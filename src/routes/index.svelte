@@ -1,4 +1,5 @@
 <script lang="ts" context="module">
+	import '../app.css';
 	export const prerender = true;
 </script>
 
@@ -11,6 +12,11 @@
 		console.log(`auth with ${authMethod}`);
 	};
 </script>
+
+<svelte:head>
+	<title>gamezilla</title>
+	<meta name="description" content="Play games with your friends" />
+</svelte:head>
 
 <Container>
 	<Typography variant="title" text="Gamezilla" class="margin-bottom-1" />
