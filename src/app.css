@@ -1,0 +1,45 @@
+:root {
+	--font-family: Ubuntu, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Cantarell,
+		'Open Sans', 'Helvetica Neue', sans-serif;
+	--primary: green;
+	--font-color: #ffffff;
+	--background-color: #0f0f0f;
+	--spacing: 1rem;
+	--small-breakpoint: 500px;
+	font-family: var(--font-family);
+}
+
+/* why? https://stackoverflow.com/questions/16907518/css-input-with-width-100-goes-outside-parents-bound */
+html {
+	box-sizing: border-box;
+}
+
+*,
+*:before,
+*:after {
+	box-sizing: inherit;
+	margin: 0;
+	padding: 0;
+	user-select: none;
+}
+
+body {
+	width: 100%;
+	overflow-x: hidden;
+
+	color: var(--font-color);
+	background-color: var(--background-color);
+}
+
+#svelte {
+	width: 100%;
+	overflow-x: hidden;
+}
+
+.margin-bottom-1 {
+	margin-bottom: var(--spacing);
+}
+
+.padding-1 {
+	padding: var(--spacing);
+}
