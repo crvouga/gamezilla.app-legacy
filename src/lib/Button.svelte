@@ -1,7 +1,11 @@
 <script lang="ts">
+	import type { IconName } from './icon-name';
+	import Icon from './Icon.svelte';
+
 	export let text: string;
 	export let fullWidth = false;
 	export let onClick: () => void;
+	export let iconName: IconName;
 
 	let classProp: string = '';
 	export { classProp as class };
@@ -10,6 +14,10 @@
 </script>
 
 <button class={buttonClass} on:click={onClick}>
+	{#if iconName}
+		<Icon name={iconName} />
+	{/if}
+
 	{text}
 </button>
 

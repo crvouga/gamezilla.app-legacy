@@ -2,6 +2,7 @@
 	import Button from '$lib/Button.svelte';
 	import Container from '$lib/Container.svelte';
 	import Typography from '$lib/Typography.svelte';
+	import Icon from './Icon.svelte';
 
 	const handleAuth = (authMethod: 'google' | 'phone' | 'email') => () => {
 		console.log(`auth with ${authMethod}`);
@@ -16,17 +17,21 @@
 		text="Continue With Google"
 		onClick={handleAuth('google')}
 		class="margin-bottom-1"
+		iconName="google"
 	/>
+
 	<Button
 		fullWidth
 		text="Continue With Phone"
 		onClick={handleAuth('phone')}
 		class="margin-bottom-1"
+		iconName="phone"
 	/>
 	<Button
 		fullWidth
 		text="Continue With Email"
 		onClick={handleAuth('email')}
 		class="margin-bottom-1"
+		iconName="email"
 	/>
 </Container>
