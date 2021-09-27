@@ -9,6 +9,7 @@
 	import LoadingPage from '$lib/LoadingPage.svelte';
 	import { Route, Router } from 'svelte-routing';
 	import AppHead from './AppHead.svelte';
+	import LobbyPage from './LobbyPage.svelte';
 	import UnauthPage from './UnauthPage.svelte';
 </script>
 
@@ -20,6 +21,7 @@
 	<AuthPage />
 {:else if $authStateStore.status === 'authenticated'}
 	<Router>
+		<Route path="/lobby" component={LobbyPage} />
 		<Route path="/unauth" component={UnauthPage} />
 		<Route path="/" component={HomePage} />
 	</Router>

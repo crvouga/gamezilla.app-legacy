@@ -8,7 +8,14 @@
 <PageBar title="Home" />
 
 <Container>
-	<Button fullWidth text="Play" class="margin-bottom-1" />
+	<Button
+		fullWidth
+		text="Play"
+		class="margin-bottom-1"
+		onClick={() => {
+			navigate('/lobby');
+		}}
+	/>
 
 	<Button
 		fullWidth
