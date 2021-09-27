@@ -4,7 +4,7 @@
 	"version": "0.0.1",
 	"scripts": {
 		"emulate": "cd functions && tsc && cd .. && firebase emulators:start",
-		"dev": "concurrently \"svelte-kit dev\" \"yarn emulate\"",
+		"dev": "svelte-kit dev",
 		"build": "svelte-kit build",
 		"preview": "svelte-kit preview",
 		"check": "svelte-check --tsconfig ./tsconfig.json",

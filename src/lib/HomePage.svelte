@@ -1,8 +1,8 @@
 <script lang="ts">
-	import Button from '$lib/Button.svelte';
-	import Container from '$lib/Container.svelte';
 	import { unauthenticate } from './auth';
-	import Dialog from './Dialog.svelte';
+	import Button from './Button.svelte';
+	import Container from './Container.svelte';
+	import Modal from './Modal.svelte';
 	import PageBar from './PageBar.svelte';
 	import Typography from './Typography.svelte';
 
@@ -19,7 +19,7 @@
 			dialogState = 'opened';
 		}}
 	/>
-	<Dialog state={dialogState}>
+	<Modal state={dialogState}>
 		<Typography
 			text="Sign out of Gamezilla?"
 			variant="medium-title"
@@ -42,5 +42,5 @@
 			text="Sign Out"
 			class="margin-bottom-1"
 		/>
-	</Dialog>
+	</Modal>
 </Container>
