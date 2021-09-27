@@ -1,9 +1,8 @@
-<script lang="ts" context="module">
-	import { authStateStore } from '$lib/auth';
-	import AuthPage from '$lib/AuthPage.svelte';
-	import LoadingPage from '$lib/LoadingPage.svelte';
-	import HomePage from '$lib/HomePage.svelte';
+<script lang="ts">
+	import App from '$lib/App.svelte';
+	import { browser } from '$app/env';
 	import '../app.css';
+	import LoadingPage from '$lib/LoadingPage.svelte';
 </script>
 
 <svelte:head>
@@ -29,10 +28,8 @@
 	/>
 </svelte:head>
 
-{#if $authStateStore.status === 'unauthenticated'}
-	<AuthPage />
-{:else if $authStateStore.status === 'loading'}
+{#if browser}
+	<App />
+{:else}
 	<LoadingPage />
-{:else if $authStateStore.status === 'authenticated'}
-	<HomePage />
 {/if}

@@ -20,7 +20,6 @@ const firebaseConfig = {
 };
 
 const firebaseApp = initializeApp(firebaseConfig);
-const firebaseAuth = getAuth(firebaseApp);
 
 export type IAuthMethod = 'google';
 
@@ -29,6 +28,8 @@ export const authenicate = async ({
 }: {
 	authMethod: IAuthMethod;
 }): Promise<Error[]> => {
+	const firebaseAuth = getAuth(firebaseApp);
+
 	if (authMethod === 'google') {
 		try {
 			await signInWithRedirect(firebaseAuth, new GoogleAuthProvider());
@@ -60,7 +61,7 @@ type IAuthState =
 	  };
 
 export const authStateStore = readable<IAuthState>({ status: 'loading' }, (set) => {
-	set({ status: 'loading' });
+	const firebaseAuth = getAuth(firebaseApp);
 
 	const unsubscribe = onAuthStateChanged(firebaseAuth, (firebaseUser) => {
 		if (firebaseUser) {
@@ -86,5 +87,7 @@ export const authStateStore = readable<IAuthState>({ status: 'loading' }, (set) 
 });
 
 export const unauthenicate = async (): Promise<void> => {
+	const firebaseAuth = getAuth(firebaseApp);
+
 	await signOut(firebaseAuth);
 };

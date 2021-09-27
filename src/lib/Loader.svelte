@@ -14,10 +14,10 @@
 		border-right: 1.1em solid rgba(255, 255, 255, 0.2);
 		border-bottom: 1.1em solid rgba(255, 255, 255, 0.2);
 		border-left: 1.1em solid #ffffff;
-		animation: load8 1.1s infinite linear;
+		animation: load 1.1s infinite linear;
 	}
 
-	@keyframes load8 {
+	@keyframes load {
 		0% {
 			transform: rotate(0deg);
 		}

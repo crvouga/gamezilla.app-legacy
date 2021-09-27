@@ -12,6 +12,7 @@
 /* why? https://stackoverflow.com/questions/16907518/css-input-with-width-100-goes-outside-parents-bound */
 html {
 	box-sizing: border-box;
+	overflow: hidden;
 }
 
 *,
@@ -25,8 +26,6 @@ html {
 
 body {
 	width: 100%;
-	overflow-x: hidden;
-
 	color: var(--font-color);
 	background-color: var(--background-color);
 }
