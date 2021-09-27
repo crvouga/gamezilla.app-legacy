@@ -62,7 +62,7 @@ type IAuthState =
 export const authStateStore = readable<IAuthState>({ status: 'loading' }, (set) => {
 	set({ status: 'loading' });
 
-	onAuthStateChanged(firebaseAuth, (firebaseUser) => {
+	const unsubscribe = onAuthStateChanged(firebaseAuth, (firebaseUser) => {
 		if (firebaseUser) {
 			set({
 				status: 'authenticated',
@@ -79,6 +79,10 @@ export const authStateStore = readable<IAuthState>({ status: 'loading' }, (set) 
 			status: 'unauthenticated'
 		});
 	});
+
+	return () => {
+		unsubscribe();
+	};
 });
 
 export const unauthenicate = async (): Promise<void> => {

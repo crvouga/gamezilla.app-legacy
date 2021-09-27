@@ -1,8 +1,8 @@
 <script lang="ts" context="module">
-	import { authenicate, authStateStore } from '$lib/auth';
+	import { authStateStore } from '$lib/auth';
 	import AuthPage from '$lib/AuthPage.svelte';
 	import LoadingPage from '$lib/LoadingPage.svelte';
-	import Routes from '$lib/Routes.svelte';
+	import HomePage from '$lib/HomePage.svelte';
 	import '../app.css';
 </script>
 
@@ -34,5 +34,5 @@
 {:else if $authStateStore.status === 'loading'}
 	<LoadingPage />
 {:else if $authStateStore.status === 'authenticated'}
-	<Routes />
+	<HomePage />
 {/if}
