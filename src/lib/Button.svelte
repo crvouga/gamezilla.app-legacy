@@ -3,6 +3,8 @@
 	import Icon from './Icon.svelte';
 
 	export let text: string;
+	export let variant: 'text' | 'contained' | 'outlined' = 'contained';
+	export let color: 'primary' | 'danger' = 'primary';
 	export let fullWidth = false;
 	export let onClick: () => void;
 	export let iconName: IconName;
@@ -10,10 +12,13 @@
 	let classProp: string = '';
 	export { classProp as class };
 
-	$: buttonClass = `${fullWidth ? 'full-width' : ''} ${classProp ?? ''}`;
+	$: buttonClass = `${fullWidth ? 'full-width' : ''} ${color} ${variant} ${classProp ?? ''}`;
+
+	const buttonColor =
+		color === 'primary' ? 'var(--primary)' : color === 'danger' ? 'var(--danger-color)' : '';
 </script>
 
-<button class={buttonClass} on:click={onClick}>
+<button style={`--button-color: ${buttonColor}`} class={buttonClass} on:click={onClick}>
 	{#if iconName}
 		<Icon class="icon" name={iconName} />
 	{/if}
@@ -30,21 +35,34 @@
 		width: 100%;
 	}
 
+	.text {
+		color: var(--button-color);
+		background-color: transparent;
+	}
+
+	.contained {
+		color: white;
+		background-color: var(--button-color);
+	}
+
 	button {
 		border: none;
 		font-family: var(--font-family);
 		cursor: pointer;
 		padding: var(--spacing);
-		border-radius: 0.5rem;
+		border-radius: var(--border-radius);
 		font-weight: bold;
 		font-size: medium;
-		color: white;
-		background-color: var(--primary);
 		text-transform: uppercase;
 	}
 
+	.outlined {
+		color: var(--button-color);
+		background-color: transparent;
+		border: 1px solid var(--button-color);
+	}
+
 	button:active {
-		box-shadow: inset 6px 6px 12px rgba(0, 0, 0, 0.5);
 		filter: brightness(0.6);
 	}
 </style>

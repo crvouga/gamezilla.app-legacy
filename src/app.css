@@ -3,10 +3,14 @@
 		'Open Sans', 'Helvetica Neue', sans-serif;
 	--primary: green;
 	--divider-color: rgba(255, 255, 255, 0.2);
+	--surface-color: #1f1f1f;
 	--font-color: #ffffff;
+	--danger-color: red;
 	--background-color: #0f0f0f;
 	--spacing: 1rem;
 	--small-breakpoint: 500px;
+	--modal-z-index: 10;
+	--border-radius: 1rem;
 	font-family: var(--font-family);
 }
 
@@ -47,6 +51,14 @@ body {
 	margin-bottom: var(--spacing);
 }
 
+.margin-right-1 {
+	margin-right: var(--spacing);
+}
+
 .padding-1 {
 	padding: var(--spacing);
+}
+
+.padding-2 {
+	padding: calc(var(--spacing) * 2);
 }

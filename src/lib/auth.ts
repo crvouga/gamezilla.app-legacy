@@ -86,7 +86,7 @@ export const authStateStore = readable<IAuthState>({ status: 'loading' }, (set) 
 	};
 });
 
-export const unauthenicate = async (): Promise<void> => {
+export const unauthenticate = async (): Promise<void> => {
 	const firebaseAuth = getAuth(firebaseApp);
 
 	await signOut(firebaseAuth);
