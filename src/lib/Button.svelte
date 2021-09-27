@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { IconName } from './icon-name';
 	import Icon from './Icon.svelte';
+	import Loader from './Loader.svelte';
 
 	export let text: string;
 	export let variant: 'text' | 'contained' | 'outlined' = 'contained';
@@ -8,6 +9,7 @@
 	export let fullWidth = false;
 	export let onClick: () => void;
 	export let iconName: IconName;
+	export let state: 'loading' | 'idle' | 'disabled' = 'idle';
 
 	let classProp: string = '';
 	export { classProp as class };
@@ -19,11 +21,12 @@
 </script>
 
 <button style={`--button-color: ${buttonColor}`} class={buttonClass} on:click={onClick}>
-	{#if iconName}
+	{#if state === 'loading'}
+		<Loader />
+	{:else if iconName}
 		<Icon class="icon" name={iconName} />
+		{text}
 	{/if}
-
-	{text}
 </button>
 
 <style>
@@ -54,6 +57,9 @@
 		font-weight: bold;
 		font-size: medium;
 		text-transform: uppercase;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 	}
 
 	.outlined {

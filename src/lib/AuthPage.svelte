@@ -5,8 +5,14 @@
 	import { authenicate, IAuthMethod } from './auth';
 	import PageBar from './PageBar.svelte';
 
+	let state: 'idle' | 'loading' = 'idle';
+
 	const handleAuth = (authMethod: IAuthMethod) => async () => {
+		state = 'loading';
+
 		await authenicate({ authMethod });
+
+		state = 'idle';
 	};
 </script>
 
@@ -14,6 +20,7 @@
 
 <Container>
 	<Button
+		{state}
 		fullWidth
 		text="Continue With Google"
 		onClick={handleAuth('google')}
