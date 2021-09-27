@@ -9,7 +9,10 @@
 
 	export let name: IconName;
 
-	$: fontAwesomeClass = iconNameToFontAwesomeClass[name];
+	let classProp;
+	export { classProp as class };
+
+	$: iconClass = `${classProp} ${iconNameToFontAwesomeClass[name]}`;
 </script>
 
-<i class={fontAwesomeClass} />
+<i class={iconClass} />

@@ -15,13 +15,17 @@
 
 <button class={buttonClass} on:click={onClick}>
 	{#if iconName}
-		<Icon name={iconName} />
+		<Icon class="icon" name={iconName} />
 	{/if}
 
 	{text}
 </button>
 
 <style>
+	.icon {
+		margin-right: var(--spacing);
+	}
+
 	.full-width {
 		width: 100%;
 	}

@@ -1,7 +1,9 @@
 <script lang="ts" context="module">
+	import { authenicate, authStateStore } from '$lib/auth';
 	import AuthPage from '$lib/AuthPage.svelte';
+	import LoadingPage from '$lib/LoadingPage.svelte';
+	import Routes from '$lib/Routes.svelte';
 	import '../app.css';
-	export const prerender = true;
 </script>
 
 <svelte:head>
@@ -27,4 +29,10 @@
 	/>
 </svelte:head>
 
-<AuthPage />
+{#if $authStateStore.status === 'unauthenticated'}
+	<AuthPage />
+{:else if $authStateStore.status === 'loading'}
+	<LoadingPage />
+{:else if $authStateStore.status === 'authenticated'}
+	<Routes />
+{/if}
