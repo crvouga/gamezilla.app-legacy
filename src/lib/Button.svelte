@@ -23,8 +23,10 @@
 <button style={`--button-color: ${buttonColor}`} class={buttonClass} on:click={onClick}>
 	{#if state === 'loading'}
 		<Loader />
-	{:else if iconName}
-		<Icon class="icon" name={iconName} />
+	{:else if state === 'idle'}
+		{#if iconName}
+			<Icon class="margin-right-1" name={iconName} />
+		{/if}
 		{text}
 	{/if}
 </button>
