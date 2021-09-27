@@ -25,6 +25,7 @@
 		fullWidth
 		onClick={() => {
 			unauthenticate();
+			navigate('/');
 		}}
 		text="Sign Out"
 		class="margin-bottom-1"
