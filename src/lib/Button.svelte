@@ -37,7 +37,7 @@
 		padding: var(--spacing);
 		border-radius: 0.5rem;
 		font-weight: bold;
-		font-size: large;
+		font-size: medium;
 		color: white;
 		background-color: var(--primary);
 		text-transform: uppercase;

@@ -3,7 +3,8 @@
 	"name": "gamezilla",
 	"version": "0.0.1",
 	"scripts": {
-		"dev": "svelte-kit dev",
+		"emulate": "cd functions && tsc && cd .. && firebase emulators:start",
+		"dev": "concurrently \"svelte-kit dev\" \"yarn emulate\"",
 		"build": "svelte-kit build",
 		"preview": "svelte-kit preview",
 		"check": "svelte-check --tsconfig ./tsconfig.json",
@@ -16,6 +17,7 @@
 		"@sveltejs/kit": "next",
 		"@typescript-eslint/eslint-plugin": "^4.31.1",
 		"@typescript-eslint/parser": "^4.31.1",
+		"concurrently": "^6.2.1",
 		"eslint": "^7.32.0",
 		"eslint-config-prettier": "^8.3.0",
 		"eslint-plugin-svelte3": "^3.2.1",

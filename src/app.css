@@ -2,6 +2,7 @@
 	--font-family: Ubuntu, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Cantarell,
 		'Open Sans', 'Helvetica Neue', sans-serif;
 	--primary: green;
+	--divider-color: rgba(255, 255, 255, 0.2);
 	--font-color: #ffffff;
 	--background-color: #0f0f0f;
 	--spacing: 1rem;
