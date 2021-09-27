@@ -3,14 +3,16 @@
 </script>
 
 <script lang="ts">
-	import { Router, Link, Route } from 'svelte-routing';
-
 	import { authStateStore } from '$lib/auth';
 	import AuthPage from '$lib/AuthPage.svelte';
 	import HomePage from '$lib/HomePage.svelte';
 	import LoadingPage from '$lib/LoadingPage.svelte';
+	import { Route, Router } from 'svelte-routing';
+	import AppHead from './AppHead.svelte';
 	import UnauthPage from './UnauthPage.svelte';
 </script>
+
+<AppHead />
 
 {#if $authStateStore.status === 'loading'}
 	<LoadingPage />

@@ -1,35 +1,5 @@
 <script lang="ts">
-	import App from '$lib/App.svelte';
-	import { browser } from '$app/env';
-	import '../app.css';
-	import LoadingPage from '$lib/LoadingPage.svelte';
+	import App from './_App.svelte';
 </script>
 
-<svelte:head>
-	<title>gamezilla</title>
-	<meta name="description" content="Play games with your friends" />
-	<link
-		rel="stylesheet"
-		href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/css/fontawesome.min.css"
-		integrity="sha512-Rcr1oG0XvqZI1yv1HIg9LgZVDEhf2AHjv+9AuD1JXWGLzlkoKDVvE925qySLcEywpMAYA/rkg296MkvqBF07Yw=="
-		crossorigin="anonymous"
-	/>
-	<link
-		rel="stylesheet"
-		href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/css/brands.min.css"
-		integrity="sha512-lCU0XyQA8yobR7ychVxEOU5rcxs0+aYh/9gNDLaybsgW9hdrtqczjfKVNIS5doY0Y5627/+3UVuoGv7p8QsUFw=="
-		crossorigin="anonymous"
-	/>
-	<link
-		rel="stylesheet"
-		href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/css/solid.min.css"
-		integrity="sha512-WTx8wN/JUnDrE4DodmdFBCsy3fTGbjs8aYW9VDbW8Irldl56eMj8qUvI3qoZZs9o3o8qFxfGcyQocUY0LYZqzQ=="
-		crossorigin="anonymous"
-	/>
-</svelte:head>
-
-{#if browser}
-	<App />
-{:else}
-	<LoadingPage />
-{/if}
+<App />
