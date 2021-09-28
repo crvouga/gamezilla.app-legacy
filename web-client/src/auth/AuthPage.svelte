@@ -4,14 +4,13 @@
   import PageBar from "../generic/PageBar.svelte";
   import { authDataAccess, IAuthMethod } from "./auth-data-access";
 
-  let state: "idle" | "loading" = "idle";
-
-  const handleAuth =
-    ({ authMethod }: { authMethod: IAuthMethod }) =>
-    async () => {
-      state = "loading";
-      authDataAccess.authenticate({ authMethod });
-    };
+  const handleAuth = ({
+    authMethod,
+  }: {
+    authMethod: IAuthMethod;
+  }) => async () => {
+    authDataAccess.authenticate({ authMethod });
+  };
 </script>
 
 <PageBar title="Gamezilla" />
@@ -20,10 +19,7 @@
   <Button
     fullWidth
     text="Continue With Google"
-    onClick={handleAuth({
-      authMethod: "google",
-    })}
+    onClick={handleAuth({ authMethod: 'google' })}
     class="margin-bottom-1"
-    iconName="google"
-  />
+    iconName="google" />
 </Container>

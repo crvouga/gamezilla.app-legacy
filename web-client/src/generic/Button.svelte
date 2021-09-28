@@ -1,35 +1,30 @@
 <script lang="ts">
-	import type { IconName } from './Icon.svelte';
-	import Icon from './Icon.svelte';
-	import Loader from './Loader.svelte';
+	import type { IconName } from "./Icon.svelte";
+	import Icon from "./Icon.svelte";
+	import Loader from "./Loader.svelte";
 
 	export let text: string;
-	export let variant: 'text' | 'contained' | 'outlined' = 'contained';
-	export let color: 'primary' | 'danger' = 'primary';
+	export let variant: "text" | "contained" | "outlined" = "contained";
+	export let color: "primary" | "danger" = "primary";
 	export let fullWidth = false;
-	export let onClick: () => void;
-	export let iconName: IconName;
-	export let state: 'loading' | 'idle' | 'disabled' = 'idle';
+	export let onClick: () => void | undefined = undefined;
+	export let iconName: IconName | undefined = undefined;
+	export let state: "loading" | "idle" | "disabled" = "idle";
 
-	let classProp: string = '';
+	let classProp: string = "";
 	export { classProp as class };
 
-	$: buttonClass = `${fullWidth ? 'full-width' : ''} ${color} ${variant} ${classProp ?? ''}`;
+	$: buttonClass = `${fullWidth ? "full-width" : ""} ${color} ${variant} ${
+		classProp ?? ""
+	}`;
 
 	const buttonColor =
-		color === 'primary' ? 'var(--primary)' : color === 'danger' ? 'var(--danger-color)' : '';
+		color === "primary"
+			? "var(--primary)"
+			: color === "danger"
+			? "var(--danger-color)"
+			: "";
 </script>
-
-<button style={`--button-color: ${buttonColor}`} class={buttonClass} on:click={onClick}>
-	{#if state === 'loading'}
-		<Loader />
-	{:else if state === 'idle'}
-		{#if iconName}
-			<Icon class="margin-right-1" name={iconName} />
-		{/if}
-		{text}
-	{/if}
-</button>
 
 <style>
 	.icon {
@@ -74,3 +69,17 @@
 		filter: brightness(0.6);
 	}
 </style>
+
+<button
+	style={`--button-color: ${buttonColor}`}
+	class={buttonClass}
+	on:click={onClick}>
+	{#if state === 'loading'}
+		<Loader />
+	{:else if state === 'idle'}
+		{#if iconName}
+			<Icon class="margin-right-1" name={iconName} />
+		{/if}
+		{text}
+	{/if}
+</button>

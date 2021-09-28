@@ -1,17 +1,11 @@
 <script lang="ts">
-	import type { IconName } from '../icon-name';
-	import Icon from './Icon.svelte';
+	import Icon, { IconName } from "./Icon.svelte";
 
-	import Typography from './Typography.svelte';
+	import Typography from "./Typography.svelte";
 
-	export let title: string = '';
-	export let iconLeft: IconName;
+	export let title: string = "";
+	export let iconLeft: IconName | undefined = undefined;
 </script>
-
-<nav>
-	<Icon name={iconLeft} />
-	<Typography variant="small-title" text={title} class="flex-1 text-align-center" />
-</nav>
 
 <style>
 	nav {
@@ -23,3 +17,11 @@
 		align-items: center;
 	}
 </style>
+
+<nav>
+	<Icon name={iconLeft} />
+	<Typography
+		variant="small-title"
+		text={title}
+		class="flex-1 text-align-center" />
+</nav>
