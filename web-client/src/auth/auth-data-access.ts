@@ -5,7 +5,7 @@ import {
   signInWithRedirect,
   signOut,
 } from "firebase/auth";
-import { firebaseApp } from "../app/firebase-app";
+import { firebaseApp } from "../firebase-app";
 
 export type IAuthMethod = "google";
 

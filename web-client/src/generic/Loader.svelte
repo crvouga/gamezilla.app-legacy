@@ -1,4 +1,7 @@
-<div class="loader" />
+<script lang="ts">
+	let className: string = "";
+	export { className as class };
+</script>
 
 <style>
 	.loader,
@@ -26,3 +29,5 @@
 		}
 	}
 </style>
+
+<div class="loader {className}" />

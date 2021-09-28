@@ -10,24 +10,21 @@
   <Typography
     text="Sign out of Gamezilla?"
     variant="medium-title"
-    class="padding-1 margin-bottom-1"
-  />
+    class="padding-1 margin-bottom-1" />
   <Button
     fullWidth
     text="Cancel"
     class="margin-bottom-1"
     onClick={() => {
-      navigate("/");
-    }}
-  />
+      navigate('/');
+    }} />
 
   <Button
     fullWidth
     onClick={() => {
       authDataAccess.unauthenticate();
-      navigate("/");
+      navigate('/');
     }}
     text="Sign Out"
-    class="margin-bottom-1"
-  />
+    class="margin-bottom-1" />
 </Modal>
