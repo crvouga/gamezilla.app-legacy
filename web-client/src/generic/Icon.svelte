@@ -1,6 +1,8 @@
-<script lang="ts">
-	import type { IconName } from './icon-name';
+<script lang="ts" context="module">
+	export type IconName = 'google' | 'phone' | 'email';
+</script>
 
+<script lang="ts">
 	export const iconNameToFontAwesomeClass: { [iconName in IconName]: string } = {
 		google: 'fab fa-google',
 		phone: 'fas fa-phone',

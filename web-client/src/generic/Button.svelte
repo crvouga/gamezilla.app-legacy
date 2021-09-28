@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { IconName } from './icon-name';
+	import type { IconName } from './Icon.svelte';
 	import Icon from './Icon.svelte';
 	import Loader from './Loader.svelte';
 

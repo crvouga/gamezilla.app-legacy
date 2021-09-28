@@ -1,5 +1,5 @@
 <script>
-	import Loader from './Loader.svelte';
+	import Loader from './generic/Loader.svelte';
 </script>
 
 <div class="wrapper">

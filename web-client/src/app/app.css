@@ -1,0 +1,72 @@
+:root {
+  --font-family: Ubuntu, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  --primary: green;
+  --divider-color: rgba(255, 255, 255, 0.2);
+  --surface-color: #1f1f1f;
+  --font-color: #ffffff;
+  --danger-color: red;
+  --background-color: #0f0f0f;
+  --spacing: 1rem;
+  --small-breakpoint: 500px;
+  --modal-z-index: 10;
+  --border-radius: 2rem;
+  font-family: var(--font-family);
+}
+
+/* why? https://stackoverflow.com/questions/16907518/css-input-with-width-100-goes-outside-parents-bound */
+html {
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+  margin: 0;
+  padding: 0;
+
+  /* why? https://stackoverflow.com/questions/826782/how-to-disable-text-selection-highlighting */
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Old versions of Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
+}
+
+body {
+  width: 100%;
+  color: var(--font-color);
+  background-color: var(--background-color);
+}
+
+#svelte {
+  width: 100%;
+  overflow-x: hidden;
+}
+
+.margin-bottom-1 {
+  margin-bottom: var(--spacing);
+}
+
+.margin-right-1 {
+  margin-right: var(--spacing);
+}
+
+.padding-1 {
+  padding: var(--spacing);
+}
+
+.padding-2 {
+  padding: calc(var(--spacing) * 2);
+}
+
+.text-align-center {
+  text-align: center;
+}
+
+.flex-1 {
+  flex: 1;
+}

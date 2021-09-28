@@ -1,9 +1,12 @@
 <script lang="ts">
 	export let text: string;
 	export let variant: 'title' | 'small-title' | 'medium-title' | 'body' = 'body';
+	export let align: 'center' | 'left' = 'left';
 
 	let classProp: string = '';
 	export { classProp as class };
+
+	$: typographyClass = `${classProp} ${align}`;
 </script>
 
 {#if variant === 'title'}
@@ -17,6 +20,10 @@
 {/if}
 
 <style>
+	* {
+		text-align: center;
+	}
+
 	h1 {
 		font-size: 2rem;
 	}

@@ -1,19 +1,13 @@
-<script lang="ts" context="module">
-	export const ssr = false;
-</script>
-
 <script lang="ts">
-	import { authStateStore } from '$lib/auth';
-	import AuthPage from '$lib/AuthPage.svelte';
-	import HomePage from '$lib/HomePage.svelte';
-	import LoadingPage from '$lib/LoadingPage.svelte';
 	import { Route, Router } from 'svelte-routing';
-	import AppHead from './AppHead.svelte';
-	import LobbyPage from './LobbyPage.svelte';
-	import UnauthPage from './UnauthPage.svelte';
+	import { authStateStore } from '../auth/auth-state-store';
+	import AuthPage from '../auth/AuthPage.svelte';
+	import UnauthPage from '../auth/UnauthPage.svelte';
+	import HomePage from '../HomePage.svelte';
+	import LoadingPage from '../LoadingPage.svelte';
+	import LobbyPage from '../LobbyPage.svelte';
+	import './app.css';
 </script>
-
-<AppHead />
 
 {#if $authStateStore.status === 'loading'}
 	<LoadingPage />
