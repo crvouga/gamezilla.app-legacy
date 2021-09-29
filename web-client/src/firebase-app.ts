@@ -11,4 +11,10 @@ const firebaseConfig = {
   measurementId: "G-P243F70BSW",
 };
 
-export const firebaseApp = initializeApp(firebaseConfig);
+export const FirebaseApp = () => {
+  const firebaseApp = initializeApp(firebaseConfig);
+
+  return firebaseApp;
+};
+
+export type IFirebaseApp = ReturnType<typeof FirebaseApp>;

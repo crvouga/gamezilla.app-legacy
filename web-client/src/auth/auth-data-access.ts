@@ -1,11 +1,12 @@
 import {
+  connectAuthEmulator,
   getAuth,
   GoogleAuthProvider,
   onAuthStateChanged,
   signInWithRedirect,
   signOut,
 } from "firebase/auth";
-import { firebaseApp } from "../firebase-app";
+import type { IFirebaseApp } from "../firebase-app";
 
 export type IAuthMethod = "google";
 
@@ -27,30 +28,42 @@ export type IAuthState =
       status: "unauthenticated";
     };
 
-export type IAuthenticate = ({
-  authMethod,
-}: {
-  authMethod: IAuthMethod;
-}) => Promise<Error[]>;
-
-export type IUnauthenticate = () => Promise<void>;
-
-export type IOnAuthStateChanged = (
-  set: (authState: IAuthState) => void
-) => () => void;
-
 export type IAuthDataAccess = {
-  authenticate: IAuthenticate;
-  unauthenticate: IUnauthenticate;
-  onAuthStateChanged: IOnAuthStateChanged;
+  authenticate: ({
+    authMethod,
+  }: {
+    authMethod: IAuthMethod;
+  }) => Promise<Error[]>;
+  unauthenticate: () => Promise<void>;
+  onAuthStateChanged: (set: (authState: IAuthState) => void) => () => void;
 };
 
-const AuthDataAccess = ({
+export const AuthDataAccessNoop = (): IAuthDataAccess => {
+  return {
+    async authenticate() {
+      return [];
+    },
+    async unauthenticate() {},
+    onAuthStateChanged() {
+      return () => {};
+    },
+  };
+};
+
+export const AuthDataAccess = ({
   firebaseApp,
+  emulate,
 }: {
-  firebaseApp: Parameters<typeof getAuth>[0];
+  firebaseApp: IFirebaseApp;
+  emulate?: boolean;
 }): IAuthDataAccess => {
   const firebaseAuth = getAuth(firebaseApp);
+
+  if (emulate) {
+    connectAuthEmulator(firebaseAuth, "http://localhost:9099", {
+      disableWarnings: true,
+    });
+  }
 
   return {
     async unauthenticate() {
@@ -101,5 +114,3 @@ const AuthDataAccess = ({
     },
   };
 };
-
-export const authDataAccess = AuthDataAccess({ firebaseApp });

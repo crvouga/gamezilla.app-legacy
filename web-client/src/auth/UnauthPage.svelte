@@ -1,9 +1,11 @@
 <script lang="ts">
+  import { getContext } from "svelte";
   import { navigate } from "svelte-routing";
   import Button from "../generic/Button.svelte";
   import Modal from "../generic/Modal.svelte";
   import Typography from "../generic/Typography.svelte";
-  import { authDataAccess } from "./auth-data-access";
+
+  const { authDataAccess } = getContext("auth");
 </script>
 
 <Modal state="opened">
@@ -22,8 +24,8 @@
   <Button
     fullWidth
     onClick={() => {
-      authDataAccess.unauthenticate();
       navigate('/');
+      authDataAccess.unauthenticate();
     }}
     text="Sign Out"
     class="margin-bottom-1" />
