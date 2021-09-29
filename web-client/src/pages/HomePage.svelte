@@ -13,10 +13,19 @@
 
 	const authUser: IAuthUser = getContext(authUserKey);
 
+	let state: "idle" | "creating-lobby" = "idle";
+
 	const handleCreateLobby = async () => {
-		dataAccess.lobby.create({
+		state = "creating-lobby";
+
+		const { errors } = await dataAccess.lobby.create({
 			userId: authUser.userId,
 		});
+
+		if (errors.length > 0) {
+			alert(errors[0].message);
+		}
+		state = "idle";
 	};
 </script>
 
@@ -24,6 +33,7 @@
 
 <Container>
 	<Button
+		loading={state === 'creating-lobby'}
 		fullWidth
 		text="Create Lobby"
 		class="margin-bottom-1"

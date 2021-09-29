@@ -8,8 +8,11 @@ export const LobbyDataAccessFirebase = ({
 }): ILobbyDataAccess => {
   return {
     async create({ userId }) {
-      console.log("TODO create lobby");
-      return [];
+      console.log("TODO create lobby", { userId });
+
+      return {
+        errors: [new Error("Failed to create lobby")],
+      };
     },
   };
 };

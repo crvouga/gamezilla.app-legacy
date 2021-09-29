@@ -9,7 +9,7 @@
 	export let fullWidth = false;
 	export let onClick: () => void | undefined = undefined;
 	export let iconName: IconName | undefined = undefined;
-	export let state: "loading" | "idle" | "disabled" = "idle";
+	export let loading: boolean = false;
 
 	let classProp: string = "";
 	export { classProp as class };
@@ -74,9 +74,9 @@
 	style={`--button-color: ${buttonColor}`}
 	class={buttonClass}
 	on:click={onClick}>
-	{#if state === 'loading'}
+	{#if loading}
 		<Loader />
-	{:else if state === 'idle'}
+	{:else}
 		{#if iconName}
 			<Icon class="margin-right-1" name={iconName} />
 		{/if}

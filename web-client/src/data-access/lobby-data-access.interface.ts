@@ -15,10 +15,12 @@ export type ILobby = {
 };
 
 export type ILobbyDataAccess = {
-  create({ userId }: { userId: string }): Promise<Error[]>;
-  // onUserLobbyStateChanged(
-  //   { userId }: { userId: string },
-  //   set: () => () => void
-  // );
-  // onLobbyStateChanged({ lobbyId }, set: () => () => void);
+  create({
+    userId,
+  }: {
+    userId: string;
+  }): Promise<{
+    errors: Error[];
+    lobbyId?: string;
+  }>;
 };

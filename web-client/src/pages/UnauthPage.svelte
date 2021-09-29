@@ -11,6 +11,7 @@
     text="Sign out of Gamezilla?"
     variant="medium-title"
     class="padding-1 margin-bottom-1" />
+
   <Button
     fullWidth
     text="Cancel"
