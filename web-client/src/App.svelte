@@ -1,9 +1,22 @@
 <script lang="ts">
-	import "./app.css";
-	import AppContext from "./AppContext.svelte";
-	import AppRoutes from "./AppRoutes.svelte";
+  import { Route, Router } from "svelte-routing";
+  import AuthPage from "./pages/AuthPage.svelte";
+  import UnauthPage from "./pages/UnauthPage.svelte";
+  import HomePage from "./pages/HomePage.svelte";
+  import LoadingPage from "./pages/LoadingPage.svelte";
+  import LobbyPage from "./pages/LobbyPage.svelte";
+  import { authStateStore } from "./stores";
+  import "./app.css";
 </script>
 
-<AppContext>
-	<AppRoutes />
-</AppContext>
+{#if $authStateStore.status === 'loading'}
+  <LoadingPage />
+{:else if $authStateStore.status === 'unauthenticated'}
+  <AuthPage />
+{:else if $authStateStore.status === 'authenticated'}
+  <Router>
+    <Route path="/lobby" component={LobbyPage} />
+    <Route path="/unauth" component={UnauthPage} />
+    <Route path="/" component={HomePage} />
+  </Router>
+{/if}

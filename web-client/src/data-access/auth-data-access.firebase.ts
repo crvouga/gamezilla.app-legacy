@@ -6,51 +6,10 @@ import {
   signInWithRedirect,
   signOut,
 } from "firebase/auth";
-import type { IFirebaseApp } from "../firebase-app";
+import type { IFirebaseApp } from "./firebase-app";
+import type { IAuthDataAccess } from "./auth-data-access.interface";
 
-export type IAuthMethod = "google";
-
-export type IAuthUser = {
-  displayName?: string;
-  userId: string;
-  avatarUrl?: string;
-};
-
-export type IAuthState =
-  | {
-      status: "loading";
-    }
-  | {
-      status: "authenticated";
-      authUser: IAuthUser;
-    }
-  | {
-      status: "unauthenticated";
-    };
-
-export type IAuthDataAccess = {
-  authenticate: ({
-    authMethod,
-  }: {
-    authMethod: IAuthMethod;
-  }) => Promise<Error[]>;
-  unauthenticate: () => Promise<void>;
-  onAuthStateChanged: (set: (authState: IAuthState) => void) => () => void;
-};
-
-export const AuthDataAccessNoop = (): IAuthDataAccess => {
-  return {
-    async authenticate() {
-      return [];
-    },
-    async unauthenticate() {},
-    onAuthStateChanged() {
-      return () => {};
-    },
-  };
-};
-
-export const AuthDataAccess = ({
+export const AuthDataAccessFirebase = ({
   firebaseApp,
   emulate,
 }: {
