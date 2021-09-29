@@ -17,12 +17,19 @@ export type ILobby = {
   };
 };
 
-export type ILobbyEvent = {
-  type: "USER_LOBBY_CREATED";
-  eventId: string;
-  lobbyId: string;
-  user: ILobbyUser;
-};
+export type ILobbyEvent =
+  | {
+      type: "USER_CREATED_LOBBY";
+      eventId: string;
+      lobbyId: string;
+      user: ILobbyUser;
+    }
+  | {
+      type: "USER_LEFTED_LOBBY";
+      eventId: string;
+      lobbyId: string;
+      userId: string;
+    };
 
 export type ILobbyState = {
   lobbyId: string;
@@ -31,29 +38,35 @@ export type ILobbyState = {
   };
 };
 
-export const toInitialLobbyState = ({
-  lobbyId,
-}: {
-  lobbyId: string;
-}): ILobbyState => {
-  return {
-    lobbyId,
-    users: {},
-  };
+const removeKey = <T>(key: string, object: T) => {
+  const { [key]: _value, ...removedKey } = object;
+  return removedKey;
 };
 
 export const lobbyStateReducer = (
   state: ILobbyState | null,
   event: ILobbyEvent
-): ILobbyState => {
+): ILobbyState | null => {
   switch (event.type) {
-    case "USER_LOBBY_CREATED":
+    case "USER_CREATED_LOBBY":
       return {
         lobbyId: event.lobbyId,
         users: {
           [event.user.userId]: event.user,
         },
       };
+
+    case "USER_LEFTED_LOBBY":
+      const nextState = {
+        ...state,
+        users: removeKey(event.userId, state.users),
+      };
+
+      if (Object.keys(nextState.users).length === 0) {
+        return null;
+      }
+
+      return nextState;
 
     default:
       return state;
@@ -69,4 +82,15 @@ export type ILobbyDataAccess = {
     errors: Error[];
     lobbyId?: string;
   }>;
+  leave({
+    userId,
+  }: {
+    userId: string;
+  }): Promise<{
+    errors: Error[];
+  }>;
+  onUserLobbyStatesChanged: (
+    { userId: string },
+    set: (lobbyStates: ILobbyState[]) => void
+  ) => () => void;
 };

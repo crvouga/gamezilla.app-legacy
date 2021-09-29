@@ -10,6 +10,7 @@
 	import Button from "../generic/Button.svelte";
 	import Container from "../generic/Container.svelte";
 	import PageBar from "../generic/PageBar.svelte";
+	import AuthUserLobbyPopup from "../shared/AuthUserLobbyPopup.svelte";
 
 	const authUser: IAuthUser = getContext(authUserKey);
 
@@ -46,7 +47,16 @@
 
 	<Button
 		fullWidth
+		text="Your Lobbies"
+		class="margin-bottom-1"
+		onClick={() => {
+			navigate('/auth-user/lobby');
+		}} />
+
+	<Button
+		fullWidth
 		text="Sign Out"
+		class="margin-bottom-1"
 		onClick={() => {
 			navigate('/unauth');
 		}} />

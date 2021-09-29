@@ -1,6 +1,7 @@
 import { readable } from "svelte/store";
 import { dataAccess } from "./data-access";
 import type { IAuthState } from "./data-access/auth-data-access.interface";
+import type { ILobbyState } from "./data-access/lobby-data-access.interface";
 
 export const authStateStore = readable<IAuthState>(
   {
@@ -9,15 +10,15 @@ export const authStateStore = readable<IAuthState>(
   dataAccess.auth.onAuthStateChanged
 );
 
-// export const lobbyStateStore = readable({}, (setLobbyState) => {
-//   return authStateStore.subscribe((authState) => {
-//     if (authState.status === "authenticated") {
-//       return dataAccess.lobby.onUserLobbyStateChanged(
-//         {
-//           userId: authState.authUser.userId,
-//         },
-//         setLobbyState
-//       );
-//     }
-//   });
-// });
+export const lobbyStatesStore = readable<ILobbyState[]>([], (set) => {
+  return authStateStore.subscribe((authState) => {
+    if (authState.status === "authenticated") {
+      return dataAccess.lobby.onUserLobbyStatesChanged(
+        {
+          userId: authState.authUser.userId,
+        },
+        set
+      );
+    }
+  });
+});

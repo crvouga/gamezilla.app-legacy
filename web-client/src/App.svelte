@@ -14,7 +14,7 @@
   import AppAuthenticated from "./AppAuthenticated.svelte";
   import type { IAuthUser } from "./data-access/auth-data-access.interface";
   import AuthPage from "./pages/AuthPage.svelte";
-  import LoadingPage from "./pages/LoadingPage.svelte";
+  import LoadingPage from "./shared/LoadingPage.svelte";
   import { authStateStore } from "./stores";
 
   $: authState = $authStateStore;

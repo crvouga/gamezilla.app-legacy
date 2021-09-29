@@ -1,13 +1,21 @@
+import {
+  deleteDoc,
+  collection,
+  doc,
+  getDoc,
+  onSnapshot,
+  query,
+  setDoc,
+  where,
+} from "firebase/firestore";
+import { v4 as uuidv4 } from "uuid";
 import type { IFirestore } from "./firebase-app";
 import {
-  ILobby,
   ILobbyDataAccess,
   ILobbyEvent,
   ILobbyState,
   lobbyStateReducer,
 } from "./lobby-data-access.interface";
-import { getDoc, doc, setDoc } from "firebase/firestore";
-import { v4 as uuidv4 } from "uuid";
 
 const generateId = () => {
   return uuidv4();
@@ -26,9 +34,17 @@ export const LobbyDataAccessFirebase = ({
     const lobbyState = (lobbyStateResponse.data() ??
       null) as ILobbyState | null;
 
-    const nextLobbyState = lobbyStateReducer(lobbyState, lobbyEvent);
+    const nextLobbyState: ILobbyState | null = lobbyStateReducer(
+      lobbyState,
+      lobbyEvent
+    );
 
     await setDoc(doc(firestore, "lobbyEvents", lobbyEvent.eventId), lobbyEvent);
+
+    if (nextLobbyState === null) {
+      await deleteDoc(doc(firestore, "lobbyStates", lobbyEvent.lobbyId));
+      return;
+    }
 
     await setDoc(
       doc(firestore, "lobbyStates", lobbyEvent.lobbyId),
@@ -40,7 +56,7 @@ export const LobbyDataAccessFirebase = ({
     async create({ user }) {
       const lobbyEvent: ILobbyEvent = {
         eventId: generateId(),
-        type: "USER_LOBBY_CREATED",
+        type: "USER_CREATED_LOBBY",
         lobbyId: generateId(),
         user,
       };
@@ -51,6 +67,33 @@ export const LobbyDataAccessFirebase = ({
         lobbyId: lobbyEvent.lobbyId,
         errors: [],
       };
+    },
+
+    async leave({ userId, lobbyId }) {
+      const lobbyEvent: ILobbyEvent = {
+        eventId: generateId(),
+        type: "USER_LEFTED_LOBBY",
+        lobbyId,
+        userId,
+      };
+
+      await saveLobbyEvent(lobbyEvent);
+
+      return {
+        errors: [],
+      };
+    },
+
+    onUserLobbyStatesChanged({ userId }, set) {
+      const q = query(
+        collection(firestore, "lobbyStates"),
+        where(`users.${userId}.userId`, "==", userId)
+      );
+
+      return onSnapshot(q, (snapshot) => {
+        const data = snapshot.docs.map((doc) => doc.data() as ILobbyState);
+        set(data);
+      });
     },
   };
 };
