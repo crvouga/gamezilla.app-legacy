@@ -16,7 +16,9 @@
 </script>
 
 <Router>
-  <Route path="/lobby" component={LobbyPage} />
+  <Route let:params path="/lobby/:lobbyId">
+    <LobbyPage lobbyId={params.lobbyId} />
+  </Route>
   <Route path="/unauth" component={UnauthPage} />
   <Route path="/" component={HomePage} />
 </Router>

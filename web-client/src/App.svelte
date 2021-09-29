@@ -9,16 +9,12 @@
 </script>
 
 <script lang="ts">
-  import { getContext, onMount, setContext } from "svelte";
-  import { Route, Router } from "svelte-routing";
+  import { getContext } from "svelte";
   import "./app.css";
+  import AppAuthenticated from "./AppAuthenticated.svelte";
   import type { IAuthUser } from "./data-access/auth-data-access.interface";
   import AuthPage from "./pages/AuthPage.svelte";
-  import HomePage from "./pages/HomePage.svelte";
   import LoadingPage from "./pages/LoadingPage.svelte";
-  import LobbyPage from "./pages/LobbyPage.svelte";
-  import UnauthPage from "./pages/UnauthPage.svelte";
-  import AppAuthenticated from "./AppAuthenticated.svelte";
   import { authStateStore } from "./stores";
 
   $: authState = $authStateStore;

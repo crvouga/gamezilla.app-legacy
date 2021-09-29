@@ -18,13 +18,18 @@
 	const handleCreateLobby = async () => {
 		state = "creating-lobby";
 
-		const { errors } = await dataAccess.lobby.create({
-			userId: authUser.userId,
+		const { lobbyId, errors } = await dataAccess.lobby.create({
+			user: authUser,
 		});
 
 		if (errors.length > 0) {
 			alert(errors[0].message);
 		}
+
+		if (lobbyId) {
+			navigate(`lobby/${lobbyId}`);
+		}
+
 		state = "idle";
 	};
 </script>
