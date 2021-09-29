@@ -1,29 +1,17 @@
 import {
-  connectAuthEmulator,
-  getAuth,
   GoogleAuthProvider,
   onAuthStateChanged,
   signInWithRedirect,
   signOut,
 } from "firebase/auth";
-import type { IFirebaseApp } from "./firebase-app";
 import type { IAuthDataAccess } from "./auth-data-access.interface";
+import type { IFirebaseAuth } from "./firebase-app";
 
 export const AuthDataAccessFirebase = ({
-  firebaseApp,
-  emulate,
+  firebaseAuth,
 }: {
-  firebaseApp: IFirebaseApp;
-  emulate?: boolean;
+  firebaseAuth: IFirebaseAuth;
 }): IAuthDataAccess => {
-  const firebaseAuth = getAuth(firebaseApp);
-
-  if (emulate) {
-    connectAuthEmulator(firebaseAuth, "http://localhost:9099", {
-      disableWarnings: true,
-    });
-  }
-
   return {
     async unauthenticate() {
       await signOut(firebaseAuth);

@@ -1,3 +1,5 @@
+export const authUserKey = "auth-user";
+
 export type IAuthMethod = "google";
 
 export type IAuthUser = {

@@ -1,4 +1,6 @@
 import { initializeApp } from "firebase/app";
+import { connectAuthEmulator, getAuth } from "firebase/auth";
+import { connectFirestoreEmulator, getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAdO_pbFEFwdkWqcRIFABFD_OXNRlXMzis",
@@ -11,10 +13,26 @@ const firebaseConfig = {
   measurementId: "G-P243F70BSW",
 };
 
-export const FirebaseApp = () => {
+export const FirebaseApp = ({ doesEmulate }: { doesEmulate: boolean }) => {
   const firebaseApp = initializeApp(firebaseConfig);
+  const firebaseAuth = getAuth(firebaseApp);
+  const firestore = getFirestore(firebaseApp);
 
-  return firebaseApp;
+  if (doesEmulate) {
+    connectAuthEmulator(firebaseAuth, "http://localhost:9099", {
+      disableWarnings: true,
+    });
+
+    connectFirestoreEmulator(firestore, "localhost", 8080);
+  }
+
+  return {
+    firebaseApp,
+    firestore,
+    firebaseAuth,
+  };
 };
 
-export type IFirebaseApp = ReturnType<typeof FirebaseApp>;
+export type IFirebaseApp = ReturnType<typeof FirebaseApp>["firebaseApp"];
+export type IFirebaseAuth = ReturnType<typeof FirebaseApp>["firebaseAuth"];
+export type IFirestore = ReturnType<typeof FirebaseApp>["firestore"];

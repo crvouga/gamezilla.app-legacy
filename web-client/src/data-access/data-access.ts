@@ -1,16 +1,19 @@
 import { FirebaseApp } from "./firebase-app";
 import { AuthDataAccessFirebase } from "./auth-data-access.firebase";
 import { getEnvironment } from "../environment";
+import { LobbyDataAccessFirebase } from "./lobby-data-access.firebase";
 
 export const DataAccess = () => {
-  const firebaseApp = FirebaseApp();
-
-  const authDataAccess = AuthDataAccessFirebase({
-    firebaseApp,
-    emulate: getEnvironment() === "development",
+  const { firestore, firebaseAuth } = FirebaseApp({
+    doesEmulate: getEnvironment() === "development",
   });
 
   return {
-    auth: authDataAccess,
+    auth: AuthDataAccessFirebase({
+      firebaseAuth,
+    }),
+    lobby: LobbyDataAccessFirebase({
+      firestore,
+    }),
   };
 };
