@@ -1,6 +1,6 @@
 import {
-  deleteDoc,
   collection,
+  deleteDoc,
   doc,
   getDoc,
   onSnapshot,
@@ -11,6 +11,7 @@ import {
 import { v4 as uuidv4 } from "uuid";
 import type { IFirestore } from "./firebase-app";
 import {
+  ILobby,
   ILobbyDataAccess,
   ILobbyEvent,
   ILobbyState,
@@ -26,30 +27,44 @@ export const LobbyDataAccessFirebase = ({
 }: {
   firestore: IFirestore;
 }): ILobbyDataAccess => {
-  const saveLobbyEvent = async (lobbyEvent: ILobbyEvent) => {
-    const lobbyStateResponse = await getDoc(
-      doc(firestore, "lobbyStates", lobbyEvent.lobbyId)
-    );
+  const getLobbyState = async ({ lobbyId }: { lobbyId: string }) => {
+    const response = await getDoc(doc(firestore, "lobbyStates", lobbyId));
 
-    const lobbyState = (lobbyStateResponse.data() ??
-      null) as ILobbyState | null;
+    const data = response.data();
 
-    const nextLobbyState: ILobbyState | null = lobbyStateReducer(
-      lobbyState,
-      lobbyEvent
-    );
+    const lobbyState = (data ?? null) as ILobbyState | null;
 
-    await setDoc(doc(firestore, "lobbyEvents", lobbyEvent.eventId), lobbyEvent);
+    return lobbyState;
+  };
 
-    if (nextLobbyState === null) {
-      await deleteDoc(doc(firestore, "lobbyStates", lobbyEvent.lobbyId));
+  const setLobbyEvent = async (eventId: string, lobbyEvent: ILobbyEvent) => {
+    await setDoc(doc(firestore, "lobbyEvents", eventId), lobbyEvent);
+  };
+
+  const setLobbyState = async (
+    lobbyId: string,
+    lobbyState: ILobbyState | null
+  ) => {
+    const ref = doc(firestore, "lobbyStates", lobbyId);
+
+    if (lobbyState === null) {
+      await deleteDoc(ref);
       return;
     }
 
-    await setDoc(
-      doc(firestore, "lobbyStates", lobbyEvent.lobbyId),
-      nextLobbyState
-    );
+    await setDoc(ref, lobbyState);
+  };
+
+  const dispatch = async (lobbyEvent: ILobbyEvent) => {
+    const { lobbyId, eventId } = lobbyEvent;
+
+    const lobbyState = await getLobbyState({ lobbyId });
+
+    const nextLobbyState = lobbyStateReducer(lobbyState, lobbyEvent);
+
+    await setLobbyEvent(eventId, lobbyEvent);
+
+    await setLobbyState(lobbyId, nextLobbyState);
   };
 
   return {
@@ -61,7 +76,7 @@ export const LobbyDataAccessFirebase = ({
         user,
       };
 
-      await saveLobbyEvent(lobbyEvent);
+      await dispatch(lobbyEvent);
 
       return {
         lobbyId: lobbyEvent.lobbyId,
@@ -77,7 +92,7 @@ export const LobbyDataAccessFirebase = ({
         userId,
       };
 
-      await saveLobbyEvent(lobbyEvent);
+      await dispatch(lobbyEvent);
 
       return {
         errors: [],
@@ -92,6 +107,19 @@ export const LobbyDataAccessFirebase = ({
 
       return onSnapshot(q, (snapshot) => {
         const data = snapshot.docs.map((doc) => doc.data() as ILobbyState);
+        set(data);
+      });
+    },
+
+    onLobbyStatesChanged({ lobbyId }, set) {
+      const q = query(
+        collection(firestore, "lobbyStates"),
+        where(`lobbyId`, "==", lobbyId)
+      );
+
+      return onSnapshot(q, (snapshot) => {
+        const data = snapshot.docs.map((doc) => doc.data() as ILobbyState);
+
         set(data);
       });
     },

@@ -38,7 +38,7 @@ export type ILobbyState = {
   };
 };
 
-const removeKey = <T>(key: string, object: T) => {
+const removeKey = <T>(key: keyof T, object: T) => {
   const { [key]: _value, ...removedKey } = object;
   return removedKey;
 };
@@ -84,13 +84,20 @@ export type ILobbyDataAccess = {
   }>;
   leave({
     userId,
+    lobbyId,
   }: {
+    lobbyId: string;
     userId: string;
   }): Promise<{
     errors: Error[];
   }>;
   onUserLobbyStatesChanged: (
     { userId: string },
+    set: (lobbyStates: ILobbyState[]) => void
+  ) => () => void;
+
+  onLobbyStatesChanged: (
+    { lobbyId: string },
     set: (lobbyStates: ILobbyState[]) => void
   ) => () => void;
 };

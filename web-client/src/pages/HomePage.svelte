@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { getContext } from "svelte";
-
 	import { navigate } from "svelte-routing";
 	import { dataAccess } from "../data-access";
 	import {
@@ -10,7 +9,6 @@
 	import Button from "../generic/Button.svelte";
 	import Container from "../generic/Container.svelte";
 	import PageBar from "../generic/PageBar.svelte";
-	import AuthUserLobbyPopup from "../shared/AuthUserLobbyPopup.svelte";
 
 	const authUser: IAuthUser = getContext(authUserKey);
 
