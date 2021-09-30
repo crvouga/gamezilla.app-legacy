@@ -8,15 +8,6 @@ export type ILobbyGame = {
   gameId: string;
 };
 
-export type ILobby = {
-  lobbyId: string;
-  game: ILobbyGame;
-  lobbyLeaderUserId: string;
-  users: {
-    [userId: string]: ILobbyUser;
-  };
-};
-
 export type ILobbyEvent =
   | {
       type: "USER_CREATED_LOBBY";

@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { getContext, onMount } from "svelte";
 	import { navigate } from "svelte-routing";
-	import { readable } from "svelte/store";
 	import { dataAccess } from "../data-access";
 	import {
 		authUserKey,
@@ -34,7 +33,7 @@
 	<PageBar title="Lobby" />
 
 	<Container>
-		<TicTacToe columnCount={3} rowCount={3} />
+		<TicTacToe />
 
 		<Button
 			fullWidth

@@ -1,6 +1,4 @@
 <script lang="ts">
-  export let columnCount: number;
-  export let rowCount: number;
   import { draw } from "svelte/transition";
   import { quintOut } from "svelte/easing";
 </script>
