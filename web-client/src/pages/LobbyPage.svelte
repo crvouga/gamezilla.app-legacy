@@ -12,6 +12,7 @@
 	import Button from "../generic/Button.svelte";
 	import Container from "../generic/Container.svelte";
 	import PageBar from "../generic/PageBar.svelte";
+	import TicTacToe from "../tic-tac-toe/TicTacToe.svelte";
 	import NotFound from "./NotFound.svelte";
 
 	export let lobbyId: string;
@@ -33,6 +34,8 @@
 	<PageBar title="Lobby" />
 
 	<Container>
+		<TicTacToe columnCount={3} rowCount={3} />
+
 		<Button
 			fullWidth
 			text="Leave Lobby"
