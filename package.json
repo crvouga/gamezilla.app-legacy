@@ -3,9 +3,13 @@
   "name": "gamezilla",
   "version": "0.0.1",
   "scripts": {
-    "emulate": "cd functions && tsc && cd .. && firebase emulators:start"
+    "dev": "concurrently \"yarn web-client:dev\" \"yarn firebase:dev\"",
+    "web-client:dev": "cd web-client && yarn dev",
+    "firebase:dev": "cd functions && tsc && cd .. && firebase emulators:start"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "concurrently": "^6.3.0"
+  },
   "type": "module",
   "dependencies": {}
 }

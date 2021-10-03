@@ -82,6 +82,7 @@ export type ILobbyDataAccess = {
   }): Promise<{
     errors: Error[];
   }>;
+
   onUserLobbyStatesChanged: (
     { userId: string },
     set: (lobbyStates: ILobbyState[]) => void

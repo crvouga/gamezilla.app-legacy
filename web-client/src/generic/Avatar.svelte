@@ -6,8 +6,10 @@
 <style>
   img {
     border-radius: 50%;
-    width: 120px;
-    height: 120px;
+    width: 100%;
+    height: 100%;
+    /* max-width: 120px;
+    max-height: 120px; */
     background-color: var(--surface-color);
   }
 </style>

@@ -44,3 +44,11 @@
   left: 50%;
   transform: translate(-50%, -50%);
 }
+
+.max-width-small-breakpoint {
+  max-width: var(--small-breakpoint);
+}
+
+.margin-auto {
+  margin: auto;
+}
