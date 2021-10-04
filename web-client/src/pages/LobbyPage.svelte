@@ -11,6 +11,7 @@
 	import Button from "../generic/Button.svelte";
 	import Container from "../generic/Container.svelte";
 	import PageBar from "../generic/PageBar.svelte";
+	import TextInput from "../generic/TextInput.svelte";
 	import Typography from "../generic/Typography.svelte";
 	import TicTacToe from "../tic-tac-toe/TicTacToe.svelte";
 	import NotFound from "./NotFound.svelte";
@@ -64,7 +65,7 @@
 		class="margin-bottom-1"
 		onClick={async () => {}} />
 
-	<ol>
+	<ol class="margin-bottom-1">
 		{#each lobbyStates as lobbyState}
 			{#each Object.values(lobbyState.users) as user}
 				<li>
@@ -74,5 +75,10 @@
 		{/each}
 	</ol>
 
-	<input type="text" />
+	<form
+		on:submit|preventDefault={(event) => {
+			console.log(event);
+		}}>
+		<TextInput placeholder="Chat Message" />
+	</form>
 </Container>
