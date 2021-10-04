@@ -50,7 +50,7 @@
 		font-family: var(--font-family);
 		cursor: pointer;
 		padding: var(--spacing);
-		border-radius: var(--border-radius);
+		border-radius: calc(var(--border-radius) / 4);
 		font-weight: bold;
 		font-size: medium;
 		text-transform: uppercase;
