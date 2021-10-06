@@ -1,27 +1,15 @@
-<script lang="ts">
-	import Icon, { IconName } from "./Icon.svelte";
-
-	import Typography from "./Typography.svelte";
-
-	export let title: string = "";
-	export let iconLeft: IconName | undefined = undefined;
-</script>
-
 <style>
-	nav {
-		height: calc(var(--spacing) * 3);
-		width: 100%;
-		border-bottom: 1px solid var(--divider-color);
-		display: flex;
-		justify-content: center;
-		align-items: center;
+	:global([slot="title"]) {
+		@apply text-2xl;
+		@apply font-bold;
+		@apply text-center;
+		@apply w-full;
 	}
 </style>
 
-<nav>
-	<Icon name={iconLeft} />
-	<Typography
-		variant="small-title"
-		text={title}
-		class="flex-1 text-align-center" />
+<nav
+	class="flex justify-items-center justify-between items-center p-2 border-gray-400 border-b-2">
+	<slot name="left" />
+	<slot name="title" />
+	<slot name="right" />
 </nav>

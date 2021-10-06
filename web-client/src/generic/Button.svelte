@@ -1,85 +1,20 @@
 <script lang="ts">
-	import type { IconName } from "./Icon.svelte";
-	import Icon from "./Icon.svelte";
-	import Loader from "./Loader.svelte";
+	import { createEventDispatcher } from "svelte";
+	let className: string = "";
+	export { className as class };
 
-	export let text: string;
-	export let variant: "text" | "contained" | "outlined" = "contained";
-	export let color: "primary" | "danger" = "primary";
-	export let fullWidth = false;
-	export let onClick: () => void | undefined = undefined;
-	export let iconName: IconName | undefined = undefined;
-	export let loading: boolean = false;
+	export let isLoading: boolean = false;
 
-	let classProp: string = "";
-	export { classProp as class };
+	const eventDispatch = createEventDispatcher();
 
-	$: buttonClass = `${fullWidth ? "full-width" : ""} ${color} ${variant} ${
-		classProp ?? ""
-	}`;
-
-	const buttonColor =
-		color === "primary"
-			? "var(--primary)"
-			: color === "danger"
-			? "var(--danger-color)"
-			: "";
+	const handleClick = () => {
+		eventDispatch("click", {});
+	};
 </script>
 
-<style>
-	.icon {
-		margin-right: var(--spacing);
-	}
-
-	.full-width {
-		width: 100%;
-	}
-
-	.text {
-		color: var(--button-color);
-		background-color: transparent;
-	}
-
-	.contained {
-		color: white;
-		background-color: var(--button-color);
-	}
-
-	button {
-		border: none;
-		font-family: var(--font-family);
-		cursor: pointer;
-		padding: var(--spacing);
-		border-radius: calc(var(--border-radius) / 4);
-		font-weight: bold;
-		font-size: medium;
-		text-transform: uppercase;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-	}
-
-	.outlined {
-		color: var(--button-color);
-		background-color: transparent;
-		border: 1px solid var(--button-color);
-	}
-
-	button:active {
-		filter: brightness(0.6);
-	}
-</style>
-
 <button
-	style={`--button-color: ${buttonColor}`}
-	class={buttonClass}
-	on:click={onClick}>
-	{#if loading}
-		<Loader />
-	{:else}
-		{#if iconName}
-			<Icon class="margin-right-1" name={iconName} />
-		{/if}
-		{text}
-	{/if}
+	on:click={handleClick}
+	type="button"
+	class="{className} w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm">
+	<slot />
 </button>

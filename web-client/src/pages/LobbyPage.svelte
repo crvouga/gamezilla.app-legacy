@@ -9,12 +9,10 @@
 	import type { ILobbyState } from "../data-access/lobby-data-access.interface";
 	import Avatar from "../generic/Avatar.svelte";
 	import Button from "../generic/Button.svelte";
-	import Container from "../generic/Container.svelte";
+	import PageContainer from "../generic/PageContainer.svelte";
 	import PageBar from "../generic/PageBar.svelte";
 	import TextInput from "../generic/TextInput.svelte";
-	import Typography from "../generic/Typography.svelte";
-	import TicTacToe from "../tic-tac-toe/TicTacToe.svelte";
-	import NotFound from "./NotFound.svelte";
+	import Icon from "../generic/Icon.svelte";
 
 	export let lobbyId: string;
 
@@ -29,51 +27,29 @@
 	});
 </script>
 
-<style>
-	input {
-		width: 100%;
-	}
-</style>
-
-<PageBar title="Lobby" />
+<PageBar>
+	<Icon name="email" />
+	<h1 slot="title">Lobby</h1>
+</PageBar>
 
 <!-- <TicTacToe class="margin-bottom-1 max-width-small-breakpoint margin-auto" /> -->
 
-<Container>
-	<Button
-		fullWidth
-		text="Start Game"
-		class="margin-bottom-1"
-		onClick={async () => {}} />
+<PageContainer>
+	<Button class="w-full mb-1" onClick={async () => {}}>Start Game</Button>
 
 	<Button
-		fullWidth
-		text="Leave Lobby"
-		class="margin-bottom-1"
+		class="w-full mb-1"
 		onClick={async () => {
 			await dataAccess.lobby.leave({
 				userId: authUser.userId,
 				lobbyId: lobbyId,
 			});
-
 			navigate('/');
-		}} />
+		}}>
+		Leave Lobby
+	</Button>
 
-	<Button
-		fullWidth
-		text="Invite"
-		class="margin-bottom-1"
-		onClick={async () => {}} />
-
-	<ol class="margin-bottom-1">
-		{#each lobbyStates as lobbyState}
-			{#each Object.values(lobbyState.users) as user}
-				<li>
-					<Avatar src={user.avatarUrl} alt={user.displayName} />
-				</li>
-			{/each}
-		{/each}
-	</ol>
+	<Button class="w-full mb-1" onClick={async () => {}}>Invite</Button>
 
 	<form
 		on:submit|preventDefault={(event) => {
@@ -81,4 +57,10 @@
 		}}>
 		<TextInput placeholder="Chat Message" />
 	</form>
-</Container>
+
+	{#each lobbyStates as lobbyState}
+		{#each Object.values(lobbyState.users) as user}
+			<Avatar src={user.avatarUrl} alt={user.displayName} />
+		{/each}
+	{/each}
+</PageContainer>

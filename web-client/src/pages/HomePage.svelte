@@ -7,8 +7,9 @@
 		IAuthUser,
 	} from "../data-access/auth-data-access.interface";
 	import Button from "../generic/Button.svelte";
-	import Container from "../generic/Container.svelte";
+	import PageContainer from "../generic/PageContainer.svelte";
 	import PageBar from "../generic/PageBar.svelte";
+	import Icon from "../generic/Icon.svelte";
 
 	const authUser: IAuthUser = getContext(authUserKey);
 
@@ -33,29 +34,32 @@
 	};
 </script>
 
-<PageBar title="Home" />
+<PageBar>
+	<Icon name="angle-left" />
+	<h1 slot="title">Home</h1>
+</PageBar>
 
-<Container>
+<PageContainer>
 	<Button
-		loading={state === 'creating-lobby'}
-		fullWidth
-		text="Create Lobby"
-		class="margin-bottom-1"
-		onClick={handleCreateLobby} />
+		on:click={handleCreateLobby}
+		isLoading={state === 'creating-lobby'}
+		class="w-full mb-1">
+		Create Lobby
+	</Button>
 
 	<Button
-		fullWidth
-		text="Your Lobbies"
-		class="margin-bottom-1"
-		onClick={() => {
+		class="w-full mb-1"
+		on:click={() => {
 			navigate('/auth-user/lobby');
-		}} />
+		}}>
+		Your Lobbies
+	</Button>
 
 	<Button
-		fullWidth
-		text="Sign Out"
-		class="margin-bottom-1"
-		onClick={() => {
+		class="w-full mb-1"
+		on:click={() => {
 			navigate('/unauth');
-		}} />
-</Container>
+		}}>
+		Sign Out
+	</Button>
+</PageContainer>

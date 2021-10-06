@@ -10,7 +10,6 @@
 
 <script lang="ts">
   import { getContext } from "svelte";
-  import "./app.css";
   import AppAuthenticated from "./AppAuthenticated.svelte";
   import type { IAuthUser } from "./data-access/auth-data-access.interface";
   import AuthPage from "./pages/AuthPage.svelte";
@@ -19,6 +18,12 @@
 
   $: authState = $authStateStore;
 </script>
+
+<style global lang="postcss">
+  @tailwind base;
+  @tailwind components;
+  @tailwind utilities;
+</style>
 
 {#if authState.status === 'loading'}
   <LoadingPage />

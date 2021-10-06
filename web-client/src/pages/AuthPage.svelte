@@ -2,8 +2,6 @@
   import { dataAccess } from "../data-access";
   import type { IAuthMethod } from "../data-access/auth-data-access.interface";
   import Button from "../generic/Button.svelte";
-  import Container from "../generic/Container.svelte";
-  import PageBar from "../generic/PageBar.svelte";
 
   const handleAuth = ({
     authMethod,
@@ -14,13 +12,11 @@
   };
 </script>
 
-<PageBar title="Gamezilla" />
-
-<Container>
-  <Button
-    fullWidth
-    text="Continue With Google"
-    onClick={handleAuth({ authMethod: 'google' })}
-    class="margin-bottom-1"
-    iconName="google" />
-</Container>
+<div class="p-2 h-screen grid place-items-center">
+  <div class="w-full">
+    <h1 class="text-3xl font-bold text-center mb-2">Gamezilla</h1>
+    <Button on:click={handleAuth({ authMethod: 'google' })} class="w-full mb-1">
+      Continue With Google
+    </Button>
+  </div>
+</div>

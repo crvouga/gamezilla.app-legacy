@@ -3,15 +3,7 @@
   export let alt: string;
 </script>
 
-<style>
-  img {
-    border-radius: 50%;
-    width: 100%;
-    height: 100%;
-    /* max-width: 120px;
-    max-height: 120px; */
-    background-color: var(--surface-color);
-  }
-</style>
-
-<img {src} {alt} />
+<img
+  class="inline-block h-12 w-12 rounded-full ring-2 ring-white"
+  {src}
+  {alt} />
