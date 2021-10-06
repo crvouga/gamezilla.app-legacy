@@ -1,13 +1,15 @@
+<!-- DOCS: https://fontawesome.com/v5.15/icons?d=gallery&p=2&m=free -->
 <script lang="ts" context="module">
-	export type IconName = "google" | "phone" | "email" | "angle-left";
+	export type IconName = "google" | "phone" | "email" | "chevron-left";
 
 	export const iconNameToFontAwesomeClass: {
 		[iconName in IconName]: string;
 	} = {
 		google: "fab fa-google",
 		phone: "fas fa-phone",
-		email: "fas fa-envelope",
-		"angle-left": "fa-solid fa-angle-left",
+
+		email: "far fa-envelope",
+		"chevron-left": "fa fa-chevron-left",
 	};
 </script>
 

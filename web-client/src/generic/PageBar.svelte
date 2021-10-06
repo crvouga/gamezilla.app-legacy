@@ -8,7 +8,7 @@
 </style>
 
 <nav
-	class="flex justify-items-center justify-between items-center p-2 border-gray-400 border-b-2">
+	class="flex justify-items-center justify-between items-center px-4 py-4 border-gray-300 border-b-2">
 	<slot name="left" />
 	<slot name="title" />
 	<slot name="right" />

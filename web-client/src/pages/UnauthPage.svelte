@@ -3,19 +3,15 @@
   import { dataAccess } from "../data-access";
   import Button from "../generic/Button.svelte";
   import Modal from "../generic/Modal.svelte";
-  import Typography from "../generic/Typography.svelte";
 </script>
 
 <Modal state="opened">
-  <Typography
-    text="Sign out of Gamezilla?"
-    variant="medium-title"
-    class="p-1 mb-1" />
+  <h1 slot="title">Sign out of Gamezilla?</h1>
 
   <Button
     slot="secondary-button"
     class="w-100 mb-1"
-    onClick={() => {
+    on:click={() => {
       navigate('/');
     }}>
     Cancel
@@ -23,7 +19,7 @@
 
   <Button
     slot="primary-button"
-    onClick={() => {
+    on:click={() => {
       navigate('/');
       dataAccess.auth.unauthenticate();
     }}

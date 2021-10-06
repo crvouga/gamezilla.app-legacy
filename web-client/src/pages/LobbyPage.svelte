@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { getContext, onMount } from "svelte";
-	import { navigate } from "svelte-routing";
+	import { Link, navigate } from "svelte-routing";
 	import { dataAccess } from "../data-access";
 	import {
 		authUserKey,
@@ -13,6 +13,7 @@
 	import PageBar from "../generic/PageBar.svelte";
 	import TextInput from "../generic/TextInput.svelte";
 	import Icon from "../generic/Icon.svelte";
+	import IconButton from "../generic/IconButton.svelte";
 
 	export let lobbyId: string;
 
@@ -25,42 +26,29 @@
 			lobbyStates = newlobbyStates;
 		});
 	});
+
+	const handleLeaveLobby = async () => {
+		await dataAccess.lobby.leave({
+			userId: authUser.userId,
+			lobbyId: lobbyId,
+		});
+		navigate("/");
+	};
 </script>
 
 <PageBar>
-	<Icon name="email" />
+	<Link slot="left" to="/">
+		<IconButton name="chevron-left" />
+	</Link>
 	<h1 slot="title">Lobby</h1>
 </PageBar>
 
-<!-- <TicTacToe class="margin-bottom-1 max-width-small-breakpoint margin-auto" /> -->
-
 <PageContainer>
-	<Button class="w-full mb-1" onClick={async () => {}}>Start Game</Button>
+	<Button>Start Game</Button>
 
-	<Button
-		class="w-full mb-1"
-		onClick={async () => {
-			await dataAccess.lobby.leave({
-				userId: authUser.userId,
-				lobbyId: lobbyId,
-			});
-			navigate('/');
-		}}>
-		Leave Lobby
-	</Button>
+	<Button on:click={handleLeaveLobby}>Leave Lobby</Button>
 
-	<Button class="w-full mb-1" onClick={async () => {}}>Invite</Button>
+	<Button>Invite</Button>
 
-	<form
-		on:submit|preventDefault={(event) => {
-			console.log(event);
-		}}>
-		<TextInput placeholder="Chat Message" />
-	</form>
-
-	{#each lobbyStates as lobbyState}
-		{#each Object.values(lobbyState.users) as user}
-			<Avatar src={user.avatarUrl} alt={user.displayName} />
-		{/each}
-	{/each}
+	<TextInput placeholder="Chat Message" />
 </PageContainer>

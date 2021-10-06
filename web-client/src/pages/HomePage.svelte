@@ -35,31 +35,15 @@
 </script>
 
 <PageBar>
-	<Icon name="angle-left" />
+	<Icon name="chevron-left" />
 	<h1 slot="title">Home</h1>
 </PageBar>
 
 <PageContainer>
-	<Button
-		on:click={handleCreateLobby}
-		isLoading={state === 'creating-lobby'}
-		class="w-full mb-1">
+	<Button on:click={handleCreateLobby} isLoading={state === 'creating-lobby'}>
 		Create Lobby
 	</Button>
 
-	<Button
-		class="w-full mb-1"
-		on:click={() => {
-			navigate('/auth-user/lobby');
-		}}>
-		Your Lobbies
-	</Button>
-
-	<Button
-		class="w-full mb-1"
-		on:click={() => {
-			navigate('/unauth');
-		}}>
-		Sign Out
-	</Button>
+	<Button href="/auth-user/lobby">Your Lobbies</Button>
+	<Button href="/unauth">Sign Out</Button>
 </PageContainer>
