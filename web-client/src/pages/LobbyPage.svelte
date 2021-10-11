@@ -43,12 +43,9 @@
 	<h1 slot="title">Lobby</h1>
 </PageBar>
 
-<PageContainer>
-	<Button>Start Game</Button>
-
-	<Button on:click={handleLeaveLobby}>Leave Lobby</Button>
-
-	<Button>Invite</Button>
-
-	<TextInput placeholder="Chat Message" />
-</PageContainer>
+<div class="p-2">
+	<Button on:click={handleLeaveLobby}>
+		<Icon slot="prefix" iconName="chevron-left" />
+		Leave Lobby
+	</Button>
+</div>

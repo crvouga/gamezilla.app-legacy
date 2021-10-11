@@ -6,10 +6,13 @@
 		authUserKey,
 		IAuthUser,
 	} from "../data-access/auth-data-access.interface";
+	import Badge from "../generic/Badge.svelte";
 	import Button from "../generic/Button.svelte";
-	import PageContainer from "../generic/PageContainer.svelte";
-	import PageBar from "../generic/PageBar.svelte";
 	import Icon from "../generic/Icon.svelte";
+	import Item from "../generic/Item.svelte";
+	import Link from "../generic/Link.svelte";
+	import PageBar from "../generic/PageBar.svelte";
+	import { lobbyStatesStore } from "../stores";
 
 	const authUser: IAuthUser = getContext(authUserKey);
 
@@ -35,15 +38,29 @@
 </script>
 
 <PageBar>
-	<Icon name="chevron-left" />
 	<h1 slot="title">Home</h1>
 </PageBar>
 
-<PageContainer>
+<div class="p-2">
 	<Button on:click={handleCreateLobby} isLoading={state === 'creating-lobby'}>
+		<Icon slot="prefix" iconName="gamepad" />
 		Create Lobby
 	</Button>
+</div>
 
-	<Button href="/auth-user/lobby">Your Lobbies</Button>
-	<Button href="/unauth">Sign Out</Button>
-</PageContainer>
+<Link to="/auth-user/lobby">
+	<Item>
+		Your Lobbies
+		<Badge slot="end">{$lobbyStatesStore.length}</Badge>
+	</Item>
+</Link>
+
+<Link to="/unauth">
+	<Item>
+		Sign Out
+		<Icon slot="end" iconName="sign-out" />
+	</Item>
+</Link>
+
+<!-- <Button href="/auth-user/lobby">Your Lobbies</Button>
+	<Button href="/unauth">Sign Out</Button> -->

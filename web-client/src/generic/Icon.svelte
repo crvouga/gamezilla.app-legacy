@@ -1,25 +1,39 @@
 <!-- DOCS: https://fontawesome.com/v5.15/icons?d=gallery&p=2&m=free -->
 <script lang="ts" context="module">
-	export type IconName = "google" | "phone" | "email" | "chevron-left";
-
-	export const iconNameToFontAwesomeClass: {
-		[iconName in IconName]: string;
-	} = {
-		google: "fab fa-google",
-		phone: "fas fa-phone",
-
-		email: "far fa-envelope",
-		"chevron-left": "fa fa-chevron-left",
-	};
+	export type IconName =
+		| "google"
+		| "phone"
+		| "chevron-left"
+		| "chevron-right"
+		| "gamepad"
+		| "sign-out";
 </script>
 
 <script lang="ts">
-	export let name: IconName;
+	import Icon from "svelte-awesome";
+	import {
+		google,
+		phone,
+		chevronLeft,
+		chevronRight,
+		gamepad,
+		signOut,
+	} from "svelte-awesome/icons";
 
+	const iconNameToData: {
+		[iconName in IconName]: unknown;
+	} = {
+		google: google,
+		phone: phone,
+		"chevron-left": chevronLeft,
+		"chevron-right": chevronRight,
+		gamepad: gamepad,
+		"sign-out": signOut,
+	};
+
+	export let iconName: IconName;
 	let className = "";
 	export { className as class };
-
-	$: iconClass = `${className} ${iconNameToFontAwesomeClass[name]}`;
 </script>
 
-<i class={iconClass} />
+<Icon class="{className} w-6 h-6" data={iconNameToData[iconName]} />
