@@ -11,7 +11,8 @@
 	import Icon from "../generic/Icon.svelte";
 	import Item from "../generic/Item.svelte";
 	import Link from "../generic/Link.svelte";
-	import PageBar from "../generic/PageBar.svelte";
+	import PageHeader from "../generic/PageHeader.svelte";
+	import PageHeaderTitle from "../generic/PageHeaderTitle.svelte";
 	import { lobbyStatesStore } from "../stores";
 
 	const authUser: IAuthUser = getContext(authUserKey);
@@ -37,9 +38,9 @@
 	};
 </script>
 
-<PageBar>
-	<h1 slot="title">Home</h1>
-</PageBar>
+<PageHeader>
+	<PageHeaderTitle>Home</PageHeaderTitle>
+</PageHeader>
 
 <div class="p-2">
 	<Button on:click={handleCreateLobby} isLoading={state === 'creating-lobby'}>
