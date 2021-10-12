@@ -12,7 +12,7 @@
 </script>
 
 <PageHeader>
-  <Link to="auth" slot="prefix">
+  <Link to="/auth" slot="prefix">
     <Icon iconName="chevron-left" />
   </Link>
   <PageHeaderTitle>Phone</PageHeaderTitle>

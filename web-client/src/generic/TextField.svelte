@@ -1,10 +1,10 @@
 <script lang="ts">
   export let id: string;
-  export let placeholder: string | undefined;
-  export let label: string | undefined;
+  export let placeholder: string | null = null;
+  export let label: string | null = null;
 
   let inputType: string = "text";
-  let className: string | undefined = undefined;
+  let className: string | null = null;
   export { className as class, inputType as type };
 </script>
 
