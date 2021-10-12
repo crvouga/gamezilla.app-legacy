@@ -1,19 +1,15 @@
-import { FirebaseApp } from "./firebase-app";
-import { AuthDataAccessFirebase } from "./auth-data-access.firebase";
-import { getEnvironment } from "../environment";
-import { LobbyDataAccessFirebase } from "./lobby-data-access.firebase";
+import { AuthDataAccessSupabase } from "./auth-data-access.supabase";
+import { LobbyDataAccessSupabase } from "./lobby-data-access.supabase";
+import { SupabaseClient } from "./supabase-client";
 
 export const DataAccess = () => {
-  const { firestore, firebaseAuth } = FirebaseApp({
-    doesEmulate: getEnvironment() === "development",
-  });
+  const supabaseClient = SupabaseClient();
 
   return {
-    auth: AuthDataAccessFirebase({
-      firebaseAuth,
+    auth: AuthDataAccessSupabase({
+      supabaseAuthClient: supabaseClient.auth,
     }),
-    lobby: LobbyDataAccessFirebase({
-      firestore,
-    }),
+
+    lobby: LobbyDataAccessSupabase(),
   };
 };

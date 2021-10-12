@@ -6,7 +6,10 @@
 		| "chevron-left"
 		| "chevron-right"
 		| "gamepad"
-		| "sign-out";
+		| "sign-out"
+		| "envelope"
+		| "exclamation-circle"
+		| "close";
 </script>
 
 <script lang="ts">
@@ -18,6 +21,9 @@
 		chevronRight,
 		gamepad,
 		signOut,
+		envelope,
+		exclamationCircle,
+		close,
 	} from "svelte-awesome/icons";
 
 	const iconNameToData: {
@@ -29,6 +35,9 @@
 		"chevron-right": chevronRight,
 		gamepad: gamepad,
 		"sign-out": signOut,
+		envelope: envelope,
+		"exclamation-circle": exclamationCircle,
+		close: close,
 	};
 
 	export let iconName: IconName;

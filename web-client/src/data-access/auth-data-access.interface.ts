@@ -1,6 +1,6 @@
 export const authUserKey = "auth-user";
 
-export type IAuthMethod = "google";
+export type IAuthMethod = "google" | "email";
 
 export type IAuthUser = {
   displayName?: string;
@@ -26,6 +26,6 @@ export type IAuthDataAccess = {
   }: {
     authMethod: IAuthMethod;
   }) => Promise<Error[]>;
-  unauthenticate: () => Promise<void>;
+  unauthenticate: () => Promise<Error[]>;
   onAuthStateChanged: (set: (authState: IAuthState) => void) => () => void;
 };

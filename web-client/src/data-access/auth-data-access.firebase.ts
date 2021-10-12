@@ -14,7 +14,12 @@ export const AuthDataAccessFirebase = ({
 }): IAuthDataAccess => {
   return {
     async unauthenticate() {
-      await signOut(firebaseAuth);
+      try {
+        await signOut(firebaseAuth);
+        return [];
+      } catch (error) {
+        return [new Error(String(error))];
+      }
     },
 
     async authenticate({ authMethod }) {
