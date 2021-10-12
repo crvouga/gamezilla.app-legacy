@@ -14,14 +14,6 @@
   <PageHeaderTitle>Sign In</PageHeaderTitle>
 </PageHeader>
 
-<Link to="/auth/email">
-  <Item>
-    <Icon iconName="google" slot="start" />
-    <Icon iconName="chevron-right" slot="end" />
-    Continue With Google
-  </Item>
-</Link>
-
 <Link to="/auth/phone">
   <Item>
     <Icon iconName="phone" slot="start" />
