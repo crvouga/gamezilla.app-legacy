@@ -1,5 +1,5 @@
 <nav
-	class="flex justify-items-center justify-between items-center px-4 py-2 border-gray-300 border-b-2">
+	class="flex justify-items-center justify-between items-center px-4 py-2 border-gray-200 border-b-2">
 	<div class="mr-4 w-10">
 		<slot name="prefix" />
 	</div>

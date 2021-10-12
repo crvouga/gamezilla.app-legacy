@@ -63,5 +63,12 @@
 	</Item>
 </Link>
 
+<Link to="/auth">
+	<Item>
+		Sign In
+		<Icon slot="end" iconName="sign-out" />
+	</Item>
+</Link>
+
 <!-- <Button href="/auth-user/lobby">Your Lobbies</Button>
 	<Button href="/unauth">Sign Out</Button> -->

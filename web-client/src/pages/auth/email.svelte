@@ -4,7 +4,7 @@
   import Link from "../../generic/Link.svelte";
   import PageHeader from "../../generic/PageHeader.svelte";
   import PageHeaderTitle from "../../generic/PageHeaderTitle.svelte";
-  import TextInput from "../../generic/TextInput.svelte";
+  import TextField from "../../generic/TextField.svelte";
 </script>
 
 <PageHeader>
@@ -14,10 +14,11 @@
   <PageHeaderTitle>Email</PageHeaderTitle>
 </PageHeader>
 
-<div class="p-4">
-  <TextInput placeholder="example@email.com" class="mb-4" />
+<form class="p-4">
+  <TextField id="email" type="email" placeholder="Email Address" class="mb-4" />
+
   <Button>
     <Icon iconName="send" slot="prefix" />
     Send Link
   </Button>
-</div>
+</form>

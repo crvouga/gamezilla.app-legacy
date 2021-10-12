@@ -4,6 +4,7 @@
   import Link from "../../generic/Link.svelte";
   import PageHeader from "../../generic/PageHeader.svelte";
   import PageHeaderTitle from "../../generic/PageHeaderTitle.svelte";
+  import TextField from "../../generic/TextField.svelte";
   import TextInput from "../../generic/TextInput.svelte";
 </script>
 
@@ -14,10 +15,10 @@
   <PageHeaderTitle>Phone</PageHeaderTitle>
 </PageHeader>
 
-<div class="p-4">
-  <TextInput placeholder="(555) 555-5555" class="mb-4" />
+<form class="p-4">
+  <TextField id="phone-number" placeholder="Mobile Phone Number" class="mb-4" />
   <Button>
     <Icon iconName="sms" slot="prefix" />
     Send Link
   </Button>
-</div>
+</form>
