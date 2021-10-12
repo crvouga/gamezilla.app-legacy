@@ -49,7 +49,7 @@
   <TextField
     id="phone-number"
     type="tel"
-    inputMode="numeric"
+    inputMode="tel"
     placeholder="Mobile Phone Number"
     bind:inputValue={phoneNumber}
     on:clear={() => {
