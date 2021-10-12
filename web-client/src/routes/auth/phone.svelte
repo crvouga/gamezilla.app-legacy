@@ -50,7 +50,6 @@
     id="phone-number"
     type="tel"
     inputMode="numeric"
-    pattern={/\d*/}
     placeholder="Mobile Phone Number"
     bind:inputValue={phoneNumber}
     on:clear={() => {
