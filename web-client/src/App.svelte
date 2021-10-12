@@ -6,12 +6,16 @@
     }
     throw new Error("Can only get auth user in an authenticated context");
   };
+
+  import { ToastStore } from "./generic/Toaster.svelte";
+  export const toastStore = ToastStore();
 </script>
 
 <script lang="ts">
   import { getContext } from "svelte";
   import AppAuthenticated from "./AppAuthenticated.svelte";
   import type { IAuthUser } from "./data-access/auth-data-access.interface";
+  import Toaster from "./generic/Toaster.svelte";
   import AuthPage from "./pages/AuthPage.svelte";
   import LoadingPage from "./shared/LoadingPage.svelte";
   import { authStateStore } from "./stores";
@@ -24,6 +28,8 @@
   @tailwind components;
   @tailwind utilities;
 </style>
+
+<Toaster toasts={$toastStore} />
 
 {#if authState.status === 'loading'}
   <LoadingPage />

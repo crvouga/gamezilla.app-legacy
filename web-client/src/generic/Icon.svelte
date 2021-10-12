@@ -13,6 +13,8 @@
 </script>
 
 <script lang="ts">
+	import { createEventDispatcher } from "svelte";
+
 	import Icon from "svelte-awesome";
 	import {
 		google,
@@ -43,6 +45,13 @@
 	export let iconName: IconName;
 	let className = "";
 	export { className as class };
+
+	const eventDispatch = createEventDispatcher();
 </script>
 
-<Icon class="{className} w-6 h-6" data={iconNameToData[iconName]} />
+<span
+	on:click={() => {
+		eventDispatch('click', {});
+	}}>
+	<Icon class="{className} w-6 h-6" data={iconNameToData[iconName]} />
+</span>
