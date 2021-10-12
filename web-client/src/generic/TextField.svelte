@@ -2,6 +2,7 @@
   export let id: string;
   export let placeholder: string | undefined;
   export let label: string | undefined;
+
   let inputType: string = "text";
   let className: string | undefined = undefined;
   export { className as class, inputType as type };
