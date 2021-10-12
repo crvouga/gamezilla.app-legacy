@@ -7,7 +7,7 @@
   export let label: string | null = null;
   export let pattern: RegExp | null = null;
   export let inputValue: string = "";
-
+  export let inputMode: string = "";
   let inputType: string = "text";
   let className: string | null = null;
   export { className as class, inputType as type };
@@ -35,6 +35,7 @@
       type="text"
       {placeholder}
       {pattern}
+      {inputMode}
       bind:this={inputRef}
       bind:value={inputValue} />
 
