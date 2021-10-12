@@ -9,13 +9,16 @@
 		| "sign-out"
 		| "envelope"
 		| "exclamation-circle"
-		| "close";
+		| "close"
+		| "send"
+		| "sms";
 </script>
 
 <script lang="ts">
 	import { createEventDispatcher } from "svelte";
 
 	import Icon from "svelte-awesome";
+	import { faSms } from "@fortawesome/free-solid-svg-icons";
 	import {
 		google,
 		phone,
@@ -26,6 +29,7 @@
 		envelope,
 		exclamationCircle,
 		close,
+		send,
 	} from "svelte-awesome/icons";
 
 	const iconNameToData: {
@@ -40,6 +44,8 @@
 		envelope: envelope,
 		"exclamation-circle": exclamationCircle,
 		close: close,
+		send: send,
+		sms: faSms,
 	};
 
 	export let iconName: IconName;
@@ -53,5 +59,5 @@
 	on:click={() => {
 		eventDispatch('click', {});
 	}}>
-	<Icon class="{className} w-6 h-6" data={iconNameToData[iconName]} />
+	<Icon class="{className} w-5 h-5" data={iconNameToData[iconName]} />
 </span>
