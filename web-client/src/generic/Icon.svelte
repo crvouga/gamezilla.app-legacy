@@ -15,21 +15,19 @@
 </script>
 
 <script lang="ts">
-	import { createEventDispatcher } from "svelte";
-
-	import Icon from "svelte-awesome";
 	import { faSms } from "@fortawesome/free-solid-svg-icons";
+	import Icon from "svelte-awesome";
 	import {
-		google,
-		phone,
 		chevronLeft,
 		chevronRight,
-		gamepad,
-		signOut,
+		close,
 		envelope,
 		exclamationCircle,
-		close,
+		gamepad,
+		google,
+		phone,
 		send,
+		signOut,
 	} from "svelte-awesome/icons";
 
 	const iconNameToData: {
@@ -51,13 +49,6 @@
 	export let iconName: IconName;
 	let className = "";
 	export { className as class };
-
-	const eventDispatch = createEventDispatcher();
 </script>
 
-<span
-	on:click={() => {
-		eventDispatch('click', {});
-	}}>
-	<Icon class="{className} w-5 h-5" data={iconNameToData[iconName]} />
-</span>
+<Icon class="w-5 h-5" data={iconNameToData[iconName]} />

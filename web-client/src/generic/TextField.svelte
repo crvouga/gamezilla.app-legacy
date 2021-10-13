@@ -1,5 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
+  import Clickable from "./Clickable.svelte";
   import Icon from "./Icon.svelte";
 
   export let id: string;
@@ -39,12 +40,10 @@
       bind:this={inputRef}
       bind:value={inputValue} />
 
-    <div class="absolute top-0 right-0 h-full flex items-center mr-2">
-      <Icon
-        slot="suffix"
-        iconName="close"
-        class="text-gray-400"
-        on:click={handleClear} />
-    </div>
+    <Clickable
+      on:click={handleClear}
+      class="absolute top-0 right-0 h-full flex justify-center items-center mr-2">
+      <Icon iconName="close" class="text-gray-400" />
+    </Clickable>
   </div>
 </div>

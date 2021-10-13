@@ -1,7 +1,11 @@
 <script lang="ts">
+  import Clickable from "./Clickable.svelte";
+
   export let to: string;
 </script>
 
-<a href={to}>
-  <slot />
-</a>
+<Clickable>
+  <a href={to}>
+    <slot />
+  </a>
+</Clickable>

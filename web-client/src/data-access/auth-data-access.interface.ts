@@ -1,6 +1,18 @@
 export const authUserKey = "auth-user";
 
-export type IAuthMethod = "google" | "email";
+export type IAuthMethod =
+  | {
+      type: "social";
+      provider: "google";
+    }
+  | {
+      type: "email";
+      emailAddress: string;
+    }
+  | {
+      type: "phone";
+      phoneNumber: string;
+    };
 
 export type IAuthUser = {
   displayName?: string;
@@ -21,11 +33,7 @@ export type IAuthState =
     };
 
 export type IAuthDataAccess = {
-  authenticate: ({
-    authMethod,
-  }: {
-    authMethod: IAuthMethod;
-  }) => Promise<Error[]>;
+  authenticate: (authMethod: IAuthMethod) => Promise<Error[]>;
   unauthenticate: () => Promise<Error[]>;
   onAuthStateChanged: (set: (authState: IAuthState) => void) => () => void;
 };

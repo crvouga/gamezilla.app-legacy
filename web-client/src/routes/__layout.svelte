@@ -1,5 +1,10 @@
+<script context="module">
+  export const toastStore = ToastStore();
+</script>
+
 <script>
   import "../app.css";
+  import Toaster, { ToastStore } from "../generic/Toaster.svelte";
 </script>
 
 <svelte:head>
@@ -8,3 +13,5 @@
 </svelte:head>
 
 <slot />
+
+<Toaster toasts={$toastStore} />

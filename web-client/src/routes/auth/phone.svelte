@@ -25,6 +25,8 @@
 </script>
 
 <script lang="ts">
+  import { dataAccess } from "../../data-access";
+
   import Button from "../../generic/Button.svelte";
   import Icon from "../../generic/Icon.svelte";
   import Link from "../../generic/Link.svelte";
@@ -35,7 +37,14 @@
   let phoneNumber = "";
   $: phoneNumber = formatPhoneNumber(phoneNumber);
 
-  const handleSubmit = async () => {};
+  const handleSubmit = async () => {
+    const errors = await dataAccess.auth.authenticate({
+      type: "phone",
+      phoneNumber: cleanPhoneNumber(phoneNumber),
+    });
+
+    console.log({ errors });
+  };
 </script>
 
 <PageHeader>
