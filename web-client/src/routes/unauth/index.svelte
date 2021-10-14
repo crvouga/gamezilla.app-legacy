@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { dataAccess } from "../../data-access";
-  import Button from "../../generic/Button.svelte";
+  import { dataAccess } from "$lib/data-access";
+  import Button from "$lib/components/Button.svelte";
 </script>
 
 <h1>Sign out of Gamezilla?</h1>

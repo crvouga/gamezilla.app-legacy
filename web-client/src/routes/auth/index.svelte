@@ -1,18 +1,10 @@
-<script lang="ts" context="module">
-  export const prerender = true;
-</script>
-
 <script lang="ts">
-  import { dataAccess } from "../../data-access";
-
-  import type { IAuthMethod } from "../../data-access/auth-data-access.interface";
-  import Clickable from "../../generic/Clickable.svelte";
-
-  import Icon from "../../generic/Icon.svelte";
-  import Item from "../../generic/Item.svelte";
-  import Link from "../../generic/Link.svelte";
-  import PageHeader from "../../generic/PageHeader.svelte";
-  import PageHeaderTitle from "../../generic/PageHeaderTitle.svelte";
+  import Clickable from "$lib/components/Clickable.svelte";
+  import Icon from "$lib/components/Icon.svelte";
+  import Item from "$lib/components/Item.svelte";
+  import PageHeader from "$lib/components/PageHeader.svelte";
+  import PageHeaderTitle from "$lib/components/PageHeaderTitle.svelte";
+  import { dataAccess } from "$lib/data-access";
   import { toastStore } from "../__layout.svelte";
 
   const handleAuthSocial = (provider: "google") => async () => {

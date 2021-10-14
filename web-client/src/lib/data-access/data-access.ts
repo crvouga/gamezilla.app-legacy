@@ -13,3 +13,5 @@ export const DataAccess = () => {
     lobby: LobbyDataAccessSupabase(),
   };
 };
+
+export type IDataAccess = ReturnType<typeof DataAccess>;

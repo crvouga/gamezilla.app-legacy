@@ -4,7 +4,7 @@
 
 <script>
   import "../app.css";
-  import Toaster, { ToastStore } from "../generic/Toaster.svelte";
+  import Toaster, { ToastStore } from "$lib/components/Toaster.svelte";
 </script>
 
 <svelte:head>

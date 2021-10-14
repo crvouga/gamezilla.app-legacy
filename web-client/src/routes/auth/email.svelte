@@ -1,18 +1,12 @@
-<script lang="ts" context="module">
-  export const prerender = true;
-</script>
-
 <script lang="ts">
-  import { errorToToast } from "../../generic/Toaster.svelte";
-
-  import { dataAccess } from "../../data-access";
-
-  import Button from "../../generic/Button.svelte";
-  import Icon from "../../generic/Icon.svelte";
-  import Link from "../../generic/Link.svelte";
-  import PageHeader from "../../generic/PageHeader.svelte";
-  import PageHeaderTitle from "../../generic/PageHeaderTitle.svelte";
-  import TextField from "../../generic/TextField.svelte";
+  import Button from "$lib/components/Button.svelte";
+  import Icon from "$lib/components/Icon.svelte";
+  import Link from "$lib/components/Link.svelte";
+  import PageHeader from "$lib/components/PageHeader.svelte";
+  import PageHeaderTitle from "$lib/components/PageHeaderTitle.svelte";
+  import TextField from "$lib/components/TextField.svelte";
+  import { errorToToast } from "$lib/components/Toaster.svelte";
+  import { dataAccess } from "$lib/data-access";
   import { toastStore } from "../__layout.svelte";
 
   let emailAddress = "";

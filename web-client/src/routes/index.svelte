@@ -1,23 +1,10 @@
 <script lang="ts">
-  import { getContext } from "svelte";
-
-  import { dataAccess } from "../data-access";
-  import {
-    authUserKey,
-    IAuthUser,
-  } from "../data-access/auth-data-access.interface";
-  import Badge from "../generic/Badge.svelte";
-  import Button from "../generic/Button.svelte";
-  import Icon from "../generic/Icon.svelte";
-  import Item from "../generic/Item.svelte";
-  import Link from "../generic/Link.svelte";
-  import PageHeader from "../generic/PageHeader.svelte";
-  import PageHeaderTitle from "../generic/PageHeaderTitle.svelte";
-  import { lobbyStatesStore } from "../stores";
-
-  const authUser: IAuthUser = getContext(authUserKey);
-
-  let state: "idle" | "creating-lobby" = "idle";
+  import Button from "$lib/components/Button.svelte";
+  import Icon from "$lib/components/Icon.svelte";
+  import Item from "$lib/components/Item.svelte";
+  import Link from "$lib/components/Link.svelte";
+  import PageHeader from "$lib/components/PageHeader.svelte";
+  import PageHeaderTitle from "$lib/components/PageHeaderTitle.svelte";
 </script>
 
 <PageHeader>
@@ -25,18 +12,11 @@
 </PageHeader>
 
 <div class="p-2">
-  <Button isLoading={state === 'creating-lobby'}>
+  <Button>
     <Icon slot="prefix" iconName="gamepad" />
     Create Lobby
   </Button>
 </div>
-
-<Link to="/auth-user/lobby">
-  <Item>
-    Your Lobbies
-    <Badge slot="end">{$lobbyStatesStore.length}</Badge>
-  </Item>
-</Link>
 
 <Link to="/unauth">
   <Item>
