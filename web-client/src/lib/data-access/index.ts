@@ -1,3 +1,3 @@
-import { DataAccess } from "./data-access";
+import { DataAccessSupabase } from "./supabase/data-access.supabase";
 
-export const dataAccess = DataAccess();
+export const dataAccess = DataAccessSupabase();

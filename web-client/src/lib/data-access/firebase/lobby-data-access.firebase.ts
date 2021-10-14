@@ -1,3 +1,4 @@
+import { generateUniqueId } from "$lib/utility";
 import {
   collection,
   deleteDoc,
@@ -8,18 +9,13 @@ import {
   setDoc,
   where,
 } from "firebase/firestore";
-import { v4 as uuidv4 } from "uuid";
-import type { IFirestore } from "./firebase-app";
 import {
   ILobbyDataAccess,
   ILobbyEvent,
   ILobbyState,
   lobbyStateReducer,
-} from "./lobby-data-access.interface";
-
-const generateId = () => {
-  return uuidv4();
-};
+} from "../lobby-data-access.interface";
+import type { IFirestore } from "./firebase-app";
 
 export const LobbyDataAccessFirebase = ({
   firestore,
@@ -69,9 +65,9 @@ export const LobbyDataAccessFirebase = ({
   return {
     async create({ user }) {
       const lobbyEvent: ILobbyEvent = {
-        eventId: generateId(),
+        eventId: generateUniqueId(),
         type: "USER_CREATED_LOBBY",
-        lobbyId: generateId(),
+        lobbyId: generateUniqueId(),
         user,
       };
 
@@ -85,7 +81,7 @@ export const LobbyDataAccessFirebase = ({
 
     async leave({ userId, lobbyId }) {
       const lobbyEvent: ILobbyEvent = {
-        eventId: generateId(),
+        eventId: generateUniqueId(),
         type: "USER_LEFTED_LOBBY",
         lobbyId,
         userId,

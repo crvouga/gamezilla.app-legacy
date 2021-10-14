@@ -1,10 +1,5 @@
-import {
-  GoogleAuthProvider,
-  onAuthStateChanged,
-  signInWithRedirect,
-  signOut,
-} from "firebase/auth";
-import type { IAuthDataAccess } from "./auth-data-access.interface";
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import type { IAuthDataAccess } from "../auth-data-access.interface";
 import type { IFirebaseAuth } from "./firebase-app";
 
 export const AuthDataAccessFirebase = ({
@@ -22,16 +17,7 @@ export const AuthDataAccessFirebase = ({
       }
     },
 
-    async authenticate({ authMethod }) {
-      if (authMethod === "google") {
-        try {
-          await signInWithRedirect(firebaseAuth, new GoogleAuthProvider());
-          return [];
-        } catch (error) {
-          return [error];
-        }
-      }
-
+    async authenticate(authMethod) {
       return [
         new Error(`${authMethod} is an unsupported authentication method`),
       ];

@@ -1,5 +1,5 @@
 import type { SupabaseAuthClient } from "@supabase/supabase-js/dist/main/lib/SupabaseAuthClient";
-import type { IAuthDataAccess } from "./auth-data-access.interface";
+import type { IAuthDataAccess } from "../auth-data-access.interface";
 
 export const AuthDataAccessSupabase = ({
   supabaseAuthClient,
