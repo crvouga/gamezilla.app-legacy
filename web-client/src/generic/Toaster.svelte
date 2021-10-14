@@ -29,6 +29,23 @@
       },
     };
   };
+
+  export type IToastStore = ReturnType<typeof ToastStore>;
+
+  export const errorToToast = (
+    toastStore: IToastStore,
+    error: Error
+  ): IToast => {
+    const id = Date.now();
+    return {
+      id,
+      type: "error",
+      message: error.message,
+      onClose: () => {
+        toastStore.remove(id);
+      },
+    };
+  };
 </script>
 
 <script lang="ts">

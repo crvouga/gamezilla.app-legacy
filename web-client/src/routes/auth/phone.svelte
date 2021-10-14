@@ -42,8 +42,6 @@
       type: "phone",
       phoneNumber: cleanPhoneNumber(phoneNumber),
     });
-
-    console.log({ errors });
   };
 </script>
 

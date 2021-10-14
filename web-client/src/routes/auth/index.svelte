@@ -46,7 +46,7 @@
   </Item>
 </Clickable>
 
-<Link to="/auth/phone">
+<!-- <Link to="/auth/phone">
   <Item>
     <Icon iconName="phone" slot="start" />
     <Icon iconName="chevron-right" slot="end" />
@@ -60,4 +60,4 @@
     <Icon iconName="chevron-right" slot="end" />
     Continue With Email
   </Item>
-</Link>
+</Link> -->
