@@ -5,9 +5,9 @@
   import PageHeader from "$lib/components/PageHeader.svelte";
   import PageHeaderTitle from "$lib/components/PageHeaderTitle.svelte";
   import TextField from "$lib/components/TextField.svelte";
-  import { errorToToast } from "$lib/components/Toaster.svelte";
   import { dataAccess } from "$lib/data-access";
-  import { toastStore } from "../__layout.svelte";
+  import { stores } from "$lib/stores";
+  import { errorToToast } from "$lib/stores/toast";
 
   let emailAddress = "";
 
@@ -17,7 +17,7 @@
       emailAddress,
     });
 
-    toastStore.push(errors.map((error) => errorToToast(toastStore, error)));
+    stores.toast.enqueue(errors.map(errorToToast));
   };
 </script>
 

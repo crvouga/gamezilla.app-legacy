@@ -5,7 +5,8 @@
   import PageHeader from "$lib/components/PageHeader.svelte";
   import PageHeaderTitle from "$lib/components/PageHeaderTitle.svelte";
   import { dataAccess } from "$lib/data-access";
-  import { toastStore } from "../__layout.svelte";
+  import { stores } from "$lib/stores";
+  import { errorToToast } from "$lib/stores/toast";
 
   const handleAuthSocial = (provider: "google") => async () => {
     const errors = await dataAccess.auth.authenticate({
@@ -13,16 +14,7 @@
       provider,
     });
 
-    toastStore.push(
-      errors.map((error) => ({
-        type: "error",
-        id: error.message,
-        message: error.message,
-        onClose: () => {
-          toastStore.remove(error.message);
-        },
-      }))
-    );
+    stores.toast.enqueue(errors.map(errorToToast));
   };
 </script>
 

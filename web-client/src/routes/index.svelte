@@ -1,5 +1,4 @@
 <script lang="ts">
-  import Button from "$lib/components/Button.svelte";
   import Icon from "$lib/components/Icon.svelte";
   import Item from "$lib/components/Item.svelte";
   import Link from "$lib/components/Link.svelte";
@@ -11,23 +10,18 @@
   <PageHeaderTitle>Home</PageHeaderTitle>
 </PageHeader>
 
-<div class="p-2">
-  <Button>
-    <Icon slot="prefix" iconName="gamepad" />
-    Create Lobby
-  </Button>
-</div>
-
-<Link to="/unauth">
+<Link to="/auth">
   <Item>
-    Sign Out
-    <Icon slot="end" iconName="sign-out" />
+    <Icon slot="start" iconName="sign-in" />
+    Sign In
+    <Icon slot="end" iconName="chevron-right" />
   </Item>
 </Link>
 
-<Link to="/auth">
+<Link to="/unauth">
   <Item>
-    Sign In
-    <Icon slot="end" iconName="sign-out" />
+    <Icon slot="start" iconName="sign-out" />
+    Sign Out
+    <Icon slot="end" iconName="chevron-right" />
   </Item>
 </Link>

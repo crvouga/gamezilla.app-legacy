@@ -32,8 +32,10 @@ export type IAuthState =
       status: "unauthenticated";
     };
 
+type IUnsubscribe = () => void;
+
 export type IAuthDataAccess = {
   authenticate: (authMethod: IAuthMethod) => Promise<Error[]>;
   unauthenticate: () => Promise<Error[]>;
-  onAuthStateChanged: (set: (authState: IAuthState) => void) => () => void;
+  onAuthStateChanged: (set: (authState: IAuthState) => void) => IUnsubscribe;
 };

@@ -45,10 +45,24 @@ export const AuthDataAccessSupabase = ({
     },
 
     onAuthStateChanged(set) {
-      set({
-        status: "unauthenticated",
-      });
-      const { data, error } = supabaseAuthClient.onAuthStateChange(
+      const session = supabaseAuthClient.session();
+
+      console.log({ session });
+
+      if (session) {
+        set({
+          status: "authenticated",
+          authUser: {
+            userId: session.user.id,
+          },
+        });
+      } else {
+        set({
+          status: "unauthenticated",
+        });
+      }
+
+      const { data } = supabaseAuthClient.onAuthStateChange(
         (event, session) => {
           switch (event) {
             case "PASSWORD_RECOVERY":

@@ -1,17 +1,21 @@
-<script context="module">
-  export const toastStore = ToastStore();
-</script>
-
 <script>
   import "../app.css";
-  import Toaster, { ToastStore } from "$lib/components/Toaster.svelte";
+  import Toaster from "$lib/components/Toaster.svelte";
+  import { stores } from "$lib/stores";
+
+  const { toast } = stores;
 </script>
 
 <svelte:head>
   <title>Gamezilla</title>
-  <meta name="description" content="Play games with your friend" />
+
+  <meta name="description" content="Play online games with your friend" />
 </svelte:head>
 
 <slot />
 
-<Toaster toasts={$toastStore} />
+<Toaster
+  on:removed={(event) => {
+    stores.toast.remove([event.detail.id]);
+  }}
+  toasts={$toast} />

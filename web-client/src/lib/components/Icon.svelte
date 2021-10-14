@@ -7,6 +7,7 @@
 		| "chevron-right"
 		| "gamepad"
 		| "sign-out"
+		| "sign-in"
 		| "envelope"
 		| "exclamation-circle"
 		| "close"
@@ -28,6 +29,7 @@
 		phone,
 		send,
 		signOut,
+		signIn,
 	} from "svelte-awesome/icons";
 
 	const iconNameToData: {
@@ -39,6 +41,7 @@
 		"chevron-right": chevronRight,
 		gamepad: gamepad,
 		"sign-out": signOut,
+		"sign-in": signIn,
 		envelope: envelope,
 		"exclamation-circle": exclamationCircle,
 		close: close,
