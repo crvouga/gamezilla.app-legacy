@@ -4,6 +4,16 @@
   import Link from "$lib/components/Link.svelte";
   import PageHeader from "$lib/components/PageHeader.svelte";
   import PageHeaderTitle from "$lib/components/PageHeaderTitle.svelte";
+  import { stores } from "$lib/stores";
+
+  const { auth } = stores;
+
+  let authState = { status: "loading" };
+
+  auth.subscribe((authState) => {
+    authState = authState;
+    console.log({ authState });
+  });
 </script>
 
 <PageHeader>

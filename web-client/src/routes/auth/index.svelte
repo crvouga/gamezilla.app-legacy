@@ -2,6 +2,7 @@
   import Clickable from "$lib/components/Clickable.svelte";
   import Icon from "$lib/components/Icon.svelte";
   import Item from "$lib/components/Item.svelte";
+  import Link from "$lib/components/Link.svelte";
   import PageHeader from "$lib/components/PageHeader.svelte";
   import PageHeaderTitle from "$lib/components/PageHeaderTitle.svelte";
   import { dataAccess } from "$lib/data-access";
@@ -37,6 +38,7 @@
     Continue With Phone
   </Item>
 </Link>
+ -->
 
 <Link to="/auth/email">
   <Item>
@@ -44,4 +46,4 @@
     <Icon iconName="chevron-right" slot="end" />
     Continue With Email
   </Item>
-</Link> -->
+</Link>

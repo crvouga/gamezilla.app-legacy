@@ -7,5 +7,5 @@ const environment = {
 };
 
 export const SupabaseClient = () => {
-  return createClient(environment.SUPABASE_URL, environment.SUPABASE_KEY);
+  return createClient(environment.SUPABASE_URL, environment.SUPABASE_KEY, {});
 };
