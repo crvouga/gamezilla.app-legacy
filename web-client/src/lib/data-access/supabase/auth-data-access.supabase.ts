@@ -20,12 +20,14 @@ export const AuthDataAccessSupabase = ({
     async authenticate(authMethod) {
       switch (authMethod.type) {
         case "social": {
+          const redirectTo = environment.isProduction
+            ? undefined
+            : window.location.toString();
+
           const { error } = await supabaseAuthClient.signIn({
             provider: authMethod.provider,
           }, {
-            redirectTo: environment.isProduction
-              ? undefined
-              : window.location.toString(),
+            redirectTo,
           });
 
           return [error];
