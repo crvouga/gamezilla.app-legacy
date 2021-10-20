@@ -25,16 +25,14 @@
 </script>
 
 <script lang="ts">
-  import { dataAccess } from "$lib/data-access";
-
   import Button from "$lib/components/Button.svelte";
   import Icon from "$lib/components/Icon.svelte";
   import Link from "$lib/components/Link.svelte";
   import PageHeader from "$lib/components/PageHeader.svelte";
   import PageHeaderTitle from "$lib/components/PageHeaderTitle.svelte";
   import TextField from "$lib/components/TextField.svelte";
-  import { stores } from "$lib/stores";
-  import { errorToToast } from "$lib/stores/toast";
+  import { dataAccess, stores } from "$lib/data-access";
+  import { errorToToast } from "$lib/data-access/stores/toast";
 
   let phoneNumber = "";
   $: phoneNumber = formatPhoneNumber(phoneNumber);

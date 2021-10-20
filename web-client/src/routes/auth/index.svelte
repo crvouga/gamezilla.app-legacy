@@ -2,14 +2,13 @@
   import Clickable from "$lib/components/Clickable.svelte";
   import Icon from "$lib/components/Icon.svelte";
   import Item from "$lib/components/Item.svelte";
-  import Link from "$lib/components/Link.svelte";
+  // import Link from "$lib/components/Link.svelte";
   import PageHeader from "$lib/components/PageHeader.svelte";
   import PageHeaderTitle from "$lib/components/PageHeaderTitle.svelte";
-  import { dataAccess } from "$lib/data-access";
-  import { stores } from "$lib/stores";
-  import { errorToToast } from "$lib/stores/toast";
+  import { dataAccess, stores } from "$lib/data-access";
+  import { errorToToast } from "$lib/data-access/stores/toast";
 
-  const handleAuthSocial = (provider: "google") => async () => {
+  const handleSocialAuth = (provider: "google") => async () => {
     const errors = await dataAccess.auth.authenticate({
       type: "social",
       provider,
@@ -23,7 +22,7 @@
   <PageHeaderTitle>Sign In</PageHeaderTitle>
 </PageHeader>
 
-<Clickable on:click={handleAuthSocial('google')}>
+<Clickable on:click={handleSocialAuth('google')}>
   <Item>
     <Icon iconName="google" slot="start" />
     <Icon iconName="chevron-right" slot="end" />
@@ -40,10 +39,11 @@
 </Link>
  -->
 
+<!-- 
 <Link to="/auth/email">
   <Item>
     <Icon iconName="envelope" slot="start" />
     <Icon iconName="chevron-right" slot="end" />
     Continue With Email
   </Item>
-</Link>
+</Link> -->

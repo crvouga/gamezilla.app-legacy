@@ -1,11 +1,11 @@
 <script lang="ts">
-  import { dataAccess } from "$lib/data-access";
+  import { goto } from "$app/navigation";
   import Button from "$lib/components/Button.svelte";
+  import Icon from "$lib/components/Icon.svelte";
+  import Link from "$lib/components/Link.svelte";
   import PageHeader from "$lib/components/PageHeader.svelte";
   import PageHeaderTitle from "$lib/components/PageHeaderTitle.svelte";
-  import Link from "$lib/components/Link.svelte";
-  import { goto } from "$app/navigation";
-  import Icon from "$lib/components/Icon.svelte";
+  import { dataAccess } from "$lib/data-access";
 
   const handleUnauth = async () => {
     await dataAccess.auth.unauthenticate();
