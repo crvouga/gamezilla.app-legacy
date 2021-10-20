@@ -1,9 +1,15 @@
 <script lang="ts">
-  export let src: string;
-  export let alt: string;
+  import Icon from "./Icon.svelte";
+
+  export let src: string | undefined = undefined;
+  export let alt: string | undefined = undefined;
 </script>
 
-<img
-  class="inline-block h-12 w-12 rounded-full ring-2 ring-white"
-  {src}
-  {alt} />
+{#if alt}
+  <img
+    class="inline-block h-12 w-12 rounded-full ring-2 ring-white"
+    {src}
+    {alt} />
+{:else}
+  <Icon iconName="user" />
+{/if}

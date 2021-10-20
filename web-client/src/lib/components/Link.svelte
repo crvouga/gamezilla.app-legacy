@@ -1,11 +1,14 @@
 <script lang="ts">
+  import { goto } from "$app/navigation";
   import Clickable from "./Clickable.svelte";
 
-  export let to: string;
+  export let to: string | undefined = undefined;
+
+  const handleClick = () => {
+    goto(to);
+  };
 </script>
 
-<Clickable>
-  <a href={to}>
-    <slot />
-  </a>
+<Clickable on:click={handleClick}>
+  <slot />
 </Clickable>

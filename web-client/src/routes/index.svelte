@@ -1,7 +1,6 @@
 <script lang="ts">
+  import Avatar from "$lib/components/Avatar.svelte";
   import Button from "$lib/components/Button.svelte";
-  import Icon from "$lib/components/Icon.svelte";
-  import Item from "$lib/components/Item.svelte";
   import Link from "$lib/components/Link.svelte";
   import PageHeader from "$lib/components/PageHeader.svelte";
   import PageHeaderTitle from "$lib/components/PageHeaderTitle.svelte";
@@ -11,16 +10,11 @@
 
 <PageHeader>
   <PageHeaderTitle>Home</PageHeaderTitle>
+  <Link slot="suffix" to="/auth-user">
+    <Avatar />
+  </Link>
 </PageHeader>
 
 <div class="p-4">
   <Button on:click={handleCreateLobby}>Create Lobby</Button>
 </div>
-
-<Link to="/unauth">
-  <Item>
-    <Icon slot="start" iconName="sign-out" />
-    Sign Out
-    <Icon slot="end" iconName="chevron-right" />
-  </Item>
-</Link>

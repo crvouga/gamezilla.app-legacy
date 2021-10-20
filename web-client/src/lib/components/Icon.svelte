@@ -12,10 +12,8 @@
 		| "exclamation-circle"
 		| "close"
 		| "send"
-		| "sms";
-</script>
-
-<script lang="ts">
+		| "sms"
+		| "user";
 	import { faSms } from "@fortawesome/free-solid-svg-icons";
 	import Icon from "svelte-awesome";
 	import {
@@ -28,11 +26,12 @@
 		google,
 		phone,
 		send,
-		signOut,
 		signIn,
+		signOut,
+		user,
 	} from "svelte-awesome/icons";
 
-	const iconNameToData: {
+	export const iconNameToData: {
 		[iconName in IconName]: unknown;
 	} = {
 		google: google,
@@ -47,8 +46,11 @@
 		close: close,
 		send: send,
 		sms: faSms,
+		user: user,
 	};
+</script>
 
+<script lang="ts">
 	export let iconName: IconName;
 	let className = "";
 	export { className as class };

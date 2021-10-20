@@ -14,7 +14,7 @@
 </script>
 
 <PageHeader>
-  <Link slot="prefix" to="/">
+  <Link slot="prefix" to="/auth-user">
     <Icon iconName="chevron-left" />
   </Link>
   <PageHeaderTitle>Sign Out</PageHeaderTitle>
