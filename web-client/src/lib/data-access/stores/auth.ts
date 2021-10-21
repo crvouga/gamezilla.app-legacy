@@ -5,7 +5,7 @@ import { dataAccess } from "..";
 export const AuthStore = () => {
   return readable<IAuthState>(
     {
-      status: "loading",
+      status: "unauthenticated",
     },
     dataAccess.auth.onAuthStateChanged
   );

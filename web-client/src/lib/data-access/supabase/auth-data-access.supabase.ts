@@ -1,9 +1,7 @@
-import type { SupabaseAuthClient } from "@supabase/supabase-js/dist/main/lib/SupabaseAuthClient";
-import type {
-  IAuthDataAccess,
-  IAuthState,
-} from "../auth-data-access.interface";
 import { environment } from "$lib/environment";
+import type { SupabaseAuthClient } from "@supabase/supabase-js/dist/main/lib/SupabaseAuthClient";
+import type { IAuthDataAccess } from "../auth-data-access.interface";
+import { setAuthCookie, unsetAuthCookie } from "./session";
 
 export const AuthDataAccessSupabase = ({
   supabaseAuthClient,
@@ -58,12 +56,12 @@ export const AuthDataAccessSupabase = ({
     },
 
     onAuthStateChanged(set) {
-      set({
-        status: "unauthenticated",
-      });
-
       const { data } = supabaseAuthClient.onAuthStateChange(
         (event, session) => {
+          console.log({
+            event,
+            session,
+          });
           switch (event) {
             case "PASSWORD_RECOVERY":
             case "SIGNED_IN":
@@ -87,7 +85,6 @@ export const AuthDataAccessSupabase = ({
       );
 
       return () => {
-        clearTimeout(timeout);
         data.unsubscribe();
       };
     },

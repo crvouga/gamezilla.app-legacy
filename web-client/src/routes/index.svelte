@@ -4,7 +4,6 @@
   import Link from "$lib/components/Link.svelte";
   import PageHeader from "$lib/components/PageHeader.svelte";
   import PageHeaderTitle from "$lib/components/PageHeaderTitle.svelte";
-  import { stores } from "$lib/data-access";
 
   const handleCreateLobby = () => {};
 </script>

@@ -1,14 +1,3 @@
-<script context="module" lang="ts">
-  export async function load({ session }) {
-    console.log({ session });
-    return {
-      props: {
-        user: session.user,
-      },
-    };
-  }
-</script>
-
 <script lang="ts">
   import Toaster from "$lib/components/Toaster.svelte";
   import { stores } from "$lib/data-access";
