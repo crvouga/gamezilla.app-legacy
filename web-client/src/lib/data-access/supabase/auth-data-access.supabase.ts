@@ -24,11 +24,14 @@ export const AuthDataAccessSupabase = ({
             ? undefined
             : window.location.toString();
 
-          const { error } = await supabaseAuthClient.signIn({
-            provider: authMethod.provider,
-          }, {
-            redirectTo,
-          });
+          const { error } = await supabaseAuthClient.signIn(
+            {
+              provider: authMethod.provider,
+            },
+            {
+              redirectTo,
+            }
+          );
 
           return [error];
         }
@@ -55,24 +58,12 @@ export const AuthDataAccessSupabase = ({
     },
 
     onAuthStateChanged(set) {
-      const session = supabaseAuthClient.session();
-
-      const initialAuthState: IAuthState = session
-        ? {
-          status: "authenticated",
-          authUser: {
-            userId: session.user.id,
-          },
-        }
-        : {
-          status: "unauthenticated",
-        };
-
-      set(initialAuthState);
+      set({
+        status: "unauthenticated",
+      });
 
       const { data } = supabaseAuthClient.onAuthStateChange(
         (event, session) => {
-          console.log({ event, session });
           switch (event) {
             case "PASSWORD_RECOVERY":
             case "SIGNED_IN":
@@ -92,10 +83,11 @@ export const AuthDataAccessSupabase = ({
               });
               return;
           }
-        },
+        }
       );
 
       return () => {
+        clearTimeout(timeout);
         data.unsubscribe();
       };
     },

@@ -11,16 +11,16 @@
 
 <script lang="ts">
   import Toaster from "$lib/components/Toaster.svelte";
-  import type { IAuthState } from "$lib/data-access/auth-data-access.interface";
   import { stores } from "$lib/data-access";
+  import type { IAuthState } from "$lib/data-access/auth-data-access.interface";
   import "../app.css";
   import AuthPage from "./auth/index.svelte";
 
-  const { auth, toast } = stores;
+  const { toast } = stores;
 
   let status: IAuthState["status"] = "loading";
 
-  auth.subscribe((authState) => {
+  stores.auth.subscribe(async (authState) => {
     status = authState.status;
   });
 </script>

@@ -7,6 +7,6 @@ export const AuthStore = () => {
     {
       status: "loading",
     },
-    dataAccess.auth.onAuthStateChanged,
+    dataAccess.auth.onAuthStateChanged
   );
 };
