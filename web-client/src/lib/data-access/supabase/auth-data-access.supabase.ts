@@ -1,7 +1,9 @@
 import { environment } from "$lib/environment";
-import { dropLastWhile, pipe } from "$lib/utility";
+import { dropLastWhile } from "$lib/utility";
 import type { SupabaseAuthClient } from "@supabase/supabase-js/dist/main/lib/SupabaseAuthClient";
 import type { IAuthDataAccess } from "../auth-data-access.interface";
+import { toUserId } from "../auth-data-access.interface";
+import { toAvatarSeed } from "../avatars";
 
 const removeTrailingBackslash = (url: string) => {
   return dropLastWhile((character) => character === "/", url.split("")).join(
@@ -68,7 +70,9 @@ export const AuthDataAccessSupabase = ({
         set({
           status: "authenticated",
           authUser: {
-            userId: session.user.id,
+            avatarSeed: toAvatarSeed(session.user.id),
+            avatarStyle: "avataaars",
+            userId: toUserId(session.user.id),
           },
         });
       }
@@ -79,6 +83,7 @@ export const AuthDataAccessSupabase = ({
             eventType,
             session,
           });
+
           switch (eventType) {
             case "PASSWORD_RECOVERY":
             case "SIGNED_IN":
@@ -86,7 +91,9 @@ export const AuthDataAccessSupabase = ({
               set({
                 status: "authenticated",
                 authUser: {
-                  userId: session.user.id,
+                  avatarSeed: toAvatarSeed(session.user.id),
+                  avatarStyle: "avataaars",
+                  userId: toUserId(session.user.id),
                 },
               });
               return;

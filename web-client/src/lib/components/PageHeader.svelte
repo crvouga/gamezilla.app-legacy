@@ -1,6 +1,6 @@
 <nav
 	class="flex justify-between items-center px-4 py-2 border-gray-200 border-b-2">
-	<div class="mr-4 w-10">
+	<div class="w-10 flex items-center justify-start">
 		<slot name="prefix" />
 	</div>
 
@@ -8,7 +8,7 @@
 		<slot />
 	</div>
 
-	<div class="ml-4 w-10 flex items-center">
+	<div class="w-10 flex items-center justify-end">
 		<slot name="suffix" />
 	</div>
 </nav>

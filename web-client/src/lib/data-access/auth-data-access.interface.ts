@@ -1,3 +1,5 @@
+import type { IAvatarSeed, IAvatarStyle } from "./avatars";
+
 export const authUserKey = "auth-user";
 
 export type IAuthMethod =
@@ -14,10 +16,16 @@ export type IAuthMethod =
       phoneNumber: string;
     };
 
+export type IUserId = string & { type: "IUserId" };
+
+export const toUserId = (userId: string) => {
+  return userId as IUserId;
+};
+
 export type IAuthUser = {
-  displayName?: string;
-  userId: string;
-  avatarUrl?: string;
+  userId: IUserId;
+  avatarSeed: IAvatarSeed;
+  avatarStyle: IAvatarStyle;
 };
 
 export type IAuthState =

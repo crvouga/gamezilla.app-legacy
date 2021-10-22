@@ -5,11 +5,11 @@
   export let alt: string | undefined = undefined;
 </script>
 
-{#if alt}
+{#if src}
   <img
-    class="inline-block h-12 w-12 rounded-full ring-2 ring-white"
+    class="inline-block h-8 w-8 rounded-full ring-2 ring-white"
     {src}
     {alt} />
 {:else}
-  <Icon iconName="user" />
+  <Icon class="h-10 w-10" iconName="user" />
 {/if}

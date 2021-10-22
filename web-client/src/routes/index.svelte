@@ -4,6 +4,7 @@
   import Link from "$lib/components/Link.svelte";
   import PageHeader from "$lib/components/PageHeader.svelte";
   import PageHeaderTitle from "$lib/components/PageHeaderTitle.svelte";
+  import { toAvatarSeed, toAvatarUrl } from "$lib/data-access/avatars";
 
   const handleCreateLobby = () => {};
 </script>
@@ -11,7 +12,11 @@
 <PageHeader>
   <PageHeaderTitle>Home</PageHeaderTitle>
   <Link slot="suffix" to="/auth-user">
-    <Avatar />
+    <Avatar
+      src={toAvatarUrl({
+        avatarSeed: toAvatarSeed('gello'),
+        avatarStyle: 'adventurer-neutral',
+      })} />
   </Link>
 </PageHeader>
 
