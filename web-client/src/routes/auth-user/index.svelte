@@ -14,9 +14,8 @@
 </PageHeader>
 
 <Link to="/auth-user/unauth">
-  <Item>
+  <Item class="text-color-blue-500">
     <Icon slot="start" iconName="sign-out" />
     Sign Out
-    <Icon slot="end" iconName="chevron-right" />
   </Item>
 </Link>

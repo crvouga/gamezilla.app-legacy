@@ -3,10 +3,12 @@ import { readable } from "svelte/store";
 import { dataAccess } from "..";
 
 export const AuthStore = () => {
-  return readable<IAuthState>(
+  const store = readable<IAuthState>(
     {
       status: "unauthenticated",
     },
     dataAccess.auth.onAuthStateChanged
   );
+
+  return store;
 };

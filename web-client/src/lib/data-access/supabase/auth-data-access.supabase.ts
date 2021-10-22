@@ -1,7 +1,13 @@
 import { environment } from "$lib/environment";
+import { dropLastWhile, pipe } from "$lib/utility";
 import type { SupabaseAuthClient } from "@supabase/supabase-js/dist/main/lib/SupabaseAuthClient";
 import type { IAuthDataAccess } from "../auth-data-access.interface";
-import { setAuthCookie, unsetAuthCookie } from "./session";
+
+const removeTrailingBackslash = (url: string) => {
+  return dropLastWhile((character) => character === "/", url.split("")).join(
+    ""
+  );
+};
 
 export const AuthDataAccessSupabase = ({
   supabaseAuthClient,
@@ -20,7 +26,7 @@ export const AuthDataAccessSupabase = ({
         case "social": {
           const redirectTo = environment.isProduction
             ? undefined
-            : window.location.toString();
+            : removeTrailingBackslash(window.location.toString());
 
           const { error } = await supabaseAuthClient.signIn(
             {
@@ -56,13 +62,24 @@ export const AuthDataAccessSupabase = ({
     },
 
     onAuthStateChanged(set) {
+      const session = supabaseAuthClient.session();
+
+      if (session) {
+        set({
+          status: "authenticated",
+          authUser: {
+            userId: session.user.id,
+          },
+        });
+      }
+
       const { data } = supabaseAuthClient.onAuthStateChange(
-        (event, session) => {
+        (eventType, session) => {
           console.log({
-            event,
+            eventType,
             session,
           });
-          switch (event) {
+          switch (eventType) {
             case "PASSWORD_RECOVERY":
             case "SIGNED_IN":
             case "USER_UPDATED":
