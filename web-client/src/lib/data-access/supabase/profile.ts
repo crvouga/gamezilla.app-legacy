@@ -21,7 +21,7 @@ export const ProfileDataAccess = ({
         .eq("user_id", userId);
 
       return {
-        errors: [new Error(response.error.message)],
+        errors: response.error ? [new Error(response.error.message)] : [],
       };
     },
 

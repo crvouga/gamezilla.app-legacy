@@ -4,15 +4,14 @@
   import PageHeader from "$lib/components/PageHeader.svelte";
   import PageHeaderTitle from "$lib/components/PageHeaderTitle.svelte";
   import { toAvatarUrl } from "$lib/data-access";
-  import { auth } from "$lib/stores";
+  import { profile } from "$lib/stores";
 
-  $: authState = $auth;
+  $: profileState = $profile;
 </script>
 
 <PageHeader>
   <PageHeaderTitle>Home</PageHeaderTitle>
   <Link slot="suffix" to="/auth-user">
-    <Avatar
-      src={authState.status === 'authenticated' ? toAvatarUrl(authState.authUser) : undefined} />
+    <Avatar src={profileState ? toAvatarUrl(profileState) : undefined} />
   </Link>
 </PageHeader>

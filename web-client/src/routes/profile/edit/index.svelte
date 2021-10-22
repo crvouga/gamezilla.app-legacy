@@ -7,12 +7,12 @@
   import PageHeaderTitle from "$lib/components/PageHeaderTitle.svelte";
   import TextField from "$lib/components/TextField.svelte";
   import {
-    toAvatarStyle,
-    toAvatarSeed,
-    toAvatarUrl,
     dataAccess,
+    toAvatarSeed,
+    toAvatarStyle,
+    toAvatarUrl,
   } from "$lib/data-access";
-  import { profile } from "$lib/stores";
+  import { profile, toast } from "$lib/stores";
 
   let avatarSeed: string = "";
   let avatarStyle: string | null = null;
@@ -39,6 +39,14 @@
       avatarSeed: toAvatarSeed(avatarSeed),
       avatarStyle: toAvatarStyle(avatarStyle),
     });
+
+    toast.enqueue([
+      {
+        id: "updated-avatar",
+        type: "success",
+        message: "Updated avatar",
+      },
+    ]);
   };
 </script>
 

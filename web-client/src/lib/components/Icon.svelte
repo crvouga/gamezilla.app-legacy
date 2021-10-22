@@ -14,10 +14,12 @@
 		| "send"
 		| "sms"
 		| "user"
-		| "user-edit";
+		| "user-edit"
+		| "check-circle";
 	import { faSms, faUserEdit } from "@fortawesome/free-solid-svg-icons";
 	import Icon from "svelte-awesome";
 	import {
+		checkCircle,
 		chevronLeft,
 		chevronRight,
 		close,
@@ -49,6 +51,7 @@
 		sms: faSms,
 		user: user,
 		"user-edit": faUserEdit,
+		"check-circle": checkCircle,
 	};
 </script>
 

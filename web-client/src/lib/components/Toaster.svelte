@@ -6,7 +6,7 @@
 
   type IToast = {
     id: string;
-    type: "error";
+    type: "error" | "success";
     message: string;
   };
 
@@ -21,8 +21,10 @@
 
 <div class="fixed bottom-0 left-0 w-full">
   {#each toasts as toast}
-    <Alert class="p-2">
-      <Icon iconName="exclamation-circle" slot="prefix" />
+    <Alert variant={toast.type} class="p-2">
+      <Icon
+        iconName={toast.type === 'error' ? 'exclamation-circle' : 'check-circle'}
+        slot="prefix" />
 
       {toast.message}
 
