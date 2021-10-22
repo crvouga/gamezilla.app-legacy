@@ -13,8 +13,9 @@
 		| "close"
 		| "send"
 		| "sms"
-		| "user";
-	import { faSms } from "@fortawesome/free-solid-svg-icons";
+		| "user"
+		| "user-edit";
+	import { faSms, faUserEdit } from "@fortawesome/free-solid-svg-icons";
 	import Icon from "svelte-awesome";
 	import {
 		chevronLeft,
@@ -47,6 +48,7 @@
 		send: send,
 		sms: faSms,
 		user: user,
+		"user-edit": faUserEdit,
 	};
 </script>
 
@@ -56,4 +58,4 @@
 	export { className as class };
 </script>
 
-<Icon class="w-5 h-5" data={iconNameToData[iconName]} />
+<Icon class="w-5 h-5 {className}" data={iconNameToData[iconName]} />

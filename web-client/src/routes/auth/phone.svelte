@@ -31,8 +31,9 @@
   import PageHeader from "$lib/components/PageHeader.svelte";
   import PageHeaderTitle from "$lib/components/PageHeaderTitle.svelte";
   import TextField from "$lib/components/TextField.svelte";
-  import { dataAccess, stores } from "$lib/data-access";
-  import { errorToToast } from "$lib/data-access/stores/toast";
+  import { dataAccess } from "$lib/data-access";
+  import { toast } from "$lib/stores";
+  import { errorToToast } from "$lib/stores/toast";
 
   let phoneNumber = "";
   $: phoneNumber = formatPhoneNumber(phoneNumber);
@@ -43,7 +44,7 @@
       phoneNumber: cleanPhoneNumber(phoneNumber),
     });
 
-    stores.toast.enqueue(errors.map(errorToToast));
+    toast.enqueue(errors.map(errorToToast));
   };
 </script>
 
