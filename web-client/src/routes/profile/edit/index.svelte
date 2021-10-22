@@ -5,43 +5,40 @@
   import Link from "$lib/components/Link.svelte";
   import PageHeader from "$lib/components/PageHeader.svelte";
   import PageHeaderTitle from "$lib/components/PageHeaderTitle.svelte";
-  import Select from "$lib/components/Select.svelte";
   import TextField from "$lib/components/TextField.svelte";
-  import { dataAccess } from "$lib/data-access";
   import {
-    toAvatarSeed,
     toAvatarStyle,
+    toAvatarSeed,
     toAvatarUrl,
-  } from "$lib/data-access/profile.interface.ts";
-  import { auth } from "$lib/stores";
-  import { generateUniqueId } from "$lib/utility";
+    dataAccess,
+  } from "$lib/data-access";
+  import { profile } from "$lib/stores";
 
   let avatarSeed: string = "";
   let avatarStyle: string | null = null;
 
-  auth.subscribe((authState) => {
-    if (authState.status === "authenticated") {
-      avatarSeed = authState.authUser.avatarSeed;
-      avatarStyle = authState.authUser.avatarStyle;
+  $: profileState = $profile;
+
+  profile.subscribe((profile) => {
+    if (profile) {
+      avatarSeed = profile.avatarSeed;
+      avatarStyle = profile.avatarStyle;
     }
   });
 
   $: avatarUrl = avatarStyle
     ? toAvatarUrl({
-        avatarSeed: toAvatarSeed(avatarSeed),
         avatarStyle: toAvatarStyle(avatarStyle),
+        avatarSeed: toAvatarSeed(avatarSeed),
       })
     : undefined;
 
   const handleSubmit = async () => {
-    // const {errors } = await dataAccess.profile.update({
-    //   avatarSeed: toAvatarSeed(avatarSeed),
-    //   avatarStyle: toAvatarStyle(avatarStyle),
-    // })
-  };
-
-  const handleGenerate = () => {
-    avatarSeed = generateUniqueId();
+    const { errors } = await dataAccess.profiile.update({
+      userId: profileState.userId,
+      avatarSeed: toAvatarSeed(avatarSeed),
+      avatarStyle: toAvatarStyle(avatarStyle),
+    });
   };
 </script>
 

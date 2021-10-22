@@ -5,10 +5,10 @@
   import Link from "$lib/components/Link.svelte";
   import PageHeader from "$lib/components/PageHeader.svelte";
   import PageHeaderTitle from "$lib/components/PageHeaderTitle.svelte";
-  import { toAvatarUrl } from "$lib/data-access/profile.interface";
-  import { auth } from "$lib/stores";
+  import { toAvatarUrl } from "$lib/data-access";
+  import { profile } from "$lib/stores";
 
-  $: authState = $auth;
+  $: profileState = $profile;
 </script>
 
 <PageHeader>
@@ -16,8 +16,7 @@
     <Icon iconName="chevron-left" />
   </Link>
   <PageHeaderTitle>
-    <Avatar
-      src={authState.status === 'authenticated' ? toAvatarUrl(authState.authUser) : undefined} />
+    <Avatar src={profileState ? toAvatarUrl(profileState) : undefined} />
   </PageHeaderTitle>
 </PageHeader>
 

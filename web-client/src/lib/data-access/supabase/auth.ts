@@ -1,18 +1,17 @@
 import { environment } from "$lib/environment";
-import type { definitions } from "$lib/generated-types/supabase";
 import { dropLastWhile } from "$lib/utility";
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { IAuthDataAccess } from "../auth-data-access.interface";
-import { toUserId } from "../auth-data-access.interface";
-import { toAvatarSeed, toAvatarStyle } from "../profile.interface";
+import { toUserId } from "../core";
+import type { IAuthDataAccess } from "../core/auth";
+import { toAvatarSeed } from "../core/profile";
 
 const removeTrailingBackslash = (url: string) => {
   return dropLastWhile((character) => character === "/", url.split("")).join(
-    ""
+    "",
   );
 };
 
-export const AuthDataAccessSupabase = ({
+export const AuthDataAccess = ({
   supabaseClient,
 }: {
   supabaseClient: SupabaseClient;
@@ -37,7 +36,7 @@ export const AuthDataAccessSupabase = ({
             },
             {
               redirectTo,
-            }
+            },
           );
 
           return [error];
@@ -68,32 +67,12 @@ export const AuthDataAccessSupabase = ({
       const session = supabaseClient.auth.session();
 
       if (session) {
-        supabaseClient
-          .from<definitions["profiles"]>("profiles")
-          .select("*")
-          .eq("user_id", session.user.id)
-          .then((response) => {
-            if (response.data.length === 0) {
-              return supabaseClient
-                .from<definitions["profiles"]>("profiles")
-                .insert({
-                  user_id: session.user.id,
-                  avatar_seed: session.user.id,
-                  avatar_style: "avataaars",
-                });
-            }
-            return response;
-          })
-          .then((response) => {
-            set({
-              status: "authenticated",
-              authUser: {
-                avatarSeed: toAvatarSeed(response.data[0].avatar_seed),
-                avatarStyle: toAvatarStyle(response.data[0].avatar_style),
-                userId: toUserId(session.user.id),
-              },
-            });
-          });
+        set({
+          status: "authenticated",
+          authUser: {
+            userId: toUserId(session.user.id),
+          },
+        });
       }
 
       const { data } = supabaseClient.auth.onAuthStateChange(
@@ -124,7 +103,7 @@ export const AuthDataAccessSupabase = ({
               });
               return;
           }
-        }
+        },
       );
 
       return () => {

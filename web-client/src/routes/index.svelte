@@ -3,7 +3,7 @@
   import Link from "$lib/components/Link.svelte";
   import PageHeader from "$lib/components/PageHeader.svelte";
   import PageHeaderTitle from "$lib/components/PageHeaderTitle.svelte";
-  import { toAvatarUrl } from "$lib/data-access/profile.interface";
+  import { toAvatarUrl } from "$lib/data-access";
   import { auth } from "$lib/stores";
 
   $: authState = $auth;

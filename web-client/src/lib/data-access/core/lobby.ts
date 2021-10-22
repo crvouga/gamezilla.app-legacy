@@ -10,17 +10,17 @@ export type ILobbyGame = {
 
 export type ILobbyEvent =
   | {
-      type: "USER_CREATED_LOBBY";
-      eventId: string;
-      lobbyId: string;
-      user: ILobbyUser;
-    }
+    type: "USER_CREATED_LOBBY";
+    eventId: string;
+    lobbyId: string;
+    user: ILobbyUser;
+  }
   | {
-      type: "USER_LEFTED_LOBBY";
-      eventId: string;
-      lobbyId: string;
-      userId: string;
-    };
+    type: "USER_LEFTED_LOBBY";
+    eventId: string;
+    lobbyId: string;
+    userId: string;
+  };
 
 export type ILobbyState = {
   lobbyId: string;
@@ -36,7 +36,7 @@ const removeKey = <T>(key: keyof T, object: T) => {
 
 export const lobbyStateReducer = (
   state: ILobbyState | null,
-  event: ILobbyEvent
+  event: ILobbyEvent,
 ): ILobbyState | null => {
   switch (event.type) {
     case "USER_CREATED_LOBBY":
@@ -85,11 +85,11 @@ export type ILobbyDataAccess = {
 
   onUserLobbyStatesChanged: (
     { userId: string },
-    set: (lobbyStates: ILobbyState[]) => void
+    set: (lobbyStates: ILobbyState[]) => void,
   ) => () => void;
 
   onLobbyStatesChanged: (
     { lobbyId: string },
-    set: (lobbyStates: ILobbyState[]) => void
+    set: (lobbyStates: ILobbyState[]) => void,
   ) => () => void;
 };
