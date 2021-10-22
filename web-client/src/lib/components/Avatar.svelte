@@ -1,18 +1,19 @@
 <script lang="ts">
   import Icon from "./Icon.svelte";
 
-  let className: string = "";
-  export { className as class };
+  let overridesClass: string = "";
+  export { overridesClass as class };
 
   export let src: string | undefined = undefined;
   export let alt: string | undefined = undefined;
+
+  $: baseClass = `inline-block h-8 w-8 rounded-full ring-1 ring-gray-200 ${overridesClass}`;
+  $: imageClass = `${baseClass}`;
+  $: iconClass = `${baseClass} bg-gray-200 text-gray-400`;
 </script>
 
 {#if src}
-  <img
-    class="inline-block h-8 w-8 rounded-full ring-2 ring-white {className}"
-    {src}
-    {alt} />
+  <img class={imageClass} {src} {alt} />
 {:else}
-  <Icon class="h-12 w-12 {className}" iconName="user" />
+  <Icon class={iconClass} iconName="user" />
 {/if}

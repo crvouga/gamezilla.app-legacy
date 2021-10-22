@@ -14,6 +14,7 @@
     toAvatarUrl,
   } from "$lib/data-access/profile.interface.ts";
   import { auth } from "$lib/stores";
+  import { generateUniqueId } from "$lib/utility";
 
   let avatarSeed: string = "";
   let avatarStyle: string | null = null;
@@ -38,6 +39,10 @@
     //   avatarStyle: toAvatarStyle(avatarStyle),
     // })
   };
+
+  const handleGenerate = () => {
+    avatarSeed = generateUniqueId();
+  };
 </script>
 
 <PageHeader>
@@ -47,13 +52,12 @@
   <PageHeaderTitle>Edit Profile</PageHeaderTitle>
 </PageHeader>
 
-<div class="flex flex-col items-center">
+<div class="flex flex-col items-center pt-4">
   <Avatar class="w-36 h-36" src={avatarUrl} />
 </div>
 
 <div class="p-4">
   <TextField
-    class="mb-4"
     label="Avatar Seed"
     bind:inputValue={avatarSeed}
     on:clear={() => {

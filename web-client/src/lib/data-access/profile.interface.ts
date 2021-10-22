@@ -1,13 +1,19 @@
-export type IAvatarStyle =
-  | "adventurer"
-  | "adventurer-neutral"
-  | "avataaars"
-  | "big-ears"
-  | "big-ears-neutral"
-  | "big-smile";
+export enum AvatarStyles {
+  "adventurer" = "adventurer",
+  "adventurer-neutral" = "adventurer-neutral",
+  "avataaars" = "avataaars",
+  "big-ears" = "big-ears",
+  "big-ears-neutral" = "big-ears-neutral",
+  "big-smile" = "big-smile",
+  "croodles-neutral" = "croodles-neutral",
+}
 
 export const toAvatarStyle = (avatarStyle: string) => {
-  return avatarStyle as IAvatarStyle;
+  if (avatarStyle in AvatarStyles) {
+    return avatarStyle as AvatarStyles;
+  }
+
+  return AvatarStyles["adventurer"];
 };
 
 export type IAvatarSeed = string & { type: "AvatarSeed" };
@@ -21,7 +27,7 @@ export const toAvatarUrl = ({
   avatarStyle,
 }: {
   avatarSeed: IAvatarSeed;
-  avatarStyle: IAvatarStyle;
+  avatarStyle: AvatarStyles;
 }) => {
   return `https://avatars.dicebear.com/api/${avatarStyle}/${avatarSeed}.svg`;
 };

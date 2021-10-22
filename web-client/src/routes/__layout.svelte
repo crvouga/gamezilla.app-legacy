@@ -1,7 +1,10 @@
 <script lang="ts">
   import Toaster from "$lib/components/Toaster.svelte";
-  import { toast } from "$lib/stores";
+  import AuthPage from "./auth/index.svelte";
+  import { auth, toast } from "$lib/stores";
   import "../app.css";
+
+  $: authState = $auth;
 </script>
 
 <svelte:head>
@@ -10,7 +13,11 @@
   <meta name="description" content="Play online games with your friend" />
 </svelte:head>
 
-<slot />
+{#if authState.status === 'authenticated'}
+  <slot />
+{:else}
+  <AuthPage />
+{/if}
 
 <Toaster
   on:removed={(event) => {
