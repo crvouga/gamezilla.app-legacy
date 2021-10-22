@@ -6,6 +6,10 @@ export type IAvatarStyle =
   | "big-ears-neutral"
   | "big-smile";
 
+export const toAvatarStyle = (avatarStyle: string) => {
+  return avatarStyle as IAvatarStyle;
+};
+
 export type IAvatarSeed = string & { type: "AvatarSeed" };
 
 export const toAvatarSeed = (seed: string) => {

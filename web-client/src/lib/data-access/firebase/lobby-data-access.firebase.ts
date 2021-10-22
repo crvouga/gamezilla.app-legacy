@@ -14,7 +14,7 @@ import {
   ILobbyEvent,
   ILobbyState,
   lobbyStateReducer,
-} from "../lobby-data-access.interface";
+} from "../lobby.interface";
 import type { IFirestore } from "./firebase-app";
 
 export const LobbyDataAccessFirebase = ({

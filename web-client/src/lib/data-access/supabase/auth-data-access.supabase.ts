@@ -1,9 +1,10 @@
 import { environment } from "$lib/environment";
+import type { definitions } from "$lib/generated-types/supabase";
 import { dropLastWhile } from "$lib/utility";
-import type { SupabaseAuthClient } from "@supabase/supabase-js/dist/main/lib/SupabaseAuthClient";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import type { IAuthDataAccess } from "../auth-data-access.interface";
 import { toUserId } from "../auth-data-access.interface";
-import { toAvatarSeed } from "../avatars";
+import { toAvatarSeed, toAvatarStyle } from "../profile.interface";
 
 const removeTrailingBackslash = (url: string) => {
   return dropLastWhile((character) => character === "/", url.split("")).join(
@@ -12,13 +13,13 @@ const removeTrailingBackslash = (url: string) => {
 };
 
 export const AuthDataAccessSupabase = ({
-  supabaseAuthClient,
+  supabaseClient,
 }: {
-  supabaseAuthClient: SupabaseAuthClient;
+  supabaseClient: SupabaseClient;
 }): IAuthDataAccess => {
   return {
     async unauthenticate() {
-      const { error } = await supabaseAuthClient.signOut();
+      const { error } = await supabaseClient.auth.signOut();
 
       return [error];
     },
@@ -30,7 +31,7 @@ export const AuthDataAccessSupabase = ({
             ? undefined
             : removeTrailingBackslash(window.location.toString());
 
-          const { error } = await supabaseAuthClient.signIn(
+          const { error } = await supabaseClient.auth.signIn(
             {
               provider: authMethod.provider,
             },
@@ -43,7 +44,7 @@ export const AuthDataAccessSupabase = ({
         }
 
         case "phone": {
-          const { error } = await supabaseAuthClient.signIn({
+          const { error } = await supabaseClient.auth.signIn({
             phone: authMethod.phoneNumber,
           });
 
@@ -51,7 +52,7 @@ export const AuthDataAccessSupabase = ({
         }
 
         case "email": {
-          const { error } = await supabaseAuthClient.signIn({
+          const { error } = await supabaseClient.auth.signIn({
             email: authMethod.emailAddress,
           });
 
@@ -64,20 +65,38 @@ export const AuthDataAccessSupabase = ({
     },
 
     onAuthStateChanged(set) {
-      const session = supabaseAuthClient.session();
+      const session = supabaseClient.auth.session();
 
       if (session) {
-        set({
-          status: "authenticated",
-          authUser: {
-            avatarSeed: toAvatarSeed(session.user.id),
-            avatarStyle: "avataaars",
-            userId: toUserId(session.user.id),
-          },
-        });
+        supabaseClient
+          .from<definitions["profiles"]>("profiles")
+          .select("*")
+          .eq("user_id", session.user.id)
+          .then((response) => {
+            if (response.data.length === 0) {
+              return supabaseClient
+                .from<definitions["profiles"]>("profiles")
+                .insert({
+                  user_id: session.user.id,
+                  avatar_seed: session.user.id,
+                  avatar_style: "avataaars",
+                });
+            }
+            return response;
+          })
+          .then((response) => {
+            set({
+              status: "authenticated",
+              authUser: {
+                avatarSeed: toAvatarSeed(response.data[0].avatar_seed),
+                avatarStyle: toAvatarStyle(response.data[0].avatar_style),
+                userId: toUserId(session.user.id),
+              },
+            });
+          });
       }
 
-      const { data } = supabaseAuthClient.onAuthStateChange(
+      const { data } = supabaseClient.auth.onAuthStateChange(
         (eventType, session) => {
           console.log({
             eventType,

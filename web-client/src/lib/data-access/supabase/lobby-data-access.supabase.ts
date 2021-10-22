@@ -1,4 +1,4 @@
-import type { ILobbyDataAccess } from "../lobby-data-access.interface";
+import type { ILobbyDataAccess } from "../lobby.interface";
 
 export const LobbyDataAccessSupabase = (): ILobbyDataAccess => {
   return {

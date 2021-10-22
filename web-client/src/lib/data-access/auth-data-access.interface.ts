@@ -1,4 +1,4 @@
-import type { IAvatarSeed, IAvatarStyle } from "./avatars";
+import type { IAvatarSeed, IAvatarStyle } from "./profile.interface";
 
 export const authUserKey = "auth-user";
 

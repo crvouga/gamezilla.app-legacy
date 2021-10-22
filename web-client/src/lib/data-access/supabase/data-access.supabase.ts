@@ -1,14 +1,18 @@
+import { createClient } from "@supabase/supabase-js";
 import type { IDataAccess } from "../data-access.interface";
 import { AuthDataAccessSupabase } from "./auth-data-access.supabase";
 import { LobbyDataAccessSupabase } from "./lobby-data-access.supabase";
-import { SupabaseClient } from "./supabase-client";
+import { environment } from "$lib/environment";
 
 export const DataAccessSupabase = (): IDataAccess => {
-  const supabaseClient = SupabaseClient();
+  const supabaseClient = createClient(
+    environment.supabaseUrl,
+    environment.supbaseKey
+  );
 
   return {
     auth: AuthDataAccessSupabase({
-      supabaseAuthClient: supabaseClient.auth,
+      supabaseClient,
     }),
 
     lobby: LobbyDataAccessSupabase(),
