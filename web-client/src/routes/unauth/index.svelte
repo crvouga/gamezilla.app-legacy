@@ -5,10 +5,11 @@
   import Link from "$lib/components/Link.svelte";
   import PageHeader from "$lib/components/PageHeader.svelte";
   import PageHeaderTitle from "$lib/components/PageHeaderTitle.svelte";
-  import { dataAccess } from "$lib/data-access";
+  import { signOut } from "$lib/features";
 
   const handleUnauth = async () => {
-    await dataAccess.auth.unauthenticate();
+    await signOut();
+
     goto("/");
   };
 </script>

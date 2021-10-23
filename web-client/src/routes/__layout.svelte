@@ -1,11 +1,20 @@
 <script lang="ts">
   import Toaster from "$lib/components/Toaster.svelte";
+  import { authStateStore, removeToast, toastStore } from "$lib/features";
   import AuthPage from "./auth/index.svelte";
-  import { auth, toast } from "$lib/stores";
-  import "../app.css";
-
-  $: authState = $auth;
 </script>
+
+<style global>
+  @tailwind base;
+  @tailwind components;
+  @tailwind utilities;
+
+  html,
+  body,
+  #svelte {
+    overflow: hidden;
+  }
+</style>
 
 <svelte:head>
   <title>Gamezilla</title>
@@ -13,7 +22,7 @@
   <meta name="description" content="Play online games with your friend" />
 </svelte:head>
 
-{#if authState.status === 'authenticated'}
+{#if $authStateStore.status === 'authenticated'}
   <slot />
 {:else}
   <AuthPage />
@@ -22,6 +31,6 @@
 <Toaster
   on:removed={(event) => {
     const toastId = event.detail.id;
-    toast.remove([toastId]);
+    removeToast([toastId]);
   }}
-  toasts={$toast} />
+  toasts={$toastStore} />

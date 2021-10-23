@@ -5,19 +5,17 @@
   import PageHeader from "$lib/components/PageHeader.svelte";
   import PageHeaderTitle from "$lib/components/PageHeaderTitle.svelte";
   import TextField from "$lib/components/TextField.svelte";
-  import { dataAccess } from "$lib/data-access";
-  import { toast } from "$lib/stores";
-  import { errorToToast } from "$lib/stores/toast";
+  import { addToast, errorToToast, signIn } from "$lib/features";
 
   let emailAddress = "";
 
   const handleSubmit = async () => {
-    const errors = await dataAccess.auth.authenticate({
+    const errors = await signIn({
       type: "email",
       emailAddress,
     });
 
-    toast.enqueue(errors.map(errorToToast));
+    addToast(errors.map(errorToToast));
   };
 </script>
 

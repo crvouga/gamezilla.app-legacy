@@ -4,17 +4,15 @@
   import Item from "$lib/components/Item.svelte";
   import PageHeader from "$lib/components/PageHeader.svelte";
   import PageHeaderTitle from "$lib/components/PageHeaderTitle.svelte";
-  import { dataAccess } from "$lib/data-access";
-  import { toast } from "$lib/stores";
-  import { errorToToast } from "$lib/stores/toast";
+  import { addToast, errorToToast, signIn } from "$lib/features";
 
   const handleSocialAuth = (provider: "google") => async () => {
-    const errors = await dataAccess.auth.authenticate({
+    const errors = await signIn({
       type: "social",
       provider,
     });
 
-    toast.enqueue(errors.map(errorToToast));
+    addToast(errors.map(errorToToast));
   };
 </script>
 
@@ -29,21 +27,3 @@
     Continue With Google
   </Item>
 </Clickable>
-
-<!-- <Link to="/auth/phone">
-  <Item>
-    <Icon iconName="phone" slot="start" />
-    <Icon iconName="chevron-right" slot="end" />
-    Continue With Phone
-  </Item>
-</Link>
- -->
-
-<!-- 
-<Link to="/auth/email">
-  <Item>
-    <Icon iconName="envelope" slot="start" />
-    <Icon iconName="chevron-right" slot="end" />
-    Continue With Email
-  </Item>
-</Link> -->

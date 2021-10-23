@@ -1,5 +1,3 @@
-import type { IUserId } from "./user";
-
 export enum AvatarStyles {
   "adventurer" = "adventurer",
   "adventurer-neutral" = "adventurer-neutral",
@@ -32,26 +30,4 @@ export const toAvatarUrl = ({
   avatarStyle: AvatarStyles;
 }) => {
   return `https://avatars.dicebear.com/api/${avatarStyle}/${avatarSeed}.svg`;
-};
-
-export type IProfile = {
-  userId: IUserId;
-  avatarSeed: IAvatarSeed;
-  avatarStyle: AvatarStyles;
-};
-
-export type IProfileDataAccess = {
-  onProfile({
-    userId,
-  }: {
-    userId: IUserId;
-  }, set: (profile: IProfile | null) => void): () => void;
-
-  update(
-    updates: {
-      userId: string;
-      avatarSeed: IAvatarSeed;
-      avatarStyle: AvatarStyles;
-    },
-  ): Promise<{ errors: Error[] }>;
 };

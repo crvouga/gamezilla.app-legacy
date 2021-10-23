@@ -6,25 +6,11 @@
   import PageHeader from "$lib/components/PageHeader.svelte";
   import PageHeaderTitle from "$lib/components/PageHeaderTitle.svelte";
   import TextField from "$lib/components/TextField.svelte";
-  import {
-    dataAccess,
-    toAvatarSeed,
-    toAvatarStyle,
-    toAvatarUrl,
-  } from "$lib/data-access";
-  import { profile, toast } from "$lib/stores";
+  import { toAvatarSeed, toAvatarStyle, toAvatarUrl } from "$lib/core";
+  
 
   let avatarSeed: string = "";
   let avatarStyle: string | null = null;
-
-  $: profileState = $profile;
-
-  profile.subscribe((profile) => {
-    if (profile) {
-      avatarSeed = profile.avatarSeed;
-      avatarStyle = profile.avatarStyle;
-    }
-  });
 
   $: avatarUrl = avatarStyle
     ? toAvatarUrl({
@@ -34,19 +20,7 @@
     : undefined;
 
   const handleSubmit = async () => {
-    const { errors } = await dataAccess.profiile.update({
-      userId: profileState.userId,
-      avatarSeed: toAvatarSeed(avatarSeed),
-      avatarStyle: toAvatarStyle(avatarStyle),
-    });
-
-    toast.enqueue([
-      {
-        id: "updated-avatar",
-        type: "success",
-        message: "Updated avatar",
-      },
-    ]);
+    
   };
 </script>
 
