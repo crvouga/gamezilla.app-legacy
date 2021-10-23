@@ -19,7 +19,7 @@ export const toAvatarStyle = (avatarStyle: string) => {
 export type IAvatarSeed = string & { type: "AvatarSeed" };
 
 export const toAvatarSeed = (seed: string) => {
-  return seed.replace(" ", "") as IAvatarSeed;
+  return seed.replace(" ", "").replace(";", "") as IAvatarSeed;
 };
 
 export const toAvatarUrl = ({

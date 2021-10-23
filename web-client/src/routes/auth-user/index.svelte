@@ -1,10 +1,10 @@
 <script lang="ts">
-  import Avatar from "$lib/components/Avatar.svelte";
   import Icon from "$lib/components/Icon.svelte";
   import Item from "$lib/components/Item.svelte";
   import Link from "$lib/components/Link.svelte";
   import PageHeader from "$lib/components/PageHeader.svelte";
   import PageHeaderTitle from "$lib/components/PageHeaderTitle.svelte";
+  import AuthUserAvatar from "$lib/shared/AuthUserAvatar.svelte";
 </script>
 
 <PageHeader>
@@ -12,7 +12,7 @@
     <Icon iconName="chevron-left" />
   </Link>
   <PageHeaderTitle>
-    <Avatar />
+    <AuthUserAvatar />
   </PageHeaderTitle>
 </PageHeader>
 

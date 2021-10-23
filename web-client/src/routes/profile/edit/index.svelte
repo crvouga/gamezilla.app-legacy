@@ -6,11 +6,58 @@
   import PageHeader from "$lib/components/PageHeader.svelte";
   import PageHeaderTitle from "$lib/components/PageHeaderTitle.svelte";
   import TextField from "$lib/components/TextField.svelte";
-  import { toAvatarSeed, toAvatarStyle, toAvatarUrl } from "$lib/core";
-  
+  import {
+    toAvatarStyle,
+    toAvatarSeed,
+    toAvatarUrl,
+    toUserId,
+    IUserId,
+    AvatarStyles,
+    IAvatarSeed,
+  } from "$lib/core";
+  import {
+    addToast,
+    authStateStore,
+    authUserProfileStore,
+    changeAvatar,
+  } from "$lib/features";
+  import { generateUniqueId } from "$lib/utility";
 
-  let avatarSeed: string = "";
-  let avatarStyle: string | null = null;
+  let userId: IUserId;
+
+  authStateStore.subscribe((authState) => {
+    if (authState.status === "authenticated") {
+      userId = authState.authUser.userId;
+    }
+  });
+
+  let avatarSeed: IAvatarSeed | null = null;
+  let avatarStyle: AvatarStyles | null = null;
+
+  authUserProfileStore.subscribe((profile) => {
+    if (profile) {
+      avatarSeed = profile.avatarSeed;
+      avatarStyle = profile.avatarStyle;
+    }
+  });
+
+  const handleSubmit = async () => {
+    if (userId) {
+      await changeAvatar({
+        userId: toUserId(userId),
+        avatarStyle: toAvatarStyle(avatarStyle),
+        avatarSeed: toAvatarSeed(avatarSeed),
+      });
+
+      addToast([
+        {
+          id: generateUniqueId(),
+          type: "success",
+          message: "Changed avatar",
+        },
+      ]);
+    }
+  };
 
   $: avatarUrl = avatarStyle
     ? toAvatarUrl({
@@ -18,10 +65,6 @@
         avatarSeed: toAvatarSeed(avatarSeed),
       })
     : undefined;
-
-  const handleSubmit = async () => {
-    
-  };
 </script>
 
 <PageHeader>
