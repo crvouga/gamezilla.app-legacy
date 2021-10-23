@@ -6,6 +6,16 @@ export enum AvatarStyles {
   "big-ears-neutral" = "big-ears-neutral",
   "big-smile" = "big-smile",
   "croodles-neutral" = "croodles-neutral",
+  "gridy" = "gridy",
+  "identicon" = "identicon",
+  "initials" = "initials",
+  "jdenticon" = "jdenticon",
+  "micah" = "micah",
+  "miniavs" = "miniavs",
+  "open-peeps" = "open-peeps",
+  "personas" = "personas",
+  "pixel-art" = "pixel-art",
+  "pixel-art-neutral" = "pixel-art-neutral",
 }
 
 export const toAvatarStyle = (avatarStyle: string) => {

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Select from "$lib/components/Select.svelte";
   import Avatar from "$lib/components/Avatar.svelte";
   import Button from "$lib/components/Button.svelte";
   import Icon from "$lib/components/Icon.svelte";
@@ -22,6 +23,7 @@
     changeAvatar,
   } from "$lib/features";
   import { generateUniqueId } from "$lib/utility";
+  import SelectOption from "$lib/components/SelectOption.svelte";
 
   let userId: IUserId;
 
@@ -79,12 +81,19 @@
 </div>
 
 <div class="p-4">
-  <TextField
-    label="Avatar Seed"
-    bind:inputValue={avatarSeed}
-    on:clear={() => {
-      avatarSeed = '';
-    }} />
+  <Select label="Avatar Style" class="mb-4" bind:value={avatarStyle}>
+    {#each Object.keys(AvatarStyles) as avatarStyle}
+      <SelectOption value={avatarStyle}>{avatarStyle}</SelectOption>
+    {/each}
+  </Select>
+  <TextField class="mb-2" label="Avatar Seed" bind:inputValue={avatarSeed} />
 
+  <Button
+    on:click={() => {
+      avatarSeed = toAvatarSeed(generateUniqueId());
+    }}
+    class="mb-4">
+    Generate Random Seed
+  </Button>
   <Button on:click={handleSubmit}>Update</Button>
 </div>
