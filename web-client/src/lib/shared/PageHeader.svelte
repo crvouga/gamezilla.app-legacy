@@ -1,4 +1,5 @@
-<nav class="flex justify-between items-center px-4 py-2 border-b border-gray">
+<nav
+	class="flex justify-between items-center px-4 py-2 border-b border-gray h-12">
 	{#if $$slots.prefix}
 		<div class="flex items-center justify-start mr-4">
 			<slot name="prefix" />
