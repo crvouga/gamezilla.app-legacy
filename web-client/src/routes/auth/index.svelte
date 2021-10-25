@@ -2,8 +2,8 @@
   import Clickable from "$lib/components/Clickable.svelte";
   import Icon from "$lib/components/Icon.svelte";
   import Item from "$lib/components/Item.svelte";
-  import PageHeader from "$lib/components/PageHeader.svelte";
-  import PageHeaderTitle from "$lib/components/PageHeaderTitle.svelte";
+  import PageHeader from "$lib/shared/PageHeader.svelte";
+  import PageHeaderTitle from "$lib/shared/PageHeaderTitle.svelte";
   import { addToast, errorToToast, signIn } from "$lib/features";
 
   const handleSocialAuth = (provider: "google") => async () => {

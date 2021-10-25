@@ -4,14 +4,14 @@ import { supabaseClient } from "$lib/supabase";
 
 export type IAuthState =
   | {
-      status: "authenticated";
-      authUser: {
-        userId: IUserId;
-      };
-    }
-  | {
-      status: "unauthenticated";
+    status: "authenticated";
+    authUser: {
+      userId: IUserId;
     };
+  }
+  | {
+    status: "unauthenticated";
+  };
 
 export const onAuthState = (set: (authState: IAuthState) => void) => {
   const session = supabaseClient.auth.session();
@@ -48,7 +48,7 @@ export const onAuthState = (set: (authState: IAuthState) => void) => {
           });
           return;
       }
-    }
+    },
   );
 
   return () => {

@@ -3,8 +3,8 @@
   import Button from "$lib/components/Button.svelte";
   import Icon from "$lib/components/Icon.svelte";
   import Link from "$lib/components/Link.svelte";
-  import PageHeader from "$lib/components/PageHeader.svelte";
-  import PageHeaderTitle from "$lib/components/PageHeaderTitle.svelte";
+  import PageHeader from "$lib/shared/PageHeader.svelte";
+  import PageHeaderTitle from "$lib/shared/PageHeaderTitle.svelte";
   import { signOut } from "$lib/features";
 
   const handleUnauth = async () => {

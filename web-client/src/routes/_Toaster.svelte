@@ -1,14 +1,9 @@
 <script lang="ts">
+  import type { IToast } from "$lib/features";
   import { createEventDispatcher } from "svelte";
-  import Alert from "./Alert.svelte";
-  import Clickable from "./Clickable.svelte";
-  import Icon from "./Icon.svelte";
-
-  type IToast = {
-    id: string;
-    type: "error" | "success";
-    message: string;
-  };
+  import Alert from "$lib/components/Alert.svelte";
+  import Clickable from "$lib/components/Clickable.svelte";
+  import Icon from "$lib/components/Icon.svelte";
 
   export let toasts: IToast[];
 

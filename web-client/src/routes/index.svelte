@@ -1,7 +1,7 @@
 <script lang="ts">
   import Link from "$lib/components/Link.svelte";
-  import PageHeader from "$lib/components/PageHeader.svelte";
-  import PageHeaderTitle from "$lib/components/PageHeaderTitle.svelte";
+  import PageHeader from "$lib/shared/PageHeader.svelte";
+  import PageHeaderTitle from "$lib/shared/PageHeaderTitle.svelte";
   import AuthUserAvatar from "$lib/shared/AuthUserAvatar.svelte";
 </script>
 

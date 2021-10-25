@@ -4,7 +4,7 @@
 </script>
 
 <div
-  class="p-4 flex justify-center items-center text-base text-gray-800 border-gray-200 border-b-2 {className}">
+  class="p-4 flex justify-center items-center border-gray-200 border-b {className}">
   <div class="mr-4">
     <slot name="start" />
   </div>
@@ -13,7 +13,7 @@
     <slot />
   </div>
 
-  <div>
+  <div class="">
     <slot name="end" />
   </div>
 </div>
