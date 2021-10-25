@@ -19,6 +19,7 @@ export interface paths {
           user_id?: parameters["rowFilter.profiles.user_id"];
           avatar_seed?: parameters["rowFilter.profiles.avatar_seed"];
           avatar_style?: parameters["rowFilter.profiles.avatar_style"];
+          search_name?: parameters["rowFilter.profiles.search_name"];
           /** Filtering Columns */
           select?: parameters["select"];
           /** Ordering */
@@ -72,6 +73,7 @@ export interface paths {
           user_id?: parameters["rowFilter.profiles.user_id"];
           avatar_seed?: parameters["rowFilter.profiles.avatar_seed"];
           avatar_style?: parameters["rowFilter.profiles.avatar_style"];
+          search_name?: parameters["rowFilter.profiles.search_name"];
         };
         header: {
           /** Preference */
@@ -89,6 +91,7 @@ export interface paths {
           user_id?: parameters["rowFilter.profiles.user_id"];
           avatar_seed?: parameters["rowFilter.profiles.avatar_seed"];
           avatar_style?: parameters["rowFilter.profiles.avatar_style"];
+          search_name?: parameters["rowFilter.profiles.search_name"];
         };
         body: {
           /** profiles */
@@ -133,6 +136,7 @@ export interface definitions {
     user_id: string;
     avatar_seed: string;
     avatar_style: string;
+    search_name?: string;
   };
 }
 
@@ -162,6 +166,7 @@ export interface parameters {
   "rowFilter.profiles.user_id": string;
   "rowFilter.profiles.avatar_seed": string;
   "rowFilter.profiles.avatar_style": string;
+  "rowFilter.profiles.search_name": string;
 }
 
 export interface operations {}

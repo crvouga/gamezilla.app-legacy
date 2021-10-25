@@ -11,7 +11,7 @@
     "supabase:init": "npx supabase init",
     "supabase:start": "npx supabase start",
     "supabase:stop": "npx supabase stop",
-    "supabase:generate-types": "npx openapi-typescript https://jyyndvyjtsgxiwomlhjj.supabase.co/rest/v1/?apikey=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTYzNDIzMjA5OSwiZXhwIjoxOTQ5ODA4MDk5fQ.1A8_Uu4MF_UsYZ0hoAG18D0376m_KhQA1SacPOklF58 --output src/lib/supabase/generated-types/index.ts"
+    "supabase:generate-types": "npx openapi-typescript https://jyyndvyjtsgxiwomlhjj.supabase.co/rest/v1/?apikey=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTYzNDIzMjA5OSwiZXhwIjoxOTQ5ODA4MDk5fQ.1A8_Uu4MF_UsYZ0hoAG18D0376m_KhQA1SacPOklF58 --output src/lib/features/_supabase/generated-types/index.ts"
   },
   "devDependencies": {
     "@fortawesome/free-solid-svg-icons": "^5.15.4",
@@ -35,3 +35,4 @@
     "uuid": "^8.3.2"
   }
 }
+t

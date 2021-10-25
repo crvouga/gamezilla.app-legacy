@@ -2,6 +2,7 @@
   import Clickable from "$lib/components/Clickable.svelte";
   import Icon from "$lib/components/Icon.svelte";
   import Link from "$lib/components/Link.svelte";
+  import { search } from "$lib/features/search";
   import PageHeader from "$lib/shared/PageHeader.svelte";
 
   let searchInputValue = "";
@@ -25,7 +26,16 @@
 
   $: {
     setSearchText(searchInputValue);
-    console.log({ searchText, searchInputValue });
+  }
+
+  const runSearch = async ({ searchText }: { searchText: string }) => {
+    const { results, errors } = await search({ searchText });
+
+    console.log({ results, errors });
+  };
+
+  $: {
+    runSearch({ searchText });
   }
 </script>
 
