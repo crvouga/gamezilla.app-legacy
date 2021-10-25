@@ -18,7 +18,7 @@
   import {
     authStateStore,
     authUserProfileStore,
-    changeAvatar,
+    updateProfile,
   } from "$lib/features";
   import { enqueueToast } from "$lib/shared";
   import PageHeader from "$lib/shared/PageHeader.svelte";
@@ -45,7 +45,7 @@
 
   const handleSubmit = async () => {
     if (userId) {
-      await changeAvatar({
+      await updateProfile({
         userId: toUserId(userId),
         avatarStyle: toAvatarStyle(avatarStyle),
         avatarSeed: toAvatarSeed(avatarSeed),
