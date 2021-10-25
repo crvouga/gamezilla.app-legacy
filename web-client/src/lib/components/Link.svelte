@@ -11,7 +11,7 @@
     goto(to);
   };
 
-  $: baseClass = `flex items-center justify-center ${className}`;
+  $: baseClass = `${className}`;
 </script>
 
 <Clickable on:click={handleClick} class={baseClass}>

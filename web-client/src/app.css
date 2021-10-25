@@ -7,3 +7,7 @@ body,
 #svelte {
   overflow: hidden;
 }
+
+.border-gray {
+  @apply border-gray-300;
+}
