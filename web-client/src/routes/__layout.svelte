@@ -1,7 +1,6 @@
 <script lang="ts">
   import Toaster from "$lib/components/toaster/Toaster.svelte";
-  import { authStateStore } from "$lib/features";
-  import { dequeueToast, toasterStore } from "$lib/shared";
+  import { authStateStore, dequeueToast, toasterStore } from "$lib/shared";
   import "../app.css";
   import AuthPage from "./auth/index.svelte";
 </script>

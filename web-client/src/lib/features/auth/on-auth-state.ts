@@ -1,17 +1,17 @@
-import type { IUserId } from "$lib/core";
-import { toUserId } from "$lib/core";
-import { supabaseClient } from "$lib/supabase";
+import type { IUserId } from "$lib/features";
+import { toUserId } from "$lib/features";
+import { supabaseClient } from "../_supabase";
 
 export type IAuthState =
   | {
-    status: "authenticated";
-    authUser: {
-      userId: IUserId;
-    };
-  }
+      status: "authenticated";
+      authUser: {
+        userId: IUserId;
+      };
+    }
   | {
-    status: "unauthenticated";
-  };
+      status: "unauthenticated";
+    };
 
 export const onAuthState = (set: (authState: IAuthState) => void) => {
   const session = supabaseClient.auth.session();
@@ -48,7 +48,7 @@ export const onAuthState = (set: (authState: IAuthState) => void) => {
           });
           return;
       }
-    },
+    }
   );
 
   return () => {

@@ -1,5 +1,5 @@
-import { supabaseClient } from "$lib/supabase";
 import { dropLastWhile } from "$lib/utility";
+import { supabaseClient } from "../_supabase";
 
 export type ISignInMethod =
   | {
