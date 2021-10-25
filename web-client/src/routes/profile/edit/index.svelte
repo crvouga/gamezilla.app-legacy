@@ -14,13 +14,13 @@
     toAvatarStyle,
     toAvatarUrl,
     toUserId,
-  } from "$lib/core";
+    updateProfile,
+  } from "$lib/features";
   import {
     authStateStore,
     authUserProfileStore,
-    updateProfile,
-  } from "$lib/features";
-  import { enqueueToast } from "$lib/shared";
+    enqueueToast,
+  } from "$lib/shared";
   import PageHeader from "$lib/shared/PageHeader.svelte";
   import PageHeaderTitle from "$lib/shared/PageHeaderTitle.svelte";
   import { generateUniqueId } from "$lib/utility";

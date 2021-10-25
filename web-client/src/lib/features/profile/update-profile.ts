@@ -1,5 +1,5 @@
-import type { definitions } from "$lib/supabase";
-import { supabaseClient } from "$lib/supabase";
+import type { definitions } from "../_supabase";
+import { supabaseClient } from "../_supabase";
 
 export const updateProfile = async ({ userId, avatarSeed, avatarStyle }) => {
   const { error } = await supabaseClient

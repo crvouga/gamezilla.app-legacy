@@ -1,2 +1,3 @@
 export * from "./update-profile";
-export * from "./auth-user-profile-store";
+export * from "./on-profile";
+export * from "./avatar";

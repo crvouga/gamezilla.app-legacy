@@ -1,7 +1,7 @@
 <script>
   import Avatar from "$lib/components/Avatar.svelte";
-  import { toAvatarUrl } from "$lib/core";
-  import { authUserProfileStore } from "$lib/features";
+  import { toAvatarUrl } from "$lib/features";
+  import { authUserProfileStore } from "$lib/shared";
 
   $: profile = $authUserProfileStore;
 </script>

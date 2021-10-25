@@ -1,7 +1,7 @@
-import type { AvatarStyles, IAvatarSeed, IUserId } from "$lib/core";
-import { toAvatarSeed, toAvatarStyle, toUserId } from "$lib/core";
-import type { definitions } from "$lib/supabase";
-import { supabaseClient } from "$lib/supabase";
+import type { AvatarStyles, IAvatarSeed, IUserId } from "$lib/features";
+import { toAvatarSeed, toAvatarStyle, toUserId } from "$lib/features";
+import type { definitions } from "../_supabase";
+import { supabaseClient } from "../_supabase";
 
 export type IProfile = {
   avatarSeed: IAvatarSeed;
@@ -38,7 +38,7 @@ const getProfile = async ({
 
 export const onProfile = (
   { userId }: { userId: IUserId },
-  set: (profile: IProfile) => void,
+  set: (profile: IProfile) => void
 ) => {
   getProfile({ userId }).then((profile) => {
     if (profile) {
