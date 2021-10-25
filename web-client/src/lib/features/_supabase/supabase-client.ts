@@ -1,7 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
-import { environment } from "./supabase-config";
+import { config } from "./supabase-config";
 
 export const supabaseClient = createClient(
-  environment.supabaseUrl,
-  environment.supbaseKey
+  config.supabaseUrl,
+  config.supbaseKey
 );
