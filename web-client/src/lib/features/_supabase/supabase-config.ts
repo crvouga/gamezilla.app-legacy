@@ -1,4 +1,4 @@
-export const environment = {
+export const config = {
   isProduction: import.meta.env.PROD,
   developmentUrl: "http://localhost:3000",
   supabaseUrl: "https://jyyndvyjtsgxiwomlhjj.supabase.co",
