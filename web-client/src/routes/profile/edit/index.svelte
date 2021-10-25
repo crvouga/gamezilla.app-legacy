@@ -10,12 +10,14 @@
     AvatarStyles,
     IAvatarSeed,
     IUserId,
+    setProfile,
     toAvatarSeed,
     toAvatarStyle,
     toAvatarUrl,
     toUserId,
-    updateProfile,
   } from "$lib/features";
+  import type { ISearchName } from "$lib/features/profile/search-name";
+  import { toSearchName } from "$lib/features/profile/search-name";
   import {
     authStateStore,
     authUserProfileStore,
@@ -35,20 +37,23 @@
 
   let avatarSeed: IAvatarSeed | null = null;
   let avatarStyle: AvatarStyles | null = null;
+  let searchName: ISearchName | null = null;
 
   authUserProfileStore.subscribe((profile) => {
     if (profile) {
       avatarSeed = profile.avatarSeed;
       avatarStyle = profile.avatarStyle;
+      searchName = profile.searchName;
     }
   });
 
   const handleSubmit = async () => {
     if (userId) {
-      await updateProfile({
+      await setProfile({
         userId: toUserId(userId),
         avatarStyle: toAvatarStyle(avatarStyle),
         avatarSeed: toAvatarSeed(avatarSeed),
+        searchName: toSearchName(searchName),
       });
 
       enqueueToast([
@@ -75,6 +80,9 @@
   <PageHeaderTitle>Edit Profile</PageHeaderTitle>
 </PageHeader>
 
+<div class="p-4">
+  <TextField label="Search Name" bind:inputValue={searchName} />
+</div>
 <div class="flex flex-col items-center pt-4">
   <Avatar class="w-36 h-36" src={avatarUrl} />
 </div>

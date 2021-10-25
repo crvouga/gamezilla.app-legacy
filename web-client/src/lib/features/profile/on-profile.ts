@@ -2,10 +2,13 @@ import type { AvatarStyles, IAvatarSeed, IUserId } from "$lib/features";
 import { toAvatarSeed, toAvatarStyle, toUserId } from "$lib/features";
 import type { definitions } from "../_supabase";
 import { supabaseClient } from "../_supabase";
+import type { ISearchName } from "./search-name";
+import { toSearchName } from "./search-name";
 
 export type IProfile = {
   avatarSeed: IAvatarSeed;
   avatarStyle: AvatarStyles;
+  searchName: ISearchName;
   userId: IUserId;
 };
 
@@ -14,6 +17,7 @@ const rowToProfile = (row: definitions["profiles"]): IProfile => {
     userId: toUserId(row.user_id),
     avatarStyle: toAvatarStyle(row.avatar_style),
     avatarSeed: toAvatarSeed(row.avatar_seed),
+    searchName: toSearchName(row.search_name),
   };
 };
 
