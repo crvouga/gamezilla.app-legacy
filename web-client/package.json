@@ -1,6 +1,7 @@
 {
   "name": "web-client",
   "version": "0.0.1",
+  "license": "MIT",
   "scripts": {
     "dev": "svelte-kit dev",
     "build": "svelte-kit build",
@@ -35,4 +36,3 @@
     "uuid": "^8.3.2"
   }
 }
-t
