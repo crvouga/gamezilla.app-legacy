@@ -4,13 +4,29 @@
   import Link from "$lib/components/Link.svelte";
   import PageHeader from "$lib/shared/PageHeader.svelte";
 
+  let searchInputValue = "";
   let searchText = "";
-
   let searchInputElement: HTMLInputElement;
+  let timer: NodeJS.Timeout;
+  const SEARCH_DELAY = 750;
+
   const handleClear = () => {
     searchText = "";
+    searchInputValue = "";
     searchInputElement.focus();
   };
+
+  const setSearchText = (newSearchText: string) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      searchText = newSearchText;
+    }, SEARCH_DELAY);
+  };
+
+  $: {
+    setSearchText(searchInputValue);
+    console.log({ searchText, searchInputValue });
+  }
 </script>
 
 <PageHeader>
@@ -23,7 +39,7 @@
     class="text-base flex-1 w-full focus:outline-none"
     placeholder="Search"
     bind:this={searchInputElement}
-    bind:value={searchText} />
+    bind:value={searchInputValue} />
 
   <Clickable slot="suffix" class="ml-4" on:click={handleClear}>
     <Icon iconName="close" />
