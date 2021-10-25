@@ -26,3 +26,7 @@ export const dropLastWhile = <T>(
 ): T[] => {
   return reverse(dropWhile(predicate, reverse(xs)));
 };
+
+export const concat = <T>(left: T[], right: T[]) => {
+  return [...left, ...right];
+};

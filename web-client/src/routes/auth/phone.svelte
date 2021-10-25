@@ -2,10 +2,12 @@
   import Button from "$lib/components/Button.svelte";
   import Icon from "$lib/components/Icon.svelte";
   import Link from "$lib/components/Link.svelte";
+  import TextField from "$lib/components/TextField.svelte";
+  import { errorToToast } from "$lib/components/toaster";
+  import { signIn } from "$lib/features";
+  import { enqueueToast } from "$lib/shared";
   import PageHeader from "$lib/shared/PageHeader.svelte";
   import PageHeaderTitle from "$lib/shared/PageHeaderTitle.svelte";
-  import TextField from "$lib/components/TextField.svelte";
-  import { addToast, errorToToast, signIn } from "$lib/features";
   import { cleanPhoneNumber } from "$lib/utility";
 
   let phoneNumber = "";
@@ -16,7 +18,7 @@
       phoneNumber: cleanPhoneNumber(phoneNumber),
     });
 
-    addToast(errors.map(errorToToast));
+    enqueueToast(errors.map(errorToToast));
   };
 </script>
 
