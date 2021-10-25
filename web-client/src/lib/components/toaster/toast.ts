@@ -1,5 +1,3 @@
-import { writable } from "svelte/store";
-
 export type IToast = {
   id: string;
   type: "error" | "success";
@@ -13,5 +11,3 @@ export const errorToToast = (error: Error): IToast => {
     message: error.message,
   };
 };
-
-export const toastStore = writable<IToast[]>([]);

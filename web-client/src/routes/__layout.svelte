@@ -1,8 +1,9 @@
 <script lang="ts">
-  import Toaster from "./_Toaster.svelte";
-  import { authStateStore, removeToast, toastStore } from "$lib/features";
-  import AuthPage from "./auth/index.svelte";
+  import Toaster from "$lib/components/toaster/Toaster.svelte";
+  import { authStateStore } from "$lib/features";
+  import { dequeueToast, toasterStore } from "$lib/shared";
   import "../app.css";
+  import AuthPage from "./auth/index.svelte";
 </script>
 
 {#if $authStateStore.status === 'authenticated'}
@@ -14,6 +15,6 @@
 <Toaster
   on:removed={(event) => {
     const toastId = event.detail.id;
-    removeToast([toastId]);
+    dequeueToast([toastId]);
   }}
-  toasts={$toastStore} />
+  toasts={$toasterStore} />

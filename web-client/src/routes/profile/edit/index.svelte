@@ -1,29 +1,29 @@
 <script lang="ts">
-  import Select from "$lib/components/Select.svelte";
   import Avatar from "$lib/components/Avatar.svelte";
   import Button from "$lib/components/Button.svelte";
   import Icon from "$lib/components/Icon.svelte";
   import Link from "$lib/components/Link.svelte";
-  import PageHeader from "$lib/shared/PageHeader.svelte";
-  import PageHeaderTitle from "$lib/shared/PageHeaderTitle.svelte";
+  import Select from "$lib/components/Select.svelte";
+  import SelectOption from "$lib/components/SelectOption.svelte";
   import TextField from "$lib/components/TextField.svelte";
   import {
-    toAvatarStyle,
-    toAvatarSeed,
-    toAvatarUrl,
-    toUserId,
-    IUserId,
     AvatarStyles,
     IAvatarSeed,
+    IUserId,
+    toAvatarSeed,
+    toAvatarStyle,
+    toAvatarUrl,
+    toUserId,
   } from "$lib/core";
   import {
-    addToast,
     authStateStore,
     authUserProfileStore,
     changeAvatar,
   } from "$lib/features";
+  import { enqueueToast } from "$lib/shared";
+  import PageHeader from "$lib/shared/PageHeader.svelte";
+  import PageHeaderTitle from "$lib/shared/PageHeaderTitle.svelte";
   import { generateUniqueId } from "$lib/utility";
-  import SelectOption from "$lib/components/SelectOption.svelte";
 
   let userId: IUserId;
 
@@ -51,11 +51,10 @@
         avatarSeed: toAvatarSeed(avatarSeed),
       });
 
-      addToast([
+      enqueueToast([
         {
-          id: generateUniqueId(),
           type: "success",
-          message: "Changed avatar",
+          message: "Updated profile",
         },
       ]);
     }
