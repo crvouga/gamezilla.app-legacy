@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Icon from "$lib/components/Icon.svelte";
   import Link from "$lib/components/Link.svelte";
   import AuthUserAvatar from "$lib/shared/AuthUserAvatar.svelte";
   import PageHeader from "$lib/shared/PageHeader.svelte";
@@ -7,7 +8,14 @@
 
 <PageHeader>
   <PageHeaderTitle>Home</PageHeaderTitle>
-  <Link slot="suffix" to="/auth-user">
-    <AuthUserAvatar />
-  </Link>
+
+  <div slot="suffix" class="flex items-center">
+    <Link to="/search" class="mr-4">
+      <Icon iconName="search" />
+    </Link>
+
+    <Link to="/auth-user">
+      <AuthUserAvatar />
+    </Link>
+  </div>
 </PageHeader>

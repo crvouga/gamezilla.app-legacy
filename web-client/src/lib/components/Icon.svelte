@@ -15,7 +15,8 @@
 		| "sms"
 		| "user"
 		| "user-edit"
-		| "check-circle";
+		| "check-circle"
+		| "search";
 	import { faSms, faUserEdit } from "@fortawesome/free-solid-svg-icons";
 	import Icon from "svelte-awesome";
 	import {
@@ -32,6 +33,7 @@
 		signIn,
 		signOut,
 		user,
+		search,
 	} from "svelte-awesome/icons";
 
 	export const iconNameToData: {
@@ -52,6 +54,7 @@
 		user: user,
 		"user-edit": faUserEdit,
 		"check-circle": checkCircle,
+		search: search,
 	};
 </script>
 
