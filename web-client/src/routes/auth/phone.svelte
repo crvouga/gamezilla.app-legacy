@@ -32,7 +32,6 @@
 <form class="p-4">
   <TextField
     id="phone-number"
-    type="tel"
     inputMode="tel"
     placeholder="Mobile Phone Number"
     bind:inputValue={phoneNumber}

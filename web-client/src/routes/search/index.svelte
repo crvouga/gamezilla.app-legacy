@@ -77,7 +77,7 @@
     <Clickable>
       <Item>
         <Avatar slot="start" src={toAvatarUrl(result)} />
-        {result.searchName}
+        <div>{result.Name}</div>
       </Item>
     </Clickable>
   {/each}

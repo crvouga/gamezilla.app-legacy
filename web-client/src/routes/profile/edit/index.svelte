@@ -6,18 +6,22 @@
   import Select from "$lib/components/Select.svelte";
   import SelectOption from "$lib/components/SelectOption.svelte";
   import TextField from "$lib/components/TextField.svelte";
-  import {
-    AvatarStyles,
+  import type {
     IAvatarSeed,
+    IAvatarStyle,
+    IName,
     IUserId,
+  } from "$lib/features";
+  import {
+    ALL_AVATAR_STYLES,
+    formatAvatarStyle,
     setProfile,
     toAvatarSeed,
     toAvatarStyle,
     toAvatarUrl,
+    toName,
     toUserId,
   } from "$lib/features";
-  import type { ISearchName } from "$lib/features/profile/search-name";
-  import { toSearchName } from "$lib/features/profile/search-name";
   import {
     authStateStore,
     authUserProfileStore,
@@ -36,14 +40,14 @@
   });
 
   let avatarSeed: IAvatarSeed | null = null;
-  let avatarStyle: AvatarStyles | null = null;
-  let searchName: ISearchName | null = null;
+  let avatarStyle: IAvatarStyle | null = null;
+  let name: IName | null = null;
 
   authUserProfileStore.subscribe((profile) => {
     if (profile) {
       avatarSeed = profile.avatarSeed;
       avatarStyle = profile.avatarStyle;
-      searchName = profile.searchName;
+      name = profile.name;
     }
   });
 
@@ -53,7 +57,7 @@
         userId: toUserId(userId),
         avatarStyle: toAvatarStyle(avatarStyle),
         avatarSeed: toAvatarSeed(avatarSeed),
-        searchName: toSearchName(searchName),
+        name: toName(name),
       });
 
       enqueueToast([
@@ -81,7 +85,7 @@
 </PageHeader>
 
 <div class="p-4">
-  <TextField label="Search Name" bind:inputValue={searchName} />
+  <TextField label="Search Name" bind:inputValue={name} />
 </div>
 <div class="flex flex-col items-center pt-4">
   <Avatar class="w-36 h-36" src={avatarUrl} />
@@ -89,8 +93,10 @@
 
 <div class="p-4">
   <Select label="Avatar Style" class="mb-4" bind:value={avatarStyle}>
-    {#each Object.keys(AvatarStyles) as avatarStyle}
-      <SelectOption value={avatarStyle}>{avatarStyle}</SelectOption>
+    {#each ALL_AVATAR_STYLES as avatarStyle}
+      <SelectOption value={avatarStyle}>
+        {formatAvatarStyle(avatarStyle)}
+      </SelectOption>
     {/each}
   </Select>
   <TextField class="mb-2" label="Avatar Seed" bind:inputValue={avatarSeed} />

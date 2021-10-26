@@ -2,7 +2,7 @@
   import { goto } from "$app/navigation";
   import Clickable from "./Clickable.svelte";
 
-  let className: string;
+  let className = "";
   export { className as class };
 
   export let to: string | undefined = undefined;
