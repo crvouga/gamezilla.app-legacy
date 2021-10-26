@@ -4,7 +4,7 @@
 
   export let start: [number, number];
   export let end: [number, number];
-  export let delay: number;
+  export let delay = 200;
 </script>
 
 <line

@@ -31,7 +31,6 @@
 <form class="p-4">
   <TextField
     id="email"
-    type="email"
     placeholder="Email Address"
     class="mb-4"
     bind:inputValue={emailAddress} />

@@ -3,15 +3,13 @@
   import Clickable from "./Clickable.svelte";
   import Icon from "./Icon.svelte";
 
-  export let id: string;
-  export let placeholder: string | null = null;
-  export let label: string | null = null;
-  export let pattern: RegExp | null = null;
-  export let inputValue: string = "";
-  export let inputMode: string = "";
-  let inputType: string = "text";
-  let className: string | null = null;
-  export { className as class, inputType as type };
+  export let id = "";
+  export let placeholder = "";
+  export let label = "";
+  export let inputValue = "";
+  export let inputMode = "";
+  let className = "";
+  export { className as class };
 
   let inputRef: HTMLInputElement;
   const dispatch = createEventDispatcher();
@@ -35,7 +33,6 @@
       {id}
       type="text"
       {placeholder}
-      {pattern}
       {inputMode}
       bind:this={inputRef}
       bind:value={inputValue} />

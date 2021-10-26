@@ -1,10 +1,5 @@
-import type { IAvatarSeed, ISearchName } from "../profile";
-import {
-  AvatarStyles,
-  toAvatarSeed,
-  toAvatarStyle,
-  toSearchName,
-} from "../profile";
+import type { IAvatarSeed, IAvatarStyle, IName } from "../profile";
+import { toAvatarSeed, toAvatarStyle, toName } from "../profile";
 import type { IUserId } from "../users";
 import { toUserId } from "../users";
 import type { definitions } from "../_supabase";
@@ -14,8 +9,8 @@ export type ISearchResult = {
   type: "profile";
   userId: IUserId;
   avatarSeed: IAvatarSeed;
-  avatarStyle: AvatarStyles;
-  searchName: ISearchName;
+  avatarStyle: IAvatarStyle;
+  Name: IName;
 };
 
 const rowToSearchResult = (row: definitions["profiles"]): ISearchResult => {
@@ -24,7 +19,7 @@ const rowToSearchResult = (row: definitions["profiles"]): ISearchResult => {
     userId: toUserId(row.user_id),
     avatarSeed: toAvatarSeed(row.avatar_seed),
     avatarStyle: toAvatarStyle(row.avatar_style),
-    searchName: toSearchName(row.search_name),
+    Name: toName(row.name),
   };
 };
 
@@ -36,7 +31,7 @@ export const search = async ({
   const response = await supabaseClient
     .from<definitions["profiles"]>("profiles")
     .select()
-    .textSearch("search_name", `'${searchText}'`);
+    .ilike("name", `%${searchText}%`);
 
   const results = response?.data?.map(rowToSearchResult) ?? [];
 

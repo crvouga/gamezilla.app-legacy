@@ -1,14 +1,14 @@
-import type { AvatarStyles, IAvatarSeed, IUserId } from "$lib/features";
+import type { IAvatarSeed, IAvatarStyle, IUserId } from "$lib/features";
 import { toAvatarSeed, toAvatarStyle, toUserId } from "$lib/features";
 import type { definitions } from "../_supabase";
 import { supabaseClient } from "../_supabase";
-import type { ISearchName } from "./search-name";
-import { toSearchName } from "./search-name";
+import type { IName } from "./name";
+import { toName } from "./name";
 
 export type IProfile = {
   avatarSeed: IAvatarSeed;
-  avatarStyle: AvatarStyles;
-  searchName: ISearchName;
+  avatarStyle: IAvatarStyle;
+  name: IName;
   userId: IUserId;
 };
 
@@ -17,7 +17,7 @@ const rowToProfile = (row: definitions["profiles"]): IProfile => {
     userId: toUserId(row.user_id),
     avatarStyle: toAvatarStyle(row.avatar_style),
     avatarSeed: toAvatarSeed(row.avatar_seed),
-    searchName: toSearchName(row.search_name),
+    name: toName(row.name),
   };
 };
 
@@ -42,7 +42,7 @@ const getProfile = async ({
 
 export const onProfile = (
   { userId }: { userId: IUserId },
-  set: (profile: IProfile) => void
+  set: (profile: IProfile) => void,
 ) => {
   getProfile({ userId }).then((profile) => {
     if (profile) {
