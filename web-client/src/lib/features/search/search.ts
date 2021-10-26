@@ -23,7 +23,7 @@ const rowToSearchResult = (row: definitions["profiles"]): ISearchResult => {
     type: "profile",
     userId: toUserId(row.user_id),
     avatarSeed: toAvatarSeed(row.avatar_seed),
-    avatarStyle: toAvatarStyle(row.avatar_seed),
+    avatarStyle: toAvatarStyle(row.avatar_style),
     searchName: toSearchName(row.search_name),
   };
 };
