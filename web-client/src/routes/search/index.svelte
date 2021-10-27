@@ -62,7 +62,7 @@
 
   <input
     type="text"
-    class="text-base flex-1 w-full focus:outline-none"
+    class="flex-1 w-full outline-none border-none"
     placeholder="Search"
     bind:this={searchInputElement}
     bind:value={searchInputValue} />

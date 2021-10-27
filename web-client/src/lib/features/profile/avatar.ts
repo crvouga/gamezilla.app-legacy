@@ -1,4 +1,4 @@
-import { capitalize } from "$lib/utility";
+import { capitalize, generateUniqueId } from "$lib/utility";
 
 export type IAvatarStyle =
   | "adventurer"
@@ -20,21 +20,21 @@ export type IAvatarStyle =
   | "pixel-art-neutral";
 
 export const AVATAR_STYLES: { [avatarStyle in IAvatarStyle]: IAvatarStyle } = {
-  "adventurer": "adventurer",
+  adventurer: "adventurer",
   "adventurer-neutral": "adventurer-neutral",
-  "avataaars": "avataaars",
+  avataaars: "avataaars",
   "big-ears": "big-ears",
   "big-ears-neutral": "big-ears-neutral",
   "big-smile": "big-smile",
   "croodles-neutral": "croodles-neutral",
-  "gridy": "gridy",
-  "identicon": "identicon",
-  "initials": "initials",
-  "jdenticon": "jdenticon",
-  "micah": "micah",
-  "miniavs": "miniavs",
+  gridy: "gridy",
+  identicon: "identicon",
+  initials: "initials",
+  jdenticon: "jdenticon",
+  micah: "micah",
+  miniavs: "miniavs",
   "open-peeps": "open-peeps",
-  "personas": "personas",
+  personas: "personas",
   "pixel-art": "pixel-art",
   "pixel-art-neutral": "pixel-art-neutral",
 };
@@ -67,4 +67,8 @@ export const toAvatarUrl = ({
   avatarStyle: IAvatarStyle;
 }) => {
   return `https://avatars.dicebear.com/api/${avatarStyle}/${avatarSeed}.svg`;
+};
+
+export const generateAvatarSeed = () => {
+  return toAvatarSeed(generateUniqueId());
 };
