@@ -1,5 +1,6 @@
 <script lang="ts">
   import Avatar from "$lib/components/Avatar.svelte";
+  import Button from "$lib/components/Button.svelte";
   import TextField from "$lib/components/FormTextInput.svelte";
   import Icon from "$lib/components/Icon.svelte";
   import Link from "$lib/components/Link.svelte";
@@ -7,7 +8,6 @@
   import { setProfile, toAvatarUrl } from "$lib/features";
   import { authUserProfileStore, enqueueToast } from "$lib/shared";
   import PageHeader from "$lib/shared/PageHeader.svelte";
-  import PageHeaderUnsavedChanges from "$lib/shared/PageHeaderUnsavedChanges.svelte";
 
   let profile: IProfile;
   $: profile = $authUserProfileStore;
@@ -42,10 +42,6 @@
   };
 </script>
 
-{#if isTouched}
-  <PageHeaderUnsavedChanges on:cancel={handleCancel} on:save={handleSubmit} />
-{/if}
-
 <PageHeader title="Edit Profile">
   <Link slot="prefix" to="/auth-user">
     <Icon iconName="chevron-left" />
@@ -62,4 +58,8 @@
 
 <div class="p-4">
   <TextField class="mb-4" label="Name" bind:value={name} />
+  <div class="flex">
+    <Button class="mr-2" on:click={handleCancel}>Cancel</Button>
+    <Button on:click={handleSubmit}>Save Changes</Button>
+  </div>
 </div>

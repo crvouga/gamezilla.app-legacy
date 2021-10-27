@@ -8,7 +8,7 @@
   const successClass = `bg-green-200 text-green-800`;
 
   $: variantClass = variant === "error" ? errorClass : successClass;
-  $: baseClass = `p-4 py-6 text-base rounded flex items-center font-bold ${variantClass} ${className}`;
+  $: baseClass = `p-4 text-base rounded flex items-center font-bold ${variantClass} ${className}`;
 </script>
 
 <div class={baseClass}>
