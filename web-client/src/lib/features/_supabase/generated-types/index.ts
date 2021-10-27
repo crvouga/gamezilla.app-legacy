@@ -12,6 +12,93 @@ export interface paths {
       };
     };
   };
+  "/lobbies": {
+    get: {
+      parameters: {
+        query: {
+          lobby_id?: parameters["rowFilter.lobbies.lobby_id"];
+          /** Filtering Columns */
+          select?: parameters["select"];
+          /** Ordering */
+          order?: parameters["order"];
+          /** Limiting and Pagination */
+          offset?: parameters["offset"];
+          /** Limiting and Pagination */
+          limit?: parameters["limit"];
+        };
+        header: {
+          /** Limiting and Pagination */
+          Range?: parameters["range"];
+          /** Limiting and Pagination */
+          "Range-Unit"?: parameters["rangeUnit"];
+          /** Preference */
+          Prefer?: parameters["preferCount"];
+        };
+      };
+      responses: {
+        /** OK */
+        200: {
+          schema: definitions["lobbies"][];
+        };
+        /** Partial Content */
+        206: unknown;
+      };
+    };
+    post: {
+      parameters: {
+        body: {
+          /** lobbies */
+          lobbies?: definitions["lobbies"];
+        };
+        query: {
+          /** Filtering Columns */
+          select?: parameters["select"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** Created */
+        201: unknown;
+      };
+    };
+    delete: {
+      parameters: {
+        query: {
+          lobby_id?: parameters["rowFilter.lobbies.lobby_id"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+    patch: {
+      parameters: {
+        query: {
+          lobby_id?: parameters["rowFilter.lobbies.lobby_id"];
+        };
+        body: {
+          /** lobbies */
+          lobbies?: definitions["lobbies"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+  };
   "/profiles": {
     get: {
       parameters: {
@@ -20,6 +107,8 @@ export interface paths {
           avatar_seed?: parameters["rowFilter.profiles.avatar_seed"];
           avatar_style?: parameters["rowFilter.profiles.avatar_style"];
           name?: parameters["rowFilter.profiles.name"];
+          username?: parameters["rowFilter.profiles.username"];
+          lobby_id?: parameters["rowFilter.profiles.lobby_id"];
           /** Filtering Columns */
           select?: parameters["select"];
           /** Ordering */
@@ -74,6 +163,8 @@ export interface paths {
           avatar_seed?: parameters["rowFilter.profiles.avatar_seed"];
           avatar_style?: parameters["rowFilter.profiles.avatar_style"];
           name?: parameters["rowFilter.profiles.name"];
+          username?: parameters["rowFilter.profiles.username"];
+          lobby_id?: parameters["rowFilter.profiles.lobby_id"];
         };
         header: {
           /** Preference */
@@ -92,6 +183,8 @@ export interface paths {
           avatar_seed?: parameters["rowFilter.profiles.avatar_seed"];
           avatar_style?: parameters["rowFilter.profiles.avatar_style"];
           name?: parameters["rowFilter.profiles.name"];
+          username?: parameters["rowFilter.profiles.username"];
+          lobby_id?: parameters["rowFilter.profiles.lobby_id"];
         };
         body: {
           /** profiles */
@@ -128,6 +221,13 @@ export interface paths {
 }
 
 export interface definitions {
+  lobbies: {
+    /**
+     * Note:
+     * This is a Primary Key.<pk/>
+     */
+    lobby_id: string;
+  };
   profiles: {
     /**
      * Note:
@@ -137,6 +237,12 @@ export interface definitions {
     avatar_seed: string;
     avatar_style: string;
     name?: string;
+    username: string;
+    /**
+     * Note:
+     * This is a Foreign Key to `lobbies.lobby_id`.<fk table='lobbies' column='lobby_id'/>
+     */
+    lobby_id?: string;
   };
 }
 
@@ -161,12 +267,17 @@ export interface parameters {
   offset: string;
   /** Limiting and Pagination */
   limit: string;
+  /** lobbies */
+  "body.lobbies": definitions["lobbies"];
+  "rowFilter.lobbies.lobby_id": string;
   /** profiles */
   "body.profiles": definitions["profiles"];
   "rowFilter.profiles.user_id": string;
   "rowFilter.profiles.avatar_seed": string;
   "rowFilter.profiles.avatar_style": string;
   "rowFilter.profiles.name": string;
+  "rowFilter.profiles.username": string;
+  "rowFilter.profiles.lobby_id": string;
 }
 
 export interface operations {}
