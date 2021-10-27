@@ -6,7 +6,6 @@
   import { signIn } from "$lib/features";
   import { enqueueToast } from "$lib/shared";
   import PageHeader from "$lib/shared/PageHeader.svelte";
-  import PageHeaderTitle from "$lib/shared/PageHeaderTitle.svelte";
 
   const handleSocialAuth = (provider: "google") => async () => {
     const errors = await signIn({
@@ -18,9 +17,7 @@
   };
 </script>
 
-<PageHeader>
-  <PageHeaderTitle>Sign In</PageHeaderTitle>
-</PageHeader>
+<PageHeader title="Sign In" />
 
 <Clickable on:click={handleSocialAuth('google')}>
   <Item>
