@@ -7,7 +7,6 @@
   import { signIn } from "$lib/features";
   import { enqueueToast } from "$lib/shared";
   import PageHeader from "$lib/shared/PageHeader.svelte";
-  import PageHeaderTitle from "$lib/shared/PageHeaderTitle.svelte";
 
   let emailAddress = "";
 
@@ -21,11 +20,10 @@
   };
 </script>
 
-<PageHeader>
+<PageHeader title="Email">
   <Link to="/auth" slot="prefix">
     <Icon iconName="chevron-left" />
   </Link>
-  <PageHeaderTitle>Email</PageHeaderTitle>
 </PageHeader>
 
 <form class="p-4">

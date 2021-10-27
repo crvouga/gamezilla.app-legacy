@@ -3,14 +3,12 @@
   import Item from "$lib/components/Item.svelte";
   import Link from "$lib/components/Link.svelte";
   import PageHeader from "$lib/shared/PageHeader.svelte";
-  import PageHeaderTitle from "$lib/shared/PageHeaderTitle.svelte";
 </script>
 
-<PageHeader>
+<PageHeader title="You">
   <Link slot="prefix" to="/">
     <Icon iconName="chevron-left" />
   </Link>
-  <PageHeaderTitle>User</PageHeaderTitle>
 </PageHeader>
 
 <Link to="/profile/edit">

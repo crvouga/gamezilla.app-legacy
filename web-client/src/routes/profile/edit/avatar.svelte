@@ -1,0 +1,92 @@
+<script lang="ts">
+  import Avatar from "$lib/components/Avatar.svelte";
+  import Button from "$lib/components/Button.svelte";
+  import Select from "$lib/components/FormSelect.svelte";
+  import SelectOption from "$lib/components/FormSelectOption.svelte";
+  import TextField from "$lib/components/FormTextInput.svelte";
+  import Icon from "$lib/components/Icon.svelte";
+  import Link from "$lib/components/Link.svelte";
+  import {
+    ALL_AVATAR_STYLES,
+    formatAvatarStyle,
+    generateAvatarSeed,
+    IAvatarSeed,
+    IAvatarStyle,
+    IProfile,
+    setProfile,
+    toAvatarUrl,
+  } from "$lib/features";
+  import { authUserProfileStore, enqueueToast } from "$lib/shared";
+  import PageHeader from "$lib/shared/PageHeader.svelte";
+  import PageHeaderUnsavedChanges from "$lib/shared/PageHeaderUnsavedChanges.svelte";
+
+  let profile: IProfile;
+  $: profile = $authUserProfileStore;
+
+  let avatarStyle: IAvatarStyle;
+  let avatarSeed: IAvatarSeed;
+
+  authUserProfileStore.subscribe((profile) => {
+    if (profile) {
+      avatarStyle = profile.avatarStyle;
+      avatarSeed = profile.avatarSeed;
+    }
+  });
+
+  $: avatarUrl = toAvatarUrl({ avatarSeed, avatarStyle });
+
+  $: isTouched =
+    profile?.avatarSeed !== avatarSeed || profile?.avatarStyle !== avatarStyle;
+
+  const handleSubmit = async () => {
+    await setProfile({
+      ...profile,
+      avatarStyle,
+      avatarSeed,
+    });
+
+    enqueueToast([
+      {
+        type: "success",
+        message: "Updated avatar",
+      },
+    ]);
+  };
+
+  const handleCancel = () => {
+    avatarStyle = profile.avatarStyle;
+    avatarSeed = profile.avatarSeed;
+  };
+</script>
+
+{#if isTouched}
+  <PageHeaderUnsavedChanges on:cancel={handleCancel} on:save={handleSubmit} />
+{/if}
+
+<PageHeader title="Edit Avatar">
+  <Link slot="prefix" to="/profile/edit">
+    <Icon iconName="chevron-left" />
+  </Link>
+</PageHeader>
+
+<div class="overflow-y-scroll">
+  <div class="flex flex-col items-center pt-4">
+    <Avatar class="w-52 h-52" src={avatarUrl} />
+  </div>
+
+  <div class="p-4">
+    <Select label="Avatar Style" class="mb-4" bind:value={avatarStyle}>
+      {#each ALL_AVATAR_STYLES as avatarStyle}
+        <SelectOption value={avatarStyle}>
+          {formatAvatarStyle(avatarStyle)}
+        </SelectOption>
+      {/each}
+    </Select>
+
+    <TextField class="mb-2" label="Avatar Seed" bind:value={avatarSeed} />
+
+    <Button on:click={() => (avatarSeed = generateAvatarSeed())} class="mb-4">
+      Generate Random Seed
+    </Button>
+  </div>
+</div>

@@ -1,11 +1,11 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
-  import Button from "$lib/components/Button.svelte";
-  import Icon from "$lib/components/Icon.svelte";
-  import Link from "$lib/components/Link.svelte";
-  import { signOut } from "$lib/features";
-  import PageHeader from "$lib/shared/PageHeader.svelte";
-  import PageHeaderTitle from "$lib/shared/PageHeaderTitle.svelte";
+import Button from "$lib/components/Button.svelte";
+import Icon from "$lib/components/Icon.svelte";
+import Link from "$lib/components/Link.svelte";
+import { signOut } from "$lib/features";
+import PageHeader from "$lib/shared/PageHeader.svelte";
+
 
   const handleUnauth = async () => {
     await signOut();
@@ -14,11 +14,11 @@
   };
 </script>
 
-<PageHeader>
+<PageHeader title="Sign Out">
   <Link slot="prefix" to="/auth-user">
     <Icon iconName="chevron-left" />
   </Link>
-  <PageHeaderTitle>Sign Out</PageHeaderTitle>
+  
 </PageHeader>
 
 <div class="p-4">
