@@ -2,7 +2,7 @@
   import Button from "$lib/components/Button.svelte";
   import Icon from "$lib/components/Icon.svelte";
   import Link from "$lib/components/Link.svelte";
-  import TextField from "$lib/components/TextField.svelte";
+  import FormTextInput from "$lib/components/FormTextInput.svelte";
   import { errorToToast } from "$lib/components/toaster";
   import { signIn } from "$lib/features";
   import { enqueueToast } from "$lib/shared";
@@ -29,11 +29,11 @@
 </PageHeader>
 
 <form class="p-4">
-  <TextField
+  <FormTextInput
     id="email"
     placeholder="Email Address"
     class="mb-4"
-    bind:inputValue={emailAddress} />
+    bind:value={emailAddress} />
 
   <Button on:click={handleSubmit}>
     <Icon iconName="send" slot="prefix" />
