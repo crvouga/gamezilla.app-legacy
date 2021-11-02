@@ -61,13 +61,13 @@
 
 {#if isTouched}
   <PageHeaderUnsavedChanges on:cancel={handleCancel} on:save={handleSubmit} />
+{:else}
+  <PageHeader title="Edit Avatar">
+    <Link slot="prefix" to="/profile/edit">
+      <Icon iconName="chevron-left" />
+    </Link>
+  </PageHeader>
 {/if}
-
-<PageHeader title="Edit Avatar">
-  <Link slot="prefix" to="/profile/edit">
-    <Icon iconName="chevron-left" />
-  </Link>
-</PageHeader>
 
 <div class="overflow-y-scroll">
   <div class="flex flex-col items-center pt-4">
