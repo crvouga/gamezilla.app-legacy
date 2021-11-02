@@ -11,6 +11,7 @@ const config = {
   ],
 
   kit: {
+    ssr: false,
     target: "#svelte",
     adapter: vercel(),
   },
