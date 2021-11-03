@@ -1,7 +1,5 @@
-import type { IName } from "../profile";
-import { toName } from "../profile";
-import type { IUserId } from "../users";
-import { toUserId } from "../users";
+import type { IName, IUserId } from "../user";
+import { toName, toUserId } from "../user";
 import type { definitions } from "../_supabase";
 import { supabaseClient } from "../_supabase";
 

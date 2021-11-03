@@ -1,7 +1,7 @@
-import type { IUserId } from "$lib/features";
-import { toUserId } from "$lib/features";
-import type { definitions } from "../_supabase";
-import { supabaseClient } from "../_supabase";
+import type { definitions } from "../../_supabase";
+import { supabaseClient } from "../../_supabase";
+import type { IUserId } from "../user";
+import { toUserId } from "../user";
 import type { IName } from "./name";
 import { toName } from "./name";
 
