@@ -1,6 +1,6 @@
-import type { IUserId } from "../users";
-import type { definitions } from "../_supabase";
-import { supabaseClient } from "../_supabase";
+import type { definitions } from "../../_supabase";
+import { supabaseClient } from "../../_supabase";
+import type { IUserId } from "../user";
 import type { IName } from "./name";
 
 export const setProfile = async ({

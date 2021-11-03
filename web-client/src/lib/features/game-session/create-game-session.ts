@@ -1,4 +1,4 @@
-import type { IUserId } from "../users";
+import type { IUserId } from "../user";
 import { supabaseClient } from "../_supabase";
 import type { definitions } from "../_supabase";
 import { generateUniqueId } from "$lib/utility";

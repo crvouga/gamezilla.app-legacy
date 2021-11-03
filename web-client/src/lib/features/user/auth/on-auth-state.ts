@@ -1,6 +1,6 @@
 import type { IUserId } from "$lib/features";
 import { toUserId } from "$lib/features";
-import { supabaseClient } from "../_supabase";
+import { supabaseClient } from "../../_supabase";
 
 export type IAuthState =
   | {
