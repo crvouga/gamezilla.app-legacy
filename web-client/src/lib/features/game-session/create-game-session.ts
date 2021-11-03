@@ -1,26 +1,23 @@
 import type { IUserId } from "../user";
-import { supabaseClient } from "../_supabase";
 import type { definitions } from "../_supabase";
-import { generateUniqueId } from "$lib/utility";
+import { supabaseClient } from "../_supabase";
 
 export const createGameSession = async ({
   userId,
 }: {
   userId: IUserId;
 }): Promise<{ errors: Error[]; gameSessionId?: string }> => {
-  const gameSessionId = generateUniqueId();
-
   const gameSessionInsert = await supabaseClient
     .from<definitions["game_sessions"]>("game_sessions")
-    .insert({
-      id: gameSessionId,
-    });
+    .insert({});
 
   if (gameSessionInsert.error) {
     return {
       errors: [new Error(gameSessionInsert.error.message)],
     };
   }
+
+  const gameSessionId = gameSessionInsert.data[0].id;
 
   const gameSessionUserInsert = await supabaseClient
     .from<definitions["game_sessions_users"]>("game_sessions_users")
