@@ -62,7 +62,7 @@ export const toAvatarSeed = (seed: string) => {
 const AVATAR_URL_ROOT = `https://avatars.dicebear.com/api`;
 const AVATAR_FILE_TYPE = "svg";
 
-export const createAvatarUrl = ({
+export const toAvatarUrl = ({
   avatarSeed,
   avatarStyle,
 }: {
@@ -72,11 +72,18 @@ export const createAvatarUrl = ({
   return `${AVATAR_URL_ROOT}/${avatarStyle}/${avatarSeed}.${AVATAR_FILE_TYPE}`;
 };
 
-export const parseAvatarUrl = (avatarUrl: string) => {
-  const url = new URL(avatarUrl);
+export const parseAvatarUrl = (
+  avatarUrl?: string
+): { avatarSeed: IAvatarSeed; avatarStyle: IAvatarStyle } => {
+  const [avatarStyle, avatarSeed] = new URL(avatarUrl).pathname
+    .split("/")
+    .flatMap((_) => _.split("."))
+    .slice(-3);
 
-  console.log({ avatarUrl, url });
-  return null;
+  return {
+    avatarStyle: toAvatarStyle(avatarStyle),
+    avatarSeed: toAvatarSeed(avatarSeed),
+  };
 };
 
 export const generateAvatarSeed = () => {
