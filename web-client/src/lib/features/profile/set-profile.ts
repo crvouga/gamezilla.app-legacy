@@ -13,12 +13,12 @@ export const setProfile = async ({
   avatarUrl?: string;
 }) => {
   const { error } = await supabaseClient
-    .from<definitions["profiles"]>("profiles")
+    .from<definitions["user_profiles"]>("user_profiles")
     .update({
       name: name,
       avatar_url: avatarUrl,
     })
-    .eq("user_id", userId);
+    .eq("id", userId);
 
   return {
     errors: error ? [new Error(error.message)] : [],

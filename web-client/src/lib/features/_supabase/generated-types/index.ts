@@ -16,9 +16,7 @@ export interface paths {
     get: {
       parameters: {
         query: {
-          game_session_id?: parameters["rowFilter.game_sessions.game_session_id"];
-          game_id?: parameters["rowFilter.game_sessions.game_id"];
-          user_id?: parameters["rowFilter.game_sessions.user_id"];
+          id?: parameters["rowFilter.game_sessions.id"];
           /** Filtering Columns */
           select?: parameters["select"];
           /** Ordering */
@@ -69,9 +67,7 @@ export interface paths {
     delete: {
       parameters: {
         query: {
-          game_session_id?: parameters["rowFilter.game_sessions.game_session_id"];
-          game_id?: parameters["rowFilter.game_sessions.game_id"];
-          user_id?: parameters["rowFilter.game_sessions.user_id"];
+          id?: parameters["rowFilter.game_sessions.id"];
         };
         header: {
           /** Preference */
@@ -86,9 +82,7 @@ export interface paths {
     patch: {
       parameters: {
         query: {
-          game_session_id?: parameters["rowFilter.game_sessions.game_session_id"];
-          game_id?: parameters["rowFilter.game_sessions.game_id"];
-          user_id?: parameters["rowFilter.game_sessions.user_id"];
+          id?: parameters["rowFilter.game_sessions.id"];
         };
         body: {
           /** game_sessions */
@@ -105,12 +99,13 @@ export interface paths {
       };
     };
   };
-  "/games": {
+  "/game_sessions_users": {
     get: {
       parameters: {
         query: {
-          game_id?: parameters["rowFilter.games.game_id"];
-          created_at?: parameters["rowFilter.games.created_at"];
+          game_session_id?: parameters["rowFilter.game_sessions_users.game_session_id"];
+          user_id?: parameters["rowFilter.game_sessions_users.user_id"];
+          id?: parameters["rowFilter.game_sessions_users.id"];
           /** Filtering Columns */
           select?: parameters["select"];
           /** Ordering */
@@ -132,7 +127,7 @@ export interface paths {
       responses: {
         /** OK */
         200: {
-          schema: definitions["games"][];
+          schema: definitions["game_sessions_users"][];
         };
         /** Partial Content */
         206: unknown;
@@ -141,8 +136,8 @@ export interface paths {
     post: {
       parameters: {
         body: {
-          /** games */
-          games?: definitions["games"];
+          /** game_sessions_users */
+          game_sessions_users?: definitions["game_sessions_users"];
         };
         query: {
           /** Filtering Columns */
@@ -161,8 +156,9 @@ export interface paths {
     delete: {
       parameters: {
         query: {
-          game_id?: parameters["rowFilter.games.game_id"];
-          created_at?: parameters["rowFilter.games.created_at"];
+          game_session_id?: parameters["rowFilter.game_sessions_users.game_session_id"];
+          user_id?: parameters["rowFilter.game_sessions_users.user_id"];
+          id?: parameters["rowFilter.game_sessions_users.id"];
         };
         header: {
           /** Preference */
@@ -177,12 +173,13 @@ export interface paths {
     patch: {
       parameters: {
         query: {
-          game_id?: parameters["rowFilter.games.game_id"];
-          created_at?: parameters["rowFilter.games.created_at"];
+          game_session_id?: parameters["rowFilter.game_sessions_users.game_session_id"];
+          user_id?: parameters["rowFilter.game_sessions_users.user_id"];
+          id?: parameters["rowFilter.game_sessions_users.id"];
         };
         body: {
-          /** games */
-          games?: definitions["games"];
+          /** game_sessions_users */
+          game_sessions_users?: definitions["game_sessions_users"];
         };
         header: {
           /** Preference */
@@ -195,15 +192,13 @@ export interface paths {
       };
     };
   };
-  "/profiles": {
+  "/user_profiles": {
     get: {
       parameters: {
         query: {
-          user_id?: parameters["rowFilter.profiles.user_id"];
-          avatar_seed?: parameters["rowFilter.profiles.avatar_seed"];
-          avatar_style?: parameters["rowFilter.profiles.avatar_style"];
-          name?: parameters["rowFilter.profiles.name"];
-          avatar_url?: parameters["rowFilter.profiles.avatar_url"];
+          id?: parameters["rowFilter.user_profiles.id"];
+          name?: parameters["rowFilter.user_profiles.name"];
+          avatar_url?: parameters["rowFilter.user_profiles.avatar_url"];
           /** Filtering Columns */
           select?: parameters["select"];
           /** Ordering */
@@ -225,7 +220,7 @@ export interface paths {
       responses: {
         /** OK */
         200: {
-          schema: definitions["profiles"][];
+          schema: definitions["user_profiles"][];
         };
         /** Partial Content */
         206: unknown;
@@ -234,8 +229,8 @@ export interface paths {
     post: {
       parameters: {
         body: {
-          /** profiles */
-          profiles?: definitions["profiles"];
+          /** user_profiles */
+          user_profiles?: definitions["user_profiles"];
         };
         query: {
           /** Filtering Columns */
@@ -254,11 +249,9 @@ export interface paths {
     delete: {
       parameters: {
         query: {
-          user_id?: parameters["rowFilter.profiles.user_id"];
-          avatar_seed?: parameters["rowFilter.profiles.avatar_seed"];
-          avatar_style?: parameters["rowFilter.profiles.avatar_style"];
-          name?: parameters["rowFilter.profiles.name"];
-          avatar_url?: parameters["rowFilter.profiles.avatar_url"];
+          id?: parameters["rowFilter.user_profiles.id"];
+          name?: parameters["rowFilter.user_profiles.name"];
+          avatar_url?: parameters["rowFilter.user_profiles.avatar_url"];
         };
         header: {
           /** Preference */
@@ -273,15 +266,13 @@ export interface paths {
     patch: {
       parameters: {
         query: {
-          user_id?: parameters["rowFilter.profiles.user_id"];
-          avatar_seed?: parameters["rowFilter.profiles.avatar_seed"];
-          avatar_style?: parameters["rowFilter.profiles.avatar_style"];
-          name?: parameters["rowFilter.profiles.name"];
-          avatar_url?: parameters["rowFilter.profiles.avatar_url"];
+          id?: parameters["rowFilter.user_profiles.id"];
+          name?: parameters["rowFilter.user_profiles.name"];
+          avatar_url?: parameters["rowFilter.user_profiles.avatar_url"];
         };
         body: {
-          /** profiles */
-          profiles?: definitions["profiles"];
+          /** user_profiles */
+          user_profiles?: definitions["user_profiles"];
         };
         header: {
           /** Preference */
@@ -319,30 +310,27 @@ export interface definitions {
      * Note:
      * This is a Primary Key.<pk/>
      */
+    id: string;
+  };
+  game_sessions_users: {
+    /**
+     * Note:
+     * This is a Foreign Key to `game_sessions.id`.<fk table='game_sessions' column='id'/>
+     */
     game_session_id: string;
-    /**
-     * Note:
-     * This is a Foreign Key to `games.game_id`.<fk table='games' column='game_id'/>
-     */
-    game_id: string;
-    user_id: string;
-  };
-  games: {
+    user_id?: string;
     /**
      * Note:
      * This is a Primary Key.<pk/>
      */
-    game_id: string;
-    created_at?: string;
+    id: string;
   };
-  profiles: {
+  user_profiles: {
     /**
      * Note:
      * This is a Primary Key.<pk/>
      */
-    user_id: string;
-    avatar_seed: string;
-    avatar_style: string;
+    id: string;
     name?: string;
     avatar_url?: string;
   };
@@ -371,20 +359,17 @@ export interface parameters {
   limit: string;
   /** game_sessions */
   "body.game_sessions": definitions["game_sessions"];
-  "rowFilter.game_sessions.game_session_id": string;
-  "rowFilter.game_sessions.game_id": string;
-  "rowFilter.game_sessions.user_id": string;
-  /** games */
-  "body.games": definitions["games"];
-  "rowFilter.games.game_id": string;
-  "rowFilter.games.created_at": string;
-  /** profiles */
-  "body.profiles": definitions["profiles"];
-  "rowFilter.profiles.user_id": string;
-  "rowFilter.profiles.avatar_seed": string;
-  "rowFilter.profiles.avatar_style": string;
-  "rowFilter.profiles.name": string;
-  "rowFilter.profiles.avatar_url": string;
+  "rowFilter.game_sessions.id": string;
+  /** game_sessions_users */
+  "body.game_sessions_users": definitions["game_sessions_users"];
+  "rowFilter.game_sessions_users.game_session_id": string;
+  "rowFilter.game_sessions_users.user_id": string;
+  "rowFilter.game_sessions_users.id": string;
+  /** user_profiles */
+  "body.user_profiles": definitions["user_profiles"];
+  "rowFilter.user_profiles.id": string;
+  "rowFilter.user_profiles.name": string;
+  "rowFilter.user_profiles.avatar_url": string;
 }
 
 export interface operations {}

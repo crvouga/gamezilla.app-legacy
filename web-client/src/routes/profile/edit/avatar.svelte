@@ -16,6 +16,7 @@
     parseAvatarUrl,
     setProfile,
     toAvatarUrl,
+    toAvatarSeed,
   } from "$lib/features";
   import { authUserProfileStore, enqueueToast } from "$lib/shared";
   import PageHeader from "$lib/shared/PageHeader.svelte";
@@ -23,7 +24,7 @@
 
   let data: IProfile | null;
   let formValues: { avatarSeed: IAvatarSeed; avatarStyle: IAvatarStyle } = {
-    avatarSeed: "",
+    avatarSeed: toAvatarSeed(""),
     avatarStyle: "adventurer",
   };
   let draftAvatarUrl = "";
