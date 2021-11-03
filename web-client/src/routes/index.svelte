@@ -1,10 +1,11 @@
 <script lang="ts">
+  import { goto } from "$app/navigation";
   import Clickable from "$lib/components/Clickable.svelte";
   import Icon from "$lib/components/Icon.svelte";
   import Item from "$lib/components/Item.svelte";
   import Link from "$lib/components/Link.svelte";
   import { errorToToast } from "$lib/components/toaster";
-  import { createLobby } from "$lib/features/lobby";
+  import { createGameSession } from "$lib/features";
   import { authStateStore, enqueueToast } from "$lib/shared";
   import AuthUserAvatar from "$lib/shared/AuthUserAvatar.svelte";
   import PageHeader from "$lib/shared/PageHeader.svelte";
@@ -16,7 +17,7 @@
       return;
     }
 
-    const { errors } = await createLobby({
+    const { errors, gameSessionId } = await createGameSession({
       userId: authState.authUser.userId,
     });
 
@@ -26,11 +27,7 @@
       return;
     }
 
-    enqueueToast([
-      {
-        message: "Created Lobby",
-      },
-    ]);
+    goto(`/game-session/${gameSessionId}`);
   };
 </script>
 

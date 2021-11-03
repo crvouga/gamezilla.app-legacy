@@ -11,9 +11,9 @@ export type IProfile = {
   userId: IUserId;
 };
 
-const rowToProfile = (row: definitions["profiles"]): IProfile => {
+const rowToProfile = (row: definitions["user_profiles"]): IProfile => {
   return {
-    userId: toUserId(row.user_id),
+    userId: toUserId(row.id),
     avatarUrl: row.avatar_url,
     name: toName(row.name),
   };
@@ -25,9 +25,9 @@ const getProfile = async ({
   userId: IUserId;
 }): Promise<IProfile | null> => {
   const { data } = await supabaseClient
-    .from<definitions["profiles"]>("profiles")
+    .from<definitions["user_profiles"]>("user_profiles")
     .select("*")
-    .eq("user_id", userId);
+    .eq("id", userId);
 
   if (data.length === 0) {
     return null;
@@ -40,7 +40,7 @@ const getProfile = async ({
 
 export const onProfile = (
   { userId }: { userId: IUserId },
-  set: (profile: IProfile) => void,
+  set: (profile: IProfile) => void
 ) => {
   getProfile({ userId }).then((profile) => {
     if (profile) {
@@ -49,7 +49,7 @@ export const onProfile = (
   });
 
   const subscription = supabaseClient
-    .from<definitions["profiles"]>(`profiles:user_id=eq.${userId}`)
+    .from<definitions["user_profiles"]>(`user_profiles:id=eq.${userId}`)
     .on("*", (payload) => {
       set(rowToProfile(payload.new));
     })
