@@ -1,26 +1,22 @@
 import type { IUserId } from "../users";
 import type { definitions } from "../_supabase";
 import { supabaseClient } from "../_supabase";
-import type { IAvatarSeed, IAvatarStyle } from "./avatar";
 import type { IName } from "./name";
 
 export const setProfile = async ({
   userId,
-  avatarSeed,
-  avatarStyle,
   name,
+  avatarUrl,
 }: {
   userId: IUserId;
-  avatarSeed: IAvatarSeed;
-  avatarStyle: IAvatarStyle;
   name: IName;
+  avatarUrl?: string;
 }) => {
   const { error } = await supabaseClient
     .from<definitions["profiles"]>("profiles")
     .update({
-      avatar_seed: avatarSeed,
-      avatar_style: avatarStyle,
       name: name,
+      avatar_url: avatarUrl,
     })
     .eq("user_id", userId);
 

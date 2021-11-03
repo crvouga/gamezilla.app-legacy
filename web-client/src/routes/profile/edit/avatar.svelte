@@ -14,7 +14,8 @@
     IAvatarStyle,
     IProfile,
     setProfile,
-    toAvatarUrl,
+    createAvatarUrl,
+    parseAvatarUrl,
   } from "$lib/features";
   import { authUserProfileStore, enqueueToast } from "$lib/shared";
   import PageHeader from "$lib/shared/PageHeader.svelte";
@@ -26,23 +27,31 @@
   let avatarStyle: IAvatarStyle;
   let avatarSeed: IAvatarSeed;
 
+  let parsedAvatarUrl: ReturnType<typeof parseAvatarUrl>;
+
   authUserProfileStore.subscribe((profile) => {
     if (profile) {
-      avatarStyle = profile.avatarStyle;
-      avatarSeed = profile.avatarSeed;
+      parsedAvatarUrl = parseAvatarUrl(profile.avatarUrl);
     }
   });
 
-  $: avatarUrl = toAvatarUrl({ avatarSeed, avatarStyle });
+  $: {
+    console.log({
+      parsedAvatarUrl,
+    });
+  }
 
-  $: isTouched =
-    profile?.avatarSeed !== avatarSeed || profile?.avatarStyle !== avatarStyle;
+  $: avatarUrl = createAvatarUrl({ avatarSeed, avatarStyle });
+
+  $: isTouched = false;
 
   const handleSubmit = async () => {
     await setProfile({
       ...profile,
-      avatarStyle,
-      avatarSeed,
+      avatarUrl: createAvatarUrl({
+        avatarSeed,
+        avatarStyle,
+      }),
     });
 
     enqueueToast([
@@ -53,10 +62,7 @@
     ]);
   };
 
-  const handleCancel = () => {
-    avatarStyle = profile.avatarStyle;
-    avatarSeed = profile.avatarSeed;
-  };
+  const handleCancel = () => {};
 </script>
 
 {#if isTouched}

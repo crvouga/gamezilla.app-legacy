@@ -12,11 +12,13 @@ export interface paths {
       };
     };
   };
-  "/lobbies": {
+  "/game_sessions": {
     get: {
       parameters: {
         query: {
-          lobby_id?: parameters["rowFilter.lobbies.lobby_id"];
+          game_session_id?: parameters["rowFilter.game_sessions.game_session_id"];
+          game_id?: parameters["rowFilter.game_sessions.game_id"];
+          user_id?: parameters["rowFilter.game_sessions.user_id"];
           /** Filtering Columns */
           select?: parameters["select"];
           /** Ordering */
@@ -38,7 +40,7 @@ export interface paths {
       responses: {
         /** OK */
         200: {
-          schema: definitions["lobbies"][];
+          schema: definitions["game_sessions"][];
         };
         /** Partial Content */
         206: unknown;
@@ -47,8 +49,8 @@ export interface paths {
     post: {
       parameters: {
         body: {
-          /** lobbies */
-          lobbies?: definitions["lobbies"];
+          /** game_sessions */
+          game_sessions?: definitions["game_sessions"];
         };
         query: {
           /** Filtering Columns */
@@ -67,7 +69,9 @@ export interface paths {
     delete: {
       parameters: {
         query: {
-          lobby_id?: parameters["rowFilter.lobbies.lobby_id"];
+          game_session_id?: parameters["rowFilter.game_sessions.game_session_id"];
+          game_id?: parameters["rowFilter.game_sessions.game_id"];
+          user_id?: parameters["rowFilter.game_sessions.user_id"];
         };
         header: {
           /** Preference */
@@ -82,11 +86,103 @@ export interface paths {
     patch: {
       parameters: {
         query: {
-          lobby_id?: parameters["rowFilter.lobbies.lobby_id"];
+          game_session_id?: parameters["rowFilter.game_sessions.game_session_id"];
+          game_id?: parameters["rowFilter.game_sessions.game_id"];
+          user_id?: parameters["rowFilter.game_sessions.user_id"];
         };
         body: {
-          /** lobbies */
-          lobbies?: definitions["lobbies"];
+          /** game_sessions */
+          game_sessions?: definitions["game_sessions"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+  };
+  "/games": {
+    get: {
+      parameters: {
+        query: {
+          game_id?: parameters["rowFilter.games.game_id"];
+          created_at?: parameters["rowFilter.games.created_at"];
+          /** Filtering Columns */
+          select?: parameters["select"];
+          /** Ordering */
+          order?: parameters["order"];
+          /** Limiting and Pagination */
+          offset?: parameters["offset"];
+          /** Limiting and Pagination */
+          limit?: parameters["limit"];
+        };
+        header: {
+          /** Limiting and Pagination */
+          Range?: parameters["range"];
+          /** Limiting and Pagination */
+          "Range-Unit"?: parameters["rangeUnit"];
+          /** Preference */
+          Prefer?: parameters["preferCount"];
+        };
+      };
+      responses: {
+        /** OK */
+        200: {
+          schema: definitions["games"][];
+        };
+        /** Partial Content */
+        206: unknown;
+      };
+    };
+    post: {
+      parameters: {
+        body: {
+          /** games */
+          games?: definitions["games"];
+        };
+        query: {
+          /** Filtering Columns */
+          select?: parameters["select"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** Created */
+        201: unknown;
+      };
+    };
+    delete: {
+      parameters: {
+        query: {
+          game_id?: parameters["rowFilter.games.game_id"];
+          created_at?: parameters["rowFilter.games.created_at"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+    patch: {
+      parameters: {
+        query: {
+          game_id?: parameters["rowFilter.games.game_id"];
+          created_at?: parameters["rowFilter.games.created_at"];
+        };
+        body: {
+          /** games */
+          games?: definitions["games"];
         };
         header: {
           /** Preference */
@@ -107,8 +203,7 @@ export interface paths {
           avatar_seed?: parameters["rowFilter.profiles.avatar_seed"];
           avatar_style?: parameters["rowFilter.profiles.avatar_style"];
           name?: parameters["rowFilter.profiles.name"];
-          username?: parameters["rowFilter.profiles.username"];
-          lobby_id?: parameters["rowFilter.profiles.lobby_id"];
+          avatar_url?: parameters["rowFilter.profiles.avatar_url"];
           /** Filtering Columns */
           select?: parameters["select"];
           /** Ordering */
@@ -163,8 +258,7 @@ export interface paths {
           avatar_seed?: parameters["rowFilter.profiles.avatar_seed"];
           avatar_style?: parameters["rowFilter.profiles.avatar_style"];
           name?: parameters["rowFilter.profiles.name"];
-          username?: parameters["rowFilter.profiles.username"];
-          lobby_id?: parameters["rowFilter.profiles.lobby_id"];
+          avatar_url?: parameters["rowFilter.profiles.avatar_url"];
         };
         header: {
           /** Preference */
@@ -183,8 +277,7 @@ export interface paths {
           avatar_seed?: parameters["rowFilter.profiles.avatar_seed"];
           avatar_style?: parameters["rowFilter.profiles.avatar_style"];
           name?: parameters["rowFilter.profiles.name"];
-          username?: parameters["rowFilter.profiles.username"];
-          lobby_id?: parameters["rowFilter.profiles.lobby_id"];
+          avatar_url?: parameters["rowFilter.profiles.avatar_url"];
         };
         body: {
           /** profiles */
@@ -221,12 +314,26 @@ export interface paths {
 }
 
 export interface definitions {
-  lobbies: {
+  game_sessions: {
     /**
      * Note:
      * This is a Primary Key.<pk/>
      */
-    lobby_id: string;
+    game_session_id: string;
+    /**
+     * Note:
+     * This is a Foreign Key to `games.game_id`.<fk table='games' column='game_id'/>
+     */
+    game_id: string;
+    user_id: string;
+  };
+  games: {
+    /**
+     * Note:
+     * This is a Primary Key.<pk/>
+     */
+    game_id: string;
+    created_at?: string;
   };
   profiles: {
     /**
@@ -237,12 +344,7 @@ export interface definitions {
     avatar_seed: string;
     avatar_style: string;
     name?: string;
-    username: string;
-    /**
-     * Note:
-     * This is a Foreign Key to `lobbies.lobby_id`.<fk table='lobbies' column='lobby_id'/>
-     */
-    lobby_id?: string;
+    avatar_url?: string;
   };
 }
 
@@ -267,17 +369,22 @@ export interface parameters {
   offset: string;
   /** Limiting and Pagination */
   limit: string;
-  /** lobbies */
-  "body.lobbies": definitions["lobbies"];
-  "rowFilter.lobbies.lobby_id": string;
+  /** game_sessions */
+  "body.game_sessions": definitions["game_sessions"];
+  "rowFilter.game_sessions.game_session_id": string;
+  "rowFilter.game_sessions.game_id": string;
+  "rowFilter.game_sessions.user_id": string;
+  /** games */
+  "body.games": definitions["games"];
+  "rowFilter.games.game_id": string;
+  "rowFilter.games.created_at": string;
   /** profiles */
   "body.profiles": definitions["profiles"];
   "rowFilter.profiles.user_id": string;
   "rowFilter.profiles.avatar_seed": string;
   "rowFilter.profiles.avatar_style": string;
   "rowFilter.profiles.name": string;
-  "rowFilter.profiles.username": string;
-  "rowFilter.profiles.lobby_id": string;
+  "rowFilter.profiles.avatar_url": string;
 }
 
 export interface operations {}

@@ -59,14 +59,24 @@ export const toAvatarSeed = (seed: string) => {
   return seed.replace(" ", "").replace(";", "") as IAvatarSeed;
 };
 
-export const toAvatarUrl = ({
+const AVATAR_URL_ROOT = `https://avatars.dicebear.com/api`;
+const AVATAR_FILE_TYPE = "svg";
+
+export const createAvatarUrl = ({
   avatarSeed,
   avatarStyle,
 }: {
   avatarSeed: IAvatarSeed;
   avatarStyle: IAvatarStyle;
 }) => {
-  return `https://avatars.dicebear.com/api/${avatarStyle}/${avatarSeed}.svg`;
+  return `${AVATAR_URL_ROOT}/${avatarStyle}/${avatarSeed}.${AVATAR_FILE_TYPE}`;
+};
+
+export const parseAvatarUrl = (avatarUrl: string) => {
+  const url = new URL(avatarUrl);
+
+  console.log({ avatarUrl, url });
+  return null;
 };
 
 export const generateAvatarSeed = () => {
