@@ -32,7 +32,9 @@ export const onGameSession = (
   set: (gameSession: IGameSession) => void
 ): (() => void) => {
   getGameSession({ gameSessionId }).then((gameSession) => {
-    set(gameSession);
+    if (gameSession) {
+      set(gameSession);
+    }
   });
 
   const subscription = supabaseClient
