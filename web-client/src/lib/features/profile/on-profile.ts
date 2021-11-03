@@ -1,13 +1,12 @@
-import type { IAvatarSeed, IAvatarStyle, IUserId } from "$lib/features";
-import { toAvatarSeed, toAvatarStyle, toUserId } from "$lib/features";
+import type { IUserId } from "$lib/features";
+import { toUserId } from "$lib/features";
 import type { definitions } from "../_supabase";
 import { supabaseClient } from "../_supabase";
 import type { IName } from "./name";
 import { toName } from "./name";
 
 export type IProfile = {
-  avatarSeed: IAvatarSeed;
-  avatarStyle: IAvatarStyle;
+  avatarUrl?: string;
   name: IName;
   userId: IUserId;
 };
@@ -15,8 +14,7 @@ export type IProfile = {
 const rowToProfile = (row: definitions["profiles"]): IProfile => {
   return {
     userId: toUserId(row.user_id),
-    avatarStyle: toAvatarStyle(row.avatar_style),
-    avatarSeed: toAvatarSeed(row.avatar_seed),
+    avatarUrl: row.avatar_url,
     name: toName(row.name),
   };
 };

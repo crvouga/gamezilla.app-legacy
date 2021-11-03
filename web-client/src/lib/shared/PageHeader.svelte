@@ -1,6 +1,6 @@
 <script lang="ts">
 	import "./page-header.css";
-	export let title = "";
+	export let title: string | null = null;
 </script>
 
 <nav
@@ -11,7 +11,7 @@
 		</div>
 	{/if}
 
-	{#if title.length > 0}
+	{#if title}
 		<div class="flex-1 title">{title}</div>
 	{:else}
 		<div class="flex-1 text-base">

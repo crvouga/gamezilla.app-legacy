@@ -4,7 +4,7 @@
   import Icon from "$lib/components/Icon.svelte";
   import Item from "$lib/components/Item.svelte";
   import Link from "$lib/components/Link.svelte";
-  import { toAvatarUrl } from "$lib/features";
+  import { createAvatarUrl } from "$lib/features";
   import type { ISearchResult } from "$lib/features/search";
   import { search } from "$lib/features/search";
   import PageHeader from "$lib/shared/PageHeader.svelte";
@@ -76,7 +76,7 @@
   {#each searchResults as result}
     <Clickable>
       <Item>
-        <Avatar slot="start" src={toAvatarUrl(result)} />
+        <Avatar slot="start" src={createAvatarUrl(result)} />
         <div>{result.Name}</div>
       </Item>
     </Clickable>
