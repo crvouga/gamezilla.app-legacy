@@ -50,7 +50,7 @@ export const toAvatarStyle = (avatarStyle: string) => {
     return avatarStyle as IAvatarStyle;
   }
 
-  return AVATAR_STYLES["adventurer"];
+  return null;
 };
 
 export type IAvatarSeed = string & { type: "AvatarSeed" };

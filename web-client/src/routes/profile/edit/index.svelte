@@ -20,7 +20,7 @@
     }
   });
 
-  $: isTouched = profile?.name !== name;
+  $: isTouched = profile?.name && profile?.name !== name;
 
   const handleCancel = () => {
     name = profile.name;
