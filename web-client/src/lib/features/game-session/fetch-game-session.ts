@@ -35,7 +35,7 @@ export const fetchGameSession = async ({
   const userProfilesResult = await supabaseClient
     .from<definitions["user_profiles"]>("user_profiles")
     .select()
-    .in("user_id", userIds);
+    .in("id", userIds);
 
   if (userProfilesResult.error) {
     return {
@@ -49,12 +49,12 @@ export const fetchGameSession = async ({
       avatarUrl?: string;
     };
   }>(
-    (usersById, user) => ({
+    (usersById, row) => ({
       ...usersById,
-      [user.user_id]: {
-        userId: user.user_id,
-        name: user.name,
-        avatarUrl: user.avatar_url,
+      [row.id]: {
+        userId: row.id,
+        name: row.name,
+        avatarUrl: row.avatar_url,
       },
     }),
     {}

@@ -30,3 +30,7 @@ export const dropLastWhile = <T>(
 export const concat = <T>(left: T[], right: T[]) => {
   return [...left, ...right];
 };
+
+export const shuffle = <T>(xs: T[]): T[] => {
+  return [...xs].sort(() => Math.random() - 0.5);
+};
