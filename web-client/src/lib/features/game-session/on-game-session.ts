@@ -1,42 +1,15 @@
 import { supabaseClient } from "../_supabase";
 import type { definitions } from "../_supabase";
-
-export type IGameSession = {
-  gameSessionId: string;
-  users: {
-    [userId: string]: {
-      userId: string;
-      avatarUrl: string;
-    };
-  };
-};
-
-const getGameSession = async ({
-  gameSessionId,
-}: {
-  gameSessionId: string;
-}): Promise<IGameSession | null> => {
-  const result = await supabaseClient
-    .from<definitions["game_sessions"]>("game_sessions")
-    .select("*")
-    .eq("id", gameSessionId)
-    .single();
-
-  console.log(result.data);
-
-  return {
-    gameSessionId: result.data.id,
-    users: {},
-  };
-};
+import type { IGameSession } from "./game-session";
+import { fetchGameSession } from "./fetch-game-session";
 
 export const onGameSession = (
   { gameSessionId }: { gameSessionId: string },
   set: (gameSession: IGameSession) => void
 ): (() => void) => {
-  getGameSession({ gameSessionId }).then((gameSession) => {
-    if (gameSession) {
-      set(gameSession);
+  fetchGameSession({ gameSessionId }).then((result) => {
+    if (result.data) {
+      set(result.data);
     }
   });
 
@@ -45,9 +18,10 @@ export const onGameSession = (
     .on("*", (payload) => {
       const gameSessionId = payload.new.id;
 
-      set({
-        gameSessionId,
-        users: {},
+      fetchGameSession({ gameSessionId }).then((result) => {
+        if (result.data) {
+          set(result.data);
+        }
       });
     })
     .subscribe();
