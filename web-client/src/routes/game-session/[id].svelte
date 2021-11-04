@@ -1,25 +1,22 @@
 <script lang="ts">
   import { page } from "$app/stores";
+  import Avatar from "$lib/components/Avatar.svelte";
   import Icon from "$lib/components/Icon.svelte";
+  import Item from "$lib/components/Item.svelte";
   import Link from "$lib/components/Link.svelte";
   import type { IGameSession } from "$lib/features";
   import { onGameSession } from "$lib/features";
   import PageHeader from "$lib/shared/PageHeader.svelte";
-  import { onDestroy } from "svelte";
   import { derived } from "svelte/store";
-
-  $: gameSessionId = $page.params.id;
 
   const gameSessionStore = derived<[typeof page], IGameSession>(
     [page],
     ([page], set) => onGameSession({ gameSessionId: page.params.id }, set)
   );
 
-  const unsubscribe = gameSessionStore.subscribe((gameSession) => {
-    console.log(gameSession);
-  });
+  $: gameSession = $gameSessionStore;
 
-  onDestroy(unsubscribe);
+  $: users = Object.values(gameSession?.users ?? {});
 </script>
 
 <PageHeader title="Lobby">
@@ -28,4 +25,11 @@
   </Link>
 </PageHeader>
 
-{gameSessionId}
+<div class="p-4 pb-0 font-bold text-lg">Players</div>
+
+{#each users as user}
+  <Item>
+    <Avatar slot="start" src={user.avatarUrl} />
+    {user.name}
+  </Item>
+{/each}

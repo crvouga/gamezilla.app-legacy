@@ -60,8 +60,8 @@
 
 <script lang="ts">
 	export let iconName: IconName;
-	let className = "";
+	let className = "w-6 h-6";
 	export { className as class };
 </script>
 
-<Icon class="w-5 h-5 {className}" data={iconNameToData[iconName]} />
+<Icon class={className} data={iconNameToData[iconName]} />
