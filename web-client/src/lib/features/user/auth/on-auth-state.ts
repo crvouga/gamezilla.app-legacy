@@ -7,6 +7,7 @@ export type IAuthState =
       status: "authenticated";
       authUser: {
         userId: IUserId;
+        name?: string;
       };
     }
   | {
@@ -21,6 +22,7 @@ export const onAuthState = (set: (authState: IAuthState) => void) => {
       status: "authenticated",
       authUser: {
         userId: toUserId(session.user.id),
+        name: String(session.user.user_metadata?.name),
       },
     });
   }
@@ -34,9 +36,8 @@ export const onAuthState = (set: (authState: IAuthState) => void) => {
           set({
             status: "authenticated",
             authUser: {
-              // avatarSeed: toAvatarSeed(session.user.id),
-              // avatarStyle: "avataaars",
               userId: toUserId(session.user.id),
+              name: String(session.user.user_metadata?.name),
             },
           });
           return;

@@ -15,7 +15,7 @@ const rowToSearchResult = (
 ): ISearchResult => {
   return {
     type: "profile",
-    userId: toUserId(row.user_id),
+    userId: toUserId(row.id),
     avatarUrl: row.avatar_url,
     name: toName(row.name),
   };

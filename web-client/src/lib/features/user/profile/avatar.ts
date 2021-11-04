@@ -1,4 +1,4 @@
-import { capitalize, generateUniqueId } from "$lib/utility";
+import { capitalize, generateUniqueId, removeKey, shuffle } from "$lib/utility";
 
 export type IAvatarStyle =
   | "adventurer"
@@ -88,4 +88,16 @@ export const parseAvatarUrl = (
 
 export const generateAvatarSeed = () => {
   return toAvatarSeed(generateUniqueId());
+};
+
+export const generateAvatarUrl = (seed?: string) => {
+  const avatarSeed = toAvatarSeed(seed ?? "");
+  const randomAvatarStyle = toAvatarStyle(
+    shuffle(Object.keys(removeKey("initials", AVATAR_STYLES)))[0]
+  );
+
+  return toAvatarUrl({
+    avatarStyle: randomAvatarStyle,
+    avatarSeed,
+  });
 };

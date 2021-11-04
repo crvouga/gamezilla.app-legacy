@@ -196,7 +196,7 @@ export interface paths {
     get: {
       parameters: {
         query: {
-          user_id?: parameters["rowFilter.user_profiles.user_id"];
+          id?: parameters["rowFilter.user_profiles.id"];
           name?: parameters["rowFilter.user_profiles.name"];
           avatar_url?: parameters["rowFilter.user_profiles.avatar_url"];
           /** Filtering Columns */
@@ -249,7 +249,7 @@ export interface paths {
     delete: {
       parameters: {
         query: {
-          user_id?: parameters["rowFilter.user_profiles.user_id"];
+          id?: parameters["rowFilter.user_profiles.id"];
           name?: parameters["rowFilter.user_profiles.name"];
           avatar_url?: parameters["rowFilter.user_profiles.avatar_url"];
         };
@@ -266,7 +266,7 @@ export interface paths {
     patch: {
       parameters: {
         query: {
-          user_id?: parameters["rowFilter.user_profiles.user_id"];
+          id?: parameters["rowFilter.user_profiles.id"];
           name?: parameters["rowFilter.user_profiles.name"];
           avatar_url?: parameters["rowFilter.user_profiles.avatar_url"];
         };
@@ -330,7 +330,7 @@ export interface definitions {
      * Note:
      * This is a Primary Key.<pk/>
      */
-    user_id: string;
+    id: string;
     name?: string;
     avatar_url?: string;
   };
@@ -367,7 +367,7 @@ export interface parameters {
   "rowFilter.game_sessions_users.id": string;
   /** user_profiles */
   "body.user_profiles": definitions["user_profiles"];
-  "rowFilter.user_profiles.user_id": string;
+  "rowFilter.user_profiles.id": string;
   "rowFilter.user_profiles.name": string;
   "rowFilter.user_profiles.avatar_url": string;
 }
