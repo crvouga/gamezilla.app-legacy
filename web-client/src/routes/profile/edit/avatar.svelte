@@ -39,8 +39,11 @@
     }
   });
 
-  $: draftAvatarUrl = toAvatarUrl(formValues);
-  $: isTouched = data?.avatarUrl !== draftAvatarUrl;
+  $: draftAvatarUrl =
+    formValues.avatarSeed && formValues.avatarStyle
+      ? toAvatarUrl(formValues)
+      : undefined;
+  $: isTouched = data?.avatarUrl && data?.avatarUrl !== draftAvatarUrl;
 
   const handleSubmit = async () => {
     await setProfile({
