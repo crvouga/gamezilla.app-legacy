@@ -13,7 +13,7 @@ export type IProfile = {
 
 const rowToProfile = (row: definitions["user_profiles"]): IProfile => {
   return {
-    userId: toUserId(row.id),
+    userId: toUserId(row.user_id),
     avatarUrl: row.avatar_url,
     name: toName(row.name),
   };
@@ -27,7 +27,7 @@ const getProfile = async ({
   const { data } = await supabaseClient
     .from<definitions["user_profiles"]>("user_profiles")
     .select("*")
-    .eq("id", userId);
+    .eq("user_id", userId);
 
   if (data.length === 0) {
     return null;
@@ -49,7 +49,7 @@ export const onProfile = (
   });
 
   const subscription = supabaseClient
-    .from<definitions["user_profiles"]>(`user_profiles:id=eq.${userId}`)
+    .from<definitions["user_profiles"]>(`user_profiles:user_id=eq.${userId}`)
     .on("*", (payload) => {
       set(rowToProfile(payload.new));
     })
