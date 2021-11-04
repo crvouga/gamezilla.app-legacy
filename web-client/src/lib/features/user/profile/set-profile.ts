@@ -18,7 +18,7 @@ export const setProfile = async ({
       name: name,
       avatar_url: avatarUrl,
     })
-    .eq("id", userId);
+    .eq("user_id", userId);
 
   return {
     errors: error ? [new Error(error.message)] : [],

@@ -18,11 +18,14 @@ const getGameSession = async ({
 }): Promise<IGameSession | null> => {
   const result = await supabaseClient
     .from<definitions["game_sessions"]>("game_sessions")
-    .select()
-    .eq("id", gameSessionId);
+    .select("*")
+    .eq("id", gameSessionId)
+    .single();
+
+  console.log(result.data);
 
   return {
-    gameSessionId: result.data[0].id,
+    gameSessionId: result.data.id,
     users: {},
   };
 };
