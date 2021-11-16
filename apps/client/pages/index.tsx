@@ -1,17 +1,17 @@
 import dynamic from "next/dynamic";
 
-const App = dynamic(
+const _Index = dynamic(
   async () => {
-    const { App } = await import("../components/App");
-    return App;
+    const { Index } = await import("../components/routes/index");
+    return Index;
   },
   {
     ssr: false,
-  },
+  }
 );
 
 export const Index = () => {
-  return <App />;
+  return <_Index />;
 };
 
 export default Index;
