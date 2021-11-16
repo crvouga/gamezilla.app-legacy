@@ -2,13 +2,18 @@ import { createAction, createReducer } from "@reduxjs/toolkit";
 
 const name: "auth" = "auth";
 
-type ISignInMethod = {
+export type ISignInMethod = {
   type: "google";
 };
 
-type IState =
+export type IAuthState =
   | {
       type: "signed-in";
+      user: {
+        userId: string;
+        avatarUrl?: string;
+        displayName?: string;
+      };
     }
   | {
       type: "signed-out";
@@ -19,22 +24,23 @@ type IState =
 
 const actions = {
   signIn: createAction<ISignInMethod>("auth/signIn"),
-  setState: createAction<IState>("auth/setState"),
+  signOut: createAction("auth/signOut"),
+  setState: createAction<IAuthState>("auth/setState"),
 };
 
 const selectors = {
-  [name]: (state: { [name]: IState }): IState => state[name],
+  state: (state: { [name]: IAuthState }): IAuthState => state[name],
 };
 
-const reducer = createReducer<IState>(
+const reducer = createReducer<IAuthState>(
   {
     type: "loading",
   },
   {
-    [actions.setState.toString()]: (
+    [actions.setState.toString()](
       _state,
       action: ReturnType<typeof actions.setState>
-    ) => {
+    ) {
       return action.payload;
     },
   }

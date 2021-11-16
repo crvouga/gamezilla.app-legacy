@@ -1,14 +1,28 @@
-import { IonApp } from "@ionic/react";
-import { Provider } from "react-redux";
-import { store } from "../../core/store";
-import { Auth } from "./auth";
+import {
+  IonButton,
+  IonContent,
+  IonHeader,
+  IonPage,
+  IonTitle,
+  IonToolbar,
+} from "@ionic/react";
+import { actions } from "../../core";
+import { useDispatch } from "react-redux";
 
-export const Index = () => {
+export const IndexPage = () => {
+  const dispatch = useDispatch();
   return (
-    <Provider store={store}>
-      <IonApp>
-        <Auth />
-      </IonApp>
-    </Provider>
+    <IonPage>
+      <IonHeader>
+        <IonToolbar>
+          <IonTitle>Hello</IonTitle>
+        </IonToolbar>
+      </IonHeader>
+      <IonContent>
+        <IonButton onClick={() => dispatch(actions.auth.signOut())}>
+          Sign Out
+        </IonButton>
+      </IonContent>
+    </IonPage>
   );
 };
