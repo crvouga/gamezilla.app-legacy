@@ -1,7 +1,0 @@
-.form-box {
-  @apply text-gray-700 border-gray-300 ring-1 focus:ring-blue-400 w-full;
-}
-
-.form-label {
-  @apply block text-gray-700 font-bold text-sm mb-1;
-}
