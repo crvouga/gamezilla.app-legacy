@@ -1,13 +1,13 @@
-import dynamic from 'next/dynamic';
+import dynamic from "next/dynamic";
 
 const App = dynamic(
   async () => {
-    const { App } = await import('../components/App');
+    const { App } = await import("../components/App");
     return App;
   },
   {
     ssr: false,
-  }
+  },
 );
 
 export const Index = () => {
@@ -15,4 +15,3 @@ export const Index = () => {
 };
 
 export default Index;
-// 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
