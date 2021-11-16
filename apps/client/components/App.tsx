@@ -6,49 +6,48 @@ import {
   IonItem,
   IonLabel,
   IonList,
+  IonLoading,
   IonPage,
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import { logoGoogle, logoInstagram, logoTiktok } from "ionicons/icons";
+import { logoGoogle } from "ionicons/icons";
+import { useState } from "react";
 
 export const App = () => {
+  const [state, setState] = useState<"loading" | "idle">("idle");
+
+  const handleGoogleAuth = () => {
+    setState("loading");
+  };
+
   return (
-    <IonApp>
-      <IonPage>
-        <IonHeader>
-          <IonToolbar>
-            <IonTitle>Gamezilla</IonTitle>
-          </IonToolbar>
-        </IonHeader>
+    <>
+      <IonApp>
+        <IonLoading
+          isOpen={state === "loading"}
+          onDidDismiss={() => setState("idle")}
+          duration={3000}
+        />
+        <IonPage>
+          <IonHeader>
+            <IonToolbar>
+              <IonTitle>Gamezilla</IonTitle>
+            </IonToolbar>
+          </IonHeader>
 
-        <IonContent>
-          <IonList>
-            <IonItem button onClick={() => {}}>
-              <IonIcon icon={logoGoogle} slot="start" />
-              <IonLabel>
-                Sign In With Google
-              </IonLabel>
-            </IonItem>
-
-            <IonItem button onClick={() => {}}>
-              <IonIcon icon={logoInstagram} slot="start" />
-
-              <IonLabel>
-                Sign In With Instagram
-              </IonLabel>
-            </IonItem>
-
-            <IonItem button onClick={() => {}}>
-              <IonIcon icon={logoTiktok} slot="start" />
-
-              <IonLabel>
-                Sign In With Tik Tok
-              </IonLabel>
-            </IonItem>
-          </IonList>
-        </IonContent>
-      </IonPage>
-    </IonApp>
+          <IonContent>
+            <IonList>
+              <IonItem button onClick={handleGoogleAuth}>
+                <IonIcon icon={logoGoogle} slot="start" />
+                <IonLabel>
+                  Sign In With Google
+                </IonLabel>
+              </IonItem>
+            </IonList>
+          </IonContent>
+        </IonPage>
+      </IonApp>
+    </>
   );
 };
