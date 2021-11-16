@@ -13,7 +13,7 @@ import { logoGoogle } from "ionicons/icons";
 import { useDispatch } from "react-redux";
 import { actions } from "../../../core";
 
-export const Auth = () => {
+export const AuthPage = () => {
   const dispatch = useDispatch();
 
   return (

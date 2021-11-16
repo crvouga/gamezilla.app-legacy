@@ -1,9 +1,9 @@
 import dynamic from "next/dynamic";
 
-const _Index = dynamic(
+const App = dynamic(
   async () => {
-    const { Index } = await import("../components/routes/index");
-    return Index;
+    const { App } = await import("../components/App");
+    return App;
   },
   {
     ssr: false,
@@ -11,7 +11,7 @@ const _Index = dynamic(
 );
 
 export const Index = () => {
-  return <_Index />;
+  return <App />;
 };
 
 export default Index;
