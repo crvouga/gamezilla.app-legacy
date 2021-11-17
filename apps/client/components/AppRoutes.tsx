@@ -1,6 +1,5 @@
-import { IonLoading } from "@ionic/react";
-import { useSelector } from "react-redux";
-import { selectors } from "../core";
+import { IonLoading, IonRouterOutlet } from "@ionic/react";
+import { IonReactRouter } from "@ionic/react-router";
 import { useAuthState } from "../hooks";
 import { IndexPage } from "./routes";
 import { AuthPage } from "./routes/auth";
@@ -10,7 +9,11 @@ export const AppRoutes = () => {
 
   switch (authState.type) {
     case "signed-in":
-      return <IndexPage />;
+      return (
+        <IonReactRouter>
+          <IndexPage />
+        </IonReactRouter>
+      );
 
     case "signed-out":
       return <AuthPage />;
