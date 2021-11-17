@@ -12,7 +12,11 @@ export const selectors = {
 };
 
 export function* saga() {
-  yield fork(authSaga, { signOut, signIn, onAuthState });
+  yield fork(authSaga, {
+    signOut,
+    signIn,
+    onAuthState,
+  });
 }
 
 export const reducer = combineReducers({

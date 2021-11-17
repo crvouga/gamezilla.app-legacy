@@ -1,7 +1,6 @@
 import { IonApp } from "@ionic/react";
 import { Provider } from "react-redux";
 import { store } from "../core/store";
-
 import { AppRoutes } from "./AppRoutes";
 
 export const App = () => {

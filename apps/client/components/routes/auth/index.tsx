@@ -1,5 +1,4 @@
 import {
-  IonAvatar,
   IonContent,
   IonHeader,
   IonIcon,
@@ -8,11 +7,12 @@ import {
   IonList,
   IonPage,
   IonTitle,
-  IonToolbar,
+  IonToolbar
 } from "@ionic/react";
 import { logoGoogle } from "ionicons/icons";
 import { useDispatch } from "react-redux";
 import { actions } from "../../../core";
+
 
 export const AuthPage = () => {
   const dispatch = useDispatch();
