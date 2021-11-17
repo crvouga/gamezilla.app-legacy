@@ -1,7 +1,7 @@
 import { combineReducers } from "@reduxjs/toolkit";
 import { fork } from "redux-saga/effects";
-import { auth } from "./auth";
-import { firebaseSaga } from "./firebase/firebase-saga";
+import { auth, authSaga } from "./auth";
+import { signOut, signIn, onAuthState } from "../firebase/firebase-auth";
 
 export const actions = {
   [auth.name]: auth.actions,
@@ -12,7 +12,7 @@ export const selectors = {
 };
 
 export function* saga() {
-  yield fork(firebaseSaga);
+  yield fork(authSaga, { signOut, signIn, onAuthState });
 }
 
 export const reducer = combineReducers({
