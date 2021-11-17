@@ -1,29 +1,17 @@
 import {
-  IonAvatar,
-  IonButton,
   IonContent,
   IonHeader,
-  IonIcon,
   IonItem,
   IonLabel,
   IonList,
   IonPage,
-  IonRouterOutlet,
-  IonTabBar,
-  IonTabButton,
-  IonTabs,
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import { toAvatarSeed, toAvatarUrl } from "apps/client/core/avatar";
-import { home, person } from "ionicons/icons";
-import { useDispatch } from "react-redux";
-import { Route } from "react-router-dom";
-import { actions } from "../../core";
 
-const HomeTab = () => {
+export const HomePage = () => {
   return (
-    <>
+    <IonPage>
       <IonHeader>
         <IonToolbar>
           <IonTitle>Home</IonTitle>
@@ -37,65 +25,6 @@ const HomeTab = () => {
           </IonItem>
         </IonList>
       </IonContent>
-    </>
-  );
-};
-
-const ProfileTab = () => {
-  const dispatch = useDispatch();
-
-  return (
-    <>
-      <IonHeader>
-        <IonToolbar>
-          <IonTitle>Profile</IonTitle>
-        </IonToolbar>
-      </IonHeader>
-
-      <IonAvatar
-        style={{
-          width: "150px",
-          height: "150px",
-        }}
-      >
-        <img
-          src={toAvatarUrl({
-            avatarSeed: toAvatarSeed("123"),
-            avatarStyle: "adventurer",
-          })}
-        />
-      </IonAvatar>
-
-      <IonContent>
-        <IonButton onClick={() => dispatch(actions.auth.signOut())}>
-          Sign Out
-        </IonButton>
-      </IonContent>
-    </>
-  );
-};
-
-export const IndexPage = () => {
-  return (
-    <IonPage>
-      <IonTabs>
-        <IonRouterOutlet>
-          <Route path="/home" component={HomeTab} exact />
-          <Route path="/profile" component={ProfileTab} exact />
-        </IonRouterOutlet>
-
-        <IonTabBar slot="bottom">
-          <IonTabButton tab="home" href="/home">
-            <IonIcon icon={home} />
-            <IonLabel>Home</IonLabel>
-          </IonTabButton>
-
-          <IonTabButton tab="profile" href="/profile">
-            <IonIcon icon={person} />
-            <IonLabel>Profile</IonLabel>
-          </IonTabButton>
-        </IonTabBar>
-      </IonTabs>
     </IonPage>
   );
 };
