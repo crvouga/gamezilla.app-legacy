@@ -47,6 +47,7 @@ const AppRoutes = () => {
             </IonTabs>
 
             <Route path="/profile/edit" component={ProfileEditPage} exact />
+
             <Redirect from="/" to="/home" exact />
           </IonRouterOutlet>
         </IonReactRouter>
@@ -63,7 +64,7 @@ const AppRoutes = () => {
 export const App = () => {
   return (
     <Provider store={store}>
-      <IonApp>
+      <IonApp className="max-w-2xl m-auto">
         <AppRoutes />
       </IonApp>
     </Provider>
