@@ -1,14 +1,24 @@
 import { IOnAuthState, ISignIn, ISignOut } from "../core/auth";
+import { dropLastWhile } from "../utility";
 import { supabase } from "./supabase";
 
 export const signOut: ISignOut = () => {
   supabase.auth.signOut();
 };
 
+const formatRedirectTo = (redirectTo: string) => {
+  return dropLastWhile(
+    (character) => character === "/",
+    redirectTo.split("")
+  ).join("");
+};
+
 export const signIn: ISignIn = async (method) => {
+  const redirectTo = formatRedirectTo(window.location.origin);
+
   switch (method.type) {
     case "google":
-      await supabase.auth.signIn({ provider: "google" });
+      await supabase.auth.signIn({ provider: "google" }, { redirectTo });
       return;
   }
 };
