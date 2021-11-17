@@ -15,14 +15,13 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
+import { toAvatarSeed, toAvatarUrl } from "apps/client/core/avatar";
 import { home, person } from "ionicons/icons";
 import { useDispatch } from "react-redux";
-import { Redirect, Route } from "react-router-dom";
+import { Route } from "react-router-dom";
 import { actions } from "../../core";
 
 const HomeTab = () => {
-  const dispatch = useDispatch();
-
   return (
     <>
       <IonHeader>
@@ -52,6 +51,20 @@ const ProfileTab = () => {
           <IonTitle>Profile</IonTitle>
         </IonToolbar>
       </IonHeader>
+
+      <IonAvatar
+        style={{
+          width: "150px",
+          height: "150px",
+        }}
+      >
+        <img
+          src={toAvatarUrl({
+            avatarSeed: toAvatarSeed("123"),
+            avatarStyle: "adventurer",
+          })}
+        />
+      </IonAvatar>
 
       <IonContent>
         <IonButton onClick={() => dispatch(actions.auth.signOut())}>
