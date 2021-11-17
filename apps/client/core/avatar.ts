@@ -1,4 +1,4 @@
-import { capitalize, generateUniqueId, removeKey, shuffle } from "../utility";
+import { capitalize } from "../utility";
 
 export type IAvatarStyle =
   | "adventurer"
