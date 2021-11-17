@@ -1,7 +1,7 @@
 import { combineReducers } from "@reduxjs/toolkit";
 import { fork } from "redux-saga/effects";
 import { auth, authSaga } from "./auth";
-import { signOut, signIn, onAuthState } from "../firebase/firebase-auth";
+import { signOut, signIn, onAuthState } from "../supabase";
 
 export const actions = {
   [auth.name]: auth.actions,

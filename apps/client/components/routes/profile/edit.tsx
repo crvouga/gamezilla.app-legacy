@@ -82,7 +82,7 @@ export const ProfileEditPage = () => {
             interface="popover"
           >
             {Object.keys(AVATAR_STYLES).map((avatarStyle) => (
-              <IonSelectOption value={avatarStyle}>
+              <IonSelectOption key={avatarStyle} value={avatarStyle}>
                 {formatAvatarStyle(toAvatarStyle(avatarStyle))}
               </IonSelectOption>
             ))}

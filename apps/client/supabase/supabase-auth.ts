@@ -14,17 +14,26 @@ export const signIn: ISignIn = async (method) => {
 };
 
 export const onAuthState: IOnAuthState = (set) => {
-  set({
-    type: "loading",
-  });
+  const timeout = setTimeout(() => {
+    const session = supabase.auth.session();
 
-  if (!supabase.auth.session()) {
-    set({
-      type: "signed-out",
-    });
-  }
+    if (session) {
+      set({
+        type: "signed-in",
+        user: {
+          userId: session.user.id,
+        },
+      });
+    } else {
+      set({
+        type: "signed-out",
+      });
+    }
+  }, 1000);
 
-  const { data } = supabase.auth.onAuthStateChange((event, session) => {
+  const response = supabase.auth.onAuthStateChange((event, session) => {
+    clearTimeout(timeout);
+
     switch (event) {
       case "PASSWORD_RECOVERY":
       case "SIGNED_IN":
@@ -47,6 +56,6 @@ export const onAuthState: IOnAuthState = (set) => {
   });
 
   return () => {
-    data.unsubscribe();
+    response.data.unsubscribe();
   };
 };
