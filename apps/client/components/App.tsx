@@ -26,26 +26,26 @@ const AppRoutes = () => {
     case "signed-in":
       return (
         <IonReactRouter>
+          <IonTabs>
+            <IonRouterOutlet>
+              <Route path="/home" component={HomePage} exact />
+              <Route path="/profile" component={ProfilePage} exact />
+            </IonRouterOutlet>
+
+            <IonTabBar slot="bottom">
+              <IonTabButton tab="home" href="/home">
+                <IonIcon icon={home} />
+                <IonLabel>Home</IonLabel>
+              </IonTabButton>
+
+              <IonTabButton tab="profile" href="/profile">
+                <IonIcon icon={person} />
+                <IonLabel>Profile</IonLabel>
+              </IonTabButton>
+            </IonTabBar>
+          </IonTabs>
+
           <IonRouterOutlet>
-            <IonTabs>
-              <IonRouterOutlet>
-                <Route path="/home" component={HomePage} exact />
-                <Route path="/profile" component={ProfilePage} exact />
-              </IonRouterOutlet>
-
-              <IonTabBar slot="bottom">
-                <IonTabButton tab="home" href="/home">
-                  <IonIcon icon={home} />
-                  <IonLabel>Home</IonLabel>
-                </IonTabButton>
-
-                <IonTabButton tab="profile" href="/profile">
-                  <IonIcon icon={person} />
-                  <IonLabel>Profile</IonLabel>
-                </IonTabButton>
-              </IonTabBar>
-            </IonTabs>
-
             <Route path="/profile/edit" component={ProfileEditPage} exact />
 
             <Redirect from="/" to="/home" exact />
