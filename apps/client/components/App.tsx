@@ -13,19 +13,10 @@ import { home, person } from "ionicons/icons";
 import { Provider } from "react-redux";
 import { Redirect, Route } from "react-router-dom";
 import { store } from "../core/store";
-import { onAuthState, signIn } from "../firebase";
 import { useAuthState } from "../hooks";
 import { HomePage } from "./routes";
 import { AuthPage } from "./routes/auth";
 import { ProfilePage } from "./routes/profile";
-
-onAuthState((authState) => {
-  appEventEmitter.emit({ type: "auth/authState", payload: authState });
-});
-
-appEventEmitter.on("auth/sign-in", (event) => {
-  signIn(event);
-});
 
 const AppRoutes = () => {
   const authState = useAuthState();
