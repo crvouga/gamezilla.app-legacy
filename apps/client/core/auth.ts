@@ -1,4 +1,5 @@
 import { createAction, createReducer } from "@reduxjs/toolkit";
+import { fork } from "child_process";
 import { eventChannel } from "redux-saga";
 import { call, put, takeEvery } from "redux-saga/effects";
 
@@ -25,7 +26,9 @@ export type IAuthState =
     };
 
 export type ISignIn = (method: ISignInMethod) => void;
+
 export type ISignOut = () => void;
+
 export type IOnAuthState = (set: (state: IAuthState) => void) => () => void;
 
 const actions = {
