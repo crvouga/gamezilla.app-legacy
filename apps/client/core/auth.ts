@@ -1,7 +1,6 @@
 import { createAction, createReducer } from "@reduxjs/toolkit";
-import { fork } from "child_process";
 import { eventChannel } from "redux-saga";
-import { call, put, takeEvery } from "redux-saga/effects";
+import { call, put, takeLatest } from "redux-saga/effects";
 
 const name: "auth" = "auth";
 
@@ -26,10 +25,14 @@ export type IAuthState =
     };
 
 export type ISignIn = (method: ISignInMethod) => void;
-
 export type ISignOut = () => void;
-
 export type IOnAuthState = (set: (state: IAuthState) => void) => () => void;
+
+export type IAuthServices = {
+  signIn: ISignIn;
+  signOut: ISignOut;
+  onAuthState: IOnAuthState;
+};
 
 const actions = {
   signIn: createAction<ISignInMethod>("auth/signIn"),
@@ -55,27 +58,19 @@ const reducer = createReducer<IAuthState>(
   }
 );
 
-export function* authSaga({
-  onAuthState,
-  signIn,
-  signOut,
-}: {
-  onAuthState: IOnAuthState;
-  signIn: ISignIn;
-  signOut: ISignOut;
-}) {
-  const authStateChannel = eventChannel(onAuthState);
+function* saga(services: IAuthServices) {
+  const authStateChannel = eventChannel(services.onAuthState);
 
-  yield takeEvery(authStateChannel, function* (authState) {
+  yield takeLatest(authStateChannel, function* (authState) {
     yield put(actions.setState(authState));
   });
 
-  yield takeEvery(actions.signIn, function* (action) {
-    yield call(signIn, action.payload);
+  yield takeLatest(actions.signIn, function* (action) {
+    yield call(services.signIn, action.payload);
   });
 
-  yield takeEvery(actions.signOut, function* () {
-    yield call(signOut);
+  yield takeLatest(actions.signOut, function* () {
+    yield call(services.signOut);
   });
 }
 
@@ -84,4 +79,5 @@ export const auth = {
   selectors,
   actions,
   reducer,
+  saga,
 };

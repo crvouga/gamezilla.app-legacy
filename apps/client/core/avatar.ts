@@ -74,14 +74,24 @@ export const toAvatarUrl = ({
 
 export const parseAvatarUrl = (
   avatarUrl?: string
-): { avatarSeed: IAvatarSeed; avatarStyle: IAvatarStyle } => {
-  const [avatarStyle, avatarSeed] = new URL(avatarUrl).pathname
-    .split("/")
-    .flatMap((_) => _.split("."))
-    .slice(-3);
+): {
+  avatarSeed: IAvatarSeed;
+   avatarStyle: IAvatarStyle
+} => {
+  try {
+    const [avatarStyle, avatarSeed] = new URL(avatarUrl).pathname
+      .split("/")
+      .flatMap((_) => _.split("."))
+      .slice(-3);
 
-  return {
-    avatarStyle: toAvatarStyle(avatarStyle),
-    avatarSeed: toAvatarSeed(avatarSeed),
-  };
+    return {
+      avatarStyle: toAvatarStyle(avatarStyle),
+      avatarSeed: toAvatarSeed(avatarSeed),
+    };
+  } catch (error) {
+    return {
+      avatarStyle: toAvatarStyle("adventurer"),
+      avatarSeed: toAvatarSeed(""),
+    };
+  }
 };
