@@ -76,7 +76,7 @@ export const parseAvatarUrl = (
   avatarUrl?: string
 ): {
   avatarSeed: IAvatarSeed;
-   avatarStyle: IAvatarStyle
+  avatarStyle: IAvatarStyle;
 } => {
   try {
     const [avatarStyle, avatarSeed] = new URL(avatarUrl).pathname
