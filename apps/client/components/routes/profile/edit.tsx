@@ -1,5 +1,6 @@
 import {
   IonAvatar,
+  IonBackButton,
   IonButton,
   IonButtons,
   IonContent,
@@ -66,13 +67,14 @@ export const ProfileEditPage = () => {
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">
-            <IonButton>Cancel</IonButton>
+            <IonBackButton />
           </IonButtons>
+
           <IonTitle>Edit Profile</IonTitle>
 
           <IonButtons slot="end">
             <IonButton onClick={handleSubmit} color="primary">
-              Done
+              Submit
             </IonButton>
           </IonButtons>
         </IonToolbar>
