@@ -34,9 +34,7 @@ export const onAuthState: IOnAuthState = (set) => {
     if (authState) {
       set({
         type: "signed-in",
-        user: {
-          userId: authState.uid,
-        },
+        userId: authState.uid,
       });
       return;
     }

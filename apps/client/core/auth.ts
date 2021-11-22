@@ -1,6 +1,7 @@
 import { createAction, createReducer } from "@reduxjs/toolkit";
 import { eventChannel } from "redux-saga";
-import { call, put, takeLatest } from "redux-saga/effects";
+import { take, fork, call, put, takeLatest } from "redux-saga/effects";
+import { IOnProfile } from "./profile/profile";
 
 const name: "auth" = "auth";
 
@@ -11,11 +12,7 @@ export type ISignInMethod = {
 export type IAuthState =
   | {
       type: "signed-in";
-      user: {
-        userId: string;
-        avatarUrl?: string;
-        displayName?: string;
-      };
+      userId: string;
     }
   | {
       type: "signed-out";
@@ -28,16 +25,13 @@ export type ISignIn = (method: ISignInMethod) => void;
 export type ISignOut = () => void;
 export type IOnAuthState = (set: (state: IAuthState) => void) => () => void;
 
-export type IAuthServices = {
-  signIn: ISignIn;
-  signOut: ISignOut;
-  onAuthState: IOnAuthState;
-};
-
 const actions = {
   signIn: createAction<ISignInMethod>("auth/signIn"),
   signOut: createAction("auth/signOut"),
-  setState: createAction<IAuthState>("auth/setState"),
+  //
+  signedIn: createAction<{ userId: string }>("auth/signed-in"),
+  //
+  setState: createAction<IAuthState>("auth/SET_STATE"),
 };
 
 const selectors = {
@@ -49,35 +43,43 @@ const reducer = createReducer<IAuthState>(
     type: "loading",
   },
   {
-    [actions.setState.toString()](
-      _state,
-      action: ReturnType<typeof actions.setState>
-    ) {
+    [actions.setState.toString()]: (_, action) => {
       return action.payload;
     },
   }
 );
-
-function* saga(services: IAuthServices) {
-  const authStateChannel = eventChannel(services.onAuthState);
-
-  yield takeLatest(authStateChannel, function* (authState) {
-    yield put(actions.setState(authState));
-  });
-
-  yield takeLatest(actions.signIn, function* (action) {
-    yield call(services.signIn, action.payload);
-  });
-
-  yield takeLatest(actions.signOut, function* () {
-    yield call(services.signOut);
-  });
-}
 
 export const auth = {
   name,
   selectors,
   actions,
   reducer,
-  saga,
 };
+
+export function* authSaga({
+  signIn,
+  signOut,
+  onAuthState,
+}: {
+  signIn: ISignIn;
+  signOut: ISignOut;
+  onAuthState: IOnAuthState;
+}) {
+  const authStateChannel = eventChannel(onAuthState);
+
+  yield takeLatest(authStateChannel, function* (authState) {
+    yield put(actions.setState(authState));
+
+    if (authState.type === "signed-in") {
+      yield put(actions.signedIn(authState));
+    }
+  });
+
+  yield takeLatest(actions.signIn, function* (action) {
+    yield call(signIn, action.payload);
+  });
+
+  yield takeLatest(actions.signOut, function* () {
+    yield call(signOut);
+  });
+}
