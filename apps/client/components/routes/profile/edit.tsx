@@ -23,14 +23,13 @@ import {
   toAvatarSeed,
   toAvatarStyle,
   toAvatarUrl,
-} from "apps/client/core/avatar";
-import { useAuthUser } from "apps/client/hooks";
+} from "apps/client/core/profile/avatar";
+import { useAuthProfile } from "apps/client/hooks";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 export const ProfileEditPage = () => {
   const dispatch = useDispatch();
-  const authUser = useAuthUser();
 
   const profile = useSelector(selectors.profile.slice);
   const parsed = parseAvatarUrl(profile?.avatarUrl ?? "");
@@ -47,8 +46,7 @@ export const ProfileEditPage = () => {
     });
 
     dispatch(
-      actions.profile.setProfile({
-        userId: authUser.userId,
+      actions.profile.editProfile({
         avatarUrl: avatarUrl,
         name: "idk",
       })

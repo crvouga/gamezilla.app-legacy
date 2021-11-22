@@ -30,9 +30,7 @@ export const onAuthState: IOnAuthState = (set) => {
     if (session) {
       set({
         type: "signed-in",
-        user: {
-          userId: session.user.id,
-        },
+        userId: session.user.id,
       });
     } else {
       set({
@@ -50,9 +48,7 @@ export const onAuthState: IOnAuthState = (set) => {
       case "USER_UPDATED":
         set({
           type: "signed-in",
-          user: {
-            userId: session.user.id,
-          },
+          userId: session.user.id,
         });
         return;
 
