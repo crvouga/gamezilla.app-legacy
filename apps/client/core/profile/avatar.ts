@@ -55,8 +55,8 @@ export const toAvatarStyle = (avatarStyle: string) => {
 
 export type IAvatarSeed = string & { type: "AvatarSeed" };
 
-export const toAvatarSeed = (seed: string) => {
-  return seed.replace(" ", "").replace(";", "") as IAvatarSeed;
+export const toAvatarSeed = (seed?: string) => {
+  return (seed?.replace(" ", "")?.replace(";", "") ?? "") as IAvatarSeed;
 };
 
 const AVATAR_URL_ROOT = `https://avatars.dicebear.com/api`;
@@ -80,9 +80,9 @@ export const parseAvatarUrl = (
 } => {
   try {
     const [avatarStyle, avatarSeed] = new URL(avatarUrl).pathname
+      .split(".")[0]
       .split("/")
-      .flatMap((_) => _.split("."))
-      .slice(-3);
+      .slice(-2);
 
     return {
       avatarStyle: toAvatarStyle(avatarStyle),
@@ -94,4 +94,14 @@ export const parseAvatarUrl = (
       avatarSeed: toAvatarSeed(""),
     };
   }
+};
+
+export const generateRandomAvatarUrl = () => {
+  const avatarStyle = AVATAR_STYLES["adventurer-neutral"];
+  const avatarSeed = toAvatarSeed(String(Math.floor(Math.random() * 10000)));
+
+  return toAvatarUrl({
+    avatarStyle,
+    avatarSeed,
+  });
 };
