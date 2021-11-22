@@ -1,7 +1,6 @@
 import { createAction, createReducer } from "@reduxjs/toolkit";
 import { eventChannel } from "redux-saga";
-import { take, fork, call, put, takeLatest } from "redux-saga/effects";
-import { IOnProfile } from "./profile/profile";
+import { call, put, takeLatest } from "redux-saga/effects";
 
 const name: "auth" = "auth";
 

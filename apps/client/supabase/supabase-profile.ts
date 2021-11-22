@@ -3,18 +3,25 @@ import {
   IOnProfile,
   ISetProfile,
 } from "../core/profile/profile";
-
+import { supabase } from "./supabase";
+import { definitions } from "./types";
 export const onProfile: IOnProfile =
   ({ userId }) =>
   (set) => {
-    setTimeout(() => {
-      set({
-        userId,
-        name: "hello",
-        avatarUrl: "hello",
-      });
-    }, 200);
-    return () => {};
+    const response = supabase
+      .from<definitions["profile"]>(`profile:id=eq.${userId}`)
+      .on("*", (payload) => {
+        set({
+          userId: payload.new.id,
+          avatarUrl: payload.new.avatar_url,
+          name: payload.new.name,
+        });
+      })
+      .subscribe();
+
+    return () => {
+      response.unsubscribe();
+    };
   };
 
 export const setProfile: ISetProfile = async (profile) => {
