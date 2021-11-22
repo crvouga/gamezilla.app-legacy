@@ -1,17 +1,23 @@
 import { useSelector } from "react-redux";
 import { selectors } from "../core";
 
-export const useAuthState = () => {
+export const useAuthSlice = () => {
   return useSelector(selectors.auth.state);
 };
 
-export const useAuthProfile = () => {
-  const authState = useSelector(selectors.auth.state);
-  const profile = useSelector(selectors.profile.slice);
+export const useProfileSlice = () => {
+  return useSelector(selectors.profile.slice);
+};
 
-  if (authState.type === "signed-in") {
-    return profile;
+export const useAuthProfile = () => {
+  const authSlice = useAuthSlice();
+  const profileSlice = useProfileSlice();
+
+  if (authSlice.type === "signed-in" && profileSlice.type === "loaded") {
+    return profileSlice.profile;
   }
 
-  throw new Error("Try to use auth user when not signed in");
+  throw new Error(
+    "Can not use auth profile when not signed in or profile loaded"
+  );
 };

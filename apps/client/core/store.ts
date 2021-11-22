@@ -1,6 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import createSagaMiddleware from "redux-saga";
-import { supabaseServices } from "../supabase";
+import { sagaParameters } from "../supabase";
 import { reducer, saga } from "./root";
 
 const sagaMiddleware = createSagaMiddleware();
@@ -10,4 +10,4 @@ export const store = configureStore({
   middleware: [sagaMiddleware],
 });
 
-sagaMiddleware.run(saga, supabaseServices);
+sagaMiddleware.run(saga, sagaParameters);

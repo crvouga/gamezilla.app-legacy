@@ -14,10 +14,11 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import { actions, selectors } from "apps/client/core";
+import { actions } from "apps/client/core";
 import {
   AVATAR_STYLES,
   formatAvatarStyle,
+  IAvatarSeed,
   IAvatarStyle,
   parseAvatarUrl,
   toAvatarSeed,
@@ -25,32 +26,39 @@ import {
   toAvatarUrl,
 } from "apps/client/core/profile/avatar";
 import { useAuthProfile } from "apps/client/hooks";
-import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 
 export const ProfileEditPage = () => {
   const dispatch = useDispatch();
 
-  const profile = useSelector(selectors.profile.slice);
-  const parsed = parseAvatarUrl(profile?.avatarUrl ?? "");
+  const profile = useAuthProfile();
 
-  const [avatarStyle, setAvatarStyle] = useState<IAvatarStyle>(
-    parsed.avatarStyle
-  );
-  const [avatarSeed, setAvatarSeed] = useState(parsed.avatarSeed);
+  const [avatarStyle, setAvatarStyle] = useState<IAvatarStyle | null>(null);
+  const [avatarSeed, setAvatarSeed] = useState<IAvatarSeed | null>(null);
+  const [name, setName] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (profile) {
+      const parsed = parseAvatarUrl(profile?.avatarUrl ?? "");
+      setAvatarStyle(parsed.avatarStyle);
+      setAvatarSeed(parsed.avatarSeed);
+      setName(profile.name);
+    }
+  }, [profile?.avatarUrl, profile?.name]);
 
   const handleSubmit = () => {
-    const avatarUrl = toAvatarUrl({
-      avatarSeed,
-      avatarStyle,
-    });
-
-    dispatch(
-      actions.profile.editProfile({
-        avatarUrl: avatarUrl,
-        name: "idk",
-      })
-    );
+    if (avatarSeed && avatarStyle && name) {
+      dispatch(
+        actions.profile.editProfile({
+          avatarUrl: toAvatarUrl({
+            avatarSeed,
+            avatarStyle,
+          }),
+          name,
+        })
+      );
+    }
   };
 
   return (
@@ -99,13 +107,14 @@ export const ProfileEditPage = () => {
         <IonItem>
           <IonLabel position="floating">Avatar Seed</IonLabel>
           <IonInput
+            value={avatarSeed}
             onIonChange={(e) => setAvatarSeed(toAvatarSeed(e.detail.value))}
           />
         </IonItem>
 
         <IonItem>
           <IonLabel position="floating">Name</IonLabel>
-          <IonInput />
+          <IonInput value={name} onIonChange={(e) => setName(e.detail.value)} />
         </IonItem>
       </IonContent>
     </IonPage>
