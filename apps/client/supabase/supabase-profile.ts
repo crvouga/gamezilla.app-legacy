@@ -10,7 +10,7 @@ import { definitions } from "./types";
 export const onProfile: IOnProfile =
   ({ userId }) =>
   (set) => {
-    const response = supabase
+    const subscription = supabase
       .from<definitions["profile"]>(`profile:id-eq.${userId}`)
       .on("*", (payload) => {
         set({
@@ -22,7 +22,7 @@ export const onProfile: IOnProfile =
       .subscribe();
 
     return () => {
-      response.unsubscribe();
+      subscription.unsubscribe();
     };
   };
 
