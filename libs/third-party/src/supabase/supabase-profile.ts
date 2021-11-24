@@ -1,9 +1,9 @@
-import { generateRandomAvatarUrl } from "../core/profile";
 import {
+  generateRandomAvatarUrl,
   IGetElseCreateProfile,
   IOnProfile,
   IUpdateProfile,
-} from "../core/profile/profile";
+} from "@gamezilla/core";
 import { supabase } from "./supabase";
 import { definitions } from "./types";
 

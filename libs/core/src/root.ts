@@ -3,10 +3,6 @@ import { spawn } from "redux-saga/effects";
 import { auth, authSaga } from "./auth";
 import { profile, profileSaga } from "./profile";
 
-export type ISagaParameters = 
-  Parameters<typeof authSaga>[0] &
-  Parameters<typeof profileSaga>[0];
-
 export const actions = {
   [auth.name]: auth.actions,
   [profile.name]: profile.actions,
@@ -22,7 +18,10 @@ export const reducer = combineReducers({
   [auth.name]: auth.reducer,
 });
 
-export function* saga(parameters: ISagaParameters) {
-  yield spawn(authSaga, parameters);
-  yield spawn(profileSaga, parameters);
+type IParameters = Parameters<typeof authSaga>[0] &
+  Parameters<typeof profileSaga>[0];
+
+export function* saga(dependencies: IParameters) {
+  yield spawn(authSaga, dependencies);
+  yield spawn(profileSaga, dependencies);
 }

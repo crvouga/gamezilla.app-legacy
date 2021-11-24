@@ -3,6 +3,9 @@
   "projects": {
     "client": "apps/client",
     "client-e2e": "apps/client-e2e",
-    "server": "apps/server"
+    "core": "libs/core",
+    "server": "apps/server",
+    "third-party": "libs/third-party",
+    "utility": "libs/utility"
   }
 }

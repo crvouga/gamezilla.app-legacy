@@ -1,4 +1,15 @@
 import {
+  actions,
+  AVATAR_STYLES,
+  formatAvatarStyle,
+  IAvatarSeed,
+  IAvatarStyle,
+  parseAvatarUrl,
+  toAvatarSeed,
+  toAvatarStyle,
+  toAvatarUrl,
+} from "@gamezilla/core";
+import {
   IonAvatar,
   IonBackButton,
   IonButton,
@@ -15,20 +26,9 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import { actions } from "apps/client/core";
-import {
-  AVATAR_STYLES,
-  formatAvatarStyle,
-  IAvatarSeed,
-  IAvatarStyle,
-  parseAvatarUrl,
-  toAvatarSeed,
-  toAvatarStyle,
-  toAvatarUrl,
-} from "apps/client/core/profile/avatar";
-import { useAuthProfile } from "apps/client/hooks";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
+import { useAuthProfile } from "../../../hooks";
 
 export const ProfileEditPage = () => {
   const dispatch = useDispatch();

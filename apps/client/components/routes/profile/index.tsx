@@ -1,3 +1,4 @@
+import { actions } from "@gamezilla/core";
 import {
   IonContent,
   IonHeader,
@@ -11,7 +12,6 @@ import {
 } from "@ionic/react";
 import { exitOutline, pencil } from "ionicons/icons";
 import { useDispatch } from "react-redux";
-import { actions } from "../../../core";
 
 export const ProfilePage = () => {
   const dispatch = useDispatch();
