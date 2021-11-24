@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux";
-import { selectors } from "../core";
+import { selectors } from "@gamezilla/core";
 
 export const useAuthSlice = () => {
   return useSelector(selectors.auth.state);

@@ -1,3 +1,5 @@
+import { createClient } from "@gamezilla/core";
+import { clientDependencies } from "@gamezilla/third-party";
 import {
   IonApp,
   IonIcon,
@@ -12,7 +14,6 @@ import { IonReactRouter } from "@ionic/react-router";
 import { home, person } from "ionicons/icons";
 import { Provider } from "react-redux";
 import { Redirect, Route } from "react-router-dom";
-import { store } from "../core/store";
 import { useAuthSlice, useProfileSlice } from "../hooks";
 import { HomePage } from "./routes";
 import { AuthPage } from "./routes/auth";
@@ -68,6 +69,8 @@ const AppRoutes = () => {
       }
   }
 };
+
+const { store } = createClient(clientDependencies);
 
 export const App = () => {
   return (

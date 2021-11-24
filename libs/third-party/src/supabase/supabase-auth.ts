@@ -1,5 +1,5 @@
-import { IOnAuthState, ISignIn, ISignOut } from "../core/auth";
-import { dropLastWhile } from "../utility";
+import { IOnAuthState, ISignIn, ISignOut } from "@gamezilla/core";
+import { dropLastWhile } from "@gamezilla/utility";
 import { supabase } from "./supabase";
 
 export const signOut: ISignOut = () => {

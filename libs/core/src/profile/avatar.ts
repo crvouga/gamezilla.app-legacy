@@ -1,4 +1,4 @@
-import { capitalize } from "../../utility";
+import { capitalize } from "@gamezilla/utility";
 
 export type IAvatarStyle =
   | "adventurer"

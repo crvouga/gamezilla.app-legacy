@@ -1,11 +1,16 @@
 import {
+  IOnAuthState,
+  ISignIn,
+  ISignInMethod,
+  ISignOut,
+} from "@gamezilla/core";
+import {
   getAuth,
   GoogleAuthProvider,
   onAuthStateChanged,
   signInWithRedirect,
   signOut as signOutFirebase,
 } from "firebase/auth";
-import { IOnAuthState, ISignIn, ISignInMethod, ISignOut } from "../core/auth";
 import { firebaseApp } from "./firebase";
 
 export const firebaseAuth = getAuth(firebaseApp);
