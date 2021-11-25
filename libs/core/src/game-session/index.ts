@@ -1,9 +1,10 @@
-import { createAction, createReducer } from "@reduxjs/toolkit";
+import { createReducer } from "@reduxjs/toolkit";
+import { createAction } from "@gamezilla/utility";
 
 const name: "gameSession" = "gameSession";
 
 const actions = {
-  create: createAction<{ userId: string }>(`${name}/create`),
+  create: createAction<{ userId: string }>(name, `create`),
 };
 
 type IGameSessionState = {

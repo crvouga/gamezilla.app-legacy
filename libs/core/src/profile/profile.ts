@@ -1,8 +1,8 @@
-import { createAction, createReducer } from "@reduxjs/toolkit";
+import { createAction, Awaited } from "@gamezilla/utility";
+import { createReducer } from "@reduxjs/toolkit";
 import { eventChannel } from "redux-saga";
 import { call, put, takeLatest } from "redux-saga/effects";
 import { auth } from "../auth";
-import { Awaited } from "@gamezilla/utility";
 import { toast } from "../toasts";
 
 export const name: "profile" = "profile";
@@ -30,11 +30,11 @@ export type ICreateProfile = ({ userId }: { userId: string }) => Promise<void>;
 export type IFindElseCreateProfile = IFindProfile;
 
 const actions = {
-  setState: createAction<IProfileState>(`${name}/set-state`),
-  recieved: createAction<IProfile>(`${name}/recieved`),
-  edit: createAction<{ avatarUrl: string; name: string }>(`${name}/edit`),
-  editSuccess: createAction(`${name}/edit-success`),
-  editError: createAction<{ message: string }>(`${name}/edit-error`),
+  setState: createAction<IProfileState>(name, `set-state`),
+  recieved: createAction<IProfile>(name, `recieved`),
+  edit: createAction<{ avatarUrl: string; name: string }>(name, `edit`),
+  editSuccess: createAction(name, `edit-success`),
+  editError: createAction<{ message: string }>(name, `edit-error`),
 };
 
 export type IProfileState =

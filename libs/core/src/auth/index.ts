@@ -1,4 +1,5 @@
-import { createAction, createReducer } from "@reduxjs/toolkit";
+import { createReducer } from "@reduxjs/toolkit";
+import { createAction } from "@gamezilla/utility";
 import { eventChannel } from "redux-saga";
 import { call, put, takeLatest } from "redux-saga/effects";
 
@@ -25,12 +26,12 @@ export type ISignOut = () => void;
 export type IOnAuthState = (set: (state: IAuthState) => void) => () => void;
 
 const actions = {
-  signIn: createAction<ISignInMethod>("auth/sign-in"),
-  signOut: createAction("auth/sign-out"),
+  signIn: createAction<ISignInMethod>(name, "sign-in"),
+  signOut: createAction(name, "sign-out"),
   //
-  signedIn: createAction<{ userId: string }>("auth/signed-in"),
+  signedIn: createAction<{ userId: string }>(name, "signed-in"),
   //
-  setState: createAction<IAuthState>("auth/set-state"),
+  setState: createAction<IAuthState>(name, "set-state"),
 };
 
 const selectors = {

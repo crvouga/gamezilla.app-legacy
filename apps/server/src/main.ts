@@ -1,4 +1,5 @@
-import { configureStore, createAction } from "@reduxjs/toolkit";
+import { configureStore } from "@reduxjs/toolkit";
+import { createAction } from "@gamezilla/utility";
 import { apply, takeEvery } from "redux-saga/effects";
 import * as express from "express";
 import * as http from "http";
@@ -24,8 +25,8 @@ server.listen(port, () => {
 
 const actions = {
   socket: {
-    connected: createAction(`socket/connected`),
-    disconnected: createAction(`socket/disconnected`),
+    connected: createAction("socket", "connected"),
+    disconnected: createAction("socket", "disconnected"),
   },
 };
 
