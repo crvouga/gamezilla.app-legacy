@@ -46,12 +46,12 @@ export const ProfileEditPage = () => {
       setAvatarSeed(parsed.avatarSeed);
       setName(profile.name);
     }
-  }, [profile?.avatarUrl, profile?.name]);
+  }, [profile, profile?.avatarUrl, profile?.name]);
 
   const handleSubmit = () => {
     if (avatarSeed && avatarStyle && name) {
       dispatch(
-        actions.profile.editProfile({
+        actions.profile.edit({
           avatarUrl: toAvatarUrl({
             avatarSeed,
             avatarStyle,

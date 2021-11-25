@@ -25,12 +25,12 @@ export type ISignOut = () => void;
 export type IOnAuthState = (set: (state: IAuthState) => void) => () => void;
 
 const actions = {
-  signIn: createAction<ISignInMethod>("auth/signIn"),
-  signOut: createAction("auth/signOut"),
+  signIn: createAction<ISignInMethod>("auth/sign-in"),
+  signOut: createAction("auth/sign-out"),
   //
   signedIn: createAction<{ userId: string }>("auth/signed-in"),
   //
-  setState: createAction<IAuthState>("auth/SET_STATE"),
+  setState: createAction<IAuthState>("auth/set-state"),
 };
 
 const selectors = {

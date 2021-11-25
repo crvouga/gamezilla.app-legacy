@@ -1,4 +1,4 @@
-import { createClient } from "@gamezilla/core";
+import { actions, createClient, selectors } from "@gamezilla/core";
 import { clientDependencies } from "@gamezilla/third-party";
 import {
   IonApp,
@@ -9,11 +9,12 @@ import {
   IonTabBar,
   IonTabButton,
   IonTabs,
+  IonToast,
   setupConfig,
 } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
 import { home, person } from "ionicons/icons";
-import { Provider } from "react-redux";
+import { Provider, useDispatch, useSelector } from "react-redux";
 import { Redirect, Route } from "react-router-dom";
 import { useAuthSlice, useProfileSlice } from "../hooks";
 import { HomePage } from "./routes";
@@ -22,12 +23,11 @@ import { ProfilePage } from "./routes/profile";
 import { ProfileEditPage } from "./routes/profile/edit";
 
 setupConfig({
-  mode: "md",
+  mode: "ios",
 });
 
 const AppRoutes = () => {
   const authSlice = useAuthSlice();
-
   const profileSlice = useProfileSlice();
 
   switch (authSlice.type) {
@@ -75,6 +75,32 @@ const AppRoutes = () => {
   }
 };
 
+const AppToasts = () => {
+  const toasts = useSelector(selectors.toast.slice);
+  const dispatch = useDispatch();
+
+  return (
+    <>
+      {toasts.map((toast, index) => (
+        <IonToast
+          isOpen={index === 0}
+          key={toast.id}
+          message={toast.message}
+          buttons={[
+            {
+              text: "Done",
+              role: "cancel",
+              handler: () => {
+                dispatch(actions.toast.dismiss(toast));
+              },
+            },
+          ]}
+        />
+      ))}
+    </>
+  );
+};
+
 const { store } = createClient(clientDependencies);
 
 export const App = () => {
@@ -82,6 +108,7 @@ export const App = () => {
     <Provider store={store}>
       <IonApp className="max-w-2xl m-auto">
         <AppRoutes />
+        <AppToasts />
       </IonApp>
     </Provider>
   );
