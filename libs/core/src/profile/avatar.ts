@@ -45,12 +45,12 @@ export const formatAvatarStyle = (avatarStyle: IAvatarStyle) => {
   return avatarStyle.split("-").map(capitalize).join(" ");
 };
 
-export const toAvatarStyle = (avatarStyle: string) => {
+export const toAvatarStyle = (avatarStyle: string): IAvatarStyle => {
   if (avatarStyle in AVATAR_STYLES) {
     return avatarStyle as IAvatarStyle;
   }
 
-  return null;
+  return "adventurer";
 };
 
 export type IAvatarSeed = string & { type: "AvatarSeed" };
@@ -79,7 +79,7 @@ export const parseAvatarUrl = (
   avatarStyle: IAvatarStyle;
 } => {
   try {
-    const [avatarStyle, avatarSeed] = new URL(avatarUrl).pathname
+    const [avatarStyle, avatarSeed] = new URL(avatarUrl ?? "").pathname
       .split(".")[0]
       .split("/")
       .slice(-2);
