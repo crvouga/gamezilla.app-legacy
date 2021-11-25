@@ -23,7 +23,7 @@ import { ProfilePage } from "./routes/profile";
 import { ProfileEditPage } from "./routes/profile/edit";
 
 setupConfig({
-  mode: "ios",
+  mode: "md",
 });
 
 const AppRoutes = () => {

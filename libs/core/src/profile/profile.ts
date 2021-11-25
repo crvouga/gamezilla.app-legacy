@@ -31,6 +31,7 @@ export type IFindElseCreateProfile = IFindProfile;
 
 const actions = {
   setState: createAction<IProfileState>(`${name}/set-state`),
+  recieved: createAction<IProfile>(`${name}/recieved`),
   edit: createAction<{ avatarUrl: string; name: string }>(`${name}/edit`),
   editSuccess: createAction(`${name}/edit-success`),
   editError: createAction<{ message: string }>(`${name}/edit-error`),
@@ -95,15 +96,35 @@ export function* profileSaga({
     const profileChannel = eventChannel(onProfile(action.payload));
 
     yield takeLatest(profileChannel, function* (profile) {
+      yield put(actions.recieved(profile));
+    });
+
+    yield takeLatest(actions.recieved, function* (action) {
       yield put(
         actions.setState({
           type: "loaded",
-          profile,
+          profile: action.payload,
+        })
+      );
+      yield put(
+        toast.actions.present({
+          message: "Profile Was Updated",
+          duration: 3000,
         })
       );
     });
 
     yield takeLatest(actions.edit, function* (action) {
+      yield put(
+        actions.setState({
+          type: "loaded",
+          profile: {
+            userId,
+            ...action.payload,
+          },
+        })
+      );
+
       const { error }: { error: Error } = yield call(updateProfile, {
         userId,
         ...action.payload,
@@ -115,12 +136,6 @@ export function* profileSaga({
       }
 
       yield put(actions.editSuccess());
-    });
-
-    yield takeLatest(actions.editSuccess, function* () {
-      yield put(
-        toast.actions.present({ message: "Updated Profile", duration: 3000 })
-      );
     });
   });
 }
