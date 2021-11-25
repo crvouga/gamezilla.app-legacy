@@ -3,6 +3,7 @@ import { eventChannel } from "redux-saga";
 import { call, put, takeLatest } from "redux-saga/effects";
 import { auth } from "../auth";
 import { Awaited } from "@gamezilla/utility";
+import { toast } from "../toasts";
 
 export const name: "profile" = "profile";
 
@@ -25,15 +26,10 @@ export type IGetElseCreateProfile = ({
 }) => Promise<IProfile>;
 
 const actions = {
-  setState: createAction<IProfileState>(`${name}/SET_STATE`),
-  editProfile: createAction<{ avatarUrl: string; name: string }>(
-    `${name}/editProfile`
-  ),
-  editProfileSuccess: createAction(`${name}/editProfileSuccess`),
-  editProfileError: createAction<{ message: string }>(
-    `${name}/editProfileError`
-  ),
-  getElseCreateProfile: createAction(`${name}/getElseCreateProfile`),
+  setState: createAction<IProfileState>(`${name}/set-state`),
+  edit: createAction<{ avatarUrl: string; name: string }>(`${name}/edit`),
+  editSuccess: createAction(`${name}/edit-success`),
+  editError: createAction<{ message: string }>(`${name}/edit-error`),
 };
 
 export type IProfileState =
@@ -46,7 +42,9 @@ export type IProfileState =
     };
 
 const reducer = createReducer<IProfileState>(
-  { type: "loading" },
+  {
+    type: "loading",
+  },
   {
     [actions.setState.toString()]: (
       _state,
@@ -91,18 +89,22 @@ export function* profileSaga({
       );
     });
 
-    yield takeLatest(actions.editProfile, function* (action) {
+    yield takeLatest(actions.edit, function* (action) {
       const { error }: { error: Error } = yield call(updateProfile, {
         userId,
         ...action.payload,
       });
 
       if (error) {
-        yield put(actions.editProfileError({ message: error.message }));
+        yield put(actions.editError({ message: error.message }));
         return;
       }
 
-      yield put(actions.editProfileSuccess());
+      yield put(actions.editSuccess());
+    });
+
+    yield takeLatest(actions.editSuccess, function* () {
+      yield put(toast.actions.present({ message: "Updated Profile" }));
     });
 
     const profile: Awaited<ReturnType<typeof getElseCreateProfile>> =
