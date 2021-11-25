@@ -12,8 +12,8 @@ export type IProfile = {
   name: string;
 };
 
-export type IOnProfile = ({
-  userId: string,
+export type IOnProfile = (_: {
+  userId: string;
 }) => (set: (profile: IProfile) => void) => () => void;
 
 export type IUpdateProfile = (profile: IProfile) => Promise<{ error: Error }>;

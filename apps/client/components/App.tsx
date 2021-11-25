@@ -9,6 +9,7 @@ import {
   IonTabBar,
   IonTabButton,
   IonTabs,
+  setupConfig,
 } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
 import { home, person } from "ionicons/icons";
@@ -19,6 +20,10 @@ import { HomePage } from "./routes";
 import { AuthPage } from "./routes/auth";
 import { ProfilePage } from "./routes/profile";
 import { ProfileEditPage } from "./routes/profile/edit";
+
+setupConfig({
+  mode: "md",
+});
 
 const AppRoutes = () => {
   const authSlice = useAuthSlice();
