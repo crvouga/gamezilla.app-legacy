@@ -17,8 +17,8 @@ export const createClient = (dependencies: IClientDependencies) => {
 
   const socket = io("http://localhost:3333");
 
-  socket.onAny((event) => {
-    console.log({ event });
+  socket.on("action", (action) => {
+    store.dispatch(action);
   });
 
   return {
