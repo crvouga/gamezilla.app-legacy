@@ -1,5 +1,6 @@
 import { generateId } from "@gamezilla/utility";
-import { createAction, createReducer } from "@reduxjs/toolkit";
+import { createReducer } from "@reduxjs/toolkit";
+import { createAction } from "@gamezilla/utility";
 import { delay, takeEvery, put } from "redux-saga/effects";
 
 export type IToast = {
