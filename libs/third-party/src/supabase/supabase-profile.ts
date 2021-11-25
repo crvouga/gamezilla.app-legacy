@@ -13,7 +13,7 @@ export const onProfile: IOnProfile =
   ({ userId }) =>
   (set) => {
     const subscription = supabase
-      .from<definitions["profile"]>(`profile:id-eq.${userId}`)
+      .from<definitions["profile"]>(`profile:id=eq.${userId}`)
       .on("*", (payload) => {
         set({
           userId: payload.new.id,
