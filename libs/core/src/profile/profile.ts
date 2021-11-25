@@ -1,8 +1,8 @@
 import { createAction, createReducer } from "@reduxjs/toolkit";
-import { fork } from "child_process";
 import { eventChannel } from "redux-saga";
 import { call, put, takeLatest } from "redux-saga/effects";
 import { auth } from "../auth";
+import { Awaited } from "@gamezilla/utility";
 
 export const name: "profile" = "profile";
 
@@ -67,7 +67,6 @@ export const profile = {
   selectors,
   name,
 };
-// type T = Awaited<Promise<PromiseLike<number>> // => number
 
 export function* profileSaga({
   onProfile,
@@ -84,12 +83,12 @@ export function* profileSaga({
     const profileChannel = eventChannel(onProfile(action.payload));
 
     yield takeLatest(profileChannel, function* (profile) {
-         yield put(
-      actions.setState({
-        type: "loaded",
-        profile,
-      })
-    );
+      yield put(
+        actions.setState({
+          type: "loaded",
+          profile,
+        })
+      );
     });
 
     yield takeLatest(actions.editProfile, function* (action) {
@@ -106,7 +105,8 @@ export function* profileSaga({
       yield put(actions.editProfileSuccess());
     });
 
-    const profile = yield call(getElseCreateProfile, { userId });
+    const profile: Awaited<ReturnType<typeof getElseCreateProfile>> =
+      yield call(getElseCreateProfile, { userId });
 
     yield put(
       actions.setState({
