@@ -1,21 +1,30 @@
-import * as express from 'express';
+import * as express from "express";
+import * as socketio from "socket.io";
+import * as http from "http";
 
 const app = express();
-
-app.get('/api', (_req, res) => {
-  res.send({ message: 'Welcome to server!' });
+const server = http.createServer(app);
+const io = new socketio.Server(server, {
+  cors: {
+    origin: "http://localhost:4200",
+  },
 });
 
-app.post('/api/command', (req, res) => {
-  const command = req.body;
-
-  res.json({ command });
+app.get("/api", (_req, res) => {
+  res.send({ message: "Welcome to server!" });
 });
 
-const port = process.env.port || 3333;
-
-const server = app.listen(port, () => {
+const port = process.env.port ?? 3333;
+server.listen(port, () => {
   console.log(`Listening at http://localhost:${port}/api`);
 });
 
-server.on('error', console.error);
+io.on("connection", (socket) => {
+  console.log("a client connected");
+
+  socket.emit("hello", "hello");
+
+  socket.on("disconnect", () => {
+    console.log("user disconnected");
+  });
+});
