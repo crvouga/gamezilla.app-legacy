@@ -1,7 +1,7 @@
 import { IClientDependencies } from "@gamezilla/core";
 import { onAuthState, signIn, signOut } from "./supabase-auth";
 import {
-  getElseCreateProfile,
+  findElseCreateProfile,
   onProfile,
   updateProfile,
 } from "./supabase-profile";
@@ -12,5 +12,5 @@ export const clientDependencies: IClientDependencies = {
   onAuthState,
   updateProfile,
   onProfile,
-  getElseCreateProfile,
+  findElseCreateProfile,
 };

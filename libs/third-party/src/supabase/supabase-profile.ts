@@ -1,6 +1,8 @@
 import {
   generateRandomAvatarUrl,
-  IGetElseCreateProfile,
+  IFindElseCreateProfile,
+  IFindProfile,
+  ICreateProfile,
   IOnProfile,
   IUpdateProfile,
 } from "@gamezilla/core";
@@ -46,7 +48,7 @@ export const updateProfile: IUpdateProfile = async (profile) => {
   };
 };
 
-export const findProfile: IGetElseCreateProfile = async ({
+export const findProfile: IFindProfile = async ({
   userId,
 }: {
   userId: string;
@@ -68,28 +70,19 @@ export const findProfile: IGetElseCreateProfile = async ({
   return null;
 };
 
-export const createProfile: IGetElseCreateProfile = async ({
+export const createProfile: ICreateProfile = async ({
   userId,
 }: {
   userId: string;
 }) => {
-  const { data } = await supabase
-    .from<definitions["profile"]>("profile")
-    .insert({
-      id: userId,
-      avatar_url: generateRandomAvatarUrl(),
-      name: "",
-    })
-    .single();
-
-  return {
-    userId: data.id,
-    name: data.name,
-    avatarUrl: data.avatar_url,
-  };
+  await supabase.from<definitions["profile"]>("profile").insert({
+    id: userId,
+    avatar_url: generateRandomAvatarUrl(),
+    name: "",
+  });
 };
 
-export const getElseCreateProfile: IGetElseCreateProfile = async ({
+export const findElseCreateProfile: IFindElseCreateProfile = async ({
   userId,
 }) => {
   const found = await findProfile({ userId });
@@ -98,5 +91,7 @@ export const getElseCreateProfile: IGetElseCreateProfile = async ({
     return found;
   }
 
-  return createProfile({ userId });
+  await createProfile({ userId });
+
+  return findProfile({ userId });
 };

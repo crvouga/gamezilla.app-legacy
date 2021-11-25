@@ -19,11 +19,15 @@ export type IOnProfile = (_: {
 
 export type IUpdateProfile = (profile: IProfile) => Promise<{ error: Error }>;
 
-export type IGetElseCreateProfile = ({
+export type IFindProfile = ({
   userId,
 }: {
   userId: string;
 }) => Promise<IProfile>;
+
+export type ICreateProfile = ({ userId }: { userId: string }) => Promise<void>;
+
+export type IFindElseCreateProfile = IFindProfile;
 
 const actions = {
   setState: createAction<IProfileState>(`${name}/set-state`),
@@ -69,14 +73,24 @@ export const profile = {
 export function* profileSaga({
   onProfile,
   updateProfile,
-  getElseCreateProfile,
+  findElseCreateProfile,
 }: {
   onProfile: IOnProfile;
   updateProfile: IUpdateProfile;
-  getElseCreateProfile: IGetElseCreateProfile;
+  findElseCreateProfile: IFindElseCreateProfile;
 }) {
   yield takeLatest(auth.actions.signedIn, function* (action) {
     const { userId } = action.payload;
+
+    const profile: Awaited<ReturnType<typeof findElseCreateProfile>> =
+      yield call(findElseCreateProfile, { userId });
+
+    yield put(
+      actions.setState({
+        type: "loaded",
+        profile,
+      })
+    );
 
     const profileChannel = eventChannel(onProfile(action.payload));
 
@@ -104,17 +118,9 @@ export function* profileSaga({
     });
 
     yield takeLatest(actions.editSuccess, function* () {
-      yield put(toast.actions.present({ message: "Updated Profile" }));
+      yield put(
+        toast.actions.present({ message: "Updated Profile", duration: 3000 })
+      );
     });
-
-    const profile: Awaited<ReturnType<typeof getElseCreateProfile>> =
-      yield call(getElseCreateProfile, { userId });
-
-    yield put(
-      actions.setState({
-        type: "loaded",
-        profile,
-      })
-    );
   });
 }
