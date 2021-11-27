@@ -17,13 +17,15 @@ export type IOnProfile = (_: {
   userId: string;
 }) => (set: (profile: IProfile) => void) => () => void;
 
-export type IUpdateProfile = (profile: IProfile) => Promise<{ error: Error }>;
+export type IUpdateProfile = (
+  profile: IProfile
+) => Promise<{ error: Error | null }>;
 
 export type IFindProfile = ({
   userId,
 }: {
   userId: string;
-}) => Promise<IProfile>;
+}) => Promise<IProfile | null>;
 
 export type ICreateProfile = ({ userId }: { userId: string }) => Promise<void>;
 

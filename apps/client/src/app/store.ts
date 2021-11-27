@@ -3,7 +3,7 @@ import createSagaMiddleware from "redux-saga";
 import { reducer, saga } from "@gamezilla/core";
 import { supabaseServices } from "@gamezilla/data-access";
 
-export const createClient = () => {
+export const createStore = () => {
   const sagaMiddleware = createSagaMiddleware();
 
   const store = configureStore({
