@@ -1,5 +1,7 @@
-import { actions, createClient, selectors } from "@gamezilla/core";
-import { clientDependencies } from "@gamezilla/third-party";
+import { actions, selectors } from "@gamezilla/core";
+
+import { createClient } from "../entry";
+
 import {
   IonApp,
   IonIcon,
@@ -101,7 +103,7 @@ const AppToasts = () => {
   );
 };
 
-const { store } = createClient(clientDependencies);
+const { store } = createClient();
 
 export const App = () => {
   return (

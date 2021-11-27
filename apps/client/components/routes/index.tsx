@@ -1,3 +1,4 @@
+import { actions } from "@gamezilla/core";
 import {
   IonContent,
   IonHeader,
@@ -8,8 +9,10 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
+import { useDispatch } from "react-redux";
 
 export const HomePage = () => {
+  const dispatch = useDispatch();
   return (
     <IonPage>
       <IonHeader>
@@ -20,7 +23,12 @@ export const HomePage = () => {
 
       <IonContent>
         <IonList>
-          <IonItem button onClick={() => {}}>
+          <IonItem
+            button
+            onClick={() => {
+              dispatch(actions.game.create());
+            }}
+          >
             <IonLabel>Create Game</IonLabel>
           </IonItem>
         </IonList>

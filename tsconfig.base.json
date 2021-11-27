@@ -21,8 +21,8 @@
       "@gamezilla/core": [
         "libs/core/src/index.ts"
       ],
-      "@gamezilla/third-party": [
-        "libs/third-party/src/index.ts"
+      "@gamezilla/data-access": [
+        "libs/data-access/src/index.ts"
       ],
       "@gamezilla/utility": [
         "libs/utility/src/index.ts"
