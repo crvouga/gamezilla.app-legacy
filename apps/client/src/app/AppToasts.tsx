@@ -10,6 +10,7 @@ export const AppToasts = () => {
     <>
       {toasts.map((toast, index) => (
         <IonToast
+          position="top"
           isOpen={index === 0}
           key={toast.id}
           message={toast.message}
