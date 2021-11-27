@@ -1,9 +1,4 @@
-import { actions, selectors } from "@gamezilla/core";
-
-import { createClient } from "../entry";
-
 import {
-  IonApp,
   IonIcon,
   IonLabel,
   IonLoading,
@@ -11,24 +6,17 @@ import {
   IonTabBar,
   IonTabButton,
   IonTabs,
-  IonToast,
-  setupConfig,
 } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
 import { home, person } from "ionicons/icons";
-import { Provider, useDispatch, useSelector } from "react-redux";
 import { Redirect, Route } from "react-router-dom";
-import { useAuthSlice, useProfileSlice } from "../hooks";
-import { HomePage } from "./routes";
-import { AuthPage } from "./routes/auth";
-import { ProfilePage } from "./routes/profile";
-import { ProfileEditPage } from "./routes/profile/edit";
+import { useAuthSlice, useProfileSlice } from "../../hooks";
+import { HomePage } from "../routes";
+import { AuthPage } from "../routes/auth";
+import { ProfilePage } from "../routes/profile";
+import { ProfileEditPage } from "../routes/profile/edit";
 
-setupConfig({
-  mode: "md",
-});
-
-const AppRoutes = () => {
+export const AppRoutes = () => {
   const authSlice = useAuthSlice();
   const profileSlice = useProfileSlice();
 
@@ -75,43 +63,4 @@ const AppRoutes = () => {
           );
       }
   }
-};
-
-const AppToasts = () => {
-  const toasts = useSelector(selectors.toast.slice);
-  const dispatch = useDispatch();
-
-  return (
-    <>
-      {toasts.map((toast, index) => (
-        <IonToast
-          isOpen={index === 0}
-          key={toast.id}
-          message={toast.message}
-          buttons={[
-            {
-              text: "Done",
-              role: "cancel",
-              handler: () => {
-                dispatch(actions.toast.dismiss(toast));
-              },
-            },
-          ]}
-        />
-      ))}
-    </>
-  );
-};
-
-const { store } = createClient();
-
-export const App = () => {
-  return (
-    <Provider store={store}>
-      <IonApp className="max-w-2xl m-auto">
-        <AppRoutes />
-        <AppToasts />
-      </IonApp>
-    </Provider>
-  );
 };

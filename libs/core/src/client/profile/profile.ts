@@ -30,8 +30,8 @@ export type ICreateProfile = ({ userId }: { userId: string }) => Promise<void>;
 export type IFindElseCreateProfile = IFindProfile;
 
 const actions = {
-  setState: createAction<IProfileState>(name, `set-state`),
-  recieved: createAction<IProfile>(name, `recieved`),
+  sync: createAction<IProfileState>(name, `sync`),
+
   edit: createAction<{ avatarUrl: string; name: string }>(name, `edit`),
   editSuccess: createAction(name, `edit-success`),
   editError: createAction<{ message: string }>(name, `edit-error`),
@@ -50,13 +50,10 @@ const reducer = createReducer<IProfileState>(
   {
     type: "loading",
   },
-  {
-    [actions.setState.toString()]: (
-      _state,
-      action: ReturnType<typeof actions.setState>
-    ) => {
+  (builder) => {
+    builder.addCase(actions.sync, (_state, action) => {
       return action.payload;
-    },
+    });
   }
 );
 
@@ -87,7 +84,7 @@ export function* profileSaga({
       yield call(findElseCreateProfile, { userId });
 
     yield put(
-      actions.setState({
+      actions.sync({
         type: "loaded",
         profile,
       })
@@ -96,27 +93,12 @@ export function* profileSaga({
     const profileChannel = eventChannel(onProfile(action.payload));
 
     yield takeLatest(profileChannel, function* (profile) {
-      yield put(actions.recieved(profile));
-    });
-
-    yield takeLatest(actions.recieved, function* (action) {
-      yield put(
-        actions.setState({
-          type: "loaded",
-          profile: action.payload,
-        })
-      );
-      yield put(
-        toast.actions.present({
-          message: "Profile Was Updated",
-          duration: 3000,
-        })
-      );
+      yield put(actions.sync({ type: "loaded", profile }));
     });
 
     yield takeLatest(actions.edit, function* (action) {
       yield put(
-        actions.setState({
+        actions.sync({
           type: "loaded",
           profile: {
             userId,
@@ -136,6 +118,12 @@ export function* profileSaga({
       }
 
       yield put(actions.editSuccess());
+    });
+
+    yield takeLatest(actions.editSuccess, function* () {
+      yield put(
+        toast.actions.present({ message: "Updated Profile", duration: 3000 })
+      );
     });
   });
 }
