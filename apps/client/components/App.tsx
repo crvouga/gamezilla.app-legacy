@@ -1,6 +1,6 @@
 import { IonApp, setupConfig } from "@ionic/react";
 import { Provider } from "react-redux";
-import { createClient } from "../../entry";
+import { createClient } from "../entry";
 import { AppRoutes } from "./AppRoutes";
 import { AppToasts } from "./AppToasts";
 
