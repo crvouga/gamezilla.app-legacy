@@ -1,6 +1,6 @@
 {
-  "root": "libs/third-party",
-  "sourceRoot": "libs/third-party/src",
+  "root": "libs/data-access",
+  "sourceRoot": "libs/data-access/src",
   "projectType": "library",
   "targets": {
     "lint": {
@@ -10,17 +10,17 @@
       ],
       "options": {
         "lintFilePatterns": [
-          "libs/third-party/**/*.ts"
+          "libs/data-access/**/*.ts"
         ]
       }
     },
     "test": {
       "executor": "@nrwl/jest:jest",
       "outputs": [
-        "coverage/libs/third-party"
+        "coverage/libs/data-access"
       ],
       "options": {
-        "jestConfig": "libs/third-party/jest.config.js",
+        "jestConfig": "libs/data-access/jest.config.js",
         "passWithNoTests": true
       }
     }

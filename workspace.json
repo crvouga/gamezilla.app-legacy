@@ -4,8 +4,8 @@
     "client": "apps/client",
     "client-e2e": "apps/client-e2e",
     "core": "libs/core",
+    "data-access": "libs/data-access",
     "server": "apps/server",
-    "third-party": "libs/third-party",
     "utility": "libs/utility"
   }
 }
