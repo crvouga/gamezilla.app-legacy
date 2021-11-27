@@ -1,3 +1,4 @@
+import { selectors } from "@gamezilla/core";
 import {
   IonIcon,
   IonLabel,
@@ -9,16 +10,16 @@ import {
 } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
 import { home, person } from "ionicons/icons";
+import { useSelector } from "react-redux";
 import { Redirect, Route } from "react-router-dom";
-import { useAuthSlice, useProfileSlice } from "../../hooks";
-import { HomePage } from "../routes";
-import { AuthPage } from "../routes/auth";
-import { ProfilePage } from "../routes/profile";
-import { ProfileEditPage } from "../routes/profile/edit";
+import { HomePage } from "./routes";
+import { AuthPage } from "./routes/auth";
+import { ProfilePage } from "./routes/profile";
+import { ProfileEditPage } from "./routes/profile/edit";
 
 export const AppRoutes = () => {
-  const authSlice = useAuthSlice();
-  const profileSlice = useProfileSlice();
+  const authSlice = useSelector(selectors.auth.state);
+  const profileSlice = useSelector(selectors.profile.slice);
 
   switch (authSlice.type) {
     case "signed-out":
