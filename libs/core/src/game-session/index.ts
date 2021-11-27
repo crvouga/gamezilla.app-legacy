@@ -1,10 +1,11 @@
-import { createReducer } from "@reduxjs/toolkit";
+import { Action, createReducer } from "@reduxjs/toolkit";
+import { call, takeLatest } from "redux-saga/effects";
 import { createAction } from "@gamezilla/utility";
 
 const name: "gameSession" = "gameSession";
 
 const actions = {
-  create: createAction<{ userId: string }>(name, `create`),
+  create: createAction(name, `create`),
 };
 
 type IGameSessionState = {
@@ -27,5 +28,7 @@ export const gameSession = {
 };
 
 export function* gameSessionClientSaga() {
-  yield;
+  yield takeLatest(actions.create, function* (action) {
+    yield call(emit, "action", action);
+  });
 }

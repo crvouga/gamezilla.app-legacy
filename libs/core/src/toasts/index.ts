@@ -14,13 +14,14 @@ export type IToastState = IToast[];
 const name: "toast" = "toast";
 
 const actions = {
-  enqueue: createAction<IToast>(`${name}/enqueue`),
-  dequeue: createAction<{ id: string }>(`${name}/dequeue`),
+  enqueue: createAction<IToast>(name, `enqueue`),
+  dequeue: createAction<{ id: string }>(name, `dequeue`),
   //
   present: createAction<{ message: string; duration?: number }>(
-    `${name}/present`
+    name,
+    `present`
   ),
-  dismiss: createAction<{ id: string }>(`${name}/dismiss`),
+  dismiss: createAction<{ id: string }>(name, `dismiss`),
 };
 
 const selectors = {

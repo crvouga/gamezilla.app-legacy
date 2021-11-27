@@ -1,10 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { createAction } from "@gamezilla/utility";
-import { apply, takeEvery } from "redux-saga/effects";
+import { takeEvery } from "redux-saga/effects";
 import * as express from "express";
 import * as http from "http";
 import createSagaMiddleware from "redux-saga";
 import * as socketio from "socket.io";
+import { instrument } from "@socket.io/admin-ui";
 
 const app = express();
 const server = http.createServer(app);
@@ -12,6 +13,10 @@ const io = new socketio.Server(server, {
   cors: {
     origin: "http://localhost:4200",
   },
+});
+
+instrument(io, {
+  auth: false,
 });
 
 app.get("/api", (_req, res) => {
@@ -40,7 +45,8 @@ const store = configureStore({
 io.on("connection", (socket) => {
   function* saga() {
     yield takeEvery("*", function* (action) {
-      yield apply(console, console.log, [action]);
+      console.log(action);
+      yield;
     });
   }
 
