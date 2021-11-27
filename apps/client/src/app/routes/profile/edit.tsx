@@ -28,7 +28,7 @@ import {
 } from "@ionic/react";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { useAuthProfile } from "../../../hooks";
+import { useAuthProfile } from "../../hooks";
 
 export const ProfileEditPage = () => {
   const dispatch = useDispatch();
@@ -62,6 +62,14 @@ export const ProfileEditPage = () => {
     }
   };
 
+  const draftAvatarUrl =
+    avatarSeed && avatarStyle
+      ? toAvatarUrl({
+          avatarSeed: toAvatarSeed(avatarSeed),
+          avatarStyle,
+        })
+      : undefined;
+
   return (
     <IonPage>
       <IonHeader>
@@ -82,12 +90,7 @@ export const ProfileEditPage = () => {
 
       <IonContent>
         <IonAvatar className="mx-auto my-4 w-36 h-36 border border-gray-700">
-          <IonImg
-            src={toAvatarUrl({
-              avatarSeed: toAvatarSeed(avatarSeed),
-              avatarStyle,
-            })}
-          />
+          <IonImg src={draftAvatarUrl} />
         </IonAvatar>
 
         <IonItem>
@@ -110,13 +113,18 @@ export const ProfileEditPage = () => {
           <IonLabel position="floating">Avatar Seed</IonLabel>
           <IonInput
             value={avatarSeed}
-            onIonChange={(e) => setAvatarSeed(toAvatarSeed(e.detail.value))}
+            onIonChange={(e) =>
+              setAvatarSeed(toAvatarSeed(e.detail.value ?? ""))
+            }
           />
         </IonItem>
 
         <IonItem>
           <IonLabel position="floating">Name</IonLabel>
-          <IonInput value={name} onIonChange={(e) => setName(e.detail.value)} />
+          <IonInput
+            value={name}
+            onIonChange={(e) => setName(e.detail.value ?? "")}
+          />
         </IonItem>
       </IonContent>
     </IonPage>

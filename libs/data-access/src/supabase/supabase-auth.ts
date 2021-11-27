@@ -27,7 +27,7 @@ export const onAuthState: IOnAuthState = (set) => {
   const timeout = setTimeout(() => {
     const session = supabase.auth.session();
 
-    if (session) {
+    if (session && session.user) {
       set({
         type: "signed-in",
         userId: session.user.id,
@@ -46,10 +46,12 @@ export const onAuthState: IOnAuthState = (set) => {
       case "PASSWORD_RECOVERY":
       case "SIGNED_IN":
       case "USER_UPDATED":
-        set({
-          type: "signed-in",
-          userId: session.user.id,
-        });
+        if (session && session.user) {
+          set({
+            type: "signed-in",
+            userId: session.user.id,
+          });
+        }
         return;
 
       case "SIGNED_OUT":
@@ -62,6 +64,6 @@ export const onAuthState: IOnAuthState = (set) => {
   });
 
   return () => {
-    response.data.unsubscribe();
+    response?.data?.unsubscribe?.();
   };
 };
