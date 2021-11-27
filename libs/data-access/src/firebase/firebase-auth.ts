@@ -21,20 +21,17 @@ export const signOut: ISignOut = () => {
 
 export const signIn: ISignIn = async (method: ISignInMethod) => {
   switch (method.type) {
-    case "google":
+    case "google": {
       const provider = new GoogleAuthProvider();
 
       await signInWithRedirect(firebaseAuth, provider);
 
       return;
+    }
   }
 };
 
 export const onAuthState: IOnAuthState = (set) => {
-  set({
-    type: "loading",
-  });
-
   return onAuthStateChanged(firebaseAuth, (authState) => {
     if (authState) {
       set({

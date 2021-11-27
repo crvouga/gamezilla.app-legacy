@@ -52,13 +52,13 @@ type ICreateGame = ({
 }) => Promise<Error | null>;
 
 export function* gameSaga({ createGame }: { createGame: ICreateGame }) {
-  yield takeLatest(actions.created, function* (action) {
-    yield call(createGame, action.payload);
-  });
+  
 
   yield takeLatest(auth.actions.signedIn, function* ({ payload: { userId } }) {
     yield takeLatest(actions.create, function* () {
       const gameId = generateId();
+
+      yield call(createGame, { userId, gameId });
 
       yield put(
         actions.created({
