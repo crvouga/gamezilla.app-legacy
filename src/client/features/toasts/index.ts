@@ -1,11 +1,13 @@
-import { createReducer } from "@reduxjs/toolkit";
-import { createAction, generateId } from "@utility";
+import { Action, createReducer } from "@reduxjs/toolkit";
+import { generateId } from "@utility";
+import { createAction } from "../../../shared";
 import { delay, put, takeEvery } from "redux-saga/effects";
 
 export type IToast = {
   id: string;
   message: string;
   duration?: number;
+  onDone?: Action;
 };
 
 export type IToastState = IToast[];
@@ -52,10 +54,14 @@ export const toast = {
 
 export function* toastSaga() {
   yield takeEvery(actions.present, function* (action) {
+    const toastId = generateId();
     const toast: IToast = {
-      id: generateId(),
+      id: toastId,
       message: action.payload.message,
       duration: action.payload.duration,
+      onDone: actions.dismiss({
+        id: toastId,
+      }),
     };
 
     yield put(actions.enqueue(toast));

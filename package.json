@@ -6,7 +6,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "load-env": "heroku config -s -a gamezilla > .env"
+    "load-env": "heroku config -s -a gamezilla > .env",
+    "server:dev": "nodemon ./server/index.ts"
   },
   "dependencies": {
     "@ionic/react": "^5.9.1",
@@ -35,8 +36,10 @@
     "autoprefixer": "^10.4.0",
     "eslint": "7",
     "eslint-config-next": "12.0.4",
+    "nodemon": "^2.0.15",
     "postcss": "^8.4.4",
     "tailwindcss": "^2.2.19",
+    "ts-node": "^10.4.0",
     "typescript": "4.5.2"
   }
 }

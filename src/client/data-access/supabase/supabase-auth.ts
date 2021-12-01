@@ -1,9 +1,9 @@
-import { IOnAuthState, ISignIn, ISignOut } from "@client";
+import { supabaseClient } from "@shared";
 import { dropLastWhile } from "@utility";
-import { supabase } from "./supabase";
+import { IOnAuthState, ISignIn, ISignOut } from "../../features";
 
 export const signOut: ISignOut = () => {
-  supabase.auth.signOut();
+  supabaseClient.auth.signOut();
 };
 
 const formatRedirectTo = (redirectTo: string) => {
@@ -14,18 +14,18 @@ const formatRedirectTo = (redirectTo: string) => {
 };
 
 export const signIn: ISignIn = async (method) => {
-  const redirectTo = formatRedirectTo(window.location.origin);
+  const redirectTo = formatRedirectTo(method.redirectTo);
 
   switch (method.type) {
     case "google":
-      await supabase.auth.signIn({ provider: "google" }, { redirectTo });
+      await supabaseClient.auth.signIn({ provider: "google" }, { redirectTo });
       return;
   }
 };
 
 export const onAuthState: IOnAuthState = (set) => {
   const timeout = setTimeout(() => {
-    const session = supabase.auth.session();
+    const session = supabaseClient.auth.session();
 
     if (session && session.user) {
       set({
@@ -39,7 +39,7 @@ export const onAuthState: IOnAuthState = (set) => {
     }
   }, 1000);
 
-  const response = supabase.auth.onAuthStateChange((event, session) => {
+  const response = supabaseClient.auth.onAuthStateChange((event, session) => {
     clearTimeout(timeout);
 
     switch (event) {

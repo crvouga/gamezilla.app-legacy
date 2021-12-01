@@ -1,4 +1,5 @@
-import { createAction, generateId } from "@utility";
+import { generateId } from "@utility";
+import { createAction } from "@shared";
 import { createReducer } from "@reduxjs/toolkit";
 import { call, put, takeLatest } from "redux-saga/effects";
 import { auth } from "../auth";
