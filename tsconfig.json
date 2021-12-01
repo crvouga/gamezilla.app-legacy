@@ -17,9 +17,10 @@
     "baseUrl": ".",
     "experimentalDecorators": true,
     "paths": {
-      "@utility": ["./utility/index.ts"],
+      "@utility": ["./src/utility"],
       "@client": ["./src/client"],
-      "@shared": ["./src/shared"]
+      "@shared": ["./src/shared"],
+      "@server": ["./src/server"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
