@@ -2,7 +2,7 @@ import dynamic from "next/dynamic";
 
 const App = dynamic(
   async () => {
-    const { App } = await import("../components/App");
+    const { App } = await import("../src/client");
     return App;
   },
   {

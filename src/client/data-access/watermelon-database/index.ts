@@ -1,4 +1,4 @@
-import { createAction } from "@utility";
+import { createAction } from "../../../shared";
 import { Database } from "@nozbe/watermelondb";
 import LokiJSAdapter from "@nozbe/watermelondb/adapters/lokijs";
 import migrations from "./model/migrations";

@@ -1,4 +1,5 @@
-import { createAction, Awaited } from "@utility";
+import { Awaited } from "@utility";
+import { createAction } from "@shared";
 import { createReducer } from "@reduxjs/toolkit";
 import { eventChannel } from "redux-saga";
 import { call, put, takeLatest } from "redux-saga/effects";

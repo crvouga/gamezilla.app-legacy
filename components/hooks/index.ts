@@ -1,4 +1,4 @@
-import { selectors } from "../../client";
+import { selectors } from "../../src/client/features";
 import { useSelector } from "react-redux";
 
 export const useAuthProfile = () => {

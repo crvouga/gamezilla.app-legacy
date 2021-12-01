@@ -1,16 +1,15 @@
+import { definitions, supabaseClient } from "@shared";
 import {
   generateRandomAvatarUrl,
+  ICreateProfile,
   IFindElseCreateProfile,
   IFindProfile,
-  ICreateProfile,
   IOnProfile,
   IUpdateProfile,
-} from "@client";
-import { supabase } from "./supabase";
-import { definitions } from "./types";
+} from "src/client/features";
 
 export const onProfile: IOnProfile = ({ userId }) => (set) => {
-  const subscription = supabase
+  const subscription = supabaseClient
     .from<definitions["profile"]>(`profile:id=eq.${userId}`)
     .on("*", (payload) => {
       set({
@@ -27,7 +26,7 @@ export const onProfile: IOnProfile = ({ userId }) => (set) => {
 };
 
 export const updateProfile: IUpdateProfile = async (profile) => {
-  const { error } = await supabase
+  const { error } = await supabaseClient
     .from<definitions["profile"]>("profile")
     .update({
       avatar_url: profile.avatarUrl,
@@ -51,7 +50,7 @@ export const findProfile: IFindProfile = async ({
 }: {
   userId: string;
 }) => {
-  const { data } = await supabase
+  const { data } = await supabaseClient
     .from<definitions["profile"]>("profile")
     .select("*")
     .eq("id", userId)
@@ -73,7 +72,7 @@ export const createProfile: ICreateProfile = async ({
 }: {
   userId: string;
 }) => {
-  await supabase.from<definitions["profile"]>("profile").insert({
+  await supabaseClient.from<definitions["profile"]>("profile").insert({
     id: userId,
     avatar_url: generateRandomAvatarUrl(),
     name: "",

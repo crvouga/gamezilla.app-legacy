@@ -11,7 +11,7 @@ import {
 } from "@ionic/react";
 import { logoGoogle } from "ionicons/icons";
 import { useDispatch } from "react-redux";
-import { actions } from "../../../client";
+import { actions } from "../../../features";
 
 export const AuthPage = () => {
   const dispatch = useDispatch();
@@ -28,7 +28,14 @@ export const AuthPage = () => {
         <IonList>
           <IonItem
             button
-            onClick={() => dispatch(actions.auth.signIn({ type: "google" }))}
+            onClick={() =>
+              dispatch(
+                actions.auth.signIn({
+                  type: "google",
+                  redirectTo: window.location.origin,
+                })
+              )
+            }
           >
             <IonIcon icon={logoGoogle} slot="start" />
             <IonLabel>Sign In With Google</IonLabel>

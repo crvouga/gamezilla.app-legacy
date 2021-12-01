@@ -1,5 +1,5 @@
 import { createReducer } from "@reduxjs/toolkit";
-import { createAction } from "@utility";
+import { createAction } from "../../../shared";
 import { eventChannel } from "redux-saga";
 import { call, put, takeLatest } from "redux-saga/effects";
 
@@ -7,6 +7,7 @@ const name: "auth" = "auth";
 
 export type ISignInMethod = {
   type: "google";
+  redirectTo: string;
 };
 
 export type IAuthState =

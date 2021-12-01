@@ -17,7 +17,6 @@ export default function CustomApp({ Component, pageProps }: AppProps) {
       <Head>
         <title>Gamezilla</title>
       </Head>
-
       <Component {...pageProps} />
     </>
   );

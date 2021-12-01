@@ -1,4 +1,4 @@
-import { actions, selectors } from "../client";
+import { actions, selectors } from "../src/client/features";
 import { IonToast } from "@ionic/react";
 import { useDispatch, useSelector } from "react-redux";
 

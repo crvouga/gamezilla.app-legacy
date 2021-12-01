@@ -3,13 +3,13 @@ import {
   PrepareAction,
 } from "@reduxjs/toolkit";
 
-const formatType = (namespace: string, type: string) => {
+const toActionType = (namespace: string, type: string) => {
   return `${namespace}/${type}`;
 };
 
 export const createAction = <TPayload>(namespace: string, type: string) => {
   return createActionReduxToolkit<PrepareAction<TPayload>>(
-    formatType(namespace, type),
+    toActionType(namespace, type),
     (payload: TPayload) => {
       return {
         payload,

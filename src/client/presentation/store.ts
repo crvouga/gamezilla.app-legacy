@@ -1,6 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import createSagaMiddleware from "redux-saga";
-import { reducer, saga } from "../client";
+import { reducer, saga } from "../features";
 import { supabaseServices } from "../data-access";
 
 export const createStore = () => {
