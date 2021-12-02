@@ -3,14 +3,13 @@
   "version": "1.0.0",
   "license": "MIT",
   "scripts": {
-    "client:dev": "cd client && yarn dev && cd ..",
-    "server:dev": "cd server && yarn dev && cd ..",
-    "server:start": "cd server && yarn start && cd ..",
-    "dev": "concurrently \"yarn client:dev\" \"yarn server:dev\"",
-    "start": "yarn server:start",
-    "heroku:local": "yarn && yarn heroku-postbuild && heroku local",
-    "heroku-postbuild": "cd client && yarn && yarn build",
-    "postinstall": "cd server && yarn"
+    "dev": "concurrently \"cd client && yarn dev\" \"yarn cd server && yarn dev\"",
+    "start": "cd server && yarn start",
+    "build": "cd server && yarn && yarn build && cd ../client && yarn && yarn build",
+    "postinstall": "yarn build",
+    "heroku:local": "yarn yarn && yarn heroku-postbuild && heroku local",
+    "heroku-prebuild": "export NPM_CONFIG_PRODUCTION=false; export NODE_ENV=; NPM_CONFIG_PRODUCTION=false NODE_ENV=development npm install --only=dev --dev",
+    "heroku-postbuild": "export NPM_CONFIG_PRODUCTION=true; export NODE_ENV=production;"
   },
   "devDependencies": {
     "concurrently": "^6.4.0"
