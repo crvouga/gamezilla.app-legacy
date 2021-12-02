@@ -8,7 +8,7 @@
     "server:start": "cd server && yarn start && cd ..",
     "dev": "concurrently \"yarn client:dev\" \"yarn server:dev\"",
     "start": "yarn server:start",
-    "heroku:local": "yarn && heroku local",
+    "heroku:local": "yarn && yarn heroku-postbuild && heroku local",
     "heroku-postbuild": "cd client && yarn && yarn build",
     "postinstall": "cd server && yarn"
   },
