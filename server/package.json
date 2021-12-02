@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "npx nodemon src/index.ts",
     "start": "node build/index.js",
-    "build": "npx tsc"
+    "tsc": "tsc",
+    "build": "yarn tsc",
+    "postinstall": "yarn build"
   },
   "devDependencies": {
     "@types/node": "^16.11.11",
