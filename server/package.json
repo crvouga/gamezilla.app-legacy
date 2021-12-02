@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "nodemon src/index.ts",
     "start": "node build/index.js",
-    "build": "tsc"
+    "tsc": "tsc",
+    "build": "yarn tsc"
   },
   "devDependencies": {
     "@types/node": "^16.11.11",
