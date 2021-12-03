@@ -2,6 +2,10 @@
   "name": "gamezilla",
   "version": "1.0.0",
   "license": "MIT",
+  "engines": {
+    "node": "v14.17.6",
+    "yarn": "1.22.4"
+  },
   "scripts": {
     "dev": "concurrently \"PORT=3000 yarn client:dev\" \"PORT=5000 yarn server:dev\"",
     "build": "concurrently \"yarn server:build\" \"yarn client:build\"",
@@ -11,7 +15,7 @@
     "client:start": "cd client && sirv public --no-clear",
     "client:check": "cd client && svelte-check --tsconfig ./tsconfig.json",
     "server:dev": "cd server && npx nodemon src/main.ts",
-    "server:start": "cd server && PORT=$PORT node build/main.js",
+    "server:start": "cd server && node build/main.js",
     "server:build": "cd server && tsc",
     "heroku:logs": "heroku logs --tail --app gamezilla",
     "heroku:local": "yarn && heroku local",
