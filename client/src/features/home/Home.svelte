@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { signOut } from './../sign-out/sign-out.ts';
+  import { signOut } from '../sign-out/sign-out.ts';
 </script>
 
 <ion-header>
