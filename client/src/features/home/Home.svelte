@@ -1,6 +1,8 @@
 <script lang="ts">
+	import Tabs from './../../lib/Tabs.svelte';
   import { signOut } from '../sign-out/sign-out.ts';
 </script>
+
 
 <ion-header>
   <ion-toolbar>
@@ -17,3 +19,4 @@
   </ion-item>
 </ion-content>
 
+<Tabs />
