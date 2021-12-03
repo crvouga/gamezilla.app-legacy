@@ -1,5 +1,5 @@
-import { dropLastWhile } from "../utility";
-import { supabaseClient } from "../lib/supabase-client";
+import { dropLastWhile } from "../../utility";
+import { supabaseClient } from "../../lib/supabase-client";
 
 export type ISignInMethod = {
   type: "google";

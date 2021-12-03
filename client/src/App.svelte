@@ -1,7 +1,7 @@
 <script lang="ts">
-	import Home from './home/Home.svelte';
+	import Home from './features/home/Home.svelte';
 	import { authStore } from './lib/auth-store.ts';
-  import SignIn from "./sign-in/SignIn.svelte"
+  import SignIn from "./features/sign-in/SignIn.svelte"
 </script>
 
 
