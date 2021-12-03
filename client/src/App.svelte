@@ -1,34 +1,22 @@
 <script lang="ts">
-	
+	const handleSignIn = () => {
+		console.log("SIGN IN")
+	}
 </script>
 
-<style>
-	main {
-		text-align: center;
-		padding: 1em;
-		max-width: 240px;
-		margin: 0 auto;
-	}
+<ion-app>
+	<ion-header>
+		<ion-toolbar>
+			<ion-title>
+				Sign In
+			</ion-title>
+		</ion-toolbar>
 
-	h1 {
-		color: #9b8d88;
-		text-transform: uppercase;
-		font-size: 4em;
-		font-weight: 100;
-	}
-
-	@media (min-width: 640px) {
-		main {
-			max-width: none;
-		}
-	}
-</style>
-
-<main>
-	<h1>Hello!</h1>
-	<p>
-		Visit the
-		<a href="https://svelte.dev/tutorial">Svelte tutorial</a>
-		to learn how to build Svelte apps.
-	</p>
-</main>
+	</ion-header>
+	<ion-content>
+		<ion-item button on:click={handleSignIn}>
+			<ion-icon slot="start" name="logo-google"></ion-icon>
+			<ion-label>Continue With Google</ion-label>
+		</ion-item>
+	</ion-content>
+</ion-app>
