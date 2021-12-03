@@ -3,7 +3,6 @@
 
 	const handleSignIn = (...params: Parameters<typeof signIn>) => async () => {
     const { errors } = await signIn(...params)
-    
 	}
 </script>
 
