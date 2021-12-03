@@ -25,7 +25,7 @@
 </style>
 
 <main>
-	<h1>Hello {SHARED}!</h1>
+	<h1>Hello!</h1>
 	<p>
 		Visit the
 		<a href="https://svelte.dev/tutorial">Svelte tutorial</a>
