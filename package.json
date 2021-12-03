@@ -3,11 +3,42 @@
   "version": "1.0.0",
   "license": "MIT",
   "scripts": {
-    "dev": "concurrently \"cd client && PORT=3000 yarn dev\" \"cd server && PORT=5000 yarn dev\"",
-    "postinstall": "cd server && yarn && cd ../client && yarn"
+    "dev": "concurrently \"PORT=3000 yarn client:dev\" \"PORT=5000 yarn server:dev\"",
+    "build": "concurrently \"yarn server:build\" \"yarn client:build\"",
+    "start": "yarn server:start",
+    "client:build": "cd client && rollup -c",
+    "client:dev": "cd client && rollup -c -w",
+    "client:start": "cd client && sirv public --no-clear",
+    "client:check": "cd client && svelte-check --tsconfig ./tsconfig.json",
+    "server:dev": "cd server && npx nodemon src/main.ts",
+    "server:start": "cd server && node build/main.js",
+    "server:build": "cd server && tsc",
+    "heroku:logs": "heroku logs --tail --app gamezilla",
+    "heroku:local": "yarn && heroku local",
+    "postinstall": "yarn build"
   },
   "devDependencies": {
-    "concurrently": "^6.4.0"
+    "@rollup/plugin-commonjs": "^17.0.0",
+    "@rollup/plugin-node-resolve": "^11.0.0",
+    "@rollup/plugin-typescript": "^8.0.0",
+    "@tsconfig/svelte": "^2.0.1",
+    "@types/node": "^16.11.11",
+    "concurrently": "^6.4.0",
+    "rollup": "^2.3.4",
+    "rollup-plugin-css-only": "^3.1.0",
+    "rollup-plugin-livereload": "^2.0.0",
+    "rollup-plugin-svelte": "^7.0.0",
+    "rollup-plugin-terser": "^7.0.0",
+    "svelte": "^3.0.0",
+    "svelte-check": "^2.0.0",
+    "svelte-preprocess": "^4.0.0",
+    "ts-node": "^10.4.0",
+    "tslib": "^2.0.0",
+    "typescript": "^4.5.2"
   },
-  "dependencies": {}
+  "dependencies": {
+    "fastify": "^3.24.1",
+    "fastify-static": "^4.5.0",
+    "sirv-cli": "^1.0.0"
+  }
 }
