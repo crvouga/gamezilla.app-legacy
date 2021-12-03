@@ -4,3 +4,4 @@ client/public/build
 server/build
 
 .DS_Store
+.env
