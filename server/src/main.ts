@@ -1,15 +1,17 @@
+import path from "path";
 import Fastify from "fastify";
+import fastifyStatic from "fastify-static";
 
 const fastify = Fastify({
   logger: true,
 });
 
-fastify.setNotFoundHandler((_request, reply) => {
-  reply.send({
-    message: "Hello from server",
-  });
+fastify.register(fastifyStatic, {
+  root: path.join(__dirname, "..", "..", "client", "public"),
 });
 
-const PORT = process.env.PORT ?? 5000;
+fastify.setNotFoundHandler((_request, reply) => {
+  reply.sendFile("index.html");
+});
 
-fastify.listen(PORT);
+fastify.listen(process.env.PORT ?? 5000);
