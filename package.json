@@ -11,7 +11,7 @@
     "client:start": "cd client && sirv public --no-clear",
     "client:check": "cd client && svelte-check --tsconfig ./tsconfig.json",
     "server:dev": "cd server && npx nodemon src/main.ts",
-    "server:start": "cd server && node build/main.js",
+    "server:start": "cd server && PORT=$PORT node build/main.js",
     "server:build": "cd server && tsc",
     "heroku:logs": "heroku logs --tail --app gamezilla",
     "heroku:local": "yarn && heroku local",
