@@ -1,14 +1,10 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "engines": {
-    "node": "v14.17.6",
-    "yarn": "1.22.4"
-  },
   "license": "MIT",
   "scripts": {
-    "dev": "npx nodemon src/index.ts",
-    "start": "node build/index.js",
+    "dev": "npx nodemon src/main.ts",
+    "start": "node build/main.js",
     "build": "yarn tsc",
     "tsc": "tsc",
     "postinstall": "yarn build",
