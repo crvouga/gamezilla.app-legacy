@@ -19,6 +19,7 @@
     "server:build": "cd server && tsc",
     "heroku:logs": "heroku logs --tail --app gamezilla",
     "heroku:local": "yarn && heroku local",
+    "heroku:env": "",
     "postinstall": "yarn build"
   },
   "devDependencies": {
