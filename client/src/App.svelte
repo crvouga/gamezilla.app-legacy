@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { SHARED } from "../../shared/src";	
+	
 </script>
 
 <style>
