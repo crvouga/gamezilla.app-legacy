@@ -7,7 +7,7 @@
     "start": "node build/main.js",
     "build": "yarn tsc",
     "tsc": "tsc",
-    "postinstall": "yarn build",
+    "postinstall": "yarn tsc",
     "heroku:logs": "heroku logs --tail --app gamezilla"
   },
   "devDependencies": {
