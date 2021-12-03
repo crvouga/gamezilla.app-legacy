@@ -7,7 +7,7 @@ const fastify = Fastify({
 });
 
 fastify.register(fastifyStatic, {
-  root: path.join(__dirname, "..", "..", "client", "public"),
+  root: path.join(__dirname, "..", "..", "client", "dist"),
 });
 
 fastify.get("/api", (_request, reply) => {
