@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "npx nodemon src/main.ts",
     "start": "node build/main.js",
-    "build": "tsc",
+    "build": "npx --package=typescript -- tsc",
     "postinstall": "yarn build",
     "heroku:logs": "heroku logs --tail --app gamezilla"
   },
