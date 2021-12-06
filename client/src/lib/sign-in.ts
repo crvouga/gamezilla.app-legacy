@@ -3,29 +3,28 @@ import { supabaseClient } from './supabase-client';
 
 export type ISignInMethod = {
 	type: 'google';
-	redirectTo: string;
+	successRedirect: string;
 };
 
-const formatRedirectTo = (redirectTo: string) => {
-	return dropLastWhile((character) => character === '/', redirectTo.split('/')).join('');
+const formatRedirect = (redirect: string) => {
+	return dropLastWhile((_) => _ === '/', redirect.split('/')).join('');
 };
 
-export const signIn = async (method: ISignInMethod) => {
+export type ISignIn = (method: ISignInMethod) => Promise<{ errors: Error[] }>;
+
+export const signIn: ISignIn = async (method) => {
 	if (method.type === 'google') {
 		const response = await supabaseClient.auth.signIn(
 			{
 				provider: 'google'
 			},
 			{
-				redirectTo: formatRedirectTo(method.redirectTo)
+				redirectTo: formatRedirect(method.successRedirect)
 			}
 		);
 
 		return {
-			errors: [
-				//
-				new Error(response.error.message)
-			]
+			errors: [new Error(response.error.message)]
 		};
 	}
 
