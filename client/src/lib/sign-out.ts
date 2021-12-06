@@ -1,6 +1,8 @@
 import { supabaseClient } from './supabase-client';
 
-export const signOut = async (): Promise<{ errors: Error[] }> => {
+type ISignOut = () => Promise<{ errors: Error[] }>;
+
+export const signOut: ISignOut = async () => {
 	const { error } = await supabaseClient.auth.signOut();
 
 	if (error) {

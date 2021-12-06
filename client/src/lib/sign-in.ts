@@ -3,7 +3,6 @@ import { supabaseClient } from './supabase-client';
 
 export type ISignInMethod = {
 	type: 'google';
-	successRedirect: string;
 };
 
 const formatRedirect = (redirect: string) => {
@@ -19,7 +18,7 @@ export const signIn: ISignIn = async (method) => {
 				provider: 'google'
 			},
 			{
-				redirectTo: formatRedirect(method.successRedirect)
+				redirectTo: formatRedirect(window.location.href)
 			}
 		);
 
