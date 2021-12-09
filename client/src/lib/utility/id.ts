@@ -1,3 +1,3 @@
-export const generateId = () => {
-  return String(Math.random());
+export const generateId = (): string => {
+	return String(Math.random());
 };
