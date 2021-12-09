@@ -1,11 +1,40 @@
-import { eventsReducer, move, moveFailed } from './tic-tac-toe';
-
-const last = <T>(xs: T[]) => xs[xs.length - 1];
+import { eventsReducer, move, moveFailed, moveSucceeded } from '.';
 
 describe('tic tac toe', () => {
-	test('only player one can make the first move');
+	test('only player one can do the first move', () => {
+		const commands = [
+			move({
+				player: 'two',
+				row: 0,
+				column: 0
+			}),
+			move({
+				player: 'one',
+				row: 0,
+				column: 0
+			}),
+			move({
+				player: 'two',
+				row: 0,
+				column: 1
+			})
+		];
 
-	test('single move per turn rule', () => {
+		const expected = [
+			moveFailed({
+				reason: 'NOT_TURN',
+				commandId: commands[0].id
+			}),
+			moveSucceeded(commands[1].payload),
+			moveSucceeded(commands[2].payload)
+		];
+
+		const actual = commands.reduce(eventsReducer, []);
+
+		expect(actual).toEqual(expected);
+	});
+
+	test('players can only move it is their turn', () => {
 		const commands = [
 			move({
 				player: 'one',
@@ -16,20 +45,38 @@ describe('tic tac toe', () => {
 				player: 'one',
 				row: 1,
 				column: 0
+			}),
+			move({
+				player: 'two',
+				row: 1,
+				column: 1
+			}),
+			move({
+				player: 'two',
+				row: 1,
+				column: 2
 			})
 		];
 
-		const events = commands.reduce(eventsReducer, []);
-
-		expect(last(events)).toEqual(
+		const expected = [
+			moveSucceeded(commands[0].payload),
 			moveFailed({
 				commandId: commands[1].id,
 				reason: 'NOT_TURN'
+			}),
+			moveSucceeded(commands[2].payload),
+			moveFailed({
+				commandId: commands[3].id,
+				reason: 'NOT_TURN'
 			})
-		);
+		];
+
+		const actual = commands.reduce(eventsReducer, []);
+
+		expect(actual).toEqual(expected);
 	});
 
-	test('single player per position rule', () => {
+	test('players can not make a move on the same position', () => {
 		const commands = [
 			move({
 				player: 'one',
@@ -43,13 +90,16 @@ describe('tic tac toe', () => {
 			})
 		];
 
-		const events = commands.reduce(eventsReducer, []);
-
-		expect(last(events)).toEqual(
+		const expected = [
+			moveSucceeded(commands[0].payload),
 			moveFailed({
 				commandId: commands[1].id,
 				reason: 'POSITION_TAKEN'
 			})
-		);
+		];
+
+		const actual = commands.reduce(eventsReducer, []);
+
+		expect(actual).toEqual(expected);
 	});
 });
