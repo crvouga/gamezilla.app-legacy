@@ -6,7 +6,7 @@ const nextTurn: { [player in IPlayer]: IPlayer } = {
 	two: 'one'
 };
 
-const turnReducer = (turn: IPlayer, event: IEvent) => {
+export const turnReducer = (turn: IPlayer, event: IEvent): IPlayer => {
 	if (event.type === 'tic-tac-toe/MOVE_SUCCEEDED') {
 		return nextTurn[event.payload.player];
 	}
@@ -116,7 +116,7 @@ export const eventsReducer = (state: IEvent[], command: ICommand): IEvent[] => {
 				.some(
 					(takenPosition) =>
 						takenPosition.column === command.payload.column &&
-						takenPosition.row === command.payload.column
+						takenPosition.row === command.payload.row
 				);
 
 			if (isPositionTaken) {
