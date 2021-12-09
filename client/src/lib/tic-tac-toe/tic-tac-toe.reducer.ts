@@ -1,4 +1,5 @@
-import { ICommand, IEvent, IPlayer, moveFailed, moveSucceeded } from './tic-tac-toe.interface';
+import { moveFailed, moveSucceeded } from './tic-tac-toe.interface';
+import type { ICommand, IEvent, IPlayer } from './tic-tac-toe.interface';
 
 const nextTurn: { [player in IPlayer]: IPlayer } = {
 	one: 'two',
@@ -44,6 +45,42 @@ type IStatus =
 const statusReducer = (state: IStatus, event: IEvent): IStatus => {
 	if (event.type === 'tic-tac-toe/MOVE_SUCCEEDED') {
 		return state;
+	}
+
+	return state;
+};
+
+export type IBoard = (IPlayer | null)[][];
+
+export const toInitialBoard = ({
+	rowCount,
+	columnCount
+}: {
+	rowCount: number;
+	columnCount: number;
+}): IBoard => {
+	const board: IBoard = [];
+	for (let column = 0; column < columnCount; column++) {
+		board.push([]);
+		for (let row = 0; row < rowCount; row++) {
+			board[column].push(null);
+		}
+	}
+	return board;
+};
+
+export const BOARD_DIMENSIONS = {
+	rowCount: 3,
+	columnCount: 3
+};
+
+export const boardReducer = (state: IBoard, event: IEvent): IBoard => {
+	if (event.type === 'tic-tac-toe/MOVE_SUCCEEDED') {
+		const copy = [...state.map((column) => [...column])];
+
+		copy[event.payload.column][event.payload.row] = event.payload.player;
+
+		return copy;
 	}
 
 	return state;
