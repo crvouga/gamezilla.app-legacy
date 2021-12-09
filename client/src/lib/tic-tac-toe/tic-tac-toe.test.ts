@@ -1,33 +1,16 @@
 import { eventsReducer, move, moveFailed, moveSucceeded } from '.';
 
 describe('tic tac toe', () => {
-	test('only player one can do the first move', () => {
+	test('player one can make the first move', () => {
 		const commands = [
-			move({
-				player: 'two',
-				row: 0,
-				column: 0
-			}),
 			move({
 				player: 'one',
 				row: 0,
 				column: 0
-			}),
-			move({
-				player: 'two',
-				row: 0,
-				column: 1
 			})
 		];
 
-		const expected = [
-			moveFailed({
-				reason: 'NOT_TURN',
-				commandId: commands[0].id
-			}),
-			moveSucceeded(commands[1].payload),
-			moveSucceeded(commands[2].payload)
-		];
+		const expected = [moveSucceeded(commands[0].payload)];
 
 		const actual = commands.reduce(eventsReducer, []);
 

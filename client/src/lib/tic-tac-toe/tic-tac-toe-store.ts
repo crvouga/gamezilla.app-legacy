@@ -8,11 +8,14 @@ import {
 	toInitialBoard
 } from './tic-tac-toe-reducer';
 
-const eventsStore = writable<IEvent[]>([]);
+export const eventsStore = writable<IEvent[]>([]);
 
 export const dispatch = (command: ICommand): void => {
+	console.log(command);
 	eventsStore.update((events) => {
-		return [command].reduce(eventsReducer, events);
+		const nextEvents = [command].reduce(eventsReducer, events);
+		console.log(nextEvents);
+		return nextEvents;
 	});
 };
 
