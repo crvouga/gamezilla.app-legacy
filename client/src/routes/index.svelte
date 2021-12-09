@@ -1,14 +1,15 @@
 <script lang="ts">
 	
+	
 
-  import {dispatch,eventsStore, move, boardStore } from '$lib';
+  import {dispatch,eventsStore, turnStore, move, boardStore } from '$lib';
   import type { IPlayer } from '$lib';
 	import Tabs from '$lib/Tabs.svelte';
 
-  
+  $: turn = $turnStore
 
   const handleClick = (row: number, column: number) => () => { 
-    dispatch(move({player: 'one', row, column}))
+    dispatch(move({player: turn, row, column}))
   }
 
 </script>
@@ -26,9 +27,12 @@
     justify-content: center;
     align-items: center;
   }
+  .board {
+    margin-bottom: 3rem;
+  }
 </style>
 
-<div class="flex">
+<div class=".board">
   {#each $boardStore as column, columnIndex }
     <div class="column">
       {#each column as cell, rowIndex}
@@ -37,5 +41,15 @@
         </div>
       {/each}
     </div>
+  {/each}
+</div>
+
+<div>
+  {#each $eventsStore as event, index }
+    
+  <div>
+    {JSON.stringify(event)}
+  </div>        
+    
   {/each}
 </div>

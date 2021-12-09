@@ -1,7 +1,8 @@
 import { derived, writable } from 'svelte/store';
-import type { ICommand, IEvent } from './tic-tac-toe-interface';
+import type { ICommand, IEvent, IPlayer } from './tic-tac-toe-interface';
 import type { IBoard } from './tic-tac-toe-reducer';
 import {
+	turnReducer,
 	boardReducer,
 	BOARD_DIMENSIONS,
 	eventsReducer,
@@ -23,4 +24,8 @@ export const boardStore = derived<typeof eventsStore, IBoard>(eventsStore, (even
 	const initialBoard = toInitialBoard(BOARD_DIMENSIONS);
 
 	set(events.reduce(boardReducer, initialBoard));
+});
+
+export const turnStore = derived<typeof eventsStore, IPlayer>(eventsStore, (events, set) => {
+	set(events.reduce(turnReducer, 'one'));
 });
