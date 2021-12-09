@@ -1,5 +1,5 @@
-import { moveFailed, moveSucceeded } from './tic-tac-toe.interface';
-import type { ICommand, IEvent, IPlayer } from './tic-tac-toe.interface';
+import type { ICommand, IEvent, IPlayer } from './tic-tac-toe-interface';
+import { moveFailed, moveSucceeded } from './tic-tac-toe-utility';
 
 const nextTurn: { [player in IPlayer]: IPlayer } = {
 	one: 'two',

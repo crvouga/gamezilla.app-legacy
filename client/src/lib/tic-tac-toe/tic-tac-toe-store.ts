@@ -1,12 +1,12 @@
 import { derived, writable } from 'svelte/store';
-import type { ICommand, IEvent } from './tic-tac-toe.interface';
-import type { IBoard } from './tic-tac-toe.reducer';
+import type { ICommand, IEvent } from './tic-tac-toe-interface';
+import type { IBoard } from './tic-tac-toe-reducer';
 import {
 	boardReducer,
 	BOARD_DIMENSIONS,
 	eventsReducer,
 	toInitialBoard
-} from './tic-tac-toe.reducer';
+} from './tic-tac-toe-reducer';
 
 const eventsStore = writable<IEvent[]>([]);
 
