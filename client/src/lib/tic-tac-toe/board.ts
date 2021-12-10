@@ -5,11 +5,11 @@ const DIRECTIONS = [
 	[0, 1]
 ];
 
-export const toConsecutives = <T>(columns: T[][]): T[][] => {
+export const toConsecutives = <T>(board: T[][]): T[][] => {
 	const consecutives = [];
 	const visited = new Set();
-	for (let i = 0; i < columns.length; i++) {
-		for (let j = 0; j < columns[i].length; j++) {
+	for (let i = 0; i < board.length; i++) {
+		for (let j = 0; j < board[i].length; j++) {
 			for (const [di, dj] of DIRECTIONS) {
 				if (visited.has('' + di + dj + i + j)) {
 					continue;
@@ -20,7 +20,7 @@ export const toConsecutives = <T>(columns: T[][]): T[][] => {
 				let ii = i;
 				let jj = j;
 
-				while (columns[i][j] === columns[ii]?.[jj]) {
+				while (board[i][j] === board[ii]?.[jj]) {
 					visited.add('' + di + dj + ii + jj);
 					consecutive.push([ii, jj]);
 					ii += di;
