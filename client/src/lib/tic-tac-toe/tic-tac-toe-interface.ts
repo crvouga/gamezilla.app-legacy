@@ -1,3 +1,5 @@
+import { createAction } from '@reduxjs/toolkit';
+
 export const name: 'tic-tac-toe' = 'tic-tac-toe';
 
 export type IPlayer = 'one' | 'two';
@@ -65,9 +67,6 @@ export const moveFailed: IMoveFailed = (payload) => {
 	};
 };
 
-export const boardClicked: IBoardClicked = (payload) => {
-	return {
-		type: 'tic-tac-toe/BOARD_CLICKED',
-		payload
-	};
-};
+export const boardClicked = createAction<{ column: number; row: number }>(
+	'tic-tac-toe/BOARD_CLICKED'
+);

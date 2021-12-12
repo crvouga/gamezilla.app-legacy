@@ -1,7 +1,7 @@
+import { put, select, takeEvery } from 'redux-saga/effects';
+import type { IEvent, IPlayer } from './tic-tac-toe-interface';
 import { boardClicked, move, moveFailed, moveSucceeded, name } from './tic-tac-toe-interface';
-import type { IEvent } from './tic-tac-toe-interface';
-import { eventsReducer } from './tic-tac-toe-reducer';
-import { take } from 'redux-saga/effects';
+import { eventsReducer, turnReducer } from './tic-tac-toe-reducer';
 
 type IState = { [name]: IEvent[] };
 
@@ -14,6 +14,14 @@ const moves = (state: IState): { player: 'one' | 'two'; row: number; column: num
 		return moves;
 	}, []);
 
+const turn = (state: IState): IPlayer => slice(state).reduce(turnReducer, 'one');
+
+const selectors = {
+	turn,
+	moves,
+	slice
+};
+
 const actions = {
 	move,
 	moveFailed,
@@ -24,15 +32,18 @@ export const ticTacToe = {
 	name,
 	reducer: eventsReducer,
 	actions,
-	selectors: {
-		slice,
-		moves
-	}
+	selectors
 };
 
 export function* ticTacToeSaga(): unknown {
-	while (true) {
-		const action = yield take('*');
+	yield takeEvery(actions.boardClicked, function* (action) {
 		console.log({ action });
-	}
+		const turn = yield select(selectors.turn);
+		yield put(
+			actions.move({
+				...action.payload,
+				player: turn
+			})
+		);
+	});
 }
