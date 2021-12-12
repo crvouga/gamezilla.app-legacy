@@ -1,5 +1,5 @@
-import { combineReducers, applyMiddleware, createStore } from 'redux';
-import { composeWithDevTools } from 'redux-devtools-extension';
+import { configureStore, combineReducers } from '@reduxjs/toolkit';
+
 import { readable } from 'svelte/store';
 import { ticTacToe, ticTacToeSaga } from './tic-tac-toe/tic-tac-toe';
 import createSagaMiddleware from 'redux-saga';
@@ -10,11 +10,10 @@ const rootReducer = combineReducers({
 
 const sagaMiddleware = createSagaMiddleware();
 
-const reduxStore = createStore(
-	rootReducer,
-	{ 'tic-tac-toe': [] },
-	composeWithDevTools(applyMiddleware(sagaMiddleware))
-);
+const reduxStore = configureStore({
+	reducer: rootReducer,
+	middleware: [sagaMiddleware]
+});
 
 function* rootSaga() {
 	yield spawn(ticTacToeSaga);
