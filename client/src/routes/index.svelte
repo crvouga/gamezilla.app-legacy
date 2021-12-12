@@ -1,24 +1,22 @@
 <script lang="ts">
 	import { eventsStore } from '$lib';
+	import { dispatch, store } from '$lib/store';
+	import { ticTacToe } from '$lib/tic-tac-toe/tic-tac-toe';
 	import TicTacToeBoard from '$lib/tic-tac-toe/tic-tac-toe-board.svelte';
 
-	let moves: { player: 'one' | 'two'; row: number; column: number }[] = [];
+	$: moves = ticTacToe.selectors.moves($store);
 </script>
 
 <TicTacToeBoard
 	rowCount={3}
 	columnCount={3}
 	{moves}
-	on:click={(e) => {
-		moves = [
-			...moves,
-			{
-				player: moves.length % 2 === 0 ? 'one' : 'two',
-				...e.detail
-			}
-		];
+	on:click={(event) => {
+		dispatch(ticTacToe.actions.boardClicked(event.detail));
 	}}
 />
+
+{JSON.stringify($store)}
 
 <div>
 	{#each $eventsStore as event}
