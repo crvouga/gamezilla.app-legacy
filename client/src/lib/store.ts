@@ -1,13 +1,26 @@
-import { combineReducers, createStore } from 'redux';
+import { combineReducers, applyMiddleware, createStore } from 'redux';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import { readable } from 'svelte/store';
-import { ticTacToe } from './tic-tac-toe/tic-tac-toe';
-
+import { ticTacToe, ticTacToeSaga } from './tic-tac-toe/tic-tac-toe';
+import createSagaMiddleware from 'redux-saga';
+import { spawn } from 'redux-saga/effects';
 const rootReducer = combineReducers({
 	[ticTacToe.name]: ticTacToe.reducer
 });
 
-const reduxStore = createStore(rootReducer, { 'tic-tac-toe': [] }, composeWithDevTools());
+const sagaMiddleware = createSagaMiddleware();
+
+const reduxStore = createStore(
+	rootReducer,
+	{ 'tic-tac-toe': [] },
+	composeWithDevTools(applyMiddleware(sagaMiddleware))
+);
+
+function* rootSaga() {
+	yield spawn(ticTacToeSaga);
+}
+
+sagaMiddleware.run(rootSaga);
 
 export const store = readable(reduxStore.getState(), (set) => {
 	reduxStore.subscribe(() => {
