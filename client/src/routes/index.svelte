@@ -1,55 +1,29 @@
 <script lang="ts">
-	
-	
+	import { eventsStore } from '$lib';
+	import TicTacToeBoard from '$lib/tic-tac-toe/tic-tac-toe-board.svelte';
 
-  import {dispatch,eventsStore, turnStore, move, boardStore } from '$lib';
-  import type { IPlayer } from '$lib';
-	import Tabs from '$lib/Tabs.svelte';
-
-  $: turn = $turnStore
-
-  const handleClick = (row: number, column: number) => () => { 
-    dispatch(move({player: turn, row, column}))
-  }
-
+	let moves: { player: 'one' | 'two'; row: number; column: number }[] = [];
 </script>
 
-
-<style>
-  .column {
-    display: flex;
-    width: 100%
-  }
-  .cell {
-    flex: 1;
-    height: 120px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  .board {
-    margin-bottom: 3rem;
-  }
-</style>
-
-<div class=".board">
-  {#each $boardStore as column, columnIndex }
-    <div class="column">
-      {#each column as cell, rowIndex}
-        <div class='cell' on:click={handleClick(rowIndex, columnIndex)}>
-          {JSON.stringify(cell)}
-        </div>
-      {/each}
-    </div>
-  {/each}
-</div>
+<TicTacToeBoard
+	rowCount={3}
+	columnCount={3}
+	{moves}
+	on:click={(e) => {
+		moves = [
+			...moves,
+			{
+				player: moves.length % 2 === 0 ? 'one' : 'two',
+				...e.detail
+			}
+		];
+	}}
+/>
 
 <div>
-  {#each $eventsStore as event, index }
-    
-  <div>
-    {JSON.stringify(event)}
-  </div>        
-    
-  {/each}
+	{#each $eventsStore as event}
+		<div>
+			{JSON.stringify(event)}
+		</div>
+	{/each}
 </div>
