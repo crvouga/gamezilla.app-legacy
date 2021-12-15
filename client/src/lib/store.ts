@@ -1,6 +1,6 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
 
-import { readable } from 'svelte/store';
+import { derived, readable } from 'svelte/store';
 import { ticTacToe, ticTacToeSaga } from './tic-tac-toe/tic-tac-toe';
 import createSagaMiddleware from 'redux-saga';
 import { spawn } from 'redux-saga/effects';

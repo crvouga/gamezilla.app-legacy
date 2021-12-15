@@ -68,5 +68,5 @@ export const moveFailed: IMoveFailed = (payload) => {
 };
 
 export const boardClicked = createAction<{ column: number; row: number }>(
-	'tic-tac-toe/BOARD_CLICKED'
+	'tic-tac-toe-ui/BOARD_CLICKED'
 );
