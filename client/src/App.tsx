@@ -6,6 +6,7 @@ import { TicTacToe, ticTacToe } from "./tic-tac-toe";
 export default function App() {
   const dispatch = useDispatch();
   const moves = useSelector(ticTacToe.selectors.moves);
+
   return (
     <>
       <TicTacToe
@@ -16,6 +17,7 @@ export default function App() {
           dispatch(ticTacToe.actions.clicked(position));
         }}
       />
+      {JSON.stringify(moves)}
     </>
   );
 }
