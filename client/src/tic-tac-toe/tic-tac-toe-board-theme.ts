@@ -1,11 +1,11 @@
 export type ITicTacToeBoardTheme = {
-  playerOne: string;
-  playerTwo: string;
+  x: string;
+  o: string;
   lines: string;
 };
 
 export const defaultTheme: ITicTacToeBoardTheme = {
-  playerOne: "orange",
-  playerTwo: "blue",
+  x: "orange",
+  o: "blue",
   lines: "black",
 };
