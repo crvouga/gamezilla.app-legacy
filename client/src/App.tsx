@@ -1,14 +1,16 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 import { HomePage } from "./pages";
-import { GamePage } from "./pages/game";
+import { GameCreatePage } from "./pages/game/create";
+import { GameIdPage } from "./pages/game/[id]";
 
 export default function App() {
   return (
     <>
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/game" element={<GamePage />} />
+        <Route path="/game/create" element={<GameCreatePage />} />
+        <Route path="/game/:id" element={<GameIdPage />} />
       </Routes>
     </>
   );

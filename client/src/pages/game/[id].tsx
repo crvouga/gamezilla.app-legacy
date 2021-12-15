@@ -11,12 +11,13 @@ import { Home } from "@mui/icons-material";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { TicTacToe, ticTacToe } from "../../tic-tac-toe";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { game } from "../../game/game";
 
-export const GamePage = () => {
+export const GameIdPage = () => {
   const dispatch = useDispatch();
   const moves = useSelector(ticTacToe.selectors.moves);
+  const params = useParams<"id">();
 
   useEffect(() => {
     dispatch(game.actions.sync());
@@ -35,6 +36,7 @@ export const GamePage = () => {
       </AppBar>
 
       <Container disableGutters>
+        {JSON.stringify(params)}
         <TicTacToe
           rowCount={3}
           columnCount={3}
