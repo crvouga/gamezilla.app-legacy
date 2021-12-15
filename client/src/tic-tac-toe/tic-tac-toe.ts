@@ -57,10 +57,15 @@ export const toPositions = ({
 
 const namespace = "tic-tac-toe";
 
+type MoveFailedReason = "POSITION_TAKEN" | "NOT_TURN";
+
 const actions = {
   clicked: createAction<Position>(`${namespace}/CLICKED`),
   move: createAction<Move>(`${namespace}/MOVE`),
-  moved: createAction<Move>(`${namespace}/MOVED`),
+  moveSucceeded: createAction<Move>(`${namespace}/MOVE_SUCCEEDED`),
+  moveFailed: createAction<{ reason: MoveFailedReason }>(
+    `${namespace}/MOVE_FAILED`
+  ),
 };
 
 const nextTurn = {
@@ -69,7 +74,7 @@ const nextTurn = {
 };
 
 export const turnReducer = (turn: Player, event: Event): Player => {
-  if (actions.moved.match(event)) {
+  if (actions.moveSucceeded.match(event)) {
     return nextTurn[event.payload.player];
   }
 
@@ -77,17 +82,18 @@ export const turnReducer = (turn: Player, event: Event): Player => {
 };
 
 export const movesReducer = (moves: Move[], event: Event) => {
-  if (actions.moved.match(event)) {
+  if (actions.moveSucceeded.match(event)) {
     return [...moves, event.payload];
   }
 
   return [];
 };
 
-type Event = ReturnType<typeof actions.moved>;
+type Event = ReturnType<typeof actions.moveSucceeded>;
 type State = Event[];
 
 const selectors = {
+  events: (state: { [namespace]: State }) => state[namespace],
   turn: (state: { [namespace]: State }) =>
     state[namespace].reduce(turnReducer, "x"),
   moves: (state: { [namespace]: State }) =>
@@ -95,11 +101,44 @@ const selectors = {
 };
 
 const reducer = createReducer<State>([], (builder) => {
-  builder.addCase(actions.moved, (state, action) => {
-    console.log({ state, action });
+  builder.addCase(actions.moveSucceeded, (state, action) => {
     state.push(action);
   });
 });
+
+const moveLogic = (
+  events: Event[],
+  move: ReturnType<typeof actions.move>
+):
+  | ReturnType<typeof actions.moveSucceeded>
+  | ReturnType<typeof actions.moveFailed> => {
+  const isNotPlayersTurn =
+    move.payload.player !==
+    events.reduce(
+      (turn, event) =>
+        actions.moveSucceeded.match(event)
+          ? nextTurn[event.payload.player]
+          : turn,
+      "x"
+    );
+
+  if (isNotPlayersTurn) {
+    return actions.moveFailed({ reason: "NOT_TURN" });
+  }
+
+  const isPositionTaken = events.some(
+    (event) =>
+      actions.moveSucceeded.match(event) &&
+      event.payload.row === move.payload.row &&
+      event.payload.column === move.payload.column
+  );
+
+  if (isPositionTaken) {
+    return actions.moveFailed({ reason: "POSITION_TAKEN" });
+  }
+
+  return actions.moveSucceeded(move.payload);
+};
 
 function* saga() {
   yield takeEvery(actions.clicked, function* (action) {
@@ -116,7 +155,13 @@ function* saga() {
   });
 
   yield takeEvery(actions.move, function* (action) {
-    yield put(actions.moved(action.payload));
+    const events: ReturnType<typeof selectors.events> = yield select(
+      selectors.events
+    );
+
+    const result = moveLogic(events, action);
+
+    yield put(result);
   });
 }
 

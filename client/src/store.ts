@@ -12,7 +12,6 @@ export const store = configureStore({
 });
 
 function* rootSaga() {
-  console.log("SAGA running");
   yield ticTacToe.saga();
 }
 
