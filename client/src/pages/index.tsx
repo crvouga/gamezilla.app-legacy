@@ -24,7 +24,7 @@ export const HomePage = () => {
 
       <Container disableGutters>
         <List>
-          <Link to="/game">
+          <Link to="/game/create">
             <ListItem button divider>
               <ListItemIcon>
                 <Gamepad />
