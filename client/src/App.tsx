@@ -1,26 +1,19 @@
 import React from "react";
-import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import "./App.css";
-import TicTacToeBoard, { BoardMove } from "./tic-tac-toe/TicTacToeBoard";
+import { TicTacToe, ticTacToe } from "./tic-tac-toe";
 
 export default function App() {
-  const [moves, setMoves] = useState<BoardMove[]>([]);
+  const dispatch = useDispatch();
+  const moves = useSelector(ticTacToe.selectors.moves);
   return (
     <>
-      <TicTacToeBoard
+      <TicTacToe
         rowCount={3}
         columnCount={3}
         moves={moves}
         onClick={(position) => {
-          setMoves((moves) => {
-            return [
-              ...moves,
-              {
-                player: moves.length % 2 === 0 ? "o" : "x",
-                ...position,
-              },
-            ];
-          });
+          dispatch(ticTacToe.actions.clicked(position));
         }}
       />
     </>

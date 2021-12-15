@@ -1,20 +1,10 @@
 import React from "react";
-import { defaultTheme } from "./tic-tac-toe-board-theme";
-import {
-  BoardPosition,
-  toBoardLines,
-  toBoardPositions,
-} from "./tic-tac-toe-board-utility";
-
-export type BoardMove = {
-  row: number;
-  column: number;
-  player: "x" | "o";
-};
+import { defaultTheme } from "./theme";
+import { Position, Move, toLines, toPositions } from "./tic-tac-toe";
 
 const theme = defaultTheme;
 
-export default function TicTacToeBoard({
+export const TicTacToe = ({
   rowCount,
   columnCount,
   onClick,
@@ -22,15 +12,14 @@ export default function TicTacToeBoard({
 }: {
   rowCount: number;
   columnCount: number;
-  moves: BoardMove[];
-
-  onClick: (position: BoardPosition) => void;
-}) {
+  moves: Move[];
+  onClick: (position: Position) => void;
+}) => {
   return (
     <>
       <svg width="100%" viewBox={`0 0 ${columnCount} ${rowCount}`}>
         <g strokeWidth={0.1} stroke="black">
-          {toBoardLines({ rowCount, columnCount }).map((line) => (
+          {toLines({ rowCount, columnCount }).map((line) => (
             <line
               key={JSON.stringify(line)}
               x1={line.x1}
@@ -60,7 +49,7 @@ export default function TicTacToeBoard({
         </g>
 
         <g fill="transparent">
-          {toBoardPositions({ rowCount, columnCount }).map((position) => (
+          {toPositions({ rowCount, columnCount }).map((position) => (
             <rect
               key={JSON.stringify(position)}
               x={position.column}
@@ -74,4 +63,4 @@ export default function TicTacToeBoard({
       </svg>
     </>
   );
-}
+};
