@@ -20,7 +20,7 @@ export const GamePage = () => {
 
   useEffect(() => {
     dispatch(game.actions.sync());
-  }, []);
+  }, [dispatch]);
 
   return (
     <>
