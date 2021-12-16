@@ -15,11 +15,11 @@ export const dropWhile = <T>(predicate: (x: T) => boolean, xs: T[]): T[] => {
 
   const [first, ...rest] = xs;
 
-  if (predicate(first)) {
-    return rest;
+  if (!predicate(first)) {
+    return xs;
   }
 
-  return [first, ...rest];
+  return dropWhile(predicate, rest);
 };
 
 export const dropLastWhile = <T>(
