@@ -1,4 +1,4 @@
-import { ExitToApp, Home, Login, Logout } from "@mui/icons-material";
+import { Home, Login, Logout } from "@mui/icons-material";
 import {
   AppBar,
   IconButton,
