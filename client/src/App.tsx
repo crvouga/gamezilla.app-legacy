@@ -1,10 +1,23 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import { Route, Routes } from "react-router-dom";
+import { auth } from "./auth/auth";
 import { HomePage } from "./pages";
 import { GameCreatePage } from "./pages/game/create";
 import { GameIdPage } from "./pages/game/[id]";
+import { SignInPage } from "./pages/sign-in";
 
 export default function App() {
+  const authState = useSelector(auth.selectors.slice);
+
+  if (auth.actions.signedOut.match(authState)) {
+    return (
+      <>
+        <SignInPage />
+      </>
+    );
+  }
+
   return (
     <>
       <Routes>
