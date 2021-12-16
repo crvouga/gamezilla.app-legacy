@@ -8,8 +8,9 @@ import {
   ListItem,
   ListItemText,
   ListItemIcon,
+  ListItemSecondaryAction,
 } from "@mui/material";
-import { Google } from "@mui/icons-material";
+import { Google, ChevronRight } from "@mui/icons-material";
 import { auth } from "../../auth/auth";
 import { useDispatch } from "react-redux";
 import { ISignInMethod } from "../../auth/sign-in";
@@ -41,6 +42,9 @@ export const SignInPage = () => {
               <Google />
             </ListItemIcon>
             <ListItemText primary="Sign In With Google" />
+            <ListItemSecondaryAction>
+              <ChevronRight />
+            </ListItemSecondaryAction>
           </ListItem>
         </List>
       </Container>
