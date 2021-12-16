@@ -37,10 +37,8 @@ const reducer = createReducer<IState>(actions.signedOut(), (builder) => {
   });
 });
 
-const authEventsChannel = eventChannel(onAuthEvents);
-
 function* saga() {
-  yield takeEvery(authEventsChannel, function* (authEvent) {
+  yield takeEvery(eventChannel(onAuthEvents), function* (authEvent) {
     yield put(authEvent);
   });
 
