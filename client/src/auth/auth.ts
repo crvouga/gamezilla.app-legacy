@@ -1,10 +1,9 @@
 import { createAction, createReducer } from "@reduxjs/toolkit";
-import { ISignInMethod, signIn } from "./sign-in";
-import { put, call, takeEvery } from "redux-saga/effects";
-import { signOut } from "./sign-out";
-import { onAuthEvents } from "./on-auth-events";
-
 import { eventChannel } from "redux-saga";
+import { call, put, takeEvery } from "redux-saga/effects";
+import { onAuthEvents } from "./on-auth-events";
+import { ISignInMethod, signIn } from "./sign-in";
+import { signOut } from "./sign-out";
 
 const namespace: "auth" = "auth";
 

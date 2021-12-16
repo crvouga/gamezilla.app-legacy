@@ -12,9 +12,20 @@ import {
   Typography,
 } from "@mui/material";
 import React from "react";
-import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import { game } from "../game";
 
 export const HomePage = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const handleCreateGame = () => {
+    const action = game.actions.create();
+    navigate(`/game/${action.payload.gameId}`);
+    dispatch(action);
+  };
+
   return (
     <>
       <AppBar position="sticky">
@@ -30,17 +41,15 @@ export const HomePage = () => {
 
       <Container disableGutters>
         <List>
-          <Link to="/game/create">
-            <ListItem button divider>
-              <ListItemIcon>
-                <Gamepad />
-              </ListItemIcon>
-              <ListItemText primary="Create Game" />
-              <ListItemSecondaryAction>
-                <ChevronRight />
-              </ListItemSecondaryAction>
-            </ListItem>
-          </Link>
+          <ListItem button divider onClick={handleCreateGame}>
+            <ListItemIcon>
+              <Gamepad />
+            </ListItemIcon>
+            <ListItemText primary="Create Game" />
+            <ListItemSecondaryAction>
+              <ChevronRight />
+            </ListItemSecondaryAction>
+          </ListItem>
         </List>
       </Container>
     </>

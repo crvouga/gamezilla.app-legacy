@@ -1,17 +1,5 @@
 import { createAction, nanoid } from "@reduxjs/toolkit";
-
-type IGame = "tic-tac-toe";
-
-type IGameSession = {
-  game?: IGame;
-  creatorId: string;
-  state: "in-game" | "in-lobby";
-  users: {
-    [userId: string]: {
-      userId: string;
-    };
-  };
-};
+import { takeEvery } from "redux-saga/effects";
 
 const actions = {
   sync: createAction("game/SYNC"),
@@ -20,8 +8,18 @@ const actions = {
       gameId: nanoid(),
     },
   })),
+  createSucceeded: createAction<{ gameId: string; userId: string }>(
+    "game/CREATE_SUCCEEDED"
+  ),
 };
 
+function* saga() {
+  yield takeEvery(actions.create, function* () {
+    yield;
+  });
+}
+
 export const game = {
+  saga,
   actions,
 };
