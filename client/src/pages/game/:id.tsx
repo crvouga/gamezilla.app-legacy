@@ -8,21 +8,16 @@ import {
   ListItemText,
   Toolbar,
 } from "@mui/material";
-import React, { useEffect } from "react";
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import { TicTacToeBoard } from "../../components/TicTacToeBoard";
-import { game } from "../../game/game";
 import { ticTacToe } from "../../game/tic-tac-toe";
 
 export const GameIdPage = () => {
   const dispatch = useDispatch();
   const moves = useSelector(ticTacToe.selectors.moves);
   const params = useParams<"id">();
-
-  useEffect(() => {
-    dispatch(game.actions.sync());
-  }, [dispatch]);
 
   return (
     <>
