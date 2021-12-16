@@ -1,3 +1,4 @@
+import { Container } from "@mui/material";
 import React from "react";
 import { useSelector } from "react-redux";
 import { Route, Routes } from "react-router-dom";
@@ -12,19 +13,19 @@ export default function App() {
 
   if (auth.actions.signedOut.match(authState)) {
     return (
-      <>
+      <Container maxWidth="xs" disableGutters>
         <SignInPage />
-      </>
+      </Container>
     );
   }
 
   return (
-    <>
+    <Container maxWidth="xs" disableGutters>
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/game/create" element={<GameCreatePage />} />
         <Route path="/game/:id" element={<GameIdPage />} />
       </Routes>
-    </>
+    </Container>
   );
 }
