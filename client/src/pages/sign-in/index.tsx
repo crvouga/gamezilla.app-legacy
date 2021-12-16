@@ -32,7 +32,7 @@ export const SignInPage = () => {
 
       <AppBar position="sticky">
         <Toolbar>
-          <Typography variant="h6">Sign In</Typography>
+          <Typography variant="h6">Gamezilla</Typography>
         </Toolbar>
       </AppBar>
       <Container disableGutters>
@@ -41,7 +41,7 @@ export const SignInPage = () => {
             <ListItemIcon>
               <Google />
             </ListItemIcon>
-            <ListItemText primary="Sign In With Google" />
+            <ListItemText primary="Continue With Google" />
             <ListItemSecondaryAction>
               <ChevronRight />
             </ListItemSecondaryAction>
