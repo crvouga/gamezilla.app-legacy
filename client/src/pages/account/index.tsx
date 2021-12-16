@@ -1,11 +1,10 @@
-import { ChevronRight, ArrowBack, Login, Logout } from "@mui/icons-material";
+import { ArrowBack, Logout } from "@mui/icons-material";
 import {
   AppBar,
   IconButton,
   List,
   ListItem,
   ListItemIcon,
-  ListItemSecondaryAction,
   ListItemText,
   Toolbar,
   Typography,
@@ -28,18 +27,6 @@ export const AccountPage = () => {
       </AppBar>
 
       <List>
-        <Link to="/sign-in">
-          <ListItem button divider>
-            <ListItemIcon>
-              <Login />
-            </ListItemIcon>
-            <ListItemText primary="Sign In" />
-            <ListItemSecondaryAction>
-              <ChevronRight />
-            </ListItemSecondaryAction>
-          </ListItem>
-        </Link>
-
         <Link to="/sign-out">
           <ListItem button divider>
             <ListItemIcon>
