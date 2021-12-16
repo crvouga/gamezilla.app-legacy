@@ -1,3 +1,4 @@
+import { Home } from "@mui/icons-material";
 import {
   AppBar,
   Container,
@@ -7,12 +8,12 @@ import {
   ListItemText,
   Toolbar,
 } from "@mui/material";
-import { Home } from "@mui/icons-material";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { TicTacToe, ticTacToe } from "../../tic-tac-toe";
 import { Link, useParams } from "react-router-dom";
+import { TicTacToeBoard } from "../../components/TicTacToeBoard";
 import { game } from "../../game/game";
+import { ticTacToe } from "../../game/tic-tac-toe";
 
 export const GameIdPage = () => {
   const dispatch = useDispatch();
@@ -37,7 +38,7 @@ export const GameIdPage = () => {
 
       <Container disableGutters>
         {JSON.stringify(params)}
-        <TicTacToe
+        <TicTacToeBoard
           rowCount={3}
           columnCount={3}
           moves={moves}

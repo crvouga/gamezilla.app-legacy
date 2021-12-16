@@ -1,19 +1,69 @@
 import React from "react";
-import { defaultTheme } from "./theme";
-import { Position, Move, toLines, toPositions } from "./tic-tac-toe";
+import { Move, Position } from "../game/tic-tac-toe";
+import { cartesianProduct, range } from "../utility";
 
-const theme = defaultTheme;
+export const toLines = ({
+  rowCount,
+  columnCount,
+}: {
+  rowCount: number;
+  columnCount: number;
+}): {
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
+}[] => {
+  const vertical = range(1, columnCount).map((column) => ({
+    x1: 0,
+    y1: column,
+    x2: columnCount,
+    y2: column,
+  }));
 
-export const TicTacToe = ({
+  const horizontal = range(1, rowCount).map((row) => ({
+    x1: row,
+    y1: 0,
+    x2: row,
+    y2: rowCount,
+  }));
+
+  return vertical.concat(horizontal);
+};
+
+export const toPositions = ({
+  rowCount,
+  columnCount,
+}: {
+  rowCount: number;
+  columnCount: number;
+}): Position[] => {
+  return cartesianProduct(
+    range(0, columnCount),
+    range(0, rowCount)
+  ).map(([column, row]) => ({ column, row }));
+};
+
+export const TicTacToeBoard = ({
   rowCount,
   columnCount,
   onClick,
   moves,
+  theme = {
+    x: "orange",
+    o: "blue",
+    lines: "black",
+  },
 }: {
   rowCount: number;
   columnCount: number;
   moves: Move[];
   onClick: (position: Position) => void;
+  theme?: {
+    x: string;
+    o: string;
+    lines: string;
+  };
 }) => {
   return (
     <>

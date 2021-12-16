@@ -2,7 +2,7 @@ import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import createSagaMiddleware from "redux-saga";
 import { spawn } from "redux-saga/effects";
 import { auth } from "./auth/auth";
-import { ticTacToe } from "./tic-tac-toe";
+import { ticTacToe } from "./game/tic-tac-toe";
 
 const sagaMiddleware = createSagaMiddleware();
 
