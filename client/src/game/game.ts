@@ -2,7 +2,6 @@ import { createAction, nanoid } from "@reduxjs/toolkit";
 import { takeEvery } from "redux-saga/effects";
 
 const actions = {
-  sync: createAction("game/SYNC"),
   create: createAction("game/CREATE", () => ({
     payload: {
       gameId: nanoid(),
@@ -11,6 +10,32 @@ const actions = {
   createSucceeded: createAction<{ gameId: string; userId: string }>(
     "game/CREATE_SUCCEEDED"
   ),
+};
+
+type IPlayer =
+  | {
+      type: "user";
+      userId: string;
+    }
+  | {
+      type: "bot";
+    };
+
+type IGameConfig = {
+  type: "tic-tac-toe";
+  rowCount: number;
+  columnCount: number;
+  x: IPlayer;
+  o: IPlayer;
+};
+
+export type IGameSession = {
+  gameConfig?: IGameConfig;
+  usersById: {
+    [id: string]: {
+      id: string;
+    };
+  };
 };
 
 function* saga() {
