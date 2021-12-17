@@ -14,6 +14,7 @@ import {
 import React from "react";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
+import { BottomNavigation } from "../components/BottomNavigation";
 import { game } from "../game";
 
 export const HomePage = () => {
@@ -45,13 +46,15 @@ export const HomePage = () => {
             <ListItemIcon>
               <Gamepad />
             </ListItemIcon>
-            <ListItemText primary="Create Game" />
+            <ListItemText primary="Play" />
             <ListItemSecondaryAction>
               <ChevronRight />
             </ListItemSecondaryAction>
           </ListItem>
         </List>
       </Container>
+
+      <BottomNavigation />
     </>
   );
 };
