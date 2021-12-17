@@ -49,6 +49,8 @@ export const movesReducer = (moves: Move[], event: Event) => {
 type Event = ReturnType<typeof actions.moveSucceeded>;
 type State = Event[];
 
+export type ITicTacToeState = State;
+
 const selectors = {
   events: (state: { [namespace]: State }) => state[namespace],
   turn: (state: { [namespace]: State }) =>
