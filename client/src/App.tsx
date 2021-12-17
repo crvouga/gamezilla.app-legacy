@@ -6,6 +6,7 @@ import { auth } from "./auth/auth";
 import { HomePage } from "./pages";
 import { AccountPage } from "./pages/account";
 import { GameIdPage } from "./pages/game/:id";
+import { ProfilePage } from "./pages/profile/:userId";
 import { SignInPage } from "./pages/sign-in";
 import { SignOutPage } from "./pages/sign-out";
 
@@ -32,6 +33,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/game/:id" element={<GameIdPage />} />
+          <Route path="/profile/:userId" element={<ProfilePage />} />
           <Route path="/account" element={<AccountPage />} />
           <Route path="/sign-in" element={<SignInPage />} />
           <Route path="/sign-out" element={<SignOutPage />} />
