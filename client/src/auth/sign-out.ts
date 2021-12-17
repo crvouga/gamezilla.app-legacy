@@ -1,4 +1,4 @@
-import { supabaseClient } from "../supabase-client";
+import { supabaseClient } from "../supabase/supabase-client";
 
 type ISignOut = () => Promise<{ errors: Error[] }>;
 
