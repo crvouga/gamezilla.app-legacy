@@ -1,4 +1,4 @@
-import { supabaseClient } from "../supabase-client";
+import { supabaseClient } from "../supabase/supabase-client";
 import { auth } from "./auth";
 
 type IEvent =
