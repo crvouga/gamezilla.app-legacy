@@ -1,7 +1,7 @@
 import { createAction, createReducer } from "@reduxjs/toolkit";
 import { call, takeLatest } from "redux-saga/effects";
 import { auth } from "../auth/auth";
-import { fetchElseCreateProfile } from "./profile-data-access";
+import { profileDataAccess } from "./profile-data-access";
 
 const namespace: "profile" = "profile";
 
@@ -30,7 +30,7 @@ function* saga() {
   yield takeLatest(auth.actions.signedIn, function* (action) {
     const userId = action.payload.id;
 
-    yield call(fetchElseCreateProfile, { userId });
+    yield call(profileDataAccess.fetchElseCreate, { userId });
   });
 }
 
