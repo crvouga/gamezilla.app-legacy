@@ -1,7 +1,7 @@
 import { definitions, supabaseClient } from "../supabase";
 import { IProfile } from "./profile";
 
-export const fetchProfile = async ({
+const fetch = async ({
   userId,
 }: {
   userId: string;
@@ -23,24 +23,26 @@ export const fetchProfile = async ({
   return null;
 };
 
-export const createProfile = async ({ userId }: { userId: string }) => {
+const create = async ({ userId }: { userId: string }) => {
   await supabaseClient.from<definitions["profiles"]>("profiles").insert({
     id: userId,
   });
 };
 
-export const fetchElseCreateProfile = async ({
-  userId,
-}: {
-  userId: string;
-}) => {
-  const fetched = await fetchProfile({ userId });
+const fetchElseCreate = async ({ userId }: { userId: string }) => {
+  const fetched = await fetch({ userId });
 
   if (fetched) {
     return fetched;
   }
 
-  await createProfile({ userId });
+  await create({ userId });
 
-  return fetchProfile({ userId });
+  return fetch({ userId });
+};
+
+export const profileDataAccess = {
+  fetchElseCreate,
+  fetch,
+  create,
 };
