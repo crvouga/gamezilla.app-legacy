@@ -1,19 +1,13 @@
 export const reverse = <T>(xs: T[]): T[] => {
-  if (xs.length === 0) {
-    return [];
-  }
-
-  const [first, ...rest] = xs;
-
-  return [...reverse(rest), first];
+  return xs.reduce<T[]>((reversed, x) => [...reversed, x], []);
 };
 
 export const dropWhile = <T>(predicate: (x: T) => boolean, xs: T[]): T[] => {
-  if (xs.length === 0) {
-    return [];
-  }
-
   const [first, ...rest] = xs;
+
+  if (!first) {
+    return xs;
+  }
 
   if (!predicate(first)) {
     return xs;
