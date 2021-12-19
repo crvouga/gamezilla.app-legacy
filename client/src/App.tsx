@@ -2,7 +2,7 @@ import { Container } from "@mui/material";
 import React from "react";
 import { useSelector } from "react-redux";
 import { Route, Routes } from "react-router-dom";
-import { auth } from "./features/auth/auth";
+import { auth } from "src/features";
 import { HomePage } from "./pages";
 import { AccountPage } from "./pages/account";
 import { GameIdPage } from "./pages/game/:id";

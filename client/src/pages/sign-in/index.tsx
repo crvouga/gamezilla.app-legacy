@@ -13,17 +13,17 @@ import {
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { LoadingDialog } from "src/components/LoadingDialog";
-import { auth, ISignInMethod } from "src/features";
+import { auth } from "src/features";
 
 export const SignInPage = () => {
   const dispatch = useDispatch();
 
   const [state, setState] = useState<"signing-in" | "idle">("idle");
 
-  const handleSignIn = (method: ISignInMethod) =>
+  const handleSignIn = (...params: Parameters<typeof auth.actions.signIn>) =>
     () => {
       setState("signing-in");
-      dispatch(auth.actions.signIn(method));
+      dispatch(auth.actions.signIn(...params));
     };
 
   return (
@@ -35,6 +35,7 @@ export const SignInPage = () => {
           <Typography variant="h6">Gamezilla</Typography>
         </Toolbar>
       </AppBar>
+
       <Container disableGutters>
         <List>
           <ListItem divider button onClick={handleSignIn({ type: "google" })}>
