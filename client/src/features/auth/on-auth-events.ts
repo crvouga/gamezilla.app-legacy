@@ -1,4 +1,4 @@
-import { supabaseClient } from "../supabase/supabase-client";
+import { supabaseClient } from "../../supabase/supabase-client";
 import { auth } from "./auth";
 
 type IEvent =
@@ -17,7 +17,7 @@ export const onAuthEvents = (emit: (event: IEvent) => void) => {
             id: String(session?.user?.id),
             displayName: session?.user?.user_metadata?.name,
             avatarUrl: session?.user?.user_metadata?.photoURL,
-          })
+          }),
         );
         return;
       case "SIGNED_OUT":

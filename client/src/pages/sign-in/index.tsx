@@ -1,30 +1,30 @@
-import React, { useState } from "react";
+import { ChevronRight, Google } from "@mui/icons-material";
 import {
-  Typography,
   AppBar,
   Container,
-  Toolbar,
   List,
   ListItem,
-  ListItemText,
   ListItemIcon,
   ListItemSecondaryAction,
+  ListItemText,
+  Toolbar,
+  Typography,
 } from "@mui/material";
-import { Google, ChevronRight } from "@mui/icons-material";
-import { auth } from "../../auth/auth";
+import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { ISignInMethod } from "../../auth/sign-in";
-import { LoadingDialog } from "../../components/LoadingDialog";
+import { LoadingDialog } from "src/components/LoadingDialog";
+import { auth, ISignInMethod } from "src/features";
 
 export const SignInPage = () => {
   const dispatch = useDispatch();
 
   const [state, setState] = useState<"signing-in" | "idle">("idle");
 
-  const handleSignIn = (method: ISignInMethod) => () => {
-    setState("signing-in");
-    dispatch(auth.actions.signIn(method));
-  };
+  const handleSignIn = (method: ISignInMethod) =>
+    () => {
+      setState("signing-in");
+      dispatch(auth.actions.signIn(method));
+    };
 
   return (
     <>
