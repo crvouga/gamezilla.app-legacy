@@ -1,8 +1,8 @@
 import { Button, Dialog, DialogActions, DialogTitle } from "@mui/material";
 import React from "react";
 import { useDispatch } from "react-redux";
-import { auth } from "../../auth/auth";
 import { useNavigate } from "react-router-dom";
+import { auth } from "src/features";
 
 export const SignOutPage = () => {
   const dispatch = useDispatch();

@@ -7,7 +7,7 @@ import { BottomNavigationActionProps } from "@mui/material/BottomNavigationActio
 import React from "react";
 import { useSelector } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
-import { auth } from "../auth/auth";
+import { auth } from "../features/auth/auth";
 
 const BottomNavigationAction = ({
   to,

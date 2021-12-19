@@ -1,5 +1,5 @@
-import { dropLastWhile } from "../utility";
-import { supabaseClient } from "../supabase/supabase-client";
+import { dropLastWhile } from "../../utility";
+import { supabaseClient } from "../../supabase/supabase-client";
 
 export type ISignInMethod = {
   type: "google";
@@ -21,7 +21,7 @@ export const signIn: ISignIn = async (method) => {
       },
       {
         redirectTo,
-      }
+      },
     );
 
     return {

@@ -1,7 +1,7 @@
 import { AppBar, Avatar, Toolbar, Typography } from "@mui/material";
 import React from "react";
 import { Link } from "react-router-dom";
-import { BottomNavigation } from "../../components/BottomNavigation";
+import { BottomNavigation } from "src/components/BottomNavigation";
 
 export const ProfilePage = () => {
   return (

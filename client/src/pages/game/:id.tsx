@@ -14,8 +14,8 @@ import {
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { TicTacToeBoard } from "../../components/TicTacToeBoard";
-import { ticTacToe } from "../../game/tic-tac-toe";
+import { TicTacToeBoard } from "src/components/TicTacToeBoard";
+import { ticTacToe } from "src/features";
 
 export const GameIdPage = () => {
   const dispatch = useDispatch();
