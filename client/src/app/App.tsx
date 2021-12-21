@@ -9,36 +9,48 @@ import { GameIdPage } from "src/pages/game/:id";
 import { ProfilePage } from "src/pages/profile/:userId";
 import { SignInPage } from "src/pages/sign-in";
 import { SignOutPage } from "src/pages/sign-out";
+import { LoadingDialog } from "src/components/LoadingDialog";
 
-const RequireAuth = ({
-  children,
-  fallback,
+const SwitchAuth = ({
+  signedIn,
+  signedOut,
+  loading,
 }: {
-  fallback: React.ReactNode;
-  children: React.ReactNode;
+  signedOut: React.ReactNode;
+  signedIn: React.ReactNode;
+  loading: React.ReactNode;
 }) => {
   const authState = useAppSelector(auth.selectors.slice);
 
-  if (auth.actions.signedIn.match(authState)) {
-    return <>{children}</>;
-  }
+  switch (authState.type) {
+    case "signed-in":
+      return <>{signedIn}</>;
 
-  return <>{fallback}</>;
+    case "signed-out":
+      return <>{signedOut}</>;
+
+    case "loading":
+      return <>{loading}</>;
+  }
 };
 
 export default function App() {
   return (
     <Container maxWidth="xs" disableGutters>
-      <RequireAuth fallback={<SignInPage />}>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/game/:id" element={<GameIdPage />} />
-          <Route path="/profile/:userId" element={<ProfilePage />} />
-          <Route path="/account" element={<AccountPage />} />
-          <Route path="/sign-in" element={<SignInPage />} />
-          <Route path="/sign-out" element={<SignOutPage />} />
-        </Routes>
-      </RequireAuth>
+      <SwitchAuth
+        loading={<LoadingDialog open />}
+        signedOut={<SignInPage />}
+        signedIn={(
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/game/:id" element={<GameIdPage />} />
+            <Route path="/profile/:userId" element={<ProfilePage />} />
+            <Route path="/account" element={<AccountPage />} />
+            <Route path="/sign-in" element={<SignInPage />} />
+            <Route path="/sign-out" element={<SignOutPage />} />
+          </Routes>
+        )}
+      />
     </Container>
   );
 }

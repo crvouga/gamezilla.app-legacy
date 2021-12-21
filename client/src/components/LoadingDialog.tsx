@@ -10,12 +10,12 @@ import React from "react";
 export const LoadingDialog = ({
   title,
   ...props
-}: DialogProps & { title: string }) => {
+}: DialogProps & { title?: string }) => {
   return (
     <Dialog {...props}>
       <DialogContent sx={{ display: "flex", alignItems: "center" }}>
-        <CircularProgress sx={{ marginRight: 2 }} />
-        <Typography>{title}</Typography>
+        <CircularProgress />
+        {title && <Typography sx={{ marginLeft: 2 }}>{title}</Typography>}
       </DialogContent>
     </Dialog>
   );
