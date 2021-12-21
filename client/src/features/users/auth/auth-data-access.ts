@@ -6,7 +6,7 @@ type IEvent =
   | ReturnType<typeof auth.actions.signedIn>
   | ReturnType<typeof auth.actions.signedOut>;
 
-export const onAuthEvents = (emit: (event: IEvent) => void) => {
+const onAuthEvents = (emit: (event: IEvent) => void) => {
   const timeout = setTimeout(() => {
     const session = supabaseClient.auth.session();
 
@@ -58,7 +58,7 @@ const formatRedirect = (redirect: string) => {
 
 export type ISignIn = (method: ISignInMethod) => Promise<{ errors: Error[] }>;
 
-export const signIn: ISignIn = async (method) => {
+const signIn: ISignIn = async (method) => {
   if (method.type === "google") {
     const redirectTo = formatRedirect(window.location.href);
 
@@ -83,7 +83,7 @@ export const signIn: ISignIn = async (method) => {
 
 export type ISignOut = () => Promise<{ errors: Error[] }>;
 
-export const signOut: ISignOut = async () => {
+const signOut: ISignOut = async () => {
   const { error } = await supabaseClient.auth.signOut();
 
   if (error) {
@@ -95,4 +95,10 @@ export const signOut: ISignOut = async () => {
   return {
     errors: [],
   };
+};
+
+export const authDataAccess = {
+  signIn,
+  signOut,
+  onAuthEvents,
 };
