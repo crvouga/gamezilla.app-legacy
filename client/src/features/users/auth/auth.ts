@@ -1,9 +1,12 @@
 import { createAction, createReducer } from "@reduxjs/toolkit";
 import { eventChannel } from "redux-saga";
 import { call, put, takeEvery } from "redux-saga/effects";
-import { onAuthEvents } from "./on-auth-events";
-import { ISignInMethod, signIn } from "./sign-in";
-import { signOut } from "./sign-out";
+import {
+  ISignInMethod,
+  onAuthEvents,
+  signIn,
+  signOut,
+} from "./auth-data-access";
 
 const namespace: "auth" = "auth";
 
@@ -11,28 +14,36 @@ const actions = {
   signIn: createAction<ISignInMethod>(`${namespace}/SIGN_IN`),
   signedIn: createAction<{
     id: string;
-    displayName?: string;
-    avatarUrl?: string;
   }>(`${namespace}/SIGNED_IN`),
   signOut: createAction(`${namespace}/SIGN_OUT`),
   signedOut: createAction(`${namespace}/SIGNED_OUT`),
 };
 
-type IState =
-  | ReturnType<typeof actions.signedOut>
-  | ReturnType<typeof actions.signedIn>;
+type IState = {
+  type: "signed-in";
+  userId: string;
+} | {
+  type: "signed-out";
+} | {
+  type: "loading";
+};
 
 const selectors = {
   slice: (state: { [namespace]: IState }): IState => state[namespace],
 };
 
-const reducer = createReducer<IState>(actions.signedOut(), (builder) => {
+const reducer = createReducer<IState>({ type: "loading" }, (builder) => {
   builder.addCase(actions.signedIn, (_state, action) => {
-    return action;
+    return {
+      type: "signed-in",
+      userId: action.payload.id,
+    };
   });
 
-  builder.addCase(actions.signedOut, (_state, action) => {
-    return action;
+  builder.addCase(actions.signedOut, () => {
+    return {
+      type: "signed-out",
+    };
   });
 });
 

@@ -1,5 +1,5 @@
 export const reverse = <T>(xs: T[]): T[] => {
-  return xs.reduce<T[]>((reversed, x) => [...reversed, x], []);
+  return xs.reduce<T[]>((reversed, x) => [x, ...reversed], []);
 };
 
 export const dropWhile = <T>(predicate: (x: T) => boolean, xs: T[]): T[] => {
@@ -18,7 +18,7 @@ export const dropWhile = <T>(predicate: (x: T) => boolean, xs: T[]): T[] => {
 
 export const dropLastWhile = <T>(
   predicate: (x: T) => boolean,
-  xs: T[]
+  xs: T[],
 ): T[] => {
   return reverse(dropWhile(predicate, reverse(xs)));
 };
