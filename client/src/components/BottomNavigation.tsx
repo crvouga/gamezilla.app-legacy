@@ -7,7 +7,7 @@ import { BottomNavigationActionProps } from "@mui/material/BottomNavigationActio
 import React from "react";
 import { useSelector } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
-import { auth } from "../features/auth/auth";
+import { auth } from "src/features";
 
 const BottomNavigationAction = ({
   to,
@@ -17,10 +17,10 @@ const BottomNavigationAction = ({
     <Link
       to={to}
       style={{
-        flex: 1,
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
+        // flex: 1,
+        // display: "flex",
+        // justifyContent: "center",
+        // alignItems: "center",
       }}
     >
       <MuiBottomNavigationAction {...props} />
@@ -37,11 +37,12 @@ export const BottomNavigation = () => {
       value={location.pathname}
       sx={{
         position: "fixed",
-        bottom: 0,
         width: "100%",
+        bottom: 0,
       }}
     >
       <BottomNavigationAction value="/" to="/" icon={<Home />} label="Home" />
+
       {auth.actions.signedIn.match(authSlice) && (
         <BottomNavigationAction
           value={`/profile/${authSlice.payload.id}`}

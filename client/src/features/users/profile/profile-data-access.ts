@@ -1,4 +1,4 @@
-import { definitions, supabaseClient } from "../../supabase";
+import { definitions, supabaseClient } from "src/supabase";
 import { IProfile } from "./profile";
 
 const fetch = async ({

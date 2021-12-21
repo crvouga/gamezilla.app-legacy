@@ -2,7 +2,6 @@ import { ChevronRight, Gamepad } from "@mui/icons-material";
 import {
   AppBar,
   Avatar,
-  Container,
   List,
   ListItem,
   ListItemIcon,
@@ -40,19 +39,17 @@ export const HomePage = () => {
         </Toolbar>
       </AppBar>
 
-      <Container disableGutters>
-        <List>
-          <ListItem button divider onClick={handleCreateGame}>
-            <ListItemIcon>
-              <Gamepad />
-            </ListItemIcon>
-            <ListItemText primary="Play" />
-            <ListItemSecondaryAction>
-              <ChevronRight />
-            </ListItemSecondaryAction>
-          </ListItem>
-        </List>
-      </Container>
+      <List>
+        <ListItem button divider onClick={handleCreateGame}>
+          <ListItemIcon>
+            <Gamepad />
+          </ListItemIcon>
+          <ListItemText primary="Play" />
+          <ListItemSecondaryAction>
+            <ChevronRight />
+          </ListItemSecondaryAction>
+        </ListItem>
+      </List>
 
       <BottomNavigation />
     </>

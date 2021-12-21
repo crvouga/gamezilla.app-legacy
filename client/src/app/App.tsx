@@ -1,14 +1,14 @@
 import { Container } from "@mui/material";
 import React from "react";
-import { useSelector } from "react-redux";
+import { useAppSelector } from "./hooks";
 import { Route, Routes } from "react-router-dom";
 import { auth } from "src/features";
-import { HomePage } from "./pages";
-import { AccountPage } from "./pages/account";
-import { GameIdPage } from "./pages/game/:id";
-import { ProfilePage } from "./pages/profile/:userId";
-import { SignInPage } from "./pages/sign-in";
-import { SignOutPage } from "./pages/sign-out";
+import { HomePage } from "src/pages";
+import { AccountPage } from "src/pages/account";
+import { GameIdPage } from "src/pages/game/:id";
+import { ProfilePage } from "src/pages/profile/:userId";
+import { SignInPage } from "src/pages/sign-in";
+import { SignOutPage } from "src/pages/sign-out";
 
 const RequireAuth = ({
   children,
@@ -17,7 +17,7 @@ const RequireAuth = ({
   fallback: React.ReactNode;
   children: React.ReactNode;
 }) => {
-  const authState = useSelector(auth.selectors.slice);
+  const authState = useAppSelector(auth.selectors.slice);
 
   if (auth.actions.signedIn.match(authState)) {
     return <>{children}</>;

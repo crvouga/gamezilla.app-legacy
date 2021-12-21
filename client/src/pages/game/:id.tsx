@@ -12,14 +12,13 @@ import {
   Toolbar,
 } from "@mui/material";
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { TicTacToeBoard } from "src/components/TicTacToeBoard";
-import { ticTacToe } from "src/features";
+import { useAppDispatch } from "src/app";
+import { ticTacToe, TicTacToeBoard } from "src/features";
 
 export const GameIdPage = () => {
-  const dispatch = useDispatch();
-  const moves = useSelector(ticTacToe.selectors.moves);
+  const dispatch = useAppDispatch();
+
   // const params = useParams<"id">();
 
   return (
@@ -39,7 +38,7 @@ export const GameIdPage = () => {
           <TicTacToeBoard
             rowCount={3}
             columnCount={3}
-            moves={moves}
+            moves={[]}
             onClick={(position) => {
               dispatch(ticTacToe.actions.clicked(position));
             }}
@@ -60,13 +59,15 @@ export const GameIdPage = () => {
 
         <List>
           <ListSubheader>Log</ListSubheader>
-          {moves.map((move) => (
+          {
+            /* {[].map((move) => (
             <ListItem key={JSON.stringify(move)}>
               <ListItemText
                 primary={`Player ${move.player} moved at position ${move.row}, ${move.column}`}
               />
             </ListItem>
-          ))}
+          ))} */
+          }
         </List>
       </Container>
     </>
