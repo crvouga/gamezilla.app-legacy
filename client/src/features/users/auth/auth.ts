@@ -1,12 +1,7 @@
 import { createAction, createReducer } from "@reduxjs/toolkit";
 import { eventChannel } from "redux-saga";
 import { call, put, takeEvery } from "redux-saga/effects";
-import {
-  ISignInMethod,
-  onAuthEvents,
-  signIn,
-  signOut,
-} from "./auth-data-access";
+import { authDataAccess, ISignInMethod } from "./auth-data-access";
 
 const namespace: "auth" = "auth";
 
@@ -48,16 +43,19 @@ const reducer = createReducer<IState>({ type: "loading" }, (builder) => {
 });
 
 function* saga() {
-  yield takeEvery(eventChannel(onAuthEvents), function* (authEvent) {
-    yield put(authEvent);
-  });
+  yield takeEvery(
+    eventChannel(authDataAccess.onAuthEvents),
+    function* (authEvent) {
+      yield put(authEvent);
+    },
+  );
 
   yield takeEvery(actions.signIn, function* (action) {
-    yield call(signIn, action.payload);
+    yield call(authDataAccess.signIn, action.payload);
   });
 
   yield takeEvery(actions.signOut, function* () {
-    yield call(signOut);
+    yield call(authDataAccess.signOut);
   });
 }
 
