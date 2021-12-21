@@ -1,5 +1,6 @@
 import { createAction, nanoid } from "@reduxjs/toolkit";
-import { takeEvery } from "redux-saga/effects";
+import { fork, takeEvery } from "redux-saga/effects";
+import { ticTacToe } from "./tic-tac-toe";
 
 const actions = {
   create: createAction("game/CREATE", () => ({
@@ -8,18 +9,18 @@ const actions = {
     },
   })),
   createSucceeded: createAction<{ gameId: string; userId: string }>(
-    "game/CREATE_SUCCEEDED"
+    "game/CREATE_SUCCEEDED",
   ),
 };
 
 type IPlayer =
   | {
-      type: "user";
-      userId: string;
-    }
+    type: "user";
+    userId: string;
+  }
   | {
-      type: "bot";
-    };
+    type: "bot";
+  };
 
 type IGameConfig = {
   type: "tic-tac-toe";
@@ -39,6 +40,8 @@ export type IGameSession = {
 };
 
 function* saga() {
+  yield fork(ticTacToe.saga);
+
   yield takeEvery(actions.create, function* () {
     yield;
   });

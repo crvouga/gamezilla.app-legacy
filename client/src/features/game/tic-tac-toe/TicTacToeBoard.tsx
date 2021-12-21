@@ -1,6 +1,6 @@
 import React from "react";
-import { Move, Position } from "../features/game/tic-tac-toe";
-import { cartesianProduct, range } from "../utility";
+import { Move, Position } from ".";
+import { cartesianProduct, range } from "../../../utility";
 
 export const toLines = ({
   rowCount,
