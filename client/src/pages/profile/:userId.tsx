@@ -1,7 +1,6 @@
 import { AppBar, Avatar, Toolbar, Typography } from "@mui/material";
 import React from "react";
 import { Link } from "react-router-dom";
-import { BottomNavigation } from "src/components/BottomNavigation";
 
 export const ProfilePage = () => {
   return (
@@ -16,8 +15,6 @@ export const ProfilePage = () => {
           </Link>
         </Toolbar>
       </AppBar>
-
-      <BottomNavigation />
     </>
   );
 };
