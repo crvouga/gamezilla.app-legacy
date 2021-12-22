@@ -13,7 +13,6 @@ import {
 import React from "react";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { BottomNavigation } from "src/components/BottomNavigation";
 import { game } from "src/features";
 
 export const HomePage = () => {
@@ -50,8 +49,6 @@ export const HomePage = () => {
           </ListItemSecondaryAction>
         </ListItem>
       </List>
-
-      <BottomNavigation />
     </>
   );
 };

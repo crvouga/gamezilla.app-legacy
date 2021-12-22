@@ -39,14 +39,16 @@ export const BottomNavigation = () => {
         position: "fixed",
         width: "100%",
         bottom: 0,
+        left: 0,
+        right: 0,
       }}
     >
       <BottomNavigationAction value="/" to="/" icon={<Home />} label="Home" />
 
-      {auth.actions.signedIn.match(authSlice) && (
+      {authSlice.type === "signed-in" && (
         <BottomNavigationAction
-          value={`/profile/${authSlice.payload.id}`}
-          to={`/profile/${authSlice.payload.id}`}
+          value={`/profile/${authSlice.userId}`}
+          to={`/profile/${authSlice.userId}`}
           icon={<Person />}
           label="Profile"
         />
