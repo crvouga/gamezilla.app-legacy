@@ -22,72 +22,95 @@ import {
   IAvatarStyle,
   toAvatarUrl,
 } from "./avatar";
+import { useNavigate } from "react-router-dom";
 
-export const AvatarEditPage = () => {
-  const [state, setState] = useState<"initial" | "choosing-avatar-style">(
-    "initial",
-  );
-  const [seed, setSeed] = useState<string>("hello");
-  const [style, setStyle] = useState<IAvatarStyle>("adventurer");
-  const avatarUrl = toAvatarUrl({ avatarStyle: style, avatarSeed: seed });
-
-  if (state === "choosing-avatar-style") {
-    return (
-      <>
-        <AppBar position="sticky">
-          <Toolbar>
-            <IconButton edge="start">
-              <Close />
-            </IconButton>
-
-            <Typography variant="h6" sx={{ flex: 1 }}>
-              Choose Style
-            </Typography>
-          </Toolbar>
-        </AppBar>
-
-        <Box sx={{ display: "flex", flexWrap: "wrap" }}>
-          {Object.values(AVATAR_STYLES).map((
-            style,
-          ) => (
-            <CardActionArea
-              key={style}
-              sx={{
-                width: "50%",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "start",
-                padding: 2,
-              }}
-              onClick={() => {
-                setState("initial");
-                setStyle(style);
-              }}
-            >
-              <Avatar
-                src={toAvatarUrl({ avatarSeed: seed, avatarStyle: style })}
-                sx={{
-                  width: 120,
-                  height: 120,
-                  marginBottom: 1,
-                }}
-              />
-              <Typography align="center" variant="h6">
-                {formatAvatarStyle(style)}
-              </Typography>
-            </CardActionArea>
-          ))}
-        </Box>
-      </>
-    );
-  }
-
+const ChooseAvatar = (
+  {
+    seed,
+    onClose,
+    onChoose,
+  }: {
+    seed: string;
+    onClose: () => void;
+    onChoose: (style: IAvatarStyle) => void;
+  },
+) => {
   return (
     <>
       <AppBar position="sticky">
         <Toolbar>
-          <IconButton edge="start">
+          <IconButton
+            edge="start"
+            onClick={onClose}
+          >
+            <Close />
+          </IconButton>
+
+          <Typography variant="h6" sx={{ flex: 1 }}>
+            Choose Style
+          </Typography>
+        </Toolbar>
+      </AppBar>
+
+      <Box sx={{ display: "flex", flexWrap: "wrap" }}>
+        {Object.values(AVATAR_STYLES).map((
+          style,
+        ) => (
+          <CardActionArea
+            key={style}
+            sx={{
+              width: "50%",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "start",
+              padding: 2,
+            }}
+            onClick={() => {
+              onChoose(style);
+            }}
+          >
+            <Avatar
+              src={toAvatarUrl({ avatarSeed: seed, avatarStyle: style })}
+              sx={{
+                width: 120,
+                height: 120,
+                marginBottom: 1,
+              }}
+            />
+            <Typography align="center" variant="h6">
+              {formatAvatarStyle(style)}
+            </Typography>
+          </CardActionArea>
+        ))}
+      </Box>
+    </>
+  );
+};
+
+const EditAvatar = (
+  {
+    onClose,
+    onDone,
+    style,
+    seed,
+    onChooseStyle,
+    onGenerateRandom,
+  }: {
+    onClose: () => void;
+    onDone: () => void;
+    onGenerateRandom: () => void;
+    onChooseStyle: () => void;
+    style: IAvatarStyle;
+    seed: string;
+  },
+) => {
+  const avatarUrl = toAvatarUrl({ avatarSeed: seed, avatarStyle: style });
+  return (
+    <>
+      <AppBar position="sticky">
+        <Toolbar>
+          <IconButton edge="start" onClick={onClose}>
             <Close />
           </IconButton>
 
@@ -95,7 +118,7 @@ export const AvatarEditPage = () => {
             Edit Avatar
           </Typography>
 
-          <IconButton edge="end">
+          <IconButton edge="end" onClick={onDone}>
             <Done />
           </IconButton>
         </Toolbar>
@@ -115,7 +138,7 @@ export const AvatarEditPage = () => {
         <ListItem
           divider
           button
-          onClick={() => setState("choosing-avatar-style")}
+          onClick={onChooseStyle}
         >
           <ListItemAvatar>
             <Avatar src={avatarUrl} />
@@ -135,12 +158,56 @@ export const AvatarEditPage = () => {
           fullWidth
           size="large"
           startIcon={<Casino />}
-          onClick={() => setSeed(String(Math.random()))}
+          onClick={onGenerateRandom}
         >
           Random
         </Button>
         <TextField label="Avatar Seed" fullWidth />
       </Box>
     </>
+  );
+};
+
+export const AvatarEditPage = () => {
+  const [state, setState] = useState<"initial" | "choosing-avatar-style">(
+    "initial",
+  );
+  const [seed, setSeed] = useState<string>("seed");
+  const [style, setStyle] = useState<IAvatarStyle>("adventurer");
+
+  const navigate = useNavigate();
+
+  if (state === "choosing-avatar-style") {
+    return (
+      <ChooseAvatar
+        seed={seed}
+        onChoose={(style) => {
+          setStyle(style);
+          setState("initial");
+        }}
+        onClose={() => {
+          setState("initial");
+        }}
+      />
+    );
+  }
+
+  return (
+    <EditAvatar
+      seed={seed}
+      style={style}
+      onChooseStyle={() => {
+        setState("choosing-avatar-style");
+      }}
+      onGenerateRandom={() => {
+        setSeed(String(Math.random()));
+      }}
+      onClose={() => {
+        navigate(-1);
+      }}
+      onDone={() => {
+        navigate(-1);
+      }}
+    />
   );
 };

@@ -1,4 +1,5 @@
 import { createAction, createReducer } from "@reduxjs/toolkit";
+import { eventChannel } from "redux-saga";
 import { call, takeLatest } from "redux-saga/effects";
 import { auth } from "../auth/auth";
 import { profileDataAccess } from "./profile-data-access";
@@ -13,17 +14,19 @@ export type IProfile = {
 
 const actions = {
   sync: createAction<IProfile>(`${namespace}/SYNC`),
+  edit: createAction(`${namespace}/EDIT`),
 };
 
-const reducer = createReducer<IProfile | null>(null, (builder) => {
+type IState = IProfile | null;
+
+const reducer = createReducer<IState>(null, (builder) => {
   builder.addCase(actions.sync, (_state, action) => {
     return action.payload;
   });
 });
 
 const selectors = {
-  slice: (state: { [namespace]: IProfile | null }): IProfile | null =>
-    state[namespace],
+  state: (state: IState): IState => state,
 };
 
 function* saga() {
@@ -31,6 +34,13 @@ function* saga() {
     const userId = action.payload.id;
 
     yield call(profileDataAccess.fetchElseCreate, { userId });
+
+    yield takeLatest(
+      eventChannel(profileDataAccess.subscribe({ userId })),
+      function* (profile) {
+        console.log({ profile });
+      },
+    );
   });
 }
 
