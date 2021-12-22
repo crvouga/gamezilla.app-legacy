@@ -13,7 +13,7 @@ import {
 import React from "react";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { game } from "src/features";
+import { game } from "../game";
 
 export const HomePage = () => {
   const navigate = useNavigate();

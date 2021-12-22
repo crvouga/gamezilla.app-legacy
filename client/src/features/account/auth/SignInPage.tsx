@@ -13,7 +13,7 @@ import {
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { LoadingDialog } from "src/components/LoadingDialog";
-import { auth } from "src/features";
+import { auth } from "./auth";
 
 export const SignInPage = () => {
   const dispatch = useDispatch();
