@@ -9,15 +9,16 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import React from "react";
 
 export const ProfileEditPage = () => {
+  const navigate = useNavigate();
   return (
     <>
       <AppBar position="sticky">
         <Toolbar>
-          <IconButton edge="start">
+          <IconButton edge="start" onClick={() => navigate(-1)}>
             <Close />
           </IconButton>
 
@@ -25,7 +26,7 @@ export const ProfileEditPage = () => {
             Edit Profile
           </Typography>
 
-          <IconButton edge="end">
+          <IconButton edge="end" onClick={() => navigate(-1)}>
             <Done />
           </IconButton>
         </Toolbar>
@@ -38,7 +39,7 @@ export const ProfileEditPage = () => {
             width: "120px",
             height: "120px",
             marginTop: 2,
-            marginBottom: 1,
+            marginBottom: 1 / 2,
           }}
         />
 

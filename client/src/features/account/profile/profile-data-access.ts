@@ -27,6 +27,7 @@ const create = async ({ userId }: { userId: string }) => {
   await supabaseClient.from<definitions["profiles"]>("profiles").insert({
     id: userId,
   });
+  return;
 };
 
 const fetchElseCreate = async ({ userId }: { userId: string }) => {
@@ -41,8 +42,15 @@ const fetchElseCreate = async ({ userId }: { userId: string }) => {
   return fetch({ userId });
 };
 
+const subscribe = ({ userId }: { userId: string }) =>
+  (set: (profile: IProfile) => void): () => void => {
+    console.log({ set: { userId, set } });
+    return () => {};
+  };
+
 export const profileDataAccess = {
   fetchElseCreate,
   fetch,
   create,
+  subscribe,
 };
