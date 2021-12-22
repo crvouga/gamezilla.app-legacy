@@ -12,12 +12,12 @@ import {
   Toolbar,
 } from "@mui/material";
 import React from "react";
+import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
-import { useAppDispatch } from "src/app";
 import { ticTacToe, TicTacToeBoard } from "src/features";
 
-export const GameIdPage = () => {
-  const dispatch = useAppDispatch();
+export const GamePage = () => {
+  const dispatch = useDispatch();
 
   // const params = useParams<"id">();
 

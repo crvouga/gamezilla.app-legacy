@@ -1,13 +1,23 @@
 import { CssBaseline, ThemeProvider } from "@mui/material";
+import { configureStore } from "@reduxjs/toolkit";
 import React from "react";
 import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
-import App from "./app/App";
+import createSagaMiddleware from "redux-saga";
+import { theme } from "src/theme";
+import { App, appReducer, appSaga } from "./App";
 import "./index.css";
 import reportWebVitals from "./reportWebVitals";
-import { store } from "./app/store";
-import { theme } from "./app/theme";
+
+const sagaMiddleware = createSagaMiddleware();
+
+const store = configureStore({
+  reducer: appReducer,
+  middleware: [sagaMiddleware],
+});
+
+sagaMiddleware.run(appSaga);
 
 ReactDOM.render(
   <React.StrictMode>
@@ -23,7 +33,4 @@ ReactDOM.render(
   document.getElementById("root"),
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+reportWebVitals(console.log);

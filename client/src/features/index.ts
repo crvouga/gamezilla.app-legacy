@@ -1,2 +1,3 @@
 export * from "./game";
-export * from "./users";
+export * from "./account";
+export * from "./home";
