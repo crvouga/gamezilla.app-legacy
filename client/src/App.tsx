@@ -8,6 +8,7 @@ import { LoadingDialog } from "src/components/LoadingDialog";
 import {
   AccountPage,
   auth,
+  AvatarEditPage,
   game,
   GamePage,
   HomePage,
@@ -56,7 +57,8 @@ export const App = () => {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/game/:id" element={<GamePage />} />
-          <Route path="/account/profile/edit" element={<ProfileEditPage />} />
+          <Route path="/profile/edit" element={<ProfileEditPage />} />
+          <Route path="/avatar/edit" element={<AvatarEditPage />} />;
           <Route path="/account" element={<AccountPage />} />
           <Route path="/sign-in" element={<SignInPage />} />
           <Route path="/sign-out" element={<SignOutPage />} />

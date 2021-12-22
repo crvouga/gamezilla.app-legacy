@@ -28,7 +28,7 @@ export const AccountPage = () => {
       </AppBar>
 
       <List>
-        <Link to="/profile">
+        <Link to="/profile/edit">
           <ListItem button divider>
             <ListItemIcon>
               <Person />
