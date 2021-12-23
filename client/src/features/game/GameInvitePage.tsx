@@ -1,7 +1,14 @@
 import { ArrowBack, Clear } from "@mui/icons-material";
-import { AppBar, IconButton, InputBase, Toolbar } from "@mui/material";
-import React, { useRef } from "react";
+import {
+  AppBar,
+  CircularProgress,
+  IconButton,
+  InputBase,
+  Toolbar,
+} from "@mui/material";
+import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSearchUsers } from "../search-users";
 
 export const GameInvitePage = () => {
   const navigate = useNavigate();
@@ -19,10 +26,13 @@ export const GameInvitePage = () => {
     }
   };
 
+  const [searchText] = useState("");
+  const searchUsers = useSearchUsers({ searchText });
+
   return (
     <>
       <AppBar position="sticky">
-        <Toolbar>
+        <Toolbar sx={{ alignItems: "center" }}>
           <IconButton edge="start" onClick={handleBack}>
             <ArrowBack />
           </IconButton>
@@ -37,6 +47,8 @@ export const GameInvitePage = () => {
           </IconButton>
         </Toolbar>
       </AppBar>
+
+      {searchUsers.type === "loading" && <CircularProgress />}
     </>
   );
 };
