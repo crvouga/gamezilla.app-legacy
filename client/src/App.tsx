@@ -17,6 +17,7 @@ import {
   SignInPage,
   SignOutPage,
 } from "src/features";
+import { GameInvitePage } from "./features/game/GameInvitePage";
 
 /**
  *
@@ -57,6 +58,7 @@ export const App = () => {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/game/:id" element={<GamePage />} />
+          <Route path="/game/:id/invite" element={<GameInvitePage />} />;
           <Route path="/profile/edit" element={<ProfileEditPage />} />
           <Route path="/avatar/edit" element={<AvatarEditPage />} />;
           <Route path="/account" element={<AccountPage />} />

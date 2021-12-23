@@ -31,7 +31,8 @@ type IGameConfig = {
 };
 
 export type IGameSession = {
-  gameConfig?: IGameConfig;
+  gameConfig: IGameConfig;
+  gameId: string;
   usersById: {
     [id: string]: {
       id: string;
