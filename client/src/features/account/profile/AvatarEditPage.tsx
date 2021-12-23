@@ -23,6 +23,8 @@ import {
   toAvatarUrl,
 } from "./avatar";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { profile } from "./profile";
 
 const ChooseAvatar = (
   {
@@ -174,7 +176,7 @@ export const AvatarEditPage = () => {
   );
   const [seed, setSeed] = useState<string>("seed");
   const [style, setStyle] = useState<IAvatarStyle>("adventurer");
-
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   if (state === "choosing-avatar-style") {
@@ -206,6 +208,11 @@ export const AvatarEditPage = () => {
         navigate(-1);
       }}
       onDone={() => {
+        dispatch(
+          profile.actions.update({
+            avatarUrl: toAvatarUrl({ avatarSeed: seed, avatarStyle: style }),
+          }),
+        );
         navigate(-1);
       }}
     />

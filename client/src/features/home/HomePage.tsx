@@ -13,9 +13,11 @@ import {
 import React from "react";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
+import { useAppSelector } from "src/App";
 import { game } from "../game";
 
 export const HomePage = () => {
+  const profileState = useAppSelector((state) => state.profile);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -33,7 +35,7 @@ export const HomePage = () => {
             Home
           </Typography>
           <Link to="/account">
-            <Avatar />
+            <Avatar src={profileState?.avatarUrl} />
           </Link>
         </Toolbar>
       </AppBar>

@@ -1,6 +1,6 @@
 import { createAction, createReducer } from "@reduxjs/toolkit";
 import { eventChannel } from "redux-saga";
-import { call, takeLatest } from "redux-saga/effects";
+import { call, put, takeLatest } from "redux-saga/effects";
 import { auth } from "../auth/auth";
 import { profileDataAccess } from "./profile-data-access";
 
@@ -13,14 +13,17 @@ export type IProfile = {
 };
 
 const actions = {
-  sync: createAction<IProfile>(`${namespace}/SYNC`),
-  edit: createAction(`${namespace}/EDIT`),
+  synced: createAction<IProfile>(`${namespace}/SYNCED`),
+  update: createAction<{
+    avatarUrl?: string;
+    displayName?: string;
+  }>(`${namespace}/UPDATE`),
 };
 
 type IState = IProfile | null;
 
 const reducer = createReducer<IState>(null, (builder) => {
-  builder.addCase(actions.sync, (_state, action) => {
+  builder.addCase(actions.synced, (_state, action) => {
     return action.payload;
   });
 });
@@ -33,14 +36,26 @@ function* saga() {
   yield takeLatest(auth.actions.signedIn, function* (action) {
     const userId = action.payload.id;
 
-    yield call(profileDataAccess.fetchElseCreate, { userId });
+    const profile: Awaited<
+      ReturnType<typeof profileDataAccess.fetchElseCreate>
+    > = yield call(profileDataAccess.fetchElseCreate, { userId });
+
+    if (profile) {
+      yield put(actions.synced(profile));
+    }
 
     yield takeLatest(
-      eventChannel(profileDataAccess.subscribe({ userId })),
+      eventChannel(
+        profileDataAccess.subscribe({ userId }),
+      ),
       function* (profile) {
-        console.log({ profile });
+        yield put(actions.synced(profile));
       },
     );
+
+    yield takeLatest(actions.update, function* (action) {
+      yield call(profileDataAccess.update, { userId, ...action.payload });
+    });
   });
 }
 

@@ -27,7 +27,6 @@ const create = async ({ userId }: { userId: string }) => {
   await supabaseClient.from<definitions["profiles"]>("profiles").insert({
     id: userId,
   });
-  return;
 };
 
 const fetchElseCreate = async ({ userId }: { userId: string }) => {
@@ -44,13 +43,40 @@ const fetchElseCreate = async ({ userId }: { userId: string }) => {
 
 const subscribe = ({ userId }: { userId: string }) =>
   (set: (profile: IProfile) => void): () => void => {
-    console.log({ set: { userId, set } });
-    return () => {};
+    const response = supabaseClient
+      .from<definitions["profiles"]>(`profiles:id=eq.${userId}`)
+      .on("*", (payload) => {
+        set({
+          userId: payload.new.id,
+          avatarUrl: payload.new.avatar_url,
+          displayName: payload.new.display_name,
+        });
+      })
+      .subscribe();
+
+    return () => {
+      response.unsubscribe();
+    };
   };
+
+const update = async ({ userId, displayName, avatarUrl }: {
+  userId: string;
+  displayName?: string;
+  avatarUrl?: string;
+}) => {
+  await supabaseClient
+    .from<definitions["profiles"]>("profiles")
+    .update({
+      display_name: displayName,
+      avatar_url: avatarUrl,
+    })
+    .match({ id: userId });
+};
 
 export const profileDataAccess = {
   fetchElseCreate,
   fetch,
   create,
   subscribe,
+  update,
 };
