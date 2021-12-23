@@ -9,16 +9,39 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import React from "react";
+import { useAppSelector } from "src/App";
+import { profile } from "./profile";
 
 export const ProfileEditPage = () => {
+  const profileState = useAppSelector((state) => state.profile);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const [displayName, setDisplayName] = useState("");
+
+  useEffect(() => {
+    if (profileState?.displayName) {
+      setDisplayName(profileState.displayName);
+    }
+  }, [profileState]);
+
+  const handleCancel = () => {
+    navigate(-1);
+  };
+
+  const handleDone = () => {
+    dispatch(profile.actions.update({ displayName }));
+    navigate(-1);
+  };
+
   return (
     <>
       <AppBar position="sticky">
         <Toolbar>
-          <IconButton edge="start" onClick={() => navigate(-1)}>
+          <IconButton edge="start" onClick={handleCancel}>
             <Close />
           </IconButton>
 
@@ -26,7 +49,7 @@ export const ProfileEditPage = () => {
             Edit Profile
           </Typography>
 
-          <IconButton edge="end" onClick={() => navigate(-1)}>
+          <IconButton edge="end" onClick={handleDone}>
             <Done />
           </IconButton>
         </Toolbar>
@@ -34,6 +57,7 @@ export const ProfileEditPage = () => {
 
       <Box sx={{ paddingX: 2 }}>
         <Avatar
+          src={profileState?.avatarUrl}
           sx={{
             marginX: "auto",
             width: "120px",
@@ -52,16 +76,12 @@ export const ProfileEditPage = () => {
         </Link>
 
         <TextField
-          label="Username"
+          disabled={profileState === null}
+          value={displayName}
+          onChange={(event) => setDisplayName(event.target.value)}
+          label="Display Name"
           fullWidth
           sx={{ marginBottom: 2 }}
-        />
-
-        <TextField
-          label="Name"
-          fullWidth
-          sx={{ marginBottom: 2 }}
-          helperText="Help people find you by providing the name you go by"
         />
       </Box>
     </>
