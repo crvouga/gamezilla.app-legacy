@@ -1,4 +1,5 @@
 import { definitions, supabaseClient } from "src/supabase";
+import { generateRandomAvatarUrl } from "./avatar";
 import { IProfile } from "./profile";
 
 const fetch = async ({
@@ -26,6 +27,7 @@ const fetch = async ({
 const create = async ({ userId }: { userId: string }) => {
   await supabaseClient.from<definitions["profiles"]>("profiles").insert({
     id: userId,
+    avatar_url: generateRandomAvatarUrl(),
   });
 };
 

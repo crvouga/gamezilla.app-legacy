@@ -73,7 +73,15 @@ export const toAvatarUrl = ({
   avatarSeed: string;
   avatarStyle: IAvatarStyle;
 }) => {
-  return `${AVATAR_URL_ROOT}/${avatarStyle}/${avatarSeed}.${AVATAR_FILE_TYPE}`;
+  const url = new URL(
+    `${AVATAR_URL_ROOT}/${avatarStyle}/${avatarSeed}.${AVATAR_FILE_TYPE}`,
+  );
+
+  if (avatarStyle === "croodles" || avatarStyle === "croodles-neutral") {
+    url.searchParams.append("backgroundColor", "white");
+  }
+
+  return url.toString();
 };
 
 export const parseAvatarUrl = (
