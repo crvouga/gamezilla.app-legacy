@@ -1,25 +1,19 @@
-import { ArrowBack } from "@mui/icons-material";
+import { ArrowBack, PersonAdd } from "@mui/icons-material";
 import {
   AppBar,
-  Avatar,
-  Container,
+  Box,
+  Button,
   IconButton,
   List,
   ListItem,
-  ListItemAvatar,
+  ListItemIcon,
   ListItemText,
-  ListSubheader,
   Toolbar,
 } from "@mui/material";
 import React from "react";
-import { useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
-import { ticTacToe, TicTacToeBoard } from "src/features";
-
+import { Link, useParams } from "react-router-dom";
 export const GamePage = () => {
-  const dispatch = useDispatch();
-
-  // const params = useParams<"id">();
+  const params = useParams<"id">();
 
   return (
     <>
@@ -33,43 +27,22 @@ export const GamePage = () => {
         </Toolbar>
       </AppBar>
 
-      <Container disableGutters>
-        <List>
-          <TicTacToeBoard
-            rowCount={3}
-            columnCount={3}
-            moves={[]}
-            onClick={(position) => {
-              dispatch(ticTacToe.actions.clicked(position));
-            }}
-          />
-          <ListItem>
-            <ListItemAvatar>
-              <Avatar />
-            </ListItemAvatar>
-            <ListItemText primary="Player" secondary="X" />
+      <List>
+        <Link to={`/game/${params.id}/invite`}>
+          <ListItem divider button>
+            <ListItemIcon>
+              <PersonAdd />
+            </ListItemIcon>
+            <ListItemText primary="Invite" />
           </ListItem>
-          <ListItem>
-            <ListItemAvatar>
-              <Avatar />
-            </ListItemAvatar>
-            <ListItemText primary="Other Player" secondary="O" />
-          </ListItem>
-        </List>
+        </Link>
+      </List>
 
-        <List>
-          <ListSubheader>Log</ListSubheader>
-          {
-            /* {[].map((move) => (
-            <ListItem key={JSON.stringify(move)}>
-              <ListItemText
-                primary={`Player ${move.player} moved at position ${move.row}, ${move.column}`}
-              />
-            </ListItem>
-          ))} */
-          }
-        </List>
-      </Container>
+      <Box sx={{ padding: 2 }}>
+        <Button fullWidth>
+          Start Game
+        </Button>
+      </Box>
     </>
   );
 };
