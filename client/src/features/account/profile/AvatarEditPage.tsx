@@ -11,19 +11,20 @@ import {
   ListItemAvatar,
   ListItemSecondaryAction,
   ListItemText,
-  TextField,
   Toolbar,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { useAppSelector } from "src/App";
 import {
   AVATAR_STYLES,
   formatAvatarStyle,
   IAvatarStyle,
+  parseAvatarUrl,
   toAvatarUrl,
 } from "./avatar";
-import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
 import { profile } from "./profile";
 
 const ChooseAvatar = (
@@ -138,7 +139,6 @@ const EditAvatar = (
 
       <List>
         <ListItem
-          divider
           button
           onClick={onChooseStyle}
         >
@@ -164,13 +164,13 @@ const EditAvatar = (
         >
           Random
         </Button>
-        <TextField label="Avatar Seed" fullWidth />
       </Box>
     </>
   );
 };
 
 export const AvatarEditPage = () => {
+  const avatarUrl = useAppSelector((state) => state.profile?.avatarUrl);
   const [state, setState] = useState<"initial" | "choosing-avatar-style">(
     "initial",
   );
@@ -178,6 +178,14 @@ export const AvatarEditPage = () => {
   const [style, setStyle] = useState<IAvatarStyle>("adventurer");
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (avatarUrl) {
+      const parsed = parseAvatarUrl(avatarUrl);
+      setSeed(parsed.avatarSeed);
+      setStyle(parsed.avatarStyle);
+    }
+  }, [avatarUrl]);
 
   if (state === "choosing-avatar-style") {
     return (
