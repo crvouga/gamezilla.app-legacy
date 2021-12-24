@@ -11,20 +11,16 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+
 import { LoadingDialog } from "src/components/LoadingDialog";
-import { auth } from "./auth";
 
 export const SignInPage = () => {
-  const dispatch = useDispatch();
-
   const [state, setState] = useState<"signing-in" | "idle">("idle");
 
-  const handleSignIn = (...params: Parameters<typeof auth.actions.signIn>) =>
-    () => {
-      setState("signing-in");
-      dispatch(auth.actions.signIn(...params));
-    };
+  const handleSignIn = () => () => {
+    setState("signing-in");
+    console.log("LOG IN");
+  };
 
   return (
     <>
@@ -38,7 +34,7 @@ export const SignInPage = () => {
 
       <Container disableGutters>
         <List>
-          <ListItem divider button onClick={handleSignIn({ type: "google" })}>
+          <ListItem divider button onClick={handleSignIn()}>
             <ListItemIcon>
               <Google />
             </ListItemIcon>

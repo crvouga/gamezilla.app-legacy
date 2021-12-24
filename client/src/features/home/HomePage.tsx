@@ -11,20 +11,15 @@ import {
   Typography,
 } from "@mui/material";
 import React from "react";
-import { useDispatch } from "react-redux";
+
 import { Link, useNavigate } from "react-router-dom";
-import { useAppSelector } from "src/App";
-import { game } from "../game";
 
 export const HomePage = () => {
-  const profileState = useAppSelector((state) => state.profile);
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   const handleCreateGame = () => {
-    const action = game.actions.create();
-    navigate(`/game/${action.payload.gameId}`);
-    dispatch(action);
+    const gameId = "error";
+    navigate(`/game/${gameId}`);
   };
 
   return (
@@ -35,7 +30,7 @@ export const HomePage = () => {
             Home
           </Typography>
           <Link to="/account">
-            <Avatar src={profileState?.avatarUrl} />
+            <Avatar />
           </Link>
         </Toolbar>
       </AppBar>

@@ -1,5 +1,5 @@
 import React from "react";
-import { Move, Position } from ".";
+
 import { cartesianProduct, range } from "../../../utility";
 
 export const toLines = ({
@@ -37,10 +37,10 @@ export const toPositions = ({
 }: {
   rowCount: number;
   columnCount: number;
-}): Position[] => {
+}): { row: number; column: number }[] => {
   return cartesianProduct(
     range(0, columnCount),
-    range(0, rowCount),
+    range(0, rowCount)
   ).map(([column, row]) => ({ column, row }));
 };
 
@@ -57,8 +57,12 @@ export const TicTacToeBoard = ({
 }: {
   rowCount: number;
   columnCount: number;
-  moves: Move[];
-  onClick: (position: Position) => void;
+  moves: {
+    player: "x" | "o";
+    row: number;
+    column: number;
+  }[];
+  onClick: (position: { row: number; column: number }) => void;
   theme?: {
     x: string;
     o: string;
@@ -81,10 +85,7 @@ export const TicTacToeBoard = ({
         </g>
 
         <g>
-          {moves.map((
-            { player, row, column },
-            index,
-          ) => (
+          {moves.map(({ player, row, column }, index) => (
             <g key={index} transform={`translate(${column}, ${row})`}>
               {player === "x" && (
                 <g strokeWidth={0.1} stroke={theme.x}>

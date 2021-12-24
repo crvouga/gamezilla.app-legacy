@@ -15,9 +15,7 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { useAppSelector } from "src/App";
 import {
   AVATAR_STYLES,
   formatAvatarStyle,
@@ -25,27 +23,21 @@ import {
   parseAvatarUrl,
   toAvatarUrl,
 } from "./avatar";
-import { profile } from "./profile";
 
-const ChooseAvatar = (
-  {
-    seed,
-    onClose,
-    onChoose,
-  }: {
-    seed: string;
-    onClose: () => void;
-    onChoose: (style: IAvatarStyle) => void;
-  },
-) => {
+const ChooseAvatar = ({
+  seed,
+  onClose,
+  onChoose,
+}: {
+  seed: string;
+  onClose: () => void;
+  onChoose: (style: IAvatarStyle) => void;
+}) => {
   return (
     <>
       <AppBar position="sticky">
         <Toolbar>
-          <IconButton
-            edge="start"
-            onClick={onClose}
-          >
+          <IconButton edge="start" onClick={onClose}>
             <Close />
           </IconButton>
 
@@ -56,9 +48,7 @@ const ChooseAvatar = (
       </AppBar>
 
       <Box sx={{ display: "flex", flexWrap: "wrap" }}>
-        {Object.values(AVATAR_STYLES).map((
-          style,
-        ) => (
+        {Object.values(AVATAR_STYLES).map((style) => (
           <CardActionArea
             key={style}
             sx={{
@@ -91,23 +81,21 @@ const ChooseAvatar = (
   );
 };
 
-const EditAvatar = (
-  {
-    onClose,
-    onDone,
-    style,
-    seed,
-    onChooseStyle,
-    onGenerateRandom,
-  }: {
-    onClose: () => void;
-    onDone: () => void;
-    onGenerateRandom: () => void;
-    onChooseStyle: () => void;
-    style: IAvatarStyle;
-    seed: string;
-  },
-) => {
+const EditAvatar = ({
+  onClose,
+  onDone,
+  style,
+  seed,
+  onChooseStyle,
+  onGenerateRandom,
+}: {
+  onClose: () => void;
+  onDone: () => void;
+  onGenerateRandom: () => void;
+  onChooseStyle: () => void;
+  style: IAvatarStyle;
+  seed: string;
+}) => {
   const avatarUrl = toAvatarUrl({ avatarSeed: seed, avatarStyle: style });
   return (
     <>
@@ -138,10 +126,7 @@ const EditAvatar = (
       />
 
       <List>
-        <ListItem
-          button
-          onClick={onChooseStyle}
-        >
+        <ListItem button onClick={onChooseStyle}>
           <ListItemAvatar>
             <Avatar src={avatarUrl} />
           </ListItemAvatar>
@@ -170,13 +155,13 @@ const EditAvatar = (
 };
 
 export const AvatarEditPage = () => {
-  const avatarUrl = useAppSelector((state) => state.profile?.avatarUrl);
+  const avatarUrl = "";
   const [state, setState] = useState<"initial" | "choosing-avatar-style">(
-    "initial",
+    "initial"
   );
   const [seed, setSeed] = useState<string>("seed");
   const [style, setStyle] = useState<IAvatarStyle>("adventurer");
-  const dispatch = useDispatch();
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -216,11 +201,6 @@ export const AvatarEditPage = () => {
         navigate(-1);
       }}
       onDone={() => {
-        dispatch(
-          profile.actions.update({
-            avatarUrl: toAvatarUrl({ avatarSeed: seed, avatarStyle: style }),
-          }),
-        );
         navigate(-1);
       }}
     />

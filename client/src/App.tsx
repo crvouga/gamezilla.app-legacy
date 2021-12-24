@@ -1,60 +1,76 @@
 import { Container } from "@mui/material";
-import { combineReducers } from "@reduxjs/toolkit";
-import React from "react";
-import { TypedUseSelectorHook, useSelector } from "react-redux";
+import React, { useEffect, useState } from "react";
 import { Route, Routes } from "react-router-dom";
-import { spawn } from "redux-saga/effects";
 import { LoadingDialog } from "src/components/LoadingDialog";
 import {
   AccountPage,
-  auth,
   AvatarEditPage,
-  game,
   GamePage,
   HomePage,
-  profile,
   ProfileEditPage,
   SignInPage,
   SignOutPage,
 } from "src/features";
 import { GameInvitePage } from "./features/game/GameInvitePage";
+import { supabaseClient } from "./supabase";
 
-/**
- *
- * State
- *
- */
+type IAuthState =
+  | {
+      type: "logged-in";
+      // profile: {
+      //   userId: string;
+      //   displayName: string;
+      //   avatarUrl: string;
+      // };
+    }
+  | {
+      type: "logged-out";
+    }
+  | {
+      type: "loading";
+    }
+  | {
+      type: "loading-profile";
+    };
 
-export const appReducer = combineReducers({
-  [auth.namespace]: auth.reducer,
-  [profile.namespace]: profile.reducer,
-});
+const useAuthState = () => {
+  const [authState, setAuthState] = useState<IAuthState>({ type: "loading" });
 
-export function* appSaga() {
-  yield spawn(game.saga);
-  yield spawn(auth.saga);
-  yield spawn(profile.saga);
-}
+  useEffect(() => {
+    supabaseClient.auth.onAuthStateChange((event) => {
+      switch (event) {
+        case "PASSWORD_RECOVERY":
+        case "USER_UPDATED":
+        case "TOKEN_REFRESHED":
+        case "SIGNED_IN":
+          setAuthState({
+            type: "logged-in",
+          });
+          return;
 
-/**
- *
- * View
- *
- */
+        case "SIGNED_OUT":
+        case "USER_DELETED":
+          setAuthState({
+            type: "logged-out",
+          });
+          return;
+      }
+    });
+  }, [setAuthState]);
 
-export const useAppSelector: TypedUseSelectorHook<
-  ReturnType<typeof appReducer>
-> = useSelector;
+  return authState;
+};
 
 export const App = () => {
-  const authSlice = useAppSelector(auth.selectors.slice);
+  const authState = useAuthState();
+
   return (
     <Container maxWidth="xs" disableGutters>
-      {authSlice.type === "loading" && <LoadingDialog open />}
+      {authState.type === "loading" && <LoadingDialog open />}
 
-      {authSlice.type === "signed-out" && <SignInPage />}
+      {authState.type === "logged-out" && <SignInPage />}
 
-      {authSlice.type === "signed-in" && (
+      {authState.type === "logged-in" && (
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/game/:id" element={<GamePage />} />

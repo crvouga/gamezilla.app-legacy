@@ -14,10 +14,8 @@ import {
 } from "@mui/material";
 import React from "react";
 import { Link } from "react-router-dom";
-import { useAppSelector } from "src/App";
 
 export const AccountPage = () => {
-  const avatarUrl = useAppSelector((state) => state.profile?.avatarUrl);
   return (
     <>
       <AppBar position="sticky">
@@ -35,7 +33,7 @@ export const AccountPage = () => {
         <Link to="/profile/edit">
           <ListItem button divider>
             <ListItemAvatar>
-              <Avatar src={avatarUrl} />
+              <Avatar />
             </ListItemAvatar>
             <ListItemText primary="Edit Profile" />
             <ListItemSecondaryAction>
