@@ -1,4 +1,4 @@
-import { Close, Done } from "@mui/icons-material";
+import { ArrowBack } from "@mui/icons-material";
 import {
   AppBar,
   Avatar,
@@ -21,7 +21,7 @@ export const ProfileEditPage = () => {
 
   const navigate = useNavigate();
 
-  const [displayName, setDisplayName] = useState("");
+  const [displayName, setDisplayName] = useState(profile.displayName ?? "");
 
   useEffect(() => {
     if (profile?.displayName) {
@@ -29,25 +29,28 @@ export const ProfileEditPage = () => {
     }
   }, [profile?.displayName, setDisplayName]);
 
-  const handleCancel = () => {
+  const handleBack = () => {
     navigate(-1);
   };
 
+  const handleCancel = () => {
+    setDisplayName(profile.displayName ?? "");
+  };
+
   const mutation = useMutation({
-    mutationFn: async () => {
-      await profileDataAccess.update({
+    mutationFn: () => {
+      return profileDataAccess.update({
         ...profile,
         displayName,
       });
     },
-    onSuccess: () => {
-      navigate(-1);
-    },
   });
 
-  const handleDone = () => {
+  const handleSave = () => {
     mutation.mutate();
   };
+
+  const touched = profile.displayName !== displayName;
 
   return (
     <>
@@ -56,21 +59,36 @@ export const ProfileEditPage = () => {
         open={mutation.status === "loading"}
       />
 
-      <AppBar position="sticky">
-        <Toolbar>
-          <IconButton edge="start" onClick={handleCancel}>
-            <Close />
-          </IconButton>
+      {!touched && (
+        <AppBar position="sticky">
+          <Toolbar>
+            <IconButton edge="start" onClick={handleBack}>
+              <ArrowBack />
+            </IconButton>
 
-          <Typography variant="h6" sx={{ flex: 1 }}>
-            Edit Profile
-          </Typography>
+            <Typography variant="h6" sx={{ flex: 1 }}>
+              Edit Profile
+            </Typography>
+          </Toolbar>
+        </AppBar>
+      )}
 
-          <IconButton edge="end" onClick={handleDone}>
-            <Done />
-          </IconButton>
-        </Toolbar>
-      </AppBar>
+      {touched && (
+        <AppBar position="sticky">
+          <Toolbar>
+            <Typography variant="h6" sx={{ flex: 1 }}>
+              Save Changes?
+            </Typography>
+
+            <Button size="small" sx={{ marginRight: 1 }} onClick={handleCancel}>
+              Cancel
+            </Button>
+            <Button size="small" variant="contained" onClick={handleSave}>
+              Save
+            </Button>
+          </Toolbar>
+        </AppBar>
+      )}
 
       <Box sx={{ paddingX: 2 }}>
         <Avatar
