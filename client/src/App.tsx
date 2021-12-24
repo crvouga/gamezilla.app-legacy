@@ -1,5 +1,5 @@
 import { Container } from "@mui/material";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback } from "react";
 import { Route, Routes } from "react-router-dom";
 import { LoadingDialog } from "src/components/LoadingDialog";
 import {
@@ -11,6 +11,7 @@ import {
   SignInPage,
   SignOutPage,
 } from "src/features";
+import { useSubscription } from "src/utility";
 import {
   IProfile,
   profileDataAccess,
@@ -121,19 +122,6 @@ const subscribeProfileState = (
   return () => {
     response.unsubscribe();
   };
-};
-
-const useSubscription = <T,>(
-  subscribe: (emit: (data: T) => void) => () => void,
-  initial: T
-) => {
-  const [data, setData] = useState<T>(initial);
-
-  useEffect(() => {
-    return subscribe(setData);
-  }, [subscribe]);
-
-  return data;
 };
 
 const ProfileContext = React.createContext<IProfile | null>(null);

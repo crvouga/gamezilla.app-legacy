@@ -15,7 +15,10 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
+import { useMutation } from "react-query";
 import { useNavigate } from "react-router-dom";
+import { useProfileContext } from "src/App";
+import { LoadingDialog } from "src/components/LoadingDialog";
 import {
   AVATAR_STYLES,
   formatAvatarStyle,
@@ -23,6 +26,7 @@ import {
   parseAvatarUrl,
   toAvatarUrl,
 } from "./avatar";
+import { profileDataAccess } from "./profile-data-access";
 
 const ChooseAvatar = ({
   seed,
@@ -155,22 +159,36 @@ const EditAvatar = ({
 };
 
 export const AvatarEditPage = () => {
-  const avatarUrl = "";
+  const profile = useProfileContext();
   const [state, setState] = useState<"initial" | "choosing-avatar-style">(
     "initial"
   );
-  const [seed, setSeed] = useState<string>("seed");
-  const [style, setStyle] = useState<IAvatarStyle>("adventurer");
+  const parsed = parseAvatarUrl(profile.avatarUrl);
+  const [seed, setSeed] = useState<string>(parsed.avatarSeed);
+  const [style, setStyle] = useState<IAvatarStyle>(parsed.avatarStyle);
+
+  useEffect(() => {
+    const parsed = parseAvatarUrl(profile.avatarUrl);
+    setStyle(parsed.avatarStyle);
+    setSeed(parsed.avatarSeed);
+  }, [profile.avatarUrl]);
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (avatarUrl) {
-      const parsed = parseAvatarUrl(avatarUrl);
-      setSeed(parsed.avatarSeed);
-      setStyle(parsed.avatarStyle);
-    }
-  }, [avatarUrl]);
+  const mutation = useMutation({
+    mutationFn: () => {
+      return profileDataAccess.update({
+        ...profile,
+        avatarUrl: toAvatarUrl({
+          avatarSeed: seed,
+          avatarStyle: style,
+        }),
+      });
+    },
+    onSuccess: () => {
+      navigate(-1);
+    },
+  });
 
   if (state === "choosing-avatar-style") {
     return (
@@ -188,21 +206,27 @@ export const AvatarEditPage = () => {
   }
 
   return (
-    <EditAvatar
-      seed={seed}
-      style={style}
-      onChooseStyle={() => {
-        setState("choosing-avatar-style");
-      }}
-      onGenerateRandom={() => {
-        setSeed(String(Math.random()));
-      }}
-      onClose={() => {
-        navigate(-1);
-      }}
-      onDone={() => {
-        navigate(-1);
-      }}
-    />
+    <>
+      <LoadingDialog
+        open={mutation.status === "loading"}
+        title="Updating Avatar"
+      />
+      <EditAvatar
+        seed={seed}
+        style={style}
+        onChooseStyle={() => {
+          setState("choosing-avatar-style");
+        }}
+        onGenerateRandom={() => {
+          setSeed(String(Math.random()));
+        }}
+        onClose={() => {
+          navigate(-1);
+        }}
+        onDone={() => {
+          mutation.mutate();
+        }}
+      />
+    </>
   );
 };

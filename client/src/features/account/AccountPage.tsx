@@ -1,7 +1,6 @@
 import { ArrowBack, ChevronRight, Logout } from "@mui/icons-material";
 import {
   AppBar,
-  Avatar,
   IconButton,
   List,
   ListItem,
@@ -14,6 +13,7 @@ import {
 } from "@mui/material";
 import React from "react";
 import { Link } from "react-router-dom";
+import { ProfileContextAvatar } from "src/components/ProfileContextAvatar";
 
 export const AccountPage = () => {
   return (
@@ -33,7 +33,7 @@ export const AccountPage = () => {
         <Link to="/profile/edit">
           <ListItem button divider>
             <ListItemAvatar>
-              <Avatar />
+              <ProfileContextAvatar />
             </ListItemAvatar>
             <ListItemText primary="Edit Profile" />
             <ListItemSecondaryAction>
