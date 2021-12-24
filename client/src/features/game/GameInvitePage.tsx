@@ -30,7 +30,7 @@ const searchUsers = async ({
   const response = await supabaseClient
     .from<definitions["profiles"]>("profiles")
     .select("*")
-    .like("display_name", `%${searchText}%`);
+    .ilike("display_name", `%${searchText}%`);
 
   return (
     response.data?.map((result) => ({
