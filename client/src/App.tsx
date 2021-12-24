@@ -5,9 +5,7 @@ import { LoadingDialog } from "src/components/LoadingDialog";
 import {
   AccountPage,
   authDataAccess,
-  AvatarEditChoosePage,
-  AvatarEditContext,
-  AvatarEditMainPage,
+  AvatarPage,
   GameInvitePage,
   GamePage,
   HomePage,
@@ -30,22 +28,16 @@ const LoggedInApp = ({ userId }: { userId: string }) => {
 
       {profileState.type === "loaded" && (
         <ProfileContext.Provider value={profileState.profile}>
-          <AvatarEditContext>
-            <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/game/:id" element={<GamePage />} />
-              <Route path="/game/:id/invite" element={<GameInvitePage />} />
-              <Route path="/profile/edit" element={<ProfileEditPage />} />
-              <Route path="/account" element={<AccountPage />} />
-              <Route path="/sign-in" element={<SignInPage />} />
-              <Route path="/sign-out" element={<SignOutPage />} />
-              <Route path="/avatar/edit" element={<AvatarEditMainPage />} />
-              <Route
-                path="/avatar/edit/choose"
-                element={<AvatarEditChoosePage />}
-              />
-            </Routes>
-          </AvatarEditContext>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/game/:id" element={<GamePage />} />
+            <Route path="/game/:id/invite" element={<GameInvitePage />} />
+            <Route path="/profile/edit" element={<ProfileEditPage />} />
+            <Route path="/account" element={<AccountPage />} />
+            <Route path="/sign-in" element={<SignInPage />} />
+            <Route path="/sign-out" element={<SignOutPage />} />
+            <Route path="/avatar/*" element={<AvatarPage />} />
+          </Routes>
         </ProfileContext.Provider>
       )}
     </>
