@@ -1,5 +1,5 @@
 import { Container } from "@mui/material";
-import React, { useCallback } from "react";
+import React from "react";
 import { Route, Routes } from "react-router-dom";
 import { LoadingDialog } from "src/components/LoadingDialog";
 import {
@@ -7,145 +7,18 @@ import {
   AvatarEditPage,
   GamePage,
   HomePage,
+  ProfileContext,
   ProfileEditPage,
   SignInPage,
   SignOutPage,
+  authDataAccess,
+  useProfileState,
+  GameInvitePage,
 } from "src/features";
-import { useSubscription } from "src/utility";
-import {
-  IProfile,
-  profileDataAccess,
-} from "./features/account/profile/profile-data-access";
-import { GameInvitePage } from "./features/game/GameInvitePage";
-import { definitions, supabaseClient } from "./supabase";
-
-type IAuthState =
-  | {
-      type: "logged-in";
-      userId: string;
-    }
-  | {
-      type: "logged-out";
-    }
-  | {
-      type: "loading";
-    };
-
-const subscribeAuthState = (
-  emit: (event: IAuthState) => void
-): (() => void) => {
-  emit({
-    type: "loading",
-  });
-
-  setTimeout(() => {
-    const session = supabaseClient.auth.session();
-    if (session?.user?.id) {
-      emit({ type: "logged-in", userId: session.user.id });
-      return;
-    }
-
-    emit({ type: "logged-out" });
-  }, 1000);
-
-  const response = supabaseClient.auth.onAuthStateChange((event, session) => {
-    switch (event) {
-      case "PASSWORD_RECOVERY":
-      case "USER_UPDATED":
-      case "TOKEN_REFRESHED":
-      case "SIGNED_IN":
-        if (session?.user?.id) {
-          emit({
-            type: "logged-in",
-            userId: session.user.id,
-          });
-        } else {
-          emit({
-            type: "logged-out",
-          });
-        }
-        return;
-
-      case "SIGNED_OUT":
-      case "USER_DELETED":
-        emit({
-          type: "logged-out",
-        });
-        return;
-    }
-  });
-  return () => {
-    response.data?.unsubscribe();
-  };
-};
-
-type IProfileState =
-  | {
-      type: "loading";
-    }
-  | {
-      type: "loaded";
-      profile: IProfile;
-    };
-
-const subscribeProfileState = (
-  { userId }: { userId: string },
-  emit: (profile: IProfileState) => void
-): (() => void) => {
-  emit({
-    type: "loading",
-  });
-
-  profileDataAccess.fetchElseCreate({ userId }).then((profile) => {
-    if (profile) {
-      emit({
-        type: "loaded",
-        profile,
-      });
-    }
-  });
-
-  const response = supabaseClient
-    .from<definitions["profiles"]>(`profiles:id=eq.${userId}`)
-    .on("*", (payload) => {
-      emit({
-        type: "loaded",
-        profile: {
-          userId: payload.new.id,
-          avatarUrl: payload.new.avatar_url,
-          displayName: payload.new.display_name,
-        },
-      });
-    })
-    .subscribe();
-
-  return () => {
-    response.unsubscribe();
-  };
-};
-
-const ProfileContext = React.createContext<IProfile | null>(null);
-
-export const useProfileContext = () => {
-  const profile = React.useContext(ProfileContext);
-
-  if (profile) {
-    return profile;
-  }
-
-  throw new Error("Profile is null");
-};
+import { useSubscription } from "./utility";
 
 const LoggedInApp = ({ userId }: { userId: string }) => {
-  const subscribe = useCallback(
-    (emit: Parameters<typeof subscribeProfileState>[1]) =>
-      subscribeProfileState({ userId }, emit),
-    [userId]
-  );
-
-  const profileState = useSubscription(subscribe, {
-    type: "loading",
-  });
+  const profileState = useProfileState({ userId });
 
   return (
     <>
@@ -172,12 +45,14 @@ const LoggedInApp = ({ userId }: { userId: string }) => {
 };
 
 export const App = () => {
-  const authState = useSubscription(subscribeAuthState, { type: "loading" });
+  const authState = useSubscription(authDataAccess.subscribe, {
+    type: "loading",
+  });
 
   return (
     <Container maxWidth="xs" disableGutters>
       {authState.type === "loading" && (
-        <LoadingDialog open title="Logging In" />
+        <LoadingDialog open title="Loading Login" />
       )}
 
       {authState.type === "logged-out" && <SignInPage />}

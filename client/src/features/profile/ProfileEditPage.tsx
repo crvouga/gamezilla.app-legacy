@@ -12,9 +12,9 @@ import {
 import React, { useEffect, useState } from "react";
 import { useMutation } from "react-query";
 import { Link, useNavigate } from "react-router-dom";
-import { useProfileContext } from "src/App";
 import { LoadingDialog } from "src/components/LoadingDialog";
-import { profileDataAccess } from "./profile-data-access";
+import { useProfileContext } from "src/features";
+import { profileDataAccess } from "./profile";
 
 export const ProfileEditPage = () => {
   const profile = useProfileContext();
