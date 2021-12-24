@@ -13,13 +13,15 @@ import {
 import React, { useState } from "react";
 
 import { LoadingDialog } from "src/components/LoadingDialog";
+import { authDataAccess, ISignInMethod } from "./auth-data-access";
 
 export const SignInPage = () => {
   const [state, setState] = useState<"signing-in" | "idle">("idle");
 
-  const handleSignIn = () => () => {
+  const handleSignIn = (method: ISignInMethod) => async () => {
     setState("signing-in");
-    console.log("LOG IN");
+    await authDataAccess.signIn(method);
+    setState("idle");
   };
 
   return (
@@ -34,7 +36,7 @@ export const SignInPage = () => {
 
       <Container disableGutters>
         <List>
-          <ListItem divider button onClick={handleSignIn()}>
+          <ListItem divider button onClick={handleSignIn({ type: "google" })}>
             <ListItemIcon>
               <Google />
             </ListItemIcon>
