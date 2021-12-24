@@ -1,6 +1,11 @@
 import { definitions, supabaseClient } from "src/supabase";
 import { generateRandomAvatarUrl } from "./avatar";
-import { IProfile } from "./profile";
+
+export type IProfile = {
+  userId: string;
+  displayName?: string;
+  avatarUrl?: string;
+};
 
 const fetch = async ({
   userId,
@@ -43,25 +48,30 @@ const fetchElseCreate = async ({ userId }: { userId: string }) => {
   return fetch({ userId });
 };
 
-const subscribe = ({ userId }: { userId: string }) =>
-  (set: (profile: IProfile) => void): () => void => {
-    const response = supabaseClient
-      .from<definitions["profiles"]>(`profiles:id=eq.${userId}`)
-      .on("*", (payload) => {
-        set({
-          userId: payload.new.id,
-          avatarUrl: payload.new.avatar_url,
-          displayName: payload.new.display_name,
-        });
-      })
-      .subscribe();
+const subscribe = ({ userId }: { userId: string }) => (
+  set: (profile: IProfile) => void
+): (() => void) => {
+  const response = supabaseClient
+    .from<definitions["profiles"]>(`profiles:id=eq.${userId}`)
+    .on("*", (payload) => {
+      set({
+        userId: payload.new.id,
+        avatarUrl: payload.new.avatar_url,
+        displayName: payload.new.display_name,
+      });
+    })
+    .subscribe();
 
-    return () => {
-      response.unsubscribe();
-    };
+  return () => {
+    response.unsubscribe();
   };
+};
 
-const update = async ({ userId, displayName, avatarUrl }: {
+const update = async ({
+  userId,
+  displayName,
+  avatarUrl,
+}: {
   userId: string;
   displayName?: string;
   avatarUrl?: string;

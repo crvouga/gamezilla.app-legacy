@@ -10,14 +10,13 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { useAppSelector } from "src/App";
-import { profile } from "./profile";
 
 export const ProfileEditPage = () => {
-  const profileState = useAppSelector((state) => state.profile);
-  const dispatch = useDispatch();
+  const profileState = {
+    displayName: "error",
+  };
+
   const navigate = useNavigate();
 
   const [displayName, setDisplayName] = useState("");
@@ -26,14 +25,13 @@ export const ProfileEditPage = () => {
     if (profileState?.displayName) {
       setDisplayName(profileState.displayName);
     }
-  }, [profileState]);
+  }, [profileState?.displayName, setDisplayName]);
 
   const handleCancel = () => {
     navigate(-1);
   };
 
   const handleDone = () => {
-    dispatch(profile.actions.update({ displayName }));
     navigate(-1);
   };
 
@@ -57,7 +55,6 @@ export const ProfileEditPage = () => {
 
       <Box sx={{ paddingX: 2 }}>
         <Avatar
-          src={profileState?.avatarUrl}
           sx={{
             marginX: "auto",
             width: "120px",
@@ -68,9 +65,7 @@ export const ProfileEditPage = () => {
         />
 
         <Link to="/avatar/edit">
-          <Button
-            sx={{ display: "block", marginX: "auto", marginBottom: 2 }}
-          >
+          <Button sx={{ display: "block", marginX: "auto", marginBottom: 2 }}>
             Change Avatar
           </Button>
         </Link>

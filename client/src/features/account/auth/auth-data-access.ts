@@ -1,28 +1,31 @@
 import { supabaseClient } from "src/supabase";
 import { dropLastWhile } from "src/utility";
-import { auth } from "./auth";
 
 type IEvent =
-  | ReturnType<typeof auth.actions.signedIn>
-  | ReturnType<typeof auth.actions.signedOut>;
+  | {
+      type: "logged-in";
+    }
+  | {
+      type: "logged-out";
+    };
 
 const onAuthEvents = (emit: (event: IEvent) => void) => {
   const timeout = setTimeout(() => {
     const session = supabaseClient.auth.session();
 
     if (session) {
-      emit(
-        auth.actions.signedIn({
-          id: String(session?.user?.id),
-        }),
-      );
+      emit({
+        type: "logged-in",
+      });
       return;
     }
 
-    emit(auth.actions.signedOut());
+    emit({
+      type: "logged-out",
+    });
   }, 1000);
 
-  const response = supabaseClient.auth.onAuthStateChange((event, session) => {
+  const response = supabaseClient.auth.onAuthStateChange((event) => {
     clearTimeout(timeout);
 
     switch (event) {
@@ -30,15 +33,15 @@ const onAuthEvents = (emit: (event: IEvent) => void) => {
       case "SIGNED_IN":
       case "TOKEN_REFRESHED":
       case "USER_UPDATED":
-        emit(
-          auth.actions.signedIn({
-            id: String(session?.user?.id),
-          }),
-        );
+        emit({
+          type: "logged-in",
+        });
         return;
       case "SIGNED_OUT":
       case "USER_DELETED":
-        emit(auth.actions.signedOut());
+        emit({
+          type: "logged-out",
+        });
         return;
     }
   });
@@ -68,7 +71,7 @@ const signIn: ISignIn = async (method) => {
       },
       {
         redirectTo,
-      },
+      }
     );
 
     return {
