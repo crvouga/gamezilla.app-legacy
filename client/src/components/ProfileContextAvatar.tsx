@@ -1,6 +1,6 @@
 import React from "react";
 import Avatar, { AvatarProps } from "@mui/material/Avatar";
-import { useProfileContext } from "src/App";
+import { useProfileContext } from "src/features";
 
 export const ProfileContextAvatar = (props: AvatarProps) => {
   const profileContext = useProfileContext();

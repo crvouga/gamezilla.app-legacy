@@ -1,8 +1,6 @@
 import { ArrowBack, PersonAdd } from "@mui/icons-material";
 import {
   AppBar,
-  Box,
-  Button,
   IconButton,
   List,
   ListItem,
@@ -38,12 +36,6 @@ export const GamePage = () => {
           </ListItem>
         </Link>
       </List>
-
-      <Box sx={{ padding: 2 }}>
-        <Button fullWidth>
-          Start Game
-        </Button>
-      </Box>
     </>
   );
 };

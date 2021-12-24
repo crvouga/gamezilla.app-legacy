@@ -10,23 +10,17 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
-
+import React from "react";
+import { useMutation } from "react-query";
 import { LoadingDialog } from "src/components/LoadingDialog";
-import { authDataAccess, ISignInMethod } from "./auth-data-access";
+import { authDataAccess } from "src/features";
 
 export const SignInPage = () => {
-  const [state, setState] = useState<"signing-in" | "idle">("idle");
-
-  const handleSignIn = (method: ISignInMethod) => async () => {
-    setState("signing-in");
-    await authDataAccess.signIn(method);
-    setState("idle");
-  };
+  const mutation = useMutation(authDataAccess.signIn);
 
   return (
     <>
-      <LoadingDialog title="Signing In" open={state === "signing-in"} />
+      <LoadingDialog title="Logging In" open={mutation.status === "loading"} />
 
       <AppBar position="sticky">
         <Toolbar>
@@ -36,7 +30,11 @@ export const SignInPage = () => {
 
       <Container disableGutters>
         <List>
-          <ListItem divider button onClick={handleSignIn({ type: "google" })}>
+          <ListItem
+            divider
+            button
+            onClick={() => mutation.mutate({ type: "google" })}
+          >
             <ListItemIcon>
               <Google />
             </ListItemIcon>

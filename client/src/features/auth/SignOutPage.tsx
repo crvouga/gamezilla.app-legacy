@@ -1,8 +1,7 @@
 import { Button, Dialog, DialogActions, DialogTitle } from "@mui/material";
 import React from "react";
-
 import { useNavigate } from "react-router-dom";
-import { authDataAccess } from "./auth-data-access";
+import { authDataAccess } from "src/features";
 
 export const SignOutPage = () => {
   const navigate = useNavigate();
@@ -19,6 +18,7 @@ export const SignOutPage = () => {
   return (
     <Dialog open onClose={handleCancel}>
       <DialogTitle>Sign Out of Gamezilla?</DialogTitle>
+
       <DialogActions>
         <Button onClick={handleCancel}>Cancel</Button>
         <Button onClick={handleSignOut}>Sign Out</Button>

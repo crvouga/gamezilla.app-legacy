@@ -17,7 +17,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { useMutation } from "react-query";
 import { useNavigate } from "react-router-dom";
-import { useProfileContext } from "src/App";
+import { useProfileContext } from "./profile";
 import { LoadingDialog } from "src/components/LoadingDialog";
 import {
   AVATAR_STYLES,
@@ -26,7 +26,7 @@ import {
   parseAvatarUrl,
   toAvatarUrl,
 } from "./avatar";
-import { profileDataAccess } from "./profile-data-access";
+import { profileDataAccess } from "./profile";
 
 const ChooseAvatar = ({
   seed,
