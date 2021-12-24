@@ -26,7 +26,7 @@ const subscribe = (emit: (event: IAuthState) => void): (() => void) => {
     }
 
     emit({ type: "logged-out" });
-  }, 1000);
+  }, 2500);
 
   const response = supabaseClient.auth.onAuthStateChange((event, session) => {
     switch (event) {

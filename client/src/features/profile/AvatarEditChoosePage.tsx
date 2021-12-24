@@ -14,21 +14,21 @@ import {
   AVATAR_STYLES,
   formatAvatarStyle,
   IAvatarStyle,
-  toAvatarSeed,
   toAvatarUrl,
 } from "./avatar";
+import { useAvatarEditContext } from "./AvatarEditContext";
 
 export const AvatarEditChoosePage = () => {
   const navigate = useNavigate();
-
-  const seed = toAvatarSeed("some-random-seed");
+  const { avatarSeed, setAvatarStyle } = useAvatarEditContext();
 
   const onBack = () => {
     navigate(-1);
   };
 
   const onChoose = (style: IAvatarStyle) => () => {
-    console.log({ style });
+    navigate(-1);
+    setAvatarStyle(style);
   };
 
   return (
@@ -46,9 +46,9 @@ export const AvatarEditChoosePage = () => {
       </AppBar>
 
       <Box sx={{ display: "flex", flexWrap: "wrap" }}>
-        {Object.values(AVATAR_STYLES).map((style) => (
+        {Object.values(AVATAR_STYLES).map((avatarStyle) => (
           <CardActionArea
-            key={style}
+            key={avatarStyle}
             sx={{
               width: "50%",
               display: "flex",
@@ -57,10 +57,10 @@ export const AvatarEditChoosePage = () => {
               justifyContent: "start",
               padding: 2,
             }}
-            onClick={onChoose(style)}
+            onClick={onChoose(avatarStyle)}
           >
             <Avatar
-              src={toAvatarUrl({ avatarSeed: seed, avatarStyle: style })}
+              src={toAvatarUrl({ avatarSeed, avatarStyle })}
               sx={{
                 width: 120,
                 height: 120,
@@ -68,7 +68,7 @@ export const AvatarEditChoosePage = () => {
               }}
             />
             <Typography align="center" variant="h6">
-              {formatAvatarStyle(style)}
+              {formatAvatarStyle(avatarStyle)}
             </Typography>
           </CardActionArea>
         ))}
