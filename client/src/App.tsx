@@ -1,5 +1,5 @@
 import { Container } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import { LoadingDialog } from "src/components/LoadingDialog";
 import {
@@ -87,7 +87,8 @@ type IProfileState =
       profile: IProfile;
     };
 
-const subscribeProfileState = ({ userId }: { userId: string }) => (
+const subscribeProfileState = (
+  { userId }: { userId: string },
   emit: (profile: IProfileState) => void
 ): (() => void) => {
   emit({
@@ -127,12 +128,34 @@ const useSubscription = <T,>(
   initial: T
 ) => {
   const [data, setData] = useState<T>(initial);
-  useEffect(() => subscribe(setData), []);
+
+  useEffect(() => {
+    return subscribe(setData);
+  }, [subscribe]);
+
   return data;
 };
 
+const ProfileContext = React.createContext<IProfile | null>(null);
+
+export const useProfileContext = () => {
+  const profile = React.useContext(ProfileContext);
+
+  if (profile) {
+    return profile;
+  }
+
+  throw new Error("Profile is null");
+};
+
 const LoggedInApp = ({ userId }: { userId: string }) => {
-  const profileState = useSubscription(subscribeProfileState({ userId }), {
+  const subscribe = useCallback(
+    (emit: Parameters<typeof subscribeProfileState>[1]) =>
+      subscribeProfileState({ userId }, emit),
+    [userId]
+  );
+
+  const profileState = useSubscription(subscribe, {
     type: "loading",
   });
 
@@ -143,16 +166,18 @@ const LoggedInApp = ({ userId }: { userId: string }) => {
       )}
 
       {profileState.type === "loaded" && (
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/game/:id" element={<GamePage />} />
-          <Route path="/game/:id/invite" element={<GameInvitePage />} />;
-          <Route path="/profile/edit" element={<ProfileEditPage />} />
-          <Route path="/avatar/edit" element={<AvatarEditPage />} />;
-          <Route path="/account" element={<AccountPage />} />
-          <Route path="/sign-in" element={<SignInPage />} />
-          <Route path="/sign-out" element={<SignOutPage />} />
-        </Routes>
+        <ProfileContext.Provider value={profileState.profile}>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/game/:id" element={<GamePage />} />
+            <Route path="/game/:id/invite" element={<GameInvitePage />} />;
+            <Route path="/profile/edit" element={<ProfileEditPage />} />
+            <Route path="/avatar/edit" element={<AvatarEditPage />} />;
+            <Route path="/account" element={<AccountPage />} />
+            <Route path="/sign-in" element={<SignInPage />} />
+            <Route path="/sign-out" element={<SignOutPage />} />
+          </Routes>
+        </ProfileContext.Provider>
       )}
     </>
   );
