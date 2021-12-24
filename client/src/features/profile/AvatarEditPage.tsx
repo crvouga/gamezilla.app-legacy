@@ -11,6 +11,7 @@ import {
   ListItemAvatar,
   ListItemSecondaryAction,
   ListItemText,
+  Slide,
   Toolbar,
   Typography,
 } from "@mui/material";
@@ -106,10 +107,11 @@ export const AvatarEditPage = () => {
         }),
       });
     },
-    onSuccess: () => {
-      navigate(-1);
-    },
   });
+
+  const onSave = () => {
+    mutation.mutate();
+  };
 
   const onChooseStyle = () => {
     setState("choosing-avatar-style");
@@ -121,10 +123,6 @@ export const AvatarEditPage = () => {
 
   const onBack = () => {
     navigate(-1);
-  };
-
-  const onSave = () => {
-    mutation.mutate();
   };
 
   const onCancel = () => {
@@ -171,20 +169,22 @@ export const AvatarEditPage = () => {
       )}
 
       {touched && (
-        <AppBar position="sticky">
-          <Toolbar>
-            <Typography variant="h6" sx={{ flex: 1 }}>
-              Save Changes?
-            </Typography>
+        <Slide direction="down" in={touched}>
+          <AppBar position="sticky">
+            <Toolbar>
+              <Typography variant="h6" sx={{ flex: 1 }}>
+                Save Changes?
+              </Typography>
 
-            <Button size="small" sx={{ marginRight: 1 }} onClick={onCancel}>
-              Cancel
-            </Button>
-            <Button size="small" variant="contained" onClick={onSave}>
-              Save
-            </Button>
-          </Toolbar>
-        </AppBar>
+              <Button size="small" sx={{ marginRight: 1 }} onClick={onCancel}>
+                Cancel
+              </Button>
+              <Button size="small" variant="contained" onClick={onSave}>
+                Save
+              </Button>
+            </Toolbar>
+          </AppBar>
+        </Slide>
       )}
 
       <Avatar
@@ -214,6 +214,7 @@ export const AvatarEditPage = () => {
 
       <Box sx={{ paddingX: 2 }}>
         <Button
+          variant="outlined"
           fullWidth
           size="large"
           startIcon={<Casino />}

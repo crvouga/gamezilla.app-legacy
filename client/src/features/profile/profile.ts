@@ -78,7 +78,11 @@ type IProfileState =
     };
 
 const subscribe = (
-  { userId }: { userId: string },
+  {
+    userId,
+  }: {
+    userId: string;
+  },
   emit: (profile: IProfileState) => void
 ): (() => void) => {
   emit({
