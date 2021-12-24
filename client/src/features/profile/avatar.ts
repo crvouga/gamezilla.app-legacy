@@ -26,10 +26,10 @@ export const AVATAR_STYLES: { [avatarStyle in IAvatarStyle]: IAvatarStyle } = {
   "adventurer-neutral": "adventurer-neutral",
   avataaars: "avataaars",
   "big-ears": "big-ears",
-  "bottts": "bottts",
+  bottts: "bottts",
   "big-ears-neutral": "big-ears-neutral",
   "big-smile": "big-smile",
-  "croodles": "croodles",
+  croodles: "croodles",
   "croodles-neutral": "croodles-neutral",
   gridy: "gridy",
   identicon: "identicon",
@@ -59,8 +59,8 @@ export const toAvatarStyle = (avatarStyle: string): IAvatarStyle => {
 
 export type IAvatarSeed = string & { type: "AvatarSeed" };
 
-export const toAvatarSeed = (seed?: string) => {
-  return (seed?.replace(" ", "")?.replace(";", "") ?? "") as IAvatarSeed;
+export const toAvatarSeed = (seed: string) => {
+  return seed.replace(" ", "").replace(";", "").replace(".", "") as IAvatarSeed;
 };
 
 const AVATAR_URL_ROOT = `https://avatars.dicebear.com/api`;
@@ -70,11 +70,11 @@ export const toAvatarUrl = ({
   avatarSeed,
   avatarStyle,
 }: {
-  avatarSeed: string;
+  avatarSeed: IAvatarSeed;
   avatarStyle: IAvatarStyle;
 }) => {
   const url = new URL(
-    `${AVATAR_URL_ROOT}/${avatarStyle}/${avatarSeed}.${AVATAR_FILE_TYPE}`,
+    `${AVATAR_URL_ROOT}/${avatarStyle}/${avatarSeed}.${AVATAR_FILE_TYPE}`
   );
 
   if (avatarStyle === "croodles" || avatarStyle === "croodles-neutral") {
@@ -85,17 +85,17 @@ export const toAvatarUrl = ({
 };
 
 export const parseAvatarUrl = (
-  avatarUrl?: string,
+  avatarUrl?: string
 ): {
   avatarSeed: IAvatarSeed;
   avatarStyle: IAvatarStyle;
 } => {
   try {
-    const [avatarStyle, avatarSeed] = new URL(avatarUrl ?? "")
-      ?.pathname
-      ?.split(".")?.[0]
-      ?.split("/")
-      ?.slice(-2) ?? [];
+    const [avatarStyle, avatarSeed] =
+      new URL(avatarUrl ?? "")?.pathname
+        ?.split(".")?.[0]
+        ?.split("/")
+        ?.slice(-2) ?? [];
 
     if (avatarStyle && avatarSeed) {
       return {

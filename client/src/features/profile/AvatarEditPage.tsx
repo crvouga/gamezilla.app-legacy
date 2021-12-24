@@ -11,7 +11,6 @@ import {
   ListItemAvatar,
   ListItemSecondaryAction,
   ListItemText,
-  Slide,
   Toolbar,
   Typography,
 } from "@mui/material";
@@ -22,8 +21,10 @@ import { LoadingDialog } from "src/components/LoadingDialog";
 import {
   AVATAR_STYLES,
   formatAvatarStyle,
+  IAvatarSeed,
   IAvatarStyle,
   parseAvatarUrl,
+  toAvatarSeed,
   toAvatarUrl,
 } from "./avatar";
 import { profileDataAccess, useProfileContext } from "./profile";
@@ -33,7 +34,7 @@ const ChooseAvatar = ({
   onClose,
   onChoose,
 }: {
-  seed: string;
+  seed: IAvatarSeed;
   onClose: () => void;
   onChoose: (style: IAvatarStyle) => void;
 }) => {
@@ -91,7 +92,7 @@ export const AvatarEditPage = () => {
     "initial"
   );
   const parsed = parseAvatarUrl(profile.avatarUrl);
-  const [seed, setSeed] = useState<string>(parsed.avatarSeed);
+  const [seed, setSeed] = useState<IAvatarSeed>(parsed.avatarSeed);
   const [style, setStyle] = useState<IAvatarStyle>(parsed.avatarStyle);
   const avatarUrl = toAvatarUrl({ avatarSeed: seed, avatarStyle: style });
 
@@ -118,7 +119,7 @@ export const AvatarEditPage = () => {
   };
 
   const onGenerateRandom = () => {
-    setSeed(String(Math.random()));
+    setSeed(toAvatarSeed(String(Math.random())));
   };
 
   const onBack = () => {
@@ -154,6 +155,7 @@ export const AvatarEditPage = () => {
         open={mutation.status === "loading"}
         title="Updating Avatar"
       />
+
       {!touched && (
         <AppBar position="sticky">
           <Toolbar>
@@ -169,22 +171,20 @@ export const AvatarEditPage = () => {
       )}
 
       {touched && (
-        <Slide direction="down" in={touched}>
-          <AppBar position="sticky">
-            <Toolbar>
-              <Typography variant="h6" sx={{ flex: 1 }}>
-                Save Changes?
-              </Typography>
+        <AppBar position="sticky">
+          <Toolbar>
+            <Typography variant="h6" sx={{ flex: 1 }}>
+              Save Changes?
+            </Typography>
 
-              <Button size="small" sx={{ marginRight: 1 }} onClick={onCancel}>
-                Cancel
-              </Button>
-              <Button size="small" variant="contained" onClick={onSave}>
-                Save
-              </Button>
-            </Toolbar>
-          </AppBar>
-        </Slide>
+            <Button size="small" sx={{ marginRight: 1 }} onClick={onCancel}>
+              Cancel
+            </Button>
+            <Button size="small" variant="contained" onClick={onSave}>
+              Save
+            </Button>
+          </Toolbar>
+        </AppBar>
       )}
 
       <Avatar
