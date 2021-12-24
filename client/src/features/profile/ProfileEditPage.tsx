@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useMutation } from "react-query";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { LoadingDialog } from "src/components/LoadingDialog";
 import { useProfileContext } from "src/features";
 import { profileDataAccess } from "./profile";
@@ -93,20 +93,30 @@ export const ProfileEditPage = () => {
       <Box sx={{ paddingX: 2 }}>
         <Avatar
           src={profile.avatarUrl}
+          onClick={() => {
+            navigate("/avatar/edit");
+          }}
           sx={{
             marginX: "auto",
-            width: "120px",
-            height: "120px",
+            width: "100px",
+            height: "100px",
             marginTop: 2,
             marginBottom: 1 / 2,
           }}
         />
 
-        <Link to="/avatar/edit">
-          <Button sx={{ display: "block", marginX: "auto", marginBottom: 2 }}>
-            Change Avatar
-          </Button>
-        </Link>
+        <Button
+          onClick={() => {
+            navigate("/avatar/edit");
+          }}
+          sx={{
+            display: "block",
+            marginX: "auto",
+            marginBottom: 2,
+          }}
+        >
+          Edit Avatar
+        </Button>
 
         <TextField
           value={displayName}

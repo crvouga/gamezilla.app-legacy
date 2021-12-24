@@ -4,7 +4,6 @@ import {
   IconButton,
   List,
   ListItem,
-  ListItemAvatar,
   ListItemIcon,
   ListItemSecondaryAction,
   ListItemText,
@@ -32,9 +31,9 @@ export const AccountPage = () => {
       <List>
         <Link to="/profile/edit">
           <ListItem button divider>
-            <ListItemAvatar>
-              <ProfileContextAvatar />
-            </ListItemAvatar>
+            <ListItemIcon>
+              <ProfileContextAvatar sx={{ width: "24px", height: "24px" }} />
+            </ListItemIcon>
             <ListItemText primary="Edit Profile" />
             <ListItemSecondaryAction>
               <ChevronRight />
