@@ -36,6 +36,7 @@ export const GamePage = () => {
           </ListItem>
         </Link>
       </List>
+      {params.id}
     </>
   );
 };
