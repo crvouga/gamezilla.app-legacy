@@ -10,33 +10,52 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
+import { useMutation } from "react-query";
 import { Link, useNavigate } from "react-router-dom";
+import { useProfileContext } from "src/App";
+import { LoadingDialog } from "src/components/LoadingDialog";
+import { profileDataAccess } from "./profile-data-access";
 
 export const ProfileEditPage = () => {
-  const profileState = {
-    displayName: "error",
-  };
+  const profile = useProfileContext();
 
   const navigate = useNavigate();
 
   const [displayName, setDisplayName] = useState("");
 
   useEffect(() => {
-    if (profileState?.displayName) {
-      setDisplayName(profileState.displayName);
+    if (profile?.displayName) {
+      setDisplayName(profile.displayName);
     }
-  }, [profileState?.displayName, setDisplayName]);
+  }, [profile?.displayName, setDisplayName]);
 
   const handleCancel = () => {
     navigate(-1);
   };
 
+  const mutation = useMutation({
+    mutationFn: async () => {
+      await profileDataAccess.update({
+        ...profile,
+        displayName,
+      });
+    },
+    onSuccess: () => {
+      navigate(-1);
+    },
+  });
+
   const handleDone = () => {
-    navigate(-1);
+    mutation.mutate();
   };
 
   return (
     <>
+      <LoadingDialog
+        title="Updating Profile"
+        open={mutation.status === "loading"}
+      />
+
       <AppBar position="sticky">
         <Toolbar>
           <IconButton edge="start" onClick={handleCancel}>
@@ -55,6 +74,7 @@ export const ProfileEditPage = () => {
 
       <Box sx={{ paddingX: 2 }}>
         <Avatar
+          src={profile.avatarUrl}
           sx={{
             marginX: "auto",
             width: "120px",
@@ -71,7 +91,6 @@ export const ProfileEditPage = () => {
         </Link>
 
         <TextField
-          disabled={profileState === null}
           value={displayName}
           onChange={(event) => setDisplayName(event.target.value)}
           label="Display Name"

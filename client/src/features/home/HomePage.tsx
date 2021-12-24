@@ -1,7 +1,6 @@
 import { ChevronRight, Gamepad } from "@mui/icons-material";
 import {
   AppBar,
-  Avatar,
   List,
   ListItem,
   ListItemIcon,
@@ -11,8 +10,8 @@ import {
   Typography,
 } from "@mui/material";
 import React from "react";
-
 import { Link, useNavigate } from "react-router-dom";
+import { ProfileContextAvatar } from "src/components/ProfileContextAvatar";
 
 export const HomePage = () => {
   const navigate = useNavigate();
@@ -30,7 +29,7 @@ export const HomePage = () => {
             Home
           </Typography>
           <Link to="/account">
-            <Avatar />
+            <ProfileContextAvatar />
           </Link>
         </Toolbar>
       </AppBar>
