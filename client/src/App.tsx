@@ -1,5 +1,5 @@
 import { Container } from "@mui/material";
-import React from "react";
+import React, { useCallback } from "react";
 import { Route, Routes } from "react-router-dom";
 import { LoadingDialog } from "src/components/LoadingDialog";
 import {
@@ -9,16 +9,24 @@ import {
   GameInvitePage,
   GamePage,
   HomePage,
-  ProfileContext,
+  ProfileContextProvider,
+  profileDataAccess,
   ProfileEditPage,
   SignInPage,
   SignOutPage,
-  useProfileState,
 } from "src/features";
 import { useSubscription } from "./utility";
 
 const LoggedInApp = ({ userId }: { userId: string }) => {
-  const profileState = useProfileState({ userId });
+  const subscribe = useCallback(
+    (emit: Parameters<typeof profileDataAccess.subscribe>[1]) =>
+      profileDataAccess.subscribe({ userId }, emit),
+    [userId]
+  );
+
+  const profileState = useSubscription(subscribe, {
+    type: "loading",
+  });
 
   return (
     <>
@@ -27,7 +35,7 @@ const LoggedInApp = ({ userId }: { userId: string }) => {
       )}
 
       {profileState.type === "loaded" && (
-        <ProfileContext.Provider value={profileState.profile}>
+        <ProfileContextProvider profile={profileState.profile}>
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/game/:id" element={<GamePage />} />
@@ -38,7 +46,7 @@ const LoggedInApp = ({ userId }: { userId: string }) => {
             <Route path="/sign-out" element={<SignOutPage />} />
             <Route path="/avatar/*" element={<AvatarPage />} />
           </Routes>
-        </ProfileContext.Provider>
+        </ProfileContextProvider>
       )}
     </>
   );
