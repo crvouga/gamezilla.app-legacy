@@ -5,13 +5,13 @@ type INewMessage =
   | {
       type: "TEXT";
       text: string;
-      creatorId: string;
+      senderId: string;
       recipientIds: string[];
     }
   | {
       type: "GAME_INVITE";
       gameId: string;
-      creatorId: string;
+      senderId: string;
       recipientIds: string[];
     };
 
@@ -24,7 +24,7 @@ const toMessageRow = (
       return {
         id: messageId,
         type: "GAME_INVITE",
-        creator_id: message.creatorId,
+        sender_id: message.senderId,
         payload: JSON.stringify({
           gameId: message.gameId,
         }),
@@ -34,7 +34,7 @@ const toMessageRow = (
       return {
         id: messageId,
         type: "TEXT",
-        creator_id: message.creatorId,
+        sender_id: message.senderId,
         payload: JSON.stringify({
           text: message.text,
         }),

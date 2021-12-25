@@ -56,7 +56,7 @@ export const GameInvitePage = () => {
     mutationFn: ({ userId }: { userId: string }) => {
       return sendMessage({
         type: "GAME_INVITE",
-        creatorId: profile.userId,
+        senderId: profile.userId,
         recipientIds: [userId],
         gameId: "test",
       });
