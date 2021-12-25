@@ -13,11 +13,11 @@ import React, { useEffect, useState } from "react";
 import { useMutation } from "react-query";
 import { useNavigate } from "react-router-dom";
 import { LoadingDialog } from "src/components/LoadingDialog";
-import { useProfileContext } from "src/features";
+import { useLoginSession } from "src/features";
 import { profileDataAccess } from "./profile";
 
 export const ProfileEditPage = () => {
-  const profile = useProfileContext();
+  const { profile } = useLoginSession();
 
   const navigate = useNavigate();
 
