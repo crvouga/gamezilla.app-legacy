@@ -67,9 +67,9 @@ const formatRedirect = (redirect: string) => {
   return dropLastWhile((_) => _ === "/", redirect.split("")).join("");
 };
 
-export type ISignIn = (method: ISignInMethod) => Promise<{ errors: Error[] }>;
-
-const signIn: ISignIn = async (method) => {
+const signInWithRedirect = async (
+  method: ISignInMethod
+): Promise<{ errors: Error[] }> => {
   if (method.type === "google") {
     const redirectTo = formatRedirect(window.location.href);
 
@@ -82,8 +82,14 @@ const signIn: ISignIn = async (method) => {
       }
     );
 
+    if (error) {
+      return {
+        errors: [new Error(error.message)],
+      };
+    }
+
     return {
-      errors: error ? [new Error(error.message)] : [],
+      errors: [],
     };
   }
 
@@ -109,7 +115,7 @@ const signOut: ISignOut = async () => {
 };
 
 export const authDataAccess = {
-  signIn,
+  signInWithRedirect,
   signOut,
   subscribe,
 };
