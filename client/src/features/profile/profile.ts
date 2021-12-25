@@ -1,6 +1,4 @@
-import React, { useCallback } from "react";
 import { definitions, supabaseClient } from "src/supabase";
-import { useSubscription } from "src/utility";
 import { generateRandomAvatarUrl } from "./avatar";
 
 export type IProfile = {
@@ -120,29 +118,4 @@ const subscribe = (
 export const profileDataAccess = {
   subscribe,
   update,
-};
-
-export const ProfileContext = React.createContext<IProfile | null>(null);
-
-export const useProfileContext = () => {
-  const profile = React.useContext(ProfileContext);
-
-  if (profile) {
-    return profile;
-  }
-
-  throw new Error("Profile is null");
-};
-
-export const useProfileState = ({ userId }: { userId: string }) => {
-  const subscribeCallback = useCallback(
-    (emit: Parameters<typeof subscribe>[1]) => subscribe({ userId }, emit),
-    [userId]
-  );
-
-  const profileState = useSubscription(subscribeCallback, {
-    type: "loading",
-  });
-
-  return profileState;
 };

@@ -7,7 +7,8 @@ import {
   parseAvatarUrl,
   toAvatarUrl,
 } from "./avatar";
-import { profileDataAccess, useProfileContext } from "./profile";
+import { profileDataAccess } from "./profile";
+import { useProfileContext } from "./ProfileContext";
 
 const useAvatarEdit = () => {
   const profile = useProfileContext();
