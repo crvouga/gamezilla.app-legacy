@@ -12,6 +12,198 @@ export interface paths {
       };
     };
   };
+  "/message_recipients": {
+    get: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.message_recipients.id"];
+          message_id?: parameters["rowFilter.message_recipients.message_id"];
+          recipient_id?: parameters["rowFilter.message_recipients.recipient_id"];
+          /** Filtering Columns */
+          select?: parameters["select"];
+          /** Ordering */
+          order?: parameters["order"];
+          /** Limiting and Pagination */
+          offset?: parameters["offset"];
+          /** Limiting and Pagination */
+          limit?: parameters["limit"];
+        };
+        header: {
+          /** Limiting and Pagination */
+          Range?: parameters["range"];
+          /** Limiting and Pagination */
+          "Range-Unit"?: parameters["rangeUnit"];
+          /** Preference */
+          Prefer?: parameters["preferCount"];
+        };
+      };
+      responses: {
+        /** OK */
+        200: {
+          schema: definitions["message_recipients"][];
+        };
+        /** Partial Content */
+        206: unknown;
+      };
+    };
+    post: {
+      parameters: {
+        body: {
+          /** message_recipients */
+          message_recipients?: definitions["message_recipients"];
+        };
+        query: {
+          /** Filtering Columns */
+          select?: parameters["select"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** Created */
+        201: unknown;
+      };
+    };
+    delete: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.message_recipients.id"];
+          message_id?: parameters["rowFilter.message_recipients.message_id"];
+          recipient_id?: parameters["rowFilter.message_recipients.recipient_id"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+    patch: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.message_recipients.id"];
+          message_id?: parameters["rowFilter.message_recipients.message_id"];
+          recipient_id?: parameters["rowFilter.message_recipients.recipient_id"];
+        };
+        body: {
+          /** message_recipients */
+          message_recipients?: definitions["message_recipients"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+  };
+  "/messages": {
+    get: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.messages.id"];
+          created_at?: parameters["rowFilter.messages.created_at"];
+          creator_id?: parameters["rowFilter.messages.creator_id"];
+          type?: parameters["rowFilter.messages.type"];
+          payload?: parameters["rowFilter.messages.payload"];
+          /** Filtering Columns */
+          select?: parameters["select"];
+          /** Ordering */
+          order?: parameters["order"];
+          /** Limiting and Pagination */
+          offset?: parameters["offset"];
+          /** Limiting and Pagination */
+          limit?: parameters["limit"];
+        };
+        header: {
+          /** Limiting and Pagination */
+          Range?: parameters["range"];
+          /** Limiting and Pagination */
+          "Range-Unit"?: parameters["rangeUnit"];
+          /** Preference */
+          Prefer?: parameters["preferCount"];
+        };
+      };
+      responses: {
+        /** OK */
+        200: {
+          schema: definitions["messages"][];
+        };
+        /** Partial Content */
+        206: unknown;
+      };
+    };
+    post: {
+      parameters: {
+        body: {
+          /** messages */
+          messages?: definitions["messages"];
+        };
+        query: {
+          /** Filtering Columns */
+          select?: parameters["select"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** Created */
+        201: unknown;
+      };
+    };
+    delete: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.messages.id"];
+          created_at?: parameters["rowFilter.messages.created_at"];
+          creator_id?: parameters["rowFilter.messages.creator_id"];
+          type?: parameters["rowFilter.messages.type"];
+          payload?: parameters["rowFilter.messages.payload"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+    patch: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.messages.id"];
+          created_at?: parameters["rowFilter.messages.created_at"];
+          creator_id?: parameters["rowFilter.messages.creator_id"];
+          type?: parameters["rowFilter.messages.type"];
+          payload?: parameters["rowFilter.messages.payload"];
+        };
+        body: {
+          /** messages */
+          messages?: definitions["messages"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+  };
   "/profiles": {
     get: {
       parameters: {
@@ -108,6 +300,30 @@ export interface paths {
 }
 
 export interface definitions {
+  message_recipients: {
+    /**
+     * Note:
+     * This is a Primary Key.<pk/>
+     */
+    id: string;
+    /**
+     * Note:
+     * This is a Foreign Key to `messages.id`.<fk table='messages' column='id'/>
+     */
+    message_id: string;
+    recipient_id: string;
+  };
+  messages: {
+    /**
+     * Note:
+     * This is a Primary Key.<pk/>
+     */
+    id: string;
+    created_at: string;
+    creator_id: string;
+    type: "TEXT" | "GAME_INVITE";
+    payload: string;
+  };
   profiles: {
     /**
      * Note:
@@ -140,6 +356,18 @@ export interface parameters {
   offset: string;
   /** Limiting and Pagination */
   limit: string;
+  /** message_recipients */
+  "body.message_recipients": definitions["message_recipients"];
+  "rowFilter.message_recipients.id": string;
+  "rowFilter.message_recipients.message_id": string;
+  "rowFilter.message_recipients.recipient_id": string;
+  /** messages */
+  "body.messages": definitions["messages"];
+  "rowFilter.messages.id": string;
+  "rowFilter.messages.created_at": string;
+  "rowFilter.messages.creator_id": string;
+  "rowFilter.messages.type": string;
+  "rowFilter.messages.payload": string;
   /** profiles */
   "body.profiles": definitions["profiles"];
   "rowFilter.profiles.id": string;

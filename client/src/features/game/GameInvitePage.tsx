@@ -12,10 +12,12 @@ import {
   Toolbar,
 } from "@mui/material";
 import React, { useState } from "react";
-import { useQuery } from "react-query";
+import { useQuery, useMutation } from "react-query";
 import { useNavigate } from "react-router-dom";
 import { definitions, supabaseClient } from "src/supabase";
-
+import { sendMessage } from "../chat";
+import { useLoginSession } from "../LoginSession";
+import { LoadingDialog } from "src/components/LoadingDialog";
 type IUser = {
   id: string;
   avatarUrl?: string;
@@ -48,6 +50,19 @@ export const GameInvitePage = () => {
     navigate(-1);
   };
 
+  const { profile } = useLoginSession();
+
+  const mutation = useMutation({
+    mutationFn: ({ userId }: { userId: string }) => {
+      return sendMessage({
+        type: "GAME_INVITE",
+        creatorId: profile.userId,
+        recipientIds: [userId],
+        gameId: "test",
+      });
+    },
+  });
+
   const [searchText, setSearchText] = useState("");
 
   const query = useQuery(["search", "users", searchText], () =>
@@ -56,6 +71,11 @@ export const GameInvitePage = () => {
 
   return (
     <>
+      <LoadingDialog
+        title="Sending Invite"
+        open={mutation.status === "loading"}
+      />
+
       <AppBar position="sticky">
         <Toolbar sx={{ alignItems: "center" }}>
           <IconButton edge="start" onClick={handleBack}>
@@ -90,7 +110,12 @@ export const GameInvitePage = () => {
         {query.status === "success" && (
           <>
             {query.data.map((result) => (
-              <ListItem button divider key={result.id}>
+              <ListItem
+                button
+                divider
+                key={result.id}
+                onClick={() => mutation.mutate({ userId: result.id })}
+              >
                 <ListItemAvatar>
                   <Avatar src={result.avatarUrl} />
                 </ListItemAvatar>
