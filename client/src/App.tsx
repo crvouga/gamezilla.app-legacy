@@ -52,7 +52,7 @@ export const App = () => {
   return (
     <Container maxWidth="xs" disableGutters>
       {authState.type === "loading" && (
-        <LoadingDialog open title="Loading Login" />
+        <LoadingDialog open title="Checking Login" />
       )}
 
       {authState.type === "logged-out" && <SignInPage />}
