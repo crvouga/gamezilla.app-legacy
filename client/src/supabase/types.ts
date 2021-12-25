@@ -111,7 +111,7 @@ export interface paths {
         query: {
           id?: parameters["rowFilter.messages.id"];
           created_at?: parameters["rowFilter.messages.created_at"];
-          creator_id?: parameters["rowFilter.messages.creator_id"];
+          sender_id?: parameters["rowFilter.messages.sender_id"];
           type?: parameters["rowFilter.messages.type"];
           payload?: parameters["rowFilter.messages.payload"];
           /** Filtering Columns */
@@ -166,7 +166,7 @@ export interface paths {
         query: {
           id?: parameters["rowFilter.messages.id"];
           created_at?: parameters["rowFilter.messages.created_at"];
-          creator_id?: parameters["rowFilter.messages.creator_id"];
+          sender_id?: parameters["rowFilter.messages.sender_id"];
           type?: parameters["rowFilter.messages.type"];
           payload?: parameters["rowFilter.messages.payload"];
         };
@@ -185,7 +185,7 @@ export interface paths {
         query: {
           id?: parameters["rowFilter.messages.id"];
           created_at?: parameters["rowFilter.messages.created_at"];
-          creator_id?: parameters["rowFilter.messages.creator_id"];
+          sender_id?: parameters["rowFilter.messages.sender_id"];
           type?: parameters["rowFilter.messages.type"];
           payload?: parameters["rowFilter.messages.payload"];
         };
@@ -320,7 +320,7 @@ export interface definitions {
      */
     id: string;
     created_at: string;
-    creator_id: string;
+    sender_id: string;
     type: "TEXT" | "GAME_INVITE";
     payload: string;
   };
@@ -365,7 +365,7 @@ export interface parameters {
   "body.messages": definitions["messages"];
   "rowFilter.messages.id": string;
   "rowFilter.messages.created_at": string;
-  "rowFilter.messages.creator_id": string;
+  "rowFilter.messages.sender_id": string;
   "rowFilter.messages.type": string;
   "rowFilter.messages.payload": string;
   /** profiles */
