@@ -9,7 +9,7 @@ import {
   GameInvitePage,
   GamePage,
   HomePage,
-  ProfileContextProvider,
+  LoginSessionProvider,
   profileDataAccess,
   ProfileEditPage,
   SignInPage,
@@ -35,7 +35,11 @@ const LoggedInApp = ({ userId }: { userId: string }) => {
       )}
 
       {profileState.type === "loaded" && (
-        <ProfileContextProvider profile={profileState.profile}>
+        <LoginSessionProvider
+          loginSession={{
+            profile: profileState.profile,
+          }}
+        >
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/game/:id" element={<GamePage />} />
@@ -46,7 +50,7 @@ const LoggedInApp = ({ userId }: { userId: string }) => {
             <Route path="/sign-out" element={<SignOutPage />} />
             <Route path="/avatar/*" element={<AvatarPage />} />
           </Routes>
-        </ProfileContextProvider>
+        </LoginSessionProvider>
       )}
     </>
   );

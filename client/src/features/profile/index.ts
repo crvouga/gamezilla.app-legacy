@@ -4,5 +4,5 @@ export * from "./AvatarEditContext";
 export * from "./AvatarEditMainPage";
 export * from "./AvatarPage";
 export * from "./profile";
-export * from "./ProfileContext";
+export * from "../LoginSession";
 export * from "./ProfileEditPage";

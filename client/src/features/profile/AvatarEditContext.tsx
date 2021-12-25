@@ -1,6 +1,7 @@
 import constate from "constate";
 import { useState } from "react";
 import { useMutation } from "react-query";
+import { useLoginSession } from "../LoginSession";
 import {
   IAvatarSeed,
   IAvatarStyle,
@@ -8,10 +9,9 @@ import {
   toAvatarUrl,
 } from "./avatar";
 import { profileDataAccess } from "./profile";
-import { useProfileContext } from "./ProfileContext";
 
 const useAvatarEdit = () => {
-  const profile = useProfileContext();
+  const { profile } = useLoginSession();
   const parsed = parseAvatarUrl(profile.avatarUrl);
   const [avatarSeed, setAvatarSeed] = useState<IAvatarSeed>(parsed.avatarSeed);
   const [avatarStyle, setAvatarStyle] = useState<IAvatarStyle>(
