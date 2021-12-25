@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ProfileContextAvatar } from "src/components/ProfileContextAvatar";
+import { LoginSessionAvatar } from "src/components/LoginSessionAvatar";
 
 export const HomePage = () => {
   const navigate = useNavigate();
@@ -29,7 +29,7 @@ export const HomePage = () => {
             Home
           </Typography>
           <Link to="/account">
-            <ProfileContextAvatar />
+            <LoginSessionAvatar />
           </Link>
         </Toolbar>
       </AppBar>

@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import React from "react";
 import { Link } from "react-router-dom";
-import { ProfileContextAvatar } from "src/components/ProfileContextAvatar";
+import { LoginSessionAvatar } from "src/components/LoginSessionAvatar";
 
 export const AccountPage = () => {
   return (
@@ -32,7 +32,7 @@ export const AccountPage = () => {
         <Link to="/profile/edit">
           <ListItem button divider>
             <ListItemIcon>
-              <ProfileContextAvatar sx={{ width: "24px", height: "24px" }} />
+              <LoginSessionAvatar sx={{ width: "24px", height: "24px" }} />
             </ListItemIcon>
             <ListItemText primary="Edit Profile" />
             <ListItemSecondaryAction>
