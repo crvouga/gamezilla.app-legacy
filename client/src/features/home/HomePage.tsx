@@ -1,4 +1,4 @@
-import { ChevronRight, Gamepad } from "@mui/icons-material";
+import { Chat, ChevronRight, Gamepad } from "@mui/icons-material";
 import {
   AppBar,
   List,
@@ -44,6 +44,18 @@ export const HomePage = () => {
             <ChevronRight />
           </ListItemSecondaryAction>
         </ListItem>
+
+        <Link to="/chat">
+          <ListItem button divider>
+            <ListItemIcon>
+              <Chat />
+            </ListItemIcon>
+            <ListItemText primary="Chat" />
+            <ListItemSecondaryAction>
+              <ChevronRight />
+            </ListItemSecondaryAction>
+          </ListItem>
+        </Link>
       </List>
     </>
   );
