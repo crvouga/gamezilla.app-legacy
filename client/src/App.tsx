@@ -14,6 +14,7 @@ import {
   ProfileEditPage,
   SignInPage,
   SignOutPage,
+  ChatPage,
 } from "src/features";
 import { useSubscription } from "./utility";
 
@@ -42,6 +43,7 @@ const LoggedInApp = ({ userId }: { userId: string }) => {
         >
           <Routes>
             <Route path="/" element={<HomePage />} />
+            <Route path="/chat" element={<ChatPage />} />
             <Route path="/game/:id" element={<GamePage />} />
             <Route path="/game/:id/invite" element={<GameInvitePage />} />
             <Route path="/profile/edit" element={<ProfileEditPage />} />

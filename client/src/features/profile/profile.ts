@@ -13,7 +13,7 @@ const fetch = async ({
   userId: string;
 }): Promise<IProfile | null> => {
   const response = await supabaseClient
-    .from<definitions["profiles"]>("profiles")
+    .from<definitions["profile"]>("profile")
     .select("*")
     .eq("id", userId)
     .single();
@@ -30,7 +30,7 @@ const fetch = async ({
 };
 
 const create = async ({ userId }: { userId: string }) => {
-  await supabaseClient.from<definitions["profiles"]>("profiles").insert({
+  await supabaseClient.from<definitions["profile"]>("profile").insert({
     id: userId,
     avatar_url: generateRandomAvatarUrl(),
   });
@@ -58,7 +58,7 @@ const update = async ({
   avatarUrl?: string;
 }) => {
   await supabaseClient
-    .from<definitions["profiles"]>("profiles")
+    .from<definitions["profile"]>("profile")
     .update({
       display_name: displayName,
       avatar_url: avatarUrl,
@@ -97,7 +97,7 @@ const subscribe = (
   });
 
   const response = supabaseClient
-    .from<definitions["profiles"]>(`profiles:id=eq.${userId}`)
+    .from<definitions["profile"]>(`profile:id=eq.${userId}`)
     .on("*", (payload) => {
       emit({
         type: "loaded",

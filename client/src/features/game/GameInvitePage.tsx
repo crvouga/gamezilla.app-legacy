@@ -30,7 +30,7 @@ const searchUsers = async ({
   searchText: string;
 }): Promise<IUser[]> => {
   const response = await supabaseClient
-    .from<definitions["profiles"]>("profiles")
+    .from<definitions["profile"]>("profile")
     .select("*")
     .ilike("display_name", `%${searchText}%`);
 
@@ -57,7 +57,7 @@ export const GameInvitePage = () => {
       return sendMessage({
         type: "GAME_INVITE",
         senderId: profile.userId,
-        recipientIds: [userId],
+        recipientId: userId,
         gameId: "test",
       });
     },
