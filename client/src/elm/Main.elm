@@ -117,8 +117,8 @@ initialModel flags =
         ]
     , direction = East
     , boundary =
-        { x = 12
-        , y = 12
+        { x = 18
+        , y = 18
         }
     }
 
@@ -128,6 +128,11 @@ cartesian2 xs ys =
     List.concatMap
         (\x -> List.map (\y -> ( x, y )) ys)
         xs
+
+
+partition : (x -> Bool) -> List x -> ( List x, List x )
+partition predicate xs =
+    ( List.filter predicate xs, List.filter (\x -> not (predicate x)) xs )
 
 
 init : Flags -> ( Model, Cmd Msg )
@@ -252,10 +257,10 @@ view model =
                     ]
                 )
             , div [ class "flex" ]
-                [ button [ class "w-full h-full p-4", onClick (SnakeTurned West) ] [ text "West" ]
-                , button [ class "w-full h-full p-4", onClick (SnakeTurned East) ] [ text "East" ]
-                , button [ class "w-full h-full p-4", onClick (SnakeTurned North) ] [ text "North" ]
-                , button [ class "w-full h-full p-4", onClick (SnakeTurned South) ] [ text "South" ]
+                [ viewButton [ class "mr-2", onClick (SnakeTurned West) ] [ text "West" ]
+                , viewButton [ class "mr-2", onClick (SnakeTurned East) ] [ text "East" ]
+                , viewButton [ class "mr-2", onClick (SnakeTurned North) ] [ text "North" ]
+                , viewButton [ onClick (SnakeTurned South) ] [ text "South" ]
                 ]
             ]
         ]
@@ -295,8 +300,8 @@ update msg model =
                             List.take model.tailLength (model.head :: model.tail)
                     }
 
-                applesEaten =
-                    List.filter
+                ( eaten, nonEaten ) =
+                    partition
                         (\apple ->
                             apple.x
                                 == nextModel.head.x
@@ -305,13 +310,16 @@ update msg model =
                         )
                         nextModel.apples
             in
-            if List.length applesEaten == 0 then
+            if List.length eaten == 0 then
                 ( nextModel
                 , Cmd.none
                 )
 
             else
-                ( nextModel
+                ( { nextModel
+                    | apples = nonEaten
+                    , tailLength = (nextModel.tailLength + List.length eaten) * 3
+                  }
                 , Cmd.none
                 )
 
@@ -322,4 +330,4 @@ update msg model =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Time.every (1000 / 3) (\posfix -> SnakeMoved)
+    Time.every (1000 / 4) (\posfix -> SnakeMoved)
