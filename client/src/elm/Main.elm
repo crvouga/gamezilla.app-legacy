@@ -46,8 +46,14 @@ add a b =
     }
 
 
+type State
+    = Paused
+    | Playing
+
+
 type alias Model =
-    { head : Position
+    { state : State
+    , head : Position
     , tail : List Position
     , apples : List Position
     , direction : Direction
@@ -97,7 +103,8 @@ toPositionVector direction =
 
 initialModel : Flags -> Model
 initialModel flags =
-    { tailLength = 3
+    { state = Playing
+    , tailLength = 3
     , head =
         { x = 4
         , y = 4
