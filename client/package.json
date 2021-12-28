@@ -1,11 +1,11 @@
 {
-    "name": "@aircastdev/elm-starter",
+    "name": "client",
     "version": "0.1.0",
     "private": true,
     "main": "index.html",
     "scripts": {
-        "start": "parcel serve index.html",
-        "build": "rm -rf dist && parcel build index.html"
+        "start": "parcel serve src/index.html",
+        "build": "rm -rf dist && parcel build src/index.html"
     },
     "dependencies": {
         "@tailwindcss/ui": "^0.6.2",
