@@ -7,7 +7,7 @@
     "elm:doc-preview": "npx elm-doc-preview --watch",
     "elm:elm-review": "npx elm-review -b",
     "app:start": "npx parcel src/index.html",
-    "build": "npx parcel build src/index.html --public-url ./",
+    "build": "npm run css:build && npx parcel build src/index.html --public-url ./",
     "css:build": "npx tailwindcss -i src/css/style.css -o src/style.css",
     "css:prod": "NODE_ENV=production npm run css:build",
     "css:watch": "SAFELISTING=true npx tailwindcss -i src/css/style.css -o src/style.css --watch"
