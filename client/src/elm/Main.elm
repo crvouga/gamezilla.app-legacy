@@ -237,8 +237,7 @@ view model =
                 [ h6 [ class "text-xl font-bold flex-1" ] [ text "Home" ]
                 ]
             , svg
-                [ class "relative flex flex-col w-full"
-                , width "100%"
+                [ width "100%"
                 , viewBox
                     (String.join
                         ", "
