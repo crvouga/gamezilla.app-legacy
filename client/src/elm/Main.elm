@@ -56,10 +56,10 @@ viewCount count =
 
 view : Model -> Document Msg
 view model =
-    Document "Gamezilla"
+    Document "Home"
         [ container []
             [ nav [ class "p-2 flex" ]
-                [ h6 [ class "text-xl font-bold flex-1" ] [ text "Avatar" ]
+                [ h6 [ class "text-xl font-bold flex-1" ] [ text "Home" ]
                 ]
             , typography [] [ viewCount model.count ]
             , div
