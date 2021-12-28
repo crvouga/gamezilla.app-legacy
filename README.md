@@ -1,3 +1,1 @@
 # gamezilla.app
-
-s
