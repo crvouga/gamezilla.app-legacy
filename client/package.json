@@ -6,7 +6,7 @@
     "start": "npm run css:build && npm run app:start",
     "elm:doc-preview": "npx elm-doc-preview --watch",
     "elm:elm-review": "npx elm-review -b",
-    "app:start": "npx parcel src/index.html",
+    "app:start": "rm -rf dist && npx parcel src/index.html",
     "build": "npm run css:build && npx parcel build src/index.html --public-url ./",
     "css:build": "npx tailwindcss -i src/css/style.css -o src/style.css",
     "css:prod": "NODE_ENV=production npm run css:build",
