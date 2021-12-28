@@ -5,6 +5,8 @@ import Components exposing (container, typography, viewButton)
 import Html exposing (Html, div, h6, nav, text)
 import Html.Attributes exposing (class, classList)
 import Html.Events exposing (onClick)
+import List
+import Tuple
 
 
 
@@ -31,13 +33,23 @@ type alias Flags =
 
 type alias Model =
     { count : Int
+    , snake : List { x : Int, y : Int }
     }
 
 
 initialModel : Flags -> Model
 initialModel flags =
-    { count = 0
+    { count =
+        0
+    , snake = [ { x = 0, y = 0 }, { x = -1, y = 0 }, { x = -2, y = 0 } ]
     }
+
+
+cartesian2 : List a -> List b -> List ( a, b )
+cartesian2 xs ys =
+    List.concatMap
+        (\x -> List.map (\y -> ( x, y )) ys)
+        xs
 
 
 init : Flags -> ( Model, Cmd Msg )
@@ -63,10 +75,34 @@ view model =
                 ]
             , typography [] [ viewCount model.count ]
             , div
-                [ class "flex justify-center items-center w-full" ]
-                [ viewButton [ class "mr-2", onClick Increment ] [ text "+" ]
-                , viewButton [ onClick Decrement ] [ text "-" ]
+                [ class "flex justify-center items-center w-full"
                 ]
+                [ viewButton
+                    [ class "mr-2"
+                    , onClick Increment
+                    ]
+                    [ text "+"
+                    ]
+                , viewButton
+                    [ onClick Decrement
+                    ]
+                    [ text "-"
+                    ]
+                ]
+            , div
+                [ class "relative flex flex-col w-full"
+                ]
+                (List.map
+                    (\( x, y ) ->
+                        div
+                            [ class "absolute" ]
+                            [ text ("(" ++ String.fromInt x ++ ", " ++ String.fromInt y ++ ")") ]
+                    )
+                    (cartesian2
+                        (List.range 0 10)
+                        (List.range 0 10)
+                    )
+                )
             ]
         ]
 
