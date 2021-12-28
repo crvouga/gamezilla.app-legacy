@@ -1,9 +1,9 @@
 module Main exposing (main)
 
-import Browser
-import Components
-import Html
-import Html.Attributes exposing (class)
+import Browser exposing (Document)
+import Components exposing (container, typography, viewButton)
+import Html exposing (Html, div, h6, nav, text)
+import Html.Attributes exposing (class, classList)
 import Html.Events exposing (onClick)
 import List
 
@@ -50,15 +50,23 @@ init flags =
 -- VIEW
 
 
-view : Model -> Browser.Document Msg
+viewCount : Int -> Html msg
+viewCount count =
+    text ("Count " ++ String.fromInt count)
+
+
+view : Model -> Document Msg
 view model =
-    Browser.Document "Gamezilla"
-        [ Components.container { maxWidth = Components.XS }
-            [ Components.typography { variant = Components.Header1 } ("Count " ++ String.fromInt model.count)
-            , Html.div
+    Document "Gamezilla"
+        [ container []
+            [ nav [ class "p-2 flex" ]
+                [ h6 [ class "text-xl font-bold flex-1" ] [ text "Avatar" ]
+                ]
+            , typography [] [ viewCount model.count ]
+            , div
                 [ class "flex justify-center items-center w-full" ]
-                [ Components.button { text = "+", class = "mr-2", onClick = Increment }
-                , Components.button { text = "-", class = "", onClick = Decrement }
+                [ viewButton [ class "mr-2", onClick Increment ] [ text "+" ]
+                , viewButton [ onClick Decrement ] [ text "-" ]
                 ]
             ]
         ]
