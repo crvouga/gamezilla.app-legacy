@@ -23,5 +23,4 @@ module.exports = {
         margin: ({ after }) => after(["first"]),
         fontWeight: ({ after }) => after(["dark"]),
     },
-    plugins: [require("@tailwindcss/ui")],
 };
