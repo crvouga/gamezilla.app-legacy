@@ -95,7 +95,7 @@ view model =
                 (List.map
                     (\( x, y ) ->
                         div
-                            [ class "absolute" ]
+                            []
                             [ text ("(" ++ String.fromInt x ++ ", " ++ String.fromInt y ++ ")") ]
                     )
                     (cartesian2
