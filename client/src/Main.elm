@@ -5,7 +5,6 @@ import Components exposing (container, typography, viewButton)
 import Html exposing (Html, div, h6, nav, text)
 import Html.Attributes exposing (class, classList)
 import Html.Events exposing (onClick)
-import List
 
 
 
