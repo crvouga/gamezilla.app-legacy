@@ -3,6 +3,7 @@
     "version": "0.1.0",
     "private": true,
     "main": "index.html",
+    "license": "",
     "scripts": {
         "start": "parcel serve src/index.html",
         "build": "rm -rf dist && parcel build src/index.html"
@@ -14,6 +15,7 @@
     "devDependencies": {
         "@types/node": "^14.14.6",
         "autoprefixer": "^9.8.6",
+        "elm": "^0.19.1-5",
         "elm-hot": "^1.1.5",
         "node-elm-compiler": "^5.0.5",
         "parcel": "^1.12.4",
