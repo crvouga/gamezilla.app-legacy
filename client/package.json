@@ -1,31 +1,38 @@
 {
-    "name": "client",
-    "version": "0.1.0",
-    "private": true,
-    "license": "",
-    "scripts": {
-        "start": "parcel serve src/index.html",
-        "build": "rm -rf dist && parcel build src/index.html"
-    },
-    "devDependencies": {
-        "@parcel/transformer-elm": "2.0.2-nightly.2576",
-        "@types/node": "^14.14.6",
-        "autoprefixer": "^9.8.6",
-        "elm": "^0.19.1-5",
-        "elm-hot": "^1.1.5",
-        "node-elm-compiler": "^5.0.5",
-        "parcel": "^2.0.0-nightly.952",
-        "postcss": "^8.4.5",
-        "postcss-cli": "^8.1.0",
-        "prettier": "^2.1.2",
-        "tailwindcss": "^3.0.7",
-        "typescript": "^4.0.5"
-    },
-    "browserslist": [
-        "last 3 and_chr versions",
-        "last 3 chrome versions",
-        "last 3 opera versions",
-        "last 3 ios_saf versions",
-        "last 3 safari versions"
-    ]
+  "name": "elm-tailwindcss-parcel-starter",
+  "version": "1.0.0",
+  "description": "a quick starter for simple elm project with parcel, tailwindcss and parcel",
+  "scripts": {
+    "start": "npm run css:build && run-pty % npm run css:watch % npm run app:start % npx elm-doc-preview -b % npx elm-review --watch",
+    "app:start": "npx parcel src/index.html",
+    "build": "npx parcel build src/index.html --public-url ./",
+    "css:build": "npx tailwindcss -i src/css/style.css -o src/style.css",
+    "css:prod": "NODE_ENV=production npm run css:build",
+    "css:watch": "SAFELISTING=true npx tailwindcss -i src/css/style.css -o src/style.css --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/leojpod/elm-tailwindcss-parcel-starter.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/leojpod/elm-tailwindcss-parcel-starter/issues"
+  },
+  "homepage": "https://github.com/leojpod/elm-tailwindcss-parcel-starter#readme",
+  "dependencies": {
+    "elm": "^0.19.1-3"
+  },
+  "devDependencies": {
+    "@parcel/transformer-elm": "^2.0.1",
+    "@typescript-eslint/eslint-plugin": "^5.7.0",
+    "@typescript-eslint/parser": "^5.7.0",
+    "concurrently": "^6.5.1",
+    "elm-doc-preview": "^5.0.5",
+    "elm-review": "^2.6.1",
+    "eslint": "^7.7.0",
+    "eslint-config-standard": "^14.1.1",
+    "parcel": "^2.0.1",
+    "tailwindcss": "^3.0.5"
+  }
 }

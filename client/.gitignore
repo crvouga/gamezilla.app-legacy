@@ -1,6 +1,21 @@
-/node_modules
-/elm-stuff
-/.cache
-/dist
-yarn-error.log
-/.parcel-cache
+# elm-package generated files
+elm-stuff
+# elm-repl generated files
+repl-temp-*
+
+
+# node stuff
+node_modules/
+yarn.lock
+
+
+# parcel stuff
+.cache/
+
+dist/
+
+# tailwindcss temporary file
+src/style.css
+.DS_Store
+.parcel-cache/
+.vim/
