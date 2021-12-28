@@ -16,7 +16,7 @@ viewButton attrs html =
 container : List (Attribute msg) -> List (Html msg) -> Html msg
 container attrs html =
     div
-        ([ class "m-auto max-w-sm flex flex-col justify-center items-center" ] ++ attrs)
+        ([ class "m-auto max-w-md flex flex-col justify-center items-center" ] ++ attrs)
         html
 
 

@@ -6,6 +6,8 @@ import Html exposing (Html, div, h6, nav, text)
 import Html.Attributes exposing (class, classList)
 import Html.Events exposing (onClick)
 import List
+import Svg exposing (rect, svg)
+import Svg.Attributes exposing (fill, height, viewBox, width, x, y)
 import Tuple
 
 
@@ -57,6 +59,16 @@ init flags =
     ( initialModel flags, Cmd.none )
 
 
+positions : List { x : Int, y : Int }
+positions =
+    List.map
+        (\( x, y ) -> { x = x, y = y })
+        (cartesian2
+            (List.range 0 10)
+            (List.range 0 10)
+        )
+
+
 
 -- VIEW
 
@@ -64,6 +76,40 @@ init flags =
 viewCount : Int -> Html msg
 viewCount count =
     text ("Count " ++ String.fromInt count)
+
+
+isEven : Int -> Bool
+isEven n =
+    modBy 2 n == 0
+
+
+isOdd : Int -> Bool
+isOdd n =
+    not (isEven n)
+
+
+type TileColor
+    = Light
+    | Dark
+
+
+toTileColor : { x : Int, y : Int } -> TileColor
+toTileColor { x, y } =
+    if (isEven x && isEven y) || (isOdd x && isOdd y) then
+        Dark
+
+    else
+        Light
+
+
+toColor : TileColor -> String
+toColor tileColor =
+    case tileColor of
+        Dark ->
+            "#A3D048"
+
+        Light ->
+            "#AAD751"
 
 
 view : Model -> Document Msg
@@ -89,19 +135,24 @@ view model =
                     [ text "-"
                     ]
                 ]
-            , div
+            , svg
                 [ class "relative flex flex-col w-full"
+                , width "100%"
+                , viewBox
+                    "0 0 10 10"
                 ]
                 (List.map
-                    (\( x, y ) ->
-                        div
+                    (\position ->
+                        rect
+                            [ x (String.fromInt position.x)
+                            , y (String.fromInt position.y)
+                            , width "1"
+                            , height "1"
+                            , fill (toColor (toTileColor position))
+                            ]
                             []
-                            [ text ("(" ++ String.fromInt x ++ ", " ++ String.fromInt y ++ ")") ]
                     )
-                    (cartesian2
-                        (List.range 0 10)
-                        (List.range 0 10)
-                    )
+                    positions
                 )
             ]
         ]
