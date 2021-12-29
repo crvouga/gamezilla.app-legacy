@@ -1,7 +1,7 @@
 module Position exposing (..)
 
 import List exposing (map, range)
-import Utility exposing (cartesian2, cartesianProduct)
+import Utility exposing (cartesian2)
 
 
 type alias Position =
