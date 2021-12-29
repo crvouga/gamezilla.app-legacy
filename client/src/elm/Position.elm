@@ -15,6 +15,13 @@ add a b =
     }
 
 
+subtract : Position -> Position -> Position
+subtract a b =
+    { x = a.x - b.x
+    , y = a.y - b.y
+    }
+
+
 equals : Position -> Position -> Bool
 equals a b =
     a.x == b.x && a.y == b.y
