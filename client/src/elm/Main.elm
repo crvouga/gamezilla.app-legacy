@@ -11,6 +11,7 @@ import Position exposing (Position)
 import Set exposing (Set)
 import Svg exposing (g, rect, svg)
 import Svg.Attributes exposing (fill, height, viewBox, width, x, y)
+import Svg.Events
 import Time
 import Utility exposing (isEven, isOdd)
 
@@ -167,6 +168,19 @@ view model =
                     , List.map viewPositionApple model.apples
                     , [ viewPositionSnake model.head ]
                     , List.map viewPositionSnake model.tail
+                    , List.map
+                        (\position ->
+                            rect
+                                [ x (String.fromInt position.x)
+                                , y (String.fromInt position.y)
+                                , width "1"
+                                , height "1"
+                                , fill "transparent"
+                                , Svg.Events.onClick (BoardClicked position)
+                                ]
+                                []
+                        )
+                        (Position.all model.boundary)
                     ]
                 )
             , div [ class "flex" ]
@@ -186,20 +200,62 @@ view model =
 type Msg
     = SnakeMoved
     | SnakeTurned Direction
+    | BoardClicked Position
+
+
+updateDirection : Direction -> Model -> Model
+updateDirection direction model =
+    if model.direction == Direction.opposite direction then
+        model
+
+    else
+        { model
+            | direction = direction
+        }
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        SnakeTurned direction ->
-            ( { model
-                | direction =
-                    if model.direction == Direction.opposite direction then
-                        model.direction
+        BoardClicked clickedPosition ->
+            let
+                delta =
+                    Position.subtract clickedPosition model.head
+
+                xDirection =
+                    if delta.x < 0 then
+                        Direction.West
 
                     else
-                        direction
-              }
+                        Direction.East
+
+                yDirection =
+                    if delta.y < 0 then
+                        Direction.North
+
+                    else
+                        Direction.South
+
+                nextDirection =
+                    case model.direction of
+                        Direction.East ->
+                            yDirection
+
+                        Direction.West ->
+                            yDirection
+
+                        Direction.North ->
+                            xDirection
+
+                        Direction.South ->
+                            xDirection
+            in
+            ( updateDirection nextDirection model
+            , Cmd.none
+            )
+
+        SnakeTurned direction ->
+            ( updateDirection direction model
             , Cmd.none
             )
 
