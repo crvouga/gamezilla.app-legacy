@@ -8,6 +8,7 @@ import Html.Attributes exposing (class, classList)
 import Html.Events exposing (onClick)
 import List
 import Position exposing (Position)
+import Random
 import Set exposing (Set)
 import Svg exposing (g, rect, svg)
 import Svg.Attributes exposing (fill, height, viewBox, width, x, y)
@@ -76,6 +77,135 @@ init flags =
 
 
 
+-- UPDATE
+
+
+type Msg
+    = SnakeMoved
+    | BoardClicked Position
+    | ToggleState
+    | SpawnApple
+
+
+updateDirection : Direction -> Model -> Model
+updateDirection direction model =
+    if model.direction == Direction.opposite direction then
+        model
+
+    else
+        { model
+            | direction = direction
+        }
+
+
+update : Msg -> Model -> ( Model, Cmd Msg )
+update msg model =
+    case msg of
+        SpawnApple ->
+            ( model
+            , Cmd.none
+            )
+
+        ToggleState ->
+            ( { model
+                | state =
+                    if model.state == Playing then
+                        Idle
+
+                    else
+                        Playing
+              }
+            , Cmd.none
+            )
+
+        BoardClicked clickedPosition ->
+            let
+                delta =
+                    Position.subtract clickedPosition model.head
+
+                xDirection =
+                    if delta.x < 0 then
+                        Direction.West
+
+                    else
+                        Direction.East
+
+                yDirection =
+                    if delta.y < 0 then
+                        Direction.North
+
+                    else
+                        Direction.South
+
+                nextDirection =
+                    case model.direction of
+                        Direction.East ->
+                            yDirection
+
+                        Direction.West ->
+                            yDirection
+
+                        Direction.North ->
+                            xDirection
+
+                        Direction.South ->
+                            xDirection
+            in
+            ( updateDirection nextDirection model
+            , Cmd.none
+            )
+
+        SnakeMoved ->
+            let
+                nextHead =
+                    model.head
+                        |> Position.add (Direction.vector model.direction)
+                        |> Position.circular model.boundary
+
+                nextTail =
+                    (model.head :: model.tail)
+                        |> List.take model.tailLength
+                        |> List.map (Position.circular model.boundary)
+
+                ( eaten, nonEaten ) =
+                    List.partition (Position.equals nextHead) model.apples
+
+                nextModel =
+                    { model
+                        | head = nextHead
+                        , tail = nextTail
+                        , apples = nonEaten
+                        , tailLength = model.tailLength + List.length eaten
+                    }
+
+                nextCommand =
+                    if List.length eaten > 0 then
+                        -- TODO Spawn Apple
+                        Cmd.none
+
+                    else
+                        Cmd.none
+            in
+            ( nextModel
+            , nextCommand
+            )
+
+
+
+-- SUBSCRIPTIONS
+
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    case model.state of
+        Playing ->
+            Time.every (1000 / 6) (\posfix -> SnakeMoved)
+
+        Idle ->
+            Sub.none
+
+
+
 -- VIEW
 
 
@@ -115,7 +245,7 @@ viewPositionChecker position =
         , y (String.fromInt position.y)
         , width "1"
         , height "1"
-        , fill (toColor (toChecker position))
+        , position |> toChecker |> toColor |> fill
         ]
         []
 
@@ -191,118 +321,3 @@ view model =
                 )
             ]
         ]
-
-
-
--- UPDATE
-
-
-type Msg
-    = SnakeMoved
-    | BoardClicked Position
-    | ToggleState
-
-
-updateDirection : Direction -> Model -> Model
-updateDirection direction model =
-    if model.direction == Direction.opposite direction then
-        model
-
-    else
-        { model
-            | direction = direction
-        }
-
-
-update : Msg -> Model -> ( Model, Cmd Msg )
-update msg model =
-    case msg of
-        ToggleState ->
-            ( { model
-                | state =
-                    if model.state == Playing then
-                        Idle
-
-                    else
-                        Playing
-              }
-            , Cmd.none
-            )
-
-        BoardClicked clickedPosition ->
-            let
-                delta =
-                    Position.subtract clickedPosition model.head
-
-                xDirection =
-                    if delta.x < 0 then
-                        Direction.West
-
-                    else
-                        Direction.East
-
-                yDirection =
-                    if delta.y < 0 then
-                        Direction.North
-
-                    else
-                        Direction.South
-
-                nextDirection =
-                    case model.direction of
-                        Direction.East ->
-                            yDirection
-
-                        Direction.West ->
-                            yDirection
-
-                        Direction.North ->
-                            xDirection
-
-                        Direction.South ->
-                            xDirection
-            in
-            ( updateDirection nextDirection model
-            , Cmd.none
-            )
-
-        SnakeMoved ->
-            let
-                nextHead =
-                    model.head
-                        |> Position.add (Direction.vector model.direction)
-                        |> Position.circular model.boundary
-
-                nextTail =
-                    (model.head :: model.tail)
-                        |> List.take model.tailLength
-                        |> List.map (Position.circular model.boundary)
-
-                ( eaten, nonEaten ) =
-                    List.partition (Position.equals nextHead) model.apples
-
-                nextModel =
-                    { model
-                        | head = nextHead
-                        , tail = nextTail
-                        , apples = nonEaten
-                        , tailLength = model.tailLength + List.length eaten
-                    }
-            in
-            ( nextModel
-            , Cmd.none
-            )
-
-
-
--- SUBSCRIPTIONS
-
-
-subscriptions : Model -> Sub Msg
-subscriptions model =
-    case model.state of
-        Playing ->
-            Time.every (1000 / 6) (\posfix -> SnakeMoved)
-
-        Idle ->
-            Sub.none
