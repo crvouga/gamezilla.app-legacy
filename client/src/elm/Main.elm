@@ -107,14 +107,20 @@ update msg model =
             )
 
         ToggleState ->
-            ( { model
-                | state =
+            let
+                nextState =
                     if model.state == Playing then
                         Idle
 
                     else
                         Playing
-              }
+
+                nextModel =
+                    { model
+                        | state = nextState
+                    }
+            in
+            ( nextModel
             , Cmd.none
             )
 
