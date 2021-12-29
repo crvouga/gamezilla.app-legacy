@@ -10,11 +10,6 @@ cartesian2 xs ys =
         xs
 
 
-partition : (x -> Bool) -> List x -> ( List x, List x )
-partition predicate xs =
-    ( List.filter predicate xs, List.filter (\x -> not (predicate x)) xs )
-
-
 isEven : Int -> Bool
 isEven n =
     modBy 2 n == 0
@@ -23,3 +18,18 @@ isEven n =
 isOdd : Int -> Bool
 isOdd n =
     not (isEven n)
+
+
+cartesianProduct : List (List a) -> List (List a)
+cartesianProduct ll =
+    case ll of
+        [] ->
+            [ [] ]
+
+        xs :: xss ->
+            lift2 (::) xs (cartesianProduct xss)
+
+
+lift2 : (a -> b -> c) -> List a -> List b -> List c
+lift2 f la lb =
+    la |> List.concatMap (\a -> lb |> List.concatMap (\b -> [ f a b ]))

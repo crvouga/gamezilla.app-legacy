@@ -2,15 +2,17 @@ module Main exposing (main)
 
 import Browser exposing (Document)
 import Components exposing (container, typography, viewButton)
+import Direction exposing (Direction)
 import Html exposing (Html, button, div, h6, nav, text, time)
 import Html.Attributes exposing (class, classList)
 import Html.Events exposing (onClick)
 import List
+import Position exposing (Position)
 import Set exposing (Set)
 import Svg exposing (g, rect, svg)
 import Svg.Attributes exposing (fill, height, viewBox, width, x, y)
 import Time
-import Tuple
+import Utility exposing (isEven, isOdd)
 
 
 
@@ -35,17 +37,6 @@ type alias Flags =
     ()
 
 
-type alias Position =
-    { x : Int, y : Int }
-
-
-add : Position -> Position -> Position
-add a b =
-    { x = a.x + b.x
-    , y = a.y + b.y
-    }
-
-
 type State
     = Paused
     | Playing
@@ -58,103 +49,29 @@ type alias Model =
     , apples : List Position
     , direction : Direction
     , tailLength : Int
-    , boundary : { x : Int, y : Int }
+    , boundary : Position
     }
-
-
-type Direction
-    = North
-    | South
-    | East
-    | West
-
-
-toOpposite : Direction -> Direction
-toOpposite direction =
-    case direction of
-        North ->
-            South
-
-        South ->
-            North
-
-        West ->
-            East
-
-        East ->
-            West
-
-
-toPositionVector : Direction -> { x : number, y : number }
-toPositionVector direction =
-    case direction of
-        North ->
-            { x = 0, y = -1 }
-
-        South ->
-            { x = 0, y = 1 }
-
-        East ->
-            { x = 1, y = 0 }
-
-        West ->
-            { x = -1, y = 0 }
 
 
 initialModel : Flags -> Model
 initialModel flags =
     { state = Playing
     , tailLength = 3
-    , head =
-        { x = 4
-        , y = 4
-        }
+    , head = { x = 4, y = 4 }
     , tail =
-        [ { x = 3
-          , y = 4
-          }
-        , { x = 2
-          , y = 4
-          }
+        [ { x = 3, y = 4 }
+        , { x = 2, y = 4 }
         ]
     , apples =
-        [ { x = 7
-          , y = 4
-          }
-        ]
-    , direction = East
-    , boundary =
-        { x = 18
-        , y = 18
-        }
+        [ { x = 7, y = 4 } ]
+    , direction = Direction.East
+    , boundary = { x = 18, y = 18 }
     }
-
-
-cartesian2 : List a -> List b -> List ( a, b )
-cartesian2 xs ys =
-    List.concatMap
-        (\x -> List.map (\y -> ( x, y )) ys)
-        xs
-
-
-partition : (x -> Bool) -> List x -> ( List x, List x )
-partition predicate xs =
-    ( List.filter predicate xs, List.filter (\x -> not (predicate x)) xs )
 
 
 init : Flags -> ( Model, Cmd Msg )
 init flags =
     ( initialModel flags, Cmd.none )
-
-
-allPositions : { x : Int, y : Int } -> List { x : Int, y : Int }
-allPositions boundary =
-    List.map
-        (\( x, y ) -> { x = x, y = y })
-        (cartesian2
-            (List.range 0 boundary.x)
-            (List.range 0 boundary.y)
-        )
 
 
 
@@ -164,16 +81,6 @@ allPositions boundary =
 viewCount : Int -> Html msg
 viewCount count =
     text ("Count " ++ String.fromInt count)
-
-
-isEven : Int -> Bool
-isEven n =
-    modBy 2 n == 0
-
-
-isOdd : Int -> Bool
-isOdd n =
-    not (isEven n)
 
 
 type Checker
@@ -256,17 +163,17 @@ view model =
                     )
                 ]
                 (List.concat
-                    [ List.map viewPositionChecker (allPositions model.boundary)
+                    [ List.map viewPositionChecker (Position.all model.boundary)
                     , List.map viewPositionApple model.apples
                     , [ viewPositionSnake model.head ]
                     , List.map viewPositionSnake model.tail
                     ]
                 )
             , div [ class "flex" ]
-                [ viewButton [ class "mr-2", onClick (SnakeTurned West) ] [ text "West" ]
-                , viewButton [ class "mr-2", onClick (SnakeTurned East) ] [ text "East" ]
-                , viewButton [ class "mr-2", onClick (SnakeTurned North) ] [ text "North" ]
-                , viewButton [ onClick (SnakeTurned South) ] [ text "South" ]
+                [ viewButton [ class "mr-2", onClick (SnakeTurned Direction.West) ] [ text "West" ]
+                , viewButton [ class "mr-2", onClick (SnakeTurned Direction.East) ] [ text "East" ]
+                , viewButton [ class "mr-2", onClick (SnakeTurned Direction.North) ] [ text "North" ]
+                , viewButton [ onClick (SnakeTurned Direction.South) ] [ text "South" ]
                 ]
             ]
         ]
@@ -287,7 +194,7 @@ update msg model =
         SnakeTurned direction ->
             ( { model
                 | direction =
-                    if model.direction == toOpposite direction then
+                    if model.direction == Direction.opposite direction then
                         model.direction
 
                     else
@@ -298,36 +205,30 @@ update msg model =
 
         SnakeMoved ->
             let
-                nextModel =
-                    { model
-                        | head =
-                            add model.head (toPositionVector model.direction)
-                        , tail =
-                            List.take model.tailLength (model.head :: model.tail)
-                    }
+                nextHead =
+                    model.head
+                        |> Position.add (Direction.vector model.direction)
+                        |> Position.circular model.boundary
+
+                nextTail =
+                    (model.head :: model.tail)
+                        |> List.take model.tailLength
+                        |> List.map (Position.circular model.boundary)
 
                 ( eaten, nonEaten ) =
-                    partition
-                        (\apple ->
-                            apple.x
-                                == nextModel.head.x
-                                && apple.y
-                                == nextModel.head.y
-                        )
-                        nextModel.apples
-            in
-            if List.length eaten == 0 then
-                ( nextModel
-                , Cmd.none
-                )
+                    List.partition (Position.equals nextHead) model.apples
 
-            else
-                ( { nextModel
-                    | apples = nonEaten
-                    , tailLength = (nextModel.tailLength + List.length eaten) * 3
-                  }
-                , Cmd.none
-                )
+                nextModel =
+                    { model
+                        | head = nextHead
+                        , tail = nextTail
+                        , apples = nonEaten
+                        , tailLength = model.tailLength + List.length eaten
+                    }
+            in
+            ( nextModel
+            , Cmd.none
+            )
 
 
 
@@ -336,4 +237,4 @@ update msg model =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Time.every (1000 / 4) (\posfix -> SnakeMoved)
+    Time.every (1000 / 6) (\posfix -> SnakeMoved)
