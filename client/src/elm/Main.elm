@@ -183,12 +183,6 @@ view model =
                         (Position.all model.boundary)
                     ]
                 )
-            , div [ class "flex" ]
-                [ viewButton [ class "mr-2", onClick (SnakeTurned Direction.West) ] [ text "West" ]
-                , viewButton [ class "mr-2", onClick (SnakeTurned Direction.East) ] [ text "East" ]
-                , viewButton [ class "mr-2", onClick (SnakeTurned Direction.North) ] [ text "North" ]
-                , viewButton [ onClick (SnakeTurned Direction.South) ] [ text "South" ]
-                ]
             ]
         ]
 
@@ -199,7 +193,6 @@ view model =
 
 type Msg
     = SnakeMoved
-    | SnakeTurned Direction
     | BoardClicked Position
 
 
@@ -251,11 +244,6 @@ update msg model =
                             xDirection
             in
             ( updateDirection nextDirection model
-            , Cmd.none
-            )
-
-        SnakeTurned direction ->
-            ( updateDirection direction model
             , Cmd.none
             )
 
