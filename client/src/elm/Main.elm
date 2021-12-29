@@ -209,11 +209,6 @@ subscriptions model =
 -- VIEW
 
 
-viewCount : Int -> Html msg
-viewCount count =
-    text ("Count " ++ String.fromInt count)
-
-
 type Checker
     = Light
     | Dark
@@ -238,14 +233,15 @@ toColor tileColor =
             "#AAD751"
 
 
-viewPositionChecker : Position -> Svg.Svg msg
+viewPositionChecker : Position -> Svg.Svg Msg
 viewPositionChecker position =
     rect
         [ x (String.fromInt position.x)
         , y (String.fromInt position.y)
         , width "1"
         , height "1"
-        , position |> toChecker |> toColor |> fill
+        , fill (toColor (toChecker position))
+        , Svg.Events.onClick (BoardClicked position)
         ]
         []
 
@@ -302,21 +298,7 @@ view model =
                 (List.concat
                     [ List.map viewPositionChecker (Position.all model.boundary)
                     , List.map viewPositionApple model.apples
-                    , [ viewPositionSnake model.head ]
-                    , List.map viewPositionSnake model.tail
-                    , List.map
-                        (\position ->
-                            rect
-                                [ x (String.fromInt position.x)
-                                , y (String.fromInt position.y)
-                                , width "1"
-                                , height "1"
-                                , fill "transparent"
-                                , Svg.Events.onClick (BoardClicked position)
-                                ]
-                                []
-                        )
-                        (Position.all model.boundary)
+                    , List.map viewPositionSnake (model.head :: model.tail)
                     ]
                 )
             ]
