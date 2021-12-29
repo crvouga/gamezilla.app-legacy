@@ -39,7 +39,7 @@ type alias Flags =
 
 
 type State
-    = Paused
+    = Idle
     | Playing
 
 
@@ -148,8 +148,14 @@ view : Model -> Document Msg
 view model =
     Document "Home"
         [ container []
-            [ nav [ class "p-2 flex" ]
-                [ h6 [ class "text-xl font-bold flex-1" ] [ text "Home" ]
+            [ viewButton [ class "m-2", onClick ToggleState ]
+                [ text
+                    (if model.state == Playing then
+                        "Pause"
+
+                     else
+                        "Play"
+                    )
                 ]
             , svg
                 [ width "100%"
@@ -194,6 +200,7 @@ view model =
 type Msg
     = SnakeMoved
     | BoardClicked Position
+    | ToggleState
 
 
 updateDirection : Direction -> Model -> Model
@@ -210,6 +217,18 @@ updateDirection direction model =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        ToggleState ->
+            ( { model
+                | state =
+                    if model.state == Playing then
+                        Idle
+
+                    else
+                        Playing
+              }
+            , Cmd.none
+            )
+
         BoardClicked clickedPosition ->
             let
                 delta =
@@ -281,4 +300,9 @@ update msg model =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Time.every (1000 / 6) (\posfix -> SnakeMoved)
+    case model.state of
+        Playing ->
+            Time.every (1000 / 6) (\posfix -> SnakeMoved)
+
+        Idle ->
+            Sub.none
