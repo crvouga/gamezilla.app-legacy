@@ -11,7 +11,7 @@
     "css:build": "npx tailwindcss -i src/css/main.css -o src/css/build.css",
     "build": "npm run css:build && npm run app:build",
     "elm-ts-interop:watch": "npx elm-ts-interop --output src/elm-ts-interop.d.ts --watch",
-    "elm-ts-interop:init": "npx elm-ts-interop init"
+    "elm-ts-interop:init": "npx elm-ts-interop init && cd src && mv *.elm elm"
   },
   "author": "",
   "license": "MIT",
