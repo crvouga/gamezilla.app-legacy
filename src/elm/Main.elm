@@ -10,6 +10,7 @@ import Html.Events exposing (onClick)
 import InteropDefinitions
 import InteropPorts
 import List
+import LogInMethod
 import Position exposing (Position)
 import Random
 import Set exposing (Set)
@@ -90,14 +91,9 @@ type Msg
     | BoardClicked Position
     | ToggleState
     | SpawnApple
-    | Greet
-
-
-greet : String -> Cmd msg
-greet greeting =
-    greeting
-        |> InteropDefinitions.Alert
-        |> InteropPorts.fromElm
+    | LogIn LogInMethod.LoginInMethod
+    | LoggedIn { userId : String }
+    | Noop
 
 
 updateDirection : Direction -> Model -> Model
@@ -114,8 +110,14 @@ updateDirection direction model =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        Greet ->
-            ( model, greet "Hello from Elm" )
+        LoggedIn loggedInUser ->
+            ( model, Cmd.none )
+
+        Noop ->
+            ( model, Cmd.none )
+
+        LogIn method ->
+            ( model, InteropPorts.fromElm (InteropDefinitions.LogIn method) )
 
         SpawnApple ->
             ( model
@@ -227,14 +229,31 @@ update msg model =
 -- SUBSCRIPTIONS
 
 
-subscriptions : Model -> Sub Msg
-subscriptions model =
-    case model.state of
+subscriptionsState : State -> Sub Msg
+subscriptionsState state =
+    case state of
         Playing ->
             Time.every (1000 / 6) (\posfix -> SnakeMoved)
 
         Idle ->
             Sub.none
+
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    Sub.batch
+        [ subscriptionsState model.state
+        , Sub.map
+            (\result ->
+                case result of
+                    Ok loggedInUser ->
+                        LoggedIn { userId = "HELLO" }
+
+                    Err _ ->
+                        Noop
+            )
+            InteropPorts.toElm
+        ]
 
 
 
@@ -266,9 +285,9 @@ view model =
         [ Container.view []
             [ Button.view
                 [ class "m-2"
-                , onClick Greet
+                , onClick (LogIn LogInMethod.Google)
                 ]
-                [ text model.message
+                [ text "Log In With Google"
                 ]
             , Button.view
                 [ class "m-2"

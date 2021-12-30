@@ -1,4 +1,5 @@
 import { Elm } from "../elm/Main.elm";
+import { supabaseClient } from "./supabase-client";
 
 const app = Elm.Main.init({
   node: document.body,
@@ -7,11 +8,46 @@ const app = Elm.Main.init({
   },
 });
 
-app.ports.interopFromElm.subscribe((fromElm) => {
+app.ports.interopFromElm.subscribe(async (fromElm) => {
   switch (fromElm.tag) {
-    case "alert": {
-      alert("alert from ts");
+    case "logIn": {
+      const redirectTo = window.location.href;
+      // console.log({ redirectTo });
+
+      switch (fromElm.data.method) {
+        case "Google":
+          await supabaseClient.auth.signIn({ provider: "google" }, {
+            redirectTo,
+          });
+          break;
+
+        case "Facebook":
+          console.error("Unsuppported sign in method");
+          break;
+      }
       break;
     }
+  }
+});
+
+supabaseClient.auth.onAuthStateChange((event, session) => {
+  console.log({ event, session });
+  switch (event) {
+    case "PASSWORD_RECOVERY":
+    case "SIGNED_IN":
+    case "TOKEN_REFRESHED":
+    case "USER_UPDATED":
+      const userId = session?.user?.id;
+
+      if (userId) {
+        app.ports.interopToElm.send({
+          tag: "loggedIn",
+          userId,
+        });
+      }
+      break;
+    case "SIGNED_OUT":
+    case "USER_DELETED":
+      break;
   }
 });

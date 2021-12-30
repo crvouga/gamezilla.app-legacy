@@ -22,3 +22,5 @@ dist/
 /package
 .env
 .env.*
+
+.vercel
