@@ -1,4 +1,4 @@
-module Direction exposing (..)
+module Direction exposing (Direction(..), opposite, vector)
 
 
 type Direction

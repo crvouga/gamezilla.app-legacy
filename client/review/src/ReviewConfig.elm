@@ -1,5 +1,6 @@
 module ReviewConfig exposing (config)
 
+import NoDeprecated
 import NoDebug.Log
 import NoDebug.TodoOrToString
 import NoExposingEverything
@@ -10,12 +11,21 @@ import NoUnoptimizedRecursion
 import Review.Rule exposing (Rule)
 
 
+
+
+
+import NoMissingTypeExpose
+import NoPrematureLetComputation
+
+
 elmReviewCommon : List Rule
 elmReviewCommon =
     [ NoExposingEverything.rule
     , NoImportingEverything.rule []
     , NoMissingTypeAnnotation.rule
     , NoMissingTypeAnnotationInLetIn.rule
+    , NoMissingTypeExpose.rule
+    , NoPrematureLetComputation.rule
     ]
 
 

@@ -1,4 +1,4 @@
-module Position exposing (..)
+module Position exposing (Position, add, all, circular, equals, subtract)
 
 import List exposing (map, range)
 import Utility exposing (cartesian2)

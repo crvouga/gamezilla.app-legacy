@@ -1,27 +1,19 @@
 {
-  "name": "elm-tailwindcss-parcel-starter",
+  "name": "client",
   "version": "1.0.0",
   "description": "a quick starter for simple elm project with parcel, tailwindcss and parcel",
   "scripts": {
+    "dev": "concurrently \"npm run css:watch\" \"npm run app:watch\" \"npm run elm:elm-review\"",
     "start": "npm run css:build && npm run app:start",
-    "elm:doc-preview": "npx elm-doc-preview --watch",
-    "elm:elm-review": "npx elm-review -b",
-    "app:start": "rm -rf dist && npx parcel src/index.html",
+    "elm:doc-preview": "npx elm-doc-preview",
+    "elm:elm-review": "npx elm-review --watch",
+    "app:watch": "rm -rf dist && npx parcel src/index.html",
     "build": "npm run css:build && npx parcel build src/index.html --public-url ./",
     "css:build": "npx tailwindcss -i src/css/style.css -o src/style.css",
-    "css:prod": "NODE_ENV=production npm run css:build",
     "css:watch": "SAFELISTING=true npx tailwindcss -i src/css/style.css -o src/style.css --watch"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/leojpod/elm-tailwindcss-parcel-starter.git"
   },
   "author": "",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/leojpod/elm-tailwindcss-parcel-starter/issues"
-  },
-  "homepage": "https://github.com/leojpod/elm-tailwindcss-parcel-starter#readme",
   "dependencies": {
     "elm": "^0.19.1-3"
   },

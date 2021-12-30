@@ -1,4 +1,4 @@
-module Components exposing (..)
+module Components exposing (TypographyVariant, container, typography, viewButton)
 
 import Html exposing (Attribute, Html, button, div, h1)
 import Html.Attributes exposing (class)
