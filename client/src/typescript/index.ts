@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const app = Elm.Main.init({
     node: document.querySelector("main"),
     flags: {
-      message: "hello from ts",
+      greeting: "Greetings from TS",
     },
   });
 

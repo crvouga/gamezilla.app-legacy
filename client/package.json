@@ -11,7 +11,7 @@
     "css:watch": "SAFELISTING=true npx tailwindcss -i src/css/index.css -o src/css/build.css --watch",
     "css:build": "npx tailwindcss --input src/css/index.css --output src/css/build.css",
     "build": "npm run css:build && npm run app:build",
-    "elm-ts-interop:watch": "npx elm-ts-interop --output src/typescript/elm-ts-interop.d.ts --watch",
+    "elm-ts-interop:watch": "npx elm-ts-interop --output src/typescript/generated-elm-interop.d.ts --watch",
     "elm-ts-interop:init": "npx elm-ts-interop init && cd src && mv *.elm elm",
     "preview": "npm run build && sirv dist --single index.html"
   },

@@ -1,4 +1,4 @@
-/// <reference path="./elm-ts-interop.d.ts" />
+/// <reference path="./generated-elm-interop.d.ts" />
 
 declare module "*.elm" {
   export const Elm: {
