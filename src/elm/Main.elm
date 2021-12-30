@@ -250,19 +250,31 @@ toCheckColor { x, y } =
         "#AAD751"
 
 
+viewToggleStateText : State -> String
+viewToggleStateText state =
+    case state of
+        Playing ->
+            "Pause"
+
+        Idle ->
+            "Play"
+
+
 view : Model -> Document Msg
 view model =
     Document "Gamezilla"
         [ Container.view []
-            [ Button.view [ class "m-2", onClick Greet ] [ text model.message ]
-            , Button.view [ class "m-2", onClick ToggleState ]
-                [ text
-                    (if model.state == Playing then
-                        "Pause"
-
-                     else
-                        "Play"
-                    )
+            [ Button.view
+                [ class "m-2"
+                , onClick Greet
+                ]
+                [ text model.message
+                ]
+            , Button.view
+                [ class "m-2"
+                , onClick ToggleState
+                ]
+                [ text (viewToggleStateText model.state)
                 ]
             , svg
                 [ width "100%"
