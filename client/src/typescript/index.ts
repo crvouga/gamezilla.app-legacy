@@ -10,7 +10,7 @@ const app = Elm.Main.init({
 app.ports.interopFromElm.subscribe((fromElm) => {
   switch (fromElm.tag) {
     case "alert": {
-      alert(fromElm.data.message);
+      alert("alert from ts");
       break;
     }
   }
