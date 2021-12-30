@@ -1,4 +1,6 @@
+/** @type {import("@types/tailwindcss/tailwind-config").TailwindConfig } */
 module.exports = {
+  darkMode: "media",
   content: [
     "src/css/**/*.css",
     "index.{html,ts}",
@@ -8,7 +10,6 @@ module.exports = {
   theme: {
     extend: {},
   },
-  safelist: process.env.SAFELISTING ? [{ pattern: /.*/ }] : [],
   variants: {},
   plugins: [],
 };
