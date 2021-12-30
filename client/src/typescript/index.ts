@@ -1,4 +1,4 @@
-import "../css/build.css";
+import "../css/generated.css";
 import { Elm } from "../elm/Main.elm";
 
 document.addEventListener("DOMContentLoaded", () => {

@@ -14,10 +14,8 @@ yarn.lock
 
 dist/
 
-# tailwindcss temporary file
-src/css/build.css
-
-# elm ts interop temporary file
+# generated files
+src/css/generated.css
 src/typescript/generated-elm-interop.d.ts
 
 .DS_Store
