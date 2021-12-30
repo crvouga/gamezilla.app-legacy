@@ -1,7 +1,8 @@
 module Main exposing (Flags, Model, Msg, State, main)
 
 import Browser exposing (Document)
-import Components exposing (container, typography, viewButton)
+import Button
+import Container
 import Direction exposing (Direction)
 import Html exposing (Html, button, div, h6, nav, text, time)
 import Html.Attributes exposing (class, classList)
@@ -240,73 +241,21 @@ subscriptions model =
 -- VIEW
 
 
-type Checker
-    = Light
-    | Dark
-
-
-toChecker : { x : Int, y : Int } -> Checker
-toChecker { x, y } =
+toCheckColor : Position -> String
+toCheckColor { x, y } =
     if (isEven x && isEven y) || (isOdd x && isOdd y) then
-        Dark
+        "#A3D048"
 
     else
-        Light
-
-
-toColor : Checker -> String
-toColor tileColor =
-    case tileColor of
-        Dark ->
-            "#A3D048"
-
-        Light ->
-            "#AAD751"
-
-
-viewPositionChecker : Position -> Svg.Svg Msg
-viewPositionChecker position =
-    rect
-        [ x (String.fromInt position.x)
-        , y (String.fromInt position.y)
-        , width "1"
-        , height "1"
-        , fill (toColor (toChecker position))
-        , Svg.Events.onClick (BoardClicked position)
-        ]
-        []
-
-
-viewPositionSnake : Position -> Svg.Svg msg
-viewPositionSnake position =
-    rect
-        [ x (String.fromInt position.x)
-        , y (String.fromInt position.y)
-        , width "1"
-        , height "1"
-        , fill "#4E7DF7"
-        ]
-        []
-
-
-viewPositionApple : Position -> Svg.Svg msg
-viewPositionApple position =
-    rect
-        [ x (String.fromInt position.x)
-        , y (String.fromInt position.y)
-        , width "1"
-        , height "1"
-        , fill "#E7491C"
-        ]
-        []
+        "#AAD751"
 
 
 view : Model -> Document Msg
 view model =
     Document "Gamezilla"
-        [ container []
-            [ viewButton [ class "m-2", onClick Greet ] [ text model.message ]
-            , viewButton [ class "m-2", onClick ToggleState ]
+        [ Container.view []
+            [ Button.view [ class "m-2", onClick Greet ] [ text model.message ]
+            , Button.view [ class "m-2", onClick ToggleState ]
                 [ text
                     (if model.state == Playing then
                         "Pause"
@@ -328,9 +277,48 @@ view model =
                     )
                 ]
                 (List.concat
-                    [ List.map viewPositionChecker (Position.all model.boundary)
-                    , List.map viewPositionApple model.apples
-                    , List.map viewPositionSnake (model.head :: model.tail)
+                    [ -- Checkers
+                      List.map
+                        (\position ->
+                            rect
+                                [ x (String.fromInt position.x)
+                                , y (String.fromInt position.y)
+                                , width "1"
+                                , height "1"
+                                , fill (toCheckColor position)
+                                , Svg.Events.onClick (BoardClicked position)
+                                ]
+                                []
+                        )
+                        (Position.all model.boundary)
+
+                    -- Apples
+                    , List.map
+                        (\position ->
+                            rect
+                                [ x (String.fromInt position.x)
+                                , y (String.fromInt position.y)
+                                , width "1"
+                                , height "1"
+                                , fill "#E7491C"
+                                ]
+                                []
+                        )
+                        model.apples
+
+                    -- Snake
+                    , List.map
+                        (\position ->
+                            rect
+                                [ x (String.fromInt position.x)
+                                , y (String.fromInt position.y)
+                                , width "1"
+                                , height "1"
+                                , fill "#4E7DF7"
+                                ]
+                                []
+                        )
+                        (model.head :: model.tail)
                     ]
                 )
             ]
