@@ -1,9 +1,9 @@
 import { Elm } from "../elm/Main.elm";
 
 const app = Elm.Main.init({
-  node: document.querySelector("main"),
+  node: document.body,
   flags: {
-    changed: "Greetings from TS",
+    greeting: "Greetings from TS",
   },
 });
 

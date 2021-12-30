@@ -1,6 +1,6 @@
-#
+elm-ts-interop-stuff
+tailwind-stuff
 typescript-stuff
-# elm-package generated files
 elm-stuff
 # elm-repl generated files
 repl-temp-*
@@ -15,8 +15,9 @@ yarn.lock
 dist/
 
 # generated files
-src/css/generated.css
 src/typescript/generated-elm-interop.d.ts
+
+
 
 .DS_Store
 .parcel-cache/
