@@ -1,1 +1,1 @@
-# gamezilla.app
+# gamzilla.app

@@ -1,5 +1,22 @@
+elm-ts-interop-stuff
+tailwind-stuff
+typescript-stuff
+elm-stuff
+# elm-repl generated files
+repl-temp-*
+
+# node stuff
+node_modules/
+yarn.lock
+
+# parcel stuff
+.cache/
+
+dist/
+
 .DS_Store
-node_modules
+.parcel-cache/
+.vim/
 /build
 /.svelte-kit
 /package
