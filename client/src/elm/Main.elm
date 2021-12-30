@@ -6,6 +6,8 @@ import Direction exposing (Direction)
 import Html exposing (Html, button, div, h6, nav, text, time)
 import Html.Attributes exposing (class, classList)
 import Html.Events exposing (onClick)
+import InteropDefinitions
+import InteropPorts
 import List
 import Position exposing (Position)
 import Random
@@ -85,6 +87,14 @@ type Msg
     | BoardClicked Position
     | ToggleState
     | SpawnApple
+    | Greet
+
+
+greet : String -> Cmd msg
+greet greeting =
+    greeting
+        |> InteropDefinitions.Alert
+        |> InteropPorts.fromElm
 
 
 updateDirection : Direction -> Model -> Model
@@ -101,6 +111,9 @@ updateDirection direction model =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        Greet ->
+            ( model, greet "Hello from Elm" )
+
         SpawnApple ->
             ( model
             , Cmd.none
@@ -290,7 +303,8 @@ view : Model -> Document Msg
 view model =
     Document "Home"
         [ container []
-            [ viewButton [ class "m-2", onClick ToggleState ]
+            [ viewButton [ class "m-2", onClick Greet ] [ text "Greet" ]
+            , viewButton [ class "m-2", onClick ToggleState ]
                 [ text
                     (if model.state == Playing then
                         "Pause"
