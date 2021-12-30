@@ -9,7 +9,7 @@ import List
 viewButton : List (Attribute msg) -> List (Html msg) -> Html msg
 viewButton attrs html =
     button
-        (attrs ++ [ class "focus:ring-12 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" ])
+        (attrs ++ [ class "focus:ring-12 bg-blue-700 hover:bg-blue-900 text-white font-bold py-2 px-4 rounded" ])
         html
 
 
