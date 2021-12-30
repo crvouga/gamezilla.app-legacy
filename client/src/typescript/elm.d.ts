@@ -1,3 +1,3 @@
 declare module "*.elm" {
-  export const Elm: unknown;
+  export const Elm: any;
 }

@@ -5,10 +5,10 @@
   "scripts": {
     "dev": "concurrently \"npm run css:watch\" \"npm run app:watch\" \"npm run elm:watch\"",
     "elm:watch": "npx elm-review --watch",
-    "app:watch": "rm -rf dist && npx parcel src/index.html",
-    "app:build": " npx parcel build src/index.html --public-url ./",
-    "css:watch": "SAFELISTING=true npx tailwindcss -i src/css/style.css -o src/css/build.css --watch",
-    "css:build": "npx tailwindcss -i src/css/style.css -o src/css/build.css",
+    "app:watch": "rm -rf dist && npx parcel src/main.html",
+    "app:build": " npx parcel build src/main.html --public-url ./",
+    "css:watch": "SAFELISTING=true npx tailwindcss -i src/css/main.css -o src/css/build.css --watch",
+    "css:build": "npx tailwindcss -i src/css/main.css -o src/css/build.css",
     "build": "npm run css:build && npm run app:build"
   },
   "author": "",
