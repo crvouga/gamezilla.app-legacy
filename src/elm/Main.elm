@@ -303,7 +303,7 @@ viewPositionApple position =
 
 view : Model -> Document Msg
 view model =
-    Document "Home"
+    Document "Gamezilla"
         [ container []
             [ viewButton [ class "m-2", onClick Greet ] [ text model.message ]
             , viewButton [ class "m-2", onClick ToggleState ]
