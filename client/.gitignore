@@ -3,11 +3,9 @@ elm-stuff
 # elm-repl generated files
 repl-temp-*
 
-
 # node stuff
 node_modules/
 yarn.lock
-
 
 # parcel stuff
 .cache/
@@ -16,6 +14,10 @@ dist/
 
 # tailwindcss temporary file
 src/css/build.css
+
+# elm ts interop temporary file
+src/elm-ts-interop.d.ts
+
 .DS_Store
 .parcel-cache/
 .vim/
