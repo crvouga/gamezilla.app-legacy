@@ -10,6 +10,7 @@ module.exports = {
   theme: {
     extend: {},
   },
+  safelist: process.env.SAFELISTING ? [{ pattern: /.*/ }] : [],
   variants: {},
   plugins: [],
 };
