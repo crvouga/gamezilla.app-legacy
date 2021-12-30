@@ -1,4 +1,4 @@
-module Utility exposing (..)
+module Utility exposing (cartesian2, isEven, isOdd)
 
 import List
 
@@ -18,18 +18,3 @@ isEven n =
 isOdd : Int -> Bool
 isOdd n =
     not (isEven n)
-
-
-cartesianProduct : List (List a) -> List (List a)
-cartesianProduct ll =
-    case ll of
-        [] ->
-            [ [] ]
-
-        xs :: xss ->
-            lift2 (::) xs (cartesianProduct xss)
-
-
-lift2 : (a -> b -> c) -> List a -> List b -> List c
-lift2 f la lb =
-    la |> List.concatMap (\a -> lb |> List.concatMap (\b -> [ f a b ]))

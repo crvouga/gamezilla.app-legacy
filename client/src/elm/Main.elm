@@ -1,4 +1,4 @@
-module Main exposing (main)
+module Main exposing (Flags, Model, Msg, State, main)
 
 import Browser exposing (Document)
 import Components exposing (container, typography, viewButton)
@@ -108,6 +108,7 @@ update msg model =
 
         ToggleState ->
             let
+                nextState : State
                 nextState =
                     if model.state == Playing then
                         Idle
@@ -115,6 +116,7 @@ update msg model =
                     else
                         Playing
 
+                nextModel : Model
                 nextModel =
                     { model
                         | state = nextState
@@ -126,9 +128,11 @@ update msg model =
 
         BoardClicked clickedPosition ->
             let
+                delta : Position
                 delta =
                     Position.subtract clickedPosition model.head
 
+                xDirection : Direction
                 xDirection =
                     if delta.x < 0 then
                         Direction.West
@@ -136,6 +140,7 @@ update msg model =
                     else
                         Direction.East
 
+                yDirection : Direction
                 yDirection =
                     if delta.y < 0 then
                         Direction.North
@@ -143,6 +148,7 @@ update msg model =
                     else
                         Direction.South
 
+                nextDirection : Direction
                 nextDirection =
                     case model.direction of
                         Direction.East ->
@@ -163,11 +169,13 @@ update msg model =
 
         SnakeMoved ->
             let
+                nextHead : Position
                 nextHead =
                     model.head
                         |> Position.add (Direction.vector model.direction)
                         |> Position.circular model.boundary
 
+                nextTail : List Position
                 nextTail =
                     (model.head :: model.tail)
                         |> List.take model.tailLength
@@ -176,6 +184,7 @@ update msg model =
                 ( eaten, nonEaten ) =
                     List.partition (Position.equals nextHead) model.apples
 
+                nextModel : Model
                 nextModel =
                     { model
                         | head = nextHead
@@ -184,6 +193,7 @@ update msg model =
                         , tailLength = model.tailLength + List.length eaten
                     }
 
+                nextCommand : Cmd Msg
                 nextCommand =
                     if List.length eaten > 0 then
                         -- TODO Spawn Apple
