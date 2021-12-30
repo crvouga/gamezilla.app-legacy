@@ -15,7 +15,7 @@ yarn.lock
 dist/
 
 # tailwindcss temporary file
-src/style.css
+src/css/build.css
 .DS_Store
 .parcel-cache/
 .vim/
