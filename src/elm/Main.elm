@@ -4,8 +4,8 @@ import Browser exposing (Document)
 import Button
 import Container
 import Direction exposing (Direction)
-import Html exposing (Html, button, div, h6, nav, text, time)
-import Html.Attributes exposing (class, classList)
+import Html exposing (Html, text)
+import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
 import InteropDefinitions
 import InteropPorts
@@ -13,7 +13,7 @@ import List
 import Position exposing (Position)
 import Random
 import Set exposing (Set)
-import Svg exposing (g, rect, svg)
+import Svg exposing (rect, svg)
 import Svg.Attributes exposing (fill, height, viewBox, width, x, y)
 import Svg.Events
 import Time
