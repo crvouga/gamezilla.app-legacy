@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "a quick starter for simple elm project with parcel, tailwindcss and parcel",
   "scripts": {
-    "dev": "concurrently \"npm run css:watch\" \"npm run app:watch\" \"npm run elm:watch\"",
+    "dev": "concurrently \"npm run app:watch\" \"npm run elm:watch\"",
     "elm:watch": "npx elm-review --watch",
     "app:watch": "rm -rf dist && npx parcel src/main.html",
     "app:build": " npx parcel build src/main.html --public-url ./",
