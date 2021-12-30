@@ -1,4 +1,4 @@
-module InteropDefinitions exposing (Flags, FromElm(..), ToElm(..), interop)
+module InteropDefinitions exposing (Flags, FromElm(..), ToElm(..), User, interop)
 
 import Json.Encode
 import TsJson.Decode as TsDecode exposing (Decoder)
