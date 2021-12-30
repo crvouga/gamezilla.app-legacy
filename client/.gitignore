@@ -18,7 +18,7 @@ dist/
 src/css/build.css
 
 # elm ts interop temporary file
-*/elm-ts-interop.d.ts
+src/typescript/elm-ts-interop.d.ts
 
 .DS_Store
 .parcel-cache/
