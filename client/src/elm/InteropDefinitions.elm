@@ -30,7 +30,7 @@ type alias User =
 
 
 type alias Flags =
-    { greeting : String
+    { changed : String
     }
 
 
@@ -62,4 +62,4 @@ toElm =
 flags : Decoder Flags
 flags =
     TsDecode.map Flags
-        (TsDecode.field "greeting" TsDecode.string)
+        (TsDecode.field "changed" TsDecode.string)

@@ -61,7 +61,7 @@ type alias Model =
 initialModel : Flags -> Model
 initialModel flags =
     { state = Playing
-    , message = flags.greeting
+    , message = flags.changed
     , tailLength = 3
     , head = { x = 4, y = 4 }
     , tail =
