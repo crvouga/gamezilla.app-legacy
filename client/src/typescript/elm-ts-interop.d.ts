@@ -25,7 +25,7 @@ export type FromElm = { data : { message : string }; tag : "alert" };
 
 export type ToElm = { tag : "authenticatedUser"; username : string };
 
-export type Flags = null;
+export type Flags = { message : string };
 
 export namespace Main {
   function init(options: { node?: HTMLElement | null; flags: Flags }): ElmApp;

@@ -38,7 +38,7 @@ main =
 
 
 type alias Flags =
-    ()
+    InteropDefinitions.Flags
 
 
 type State
@@ -54,12 +54,14 @@ type alias Model =
     , direction : Direction
     , tailLength : Int
     , boundary : Position
+    , message : String
     }
 
 
 initialModel : Flags -> Model
 initialModel flags =
     { state = Playing
+    , message = flags.message
     , tailLength = 3
     , head = { x = 4, y = 4 }
     , tail =
@@ -303,7 +305,7 @@ view : Model -> Document Msg
 view model =
     Document "Home"
         [ container []
-            [ viewButton [ class "m-2", onClick Greet ] [ text "Greet" ]
+            [ viewButton [ class "m-2", onClick Greet ] [ text model.message ]
             , viewButton [ class "m-2", onClick ToggleState ]
                 [ text
                     (if model.state == Playing then
