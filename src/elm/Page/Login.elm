@@ -3,6 +3,7 @@ module Page.Login exposing (Model, Msg, State, initialModel, update, view)
 import Container
 import Html exposing (Html, div, h1, text)
 import Html.Attributes exposing (class)
+import Html.Events exposing (onClick)
 import Icons
 import LogInMethod exposing (LoginInMethod)
 
@@ -32,13 +33,13 @@ initialModel =
 
 
 type Msg
-    = Login LoginInMethod
+    = LogIn LoginInMethod
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        Login method ->
+        LogIn method ->
             ( { model | state = Redirecting }, Cmd.none )
 
 
@@ -55,12 +56,24 @@ view model =
             [ h1
                 [ class "text-xl font-bold flex items-center justify-center flex-1"
                 ]
-                [ text "Login" ]
+                [ text "Log In" ]
             ]
         , div
-            [ class "flex flex-row justify-start items-center font-bold p-4 border-b-2 hover:bg-gray-100 active:bg-gray-200 cursor-pointer" ]
+            [ class "flex flex-row justify-start items-center font-bold p-4 border-b-2 hover:bg-gray-100 active:bg-gray-200 cursor-pointer"
+            , onClick (LogIn LogInMethod.Google)
+            ]
             [ div [ class "mr-2" ] [ Icons.google ]
             , div [ class "flex-1" ] [ text "Continue With Google" ]
             , div [] [ Icons.cheveronRight ]
+            ]
+        , div []
+            [ text
+                (case model.state of
+                    Idle ->
+                        "idle"
+
+                    Redirecting ->
+                        "redirecting"
+                )
             ]
         ]
