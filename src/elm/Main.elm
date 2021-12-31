@@ -1,11 +1,16 @@
-module Main exposing (Flags, Model, Msg, main)
+module Main exposing (CurrentPage(..), Flags, Model, Msg(..), main)
 
 import Browser exposing (Document, UrlRequest)
+import Components.BackdropLoader
+import Components.Button
+import Components.Container
 import Html exposing (Html, div, h1, text)
 import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
 import InteropDefinitions
 import InteropPorts
+import LogInMethod
+import LogInSession exposing (Model(..))
 import Page.Login
 import Url exposing (Url)
 import Utility exposing (isEven, isOdd)
@@ -31,17 +36,26 @@ main =
 -- MODEL
 
 
+type alias User =
+    { userId : String
+    }
+
+
 type alias Flags =
     InteropDefinitions.Flags
 
 
-type Model
+type CurrentPage
     = LogInPage Page.Login.Model
+
+
+type alias Model =
+    { page : Page.Login.Model }
 
 
 initialModel : Model
 initialModel =
-    LogInPage Page.Login.initialModel
+    { page = Page.Login.initialModel }
 
 
 init : Flags -> ( Model, Cmd Msg )
@@ -55,7 +69,6 @@ init flags =
 
 type Msg
     = LogInPageMsg Page.Login.Msg
-    | Noop
     | UrlChanged Url
     | UrlRequested Browser.UrlRequest
 
@@ -69,18 +82,19 @@ updateWith toModel toMsg model ( subModel, subCmd ) =
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    case ( model, msg ) of
-        ( _, UrlRequested _ ) ->
+    case msg of
+        UrlRequested url ->
             ( model, Cmd.none )
 
-        ( _, UrlChanged _ ) ->
+        UrlChanged url ->
             ( model, Cmd.none )
 
-        ( LogInPage logInPageModel, LogInPageMsg logInPageMsg ) ->
-            updateWith LogInPage LogInPageMsg model (Page.Login.update logInPageMsg logInPageModel)
-
-        ( _, _ ) ->
-            ( model, Cmd.none )
+        LogInPageMsg logInPageMsg ->
+            let
+                ( m, c ) =
+                    Page.Login.update logInPageMsg model.page
+            in
+            ( { model | page = m }, Cmd.map LogInPageMsg c )
 
 
 
@@ -93,11 +107,22 @@ subscriptions model =
 
 
 
+-- Sub.map
+--     (\result ->
+--         case result of
+--             Ok toElm ->
+--                 case toElm of
+--                     InteropDefinitions.LoggedIn { userId } ->
+--                         LogInSessionChanged (LogIn { page = Page.Login.initialModel })
+--                     InteropDefinitions.LoggedOut ->
+--                         LogInSessionChanged (LoggedOut { page = Page.Login.initialModel })
+--             Err _ ->
+--                 LogInSessionChanged (LoggedOut { page = Page.Login.initialModel })
+--     )
+--     InteropPorts.toElm
 -- VIEW
 
 
 view : Model -> Document Msg
-view model =
-    case model of
-        LogInPage logInPageModel ->
-            Document "Log In" [ Html.map LogInPageMsg (Page.Login.view logInPageModel) ]
+view { page } =
+    Document "Log In" [ Html.map LogInPageMsg (Page.Login.view page) ]

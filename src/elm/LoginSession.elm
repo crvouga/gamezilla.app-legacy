@@ -1,10 +1,7 @@
-module LogInSession exposing (Model(..), Msg(..), User, logIn, subscriptions, update)
+module LogInSession exposing (Model(..), Msg(..), User, initialModel, logIn, subscriptions, update)
 
 import Components.Button
 import Components.Container
-import Html exposing (Html, h1, text)
-import Html.Attributes exposing (class, disabled)
-import Html.Events exposing (onClick)
 import InteropDefinitions
 import InteropPorts
 import LogInMethod
@@ -19,6 +16,11 @@ type Model
     = IsLoading
     | IsLoggedOut
     | IsLoggedIn User
+
+
+initialModel : Model
+initialModel =
+    IsLoading
 
 
 
