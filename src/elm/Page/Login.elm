@@ -1,11 +1,13 @@
 module Page.Login exposing (Model, Msg, initialModel, update, view)
 
-import BackdropLoader
-import Container
+import Components.BackdropLoader
+import Components.Container
+import Components.Icons
+import Components.Item
+import Components.PageBar
 import Html exposing (Html, div, h1, text)
 import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
-import Icons
 import InteropPorts
 import LogInMethod exposing (LoginInMethod)
 import LogInSession
@@ -46,33 +48,24 @@ update msg model =
 
 view : Model -> Html Msg
 view model =
-    div []
-        [ div
-            [ class "w-full p-2 border-b-2"
-            ]
-            [ h1
-                [ class "text-xl font-bold flex items-center justify-center flex-1"
-                ]
+    Components.Container.view []
+        [ Components.PageBar.view []
+            [ Components.PageBar.viewTitle []
                 [ text "Log In" ]
             ]
-        , div
-            [ class "flex flex-row justify-start items-center font-bold p-4 border-b-2 hover:bg-gray-100 active:bg-gray-200 cursor-pointer"
-            , onClick (LogIn LogInMethod.Google)
+        , Components.Item.view [ onClick (LogIn LogInMethod.Google) ]
+            [ Components.Item.viewStart [] [ Components.Icons.google ]
+            , Components.Item.viewCenter [] [ text "Continue With Google" ]
+            , Components.Item.viewEnd [] [ Components.Icons.cheveronRight ]
             ]
-            [ div [ class "mr-2" ] [ Icons.google ]
-            , div [ class "flex-1" ] [ text "Continue With Google" ]
-            , div [] [ Icons.cheveronRight ]
-            ]
-        , div []
-            (case model of
-                Idle ->
-                    []
+        , Components.BackdropLoader.view
+            { isOpen =
+                case model of
+                    Idle ->
+                        False
 
-                Redirecting logInMethod ->
-                    [ BackdropLoader.view
-                        { title =
-                            "Redirecting..."
-                        }
-                    ]
-            )
+                    Redirecting _ ->
+                        True
+            , title = "Redirecting..."
+            }
         ]

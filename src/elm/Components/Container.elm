@@ -1,4 +1,4 @@
-module Container exposing (view)
+module Components.Container exposing (view)
 
 import Html exposing (Attribute, Html, div)
 import Html.Attributes exposing (class)

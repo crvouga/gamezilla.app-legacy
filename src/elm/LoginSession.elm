@@ -1,7 +1,7 @@
 module LogInSession exposing (Model(..), Msg(..), User, logIn, subscriptions, update)
 
-import Button
-import Container
+import Components.Button
+import Components.Container
 import Html exposing (Html, h1, text)
 import Html.Attributes exposing (class, disabled)
 import Html.Events exposing (onClick)
