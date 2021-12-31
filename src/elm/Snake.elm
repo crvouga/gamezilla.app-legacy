@@ -1,4 +1,4 @@
-module Snake exposing (Model, Msg, initialModel, subscriptions, update, view)
+module Snake exposing (Model, Msg, State(..), initialModel, subscriptions, update, view)
 
 import Browser exposing (Document)
 import Button
