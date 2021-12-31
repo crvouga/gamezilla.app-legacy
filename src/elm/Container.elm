@@ -7,5 +7,5 @@ import Html.Attributes exposing (class)
 view : List (Attribute msg) -> List (Html msg) -> Html msg
 view attrs html =
     div
-        ([ class "m-auto max-w-md flex flex-col justify-center items-center" ] ++ attrs)
+        ([ class "m-auto w-full max-w-md flex flex-col justify-center items-center" ] ++ attrs)
         html

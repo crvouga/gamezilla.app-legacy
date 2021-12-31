@@ -1,4 +1,4 @@
-module Main exposing (Flags, Model, Msg, State, main)
+module Main exposing (Flags, Model, Msg, main)
 
 import Browser exposing (Document)
 import Button
@@ -11,9 +11,11 @@ import InteropDefinitions
 import InteropPorts
 import List
 import LogInMethod
+import LoginSession
 import Position exposing (Position)
 import Random
 import Set exposing (Set)
+import Snake
 import Svg exposing (rect, svg)
 import Svg.Attributes exposing (fill, height, viewBox, width, x, y)
 import Svg.Events
@@ -43,45 +45,22 @@ type alias Flags =
     InteropDefinitions.Flags
 
 
-type State
-    = Idle
-    | Playing
-
-
 type alias Model =
-    { loggedInUser : Maybe InteropDefinitions.LoggedInUser
-    , state : State
-    , head : Position
-    , tail : List Position
-    , apples : List Position
-    , direction : Direction
-    , tailLength : Int
-    , boundary : Position
-    , message : String
+    { logInSession : LoginSession.Model
+    , snake : Snake.Model
     }
 
 
-initialModel : Flags -> Model
-initialModel flags =
-    { loggedInUser = Maybe.Nothing
-    , state = Idle
-    , message = flags.greeting
-    , tailLength = 3
-    , head = { x = 4, y = 4 }
-    , tail =
-        [ { x = 3, y = 4 }
-        , { x = 2, y = 4 }
-        ]
-    , apples =
-        [ { x = 7, y = 4 } ]
-    , direction = Direction.East
-    , boundary = { x = 18, y = 18 }
+initialModel : Model
+initialModel =
+    { logInSession = LoginSession.IsLoading
+    , snake = Snake.initialModel
     }
 
 
 init : Flags -> ( Model, Cmd Msg )
 init flags =
-    ( initialModel flags, Cmd.none )
+    ( initialModel, Cmd.none )
 
 
 
@@ -89,185 +68,41 @@ init flags =
 
 
 type Msg
-    = SnakeMoved
-    | BoardClicked Position
-    | ToggleState
-    | SpawnApple
-    | LogIn LogInMethod.LoginInMethod
-    | LoggedIn InteropDefinitions.LoggedInUser
-    | LogOut
-    | LoggedOut
+    = GotSnakeMsg Snake.Msg
+    | GotLoginSessionMsg LoginSession.Msg
     | Noop
-
-
-updateDirection : Direction -> Model -> Model
-updateDirection direction model =
-    if model.direction == Direction.opposite direction then
-        model
-
-    else
-        { model
-            | direction = direction
-        }
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        LoggedOut ->
-            ( { model | loggedInUser = Maybe.Nothing }, Cmd.none )
-
-        LogOut ->
-            ( model, InteropPorts.fromElm InteropDefinitions.LogOut )
-
-        LoggedIn loggedInUser ->
-            ( { model | loggedInUser = Maybe.Just loggedInUser }, Cmd.none )
-
         Noop ->
             ( model, Cmd.none )
 
-        LogIn method ->
-            ( model, InteropPorts.fromElm (InteropDefinitions.LogIn method) )
-
-        SpawnApple ->
-            ( model
-            , Cmd.none
-            )
-
-        ToggleState ->
+        GotLoginSessionMsg loginSessionMsg ->
             let
-                nextState : State
-                nextState =
-                    if model.state == Playing then
-                        Idle
-
-                    else
-                        Playing
-
-                nextModel : Model
-                nextModel =
-                    { model
-                        | state = nextState
-                    }
+                ( loginSessionModel, loginSessionCommand ) =
+                    LoginSession.update loginSessionMsg model.logInSession
             in
-            ( nextModel
-            , Cmd.none
-            )
+            ( { model | logInSession = loginSessionModel }, Cmd.map (\commandMsg -> GotLoginSessionMsg commandMsg) loginSessionCommand )
 
-        BoardClicked clickedPosition ->
+        GotSnakeMsg snakeMsg ->
             let
-                delta : Position
-                delta =
-                    Position.subtract clickedPosition model.head
-
-                xDirection : Direction
-                xDirection =
-                    if delta.x < 0 then
-                        Direction.West
-
-                    else
-                        Direction.East
-
-                yDirection : Direction
-                yDirection =
-                    if delta.y < 0 then
-                        Direction.North
-
-                    else
-                        Direction.South
-
-                nextDirection : Direction
-                nextDirection =
-                    case model.direction of
-                        Direction.East ->
-                            yDirection
-
-                        Direction.West ->
-                            yDirection
-
-                        Direction.North ->
-                            xDirection
-
-                        Direction.South ->
-                            xDirection
+                ( snakeModel, snakeCommand ) =
+                    Snake.update snakeMsg model.snake
             in
-            ( updateDirection nextDirection model
-            , Cmd.none
-            )
-
-        SnakeMoved ->
-            let
-                nextHead : Position
-                nextHead =
-                    model.head
-                        |> Position.add (Direction.vector model.direction)
-                        |> Position.circular model.boundary
-
-                nextTail : List Position
-                nextTail =
-                    (model.head :: model.tail)
-                        |> List.take model.tailLength
-                        |> List.map (Position.circular model.boundary)
-
-                ( eaten, nonEaten ) =
-                    List.partition (Position.equals nextHead) model.apples
-
-                nextModel : Model
-                nextModel =
-                    { model
-                        | head = nextHead
-                        , tail = nextTail
-                        , apples = nonEaten
-                        , tailLength = model.tailLength + List.length eaten
-                    }
-
-                nextCommand : Cmd Msg
-                nextCommand =
-                    if List.length eaten > 0 then
-                        -- TODO Spawn Apple
-                        Cmd.none
-
-                    else
-                        Cmd.none
-            in
-            ( nextModel
-            , nextCommand
-            )
+            ( { model | snake = snakeModel }, Cmd.map (\commandMsg -> GotSnakeMsg commandMsg) snakeCommand )
 
 
 
 -- SUBSCRIPTIONS
 
 
-subscriptionsState : State -> Sub Msg
-subscriptionsState state =
-    case state of
-        Playing ->
-            Time.every (1000 / 6) (\posfix -> SnakeMoved)
-
-        Idle ->
-            Sub.none
-
-
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch
-        [ subscriptionsState model.state
-        , Sub.map
-            (\result ->
-                case result of
-                    Ok toElm ->
-                        case toElm of
-                            InteropDefinitions.LoggedIn x ->
-                                LoggedIn x
-
-                            InteropDefinitions.LoggedOut ->
-                                LoggedOut
-
-                    Err _ ->
-                        Noop
-            )
-            InteropPorts.toElm
+        [ Sub.map GotSnakeMsg (Snake.subscriptions model.snake)
+        , Sub.map GotLoginSessionMsg (LoginSession.subscriptions model.logInSession)
         ]
 
 
@@ -275,110 +110,11 @@ subscriptions model =
 -- VIEW
 
 
-toCheckColor : Position -> String
-toCheckColor { x, y } =
-    if (isEven x && isEven y) || (isOdd x && isOdd y) then
-        "#A3D048"
-
-    else
-        "#AAD751"
-
-
-viewToggleStateText : State -> String
-viewToggleStateText state =
-    case state of
-        Playing ->
-            "Pause"
-
-        Idle ->
-            "Play"
-
-
 view : Model -> Document Msg
 view model =
     Document "Gamezilla"
         [ Container.view []
-            [ case model.loggedInUser of
-                Just loggedInUser ->
-                    Container.view []
-                        [ h1 [] [ text ("userId = " ++ loggedInUser.userId) ]
-                        , Button.view
-                            [ class "m-2"
-                            , onClick LogOut
-                            ]
-                            [ text "Log Out"
-                            ]
-                        ]
-
-                Nothing ->
-                    Button.view
-                        [ class "m-2"
-                        , onClick (LogIn LogInMethod.Google)
-                        ]
-                        [ text "Log In With Google"
-                        ]
-            , Button.view
-                [ class "m-2"
-                , onClick ToggleState
-                ]
-                [ text (viewToggleStateText model.state)
-                ]
-            , svg
-                [ width "100%"
-                , viewBox
-                    (String.join
-                        ", "
-                        [ "0"
-                        , "0"
-                        , String.fromInt model.boundary.x
-                        , String.fromInt model.boundary.y
-                        ]
-                    )
-                ]
-                (List.concat
-                    [ -- Checkers
-                      List.map
-                        (\position ->
-                            rect
-                                [ x (String.fromInt position.x)
-                                , y (String.fromInt position.y)
-                                , width "1"
-                                , height "1"
-                                , fill (toCheckColor position)
-                                , Svg.Events.onClick (BoardClicked position)
-                                ]
-                                []
-                        )
-                        (Position.all model.boundary)
-
-                    -- Apples
-                    , List.map
-                        (\position ->
-                            rect
-                                [ x (String.fromInt position.x)
-                                , y (String.fromInt position.y)
-                                , width "1"
-                                , height "1"
-                                , fill "#E7491C"
-                                ]
-                                []
-                        )
-                        model.apples
-
-                    -- Snake
-                    , List.map
-                        (\position ->
-                            rect
-                                [ x (String.fromInt position.x)
-                                , y (String.fromInt position.y)
-                                , width "1"
-                                , height "1"
-                                , fill "#4E7DF7"
-                                ]
-                                []
-                        )
-                        (model.head :: model.tail)
-                    ]
-                )
+            [ Html.map GotLoginSessionMsg (LoginSession.viewLogInSessionButton model.logInSession)
+            , Html.map GotSnakeMsg (Snake.view model.snake)
             ]
         ]
