@@ -1,8 +1,8 @@
 module Snake exposing (Model, Msg, State(..), initialModel, subscriptions, update, view)
 
 import Browser exposing (Document)
-import Button
-import Container
+import Components.Button
+import Components.Container
 import Direction exposing (Direction)
 import Html exposing (Html, div, h1, text)
 import Html.Attributes exposing (class)

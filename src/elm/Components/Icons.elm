@@ -1,4 +1,4 @@
-module Icons exposing (cheveronRight, google)
+module Components.Icons exposing (cheveronRight, google)
 
 import Html exposing (Html)
 import Html.Attributes as Attr
@@ -42,17 +42,14 @@ google =
 cheveronRight : Html msg
 cheveronRight =
     svg
-        [ SvgAttr.width "24"
-        , SvgAttr.height "24"
-        , SvgAttr.fill "none"
-        , SvgAttr.viewBox "0 0 24 24"
-        , SvgAttr.stroke "currentColor"
+        [ SvgAttr.class "h-6 w-6"
+        , SvgAttr.viewBox "0 0 20 20"
+        , SvgAttr.fill "currentColor"
         ]
         [ path
-            [ Attr.attribute "strokelinecap" "round"
-            , Attr.attribute "strokelinejoin" "round"
-            , Attr.attribute "strokewidth" "{4}"
-            , SvgAttr.d "M9 5l7 7-7 7"
+            [ SvgAttr.fillRule "evenodd"
+            , SvgAttr.d "M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+            , SvgAttr.clipRule "evenodd"
             ]
             []
         ]
