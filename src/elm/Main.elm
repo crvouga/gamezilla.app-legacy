@@ -4,7 +4,7 @@ import Browser exposing (Document)
 import Button
 import Container
 import Direction exposing (Direction)
-import Html exposing (Html, text)
+import Html exposing (Html, div, h1, text)
 import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
 import InteropDefinitions
@@ -49,7 +49,8 @@ type State
 
 
 type alias Model =
-    { state : State
+    { loggedInUser : Maybe InteropDefinitions.LoggedInUser
+    , state : State
     , head : Position
     , tail : List Position
     , apples : List Position
@@ -62,7 +63,8 @@ type alias Model =
 
 initialModel : Flags -> Model
 initialModel flags =
-    { state = Playing
+    { loggedInUser = Maybe.Nothing
+    , state = Idle
     , message = flags.greeting
     , tailLength = 3
     , head = { x = 4, y = 4 }
@@ -92,7 +94,9 @@ type Msg
     | ToggleState
     | SpawnApple
     | LogIn LogInMethod.LoginInMethod
-    | LoggedIn { userId : String }
+    | LoggedIn InteropDefinitions.LoggedInUser
+    | LogOut
+    | LoggedOut
     | Noop
 
 
@@ -110,8 +114,14 @@ updateDirection direction model =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        LoggedOut ->
+            ( { model | loggedInUser = Maybe.Nothing }, Cmd.none )
+
+        LogOut ->
+            ( model, InteropPorts.fromElm InteropDefinitions.LogOut )
+
         LoggedIn loggedInUser ->
-            ( model, Cmd.none )
+            ( { model | loggedInUser = Maybe.Just loggedInUser }, Cmd.none )
 
         Noop ->
             ( model, Cmd.none )
@@ -246,8 +256,13 @@ subscriptions model =
         , Sub.map
             (\result ->
                 case result of
-                    Ok loggedInUser ->
-                        LoggedIn { userId = "HELLO" }
+                    Ok toElm ->
+                        case toElm of
+                            InteropDefinitions.LoggedIn x ->
+                                LoggedIn x
+
+                            InteropDefinitions.LoggedOut ->
+                                LoggedOut
 
                     Err _ ->
                         Noop
@@ -283,12 +298,25 @@ view : Model -> Document Msg
 view model =
     Document "Gamezilla"
         [ Container.view []
-            [ Button.view
-                [ class "m-2"
-                , onClick (LogIn LogInMethod.Google)
-                ]
-                [ text "Log In With Google"
-                ]
+            [ case model.loggedInUser of
+                Just loggedInUser ->
+                    Container.view []
+                        [ h1 [] [ text ("userId = " ++ loggedInUser.userId) ]
+                        , Button.view
+                            [ class "m-2"
+                            , onClick LogOut
+                            ]
+                            [ text "Log Out"
+                            ]
+                        ]
+
+                Nothing ->
+                    Button.view
+                        [ class "m-2"
+                        , onClick (LogIn LogInMethod.Google)
+                        ]
+                        [ text "Log In With Google"
+                        ]
             , Button.view
                 [ class "m-2"
                 , onClick ToggleState

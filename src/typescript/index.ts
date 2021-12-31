@@ -10,20 +10,30 @@ const app = Elm.Main.init({
 
 app.ports.interopFromElm.subscribe(async (fromElm) => {
   switch (fromElm.tag) {
+    case "logOut": {
+      await supabaseClient.auth.signOut();
+
+      break;
+    }
+
     case "logIn": {
       const redirectTo = window.location.href;
       // console.log({ redirectTo });
 
       switch (fromElm.data.method) {
-        case "Google":
-          await supabaseClient.auth.signIn({ provider: "google" }, {
-            redirectTo,
-          });
+        case "Google": {
+          await supabaseClient.auth.signIn(
+            { provider: "google" },
+            {
+              redirectTo,
+            }
+          );
           break;
-
-        case "Facebook":
+        }
+        case "Facebook": {
           console.error("Unsuppported sign in method");
           break;
+        }
       }
       break;
     }
@@ -48,6 +58,9 @@ supabaseClient.auth.onAuthStateChange((event, session) => {
       break;
     case "SIGNED_OUT":
     case "USER_DELETED":
+      app.ports.interopToElm.send({
+        tag: "loggedOut",
+      });
       break;
   }
 });
