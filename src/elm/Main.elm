@@ -1,6 +1,6 @@
 module Main exposing (Flags, Model, Msg, main)
 
-import Browser exposing (Document)
+import Browser exposing (Document, UrlRequest)
 import Button
 import Container
 import Direction exposing (Direction)
@@ -12,6 +12,7 @@ import InteropPorts
 import List
 import LogInMethod
 import LoginSession
+import Page.Login
 import Position exposing (Position)
 import Random
 import Set exposing (Set)
@@ -20,6 +21,7 @@ import Svg exposing (rect, svg)
 import Svg.Attributes exposing (fill, height, viewBox, width, x, y)
 import Svg.Events
 import Time
+import Url exposing (Url)
 import Utility exposing (isEven, isOdd)
 
 
@@ -29,11 +31,13 @@ import Utility exposing (isEven, isOdd)
 
 main : Program Flags Model Msg
 main =
-    Browser.document
-        { init = init
+    Browser.application
+        { init = \flags url key -> init flags
         , view = view
         , update = update
         , subscriptions = subscriptions
+        , onUrlRequest = UrlRequested
+        , onUrlChange = UrlChanged
         }
 
 
@@ -45,17 +49,13 @@ type alias Flags =
     InteropDefinitions.Flags
 
 
-type alias Model =
-    { logInSession : LoginSession.Model
-    , snake : Snake.Model
-    }
+type Model
+    = LoginPage Page.Login.Model
 
 
 initialModel : Model
 initialModel =
-    { logInSession = LoginSession.IsLoading
-    , snake = Snake.initialModel
-    }
+    LoginPage Page.Login.initialModel
 
 
 init : Flags -> ( Model, Cmd Msg )
@@ -68,9 +68,10 @@ init flags =
 
 
 type Msg
-    = GotSnakeMsg Snake.Msg
-    | GotLoginSessionMsg LoginSession.Msg
+    = LoginPageMsg Page.Login.Msg
     | Noop
+    | UrlChanged Url
+    | UrlRequested Browser.UrlRequest
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -79,19 +80,14 @@ update msg model =
         Noop ->
             ( model, Cmd.none )
 
-        GotLoginSessionMsg loginSessionMsg ->
-            let
-                ( loginSessionModel, loginSessionCommand ) =
-                    LoginSession.update loginSessionMsg model.logInSession
-            in
-            ( { model | logInSession = loginSessionModel }, Cmd.map (\commandMsg -> GotLoginSessionMsg commandMsg) loginSessionCommand )
+        UrlRequested _ ->
+            ( model, Cmd.none )
 
-        GotSnakeMsg snakeMsg ->
-            let
-                ( snakeModel, snakeCommand ) =
-                    Snake.update snakeMsg model.snake
-            in
-            ( { model | snake = snakeModel }, Cmd.map (\commandMsg -> GotSnakeMsg commandMsg) snakeCommand )
+        UrlChanged _ ->
+            ( model, Cmd.none )
+
+        LoginPageMsg loginPageMsg ->
+            ( model, Cmd.none )
 
 
 
@@ -100,10 +96,7 @@ update msg model =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Sub.batch
-        [ Sub.map GotSnakeMsg (Snake.subscriptions model.snake)
-        , Sub.map GotLoginSessionMsg (LoginSession.subscriptions model.logInSession)
-        ]
+    Sub.none
 
 
 
@@ -112,9 +105,6 @@ subscriptions model =
 
 view : Model -> Document Msg
 view model =
-    Document "Gamezilla"
-        [ Container.view []
-            [ Html.map GotLoginSessionMsg (LoginSession.viewLogInSessionButton model.logInSession)
-            , Html.map GotSnakeMsg (Snake.view model.snake)
-            ]
-        ]
+    case model of
+        LoginPage loginPageModel ->
+            Document "Login" [ Html.map LoginPageMsg (Page.Login.view loginPageModel) ]
