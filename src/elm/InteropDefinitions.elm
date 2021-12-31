@@ -20,10 +20,12 @@ interop =
 
 type FromElm
     = LogIn LogInMethod.LoginInMethod
+    | LogOut
 
 
 type ToElm
     = LoggedIn LoggedInUser
+    | LoggedOut
 
 
 type alias LoggedInUser =
@@ -36,22 +38,34 @@ type alias Flags =
     }
 
 
+logInEncoder : Encoder LogInMethod.LoginInMethod
+logInEncoder =
+    TsEncode.object
+        [ required
+            "method"
+            (\method -> method)
+            LogInMethod.encoder
+        ]
+
+
+logOutEncoder : Encoder ()
+logOutEncoder =
+    TsEncode.object []
+
+
 fromElm : Encoder FromElm
 fromElm =
     TsEncode.union
-        (\vLogIn value ->
+        (\vLogIn vLogOut value ->
             case value of
                 LogIn method ->
                     vLogIn method
+
+                LogOut ->
+                    vLogOut
         )
-        |> TsEncode.variantTagged "logIn"
-            (TsEncode.object
-                [ required
-                    "method"
-                    (\method -> method)
-                    LogInMethod.encoder
-                ]
-            )
+        |> TsEncode.variantTagged "logIn" logInEncoder
+        |> TsEncode.variant0 "logOut"
         |> TsEncode.buildUnion
 
 
@@ -64,6 +78,7 @@ toElm =
                     (TsDecode.field "userId" TsDecode.string)
                 )
           )
+        , ( "loggedOut", TsDecode.succeed LoggedOut )
         ]
 
 
