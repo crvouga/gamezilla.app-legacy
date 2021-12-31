@@ -1,31 +1,28 @@
-module Page.Login exposing (Model, Msg, State, initialModel, update, view)
+module Page.Login exposing (Model, Msg, initialModel, update, view)
 
+import BackdropLoader
 import Container
 import Html exposing (Html, div, h1, text)
 import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
 import Icons
+import InteropPorts
 import LogInMethod exposing (LoginInMethod)
+import LogInSession
 
 
 
 -- MODEL
 
 
-type State
+type Model
     = Idle
-    | Redirecting
-
-
-type alias Model =
-    { state : State
-    }
+    | Redirecting LoginInMethod
 
 
 initialModel : Model
 initialModel =
-    { state = Idle
-    }
+    Idle
 
 
 
@@ -40,7 +37,7 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         LogIn method ->
-            ( { model | state = Redirecting }, Cmd.none )
+            ( Redirecting method, LogInSession.logIn method )
 
 
 
@@ -67,13 +64,15 @@ view model =
             , div [] [ Icons.cheveronRight ]
             ]
         , div []
-            [ text
-                (case model.state of
-                    Idle ->
-                        "idle"
+            (case model of
+                Idle ->
+                    []
 
-                    Redirecting ->
-                        "redirecting"
-                )
-            ]
+                Redirecting logInMethod ->
+                    [ BackdropLoader.view
+                        { title =
+                            "Redirecting..."
+                        }
+                    ]
+            )
         ]
