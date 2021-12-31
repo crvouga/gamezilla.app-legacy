@@ -1,4 +1,4 @@
-module LoginSession exposing (Model(..), Msg(..), User, subscriptions, update, viewLogInSessionButton)
+module LogInSession exposing (Model(..), Msg(..), User, logIn, subscriptions, update)
 
 import Button
 import Container
@@ -21,12 +21,19 @@ type Model
     | IsLoggedIn User
 
 
+
+-- UPDATE
+
+
 type Msg
-    = LogIn LogInMethod.LoginInMethod
-    | LoggedIn User
-    | LogOut
+    = LoggedIn User
     | LoggedOut
     | Error
+
+
+logIn : LogInMethod.LoginInMethod -> Cmd msg
+logIn method =
+    InteropPorts.fromElm (InteropDefinitions.LogIn method)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -38,14 +45,8 @@ update msg model =
         LoggedOut ->
             ( IsLoggedOut, Cmd.none )
 
-        LogOut ->
-            ( model, InteropPorts.fromElm InteropDefinitions.LogOut )
-
         LoggedIn loggedInUser ->
             ( IsLoggedIn loggedInUser, Cmd.none )
-
-        LogIn method ->
-            ( model, InteropPorts.fromElm (InteropDefinitions.LogIn method) )
 
 
 subscriptions : Model -> Sub Msg
@@ -65,34 +66,3 @@ subscriptions model =
                     Error
         )
         InteropPorts.toElm
-
-
-viewLogInSessionButton : Model -> Html Msg
-viewLogInSessionButton model =
-    case model of
-        IsLoggedIn loggedInUser ->
-            Container.view []
-                [ h1 [] [ text ("userId = " ++ loggedInUser.userId) ]
-                , Button.view
-                    [ class "m-2"
-                    , onClick LogOut
-                    ]
-                    [ text "Log Out"
-                    ]
-                ]
-
-        IsLoggedOut ->
-            Button.view
-                [ class "m-2"
-                , onClick (LogIn LogInMethod.Google)
-                ]
-                [ text "Log In With Google"
-                ]
-
-        IsLoading ->
-            Button.view
-                [ class "m-2 bg-gray-400 hover:bg-gray-400"
-                , disabled True
-                ]
-                [ text "Loading"
-                ]

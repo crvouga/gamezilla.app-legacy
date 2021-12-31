@@ -1,26 +1,12 @@
 module Main exposing (Flags, Model, Msg, main)
 
 import Browser exposing (Document, UrlRequest)
-import Button
-import Container
-import Direction exposing (Direction)
 import Html exposing (Html, div, h1, text)
 import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
 import InteropDefinitions
 import InteropPorts
-import List
-import LogInMethod
-import LoginSession
 import Page.Login
-import Position exposing (Position)
-import Random
-import Set exposing (Set)
-import Snake
-import Svg exposing (rect, svg)
-import Svg.Attributes exposing (fill, height, viewBox, width, x, y)
-import Svg.Events
-import Time
 import Url exposing (Url)
 import Utility exposing (isEven, isOdd)
 
