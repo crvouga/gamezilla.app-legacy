@@ -18,12 +18,13 @@ app.ports.interopFromElm.subscribe(async (fromElm) => {
 
     case "logIn": {
       const redirectTo = window.location.href;
-      // console.log({ redirectTo });
 
       switch (fromElm.data.method) {
         case "Google": {
           await supabaseClient.auth.signIn(
-            { provider: "google" },
+            {
+              provider: "google",
+            },
             {
               redirectTo,
             }
@@ -40,8 +41,24 @@ app.ports.interopFromElm.subscribe(async (fromElm) => {
   }
 });
 
+setTimeout(() => {
+  const session = supabaseClient.auth.session();
+  const userId = session?.user?.id;
+
+  if (userId) {
+    app.ports.interopToElm.send({
+      tag: "loggedIn",
+      userId,
+    });
+    return;
+  }
+
+  app.ports.interopToElm.send({
+    tag: "loggedOut",
+  });
+}, 2000);
+
 supabaseClient.auth.onAuthStateChange((event, session) => {
-  console.log({ event, session });
   switch (event) {
     case "PASSWORD_RECOVERY":
     case "SIGNED_IN":
