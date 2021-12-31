@@ -50,12 +50,12 @@ type alias Flags =
 
 
 type Model
-    = LoginPage Page.Login.Model
+    = LogInPage Page.Login.Model
 
 
 initialModel : Model
 initialModel =
-    LoginPage Page.Login.initialModel
+    LogInPage Page.Login.initialModel
 
 
 init : Flags -> ( Model, Cmd Msg )
@@ -68,25 +68,32 @@ init flags =
 
 
 type Msg
-    = LoginPageMsg Page.Login.Msg
+    = LogInPageMsg Page.Login.Msg
     | Noop
     | UrlChanged Url
     | UrlRequested Browser.UrlRequest
 
 
+updateWith : (subModel -> Model) -> (subMsg -> Msg) -> Model -> ( subModel, Cmd subMsg ) -> ( Model, Cmd Msg )
+updateWith toModel toMsg model ( subModel, subCmd ) =
+    ( toModel subModel
+    , Cmd.map toMsg subCmd
+    )
+
+
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    case msg of
-        Noop ->
+    case ( model, msg ) of
+        ( _, UrlRequested _ ) ->
             ( model, Cmd.none )
 
-        UrlRequested _ ->
+        ( _, UrlChanged _ ) ->
             ( model, Cmd.none )
 
-        UrlChanged _ ->
-            ( model, Cmd.none )
+        ( LogInPage logInPageModel, LogInPageMsg logInPageMsg ) ->
+            updateWith LogInPage LogInPageMsg model (Page.Login.update logInPageMsg logInPageModel)
 
-        LoginPageMsg loginPageMsg ->
+        ( _, _ ) ->
             ( model, Cmd.none )
 
 
@@ -106,5 +113,5 @@ subscriptions model =
 view : Model -> Document Msg
 view model =
     case model of
-        LoginPage loginPageModel ->
-            Document "Login" [ Html.map LoginPageMsg (Page.Login.view loginPageModel) ]
+        LogInPage logInPageModel ->
+            Document "Log In" [ Html.map LogInPageMsg (Page.Login.view logInPageModel) ]
