@@ -77,7 +77,7 @@ update msg model =
                 ( nextLoginPageModel, loginPageCmd ) =
                     Page.Login.update loginPageMsg model.loginPage
             in
-            ( { model | loginPage = nextLoginPageModel }, Cmd.none )
+            ( { model | loginPage = nextLoginPageModel }, Cmd.map GotLoginPageMsg loginPageCmd )
 
         UrlChanged url ->
             ( model, Cmd.none )
