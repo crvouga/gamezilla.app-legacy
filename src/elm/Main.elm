@@ -12,7 +12,6 @@ import InteropPorts
 import LogInMethod
 import Page.Login
 import Url exposing (Url)
-import Utility exposing (isEven, isOdd)
 
 
 
@@ -39,17 +38,14 @@ type alias Flags =
     InteropDefinitions.Flags
 
 
-type alias Model =
-    { authState : Maybe AuthState
-    , loginPage : Page.Login.Model
-    }
+type Model
+    = Loading
+    | Loaded AuthState
 
 
 initialModel : Model
 initialModel =
-    { authState = Nothing
-    , loginPage = Page.Login.initialModel
-    }
+    Loading
 
 
 init : Flags -> ( Model, Cmd Msg )
@@ -66,19 +62,11 @@ type Msg
     | UrlRequested Browser.UrlRequest
     | ToElmMsg ToElm
     | ToElmError
-    | GotLoginPageMsg Page.Login.Msg
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        GotLoginPageMsg loginPageMsg ->
-            let
-                ( nextLoginPageModel, loginPageCmd ) =
-                    Page.Login.update loginPageMsg model.loginPage
-            in
-            ( { model | loginPage = nextLoginPageModel }, Cmd.map GotLoginPageMsg loginPageCmd )
-
         UrlChanged url ->
             ( model, Cmd.none )
 
@@ -91,7 +79,7 @@ update msg model =
         ToElmMsg toElmMsg ->
             case toElmMsg of
                 AuthStateChanged authState ->
-                    ( { model | authState = Maybe.Just authState }, Cmd.none )
+                    ( Loaded authState, Cmd.none )
 
 
 
@@ -118,8 +106,13 @@ subscriptions model =
 
 view : Model -> Document Msg
 view model =
-    { title = "Gamezilla"
-    , body =
-        [ Html.map GotLoginPageMsg (Page.Login.view model.loginPage)
-        ]
-    }
+    case model of
+        Loading ->
+            { title = "Loading"
+            , body = [ Components.BackdropLoader.view [] [ Components.BackdropLoader.viewTitle [] [ text "Loading" ] ] ]
+            }
+
+        Loaded authState ->
+            { title = "Loaded"
+            , body = [ Components.BackdropLoader.view [] [ Components.BackdropLoader.viewTitle [] [ text "Loaded" ] ] ]
+            }

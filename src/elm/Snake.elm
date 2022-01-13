@@ -1,23 +1,116 @@
 module Snake exposing (Model, Msg, State(..), initialModel, subscriptions, update, view)
 
+-- POSITION
+
 import Browser exposing (Document)
 import Components.Button
 import Components.Container
-import Direction exposing (Direction)
 import Html exposing (Html, div, h1, text)
 import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
 import InteropDefinitions
 import InteropPorts
-import List
-import Position exposing (Position)
+import List exposing (map, range)
 import Random
 import Set exposing (Set)
 import Svg exposing (rect, svg)
 import Svg.Attributes exposing (fill, height, viewBox, width, x, y)
 import Svg.Events
 import Time
-import Utility exposing (isEven, isOdd)
+
+
+type alias Position =
+    { x : Int, y : Int }
+
+
+add : Position -> Position -> Position
+add a b =
+    { x = a.x + b.x
+    , y = a.y + b.y
+    }
+
+
+subtract : Position -> Position -> Position
+subtract a b =
+    { x = a.x - b.x
+    , y = a.y - b.y
+    }
+
+
+equals : Position -> Position -> Bool
+equals a b =
+    a.x == b.x && a.y == b.y
+
+
+circular : Position -> Position -> Position
+circular bounds position =
+    { x = modBy bounds.x position.x
+    , y = modBy bounds.y position.y
+    }
+
+
+cartesian2 : List a -> List b -> List ( a, b )
+cartesian2 xs ys =
+    List.concatMap
+        (\x -> List.map (\y -> ( x, y )) ys)
+        xs
+
+
+all : Position -> List Position
+all bounds =
+    cartesian2 (range 0 bounds.x) (range 0 bounds.y)
+        |> map (\( x, y ) -> { x = x, y = y })
+
+
+
+-- DIRECTIOn
+
+
+type Direction
+    = North
+    | South
+    | East
+    | West
+
+
+opposite : Direction -> Direction
+opposite direction =
+    case direction of
+        North ->
+            South
+
+        South ->
+            North
+
+        West ->
+            East
+
+        East ->
+            West
+
+
+vector : Direction -> { x : Int, y : Int }
+vector direction =
+    case direction of
+        North ->
+            { x = 0
+            , y = -1
+            }
+
+        South ->
+            { x = 0
+            , y = 1
+            }
+
+        East ->
+            { x = 1
+            , y = 0
+            }
+
+        West ->
+            { x = -1
+            , y = 0
+            }
 
 
 
@@ -51,7 +144,7 @@ initialModel =
         ]
     , apples =
         [ { x = 7, y = 4 } ]
-    , direction = Direction.East
+    , direction = East
     , boundary = { x = 18, y = 18 }
     }
 
@@ -69,7 +162,7 @@ type Msg
 
 updateDirection : Direction -> Model -> Model
 updateDirection direction model =
-    if model.direction == Direction.opposite direction then
+    if model.direction == opposite direction then
         model
 
     else
@@ -110,37 +203,37 @@ update msg model =
             let
                 delta : Position
                 delta =
-                    Position.subtract clickedPosition model.head
+                    subtract clickedPosition model.head
 
                 xDirection : Direction
                 xDirection =
                     if delta.x < 0 then
-                        Direction.West
+                        West
 
                     else
-                        Direction.East
+                        East
 
                 yDirection : Direction
                 yDirection =
                     if delta.y < 0 then
-                        Direction.North
+                        North
 
                     else
-                        Direction.South
+                        South
 
                 nextDirection : Direction
                 nextDirection =
                     case model.direction of
-                        Direction.East ->
+                        East ->
                             yDirection
 
-                        Direction.West ->
+                        West ->
                             yDirection
 
-                        Direction.North ->
+                        North ->
                             xDirection
 
-                        Direction.South ->
+                        South ->
                             xDirection
             in
             ( updateDirection nextDirection model
@@ -152,17 +245,17 @@ update msg model =
                 nextHead : Position
                 nextHead =
                     model.head
-                        |> Position.add (Direction.vector model.direction)
-                        |> Position.circular model.boundary
+                        |> add (vector model.direction)
+                        |> circular model.boundary
 
                 nextTail : List Position
                 nextTail =
                     (model.head :: model.tail)
                         |> List.take model.tailLength
-                        |> List.map (Position.circular model.boundary)
+                        |> List.map (circular model.boundary)
 
                 ( eaten, nonEaten ) =
-                    List.partition (Position.equals nextHead) model.apples
+                    List.partition (equals nextHead) model.apples
 
                 nextModel : Model
                 nextModel =
@@ -205,6 +298,16 @@ subscriptions model =
 -- VIEW
 
 
+isEven : Int -> Bool
+isEven n =
+    modBy 2 n == 0
+
+
+isOdd : Int -> Bool
+isOdd n =
+    not (isEven n)
+
+
 toCheckColor : Position -> String
 toCheckColor { x, y } =
     if (isEven x && isEven y) || (isOdd x && isOdd y) then
@@ -226,8 +329,8 @@ viewToggleStateText state =
 
 view : Model -> Html Msg
 view model =
-    Container.view []
-        [ Button.view
+    Components.Container.view []
+        [ Components.Button.view
             [ class "m-2"
             , onClick ToggleState
             ]
@@ -259,7 +362,7 @@ view model =
                             ]
                             []
                     )
-                    (Position.all model.boundary)
+                    (all model.boundary)
 
                 -- Apples
                 , List.map
