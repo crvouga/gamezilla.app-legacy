@@ -1,4 +1,4 @@
-module Components.Item exposing (..)
+module Components.Item exposing (view, viewCenter, viewEnd, viewStart)
 
 import Html exposing (Attribute, Html, div, h1, text)
 import Html.Attributes exposing (class)

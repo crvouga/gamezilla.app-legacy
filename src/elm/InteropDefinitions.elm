@@ -1,9 +1,10 @@
-module InteropDefinitions exposing (Flags, FromElm(..), LoggedInUser, ToElm(..), interop)
+module InteropDefinitions exposing (AuthState, Flags, FromElm(..), LoggedInUser, ToElm(..), interop)
 
 import Json.Encode
-import LogInMethod
-import TsJson.Decode as TsDecode exposing (Decoder)
-import TsJson.Encode as TsEncode exposing (Encoder, optional, required)
+import LogInMethod exposing (LoginInMethod)
+import TsJson.Decode as Decode exposing (Decoder)
+import TsJson.Decode.Pipeline as DecodePipeline
+import TsJson.Encode as Encode exposing (Encoder, optional, required)
 
 
 interop :
@@ -19,18 +20,21 @@ interop =
 
 
 type FromElm
-    = LogIn LogInMethod.LoginInMethod
+    = LogIn LoginInMethod
     | LogOut
 
 
-type ToElm
+type alias LoggedInUser =
+    { userId : String }
+
+
+type AuthState
     = LoggedIn LoggedInUser
     | LoggedOut
 
 
-type alias LoggedInUser =
-    { userId : String
-    }
+type ToElm
+    = AuthStateChanged AuthState
 
 
 type alias Flags =
@@ -38,9 +42,13 @@ type alias Flags =
     }
 
 
+
+-- ENCODERS
+
+
 logInEncoder : Encoder LogInMethod.LoginInMethod
 logInEncoder =
-    TsEncode.object
+    Encode.object
         [ required
             "method"
             (\method -> method)
@@ -50,12 +58,12 @@ logInEncoder =
 
 logOutEncoder : Encoder ()
 logOutEncoder =
-    TsEncode.object []
+    Encode.object []
 
 
 fromElm : Encoder FromElm
 fromElm =
-    TsEncode.union
+    Encode.union
         (\vLogIn vLogOut value ->
             case value of
                 LogIn method ->
@@ -64,25 +72,41 @@ fromElm =
                 LogOut ->
                     vLogOut
         )
-        |> TsEncode.variantTagged "logIn" logInEncoder
-        |> TsEncode.variant0 "logOut"
-        |> TsEncode.buildUnion
+        |> Encode.variantTagged "logIn" logInEncoder
+        |> Encode.variant0 "logOut"
+        |> Encode.buildUnion
+
+
+
+-- DECODERS
+
+
+authStateDecoder : Decoder AuthState
+authStateDecoder =
+    Decode.discriminatedUnion "type"
+        [ ( "LoggedOut", Decode.succeed LoggedOut )
+        , ( "LoggedIn"
+          , Decode.succeed
+                (\userId -> LoggedIn { userId = userId })
+                |> Decode.andMap (Decode.field "userId" Decode.string)
+          )
+        ]
 
 
 toElm : Decoder ToElm
 toElm =
-    TsDecode.discriminatedUnion "tag"
-        [ ( "loggedIn"
-          , TsDecode.map LoggedIn
-                (TsDecode.map LoggedInUser
-                    (TsDecode.field "userId" TsDecode.string)
-                )
+    Decode.discriminatedUnion "tag"
+        [ ( "authStateChanged"
+          , Decode.map AuthStateChanged authStateDecoder
           )
-        , ( "loggedOut", TsDecode.succeed LoggedOut )
         ]
+
+
+
+-- FLAGS
 
 
 flags : Decoder Flags
 flags =
-    TsDecode.map Flags
-        (TsDecode.field "greeting" TsDecode.string)
+    Decode.map Flags
+        (Decode.field "greeting" Decode.string)

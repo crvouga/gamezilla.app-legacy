@@ -27,7 +27,7 @@ app.ports.interopFromElm.subscribe(async (fromElm) => {
             },
             {
               redirectTo,
-            }
+            },
           );
           break;
         }
@@ -47,14 +47,16 @@ setTimeout(() => {
 
   if (userId) {
     app.ports.interopToElm.send({
-      tag: "loggedIn",
+      tag: "authStateChanged",
+      type: "LoggedIn",
       userId,
     });
     return;
   }
 
   app.ports.interopToElm.send({
-    tag: "loggedOut",
+    tag: "authStateChanged",
+    type: "LoggedOut",
   });
 }, 2000);
 
@@ -68,7 +70,8 @@ supabaseClient.auth.onAuthStateChange((event, session) => {
 
       if (userId) {
         app.ports.interopToElm.send({
-          tag: "loggedIn",
+          tag: "authStateChanged",
+          type: "LoggedIn",
           userId,
         });
       }
@@ -76,7 +79,8 @@ supabaseClient.auth.onAuthStateChange((event, session) => {
     case "SIGNED_OUT":
     case "USER_DELETED":
       app.ports.interopToElm.send({
-        tag: "loggedOut",
+        tag: "authStateChanged",
+        type: "LoggedOut",
       });
       break;
   }
