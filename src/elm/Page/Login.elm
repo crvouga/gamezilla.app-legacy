@@ -1,5 +1,6 @@
 module Page.Login exposing (Model, Msg, initialModel, update, view)
 
+import Browser exposing (Document)
 import Components.BackdropLoader
 import Components.Container
 import Components.Icons
@@ -10,7 +11,7 @@ import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
 import InteropDefinitions
 import InteropPorts
-import LogInMethod exposing (LoginInMethod)
+import LogInMethod exposing (LogInMethod)
 
 
 
@@ -19,7 +20,7 @@ import LogInMethod exposing (LoginInMethod)
 
 type Model
     = Idle
-    | Redirecting LoginInMethod
+    | Redirecting LogInMethod
 
 
 initialModel : Model
@@ -32,7 +33,7 @@ initialModel =
 
 
 type Msg
-    = LogIn LoginInMethod
+    = LogIn LogInMethod
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )

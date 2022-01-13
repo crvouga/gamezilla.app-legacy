@@ -8,7 +8,7 @@ const app = Elm.Main.init({
   },
 });
 
-app.ports.interopFromElm.subscribe(async (fromElm) => {
+app.ports.interopFromElm?.subscribe(async (fromElm) => {
   switch (fromElm.tag) {
     case "logOut": {
       await supabaseClient.auth.signOut();

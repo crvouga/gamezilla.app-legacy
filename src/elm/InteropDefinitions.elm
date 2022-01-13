@@ -1,7 +1,7 @@
 module InteropDefinitions exposing (AuthState, Flags, FromElm(..), LoggedInUser, ToElm(..), interop)
 
 import Json.Encode
-import LogInMethod exposing (LoginInMethod)
+import LogInMethod exposing (LogInMethod)
 import TsJson.Decode as Decode exposing (Decoder)
 import TsJson.Decode.Pipeline as DecodePipeline
 import TsJson.Encode as Encode exposing (Encoder, optional, required)
@@ -20,7 +20,7 @@ interop =
 
 
 type FromElm
-    = LogIn LoginInMethod
+    = LogIn LogInMethod
     | LogOut
 
 
@@ -46,7 +46,7 @@ type alias Flags =
 -- ENCODERS
 
 
-logInEncoder : Encoder LogInMethod.LoginInMethod
+logInEncoder : Encoder LogInMethod
 logInEncoder =
     Encode.object
         [ required

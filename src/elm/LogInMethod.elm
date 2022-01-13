@@ -1,15 +1,15 @@
-module LogInMethod exposing (LoginInMethod(..), encoder)
+module LogInMethod exposing (LogInMethod(..), encoder)
 
 import Json.Encode
 import TsJson.Encode exposing (Encoder, buildUnion, union, variantLiteral)
 
 
-type LoginInMethod
+type LogInMethod
     = Google
     | Facebook
 
 
-toString : LoginInMethod -> String
+toString : LogInMethod -> String
 toString method =
     case method of
         Google ->
@@ -19,7 +19,7 @@ toString method =
             "Facebook"
 
 
-encoder : Encoder LoginInMethod
+encoder : Encoder LogInMethod
 encoder =
     union
         (\vGoogle vFacebook value ->
