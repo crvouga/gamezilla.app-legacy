@@ -1,4 +1,4 @@
-module Main exposing (CurrentPage(..), Flags, Model, Msg(..), main)
+module Main exposing (Flags, Model, Msg(..), main)
 
 import Browser exposing (Document, UrlRequest)
 import Components.BackdropLoader
@@ -7,10 +7,9 @@ import Components.Container
 import Html exposing (Html, div, h1, text)
 import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
-import InteropDefinitions
+import InteropDefinitions exposing (AuthState, ToElm(..))
 import InteropPorts
 import LogInMethod
-import LogInSession exposing (Model(..))
 import Page.Login
 import Url exposing (Url)
 import Utility exposing (isEven, isOdd)
@@ -36,26 +35,21 @@ main =
 -- MODEL
 
 
-type alias User =
-    { userId : String
-    }
-
-
 type alias Flags =
     InteropDefinitions.Flags
 
 
-type CurrentPage
-    = LogInPage Page.Login.Model
-
-
 type alias Model =
-    { page : Page.Login.Model }
+    { authState : Maybe AuthState
+    , loginPage : Page.Login.Model
+    }
 
 
 initialModel : Model
 initialModel =
-    { page = Page.Login.initialModel }
+    { authState = Nothing
+    , loginPage = Page.Login.initialModel
+    }
 
 
 init : Flags -> ( Model, Cmd Msg )
@@ -68,33 +62,36 @@ init flags =
 
 
 type Msg
-    = LogInPageMsg Page.Login.Msg
-    | UrlChanged Url
+    = UrlChanged Url
     | UrlRequested Browser.UrlRequest
-
-
-updateWith : (subModel -> Model) -> (subMsg -> Msg) -> Model -> ( subModel, Cmd subMsg ) -> ( Model, Cmd Msg )
-updateWith toModel toMsg model ( subModel, subCmd ) =
-    ( toModel subModel
-    , Cmd.map toMsg subCmd
-    )
+    | ToElmMsg ToElm
+    | ToElmError
+    | GotLoginPageMsg Page.Login.Msg
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        UrlRequested url ->
-            ( model, Cmd.none )
+        GotLoginPageMsg loginPageMsg ->
+            let
+                ( nextLoginPageModel, loginPageCmd ) =
+                    Page.Login.update loginPageMsg model.loginPage
+            in
+            ( { model | loginPage = nextLoginPageModel }, Cmd.none )
 
         UrlChanged url ->
             ( model, Cmd.none )
 
-        LogInPageMsg logInPageMsg ->
-            let
-                ( m, c ) =
-                    Page.Login.update logInPageMsg model.page
-            in
-            ( { model | page = m }, Cmd.map LogInPageMsg c )
+        UrlRequested urlRequest ->
+            ( model, Cmd.none )
+
+        ToElmError ->
+            ( model, Cmd.none )
+
+        ToElmMsg toElmMsg ->
+            case toElmMsg of
+                AuthStateChanged authState ->
+                    ( { model | authState = Maybe.Just authState }, Cmd.none )
 
 
 
@@ -103,26 +100,26 @@ update msg model =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Sub.none
+    Sub.map
+        (\result ->
+            case result of
+                Err _ ->
+                    ToElmError
+
+                Ok toElmMsg ->
+                    ToElmMsg toElmMsg
+        )
+        InteropPorts.toElm
 
 
 
--- Sub.map
---     (\result ->
---         case result of
---             Ok toElm ->
---                 case toElm of
---                     InteropDefinitions.LoggedIn { userId } ->
---                         LogInSessionChanged (LogIn { page = Page.Login.initialModel })
---                     InteropDefinitions.LoggedOut ->
---                         LogInSessionChanged (LoggedOut { page = Page.Login.initialModel })
---             Err _ ->
---                 LogInSessionChanged (LoggedOut { page = Page.Login.initialModel })
---     )
---     InteropPorts.toElm
 -- VIEW
 
 
 view : Model -> Document Msg
-view { page } =
-    Document "Log In" [ Html.map LogInPageMsg (Page.Login.view page) ]
+view model =
+    { title = "Gamezilla"
+    , body =
+        [ Html.map GotLoginPageMsg (Page.Login.view model.loginPage)
+        ]
+    }

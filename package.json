@@ -3,18 +3,17 @@
   "version": "1.0.0",
   "description": "client",
   "scripts": {
-    "dev": "concurrently \"npm run watch:css\" \"npm run watch:app\" \"npm run watch:elm-ts-interop\"",
+    "dev": "npm run watch:app",
     "preview": "rm -rf dist && npm run build && sirv dist --single index.html",
     "build": "npm run build:css && npm run build:app",
     "build:app": "npx parcel build src/index.html --public-url ./",
     "build:css": "npx tailwindcss -i src/index.css -o tailwind-stuff/index.css",
     "watch:app": "rm -rf dist && npx parcel serve src/index.html",
     "watch:css": "npx tailwindcss -i src/index.css -o tailwind-stuff/index.css -w",
-    "watch:ts": "npx tsc --watch",
+    "watch:ts": "concurrently \"npx tsc --watch\" \"npm run watch:generate-elm-ts-interop\"",
     "watch:elm-review": "npx elm-review --watch",
-    "watch:elm-ts-interop": "npx elm-ts-interop --output elm-ts-interop-stuff/index.d.ts --watch",
-    "init-elm-ts-interop": "npx elm-ts-interop init && cd src && mv *.elm elm",
-    "env:vercel": "vercel env pull"
+    "watch:generate-elm-ts-interop": "npx elm-ts-interop --output elm-ts-interop-stuff/index.d.ts --watch",
+    "env": "vercel env pull"
   },
   "author": "",
   "license": "MIT",

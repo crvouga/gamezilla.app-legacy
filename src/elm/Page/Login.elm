@@ -8,9 +8,9 @@ import Components.PageBar
 import Html exposing (Html, div, h1, text)
 import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
+import InteropDefinitions
 import InteropPorts
 import LogInMethod exposing (LoginInMethod)
-import LogInSession
 
 
 
@@ -39,7 +39,7 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         LogIn method ->
-            ( Redirecting method, LogInSession.logIn method )
+            ( Redirecting method, InteropPorts.fromElm (InteropDefinitions.LogIn method) )
 
 
 
@@ -58,14 +58,10 @@ view model =
             , Components.Item.viewCenter [] [ text "Continue With Google" ]
             , Components.Item.viewEnd [] [ Components.Icons.cheveronRight ]
             ]
-        , Components.BackdropLoader.view
-            { isOpen =
-                case model of
-                    Idle ->
-                        False
+        , case model of
+            Idle ->
+                div [] []
 
-                    Redirecting _ ->
-                        True
-            , title = "Redirecting..."
-            }
+            Redirecting _ ->
+                Components.BackdropLoader.view [] [ Components.BackdropLoader.viewTitle [] [ text "Redirecting..." ] ]
         ]
