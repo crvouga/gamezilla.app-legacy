@@ -5,18 +5,27 @@ import { Item, ItemCenter, ItemEnd, ItemStart } from "Components/Item";
 import { PageBar, PageBarTitle } from "Components/PageBar";
 import React, { useState } from "react";
 
-export const LoginPage = () => {
-  const [state, setState] = useState<"idle" | "redirecting">("idle");
+const useLoginPageState = () => {
+  const [state, setState] = useState<"idle" | "logging-in">("idle");
 
-  const transition = (message: { type: "login-with-google" }) => {
+  const dispatch = (message: { type: "login-with-google" }) => {
     if (message.type === "login-with-google") {
-      setState("redirecting");
+      setState("logging-in");
     }
   };
 
+  return {
+    state,
+    dispatch,
+  };
+};
+
+export const LoginPage = () => {
+  const { state, dispatch } = useLoginPageState();
+
   return (
     <>
-      {state === "redirecting" && (
+      {state === "logging-in" && (
         <BackdropLoader>
           <BackdropLoaderTitle>Redirecting...</BackdropLoaderTitle>
         </BackdropLoader>
@@ -26,7 +35,7 @@ export const LoginPage = () => {
         <PageBar>
           <PageBarTitle>Login</PageBarTitle>
         </PageBar>
-        <Item onClick={() => transition({ type: "login-with-google" })}>
+        <Item onClick={() => dispatch({ type: "login-with-google" })}>
           <ItemStart>
             <Icons.Google />
           </ItemStart>
