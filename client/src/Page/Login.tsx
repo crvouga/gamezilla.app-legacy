@@ -5,7 +5,7 @@ import { Item, ItemCenter, ItemEnd, ItemStart } from "Components/Item";
 import { PageBar, PageBarTitle } from "Components/PageBar";
 import React, { useState } from "react";
 
-const useLoginPageState = () => {
+export const LoginPage = () => {
   const [state, setState] = useState<"idle" | "logging-in">("idle");
 
   const dispatch = (message: { type: "login-with-google" }) => {
@@ -13,15 +13,6 @@ const useLoginPageState = () => {
       setState("logging-in");
     }
   };
-
-  return {
-    state,
-    dispatch,
-  };
-};
-
-export const LoginPage = () => {
-  const { state, dispatch } = useLoginPageState();
 
   return (
     <>
