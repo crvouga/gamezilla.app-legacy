@@ -4,13 +4,15 @@ import * as Icons from "Components/Icons";
 import { Item, ItemCenter, ItemEnd, ItemStart } from "Components/Item";
 import { PageBar, PageBarTitle } from "Components/PageBar";
 import React, { useState } from "react";
+import { supabaseClient } from "supabase-client";
 
 export const LoginPage = () => {
   const [state, setState] = useState<"idle" | "logging-in">("idle");
 
-  const dispatch = (message: { type: "login-with-google" }) => {
+  const dispatch = async (message: { type: "login-with-google" }) => {
     if (message.type === "login-with-google") {
       setState("logging-in");
+      await supabaseClient.auth.signIn({ provider: "google" });
     }
   };
 
