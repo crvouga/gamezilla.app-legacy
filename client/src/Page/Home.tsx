@@ -1,12 +1,10 @@
 import { Backdrop } from "Components/Backdrop";
 import { Button } from "Components/Button";
 import { Container } from "Components/Container";
-import * as Icons from "Components/Icons";
-import { Item, ItemCenter, ItemEnd } from "Components/Item";
+import { Item, ItemCenter } from "Components/Item";
 import { PageBar, PageBarTitle } from "Components/PageBar";
 import { Surface } from "Components/Surface";
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 import { supabaseClient } from "supabase-client";
 
 type State =
@@ -30,22 +28,23 @@ type Message =
 
 export const HomePage = () => {
   const [state, setState] = useState<State>({ type: "idle" });
+
   const dispatch = async (message: Message) => {
-    if (message.type === "logout") {
-      setState({ type: "confirming-logout" });
-      return;
-    }
+    switch (message.type) {
+      case "cancelled-logout":
+        setState({ type: "idle" });
+        return;
 
-    if (message.type === "comfirmed-logout") {
-      await supabaseClient.auth.signOut();
-      return;
-    }
+      case "comfirmed-logout":
+        await supabaseClient.auth.signOut();
+        return;
 
-    if (message.type === "cancelled-logout") {
-      setState({ type: "idle" });
-      return;
+      case "logout":
+        setState({ type: "confirming-logout" });
+        return;
     }
   };
+
   return (
     <>
       {state.type === "confirming-logout" && (

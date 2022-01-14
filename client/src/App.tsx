@@ -48,19 +48,18 @@ export const App = () => {
     });
   }, []);
 
-  if (state.type === "loading") {
-    return (
-      <BackdropLoader>
-        <BackdropLoaderTitle>Loading...</BackdropLoaderTitle>
-      </BackdropLoader>
-    );
-  }
+  switch (state.type) {
+    case "loading":
+      return (
+        <BackdropLoader>
+          <BackdropLoaderTitle>Loading...</BackdropLoaderTitle>
+        </BackdropLoader>
+      );
 
-  if (state.type === "logged-out") {
-    return <LoginPage />;
-  }
+    case "logged-in":
+      return <HomePage />;
 
-  if (state.type === "logged-in") {
-    return <HomePage />;
+    case "logged-out":
+      return <LoginPage />;
   }
 };
