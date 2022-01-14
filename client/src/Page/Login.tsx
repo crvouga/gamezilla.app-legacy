@@ -4,7 +4,7 @@ import * as Icons from "Components/Icons";
 import { Item, ItemCenter, ItemEnd, ItemStart } from "Components/Item";
 import { PageBar, PageBarTitle } from "Components/PageBar";
 import React, { useState } from "react";
-import { supabaseClient } from "supabase-client";
+import { supabaseClient } from "supabase/supabase-client";
 
 export const LoginPage = () => {
   const [state, setState] = useState<"idle" | "logging-in">("idle");
