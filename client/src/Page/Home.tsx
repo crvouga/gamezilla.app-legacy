@@ -1,7 +1,8 @@
+import * as Icons from "Components/Icons";
 import { Backdrop } from "Components/Backdrop";
 import { Button } from "Components/Button";
 import { Container } from "Components/Container";
-import { Item, ItemCenter } from "Components/Item";
+import { Item, ItemCenter, ItemStart } from "Components/Item";
 import { PageBar, PageBarTitle } from "Components/PageBar";
 import { Surface } from "Components/Surface";
 import React, { useState } from "react";
@@ -68,6 +69,9 @@ export const HomePage = () => {
           <PageBarTitle>Home</PageBarTitle>
         </PageBar>
         <Item onClick={() => dispatch({ type: "logout" })}>
+          <ItemStart>
+            <Icons.Logout />
+          </ItemStart>
           <ItemCenter>Logout</ItemCenter>
         </Item>
       </Container>
