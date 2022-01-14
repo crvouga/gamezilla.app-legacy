@@ -6,7 +6,7 @@ import { Item, ItemCenter, ItemStart } from "Components/Item";
 import { PageBar, PageBarTitle } from "Components/PageBar";
 import { Surface } from "Components/Surface";
 import React, { useState } from "react";
-import { supabaseClient } from "supabase-client";
+import { supabaseClient } from "supabase/supabase-client";
 
 type State =
   | {
