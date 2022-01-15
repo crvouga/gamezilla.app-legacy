@@ -50,6 +50,7 @@ export const HomePage = () => {
       {state.type === "confirming-logout" && (
         <ModalConformation
           title="Logout of Gamezilla?"
+          onBackdropClick={() => dispatch({ type: "cancelled-logout" })}
           left={{
             title: "Cancel",
             onClick: () => dispatch({ type: "cancelled-logout" }),
