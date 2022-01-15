@@ -9,7 +9,7 @@ export const App = () => {
 
   switch (loginSession.type) {
     case "loading":
-      return <ModalLoader title="Loading..." />;
+      return <ModalLoader title="Loading..." subtitle="Checking login" />;
 
     case "logged-in":
       return <LoggedInApp userId={loginSession.userId} />;

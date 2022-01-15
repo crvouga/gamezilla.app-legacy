@@ -3,14 +3,18 @@ import { definitions, supabaseClient } from "src/supabase";
 
 type State =
   | {
+      type: "error";
+    }
+  | {
       type: "loading";
     }
   | {
       type: "loaded";
-      profile: { userId: string; avatarUrl?: string; displayName?: string };
-    }
-  | {
-      type: "error";
+      profile: {
+        userId: string;
+        avatarUrl?: string;
+        displayName?: string;
+      };
     };
 
 export const useProfile = ({ userId }: { userId: string }) => {

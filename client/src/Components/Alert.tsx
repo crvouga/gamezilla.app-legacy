@@ -45,9 +45,13 @@ export const Alert = ({
 
       <div>
         {title && (
-          <div className={`font-bold ${classNames.title}`}>{title}</div>
+          <div className={`font-bold text-base ${classNames.title}`}>
+            {title}
+          </div>
         )}
-        {body && <div className={`font-medium ${classNames.body}`}>{body}</div>}
+        {body && (
+          <div className={`font-medium text-sm ${classNames.body}`}>{body}</div>
+        )}
       </div>
     </div>
   );

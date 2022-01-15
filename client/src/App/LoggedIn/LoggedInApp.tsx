@@ -48,7 +48,7 @@ export const LoggedInApp = ({ userId }: { userId: string }) => {
       );
 
     case "loading":
-      return <ModalLoader title="Loading Profile..." />;
+      return <ModalLoader title="Loading..." subtitle="Fetching profile" />;
 
     case "loaded":
       const { profile } = profileState;
