@@ -6,7 +6,7 @@ import { PageBar, PageBarTitle } from "Components/PageBar";
 import React, { useState } from "react";
 import { supabaseClient } from "supabase/supabase-client";
 
-export const LoginPage = () => {
+export const LoggedOutApp = () => {
   const [state, setState] = useState<"idle" | "logging-in">("idle");
 
   const dispatch = async (message: { type: "login-with-google" }) => {
