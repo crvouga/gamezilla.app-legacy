@@ -12,7 +12,7 @@ export const EditProfilePage = ({
   const router = useRouter();
   return (
     <>
-      <PageBar title="Edit Profile" />
+      <PageBar center="Edit Profile" />
       <Avatar className="w-36 h-36 m-auto mt-4" src={profile.avatarUrl} />
       <Button
         className="m-auto mt-2"

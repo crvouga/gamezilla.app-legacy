@@ -11,7 +11,7 @@ export const Button = ({
 }) => {
   return (
     <button
-      className={`rounded block p-2 text-blue-400 active:text-blue-200 font-bold text-lg ${className}`}
+      className={`rounded block p-2 text-blue-400 active:text-blue-200 font-bold ${className}`}
       onClick={onClick}
     >
       {text}
