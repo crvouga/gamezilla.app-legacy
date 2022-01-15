@@ -22,7 +22,7 @@ export const ModalConformation = ({
   return (
     <Backdrop>
       <div className="drop-shadow-md rounded-md bg bg-slate-100 text-gray-700 overflow-hidden">
-        <h1 className="text-xl text-center font-medium p-8 pb-6">{title}</h1>
+        <h1 className="text-xl text-center font-medium p-6">{title}</h1>
         <div className="w-full flex border-t border-gray-300">
           <button
             className={`border-r border-gray-300 ${classNames.action}`}
