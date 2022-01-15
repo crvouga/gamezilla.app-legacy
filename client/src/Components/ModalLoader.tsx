@@ -2,20 +2,12 @@ import { Backdrop } from "./Backdrop";
 import { Loader } from "./Loader";
 import { Surface } from "./Surface";
 
-export const BackdropLoaderTitle = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => {
-  return <h1 className="text-lg font-medium">{children}</h1>;
-};
-
-export const BackdropLoader = ({ children }: { children: React.ReactNode }) => {
+export const ModalLoader = ({ title }: { title: string }) => {
   return (
     <Backdrop>
       <Surface className="flex items-center">
         <Loader className="mr-4" />
-        {children}
+        <h1 className="text-lg font-medium">{title}</h1>
       </Surface>
     </Backdrop>
   );

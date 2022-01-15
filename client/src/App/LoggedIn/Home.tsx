@@ -1,9 +1,10 @@
-import * as Icons from "Components/Icons";
 import { Backdrop } from "Components/Backdrop";
 import { Button } from "Components/Button";
 import { Container } from "Components/Container";
-import { Item, ItemCenter, ItemStart } from "Components/Item";
-import { PageBar, PageBarTitle } from "Components/PageBar";
+import * as Icons from "Components/Icons";
+import { Item } from "Components/Item";
+import { ModalConformation } from "Components/ModalConformation";
+import { PageBar } from "Components/PageBar";
 import { Surface } from "Components/Surface";
 import React, { useState } from "react";
 import { supabaseClient } from "supabase/supabase-client";
@@ -49,31 +50,27 @@ export const HomePage = () => {
   return (
     <>
       {state.type === "confirming-logout" && (
-        <Backdrop>
-          <Surface>
-            <h1 className="text-xl font-medium mb-2">Logout of Gamezilla?</h1>
-            <div className="flex justify-center items-center">
-              <Button onClick={() => dispatch({ type: "cancelled-logout" })}>
-                Cancel
-              </Button>
-              <Button onClick={() => dispatch({ type: "comfirmed-logout" })}>
-                Logout
-              </Button>
-            </div>
-          </Surface>
-        </Backdrop>
+        <ModalConformation
+          title="Logout of Gamezilla?"
+          left={{
+            title: "Cancel",
+            onClick: () => dispatch({ type: "cancelled-logout" }),
+          }}
+          right={{
+            title: "Logout",
+            onClick: () => dispatch({ type: "comfirmed-logout" }),
+          }}
+        />
       )}
 
       <Container>
-        <PageBar>
-          <PageBarTitle>Home</PageBarTitle>
-        </PageBar>
-        <Item onClick={() => dispatch({ type: "logout" })}>
-          <ItemStart>
-            <Icons.Logout />
-          </ItemStart>
-          <ItemCenter>Logout</ItemCenter>
-        </Item>
+        <PageBar title="Home" />
+
+        <Item
+          onClick={() => dispatch({ type: "logout" })}
+          start={<Icons.Logout />}
+          center="Logout"
+        />
       </Container>
     </>
   );

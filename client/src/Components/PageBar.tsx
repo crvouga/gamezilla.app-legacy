@@ -1,13 +1,13 @@
 import React from "react";
 
-export const PageBarTitle = ({ children }: { children: React.ReactNode }) => {
+export const PageBar = ({ title }: { title?: string }) => {
   return (
-    <h1 className="text-xl font-bold flex items-center justify-center flex-1">
-      {children}
-    </h1>
+    <div className="w-full p-2 border-b">
+      {title && (
+        <h1 className="text-xl font-bold flex items-center justify-center flex-1">
+          {title}
+        </h1>
+      )}
+    </div>
   );
-};
-
-export const PageBar = ({ children }: { children: React.ReactNode }) => {
-  return <div className="w-full p-2 border-b">{children}</div>;
 };
