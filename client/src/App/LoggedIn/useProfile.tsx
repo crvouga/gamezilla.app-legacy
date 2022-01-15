@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { definitions, supabaseClient } from "supabase";
+import { definitions, supabaseClient } from "src/supabase";
 
 type State =
   | {
