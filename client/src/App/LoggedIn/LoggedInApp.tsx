@@ -4,9 +4,12 @@ import { ModalLoader } from "Components/ModalLoader";
 import React from "react";
 import { HomePage } from "./Home";
 import { useProfile } from "./useProfile";
+import { useRouter } from "./useRouter";
 
 export const LoggedInApp = ({ userId }: { userId: string }) => {
   const profileState = useProfile({ userId });
+
+  const router = useRouter();
 
   switch (profileState.type) {
     case "error":
@@ -25,6 +28,11 @@ export const LoggedInApp = ({ userId }: { userId: string }) => {
       return <ModalLoader title="Loading Profile..." />;
 
     case "loaded":
-      return <HomePage />;
+      return (
+        <>
+          {router.route === "home" && <HomePage />}
+          {router.route === "edit-profile" && <div>edit profile</div>}
+        </>
+      );
   }
 };
