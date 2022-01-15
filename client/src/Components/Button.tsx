@@ -1,18 +1,20 @@
 import React from "react";
 
 export const Button = ({
-  children,
   onClick,
+  className,
+  text,
 }: {
-  children: React.ReactNode;
+  className?: string;
   onClick?: () => void;
+  text: string;
 }) => {
   return (
     <button
-      className="w-full p-2 text-blue-400 active:text-blue-200 font-bold font-lg"
+      className={`rounded block p-2 text-blue-400 active:text-blue-200 font-bold text-lg ${className}`}
       onClick={onClick}
     >
-      {children}
+      {text}
     </button>
   );
 };

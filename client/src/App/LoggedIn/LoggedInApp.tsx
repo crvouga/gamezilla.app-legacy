@@ -2,6 +2,7 @@ import { Alert } from "Components/Alert";
 import { Backdrop } from "Components/Backdrop";
 import { ModalLoader } from "Components/ModalLoader";
 import React from "react";
+import { EditAvatarPage } from "./EditAvatar";
 import { EditProfilePage } from "./EditProfile";
 import { HomePage } from "./Home";
 import { useProfile } from "./useProfile";
@@ -32,7 +33,12 @@ export const LoggedInApp = ({ userId }: { userId: string }) => {
       return (
         <>
           {router.route === "home" && <HomePage />}
-          {router.route === "edit-profile" && <EditProfilePage />}
+          {router.route === "edit-profile" && (
+            <EditProfilePage profile={profileState.profile} />
+          )}
+          {router.route === "edit-avatar" && (
+            <EditAvatarPage profile={profileState.profile} />
+          )}
         </>
       );
   }
