@@ -13,7 +13,7 @@ export const Item = ({
 }) => {
   return (
     <div
-      className="w-full flex flex-row justify-start items-center font-bold p-4 border-b hover:bg-gray-100 active:bg-gray-200 cursor-pointer"
+      className="text-gray-700 w-full flex flex-row justify-start items-center font-bold p-4 border-b hover:bg-gray-100 active:bg-gray-200 cursor-pointer"
       onClick={onClick}
     >
       {start && <div className="mr-4">{start}</div>}

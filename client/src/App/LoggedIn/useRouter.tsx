@@ -1,0 +1,69 @@
+import { useEffect } from "react";
+import { useState } from "react";
+
+type State =
+  | {
+      route: "home";
+    }
+  | {
+      route: "edit-profile";
+    };
+
+const toPathname = (state: State) => {
+  switch (state.route) {
+    case "home":
+      return "/";
+
+    case "edit-profile":
+      return "/edit-profile";
+  }
+};
+
+const toState = ({ pathname }: { pathname: string }): State => {
+  if (pathname === "/") {
+    return {
+      route: "home",
+    };
+  }
+
+  if (pathname === "/edit-profile") {
+    return {
+      route: "edit-profile",
+    };
+  }
+
+  return {
+    route: "home",
+  };
+};
+
+export const useRouter = () => {
+  const [state, setState] = useState<State>(() => {
+    return toState({ pathname: window.location.pathname });
+  });
+
+  useEffect(() => {
+    const onLocationChange = () => {
+      setState(toState({ pathname: window.location.pathname }));
+    };
+
+    window.addEventListener("popstate", onLocationChange);
+
+    return () => {
+      window.removeEventListener("popstate", onLocationChange);
+    };
+  }, []);
+
+  const push = (state: State) => {
+    window.history.pushState({}, "", toPathname(state));
+
+    const event = new PopStateEvent("popstate");
+
+    window.dispatchEvent(event);
+  };
+
+  return {
+    route: state.route,
+    push,
+  };
+};

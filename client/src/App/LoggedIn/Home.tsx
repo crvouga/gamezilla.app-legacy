@@ -4,6 +4,7 @@ import { ModalConformation } from "Components/ModalConformation";
 import { PageBar } from "Components/PageBar";
 import React, { useState } from "react";
 import { supabaseClient } from "supabase/supabase-client";
+import { useRouter } from "./useRouter";
 
 type State =
   | {
@@ -26,6 +27,7 @@ type Message =
 
 export const HomePage = () => {
   const [state, setState] = useState<State>({ type: "idle" });
+  const router = useRouter();
 
   const dispatch = async (message: Message) => {
     switch (message.type) {
@@ -60,6 +62,15 @@ export const HomePage = () => {
       )}
 
       <PageBar title="Home" />
+
+      <Item
+        onClick={() => {
+          router.push({ route: "edit-profile" });
+        }}
+        start={<Icons.Edit />}
+        center="Edit Profile"
+        end={<Icons.CheveronRight />}
+      />
 
       <Item
         onClick={() => dispatch({ type: "logout" })}
