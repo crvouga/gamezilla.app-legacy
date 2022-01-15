@@ -8,10 +8,10 @@ export const Avatar = ({
 }) => {
   return (
     <div
-      className={`relative border rounded-full p-2 overflow-hidden ${className}`}
+      className={`relative border rounded-full overflow-hidden ${className}`}
     >
       {src ? (
-        <img src={src} />
+        <img width="100%" height="100%" src={src} />
       ) : (
         <Icons.User className="w-full h-full bg-gray-400" />
       )}

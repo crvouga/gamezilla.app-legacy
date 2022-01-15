@@ -19,7 +19,7 @@ export const LoggedOutApp = () => {
     <>
       {state === "logging-in" && <ModalLoader title="Redirecting..." />}
 
-      <PageBar title="Login" />
+      <PageBar center="Login" />
 
       <Item
         onClick={() => dispatch({ type: "login-with-google" })}

@@ -61,7 +61,7 @@ export const HomePage = () => {
         />
       )}
 
-      <PageBar title="Home" />
+      <PageBar center="Home" />
 
       <Item
         onClick={() => {
