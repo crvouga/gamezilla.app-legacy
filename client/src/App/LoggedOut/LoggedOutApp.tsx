@@ -1,7 +1,6 @@
-import { ModalLoader } from "Components/ModalLoader";
-import { Container } from "Components/Container";
 import * as Icons from "Components/Icons";
 import { Item } from "Components/Item";
+import { ModalLoader } from "Components/ModalLoader";
 import { PageBar } from "Components/PageBar";
 import React, { useState } from "react";
 import { supabaseClient } from "supabase/supabase-client";
@@ -20,16 +19,14 @@ export const LoggedOutApp = () => {
     <>
       {state === "logging-in" && <ModalLoader title="Redirecting..." />}
 
-      <Container>
-        <PageBar title="Login" />
+      <PageBar title="Login" />
 
-        <Item
-          onClick={() => dispatch({ type: "login-with-google" })}
-          start={<Icons.Google />}
-          center="Continue With Google"
-          end={<Icons.CheveronRight />}
-        />
-      </Container>
+      <Item
+        onClick={() => dispatch({ type: "login-with-google" })}
+        start={<Icons.Google />}
+        center="Continue With Google"
+        end={<Icons.CheveronRight />}
+      />
     </>
   );
 };
