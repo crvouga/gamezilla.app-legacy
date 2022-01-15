@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import { definitions } from "./generated-types";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 
@@ -13,3 +14,20 @@ if (!supabaseAnonKey) {
 }
 
 export const supabaseClient = createClient(supabaseUrl, supabaseAnonKey);
+
+supabaseClient
+  .from<definitions["conversation"]>("conversation")
+  .select(
+    `
+    id,
+    createdAt,
+    profiles:profiles(
+      id,
+      display_name,
+      avatar_url
+    )
+  `
+  )
+  .then((response) => {
+    console.log(response.data);
+  });

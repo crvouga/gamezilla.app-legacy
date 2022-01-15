@@ -5,13 +5,34 @@ import React from "react";
 import { EditAvatarPage } from "./EditAvatar";
 import { EditProfilePage } from "./EditProfile";
 import { HomePage } from "./Home";
+import { SearchUsersPage } from "./SearchUsers";
 import { useProfile } from "./useProfile";
 import { useRouter } from "./useRouter";
 
+const LoggedInRoutes = ({
+  profile,
+}: {
+  profile: { userId: string; avatarUrl?: string; displayName?: string };
+}) => {
+  const router = useRouter();
+
+  switch (router.route) {
+    case "search-users":
+      return <SearchUsersPage />;
+
+    case "home":
+      return <HomePage />;
+
+    case "edit-profile":
+      return <EditProfilePage profile={profile} />;
+
+    case "edit-avatar":
+      return <EditAvatarPage profile={profile} />;
+  }
+};
+
 export const LoggedInApp = ({ userId }: { userId: string }) => {
   const profileState = useProfile({ userId });
-
-  const router = useRouter();
 
   switch (profileState.type) {
     case "error":
@@ -30,16 +51,7 @@ export const LoggedInApp = ({ userId }: { userId: string }) => {
       return <ModalLoader title="Loading Profile..." />;
 
     case "loaded":
-      return (
-        <>
-          {router.route === "home" && <HomePage />}
-          {router.route === "edit-profile" && (
-            <EditProfilePage profile={profileState.profile} />
-          )}
-          {router.route === "edit-avatar" && (
-            <EditAvatarPage profile={profileState.profile} />
-          )}
-        </>
-      );
+      const { profile } = profileState;
+      return <LoggedInRoutes profile={profile} />;
   }
 };

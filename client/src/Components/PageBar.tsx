@@ -13,7 +13,7 @@ export const PageBar = ({
 }) => {
   return (
     <div
-      className={`overflow-hidden h-18 max-h-18 w-full p-2 border-b text-xl font-bold flex items-center ${className}`}
+      className={`overflow-hidden w-full p-2 border-b text-xl font-bold flex items-center ${className}`}
     >
       {left && <div>{left}</div>}
       {center && (

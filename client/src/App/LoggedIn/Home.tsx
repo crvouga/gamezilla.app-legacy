@@ -73,7 +73,18 @@ export const HomePage = () => {
       />
 
       <Item
-        onClick={() => dispatch({ type: "logout" })}
+        onClick={() => {
+          router.push({ route: "search-users" });
+        }}
+        start={<Icons.Search />}
+        center="Search Users"
+        end={<Icons.CheveronRight />}
+      />
+
+      <Item
+        onClick={() => {
+          dispatch({ type: "logout" });
+        }}
         start={<Icons.Logout />}
         center="Logout"
       />

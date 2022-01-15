@@ -3,7 +3,7 @@ import { Button } from "Components/Button";
 import { ModalLoader } from "Components/ModalLoader";
 import { PageBar } from "Components/PageBar";
 import React, { useEffect, useState } from "react";
-import * as R from "remeda";
+
 import { definitions, supabaseClient } from "supabase";
 import {
   AVATAR_STYLES,
@@ -13,6 +13,7 @@ import {
   toAvatarUrl,
 } from "./avatar";
 import * as Icons from "Components/Icons";
+import { mapValues } from "utility";
 
 export const EditAvatarPage = ({
   profile,
@@ -51,7 +52,7 @@ export const EditAvatarPage = ({
     setState("idle");
   };
 
-  const refByStyle = R.mapValues(AVATAR_STYLES, () =>
+  const refByStyle = mapValues(AVATAR_STYLES, () =>
     React.createRef<HTMLDivElement>()
   );
 
