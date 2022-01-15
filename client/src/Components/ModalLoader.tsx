@@ -10,7 +10,7 @@ export const ModalLoader = ({
   subtitle?: string;
 }) => {
   return (
-    <Backdrop>
+    <Backdrop className="cursor-progress">
       <Surface className="flex items-center">
         <Loader className="mr-4" />
         <div>
