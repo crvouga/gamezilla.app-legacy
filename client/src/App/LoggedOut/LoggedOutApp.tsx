@@ -1,8 +1,8 @@
-import { BackdropLoader, BackdropLoaderTitle } from "Components/BackdropLoader";
+import { ModalLoader } from "Components/ModalLoader";
 import { Container } from "Components/Container";
 import * as Icons from "Components/Icons";
-import { Item, ItemCenter, ItemEnd, ItemStart } from "Components/Item";
-import { PageBar, PageBarTitle } from "Components/PageBar";
+import { Item } from "Components/Item";
+import { PageBar } from "Components/PageBar";
 import React, { useState } from "react";
 import { supabaseClient } from "supabase/supabase-client";
 
@@ -18,25 +18,17 @@ export const LoggedOutApp = () => {
 
   return (
     <>
-      {state === "logging-in" && (
-        <BackdropLoader>
-          <BackdropLoaderTitle>Redirecting...</BackdropLoaderTitle>
-        </BackdropLoader>
-      )}
+      {state === "logging-in" && <ModalLoader title="Redirecting..." />}
 
       <Container>
-        <PageBar>
-          <PageBarTitle>Login</PageBarTitle>
-        </PageBar>
-        <Item onClick={() => dispatch({ type: "login-with-google" })}>
-          <ItemStart>
-            <Icons.Google />
-          </ItemStart>
-          <ItemCenter>Continue With Google</ItemCenter>
-          <ItemEnd>
-            <Icons.CheveronRight />
-          </ItemEnd>
-        </Item>
+        <PageBar title="Login" />
+
+        <Item
+          onClick={() => dispatch({ type: "login-with-google" })}
+          start={<Icons.Google />}
+          center="Continue With Google"
+          end={<Icons.CheveronRight />}
+        />
       </Container>
     </>
   );

@@ -1,4 +1,4 @@
-import { BackdropLoader, BackdropLoaderTitle } from "Components/BackdropLoader";
+import { ModalLoader } from "Components/ModalLoader";
 import React from "react";
 import { LoggedInApp } from "./LoggedIn/LoggedInApp";
 import { LoggedOutApp } from "./LoggedOut/LoggedOutApp";
@@ -9,11 +9,7 @@ export const App = () => {
 
   switch (loginSession.type) {
     case "loading":
-      return (
-        <BackdropLoader>
-          <BackdropLoaderTitle>Loading...</BackdropLoaderTitle>
-        </BackdropLoader>
-      );
+      return <ModalLoader title="Loading..." />;
 
     case "logged-in":
       return <LoggedInApp userId={loginSession.userId} />;
