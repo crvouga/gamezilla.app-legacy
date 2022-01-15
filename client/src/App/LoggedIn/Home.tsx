@@ -1,11 +1,7 @@
-import { Backdrop } from "Components/Backdrop";
-import { Button } from "Components/Button";
-import { Container } from "Components/Container";
 import * as Icons from "Components/Icons";
 import { Item } from "Components/Item";
 import { ModalConformation } from "Components/ModalConformation";
 import { PageBar } from "Components/PageBar";
-import { Surface } from "Components/Surface";
 import React, { useState } from "react";
 import { supabaseClient } from "supabase/supabase-client";
 
@@ -63,15 +59,13 @@ export const HomePage = () => {
         />
       )}
 
-      <Container>
-        <PageBar title="Home" />
+      <PageBar title="Home" />
 
-        <Item
-          onClick={() => dispatch({ type: "logout" })}
-          start={<Icons.Logout />}
-          center="Logout"
-        />
-      </Container>
+      <Item
+        onClick={() => dispatch({ type: "logout" })}
+        start={<Icons.Logout />}
+        center="Logout"
+      />
     </>
   );
 };
