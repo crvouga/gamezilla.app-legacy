@@ -8,8 +8,10 @@ export const ModalConformation = ({
   title,
   left,
   right,
+  onBackdropClick,
 }: {
   title: string;
+  onBackdropClick?: () => void;
   left: {
     title: string;
     onClick: () => void;
@@ -20,8 +22,13 @@ export const ModalConformation = ({
   };
 }) => {
   return (
-    <Backdrop>
-      <div className="drop-shadow-md rounded-md bg bg-slate-100 text-gray-700 overflow-hidden">
+    <Backdrop onClick={onBackdropClick}>
+      <div
+        onClick={(event) => {
+          event.stopPropagation();
+        }}
+        className="drop-shadow-md rounded-md bg bg-slate-100 text-gray-700 overflow-hidden"
+      >
         <h1 className="text-xl text-center font-medium p-6">{title}</h1>
         <div className="w-full flex border-t border-gray-300">
           <button
