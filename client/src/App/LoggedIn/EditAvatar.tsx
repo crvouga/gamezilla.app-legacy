@@ -1,8 +1,9 @@
 import { Avatar } from "Components/Avatar";
 import { Button } from "Components/Button";
-import { PageBar } from "Components/PageBar";
 import { ModalLoader } from "Components/ModalLoader";
-import React, { useState } from "react";
+import { PageBar } from "Components/PageBar";
+import React, { useEffect, useState } from "react";
+import * as R from "remeda";
 import { definitions, supabaseClient } from "supabase";
 import {
   AVATAR_STYLES,
@@ -11,9 +12,7 @@ import {
   parseAvatarUrl,
   toAvatarUrl,
 } from "./avatar";
-import { useRouter } from "./useRouter";
-import { useEffect } from "react";
-import * as R from "remeda";
+import * as Icons from "Components/Icons";
 
 export const EditAvatarPage = ({
   profile,
