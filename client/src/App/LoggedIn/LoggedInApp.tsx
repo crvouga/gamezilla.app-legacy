@@ -2,6 +2,7 @@ import { Alert } from "Components/Alert";
 import { Backdrop } from "Components/Backdrop";
 import { ModalLoader } from "Components/ModalLoader";
 import React from "react";
+import { EditProfilePage } from "./EditProfile";
 import { HomePage } from "./Home";
 import { useProfile } from "./useProfile";
 import { useRouter } from "./useRouter";
@@ -31,7 +32,7 @@ export const LoggedInApp = ({ userId }: { userId: string }) => {
       return (
         <>
           {router.route === "home" && <HomePage />}
-          {router.route === "edit-profile" && <div>edit profile</div>}
+          {router.route === "edit-profile" && <EditProfilePage />}
         </>
       );
   }
