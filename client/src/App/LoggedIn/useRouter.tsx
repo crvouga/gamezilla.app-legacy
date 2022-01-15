@@ -7,6 +7,9 @@ type State =
     }
   | {
       route: "edit-profile";
+    }
+  | {
+      route: "edit-avatar";
     };
 
 const toPathname = (state: State) => {
@@ -16,6 +19,9 @@ const toPathname = (state: State) => {
 
     case "edit-profile":
       return "/edit-profile";
+
+    case "edit-avatar":
+      return "/edit-avatar";
   }
 };
 
@@ -29,6 +35,12 @@ const toState = ({ pathname }: { pathname: string }): State => {
   if (pathname === "/edit-profile") {
     return {
       route: "edit-profile",
+    };
+  }
+
+  if (pathname === "/edit-avatar") {
+    return {
+      route: "edit-avatar",
     };
   }
 
