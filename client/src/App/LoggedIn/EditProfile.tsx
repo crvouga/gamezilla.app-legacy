@@ -1,6 +1,6 @@
-import { Avatar } from "Components/Avatar";
-import { Button } from "Components/Button";
-import { PageBar } from "Components/PageBar";
+import { Avatar } from "src/Components/Avatar";
+import { Button } from "src/Components/Button";
+import { PageBar } from "src/Components/PageBar";
 import React from "react";
 import { useRouter } from "./useRouter";
 

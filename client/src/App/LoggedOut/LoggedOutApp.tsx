@@ -1,9 +1,9 @@
-import * as Icons from "Components/Icons";
-import { Item } from "Components/Item";
-import { ModalLoader } from "Components/ModalLoader";
-import { PageBar } from "Components/PageBar";
+import * as Icons from "src/Components/Icons";
+import { Item } from "src/Components/Item";
+import { ModalLoader } from "src/Components/ModalLoader";
+import { PageBar } from "src/Components/PageBar";
 import React, { useState } from "react";
-import { supabaseClient } from "supabase/supabase-client";
+import { supabaseClient } from "src/supabase";
 
 export const LoggedOutApp = () => {
   const [state, setState] = useState<"idle" | "logging-in">("idle");
@@ -11,7 +11,16 @@ export const LoggedOutApp = () => {
   const dispatch = async (message: { type: "login-with-google" }) => {
     if (message.type === "login-with-google") {
       setState("logging-in");
-      await supabaseClient.auth.signIn({ provider: "google" });
+      const redirectTo = window.location.href;
+      console.log({ redirectTo });
+      await supabaseClient.auth.signIn(
+        {
+          provider: "google",
+        },
+        {
+          redirectTo: redirectTo,
+        }
+      );
     }
   };
 
