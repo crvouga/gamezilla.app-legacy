@@ -1,6 +1,6 @@
-import { Alert } from "src/Components/Alert";
-import { Backdrop } from "src/Components/Backdrop";
-import { ModalLoader } from "src/Components/ModalLoader";
+import { Alert } from "../../Components/Alert";
+import { Backdrop } from "../../Components/Backdrop";
+import { ModalLoader } from "../../Components/ModalLoader";
 import React from "react";
 import { EditAvatarPage } from "./EditAvatar";
 import { EditProfilePage } from "./EditProfile";

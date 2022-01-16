@@ -1,5 +1,5 @@
 import React from "react";
-import * as Icons from "src/Components/Icons";
+import * as Icons from "./Icons";
 
 type AlertVariant = "error";
 

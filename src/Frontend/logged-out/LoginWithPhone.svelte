@@ -5,6 +5,22 @@
   import PaperAirplane from "../components/icons/PaperAirplane.svelte";
 
   const dispatch = createEventDispatcher<{ back: {} }>();
+
+  const handleSubmit = async (event: SubmitEvent) => {
+    event.preventDefault()
+    
+    const formData = new FormData(event.target)
+
+    const phoneNumber = formData.get("phone-number")
+
+    await fetch("/api/login/phone", {
+      method: "POST",
+      body: {
+        phoneNumber
+      }
+    })
+  }
+
 </script>
 
 <div class="w-full p-2 px-4 flex justify-center items-center border-b">
@@ -20,9 +36,7 @@
 <form
   id="login"
   class="p-4"
-  on:submit|preventDefault={() => {
-    console.log('SEND');
-  }}>
+  on:submit={handleSubmit}>
   <label for="phone-number" class="pb-2 text-base font-medium">Phone Number</label>
   <div>
     <input

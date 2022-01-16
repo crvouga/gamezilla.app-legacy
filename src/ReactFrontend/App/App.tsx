@@ -1,4 +1,4 @@
-import { ModalLoader } from "src/Components/ModalLoader";
+import { ModalLoader } from "../Components/ModalLoader";
 import React from "react";
 import { LoggedInApp } from "./LoggedIn/LoggedInApp";
 import { LoggedOutApp } from "./LoggedOut/LoggedOutApp";

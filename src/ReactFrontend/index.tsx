@@ -1,5 +1,5 @@
 import ReactDOM from "react-dom";
-import { App } from "src/App/App";
+import { App } from "./App/App";
 import React from "react";
 import "./index.css";
 

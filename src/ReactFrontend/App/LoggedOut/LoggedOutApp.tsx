@@ -1,9 +1,9 @@
-import * as Icons from "src/Components/Icons";
-import { Item } from "src/Components/Item";
-import { ModalLoader } from "src/Components/ModalLoader";
-import { PageBar } from "src/Components/PageBar";
+import * as Icons from "../../Components/Icons";
+import { Item } from "../../Components/Item";
+import { ModalLoader } from "../../Components/ModalLoader";
+import { PageBar } from "../../Components/PageBar";
 import React, { useState } from "react";
-import { supabaseClient } from "src/supabase";
+import { supabaseClient } from "../../supabase";
 
 export const LoggedOutApp = () => {
   const [state, setState] = useState<"idle" | "logging-in">("idle");
