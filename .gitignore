@@ -6,3 +6,4 @@
 /build
 .parcel-cache
 .env
+tsconfig.tsbuildinfo

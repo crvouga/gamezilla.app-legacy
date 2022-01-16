@@ -13,10 +13,10 @@ expressApp.get("/api/hello", (_req, res) => {
   res.json({ message: "GELLo" });
 });
 
-const FRONTEND_BUILD_PATH = path.join(__dirname, "..", "..", "public");
-expressApp.use(express.static(FRONTEND_BUILD_PATH));
+const FRONTEND_SVELTE_BUILD_PATH = path.join(__dirname, "..", "..", "public");
+expressApp.use(express.static(FRONTEND_SVELTE_BUILD_PATH));
 expressApp.get("*", (_req, res) => {
-  res.sendFile(path.join(FRONTEND_BUILD_PATH, "index.html"));
+  res.sendFile(path.join(FRONTEND_SVELTE_BUILD_PATH, "index.html"));
 });
 
 /**
