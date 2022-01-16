@@ -8,6 +8,7 @@
     "backend:start": "cd build/Backend && node main.js",
     "backend:check": "cd src/Backend && tsc -w",
     "postinstall": "yarn backend:build",
+    "heroku-postbuild": "yarn frontend:build",
     "frontend:dev": "rollup -c -w",
     "frontend:build": "rollup -c",
     "frontend:start": "sirv public --no-clear",
