@@ -9,6 +9,10 @@ const expressApp = express();
  *
  */
 
+expressApp.get("/api/hello", (_req, res) => {
+  res.json({ message: "GELLo" });
+});
+
 const FRONTEND_BUILD_PATH = path.join(__dirname, "..", "..", "public");
 expressApp.use(express.static(FRONTEND_BUILD_PATH));
 expressApp.get("*", (_req, res) => {

@@ -1,4 +1,3 @@
-const production = !process.env.ROLLUP_WATCH;
 module.exports = {
   mode: "jit",
   future: {
@@ -6,8 +5,6 @@ module.exports = {
     removeDeprecatedGapUtilities: true,
   },
   plugins: [],
-  purge: {
-    content: ["./src/**/*.svelte"],
-    enabled: production, // disable purge in dev
-  },
+
+  content: ["./src/**/*.{js,ts,jsx,tsx,html,svelte}"],
 };

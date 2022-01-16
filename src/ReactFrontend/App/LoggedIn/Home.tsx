@@ -1,9 +1,9 @@
-import * as Icons from "src/Components/Icons";
-import { Item } from "src/Components/Item";
-import { ModalConformation } from "src/Components/ModalConformation";
-import { PageBar } from "src/Components/PageBar";
+import * as Icons from "../../Components/Icons";
+import { Item } from "../../Components/Item";
+import { ModalConformation } from "../../Components/ModalConformation";
+import { PageBar } from "../../Components/PageBar";
 import React, { useState } from "react";
-import { supabaseClient } from "src/supabase";
+import { supabaseClient } from "../../supabase";
 import { useRouter } from "./useRouter";
 
 type State =

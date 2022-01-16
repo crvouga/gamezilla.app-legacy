@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { definitions, supabaseClient } from "src/supabase";
+import { definitions, supabaseClient } from "../../supabase";
 
 type State =
   | {
@@ -58,6 +58,10 @@ export const useProfile = ({ userId }: { userId: string }) => {
         });
       })
       .subscribe();
+
+    subscription.onError = () => {
+      setState({ type: "error" });
+    };
 
     return () => {
       subscription.unsubscribe();
