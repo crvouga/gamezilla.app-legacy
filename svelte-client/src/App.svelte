@@ -1,5 +1,5 @@
 <script lang="ts">
-	import LoggedOutApp from "./LoggedOutApp.svelte";
+	import LoggedOut from "./logged-out/LoggedOut.svelte";
 </script>
 
 <style global lang="postcss">
@@ -12,4 +12,4 @@
 	}
 </style>
 
-<LoggedOutApp />
+<LoggedOut />
