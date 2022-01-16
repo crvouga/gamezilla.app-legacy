@@ -3,8 +3,6 @@
   import Login from "./Login.svelte";
   import LoginWithPhone from "./LoginWithPhone.svelte";
 
-  console.log("GELLO");
-
   type Route = "login" | "login/phone";
 
   const toRoute = (pathname: string): Route => {
@@ -15,17 +13,20 @@
     return "login";
   };
 
-  const routeStore = readable<Route>("login", (set) => {
-    const onPopstate = () => {
-      set(toRoute(window.location.pathname));
-    };
+  const routeStore = readable<Route>(
+    toRoute(window.location.pathname),
+    (set) => {
+      const onPopstate = () => {
+        set(toRoute(window.location.pathname));
+      };
 
-    window.addEventListener("popstate", onPopstate);
+      window.addEventListener("popstate", onPopstate);
 
-    return () => {
-      window.removeEventListener("popstate", onPopstate);
-    };
-  });
+      return () => {
+        window.removeEventListener("popstate", onPopstate);
+      };
+    }
+  );
 
   const push = (route: Route) => {
     window.history.pushState({}, "", route);
