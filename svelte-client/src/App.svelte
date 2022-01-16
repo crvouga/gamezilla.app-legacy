@@ -10,6 +10,9 @@
 	:global(body) {
 		@apply fixed top-0 left-0 bottom-0 right-0 overflow-hidden select-none;
 	}
+	:global(*:focus) {
+		outline: none;
+	}
 </style>
 
 <LoggedOut />
