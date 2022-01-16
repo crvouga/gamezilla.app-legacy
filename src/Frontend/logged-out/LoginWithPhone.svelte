@@ -5,27 +5,6 @@
   import PaperAirplane from "../components/icons/PaperAirplane.svelte";
 
   const dispatch = createEventDispatcher<{ back: {} }>();
-
-  const formatPhoneNumber = (value: string): string => {
-    if (!value) {
-      return "(";
-    }
-
-    const phoneNumber = value.replace(/[^\d]/g, "");
-
-    if (phoneNumber.length <= 3) {
-      return `(${phoneNumber}`;
-    }
-
-    if (phoneNumber.length <= 6) {
-      return `(${phoneNumber.slice(0, 3)})${phoneNumber.slice(3)}`;
-    }
-
-    return `(${phoneNumber.slice(0, 3)})${phoneNumber.slice(
-      3,
-      6
-    )}-${phoneNumber.slice(6, 9)}`;
-  };
 </script>
 
 <div class="w-full p-2 px-4 flex justify-center items-center border-b">
@@ -47,9 +26,6 @@
   <label for="phone-number" class="pb-2 text-base font-medium">Phone Number</label>
   <div>
     <input
-      on:keydown={(event) => {
-        event.currentTarget.value = formatPhoneNumber(event.currentTarget.value);
-      }}
       class="p-2 px-4 mb-4 border-2 text-lg w-full rounded-md focus:border-blue-500"
       id="phone-number"
       type="tel"
