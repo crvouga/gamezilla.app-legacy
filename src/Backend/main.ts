@@ -1,15 +1,20 @@
-import http from "http";
+import express from "express";
+import path from "path";
 
-const server = http.createServer((req, res) => {
-  res.writeHead(200, { "Content-Type": "text/plain" });
+const expressApp = express();
 
-  res.end("hellos World!\n");
+const FRONTEND_BUILD_PATH = path.join(__dirname, "..", "..", "public");
+
+expressApp.use(express.static(FRONTEND_BUILD_PATH));
+
+expressApp.all("*", (_req, res) => {
+  res.sendFile(path.join(FRONTEND_BUILD_PATH, "index.html"));
 });
 
 const env = {
   port: Number(process.env.PORT ?? 3000),
 };
 
-server.listen(env.port);
-
-console.log(`Backend Ready\n -\- Local: http://localhost:${env.port}/`);
+expressApp.listen(env.port, () => {
+  console.log(`Backend Ready\n -\- Local: http://localhost:${env.port}/`);
+});
