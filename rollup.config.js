@@ -21,7 +21,7 @@ function serve() {
       if (server) return;
       server = require("child_process").spawn(
         "npm",
-        ["run", "frontend:start", "--", "--dev"],
+        ["run", "frontend-svelte:start", "--", "--dev"],
         {
           stdio: ["ignore", "inherit", "inherit"],
           shell: true,
@@ -35,7 +35,7 @@ function serve() {
 }
 
 export default {
-  input: "src/Frontend/main.ts",
+  input: "src/FrontendSvelte/main.ts",
   output: {
     sourcemap: true,
     format: "iife",

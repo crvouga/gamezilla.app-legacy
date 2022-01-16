@@ -1,4 +1,3 @@
-import { PageBar } from "src/Components/PageBar";
 import React, { useState } from "react";
 
 export const SearchUsersPage = () => {
