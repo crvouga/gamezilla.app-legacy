@@ -1,5 +1,5 @@
 {
-  "name": "svelte-app",
+  "name": "gamezilla",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -16,7 +16,9 @@
     "frontend-react:dev": "npx parcel --dist-dir build/FrontendReact src/FrontendReact/index.html",
     "frontend-react:build": "npx parcel build --dist-dir build/FrontendReact src/FrontendReact/index.html",
     "frontend-react:check": "cd src/FrontendReact && tsc -w",
-    "load-env": "heroku config -s -a gamezilla > .env"
+    "heroku:env": "heroku config -s -a gamezilla > .env",
+    "heroku:start": "yarn backend:start",
+    "heroku:preview": "yarn && yarn heroku-postbuild && yarn heroku:start "
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^17.0.0",
