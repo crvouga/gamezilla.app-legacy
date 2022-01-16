@@ -72,6 +72,7 @@ export default {
     typescript({
       sourceMap: !production,
       inlineSources: !production,
+      exclude: ["src/Backend/*", "src/FrontendReact/*"],
     }),
 
     // In dev mode, call `npm run start` once

@@ -14,9 +14,15 @@ expressApp.get("/api/hello", (_req, res) => {
 });
 
 const FRONTEND_SVELTE_BUILD_PATH = path.join(__dirname, "..", "..", "public");
-expressApp.use(express.static(FRONTEND_SVELTE_BUILD_PATH));
+const FRONTEND_REACT_BUILD_PATH = path.join(
+  __dirname,
+  "..",
+  "..",
+  "build/ReactFrontend"
+);
+expressApp.use(express.static(FRONTEND_REACT_BUILD_PATH));
 expressApp.get("*", (_req, res) => {
-  res.sendFile(path.join(FRONTEND_SVELTE_BUILD_PATH, "index.html"));
+  res.sendFile(path.join(FRONTEND_REACT_BUILD_PATH, "index.html"));
 });
 
 /**

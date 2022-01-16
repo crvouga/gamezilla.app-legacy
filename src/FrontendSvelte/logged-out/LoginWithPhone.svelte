@@ -6,21 +6,26 @@
 
   const dispatch = createEventDispatcher<{ back: {} }>();
 
-  const handleSubmit = async (event: SubmitEvent) => {
-    event.preventDefault()
-    
-    const formData = new FormData(event.target)
+  const handleSubmit = (event) => {
+    event.preventDefault();
 
-    const phoneNumber = formData.get("phone-number")
+    const target = event.target as HTMLFormElement;
 
-    await fetch("/api/login/phone", {
-      method: "POST",
-      body: {
-        phoneNumber
-      }
-    })
-  }
+    const formData = new FormData(target);
 
+    const phoneNumber = formData
+      .get("phone-number")
+      .toString()
+      .replace(/[^.\d]/g, "");
+
+    console.log({ phoneNumber });
+    // await fetch("/api/login/phone", {
+    //   method: "POST",
+    //   body: {
+    //     phoneNumber
+    //   }
+    // })
+  };
 </script>
 
 <div class="w-full p-2 px-4 flex justify-center items-center border-b">
@@ -33,10 +38,7 @@
   <div class="w-6 h-6" />
 </div>
 
-<form
-  id="login"
-  class="p-4"
-  on:submit={handleSubmit}>
+<form id="login" class="p-4" on:submit={handleSubmit}>
   <label for="phone-number" class="pb-2 text-base font-medium">Phone Number</label>
   <div>
     <input
