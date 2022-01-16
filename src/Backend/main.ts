@@ -18,7 +18,8 @@ const FRONTEND_REACT_BUILD_PATH = path.join(
   __dirname,
   "..",
   "..",
-  "build/ReactFrontend"
+  "build",
+  "FrontendReact"
 );
 expressApp.use(express.static(FRONTEND_REACT_BUILD_PATH));
 expressApp.get("*", (_req, res) => {
