@@ -3,11 +3,14 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build": "rollup -c",
-    "dev": "rollup -c -w --single",
-    "start": "sirv public --no-clear",
-    "check": "svelte-check --tsconfig ./tsconfig.json",
-    "preview": "yarn build && yarn start"
+    "backend:dev": "cd build/Backend && nodemon main.js",
+    "backend:build": "cd src/Backend && tsc",
+    "backend:start": "cd build/Backend && node main.js",
+    "backend:check": "cd src/Backend && tsc -w",
+    "frontend:dev": "rollup -c -w",
+    "frontend:build": "rollup -c",
+    "frontend:start": "sirv public --no-clear",
+    "frontend:check": "cd src/Frontend && svelte-check --tsconfig ./tsconfig.json"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^17.0.0",
@@ -15,6 +18,7 @@
     "@rollup/plugin-typescript": "^8.0.0",
     "@tsconfig/svelte": "^2.0.0",
     "autoprefixer": "^9",
+    "nodemon": "^2.0.15",
     "postcss": "^8.4.5",
     "rollup": "^2.3.4",
     "rollup-plugin-css-only": "^3.1.0",
