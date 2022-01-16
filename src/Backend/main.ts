@@ -5,7 +5,7 @@ const expressApp = express();
 
 /**
  *
- * Serving frontend app
+ * Serving frontend app files
  *
  */
 
@@ -21,10 +21,8 @@ expressApp.get("*", (_req, res) => {
  *
  */
 
-const env = {
-  port: Number(process.env.PORT ?? 3000),
-};
+const PORT = Number(process.env.PORT ?? 3000);
 
-expressApp.listen(env.port, () => {
-  console.log(`Backend Ready\n -\- Local: http://localhost:${env.port}/`);
+expressApp.listen(PORT, () => {
+  console.log(`Backend Ready\n -\- Local: http://localhost:${PORT}/`);
 });
