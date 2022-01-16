@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+
 export const mapValues = <TK extends string | number | symbol, TX, TY>(
   object: Record<TK, TX>,
   f: (x: TX) => TY
@@ -10,4 +12,48 @@ export const mapValues = <TK extends string | number | symbol, TX, TY>(
     (object, [key, value]) => ({ ...object, [key]: f(value) }),
     initial
   );
+};
+
+export const useUrlState = <State>({
+  decode,
+  encode,
+}: {
+  decode: ({ pathname }: { pathname: string }) => State;
+  encode: (route: State) => { pathname: string };
+}) => {
+  const [state, setState] = useState<State>(() => {
+    return decode({ pathname: window.location.pathname });
+  });
+
+  useEffect(() => {
+    const onLocationChange = () => {
+      setState(decode({ pathname: window.location.pathname }));
+    };
+
+    window.addEventListener("popstate", onLocationChange);
+
+    return () => {
+      window.removeEventListener("popstate", onLocationChange);
+    };
+  }, []);
+
+  const push = (state: State) => {
+    const { pathname } = encode(state);
+
+    window.history.pushState({}, "", pathname);
+
+    const event = new PopStateEvent("popstate");
+
+    window.dispatchEvent(event);
+  };
+
+  const back = () => {
+    window.history.back();
+  };
+
+  return {
+    state,
+    push,
+    back,
+  };
 };

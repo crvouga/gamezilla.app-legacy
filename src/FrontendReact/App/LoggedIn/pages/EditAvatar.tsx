@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { Avatar } from "../../Components/Avatar";
-import { Button } from "../../Components/Button";
-import { ModalLoader } from "../../Components/ModalLoader";
-import { PageBar } from "../../Components/PageBar";
-import { definitions, supabaseClient } from "../../supabase";
-import { mapValues } from "../../utility";
+import { Avatar } from "../../../Components/Avatar";
+import { Button } from "../../../Components/Button";
+import { ModalLoader } from "../../../Components/ModalLoader";
+import { PageBar } from "../../../Components/PageBar";
+import { definitions, supabaseClient } from "../../../supabase";
+import { mapValues } from "../../../utility";
 import {
   AVATAR_STYLES,
   formatAvatarStyle,
   IAvatarStyle,
   parseAvatarUrl,
   toAvatarUrl,
-} from "./avatar";
+} from "../avatar";
 
 export const EditAvatarPage = ({
   profile,

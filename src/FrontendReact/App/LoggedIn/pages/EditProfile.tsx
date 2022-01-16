@@ -1,15 +1,15 @@
-import { Avatar } from "../../Components/Avatar";
-import { Button } from "../../Components/Button";
-import { PageBar } from "../../Components/PageBar";
+import { Avatar } from "../../../Components/Avatar";
+import { Button } from "../../../Components/Button";
+import { PageBar } from "../../../Components/PageBar";
 import React from "react";
-import { useRouter } from "./useRouter";
 
 export const EditProfilePage = ({
   profile,
+  onEditAvatar,
 }: {
   profile: { avatarUrl?: string };
+  onEditAvatar: () => void;
 }) => {
-  const router = useRouter();
   return (
     <>
       <PageBar center="Edit Profile" />
@@ -19,9 +19,7 @@ export const EditProfilePage = ({
       <Button
         className="m-auto mt-2"
         text="Edit Avatar"
-        onClick={() => {
-          router.push({ route: "edit-avatar" });
-        }}
+        onClick={onEditAvatar}
       />
     </>
   );
