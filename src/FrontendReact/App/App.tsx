@@ -16,7 +16,7 @@ type State =
       type: "logged-out";
     };
 
-export const useLoginSession = () => {
+export const useAuthStateSubscription = () => {
   const [state, setState] = useState<State>({ type: "loading" });
 
   useEffect(() => {
@@ -64,14 +64,14 @@ export const useLoginSession = () => {
 };
 
 export const App = () => {
-  const loginSession = useLoginSession();
+  const authState = useAuthStateSubscription();
 
-  switch (loginSession.type) {
+  switch (authState.type) {
     case "loading":
       return <ModalLoader title="Loading..." />;
 
     case "logged-in":
-      return <LoggedInApp userId={loginSession.userId} />;
+      return <LoggedInApp userId={authState.userId} />;
 
     case "logged-out":
       return <LoggedOutApp />;
