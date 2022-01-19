@@ -16,6 +16,55 @@ type State =
       type: "logged-out";
     };
 
+// const appMachine = createMachine<Context>({
+//   id: "app",
+//   initial: "loading",
+//   context: {
+//     retries: 0,
+//   },
+//   states: {
+//     loading: {
+//       on: {
+//         LOGGED_IN: "logged-in",
+//         LOGGED_OUT: "logged-out",
+//       },
+//     },
+//     "logged-out": {
+//       type: "final",
+//       initial: "idle",
+//       states: {
+//         idle: {
+//           on: {
+//             LOGIN: "try-logging-in",
+//           },
+//         },
+//         "loggin-in": {
+//           on: {
+//             CANCEL: "idle",
+//           },
+//         },
+//       },
+//     },
+
+//     "logged-in": {
+//       on: {
+//         LOGOUT: "logged-out",
+//       },
+//       initial: "loading",
+//       states: {
+//         subscribing: {
+//           on: {
+//             SUBSCRIBED: "subscribed",
+//           },
+//         },
+//         subscribed: {
+//           on: {},
+//         },
+//       },
+//     },
+//   },
+// });
+
 export const useAuthStateSubscription = () => {
   const [state, setState] = useState<State>({ type: "loading" });
 

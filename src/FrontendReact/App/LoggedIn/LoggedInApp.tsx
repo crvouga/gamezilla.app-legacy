@@ -4,6 +4,7 @@ import { Backdrop } from "../../Components/Backdrop";
 import { ModalLoader } from "../../Components/ModalLoader";
 import { definitions, supabaseClient } from "../../supabase";
 import { LoggedInRoutes } from "./LoggedInRoutes";
+import { IRoute } from "./Routes";
 
 type State =
   | {
@@ -14,6 +15,7 @@ type State =
     }
   | {
       type: "loaded";
+      route: IRoute;
       profile: {
         userId: string;
         avatarUrl?: string;
@@ -39,6 +41,9 @@ export const useProfileSubscription = ({ userId }: { userId: string }) => {
         if (data) {
           setState({
             type: "loaded",
+            route: {
+              type: "home",
+            },
             profile: {
               userId: data.id,
               avatarUrl: data.avatar_url,
@@ -54,6 +59,9 @@ export const useProfileSubscription = ({ userId }: { userId: string }) => {
       .on("*", (payload) => {
         setState({
           type: "loaded",
+          route: {
+            type: "home",
+          },
           profile: {
             userId: payload.new.id,
             avatarUrl: payload.new.avatar_url,
@@ -76,9 +84,9 @@ export const useProfileSubscription = ({ userId }: { userId: string }) => {
 };
 
 export const LoggedInApp = ({ userId }: { userId: string }) => {
-  const profileSubscription = useProfileSubscription({ userId });
+  const state = useProfileSubscription({ userId });
 
-  switch (profileSubscription.type) {
+  switch (state.type) {
     case "error":
       return (
         <Backdrop>
@@ -95,7 +103,7 @@ export const LoggedInApp = ({ userId }: { userId: string }) => {
       return <ModalLoader title="Loading..." />;
 
     case "loaded":
-      const { profile } = profileSubscription;
+      const { profile } = state;
       return <LoggedInRoutes profile={profile} />;
   }
 };

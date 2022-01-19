@@ -29,10 +29,15 @@ export const concat = <T>(...xss: T[][]): T[] => {
   return xss.flat(1);
 };
 
+export const any = <T>(predicate: (x: T) => boolean, xs: T[]): boolean => {
+  return xs.some(predicate);
+};
+
 export default {
   difference,
   cartesianProduct,
   shuffle,
   head,
   concat,
+  any,
 };
