@@ -14,9 +14,9 @@ export const mapValues = <TK extends string | number | symbol, TX, TY>(
   );
 };
 
-export const useUrlState = <State>({
-  decode,
+export const useLocationState = <State>({
   encode,
+  decode,
 }: {
   decode: ({ pathname }: { pathname: string }) => State;
   encode: (route: State) => { pathname: string };
@@ -47,13 +47,13 @@ export const useUrlState = <State>({
     window.dispatchEvent(event);
   };
 
-  const back = () => {
+  const pop = () => {
     window.history.back();
   };
 
   return {
     state,
     push,
-    back,
+    pop,
   };
 };

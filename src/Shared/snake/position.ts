@@ -1,35 +1,37 @@
 import { cartesianProduct } from "../utility/list";
-import * as Integer from "./integer";
+import Integer, { IInteger } from "../utility/integer";
 
 export type IPosition = {
-  x: Integer.Integer;
-  y: Integer.Integer;
+  x: IInteger;
+  y: IInteger;
 };
 
-const add = (a: IPosition, b: IPosition): IPosition => {
+const Position = (x: number, y: number): IPosition => {
   return {
-    x: Integer.add(a.x, b.x),
-    y: Integer.add(a.y, b.y),
+    x: Integer.floor(x),
+    y: Integer.floor(y),
   };
 };
 
-const random = (lower: IPosition, upper: IPosition) => {
-  return {
-    x: Integer.random(lower.x, upper.x),
-    y: Integer.random(lower.y, upper.y),
-  };
+const add = (a: IPosition, b: IPosition) => {
+  return Position(a.x + b.x, a.y + b.y);
 };
 
 const range = (lower: IPosition, upper: IPosition): IPosition[] => {
   return cartesianProduct(
-    (x, y) => ({ x, y }),
+    Position,
     Integer.range(lower.x, upper.x),
     Integer.range(lower.y, upper.y)
   );
 };
 
+const equals = (a: IPosition, b: IPosition): boolean => {
+  return a.x === b.x && a.y === b.y;
+};
+
 export default {
   add,
-  random,
   range,
+  equals,
+  Position,
 };
