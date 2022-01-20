@@ -4,7 +4,7 @@ module.exports = {
     purgeLayersByDefault: true,
     removeDeprecatedGapUtilities: true,
   },
-  plugins: [],
+  plugins: [require("@tailwindcss/forms")],
 
   content: ["./src/**/*.{js,ts,jsx,tsx,html,svelte}"],
 };
