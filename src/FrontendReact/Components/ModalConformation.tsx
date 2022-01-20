@@ -22,7 +22,7 @@ export const ModalConformation = ({
   };
 }) => {
   return (
-    <Backdrop onClick={onBackdropClick}>
+    <Backdrop className="p-4" onClick={onBackdropClick}>
       <div
         onClick={(event) => {
           event.stopPropagation();
