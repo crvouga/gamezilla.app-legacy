@@ -13,6 +13,9 @@ export type IRoute =
     }
   | {
       type: "logout";
+    }
+  | {
+      type: "tic-tac-toe";
     };
 
 const encode = (route: IRoute) => {
@@ -40,6 +43,11 @@ const encode = (route: IRoute) => {
     case "logout":
       return {
         pathname: "/logout",
+      };
+
+    case "tic-tac-toe":
+      return {
+        pathname: "/tic-tac-toe",
       };
   }
 };
@@ -72,6 +80,12 @@ const decode = ({ pathname }: { pathname: string }): IRoute => {
   if (pathname === "/logout") {
     return {
       type: "logout",
+    };
+  }
+
+  if (pathname === "/tic-tac-toe") {
+    return {
+      type: "tic-tac-toe",
     };
   }
 

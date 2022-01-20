@@ -5,28 +5,27 @@ import { PageBar } from "../../../Components/PageBar";
 
 export const HomePage = ({
   onEditProfile,
-  onSearchUsers,
   onLogout,
+  onTicTacToe,
 }: {
   onEditProfile: () => void;
-  onSearchUsers: () => void;
   onLogout: () => void;
+  onTicTacToe: () => void;
 }) => {
   return (
     <>
       <PageBar center="Home" />
 
       <Item
-        onClick={onEditProfile}
-        start={<Icons.Edit />}
-        center="Edit Profile"
+        onClick={onTicTacToe}
+        center="Tic Tac Toe"
         end={<Icons.CheveronRight />}
       />
 
       <Item
-        onClick={onSearchUsers}
-        start={<Icons.Search />}
-        center="Search Users"
+        onClick={onEditProfile}
+        start={<Icons.Edit />}
+        center="Edit Profile"
         end={<Icons.CheveronRight />}
       />
 

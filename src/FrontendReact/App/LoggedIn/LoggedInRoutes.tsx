@@ -6,6 +6,7 @@ import { EditProfilePage } from "./pages/EditProfile";
 import { HomePage } from "./pages/Home";
 import { LogoutPage } from "./pages/Logout";
 import { SearchUsersPage } from "./pages/SearchUsers";
+import { TicTacToePage } from "./pages/TicTacToe";
 import Routes from "./Routes";
 
 export const LoggedInRoutes = ({
@@ -26,11 +27,11 @@ export const LoggedInRoutes = ({
     case "home":
       return (
         <HomePage
+          onTicTacToe={() => {
+            routeState.push({ type: "tic-tac-toe" });
+          }}
           onEditProfile={() => {
             routeState.push({ type: "edit-profile" });
-          }}
-          onSearchUsers={() => {
-            routeState.push({ type: "search-users" });
           }}
           onLogout={() => {
             routeState.push({ type: "logout" });
@@ -62,5 +63,8 @@ export const LoggedInRoutes = ({
           }}
         />
       );
+
+    case "tic-tac-toe":
+      return <TicTacToePage />;
   }
 };
