@@ -1,7 +1,7 @@
 import { Backdrop } from "./Backdrop";
 
 const classNames = {
-  action: "flex-1 p-4 text-sm uppercase hover:bg-gray-200",
+  action: "flex-1 p-4 uppercase font-bold hover:bg-gray-200",
 };
 
 export const ModalConformation = ({
@@ -29,7 +29,7 @@ export const ModalConformation = ({
         }}
         className="drop-shadow-md rounded-md bg bg-slate-100 text-gray-700 overflow-hidden"
       >
-        <h1 className="text-xl text-center font-medium p-6">{title}</h1>
+        <h1 className="text-xl text-center font-bold p-6">{title}</h1>
         <div className="w-full flex border-t border-gray-300">
           <button
             className={`border-r border-gray-300 ${classNames.action}`}
@@ -37,7 +37,10 @@ export const ModalConformation = ({
           >
             {left.title}
           </button>
-          <button className={classNames.action} onClick={right.onClick}>
+          <button
+            className={`text-green-500 ${classNames.action}`}
+            onClick={right.onClick}
+          >
             {right.title}
           </button>
         </div>
