@@ -10,7 +10,7 @@ export const LogoutPage = ({
 }) => {
   return (
     <ModalConformation
-      title="Logout of Gamezilla?"
+      title="Do you want to log out?"
       onBackdropClick={onCancel}
       left={{
         title: "Cancel",
