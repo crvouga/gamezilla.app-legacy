@@ -1,10 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Alert } from "../../Components/Alert";
-import { Backdrop } from "../../Components/Backdrop";
-import { ModalLoader } from "../../Components/ModalLoader";
-import { definitions, supabaseClient } from "../../supabase";
-import { LoggedInRoutes } from "./LoggedInRoutes";
-import { IRoute } from "./Routes";
+import { useEffect, useState } from "react";
+import { definitions, supabaseClient } from "../supabase";
 
 type State =
   | {
@@ -15,7 +10,7 @@ type State =
     }
   | {
       type: "loaded";
-      route: IRoute;
+
       profile: {
         userId: string;
         avatarUrl?: string;
@@ -23,7 +18,7 @@ type State =
       };
     };
 
-export const useProfileSubscription = ({ userId }: { userId: string }) => {
+export const useProfileState = ({ userId }: { userId: string }) => {
   const [state, setState] = useState<State>({ type: "loading" });
 
   useEffect(() => {
@@ -41,9 +36,6 @@ export const useProfileSubscription = ({ userId }: { userId: string }) => {
         if (data) {
           setState({
             type: "loaded",
-            route: {
-              type: "home",
-            },
             profile: {
               userId: data.id,
               avatarUrl: data.avatar_url,
@@ -59,9 +51,6 @@ export const useProfileSubscription = ({ userId }: { userId: string }) => {
       .on("*", (payload) => {
         setState({
           type: "loaded",
-          route: {
-            type: "home",
-          },
           profile: {
             userId: payload.new.id,
             avatarUrl: payload.new.avatar_url,
@@ -81,29 +70,4 @@ export const useProfileSubscription = ({ userId }: { userId: string }) => {
   }, []);
 
   return state;
-};
-
-export const LoggedInApp = ({ userId }: { userId: string }) => {
-  const state = useProfileSubscription({ userId });
-
-  switch (state.type) {
-    case "error":
-      return (
-        <Backdrop>
-          <Alert
-            className="m-4"
-            variant="error"
-            title="Error"
-            body="Something went wrong when trying to load your profile"
-          />
-        </Backdrop>
-      );
-
-    case "loading":
-      return <ModalLoader title="Loading..." />;
-
-    case "loaded":
-      const { profile } = state;
-      return <LoggedInRoutes profile={profile} />;
-  }
 };

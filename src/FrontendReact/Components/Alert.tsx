@@ -39,9 +39,7 @@ export const Alert = ({
     <div
       className={`p-4 flex items-start justify-center rounded ${classNames.root} ${className}`}
     >
-      <div className={`mr-4 mt-1 ${classNames.icon}`}>
-        {variantToIcon[variant]}
-      </div>
+      <div className={`mr-4 ${classNames.icon}`}>{variantToIcon[variant]}</div>
 
       <div>
         {title && (
