@@ -1,8 +1,8 @@
 import React from "react";
-import * as Icons from "../../../Components/Icons";
-import { Item } from "../../../Components/Item";
-import { PageBar } from "../../../Components/PageBar";
-import { useLocationState } from "../../../utility";
+import * as Icons from "../../Components/Icons";
+import { Item } from "../../Components/Item";
+import { PageBar } from "../../Components/PageBar";
+import { useLocationState } from "../../utility";
 
 export const TicTacToePage = () => {
   return (

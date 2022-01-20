@@ -1,79 +1,61 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
+import { Route, Routes } from "react-router-dom";
+import { Alert } from "../Components/Alert";
+import { Backdrop } from "../Components/Backdrop";
 import { ModalLoader } from "../Components/ModalLoader";
-import { supabaseClient } from "../supabase";
-import { LoggedInApp } from "./LoggedIn/LoggedInApp";
-import { LoggedOutApp } from "./LoggedOut/LoggedOutApp";
+import { EditAvatarPage } from "./pages/EditAvatar";
+import { EditProfilePage } from "./pages/EditProfile";
+import { HomePage } from "./pages/Home";
+import { LoginPage } from "./pages/Login";
+import { LogoutPage } from "./pages/Logout";
+import { TicTacToePage } from "./pages/TicTacToe";
+import { useAuthState } from "./useAuthState";
+import { useProfileState } from "./useProfileState";
 
-type State =
-  | {
-      type: "loading";
-    }
-  | {
-      type: "logged-in";
-      userId: string;
-    }
-  | {
-      type: "logged-out";
-    };
+const LoggedIn = ({ userId }: { userId: string }) => {
+  const profileState = useProfileState({ userId });
 
-export const useAuthStateSubscription = () => {
-  const [state, setState] = useState<State>({ type: "loading" });
-
-  useEffect(() => {
-    setTimeout(() => {
-      const session = supabaseClient.auth.session();
-      const userId = session?.user?.id;
-
-      if (userId) {
-        setState({ type: "logged-in", userId });
-        return;
-      }
-
-      setState({ type: "logged-out" });
-    }, 1000 * 1.5);
-
-    const subscription = supabaseClient.auth.onAuthStateChange(
-      (event, session) => {
-        switch (event) {
-          case "PASSWORD_RECOVERY":
-          case "SIGNED_IN":
-          case "TOKEN_REFRESHED":
-          case "USER_UPDATED":
-            const userId = session?.user?.id;
-            if (userId) {
-              setState({ type: "logged-in", userId });
-              return;
-            }
-            setState({ type: "logged-out" });
-            return;
-
-          case "SIGNED_OUT":
-          case "USER_DELETED":
-            setState({ type: "logged-out" });
-            return;
-        }
-      }
+  if (profileState.type === "error") {
+    return (
+      <Backdrop>
+        <Alert variant="error" title="Failed to load your profile" />
+      </Backdrop>
     );
+  }
 
-    return () => {
-      subscription.data?.unsubscribe();
-    };
-  }, []);
+  if (profileState.type === "loading") {
+    return <ModalLoader title="Loading..." />;
+  }
 
-  return state;
+  const { profile } = profileState;
+
+  return (
+    <Routes>
+      <Route path="/logout" element={<LogoutPage />} />
+      <Route
+        path="/edit/profile"
+        element={<EditProfilePage profile={profile} />}
+      />
+      <Route
+        path="/edit/profile/avatar"
+        element={<EditAvatarPage profile={profile} />}
+      />
+      <Route path="/tic-tac-toe" element={<TicTacToePage />} />
+      <Route path="*" element={<HomePage />} />
+    </Routes>
+  );
 };
 
 export const App = () => {
-  const authState = useAuthStateSubscription();
+  const authState = useAuthState();
 
-  switch (authState.type) {
-    case "loading":
-      return <ModalLoader title="Loading..." />;
-
-    case "logged-in":
-      return <LoggedInApp userId={authState.userId} />;
-
-    case "logged-out":
-      return <LoggedOutApp />;
+  if (authState.type === "loading") {
+    return <ModalLoader title="Loading..." />;
   }
+
+  if (authState.type === "logged-in") {
+    return <LoggedIn userId={authState.userId} />;
+  }
+
+  return <LoginPage />;
 };
