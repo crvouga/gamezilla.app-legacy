@@ -18,7 +18,7 @@ export const Nothing = {
   type: "Nothing" as "Nothing",
 };
 
-export default {
+export const Maybe = {
   Just,
   Nothing,
 };

@@ -1,11 +1,10 @@
 import { equals } from "./equals";
-import Maybe, { IMaybe } from "./maybe";
 
-export const difference = <TA, TB>(as: Array<TA>, bs: Array<TB>): Array<TA> => {
+const difference = <TA, TB>(as: Array<TA>, bs: Array<TB>): Array<TA> => {
   return as.filter((a) => bs.every((b) => !equals(a, b)));
 };
 
-export const cartesianProduct = <TA, TB, TC>(
+const cartesianProduct = <TA, TB, TC>(
   f: (a: TA, b: TB) => TC,
   as: Array<TA>,
   bs: Array<TB>
@@ -13,31 +12,68 @@ export const cartesianProduct = <TA, TB, TC>(
   return as.flatMap((a) => bs.map((b) => f(a, b)));
 };
 
-export const head = <T>(xs: T[]): IMaybe<T> => {
-  if (xs.length === 0) {
-    return Maybe.Nothing;
-  }
-
-  return Maybe.Just(xs[0]);
+const head = <T>([x]: T[]): T | null => {
+  return x ?? null;
 };
 
-export const shuffle = <T>(x: T[]): T[] => {
+const shuffle = <T>(x: T[]): T[] => {
   return x.sort(() => Math.floor(Math.random() * 2 - 1));
 };
 
-export const concat = <T>(...xss: T[][]): T[] => {
+const concat = <T>(...xss: T[][]): T[] => {
   return xss.flat(1);
 };
 
-export const any = <T>(predicate: (x: T) => boolean, xs: T[]): boolean => {
+const any = <T>(predicate: (x: T) => boolean, xs: T[]): boolean => {
   return xs.some(predicate);
 };
 
-export default {
+const take = <T>(n: number, xs: T[]): T[] => {
+  if (n <= 0) {
+    return [];
+  }
+
+  const [first, ...rest] = xs;
+
+  if (first) {
+    return [first, ...take(n - 1, rest)];
+  }
+
+  return [];
+};
+
+const drop = <T>(n: number, xs: T[]): T[] => {
+  if (n === 0) {
+    return xs;
+  }
+
+  const [_first, ...rest] = xs;
+
+  return drop(n - 1, rest);
+};
+
+const splitAt = <T>(n: number, xs: T[]): [T[], T[]] => {
+  return [take(n, xs), drop(n, xs)];
+};
+
+const splitEvery = <T>(n: number, xs: T[]): T[][] => {
+  if (xs.length <= n) {
+    return [xs];
+  }
+
+  const [first, rest] = splitAt(n, xs);
+
+  return [first, ...splitEvery(n, rest)];
+};
+
+export const List = {
   difference,
   cartesianProduct,
   shuffle,
   head,
   concat,
   any,
+  splitAt,
+  splitEvery,
+  take,
 };
