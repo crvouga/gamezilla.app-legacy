@@ -1,6 +1,6 @@
 // SOURCE: https://heroicons.com/
 
-export const Google = () => {
+const Google = () => {
   return (
     <svg
       viewBox="0 0 24 24"
@@ -30,7 +30,7 @@ export const Google = () => {
   );
 };
 
-export const CheveronRight = () => {
+const CheveronRight = () => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -47,7 +47,7 @@ export const CheveronRight = () => {
   );
 };
 
-export const CheveronLeft = () => {
+const CheveronLeft = () => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -64,7 +64,7 @@ export const CheveronLeft = () => {
   );
 };
 
-export const Logout = () => {
+const Logout = () => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -83,7 +83,7 @@ export const Logout = () => {
   );
 };
 
-export const Error = () => {
+const Error = () => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -100,7 +100,7 @@ export const Error = () => {
   );
 };
 
-export const Edit = () => {
+const Edit = () => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -113,7 +113,7 @@ export const Edit = () => {
   );
 };
 
-export const User = ({ className }: { className?: string }) => {
+const User = ({ className }: { className?: string }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -130,7 +130,7 @@ export const User = ({ className }: { className?: string }) => {
   );
 };
 
-export const Search = () => {
+const Search = () => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -149,7 +149,7 @@ export const Search = () => {
   );
 };
 
-export const Globe = ({ className }: { className?: string }) => {
+const Globe = ({ className }: { className?: string }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -166,4 +166,17 @@ export const Globe = ({ className }: { className?: string }) => {
       />
     </svg>
   );
+};
+
+export const Icons = {
+  Globe,
+  Google,
+  CheveronRight,
+  CheveronLeft,
+  Logout,
+  Location,
+  Error,
+  Edit,
+  User,
+  Search,
 };

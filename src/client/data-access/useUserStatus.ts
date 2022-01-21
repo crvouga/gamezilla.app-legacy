@@ -10,7 +10,6 @@ type State =
     }
   | {
       type: "loaded";
-
       profile: {
         userId: string;
         avatarUrl?: string;
@@ -18,7 +17,7 @@ type State =
       };
     };
 
-export const useProfileState = ({ userId }: { userId: string }) => {
+export const useUserStatus = ({ userId }: { userId: string }) => {
   const [state, setState] = useState<State>({ type: "loading" });
 
   useEffect(() => {

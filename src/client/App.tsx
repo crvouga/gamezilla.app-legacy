@@ -1,7 +1,7 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 import { Alert, Backdrop, ModalLoader } from "./components";
-import { useAuthState, useProfileState } from "./data-access";
+import { useAuthStatus, useUserStatus } from "./data-access";
 import {
   EditAvatarPage,
   EditProfilePage,
@@ -12,7 +12,7 @@ import {
 } from "./pages";
 
 export const App = () => {
-  const authState = useAuthState();
+  const authState = useAuthStatus();
 
   if (authState.type === "loading") {
     return <ModalLoader title="Loading..." />;
@@ -26,9 +26,9 @@ export const App = () => {
 };
 
 const LoggedIn = ({ userId }: { userId: string }) => {
-  const profileState = useProfileState({ userId });
+  const userStatus = useUserStatus({ userId });
 
-  if (profileState.type === "error") {
+  if (userStatus.type === "error") {
     return (
       <Backdrop>
         <Alert variant="error" title="Failed to load your profile" />
@@ -36,11 +36,11 @@ const LoggedIn = ({ userId }: { userId: string }) => {
     );
   }
 
-  if (profileState.type === "loading") {
+  if (userStatus.type === "loading") {
     return <ModalLoader title="Loading..." />;
   }
 
-  const { profile } = profileState;
+  const { profile } = userStatus;
 
   return (
     <Routes>

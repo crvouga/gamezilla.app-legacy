@@ -1,4 +1,5 @@
-import * as Icons from "./Icons";
+import { Icons } from "./Icons";
+
 export const Avatar = ({
   src,
   className = "w-12 h-12",

@@ -1,36 +1,22 @@
-import * as Icons from "../components/Icons";
-import { Item } from "../components/Item";
-import { ModalLoader } from "../components/ModalLoader";
-import { PageBar } from "../components/PageBar";
-import React, { useState } from "react";
-import { supabaseClient } from "../../shared/supabase";
+import React from "react";
+import { Icons, Item, ModalLoader, PageBar } from "../components";
+import { useLogin } from "../data-access";
 
 export const LoginPage = () => {
-  const [state, setState] = useState<"idle" | "logging-in">("idle");
+  const login = useLogin();
 
-  const loginWithGoogle = async () => {
-    setState("logging-in");
-
-    const redirectTo = window.location.href;
-
-    await supabaseClient.auth.signIn(
-      {
-        provider: "google",
-      },
-      {
-        redirectTo: redirectTo,
-      }
-    );
-  };
+  if (login.status === "redirecting") {
+    return <ModalLoader title="Redirecting..." />;
+  }
 
   return (
     <>
-      {state === "logging-in" && <ModalLoader title="Redirecting..." />}
-
       <PageBar center="Login" />
 
       <Item
-        onClick={loginWithGoogle}
+        onClick={() => {
+          login.mutate({ provider: "google" });
+        }}
         start={<Icons.Google />}
         center="Continue With Google"
         end={<Icons.CheveronRight />}
