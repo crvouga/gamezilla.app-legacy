@@ -1,9 +1,6 @@
 import React from "react";
-import * as Icons from "../components/Icons";
-import { Item } from "../components/Item";
-import { PageBar } from "../components/PageBar";
 import { Link } from "react-router-dom";
-import { Avatar } from "../components";
+import { Avatar, Icons, Item, PageBar } from "../components";
 
 export const HomePage = ({ profile }: { profile: { avatarUrl?: string } }) => {
   return (

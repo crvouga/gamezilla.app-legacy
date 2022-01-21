@@ -13,7 +13,7 @@ type State =
       type: "logged-out";
     };
 
-export const useAuthState = () => {
+export const useAuthStatus = () => {
   const [state, setState] = useState<State>({ type: "loading" });
 
   useEffect(() => {

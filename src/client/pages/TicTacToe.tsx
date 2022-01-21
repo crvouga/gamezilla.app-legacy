@@ -1,7 +1,5 @@
 import React from "react";
-import * as Icons from "../components/Icons";
-import { Item } from "../components/Item";
-import { PageBar } from "../components/PageBar";
+import { Icons, Item, PageBar } from "../components";
 
 export const TicTacToePage = () => {
   return (

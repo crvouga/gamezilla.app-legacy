@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { definitions, supabaseClient } from "../../shared/supabase";
 
 export const updateProfile = async ({
@@ -16,5 +17,20 @@ export const updateProfile = async ({
 };
 
 export const useUpdateProfile = () => {
-  return updateProfile;
+  const [status, setStatus] = useState<"mutating" | "idle">("idle");
+
+  if (status === "idle") {
+    return {
+      status,
+      async mutate(...params: Parameters<typeof updateProfile>) {
+        setStatus("mutating");
+        await updateProfile(...params);
+        setStatus("idle");
+      },
+    };
+  }
+
+  return {
+    status,
+  };
 };

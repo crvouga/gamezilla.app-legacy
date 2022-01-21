@@ -4,6 +4,7 @@ import { List, Record } from "../../shared/utility";
 import {
   AVATAR_STYLES,
   formatAvatarStyle,
+  IAvatarSeed,
   IAvatarStyle,
   parseAvatarUrl,
   toAvatarUrl,
@@ -13,7 +14,10 @@ import { useUpdateProfile } from "../data-access";
 export const EditAvatarPage = ({
   profile,
 }: {
-  profile: { userId: string; avatarUrl?: string };
+  profile: {
+    userId: string;
+    avatarUrl?: string;
+  };
 }) => {
   const parsed = parseAvatarUrl(profile.avatarUrl);
 
@@ -26,27 +30,63 @@ export const EditAvatarPage = ({
     avatarStyle: selectedStyle,
   });
 
-  const isTouched = selectedStyle !== parsed.avatarStyle;
-
-  const [state, setState] = useState<"idle" | "saving">("idle");
-
   const updateProfile = useUpdateProfile();
 
-  const handleSave = async () => {
-    if (state === "saving") {
-      return;
-    }
+  if (updateProfile.status === "mutating") {
+    return <ModalLoader title="Saving..." />;
+  }
 
-    setState("saving");
+  return (
+    <>
+      <PageBar
+        left={
+          <Button
+            onClick={() => {
+              setSelectedStyle(parsed.avatarStyle);
+            }}
+            text="Cancel"
+          />
+        }
+        center="Edit Avatar"
+        right={
+          <Button
+            onClick={() => {
+              updateProfile.mutate({
+                userId: profile.userId,
+                avatarUrl,
+              });
+            }}
+            text="Done"
+          />
+        }
+      />
 
-    await updateProfile({
-      ...profile,
-      avatarUrl,
-    });
+      <div className="w-full flex flex-col justify-center items-center mt-4 mb-6">
+        <Avatar className="w-52 h-52 mb-2" src={avatarUrl} />
 
-    setState("idle");
-  };
+        <div className="text-2xl font-medium">
+          {formatAvatarStyle(selectedStyle)}
+        </div>
+      </div>
 
+      <EditAvatarSelectGrid
+        avatarSeed={parsed.avatarSeed}
+        selectedStyle={selectedStyle}
+        onSelect={setSelectedStyle}
+      />
+    </>
+  );
+};
+
+const EditAvatarSelectGrid = ({
+  avatarSeed,
+  selectedStyle,
+  onSelect,
+}: {
+  avatarSeed: IAvatarSeed;
+  selectedStyle: IAvatarStyle;
+  onSelect: (style: IAvatarStyle) => void;
+}) => {
   const refByStyle = Record.mapValues(AVATAR_STYLES, () =>
     React.createRef<HTMLDivElement>()
   );
@@ -60,68 +100,39 @@ export const EditAvatarPage = ({
   }, [selectedStyle]);
 
   return (
-    <>
-      {state === "saving" && <ModalLoader title="Saving..." />}
-
-      <PageBar
-        left={
-          <Button
-            onClick={() => {
-              setSelectedStyle(parsed.avatarStyle);
-            }}
-            text="Cancel"
-          />
-        }
-        center="Edit Avatar"
-        right={<Button onClick={handleSave} text="Done" />}
-      />
-
-      <div className="w-full flex flex-col justify-center items-center mt-4 mb-6">
-        <Avatar className="w-52 h-52 mb-2" src={avatarUrl} />
-
-        <div className="text-2xl font-medium">
-          {formatAvatarStyle(selectedStyle)}
-        </div>
-      </div>
-
-      <div className=" w-full flex overflow-x-scroll">
-        {List.splitEvery(4, Object.values(AVATAR_STYLES)).map(
-          (avatarStyles) => (
+    <div className=" w-full flex overflow-x-scroll">
+      {List.splitEvery(4, Object.values(AVATAR_STYLES)).map((avatarStyles) => (
+        <div
+          key={avatarStyles.join(",")}
+          className="w-full grid gap-4 grid-cols-3 grid-rows-3"
+        >
+          {avatarStyles.map((avatarStyle) => (
             <div
-              key={avatarStyles.join(",")}
-              className="w-full grid gap-4 grid-cols-3 grid-rows-3"
+              ref={refByStyle[avatarStyle]}
+              key={avatarStyle}
+              className="w-1/2 p-4 flex flex-col text-center"
+              onClick={() => onSelect(avatarStyle)}
             >
-              {avatarStyles.map((avatarStyle) => (
-                <div
-                  ref={refByStyle[avatarStyle]}
-                  key={avatarStyle}
-                  className="w-1/2 p-4 flex flex-col text-center"
-                  onClick={() => setSelectedStyle(avatarStyle)}
-                >
-                  <Avatar
-                    className={`w-full h-full mb-2 ${
-                      selectedStyle === avatarStyle
-                        ? "border-4 border-black"
-                        : ""
-                    }`}
-                    src={toAvatarUrl({
-                      avatarStyle,
-                      avatarSeed: parsed.avatarSeed,
-                    })}
-                  />
-                  <div
-                    className={`${
-                      selectedStyle === avatarStyle ? "font-bold" : "font-light"
-                    }`}
-                  >
-                    {formatAvatarStyle(avatarStyle)}
-                  </div>
-                </div>
-              ))}
+              <Avatar
+                className={`w-full h-full mb-2 ${
+                  selectedStyle === avatarStyle ? "border-4 border-black" : ""
+                }`}
+                src={toAvatarUrl({
+                  avatarStyle,
+                  avatarSeed,
+                })}
+              />
+              <div
+                className={`${
+                  selectedStyle === avatarStyle ? "font-bold" : "font-light"
+                }`}
+              >
+                {formatAvatarStyle(avatarStyle)}
+              </div>
             </div>
-          )
-        )}
-      </div>
-    </>
+          ))}
+        </div>
+      ))}
+    </div>
   );
 };

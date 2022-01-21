@@ -1,10 +1,6 @@
-import React from "react";
-import { Avatar } from "../components/Avatar";
-import { Button } from "../components/Button";
-import { PageBar } from "../components/PageBar";
-import { Link, Routes, Route } from "react-router-dom";
-import { useState } from "react";
-import { TextField } from "../components/TextField";
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { Avatar, Button, PageBar, TextField } from "../components";
 
 export const EditProfilePage = ({
   profile,
