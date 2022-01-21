@@ -19,7 +19,7 @@ const mergeLeft = <T>(l: T, r: Partial<T>): T => {
   };
 };
 
-export default {
+export const Record = {
   mapValues,
   mergeLeft,
 };

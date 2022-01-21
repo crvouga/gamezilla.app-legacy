@@ -1,4 +1,4 @@
-export type IInteger = number & { type: "Integer" };
+export type IInteger = number & { Integer: true };
 
 const floor = (x: number): IInteger => {
   return Math.floor(x) as IInteger;
@@ -20,7 +20,7 @@ const range = (lower: IInteger, upper: IInteger): Array<IInteger> => {
   return [lower, ...range(floor(lower + 1), upper)];
 };
 
-export default {
+export const Integer = {
   range,
   floor,
   add,

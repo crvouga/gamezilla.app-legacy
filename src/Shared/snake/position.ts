@@ -1,12 +1,11 @@
-import { cartesianProduct } from "../utility/list";
-import Integer, { IInteger } from "../utility/integer";
+import { List, IInteger, Integer } from "src/shared/utility";
 
 export type IPosition = {
   x: IInteger;
   y: IInteger;
 };
 
-const Position = (x: number, y: number): IPosition => {
+const make = (x: number, y: number): IPosition => {
   return {
     x: Integer.floor(x),
     y: Integer.floor(y),
@@ -14,12 +13,12 @@ const Position = (x: number, y: number): IPosition => {
 };
 
 const add = (a: IPosition, b: IPosition) => {
-  return Position(a.x + b.x, a.y + b.y);
+  return make(a.x + b.x, a.y + b.y);
 };
 
 const range = (lower: IPosition, upper: IPosition): IPosition[] => {
-  return cartesianProduct(
-    Position,
+  return List.cartesianProduct(
+    make,
     Integer.range(lower.x, upper.x),
     Integer.range(lower.y, upper.y)
   );
@@ -29,9 +28,11 @@ const equals = (a: IPosition, b: IPosition): boolean => {
   return a.x === b.x && a.y === b.y;
 };
 
-export default {
+const ZERO = make(0, 0);
+
+export const Position = {
   add,
   range,
   equals,
-  Position,
+  ZERO,
 };
