@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "react-location";
 import { Avatar, Button, PageBar, TextField } from "../components";
 
 export const EditProfilePage = ({
@@ -31,11 +31,11 @@ export const EditProfilePage = ({
           }
         />
       ) : (
-        <PageBar center="Edit Avatar" />
+        <PageBar center="Edit Profile" />
       )}
 
       <Avatar className="w-36 h-36 m-auto mt-4" src={profile.avatarUrl} />
-      <Link to="/edit/profile/avatar">
+      <Link to="/profile/avatar/edit">
         <Button
           className="m-auto mt-2"
           text="Edit Avatar"
