@@ -22,3 +22,7 @@ export type IMessage =
       gameId: string;
       userId: string;
     };
+
+export const nextState = () => {
+  return;
+};

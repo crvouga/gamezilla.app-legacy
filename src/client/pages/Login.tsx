@@ -1,11 +1,12 @@
 import React from "react";
+import { useMutation } from "react-query";
 import { Icons, Item, ModalLoader, PageBar } from "../components";
-import { useLogin } from "../data-access";
+import { login } from "../data-access";
 
 export const LoginPage = () => {
-  const login = useLogin();
+  const mutation = useMutation(login);
 
-  if (login.status === "redirecting") {
+  if (mutation.status === "loading") {
     return <ModalLoader title="Redirecting..." />;
   }
 
@@ -15,7 +16,7 @@ export const LoginPage = () => {
 
       <Item
         onClick={() => {
-          login.mutate({ provider: "google" });
+          mutation.mutate({ provider: "google" });
         }}
         start={<Icons.Google />}
         center="Continue With Google"

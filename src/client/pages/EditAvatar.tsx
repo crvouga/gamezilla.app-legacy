@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Avatar, Button, ModalLoader, PageBar } from "../components";
-import { List, Record } from "../../shared/utility";
+import React, { useState } from "react";
+import { Link } from "react-location";
 import {
   AVATAR_STYLES,
   formatAvatarStyle,
@@ -9,7 +8,16 @@ import {
   parseAvatarUrl,
   toAvatarUrl,
 } from "../../shared/avatar";
-import { useUpdateProfile } from "../data-access";
+import {
+  Avatar,
+  Button,
+  Icons,
+  Item,
+  ModalLoader,
+  PageBar,
+} from "../components";
+import { updateProfile } from "../data-access";
+import { useMutation } from "react-query";
 
 export const EditAvatarPage = ({
   profile,
@@ -25,14 +33,11 @@ export const EditAvatarPage = ({
     parsed.avatarStyle
   );
 
-  const avatarUrl = toAvatarUrl({
-    avatarSeed: parsed.avatarSeed,
-    avatarStyle: selectedStyle,
-  });
+  const avatarUrl = toAvatarUrl(selectedStyle, parsed.avatarSeed);
 
-  const updateProfile = useUpdateProfile();
+  const mutation = useMutation(updateProfile);
 
-  if (updateProfile.status === "mutating") {
+  if (mutation.status === "loading") {
     return <ModalLoader title="Saving..." />;
   }
 
@@ -51,7 +56,7 @@ export const EditAvatarPage = ({
         right={
           <Button
             onClick={() => {
-              updateProfile.mutate({
+              mutation.mutate({
                 userId: profile.userId,
                 avatarUrl,
               });
@@ -69,16 +74,18 @@ export const EditAvatarPage = ({
         </div>
       </div>
 
-      <EditAvatarSelectGrid
-        avatarSeed={parsed.avatarSeed}
-        selectedStyle={selectedStyle}
-        onSelect={setSelectedStyle}
-      />
+      <Link to="choose-style">
+        <Item
+          start={<Avatar src={avatarUrl} />}
+          center="Choose Style"
+          end={<Icons.CheveronRight />}
+        />
+      </Link>
     </>
   );
 };
 
-const EditAvatarSelectGrid = ({
+export const EditAvatarChooseStyle = ({
   avatarSeed,
   selectedStyle,
   onSelect,
@@ -87,50 +94,17 @@ const EditAvatarSelectGrid = ({
   selectedStyle: IAvatarStyle;
   onSelect: (style: IAvatarStyle) => void;
 }) => {
-  const refByStyle = Record.mapValues(AVATAR_STYLES, () =>
-    React.createRef<HTMLDivElement>()
-  );
-
-  useEffect(() => {
-    refByStyle[selectedStyle]?.current?.scrollIntoView({
-      behavior: "smooth",
-      inline: "center",
-      block: "center",
-    });
-  }, [selectedStyle]);
-
   return (
-    <div className=" w-full flex overflow-x-scroll">
-      {List.splitEvery(4, Object.values(AVATAR_STYLES)).map((avatarStyles) => (
-        <div
-          key={avatarStyles.join(",")}
-          className="w-full grid gap-4 grid-cols-3 grid-rows-3"
-        >
-          {avatarStyles.map((avatarStyle) => (
-            <div
-              ref={refByStyle[avatarStyle]}
-              key={avatarStyle}
-              className="w-1/2 p-4 flex flex-col text-center"
-              onClick={() => onSelect(avatarStyle)}
-            >
-              <Avatar
-                className={`w-full h-full mb-2 ${
-                  selectedStyle === avatarStyle ? "border-4 border-black" : ""
-                }`}
-                src={toAvatarUrl({
-                  avatarStyle,
-                  avatarSeed,
-                })}
-              />
-              <div
-                className={`${
-                  selectedStyle === avatarStyle ? "font-bold" : "font-light"
-                }`}
-              >
-                {formatAvatarStyle(avatarStyle)}
-              </div>
-            </div>
-          ))}
+    <div>
+      {Object.values(AVATAR_STYLES).map((avatarStyle) => (
+        <div key={avatarStyle} className="w-full flex-1">
+          <Avatar
+            className={`w-full`}
+            src={toAvatarUrl(avatarStyle, avatarSeed)}
+          />
+          <div className="font-medium text-lg text-center p-2">
+            {formatAvatarStyle(avatarStyle)}
+          </div>
         </div>
       ))}
     </div>

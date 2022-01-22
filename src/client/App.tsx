@@ -1,7 +1,7 @@
 import React from "react";
-import { Route, Routes } from "react-router-dom";
+import { ReactLocation, Router } from "react-location";
 import { Alert, Backdrop, ModalLoader } from "./components";
-import { useAuthStatus, useUserStatus } from "./data-access";
+import { onAuthStatus, onUserStatus } from "./data-access";
 import {
   EditAvatarPage,
   EditProfilePage,
@@ -10,23 +10,29 @@ import {
   LogoutPage,
   TicTacToePage,
 } from "./pages";
+import { useSubscription } from "./utility";
+
+const location = new ReactLocation();
 
 export const App = () => {
-  const authState = useAuthStatus();
+  const authState = useSubscription({ type: "loading" }, onAuthStatus);
 
   if (authState.type === "loading") {
     return <ModalLoader title="Loading..." />;
   }
 
-  if (authState.type === "logged-in") {
-    return <LoggedIn userId={authState.userId} />;
+  if (authState.type === "logged-out") {
+    return <LoginPage />;
   }
 
-  return <LoginPage />;
+  return <LoggedIn userId={authState.userId} />;
 };
 
 const LoggedIn = ({ userId }: { userId: string }) => {
-  const userStatus = useUserStatus({ userId });
+  const userStatus = useSubscription(
+    { type: "loading" },
+    onUserStatus({ userId })
+  );
 
   if (userStatus.type === "error") {
     return (
@@ -43,18 +49,30 @@ const LoggedIn = ({ userId }: { userId: string }) => {
   const { profile } = userStatus;
 
   return (
-    <Routes>
-      <Route path="/logout" element={<LogoutPage />} />
-      <Route
-        path="/edit/profile"
-        element={<EditProfilePage profile={profile} />}
-      />
-      <Route
-        path="/edit/profile/avatar"
-        element={<EditAvatarPage profile={profile} />}
-      />
-      <Route path="/tic-tac-toe" element={<TicTacToePage />} />
-      <Route path="*" element={<HomePage profile={profile} />} />
-    </Routes>
+    <Router
+      location={location}
+      routes={[
+        {
+          path: "/logout",
+          element: <LogoutPage />,
+        },
+        {
+          path: "/profile/edit",
+          element: <EditProfilePage profile={profile} />,
+        },
+        {
+          path: "/profile/avatar/edit",
+          element: <EditAvatarPage profile={profile} />,
+        },
+        {
+          path: "/tic-tac-toe",
+          element: <TicTacToePage />,
+        },
+        {
+          path: "/",
+          element: <HomePage profile={profile} />,
+        },
+      ]}
+    />
   );
 };
