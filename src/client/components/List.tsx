@@ -1,6 +1,7 @@
+import { Box } from "@mui/material";
 import React from "react";
 
-export const Item = ({
+export const ListItem = ({
   start,
   center,
   end,
@@ -12,13 +13,17 @@ export const Item = ({
   end?: React.ReactNode;
 }) => {
   return (
-    <div
+    <Box
       className="text-gray-700 w-full flex flex-row justify-start items-center font-bold p-4 border-b hover:opacity-75 active:opacity-50 cursor-pointer"
+      sx={{
+        width: "100%",
+        display: "flex",
+      }}
       onClick={onClick}
     >
-      {start && <div className="mr-4">{start}</div>}
-      {center && <div className="flex-1">{center}</div>}
-      {end && <div>{end}</div>}
-    </div>
+      {start && <Box sx={{ marginRight: 4 }}>{start}</Box>}
+      {center && <Box sx={{ flex: 1 }}>{center}</Box>}
+      {end && <Box>{end}</Box>}
+    </Box>
   );
 };

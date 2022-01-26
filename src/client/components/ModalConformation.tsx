@@ -1,3 +1,4 @@
+import { Button, Dialog, DialogActions, DialogTitle } from "@mui/material";
 import { Backdrop } from "./Backdrop";
 
 const classNames = {
@@ -22,29 +23,12 @@ export const ModalConformation = ({
   };
 }) => {
   return (
-    <Backdrop className="p-4" onClick={onBackdropClick}>
-      <div
-        onClick={(event) => {
-          event.stopPropagation();
-        }}
-        className="drop-shadow-md rounded-md bg bg-slate-100 text-gray-700 overflow-hidden"
-      >
-        <h1 className="text-xl text-center font-bold p-6">{title}</h1>
-        <div className="w-full flex border-t border-gray-300">
-          <button
-            className={`border-r border-gray-300 ${classNames.action}`}
-            onClick={left.onClick}
-          >
-            {left.title}
-          </button>
-          <button
-            className={`text-green-500 ${classNames.action}`}
-            onClick={right.onClick}
-          >
-            {right.title}
-          </button>
-        </div>
-      </div>
-    </Backdrop>
+    <Dialog open onClose={onBackdropClick}>
+      <DialogTitle>{title}</DialogTitle>
+      <DialogActions>
+        <Button onClick={left.onClick}>{left.title}</Button>
+        <Button onClick={right.onClick}>{right.title}</Button>
+      </DialogActions>
+    </Dialog>
   );
 };

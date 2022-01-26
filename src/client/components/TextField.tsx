@@ -1,5 +1,5 @@
 import React from "react";
-
+import MuiTextField from "@mui/material/TextField";
 export const TextField = ({
   value,
   label,
@@ -14,25 +14,16 @@ export const TextField = ({
   placeholder?: string;
 }) => {
   return (
-    <div>
-      {label && (
-        <label
-          className="block text-gray-700 text-sm font-bold mb-2"
-          htmlFor={id}
-        >
-          {label}
-        </label>
-      )}
-      <input
-        id={id}
-        value={value}
-        onChange={(event) => {
-          onChange?.(event.target.value);
-        }}
-        className="shadow appearance-none rounded w-full p-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-        type="text"
-        placeholder={placeholder}
-      />
-    </div>
+    <MuiTextField
+      id={id}
+      label={label}
+      onChange={
+        onChange
+          ? (event) => {
+              onChange(event?.currentTarget?.value ?? "");
+            }
+          : undefined
+      }
+    />
   );
 };

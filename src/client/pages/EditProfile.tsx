@@ -15,7 +15,6 @@ export const EditProfilePage = ({
     <>
       {isTouched ? (
         <PageBar
-          className="justify-between"
           left="Save Changes?"
           right={
             <div className="flex">
@@ -34,7 +33,7 @@ export const EditProfilePage = ({
         <PageBar center="Edit Profile" />
       )}
 
-      <Avatar className="w-36 h-36 m-auto mt-4" src={profile.avatarUrl} />
+      <Avatar sx={{}} src={profile.avatarUrl} />
       <Link to="/profile/avatar/edit">
         <Button
           className="m-auto mt-2"
