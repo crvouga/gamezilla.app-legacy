@@ -1,26 +1,11 @@
-import { Icons } from "./Icons";
+import MuiAvatar, { AvatarProps } from "@mui/material/Avatar";
 
 export const Avatar = ({
   src,
-  className = "w-12 h-12",
+  sx,
 }: {
   src?: string;
-  className?: string;
+  sx?: AvatarProps["sx"];
 }) => {
-  return (
-    <div
-      className={`relative border aspect-square rounded-full overflow-hidden ${className}`}
-    >
-      {src ? (
-        <img
-          className="absolute top-0 bottom-0 left-0 right-0"
-          width="100%"
-          height="100%"
-          src={src}
-        />
-      ) : (
-        <Icons.User className="w-full h-full bg-gray-400" />
-      )}
-    </div>
-  );
+  return <MuiAvatar src={src} sx={sx} />;
 };

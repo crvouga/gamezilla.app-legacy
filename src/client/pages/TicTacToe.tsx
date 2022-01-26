@@ -1,5 +1,5 @@
 import React from "react";
-import { Icons, Item, PageBar } from "../components";
+import { Icons, ListItem, PageBar } from "../components";
 
 export const TicTacToePage = () => {
   return (
@@ -13,16 +13,16 @@ export const TicTacToePage = () => {
         <line stroke="black" strokeWidth={0.1} x1={0} y1={2} x2={3} y2={2} />
       </svg> */}
 
-      <Item
-        start={<Icons.Globe />}
+      <ListItem
+        start={<Icons.NetworkCell />}
         center="Create Game"
-        end={<Icons.CheveronRight />}
+        end={<Icons.ChevronRight />}
       />
 
-      <Item
-        start={<Icons.User />}
+      <ListItem
+        start={<Icons.Person />}
         center="Find Game"
-        end={<Icons.CheveronRight />}
+        end={<Icons.ChevronRight />}
       />
     </>
   );

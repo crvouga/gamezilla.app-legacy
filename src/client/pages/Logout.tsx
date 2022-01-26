@@ -4,7 +4,7 @@ import { useMutation } from "react-query";
 import { ModalConformation, ModalLoader } from "../components";
 import { logout } from "../data-access";
 
-export const LogoutPage = () => {
+export const LogoutPage = ({ username }: { username: string }) => {
   const navigate = useNavigate();
   const mutation = useMutation(logout);
 
@@ -14,7 +14,7 @@ export const LogoutPage = () => {
 
   return (
     <ModalConformation
-      title="Do you want to log out?"
+      title={`Log out of ${username}?`}
       onBackdropClick={() => {
         navigate({ to: "/", replace: true });
       }}

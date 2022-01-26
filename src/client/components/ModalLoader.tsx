@@ -1,23 +1,29 @@
-import { Backdrop } from "./Backdrop";
-import { Loader } from "./Loader";
-import { Surface } from "./Surface";
+import {
+  CircularProgress,
+  Dialog,
+  DialogContent,
+  Typography,
+} from "@mui/material";
 
 export const ModalLoader = ({
+  open = true,
   title,
-  subtitle,
 }: {
+  open?: boolean;
   title: string;
-  subtitle?: string;
 }) => {
   return (
-    <Backdrop className="cursor-progress">
-      <Surface className="flex items-center">
-        <Loader className="mr-4" />
-        <div>
-          <h1 className="text-lg font-medium">{title}</h1>
-          {subtitle && <h2 className="text-sm text-gray-400">{subtitle}</h2>}
-        </div>
-      </Surface>
-    </Backdrop>
+    <Dialog open={open}>
+      <DialogContent
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <CircularProgress sx={{ marginRight: 4 }} />
+        <Typography variant="h6">{title}</Typography>
+      </DialogContent>
+    </Dialog>
   );
 };

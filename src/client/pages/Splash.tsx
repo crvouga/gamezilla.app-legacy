@@ -1,8 +1,19 @@
-export const Splash = ({ subtitle }: { subtitle?: string }) => {
+import { Box, Typography } from "@mui/material";
+
+export const Splash = () => {
   return (
-    <div className="fixed w-screen h-screen flex flex-col justify-center items-center">
-      <div className="text-7xl">🦖</div>
-      {subtitle && <div className="text-gray-400 text-lg">{subtitle}</div>}
-    </div>
+    <Box
+      sx={{
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        display: "grid",
+        placeItems: "center",
+      }}
+    >
+      <Typography variant="h1">🦖</Typography>
+    </Box>
   );
 };

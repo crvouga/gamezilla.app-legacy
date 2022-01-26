@@ -1,5 +1,12 @@
+import {
+  ListItemText,
+  ListItem,
+  ListItemAvatar,
+  ListItemIcon,
+} from "@mui/material";
 import React, { useState } from "react";
 import { Link } from "react-location";
+import { useMutation } from "react-query";
 import {
   AVATAR_STYLES,
   formatAvatarStyle,
@@ -8,16 +15,8 @@ import {
   parseAvatarUrl,
   toAvatarUrl,
 } from "../../shared/avatar";
-import {
-  Avatar,
-  Button,
-  Icons,
-  Item,
-  ModalLoader,
-  PageBar,
-} from "../components";
+import { Avatar, Button, Icons, ModalLoader, PageBar } from "../components";
 import { updateProfile } from "../data-access";
-import { useMutation } from "react-query";
 
 export const EditAvatarPage = ({
   profile,
@@ -67,7 +66,7 @@ export const EditAvatarPage = ({
       />
 
       <div className="w-full flex flex-col justify-center items-center mt-4 mb-6">
-        <Avatar className="w-52 h-52 mb-2" src={avatarUrl} />
+        <Avatar src={avatarUrl} />
 
         <div className="text-2xl font-medium">
           {formatAvatarStyle(selectedStyle)}
@@ -75,11 +74,15 @@ export const EditAvatarPage = ({
       </div>
 
       <Link to="choose-style">
-        <Item
-          start={<Avatar src={avatarUrl} />}
-          center="Choose Style"
-          end={<Icons.CheveronRight />}
-        />
+        <ListItem>
+          <ListItemAvatar>
+            <Avatar src={avatarUrl} />
+            <ListItemText primary="Choose Style" />
+            <ListItemIcon>
+              <Icons.ChevronRight />
+            </ListItemIcon>
+          </ListItemAvatar>
+        </ListItem>
       </Link>
     </>
   );
@@ -99,7 +102,7 @@ export const EditAvatarChooseStyle = ({
       {Object.values(AVATAR_STYLES).map((avatarStyle) => (
         <div key={avatarStyle} className="w-full flex-1">
           <Avatar
-            className={`w-full`}
+            sx={{ width: "100%" }}
             src={toAvatarUrl(avatarStyle, avatarSeed)}
           />
           <div className="font-medium text-lg text-center p-2">
