@@ -5,16 +5,16 @@
   "license": "",
   "scripts": {
     "watch": "tsc -w",
-    "postinstall": "yarn server:build",
-    "heroku-postbuild": "yarn client:build",
+    "postinstall": "npm run server:build",
+    "heroku-postbuild": "npm run client:build",
     "server:dev": "cd build/server && nodemon main.js",
     "server:build": "cd src/server && tsc --build",
     "server:start": "cd build/server && node main.js",
     "client:dev": "parcel --dist-dir build/client src/client/main.html",
     "client:build": "parcel build --dist-dir build/client src/client/main.html",
     "heroku:env": "heroku config -s -a gamezilla > .env",
-    "heroku:start": "yarn server:start",
-    "heroku:preview": "yarn && yarn heroku-postbuild && yarn heroku:start "
+    "heroku:start": "npm run server:start",
+    "heroku:preview": "npm install && npm run heroku-postbuild && npm run heroku:start "
   },
   "devDependencies": {
     "@tailwindcss/forms": "^0.4.0",
