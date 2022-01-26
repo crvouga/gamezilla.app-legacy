@@ -5,3 +5,4 @@ export * from "./Login";
 export * from "./Logout";
 export * from "./SearchUsers";
 export * from "./TicTacToe";
+export * from "./Splash";
