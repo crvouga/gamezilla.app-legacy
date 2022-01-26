@@ -1,7 +1,7 @@
 import { Backdrop } from "./Backdrop";
 
 const classNames = {
-  action: "flex-1 p-4 uppercase font-bold hover:bg-gray-200",
+  action: "flex-1 p-4 uppercase font-bold hover:opacity-70 active:opacity-50",
 };
 
 export const ModalConformation = ({

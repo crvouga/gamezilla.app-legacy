@@ -10,6 +10,7 @@ import {
   LogoutPage,
   TicTacToePage,
 } from "./pages";
+import { Splash } from "./pages/Splash";
 import { useSubscription } from "./utility";
 
 const location = new ReactLocation();
@@ -18,7 +19,7 @@ export const App = () => {
   const authState = useSubscription({ type: "loading" }, onAuthStatus);
 
   if (authState.type === "loading") {
-    return <ModalLoader title="Loading..." />;
+    return <Splash />;
   }
 
   if (authState.type === "logged-out") {
@@ -34,16 +35,16 @@ const LoggedIn = ({ userId }: { userId: string }) => {
     onUserStatus({ userId })
   );
 
+  if (userStatus.type === "loading") {
+    return <Splash />;
+  }
+
   if (userStatus.type === "error") {
     return (
       <Backdrop>
         <Alert variant="error" title="Failed to load your profile" />
       </Backdrop>
     );
-  }
-
-  if (userStatus.type === "loading") {
-    return <ModalLoader title="Loading..." />;
   }
 
   const { profile } = userStatus;
