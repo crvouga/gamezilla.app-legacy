@@ -1,14 +1,11 @@
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import LocationOnIcon from "@mui/icons-material/LocationOn";
-import RestoreIcon from "@mui/icons-material/Restore";
-import { Person } from "@mui/icons-material";
+import { Home, Person } from "@mui/icons-material";
 import {
-  Avatar,
   BottomNavigation,
   BottomNavigationAction,
+  Container,
 } from "@mui/material";
 import React, { useRef } from "react";
-import { Outlet, ReactLocation, Router } from "react-location";
+import { ReactLocation, Router } from "react-location";
 import { Alert, Backdrop } from "./components";
 import { onAuthStatus, onUserStatus } from "./data-access";
 import {
@@ -19,6 +16,7 @@ import {
   LogoutPage,
   TicTacToePage,
 } from "./pages";
+import { ProfilePage } from "./pages/Profile";
 import { Splash } from "./pages/Splash";
 import { useSubscription } from "./utility";
 
@@ -64,26 +62,39 @@ const LoggedIn = ({ userId }: { userId: string }) => {
       routes={[
         {
           path: "/",
-          element: <Root profile={profile} />,
-          children: [
-            {
-              path: "/home",
-              element: <HomePage profile={profile} />,
-            },
-            {
-              path: "/profile/edit",
-              element: <EditProfilePage profile={profile} />,
-            },
-            {
-              path: "/profile/avatar/edit",
-              element: <EditAvatarPage profile={profile} />,
-            },
-          ],
+          element: (
+            <RootLayout>
+              <HomePage profile={profile} />
+            </RootLayout>
+          ),
         },
-
+        {
+          path: "/profile",
+          element: (
+            <RootLayout>
+              <ProfilePage profile={profile} />
+            </RootLayout>
+          ),
+        },
+        {
+          path: "/profile/edit",
+          element: (
+            <RootLayout>
+              <EditProfilePage profile={profile} />
+            </RootLayout>
+          ),
+        },
+        {
+          path: "/profile/avatar/edit",
+          element: (
+            <RootLayout>
+              <EditAvatarPage profile={profile} />
+            </RootLayout>
+          ),
+        },
         {
           path: "/logout",
-          element: <LogoutPage username={profile.displayName ?? "user123"} />,
+          element: <LogoutPage username={profile.username} />,
         },
         {
           path: "/tic-tac-toe",
@@ -94,23 +105,32 @@ const LoggedIn = ({ userId }: { userId: string }) => {
   );
 };
 
-export const Root = ({ profile }: { profile: { avatarUrl?: string } }) => {
+const RootLayout = ({ children }: { children: React.ReactNode }) => {
   const [value, setValue] = React.useState(0);
 
   return (
     <>
-      <Outlet />
+      {children}
 
       <BottomNavigation
+        sx={{
+          position: "fixed",
+          right: 0,
+          bottom: 0,
+          left: 0,
+        }}
         showLabels
         value={value}
         onChange={(event, newValue) => {
           setValue(newValue);
         }}
       >
-        <BottomNavigationAction label="Recents" icon={<RestoreIcon />} />
-        <BottomNavigationAction label="Favorites" icon={<FavoriteIcon />} />
-        <BottomNavigationAction label="Profile" icon={<Person />} />
+        <BottomNavigationAction label="Home" href="/" icon={<Home />} />
+        <BottomNavigationAction
+          href="/profile"
+          label="Profile"
+          icon={<Person />}
+        />
       </BottomNavigation>
     </>
   );

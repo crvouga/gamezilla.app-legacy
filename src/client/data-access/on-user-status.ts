@@ -11,8 +11,8 @@ type UserStatus =
       type: "loaded";
       profile: {
         userId: string;
+        username: string;
         avatarUrl?: string;
-        displayName?: string;
       };
     };
 
@@ -36,7 +36,9 @@ export const onUserStatus = ({ userId }: { userId: string }) => (
           profile: {
             userId: data.id,
             avatarUrl: data.avatar_url,
-            displayName: data.display_name,
+            username:
+              data.display_name?.split(" ").join(".").toLowerCase() ??
+              "usernamae",
           },
         });
         return;
@@ -51,7 +53,9 @@ export const onUserStatus = ({ userId }: { userId: string }) => (
         profile: {
           userId: payload.new.id,
           avatarUrl: payload.new.avatar_url,
-          displayName: payload.new.display_name,
+          username:
+            payload.new.display_name?.split(" ").join(".").toLowerCase() ??
+            "username",
         },
       });
     })
