@@ -1,7 +1,10 @@
 import React from "react";
+import ReactDOM from "react-dom";
 import { ReactLocation, Router } from "react-location";
-import { Alert, Backdrop, ModalLoader } from "./components";
+import { QueryClient, QueryClientProvider } from "react-query";
+import { Alert, Backdrop } from "./components";
 import { onAuthStatus, onUserStatus } from "./data-access";
+import "./main.css";
 import {
   EditAvatarPage,
   EditProfilePage,
@@ -12,28 +15,15 @@ import {
 } from "./pages";
 import { Splash } from "./pages/Splash";
 import { useSubscription } from "./utility";
-
-const location = new ReactLocation();
-
-export const App = () => {
-  const authState = useSubscription({ type: "loading" }, onAuthStatus);
-
-  if (authState.type === "loading") {
-    return <Splash />;
-  }
-
-  if (authState.type === "logged-out") {
-    return <LoginPage />;
-  }
-
-  return <LoggedIn userId={authState.userId} />;
-};
+import { useRef } from "react";
 
 const LoggedIn = ({ userId }: { userId: string }) => {
   const userStatus = useSubscription(
     { type: "loading" },
     onUserStatus({ userId })
   );
+
+  const locationRef = useRef(new ReactLocation());
 
   if (userStatus.type === "loading") {
     return <Splash />;
@@ -51,7 +41,7 @@ const LoggedIn = ({ userId }: { userId: string }) => {
 
   return (
     <Router
-      location={location}
+      location={locationRef.current}
       routes={[
         {
           path: "/logout",
@@ -77,3 +67,26 @@ const LoggedIn = ({ userId }: { userId: string }) => {
     />
   );
 };
+
+const App = () => {
+  const authState = useSubscription({ type: "loading" }, onAuthStatus);
+
+  if (authState.type === "loading") {
+    return <Splash />;
+  }
+
+  if (authState.type === "logged-out") {
+    return <LoginPage />;
+  }
+
+  return <LoggedIn userId={authState.userId} />;
+};
+
+const queryClient = new QueryClient();
+
+ReactDOM.render(
+  <QueryClientProvider client={queryClient}>
+    <App />
+  </QueryClientProvider>,
+  document.getElementById("app")
+);
