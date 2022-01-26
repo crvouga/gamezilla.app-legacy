@@ -1,3 +1,4 @@
+import { Container } from "@mui/material";
 import React from "react";
 import ReactDOM from "react-dom";
 import { QueryClient, QueryClientProvider } from "react-query";
@@ -7,7 +8,9 @@ import { ThemeProvider } from "./components";
 ReactDOM.render(
   <ThemeProvider>
     <QueryClientProvider client={new QueryClient()}>
-      <App />
+      <Container maxWidth="sm">
+        <App />
+      </Container>
     </QueryClientProvider>
   </ThemeProvider>,
   document.getElementById("reactjs-app")

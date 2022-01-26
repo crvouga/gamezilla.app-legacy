@@ -1,10 +1,22 @@
-import React from "react";
 import {
   createTheme,
   CssBaseline,
+  LinkBaseProps,
   responsiveFontSizes,
   ThemeProvider as MuiThemeProvider,
 } from "@mui/material";
+import React from "react";
+import { Link } from "react-location";
+
+const LinkBehavior = React.forwardRef<any, Partial<LinkBaseProps>>(
+  (props, _ref) => {
+    return (
+      <Link to={props.href} {...props}>
+        {props.children}
+      </Link>
+    );
+  }
+);
 
 const darkTheme = createTheme({
   palette: {
@@ -25,6 +37,19 @@ const darkTheme = createTheme({
     MuiPaper: {
       defaultProps: {
         elevation: 0,
+      },
+    },
+
+    MuiLink: {
+      defaultProps: {
+        //@ts-ignore
+        component: LinkBehavior,
+      },
+    },
+
+    MuiButtonBase: {
+      defaultProps: {
+        LinkComponent: LinkBehavior,
       },
     },
   },
