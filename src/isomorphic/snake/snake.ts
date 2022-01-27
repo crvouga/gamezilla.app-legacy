@@ -4,7 +4,7 @@ import {
   IRandomSeed,
   List,
   NaturalNumber,
-} from "src/shared/utility";
+} from "src/isomorphic/utility";
 import { Position, IPosition } from "./position";
 
 type IState = {

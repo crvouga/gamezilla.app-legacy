@@ -1,4 +1,4 @@
-import { supabaseClient } from "../../shared/supabase";
+import { supabaseClient } from "../../isomorphic/supabase";
 
 const NEVER_RESOLVE = new Promise((_resolve, _reject) => {});
 
