@@ -1,4 +1,4 @@
-import { supabaseClient } from "../../isomorphic/supabase";
+import { supabaseClient } from "../../shared/supabase";
 
 type AuthStatus =
   | {

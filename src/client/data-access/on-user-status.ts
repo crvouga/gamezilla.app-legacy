@@ -1,4 +1,4 @@
-import { definitions, supabaseClient } from "../../isomorphic/supabase";
+import { definitions, supabaseClient } from "../../shared/supabase";
 
 type UserStatus =
   | {

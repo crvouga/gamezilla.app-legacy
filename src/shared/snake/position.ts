@@ -1,4 +1,4 @@
-import { List, IInteger, Integer } from "src/isomorphic/utility";
+import { List, IInteger, Integer } from "src/shared/utility";
 
 export type IPosition = {
   x: IInteger;

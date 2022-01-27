@@ -14,7 +14,7 @@ import {
   IAvatarStyle,
   parseAvatarUrl,
   toAvatarUrl,
-} from "../../isomorphic/avatar";
+} from "../../shared/avatar";
 import { Avatar, Button, Icons, ModalLoader, PageBar } from "../components";
 import { updateProfile } from "../data-access";
 
