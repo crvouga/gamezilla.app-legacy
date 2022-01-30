@@ -13,10 +13,10 @@ expressApp.get("/api/hello", (_req, res) => {
   res.json({ message: "GELLo" });
 });
 
-const CLIENT_BUILD_PATH = path.join(__dirname, "..", "..", "build", "client");
+const CLIENT_BUILD_PATH = path.join(__dirname, "..", "..", ".builds", "client");
 expressApp.use(express.static(CLIENT_BUILD_PATH));
 expressApp.get("*", (_req, res) => {
-  res.sendFile(path.join(CLIENT_BUILD_PATH, "index.html"));
+  res.sendFile(path.join(CLIENT_BUILD_PATH, "main.html"));
 });
 
 expressApp.get("/api/chat/conversations", (req, res) => {
