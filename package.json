@@ -8,13 +8,13 @@
     "postinstall": "npm run server:build",
     "heroku-postbuild": "npm run client:build",
     "server:dev": "cd .builds/server && nodemon main.js",
-    "server:build": "cd src/server && tsc --build",
+    "server:build": "cd src/server && tsc main.ts --esModuleInterop --outDir ../../.builds/server",
     "server:start": "cd .builds/server && node main.js",
     "client:dev": "parcel --dist-dir .builds/client src/client/main.html",
     "client:build": "parcel build --dist-dir .builds/client src/client/main.html",
     "heroku:env": "heroku config -s -a gamezilla > .env",
     "heroku:start": "npm run server:start",
-    "heroku:preview": "npm install && npm run heroku-postbuild && npm run heroku:start "
+    "heroku:preview": "npm install && npm run heroku:env && npm run heroku-postbuild && npm run heroku:start "
   },
   "devDependencies": {
     "@types/express": "^4.17.13",

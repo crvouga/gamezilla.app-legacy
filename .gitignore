@@ -4,3 +4,4 @@
 .parcel-cache
 .env
 tsconfig.tsbuildinfo
+dist
