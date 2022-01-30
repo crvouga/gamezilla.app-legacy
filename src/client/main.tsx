@@ -8,7 +8,7 @@ import { ThemeProvider } from "./components";
 ReactDOM.render(
   <ThemeProvider>
     <QueryClientProvider client={new QueryClient()}>
-      <Container maxWidth="sm">
+      <Container disableGutters maxWidth="sm">
         <App />
       </Container>
     </QueryClientProvider>

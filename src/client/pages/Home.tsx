@@ -1,4 +1,6 @@
 import {
+  Avatar,
+  Link,
   List,
   ListItemButton,
   ListItemText,
@@ -14,6 +16,10 @@ export const HomePage = ({ profile }: { profile: { avatarUrl?: string } }) => {
         <Typography sx={{ flex: 1 }} variant="h4">
           Home
         </Typography>
+
+        <Link href="/account">
+          <Avatar src={profile.avatarUrl} />
+        </Link>
       </Toolbar>
 
       <List>

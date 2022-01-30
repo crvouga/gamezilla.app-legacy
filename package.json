@@ -14,7 +14,7 @@
     "client:build": "parcel build --dist-dir .builds/client src/client/main.html",
     "heroku:env": "heroku config -s -a gamezilla > .env",
     "heroku:start": "npm run server:start",
-    "heroku:preview": "npm install && npm run heroku:env && npm run heroku-postbuild && npm run heroku:start "
+    "heroku:preview": "npm run heroku:env && npm install && npm run heroku-postbuild && npm run heroku:start "
   },
   "devDependencies": {
     "@types/express": "^4.17.13",
