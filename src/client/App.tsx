@@ -1,9 +1,5 @@
 import { Home, Person } from "@mui/icons-material";
-import {
-  BottomNavigation,
-  BottomNavigationAction,
-  Container,
-} from "@mui/material";
+import { BottomNavigation, BottomNavigationAction } from "@mui/material";
 import React, { useRef } from "react";
 import { ReactLocation, Router } from "react-location";
 import { Alert, Backdrop } from "./components";
@@ -16,6 +12,7 @@ import {
   LogoutPage,
   TicTacToePage,
 } from "./pages";
+import { AccountPage } from "./pages/Account";
 import { ProfilePage } from "./pages/Profile";
 import { Splash } from "./pages/Splash";
 import { useSubscription } from "./utility";
@@ -67,6 +64,10 @@ const LoggedIn = ({ userId }: { userId: string }) => {
               <HomePage profile={profile} />
             </RootLayout>
           ),
+        },
+        {
+          path: "/account",
+          element: <AccountPage />,
         },
         {
           path: "/profile",
