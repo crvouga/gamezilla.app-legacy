@@ -7,6 +7,7 @@ import {
 } from "@mui/material";
 import React, { useRef } from "react";
 import { ReactLocation, Router } from "react-location";
+import { LinkBehavior } from "./components/Link";
 import { onAuthStatus, onUserStatus } from "./data-access";
 import { AccountPage } from "./pages/Account";
 import { EditAvatarPage } from "./pages/EditAvatar";
@@ -35,7 +36,9 @@ export const App = () => {
 
 const LoggedIn = ({ userId }: { userId: string }) => {
   const userStatus = useSubscription(
-    { type: "loading" },
+    {
+      type: "loading",
+    },
     onUserStatus({ userId })
   );
 
@@ -48,7 +51,9 @@ const LoggedIn = ({ userId }: { userId: string }) => {
   if (userStatus.type === "error") {
     return (
       <Backdrop open>
-        <Alert severity="error">Failed to load your profile</Alert>
+        <Alert sx={{ m: 4 }} variant="filled" severity="error">
+          Something went wrong when trying to load your profile.
+        </Alert>
       </Backdrop>
     );
   }
@@ -128,14 +133,26 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
           setValue(newValue);
         }}
       >
-        <BottomNavigationAction label="Home" href="/" icon={<Home />} />
-        <BottomNavigationAction href="/chat" label="Chat" icon={<Chat />} />
         <BottomNavigationAction
+          LinkComponent={LinkBehavior}
+          label="Home"
+          href="/"
+          icon={<Home />}
+        />
+        <BottomNavigationAction
+          LinkComponent={LinkBehavior}
+          href="/chat"
+          label="Chat"
+          icon={<Chat />}
+        />
+        <BottomNavigationAction
+          LinkComponent={LinkBehavior}
           href="/search"
           label="Search"
           icon={<Search />}
         />
         <BottomNavigationAction
+          LinkComponent={LinkBehavior}
           href="/profile"
           label="Profile"
           icon={<Person />}
