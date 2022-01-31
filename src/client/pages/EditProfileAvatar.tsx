@@ -121,6 +121,8 @@ const EditProfileAvatar = ({
     <>
       <AppBar>
         <Toolbar>
+          <BackButton />
+
           <Typography sx={{ flex: 1 }} variant="h6">
             Edit Avatar
           </Typography>
