@@ -60,10 +60,7 @@ export const EditProfileAvatarPage = ({
 
   return (
     <>
-      <ModalLoader
-        open={mutation.status === "loading"}
-        title="Updating Avatar..."
-      />
+      <ModalLoader open={mutation.status === "loading"} title="Updating..." />
 
       <Routes>
         <Route

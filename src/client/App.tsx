@@ -1,21 +1,16 @@
 import { Chat, Home, Person, Search } from "@mui/icons-material";
-import {
-  Alert,
-  Backdrop,
-  BottomNavigation,
-  BottomNavigationAction,
-} from "@mui/material";
-import React, { useRef } from "react";
-import { useMutation, useQuery } from "react-query";
+import { BottomNavigation, BottomNavigationAction } from "@mui/material";
+import React from "react";
+import { useQuery } from "react-query";
 import { Route, Routes } from "react-router-dom";
 import { LinkBehavior } from "./components/Link";
 import {
-  IAuthStatus,
   getAuthStatus,
+  getElseCreateProfile,
+  IAuthStatus,
+  IUserStatus,
   onAuthStatus,
   onUserStatus,
-  IUserStatus,
-  getElseCreateProfile,
 } from "./data-access";
 import { AccountPage } from "./pages/Account";
 import { EditProfilePage } from "./pages/EditProfile";
