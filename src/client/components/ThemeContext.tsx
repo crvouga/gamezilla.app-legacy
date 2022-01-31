@@ -4,13 +4,13 @@ import {
   responsiveFontSizes,
   ThemeProvider as MuiThemeProvider,
 } from "@mui/material";
-import { green } from "@mui/material/colors";
+import { blue } from "@mui/material/colors";
 import React from "react";
 
 const darkTheme = createTheme({
   palette: {
     mode: "dark",
-    primary: green,
+    primary: blue,
   },
   components: {
     MuiAppBar: {
@@ -25,6 +25,17 @@ const darkTheme = createTheme({
       defaultProps: {
         underline: "none",
         color: "inherit",
+      },
+    },
+
+    MuiAlert: {
+      defaultProps: {
+        variant: "filled",
+      },
+      styleOverrides: {
+        root: {
+          width: "100%",
+        },
       },
     },
   },

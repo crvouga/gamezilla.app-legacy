@@ -7,10 +7,14 @@ export const updateProfile = async ({
   userId: string;
   avatarUrl: string;
 }) => {
-  await supabaseClient
+  const { error } = await supabaseClient
     .from<definitions["profile"]>("profile")
     .update({
       avatar_url: avatarUrl,
     })
     .match({ id: userId });
+
+  if (error) {
+    throw error;
+  }
 };

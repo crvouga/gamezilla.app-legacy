@@ -1,5 +1,6 @@
 import { ChevronRight } from "@mui/icons-material";
 import {
+  Alert,
   AppBar,
   Avatar,
   Box,
@@ -9,6 +10,7 @@ import {
   ListItemButton,
   ListItemSecondaryAction,
   ListItemText,
+  Snackbar,
   TextField,
   Toolbar,
   Typography,
@@ -46,19 +48,26 @@ export const EditProfileAvatarPage = ({
 
   const mutation = useMutation(updateProfile);
   const navigate = useNavigate();
-  const onSubmit = () => {
-    mutation.mutate({
-      userId: profile.userId,
-      avatarUrl: toAvatarUrl(avatarStyle, avatarSeed),
-    });
-  };
-
   return (
     <>
       <ModalLoader
         open={mutation.status === "loading"}
         title="Updating Avatar..."
       />
+
+      <Snackbar
+        autoHideDuration={2000}
+        onClose={mutation.reset}
+        open={mutation.status === "success"}
+      >
+        <Alert severity="success">Updated Avatar.</Alert>
+      </Snackbar>
+
+      <Snackbar autoHideDuration={2000} open={mutation.status === "error"}>
+        <Alert variant="filled" severity="error">
+          Failed to update avatar.
+        </Alert>
+      </Snackbar>
 
       <Routes>
         <Route
@@ -96,7 +105,12 @@ export const EditProfileAvatarPage = ({
             <EditProfileAvatar
               avatarSeed={avatarSeed}
               avatarStyle={avatarStyle}
-              onDone={onSubmit}
+              onDone={() => {
+                mutation.mutate({
+                  userId: profile.userId,
+                  avatarUrl: toAvatarUrl(avatarStyle, avatarSeed),
+                });
+              }}
             />
           }
         />
@@ -121,7 +135,10 @@ const EditProfileAvatar = ({
           <Typography sx={{ flex: 1 }} variant="h6">
             Edit Avatar
           </Typography>
-          <Button onClick={onDone}>Done</Button>
+
+          <Button size="large" onClick={onDone}>
+            Done
+          </Button>
         </Toolbar>
       </AppBar>
 
