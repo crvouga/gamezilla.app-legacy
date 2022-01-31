@@ -1,9 +1,4 @@
 import { Button, Dialog, DialogActions, DialogTitle } from "@mui/material";
-import { Backdrop } from "./Backdrop";
-
-const classNames = {
-  action: "flex-1 p-4 uppercase font-bold hover:opacity-70 active:opacity-50",
-};
 
 export const ModalConformation = ({
   title,
@@ -11,7 +6,7 @@ export const ModalConformation = ({
   right,
   onBackdropClick,
 }: {
-  title: string;
+  title: React.ReactNode;
   onBackdropClick?: () => void;
   left: {
     title: string;

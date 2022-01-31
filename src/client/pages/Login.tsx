@@ -1,3 +1,4 @@
+import { ChevronRight, Google } from "@mui/icons-material";
 import {
   AppBar,
   List,
@@ -10,7 +11,7 @@ import {
 } from "@mui/material";
 import React from "react";
 import { useMutation } from "react-query";
-import { Icons, ModalLoader } from "../components";
+import { ModalLoader } from "../components/ModalLoader";
 import { login } from "../data-access";
 
 export const LoginPage = () => {
@@ -25,7 +26,7 @@ export const LoginPage = () => {
 
       <AppBar>
         <Toolbar>
-          <Typography sx={{ flex: 1 }} variant="h6" align="center">
+          <Typography sx={{ flex: 1 }} variant="h6">
             Login
           </Typography>
         </Toolbar>
@@ -39,11 +40,11 @@ export const LoginPage = () => {
           }}
         >
           <ListItemIcon>
-            <Icons.Google />
+            <Google />
           </ListItemIcon>
           <ListItemText primary="Continue With Google" />
           <ListItemSecondaryAction>
-            <Icons.ChevronRight />
+            <ChevronRight />
           </ListItemSecondaryAction>
         </ListItemButton>
       </List>
