@@ -9,6 +9,7 @@ import {
 import React, { useState } from "react";
 import { useMutation } from "react-query";
 import { useNavigate } from "react-router-dom";
+import { BackButton } from "../components/BackButton";
 import { ModalLoader } from "../components/ModalLoader";
 import { updateProfile } from "../data-access";
 
@@ -40,6 +41,7 @@ export const EditProfileUsernamePage = ({
 
       <AppBar>
         <Toolbar>
+          <BackButton />
           <Typography variant="h6" sx={{ flex: 1 }}>
             Edit Username
           </Typography>

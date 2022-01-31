@@ -12,6 +12,7 @@ import {
   Typography,
 } from "@mui/material";
 import React from "react";
+import { BackButton } from "../components/BackButton";
 import { Link, LinkBehavior } from "../components/Link";
 
 export const EditProfilePage = ({
@@ -23,6 +24,7 @@ export const EditProfilePage = ({
     <>
       <AppBar>
         <Toolbar>
+          <BackButton />
           <Typography variant="h6" sx={{ flex: 1 }}>
             Edit Profile
           </Typography>

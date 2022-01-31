@@ -27,6 +27,7 @@ import {
   toAvatarUrl,
 } from "../../shared/avatar";
 import { AspectRatioSquare } from "../components/AspectRatio";
+import { BackButton } from "../components/BackButton";
 import { Link } from "../components/Link";
 import { ModalLoader } from "../components/ModalLoader";
 import { updateProfile } from "../data-access";
@@ -183,6 +184,7 @@ const EditProfileAvatarStyle = ({
     <>
       <AppBar>
         <Toolbar>
+          <BackButton edge="start" />
           <Typography variant="h6">Choose Style</Typography>
         </Toolbar>
       </AppBar>
@@ -243,6 +245,7 @@ const EditProfileAvatarSeed = ({
     <>
       <AppBar>
         <Toolbar>
+          <BackButton edge="start" />
           <Typography variant="h6">Edit Avatar Seed</Typography>
         </Toolbar>
       </AppBar>
