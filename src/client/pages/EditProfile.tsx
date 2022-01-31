@@ -49,24 +49,18 @@ export const EditProfilePage = ({
 
       <List>
         <Link href="/profile/edit/username">
-          <ListItemEditField label="Username" value={profile.username} />
+          <ListItemField label="Username" value={profile.username} />
         </Link>
 
         <Link href="/profile/edit/name">
-          <ListItemEditField label="Name" value={profile.displayName} />
+          <ListItemField label="Name" value={profile.displayName} />
         </Link>
       </List>
     </>
   );
 };
 
-const ListItemEditField = ({
-  label,
-  value,
-}: {
-  label: string;
-  value?: string;
-}) => {
+const ListItemField = ({ label, value }: { label: string; value?: string }) => {
   return (
     <ListItemButton>
       <ListItemText

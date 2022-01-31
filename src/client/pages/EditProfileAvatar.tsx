@@ -4,9 +4,8 @@ import {
   Avatar,
   Box,
   Button,
-  ListItem,
-  ListItemAvatar,
-  ListItemIcon,
+  ListItemButton,
+  ListItemSecondaryAction,
   ListItemText,
   TextField,
   Toolbar,
@@ -20,9 +19,9 @@ import {
   IAvatarSeed,
   IAvatarStyle,
   parseAvatarUrl,
+  toAvatarSeed,
   toAvatarUrl,
 } from "../../shared/avatar";
-import { Link } from "../components/Link";
 import { ModalLoader } from "../components/ModalLoader";
 import { updateProfile } from "../data-access";
 
@@ -36,11 +35,12 @@ export const EditProfileAvatarPage = ({
 }) => {
   const parsed = parseAvatarUrl(profile.avatarUrl);
 
-  const [selectedStyle, setSelectedStyle] = useState<IAvatarStyle>(
+  const [avatarStyle, setAvatarStyle] = useState<IAvatarStyle>(
     parsed.avatarStyle
   );
+  const [avatarSeed, setAvatarSeed] = useState<IAvatarSeed>(parsed.avatarSeed);
 
-  const avatarUrl = toAvatarUrl(selectedStyle, parsed.avatarSeed);
+  const avatarUrl = toAvatarUrl(avatarStyle, avatarSeed);
 
   const mutation = useMutation(updateProfile);
 
@@ -67,43 +67,73 @@ export const EditProfileAvatarPage = ({
       </AppBar>
 
       <Box sx={{ p: 2, width: "100%", display: "grid", placeItems: "center" }}>
-        <Avatar
-          sx={{ marginBottom: 2, width: 120, height: 120 }}
-          src={avatarUrl}
-        />
-
-        <Typography variant="h5" sx={{ marginBottom: 4 }}>
-          {formatAvatarStyle(selectedStyle)}
-        </Typography>
-
-        <TextField label="Avatar Seed" fullWidth />
+        <Avatar sx={{ width: 120, height: 120 }} src={avatarUrl} />
       </Box>
+      <ListItemField label="Avatar Seed" value={avatarSeed} />
+      <ListItemField
+        label="Avatar Style"
+        value={formatAvatarStyle(avatarStyle)}
+      />
     </>
   );
 };
 
-export const EditAvatarChooseStyle = ({
+const ListItemField = ({ label, value }: { label: string; value?: string }) => {
+  return (
+    <ListItemButton>
+      <ListItemText
+        primaryTypographyProps={{
+          variant: "body1",
+        }}
+        primary={label}
+        secondaryTypographyProps={{
+          variant: "body1",
+          color: value ? "text.primary" : "text.disabled",
+        }}
+        secondary={value ?? label}
+      />
+      <ListItemSecondaryAction>
+        <ChevronRight />
+      </ListItemSecondaryAction>
+    </ListItemButton>
+  );
+};
+
+const EditProfileAvatar = ({
+  onDone,
   avatarSeed,
-  selectedStyle,
-  onSelect,
+  avatarStyle,
 }: {
+  onDone: () => void;
   avatarSeed: IAvatarSeed;
-  selectedStyle: IAvatarStyle;
-  onSelect: (style: IAvatarStyle) => void;
+  avatarStyle: IAvatarStyle;
 }) => {
   return (
-    <div>
-      {Object.values(AVATAR_STYLES).map((avatarStyle) => (
-        <div key={avatarStyle} className="w-full flex-1">
-          <Avatar
-            sx={{ width: "100%" }}
-            src={toAvatarUrl(avatarStyle, avatarSeed)}
-          />
-          <div className="font-medium text-lg text-center p-2">
-            {formatAvatarStyle(avatarStyle)}
-          </div>
-        </div>
-      ))}
-    </div>
+    <>
+      <AppBar>
+        <Toolbar>
+          <Typography sx={{ flex: 1 }} variant="h6">
+            Edit Avatar
+          </Typography>
+          <Button onClick={onDone}>Done</Button>
+        </Toolbar>
+      </AppBar>
+
+      <Box sx={{ p: 2, width: "100%", display: "grid", placeItems: "center" }}>
+        <Avatar
+          sx={{ width: 120, height: 120 }}
+          src={toAvatarUrl(avatarStyle, avatarSeed)}
+        />
+      </Box>
+      <ListItemField label="Avatar Seed" value={avatarSeed} />
+      <ListItemField
+        label="Avatar Style"
+        value={formatAvatarStyle(avatarStyle)}
+      />
+    </>
   );
+};
+
+const EditProfileAvatarSeed = () => {
+  return <>Hello</>;
 };
