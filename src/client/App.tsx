@@ -6,7 +6,7 @@ import {
   BottomNavigationAction,
 } from "@mui/material";
 import React, { useRef } from "react";
-import { ReactLocation, Router } from "react-location";
+import { Navigate, ReactLocation, Router } from "react-location";
 import { LinkBehavior } from "./components/Link";
 import { onAuthStatus, onUserStatus } from "./data-access";
 import { AccountPage } from "./pages/Account";
@@ -120,6 +120,10 @@ const LoggedIn = ({ userId }: { userId: string }) => {
         {
           path: "/tic-tac-toe",
           element: <TicTacToePage />,
+        },
+
+        {
+          element: <Navigate to="/" />,
         },
       ]}
     />
