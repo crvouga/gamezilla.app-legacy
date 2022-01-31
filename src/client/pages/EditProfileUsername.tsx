@@ -1,12 +1,15 @@
+import { Clear } from "@mui/icons-material";
 import {
   AppBar,
   Box,
   Button,
+  IconButton,
+  InputAdornment,
   TextField,
   Toolbar,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { useMutation } from "react-query";
 import { useNavigate } from "react-router-dom";
 import { BackButton } from "../components/BackButton";
@@ -18,7 +21,7 @@ export const EditProfileUsernamePage = ({
 }: {
   profile: { userId: string; username?: string };
 }) => {
-  const [username, setUsername] = useState(profile.username);
+  const usernameRef = useRef<HTMLInputElement | null>(null);
 
   const navigate = useNavigate();
 
@@ -29,10 +32,14 @@ export const EditProfileUsernamePage = ({
   });
 
   const onDone = () => {
-    mutation.mutate({
-      userId: profile.userId,
-      username,
-    });
+    if (usernameRef.current) {
+      const username = usernameRef.current.value;
+
+      mutation.mutate({
+        userId: profile.userId,
+        username,
+      });
+    }
   };
 
   return (
@@ -52,10 +59,25 @@ export const EditProfileUsernamePage = ({
       <Box sx={{ padding: 2 }}>
         <TextField
           label="Username"
-          defaultValue={username}
+          defaultValue={profile.username}
           fullWidth
-          onChange={(event) => {
-            setUsername(event.target.value);
+          inputRef={usernameRef}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton
+                  edge="end"
+                  onClick={() => {
+                    if (usernameRef.current) {
+                      usernameRef.current.value = "";
+                      usernameRef.current.focus();
+                    }
+                  }}
+                >
+                  <Clear />
+                </IconButton>
+              </InputAdornment>
+            ),
           }}
         />
       </Box>
