@@ -3,7 +3,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { App } from "./App";
-import { ThemeProvider } from "./components";
+import { ThemeProvider } from "./components/ThemeContext";
 
 ReactDOM.render(
   <ThemeProvider>

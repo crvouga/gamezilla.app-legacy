@@ -1,6 +1,13 @@
+import {
+  AppBar,
+  Avatar,
+  Button,
+  TextField,
+  Toolbar,
+  Typography,
+} from "@mui/material";
 import React, { useState } from "react";
-import { Link } from "react-location";
-import { Avatar, Button, PageBar, TextField } from "../components";
+import { Link } from "../components/Link";
 
 export const EditProfilePage = ({
   profile,
@@ -9,44 +16,29 @@ export const EditProfilePage = ({
 }) => {
   const [displayName, setDisplayName] = useState(profile?.displayName);
 
-  const isTouched = displayName !== profile?.displayName;
-
   return (
     <>
-      {isTouched ? (
-        <PageBar
-          left="Save Changes?"
-          right={
-            <div className="flex">
-              <Button
-                className="p-0 mr-4"
-                onClick={() => {
-                  setDisplayName(profile?.displayName);
-                }}
-                text="Cancel"
-              />
-              <Button className="p-0" onClick={() => {}} text="Save" />
-            </div>
-          }
-        />
-      ) : (
-        <PageBar center="Edit Profile" />
-      )}
+      <AppBar>
+        <Toolbar>
+          <Button>Cancel</Button>
+          <Typography variant="h6">Edit Profile</Typography>
+          <Button>Done</Button>
+        </Toolbar>
+      </AppBar>
 
-      <Avatar sx={{}} src={profile.avatarUrl} />
-      <Link to="/profile/avatar/edit">
-        <Button
-          className="m-auto mt-2"
-          text="Edit Avatar"
-          // onClick={onEditAvatar}
-        />
+      <Avatar src={profile.avatarUrl} />
+
+      <Link href="/profile/avatar/edit">
+        <Button sx={{ margin: "auto", marginTop: 2 }}>Edit Avatar</Button>
       </Link>
 
       <div className="p-4">
         <TextField
           id="displayName"
           value={displayName}
-          onChange={setDisplayName}
+          onChange={(event) => {
+            setDisplayName(event.target.value);
+          }}
           label="Display Name"
         />
       </div>

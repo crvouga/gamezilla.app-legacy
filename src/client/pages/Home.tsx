@@ -1,6 +1,6 @@
 import {
+  AppBar,
   Avatar,
-  Link,
   List,
   ListItemButton,
   ListItemText,
@@ -8,24 +8,29 @@ import {
   Typography,
 } from "@mui/material";
 import React from "react";
+import { Link } from "../components/Link";
 
 export const HomePage = ({ profile }: { profile: { avatarUrl?: string } }) => {
   return (
     <>
-      <Toolbar>
-        <Typography sx={{ flex: 1 }} variant="h4">
-          Home
-        </Typography>
+      <AppBar>
+        <Toolbar>
+          <Typography sx={{ flex: 1 }} variant="h4">
+            Home
+          </Typography>
 
-        <Link href="/account">
-          <Avatar src={profile.avatarUrl} />
-        </Link>
-      </Toolbar>
+          <Link href="/account">
+            <Avatar src={profile.avatarUrl} />
+          </Link>
+        </Toolbar>
+      </AppBar>
 
       <List>
-        <ListItemButton href="/tic-tac-toe">
-          <ListItemText primary="Play Tic Tac Toe" />
-        </ListItemButton>
+        <Link href="/tic-tac-toe">
+          <ListItemButton>
+            <ListItemText primary="Play Tic Tac Toe" />
+          </ListItemButton>
+        </Link>
       </List>
     </>
   );

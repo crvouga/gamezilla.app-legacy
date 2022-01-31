@@ -1,20 +1,22 @@
-import { Home, Person } from "@mui/icons-material";
-import { BottomNavigation, BottomNavigationAction } from "@mui/material";
+import { Chat, Home, Person, Search } from "@mui/icons-material";
+import {
+  Alert,
+  Backdrop,
+  BottomNavigation,
+  BottomNavigationAction,
+} from "@mui/material";
 import React, { useRef } from "react";
 import { ReactLocation, Router } from "react-location";
-import { Alert, Backdrop } from "./components";
 import { onAuthStatus, onUserStatus } from "./data-access";
-import {
-  EditAvatarPage,
-  EditProfilePage,
-  HomePage,
-  LoginPage,
-  LogoutPage,
-  TicTacToePage,
-} from "./pages";
 import { AccountPage } from "./pages/Account";
+import { EditAvatarPage } from "./pages/EditAvatar";
+import { EditProfilePage } from "./pages/EditProfile";
+import { HomePage } from "./pages/Home";
+import { LoginPage } from "./pages/Login";
+import { LogoutPage } from "./pages/Logout";
 import { ProfilePage } from "./pages/Profile";
 import { Splash } from "./pages/Splash";
+import { TicTacToePage } from "./pages/TicTacToe";
 import { useSubscription } from "./utility";
 
 export const App = () => {
@@ -45,8 +47,8 @@ const LoggedIn = ({ userId }: { userId: string }) => {
 
   if (userStatus.type === "error") {
     return (
-      <Backdrop>
-        <Alert variant="error" title="Failed to load your profile" />
+      <Backdrop open>
+        <Alert severity="error">Failed to load your profile</Alert>
       </Backdrop>
     );
   }
@@ -67,7 +69,7 @@ const LoggedIn = ({ userId }: { userId: string }) => {
         },
         {
           path: "/account",
-          element: <AccountPage />,
+          element: <AccountPage profile={profile} />,
         },
         {
           path: "/profile",
@@ -95,7 +97,7 @@ const LoggedIn = ({ userId }: { userId: string }) => {
         },
         {
           path: "/logout",
-          element: <LogoutPage username={profile.username} />,
+          element: <LogoutPage profile={profile} />,
         },
         {
           path: "/tic-tac-toe",
@@ -127,6 +129,12 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
         }}
       >
         <BottomNavigationAction label="Home" href="/" icon={<Home />} />
+        <BottomNavigationAction href="/chat" label="Chat" icon={<Chat />} />
+        <BottomNavigationAction
+          href="/search"
+          label="Search"
+          icon={<Search />}
+        />
         <BottomNavigationAction
           href="/profile"
           label="Profile"

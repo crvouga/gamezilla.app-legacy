@@ -1,11 +1,16 @@
+import { ChevronRight } from "@mui/icons-material";
 import {
-  ListItemText,
+  AppBar,
+  Avatar,
+  Button,
   ListItem,
   ListItemAvatar,
   ListItemIcon,
+  ListItemText,
+  Toolbar,
+  Typography,
 } from "@mui/material";
 import React, { useState } from "react";
-import { Link } from "react-location";
 import { useMutation } from "react-query";
 import {
   AVATAR_STYLES,
@@ -15,7 +20,8 @@ import {
   parseAvatarUrl,
   toAvatarUrl,
 } from "../../shared/avatar";
-import { Avatar, Button, Icons, ModalLoader, PageBar } from "../components";
+import { Link } from "../components/Link";
+import { ModalLoader } from "../components/ModalLoader";
 import { updateProfile } from "../data-access";
 
 export const EditAvatarPage = ({
@@ -42,17 +48,16 @@ export const EditAvatarPage = ({
 
   return (
     <>
-      <PageBar
-        left={
+      <AppBar>
+        <Toolbar>
           <Button
             onClick={() => {
               setSelectedStyle(parsed.avatarStyle);
             }}
-            text="Cancel"
-          />
-        }
-        center="Edit Avatar"
-        right={
+          >
+            Cancel
+          </Button>
+          <Typography variant="h6">Edit Avatar</Typography>
           <Button
             onClick={() => {
               mutation.mutate({
@@ -60,10 +65,11 @@ export const EditAvatarPage = ({
                 avatarUrl,
               });
             }}
-            text="Done"
-          />
-        }
-      />
+          >
+            Done
+          </Button>
+        </Toolbar>
+      </AppBar>
 
       <div className="w-full flex flex-col justify-center items-center mt-4 mb-6">
         <Avatar src={avatarUrl} />
@@ -73,13 +79,13 @@ export const EditAvatarPage = ({
         </div>
       </div>
 
-      <Link to="choose-style">
+      <Link href="choose-style">
         <ListItem>
           <ListItemAvatar>
             <Avatar src={avatarUrl} />
             <ListItemText primary="Choose Style" />
             <ListItemIcon>
-              <Icons.ChevronRight />
+              <ChevronRight />
             </ListItemIcon>
           </ListItemAvatar>
         </ListItem>
