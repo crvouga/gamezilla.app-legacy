@@ -9,7 +9,7 @@ import { logout } from "../data-access";
 export const LogoutPage = ({
   profile,
 }: {
-  profile: { username: string; avatarUrl?: string };
+  profile: { username?: string; avatarUrl?: string };
 }) => {
   const navigate = useNavigate();
 

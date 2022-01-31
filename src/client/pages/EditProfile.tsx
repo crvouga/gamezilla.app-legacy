@@ -17,7 +17,7 @@ import { Link, LinkBehavior } from "../components/Link";
 export const EditProfilePage = ({
   profile,
 }: {
-  profile: { avatarUrl?: string; username: string; displayName?: string };
+  profile: { avatarUrl?: string; username?: string; name?: string };
 }) => {
   return (
     <>
@@ -53,7 +53,7 @@ export const EditProfilePage = ({
         </Link>
 
         <Link href="/profile/edit/name">
-          <ListItemField label="Name" value={profile.displayName} />
+          <ListItemField label="Name" value={profile.name} />
         </Link>
       </List>
     </>

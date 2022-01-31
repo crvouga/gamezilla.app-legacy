@@ -1,69 +1,89 @@
 import { definitions, supabaseClient } from "../../shared/supabase";
 
-type UserStatus =
-  | {
-      type: "error";
-    }
-  | {
-      type: "loading";
-    }
-  | {
-      type: "loaded";
-      profile: {
-        userId: string;
-        username: string;
-        avatarUrl?: string;
-      };
-    };
+export type IUserStatus = {
+  userId: string;
+  username?: string;
+  avatarUrl?: string;
+  name?: string;
+};
 
-export const onUserStatus = ({ userId }: { userId: string }) => (
-  set: (state: UserStatus) => void
-) => {
-  supabaseClient
+const getProfile = async ({
+  userId,
+}: {
+  userId: string;
+}): Promise<IUserStatus | null> => {
+  const { data } = await supabaseClient
     .from<definitions["profile"]>("profile")
     .select("*")
     .eq("id", userId)
-    .single()
-    .then(({ data, error }) => {
-      if (error) {
-        set({ type: "error" });
-        return;
-      }
+    .single();
 
-      if (data) {
-        set({
-          type: "loaded",
-          profile: {
-            userId: data.id,
-            avatarUrl: data.avatar_url,
-            username:
-              data.display_name?.split(" ").join(".").toLowerCase() ??
-              "usernamae",
-          },
-        });
-        return;
-      }
-    });
+  if (data) {
+    return {
+      userId: data.id,
+      avatarUrl: data.avatar_url,
+      username: data.username,
+      name: data.name,
+    };
+  }
 
+  return null;
+};
+
+const createProfile = async ({
+  userId,
+}: {
+  userId: string;
+}): Promise<IUserStatus> => {
+  const response = await supabaseClient
+    .from<definitions["profile"]>("profile")
+    .insert({
+      id: userId,
+    })
+    .single();
+
+  if (response.data?.id) {
+    return {
+      userId: response.data?.id,
+      avatarUrl: response.data?.avatar_url,
+      name: response.data?.name,
+      username: response.data?.username,
+    };
+  }
+
+  throw new Error("failed to create");
+};
+
+export const getElseCreateProfile = async ({
+  userId,
+}: {
+  userId: string;
+}): Promise<IUserStatus> => {
+  const profile = await getProfile({ userId });
+
+  if (profile) {
+    return profile;
+  }
+
+  const created = await createProfile({ userId });
+
+  return created;
+};
+
+export const onUserStatus = ({ userId }: { userId: string }) => (
+  set: (state: IUserStatus) => void
+) => {
   const subscription = supabaseClient
     .from<definitions["profile"]>(`profile:id=eq.${userId}`)
     .on("*", (payload) => {
       set({
-        type: "loaded",
-        profile: {
-          userId: payload.new.id,
-          avatarUrl: payload.new.avatar_url,
-          username:
-            payload.new.display_name?.split(" ").join(".").toLowerCase() ??
-            "username",
-        },
+        userId: payload.new.id,
+        avatarUrl: payload.new.avatar_url,
+        username: payload.new.username,
+        name: payload.new.name,
       });
     })
     .subscribe();
-
-  subscription.onError = () => {
-    set({ type: "error" });
-  };
 
   return () => {
     subscription.unsubscribe();

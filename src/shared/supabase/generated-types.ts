@@ -306,7 +306,8 @@ export interface paths {
         query: {
           id?: parameters["rowFilter.profile.id"];
           avatar_url?: parameters["rowFilter.profile.avatar_url"];
-          display_name?: parameters["rowFilter.profile.display_name"];
+          name?: parameters["rowFilter.profile.name"];
+          username?: parameters["rowFilter.profile.username"];
           /** Filtering Columns */
           select?: parameters["select"];
           /** Ordering */
@@ -359,7 +360,8 @@ export interface paths {
         query: {
           id?: parameters["rowFilter.profile.id"];
           avatar_url?: parameters["rowFilter.profile.avatar_url"];
-          display_name?: parameters["rowFilter.profile.display_name"];
+          name?: parameters["rowFilter.profile.name"];
+          username?: parameters["rowFilter.profile.username"];
         };
         header: {
           /** Preference */
@@ -376,7 +378,8 @@ export interface paths {
         query: {
           id?: parameters["rowFilter.profile.id"];
           avatar_url?: parameters["rowFilter.profile.avatar_url"];
-          display_name?: parameters["rowFilter.profile.display_name"];
+          name?: parameters["rowFilter.profile.name"];
+          username?: parameters["rowFilter.profile.username"];
         };
         body: {
           /** profile */
@@ -468,7 +471,9 @@ export interface definitions {
     /** Format: text */
     avatar_url?: string;
     /** Format: text */
-    display_name?: string;
+    name?: string;
+    /** Format: text */
+    username?: string;
   };
 }
 
@@ -542,7 +547,9 @@ export interface parameters {
   /** Format: text */
   "rowFilter.profile.avatar_url": string;
   /** Format: text */
-  "rowFilter.profile.display_name": string;
+  "rowFilter.profile.name": string;
+  /** Format: text */
+  "rowFilter.profile.username": string;
 }
 
 export interface operations {}

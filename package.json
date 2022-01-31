@@ -14,7 +14,8 @@
     "client:build": "parcel build --dist-dir .builds/client src/client/main.html",
     "heroku:env": "heroku config -s -a gamezilla > .env",
     "heroku:start": "npm run server:start",
-    "heroku:preview": "npm run heroku:env && npm install && npm run heroku-postbuild && npm run heroku:start "
+    "heroku:preview": "npm run heroku:env && npm install && npm run heroku-postbuild && npm run heroku:start",
+    "supabase:generate": "npx openapi-typescript https://ldxpcprlgecjvqwzuxgv.supabase.co/rest/v1/?apikey=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTYzNzA0MDQ5NywiZXhwIjoxOTUyNjE2NDk3fQ.ReI8CpIFbLB9Q53Az7CDBIyrn_o1JeGhPoZXdqx8Ac4 --output src/shared/supabase/generated-types.ts"
   },
   "devDependencies": {
     "@types/express": "^4.17.13",
