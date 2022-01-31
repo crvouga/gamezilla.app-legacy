@@ -4,14 +4,17 @@ import ReactDOM from "react-dom";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { App } from "./App";
 import { ThemeProvider } from "./components/ThemeContext";
+import { BrowserRouter } from "react-router-dom";
 
 ReactDOM.render(
-  <ThemeProvider>
-    <QueryClientProvider client={new QueryClient()}>
-      <Container disableGutters maxWidth="sm">
-        <App />
-      </Container>
-    </QueryClientProvider>
-  </ThemeProvider>,
+  <QueryClientProvider client={new QueryClient()}>
+    <BrowserRouter>
+      <ThemeProvider>
+        <Container disableGutters maxWidth="sm">
+          <App />
+        </Container>
+      </ThemeProvider>
+    </BrowserRouter>
+  </QueryClientProvider>,
   document.getElementById("reactjs-app")
 );

@@ -14,8 +14,8 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useState } from "react";
-import { Router, useLocation, useResolvePath } from "react-location";
 import { useMutation } from "react-query";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import {
   AVATAR_STYLES,
   formatAvatarStyle,
@@ -44,44 +44,14 @@ export const EditProfileAvatarPage = ({
   const [avatarStyle, setAvatarStyle] = useState(parsed.avatarStyle);
   const [avatarSeed, setAvatarSeed] = useState(parsed.avatarSeed);
 
-  const location = useLocation();
-  const resolvePath = useResolvePath();
-
   const mutation = useMutation(updateProfile);
-
+  const navigate = useNavigate();
   const onSubmit = () => {
     mutation.mutate({
       userId: profile.userId,
       avatarUrl: toAvatarUrl(avatarStyle, avatarSeed),
     });
   };
-
-  if (location.current.pathname === resolvePath("style")) {
-    return (
-      <EditProfileAvatarStyle
-        avatarSeed={avatarSeed}
-        onSelect={(avatarStyle) => {
-          setAvatarStyle(avatarStyle);
-          location.history.back();
-        }}
-      />
-    );
-  }
-
-  if (location.current.pathname === resolvePath("seed")) {
-    return (
-      <EditProfileAvatarSeed
-        avatarSeed={avatarSeed}
-        avatarStyle={avatarStyle}
-        onChange={(avatarSeed) => {
-          setAvatarSeed(avatarSeed);
-        }}
-        onRandom={() => {
-          setAvatarSeed(generateRandomAvatarSeed());
-        }}
-      />
-    );
-  }
 
   return (
     <>
@@ -90,11 +60,47 @@ export const EditProfileAvatarPage = ({
         title="Updating Avatar..."
       />
 
-      <EditProfileAvatar
-        avatarSeed={avatarSeed}
-        avatarStyle={avatarStyle}
-        onDone={onSubmit}
-      />
+      <Routes>
+        <Route
+          path="style"
+          element={
+            <EditProfileAvatarStyle
+              avatarSeed={avatarSeed}
+              onSelect={(avatarStyle) => {
+                setAvatarStyle(avatarStyle);
+                navigate(-1);
+              }}
+            />
+          }
+        />
+
+        <Route
+          path="seed"
+          element={
+            <EditProfileAvatarSeed
+              avatarSeed={avatarSeed}
+              avatarStyle={avatarStyle}
+              onChange={(avatarSeed) => {
+                setAvatarSeed(avatarSeed);
+              }}
+              onRandom={() => {
+                setAvatarSeed(generateRandomAvatarSeed());
+              }}
+            />
+          }
+        />
+
+        <Route
+          path=""
+          element={
+            <EditProfileAvatar
+              avatarSeed={avatarSeed}
+              avatarStyle={avatarStyle}
+              onDone={onSubmit}
+            />
+          }
+        />
+      </Routes>
     </>
   );
 };
@@ -108,8 +114,6 @@ const EditProfileAvatar = ({
   avatarSeed: IAvatarSeed;
   onDone?: () => void;
 }) => {
-  const resolvePath = useResolvePath();
-
   return (
     <>
       <AppBar>
@@ -128,14 +132,14 @@ const EditProfileAvatar = ({
         />
       </Box>
 
-      <Link href={resolvePath("style")}>
+      <Link href={"style"}>
         <ListItemField
           label="Avatar Style"
           value={formatAvatarStyle(avatarStyle)}
         />
       </Link>
 
-      <Link href={resolvePath("seed")}>
+      <Link href={"seed"}>
         <ListItemField label="Avatar Seed" value={avatarSeed} />
       </Link>
     </>

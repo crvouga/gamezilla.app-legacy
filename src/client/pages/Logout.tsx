@@ -1,6 +1,6 @@
 import { Avatar, Box, Chip } from "@mui/material";
 import React from "react";
-import { useNavigate } from "react-location";
+import { useNavigate } from "react-router-dom";
 import { useMutation } from "react-query";
 import { ModalConformation } from "../components/ModalConformation";
 import { ModalLoader } from "../components/ModalLoader";
@@ -15,10 +15,7 @@ export const LogoutPage = ({
 
   const mutation = useMutation(logout, {
     onSuccess: () => {
-      navigate({
-        to: "/",
-        replace: true,
-      });
+      navigate("/", { replace: true });
     },
   });
 
@@ -30,12 +27,12 @@ export const LogoutPage = ({
     <ModalConformation
       title={`Log out of ${profile.username}?`}
       onBackdropClick={() => {
-        window.history.back();
+        navigate(-1);
       }}
       left={{
         title: "Cancel",
         onClick: () => {
-          window.history.back();
+          navigate(-1);
         },
       }}
       right={{

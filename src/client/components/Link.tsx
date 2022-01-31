@@ -1,13 +1,13 @@
-import { Link as MuiLink, LinkProps, LinkBaseProps } from "@mui/material";
-import { Link as ReactLoactionLink } from "react-location";
+import { Link as MuiLink, LinkBaseProps, LinkProps } from "@mui/material";
 import React from "react";
+import { Link as ReactRouterDomLink } from "react-router-dom";
 
 export const LinkBehavior = React.forwardRef<any, Partial<LinkBaseProps>>(
   (props, _ref) => {
     return (
-      <ReactLoactionLink to={props.href} {...props}>
+      <ReactRouterDomLink to={{ pathname: props.href }} {...props}>
         {props.children}
-      </ReactLoactionLink>
+      </ReactRouterDomLink>
     );
   }
 );

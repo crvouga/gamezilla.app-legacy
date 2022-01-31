@@ -6,21 +6,19 @@ import {
   BottomNavigationAction,
 } from "@mui/material";
 import React, { useRef } from "react";
-import { Navigate, ReactLocation, Router } from "react-location";
+import { Route, Routes } from "react-router-dom";
 import { LinkBehavior } from "./components/Link";
 import { onAuthStatus, onUserStatus } from "./data-access";
 import { AccountPage } from "./pages/Account";
-import { EditProfileAvatarPage } from "./pages/EditProfileAvatar";
 import { EditProfilePage } from "./pages/EditProfile";
+import { EditProfileAvatarPage } from "./pages/EditProfileAvatar";
+import { EditProfileNamePage } from "./pages/EditProfileName";
+import { EditProfileUsernamePage } from "./pages/EditProfileUsername";
 import { HomePage } from "./pages/Home";
 import { LoginPage } from "./pages/Login";
 import { LogoutPage } from "./pages/Logout";
-import { ProfilePage } from "./pages/Profile";
 import { Splash } from "./pages/Splash";
-import { TicTacToePage } from "./pages/TicTacToe";
 import { useSubscription } from "./utility";
-import { EditProfileNamePage } from "./pages/EditProfileName";
-import { EditProfileUsernamePage } from "./pages/EditProfileUsername";
 
 export const App = () => {
   const authState = useSubscription({ type: "loading" }, onAuthStatus);
@@ -44,8 +42,6 @@ const LoggedIn = ({ userId }: { userId: string }) => {
     onUserStatus({ userId })
   );
 
-  const locationRef = useRef(new ReactLocation());
-
   if (userStatus.type === "loading") {
     return <Splash />;
   }
@@ -63,70 +59,33 @@ const LoggedIn = ({ userId }: { userId: string }) => {
   const { profile } = userStatus;
 
   return (
-    <Router
-      location={locationRef.current}
-      routes={[
-        {
-          path: "/",
-          element: (
-            <RootLayout>
-              <HomePage profile={profile} />
-            </RootLayout>
-          ),
-        },
-        {
-          path: "/account",
-          element: <AccountPage profile={profile} />,
-        },
-        {
-          path: "/profile",
-          children: [
-            {
-              path: "/",
-              element: (
-                <RootLayout>
-                  <ProfilePage profile={profile} />
-                </RootLayout>
-              ),
-            },
-            {
-              path: "/edit",
-              children: [
-                {
-                  path: "/",
-                  element: <EditProfilePage profile={profile} />,
-                },
-                {
-                  path: "/avatar",
-                  element: <EditProfileAvatarPage profile={profile} />,
-                },
-                {
-                  path: "/name",
-                  element: <EditProfileNamePage profile={profile} />,
-                },
-                {
-                  path: "/username",
-                  element: <EditProfileUsernamePage profile={profile} />,
-                },
-              ],
-            },
-          ],
-        },
-
-        {
-          path: "/logout",
-          element: <LogoutPage profile={profile} />,
-        },
-        {
-          path: "/tic-tac-toe",
-          element: <TicTacToePage />,
-        },
-
-        {
-          element: <Navigate to="/" />,
-        },
-      ]}
-    />
+    <Routes>
+      <Route
+        path="/"
+        element={
+          <RootLayout>
+            <HomePage profile={profile} />
+          </RootLayout>
+        }
+      />
+      <Route path="/account" element={<AccountPage profile={profile} />} />
+      <Route path="/profile/edit">
+        <Route path="" element={<EditProfilePage profile={profile} />} />
+        <Route
+          path="avatar/*"
+          element={<EditProfileAvatarPage profile={profile} />}
+        />
+        <Route
+          path="name"
+          element={<EditProfileNamePage profile={profile} />}
+        />
+        <Route
+          path="username"
+          element={<EditProfileUsernamePage profile={profile} />}
+        />
+      </Route>
+      <Route path="/logout" element={<LogoutPage profile={profile} />} />
+    </Routes>
   );
 };
 
