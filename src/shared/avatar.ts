@@ -112,9 +112,6 @@ export const parseAvatarUrl = (
   }
 };
 
-export const generateRandomAvatarUrl = () => {
-  const avatarStyle = AVATAR_STYLES["adventurer-neutral"];
-  const avatarSeed = toAvatarSeed(String(Math.floor(Math.random() * 10000)));
-
-  return toAvatarUrl(avatarStyle, avatarSeed);
+export const generateRandomAvatarSeed = () => {
+  return toAvatarSeed(String(Math.floor(Math.random() * 10000)));
 };

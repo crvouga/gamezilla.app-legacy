@@ -3,36 +3,33 @@ import {
   AppBar,
   Avatar,
   Box,
+  Button,
   ButtonBase,
-  Dialog,
   Grid,
   ListItemButton,
   ListItemSecondaryAction,
   ListItemText,
+  TextField,
   Toolbar,
   Typography,
 } from "@mui/material";
-import React from "react";
+import React, { useState } from "react";
+import { Router, useLocation, useResolvePath } from "react-location";
+import { useMutation } from "react-query";
 import {
   AVATAR_STYLES,
   formatAvatarStyle,
+  generateRandomAvatarSeed,
   IAvatarSeed,
   IAvatarStyle,
   parseAvatarUrl,
+  toAvatarSeed,
   toAvatarUrl,
 } from "../../shared/avatar";
-import {
-  Router,
-  ReactLocation,
-  useRouter,
-  useResolvePath,
-  useNavigate,
-  useLocation,
-} from "react-location";
-import { useRef } from "react";
-import { useReducer } from "react";
-import { useState } from "react";
+import { AspectRatioSquare } from "../components/AspectRatio";
 import { Link } from "../components/Link";
+import { ModalLoader } from "../components/ModalLoader";
+import { updateProfile } from "../data-access";
 
 export const EditProfileAvatarPage = ({
   profile,
@@ -49,39 +46,54 @@ export const EditProfileAvatarPage = ({
 
   const location = useLocation();
   const resolvePath = useResolvePath();
-  const navigate = useNavigate();
+
+  const mutation = useMutation(updateProfile);
+
+  const onSubmit = () => {
+    mutation.mutate({
+      userId: profile.userId,
+      avatarUrl: toAvatarUrl(avatarStyle, avatarSeed),
+    });
+  };
+
+  if (location.current.pathname === resolvePath("style")) {
+    return (
+      <EditProfileAvatarStyle
+        avatarSeed={avatarSeed}
+        onSelect={(avatarStyle) => {
+          setAvatarStyle(avatarStyle);
+          location.history.back();
+        }}
+      />
+    );
+  }
+
+  if (location.current.pathname === resolvePath("seed")) {
+    return (
+      <EditProfileAvatarSeed
+        avatarSeed={avatarSeed}
+        avatarStyle={avatarStyle}
+        onChange={(avatarSeed) => {
+          setAvatarSeed(avatarSeed);
+        }}
+        onRandom={() => {
+          setAvatarSeed(generateRandomAvatarSeed());
+        }}
+      />
+    );
+  }
 
   return (
     <>
-      <Router
-        location={location}
-        routes={[
-          {
-            path: resolvePath("style"),
-            element: (
-              <EditProfileAvatarStyle
-                avatarSeed={avatarSeed}
-                onSelect={(avatarStyle) => {
-                  setAvatarStyle(avatarStyle);
-                  navigate({
-                    to: resolvePath("."),
-                    replace: true,
-                  });
-                }}
-              />
-            ),
-          },
+      <ModalLoader
+        open={mutation.status === "loading"}
+        title="Updating Avatar..."
+      />
 
-          {
-            path: resolvePath("."),
-            element: (
-              <EditProfileAvatar
-                avatarSeed={avatarSeed}
-                avatarStyle={avatarStyle}
-              />
-            ),
-          },
-        ]}
+      <EditProfileAvatar
+        avatarSeed={avatarSeed}
+        avatarStyle={avatarStyle}
+        onDone={onSubmit}
       />
     </>
   );
@@ -90,9 +102,11 @@ export const EditProfileAvatarPage = ({
 const EditProfileAvatar = ({
   avatarStyle,
   avatarSeed,
+  onDone,
 }: {
   avatarStyle: IAvatarStyle;
   avatarSeed: IAvatarSeed;
+  onDone?: () => void;
 }) => {
   const resolvePath = useResolvePath();
 
@@ -100,13 +114,16 @@ const EditProfileAvatar = ({
     <>
       <AppBar>
         <Toolbar>
-          <Typography variant="h6">Edit Avatar</Typography>
+          <Typography sx={{ flex: 1 }} variant="h6">
+            Edit Avatar
+          </Typography>
+          <Button onClick={onDone}>Done</Button>
         </Toolbar>
       </AppBar>
 
       <Box sx={{ width: "100%", display: "grid", placeItems: "center", p: 2 }}>
         <Avatar
-          sx={{ width: 120, height: 120 }}
+          sx={{ width: 160, height: 160 }}
           src={toAvatarUrl(avatarStyle, avatarSeed)}
         />
       </Box>
@@ -118,7 +135,9 @@ const EditProfileAvatar = ({
         />
       </Link>
 
-      <ListItemField label="Avatar Seed" value={avatarSeed} />
+      <Link href={resolvePath("seed")}>
+        <ListItemField label="Avatar Seed" value={avatarSeed} />
+      </Link>
     </>
   );
 };
@@ -165,6 +184,7 @@ const EditProfileAvatarStyle = ({
             key={avatarStyle}
             item
             xs={6}
+            sm={4}
             onClick={() => {
               onSelect(avatarStyle);
             }}
@@ -172,30 +192,21 @@ const EditProfileAvatarStyle = ({
             <ButtonBase
               sx={{
                 width: "100%",
+                height: "100%",
                 display: "flex",
                 flexDirection: "column",
                 padding: 2,
               }}
             >
-              <Box
-                sx={{
-                  width: "100%",
-                  paddingTop: "100%",
-                  height: 0,
-                  position: "relative",
-                }}
-              >
+              <AspectRatioSquare>
                 <Avatar
                   sx={{
-                    position: "absolute",
-                    top: 0,
-                    left: 0,
                     width: "100%",
                     height: "100%",
                   }}
                   src={toAvatarUrl(avatarStyle, avatarSeed)}
                 />
-              </Box>
+              </AspectRatioSquare>
 
               <Typography sx={{ marginTop: 2 }} variant="h6">
                 {formatAvatarStyle(avatarStyle)}
@@ -204,6 +215,50 @@ const EditProfileAvatarStyle = ({
           </Grid>
         ))}
       </Grid>
+    </>
+  );
+};
+
+const EditProfileAvatarSeed = ({
+  avatarSeed,
+  avatarStyle,
+  onChange,
+  onRandom,
+}: {
+  avatarStyle: IAvatarStyle;
+  avatarSeed: IAvatarSeed;
+  onChange: (avatarSeed: IAvatarSeed) => void;
+  onRandom: () => void;
+}) => {
+  return (
+    <>
+      <AppBar>
+        <Toolbar>
+          <Typography variant="h6">Edit Avatar Seed</Typography>
+        </Toolbar>
+      </AppBar>
+
+      <Box sx={{ width: "100%", display: "grid", placeItems: "center", p: 2 }}>
+        <Avatar
+          sx={{ width: 160, height: 160 }}
+          src={toAvatarUrl(avatarStyle, avatarSeed)}
+        />
+      </Box>
+
+      <Box sx={{ padding: 2 }}>
+        <TextField
+          fullWidth
+          label="Avatar Seed"
+          value={avatarSeed}
+          onChange={(event) => {
+            onChange(toAvatarSeed(event.target.value));
+          }}
+          sx={{ marginBottom: 2 }}
+        />
+        <Button fullWidth variant="contained" onClick={onRandom}>
+          Random
+        </Button>
+      </Box>
     </>
   );
 };
