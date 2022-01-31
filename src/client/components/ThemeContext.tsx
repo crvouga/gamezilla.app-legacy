@@ -4,12 +4,13 @@ import {
   responsiveFontSizes,
   ThemeProvider as MuiThemeProvider,
 } from "@mui/material";
+import { green } from "@mui/material/colors";
 import React from "react";
-import { LinkBehavior } from "./Link";
 
 const darkTheme = createTheme({
   palette: {
     mode: "dark",
+    primary: green,
   },
   components: {
     MuiAppBar: {
