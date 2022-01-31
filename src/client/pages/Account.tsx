@@ -9,6 +9,7 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
+import { BackButton } from "../components/BackButton";
 import { Link } from "../components/Link";
 
 export const AccountPage = ({
@@ -20,6 +21,7 @@ export const AccountPage = ({
     <>
       <AppBar>
         <Toolbar>
+          <BackButton />
           <Typography variant="h6">Account</Typography>
         </Toolbar>
       </AppBar>
