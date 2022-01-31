@@ -2,11 +2,13 @@ import { ChevronRight } from "@mui/icons-material";
 import {
   AppBar,
   Avatar,
+  Box,
   Button,
   ListItem,
   ListItemAvatar,
   ListItemIcon,
   ListItemText,
+  TextField,
   Toolbar,
   Typography,
 } from "@mui/material";
@@ -24,7 +26,7 @@ import { Link } from "../components/Link";
 import { ModalLoader } from "../components/ModalLoader";
 import { updateProfile } from "../data-access";
 
-export const EditAvatarPage = ({
+export const EditProfileAvatarPage = ({
   profile,
 }: {
   profile: {
@@ -42,22 +44,15 @@ export const EditAvatarPage = ({
 
   const mutation = useMutation(updateProfile);
 
-  if (mutation.status === "loading") {
-    return <ModalLoader title="Saving..." />;
-  }
-
   return (
     <>
+      <ModalLoader open={mutation.status === "loading"} title="Saving..." />
+
       <AppBar>
         <Toolbar>
-          <Button
-            onClick={() => {
-              setSelectedStyle(parsed.avatarStyle);
-            }}
-          >
-            Cancel
-          </Button>
-          <Typography variant="h6">Edit Avatar</Typography>
+          <Typography sx={{ flex: 1 }} variant="h6">
+            Edit Avatar
+          </Typography>
           <Button
             onClick={() => {
               mutation.mutate({
@@ -71,25 +66,18 @@ export const EditAvatarPage = ({
         </Toolbar>
       </AppBar>
 
-      <div className="w-full flex flex-col justify-center items-center mt-4 mb-6">
-        <Avatar src={avatarUrl} />
+      <Box sx={{ p: 2, width: "100%", display: "grid", placeItems: "center" }}>
+        <Avatar
+          sx={{ marginBottom: 2, width: 120, height: 120 }}
+          src={avatarUrl}
+        />
 
-        <div className="text-2xl font-medium">
+        <Typography variant="h5" sx={{ marginBottom: 4 }}>
           {formatAvatarStyle(selectedStyle)}
-        </div>
-      </div>
+        </Typography>
 
-      <Link href="choose-style">
-        <ListItem>
-          <ListItemAvatar>
-            <Avatar src={avatarUrl} />
-            <ListItemText primary="Choose Style" />
-            <ListItemIcon>
-              <ChevronRight />
-            </ListItemIcon>
-          </ListItemAvatar>
-        </ListItem>
-      </Link>
+        <TextField label="Avatar Seed" fullWidth />
+      </Box>
     </>
   );
 };

@@ -10,7 +10,7 @@ import { ReactLocation, Router } from "react-location";
 import { LinkBehavior } from "./components/Link";
 import { onAuthStatus, onUserStatus } from "./data-access";
 import { AccountPage } from "./pages/Account";
-import { EditAvatarPage } from "./pages/EditAvatar";
+import { EditProfileAvatarPage } from "./pages/EditProfileAvatar";
 import { EditProfilePage } from "./pages/EditProfile";
 import { HomePage } from "./pages/Home";
 import { LoginPage } from "./pages/Login";
@@ -19,6 +19,8 @@ import { ProfilePage } from "./pages/Profile";
 import { Splash } from "./pages/Splash";
 import { TicTacToePage } from "./pages/TicTacToe";
 import { useSubscription } from "./utility";
+import { EditProfileNamePage } from "./pages/EditProfileName";
+import { EditProfileUsernamePage } from "./pages/EditProfileUsername";
 
 export const App = () => {
   const authState = useSubscription({ type: "loading" }, onAuthStatus);
@@ -78,28 +80,39 @@ const LoggedIn = ({ userId }: { userId: string }) => {
         },
         {
           path: "/profile",
-          element: (
-            <RootLayout>
-              <ProfilePage profile={profile} />
-            </RootLayout>
-          ),
+          children: [
+            {
+              path: "/",
+              element: (
+                <RootLayout>
+                  <ProfilePage profile={profile} />
+                </RootLayout>
+              ),
+            },
+            {
+              path: "/edit",
+              children: [
+                {
+                  path: "/",
+                  element: <EditProfilePage profile={profile} />,
+                },
+                {
+                  path: "/avatar",
+                  element: <EditProfileAvatarPage profile={profile} />,
+                },
+                {
+                  path: "/name",
+                  element: <EditProfileNamePage profile={profile} />,
+                },
+                {
+                  path: "/username",
+                  element: <EditProfileUsernamePage profile={profile} />,
+                },
+              ],
+            },
+          ],
         },
-        {
-          path: "/profile/edit",
-          element: (
-            <RootLayout>
-              <EditProfilePage profile={profile} />
-            </RootLayout>
-          ),
-        },
-        {
-          path: "/profile/avatar/edit",
-          element: (
-            <RootLayout>
-              <EditAvatarPage profile={profile} />
-            </RootLayout>
-          ),
-        },
+
         {
           path: "/logout",
           element: <LogoutPage profile={profile} />,
