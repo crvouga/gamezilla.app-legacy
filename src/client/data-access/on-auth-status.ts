@@ -1,9 +1,6 @@
 import { supabaseClient } from "../../shared/supabase";
 
-type AuthStatus =
-  | {
-      type: "loading";
-    }
+export type IAuthStatus =
   | {
       type: "logged-in";
       userId: string;
@@ -12,19 +9,23 @@ type AuthStatus =
       type: "logged-out";
     };
 
-export const onAuthStatus = (set: (state: AuthStatus) => void) => {
-  setTimeout(() => {
-    const session = supabaseClient.auth.session();
-    const userId = session?.user?.id;
+export const getAuthStatus = async (): Promise<IAuthStatus> => {
+  const session = supabaseClient.auth.session();
+  const userId = session?.user?.id;
 
-    if (userId) {
-      set({ type: "logged-in", userId });
-      return;
-    }
+  if (userId) {
+    return {
+      type: "logged-in",
+      userId,
+    };
+  }
 
-    set({ type: "logged-out" });
-  }, 1000 * 1.5);
+  return {
+    type: "logged-out",
+  };
+};
 
+export const onAuthStatus = (set: (state: IAuthStatus) => void) => {
   const subscription = supabaseClient.auth.onAuthStateChange(
     (event, session) => {
       switch (event) {

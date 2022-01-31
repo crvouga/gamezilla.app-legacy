@@ -1,6 +1,5 @@
 import { ChevronRight } from "@mui/icons-material";
 import {
-  Alert,
   AppBar,
   Avatar,
   Box,
@@ -10,7 +9,6 @@ import {
   ListItemButton,
   ListItemSecondaryAction,
   ListItemText,
-  Snackbar,
   TextField,
   Toolbar,
   Typography,
@@ -46,28 +44,26 @@ export const EditProfileAvatarPage = ({
   const [avatarStyle, setAvatarStyle] = useState(parsed.avatarStyle);
   const [avatarSeed, setAvatarSeed] = useState(parsed.avatarSeed);
 
-  const mutation = useMutation(updateProfile);
   const navigate = useNavigate();
+  const mutation = useMutation(updateProfile, {
+    onSuccess: () => {
+      navigate(-1);
+    },
+  });
+
+  const onDone = () => {
+    mutation.mutate({
+      userId: profile.userId,
+      avatarUrl: toAvatarUrl(avatarStyle, avatarSeed),
+    });
+  };
+
   return (
     <>
       <ModalLoader
         open={mutation.status === "loading"}
         title="Updating Avatar..."
       />
-
-      <Snackbar
-        autoHideDuration={2000}
-        onClose={mutation.reset}
-        open={mutation.status === "success"}
-      >
-        <Alert severity="success">Updated Avatar.</Alert>
-      </Snackbar>
-
-      <Snackbar autoHideDuration={2000} open={mutation.status === "error"}>
-        <Alert variant="filled" severity="error">
-          Failed to update avatar.
-        </Alert>
-      </Snackbar>
 
       <Routes>
         <Route
@@ -105,12 +101,7 @@ export const EditProfileAvatarPage = ({
             <EditProfileAvatar
               avatarSeed={avatarSeed}
               avatarStyle={avatarStyle}
-              onDone={() => {
-                mutation.mutate({
-                  userId: profile.userId,
-                  avatarUrl: toAvatarUrl(avatarStyle, avatarSeed),
-                });
-              }}
+              onDone={onDone}
             />
           }
         />

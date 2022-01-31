@@ -6,9 +6,17 @@ import {
   BottomNavigationAction,
 } from "@mui/material";
 import React, { useRef } from "react";
+import { useMutation, useQuery } from "react-query";
 import { Route, Routes } from "react-router-dom";
 import { LinkBehavior } from "./components/Link";
-import { onAuthStatus, onUserStatus } from "./data-access";
+import {
+  IAuthStatus,
+  getAuthStatus,
+  onAuthStatus,
+  onUserStatus,
+  IUserStatus,
+  getElseCreateProfile,
+} from "./data-access";
 import { AccountPage } from "./pages/Account";
 import { EditProfilePage } from "./pages/EditProfile";
 import { EditProfileAvatarPage } from "./pages/EditProfileAvatar";
@@ -21,42 +29,46 @@ import { Splash } from "./pages/Splash";
 import { useSubscription } from "./utility";
 
 export const App = () => {
-  const authState = useSubscription({ type: "loading" }, onAuthStatus);
+  return <LoadAuth />;
+};
 
-  if (authState.type === "loading") {
-    return <Splash />;
+const LoadAuth = () => {
+  const query = useQuery(["auth"], getAuthStatus);
+
+  if (query.status === "success") {
+    return <SubscribeAuth initial={query.data} />;
   }
 
-  if (authState.type === "logged-out") {
+  return <Splash />;
+};
+
+const SubscribeAuth = ({ initial }: { initial: IAuthStatus }) => {
+  const authStatus = useSubscription(initial, onAuthStatus);
+
+  if (authStatus.type === "logged-out") {
     return <LoginPage />;
   }
 
-  return <LoggedIn userId={authState.userId} />;
+  return <LoadUser userId={authStatus.userId} />;
 };
 
-const LoggedIn = ({ userId }: { userId: string }) => {
-  const userStatus = useSubscription(
-    {
-      type: "loading",
-    },
-    onUserStatus({ userId })
+const LoadUser = ({ userId }: { userId: string }) => {
+  const query = useQuery(["user-status"], () =>
+    getElseCreateProfile({ userId })
   );
 
-  if (userStatus.type === "loading") {
-    return <Splash />;
+  if (query.status === "success") {
+    return <SubscribeUser initial={query.data} />;
   }
 
-  if (userStatus.type === "error") {
-    return (
-      <Backdrop open>
-        <Alert sx={{ m: 4 }} variant="filled" severity="error">
-          Something went wrong when trying to load your profile.
-        </Alert>
-      </Backdrop>
-    );
-  }
+  return <Splash />;
+};
 
-  const { profile } = userStatus;
+const SubscribeUser = ({ initial }: { initial: IUserStatus }) => {
+  const userStatus = useSubscription(
+    initial,
+    onUserStatus({ userId: initial.userId })
+  );
 
   return (
     <Routes>
@@ -64,27 +76,27 @@ const LoggedIn = ({ userId }: { userId: string }) => {
         path="/"
         element={
           <RootLayout>
-            <HomePage profile={profile} />
+            <HomePage profile={userStatus} />
           </RootLayout>
         }
       />
-      <Route path="/account" element={<AccountPage profile={profile} />} />
+      <Route path="/account" element={<AccountPage profile={userStatus} />} />
       <Route path="/profile/edit">
-        <Route path="" element={<EditProfilePage profile={profile} />} />
+        <Route path="" element={<EditProfilePage profile={userStatus} />} />
         <Route
           path="avatar/*"
-          element={<EditProfileAvatarPage profile={profile} />}
+          element={<EditProfileAvatarPage profile={userStatus} />}
         />
         <Route
           path="name"
-          element={<EditProfileNamePage profile={profile} />}
+          element={<EditProfileNamePage profile={userStatus} />}
         />
         <Route
           path="username"
-          element={<EditProfileUsernamePage profile={profile} />}
+          element={<EditProfileUsernamePage profile={userStatus} />}
         />
       </Route>
-      <Route path="/logout" element={<LogoutPage profile={profile} />} />
+      <Route path="/logout" element={<LogoutPage profile={userStatus} />} />
     </Routes>
   );
 };

@@ -14,7 +14,7 @@ import { Link } from "../components/Link";
 export const AccountPage = ({
   profile,
 }: {
-  profile: { username: string; avatarUrl?: string };
+  profile: { username?: string; avatarUrl?: string };
 }) => {
   return (
     <>
