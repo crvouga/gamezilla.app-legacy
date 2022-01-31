@@ -8,9 +8,9 @@ import {
   getAuthStatus,
   getElseCreateProfile,
   IAuthStatus,
-  IUserStatus,
+  IProfile,
   onAuthStatus,
-  onUserStatus,
+  onProfile,
 } from "./data-access";
 import { AccountPage } from "./pages/Account";
 import { EditProfilePage } from "./pages/EditProfile";
@@ -59,10 +59,10 @@ const LoadUser = ({ userId }: { userId: string }) => {
   return <Splash />;
 };
 
-const SubscribeUser = ({ initial }: { initial: IUserStatus }) => {
-  const userStatus = useSubscription(
+const SubscribeUser = ({ initial }: { initial: IProfile }) => {
+  const profile = useSubscription(
     initial,
-    onUserStatus({ userId: initial.userId })
+    onProfile({ userId: initial.userId })
   );
 
   return (
@@ -71,27 +71,27 @@ const SubscribeUser = ({ initial }: { initial: IUserStatus }) => {
         path="/"
         element={
           <RootLayout>
-            <HomePage profile={userStatus} />
+            <HomePage profile={profile} />
           </RootLayout>
         }
       />
-      <Route path="/account" element={<AccountPage profile={userStatus} />} />
+      <Route path="/account" element={<AccountPage profile={profile} />} />
       <Route path="/profile/edit">
-        <Route path="" element={<EditProfilePage profile={userStatus} />} />
+        <Route path="" element={<EditProfilePage profile={profile} />} />
         <Route
           path="avatar/*"
-          element={<EditProfileAvatarPage profile={userStatus} />}
+          element={<EditProfileAvatarPage profile={profile} />}
         />
         <Route
           path="name"
-          element={<EditProfileNamePage profile={userStatus} />}
+          element={<EditProfileNamePage profile={profile} />}
         />
         <Route
           path="username"
-          element={<EditProfileUsernamePage profile={userStatus} />}
+          element={<EditProfileUsernamePage profile={profile} />}
         />
       </Route>
-      <Route path="/logout" element={<LogoutPage profile={userStatus} />} />
+      <Route path="/logout" element={<LogoutPage profile={profile} />} />
     </Routes>
   );
 };

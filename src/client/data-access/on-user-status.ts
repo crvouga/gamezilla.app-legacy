@@ -1,6 +1,6 @@
 import { definitions, supabaseClient } from "../../shared/supabase";
 
-export type IUserStatus = {
+export type IProfile = {
   userId: string;
   username?: string;
   avatarUrl?: string;
@@ -11,7 +11,7 @@ const getProfile = async ({
   userId,
 }: {
   userId: string;
-}): Promise<IUserStatus | null> => {
+}): Promise<IProfile | null> => {
   const { data } = await supabaseClient
     .from<definitions["profile"]>("profile")
     .select("*")
@@ -34,7 +34,7 @@ const createProfile = async ({
   userId,
 }: {
   userId: string;
-}): Promise<IUserStatus> => {
+}): Promise<IProfile> => {
   const response = await supabaseClient
     .from<definitions["profile"]>("profile")
     .insert({
@@ -58,7 +58,7 @@ export const getElseCreateProfile = async ({
   userId,
 }: {
   userId: string;
-}): Promise<IUserStatus> => {
+}): Promise<IProfile> => {
   const profile = await getProfile({ userId });
 
   if (profile) {
@@ -70,8 +70,8 @@ export const getElseCreateProfile = async ({
   return created;
 };
 
-export const onUserStatus = ({ userId }: { userId: string }) => (
-  set: (state: IUserStatus) => void
+export const onProfile = ({ userId }: { userId: string }) => (
+  set: (state: IProfile) => void
 ) => {
   const subscription = supabaseClient
     .from<definitions["profile"]>(`profile:id=eq.${userId}`)
