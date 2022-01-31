@@ -1,47 +1,88 @@
+import { ChevronRight } from "@mui/icons-material";
 import {
   AppBar,
   Avatar,
+  Box,
   Button,
-  TextField,
+  List,
+  ListItemButton,
+  ListItemSecondaryAction,
+  ListItemText,
   Toolbar,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
-import { Link } from "../components/Link";
+import React from "react";
+import { Link, LinkBehavior } from "../components/Link";
 
 export const EditProfilePage = ({
   profile,
 }: {
-  profile: { avatarUrl?: string; displayName?: string };
+  profile: { avatarUrl?: string; username: string; displayName?: string };
 }) => {
-  const [displayName, setDisplayName] = useState(profile?.displayName);
-
   return (
     <>
       <AppBar>
         <Toolbar>
-          <Button>Cancel</Button>
-          <Typography variant="h6">Edit Profile</Typography>
-          <Button>Done</Button>
+          <Typography variant="h6" sx={{ flex: 1 }}>
+            Edit Profile
+          </Typography>
         </Toolbar>
       </AppBar>
 
-      <Avatar src={profile.avatarUrl} />
-
-      <Link href="/profile/avatar/edit">
-        <Button sx={{ margin: "auto", marginTop: 2 }}>Edit Avatar</Button>
-      </Link>
-
-      <div className="p-4">
-        <TextField
-          id="displayName"
-          value={displayName}
-          onChange={(event) => {
-            setDisplayName(event.target.value);
-          }}
-          label="Display Name"
+      <Box
+        sx={{
+          padding: 2,
+          width: "100%",
+          display: "grid",
+          placeItems: "center",
+        }}
+      >
+        <Avatar
+          sx={{ width: 120, height: 120, marginBottom: 2 }}
+          src={profile.avatarUrl}
         />
-      </div>
+
+        <Button href="/profile/edit/avatar" LinkComponent={LinkBehavior}>
+          Edit Avatar
+        </Button>
+      </Box>
+
+      <List>
+        <Link href="/profile/edit/username">
+          <ListItemEditField label="Username" value={profile.username} />
+        </Link>
+
+        <Link href="/profile/edit/name">
+          <ListItemEditField label="Name" value={profile.displayName} />
+        </Link>
+      </List>
     </>
+  );
+};
+
+const ListItemEditField = ({
+  label,
+  value,
+}: {
+  label: string;
+  value?: string;
+}) => {
+  return (
+    <ListItemButton>
+      <ListItemText
+        primaryTypographyProps={{
+          variant: "body1",
+        }}
+        primary={label}
+        secondaryTypographyProps={{
+          variant: "body1",
+          color: value ? "text.primary" : "text.disabled",
+        }}
+        secondary={value ?? label}
+      />
+      <ListItemSecondaryAction>
+        <ChevronRight />
+      </ListItemSecondaryAction>
+    </ListItemButton>
   );
 };
