@@ -28,7 +28,12 @@ export const App = () => {
 };
 
 const LoadAuth = () => {
-  const query = useQuery(["auth"], getAuthStatus);
+  const query = useQuery({
+    queryKey: "auth",
+    queryFn: getAuthStatus,
+    staleTime: Infinity,
+    refetchOnMount: true,
+  });
 
   if (query.status === "success") {
     return <SubscribeAuth initial={query.data} />;
@@ -48,9 +53,12 @@ const SubscribeAuth = ({ initial }: { initial: IAuthStatus }) => {
 };
 
 const LoadUser = ({ userId }: { userId: string }) => {
-  const query = useQuery(["user-status"], () =>
-    getElseCreateProfile({ userId })
-  );
+  const query = useQuery({
+    queryKey: userId,
+    queryFn: () => getElseCreateProfile({ userId }),
+    staleTime: Infinity,
+    refetchOnMount: true,
+  });
 
   if (query.status === "success") {
     return <SubscribeUser initial={query.data} />;
