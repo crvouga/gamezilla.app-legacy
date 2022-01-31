@@ -3,27 +3,36 @@ import {
   AppBar,
   Avatar,
   Box,
-  Button,
+  ButtonBase,
+  Dialog,
+  Grid,
   ListItemButton,
   ListItemSecondaryAction,
   ListItemText,
-  TextField,
   Toolbar,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
-import { useMutation } from "react-query";
+import React from "react";
 import {
   AVATAR_STYLES,
   formatAvatarStyle,
   IAvatarSeed,
   IAvatarStyle,
   parseAvatarUrl,
-  toAvatarSeed,
   toAvatarUrl,
 } from "../../shared/avatar";
-import { ModalLoader } from "../components/ModalLoader";
-import { updateProfile } from "../data-access";
+import {
+  Router,
+  ReactLocation,
+  useRouter,
+  useResolvePath,
+  useNavigate,
+  useLocation,
+} from "react-location";
+import { useRef } from "react";
+import { useReducer } from "react";
+import { useState } from "react";
+import { Link } from "../components/Link";
 
 export const EditProfileAvatarPage = ({
   profile,
@@ -35,45 +44,81 @@ export const EditProfileAvatarPage = ({
 }) => {
   const parsed = parseAvatarUrl(profile.avatarUrl);
 
-  const [avatarStyle, setAvatarStyle] = useState<IAvatarStyle>(
-    parsed.avatarStyle
-  );
-  const [avatarSeed, setAvatarSeed] = useState<IAvatarSeed>(parsed.avatarSeed);
+  const [avatarStyle, setAvatarStyle] = useState(parsed.avatarStyle);
+  const [avatarSeed, setAvatarSeed] = useState(parsed.avatarSeed);
 
-  const avatarUrl = toAvatarUrl(avatarStyle, avatarSeed);
-
-  const mutation = useMutation(updateProfile);
+  const location = useLocation();
+  const resolvePath = useResolvePath();
+  const navigate = useNavigate();
 
   return (
     <>
-      <ModalLoader open={mutation.status === "loading"} title="Saving..." />
+      <Router
+        location={location}
+        routes={[
+          {
+            path: resolvePath("style"),
+            element: (
+              <EditProfileAvatarStyle
+                avatarSeed={avatarSeed}
+                onSelect={(avatarStyle) => {
+                  setAvatarStyle(avatarStyle);
+                  navigate({
+                    to: resolvePath("."),
+                    replace: true,
+                  });
+                }}
+              />
+            ),
+          },
 
+          {
+            path: resolvePath("."),
+            element: (
+              <EditProfileAvatar
+                avatarSeed={avatarSeed}
+                avatarStyle={avatarStyle}
+              />
+            ),
+          },
+        ]}
+      />
+    </>
+  );
+};
+
+const EditProfileAvatar = ({
+  avatarStyle,
+  avatarSeed,
+}: {
+  avatarStyle: IAvatarStyle;
+  avatarSeed: IAvatarSeed;
+}) => {
+  const resolvePath = useResolvePath();
+
+  return (
+    <>
       <AppBar>
         <Toolbar>
-          <Typography sx={{ flex: 1 }} variant="h6">
-            Edit Avatar
-          </Typography>
-          <Button
-            onClick={() => {
-              mutation.mutate({
-                userId: profile.userId,
-                avatarUrl,
-              });
-            }}
-          >
-            Done
-          </Button>
+          <Typography variant="h6">Edit Avatar</Typography>
         </Toolbar>
       </AppBar>
 
-      <Box sx={{ p: 2, width: "100%", display: "grid", placeItems: "center" }}>
-        <Avatar sx={{ width: 120, height: 120 }} src={avatarUrl} />
+      <Box sx={{ width: "100%", display: "grid", placeItems: "center", p: 2 }}>
+        <Avatar
+          sx={{ width: 120, height: 120 }}
+          src={toAvatarUrl(avatarStyle, avatarSeed)}
+        />
       </Box>
+
+      <Link href={resolvePath("style")}>
+        <ListItemField
+          label="Avatar Style"
+          value={formatAvatarStyle(avatarStyle)}
+        />
+      </Link>
+
       <ListItemField label="Avatar Seed" value={avatarSeed} />
-      <ListItemField
-        label="Avatar Style"
-        value={formatAvatarStyle(avatarStyle)}
-      />
     </>
   );
 };
@@ -99,41 +144,66 @@ const ListItemField = ({ label, value }: { label: string; value?: string }) => {
   );
 };
 
-const EditProfileAvatar = ({
-  onDone,
+const EditProfileAvatarStyle = ({
   avatarSeed,
-  avatarStyle,
+  onSelect,
 }: {
-  onDone: () => void;
   avatarSeed: IAvatarSeed;
-  avatarStyle: IAvatarStyle;
+  onSelect: (avatarStyle: IAvatarStyle) => void;
 }) => {
   return (
     <>
       <AppBar>
         <Toolbar>
-          <Typography sx={{ flex: 1 }} variant="h6">
-            Edit Avatar
-          </Typography>
-          <Button onClick={onDone}>Done</Button>
+          <Typography variant="h6">Choose Style</Typography>
         </Toolbar>
       </AppBar>
 
-      <Box sx={{ p: 2, width: "100%", display: "grid", placeItems: "center" }}>
-        <Avatar
-          sx={{ width: 120, height: 120 }}
-          src={toAvatarUrl(avatarStyle, avatarSeed)}
-        />
-      </Box>
-      <ListItemField label="Avatar Seed" value={avatarSeed} />
-      <ListItemField
-        label="Avatar Style"
-        value={formatAvatarStyle(avatarStyle)}
-      />
+      <Grid container>
+        {Object.values(AVATAR_STYLES).map((avatarStyle) => (
+          <Grid
+            key={avatarStyle}
+            item
+            xs={6}
+            onClick={() => {
+              onSelect(avatarStyle);
+            }}
+          >
+            <ButtonBase
+              sx={{
+                width: "100%",
+                display: "flex",
+                flexDirection: "column",
+                padding: 2,
+              }}
+            >
+              <Box
+                sx={{
+                  width: "100%",
+                  paddingTop: "100%",
+                  height: 0,
+                  position: "relative",
+                }}
+              >
+                <Avatar
+                  sx={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    height: "100%",
+                  }}
+                  src={toAvatarUrl(avatarStyle, avatarSeed)}
+                />
+              </Box>
+
+              <Typography sx={{ marginTop: 2 }} variant="h6">
+                {formatAvatarStyle(avatarStyle)}
+              </Typography>
+            </ButtonBase>
+          </Grid>
+        ))}
+      </Grid>
     </>
   );
-};
-
-const EditProfileAvatarSeed = () => {
-  return <>Hello</>;
 };
