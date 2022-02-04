@@ -208,33 +208,3 @@ const EditProfileAvatarStyle = ({
     </Box>
   );
 };
-
-const EditProfileAvatarSeed = ({
-  avatarSeed,
-  avatarStyle,
-  onChange,
-  onRandom,
-}: {
-  avatarStyle: IAvatarStyle;
-  avatarSeed: IAvatarSeed;
-  onChange: (avatarSeed: IAvatarSeed) => void;
-  onRandom: () => void;
-}) => {
-  return (
-    <>
-      <AppBar>
-        <Toolbar>
-          <BackButton edge="start" />
-          <Typography variant="h6">Edit Avatar Seed</Typography>
-        </Toolbar>
-      </AppBar>
-
-      <Box sx={{ width: "100%", display: "grid", placeItems: "center", p: 2 }}>
-        <Avatar
-          sx={{ width: 160, height: 160 }}
-          src={toAvatarUrl(avatarStyle, avatarSeed)}
-        />
-      </Box>
-    </>
-  );
-};

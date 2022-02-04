@@ -32,15 +32,30 @@ const getProfile = async ({
 
 export const createProfile = async ({
   userId,
+  name,
+  username,
+  avatarUrl,
 }: {
   userId: string;
+  name: string;
+  username: string;
+  avatarUrl: string;
 }): Promise<
-  { type: "success"; profile: IProfile } | { type: "error"; error: Error }
+  {
+    type: "success";
+    profile: IProfile;
+  } | {
+    type: "error";
+    error: Error;
+  }
 > => {
   const response = await supabaseClient
     .from<definitions["profile"]>("profile")
     .insert({
       id: userId,
+      name,
+      username,
+      avatar_url: avatarUrl,
     })
     .single();
 
@@ -60,6 +75,13 @@ export const createProfile = async ({
     type: "error",
     error: new Error(response.error?.message ?? "Failed to create profile"),
   };
+};
+
+export const deleteProfile = async ({ userId }: { userId: string }) => {
+  await supabaseClient
+    .from<definitions["profile"]>("profile")
+    .delete()
+    .match({ id: userId });
 };
 
 type IProfileStatus = {
@@ -93,10 +115,7 @@ export const onProfileStatus = ({ userId }: { userId: string }) =>
 
     const subscription = supabaseClient
       .from<definitions["profile"]>(`profile:id=eq.${userId}`)
-      .on("DELETE", () => {
-        set({ type: "not-found" });
-      })
-      .on("*", (payload) => {
+      .on("INSERT", (payload) => {
         set({
           type: "found",
           profile: {
@@ -106,6 +125,20 @@ export const onProfileStatus = ({ userId }: { userId: string }) =>
             name: payload.new.name,
           },
         });
+      })
+      .on("UPDATE", (payload) => {
+        set({
+          type: "found",
+          profile: {
+            userId: payload.new.id,
+            avatarUrl: payload.new.avatar_url,
+            username: payload.new.username,
+            name: payload.new.name,
+          },
+        });
+      })
+      .on("DELETE", () => {
+        set({ type: "not-found" });
       })
       .subscribe();
 
