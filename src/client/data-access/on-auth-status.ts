@@ -22,7 +22,6 @@ export const getAuthStatus = async (): Promise<IAuthStatus> => {
   const userId = session?.user?.id;
 
   if (userId) {
-    console.log({ "session.user": session.user });
     return {
       type: "logged-in",
       userId,

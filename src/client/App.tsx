@@ -91,7 +91,7 @@ const SubscribeProfile = ({
       return (
         <Routes>
           <Route
-            path="/profile/create"
+            path="/profile/create/*"
             element={
               <CreateProfilePage userMetadata={userMetadata} userId={userId} />
             }
