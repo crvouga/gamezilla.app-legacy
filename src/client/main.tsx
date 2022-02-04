@@ -10,7 +10,17 @@ ReactDOM.render(
   <QueryClientProvider client={new QueryClient()}>
     <BrowserRouter>
       <ThemeProvider>
-        <Container disableGutters maxWidth="sm">
+        <Container
+          disableGutters
+          maxWidth="sm"
+          sx={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+          }}
+        >
           <App />
         </Container>
       </ThemeProvider>
