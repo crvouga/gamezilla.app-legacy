@@ -2,12 +2,15 @@ import { supabaseClient } from "../../shared/supabase";
 
 export type IAuthStatus =
   | {
-      type: "logged-in";
-      userId: string;
-    }
+    type: "loading";
+  }
   | {
-      type: "logged-out";
-    };
+    type: "logged-in";
+    userId: string;
+  }
+  | {
+    type: "logged-out";
+  };
 
 export const getAuthStatus = async (): Promise<IAuthStatus> => {
   const session = supabaseClient.auth.session();
@@ -26,6 +29,11 @@ export const getAuthStatus = async (): Promise<IAuthStatus> => {
 };
 
 export const onAuthStatus = (set: (state: IAuthStatus) => void) => {
+  setTimeout(async () => {
+    const authStatus = await getAuthStatus();
+    set(authStatus);
+  }, 1000 * 1.5);
+
   const subscription = supabaseClient.auth.onAuthStateChange(
     (event, session) => {
       switch (event) {
@@ -46,7 +54,7 @@ export const onAuthStatus = (set: (state: IAuthStatus) => void) => {
           set({ type: "logged-out" });
           return;
       }
-    }
+    },
   );
 
   return () => {

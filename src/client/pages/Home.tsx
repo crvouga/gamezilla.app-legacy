@@ -15,7 +15,7 @@ export const HomePage = ({ profile }: { profile: { avatarUrl?: string } }) => {
     <>
       <AppBar>
         <Toolbar>
-          <Typography sx={{ flex: 1 }} variant="h4">
+          <Typography sx={{ flex: 1 }} variant="h6">
             Home
           </Typography>
 

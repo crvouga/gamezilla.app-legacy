@@ -26,7 +26,7 @@ export const LoginPage = () => {
 
       <AppBar>
         <Toolbar>
-          <Typography sx={{ flex: 1 }} variant="h6">
+          <Typography align="center" sx={{ flex: 1 }} variant="h6">
             Login
           </Typography>
         </Toolbar>
