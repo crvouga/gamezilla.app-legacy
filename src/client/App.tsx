@@ -1,18 +1,11 @@
 import { Chat, Home, Person, Search } from "@mui/icons-material";
 import { BottomNavigation, BottomNavigationAction } from "@mui/material";
 import React from "react";
-import { useQuery } from "react-query";
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import { LinkBehavior } from "./components/Link";
-import {
-  getAuthStatus,
-  getElseCreateProfile,
-  IAuthStatus,
-  IProfile,
-  onAuthStatus,
-  onProfile,
-} from "./data-access";
+import { onAuthStatus, onProfileStatus } from "./data-access";
 import { AccountPage } from "./pages/Account";
+import { CreateProfilePage } from "./pages/CreateProfile";
 import { EditProfilePage } from "./pages/EditProfile";
 import { EditProfileAvatarPage } from "./pages/EditProfileAvatar";
 import { EditProfileNamePage } from "./pages/EditProfileName";
@@ -32,59 +25,70 @@ const SubscribeAuth = () => {
 
   switch (authStatus.type) {
     case "logged-out":
-      return <LoginPage />;
+      return (
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="*" element={<Navigate to="/login" />} />
+        </Routes>
+      );
 
     case "loading":
       return <Splash />;
 
     case "logged-in":
       const { userId } = authStatus;
-      return <LoadUser userId={userId} />;
+      return <SubscribeProfile userId={userId} />;
   }
 };
 
-const LoadUser = ({ userId }: { userId: string }) => {
-  const query = useQuery(["user", userId], () =>
-    getElseCreateProfile({ userId })
+const SubscribeProfile = ({ userId }: { userId: string }) => {
+  const profileStatus = useSubscription(
+    { type: "loading" },
+    onProfileStatus({ userId })
   );
 
-  if (query.status === "success") {
-    const profile = query.data;
+  switch (profileStatus.type) {
+    case "not-found":
+      return (
+        <Routes>
+          <Route
+            path="/profile/create"
+            element={<CreateProfilePage userId={userId} />}
+          />
+          <Route path="/logout" element={<LogoutPage />} />
+          <Route path="*" element={<Navigate to="/profile/create" />} />
+        </Routes>
+      );
 
-    return <SubscribeUser initial={profile} />;
+    case "loading":
+      return <Splash />;
+
+    case "found":
+      const { profile } = profileStatus;
+
+      return (
+        <Routes>
+          <Route path="/" element={<HomePage profile={profile} />} />
+          <Route path="/account" element={<AccountPage profile={profile} />} />
+          <Route path="/profile/edit">
+            <Route path="" element={<EditProfilePage profile={profile} />} />
+            <Route
+              path="avatar/*"
+              element={<EditProfileAvatarPage profile={profile} />}
+            />
+            <Route
+              path="name"
+              element={<EditProfileNamePage profile={profile} />}
+            />
+            <Route
+              path="username"
+              element={<EditProfileUsernamePage profile={profile} />}
+            />
+          </Route>
+          <Route path="/logout" element={<LogoutPage />} />
+        </Routes>
+      );
   }
-
-  return <Splash />;
-};
-
-const SubscribeUser = ({ initial }: { initial: IProfile }) => {
-  const profile = useSubscription(
-    initial,
-    onProfile({ userId: initial.userId })
-  );
-
-  return (
-    <Routes>
-      <Route path="/" element={<HomePage profile={profile} />} />
-      <Route path="/account" element={<AccountPage profile={profile} />} />
-      <Route path="/profile/edit">
-        <Route path="" element={<EditProfilePage profile={profile} />} />
-        <Route
-          path="avatar/*"
-          element={<EditProfileAvatarPage profile={profile} />}
-        />
-        <Route
-          path="name"
-          element={<EditProfileNamePage profile={profile} />}
-        />
-        <Route
-          path="username"
-          element={<EditProfileUsernamePage profile={profile} />}
-        />
-      </Route>
-      <Route path="/logout" element={<LogoutPage profile={profile} />} />
-    </Routes>
-  );
 };
 
 const RootLayout = ({ children }: { children: React.ReactNode }) => {

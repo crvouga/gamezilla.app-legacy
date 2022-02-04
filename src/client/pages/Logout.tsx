@@ -5,11 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { ModalLoader } from "../components/ModalLoader";
 import { logout } from "../data-access";
 
-export const LogoutPage = ({
-  profile,
-}: {
-  profile: { username?: string; avatarUrl?: string };
-}) => {
+export const LogoutPage = () => {
   const navigate = useNavigate();
 
   const mutation = useMutation(logout, {
@@ -32,7 +28,7 @@ export const LogoutPage = ({
 
   return (
     <Dialog open onClose={onCancel}>
-      <DialogTitle>Logout of {profile.username}?</DialogTitle>
+      <DialogTitle>Logout of Gamezilla?</DialogTitle>
       <DialogActions>
         <Button onClick={onCancel}>Cancel</Button>
         <Button onClick={onConfirm}>Logout</Button>

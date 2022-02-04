@@ -70,18 +70,49 @@ export const getElseCreateProfile = async ({
   return created;
 };
 
-export const onProfile = ({ userId }: { userId: string }) =>
+type IProfileStatus = {
+  type: "loading";
+} | {
+  type: "found";
+  profile: {
+    userId: string;
+    avatarUrl?: string;
+    username?: string;
+    name?: string;
+  };
+} | {
+  type: "not-found";
+};
+
+export const onProfileStatus = ({ userId }: { userId: string }) =>
   (
-    set: (state: IProfile) => void,
+    set: (status: IProfileStatus) => void,
   ) => {
+    getProfile({ userId }).then((profile) => {
+      if (profile) {
+        set({
+          type: "found",
+          profile,
+        });
+        return;
+      }
+      set({ type: "not-found" });
+    });
+
     const subscription = supabaseClient
       .from<definitions["profile"]>(`profile:id=eq.${userId}`)
+      .on("DELETE", () => {
+        set({ type: "not-found" });
+      })
       .on("*", (payload) => {
         set({
-          userId: payload.new.id,
-          avatarUrl: payload.new.avatar_url,
-          username: payload.new.username,
-          name: payload.new.name,
+          type: "found",
+          profile: {
+            userId: payload.new.id,
+            avatarUrl: payload.new.avatar_url,
+            username: payload.new.username,
+            name: payload.new.name,
+          },
         });
       })
       .subscribe();

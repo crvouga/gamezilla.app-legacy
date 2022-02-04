@@ -19,7 +19,16 @@ ReactDOM.render(
             height: "100vh",
           }}
         >
-          <Container disableGutters maxWidth="sm">
+          <Container
+            disableGutters
+            maxWidth="sm"
+            sx={{
+              width: "100%",
+              height: "100%",
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
             <App />
           </Container>
         </Box>
