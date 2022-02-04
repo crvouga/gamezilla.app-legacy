@@ -29,6 +29,7 @@ import {
 import { AspectRatioSquare } from "../components/AspectRatio";
 import { BackButton } from "../components/BackButton";
 import { Link } from "../components/Link";
+import { ListItemField } from "../components/ListItemField";
 import { ModalLoader } from "../components/ModalLoader";
 import { updateProfile } from "../data-access";
 
@@ -78,100 +79,69 @@ export const EditProfileAvatarPage = ({
         />
 
         <Route
-          path="seed"
-          element={
-            <EditProfileAvatarSeed
-              avatarSeed={avatarSeed}
-              avatarStyle={avatarStyle}
-              onChange={(avatarSeed) => {
-                setAvatarSeed(avatarSeed);
-              }}
-              onRandom={() => {
-                setAvatarSeed(generateRandomAvatarSeed());
-              }}
-            />
-          }
-        />
-
-        <Route
           path=""
           element={
-            <EditProfileAvatar
-              avatarSeed={avatarSeed}
-              avatarStyle={avatarStyle}
-              onDone={onDone}
-            />
+            <>
+              <AppBar>
+                <Toolbar>
+                  <BackButton />
+
+                  <Typography sx={{ flex: 1 }} variant="h6">
+                    Edit Avatar
+                  </Typography>
+
+                  <Button size="large" onClick={onDone}>
+                    Done
+                  </Button>
+                </Toolbar>
+              </AppBar>
+
+              <Box
+                sx={{
+                  width: "100%",
+                  display: "grid",
+                  placeItems: "center",
+                  p: 2,
+                }}
+              >
+                <Avatar
+                  sx={{ width: 160, height: 160 }}
+                  src={toAvatarUrl(avatarStyle, avatarSeed)}
+                />
+              </Box>
+
+              <Link href={"style"}>
+                <ListItemField
+                  label="Avatar Style"
+                  value={formatAvatarStyle(avatarStyle)}
+                />
+              </Link>
+
+              <Box sx={{ padding: 2 }}>
+                <TextField
+                  fullWidth
+                  label="Avatar Seed"
+                  value={avatarSeed}
+                  onChange={(event) => {
+                    setAvatarSeed(toAvatarSeed(event.target.value));
+                  }}
+                  sx={{ marginBottom: 2 }}
+                />
+                <Button
+                  fullWidth
+                  variant="contained"
+                  onClick={() => {
+                    setAvatarSeed(generateRandomAvatarSeed());
+                  }}
+                >
+                  Random
+                </Button>
+              </Box>
+            </>
           }
         />
       </Routes>
     </>
-  );
-};
-
-const EditProfileAvatar = ({
-  avatarStyle,
-  avatarSeed,
-  onDone,
-}: {
-  avatarStyle: IAvatarStyle;
-  avatarSeed: IAvatarSeed;
-  onDone?: () => void;
-}) => {
-  return (
-    <>
-      <AppBar>
-        <Toolbar>
-          <BackButton />
-
-          <Typography sx={{ flex: 1 }} variant="h6">
-            Edit Avatar
-          </Typography>
-
-          <Button size="large" onClick={onDone}>
-            Done
-          </Button>
-        </Toolbar>
-      </AppBar>
-
-      <Box sx={{ width: "100%", display: "grid", placeItems: "center", p: 2 }}>
-        <Avatar
-          sx={{ width: 160, height: 160 }}
-          src={toAvatarUrl(avatarStyle, avatarSeed)}
-        />
-      </Box>
-
-      <Link href={"style"}>
-        <ListItemField
-          label="Avatar Style"
-          value={formatAvatarStyle(avatarStyle)}
-        />
-      </Link>
-
-      <Link href={"seed"}>
-        <ListItemField label="Avatar Seed" value={avatarSeed} />
-      </Link>
-    </>
-  );
-};
-
-const ListItemField = ({ label, value }: { label: string; value?: string }) => {
-  return (
-    <ListItemButton>
-      <ListItemText
-        primaryTypographyProps={{
-          variant: "body1",
-        }}
-        primary={label}
-        secondaryTypographyProps={{
-          variant: "body1",
-          color: value ? "text.primary" : "text.disabled",
-        }}
-        secondary={value ?? label}
-      />
-      <ListItemSecondaryAction>
-        <ChevronRight />
-      </ListItemSecondaryAction>
-    </ListItemButton>
   );
 };
 
@@ -183,7 +153,14 @@ const EditProfileAvatarStyle = ({
   onSelect: (avatarStyle: IAvatarStyle) => void;
 }) => {
   return (
-    <>
+    <Box
+      sx={{
+        width: "100%",
+        height: "100vh",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
       <AppBar>
         <Toolbar>
           <BackButton edge="start" />
@@ -191,7 +168,7 @@ const EditProfileAvatarStyle = ({
         </Toolbar>
       </AppBar>
 
-      <Grid container>
+      <Grid container sx={{ flex: 1, overflowY: "scroll" }}>
         {Object.values(AVATAR_STYLES).map((avatarStyle) => (
           <Grid
             key={avatarStyle}
@@ -228,7 +205,7 @@ const EditProfileAvatarStyle = ({
           </Grid>
         ))}
       </Grid>
-    </>
+    </Box>
   );
 };
 
@@ -257,21 +234,6 @@ const EditProfileAvatarSeed = ({
           sx={{ width: 160, height: 160 }}
           src={toAvatarUrl(avatarStyle, avatarSeed)}
         />
-      </Box>
-
-      <Box sx={{ padding: 2 }}>
-        <TextField
-          fullWidth
-          label="Avatar Seed"
-          value={avatarSeed}
-          onChange={(event) => {
-            onChange(toAvatarSeed(event.target.value));
-          }}
-          sx={{ marginBottom: 2 }}
-        />
-        <Button fullWidth variant="contained" onClick={onRandom}>
-          Random
-        </Button>
       </Box>
     </>
   );

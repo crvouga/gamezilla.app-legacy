@@ -14,6 +14,7 @@ import {
 import React from "react";
 import { BackButton } from "../components/BackButton";
 import { Link, LinkBehavior } from "../components/Link";
+import { ListItemField } from "../components/ListItemField";
 
 export const EditProfilePage = ({
   profile,
@@ -105,26 +106,5 @@ export const EditProfile = ({
         </Link>
       </List>
     </>
-  );
-};
-
-const ListItemField = ({ label, value }: { label: string; value?: string }) => {
-  return (
-    <ListItemButton>
-      <ListItemText
-        primaryTypographyProps={{
-          variant: "body1",
-        }}
-        primary={label}
-        secondaryTypographyProps={{
-          variant: "body1",
-          color: value ? "text.primary" : "text.disabled",
-        }}
-        secondary={value ?? label}
-      />
-      <ListItemSecondaryAction>
-        <ChevronRight />
-      </ListItemSecondaryAction>
-    </ListItemButton>
   );
 };
