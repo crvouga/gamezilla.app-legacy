@@ -67,10 +67,7 @@ export const EditProfileNamePage = ({
         {/* <Typography color="text.secondary"></Typography> */}
       </Box>
 
-      <AppBar
-        color="default"
-        sx={{ position: "fixed", top: "auto", bottom: 0 }}
-      >
+      <AppBar>
         <Toolbar sx={{ justifyContent: "flex-end" }}>
           <Button
             onClick={onCancel}

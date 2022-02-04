@@ -34,7 +34,7 @@ const darkTheme = createTheme({
   components: {
     MuiAppBar: {
       defaultProps: {
-        position: "sticky",
+        position: "static",
         elevation: 0,
         color: "transparent",
         // variant: "outlined",
