@@ -1,5 +1,9 @@
 import { supabaseClient } from "../../shared/supabase";
 
+export type IUserMetadata = {
+  name?: string;
+};
+
 export type IAuthStatus =
   | {
     type: "loading";
@@ -7,6 +11,7 @@ export type IAuthStatus =
   | {
     type: "logged-in";
     userId: string;
+    userMetadata: IUserMetadata;
   }
   | {
     type: "logged-out";
@@ -17,9 +22,13 @@ export const getAuthStatus = async (): Promise<IAuthStatus> => {
   const userId = session?.user?.id;
 
   if (userId) {
+    console.log({ "session.user": session.user });
     return {
       type: "logged-in",
       userId,
+      userMetadata: {
+        name: session.user?.user_metadata["full_name"],
+      },
     };
   }
 
@@ -43,7 +52,13 @@ export const onAuthStatus = (set: (state: IAuthStatus) => void) => {
         case "USER_UPDATED":
           const userId = session?.user?.id;
           if (userId) {
-            set({ type: "logged-in", userId });
+            set({
+              type: "logged-in",
+              userId,
+              userMetadata: {
+                name: session.user?.user_metadata["display_name"],
+              },
+            });
             return;
           }
           set({ type: "logged-out" });

@@ -15,10 +15,16 @@ import { useTheme } from "@mui/material/styles";
 import React, { useState } from "react";
 import { Link } from "../components/Link";
 
-export const CreateProfilePage = ({ userId }: { userId: string }) => {
+export const CreateProfilePage = ({
+  userId,
+  userMetadata,
+}: {
+  userId: string;
+  userMetadata: {
+    name?: string;
+  };
+}) => {
   const theme = useTheme();
-
-  const [name, setName] = useState("");
 
   const [activeStep, setActiveStep] = React.useState(0);
 
@@ -49,7 +55,7 @@ export const CreateProfilePage = ({ userId }: { userId: string }) => {
         <Typography variant="h4" align="center" gutterBottom>
           What's your name?
         </Typography>
-        <TextField label="Name" />
+        <TextField defaultValue={userMetadata.name} label="Name" />
       </Box>
 
       <MobileStepper

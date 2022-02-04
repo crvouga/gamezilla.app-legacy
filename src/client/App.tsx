@@ -64,12 +64,20 @@ const SubscribeAuth = () => {
       return <SplashPage />;
 
     case "logged-in":
-      const { userId } = authStatus;
-      return <SubscribeProfile userId={userId} />;
+      const { userId, userMetadata } = authStatus;
+      return <SubscribeProfile userMetadata={userMetadata} userId={userId} />;
   }
 };
 
-const SubscribeProfile = ({ userId }: { userId: string }) => {
+const SubscribeProfile = ({
+  userId,
+  userMetadata,
+}: {
+  userMetadata: {
+    name?: string;
+  };
+  userId: string;
+}) => {
   const profileStatus = useSubscription(
     { type: "loading" },
     onProfileStatus({ userId })
@@ -84,7 +92,9 @@ const SubscribeProfile = ({ userId }: { userId: string }) => {
         <Routes>
           <Route
             path="/profile/create"
-            element={<CreateProfilePage userId={userId} />}
+            element={
+              <CreateProfilePage userMetadata={userMetadata} userId={userId} />
+            }
           />
           <Route path="/logout" element={<LogoutPage />} />
           <Route path="*" element={<Navigate to="/profile/create" />} />
