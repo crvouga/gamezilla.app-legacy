@@ -24,44 +24,34 @@ import { Splash } from "./pages/Splash";
 import { useSubscription } from "./utility";
 
 export const App = () => {
-  return <LoadAuth />;
+  return <SubscribeAuth />;
 };
 
-const LoadAuth = () => {
-  const query = useQuery({
-    queryKey: "auth",
-    queryFn: getAuthStatus,
-    staleTime: Infinity,
-    refetchOnMount: true,
-  });
+const SubscribeAuth = () => {
+  const authStatus = useSubscription({ type: "loading" }, onAuthStatus);
 
-  if (query.status === "success") {
-    return <SubscribeAuth initial={query.data} />;
+  switch (authStatus.type) {
+    case "logged-out":
+      return <LoginPage />;
+
+    case "loading":
+      return <Splash />;
+
+    case "logged-in":
+      const { userId } = authStatus;
+      return <LoadUser userId={userId} />;
   }
-
-  return <Splash />;
-};
-
-const SubscribeAuth = ({ initial }: { initial: IAuthStatus }) => {
-  const authStatus = useSubscription(initial, onAuthStatus);
-
-  if (authStatus.type === "logged-out") {
-    return <LoginPage />;
-  }
-
-  return <LoadUser userId={authStatus.userId} />;
 };
 
 const LoadUser = ({ userId }: { userId: string }) => {
-  const query = useQuery({
-    queryKey: userId,
-    queryFn: () => getElseCreateProfile({ userId }),
-    staleTime: Infinity,
-    refetchOnMount: true,
-  });
+  const query = useQuery(["user", userId], () =>
+    getElseCreateProfile({ userId })
+  );
 
   if (query.status === "success") {
-    return <SubscribeUser initial={query.data} />;
+    const profile = query.data;
+
+    return <SubscribeUser initial={profile} />;
   }
 
   return <Splash />;

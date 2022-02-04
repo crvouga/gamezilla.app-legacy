@@ -1,8 +1,7 @@
-import { Avatar, Box, Chip } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogTitle } from "@mui/material";
 import React from "react";
-import { useNavigate } from "react-router-dom";
 import { useMutation } from "react-query";
-import { ModalConformation } from "../components/ModalConformation";
+import { useNavigate } from "react-router-dom";
 import { ModalLoader } from "../components/ModalLoader";
 import { logout } from "../data-access";
 
@@ -19,28 +18,25 @@ export const LogoutPage = ({
     },
   });
 
+  const onConfirm = () => {
+    mutation.mutate();
+  };
+
+  const onCancel = () => {
+    navigate(-1);
+  };
+
   if (mutation.status === "loading") {
     return <ModalLoader title="Logging out..." />;
   }
 
   return (
-    <ModalConformation
-      title={`Log out of ${profile.username}?`}
-      onBackdropClick={() => {
-        navigate(-1);
-      }}
-      left={{
-        title: "Cancel",
-        onClick: () => {
-          navigate(-1);
-        },
-      }}
-      right={{
-        title: "Logout",
-        onClick: () => {
-          mutation.mutate();
-        },
-      }}
-    />
+    <Dialog open onClose={onCancel}>
+      <DialogTitle>Logout of {profile.username}?</DialogTitle>
+      <DialogActions>
+        <Button onClick={onCancel}>Cancel</Button>
+        <Button onClick={onConfirm}>Logout</Button>
+      </DialogActions>
+    </Dialog>
   );
 };

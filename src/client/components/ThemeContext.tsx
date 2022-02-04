@@ -17,7 +17,7 @@ const darkTheme = createTheme({
       defaultProps: {
         position: "sticky",
         elevation: 0,
-        variant: "outlined",
+        // variant: "outlined",
       },
     },
 

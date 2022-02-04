@@ -70,22 +70,23 @@ export const getElseCreateProfile = async ({
   return created;
 };
 
-export const onProfile = ({ userId }: { userId: string }) => (
-  set: (state: IProfile) => void
-) => {
-  const subscription = supabaseClient
-    .from<definitions["profile"]>(`profile:id=eq.${userId}`)
-    .on("*", (payload) => {
-      set({
-        userId: payload.new.id,
-        avatarUrl: payload.new.avatar_url,
-        username: payload.new.username,
-        name: payload.new.name,
-      });
-    })
-    .subscribe();
+export const onProfile = ({ userId }: { userId: string }) =>
+  (
+    set: (state: IProfile) => void,
+  ) => {
+    const subscription = supabaseClient
+      .from<definitions["profile"]>(`profile:id=eq.${userId}`)
+      .on("*", (payload) => {
+        set({
+          userId: payload.new.id,
+          avatarUrl: payload.new.avatar_url,
+          username: payload.new.username,
+          name: payload.new.name,
+        });
+      })
+      .subscribe();
 
-  return () => {
-    subscription.unsubscribe();
+    return () => {
+      subscription.unsubscribe();
+    };
   };
-};
