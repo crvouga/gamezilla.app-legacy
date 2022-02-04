@@ -11,6 +11,7 @@ import { LinkBehavior } from "./components/Link";
 import { onAuthStatus, onProfileStatus } from "./data-access";
 import { AccountPage } from "./pages/Account";
 import { CreateProfilePage } from "./pages/CreateProfile";
+import { DeleteProfilePage } from "./pages/DeleteProfile";
 import { EditProfilePage } from "./pages/EditProfile";
 import { EditProfileAvatarPage } from "./pages/EditProfileAvatar";
 import { EditProfileNamePage } from "./pages/EditProfileName";
@@ -124,6 +125,10 @@ const SubscribeProfile = ({
             />
           </Route>
           <Route path="/logout" element={<LogoutPage />} />
+          <Route
+            path="/profile/delete"
+            element={<DeleteProfilePage userId={profile.userId} />}
+          />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       );

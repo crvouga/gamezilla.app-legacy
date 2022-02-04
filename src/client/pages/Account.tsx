@@ -1,4 +1,4 @@
-import { ChevronRight, Edit, Logout } from "@mui/icons-material";
+import { DeleteForever, ChevronRight, Edit, Logout } from "@mui/icons-material";
 import {
   AppBar,
   List,
@@ -45,6 +45,15 @@ export const AccountPage = ({
               <Logout />
             </ListItemIcon>
             <ListItemText primary="Logout" />
+          </ListItemButton>
+        </Link>
+
+        <Link href="/profile/delete">
+          <ListItemButton color="error.main">
+            <ListItemIcon>
+              <DeleteForever />
+            </ListItemIcon>
+            <ListItemText primary="Delete Profile" />
           </ListItemButton>
         </Link>
       </List>

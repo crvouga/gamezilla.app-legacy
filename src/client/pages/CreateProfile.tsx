@@ -1,6 +1,4 @@
 import { Close } from "@mui/icons-material";
-import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
-import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import {
   AppBar,
   Box,
@@ -10,10 +8,12 @@ import {
   Typography,
 } from "@mui/material";
 import Button from "@mui/material/Button";
-import MobileStepper from "@mui/material/MobileStepper";
-import { useTheme } from "@mui/material/styles";
-import React, { useState } from "react";
+import React from "react";
+import { useMutation } from "react-query";
+import { generateRandomAvatarSeed, toAvatarUrl } from "../../shared/avatar";
 import { Link } from "../components/Link";
+import { ModalLoader } from "../components/ModalLoader";
+import { createProfile } from "../data-access";
 
 export const CreateProfilePage = ({
   userId,
@@ -24,20 +24,12 @@ export const CreateProfilePage = ({
     name?: string;
   };
 }) => {
-  const theme = useTheme();
-
-  const [activeStep, setActiveStep] = React.useState(0);
-
-  const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
-  };
-
-  const handleBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
-  };
+  const mutation = useMutation(createProfile);
 
   return (
     <>
+      <ModalLoader open={mutation.status === "loading"} title="Creating..." />
+
       <AppBar>
         <Toolbar>
           <Link href="/logout">
@@ -52,41 +44,46 @@ export const CreateProfilePage = ({
       </AppBar>
 
       <Box sx={{ flex: 1, p: 2 }}>
-        <Typography variant="h4" align="center" gutterBottom>
-          What's your name?
-        </Typography>
-        <TextField defaultValue={userMetadata.name} label="Name" />
-      </Box>
+        <form
+          onSubmit={(event) => {
+            event.preventDefault();
 
-      <MobileStepper
-        variant="progress"
-        steps={3}
-        position="static"
-        activeStep={activeStep}
-        sx={{
-          width: "100%",
-        }}
-        nextButton={
-          <Button size="large" onClick={handleNext} disabled={activeStep === 3}>
-            Next
-            {theme.direction === "rtl" ? (
-              <KeyboardArrowLeft />
-            ) : (
-              <KeyboardArrowRight />
-            )}
+            const formData = new FormData(event.currentTarget);
+
+            const name = formData.get("name")?.toString();
+            const username = formData.get("username")?.toString();
+
+            if (name && username) {
+              mutation.mutate({
+                userId,
+                name,
+                username,
+                avatarUrl: toAvatarUrl(
+                  "croodles-neutral",
+                  generateRandomAvatarSeed()
+                ),
+              });
+            }
+          }}
+        >
+          <TextField
+            sx={{ marginBottom: 4 }}
+            defaultValue={userMetadata.name}
+            label="Name"
+            name="name"
+          />
+          <TextField
+            sx={{ marginBottom: 4 }}
+            defaultValue={userMetadata.name?.replace(" ", "").toLowerCase()}
+            label="Username"
+            name="username"
+          />
+
+          <Button fullWidth variant="contained" size="large" type="submit">
+            Create Profile
           </Button>
-        }
-        backButton={
-          <Button size="large" onClick={handleBack} disabled={activeStep === 0}>
-            {theme.direction === "rtl" ? (
-              <KeyboardArrowRight />
-            ) : (
-              <KeyboardArrowLeft />
-            )}
-            Back
-          </Button>
-        }
-      />
+        </form>
+      </Box>
     </>
   );
 };

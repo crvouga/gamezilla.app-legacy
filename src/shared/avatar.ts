@@ -71,7 +71,7 @@ const AVATAR_FILE_TYPE = "svg";
 
 export const toAvatarUrl = (style: IAvatarStyle, seed: IAvatarSeed) => {
   const url = new URL(
-    `${AVATAR_URL_ROOT}/${style}/${seed}.${AVATAR_FILE_TYPE}`
+    `${AVATAR_URL_ROOT}/${style}/${seed}.${AVATAR_FILE_TYPE}`,
   );
 
   if (style === "croodles" || style === "croodles-neutral") {
@@ -82,17 +82,16 @@ export const toAvatarUrl = (style: IAvatarStyle, seed: IAvatarSeed) => {
 };
 
 export const parseAvatarUrl = (
-  avatarUrl?: string
+  avatarUrl?: string,
 ): {
   avatarSeed: IAvatarSeed;
   avatarStyle: IAvatarStyle;
 } => {
   try {
-    const [avatarStyle, avatarSeed] =
-      new URL(avatarUrl ?? "")?.pathname
-        ?.split(".")?.[0]
-        ?.split("/")
-        ?.slice(-2) ?? [];
+    const [avatarStyle, avatarSeed] = new URL(avatarUrl ?? "")?.pathname
+      ?.split(".")?.[0]
+      ?.split("/")
+      ?.slice(-2) ?? [];
 
     if (avatarStyle && avatarSeed) {
       return {
