@@ -48,6 +48,13 @@ const darkTheme = createTheme({
       },
     },
 
+    MuiTextField: {
+      defaultProps: {
+        fullWidth: true,
+        variant: "outlined",
+      },
+    },
+
     MuiAlert: {
       defaultProps: {
         variant: "filled",
