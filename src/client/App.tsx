@@ -65,14 +65,7 @@ const SubscribeUser = ({ initial }: { initial: IProfile }) => {
 
   return (
     <Routes>
-      <Route
-        path="/"
-        element={
-          <RootLayout>
-            <HomePage profile={profile} />
-          </RootLayout>
-        }
-      />
+      <Route path="/" element={<HomePage profile={profile} />} />
       <Route path="/account" element={<AccountPage profile={profile} />} />
       <Route path="/profile/edit">
         <Route path="" element={<EditProfilePage profile={profile} />} />

@@ -5,6 +5,7 @@ import {
   Box,
   Button,
   List,
+  ListItemAvatar,
   ListItemButton,
   ListItemSecondaryAction,
   ListItemText,
@@ -41,53 +42,11 @@ export const EditProfilePage = ({
         }}
       >
         <Avatar
-          sx={{ width: 120, height: 120, marginBottom: 2 }}
-          src={profile.avatarUrl}
-        />
-
-        <Button href="/profile/edit/avatar" LinkComponent={LinkBehavior}>
-          Edit Avatar
-        </Button>
-      </Box>
-
-      <List>
-        <Link href="/profile/edit/username">
-          <ListItemField label="Username" value={profile.username} />
-        </Link>
-
-        <Link href="/profile/edit/name">
-          <ListItemField label="Name" value={profile.name} />
-        </Link>
-      </List>
-    </>
-  );
-};
-
-export const EditProfile = ({
-  profile,
-}: {
-  profile: { avatarUrl?: string; username?: string; name?: string };
-}) => {
-  return (
-    <>
-      <AppBar>
-        <Toolbar>
-          <Typography variant="h6" sx={{ flex: 1 }}>
-            Edit Profile
-          </Typography>
-        </Toolbar>
-      </AppBar>
-
-      <Box
-        sx={{
-          padding: 2,
-          width: "100%",
-          display: "grid",
-          placeItems: "center",
-        }}
-      >
-        <Avatar
-          sx={{ width: 120, height: 120, marginBottom: 2 }}
+          sx={{
+            width: 120,
+            height: 120,
+            marginBottom: 1,
+          }}
           src={profile.avatarUrl}
         />
 

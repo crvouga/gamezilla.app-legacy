@@ -4,13 +4,17 @@ import {
   responsiveFontSizes,
   ThemeProvider as MuiThemeProvider,
 } from "@mui/material";
-import { blue } from "@mui/material/colors";
+import { green, blue } from "@mui/material/colors";
 import React from "react";
 
 const darkTheme = createTheme({
   palette: {
     mode: "dark",
-    primary: blue,
+    primary: green,
+    background: {
+      default: "#000",
+      paper: "#232323",
+    },
   },
   typography: {
     fontFamily: [
@@ -26,13 +30,13 @@ const darkTheme = createTheme({
       '"Segoe UI Emoji"',
       '"Segoe UI Symbol"',
     ].join(","),
-    fontWeightRegular: "bold",
   },
   components: {
     MuiAppBar: {
       defaultProps: {
         position: "sticky",
         elevation: 0,
+        color: "transparent",
         // variant: "outlined",
       },
     },
