@@ -1,37 +1,15 @@
-import { Box, Container } from "@mui/material";
 import React from "react";
 import ReactDOM from "react-dom";
 import { QueryClient, QueryClientProvider } from "react-query";
+import { BrowserRouter } from "react-router-dom";
 import { App } from "./App";
 import { ThemeProvider } from "./components/ThemeContext";
-import { BrowserRouter } from "react-router-dom";
 
 ReactDOM.render(
   <QueryClientProvider client={new QueryClient()}>
     <BrowserRouter>
       <ThemeProvider>
-        <Box
-          sx={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            width: "100vw",
-            height: "100vh",
-          }}
-        >
-          <Container
-            disableGutters
-            maxWidth="sm"
-            sx={{
-              width: "100%",
-              height: "100%",
-              display: "flex",
-              flexDirection: "column",
-            }}
-          >
-            <App />
-          </Container>
-        </Box>
+        <App />
       </ThemeProvider>
     </BrowserRouter>
   </QueryClientProvider>,

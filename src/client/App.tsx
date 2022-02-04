@@ -1,5 +1,10 @@
 import { Chat, Home, Person, Search } from "@mui/icons-material";
-import { BottomNavigation, BottomNavigationAction } from "@mui/material";
+import {
+  BottomNavigation,
+  BottomNavigationAction,
+  Box,
+  Container,
+} from "@mui/material";
 import React from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { LinkBehavior } from "./components/Link";
@@ -13,11 +18,34 @@ import { EditProfileUsernamePage } from "./pages/EditProfileUsername";
 import { HomePage } from "./pages/Home";
 import { LoginPage } from "./pages/Login";
 import { LogoutPage } from "./pages/Logout";
-import { Splash } from "./pages/Splash";
+import { SplashPage } from "./pages/Splash";
 import { useSubscription } from "./utility";
 
 export const App = () => {
-  return <SubscribeAuth />;
+  return (
+    <Box
+      sx={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100vw",
+        height: "100vh",
+      }}
+    >
+      <Container
+        disableGutters
+        maxWidth="sm"
+        sx={{
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
+        <SubscribeAuth />
+      </Container>
+    </Box>
+  );
 };
 
 const SubscribeAuth = () => {
@@ -33,7 +61,7 @@ const SubscribeAuth = () => {
       );
 
     case "loading":
-      return <Splash />;
+      return <SplashPage />;
 
     case "logged-in":
       const { userId } = authStatus;
@@ -48,6 +76,9 @@ const SubscribeProfile = ({ userId }: { userId: string }) => {
   );
 
   switch (profileStatus.type) {
+    case "loading":
+      return <SplashPage />;
+
     case "not-found":
       return (
         <Routes>
@@ -59,9 +90,6 @@ const SubscribeProfile = ({ userId }: { userId: string }) => {
           <Route path="*" element={<Navigate to="/profile/create" />} />
         </Routes>
       );
-
-    case "loading":
-      return <Splash />;
 
     case "found":
       const { profile } = profileStatus;
@@ -86,6 +114,7 @@ const SubscribeProfile = ({ userId }: { userId: string }) => {
             />
           </Route>
           <Route path="/logout" element={<LogoutPage />} />
+          <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       );
   }
