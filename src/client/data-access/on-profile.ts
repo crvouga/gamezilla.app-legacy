@@ -30,11 +30,13 @@ const getProfile = async ({
   return null;
 };
 
-const createProfile = async ({
+export const createProfile = async ({
   userId,
 }: {
   userId: string;
-}): Promise<IProfile> => {
+}): Promise<
+  { type: "success"; profile: IProfile } | { type: "error"; error: Error }
+> => {
   const response = await supabaseClient
     .from<definitions["profile"]>("profile")
     .insert({
@@ -44,30 +46,20 @@ const createProfile = async ({
 
   if (response.data?.id) {
     return {
-      userId: response.data?.id,
-      avatarUrl: response.data?.avatar_url,
-      name: response.data?.name,
-      username: response.data?.username,
+      type: "success",
+      profile: {
+        userId: response.data?.id,
+        avatarUrl: response.data?.avatar_url,
+        name: response.data?.name,
+        username: response.data?.username,
+      },
     };
   }
 
-  throw new Error("failed to create");
-};
-
-export const getElseCreateProfile = async ({
-  userId,
-}: {
-  userId: string;
-}): Promise<IProfile> => {
-  const profile = await getProfile({ userId });
-
-  if (profile) {
-    return profile;
-  }
-
-  const created = await createProfile({ userId });
-
-  return created;
+  return {
+    type: "error",
+    error: new Error(response.error?.message ?? "Failed to create profile"),
+  };
 };
 
 type IProfileStatus = {

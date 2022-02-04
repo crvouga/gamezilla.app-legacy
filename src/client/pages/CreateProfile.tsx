@@ -12,11 +12,14 @@ import {
 import Button from "@mui/material/Button";
 import MobileStepper from "@mui/material/MobileStepper";
 import { useTheme } from "@mui/material/styles";
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "../components/Link";
 
 export const CreateProfilePage = ({ userId }: { userId: string }) => {
   const theme = useTheme();
+
+  const [name, setName] = useState("");
+
   const [activeStep, setActiveStep] = React.useState(0);
 
   const handleNext = () => {
@@ -55,8 +58,7 @@ export const CreateProfilePage = ({ userId }: { userId: string }) => {
         position="static"
         activeStep={activeStep}
         sx={{
-          maxWidth: 400,
-          // flexGrow: 1
+          width: "100%",
         }}
         nextButton={
           <Button size="large" onClick={handleNext} disabled={activeStep === 3}>

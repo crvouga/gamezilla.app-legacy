@@ -1,14 +1,11 @@
 import { Box, Typography } from "@mui/material";
 
-export const Splash = () => {
+export const SplashPage = () => {
   return (
     <Box
       sx={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        width: "100vw",
-        height: "100vh",
+        width: "100%",
+        height: "100%",
         display: "grid",
         placeItems: "center",
       }}
