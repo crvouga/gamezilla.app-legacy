@@ -12,6 +12,22 @@ const darkTheme = createTheme({
     mode: "dark",
     primary: blue,
   },
+  typography: {
+    fontFamily: [
+      "Nunito",
+      "-apple-system",
+      "BlinkMacSystemFont",
+      '"Segoe UI"',
+      "Roboto",
+      '"Helvetica Neue"',
+      "Arial",
+      "sans-serif",
+      '"Apple Color Emoji"',
+      '"Segoe UI Emoji"',
+      '"Segoe UI Symbol"',
+    ].join(","),
+    fontWeightRegular: "bold",
+  },
   components: {
     MuiAppBar: {
       defaultProps: {
