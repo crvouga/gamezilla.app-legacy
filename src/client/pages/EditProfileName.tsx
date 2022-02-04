@@ -58,11 +58,10 @@ export const EditProfileNamePage = ({
           onChange={(event) => {
             setName(event.target.value);
           }}
+          helperText="Help people discover your account by using the name you're known by:
+          either your full name, nickname, or business name."
         />
-        <Typography color="text.secondary">
-          Help people discover your account by using the name you're known by:
-          either your full name, nickname, or business name.
-        </Typography>
+        {/* <Typography color="text.secondary"></Typography> */}
       </Box>
     </>
   );

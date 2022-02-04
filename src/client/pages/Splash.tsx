@@ -13,7 +13,9 @@ export const Splash = () => {
         placeItems: "center",
       }}
     >
-      <Typography variant="h1">🦖</Typography>
+      <Typography variant="h3" color="primary.main">
+        Gamezilla
+      </Typography>
     </Box>
   );
 };
