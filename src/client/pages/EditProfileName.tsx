@@ -35,6 +35,10 @@ export const EditProfileNamePage = ({
     });
   };
 
+  const onCancel = () => {
+    setName(profile.name);
+  };
+
   return (
     <>
       <ModalLoader open={mutation.status === "loading"} title="Updating..." />
@@ -45,7 +49,6 @@ export const EditProfileNamePage = ({
           <Typography variant="h6" sx={{ flex: 1 }}>
             Edit Name
           </Typography>
-          <Button onClick={onDone}>Done</Button>
         </Toolbar>
       </AppBar>
 
@@ -63,6 +66,24 @@ export const EditProfileNamePage = ({
         />
         {/* <Typography color="text.secondary"></Typography> */}
       </Box>
+
+      <AppBar
+        color="default"
+        sx={{ position: "fixed", top: "auto", bottom: 0 }}
+      >
+        <Toolbar sx={{ justifyContent: "flex-end" }}>
+          <Button
+            onClick={onCancel}
+            variant="contained"
+            sx={{ marginRight: 2 }}
+          >
+            Cancel
+          </Button>
+          <Button onClick={onDone} variant="contained">
+            Done
+          </Button>
+        </Toolbar>
+      </AppBar>
     </>
   );
 };
