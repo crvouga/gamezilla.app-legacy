@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <!-- meta -->
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta
@@ -18,7 +19,22 @@
       href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;900&display=swap"
       rel="stylesheet"
     />
+
+    <!-- styles -->
+    <style>
+      * {
+        user-select: none;
+      }
+      #reactjs-app {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+      }
+    </style>
   </head>
+
   <body>
     <div id="reactjs-app"></div>
     <script type="module" src="main.tsx"></script>
