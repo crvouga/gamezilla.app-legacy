@@ -34,7 +34,6 @@ export const LoginPage = () => {
 
       <List>
         <ListItemButton
-          divider
           onClick={() => {
             mutation.mutate({ provider: "google" });
           }}
