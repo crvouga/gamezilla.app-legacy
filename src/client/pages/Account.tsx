@@ -9,8 +9,8 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-import { BackButton } from "../components/back-button";
-import { Link } from "../components/link";
+import BackButton from "../components/BackButton";
+import { Link } from "../components/Link";
 
 const Account = ({
   profile,

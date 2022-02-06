@@ -4,27 +4,25 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import { onAuthStatus, onProfileStatus } from "./data-access";
 import { useSubscription } from "./utility";
 
-const Account = React.lazy(() => import("./pages/account"));
-const Home = React.lazy(() => import("./pages/home"));
-const Login = React.lazy(() => import("./pages/login"));
-const Logout = React.lazy(() => import("./pages/logout"));
-const ProfileCreate = React.lazy(() => import("./pages/profile-create"));
-const ProfileDelete = React.lazy(() => import("./pages/profile-delete"));
-const ProfileUpdate = React.lazy(() => import("./pages/profile-update"));
+const Account = React.lazy(() => import("./pages/Account"));
+const Home = React.lazy(() => import("./pages/Home"));
+const Login = React.lazy(() => import("./pages/Login"));
+const Logout = React.lazy(() => import("./pages/Logout"));
+const ProfileCreate = React.lazy(() => import("./pages/ProfileCreate"));
+const ProfileDelete = React.lazy(() => import("./pages/ProfileDelete"));
+const ProfileUpdate = React.lazy(() => import("./pages/ProfileUpdate"));
 const ProfileUpdateAvatar = React.lazy(
-  () => import("./pages/profile-update-avatar")
+  () => import("./pages/ProfileUpdateAvatar")
 );
-const ProfileUpdateName = React.lazy(
-  () => import("./pages/profile-update-name")
-);
+const ProfileUpdateName = React.lazy(() => import("./pages/ProfileUpdateName"));
 const ProfileUpdateUsername = React.lazy(
-  () => import("./pages/profile-update-username")
+  () => import("./pages/ProfileUpdateUsername")
 );
-const Splash = React.lazy(() => import("./pages/splash"));
-const TicTacToe = React.lazy(() => import("./pages/tic-tac-toe"));
-const TicTacToeGame = React.lazy(() => import("./pages/tic-tac-toe-game"));
+const Splash = React.lazy(() => import("./pages/Splash"));
+const TicTacToe = React.lazy(() => import("./pages/TicTacToe"));
+const TicTacToeGame = React.lazy(() => import("./pages/TicTacToeGame"));
 
-export const App = () => {
+const App = () => {
   const theme = useTheme();
   return (
     <Box
@@ -130,3 +128,5 @@ const SubscribeProfile = ({
       );
   }
 };
+
+export default App;

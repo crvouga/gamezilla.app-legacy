@@ -10,7 +10,7 @@ import {
   Typography,
 } from "@mui/material";
 import React from "react";
-import { Link } from "../components/link";
+import { Link } from "../components/Link";
 
 const Home = ({ profile }: { profile: { avatarUrl?: string } }) => {
   return (

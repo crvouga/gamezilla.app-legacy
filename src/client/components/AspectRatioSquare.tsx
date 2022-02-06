@@ -1,7 +1,7 @@
 import { Box, BoxProps } from "@mui/material";
 import React from "react";
 
-export const AspectRatioSquare = ({ children, sx, ...props }: BoxProps) => {
+const AspectRatioSquare = ({ children, sx, ...props }: BoxProps) => {
   return (
     <Box
       sx={{
@@ -27,3 +27,5 @@ export const AspectRatioSquare = ({ children, sx, ...props }: BoxProps) => {
     </Box>
   );
 };
+
+export default AspectRatioSquare;

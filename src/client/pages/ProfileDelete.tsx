@@ -2,7 +2,7 @@ import { Button, Dialog, DialogActions, DialogTitle } from "@mui/material";
 import React from "react";
 import { useMutation } from "react-query";
 import { useNavigate } from "react-router-dom";
-import { ModalLoader } from "../components/modal-loader";
+import { ModalLoader } from "../components/ModalLoader";
 import { deleteProfile } from "../data-access";
 
 const ProfileDelete = ({ userId }: { userId: string }) => {

@@ -8,9 +8,9 @@ import {
   Typography,
 } from "@mui/material";
 import React from "react";
-import { BackButton } from "../components/back-button";
-import { Link, LinkBehavior } from "../components/link";
-import { ListItemField } from "../components/list-item-field";
+import BackButton from "../components/BackButton";
+import { Link, LinkBehavior } from "../components/Link";
+import { ListItemField } from "../components/ListItemField";
 
 const ProfileUpdate = ({
   profile,
