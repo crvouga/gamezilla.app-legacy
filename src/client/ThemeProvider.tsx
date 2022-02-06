@@ -94,7 +94,7 @@ const theme = responsiveFontSizes(darkTheme);
 const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   return (
     <MuiThemeProvider theme={theme}>
-      <CssBaseline />
+      <CssBaseline enableColorScheme />
       {children}
     </MuiThemeProvider>
   );
