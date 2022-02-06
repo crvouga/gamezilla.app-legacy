@@ -12,11 +12,11 @@ import {
 import React, { useState } from "react";
 import { useMutation } from "react-query";
 import { Route, Routes, useNavigate } from "react-router-dom";
-import { AspectRatioSquare } from "../components/aspect-ratio";
-import { BackButton } from "../components/back-button";
-import { Link } from "../components/link";
-import { ListItemField } from "../components/list-item-field";
-import { ModalLoader } from "../components/modal-loader";
+import AspectRatioSquare from "../components/AspectRatioSquare";
+import BackButton from "../components/BackButton";
+import { Link } from "../components/Link";
+import { ListItemField } from "../components/ListItemField";
+import { ModalLoader } from "../components/ModalLoader";
 import { updateProfile } from "../data-access";
 
 const ProfileUpdateAvatar = ({

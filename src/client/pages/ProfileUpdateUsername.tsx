@@ -12,8 +12,8 @@ import {
 import React, { useRef, useState } from "react";
 import { useMutation } from "react-query";
 import { useNavigate } from "react-router-dom";
-import { BackButton } from "../components/back-button";
-import { ModalLoader } from "../components/modal-loader";
+import BackButton from "../components/BackButton";
+import { ModalLoader } from "../components/ModalLoader";
 import { updateProfile } from "../data-access";
 
 const ProfileUpdateUsername = ({

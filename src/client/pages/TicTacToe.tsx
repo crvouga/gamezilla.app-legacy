@@ -11,7 +11,7 @@ import {
   Typography,
 } from "@mui/material";
 import React from "react";
-import { BackButton } from "../components/back-button";
+import BackButton from "../components/BackButton";
 
 export const TicTacToe = () => {
   const navigate = useNavigate();

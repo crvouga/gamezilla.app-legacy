@@ -1,7 +1,7 @@
 import { AppBar, Toolbar } from "@mui/material";
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
-import { BackButton } from "../components/back-button";
+import BackButton from "../components/BackButton";
 
 const theme = {
   background: "#31BCAC",

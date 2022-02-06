@@ -78,7 +78,7 @@ const darkTheme = createTheme({
 
 const theme = responsiveFontSizes(darkTheme);
 
-export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
+const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   return (
     <MuiThemeProvider theme={theme}>
       <CssBaseline />
@@ -86,3 +86,5 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
     </MuiThemeProvider>
   );
 };
+
+export default ThemeProvider;
