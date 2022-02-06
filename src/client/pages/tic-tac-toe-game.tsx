@@ -1,17 +1,7 @@
 import { AppBar, Toolbar } from "@mui/material";
-import React from "react";
+import React, { useState } from "react";
 import { useParams } from "react-router-dom";
-import { BackButton } from "../components/BackButton";
-
-export const TicTacToeGamePage = () => {
-  const { gameId } = useParams();
-
-  if (gameId) {
-    return <TicTacToeGame gameId={gameId} />;
-  }
-
-  return <></>;
-};
+import { BackButton } from "../components/back-button";
 
 const theme = {
   background: "#31BCAC",
@@ -20,7 +10,19 @@ const theme = {
   o: "#F2EAD2",
 };
 
-const TicTacToeGame = ({ gameId }: { gameId: string }) => {
+export const TicTacToeGame = () => {
+  const { gameId } = useParams();
+  const [gameState, setGameState] = useState({
+    users: {},
+    x: {},
+    o: {},
+    spectators: [],
+  });
+
+  if (!gameId) {
+    return <>error</>;
+  }
+
   return (
     <>
       <AppBar>
@@ -39,6 +41,7 @@ const TicTacToeGame = ({ gameId }: { gameId: string }) => {
           <line x1={2} y1={0} x2={2} y2={3} />
         </g>
       </svg>
+
       {gameId}
     </>
   );

@@ -1,6 +1,6 @@
 import { Box, Typography } from "@mui/material";
 
-export const SplashPage = () => {
+export const Splash = () => {
   return (
     <Box
       sx={{

@@ -2,10 +2,10 @@ import { Button, Dialog, DialogActions, DialogTitle } from "@mui/material";
 import React from "react";
 import { useMutation } from "react-query";
 import { useNavigate } from "react-router-dom";
-import { ModalLoader } from "../components/ModalLoader";
+import { ModalLoader } from "../components/modal-loader";
 import { logout } from "../data-access";
 
-export const LogoutPage = () => {
+export const Logout = () => {
   const navigate = useNavigate();
 
   const mutation = useMutation(logout, {

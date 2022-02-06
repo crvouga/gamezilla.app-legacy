@@ -9,10 +9,10 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-import { BackButton } from "../components/BackButton";
-import { Link } from "../components/Link";
+import { BackButton } from "../components/back-button";
+import { Link } from "../components/link";
 
-export const AccountPage = ({
+export const Account = ({
   profile,
 }: {
   profile: { username?: string; avatarUrl?: string };
