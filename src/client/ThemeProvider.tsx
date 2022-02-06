@@ -36,7 +36,20 @@ const darkTheme = createTheme({
   components: {
     MuiButtonBase: {
       defaultProps: {
-        disableRipple: false,
+        disableRipple: true,
+      },
+    },
+
+    MuiCircularProgress: {
+      defaultProps: {
+        disableShrink: true,
+      },
+      styleOverrides: {},
+    },
+
+    MuiLinearProgress: {
+      defaultProps: {
+        variant: "indeterminate",
       },
     },
 
