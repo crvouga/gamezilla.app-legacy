@@ -10,8 +10,8 @@
     "server:dev": "cd .builds/server && nodemon main.js",
     "server:build": "cd src/server && tsc main.ts --esModuleInterop --outDir ../../.builds/server",
     "server:start": "cd .builds/server && node main.js",
-    "client:dev": "parcel --dist-dir .builds/client src/client/main.html",
-    "client:build": "parcel build --dist-dir .builds/client src/client/main.html",
+    "client:dev": "npx parcel --dist-dir .builds/client src/client/main.html",
+    "client:build": "npx parcel build --dist-dir .builds/client src/client/main.html",
     "heroku:env": "heroku config -s -a gamezilla > .env",
     "heroku:start": "npm run server:start",
     "heroku:preview": "npm run heroku:env && npm install && npm run heroku-postbuild && npm run heroku:start",
@@ -24,7 +24,6 @@
     "@types/react-dom": "^17.0.11",
     "autoprefixer": "^10.4.2",
     "nodemon": "^2.0.15",
-    "parcel": "^2.2.0",
     "tslib": "^2.0.0",
     "typescript": "4.5.4"
   },
