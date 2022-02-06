@@ -11,10 +11,10 @@ import {
 } from "@mui/material";
 import React from "react";
 import { useMutation } from "react-query";
-import { ModalLoader } from "../components/ModalLoader";
+import { ModalLoader } from "../components/modal-loader";
 import { login } from "../data-access";
 
-export const LoginPage = () => {
+export const Login = () => {
   const mutation = useMutation(login);
 
   return (

@@ -10,12 +10,12 @@ import {
 import Button from "@mui/material/Button";
 import React from "react";
 import { useMutation } from "react-query";
-import { generateRandomAvatarSeed, toAvatarUrl } from "../../shared/avatar";
-import { Link } from "../components/Link";
-import { ModalLoader } from "../components/ModalLoader";
+import { Link } from "../components/link";
+import { ModalLoader } from "../components/modal-loader";
 import { createProfile } from "../data-access";
+import { generateRandomAvatarSeed, toAvatarUrl } from "./profile-update-avatar";
 
-export const CreateProfilePage = ({
+export const ProfileCreate = ({
   userId,
   userMetadata,
 }: {
