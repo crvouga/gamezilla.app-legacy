@@ -25,12 +25,17 @@
       * {
         user-select: none;
       }
+
+      html,
+      body,
       #reactjs-app {
         position: fixed;
         top: 0;
         left: 0;
         width: 100vw;
         height: 100vh;
+        height: -webkit-fill-available;
+        overflow: hidden;
       }
     </style>
   </head>
