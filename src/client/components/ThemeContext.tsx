@@ -32,15 +32,8 @@ const darkTheme = createTheme({
       '"Segoe UI Symbol"',
     ].join(","),
   },
-  components: {
-    MuiTypography: {
-      styleOverrides: {
-        root: {
-          userSelect: "none",
-        },
-      },
-    },
 
+  components: {
     MuiAppBar: {
       defaultProps: {
         position: "static",

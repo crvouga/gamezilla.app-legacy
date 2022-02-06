@@ -4,6 +4,7 @@ import {
   BottomNavigationAction,
   Box,
   Container,
+  useTheme,
 } from "@mui/material";
 import React from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
@@ -23,6 +24,7 @@ import { SplashPage } from "./pages/Splash";
 import { useSubscription } from "./utility";
 
 export const App = () => {
+  const theme = useTheme();
   return (
     <Box
       sx={{
@@ -31,12 +33,13 @@ export const App = () => {
         left: 0,
         width: "100vw",
         height: "100vh",
+        userSelect: "none",
       }}
     >
-      <Container
-        disableGutters
-        maxWidth="sm"
+      <Box
         sx={{
+          margin: "auto",
+          maxWidth: theme.breakpoints.values.sm,
           width: "100%",
           height: "100%",
           display: "flex",
@@ -44,7 +47,7 @@ export const App = () => {
         }}
       >
         <SubscribeAuth />
-      </Container>
+      </Box>
     </Box>
   );
 };
