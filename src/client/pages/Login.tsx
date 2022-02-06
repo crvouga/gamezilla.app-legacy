@@ -32,7 +32,7 @@ const Login = () => {
         </Toolbar>
       </AppBar>
 
-      <List>
+      <List component="div">
         <ListItemButton
           onClick={() => {
             mutation.mutate({ provider: "google" });
