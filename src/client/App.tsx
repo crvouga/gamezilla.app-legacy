@@ -1,26 +1,21 @@
 import { Box, useTheme } from "@mui/material";
-import React from "react";
+import React, { Suspense } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { onAuthStatus, onProfileStatus } from "./data-access";
+import Account from "./pages/Account";
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import Logout from "./pages/Logout";
+import ProfileCreate from "./pages/ProfileCreate";
+import ProfileDelete from "./pages/ProfileDelete";
+import ProfileUpdate from "./pages/ProfileUpdate";
+import ProfileUpdateAvatar from "./pages/ProfileUpdateAvatar";
+import ProfileUpdateName from "./pages/ProfileUpdateName";
+import ProfileUpdateUsername from "./pages/ProfileUpdateUsername";
+import Splash from "./pages/Splash";
+import TicTacToe from "./pages/TicTacToe";
+import TicTacToeGame from "./pages/TicTacToeGame";
 import { useSubscription } from "./utility";
-
-const Account = React.lazy(() => import("./pages/Account"));
-const Home = React.lazy(() => import("./pages/Home"));
-const Login = React.lazy(() => import("./pages/Login"));
-const Logout = React.lazy(() => import("./pages/Logout"));
-const ProfileCreate = React.lazy(() => import("./pages/ProfileCreate"));
-const ProfileDelete = React.lazy(() => import("./pages/ProfileDelete"));
-const ProfileUpdate = React.lazy(() => import("./pages/ProfileUpdate"));
-const ProfileUpdateAvatar = React.lazy(
-  () => import("./pages/ProfileUpdateAvatar")
-);
-const ProfileUpdateName = React.lazy(() => import("./pages/ProfileUpdateName"));
-const ProfileUpdateUsername = React.lazy(
-  () => import("./pages/ProfileUpdateUsername")
-);
-const Splash = React.lazy(() => import("./pages/Splash"));
-const TicTacToe = React.lazy(() => import("./pages/TicTacToe"));
-const TicTacToeGame = React.lazy(() => import("./pages/TicTacToeGame"));
 
 const App = () => {
   const theme = useTheme();
@@ -47,7 +42,14 @@ const SubscribeAuth = () => {
     case "logged-out":
       return (
         <Routes>
-          <Route path="/login" element={<Login />} />
+          <Route
+            path="/login"
+            element={
+              <Suspense fallback={<Splash />}>
+                <Login />
+              </Suspense>
+            }
+          />
           <Route path="*" element={<Navigate to="/login" />} />
         </Routes>
       );
