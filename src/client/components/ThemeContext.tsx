@@ -17,6 +17,7 @@ const darkTheme = createTheme({
     },
   },
   typography: {
+    fontSize: 18,
     fontFamily: [
       "Nunito",
       "-apple-system",
