@@ -34,6 +34,12 @@ const darkTheme = createTheme({
   },
 
   components: {
+    MuiButtonBase: {
+      defaultProps: {
+        disableRipple: false,
+      },
+    },
+
     MuiAppBar: {
       defaultProps: {
         position: "static",

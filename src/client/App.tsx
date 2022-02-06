@@ -21,6 +21,7 @@ import { LoginPage } from "./pages/Login";
 import { LogoutPage } from "./pages/Logout";
 import { SplashPage } from "./pages/Splash";
 import { TicTacToePage } from "./pages/TicTacToe";
+import { TicTacToeGamePage } from "./pages/TicTacToeGame";
 import { useSubscription } from "./utility";
 
 export const App = () => {
@@ -133,6 +134,11 @@ const SubscribeProfile = ({
             element={<DeleteProfilePage userId={profile.userId} />}
           />
           <Route path="/tic-tac-toe" element={<TicTacToePage />} />
+          <Route
+            path="/tic-tac-toe/game/:gameId"
+            element={<TicTacToeGamePage />}
+          />
+
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       );
