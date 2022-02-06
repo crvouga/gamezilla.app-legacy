@@ -1,6 +1,5 @@
 import {
   CircularProgress,
-  LinearProgress,
   Dialog,
   DialogContent,
   Typography,
@@ -15,7 +14,6 @@ export const ModalLoader = ({
 }) => {
   return (
     <Dialog open={open}>
-      <LinearProgress />
       <DialogContent
         sx={{
           display: "flex",
@@ -23,7 +21,7 @@ export const ModalLoader = ({
           justifyContent: "center",
         }}
       >
-        {/* <CircularProgress sx={{ marginRight: 4 }} /> */}
+        <CircularProgress sx={{ marginRight: 4 }} />
         <Typography variant="h6">{title}</Typography>
       </DialogContent>
     </Dialog>
