@@ -29,26 +29,15 @@ export const App = () => {
   return (
     <Box
       sx={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        width: "100vw",
-        height: "100vh",
-        userSelect: "none",
+        margin: "auto",
+        maxWidth: theme.breakpoints.values.sm,
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
       }}
     >
-      <Box
-        sx={{
-          margin: "auto",
-          maxWidth: theme.breakpoints.values.sm,
-          width: "100%",
-          height: "100%",
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
-        <SubscribeAuth />
-      </Box>
+      <SubscribeAuth />
     </Box>
   );
 };
