@@ -1,4 +1,5 @@
 import { Add, ChevronRight, Search } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
 import {
   AppBar,
   List,
@@ -13,6 +14,7 @@ import React from "react";
 import { BackButton } from "../components/BackButton";
 
 export const TicTacToePage = () => {
+  const navigate = useNavigate();
   return (
     <>
       <AppBar>
@@ -23,7 +25,12 @@ export const TicTacToePage = () => {
       </AppBar>
 
       <List>
-        <ListItemButton>
+        <ListItemButton
+          onClick={() => {
+            const gameId = String(Math.floor(Math.random() * 1000));
+            navigate(`/tic-tac-toe/game/${gameId}`);
+          }}
+        >
           <ListItemIcon>
             <Add />
           </ListItemIcon>
