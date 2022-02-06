@@ -1,8 +1,10 @@
+import { ChevronRight } from "@mui/icons-material";
 import {
   AppBar,
   Avatar,
   List,
   ListItemButton,
+  ListItemIcon,
   ListItemText,
   Toolbar,
   Typography,
@@ -28,7 +30,10 @@ export const HomePage = ({ profile }: { profile: { avatarUrl?: string } }) => {
       <List>
         <Link href="/tic-tac-toe">
           <ListItemButton>
-            <ListItemText primary="Play Tic Tac Toe" />
+            <ListItemText primary=" Tic Tac Toe" />
+            <ListItemIcon>
+              <ChevronRight />
+            </ListItemIcon>
           </ListItemButton>
         </Link>
       </List>
