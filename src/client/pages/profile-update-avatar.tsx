@@ -19,7 +19,7 @@ import { ListItemField } from "../components/list-item-field";
 import { ModalLoader } from "../components/modal-loader";
 import { updateProfile } from "../data-access";
 
-export const ProfileUpdateAvatar = ({
+const ProfileUpdateAvatar = ({
   profile,
 }: {
   profile: {
@@ -320,3 +320,5 @@ export const parseAvatarUrl = (
 export const generateRandomAvatarSeed = () => {
   return toAvatarSeed(String(Math.floor(Math.random() * 10000)));
 };
+
+export default ProfileUpdateAvatar;

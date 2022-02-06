@@ -46,3 +46,5 @@ export const TicTacToeGame = () => {
     </>
   );
 };
+
+export default TicTacToeGame;

@@ -2,20 +2,27 @@ import { Box, useTheme } from "@mui/material";
 import React from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { onAuthStatus, onProfileStatus } from "./data-access";
-import { Account } from "./pages/account";
-import { Home } from "./pages/home";
-import { Login } from "./pages/login";
-import { Logout } from "./pages/logout";
-import { ProfileCreate } from "./pages/profile-create";
-import { ProfileDelete } from "./pages/profile-delete";
-import { ProfileUpdate } from "./pages/profile-update";
-import { ProfileUpdateAvatar } from "./pages/profile-update-avatar";
-import { ProfileUpdateName } from "./pages/profile-update-name";
-import { ProfileUpdateUsername } from "./pages/profile-update-username";
-import { Splash } from "./pages/splash";
-import { TicTacToe } from "./pages/tic-tac-toe";
-import { TicTacToeGame } from "./pages/tic-tac-toe-game";
 import { useSubscription } from "./utility";
+
+const Account = React.lazy(() => import("./pages/account"));
+const Home = React.lazy(() => import("./pages/home"));
+const Login = React.lazy(() => import("./pages/login"));
+const Logout = React.lazy(() => import("./pages/logout"));
+const ProfileCreate = React.lazy(() => import("./pages/profile-create"));
+const ProfileDelete = React.lazy(() => import("./pages/profile-delete"));
+const ProfileUpdate = React.lazy(() => import("./pages/profile-update"));
+const ProfileUpdateAvatar = React.lazy(
+  () => import("./pages/profile-update-avatar")
+);
+const ProfileUpdateName = React.lazy(
+  () => import("./pages/profile-update-name")
+);
+const ProfileUpdateUsername = React.lazy(
+  () => import("./pages/profile-update-username")
+);
+const Splash = React.lazy(() => import("./pages/splash"));
+const TicTacToe = React.lazy(() => import("./pages/tic-tac-toe"));
+const TicTacToeGame = React.lazy(() => import("./pages/tic-tac-toe-game"));
 
 export const App = () => {
   const theme = useTheme();

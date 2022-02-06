@@ -16,7 +16,7 @@ import { BackButton } from "../components/back-button";
 import { ModalLoader } from "../components/modal-loader";
 import { updateProfile } from "../data-access";
 
-export const ProfileUpdateUsername = ({
+const ProfileUpdateUsername = ({
   profile,
 }: {
   profile: { userId: string; username?: string };
@@ -84,3 +84,5 @@ export const ProfileUpdateUsername = ({
     </>
   );
 };
+
+export default ProfileUpdateUsername;
