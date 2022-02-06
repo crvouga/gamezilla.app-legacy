@@ -4,7 +4,7 @@ import {
   responsiveFontSizes,
   ThemeProvider as MuiThemeProvider,
 } from "@mui/material";
-import { green, blue } from "@mui/material/colors";
+import { green } from "@mui/material/colors";
 import React from "react";
 
 const darkTheme = createTheme({
