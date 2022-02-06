@@ -3,7 +3,6 @@ import {
   BottomNavigation,
   BottomNavigationAction,
   Box,
-  Container,
   useTheme,
 } from "@mui/material";
 import React from "react";
@@ -21,6 +20,7 @@ import { HomePage } from "./pages/Home";
 import { LoginPage } from "./pages/Login";
 import { LogoutPage } from "./pages/Logout";
 import { SplashPage } from "./pages/Splash";
+import { TicTacToePage } from "./pages/TicTacToe";
 import { useSubscription } from "./utility";
 
 export const App = () => {
@@ -132,6 +132,7 @@ const SubscribeProfile = ({
             path="/profile/delete"
             element={<DeleteProfilePage userId={profile.userId} />}
           />
+          <Route path="/tic-tac-toe" element={<TicTacToePage />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       );
