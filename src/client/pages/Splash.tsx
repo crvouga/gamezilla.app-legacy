@@ -1,6 +1,6 @@
 import { Box, Typography } from "@mui/material";
 
-export const Splash = () => {
+const Splash = () => {
   return (
     <Box
       sx={{
@@ -16,3 +16,5 @@ export const Splash = () => {
     </Box>
   );
 };
+
+export default Splash;

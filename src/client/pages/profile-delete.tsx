@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { ModalLoader } from "../components/modal-loader";
 import { deleteProfile } from "../data-access";
 
-export const ProfileDelete = ({ userId }: { userId: string }) => {
+const ProfileDelete = ({ userId }: { userId: string }) => {
   const navigate = useNavigate();
 
   const mutation = useMutation(deleteProfile, {
@@ -36,3 +36,5 @@ export const ProfileDelete = ({ userId }: { userId: string }) => {
     </Dialog>
   );
 };
+
+export default ProfileDelete;

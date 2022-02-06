@@ -12,7 +12,7 @@ import {
 import React from "react";
 import { Link } from "../components/link";
 
-export const Home = ({ profile }: { profile: { avatarUrl?: string } }) => {
+const Home = ({ profile }: { profile: { avatarUrl?: string } }) => {
   return (
     <>
       <AppBar>
@@ -40,3 +40,5 @@ export const Home = ({ profile }: { profile: { avatarUrl?: string } }) => {
     </>
   );
 };
+
+export default Home;

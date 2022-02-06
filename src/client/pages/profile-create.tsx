@@ -15,7 +15,7 @@ import { ModalLoader } from "../components/modal-loader";
 import { createProfile } from "../data-access";
 import { generateRandomAvatarSeed, toAvatarUrl } from "./profile-update-avatar";
 
-export const ProfileCreate = ({
+const ProfileCreate = ({
   userId,
   userMetadata,
 }: {
@@ -87,3 +87,5 @@ export const ProfileCreate = ({
     </>
   );
 };
+
+export default ProfileCreate;

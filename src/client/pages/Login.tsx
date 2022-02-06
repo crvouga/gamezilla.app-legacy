@@ -14,7 +14,7 @@ import { useMutation } from "react-query";
 import { ModalLoader } from "../components/modal-loader";
 import { login } from "../data-access";
 
-export const Login = () => {
+const Login = () => {
   const mutation = useMutation(login);
 
   return (
@@ -50,3 +50,5 @@ export const Login = () => {
     </>
   );
 };
+
+export default Login;

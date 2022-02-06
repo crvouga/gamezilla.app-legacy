@@ -12,7 +12,7 @@ import { BackButton } from "../components/back-button";
 import { Link, LinkBehavior } from "../components/link";
 import { ListItemField } from "../components/list-item-field";
 
-export const ProfileUpdate = ({
+const ProfileUpdate = ({
   profile,
 }: {
   profile: { avatarUrl?: string; username?: string; name?: string };
@@ -62,3 +62,5 @@ export const ProfileUpdate = ({
     </>
   );
 };
+
+export default ProfileUpdate;

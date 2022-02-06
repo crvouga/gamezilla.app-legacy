@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { ModalLoader } from "../components/modal-loader";
 import { logout } from "../data-access";
 
-export const Logout = () => {
+const Logout = () => {
   const navigate = useNavigate();
 
   const mutation = useMutation(logout, {
@@ -36,3 +36,5 @@ export const Logout = () => {
     </Dialog>
   );
 };
+
+export default Logout;

@@ -12,7 +12,7 @@ import {
 import { BackButton } from "../components/back-button";
 import { Link } from "../components/link";
 
-export const Account = ({
+const Account = ({
   profile,
 }: {
   profile: { username?: string; avatarUrl?: string };
@@ -60,3 +60,5 @@ export const Account = ({
     </>
   );
 };
+
+export default Account;
