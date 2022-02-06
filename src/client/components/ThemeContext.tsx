@@ -33,6 +33,14 @@ const darkTheme = createTheme({
     ].join(","),
   },
   components: {
+    MuiTypography: {
+      styleOverrides: {
+        root: {
+          userSelect: "none",
+        },
+      },
+    },
+
     MuiAppBar: {
       defaultProps: {
         position: "static",
