@@ -1,5 +1,5 @@
 import { Box, useTheme } from "@mui/material";
-import React from "react";
+import React, { useEffect } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { onAuthStatus, onProfileStatus } from "./data-access";
 import Account from "./pages/Account";
@@ -16,9 +16,15 @@ import Splash from "./pages/Splash";
 import TicTacToe from "./pages/TicTacToe";
 import TicTacToeGame from "./pages/TicTacToeGame";
 import { useSubscription } from "./utility";
+import { publish, subscribe } from "./data-access/socket";
 
 const App = () => {
   const theme = useTheme();
+
+  useEffect(() => {
+    publish("clients", { type: "MOUNT" });
+  }, []);
+
   return (
     <Box
       sx={{

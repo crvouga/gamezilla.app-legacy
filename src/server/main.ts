@@ -1,29 +1,42 @@
 import express from "express";
+import socketio from "socket.io";
+import http from "http";
 
-const expressApp = express();
+const startServer = async ({
+  port,
+  mode,
+}: {
+  port: number;
+  mode: "development" | "production";
+}) => {
+  const expressApp = express();
+  const httpServer = http.createServer(expressApp);
+  const socketServer = new socketio.Server(httpServer, {
+    cors: {
+      origin: mode === "development" ? "*" : [],
+      credentials: true,
+    },
+  });
 
-/**
- *
- * Serving frontend app files
- *
- */
+  socketServer.on("connection", (socket) => {
+    console.log("a user connected");
+    socket.on("subscribe", (channelId: string) => {
+      socket.join(channelId);
+    });
+    socket.on("unsubscribe", (channelId: string) => {
+      socket.leave(channelId);
+    });
+  });
 
-expressApp.get("/api/hello", (_req, res) => {
-  res.json({ message: "GELLo" });
-});
+  httpServer.listen(port, () => {
+    console.log(`Backend Ready\n -\- Local: http://localhost:${port}/`);
+  });
+};
 
-expressApp.get("/api/chat/conversations", (req, res) => {
-  res.json({});
-});
+const mode =
+  process.env.NODE_ENV === "production" ? "production" : "development";
 
-/**
- *
- * Starting server
- *
- */
-
-const PORT = Number(process.env.PORT ?? 3000);
-
-expressApp.listen(PORT, () => {
-  console.log(`Backend Ready\n -\- Local: http://localhost:${PORT}/`);
+startServer({
+  port: Number(process.env.PORT ?? 8000),
+  mode,
 });
