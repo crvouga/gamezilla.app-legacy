@@ -1,4 +1,4 @@
-import { DeleteForever, ChevronRight, Edit, Logout } from "@mui/icons-material";
+import { ChevronRight, DeleteForever, Edit, Logout } from "@mui/icons-material";
 import {
   AppBar,
   List,
@@ -9,8 +9,8 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
+import { Link } from "react-router-dom";
 import BackButton from "../components/BackButton";
-import { Link } from "../components/Link";
 
 const Account = ({
   profile,
@@ -27,7 +27,7 @@ const Account = ({
       </AppBar>
 
       <List>
-        <Link href="/profile/edit">
+        <Link to="/profile/edit">
           <ListItemButton>
             <ListItemIcon>
               <Edit />
@@ -39,21 +39,21 @@ const Account = ({
           </ListItemButton>
         </Link>
 
-        <Link href="/logout">
+        <Link to="/profile/delete">
+          <ListItemButton divider>
+            <ListItemIcon>
+              <DeleteForever />
+            </ListItemIcon>
+            <ListItemText primary="Delete Profile" />
+          </ListItemButton>
+        </Link>
+
+        <Link to="/logout">
           <ListItemButton>
             <ListItemIcon>
               <Logout />
             </ListItemIcon>
             <ListItemText primary="Logout" />
-          </ListItemButton>
-        </Link>
-
-        <Link href="/profile/delete">
-          <ListItemButton color="error.main">
-            <ListItemIcon>
-              <DeleteForever />
-            </ListItemIcon>
-            <ListItemText primary="Delete Profile" />
           </ListItemButton>
         </Link>
       </List>
