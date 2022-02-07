@@ -1,5 +1,5 @@
 import { Box, useTheme } from "@mui/material";
-import React, { Suspense } from "react";
+import React from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { onAuthStatus, onProfileStatus } from "./data-access";
 import Account from "./pages/Account";
@@ -42,14 +42,7 @@ const SubscribeAuth = () => {
     case "logged-out":
       return (
         <Routes>
-          <Route
-            path="/login"
-            element={
-              <Suspense fallback={<Splash />}>
-                <Login />
-              </Suspense>
-            }
-          />
+          <Route path="/login" element={<Login />} />
           <Route path="*" element={<Navigate to="/login" />} />
         </Routes>
       );
