@@ -4,14 +4,13 @@
   "private": true,
   "license": "",
   "scripts": {
-    "watch": "tsc -w",
+    "server:start": "node --inspect=5858 -r ts-node/register ./src/server/main.ts",
+    "server:start:watch": "nodemon",
     "postinstall": "npm run server:build",
-    "heroku-postbuild": "npm run client:build",
-    "server:dev": "cd .builds/server && nodemon main.js",
-    "server:build": "cd src/server && tsc main.ts --esModuleInterop --outDir ../../.builds/server",
-    "server:start": "cd .builds/server && node main.js",
-    "client:dev": "npx parcel --dist-dir .builds/client src/client/main.html",
-    "client:build": "npx parcel build --dist-dir .builds/client src/client/main.html",
+    "server:dev": "cd dist/server && nodemon main.js",
+    "server:build": "cd src/server && tsc main.ts --esModuleInterop --outDir ../../dist/server",
+    "client:dev": "npx parcel --dist-dir dist/client src/client/main.html",
+    "client:build": "npx parcel build --dist-dir dist/client src/client/main.html",
     "heroku:env": "heroku config -s -a gamezilla > .env",
     "heroku:start": "npm run server:start",
     "heroku:preview": "npm run heroku:env && npm install && npm run heroku-postbuild && npm run heroku:start",
@@ -39,6 +38,20 @@
     "react-query": "^3.34.11",
     "react-router-dom": "^6.2.1",
     "socket.io": "^4.4.1",
-    "socket.io-client": "^4.4.1"
+    "socket.io-client": "^4.4.1",
+    "ts-node": "^10.5.0"
+  },
+  "nodemonConfig": {
+    "ignore": [
+      "**/*.test.ts",
+      "**/*.spec.ts",
+      ".git",
+      "node_modules"
+    ],
+    "watch": [
+      "src"
+    ],
+    "exec": "npm run server:start",
+    "ext": "ts"
   }
 }

@@ -29,14 +29,11 @@ const startServer = async ({
   });
 
   httpServer.listen(port, () => {
-    console.log(`Backend Ready\n -\- Local: http://localhost:${port}/`);
+    console.log(`Server Listening: http://localhost:${port}/`);
   });
 };
 
-const mode =
-  process.env.NODE_ENV === "production" ? "production" : "development";
-
 startServer({
   port: Number(process.env.PORT ?? 8000),
-  mode,
+  mode: process.env.NODE_ENV === "production" ? "production" : "development",
 });
