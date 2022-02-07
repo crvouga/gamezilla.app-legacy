@@ -23,6 +23,8 @@ export type IMessage =
       userId: string;
     };
 
+export type ChannelId = string;
+
 export const nextState = () => {
   return;
 };
