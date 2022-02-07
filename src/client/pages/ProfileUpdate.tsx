@@ -8,8 +8,8 @@ import {
   Typography,
 } from "@mui/material";
 import React from "react";
+import { Link } from "react-router-dom";
 import BackButton from "../components/BackButton";
-import { Link, LinkBehavior } from "../components/Link";
 import { ListItemField } from "../components/ListItemField";
 
 const ProfileUpdate = ({
@@ -45,19 +45,23 @@ const ProfileUpdate = ({
           src={profile.avatarUrl}
         />
 
-        <Button href="/profile/edit/avatar" LinkComponent={LinkBehavior}>
-          Edit Avatar
-        </Button>
+        <Link to="/profile/edit/avatar">
+          <Button>Edit Avatar</Button>
+        </Link>
       </Box>
 
       <List>
-        <Link href="/profile/edit/username">
-          <ListItemField label="Username" value={profile.username} />
-        </Link>
+        <ListItemField
+          to="/profile/edit/username"
+          label="Username"
+          value={profile.username}
+        />
 
-        <Link href="/profile/edit/name">
-          <ListItemField label="Name" value={profile.name} />
-        </Link>
+        <ListItemField
+          to="/profile/edit/name"
+          label="Name"
+          value={profile.name}
+        />
       </List>
     </>
   );

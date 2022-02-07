@@ -2,15 +2,16 @@ import { ChevronRight } from "@mui/icons-material";
 import {
   AppBar,
   Avatar,
+  ButtonBase,
   List,
   ListItemButton,
-  ListItemIcon,
+  ListItemSecondaryAction,
   ListItemText,
   Toolbar,
   Typography,
 } from "@mui/material";
 import React from "react";
-import { Link } from "../components/Link";
+import { Link } from "react-router-dom";
 
 const Home = ({ profile }: { profile: { avatarUrl?: string } }) => {
   return (
@@ -21,19 +22,19 @@ const Home = ({ profile }: { profile: { avatarUrl?: string } }) => {
             Home
           </Typography>
 
-          <Link href="/account">
+          <Link to="/account">
             <Avatar src={profile.avatarUrl} />
           </Link>
         </Toolbar>
       </AppBar>
 
       <List>
-        <Link href="/tic-tac-toe">
+        <Link to="/tic-tac-toe">
           <ListItemButton>
-            <ListItemText primary=" Tic Tac Toe" />
-            <ListItemIcon>
+            <ListItemText primary="Tic Tac Toe" />
+            <ListItemSecondaryAction>
               <ChevronRight />
-            </ListItemIcon>
+            </ListItemSecondaryAction>
           </ListItemButton>
         </Link>
       </List>
