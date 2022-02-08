@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "npx parcel src/main.html",
     "build": "npx parcel build src/main.html",
-    "generate-supabase-types": "npx openapi-typescript https://ldxpcprlgecjvqwzuxgv.supabase.co/rest/v1/?apikey=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTYzNzA0MDQ5NywiZXhwIjoxOTUyNjE2NDk3fQ.ReI8CpIFbLB9Q53Az7CDBIyrn_o1JeGhPoZXdqx8Ac4 --output src/third-party/supabase-types.ts"
+    "generate-supabase-types": "npx openapi-typescript https://ldxpcprlgecjvqwzuxgv.supabase.co/rest/v1/?apikey=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTYzNzA0MDQ5NywiZXhwIjoxOTUyNjE2NDk3fQ.ReI8CpIFbLB9Q53Az7CDBIyrn_o1JeGhPoZXdqx8Ac4 --output src/third-party/supabase-types.ts",
+    "load-env": "vercel env pull"
   },
   "devDependencies": {
     "@types/react": "17.0.38",
