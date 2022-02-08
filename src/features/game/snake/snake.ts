@@ -1,11 +1,5 @@
-import {
-  INaturalNumber,
-  Record,
-  IRandomSeed,
-  List,
-  NaturalNumber,
-} from "src/utility";
-import { Position, IPosition } from "./snake-position";
+import { INaturalNumber, List, NaturalNumber, Record } from "utility";
+import { IPosition, Position } from "./snake-position";
 
 type IState = {
   type: "SnakeState";
