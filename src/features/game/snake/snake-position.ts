@@ -1,4 +1,4 @@
-import { List, IInteger, Integer } from "src/utility";
+import { IInteger, Integer, List } from "utility";
 
 export type IPosition = {
   x: IInteger;
