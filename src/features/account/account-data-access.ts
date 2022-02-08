@@ -1,8 +1,7 @@
 import { supabaseClient } from "../../third-party-services";
+import { IAuthStatus, ILogin } from "./account-data";
 
-const NEVER_RESOLVE = new Promise((_resolve, _reject) => {});
-
-export const login = async ({ provider }: { provider: "google" }) => {
+export const login = async ({ provider }: ILogin) => {
   const redirectTo = window.location.href;
 
   await supabaseClient.auth.signIn(
@@ -11,33 +10,14 @@ export const login = async ({ provider }: { provider: "google" }) => {
     },
     {
       redirectTo: redirectTo,
-    }
+    },
   );
-
-  await NEVER_RESOLVE;
 };
 
 export const logout = async () => {
   await new Promise((resolve) => setTimeout(resolve, 3000));
   supabaseClient.auth.signOut();
 };
-
-export type IUserMetadata = {
-  name?: string;
-};
-
-export type IAuthStatus =
-  | {
-      type: "loading";
-    }
-  | {
-      type: "logged-in";
-      userId: string;
-      userMetadata: IUserMetadata;
-    }
-  | {
-      type: "logged-out";
-    };
 
 export const getAuthStatus = async (): Promise<IAuthStatus> => {
   const session = supabaseClient.auth.session();
@@ -90,7 +70,7 @@ export const onAuthStatus = (set: (state: IAuthStatus) => void) => {
           set({ type: "logged-out" });
           return;
       }
-    }
+    },
   );
 
   return () => {

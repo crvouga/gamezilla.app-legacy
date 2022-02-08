@@ -1,6 +1,5 @@
 /node_modules/
 .DS_Store
-.builds
 .parcel-cache
 .env
 tsconfig.tsbuildinfo
