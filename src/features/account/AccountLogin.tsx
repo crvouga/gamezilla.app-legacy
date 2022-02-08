@@ -15,7 +15,13 @@ import { ModalLoader } from "../../components/ModalLoader";
 import { login } from "./account-data-access";
 
 const Login = () => {
-  const mutation = useMutation(login);
+  const mutation = useMutation(async (...params: Parameters<typeof login>) => {
+    await login(...params);
+
+    const NEVER_RESOLVE = new Promise(() => {});
+
+    await NEVER_RESOLVE;
+  });
 
   return (
     <>
