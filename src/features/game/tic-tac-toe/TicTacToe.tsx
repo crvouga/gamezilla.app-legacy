@@ -1,5 +1,5 @@
-import { AppBar, Toolbar } from "@mui/material";
-import BackButton from "components/BackButton";
+import { AppBar, Button, IconButton, Toolbar } from "@mui/material";
+
 import React from "react";
 import { Navigate, useParams } from "react-router-dom";
 
@@ -10,7 +10,7 @@ const theme = {
   o: "#F2EAD2",
 };
 
-const TicTacToeSession = () => {
+const TicTacToe = () => {
   const { gameId } = useParams();
 
   if (!gameId) {
@@ -29,7 +29,7 @@ const SubscribeSession = ({ gameId }: { gameId: string }) => {
     <>
       <AppBar>
         <Toolbar>
-          <BackButton />
+          <Button>Leave</Button>
         </Toolbar>
       </AppBar>
 
@@ -47,4 +47,4 @@ const SubscribeSession = ({ gameId }: { gameId: string }) => {
   );
 };
 
-export default TicTacToeSession;
+export default TicTacToe;

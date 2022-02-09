@@ -28,6 +28,14 @@ const darkTheme = createTheme({
   },
 
   components: {
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          backgroundColor: "#000",
+        },
+      },
+    },
+
     MuiAppBar: {
       defaultProps: {
         position: "static",

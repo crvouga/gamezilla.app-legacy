@@ -107,7 +107,9 @@ export const onProfileStatus = ({ userId }: { userId: string }) => (
       });
       return;
     }
-    set({ type: "not-found" });
+    set({
+      type: "not-found",
+    });
   });
 
   const subscription = supabaseClient
@@ -135,7 +137,9 @@ export const onProfileStatus = ({ userId }: { userId: string }) => (
       });
     })
     .on("DELETE", () => {
-      set({ type: "not-found" });
+      set({
+        type: "not-found",
+      });
     })
     .subscribe();
 

@@ -66,31 +66,36 @@ type IPosition = {
 };
 
 type IPlayerMoved = {
-  type: "tic-tac-toe-game/PLAYER_MOVED";
+  namespace: "tic-tac-toe";
+  type: "PLAYER_MOVED";
   player: IPlayer;
   position: IPosition;
 };
 
-type IGameEvent = IPlayerMoved;
+export type IGameEvent = IPlayerMoved;
 
-type IGameState = IGameEvent[];
-
-export type IGameSession = {
-  gameSessionId: string;
-  gameState: IGameState;
-};
-
-export type ITicTacToeCommand = {
-  type: "ticTacToeGame:movePlayer";
-  player: IPlayer;
-  position: IPosition;
-};
+export type IGameSessionEvent =
+  | {
+    namespace: "tic-tac-toe-game-session";
+    gameSessionId: string;
+    type: "CREATED_GAME_SESSION";
+  }
+  | {
+    namespace: "tic-tac-toe-game-session";
+    gameSessionId: string;
+    type: "LEFTED_GAME_SESSION";
+  }
+  | {
+    namespace: "tic-tac-toe-game-session";
+    type: "GAME_EVENT";
+    gameEvent: IGameEvent;
+  };
 
 export const turnReducer = (
   turn: IPlayer,
   event: IGameEvent,
 ): IPlayer => {
-  if (event.type === "tic-tac-toe-game/PLAYER_MOVED") {
+  if (event.type === "PLAYER_MOVED") {
     return event.player;
   }
 
@@ -111,7 +116,7 @@ export const boardReducer = (
   board: IBoard,
   event: IGameEvent,
 ): IBoard => {
-  if (event.type === "tic-tac-toe-game/PLAYER_MOVED") {
+  if (event.type === "PLAYER_MOVED") {
     return mapBoard(board, (slot, x, y) => {
       if (
         slot === "empty" &&

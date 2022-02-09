@@ -13,24 +13,15 @@ import {
 } from "@mui/material";
 import React from "react";
 
-export const TicTacToe = () => {
+export const GameSessionCreate = () => {
+  return <>create game session</>;
+};
+
+export const GameSession = () => {
   const navigate = useNavigate();
 
   return (
     <>
-      <AppBar>
-        <Toolbar>
-          <IconButton
-            onClick={() => {
-              navigate(-1);
-            }}
-          >
-            <ChevronLeft />
-          </IconButton>
-          <Typography variant="h6">Tic Tac Toe</Typography>
-        </Toolbar>
-      </AppBar>
-
       <List>
         <ListItemButton
           onClick={() => {
@@ -60,5 +51,3 @@ export const TicTacToe = () => {
     </>
   );
 };
-
-export default TicTacToe;
