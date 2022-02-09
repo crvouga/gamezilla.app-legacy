@@ -10,21 +10,21 @@ const theme = {
   o: "#F2EAD2",
 };
 
-export const TicTacToeGame = () => {
+const TicTacToeSession = () => {
   const { gameId } = useParams();
 
   if (!gameId) {
     return (
       <Navigate
-        to={`/tic-tac-toe/game/${Math.floor(Math.random() * 100_000)}`}
+        to={`/tic-tac-toe/session/${Math.floor(Math.random() * 100_000)}`}
       />
     );
   }
 
-  return <TicTacToeGameId gameId={gameId} />;
+  return <SubscribeSession gameId={gameId} />;
 };
 
-const TicTacToeGameId = ({ gameId }: { gameId: string }) => {
+const SubscribeSession = ({ gameId }: { gameId: string }) => {
   return (
     <>
       <AppBar>
@@ -47,4 +47,4 @@ const TicTacToeGameId = ({ gameId }: { gameId: string }) => {
   );
 };
 
-export default TicTacToeGame;
+export default TicTacToeSession;

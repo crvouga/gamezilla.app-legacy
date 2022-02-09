@@ -1,7 +1,8 @@
-import { Add, ChevronRight, Search } from "@mui/icons-material";
+import { Add, ChevronLeft, ChevronRight, Search } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import {
   AppBar,
+  IconButton,
   List,
   ListItemButton,
   ListItemIcon,
@@ -11,15 +12,21 @@ import {
   Typography,
 } from "@mui/material";
 import React from "react";
-import BackButton from "../../../components/BackButton";
 
 export const TicTacToe = () => {
   const navigate = useNavigate();
+
   return (
     <>
       <AppBar>
         <Toolbar>
-          <BackButton />
+          <IconButton
+            onClick={() => {
+              navigate(-1);
+            }}
+          >
+            <ChevronLeft />
+          </IconButton>
           <Typography variant="h6">Tic Tac Toe</Typography>
         </Toolbar>
       </AppBar>
@@ -28,7 +35,7 @@ export const TicTacToe = () => {
         <ListItemButton
           onClick={() => {
             const gameId = String(Math.floor(Math.random() * 1000));
-            navigate(`/tic-tac-toe/game/${gameId}`);
+            navigate(`/tic-tac-toe/session/${gameId}`);
           }}
         >
           <ListItemIcon>
