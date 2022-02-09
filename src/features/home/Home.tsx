@@ -11,9 +11,15 @@ import {
   Typography,
 } from "@mui/material";
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Home = ({ profile }: { profile: { avatarUrl?: string } }) => {
+  const navigate = useNavigate();
+
+  const onCreateGame = () => {
+    navigate(`/game-session/${Math.floor(Math.random() * 100000)}`);
+  };
+
   return (
     <>
       <AppBar>
@@ -29,17 +35,15 @@ const Home = ({ profile }: { profile: { avatarUrl?: string } }) => {
       </AppBar>
 
       <List>
-        <Link to="/game-session/create">
-          <ListItemButton>
-            <ListItemIcon>
-              <Add />
-            </ListItemIcon>
-            <ListItemText primary="Create Game" />
-            <ListItemSecondaryAction>
-              <ChevronRight />
-            </ListItemSecondaryAction>
-          </ListItemButton>
-        </Link>
+        <ListItemButton onClick={onCreateGame}>
+          <ListItemIcon>
+            <Add />
+          </ListItemIcon>
+          <ListItemText primary="Create Game" />
+          <ListItemSecondaryAction>
+            <ChevronRight />
+          </ListItemSecondaryAction>
+        </ListItemButton>
 
         <ListItemButton>
           <ListItemIcon>

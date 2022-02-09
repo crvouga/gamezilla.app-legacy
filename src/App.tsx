@@ -5,7 +5,7 @@ import Account from "./features/account/Account";
 import { onAuthStatus } from "./features/account/account-data-access";
 import Login from "./features/account/AccountLogin";
 import Logout from "./features/account/AccountLogout";
-import { GameSession, GameSessionCreate } from "./features/game/GameSession";
+import { GameSession } from "./features/game/GameSession";
 import Home from "./features/home/Home";
 import { onProfileStatus } from "./features/profile/profile-data-access";
 import ProfileCreate from "./features/profile/ProfileCreate";
@@ -137,7 +137,7 @@ const SubscribeProfile = ({
             path="/profile/delete"
             element={<ProfileDelete userId={profile.userId} />}
           />
-          <Route path="/game-session/create" element={<GameSessionCreate />} />
+
           <Route
             path="/game-session/:gameSessionId"
             element={<GameSession />}
