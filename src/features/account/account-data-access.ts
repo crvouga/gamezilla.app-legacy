@@ -10,7 +10,7 @@ export const login = async ({ provider }: ILogin) => {
     },
     {
       redirectTo: redirectTo,
-    },
+    }
   );
 };
 
@@ -70,7 +70,7 @@ export const onAuthStatus = (set: (state: IAuthStatus) => void) => {
           set({ type: "logged-out" });
           return;
       }
-    },
+    }
   );
 
   return () => {

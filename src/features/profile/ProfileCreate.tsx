@@ -1,18 +1,15 @@
-import { Close } from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
 import {
   AppBar,
   Box,
-  IconButton,
+  Button,
   TextField,
   Toolbar,
   Typography,
 } from "@mui/material";
-import Button from "@mui/material/Button";
-import React from "react";
+import React, { useState } from "react";
 import { useMutation } from "react-query";
-import { Link } from "react-router-dom";
-
+import { useNavigate } from "react-router-dom";
 import { createProfile } from "./profile-data-access";
 import { generateRandomAvatarSeed, toAvatarUrl } from "./ProfileUpdateAvatar";
 
@@ -26,17 +23,37 @@ const ProfileCreate = ({
   };
 }) => {
   const mutation = useMutation(createProfile);
+  const [name, setName] = useState(userMetadata.name ?? "");
+  const [username, setUsername] = useState(
+    userMetadata.name?.replace(" ", "").toLowerCase() ?? ""
+  );
+
+  const onCreate = () => {
+    mutation.mutate({
+      userId,
+      name,
+      username,
+      avatarUrl: toAvatarUrl("croodles-neutral", generateRandomAvatarSeed()),
+    });
+  };
+
+  const navigate = useNavigate();
+
+  const onCancel = () => {
+    navigate("/logout");
+  };
 
   return (
-    <>
+    <Box
+      sx={{
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
       <AppBar>
         <Toolbar>
-          <Link to="/logout">
-            <IconButton edge="start">
-              <Close />
-            </IconButton>
-          </Link>
-
           <Typography variant="h6" sx={{ flex: 1 }}>
             Create Profile
           </Typography>
@@ -44,53 +61,40 @@ const ProfileCreate = ({
       </AppBar>
 
       <Box sx={{ flex: 1, p: 2 }}>
-        <form
-          onSubmit={(event) => {
-            event.preventDefault();
+        <TextField
+          sx={{ marginBottom: 2 }}
+          value={name}
+          onChange={(event) => setName(event.currentTarget.value)}
+          label="Name"
+        />
 
-            const formData = new FormData(event.currentTarget);
-
-            const name = formData.get("name")?.toString();
-            const username = formData.get("username")?.toString();
-
-            if (name && username) {
-              mutation.mutate({
-                userId,
-                name,
-                username,
-                avatarUrl: toAvatarUrl(
-                  "croodles-neutral",
-                  generateRandomAvatarSeed()
-                ),
-              });
-            }
-          }}
-        >
-          <TextField
-            sx={{ marginBottom: 4 }}
-            defaultValue={userMetadata.name}
-            label="Name"
-            name="name"
-          />
-          <TextField
-            sx={{ marginBottom: 4 }}
-            defaultValue={userMetadata.name?.replace(" ", "").toLowerCase()}
-            label="Username"
-            name="username"
-          />
-
-          <LoadingButton
-            fullWidth
-            variant="contained"
-            size="large"
-            type="submit"
-            loading={mutation.status === "loading"}
-          >
-            Create Profile
-          </LoadingButton>
-        </form>
+        <TextField
+          value={username}
+          onChange={(event) => setUsername(event.currentTarget.value)}
+          label="Username"
+        />
       </Box>
-    </>
+      <Box sx={{ display: "flex", p: 2 }}>
+        <Button
+          variant="outlined"
+          onClick={onCancel}
+          sx={{ flex: 1, marginRight: 2 }}
+        >
+          Cancel
+        </Button>
+        <LoadingButton
+          sx={{ flex: 1 }}
+          onClick={onCreate}
+          fullWidth
+          variant="contained"
+          size="large"
+          type="submit"
+          loading={mutation.status === "loading"}
+        >
+          Create
+        </LoadingButton>
+      </Box>
+    </Box>
   );
 };
 
