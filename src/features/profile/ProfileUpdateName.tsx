@@ -1,10 +1,11 @@
+import { Clear } from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
-import { ChevronLeft } from "@mui/icons-material";
 import {
-  IconButton,
   AppBar,
   Box,
   Button,
+  IconButton,
+  InputAdornment,
   TextField,
   Toolbar,
   Typography,
@@ -37,28 +38,27 @@ const ProfileUpdateName = ({
   };
 
   const onCancel = () => {
-    setName(profile.name);
+    navigate(-1);
   };
 
   return (
-    <>
+    <Box
+      sx={{
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
       <AppBar>
         <Toolbar>
-          <IconButton
-            edge="start"
-            onClick={() => {
-              navigate(-1);
-            }}
-          >
-            <ChevronLeft />
-          </IconButton>
           <Typography variant="h6" sx={{ flex: 1 }}>
             Edit Name
           </Typography>
         </Toolbar>
       </AppBar>
 
-      <Box sx={{ padding: 2 }}>
+      <Box sx={{ padding: 2, flex: 1 }}>
         <TextField
           label="Name"
           value={name}
@@ -67,6 +67,20 @@ const ProfileUpdateName = ({
           onChange={(event) => {
             setName(event.target.value);
           }}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton
+                  edge="end"
+                  onClick={() => {
+                    setName("");
+                  }}
+                >
+                  <Clear />
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
         />
         <Typography color="text.secondary">
           Help people discover your account by using the name you're known by:
@@ -74,19 +88,24 @@ const ProfileUpdateName = ({
         </Typography>
       </Box>
 
-      <Toolbar sx={{ justifyContent: "flex-end" }}>
-        <Button onClick={onCancel} variant="contained" sx={{ marginRight: 2 }}>
+      <Box sx={{ display: "flex", p: 2 }}>
+        <Button
+          onClick={onCancel}
+          variant="outlined"
+          sx={{ flex: 1, marginRight: 2 }}
+        >
           Cancel
         </Button>
         <LoadingButton
           loading={mutation.status === "loading"}
           onClick={onDone}
           variant="contained"
+          sx={{ flex: 1 }}
         >
-          Done
+          Update
         </LoadingButton>
-      </Toolbar>
-    </>
+      </Box>
+    </Box>
   );
 };
 

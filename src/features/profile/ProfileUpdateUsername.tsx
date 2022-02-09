@@ -3,6 +3,7 @@ import { LoadingButton } from "@mui/lab";
 import {
   AppBar,
   Box,
+  Button,
   IconButton,
   InputAdornment,
   TextField,
@@ -29,6 +30,13 @@ const ProfileUpdateUsername = ({
     },
   });
 
+  const onCancel = () => {
+    if (usernameRef.current) {
+      usernameRef.current.value = profile.username ?? "";
+    }
+    navigate(-1);
+  };
+
   const onDone = () => {
     if (usernameRef.current) {
       const username = usernameRef.current.value;
@@ -41,30 +49,24 @@ const ProfileUpdateUsername = ({
   };
 
   return (
-    <>
+    <Box
+      sx={{
+        height: "100%",
+        width: "100%",
+        overflow: "hidden",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
       <AppBar>
         <Toolbar>
-          <IconButton
-            edge="start"
-            onClick={() => {
-              navigate(-1);
-            }}
-          >
-            <ChevronLeft />
-          </IconButton>
           <Typography variant="h6" sx={{ flex: 1 }}>
             Edit Username
           </Typography>
-          <LoadingButton
-            loading={mutation.status === "loading"}
-            onClick={onDone}
-          >
-            Done
-          </LoadingButton>
         </Toolbar>
       </AppBar>
 
-      <Box sx={{ padding: 2 }}>
+      <Box sx={{ padding: 2, flex: 1 }}>
         <TextField
           label="Username"
           defaultValue={profile.username}
@@ -89,7 +91,26 @@ const ProfileUpdateUsername = ({
           }}
         />
       </Box>
-    </>
+
+      <Box sx={{ p: 2, display: "flex" }}>
+        <Button
+          variant="outlined"
+          sx={{ flex: 1, marginRight: 2 }}
+          onClick={onCancel}
+        >
+          Cancel
+        </Button>
+
+        <LoadingButton
+          sx={{ flex: 1 }}
+          loading={mutation.status === "loading"}
+          variant="contained"
+          onClick={onDone}
+        >
+          Update
+        </LoadingButton>
+      </Box>
+    </Box>
   );
 };
 
