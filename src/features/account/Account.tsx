@@ -1,6 +1,13 @@
-import { ChevronRight, DeleteForever, Edit, Logout } from "@mui/icons-material";
+import {
+  ChevronLeft,
+  ChevronRight,
+  DeleteForever,
+  Edit,
+  Logout,
+} from "@mui/icons-material";
 import {
   AppBar,
+  IconButton,
   List,
   ListItemButton,
   ListItemIcon,
@@ -9,19 +16,26 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-import { Link } from "react-router-dom";
-import BackButton from "../../components/BackButton";
+import { Link, useNavigate } from "react-router-dom";
 
 const Account = ({
   profile,
 }: {
   profile: { username?: string; avatarUrl?: string };
 }) => {
+  const navigate = useNavigate();
   return (
     <>
       <AppBar>
         <Toolbar>
-          <BackButton />
+          <IconButton
+            edge="start"
+            onClick={() => {
+              navigate(-1);
+            }}
+          >
+            <ChevronLeft />
+          </IconButton>
           <Typography variant="h6">Account</Typography>
         </Toolbar>
       </AppBar>

@@ -1,15 +1,16 @@
+import { ChevronLeft } from "@mui/icons-material";
 import {
   AppBar,
   Avatar,
   Box,
   Button,
+  IconButton,
   List,
   Toolbar,
   Typography,
 } from "@mui/material";
 import React from "react";
-import { Link } from "react-router-dom";
-import BackButton from "../../components/BackButton";
+import { Link, useNavigate } from "react-router-dom";
 import { ListItemField } from "../../components/ListItemField";
 
 const ProfileUpdate = ({
@@ -17,11 +18,19 @@ const ProfileUpdate = ({
 }: {
   profile: { avatarUrl?: string; username?: string; name?: string };
 }) => {
+  const navigate = useNavigate();
   return (
     <>
       <AppBar>
         <Toolbar>
-          <BackButton />
+          <IconButton
+            edge="start"
+            onClick={() => {
+              navigate(-1);
+            }}
+          >
+            <ChevronLeft />
+          </IconButton>
           <Typography variant="h6" sx={{ flex: 1 }}>
             Edit Profile
           </Typography>

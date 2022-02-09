@@ -1,19 +1,17 @@
-import { Clear } from "@mui/icons-material";
+import { ChevronLeft, Clear } from "@mui/icons-material";
+import { LoadingButton } from "@mui/lab";
 import {
   AppBar,
   Box,
-  Button,
   IconButton,
   InputAdornment,
   TextField,
   Toolbar,
   Typography,
 } from "@mui/material";
-import React, { useRef, useState } from "react";
+import React, { useRef } from "react";
 import { useMutation } from "react-query";
 import { useNavigate } from "react-router-dom";
-import BackButton from "../../components/BackButton";
-import { ModalLoader } from "../../components/ModalLoader";
 import { updateProfile } from "./profile-data-access";
 
 const ProfileUpdateUsername = ({
@@ -44,15 +42,25 @@ const ProfileUpdateUsername = ({
 
   return (
     <>
-      <ModalLoader open={mutation.status === "loading"} title="Updating..." />
-
       <AppBar>
         <Toolbar>
-          <BackButton />
+          <IconButton
+            edge="start"
+            onClick={() => {
+              navigate(-1);
+            }}
+          >
+            <ChevronLeft />
+          </IconButton>
           <Typography variant="h6" sx={{ flex: 1 }}>
             Edit Username
           </Typography>
-          <Button onClick={onDone}>Done</Button>
+          <LoadingButton
+            loading={mutation.status === "loading"}
+            onClick={onDone}
+          >
+            Done
+          </LoadingButton>
         </Toolbar>
       </AppBar>
 
