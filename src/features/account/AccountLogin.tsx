@@ -1,17 +1,8 @@
-import { ChevronRight, Google } from "@mui/icons-material";
-import {
-  AppBar,
-  List,
-  ListItemButton,
-  ListItemIcon,
-  ListItemSecondaryAction,
-  ListItemText,
-  Toolbar,
-  Typography,
-} from "@mui/material";
+import { Google } from "@mui/icons-material";
+import { LoadingButton } from "@mui/lab";
+import { AppBar, Box, Toolbar, Typography } from "@mui/material";
 import React from "react";
 import { useMutation } from "react-query";
-import { ModalLoader } from "../../components/ModalLoader";
 import { login } from "./account-data-access";
 
 const Login = () => {
@@ -24,36 +15,34 @@ const Login = () => {
   });
 
   return (
-    <>
-      <ModalLoader
-        open={mutation.status === "loading"}
-        title="Redirecting..."
-      />
+    <Box
+      sx={{
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        flexDirection: "column",
+        p: 2,
+      }}
+    >
+      <Typography variant="h3" color="primary.main" sx={{ marginBottom: 2 }}>
+        Gamezilla
+      </Typography>
 
-      <AppBar>
-        <Toolbar>
-          <Typography align="center" sx={{ flex: 1 }} variant="h6">
-            Login
-          </Typography>
-        </Toolbar>
-      </AppBar>
-
-      <List component="div">
-        <ListItemButton
-          onClick={() => {
-            mutation.mutate({ provider: "google" });
-          }}
-        >
-          <ListItemIcon>
-            <Google />
-          </ListItemIcon>
-          <ListItemText primary="Continue With Google" />
-          <ListItemSecondaryAction>
-            <ChevronRight />
-          </ListItemSecondaryAction>
-        </ListItemButton>
-      </List>
-    </>
+      <LoadingButton
+        variant="contained"
+        size="large"
+        fullWidth
+        startIcon={<Google />}
+        loading={mutation.status === "loading"}
+        onClick={() => {
+          mutation.mutate({ provider: "google" });
+        }}
+      >
+        Continue With Google
+      </LoadingButton>
+    </Box>
   );
 };
 
