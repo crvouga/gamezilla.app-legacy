@@ -1,4 +1,5 @@
 import { Close } from "@mui/icons-material";
+import { LoadingButton } from "@mui/lab";
 import {
   AppBar,
   Box,
@@ -11,7 +12,7 @@ import Button from "@mui/material/Button";
 import React from "react";
 import { useMutation } from "react-query";
 import { Link } from "react-router-dom";
-import { ModalLoader } from "../../components/ModalLoader";
+
 import { createProfile } from "./profile-data-access";
 import { generateRandomAvatarSeed, toAvatarUrl } from "./ProfileUpdateAvatar";
 
@@ -28,8 +29,6 @@ const ProfileCreate = ({
 
   return (
     <>
-      <ModalLoader open={mutation.status === "loading"} title="Creating..." />
-
       <AppBar>
         <Toolbar>
           <Link to="/logout">
@@ -80,9 +79,15 @@ const ProfileCreate = ({
             name="username"
           />
 
-          <Button fullWidth variant="contained" size="large" type="submit">
+          <LoadingButton
+            fullWidth
+            variant="contained"
+            size="large"
+            type="submit"
+            loading={mutation.status === "loading"}
+          >
             Create Profile
-          </Button>
+          </LoadingButton>
         </form>
       </Box>
     </>

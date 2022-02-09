@@ -1,3 +1,5 @@
+import { ChevronLeft } from "@mui/icons-material";
+import { LoadingButton } from "@mui/lab";
 import {
   AppBar,
   Avatar,
@@ -5,6 +7,7 @@ import {
   Button,
   ButtonBase,
   Grid,
+  IconButton,
   TextField,
   Toolbar,
   Typography,
@@ -13,9 +16,8 @@ import React, { useState } from "react";
 import { useMutation } from "react-query";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import AspectRatioSquare from "../../components/AspectRatioSquare";
-import BackButton from "../../components/BackButton";
+
 import { ListItemField } from "../../components/ListItemField";
-import { ModalLoader } from "../../components/ModalLoader";
 import { updateProfile } from "./profile-data-access";
 
 const ProfileUpdateAvatar = ({
@@ -38,17 +40,8 @@ const ProfileUpdateAvatar = ({
     },
   });
 
-  const onDone = () => {
-    mutation.mutate({
-      userId: profile.userId,
-      avatarUrl: toAvatarUrl(avatarStyle, avatarSeed),
-    });
-  };
-
   return (
     <>
-      <ModalLoader open={mutation.status === "loading"} title="Updating..." />
-
       <Routes>
         <Route
           path="style"
@@ -69,15 +62,31 @@ const ProfileUpdateAvatar = ({
             <>
               <AppBar>
                 <Toolbar>
-                  <BackButton />
+                  <IconButton
+                    edge="start"
+                    onClick={() => {
+                      navigate(-1);
+                    }}
+                  >
+                    <ChevronLeft />
+                  </IconButton>
 
                   <Typography sx={{ flex: 1 }} variant="h6">
                     Edit Avatar
                   </Typography>
 
-                  <Button size="large" onClick={onDone}>
+                  <LoadingButton
+                    loading={mutation.status === "loading"}
+                    size="large"
+                    onClick={() => {
+                      mutation.mutate({
+                        userId: profile.userId,
+                        avatarUrl: toAvatarUrl(avatarStyle, avatarSeed),
+                      });
+                    }}
+                  >
                     Done
-                  </Button>
+                  </LoadingButton>
                 </Toolbar>
               </AppBar>
 
@@ -136,6 +145,7 @@ const EditProfileAvatarStyle = ({
   avatarSeed: IAvatarSeed;
   onSelect: (avatarStyle: IAvatarStyle) => void;
 }) => {
+  const navigate = useNavigate();
   return (
     <Box
       sx={{
@@ -147,7 +157,14 @@ const EditProfileAvatarStyle = ({
     >
       <AppBar>
         <Toolbar>
-          <BackButton edge="start" />
+          <IconButton
+            edge="start"
+            onClick={() => {
+              navigate(-1);
+            }}
+          >
+            <ChevronLeft />
+          </IconButton>
           <Typography variant="h6">Choose Style</Typography>
         </Toolbar>
       </AppBar>

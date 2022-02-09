@@ -1,8 +1,8 @@
+import { LoadingButton } from "@mui/lab";
 import { Button, Dialog, DialogActions, DialogTitle } from "@mui/material";
 import React from "react";
 import { useMutation } from "react-query";
 import { useNavigate } from "react-router-dom";
-import { ModalLoader } from "../../components/ModalLoader";
 import { deleteProfile } from "./profile-data-access";
 
 const ProfileDelete = ({ userId }: { userId: string }) => {
@@ -22,16 +22,17 @@ const ProfileDelete = ({ userId }: { userId: string }) => {
     navigate(-1);
   };
 
-  if (mutation.status === "loading") {
-    return <ModalLoader title="Deleting..." />;
-  }
-
   return (
     <Dialog open onClose={onCancel}>
       <DialogTitle>Delete your profile forever?</DialogTitle>
       <DialogActions>
         <Button onClick={onCancel}>Cancel</Button>
-        <Button onClick={onConfirm}>Delete</Button>
+        <LoadingButton
+          loading={mutation.status === "loading"}
+          onClick={onConfirm}
+        >
+          Delete
+        </LoadingButton>
       </DialogActions>
     </Dialog>
   );
