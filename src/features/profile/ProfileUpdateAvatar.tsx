@@ -46,7 +46,7 @@ const ProfileUpdateAvatar = ({
         <Route
           path="style"
           element={
-            <EditProfileAvatarStyle
+            <ChooseStyle
               avatarSeed={avatarSeed}
               onSelect={(avatarStyle) => {
                 setAvatarStyle(avatarStyle);
@@ -59,78 +59,90 @@ const ProfileUpdateAvatar = ({
         <Route
           path=""
           element={
-            <>
+            <Box
+              sx={{
+                width: "100%",
+                height: "100%",
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
               <AppBar>
                 <Toolbar>
-                  <IconButton
-                    edge="start"
-                    onClick={() => {
-                      navigate(-1);
-                    }}
-                  >
-                    <ChevronLeft />
-                  </IconButton>
-
                   <Typography sx={{ flex: 1 }} variant="h6">
                     Edit Avatar
                   </Typography>
-
-                  <LoadingButton
-                    loading={mutation.status === "loading"}
-                    size="large"
-                    onClick={() => {
-                      mutation.mutate({
-                        userId: profile.userId,
-                        avatarUrl: toAvatarUrl(avatarStyle, avatarSeed),
-                      });
-                    }}
-                  >
-                    Done
-                  </LoadingButton>
                 </Toolbar>
               </AppBar>
 
-              <Box
-                sx={{
-                  width: "100%",
-                  display: "grid",
-                  placeItems: "center",
-                  p: 2,
-                }}
-              >
-                <Avatar
-                  sx={{ width: 160, height: 160 }}
-                  src={toAvatarUrl(avatarStyle, avatarSeed)}
-                />
-              </Box>
-
-              <ListItemField
-                to={"style"}
-                label="Avatar Style"
-                value={formatAvatarStyle(avatarStyle)}
-              />
-
-              <Box sx={{ padding: 2 }}>
-                <TextField
-                  fullWidth
-                  label="Avatar Seed"
-                  value={avatarSeed}
-                  onChange={(event) => {
-                    setAvatarSeed(toAvatarSeed(event.target.value));
-                  }}
-                  sx={{ marginBottom: 2 }}
-                />
-                <Button
-                  fullWidth
-                  variant="contained"
-                  onClick={() => {
-                    setAvatarSeed(generateRandomAvatarSeed());
+              <Box sx={{ flex: 1 }}>
+                <Box
+                  sx={{
+                    width: "100%",
+                    display: "grid",
+                    placeItems: "center",
+                    p: 2,
                   }}
                 >
-                  Random
-                </Button>
+                  <Avatar
+                    sx={{ width: 160, height: 160 }}
+                    src={toAvatarUrl(avatarStyle, avatarSeed)}
+                  />
+                </Box>
+
+                <ListItemField
+                  to={"style"}
+                  label="Avatar Style"
+                  value={formatAvatarStyle(avatarStyle)}
+                />
+
+                <Box sx={{ padding: 2 }}>
+                  <TextField
+                    fullWidth
+                    label="Avatar Seed"
+                    value={avatarSeed}
+                    onChange={(event) => {
+                      setAvatarSeed(toAvatarSeed(event.target.value));
+                    }}
+                    sx={{ marginBottom: 2 }}
+                  />
+                  <Button
+                    fullWidth
+                    onClick={() => {
+                      setAvatarSeed(generateRandomAvatarSeed());
+                    }}
+                  >
+                    Random Seed
+                  </Button>
+                </Box>
               </Box>
-            </>
+
+              <Box sx={{ p: 2, display: "flex" }}>
+                <Button
+                  variant="outlined"
+                  sx={{ flex: 1, marginRight: 2 }}
+                  onClick={() => {
+                    navigate(-1);
+                  }}
+                >
+                  Cancel
+                </Button>
+                <LoadingButton
+                  sx={{ flex: 1 }}
+                  variant="contained"
+                  loading={mutation.status === "loading"}
+                  size="large"
+                  onClick={() => {
+                    mutation.mutate({
+                      userId: profile.userId,
+                      avatarUrl: toAvatarUrl(avatarStyle, avatarSeed),
+                    });
+                  }}
+                >
+                  Update
+                </LoadingButton>
+              </Box>
+            </Box>
           }
         />
       </Routes>
@@ -138,7 +150,7 @@ const ProfileUpdateAvatar = ({
   );
 };
 
-const EditProfileAvatarStyle = ({
+const ChooseStyle = ({
   avatarSeed,
   onSelect,
 }: {

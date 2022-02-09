@@ -51,6 +51,12 @@ const darkTheme = createTheme({
       },
     },
 
+    MuiButton: {
+      defaultProps: {
+        size: "large",
+      },
+    },
+
     MuiAlert: {
       defaultProps: {
         variant: "filled",
