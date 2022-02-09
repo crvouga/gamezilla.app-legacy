@@ -96,23 +96,29 @@ const ProfileUpdateAvatar = ({
                   value={formatAvatarStyle(avatarStyle)}
                 />
 
-                <Box sx={{ padding: 2 }}>
+                <Box
+                  sx={{
+                    padding: 2,
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
                   <TextField
-                    fullWidth
+                    sx={{ flex: 1 }}
                     label="Avatar Seed"
                     value={avatarSeed}
                     onChange={(event) => {
                       setAvatarSeed(toAvatarSeed(event.target.value));
                     }}
-                    sx={{ marginBottom: 2 }}
                   />
                   <Button
-                    fullWidth
+                    sx={{ p: 2 }}
+                    variant="outlined"
                     onClick={() => {
                       setAvatarSeed(generateRandomAvatarSeed());
                     }}
                   >
-                    Random Seed
+                    Random
                   </Button>
                 </Box>
               </Box>
