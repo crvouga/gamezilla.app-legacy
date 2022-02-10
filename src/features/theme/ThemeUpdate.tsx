@@ -5,8 +5,8 @@ import {
   SettingsBrightness,
 } from "@mui/icons-material";
 import {
-  Box,
   AppBar,
+  Box,
   IconButton,
   ToggleButton,
   ToggleButtonGroup,
@@ -16,11 +16,7 @@ import {
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-const AccountSettings = ({
-  profile,
-}: {
-  profile: { username?: string; avatarUrl?: string };
-}) => {
+const ThemeUpdate = () => {
   const navigate = useNavigate();
 
   return (
@@ -35,14 +31,15 @@ const AccountSettings = ({
           >
             <ChevronLeft />
           </IconButton>
-          <Typography variant="h6">Settings</Typography>
+          <Typography variant="h6">Theme</Typography>
         </Toolbar>
       </AppBar>
 
       <Box sx={{ p: 2 }}>
         <Typography gutterBottom color="text.secondary">
-          Theme
+          Mode
         </Typography>
+
         <ToggleButtonGroup
           fullWidth
           color="primary"
@@ -68,4 +65,4 @@ const AccountSettings = ({
   );
 };
 
-export default AccountSettings;
+export default ThemeUpdate;

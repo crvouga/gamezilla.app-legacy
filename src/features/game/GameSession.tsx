@@ -3,7 +3,7 @@ import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ListItemField } from "../../components/ListItemField";
 
-export const GameSession = () => {
+const GameSession = () => {
   const { gameSessionId } = useParams();
 
   const navigate = useNavigate();
@@ -30,3 +30,5 @@ export const GameSession = () => {
     </>
   );
 };
+
+export default GameSession;

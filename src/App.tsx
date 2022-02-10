@@ -2,13 +2,11 @@ import { Box, Typography, useMediaQuery, useTheme } from "@mui/material";
 import React from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import { ThemeProvider } from "./ThemeProvider";
 import Account from "./features/account/Account";
 import { onAuthStatus } from "./features/account/account-data-access";
-import Login from "./features/account/AccountLogin";
-import Logout from "./features/account/AccountLogout";
-import AccountSettings from "./features/account/AccountSettings";
-import { GameSession } from "./features/game/GameSession";
+import AccountLogin from "./features/account/AccountLogin";
+import AccountLogout from "./features/account/AccountLogout";
+import GameSession from "./features/game/GameSession";
 import Home from "./features/home/Home";
 import { onProfileStatus } from "./features/profile/profile-data-access";
 import ProfileCreate from "./features/profile/ProfileCreate";
@@ -17,17 +15,19 @@ import ProfileUpdate from "./features/profile/ProfileUpdate";
 import ProfileUpdateAvatar from "./features/profile/ProfileUpdateAvatar";
 import ProfileUpdateName from "./features/profile/ProfileUpdateName";
 import ProfileUpdateUsername from "./features/profile/ProfileUpdateUsername";
+import ThemeContext from "./features/theme/ThemeProvider";
+import ThemeUpdate from "./features/theme/ThemeUpdate";
 import { useSubscription } from "./utility/use-subscription";
 
 const App = () => {
   return (
     <QueryClientProvider client={new QueryClient()}>
       <BrowserRouter>
-        <ThemeProvider>
+        <ThemeContext themeMode="system">
           <Layout>
             <SubscribeAuth />
           </Layout>
-        </ThemeProvider>
+        </ThemeContext>
       </BrowserRouter>
     </QueryClientProvider>
   );
@@ -40,7 +40,7 @@ const SubscribeAuth = () => {
     case "logged-out":
       return (
         <Routes>
-          <Route path="/login" element={<Login />} />
+          <Route path="/login" element={<AccountLogin />} />
           <Route path="*" element={<Navigate to="/login" />} />
         </Routes>
       );
@@ -81,7 +81,7 @@ const SubscribeProfile = ({
               <ProfileCreate userMetadata={userMetadata} userId={userId} />
             }
           />
-          <Route path="/logout" element={<Logout />} />
+          <Route path="/logout" element={<AccountLogout />} />
           <Route path="*" element={<Navigate to="/profile/create" />} />
         </Routes>
       );
@@ -93,10 +93,7 @@ const SubscribeProfile = ({
         <Routes>
           <Route path="/" element={<Home profile={profile} />} />
           <Route path="/account" element={<Account profile={profile} />} />
-          <Route
-            path="/account/settings"
-            element={<AccountSettings profile={profile} />}
-          />
+          <Route path="/theme/update" element={<ThemeUpdate />} />
 
           <Route path="/profile/edit">
             <Route path="" element={<ProfileUpdate profile={profile} />} />
@@ -113,7 +110,7 @@ const SubscribeProfile = ({
               element={<ProfileUpdateUsername profile={profile} />}
             />
           </Route>
-          <Route path="/logout" element={<Logout />} />
+          <Route path="/logout" element={<AccountLogout />} />
           <Route
             path="/profile/delete"
             element={<ProfileDelete userId={profile.userId} />}
@@ -156,7 +153,14 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
   if (isSmallScreen) {
     return (
-      <Box sx={{ width: "100%", height: "100%", overflow: "hidden" }}>
+      <Box
+        sx={{
+          backgroundColor: theme.palette.background.default,
+          width: "100%",
+          height: "100%",
+          overflow: "hidden",
+        }}
+      >
         {children}
       </Box>
     );

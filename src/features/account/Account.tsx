@@ -6,6 +6,7 @@ import {
   Edit,
   Logout,
   Settings,
+  SettingsBrightness,
 } from "@mui/icons-material";
 import {
   AppBar,
@@ -43,18 +44,6 @@ const Account = ({
       </AppBar>
 
       <List>
-        <Link to="/account/settings">
-          <ListItemButton divider>
-            <ListItemIcon>
-              <Settings />
-            </ListItemIcon>
-            <ListItemText primary="Settings" />
-            <ListItemSecondaryAction>
-              <ChevronRight />
-            </ListItemSecondaryAction>
-          </ListItemButton>
-        </Link>
-
         <Link to="/profile/edit">
           <ListItemButton>
             <ListItemIcon>
@@ -73,6 +62,18 @@ const Account = ({
               <DeleteForever />
             </ListItemIcon>
             <ListItemText primary="Delete Profile" />
+          </ListItemButton>
+        </Link>
+
+        <Link to="/theme/update">
+          <ListItemButton divider>
+            <ListItemIcon>
+              <SettingsBrightness />
+            </ListItemIcon>
+            <ListItemText primary="Edit Theme" />
+            <ListItemSecondaryAction>
+              <ChevronRight />
+            </ListItemSecondaryAction>
           </ListItemButton>
         </Link>
 

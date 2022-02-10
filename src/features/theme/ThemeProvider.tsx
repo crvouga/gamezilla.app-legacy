@@ -1,14 +1,17 @@
 import {
   createTheme,
-  useMediaQuery,
   CssBaseline,
   responsiveFontSizes,
-  ThemeProvider as MuiThemeProvider,
   ThemeOptions,
+  ThemeProvider as MuiThemeProvider,
+  useMediaQuery,
 } from "@mui/material";
 import { blue } from "@mui/material/colors";
 import { deepmerge } from "@mui/utils";
-import React, { useState } from "react";
+import React from "react";
+import { IThemeMode } from "./theme-data";
+
+const defaultTheme = createTheme();
 
 const baseOptions: ThemeOptions = {
   palette: {
@@ -37,6 +40,14 @@ const baseOptions: ThemeOptions = {
         position: "static",
         elevation: 0,
         color: "transparent",
+      },
+    },
+
+    MuiAvatar: {
+      styleOverrides: {
+        root: {
+          border: `1px solid ${defaultTheme.palette.divider}`,
+        },
       },
     },
 
@@ -90,36 +101,15 @@ const lightTheme = responsiveFontSizes(
   createTheme(deepmerge(baseOptions, lightOptions))
 );
 
-export type IThemeMode = "light" | "dark" | "system";
-
-const getStoredThemeMode = (): IThemeMode => {
-  const value = localStorage.getItem("themeMode");
-
-  if (value === "light" || value === "dark" || value === "system") {
-    return value;
-  }
-
-  return "dark";
-};
-
-const setStoredThemeMode = (themeMode: IThemeMode) => {
-  localStorage.setItem("themeMode", themeMode);
-};
-
-const ThemeModeContext = React.createContext<{
+export const ThemeProvider = ({
+  themeMode,
+  children,
+}: {
   themeMode: IThemeMode;
-  setThemeMode: (themeMode: IThemeMode) => void;
-}>({ themeMode: getStoredThemeMode(), setThemeMode: setStoredThemeMode });
-
-export const useThemeMode = () => {
-  return React.useContext(ThemeModeContext);
-};
-
-export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
+  children: React.ReactNode;
+}) => {
   const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
   const systemTheme = prefersDarkMode ? darkTheme : lightTheme;
-
-  const [themeMode, setThemeMode] = useState(getStoredThemeMode);
 
   const theme = {
     light: lightTheme,
@@ -128,11 +118,11 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   }[themeMode];
 
   return (
-    <ThemeModeContext.Provider value={{ themeMode, setThemeMode }}>
-      <MuiThemeProvider theme={theme}>
-        <CssBaseline enableColorScheme />
-        {children}
-      </MuiThemeProvider>
-    </ThemeModeContext.Provider>
+    <MuiThemeProvider theme={theme}>
+      <CssBaseline enableColorScheme />
+      {children}
+    </MuiThemeProvider>
   );
 };
+
+export default ThemeProvider;
