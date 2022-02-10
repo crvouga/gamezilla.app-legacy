@@ -15,8 +15,7 @@ export const login = async ({ provider }: ILogin) => {
 };
 
 export const logout = async () => {
-  await new Promise((resolve) => setTimeout(resolve, 3000));
-  supabaseClient.auth.signOut();
+  await supabaseClient.auth.signOut();
 };
 
 export const getAuthStatus = async (): Promise<IAuthStatus> => {
@@ -39,13 +38,14 @@ export const getAuthStatus = async (): Promise<IAuthStatus> => {
 };
 
 export const onAuthStatus = (set: (state: IAuthStatus) => void) => {
-  setTimeout(async () => {
+  const timeoutHandler = setTimeout(async () => {
     const authStatus = await getAuthStatus();
     set(authStatus);
   }, 1000 * 1.5);
 
   const subscription = supabaseClient.auth.onAuthStateChange(
     (event, session) => {
+      clearTimeout(timeoutHandler);
       switch (event) {
         case "PASSWORD_RECOVERY":
         case "SIGNED_IN":
@@ -74,6 +74,7 @@ export const onAuthStatus = (set: (state: IAuthStatus) => void) => {
   );
 
   return () => {
+    clearTimeout(timeoutHandler);
     subscription.data?.unsubscribe();
   };
 };
