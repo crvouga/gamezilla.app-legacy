@@ -36,9 +36,7 @@ const ALL_WIN_POSITIONS_SETS: {
   },
 };
 
-export const toWinPositionSets = (
-  board: IBoard,
-) => {
+export const toWinPositionSets = (board: IBoard) => {
   return [];
 };
 
@@ -76,25 +74,22 @@ export type IGameEvent = IPlayerMoved;
 
 export type IGameSessionEvent =
   | {
-    namespace: "tic-tac-toe-game-session";
-    gameSessionId: string;
-    type: "CREATED_GAME_SESSION";
-  }
+      namespace: "tic-tac-toe-game-session";
+      gameSessionId: string;
+      type: "CREATED_GAME_SESSION";
+    }
   | {
-    namespace: "tic-tac-toe-game-session";
-    gameSessionId: string;
-    type: "LEFTED_GAME_SESSION";
-  }
+      namespace: "tic-tac-toe-game-session";
+      gameSessionId: string;
+      type: "LEFTED_GAME_SESSION";
+    }
   | {
-    namespace: "tic-tac-toe-game-session";
-    type: "GAME_EVENT";
-    gameEvent: IGameEvent;
-  };
+      namespace: "tic-tac-toe-game-session";
+      type: "GAME_EVENT";
+      gameEvent: IGameEvent;
+    };
 
-export const turnReducer = (
-  turn: IPlayer,
-  event: IGameEvent,
-): IPlayer => {
+export const turnReducer = (turn: IPlayer, event: IGameEvent): IPlayer => {
   if (event.type === "PLAYER_MOVED") {
     return event.player;
   }
@@ -104,18 +99,14 @@ export const turnReducer = (
 
 const mapBoard = (
   board: IBoard,
-  f: (slot: ISlot, x: IPosition["x"], y: IPosition["y"]) => ISlot,
+  f: (slot: ISlot, x: IPosition["x"], y: IPosition["y"]) => ISlot
 ): IBoard => {
-  return mapValues(
-    board,
-    (column, x) => mapValues(column, (slot, y) => f(slot, x, y)),
+  return mapValues(board, (column, x) =>
+    mapValues(column, (slot, y) => f(slot, x, y))
   );
 };
 
-export const boardReducer = (
-  board: IBoard,
-  event: IGameEvent,
-): IBoard => {
+export const boardReducer = (board: IBoard, event: IGameEvent): IBoard => {
   if (event.type === "PLAYER_MOVED") {
     return mapBoard(board, (slot, x, y) => {
       if (
