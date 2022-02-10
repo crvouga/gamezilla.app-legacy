@@ -1,12 +1,9 @@
-import React from "react";
 import {
   ChevronLeft,
   ChevronRight,
   DeleteForever,
   Edit,
   Logout,
-  Settings,
-  SettingsBrightness,
 } from "@mui/icons-material";
 import {
   AppBar,
@@ -19,6 +16,7 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
+import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 const Account = ({
@@ -62,18 +60,6 @@ const Account = ({
               <DeleteForever />
             </ListItemIcon>
             <ListItemText primary="Delete Profile" />
-          </ListItemButton>
-        </Link>
-
-        <Link to="/theme/update">
-          <ListItemButton divider>
-            <ListItemIcon>
-              <SettingsBrightness />
-            </ListItemIcon>
-            <ListItemText primary="Edit Theme" />
-            <ListItemSecondaryAction>
-              <ChevronRight />
-            </ListItemSecondaryAction>
           </ListItemButton>
         </Link>
 

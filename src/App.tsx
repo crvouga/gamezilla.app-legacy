@@ -1,9 +1,7 @@
 import { Box, Typography, useMediaQuery, useTheme } from "@mui/material";
-
-import React, { useEffect } from "react";
+import React from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import { usePersistedState } from "./utility/use-persisted-state";
 import Account from "./features/account/Account";
 import { onAuthStatus } from "./features/account/account-data-access";
 import AccountLogin from "./features/account/AccountLogin";
@@ -17,10 +15,7 @@ import ProfileUpdate from "./features/profile/ProfileUpdate";
 import ProfileUpdateAvatar from "./features/profile/ProfileUpdateAvatar";
 import ProfileUpdateName from "./features/profile/ProfileUpdateName";
 import ProfileUpdateUsername from "./features/profile/ProfileUpdateUsername";
-import ThemeProvider, {
-  useThemeModeContext,
-} from "./features/theme/ThemeProvider";
-import ThemeUpdate from "./features/theme/ThemeUpdate";
+import ThemeProvider from "./features/theme/ThemeProvider";
 import { useSubscription } from "./utility/use-subscription";
 
 const App = () => {
@@ -108,20 +103,10 @@ const FoundProfile = ({
     themeMode: "LIGHT" | "DARK" | "SYSTEM";
   };
 }) => {
-  const { themeMode, setThemeMode } = useThemeModeContext();
-
-  useEffect(() => {
-    setThemeMode(profile.themeMode);
-  }, [profile.themeMode]);
-
   return (
     <Routes>
       <Route path="/" element={<Home profile={profile} />} />
       <Route path="/account" element={<Account profile={profile} />} />
-      <Route
-        path="/theme/update"
-        element={<ThemeUpdate themeMode={themeMode} profile={profile} />}
-      />
 
       <Route path="/profile/edit">
         <Route path="" element={<ProfileUpdate profile={profile} />} />
