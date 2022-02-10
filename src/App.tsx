@@ -2,11 +2,12 @@ import { Box, Typography, useMediaQuery, useTheme } from "@mui/material";
 import React from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import { AppThemeProvider } from "./AppThemeProvider";
+import { ThemeProvider } from "./ThemeProvider";
 import Account from "./features/account/Account";
 import { onAuthStatus } from "./features/account/account-data-access";
 import Login from "./features/account/AccountLogin";
 import Logout from "./features/account/AccountLogout";
+import AccountSettings from "./features/account/AccountSettings";
 import { GameSession } from "./features/game/GameSession";
 import Home from "./features/home/Home";
 import { onProfileStatus } from "./features/profile/profile-data-access";
@@ -22,11 +23,11 @@ const App = () => {
   return (
     <QueryClientProvider client={new QueryClient()}>
       <BrowserRouter>
-        <AppThemeProvider>
-          <AppLayout>
+        <ThemeProvider>
+          <Layout>
             <SubscribeAuth />
-          </AppLayout>
-        </AppThemeProvider>
+          </Layout>
+        </ThemeProvider>
       </BrowserRouter>
     </QueryClientProvider>
   );
@@ -92,6 +93,11 @@ const SubscribeProfile = ({
         <Routes>
           <Route path="/" element={<Home profile={profile} />} />
           <Route path="/account" element={<Account profile={profile} />} />
+          <Route
+            path="/account/settings"
+            element={<AccountSettings profile={profile} />}
+          />
+
           <Route path="/profile/edit">
             <Route path="" element={<ProfileUpdate profile={profile} />} />
             <Route
@@ -143,13 +149,17 @@ const Splash = () => {
   );
 };
 
-const AppLayout = ({ children }: { children: React.ReactNode }) => {
+const Layout = ({ children }: { children: React.ReactNode }) => {
   const theme = useTheme();
 
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
   if (isSmallScreen) {
-    return <Box sx={{ width: "100%", height: "100%" }}>{children}</Box>;
+    return (
+      <Box sx={{ width: "100%", height: "100%", overflow: "hidden" }}>
+        {children}
+      </Box>
+    );
   }
 
   return (
@@ -167,11 +177,11 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
         sx={{
           border: `1px solid ${theme.palette.divider}`,
           borderRadius: "1rem",
-
+          backgroundColor: theme.palette.background.default,
           width: "100%",
           height: "100%",
-          maxHeight: theme.breakpoints.values.sm,
-          overflow: "scroll",
+          maxHeight: theme.breakpoints.values.sm * 1.1,
+          overflow: "hidden",
         }}
       >
         {children}
