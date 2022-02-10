@@ -9,7 +9,8 @@ import {
 import { blue } from "@mui/material/colors";
 import { deepmerge } from "@mui/utils";
 import React from "react";
-import { IThemeMode } from "./theme-data";
+import { usePersistedState } from "../../utility/use-persisted-state";
+import { decodeThemeMode, IThemeMode, encodeThemeMode } from "./theme-data";
 
 const defaultTheme = createTheme();
 
@@ -101,27 +102,61 @@ const lightTheme = responsiveFontSizes(
   createTheme(deepmerge(baseOptions, lightOptions))
 );
 
-export const ThemeProvider = ({
-  themeMode,
-  children,
-}: {
-  themeMode: IThemeMode;
-  children: React.ReactNode;
-}) => {
+const THEME_MODE_LOCAL_STORAGE_KEY = "theme-mode";
+
+export const getThemeMode = () => {
+  return decodeThemeMode(
+    localStorage.getItem(THEME_MODE_LOCAL_STORAGE_KEY) ?? ""
+  );
+};
+
+export const setThemeMode = (themeMode: IThemeMode) => {
+  localStorage.setItem(
+    THEME_MODE_LOCAL_STORAGE_KEY,
+    encodeThemeMode(themeMode)
+  );
+};
+
+const THEME_MODE_KEY = "theme-mode";
+
+const ThemeModeContext = React.createContext({
+  themeMode: decodeThemeMode(localStorage.getItem(THEME_MODE_KEY) ?? ""),
+  setThemeMode: (themeMode: IThemeMode) => {
+    localStorage.setItem(THEME_MODE_KEY, themeMode);
+  },
+});
+
+export const useThemeModeContext = () => {
+  return React.useContext(ThemeModeContext);
+};
+
+const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
   const systemTheme = prefersDarkMode ? darkTheme : lightTheme;
 
-  const theme = {
-    light: lightTheme,
-    dark: darkTheme,
-    system: systemTheme,
-  }[themeMode];
+  const [themeMode, setThemeMode] = usePersistedState(
+    "theme-mode",
+    encodeThemeMode,
+    decodeThemeMode,
+    "SYSTEM"
+  );
+
+  const theme =
+    themeMode === "DARK"
+      ? darkTheme
+      : themeMode === "LIGHT"
+      ? lightTheme
+      : themeMode === "SYSTEM"
+      ? systemTheme
+      : systemTheme;
 
   return (
-    <MuiThemeProvider theme={theme}>
-      <CssBaseline enableColorScheme />
-      {children}
-    </MuiThemeProvider>
+    <ThemeModeContext.Provider value={{ themeMode, setThemeMode }}>
+      <MuiThemeProvider theme={theme}>
+        <CssBaseline enableColorScheme />
+        {children}
+      </MuiThemeProvider>
+    </ThemeModeContext.Provider>
   );
 };
 

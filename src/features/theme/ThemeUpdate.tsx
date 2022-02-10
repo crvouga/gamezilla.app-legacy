@@ -6,7 +6,9 @@ import {
 } from "@mui/icons-material";
 import {
   AppBar,
+  Backdrop,
   Box,
+  CircularProgress,
   IconButton,
   ToggleButton,
   ToggleButtonGroup,
@@ -14,10 +16,21 @@ import {
   Typography,
 } from "@mui/material";
 import React from "react";
+import { useMutation } from "react-query";
 import { useNavigate } from "react-router-dom";
+import { updateThemeMode } from "./theme-data-access";
+import { IThemeMode, decodeThemeMode } from "./theme-data";
 
-const ThemeUpdate = () => {
+const ThemeUpdate = ({
+  themeMode,
+  profile,
+}: {
+  themeMode: IThemeMode;
+  profile: { userId: string };
+}) => {
   const navigate = useNavigate();
+
+  const mutation = useMutation(updateThemeMode);
 
   return (
     <>
@@ -44,23 +57,33 @@ const ThemeUpdate = () => {
           fullWidth
           color="primary"
           exclusive
-          value="system"
-          // onChange={handleChange}
+          value={themeMode}
+          onChange={(_event, value) => {
+            mutation.mutate({
+              userId: profile.userId,
+              themeMode: decodeThemeMode(value),
+            });
+          }}
+          size="small"
         >
-          <ToggleButton value="light">
+          <ToggleButton value="LIGHT">
             <LightMode sx={{ marginRight: 1 }} />
             Light
           </ToggleButton>
-          <ToggleButton value="system">
+          <ToggleButton value="SYSTEM">
             <SettingsBrightness sx={{ marginRight: 1 }} />
             System
           </ToggleButton>
-          <ToggleButton value="dark">
+          <ToggleButton value="DARK">
             <DarkMode sx={{ marginRight: 1 }} />
             Dark
           </ToggleButton>
         </ToggleButtonGroup>
       </Box>
+
+      <Backdrop open={mutation.status === "loading"}>
+        <CircularProgress />
+      </Backdrop>
     </>
   );
 };

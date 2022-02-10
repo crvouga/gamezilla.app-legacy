@@ -1,7 +1,9 @@
 import { Box, Typography, useMediaQuery, useTheme } from "@mui/material";
-import React from "react";
+
+import React, { useEffect } from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { usePersistedState } from "./utility/use-persisted-state";
 import Account from "./features/account/Account";
 import { onAuthStatus } from "./features/account/account-data-access";
 import AccountLogin from "./features/account/AccountLogin";
@@ -15,7 +17,9 @@ import ProfileUpdate from "./features/profile/ProfileUpdate";
 import ProfileUpdateAvatar from "./features/profile/ProfileUpdateAvatar";
 import ProfileUpdateName from "./features/profile/ProfileUpdateName";
 import ProfileUpdateUsername from "./features/profile/ProfileUpdateUsername";
-import ThemeContext from "./features/theme/ThemeProvider";
+import ThemeProvider, {
+  useThemeModeContext,
+} from "./features/theme/ThemeProvider";
 import ThemeUpdate from "./features/theme/ThemeUpdate";
 import { useSubscription } from "./utility/use-subscription";
 
@@ -23,11 +27,11 @@ const App = () => {
   return (
     <QueryClientProvider client={new QueryClient()}>
       <BrowserRouter>
-        <ThemeContext themeMode="system">
+        <ThemeProvider>
           <Layout>
             <SubscribeAuth />
           </Layout>
-        </ThemeContext>
+        </ThemeProvider>
       </BrowserRouter>
     </QueryClientProvider>
   );
@@ -89,45 +93,60 @@ const SubscribeProfile = ({
     case "found":
       const { profile } = profileStatus;
 
-      return (
-        <Routes>
-          <Route path="/" element={<Home profile={profile} />} />
-          <Route path="/account" element={<Account profile={profile} />} />
-          <Route path="/theme/update" element={<ThemeUpdate />} />
-
-          <Route path="/profile/edit">
-            <Route path="" element={<ProfileUpdate profile={profile} />} />
-            <Route
-              path="avatar/*"
-              element={<ProfileUpdateAvatar profile={profile} />}
-            />
-            <Route
-              path="name"
-              element={<ProfileUpdateName profile={profile} />}
-            />
-            <Route
-              path="username"
-              element={<ProfileUpdateUsername profile={profile} />}
-            />
-          </Route>
-          <Route path="/logout" element={<AccountLogout />} />
-          <Route
-            path="/profile/delete"
-            element={<ProfileDelete userId={profile.userId} />}
-          />
-
-          <Route
-            path="/game-session/:gameSessionId"
-            element={<GameSession />}
-          />
-
-          <Route path="*" element={<Navigate to="/" />} />
-        </Routes>
-      );
+      return <FoundProfile profile={profile} />;
   }
 };
 
-export default App;
+const FoundProfile = ({
+  profile,
+}: {
+  profile: {
+    userId: string;
+    avatarUrl?: string;
+    name?: string;
+    username?: string;
+    themeMode: "LIGHT" | "DARK" | "SYSTEM";
+  };
+}) => {
+  const { themeMode, setThemeMode } = useThemeModeContext();
+
+  useEffect(() => {
+    setThemeMode(profile.themeMode);
+  }, [profile.themeMode]);
+
+  return (
+    <Routes>
+      <Route path="/" element={<Home profile={profile} />} />
+      <Route path="/account" element={<Account profile={profile} />} />
+      <Route
+        path="/theme/update"
+        element={<ThemeUpdate themeMode={themeMode} profile={profile} />}
+      />
+
+      <Route path="/profile/edit">
+        <Route path="" element={<ProfileUpdate profile={profile} />} />
+        <Route
+          path="avatar/*"
+          element={<ProfileUpdateAvatar profile={profile} />}
+        />
+        <Route path="name" element={<ProfileUpdateName profile={profile} />} />
+        <Route
+          path="username"
+          element={<ProfileUpdateUsername profile={profile} />}
+        />
+      </Route>
+      <Route path="/logout" element={<AccountLogout />} />
+      <Route
+        path="/profile/delete"
+        element={<ProfileDelete userId={profile.userId} />}
+      />
+
+      <Route path="/game-session/:gameSessionId" element={<GameSession />} />
+
+      <Route path="*" element={<Navigate to="/" />} />
+    </Routes>
+  );
+};
 
 const Splash = () => {
   return (
@@ -193,3 +212,5 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     </Box>
   );
 };
+
+export default App;

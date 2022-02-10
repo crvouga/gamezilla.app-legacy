@@ -2,16 +2,10 @@ import React, { useState, useRef, useEffect } from "react";
 
 export const usePersistedState = <T>(
   key: string,
+  encode: (value: T) => string,
+  decode: (value: string) => T,
   defaultValue: T
 ): [T, React.Dispatch<React.SetStateAction<T>>] => {
-  const encode = (value: T): string => {
-    return JSON.stringify(value);
-  };
-
-  const decode = (encodedValue: string): T => {
-    return JSON.parse(encodedValue);
-  };
-
   const keyRef = useRef(key);
   const [value, setValue] = useState(() => {
     try {
