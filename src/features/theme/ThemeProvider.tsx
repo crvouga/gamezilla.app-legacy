@@ -17,7 +17,7 @@ const baseOptions: ThemeOptions = {
     primary: blue,
   },
   typography: {
-    fontSize: 18,
+    fontSize: 20,
     fontFamily: [
       "Nunito",
       "-apple-system",
