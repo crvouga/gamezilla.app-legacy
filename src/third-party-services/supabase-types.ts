@@ -308,6 +308,7 @@ export interface paths {
           avatar_url?: parameters["rowFilter.profile.avatar_url"];
           name?: parameters["rowFilter.profile.name"];
           username?: parameters["rowFilter.profile.username"];
+          theme_mode?: parameters["rowFilter.profile.theme_mode"];
           /** Filtering Columns */
           select?: parameters["select"];
           /** Ordering */
@@ -362,6 +363,7 @@ export interface paths {
           avatar_url?: parameters["rowFilter.profile.avatar_url"];
           name?: parameters["rowFilter.profile.name"];
           username?: parameters["rowFilter.profile.username"];
+          theme_mode?: parameters["rowFilter.profile.theme_mode"];
         };
         header: {
           /** Preference */
@@ -380,6 +382,7 @@ export interface paths {
           avatar_url?: parameters["rowFilter.profile.avatar_url"];
           name?: parameters["rowFilter.profile.name"];
           username?: parameters["rowFilter.profile.username"];
+          theme_mode?: parameters["rowFilter.profile.theme_mode"];
         };
         body: {
           /** profile */
@@ -474,6 +477,12 @@ export interface definitions {
     name?: string;
     /** Format: text */
     username?: string;
+    /**
+     * Format: public.theme_mode
+     * @default SYSTEM
+     * @enum {string}
+     */
+    theme_mode: "LIGHT" | "SYSTEM" | "DARK";
   };
 }
 
@@ -550,6 +559,8 @@ export interface parameters {
   "rowFilter.profile.name": string;
   /** Format: text */
   "rowFilter.profile.username": string;
+  /** Format: public.theme_mode */
+  "rowFilter.profile.theme_mode": string;
 }
 
 export interface operations {}
