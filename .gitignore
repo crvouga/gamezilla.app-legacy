@@ -1,7 +1,7 @@
-/node_modules/
+node_modules
 .DS_Store
-.parcel-cache
-.env
-tsconfig.tsbuildinfo
 dist
+dist-ssr
+*.local
+.env
 .vercel

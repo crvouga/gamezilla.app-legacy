@@ -1,31 +1,31 @@
 {
-  "name": "gamezilla",
-  "version": "1.0.0",
-  "private": true,
-  "license": "",
+  "name": "vite-project",
+  "version": "0.0.0",
   "scripts": {
-    "dev": "npx parcel src/main.html",
-    "build": "npx parcel build src/main.html",
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
     "generate-supabase-types": "npx openapi-typescript https://ldxpcprlgecjvqwzuxgv.supabase.co/rest/v1/?apikey=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTYzNzA0MDQ5NywiZXhwIjoxOTUyNjE2NDk3fQ.ReI8CpIFbLB9Q53Az7CDBIyrn_o1JeGhPoZXdqx8Ac4 --output src/third-party/supabase-types.ts",
     "load-env": "vercel env pull"
-  },
-  "devDependencies": {
-    "@types/react": "17.0.38",
-    "@types/react-dom": "^17.0.11",
-    "parcel": "^2.2.1",
-    "tslib": "^2.0.0",
-    "typescript": "4.5.4"
   },
   "dependencies": {
     "@emotion/react": "^11.7.1",
     "@emotion/styled": "^11.6.0",
-    "@mui/icons-material": "^5.3.1",
+    "@mui/icons-material": "^5.4.1",
     "@mui/lab": "^5.0.0-alpha.68",
-    "@mui/material": "^5.3.1",
-    "@supabase/supabase-js": "^1.29.1",
-    "react": "17.0.2",
-    "react-dom": "17.0.2",
-    "react-query": "^3.34.11",
+    "@mui/material": "^5.4.1",
+    "@supabase/supabase-js": "^1.30.0",
+    "fast-deep-equal": "^3.1.3",
+    "react": "^17.0.0",
+    "react-dom": "^17.0.0",
+    "react-query": "^3.34.14",
     "react-router-dom": "^6.2.1"
+  },
+  "devDependencies": {
+    "@types/react": "^17.0.0",
+    "@types/react-dom": "^17.0.0",
+    "@vitejs/plugin-react": "^1.0.0",
+    "typescript": "^4.3.2",
+    "vite": "^2.6.4"
   }
 }

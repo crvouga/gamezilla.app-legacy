@@ -1,9 +1,11 @@
+import React from "react";
 import {
   ChevronLeft,
   ChevronRight,
   DeleteForever,
   Edit,
   Logout,
+  Settings,
 } from "@mui/icons-material";
 import {
   AppBar,
@@ -41,6 +43,18 @@ const Account = ({
       </AppBar>
 
       <List>
+        <Link to="/">
+          <ListItemButton divider>
+            <ListItemIcon>
+              <Settings />
+            </ListItemIcon>
+            <ListItemText primary="Settings" />
+            <ListItemSecondaryAction>
+              <ChevronRight />
+            </ListItemSecondaryAction>
+          </ListItemButton>
+        </Link>
+
         <Link to="/profile/edit">
           <ListItemButton>
             <ListItemIcon>

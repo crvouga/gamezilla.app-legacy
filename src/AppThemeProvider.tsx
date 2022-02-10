@@ -3,7 +3,7 @@ import {
   useMediaQuery,
   CssBaseline,
   responsiveFontSizes,
-  ThemeProvider as MuiThemeProvider,
+  ThemeProvider,
   ThemeOptions,
 } from "@mui/material";
 import { green } from "@mui/material/colors";
@@ -69,14 +69,9 @@ const baseOptions: ThemeOptions = {
 export const darkOptions: ThemeOptions = {
   palette: {
     mode: "dark",
-  },
-  components: {
-    MuiPaper: {
-      styleOverrides: {
-        root: {
-          backgroundColor: "#000",
-        },
-      },
+    background: {
+      default: "#000",
+      paper: "#101010",
     },
   },
 };
@@ -95,15 +90,19 @@ const lightTheme = responsiveFontSizes(
   createTheme(deepmerge(baseOptions, lightOptions))
 );
 
-export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
+export const AppThemeProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
   const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
 
   const theme = prefersDarkMode ? darkTheme : lightTheme;
 
   return (
-    <MuiThemeProvider theme={theme}>
+    <ThemeProvider theme={theme}>
       <CssBaseline enableColorScheme />
       {children}
-    </MuiThemeProvider>
+    </ThemeProvider>
   );
 };
