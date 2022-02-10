@@ -1,11 +1,19 @@
 import { AppBar, Box, Button, List, Toolbar } from "@mui/material";
 import React from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { ListItemField } from "../../components/ListItemField";
 
 const GameSession = () => {
   const { gameSessionId } = useParams();
 
+  if (gameSessionId) {
+    return <SubscribeGameSession gameSessionId={gameSessionId} />;
+  }
+
+  return <Navigate to={`/game-session/${Math.floor(Math.random() * 1000)}`} />;
+};
+
+const SubscribeGameSession = ({ gameSessionId }: { gameSessionId: string }) => {
   const navigate = useNavigate();
 
   const onLeave = () => {
@@ -13,13 +21,22 @@ const GameSession = () => {
   };
 
   return (
-    <>
+    <Box
+      sx={{
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
       <AppBar>
         <Toolbar>
-          <Button onClick={onLeave}>Leave</Button>
+          <Button sx={{ marginLeft: -2 }} onClick={onLeave}>
+            Leave
+          </Button>
         </Toolbar>
       </AppBar>
-      <List>
+      <List sx={{ flex: 1 }}>
         <ListItemField to="edit" label="Game" value="Tic Tac Toe" />
       </List>
       <Box sx={{ p: 2 }}>
@@ -27,7 +44,7 @@ const GameSession = () => {
           Start Game
         </Button>
       </Box>
-    </>
+    </Box>
   );
 };
 
