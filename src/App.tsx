@@ -1,6 +1,8 @@
 import { Box, Typography, useMediaQuery, useTheme } from "@mui/material";
 import React from "react";
-import { Navigate, Route, Routes } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "react-query";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { AppThemeProvider } from "./AppThemeProvider";
 import Account from "./features/account/Account";
 import { onAuthStatus } from "./features/account/account-data-access";
 import Login from "./features/account/AccountLogin";
@@ -17,43 +19,16 @@ import ProfileUpdateUsername from "./features/profile/ProfileUpdateUsername";
 import { useSubscription } from "./utility/use-subscription";
 
 const App = () => {
-  const theme = useTheme();
-
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
-
-  if (isSmallScreen) {
-    return (
-      <Box sx={{ width: "100%", height: "100%" }}>
-        <SubscribeAuth />
-      </Box>
-    );
-  }
-
   return (
-    <Box
-      sx={{
-        margin: "auto",
-        width: "100%",
-        maxWidth: theme.breakpoints.values.sm,
-        height: "100%",
-        display: "flex",
-        alignItems: "center",
-      }}
-    >
-      <Box
-        sx={{
-          border: `1px solid ${theme.palette.divider}`,
-          borderRadius: "1rem",
-
-          width: "100%",
-          height: "100%",
-          maxHeight: theme.breakpoints.values.sm,
-          overflow: "scroll",
-        }}
-      >
-        <SubscribeAuth />
-      </Box>
-    </Box>
+    <QueryClientProvider client={new QueryClient()}>
+      <BrowserRouter>
+        <AppThemeProvider>
+          <AppLayout>
+            <SubscribeAuth />
+          </AppLayout>
+        </AppThemeProvider>
+      </BrowserRouter>
+    </QueryClientProvider>
   );
 };
 
@@ -164,6 +139,43 @@ const Splash = () => {
       <Typography variant="h3" color="primary.main">
         Gamezilla
       </Typography>
+    </Box>
+  );
+};
+
+const AppLayout = ({ children }: { children: React.ReactNode }) => {
+  const theme = useTheme();
+
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+
+  if (isSmallScreen) {
+    return <Box sx={{ width: "100%", height: "100%" }}>{children}</Box>;
+  }
+
+  return (
+    <Box
+      sx={{
+        margin: "auto",
+        width: "100%",
+        maxWidth: theme.breakpoints.values.sm,
+        height: "100%",
+        display: "flex",
+        alignItems: "center",
+      }}
+    >
+      <Box
+        sx={{
+          border: `1px solid ${theme.palette.divider}`,
+          borderRadius: "1rem",
+
+          width: "100%",
+          height: "100%",
+          maxHeight: theme.breakpoints.values.sm,
+          overflow: "scroll",
+        }}
+      >
+        {children}
+      </Box>
     </Box>
   );
 };
