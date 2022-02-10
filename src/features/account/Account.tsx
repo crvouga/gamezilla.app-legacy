@@ -43,7 +43,7 @@ const Account = ({
       </AppBar>
 
       <List>
-        <Link to="/">
+        <Link to="/account/settings">
           <ListItemButton divider>
             <ListItemIcon>
               <Settings />

@@ -4,15 +4,17 @@ export type IUserMetadata = {
 
 export type IAuthStatus =
   | {
-    type: "loading";
-  }
+      type: "loading";
+    }
   | {
-    type: "logged-out";
-  }
+      type: "logged-out";
+    }
   | {
-    type: "logged-in";
-    userId: string;
-    userMetadata: IUserMetadata;
-  };
+      type: "logged-in";
+      userId: string;
+      userMetadata: IUserMetadata;
+    };
 
 export type ILogin = { provider: "google" };
+
+export type IThemeMode = "light" | "dark" | "system";
