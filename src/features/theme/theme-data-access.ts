@@ -1,9 +1,15 @@
+import { definitions, supabaseClient } from "../../third-party-services";
 import { IThemeMode } from "./theme-data";
 
-const LOCAL_STORAGE_KEY = "theme-mode";
-
-export const onThemeMode = ({ userId }: { userId: string }) => (
-  set: (themeMode: IThemeMode) => void
-) => {
-  return () => {};
+export const updateThemeMode = async ({
+  userId,
+  themeMode,
+}: {
+  userId: string;
+  themeMode: IThemeMode;
+}) => {
+  await supabaseClient
+    .from<definitions["profile"]>("profile")
+    .update({ theme_mode: themeMode })
+    .match({ id: userId });
 };

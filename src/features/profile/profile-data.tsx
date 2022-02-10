@@ -3,4 +3,5 @@ export type IProfile = {
   username?: string;
   avatarUrl?: string;
   name?: string;
+  themeMode: "LIGHT" | "DARK" | "SYSTEM";
 };

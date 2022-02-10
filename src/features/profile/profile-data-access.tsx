@@ -18,6 +18,7 @@ const getProfile = async ({
       avatarUrl: data.avatar_url,
       username: data.username,
       name: data.name,
+      themeMode: data.theme_mode,
     };
   }
 
@@ -51,6 +52,7 @@ export const createProfile = async ({
       name,
       username,
       avatar_url: avatarUrl,
+      theme_mode: "SYSTEM",
     })
     .single();
 
@@ -62,6 +64,7 @@ export const createProfile = async ({
         avatarUrl: response.data?.avatar_url,
         name: response.data?.name,
         username: response.data?.username,
+        themeMode: response.data?.theme_mode,
       },
     };
   }
@@ -90,6 +93,7 @@ type IProfileStatus =
         avatarUrl?: string;
         username?: string;
         name?: string;
+        themeMode: "LIGHT" | "DARK" | "SYSTEM";
       };
     }
   | {
@@ -122,6 +126,7 @@ export const onProfileStatus = ({ userId }: { userId: string }) => (
           avatarUrl: payload.new.avatar_url,
           username: payload.new.username,
           name: payload.new.name,
+          themeMode: payload.new.theme_mode,
         },
       });
     })
@@ -133,6 +138,7 @@ export const onProfileStatus = ({ userId }: { userId: string }) => (
           avatarUrl: payload.new.avatar_url,
           username: payload.new.username,
           name: payload.new.name,
+          themeMode: payload.new.theme_mode,
         },
       });
     })

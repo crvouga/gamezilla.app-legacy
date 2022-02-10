@@ -17,21 +17,3 @@ export const useSubscription = <T>(
 
   return data;
 };
-
-export const usePersistedSubscription = <T>(
-  key: string,
-  initialData: T,
-  subscribe: (set: (data: T) => void) => () => void
-) => {
-  const [data, setData] = usePersistedState(key, initialData);
-
-  useEffect(() => {
-    const unsubscribe = subscribe(setData);
-
-    return () => {
-      unsubscribe();
-    };
-  }, []);
-
-  return data;
-};

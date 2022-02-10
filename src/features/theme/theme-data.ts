@@ -1,8 +1,12 @@
-export type IThemeMode = "light" | "dark" | "system";
+export type IThemeMode = "LIGHT" | "DARK" | "SYSTEM";
 
 export const decodeThemeMode = (encoded: string): IThemeMode => {
-  if (encoded === "system" || encoded === "light" || encoded === "dark") {
+  if (encoded === "SYSTEM" || encoded === "LIGHT" || encoded === "DARK") {
     return encoded;
   }
-  return "system";
+  return "SYSTEM";
+};
+
+export const encodeThemeMode = (themeMode: IThemeMode) => {
+  return String(themeMode);
 };
