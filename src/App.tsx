@@ -77,7 +77,10 @@ const SubscribeProfile = ({
           <Route
             path="/profile/create/*"
             element={
-              <ProfileCreate userMetadata={userMetadata} userId={userId} />
+              <ProfileCreate
+                defaultName={userMetadata.name ?? ""}
+                userId={userId}
+              />
             }
           />
           <Route path="/logout" element={<AccountLogout />} />
