@@ -178,7 +178,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       sx={{
         margin: "auto",
         width: "100%",
-        maxWidth: theme.breakpoints.values.sm,
+        maxWidth: 500,
         height: "100%",
         display: "flex",
         alignItems: "center",
@@ -191,7 +191,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           backgroundColor: theme.palette.background.default,
           width: "100%",
           height: "100%",
-          maxHeight: theme.breakpoints.values.sm * 1.1,
+          maxHeight: 500 * (16 / 9),
           overflow: "hidden",
         }}
       >
