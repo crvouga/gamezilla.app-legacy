@@ -1,5 +1,12 @@
 import { definitions, supabaseClient } from "../../third-party-services";
-import { IProfile } from "./profile-data";
+
+export type IProfile = {
+  userId: string;
+  avatarUrl?: string;
+  username?: string;
+  name?: string;
+  themeMode: "LIGHT" | "DARK" | "SYSTEM";
+};
 
 const getProfile = async ({
   userId,
@@ -82,16 +89,9 @@ export const deleteProfile = async ({ userId }: { userId: string }) => {
     .match({ id: userId });
 };
 
-type IProfileData = {
-  userId: string;
-  avatarUrl?: string;
-  username?: string;
-  name?: string;
-  themeMode: "LIGHT" | "DARK" | "SYSTEM";
-};
-export const onProfileStatus =
+export const onProfile =
   ({ userId }: { userId: string }) =>
-  (set: (profile: IProfileData | null) => void) => {
+  (set: (maybeProfile: IProfile | null) => void) => {
     getProfile({ userId }).then((profile) => {
       if (profile) {
         set(profile);
