@@ -2,11 +2,8 @@ export type IUserMetadata = {
   name?: string;
 };
 
-export type IAuthStatus =
-  | {
-      type: "loading";
-    }
-  | {
+export type IAuthState =
+   {
       type: "logged-out";
     }
   | {

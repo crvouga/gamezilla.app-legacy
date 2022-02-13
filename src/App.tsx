@@ -3,12 +3,12 @@ import React from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import Account from "./features/account/Account";
-import { onAuthStatus } from "./features/account/account-data-access";
+import { onAuthState } from "./features/account/account-data-access";
 import AccountLogin from "./features/account/AccountLogin";
 import AccountLogout from "./features/account/AccountLogout";
 import GameSession from "./features/game/GameSession";
 import Home from "./features/home/Home";
-import { onProfileStatus } from "./features/profile/profile-data-access";
+import { onProfileStatus as onProfile } from "./features/profile/profile-data-access";
 import ProfileCreate from "./features/profile/ProfileCreate";
 import ProfileDelete from "./features/profile/ProfileDelete";
 import ProfileUpdate from "./features/profile/ProfileUpdate";
@@ -33,66 +33,60 @@ const App = () => {
 };
 
 const SubscribeAuth = () => {
-  const authStatus = useSubscription({ type: "loading" }, onAuthStatus);
+  const authStateSubscription = useSubscription(onAuthState);
 
-  switch (authStatus.type) {
-    case "logged-out":
-      return (
-        <Routes>
-          <Route path="/login" element={<AccountLogin />} />
-          <Route path="*" element={<Navigate to="/login" />} />
-        </Routes>
-      );
-
-    case "loading":
-      return <Splash />;
-
-    case "logged-in":
-      const { userId, userMetadata } = authStatus;
-      return <SubscribeProfile userMetadata={userMetadata} userId={userId} />;
+  if (authStateSubscription.status === "loading") {
+    return <Splash />;
   }
+
+  const authState = authStateSubscription.data;
+
+  if (authState.type === "logged-out") {
+    return (
+      <Routes>
+        <Route path="/login" element={<AccountLogin />} />
+        <Route path="*" element={<Navigate to="/login" />} />
+      </Routes>
+    );
+  }
+
+  return (
+    <SubscribeProfile
+      defaultName={authState.userMetadata.name ?? ""}
+      userId={authState.userId}
+    />
+  );
 };
 
 const SubscribeProfile = ({
   userId,
-  userMetadata,
+  defaultName,
 }: {
-  userMetadata: {
-    name?: string;
-  };
+  defaultName: string;
   userId: string;
 }) => {
-  const profileStatus = useSubscription(
-    { type: "loading" },
-    onProfileStatus({ userId })
-  );
+  const profileSubscription = useSubscription(onProfile({ userId }));
 
-  switch (profileStatus.type) {
-    case "loading":
-      return <Splash />;
-
-    case "not-found":
-      return (
-        <Routes>
-          <Route
-            path="/profile/create/*"
-            element={
-              <ProfileCreate
-                defaultName={userMetadata.name ?? ""}
-                userId={userId}
-              />
-            }
-          />
-          <Route path="/logout" element={<AccountLogout />} />
-          <Route path="*" element={<Navigate to="/profile/create" />} />
-        </Routes>
-      );
-
-    case "found":
-      const { profile } = profileStatus;
-
-      return <FoundProfile profile={profile} />;
+  if (profileSubscription.status === "loading") {
+    return <Splash />;
   }
+
+  const maybeProfile = profileSubscription.data;
+
+  if (maybeProfile) {
+    return <FoundProfile profile={maybeProfile} />;
+  }
+
+  return (
+    <Routes>
+      <Route
+        path="/profile/create/*"
+        element={<ProfileCreate defaultName={defaultName} userId={userId} />}
+      />
+      <Route path="/logout" element={<AccountLogout />} />
+      <Route path="*" element={<Navigate to="/profile/create" />} />
+    </Routes>
+  );
 };
 
 const FoundProfile = ({
