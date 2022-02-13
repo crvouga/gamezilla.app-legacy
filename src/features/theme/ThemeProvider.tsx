@@ -61,6 +61,12 @@ const baseOptions: ThemeOptions = {
       defaultProps: {
         size: "large",
       },
+      styleOverrides: {
+        root: {
+          borderRadius: "2rem",
+          textTransform: "none",
+        },
+      },
     },
 
     MuiAlert: {
