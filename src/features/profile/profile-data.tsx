@@ -5,3 +5,5 @@ export type IProfile = {
   name?: string;
   themeMode: "LIGHT" | "DARK" | "SYSTEM";
 };
+
+export type IUsername = string & { type: "Username" };
