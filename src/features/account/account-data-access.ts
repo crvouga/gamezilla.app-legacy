@@ -1,5 +1,5 @@
 import { supabaseClient } from "../../third-party-services";
-import { IAuthStatus, ILogin } from "./account-data";
+import { IAuthState, ILogin } from "./account-data";
 
 export const login = async ({ provider }: ILogin) => {
   const redirectTo = window.location.href;
@@ -18,7 +18,7 @@ export const logout = async () => {
   await supabaseClient.auth.signOut();
 };
 
-export const getAuthStatus = async (): Promise<IAuthStatus> => {
+export const getAuthStatus = async (): Promise<IAuthState> => {
   const session = supabaseClient.auth.session();
   const userId = session?.user?.id;
 
@@ -37,7 +37,7 @@ export const getAuthStatus = async (): Promise<IAuthStatus> => {
   };
 };
 
-export const onAuthStatus = (set: (state: IAuthStatus) => void) => {
+export const onAuthState = (set: (state: IAuthState) => void) => {
   const timeoutHandler = setTimeout(async () => {
     const authStatus = await getAuthStatus();
     set(authStatus);

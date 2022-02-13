@@ -1,19 +1,28 @@
 import { useEffect, useState } from "react";
-import { usePersistedState } from "./use-persisted-state";
 
-export const useSubscription = <T>(
-  initialData: T,
-  subscribe: (set: (data: T) => void) => () => void
-) => {
-  const [data, setData] = useState(initialData);
+type ISubsrcriptionState<TData> = 
+  {
+    status: "loading"
+  } |
+  {
+    status: "success"
+    data: TData
+  }
+
+type ISubscribe<TData> =(set: (data: TData) => void) => () => void
+
+export const useSubscription = <TData>(subscribe: ISubscribe<TData>) => {
+  const [state, setState]= useState<ISubsrcriptionState<TData>>({status: "loading"});
 
   useEffect(() => {
-    const unsubscribe = subscribe(setData);
+    const unsubscribe = subscribe(data=> {
+      setState({status: "success", data})
+    });
 
     return () => {
       unsubscribe();
     };
   }, []);
 
-  return data;
+  return state;
 };

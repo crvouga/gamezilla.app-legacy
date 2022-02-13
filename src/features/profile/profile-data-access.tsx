@@ -82,77 +82,53 @@ export const deleteProfile = async ({ userId }: { userId: string }) => {
     .match({ id: userId });
 };
 
-type IProfileStatus =
-  | {
-      type: "loading";
-    }
-  | {
-      type: "found";
-      profile: {
-        userId: string;
-        avatarUrl?: string;
-        username?: string;
-        name?: string;
-        themeMode: "LIGHT" | "DARK" | "SYSTEM";
-      };
-    }
-  | {
-      type: "not-found";
-    };
-
-export const onProfileStatus = ({ userId }: { userId: string }) => (
-  set: (status: IProfileStatus) => void
-) => {
-  getProfile({ userId }).then((profile) => {
-    if (profile) {
-      set({
-        type: "found",
-        profile,
-      });
-      return;
-    }
-    set({
-      type: "not-found",
-    });
-  });
-
-  const subscription = supabaseClient
-    .from<definitions["profile"]>(`profile:id=eq.${userId}`)
-    .on("INSERT", (payload) => {
-      set({
-        type: "found",
-        profile: {
-          userId: payload.new.id,
-          avatarUrl: payload.new.avatar_url,
-          username: payload.new.username,
-          name: payload.new.name,
-          themeMode: payload.new.theme_mode,
-        },
-      });
-    })
-    .on("UPDATE", (payload) => {
-      set({
-        type: "found",
-        profile: {
-          userId: payload.new.id,
-          avatarUrl: payload.new.avatar_url,
-          username: payload.new.username,
-          name: payload.new.name,
-          themeMode: payload.new.theme_mode,
-        },
-      });
-    })
-    .on("DELETE", () => {
-      set({
-        type: "not-found",
-      });
-    })
-    .subscribe();
-
-  return () => {
-    subscription.unsubscribe();
-  };
+type IProfileData = {
+  userId: string;
+  avatarUrl?: string;
+  username?: string;
+  name?: string;
+  themeMode: "LIGHT" | "DARK" | "SYSTEM";
 };
+export const onProfileStatus =
+  ({ userId }: { userId: string }) =>
+  (set: (profile: IProfileData | null) => void) => {
+    getProfile({ userId }).then((profile) => {
+      if (profile) {
+        set(profile);
+        return;
+      }
+      set(null);
+    });
+
+    const subscription = supabaseClient
+      .from<definitions["profile"]>(`profile:id=eq.${userId}`)
+      .on("INSERT", (payload) => {
+        set({
+          userId: payload.new.id,
+          avatarUrl: payload.new.avatar_url,
+          username: payload.new.username,
+          name: payload.new.name,
+          themeMode: payload.new.theme_mode,
+        });
+      })
+      .on("UPDATE", (payload) => {
+        set({
+          userId: payload.new.id,
+          avatarUrl: payload.new.avatar_url,
+          username: payload.new.username,
+          name: payload.new.name,
+          themeMode: payload.new.theme_mode,
+        });
+      })
+      .on("DELETE", () => {
+        set(null);
+      })
+      .subscribe();
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  };
 
 export const updateProfile = async ({
   userId,
