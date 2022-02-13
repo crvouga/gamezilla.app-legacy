@@ -8,7 +8,7 @@ import AccountLogin from "./features/account/AccountLogin";
 import AccountLogout from "./features/account/AccountLogout";
 import GameSession from "./features/game/GameSession";
 import Home from "./features/home/Home";
-import { onProfileStatus as onProfile } from "./features/profile/profile-data-access";
+import { onProfile, IProfile } from "./features/profile/profile-data-access";
 import ProfileCreate from "./features/profile/ProfileCreate";
 import ProfileDelete from "./features/profile/ProfileDelete";
 import ProfileUpdate from "./features/profile/ProfileUpdate";
@@ -89,17 +89,7 @@ const SubscribeProfile = ({
   );
 };
 
-const FoundProfile = ({
-  profile,
-}: {
-  profile: {
-    userId: string;
-    avatarUrl?: string;
-    name?: string;
-    username?: string;
-    themeMode: "LIGHT" | "DARK" | "SYSTEM";
-  };
-}) => {
+const FoundProfile = ({ profile }: { profile: IProfile }) => {
   return (
     <Routes>
       <Route path="/" element={<Home profile={profile} />} />
