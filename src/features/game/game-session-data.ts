@@ -1,3 +1,6 @@
+
+
+
 export type IGameSession<TGameState> = {
   game: {
     name: string;
@@ -20,3 +23,7 @@ export type ICommand = {
 export type IEvent = {
   type: "game-session/CREATE";
 };
+
+export const generateId = () => {
+    return String(Math.floor(Math.random() * 1_000_000))
+}

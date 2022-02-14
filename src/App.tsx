@@ -97,17 +97,22 @@ const FoundProfile = ({ profile }: { profile: IProfile }) => {
 
       <Route path="/profile/edit">
         <Route path="" element={<ProfileUpdate profile={profile} />} />
+
         <Route
           path="avatar/*"
           element={<ProfileUpdateAvatar profile={profile} />}
         />
+
         <Route path="name" element={<ProfileUpdateName profile={profile} />} />
+
         <Route
           path="username"
           element={<ProfileUpdateUsername profile={profile} />}
         />
       </Route>
+
       <Route path="/logout" element={<AccountLogout />} />
+
       <Route
         path="/profile/delete"
         element={<ProfileDelete userId={profile.userId} />}

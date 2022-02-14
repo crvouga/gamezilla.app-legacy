@@ -10,6 +10,7 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
+import { generateId } from "../game/game-session-data";
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -17,7 +18,7 @@ const Home = ({ profile }: { profile: { avatarUrl?: string } }) => {
   const navigate = useNavigate();
 
   const onCreateGame = () => {
-    navigate(`/game-session/${Math.floor(Math.random() * 100000)}`);
+    navigate(`/game-session/${generateId()}`);
   };
 
   return (
