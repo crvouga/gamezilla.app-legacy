@@ -33,13 +33,13 @@ const App = () => {
 };
 
 const SubscribeAuth = () => {
-  const authStateSubscription = useSubscription(onAuthState);
+  const subscription = useSubscription(onAuthState);
 
-  if (authStateSubscription.status === "loading") {
+  if (subscription.status === "loading") {
     return <Splash />;
   }
 
-  const authState = authStateSubscription.data;
+  const authState = subscription.data;
 
   if (authState.type === "logged-out") {
     return (
@@ -65,16 +65,16 @@ const SubscribeProfile = ({
   defaultName: string;
   userId: string;
 }) => {
-  const profileSubscription = useSubscription(onProfile({ userId }));
+  const subscription = useSubscription(onProfile({ userId }));
 
-  if (profileSubscription.status === "loading") {
+  if (subscription.status === "loading") {
     return <Splash />;
   }
 
-  const maybeProfile = profileSubscription.data;
+  const profile = subscription.data;
 
-  if (maybeProfile) {
-    return <FoundProfile profile={maybeProfile} />;
+  if (profile) {
+    return <FoundProfile profile={profile} />;
   }
 
   return (

@@ -6,7 +6,7 @@ import {
   ThemeProvider as MuiThemeProvider,
   useMediaQuery,
 } from "@mui/material";
-import { green } from "@mui/material/colors";
+import { blue } from "@mui/material/colors";
 import { deepmerge } from "@mui/utils";
 import React from "react";
 
@@ -14,7 +14,7 @@ const defaultTheme = createTheme();
 
 const baseOptions: ThemeOptions = {
   palette: {
-    primary: green,
+    primary: blue,
   },
   typography: {
     fontSize: 20,
