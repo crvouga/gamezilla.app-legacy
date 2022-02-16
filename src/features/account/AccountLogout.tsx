@@ -1,5 +1,5 @@
 import { LoadingButton } from "@mui/lab";
-import { Button, Dialog, DialogActions, DialogTitle } from "@mui/material";
+import { Box, Button, Drawer, Typography } from "@mui/material";
 import React from "react";
 import { useMutation } from "react-query";
 import { useNavigate } from "react-router-dom";
@@ -23,18 +23,37 @@ const Logout = () => {
   };
 
   return (
-    <Dialog open onClose={onCancel}>
-      <DialogTitle>Logout of Gamezilla?</DialogTitle>
-      <DialogActions>
-        <Button onClick={onCancel}>Cancel</Button>
+    <Drawer open anchor="bottom" onBackdropClick={onCancel}>
+      <Typography sx={{ p: 2 }} align="center" variant="h5">
+        Logout of Gamezilla?
+      </Typography>
+
+      <Box
+        sx={{
+          width: "100%",
+          p: 2,
+          display: "flex",
+        }}
+      >
+        <Button
+          variant="outlined"
+          sx={{ flex: 1, marginRight: 2 }}
+          onClick={onCancel}
+        >
+          Cancel
+        </Button>
+
         <LoadingButton
+          sx={{ flex: 1 }}
+          variant="contained"
           loading={mutation.status === "loading"}
+          size="large"
           onClick={onConfirm}
         >
           Logout
         </LoadingButton>
-      </DialogActions>
-    </Dialog>
+      </Box>
+    </Drawer>
   );
 };
 
