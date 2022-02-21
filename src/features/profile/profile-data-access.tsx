@@ -8,6 +8,16 @@ export type IProfile = {
   themeMode: "LIGHT" | "DARK" | "SYSTEM";
 };
 
+const rowToProfile = (row: definitions["profile"]): IProfile => {
+  return {
+    userId: row.id,
+    avatarUrl: row.avatar_url,
+    name: row.name,
+    username: row.username,
+    themeMode: row.theme_mode,
+  };
+};
+
 const getProfile = async ({
   userId,
 }: {
@@ -20,13 +30,7 @@ const getProfile = async ({
     .single();
 
   if (data) {
-    return {
-      userId: data.id,
-      avatarUrl: data.avatar_url,
-      username: data.username,
-      name: data.name,
-      themeMode: data.theme_mode,
-    };
+    return rowToProfile(data);
   }
 
   return null;
@@ -66,13 +70,7 @@ export const createProfile = async ({
   if (response.data?.id) {
     return {
       type: "success",
-      profile: {
-        userId: response.data?.id,
-        avatarUrl: response.data?.avatar_url,
-        name: response.data?.name,
-        username: response.data?.username,
-        themeMode: response.data?.theme_mode,
-      },
+      profile: rowToProfile(response.data),
     };
   }
 
@@ -103,22 +101,10 @@ export const onProfile =
     const subscription = supabaseClient
       .from<definitions["profile"]>(`profile:id=eq.${userId}`)
       .on("INSERT", (payload) => {
-        set({
-          userId: payload.new.id,
-          avatarUrl: payload.new.avatar_url,
-          username: payload.new.username,
-          name: payload.new.name,
-          themeMode: payload.new.theme_mode,
-        });
+        set(rowToProfile(payload.new));
       })
       .on("UPDATE", (payload) => {
-        set({
-          userId: payload.new.id,
-          avatarUrl: payload.new.avatar_url,
-          username: payload.new.username,
-          name: payload.new.name,
-          themeMode: payload.new.theme_mode,
-        });
+        set(rowToProfile(payload.new));
       })
       .on("DELETE", () => {
         set(null);
