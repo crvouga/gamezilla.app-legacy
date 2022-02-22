@@ -36,21 +36,23 @@ const Home = ({ profile }: { profile: { avatarUrl?: string } }) => {
       </AppBar>
 
       <List>
-        <ListItemButton onClick={onCreateGame}>
-          <ListItemIcon>
-            <Add />
-          </ListItemIcon>
-          <ListItemText primary="Create Game" />
-          <ListItemSecondaryAction>
-            <ChevronRight />
-          </ListItemSecondaryAction>
-        </ListItemButton>
+        <Link to="/game-session/create">
+          <ListItemButton>
+            <ListItemIcon>
+              <Add />
+            </ListItemIcon>
+            <ListItemText primary="Create Game" />
+            <ListItemSecondaryAction>
+              <ChevronRight />
+            </ListItemSecondaryAction>
+          </ListItemButton>
+        </Link>
 
         <ListItemButton>
           <ListItemIcon>
             <Search />
           </ListItemIcon>
-          <ListItemText primary="Join Game" />
+          <ListItemText primary="Browse Games" />
           <ListItemSecondaryAction>
             <ChevronRight />
           </ListItemSecondaryAction>

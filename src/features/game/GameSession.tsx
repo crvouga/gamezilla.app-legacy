@@ -11,7 +11,7 @@ const GameSession = () => {
     return <SubscribeGameSession gameSessionId={gameSessionId} />;
   }
 
-  return <Navigate to={`/game-session/${generateId()}`} />;
+  return <Navigate to="/" replace />;
 };
 
 const SubscribeGameSession = ({ gameSessionId }: { gameSessionId: string }) => {
