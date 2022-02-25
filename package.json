@@ -8,7 +8,8 @@
     "server:build": "tsc src/main.server.ts --outDir ./dist/server --esModuleInterop",
     "server:dev": "npx tsc-watch src/main.server.ts --esModuleInterop --outDir ./dist/server --onSuccess \"node ./dist/server/main.server.js\"",
     "server:start": "node ./dist/server/main.server.js",
-    "heroku:start": "npm run server:build && npm run server:start",
+    "heroku-postbuild": "npm run server:build",
+    "heroku:start": "npm run server:start",
     "heroku:local": "npx heroku local web",
     "supabase:load-types": "npx openapi-typescript https://ldxpcprlgecjvqwzuxgv.supabase.co/rest/v1/?apikey=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTYzNzA0MDQ5NywiZXhwIjoxOTUyNjE2NDk3fQ.ReI8CpIFbLB9Q53Az7CDBIyrn_o1JeGhPoZXdqx8Ac4 --output src/third-party-services/supabase-types.ts",
     "vercel:load-env": "npx vercel env pull"
