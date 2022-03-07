@@ -1,4 +1,4 @@
-import { definitions, supabaseClient } from "../../third-party-services";
+import { definitions, supabaseClient } from "@libs/third-party-services";
 
 export const find = async ({ gameSessionId }: { gameSessionId: string }) => {
   const { data, error } = await supabaseClient

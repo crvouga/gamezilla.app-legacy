@@ -1,3 +1,4 @@
+import { ListItemField } from "@libs/components";
 import { ChevronLeft } from "@mui/icons-material";
 import {
   AppBar,
@@ -11,7 +12,6 @@ import {
 } from "@mui/material";
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ListItemField } from "../../components/ListItemField";
 
 const ProfileUpdate = ({
   profile,

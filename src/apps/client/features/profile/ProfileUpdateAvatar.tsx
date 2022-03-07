@@ -1,3 +1,4 @@
+import { AspectRatioSquare, ListItemField } from "@libs/components";
 import { ChevronLeft } from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
 import {
@@ -15,9 +16,6 @@ import {
 import React, { useState } from "react";
 import { useMutation } from "react-query";
 import { Route, Routes, useNavigate } from "react-router-dom";
-import AspectRatioSquare from "../../components/AspectRatioSquare";
-
-import { ListItemField } from "../../components/ListItemField";
 import { updateProfile } from "./profile-data-access";
 
 const ProfileUpdateAvatar = ({

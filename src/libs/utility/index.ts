@@ -5,3 +5,5 @@ export * from "./maybe";
 export * from "./random";
 export * from "./record";
 export * from "./natural-number";
+export * from "./use-persisted-state";
+export * from "./use-subscription";
