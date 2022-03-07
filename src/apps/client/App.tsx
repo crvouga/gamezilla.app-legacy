@@ -120,7 +120,7 @@ const FoundProfile = ({ profile }: { profile: IProfile }) => {
       />
 
       <Route
-        path="/create-game-session"
+        path="/game-session-create"
         element={<GameSessionCreate profile={profile} />}
       />
 
