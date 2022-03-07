@@ -1,4 +1,4 @@
-import { supabaseClient } from "@apps/client/data-access";
+import { supabaseClient } from "../../data-access";
 import { IAuthState, ILogin } from "./account-data";
 
 export const login = async ({ provider }: ILogin) => {

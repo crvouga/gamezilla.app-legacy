@@ -1,8 +1,7 @@
+import { ListItemField } from "@libs/components";
 import { AppBar, Box, Button, List, Toolbar } from "@mui/material";
 import React from "react";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
-import { ListItemField } from "../../../../libs/components/ListItemField";
-import { generateId } from "./game-session-data";
 
 const GameSession = () => {
   const { gameSessionId } = useParams();

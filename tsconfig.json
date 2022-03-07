@@ -24,10 +24,6 @@
       ],
       "@libs/server-interface": [
         "./src/libs/server-interface/index"
-      ],
-      "@apps/client/*": ["./src/apps/client/*"],
-      "@apps/server/*": [
-        "./src/apps/server/*"
       ]
     }
   },
