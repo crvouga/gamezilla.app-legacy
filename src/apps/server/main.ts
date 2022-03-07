@@ -14,5 +14,5 @@ const gameServer = new Server();
 gameServer.define(RoomNames.GameSession, GameSessionRoom);
 
 gameServer.listen(port, undefined, undefined, () => {
-  console.log(`game server is listening on port ${port}`);
+  console.log(`[colyseus] game server is listening on port ${port}`);
 });
