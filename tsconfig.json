@@ -19,8 +19,8 @@
     "paths": {
       "@libs/utility": ["src/libs/utility/index"],
       "@libs/components": ["src/libs/components/index"],
-      "@libs/third-party-services": [
-        "src/libs/third-party-services/index"
+      "@libs/supabase": [
+        "src/libs/supabase/index"
       ],
     }
   },

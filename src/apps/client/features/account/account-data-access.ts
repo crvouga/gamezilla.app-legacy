@@ -1,4 +1,4 @@
-import { supabaseClient } from "@libs/third-party-services";
+import { supabaseClient } from "@libs/supabase";
 import { IAuthState, ILogin } from "./account-data";
 
 export const login = async ({ provider }: ILogin) => {
