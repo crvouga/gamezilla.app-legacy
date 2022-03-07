@@ -10,7 +10,7 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-import { generateId } from "../game/game-session-data";
+import { generateId } from "./game-session-data";
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 

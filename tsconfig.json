@@ -15,7 +15,14 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react",
-    "baseUrl": "./src"
+    "baseUrl": ".",
+    "paths": {
+      "@libs/utility": ["src/libs/utility/index"],
+      "@libs/components": ["src/libs/components/index"],
+      "@libs/third-party-services": [
+        "src/libs/third-party-services/index"
+      ],
+    }
   },
   "include": ["./src", "vite-env.d.ts"],
   "exclude": ["./node_modules"]

@@ -1,3 +1,4 @@
+import { useSubscription } from "@libs/utility";
 import { Box, Typography, useMediaQuery, useTheme } from "@mui/material";
 import React from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
@@ -8,7 +9,7 @@ import AccountLogin from "./features/account/AccountLogin";
 import AccountLogout from "./features/account/AccountLogout";
 import GameSession from "./features/game/GameSession";
 import Home from "./features/home/Home";
-import { onProfile, IProfile } from "./features/profile/profile-data-access";
+import { IProfile, onProfile } from "./features/profile/profile-data-access";
 import ProfileCreate from "./features/profile/ProfileCreate";
 import ProfileDelete from "./features/profile/ProfileDelete";
 import ProfileUpdate from "./features/profile/ProfileUpdate";
@@ -16,9 +17,8 @@ import ProfileUpdateAvatar from "./features/profile/ProfileUpdateAvatar";
 import ProfileUpdateName from "./features/profile/ProfileUpdateName";
 import ProfileUpdateUsername from "./features/profile/ProfileUpdateUsername";
 import ThemeProvider from "./features/theme/ThemeProvider";
-import { useSubscription } from "./utility/use-subscription";
 
-const App = () => {
+export const App = () => {
   return (
     <QueryClientProvider client={new QueryClient()}>
       <BrowserRouter>
@@ -189,5 +189,3 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     </Box>
   );
 };
-
-export default App;

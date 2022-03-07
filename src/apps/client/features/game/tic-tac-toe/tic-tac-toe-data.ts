@@ -1,4 +1,4 @@
-import { mapValues } from "utility";
+import { mapValues } from "@libs/utility";
 
 type IPlayer = "x" | "o";
 
