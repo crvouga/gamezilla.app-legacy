@@ -1,5 +1,5 @@
-import { supabaseClient } from "@apps/client/data-access";
 import { definitions } from "@libs/supabase";
+import { supabaseClient } from "../../data-access";
 
 export type IProfile = {
   userId: string;
