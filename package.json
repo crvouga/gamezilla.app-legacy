@@ -2,7 +2,6 @@
   "name": "gamezilla",
   "version": "0.0.0",
   "scripts": {
-    
     "client:dev": "vite dev",
     "client:build": "tsc && vite build",
     "server:build": "tsc src/apps/main.ts --outDir ./dist/server --esModuleInterop",
