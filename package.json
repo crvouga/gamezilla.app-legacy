@@ -1,6 +1,7 @@
 {
   "name": "gamezilla",
   "version": "0.0.0",
+  
   "scripts": {
     "client:dev": "vite dev",
     "client:build": "npx tsc && vite build",
@@ -14,6 +15,7 @@
     "vercel:env": "npx vercel env"
   },
   "dependencies": {
+    "@colyseus/monitor": "^0.14.22",
     "@emotion/react": "^11.7.1",
     "@emotion/styled": "^11.6.0",
     "@mui/icons-material": "^5.4.1",
@@ -22,6 +24,7 @@
     "@supabase/supabase-js": "^1.30.0",
     "colyseus": "^0.14.23",
     "colyseus.js": "^0.14.13",
+    "express": "^4.17.3",
     "fast-deep-equal": "^3.1.3",
     "react": "^17.0.0",
     "react-dom": "^17.0.0",

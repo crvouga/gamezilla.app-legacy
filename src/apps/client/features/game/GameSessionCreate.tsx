@@ -1,25 +1,19 @@
 import { AppBarBackButton } from "@libs/components";
-import { AppBar, Box, Button, Toolbar, Typography } from "@mui/material";
+import { AppBar, Box, Button, Stack, Toolbar, Typography } from "@mui/material";
 import React from "react";
-import { useNavigate } from "react-router-dom";
-import { generateId } from "./game-session-data";
-import { _create } from "./game-session-data-access";
+import { create } from "./game-session-data-access";
 
 export const GameSessionCreate = ({
   profile,
 }: {
   profile: { avatarUrl?: string };
 }) => {
-  const navigate = useNavigate();
-
-  const onCreateGame = () => {
-    _create();
-
-    // navigate(`/game-session/${generateId()}`, { replace: true });
+  const onCreateGame = async () => {
+    await create();
   };
 
   return (
-    <>
+    <Box sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
       <AppBar>
         <Toolbar>
           <AppBarBackButton />
@@ -37,6 +31,6 @@ export const GameSessionCreate = ({
           Create Game
         </Button>
       </Box>
-    </>
+    </Box>
   );
 };

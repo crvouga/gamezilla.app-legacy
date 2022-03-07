@@ -36,7 +36,7 @@ const Home = ({ profile }: { profile: { avatarUrl?: string } }) => {
       </AppBar>
 
       <List>
-        <Link to="/create-game-session">
+        <Link to="/game-session-create">
           <ListItemButton>
             <ListItemIcon>
               <Add />
