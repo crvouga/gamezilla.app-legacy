@@ -1,13 +1,18 @@
 import { Server } from "colyseus";
+import {
+  COLYSEUS_DEVELOPMENT_SERVER_PORT,
+  RoomNames,
+} from "../../libs/server-interface";
+import { GameSessionRoom } from "./game-session-room";
 
-export const startServer = ({ port }: { port: number }) => {
-  const gameServer = new Server();
+const port = process.env.PORT
+  ? parseInt(process.env.PORT)
+  : COLYSEUS_DEVELOPMENT_SERVER_PORT;
 
-  gameServer.listen(port, undefined, undefined, () => {
-    console.log(`game server is listening on port ${port}`);
-  });
-};
+const gameServer = new Server();
 
-startServer({
-  port: process.env.PORT ? parseInt(process.env.PORT) : 8000,
+gameServer.define(RoomNames.GameSession, GameSessionRoom);
+
+gameServer.listen(port, undefined, undefined, () => {
+  console.log(`game server is listening on port ${port}`);
 });

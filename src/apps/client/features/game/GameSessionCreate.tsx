@@ -1,21 +1,9 @@
-import { Add, ChevronRight, Search } from "@mui/icons-material";
-import {
-  AppBar,
-  Avatar,
-  Box,
-  Button,
-  List,
-  ListItemButton,
-  ListItemIcon,
-  ListItemSecondaryAction,
-  ListItemText,
-  Toolbar,
-  Typography,
-} from "@mui/material";
-import { generateId } from "./game-session-data";
-import React from "react";
-import { Link, useNavigate } from "react-router-dom";
 import { AppBarBackButton } from "@libs/components";
+import { AppBar, Box, Button, Toolbar, Typography } from "@mui/material";
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import { generateId } from "./game-session-data";
+import { _create } from "./game-session-data-access";
 
 export const GameSessionCreate = ({
   profile,
@@ -25,7 +13,9 @@ export const GameSessionCreate = ({
   const navigate = useNavigate();
 
   const onCreateGame = () => {
-    navigate(`/game-session/${generateId()}`, { replace: true });
+    _create();
+
+    // navigate(`/game-session/${generateId()}`, { replace: true });
   };
 
   return (
