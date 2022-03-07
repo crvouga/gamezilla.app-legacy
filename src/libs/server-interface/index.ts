@@ -1,1 +1,1 @@
-export const COLYSESU_GAME_SERVER_PORT = 8000;
+export * from "./colyseus";

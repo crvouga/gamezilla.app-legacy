@@ -15,13 +15,20 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react",
-    "baseUrl": ".",
+    "baseUrl": "src",
     "paths": {
-      "@libs/utility": ["src/libs/utility/index"],
-      "@libs/components": ["src/libs/components/index"],
+      "@libs/utility": ["libs/utility/index"],
+      "@libs/components": ["libs/components/index"],
       "@libs/supabase": [
-        "src/libs/supabase/index"
+        "libs/supabase/index"
       ],
+      "@libs/server-interface": [
+        "libs/server-interface/index"
+      ],
+      "@apps/client/*": ["apps/client/*"],
+      "@apps/server/*": [
+        "apps/server/*"
+      ]
     }
   },
   "include": ["./src", "vite-env.d.ts"],

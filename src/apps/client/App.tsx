@@ -8,6 +8,7 @@ import { onAuthState } from "./features/account/account-data-access";
 import AccountLogin from "./features/account/AccountLogin";
 import AccountLogout from "./features/account/AccountLogout";
 import GameSession from "./features/game/GameSession";
+import { GameSessionCreate } from "./features/game/GameSessionCreate";
 import Home from "./features/home/Home";
 import { IProfile, onProfile } from "./features/profile/profile-data-access";
 import ProfileCreate from "./features/profile/ProfileCreate";
@@ -116,6 +117,11 @@ const FoundProfile = ({ profile }: { profile: IProfile }) => {
       <Route
         path="/profile/delete"
         element={<ProfileDelete userId={profile.userId} />}
+      />
+
+      <Route
+        path="/create-game-session"
+        element={<GameSessionCreate profile={profile} />}
       />
 
       <Route path="/game-session/:gameSessionId" element={<GameSession />} />
