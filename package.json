@@ -3,9 +3,9 @@
   "version": "0.0.0",
   "scripts": {
     "client:dev": "vite dev",
-    "client:build": "tsc && vite build",
-    "server:build": "tsc src/apps/main.ts --outDir ./dist/server --esModuleInterop",
-    "server:dev": "npx tsc-watch src/apps/server/main.ts --esModuleInterop --outDir ./dist/server --onSuccess \"node ./dist/server/main.js\"",
+    "client:build": "npx tsc && vite build",
+    "server:dev": "npx tsc-watch src/apps/server/main.ts --esModuleInterop --outDir ./dist/server --onSuccess \"node ./dist/server/apps/server/main.js\"",
+    "server:build": "npx tsc src/apps/server/main.ts --outDir ./dist/server --esModuleInterop",
     "server:start": "node ./dist/server/main.server.js",
     "heroku-postbuild": "npm run server:build",
     "heroku:start": "npm run server:start",
@@ -32,7 +32,8 @@
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
     "@vitejs/plugin-react": "^1.0.0",
-    "typescript": "^4.3.2",
+    "tsc-watch": "^4.6.0",
+    "typescript": "^4.6.2",
     "vite": "^2.6.4",
     "vite-tsconfig-paths": "^3.4.1"
   },

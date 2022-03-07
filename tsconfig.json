@@ -15,19 +15,19 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react",
-    "baseUrl": "src",
+    "baseUrl": ".",
     "paths": {
-      "@libs/utility": ["libs/utility/index"],
-      "@libs/components": ["libs/components/index"],
+      "@libs/utility": ["./src/libs/utility/index"],
+      "@libs/components": ["./src/libs/components/index"],
       "@libs/supabase": [
-        "libs/supabase/index"
+        "./src/libs/supabase/index"
       ],
       "@libs/server-interface": [
-        "libs/server-interface/index"
+        "./src/libs/server-interface/index"
       ],
-      "@apps/client/*": ["apps/client/*"],
+      "@apps/client/*": ["./src/apps/client/*"],
       "@apps/server/*": [
-        "apps/server/*"
+        "./src/apps/server/*"
       ]
     }
   },

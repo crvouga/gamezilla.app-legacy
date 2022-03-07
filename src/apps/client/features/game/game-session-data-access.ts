@@ -1,8 +1,11 @@
 import { supabaseClient, colyseusClient } from "@apps/client/data-access";
+import { RoomNames } from "@libs/server-interface";
 import { definitions } from "@libs/supabase";
 
-export const _create = () => {
-  return colyseusClient.create("game-session");
+export const _create = async () => {
+  // console.log({ colyseusClient, create: colyseusClient.create, RoomNames });
+  await colyseusClient.create(RoomNames.GameSession);
+  console.log("DONE");
 };
 
 export const find = async ({ gameSessionId }: { gameSessionId: string }) => {
