@@ -1,5 +1,5 @@
-import { ListItemField } from "@libs/components";
 import { AppBar, Box, Button, List, Toolbar } from "@mui/material";
+import { ListItemField } from "@libs/ui";
 import React from "react";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 
@@ -13,7 +13,7 @@ const GameSession = () => {
   return <Navigate to="/" replace />;
 };
 
-const SubscribeGameSession = ({ gameSessionId }: { gameSessionId: string }) => {
+const SubscribeGameSession = (_props: { gameSessionId: string }) => {
   const navigate = useNavigate();
 
   const onLeave = () => {

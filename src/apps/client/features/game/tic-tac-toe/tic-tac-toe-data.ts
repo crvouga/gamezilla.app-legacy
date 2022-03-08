@@ -1,4 +1,4 @@
-import { mapValues } from "@libs/utility";
+import { mapValues } from "@libs/utils";
 
 type IPlayer = "x" | "o";
 
@@ -16,47 +16,47 @@ type IBoard = {
   2: IColumn;
 };
 
-const ALL_WIN_POSITIONS_SETS: {
-  [key: number]: { 0: IPosition; 1: IPosition; 2: IPosition };
-} = {
-  0: {
-    0: { x: 0, y: 0 },
-    1: { x: 1, y: 0 },
-    2: { x: 2, y: 0 },
-  },
-  1: {
-    0: { x: 0, y: 1 },
-    1: { x: 1, y: 1 },
-    2: { x: 2, y: 1 },
-  },
-  2: {
-    0: { x: 0, y: 2 },
-    1: { x: 1, y: 2 },
-    2: { x: 2, y: 2 },
-  },
-};
+// const ALL_WIN_POSITIONS_SETS: {
+//   [key: number]: { 0: IPosition; 1: IPosition; 2: IPosition };
+// } = {
+//   0: {
+//     0: { x: 0, y: 0 },
+//     1: { x: 1, y: 0 },
+//     2: { x: 2, y: 0 },
+//   },
+//   1: {
+//     0: { x: 0, y: 1 },
+//     1: { x: 1, y: 1 },
+//     2: { x: 2, y: 1 },
+//   },
+//   2: {
+//     0: { x: 0, y: 2 },
+//     1: { x: 1, y: 2 },
+//     2: { x: 2, y: 2 },
+//   },
+// };
 
-export const toWinPositionSets = (board: IBoard) => {
+export const toWinPositionSets = (_board: IBoard) => {
   return [];
 };
 
-const EMPTY_BOARD: IBoard = {
-  0: {
-    0: "empty",
-    1: "empty",
-    2: "empty",
-  },
-  1: {
-    0: "empty",
-    1: "empty",
-    2: "empty",
-  },
-  2: {
-    0: "empty",
-    1: "empty",
-    2: "empty",
-  },
-};
+// const EMPTY_BOARD: IBoard = {
+//   0: {
+//     0: "empty",
+//     1: "empty",
+//     2: "empty",
+//   },
+//   1: {
+//     0: "empty",
+//     1: "empty",
+//     2: "empty",
+//   },
+//   2: {
+//     0: "empty",
+//     1: "empty",
+//     2: "empty",
+//   },
+// };
 
 type IPosition = {
   x: keyof IBoard;

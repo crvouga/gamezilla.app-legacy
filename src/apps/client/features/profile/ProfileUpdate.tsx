@@ -1,4 +1,4 @@
-import { ListItemField } from "@libs/components";
+import { ListItemField } from "@libs/ui";
 import { ChevronLeft } from "@mui/icons-material";
 import {
   AppBar,

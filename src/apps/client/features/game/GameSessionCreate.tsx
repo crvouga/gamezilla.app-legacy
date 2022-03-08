@@ -1,20 +1,17 @@
-import { AppBarBackButton } from "@libs/components";
 import {
   Alert,
   AppBar,
   Box,
   Button,
   Snackbar,
-  Stack,
   Toolbar,
   Typography,
 } from "@mui/material";
+import { AppBarBackButton } from "@libs/ui";
 import React, { useState } from "react";
 import { create, IGameSessionCreateResult } from "./game-session-data-access";
 
-export const GameSessionCreate = ({
-  profile,
-}: {
+export const GameSessionCreate = (_props: {
   profile: { avatarUrl?: string };
 }) => {
   const [result, setResult] = useState<

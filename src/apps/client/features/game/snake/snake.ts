@@ -1,4 +1,4 @@
-import { INaturalNumber, List, NaturalNumber, Record } from "@libs/utility";
+import { INaturalNumber, List, NaturalNumber, Record } from "@libs/utils";
 import { IPosition, Position } from "./snake-position";
 
 type IState = {

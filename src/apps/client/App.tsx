@@ -1,4 +1,4 @@
-import { useSubscription } from "@libs/utility";
+import { useSubscription } from "@libs/utils";
 import { Box, Typography, useMediaQuery, useTheme } from "@mui/material";
 import React from "react";
 import { QueryClient, QueryClientProvider } from "react-query";

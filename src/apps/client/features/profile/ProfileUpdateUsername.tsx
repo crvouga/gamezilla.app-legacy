@@ -1,4 +1,4 @@
-import { ChevronLeft, Clear } from "@mui/icons-material";
+import { Clear } from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
 import {
   AppBar,

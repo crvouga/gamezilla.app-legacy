@@ -19,9 +19,7 @@ import {
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-const Account = ({
-  profile,
-}: {
+const Account = (_props: {
   profile: { username?: string; avatarUrl?: string };
 }) => {
   const navigate = useNavigate();

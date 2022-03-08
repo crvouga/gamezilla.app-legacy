@@ -1,4 +1,4 @@
-import { AspectRatioSquare, ListItemField } from "@libs/components";
+import { AspectRatioSquare, ListItemField } from "@libs/ui";
 import { ChevronLeft } from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
 import {

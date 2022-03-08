@@ -1,7 +1,7 @@
 import {
   COLYSEUS_DEVELOPMENT_SERVER_PORT,
   RoomNames,
-} from "@libs/server-interface";
+} from "@libs/api-interfaces";
 import * as Colyseus from "colyseus.js";
 
 export const colyseusClient = new Colyseus.Client(
