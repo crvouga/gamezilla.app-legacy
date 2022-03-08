@@ -1,4 +1,4 @@
-import { definitions } from "@libs/supabase";
+import { definitions } from "@libs/api-interfaces";
 import { supabaseClient } from "../../data-access";
 
 export type IProfile = {

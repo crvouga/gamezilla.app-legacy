@@ -1,5 +1,4 @@
-import { AppBar, Button, IconButton, Toolbar } from "@mui/material";
-
+import { AppBar, Button, Toolbar } from "@mui/material";
 import React from "react";
 import { Navigate, useParams } from "react-router-dom";
 
@@ -24,7 +23,7 @@ const TicTacToe = () => {
   return <SubscribeSession gameId={gameId} />;
 };
 
-const SubscribeSession = ({ gameId }: { gameId: string }) => {
+const SubscribeSession = (_props: { gameId: string }) => {
   return (
     <>
       <AppBar>

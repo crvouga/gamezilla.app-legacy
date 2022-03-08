@@ -205,6 +205,8 @@ export interface paths {
           id?: parameters["rowFilter.game_session.id"];
           created_at?: parameters["rowFilter.game_session.created_at"];
           host_id?: parameters["rowFilter.game_session.host_id"];
+          public?: parameters["rowFilter.game_session.public"];
+          name?: parameters["rowFilter.game_session.name"];
           /** Filtering Columns */
           select?: parameters["select"];
           /** Ordering */
@@ -258,6 +260,8 @@ export interface paths {
           id?: parameters["rowFilter.game_session.id"];
           created_at?: parameters["rowFilter.game_session.created_at"];
           host_id?: parameters["rowFilter.game_session.host_id"];
+          public?: parameters["rowFilter.game_session.public"];
+          name?: parameters["rowFilter.game_session.name"];
         };
         header: {
           /** Preference */
@@ -275,6 +279,8 @@ export interface paths {
           id?: parameters["rowFilter.game_session.id"];
           created_at?: parameters["rowFilter.game_session.created_at"];
           host_id?: parameters["rowFilter.game_session.host_id"];
+          public?: parameters["rowFilter.game_session.public"];
+          name?: parameters["rowFilter.game_session.name"];
         };
         body: {
           /** game_session */
@@ -546,6 +552,13 @@ export interface definitions {
      * This is a Foreign Key to `profile.id`.<fk table='profile' column='id'/>
      */
     host_id?: string;
+    /**
+     * Format: boolean
+     * @default true
+     */
+    public: boolean;
+    /** Format: text */
+    name: string;
   };
   message: {
     /**
@@ -655,6 +668,10 @@ export interface parameters {
   "rowFilter.game_session.created_at": string;
   /** Format: uuid */
   "rowFilter.game_session.host_id": string;
+  /** Format: boolean */
+  "rowFilter.game_session.public": string;
+  /** Format: text */
+  "rowFilter.game_session.name": string;
   /** @description message */
   "body.message": definitions["message"];
   /** Format: uuid */

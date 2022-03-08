@@ -1,6 +1,6 @@
 import { Google } from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
-import { AppBar, Box, Toolbar, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import React from "react";
 import { useMutation } from "react-query";
 import { login } from "./account-data-access";

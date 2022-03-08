@@ -1,17 +1,16 @@
 {
   "name": "gamezilla",
   "version": "0.0.0",
-  
   "scripts": {
     "client:dev": "vite dev",
     "client:build": "npx tsc && vite build",
-    "server:dev": "npx tsc-watch src/apps/server/main.ts --esModuleInterop --outDir ./dist/server --onSuccess \"node ./dist/server/apps/server/main.js\"",
-    "server:build": "npx tsc src/apps/server/main.ts --outDir ./dist/server --esModuleInterop",
-    "server:start": "node ./dist/server/main.server.js",
+    "server:dev": "npx tsc-watch --project ./tsconfig.server.json --onSuccess \"node ./server-build/src/apps/server/main.js\"",
+    "server:build": "npx tsc --project ./tsconfig.server.json",
+    "server:start": "node ./server-build/src/apps/server/main.js",
     "heroku-postbuild": "npm run server:build",
     "heroku:start": "npm run server:start",
     "heroku:local": "npx heroku local web",
-    "supabase:types": "npx openapi-typescript https://ldxpcprlgecjvqwzuxgv.supabase.co/rest/v1/?apikey=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTYzNzA0MDQ5NywiZXhwIjoxOTUyNjE2NDk3fQ.ReI8CpIFbLB9Q53Az7CDBIyrn_o1JeGhPoZXdqx8Ac4 --output src/third-party-services/supabase-types.ts",
+    "supabase:types": "npx openapi-typescript https://ldxpcprlgecjvqwzuxgv.supabase.co/rest/v1/?apikey=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTYzNzA0MDQ5NywiZXhwIjoxOTUyNjE2NDk3fQ.ReI8CpIFbLB9Q53Az7CDBIyrn_o1JeGhPoZXdqx8Ac4 --output src/libs/api-interfaces/supabase-types.ts",
     "vercel:env": "npx vercel env"
   },
   "dependencies": {
@@ -36,7 +35,7 @@
     "@types/react-dom": "^17.0.0",
     "@vitejs/plugin-react": "^1.0.0",
     "tsc-watch": "^4.6.0",
-    "typescript": "^4.6.2",
+    "typescript": "^4.7.0-dev.20220308",
     "vite": "^2.6.4",
     "vite-tsconfig-paths": "^3.4.1"
   },
