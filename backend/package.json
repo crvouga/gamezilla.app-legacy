@@ -1,7 +1,7 @@
 {
   "scripts": {
     "dev": "tsc-watch --project ./tsconfig.json --onSuccess \"node dist/main.js\"",
-    "build": "tsc"
+    "build": "tsc --build ."
   },
   "dependencies": {
     "colyseus": "^0.14.23"
