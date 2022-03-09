@@ -1,3 +1,4 @@
+import { Room } from "colyseus.js";
 import { colyseusClient } from "../../data-access";
 
 export type IGameSessionCreateResult =
@@ -53,18 +54,13 @@ const unknownErrorToMessage = (error: unknown): string => {
   return `Something went wrong for an unknown reason`;
 };
 
-export const create = async (): Promise<IResult> => {
+export const create = async (): Promise<IResult<Room<unknown>>> => {
   try {
     const room = await colyseusClient.create("GameSession");
 
-    room.send("HI");
-    room.onMessage("HELLO", () => {
-      console.log("server said hello");
-    });
-
     return {
       type: "success",
-      data: undefined,
+      data: room,
     };
   } catch (error) {
     return {
