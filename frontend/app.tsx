@@ -23,9 +23,9 @@ import { ISayHello } from "../common";
 const hello: ISayHello = () => "say hello!";
 
 export const App = () => {
+  console.log(hello());
   return (
     <>
-      {hello()}
       <QueryClientProvider client={new QueryClient()}>
         <BrowserRouter>
           <ThemeProvider>
