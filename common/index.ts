@@ -1,1 +1,1 @@
-export const Hello = "hello from common!";
+export type ISayHello = () => "say hello!";
