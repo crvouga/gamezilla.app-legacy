@@ -4,11 +4,13 @@ import {
   Box,
   Button,
   Snackbar,
+  ToggleButton,
+  ToggleButtonGroup,
   Toolbar,
   Typography,
 } from "@mui/material";
 import { AppBarBackButton } from "../../ui";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { create, IGameSessionCreateResult } from "./game-session-data-access";
 
 export const GameSessionCreate = (_props: {
@@ -21,6 +23,25 @@ export const GameSessionCreate = (_props: {
   const onCreateGame = async () => {
     const result = await create();
     setResult(result);
+
+    if (result.type === "success") {
+      const room = result.data;
+      room.onError((code, message) => {
+        console.log("room.error", { sessionId: room.sessionId, code, message });
+      });
+
+      room.onMessage("*", (type, message) => {
+        console.log("room.message", {
+          sessionId: room.sessionId,
+          type,
+          message,
+        });
+      });
+
+      room.onLeave((code) => {
+        console.log("room.leave", { sessionId: room.sessionId, code });
+      });
+    }
   };
 
   const error =
@@ -51,7 +72,7 @@ export const GameSessionCreate = (_props: {
         </Toolbar>
       </AppBar>
 
-      <Box sx={{ flex: 1 }}></Box>
+      <Box sx={{ flex: 1, padding: 2 }}></Box>
 
       <Box sx={{ p: 2 }}>
         <Button fullWidth variant="contained" onClick={onCreateGame}>
