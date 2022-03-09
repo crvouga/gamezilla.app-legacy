@@ -1,4 +1,10 @@
 {
+    "references": [
+      {
+        "prepend": true,
+        "path": "../common"
+      }
+    ],
   "compilerOptions": {
     /* Visit https://aka.ms/tsconfig.json to read more about this file */
 
