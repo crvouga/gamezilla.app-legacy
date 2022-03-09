@@ -1,11 +1,11 @@
 import { Server } from "colyseus";
 import { GameSessionRoom } from "./game-session-room";
 
-import { ISayHello } from "../common";
+import { COLYSEUS_DEV_PORT, ISayHello } from "../common";
 
 const sayHello: ISayHello = () => "say hello!";
 
-const port = process.env.PORT ? parseInt(process.env.PORT) : 8000;
+const port = process.env.PORT ? parseInt(process.env.PORT) : COLYSEUS_DEV_PORT;
 
 const gameServer = new Server();
 

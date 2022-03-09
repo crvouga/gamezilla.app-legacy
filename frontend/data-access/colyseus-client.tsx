@@ -1,7 +1,6 @@
 import * as Colyseus from "colyseus.js";
-
-const COLYSEUS_DEVELOPMENT_SERVER_PORT = 8000;
+import { COLYSEUS_DEV_PORT } from "../../common";
 
 export const colyseusClient = new Colyseus.Client(
-  `ws://localhost:${COLYSEUS_DEVELOPMENT_SERVER_PORT}`
+  `ws://localhost:${COLYSEUS_DEV_PORT}`
 );
