@@ -1,7 +1,7 @@
 import { Server } from "colyseus";
 import { GameSessionRoom } from "./game-session-room";
 
-import { Hello } from "../../common/src";
+import { Hello } from "../common";
 
 const port = process.env.PORT ? parseInt(process.env.PORT) : 8000;
 
