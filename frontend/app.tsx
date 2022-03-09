@@ -18,18 +18,22 @@ import ProfileUpdateAvatar from "./features/profile/ProfileUpdateAvatar";
 import ProfileUpdateName from "./features/profile/ProfileUpdateName";
 import ProfileUpdateUsername from "./features/profile/ProfileUpdateUsername";
 import ThemeProvider from "./features/theme/ThemeProvider";
+import { Hello } from "../common";
 
 export const App = () => {
   return (
-    <QueryClientProvider client={new QueryClient()}>
-      <BrowserRouter>
-        <ThemeProvider>
-          <Layout>
-            <SubscribeAuth />
-          </Layout>
-        </ThemeProvider>
-      </BrowserRouter>
-    </QueryClientProvider>
+    <>
+      {Hello}
+      <QueryClientProvider client={new QueryClient()}>
+        <BrowserRouter>
+          <ThemeProvider>
+            <Layout>
+              <SubscribeAuth />
+            </Layout>
+          </ThemeProvider>
+        </BrowserRouter>
+      </QueryClientProvider>
+    </>
   );
 };
 
