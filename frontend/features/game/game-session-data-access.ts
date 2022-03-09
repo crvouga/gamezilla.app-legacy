@@ -55,7 +55,12 @@ const unknownErrorToMessage = (error: unknown): string => {
 
 export const create = async (): Promise<IResult> => {
   try {
-    await colyseusClient.create("GameSession");
+    const room = await colyseusClient.create("GameSession");
+
+    room.send("HI");
+    room.onMessage("HELLO", () => {
+      console.log("server said hello");
+    });
 
     return {
       type: "success",
