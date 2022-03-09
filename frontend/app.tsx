@@ -1,4 +1,3 @@
-import { useSubscription } from "./utils";
 import { Box, Typography, useMediaQuery, useTheme } from "@mui/material";
 import React from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
@@ -18,12 +17,9 @@ import ProfileUpdateAvatar from "./features/profile/ProfileUpdateAvatar";
 import ProfileUpdateName from "./features/profile/ProfileUpdateName";
 import ProfileUpdateUsername from "./features/profile/ProfileUpdateUsername";
 import ThemeProvider from "./features/theme/ThemeProvider";
-import { ISayHello } from "../common";
-
-const hello: ISayHello = () => "say hello!";
+import { useSubscription } from "./utils";
 
 export const App = () => {
-  console.log(hello());
   return (
     <>
       <QueryClientProvider client={new QueryClient()}>
@@ -159,20 +155,18 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
-  if (isSmallScreen) {
-    return (
-      <Box
-        sx={{
-          backgroundColor: theme.palette.background.default,
-          width: "100%",
-          height: "100%",
-          overflow: "hidden",
-        }}
-      >
-        {children}
-      </Box>
-    );
-  }
+  return (
+    <Box
+      sx={{
+        backgroundColor: theme.palette.background.default,
+        width: "100%",
+        height: "100%",
+        overflow: "hidden",
+      }}
+    >
+      {children}
+    </Box>
+  );
 
   return (
     <Box
