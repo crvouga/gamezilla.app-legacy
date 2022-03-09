@@ -1,14 +1,14 @@
-import { Server } from "colyseus";
-import { COLYSEUS_DEV_PORT, COLYSEUS_DEV_URL } from "../common";
-import { GameSessionRoom } from "./game-session-room";
 import { monitor } from "@colyseus/monitor";
+import { Server } from "colyseus";
 import express from "express";
+import { COLYSEUS_DEV_PORT, COLYSEUS_DEV_URL, RoomNames } from "../common";
+import { GameRoom } from "./game-room";
 
 const port = process.env.PORT ? parseInt(process.env.PORT) : COLYSEUS_DEV_PORT;
 
 const gameServer = new Server();
 
-gameServer.define("GameSession", GameSessionRoom);
+gameServer.define(RoomNames.Game, GameRoom);
 
 gameServer.listen(port, undefined, undefined, () => {
   console.clear();
