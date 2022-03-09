@@ -3,7 +3,9 @@
     "composite": true,
     "module": "esnext",
     "moduleResolution": "node",
-    "outDir": "../build/frontend"
+    "outDir": "../build/frontend/vite",
+    "skipLibCheck": true
   },
+  "exclude": ["node_modules"],
   "include": ["vite.config.ts"]
 }

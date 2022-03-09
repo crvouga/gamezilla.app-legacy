@@ -1,13 +1,15 @@
 {
+  "private": true,
   "scripts": {
-    "backend:dev": "tsc-watch --project ./tsconfig.json --onSuccess \"yarn start\"",
+    "backend:dev": "tsc-watch --build ./backend/tsconfig.json --onSuccess \"yarn backend:start\"",
     "backend:start": "node ./build/backend/main.js",
     "backend:build": "cd backend && tsc --build",
     "frontend:dev": "cd frontend && vite",
     "frontend:build": "cd frontend && vite build --outDir ../build/frontend",
     "frontend:start": "sirv build/frontend --single --port 3000",
     "supabase:types": "npx openapi-typescript https://ldxpcprlgecjvqwzuxgv.supabase.co/rest/v1/?apikey=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTYzNzA0MDQ5NywiZXhwIjoxOTUyNjE2NDk3fQ.ReI8CpIFbLB9Q53Az7CDBIyrn_o1JeGhPoZXdqx8Ac4 --output frontend/data-access/supabase-types.ts",
-    "clean": "rm -rf build && rm -rf node_modules"
+    "watch": "tsc --build tsconfig.json --watch",
+    "clean": "rm -rf build && rm -rf node_modules && rm .env && rm .vercel"
   },
   "dependencies": {
     "@emotion/react": "11.5.0",

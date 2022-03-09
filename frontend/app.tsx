@@ -18,12 +18,14 @@ import ProfileUpdateAvatar from "./features/profile/ProfileUpdateAvatar";
 import ProfileUpdateName from "./features/profile/ProfileUpdateName";
 import ProfileUpdateUsername from "./features/profile/ProfileUpdateUsername";
 import ThemeProvider from "./features/theme/ThemeProvider";
-import { Hello } from "../common";
+import { ISayHello } from "../common";
+
+const hello: ISayHello = () => "say hello!";
 
 export const App = () => {
   return (
     <>
-      {Hello}
+      {hello()}
       <QueryClientProvider client={new QueryClient()}>
         <BrowserRouter>
           <ThemeProvider>
