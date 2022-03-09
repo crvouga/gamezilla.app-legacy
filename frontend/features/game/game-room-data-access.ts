@@ -1,9 +1,6 @@
 import { Room } from "colyseus.js";
+import { RoomNames } from "../../../common";
 import { colyseusClient } from "../../data-access";
-
-export type IGameSessionCreateResult =
-  | { type: "success" }
-  | { type: "error"; errors: [{ message: string }] };
 
 export type IResult<TData = undefined> =
   | {
@@ -56,7 +53,7 @@ const unknownErrorToMessage = (error: unknown): string => {
 
 export const create = async (): Promise<IResult<Room<unknown>>> => {
   try {
-    const room = await colyseusClient.create("GameSession");
+    const room = await colyseusClient.create(RoomNames.Game);
 
     return {
       type: "success",

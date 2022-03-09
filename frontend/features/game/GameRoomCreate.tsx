@@ -4,20 +4,16 @@ import {
   Box,
   Button,
   Snackbar,
-  ToggleButton,
-  ToggleButtonGroup,
   Toolbar,
   Typography,
 } from "@mui/material";
+import React, { useState } from "react";
 import { AppBarBackButton } from "../../ui";
-import React, { useEffect, useState } from "react";
-import { create, IGameSessionCreateResult } from "./game-session-data-access";
+import { create } from "./game-room-data-access";
 
-export const GameSessionCreate = (_props: {
-  profile: { avatarUrl?: string };
-}) => {
+const GameRoomCreate = () => {
   const [result, setResult] = useState<
-    { type: "idle" } | IGameSessionCreateResult
+    { type: "idle" } | Awaited<ReturnType<typeof create>>
   >({ type: "idle" });
 
   const onCreateGame = async () => {
@@ -82,3 +78,5 @@ export const GameSessionCreate = (_props: {
     </Box>
   );
 };
+
+export default GameRoomCreate;
