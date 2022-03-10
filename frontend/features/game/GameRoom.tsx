@@ -1,7 +1,9 @@
-import { AppBar, Box, Toolbar, Typography } from "@mui/material";
+import { ExitToApp } from "@mui/icons-material";
+import { AppBar, Box, IconButton, Toolbar, Typography } from "@mui/material";
 import { Room } from "colyseus.js";
 import React, { useEffect } from "react";
 import { AppBarBackButton } from "../../ui";
+import { Link } from "react-router-dom";
 
 const GameRoom = ({ room }: { room: Room<unknown> }) => {
   useEffect(() => {
@@ -24,20 +26,20 @@ const GameRoom = ({ room }: { room: Room<unknown> }) => {
     room.onLeave((code) => {
       console.log("room.leave", { sessionId: room.sessionId, code });
     });
-
-    return () => {
-      room.leave();
-    };
   }, []);
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
       <AppBar>
         <Toolbar>
-          <AppBarBackButton />
+          <Link to="/game/leave" replace>
+            <IconButton edge="start" sx={{ marginRight: 2 }}>
+              <ExitToApp />
+            </IconButton>
+          </Link>
 
           <Typography sx={{ flex: 1 }} variant="h6">
-            Hello
+            Game Room
           </Typography>
         </Toolbar>
       </AppBar>
