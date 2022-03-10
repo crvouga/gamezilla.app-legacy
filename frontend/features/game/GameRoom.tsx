@@ -1,53 +1,81 @@
-import { AppBar, Box, Button, List, Toolbar } from "@mui/material";
-import { ListItemField } from "../../ui";
-import React from "react";
-import { Navigate, useNavigate, useParams } from "react-router-dom";
+import { Alert, Snackbar } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { Navigate, Route, Routes } from "react-router-dom";
+import { create } from "./game-room-data-access";
+import GameRoomCreate from "./GameRoomCreate";
+import GameRoomSession from "./GameRoomSession";
 
-const GameSession = () => {
-  const { gameSessionId } = useParams();
+const GameRoom = () => {
+  const [result, setResult] = useState<
+    { type: "idle" } | Awaited<ReturnType<typeof create>>
+  >({ type: "idle" });
 
-  if (gameSessionId) {
-    return <SubscribeGameSession gameSessionId={gameSessionId} />;
-  }
+  const onCreate = async () => {
+    const result = await create();
+    setResult(result);
 
-  return <Navigate to="/" replace />;
-};
+    if (result.type === "success") {
+      const room = result.data;
+      room.onError((code, message) => {
+        console.log("room.error", {
+          sessionId: room.sessionId,
+          code,
+          message,
+        });
+      });
 
-const SubscribeGameSession = (_props: { gameSessionId: string }) => {
-  const navigate = useNavigate();
+      room.onMessage("*", (type, message) => {
+        console.log("room.message", {
+          sessionId: room.sessionId,
+          type,
+          message,
+        });
+      });
 
-  const onLeave = () => {
-    navigate(-1);
+      room.onLeave((code) => {
+        console.log("room.leave", { sessionId: room.sessionId, code });
+      });
+    }
   };
 
+  if (result.type === "success") {
+    const room = result.data;
+
+    return (
+      <Routes>
+        <Route path="/session" element={<GameRoomSession room={room} />} />
+        <Route path="*" element={<Navigate to="session" replace />} />
+      </Routes>
+    );
+  }
+
+  const error =
+    result.type === "error" && result.errors.length > 0
+      ? result.errors[0]
+      : { message: "Something went wrong an unknown reason" };
+
   return (
-    <Box
-      sx={{
-        width: "100%",
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
-      <AppBar>
-        <Toolbar>
-          <Button sx={{ marginLeft: -2 }} onClick={onLeave}>
-            Leave
-          </Button>
-        </Toolbar>
-      </AppBar>
+    <>
+      <Snackbar
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        open={result.type === "error"}
+        onClose={() => setResult({ type: "idle" })}
+        autoHideDuration={3000}
+      >
+        <Alert key={error.message} severity="error">
+          {error.message}
+        </Alert>
+      </Snackbar>
 
-      <List sx={{ flex: 1 }}>
-        <ListItemField to="edit" label="Game" value="Tic Tac Toe" />
-      </List>
-
-      <Box sx={{ p: 2 }}>
-        <Button fullWidth variant="contained">
-          Start Game
-        </Button>
-      </Box>
-    </Box>
+      <Routes>
+        <Route
+          path="/create"
+          element={<GameRoomCreate onCreate={onCreate} />}
+        />
+        <Route path="*" element={<Navigate to="create" replace />} />
+      </Routes>
+    </>
   );
 };
 
-export default GameSession;
+export default GameRoom;

@@ -4,7 +4,7 @@ import {
   DeleteForever,
   Edit,
   Logout,
-} from '@mui/icons-material';
+} from "@mui/icons-material";
 import {
   AppBar,
   IconButton,
@@ -15,9 +15,9 @@ import {
   ListItemText,
   Toolbar,
   Typography,
-} from '@mui/material';
-import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+} from "@mui/material";
+import React from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 const Account = (_props: {
   profile: { username?: string; avatarUrl?: string };
@@ -40,7 +40,7 @@ const Account = (_props: {
       </AppBar>
 
       <List>
-        <Link to="/profile/edit">
+        <Link to="/profile/update">
           <ListItemButton>
             <ListItemIcon>
               <Edit />

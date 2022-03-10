@@ -1,4 +1,4 @@
-import { LoadingButton, LoadingButtonProps } from '@mui/lab';
+import { LoadingButton, LoadingButtonProps } from "@mui/lab";
 import {
   AppBar,
   Box,
@@ -6,12 +6,12 @@ import {
   TextField,
   Toolbar,
   Typography,
-} from '@mui/material';
-import React, { useState } from 'react';
-import { useMutation } from 'react-query';
-import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
-import { createProfile } from './profile-data-access';
-import { generateRandomAvatarSeed, toAvatarUrl } from './ProfileUpdateAvatar';
+} from "@mui/material";
+import React, { useState } from "react";
+import { useMutation } from "react-query";
+import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
+import { createProfile } from "../profile-data-access";
+import { generateRandomAvatarSeed, toAvatarUrl } from "../profile-data";
 
 const ProfileCreate = ({
   userId,
@@ -23,7 +23,7 @@ const ProfileCreate = ({
   const mutation = useMutation(createProfile);
   const [name, setName] = useState(defaultName);
   const [username, setUsername] = useState(
-    name.replace(' ', '').toLowerCase() ?? ''
+    name.replace(" ", "").toLowerCase() ?? ""
   );
 
   const onCreate = () => {
@@ -31,14 +31,14 @@ const ProfileCreate = ({
       userId,
       name,
       username,
-      avatarUrl: toAvatarUrl('croodles-neutral', generateRandomAvatarSeed()),
+      avatarUrl: toAvatarUrl("croodles-neutral", generateRandomAvatarSeed()),
     });
   };
 
   const navigate = useNavigate();
 
   const onCancel = () => {
-    navigate('/logout', { replace: true });
+    navigate("/logout", { replace: true });
   };
 
   const back = () => {
@@ -53,14 +53,14 @@ const ProfileCreate = ({
           <Layout
             title="What's your name?"
             backButtonProps={{
-              children: 'Cancel',
+              children: "Cancel",
               onClick: onCancel,
             }}
             nextButtonProps={{
-              children: 'Next',
+              children: "Next",
 
               onClick: () => {
-                navigate('2');
+                navigate("2");
               },
             }}
           >
@@ -81,11 +81,11 @@ const ProfileCreate = ({
           <Layout
             title="What's your username?"
             backButtonProps={{
-              children: 'Back',
+              children: "Back",
               onClick: back,
             }}
             nextButtonProps={{
-              children: 'Done',
+              children: "Done",
               loading: mutation.isLoading,
               onClick: onCreate,
             }}
@@ -102,7 +102,7 @@ const ProfileCreate = ({
         }
       />
 
-      <Route path="*" element={<Navigate to="/" />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 };
@@ -121,10 +121,10 @@ const Layout = ({
   return (
     <Box
       sx={{
-        width: '100%',
-        height: '100%',
-        display: 'flex',
-        flexDirection: 'column',
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
       }}
     >
       <AppBar>
@@ -144,7 +144,7 @@ const Layout = ({
         {children}
       </Box>
 
-      <Box sx={{ display: 'flex', p: 2 }}>
+      <Box sx={{ display: "flex", p: 2 }}>
         <Button
           variant="outlined"
           sx={{ flex: 1, marginRight: 2 }}

@@ -7,15 +7,10 @@ import { onAuthState } from "./features/account/account-data-access";
 import AccountLogin from "./features/account/AccountLogin";
 import AccountLogout from "./features/account/AccountLogout";
 import GameRoom from "./features/game/GameRoom";
-import GameRoomCreate from "./features/game/GameRoomCreate";
 import Home from "./features/home/Home";
 import { IProfile, onProfile } from "./features/profile/profile-data-access";
-import ProfileCreate from "./features/profile/ProfileCreate";
-import ProfileDelete from "./features/profile/ProfileDelete";
-import ProfileUpdate from "./features/profile/ProfileUpdate";
-import ProfileUpdateAvatar from "./features/profile/ProfileUpdateAvatar";
-import ProfileUpdateName from "./features/profile/ProfileUpdateName";
-import ProfileUpdateUsername from "./features/profile/ProfileUpdateUsername";
+import ProfileCreate from "./features/profile/profile-create/ProfileCreate";
+import Profile from "./features/profile/Profile";
 import ThemeProvider from "./features/theme/ThemeProvider";
 import { useSubscription } from "./utils";
 
@@ -48,7 +43,7 @@ const SubscribeAuth = () => {
     return (
       <Routes>
         <Route path="/login" element={<AccountLogin />} />
-        <Route path="*" element={<Navigate to="/login" />} />
+        <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     );
   }
@@ -77,7 +72,7 @@ const SubscribeProfile = ({
   const profile = subscription.data;
 
   if (profile) {
-    return <FoundProfile profile={profile} />;
+    return <SubscribeGameRoomSession profile={profile} />;
   }
 
   return (
@@ -87,48 +82,34 @@ const SubscribeProfile = ({
         element={<ProfileCreate defaultName={defaultName} userId={userId} />}
       />
       <Route path="/logout" element={<AccountLogout />} />
-      <Route path="*" element={<Navigate to="/profile/create" />} />
+      <Route path="*" element={<Navigate to="/profile/create" replace />} />
     </Routes>
   );
 };
 
-const FoundProfile = ({ profile }: { profile: IProfile }) => {
+const SubscribeGameRoomSession = ({ profile }: { profile: IProfile }) => {
   return (
     <Routes>
       <Route path="/" element={<Home profile={profile} />} />
       <Route path="/account" element={<Account profile={profile} />} />
-
-      <Route path="/profile/edit">
-        <Route path="" element={<ProfileUpdate profile={profile} />} />
-
-        <Route
-          path="avatar/*"
-          element={<ProfileUpdateAvatar profile={profile} />}
-        />
-
-        <Route path="name" element={<ProfileUpdateName profile={profile} />} />
-
-        <Route
-          path="username"
-          element={<ProfileUpdateUsername profile={profile} />}
-        />
-      </Route>
-
       <Route path="/logout" element={<AccountLogout />} />
-
-      <Route
-        path="/profile/delete"
-        element={<ProfileDelete userId={profile.userId} />}
-      />
-
-      <Route path="/game-room-create" element={<GameRoomCreate />} />
-
-      <Route path="/game-room/:gameSessionId" element={<GameRoom />} />
-
-      <Route path="*" element={<Navigate to="/" />} />
+      <Route path="/profile/*" element={<Profile profile={profile} />} />
+      <Route path="/game-room/*" element={<GameRoom />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 };
+
+/**
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ */
 
 const Splash = () => {
   return (

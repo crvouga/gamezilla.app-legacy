@@ -1,5 +1,5 @@
-import { Clear } from '@mui/icons-material';
-import { LoadingButton } from '@mui/lab';
+import { Clear } from "@mui/icons-material";
+import { LoadingButton } from "@mui/lab";
 import {
   AppBar,
   Backdrop,
@@ -11,11 +11,11 @@ import {
   TextField,
   Toolbar,
   Typography,
-} from '@mui/material';
-import React, { useState } from 'react';
-import { useMutation } from 'react-query';
-import { useNavigate } from 'react-router-dom';
-import { updateProfile } from './profile-data-access';
+} from "@mui/material";
+import React, { useState } from "react";
+import { useMutation } from "react-query";
+import { useNavigate } from "react-router-dom";
+import { updateProfile } from "../profile-data-access";
 
 const ProfileUpdateName = ({
   profile,
@@ -46,10 +46,10 @@ const ProfileUpdateName = ({
   return (
     <Box
       sx={{
-        width: '100%',
-        height: '100%',
-        display: 'flex',
-        flexDirection: 'column',
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
       }}
     >
       <AppBar>
@@ -75,7 +75,7 @@ const ProfileUpdateName = ({
                 <IconButton
                   edge="end"
                   onClick={() => {
-                    setName('');
+                    setName("");
                   }}
                 >
                   <Clear />
@@ -90,7 +90,7 @@ const ProfileUpdateName = ({
         </Typography>
       </Box>
 
-      <Box sx={{ display: 'flex', p: 2 }}>
+      <Box sx={{ display: "flex", p: 2 }}>
         <Button
           onClick={onCancel}
           variant="outlined"
@@ -99,7 +99,7 @@ const ProfileUpdateName = ({
           Cancel
         </Button>
         <LoadingButton
-          loading={mutation.status === 'loading'}
+          loading={mutation.status === "loading"}
           onClick={onDone}
           variant="contained"
           sx={{ flex: 1 }}
@@ -107,7 +107,7 @@ const ProfileUpdateName = ({
           Update
         </LoadingButton>
 
-        <Backdrop open={mutation.status === 'loading'}>
+        <Backdrop open={mutation.status === "loading"}>
           <CircularProgress disableShrink />
         </Backdrop>
       </Box>
