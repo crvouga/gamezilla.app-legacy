@@ -98,13 +98,8 @@ export const lightOptions: ThemeOptions = {
   },
 };
 
-const darkTheme = responsiveFontSizes(
-  createTheme(deepmerge(baseOptions, darkOptions))
-);
-
-const lightTheme = responsiveFontSizes(
-  createTheme(deepmerge(baseOptions, lightOptions))
-);
+const darkTheme = createTheme(deepmerge(baseOptions, darkOptions));
+const lightTheme = createTheme(deepmerge(baseOptions, lightOptions));
 
 const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
