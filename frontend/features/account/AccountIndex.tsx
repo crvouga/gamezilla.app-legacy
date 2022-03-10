@@ -45,7 +45,7 @@ const AccountIndex = () => {
           </ListItemButton>
         </Link>
 
-        <Link to="/logout">
+        <Link to="logout">
           <ListItemButton>
             <ListItemIcon>
               <Logout />
