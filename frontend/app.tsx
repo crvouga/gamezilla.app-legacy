@@ -6,7 +6,7 @@ import Account from "./features/account/Account";
 import { onAuthState } from "./features/account/account-data-access";
 import AccountLogin from "./features/account/AccountLogin";
 import AccountLogout from "./features/account/AccountLogout";
-import GameRoom from "./features/game/GameRoom";
+import Game from "./features/game/Game";
 import Home from "./features/home/Home";
 import { IProfile, onProfile } from "./features/profile/profile-data-access";
 import ProfileCreate from "./features/profile/profile-create/ProfileCreate";
@@ -16,21 +16,19 @@ import { useSubscription } from "./utils";
 
 export const App = () => {
   return (
-    <>
-      <QueryClientProvider client={new QueryClient()}>
-        <BrowserRouter>
-          <ThemeProvider>
-            <Layout>
-              <SubscribeAuth />
-            </Layout>
-          </ThemeProvider>
-        </BrowserRouter>
-      </QueryClientProvider>
-    </>
+    <QueryClientProvider client={new QueryClient()}>
+      <BrowserRouter>
+        <ThemeProvider>
+          <Layout>
+            <AuthGateway />
+          </Layout>
+        </ThemeProvider>
+      </BrowserRouter>
+    </QueryClientProvider>
   );
 };
 
-const SubscribeAuth = () => {
+const AuthGateway = () => {
   const subscription = useSubscription(onAuthState);
 
   if (subscription.status === "loading") {
@@ -39,24 +37,24 @@ const SubscribeAuth = () => {
 
   const authState = subscription.data;
 
-  if (authState.type === "logged-out") {
+  if (authState.type === "logged-in") {
     return (
-      <Routes>
-        <Route path="/login" element={<AccountLogin />} />
-        <Route path="*" element={<Navigate to="/login" replace />} />
-      </Routes>
+      <ProfileGateway
+        defaultName={authState.userMetadata.name ?? ""}
+        userId={authState.userId}
+      />
     );
   }
 
   return (
-    <SubscribeProfile
-      defaultName={authState.userMetadata.name ?? ""}
-      userId={authState.userId}
-    />
+    <Routes>
+      <Route path="/login" element={<AccountLogin />} />
+      <Route path="*" element={<Navigate to="/login" replace />} />
+    </Routes>
   );
 };
 
-const SubscribeProfile = ({
+const ProfileGateway = ({
   userId,
   defaultName,
 }: {
@@ -72,7 +70,7 @@ const SubscribeProfile = ({
   const profile = subscription.data;
 
   if (profile) {
-    return <SubscribeGameRoomSession profile={profile} />;
+    return <GameRoomGateway profile={profile} />;
   }
 
   return (
@@ -87,14 +85,14 @@ const SubscribeProfile = ({
   );
 };
 
-const SubscribeGameRoomSession = ({ profile }: { profile: IProfile }) => {
+const GameRoomGateway = ({ profile }: { profile: IProfile }) => {
   return (
     <Routes>
       <Route path="/" element={<Home profile={profile} />} />
       <Route path="/account" element={<Account profile={profile} />} />
       <Route path="/logout" element={<AccountLogout />} />
       <Route path="/profile/*" element={<Profile profile={profile} />} />
-      <Route path="/game-room/*" element={<GameRoom />} />
+      <Route path="/game/*" element={<Game />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );

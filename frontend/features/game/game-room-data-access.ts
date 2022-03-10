@@ -9,11 +9,7 @@ export type IResult<TData = undefined> =
     }
   | {
       type: "error";
-      errors: [
-        {
-          message: string;
-        }
-      ];
+      error: Error;
     };
 
 const isError = (unknown: unknown): unknown is Error => {
@@ -62,11 +58,7 @@ export const create = async (): Promise<IResult<Room<unknown>>> => {
   } catch (error) {
     return {
       type: "error",
-      errors: [
-        {
-          message: unknownErrorToMessage(error),
-        },
-      ],
+      error: new Error(unknownErrorToMessage(error)),
     };
   }
 };
