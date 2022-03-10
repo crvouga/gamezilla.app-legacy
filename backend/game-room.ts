@@ -16,10 +16,13 @@ export class GameRoom extends Room {
       client.send("tick");
     }, 1000);
   }
-  onLeave(_client: Client, _consented: boolean) {}
+  onLeave(_client: Client, _consented: boolean) {
+    console.log("game room lefted");
+  }
   onDispose() {
     if (this.timer) {
       clearInterval(this.timer);
     }
+    console.log("game room disposed");
   }
 }
