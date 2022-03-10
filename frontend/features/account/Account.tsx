@@ -1,76 +1,15 @@
-import {
-  ChevronLeft,
-  ChevronRight,
-  DeleteForever,
-  Edit,
-  Logout,
-} from "@mui/icons-material";
-import {
-  AppBar,
-  IconButton,
-  List,
-  ListItemButton,
-  ListItemIcon,
-  ListItemSecondaryAction,
-  ListItemText,
-  Toolbar,
-  Typography,
-} from "@mui/material";
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
+import AccountIndex from "./AccountIndex";
+import AccountLogout from "./AccountLogout";
 
-const Account = (_props: {
-  profile: { username?: string; avatarUrl?: string };
-}) => {
-  const navigate = useNavigate();
+const Account = () => {
   return (
-    <>
-      <AppBar>
-        <Toolbar>
-          <IconButton
-            edge="start"
-            onClick={() => {
-              navigate(-1);
-            }}
-          >
-            <ChevronLeft />
-          </IconButton>
-          <Typography variant="h6">Account</Typography>
-        </Toolbar>
-      </AppBar>
-
-      <List>
-        <Link to="/profile/update">
-          <ListItemButton>
-            <ListItemIcon>
-              <Edit />
-            </ListItemIcon>
-            <ListItemText primary="Edit Profile" />
-            <ListItemSecondaryAction>
-              <ChevronRight />
-            </ListItemSecondaryAction>
-          </ListItemButton>
-        </Link>
-
-        <Link to="/profile/delete">
-          <ListItemButton divider>
-            <ListItemIcon>
-              <DeleteForever />
-            </ListItemIcon>
-            <ListItemText primary="Delete Profile" />
-          </ListItemButton>
-        </Link>
-
-        <Link to="/logout">
-          <ListItemButton>
-            <ListItemIcon>
-              <Logout />
-            </ListItemIcon>
-            <ListItemText primary="Logout" />
-          </ListItemButton>
-        </Link>
-      </List>
-    </>
+    <Routes>
+      <Route path="/" element={<AccountIndex />} />
+      <Route path="/logout" element={<AccountLogout />} />
+      <Route path="*" element={<Navigate to="" replace />} />
+    </Routes>
   );
 };
 

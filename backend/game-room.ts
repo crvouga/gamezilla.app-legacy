@@ -16,8 +16,9 @@ export class GameRoom extends Room {
       client.send("tick");
     }, 1000);
   }
-  onLeave(_client: Client, _consented: boolean) {
+  onLeave(client: Client, _consented: boolean) {
     console.log("game room lefted");
+    this.allowReconnection(client, 10);
   }
   onDispose() {
     if (this.timer) {

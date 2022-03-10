@@ -8,9 +8,9 @@ import AccountLogin from "./features/account/AccountLogin";
 import AccountLogout from "./features/account/AccountLogout";
 import Game from "./features/game/Game";
 import Home from "./features/home/Home";
-import { IProfile, onProfile } from "./features/profile/profile-data-access";
-import ProfileCreate from "./features/profile/profile-create/ProfileCreate";
 import Profile from "./features/profile/Profile";
+import ProfileCreate from "./features/profile/profile-create/ProfileCreate";
+import { IProfile, onProfile } from "./features/profile/profile-data-access";
 import ThemeProvider from "./features/theme/ThemeProvider";
 import { useSubscription } from "./utils";
 
@@ -20,7 +20,7 @@ export const App = () => {
       <BrowserRouter>
         <ThemeProvider>
           <Layout>
-            <AuthGateway />
+            <LoadAuth />
           </Layout>
         </ThemeProvider>
       </BrowserRouter>
@@ -28,7 +28,7 @@ export const App = () => {
   );
 };
 
-const AuthGateway = () => {
+const LoadAuth = () => {
   const subscription = useSubscription(onAuthState);
 
   if (subscription.status === "loading") {
@@ -39,7 +39,7 @@ const AuthGateway = () => {
 
   if (authState.type === "logged-in") {
     return (
-      <ProfileGateway
+      <LoadProfile
         defaultName={authState.userMetadata.name ?? ""}
         userId={authState.userId}
       />
@@ -54,7 +54,7 @@ const AuthGateway = () => {
   );
 };
 
-const ProfileGateway = ({
+const LoadProfile = ({
   userId,
   defaultName,
 }: {
@@ -70,7 +70,7 @@ const ProfileGateway = ({
   const profile = subscription.data;
 
   if (profile) {
-    return <GameRoomGateway profile={profile} />;
+    return <LoadGameRoom profile={profile} />;
   }
 
   return (
@@ -85,12 +85,11 @@ const ProfileGateway = ({
   );
 };
 
-const GameRoomGateway = ({ profile }: { profile: IProfile }) => {
+const LoadGameRoom = ({ profile }: { profile: IProfile }) => {
   return (
     <Routes>
       <Route path="/" element={<Home profile={profile} />} />
-      <Route path="/account" element={<Account profile={profile} />} />
-      <Route path="/logout" element={<AccountLogout />} />
+      <Route path="/account/*" element={<Account />} />
       <Route path="/profile/*" element={<Profile profile={profile} />} />
       <Route path="/game/*" element={<Game />} />
       <Route path="*" element={<Navigate to="/" replace />} />

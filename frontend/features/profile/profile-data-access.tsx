@@ -6,6 +6,7 @@ export type IProfile = {
   username?: string;
   name?: string;
   themeMode: "LIGHT" | "DARK" | "SYSTEM";
+  gameRoomId?: string;
 };
 
 const rowToProfile = (row: definitions["profile"]): IProfile => {
@@ -15,6 +16,7 @@ const rowToProfile = (row: definitions["profile"]): IProfile => {
     name: row.name,
     username: row.username,
     themeMode: row.theme_mode,
+    gameRoomId: row.game_room_id,
   };
 };
 
