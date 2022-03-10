@@ -16,7 +16,7 @@ import { IProfile, onProfile } from "./features/profile/profile-data-access";
 import ThemeProvider from "./features/theme/ThemeProvider";
 import { useSubscription } from "./utils";
 
-export const App = () => {
+const App = () => {
   return (
     <QueryClientProvider client={new QueryClient()}>
       <BrowserRouter>
@@ -195,3 +195,5 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     </Box>
   );
 };
+
+export default App;
