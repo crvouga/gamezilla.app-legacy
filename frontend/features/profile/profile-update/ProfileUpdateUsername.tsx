@@ -1,5 +1,5 @@
-import { Clear } from '@mui/icons-material';
-import { LoadingButton } from '@mui/lab';
+import { Clear } from "@mui/icons-material";
+import { LoadingButton } from "@mui/lab";
 import {
   AppBar,
   Box,
@@ -9,11 +9,11 @@ import {
   TextField,
   Toolbar,
   Typography,
-} from '@mui/material';
-import React, { useRef } from 'react';
-import { useMutation } from 'react-query';
-import { useNavigate } from 'react-router-dom';
-import { updateProfile } from './profile-data-access';
+} from "@mui/material";
+import React, { useRef } from "react";
+import { useMutation } from "react-query";
+import { useNavigate } from "react-router-dom";
+import { updateProfile } from "../profile-data-access";
 
 const ProfileUpdateUsername = ({
   profile,
@@ -32,7 +32,7 @@ const ProfileUpdateUsername = ({
 
   const onCancel = () => {
     if (usernameRef.current) {
-      usernameRef.current.value = profile.username ?? '';
+      usernameRef.current.value = profile.username ?? "";
     }
     navigate(-1);
   };
@@ -51,11 +51,11 @@ const ProfileUpdateUsername = ({
   return (
     <Box
       sx={{
-        height: '100%',
-        width: '100%',
-        overflow: 'hidden',
-        display: 'flex',
-        flexDirection: 'column',
+        height: "100%",
+        width: "100%",
+        overflow: "hidden",
+        display: "flex",
+        flexDirection: "column",
       }}
     >
       <AppBar>
@@ -79,7 +79,7 @@ const ProfileUpdateUsername = ({
                   edge="end"
                   onClick={() => {
                     if (usernameRef.current) {
-                      usernameRef.current.value = '';
+                      usernameRef.current.value = "";
                       usernameRef.current.focus();
                     }
                   }}
@@ -92,7 +92,7 @@ const ProfileUpdateUsername = ({
         />
       </Box>
 
-      <Box sx={{ p: 2, display: 'flex' }}>
+      <Box sx={{ p: 2, display: "flex" }}>
         <Button
           variant="outlined"
           sx={{ flex: 1, marginRight: 2 }}
@@ -103,7 +103,7 @@ const ProfileUpdateUsername = ({
 
         <LoadingButton
           sx={{ flex: 1 }}
-          loading={mutation.status === 'loading'}
+          loading={mutation.status === "loading"}
           variant="contained"
           onClick={onDone}
         >

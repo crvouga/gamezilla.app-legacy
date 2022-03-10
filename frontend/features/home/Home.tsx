@@ -1,4 +1,4 @@
-import { Add, ChevronRight, Search } from '@mui/icons-material';
+import { Add, ChevronRight, Search } from "@mui/icons-material";
 import {
   AppBar,
   Avatar,
@@ -9,9 +9,9 @@ import {
   ListItemText,
   Toolbar,
   Typography,
-} from '@mui/material';
-import React from 'react';
-import { Link } from 'react-router-dom';
+} from "@mui/material";
+import React from "react";
+import { Link } from "react-router-dom";
 
 const Home = ({ profile }: { profile: { avatarUrl?: string } }) => {
   return (
@@ -29,7 +29,7 @@ const Home = ({ profile }: { profile: { avatarUrl?: string } }) => {
       </AppBar>
 
       <List>
-        <Link to="/game-session-create">
+        <Link to="/game-room/create">
           <ListItemButton>
             <ListItemIcon>
               <Add />

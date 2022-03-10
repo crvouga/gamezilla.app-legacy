@@ -1,16 +1,16 @@
-import { LoadingButton } from '@mui/lab';
-import { Drawer, Box, Button, Typography } from '@mui/material';
-import React from 'react';
-import { useMutation } from 'react-query';
-import { useNavigate } from 'react-router-dom';
-import { deleteProfile } from './profile-data-access';
+import { LoadingButton } from "@mui/lab";
+import { Drawer, Box, Button, Typography } from "@mui/material";
+import React from "react";
+import { useMutation } from "react-query";
+import { useNavigate } from "react-router-dom";
+import { deleteProfile } from "../profile-data-access";
 
 const ProfileDelete = ({ userId }: { userId: string }) => {
   const navigate = useNavigate();
 
   const mutation = useMutation(deleteProfile, {
     onSuccess: () => {
-      navigate('/', { replace: true });
+      navigate("/", { replace: true });
     },
   });
 
@@ -30,9 +30,9 @@ const ProfileDelete = ({ userId }: { userId: string }) => {
 
       <Box
         sx={{
-          width: '100%',
+          width: "100%",
           p: 2,
-          display: 'flex',
+          display: "flex",
         }}
       >
         <Button
@@ -46,7 +46,7 @@ const ProfileDelete = ({ userId }: { userId: string }) => {
         <LoadingButton
           sx={{ flex: 1 }}
           variant="contained"
-          loading={mutation.status === 'loading'}
+          loading={mutation.status === "loading"}
           size="large"
           onClick={onConfirm}
         >

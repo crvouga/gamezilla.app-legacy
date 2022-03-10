@@ -1,63 +1,10 @@
-import {
-  Alert,
-  AppBar,
-  Box,
-  Button,
-  Snackbar,
-  Toolbar,
-  Typography,
-} from "@mui/material";
-import React, { useState } from "react";
+import { AppBar, Box, Button, Toolbar, Typography } from "@mui/material";
+import React from "react";
 import { AppBarBackButton } from "../../ui";
-import { create } from "./game-room-data-access";
 
-const GameRoomCreate = () => {
-  const [result, setResult] = useState<
-    { type: "idle" } | Awaited<ReturnType<typeof create>>
-  >({ type: "idle" });
-
-  const onCreateGame = async () => {
-    const result = await create();
-    setResult(result);
-
-    if (result.type === "success") {
-      const room = result.data;
-      room.onError((code, message) => {
-        console.log("room.error", { sessionId: room.sessionId, code, message });
-      });
-
-      room.onMessage("*", (type, message) => {
-        console.log("room.message", {
-          sessionId: room.sessionId,
-          type,
-          message,
-        });
-      });
-
-      room.onLeave((code) => {
-        console.log("room.leave", { sessionId: room.sessionId, code });
-      });
-    }
-  };
-
-  const error =
-    result.type === "error" && result.errors.length > 0
-      ? result.errors[0]
-      : { message: "Something went wrong an unknown reason" };
-
+const GameRoomCreate = ({ onCreate }: { onCreate: () => void }) => {
   return (
     <Box sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
-      <Snackbar
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-        open={result.type === "error"}
-        onClose={() => setResult({ type: "idle" })}
-        autoHideDuration={3000}
-      >
-        <Alert key={error.message} severity="error">
-          {error.message}
-        </Alert>
-      </Snackbar>
-
       <AppBar>
         <Toolbar>
           <AppBarBackButton />
@@ -71,7 +18,7 @@ const GameRoomCreate = () => {
       <Box sx={{ flex: 1, padding: 2 }}></Box>
 
       <Box sx={{ p: 2 }}>
-        <Button fullWidth variant="contained" onClick={onCreateGame}>
+        <Button fullWidth variant="contained" onClick={onCreate}>
           Create Game
         </Button>
       </Box>

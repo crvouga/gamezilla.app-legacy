@@ -1,36 +1,26 @@
-import { ListItemField } from "../../ui";
-import { ChevronLeft } from "@mui/icons-material";
 import {
   AppBar,
   Avatar,
   Box,
   Button,
-  IconButton,
   List,
   Toolbar,
   Typography,
 } from "@mui/material";
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { AppBarBackButton, ListItemField } from "../../../ui";
 
 const ProfileUpdate = ({
   profile,
 }: {
   profile: { avatarUrl?: string; username?: string; name?: string };
 }) => {
-  const navigate = useNavigate();
   return (
     <>
       <AppBar>
         <Toolbar>
-          <IconButton
-            edge="start"
-            onClick={() => {
-              navigate(-1);
-            }}
-          >
-            <ChevronLeft />
-          </IconButton>
+          <AppBarBackButton />
           <Typography variant="h6" sx={{ flex: 1 }}>
             Edit Profile
           </Typography>
@@ -54,23 +44,19 @@ const ProfileUpdate = ({
           src={profile.avatarUrl}
         />
 
-        <Link to="/profile/edit/avatar">
+        <Link to="avatar">
           <Button>Edit Avatar</Button>
         </Link>
       </Box>
 
       <List>
         <ListItemField
-          to="/profile/edit/username"
+          to="username"
           label="Username"
           value={profile.username}
         />
 
-        <ListItemField
-          to="/profile/edit/name"
-          label="Name"
-          value={profile.name}
-        />
+        <ListItemField to="name" label="Name" value={profile.name} />
       </List>
     </>
   );
