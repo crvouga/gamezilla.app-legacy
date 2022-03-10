@@ -34,7 +34,7 @@ const LoadAuth = () => {
   const subscription = useSubscription(onAuthState);
 
   if (subscription.status === "loading") {
-    return <Splash />;
+    return <Splash subtitle="Checking if logged in..." />;
   }
 
   const authState = subscription.data;
@@ -66,7 +66,7 @@ const LoadProfile = ({
   const subscription = useSubscription(onProfile({ userId }));
 
   if (subscription.status === "loading") {
-    return <Splash />;
+    return <Splash subtitle="Loading profile..." />;
   }
 
   const profile = subscription.data;
@@ -131,7 +131,21 @@ const LoadGameRoom = ({ profile }: { profile: IProfile }) => {
  *
  */
 
-const Splash = () => {
+import { keyframes } from "@mui/system";
+
+const pulse = keyframes`
+  0% {
+    opacity: 1
+  }
+  50% {
+    opacity: 0.75
+  }
+  100% {
+    opacity: 1
+  }
+`;
+
+const Splash = ({ subtitle }: { subtitle: string }) => {
   return (
     <Box
       sx={{
@@ -141,9 +155,21 @@ const Splash = () => {
         placeItems: "center",
       }}
     >
-      <Typography variant="h3" color="primary.main">
-        Gamezilla
-      </Typography>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <Typography variant="h3" color="primary.main">
+          Gamezilla
+        </Typography>
+        <Typography align="center" variant="caption" color="text.secondary">
+          {subtitle}
+        </Typography>
+      </Box>
     </Box>
   );
 };
