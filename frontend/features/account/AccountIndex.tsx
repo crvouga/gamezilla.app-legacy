@@ -37,7 +37,7 @@ const AccountIndex = () => {
         </Link>
 
         <Link to="/profile/delete">
-          <ListItemButton divider>
+          <ListItemButton>
             <ListItemIcon>
               <DeleteForever />
             </ListItemIcon>
