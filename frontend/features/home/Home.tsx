@@ -1,10 +1,9 @@
-import { Add, ChevronRight, Search } from "@mui/icons-material";
+import { ChevronRight } from "@mui/icons-material";
 import {
   AppBar,
   Avatar,
   List,
   ListItemButton,
-  ListItemIcon,
   ListItemSecondaryAction,
   ListItemText,
   Toolbar,
@@ -29,27 +28,17 @@ const Home = ({ profile }: { profile: { avatarUrl?: string } }) => {
       </AppBar>
 
       <List>
-        <Link to="/game/create">
+        <Link to="/game">
           <ListItemButton>
-            <ListItemIcon>
+            {/* <ListItemIcon>
               <Add />
-            </ListItemIcon>
-            <ListItemText primary="Create Game" />
+            </ListItemIcon> */}
+            <ListItemText primary="Play Game" />
             <ListItemSecondaryAction>
               <ChevronRight />
             </ListItemSecondaryAction>
           </ListItemButton>
         </Link>
-
-        <ListItemButton>
-          <ListItemIcon>
-            <Search />
-          </ListItemIcon>
-          <ListItemText primary="Browse Games" />
-          <ListItemSecondaryAction>
-            <ChevronRight />
-          </ListItemSecondaryAction>
-        </ListItemButton>
       </List>
     </>
   );
