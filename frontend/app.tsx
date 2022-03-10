@@ -1,6 +1,6 @@
 import { Box, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { Room } from "colyseus.js";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import Account from "./features/account/Account";
@@ -8,13 +8,19 @@ import { onAuthState } from "./features/account/account-data-access";
 import AccountLogin from "./features/account/AccountLogin";
 import AccountLogout from "./features/account/AccountLogout";
 import Game from "./features/game/Game";
+import { gameRoomDataAccess } from "./features/game/game-data-access";
+import GameLeave from "./features/game/GameLeave";
 import GameRoom from "./features/game/GameRoom";
 import Home from "./features/home/Home";
 import Profile from "./features/profile/Profile";
 import ProfileCreate from "./features/profile/profile-create/ProfileCreate";
 import { IProfile, onProfile } from "./features/profile/profile-data-access";
 import ThemeProvider from "./features/theme/ThemeProvider";
-import { useSubscription } from "./utils";
+import {
+  createStorageLocalJSON,
+  useStorageLocalJSON,
+  useSubscription,
+} from "./utils";
 
 const App = () => {
   return (
@@ -88,19 +94,82 @@ const LoadProfile = ({
 };
 
 const LoadGameRoom = ({ profile }: { profile: IProfile }) => {
-  const [room, setRoom] = useState<Room<unknown> | null>(null);
+  const [roomIds, setRoomIds] = useStorageLocalJSON<null | {
+    sessionId: string;
+    roomId: string;
+  }>("gameRoomIds", null);
 
-  const onCreate = () => {
-    console.log("onCreate");
+  const [state, setState] = useState<
+    | { type: "loading" }
+    | { type: "in-room"; room: Room<unknown> }
+    | { type: "not-in-room" }
+  >(roomIds ? { type: "loading" } : { type: "not-in-room" });
+
+  useEffect(() => {
+    if (roomIds) {
+      const reconnect = async () => {
+        const result = await gameRoomDataAccess.reconnect(roomIds);
+        console.log({ result });
+        if (result.type === "success") {
+          setState({
+            type: "in-room",
+            room: result.data,
+          });
+          return;
+        }
+
+        if (result.type === "error") {
+          setRoomIds(null);
+          setState({
+            type: "not-in-room",
+          });
+          return;
+        }
+
+        setState({
+          type: "not-in-room",
+        });
+      };
+      reconnect();
+    }
+  }, []);
+
+  const onCreate = async () => {
+    const result = await gameRoomDataAccess.create();
+
+    if (result.type === "success") {
+      const room = result.data;
+      setState({
+        type: "in-room",
+        room,
+      });
+      setRoomIds({
+        sessionId: room.sessionId,
+        roomId: room.id,
+      });
+      return;
+    }
   };
+
   const onJoin = () => {
     console.log("onJoin");
   };
 
-  if (room) {
+  if (state.type === "loading") {
+    return <Splash subtitle="Checking if in a game..." />;
+  }
+
+  if (state.type === "in-room") {
+    const { room } = state;
+    const onLeave = async () => {
+      await room.leave(true);
+      setState({ type: "not-in-room" });
+    };
+
     return (
       <Routes>
-        <Route path="/game/room/*" element={<GameRoom room={room} />} />
+        <Route path="/game/room/*" element={<GameRoom room={state.room} />} />
+        <Route path="/game/leave/*" element={<GameLeave onLeave={onLeave} />} />
         <Route path="*" element={<Navigate to="/game/room" replace />} />
       </Routes>
     );
@@ -119,31 +188,6 @@ const LoadGameRoom = ({ profile }: { profile: IProfile }) => {
     </Routes>
   );
 };
-
-/**
- *
- *
- *
- *
- *
- *
- *
- *
- */
-
-import { keyframes } from "@mui/system";
-
-const pulse = keyframes`
-  0% {
-    opacity: 1
-  }
-  50% {
-    opacity: 0.75
-  }
-  100% {
-    opacity: 1
-  }
-`;
 
 const Splash = ({ subtitle }: { subtitle: string }) => {
   return (
