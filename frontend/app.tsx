@@ -1,5 +1,6 @@
 import { Box, Typography, useMediaQuery, useTheme } from "@mui/material";
-import React from "react";
+import { Room } from "colyseus.js";
+import React, { useState } from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import Account from "./features/account/Account";
@@ -7,6 +8,7 @@ import { onAuthState } from "./features/account/account-data-access";
 import AccountLogin from "./features/account/AccountLogin";
 import AccountLogout from "./features/account/AccountLogout";
 import Game from "./features/game/Game";
+import GameRoom from "./features/game/GameRoom";
 import Home from "./features/home/Home";
 import Profile from "./features/profile/Profile";
 import ProfileCreate from "./features/profile/profile-create/ProfileCreate";
@@ -86,12 +88,33 @@ const LoadProfile = ({
 };
 
 const LoadGameRoom = ({ profile }: { profile: IProfile }) => {
+  const [room, setRoom] = useState<Room<unknown> | null>(null);
+
+  const onCreate = () => {
+    console.log("onCreate");
+  };
+  const onJoin = () => {
+    console.log("onJoin");
+  };
+
+  if (room) {
+    return (
+      <Routes>
+        <Route path="/game/room/*" element={<GameRoom room={room} />} />
+        <Route path="*" element={<Navigate to="/game/room" replace />} />
+      </Routes>
+    );
+  }
+
   return (
     <Routes>
       <Route path="/" element={<Home profile={profile} />} />
       <Route path="/account/*" element={<Account />} />
       <Route path="/profile/*" element={<Profile profile={profile} />} />
-      <Route path="/game/*" element={<Game />} />
+      <Route
+        path="/game/*"
+        element={<Game onJoin={onJoin} onCreate={onCreate} />}
+      />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );

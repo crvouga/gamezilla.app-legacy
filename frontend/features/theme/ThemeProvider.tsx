@@ -5,10 +5,10 @@ import {
   ThemeOptions,
   ThemeProvider as MuiThemeProvider,
   useMediaQuery,
-} from '@mui/material';
-import { blue } from '@mui/material/colors';
-import { deepmerge } from '@mui/utils';
-import React from 'react';
+} from "@mui/material";
+import { blue } from "@mui/material/colors";
+import { deepmerge } from "@mui/utils";
+import React from "react";
 
 const defaultTheme = createTheme();
 
@@ -19,26 +19,26 @@ const baseOptions: ThemeOptions = {
   typography: {
     fontSize: 20,
     fontFamily: [
-      'Nunito',
-      '-apple-system',
-      'BlinkMacSystemFont',
+      "Nunito",
+      "-apple-system",
+      "BlinkMacSystemFont",
       '"Segoe UI"',
-      'Roboto',
+      "Roboto",
       '"Helvetica Neue"',
-      'Arial',
-      'sans-serif',
+      "Arial",
+      "sans-serif",
       '"Apple Color Emoji"',
       '"Segoe UI Emoji"',
       '"Segoe UI Symbol"',
-    ].join(','),
+    ].join(","),
   },
 
   components: {
     MuiAppBar: {
       defaultProps: {
-        position: 'static',
+        position: "static",
         elevation: 0,
-        color: 'transparent',
+        color: "transparent",
       },
     },
 
@@ -53,29 +53,29 @@ const baseOptions: ThemeOptions = {
     MuiTextField: {
       defaultProps: {
         fullWidth: true,
-        variant: 'outlined',
+        variant: "outlined",
       },
     },
 
     MuiButton: {
       defaultProps: {
-        size: 'large',
+        size: "large",
       },
       styleOverrides: {
         root: {
-          borderRadius: '2rem',
-          textTransform: 'none',
+          borderRadius: "2rem",
+          textTransform: "none",
         },
       },
     },
 
     MuiAlert: {
       defaultProps: {
-        variant: 'filled',
+        variant: "filled",
       },
       styleOverrides: {
         root: {
-          width: '100%',
+          width: "100%",
         },
       },
     },
@@ -84,17 +84,17 @@ const baseOptions: ThemeOptions = {
 
 export const darkOptions: ThemeOptions = {
   palette: {
-    mode: 'dark',
+    mode: "dark",
     background: {
-      default: '#000',
-      paper: '#101010',
+      default: "#000",
+      paper: "#101010",
     },
   },
 };
 
 export const lightOptions: ThemeOptions = {
   palette: {
-    mode: 'light',
+    mode: "light",
   },
 };
 
@@ -107,11 +107,11 @@ const lightTheme = responsiveFontSizes(
 );
 
 const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
-  const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
-  const theme = prefersDarkMode ? darkTheme : lightTheme;
+  const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
+  const _theme = prefersDarkMode ? darkTheme : lightTheme;
 
   return (
-    <MuiThemeProvider theme={theme}>
+    <MuiThemeProvider theme={darkTheme}>
       <CssBaseline enableColorScheme />
       {children}
     </MuiThemeProvider>

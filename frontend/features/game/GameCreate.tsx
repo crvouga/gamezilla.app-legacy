@@ -2,7 +2,7 @@ import { AppBar, Box, Button, Toolbar, Typography } from "@mui/material";
 import React from "react";
 import { AppBarBackButton } from "../../ui";
 
-const GameRoomCreate = ({ onCreate }: { onCreate: () => void }) => {
+const GameCreate = ({ onCreate }: { onCreate: () => void }) => {
   return (
     <Box sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
       <AppBar>
@@ -26,4 +26,4 @@ const GameRoomCreate = ({ onCreate }: { onCreate: () => void }) => {
   );
 };
 
-export default GameRoomCreate;
+export default GameCreate;
