@@ -1,9 +1,10 @@
-import { ChevronRight } from "@mui/icons-material";
+import { ChevronRight, Games } from "@mui/icons-material";
 import {
   AppBar,
   Avatar,
   List,
   ListItemButton,
+  ListItemIcon,
   ListItemSecondaryAction,
   ListItemText,
   Toolbar,
@@ -30,9 +31,9 @@ const Home = ({ profile }: { profile: { avatarUrl?: string } }) => {
       <List>
         <Link to="/game">
           <ListItemButton>
-            {/* <ListItemIcon>
-              <Add />
-            </ListItemIcon> */}
+            <ListItemIcon>
+              <Games />
+            </ListItemIcon>
             <ListItemText primary="Play Game" />
             <ListItemSecondaryAction>
               <ChevronRight />
