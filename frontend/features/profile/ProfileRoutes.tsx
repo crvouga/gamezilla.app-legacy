@@ -4,7 +4,7 @@ import { IProfile } from "./profile-data-access";
 import ProfileDelete from "./profile-delete";
 import ProfileUpdate from "./profile-update";
 
-const Profile = ({ profile }: { profile: IProfile }) => {
+const ProfileRoutes = ({ profile }: { profile: IProfile }) => {
   return (
     <Routes>
       <Route path="/update/*" element={<ProfileUpdate profile={profile} />} />
@@ -19,4 +19,4 @@ const Profile = ({ profile }: { profile: IProfile }) => {
   );
 };
 
-export default Profile;
+export default ProfileRoutes;
