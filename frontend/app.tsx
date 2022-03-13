@@ -16,18 +16,22 @@ import ProfileCreate from "./features/profile/profile-create/ProfileCreate";
 import { IProfile, onProfile } from "./features/profile/profile-data-access";
 import ThemeProvider from "./features/theme/ThemeProvider";
 import { useStorageLocalJSON, useSubscription } from "./utils";
+import { Provider } from "react-redux";
+import { appStore } from "./app-store";
 
 const App = () => {
   return (
-    <QueryClientProvider client={new QueryClient()}>
-      <BrowserRouter>
-        <ThemeProvider>
-          <Layout>
-            <LoadAuth />
-          </Layout>
-        </ThemeProvider>
-      </BrowserRouter>
-    </QueryClientProvider>
+    <Provider store={appStore}>
+      <QueryClientProvider client={new QueryClient()}>
+        <BrowserRouter>
+          <ThemeProvider>
+            <Layout>
+              <LoadAuth />
+            </Layout>
+          </ThemeProvider>
+        </BrowserRouter>
+      </QueryClientProvider>
+    </Provider>
   );
 };
 
