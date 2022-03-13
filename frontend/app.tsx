@@ -7,7 +7,7 @@ import AccountRoutes from "./features/account/AccountRoutes";
 import { onAuthState } from "./features/account/account-data-access";
 import AccountLogin from "./features/account/AccountLogin";
 import AccountLogout from "./features/account/AccountLogout";
-import { gameRoomDataAccess } from "./features/game/game-room-data-access";
+import { gameDataAccess } from "./features/game/game-data-access";
 import GameConnectedRoutes from "./features/game/GameConnectedRoutes";
 import GameDisconnectedRoutes from "./features/game/GameDisconnectedRoutes";
 import Home from "./features/home/Home";
@@ -103,7 +103,7 @@ const LoadGameRoom = ({ profile }: { profile: IProfile }) => {
   useEffect(() => {
     if (roomIds) {
       const reconnect = async () => {
-        const result = await gameRoomDataAccess.reconnect(roomIds);
+        const result = await gameDataAccess.reconnect(roomIds);
         console.log({ result });
         if (result.type === "success") {
           setState({
@@ -130,7 +130,7 @@ const LoadGameRoom = ({ profile }: { profile: IProfile }) => {
   }, []);
 
   const onCreate = async () => {
-    const result = await gameRoomDataAccess.create();
+    const result = await gameDataAccess.create();
 
     if (result.type === "success") {
       const room = result.data;
