@@ -13,7 +13,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { AppBarBackButton } from "../../ui";
 
-const GameIndex = () => {
+const GameDisconnected = () => {
   return (
     <>
       <AppBar>
@@ -54,4 +54,4 @@ const GameIndex = () => {
   );
 };
 
-export default GameIndex;
+export default GameDisconnected;

@@ -1,10 +1,10 @@
 import React from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import GameCreate from "./GameCreate";
-import GameIndex from "./GameIndex";
+import GameDisconnected from "./GameDisconnected";
 import GameJoin from "./GameJoin";
 
-const Game = ({
+const GameDisconnectedRoutes = ({
   onCreate,
   onJoin,
 }: {
@@ -13,7 +13,7 @@ const Game = ({
 }) => {
   return (
     <Routes>
-      <Route path="/" element={<GameIndex />} />
+      <Route path="/" element={<GameDisconnected />} />
       <Route path="/create" element={<GameCreate onCreate={onCreate} />} />
       <Route path="/join" element={<GameJoin onJoin={onJoin} />} />
       <Route path="*" element={<Navigate to="" replace />} />
@@ -21,4 +21,4 @@ const Game = ({
   );
 };
 
-export default Game;
+export default GameDisconnectedRoutes;
