@@ -2,10 +2,9 @@ import { ExitToApp } from "@mui/icons-material";
 import { AppBar, Box, IconButton, Toolbar, Typography } from "@mui/material";
 import { Room } from "colyseus.js";
 import React, { useEffect } from "react";
-import { AppBarBackButton } from "../../ui";
 import { Link } from "react-router-dom";
 
-const GameRoom = ({ room }: { room: Room<unknown> }) => {
+const GameConnected = ({ room }: { room: Room<unknown> }) => {
   useEffect(() => {
     room.onError((code, message) => {
       console.log("room.error", {
@@ -49,4 +48,4 @@ const GameRoom = ({ room }: { room: Room<unknown> }) => {
   );
 };
 
-export default GameRoom;
+export default GameConnected;

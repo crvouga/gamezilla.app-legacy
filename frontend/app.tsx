@@ -7,20 +7,15 @@ import Account from "./features/account/Account";
 import { onAuthState } from "./features/account/account-data-access";
 import AccountLogin from "./features/account/AccountLogin";
 import AccountLogout from "./features/account/AccountLogout";
-import Game from "./features/game/Game";
-import { gameRoomDataAccess } from "./features/game/game-data-access";
-import GameLeave from "./features/game/GameLeave";
-import GameRoom from "./features/game/GameRoom";
+import { gameRoomDataAccess } from "./features/game/game-room-data-access";
+import GameConnectedRoutes from "./features/game/GameConnectedRoutes";
+import GameDisconnectedRoutes from "./features/game/GameDisconnectedRoutes";
 import Home from "./features/home/Home";
 import Profile from "./features/profile/Profile";
 import ProfileCreate from "./features/profile/profile-create/ProfileCreate";
 import { IProfile, onProfile } from "./features/profile/profile-data-access";
 import ThemeProvider from "./features/theme/ThemeProvider";
-import {
-  createStorageLocalJSON,
-  useStorageLocalJSON,
-  useSubscription,
-} from "./utils";
+import { useStorageLocalJSON, useSubscription } from "./utils";
 
 const App = () => {
   return (
@@ -161,6 +156,7 @@ const LoadGameRoom = ({ profile }: { profile: IProfile }) => {
 
   if (state.type === "in-room") {
     const { room } = state;
+
     const onLeave = async () => {
       await room.leave(true);
       setState({ type: "not-in-room" });
@@ -168,9 +164,11 @@ const LoadGameRoom = ({ profile }: { profile: IProfile }) => {
 
     return (
       <Routes>
-        <Route path="/game/room/*" element={<GameRoom room={state.room} />} />
-        <Route path="/game/leave/*" element={<GameLeave onLeave={onLeave} />} />
-        <Route path="*" element={<Navigate to="/game/room" replace />} />
+        <Route
+          path="/game/*"
+          element={<GameConnectedRoutes onLeave={onLeave} room={state.room} />}
+        />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     );
   }
@@ -182,7 +180,7 @@ const LoadGameRoom = ({ profile }: { profile: IProfile }) => {
       <Route path="/profile/*" element={<Profile profile={profile} />} />
       <Route
         path="/game/*"
-        element={<Game onJoin={onJoin} onCreate={onCreate} />}
+        element={<GameDisconnectedRoutes onJoin={onJoin} onCreate={onCreate} />}
       />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
