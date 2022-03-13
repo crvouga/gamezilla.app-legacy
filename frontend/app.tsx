@@ -3,7 +3,7 @@ import { Room } from "colyseus.js";
 import React, { useEffect, useState } from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import Account from "./features/account/Account";
+import AccountRoutes from "./features/account/AccountRoutes";
 import { onAuthState } from "./features/account/account-data-access";
 import AccountLogin from "./features/account/AccountLogin";
 import AccountLogout from "./features/account/AccountLogout";
@@ -11,7 +11,7 @@ import { gameRoomDataAccess } from "./features/game/game-room-data-access";
 import GameConnectedRoutes from "./features/game/GameConnectedRoutes";
 import GameDisconnectedRoutes from "./features/game/GameDisconnectedRoutes";
 import Home from "./features/home/Home";
-import Profile from "./features/profile/Profile";
+import ProfileRoutes from "./features/profile/ProfileRoutes";
 import ProfileCreate from "./features/profile/profile-create/ProfileCreate";
 import { IProfile, onProfile } from "./features/profile/profile-data-access";
 import ThemeProvider from "./features/theme/ThemeProvider";
@@ -176,8 +176,8 @@ const LoadGameRoom = ({ profile }: { profile: IProfile }) => {
   return (
     <Routes>
       <Route path="/" element={<Home profile={profile} />} />
-      <Route path="/account/*" element={<Account />} />
-      <Route path="/profile/*" element={<Profile profile={profile} />} />
+      <Route path="/account/*" element={<AccountRoutes />} />
+      <Route path="/profile/*" element={<ProfileRoutes profile={profile} />} />
       <Route
         path="/game/*"
         element={<GameDisconnectedRoutes onJoin={onJoin} onCreate={onCreate} />}
