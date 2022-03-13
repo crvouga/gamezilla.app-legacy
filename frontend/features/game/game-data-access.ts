@@ -18,7 +18,7 @@ const reconnect = async ({
   return tryCatch(() => colyseusClient.reconnect(roomId, sessionId));
 };
 
-export const gameRoomDataAccess = {
+export const gameDataAccess = {
   create,
   reconnect,
 };
