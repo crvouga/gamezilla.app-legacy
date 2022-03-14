@@ -12,7 +12,7 @@ import Home from "./features/home/Home";
 import ProfileCreate from "./features/profile/profile-create/ProfileCreate";
 import { IProfile, onProfile } from "./features/profile/profile-data-access";
 import ProfileRoutes from "./features/profile/ProfileRoutes";
-import { IAppDispatch, IAppState } from "./store";
+import { IAppDispatch, IAppState, useAppSelector } from "./store";
 import { useSubscription } from "./utils";
 
 const App = ({
@@ -24,26 +24,22 @@ const App = ({
 }) => {
   return (
     <Layout>
-      <LoadAuth gameState={appState.game} />
+      <LoadAuth appState={appState} />
     </Layout>
   );
 };
 
-const LoadAuth = ({ gameState }: { gameState: Game.IState }) => {
-  const subscription = useSubscription(onAuthState);
-
-  if (subscription.status === "loading") {
+const LoadAuth = ({ appState }: { appState: IAppState }) => {
+  if (appState.account.type === "loading") {
     return <Splash subtitle="Checking if logged in..." />;
   }
 
-  const authState = subscription.data;
-
-  if (authState.type === "logged-in") {
+  if (appState.account.type === "logged-in") {
     return (
       <LoadProfile
-        gameState={gameState}
-        defaultName={authState.userMetadata.name ?? ""}
-        userId={authState.userId}
+        appState={appState}
+        defaultName={appState.account.name ?? ""}
+        userId={appState.account.userId}
       />
     );
   }
@@ -57,24 +53,25 @@ const LoadAuth = ({ gameState }: { gameState: Game.IState }) => {
 };
 
 const LoadProfile = ({
-  userId,
+  appState,
   defaultName,
-  gameState,
+  userId,
 }: {
   defaultName: string;
   userId: string;
-  gameState: Game.IState;
+  appState: IAppState;
 }) => {
-  const subscription = useSubscription(onProfile({ userId }));
-
-  if (subscription.status === "loading") {
+  if (appState.profile.type === "loading") {
     return <Splash subtitle="Loading profile..." />;
   }
 
-  const profile = subscription.data;
-
-  if (profile) {
-    return <LoadGameRoom gameState={gameState} profile={profile} />;
+  if (appState.profile.type === "found") {
+    return (
+      <LoadGameRoom
+        gameState={appState.game}
+        profile={appState.profile.profile}
+      />
+    );
   }
 
   return (
@@ -103,10 +100,7 @@ const LoadGameRoom = ({
   if (gameState.type === "connected") {
     return (
       <Routes>
-        <Route
-          path="/game/*"
-          element={<GameConnectedRoutes onLeave={() => {}} />}
-        />
+        <Route path="/game/*" element={<GameConnectedRoutes />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     );

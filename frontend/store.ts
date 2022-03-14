@@ -7,6 +7,12 @@ import { composeWithDevTools } from "redux-devtools-extension";
 const sagaMiddleware = createSagaMiddleware();
 
 const initialState: App.IState = {
+  profile: {
+    type: "loading",
+  },
+  account: {
+    type: "loading",
+  },
   game: {
     type: "loading",
   },
@@ -25,14 +31,7 @@ export const store = createStore(
   composeWithDevTools(applyMiddleware(sagaMiddleware))
 );
 
-const actionChannel = channel<App.IAction>();
-
-actionChannel.take((action) => {
-  // @ts-ignore
-  store.dispatch(action);
-});
-
-sagaMiddleware.run(App.saga, actionChannel);
+sagaMiddleware.run(App.saga);
 
 /*
 

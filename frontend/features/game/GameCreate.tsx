@@ -24,7 +24,7 @@ const GameCreate = () => {
           fullWidth
           variant="contained"
           onClick={() => {
-            dispatch({ type: "game", payload: { type: "create" } });
+            dispatch({ namespace: "game", type: "game/create" });
           }}
         >
           Create Game
