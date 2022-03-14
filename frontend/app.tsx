@@ -1,41 +1,35 @@
 import { Box, Typography, useMediaQuery, useTheme } from "@mui/material";
-import { Room } from "colyseus.js";
-import React, { useEffect, useState } from "react";
-import { QueryClient, QueryClientProvider } from "react-query";
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import AccountRoutes from "./features/account/AccountRoutes";
+import React from "react";
+import { Navigate, Route, Routes } from "react-router-dom";
 import { onAuthState } from "./features/account/account-data-access";
 import AccountLogin from "./features/account/AccountLogin";
 import AccountLogout from "./features/account/AccountLogout";
-import { gameDataAccess } from "./features/game/game-data-access";
+import AccountRoutes from "./features/account/AccountRoutes";
+import * as Game from "./features/game/game-state";
 import GameConnectedRoutes from "./features/game/GameConnectedRoutes";
 import GameDisconnectedRoutes from "./features/game/GameDisconnectedRoutes";
 import Home from "./features/home/Home";
-import ProfileRoutes from "./features/profile/ProfileRoutes";
 import ProfileCreate from "./features/profile/profile-create/ProfileCreate";
 import { IProfile, onProfile } from "./features/profile/profile-data-access";
-import ThemeProvider from "./features/theme/ThemeProvider";
-import { useStorageLocalJSON, useSubscription } from "./utils";
-import { Provider } from "react-redux";
-import { appStore } from "./app-store";
+import ProfileRoutes from "./features/profile/ProfileRoutes";
+import { IAppDispatch, IAppState } from "./store";
+import { useSubscription } from "./utils";
 
-const App = () => {
+const App = ({
+  appState,
+  appDispatch,
+}: {
+  appDispatch: IAppDispatch;
+  appState: IAppState;
+}) => {
   return (
-    <Provider store={appStore}>
-      <QueryClientProvider client={new QueryClient()}>
-        <BrowserRouter>
-          <ThemeProvider>
-            <Layout>
-              <LoadAuth />
-            </Layout>
-          </ThemeProvider>
-        </BrowserRouter>
-      </QueryClientProvider>
-    </Provider>
+    <Layout>
+      <LoadAuth gameState={appState.game} />
+    </Layout>
   );
 };
 
-const LoadAuth = () => {
+const LoadAuth = ({ gameState }: { gameState: Game.IState }) => {
   const subscription = useSubscription(onAuthState);
 
   if (subscription.status === "loading") {
@@ -47,6 +41,7 @@ const LoadAuth = () => {
   if (authState.type === "logged-in") {
     return (
       <LoadProfile
+        gameState={gameState}
         defaultName={authState.userMetadata.name ?? ""}
         userId={authState.userId}
       />
@@ -64,9 +59,11 @@ const LoadAuth = () => {
 const LoadProfile = ({
   userId,
   defaultName,
+  gameState,
 }: {
   defaultName: string;
   userId: string;
+  gameState: Game.IState;
 }) => {
   const subscription = useSubscription(onProfile({ userId }));
 
@@ -77,7 +74,7 @@ const LoadProfile = ({
   const profile = subscription.data;
 
   if (profile) {
-    return <LoadGameRoom profile={profile} />;
+    return <LoadGameRoom gameState={gameState} profile={profile} />;
   }
 
   return (
@@ -92,85 +89,23 @@ const LoadProfile = ({
   );
 };
 
-const LoadGameRoom = ({ profile }: { profile: IProfile }) => {
-  const [roomIds, setRoomIds] = useStorageLocalJSON<null | {
-    sessionId: string;
-    roomId: string;
-  }>("gameRoomIds", null);
-
-  const [state, setState] = useState<
-    | { type: "loading" }
-    | { type: "in-room"; room: Room<unknown> }
-    | { type: "not-in-room" }
-  >(roomIds ? { type: "loading" } : { type: "not-in-room" });
-
-  useEffect(() => {
-    if (roomIds) {
-      const reconnect = async () => {
-        const result = await gameDataAccess.reconnect(roomIds);
-        console.log({ result });
-        if (result.type === "success") {
-          setState({
-            type: "in-room",
-            room: result.data,
-          });
-          return;
-        }
-
-        if (result.type === "error") {
-          setRoomIds(null);
-          setState({
-            type: "not-in-room",
-          });
-          return;
-        }
-
-        setState({
-          type: "not-in-room",
-        });
-      };
-      reconnect();
-    }
-  }, []);
-
-  const onCreate = async () => {
-    const result = await gameDataAccess.create();
-
-    if (result.type === "success") {
-      const room = result.data;
-      setState({
-        type: "in-room",
-        room,
-      });
-      setRoomIds({
-        sessionId: room.sessionId,
-        roomId: room.id,
-      });
-      return;
-    }
-  };
-
-  const onJoin = () => {
-    console.log("onJoin");
-  };
-
-  if (state.type === "loading") {
+const LoadGameRoom = ({
+  profile,
+  gameState,
+}: {
+  profile: IProfile;
+  gameState: Game.IState;
+}) => {
+  if (gameState.type === "loading") {
     return <Splash subtitle="Checking if in a game..." />;
   }
 
-  if (state.type === "in-room") {
-    const { room } = state;
-
-    const onLeave = async () => {
-      await room.leave(true);
-      setState({ type: "not-in-room" });
-    };
-
+  if (gameState.type === "connected") {
     return (
       <Routes>
         <Route
           path="/game/*"
-          element={<GameConnectedRoutes onLeave={onLeave} room={state.room} />}
+          element={<GameConnectedRoutes onLeave={() => {}} />}
         />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
@@ -182,10 +117,7 @@ const LoadGameRoom = ({ profile }: { profile: IProfile }) => {
       <Route path="/" element={<Home profile={profile} />} />
       <Route path="/account/*" element={<AccountRoutes />} />
       <Route path="/profile/*" element={<ProfileRoutes profile={profile} />} />
-      <Route
-        path="/game/*"
-        element={<GameDisconnectedRoutes onJoin={onJoin} onCreate={onCreate} />}
-      />
+      <Route path="/game/*" element={<GameDisconnectedRoutes />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );

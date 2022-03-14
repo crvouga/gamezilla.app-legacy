@@ -1,10 +1,10 @@
-import { Action, createAction } from "@reduxjs/toolkit";
-import { put, takeLeading } from "redux-saga/effects";
-import { createStorageLocalJSON, IStorage } from "../../utils";
+import { Channel, EventChannel } from "redux-saga";
 
-const namespace = "game" as const;
+import { fork, takeEvery, call, put } from "typed-redux-saga";
+import { createStorageLocalJSON } from "../../utils";
+import * as GameDataAccess from "./game-data-access";
 
-export type IGameState =
+export type IState =
   | {
       type: "connected";
     }
@@ -15,54 +15,114 @@ export type IGameState =
       type: "loading";
     };
 
-export const actions = {
-  connected: createAction(`${namespace}/connected`),
-  disconnected: createAction(`${namespace}/disconnected`),
-  reconnect: createAction<{ roomId: string; sessionId: string }>(
-    `${namespace}/reconnect`
-  ),
-  reconnectSucceeded: createAction(`${namespace}/reconnect/succeeded`),
-  reconnectFailed: createAction(`${namespace}/reconnect/failed`),
-};
-
-const initialState: IGameState = {
-  type: "loading",
-};
-
-export const reducer = (state: IGameState, action: Action): IGameState => {
-  if (actions.connected.match(action)) {
-    return {
-      type: "connected",
+export type IAction =
+  | {
+      type: "connected";
+    }
+  | {
+      type: "disconnected";
+    }
+  | {
+      type: "reconnect";
+      sessionId: string;
+      roomId: string;
+    }
+  | {
+      type: "reconnect/failed";
+    }
+  | {
+      type: "reconnect/succeeded";
+    }
+  | {
+      type: "create";
+    }
+  | {
+      type: "join";
     };
-  }
 
-  if (actions.disconnected.match(action)) {
-    return {
-      type: "disconnected",
-    };
-  }
+export const reducer = (state: IState, action: IAction): IState => {
+  switch (action.type) {
+    case "connected":
+      return {
+        type: "connected",
+      };
 
-  return state;
+    case "reconnect/succeeded":
+      return {
+        type: "connected",
+      };
+
+    case "reconnect/failed":
+      return {
+        type: "disconnected",
+      };
+
+    case "disconnected":
+      return {
+        type: "disconnected",
+      };
+
+    default:
+      return state;
+  }
 };
 
-export const game = {
-  initialState,
-  namespace,
-  reducer,
-  actions,
-};
+/*
 
-function* reconnectSaga(action: ReturnType<typeof actions.reconnect>) {}
 
-export function* gameSaga() {
+
+*/
+
+export function* saga(actionChannel: Channel<IAction>) {
   const storage =
     createStorageLocalJSON<{ roomId: string; sessionId: string }>();
 
   const found = storage.read("gameRoomIds");
 
   if (found) {
-    yield put(actions.reconnect(found));
+    yield put(actionChannel, { type: "reconnect", ...found });
+  } else {
+    yield put(actionChannel, { type: "disconnected" });
   }
 
-  yield takeLeading(actions.reconnect, reconnectSaga);
+  console.log("TAKE");
+  actionChannel.take(console.log);
+
+  yield* takeEvery(actionChannel, function* (action) {
+    console.log(action);
+
+    if (action.type === "reconnect") {
+      const { roomId, sessionId } = action;
+
+      const roomChannel = yield* call(() =>
+        GameDataAccess.reconnect({ roomId, sessionId })
+      );
+
+      if (roomChannel) {
+        yield fork(connectedSaga, roomChannel);
+      }
+
+      return;
+    }
+
+    if (action.type === "create") {
+      const roomChannel = yield* call(() => GameDataAccess.create());
+
+      if (roomChannel) {
+        yield fork(connectedSaga, roomChannel);
+      }
+
+      return;
+    }
+  });
+}
+
+function* connectedSaga(roomChannel: EventChannel<GameDataAccess.IRoomAction>) {
+  yield put<IAction>({
+    type: "connected",
+  });
+
+  yield takeEvery(roomChannel, function* (action) {
+    console.log(action);
+  });
 }
