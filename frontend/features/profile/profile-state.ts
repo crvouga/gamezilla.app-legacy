@@ -1,3 +1,4 @@
+import { createAction, createReducer } from "@reduxjs/toolkit";
 import { eventChannel } from "redux-saga";
 import { put, takeEvery } from "redux-saga/effects";
 import * as ProfileDataAccess from "./profile-data-access";
@@ -14,35 +15,27 @@ export type IState =
       type: "not-found";
     };
 
-export type IAction =
-  | {
-      namespace: "profile";
-      type: "profile/not-found";
-    }
-  | {
-      namespace: "profile";
-      type: "profile/found";
-      payload: {
-        profile: ProfileDataAccess.IProfile;
-      };
-    };
+export const actions = {
+  notFound: createAction("profile/not-found"),
+  found: createAction<{ profile: ProfileDataAccess.IProfile }, "profile/found">(
+    "profile/found"
+  ),
+};
 
-export const reducer = (state: IState, action: IAction): IState => {
-  if (action.type === "profile/found") {
+export const reducer = createReducer<IState>({ type: "loading" }, (builder) => {
+  builder.addCase(actions.found, (_state, action) => {
     return {
       type: "found",
       profile: action.payload.profile,
     };
-  }
+  });
 
-  if (action.type === "profile/not-found") {
+  builder.addCase(actions.notFound, () => {
     return {
       type: "not-found",
     };
-  }
-
-  return state;
-};
+  });
+});
 
 /* 
 
@@ -51,17 +44,15 @@ export const reducer = (state: IState, action: IAction): IState => {
 */
 
 export function* saga({ userId }: { userId: string }) {
-  const profileChannel = eventChannel<IAction>((emit) => {
+  const profileChannel = eventChannel<
+    ReturnType<typeof actions.found> | ReturnType<typeof actions.notFound>
+  >((emit) => {
     return ProfileDataAccess.onProfile({ userId })((profile) => {
       if (profile) {
-        emit({
-          namespace: "profile",
-          type: "profile/found",
-          payload: { profile },
-        });
+        emit(actions.found({ profile }));
         return;
       }
-      emit({ namespace: "profile", type: "profile/not-found" });
+      emit(actions.notFound());
     });
   });
 

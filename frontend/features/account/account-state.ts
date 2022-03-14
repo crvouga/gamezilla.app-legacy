@@ -1,4 +1,4 @@
-import { FunctionsOutlined } from "@mui/icons-material";
+import { createAction, createReducer } from "@reduxjs/toolkit";
 import { eventChannel } from "redux-saga";
 import { call, put, takeEvery } from "redux-saga/effects";
 import * as AccountDataAccess from "./account-data-access";
@@ -16,48 +16,30 @@ export type IState =
       name?: string;
     };
 
-export type IAction =
-  | {
-      namespace: "account";
-      type: "account/login";
-      payload: {
-        method: "google";
-      };
-    }
-  | {
-      namespace: "account";
-      type: "account/logout";
-    }
-  | {
-      namespace: "account";
-      type: "account/logged-out";
-    }
-  | {
-      namespace: "account";
-      type: "account/logged-in";
-      payload: {
-        userId: string;
-        name?: string;
-      };
-    };
+export const actions = {
+  login: createAction<{ method: "google" }, "account/login">("account/login"),
+  loggedIn: createAction<
+    { userId: string; name?: string },
+    "account/logged-in"
+  >("account/logged-in"),
+  logout: createAction("account/logout"),
+  loggedOut: createAction("account/logged-out"),
+};
 
-export const reducer = (state: IState, action: IAction): IState => {
-  if (action.type === "account/logged-in") {
+export const reducer = createReducer<IState>({ type: "loading" }, (builder) => {
+  builder.addCase(actions.loggedIn, (_state, action) => {
     return {
       type: "logged-in",
       ...action.payload,
     };
-  }
+  });
 
-  if (action.type === "account/logged-out") {
+  builder.addCase(actions.loggedOut, () => {
     return {
       type: "logged-out",
     };
-  }
-
-  return state;
-};
-
+  });
+});
 /*
 
 
@@ -65,24 +47,21 @@ export const reducer = (state: IState, action: IAction): IState => {
 */
 
 export function* saga() {
-  const accountChannel = eventChannel<IAction>((emit) => {
+  const accountChannel = eventChannel<
+    ReturnType<typeof actions.loggedIn> | ReturnType<typeof actions.loggedOut>
+  >((emit) => {
     const unsubscribe = AccountDataAccess.onAuthState((authState) => {
       if (authState.type === "logged-in") {
-        emit({
-          namespace: "account",
-          type: "account/logged-in",
-          payload: {
+        emit(
+          actions.loggedIn({
             userId: authState.userId,
             name: authState.userMetadata.name,
-          },
-        });
+          })
+        );
       }
 
       if (authState.type === "logged-out") {
-        emit({
-          namespace: "account",
-          type: "account/logged-out",
-        });
+        emit(actions.loggedOut());
       }
     });
 
@@ -95,13 +74,11 @@ export function* saga() {
     yield put(action);
   });
 
-  yield takeEvery("*", function* (action: IAction) {
-    if (action.type === "account/login") {
-      yield call(AccountDataAccess.login, { provider: action.payload.method });
-    }
+  yield takeEvery(actions.logout, function* () {
+    yield call(AccountDataAccess.logout);
+  });
 
-    if (action.type === "account/logout") {
-      yield call(AccountDataAccess.logout);
-    }
+  yield takeEvery(actions.login, function* (action) {
+    yield call(AccountDataAccess.login, { provider: action.payload.method });
   });
 }

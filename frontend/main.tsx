@@ -4,12 +4,12 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
 import App from "./app";
-import { store, useAppDispatch, useAppSelector } from "./store";
+import { appStore, useAppDispatch, useAppSelector } from "./app-store";
 import ThemeProvider from "./features/theme/ThemeProvider";
 
 const Providers = ({ children }: { children: React.ReactNode }) => {
   return (
-    <Provider store={store}>
+    <Provider store={appStore}>
       <QueryClientProvider client={new QueryClient()}>
         <BrowserRouter>
           <ThemeProvider>{children}</ThemeProvider>

@@ -1,17 +1,17 @@
 import { LoadingButton } from "@mui/lab";
 import { Box, Button, Drawer, Typography } from "@mui/material";
 import React from "react";
-import { useMutation } from "react-query";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { useAppDispatch } from "../../store";
+import * as Game from "./game-state";
 
 const GameLeave = () => {
   const navigate = useNavigate();
 
-  const dispatch = useAppDispatch();
+  const dispatch = useDispatch();
 
   const onLeave = () => {
-    dispatch({ namespace: "game", type: "game/leave" });
+    dispatch(Game.actions.leave());
   };
 
   const onCancel = () => {

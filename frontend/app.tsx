@@ -12,7 +12,7 @@ import Home from "./features/home/Home";
 import ProfileCreate from "./features/profile/profile-create/ProfileCreate";
 import { IProfile, onProfile } from "./features/profile/profile-data-access";
 import ProfileRoutes from "./features/profile/ProfileRoutes";
-import { IAppDispatch, IAppState, useAppSelector } from "./store";
+import { IAppDispatch, IAppState, useAppSelector } from "./app-store";
 import { useSubscription } from "./utils";
 
 const App = ({
@@ -37,7 +37,6 @@ const LoadAuth = ({ appState }: { appState: IAppState }) => {
   if (appState.account.type === "logged-in") {
     return (
       <LoadProfile
-        appState={appState}
         defaultName={appState.account.name ?? ""}
         userId={appState.account.userId}
       />
@@ -53,25 +52,20 @@ const LoadAuth = ({ appState }: { appState: IAppState }) => {
 };
 
 const LoadProfile = ({
-  appState,
   defaultName,
   userId,
 }: {
   defaultName: string;
   userId: string;
-  appState: IAppState;
 }) => {
-  if (appState.profile.type === "loading") {
+  const profile = useAppSelector((state) => state.profile);
+
+  if (profile.type === "loading") {
     return <Splash subtitle="Loading profile..." />;
   }
 
-  if (appState.profile.type === "found") {
-    return (
-      <LoadGameRoom
-        gameState={appState.game}
-        profile={appState.profile.profile}
-      />
-    );
+  if (profile.type === "found") {
+    return <LoadGameRoom profile={profile.profile} />;
   }
 
   return (
@@ -86,13 +80,9 @@ const LoadProfile = ({
   );
 };
 
-const LoadGameRoom = ({
-  profile,
-  gameState,
-}: {
-  profile: IProfile;
-  gameState: Game.IState;
-}) => {
+const LoadGameRoom = ({ profile }: { profile: IProfile }) => {
+  const gameState = useAppSelector((state) => state.game);
+
   if (gameState.type === "loading") {
     return <Splash subtitle="Checking if in a game..." />;
   }
