@@ -1,40 +1,52 @@
-import { channel, Channel, eventChannel } from "redux-saga";
-import { put, spawn, takeEvery } from "redux-saga/effects";
+import { Channel } from "redux-saga";
+import { spawn, takeEvery, takeLatest } from "redux-saga/effects";
 import * as Game from "./features/game/game-state";
+import * as Account from "./features/account/account-state";
+import * as Profile from "./features/profile/profile-state";
 
 export type IState = {
+  account: Account.IState;
   game: Game.IState;
+  profile: Profile.IState;
 };
 
-export type IAction = {
-  type: "game";
-  payload: Game.IAction;
-};
+export type IAction = Game.IAction | Account.IAction | Profile.IAction;
 
 export const reducer = (state: IState, action: IAction): IState => {
-  switch (action.type) {
+  switch (action.namespace) {
+    case "profile":
+      return {
+        ...state,
+        profile: Profile.reducer(state.profile, action),
+      };
+
     case "game":
       return {
-        game: Game.reducer(state.game, action.payload),
+        ...state,
+        game: Game.reducer(state.game, action),
       };
+
+    case "account": {
+      return {
+        ...state,
+        account: Account.reducer(state.account, action),
+      };
+    }
 
     default:
       return state;
   }
 };
 
-export function* saga(actionChannel: Channel<IAction>) {
-  const gameActionChannel = channel<Game.IAction>();
+export function* saga() {
+  yield spawn(Game.saga);
+  yield spawn(Account.saga);
 
-  yield takeEvery(gameActionChannel, function* (gameAction) {
-    yield put(actionChannel, { type: "game", payload: gameAction });
-  });
+  yield takeLatest("*", function* (action: IAction) {
+    if (action.type === "account/logged-in") {
+      const { userId } = action.payload;
 
-  yield spawn(Game.saga, gameActionChannel);
-
-  actionChannel.take((action) => {
-    if (action.type === "game") {
-      gameActionChannel.put(action.payload);
+      yield* Profile.saga({ userId });
     }
   });
 }

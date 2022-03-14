@@ -1,5 +1,5 @@
 import { Room } from "colyseus.js";
-import { eventChannel } from "redux-saga";
+import { channel, eventChannel } from "redux-saga";
 import { RoomNames, tryCatch } from "../../../common";
 import { colyseusClient } from "../../data-access";
 
@@ -35,7 +35,7 @@ export const reconnect = async ({
 
 export type IRoomAction =
   | {
-      type: "room/leave";
+      type: "room/lefted";
       code: number;
     }
   | {
@@ -46,11 +46,11 @@ export type IRoomAction =
       };
     };
 
-export const createRoomChannel = (room: Room<unknown>) => {
-  return eventChannel<IRoomAction>((emit) => {
+const createRoomChannel = (room: Room<unknown>) => {
+  const roomChannel = eventChannel<IRoomAction>((emit) => {
     room.onLeave((code) => {
       emit({
-        type: "room/leave",
+        type: "room/lefted",
         code,
       });
     });
@@ -69,4 +69,11 @@ export const createRoomChannel = (room: Room<unknown>) => {
       room.removeAllListeners();
     };
   });
+
+  return {
+    roomChannel,
+    leave: () => {
+      room.leave(true);
+    },
+  };
 };

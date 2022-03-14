@@ -3,6 +3,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import GameCreate from "./GameCreate";
 import GameDisconnected from "./GameDisconnected";
 import GameJoin from "./GameJoin";
+import * as Game from "./game-state";
 
 const GameDisconnectedRoutes = () => {
   return (

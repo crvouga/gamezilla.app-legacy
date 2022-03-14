@@ -3,11 +3,16 @@ import { Box, Button, Drawer, Typography } from "@mui/material";
 import React from "react";
 import { useMutation } from "react-query";
 import { useNavigate } from "react-router-dom";
+import { useAppDispatch } from "../../store";
 
-const GameLeave = ({ onLeave }: { onLeave: () => void }) => {
+const GameLeave = () => {
   const navigate = useNavigate();
 
-  const onConfirm = () => {};
+  const dispatch = useAppDispatch();
+
+  const onLeave = () => {
+    dispatch({ namespace: "game", type: "game/leave" });
+  };
 
   const onCancel = () => {
     navigate(-1);
