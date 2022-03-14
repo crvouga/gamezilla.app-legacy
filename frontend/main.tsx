@@ -1,10 +1,36 @@
 import React from "react";
-import * as ReactDOM from "react-dom";
+import { render } from "react-dom";
+import { QueryClient, QueryClientProvider } from "react-query";
+import { Provider } from "react-redux";
+import { BrowserRouter } from "react-router-dom";
 import App from "./app";
+import { store, useAppDispatch, useAppSelector } from "./store";
+import ThemeProvider from "./features/theme/ThemeProvider";
 
-ReactDOM.render(
+const Providers = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <Provider store={store}>
+      <QueryClientProvider client={new QueryClient()}>
+        <BrowserRouter>
+          <ThemeProvider>{children}</ThemeProvider>
+        </BrowserRouter>
+      </QueryClientProvider>
+    </Provider>
+  );
+};
+
+const Root = () => {
+  const appState = useAppSelector((appState) => appState);
+  const dispatch = useAppDispatch();
+
+  return <App appState={appState} appDispatch={dispatch} />;
+};
+
+render(
   <React.StrictMode>
-    <App />
+    <Providers>
+      <Root />
+    </Providers>
   </React.StrictMode>,
   document.getElementById("root")
 );

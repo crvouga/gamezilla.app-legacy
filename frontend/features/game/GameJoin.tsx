@@ -1,8 +1,10 @@
 import { AppBar, Box, Button, Toolbar, Typography } from "@mui/material";
 import React from "react";
+import { useAppDispatch } from "../../store";
 import { AppBarBackButton } from "../../ui";
 
-const GameJoin = ({ onJoin }: { onJoin: () => void }) => {
+const GameJoin = () => {
+  const dispatch = useAppDispatch();
   return (
     <Box sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
       <AppBar>
@@ -18,7 +20,13 @@ const GameJoin = ({ onJoin }: { onJoin: () => void }) => {
       <Box sx={{ flex: 1, padding: 2 }}></Box>
 
       <Box sx={{ p: 2 }}>
-        <Button fullWidth variant="contained" onClick={onJoin}>
+        <Button
+          fullWidth
+          variant="contained"
+          onClick={() => {
+            dispatch({ type: "game", payload: { type: "join" } });
+          }}
+        >
           Join Game
         </Button>
       </Box>

@@ -1,27 +1,40 @@
-import { Action, combineReducers, configureStore } from "@reduxjs/toolkit";
-import { IGameState, game, gameSaga } from "./features/game/game-state";
-import createSagaMiddleware from "redux-saga";
-import { spawn } from "redux-saga/effects";
+import { channel, Channel, eventChannel } from "redux-saga";
+import { put, spawn, takeEvery } from "redux-saga/effects";
+import * as Game from "./features/game/game-state";
 
-export type IAppState = {
-  [game.namespace]: IGameState;
+export type IState = {
+  game: Game.IState;
 };
 
-const initialState: IAppState = {
-  game: game.initialState,
+export type IAction = {
+  type: "game";
+  payload: Game.IAction;
 };
 
-const reducer = (state: IAppState, action: Action): IAppState => {
-  return {
-    game: game.reducer(state.game, action),
-  };
+export const reducer = (state: IState, action: IAction): IState => {
+  switch (action.type) {
+    case "game":
+      return {
+        game: Game.reducer(state.game, action.payload),
+      };
+
+    default:
+      return state;
+  }
 };
 
-export function* appSaga() {
-  yield spawn(gameSaga);
+export function* saga(actionChannel: Channel<IAction>) {
+  const gameActionChannel = channel<Game.IAction>();
+
+  yield takeEvery(gameActionChannel, function* (gameAction) {
+    yield put(actionChannel, { type: "game", payload: gameAction });
+  });
+
+  yield spawn(Game.saga, gameActionChannel);
+
+  actionChannel.take((action) => {
+    if (action.type === "game") {
+      gameActionChannel.put(action.payload);
+    }
+  });
 }
-
-export const app = {
-  reducer,
-  initialState,
-};
