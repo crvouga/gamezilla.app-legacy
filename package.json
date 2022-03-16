@@ -10,7 +10,8 @@
     "supabase:types": "npx openapi-typescript https://ldxpcprlgecjvqwzuxgv.supabase.co/rest/v1/?apikey=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTYzNzA0MDQ5NywiZXhwIjoxOTUyNjE2NDk3fQ.ReI8CpIFbLB9Q53Az7CDBIyrn_o1JeGhPoZXdqx8Ac4 --output frontend/data-access/supabase-types.ts",
     "watch": "tsc --build tsconfig.json --watch",
     "clean": "rm -rf build && rm -rf node_modules && rm .env && rm -rf .vercel",
-    "setup": "yarn && npx vercel pull"
+    "setup": "yarn && npx vercel pull",
+    "heroku:start": "backend:build && backend:start"
   },
   "dependencies": {
     "@colyseus/monitor": "^0.14.22",
