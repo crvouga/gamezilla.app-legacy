@@ -10,6 +10,12 @@ export type IState =
       type: "logged-out";
     }
   | {
+      type: "logging-in";
+    }
+  | {
+      type: "logging-out";
+    }
+  | {
       type: "logged-in";
       userId: string;
       name?: string;
@@ -56,6 +62,11 @@ export const initialState: IState = {
 
 export const reducer = (state: IState, action: IAction): IState => {
   switch (action.type) {
+    case ActionType.Login:
+      return {
+        type: "logging-in",
+      };
+
     case ActionType.LoggedIn:
       return {
         type: "logged-in",
@@ -77,6 +88,13 @@ export const reducer = (state: IState, action: IAction): IState => {
 
 
 */
+
+export function* saga() {
+  const accountChan = createAccountChan();
+  yield takeEvery(accountChan, watchAccountChan);
+  yield takeLeading(ActionType.Login, watchLogin);
+  yield takeLeading(ActionType.Logout, watchLogout);
+}
 
 function* watchLogin(action: ILogin) {
   yield call(AccountDataAccess.login, { provider: action.payload.method });
@@ -112,10 +130,3 @@ const createAccountChan = () => {
     });
   });
 };
-
-export function* saga() {
-  const accountChan = createAccountChan();
-  yield takeEvery(accountChan, watchAccountChan);
-  yield takeLeading(ActionType.Login, watchLogin);
-  yield takeLeading(ActionType.Logout, watchLogout);
-}

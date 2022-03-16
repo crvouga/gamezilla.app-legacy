@@ -1,28 +1,25 @@
-import { Google } from '@mui/icons-material';
-import { LoadingButton } from '@mui/lab';
-import { Box, Typography } from '@mui/material';
-import React from 'react';
-import { useMutation } from 'react-query';
-import { login } from './account-data-access';
+import { Google } from "@mui/icons-material";
+import { LoadingButton } from "@mui/lab";
+import { Box, Typography } from "@mui/material";
+import React from "react";
+import * as Account from "./account-state";
 
-const Login = () => {
-  const mutation = useMutation(async (...params: Parameters<typeof login>) => {
-    await login(...params);
-
-    const NEVER_RESOLVE = new Promise(() => {});
-
-    await NEVER_RESOLVE;
-  });
-
+const Login = ({
+  dispatch,
+  state,
+}: {
+  dispatch: (action: Account.IAction) => void;
+  state: Account.IState;
+}) => {
   return (
     <Box
       sx={{
-        width: '100%',
-        height: '100%',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        flexDirection: 'column',
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        flexDirection: "column",
         p: 2,
       }}
     >
@@ -35,9 +32,15 @@ const Login = () => {
         size="large"
         fullWidth
         startIcon={<Google />}
-        loading={mutation.status === 'loading'}
+        loading={state.type === "logging-in"}
         onClick={() => {
-          mutation.mutate({ provider: 'google' });
+          dispatch({
+            namespace: "account",
+            type: Account.ActionType.Login,
+            payload: {
+              method: "google",
+            },
+          });
         }}
       >
         Continue With Google

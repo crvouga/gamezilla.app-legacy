@@ -1,22 +1,17 @@
-import { LoadingButton } from '@mui/lab';
-import { Box, Button, Drawer, Typography } from '@mui/material';
-import React from 'react';
-import { useMutation } from 'react-query';
-import { useNavigate } from 'react-router-dom';
-import { logout } from './account-data-access';
+import { LoadingButton } from "@mui/lab";
+import { Box, Button, Drawer, Typography } from "@mui/material";
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import * as Account from "./account-state";
 
-const Logout = () => {
+const Logout = ({
+  dispatch,
+  state,
+}: {
+  state: Account.IState;
+  dispatch: (action: Account.IAction) => void;
+}) => {
   const navigate = useNavigate();
-
-  const mutation = useMutation(logout, {
-    onSuccess: () => {
-      navigate('/', { replace: true });
-    },
-  });
-
-  const onConfirm = () => {
-    mutation.mutate();
-  };
 
   const onCancel = () => {
     navigate(-1);
@@ -30,9 +25,9 @@ const Logout = () => {
 
       <Box
         sx={{
-          width: '100%',
+          width: "100%",
           p: 2,
-          display: 'flex',
+          display: "flex",
         }}
       >
         <Button
@@ -46,9 +41,14 @@ const Logout = () => {
         <LoadingButton
           sx={{ flex: 1 }}
           variant="contained"
-          loading={mutation.status === 'loading'}
+          loading={state.type === "logging-out"}
           size="large"
-          onClick={onConfirm}
+          onClick={() => {
+            dispatch({
+              namespace: "account",
+              type: Account.ActionType.Logout,
+            });
+          }}
         >
           Logout
         </LoadingButton>

@@ -48,7 +48,10 @@ const LoadAccount = ({
 
   return (
     <Routes>
-      <Route path="/login" element={<AccountLogin />} />
+      <Route
+        path="/login"
+        element={<AccountLogin state={state.account} dispatch={dispatch} />}
+      />
       <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
   );
@@ -83,7 +86,10 @@ const LoadProfile = ({
         path="/profile/create/*"
         element={<ProfileCreate defaultName={""} userId={userId} />}
       />
-      <Route path="/logout" element={<AccountLogout />} />
+      <Route
+        path="/logout"
+        element={<AccountLogout state={state.account} dispatch={dispatch} />}
+      />
       <Route path="*" element={<Navigate to="/profile/create" replace />} />
     </Routes>
   );
@@ -119,7 +125,10 @@ const LoadGameRoom = ({
   return (
     <Routes>
       <Route path="/" element={<Home profile={profile} />} />
-      <Route path="/account/*" element={<AccountRoutes />} />
+      <Route
+        path="/account/*"
+        element={<AccountRoutes state={state.account} dispatch={dispatch} />}
+      />
       <Route path="/profile/*" element={<ProfileRoutes profile={profile} />} />
       <Route
         path="/game/*"
