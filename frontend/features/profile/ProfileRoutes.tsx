@@ -14,7 +14,7 @@ const ProfileRoutes = ({ profile }: { profile: IProfile }) => {
         element={<ProfileDelete userId={profile.userId} />}
       />
 
-      <Route path="*" element={<Navigate to="update" />} />
+      <Route path="*" element={<Navigate to="/" />} />
     </Routes>
   );
 };

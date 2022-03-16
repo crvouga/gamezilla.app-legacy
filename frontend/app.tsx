@@ -1,44 +1,37 @@
 import { Box, Typography, useMediaQuery, useTheme } from "@mui/material";
 import React from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
-import { onAuthState } from "./features/account/account-data-access";
+import { useAppSelector } from "./app-store";
 import AccountLogin from "./features/account/AccountLogin";
 import AccountLogout from "./features/account/AccountLogout";
 import AccountRoutes from "./features/account/AccountRoutes";
-import * as Game from "./features/game/game-state";
 import GameConnectedRoutes from "./features/game/GameConnectedRoutes";
 import GameDisconnectedRoutes from "./features/game/GameDisconnectedRoutes";
 import Home from "./features/home/Home";
 import ProfileCreate from "./features/profile/profile-create/ProfileCreate";
-import { IProfile, onProfile } from "./features/profile/profile-data-access";
+import { IProfile } from "./features/profile/profile-data-access";
 import ProfileRoutes from "./features/profile/ProfileRoutes";
-import { IAppDispatch, IAppState, useAppSelector } from "./app-store";
-import { useSubscription } from "./utils";
 
-const App = ({
-  appState,
-  appDispatch,
-}: {
-  appDispatch: IAppDispatch;
-  appState: IAppState;
-}) => {
+const App = () => {
   return (
     <Layout>
-      <LoadAuth appState={appState} />
+      <LoadAccount />
     </Layout>
   );
 };
 
-const LoadAuth = ({ appState }: { appState: IAppState }) => {
-  if (appState.account.type === "loading") {
+const LoadAccount = () => {
+  const accountState = useAppSelector((state) => state.account);
+
+  if (accountState.type === "loading") {
     return <Splash subtitle="Checking if logged in..." />;
   }
 
-  if (appState.account.type === "logged-in") {
+  if (accountState.type === "logged-in") {
     return (
       <LoadProfile
-        defaultName={appState.account.name ?? ""}
-        userId={appState.account.userId}
+        defaultName={accountState.name ?? ""}
+        userId={accountState.userId}
       />
     );
   }

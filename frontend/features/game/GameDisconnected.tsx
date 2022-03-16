@@ -11,14 +11,15 @@ import {
 } from "@mui/material";
 import React from "react";
 import { Link } from "react-router-dom";
-import { AppBarBackButton } from "../../ui";
+import { BackButton } from "../../ui";
 
 const GameDisconnected = () => {
   return (
     <>
       <AppBar>
         <Toolbar>
-          <AppBarBackButton />
+          <BackButton to="/" />
+
           <Typography sx={{ flex: 1 }} variant="h6">
             Play Game
           </Typography>

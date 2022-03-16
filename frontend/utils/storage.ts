@@ -5,7 +5,7 @@ export type IEncoderDecoder<TValue> = {
 
 export type IStorage<TValue> = {
   read: (key: string) => TValue | null;
-  write: (key: string, value: TValue) => void;
+  write: (key: string, value: TValue | null) => void;
 };
 
 export const createStorageLocal = <TValue>({
@@ -23,7 +23,7 @@ export const createStorageLocal = <TValue>({
       return null;
     },
     write: (key, value) => {
-      localStorage.setItem(key, encode(value));
+      localStorage.setItem(key, value ? encode(value) : String(null));
     },
   };
 };
