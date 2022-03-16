@@ -13,9 +13,9 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useState } from "react";
-import { useMutation } from "react-query";
 import { useNavigate } from "react-router-dom";
-import { updateProfile } from "../profile-data-access";
+import { useAppDispatch, useAppSelector } from "../../../app-store";
+import * as Profile from "../profile-state";
 
 const ProfileUpdateName = ({
   profile,
@@ -26,17 +26,20 @@ const ProfileUpdateName = ({
 
   const navigate = useNavigate();
 
-  const mutation = useMutation(updateProfile, {
-    onSuccess: () => {
-      navigate(-1);
-    },
-  });
+  const isUpdating = useAppSelector(
+    (state) =>
+      state.profile.type === "found" && state.profile.status === "updating"
+  );
+
+  const dispatch = useAppDispatch();
 
   const onDone = () => {
-    mutation.mutate({
-      userId: profile.userId,
-      name,
-    });
+    dispatch(
+      Profile.Actions.update({
+        userId: profile.userId,
+        name,
+      })
+    );
   };
 
   const onCancel = () => {
@@ -99,7 +102,7 @@ const ProfileUpdateName = ({
           Cancel
         </Button>
         <LoadingButton
-          loading={mutation.status === "loading"}
+          loading={isUpdating}
           onClick={onDone}
           variant="contained"
           sx={{ flex: 1 }}
@@ -107,7 +110,7 @@ const ProfileUpdateName = ({
           Update
         </LoadingButton>
 
-        <Backdrop open={mutation.status === "loading"}>
+        <Backdrop open={isUpdating}>
           <CircularProgress disableShrink />
         </Backdrop>
       </Box>

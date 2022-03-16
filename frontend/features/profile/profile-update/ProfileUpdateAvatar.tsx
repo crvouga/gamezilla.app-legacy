@@ -13,8 +13,8 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useState } from "react";
-import { useMutation } from "react-query";
 import { Route, Routes, useNavigate } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "../../../app-store";
 import { AspectRatioSquare, ListItemField } from "../../../ui";
 import {
   AVATAR_STYLES,
@@ -26,7 +26,7 @@ import {
   toAvatarSeed,
   toAvatarUrl,
 } from "../profile-data";
-import { updateProfile } from "../profile-data-access";
+import * as Profile from "../profile-state";
 
 const ProfileUpdateAvatar = ({
   profile,
@@ -42,11 +42,13 @@ const ProfileUpdateAvatar = ({
   const [avatarSeed, setAvatarSeed] = useState(parsed.avatarSeed);
 
   const navigate = useNavigate();
-  const mutation = useMutation(updateProfile, {
-    onSuccess: () => {
-      navigate(-1);
-    },
-  });
+
+  const isUpdating = useAppSelector(
+    (state) =>
+      state.profile.type === "found" && state.profile.status === "updating"
+  );
+
+  const dispatch = useAppDispatch();
 
   return (
     <>
@@ -144,13 +146,15 @@ const ProfileUpdateAvatar = ({
                 <LoadingButton
                   sx={{ flex: 1 }}
                   variant="contained"
-                  loading={mutation.status === "loading"}
+                  loading={isUpdating}
                   size="large"
                   onClick={() => {
-                    mutation.mutate({
-                      userId: profile.userId,
-                      avatarUrl: toAvatarUrl(avatarStyle, avatarSeed),
-                    });
+                    dispatch(
+                      Profile.Actions.update({
+                        userId: profile.userId,
+                        avatarUrl: toAvatarUrl(avatarStyle, avatarSeed),
+                      })
+                    );
                   }}
                 >
                   Update

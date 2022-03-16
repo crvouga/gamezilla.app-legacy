@@ -1,4 +1,4 @@
-import { spawn, takeLatest } from "redux-saga/effects";
+import { fork, spawn, takeLatest } from "redux-saga/effects";
 import * as Account from "./features/account/account-state";
 import * as Game from "./features/game/game-state";
 import * as Profile from "./features/profile/profile-state";
@@ -49,7 +49,7 @@ export function* saga() {
     yield* Profile.saga({ userId: action.payload.userId });
   });
 
-  yield takeLatest(Profile.Actions.found, function* (action) {
-    yield* Game.saga({ profile: action.payload });
+  yield spawn(function* () {
+    yield* Game.saga();
   });
 }

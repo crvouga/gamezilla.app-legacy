@@ -1,5 +1,5 @@
 import { eventChannel } from "redux-saga";
-import { call, put, take, takeEvery } from "redux-saga/effects";
+import { call, put, takeEvery } from "redux-saga/effects";
 import {
   Action,
   ActionType,
@@ -7,7 +7,6 @@ import {
   InferActionMap,
   InferActionUnion,
 } from "../../utils";
-import { IProfile } from "../profile/profile-data-access";
 import * as GameDataAccess from "./game-data-access";
 
 export type IState =
@@ -90,7 +89,7 @@ export const reducer = (state: IState, action: IAction): IState => {
  *
  */
 
-export function* saga({ profile }: { profile: IProfile }) {
+export function* saga() {
   yield takeEvery(Actions.connected, watchConnected);
   yield takeEvery(Actions.reconnectFailed, watchReconnectFailed);
   yield takeEvery(Actions.reconnect, watchReconnect);
