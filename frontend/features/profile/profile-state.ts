@@ -1,4 +1,3 @@
-import { createAction, createReducer } from "@reduxjs/toolkit";
 import { eventChannel } from "redux-saga";
 import { put, takeEvery } from "redux-saga/effects";
 import * as ProfileDataAccess from "./profile-data-access";
@@ -15,48 +14,78 @@ export type IState =
       type: "not-found";
     };
 
-export const actions = {
-  notFound: createAction("profile/not-found"),
-  found: createAction<{ profile: ProfileDataAccess.IProfile }, "profile/found">(
-    "profile/found"
-  ),
+export enum ActionType {
+  Found = "profile/found",
+  NotFound = "profile/not-found",
+}
+
+export type IFound = {
+  namespace: "profile";
+  type: ActionType.Found;
+  payload: ProfileDataAccess.IProfile;
 };
 
-export const reducer = createReducer<IState>({ type: "loading" }, (builder) => {
-  builder.addCase(actions.found, (_state, action) => {
-    return {
-      type: "found",
-      profile: action.payload.profile,
-    };
-  });
+type INotFound = {
+  namespace: "profile";
+  type: ActionType.NotFound;
+};
 
-  builder.addCase(actions.notFound, () => {
-    return {
-      type: "not-found",
-    };
-  });
-});
+export type IAction = IFound | INotFound;
+
+export const initialState: IState = {
+  type: "loading",
+};
+
+export const reducer = (state: IState, action: IAction): IState => {
+  switch (action.type) {
+    case ActionType.Found:
+      return {
+        type: "found",
+        profile: action.payload,
+      };
+
+    case ActionType.NotFound:
+      return {
+        type: "not-found",
+      };
+
+    default:
+      return state;
+  }
+};
 
 /* 
 
 
 
+
 */
 
-export function* saga({ userId }: { userId: string }) {
-  const profileChannel = eventChannel<
-    ReturnType<typeof actions.found> | ReturnType<typeof actions.notFound>
-  >((emit) => {
+const createProfileChan = ({ userId }: { userId: string }) => {
+  return eventChannel<IAction>((emit) => {
     return ProfileDataAccess.onProfile({ userId })((profile) => {
       if (profile) {
-        emit(actions.found({ profile }));
+        emit({
+          namespace: "profile",
+          type: ActionType.Found,
+          payload: profile,
+        });
         return;
       }
-      emit(actions.notFound());
+
+      emit({
+        namespace: "profile",
+        type: ActionType.NotFound,
+      });
     });
   });
+};
 
-  yield takeEvery(profileChannel, function* (action) {
-    yield put(action);
-  });
+function* watchProfileChan(action: IAction) {
+  yield put<IAction>(action);
+}
+
+export function* saga({ userId }: { userId: string }) {
+  const profileChan = createProfileChan({ userId });
+  yield takeEvery(profileChan, watchProfileChan);
 }

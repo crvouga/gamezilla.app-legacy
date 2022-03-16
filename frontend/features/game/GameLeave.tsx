@@ -3,15 +3,21 @@ import { Box, Button, Drawer, Typography } from "@mui/material";
 import React from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { Dispatch } from "redux";
 import * as Game from "./game-state";
 
-const GameLeave = () => {
+const GameLeave = ({
+  dispatch,
+}: {
+  dispatch: (action: Game.IAction) => void;
+}) => {
   const navigate = useNavigate();
 
-  const dispatch = useDispatch();
-
   const onLeave = () => {
-    dispatch(Game.actions.leave());
+    dispatch({
+      namespace: "game",
+      type: Game.ActionType.Leave,
+    });
   };
 
   const onCancel = () => {

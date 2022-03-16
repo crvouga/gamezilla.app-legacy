@@ -4,8 +4,11 @@ import { useDispatch } from "react-redux";
 import { AppBarBackButton } from "../../ui";
 import * as Game from "./game-state";
 
-const GameCreate = () => {
-  const dispatch = useDispatch();
+const GameCreate = ({
+  dispatch,
+}: {
+  dispatch: (action: Game.IAction) => void;
+}) => {
   return (
     <Box sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
       <AppBar>
@@ -25,7 +28,10 @@ const GameCreate = () => {
           fullWidth
           variant="contained"
           onClick={() => {
-            dispatch(Game.actions.create());
+            dispatch({
+              namespace: "game",
+              type: Game.ActionType.Create,
+            });
           }}
         >
           Create Game
