@@ -35,13 +35,7 @@ const Login = () => {
         startIcon={<Google />}
         loading={isLoggingIn}
         onClick={() => {
-          dispatch({
-            namespace: "account",
-            type: Account.ActionType.Login,
-            payload: {
-              method: "google",
-            },
-          });
+          dispatch(Account.Actions.login({ method: "google" }));
         }}
       >
         Continue With Google

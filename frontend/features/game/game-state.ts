@@ -2,6 +2,7 @@ import { eventChannel } from "redux-saga";
 import { call, put, take, takeEvery } from "redux-saga/effects";
 import {
   Action,
+  ActionType,
   createStorageLocalJSON,
   InferActionMap,
   InferActionUnion,
@@ -38,8 +39,8 @@ export const Actions = {
   ),
   disconnected: Action("game", "disconnected"),
   reconnect: Action("game", "reconnect"),
-  reconnectSucceeded: Action("game", "reconnect/succeeded"),
-  reconnectFailed: Action("game", "reconnect/failed"),
+  reconnectSucceeded: Action("game", "reconnect-succeeded"),
+  reconnectFailed: Action("game", "reconnect-failed"),
   create: Action("game", "create"),
   join: Action("game", "join"),
   leave: Action("game", "leave"),
@@ -52,27 +53,27 @@ export type IActionMap = InferActionMap<typeof Actions>;
 
 export const reducer = (state: IState, action: IAction): IState => {
   switch (action.type) {
-    case "game::connected":
+    case ActionType("game", "connected"):
       return {
         type: "connected",
       };
 
-    case "game::disconnected":
+    case ActionType("game", "disconnected"):
       return {
         type: "disconnected",
       };
 
-    case "game::left":
+    case ActionType("game", "left"):
       return {
         type: "disconnected",
       };
 
-    case "game::reconnect/failed":
+    case ActionType("game", "reconnect-failed"):
       return {
         type: "disconnected",
       };
 
-    case "game::reconnect/succeeded":
+    case ActionType("game", "reconnect-succeeded"):
       return {
         type: "connected",
       };

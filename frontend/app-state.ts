@@ -1,12 +1,4 @@
-import { channel } from "redux-saga";
-import {
-  actionChannel,
-  fork,
-  put,
-  spawn,
-  takeEvery,
-  takeLatest,
-} from "redux-saga/effects";
+import { spawn, takeLatest } from "redux-saga/effects";
 import * as Account from "./features/account/account-state";
 import * as Game from "./features/game/game-state";
 import * as Profile from "./features/profile/profile-state";
@@ -53,17 +45,11 @@ export const reducer = (state: IState, action: IAction): IState => {
 export function* saga() {
   yield spawn(Account.saga);
 
-  yield takeLatest(
-    Account.ActionType.LoggedIn,
-    function* (action: Account.ILoggedIn) {
-      yield fork(Profile.saga, { userId: action.payload.userId });
-    }
-  );
+  yield takeLatest(Account.Actions.loggedIn, function* (action) {
+    yield* Profile.saga({ userId: action.payload.userId });
+  });
 
-  yield takeLatest(
-    Profile.ActionType.Found,
-    function* (action: Profile.IFound) {
-      yield fork(Game.saga, { profile: action.payload });
-    }
-  );
+  yield takeLatest(Profile.Actions.found, function* (action) {
+    yield* Game.saga({ profile: action.payload });
+  });
 }
