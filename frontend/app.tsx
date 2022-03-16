@@ -1,8 +1,7 @@
 import { Box, Typography, useMediaQuery, useTheme } from "@mui/material";
 import React from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
-import { IState } from "./app-state";
-import { IAppDispatch, useAppDispatch, useAppSelector } from "./app-store";
+import { useAppSelector } from "./app-store";
 import AccountLogin from "./features/account/AccountLogin";
 import AccountLogout from "./features/account/AccountLogout";
 import AccountRoutes from "./features/account/AccountRoutes";
@@ -14,69 +13,41 @@ import ProfileCreate from "./features/profile/ProfileCreate";
 import ProfileRoutes from "./features/profile/ProfileRoutes";
 
 const App = () => {
-  const state = useAppSelector((state) => state);
-
-  const dispatch = useAppDispatch();
   return (
     <Layout>
-      <LoadAccount dispatch={dispatch} state={state} />
+      <LoadAccount />
     </Layout>
   );
 };
 
-const LoadAccount = ({
-  state,
-  dispatch,
-}: {
-  dispatch: IAppDispatch;
-  state: IState;
-}) => {
-  if (state.account.type === "loading") {
+const LoadAccount = () => {
+  const account = useAppSelector((state) => state.account);
+
+  if (account.type === "loading") {
     return <Splash subtitle="Checking if logged in..." />;
   }
 
-  if (state.account.type === "logged-in") {
-    return (
-      <LoadProfile
-        dispatch={dispatch}
-        userId={state.account.userId}
-        state={state}
-      />
-    );
+  if (account.type === "logged-in") {
+    return <LoadProfile userId={account.userId} />;
   }
 
   return (
     <Routes>
-      <Route
-        path="/login"
-        element={<AccountLogin state={state.account} dispatch={dispatch} />}
-      />
+      <Route path="/login" element={<AccountLogin />} />
       <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
   );
 };
 
-const LoadProfile = ({
-  dispatch,
-  userId,
-  state,
-}: {
-  userId: string;
-  state: IState;
-  dispatch: IAppDispatch;
-}) => {
-  if (state.profile.type === "loading") {
+const LoadProfile = ({ userId }: { userId: string }) => {
+  const profile = useAppSelector((state) => state.profile);
+
+  if (profile.type === "loading") {
     return <Splash subtitle="Loading profile..." />;
   }
 
-  if (state.profile.type === "found") {
-    return (
-      <LoadGameRoom
-        dispatch={dispatch}
-        profile={state.profile.profile}
-        state={state}
-      />
-    );
+  if (profile.type === "found") {
+    return <LoadGameRoom profile={profile.profile} />;
   }
 
   return (
@@ -85,37 +56,23 @@ const LoadProfile = ({
         path="/profile/create/*"
         element={<ProfileCreate defaultName={""} userId={userId} />}
       />
-      <Route
-        path="/logout"
-        element={<AccountLogout state={state.account} dispatch={dispatch} />}
-      />
+      <Route path="/logout" element={<AccountLogout />} />
       <Route path="*" element={<Navigate to="/profile/create" replace />} />
     </Routes>
   );
 };
 
-const LoadGameRoom = ({
-  state,
-  profile,
-  dispatch,
-}: {
-  state: IState;
-  profile: IProfile;
-  dispatch: IAppDispatch;
-}) => {
-  console.log({ state });
+const LoadGameRoom = ({ profile }: { profile: IProfile }) => {
+  const game = useAppSelector((state) => state.game);
 
-  if (state.game.type === "loading") {
+  if (game.type === "loading") {
     return <Splash subtitle="Checking if in a game..." />;
   }
 
-  if (state.game.type === "connected") {
+  if (game.type === "connected") {
     return (
       <Routes>
-        <Route
-          path="/game/*"
-          element={<GameConnectedRoutes dispatch={dispatch} />}
-        />
+        <Route path="/game/*" element={<GameConnectedRoutes />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     );
@@ -124,15 +81,9 @@ const LoadGameRoom = ({
   return (
     <Routes>
       <Route path="/" element={<Home profile={profile} />} />
-      <Route
-        path="/account/*"
-        element={<AccountRoutes state={state.account} dispatch={dispatch} />}
-      />
+      <Route path="/account/*" element={<AccountRoutes />} />
       <Route path="/profile/*" element={<ProfileRoutes profile={profile} />} />
-      <Route
-        path="/game/*"
-        element={<GameDisconnectedRoutes dispatch={dispatch} />}
-      />
+      <Route path="/game/*" element={<GameDisconnectedRoutes />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );

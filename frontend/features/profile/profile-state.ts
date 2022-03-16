@@ -28,6 +28,20 @@ export type IFound = {
   payload: ProfileDataAccess.IProfile;
 };
 
+const Actions = {
+  update: (payload: {
+    userId: string;
+    username?: string;
+    avatarUrl?: string;
+    name?: string;
+  }) => {
+    return {
+      type: "profile/update",
+      payload,
+    } as const;
+  },
+};
+
 type ICreate = {
   namespace: "profile";
   type: ActionType.Create;
@@ -86,10 +100,18 @@ export const reducer = (state: IState, action: IAction): IState => {
 
 */
 
+// const isOne = (action: any): action is "1" => {
+//   return action === "1";
+// };
+
 export function* saga({ userId }: { userId: string }) {
   const profileChan = createProfileChan({ userId });
+
   yield takeEvery(profileChan, watchProfileChan);
-  yield takeEvery(ActionType.Update, watchUpdate);
+
+  // yield takeEvery(Actions.update, function* (action) {
+  //   yield call(ProfileDataAccess.updateProfile, action.payload);
+  // });
 }
 
 function* watchUpdate(action: IUpdate) {
