@@ -1,6 +1,5 @@
 import React from "react";
 import { render } from "react-dom";
-import { QueryClient, QueryClientProvider } from "react-query";
 import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
 import App from "./app";
@@ -10,13 +9,11 @@ import ThemeProvider from "./features/theme/ThemeProvider";
 render(
   <React.StrictMode>
     <Provider store={appStore}>
-      <QueryClientProvider client={new QueryClient()}>
-        <BrowserRouter>
-          <ThemeProvider>
-            <App />
-          </ThemeProvider>
-        </BrowserRouter>
-      </QueryClientProvider>
+      <BrowserRouter>
+        <ThemeProvider>
+          <App />
+        </ThemeProvider>
+      </BrowserRouter>
     </Provider>
   </React.StrictMode>,
   document.getElementById("root")

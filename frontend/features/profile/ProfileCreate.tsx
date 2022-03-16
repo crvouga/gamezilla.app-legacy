@@ -8,10 +8,10 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useState } from "react";
-import { useMutation } from "react-query";
 import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
-import { createProfile } from "./profile-data-access";
+import { useAppDispatch, useAppSelector } from "../../app-store";
 import { generateRandomAvatarSeed, toAvatarUrl } from "./profile-data";
+import * as Profile from "./profile-state";
 
 const ProfileCreate = ({
   userId,
@@ -20,19 +20,27 @@ const ProfileCreate = ({
   userId: string;
   defaultName: string;
 }) => {
-  const mutation = useMutation(createProfile);
+  const isCreating = useAppSelector(
+    (state) =>
+      state.profile.type === "not-found" && state.profile.status === "creating"
+  );
+
+  const dispatch = useAppDispatch();
+
   const [name, setName] = useState(defaultName);
   const [username, setUsername] = useState(
     name.replace(" ", "").toLowerCase() ?? ""
   );
 
   const onCreate = () => {
-    mutation.mutate({
-      userId,
-      name,
-      username,
-      avatarUrl: toAvatarUrl("croodles-neutral", generateRandomAvatarSeed()),
-    });
+    dispatch(
+      Profile.Actions.create({
+        userId,
+        name,
+        username,
+        avatarUrl: toAvatarUrl("croodles-neutral", generateRandomAvatarSeed()),
+      })
+    );
   };
 
   const navigate = useNavigate();
@@ -86,7 +94,7 @@ const ProfileCreate = ({
             }}
             nextButtonProps={{
               children: "Done",
-              loading: mutation.isLoading,
+              loading: isCreating,
               onClick: onCreate,
             }}
           >

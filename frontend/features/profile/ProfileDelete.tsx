@@ -1,18 +1,19 @@
 import { LoadingButton } from "@mui/lab";
 import { Drawer, Box, Button, Typography } from "@mui/material";
 import React from "react";
-import { useMutation } from "react-query";
+
 import { useNavigate } from "react-router-dom";
-import { deleteProfile } from "./profile-data-access";
+import { useAppDispatch, useAppSelector } from "../../app-store";
+import * as Profile from "./profile-state";
 
 const ProfileDelete = ({ userId }: { userId: string }) => {
   const navigate = useNavigate();
 
-  const mutation = useMutation(deleteProfile);
-
-  const onConfirm = () => {
-    mutation.mutate({ userId });
-  };
+  const dispatch = useAppDispatch();
+  const isDeleting = useAppSelector(
+    (state) =>
+      state.profile.type === "found" && state.profile.status === "deleting"
+  );
 
   const onCancel = () => {
     navigate(-1);
@@ -42,9 +43,11 @@ const ProfileDelete = ({ userId }: { userId: string }) => {
         <LoadingButton
           sx={{ flex: 1 }}
           variant="contained"
-          loading={mutation.status === "loading"}
+          loading={isDeleting}
           size="large"
-          onClick={onConfirm}
+          onClick={() => {
+            dispatch(Profile.Actions.delete({ userId }));
+          }}
         >
           Delete
         </LoadingButton>

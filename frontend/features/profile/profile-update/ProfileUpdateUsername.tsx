@@ -11,9 +11,9 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useRef } from "react";
-import { useMutation } from "react-query";
 import { useNavigate } from "react-router-dom";
-import { updateProfile } from "../profile-data-access";
+import { useAppDispatch, useAppSelector } from "../../../app-store";
+import * as Profile from "../profile-state";
 
 const ProfileUpdateUsername = ({
   profile,
@@ -22,13 +22,14 @@ const ProfileUpdateUsername = ({
 }) => {
   const usernameRef = useRef<HTMLInputElement | null>(null);
 
-  const navigate = useNavigate();
+  const isUpdating = useAppSelector(
+    (state) =>
+      state.profile.type === "found" && state.profile.status === "updating"
+  );
 
-  const mutation = useMutation(updateProfile, {
-    onSuccess: () => {
-      navigate(-1);
-    },
-  });
+  const dispatch = useAppDispatch();
+
+  const navigate = useNavigate();
 
   const onCancel = () => {
     if (usernameRef.current) {
@@ -41,10 +42,12 @@ const ProfileUpdateUsername = ({
     if (usernameRef.current) {
       const username = usernameRef.current.value;
 
-      mutation.mutate({
-        userId: profile.userId,
-        username,
-      });
+      dispatch(
+        Profile.Actions.update({
+          userId: profile.userId,
+          username,
+        })
+      );
     }
   };
 
@@ -103,7 +106,7 @@ const ProfileUpdateUsername = ({
 
         <LoadingButton
           sx={{ flex: 1 }}
-          loading={mutation.status === "loading"}
+          loading={isUpdating}
           variant="contained"
           onClick={onDone}
         >
