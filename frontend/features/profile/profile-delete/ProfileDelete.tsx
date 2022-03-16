@@ -8,11 +8,7 @@ import { deleteProfile } from "../profile-data-access";
 const ProfileDelete = ({ userId }: { userId: string }) => {
   const navigate = useNavigate();
 
-  const mutation = useMutation(deleteProfile, {
-    onSuccess: () => {
-      navigate("/", { replace: true });
-    },
-  });
+  const mutation = useMutation(deleteProfile);
 
   const onConfirm = () => {
     mutation.mutate({ userId });

@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import React from "react";
 import { Link } from "react-router-dom";
-import { AppBarBackButton, ListItemField } from "../../../ui";
+import { BackButton, ListItemField } from "../../../ui";
 
 const ProfileUpdate = ({
   profile,
@@ -20,7 +20,7 @@ const ProfileUpdate = ({
     <>
       <AppBar>
         <Toolbar>
-          <AppBarBackButton />
+          <BackButton to="/" />
           <Typography variant="h6" sx={{ flex: 1 }}>
             Edit Profile
           </Typography>
