@@ -1,6 +1,5 @@
-import { createAction, createReducer } from "@reduxjs/toolkit";
 import { eventChannel } from "redux-saga";
-import { call, fork, put, takeEvery, takeLatest } from "redux-saga/effects";
+import { call, put, takeEvery } from "redux-saga/effects";
 import { createStorageLocalJSON } from "../../utils";
 import { IProfile } from "../profile/profile-data-access";
 import * as GameDataAccess from "./game-data-access";
@@ -16,39 +15,99 @@ export type IState =
       type: "loading";
     };
 
-export const actions = {
-  connected: createAction<
-    { sessionId: string; roomId: string },
-    "game/connected"
-  >("game/connected"),
-  disconnected: createAction("game/disconnected"),
-  reconnect: createAction<
-    { sessionId: string; roomId: string },
-    "game/reconnect"
-  >("game/reconnect"),
-  reconnectFailed: createAction("game/reconnect/failed"),
-  reconnectSucceeded: createAction("game/reconnect/succeeded"),
-  create: createAction("game/create"),
-  leave: createAction("game/leave"),
-  lefted: createAction("game/lefted"),
-  join: createAction("game/join"),
-  message: createAction("game/message"),
+export enum ActionType {
+  Connected = "game/connected",
+  Disconnected = "game/disconnected",
+  Reconnect = "game/reconnect",
+  ReconnectFailed = "game/reconnect/failed",
+  ReconnectSucceeded = "game/reconnect/succeeded",
+  Create = "game/create",
+  Join = "game/join",
+  Leave = "game/leave",
+  Lefted = "game/lefted",
+  Message = "game/message",
+}
+
+type IConnected = {
+  namespace: "game";
+  type: ActionType.Connected;
+  payload: {
+    sessionId: string;
+    roomId: string;
+  };
 };
 
-export const reducer = createReducer<IState>({ type: "loading" }, (builder) => {
-  builder.addCase(actions.connected, () => {
-    return { type: "connected" };
-  });
-  builder.addCase(actions.disconnected, () => {
-    return { type: "disconnected" };
-  });
-  builder.addCase(actions.reconnectFailed, () => {
-    return { type: "disconnected" };
-  });
-  builder.addCase(actions.lefted, () => {
-    return { type: "disconnected" };
-  });
-});
+type IReconnectSucceeded = {
+  namespace: "game";
+  type: ActionType.ReconnectSucceeded;
+  payload: {
+    sessionId: string;
+    roomId: string;
+  };
+};
+
+export type IAction =
+  | IConnected
+  | {
+      namespace: "game";
+      type: ActionType.Message;
+      payload: {
+        type: string;
+      };
+    }
+  | {
+      namespace: "game";
+      type: ActionType.Lefted;
+    }
+  | {
+      namespace: "game";
+      type: ActionType.Disconnected;
+    }
+  | {
+      namespace: "game";
+      type: ActionType.Create;
+    }
+  | {
+      namespace: "game";
+      type: ActionType.Join;
+    }
+  | {
+      namespace: "game";
+      type: ActionType.Leave;
+    }
+  | {
+      namespace: "game";
+      type: ActionType.Reconnect;
+    }
+  | {
+      namespace: "game";
+      type: ActionType.ReconnectFailed;
+      payload: {
+        reason: string;
+      };
+    }
+  | IReconnectSucceeded;
+
+export const initialState: IState = {
+  type: "loading",
+};
+
+export const reducer = (state: IState, action: IAction): IState => {
+  switch (action.type) {
+    case ActionType.Connected:
+      return {
+        type: "connected",
+      };
+
+    case ActionType.Disconnected:
+      return {
+        type: "disconnected",
+      };
+
+    default:
+      return state;
+  }
+};
 
 /*
 
@@ -56,96 +115,150 @@ export const reducer = createReducer<IState>({ type: "loading" }, (builder) => {
 
 */
 
-function* reconnectSaga(action: ReturnType<typeof actions.reconnect>) {
-  const { roomId, sessionId } = action.payload;
+const storageKey = "gameRoomIds";
+
+const storage = createStorageLocalJSON<{ roomId: string; sessionId: string }>();
+
+function* watchConnected(action: IConnected) {
+  yield call(storage.write, storageKey, action.payload);
+}
+
+function* watchDisconnected() {
+  yield call(storage.write, storageKey, null);
+}
+
+function* watchReconnectFailed() {
+  yield put<IAction>({ namespace: "game", type: ActionType.Disconnected });
+}
+
+function* watchReconnectSucceeded(action: IReconnectSucceeded) {
+  yield put<IAction>({
+    namespace: "game",
+    type: ActionType.Connected,
+    payload: action.payload,
+  });
+}
+
+function* watchReconnect() {
+  const found: ReturnType<typeof storage.read> = yield call(
+    storage.read,
+    "gameRoomIds"
+  );
+
+  if (!found) {
+    yield put<IAction>({
+      namespace: "game",
+      type: ActionType.ReconnectFailed,
+      payload: {
+        reason: "Game room ids where not in storage",
+      },
+    });
+    return;
+  }
 
   const result: Awaited<ReturnType<typeof GameDataAccess.reconnect>> =
-    yield call(GameDataAccess.reconnect, {
-      roomId,
-      sessionId,
+    yield call(GameDataAccess.reconnect, found);
+
+  if (result.type === "error") {
+    yield put<IAction>({
+      namespace: "game",
+      type: ActionType.ReconnectFailed,
+      payload: {
+        reason: result.errors.map((e) => e.message).join(", "),
+      },
     });
-
-  if (result.type === "success") {
-    yield put(actions.reconnectSucceeded());
-
-    yield fork(connectedSaga, result.data);
 
     return;
   }
 
-  yield put(actions.reconnectFailed());
+  yield put<IAction>({
+    namespace: "game",
+    type: ActionType.ReconnectSucceeded,
+    payload: found,
+  });
+
+  const room = result.data;
+
+  yield* roomFlow(room);
 }
 
-function* createSaga() {
+function* watchCreate() {
   const result: Awaited<ReturnType<typeof GameDataAccess.create>> = yield call(
     GameDataAccess.create
   );
 
   if (result.type === "success") {
-    yield fork(connectedSaga, result.data);
+    const room = result.data;
+
+    yield* roomFlow(room);
   }
 }
 
-function* tryReconnectSaga() {
-  const storage =
-    createStorageLocalJSON<{ roomId: string; sessionId: string }>();
-
-  yield takeEvery(actions.connected, function* (action) {
-    storage.write("gameRoomIds", action.payload);
-  });
-
-  yield takeEvery(actions.reconnectFailed, function* () {
-    storage.write("gameRoomIds", null);
-  });
-
-  const found = storage.read("gameRoomIds");
-
-  if (!found) {
-    yield put(actions.disconnected());
-    return;
-  }
-
-  if (found) {
-    yield put(actions.reconnect(found));
-    return;
-  }
-}
-
-export function* saga({ profile }: { profile: IProfile }) {
-  yield takeLatest(actions.reconnect, reconnectSaga);
-  yield takeLatest(actions.create, createSaga);
-  yield fork(tryReconnectSaga);
-}
-
-function* connectedSaga(room: GameDataAccess.IRoom) {
-  yield put(
-    actions.connected({
-      roomId: room.id,
-      sessionId: room.sessionId,
-    })
-  );
-
-  const roomChannel = eventChannel<
-    ReturnType<typeof actions.lefted> | ReturnType<typeof actions.message>
-  >((emit) => {
+const createRoomChan = (room: GameDataAccess.IRoom) => {
+  return eventChannel<IAction>((emit) => {
     room.onLeave(() => {
-      emit(actions.lefted());
+      emit({
+        namespace: "game",
+        type: ActionType.Lefted,
+      });
     });
 
     room.onMessage("*", (type) => {
-      emit(actions.message());
+      emit({
+        namespace: "game",
+        type: ActionType.Message,
+        payload: {
+          type: String(type),
+        },
+      });
     });
 
     return () => {
       room.removeAllListeners();
     };
   });
+};
 
-  yield takeEvery(roomChannel, function* (action) {
-    yield put(action);
+function* watchRoomChan(action: IAction) {
+  yield put<IAction>(action);
+}
+
+function* watchLeave(room: GameDataAccess.IRoom) {
+  yield call(() => room.leave(true));
+}
+
+function* roomFlow(room: GameDataAccess.IRoom) {
+  yield put<IAction>({
+    namespace: "game",
+    type: ActionType.Connected,
+    payload: {
+      sessionId: room.sessionId,
+      roomId: room.id,
+    },
   });
+  const roomChan = createRoomChan(room);
+  yield takeEvery(roomChan, watchRoomChan);
+  yield takeEvery(ActionType.Leave, watchLeave, room);
+}
 
-  yield takeEvery(actions.leave, function* () {
-    yield call(() => room.leave());
+function* watchLefted() {
+  yield put<IAction>({
+    namespace: "game",
+    type: ActionType.Disconnected,
+  });
+}
+
+export function* saga({ profile }: { profile: IProfile }) {
+  yield takeEvery(ActionType.Connected, watchConnected);
+  yield takeEvery(ActionType.Disconnected, watchDisconnected);
+  yield takeEvery(ActionType.ReconnectFailed, watchReconnectFailed);
+  yield takeEvery(ActionType.ReconnectSucceeded, watchReconnectSucceeded);
+  yield takeEvery(ActionType.Reconnect, watchReconnect);
+  yield takeEvery(ActionType.Lefted, watchLefted);
+  yield takeEvery(ActionType.Create, watchCreate);
+
+  yield put<IAction>({
+    namespace: "game",
+    type: ActionType.Reconnect,
   });
 }

@@ -1,7 +1,9 @@
 import { Box, Typography, useMediaQuery, useTheme } from "@mui/material";
 import React from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
-import { useAppSelector } from "./app-store";
+import { Dispatch } from "redux";
+import { IAction, IState } from "./app-state";
+import { IAppDispatch, useAppDispatch, useAppSelector } from "./app-store";
 import AccountLogin from "./features/account/AccountLogin";
 import AccountLogout from "./features/account/AccountLogout";
 import AccountRoutes from "./features/account/AccountRoutes";
@@ -13,25 +15,33 @@ import { IProfile } from "./features/profile/profile-data-access";
 import ProfileRoutes from "./features/profile/ProfileRoutes";
 
 const App = () => {
+  const state = useAppSelector((state) => state);
+
+  const dispatch = useAppDispatch();
   return (
     <Layout>
-      <LoadAccount />
+      <LoadAccount dispatch={dispatch} state={state} />
     </Layout>
   );
 };
 
-const LoadAccount = () => {
-  const accountState = useAppSelector((state) => state.account);
-
-  if (accountState.type === "loading") {
+const LoadAccount = ({
+  state,
+  dispatch,
+}: {
+  dispatch: IAppDispatch;
+  state: IState;
+}) => {
+  if (state.account.type === "loading") {
     return <Splash subtitle="Checking if logged in..." />;
   }
 
-  if (accountState.type === "logged-in") {
+  if (state.account.type === "logged-in") {
     return (
       <LoadProfile
-        defaultName={accountState.name ?? ""}
-        userId={accountState.userId}
+        dispatch={dispatch}
+        userId={state.account.userId}
+        state={state}
       />
     );
   }
@@ -45,27 +55,33 @@ const LoadAccount = () => {
 };
 
 const LoadProfile = ({
-  defaultName,
+  dispatch,
   userId,
+  state,
 }: {
-  defaultName: string;
   userId: string;
+  state: IState;
+  dispatch: IAppDispatch;
 }) => {
-  const profile = useAppSelector((state) => state.profile);
-
-  if (profile.type === "loading") {
+  if (state.profile.type === "loading") {
     return <Splash subtitle="Loading profile..." />;
   }
 
-  if (profile.type === "found") {
-    return <LoadGameRoom profile={profile.profile} />;
+  if (state.profile.type === "found") {
+    return (
+      <LoadGameRoom
+        dispatch={dispatch}
+        profile={state.profile.profile}
+        state={state}
+      />
+    );
   }
 
   return (
     <Routes>
       <Route
         path="/profile/create/*"
-        element={<ProfileCreate defaultName={defaultName} userId={userId} />}
+        element={<ProfileCreate defaultName={""} userId={userId} />}
       />
       <Route path="/logout" element={<AccountLogout />} />
       <Route path="*" element={<Navigate to="/profile/create" replace />} />
@@ -73,17 +89,28 @@ const LoadProfile = ({
   );
 };
 
-const LoadGameRoom = ({ profile }: { profile: IProfile }) => {
-  const gameState = useAppSelector((state) => state.game);
+const LoadGameRoom = ({
+  state,
+  profile,
+  dispatch,
+}: {
+  state: IState;
+  profile: IProfile;
+  dispatch: IAppDispatch;
+}) => {
+  console.log({ state });
 
-  if (gameState.type === "loading") {
+  if (state.game.type === "loading") {
     return <Splash subtitle="Checking if in a game..." />;
   }
 
-  if (gameState.type === "connected") {
+  if (state.game.type === "connected") {
     return (
       <Routes>
-        <Route path="/game/*" element={<GameConnectedRoutes />} />
+        <Route
+          path="/game/*"
+          element={<GameConnectedRoutes dispatch={dispatch} />}
+        />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     );
@@ -94,7 +121,10 @@ const LoadGameRoom = ({ profile }: { profile: IProfile }) => {
       <Route path="/" element={<Home profile={profile} />} />
       <Route path="/account/*" element={<AccountRoutes />} />
       <Route path="/profile/*" element={<ProfileRoutes profile={profile} />} />
-      <Route path="/game/*" element={<GameDisconnectedRoutes />} />
+      <Route
+        path="/game/*"
+        element={<GameDisconnectedRoutes dispatch={dispatch} />}
+      />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );

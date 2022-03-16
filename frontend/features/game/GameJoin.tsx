@@ -1,12 +1,13 @@
 import { AppBar, Box, Button, Toolbar, Typography } from "@mui/material";
 import React from "react";
-import { useDispatch } from "react-redux";
 import { AppBarBackButton } from "../../ui";
 import * as Game from "./game-state";
 
-const GameJoin = () => {
-  const dispatch = useDispatch();
-
+const GameJoin = ({
+  dispatch,
+}: {
+  dispatch: (action: Game.IAction) => void;
+}) => {
   return (
     <Box sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
       <AppBar>
@@ -26,7 +27,10 @@ const GameJoin = () => {
           fullWidth
           variant="contained"
           onClick={() => {
-            dispatch(Game.actions.join());
+            dispatch({
+              namespace: "game",
+              type: Game.ActionType.Join,
+            });
           }}
         >
           Join Game
