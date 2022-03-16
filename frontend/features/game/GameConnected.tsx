@@ -1,27 +1,45 @@
-import { ExitToApp } from "@mui/icons-material";
-import { AppBar, Box, IconButton, Toolbar, Typography } from "@mui/material";
+import { ChevronLeft, ExitToApp } from "@mui/icons-material";
+import {
+  AppBar,
+  Box,
+  Button,
+  IconButton,
+  ListItem,
+  ListItemText,
+  Toolbar,
+  Typography,
+} from "@mui/material";
 import { Room } from "colyseus.js";
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
+import { useAppSelector } from "../../app-store";
 
 const GameConnected = () => {
+  const messages = useAppSelector((state) =>
+    state.game.type === "connected" ? state.game.messages : []
+  );
   return (
     <Box sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
       <AppBar>
         <Toolbar>
           <Link to="/game/leave" replace>
-            <IconButton edge="start" sx={{ marginRight: 2 }}>
-              <ExitToApp />
-            </IconButton>
+            <Button
+              startIcon={<ChevronLeft />}
+              sx={{ marginLeft: -1, marginRight: 2 }}
+            >
+              Leave
+            </Button>
           </Link>
-
-          <Typography sx={{ flex: 1 }} variant="h6">
-            Game Room
-          </Typography>
         </Toolbar>
       </AppBar>
 
-      <Box sx={{ flex: 1, padding: 2 }}></Box>
+      <Box sx={{ flex: 1, padding: 2, overflowY: "scroll" }}>
+        {messages.map((message, index) => (
+          <ListItem key={index}>
+            <ListItemText primary={message.type} />
+          </ListItem>
+        ))}
+      </Box>
     </Box>
   );
 };

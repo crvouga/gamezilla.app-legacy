@@ -12,6 +12,9 @@ import * as GameDataAccess from "./game-data-access";
 export type IState =
   | {
       type: "connected";
+      messages: {
+        type: string;
+      }[];
     }
   | {
       type: "disconnected";
@@ -52,9 +55,18 @@ export type IActionMap = InferActionMap<typeof Actions>;
 
 export const reducer = (state: IState, action: IAction): IState => {
   switch (action.type) {
+    case ActionType("game", "message"):
+      return {
+        type: "connected",
+        messages: [
+          ...(state.type === "connected" ? state.messages : []),
+          action.payload,
+        ],
+      };
     case ActionType("game", "connected"):
       return {
         type: "connected",
+        messages: [],
       };
 
     case ActionType("game", "disconnected"):
@@ -75,6 +87,7 @@ export const reducer = (state: IState, action: IAction): IState => {
     case ActionType("game", "reconnect-succeeded"):
       return {
         type: "connected",
+        messages: [],
       };
 
     default:
