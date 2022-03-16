@@ -1,24 +1,14 @@
 import { LoadingButton } from "@mui/lab";
 import { Box, Button, Drawer, Typography } from "@mui/material";
 import React from "react";
-import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { Dispatch } from "redux";
+import { useAppDispatch } from "../../app-store";
 import * as Game from "./game-state";
 
-const GameLeave = ({
-  dispatch,
-}: {
-  dispatch: (action: Game.IAction) => void;
-}) => {
-  const navigate = useNavigate();
+const GameLeave = () => {
+  const dispatch = useAppDispatch();
 
-  const onLeave = () => {
-    dispatch({
-      namespace: "game",
-      type: Game.ActionType.Leave,
-    });
-  };
+  const navigate = useNavigate();
 
   const onCancel = () => {
     navigate(-1);
@@ -49,7 +39,9 @@ const GameLeave = ({
           sx={{ flex: 1 }}
           variant="contained"
           size="large"
-          onClick={onLeave}
+          onClick={() => {
+            dispatch(Game.Actions.leave());
+          }}
         >
           Leave
         </LoadingButton>

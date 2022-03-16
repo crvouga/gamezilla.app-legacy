@@ -1,6 +1,11 @@
 import { eventChannel } from "redux-saga";
-import { call, put, takeEvery } from "redux-saga/effects";
-import { createStorageLocalJSON } from "../../utils";
+import { call, put, take, takeEvery } from "redux-saga/effects";
+import {
+  Action,
+  createStorageLocalJSON,
+  InferActionMap,
+  InferActionUnion,
+} from "../../utils";
 import { IProfile } from "../profile/profile-data-access";
 import * as GameDataAccess from "./game-data-access";
 
@@ -15,93 +20,61 @@ export type IState =
       type: "loading";
     };
 
-export enum ActionType {
-  Connected = "game/connected",
-  Disconnected = "game/disconnected",
-  Reconnect = "game/reconnect",
-  ReconnectFailed = "game/reconnect/failed",
-  ReconnectSucceeded = "game/reconnect/succeeded",
-  Create = "game/create",
-  Join = "game/join",
-  Leave = "game/leave",
-  Lefted = "game/lefted",
-  Message = "game/message",
-}
-
-type IConnected = {
-  namespace: "game";
-  type: ActionType.Connected;
-  payload: {
-    sessionId: string;
-    roomId: string;
-  };
-};
-
-type IReconnectSucceeded = {
-  namespace: "game";
-  type: ActionType.ReconnectSucceeded;
-  payload: {
-    sessionId: string;
-    roomId: string;
-  };
-};
-
-export type IAction =
-  | IConnected
-  | {
-      namespace: "game";
-      type: ActionType.Message;
-      payload: {
-        type: string;
-      };
-    }
-  | {
-      namespace: "game";
-      type: ActionType.Lefted;
-    }
-  | {
-      namespace: "game";
-      type: ActionType.Disconnected;
-    }
-  | {
-      namespace: "game";
-      type: ActionType.Create;
-    }
-  | {
-      namespace: "game";
-      type: ActionType.Join;
-    }
-  | {
-      namespace: "game";
-      type: ActionType.Leave;
-    }
-  | {
-      namespace: "game";
-      type: ActionType.Reconnect;
-    }
-  | {
-      namespace: "game";
-      type: ActionType.ReconnectFailed;
-      payload: {
-        reason: string;
-      };
-    }
-  | IReconnectSucceeded;
-
 export const initialState: IState = {
   type: "loading",
 };
 
+/**
+ *
+ *
+ *
+ *
+ */
+
+export const Actions = {
+  connected: Action<"game", "connected", { sessionId: string; roomId: string }>(
+    "game",
+    "connected"
+  ),
+  disconnected: Action("game", "disconnected"),
+  reconnect: Action("game", "reconnect"),
+  reconnectSucceeded: Action("game", "reconnect/succeeded"),
+  reconnectFailed: Action("game", "reconnect/failed"),
+  create: Action("game", "create"),
+  join: Action("game", "join"),
+  leave: Action("game", "leave"),
+  left: Action("game", "left"),
+  message: Action<"game", "message", { type: string }>("game", "message"),
+};
+
+export type IAction = InferActionUnion<typeof Actions>;
+export type IActionMap = InferActionMap<typeof Actions>;
+
 export const reducer = (state: IState, action: IAction): IState => {
   switch (action.type) {
-    case ActionType.Connected:
+    case "game::connected":
       return {
         type: "connected",
       };
 
-    case ActionType.Disconnected:
+    case "game::disconnected":
       return {
         type: "disconnected",
+      };
+
+    case "game::left":
+      return {
+        type: "disconnected",
+      };
+
+    case "game::reconnect/failed":
+      return {
+        type: "disconnected",
+      };
+
+    case "game::reconnect/succeeded":
+      return {
+        type: "connected",
       };
 
     default:
@@ -109,34 +82,32 @@ export const reducer = (state: IState, action: IAction): IState => {
   }
 };
 
-/*
+/**
+ *
+ *
+ *
+ *
+ */
 
+export function* saga({ profile }: { profile: IProfile }) {
+  yield takeEvery(Actions.connected, watchConnected);
+  yield takeEvery(Actions.reconnectFailed, watchReconnectFailed);
+  yield takeEvery(Actions.reconnect, watchReconnect);
+  yield takeEvery(Actions.create, watchCreate);
 
-
-*/
+  yield put(Actions.reconnect());
+}
 
 const storageKey = "gameRoomIds";
 
 const storage = createStorageLocalJSON<{ roomId: string; sessionId: string }>();
 
-function* watchConnected(action: IConnected) {
+function* watchConnected(action: IActionMap["connected"]) {
   yield call(storage.write, storageKey, action.payload);
 }
 
-function* watchDisconnected() {
-  yield call(storage.write, storageKey, null);
-}
-
 function* watchReconnectFailed() {
-  yield put<IAction>({ namespace: "game", type: ActionType.Disconnected });
-}
-
-function* watchReconnectSucceeded(action: IReconnectSucceeded) {
-  yield put<IAction>({
-    namespace: "game",
-    type: ActionType.Connected,
-    payload: action.payload,
-  });
+  yield call(storage.write, storageKey, null);
 }
 
 function* watchReconnect() {
@@ -146,13 +117,7 @@ function* watchReconnect() {
   );
 
   if (!found) {
-    yield put<IAction>({
-      namespace: "game",
-      type: ActionType.ReconnectFailed,
-      payload: {
-        reason: "Game room ids where not in storage",
-      },
-    });
+    yield put(Actions.reconnectFailed());
     return;
   }
 
@@ -160,29 +125,19 @@ function* watchReconnect() {
     yield call(GameDataAccess.reconnect, found);
 
   if (result.type === "error") {
-    yield put<IAction>({
-      namespace: "game",
-      type: ActionType.ReconnectFailed,
-      payload: {
-        reason: result.errors.map((e) => e.message).join(", "),
-      },
-    });
+    yield put(Actions.reconnectFailed());
 
     return;
   }
 
-  yield put<IAction>({
-    namespace: "game",
-    type: ActionType.ReconnectSucceeded,
-    payload: found,
-  });
+  yield put(Actions.reconnectSucceeded());
 
   const room = result.data;
 
   yield* roomFlow(room);
 }
 
-function* watchCreate() {
+function* watchCreate(action: IActionMap["create"]) {
   const result: Awaited<ReturnType<typeof GameDataAccess.create>> = yield call(
     GameDataAccess.create
   );
@@ -197,20 +152,11 @@ function* watchCreate() {
 const createRoomChan = (room: GameDataAccess.IRoom) => {
   return eventChannel<IAction>((emit) => {
     room.onLeave(() => {
-      emit({
-        namespace: "game",
-        type: ActionType.Lefted,
-      });
+      emit(Actions.left());
     });
 
     room.onMessage("*", (type) => {
-      emit({
-        namespace: "game",
-        type: ActionType.Message,
-        payload: {
-          type: String(type),
-        },
-      });
+      emit(Actions.message({ type: String(type) }));
     });
 
     return () => {
@@ -220,7 +166,7 @@ const createRoomChan = (room: GameDataAccess.IRoom) => {
 };
 
 function* watchRoomChan(action: IAction) {
-  yield put<IAction>(action);
+  yield put(action);
 }
 
 function* watchLeave(room: GameDataAccess.IRoom) {
@@ -228,37 +174,13 @@ function* watchLeave(room: GameDataAccess.IRoom) {
 }
 
 function* roomFlow(room: GameDataAccess.IRoom) {
-  yield put<IAction>({
-    namespace: "game",
-    type: ActionType.Connected,
-    payload: {
+  yield put(
+    Actions.connected({
       sessionId: room.sessionId,
       roomId: room.id,
-    },
-  });
+    })
+  );
   const roomChan = createRoomChan(room);
   yield takeEvery(roomChan, watchRoomChan);
-  yield takeEvery(ActionType.Leave, watchLeave, room);
-}
-
-function* watchLefted() {
-  yield put<IAction>({
-    namespace: "game",
-    type: ActionType.Disconnected,
-  });
-}
-
-export function* saga({ profile }: { profile: IProfile }) {
-  yield takeEvery(ActionType.Connected, watchConnected);
-  yield takeEvery(ActionType.Disconnected, watchDisconnected);
-  yield takeEvery(ActionType.ReconnectFailed, watchReconnectFailed);
-  yield takeEvery(ActionType.ReconnectSucceeded, watchReconnectSucceeded);
-  yield takeEvery(ActionType.Reconnect, watchReconnect);
-  yield takeEvery(ActionType.Lefted, watchLefted);
-  yield takeEvery(ActionType.Create, watchCreate);
-
-  yield put<IAction>({
-    namespace: "game",
-    type: ActionType.Reconnect,
-  });
+  yield takeEvery(Actions.leave, watchLeave, room);
 }
