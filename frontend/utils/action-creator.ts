@@ -20,6 +20,13 @@ export type InferActionMap<
     : never;
 };
 
+export const ActionType = <TNamespace extends string, TType extends string>(
+  namespace: TNamespace,
+  type: TType
+) => {
+  return `[${namespace}] ${type}` as const;
+};
+
 export const Action = <
   TNamespace extends string,
   TType extends string,
@@ -28,18 +35,18 @@ export const Action = <
   namespace: TNamespace,
   type: TType
 ) => {
-  const namespacedType: `${TNamespace}::${TType}` = `${namespace}::${type}`;
+  const actionType = ActionType(namespace, type);
 
   const actionCreator = (payload: TPayload) => {
     return {
       namespace,
-      type: namespacedType,
+      type: actionType,
       payload,
     } as const;
   };
 
   actionCreator.toString = function () {
-    return namespacedType;
+    return actionType;
   };
 
   return actionCreator;

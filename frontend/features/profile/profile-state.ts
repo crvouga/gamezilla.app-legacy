@@ -1,5 +1,6 @@
 import { eventChannel } from "redux-saga";
-import { call, put, takeEvery } from "redux-saga/effects";
+import { put, takeEvery } from "redux-saga/effects";
+import { Action, ActionType, InferActionUnion } from "../../utils";
 import * as ProfileDataAccess from "./profile-data-access";
 
 export type IState =
@@ -14,76 +15,29 @@ export type IState =
       type: "not-found";
     };
 
-export enum ActionType {
-  Found = "profile/found",
-  NotFound = "profile/not-found",
-  Update = "profile/update",
-  Delete = "profile/delete",
-  Create = "profile/create",
-}
-
-export type IFound = {
-  namespace: "profile";
-  type: ActionType.Found;
-  payload: ProfileDataAccess.IProfile;
-};
-
-const Actions = {
-  update: (payload: {
-    userId: string;
-    username?: string;
-    avatarUrl?: string;
-    name?: string;
-  }) => {
-    return {
-      type: "profile/update",
-      payload,
-    } as const;
-  },
-};
-
-type ICreate = {
-  namespace: "profile";
-  type: ActionType.Create;
-};
-
-type IUpdate = {
-  namespace: "profile";
-  type: ActionType.Update;
-  payload: {
-    userId: string;
-    username?: string;
-    avatarUrl?: string;
-    name?: string;
-  };
-};
-
-export type IAction =
-  | IFound
-  | {
-      namespace: "profile";
-      type: ActionType.NotFound;
-    }
-  | IUpdate
-  | {
-      namespace: "profile";
-      type: ActionType.Delete;
-    }
-  | ICreate;
-
 export const initialState: IState = {
   type: "loading",
 };
 
+export const Actions = {
+  found: Action<"profile", "found", ProfileDataAccess.IProfile>(
+    "profile",
+    "found"
+  ),
+  notFound: Action("profile", "not-found"),
+};
+
+export type IAction = InferActionUnion<typeof Actions>;
+
 export const reducer = (state: IState, action: IAction): IState => {
   switch (action.type) {
-    case ActionType.Found:
+    case ActionType("profile", "found"):
       return {
         type: "found",
         profile: action.payload,
       };
 
-    case ActionType.NotFound:
+    case ActionType("profile", "not-found"):
       return {
         type: "not-found",
       };
@@ -100,44 +54,25 @@ export const reducer = (state: IState, action: IAction): IState => {
 
 */
 
-// const isOne = (action: any): action is "1" => {
-//   return action === "1";
-// };
-
 export function* saga({ userId }: { userId: string }) {
   const profileChan = createProfileChan({ userId });
 
   yield takeEvery(profileChan, watchProfileChan);
-
-  // yield takeEvery(Actions.update, function* (action) {
-  //   yield call(ProfileDataAccess.updateProfile, action.payload);
-  // });
-}
-
-function* watchUpdate(action: IUpdate) {
-  yield call(ProfileDataAccess.updateProfile, action.payload);
 }
 
 const createProfileChan = ({ userId }: { userId: string }) => {
   return eventChannel<IAction>((emit) => {
     return ProfileDataAccess.onProfile({ userId })((profile) => {
       if (profile) {
-        emit({
-          namespace: "profile",
-          type: ActionType.Found,
-          payload: profile,
-        });
+        emit(Actions.found(profile));
         return;
       }
 
-      emit({
-        namespace: "profile",
-        type: ActionType.NotFound,
-      });
+      emit(Actions.notFound());
     });
   });
 };
 
 function* watchProfileChan(action: IAction) {
-  yield put<IAction>(action);
+  yield put(action);
 }

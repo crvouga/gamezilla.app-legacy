@@ -1,5 +1,11 @@
 import { eventChannel } from "redux-saga";
 import { call, put, takeEvery, takeLeading } from "redux-saga/effects";
+import {
+  Action,
+  ActionType,
+  InferActionMap,
+  InferActionUnion,
+} from "../../utils";
 import * as AccountDataAccess from "./account-data-access";
 
 export type IState =
@@ -21,59 +27,43 @@ export type IState =
       name?: string;
     };
 
-export enum ActionType {
-  LoggedIn = "account/logged-in",
-  LoggedOut = "account/logged-out",
-  Login = "account/login",
-  Logout = "account/logout",
-}
-
-export type ILoggedIn = {
-  namespace: "account";
-  type: ActionType.LoggedIn;
-  payload: {
-    userId: string;
-  };
-};
-
-type ILoggedOut = {
-  namespace: "account";
-  type: ActionType.LoggedOut;
-};
-
-type ILogin = {
-  namespace: "account";
-  type: ActionType.Login;
-  payload: {
-    method: "google";
-  };
-};
-
-type ILogout = {
-  namespace: "account";
-  type: ActionType.Logout;
-};
-
-export type IAction = ILoggedIn | ILoggedOut | ILogin | ILogout;
-
 export const initialState: IState = {
   type: "loading",
 };
 
+export const Actions = {
+  login: Action<"account", "login", { method: "google" }>("account", "login"),
+  logout: Action("account", "logout"),
+  loggedIn: Action<"account", "logged-in", { userId: string }>(
+    "account",
+    "logged-in"
+  ),
+  loggedOut: Action("account", "logged-out"),
+};
+
+export type IAction = InferActionUnion<typeof Actions>;
+
+type IActionMap = InferActionMap<typeof Actions>;
+
 export const reducer = (state: IState, action: IAction): IState => {
   switch (action.type) {
-    case ActionType.Login:
+    case ActionType("account", "login"):
       return {
         type: "logging-in",
       };
 
-    case ActionType.LoggedIn:
+    case ActionType("account", "logout"):
+      return {
+        type: "logging-out",
+      };
+
+    case ActionType("account", "logged-in"):
       return {
         type: "logged-in",
         userId: action.payload.userId,
       };
 
-    case ActionType.LoggedOut:
+    case ActionType("account", "logged-out"):
       return {
         type: "logged-out",
       };
@@ -92,15 +82,15 @@ export const reducer = (state: IState, action: IAction): IState => {
 export function* saga() {
   const accountChan = createAccountChan();
   yield takeEvery(accountChan, watchAccountChan);
-  yield takeLeading(ActionType.Login, watchLogin);
-  yield takeLeading(ActionType.Logout, watchLogout);
+  yield takeLeading(Actions.login, watchLogin);
+  yield takeLeading(Actions.logout, watchLogout);
 }
 
-function* watchLogin(action: ILogin) {
+function* watchLogin(action: IActionMap["login"]) {
   yield call(AccountDataAccess.login, { provider: action.payload.method });
 }
 
-function* watchLogout(_action: ILogout) {
+function* watchLogout(_action: IActionMap["logout"]) {
   yield call(AccountDataAccess.logout);
 }
 
@@ -112,20 +102,11 @@ const createAccountChan = () => {
   return eventChannel<IAction>((emit) => {
     return AccountDataAccess.onAuthState((authState) => {
       if (authState.type === "logged-in") {
-        emit({
-          namespace: "account",
-          type: ActionType.LoggedIn,
-          payload: {
-            userId: authState.userId,
-          },
-        });
+        emit(Actions.loggedIn({ userId: authState.userId }));
       }
 
       if (authState.type === "logged-out") {
-        emit({
-          namespace: "account",
-          type: ActionType.LoggedOut,
-        });
+        emit(Actions.loggedOut());
       }
     });
   });

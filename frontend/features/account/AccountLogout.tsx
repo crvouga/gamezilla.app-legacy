@@ -43,10 +43,7 @@ const Logout = () => {
           loading={isLoggingOut}
           size="large"
           onClick={() => {
-            dispatch({
-              namespace: "account",
-              type: Account.ActionType.Logout,
-            });
+            dispatch(Account.Actions.logout());
           }}
         >
           Logout
