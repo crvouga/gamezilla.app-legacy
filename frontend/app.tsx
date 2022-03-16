@@ -1,8 +1,7 @@
 import { Box, Typography, useMediaQuery, useTheme } from "@mui/material";
 import React from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
-import { Dispatch } from "redux";
-import { IAction, IState } from "./app-state";
+import { IState } from "./app-state";
 import { IAppDispatch, useAppDispatch, useAppSelector } from "./app-store";
 import AccountLogin from "./features/account/AccountLogin";
 import AccountLogout from "./features/account/AccountLogout";
@@ -10,8 +9,8 @@ import AccountRoutes from "./features/account/AccountRoutes";
 import GameConnectedRoutes from "./features/game/GameConnectedRoutes";
 import GameDisconnectedRoutes from "./features/game/GameDisconnectedRoutes";
 import Home from "./features/home/Home";
-import ProfileCreate from "./features/profile/profile-create/ProfileCreate";
 import { IProfile } from "./features/profile/profile-data-access";
+import ProfileCreate from "./features/profile/ProfileCreate";
 import ProfileRoutes from "./features/profile/ProfileRoutes";
 
 const App = () => {

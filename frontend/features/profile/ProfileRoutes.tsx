@@ -1,7 +1,7 @@
 import React from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { IProfile } from "./profile-data-access";
-import ProfileDelete from "./profile-delete";
+import ProfileDelete from "./ProfileDelete";
 import ProfileUpdate from "./profile-update";
 
 const ProfileRoutes = ({ profile }: { profile: IProfile }) => {

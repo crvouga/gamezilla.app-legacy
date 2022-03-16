@@ -10,8 +10,8 @@ import {
 import React, { useState } from "react";
 import { useMutation } from "react-query";
 import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
-import { createProfile } from "../profile-data-access";
-import { generateRandomAvatarSeed, toAvatarUrl } from "../profile-data";
+import { createProfile } from "./profile-data-access";
+import { generateRandomAvatarSeed, toAvatarUrl } from "./profile-data";
 
 const ProfileCreate = ({
   userId,

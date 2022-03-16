@@ -3,7 +3,7 @@ import { Drawer, Box, Button, Typography } from "@mui/material";
 import React from "react";
 import { useMutation } from "react-query";
 import { useNavigate } from "react-router-dom";
-import { deleteProfile } from "../profile-data-access";
+import { deleteProfile } from "./profile-data-access";
 
 const ProfileDelete = ({ userId }: { userId: string }) => {
   const navigate = useNavigate();
