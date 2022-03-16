@@ -1,13 +1,23 @@
 import React from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
-import Account from "./Account";
+import AccountIndex from "./Account";
+import * as Account from "./account-state";
 import AccountLogout from "./AccountLogout";
 
-const AccountRoutes = () => {
+const AccountRoutes = ({
+  state,
+  dispatch,
+}: {
+  state: Account.IState;
+  dispatch: (action: Account.IAction) => void;
+}) => {
   return (
     <Routes>
-      <Route path="/" element={<Account />} />
-      <Route path="/logout" element={<AccountLogout />} />
+      <Route path="/" element={<AccountIndex />} />
+      <Route
+        path="/logout"
+        element={<AccountLogout state={state} dispatch={dispatch} />}
+      />
       <Route path="*" element={<Navigate to="" replace />} />
     </Routes>
   );

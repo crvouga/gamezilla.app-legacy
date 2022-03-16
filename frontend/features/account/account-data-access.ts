@@ -1,5 +1,22 @@
-import { supabaseClient } from '../../data-access';
-import { IAuthState, ILogin } from './account-data';
+import { supabaseClient } from "../../data-access";
+
+export type IUserMetadata = {
+  name?: string;
+};
+
+export type IAuthState =
+  | {
+      type: "logged-out";
+    }
+  | {
+      type: "logged-in";
+      userId: string;
+      userMetadata: IUserMetadata;
+    };
+
+export type ILogin = { provider: "google" };
+
+export type IThemeMode = "light" | "dark" | "system";
 
 export const login = async ({ provider }: ILogin) => {
   const redirectTo = window.location.href;
@@ -24,16 +41,16 @@ export const getAuthStatus = async (): Promise<IAuthState> => {
 
   if (userId) {
     return {
-      type: 'logged-in',
+      type: "logged-in",
       userId,
       userMetadata: {
-        name: session.user?.user_metadata['full_name'],
+        name: session.user?.user_metadata["full_name"],
       },
     };
   }
 
   return {
-    type: 'logged-out',
+    type: "logged-out",
   };
 };
 
@@ -47,27 +64,27 @@ export const onAuthState = (set: (state: IAuthState) => void) => {
     (event, session) => {
       clearTimeout(timeoutHandler);
       switch (event) {
-        case 'PASSWORD_RECOVERY':
-        case 'SIGNED_IN':
-        case 'TOKEN_REFRESHED':
-        case 'USER_UPDATED':
+        case "PASSWORD_RECOVERY":
+        case "SIGNED_IN":
+        case "TOKEN_REFRESHED":
+        case "USER_UPDATED":
           const userId = session?.user?.id;
           if (userId) {
             set({
-              type: 'logged-in',
+              type: "logged-in",
               userId,
               userMetadata: {
-                name: session.user?.user_metadata['display_name'],
+                name: session.user?.user_metadata["display_name"],
               },
             });
             return;
           }
-          set({ type: 'logged-out' });
+          set({ type: "logged-out" });
           return;
 
-        case 'SIGNED_OUT':
-        case 'USER_DELETED':
-          set({ type: 'logged-out' });
+        case "SIGNED_OUT":
+        case "USER_DELETED":
+          set({ type: "logged-out" });
           return;
       }
     }
