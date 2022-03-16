@@ -1,5 +1,5 @@
 import { eventChannel } from "redux-saga";
-import { put, takeEvery } from "redux-saga/effects";
+import { call, put, takeEvery } from "redux-saga/effects";
 import * as ProfileDataAccess from "./profile-data-access";
 
 export type IState =
@@ -17,6 +17,9 @@ export type IState =
 export enum ActionType {
   Found = "profile/found",
   NotFound = "profile/not-found",
+  Update = "profile/update",
+  Delete = "profile/delete",
+  Create = "profile/create",
 }
 
 export type IFound = {
@@ -25,12 +28,34 @@ export type IFound = {
   payload: ProfileDataAccess.IProfile;
 };
 
-type INotFound = {
+type ICreate = {
   namespace: "profile";
-  type: ActionType.NotFound;
+  type: ActionType.Create;
 };
 
-export type IAction = IFound | INotFound;
+type IUpdate = {
+  namespace: "profile";
+  type: ActionType.Update;
+  payload: {
+    userId: string;
+    username?: string;
+    avatarUrl?: string;
+    name?: string;
+  };
+};
+
+export type IAction =
+  | IFound
+  | {
+      namespace: "profile";
+      type: ActionType.NotFound;
+    }
+  | IUpdate
+  | {
+      namespace: "profile";
+      type: ActionType.Delete;
+    }
+  | ICreate;
 
 export const initialState: IState = {
   type: "loading",
@@ -61,6 +86,16 @@ export const reducer = (state: IState, action: IAction): IState => {
 
 */
 
+export function* saga({ userId }: { userId: string }) {
+  const profileChan = createProfileChan({ userId });
+  yield takeEvery(profileChan, watchProfileChan);
+  yield takeEvery(ActionType.Update, watchUpdate);
+}
+
+function* watchUpdate(action: IUpdate) {
+  yield call(ProfileDataAccess.updateProfile, action.payload);
+}
+
 const createProfileChan = ({ userId }: { userId: string }) => {
   return eventChannel<IAction>((emit) => {
     return ProfileDataAccess.onProfile({ userId })((profile) => {
@@ -83,9 +118,4 @@ const createProfileChan = ({ userId }: { userId: string }) => {
 
 function* watchProfileChan(action: IAction) {
   yield put<IAction>(action);
-}
-
-export function* saga({ userId }: { userId: string }) {
-  const profileChan = createProfileChan({ userId });
-  yield takeEvery(profileChan, watchProfileChan);
 }
