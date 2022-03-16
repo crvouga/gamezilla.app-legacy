@@ -2,10 +2,8 @@ import { Clear } from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
 import {
   AppBar,
-  Backdrop,
   Box,
   Button,
-  CircularProgress,
   IconButton,
   InputAdornment,
   TextField,
@@ -109,10 +107,6 @@ const ProfileUpdateName = ({
         >
           Update
         </LoadingButton>
-
-        <Backdrop open={isUpdating}>
-          <CircularProgress disableShrink />
-        </Backdrop>
       </Box>
     </Box>
   );
