@@ -5,6 +5,7 @@ import {
   ActionType,
   InferActionMap,
   InferActionUnion,
+  isActions,
 } from "../../utils";
 import * as AccountDataAccess from "./account-data-access";
 
@@ -43,6 +44,10 @@ export const Actions = {
 
 export type IAction = InferActionUnion<typeof Actions>;
 
+export const isAction = (action: unknown): action is IAction => {
+  return isActions(Actions, action);
+};
+
 type IActionMap = InferActionMap<typeof Actions>;
 
 export const reducer = (state: IState, action: IAction): IState => {
@@ -67,9 +72,6 @@ export const reducer = (state: IState, action: IAction): IState => {
       return {
         type: "logged-out",
       };
-
-    default:
-      return state;
   }
 };
 

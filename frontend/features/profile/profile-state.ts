@@ -5,6 +5,7 @@ import {
   ActionType,
   InferActionMap,
   InferActionUnion,
+  isActions,
 } from "../../utils";
 import * as ProfileDataAccess from "./profile-data-access";
 
@@ -65,6 +66,10 @@ export const Actions = {
 };
 
 export type IAction = InferActionUnion<typeof Actions>;
+
+export const isAction = (action: unknown): action is IAction => {
+  return isActions(Actions, action);
+};
 
 type IActionMap = InferActionMap<typeof Actions>;
 

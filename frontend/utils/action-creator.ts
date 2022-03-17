@@ -20,11 +20,34 @@ export type InferActionMap<
     : never;
 };
 
-export const ActionType = <TNamespace extends string, TType extends string>(
+export type IActionType = <TNamespace extends string, TType extends string>(
   namespace: TNamespace,
   type: TType
-) => {
-  return `[${namespace}] ${type}` as const;
+) => `[${TNamespace}] ${TType}`;
+
+export const ActionType: IActionType = (namespace, type) => {
+  return `[${namespace}] ${type}`;
+};
+
+export type IAction = <
+  TNamespace extends string,
+  TType extends string,
+  TPayload = void
+>(
+  namespace: TNamespace,
+  type: TType
+) => (payload: TPayload) => {
+  (payload: TPayload): {
+    readonly namespace: TNamespace;
+    readonly type: `[${TNamespace}] ${TType}`;
+    readonly payload: TPayload;
+  };
+  toString(): `[${TNamespace}] ${TType}`;
+  is(action: unknown): action is {
+    readonly namespace: TNamespace;
+    readonly type: `[${TNamespace}] ${TType}`;
+    readonly payload: TPayload;
+  };
 };
 
 export const Action = <
@@ -49,5 +72,25 @@ export const Action = <
     return actionType;
   };
 
+  type IAction = ReturnType<typeof actionCreator>;
+
+  actionCreator.is = (action: unknown): action is IAction => {
+    return (
+      (action as IAction).namespace === namespace &&
+      (action as IAction).type === actionType
+    );
+  };
+
   return actionCreator;
+};
+
+const or = (x1: boolean, x2: boolean) => x1 || x2;
+
+export const isActions = (
+  actionCreatorMap: Record<string, any>,
+  action: unknown
+): action is IAction => {
+  return Object.entries(actionCreatorMap)
+    .map(([_, actionCreator]) => actionCreator.is(action))
+    .reduce(or);
 };

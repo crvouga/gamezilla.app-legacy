@@ -1,4 +1,4 @@
-import { ChevronRight, Games } from "@mui/icons-material";
+import { ChevronRight, Games, Person } from "@mui/icons-material";
 import {
   AppBar,
   Avatar,
@@ -11,9 +11,11 @@ import {
   Typography,
 } from "@mui/material";
 import React from "react";
-import { Link } from "react-router-dom";
+import * as Routing from "../../app-routing-state";
+import { useAppDispatch } from "../../app-store";
 
 const Home = ({ profile }: { profile: { avatarUrl?: string } }) => {
+  const dispatch = useAppDispatch();
   return (
     <>
       <AppBar>
@@ -22,24 +24,43 @@ const Home = ({ profile }: { profile: { avatarUrl?: string } }) => {
             Home
           </Typography>
 
-          <Link to="/account">
-            <Avatar src={profile.avatarUrl} />
-          </Link>
+          <Avatar
+            onClick={() => {
+              dispatch(Routing.Actions.push(Routing.IRoute.account));
+            }}
+            src={profile.avatarUrl}
+          />
         </Toolbar>
       </AppBar>
 
       <List>
-        <Link to="/game">
-          <ListItemButton>
-            <ListItemIcon>
-              <Games />
-            </ListItemIcon>
-            <ListItemText primary="Play Game" />
-            <ListItemSecondaryAction>
-              <ChevronRight />
-            </ListItemSecondaryAction>
-          </ListItemButton>
-        </Link>
+        <ListItemButton
+          onClick={() => {
+            dispatch(Routing.Actions.push(Routing.IRoute.logout));
+          }}
+        >
+          <ListItemIcon>
+            <Games />
+          </ListItemIcon>
+          <ListItemText primary="Play Game" />
+          <ListItemSecondaryAction>
+            <ChevronRight />
+          </ListItemSecondaryAction>
+        </ListItemButton>
+
+        <ListItemButton
+          onClick={() => {
+            dispatch(Routing.Actions.push(Routing.IRoute.profile));
+          }}
+        >
+          <ListItemIcon>
+            <Person />
+          </ListItemIcon>
+          <ListItemText primary="Profile" />
+          <ListItemSecondaryAction>
+            <ChevronRight />
+          </ListItemSecondaryAction>
+        </ListItemButton>
       </List>
     </>
   );
