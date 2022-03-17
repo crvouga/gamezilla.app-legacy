@@ -2,15 +2,11 @@ import { Google } from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
 import { Box, Typography } from "@mui/material";
 import React from "react";
-import { useAppDispatch, useAppSelector } from "../../app-store";
+import { useAppDispatch } from "../../app-store";
 import * as Account from "./account-state";
 
-const Login = () => {
+const Login = ({ loading }: { loading?: boolean }) => {
   const dispatch = useAppDispatch();
-
-  const isLoggingIn = useAppSelector(
-    (state) => state.account.type === "logging-in"
-  );
 
   return (
     <Box
@@ -33,7 +29,7 @@ const Login = () => {
         size="large"
         fullWidth
         startIcon={<Google />}
-        loading={isLoggingIn}
+        loading={loading}
         onClick={() => {
           dispatch(Account.Actions.login({ method: "google" }));
         }}

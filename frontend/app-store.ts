@@ -6,12 +6,16 @@ import * as App from "./app-state";
 
 const sagaMiddleware = createSagaMiddleware();
 
-const reducer = (state: App.IState = App.initialState, action: App.IAction) => {
-  return App.reducer(state, action);
-};
-
 export const appStore = createStore(
-  reducer,
+  (maybeState, action) => {
+    const state = maybeState ?? App.initialState;
+
+    if (App.isAction(action)) {
+      return App.reducer(state, action);
+    }
+
+    return state;
+  },
   App.initialState,
   composeWithDevTools(applyMiddleware(sagaMiddleware))
 );

@@ -6,12 +6,14 @@ import {
   createStorageLocalJSON,
   InferActionMap,
   InferActionUnion,
+  isActions,
 } from "../../utils";
 import * as GameDataAccess from "./game-data-access";
 
 export type IState =
   | {
       type: "connected";
+      route: "/" | "/leave";
       messages: {
         type: string;
       }[];
@@ -51,12 +53,19 @@ export const Actions = {
 };
 
 export type IAction = InferActionUnion<typeof Actions>;
+
+export const isAction = (action: unknown): action is IAction => {
+  return isActions(Actions, action);
+};
+
 export type IActionMap = InferActionMap<typeof Actions>;
 
 export const reducer = (state: IState, action: IAction): IState => {
   switch (action.type) {
     case ActionType("game", "message"):
       return {
+        route: "/",
+        ...state,
         type: "connected",
         messages: [
           ...(state.type === "connected" ? state.messages : []),
@@ -66,6 +75,7 @@ export const reducer = (state: IState, action: IAction): IState => {
     case ActionType("game", "connected"):
       return {
         type: "connected",
+        route: "/",
         messages: [],
       };
 
@@ -87,6 +97,7 @@ export const reducer = (state: IState, action: IAction): IState => {
     case ActionType("game", "reconnect-succeeded"):
       return {
         type: "connected",
+        route: "/",
         messages: [],
       };
 

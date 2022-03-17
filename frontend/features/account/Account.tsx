@@ -24,7 +24,7 @@ const Account = () => {
       </AppBar>
 
       <List>
-        <Link to="/profile/update">
+        {/* <Link to="/profile/update">
           <ListItemButton>
             <ListItemIcon>
               <Edit />
@@ -43,7 +43,7 @@ const Account = () => {
             </ListItemIcon>
             <ListItemText primary="Delete Profile" />
           </ListItemButton>
-        </Link>
+        </Link> */}
 
         <Link to="logout">
           <ListItemButton>

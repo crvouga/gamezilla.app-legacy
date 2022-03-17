@@ -59,7 +59,7 @@ const ProfileCreate = ({
         path="/"
         element={
           <Layout
-            title="What's your name?"
+            title="Create Profile"
             backButtonProps={{
               children: "Cancel",
               onClick: onCancel,
@@ -87,7 +87,7 @@ const ProfileCreate = ({
         path="/2"
         element={
           <Layout
-            title="What's your username?"
+            title="Create Profile"
             backButtonProps={{
               children: "Back",
               onClick: back,
@@ -137,7 +137,7 @@ const Layout = ({
     >
       <AppBar>
         <Toolbar>
-          <Typography align="center" variant="h5" sx={{ flex: 1 }}>
+          <Typography variant="h6" sx={{ flex: 1 }}>
             {title}
           </Typography>
         </Toolbar>

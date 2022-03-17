@@ -5,8 +5,9 @@ import { useAppSelector } from "./app-store";
 import AccountLogin from "./features/account/AccountLogin";
 import AccountLogout from "./features/account/AccountLogout";
 import AccountRoutes from "./features/account/AccountRoutes";
-import GameConnectedRoutes from "./features/game/GameConnectedRoutes";
+import GameConnected from "./features/game/GameConnected";
 import GameDisconnectedRoutes from "./features/game/GameDisconnectedRoutes";
+import GameLeave from "./features/game/GameLeave";
 import Home from "./features/home/Home";
 import { IProfile } from "./features/profile/profile-data-access";
 import ProfileCreate from "./features/profile/ProfileCreate";
@@ -23,70 +24,79 @@ const App = () => {
 const LoadAccount = () => {
   const account = useAppSelector((state) => state.account);
 
-  if (account.type === "loading") {
-    return <Splash subtitle="Checking if logged in..." />;
-  }
+  switch (account.type) {
+    case "loading":
+      return <Splash subtitle="Checking if logged in..." />;
 
-  if (account.type === "logged-in") {
-    return <LoadProfile userId={account.userId} />;
-  }
+    case "logged-in":
+      return <LoadProfile userId={account.userId} />;
 
-  return (
-    <Routes>
-      <Route path="/login" element={<AccountLogin />} />
-      <Route path="*" element={<Navigate to="/login" replace />} />
-    </Routes>
-  );
+    case "logging-out":
+      return <Splash subtitle="Logging out..." />;
+
+    case "logged-out":
+      return <AccountLogin />;
+
+    case "logging-in":
+      return <AccountLogin loading />;
+  }
 };
 
 const LoadProfile = ({ userId }: { userId: string }) => {
   const profile = useAppSelector((state) => state.profile);
+  const routing = useAppSelector((state) => state.routing);
 
-  if (profile.type === "loading") {
-    return <Splash subtitle="Loading profile..." />;
+  switch (profile.type) {
+    case "loading":
+      return <Splash subtitle="Loading profile..." />;
+
+    case "not-found":
+      return (
+        <Routes>
+          <Route
+            path="/profile/create/*"
+            element={<ProfileCreate defaultName={""} userId={userId} />}
+          />
+          <Route path="/logout" element={<AccountLogout />} />
+          <Route path="*" element={<Navigate to="/profile/create" replace />} />
+        </Routes>
+      );
+
+    case "found":
+      return <LoadGameRoom profile={profile.profile} />;
   }
-
-  if (profile.type === "found") {
-    return <LoadGameRoom profile={profile.profile} />;
-  }
-
-  return (
-    <Routes>
-      <Route
-        path="/profile/create/*"
-        element={<ProfileCreate defaultName={""} userId={userId} />}
-      />
-      <Route path="/logout" element={<AccountLogout />} />
-      <Route path="*" element={<Navigate to="/profile/create" replace />} />
-    </Routes>
-  );
 };
 
 const LoadGameRoom = ({ profile }: { profile: IProfile }) => {
   const game = useAppSelector((state) => state.game);
 
-  if (game.type === "loading") {
-    return <Splash subtitle="Checking if in a game..." />;
-  }
+  switch (game.type) {
+    case "loading":
+      return <Splash subtitle="Checking if in a game..." />;
 
-  if (game.type === "connected") {
-    return (
-      <Routes>
-        <Route path="/game/*" element={<GameConnectedRoutes />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    );
-  }
+    case "connected":
+      switch (game.route) {
+        case "/":
+          return <GameConnected />;
 
-  return (
-    <Routes>
-      <Route path="/" element={<Home profile={profile} />} />
-      <Route path="/account/*" element={<AccountRoutes />} />
-      <Route path="/profile/*" element={<ProfileRoutes profile={profile} />} />
-      <Route path="/game/*" element={<GameDisconnectedRoutes />} />
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
-  );
+        case "/leave":
+          return <GameLeave />;
+      }
+
+    case "disconnected":
+      return (
+        <Routes>
+          <Route path="/" element={<Home profile={profile} />} />
+          <Route path="/account/*" element={<AccountRoutes />} />
+          <Route
+            path="/profile/*"
+            element={<ProfileRoutes profile={profile} />}
+          />
+          <Route path="/game/*" element={<GameDisconnectedRoutes />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      );
+  }
 };
 
 const Splash = ({ subtitle }: { subtitle: string }) => {
