@@ -7,8 +7,8 @@ import * as Profile from "./profile-state";
 const ProfileDelete = ({ userId }: { userId: string }) => {
   const dispatch = useAppDispatch();
   const isDeleting = useAppSelector(
-    (state) =>
-      state.profile.type === "found" && state.profile.status === "deleting"
+    (state) => true
+    // state.profile.type === "found" && state.profile.status === "deleting"
   );
 
   const onCancel = () => {};
@@ -40,7 +40,7 @@ const ProfileDelete = ({ userId }: { userId: string }) => {
           loading={isDeleting}
           size="large"
           onClick={() => {
-            dispatch(Profile.Actions.delete({ userId }));
+            // dispatch(Profile.Actions.delete({ userId }));
           }}
         >
           Delete

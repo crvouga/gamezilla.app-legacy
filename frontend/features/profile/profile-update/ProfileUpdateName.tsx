@@ -12,7 +12,6 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../app-store";
-import * as Profile from "../profile-state";
 
 const ProfileUpdateName = ({
   profile,
@@ -22,20 +21,13 @@ const ProfileUpdateName = ({
   const [name, setName] = useState(profile.name);
 
   const isUpdating = useAppSelector(
-    (state) =>
-      state.profile.type === "found" && state.profile.status === "updating"
+    (state) => true
+    // state.profile.type === "found" && state.profile.status === "updating"
   );
 
   const dispatch = useAppDispatch();
 
-  const onDone = () => {
-    dispatch(
-      Profile.Actions.update({
-        userId: profile.userId,
-        name,
-      })
-    );
-  };
+  const onDone = () => {};
 
   const onCancel = () => {};
 

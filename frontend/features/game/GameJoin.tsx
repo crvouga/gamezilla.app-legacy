@@ -26,7 +26,7 @@ const GameJoin = () => {
           fullWidth
           variant="contained"
           onClick={() => {
-            dispatch(Game.Actions.join());
+            // dispatch(Game.Actions.join());
           }}
         >
           Join Game

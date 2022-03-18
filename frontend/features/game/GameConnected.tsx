@@ -11,8 +11,9 @@ import React from "react";
 import { useAppSelector } from "../../app-store";
 
 const GameConnected = () => {
-  const messages = useAppSelector((state) =>
-    state.game.type === "connected" ? state.game.messages : []
+  const messages = useAppSelector(
+    (state) => []
+    // state.game.type === "connected" ? state.game.messages : []
   );
   return (
     <Box sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
@@ -30,7 +31,7 @@ const GameConnected = () => {
       <Box sx={{ flex: 1, padding: 2, overflowY: "scroll" }}>
         {messages.map((message, index) => (
           <ListItem key={index}>
-            <ListItemText primary={message.type} />
+            <ListItemText primary={"message.type"} />
           </ListItem>
         ))}
       </Box>

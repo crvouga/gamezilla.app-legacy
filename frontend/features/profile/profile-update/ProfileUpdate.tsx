@@ -17,8 +17,8 @@ import ProfileUpdateUsername from "./ProfileUpdateUsername";
 
 const ProfileUpdate = ({ profile }: { profile: IProfile }) => {
   const isUpdating = useAppSelector(
-    (state) =>
-      state.profile.type === "found" && state.profile.status === "updating"
+    (state) => false
+    // state.profile.type === "found" && state.profile.status === "updating"
   );
 
   return (

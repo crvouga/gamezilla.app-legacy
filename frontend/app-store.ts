@@ -2,7 +2,12 @@ import { composeWithDevTools } from "@redux-devtools/extension";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import { applyMiddleware, createStore } from "redux";
 import createSagaMiddleware from "redux-saga";
-import * as App from "./app-state";
+import { put, takeEvery } from "redux-saga/effects";
+import * as App from "./app";
+import { login } from "./app-data-access";
+import { onAuthState } from "./features/account/account-data-access";
+import { onProfile } from "./features/profile/profile-data-access";
+import { Action, isActions } from "./utils";
 
 const sagaMiddleware = createSagaMiddleware();
 
@@ -20,7 +25,45 @@ export const appStore = createStore(
   composeWithDevTools(applyMiddleware(sagaMiddleware))
 );
 
-sagaMiddleware.run(App.saga);
+const params: App.ISagaParams = {
+  subscribeAuthState: onAuthState,
+  appLoggedOut: {
+    login: ({ method }) => login({ provider: method }),
+  },
+  appLoggedIn: {
+    subscribeProfile: onProfile,
+  },
+};
+
+type IWarning = {
+  type: "unknown-action";
+  action: unknown;
+};
+
+const Actions = {
+  warning: Action<"runtime", "warning", IWarning>("runtime", "warning"),
+};
+
+const isAction = (action: unknown) => {
+  return isActions(Actions, action) || App.isAction(action);
+};
+
+function* saga() {
+  yield takeEvery("*", function* (action) {
+    if (!isAction(action)) {
+      yield put(
+        Actions.warning({
+          type: "unknown-action",
+          action,
+        })
+      );
+    }
+  });
+
+  yield* App.saga(params);
+}
+
+sagaMiddleware.run(saga);
 
 /*
 
