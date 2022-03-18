@@ -8,7 +8,6 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useState } from "react";
-import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../app-store";
 import { generateRandomAvatarSeed, toAvatarUrl } from "./profile-data";
 import * as Profile from "./profile-state";
@@ -43,76 +42,60 @@ const ProfileCreate = ({
     );
   };
 
-  const navigate = useNavigate();
+  const onCancel = () => {};
 
-  const onCancel = () => {
-    navigate("/logout", { replace: true });
-  };
+  const back = () => {};
 
-  const back = () => {
-    navigate(-1);
-  };
-
-  return (
-    <Routes>
-      <Route
-        path="/"
-        element={
-          <Layout
-            title="Create Profile"
-            backButtonProps={{
-              children: "Cancel",
-              onClick: onCancel,
+  switch ("1") {
+    case "1":
+      return (
+        <Layout
+          title="Create Profile"
+          backButtonProps={{
+            children: "Cancel",
+            onClick: onCancel,
+          }}
+          nextButtonProps={{
+            children: "Next",
+            onClick: () => {},
+          }}
+        >
+          <TextField
+            sx={{ marginBottom: 2 }}
+            value={name}
+            onChange={(event) => {
+              setName(event.currentTarget.value);
             }}
-            nextButtonProps={{
-              children: "Next",
+            label="Name"
+          />
+        </Layout>
+      );
 
-              onClick: () => {
-                navigate("2");
-              },
+    default:
+      return (
+        <Layout
+          title="Create Profile"
+          backButtonProps={{
+            children: "Back",
+            onClick: back,
+          }}
+          nextButtonProps={{
+            children: "Done",
+            loading: isCreating,
+            onClick: onCreate,
+          }}
+        >
+          <TextField
+            sx={{ marginBottom: 2 }}
+            value={username}
+            onChange={(event) => {
+              setUsername(event.currentTarget.value);
             }}
-          >
-            <TextField
-              sx={{ marginBottom: 2 }}
-              value={name}
-              onChange={(event) => {
-                setName(event.currentTarget.value);
-              }}
-              label="Name"
-            />
-          </Layout>
-        }
-      />
-      <Route
-        path="/2"
-        element={
-          <Layout
-            title="Create Profile"
-            backButtonProps={{
-              children: "Back",
-              onClick: back,
-            }}
-            nextButtonProps={{
-              children: "Done",
-              loading: isCreating,
-              onClick: onCreate,
-            }}
-          >
-            <TextField
-              sx={{ marginBottom: 2 }}
-              value={username}
-              onChange={(event) => {
-                setUsername(event.currentTarget.value);
-              }}
-              label="Username"
-            />
-          </Layout>
-        }
-      />
-
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
-  );
+            label="Username"
+          />
+        </Layout>
+      );
+  }
 };
 
 const Layout = ({

@@ -8,7 +8,6 @@ import {
   Typography,
 } from "@mui/material";
 import React from "react";
-import { Link } from "react-router-dom";
 import { BackButton, ListItemField } from "../../../ui";
 
 const ProfileUpdate = ({
@@ -44,9 +43,7 @@ const ProfileUpdate = ({
           src={profile.avatarUrl}
         />
 
-        <Link to="avatar">
-          <Button>Edit Avatar</Button>
-        </Link>
+        <Button>Edit Avatar</Button>
       </Box>
 
       <List>

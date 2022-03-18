@@ -11,7 +11,6 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../../app-store";
 import * as Profile from "../profile-state";
 
@@ -21,8 +20,6 @@ const ProfileUpdateName = ({
   profile: { userId: string; name?: string };
 }) => {
   const [name, setName] = useState(profile.name);
-
-  const navigate = useNavigate();
 
   const isUpdating = useAppSelector(
     (state) =>
@@ -40,9 +37,7 @@ const ProfileUpdateName = ({
     );
   };
 
-  const onCancel = () => {
-    navigate(-1);
-  };
+  const onCancel = () => {};
 
   return (
     <Box

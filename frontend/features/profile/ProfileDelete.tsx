@@ -1,23 +1,17 @@
 import { LoadingButton } from "@mui/lab";
-import { Drawer, Box, Button, Typography } from "@mui/material";
+import { Box, Button, Drawer, Typography } from "@mui/material";
 import React from "react";
-
-import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../app-store";
 import * as Profile from "./profile-state";
 
 const ProfileDelete = ({ userId }: { userId: string }) => {
-  const navigate = useNavigate();
-
   const dispatch = useAppDispatch();
   const isDeleting = useAppSelector(
     (state) =>
       state.profile.type === "found" && state.profile.status === "deleting"
   );
 
-  const onCancel = () => {
-    navigate(-1);
-  };
+  const onCancel = () => {};
 
   return (
     <Drawer open anchor="bottom" onBackdropClick={onCancel}>

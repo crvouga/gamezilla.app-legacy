@@ -11,7 +11,6 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useRef } from "react";
-import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../../app-store";
 import * as Profile from "../profile-state";
 
@@ -29,13 +28,10 @@ const ProfileUpdateUsername = ({
 
   const dispatch = useAppDispatch();
 
-  const navigate = useNavigate();
-
   const onCancel = () => {
     if (usernameRef.current) {
       usernameRef.current.value = profile.username ?? "";
     }
-    navigate(-1);
   };
 
   const onDone = () => {
