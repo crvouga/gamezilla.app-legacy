@@ -34,7 +34,7 @@ const ProfileDelete = ({ userId }: { userId: string }) => {
           loading={isDeleting}
           size="large"
           onClick={() => {
-            // dispatch(Profile.Actions.delete({ userId }));
+            // dispatch(Profile.actions.delete({ userId }));
           }}
         >
           Delete

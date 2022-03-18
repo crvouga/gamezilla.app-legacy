@@ -3,7 +3,12 @@ import { LoadingButton } from "@mui/lab";
 import { Box, Typography } from "@mui/material";
 import React from "react";
 import { call, takeLeading } from "redux-saga/effects";
-import { Action, InferActionUnion, isActions } from "./utils";
+import {
+  Action,
+  InferActionMap,
+  InferActionUnion,
+  isActions,
+} from "../../utils";
 
 /* 
 
@@ -22,27 +27,30 @@ export const initialState: IState = {
   type: "idle",
 };
 
+export type ILoginMethod = {
+  type: "google";
+};
+
 /* 
 
 
 */
 
-const Actions = {
-  login: Action<"app-logged-out", "login", { method: "google" }>(
-    "app-logged-out",
-    "login"
-  ),
+const actions = {
+  login: Action<"logged-out", "login", ILoginMethod>("logged-out", "login"),
 };
 
-export type IAction = InferActionUnion<typeof Actions>;
+export type IAction = InferActionUnion<typeof actions>;
+
+export type IActionMap = InferActionMap<typeof actions>;
 
 export const isAction = (action: unknown): action is IAction => {
-  return isActions(Actions, action);
+  return isActions(actions, action);
 };
 
 export const reducer = (state: IState, action: IAction): IState => {
   switch (action.type) {
-    case "app-logged-out::login":
+    case "logged-out::login":
       return {
         type: "loading",
       };
@@ -54,14 +62,18 @@ export const reducer = (state: IState, action: IAction): IState => {
 
 */
 
-export type ISagaParams = {
-  login: ({ method }: { method: "google" }) => void;
+export type ILogin = (method: ILoginMethod) => void;
+
+export type IDataAccess = {
+  login: ILogin;
 };
 
-export function* saga({ login }: ISagaParams) {
-  yield takeLeading(Actions.login, function* (action) {
+export function* saga({ login }: IDataAccess) {
+  function* loginFlow(action: IActionMap["login"]) {
     yield call(login, action.payload);
-  });
+  }
+
+  yield takeLeading(actions.login, loginFlow);
 }
 
 /* 
@@ -99,7 +111,7 @@ export const view = ({
         startIcon={<Google />}
         loading={state.type === "loading"}
         onClick={() => {
-          dispatch(Actions.login({ method: "google" }));
+          dispatch(actions.login({ type: "google" }));
         }}
       >
         Continue With Google

@@ -11,9 +11,8 @@ import {
   Typography,
 } from "@mui/material";
 import React from "react";
-import * as Routing from "../../app-routing-state";
 
-const Home = ({ profile }: { profile: { avatarUrl?: string } }) => {
+export const view = ({ profile }: { profile: { avatarUrl?: string } }) => {
   return (
     <>
       <AppBar>
@@ -22,19 +21,7 @@ const Home = ({ profile }: { profile: { avatarUrl?: string } }) => {
             Home
           </Typography>
 
-          <Avatar
-            onClick={() => {
-              // dispatch(
-              //   Routing.Actions.push({
-              //     type: "account",
-              //     child: {
-              //       type: "home",
-              //     },
-              //   })
-              // );
-            }}
-            src={profile.avatarUrl}
-          />
+          <Avatar onClick={() => {}} src={profile.avatarUrl} />
         </Toolbar>
       </AppBar>
 
@@ -42,7 +29,7 @@ const Home = ({ profile }: { profile: { avatarUrl?: string } }) => {
         <ListItemButton
           onClick={() => {
             // dispatch(
-            //   Routing.Actions.push({
+            //   Routing.actions.push({
             //     type: "account",
             //     child: {
             //       type: "login",
@@ -63,7 +50,7 @@ const Home = ({ profile }: { profile: { avatarUrl?: string } }) => {
         <ListItemButton
           onClick={() => {
             // dispatch(
-            //   Routing.Actions.push({
+            //   Routing.actions.push({
             //     type: "profile",
             //     child: {
             //       type: "home",
@@ -84,5 +71,3 @@ const Home = ({ profile }: { profile: { avatarUrl?: string } }) => {
     </>
   );
 };
-
-export default Home;

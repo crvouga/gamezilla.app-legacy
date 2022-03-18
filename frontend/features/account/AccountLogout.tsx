@@ -35,7 +35,7 @@ const Logout = () => {
           loading={isLoggingOut}
           size="large"
           onClick={() => {
-            // dispatch(Account.Actions.logout());
+            // dispatch(Account.actions.logout());
           }}
         >
           Logout

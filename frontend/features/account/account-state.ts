@@ -32,7 +32,7 @@ export const initialState: IState = {
   type: "loading",
 };
 
-export const Actions = {
+export const actions = {
   login: Action<"account", "login", { method: "google" }>("account", "login"),
   logout: Action("account", "logout"),
   loggedIn: Action<"account", "logged-in", { userId: string }>(
@@ -42,13 +42,13 @@ export const Actions = {
   loggedOut: Action("account", "logged-out"),
 };
 
-export type IAction = InferActionUnion<typeof Actions>;
+export type IAction = InferActionUnion<typeof actions>;
 
 export const isAction = (action: unknown): action is IAction => {
-  return isActions(Actions, action);
+  return isActions(actions, action);
 };
 
-type IActionMap = InferActionMap<typeof Actions>;
+type IActionMap = InferActionMap<typeof actions>;
 
 export const reducer = (state: IState, action: IAction): IState => {
   switch (action.type) {
@@ -84,8 +84,8 @@ export const reducer = (state: IState, action: IAction): IState => {
 export function* saga() {
   const accountChan = createAccountChan();
   yield takeEvery(accountChan, watchAccountChan);
-  yield takeLeading(Actions.login, watchLogin);
-  yield takeLeading(Actions.logout, watchLogout);
+  yield takeLeading(actions.login, watchLogin);
+  yield takeLeading(actions.logout, watchLogout);
 }
 
 function* watchLogin(action: IActionMap["login"]) {
@@ -104,11 +104,11 @@ const createAccountChan = () => {
   return eventChannel<IAction>((emit) => {
     return AccountDataAccess.onAuthState((authState) => {
       if (authState.type === "logged-in") {
-        emit(Actions.loggedIn({ userId: authState.userId }));
+        emit(actions.loggedIn({ userId: authState.userId }));
       }
 
       if (authState.type === "logged-out") {
-        emit(Actions.loggedOut());
+        emit(actions.loggedOut());
       }
     });
   });
