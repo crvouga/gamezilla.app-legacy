@@ -12,10 +12,8 @@ import {
 } from "@mui/material";
 import React from "react";
 import * as Routing from "../../app-routing-state";
-import { useAppDispatch } from "../../app-store";
 
 const Home = ({ profile }: { profile: { avatarUrl?: string } }) => {
-  const dispatch = useAppDispatch();
   return (
     <>
       <AppBar>

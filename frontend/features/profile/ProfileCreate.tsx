@@ -8,7 +8,6 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useState } from "react";
-import { useAppDispatch, useAppSelector } from "../../app-store";
 import { generateRandomAvatarSeed, toAvatarUrl } from "./profile-data";
 import * as Profile from "./profile-state";
 
@@ -19,12 +18,7 @@ const ProfileCreate = ({
   userId: string;
   defaultName: string;
 }) => {
-  const isCreating = useAppSelector(
-    (state) => true
-    // state.profile.type === "not-found" && state.profile.status === "creating"
-  );
-
-  const dispatch = useAppDispatch();
+  const isCreating = false;
 
   const [name, setName] = useState(defaultName);
   const [username, setUsername] = useState(

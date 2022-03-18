@@ -1,25 +1,29 @@
 import React from "react";
-import { render } from "react-dom";
-import { Provider } from "react-redux";
+import * as ReactDOM from "react-dom";
 import * as App from "./app";
-import { appStore, useAppDispatch, useAppSelector } from "./app-store";
+import { appStore } from "./store";
 import ThemeProvider from "./features/theme/ThemeProvider";
-import fastDeepEqual from "fast-deep-equal";
 
-const Root = () => {
-  const state = useAppSelector((state) => state, fastDeepEqual);
-  const dispatch = useAppDispatch();
-
-  return <App.view state={state} dispatch={dispatch} />;
+const render = ({
+  state,
+  dispatch,
+}: {
+  state: App.IState;
+  dispatch: (action: App.IAction) => void;
+}) => {
+  ReactDOM.render(
+    <React.StrictMode>
+      <ThemeProvider>
+        <App.view state={state} dispatch={dispatch} />
+      </ThemeProvider>
+    </React.StrictMode>,
+    document.getElementById("root")
+  );
 };
 
-render(
-  <React.StrictMode>
-    <Provider store={appStore}>
-      <ThemeProvider>
-        <Root />
-      </ThemeProvider>
-    </Provider>
-  </React.StrictMode>,
-  document.getElementById("root")
-);
+appStore.subscribe(() => {
+  render({
+    state: appStore.getState(),
+    dispatch: appStore.dispatch,
+  });
+});

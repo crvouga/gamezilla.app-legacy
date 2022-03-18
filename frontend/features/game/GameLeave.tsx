@@ -1,12 +1,8 @@
 import { LoadingButton } from "@mui/lab";
 import { Box, Button, Drawer, Typography } from "@mui/material";
 import React from "react";
-import { useAppDispatch } from "../../app-store";
-import * as Game from "./game-state";
 
 const GameLeave = () => {
-  const dispatch = useAppDispatch();
-
   const onCancel = () => {};
 
   return (

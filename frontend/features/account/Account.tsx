@@ -8,13 +8,9 @@ import {
   Typography,
 } from "@mui/material";
 import React from "react";
-import * as Routing from "../../app-routing-state";
-import { useAppDispatch } from "../../app-store";
 import { AppBarBackButton } from "../../ui";
 
 const Account = () => {
-  const dispatch = useAppDispatch();
-
   return (
     <>
       <AppBar>
