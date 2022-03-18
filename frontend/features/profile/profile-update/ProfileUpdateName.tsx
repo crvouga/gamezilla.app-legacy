@@ -11,7 +11,6 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useState } from "react";
-import { useAppDispatch, useAppSelector } from "../../../app-store";
 
 const ProfileUpdateName = ({
   profile,
@@ -20,12 +19,7 @@ const ProfileUpdateName = ({
 }) => {
   const [name, setName] = useState(profile.name);
 
-  const isUpdating = useAppSelector(
-    (state) => true
-    // state.profile.type === "found" && state.profile.status === "updating"
-  );
-
-  const dispatch = useAppDispatch();
+  const isUpdating = false;
 
   const onDone = () => {};
 

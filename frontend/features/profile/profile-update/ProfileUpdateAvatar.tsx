@@ -13,7 +13,7 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useState } from "react";
-import { useAppDispatch, useAppSelector } from "../../../app-store";
+
 import { AspectRatioSquare, ListItemField } from "../../../ui";
 import {
   AVATAR_STYLES,
@@ -50,12 +50,7 @@ const Index = ({
   const [avatarStyle, setAvatarStyle] = useState(parsed.avatarStyle);
   const [avatarSeed, setAvatarSeed] = useState(parsed.avatarSeed);
 
-  const isUpdating = useAppSelector(
-    (state) => true
-    // state.profile.type === "found" && state.profile.status === "updating"
-  );
-
-  const dispatch = useAppDispatch();
+  const isUpdating = false;
 
   return (
     <Box

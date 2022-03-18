@@ -11,8 +11,6 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useRef } from "react";
-import { useAppDispatch, useAppSelector } from "../../../app-store";
-import * as Profile from "../profile-state";
 
 const ProfileUpdateUsername = ({
   profile,
@@ -21,19 +19,12 @@ const ProfileUpdateUsername = ({
 }) => {
   const usernameRef = useRef<HTMLInputElement | null>(null);
 
-  const isUpdating = useAppSelector(
-    (state) => true
-    // state.profile.type === "found" && state.profile.status === "updating"
-  );
-
-  const dispatch = useAppDispatch();
-
   const onCancel = () => {
     if (usernameRef.current) {
       usernameRef.current.value = profile.username ?? "";
     }
   };
-
+  const isUpdating = false;
   const onDone = () => {
     if (usernameRef.current) {
       const username = usernameRef.current.value;

@@ -1,25 +1,9 @@
-import {
-  Backdrop,
-  Box,
-  CircularProgress,
-  Dialog,
-  DialogContent,
-  Typography,
-} from "@mui/material";
+import { Box, CircularProgress, Dialog, Typography } from "@mui/material";
 import React from "react";
-
-import { useAppSelector } from "../../../app-store";
 import { IProfile } from "../profile-data-access";
-import ProfileUpdateAvatar from "./ProfileUpdateAvatar";
-import ProfileUpdateIndex from "./ProfileUpdateIndex";
-import ProfileUpdateName from "./ProfileUpdateName";
-import ProfileUpdateUsername from "./ProfileUpdateUsername";
 
 const ProfileUpdate = ({ profile }: { profile: IProfile }) => {
-  const isUpdating = useAppSelector(
-    (state) => false
-    // state.profile.type === "found" && state.profile.status === "updating"
-  );
+  const isUpdating = false;
 
   return (
     <>

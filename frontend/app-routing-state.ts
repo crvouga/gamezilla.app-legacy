@@ -8,7 +8,6 @@ import {
   isActions,
 } from "./utils";
 import URLPattern from "url-pattern";
-import { IAppState } from "./app-store";
 
 export type IAppRoute =
   | {

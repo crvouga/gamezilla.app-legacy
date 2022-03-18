@@ -1,19 +1,12 @@
 import { LoadingButton } from "@mui/lab";
 import { Box, Button, Drawer, Typography } from "@mui/material";
 import React from "react";
-import { useAppDispatch, useAppSelector } from "../../app-store";
 import * as Account from "./account-state";
 
 const Logout = () => {
-  const isLoggingOut = useAppSelector(
-    (state) => true
-    //  state.account.type === "logging-out"
-  );
-  const dispatch = useAppDispatch();
+  const isLoggingOut = false;
 
-  const onCancel = () => {
-    // navigate(-1);
-  };
+  const onCancel = () => {};
 
   return (
     <Drawer open anchor="bottom" onBackdropClick={onCancel}>

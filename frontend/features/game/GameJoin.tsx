@@ -1,12 +1,8 @@
 import { AppBar, Box, Button, Toolbar, Typography } from "@mui/material";
 import React from "react";
-import { useAppDispatch } from "../../app-store";
 import { AppBarBackButton } from "../../ui";
-import * as Game from "./game-state";
 
 const GameJoin = () => {
-  const dispatch = useAppDispatch();
-
   return (
     <Box sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
       <AppBar>

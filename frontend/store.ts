@@ -1,5 +1,4 @@
 import { composeWithDevTools } from "@redux-devtools/extension";
-import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import { applyMiddleware, createStore } from "redux";
 import createSagaMiddleware from "redux-saga";
 import { put, takeEvery } from "redux-saga/effects";
@@ -64,14 +63,3 @@ function* saga() {
 }
 
 sagaMiddleware.run(saga);
-
-/*
-
-
-*/
-
-export type IAppState = ReturnType<typeof appStore.getState>;
-export type IAppDispatch = typeof appStore.dispatch;
-
-export const useAppDispatch = () => useDispatch<IAppDispatch>();
-export const useAppSelector: TypedUseSelectorHook<IAppState> = useSelector;

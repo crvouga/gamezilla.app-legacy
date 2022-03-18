@@ -1,15 +1,9 @@
 import { LoadingButton } from "@mui/lab";
 import { Box, Button, Drawer, Typography } from "@mui/material";
 import React from "react";
-import { useAppDispatch, useAppSelector } from "../../app-store";
-import * as Profile from "./profile-state";
 
 const ProfileDelete = ({ userId }: { userId: string }) => {
-  const dispatch = useAppDispatch();
-  const isDeleting = useAppSelector(
-    (state) => true
-    // state.profile.type === "found" && state.profile.status === "deleting"
-  );
+  const isDeleting = false;
 
   const onCancel = () => {};
 

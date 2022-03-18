@@ -8,7 +8,7 @@
     "frontend:build": "cd frontend && vite build --outDir ../build/frontend",
     "frontend:start": "sirv build/frontend --single --port 3000",
     "supabase:types": "npx openapi-typescript https://ldxpcprlgecjvqwzuxgv.supabase.co/rest/v1/?apikey=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTYzNzA0MDQ5NywiZXhwIjoxOTUyNjE2NDk3fQ.ReI8CpIFbLB9Q53Az7CDBIyrn_o1JeGhPoZXdqx8Ac4 --output frontend/data-access/supabase-types.ts",
-    "watch": "tsc --build tsconfig.json --watch",
+    "typecheck": "tsc --build tsconfig.json --watch",
     "clean": "rm -rf build && rm -rf node_modules && rm .env && rm -rf .vercel",
     "setup": "yarn && npx vercel pull",
     "heroku:start": "backend:build && backend:start"
@@ -28,7 +28,6 @@
     "fast-deep-equal": "^3.1.3",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "react-redux": "^7.2.6",
     "redux": "^4.1.2",
     "redux-saga": "^1.1.3",
     "url-pattern": "^1.0.3"
