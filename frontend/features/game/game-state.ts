@@ -42,7 +42,7 @@ export const initialState: IState = {
  *
  */
 
-export const Actions = {
+export const actions = {
   connected: Action<"game", "connected", { sessionId: string; roomId: string }>(
     "game",
     "connected"
@@ -58,13 +58,13 @@ export const Actions = {
   message: Action<"game", "message", { type: string }>("game", "message"),
 };
 
-export type IAction = InferActionUnion<typeof Actions>;
+export type IAction = InferActionUnion<typeof actions>;
 
 export const isAction = (action: unknown): action is IAction => {
-  return isActions(Actions, action);
+  return isActions(actions, action);
 };
 
-export type IActionMap = InferActionMap<typeof Actions>;
+export type IActionMap = InferActionMap<typeof actions>;
 
 export const reducer = (state: IState, action: IAction): IState => {
   switch (action.type) {
@@ -126,12 +126,12 @@ export const reducer = (state: IState, action: IAction): IState => {
  */
 
 export function* saga() {
-  yield takeEvery(Actions.connected, watchConnected);
-  yield takeEvery(Actions.reconnectFailed, watchReconnectFailed);
-  yield takeEvery(Actions.reconnect, watchReconnect);
-  yield takeEvery(Actions.create, watchCreate);
+  yield takeEvery(actions.connected, watchConnected);
+  yield takeEvery(actions.reconnectFailed, watchReconnectFailed);
+  yield takeEvery(actions.reconnect, watchReconnect);
+  yield takeEvery(actions.create, watchCreate);
 
-  yield put(Actions.reconnect());
+  yield put(actions.reconnect());
 }
 
 const storageKey = "gameRoomIds";
@@ -153,7 +153,7 @@ function* watchReconnect() {
   );
 
   if (!found) {
-    yield put(Actions.reconnectFailed());
+    yield put(actions.reconnectFailed());
     return;
   }
 
@@ -161,12 +161,12 @@ function* watchReconnect() {
     yield call(GameDataAccess.reconnect, found);
 
   if (result.type === "error") {
-    yield put(Actions.reconnectFailed());
+    yield put(actions.reconnectFailed());
 
     return;
   }
 
-  yield put(Actions.reconnectSucceeded());
+  yield put(actions.reconnectSucceeded());
 
   const room = result.data;
 
@@ -188,11 +188,11 @@ function* watchCreate(action: IActionMap["create"]) {
 const createRoomChan = (room: GameDataAccess.IRoom) => {
   return eventChannel<IAction>((emit) => {
     room.onLeave(() => {
-      emit(Actions.left());
+      emit(actions.left());
     });
 
     room.onMessage("*", (type) => {
-      emit(Actions.message({ type: String(type) }));
+      emit(actions.message({ type: String(type) }));
     });
 
     return () => {
@@ -211,12 +211,12 @@ function* watchLeave(room: GameDataAccess.IRoom) {
 
 function* roomFlow(room: GameDataAccess.IRoom) {
   yield put(
-    Actions.connected({
+    actions.connected({
       sessionId: room.sessionId,
       roomId: room.id,
     })
   );
   const roomChan = createRoomChan(room);
   yield takeEvery(roomChan, watchRoomChan);
-  yield takeEvery(Actions.leave, watchLeave, room);
+  yield takeEvery(actions.leave, watchLeave, room);
 }

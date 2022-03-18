@@ -1,29 +1,16 @@
 import React from "react";
 import * as ReactDOM from "react-dom";
-import * as App from "./app";
-import { appStore } from "./store";
+import * as App from "./app/app";
 import ThemeProvider from "./features/theme/ThemeProvider";
+import { store } from "./store";
 
-const render = ({
-  state,
-  dispatch,
-}: {
-  state: App.IState;
-  dispatch: (action: App.IAction) => void;
-}) => {
+store.subscribe(() => {
   ReactDOM.render(
     <React.StrictMode>
       <ThemeProvider>
-        <App.view state={state} dispatch={dispatch} />
+        <App.view state={store.getState()} dispatch={store.dispatch} />
       </ThemeProvider>
     </React.StrictMode>,
     document.getElementById("root")
   );
-};
-
-appStore.subscribe(() => {
-  render({
-    state: appStore.getState(),
-    dispatch: appStore.dispatch,
-  });
 });

@@ -23,7 +23,7 @@ const Account = () => {
       <ListItemButton
         onClick={() => {
           // dispatch(
-          //   Routing.Actions.push({
+          //   Routing.actions.push({
           //     type: "account",
           //     child: { type: "logout" },
           //   })

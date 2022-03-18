@@ -27,7 +27,7 @@ const ProfileCreate = ({
 
   const onCreate = () => {
     // dispatch(
-    //   Profile.Actions.create({
+    //   Profile.actions.create({
     //     userId,
     //     name,
     //     username,

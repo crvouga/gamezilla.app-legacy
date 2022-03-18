@@ -2,56 +2,48 @@ import { composeWithDevTools } from "@redux-devtools/extension";
 import { applyMiddleware, createStore } from "redux";
 import createSagaMiddleware from "redux-saga";
 import { put, takeEvery } from "redux-saga/effects";
-import * as App from "./app";
-import { login } from "./app-data-access";
-import { onAuthState } from "./features/account/account-data-access";
-import { onProfile } from "./features/profile/profile-data-access";
+import { App, AppDataAccess } from "./app";
 import { Action, isActions } from "./utils";
 
 const sagaMiddleware = createSagaMiddleware();
 
-export const appStore = createStore(
-  (maybeState: App.IState | undefined, action: App.IAction) => {
-    const state = maybeState ?? App.initialState;
+const safeReducer = (
+  maybeState: App.IState | undefined,
+  action: App.IAction
+) => {
+  const state = maybeState ?? App.initialState;
 
-    if (App.isAction(action)) {
-      return App.reducer(state, action);
-    }
+  if (App.isAction(action)) {
+    return App.reducer(state, action);
+  }
 
-    return state;
-  },
+  return state;
+};
+
+export const store = createStore(
+  safeReducer,
   App.initialState,
   composeWithDevTools(applyMiddleware(sagaMiddleware))
 );
-
-const params: App.ISagaParams = {
-  subscribeAuthState: onAuthState,
-  appLoggedOut: {
-    login: ({ method }) => login({ provider: method }),
-  },
-  appLoggedIn: {
-    subscribeProfile: onProfile,
-  },
-};
 
 type IWarning = {
   type: "unknown-action";
   action: unknown;
 };
 
-const Actions = {
+const actions = {
   warning: Action<"runtime", "warning", IWarning>("runtime", "warning"),
 };
 
 const isAction = (action: unknown) => {
-  return isActions(Actions, action) || App.isAction(action);
+  return isActions(actions, action) || App.isAction(action);
 };
 
 function* saga() {
   yield takeEvery("*", function* (action) {
     if (!isAction(action)) {
       yield put(
-        Actions.warning({
+        actions.warning({
           type: "unknown-action",
           action,
         })
@@ -59,7 +51,7 @@ function* saga() {
     }
   });
 
-  yield* App.saga(params);
+  yield* App.saga(AppDataAccess);
 }
 
 sagaMiddleware.run(saga);

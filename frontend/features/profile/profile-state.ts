@@ -27,7 +27,7 @@ export const initialState: IState = {
   type: "loading",
 };
 
-export const Actions = {
+export const actions = {
   found: Action<"profile", "found", ProfileDataAccess.IProfile>(
     "profile",
     "found"
@@ -65,13 +65,13 @@ export const Actions = {
   createFailed: Action("profile", "create-failed"),
 };
 
-export type IAction = InferActionUnion<typeof Actions>;
+export type IAction = InferActionUnion<typeof actions>;
 
 export const isAction = (action: unknown): action is IAction => {
-  return isActions(Actions, action);
+  return isActions(actions, action);
 };
 
-type IActionMap = InferActionMap<typeof Actions>;
+type IActionMap = InferActionMap<typeof actions>;
 
 export const reducer = (state: IState, action: IAction): IState => {
   switch (state.type) {
@@ -176,38 +176,38 @@ export function* saga({ userId }: { userId: string }) {
   const profileChan = createProfileChan({ userId });
 
   yield takeEvery(profileChan, watchProfileChan);
-  yield takeLeading(Actions.update, watchUpdate);
-  yield takeLeading(Actions.delete, watchDelete);
-  yield takeLeading(Actions.create, watchCreate);
+  yield takeLeading(actions.update, watchUpdate);
+  yield takeLeading(actions.delete, watchDelete);
+  yield takeLeading(actions.create, watchCreate);
 }
 
 function* watchCreate(action: IActionMap["create"]) {
   yield call(ProfileDataAccess.createProfile, action.payload);
 
-  yield put(Actions.createSucceeded());
+  yield put(actions.createSucceeded());
 }
 
 function* watchUpdate(action: IActionMap["update"]) {
   yield call(ProfileDataAccess.updateProfile, action.payload);
 
-  yield put(Actions.updateSucceeded());
+  yield put(actions.updateSucceeded());
 }
 
 function* watchDelete(action: IActionMap["delete"]) {
   yield call(ProfileDataAccess.deleteProfile, action.payload);
 
-  yield put(Actions.deleteSucceeded());
+  yield put(actions.deleteSucceeded());
 }
 
 const createProfileChan = ({ userId }: { userId: string }) => {
   return eventChannel<IAction>((emit) => {
     return ProfileDataAccess.onProfile({ userId })((profile) => {
       if (profile) {
-        emit(Actions.found(profile));
+        emit(actions.found(profile));
         return;
       }
 
-      emit(Actions.notFound());
+      emit(actions.notFound());
     });
   });
 };
