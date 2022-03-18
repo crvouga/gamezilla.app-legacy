@@ -1,7 +1,6 @@
 import { LoadingButton } from "@mui/lab";
 import { Box, Button, Drawer, Typography } from "@mui/material";
 import React from "react";
-import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../app-store";
 import * as Account from "./account-state";
 
@@ -10,10 +9,9 @@ const Logout = () => {
     (state) => state.account.type === "logging-out"
   );
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
 
   const onCancel = () => {
-    navigate(-1);
+    // navigate(-1);
   };
 
   return (

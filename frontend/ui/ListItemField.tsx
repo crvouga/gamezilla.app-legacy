@@ -5,7 +5,6 @@ import {
   ListItemText,
 } from "@mui/material";
 import React from "react";
-import { Link } from "react-router-dom";
 
 export const ListItemField = ({
   label,
@@ -17,24 +16,22 @@ export const ListItemField = ({
   value?: string;
 }) => {
   return (
-    <Link to={to}>
-      <ListItemButton>
-        <ListItemText
-          primaryTypographyProps={{
-            variant: "body2",
-            color: "text.secondary",
-          }}
-          primary={label}
-          secondaryTypographyProps={{
-            variant: "body1",
-            color: value ? "text.primary" : "text.disabled",
-          }}
-          secondary={value ?? label}
-        />
-        <ListItemSecondaryAction>
-          <ChevronRight />
-        </ListItemSecondaryAction>
-      </ListItemButton>
-    </Link>
+    <ListItemButton>
+      <ListItemText
+        primaryTypographyProps={{
+          variant: "body2",
+          color: "text.secondary",
+        }}
+        primary={label}
+        secondaryTypographyProps={{
+          variant: "body1",
+          color: value ? "text.primary" : "text.disabled",
+        }}
+        secondary={value ?? label}
+      />
+      <ListItemSecondaryAction>
+        <ChevronRight />
+      </ListItemSecondaryAction>
+    </ListItemButton>
   );
 };

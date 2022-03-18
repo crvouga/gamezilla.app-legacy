@@ -26,7 +26,14 @@ const Home = ({ profile }: { profile: { avatarUrl?: string } }) => {
 
           <Avatar
             onClick={() => {
-              dispatch(Routing.Actions.push(Routing.IRoute.account));
+              dispatch(
+                Routing.Actions.push({
+                  type: "account",
+                  child: {
+                    type: "home",
+                  },
+                })
+              );
             }}
             src={profile.avatarUrl}
           />
@@ -36,7 +43,14 @@ const Home = ({ profile }: { profile: { avatarUrl?: string } }) => {
       <List>
         <ListItemButton
           onClick={() => {
-            dispatch(Routing.Actions.push(Routing.IRoute.logout));
+            dispatch(
+              Routing.Actions.push({
+                type: "account",
+                child: {
+                  type: "login",
+                },
+              })
+            );
           }}
         >
           <ListItemIcon>
@@ -50,7 +64,14 @@ const Home = ({ profile }: { profile: { avatarUrl?: string } }) => {
 
         <ListItemButton
           onClick={() => {
-            dispatch(Routing.Actions.push(Routing.IRoute.profile));
+            dispatch(
+              Routing.Actions.push({
+                type: "profile",
+                child: {
+                  type: "home",
+                },
+              })
+            );
           }}
         >
           <ListItemIcon>

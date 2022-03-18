@@ -7,7 +7,7 @@ import {
   Typography,
 } from "@mui/material";
 import React from "react";
-import { Route, Routes } from "react-router-dom";
+
 import { useAppSelector } from "../../../app-store";
 import { IProfile } from "../profile-data-access";
 import ProfileUpdateAvatar from "./ProfileUpdateAvatar";
@@ -23,22 +23,6 @@ const ProfileUpdate = ({ profile }: { profile: IProfile }) => {
 
   return (
     <>
-      <Routes>
-        <Route path="" element={<ProfileUpdateIndex profile={profile} />} />
-
-        <Route
-          path="avatar/*"
-          element={<ProfileUpdateAvatar profile={profile} />}
-        />
-
-        <Route path="name" element={<ProfileUpdateName profile={profile} />} />
-
-        <Route
-          path="username"
-          element={<ProfileUpdateUsername profile={profile} />}
-        />
-      </Routes>
-
       <Dialog open={isUpdating}>
         <Box
           sx={{

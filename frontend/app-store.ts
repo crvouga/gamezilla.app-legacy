@@ -7,7 +7,7 @@ import * as App from "./app-state";
 const sagaMiddleware = createSagaMiddleware();
 
 export const appStore = createStore(
-  (maybeState, action) => {
+  (maybeState: App.IState | undefined, action: App.IAction) => {
     const state = maybeState ?? App.initialState;
 
     if (App.isAction(action)) {

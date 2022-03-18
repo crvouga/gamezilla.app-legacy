@@ -10,7 +10,6 @@ import {
   Typography,
 } from "@mui/material";
 import React from "react";
-import { Link } from "react-router-dom";
 import { BackButton } from "../../ui";
 
 const GameDisconnected = () => {
@@ -27,29 +26,25 @@ const GameDisconnected = () => {
       </AppBar>
 
       <List>
-        <Link to="create">
-          <ListItemButton>
-            <ListItemIcon>
-              <Add />
-            </ListItemIcon>
-            <ListItemText primary="Create Game" />
-            <ListItemSecondaryAction>
-              <ChevronRight />
-            </ListItemSecondaryAction>
-          </ListItemButton>
-        </Link>
+        <ListItemButton>
+          <ListItemIcon>
+            <Add />
+          </ListItemIcon>
+          <ListItemText primary="Create Game" />
+          <ListItemSecondaryAction>
+            <ChevronRight />
+          </ListItemSecondaryAction>
+        </ListItemButton>
 
-        <Link to="join">
-          <ListItemButton>
-            <ListItemIcon>
-              <Search />
-            </ListItemIcon>
-            <ListItemText primary="Join Game" />
-            <ListItemSecondaryAction>
-              <ChevronRight />
-            </ListItemSecondaryAction>
-          </ListItemButton>
-        </Link>
+        <ListItemButton>
+          <ListItemIcon>
+            <Search />
+          </ListItemIcon>
+          <ListItemText primary="Join Game" />
+          <ListItemSecondaryAction>
+            <ChevronRight />
+          </ListItemSecondaryAction>
+        </ListItemButton>
       </List>
     </>
   );

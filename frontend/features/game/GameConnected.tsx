@@ -1,17 +1,13 @@
-import { ChevronLeft, ExitToApp } from "@mui/icons-material";
+import { ChevronLeft } from "@mui/icons-material";
 import {
   AppBar,
   Box,
   Button,
-  IconButton,
   ListItem,
   ListItemText,
   Toolbar,
-  Typography,
 } from "@mui/material";
-import { Room } from "colyseus.js";
-import React, { useEffect } from "react";
-import { Link } from "react-router-dom";
+import React from "react";
 import { useAppSelector } from "../../app-store";
 
 const GameConnected = () => {
@@ -22,14 +18,12 @@ const GameConnected = () => {
     <Box sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
       <AppBar>
         <Toolbar>
-          <Link to="/game/leave" replace>
-            <Button
-              startIcon={<ChevronLeft />}
-              sx={{ marginLeft: -1, marginRight: 2 }}
-            >
-              Leave
-            </Button>
-          </Link>
+          <Button
+            startIcon={<ChevronLeft />}
+            sx={{ marginLeft: -1, marginRight: 2 }}
+          >
+            Leave
+          </Button>
         </Toolbar>
       </AppBar>
 

@@ -1,19 +1,20 @@
-import { ChevronRight, DeleteForever, Edit, Logout } from "@mui/icons-material";
+import { Logout } from "@mui/icons-material";
 import {
   AppBar,
-  List,
   ListItemButton,
   ListItemIcon,
-  ListItemSecondaryAction,
   ListItemText,
   Toolbar,
   Typography,
 } from "@mui/material";
 import React from "react";
-import { Link } from "react-router-dom";
+import * as Routing from "../../app-routing-state";
+import { useAppDispatch } from "../../app-store";
 import { AppBarBackButton } from "../../ui";
 
 const Account = () => {
+  const dispatch = useAppDispatch();
+
   return (
     <>
       <AppBar>
@@ -23,37 +24,21 @@ const Account = () => {
         </Toolbar>
       </AppBar>
 
-      <List>
-        {/* <Link to="/profile/update">
-          <ListItemButton>
-            <ListItemIcon>
-              <Edit />
-            </ListItemIcon>
-            <ListItemText primary="Edit Profile" />
-            <ListItemSecondaryAction>
-              <ChevronRight />
-            </ListItemSecondaryAction>
-          </ListItemButton>
-        </Link>
-
-        <Link to="/profile/delete">
-          <ListItemButton>
-            <ListItemIcon>
-              <DeleteForever />
-            </ListItemIcon>
-            <ListItemText primary="Delete Profile" />
-          </ListItemButton>
-        </Link> */}
-
-        <Link to="logout">
-          <ListItemButton>
-            <ListItemIcon>
-              <Logout />
-            </ListItemIcon>
-            <ListItemText primary="Logout" />
-          </ListItemButton>
-        </Link>
-      </List>
+      <ListItemButton
+        onClick={() => {
+          dispatch(
+            Routing.Actions.push({
+              type: "account",
+              child: { type: "logout" },
+            })
+          );
+        }}
+      >
+        <ListItemIcon>
+          <Logout />
+        </ListItemIcon>
+        <ListItemText primary="Logout" />
+      </ListItemButton>
     </>
   );
 };

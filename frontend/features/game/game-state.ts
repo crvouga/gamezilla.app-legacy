@@ -13,7 +13,13 @@ import * as GameDataAccess from "./game-data-access";
 export type IState =
   | {
       type: "connected";
-      route: "/" | "/leave";
+      route:
+        | {
+            type: "home";
+          }
+        | {
+            type: "leave";
+          };
       messages: {
         type: string;
       }[];
@@ -64,7 +70,9 @@ export const reducer = (state: IState, action: IAction): IState => {
   switch (action.type) {
     case ActionType("game", "message"):
       return {
-        route: "/",
+        route: {
+          type: "home",
+        },
         ...state,
         type: "connected",
         messages: [
@@ -75,7 +83,9 @@ export const reducer = (state: IState, action: IAction): IState => {
     case ActionType("game", "connected"):
       return {
         type: "connected",
-        route: "/",
+        route: {
+          type: "home",
+        },
         messages: [],
       };
 
@@ -97,7 +107,9 @@ export const reducer = (state: IState, action: IAction): IState => {
     case ActionType("game", "reconnect-succeeded"):
       return {
         type: "connected",
-        route: "/",
+        route: {
+          type: "home",
+        },
         messages: [],
       };
 
