@@ -1,8 +1,8 @@
 import { AppBar, Box, Button, Toolbar, Typography } from "@mui/material";
 import React from "react";
-import { AppBarBackButton } from "../../ui";
+import { AppBarBackButton } from "../../../ui";
 
-const GameJoin = () => {
+const GameCreate = () => {
   return (
     <Box sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
       <AppBar>
@@ -10,7 +10,7 @@ const GameJoin = () => {
           <AppBarBackButton />
 
           <Typography sx={{ flex: 1 }} variant="h6">
-            Join Game
+            Create Game
           </Typography>
         </Toolbar>
       </AppBar>
@@ -22,14 +22,14 @@ const GameJoin = () => {
           fullWidth
           variant="contained"
           onClick={() => {
-            // dispatch(Game.actions.join());
+            // dispatch(Game.actions.create());
           }}
         >
-          Join Game
+          Create Game
         </Button>
       </Box>
     </Box>
   );
 };
 
-export default GameJoin;
+export default GameCreate;

@@ -4,6 +4,7 @@ import { eventChannel } from "redux-saga";
 import { put, takeEvery, takeLatest } from "redux-saga/effects";
 import { Splash } from "../ui";
 import { Action, InferActionUnion, isActions, ISubscription } from "../utils";
+import { AppThemeProvider } from "./app-theme";
 import { LoggedIn } from "./logged-in";
 import { LoggedOut } from "./logged-out";
 
@@ -151,17 +152,19 @@ export const view = ({
   dispatch: (action: IAction) => void;
 }) => {
   return (
-    <Layout>
-      {state.type === "loading" && (
-        <Splash subtitle="Checking if logged in..." />
-      )}
-      {state.type === "logged-out" && (
-        <LoggedOut.view state={state.child} dispatch={dispatch} />
-      )}
-      {state.type === "logged-in" && (
-        <LoggedIn.view state={state.child} dispatch={dispatch} />
-      )}
-    </Layout>
+    <AppThemeProvider>
+      <Layout>
+        {state.type === "loading" && (
+          <Splash subtitle="Checking if logged in..." />
+        )}
+        {state.type === "logged-out" && (
+          <LoggedOut.view state={state.child} dispatch={dispatch} />
+        )}
+        {state.type === "logged-in" && (
+          <LoggedIn.view state={state.child} dispatch={dispatch} />
+        )}
+      </Layout>
+    </AppThemeProvider>
   );
 };
 

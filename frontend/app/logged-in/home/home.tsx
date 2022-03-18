@@ -1,4 +1,4 @@
-import { ChevronRight, Games, Person } from "@mui/icons-material";
+import { ChevronRight, Games, Logout, Person } from "@mui/icons-material";
 import {
   AppBar,
   Avatar,
@@ -7,21 +7,59 @@ import {
   ListItemIcon,
   ListItemSecondaryAction,
   ListItemText,
+  Menu,
+  MenuItem,
   Toolbar,
   Typography,
 } from "@mui/material";
 import React from "react";
 
 export const view = ({ profile }: { profile: { avatarUrl?: string } }) => {
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+
+  const open = Boolean(anchorEl);
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
   return (
     <>
+      <Menu
+        id="basic-menu"
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        MenuListProps={{
+          "aria-labelledby": "basic-button",
+        }}
+      >
+        <MenuItem onClick={handleClose}>
+          <ListItemIcon>
+            <Person />
+          </ListItemIcon>
+          Profile
+        </MenuItem>
+        <MenuItem onClick={handleClose}>
+          <ListItemIcon>
+            <Logout />
+          </ListItemIcon>
+          Logout
+        </MenuItem>
+      </Menu>
+
       <AppBar>
         <Toolbar>
           <Typography sx={{ flex: 1 }} variant="h6">
             Home
           </Typography>
 
-          <Avatar onClick={() => {}} src={profile.avatarUrl} />
+          <Avatar
+            onClick={(event) => {
+              setAnchorEl(event.currentTarget);
+            }}
+            src={profile.avatarUrl}
+          />
         </Toolbar>
       </AppBar>
 
@@ -42,27 +80,6 @@ export const view = ({ profile }: { profile: { avatarUrl?: string } }) => {
             <Games />
           </ListItemIcon>
           <ListItemText primary="Play Game" />
-          <ListItemSecondaryAction>
-            <ChevronRight />
-          </ListItemSecondaryAction>
-        </ListItemButton>
-
-        <ListItemButton
-          onClick={() => {
-            // dispatch(
-            //   Routing.actions.push({
-            //     type: "profile",
-            //     child: {
-            //       type: "home",
-            //     },
-            //   })
-            // );
-          }}
-        >
-          <ListItemIcon>
-            <Person />
-          </ListItemIcon>
-          <ListItemText primary="Profile" />
           <ListItemSecondaryAction>
             <ChevronRight />
           </ListItemSecondaryAction>

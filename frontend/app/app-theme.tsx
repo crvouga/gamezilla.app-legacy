@@ -1,7 +1,6 @@
 import {
   createTheme,
   CssBaseline,
-  responsiveFontSizes,
   ThemeOptions,
   ThemeProvider as MuiThemeProvider,
   useMediaQuery,
@@ -101,16 +100,25 @@ export const lightOptions: ThemeOptions = {
 const darkTheme = createTheme(deepmerge(baseOptions, darkOptions));
 const lightTheme = createTheme(deepmerge(baseOptions, lightOptions));
 
-const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
+const _useSystemTheme = () => {
   const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
-  const _theme = prefersDarkMode ? darkTheme : lightTheme;
+
+  const systemTheme = prefersDarkMode ? darkTheme : lightTheme;
+
+  return systemTheme;
+};
+
+export const AppThemeProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
+  const theme = darkTheme;
 
   return (
-    <MuiThemeProvider theme={darkTheme}>
+    <MuiThemeProvider theme={theme}>
       <CssBaseline enableColorScheme />
       {children}
     </MuiThemeProvider>
   );
 };
-
-export default ThemeProvider;

@@ -1,8 +1,11 @@
-export { LoggedInDataAccess as loggedIn } from "./logged-in";
-export { LoggedOutDataAccess as loggedOut } from "./logged-out";
-
 import { supabaseClient } from "../data-access";
 import { IAuthState, IOnAuthState } from "./app";
+import { LoggedInDataAccess } from "./logged-in";
+import { LoggedOutDataAccess } from "./logged-out";
+
+export const loggedIn = LoggedInDataAccess;
+
+export const loggedOut = LoggedOutDataAccess;
 
 const getAuthState = async (): Promise<IAuthState> => {
   const session = supabaseClient.auth.session();

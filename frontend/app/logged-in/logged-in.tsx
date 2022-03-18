@@ -1,8 +1,5 @@
 import { eventChannel } from "redux-saga";
 import { put, takeEvery } from "redux-saga/effects";
-import Account from "../../features/account/Account";
-import { Home } from "./home";
-import { IProfile } from "./logged-in-data-access";
 import { Splash } from "../../ui";
 import {
   Action,
@@ -10,6 +7,9 @@ import {
   isActions,
   ISubscription,
 } from "../../utils";
+import { Home } from "./home";
+import { IProfile } from "./logged-in-data-access";
+import { Logout } from "./logout";
 
 export type IState =
   | {
@@ -33,7 +33,7 @@ export type IState =
             type: "home";
           }
         | {
-            type: "account";
+            type: "logout";
           };
     };
 
@@ -126,7 +126,7 @@ export const view = ({
       {state.type === "found" && (
         <>
           {state.route.type === "home" && <Home.view profile={state.profile} />}
-          {state.route.type === "account" && <Account />}
+          {state.route.type === "logout" && <Logout.view />}
         </>
       )}
       {state.type === "not-found" && "not-found"}

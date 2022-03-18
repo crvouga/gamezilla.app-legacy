@@ -10,7 +10,7 @@ import {
   Typography,
 } from "@mui/material";
 import React from "react";
-import { BackButton } from "../../ui";
+import { BackButton } from "../../../ui";
 
 const GameDisconnected = () => {
   return (
