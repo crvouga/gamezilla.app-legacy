@@ -6,7 +6,7 @@ import {
   InferActionMap,
   InferActionUnion,
   isActions,
-} from "../../utils";
+} from "../../../utils";
 import * as ProfileDataAccess from "./profile-data-access";
 
 export type IState =

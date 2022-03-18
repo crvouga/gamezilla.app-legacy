@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 
-import { AspectRatioSquare, ListItemField } from "../../../ui";
+import { AspectRatioSquare, ListItemField } from "../../../../ui";
 import {
   AVATAR_STYLES,
   formatAvatarStyle,

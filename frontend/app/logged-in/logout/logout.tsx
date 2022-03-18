@@ -1,9 +1,8 @@
 import { LoadingButton } from "@mui/lab";
 import { Box, Button, Drawer, Typography } from "@mui/material";
 import React from "react";
-import * as Account from "./account-state";
 
-const Logout = () => {
+export const view = () => {
   const isLoggingOut = false;
 
   const onCancel = () => {};
@@ -44,5 +43,3 @@ const Logout = () => {
     </Drawer>
   );
 };
-
-export default Logout;

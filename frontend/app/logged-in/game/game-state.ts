@@ -7,7 +7,7 @@ import {
   InferActionMap,
   InferActionUnion,
   isActions,
-} from "../../utils";
+} from "../../../utils";
 import * as GameDataAccess from "./game-data-access";
 
 export type IState =

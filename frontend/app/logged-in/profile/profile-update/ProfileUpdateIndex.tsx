@@ -8,7 +8,7 @@ import {
   Typography,
 } from "@mui/material";
 import React from "react";
-import { BackButton, ListItemField } from "../../../ui";
+import { BackButton, ListItemField } from "../../../../ui";
 
 const ProfileUpdate = ({
   profile,
