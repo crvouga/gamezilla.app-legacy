@@ -20,8 +20,8 @@ const ProfileCreate = ({
   defaultName: string;
 }) => {
   const isCreating = useAppSelector(
-    (state) =>
-      state.profile.type === "not-found" && state.profile.status === "creating"
+    (state) => true
+    // state.profile.type === "not-found" && state.profile.status === "creating"
   );
 
   const dispatch = useAppDispatch();
@@ -32,14 +32,14 @@ const ProfileCreate = ({
   );
 
   const onCreate = () => {
-    dispatch(
-      Profile.Actions.create({
-        userId,
-        name,
-        username,
-        avatarUrl: toAvatarUrl("croodles-neutral", generateRandomAvatarSeed()),
-      })
-    );
+    // dispatch(
+    //   Profile.Actions.create({
+    //     userId,
+    //     name,
+    //     username,
+    //     avatarUrl: toAvatarUrl("croodles-neutral", generateRandomAvatarSeed()),
+    //   })
+    // );
   };
 
   const onCancel = () => {};

@@ -25,7 +25,7 @@ const GameCreate = () => {
           fullWidth
           variant="contained"
           onClick={() => {
-            dispatch(Game.Actions.create());
+            // dispatch(Game.Actions.create());
           }}
         >
           Create Game

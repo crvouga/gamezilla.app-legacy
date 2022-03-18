@@ -6,7 +6,8 @@ import * as Account from "./account-state";
 
 const Logout = () => {
   const isLoggingOut = useAppSelector(
-    (state) => state.account.type === "logging-out"
+    (state) => true
+    //  state.account.type === "logging-out"
   );
   const dispatch = useAppDispatch();
 
@@ -41,7 +42,7 @@ const Logout = () => {
           loading={isLoggingOut}
           size="large"
           onClick={() => {
-            dispatch(Account.Actions.logout());
+            // dispatch(Account.Actions.logout());
           }}
         >
           Logout

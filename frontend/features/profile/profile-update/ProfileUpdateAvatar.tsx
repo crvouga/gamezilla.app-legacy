@@ -25,7 +25,6 @@ import {
   toAvatarSeed,
   toAvatarUrl,
 } from "../profile-data";
-import * as Profile from "../profile-state";
 
 const ProfileUpdateAvatar = ({
   profile,
@@ -52,8 +51,8 @@ const Index = ({
   const [avatarSeed, setAvatarSeed] = useState(parsed.avatarSeed);
 
   const isUpdating = useAppSelector(
-    (state) =>
-      state.profile.type === "found" && state.profile.status === "updating"
+    (state) => true
+    // state.profile.type === "found" && state.profile.status === "updating"
   );
 
   const dispatch = useAppDispatch();
@@ -136,14 +135,7 @@ const Index = ({
           variant="contained"
           loading={isUpdating}
           size="large"
-          onClick={() => {
-            dispatch(
-              Profile.Actions.update({
-                userId: profile.userId,
-                avatarUrl: toAvatarUrl(avatarStyle, avatarSeed),
-              })
-            );
-          }}
+          onClick={() => {}}
         >
           Update
         </LoadingButton>

@@ -35,7 +35,7 @@ const GameLeave = () => {
           variant="contained"
           size="large"
           onClick={() => {
-            dispatch(Game.Actions.leave());
+            // dispatch(Game.Actions.leave());
           }}
         >
           Leave

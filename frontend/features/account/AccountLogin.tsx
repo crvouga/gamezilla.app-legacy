@@ -31,7 +31,7 @@ const Login = ({ loading }: { loading?: boolean }) => {
         startIcon={<Google />}
         loading={loading}
         onClick={() => {
-          dispatch(Account.Actions.login({ method: "google" }));
+          // dispatch(Account.Actions.login({ method: "google" }));
         }}
       >
         Continue With Google

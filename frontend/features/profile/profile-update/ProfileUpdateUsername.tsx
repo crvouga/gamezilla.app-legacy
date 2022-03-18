@@ -22,8 +22,8 @@ const ProfileUpdateUsername = ({
   const usernameRef = useRef<HTMLInputElement | null>(null);
 
   const isUpdating = useAppSelector(
-    (state) =>
-      state.profile.type === "found" && state.profile.status === "updating"
+    (state) => true
+    // state.profile.type === "found" && state.profile.status === "updating"
   );
 
   const dispatch = useAppDispatch();
@@ -37,13 +37,6 @@ const ProfileUpdateUsername = ({
   const onDone = () => {
     if (usernameRef.current) {
       const username = usernameRef.current.value;
-
-      dispatch(
-        Profile.Actions.update({
-          userId: profile.userId,
-          username,
-        })
-      );
     }
   };
 

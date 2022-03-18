@@ -1,140 +1,186 @@
-import { Box, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { Box, useMediaQuery, useTheme } from "@mui/material";
 import React from "react";
-import { AppRoutingNotFound } from "./app-routing";
-import { useAppSelector } from "./app-store";
-import Account from "./features/account/Account";
-import AccountLogin from "./features/account/AccountLogin";
-import AccountLogout from "./features/account/AccountLogout";
-import GameConnected from "./features/game/GameConnected";
-import GameLeave from "./features/game/GameLeave";
-import Home from "./features/home/Home";
-import { IProfile } from "./features/profile/profile-data-access";
-import ProfileCreate from "./features/profile/ProfileCreate";
+import { eventChannel } from "redux-saga";
+import { put, race, take, takeEvery, takeLatest } from "redux-saga/effects";
+import * as AppDataAccess from "./app-data-access";
+import * as AppLoggedIn from "./app-logged-in";
+import * as AppLoggedOut from "./app-logged-out";
+import { Splash } from "./ui";
+import { Action, InferActionUnion, isActions } from "./utils";
 
-const App = () => {
+/* 
+
+
+*/
+
+export type IState =
+  | {
+      type: "loading";
+    }
+  | {
+      type: "logged-out";
+      child: AppLoggedOut.IState;
+    }
+  | {
+      type: "logged-in";
+      userId: string;
+      child: AppLoggedIn.IState;
+    };
+
+/* 
+
+
+*/
+
+const Actions = {
+  loggedIn: Action<"app", "logged-in", { userId: string }>("app", "logged-in"),
+  loggedOut: Action("app", "logged-out"),
+};
+
+type IAppAction = InferActionUnion<typeof Actions>;
+
+export type IAction = IAppAction | AppLoggedOut.IAction | AppLoggedIn.IAction;
+
+export const isAction = (action: unknown): action is IAction => {
   return (
-    <Layout>
-      <LoadAccount />
-    </Layout>
+    isActions(Actions, action) ||
+    AppLoggedOut.isAction(action) ||
+    AppLoggedIn.isAction(action)
   );
 };
 
-const LoadAccount = () => {
-  const account = useAppSelector((state) => state.account);
+const appReducer = (state: IState, action: IAppAction): IState => {
+  switch (action.type) {
+    case "app::logged-in":
+      return {
+        type: "logged-in",
+        userId: action.payload.userId,
+        child: AppLoggedIn.initialState,
+      };
 
-  switch (account.type) {
-    case "loading":
-      return <Splash subtitle="Checking if logged in..." />;
-
-    case "logged-in":
-      return <LoadProfile userId={account.userId} />;
-
-    case "logging-out":
-      return <Splash subtitle="Logging out..." />;
-
-    case "logged-out":
-      return <AccountLogin />;
-
-    case "logging-in":
-      return <AccountLogin loading />;
+    case "app::logged-out":
+      return {
+        type: "logged-out",
+        child: AppLoggedOut.initialState,
+      };
   }
 };
 
-const LoadProfile = ({ userId }: { userId: string }) => {
-  const profile = useAppSelector((state) => state.profile);
-  const routing = useAppSelector((state) => state.routing);
+const loggedOutReducer = (
+  state: IState,
+  action: AppLoggedOut.IAction
+): IState => {
+  if (state.type === "logged-out") {
+    return {
+      ...state,
+      child: AppLoggedOut.reducer(state.child, action),
+    };
+  }
 
-  switch (profile.type) {
-    case "loading":
-      return <Splash subtitle="Loading profile..." />;
+  return state;
+};
 
-    case "not-found":
-      switch (routing.route.type) {
-        case "profile":
-          switch (routing.route.child.type) {
-            case "create":
-              return <ProfileCreate defaultName={""} userId={userId} />;
-            default:
-              return <AccountLogout />;
-          }
-        default:
-          return <AccountLogout />;
-      }
+const loggedInReducer = (
+  state: IState,
+  action: AppLoggedIn.IAction
+): IState => {
+  if (state.type === "logged-in") {
+    return {
+      ...state,
+      child: AppLoggedIn.reducer(state.child, action),
+    };
+  }
 
-    case "found":
-      return <LoadGameRoom profile={profile.profile} />;
+  return state;
+};
+
+export const reducer = (state: IState, action: IAction): IState => {
+  switch (action.namespace) {
+    case "app":
+      return appReducer(state, action);
+
+    case "app-logged-out":
+      return loggedOutReducer(state, action);
+
+    case "app-logged-in":
+      return loggedInReducer(state, action);
   }
 };
 
-const LoadGameRoom = ({ profile }: { profile: IProfile }) => {
-  const game = useAppSelector((state) => state.game);
-  const routing = useAppSelector((state) => state.routing);
-
-  switch (game.type) {
-    case "loading":
-      return <Splash subtitle="Checking if in a game..." />;
-
-    case "connected":
-      switch (game.route.type) {
-        case "home":
-          return <GameConnected />;
-
-        case "leave":
-          return <GameLeave />;
-      }
-
-    case "disconnected":
-      switch (routing.route.type) {
-        case "home":
-          return <Home profile={profile} />;
-
-        case "account":
-          switch (routing.route.child.type) {
-            case "home":
-              return <Account />;
-
-            case "login":
-              return <AccountLogin />;
-
-            case "logout":
-              return <AccountLogout />;
-          }
-
-        case "profile":
-          return <>profile stuff</>;
-
-        default:
-          return <AppRoutingNotFound />;
-      }
-  }
+export const initialState: IState = {
+  type: "loading",
 };
 
-const Splash = ({ subtitle }: { subtitle: string }) => {
+/* 
+
+
+*/
+
+type ISubscribeAuthState = (
+  emit: (
+    authState: { type: "logged-out" } | { type: "logged-in"; userId: string }
+  ) => void
+) => () => void;
+
+export type ISagaParams = {
+  appLoggedIn: AppLoggedIn.ISagaParams;
+  appLoggedOut: AppLoggedOut.ISagaParams;
+  subscribeAuthState: ISubscribeAuthState;
+};
+
+export function* saga(params: ISagaParams) {
+  const authStateChan = eventChannel(params.subscribeAuthState);
+
+  yield takeEvery(authStateChan, function* (authState) {
+    if (authState.type === "logged-in") {
+      yield put(Actions.loggedIn({ userId: authState.userId }));
+    }
+
+    if (authState.type === "logged-out") {
+      yield put(Actions.loggedOut());
+    }
+  });
+
+  yield takeLatest(
+    [Actions.loggedIn.toString(), Actions.loggedOut.toString()],
+    function* (action: IAppAction) {
+      if (action.type === "app::logged-in") {
+        yield* AppLoggedIn.saga(params.appLoggedIn, {
+          userId: action.payload.userId,
+        });
+      }
+
+      if (action.type === "app::logged-out") {
+        yield* AppLoggedOut.saga(params.appLoggedOut);
+      }
+    }
+  );
+}
+
+/* 
+
+
+*/
+
+export const view = ({
+  state,
+  dispatch,
+}: {
+  state: IState;
+  dispatch: (action: IAction) => void;
+}) => {
   return (
-    <Box
-      sx={{
-        width: "100%",
-        height: "100%",
-        display: "grid",
-        placeItems: "center",
-      }}
-    >
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <Typography variant="h3" color="primary.main">
-          Gamezilla
-        </Typography>
-        <Typography align="center" variant="caption" color="text.secondary">
-          {subtitle}
-        </Typography>
-      </Box>
-    </Box>
+    <Layout>
+      {state.type === "loading" && (
+        <Splash subtitle="Checking if logged in..." />
+      )}
+      {state.type === "logged-out" && (
+        <AppLoggedOut.view state={state.child} dispatch={dispatch} />
+      )}
+      {state.type === "logged-in" && (
+        <AppLoggedIn.view state={state.child} dispatch={dispatch} />
+      )}
+    </Layout>
   );
 };
 
@@ -185,5 +231,3 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     </Box>
   );
 };
-
-export default App;

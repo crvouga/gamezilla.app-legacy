@@ -184,19 +184,19 @@ export function* saga() {
   const locationChan = createWindowLocationChan();
   yield takeEvery(locationChan, watchWindowLocationChan);
 
-  yield fork(function* () {
-    while (true) {
-      yield take("*");
+  // yield fork(function* () {
+  //   while (true) {
+  //     yield take("*");
 
-      const route: IAppRoute = yield select(
-        (state: IAppState) => state.routing.route
-      );
+  //     const nextRoute: IAppRoute = yield select(
+  //       (state: IAppState) => state.routing.route
+  //     );
 
-      yield call(() => {
-        window.history.pushState({}, "", encode(route));
-      });
-    }
-  });
+  //     yield call(() => {
+  //       window.history.pushState({}, "", encode(nextRoute));
+  //     });
+  //   }
+  // });
 
   const pathname = window.location.pathname;
   yield put(Actions.urlChanged(pathname));
