@@ -30,3 +30,5 @@ build
 tsconfig.tsbuildinfo
 
 .expo
+
+web-build

@@ -136,7 +136,7 @@ export const view = ({
 }) => {
   return (
     <>
-      <Button>Logout</Button>
+      <Button onPress={() => {}}>Logout</Button>
     </>
   );
 };
