@@ -9,11 +9,10 @@
     "expo:ios": "expo start --ios",
     "expo:start": "expo start",
     "expo:web": "expo start --web",
-    "frontend:build": "cd frontend && vite build --outDir ../build/frontend",
-    "frontend:dev": "cd frontend && vite",
-    "frontend:start": "sirv build/frontend --single --port 3000",
+    "frontend:build": "expo build:web",
+    "frontend:dev": "yarn expo:start",
+    "frontend:start": "sirv web-build --single --port 3000",
     "heroku:start": "backend:build && backend:start",
-    "setup": "yarn && npx vercel pull",
     "supabase:types": "npx openapi-typescript https://ldxpcprlgecjvqwzuxgv.supabase.co/rest/v1/?apikey=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTYzNzA0MDQ5NywiZXhwIjoxOTUyNjE2NDk3fQ.ReI8CpIFbLB9Q53Az7CDBIyrn_o1JeGhPoZXdqx8Ac4 --output frontend/data-access/supabase-types.ts",
     "typecheck": "tsc --build tsconfig.json --watch",
     "sort": "npx sort-package-json"
@@ -47,7 +46,6 @@
     "@vitejs/plugin-react": "^1.0.7",
     "sirv-cli": "^2.0.2",
     "tsc-watch": "^4.6.0",
-    "typescript": "^4.6.2",
-    "vite": "^2.8.0"
+    "typescript": "^4.6.2"
   }
 }
