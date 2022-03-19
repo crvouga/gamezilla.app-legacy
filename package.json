@@ -9,7 +9,7 @@
     "expo:ios": "expo start --ios",
     "expo:start": "expo start",
     "expo:web": "expo start --web",
-    "frontend:build": "expo build:web",
+    "frontend:build": "npx expo build:web",
     "frontend:dev": "yarn expo:start",
     "frontend:start": "sirv web-build --single --port 3000",
     "heroku:start": "backend:build && backend:start",

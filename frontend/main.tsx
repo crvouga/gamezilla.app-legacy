@@ -2,6 +2,7 @@ import { registerRootComponent } from "expo";
 import { useEffect, useState } from "react";
 import { Text } from "react-native";
 import * as App from "./app/app";
+import * as AppView from "./app/app-view";
 import * as AppDataAccess from "./app/app-data-access";
 import { configureStore } from "./configure-store";
 import { useLoadFonts } from "./ui-components/fonts";
@@ -30,7 +31,7 @@ const Root = () => {
     return <Text>Loading...</Text>;
   }
 
-  return <App.view state={state} dispatch={store.dispatch} />;
+  return <AppView.view state={state} dispatch={store.dispatch} />;
 };
 
 registerRootComponent(Root);
