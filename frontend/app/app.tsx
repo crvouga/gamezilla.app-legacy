@@ -161,8 +161,8 @@ export const view = ({
   dispatch: (action: IAction) => void;
 }) => {
   return (
-    <Provider theme={theme}>
-      <View style={styles.root}>
+    <View style={styles.root}>
+      <Provider theme={theme}>
         <LoadingDialog
           visible={state.type === "loading"}
           title="Checking if logged in..."
@@ -175,7 +175,7 @@ export const view = ({
         {state.type === "logged-out" && (
           <LoggedOut.view state={state.child} dispatch={dispatch} />
         )}
-      </View>
-    </Provider>
+      </Provider>
+    </View>
   );
 };
