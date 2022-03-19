@@ -1,8 +1,10 @@
 import { registerRootComponent } from "expo";
 import { useEffect, useState } from "react";
+import { Text } from "react-native";
 import * as App from "./app/app";
 import * as AppDataAccess from "./app/app-data-access";
 import { configureStore } from "./configure-store";
+import { useLoadFonts } from "./ui-components/fonts";
 
 const store = configureStore({
   reducer: App.reducer,
@@ -14,6 +16,8 @@ const store = configureStore({
 });
 
 const Root = () => {
+  const [isLoaded, error] = useLoadFonts();
+
   const [state, setState] = useState(store.getState);
 
   useEffect(() => {
@@ -21,6 +25,10 @@ const Root = () => {
       setState(store.getState);
     });
   }, []);
+
+  if (!isLoaded) {
+    return <Text>Loading...</Text>;
+  }
 
   return <App.view state={state} dispatch={store.dispatch} />;
 };

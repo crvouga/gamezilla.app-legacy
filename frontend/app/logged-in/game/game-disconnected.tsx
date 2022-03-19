@@ -1,21 +1,21 @@
-import { Add, ChevronRight, Search } from "@mui/icons-material";
-import {
-  AppBar,
-  List,
-  ListItemButton,
-  ListItemIcon,
-  ListItemSecondaryAction,
-  ListItemText,
-  Toolbar,
-  Typography,
-} from "@mui/material";
+// import { Add, ChevronRight, Search } from "@mui/icons-material";
+// import {
+//   AppBar,
+//   List,
+//   ListItemButton,
+//   ListItemIcon,
+//   ListItemSecondaryAction,
+//   ListItemText,
+//   Toolbar,
+//   Typography,
+// } from "@mui/material";
 import React from "react";
-import { BackButton } from "../../../ui";
 
 const GameDisconnected = () => {
   return (
     <>
-      <AppBar>
+      <>todo</>
+      {/* <AppBar>
         <Toolbar>
           <BackButton to="/" />
 
@@ -45,7 +45,7 @@ const GameDisconnected = () => {
             <ChevronRight />
           </ListItemSecondaryAction>
         </ListItemButton>
-      </List>
+      </List> */}
     </>
   );
 };
