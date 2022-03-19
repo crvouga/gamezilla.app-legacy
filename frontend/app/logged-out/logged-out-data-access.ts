@@ -8,7 +8,3 @@ export const login: ILogin = ({ type }) => {
     supabaseClient.auth.signIn({ provider: "google" }, { redirectTo });
   }
 };
-
-export const LoggedOutDataAccess: IDataAccess = {
-  login,
-};

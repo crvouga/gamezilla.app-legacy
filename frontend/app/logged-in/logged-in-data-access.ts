@@ -1,14 +1,5 @@
 import { definitions, supabaseClient } from "../../data-access";
-import { IOnProfile } from "./logged-in";
-
-export type IProfile = {
-  userId: string;
-  avatarUrl?: string;
-  username?: string;
-  name?: string;
-  themeMode: "LIGHT" | "DARK" | "SYSTEM";
-  gameRoomId?: string;
-};
+import { IOnProfile, IProfile } from "./logged-in";
 
 const rowToProfile = (row: definitions["profile"]): IProfile => {
   return {

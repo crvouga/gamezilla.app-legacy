@@ -1,5 +1,6 @@
 {
   "private": true,
+  "main": "./frontend/main.tsx",
   "scripts": {
     "backend:dev": "tsc-watch --build ./backend/tsconfig.json --onSuccess \"yarn backend:start\"",
     "backend:start": "node ./build/backend/main.js",
@@ -11,7 +12,11 @@
     "typecheck": "tsc --build tsconfig.json --watch",
     "clean": "rm -rf build && rm -rf node_modules && rm .env && rm -rf .vercel",
     "setup": "yarn && npx vercel pull",
-    "heroku:start": "backend:build && backend:start"
+    "heroku:start": "backend:build && backend:start",
+    "expo:start": "expo start",
+    "expo:android": "expo start --android",
+    "expo:ios": "expo start --ios",
+    "expo:web": "expo start --web"
   },
   "dependencies": {
     "@colyseus/monitor": "^0.14.22",
@@ -30,7 +35,11 @@
     "react-dom": "^17.0.2",
     "redux": "^4.1.2",
     "redux-saga": "^1.1.3",
-    "url-pattern": "^1.0.3"
+    "url-pattern": "^1.0.3",
+    "expo": "~44.0.0",
+    "expo-status-bar": "~1.2.0",
+    "react-native": "0.64.3",
+    "react-native-web": "0.17.1"
   },
   "devDependencies": {
     "@types/express": "^4.17.13",
@@ -40,6 +49,8 @@
     "sirv-cli": "^2.0.2",
     "tsc-watch": "^4.6.0",
     "typescript": "^4.6.2",
-    "vite": "^2.8.0"
+    "vite": "^2.8.0",
+    "@types/react-native": "~0.64.12"
+
   }
 }
