@@ -1,4 +1,4 @@
-import { Box, CircularProgress, Dialog, Typography } from "@mui/material";
+// import { Box, CircularProgress, Dialog, Typography } from "@mui/material";
 import React from "react";
 import { IProfile } from "../profile-data-access";
 
@@ -7,7 +7,8 @@ const ProfileUpdate = ({ profile }: { profile: IProfile }) => {
 
   return (
     <>
-      <Dialog open={isUpdating}>
+      todo
+      {/* <Dialog open={isUpdating}>
         <Box
           sx={{
             padding: 2,
@@ -19,7 +20,7 @@ const ProfileUpdate = ({ profile }: { profile: IProfile }) => {
           <CircularProgress sx={{ marginRight: 2 }} />
           <Typography>Updating...</Typography>
         </Box>
-      </Dialog>
+      </Dialog> */}
     </>
   );
 };

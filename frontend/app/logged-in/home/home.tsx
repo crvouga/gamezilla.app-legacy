@@ -1,17 +1,3 @@
-import { ChevronRight, Games, Logout, Person } from "@mui/icons-material";
-import {
-  AppBar,
-  Avatar,
-  List,
-  ListItemButton,
-  ListItemIcon,
-  ListItemSecondaryAction,
-  ListItemText,
-  Menu,
-  MenuItem,
-  Toolbar,
-  Typography,
-} from "@mui/material";
 import React from "react";
 
 type IRoute =
@@ -42,7 +28,8 @@ export const view = ({
 
   return (
     <>
-      <Menu
+      <>todo</>
+      {/* <Menu
         id="basic-menu"
         anchorEl={anchorEl}
         open={open}
@@ -104,7 +91,7 @@ export const view = ({
             <ChevronRight />
           </ListItemSecondaryAction>
         </ListItemButton>
-      </List>
+      </List> */}
     </>
   );
 };

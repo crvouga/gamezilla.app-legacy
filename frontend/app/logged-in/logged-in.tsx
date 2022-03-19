@@ -1,6 +1,6 @@
+import { Button } from "react-native-paper";
 import { eventChannel } from "redux-saga";
 import { put, takeEvery } from "redux-saga/effects";
-import { Splash } from "../../ui";
 import {
   Action,
   InferActionUnion,
@@ -8,7 +8,6 @@ import {
   ISubscription,
 } from "../../utils";
 import * as Home from "./home/home";
-
 import * as Logout from "./logout/logout";
 
 type IProfileFoundRoute =
@@ -137,16 +136,7 @@ export const view = ({
 }) => {
   return (
     <>
-      {state.type === "loading" && <Splash subtitle="Loading profile..." />}
-      {state.type === "found" && (
-        <>
-          {state.route.type === "home" && (
-            <Home.view navigate={console.log} profile={state.profile} />
-          )}
-          {state.route.type === "logout" && <Logout.view />}
-        </>
-      )}
-      {state.type === "not-found" && "not-found"}
+      <Button>Logout</Button>
     </>
   );
 };

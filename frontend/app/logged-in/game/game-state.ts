@@ -3,7 +3,6 @@ import { call, put, takeEvery } from "redux-saga/effects";
 import {
   Action,
   ActionType,
-  createStorageLocalJSON,
   InferActionMap,
   InferActionUnion,
   isActions,
@@ -134,43 +133,36 @@ export function* saga() {
   yield put(actions.reconnect());
 }
 
-const storageKey = "gameRoomIds";
+// const storageKey = "gameRoomIds";
 
-const storage = createStorageLocalJSON<{ roomId: string; sessionId: string }>();
+// const storage = createStorageLocalJSON<{ roomId: string; sessionId: string }>();
 
 function* watchConnected(action: IActionMap["connected"]) {
-  yield call(storage.write, storageKey, action.payload);
+  // yield call(storage.write, storageKey, action.payload);
 }
 
 function* watchReconnectFailed() {
-  yield call(storage.write, storageKey, null);
+  // yield call(storage.write, storageKey, null);
 }
 
 function* watchReconnect() {
-  const found: ReturnType<typeof storage.read> = yield call(
-    storage.read,
-    "gameRoomIds"
-  );
-
-  if (!found) {
-    yield put(actions.reconnectFailed());
-    return;
-  }
-
-  const result: Awaited<ReturnType<typeof GameDataAccess.reconnect>> =
-    yield call(GameDataAccess.reconnect, found);
-
-  if (result.type === "error") {
-    yield put(actions.reconnectFailed());
-
-    return;
-  }
-
-  yield put(actions.reconnectSucceeded());
-
-  const room = result.data;
-
-  yield* roomFlow(room);
+  // const found: ReturnType<typeof storage.read> = yield call(
+  //   storage.read,
+  //   "gameRoomIds"
+  // );
+  // if (!found) {
+  //   yield put(actions.reconnectFailed());
+  //   return;
+  // }
+  // const result: Awaited<ReturnType<typeof GameDataAccess.reconnect>> =
+  //   yield call(GameDataAccess.reconnect, found);
+  // if (result.type === "error") {
+  //   yield put(actions.reconnectFailed());
+  //   return;
+  // }
+  // yield put(actions.reconnectSucceeded());
+  // const room = result.data;
+  // yield* roomFlow(room);
 }
 
 function* watchCreate(action: IActionMap["create"]) {

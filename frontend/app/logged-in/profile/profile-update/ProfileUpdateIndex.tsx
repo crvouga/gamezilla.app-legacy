@@ -1,14 +1,4 @@
-import {
-  AppBar,
-  Avatar,
-  Box,
-  Button,
-  List,
-  Toolbar,
-  Typography,
-} from "@mui/material";
 import React from "react";
-import { BackButton, ListItemField } from "../../../../ui";
 
 const ProfileUpdate = ({
   profile,
@@ -17,7 +7,8 @@ const ProfileUpdate = ({
 }) => {
   return (
     <>
-      <AppBar>
+      todo
+      {/* <AppBar>
         <Toolbar>
           <BackButton to="/" />
           <Typography variant="h6" sx={{ flex: 1 }}>
@@ -54,7 +45,7 @@ const ProfileUpdate = ({
         />
 
         <ListItemField to="name" label="Name" value={profile.name} />
-      </List>
+      </List> */}
     </>
   );
 };

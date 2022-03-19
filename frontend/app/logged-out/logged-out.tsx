@@ -1,8 +1,8 @@
-import { Google } from "@mui/icons-material";
-import { LoadingButton } from "@mui/lab";
-import { Box, Typography } from "@mui/material";
 import React from "react";
+import { StyleSheet, View } from "react-native";
+import { Button, Headline } from "react-native-paper";
 import { call, takeLeading } from "redux-saga/effects";
+import { spacing } from "../../ui-components/theme";
 import {
   Action,
   InferActionMap,
@@ -81,6 +81,26 @@ export function* saga({ login }: IDataAccess) {
 
 */
 
+const styles = StyleSheet.create({
+  root: {
+    padding: spacing(2),
+    width: "100%",
+    height: "100%",
+    justifyContent: "center",
+  },
+
+  button: {
+    margin: spacing(2),
+  },
+
+  headline: {
+    fontSize: 48,
+    textAlign: "center",
+    marginBottom: spacing(2),
+    fontWeight: "bold",
+  },
+});
+
 export const view = ({
   state,
   dispatch,
@@ -88,34 +108,24 @@ export const view = ({
   state: IState;
   dispatch: (action: IAction) => void;
 }) => {
-  return (
-    <Box
-      sx={{
-        width: "100%",
-        height: "100%",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        flexDirection: "column",
-        p: 2,
-      }}
-    >
-      <Typography variant="h4" color="primary.main" sx={{ marginBottom: 2 }}>
-        Gamezilla
-      </Typography>
+  const onLogin = () => {
+    dispatch(actions.login({ type: "google" }));
+  };
 
-      <LoadingButton
-        variant="contained"
-        size="large"
-        fullWidth
-        startIcon={<Google />}
+  return (
+    <View style={styles.root}>
+      <Headline style={styles.headline}>Gamezilla</Headline>
+
+      <Button
+        style={styles.button}
+        mode="contained"
+        icon="google"
+        onPress={onLogin}
         loading={state.type === "loading"}
-        onClick={() => {
-          dispatch(actions.login({ type: "google" }));
-        }}
+        disabled={state.type === "loading"}
       >
-        Continue With Google
-      </LoadingButton>
-    </Box>
+        Continue with Google
+      </Button>
+    </View>
   );
 };
