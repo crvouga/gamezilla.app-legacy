@@ -1,15 +1,7 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from "@supabase/supabase-js";
 
-const getEnv = (key: string): string => {
-  const value = import.meta.env[key];
+const SUPABASE_URL = "https://ldxpcprlgecjvqwzuxgv.supabase.co";
+const SUPABASE_ANON_KEY =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTYzNzA0MDQ5NywiZXhwIjoxOTUyNjE2NDk3fQ.ReI8CpIFbLB9Q53Az7CDBIyrn_o1JeGhPoZXdqx8Ac4";
 
-  if (typeof value === 'string') {
-    return value;
-  }
-
-  throw new Error(`env variable '${key}' is undefined`);
-};
-
-const supabaseUrl = getEnv('VITE_SUPABASE_URL');
-const supabaseAnonKey = getEnv('VITE_SUPABASE_ANON_KEY');
-export const supabaseClient = createClient(supabaseUrl, supabaseAnonKey);
+export const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);

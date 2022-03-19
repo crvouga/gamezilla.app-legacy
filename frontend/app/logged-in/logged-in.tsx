@@ -7,9 +7,25 @@ import {
   isActions,
   ISubscription,
 } from "../../utils";
-import { Home } from "./home";
-import { IProfile } from "./logged-in-data-access";
-import { Logout } from "./logout";
+import * as Home from "./home/home";
+
+import * as Logout from "./logout/logout";
+
+type IProfileFoundRoute =
+  | {
+      type: "home";
+    }
+  | {
+      type: "logout";
+    };
+
+type IProfileNotFoundRoute =
+  | {
+      type: "logout";
+    }
+  | {
+      type: "create";
+    };
 
 export type IState =
   | {
@@ -17,24 +33,12 @@ export type IState =
     }
   | {
       type: "not-found";
-      route:
-        | {
-            type: "logout";
-          }
-        | {
-            type: "create";
-          };
+      route: IProfileNotFoundRoute;
     }
   | {
       type: "found";
       profile: IProfile;
-      route:
-        | {
-            type: "home";
-          }
-        | {
-            type: "logout";
-          };
+      route: IProfileFoundRoute;
     };
 
 export const initialState: IState = {
@@ -86,6 +90,15 @@ export const reducer = (state: IState, action: IAction): IState => {
 
 */
 
+export type IProfile = {
+  userId: string;
+  avatarUrl?: string;
+  username?: string;
+  name?: string;
+  themeMode: "LIGHT" | "DARK" | "SYSTEM";
+  gameRoomId?: string;
+};
+
 export type IOnProfile = ({
   userId,
 }: {
@@ -96,16 +109,18 @@ export type IDataAccess = {
   onProfile: IOnProfile;
 };
 
+function* watchProfileChan(profile: IProfile | null) {
+  if (profile) {
+    yield put(actions.profileFound({ profile }));
+  } else {
+    yield put(actions.profileNotFound());
+  }
+}
+
 export function* saga(dataAccess: IDataAccess, { userId }: { userId: string }) {
   const profileChan = eventChannel(dataAccess.onProfile({ userId }));
 
-  yield takeEvery(profileChan, function* (profile) {
-    if (profile) {
-      yield put(actions.profileFound({ profile }));
-    } else {
-      yield put(actions.profileNotFound());
-    }
-  });
+  yield takeEvery(profileChan, watchProfileChan);
 }
 
 /* 
@@ -125,7 +140,9 @@ export const view = ({
       {state.type === "loading" && <Splash subtitle="Loading profile..." />}
       {state.type === "found" && (
         <>
-          {state.route.type === "home" && <Home.view profile={state.profile} />}
+          {state.route.type === "home" && (
+            <Home.view navigate={console.log} profile={state.profile} />
+          )}
           {state.route.type === "logout" && <Logout.view />}
         </>
       )}

@@ -1,7 +1,7 @@
 import { supabaseClient } from "../data-access";
 import { IAuthState, IOnAuthState } from "./app";
-import { LoggedInDataAccess } from "./logged-in";
-import { LoggedOutDataAccess } from "./logged-out";
+import * as LoggedInDataAccess from "./logged-in/logged-in-data-access";
+import * as LoggedOutDataAccess from "./logged-out/logged-out-data-access";
 
 export const loggedIn = LoggedInDataAccess;
 

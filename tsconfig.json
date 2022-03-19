@@ -1,14 +1,16 @@
-{    
-    "files": [],
-    "references": [
-        {
-            "path": "./backend"
-        },
-        {
-            "path": "./common"
-        },
-        {
-            "path": "./frontend"
-        }
-    ],
+{
+  "files": [],
+  "references": [
+    {
+      "path": "./backend"
+    },
+    {
+      "path": "./common"
+    },
+    {
+      "path": "./frontend"
+    }
+  ],
+  "compilerOptions": {},
+  "extends": "expo/tsconfig.base"
 }

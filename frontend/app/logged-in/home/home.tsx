@@ -14,7 +14,24 @@ import {
 } from "@mui/material";
 import React from "react";
 
-export const view = ({ profile }: { profile: { avatarUrl?: string } }) => {
+type IRoute =
+  | {
+      type: "profile";
+    }
+  | {
+      type: "logout";
+    }
+  | {
+      type: "game";
+    };
+
+export const view = ({
+  navigate,
+  profile,
+}: {
+  navigate: (route: IRoute) => void;
+  profile: { avatarUrl?: string };
+}) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
   const open = Boolean(anchorEl);
@@ -34,13 +51,23 @@ export const view = ({ profile }: { profile: { avatarUrl?: string } }) => {
           "aria-labelledby": "basic-button",
         }}
       >
-        <MenuItem onClick={handleClose}>
+        <MenuItem
+          onClick={() => {
+            handleClose();
+            navigate({ type: "profile" });
+          }}
+        >
           <ListItemIcon>
             <Person />
           </ListItemIcon>
           Profile
         </MenuItem>
-        <MenuItem onClick={handleClose}>
+        <MenuItem
+          onClick={() => {
+            handleClose();
+            navigate({ type: "logout" });
+          }}
+        >
           <ListItemIcon>
             <Logout />
           </ListItemIcon>
@@ -66,14 +93,7 @@ export const view = ({ profile }: { profile: { avatarUrl?: string } }) => {
       <List>
         <ListItemButton
           onClick={() => {
-            // dispatch(
-            //   Routing.actions.push({
-            //     type: "account",
-            //     child: {
-            //       type: "login",
-            //     },
-            //   })
-            // );
+            navigate({ type: "game" });
           }}
         >
           <ListItemIcon>

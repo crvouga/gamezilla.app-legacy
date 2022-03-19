@@ -1,12 +1,9 @@
-import { Box, useMediaQuery, useTheme } from "@mui/material";
-import React from "react";
+import { StyleSheet, Text, View } from "react-native";
 import { eventChannel } from "redux-saga";
 import { put, takeEvery, takeLatest } from "redux-saga/effects";
-import { Splash } from "../ui";
 import { Action, InferActionUnion, isActions, ISubscription } from "../utils";
-import { AppThemeProvider } from "./app-theme";
-import { LoggedIn } from "./logged-in";
-import { LoggedOut } from "./logged-out";
+import * as LoggedIn from "./logged-in/logged-in";
+import * as LoggedOut from "./logged-out/logged-out";
 
 /* 
 
@@ -144,6 +141,14 @@ export function* saga(dataAccess: IDataAccess) {
 
 */
 
+const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+    width: "100%",
+    height: "100%",
+  },
+});
+
 export const view = ({
   state,
   dispatch,
@@ -152,66 +157,9 @@ export const view = ({
   dispatch: (action: IAction) => void;
 }) => {
   return (
-    <AppThemeProvider>
-      <Layout>
-        {state.type === "loading" && (
-          <Splash subtitle="Checking if logged in..." />
-        )}
-        {state.type === "logged-out" && (
-          <LoggedOut.view state={state.child} dispatch={dispatch} />
-        )}
-        {state.type === "logged-in" && (
-          <LoggedIn.view state={state.child} dispatch={dispatch} />
-        )}
-      </Layout>
-    </AppThemeProvider>
-  );
-};
-
-const Layout = ({ children }: { children: React.ReactNode }) => {
-  const theme = useTheme();
-
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
-
-  if (isSmallScreen) {
-    return (
-      <Box
-        sx={{
-          backgroundColor: theme.palette.background.default,
-          width: "100%",
-          height: "100%",
-          overflow: "hidden",
-        }}
-      >
-        {children}
-      </Box>
-    );
-  }
-
-  return (
-    <Box
-      sx={{
-        margin: "auto",
-        width: "100%",
-        maxWidth: 500,
-        height: "100%",
-        display: "flex",
-        alignItems: "center",
-      }}
-    >
-      <Box
-        sx={{
-          border: `1px solid ${theme.palette.divider}`,
-          borderRadius: "1rem",
-          backgroundColor: theme.palette.background.default,
-          width: "100%",
-          height: "100%",
-          maxHeight: 500 * (16 / 9),
-          overflow: "hidden",
-        }}
-      >
-        {children}
-      </Box>
-    </Box>
+    <View style={styles.root}>
+      <Text>hello from app</Text>
+      <Text>{JSON.stringify(state, null, 4)}</Text>
+    </View>
   );
 };
