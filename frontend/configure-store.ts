@@ -13,7 +13,7 @@ export const configureStore = <TState, TAction extends Action<any>>({
   reducer: (state: TState, action: TAction) => TState;
   initialState: TState;
   isAction: (action: unknown) => action is TAction;
-  saga: () => Generator<ForkEffect<void>, void, undefined>;
+  saga: () => Generator;
 }) => {
   const sagaMiddleware = createSagaMiddleware();
 
