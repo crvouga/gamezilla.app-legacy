@@ -28,7 +28,6 @@ build
 
 .env
 tsconfig.tsbuildinfo
-
 .expo
-
 web-build
+.builds

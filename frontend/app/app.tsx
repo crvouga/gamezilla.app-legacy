@@ -1,7 +1,7 @@
 import React from "react";
 import { eventChannel } from "redux-saga";
 import { put, takeEvery, takeLatest } from "redux-saga/effects";
-import * as UI from "../ui-components";
+import { LoadingDialog } from "../ui-components";
 import { Action, InferActionUnion, isActions, ISubscription } from "../utils";
 import * as LoggedIn from "./logged-in/logged-in";
 import * as LoggedOut from "./logged-out/logged-out";
@@ -159,8 +159,8 @@ export const view = ({
   dispatch: (action: IAction) => void;
 }) => {
   return (
-    <UI.ThemeProvider>
-      <UI.LoadingDialog
+    <>
+      <LoadingDialog
         visible={state.type === "loading"}
         title={"Checking if logged in..."}
       />
@@ -172,6 +172,6 @@ export const view = ({
       {state.type === "logged-out" && (
         <LoggedOut.view state={state.child} dispatch={dispatch} />
       )}
-    </UI.ThemeProvider>
+    </>
   );
 };

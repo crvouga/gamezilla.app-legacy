@@ -4,10 +4,10 @@
   "scripts": {
     "backend:build": "cd backend && tsc --build",
     "backend:dev": "tsc-watch --build ./backend/tsconfig.json --onSuccess \"yarn backend:start\"",
-    "backend:start": "node ./build/backend/main.js",
+    "backend:start": "node ./.builds/backend/main.js",
     "frontend:build": "vite build frontend",
     "frontend:dev": "vite frontend",
-    "frontend:start": "sirv ./build/frontend --single --port 3000",
+    "frontend:start": "sirv ./.builds/frontend --single --port 3000",
     "heroku:start": "backend:build && backend:start",
     "sort": "npx sort-package-json",
     "supabase:types": "npx openapi-typescript https://ldxpcprlgecjvqwzuxgv.supabase.co/rest/v1/?apikey=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTYzNzA0MDQ5NywiZXhwIjoxOTUyNjE2NDk3fQ.ReI8CpIFbLB9Q53Az7CDBIyrn_o1JeGhPoZXdqx8Ac4 --output frontend/data-access/supabase-types.ts",
@@ -27,6 +27,7 @@
     "fast-deep-equal": "^3.1.3",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "react-router-dom": "^6.2.2",
     "redux": "^4.1.2",
     "redux-saga": "^1.1.3",
     "url-pattern": "^1.0.3"

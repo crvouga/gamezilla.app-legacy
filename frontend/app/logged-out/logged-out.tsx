@@ -1,5 +1,9 @@
+import { ConstructionOutlined, Google } from "@mui/icons-material";
+import { Box, Button, Dialog, Typography } from "@mui/material";
+
 import React from "react";
 import { call, takeLeading } from "redux-saga/effects";
+import { LoadingDialog } from "../../ui-components";
 import {
   Action,
   InferActionMap,
@@ -7,10 +11,13 @@ import {
   isActions,
 } from "../../utils";
 
-/* 
-
-
-*/
+/**
+ *
+ *
+ * State
+ *
+ *
+ */
 
 export type IState =
   | {
@@ -24,14 +31,17 @@ export const initialState: IState = {
   type: "idle",
 };
 
+/**
+ *
+ *
+ * Reducer
+ *
+ *
+ */
+
 export type ILoginMethod = {
   type: "google";
 };
-
-/* 
-
-
-*/
 
 const actions = {
   login: Action<"logged-out", "login", ILoginMethod>("logged-out", "login"),
@@ -54,10 +64,13 @@ export const reducer = (state: IState, action: IAction): IState => {
   }
 };
 
-/* 
-
-
-*/
+/**
+ *
+ *
+ * Saga
+ *
+ *
+ */
 
 export type ILogin = (method: ILoginMethod) => void;
 
@@ -66,17 +79,18 @@ export type IDataAccess = {
 };
 
 export function* saga({ login }: IDataAccess) {
-  function* loginFlow(action: IActionMap["login"]) {
+  yield takeLeading(actions.login, function* (action) {
     yield call(login, action.payload);
-  }
-
-  yield takeLeading(actions.login, loginFlow);
+  });
 }
 
-/* 
-
-
-*/
+/**
+ *
+ *
+ * View
+ *
+ *
+ */
 
 export const view = ({
   state,
@@ -85,15 +99,27 @@ export const view = ({
   state: IState;
   dispatch: (action: IAction) => void;
 }) => {
-  const onLogin = () => {
-    dispatch(actions.login({ type: "google" }));
-  };
-
   return (
-    <div>
-      <h1>Gamezilla</h1>
+    <>
+      <LoadingDialog visible={state.type === "loading"} title="Logging in..." />
 
-      <button>Continue with Google</button>
-    </div>
+      <Dialog open={state.type === "idle"}>
+        <Box sx={{ p: 2 }}>
+          <Typography variant="h3" sx={{ marginBottom: 2, paddingX: 4 }}>
+            Gamezilla
+          </Typography>
+          <Button
+            fullWidth
+            startIcon={<Google />}
+            variant="contained"
+            onClick={() => {
+              dispatch(actions.login({ type: "google" }));
+            }}
+          >
+            Continue with Google
+          </Button>
+        </Box>
+      </Dialog>
+    </>
   );
 };

@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import * as ReactDOM from "react-dom";
-import { useEffect, useState } from "react";
+import { BrowserRouter } from "react-router-dom";
 import * as App from "./app/app";
 import * as AppDataAccess from "./app/app-data-access";
+import { ThemeProvider } from "./ui-components";
 import { createStore } from "./utils";
 
 const store = createStore({
@@ -23,7 +24,13 @@ const Root = () => {
     });
   }, []);
 
-  return <App.view state={state} dispatch={store.dispatch} />;
+  return (
+    <BrowserRouter>
+      <ThemeProvider>
+        <App.view state={state} dispatch={store.dispatch} />
+      </ThemeProvider>
+    </BrowserRouter>
+  );
 };
 
 ReactDOM.render(<Root />, document.getElementById("root"));
