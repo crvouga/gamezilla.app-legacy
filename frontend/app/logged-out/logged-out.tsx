@@ -2,6 +2,7 @@ import { ConstructionOutlined, Google } from "@mui/icons-material";
 import { Box, Button, Dialog, Typography } from "@mui/material";
 
 import React from "react";
+import { Navigate, Route, Routes } from "react-router-dom";
 import { call, takeLeading } from "redux-saga/effects";
 import { LoadingDialog } from "../../ui-components";
 import {
@@ -101,25 +102,41 @@ export const view = ({
 }) => {
   return (
     <>
-      <LoadingDialog visible={state.type === "loading"} title="Logging in..." />
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <>
+              <LoadingDialog
+                visible={state.type === "loading"}
+                title="Logging in..."
+              />
 
-      <Dialog open={state.type === "idle"}>
-        <Box sx={{ p: 2 }}>
-          <Typography variant="h3" sx={{ marginBottom: 2, paddingX: 4 }}>
-            Gamezilla
-          </Typography>
-          <Button
-            fullWidth
-            startIcon={<Google />}
-            variant="contained"
-            onClick={() => {
-              dispatch(actions.login({ type: "google" }));
-            }}
-          >
-            Continue with Google
-          </Button>
-        </Box>
-      </Dialog>
+              <Dialog open={state.type === "idle"}>
+                <Box sx={{ p: 2 }}>
+                  <Typography
+                    variant="h3"
+                    sx={{ marginBottom: 2, paddingX: 4 }}
+                  >
+                    Gamezilla
+                  </Typography>
+                  <Button
+                    fullWidth
+                    startIcon={<Google />}
+                    variant="contained"
+                    onClick={() => {
+                      dispatch(actions.login({ type: "google" }));
+                    }}
+                  >
+                    Continue with Google
+                  </Button>
+                </Box>
+              </Dialog>
+            </>
+          }
+        />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
     </>
   );
 };
