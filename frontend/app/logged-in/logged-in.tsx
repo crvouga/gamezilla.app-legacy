@@ -1,12 +1,14 @@
 import React from "react";
 import { eventChannel } from "redux-saga";
 import { put, takeEvery } from "redux-saga/effects";
+import * as UI from "../../ui-components";
 import {
   Action,
   InferActionUnion,
   isActions,
   ISubscription,
 } from "../../utils";
+import * as Home from "./home/home";
 
 type IProfileFoundRoute =
   | {
@@ -132,5 +134,14 @@ export const view = ({
   state: IState;
   dispatch: (action: IAction) => void;
 }) => {
-  return <></>;
+  return (
+    <>
+      <UI.LoadingDialog
+        visible={state.type === "loading"}
+        title="Loading profile..."
+      />
+
+      {state.type === "found" && <Home.view profile={state.profile} />}
+    </>
+  );
 };

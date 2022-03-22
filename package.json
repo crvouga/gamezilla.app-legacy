@@ -15,6 +15,10 @@
   },
   "dependencies": {
     "@colyseus/monitor": "^0.14.22",
+    "@emotion/react": "^11.8.2",
+    "@emotion/styled": "^11.8.1",
+    "@mui/icons-material": "^5.5.1",
+    "@mui/material": "^5.5.2",
     "@redux-devtools/extension": "^3.2.2",
     "@supabase/supabase-js": "^1.30.0",
     "colyseus": "^0.14.23",

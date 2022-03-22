@@ -1,7 +1,7 @@
 import React from "react";
 import { eventChannel } from "redux-saga";
 import { put, takeEvery, takeLatest } from "redux-saga/effects";
-import { LoadingDialog } from "../ui-components/Loading";
+import * as UI from "../ui-components";
 import { Action, InferActionUnion, isActions, ISubscription } from "../utils";
 import * as LoggedIn from "./logged-in/logged-in";
 import * as LoggedOut from "./logged-out/logged-out";
@@ -121,7 +121,6 @@ export function* saga(dataAccess: IDataAccess) {
   const authChan = eventChannel<IAuthState>(dataAccess.onAuthState);
 
   yield takeEvery(authChan, function* (authState) {
-    console.log({ authState });
     switch (authState.type) {
       case "logged-in":
         yield put(actions.loggedIn(authState));
@@ -160,8 +159,8 @@ export const view = ({
   dispatch: (action: IAction) => void;
 }) => {
   return (
-    <div>
-      <LoadingDialog
+    <UI.ThemeProvider>
+      <UI.LoadingDialog
         visible={state.type === "loading"}
         title={"Checking if logged in..."}
       />
@@ -173,6 +172,6 @@ export const view = ({
       {state.type === "logged-out" && (
         <LoggedOut.view state={state.child} dispatch={dispatch} />
       )}
-    </div>
+    </UI.ThemeProvider>
   );
 };
