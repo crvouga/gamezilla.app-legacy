@@ -1,10 +1,4 @@
-import {
-  ActivityIndicator,
-  Dialog,
-  Portal,
-  Headline,
-} from "react-native-paper";
-import { spacing } from "./theme";
+import React from "react";
 
 export const LoadingDialog = ({
   visible,
@@ -14,16 +8,11 @@ export const LoadingDialog = ({
   title: string;
 }) => {
   return (
-    <Portal>
-      <Dialog visible={visible}>
-        <Dialog.Content>
-          <ActivityIndicator
-            size="large"
-            style={{ marginBottom: spacing(2) }}
-          />
-          <Headline style={{ textAlign: "center" }}>{title}</Headline>
-        </Dialog.Content>
-      </Dialog>
-    </Portal>
+    <div>
+      <div>
+        <div />
+        <h1 style={{ textAlign: "center" }}>{title}</h1>
+      </div>
+    </div>
   );
 };

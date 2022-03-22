@@ -1,5 +1,5 @@
 import { put, takeEvery } from "redux-saga/effects";
-import { Action, isActions } from ".";
+import { Action, isActions } from "./action-creator";
 
 const actions = {
   error: Action<
