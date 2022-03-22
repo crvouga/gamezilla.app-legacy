@@ -58,3 +58,7 @@ export const onProfile: IOnProfile =
       subscription.unsubscribe();
     };
   };
+
+export const logout = async () => {
+  await supabaseClient.auth.signOut();
+};
