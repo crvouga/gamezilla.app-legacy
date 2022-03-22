@@ -7,7 +7,7 @@ export const loggedIn = LoggedInDataAccess;
 
 export const loggedOut = LoggedOutDataAccess;
 
-const getAuthState = async (): Promise<IAuthState> => {
+const getAuthState = (): IAuthState => {
   const session = supabaseClient.auth.session();
   const userId = session?.user?.id;
 

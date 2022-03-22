@@ -1,13 +1,11 @@
-import { registerRootComponent } from "expo";
+import React from "react";
+import * as ReactDOM from "react-dom";
 import { useEffect, useState } from "react";
-import { Text } from "react-native";
 import * as App from "./app/app";
-import * as AppView from "./app/app-view";
 import * as AppDataAccess from "./app/app-data-access";
-import { configureStore } from "./configure-store";
-import { useLoadFonts } from "./ui-components/fonts";
+import { createStore } from "./utils";
 
-const store = configureStore({
+const store = createStore({
   reducer: App.reducer,
   initialState: App.initialState,
   isAction: App.isAction,
@@ -17,8 +15,6 @@ const store = configureStore({
 });
 
 const Root = () => {
-  const [isLoaded, error] = useLoadFonts();
-
   const [state, setState] = useState(store.getState);
 
   useEffect(() => {
@@ -27,11 +23,7 @@ const Root = () => {
     });
   }, []);
 
-  if (!isLoaded) {
-    return <Text>Loading...</Text>;
-  }
-
-  return <AppView.view state={state} dispatch={store.dispatch} />;
+  return <App.view state={state} dispatch={store.dispatch} />;
 };
 
-registerRootComponent(Root);
+ReactDOM.render(<Root />, document.getElementById("root"));

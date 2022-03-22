@@ -1,4 +1,4 @@
-import { Button } from "react-native-paper";
+import React from "react";
 import { eventChannel } from "redux-saga";
 import { put, takeEvery } from "redux-saga/effects";
 import {
@@ -7,8 +7,6 @@ import {
   isActions,
   ISubscription,
 } from "../../utils";
-import * as Home from "./home/home";
-import * as Logout from "./logout/logout";
 
 type IProfileFoundRoute =
   | {
@@ -134,9 +132,5 @@ export const view = ({
   state: IState;
   dispatch: (action: IAction) => void;
 }) => {
-  return (
-    <>
-      <Button onPress={() => {}}>Logout</Button>
-    </>
-  );
+  return <></>;
 };

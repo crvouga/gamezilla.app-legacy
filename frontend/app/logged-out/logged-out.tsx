@@ -1,8 +1,5 @@
 import React from "react";
-import { StyleSheet, View } from "react-native";
-import { Button, Headline } from "react-native-paper";
 import { call, takeLeading } from "redux-saga/effects";
-import { spacing } from "../../ui-components/theme";
 import {
   Action,
   InferActionMap,
@@ -81,27 +78,6 @@ export function* saga({ login }: IDataAccess) {
 
 */
 
-const styles = StyleSheet.create({
-  root: {
-    padding: spacing(2),
-    width: "100%",
-    height: "100%",
-    justifyContent: "center",
-    flex: 1,
-  },
-
-  button: {
-    margin: spacing(2),
-  },
-
-  headline: {
-    fontSize: 48,
-    textAlign: "center",
-    marginBottom: spacing(2),
-    fontWeight: "bold",
-  },
-});
-
 export const view = ({
   state,
   dispatch,
@@ -114,19 +90,10 @@ export const view = ({
   };
 
   return (
-    <View style={styles.root}>
-      <Headline style={styles.headline}>Gamezilla</Headline>
+    <div>
+      <h1>Gamezilla</h1>
 
-      <Button
-        style={styles.button}
-        mode="contained"
-        icon="google"
-        onPress={onLogin}
-        loading={state.type === "loading"}
-        disabled={state.type === "loading"}
-      >
-        Continue with Google
-      </Button>
-    </View>
+      <button>Continue with Google</button>
+    </div>
   );
 };
