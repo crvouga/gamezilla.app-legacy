@@ -11,6 +11,8 @@ import {
   isActions,
   ISubscription,
 } from "../../utils";
+import { ProfileCreateForm } from "./profile/profile-create-form";
+import { LoadingDialog } from "../../ui-components";
 
 type IProfileState =
   | {
@@ -18,6 +20,7 @@ type IProfileState =
     }
   | {
       type: "profile-not-found";
+      status: "idle" | "creating";
     }
   | {
       type: "profile-found";
@@ -47,6 +50,11 @@ const actions = {
     "profile-found"
   ),
   profileNotFound: Action("logged-in", "profile-not-found"),
+  createProfile: Action<
+    "logged-in",
+    "create-profile",
+    { avatarUrl: string; name: string; username: string }
+  >("logged-in", "create-profile"),
   logout: Action("logged-in", "logout"),
 };
 
@@ -58,6 +66,19 @@ export const isAction = (action: unknown): action is IAction => {
 
 export const reducer = (state: IState, action: IAction): IState => {
   switch (action.type) {
+    case "logged-in::create-profile":
+      if (state.child.type === "profile-not-found") {
+        return {
+          ...state,
+          child: {
+            ...state.child,
+            status: "creating",
+          },
+        };
+      }
+
+      return state;
+
     case "logged-in::logout":
       return {
         ...state,
@@ -78,6 +99,7 @@ export const reducer = (state: IState, action: IAction): IState => {
         ...state,
         child: {
           type: "profile-not-found",
+          status: "idle",
         },
       };
   }
@@ -101,16 +123,30 @@ export type IOnProfile = ({
   userId,
 }: {
   userId: string;
-}) => ISubscription<IProfile | null>;
+}) => ISubscription<
+  { type: "found"; profile: IProfile } | { type: "not-found" }
+>;
+
+export type ICreateProfile = (values: {
+  userId: string;
+  avatarUrl: string;
+  username: string;
+  name: string;
+}) => Promise<
+  { type: "success" } | { type: "error"; errors: { message: string }[] }
+>;
 
 export type IDataAccess = {
   onProfile: IOnProfile;
   logout: () => void;
+  createProfile: ICreateProfile;
 };
 
-function* watchProfileChan(profile: IProfile | null) {
-  if (profile) {
-    yield put(actions.profileFound({ profile }));
+function* watchProfileChan(
+  result: { type: "found"; profile: IProfile } | { type: "not-found" }
+) {
+  if (result.type === "found") {
+    yield put(actions.profileFound(result));
   } else {
     yield put(actions.profileNotFound());
   }
@@ -120,8 +156,17 @@ export function* saga(dataAccess: IDataAccess, { userId }: { userId: string }) {
   const profileChan = eventChannel(dataAccess.onProfile({ userId }));
 
   yield takeEvery(profileChan, watchProfileChan);
+
   yield takeEvery(actions.logout, function* () {
     yield call(dataAccess.logout);
+  });
+
+  yield takeEvery(actions.createProfile, function* (action) {
+    const result: Awaited<ReturnType<typeof dataAccess.createProfile>> =
+      yield call(dataAccess.createProfile, {
+        userId,
+        ...action.payload,
+      });
   });
 }
 
@@ -131,9 +176,13 @@ export function* saga(dataAccess: IDataAccess, { userId }: { userId: string }) {
 */
 
 export const view = ({
+  userId,
+  defaultName,
   state,
   dispatch,
 }: {
+  defaultName: string;
+  userId: string;
   state: IState;
   dispatch: (action: IAction) => void;
 }) => {
@@ -157,32 +206,59 @@ export const view = ({
     navigate(route.type);
   };
 
-  const back = () => {
-    navigate(-1);
-  };
-
   return (
     <>
-      <UI.LoadingDialog
-        visible={state.child.type === "loading"}
-        title="Loading profile..."
-      />
-
       <Routes>
-        {state.child.type !== "loading" && (
-          <Route
-            path="logout"
-            element={
-              <Logout.LogoutDialog
-                onCancel={() => {
-                  navigate("home", { replace: true });
-                }}
-                onLogout={() => {
-                  dispatch(actions.logout());
-                }}
-              />
-            }
-          />
+        {state.child.type === "loading" && (
+          <>
+            <Route
+              path="/loading"
+              element={
+                <LoadingDialog
+                  visible={state.child.type === "loading"}
+                  title="Loading profile..."
+                />
+              }
+            />
+
+            <Route path="*" element={<Navigate to="/loading" replace />} />
+          </>
+        )}
+
+        {state.child.type === "profile-not-found" && (
+          <>
+            <Route
+              path="profile/create/*"
+              element={
+                <ProfileCreateForm
+                  onCancel={() => {
+                    push({ type: "logout" });
+                  }}
+                  onCreate={(values) => {
+                    dispatch(actions.createProfile(values));
+                  }}
+                  userId={userId}
+                  defaultName={defaultName}
+                />
+              }
+            />
+
+            <Route
+              path="/logout"
+              element={
+                <Logout.LogoutDialog
+                  onCancel={() => {
+                    navigate("profile/create", { replace: true });
+                  }}
+                  onLogout={() => {
+                    dispatch(actions.logout());
+                  }}
+                />
+              }
+            />
+
+            <Route path="*" element={<Navigate to="profile/create" />} />
+          </>
         )}
 
         {state.child.type === "profile-found" && (
@@ -190,6 +266,20 @@ export const view = ({
             <Route
               path="home"
               element={<Home.view profile={state.child.profile} push={push} />}
+            />
+
+            <Route
+              path="logout"
+              element={
+                <Logout.LogoutDialog
+                  onCancel={() => {
+                    navigate("home", { replace: true });
+                  }}
+                  onLogout={() => {
+                    dispatch(actions.logout());
+                  }}
+                />
+              }
             />
 
             <Route path="*" element={<Navigate to="home" />} />

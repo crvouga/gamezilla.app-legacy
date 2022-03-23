@@ -1,5 +1,5 @@
 import { definitions, supabaseClient } from "../../data-access";
-import { IOnProfile, IProfile } from "./logged-in";
+import { ICreateProfile, IOnProfile, IProfile } from "./logged-in";
 
 const rowToProfile = (row: definitions["profile"]): IProfile => {
   return {
@@ -35,22 +35,30 @@ export const onProfile: IOnProfile =
   (set) => {
     getProfile({ userId }).then((profile) => {
       if (profile) {
-        set(profile);
+        set({ type: "found", profile });
         return;
       }
-      set(null);
+      set({ type: "not-found" });
     });
 
     const subscription = supabaseClient
       .from<definitions["profile"]>(`profile:id=eq.${userId}`)
       .on("INSERT", (payload) => {
-        set(rowToProfile(payload.new));
+        set({
+          type: "found",
+          profile: rowToProfile(payload.new),
+        });
       })
       .on("UPDATE", (payload) => {
-        set(rowToProfile(payload.new));
+        set({
+          type: "found",
+          profile: rowToProfile(payload.new),
+        });
       })
       .on("DELETE", () => {
-        set(null);
+        set({
+          type: "not-found",
+        });
       })
       .subscribe();
 
@@ -61,4 +69,38 @@ export const onProfile: IOnProfile =
 
 export const logout = async () => {
   await supabaseClient.auth.signOut();
+};
+
+export const createProfile: ICreateProfile = async ({
+  userId,
+  name,
+  username,
+  avatarUrl,
+}) => {
+  const response = await supabaseClient
+    .from<definitions["profile"]>("profile")
+    .insert({
+      id: userId,
+      name,
+      username,
+      avatar_url: avatarUrl,
+      theme_mode: "SYSTEM",
+    })
+    .single();
+
+  if (response.data?.id) {
+    return {
+      type: "success",
+      profile: rowToProfile(response.data),
+    };
+  }
+
+  return {
+    type: "error",
+    errors: [
+      {
+        message: response.error?.message ?? "Failed to create profile",
+      },
+    ],
+  };
 };

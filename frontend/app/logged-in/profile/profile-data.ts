@@ -69,12 +69,18 @@ export const toAvatarSeed = (seed: string) => {
 const AVATAR_URL_ROOT = `https://avatars.dicebear.com/api`;
 const AVATAR_FILE_TYPE = "svg";
 
-export const toAvatarUrl = (style: IAvatarStyle, seed: IAvatarSeed) => {
+export const toAvatarUrl = ({
+  avatarSeed,
+  avatarStyle,
+}: {
+  avatarStyle: IAvatarStyle;
+  avatarSeed: IAvatarSeed;
+}) => {
   const url = new URL(
-    `${AVATAR_URL_ROOT}/${style}/${seed}.${AVATAR_FILE_TYPE}`
+    `${AVATAR_URL_ROOT}/${avatarStyle}/${avatarSeed}.${AVATAR_FILE_TYPE}`
   );
 
-  if (style === "croodles" || style === "croodles-neutral") {
+  if (avatarStyle === "croodles" || avatarStyle === "croodles-neutral") {
     url.searchParams.append("backgroundColor", "white");
   }
 
