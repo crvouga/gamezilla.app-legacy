@@ -1,7 +1,7 @@
 import { Box, Button, Dialog, Typography } from "@mui/material";
 import React from "react";
 
-export const LogoutDialog = ({
+export const LogoutForm = ({
   onCancel,
   onLogout,
 }: {
@@ -26,14 +26,14 @@ export const LogoutDialog = ({
         <Button
           variant="contained"
           fullWidth
+          onClick={onLogout}
           sx={{ marginBottom: 2 }}
-          onClick={onCancel}
         >
-          Cancel
+          Logout
         </Button>
 
-        <Button variant="outlined" fullWidth onClick={onLogout}>
-          Logout
+        <Button variant="outlined" fullWidth onClick={onCancel}>
+          Cancel
         </Button>
       </Box>
     </Dialog>

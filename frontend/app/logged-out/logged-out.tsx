@@ -116,10 +116,12 @@ export const view = ({
                 <Box sx={{ p: 2 }}>
                   <Typography
                     variant="h3"
+                    align="center"
                     sx={{ marginBottom: 2, paddingX: 4 }}
                   >
                     Gamezilla
                   </Typography>
+
                   <Button
                     fullWidth
                     startIcon={<Google />}

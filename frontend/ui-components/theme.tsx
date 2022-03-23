@@ -1,6 +1,7 @@
 import {
   createTheme,
   CssBaseline,
+  responsiveFontSizes,
   ThemeProvider as MuiThemeProvider,
 } from "@mui/material";
 import React from "react";
@@ -19,12 +20,20 @@ export const darkTheme = createTheme({
         elevation: 0,
       },
     },
+
+    MuiButton: {
+      defaultProps: {
+        size: "large",
+      },
+    },
   },
 });
 
+const theme = responsiveFontSizes(darkTheme);
+
 export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   return (
-    <MuiThemeProvider theme={darkTheme}>
+    <MuiThemeProvider theme={theme}>
       <CssBaseline />
 
       {children}
