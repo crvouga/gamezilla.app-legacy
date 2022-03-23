@@ -1,5 +1,10 @@
 import { definitions, supabaseClient } from "../../data-access";
-import { ICreateProfile, IOnProfile, IProfile } from "./logged-in";
+import {
+  ICreateProfile,
+  IOnProfile,
+  IProfile,
+  IUpdateProfile,
+} from "./logged-in";
 
 const rowToProfile = (row: definitions["profile"]): IProfile => {
   return {
@@ -100,6 +105,39 @@ export const createProfile: ICreateProfile = async ({
     errors: [
       {
         message: response.error?.message ?? "Failed to create profile",
+      },
+    ],
+  };
+};
+
+export const updateProfile: IUpdateProfile = async ({
+  userId,
+  name,
+  username,
+  avatarUrl,
+}) => {
+  const response = await supabaseClient
+    .from<definitions["profile"]>("profile")
+    .update({
+      name,
+      username,
+      avatar_url: avatarUrl,
+    })
+    .match({ id: userId })
+    .single();
+
+  if (response.data?.id) {
+    return {
+      type: "success",
+      profile: rowToProfile(response.data),
+    };
+  }
+
+  return {
+    type: "error",
+    errors: [
+      {
+        message: response.error?.message ?? "Failed to update profile",
       },
     ],
   };

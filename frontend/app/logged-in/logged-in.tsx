@@ -1,18 +1,31 @@
+import { ChevronRight, Edit } from "@mui/icons-material";
+import {
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemSecondaryAction,
+  ListItemText,
+} from "@mui/material";
 import React from "react";
 import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 import { eventChannel } from "redux-saga";
 import { call, put, takeEvery } from "redux-saga/effects";
-import * as UI from "../../ui-components";
-import * as Home from "./home/home";
-import * as Logout from "./logout/logout-dialog";
+import { AppBar, LoadingDialog } from "../../ui-components";
 import {
   Action,
   InferActionUnion,
   isActions,
   ISubscription,
 } from "../../utils";
-import { ProfileCreateForm } from "./profile/profile-create-form";
-import { LoadingDialog } from "../../ui-components";
+import { Home } from "./home";
+import { LogoutForm } from "./logout-form";
+import {
+  parseAvatarUrl,
+  toAvatarSeed,
+  toAvatarUrl,
+} from "./profile/profile-data";
+import { ProfileForm } from "./profile/profile-form";
 
 type IProfileState =
   | {
@@ -24,6 +37,7 @@ type IProfileState =
     }
   | {
       type: "profile-found";
+      status: "idle" | "updating";
       profile: IProfile;
     };
 
@@ -55,6 +69,11 @@ const actions = {
     "create-profile",
     { avatarUrl: string; name: string; username: string }
   >("logged-in", "create-profile"),
+  updateProfile: Action<
+    "logged-in",
+    "update-profile",
+    { avatarUrl: string; name: string; username: string }
+  >("logged-in", "update-profile"),
   logout: Action("logged-in", "logout"),
 };
 
@@ -66,6 +85,19 @@ export const isAction = (action: unknown): action is IAction => {
 
 export const reducer = (state: IState, action: IAction): IState => {
   switch (action.type) {
+    case "logged-in::update-profile":
+      if (state.child.type === "profile-found") {
+        return {
+          ...state,
+          child: {
+            ...state.child,
+            status: "updating",
+          },
+        };
+      }
+
+      return state;
+
     case "logged-in::create-profile":
       if (state.child.type === "profile-not-found") {
         return {
@@ -90,6 +122,7 @@ export const reducer = (state: IState, action: IAction): IState => {
         ...state,
         child: {
           type: "profile-found",
+          status: "idle",
           profile: action.payload.profile,
         },
       };
@@ -136,10 +169,20 @@ export type ICreateProfile = (values: {
   { type: "success" } | { type: "error"; errors: { message: string }[] }
 >;
 
+export type IUpdateProfile = (values: {
+  userId: string;
+  avatarUrl: string;
+  username: string;
+  name: string;
+}) => Promise<
+  { type: "success" } | { type: "error"; errors: { message: string }[] }
+>;
+
 export type IDataAccess = {
   onProfile: IOnProfile;
   logout: () => void;
   createProfile: ICreateProfile;
+  updateProfile: IUpdateProfile;
 };
 
 function* watchProfileChan(
@@ -230,15 +273,26 @@ export const view = ({
             <Route
               path="profile/create/*"
               element={
-                <ProfileCreateForm
+                <ProfileForm
+                  title="Create Profile"
                   onCancel={() => {
                     push({ type: "logout" });
                   }}
-                  onCreate={(values) => {
-                    dispatch(actions.createProfile(values));
+                  onDone={(values) => {
+                    dispatch(
+                      actions.createProfile({
+                        username: values.username,
+                        name: values.name,
+                        avatarUrl: toAvatarUrl(values),
+                      })
+                    );
                   }}
-                  userId={userId}
-                  defaultName={defaultName}
+                  defaultValues={{
+                    name: defaultName,
+                    username: defaultName.replace(" ", "").toLocaleLowerCase(),
+                    avatarSeed: toAvatarSeed(defaultName),
+                    avatarStyle: "big-ears-neutral",
+                  }}
                 />
               }
             />
@@ -246,7 +300,7 @@ export const view = ({
             <Route
               path="/logout"
               element={
-                <Logout.LogoutDialog
+                <LogoutForm
                   onCancel={() => {
                     navigate("profile/create", { replace: true });
                   }}
@@ -265,13 +319,66 @@ export const view = ({
           <>
             <Route
               path="home"
-              element={<Home.view profile={state.child.profile} push={push} />}
+              element={<Home profile={state.child.profile} push={push} />}
             />
+
+            <Route path="profile">
+              <Route
+                path=""
+                element={
+                  <>
+                    <AppBar title="Profile" />
+                    <List>
+                      <ListItemButton
+                        onClick={() => {
+                          navigate("profile/edit");
+                        }}
+                      >
+                        <ListItemIcon>
+                          <Edit />
+                        </ListItemIcon>
+                        <ListItemText primary="Edit" />
+                        <ListItemSecondaryAction>
+                          <ChevronRight />
+                        </ListItemSecondaryAction>
+                      </ListItemButton>
+                      <ListItemButton>
+                        <ListItemText primary="Delete" />
+                      </ListItemButton>
+                    </List>
+                  </>
+                }
+              />
+              <Route
+                path="edit/*"
+                element={
+                  <ProfileForm
+                    title="Edit Profile"
+                    defaultValues={{
+                      ...parseAvatarUrl(state.child.profile.avatarUrl),
+                      username: state.child.profile.username ?? "",
+                      name: state.child.profile.name ?? "",
+                    }}
+                    onCancel={() => {
+                      navigate("home", { replace: true });
+                    }}
+                    onDone={(values) => {
+                      dispatch(
+                        actions.updateProfile({
+                          ...values,
+                          avatarUrl: toAvatarUrl(values),
+                        })
+                      );
+                    }}
+                  />
+                }
+              />
+            </Route>
 
             <Route
               path="logout"
               element={
-                <Logout.LogoutDialog
+                <LogoutForm
                   onCancel={() => {
                     navigate("home", { replace: true });
                   }}

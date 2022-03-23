@@ -3,41 +3,29 @@ import React, { useState } from "react";
 import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 import { AppBar } from "../../../ui-components";
 import { ProfileAvatarForm } from "./profile-avatar-form";
-import {
-  IAvatarSeed,
-  IAvatarStyle,
-  toAvatarSeed,
-  toAvatarUrl,
-} from "./profile-data";
+import { IAvatarSeed, IAvatarStyle, toAvatarUrl } from "./profile-data";
 
-export const ProfileCreateForm = ({
-  userId,
-  defaultName,
+type IValues = {
+  avatarSeed: IAvatarSeed;
+  avatarStyle: IAvatarStyle;
+  username: string;
+  name: string;
+};
+
+export const ProfileForm = ({
+  defaultValues,
   onCancel,
-  onCreate,
+  onDone,
+  title,
 }: {
-  userId: string;
-  defaultName: string;
-  onCreate: (values: {
-    avatarUrl: string;
-    username: string;
-    name: string;
-  }) => void;
+  title: string;
+  defaultValues: IValues;
+  onDone: (values: IValues) => void;
   onCancel: () => void;
 }) => {
-  const isCreating = false;
+  const [values, setValues] = useState(defaultValues);
 
-  const [name, setName] = useState(defaultName);
-  const [username, setUsername] = useState(
-    name.replace(" ", "").toLowerCase() ?? ""
-  );
-  const [avatarSeed, setAvatarSeed] = useState<IAvatarSeed>(
-    toAvatarSeed(username)
-  );
-  const [avatarStyle, setAvatarStyle] =
-    useState<IAvatarStyle>("pixel-art-neutral");
-
-  const avatarUrl = toAvatarUrl({ avatarSeed, avatarStyle });
+  const avatarUrl = toAvatarUrl(values);
 
   const navigate = useNavigate();
 
@@ -49,7 +37,7 @@ export const ProfileCreateForm = ({
           <Box
             sx={{ height: "100%", display: "flex", flexDirection: "column" }}
           >
-            <AppBar title="Create Profile" />
+            <AppBar title={title} />
 
             <Box
               onClick={() => {
@@ -79,15 +67,25 @@ export const ProfileCreateForm = ({
                 sx={{ marginBottom: 4 }}
                 fullWidth
                 label="Name"
-                value={name}
-                onChange={(event) => setName(event.currentTarget.value)}
+                value={values.name}
+                onChange={(event) =>
+                  setValues((values) => ({
+                    ...values,
+                    name: event.currentTarget.value,
+                  }))
+                }
               />
 
               <TextField
                 fullWidth
                 label="Username"
-                value={username}
-                onChange={(event) => setUsername(event.currentTarget.value)}
+                value={values.username}
+                onChange={(event) =>
+                  setValues((values) => ({
+                    ...values,
+                    username: event.currentTarget.value,
+                  }))
+                }
               />
             </Box>
 
@@ -115,14 +113,10 @@ export const ProfileCreateForm = ({
                 fullWidth
                 variant="contained"
                 onClick={() => {
-                  onCreate({
-                    avatarUrl,
-                    name,
-                    username,
-                  });
+                  onDone(values);
                 }}
               >
-                Create
+                Done
               </Button>
             </Box>
           </Box>
@@ -133,13 +127,12 @@ export const ProfileCreateForm = ({
         path="avatar"
         element={
           <ProfileAvatarForm
-            defaultValues={{
-              avatarSeed,
-              avatarStyle,
-            }}
-            onDone={(values) => {
-              setAvatarSeed(values.avatarSeed);
-              setAvatarStyle(values.avatarStyle);
+            defaultValues={values}
+            onDone={(avatarValues) => {
+              setValues((values) => ({
+                ...values,
+                ...avatarValues,
+              }));
               navigate(-1);
             }}
             onCancel={() => {

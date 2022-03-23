@@ -1,5 +1,5 @@
 import React from "react";
-import * as UI from "../../../ui-components";
+import { Icons, Avatar, AppBar, Menu } from "../../ui-components";
 
 type IRoute =
   | {
@@ -12,7 +12,7 @@ type IRoute =
       type: "game";
     };
 
-export const view = ({
+export const Home = ({
   profile,
   push,
 }: {
@@ -29,10 +29,10 @@ export const view = ({
 
   return (
     <>
-      <UI.AppBar
+      <AppBar
         title={"Home"}
         end={[
-          <UI.Avatar
+          <Avatar
             src={profile.avatarUrl}
             onClick={(event) => {
               setAnchorEl(event.currentTarget);
@@ -41,20 +41,20 @@ export const view = ({
         ]}
       />
 
-      <UI.Menu
+      <Menu
         anchorEl={anchorEl}
         open={open}
         onClose={handleClose}
         items={[
           {
-            icon: <UI.Icons.Person />,
+            icon: <Icons.Person />,
             title: "Your profile",
             onClick: () => {
-              push({ type: "logout" });
+              push({ type: "profile" });
             },
           },
           {
-            icon: <UI.Icons.Logout />,
+            icon: <Icons.Logout />,
             title: "Logout",
             onClick: () => {
               push({ type: "logout" });
