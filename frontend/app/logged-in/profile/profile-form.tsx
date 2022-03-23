@@ -23,9 +23,12 @@ export const ProfileForm = ({
   onDone: (values: IValues) => void;
   onCancel: () => void;
 }) => {
-  const [values, setValues] = useState(defaultValues);
+  const [name, setName] = useState(defaultValues.name);
+  const [username, setUsername] = useState(defaultValues.username);
+  const [avatarSeed, setAvatarSeed] = useState(defaultValues.avatarSeed);
+  const [avatarStyle, setAvatarStyle] = useState(defaultValues.avatarStyle);
 
-  const avatarUrl = toAvatarUrl(values);
+  const avatarUrl = toAvatarUrl({ avatarSeed, avatarStyle });
 
   const navigate = useNavigate();
 
@@ -67,25 +70,19 @@ export const ProfileForm = ({
                 sx={{ marginBottom: 4 }}
                 fullWidth
                 label="Name"
-                value={values.name}
-                onChange={(event) =>
-                  setValues((values) => ({
-                    ...values,
-                    name: event.currentTarget.value,
-                  }))
-                }
+                value={name}
+                onChange={(event) => {
+                  setName(event?.currentTarget?.value ?? "");
+                }}
               />
 
               <TextField
                 fullWidth
                 label="Username"
-                value={values.username}
-                onChange={(event) =>
-                  setValues((values) => ({
-                    ...values,
-                    username: event.currentTarget.value,
-                  }))
-                }
+                value={username}
+                onChange={(event) => {
+                  setUsername(event?.currentTarget?.value ?? "");
+                }}
               />
             </Box>
 
@@ -113,7 +110,12 @@ export const ProfileForm = ({
                 fullWidth
                 variant="contained"
                 onClick={() => {
-                  onDone(values);
+                  onDone({
+                    avatarSeed,
+                    avatarStyle,
+                    name,
+                    username,
+                  });
                 }}
               >
                 Done
@@ -127,12 +129,13 @@ export const ProfileForm = ({
         path="avatar"
         element={
           <ProfileAvatarForm
-            defaultValues={values}
+            defaultValues={{
+              avatarSeed,
+              avatarStyle,
+            }}
             onDone={(avatarValues) => {
-              setValues((values) => ({
-                ...values,
-                ...avatarValues,
-              }));
+              setAvatarSeed(avatarValues.avatarSeed);
+              setAvatarStyle(avatarValues.avatarStyle);
               navigate(-1);
             }}
             onCancel={() => {

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { eventChannel } from "redux-saga";
 import { put, takeEvery, takeLatest } from "redux-saga/effects";
 import { LoadingDialog } from "../ui-components";
@@ -169,6 +169,8 @@ export const view = ({
   state: IState;
   dispatch: (action: IAction) => void;
 }) => {
+  const [_state, setState] = useState<IState>();
+
   return (
     <>
       <LoadingDialog

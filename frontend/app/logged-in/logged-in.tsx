@@ -1,7 +1,6 @@
-import { ChevronRight, Edit } from "@mui/icons-material";
+import { ChevronRight, Delete, Edit } from "@mui/icons-material";
 import {
   List,
-  ListItem,
   ListItemButton,
   ListItemIcon,
   ListItemSecondaryAction,
@@ -12,6 +11,7 @@ import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 import { eventChannel } from "redux-saga";
 import { call, put, takeEvery } from "redux-saga/effects";
 import { AppBar, LoadingDialog } from "../../ui-components";
+import { DialogConformation } from "../../ui-components/dialog-confirmation";
 import {
   Action,
   InferActionUnion,
@@ -19,7 +19,6 @@ import {
   ISubscription,
 } from "../../utils";
 import { Home } from "./home";
-import { LogoutForm } from "./logout-form";
 import {
   parseAvatarUrl,
   toAvatarSeed,
@@ -58,6 +57,14 @@ export const initialState: IState = {
 
 */
 
+const MutationActions = () => {
+  return {
+    mutate: Action("mutation", "mutate"),
+    succeeded: Action("mutation", "succeeded"),
+    failed: Action("mutation", "failed"),
+  };
+};
+
 const actions = {
   profileFound: Action<"logged-in", "profile-found", { profile: IProfile }>(
     "logged-in",
@@ -74,6 +81,8 @@ const actions = {
     "update-profile",
     { avatarUrl: string; name: string; username: string }
   >("logged-in", "update-profile"),
+  updateProfileFailed: Action("logged-in", "update-profile-failed"),
+  profileUpdated: Action("logged-in", "profile-updated"),
   logout: Action("logged-in", "logout"),
 };
 
@@ -92,6 +101,32 @@ export const reducer = (state: IState, action: IAction): IState => {
           child: {
             ...state.child,
             status: "updating",
+          },
+        };
+      }
+
+      return state;
+
+    case "logged-in::profile-updated":
+      if (state.child.type === "profile-found") {
+        return {
+          ...state,
+          child: {
+            ...state.child,
+            status: "idle",
+          },
+        };
+      }
+
+      return state;
+
+    case "logged-in::update-profile-failed":
+      if (state.child.type === "profile-found") {
+        return {
+          ...state,
+          child: {
+            ...state.child,
+            status: "idle",
           },
         };
       }
@@ -211,6 +246,22 @@ export function* saga(dataAccess: IDataAccess, { userId }: { userId: string }) {
         ...action.payload,
       });
   });
+
+  yield takeEvery(actions.updateProfile, function* (action) {
+    const result: Awaited<ReturnType<typeof dataAccess.updateProfile>> =
+      yield call(dataAccess.updateProfile, {
+        userId,
+        ...action.payload,
+      });
+
+    if (result.type === "error") {
+      yield put(actions.updateProfileFailed());
+    }
+
+    if (result.type === "success") {
+      yield put(actions.profileUpdated());
+    }
+  });
 }
 
 /* 
@@ -255,7 +306,7 @@ export const view = ({
         {state.child.type === "loading" && (
           <>
             <Route
-              path="/loading"
+              path=""
               element={
                 <LoadingDialog
                   visible={state.child.type === "loading"}
@@ -264,7 +315,7 @@ export const view = ({
               }
             />
 
-            <Route path="*" element={<Navigate to="/loading" replace />} />
+            <Route path="*" element={<Navigate to="" replace />} />
           </>
         )}
 
@@ -300,11 +351,13 @@ export const view = ({
             <Route
               path="/logout"
               element={
-                <LogoutForm
+                <DialogConformation
+                  title="Log out of Gamezilla?"
                   onCancel={() => {
-                    navigate("profile/create", { replace: true });
+                    navigate("home", { replace: true });
                   }}
-                  onLogout={() => {
+                  confirmTitle="Logout"
+                  onConfirm={() => {
                     dispatch(actions.logout());
                   }}
                 />
@@ -342,8 +395,18 @@ export const view = ({
                           <ChevronRight />
                         </ListItemSecondaryAction>
                       </ListItemButton>
-                      <ListItemButton>
+                      <ListItemButton
+                        onClick={() => {
+                          navigate("profile/delete");
+                        }}
+                      >
+                        <ListItemIcon>
+                          <Delete />
+                        </ListItemIcon>
                         <ListItemText primary="Delete" />
+                        <ListItemSecondaryAction>
+                          <ChevronRight />
+                        </ListItemSecondaryAction>
                       </ListItemButton>
                     </List>
                   </>
@@ -352,25 +415,48 @@ export const view = ({
               <Route
                 path="edit/*"
                 element={
-                  <ProfileForm
-                    title="Edit Profile"
-                    defaultValues={{
-                      ...parseAvatarUrl(state.child.profile.avatarUrl),
-                      username: state.child.profile.username ?? "",
-                      name: state.child.profile.name ?? "",
-                    }}
-                    onCancel={() => {
-                      navigate("home", { replace: true });
-                    }}
-                    onDone={(values) => {
-                      dispatch(
-                        actions.updateProfile({
-                          ...values,
-                          avatarUrl: toAvatarUrl(values),
-                        })
-                      );
-                    }}
-                  />
+                  <>
+                    <LoadingDialog
+                      visible={state.child.status === "updating"}
+                      title="Updating profile..."
+                    />
+                    <ProfileForm
+                      title="Edit Profile"
+                      defaultValues={{
+                        ...parseAvatarUrl(state.child.profile.avatarUrl),
+                        username: state.child.profile.username ?? "",
+                        name: state.child.profile.name ?? "",
+                      }}
+                      onCancel={() => {
+                        navigate("profile", { replace: true });
+                      }}
+                      onDone={(values) => {
+                        dispatch(
+                          actions.updateProfile({
+                            ...values,
+                            avatarUrl: toAvatarUrl(values),
+                          })
+                        );
+                      }}
+                    />
+                  </>
+                }
+              />
+              <Route
+                path="delete"
+                element={
+                  <>
+                    <DialogConformation
+                      title="Delete your profile forever?"
+                      onCancel={() => {
+                        navigate("profile", { replace: true });
+                      }}
+                      confirmTitle="Delete"
+                      onConfirm={() => {
+                        // dispatch(actions.deleteProfile());
+                      }}
+                    />
+                  </>
                 }
               />
             </Route>
@@ -378,11 +464,13 @@ export const view = ({
             <Route
               path="logout"
               element={
-                <LogoutForm
+                <DialogConformation
+                  title="Log out of Gamezilla?"
                   onCancel={() => {
                     navigate("home", { replace: true });
                   }}
-                  onLogout={() => {
+                  confirmTitle="Logout"
+                  onConfirm={() => {
                     dispatch(actions.logout());
                   }}
                 />

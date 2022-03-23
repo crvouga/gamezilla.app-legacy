@@ -1,12 +1,16 @@
 import { Box, Button, Dialog, Typography } from "@mui/material";
 import React from "react";
 
-export const LogoutForm = ({
+export const DialogConformation = ({
+  title,
+  confirmTitle,
   onCancel,
-  onLogout,
+  onConfirm,
 }: {
+  title: string;
+  confirmTitle: string;
   onCancel: () => void;
-  onLogout: () => void;
+  onConfirm: () => void;
 }) => {
   return (
     <Dialog open onClose={onCancel}>
@@ -20,20 +24,20 @@ export const LogoutForm = ({
         }}
       >
         <Typography variant="h5" sx={{ marginBottom: 2, paddingX: 2 }}>
-          Log out of Gamezilla?
+          {title}
         </Typography>
 
         <Button
-          variant="contained"
+          variant="outlined"
           fullWidth
-          onClick={onLogout}
+          onClick={onCancel}
           sx={{ marginBottom: 2 }}
         >
-          Logout
+          Cancel
         </Button>
 
-        <Button variant="outlined" fullWidth onClick={onCancel}>
-          Cancel
+        <Button variant="contained" fullWidth onClick={onConfirm}>
+          {confirmTitle}
         </Button>
       </Box>
     </Dialog>
