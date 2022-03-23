@@ -10,11 +10,16 @@ export const loggedOut = LoggedOutDataAccess;
 const getAuthState = (): IAuthState => {
   const session = supabaseClient.auth.session();
   const userId = session?.user?.id;
+  const defaultName =
+    session?.user?.user_metadata?.name ??
+    session?.user?.user_metadata?.full_name ??
+    "";
 
   if (userId) {
     return {
       type: "logged-in",
       userId,
+      defaultName,
     };
   }
 
@@ -38,10 +43,16 @@ export const onAuthState: IOnAuthState = (set) => {
         case "TOKEN_REFRESHED":
         case "USER_UPDATED":
           const userId = session?.user?.id;
+          const defaultName =
+            session?.user?.user_metadata?.name ??
+            session?.user?.user_metadata?.full_name ??
+            "";
+
           if (userId) {
             set({
               type: "logged-in",
               userId,
+              defaultName,
             });
             return;
           }

@@ -25,6 +25,7 @@ export type IState =
   | {
       type: "logged-in";
       userId: string;
+      defaultName: string;
       child: LoggedIn.IState;
     };
 
@@ -41,7 +42,10 @@ export const initialState: IState = {
  */
 
 export const actions = {
-  loggedIn: Action<"app", "logged-in", { userId: string }>("app", "logged-in"),
+  loggedIn: Action<"app", "logged-in", { userId: string; defaultName: string }>(
+    "app",
+    "logged-in"
+  ),
   loggedOut: Action("app", "logged-out"),
 };
 
@@ -65,6 +69,7 @@ export const reducer = (state: IState, action: IAction): IState => {
           return {
             type: "logged-in",
             userId: action.payload.userId,
+            defaultName: action.payload.defaultName,
             child: LoggedIn.initialState,
           };
 
@@ -106,8 +111,14 @@ export const reducer = (state: IState, action: IAction): IState => {
  */
 
 export type IAuthState =
-  | { type: "logged-out" }
-  | { type: "logged-in"; userId: string };
+  | {
+      type: "logged-out";
+    }
+  | {
+      type: "logged-in";
+      userId: string;
+      defaultName: string;
+    };
 
 export type IOnAuthState = ISubscription<IAuthState>;
 
@@ -166,7 +177,12 @@ export const view = ({
       />
 
       {state.type === "logged-in" && (
-        <LoggedIn.view state={state.child} dispatch={dispatch} />
+        <LoggedIn.view
+          defaultName={state.defaultName}
+          userId={state.userId}
+          state={state.child}
+          dispatch={dispatch}
+        />
       )}
 
       {state.type === "logged-out" && (
