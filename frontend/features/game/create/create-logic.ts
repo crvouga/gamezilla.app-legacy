@@ -1,3 +1,4 @@
+import { call, put, takeLatest } from "redux-saga/effects";
 import { Action, InferActionUnion } from "../../../utils";
 
 /**
@@ -52,8 +53,20 @@ export const reducer = (state: IState, action: IAction): IState => {
  *
  */
 
-type IDataAccess = {
-  create: () => {};
+export type IDataAccess = {
+  create: () => Promise<{ type: "success" } | { type: "error" }>;
 };
 
-export function* saga() {}
+export function* saga({ create }: IDataAccess) {
+  yield takeLatest(actions.gameCreate, function* (action) {
+    const result: Awaited<ReturnType<typeof create>> = yield call(create);
+
+    if (result.type === "error") {
+      yield put(actions.gameCreateFailed());
+    }
+
+    if (result.type === "success") {
+      yield put(actions.gameCreateSucceeded());
+    }
+  });
+}
