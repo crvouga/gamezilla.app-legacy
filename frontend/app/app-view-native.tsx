@@ -1,6 +1,7 @@
 import { LinkingOptions, NavigationContainer } from "@react-navigation/native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import AppLoading from "expo-app-loading";
 import * as React from "react";
 import { View } from "react-native";
 import {
@@ -11,12 +12,11 @@ import {
 } from "react-native-paper";
 import { useAuthState } from "../features/auth/auth-state/use-auth-state";
 import { SignInView } from "../features/auth/sign-in/sign-in-view-native";
-import { SignOutView } from "../features/auth/sign-out/sign-out-view-native";
+import { SignOutButton } from "../features/auth/sign-out/sign-out-view-native";
 import { ProfileCreateScreen } from "../features/profile/profile-create/profile-create-screen";
+import { ProfileDeleteButton } from "../features/profile/profile-delete/profile-delete-view";
 import { useAppSelector } from "../main-store";
-import { DialogLoading } from "../ui/DialogLoading";
-import { useFontState } from "../ui/theme-fonts";
-import { darkTheme } from "../ui/theme";
+import { darkTheme, DialogLoading, spacing, useFontState } from "../ui";
 
 const linking: LinkingOptions<RootStackParamList> = {
   prefixes: [],
@@ -27,8 +27,6 @@ const linking: LinkingOptions<RootStackParamList> = {
     },
   },
 };
-
-import AppLoading from "expo-app-loading";
 
 export const AppView = () => {
   const authState = useAuthState();
@@ -94,7 +92,7 @@ const SignedInView = ({
         />
       </Portal>
 
-      {profileState.type === "found" && <ProfileFoundView />}
+      {profileState.type === "found" && <ProfileFoundView userId={userId} />}
 
       {profileState.type === "not-found" && (
         <ProfileNotFoundView userId={userId} defaultName={defaultName} />
@@ -159,7 +157,7 @@ type RootStackParamList = {
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
-const ProfileFoundView = () => {
+const ProfileFoundView = ({ userId }: { userId: string }) => {
   return (
     <Stack.Navigator initialRouteName="Home">
       <Stack.Screen
@@ -178,7 +176,6 @@ const ProfileFoundView = () => {
 
       <Stack.Screen
         name="Profile"
-        component={ProfileScreen}
         options={{
           header: ({ navigation }) => {
             return (
@@ -193,7 +190,11 @@ const ProfileFoundView = () => {
             );
           },
         }}
-      />
+      >
+        {() => {
+          return <ProfileScreen userId={userId} />;
+        }}
+      </Stack.Screen>
 
       <Stack.Screen
         name="Game"
@@ -220,7 +221,6 @@ const ProfileFoundView = () => {
 const HomeScreen = ({
   navigation,
 }: NativeStackScreenProps<RootStackParamList, "Home">) => {
-  const [state, setState] = React.useState<"idle" | "visible">("idle");
   return (
     <>
       <List.Section>
@@ -240,25 +240,12 @@ const HomeScreen = ({
           left={() => <List.Icon icon="account" />}
           right={() => <List.Icon icon="chevron-right" />}
         />
-        <List.Item
-          onPress={() => {
-            setState("visible");
-          }}
-          title="Sign Out"
-          left={() => <List.Icon icon="logout" />}
-        />
       </List.Section>
-      <SignOutView
-        visible={state === "visible"}
-        onCancel={() => {
-          setState("idle");
-        }}
-      />
     </>
   );
 };
 
-const ProfileScreen = () => {
+const ProfileScreen = ({ userId }: { userId: string }) => {
   return (
     <>
       <List.Section>
@@ -268,12 +255,16 @@ const ProfileScreen = () => {
           left={() => <List.Icon icon="pencil" />}
           right={() => <List.Icon icon="chevron-right" />}
         />
-        <List.Item
-          title="Delete"
-          left={() => <List.Icon icon="delete" />}
-          right={() => <List.Icon icon="chevron-right" />}
-        />
       </List.Section>
+
+      <SignOutButton
+        style={{ marginHorizontal: spacing(1), marginBottom: spacing(2) }}
+      />
+
+      <ProfileDeleteButton
+        style={{ marginHorizontal: spacing(1) }}
+        userId={userId}
+      />
     </>
   );
 };

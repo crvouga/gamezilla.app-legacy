@@ -1,3 +1,4 @@
+import { ViewStyle } from "react-native";
 import { Button as PaperButton } from "react-native-paper";
 
 export const Button = ({
@@ -7,7 +8,11 @@ export const Button = ({
   loading,
   disabled,
   icon,
+  color,
+  style,
 }: {
+  style?: ViewStyle;
+  color?: string;
   icon?: string;
   mode?: "contained" | "outlined" | "text";
   title: string;
@@ -23,7 +28,12 @@ export const Button = ({
       uppercase={false}
       onPress={onPress}
       icon={icon}
-      style={{ borderRadius: 24 }}
+      color={color}
+      theme={{ roundness: 24 }}
+      style={{
+        borderColor: color,
+        ...style,
+      }}
     >
       {title}
     </PaperButton>

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { Button, Dialog, Portal, Title } from "react-native-paper";
-import { DialogLoading } from "../../../ui/DialogLoading";
+import { ViewStyle } from "react-native";
+import { Dialog, Portal, Title, useTheme } from "react-native-paper";
+import { Button, DialogLoading } from "../../../ui";
 import { dataAccess } from "./sign-out-data-access";
 
 export const SignOutView = ({
@@ -31,12 +32,40 @@ export const SignOutView = ({
         </Dialog.Title>
 
         <Dialog.Actions>
-          <Button onPress={onCancel}>Cancel</Button>
-          <Button onPress={onSignOut}>Sign Out</Button>
+          <Button onPress={onCancel} title="Cancel" />
+          <Button onPress={onSignOut} title="Sign Out" />
         </Dialog.Actions>
       </Dialog>
 
       <DialogLoading visible={state === "loading"} title="Signing out..." />
     </Portal>
+  );
+};
+
+export const SignOutButton = ({ style }: { style?: ViewStyle }) => {
+  const [state, setState] = useState<"idle" | "visible">("idle");
+
+  const onPress = () => {
+    setState("visible");
+  };
+
+  const onCancel = () => {
+    setState("idle");
+  };
+
+  const theme = useTheme();
+
+  return (
+    <>
+      <Button
+        mode="outlined"
+        icon="logout"
+        onPress={onPress}
+        title="Sign Out"
+        color={theme.colors.error}
+        style={style}
+      />
+      <SignOutView visible={state === "visible"} onCancel={onCancel} />
+    </>
   );
 };
