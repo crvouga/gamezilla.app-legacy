@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { ViewStyle } from "react-native";
-import { Dialog, Portal, Title, useTheme } from "react-native-paper";
+import { Dialog, Portal, useTheme } from "react-native-paper";
 import { Button, DialogLoading } from "../../../ui";
 import { dataAccess } from "./sign-out-data-access";
 
@@ -26,10 +26,7 @@ export const SignOutView = ({
   return (
     <Portal>
       <Dialog visible={visible && state === "idle"} onDismiss={onCancel}>
-        {/* @ts-ignore */}
-        <Dialog.Title>
-          <Title>Sign out of Gamezilla?</Title>
-        </Dialog.Title>
+        <Dialog.Title>Sign out of Gamezilla?</Dialog.Title>
 
         <Dialog.Actions>
           <Button onPress={onCancel} title="Cancel" />
