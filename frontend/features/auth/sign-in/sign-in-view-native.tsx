@@ -1,11 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { StyleSheet } from "react-native";
 import { Button, Dialog, Headline, Portal } from "react-native-paper";
-import { useDispatch } from "react-redux";
-import { useAppSelector } from "../../../main-store";
 import { DialogLoading } from "../../../ui/DialogLoading";
 import { fontSize, spacing } from "../../../ui/ThemeProvider";
-import { actions } from "./sign-in-logic";
+import { dataAccess } from "./sign-in-data-access";
 
 const styles = StyleSheet.create({
   root: {
@@ -13,20 +11,25 @@ const styles = StyleSheet.create({
   },
   headline: {
     textAlign: "center",
-    fontSize: fontSize(8),
+    fontSize: fontSize(6),
     marginBottom: spacing(2),
   },
 });
 
 export const SignInView = () => {
-  const state = useAppSelector((state) => state.auth.signIn);
-  const dispatch = useDispatch();
+  const [state, setState] = useState<"idle" | "loading">("idle");
+
+  const loginInWithGoogle = async () => {
+    setState("loading");
+
+    await dataAccess.signIn({ type: "google" });
+  };
 
   return (
     <>
       <Portal>
         <Dialog
-          visible={state.type === "idle"}
+          visible={state === "idle"}
           dismissable={false}
           style={styles.root}
         >
@@ -34,20 +37,15 @@ export const SignInView = () => {
           <Button
             icon="google"
             mode="contained"
-            loading={state.type === "signing-in"}
-            disabled={state.type === "signing-in"}
-            onPress={() => {
-              dispatch(actions.signIn({ type: "google" }));
-            }}
+            loading={state === "loading"}
+            disabled={state === "loading"}
+            onPress={loginInWithGoogle}
           >
             Continue With Google
           </Button>
         </Dialog>
 
-        <DialogLoading
-          visible={state.type === "signing-in"}
-          title="Signing in..."
-        />
+        <DialogLoading visible={state === "loading"} title="Signing in..." />
       </Portal>
     </>
   );

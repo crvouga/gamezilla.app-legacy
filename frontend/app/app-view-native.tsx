@@ -1,27 +1,17 @@
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import * as React from "react";
-import {
-  Appbar,
-  Avatar,
-  Button,
-  List,
-  Portal,
-  TextInput,
-} from "react-native-paper";
+import { Appbar, List, Portal } from "react-native-paper";
+import { useAuthState } from "../features/auth/auth-state/use-auth-state";
 import { SignInView } from "../features/auth/sign-in/sign-in-view-native";
 import { SignOutView } from "../features/auth/sign-out/sign-out-view-native";
-import { toAvatarSeed } from "../features/profile/profile-avatar-data";
-import {
-  IProfileFormValues,
-  ProfileFormView,
-} from "../features/profile/profile-form-view-native";
+import { ProfileCreateScreen } from "../features/profile/profile-create/profile-create-screen";
 import { useAppSelector } from "../main-store";
 import { DialogLoading } from "../ui/DialogLoading";
-import { spacing, ThemeProvider } from "../ui/ThemeProvider";
+import { ThemeProvider } from "../ui/ThemeProvider";
 
 export const AppView = () => {
-  const authState = useAppSelector((state) => state.auth.subscribe);
+  const authState = useAuthState();
 
   return (
     <ThemeProvider>
@@ -33,7 +23,10 @@ export const AppView = () => {
       </Portal>
 
       {authState.type === "signed-in" && (
-        <SignedInView defaultName={authState.defaultName} />
+        <SignedInView
+          userId={authState.userId}
+          defaultName={authState.defaultName}
+        />
       )}
 
       {authState.type === "signed-out" && (
@@ -45,7 +38,13 @@ export const AppView = () => {
   );
 };
 
-const SignedInView = ({ defaultName }: { defaultName: string }) => {
+const SignedInView = ({
+  userId,
+  defaultName,
+}: {
+  userId: string;
+  defaultName: string;
+}) => {
   const profileState = useAppSelector((state) => state.profile.subscribe);
 
   return (
@@ -60,22 +59,27 @@ const SignedInView = ({ defaultName }: { defaultName: string }) => {
       {profileState.type === "found" && <ProfileFoundView />}
 
       {profileState.type === "not-found" && (
-        <ProfileNotFoundView defaultName={defaultName} />
+        <ProfileNotFoundView userId={userId} defaultName={defaultName} />
       )}
     </>
   );
 };
 
 type ProfileNotFoundStackParamList = {
-  CreateProfile: {
-    defaultValues: IProfileFormValues;
-  };
+  CreateProfile: undefined;
+  SignOut: undefined;
 };
 
 const ProfileNotFoundStack =
   createNativeStackNavigator<ProfileNotFoundStackParamList>();
 
-const ProfileNotFoundView = ({ defaultName }: { defaultName: string }) => {
+const ProfileNotFoundView = ({
+  defaultName,
+  userId,
+}: {
+  defaultName: string;
+  userId: string;
+}) => {
   return (
     <ProfileNotFoundStack.Navigator initialRouteName="CreateProfile">
       <ProfileNotFoundStack.Screen
@@ -84,21 +88,28 @@ const ProfileNotFoundView = ({ defaultName }: { defaultName: string }) => {
       >
         {() => {
           return (
-            <ProfileFormView
-              onSubmit={(values) => {
-                console.log({ values });
-              }}
-              defaultValues={{
-                name: defaultName,
-                username: defaultName.replace(" ", "").toLocaleLowerCase(),
-                avatarSeed: toAvatarSeed(defaultName),
-                avatarStyle: "big-ears-neutral",
-              }}
-            />
+            <ProfileCreateScreen defaultName={defaultName} userId={userId} />
           );
         }}
       </ProfileNotFoundStack.Screen>
+      <ProfileNotFoundStack.Screen
+        name="SignOut"
+        options={{ headerShown: false }}
+        component={SignOutScreen}
+      />
     </ProfileNotFoundStack.Navigator>
+  );
+};
+
+const SignOutScreen = (
+  props: NativeStackScreenProps<ProfileNotFoundStackParamList, "SignOut">
+) => {
+  return (
+    <>
+      <Appbar.Header>
+        <Appbar.Content title="Sign Out" />
+      </Appbar.Header>
+    </>
   );
 };
 

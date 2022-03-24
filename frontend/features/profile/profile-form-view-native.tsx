@@ -24,7 +24,9 @@ export type IProfileFormValues = {
 const useProfileForm = ({
   onSubmit,
   defaultValues,
+  submitting,
 }: {
+  submitting: boolean;
   onSubmit: (values: IProfileFormValues) => void;
   defaultValues: IProfileFormValues;
 }) => {
@@ -36,6 +38,7 @@ const useProfileForm = ({
   const avatarUrl = toAvatarUrl({ avatarSeed, avatarStyle });
 
   return {
+    submitting,
     onSubmit: () => {
       onSubmit({
         name,
@@ -68,12 +71,19 @@ const Stack = createNativeStackNavigator<IStackParamList>();
 export const ProfileFormView = ({
   defaultValues,
   onSubmit,
+  submitting,
 }: {
+  submitting: boolean;
+  onBack: () => void;
   defaultValues: IProfileFormValues;
   onSubmit: (values: IProfileFormValues) => void;
 }) => {
   return (
-    <ProfileFormContext onSubmit={onSubmit} defaultValues={defaultValues}>
+    <ProfileFormContext
+      submitting={submitting}
+      onSubmit={onSubmit}
+      defaultValues={defaultValues}
+    >
       <Stack.Navigator>
         <Stack.Screen
           name="Profile"
@@ -81,7 +91,6 @@ export const ProfileFormView = ({
           options={{
             header: () => (
               <Appbar.Header>
-                <Appbar.BackAction />
                 <Appbar.Content title="Profile" />
               </Appbar.Header>
             ),
@@ -126,7 +135,7 @@ const ProfileAvatar = () => {
 const ProfileView = ({
   navigation,
 }: NativeStackScreenProps<IStackParamList, "Profile">) => {
-  const { avatarUrl, username, setUsername, name, setName, onSubmit } =
+  const { submitting, username, setUsername, name, setName, onSubmit } =
     useProfileFormContext();
 
   return (
@@ -164,6 +173,8 @@ const ProfileView = ({
         style={{ marginHorizontal: spacing(1) }}
         mode="contained"
         onPress={onSubmit}
+        disabled={submitting}
+        loading={submitting}
       >
         Create
       </Button>
@@ -186,6 +197,16 @@ const AvatarView = () => {
         value={avatarSeed}
         onChangeText={(text) => setAvatarSeed(toAvatarSeed(text))}
       />
+
+      <Button
+        style={{ marginHorizontal: spacing(1), marginBottom: spacing(2) }}
+        mode="contained"
+        onPress={() => {
+          setAvatarSeed(toAvatarSeed(String(Math.random())));
+        }}
+      >
+        Generate Seed
+      </Button>
     </>
   );
 };
