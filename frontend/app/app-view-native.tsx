@@ -1,12 +1,19 @@
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import * as React from "react";
-import { Appbar, List, Portal, Headline, Title } from "react-native-paper";
+import {
+  Appbar,
+  Avatar,
+  Button,
+  List,
+  Portal,
+  TextInput,
+} from "react-native-paper";
 import { SignInView } from "../features/auth/sign-in/sign-in-view-native";
 import { SignOutView } from "../features/auth/sign-out/sign-out-view-native";
 import { useAppSelector } from "../main-store";
 import { DialogLoading } from "../ui/DialogLoading";
-import { ThemeProvider } from "../ui/ThemeProvider";
+import { spacing, ThemeProvider } from "../ui/ThemeProvider";
 
 export const AppView = () => {
   const authState = useAppSelector((state) => state.auth.subscribe);
@@ -80,7 +87,32 @@ const ProfileNotFoundView = () => {
 const CreateProfileView = () => {
   return (
     <>
-      <Headline>Create Profile</Headline>
+      <Avatar.Icon
+        style={{
+          marginHorizontal: "auto",
+          marginTop: spacing(2),
+          marginBottom: spacing(1),
+        }}
+        size={144}
+        icon="folder"
+      />
+      <Button onPress={() => {}}>Change Avatar</Button>
+
+      <TextInput
+        style={{ marginHorizontal: spacing(1), marginBottom: spacing(2) }}
+        mode="outlined"
+        label="Name"
+        value={"text"}
+        // onChangeText={(text) => setText(text)}
+      />
+
+      <TextInput
+        style={{ marginHorizontal: spacing(1) }}
+        mode="outlined"
+        label="Username"
+        value={"text"}
+        // onChangeText={(text) => setText(text)}
+      />
     </>
   );
 };
