@@ -1,40 +1,69 @@
+import { LinkingOptions, NavigationContainer } from "@react-navigation/native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import * as React from "react";
-import { Appbar, List, Portal } from "react-native-paper";
+import { View } from "react-native";
+import {
+  Appbar,
+  List,
+  Portal,
+  Provider as PaperProvider,
+} from "react-native-paper";
 import { useAuthState } from "../features/auth/auth-state/use-auth-state";
 import { SignInView } from "../features/auth/sign-in/sign-in-view-native";
 import { SignOutView } from "../features/auth/sign-out/sign-out-view-native";
 import { ProfileCreateScreen } from "../features/profile/profile-create/profile-create-screen";
 import { useAppSelector } from "../main-store";
 import { DialogLoading } from "../ui/DialogLoading";
-import { ThemeProvider } from "../ui/ThemeProvider";
+import { darkTheme } from "../ui/theme";
 
+const linking: LinkingOptions<RootStackParamList> = {
+  prefixes: [],
+  config: {
+    screens: {
+      Home: "home",
+      Profile: "profile",
+    },
+  },
+};
 export const AppView = () => {
   const authState = useAuthState();
 
   return (
-    <ThemeProvider>
-      <Portal>
-        <DialogLoading
-          visible={authState.type === "loading"}
-          title="Checking if logged in..."
-        />
-      </Portal>
+    <PaperProvider theme={darkTheme}>
+      <NavigationContainer theme={darkTheme}>
+        <View
+          style={{
+            backgroundColor: darkTheme.colors.background,
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+          }}
+        >
+          <Portal>
+            <DialogLoading
+              visible={authState.type === "loading"}
+              title="Checking if logged in..."
+            />
+          </Portal>
 
-      {authState.type === "signed-in" && (
-        <SignedInView
-          userId={authState.userId}
-          defaultName={authState.defaultName}
-        />
-      )}
+          {authState.type === "signed-in" && (
+            <SignedInView
+              userId={authState.userId}
+              defaultName={authState.defaultName}
+            />
+          )}
 
-      {authState.type === "signed-out" && (
-        <>
-          <SignInView />
-        </>
-      )}
-    </ThemeProvider>
+          {authState.type === "signed-out" && (
+            <>
+              <SignInView />
+            </>
+          )}
+        </View>
+      </NavigationContainer>
+    </PaperProvider>
   );
 };
 
@@ -115,7 +144,8 @@ const SignOutScreen = (
 
 type RootStackParamList = {
   Home: undefined;
-  Logout: undefined;
+  Profile: undefined;
+  Game: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -136,6 +166,44 @@ const ProfileFoundView = () => {
           },
         }}
       />
+
+      <Stack.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={{
+          header: ({ navigation }) => {
+            return (
+              <Appbar.Header>
+                <Appbar.BackAction
+                  onPress={() => {
+                    navigation.goBack();
+                  }}
+                />
+                <Appbar.Content title="Profile" />
+              </Appbar.Header>
+            );
+          },
+        }}
+      />
+
+      <Stack.Screen
+        name="Game"
+        component={GameScreen}
+        options={{
+          header: ({ navigation }) => {
+            return (
+              <Appbar.Header>
+                <Appbar.BackAction
+                  onPress={() => {
+                    navigation.goBack();
+                  }}
+                />
+                <Appbar.Content title="Game" />
+              </Appbar.Header>
+            );
+          },
+        }}
+      />
     </Stack.Navigator>
   );
 };
@@ -148,13 +216,17 @@ const HomeScreen = ({
     <>
       <List.Section>
         <List.Item
-          onPress={() => {}}
+          onPress={() => {
+            navigation.navigate("Game");
+          }}
           title="Game"
           left={() => <List.Icon icon="gamepad" />}
           right={() => <List.Icon icon="chevron-right" />}
         />
         <List.Item
-          onPress={() => {}}
+          onPress={() => {
+            navigation.navigate("Profile");
+          }}
           title="Profile"
           left={() => <List.Icon icon="account" />}
           right={() => <List.Icon icon="chevron-right" />}
@@ -173,6 +245,47 @@ const HomeScreen = ({
           setState("idle");
         }}
       />
+    </>
+  );
+};
+
+const ProfileScreen = () => {
+  return (
+    <>
+      <List.Section>
+        <List.Item
+          onPress={() => {}}
+          title="Edit"
+          left={() => <List.Icon icon="pencil" />}
+          right={() => <List.Icon icon="chevron-right" />}
+        />
+        <List.Item
+          title="Delete"
+          left={() => <List.Icon icon="delete" />}
+          right={() => <List.Icon icon="chevron-right" />}
+        />
+      </List.Section>
+    </>
+  );
+};
+
+const GameScreen = () => {
+  return (
+    <>
+      <List.Section>
+        <List.Item
+          onPress={() => {}}
+          title="Create"
+          left={() => <List.Icon icon="pencil" />}
+          right={() => <List.Icon icon="chevron-right" />}
+        />
+        <List.Item
+          onPress={() => {}}
+          title="Join"
+          left={() => <List.Icon icon="magnify" />}
+          right={() => <List.Icon icon="chevron-right" />}
+        />
+      </List.Section>
     </>
   );
 };
