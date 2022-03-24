@@ -152,7 +152,6 @@ const ProfileView = ({
       </Button>
 
       <TextInput
-        autoComplete="true"
         style={{ marginHorizontal: spacing(1), marginBottom: spacing(2) }}
         mode="outlined"
         label="Name"
@@ -161,7 +160,6 @@ const ProfileView = ({
       />
 
       <TextInput
-        autoComplete="true"
         style={{ marginHorizontal: spacing(1), marginBottom: spacing(2) }}
         mode="outlined"
         label="Username"
@@ -190,7 +188,6 @@ const AvatarView = () => {
       <ProfileAvatar />
 
       <TextInput
-        autoComplete="true"
         style={{ marginHorizontal: spacing(1), marginBottom: spacing(2) }}
         mode="outlined"
         label="Avatar Seed"

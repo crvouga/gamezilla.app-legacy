@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { StyleSheet } from "react-native";
-import { Button, Dialog, Headline, Portal } from "react-native-paper";
-import { DialogLoading } from "../../../ui/DialogLoading";
-import { fontSize, spacing } from "../../../ui/theme";
+import { Dialog, Headline, Portal } from "react-native-paper";
+import { Button, DialogLoading } from "../../../ui";
+import { fontSize, spacing } from "../../../ui";
 import { dataAccess } from "./sign-in-data-access";
 
 const styles = StyleSheet.create({
@@ -40,9 +40,8 @@ export const SignInView = () => {
             loading={state === "loading"}
             disabled={state === "loading"}
             onPress={loginInWithGoogle}
-          >
-            Continue With Google
-          </Button>
+            title="Continue With Google"
+          />
         </Dialog>
 
         <DialogLoading visible={state === "loading"} title="Signing in..." />
