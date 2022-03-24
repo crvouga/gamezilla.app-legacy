@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { StyleSheet } from "react-native";
 import { Button, Dialog, Headline, Portal } from "react-native-paper";
 import { DialogLoading } from "../../../ui/DialogLoading";
-import { fontSize, spacing } from "../../../ui/ThemeProvider";
+import { fontSize, spacing } from "../../../ui/theme";
 import { dataAccess } from "./sign-in-data-access";
 
 const styles = StyleSheet.create({

@@ -1,7 +1,7 @@
 import * as React from "react";
 import { StyleSheet } from "react-native";
 import { ActivityIndicator, Dialog, Title } from "react-native-paper";
-import { spacing } from "./ThemeProvider";
+import { spacing } from "./theme";
 
 export const DialogLoading = ({
   visible,

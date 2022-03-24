@@ -6,7 +6,7 @@ import constate from "constate";
 import * as React from "react";
 import { useState } from "react";
 import { Appbar, Avatar, Button, TextInput } from "react-native-paper";
-import { spacing } from "../../ui/ThemeProvider";
+import { spacing } from "../../ui/theme";
 import {
   IAvatarSeed,
   IAvatarStyle,
