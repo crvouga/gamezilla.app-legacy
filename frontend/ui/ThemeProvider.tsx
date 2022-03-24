@@ -5,6 +5,7 @@ import {
 } from "@react-navigation/native";
 import merge from "deepmerge";
 import React from "react";
+import { View } from "react-native";
 import {
   DarkTheme as PaperDarkTheme,
   DefaultTheme as PaperDefaultTheme,
@@ -26,7 +27,17 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   return (
     <>
       <PaperProvider theme={darkTheme}>
-        <NavigationContainer theme={darkTheme}>{children}</NavigationContainer>
+        <NavigationContainer theme={darkTheme}>
+          <View
+            style={{
+              backgroundColor: darkTheme.colors.background,
+              width: "100%",
+              height: "100%",
+            }}
+          >
+            {children}
+          </View>
+        </NavigationContainer>
       </PaperProvider>
     </>
   );

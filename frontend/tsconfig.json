@@ -20,7 +20,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": false,
-    "jsx": "react",
+    "jsx": "react-native",
     "outDir": "../.builds/frontend",
     "rootDir": ".",
     "composite": true,

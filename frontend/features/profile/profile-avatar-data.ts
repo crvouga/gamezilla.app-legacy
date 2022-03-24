@@ -67,7 +67,7 @@ export const toAvatarSeed = (seed: string) => {
 };
 
 const AVATAR_URL_ROOT = `https://avatars.dicebear.com/api`;
-const AVATAR_FILE_TYPE = "svg";
+const AVATAR_FILE_TYPE = "png";
 
 export const toAvatarUrl = ({
   avatarSeed,
@@ -84,6 +84,7 @@ export const toAvatarUrl = ({
     url.searchParams.append("backgroundColor", "white");
   }
 
+  console.log(url.toString());
   return url.toString();
 };
 
