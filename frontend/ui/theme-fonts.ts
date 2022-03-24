@@ -19,19 +19,19 @@ import { Fonts } from "react-native-paper/lib/typescript/types";
 
 export const fonts: Fonts = {
   regular: {
-    fontFamily: "Nunito_400Regular",
+    fontFamily: "Nunito_800ExtraBold",
     fontWeight: "normal",
   },
   medium: {
-    fontFamily: "Nunito_600SemiBold",
+    fontFamily: "Nunito_900Black",
     fontWeight: "normal",
   },
   light: {
-    fontFamily: "Nunito_300Light",
+    fontFamily: "Nunito_700Bold",
     fontWeight: "normal",
   },
   thin: {
-    fontFamily: "Nunito_200ExtraLight",
+    fontFamily: "Nunito_700Bold",
     fontWeight: "normal",
   },
 };
