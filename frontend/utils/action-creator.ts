@@ -22,10 +22,10 @@ export type InferActionUnion<TActionCreatorMap extends IActionCreatorMap> =
 export type IActionType = <TNamespace extends string, TType extends string>(
   namespace: TNamespace,
   type: TType
-) => `${TNamespace}::${TType}`;
+) => `${TNamespace}/${TType}`;
 
 export const ActionType: IActionType = (namespace, type) => {
-  return `${namespace}::${type}`;
+  return `${namespace}/${type}`;
 };
 
 export type IAction = <

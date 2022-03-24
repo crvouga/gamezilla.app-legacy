@@ -26,13 +26,13 @@ export type IState =
  */
 
 export const actions = {
-  signOut: Action<"signOut", "signOut">("signOut", "signOut"),
+  signOut: Action<"auth/signOut", "signOut">("auth/signOut", "signOut"),
 };
 
 export type IAction = InferActionUnion<typeof actions>;
 
 export const reducer = (state: IState, action: IAction): IState => {
-  if (action.type === "signOut::signOut") {
+  if (action.type === "auth/signOut/signOut") {
     return {
       type: "signing-out",
     };

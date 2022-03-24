@@ -10,7 +10,32 @@ import { AppView } from "./app/app-view";
 const store = createStore({
   reducer,
   initialState: {
-    type: "loading",
+    auth: {
+      subscribe: {
+        type: "loading",
+      },
+      signIn: {
+        type: "idle",
+      },
+      signOut: {
+        type: "idle",
+      },
+    },
+
+    profile: {
+      subscribe: {
+        type: "loading",
+      },
+      create: {
+        type: "idle",
+      },
+      delete: {
+        type: "idle",
+      },
+      update: {
+        type: "idle",
+      },
+    },
   },
   isAction: (action: unknown): action is IAction => {
     return isActions(actions, action);

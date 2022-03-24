@@ -31,13 +31,16 @@ export type ISignInMethod = {
  */
 
 export const actions = {
-  signIn: Action<"signIn", "signIn", ISignInMethod>("signIn", "signIn"),
+  signIn: Action<"auth/signIn", "signIn", ISignInMethod>(
+    "auth/signIn",
+    "signIn"
+  ),
 };
 
 export type IAction = InferActionUnion<typeof actions>;
 
 export const reducer = (state: IState, action: IAction): IState => {
-  if (action.type === "signIn::signIn") {
+  if (action.type === "auth/signIn/signIn") {
     return {
       type: "signing-in",
       method: action.payload,
