@@ -11,6 +11,11 @@ import {
 } from "react-native-paper";
 import { SignInView } from "../features/auth/sign-in/sign-in-view-native";
 import { SignOutView } from "../features/auth/sign-out/sign-out-view-native";
+import { toAvatarSeed } from "../features/profile/profile-avatar-data";
+import {
+  IProfileFormValues,
+  ProfileFormView,
+} from "../features/profile/profile-form-view-native";
 import { useAppSelector } from "../main-store";
 import { DialogLoading } from "../ui/DialogLoading";
 import { spacing, ThemeProvider } from "../ui/ThemeProvider";
@@ -27,7 +32,9 @@ export const AppView = () => {
         />
       </Portal>
 
-      {authState.type === "signed-in" && <SignedInView />}
+      {authState.type === "signed-in" && (
+        <SignedInView defaultName={authState.defaultName} />
+      )}
 
       {authState.type === "signed-out" && (
         <>
@@ -38,7 +45,7 @@ export const AppView = () => {
   );
 };
 
-const SignedInView = () => {
+const SignedInView = ({ defaultName }: { defaultName: string }) => {
   const profileState = useAppSelector((state) => state.profile.subscribe);
 
   return (
@@ -52,68 +59,46 @@ const SignedInView = () => {
 
       {profileState.type === "found" && <ProfileFoundView />}
 
-      {profileState.type === "not-found" && <ProfileNotFoundView />}
+      {profileState.type === "not-found" && (
+        <ProfileNotFoundView defaultName={defaultName} />
+      )}
     </>
   );
 };
 
 type ProfileNotFoundStackParamList = {
-  CreateProfile: undefined;
+  CreateProfile: {
+    defaultValues: IProfileFormValues;
+  };
 };
 
 const ProfileNotFoundStack =
   createNativeStackNavigator<ProfileNotFoundStackParamList>();
 
-const ProfileNotFoundView = () => {
+const ProfileNotFoundView = ({ defaultName }: { defaultName: string }) => {
   return (
     <ProfileNotFoundStack.Navigator initialRouteName="CreateProfile">
       <ProfileNotFoundStack.Screen
         name="CreateProfile"
-        component={CreateProfileView}
-        options={{
-          header: () => {
-            return (
-              <Appbar.Header>
-                <Appbar.Content title="Create Profile" />
-              </Appbar.Header>
-            );
-          },
+        options={{ headerShown: false }}
+      >
+        {() => {
+          return (
+            <ProfileFormView
+              onSubmit={(values) => {
+                console.log({ values });
+              }}
+              defaultValues={{
+                name: defaultName,
+                username: defaultName.replace(" ", "").toLocaleLowerCase(),
+                avatarSeed: toAvatarSeed(defaultName),
+                avatarStyle: "big-ears-neutral",
+              }}
+            />
+          );
         }}
-      />
+      </ProfileNotFoundStack.Screen>
     </ProfileNotFoundStack.Navigator>
-  );
-};
-
-const CreateProfileView = () => {
-  return (
-    <>
-      <Avatar.Icon
-        style={{
-          marginHorizontal: "auto",
-          marginTop: spacing(2),
-          marginBottom: spacing(1),
-        }}
-        size={144}
-        icon="folder"
-      />
-      <Button onPress={() => {}}>Change Avatar</Button>
-
-      <TextInput
-        style={{ marginHorizontal: spacing(1), marginBottom: spacing(2) }}
-        mode="outlined"
-        label="Name"
-        value={"text"}
-        // onChangeText={(text) => setText(text)}
-      />
-
-      <TextInput
-        style={{ marginHorizontal: spacing(1) }}
-        mode="outlined"
-        label="Username"
-        value={"text"}
-        // onChangeText={(text) => setText(text)}
-      />
-    </>
   );
 };
 

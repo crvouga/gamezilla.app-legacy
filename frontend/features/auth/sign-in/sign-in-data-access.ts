@@ -6,7 +6,6 @@ import { Platform } from "react-native";
 export const dataAccess: IDataAccess = {
   signIn: async (method) => {
     if (Platform.OS === "web") {
-      consol;
       await supabaseClient.auth.signIn(
         {
           provider: method.type,
