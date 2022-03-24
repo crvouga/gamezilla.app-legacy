@@ -11,7 +11,7 @@ import {
   TextField,
 } from "@mui/material";
 import React, { useState } from "react";
-import { AppBar } from "../../../ui-components";
+import { AppBar } from "../../ui-components";
 import {
   ALL_AVATAR_STYLES,
   formatAvatarStyle,
@@ -20,7 +20,7 @@ import {
   toAvatarSeed,
   toAvatarStyle,
   toAvatarUrl,
-} from "./profile-data";
+} from "./profile-avatar-data";
 
 export const ProfileAvatarForm = ({
   defaultValues,

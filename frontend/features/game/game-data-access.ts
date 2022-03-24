@@ -1,6 +1,6 @@
 import { Room } from "colyseus.js";
-import { RoomNames, tryCatch } from "../../../../common";
-import { colyseusClient } from "../../../data-access";
+import { RoomNames, tryCatch } from "../../../common";
+import { colyseusClient } from "../../data-access";
 
 export type IRoom = Room<unknown>;
 

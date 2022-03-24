@@ -6,7 +6,7 @@ import {
   InferActionMap,
   InferActionUnion,
   isActions,
-} from "../../../utils";
+} from "../../utils";
 import * as GameDataAccess from "./game-data-access";
 
 export type IState =
@@ -166,15 +166,13 @@ function* watchReconnect() {
 }
 
 function* watchCreate(action: IActionMap["create"]) {
-  const result: Awaited<ReturnType<typeof GameDataAccess.create>> = yield call(
-    GameDataAccess.create
-  );
-
-  if (result.type === "success") {
-    const room = result.data;
-
-    yield* roomFlow(room);
-  }
+  // const result: Awaited<ReturnType<typeof GameDataAccess.create>> = yield call(
+  //   GameDataAccess.create
+  // );
+  // if (result.type === "success") {
+  //   const room = result.data;
+  //   yield* roomFlow(room);
+  // }
 }
 
 const createRoomChan = (room: GameDataAccess.IRoom) => {

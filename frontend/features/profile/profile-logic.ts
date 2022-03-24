@@ -1,44 +1,47 @@
-import { eventChannel } from "redux-saga";
-import { call, put, takeEvery, takeLeading } from "redux-saga/effects";
+import { EventChannel, eventChannel } from "redux-saga";
+import { put, takeEvery } from "redux-saga/effects";
 import {
   Action,
   ActionType,
   InferActionMap,
   InferActionUnion,
   isActions,
-} from "../../../utils";
-import * as ProfileDataAccess from "./profile-data-access";
+} from "../../utils";
 
-export type IState =
-  | {
-      type: "loading";
-    }
-  | {
-      type: "found";
-      profile: ProfileDataAccess.IProfile;
-      status: "idle" | "updating" | "deleting";
-    }
-  | {
-      type: "not-found";
-      status: "idle" | "creating";
-    };
-
-export const initialState: IState = {
-  type: "loading",
+export type IProfile = {
+  userId: string;
+  avatarUrl?: string;
+  username?: string;
+  name?: string;
+  themeMode: "LIGHT" | "DARK" | "SYSTEM";
+  gameRoomId?: string;
 };
 
+export type IFoundState = {
+  type: "found";
+  profile: IProfile;
+  status: "idle" | "updating" | "deleting";
+};
+
+export type INotFoundState = {
+  type: "not-found";
+  status: "idle" | "creating";
+};
+
+export type ILoadingState = {
+  type: "loading";
+};
+
+export type IState = ILoadingState | IFoundState | INotFoundState;
+
 export const actions = {
-  found: Action<"profile", "found", ProfileDataAccess.IProfile>(
-    "profile",
-    "found"
-  ),
+  found: Action<"profile", "found", IProfile>("profile", "found"),
   notFound: Action("profile", "not-found"),
   //
   update: Action<
     "profile",
     "update",
     {
-      userId: string;
       avatarUrl?: string;
       username?: string;
       name?: string;
@@ -55,7 +58,6 @@ export const actions = {
     "profile",
     "create",
     {
-      userId: string;
       username: string;
       name: string;
       avatarUrl: string;
@@ -172,46 +174,29 @@ export const Selectors = {
 
 */
 
-export function* saga({ userId }: { userId: string }) {
-  const profileChan = createProfileChan({ userId });
-
-  yield takeEvery(profileChan, watchProfileChan);
-  yield takeLeading(actions.update, watchUpdate);
-  yield takeLeading(actions.delete, watchDelete);
-  yield takeLeading(actions.create, watchCreate);
-}
-
-function* watchCreate(action: IActionMap["create"]) {
-  yield call(ProfileDataAccess.createProfile, action.payload);
-
-  yield put(actions.createSucceeded());
-}
-
-function* watchUpdate(action: IActionMap["update"]) {
-  yield call(ProfileDataAccess.updateProfile, action.payload);
-
-  yield put(actions.updateSucceeded());
-}
-
-function* watchDelete(action: IActionMap["delete"]) {
-  yield call(ProfileDataAccess.deleteProfile, action.payload);
-
-  yield put(actions.deleteSucceeded());
-}
-
-const createProfileChan = ({ userId }: { userId: string }) => {
-  return eventChannel<IAction>((emit) => {
-    return ProfileDataAccess.onProfile({ userId })((profile) => {
-      if (profile) {
-        emit(actions.found(profile));
-        return;
-      }
-
-      emit(actions.notFound());
-    });
-  });
+export type IDataAccess = {
+  createProfileChan: ({
+    userId,
+  }: {
+    userId: string;
+  }) => EventChannel<
+    { type: "found"; profile: IProfile } | { type: "not-found" }
+  >;
 };
 
-function* watchProfileChan(action: IAction) {
-  yield put(action);
+export function* saga(
+  { createProfileChan }: IDataAccess,
+  { userId }: { userId: string }
+) {
+  const profileChan = createProfileChan({ userId });
+
+  yield takeEvery(profileChan, function* (result) {
+    if (result.type === "found") {
+      yield put(actions.found(result.profile));
+    }
+
+    if (result.type === "not-found") {
+      yield put(actions.notFound());
+    }
+  });
 }
