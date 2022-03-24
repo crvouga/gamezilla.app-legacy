@@ -16,6 +16,11 @@ export type IState = {
   profile: Profile.IState;
 };
 
+export const initialState: IState = {
+  auth: Auth.initialState,
+  profile: Profile.initialState,
+};
+
 /**
  *
  *

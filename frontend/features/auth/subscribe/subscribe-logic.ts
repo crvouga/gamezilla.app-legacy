@@ -10,21 +10,22 @@ import { Action, InferActionUnion } from "../../../utils";
  *
  */
 
-export type ISignedOutState = {
-  type: "signed-out";
-};
+export type IState =
+  | {
+      type: "loading";
+    }
+  | {
+      type: "signed-in";
+      userId: string;
+      defaultName: string;
+    }
+  | {
+      type: "signed-out";
+    };
 
-export type ISignedInState = {
-  type: "signed-in";
-  userId: string;
-  defaultName: string;
+export const initialState: IState = {
+  type: "loading",
 };
-
-export type ILoadingState = {
-  type: "loading";
-};
-
-export type IState = ISignedOutState | ISignedInState | ILoadingState;
 
 /**
  *

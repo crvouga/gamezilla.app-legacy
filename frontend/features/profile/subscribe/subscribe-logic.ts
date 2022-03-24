@@ -34,6 +34,10 @@ export type ILoadingState = {
 
 export type IState = ILoadingState | IFoundState | INotFoundState;
 
+export const initialState: IState = {
+  type: "loading",
+};
+
 /**
  *
  *

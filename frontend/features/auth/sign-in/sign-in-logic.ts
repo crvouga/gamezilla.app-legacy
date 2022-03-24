@@ -22,6 +22,10 @@ export type ISignInMethod = {
   type: "google";
 };
 
+export const initialState: IState = {
+  type: "idle",
+};
+
 /**
  *
  *

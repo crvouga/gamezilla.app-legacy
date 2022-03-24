@@ -18,6 +18,10 @@ export type IState =
       type: "mutating";
     };
 
+export const initialState: IState = {
+  type: "idle",
+};
+
 /**
  *
  *
