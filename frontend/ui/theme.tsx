@@ -6,10 +6,35 @@ import merge from "deepmerge";
 import {
   DarkTheme as PaperDarkTheme,
   DefaultTheme as PaperDefaultTheme,
+  configureFonts,
 } from "react-native-paper";
+import { fonts } from "./theme-fonts";
 
-export const defaultTheme = merge(PaperDefaultTheme, NavigationDefaultTheme);
-export const darkTheme = merge(PaperDarkTheme, NavigationDarkTheme);
+type IPaperTheme = typeof PaperDefaultTheme & typeof PaperDarkTheme;
+type INavigationTheme = typeof NavigationDefaultTheme &
+  typeof NavigationDarkTheme;
+
+type ITheme = IPaperTheme & INavigationTheme;
+
+export const defaultTheme: ITheme = {
+  ...merge(PaperDefaultTheme, NavigationDefaultTheme),
+  fonts: configureFonts({
+    ios: fonts,
+    web: fonts,
+    android: fonts,
+    default: fonts,
+  }),
+};
+
+export const darkTheme: ITheme = {
+  ...merge(PaperDarkTheme, NavigationDarkTheme),
+  fonts: configureFonts({
+    ios: fonts,
+    web: fonts,
+    android: fonts,
+    default: fonts,
+  }),
+};
 
 export const spacing = (n: number) => {
   return n * 12;

@@ -20,8 +20,6 @@ export const SignOutView = ({
     });
 
     await dataAccess.signOut();
-
-    setState("idle");
   };
 
   return (

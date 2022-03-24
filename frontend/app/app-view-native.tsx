@@ -15,6 +15,7 @@ import { SignOutView } from "../features/auth/sign-out/sign-out-view-native";
 import { ProfileCreateScreen } from "../features/profile/profile-create/profile-create-screen";
 import { useAppSelector } from "../main-store";
 import { DialogLoading } from "../ui/DialogLoading";
+import { useFontState } from "../ui/theme-fonts";
 import { darkTheme } from "../ui/theme";
 
 const linking: LinkingOptions<RootStackParamList> = {
@@ -26,8 +27,16 @@ const linking: LinkingOptions<RootStackParamList> = {
     },
   },
 };
+
+import AppLoading from "expo-app-loading";
+
 export const AppView = () => {
   const authState = useAuthState();
+  const fontsState = useFontState();
+
+  if (fontsState.type === "loading") {
+    return <AppLoading />;
+  }
 
   return (
     <PaperProvider theme={darkTheme}>
