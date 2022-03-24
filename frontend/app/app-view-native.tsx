@@ -1,6 +1,7 @@
 import { LinkingOptions, NavigationContainer } from "@react-navigation/native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import constate from "constate";
 import AppLoading from "expo-app-loading";
 import * as React from "react";
 import { View } from "react-native";
@@ -15,6 +16,7 @@ import { SignInView } from "../features/auth/sign-in/sign-in-view-native";
 import { SignOutButton } from "../features/auth/sign-out/sign-out-view-native";
 import { ProfileCreateScreen } from "../features/profile/profile-create/profile-create-screen";
 import { ProfileDeleteButton } from "../features/profile/profile-delete/profile-delete-view";
+import { ProfileUpdateView } from "../features/profile/profile-update/profile-update-view";
 import { useAppSelector } from "../main-store";
 import { darkTheme, DialogLoading, spacing, useFontState } from "../ui";
 
@@ -27,6 +29,12 @@ const linking: LinkingOptions<RootStackParamList> = {
     },
   },
 };
+
+const [SignedInContext, useSignedInContext] = constate(
+  (signedInState: { userId: string; defaultName: string }) => {
+    return signedInState;
+  }
+);
 
 export const AppView = () => {
   const authState = useAuthState();
@@ -57,10 +65,12 @@ export const AppView = () => {
           </Portal>
 
           {authState.type === "signed-in" && (
-            <SignedInView
+            <SignedInContext
               userId={authState.userId}
               defaultName={authState.defaultName}
-            />
+            >
+              <SignedInView />
+            </SignedInContext>
           )}
 
           {authState.type === "signed-out" && (
@@ -74,13 +84,7 @@ export const AppView = () => {
   );
 };
 
-const SignedInView = ({
-  userId,
-  defaultName,
-}: {
-  userId: string;
-  defaultName: string;
-}) => {
+const SignedInView = () => {
   const profileState = useAppSelector((state) => state.profile.subscribe);
 
   return (
@@ -92,72 +96,59 @@ const SignedInView = ({
         />
       </Portal>
 
-      {profileState.type === "found" && <ProfileFoundView userId={userId} />}
-
-      {profileState.type === "not-found" && (
-        <ProfileNotFoundView userId={userId} defaultName={defaultName} />
+      {profileState.type === "found" && (
+        <ProfileFoundView profile={profileState.profile} />
       )}
+
+      {profileState.type === "not-found" && <ProfileNotFoundView />}
     </>
   );
 };
 
 type ProfileNotFoundStackParamList = {
   CreateProfile: undefined;
-  SignOut: undefined;
 };
 
 const ProfileNotFoundStack =
   createNativeStackNavigator<ProfileNotFoundStackParamList>();
 
-const ProfileNotFoundView = ({
-  defaultName,
-  userId,
-}: {
-  defaultName: string;
-  userId: string;
-}) => {
+const ProfileNotFoundView = () => {
   return (
     <ProfileNotFoundStack.Navigator initialRouteName="CreateProfile">
       <ProfileNotFoundStack.Screen
         name="CreateProfile"
         options={{ headerShown: false }}
-      >
-        {() => {
-          return (
-            <ProfileCreateScreen defaultName={defaultName} userId={userId} />
-          );
-        }}
-      </ProfileNotFoundStack.Screen>
-      <ProfileNotFoundStack.Screen
-        name="SignOut"
-        options={{ headerShown: false }}
-        component={SignOutScreen}
+        component={MyProfileCreateScreen}
       />
     </ProfileNotFoundStack.Navigator>
   );
 };
 
-const SignOutScreen = (
-  props: NativeStackScreenProps<ProfileNotFoundStackParamList, "SignOut">
-) => {
-  return (
-    <>
-      <Appbar.Header>
-        <Appbar.Content title="Sign Out" />
-      </Appbar.Header>
-    </>
-  );
+const MyProfileCreateScreen = () => {
+  const { defaultName, userId } = useSignedInContext();
+
+  return <ProfileCreateScreen defaultName={defaultName} userId={userId} />;
 };
 
 type RootStackParamList = {
   Home: undefined;
   Profile: undefined;
   Game: undefined;
+  ProfileUpdate: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
-const ProfileFoundView = ({ userId }: { userId: string }) => {
+const ProfileFoundView = ({
+  profile,
+}: {
+  profile: {
+    userId: string;
+    username?: string;
+    name?: string;
+    avatarUrl?: string;
+  };
+}) => {
   return (
     <Stack.Navigator initialRouteName="Home">
       <Stack.Screen
@@ -176,6 +167,7 @@ const ProfileFoundView = ({ userId }: { userId: string }) => {
 
       <Stack.Screen
         name="Profile"
+        component={ProfileScreen}
         options={{
           header: ({ navigation }) => {
             return (
@@ -190,9 +182,27 @@ const ProfileFoundView = ({ userId }: { userId: string }) => {
             );
           },
         }}
+      />
+
+      <Stack.Screen
+        name="ProfileUpdate"
+        options={{
+          header: ({ navigation }) => {
+            return (
+              <Appbar.Header>
+                <Appbar.BackAction
+                  onPress={() => {
+                    navigation.goBack();
+                  }}
+                />
+                <Appbar.Content title="Edit Profile" />
+              </Appbar.Header>
+            );
+          },
+        }}
       >
         {() => {
-          return <ProfileScreen userId={userId} />;
+          return <ProfileUpdateView profile={profile} />;
         }}
       </Stack.Screen>
 
@@ -245,12 +255,18 @@ const HomeScreen = ({
   );
 };
 
-const ProfileScreen = ({ userId }: { userId: string }) => {
+const ProfileScreen = ({
+  navigation,
+}: NativeStackScreenProps<RootStackParamList, "Home">) => {
+  const { userId } = useSignedInContext();
+
   return (
     <>
       <List.Section>
         <List.Item
-          onPress={() => {}}
+          onPress={() => {
+            navigation.navigate("ProfileUpdate");
+          }}
           title="Edit"
           left={() => <List.Icon icon="pencil" />}
           right={() => <List.Icon icon="chevron-right" />}

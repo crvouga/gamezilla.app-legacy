@@ -5,8 +5,8 @@ import {
 import constate from "constate";
 import * as React from "react";
 import { useState } from "react";
-import { Appbar, Avatar, Button, TextInput } from "react-native-paper";
-import { spacing } from "../../ui/theme";
+import { Appbar, Avatar, TextInput } from "react-native-paper";
+import { spacing, Button } from "../../ui";
 import {
   IAvatarSeed,
   IAvatarStyle,
@@ -25,10 +25,12 @@ const useProfileForm = ({
   onSubmit,
   defaultValues,
   submitting,
+  submitTitle,
 }: {
   submitting: boolean;
   onSubmit: (values: IProfileFormValues) => void;
   defaultValues: IProfileFormValues;
+  submitTitle: string;
 }) => {
   const [name, setName] = useState(defaultValues.name);
   const [username, setUsername] = useState(defaultValues.username);
@@ -47,6 +49,7 @@ const useProfileForm = ({
         avatarStyle,
       });
     },
+    submitTitle,
     avatarUrl,
     name,
     setName,
@@ -72,7 +75,9 @@ export const ProfileFormView = ({
   defaultValues,
   onSubmit,
   submitting,
+  submitTitle,
 }: {
+  submitTitle: string;
   submitting: boolean;
   onBack: () => void;
   defaultValues: IProfileFormValues;
@@ -80,6 +85,7 @@ export const ProfileFormView = ({
 }) => {
   return (
     <ProfileFormContext
+      submitTitle={submitTitle}
       submitting={submitting}
       onSubmit={onSubmit}
       defaultValues={defaultValues}
@@ -89,11 +95,7 @@ export const ProfileFormView = ({
           name="Profile"
           component={ProfileView}
           options={{
-            header: () => (
-              <Appbar.Header>
-                <Appbar.Content title="Profile" />
-              </Appbar.Header>
-            ),
+            headerShown: false,
           }}
         />
         <Stack.Screen
@@ -135,8 +137,15 @@ const ProfileAvatar = () => {
 const ProfileView = ({
   navigation,
 }: NativeStackScreenProps<IStackParamList, "Profile">) => {
-  const { submitting, username, setUsername, name, setName, onSubmit } =
-    useProfileFormContext();
+  const {
+    submitTitle,
+    submitting,
+    username,
+    setUsername,
+    name,
+    setName,
+    onSubmit,
+  } = useProfileFormContext();
 
   return (
     <>
@@ -147,9 +156,8 @@ const ProfileView = ({
         onPress={() => {
           navigation.navigate("Avatar");
         }}
-      >
-        Change Avatar
-      </Button>
+        title={"Change Avatar"}
+      />
 
       <TextInput
         style={{ marginHorizontal: spacing(1), marginBottom: spacing(2) }}
@@ -173,9 +181,8 @@ const ProfileView = ({
         onPress={onSubmit}
         disabled={submitting}
         loading={submitting}
-      >
-        Create
-      </Button>
+        title={submitTitle}
+      />
     </>
   );
 };
@@ -201,9 +208,8 @@ const AvatarView = () => {
         onPress={() => {
           setAvatarSeed(toAvatarSeed(String(Math.random())));
         }}
-      >
-        Generate Seed
-      </Button>
+        title="Generate Seed"
+      />
     </>
   );
 };

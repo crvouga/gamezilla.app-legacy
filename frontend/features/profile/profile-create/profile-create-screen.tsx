@@ -45,6 +45,7 @@ export const ProfileCreateScreen = ({
   return (
     <>
       <ProfileFormView
+        submitTitle="Create"
         onBack={() => {}}
         onSubmit={onSubmit}
         defaultValues={defaultValues}

@@ -1,5 +1,20 @@
 import { definitions, supabaseClient } from "../../../data-access";
-import { IDataAccess } from "./profile-create-interface";
+
+export type IDataAccess = {
+  create: (profile: {
+    userId: string;
+    avatarUrl: string;
+    name: string;
+    username: string;
+  }) => Promise<
+    | {
+        type: "success";
+      }
+    | {
+        type: "error";
+      }
+  >;
+};
 
 export const dataAccess: IDataAccess = {
   create: async ({ userId, name, username, avatarUrl }) => {
