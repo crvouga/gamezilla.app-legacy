@@ -18,6 +18,12 @@ export type IState = {
   subscribe: Subscribe.IState;
 };
 
+export const initialState: IState = {
+  signIn: SignIn.initialState,
+  signOut: SignOut.initialState,
+  subscribe: Subscribe.initialState,
+};
+
 /**
  *
  *

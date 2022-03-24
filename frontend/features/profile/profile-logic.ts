@@ -20,6 +20,13 @@ export type IState = {
   update: Update.IState;
 };
 
+export const initialState: IState = {
+  create: Create.initialState,
+  delete: Delete.initialState,
+  subscribe: Subscribe.initialState,
+  update: Update.initialState,
+};
+
 /**
  *
  *

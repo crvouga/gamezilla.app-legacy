@@ -17,6 +17,10 @@ export type IState =
       type: "signing-out";
     };
 
+export const initialState: IState = {
+  type: "idle",
+};
+
 /**
  *
  *

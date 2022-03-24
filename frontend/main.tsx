@@ -1,66 +1,17 @@
-import React, { useEffect, useState } from "react";
-import * as ReactDOM from "react-dom";
-import { BrowserRouter } from "react-router-dom";
-import { ThemeProvider } from "./ui-components";
-import { IAction, reducer, actions, saga } from "./app/app-logic";
-import { dataAccess } from "./app/app-data-access";
-import { isActions, createStore } from "./utils";
-import { AppView } from "./app/app-view";
-
-const store = createStore({
-  reducer,
-  initialState: {
-    auth: {
-      subscribe: {
-        type: "loading",
-      },
-      signIn: {
-        type: "idle",
-      },
-      signOut: {
-        type: "idle",
-      },
-    },
-
-    profile: {
-      subscribe: {
-        type: "loading",
-      },
-      create: {
-        type: "idle",
-      },
-      delete: {
-        type: "idle",
-      },
-      update: {
-        type: "idle",
-      },
-    },
-  },
-  isAction: (action: unknown): action is IAction => {
-    return isActions(actions, action);
-  },
-  saga: function* () {
-    yield* saga(dataAccess);
-  },
-});
+import { registerRootComponent } from "expo";
+import React from "react";
+/** URL polyfill. Required for Supabase queries to work in React Native. */
+import "react-native-url-polyfill/auto";
+import { Provider } from "react-redux";
+import { AppView } from "./app/app-view-native";
+import { store } from "./main-store";
 
 const Root = () => {
-  const [state, setState] = useState(store.getState);
-
-  useEffect(() => {
-    store.subscribe(() => {
-      setState(store.getState);
-    });
-  }, []);
-
   return (
-    <BrowserRouter>
-      <ThemeProvider>
-        <AppView state={state} dispatch={store.dispatch} />
-      </ThemeProvider>
-    </BrowserRouter>
+    <Provider store={store}>
+      <AppView />
+    </Provider>
   );
 };
 
-ReactDOM.render(<Root />, document.getElementById("root"));
+registerRootComponent(Root);

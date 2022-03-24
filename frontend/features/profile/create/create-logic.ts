@@ -17,6 +17,10 @@ export type IState =
       type: "creating";
     };
 
+export const initialState: IState = {
+  type: "idle",
+};
+
 /**
  *
  *
