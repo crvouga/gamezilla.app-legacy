@@ -29,7 +29,7 @@ export const darkTheme = createTheme({
   },
 });
 
-const theme = responsiveFontSizes(darkTheme);
+const theme = darkTheme;
 
 export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   return (

@@ -1,8 +1,7 @@
 import React from "react";
 import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
-import * as SignIn from "../features/auth/sign-in/sign-in-logic";
-import { SignInView } from "../features/auth/sign-in/sign-in-view";
-import { SignOutView } from "../features/auth/sign-out/sign-out-view";
+import { SignInView, SignOutView } from "../features/auth/auth-view";
+import { GameView } from "../features/game/game-view";
 import { HomeView } from "../features/home/home-view";
 import {
   ProfileCreateView,
@@ -106,13 +105,28 @@ const ProfileFoundView = ({
           path="/home"
           element={
             <HomeView
-              profile={profile}
               navigate={(action) => {
                 if (action.type === "sign-out") {
                   navigate("/sign-out");
                 }
                 if (action.type === "profile") {
                   navigate("/profile");
+                }
+                if (action.type === "game") {
+                  navigate("/game");
+                }
+              }}
+            />
+          }
+        />
+
+        <Route
+          path="/game"
+          element={
+            <GameView
+              navigate={(action) => {
+                if (action.type === "back") {
+                  navigate("/home", { replace: true });
                 }
               }}
             />
