@@ -1,4 +1,6 @@
-import { definitions, supabaseClient } from "../../../data-access";
+import { eventChannel } from "redux-saga";
+import { definitions, supabaseClient } from "../../data-access";
+import { IDataAccess } from "./profile-logic";
 
 export type IProfile = {
   userId: string;
@@ -89,35 +91,6 @@ export const deleteProfile = async ({ userId }: { userId: string }) => {
     .match({ id: userId });
 };
 
-export const onProfile =
-  ({ userId }: { userId: string }) =>
-  (set: (maybeProfile: IProfile | null) => void) => {
-    getProfile({ userId }).then((profile) => {
-      if (profile) {
-        set(profile);
-        return;
-      }
-      set(null);
-    });
-
-    const subscription = supabaseClient
-      .from<definitions["profile"]>(`profile:id=eq.${userId}`)
-      .on("INSERT", (payload) => {
-        set(rowToProfile(payload.new));
-      })
-      .on("UPDATE", (payload) => {
-        set(rowToProfile(payload.new));
-      })
-      .on("DELETE", () => {
-        set(null);
-      })
-      .subscribe();
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  };
-
 export const updateProfile = async ({
   userId,
   avatarUrl,
@@ -141,4 +114,42 @@ export const updateProfile = async ({
   if (error) {
     throw error;
   }
+};
+
+const mapProfile = (profile: IProfile | null) => {
+  if (profile) {
+    return {
+      type: "found",
+      profile,
+    } as const;
+  }
+  return {
+    type: "not-found",
+  } as const;
+};
+
+export const dataAccess: IDataAccess = {
+  createProfileChan: ({ userId }) =>
+    eventChannel((emit) => {
+      getProfile({ userId }).then((profile) => {
+        emit(mapProfile(profile));
+      });
+
+      const subscription = supabaseClient
+        .from<definitions["profile"]>(`profile:id=eq.${userId}`)
+        .on("INSERT", (payload) => {
+          emit(mapProfile(rowToProfile(payload.new)));
+        })
+        .on("UPDATE", (payload) => {
+          emit(mapProfile(rowToProfile(payload.new)));
+        })
+        .on("DELETE", () => {
+          emit({ type: "not-found" });
+        })
+        .subscribe();
+
+      return () => {
+        subscription.unsubscribe();
+      };
+    }),
 };

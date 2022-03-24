@@ -1,9 +1,9 @@
 import { Avatar, Box, Button, TextField } from "@mui/material";
 import React, { useState } from "react";
 import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
-import { AppBar } from "../../../ui-components";
-import { ProfileAvatarForm } from "./profile-avatar-form";
-import { IAvatarSeed, IAvatarStyle, toAvatarUrl } from "./profile-data";
+import { AppBar } from "../../ui-components";
+import { ProfileAvatarForm } from "./profile-view-avatar-form";
+import { IAvatarSeed, IAvatarStyle, toAvatarUrl } from "./profile-avatar-data";
 
 type IValues = {
   avatarSeed: IAvatarSeed;
@@ -15,12 +15,14 @@ type IValues = {
 export const ProfileForm = ({
   defaultValues,
   onCancel,
-  onDone,
+  onSubmit,
   title,
+  submitTitle,
 }: {
   title: string;
   defaultValues: IValues;
-  onDone: (values: IValues) => void;
+  submitTitle: string;
+  onSubmit: (values: IValues) => void;
   onCancel: () => void;
 }) => {
   const [name, setName] = useState(defaultValues.name);
@@ -110,7 +112,7 @@ export const ProfileForm = ({
                 fullWidth
                 variant="contained"
                 onClick={() => {
-                  onDone({
+                  onSubmit({
                     avatarSeed,
                     avatarStyle,
                     name,
@@ -118,7 +120,7 @@ export const ProfileForm = ({
                   });
                 }}
               >
-                Done
+                {submitTitle}
               </Button>
             </Box>
           </Box>

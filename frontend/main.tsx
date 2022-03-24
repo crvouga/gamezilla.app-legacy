@@ -1,17 +1,22 @@
 import React, { useEffect, useState } from "react";
 import * as ReactDOM from "react-dom";
 import { BrowserRouter } from "react-router-dom";
-import * as App from "./app/app";
-import * as AppDataAccess from "./app/app-data-access";
 import { ThemeProvider } from "./ui-components";
-import { createStore } from "./utils";
+import { IAction, reducer, actions, saga } from "./app/app-logic";
+import { dataAccess } from "./app/app-data-access";
+import { isActions, createStore } from "./utils";
+import { AppView } from "./app/app-view";
 
 const store = createStore({
-  reducer: App.reducer,
-  initialState: App.initialState,
-  isAction: App.isAction,
+  reducer,
+  initialState: {
+    type: "loading",
+  },
+  isAction: (action: unknown): action is IAction => {
+    return isActions(actions, action);
+  },
   saga: function* () {
-    yield* App.saga(AppDataAccess);
+    yield* saga(dataAccess);
   },
 });
 
@@ -27,7 +32,7 @@ const Root = () => {
   return (
     <BrowserRouter>
       <ThemeProvider>
-        <App.view state={state} dispatch={store.dispatch} />
+        <AppView state={state} dispatch={store.dispatch} />
       </ThemeProvider>
     </BrowserRouter>
   );

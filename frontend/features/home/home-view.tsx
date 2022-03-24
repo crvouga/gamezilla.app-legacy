@@ -12,7 +12,7 @@ type IRoute =
       type: "game";
     };
 
-export const Home = ({
+export const HomeView = ({
   profile,
   push,
 }: {

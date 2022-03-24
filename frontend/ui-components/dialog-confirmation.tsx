@@ -6,14 +6,16 @@ export const DialogConformation = ({
   confirmTitle,
   onCancel,
   onConfirm,
+  visible,
 }: {
+  visible: boolean;
   title: string;
   confirmTitle: string;
   onCancel: () => void;
   onConfirm: () => void;
 }) => {
   return (
-    <Dialog open onClose={onCancel}>
+    <Dialog open={visible} onClose={onCancel}>
       <Box
         sx={{
           width: "100%",
