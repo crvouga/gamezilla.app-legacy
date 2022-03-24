@@ -16,9 +16,9 @@ export const SignOutView = ({
     <>
       <DialogConformation
         visible={state.type === "idle"}
-        title="Log out of Gamezilla?"
+        title="Sign out of Gamezilla?"
         onCancel={onCancel}
-        confirmTitle="Logout"
+        confirmTitle="Sign out"
         onConfirm={() => {
           dispatch(actions.signOut());
         }}

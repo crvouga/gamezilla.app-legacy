@@ -1,12 +1,12 @@
 import React from "react";
 import { Icons, Avatar, AppBar, Menu } from "../../ui-components";
 
-type IRoute =
+type INavigateAction =
   | {
       type: "profile";
     }
   | {
-      type: "logout";
+      type: "sign-out";
     }
   | {
       type: "game";
@@ -14,9 +14,9 @@ type IRoute =
 
 export const HomeView = ({
   profile,
-  push,
+  navigate,
 }: {
-  push: (route: IRoute) => void;
+  navigate: (route: INavigateAction) => void;
   profile: { avatarUrl?: string };
 }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -50,14 +50,14 @@ export const HomeView = ({
             icon: <Icons.Person />,
             title: "Your profile",
             onClick: () => {
-              push({ type: "profile" });
+              navigate({ type: "profile" });
             },
           },
           {
             icon: <Icons.Logout />,
-            title: "Logout",
+            title: "Sign Out",
             onClick: () => {
-              push({ type: "logout" });
+              navigate({ type: "sign-out" });
             },
           },
         ]}

@@ -49,11 +49,9 @@ export const ProfileAvatarForm = ({
     avatarStyle,
   });
 
-  const [age, setAge] = useState("");
-
   return (
     <Box sx={{ display: "flex", flexDirection: "column" }}>
-      <AppBar title="Avatar" />
+      <AppBar title="Pick Avatar" />
 
       <Avatar
         src={avatarUrl}

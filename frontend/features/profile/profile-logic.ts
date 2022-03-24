@@ -1,202 +1,92 @@
-import { EventChannel, eventChannel } from "redux-saga";
-import { put, takeEvery } from "redux-saga/effects";
-import {
-  Action,
-  ActionType,
-  InferActionMap,
-  InferActionUnion,
-  isActions,
-} from "../../utils";
+import { fork } from "redux-saga/effects";
+import { InferActionUnion } from "../../utils";
+import * as Create from "./create/create-logic";
+import * as Delete from "./delete/delete-logic";
+import * as Subscribe from "./subscribe/subscribe-logic";
+import * as Update from "./update/update-logic";
 
-export type IProfile = {
-  userId: string;
-  avatarUrl?: string;
-  username?: string;
-  name?: string;
-  themeMode: "LIGHT" | "DARK" | "SYSTEM";
-  gameRoomId?: string;
+/**
+ *
+ *
+ * State
+ *
+ *
+ */
+
+export type IState = {
+  create: Create.IState;
+  delete: Delete.IState;
+  subscribe: Subscribe.IState;
+  update: Update.IState;
 };
 
-export type IFoundState = {
-  type: "found";
-  profile: IProfile;
-  status: "idle" | "updating" | "deleting";
-};
-
-export type INotFoundState = {
-  type: "not-found";
-  status: "idle" | "creating";
-};
-
-export type ILoadingState = {
-  type: "loading";
-};
-
-export type IState = ILoadingState | IFoundState | INotFoundState;
+/**
+ *
+ *
+ * Reducer
+ *
+ *
+ */
 
 export const actions = {
-  found: Action<"profile", "found", IProfile>("profile", "found"),
-  notFound: Action("profile", "not-found"),
-  //
-  update: Action<
-    "profile",
-    "update",
-    {
-      avatarUrl?: string;
-      username?: string;
-      name?: string;
-    }
-  >("profile", "update"),
-  updateSucceeded: Action("profile", "update-succeeded"),
-  updateFailed: Action("profile", "update-failed"),
-  //
-  delete: Action<"profile", "delete", { userId: string }>("profile", "delete"),
-  deleteSucceeded: Action("profile", "delete-succeeded"),
-  deleteFailed: Action("profile", "delete-failed"),
-  //
-  create: Action<
-    "profile",
-    "create",
-    {
-      username: string;
-      name: string;
-      avatarUrl: string;
-    }
-  >("profile", "create"),
-  createSucceeded: Action("profile", "create-succeeded"),
-  createFailed: Action("profile", "create-failed"),
+  ...Create.actions,
+  ...Delete.actions,
+  ...Update.actions,
+  ...Subscribe.actions,
 };
 
 export type IAction = InferActionUnion<typeof actions>;
 
-export const isAction = (action: unknown): action is IAction => {
-  return isActions(actions, action);
-};
-
-type IActionMap = InferActionMap<typeof actions>;
-
 export const reducer = (state: IState, action: IAction): IState => {
-  switch (state.type) {
-    case "not-found":
-      switch (action.type) {
-        case ActionType("profile", "found"):
-          return {
-            type: "found",
-            profile: action.payload,
-            status: "idle",
-          };
-
-        case ActionType("profile", "create"):
-          return {
-            ...state,
-            status: "creating",
-          };
-
-        case ActionType("profile", "create-succeeded"):
-          return {
-            ...state,
-            status: "idle",
-          };
-
-        default:
-          return state;
-      }
-
-    case "loading":
-      switch (action.type) {
-        case ActionType("profile", "found"):
-          return {
-            type: "found",
-            profile: action.payload,
-            status: "idle",
-          };
-
-        case ActionType("profile", "not-found"):
-          return {
-            type: "not-found",
-            status: "idle",
-          };
-
-        default:
-          return state;
-      }
-
-    case "found":
-      switch (action.type) {
-        case ActionType("profile", "not-found"):
-          return {
-            type: "not-found",
-            status: "idle",
-          };
-
-        case ActionType("profile", "delete"):
-          return {
-            ...state,
-            status: "deleting",
-          };
-
-        case ActionType("profile", "delete-succeeded"):
-          return {
-            ...state,
-            status: "idle",
-          };
-
-        case ActionType("profile", "update"):
-          return {
-            ...state,
-            status: "updating",
-          };
-
-        case ActionType("profile", "update-succeeded"):
-          return {
-            ...state,
-            status: "idle",
-          };
-
-        default:
-          return state;
-      }
-
-    default:
-      return state;
+  if (action.namespace === "profile/create") {
+    return {
+      ...state,
+      create: Create.reducer(state.create, action),
+    };
   }
+
+  if (action.namespace === "profile/delete") {
+    return {
+      ...state,
+      delete: Delete.reducer(state.delete, action),
+    };
+  }
+
+  if (action.namespace === "profile/update") {
+    return {
+      ...state,
+      update: Update.reducer(state.update, action),
+    };
+  }
+
+  if (action.namespace === "profile/subscribe") {
+    return {
+      ...state,
+      subscribe: Subscribe.reducer(state.subscribe, action),
+    };
+  }
+
+  return state;
 };
 
-export const Selectors = {
-  isUpdating: (state: IState) =>
-    state.type === "found" && state.status === "updating",
-};
-
-/* 
-
-
-
-
-*/
+/**
+ *
+ *
+ * Saga
+ *
+ *
+ */
 
 export type IDataAccess = {
-  createProfileChan: ({
-    userId,
-  }: {
-    userId: string;
-  }) => EventChannel<
-    { type: "found"; profile: IProfile } | { type: "not-found" }
-  >;
+  create: Create.IDataAccess;
+  delete: Delete.IDataAccess;
+  update: Update.IDataAccess;
+  subscribe: Subscribe.IDataAccess;
 };
 
-export function* saga(
-  { createProfileChan }: IDataAccess,
-  { userId }: { userId: string }
-) {
-  const profileChan = createProfileChan({ userId });
-
-  yield takeEvery(profileChan, function* (result) {
-    if (result.type === "found") {
-      yield put(actions.found(result.profile));
-    }
-
-    if (result.type === "not-found") {
-      yield put(actions.notFound());
-    }
-  });
+export function* saga(dataAccess: IDataAccess, { userId }: { userId: string }) {
+  yield fork(Create.saga, dataAccess.create, { userId });
+  yield fork(Delete.saga, dataAccess.delete, { userId });
+  yield fork(Update.saga, dataAccess.update, { userId });
+  yield fork(Subscribe.saga, dataAccess.subscribe, { userId });
 }

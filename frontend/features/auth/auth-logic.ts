@@ -1,6 +1,8 @@
-import { EventChannel } from "redux-saga";
-import { put, takeEvery } from "redux-saga/effects";
-import { Action, InferActionUnion } from "../../utils";
+import { fork } from "redux-saga/effects";
+import { InferActionUnion } from "../../utils";
+import * as SignIn from "./sign-in/sign-in-logic";
+import * as SignOut from "./sign-out/sign-out-logic";
+import * as Subscribe from "./subscribe/subscribe-logic";
 
 /**
  *
@@ -10,23 +12,11 @@ import { Action, InferActionUnion } from "../../utils";
  *
  */
 
-export type ISignedOutState = {
-  type: "signed-out";
+export type IState = {
+  signIn: SignIn.IState;
+  signOut: SignOut.IState;
+  subscribe: Subscribe.IState;
 };
-
-export type ISignedInState = {
-  type: "signed-in";
-  userId: string;
-  defaultName: string;
-};
-
-export type ILoadingState = {
-  type: "loading";
-};
-
-export type IAuthState = ISignedOutState | ISignedInState;
-
-export type IState = IAuthState | ILoadingState;
 
 /**
  *
@@ -37,16 +27,32 @@ export type IState = IAuthState | ILoadingState;
  */
 
 export const actions = {
-  synced: Action<"auth", "synced", IAuthState>("auth", "synced"),
+  ...SignIn.actions,
+  ...SignOut.actions,
+  ...Subscribe.actions,
 };
 
 export type IAction = InferActionUnion<typeof actions>;
 
 export const reducer = (state: IState, action: IAction): IState => {
-  if (action.type === "auth::synced") {
+  if (action.namespace === "auth/subscribe") {
     return {
       ...state,
-      ...action.payload,
+      subscribe: Subscribe.reducer(state.subscribe, action),
+    };
+  }
+
+  if (action.namespace === "auth/signIn") {
+    return {
+      ...state,
+      signIn: SignIn.reducer(state.signIn, action),
+    };
+  }
+
+  if (action.namespace === "auth/signOut") {
+    return {
+      ...state,
+      signOut: SignOut.reducer(state.signOut, action),
     };
   }
 
@@ -62,12 +68,13 @@ export const reducer = (state: IState, action: IAction): IState => {
  */
 
 export type IDataAccess = {
-  authStateChan: EventChannel<IAuthState>;
-  getAuthState: () => IAuthState;
+  signIn: SignIn.IDataAccess;
+  signOut: SignOut.IDataAccess;
+  subscribe: Subscribe.IDataAccess;
 };
 
-export function* saga({ authStateChan }: IDataAccess) {
-  yield takeEvery(authStateChan, function* (authState) {
-    yield put(actions.synced(authState));
-  });
+export function* saga(dataAccess: IDataAccess) {
+  yield fork(SignIn.saga, dataAccess.signIn);
+  yield fork(SignOut.saga, dataAccess.signOut);
+  yield fork(Subscribe.saga, dataAccess.subscribe);
 }
