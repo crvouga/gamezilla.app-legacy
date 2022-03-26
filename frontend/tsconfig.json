@@ -33,8 +33,5 @@
     {
       "path": "../common"
     },
-    {
-      "path": "./tsconfig.vite.json"
-    },
   ]
 }

@@ -1,247 +1,73 @@
-import React from "react";
-import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
-import { SignInView, SignOutView } from "../features/auth/auth-view";
-import { GameView } from "../features/game/game-view";
-import { HomeView } from "../features/home/home-view";
-import {
-  ProfileCreateView,
-  ProfileDeleteView,
-  ProfileUpdateView,
-  ProfileView,
-} from "../features/profile/profile-view";
-import { IProfile } from "../features/profile/subscribe/subscribe-logic";
-import { LoadingDialog } from "../ui-components";
-import { IAction, IState } from "./app-logic";
+import { NavigationContainer } from "@react-navigation/native";
+import AppLoading from "expo-app-loading";
+import * as React from "react";
+import { View } from "react-native";
+import { Portal, Provider as PaperProvider } from "react-native-paper";
+import { useAuthState } from "../features/auth/auth-state/use-auth-state";
+import { SignInView } from "../features/auth/sign-in/sign-in-view";
+import { useAppSelector } from "../main-store";
+import { darkTheme, DialogLoading, useFontState } from "../ui";
+import { AppNoProfileView } from "./app-no-profile-view";
+import { AppProfileView } from "./app-profile-view";
 
-export const AppView = ({
-  state,
-  dispatch,
-}: {
-  state: IState;
-  dispatch: (action: IAction) => void;
-}) => {
-  return (
-    <>
-      <LoadingDialog
-        visible={state.auth.subscribe.type === "loading"}
-        title="Checking if logged in..."
-      />
+export const AppView = () => {
+  const authState = useAuthState();
+  const fontsState = useFontState();
+  const profileState = useAppSelector((state) => state.profile.subscribe);
 
-      {state.auth.subscribe.type === "signed-in" && (
-        <SignedInView
-          defaultName={state.auth.subscribe.defaultName}
-          dispatch={dispatch}
-          state={state}
-        />
-      )}
-
-      {state.auth.subscribe.type === "signed-out" && (
-        <SignedOutView state={state} dispatch={dispatch} />
-      )}
-    </>
-  );
-};
-
-const SignedOutView = ({
-  state,
-  dispatch,
-}: {
-  state: IState;
-  dispatch: (action: IAction) => void;
-}) => {
-  return <SignInView state={state.auth.signIn} dispatch={dispatch} />;
-};
-
-const SignedInView = ({
-  dispatch,
-  defaultName,
-  state,
-}: {
-  state: IState;
-  defaultName: string;
-  dispatch: (action: IAction) => void;
-}) => {
-  return (
-    <>
-      <LoadingDialog
-        visible={state.profile.subscribe.type === "loading"}
-        title="Loading profile..."
-      />
-
-      {state.profile.subscribe.type === "found" && (
-        <ProfileFoundView
-          state={state}
-          profile={state.profile.subscribe.profile}
-          dispatch={dispatch}
-        />
-      )}
-
-      {state.profile.subscribe.type === "not-found" && (
-        <ProfileNotFoundView
-          defaultName={defaultName}
-          state={state}
-          dispatch={dispatch}
-        />
-      )}
-    </>
-  );
-};
-
-const ProfileFoundView = ({
-  dispatch,
-  state,
-  profile,
-}: {
-  profile: IProfile;
-  state: IState;
-  dispatch: (action: IAction) => void;
-}) => {
-  const navigate = useNavigate();
+  if (fontsState.type === "loading") {
+    return <AppLoading />;
+  }
 
   return (
-    <>
-      <Routes>
-        <Route
-          path="/home"
-          element={
-            <HomeView
-              navigate={(action) => {
-                if (action.type === "sign-out") {
-                  navigate("/sign-out");
-                }
-                if (action.type === "profile") {
-                  navigate("/profile");
-                }
-                if (action.type === "game") {
-                  navigate("/game");
-                }
-              }}
+    <PaperProvider theme={darkTheme}>
+      <NavigationContainer theme={darkTheme}>
+        <View
+          style={{
+            backgroundColor: darkTheme.colors.background,
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+          }}
+        >
+          <Portal>
+            <DialogLoading
+              visible={authState.type === "loading"}
+              title={"Checking if logged in..."}
             />
-          }
-        />
+          </Portal>
 
-        <Route
-          path="/game"
-          element={
-            <GameView
-              navigate={(action) => {
-                if (action.type === "back") {
-                  navigate("/home", { replace: true });
-                }
-              }}
-            />
-          }
-        />
+          {authState.type === "signed-out" && (
+            <>
+              <SignInView />
+            </>
+          )}
 
-        <Route
-          path="/profile"
-          element={
-            <ProfileView
-              navigate={(action) => {
-                if (action.type === "back") {
-                  navigate("/home", { replace: true });
-                }
+          {authState.type === "signed-in" && (
+            <>
+              <Portal>
+                <DialogLoading
+                  visible={profileState.type === "loading"}
+                  title={"Loading profile..."}
+                />
+              </Portal>
 
-                if (action.type === "delete") {
-                  navigate("/profile/delete");
-                }
+              {profileState.type === "found" && (
+                <AppProfileView profile={profileState.profile} />
+              )}
 
-                if (action.type === "edit") {
-                  navigate("/profile/edit");
-                }
-              }}
-            />
-          }
-        />
-
-        <Route
-          path="/profile/edit/*"
-          element={
-            <ProfileUpdateView
-              onCancel={() => {
-                navigate("/profile", { replace: true });
-              }}
-              profile={profile}
-              state={state.profile.update}
-              dispatch={dispatch}
-            />
-          }
-        />
-
-        <Route
-          path="/profile/delete/*"
-          element={
-            <ProfileDeleteView
-              onCancel={() => {
-                navigate("/profile", { replace: true });
-              }}
-              state={state.profile.delete}
-              dispatch={dispatch}
-            />
-          }
-        />
-
-        <Route
-          path="/sign-out"
-          element={
-            <SignOutView
-              onCancel={() => {
-                navigate("/home", { replace: true });
-              }}
-              state={state.auth.signOut}
-              dispatch={dispatch}
-            />
-          }
-        />
-
-        <Route path="*" element={<Navigate to="/home" replace />} />
-      </Routes>
-    </>
-  );
-};
-
-const ProfileNotFoundView = ({
-  state,
-  dispatch,
-  defaultName,
-}: {
-  state: IState;
-  dispatch: (action: IAction) => void;
-  defaultName: string;
-}) => {
-  const navigate = useNavigate();
-
-  return (
-    <>
-      <Routes>
-        <Route
-          path="/profile/create/*"
-          element={
-            <ProfileCreateView
-              state={state.profile.create}
-              onCancel={() => {
-                navigate("/sign-out", { replace: true });
-              }}
-              dispatch={dispatch}
-              defaultName={defaultName}
-            />
-          }
-        />
-
-        <Route
-          path="/sign-out"
-          element={
-            <SignOutView
-              onCancel={() => {
-                navigate("/profile/create", { replace: true });
-              }}
-              state={state.auth.signOut}
-              dispatch={dispatch}
-            />
-          }
-        />
-        <Route path="*" element={<Navigate to="/profile/create" replace />} />
-      </Routes>
-    </>
+              {profileState.type === "not-found" && (
+                <AppNoProfileView
+                  userId={authState.userId}
+                  defaultName={authState.defaultName}
+                />
+              )}
+            </>
+          )}
+        </View>
+      </NavigationContainer>
+    </PaperProvider>
   );
 };

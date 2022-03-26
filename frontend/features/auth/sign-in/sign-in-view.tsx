@@ -1,45 +1,51 @@
-import { Google } from "@mui/icons-material";
-import { Box, Button, Dialog, Typography } from "@mui/material";
-import React from "react";
-import { LoadingDialog } from "../../../ui-components";
-import { actions, IAction, IState } from "./sign-in-logic";
+import React, { useState } from "react";
+import { StyleSheet, View } from "react-native";
+import { Dialog, Headline, Portal } from "react-native-paper";
+import { Button, DialogLoading } from "../../../ui";
+import { fontSize, spacing } from "../../../ui";
+import { dataAccess } from "./sign-in-data-access";
 
-export const SignInView = ({
-  state,
-  dispatch,
-}: {
-  state: IState;
-  dispatch: (action: IAction) => void;
-}) => {
+const styles = StyleSheet.create({
+  root: {
+    padding: spacing(2),
+    // alignItems: "center",
+    justifyContent: "center",
+    flex: 1,
+  },
+  headline: {
+    textAlign: "center",
+    fontSize: fontSize(6),
+    marginBottom: spacing(2),
+  },
+});
+
+export const SignInView = () => {
+  const [state, setState] = useState<"idle" | "loading">("idle");
+
+  const loginInWithGoogle = async () => {
+    setState("loading");
+
+    await dataAccess.signIn({ type: "google" });
+  };
+
   return (
     <>
-      <LoadingDialog
-        visible={state.type === "signing-in"}
-        title="Signing in..."
-      />
+      <View style={styles.root}>
+        <Headline style={styles.headline}>Gamezilla</Headline>
 
-      <Dialog open={state.type === "idle"}>
-        <Box sx={{ p: 2 }}>
-          <Typography
-            variant="h3"
-            align="center"
-            sx={{ marginBottom: 2, paddingX: 4 }}
-          >
-            Gamezilla
-          </Typography>
+        <Button
+          icon="google"
+          mode="contained"
+          loading={state === "loading"}
+          disabled={state === "loading"}
+          onPress={loginInWithGoogle}
+          title="Continue With Google"
+        />
+      </View>
 
-          <Button
-            fullWidth
-            startIcon={<Google />}
-            variant="contained"
-            onClick={() => {
-              dispatch(actions.signIn({ type: "google" }));
-            }}
-          >
-            Continue with Google
-          </Button>
-        </Box>
-      </Dialog>
+      <Portal>
+        <DialogLoading visible={state === "loading"} title="Signing in..." />
+      </Portal>
     </>
   );
 };

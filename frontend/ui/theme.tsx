@@ -37,7 +37,7 @@ export const darkTheme: ITheme = {
 };
 
 export const spacing = (n: number) => {
-  return n * 12;
+  return n * 8;
 };
 
 export const fontSize = (n: number) => {
