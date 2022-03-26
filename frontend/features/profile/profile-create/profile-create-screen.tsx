@@ -1,11 +1,8 @@
 import React, { useState } from "react";
-import { Snackbar, Portal } from "react-native-paper";
+import { Snackbar, Portal, Appbar } from "react-native-paper";
 import { DialogLoading } from "../../../ui/DialogLoading";
 import { toAvatarSeed, toAvatarUrl } from "../profile-avatar-data";
-import {
-  IProfileFormValues,
-  ProfileFormView,
-} from "../profile-form-view-native";
+import { IProfileFormValues, ProfileFormView } from "../profile-form-view";
 import { dataAccess } from "./profile-create-data-access";
 
 export const ProfileCreateScreen = ({
@@ -44,6 +41,10 @@ export const ProfileCreateScreen = ({
 
   return (
     <>
+      <Appbar.Header>
+        <Appbar.Content title="Create Profile" />
+      </Appbar.Header>
+
       <ProfileFormView
         submitTitle="Create"
         onBack={() => {}}
@@ -51,6 +52,7 @@ export const ProfileCreateScreen = ({
         defaultValues={defaultValues}
         submitting={state === "mutating"}
       />
+
       <Portal>
         <DialogLoading
           visible={state === "mutating"}

@@ -1,4 +1,4 @@
-import { composeWithDevTools } from "@redux-devtools/extension";
+// import { composeWithDevTools } from "@redux-devtools/extension";
 import {
   Action,
   applyMiddleware,
@@ -43,7 +43,7 @@ export const createStore = <
   const store = createReduxStore(
     rootReducer,
     undefined,
-    composeWithDevTools(applyMiddleware(sagaMiddleware))
+    applyMiddleware(sagaMiddleware)
   );
 
   sagaMiddleware.run(rootSaga);

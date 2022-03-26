@@ -1,6 +1,5 @@
-import { eventChannel } from "redux-saga";
 import { definitions, supabaseClient } from "../../../data-access";
-import { IDataAccess, IProfile } from "./subscribe-logic";
+import { IDataAccess, IProfile } from "./profile-state";
 
 const rowToProfile = (row: definitions["profile"]): IProfile => {
   return {
@@ -8,8 +7,8 @@ const rowToProfile = (row: definitions["profile"]): IProfile => {
     avatarUrl: row.avatar_url,
     name: row.name,
     username: row.username,
-    themeMode: row.theme_mode,
-    gameRoomId: row.game_room_id,
+    // themeMode: row.theme_mode,
+    // gameRoomId: row.game_room_id,
   };
 };
 
@@ -45,8 +44,9 @@ const mapProfile = (profile: IProfile | null) => {
 };
 
 export const dataAccess: IDataAccess = {
-  createProfileChan: ({ userId }) =>
-    eventChannel((emit) => {
+  subscribe:
+    ({ userId }) =>
+    (emit) => {
       getProfile({ userId }).then((profile) => {
         emit(mapProfile(profile));
       });
@@ -67,5 +67,5 @@ export const dataAccess: IDataAccess = {
       return () => {
         subscription.unsubscribe();
       };
-    }),
+    },
 };

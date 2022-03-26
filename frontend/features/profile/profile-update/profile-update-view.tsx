@@ -2,10 +2,7 @@ import React, { useState } from "react";
 import { Portal, Snackbar } from "react-native-paper";
 import { DialogLoading } from "../../../ui/DialogLoading";
 import { parseAvatarUrl, toAvatarUrl } from "../profile-avatar-data";
-import {
-  IProfileFormValues,
-  ProfileFormView,
-} from "../profile-form-view-native";
+import { IProfileFormValues, ProfileFormView } from "../profile-form-view";
 import { dataAccess } from "./profile-update-data-access";
 
 export const ProfileUpdateView = ({
