@@ -9,11 +9,14 @@ import { useAppSelector } from "../main-store";
 import { darkTheme, DialogLoading, useFontState } from "../ui";
 import { AppNoProfileView } from "./app-no-profile-view";
 import { AppProfileView } from "./app-profile-view";
+import { useWebStyles } from "./use-web-styles";
 
 export const AppView = () => {
   const authState = useAuthState();
   const fontsState = useFontState();
   const profileState = useAppSelector((state) => state.profile.subscribe);
+
+  useWebStyles({ backgroundColor: darkTheme.colors.background });
 
   if (fontsState.type === "loading") {
     return <AppLoading />;
