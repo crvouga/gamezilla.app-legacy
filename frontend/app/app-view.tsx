@@ -5,16 +5,15 @@ import { View } from "react-native";
 import { Portal, Provider as PaperProvider } from "react-native-paper";
 import { useAuthState } from "../features/auth/auth-state/use-auth-state";
 import { SignInView } from "../features/auth/sign-in/sign-in-view";
-import { useAppSelector } from "../main-store";
+import { useProfileState } from "../features/profile/profile-state/use-profile-state";
 import { darkTheme, DialogLoading, useFontState } from "../ui";
 import { AppNoProfileView } from "./app-no-profile-view";
 import { AppProfileView } from "./app-profile-view";
 import { useWebStyles } from "./use-web-styles";
 
 export const AppView = () => {
-  const authState = useAuthState();
   const fontsState = useFontState();
-  const profileState = useAppSelector((state) => state.profile.subscribe);
+  const authState = useAuthState();
 
   useWebStyles({ backgroundColor: darkTheme.colors.background });
 
@@ -27,50 +26,55 @@ export const AppView = () => {
       <NavigationContainer theme={darkTheme}>
         <View
           style={{
+            flex: 1,
             backgroundColor: darkTheme.colors.background,
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
           }}
         >
-          <Portal>
-            <DialogLoading
-              visible={authState.type === "loading"}
-              title={"Checking if logged in..."}
-            />
-          </Portal>
-
-          {authState.type === "signed-out" && (
-            <>
-              <SignInView />
-            </>
+          {authState.type === "loading" && (
+            <Portal>
+              <DialogLoading visible title={"Checking if logged in..."} />
+            </Portal>
           )}
 
+          {authState.type === "signed-out" && <SignInView />}
+
           {authState.type === "signed-in" && (
-            <>
-              <Portal>
-                <DialogLoading
-                  visible={profileState.type === "loading"}
-                  title={"Loading profile..."}
-                />
-              </Portal>
-
-              {profileState.type === "found" && (
-                <AppProfileView profile={profileState.profile} />
-              )}
-
-              {profileState.type === "not-found" && (
-                <AppNoProfileView
-                  userId={authState.userId}
-                  defaultName={authState.defaultName}
-                />
-              )}
-            </>
+            <AppSignedInView
+              userId={authState.userId}
+              defaultName={authState.defaultName}
+            />
           )}
         </View>
       </NavigationContainer>
     </PaperProvider>
+  );
+};
+
+const AppSignedInView = ({
+  userId,
+  defaultName,
+}: {
+  userId: string;
+  defaultName: string;
+}) => {
+  const profileState = useProfileState({ userId });
+
+  return (
+    <>
+      <Portal>
+        <DialogLoading
+          visible={profileState.type === "loading"}
+          title={"Loading profile..."}
+        />
+      </Portal>
+
+      {profileState.type === "not-found" && (
+        <AppNoProfileView userId={userId} defaultName={defaultName} />
+      )}
+
+      {profileState.type === "found" && (
+        <AppProfileView profile={profileState.profile} />
+      )}
+    </>
   );
 };
