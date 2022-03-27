@@ -1,14 +1,12 @@
 import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
-import { Dialog, Headline, Portal } from "react-native-paper";
-import { Button, DialogLoading } from "../../../ui";
-import { fontSize, spacing } from "../../../ui";
+import { Headline, Portal } from "react-native-paper";
+import { Button, DialogLoading, fontSize, spacing } from "../../../ui";
 import { dataAccess } from "./sign-in-data-access";
 
 const styles = StyleSheet.create({
   root: {
     padding: spacing(2),
-    // alignItems: "center",
     justifyContent: "center",
     flex: 1,
   },

@@ -5,7 +5,7 @@ import { toAvatarSeed, toAvatarUrl } from "../profile-avatar-data";
 import { IProfileFormValues, ProfileFormView } from "../profile-form-view";
 import { dataAccess } from "./profile-create-data-access";
 
-export const ProfileCreateScreen = ({
+export const ProfileCreateView = ({
   userId,
   defaultName,
 }: {
