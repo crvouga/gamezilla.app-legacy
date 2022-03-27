@@ -1,12 +1,3 @@
-export type IState =
-  | {
-      type: "idle";
-    }
-  | {
-      type: "signing-in";
-      method: ISignInMethod;
-    };
-
 export type ISignInMethod = {
   type: "google";
 };
