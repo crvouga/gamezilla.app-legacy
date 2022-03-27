@@ -1,5 +1,6 @@
+import { eventChannel } from "redux-saga";
 import { definitions, supabaseClient } from "../../../data-access";
-import { IDataAccess, IProfile } from "./profile-state";
+import { actions, IDataAccess, IProfile } from "./profile-state";
 
 const rowToProfile = (row: definitions["profile"]): IProfile => {
   return {
@@ -30,42 +31,36 @@ const getProfile = async ({
   return null;
 };
 
-const mapProfile = (profile: IProfile | null) => {
+const profileToProfileEvent = (profile: IProfile | null) => {
   if (profile) {
-    return {
-      type: "found",
-      profile,
-    } as const;
+    return actions.found(profile);
   }
 
-  return {
-    type: "not-found",
-  } as const;
+  return actions.notFound();
 };
 
 export const dataAccess: IDataAccess = {
-  subscribe:
-    ({ userId }) =>
-    (emit) => {
+  createProfileEventChan: ({ userId }) =>
+    eventChannel((emit) => {
       getProfile({ userId }).then((profile) => {
-        emit(mapProfile(profile));
+        emit(profileToProfileEvent(profile));
       });
 
       const subscription = supabaseClient
         .from<definitions["profile"]>(`profile:id=eq.${userId}`)
         .on("INSERT", (payload) => {
-          emit(mapProfile(rowToProfile(payload.new)));
+          emit(profileToProfileEvent(rowToProfile(payload.new)));
         })
         .on("UPDATE", (payload) => {
-          emit(mapProfile(rowToProfile(payload.new)));
+          emit(profileToProfileEvent(rowToProfile(payload.new)));
         })
         .on("DELETE", () => {
-          emit({ type: "not-found" });
+          emit(profileToProfileEvent(null));
         })
         .subscribe();
 
       return () => {
         subscription.unsubscribe();
       };
-    },
+    }),
 };

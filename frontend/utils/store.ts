@@ -1,16 +1,11 @@
-// import { composeWithDevTools } from "@redux-devtools/extension";
-import {
-  Action,
-  applyMiddleware,
-  createStore as createReduxStore,
-} from "redux";
+import { Action, configureStore } from "@reduxjs/toolkit";
 import createSagaMiddleware from "redux-saga";
 import { spawn } from "redux-saga/effects";
 import { logUnknownActionsSaga } from "./sagas";
 
 export const createStore = <
   TState,
-  TAction extends Action<any>,
+  TAction extends Action,
   TGenerator extends Generator
 >({
   reducer,
@@ -20,7 +15,7 @@ export const createStore = <
 }: {
   reducer: (state: TState, action: TAction) => TState;
   initialState: TState;
-  isAction: (action: unknown) => action is TAction;
+  isAction: (action: Action<unknown>) => action is TAction;
   saga: () => TGenerator;
 }) => {
   const rootReducer = (maybeState: TState | undefined, action: TAction) => {
@@ -40,11 +35,10 @@ export const createStore = <
 
   const sagaMiddleware = createSagaMiddleware();
 
-  const store = createReduxStore(
-    rootReducer,
-    undefined,
-    applyMiddleware(sagaMiddleware)
-  );
+  const store = configureStore({
+    reducer: rootReducer,
+    middleware: [sagaMiddleware],
+  });
 
   sagaMiddleware.run(rootSaga);
 

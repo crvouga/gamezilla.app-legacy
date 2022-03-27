@@ -1,27 +1,25 @@
+import { Action, createAction } from "@reduxjs/toolkit";
 import { put, takeEvery } from "redux-saga/effects";
-import { Action, isActions } from "./action-creator";
 
-const actions = {
-  error: Action<
-    "utility",
-    "error",
-    {
-      type: "unknown-action";
-      action: unknown;
-    }
-  >("utility", "error"),
+type IError = {
+  type: "unknown-action";
+  action: unknown;
 };
 
-export function* logUnknownActionsSaga<TAction>({
+const actions = {
+  error: createAction<IError, "utility/ERROR">("utility/ERROR"),
+};
+
+export function* logUnknownActionsSaga<TAction extends Action>({
   isAction,
 }: {
-  isAction: (action: unknown) => action is TAction;
+  isAction: (action: Action<unknown>) => action is TAction;
 }) {
-  const isStoreAction = (action: unknown) => {
-    return isActions(actions, action) || isAction(action);
+  const isStoreAction = (action: Action<unknown>) => {
+    return actions.error.match(action) || isAction(action);
   };
 
-  function* watchUnknownActions(action: unknown) {
+  function* watchUnknownActions(action: Action<unknown>) {
     if (isStoreAction(action)) {
       return;
     }
