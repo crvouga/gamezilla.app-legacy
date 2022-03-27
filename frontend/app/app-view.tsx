@@ -1,21 +1,28 @@
-import { NavigationContainer } from "@react-navigation/native";
+import { useReduxDevToolsExtension } from "@react-navigation/devtools";
+import {
+  NavigationContainer,
+  useNavigationContainerRef,
+} from "@react-navigation/native";
 import AppLoading from "expo-app-loading";
 import * as React from "react";
 import { View } from "react-native";
 import { Portal, Provider as PaperProvider } from "react-native-paper";
-import { useAuthState } from "../features/auth/auth-state/use-auth-state";
 import { SignInView } from "../features/auth/sign-in/sign-in-view";
-import { useProfileState } from "../features/profile/profile-state/use-profile-state";
+import { useAppSelector } from "../store";
 import { darkTheme, DialogLoading, useFontState } from "../ui";
-import { AppNoProfileView } from "./app-no-profile-view";
-import { AppProfileView } from "./app-profile-view";
+import { AppNoProfileView } from "./app-view-no-profile";
+import { AppProfileView } from "./app-view-profile";
 import { useWebStyles } from "./use-web-styles";
 
 export const AppView = () => {
   const fontsState = useFontState();
-  const authState = useAuthState();
+  const authState = useAppSelector((state) => state.auth);
 
   useWebStyles({ backgroundColor: darkTheme.colors.background });
+
+  const navigationRef = useNavigationContainerRef();
+
+  useReduxDevToolsExtension(navigationRef);
 
   if (fontsState.type === "loading") {
     return <AppLoading />;
@@ -23,7 +30,7 @@ export const AppView = () => {
 
   return (
     <PaperProvider theme={darkTheme}>
-      <NavigationContainer theme={darkTheme}>
+      <NavigationContainer ref={navigationRef} theme={darkTheme}>
         <View
           style={{
             flex: 1,
@@ -57,7 +64,7 @@ const AppSignedInView = ({
   userId: string;
   defaultName: string;
 }) => {
-  const profileState = useProfileState({ userId });
+  const profileState = useAppSelector((state) => state.profile);
 
   return (
     <>

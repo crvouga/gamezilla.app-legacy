@@ -1,8 +1,9 @@
 import { Session } from "@supabase/supabase-js";
+import { eventChannel } from "redux-saga";
 import { supabaseClient } from "../../../data-access";
-import { IAuthState, IDataAccess } from "./auth-state";
+import { actions, IAction, IDataAccess } from "./auth-state";
 
-export const sessionToAuthState = (session: Session | null): IAuthState => {
+export const sessionToAuthEvent = (session: Session | null): IAction => {
   const userId = session?.user?.id;
   const defaultName =
     session?.user?.user_metadata?.name ??
@@ -10,33 +11,30 @@ export const sessionToAuthState = (session: Session | null): IAuthState => {
     "";
 
   if (userId) {
-    return {
-      type: "signed-in",
+    return actions.signedIn({
       userId,
       defaultName,
-    };
+    });
   }
 
-  return {
-    type: "signed-out",
-  };
+  return actions.signedOut();
 };
 
 export const dataAccess: IDataAccess = {
-  subscribe: (emit) => {
+  authEventChan: eventChannel((emit) => {
     const timeoutHandler = setTimeout(() => {
-      emit(sessionToAuthState(supabaseClient.auth.session()));
+      emit(sessionToAuthEvent(supabaseClient.auth.session()));
     }, 1000);
 
     const response = supabaseClient.auth.onAuthStateChange(
       (_event, session) => {
         clearTimeout(timeoutHandler);
-        emit(sessionToAuthState(session));
+        emit(sessionToAuthEvent(session));
       }
     );
 
     return () => {
       response.data?.unsubscribe();
     };
-  },
+  }),
 };

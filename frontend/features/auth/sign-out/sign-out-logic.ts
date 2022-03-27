@@ -1,5 +1,6 @@
+import { createAction } from "@reduxjs/toolkit";
 import { call, delay, takeLeading } from "redux-saga/effects";
-import { Action, InferActionUnion } from "../../../utils";
+import { InferActionUnion } from "../../../utils";
 
 /**
  *
@@ -24,19 +25,27 @@ export const initialState: IState = {
 /**
  *
  *
- * Reducer
+ * Actions
  *
  *
  */
 
 export const actions = {
-  signOut: Action<"auth/signOut", "signOut">("auth/signOut", "signOut"),
+  signOut: createAction("auth/SIGN_OUT"),
 };
 
 export type IAction = InferActionUnion<typeof actions>;
 
+/**
+ *
+ *
+ * Reducer
+ *
+ *
+ */
+
 export const reducer = (state: IState, action: IAction): IState => {
-  if (action.type === "auth/signOut/signOut") {
+  if (action.type === "auth/SIGN_OUT") {
     return {
       type: "signing-out",
     };

@@ -1,3 +1,17 @@
+import { createAction } from "@reduxjs/toolkit";
+import { EventChannel } from "redux-saga";
+import { put, takeEvery } from "redux-saga/effects";
+import { InferActionUnion } from "../../../utils";
+import { dataAccess } from "./profile-state-data-access";
+
+/**
+ *
+ *
+ * State
+ *
+ *
+ */
+
 export type IProfile = {
   userId: string;
   avatarUrl?: string;
@@ -5,7 +19,7 @@ export type IProfile = {
   username?: string;
 };
 
-export type IProfileState =
+export type IState =
   | {
       type: "loading";
     }
@@ -17,10 +31,66 @@ export type IProfileState =
       profile: IProfile;
     };
 
+/**
+ *
+ *
+ * Actions
+ *
+ *
+ */
+
+export const actions = {
+  found: createAction<IProfile, "profile/FOUND">("profile/FOUND"),
+  notFound: createAction("profile/NOT_FOUND"),
+};
+
+export type IAction = InferActionUnion<typeof actions>;
+
+/**
+ *
+ *
+ * Reducer
+ *
+ *
+ */
+
+export const reducer = (state: IState, action: IAction): IState => {
+  if (action.type === "profile/FOUND") {
+    return {
+      type: "found",
+      profile: action.payload,
+    };
+  }
+
+  if (action.type === "profile/NOT_FOUND") {
+    return {
+      type: "not-found",
+    };
+  }
+
+  return state;
+};
+
+/**
+ *
+ *
+ * Saga
+ *
+ *
+ */
+
 export type IDataAccess = {
-  subscribe: ({
+  createProfileEventChan: ({
     userId,
   }: {
     userId: string;
-  }) => (emit: (profileState: IProfileState) => void) => () => void;
+  }) => EventChannel<IAction>;
 };
+
+export function* saga({ userId }: { userId: string }) {
+  const profileEventChan = dataAccess.createProfileEventChan({ userId });
+
+  yield takeEvery(profileEventChan, function* (action) {
+    yield put(action);
+  });
+}

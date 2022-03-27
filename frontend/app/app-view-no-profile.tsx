@@ -31,15 +31,15 @@ export const AppNoProfileView = ({
         <Stack.Screen
           name="ProfileCreate"
           options={{ headerShown: false }}
-          component={ProfileCreateScreenContainer}
+          component={createProfileCreateScreen({ userId, defaultName })}
         />
       </Stack.Navigator>
     </StackContext>
   );
 };
 
-const ProfileCreateScreenContainer = () => {
-  const { defaultName, userId } = useStackContext();
-
-  return <ProfileCreateScreen defaultName={defaultName} userId={userId} />;
-};
+const createProfileCreateScreen =
+  ({ defaultName, userId }: { defaultName: string; userId: string }) =>
+  () => {
+    return <ProfileCreateScreen defaultName={defaultName} userId={userId} />;
+  };
