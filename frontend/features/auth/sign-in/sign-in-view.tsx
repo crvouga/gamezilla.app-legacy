@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export const SignInView = () => {
+export const SignInScreen = () => {
   const [state, setState] = useState<"idle" | "loading">("idle");
 
   const loginInWithGoogle = async () => {

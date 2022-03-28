@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { Portal, Snackbar } from "react-native-paper";
+import { parseAvatarUrl, toAvatarUrl } from "../../../../common";
 import { DialogLoading } from "../../../ui/DialogLoading";
-import { parseAvatarUrl, toAvatarUrl } from "../profile-avatar-data";
-import { IProfileFormValues, ProfileFormView } from "../profile-form-view";
+// import { IProfileFormValues, ProfileFormView } from "../profile-form";
 import { dataAccess } from "./profile-update-data-access";
 
-export const ProfileUpdateView = ({
+export const ProfileUpdateScreen = ({
   profile,
 }: {
   profile: {
@@ -19,7 +19,7 @@ export const ProfileUpdateView = ({
     "idle"
   );
 
-  const onSubmit = async (formValues: IProfileFormValues) => {
+  const onSubmit = async (formValues: any) => {
     setState("mutating");
 
     const result = await dataAccess.update({
@@ -36,7 +36,7 @@ export const ProfileUpdateView = ({
     setState("success");
   };
 
-  const defaultValues: IProfileFormValues = {
+  const defaultValues = {
     name: profile.name ?? "",
     username: profile.username ?? "",
     ...parseAvatarUrl(profile.avatarUrl),
@@ -44,14 +44,6 @@ export const ProfileUpdateView = ({
 
   return (
     <>
-      <ProfileFormView
-        onBack={() => {}}
-        submitTitle="Update"
-        onSubmit={onSubmit}
-        defaultValues={defaultValues}
-        submitting={state === "mutating"}
-      />
-
       <Portal>
         <DialogLoading
           visible={state === "mutating"}

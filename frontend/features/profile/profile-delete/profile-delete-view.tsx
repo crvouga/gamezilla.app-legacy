@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { ViewStyle } from "react-native";
-import { Dialog, Portal, useTheme } from "react-native-paper";
-import { Button, DialogLoading, spacing } from "../../../ui";
+import { Dialog, Portal } from "react-native-paper";
+import { Button, DialogLoading, useTheme } from "../../../ui";
 import { dataAccess } from "./profile-delete-data-access";
 
 export const ProfileDeleteDialog = ({

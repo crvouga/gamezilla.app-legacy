@@ -1,22 +1,25 @@
 import React, { useState } from "react";
 import { Snackbar, Portal, Appbar } from "react-native-paper";
 import { DialogLoading } from "../../../ui/DialogLoading";
-import { toAvatarSeed, toAvatarUrl } from "../profile-avatar-data";
-import { IProfileFormValues, ProfileFormView } from "../profile-form-view";
+import { toAvatarSeed, toAvatarUrl } from "../../../../common";
+
 import { dataAccess } from "./profile-create-data-access";
+import { ProfileForm, useProfileForm } from "../profile-form/profile-form";
 
 export const ProfileCreateView = ({
   userId,
   defaultName,
+  onLogout,
 }: {
   userId: string;
   defaultName: string;
+  onLogout: () => void;
 }) => {
   const [state, setState] = useState<"idle" | "mutating" | "error" | "success">(
     "idle"
   );
 
-  const onSubmit = async (formValues: IProfileFormValues) => {
+  const onSubmit = async (formValues: any) => {
     setState("mutating");
     const result = await dataAccess.create({
       ...formValues,
@@ -32,25 +35,25 @@ export const ProfileCreateView = ({
     setState("success");
   };
 
-  const defaultValues: IProfileFormValues = {
+  const profileForm = useProfileForm({
     name: defaultName,
     username: defaultName.replace(" ", "").toLocaleLowerCase(),
     avatarSeed: toAvatarSeed(defaultName),
     avatarStyle: "big-ears-neutral",
-  };
+  });
 
   return (
     <>
       <Appbar.Header>
+        <Appbar.Action icon="logout" onPress={onLogout} />
+
         <Appbar.Content title="Create Profile" />
       </Appbar.Header>
 
-      <ProfileFormView
-        submitTitle="Create"
-        onBack={() => {}}
-        onSubmit={onSubmit}
-        defaultValues={defaultValues}
-        submitting={state === "mutating"}
+      <ProfileForm
+        onCancel={() => {}}
+        onChangeAvatar={() => {}}
+        form={profileForm}
       />
 
       <Portal>
@@ -59,7 +62,6 @@ export const ProfileCreateView = ({
           title="Creating profile..."
         />
       </Portal>
-
       <Snackbar
         visible={state === "error"}
         onDismiss={() => {

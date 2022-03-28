@@ -4,7 +4,7 @@ import { Dialog, Portal, useTheme } from "react-native-paper";
 import { Button, DialogLoading } from "../../../ui";
 import { dataAccess } from "./sign-out-data-access";
 
-export const SignOutView = ({
+export const SignOutDialog = ({
   visible,
   onCancel,
 }: {
@@ -24,7 +24,7 @@ export const SignOutView = ({
   };
 
   return (
-    <Portal>
+    <>
       <Dialog visible={visible && state === "idle"} onDismiss={onCancel}>
         <Dialog.Title>Sign out of Gamezilla?</Dialog.Title>
 
@@ -35,7 +35,7 @@ export const SignOutView = ({
       </Dialog>
 
       <DialogLoading visible={state === "loading"} title="Signing out..." />
-    </Portal>
+    </>
   );
 };
 
@@ -62,7 +62,9 @@ export const SignOutButton = ({ style }: { style?: ViewStyle }) => {
         color={theme.colors.error}
         style={style}
       />
-      <SignOutView visible={state === "visible"} onCancel={onCancel} />
+      <Portal>
+        <SignOutDialog visible={state === "visible"} onCancel={onCancel} />
+      </Portal>
     </>
   );
 };
