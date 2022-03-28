@@ -26,8 +26,6 @@ export const dataAccess: IDataAccess = {
     //https://auth.expo.io
     const redirectUri = AuthSession.makeRedirectUri({ useProxy: false });
 
-    console.log({ redirectUri, proxyRedirectUri });
-
     const provider = method.type;
 
     const response = await AuthSession.startAsync({

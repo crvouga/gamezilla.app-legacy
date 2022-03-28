@@ -1,7 +1,7 @@
 import { createAction } from "@reduxjs/toolkit";
 import { EventChannel } from "redux-saga";
 import { put, takeEvery } from "redux-saga/effects";
-import { InferActionUnion } from "../../../utils";
+import { InferActionUnion } from "../../utils";
 import { dataAccess } from "./profile-state-data-access";
 
 /**

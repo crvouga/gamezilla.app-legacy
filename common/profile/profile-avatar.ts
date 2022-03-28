@@ -84,7 +84,6 @@ export const toAvatarUrl = ({
     url.searchParams.append("backgroundColor", "white");
   }
 
-  console.log(url.toString());
   return url.toString();
 };
 
