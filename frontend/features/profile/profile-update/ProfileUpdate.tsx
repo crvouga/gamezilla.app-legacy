@@ -183,7 +183,7 @@ export const ProfileScreen = ({ navigation }: IScreenProps<"Profile">) => {
           onPress={onSubmit}
           loading={formStatus === "loading"}
           title="Update Profile"
-          loadingText="Updating Profile..."
+          loadingText="Updating..."
           style={{
             marginBottom: spacing(2),
           }}
@@ -283,7 +283,7 @@ export const AvatarScreen = ({ navigation, route }: IScreenProps<"Avatar">) => {
         }}
         mode="contained"
         onPress={onChangeAvatar}
-        title="Change Avatar"
+        title="Done"
       />
     </>
   );
