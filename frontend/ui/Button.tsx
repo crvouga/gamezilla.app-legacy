@@ -31,7 +31,7 @@ export const Button = ({
       color={color}
       theme={{ roundness: 24 }}
       style={{
-        borderColor: color,
+        ...(color ? { borderColor: color } : {}),
         ...style,
       }}
     >
