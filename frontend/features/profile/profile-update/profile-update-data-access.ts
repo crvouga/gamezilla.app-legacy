@@ -1,6 +1,6 @@
 import { definitions, supabaseClient } from "../../../data-access";
 
-export type IDataAccess = {
+type IDataAccess = {
   update: (profile: {
     userId: string;
     avatarUrl: string;

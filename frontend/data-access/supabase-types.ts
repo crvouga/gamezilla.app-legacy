@@ -125,11 +125,11 @@ export interface definitions {
      */
     id: string;
     /** Format: text */
-    avatar_url?: string;
+    avatar_url: string;
     /** Format: text */
-    name?: string;
+    name: string;
     /** Format: text */
-    username?: string;
+    username: string;
     /**
      * Format: public.theme_mode
      * @default SYSTEM
