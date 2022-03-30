@@ -4,7 +4,7 @@ import AppLoading from "expo-app-loading";
 import * as React from "react";
 import { View } from "react-native";
 import { Appbar, List, Portal } from "react-native-paper";
-import { SignInScreen } from "../features/auth/sign-in/sign-in-view";
+import { SignInScreen } from "../features/auth/sign-in/sign-in-screen";
 import { SignOutButton } from "../features/auth/sign-out/sign-out-view";
 import { ProfileCreateView } from "../features/profile/profile-create/profile-create-view";
 import { ProfileDeleteButton } from "../features/profile/profile-delete/profile-delete-view";
@@ -12,6 +12,7 @@ import { DialogLoading, spacing, useTheme } from "../ui";
 import { AppNavigationProvider } from "./app-navigation";
 import { AppStoreProvider, useAppSelector } from "./app-store";
 import { AppThemeProvider, useFontState } from "./app-theme";
+import { StateInspector } from "reinspect";
 
 type AppStackParamList = {
   Home: undefined;
@@ -36,13 +37,15 @@ export const AppContainer = () => {
   }
 
   return (
-    <AppStoreProvider>
-      <AppThemeProvider>
-        <AppNavigationProvider>
-          <App />
-        </AppNavigationProvider>
-      </AppThemeProvider>
-    </AppStoreProvider>
+    <StateInspector name="App">
+      <AppStoreProvider>
+        <AppThemeProvider>
+          <AppNavigationProvider>
+            <App />
+          </AppNavigationProvider>
+        </AppThemeProvider>
+      </AppStoreProvider>
+    </StateInspector>
   );
 };
 
@@ -83,7 +86,9 @@ export const App = () => {
 
   if (state.profile.type === "not-found") {
     return (
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Navigator
+        screenOptions={{ headerShown: false, animationTypeForReplace: "pop" }}
+      >
         <Stack.Screen
           name="ProfileCreate"
           component={thunk(ProfileCreateView, {
@@ -99,9 +104,7 @@ export const App = () => {
   const { profile } = state.profile;
 
   return (
-    <Stack.Navigator
-      screenOptions={{ headerShown: false, animationTypeForReplace: "pop" }}
-    >
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Home" component={HomeScreen} />
       <Stack.Screen
         name="Profile"

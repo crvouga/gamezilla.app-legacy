@@ -15,11 +15,6 @@ export const useWebStyles = ({
           padding: 0px;
           margin: 0px;
           background-color: ${backgroundColor}
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 100vw;
-          height: 100vh;
       }
   `;
   return useEffect(() => {

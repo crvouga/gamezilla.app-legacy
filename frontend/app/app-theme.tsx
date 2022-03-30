@@ -19,7 +19,7 @@ import { ReactNode } from "react";
 import { createTheme, ThemeProvider, useWebStyles } from "../ui";
 
 const theme = createTheme({
-  mode: "light",
+  mode: "dark",
   fonts: {
     regular: {
       fontFamily: "Nunito_800ExtraBold",

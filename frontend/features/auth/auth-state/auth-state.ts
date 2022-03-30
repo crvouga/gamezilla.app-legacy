@@ -1,4 +1,4 @@
-import { createAction, createReducer } from "@reduxjs/toolkit";
+import { createAction } from "@reduxjs/toolkit";
 import { EventChannel } from "redux-saga";
 import { put, takeEvery } from "redux-saga/effects";
 import { InferActionUnion } from "../../../utils";
