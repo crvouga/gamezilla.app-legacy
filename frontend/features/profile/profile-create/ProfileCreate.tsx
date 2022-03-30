@@ -272,7 +272,7 @@ export const AvatarScreen = ({
         }}
         mode="contained"
         onPress={onChangeAvatar}
-        title="Change Avatar"
+        title="Done"
       />
     </>
   );
