@@ -1,8 +1,7 @@
 import { createAction } from "@reduxjs/toolkit";
 import { EventChannel } from "redux-saga";
 import { put, takeEvery } from "redux-saga/effects";
-import { InferActionUnion } from "../../utils";
-import { dataAccess } from "./profile-state-data-access";
+import { InferActionUnion } from "../../../utils";
 
 /**
  *
@@ -14,9 +13,9 @@ import { dataAccess } from "./profile-state-data-access";
 
 export type IProfile = {
   userId: string;
-  avatarUrl?: string;
-  name?: string;
-  username?: string;
+  avatarUrl: string;
+  name: string;
+  username: string;
 };
 
 export type IState =
@@ -87,7 +86,13 @@ export type IDataAccess = {
   }) => EventChannel<IAction>;
 };
 
-export function* saga({ userId }: { userId: string }) {
+export function* saga({
+  userId,
+  dataAccess,
+}: {
+  dataAccess: IDataAccess;
+  userId: string;
+}) {
   const profileEventChan = dataAccess.createProfileEventChan({ userId });
 
   yield takeEvery(profileEventChan, function* (action) {

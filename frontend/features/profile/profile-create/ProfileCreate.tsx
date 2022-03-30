@@ -2,6 +2,7 @@ import {
   createNativeStackNavigator,
   NativeStackScreenProps,
 } from "@react-navigation/native-stack";
+import constate from "constate";
 import React, { useState } from "react";
 import { FlatList, View } from "react-native";
 import { Appbar, Avatar, List, Portal, TextInput } from "react-native-paper";
@@ -13,16 +14,12 @@ import {
   toAvatarSeed,
   toAvatarUrl,
 } from "../../../../common";
-import { Button, spacing } from "../../../ui";
-import { DialogLoading } from "../../../ui/DialogLoading";
+import { Button, DialogLoading, spacing } from "../../../ui";
 import { createEventEmitter, useEventHandler } from "../../../utils";
 import { dataAccess } from "./profile-create-data-access";
 
 type IStackParamList = {
-  Profile: {
-    userId: string;
-    defaultName: string;
-  };
+  Profile: undefined;
   Avatar: {
     avatarStyle: IAvatarStyle;
     avatarSeed: IAvatarSeed;
@@ -42,46 +39,46 @@ const eventEmitter = createEventEmitter<{
     avatarStyle: IAvatarStyle;
     avatarSeed: IAvatarSeed;
   };
-  LOGGED_OUT: {};
 }>();
 
-export const ProfileCreateView = ({
-  onLogout,
-  defaultName,
-  userId,
-}: {
+const [ProfileCreateContext, useProfileCreateContext] = constate(
+  (props: { userId: string; defaultName: string; onLogout: () => void }) => {
+    return props;
+  }
+);
+
+export const ProfileCreate = (props: {
   userId: string;
   defaultName: string;
   onLogout: () => void;
 }) => {
-  useEventHandler(eventEmitter, "LOGGED_OUT", onLogout);
-
   return (
-    <Stack.Navigator
-      initialRouteName="Profile"
-      screenOptions={{ headerShown: false, presentation: "fullScreenModal" }}
-    >
-      <Stack.Screen
-        name="Profile"
-        component={ProfileScreen}
-        initialParams={{
-          userId,
-          defaultName,
+    <ProfileCreateContext {...props}>
+      <Stack.Navigator
+        initialRouteName="Profile"
+        screenOptions={{
+          headerShown: false,
+          presentation: "fullScreenModal",
         }}
-      />
-      <Stack.Screen name="Avatar" component={AvatarScreen} />
-      <Stack.Screen name="AvatarStyle" component={AvatarStyleScreen} />
-    </Stack.Navigator>
+      >
+        <Stack.Screen name="Profile" component={ProfileScreen} />
+        <Stack.Screen name="Avatar" component={AvatarScreen} />
+        <Stack.Screen name="AvatarStyle" component={AvatarStyleScreen} />
+      </Stack.Navigator>
+    </ProfileCreateContext>
   );
 };
 
 export const ProfileScreen = ({
   navigation,
-  route,
 }: NativeStackScreenProps<IStackParamList, "Profile">) => {
+  const { userId, defaultName, onLogout } = useProfileCreateContext();
+
   const [formStatus, setFormStatus] = useState<"idle" | "loading">("idle");
-  const [name, setName] = useState(route.params.defaultName);
-  const [username, setUsername] = useState(route.params.defaultName);
+  const [name, setName] = useState(defaultName);
+  const [username, setUsername] = useState(
+    defaultName.replace(" ", "").toLowerCase()
+  );
   const [avatarSeed, setAvatarSeed] = useState<IAvatarSeed>(
     toAvatarSeed("string")
   );
@@ -107,17 +104,13 @@ export const ProfileScreen = ({
     setFormStatus("loading");
 
     await dataAccess.create({
-      userId: route.params.userId,
+      userId,
       avatarUrl: toAvatarUrl({ avatarSeed, avatarStyle }),
       name,
       username,
     });
 
     setFormStatus("idle");
-  };
-
-  const onLogout = () => {
-    eventEmitter.emit("LOGGED_OUT", {});
   };
 
   return (
@@ -297,6 +290,14 @@ const AvatarStyleScreen = ({
   navigation,
   route,
 }: NativeStackScreenProps<IStackParamList, "AvatarStyle">) => {
+  const handleSubmit = (avatarStyle: IAvatarStyle) => () => {
+    eventEmitter.emit("AVATAR_STYLE_FORM_SUBMITTED", {
+      avatarStyle,
+    });
+
+    navigation.goBack();
+  };
+
   return (
     <>
       <Appbar.Header>
@@ -313,13 +314,7 @@ const AvatarStyleScreen = ({
         data={ALL_AVATAR_STYLES}
         renderItem={({ item }) => (
           <List.Item
-            onPress={() => {
-              eventEmitter.emit("AVATAR_STYLE_FORM_SUBMITTED", {
-                avatarStyle: item,
-              });
-
-              navigation.goBack();
-            }}
+            onPress={handleSubmit(item)}
             left={() => (
               <Avatar.Image
                 style={{ backgroundColor: "transparent" }}

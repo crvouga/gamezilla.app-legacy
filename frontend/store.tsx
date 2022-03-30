@@ -2,11 +2,11 @@ import { ReactNode } from "react";
 import {
   Provider,
   TypedUseSelectorHook,
-  useDispatch,
-  useSelector,
+  useDispatch as useDispatchRedux,
+  useSelector as useSelectorRedux,
 } from "react-redux";
-import { createStore } from "../utils";
-import * as App from "./app-state";
+import { createStore } from "./utils";
+import * as App from "./app/app-state";
 
 const store = createStore({
   reducer: App.reducer,
@@ -26,12 +26,12 @@ const store = createStore({
   },
 });
 
-export const AppStoreProvider = ({ children }: { children: ReactNode }) => {
+export const StoreProvider = ({ children }: { children: ReactNode }) => {
   return <Provider store={store}>{children}</Provider>;
 };
 
-export const useAppSelector: TypedUseSelectorHook<
+export const useSelector: TypedUseSelectorHook<
   ReturnType<typeof store.getState>
-> = useSelector;
+> = useSelectorRedux;
 
-export const useAppDispatch = () => useDispatch<App.IAction>();
+export const useDispatch = () => useDispatchRedux<App.IAction>();

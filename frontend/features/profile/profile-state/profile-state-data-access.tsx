@@ -1,5 +1,5 @@
 import { eventChannel } from "redux-saga";
-import { definitions, supabaseClient } from "../../data-access";
+import { definitions, supabaseClient } from "../../../data-access";
 import { actions, IDataAccess, IProfile } from "./profile-state";
 
 const rowToProfile = (row: definitions["profile"]): IProfile => {

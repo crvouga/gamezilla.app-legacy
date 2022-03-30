@@ -1,7 +1,14 @@
 import * as AuthSession from "expo-auth-session";
-import { supabaseClient, supabaseConfig } from "../../../data-access";
-import { IDataAccess } from "./sign-in-logic";
 import { Platform } from "react-native";
+import { supabaseClient, supabaseConfig } from "../../../data-access";
+
+export type ISignInMethod = {
+  type: "google";
+};
+
+export type IDataAccess = {
+  signIn: (method: ISignInMethod) => Promise<void>;
+};
 
 export const dataAccess: IDataAccess = {
   signIn: async (method) => {

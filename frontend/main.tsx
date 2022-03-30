@@ -1,6 +1,33 @@
+import { NavigationContainer } from "@react-navigation/native";
 import { registerRootComponent } from "expo";
+import AppLoading from "expo-app-loading";
 /** URL polyfill. Required for Supabase queries to work in React Native. */
 import "react-native-url-polyfill/auto";
-import { AppContainer } from "./app/app";
+import { App } from "./app/app";
+import { StoreProvider } from "./store";
+import { theme, useFontState } from "./theme";
+import { ThemeProvider, useWebStyles } from "./ui";
 
-registerRootComponent(AppContainer);
+const Root = () => {
+  const fontState = useFontState();
+
+  useWebStyles({
+    backgroundColor: theme.colors.background,
+  });
+
+  if (fontState.type === "loading") {
+    return <AppLoading />;
+  }
+
+  return (
+    <StoreProvider>
+      <ThemeProvider theme={theme}>
+        <NavigationContainer theme={theme}>
+          <App />
+        </NavigationContainer>
+      </ThemeProvider>
+    </StoreProvider>
+  );
+};
+
+registerRootComponent(Root);

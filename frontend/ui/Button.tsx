@@ -10,11 +10,13 @@ export const Button = ({
   icon,
   color,
   style,
+  loadingText,
 }: {
   style?: ViewStyle;
   color?: string;
   icon?: string;
   mode?: "contained" | "outlined" | "text";
+  loadingText?: string;
   title: string;
   onPress: () => void;
   loading?: boolean;
@@ -35,7 +37,7 @@ export const Button = ({
         ...style,
       }}
     >
-      {title}
+      {loading ? loadingText ?? title : title}
     </PaperButton>
   );
 };

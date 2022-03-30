@@ -1,7 +1,15 @@
 import { definitions, supabaseClient } from "../../../data-access";
-import { IDataAccess } from "./profile-create-state";
 
-export const dataAccess: IDataAccess = {
+export type IProfileCreateDataAccess = {
+  create: (profile: {
+    userId: string;
+    avatarUrl: string;
+    name: string;
+    username: string;
+  }) => Promise<{ type: "succeeded" } | { type: "failed" }>;
+};
+
+export const dataAccess: IProfileCreateDataAccess = {
   create: async ({ userId, name, username, avatarUrl }) => {
     const { error } = await supabaseClient
       .from<definitions["profile"]>("profile")
@@ -16,12 +24,12 @@ export const dataAccess: IDataAccess = {
 
     if (error) {
       return {
-        type: "error",
+        type: "failed",
       };
     }
 
     return {
-      type: "success",
+      type: "succeeded",
     };
   },
 };

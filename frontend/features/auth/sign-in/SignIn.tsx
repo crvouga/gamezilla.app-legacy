@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
-import { Headline, Portal } from "react-native-paper";
-import { Button, DialogLoading, fontSize, spacing } from "../../../ui";
+import { Headline } from "react-native-paper";
+import { Button, spacing } from "../../../ui";
 import { dataAccess } from "./sign-in-data-access";
 
 const styles = StyleSheet.create({
@@ -12,12 +12,12 @@ const styles = StyleSheet.create({
   },
   headline: {
     textAlign: "center",
-    fontSize: fontSize(6),
+    // fontSize: fontSize(6),
     marginBottom: spacing(2),
   },
 });
 
-export const SignInScreen = () => {
+export const SignIn = () => {
   const [state, setState] = useState<"idle" | "loading">("idle");
 
   const loginInWithGoogle = async () => {
@@ -37,13 +37,10 @@ export const SignInScreen = () => {
           loading={state === "loading"}
           disabled={state === "loading"}
           onPress={loginInWithGoogle}
-          title="Continue With Google"
+          title="Continue with Google"
+          loadingText="Continuing Wwth Google..."
         />
       </View>
-
-      <Portal>
-        <DialogLoading visible={state === "loading"} title="Signing in..." />
-      </Portal>
     </>
   );
 };
