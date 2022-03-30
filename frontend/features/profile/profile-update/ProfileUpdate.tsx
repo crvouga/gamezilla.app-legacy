@@ -5,7 +5,7 @@ import {
 import constate from "constate";
 import React, { useState } from "react";
 import { FlatList, View } from "react-native";
-import { Appbar, Avatar, List, Portal, TextInput } from "react-native-paper";
+import { Appbar, Avatar, List, TextInput } from "react-native-paper";
 import {
   ALL_AVATAR_STYLES,
   formatAvatarStyle,
@@ -16,7 +16,6 @@ import {
   toAvatarUrl,
 } from "../../../../common";
 import { Button, spacing } from "../../../ui";
-import { DialogLoading } from "../../../ui/DialogLoading";
 import { createEventEmitter, useEventHandler } from "../../../utils";
 import { dataAccess } from "./profile-update-data-access";
 
@@ -55,6 +54,7 @@ type IProfileUpdateProps = {
     avatarUrl: string;
     name: string;
   };
+  onSuccess: () => void;
   onCancel: () => void;
 };
 
@@ -83,7 +83,7 @@ export const ProfileUpdate = (props: IProfileUpdateProps) => {
 };
 
 export const ProfileScreen = ({ navigation }: IScreenProps<"Profile">) => {
-  const { profile, onCancel } = useProfileUpdateContext();
+  const { profile, onSuccess, onCancel } = useProfileUpdateContext();
 
   const [formStatus, setFormStatus] = useState<"idle" | "loading">("idle");
   const [name, setName] = useState(profile.name);
@@ -111,25 +111,22 @@ export const ProfileScreen = ({ navigation }: IScreenProps<"Profile">) => {
   const onSubmit = async () => {
     setFormStatus("loading");
 
-    await dataAccess.update({
+    const result = await dataAccess.update({
       userId: profile.userId,
       avatarUrl: toAvatarUrl({ avatarSeed, avatarStyle }),
       name,
       username,
     });
 
+    if (result.type === "success") {
+      onSuccess();
+    }
+
     setFormStatus("idle");
   };
 
   return (
     <>
-      {/* <Portal>
-        <DialogLoading
-          visible={formStatus === "loading"}
-          title="Updating profile..."
-        />
-      </Portal> */}
-
       <Appbar.Header>
         <Appbar.BackAction onPress={onCancel} />
         <Appbar.Content title="Update Profile" />

@@ -32,10 +32,7 @@ export const Button = ({
       icon={icon}
       color={color}
       theme={{ roundness: 24 }}
-      style={{
-        ...(color ? { borderColor: color } : {}),
-        ...style,
-      }}
+      style={style}
     >
       {loading ? loadingText ?? title : title}
     </PaperButton>

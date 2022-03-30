@@ -1,6 +1,6 @@
 import { createAction } from "@reduxjs/toolkit";
 import { EventChannel } from "redux-saga";
-import { put, takeEvery } from "redux-saga/effects";
+import { delay, put, takeEvery } from "redux-saga/effects";
 import { InferActionUnion } from "../../../utils";
 
 /**
@@ -96,6 +96,7 @@ export function* saga({
   const profileEventChan = dataAccess.createProfileEventChan({ userId });
 
   yield takeEvery(profileEventChan, function* (action) {
+    yield delay(1000);
     yield put(action);
   });
 }

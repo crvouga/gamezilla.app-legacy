@@ -5,7 +5,7 @@ import {
 import constate from "constate";
 import React, { useState } from "react";
 import { FlatList, View } from "react-native";
-import { Appbar, Avatar, List, Portal, TextInput } from "react-native-paper";
+import { Appbar, Avatar, List, TextInput } from "react-native-paper";
 import {
   ALL_AVATAR_STYLES,
   formatAvatarStyle,
@@ -14,7 +14,7 @@ import {
   toAvatarSeed,
   toAvatarUrl,
 } from "../../../../common";
-import { Button, DialogLoading, spacing } from "../../../ui";
+import { Button, spacing } from "../../../ui";
 import { createEventEmitter, useEventHandler } from "../../../utils";
 import { dataAccess } from "./profile-create-data-access";
 
@@ -109,19 +109,10 @@ export const ProfileScreen = ({
       name,
       username,
     });
-
-    setFormStatus("idle");
   };
 
   return (
     <>
-      <Portal>
-        <DialogLoading
-          visible={formStatus === "loading"}
-          title="Creating profile..."
-        />
-      </Portal>
-
       <Appbar.Header>
         <Appbar.Action icon="logout" onPress={onLogout} />
         <Appbar.Content title="Create Profile" />
@@ -181,6 +172,7 @@ export const ProfileScreen = ({
           style={{
             marginBottom: spacing(2),
           }}
+          loadingText="Creating..."
           mode="contained"
         />
       </View>
