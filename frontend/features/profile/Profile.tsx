@@ -1,6 +1,14 @@
 import * as React from "react";
+import { StyleSheet } from "react-native";
 import { Appbar, List } from "react-native-paper";
-import { Button, useTheme } from "../../ui";
+import { Button, spacing, useTheme } from "../../ui";
+
+const styles = StyleSheet.create({
+  button: {
+    marginHorizontal: spacing(2),
+    marginBottom: spacing(2),
+  },
+});
 
 export const Profile = ({
   onUpdate,
@@ -32,13 +40,17 @@ export const Profile = ({
       </List.Section>
 
       <Button
+        style={styles.button}
         onPress={onSignOut}
         icon="logout"
         title="Sign Out"
         color={theme.colors.error}
+        mode="outlined"
       />
 
       <Button
+        style={styles.button}
+        mode="outlined"
         onPress={onDelete}
         icon="delete"
         title="Delete Profile"

@@ -1,6 +1,6 @@
 import { createAction } from "@reduxjs/toolkit";
 import { EventChannel } from "redux-saga";
-import { put, takeEvery } from "redux-saga/effects";
+import { delay, put, takeEvery } from "redux-saga/effects";
 import { InferActionUnion } from "../../../utils";
 
 /**
@@ -83,6 +83,7 @@ export type IDataAccess = {
 
 export function* saga({ dataAccess }: { dataAccess: IDataAccess }) {
   yield takeEvery(dataAccess.authEventChan, function* (authEvent) {
+    yield delay(1000);
     yield put(authEvent);
   });
 }

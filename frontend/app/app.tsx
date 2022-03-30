@@ -4,12 +4,12 @@ import * as React from "react";
 import { SignIn } from "../features/auth/sign-in/SignIn";
 import { SignOut } from "../features/auth/sign-out/SignOut";
 import { Home } from "../features/home/Home";
+import { Profile } from "../features/profile/Profile";
 import { ProfileCreate } from "../features/profile/profile-create/ProfileCreate";
 import { ProfileDelete } from "../features/profile/profile-delete/ProfileDelete";
 import { ProfileUpdate } from "../features/profile/profile-update/ProfileUpdate";
-import { Profile } from "../features/profile/Profile";
 import { useSelector } from "../store";
-import { DialogLoading, useTheme } from "../ui";
+import { DialogLoading } from "../ui";
 
 type IStackParamList = {
   Home: undefined;
@@ -20,14 +20,14 @@ type IStackParamList = {
   ProfileDelete: undefined;
   SignIn: undefined;
   SignOut: undefined;
-  Loading: undefined;
+  LoadingAuth: undefined;
+  LoadingProfile: undefined;
 };
 
 export const Stack = createNativeStackNavigator<IStackParamList>();
 
 export const App = () => {
   const state = useSelector((state) => state);
-  const theme = useTheme();
   const navigation = useNavigation<NavigationProp<IStackParamList>>();
 
   if (state.auth.type === "loading") {
@@ -38,7 +38,7 @@ export const App = () => {
     return (
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen
-          name="Loading"
+          name="LoadingAuth"
           component={LoadingScreen}
           options={{ presentation: "containedTransparentModal" }}
         />
@@ -68,7 +68,7 @@ export const App = () => {
     return (
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen
-          name="Loading"
+          name="LoadingProfile"
           component={LoadingScreen}
           options={{ presentation: "containedTransparentModal" }}
         />
@@ -96,11 +96,7 @@ export const App = () => {
     return (
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="ProfileCreate" component={ProfileCreateScreen} />
-        <Stack.Screen
-          name="SignOut"
-          component={SignOutScreen}
-          options={{ presentation: "transparentModal" }}
-        />
+        <Stack.Screen name="SignOut" component={SignOutScreen} />
       </Stack.Navigator>
     );
   }
@@ -108,7 +104,13 @@ export const App = () => {
   const { profile } = state.profile;
 
   const ProfileUpdateScreen = () => {
-    return <ProfileUpdate profile={profile} onCancel={navigation.goBack} />;
+    return (
+      <ProfileUpdate
+        onSuccess={navigation.goBack}
+        profile={profile}
+        onCancel={navigation.goBack}
+      />
+    );
   };
 
   const ProfileScreen = () => {
@@ -150,16 +152,8 @@ export const App = () => {
       <Stack.Screen name="Home" component={HomeScreen} />
       <Stack.Screen name="Profile" component={ProfileScreen} />
       <Stack.Screen name="ProfileUpdate" component={ProfileUpdateScreen} />
-      <Stack.Screen
-        name="ProfileDelete"
-        component={ProfileDeleteScreen}
-        options={{ presentation: "containedTransparentModal" }}
-      />
-      <Stack.Screen
-        name="SignOut"
-        component={SignOutScreen}
-        options={{ presentation: "containedTransparentModal" }}
-      />
+      <Stack.Screen name="ProfileDelete" component={ProfileDeleteScreen} />
+      <Stack.Screen name="SignOut" component={SignOutScreen} />
     </Stack.Navigator>
   );
 };
