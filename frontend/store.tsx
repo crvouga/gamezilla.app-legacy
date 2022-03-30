@@ -17,6 +17,9 @@ const store = createStore({
   },
   saga: App.saga,
   initialState: {
+    game: {
+      type: "closed",
+    },
     auth: {
       type: "loading",
     },
@@ -34,4 +37,4 @@ export const useSelector: TypedUseSelectorHook<
   ReturnType<typeof store.getState>
 > = useSelectorRedux;
 
-export const useDispatch = () => useDispatchRedux<App.IAction>();
+export const useDispatch = () => useDispatchRedux<() => App.IAction>();

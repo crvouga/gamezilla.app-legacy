@@ -1,15 +1,15 @@
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import * as React from "react";
-import { SignIn } from "../features/auth/sign-in/SignIn";
-import { SignOut } from "../features/auth/sign-out/SignOut";
-import { Home } from "../features/home/Home";
-import { Profile } from "../features/profile/Profile";
-import { ProfileCreate } from "../features/profile/profile-create/ProfileCreate";
-import { ProfileDelete } from "../features/profile/profile-delete/ProfileDelete";
-import { ProfileUpdate } from "../features/profile/profile-update/ProfileUpdate";
-import { useSelector } from "../store";
-import { DialogLoading } from "../ui";
+import { Account } from "../features/account/Account";
+import { ProfileCreate } from "../features/account/profile-create/ProfileCreate";
+import { SignIn } from "../features/account/sign-in/SignIn";
+import { SignOut } from "../features/account/sign-out/SignOut";
+import { Game } from "../features/game/Game";
+import { useDispatch, useSelector } from "../store";
+import { DialogLoading, useTheme } from "../ui";
 
 type IStackParamList = {
   Home: undefined;
@@ -24,13 +24,24 @@ type IStackParamList = {
   LoadingProfile: undefined;
 };
 
+type ITabParamList = {
+  Game: undefined;
+  Account: undefined;
+};
+
+export const Tab = createBottomTabNavigator<ITabParamList>();
 export const Stack = createNativeStackNavigator<IStackParamList>();
 
 export const App = () => {
-  const state = useSelector((state) => state);
+  const authState = useSelector((state) => state.auth);
+  const profileState = useSelector((state) => state.profile);
+  const gameState = useSelector((state) => state.game);
   const navigation = useNavigation<NavigationProp<IStackParamList>>();
+  const theme = useTheme();
 
-  if (state.auth.type === "loading") {
+  const dispatch = useDispatch();
+
+  if (authState.type === "loading") {
     const LoadingScreen = () => {
       return <DialogLoading visible title={"Checking if logged in..."} />;
     };
@@ -46,7 +57,7 @@ export const App = () => {
     );
   }
 
-  if (state.auth.type === "signed-out") {
+  if (authState.type === "signed-out") {
     const SignInScreen = () => {
       return <SignIn />;
     };
@@ -58,9 +69,9 @@ export const App = () => {
     );
   }
 
-  const { defaultName, userId } = state.auth;
+  const { defaultName, userId } = authState;
 
-  if (state.profile.type === "loading") {
+  if (profileState.type === "loading") {
     const LoadingScreen = () => {
       return <DialogLoading visible title={"Loading profile..."} />;
     };
@@ -76,7 +87,7 @@ export const App = () => {
     );
   }
 
-  if (state.profile.type === "not-found") {
+  if (profileState.type === "not-found") {
     const ProfileCreateScreen = () => {
       return (
         <ProfileCreate
@@ -101,59 +112,47 @@ export const App = () => {
     );
   }
 
-  const { profile } = state.profile;
+  const { profile } = profileState;
 
-  const ProfileUpdateScreen = () => {
-    return (
-      <ProfileUpdate
-        onSuccess={navigation.goBack}
-        profile={profile}
-        onCancel={navigation.goBack}
-      />
-    );
+  const AccountScreen = () => {
+    return <Account profile={profile} />;
   };
 
-  const ProfileScreen = () => {
-    return (
-      <Profile
-        onBack={navigation.goBack}
-        onDelete={() => {
-          navigation.navigate("ProfileDelete");
-        }}
-        onUpdate={() => {
-          navigation.navigate("ProfileUpdate");
-        }}
-        onSignOut={() => {
-          navigation.navigate("SignOut");
-        }}
-      />
-    );
-  };
-
-  const ProfileDeleteScreen = () => {
-    return <ProfileDelete userId={userId} onCancel={navigation.goBack} />;
-  };
-
-  const SignOutScreen = () => {
-    return <SignOut onCancel={navigation.goBack} />;
-  };
-
-  const HomeScreen = () => {
-    return (
-      <Home
-        onProfile={() => navigation.navigate("Profile")}
-        onGame={() => navigation.navigate("Home")}
-      />
-    );
+  const GameScreen = () => {
+    return <Game dispatch={dispatch} state={gameState} />;
   };
 
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Home" component={HomeScreen} />
-      <Stack.Screen name="Profile" component={ProfileScreen} />
-      <Stack.Screen name="ProfileUpdate" component={ProfileUpdateScreen} />
-      <Stack.Screen name="ProfileDelete" component={ProfileDeleteScreen} />
-      <Stack.Screen name="SignOut" component={SignOutScreen} />
-    </Stack.Navigator>
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        tabBarActiveBackgroundColor: theme.colors.background,
+        tabBarInactiveBackgroundColor: theme.colors.background,
+        headerShown: false,
+        tabBarIcon: ({ focused, color, size }) => {
+          return (
+            <Ionicons
+              name={
+                route.name === "Account"
+                  ? focused
+                    ? "person"
+                    : "person-outline"
+                  : route.name === "Game"
+                  ? focused
+                    ? "game-controller"
+                    : "game-controller-outline"
+                  : "add"
+              }
+              size={size}
+              color={color}
+            />
+          );
+        },
+        tabBarActiveTintColor: theme.colors.text,
+        tabBarInactiveTintColor: theme.colors.placeholder,
+      })}
+    >
+      <Tab.Screen name="Game" component={GameScreen} />
+      <Tab.Screen name="Account" component={AccountScreen} />
+    </Tab.Navigator>
   );
 };
