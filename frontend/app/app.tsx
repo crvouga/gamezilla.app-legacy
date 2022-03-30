@@ -163,15 +163,3 @@ export const App = () => {
     </Stack.Navigator>
   );
 };
-
-const AppSignedOut = () => {
-  const SignInScreen = () => {
-    return <SignIn />;
-  };
-
-  return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="SignIn" component={SignInScreen} />
-    </Stack.Navigator>
-  );
-};
