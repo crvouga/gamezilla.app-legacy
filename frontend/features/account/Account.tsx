@@ -10,29 +10,22 @@ const styles = StyleSheet.create({
   },
 });
 
-export const Profile = ({
-  onUpdate,
-  onDelete,
-  onSignOut,
-  onBack,
+export const Account = ({
+  profile,
 }: {
-  onUpdate: () => void;
-  onDelete: () => void;
-  onSignOut: () => void;
-  onBack: () => void;
+  profile: { username: string; userId: string };
 }) => {
   const theme = useTheme();
 
   return (
     <>
       <Appbar.Header>
-        <Appbar.BackAction onPress={onBack} />
-        <Appbar.Content title="Profile" />
+        <Appbar.Content title={profile.username} />
       </Appbar.Header>
 
       <List.Section>
         <List.Item
-          onPress={onUpdate}
+          onPress={() => {}}
           title="Edit"
           left={() => <List.Icon icon="pencil" />}
           right={() => <List.Icon icon="chevron-right" />}
@@ -41,7 +34,7 @@ export const Profile = ({
 
       <Button
         style={styles.button}
-        onPress={onSignOut}
+        onPress={() => {}}
         icon="logout"
         title="Sign Out"
         color={theme.colors.error}
@@ -51,7 +44,7 @@ export const Profile = ({
       <Button
         style={styles.button}
         mode="outlined"
-        onPress={onDelete}
+        onPress={() => {}}
         icon="delete"
         title="Delete Profile"
         color={theme.colors.error}

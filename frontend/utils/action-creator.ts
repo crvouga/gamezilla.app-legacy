@@ -1,3 +1,5 @@
+import { ActionCreator } from "@reduxjs/toolkit";
+
 // source: https://warhol.io/blog/reducing-redux-boilerplate-in-typescript
 
 type IActionCreatorMap = Record<string, (...args: any[]) => any>;
