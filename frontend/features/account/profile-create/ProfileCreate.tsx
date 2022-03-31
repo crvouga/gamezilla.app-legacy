@@ -14,7 +14,13 @@ import {
   toAvatarSeed,
   toAvatarUrl,
 } from "../../../../common";
-import { Button, spacing } from "../../../ui";
+import {
+  AppBarAction,
+  AppBarContent,
+  AppBarHeader,
+  Button,
+  spacing,
+} from "../../../ui";
 import { createEventEmitter, useEventHandler } from "../../../utils";
 import { dataAccess } from "./profile-create-data-access";
 
@@ -113,10 +119,10 @@ export const ProfileScreen = ({
 
   return (
     <>
-      <Appbar.Header>
-        <Appbar.Action icon="logout" onPress={onLogout} />
-        <Appbar.Content title="Create Profile" />
-      </Appbar.Header>
+      <AppBarHeader>
+        <AppBarAction icon="logout" onPress={onLogout} />
+        <AppBarContent title="Create Profile" />
+      </AppBarHeader>
 
       <Avatar.Image
         style={{
@@ -210,10 +216,10 @@ export const AvatarScreen = ({
 
   return (
     <>
-      <Appbar.Header>
-        <Appbar.Action icon="close" onPress={navigation.goBack} />
-        <Appbar.Content title="Avatar" />
-      </Appbar.Header>
+      <AppBarHeader>
+        <AppBarAction icon="close" onPress={navigation.goBack} />
+        <AppBarContent title="Avatar" />
+      </AppBarHeader>
 
       <Avatar.Image
         style={{
@@ -292,15 +298,15 @@ const AvatarStyleScreen = ({
 
   return (
     <>
-      <Appbar.Header>
-        <Appbar.Action
+      <AppBarHeader>
+        <AppBarAction
           icon="close"
           onPress={() => {
             navigation.goBack();
           }}
         />
-        <Appbar.Content title="Avatar Style" />
-      </Appbar.Header>
+        <AppBarContent title="Avatar Style" />
+      </AppBarHeader>
 
       <FlatList
         data={ALL_AVATAR_STYLES}

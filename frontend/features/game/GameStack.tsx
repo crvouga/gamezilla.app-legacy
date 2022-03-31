@@ -1,6 +1,12 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import * as React from "react";
 import { Appbar, List } from "react-native-paper";
+import {
+  AppBarAction,
+  AppBarBackAction,
+  AppBarContent,
+  AppBarHeader,
+} from "../../ui";
 import * as GameState from "./game-state";
 
 type IStackParamList = {
@@ -10,7 +16,7 @@ type IStackParamList = {
 
 const Stack = createNativeStackNavigator<IStackParamList>();
 
-export const Game = ({
+export const GameStack = ({
   dispatch,
   state,
 }: {
@@ -21,9 +27,9 @@ export const Game = ({
     const OpenScreen = () => {
       return (
         <>
-          <Appbar.Header>
-            <Appbar.Content title="Game" />
-          </Appbar.Header>
+          <AppBarHeader>
+            <AppBarContent title="Game" />
+          </AppBarHeader>
 
           <List.Item
             title="Tic Tac Toe"
@@ -46,14 +52,14 @@ export const Game = ({
   const GameScreen = () => {
     return (
       <>
-        <Appbar.Header>
-          <Appbar.BackAction
+        <AppBarHeader>
+          <AppBarBackAction
             onPress={() => {
               dispatch(GameState.actions.close());
             }}
           />
-          <Appbar.Content title={state.gameId} />
-        </Appbar.Header>
+          <AppBarContent title={state.gameId} />
+        </AppBarHeader>
       </>
     );
   };

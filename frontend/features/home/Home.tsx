@@ -1,5 +1,6 @@
 import * as React from "react";
 import { Appbar, List } from "react-native-paper";
+import { AppBarContent, AppBarHeader } from "../../ui";
 
 export const Home = ({
   onProfile,
@@ -10,9 +11,9 @@ export const Home = ({
 }) => {
   return (
     <>
-      <Appbar.Header>
-        <Appbar.Content title="Home" />
-      </Appbar.Header>
+      <AppBarHeader>
+        <AppBarContent title="Home" />
+      </AppBarHeader>
 
       <List.Section>
         <List.Item
