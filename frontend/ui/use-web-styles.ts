@@ -14,7 +14,10 @@ export const useWebStyles = ({
       ${rootCssSelector} { 
           padding: 0px;
           margin: 0px;
-          background-color: ${backgroundColor}
+          background-color: ${backgroundColor};
+          max-width: 720px;
+          margin-left: auto;
+          margin-right: auto;
       }
   `;
   return useEffect(() => {

@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
-import { Appbar } from "react-native-paper";
+import { StatusBar, View } from "react-native";
+import { Appbar, Text } from "react-native-paper";
 
 import { useTheme } from ".";
 
@@ -19,11 +20,13 @@ export const AppBarContent = ({
   title: string;
   subtitle?: string;
 }) => {
-  return <Appbar.Content title={title} subtitle={subtitle} />;
-};
-
-export const AppBarBackAction = ({ onPress }: { onPress: () => void }) => {
-  return <Appbar.BackAction onPress={onPress} />;
+  return (
+    <Appbar.Content
+      titleStyle={{ textAlign: "center" }}
+      title={title}
+      subtitle={subtitle}
+    />
+  );
 };
 
 export const AppBarAction = ({
@@ -33,5 +36,39 @@ export const AppBarAction = ({
   icon: string;
   onPress: () => void;
 }) => {
-  return <Appbar.Action icon={icon} onPress={onPress} />;
+  const theme = useTheme();
+
+  return (
+    <Appbar.Action
+      size={36}
+      color={theme.colors.text}
+      icon={icon}
+      onPress={onPress}
+    />
+  );
+};
+
+export const AppBarBackAction = ({ onPress }: { onPress: () => void }) => {
+  const theme = useTheme();
+
+  return <AppBarAction icon="chevron-left" onPress={onPress} />;
+};
+
+export const AppBar = ({
+  left,
+  right,
+  title,
+}: {
+  left?: React.ReactNode;
+  right?: React.ReactNode;
+  title: string;
+}) => {
+  const width = `${(1 / 4) * 100}%`;
+  return (
+    <AppBarHeader>
+      <View style={{ alignItems: "flex-start", width }}>{left}</View>
+      <AppBarContent title={title} />
+      <View style={{ alignItems: "flex-end", width }}>{right}</View>
+    </AppBarHeader>
+  );
 };
