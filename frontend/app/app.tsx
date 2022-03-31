@@ -7,7 +7,7 @@ import { Account } from "../features/account/Account";
 import { ProfileCreate } from "../features/account/profile-create/ProfileCreate";
 import { SignIn } from "../features/account/sign-in/SignIn";
 import { SignOut } from "../features/account/sign-out/SignOut";
-import { Game } from "../features/game/Game";
+import { GameStack } from "../features/game/GameStack";
 import { useDispatch, useSelector } from "../store";
 import { DialogLoading, useTheme } from "../ui";
 
@@ -25,7 +25,7 @@ type IStackParamList = {
 };
 
 type ITabParamList = {
-  Game: undefined;
+  Play: undefined;
   Account: undefined;
 };
 
@@ -118,8 +118,8 @@ export const App = () => {
     return <Account profile={profile} />;
   };
 
-  const GameScreen = () => {
-    return <Game dispatch={dispatch} state={gameState} />;
+  const GameStackScreen = () => {
+    return <GameStack dispatch={dispatch} state={gameState} />;
   };
 
   return (
@@ -136,7 +136,7 @@ export const App = () => {
                   ? focused
                     ? "person"
                     : "person-outline"
-                  : route.name === "Game"
+                  : route.name === "Play"
                   ? focused
                     ? "game-controller"
                     : "game-controller-outline"
@@ -151,7 +151,7 @@ export const App = () => {
         tabBarInactiveTintColor: theme.colors.placeholder,
       })}
     >
-      <Tab.Screen name="Game" component={GameScreen} />
+      <Tab.Screen name="Play" component={GameStackScreen} />
       <Tab.Screen name="Account" component={AccountScreen} />
     </Tab.Navigator>
   );
