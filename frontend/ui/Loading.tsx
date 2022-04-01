@@ -3,8 +3,6 @@ import { Animated } from "react-native";
 import { ActivityIndicator } from "react-native-paper";
 import { zIndex } from "./theme";
 
-const DURATION_MS = 250;
-
 export const Loading = ({ visible }: { visible: boolean }) => {
   const fadeRef = useRef(new Animated.Value(0));
 
@@ -13,15 +11,13 @@ export const Loading = ({ visible }: { visible: boolean }) => {
   useEffect(() => {
     setStatus(visible ? "mounted" : "unmounted");
 
-    const onAnimationEnd = () => {
-      setStatus(visible ? "mounted" : "unmounted");
-    };
-
     Animated.timing(fadeRef.current, {
       toValue: visible ? 1 : 0,
-      duration: DURATION_MS,
+      duration: 250,
       useNativeDriver: true,
-    }).start(onAnimationEnd);
+    }).start(() => {
+      setStatus(visible ? "mounted" : "unmounted");
+    });
   }, [fadeRef.current, visible]);
 
   if (status === "unmounted") {

@@ -18,6 +18,13 @@ export type IGameId =
   | "cards"
   | "battleship";
 
+export const formatGameId = (gameId: IGameId) => {
+  const capitalize = ([first, ...rest]: string) =>
+    `${first.toUpperCase()}${rest.join("").toLowerCase()}`;
+
+  return gameId.split("-").map(capitalize).join(" ");
+};
+
 export type IState =
   | {
       type: "stopped";

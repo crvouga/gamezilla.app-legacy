@@ -38,13 +38,7 @@ export const AppBarAction = ({
   const theme = useTheme();
 
   return (
-    <Appbar.Action
-      size={36}
-      color={theme.colors.text}
-      icon={icon}
-      onPress={onPress}
-      style={{ marginLeft: spacing(-1) }}
-    />
+    <Appbar.Action color={theme.colors.text} icon={icon} onPress={onPress} />
   );
 };
 
