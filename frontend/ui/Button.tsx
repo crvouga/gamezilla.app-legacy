@@ -11,8 +11,12 @@ export const Button = ({
   color,
   style,
   loadingText,
+  compact,
+  labelStyle,
 }: {
   style?: ViewStyle;
+  labelStyle?: ViewStyle;
+  compact?: boolean;
   color?: string;
   icon?: string;
   mode?: "contained" | "outlined" | "text";
@@ -33,6 +37,8 @@ export const Button = ({
       color={color}
       theme={{ roundness: 24 }}
       style={style}
+      labelStyle={labelStyle}
+      compact={compact}
     >
       {loading ? loadingText ?? title : title}
     </PaperButton>

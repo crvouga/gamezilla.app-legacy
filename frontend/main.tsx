@@ -12,6 +12,7 @@ const Root = () => {
   const fontState = useFontState();
 
   useWebStyles({
+    borderColor: theme.colors.border,
     backgroundColor: theme.colors.background,
   });
 
