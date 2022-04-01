@@ -1,5 +1,6 @@
+import { useFocusEffect } from "@react-navigation/native";
 import * as React from "react";
-import { TouchableOpacity, View } from "react-native";
+import { TouchableHighlight, View } from "react-native";
 import { List, Text } from "react-native-paper";
 import {
   AppBar,
@@ -23,24 +24,24 @@ export const GameStartedBanner = ({
 }) => {
   const theme = useTheme();
 
-  if (state.type === "stopped") {
-    return <></>;
-  }
-
   return (
-    <TouchableOpacity onPress={onNavigateGame}>
-      <View
-        style={{
-          backgroundColor: theme.colors.primary,
-          paddingHorizontal: spacing(2),
-          paddingVertical: spacing(1),
-          flexDirection: "row",
-          alignItems: "center",
-        }}
-      >
-        <Text style={{ flex: 1 }}>{state.gameId}</Text>
-      </View>
-    </TouchableOpacity>
+    <>
+      {state.type === "started" && state.status === "blurred" && (
+        <TouchableHighlight onPress={onNavigateGame}>
+          <View
+            style={{
+              backgroundColor: theme.colors.primary,
+              paddingHorizontal: spacing(2),
+              paddingVertical: spacing(1),
+              flexDirection: "row",
+              alignItems: "center",
+            }}
+          >
+            <Text style={{ flex: 1 }}>{state.gameId}</Text>
+          </View>
+        </TouchableHighlight>
+      )}
+    </>
   );
 };
 
@@ -106,6 +107,15 @@ export const Game = ({
   dispatch: (action: GameState.IAction) => void;
   onBack: () => void;
 }) => {
+  useFocusEffect(
+    React.useCallback(() => {
+      dispatch(GameState.actions.focused());
+      return () => {
+        dispatch(GameState.actions.blurred());
+      };
+    }, [])
+  );
+
   return (
     <>
       <AppBar left={<AppBarBackAction onPress={onBack} />} title={gameId} />

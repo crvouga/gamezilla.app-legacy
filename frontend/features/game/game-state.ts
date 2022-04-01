@@ -25,6 +25,7 @@ export type IState =
   | {
       type: "started";
       gameId: IGameId;
+      status: "focused" | "blurred";
     };
 
 /**
@@ -39,6 +40,8 @@ export const actions = {
   start: createAction<IGameId, "game/START">("game/START"),
   started: createAction<IGameId, "game/STARTED">("game/STARTED"),
   stopped: createAction("game/STOPPED"),
+  focused: createAction("game/FOCUSED"),
+  blurred: createAction("game/BLURRED"),
 };
 
 export type IAction = InferActionUnion<typeof actions>;
@@ -62,9 +65,29 @@ export const reducer = (state: IState, action: IAction): IState => {
       return {
         type: "started",
         gameId: action.payload,
+        status: "blurred",
       };
 
     case "game/START":
+      return state;
+
+    case "game/FOCUSED":
+      if (state.type === "started") {
+        return {
+          ...state,
+          status: "focused",
+        };
+      }
+      return state;
+
+    case "game/BLURRED":
+      if (state.type === "started") {
+        return {
+          ...state,
+          status: "blurred",
+        };
+      }
+
       return state;
   }
 };
