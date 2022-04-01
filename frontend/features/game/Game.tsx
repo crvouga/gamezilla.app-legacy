@@ -1,17 +1,19 @@
 import { useFocusEffect } from "@react-navigation/native";
 import * as React from "react";
-import { TouchableHighlight, View } from "react-native";
-import { List, Text } from "react-native-paper";
+import { Animated, TouchableHighlight, View } from "react-native";
+import { Dialog, IconButton, List, Portal, Text } from "react-native-paper";
 import {
   AppBar,
   AppBarBackAction,
   AppBarContent,
   AppBarHeader,
   Button,
+  Icon,
   spacing,
   useTheme,
 } from "../../ui";
 import * as GameState from "./game-state";
+import { TicTacToe } from "./tic-tac-toe/TicTacToe";
 
 export const GameStartedBanner = ({
   dispatch,
@@ -24,6 +26,22 @@ export const GameStartedBanner = ({
 }) => {
   const theme = useTheme();
 
+  const fadeRef = React.useRef(new Animated.Value(1));
+
+  React.useEffect(() => {
+    const run = (animation: "fade-in" | "fade-out") => {
+      Animated.timing(fadeRef.current, {
+        toValue: animation === "fade-in" ? 1 : 2 / 3,
+        duration: 1000 * (2 / 3),
+        useNativeDriver: true,
+      }).start(() => {
+        run(animation === "fade-out" ? "fade-in" : "fade-out");
+      });
+    };
+
+    run("fade-out");
+  }, [fadeRef.current]);
+
   return (
     <>
       {state.type === "started" && state.status === "blurred" && (
@@ -33,11 +51,21 @@ export const GameStartedBanner = ({
               backgroundColor: theme.colors.primary,
               paddingHorizontal: spacing(2),
               paddingVertical: spacing(1),
-              flexDirection: "row",
-              alignItems: "center",
             }}
           >
-            <Text style={{ flex: 1 }}>{state.gameId}</Text>
+            <Animated.View
+              style={{
+                opacity: fadeRef.current,
+                flex: 1,
+                flexDirection: "row",
+              }}
+            >
+              <Text style={{ flex: 1 }}>{`Back to ${GameState.formatGameId(
+                state.gameId
+              )}`}</Text>
+
+              <Icon name="chevron-right" size={18} />
+            </Animated.View>
           </View>
         </TouchableHighlight>
       )}
@@ -116,16 +144,67 @@ export const Game = ({
     }, [])
   );
 
+  if (gameId === "tic-tac-toe") {
+    return (
+      <>
+        <AppBar
+          left={<AppBarBackAction onPress={onBack} />}
+          title={GameState.formatGameId(gameId)}
+          right={
+            <StopGameButton
+              onStop={() => {
+                dispatch(GameState.actions.stopped());
+              }}
+            />
+          }
+        />
+
+        <TicTacToe />
+      </>
+    );
+  }
+
   return (
     <>
-      <AppBar left={<AppBarBackAction onPress={onBack} />} title={gameId} />
-
-      <Button
-        onPress={() => {
-          dispatch(GameState.actions.stopped());
-        }}
-        title="Stop Game"
+      <AppBar
+        left={<AppBarBackAction onPress={onBack} />}
+        title={GameState.formatGameId(gameId)}
+        right={
+          <StopGameButton
+            onStop={() => {
+              dispatch(GameState.actions.stopped());
+            }}
+          />
+        }
       />
+    </>
+  );
+};
+
+const StopGameButton = ({ onStop }: { onStop: () => void }) => {
+  const [status, setStatus] = React.useState<"idle" | "visible">("idle");
+
+  const onDismiss = () => {
+    setStatus("idle");
+  };
+
+  return (
+    <>
+      <IconButton
+        icon={"power"}
+        onPress={() => {
+          setStatus("visible");
+        }}
+      />
+      <Portal>
+        <Dialog visible={status === "visible"} onDismiss={onDismiss}>
+          <Dialog.Title>Stop Game?</Dialog.Title>
+          <Dialog.Actions>
+            <Button onPress={onDismiss} title="Cancel" />
+            <Button onPress={onStop} title="Stop" />
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
     </>
   );
 };
