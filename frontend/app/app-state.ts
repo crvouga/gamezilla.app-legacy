@@ -1,9 +1,7 @@
 import { fork, spawn, takeLatest } from "redux-saga/effects";
 import * as Auth from "../features/account/auth-state/auth-state";
-import { dataAccess as authDataAccess } from "../features/account/auth-state/auth-state-data-access";
 import * as Profile from "../features/account/profile-state/profile-state";
 import * as Game from "../features/game/game-state";
-import { dataAccess as profileDataAccess } from "../features/account/profile-state/profile-state-data-access";
 import { InferActionUnion } from "../utils";
 
 /**
@@ -62,6 +60,7 @@ export const reducer = (state: IState, action: IAction): IState => {
 
     case "profile/FOUND":
     case "profile/NOT_FOUND":
+    case "profile/GOT_PROFILE_UPDATE":
       return {
         ...state,
         profile: Profile.reducer(state.profile, action),
@@ -77,14 +76,19 @@ export const reducer = (state: IState, action: IAction): IState => {
  *
  */
 
-export function* saga() {
-  yield spawn(Auth.saga, { dataAccess: authDataAccess });
+export type IDataAccess = {
+  auth: Auth.IDataAccess;
+  profile: Profile.IDataAccess;
+};
+
+export function* saga({ dataAccess }: { dataAccess: IDataAccess }) {
+  yield spawn(Auth.saga, { dataAccess: dataAccess.auth });
 
   yield takeLatest(Auth.actions.signedIn, function* (action) {
     const { userId } = action.payload;
 
     yield fork(Profile.saga, {
-      dataAccess: profileDataAccess,
+      dataAccess: dataAccess.profile,
       userId,
     });
   });

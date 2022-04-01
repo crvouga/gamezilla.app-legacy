@@ -4,7 +4,7 @@ import AppLoading from "expo-app-loading";
 /** URL polyfill. Required for Supabase queries to work in React Native. */
 import "react-native-url-polyfill/auto";
 import { App } from "./app/app";
-import { StoreProvider } from "./store";
+import { StoreProvider } from "./data-access/store";
 import { theme, useFontState } from "./theme";
 import { ThemeProvider, useWebStyles } from "./ui";
 

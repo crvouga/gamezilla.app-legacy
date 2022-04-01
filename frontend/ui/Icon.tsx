@@ -2,7 +2,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { ViewStyle } from "react-native";
 import { useTheme } from "./theme";
 
-type Name = keyof typeof MaterialIcons.glyphMap;
+export type IconName = keyof typeof MaterialIcons.glyphMap;
 
 export const Icon = ({
   size = 24,
@@ -11,7 +11,7 @@ export const Icon = ({
 }: {
   size?: number;
   style?: ViewStyle;
-  name: Name;
+  name: IconName;
 }) => {
   const theme = useTheme();
 

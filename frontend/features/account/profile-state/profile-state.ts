@@ -1,7 +1,9 @@
 import { createAction } from "@reduxjs/toolkit";
 import { EventChannel } from "redux-saga";
-import { delay, put, takeEvery } from "redux-saga/effects";
+import { delay, fork, put, takeEvery } from "redux-saga/effects";
+import { parseAvatarUrl } from "../../../../common";
 import { InferActionUnion } from "../../../utils";
+import * as ProfileUpdate from "../profile-update/profile-update-state";
 
 /**
  *
@@ -28,6 +30,7 @@ export type IState =
   | {
       type: "found";
       profile: IProfile;
+      profileUpdate: ProfileUpdate.IState;
     };
 
 /**
@@ -41,6 +44,10 @@ export type IState =
 export const actions = {
   found: createAction<IProfile, "profile/FOUND">("profile/FOUND"),
   notFound: createAction("profile/NOT_FOUND"),
+  gotProfileUpdate: createAction<
+    ProfileUpdate.IAction,
+    "profile/GOT_PROFILE_UPDATE"
+  >("profile/GOT_PROFILE_UPDATE"),
 };
 
 export type IAction = InferActionUnion<typeof actions>;
@@ -54,20 +61,34 @@ export type IAction = InferActionUnion<typeof actions>;
  */
 
 export const reducer = (state: IState, action: IAction): IState => {
-  if (action.type === "profile/FOUND") {
-    return {
-      type: "found",
-      profile: action.payload,
-    };
-  }
+  switch (action.type) {
+    case "profile/GOT_PROFILE_UPDATE":
+      if (state.type === "found") {
+        return {
+          ...state,
+          profileUpdate: ProfileUpdate.reducer(
+            state.profileUpdate,
+            action.payload
+          ),
+        };
+      }
 
-  if (action.type === "profile/NOT_FOUND") {
-    return {
-      type: "not-found",
-    };
-  }
+      return state;
 
-  return state;
+    case "profile/FOUND":
+      return {
+        type: "found",
+        profile: action.payload,
+        profileUpdate: {
+          type: "idle",
+        },
+      };
+
+    case "profile/NOT_FOUND":
+      return {
+        type: "not-found",
+      };
+  }
 };
 
 /**
@@ -79,6 +100,7 @@ export const reducer = (state: IState, action: IAction): IState => {
  */
 
 export type IDataAccess = {
+  profileUpdate: ProfileUpdate.IDataAccess;
   createProfileEventChan: ({
     userId,
   }: {
@@ -98,5 +120,10 @@ export function* saga({
   yield takeEvery(profileEventChan, function* (action) {
     yield delay(1000);
     yield put(action);
+  });
+
+  yield fork(ProfileUpdate.saga, {
+    dataAccess: dataAccess.profileUpdate,
+    userId,
   });
 }

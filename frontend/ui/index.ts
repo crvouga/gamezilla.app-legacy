@@ -6,3 +6,4 @@ export * from "./Icon";
 export * from "./theme";
 export * from "./use-web-styles";
 export * from "./ListItem";
+export * from "./Loading";
