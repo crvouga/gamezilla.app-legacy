@@ -10,8 +10,9 @@ import { ProfileDelete } from "../features/account/profile-delete/ProfileDelete"
 import { ProfileUpdateStack } from "../features/account/profile-update/ProfileUpdateStack";
 import { SignIn } from "../features/account/sign-in/SignIn";
 import { SignOut } from "../features/account/sign-out/SignOut";
-import { GameStack } from "../features/game/GameStack";
+import { Game, GameStart, GameStartedBanner } from "../features/game/Game";
 import { DialogLoading, useTheme } from "../ui";
+import { useEventHandler } from "../utils";
 
 type IStackParamList = {
   Home: undefined;
@@ -27,7 +28,7 @@ type IStackParamList = {
 };
 
 type ITabParamList = {
-  Play: undefined;
+  GameStart: undefined;
   Account: undefined;
 };
 
@@ -38,8 +39,15 @@ export const App = () => {
   const authState = useSelector((state) => state.auth);
   const profileState = useSelector((state) => state.profile);
   const gameState = useSelector((state) => state.game);
+
   const navigation = useNavigation<NavigationProp<IStackParamList>>();
   const theme = useTheme();
+
+  React.useEffect(() => {
+    if (gameState.type === "started") {
+      navigation.navigate("Game");
+    }
+  }, [gameState.type]);
 
   const dispatch = useDispatch();
 
@@ -127,11 +135,19 @@ export const App = () => {
     );
   };
 
-  const GameStackScreen = () => {
-    return <GameStack dispatch={dispatch} state={gameState} />;
+  const GameStartScreen = () => {
+    return (
+      <GameStart
+        onNavigateGame={() => {
+          navigation.navigate("Game");
+        }}
+        dispatch={dispatch}
+        state={gameState}
+      />
+    );
   };
 
-  const TabStack = () => {
+  const TabStackScreen = () => {
     return (
       <Tab.Navigator
         screenOptions={({ route }) => ({
@@ -146,7 +162,7 @@ export const App = () => {
                     ? focused
                       ? "person"
                       : "person-outline"
-                    : route.name === "Play"
+                    : route.name === "GameStart"
                     ? focused
                       ? "game-controller"
                       : "game-controller-outline"
@@ -161,7 +177,7 @@ export const App = () => {
           tabBarInactiveTintColor: theme.colors.placeholder,
         })}
       >
-        <Tab.Screen name="Play" component={GameStackScreen} />
+        <Tab.Screen name="GameStart" component={GameStartScreen} />
         <Tab.Screen name="Account" component={AccountScreen} />
       </Tab.Navigator>
     );
@@ -180,14 +196,35 @@ export const App = () => {
   };
 
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Home" component={TabStack} />
-      <Stack.Screen
-        name="ProfileUpdateStack"
-        component={ProfileUpdateStackScreen}
+    <>
+      <GameStartedBanner
+        onNavigateGame={() => {
+          navigation.navigate("Game");
+        }}
+        state={gameState}
+        dispatch={dispatch}
       />
-      <Stack.Screen name="ProfileDelete" component={ProfileDeleteScreen} />
-      <Stack.Screen name="SignOut" component={SignOutScreen} />
-    </Stack.Navigator>
+
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="Home" component={TabStackScreen} />
+        <Stack.Screen
+          name="ProfileUpdateStack"
+          component={ProfileUpdateStackScreen}
+        />
+        <Stack.Screen name="ProfileDelete" component={ProfileDeleteScreen} />
+        <Stack.Screen name="SignOut" component={SignOutScreen} />
+        {gameState.type === "started" && (
+          <Stack.Screen name="Game">
+            {() => (
+              <Game
+                onBack={navigation.goBack}
+                dispatch={dispatch}
+                gameId={gameState.gameId}
+              />
+            )}
+          </Stack.Screen>
+        )}
+      </Stack.Navigator>
+    </>
   );
 };

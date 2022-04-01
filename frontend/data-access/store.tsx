@@ -17,11 +17,11 @@ const store = createStore({
     );
   },
   saga: function* () {
-    yield App.saga({ dataAccess });
+    yield App.saga({ dataAccess, getState: (_) => _ as App.IState });
   },
   initialState: {
     game: {
-      type: "closed",
+      type: "stopped",
     },
     auth: {
       type: "loading",

@@ -1,4 +1,5 @@
 import { createAction } from "@reduxjs/toolkit";
+import { put, select, takeEvery } from "redux-saga/effects";
 import { InferActionUnion } from "../../utils";
 
 /**
@@ -9,14 +10,20 @@ import { InferActionUnion } from "../../utils";
  *
  */
 
-export type IGameId = "tic-tac-toe";
+export type IGameId =
+  | "tic-tac-toe"
+  | "chess"
+  | "connect-four"
+  | "checkers"
+  | "cards"
+  | "battleship";
 
 export type IState =
   | {
-      type: "closed";
+      type: "stopped";
     }
   | {
-      type: "opened";
+      type: "started";
       gameId: IGameId;
     };
 
@@ -29,8 +36,9 @@ export type IState =
  */
 
 export const actions = {
-  open: createAction<IGameId, "game/OPEN">("game/OPEN"),
-  close: createAction("game/CLOSE"),
+  start: createAction<IGameId, "game/START">("game/START"),
+  started: createAction<IGameId, "game/STARTED">("game/STARTED"),
+  stopped: createAction("game/STOPPED"),
 };
 
 export type IAction = InferActionUnion<typeof actions>;
@@ -45,16 +53,19 @@ export type IAction = InferActionUnion<typeof actions>;
 
 export const reducer = (state: IState, action: IAction): IState => {
   switch (action.type) {
-    case "game/CLOSE":
+    case "game/STOPPED":
       return {
-        type: "closed",
+        type: "stopped",
       };
 
-    case "game/OPEN":
+    case "game/STARTED":
       return {
-        type: "opened",
+        type: "started",
         gameId: action.payload,
       };
+
+    case "game/START":
+      return state;
   }
 };
 
@@ -66,4 +77,12 @@ export const reducer = (state: IState, action: IAction): IState => {
  *
  */
 
-export function* saga() {}
+export function* saga({ getState }: { getState: (state: unknown) => IState }) {
+  yield takeEvery(actions.start, function* (action) {
+    const state: IState = yield select(getState);
+
+    if (state.type === "stopped") {
+      yield put(actions.started(action.payload));
+    }
+  });
+}
