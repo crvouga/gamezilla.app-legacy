@@ -1,8 +1,7 @@
 import { ReactNode } from "react";
-import { StatusBar, View } from "react-native";
-import { Appbar, Text } from "react-native-paper";
-
-import { useTheme } from ".";
+import { View } from "react-native";
+import { Appbar } from "react-native-paper";
+import { spacing, useTheme } from "./theme";
 
 export const AppBarHeader = ({ children }: { children: ReactNode }) => {
   const theme = useTheme();
@@ -44,13 +43,12 @@ export const AppBarAction = ({
       color={theme.colors.text}
       icon={icon}
       onPress={onPress}
+      style={{ marginLeft: spacing(-1) }}
     />
   );
 };
 
 export const AppBarBackAction = ({ onPress }: { onPress: () => void }) => {
-  const theme = useTheme();
-
   return <AppBarAction icon="chevron-left" onPress={onPress} />;
 };
 

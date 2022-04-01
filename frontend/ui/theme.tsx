@@ -34,6 +34,16 @@ export const fontSize = (n: number) => {
   return n * 6;
 };
 
+export const zIndex = (type: "modal" | "normal") => {
+  switch (type) {
+    case "modal":
+      return 10;
+
+    case "normal":
+      return 1;
+  }
+};
+
 const [ThemeContext, useThemeContext] = constate(
   ({ theme }: { theme: ITheme }) => {
     return theme;

@@ -1,5 +1,6 @@
 import { eventChannel } from "redux-saga";
 import { definitions, supabaseClient } from "../../../data-access";
+import * as ProfileUpdate from "../profile-update/profile-update-data-access";
 import { actions, IDataAccess, IProfile } from "./profile-state";
 
 const rowToProfile = (row: definitions["profile"]): IProfile => {
@@ -40,6 +41,7 @@ const profileToProfileEvent = (profile: IProfile | null) => {
 };
 
 export const dataAccess: IDataAccess = {
+  profileUpdate: ProfileUpdate.dataAccess,
   createProfileEventChan: ({ userId }) =>
     eventChannel((emit) => {
       getProfile({ userId }).then((profile) => {

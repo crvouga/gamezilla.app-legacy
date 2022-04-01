@@ -1,20 +1,6 @@
+import { useState } from "react";
 import { definitions, supabaseClient } from "../../../data-access";
-
-type IDataAccess = {
-  update: (profile: {
-    userId: string;
-    avatarUrl: string;
-    name: string;
-    username: string;
-  }) => Promise<
-    | {
-        type: "success";
-      }
-    | {
-        type: "error";
-      }
-  >;
-};
+import { IDataAccess } from "./profile-update-state";
 
 export const dataAccess: IDataAccess = {
   update: async ({ userId, name, username, avatarUrl }) => {
@@ -37,4 +23,46 @@ export const dataAccess: IDataAccess = {
       type: "success",
     };
   },
+};
+
+export const useProfileUpdateMutation = ({
+  onSuccess,
+}: {
+  onSuccess?: () => void;
+}) => {
+  const [status, setStatus] = useState<
+    "idle" | "loading" | "success" | "failed"
+  >("idle");
+
+  const mutate = async (
+    userId: string,
+    updates: {
+      avatarUrl?: string;
+      name?: string;
+      username?: string;
+    }
+  ) => {
+    setStatus("loading");
+
+    const result = await dataAccess.update({
+      userId,
+      ...updates,
+    });
+
+    if (result.type === "error") {
+      setStatus("failed");
+      return;
+    }
+
+    if (result.type === "success") {
+      setStatus("success");
+      onSuccess?.();
+      return;
+    }
+  };
+
+  return {
+    mutate,
+    status,
+  };
 };

@@ -5,8 +5,9 @@ import {
   useDispatch as useDispatchRedux,
   useSelector as useSelectorRedux,
 } from "react-redux";
-import { createStore } from "./utils";
-import * as App from "./app/app-state";
+import * as App from "../app/app-state";
+import { createStore } from "../utils";
+import { dataAccess } from "./data-access";
 
 const store = createStore({
   reducer: App.reducer,
@@ -15,7 +16,9 @@ const store = createStore({
       actionCreator.match(action)
     );
   },
-  saga: App.saga,
+  saga: function* () {
+    yield App.saga({ dataAccess });
+  },
   initialState: {
     game: {
       type: "closed",

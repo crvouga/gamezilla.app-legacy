@@ -5,7 +5,6 @@ import {
   formatAvatarStyle,
   IAvatarSeed,
   IAvatarStyle,
-  parseAvatarUrl,
   toAvatarUrl,
 } from "../../../../common";
 import {
@@ -14,83 +13,58 @@ import {
   AvatarImage,
   Button,
   ListItem,
+  ListItemIcon,
+  Loading,
   spacing,
+  useTheme,
 } from "../../../ui";
-import { createEventEmitter } from "../../../utils";
+import { useEventHandler } from "../../../utils";
 import { ProfileUpdateItem } from "./Item";
-
-const eventEmitter = createEventEmitter<{
-  CHANGED_AVATAR_STYLE: IAvatarStyle;
-  CHANGED_AVATAR_SEED: IAvatarSeed;
-}>();
+import { useProfileUpdateMutation } from "./profile-update-data-access";
 
 export const ProfileUpdateAvatar = ({
   onCancel,
+  onAvatarSeed,
+  onAvatarStyle,
   onSuccess,
-  profile,
-  onUpdateAvatarSeed,
-  onUpdateAvatarStyle,
-  avatarSeed,
   avatarStyle,
+  avatarSeed,
+  userId,
 }: {
+  userId: string;
+  avatarStyle: IAvatarStyle;
+  avatarSeed: IAvatarSeed;
   onCancel: () => void;
   onSuccess: () => void;
-  profile: {
-    userId: string;
-  };
-  avatarSeed: IAvatarSeed;
-  avatarStyle: IAvatarStyle;
-  onUpdateAvatarSeed: ({
-    avatarSeed,
-    avatarStyle,
-  }: {
-    avatarSeed: IAvatarSeed;
-    avatarStyle: IAvatarStyle;
-  }) => void;
-  onUpdateAvatarStyle: ({
-    avatarSeed,
-    avatarStyle,
-  }: {
-    avatarSeed: IAvatarSeed;
-    avatarStyle: IAvatarStyle;
-  }) => void;
+  onAvatarSeed: () => void;
+  onAvatarStyle: () => void;
 }) => {
-  const onSave = () => {};
-
-  const avatarValues = {
-    avatarSeed,
-    avatarStyle,
-  };
-
   return (
     <>
-      <AppBar
-        left={<Button onPress={onCancel} title="Cancel" />}
-        title="Avatar"
-        right={<Button onPress={onSave} title="Save" />}
-      />
+      <AppBar left={<AppBarBackAction onPress={onCancel} />} title="Avatar" />
 
       <AvatarImage
         source={{
           uri: toAvatarUrl({ avatarSeed, avatarStyle }),
         }}
-        size={200}
+        size={144}
         style={{
           marginLeft: "auto",
           marginRight: "auto",
+          marginBottom: spacing(2),
         }}
       />
 
       <ProfileUpdateItem
         title="Avatar Style"
-        value={avatarStyle}
-        onPress={() => onUpdateAvatarStyle(avatarValues)}
+        value={formatAvatarStyle(avatarStyle)}
+        onPress={onAvatarStyle}
       />
 
       <ProfileUpdateItem
         title="Avatar Seed"
         value={avatarSeed}
-        onPress={() => onUpdateAvatarSeed(avatarValues)}
+        onPress={onAvatarSeed}
       />
     </>
   );
@@ -98,10 +72,8 @@ export const ProfileUpdateAvatar = ({
 
 export const ProfileUpdateAvatarSeed = ({
   onCancel,
-  avatarSeed,
 }: {
   onCancel: () => void;
-  avatarSeed: IAvatarSeed;
 }) => {
   const onSave = () => {};
 
@@ -131,29 +103,67 @@ export const ProfileUpdateAvatarSeed = ({
 export const ProfileUpdateAvatarStyle = ({
   onBack,
   avatarSeed,
-  onAvatarStyle,
+  initial,
+  userId,
+  onSuccess,
 }: {
   onBack: () => void;
-  onAvatarStyle: (avatarStyle: IAvatarStyle) => void;
+  initial: {
+    avatarStyle: IAvatarStyle;
+  };
   avatarSeed: IAvatarSeed;
+  userId: string;
+  onSuccess: () => void;
 }) => {
+  const theme = useTheme();
+
+  const [avatarStyle, setAvatarStyle] = useState(initial.avatarStyle);
+
+  const profileUpdate = useProfileUpdateMutation({ onSuccess });
+
+  const avatarUrl = toAvatarUrl({ avatarSeed, avatarStyle });
+
+  const onSave = () => {
+    profileUpdate.mutate(userId, { avatarUrl });
+  };
+
   return (
     <>
+      <Loading visible={profileUpdate.status === "loading"} />
+
       <AppBar
-        left={<AppBarBackAction onPress={onBack} />}
+        left={<Button title="Cancel" onPress={onBack} />}
         title="Avatar Style"
+        right={<Button title="Save" onPress={onSave} />}
+      />
+
+      <AvatarImage
+        source={{
+          uri: toAvatarUrl({ avatarSeed, avatarStyle }),
+        }}
+        size={144}
+        style={{
+          marginLeft: "auto",
+          marginRight: "auto",
+          marginBottom: spacing(2),
+        }}
       />
 
       <FlatList
+        style={{
+          borderTopColor: theme.colors.border,
+          borderTopWidth: 2,
+          borderStyle: "solid",
+        }}
         data={ALL_AVATAR_STYLES}
         renderItem={({ item }) => (
           <ListItem
             onPress={() => {
-              onAvatarStyle(item);
+              setAvatarStyle(item);
             }}
-            left={() => (
+            left={
               <AvatarImage
-                style={{ backgroundColor: "transparent" }}
+                style={{ marginRight: spacing(2) }}
                 source={{
                   uri: toAvatarUrl({
                     avatarStyle: item,
@@ -161,7 +171,8 @@ export const ProfileUpdateAvatarStyle = ({
                   }),
                 }}
               />
-            )}
+            }
+            right={item === avatarStyle ? <ListItemIcon icon="check" /> : null}
             title={formatAvatarStyle(item)}
           />
         )}
