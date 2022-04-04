@@ -6,3 +6,4 @@ export * from "./random";
 export * from "./record";
 export * from "./natural-number";
 export * from "./result";
+export * from "./task";

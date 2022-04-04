@@ -1,8 +1,8 @@
 import { mapValues } from "../../utils";
 
-type IPlayer = "x" | "o";
+type IPlayer = "X" | "O";
 
-type ISlot = IPlayer | "empty";
+type ISlot = IPlayer | "Empty";
 
 type IColumn = {
   0: ISlot;
@@ -110,7 +110,7 @@ export const boardReducer = (board: IBoard, event: IGameEvent): IBoard => {
   if (event.type === "PLAYER_MOVED") {
     return mapBoard(board, (slot, x, y) => {
       if (
-        slot === "empty" &&
+        slot === "Empty" &&
         event.position.x === x &&
         event.position.y === y
       ) {

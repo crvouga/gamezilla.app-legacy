@@ -38,7 +38,7 @@ export const SignIn = () => {
           disabled={state === "loading"}
           onPress={loginInWithGoogle}
           title="Continue with Google"
-          loadingText="Continuing Wwth Google..."
+          loadingText="Signing in..."
         />
       </View>
     </>
