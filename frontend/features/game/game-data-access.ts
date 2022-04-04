@@ -1,11 +1,11 @@
 import { Room } from "colyseus.js";
-import { RoomNames, tryCatch } from "../../../common";
+import { RoomNames } from "../../../common";
 import { colyseusClient } from "../../data-access";
 
 export type IRoom = Room<unknown>;
 
 export const create = async () => {
-  return await tryCatch(() => colyseusClient.create(RoomNames.Game));
+  return colyseusClient.create(RoomNames.Game);
 };
 
 export const reconnect = async ({
@@ -15,5 +15,5 @@ export const reconnect = async ({
   roomId: string;
   sessionId: string;
 }) => {
-  return await tryCatch(() => colyseusClient.reconnect(roomId, sessionId));
+  return colyseusClient.reconnect(roomId, sessionId);
 };

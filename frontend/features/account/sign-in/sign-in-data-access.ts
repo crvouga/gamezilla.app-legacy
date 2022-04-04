@@ -1,5 +1,6 @@
 import * as AuthSession from "expo-auth-session";
 import { Platform } from "react-native";
+import { IResult, Result } from "../../../../common/utils";
 import { supabaseClient, supabaseConfig } from "../../../data-access";
 
 export type ISignInMethod = {
@@ -7,7 +8,7 @@ export type ISignInMethod = {
 };
 
 export type IDataAccess = {
-  signIn: (method: ISignInMethod) => Promise<void>;
+  signIn: (method: ISignInMethod) => Promise<IResult<string>>;
 };
 
 export const dataAccess: IDataAccess = {
@@ -21,7 +22,7 @@ export const dataAccess: IDataAccess = {
           redirectTo: window.location.origin,
         }
       );
-      return;
+      return Result.Ok("Signed in");
     }
 
     //DOCS: docs.expo.dev/versions/latest/sdk/auth-session/#what--authexpoio--does-for-you
@@ -49,7 +50,13 @@ export const dataAccess: IDataAccess = {
           redirectTo: redirectUri,
         }
       );
-      return;
+      return Result.Ok("Signed in");
     }
+
+    return Result.Err(
+      response.type === "error"
+        ? response.error?.message ?? "Sign in failed"
+        : "Sign in failed"
+    );
   },
 };
