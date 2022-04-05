@@ -13,6 +13,7 @@ export const Button = ({
   loadingText,
   compact,
   labelStyle,
+  roundness = 24,
 }: {
   style?: ViewStyle;
   labelStyle?: ViewStyle;
@@ -25,6 +26,7 @@ export const Button = ({
   onPress: () => void;
   loading?: boolean;
   disabled?: boolean;
+  roundness?: number;
 }) => {
   return (
     <PaperButton
@@ -35,7 +37,7 @@ export const Button = ({
       onPress={onPress}
       icon={icon}
       color={color}
-      theme={{ roundness: 24 }}
+      theme={{ roundness: roundness }}
       style={style}
       labelStyle={labelStyle}
       compact={compact}
