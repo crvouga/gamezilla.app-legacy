@@ -1,5 +1,19 @@
-type IGameName = "tic-tac-toe";
+export const RoomName = "Game";
 
-export type IState = {
-  gameName: IGameName;
+export type IGameRoomState = {
+  leaderId: string;
+};
+
+export type ICreateGameRoom = {
+  type: "CreateGameRoom";
+  payload: {
+    userId: string;
+  };
+};
+
+export type IGameRoomCreated = {
+  type: "CreateGameRoom";
+  payload: {
+    userId: string;
+  };
 };

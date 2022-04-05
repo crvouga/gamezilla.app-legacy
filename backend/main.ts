@@ -1,8 +1,12 @@
 import { monitor } from "@colyseus/monitor";
 import { Server } from "colyseus";
 import express from "express";
-import { COLYSEUS_DEV_PORT, COLYSEUS_DEV_URL, RoomNames } from "../common";
-import { GameRoom } from "./game-room";
+import { GameRoom } from "../common/games/game-room/backend/game-room";
+import {
+  COLYSEUS_DEV_PORT,
+  COLYSEUS_DEV_URL,
+  RoomNames,
+} from "../common/infrastructure/colyseus/colyseus";
 
 const port = process.env.PORT ? parseInt(process.env.PORT) : COLYSEUS_DEV_PORT;
 
