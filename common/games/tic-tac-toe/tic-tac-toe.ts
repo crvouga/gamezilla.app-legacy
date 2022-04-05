@@ -1,6 +1,6 @@
 import { createAction } from "@reduxjs/toolkit";
 import { put, select, takeEvery } from "redux-saga/effects";
-import { mapValues } from "../../utils";
+import { equals, mapValues } from "../../utils";
 import { InferActionUnion } from "../../utils/action-creator";
 
 export type IPlayer = "X" | "O";
@@ -17,18 +17,27 @@ export type IBoard = {
   };
 };
 
-export type IPosition = {
-  row: IRow;
-  column: IColumn;
-};
+export type IPosition = readonly [IColumn, IRow];
+
+const getSlot = (board: IBoard, [column, row]: IPosition): ISlot =>
+  board[column][row];
+
+const setSlot = (
+  board: IBoard,
+  [column, row]: IPosition,
+  slot: ISlot
+): IBoard => ({
+  ...board,
+  [column]: {
+    ...board[column],
+    [row]: slot,
+  },
+});
 
 export const allPositions: IPosition[] = (["0", "1", "2"] as const).flatMap(
-  (row) => (["0", "1", "2"] as const).map((column) => ({ row, column }))
+  (column: IColumn) =>
+    (["0", "1", "2"] as const).map((row: IRow) => [column, row] as const)
 );
-
-export const toWinPositionSets = (_board: IBoard) => {
-  return [];
-};
 
 const emptyBoard: IBoard = {
   0: {
@@ -49,41 +58,57 @@ const emptyBoard: IBoard = {
 };
 
 export const actions = {
-  moved: createAction<
-    { row: IRow; column: IColumn; player: IPlayer },
-    "tic-tac-toe/MOVED"
-  >("tic-tac-toe/MOVED"),
+  restart: createAction("tic-tac-toe/RESTART"),
 
-  boardPressed: createAction<
-    { row: IRow; column: IColumn },
-    "tic-tac-toe/BOARD_PRESSED"
-  >("tic-tac-toe/BOARD_PRESSED"),
+  moved: createAction(
+    "tic-tac-toe/MOVED",
+    (position: IPosition, player: IPlayer) => ({
+      payload: {
+        position,
+        player,
+      },
+    })
+  ),
+
+  boardPressed: createAction(
+    "tic-tac-toe/BOARD_PRESSED",
+    (position: IPosition) => ({ payload: position })
+  ),
 };
 
 export type IAction = InferActionUnion<typeof actions>;
 
 export const mapBoard = (
   board: IBoard,
-  f: (a: ISlot, column: IPosition["column"], row: IPosition["row"]) => ISlot
+  f: (a: ISlot, column: IColumn, row: IRow) => ISlot
 ): IBoard =>
   mapValues(board, (column, x) =>
     mapValues(column, (slot, y) => f(slot, x, y))
   );
 
+export const canRestart = (board: IBoard) => {
+  return !equals(board, emptyBoard);
+};
+
 export const boardReducer = (board: IBoard, action: IAction): IBoard => {
   switch (action.type) {
+    case "tic-tac-toe/RESTART":
+      return emptyBoard;
+
     case "tic-tac-toe/BOARD_PRESSED":
       return board;
 
     case "tic-tac-toe/MOVED":
-      const { column, row, player } = action.payload;
-      return {
-        ...board,
-        [column]: {
-          ...board[column],
-          [row]: player,
-        },
-      };
+      const { position, player } = action.payload;
+
+      if (
+        getSlot(board, position) === "Empty" &&
+        toStatus(board).type === "Turn"
+      ) {
+        return setSlot(board, position, player);
+      }
+
+      return board;
   }
 };
 
@@ -107,6 +132,100 @@ const boardToTurn = (board: IBoard): IPlayer => {
   return isEven(emptySlots.length) ? "O" : "X";
 };
 
+type IWin = [IPosition, IPosition, IPosition];
+
+const ALL_POSSIBLE_WINS: IWin[] = [
+  // |
+  [
+    ["0", "0"],
+    ["0", "1"],
+    ["0", "2"],
+  ],
+  [
+    ["1", "0"],
+    ["1", "1"],
+    ["1", "2"],
+  ],
+  [
+    ["2", "0"],
+    ["2", "1"],
+    ["2", "2"],
+  ],
+  // -
+  [
+    ["0", "0"],
+    ["1", "0"],
+    ["2", "0"],
+  ],
+  [
+    ["0", "1"],
+    ["1", "1"],
+    ["2", "1"],
+  ],
+  [
+    ["0", "2"],
+    ["1", "2"],
+    ["2", "2"],
+  ],
+  // \
+  [
+    ["0", "0"],
+    ["1", "1"],
+    ["2", "2"],
+  ],
+  // /
+  [
+    ["0", "2"],
+    ["1", "1"],
+    ["2", "0"],
+  ],
+];
+
+const isWin = (board: IBoard, possibleWin: IWin) => {
+  const slots = possibleWin
+    .map((position) => getSlot(board, position))
+    .filter((slot) => slot !== "Empty");
+
+  return new Set(slots).size === 1 && slots.length == 3;
+};
+
+const toWins = (board: IBoard) => {
+  return ALL_POSSIBLE_WINS.filter((possibleWin) => isWin(board, possibleWin));
+};
+
+const toWinner = (board: IBoard) => {
+  const wins = toWins(board);
+
+  if (wins.length === 0) {
+    return "None";
+  }
+
+  const arbitraryPosition = wins[0][0];
+
+  const slot = getSlot(board, arbitraryPosition);
+
+  if (slot === "Empty") {
+    return "None";
+  }
+
+  return slot;
+};
+
+const toStatus = (board: IBoard) => {
+  const winner = toWinner(board);
+
+  if (winner !== "None") {
+    return {
+      type: "Winner",
+      player: winner,
+    } as const;
+  }
+
+  const turn = boardToTurn(board);
+
+  return { type: "Turn", player: turn } as const;
+};
+
 export const initialState: IState = {
   board: emptyBoard,
 
@@ -120,10 +239,15 @@ export const initialState: IState = {
   },
 };
 
-export const toStatus = ({ board }: { board: IBoard }) => {
-  const turn = boardToTurn(board);
+export const toStatusText = (board: IBoard) => {
+  const status = toStatus(board);
+  switch (status.type) {
+    case "Turn":
+      return `${status.player}'s turn`;
 
-  return `${turn}'s turn`;
+    case "Winner":
+      return `${status.player}'s won`;
+  }
 };
 
 export const reducer = (state: IState, action: IAction): IState => ({
@@ -137,13 +261,6 @@ export function* saga({ selector }: { selector: (_: unknown) => IState }) {
 
     const turn = boardToTurn(state.board);
 
-    if (state.board[action.payload.column][action.payload.row] === "Empty") {
-      yield put(
-        actions.moved({
-          ...action.payload,
-          player: turn,
-        })
-      );
-    }
+    yield put(actions.moved(action.payload, turn));
   });
 }

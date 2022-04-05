@@ -90,6 +90,7 @@ export const reducer = (state: IState, action: IAction): IState => {
 
     case "tic-tac-toe/BOARD_PRESSED":
     case "tic-tac-toe/MOVED":
+    case "tic-tac-toe/RESTART":
       if (state.type === "started" && state.game.name === "tic-tac-toe") {
         return {
           ...state,
