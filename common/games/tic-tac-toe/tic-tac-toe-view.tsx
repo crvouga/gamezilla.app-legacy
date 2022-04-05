@@ -2,15 +2,16 @@ import React from "react";
 import { Platform } from "react-native";
 import { Title } from "react-native-paper";
 import Svg, { Circle, G, Line, Rect } from "react-native-svg";
+import { Button, spacing } from "../../ui";
 import {
   actions,
   allPositions,
+  canRestart,
   IAction,
   IBoard,
-  IColumn,
-  IRow,
+  IPosition,
   ISlot,
-  toStatus,
+  toStatusText,
 } from "./tic-tac-toe";
 
 export const ViewTicTacToe = ({
@@ -23,12 +24,21 @@ export const ViewTicTacToe = ({
   return (
     <>
       <Title style={{ textAlign: "center", padding: 8 }}>
-        {toStatus({ board })}
+        {toStatusText(board)}
       </Title>
       <TicTacToeBoard
         board={board}
-        onPress={(column, row) => {
-          dispatch(actions.boardPressed({ column, row }));
+        onPress={(position) => {
+          dispatch(actions.boardPressed(position));
+        }}
+      />
+      <Button
+        disabled={!canRestart(board)}
+        style={{ margin: spacing(2) }}
+        mode="contained"
+        title="Restart game"
+        onPress={() => {
+          dispatch(actions.restart());
         }}
       />
     </>
@@ -46,7 +56,7 @@ export const TicTacToeBoard = ({
   onPress,
 }: {
   board: IBoard;
-  onPress: (column: IColumn, row: IRow) => void;
+  onPress: (position: IPosition) => void;
 }) => {
   return (
     <Svg width="100%" viewBox="0 0 3 3">
@@ -54,7 +64,7 @@ export const TicTacToeBoard = ({
         <Line key={index} {...line} stroke="white" strokeWidth={0.1} />
       ))}
 
-      {allPositions.map(({ column, row }) => (
+      {allPositions.map(([column, row]) => (
         <>
           <Rect
             key={`${column} ${row}`}
@@ -66,12 +76,12 @@ export const TicTacToeBoard = ({
             {...(Platform.OS === "web"
               ? {
                   onClick: () => {
-                    onPress(column, row);
+                    onPress([column, row]);
                   },
                 }
               : {
                   onPress: () => {
-                    onPress(column, row);
+                    onPress([column, row]);
                   },
                 })}
           />
