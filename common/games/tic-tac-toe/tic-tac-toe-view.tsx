@@ -2,15 +2,15 @@ import React from "react";
 import { Platform } from "react-native";
 import { Title } from "react-native-paper";
 import Svg, { Circle, G, Line, Rect } from "react-native-svg";
-
 import {
-  IBoard,
-  toStatus,
+  actions,
   allPositions,
+  IAction,
+  IBoard,
   IColumn,
   IRow,
-  IAction,
-  actions,
+  ISlot,
+  toStatus,
 } from "./tic-tac-toe";
 
 export const ViewTicTacToe = ({
@@ -75,40 +75,71 @@ export const TicTacToeBoard = ({
                   },
                 })}
           />
-          {board[column][row] === "X" && (
-            <G
-              transform={`translate(${-0.5}, ${-0.5}) scale(0.8) translate(${0.5}, ${0.5}) translate(${column}, ${row})`}
-            >
-              <Line
-                x1={0}
-                y1={0}
-                x2={1}
-                y2={1}
-                stroke="white"
-                strokeWidth={0.1}
-              />
-              <Line
-                x1={1}
-                y1={0}
-                x2={0}
-                y2={1}
-                stroke="white"
-                strokeWidth={0.1}
-              />
-            </G>
-          )}
-          {board[column][row] === "O" && (
-            <Circle
-              r={0.3}
-              cx={Number(column) + 0.5}
-              cy={Number(row) + 0.5}
-              stroke="white"
-              strokeWidth={0.1}
-              fill="transparent"
-            />
-          )}
+
+          <Slot
+            slot={board[column][row]}
+            cx={Number(column) + 0.5}
+            cy={Number(row) + 0.5}
+            r={0.3}
+          />
         </>
       ))}
     </Svg>
+  );
+};
+
+const Slot = ({
+  slot,
+  cx,
+  cy,
+  r,
+}: {
+  slot: ISlot;
+  r: number;
+  cx: number;
+  cy: number;
+}) => {
+  return {
+    Empty: () => <></>,
+    X: () => <Cross r={r} cx={cx} cy={cy} />,
+    O: () => <Naught r={r} cx={cx} cy={cy} />,
+  }[slot]();
+};
+
+const Cross = ({ cx, cy, r }: { r: number; cx: number; cy: number }) => {
+  return (
+    <G>
+      {/* direction: \ */}
+      <Line
+        x1={cx - r}
+        y1={cy - r}
+        x2={cx + r}
+        y2={cy + r}
+        stroke="white"
+        strokeWidth={0.1}
+      />
+      {/* direction: / */}
+      <Line
+        x1={cx + r}
+        y1={cy - r}
+        x2={cx - r}
+        y2={cy + r}
+        stroke="white"
+        strokeWidth={0.1}
+      />
+    </G>
+  );
+};
+
+const Naught = ({ cx, cy, r }: { r: number; cx: number; cy: number }) => {
+  return (
+    <Circle
+      r={r}
+      cx={cx}
+      cy={cy}
+      stroke="white"
+      strokeWidth={0.1}
+      fill="transparent"
+    />
   );
 };

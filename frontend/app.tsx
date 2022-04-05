@@ -11,8 +11,8 @@ import { ProfileDelete } from "../common/account/profile-delete/ProfileDelete";
 import { ProfileUpdateStack } from "../common/account/profile-update/ProfileUpdateStack";
 import { SignIn } from "../common/account/sign-in/SignIn";
 import { SignOut } from "../common/account/sign-out/SignOut";
-import { Game, GameStart } from "../common/games/Game";
-import { GameBanner } from "../common/games/GameBanner";
+import { Game, GameStart } from "../common/games/game-view";
+import { GameBanner } from "../common/games/game-view-banner";
 import { spacing, useTheme } from "../common/ui";
 import { useDispatch, useSelector } from "./store";
 
