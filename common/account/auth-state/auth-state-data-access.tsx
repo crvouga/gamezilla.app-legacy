@@ -1,5 +1,6 @@
 import { Session } from "@supabase/supabase-js";
 import { eventChannel } from "redux-saga";
+import { call, put, takeEvery } from "redux-saga/effects";
 import { supabaseClient } from "../../infrastructure/supabase";
 import { actions, IAction, IDataAccess } from "./auth-state";
 
@@ -38,3 +39,24 @@ export const dataAccess: IDataAccess = {
     };
   }),
 };
+
+const authChan = eventChannel<IAction>((emit) => {
+  const timeoutHandler = setTimeout(() => {
+    emit(sessionToAuthEvent(supabaseClient.auth.session()));
+  }, 1000);
+
+  const response = supabaseClient.auth.onAuthStateChange((_event, session) => {
+    clearTimeout(timeoutHandler);
+    emit(sessionToAuthEvent(session));
+  });
+
+  return () => {
+    response.data?.unsubscribe();
+  };
+});
+
+export function* authDataAccessSaga() {
+  yield takeEvery(authChan, function* (authAction) {
+    yield put(authAction);
+  });
+}
