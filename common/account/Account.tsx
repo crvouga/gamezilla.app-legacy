@@ -1,7 +1,7 @@
-import * as React from "react";
+import React from "react";
 import { StyleSheet } from "react-native";
 import { Title } from "react-native-paper";
-import { AppBar, AppBarContent, AppBarHeader, Button, spacing } from "../ui";
+import { AppBar, Button, spacing } from "../ui";
 import { AvatarImage } from "../ui/Avatar";
 
 const styles = StyleSheet.create({
@@ -43,7 +43,7 @@ export const Account = ({
         title="Edit Profile"
         onPress={onProfileUpdate}
         mode="outlined"
-        style={{ marginHorizontal: spacing(2) }}
+        style={styles.button}
       />
     </>
   );

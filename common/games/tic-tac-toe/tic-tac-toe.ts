@@ -3,9 +3,9 @@ import { put, select, takeEvery } from "redux-saga/effects";
 import { mapValues } from "../../utils";
 import { InferActionUnion } from "../../utils/action-creator";
 
-type IPlayer = "X" | "O";
+export type IPlayer = "X" | "O";
 
-type ISlot = IPlayer | "Empty";
+export type ISlot = IPlayer | "Empty";
 
 export type IRow = "0" | "1" | "2";
 
@@ -90,7 +90,10 @@ export const boardReducer = (board: IBoard, action: IAction): IBoard => {
 export type IState = {
   board: IBoard;
   playerTypes: {
-    [player in IPlayer]: { type: "Local" } | { type: "Computer" };
+    [player in IPlayer]:
+      | { type: "None" }
+      | { type: "User"; userId: string }
+      | { type: "Computer"; difficulty: "Easy" | "Medium" | "Impossible" };
   };
 };
 
@@ -109,10 +112,10 @@ export const initialState: IState = {
 
   playerTypes: {
     X: {
-      type: "Local",
+      type: "None",
     },
     O: {
-      type: "Local",
+      type: "None",
     },
   },
 };

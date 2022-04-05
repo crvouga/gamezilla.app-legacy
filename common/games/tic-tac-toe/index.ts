@@ -1,2 +1,2 @@
 export * from "./tic-tac-toe";
-export * from "./TicTacToe";
+export * from "./tic-tac-toe-view";

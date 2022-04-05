@@ -9,7 +9,7 @@ import {
   Button,
 } from "../ui";
 import * as GameState from "./game-state";
-import { ViewTicTacToe } from "./tic-tac-toe/TicTacToe";
+import { ViewTicTacToe } from "./tic-tac-toe/tic-tac-toe-view";
 
 export const GameStart = ({
   dispatch,
