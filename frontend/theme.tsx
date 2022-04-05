@@ -15,7 +15,7 @@ import {
   Nunito_900Black_Italic,
   useFonts,
 } from "@expo-google-fonts/nunito";
-import { createTheme } from "./ui";
+import { createTheme } from "../common/ui";
 
 export const theme = createTheme({
   mode: "dark",

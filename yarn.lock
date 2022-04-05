@@ -3030,6 +3030,11 @@ babel-plugin-react-native-web@~0.17.1:
   resolved "https://registry.yarnpkg.com/babel-plugin-react-native-web/-/babel-plugin-react-native-web-0.17.7.tgz#1580e27a2e3c6692127535d3880fe1e247ef6414"
   integrity sha512-UBLfIsfU3vi//Ab4i0WSWAfm1whLTK9uJoH0RPZ6a67eS/h9JGYjKy7+1RpHxSBviHi9NIMiYfWseTLjyIsE1g==
 
+babel-plugin-rename-jsx-attribute@^0.2.4:
+  version "0.2.4"
+  resolved "https://registry.yarnpkg.com/babel-plugin-rename-jsx-attribute/-/babel-plugin-rename-jsx-attribute-0.2.4.tgz#6441fe55ba6a1c8218b2aadd2b5c8151c02dc436"
+  integrity sha512-R3kRggMmkXAd465a2q2Y2IceIUJHoyw9q/c0I7i3JdQDHGbUj59OTOR6QjRuB/bII1yH2Xuy/KM5+NNs9NzCGw==
+
 babel-plugin-syntax-trailing-function-commas@^7.0.0-beta.0:
   version "7.0.0-beta.0"
   resolved "https://registry.yarnpkg.com/babel-plugin-syntax-trailing-function-commas/-/babel-plugin-syntax-trailing-function-commas-7.0.0-beta.0.tgz#aa213c1435e2bffeb6fca842287ef534ad05d5cf"
@@ -12160,6 +12165,11 @@ ts-invariant@^0.4.0:
   integrity sha512-uEtWkFM/sdZvRNNDL3Ehu4WVpwaulhwQszV8mrtcdeE8nN00BV9mAmQ88RkrBhFgl9gMgvjJLAQcZbnPXI9mlA==
   dependencies:
     tslib "^1.9.3"
+
+ts-pattern@^4.0.1:
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/ts-pattern/-/ts-pattern-4.0.1.tgz#3b395d6be7112a542d79443c2f577bd89bdba24e"
+  integrity sha512-UaEFiG0xvCAa0tXBi242rD2WU28RlurzQe27t7vc2+3difhtA58Q6BiFl3YQbDlDiWfantdP05YICJPpGo/ulg==
 
 ts-pnp@^1.1.6:
   version "1.2.0"
