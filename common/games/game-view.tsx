@@ -78,25 +78,18 @@ export const GameStart = ({
           flexDirection: "row",
           flex: 1,
           width: "100%",
+          alignItems: "flex-start",
           flexWrap: "wrap",
           overflow: "scroll",
         }}
       >
-        {[
-          0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0, 1, 2, 3, 4,
-          5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
-        ].map((_, index) => {
-          return (
-            <GameStartLink
-              key={index}
-              title="Tic Tac Toe"
-              icon={<TicTacToeIconSvg />}
-              onPress={() => {
-                dispatch(GameState.actions.start("tic-tac-toe"));
-              }}
-            />
-          );
-        })}
+        <GameStartLink
+          title="Tic Tac Toe"
+          icon={<TicTacToeIconSvg />}
+          onPress={() => {
+            dispatch(GameState.actions.start("tic-tac-toe"));
+          }}
+        />
       </View>
     </>
   );
