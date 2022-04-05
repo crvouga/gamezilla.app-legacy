@@ -86,10 +86,6 @@ export const mapBoard = (
     mapValues(column, (slot, y) => f(slot, x, y))
   );
 
-export const canRestart = (board: IBoard) => {
-  return !equals(board, emptyBoard);
-};
-
 export const boardReducer = (board: IBoard, action: IAction): IBoard => {
   switch (action.type) {
     case "tic-tac-toe/RESTART":
@@ -103,7 +99,7 @@ export const boardReducer = (board: IBoard, action: IAction): IBoard => {
 
       if (
         getSlot(board, position) === "Empty" &&
-        toStatus(board).type === "Turn"
+        toStatus(board).type !== "Win"
       ) {
         return setSlot(board, position, player);
       }
@@ -124,7 +120,7 @@ export type IState = {
 
 const isEven = (x: number) => x % 2 === 0;
 
-const boardToTurn = (board: IBoard): IPlayer => {
+const toTurn = (board: IBoard): IPlayer => {
   const slots = Object.values(board).flatMap((_) => Object.values(_));
 
   const emptySlots = slots.filter((slot) => slot === "Empty");
@@ -211,19 +207,25 @@ const toWinner = (board: IBoard) => {
   return slot;
 };
 
-const toStatus = (board: IBoard) => {
+export const toStatus = (board: IBoard) => {
+  if (equals(board, emptyBoard)) {
+    return {
+      type: "Initial",
+    } as const;
+  }
+
   const winner = toWinner(board);
 
   if (winner !== "None") {
     return {
-      type: "Winner",
-      player: winner,
+      type: "Win",
+      winner,
     } as const;
   }
 
-  const turn = boardToTurn(board);
-
-  return { type: "Turn", player: turn } as const;
+  return {
+    type: "Playing",
+  } as const;
 };
 
 export const initialState: IState = {
@@ -239,14 +241,18 @@ export const initialState: IState = {
   },
 };
 
-export const toStatusText = (board: IBoard) => {
+export const toStatusText = (board: IBoard): string => {
   const status = toStatus(board);
-  switch (status.type) {
-    case "Turn":
-      return `${status.player}'s turn`;
 
-    case "Winner":
-      return `${status.player}'s won`;
+  switch (status.type) {
+    case "Initial":
+      return `${toTurn(board)} turn`;
+
+    case "Playing":
+      return `${toTurn(board)} turn`;
+
+    case "Win":
+      return `${status.winner} won`;
   }
 };
 
@@ -259,7 +265,7 @@ export function* saga({ selector }: { selector: (_: unknown) => IState }) {
   yield takeEvery(actions.boardPressed, function* (action) {
     const state: IState = yield select(selector);
 
-    const turn = boardToTurn(state.board);
+    const turn = toTurn(state.board);
 
     yield put(actions.moved(action.payload, turn));
   });
