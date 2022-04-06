@@ -147,40 +147,42 @@ export const App = () => {
 
   const TabStackScreen = () => {
     return (
-      <Tab.Navigator
-        screenOptions={({ route }) => ({
-          tabBarActiveBackgroundColor: theme.colors.background,
-          tabBarInactiveBackgroundColor: theme.colors.background,
-          headerShown: false,
-          tabBarIcon: ({ focused, color, size }) => {
-            return (
-              <Ionicons
-                name={
-                  route.name === "Account"
-                    ? focused
-                      ? "person"
-                      : "person-outline"
-                    : route.name === "GameStart"
-                    ? focused
-                      ? "game-controller"
-                      : "game-controller-outline"
-                    : "add"
-                }
-                size={size}
-                color={color}
-              />
-            );
-          },
-          tabBarActiveTintColor: theme.colors.text,
-          tabBarInactiveTintColor: theme.colors.placeholder,
-          tabBarStyle: {
-            backgroundColor: theme.colors.background,
-          },
-        })}
-      >
-        <Tab.Screen name="GameStart" component={GameStartScreen} />
-        <Tab.Screen name="Account" component={AccountScreen} />
-      </Tab.Navigator>
+      <>
+        <Tab.Navigator
+          screenOptions={({ route }) => ({
+            tabBarActiveBackgroundColor: theme.colors.background,
+            tabBarInactiveBackgroundColor: theme.colors.background,
+            headerShown: false,
+            tabBarIcon: ({ focused, color, size }) => {
+              return (
+                <Ionicons
+                  name={
+                    route.name === "Account"
+                      ? focused
+                        ? "person"
+                        : "person-outline"
+                      : route.name === "GameStart"
+                      ? focused
+                        ? "game-controller"
+                        : "game-controller-outline"
+                      : "add"
+                  }
+                  size={size}
+                  color={color}
+                />
+              );
+            },
+            tabBarActiveTintColor: theme.colors.text,
+            tabBarInactiveTintColor: theme.colors.placeholder,
+            tabBarStyle: {
+              backgroundColor: theme.colors.background,
+            },
+          })}
+        >
+          <Tab.Screen name="GameStart" component={GameStartScreen} />
+          <Tab.Screen name="Account" component={AccountScreen} />
+        </Tab.Navigator>
+      </>
     );
   };
 
