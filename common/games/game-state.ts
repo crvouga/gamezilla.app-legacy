@@ -28,7 +28,6 @@ export type IState =
     }
   | {
       type: "started";
-      status: "focused" | "blurred";
       game: IGameState;
     };
 
@@ -49,8 +48,6 @@ export const actions = {
   started: createAction<IGameState["name"], "game/STARTED">("game/STARTED"),
   stop: createAction("game/STOP"),
   stopped: createAction("game/STOPPED"),
-  focused: createAction("game/FOCUSED"),
-  blurred: createAction("game/BLURRED"),
   ...TicTacToe.actions,
 };
 
@@ -78,7 +75,6 @@ export const reducer = (state: IState, action: IAction): IState => {
       if (action.payload === "tic-tac-toe") {
         return {
           type: "started",
-          status: "blurred",
           game: {
             name: "tic-tac-toe",
             state: TicTacToe.initialState,
@@ -104,25 +100,6 @@ export const reducer = (state: IState, action: IAction): IState => {
       return state;
 
     case "game/START":
-      return state;
-
-    case "game/FOCUSED":
-      if (state.type === "started") {
-        return {
-          ...state,
-          status: "focused",
-        };
-      }
-      return state;
-
-    case "game/BLURRED":
-      if (state.type === "started") {
-        return {
-          ...state,
-          status: "blurred",
-        };
-      }
-
       return state;
   }
 };

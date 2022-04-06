@@ -1,62 +1,12 @@
-import { useFocusEffect } from "@react-navigation/native";
 import * as React from "react";
-import { TouchableHighlight, View } from "react-native";
-import { Dialog, IconButton, Portal, Text } from "react-native-paper";
-import {
-  AppBar,
-  AppBarBackAction,
-  AppBarContent,
-  AppBarHeader,
-  Button,
-  spacing,
-} from "../ui";
+import { View } from "react-native";
+import { AppBarContent, AppBarHeader } from "../ui";
 import * as GameState from "./game-state";
+import { GameLink } from "./game-view-link";
 import {
   TicTacToeIconSvg,
-  ViewTicTacToe,
+  TicTacToeView,
 } from "./tic-tac-toe/tic-tac-toe-view";
-
-const GameStartLink = ({
-  onPress,
-  title,
-  icon,
-}: {
-  onPress: () => void;
-  title: string;
-  icon: React.ReactNode;
-}) => {
-  return (
-    <View
-      style={{
-        width: `${(1 / 4) * 100}%`,
-        alignItems: "center",
-        justifyContent: "center",
-        padding: spacing(2),
-      }}
-    >
-      <TouchableHighlight onPress={onPress}>
-        <View style={{ width: "100%" }}>
-          <View
-            style={{
-              overflow: "hidden",
-              width: "100%",
-              borderRadius: 12,
-              marginBottom: spacing(1),
-            }}
-          >
-            {icon}
-          </View>
-
-          <Text
-            style={{ textAlign: "center", width: "100%", overflow: "hidden" }}
-          >
-            {title}
-          </Text>
-        </View>
-      </TouchableHighlight>
-    </View>
-  );
-};
 
 export const GameStart = ({
   dispatch,
@@ -84,13 +34,18 @@ export const GameStart = ({
           overflow: "scroll",
         }}
       >
-        <GameStartLink
-          title="Tic Tac Toe"
-          icon={<TicTacToeIconSvg />}
-          onPress={() => {
-            dispatch(GameState.actions.start("tic-tac-toe"));
-          }}
-        />
+        {[1].map((_, index) => {
+          return (
+            <GameLink
+              key={index}
+              title="Tic Tac Toe"
+              icon={<TicTacToeIconSvg />}
+              onPress={() => {
+                dispatch(GameState.actions.start("tic-tac-toe"));
+              }}
+            />
+          );
+        })}
       </View>
     </>
   );
@@ -105,76 +60,18 @@ export const Game = ({
   dispatch: (action: GameState.IAction) => void;
   onBack: () => void;
 }) => {
-  useFocusEffect(
-    React.useCallback(() => {
-      dispatch(GameState.actions.focused());
-      return () => {
-        dispatch(GameState.actions.blurred());
-      };
-    }, [])
-  );
-
-  if (gameState.name === "tic-tac-toe") {
-    return (
-      <>
-        <AppBar
-          left={<AppBarBackAction onPress={onBack} />}
-          title={GameState.formatGameName(gameState.name)}
-          right={
-            <StopGameButton
-              onStop={() => {
-                dispatch(GameState.actions.stopped());
-              }}
-            />
-          }
+  return (
+    <>
+      {gameState.name === "tic-tac-toe" && (
+        <TicTacToeView
+          onBack={onBack}
+          onStop={() => {
+            dispatch(GameState.actions.stop());
+          }}
+          board={gameState.state.board}
+          dispatch={dispatch}
         />
-
-        <ViewTicTacToe board={gameState.state.board} dispatch={dispatch} />
-      </>
-    );
-  }
-
-  return (
-    <>
-      <AppBar
-        left={<AppBarBackAction onPress={onBack} />}
-        title={GameState.formatGameName(gameState.name)}
-        right={
-          <StopGameButton
-            onStop={() => {
-              dispatch(GameState.actions.stopped());
-            }}
-          />
-        }
-      />
-    </>
-  );
-};
-
-const StopGameButton = ({ onStop }: { onStop: () => void }) => {
-  const [status, setStatus] = React.useState<"idle" | "visible">("idle");
-
-  const onDismiss = () => {
-    setStatus("idle");
-  };
-
-  return (
-    <>
-      <IconButton
-        icon={"power"}
-        onPress={() => {
-          setStatus("visible");
-        }}
-      />
-      <Portal>
-        <Dialog visible={status === "visible"} onDismiss={onDismiss}>
-          <Dialog.Title>Stop Game?</Dialog.Title>
-          <Dialog.Actions>
-            <Button onPress={onDismiss} title="Cancel" />
-            <Button onPress={onStop} title="Stop" />
-          </Dialog.Actions>
-        </Dialog>
-      </Portal>
+      )}
     </>
   );
 };

@@ -10,8 +10,6 @@ export const minimax = async <TNode>(
 ): Promise<number> => {
   const { isTerminal, toScore, toChildren } = config;
 
-  console.log(node, depth, strategy);
-
   if (depth === 0 || (await isTerminal(node))) {
     return await toScore(node);
   }

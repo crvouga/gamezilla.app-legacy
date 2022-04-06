@@ -23,20 +23,18 @@ export const Account = ({
 }) => {
   return (
     <>
-      <AppBar title={profile.username} />
+      <AppBar title={`@${profile.username}`} />
 
       <AvatarImage
         style={{
           marginLeft: "auto",
           marginRight: "auto",
+          marginTop: spacing(2),
+          marginBottom: spacing(2),
         }}
         size={144}
         source={{ uri: profile.avatarUrl }}
       />
-
-      <Title
-        style={{ textAlign: "center", marginBottom: spacing(2) }}
-      >{`@${profile.username}`}</Title>
 
       <Button
         icon="pencil"

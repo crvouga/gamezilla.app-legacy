@@ -38,9 +38,11 @@ export const Tab = createBottomTabNavigator<ITabParamList>();
 export const Stack = createNativeStackNavigator<IStackParamList>();
 
 const LoadingScreen = ({ title }: { title: string }) => {
+  const theme = useTheme();
   return (
     <View
       style={{
+        backgroundColor: theme.colors.background,
         justifyContent: "center",
         alignItems: "center",
         flex: 1,
@@ -171,6 +173,9 @@ export const App = () => {
           },
           tabBarActiveTintColor: theme.colors.text,
           tabBarInactiveTintColor: theme.colors.placeholder,
+          tabBarStyle: {
+            backgroundColor: theme.colors.background,
+          },
         })}
       >
         <Tab.Screen name="GameStart" component={GameStartScreen} />
@@ -210,7 +215,10 @@ export const App = () => {
         <Stack.Screen name="ProfileDelete" component={ProfileDeleteScreen} />
         <Stack.Screen name="SignOut" component={SignOutScreen} />
         {gameState.type === "started" && (
-          <Stack.Screen name="Game">
+          <Stack.Screen
+            name="Game"
+            options={{ presentation: "fullScreenModal" }}
+          >
             {() => (
               <Game
                 onBack={navigation.goBack}
