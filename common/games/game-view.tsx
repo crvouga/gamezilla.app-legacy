@@ -28,7 +28,7 @@ const GameStartLink = ({
   return (
     <View
       style={{
-        width: `${(1 / 3) * 100}%`,
+        width: `${(1 / 4) * 100}%`,
         alignItems: "center",
         justifyContent: "center",
         padding: spacing(2),
@@ -79,6 +79,7 @@ export const GameStart = ({
           flex: 1,
           width: "100%",
           alignItems: "flex-start",
+          justifyContent: "flex-start",
           flexWrap: "wrap",
           overflow: "scroll",
         }}
