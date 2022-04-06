@@ -1,3 +1,4 @@
+import { useFocusEffect } from "@react-navigation/native";
 import * as React from "react";
 import { View } from "react-native";
 import { AppBarContent, AppBarHeader } from "../ui";
@@ -60,6 +61,15 @@ export const Game = ({
   dispatch: (action: GameState.IAction) => void;
   onBack: () => void;
 }) => {
+  useFocusEffect(
+    React.useCallback(() => {
+      dispatch(GameState.actions.focused());
+      return () => {
+        dispatch(GameState.actions.blurred());
+      };
+    }, [])
+  );
+
   return (
     <>
       {gameState.name === "tic-tac-toe" && (

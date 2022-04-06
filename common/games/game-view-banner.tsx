@@ -1,5 +1,11 @@
 import * as React from "react";
-import { Animated, SafeAreaView, TouchableHighlight, View } from "react-native";
+import {
+  Animated,
+  Platform,
+  SafeAreaView,
+  TouchableHighlight,
+  View,
+} from "react-native";
 import { Text } from "react-native-paper";
 import { Icon, spacing, useTheme } from "../ui";
 import * as GameState from "./game-state";
@@ -21,13 +27,22 @@ export const GameBanner = ({
 
   const heightValue = React.useRef(new Animated.Value(0)).current;
 
+  const status =
+    Platform.OS === "web" &&
+    state.type === "started" &&
+    state.status === "blurred"
+      ? "opened"
+      : Platform.OS !== "web" && state.type === "started"
+      ? "opened"
+      : "closed";
+
   React.useEffect(() => {
     Animated.timing(heightValue, {
-      toValue: state.type === "started" ? 36 + safeAreaInsets.top : 0,
+      toValue: status === "opened" ? 36 + safeAreaInsets.top : 0,
       duration: 250,
       useNativeDriver: false,
     }).start(() => {});
-  }, [state.type]);
+  }, [status]);
 
   return (
     <>
@@ -43,6 +58,7 @@ export const GameBanner = ({
                 paddingHorizontal: spacing(2),
                 paddingVertical: spacing(1),
                 flexDirection: "row",
+                backgroundColor: theme.colors.primary,
               }}
             >
               <Text style={{ flex: 1 }}>{`Back to ${

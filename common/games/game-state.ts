@@ -27,6 +27,7 @@ export type IState =
       type: "stopped";
     }
   | {
+      status: "focused" | "focusing" | "blurred";
       type: "started";
       game: IGameState;
     };
@@ -48,6 +49,10 @@ export const actions = {
   started: createAction<IGameState["name"], "game/STARTED">("game/STARTED"),
   stop: createAction("game/STOP"),
   stopped: createAction("game/STOPPED"),
+  focused: createAction("game/FOCUSED"),
+  focus: createAction("game/FOCUS"),
+  blurred: createAction("game/BLURRED"),
+
   ...TicTacToe.actions,
 };
 
@@ -63,6 +68,30 @@ export type IAction = InferActionUnion<typeof actions>;
 
 export const reducer = (state: IState, action: IAction): IState => {
   switch (action.type) {
+    case "game/FOCUS":
+      return state.type === "stopped"
+        ? state
+        : {
+            ...state,
+            status: "focusing",
+          };
+
+    case "game/FOCUSED":
+      return state.type === "stopped"
+        ? state
+        : {
+            ...state,
+            status: "focused",
+          };
+
+    case "game/BLURRED":
+      return state.type === "stopped"
+        ? state
+        : {
+            ...state,
+            status: "blurred",
+          };
+
     case "game/STOP":
       return state;
 
@@ -75,6 +104,7 @@ export const reducer = (state: IState, action: IAction): IState => {
       if (action.payload === "tic-tac-toe") {
         return {
           type: "started",
+          status: "focusing",
           game: {
             name: "tic-tac-toe",
             state: TicTacToe.initialState,
@@ -119,6 +149,8 @@ export function* saga({ selector }: { selector: (_: unknown) => IState }) {
     if (state.type === "stopped") {
       yield put(actions.started(action.payload));
     }
+
+    yield put(actions.focus());
   });
 
   yield takeEvery(actions.stop, function* () {
