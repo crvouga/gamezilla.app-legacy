@@ -3,9 +3,18 @@ import {
   useDispatch as useDispatchRedux,
   useSelector as useSelectorRedux,
 } from "react-redux";
-import { createStore } from "../common/utils";
+import {
+  createEventEmitter,
+  createStore,
+  InferActionMap,
+} from "../common/utils";
 import * as App from "./app-state";
 import { dataAccess } from "./app-data-access";
+import { takeEvery } from "redux-saga/effects";
+
+export const actionEmitter = createEventEmitter<{
+  [key in App.IAction["type"]]: Extract<App.IAction, { type: key }>;
+}>();
 
 export const store = createStore({
   reducer: App.reducer,
@@ -15,6 +24,10 @@ export const store = createStore({
     );
   },
   saga: function* () {
+    yield takeEvery("*", function* (action: App.IAction) {
+      actionEmitter.emit(action.type, action);
+    });
+
     yield App.saga({
       dataAccess,
       selector: (_) => _ as App.IState,

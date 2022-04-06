@@ -14,7 +14,8 @@ import { SignOut } from "../common/account/sign-out/SignOut";
 import { Game, GameStart } from "../common/games/game-view";
 import { GameBanner } from "../common/games/game-view-banner";
 import { spacing, useTheme } from "../common/ui";
-import { useDispatch, useSelector } from "./store";
+import { useEventHandler } from "../common/utils";
+import { actionEmitter, useDispatch, useSelector } from "./store";
 
 type IStackParamList = {
   Home: undefined;
@@ -66,10 +67,10 @@ export const App = () => {
   const theme = useTheme();
 
   React.useEffect(() => {
-    if (gameState.type === "started") {
+    if (gameState.type === "started" && gameState.status === "focusing") {
       navigation.navigate("Game");
     }
-  }, [gameState.type]);
+  }, [gameState.type, gameState.type === "started" ? gameState.status : ""]);
 
   const dispatch = useDispatch();
 
@@ -208,7 +209,11 @@ export const App = () => {
         dispatch={dispatch}
       />
 
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Navigator
+        screenOptions={{
+          headerShown: false,
+        }}
+      >
         <Stack.Screen name="Home" component={TabStackScreen} />
         <Stack.Screen
           name="ProfileUpdateStack"
@@ -219,7 +224,7 @@ export const App = () => {
         {gameState.type === "started" && (
           <Stack.Screen
             name="Game"
-            options={{ presentation: "fullScreenModal" }}
+            options={{ headerShown: false, presentation: "fullScreenModal" }}
           >
             {() => (
               <Game
