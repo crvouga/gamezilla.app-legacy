@@ -14,9 +14,11 @@ export const Button = ({
   compact,
   labelStyle,
   roundness = 24,
+  contentStyle,
 }: {
   style?: ViewStyle;
   labelStyle?: ViewStyle;
+  contentStyle?: ViewStyle;
   compact?: boolean;
   color?: string;
   icon?: string;
@@ -30,6 +32,7 @@ export const Button = ({
 }) => {
   return (
     <PaperButton
+      contentStyle={contentStyle}
       loading={loading}
       disabled={loading || disabled}
       mode={mode}

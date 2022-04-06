@@ -1,9 +1,9 @@
 import React from "react";
 import { Platform } from "react-native";
-import { Title } from "react-native-paper";
+import { IconButton, Title } from "react-native-paper";
 
 import Svg, { Circle, G, Line, Rect } from "react-native-svg";
-import { Button, spacing } from "../../ui";
+import { AppBar, AppBarBackAction, Button, spacing } from "../../ui";
 import {
   actions,
   ALL_POSSIBLE_POSITIONS,
@@ -33,18 +33,29 @@ const toStatusText = (board: IBoard): string => {
   }
 };
 
-export const ViewTicTacToe = ({
+export const TicTacToeView = ({
   dispatch,
   board,
+  onBack,
+  onStop,
 }: {
   board: IBoard;
   dispatch: (action: IAction) => void;
+  onBack: () => void;
+  onStop: () => void;
 }) => {
   return (
     <>
+      <AppBar
+        left={<AppBarBackAction onPress={onBack} />}
+        title={"Tic Tac Toe"}
+        right={<IconButton icon={"power"} onPress={onStop} />}
+      />
+
       <Title style={{ textAlign: "center", padding: 8 }}>
         {toStatusText(board)}
       </Title>
+
       <TicTacToeBoard
         board={board}
         onPress={(position) => {
@@ -87,7 +98,7 @@ export const TicTacToeBoard = ({
   ] as const;
 
   return (
-    <Svg width="100%" viewBox="0 0 3 3">
+    <Svg width="100%" style={{ aspectRatio: 1 }} viewBox="0 0 3 3">
       <Rect x={0} y={0} width={3} height={3} fill={theme.background} />
       {LINES.map((line, index) => (
         <Line key={index} {...line} stroke={theme.line} strokeWidth={0.1} />
@@ -182,7 +193,7 @@ export const TicTacToeIconSvg = () => {
   ] as const;
 
   return (
-    <Svg width="100%" viewBox="0 0 2 2">
+    <Svg width="100%" style={{ aspectRatio: 1 }} viewBox="0 0 2 2">
       <Rect x={0} y={0} width={2} height={2} fill={theme.background} />
       {LINES.map((line, index) => (
         <Line key={index} {...line} stroke={theme.line} strokeWidth={0.1} />

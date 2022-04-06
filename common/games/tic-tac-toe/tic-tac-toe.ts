@@ -1,5 +1,5 @@
 import { createAction } from "@reduxjs/toolkit";
-import { call, delay, put, select, takeEvery } from "redux-saga/effects";
+import { put, select, takeEvery } from "redux-saga/effects";
 import { equals, mapValues, minimax } from "../../utils";
 import { InferActionUnion } from "../../utils/action-creator";
 
@@ -253,7 +253,7 @@ export const initialState: IState = {
       type: "Local",
     },
     O: {
-      type: "Computer",
+      type: "Local",
     },
   },
 };
@@ -273,30 +273,6 @@ export function* saga({ selector }: { selector: (_: unknown) => IState }) {
 
     if (state.playerTypes[turn].type === "Local") {
       yield put(actions.moved(action.payload, turn));
-    }
-  });
-
-  yield takeEvery("*", function* () {
-    const state: IState = yield select(selector);
-
-    const status = toStatus(state.board);
-    const turn = toTurn(state.board);
-
-    if (
-      status.type !== "Tie" &&
-      status.type !== "Win" &&
-      state.playerTypes[turn].type === "Computer"
-    ) {
-      const bestMove: Awaited<ReturnType<typeof toBestMove>> = yield call(
-        toBestMove,
-        state.board,
-        turn
-      );
-
-      if (bestMove) {
-        yield delay(500);
-        yield put(actions.moved(bestMove, turn));
-      }
     }
   });
 }
