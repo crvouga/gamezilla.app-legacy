@@ -1,6 +1,6 @@
 import { createAction } from "@reduxjs/toolkit";
-import { delay, put, select, take, takeEvery } from "redux-saga/effects";
-import { equals, INaturalNumber, mapValues, maxBy, minimax } from "../../utils";
+import { call, delay, put, select, takeEvery } from "redux-saga/effects";
+import { equals, mapValues, minimax } from "../../utils";
 import { InferActionUnion } from "../../utils/action-creator";
 
 export type IPlayer = "X" | "O";
@@ -279,25 +279,23 @@ export function* saga({ selector }: { selector: (_: unknown) => IState }) {
   yield takeEvery("*", function* () {
     const state: IState = yield select(selector);
 
+    const status = toStatus(state.board);
     const turn = toTurn(state.board);
 
-    if (state.playerTypes[turn].type === "Computer") {
-      const minimax = makeMinimax(turn);
-
-      const result = minimax(
-        {
-          board: state.board,
-          lastMove: null,
-        },
-        9
+    if (
+      status.type !== "Tie" &&
+      status.type !== "Win" &&
+      state.playerTypes[turn].type === "Computer"
+    ) {
+      const bestMove: Awaited<ReturnType<typeof toBestMove>> = yield call(
+        toBestMove,
+        state.board,
+        turn
       );
 
-      if (result.node.lastMove) {
-        yield delay(1000);
-
-        console.log({ result });
-
-        yield put(actions.moved(result.node.lastMove.position, turn));
+      if (bestMove) {
+        yield delay(500);
+        yield put(actions.moved(bestMove, turn));
       }
     }
   });
@@ -309,45 +307,76 @@ const toEmptyPositions = (board: IBoard): IPosition[] => {
   );
 };
 
-type IMinimaxNode = {
-  board: IBoard;
-  lastMove: {
-    position: IPosition;
-    player: IPlayer;
-  } | null;
+const toChildren = async (board: IBoard) => {
+  const emptyPositions = toEmptyPositions(board);
+  const turn = toTurn(board);
+  return emptyPositions.map((position) => move(board, position, turn));
 };
 
-const makeMinimax = (player: IPlayer) => {
-  return minimax<IMinimaxNode>({
-    isTerminal: (node) => {
-      const status = toStatus(node.board);
-      return status.type === "Tie" || status.type === "Win";
-    },
+const isTerminal = async (board: IBoard) => {
+  const status = toStatus(board);
 
-    toScore: (node) => {
-      const winner = toWinner(node.board);
+  return status.type === "Tie" || status.type === "Win";
+};
 
-      if (winner === "None") {
-        return 0;
-      }
+const toScore = (player: IPlayer) => async (board: IBoard) => {
+  const winner = toWinner(board);
 
-      if (winner === player) {
-        return Infinity;
-      }
+  if (winner === "None") {
+    return 0;
+  }
 
-      return -Infinity;
-    },
+  if (winner === player) {
+    return Infinity;
+  }
 
-    toChildren: (node) => {
-      const emptyPositions = toEmptyPositions(node.board);
-      const turn = toTurn(node.board);
-      return emptyPositions.map((position) => ({
-        board: setSlot(node.board, position, turn),
-        lastMove: {
-          player: turn,
-          position,
-        },
-      }));
-    },
-  });
+  return -Infinity;
+};
+
+const reduceP = async <TY, TX>(
+  reducer: (y: TY, x: TX) => Promise<TY> | TY,
+  y0: TY,
+  xs: TX[]
+): Promise<TY> => {
+  let y = y0;
+
+  for (const x of xs) {
+    y = await reducer(y, x);
+  }
+
+  return y;
+};
+
+const maxByP = async <TX>(
+  keyFn: (x: TX) => Promise<number>,
+  x1: TX,
+  x2: TX
+): Promise<TX> => {
+  if ((await keyFn(x1)) >= (await keyFn(x2))) {
+    return x1;
+  }
+
+  return x2;
+};
+
+const toBestMove = async (board: IBoard, player: IPlayer) => {
+  const config = {
+    toChildren,
+    toScore: toScore(player),
+    isTerminal,
+  };
+
+  return reduceP<IPosition | null, IPosition>(
+    (best, position) =>
+      best
+        ? maxByP(
+            (position) =>
+              minimax(config, move(board, position, player), 3, "max"),
+            best,
+            position
+          )
+        : position,
+    null,
+    toEmptyPositions(board)
+  );
 };

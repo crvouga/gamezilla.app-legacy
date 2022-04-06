@@ -1,9 +1,11 @@
 export * from "./action-creator";
+export * from "./compare";
 export * from "./equals";
 export * from "./event-emitter";
 export * from "./integer";
 export * from "./list";
 export * from "./maybe";
+export * from "./minimax/minimax";
 export * from "./natural-number";
 export * from "./random";
 export * from "./record";
@@ -11,5 +13,3 @@ export * from "./result";
 export * from "./sagas";
 export * from "./store";
 export * from "./task";
-export * from "./compare";
-export * from "./minimax";
