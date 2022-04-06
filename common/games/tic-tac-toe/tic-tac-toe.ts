@@ -1,6 +1,6 @@
 import { createAction } from "@reduxjs/toolkit";
-import { put, select, takeEvery } from "redux-saga/effects";
-import { equals, mapValues } from "../../utils";
+import { delay, put, select, take, takeEvery } from "redux-saga/effects";
+import { equals, INaturalNumber, mapValues, maxBy, minimax } from "../../utils";
 import { InferActionUnion } from "../../utils/action-creator";
 
 export type IPlayer = "X" | "O";
@@ -19,7 +19,7 @@ export type IBoard = {
 
 export type IPosition = readonly [IColumn, IRow];
 
-const getSlot = (board: IBoard, [column, row]: IPosition): ISlot =>
+const toSlot = (board: IBoard, [column, row]: IPosition): ISlot =>
   board[column][row];
 
 const setSlot = (
@@ -34,9 +34,10 @@ const setSlot = (
   },
 });
 
-export const allPositions: IPosition[] = (["0", "1", "2"] as const).flatMap(
-  (column: IColumn) =>
-    (["0", "1", "2"] as const).map((row: IRow) => [column, row] as const)
+export const ALL_POSSIBLE_POSITIONS: IPosition[] = (
+  ["0", "1", "2"] as const
+).flatMap((column: IColumn) =>
+  (["0", "1", "2"] as const).map((row: IRow) => [column, row] as const)
 );
 
 const emptyBoard: IBoard = {
@@ -86,6 +87,18 @@ export const mapBoard = (
     mapValues(column, (slot, y) => f(slot, x, y))
   );
 
+const move = (board: IBoard, position: IPosition, player: IPlayer) => {
+  if (
+    toSlot(board, position) === "Empty" &&
+    toStatus(board).type !== "Win" &&
+    toTurn(board) === player
+  ) {
+    return setSlot(board, position, player);
+  }
+
+  return board;
+};
+
 export const boardReducer = (board: IBoard, action: IAction): IBoard => {
   switch (action.type) {
     case "tic-tac-toe/RESTART":
@@ -96,15 +109,7 @@ export const boardReducer = (board: IBoard, action: IAction): IBoard => {
 
     case "tic-tac-toe/MOVED":
       const { position, player } = action.payload;
-
-      if (
-        getSlot(board, position) === "Empty" &&
-        toStatus(board).type !== "Win"
-      ) {
-        return setSlot(board, position, player);
-      }
-
-      return board;
+      return move(board, position, player);
   }
 };
 
@@ -113,14 +118,14 @@ export type IState = {
   playerTypes: {
     [player in IPlayer]:
       | { type: "None" }
-      | { type: "User"; userId: string }
-      | { type: "Computer"; difficulty: "Easy" | "Medium" | "Impossible" };
+      | { type: "Local" }
+      | { type: "Computer" };
   };
 };
 
 const isEven = (x: number) => x % 2 === 0;
 
-const toTurn = (board: IBoard): IPlayer => {
+export const toTurn = (board: IBoard): IPlayer => {
   const slots = Object.values(board).flatMap((_) => Object.values(_));
 
   const emptySlots = slots.filter((slot) => slot === "Empty");
@@ -179,7 +184,7 @@ const ALL_POSSIBLE_WINS: IWin[] = [
 
 const isWin = (board: IBoard, possibleWin: IWin) => {
   const slots = possibleWin
-    .map((position) => getSlot(board, position))
+    .map((position) => toSlot(board, position))
     .filter((slot) => slot !== "Empty");
 
   return new Set(slots).size === 1 && slots.length == 3;
@@ -198,13 +203,19 @@ const toWinner = (board: IBoard) => {
 
   const arbitraryPosition = wins[0][0];
 
-  const slot = getSlot(board, arbitraryPosition);
+  const slot = toSlot(board, arbitraryPosition);
 
   if (slot === "Empty") {
     return "None";
   }
 
   return slot;
+};
+
+const isBoardFull = (board: IBoard) => {
+  return Object.values(board)
+    .flatMap((column) => Object.values(column))
+    .every((slot) => slot !== "Empty");
 };
 
 export const toStatus = (board: IBoard) => {
@@ -223,6 +234,12 @@ export const toStatus = (board: IBoard) => {
     } as const;
   }
 
+  if (isBoardFull(board)) {
+    return {
+      type: "Tie",
+    } as const;
+  }
+
   return {
     type: "Playing",
   } as const;
@@ -233,33 +250,20 @@ export const initialState: IState = {
 
   playerTypes: {
     X: {
-      type: "None",
+      type: "Local",
     },
     O: {
-      type: "None",
+      type: "Computer",
     },
   },
 };
 
-export const toStatusText = (board: IBoard): string => {
-  const status = toStatus(board);
-
-  switch (status.type) {
-    case "Initial":
-      return `${toTurn(board)} turn`;
-
-    case "Playing":
-      return `${toTurn(board)} turn`;
-
-    case "Win":
-      return `${status.winner} won`;
-  }
+export const reducer = (state: IState, action: IAction): IState => {
+  return {
+    ...state,
+    board: boardReducer(state.board, action),
+  };
 };
-
-export const reducer = (state: IState, action: IAction): IState => ({
-  ...state,
-  board: boardReducer(state.board, action),
-});
 
 export function* saga({ selector }: { selector: (_: unknown) => IState }) {
   yield takeEvery(actions.boardPressed, function* (action) {
@@ -267,6 +271,83 @@ export function* saga({ selector }: { selector: (_: unknown) => IState }) {
 
     const turn = toTurn(state.board);
 
-    yield put(actions.moved(action.payload, turn));
+    if (state.playerTypes[turn].type === "Local") {
+      yield put(actions.moved(action.payload, turn));
+    }
+  });
+
+  yield takeEvery("*", function* () {
+    const state: IState = yield select(selector);
+
+    const turn = toTurn(state.board);
+
+    if (state.playerTypes[turn].type === "Computer") {
+      const minimax = makeMinimax(turn);
+
+      const result = minimax(
+        {
+          board: state.board,
+          lastMove: null,
+        },
+        9
+      );
+
+      if (result.node.lastMove) {
+        yield delay(1000);
+
+        console.log({ result });
+
+        yield put(actions.moved(result.node.lastMove.position, turn));
+      }
+    }
   });
 }
+
+const toEmptyPositions = (board: IBoard): IPosition[] => {
+  return ALL_POSSIBLE_POSITIONS.filter(
+    (position) => toSlot(board, position) === "Empty"
+  );
+};
+
+type IMinimaxNode = {
+  board: IBoard;
+  lastMove: {
+    position: IPosition;
+    player: IPlayer;
+  } | null;
+};
+
+const makeMinimax = (player: IPlayer) => {
+  return minimax<IMinimaxNode>({
+    isTerminal: (node) => {
+      const status = toStatus(node.board);
+      return status.type === "Tie" || status.type === "Win";
+    },
+
+    toScore: (node) => {
+      const winner = toWinner(node.board);
+
+      if (winner === "None") {
+        return 0;
+      }
+
+      if (winner === player) {
+        return Infinity;
+      }
+
+      return -Infinity;
+    },
+
+    toChildren: (node) => {
+      const emptyPositions = toEmptyPositions(node.board);
+      const turn = toTurn(node.board);
+      return emptyPositions.map((position) => ({
+        board: setSlot(node.board, position, turn),
+        lastMove: {
+          player: turn,
+          position,
+        },
+      }));
+    },
+  });
+};

@@ -11,3 +11,5 @@ export * from "./result";
 export * from "./sagas";
 export * from "./store";
 export * from "./task";
+export * from "./compare";
+export * from "./minimax";

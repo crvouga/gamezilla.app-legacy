@@ -6,14 +6,32 @@ import Svg, { Circle, G, Line, Rect } from "react-native-svg";
 import { Button, spacing } from "../../ui";
 import {
   actions,
-  allPositions,
+  ALL_POSSIBLE_POSITIONS,
   IAction,
   IBoard,
   IPosition,
   ISlot,
   toStatus,
-  toStatusText,
+  toTurn,
 } from "./tic-tac-toe";
+
+const toStatusText = (board: IBoard): string => {
+  const status = toStatus(board);
+
+  switch (status.type) {
+    case "Tie":
+      return `Tie`;
+
+    case "Initial":
+      return `${toTurn(board)} turn`;
+
+    case "Playing":
+      return `${toTurn(board)} turn`;
+
+    case "Win":
+      return `${status.winner} won`;
+  }
+};
 
 export const ViewTicTacToe = ({
   dispatch,
@@ -75,10 +93,9 @@ export const TicTacToeBoard = ({
         <Line key={index} {...line} stroke={theme.line} strokeWidth={0.1} />
       ))}
 
-      {allPositions.map(([column, row]) => (
-        <>
+      {ALL_POSSIBLE_POSITIONS.map(([column, row]) => (
+        <G key={`${column} ${row} ${board[column][row]}`}>
           <Rect
-            key={`${column} ${row}`}
             x={Number(column)}
             y={Number(row)}
             width={1}
@@ -103,7 +120,7 @@ export const TicTacToeBoard = ({
             cy={Number(row) + 0.5}
             r={0.3}
           />
-        </>
+        </G>
       ))}
     </Svg>
   );
@@ -173,6 +190,7 @@ export const TicTacToeIconSvg = () => {
 
       {positions.map(([[column, row], slot]) => (
         <Slot
+          key={`${column} ${row} ${slot}`}
           slot={slot}
           cx={Number(column) + 0.5}
           cy={Number(row) + 0.5}
