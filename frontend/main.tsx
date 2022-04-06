@@ -1,6 +1,7 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { registerRootComponent } from "expo";
 import AppLoading from "expo-app-loading";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 /** URL polyfill. Required for Supabase queries to work in React Native. */
 import "react-native-url-polyfill/auto";
 import { Provider } from "react-redux";
@@ -22,13 +23,15 @@ const Root = () => {
   }
 
   return (
-    <Provider store={store}>
-      <ThemeProvider theme={theme}>
-        <NavigationContainer theme={theme}>
-          <App />
-        </NavigationContainer>
-      </ThemeProvider>
-    </Provider>
+    <SafeAreaProvider>
+      <Provider store={store}>
+        <ThemeProvider theme={theme}>
+          <NavigationContainer theme={theme}>
+            <App />
+          </NavigationContainer>
+        </ThemeProvider>
+      </Provider>
+    </SafeAreaProvider>
   );
 };
 
