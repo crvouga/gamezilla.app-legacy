@@ -16,11 +16,11 @@ export type IGameState = {
   state: TicTacToe.IState;
 };
 
-const capitalize = ([first, ...rest]: string) =>
-  `${first.toUpperCase()}${rest.join("").toLowerCase()}`;
-
 export const formatGameName = (name: IGameState["name"]) =>
-  name.split("-").map(capitalize).join(" ");
+  name
+    .split("-")
+    .map(([x, ...xs]) => [x.toLowerCase(), xs.join("").toLowerCase()].join(""))
+    .join(" ");
 
 export type IState =
   | {
