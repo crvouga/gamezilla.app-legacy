@@ -11,7 +11,8 @@ type IColumns = IColumn[];
 
 type IColumnIndex = number & { type: "ColumnIndex" };
 
-const MAX_COLUMN_HEIGHT = 7;
+const MAX_COLUMN_HEIGHT = 6;
+const COLUMN_COUNT = 7;
 
 const move = (
   columns: IColumns,
@@ -48,6 +49,10 @@ export const toTurn = (columns: IColumns): IPlayer => {
     : "PlayerTwo";
 };
 
+const isFull = (columns: IColumns) => {
+  return columns.flat().length >= MAX_COLUMN_HEIGHT * COLUMN_COUNT;
+};
+
 type IStatus =
   | {
       type: "Playing";
@@ -60,23 +65,7 @@ type IStatus =
       type: "Tie";
     };
 
-function* generateConnection(
-  columns: IColumns,
-  slot: ISlot,
-  [x, y]: readonly [number, number]
-) {}
-
-type IPosition = {
-  x: number;
-  y: number;
-};
-
-type IDirection = {
-  dx: number;
-  dy: number;
-};
-
-function* yieldAllPositionsAndDirections(columns: IColumns) {
+function* yieldPositionsAndDirections(columns: IColumns) {
   for (let x = 0; x <= columns.length; x++) {
     for (let y = 0; y <= columns[x].length; y++) {
       for (let dx = -1; dx <= 1; dx++) {
@@ -106,6 +95,11 @@ function* yieldLine({
   dx: number;
   dy: number;
 }) {
+  yield {
+    x,
+    y,
+  };
+
   while (true) {
     const adjancentPosition = {
       x: x + dx,
@@ -124,13 +118,10 @@ function* yieldLine({
   }
 }
 
-function* yieldLines(
-  columns: IColumns,
-  { minimumLength }: { minimumLength: number }
-) {
+function* yieldLines(columns: IColumns) {
   const visited = new Set();
 
-  for (const { x, y, dx, dy } of yieldAllPositionsAndDirections(columns)) {
+  for (const { x, y, dx, dy } of yieldPositionsAndDirections(columns)) {
     const key = `${x}${y}${dx}${dy}`;
 
     if (visited.has(key)) {
@@ -141,14 +132,22 @@ function* yieldLines(
 
     const line = Array.from(yieldLine({ columns, x, y, dx, dy }));
 
-    if (line.length >= minimumLength) {
-      yield line;
+    yield line;
+  }
+}
+
+function* filter<T>(predicate: (item: T) => boolean, generator: Generator<T>) {
+  for (const item of generator) {
+    if (predicate(item)) {
+      yield item;
     }
   }
 }
 
 export const toStatus = (columns: IColumns): IStatus => {
-  const winningLines = Array.from(yieldLines(columns, { minimumLength: 5 }));
+  const winningLines = Array.from(
+    filter((line) => line.length >= 5, yieldLines(columns))
+  );
 
   if (winningLines.length > 0) {
     const winner = toSlot(columns, winningLines[0][0]);
@@ -162,6 +161,12 @@ export const toStatus = (columns: IColumns): IStatus => {
     return {
       type: "Winner",
       winner,
+    };
+  }
+
+  if (isFull(columns)) {
+    return {
+      type: "Tie",
     };
   }
 
