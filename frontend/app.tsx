@@ -229,7 +229,7 @@ export const App = () => {
               <GameView
                 onBack={navigation.goBack}
                 dispatch={dispatch}
-                state={gameState}
+                state={gameState.game}
               />
             )}
           </Stack.Screen>

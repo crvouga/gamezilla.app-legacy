@@ -54,12 +54,9 @@ export const reducer = (state: IState, action: IAction): IState => {
     case "game/FOCUS":
     case "game/STOPPED":
     case "game/STARTED":
-    case "game/START":
-    case "game/STOP":
     case "game/BLURRED":
     case "game/FOCUSED":
     case "tic-tac-toe/BOARD_PRESSED":
-    case "tic-tac-toe/MOVED":
     case "tic-tac-toe/RESTART":
     case "connect-four/COLUMN_PRESSED":
     case "connect-four/MOVED":

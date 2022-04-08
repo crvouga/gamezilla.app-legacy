@@ -1,18 +1,8 @@
-import { Actions, createAction, Dispatch, Middleware } from "@reduxjs/toolkit";
-import {
-  actionChannel,
-  call,
-  fork,
-  put,
-  race,
-  select,
-  take,
-  takeEvery,
-  takeLatest,
-} from "redux-saga/effects";
+import { createAction } from "@reduxjs/toolkit";
+import { call, race, take, takeEvery } from "redux-saga/effects";
 import { InferActionUnion } from "../utils/action-creator";
-import * as TicTacToe from "./tic-tac-toe/tic-tac-toe";
 import * as ConnectFour from "./connect-four/connect-four";
+import * as TicTacToe from "./tic-tac-toe/tic-tac-toe";
 
 /**
  *
@@ -22,30 +12,29 @@ import * as ConnectFour from "./connect-four/connect-four";
  *
  */
 
-export type IGameState =
+export type IGame =
   | {
-      gameName: "tic-tac-toe";
-      gameState: TicTacToe.IState;
+      type: "tic-tac-toe";
+      name: string;
+      state: TicTacToe.IState;
     }
   | {
-      gameName: "connect-four";
-      gameState: ConnectFour.IState;
+      type: "connect-four";
+      name: string;
+      state: ConnectFour.IState;
     };
 
-export const formatGameName = (name: IGameState["gameName"]) =>
-  name
-    .split("-")
-    .map(([x, ...xs]) => [x.toLowerCase(), xs.join("").toLowerCase()].join(""))
-    .join(" ");
+type IStatus = "focused" | "focusing" | "blurred";
 
 export type IState =
   | {
       type: "stopped";
     }
-  | ({
-      status: "focused" | "focusing" | "blurred";
+  | {
       type: "started";
-    } & IGameState);
+      status: IStatus;
+      game: IGame;
+    };
 
 export const initialState: IState = {
   type: "stopped",
@@ -60,9 +49,7 @@ export const initialState: IState = {
  */
 
 export const actions = {
-  start: createAction<IGameState["gameName"], "game/START">("game/START"),
-  started: createAction<IGameState["gameName"], "game/STARTED">("game/STARTED"),
-  stop: createAction("game/STOP"),
+  started: createAction<IGame["type"], "game/STARTED">("game/STARTED"),
   stopped: createAction("game/STOPPED"),
   focused: createAction("game/FOCUSED"),
   focus: createAction("game/FOCUS"),
@@ -74,92 +61,103 @@ export type IAction =
   | TicTacToe.IAction
   | ConnectFour.IAction;
 
-/**
- *
- *
- * Reducer
- *
- *
- */
-
-export const reducer = (state: IState, action: IAction): IState => {
+const statusReducer = (
+  game: IGame,
+  status: IStatus,
+  action: IAction
+): IStatus => {
   switch (action.type) {
-    case "game/FOCUS":
-      return state.type === "stopped"
-        ? state
-        : {
-            ...state,
-            status: "focusing",
-          };
+    case "game/STARTED":
+      if (game.type === action.payload) {
+        return "focusing";
+      }
 
-    case "game/FOCUSED":
-      return state.type === "stopped"
-        ? state
-        : {
-            ...state,
-            status: "focused",
-          };
+      return status;
 
     case "game/BLURRED":
-      return state.type === "stopped"
-        ? state
-        : {
-            ...state,
-            status: "blurred",
+      return "blurred";
+
+    case "game/FOCUS":
+      return "focusing";
+
+    case "game/FOCUSED":
+      return "focused";
+
+    default:
+      return status;
+  }
+};
+
+const gameReducer = (game: IGame, action: IAction): IGame => {
+  switch (game.type) {
+    case "connect-four":
+      switch (action.type) {
+        case "connect-four/COLUMN_PRESSED":
+        case "connect-four/MOVED":
+          return {
+            ...game,
+            state: ConnectFour.reducer(game.state, action),
           };
 
-    case "game/STOP":
-      return state;
+        default:
+          return game;
+      }
 
-    case "game/STOPPED":
-      return {
-        type: "stopped",
-      };
+    case "tic-tac-toe":
+      switch (action.type) {
+        case "tic-tac-toe/BOARD_PRESSED":
+        case "tic-tac-toe/RESTART":
+          return {
+            ...game,
+            state: TicTacToe.reducer(game.state, action),
+          };
 
-    case "game/STARTED":
-      switch (action.payload) {
-        case "tic-tac-toe":
+        default:
+          return game;
+      }
+  }
+};
+
+export const reducer = (state: IState, action: IAction): IState => {
+  switch (state.type) {
+    case "started":
+      switch (action.type) {
+        case "game/STOPPED":
+          return {
+            type: "stopped",
+          };
+
+        default:
+          return {
+            type: "started",
+            status: statusReducer(state.game, state.status, action),
+            game: gameReducer(state.game, action),
+          };
+      }
+
+    case "stopped":
+      switch (action.type) {
+        case "game/STARTED":
           return {
             type: "started",
             status: "focusing",
-            gameName: "tic-tac-toe",
-            gameState: TicTacToe.initialState,
+            game:
+              action.payload === "connect-four"
+                ? {
+                    type: "connect-four",
+                    name: "Connect Four",
+                    state: ConnectFour.initialState,
+                  }
+                : {
+                    type: "tic-tac-toe",
+                    name: "Tic Tac Toe",
+                    state: TicTacToe.initialState,
+                  },
           };
 
-        case "connect-four":
-          return {
-            type: "started",
-            status: "focusing",
-            gameName: "connect-four",
-            gameState: ConnectFour.initialState,
-          };
+        default:
+          return state;
       }
-
-    case "game/START":
-      return state;
-
-    case "tic-tac-toe/BOARD_PRESSED":
-    case "tic-tac-toe/MOVED":
-    case "tic-tac-toe/RESTART":
-      if (state.type === "started" && state.gameName === "tic-tac-toe") {
-        return {
-          ...state,
-          gameState: TicTacToe.reducer(state.gameState, action),
-        };
-      }
-
-      return state;
-
-    case "connect-four/COLUMN_PRESSED":
-    case "connect-four/MOVED":
-      if (state.type === "started" && state.gameName === "connect-four") {
-        return {
-          ...state,
-          gameState: ConnectFour.reducer(state.gameState, action),
-        };
-      }
-
-      return state;
   }
 };
 
@@ -171,79 +169,14 @@ Middleware
 
 */
 
-function* startFlow() {
-  const action: ReturnType<typeof actions.start> = yield take(actions.start);
-
-  yield put(actions.started(action.payload));
-
-  while (true) {
-    yield take(actions.stopped);
-
-    const action: ReturnType<typeof actions.start> = yield take(actions.start);
-
-    yield put(actions.started(action.payload));
-  }
-}
-
-function* stopFlow() {
-  while (true) {
-    yield take(actions.started);
-
-    yield take(actions.stop);
-
-    yield put(actions.stopped());
-  }
-}
-
-function* focusFlow() {
-  while (true) {
-    const started: ReturnType<typeof actions.started> = yield take(
-      actions.started
-    );
-
-    yield race([
-      take(actions.stopped),
-      function* () {
-        while (true) {
-          console.log("WATING START");
-          const start: ReturnType<typeof actions.start> = yield take(
-            actions.start
-          );
-
-          console.log("COMPARING");
-          if (started.payload === start.payload) {
-            yield put(actions.focus());
-          }
-        }
-      },
-    ]);
-  }
-}
-
-function* gameFlow() {
-  while (true) {
-    const started: ReturnType<typeof actions.started> = yield take(
-      actions.started
-    );
-
-    yield race([
-      actions.stopped,
-      function* () {
-        switch (started.payload) {
-          case "connect-four":
-            return;
-
-          case "tic-tac-toe":
-            return;
-        }
-      },
-    ]);
-  }
-}
-
 export function* saga() {
-  yield fork(startFlow);
-  yield fork(stopFlow);
-  yield fork(focusFlow);
-  yield fork(gameFlow);
+  yield takeEvery(actions.started, function* (action) {
+    switch (action.payload) {
+      case "connect-four":
+        yield race([take(actions.stopped), call(ConnectFour.saga)]);
+
+      case "tic-tac-toe":
+        yield race([take(actions.stopped), call(TicTacToe.saga)]);
+    }
+  });
 }

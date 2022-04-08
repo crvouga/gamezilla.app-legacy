@@ -254,3 +254,4 @@ export const reducer = (state: IState, action: IAction): IState => {
 
 
 */
+export function* saga() {}
