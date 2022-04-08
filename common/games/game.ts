@@ -92,13 +92,20 @@ const gameReducer = (game: IGame, action: IAction): IGame => {
   switch (game.type) {
     case "connect-four":
       switch (action.type) {
+        case "connect-four/COLUMNS_CLEARED":
         case "connect-four/COLUMN_PRESSED":
           return {
             ...game,
             state: ConnectFour.reducer(game.state, action),
           };
 
-        default:
+        case "game/BLURRED":
+        case "game/FOCUS":
+        case "game/FOCUSED":
+        case "game/STARTED":
+        case "game/STOPPED":
+        case "tic-tac-toe/BOARD_PRESSED":
+        case "tic-tac-toe/RESTART":
           return game;
       }
 
@@ -111,7 +118,13 @@ const gameReducer = (game: IGame, action: IAction): IGame => {
             state: TicTacToe.reducer(game.state, action),
           };
 
-        default:
+        case "game/BLURRED":
+        case "game/FOCUS":
+        case "game/FOCUSED":
+        case "game/STARTED":
+        case "game/STOPPED":
+        case "connect-four/COLUMNS_CLEARED":
+        case "connect-four/COLUMN_PRESSED":
           return game;
       }
   }

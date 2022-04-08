@@ -200,6 +200,8 @@ Actions
 */
 
 export const actions = {
+  columnsCleared: createAction("connect-four/COLUMNS_CLEARED"),
+
   columnPressed: createAction(
     "connect-four/COLUMN_PRESSED",
     (columnIndex: number) => ({
@@ -222,6 +224,12 @@ Reducer
 
 export const reducer = (state: IState, action: IAction): IState => {
   switch (action.type) {
+    case "connect-four/COLUMNS_CLEARED":
+      return {
+        ...state,
+        columns: EMPTY_COLUMNS,
+      };
+
     case "connect-four/COLUMN_PRESSED":
       const { columnIndex } = action.payload;
 

@@ -10,7 +10,13 @@ import Svg, {
   Rect,
   Stop,
 } from "react-native-svg";
-import { AppBar, AppBarAction, AppBarBackAction } from "../../ui";
+import {
+  AppBar,
+  AppBarAction,
+  AppBarBackAction,
+  Button,
+  spacing,
+} from "../../ui";
 import {
   ISlot,
   actions,
@@ -81,28 +87,6 @@ const ConnectFourSvgDefinitions = ({ ids }: { ids: ISvgDefIds }) => {
       </RadialGradient>
     </Defs>
   );
-};
-
-const Slot = ({
-  slot,
-  cx,
-  cy,
-  r,
-}: {
-  slot: ISlot;
-  cx: number;
-  cy: number;
-  r: number;
-}) => {
-  if (slot === "Empty") {
-    return null;
-  }
-
-  if (slot === "PlayerOne") {
-    return <Circle cx={cx} cy={cy} r={r} fill={"url(#playerOne)"} />;
-  }
-
-  return <Circle cx={cx} cy={cy} r={r} fill={"url(#playerTwo)"} />;
 };
 
 export const ConnectFourView = ({
@@ -195,6 +179,15 @@ export const ConnectFourView = ({
           ))}
         </G>
       </Svg>
+
+      <Button
+        onPress={() => {
+          dispatch(actions.columnsCleared());
+        }}
+        roundness={0}
+        labelStyle={{ padding: spacing(2), paddingVertical: spacing(1) }}
+        title="Restart"
+      />
     </>
   );
 };
