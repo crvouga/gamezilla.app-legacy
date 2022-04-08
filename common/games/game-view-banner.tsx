@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import { Text } from "react-native-paper";
 import { Icon, spacing, useTheme } from "../ui";
-import * as GameState from "./game-state";
+import * as GameState from "./game";
 
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -63,7 +63,7 @@ export const GameBanner = ({
             >
               <Text style={{ flex: 1 }}>{`Back to ${
                 state.type === "started"
-                  ? GameState.formatGameName(state.game.name)
+                  ? GameState.formatGameName(state.gameName)
                   : "..."
               }`}</Text>
 

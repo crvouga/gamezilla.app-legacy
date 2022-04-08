@@ -94,13 +94,13 @@ export const reducer = (state: IState, action: IAction): IState => {
   }
 };
 
-/**
- *
- *
- * Saga
- *
- *
- */
+/*
+ 
+
+Saga
+
+
+*/
 
 export type IDataAccess = {
   profileUpdate: ProfileUpdate.IDataAccess;

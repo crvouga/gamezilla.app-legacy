@@ -11,11 +11,10 @@ import { ProfileDelete } from "../common/account/profile-delete/ProfileDelete";
 import { ProfileUpdateStack } from "../common/account/profile-update/ProfileUpdateStack";
 import { SignIn } from "../common/account/sign-in/SignIn";
 import { SignOut } from "../common/account/sign-out/SignOut";
-import { Game, GameStart } from "../common/games/game-view";
+import { GameStartView, GameView } from "../common/games/game-view";
 import { GameBanner } from "../common/games/game-view-banner";
 import { spacing, useTheme } from "../common/ui";
-import { useEventHandler } from "../common/utils";
-import { actionEmitter, useDispatch, useSelector } from "./store";
+import { useDispatch, useSelector } from "./store";
 
 type IStackParamList = {
   Home: undefined;
@@ -136,7 +135,7 @@ export const App = () => {
 
   const GameStartScreen = () => {
     return (
-      <GameStart
+      <GameStartView
         onNavigateGame={() => {
           navigation.navigate("Game");
         }}
@@ -227,10 +226,10 @@ export const App = () => {
             options={{ headerShown: false, presentation: "fullScreenModal" }}
           >
             {() => (
-              <Game
+              <GameView
                 onBack={navigation.goBack}
                 dispatch={dispatch}
-                gameState={gameState.game}
+                state={gameState}
               />
             )}
           </Stack.Screen>

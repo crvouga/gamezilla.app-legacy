@@ -1,4 +1,5 @@
-import { createAction } from "@reduxjs/toolkit";
+import { createAction, Dispatch, Middleware } from "@reduxjs/toolkit";
+import { Channel } from "redux-saga";
 import { put, select, takeEvery } from "redux-saga/effects";
 import { equals, mapValues, minimax } from "../../utils";
 import { InferActionUnion } from "../../utils/action-creator";
@@ -100,6 +101,7 @@ const move = (board: IBoard, position: IPosition, player: IPlayer) => {
 };
 
 export const boardReducer = (board: IBoard, action: IAction): IBoard => {
+  console.log(board, action);
   switch (action.type) {
     case "tic-tac-toe/RESTART":
       return emptyBoard;
@@ -265,17 +267,46 @@ export const reducer = (state: IState, action: IAction): IState => {
   };
 };
 
-export function* saga({ selector }: { selector: (_: unknown) => IState }) {
-  yield takeEvery(actions.boardPressed, function* (action) {
-    const state: IState = yield select(selector);
+/* 
 
-    const turn = toTurn(state.board);
 
-    if (state.playerTypes[turn].type === "Local") {
-      yield put(actions.moved(action.payload, turn));
+Middlware
+
+
+*/
+
+function* saga() {}
+
+export const middleware =
+  ({
+    dispatch,
+    getState,
+  }: {
+    dispatch: (action: IAction) => void;
+    getState: () => IState;
+  }) =>
+  (next: (action: IAction) => void) =>
+  (action: IAction) => {
+    next(action);
+
+    if (action.type === "tic-tac-toe/BOARD_PRESSED") {
+      const state = getState();
+
+      const turn = toTurn(state.board);
+
+      if (state.playerTypes[turn].type === "Local") {
+        dispatch(actions.moved(action.payload, turn));
+      }
     }
-  });
-}
+  };
+
+/*
+
+
+Bot
+
+
+*/
 
 const toEmptyPositions = (board: IBoard): IPosition[] => {
   return ALL_POSSIBLE_POSITIONS.filter(

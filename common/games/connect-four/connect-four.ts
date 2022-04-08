@@ -11,8 +11,10 @@ type IColumns = IColumn[];
 
 type IColumnIndex = number & { type: "ColumnIndex" };
 
-const MAX_COLUMN_HEIGHT = 6;
-const COLUMN_COUNT = 7;
+export const MAX_COLUMN_HEIGHT = 6;
+export const COLUMN_COUNT = 7;
+
+const EMPTY_COLUMNS: IColumns = [...Array(COLUMN_COUNT)].map(() => []);
 
 const move = (
   columns: IColumns,
@@ -106,9 +108,9 @@ function* yieldLine({
       y: y + dy,
     };
 
-    const slot = toSlot(columns, { x, y });
-
     const adjancentSlot = toSlot(columns, adjancentPosition);
+
+    const slot = toSlot(columns, { x, y });
 
     if (adjancentSlot === slot) {
       yield adjancentPosition;
@@ -183,8 +185,12 @@ State
 
 */
 
-type IState = {
+export type IState = {
   columns: IColumns;
+};
+
+export const initialState: IState = {
+  columns: EMPTY_COLUMNS,
 };
 
 /*
@@ -195,7 +201,7 @@ Actions
 
 */
 
-const actions = {
+export const actions = {
   moved: createAction(
     "connect-four/MOVED",
     (columnIndex: IColumnIndex, player: IPlayer) => ({
@@ -205,9 +211,18 @@ const actions = {
       },
     })
   ),
+
+  columnPressed: createAction(
+    "connect-four/COLUMN_PRESSED",
+    (columnIndex: IColumnIndex) => ({
+      payload: {
+        columnIndex,
+      },
+    })
+  ),
 };
 
-type IAction = InferActionUnion<typeof actions>;
+export type IAction = InferActionUnion<typeof actions>;
 
 /*
 
@@ -217,7 +232,7 @@ Reducer
 
 */
 
-const reducer = (state: IState, action: IAction): IState => {
+export const reducer = (state: IState, action: IAction): IState => {
   switch (action.type) {
     case "connect-four/MOVED":
       const { columnIndex, player } = action.payload;
@@ -226,6 +241,9 @@ const reducer = (state: IState, action: IAction): IState => {
         ...state,
         columns: move(state.columns, columnIndex, player),
       };
+
+    case "connect-four/COLUMN_PRESSED":
+      return state;
   }
 };
 
