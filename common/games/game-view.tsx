@@ -2,7 +2,10 @@ import { useFocusEffect } from "@react-navigation/native";
 import * as React from "react";
 import { View } from "react-native";
 import { AppBarContent, AppBarHeader } from "../ui";
-import { ConnectFourView } from "./connect-four/connect-four-view";
+import {
+  ConnectFourSvgIcon,
+  ConnectFourView,
+} from "./connect-four/connect-four-view";
 import { IGame, IState, IAction, actions } from "./game";
 import { GameLink } from "./game-view-link";
 import {
@@ -46,7 +49,7 @@ export const GameStartView = ({
 
         <GameLink
           title="Connect Four"
-          icon={<TicTacToeIconSvg />}
+          icon={<ConnectFourSvgIcon />}
           onPress={() => {
             dispatch(actions.started("connect-four"));
           }}
@@ -80,7 +83,14 @@ export const GameView = ({
 
   switch (state.type) {
     case "connect-four":
-      return <ConnectFourView onBack={onBack} onStop={onStop} />;
+      return (
+        <ConnectFourView
+          dispatch={dispatch}
+          state={state.state}
+          onBack={onBack}
+          onStop={onStop}
+        />
+      );
 
     case "tic-tac-toe":
       return (

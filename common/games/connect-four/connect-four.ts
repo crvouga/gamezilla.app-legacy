@@ -3,7 +3,7 @@ import { InferActionUnion } from "../../utils";
 
 type IPlayer = "PlayerOne" | "PlayerTwo";
 
-type ISlot = IPlayer | "Empty";
+export type ISlot = IPlayer | "Empty";
 
 type IColumn = ISlot[];
 
@@ -18,7 +18,7 @@ const EMPTY_COLUMNS: IColumns = [...Array(COLUMN_COUNT)].map(() => []);
 
 const move = (
   columns: IColumns,
-  columnIndex: IColumnIndex,
+  columnIndex: number,
   player: IPlayer
 ): IColumns => {
   return columns.map((column, index) => {
@@ -202,19 +202,9 @@ Actions
 */
 
 export const actions = {
-  moved: createAction(
-    "connect-four/MOVED",
-    (columnIndex: IColumnIndex, player: IPlayer) => ({
-      payload: {
-        columnIndex,
-        player,
-      },
-    })
-  ),
-
   columnPressed: createAction(
     "connect-four/COLUMN_PRESSED",
-    (columnIndex: IColumnIndex) => ({
+    (columnIndex: number) => ({
       payload: {
         columnIndex,
       },
@@ -234,16 +224,13 @@ Reducer
 
 export const reducer = (state: IState, action: IAction): IState => {
   switch (action.type) {
-    case "connect-four/MOVED":
-      const { columnIndex, player } = action.payload;
+    case "connect-four/COLUMN_PRESSED":
+      const { columnIndex } = action.payload;
 
       return {
         ...state,
-        columns: move(state.columns, columnIndex, player),
+        columns: move(state.columns, columnIndex, "PlayerOne"),
       };
-
-    case "connect-four/COLUMN_PRESSED":
-      return state;
   }
 };
 

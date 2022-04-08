@@ -33,7 +33,7 @@ export const GameLink = ({
             style={{
               overflow: "hidden",
               width: "100%",
-              borderRadius: 12,
+              borderRadius: 18,
               marginBottom: spacing(1),
             }}
           >
