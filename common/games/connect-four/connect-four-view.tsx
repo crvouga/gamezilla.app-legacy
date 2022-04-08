@@ -2,6 +2,7 @@ import { Platform } from "react-native";
 import Svg, {
   Circle,
   Defs,
+  G,
   LinearGradient,
   Mask,
   Pattern,
@@ -21,8 +22,8 @@ import {
 
 const theme = {
   primary: {
-    light: "#2195F2",
-    dark: "#1976D2",
+    light: "#1976D2",
+    dark: "#2195F2",
     darker: "#0D47A1",
   },
   playerOne: {
@@ -136,61 +137,63 @@ export const ConnectFourView = ({
       >
         <ConnectFourSvgDefinitions ids={ids} />
 
-        <Rect
-          x={0}
-          y={0}
-          width={COLUMN_COUNT}
-          height={MAX_COLUMN_HEIGHT}
-          fill={theme.primary.darker}
-        />
-
-        {state.columns.map((column, columnIndex) =>
-          column.map((slot, rowIndex) =>
-            slot === "Empty" ? null : (
-              <Circle
-                cx={columnIndex + 0.5}
-                cy={rowIndex + 0.5}
-                r={0.5}
-                fill={
-                  slot === "PlayerOne"
-                    ? `url(#${ids.playerOne})`
-                    : `url(#${ids.playerTwo})`
-                }
-              />
-            )
-          )
-        )}
-
-        <Rect
-          x={0}
-          y={0}
-          width={COLUMN_COUNT}
-          height={MAX_COLUMN_HEIGHT}
-          mask={`url(#${ids.holeMask})`}
-          fill={`url(#${ids.column})`}
-        />
-
-        {[...Array(COLUMN_COUNT)].map((_, columnIndex) => (
+        <G transform={`translate(0, ${MAX_COLUMN_HEIGHT}) scale(1,-1)`}>
           <Rect
-            key={columnIndex}
-            x={columnIndex}
+            x={0}
             y={0}
-            width={1}
+            width={COLUMN_COUNT}
             height={MAX_COLUMN_HEIGHT}
-            fill="transparent"
-            {...(Platform.OS === "web"
-              ? {
-                  onClick: () => {
-                    onColumnPressed(columnIndex);
-                  },
-                }
-              : {
-                  onPress: () => {
-                    onColumnPressed(columnIndex);
-                  },
-                })}
+            fill={theme.primary.darker}
           />
-        ))}
+
+          {state.columns.map((column, columnIndex) =>
+            column.map((slot, rowIndex) =>
+              slot === "Empty" ? null : (
+                <Circle
+                  cx={columnIndex + 0.5}
+                  cy={rowIndex + 0.5}
+                  r={0.5}
+                  fill={
+                    slot === "PlayerOne"
+                      ? `url(#${ids.playerOne})`
+                      : `url(#${ids.playerTwo})`
+                  }
+                />
+              )
+            )
+          )}
+
+          <Rect
+            x={0}
+            y={0}
+            width={COLUMN_COUNT}
+            height={MAX_COLUMN_HEIGHT}
+            mask={`url(#${ids.holeMask})`}
+            fill={`url(#${ids.column})`}
+          />
+
+          {[...Array(COLUMN_COUNT)].map((_, columnIndex) => (
+            <Rect
+              key={columnIndex}
+              x={columnIndex}
+              y={0}
+              width={1}
+              height={MAX_COLUMN_HEIGHT}
+              fill="transparent"
+              {...(Platform.OS === "web"
+                ? {
+                    onClick: () => {
+                      onColumnPressed(columnIndex);
+                    },
+                  }
+                : {
+                    onPress: () => {
+                      onColumnPressed(columnIndex);
+                    },
+                  })}
+            />
+          ))}
+        </G>
       </Svg>
     </>
   );

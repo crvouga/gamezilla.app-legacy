@@ -46,9 +46,7 @@ const toSlot = (
 const isEven = (x: number) => x % 2 === 0;
 
 export const toTurn = (columns: IColumns): IPlayer => {
-  return isEven(columns.flat().filter((slot) => slot === "PlayerOne").length)
-    ? "PlayerOne"
-    : "PlayerTwo";
+  return isEven(columns.flat().length) ? "PlayerTwo" : "PlayerOne";
 };
 
 const isFull = (columns: IColumns) => {
@@ -227,9 +225,11 @@ export const reducer = (state: IState, action: IAction): IState => {
     case "connect-four/COLUMN_PRESSED":
       const { columnIndex } = action.payload;
 
+      const turn = toTurn(state.columns);
+
       return {
         ...state,
-        columns: move(state.columns, columnIndex, "PlayerOne"),
+        columns: move(state.columns, columnIndex, turn),
       };
   }
 };
