@@ -6,6 +6,7 @@ import Svg, { Circle, G, Line, Rect } from "react-native-svg";
 import { AppBar, AppBarBackAction, Button, spacing } from "../../ui";
 import {
   actions,
+  IState,
   ALL_POSSIBLE_POSITIONS,
   IAction,
   IBoard,
@@ -35,11 +36,11 @@ const toStatusText = (board: IBoard): string => {
 
 export const TicTacToeView = ({
   dispatch,
-  board,
+  state,
   onBack,
   onStop,
 }: {
-  board: IBoard;
+  state: IState;
   dispatch: (action: IAction) => void;
   onBack: () => void;
   onStop: () => void;
@@ -53,18 +54,18 @@ export const TicTacToeView = ({
       />
 
       <Title style={{ textAlign: "center", padding: 8 }}>
-        {toStatusText(board)}
+        {toStatusText(state.board)}
       </Title>
 
       <TicTacToeBoard
-        board={board}
+        board={state.board}
         onPress={(position) => {
           dispatch(actions.boardPressed(position));
         }}
       />
       <Button
         labelStyle={{ padding: spacing(1) }}
-        disabled={toStatus(board).type === "Initial"}
+        disabled={toStatus(state.board).type === "Initial"}
         color={theme.background}
         title="Restart game"
         onPress={() => {
@@ -83,6 +84,13 @@ const theme = {
   naught: "#F2EBD3",
 };
 
+const LINES = [
+  { x1: 1, y1: 0, x2: 1, y2: 3 },
+  { x1: 2, y1: 0, x2: 2, y2: 3 },
+  { x1: 0, y1: 1, x2: 3, y2: 1 },
+  { x1: 0, y1: 2, x2: 3, y2: 2 },
+] as const;
+
 export const TicTacToeBoard = ({
   board,
   onPress,
@@ -90,13 +98,6 @@ export const TicTacToeBoard = ({
   board: IBoard;
   onPress: (position: IPosition) => void;
 }) => {
-  const LINES = [
-    { x1: 1, y1: 0, x2: 1, y2: 3 },
-    { x1: 2, y1: 0, x2: 2, y2: 3 },
-    { x1: 0, y1: 1, x2: 3, y2: 1 },
-    { x1: 0, y1: 2, x2: 3, y2: 2 },
-  ] as const;
-
   return (
     <Svg width="100%" style={{ aspectRatio: 1 }} viewBox="0 0 3 3">
       <Rect x={0} y={0} width={3} height={3} fill={theme.background} />

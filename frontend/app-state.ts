@@ -1,7 +1,7 @@
 import { fork, spawn, takeLatest } from "redux-saga/effects";
 import * as Auth from "../common/account/auth-state/auth-state";
 import * as Profile from "../common/account/profile-state/profile-state";
-import * as Game from "../common/games/game-state";
+import * as Game from "../common/games/game";
 import { InferActionUnion } from "../common/utils/action-creator";
 
 /**
@@ -32,13 +32,7 @@ export const initialState: IState = {
  *
  */
 
-export const actions = {
-  ...Auth.actions,
-  ...Profile.actions,
-  ...Game.actions,
-};
-
-export type IAction = InferActionUnion<typeof actions>;
+export type IAction = Auth.IAction | Profile.IAction | Game.IAction;
 
 /**
  *
@@ -67,6 +61,8 @@ export const reducer = (state: IState, action: IAction): IState => {
     case "tic-tac-toe/BOARD_PRESSED":
     case "tic-tac-toe/MOVED":
     case "tic-tac-toe/RESTART":
+    case "connect-four/COLUMN_PRESSED":
+    case "connect-four/MOVED":
       return {
         ...state,
         game: Game.reducer(state.game, action),
@@ -82,29 +78,23 @@ export const reducer = (state: IState, action: IAction): IState => {
   }
 };
 
-/**
- *
- *
- * Saga
- *
- *
- */
+/*
+ 
+
+Middleware
+
+
+*/
 
 export type IDataAccess = {
   auth: Auth.IDataAccess;
   profile: Profile.IDataAccess;
 };
 
-export function* saga({
-  dataAccess,
-  selector,
-}: {
-  selector: (_: unknown) => IState;
-  dataAccess: IDataAccess;
-}) {
+export function* saga({ dataAccess }: { dataAccess: IDataAccess }) {
   yield spawn(Auth.saga, { dataAccess: dataAccess.auth });
 
-  yield fork(Game.saga, { selector: (_) => selector(_).game });
+  yield spawn(Game.saga);
 
   yield takeLatest(Auth.actions.signedIn, function* (action) {
     const { userId } = action.payload;
