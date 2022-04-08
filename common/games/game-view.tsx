@@ -3,7 +3,7 @@ import * as React from "react";
 import { View } from "react-native";
 import { AppBarContent, AppBarHeader } from "../ui";
 import { ConnectFourView } from "./connect-four/connect-four-view";
-import { IGameState, IState, IAction, actions } from "./game";
+import { IGame, IState, IAction, actions } from "./game";
 import { GameLink } from "./game-view-link";
 import {
   TicTacToeIconSvg,
@@ -40,7 +40,7 @@ export const GameStartView = ({
           title="Tic Tac Toe"
           icon={<TicTacToeIconSvg />}
           onPress={() => {
-            dispatch(actions.start("tic-tac-toe"));
+            dispatch(actions.started("tic-tac-toe"));
           }}
         />
 
@@ -48,7 +48,7 @@ export const GameStartView = ({
           title="Connect Four"
           icon={<TicTacToeIconSvg />}
           onPress={() => {
-            dispatch(actions.start("connect-four"));
+            dispatch(actions.started("connect-four"));
           }}
         />
       </View>
@@ -61,7 +61,7 @@ export const GameView = ({
   state,
   onBack,
 }: {
-  state: IGameState;
+  state: IGame;
   dispatch: (action: IAction) => void;
   onBack: () => void;
 }) => {
@@ -75,10 +75,10 @@ export const GameView = ({
   );
 
   const onStop = () => {
-    dispatch(actions.stop());
+    dispatch(actions.stopped());
   };
 
-  switch (state.gameName) {
+  switch (state.type) {
     case "connect-four":
       return <ConnectFourView onBack={onBack} onStop={onStop} />;
 
@@ -87,7 +87,7 @@ export const GameView = ({
         <TicTacToeView
           onBack={onBack}
           onStop={onStop}
-          state={state.gameState}
+          state={state.state}
           dispatch={dispatch}
         />
       );

@@ -62,16 +62,6 @@ const emptyBoard: IBoard = {
 export const actions = {
   restart: createAction("tic-tac-toe/RESTART"),
 
-  moved: createAction(
-    "tic-tac-toe/MOVED",
-    (position: IPosition, player: IPlayer) => ({
-      payload: {
-        position,
-        player,
-      },
-    })
-  ),
-
   boardPressed: createAction(
     "tic-tac-toe/BOARD_PRESSED",
     (position: IPosition) => ({ payload: position })
@@ -92,27 +82,13 @@ const move = (board: IBoard, position: IPosition, player: IPlayer) => {
   if (
     toSlot(board, position) === "Empty" &&
     toStatus(board).type !== "Win" &&
+    toStatus(board).type !== "Tie" &&
     toTurn(board) === player
   ) {
     return setSlot(board, position, player);
   }
 
   return board;
-};
-
-export const boardReducer = (board: IBoard, action: IAction): IBoard => {
-  console.log(board, action);
-  switch (action.type) {
-    case "tic-tac-toe/RESTART":
-      return emptyBoard;
-
-    case "tic-tac-toe/BOARD_PRESSED":
-      return board;
-
-    case "tic-tac-toe/MOVED":
-      const { position, player } = action.payload;
-      return move(board, position, player);
-  }
 };
 
 export type IState = {
@@ -261,10 +237,25 @@ export const initialState: IState = {
 };
 
 export const reducer = (state: IState, action: IAction): IState => {
-  return {
-    ...state,
-    board: boardReducer(state.board, action),
-  };
+  switch (action.type) {
+    case "tic-tac-toe/RESTART":
+      return {
+        ...state,
+        board: emptyBoard,
+      };
+
+    case "tic-tac-toe/BOARD_PRESSED":
+      const turn = toTurn(state.board);
+
+      if (state.playerTypes[turn].type === "Local") {
+        return {
+          ...state,
+          board: move(state.board, action.payload, turn),
+        };
+      }
+
+      return state;
+  }
 };
 
 /* 
@@ -275,30 +266,7 @@ Middlware
 
 */
 
-function* saga() {}
-
-export const middleware =
-  ({
-    dispatch,
-    getState,
-  }: {
-    dispatch: (action: IAction) => void;
-    getState: () => IState;
-  }) =>
-  (next: (action: IAction) => void) =>
-  (action: IAction) => {
-    next(action);
-
-    if (action.type === "tic-tac-toe/BOARD_PRESSED") {
-      const state = getState();
-
-      const turn = toTurn(state.board);
-
-      if (state.playerTypes[turn].type === "Local") {
-        dispatch(actions.moved(action.payload, turn));
-      }
-    }
-  };
+export function* saga() {}
 
 /*
 

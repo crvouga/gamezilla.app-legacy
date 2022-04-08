@@ -62,9 +62,7 @@ export const GameBanner = ({
               }}
             >
               <Text style={{ flex: 1 }}>{`Back to ${
-                state.type === "started"
-                  ? GameState.formatGameName(state.gameName)
-                  : "..."
+                state.type === "started" ? state.game.name : "..."
               }`}</Text>
 
               <Icon name="chevron-right" size={18} />
