@@ -1,6 +1,6 @@
 import { createAction, Dispatch, Middleware } from "@reduxjs/toolkit";
 import { Channel } from "redux-saga";
-import { put, select, takeEvery } from "redux-saga/effects";
+import { call, put, select, takeEvery } from "redux-saga/effects";
 import { equals, mapValues, minimax } from "../../utils";
 import { InferActionUnion } from "../../utils/action-creator";
 
@@ -237,25 +237,25 @@ export const initialState: IState = {
 };
 
 export const reducer = (state: IState, action: IAction): IState => {
-  switch (action.type) {
-    case "tic-tac-toe/RESTART":
+  if (actions.restart.match(action)) {
+    return {
+      ...state,
+      board: emptyBoard,
+    };
+  }
+
+  if (actions.boardPressed.match(action)) {
+    const turn = toTurn(state.board);
+
+    if (state.playerTypes[turn].type === "Local") {
       return {
         ...state,
-        board: emptyBoard,
+        board: move(state.board, action.payload, turn),
       };
-
-    case "tic-tac-toe/BOARD_PRESSED":
-      const turn = toTurn(state.board);
-
-      if (state.playerTypes[turn].type === "Local") {
-        return {
-          ...state,
-          board: move(state.board, action.payload, turn),
-        };
-      }
-
-      return state;
+    }
   }
+
+  return state;
 };
 
 /* 
