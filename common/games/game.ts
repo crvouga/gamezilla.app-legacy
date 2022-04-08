@@ -93,7 +93,6 @@ const gameReducer = (game: IGame, action: IAction): IGame => {
     case "connect-four":
       switch (action.type) {
         case "connect-four/COLUMN_PRESSED":
-        case "connect-four/MOVED":
           return {
             ...game,
             state: ConnectFour.reducer(game.state, action),
