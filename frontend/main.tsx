@@ -1,38 +1,71 @@
-import { NavigationContainer } from "@react-navigation/native";
-import { registerRootComponent } from "expo";
-import AppLoading from "expo-app-loading";
-import { SafeAreaProvider } from "react-native-safe-area-context";
-/** URL polyfill. Required for Supabase queries to work in React Native. */
-import "react-native-url-polyfill/auto";
-import { Provider } from "react-redux";
-import { ThemeProvider, useWebStyles } from "../common/ui";
-import { App } from "./app";
-import { store } from "./store";
-import { theme, useFontState } from "./theme";
+import { createTheme, CssBaseline, ThemeProvider } from "@mui/material";
+import { configureStore } from "@reduxjs/toolkit";
+import React, { StrictMode } from "react";
+import ReactDOM from "react-dom";
+import createSagaMiddleware from "redux-saga";
+import * as App from "./App";
 
-const Root = () => {
-  const fontState = useFontState();
+/* 
 
-  useWebStyles({
-    borderColor: theme.colors.border,
-    backgroundColor: theme.colors.background,
-  });
 
-  if (fontState.type === "loading") {
-    return <AppLoading />;
+
+
+*/
+
+const rootReducer = (
+  maybeState: App.IState | undefined,
+  action: App.IAction
+): App.IState => {
+  const state = maybeState ?? App.initialState;
+
+  const maybeResult = App.reducer(state, action);
+
+  const [nextState, ...nextActions] = maybeResult ?? [state];
+
+  for (const nextAction of nextActions) {
+    store.dispatch(nextAction);
   }
 
-  return (
-    <SafeAreaProvider>
-      <Provider store={store}>
-        <ThemeProvider theme={theme}>
-          <NavigationContainer theme={theme}>
-            <App />
-          </NavigationContainer>
-        </ThemeProvider>
-      </Provider>
-    </SafeAreaProvider>
-  );
+  return nextState ?? state;
 };
 
-registerRootComponent(Root);
+const sagaMiddleware = createSagaMiddleware();
+
+const store = configureStore({
+  reducer: rootReducer,
+  middleware: [sagaMiddleware],
+});
+
+sagaMiddleware.run(App.saga);
+
+/* 
+
+
+
+
+*/
+
+const theme = createTheme({
+  palette: {
+    mode: "dark",
+  },
+});
+
+/* 
+
+
+
+
+*/
+
+store.subscribe(() => {
+  ReactDOM.render(
+    <StrictMode>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <App.view state={store.getState()} />
+      </ThemeProvider>
+    </StrictMode>,
+    document.getElementById("root")
+  );
+});

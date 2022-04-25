@@ -1,5 +1,4 @@
 {
-  "extends": "expo/tsconfig.base",
   "compilerOptions": {
     "target": "ESNext",
     "useDefineForClassFields": true,
@@ -24,7 +23,7 @@
     "outDir": "../.builds/frontend",
     "rootDir": ".",
     "composite": true,
-    "skipDefaultLibCheck": true
+    "skipDefaultLibCheck": true,
   },
   "exclude": [
     "node_modules"
@@ -33,5 +32,8 @@
     {
       "path": "../common"
     },
+    {
+      "path": "./tsconfig.node.json" 
+    }
   ]
 }
