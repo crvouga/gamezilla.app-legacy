@@ -2,10 +2,8 @@ import { useFocusEffect } from "@react-navigation/native";
 import * as React from "react";
 import { View } from "react-native";
 import { AppBarContent, AppBarHeader } from "../ui";
-import {
-  ConnectFourSvgIcon,
-  ConnectFourView,
-} from "./connect-four/connect-four-view";
+import { ConnectFourSvgIcon } from "./connect-four/connect-four-icon-svg";
+import { ConnectFourView } from "./connect-four/connect-four-view";
 import { IGame, IState, IAction, actions } from "./game";
 import { GameLink } from "./game-view-link";
 import {

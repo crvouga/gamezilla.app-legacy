@@ -2,7 +2,6 @@ import { fork, spawn, takeLatest } from "redux-saga/effects";
 import * as Auth from "../common/account/auth-state/auth-state";
 import * as Profile from "../common/account/profile-state/profile-state";
 import * as Game from "../common/games/game";
-import { InferActionUnion } from "../common/utils/action-creator";
 
 /**
  *

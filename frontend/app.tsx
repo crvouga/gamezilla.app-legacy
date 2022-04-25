@@ -1,240 +1,156 @@
-import Ionicons from "@expo/vector-icons/Ionicons";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { NavigationProp, useNavigation } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import * as React from "react";
-import { View } from "react-native";
-import { ActivityIndicator, Title } from "react-native-paper";
-import { Account } from "../common/account/Account";
-import { ProfileCreate } from "../common/account/profile-create/ProfileCreate";
-import { ProfileDelete } from "../common/account/profile-delete/ProfileDelete";
-import { ProfileUpdateStack } from "../common/account/profile-update/ProfileUpdateStack";
-import { SignIn } from "../common/account/sign-in/SignIn";
-import { SignOut } from "../common/account/sign-out/SignOut";
-import { GameStartView, GameView } from "../common/games/game-view";
-import { GameBanner } from "../common/games/game-view-banner";
-import { spacing, useTheme } from "../common/ui";
-import { useDispatch, useSelector } from "./store";
+import { CircularProgress, Box } from "@mui/material";
+import { Session } from "@supabase/supabase-js";
+import { eventChannel } from "redux-saga";
+import { put, takeEvery } from "redux-saga/effects";
+import { supabaseClient } from "./supabase";
 
-type IStackParamList = {
-  Home: undefined;
-  Profile: undefined;
-  Game: undefined;
-  ProfileUpdateStack: undefined;
-  ProfileCreate: undefined;
-  ProfileDelete: undefined;
-  SignIn: undefined;
-  SignOut: undefined;
-  LoadingAuth: undefined;
-  LoadingProfile: undefined;
-};
+/*
 
-type ITabParamList = {
-  GameStart: undefined;
-  Account: undefined;
-};
 
-export const Tab = createBottomTabNavigator<ITabParamList>();
-export const Stack = createNativeStackNavigator<IStackParamList>();
 
-const LoadingScreen = ({ title }: { title: string }) => {
-  const theme = useTheme();
-  return (
-    <View
-      style={{
-        backgroundColor: theme.colors.background,
-        justifyContent: "center",
-        alignItems: "center",
-        flex: 1,
-        width: "100%",
-      }}
-    >
-      <View>
-        <ActivityIndicator style={{ marginBottom: spacing(2) }} size={32} />
-        <Title>{title}</Title>
-      </View>
-    </View>
-  );
-};
+State
 
-export const App = () => {
-  const authState = useSelector((state) => state.auth);
-  const profileState = useSelector((state) => state.profile);
-  const gameState = useSelector((state) => state.game);
 
-  const navigation = useNavigation<NavigationProp<IStackParamList>>();
-  const theme = useTheme();
+*/
 
-  React.useEffect(() => {
-    if (gameState.type === "started" && gameState.status === "focusing") {
-      navigation.navigate("Game");
+export type IState =
+  | {
+      type: "loading";
     }
-  }, [gameState.type, gameState.type === "started" ? gameState.status : ""]);
-
-  const dispatch = useDispatch();
-
-  if (authState.type === "loading") {
-    return <LoadingScreen title="Checking if logged in..." />;
-  }
-
-  if (authState.type === "signed-out") {
-    const SignInScreen = () => {
-      return <SignIn />;
+  | {
+      type: "signed-in";
+    }
+  | {
+      type: "signed-out";
     };
 
-    return (
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="SignIn" component={SignInScreen} />
-      </Stack.Navigator>
-    );
+export const initialState: IState = {
+  type: "loading",
+};
+
+/*
+
+
+
+Actions
+
+
+
+ */
+
+export type IAction =
+  | {
+      type: "auth/signed-out";
+    }
+  | {
+      type: "auth/signed-in";
+      payload: {
+        userId: string;
+        defaultName: string;
+      };
+    };
+
+/*
+
+
+Reducer
+
+
+*/
+
+export const reducer = (
+  state: IState,
+  action: IAction
+): [IState, ...IAction[]] => {
+  switch (action.type) {
+    case "auth/signed-in":
+      return [{ type: "signed-in" }];
+
+    case "auth/signed-out":
+      return [{ type: "signed-out" }];
+  }
+};
+
+/*
+ 
+
+Saga
+
+
+*/
+
+export const sessionToAuthEvent = (session: Session | null): IAction => {
+  const userId = session?.user?.id;
+  const defaultName =
+    session?.user?.user_metadata?.name ??
+    session?.user?.user_metadata?.full_name ??
+    "";
+
+  if (userId) {
+    return {
+      type: "auth/signed-in",
+      payload: {
+        userId,
+        defaultName,
+      },
+    };
   }
 
-  const { defaultName, userId } = authState;
+  return {
+    type: "auth/signed-out",
+  };
+};
 
-  if (profileState.type === "loading") {
-    return <LoadingScreen title="Loading profile..." />;
-  }
+const authChan = eventChannel<IAction>((emit) => {
+  const timeoutHandler = setTimeout(() => {
+    emit(sessionToAuthEvent(supabaseClient.auth.session()));
+  }, 1000);
 
-  if (profileState.type === "not-found") {
-    const ProfileCreateScreen = () => {
+  const response = supabaseClient.auth.onAuthStateChange((_event, session) => {
+    clearTimeout(timeoutHandler);
+    emit(sessionToAuthEvent(session));
+  });
+
+  return () => {
+    response.data?.unsubscribe();
+  };
+});
+
+export function* saga() {
+  yield takeEvery(authChan, function* (action) {
+    yield put(action);
+  });
+}
+
+/*
+
+
+View
+
+
+*/
+
+export const view = ({ state }: { state: IState }) => {
+  switch (state.type) {
+    case "loading":
       return (
-        <ProfileCreate
-          onLogout={() => {
-            navigation.navigate("SignOut");
+        <Box
+          sx={{
+            position: "fixed",
+            width: "100%",
+            height: "100%",
+            display: "grid",
+            placeItems: "center",
           }}
-          userId={userId}
-          defaultName={defaultName}
-        />
-      );
-    };
-
-    const SignOutScreen = () => {
-      return <SignOut onCancel={navigation.goBack} />;
-    };
-
-    return (
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="ProfileCreate" component={ProfileCreateScreen} />
-        <Stack.Screen name="SignOut" component={SignOutScreen} />
-      </Stack.Navigator>
-    );
-  }
-
-  const { profile } = profileState;
-
-  const AccountScreen = () => {
-    return (
-      <Account
-        profile={profile}
-        onProfileUpdate={() => {
-          navigation.navigate("ProfileUpdateStack");
-        }}
-      />
-    );
-  };
-
-  const GameStartScreen = () => {
-    return (
-      <GameStartView
-        onNavigateGame={() => {
-          navigation.navigate("Game");
-        }}
-        dispatch={dispatch}
-        state={gameState}
-      />
-    );
-  };
-
-  const TabStackScreen = () => {
-    return (
-      <>
-        <Tab.Navigator
-          screenOptions={({ route }) => ({
-            tabBarActiveBackgroundColor: theme.colors.background,
-            tabBarInactiveBackgroundColor: theme.colors.background,
-            headerShown: false,
-            tabBarIcon: ({ focused, color, size }) => {
-              return (
-                <Ionicons
-                  name={
-                    route.name === "Account"
-                      ? focused
-                        ? "person"
-                        : "person-outline"
-                      : route.name === "GameStart"
-                      ? focused
-                        ? "game-controller"
-                        : "game-controller-outline"
-                      : "add"
-                  }
-                  size={size}
-                  color={color}
-                />
-              );
-            },
-            tabBarActiveTintColor: theme.colors.text,
-            tabBarInactiveTintColor: theme.colors.placeholder,
-            tabBarStyle: {
-              backgroundColor: theme.colors.background,
-            },
-          })}
         >
-          <Tab.Screen name="GameStart" component={GameStartScreen} />
-          <Tab.Screen name="Account" component={AccountScreen} />
-        </Tab.Navigator>
-      </>
-    );
-  };
+          <CircularProgress />
+        </Box>
+      );
 
-  const ProfileDeleteScreen = () => {
-    return <ProfileDelete onCancel={navigation.goBack} userId={userId} />;
-  };
+    case "signed-in":
+      return <>hello</>;
 
-  const SignOutScreen = () => {
-    return <SignOut onCancel={navigation.goBack} />;
-  };
-
-  const ProfileUpdateStackScreen = () => {
-    return <ProfileUpdateStack profile={profile} />;
-  };
-
-  return (
-    <>
-      <GameBanner
-        onPress={() => {
-          navigation.navigate("Game");
-        }}
-        state={gameState}
-        dispatch={dispatch}
-      />
-
-      <Stack.Navigator
-        screenOptions={{
-          headerShown: false,
-        }}
-      >
-        <Stack.Screen name="Home" component={TabStackScreen} />
-        <Stack.Screen
-          name="ProfileUpdateStack"
-          component={ProfileUpdateStackScreen}
-        />
-        <Stack.Screen name="ProfileDelete" component={ProfileDeleteScreen} />
-        <Stack.Screen name="SignOut" component={SignOutScreen} />
-        {gameState.type === "started" && (
-          <Stack.Screen
-            name="Game"
-            options={{ headerShown: false, presentation: "fullScreenModal" }}
-          >
-            {() => (
-              <GameView
-                onBack={navigation.goBack}
-                dispatch={dispatch}
-                state={gameState.game}
-              />
-            )}
-          </Stack.Screen>
-        )}
-      </Stack.Navigator>
-    </>
-  );
+    case "signed-out":
+      return <>signed out</>;
+  }
 };

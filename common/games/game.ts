@@ -1,6 +1,6 @@
 import { createAction } from "@reduxjs/toolkit";
-import { call, race, take, takeEvery } from "redux-saga/effects";
-import { InferActionUnion } from "../utils/action-creator";
+import { call, race, take, takeLeading } from "redux-saga/effects";
+import { InferActionMap, InferActionUnion } from "../utils";
 import * as ConnectFour from "./connect-four/connect-four";
 import * as TicTacToe from "./tic-tac-toe/tic-tac-toe";
 
@@ -99,13 +99,7 @@ const gameReducer = (game: IGame, action: IAction): IGame => {
             state: ConnectFour.reducer(game.state, action),
           };
 
-        case "game/BLURRED":
-        case "game/FOCUS":
-        case "game/FOCUSED":
-        case "game/STARTED":
-        case "game/STOPPED":
-        case "tic-tac-toe/BOARD_PRESSED":
-        case "tic-tac-toe/RESTART":
+        default:
           return game;
       }
 
@@ -118,13 +112,7 @@ const gameReducer = (game: IGame, action: IAction): IGame => {
             state: TicTacToe.reducer(game.state, action),
           };
 
-        case "game/BLURRED":
-        case "game/FOCUS":
-        case "game/FOCUSED":
-        case "game/STARTED":
-        case "game/STOPPED":
-        case "connect-four/COLUMNS_CLEARED":
-        case "connect-four/COLUMN_PRESSED":
+        default:
           return game;
       }
   }
@@ -182,13 +170,21 @@ Middleware
 */
 
 export function* saga() {
-  yield takeEvery(actions.started, function* (action) {
-    switch (action.payload) {
-      case "connect-four":
-        yield race([take(actions.stopped), call(ConnectFour.saga)]);
+  yield takeLeading(actions.started, startedFlow);
+}
 
-      case "tic-tac-toe":
-        yield race([take(actions.stopped), call(TicTacToe.saga)]);
-    }
-  });
+type IActionMap = InferActionMap<typeof actions>;
+
+function* startedFlow(action: IActionMap["started"]) {
+  yield race([take(actions.stopped), call(gameFlow, action.payload)]);
+}
+
+function* gameFlow(gameType: IGame["type"]) {
+  switch (gameType) {
+    case "connect-four":
+      yield* ConnectFour.saga();
+
+    case "tic-tac-toe":
+      yield* TicTacToe.saga();
+  }
 }

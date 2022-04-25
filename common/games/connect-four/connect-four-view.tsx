@@ -6,7 +6,6 @@ import Svg, {
   LinearGradient,
   Mask,
   Pattern,
-  RadialGradient,
   Rect,
   Stop,
 } from "react-native-svg";
@@ -17,77 +16,114 @@ import {
   Button,
   spacing,
 } from "../../ui";
-import {
-  ISlot,
-  actions,
-  IAction,
-  IState,
-  COLUMN_COUNT,
-  MAX_COLUMN_HEIGHT,
-} from "./connect-four";
-
-const theme = {
-  primary: {
-    light: "#1976D2",
-    dark: "#2195F2",
-    darker: "#0D47A1",
-  },
-  playerOne: {
-    light: "#FFB74D",
-    dark: "#FFA623",
-  },
-  playerTwo: {
-    light: "#F24237",
-    dark: "#DB332F",
-  },
-};
+import { actions, IAction, IState } from "./connect-four";
+import { COLUMN_COUNT, MAX_COLUMN_HEIGHT } from "./connect-four-columns";
+import { theme } from "./connect-four-theme";
 
 const makeSvgDefsIds = (namespace: string) => {
   return {
-    cellPattern: `${namespace}-cell-pattern`,
-    holeMask: `${namespace}-hole-mask`,
-    column: `${namespace}-column`,
-    playerOne: `${namespace}-player-one`,
-    playerTwo: `${namespace}-player-two`,
+    holePattern: `${namespace}holepattern`,
+    holeMask: `${namespace}holemask`,
+    columnGradient: `${namespace}column`,
+    playerOneGradient: `${namespace}playerone`,
+    playerTwoGradient: `${namespace}playertwo`,
   };
 };
 
 type ISvgDefIds = ReturnType<typeof makeSvgDefsIds>;
 
-const ConnectFourSvgDefinitions = ({ ids }: { ids: ISvgDefIds }) => {
+const ConnectFourSvgDefs = ({
+  scale,
+  ids,
+}: {
+  scale: number;
+  ids: ISvgDefIds;
+}) => {
   return (
     <Defs>
       <Pattern
-        id={ids.cellPattern}
+        id={ids.holePattern}
         patternUnits="userSpaceOnUse"
-        width="1"
-        height="1"
+        width={1 * scale}
+        height={1 * scale}
+        viewBox={[0, 0, 1 * scale, 1 * scale].join(" ")}
       >
-        <Circle cx="0.5" cy="0.5" r="0.45" fill="black"></Circle>
+        <Circle
+          cx={0.5 * scale}
+          cy={0.5 * scale}
+          r={0.425 * scale}
+          fill="black"
+        ></Circle>
       </Pattern>
 
       <Mask id={ids.holeMask}>
-        <Rect width="10" height="60" fill="white"></Rect>
-        <Rect width="10" height="60" fill={`url(#${ids.cellPattern})`}></Rect>
+        <Rect
+          x={0}
+          y={0}
+          width={COLUMN_COUNT * scale}
+          height={MAX_COLUMN_HEIGHT * scale}
+          fill="white"
+        ></Rect>
+        <Rect
+          x={0}
+          y={0}
+          width={COLUMN_COUNT * scale}
+          height={MAX_COLUMN_HEIGHT * scale}
+          fill={`url(#${ids.holePattern})`}
+        ></Rect>
       </Mask>
 
-      <LinearGradient id={ids.column} gradientTransform="rotate(90)">
+      <LinearGradient id={ids.columnGradient} gradientTransform="rotate(90)">
         <Stop offset="0%" stopColor={theme.primary.light} />
         <Stop offset="100%" stopColor={theme.primary.dark} />
       </LinearGradient>
 
-      <RadialGradient id={ids.playerOne} gradientTransform="rotate(90)">
+      <LinearGradient id={ids.playerOneGradient} gradientTransform="rotate(90)">
         <Stop offset="0%" stopColor={theme.playerOne.light} />
         <Stop offset="100%" stopColor={theme.playerOne.dark} />
-      </RadialGradient>
+      </LinearGradient>
 
-      <RadialGradient id={ids.playerTwo} gradientTransform="rotate(90)">
+      <LinearGradient id={ids.playerTwoGradient} gradientTransform="rotate(90)">
         <Stop offset="0%" stopColor={theme.playerTwo.light} />
         <Stop offset="100%" stopColor={theme.playerTwo.dark} />
-      </RadialGradient>
+      </LinearGradient>
     </Defs>
   );
 };
+
+const Slot = ({ cx, cy, r }: { cx: number; cy: number; r: number }) => {
+  return (
+    <Svg
+      x={cx - r}
+      y={cy - r}
+      width={r * 2}
+      height={r * 2}
+      viewBox={[0, 0, 1, 1].join(", ")}
+    >
+      <Defs>
+        <Mask id="slot" x="0" y="0" height="100%" width="100%">
+          <Rect height="100%" width="100%" fill="#fff" />
+          <Circle r={0.45} cx={0.5} cy={0.5} />
+        </Mask>
+      </Defs>
+      <Rect
+        x={0}
+        y={0}
+        width={1}
+        height={1}
+        mask={`url(#slot)`}
+        fill={theme.primary.light}
+      />
+    </Svg>
+  );
+};
+
+const allIndexes = [...new Array(COLUMN_COUNT)].flatMap((_, columnIndex) =>
+  [...new Array(MAX_COLUMN_HEIGHT)].map((_, rowIndex) => ({
+    columnIndex,
+    rowIndex,
+  }))
+);
 
 export const ConnectFourView = ({
   onStop,
@@ -106,6 +142,8 @@ export const ConnectFourView = ({
 
   const ids = makeSvgDefsIds("game");
 
+  const scale = 1;
+
   return (
     <>
       <AppBar
@@ -117,52 +155,62 @@ export const ConnectFourView = ({
       <Svg
         width="100%"
         style={{ aspectRatio: COLUMN_COUNT / MAX_COLUMN_HEIGHT }}
-        viewBox={[0, 0, COLUMN_COUNT, MAX_COLUMN_HEIGHT].join(" ")}
+        viewBox={[0, 0, COLUMN_COUNT * scale, MAX_COLUMN_HEIGHT * scale].join(
+          " "
+        )}
       >
-        <ConnectFourSvgDefinitions ids={ids} />
+        <G transform={`translate(0, ${MAX_COLUMN_HEIGHT * scale}) scale(1,-1)`}>
+          <ConnectFourSvgDefs scale={scale} ids={ids} />
 
-        <G transform={`translate(0, ${MAX_COLUMN_HEIGHT}) scale(1,-1)`}>
           <Rect
             x={0}
             y={0}
-            width={COLUMN_COUNT}
-            height={MAX_COLUMN_HEIGHT}
+            width={COLUMN_COUNT * scale}
+            height={MAX_COLUMN_HEIGHT * scale}
             fill={theme.primary.darker}
           />
 
           {state.columns.map((column, columnIndex) =>
-            column.map((slot, rowIndex) =>
-              slot === "Empty" ? null : (
-                <Circle
-                  cx={columnIndex + 0.5}
-                  cy={rowIndex + 0.5}
-                  r={0.5}
-                  fill={
-                    slot === "PlayerOne"
-                      ? `url(#${ids.playerOne})`
-                      : `url(#${ids.playerTwo})`
-                  }
-                />
-              )
-            )
+            column.map((slot, rowIndex) => (
+              <Circle
+                key={[columnIndex, rowIndex, slot].join(" ")}
+                cx={(columnIndex + 0.5) * scale}
+                cy={(rowIndex + 0.5) * scale}
+                r={0.5 * scale}
+                fill={
+                  slot === "PlayerOne"
+                    ? `url(#${ids.playerOneGradient})`
+                    : `url(#${ids.playerTwoGradient})`
+                }
+              />
+            ))
           )}
+
+          {allIndexes.map(({ columnIndex, rowIndex }) => (
+            <Slot
+              key={[columnIndex, rowIndex].join(" ")}
+              cx={(columnIndex + 0.5) * scale}
+              cy={(rowIndex + 0.5) * scale}
+              r={0.5 * scale}
+            />
+          ))}
 
           <Rect
             x={0}
             y={0}
-            width={COLUMN_COUNT}
-            height={MAX_COLUMN_HEIGHT}
+            width={COLUMN_COUNT * scale}
+            height={MAX_COLUMN_HEIGHT * scale}
             mask={`url(#${ids.holeMask})`}
-            fill={`url(#${ids.column})`}
+            fill={`url(#${ids.columnGradient})`}
           />
 
           {[...Array(COLUMN_COUNT)].map((_, columnIndex) => (
             <Rect
               key={columnIndex}
-              x={columnIndex}
+              x={columnIndex * scale}
               y={0}
-              width={1}
-              height={MAX_COLUMN_HEIGHT}
+              width={1 * scale}
+              height={MAX_COLUMN_HEIGHT * scale}
               fill="transparent"
               {...(Platform.OS === "web"
                 ? {
@@ -189,37 +237,5 @@ export const ConnectFourView = ({
         title="Restart"
       />
     </>
-  );
-};
-
-export const ConnectFourSvgIcon = () => {
-  const ids = makeSvgDefsIds("icon");
-
-  const playerOneFill = `url(#${ids.playerOne})`;
-  const playerTwoFill = `url(#${ids.playerTwo})`;
-
-  return (
-    <Svg width="100%" style={{ aspectRatio: 1 }} viewBox={"0 0 2 2"}>
-      <ConnectFourSvgDefinitions ids={ids} />
-
-      <Rect x={0} y={0} width={2} height={2} fill={theme.primary.darker} />
-
-      <Circle cx={0.5} cy={0} r={0.5} fill={playerOneFill} />
-
-      <Circle cx={1.5} cy={0.5} r={0.5} fill={playerTwoFill} />
-
-      <Circle cx={1.5} cy={1.5} r={0.5} fill={playerOneFill} />
-
-      <Circle cx={0.5} cy={1.5} r={0.5} fill={playerTwoFill} />
-
-      <Rect
-        x={0}
-        y={0}
-        width={COLUMN_COUNT}
-        height={MAX_COLUMN_HEIGHT}
-        mask={`url(#${ids.holeMask})`}
-        fill={`url(#${ids.column})`}
-      />
-    </Svg>
   );
 };
