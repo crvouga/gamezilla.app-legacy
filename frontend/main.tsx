@@ -1,4 +1,5 @@
 import { createTheme, CssBaseline, ThemeProvider } from "@mui/material";
+import { blue, green, red } from "@mui/material/colors";
 import { configureStore } from "@reduxjs/toolkit";
 import React, { StrictMode } from "react";
 import ReactDOM from "react-dom";
@@ -48,6 +49,19 @@ sagaMiddleware.run(App.saga);
 const theme = createTheme({
   palette: {
     mode: "dark",
+    primary: green,
+  },
+  typography: {
+    fontFamily: ["Nunito"].join(","),
+  },
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          borderRadius: "120px",
+        },
+      },
+    },
   },
 });
 
@@ -63,7 +77,7 @@ store.subscribe(() => {
     <StrictMode>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <App.view state={store.getState()} />
+        <App.view dispatch={store.dispatch} state={store.getState()} />
       </ThemeProvider>
     </StrictMode>,
     document.getElementById("root")

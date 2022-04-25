@@ -1,7 +1,9 @@
-import { CircularProgress, Box } from "@mui/material";
+import { Google } from "@mui/icons-material";
+import { LoadingButton } from "@mui/lab";
+import { Box, CircularProgress, Typography } from "@mui/material";
 import { Session } from "@supabase/supabase-js";
 import { eventChannel } from "redux-saga";
-import { put, takeEvery } from "redux-saga/effects";
+import { call, put, takeEvery } from "redux-saga/effects";
 import { supabaseClient } from "./supabase";
 
 /*
@@ -15,17 +17,27 @@ State
 
 export type IState =
   | {
-      type: "loading";
+      type: "Loading";
     }
   | {
-      type: "signed-in";
+      type: "SignedOut";
+      child:
+        | {
+            type: "Idle";
+          }
+        | {
+            type: "Loading";
+          };
     }
   | {
-      type: "signed-out";
+      type: "LoadingProfile";
+    }
+  | {
+      type: "Loaded";
     };
 
 export const initialState: IState = {
-  type: "loading",
+  type: "Loading",
 };
 
 /*
@@ -40,10 +52,13 @@ Actions
 
 export type IAction =
   | {
-      type: "auth/signed-out";
+      type: "auth/SignedOut";
     }
   | {
-      type: "auth/signed-in";
+      type: "auth/SignIn";
+    }
+  | {
+      type: "auth/SignedIn";
       payload: {
         userId: string;
         defaultName: string;
@@ -62,12 +77,33 @@ export const reducer = (
   state: IState,
   action: IAction
 ): [IState, ...IAction[]] => {
-  switch (action.type) {
-    case "auth/signed-in":
-      return [{ type: "signed-in" }];
+  switch (state.type) {
+    case "Loaded":
+      return [state];
 
-    case "auth/signed-out":
-      return [{ type: "signed-out" }];
+    case "Loading":
+      switch (action.type) {
+        case "auth/SignedIn":
+          return [{ type: "LoadingProfile" }];
+
+        case "auth/SignedOut":
+          return [{ type: "SignedOut", child: { type: "Idle" } }];
+
+        default:
+          return [state];
+      }
+
+    case "LoadingProfile":
+      return [state];
+
+    case "SignedOut":
+      switch (action.type) {
+        case "auth/SignIn":
+          return [{ ...state, child: { type: "Loading" } }];
+
+        default:
+          return [state];
+      }
   }
 };
 
@@ -88,7 +124,7 @@ export const sessionToAuthEvent = (session: Session | null): IAction => {
 
   if (userId) {
     return {
-      type: "auth/signed-in",
+      type: "auth/SignedIn",
       payload: {
         userId,
         defaultName,
@@ -97,7 +133,7 @@ export const sessionToAuthEvent = (session: Session | null): IAction => {
   }
 
   return {
-    type: "auth/signed-out",
+    type: "auth/SignedOut",
   };
 };
 
@@ -116,9 +152,17 @@ const authChan = eventChannel<IAction>((emit) => {
   };
 });
 
+const signIn = async () => {
+  await supabaseClient.auth.signIn({ provider: "google" });
+};
+
 export function* saga() {
   yield takeEvery(authChan, function* (action) {
     yield put(action);
+  });
+
+  yield takeEvery("auth/SignIn", function* () {
+    yield call(signIn);
   });
 }
 
@@ -130,9 +174,15 @@ View
 
 */
 
-export const view = ({ state }: { state: IState }) => {
+export const view = ({
+  state,
+  dispatch,
+}: {
+  state: IState;
+  dispatch: (action: IAction) => void;
+}) => {
   switch (state.type) {
-    case "loading":
+    case "Loading":
       return (
         <Box
           sx={{
@@ -147,10 +197,55 @@ export const view = ({ state }: { state: IState }) => {
         </Box>
       );
 
-    case "signed-in":
-      return <>hello</>;
+    case "SignedOut":
+      return (
+        <Box
+          sx={{
+            position: "fixed",
+            width: "100%",
+            height: "100%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flexDirection: "column",
+            p: 2,
+          }}
+        >
+          <Typography sx={{ marginBottom: 2 }} variant="h3" align="center">
+            Gamezilla
+          </Typography>
 
-    case "signed-out":
-      return <>signed out</>;
+          <LoadingButton
+            startIcon={<Google />}
+            variant="contained"
+            size="large"
+            fullWidth
+            loading={state.child.type === "Loading"}
+            onClick={() => {
+              dispatch({ type: "auth/SignIn" });
+            }}
+          >
+            Continue With Google
+          </LoadingButton>
+        </Box>
+      );
+
+    case "LoadingProfile":
+      return (
+        <Box
+          sx={{
+            position: "fixed",
+            width: "100%",
+            height: "100%",
+            display: "grid",
+            placeItems: "center",
+          }}
+        >
+          <CircularProgress />
+        </Box>
+      );
+
+    case "Loaded":
+      return <>Loaded</>;
   }
 };
