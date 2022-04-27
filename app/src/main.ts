@@ -14,5 +14,3 @@ app.ports.interopFromElm.subscribe((fromElm) => {
       break;
   }
 });
-
-console.log("HELLO");
