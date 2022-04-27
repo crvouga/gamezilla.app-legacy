@@ -1,8 +1,7 @@
 module InteropDefinitions exposing (Flags, FromElm(..), ToElm(..), interop)
 
-import Json.Encode
 import TsJson.Decode as TsDecode exposing (Decoder)
-import TsJson.Encode as TsEncode exposing (Encoder, optional, required)
+import TsJson.Encode as TsEncode exposing (Encoder, required)
 
 
 interop :
