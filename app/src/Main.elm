@@ -1,10 +1,13 @@
 module Main exposing (..)
 
 import Browser
-import Html exposing (Html)
-import Set exposing (Set)
+import Html exposing (Html, button, text)
+import Html.Events exposing (onClick)
+import InteropDefinitions
+import InteropPorts
 import Svg exposing (g, rect, svg)
 import Svg.Attributes exposing (fill, height, viewBox, width)
+import Time
 
 
 
@@ -25,6 +28,10 @@ main =
 -- Model
 
 
+type alias Flags =
+    InteropDefinitions.Flags
+
+
 type alias Position =
     ( Int, Int )
 
@@ -43,7 +50,9 @@ cartesianProduct xs ys =
 
 range : Position -> Position -> List Position
 range ( x1, y1 ) ( x2, y2 ) =
-    cartesianProduct (List.range x1 x2) (List.range y1 y2)
+    cartesianProduct
+        (List.range x1 x2)
+        (List.range y1 y2)
 
 
 type alias Model =
@@ -55,7 +64,7 @@ type alias Model =
     }
 
 
-init : flags -> ( Model, Cmd Msg )
+init : () -> ( Model, Cmd Msg )
 init _ =
     ( { head = ( 4, 6 )
       , tail = [ ( 3, 6 ), ( 2, 6 ) ]
@@ -74,6 +83,8 @@ init _ =
 type Msg
     = Increment
     | Decrement
+    | Step
+    | Greet
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -85,6 +96,19 @@ update msg model =
         Decrement ->
             ( model, Cmd.none )
 
+        Step ->
+            ( model, Cmd.none )
+
+        Greet ->
+            ( model, greet "Hello" )
+
+
+greet : String -> Cmd msg
+greet text =
+    text
+        |> InteropDefinitions.Alert
+        |> InteropPorts.fromElm
+
 
 
 -- Subscriptions
@@ -92,7 +116,7 @@ update msg model =
 
 subscriptions : Model -> Sub Msg
 subscriptions _ =
-    Sub.none
+    Time.every 1000 (\_ -> Step)
 
 
 
@@ -103,7 +127,10 @@ view : Model -> Browser.Document Msg
 view model =
     { title = "Gamezilla"
     , body =
-        [ viewBoard model
+        [ button [ onClick Greet ]
+            [ text "Greet" ]
+        , viewBoard
+            model
         ]
     }
 
@@ -114,14 +141,14 @@ viewBoard model =
         [ width "100%"
         , viewBox "0 0 12 12"
         ]
-        [ viewBoardGrid model
+        [ viewGrid model
         , viewApples model
-        , viewBoardSnake model
+        , viewSnake model
         ]
 
 
-viewBoardGrid : Model -> Html Msg
-viewBoardGrid model =
+viewGrid : Model -> Html Msg
+viewGrid model =
     g []
         (List.map
             (\( x, y ) ->
@@ -158,8 +185,8 @@ viewApples model =
         )
 
 
-viewBoardSnake : Model -> Html Msg
-viewBoardSnake model =
+viewSnake : Model -> Html Msg
+viewSnake model =
     g []
         (List.map
             (\( x, y ) ->

@@ -71,6 +71,7 @@
     "@types/react-native-base64": "^0.2.0",
     "@vitejs/plugin-react": "^1.0.7",
     "babel-plugin-rename-jsx-attribute": "^0.2.4",
+    "elm-live": "^4.0.2",
     "expo-cli": "^5.3.0",
     "jest": "^27.5.1",
     "sirv-cli": "^2.0.2",
