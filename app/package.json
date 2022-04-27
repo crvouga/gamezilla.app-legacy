@@ -1,0 +1,13 @@
+{
+    "license": "",
+    "scripts": {
+        "dev": "npx parcel src/main.html",
+        "elm-ts-interop": "elm-ts-interop --output src/interop.d.ts --watch"
+    },
+    "devDependencies": {
+        "@parcel/transformer-elm": "^2.5.0",
+        "elm": "^0.19.1-5",
+        "elm-ts-interop": "0.0.8",
+        "parcel": "^2.5.0"
+    }
+}

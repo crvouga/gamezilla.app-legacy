@@ -31,3 +31,4 @@ tsconfig.tsbuildinfo
 .expo
 web-build
 .builds
+.parcel-cache
