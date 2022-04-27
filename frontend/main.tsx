@@ -1,9 +1,10 @@
 import { createTheme, CssBaseline, ThemeProvider } from "@mui/material";
-import { blue, green, red } from "@mui/material/colors";
+import { green } from "@mui/material/colors";
 import { configureStore } from "@reduxjs/toolkit";
 import React, { StrictMode } from "react";
 import ReactDOM from "react-dom";
-import createSagaMiddleware from "redux-saga";
+import { channel, runSaga, RunSagaOptions, stdChannel } from "redux-saga";
+import { fork, takeEvery } from "redux-saga/effects";
 import * as App from "./App";
 
 /* 
@@ -17,27 +18,32 @@ const rootReducer = (
   maybeState: App.IState | undefined,
   action: App.IAction
 ): App.IState => {
-  const state = maybeState ?? App.initialState;
+  const previousState = maybeState ?? App.initialState;
 
-  const maybeResult = App.reducer(state, action);
+  const nextState = App.reducer(previousState, action) ?? previousState;
 
-  const [nextState, ...nextActions] = maybeResult ?? [state];
-
-  for (const nextAction of nextActions) {
-    store.dispatch(nextAction);
-  }
-
-  return nextState ?? state;
+  return nextState;
 };
-
-const sagaMiddleware = createSagaMiddleware();
 
 const store = configureStore({
   reducer: rootReducer,
-  middleware: [sagaMiddleware],
 });
 
-sagaMiddleware.run(App.saga);
+const sagaChan = stdChannel<App.IAction>();
+
+const myIO: RunSagaOptions<App.IAction, App.IState> = {
+  channel: sagaChan,
+
+  dispatch(output) {
+    store.dispatch(output);
+  },
+
+  getState() {
+    return store.getState();
+  },
+};
+
+runSaga(myIO, App.saga);
 
 /* 
 
@@ -72,7 +78,7 @@ const theme = createTheme({
 
 */
 
-store.subscribe(() => {
+const render = () => {
   ReactDOM.render(
     <StrictMode>
       <ThemeProvider theme={theme}>
@@ -82,4 +88,8 @@ store.subscribe(() => {
     </StrictMode>,
     document.getElementById("root")
   );
-});
+};
+
+render();
+
+store.subscribe(render);
