@@ -9,9 +9,7 @@ import Element.Input as Input
 import Icons
 import InteropDefinitions exposing (FromElm(..), ToElm(..))
 import InteropPorts
-import Widget
-import Widget.Material as Material
-import Widget.Material.Typography as Typography
+import Widgets
 
 
 
@@ -130,28 +128,6 @@ subscriptions _ =
 -- View
 
 
-type alias Theme =
-    { backgroundColor : Element.Color
-    , fontColor : Element.Color
-    , primary : Element.Color
-    , spacing : Int
-    }
-
-
-palette : Material.Palette
-palette =
-    Material.defaultPalette
-
-
-theme : Theme
-theme =
-    { backgroundColor = Element.rgb255 0 0 0
-    , fontColor = Element.rgb255 255 255 255
-    , primary = Element.rgb255 76 175 80
-    , spacing = 8
-    }
-
-
 view : Model -> Browser.Document Msg
 view model =
     case model of
@@ -165,24 +141,22 @@ view model =
             loadingLayout "Signing in..."
 
         Unauthenticated ->
-            layout "Sign In" viewSignInScreen
+            Widgets.layout "Sign In" viewSignInScreen
 
         Authenticated ->
-            layout "Sign Out"
+            Widgets.layout "Sign Out"
                 (Element.column
                     [ Element.centerX
                     , Element.centerY
-                    , Element.spacing (theme.spacing * 2)
+                    , Element.spacing (Widgets.theme.spacing * 2)
                     ]
                     [ Element.el
-                        (List.append Typography.h1
-                            [ Font.size 48
-                            , Element.centerX
-                            , Element.centerY
-                            ]
-                        )
+                        [ Font.size 48
+                        , Element.centerX
+                        , Element.centerY
+                        ]
                         (Element.text "Welcome")
-                    , button [] { onPress = Just SignOut, label = "Sign Out", icon = Nothing }
+                    , Widgets.button [] { onPress = Just SignOut, label = "Sign Out", icon = Nothing }
                     ]
                 )
 
@@ -192,19 +166,17 @@ viewSignInScreen =
     Element.column
         [ Element.centerX
         , Element.centerY
-        , Element.spacing (theme.spacing * 2)
+        , Element.spacing (Widgets.theme.spacing * 2)
         , Element.width Element.fill
-        , Element.padding (theme.spacing * 2)
+        , Element.padding (Widgets.theme.spacing * 2)
         ]
         [ Element.el
-            (List.append Typography.h1
-                [ Font.size 48
-                , Element.centerX
-                , Element.centerY
-                ]
-            )
+            [ Font.size 48
+            , Element.centerX
+            , Element.centerY
+            ]
             (Element.text "Gamezilla")
-        , button []
+        , Widgets.button []
             { onPress = Just SignInWithGoogle
             , label = "Continue With Google"
             , icon = Just (Icons.google [])
@@ -212,73 +184,17 @@ viewSignInScreen =
         ]
 
 
-button : List (Element.Attribute msg) -> { onPress : Maybe msg, icon : Maybe (Element.Element msg), label : String } -> Element.Element msg
-button attrs { onPress, icon, label } =
-    Input.button
-        (List.append attrs
-            [ Background.color theme.primary
-            , Font.color theme.fontColor
-            , Element.padding (theme.spacing * 1)
-            , Element.Border.rounded 24
-            , Element.mouseDown [ Element.alpha 0.5 ]
-            , Element.mouseOver [ Element.alpha 0.8 ]
-            , Element.width Element.fill
-            , Font.size 18
-            , Font.center
-            ]
-        )
-        { onPress = onPress
-        , label =
-            Element.row
-                [ Element.centerX
-                , Element.centerY
-                , Element.spacing 6
-                ]
-                [ case icon of
-                    Just element ->
-                        element
-
-                    Nothing ->
-                        Element.none
-                , Element.text label
-                ]
-        }
-
-
-layout : String -> Element.Element msg -> Browser.Document msg
-layout title child =
-    { title = title
-    , body =
-        [ Element.layoutWith
-            { options =
-                [ Element.focusStyle
-                    { borderColor = Nothing
-                    , backgroundColor = Nothing
-                    , shadow = Nothing
-                    }
-                ]
-            }
-            [ Background.color theme.backgroundColor
-            , Font.color theme.fontColor
-            , Element.width Element.fill
-            , Element.height Element.fill
-            , Font.family
-                [ Font.typeface "Nunito"
-                ]
-            ]
-            child
-        ]
-    }
-
-
 loadingLayout : String -> Browser.Document msg
 loadingLayout title =
-    layout title
+    Widgets.layout title
         (Element.column
             [ Element.centerX
             , Element.centerY
+            , Element.spacing (Widgets.theme.spacing * 2)
+            , Font.color Widgets.theme.fontSecondaryColor
+            , Font.size 16
             ]
-            [ Widget.circularProgressIndicator (Material.progressIndicator Material.defaultPalette) Nothing
+            [ Widgets.spinner [ Element.centerX ]
             , Element.text title
             ]
         )
