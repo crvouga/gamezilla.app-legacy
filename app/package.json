@@ -11,5 +11,8 @@
         "elm": "^0.19.1-5",
         "elm-ts-interop": "0.0.8",
         "parcel": "^2.5.0"
+    },
+    "dependencies": {
+        "@supabase/supabase-js": "^1.35.2"
     }
 }
