@@ -4,9 +4,8 @@ import Browser
 import Direction exposing (Direction(..))
 import Html exposing (button, text)
 import Html.Events exposing (onClick)
-import InteropDefinitions
+import InteropDefinitions exposing (ToElm(..))
 import InteropPorts
-import Snake
 
 
 
@@ -31,15 +30,14 @@ type alias Flags =
     InteropDefinitions.Flags
 
 
-type alias Model =
-    { snake : Snake.Model
-    }
+type Model
+    = Loading
+    | Unauthenticated
 
 
 init : () -> ( Model, Cmd Msg )
 init _ =
-    ( { snake = Snake.init
-      }
+    ( Loading
     , Cmd.none
     )
 
@@ -49,22 +47,31 @@ init _ =
 
 
 type Msg
-    = SnakeMsg Snake.Msg
-    | Greet
+    = Greet
+    | ToElm InteropDefinitions.ToElm
+    | Problem String
+    | SignInWithGoogle
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        SnakeMsg snakeMsg ->
-            let
-                ( snakeModel, snakeCmd ) =
-                    Snake.update snakeMsg model.snake
-            in
-            ( { model | snake = snakeModel }, Cmd.map SnakeMsg snakeCmd )
-
         Greet ->
             ( model, greet "Hello" )
+
+        SignInWithGoogle ->
+            ( model, greet "Signing in..." )
+
+        ToElm toElm ->
+            case toElm of
+                SignedIn _ ->
+                    ( model, Cmd.none )
+
+                SignedOut ->
+                    ( Unauthenticated, Cmd.none )
+
+        Problem _ ->
+            ( model, Cmd.none )
 
 
 greet : String -> Cmd msg
@@ -79,8 +86,17 @@ greet text =
 
 
 subscriptions : Model -> Sub Msg
-subscriptions model =
-    Sub.map SnakeMsg (Snake.subscriptions model.snake)
+subscriptions _ =
+    Sub.map
+        (\result ->
+            case result of
+                Err _ ->
+                    Problem "Something went wrong"
+
+                Ok toElm ->
+                    ToElm toElm
+        )
+        InteropPorts.toElm
 
 
 
@@ -89,10 +105,17 @@ subscriptions model =
 
 view : Model -> Browser.Document Msg
 view model =
-    { title = "Gamezilla"
-    , body =
-        [ button [ onClick Greet ]
-            [ text "Greet" ]
-        , Html.map SnakeMsg (Snake.view model.snake)
-        ]
-    }
+    case model of
+        Loading ->
+            { title = "Loading..."
+            , body =
+                [ text "Loading..."
+                ]
+            }
+
+        Unauthenticated ->
+            { title = "Gamezilla - Sign In"
+            , body =
+                [ button [ onClick SignInWithGoogle ] [ text "Sign in with google" ]
+                ]
+            }
