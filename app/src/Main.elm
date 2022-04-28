@@ -2,8 +2,12 @@ module Main exposing (..)
 
 import Browser
 import Element
+import Element.Background as Background
+import Element.Border
 import Element.Font as Font
-import InteropDefinitions exposing (ToElm(..))
+import Element.Input as Input
+import Icons
+import InteropDefinitions exposing (FromElm(..), ToElm(..))
 import InteropPorts
 import Widget
 import Widget.Material as Material
@@ -138,11 +142,12 @@ palette =
     Material.defaultPalette
 
 
-
--- { backgroundColor = Element.rgb255 40 40 40
--- , fontColor = Element.rgb255 255 255 255
--- , primary = Element.rgb255 76 175 80
--- }
+theme : Theme
+theme =
+    { backgroundColor = Element.rgb255 40 40 40
+    , fontColor = Element.rgb255 255 255 255
+    , primary = Element.rgb255 76 175 80
+    }
 
 
 view : Model -> Browser.Document Msg
@@ -158,26 +163,7 @@ view model =
             loadingLayout "Signing in..."
 
         Unauthenticated ->
-            layout "Sign In"
-                (Element.column
-                    [ Element.centerX
-                    , Element.centerY
-                    , Element.spacing 12
-                    ]
-                    [ Element.el
-                        (List.append Typography.h1
-                            [ Font.size 48
-                            , Element.centerX
-                            , Element.centerY
-                            ]
-                        )
-                        (Element.text "Gamezilla")
-                    , Widget.textButton (Material.containedButton palette)
-                        { text = "Continue with Google"
-                        , onPress = Just SignInWithGoogle
-                        }
-                    ]
-                )
+            layout "Sign In" viewSignInScreen
 
         Authenticated ->
             layout "Sign Out"
@@ -194,25 +180,87 @@ view model =
                             ]
                         )
                         (Element.text "Welcome")
-                    , Widget.textButton (Material.containedButton palette)
-                        { text = "Sign out"
-                        , onPress = Just SignOut
-                        }
+                    , button [] { onPress = Just SignOut, label = "Sign Out", icon = Nothing }
                     ]
                 )
+
+
+viewSignInScreen : Element.Element Msg
+viewSignInScreen =
+    Element.column
+        [ Element.centerX
+        , Element.centerY
+        , Element.spacing 12
+        , Element.width Element.fill
+        , Element.padding 12
+        ]
+        [ Element.el
+            (List.append Typography.h1
+                [ Font.size 48
+                , Element.centerX
+                , Element.centerY
+                ]
+            )
+            (Element.text "Gamezilla")
+        , button []
+            { onPress = Just SignInWithGoogle
+            , label = "Continue With Google"
+            , icon = Just (Icons.google [])
+            }
+        ]
+
+
+button : List (Element.Attribute msg) -> { onPress : Maybe msg, icon : Maybe (Element.Element msg), label : String } -> Element.Element msg
+button attrs { onPress, icon, label } =
+    Input.button
+        (List.append attrs
+            [ Background.color theme.primary
+            , Font.color theme.fontColor
+            , Element.padding 12
+            , Element.Border.rounded 24
+            , Element.mouseDown [ Element.alpha 0.5 ]
+            , Element.width Element.fill
+            , Font.size 18
+            , Font.center
+            ]
+        )
+        { onPress = onPress
+        , label =
+            Element.row
+                [ Element.centerX
+                , Element.centerY
+                , Element.spacing 6
+                ]
+                [ case icon of
+                    Just element ->
+                        element
+
+                    Nothing ->
+                        Element.none
+                , Element.text label
+                ]
+        }
 
 
 layout : String -> Element.Element msg -> Browser.Document msg
 layout title child =
     { title = title
     , body =
-        [ Element.layout []
-            (Element.el
-                [ Element.width Element.fill
-                , Element.height Element.fill
+        [ Element.layoutWith
+            { options =
+                [ Element.focusStyle
+                    { borderColor = Nothing
+                    , backgroundColor = Nothing
+                    , shadow = Nothing
+                    }
                 ]
-                child
-            )
+            }
+            [ Background.color theme.backgroundColor
+            , Font.color theme.fontColor
+            , Element.width Element.fill
+            , Element.height Element.fill
+            ]
+            child
         ]
     }
 
