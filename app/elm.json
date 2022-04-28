@@ -15,6 +15,7 @@
             "elm/svg": "1.0.1",
             "elm/time": "1.0.0",
             "icidasset/elm-material-icons": "10.0.0",
+            "mdgriffith/elm-animator": "1.1.1",
             "mdgriffith/elm-ui": "1.1.8"
         },
         "indirect": {
@@ -25,6 +26,7 @@
             "elm-community/dict-extra": "2.4.0",
             "elm-community/intdict": "3.0.0",
             "fredcy/elm-parseint": "2.0.1",
+            "ianmackenzie/elm-units": "2.9.0",
             "noahzgordon/elm-color-extra": "1.0.2",
             "turboMaCk/queue": "1.1.0"
         }
