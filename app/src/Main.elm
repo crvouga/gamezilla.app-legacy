@@ -5,7 +5,6 @@ import Element
 import Element.Font as Font
 import InteropDefinitions exposing (ToElm(..))
 import InteropPorts
-import Material.Icons.Types exposing (Coloring(..))
 import Widget
 import Widget.Material as Material
 import Widget.Material.Typography as Typography
