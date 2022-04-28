@@ -144,7 +144,7 @@ palette =
 
 theme : Theme
 theme =
-    { backgroundColor = Element.rgb255 40 40 40
+    { backgroundColor = Element.rgb255 0 0 0
     , fontColor = Element.rgb255 255 255 255
     , primary = Element.rgb255 76 175 80
     }
