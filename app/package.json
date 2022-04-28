@@ -1,8 +1,9 @@
 {
     "license": "",
     "scripts": {
-        "dev": "npx parcel src/main.html",
-        "elm-ts-interop": "elm-ts-interop --output src/interop.d.ts --watch"
+        "dev": "npx parcel src/main.html --port 3000",
+        "elm-ts-interop": "npx elm-ts-interop --output src/interop.d.ts --watch",
+        "supabase-types": "npx openapi-typescript https://ldxpcprlgecjvqwzuxgv.supabase.co/rest/v1/?apikey=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTYzNzA0MDQ5NywiZXhwIjoxOTUyNjE2NDk3fQ.ReI8CpIFbLB9Q53Az7CDBIyrn_o1JeGhPoZXdqx8Ac4 --output src/supabase-types.ts"
     },
     "devDependencies": {
         "@parcel/transformer-elm": "^2.5.0",

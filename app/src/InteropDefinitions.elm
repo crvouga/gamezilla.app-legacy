@@ -21,11 +21,12 @@ type FromElm
 
 
 type ToElm
-    = AuthenticatedUser User
+    = SignedIn User
+    | SignedOut
 
 
 type alias User =
-    { username : String }
+    { userId : String }
 
 
 type alias Flags =
@@ -48,12 +49,13 @@ fromElm =
 toElm : Decoder ToElm
 toElm =
     TsDecode.discriminatedUnion "tag"
-        [ ( "authenticatedUser"
-          , TsDecode.map AuthenticatedUser
+        [ ( "SignedIn"
+          , TsDecode.map SignedIn
                 (TsDecode.map User
-                    (TsDecode.field "username" TsDecode.string)
+                    (TsDecode.field "userId" TsDecode.string)
                 )
           )
+        , ( "SignedOut", TsDecode.succeed SignedOut )
         ]
 
 
