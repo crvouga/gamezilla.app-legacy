@@ -9,11 +9,25 @@ const app = Elm.Main.init({
 
 app.ports.interopFromElm.subscribe((fromElm) => {
   switch (fromElm.tag) {
-    case "alert":
+    case "Alert":
       alert(
         `alerting from typescript: \n message from elm: ${fromElm.data.message}`
       );
       break;
+
+    case "SignIn":
+      supabaseClient.auth.signIn(
+        {
+          provider: "google",
+        },
+        {
+          redirectTo: window.location.origin,
+        }
+      );
+      break;
+
+    case "SignOut":
+      supabaseClient.auth.signOut();
   }
 });
 

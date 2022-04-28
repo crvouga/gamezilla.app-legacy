@@ -18,6 +18,8 @@ interop =
 
 type FromElm
     = Alert String
+    | SignIn String
+    | SignOut String
 
 
 type ToElm
@@ -36,12 +38,22 @@ type alias Flags =
 fromElm : Encoder FromElm
 fromElm =
     TsEncode.union
-        (\vAlert value ->
+        (\vAlert vSignIn vSignOut value ->
             case value of
                 Alert string ->
                     vAlert string
+
+                SignIn string ->
+                    vSignIn string
+
+                SignOut string ->
+                    vSignOut string
         )
-        |> TsEncode.variantTagged "alert"
+        |> TsEncode.variantTagged "Alert"
+            (TsEncode.object [ required "message" identity TsEncode.string ])
+        |> TsEncode.variantTagged "SignIn"
+            (TsEncode.object [ required "message" identity TsEncode.string ])
+        |> TsEncode.variantTagged "SignOut"
             (TsEncode.object [ required "message" identity TsEncode.string ])
         |> TsEncode.buildUnion
 

@@ -1,11 +1,14 @@
 module Main exposing (..)
 
 import Browser
-import Direction exposing (Direction(..))
-import Html exposing (button, text)
-import Html.Events exposing (onClick)
+import Element
+import Element.Font as Font
 import InteropDefinitions exposing (ToElm(..))
 import InteropPorts
+import Material.Icons.Types exposing (Coloring(..))
+import Widget
+import Widget.Material as Material
+import Widget.Material.Typography as Typography
 
 
 
@@ -33,6 +36,9 @@ type alias Flags =
 type Model
     = Loading
     | Unauthenticated
+    | Unauthenticating
+    | Authenticating
+    | Authenticated
 
 
 init : () -> ( Model, Cmd Msg )
@@ -51,6 +57,7 @@ type Msg
     | ToElm InteropDefinitions.ToElm
     | Problem String
     | SignInWithGoogle
+    | SignOut
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -60,12 +67,15 @@ update msg model =
             ( model, greet "Hello" )
 
         SignInWithGoogle ->
-            ( model, greet "Signing in..." )
+            ( Authenticating, signIn "sign in" )
+
+        SignOut ->
+            ( Unauthenticating, signOut "sign in" )
 
         ToElm toElm ->
             case toElm of
                 SignedIn _ ->
-                    ( model, Cmd.none )
+                    ( Authenticated, Cmd.none )
 
                 SignedOut ->
                     ( Unauthenticated, Cmd.none )
@@ -78,6 +88,20 @@ greet : String -> Cmd msg
 greet text =
     text
         |> InteropDefinitions.Alert
+        |> InteropPorts.fromElm
+
+
+signIn : String -> Cmd msg
+signIn text =
+    text
+        |> InteropDefinitions.SignIn
+        |> InteropPorts.fromElm
+
+
+signOut : String -> Cmd msg
+signOut text =
+    text
+        |> InteropDefinitions.SignOut
         |> InteropPorts.fromElm
 
 
@@ -103,19 +127,105 @@ subscriptions _ =
 -- View
 
 
+type alias Theme =
+    { backgroundColor : Element.Color
+    , fontColor : Element.Color
+    , primary : Element.Color
+    }
+
+
+palette : Material.Palette
+palette =
+    Material.defaultPalette
+
+
+
+-- { backgroundColor = Element.rgb255 40 40 40
+-- , fontColor = Element.rgb255 255 255 255
+-- , primary = Element.rgb255 76 175 80
+-- }
+
+
 view : Model -> Browser.Document Msg
 view model =
     case model of
         Loading ->
-            { title = "Loading..."
-            , body =
-                [ text "Loading..."
-                ]
-            }
+            loadingLayout "Loading..."
+
+        Unauthenticating ->
+            loadingLayout "Signing Out..."
+
+        Authenticating ->
+            loadingLayout "Signing in..."
 
         Unauthenticated ->
-            { title = "Gamezilla - Sign In"
-            , body =
-                [ button [ onClick SignInWithGoogle ] [ text "Sign in with google" ]
+            layout "Sign In"
+                (Element.column
+                    [ Element.centerX
+                    , Element.centerY
+                    , Element.spacing 12
+                    ]
+                    [ Element.el
+                        (List.append Typography.h1
+                            [ Font.size 48
+                            , Element.centerX
+                            , Element.centerY
+                            ]
+                        )
+                        (Element.text "Gamezilla")
+                    , Widget.textButton (Material.containedButton palette)
+                        { text = "Continue with Google"
+                        , onPress = Just SignInWithGoogle
+                        }
+                    ]
+                )
+
+        Authenticated ->
+            layout "Sign Out"
+                (Element.column
+                    [ Element.centerX
+                    , Element.centerY
+                    , Element.spacing 12
+                    ]
+                    [ Element.el
+                        (List.append Typography.h1
+                            [ Font.size 48
+                            , Element.centerX
+                            , Element.centerY
+                            ]
+                        )
+                        (Element.text "Welcome")
+                    , Widget.textButton (Material.containedButton palette)
+                        { text = "Sign out"
+                        , onPress = Just SignOut
+                        }
+                    ]
+                )
+
+
+layout : String -> Element.Element msg -> Browser.Document msg
+layout title child =
+    { title = title
+    , body =
+        [ Element.layout []
+            (Element.el
+                [ Element.width Element.fill
+                , Element.height Element.fill
                 ]
-            }
+                child
+            )
+        ]
+    }
+
+
+loadingLayout : String -> Browser.Document msg
+loadingLayout title =
+    layout title
+        (Element.column
+            [ Element.centerX
+            , Element.centerY
+            ]
+            [ Widget.circularProgressIndicator (Material.progressIndicator Material.defaultPalette) Nothing
+            , Element.text title
+            ]
+        )
