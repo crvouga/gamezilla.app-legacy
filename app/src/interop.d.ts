@@ -21,7 +21,7 @@ export interface ElmApp {
   };
 }
 
-export type FromElm = { data : { message : string }; tag : "alert" };
+export type FromElm = { data : { message : string }; tag : "SignOut" } | { data : { message : string }; tag : "SignIn" } | { data : { message : string }; tag : "Alert" };
 
 export type ToElm = { tag : "SignedIn"; userId : string } | { tag : "SignedOut" };
 
