@@ -134,6 +134,7 @@ type alias Theme =
     { backgroundColor : Element.Color
     , fontColor : Element.Color
     , primary : Element.Color
+    , spacing : Int
     }
 
 
@@ -147,6 +148,7 @@ theme =
     { backgroundColor = Element.rgb255 0 0 0
     , fontColor = Element.rgb255 255 255 255
     , primary = Element.rgb255 76 175 80
+    , spacing = 8
     }
 
 
@@ -170,7 +172,7 @@ view model =
                 (Element.column
                     [ Element.centerX
                     , Element.centerY
-                    , Element.spacing 12
+                    , Element.spacing (theme.spacing * 2)
                     ]
                     [ Element.el
                         (List.append Typography.h1
@@ -190,9 +192,9 @@ viewSignInScreen =
     Element.column
         [ Element.centerX
         , Element.centerY
-        , Element.spacing 12
+        , Element.spacing (theme.spacing * 2)
         , Element.width Element.fill
-        , Element.padding 12
+        , Element.padding (theme.spacing * 2)
         ]
         [ Element.el
             (List.append Typography.h1
@@ -216,9 +218,10 @@ button attrs { onPress, icon, label } =
         (List.append attrs
             [ Background.color theme.primary
             , Font.color theme.fontColor
-            , Element.padding 12
+            , Element.padding (theme.spacing * 1)
             , Element.Border.rounded 24
             , Element.mouseDown [ Element.alpha 0.5 ]
+            , Element.mouseOver [ Element.alpha 0.8 ]
             , Element.width Element.fill
             , Font.size 18
             , Font.center
@@ -259,6 +262,9 @@ layout title child =
             , Font.color theme.fontColor
             , Element.width Element.fill
             , Element.height Element.fill
+            , Font.family
+                [ Font.typeface "Nunito"
+                ]
             ]
             child
         ]
