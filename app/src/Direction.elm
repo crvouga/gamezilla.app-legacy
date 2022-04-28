@@ -32,3 +32,19 @@ vector direction =
             { x = 1
             , y = 0
             }
+
+
+opposite : Direction -> Direction
+opposite direction =
+    case direction of
+        North ->
+            South
+
+        South ->
+            North
+
+        East ->
+            West
+
+        West ->
+            East

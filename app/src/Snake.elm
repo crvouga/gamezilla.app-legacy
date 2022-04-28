@@ -1,8 +1,11 @@
 module Snake exposing (..)
 
+import Browser.Events
 import Direction exposing (Direction(..))
 import Html exposing (Html, div)
+import Json.Decode as Decode
 import Position exposing (Position)
+import Status exposing (Status(..))
 import Svg exposing (g, rect, svg)
 import Svg.Attributes exposing (fill, height, viewBox, width)
 import Time
@@ -13,7 +16,8 @@ import Time
 
 
 type alias Model =
-    { head : Position
+    { status : Status
+    , head : Position
     , tail : List Position
     , apples : List Position
     , topLeft : Position
@@ -25,7 +29,8 @@ type alias Model =
 
 init : Model
 init =
-    { head = { x = 4, y = 6 }
+    { status = Status.Paused
+    , head = { x = 4, y = 6 }
     , tail = [ { x = 3, y = 6 }, { x = 2, y = 6 } ]
     , apples = [ { x = 7, y = 6 } ]
     , topLeft = { x = 0, y = 0 }
@@ -41,31 +46,122 @@ init =
 
 type Msg
     = Step
+    | KeyBoardPressed Key
+
+
+type Key
+    = ArrowDown
+    | ArrowUp
+    | ArrowLeft
+    | ArrowRight
+    | W
+    | A
+    | S
+    | D
+    | SpaceBar
+    | Unknown
+
+
+keyToDirection : Key -> Maybe Direction
+keyToDirection key =
+    case key of
+        ArrowDown ->
+            Just South
+
+        ArrowUp ->
+            Just North
+
+        ArrowRight ->
+            Just East
+
+        ArrowLeft ->
+            Just West
+
+        S ->
+            Just South
+
+        W ->
+            Just North
+
+        D ->
+            Just East
+
+        A ->
+            Just West
+
+        _ ->
+            Nothing
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    case msg of
-        Step ->
-            ( step model, Cmd.none )
+    case model.status of
+        Paused ->
+            case msg of
+                Step ->
+                    ( model, Cmd.none )
 
+                KeyBoardPressed key ->
+                    let
+                        nextStatus =
+                            case key of
+                                SpaceBar ->
+                                    Status.toggle model.status
 
-step : Model -> Model
-step model =
-    { model
-        | head = nextHead model
-        , tail = nextTail model
-    }
+                                _ ->
+                                    model.status
+                    in
+                    ( { model
+                        | status = nextStatus
+                      }
+                    , Cmd.none
+                    )
 
+        Playing ->
+            case msg of
+                Step ->
+                    if model.status == Status.Paused then
+                        ( model, Cmd.none )
 
-nextHead : Model -> Position
-nextHead model =
-    Position.add model.head (Direction.vector model.direction)
+                    else
+                        let
+                            nextTail =
+                                List.take model.tailLength (List.append [ model.head ] model.tail)
 
+                            nextHead =
+                                Position.add model.head (Direction.vector model.direction)
+                        in
+                        ( { model | tail = nextTail, head = nextHead }
+                        , Cmd.none
+                        )
 
-nextTail : Model -> List Position
-nextTail model =
-    List.take model.tailLength (List.append [ model.head ] model.tail)
+                KeyBoardPressed key ->
+                    let
+                        nextDirection =
+                            keyToDirection key
+                                |> Maybe.withDefault model.direction
+                                |> (\direction ->
+                                        if direction == Direction.opposite model.direction then
+                                            model.direction
+
+                                        else
+                                            direction
+                                   )
+
+                        nextStatus =
+                            case key of
+                                SpaceBar ->
+                                    Status.toggle model.status
+
+                                _ ->
+                                    model.status
+                    in
+                    ( { model
+                        | direction = nextDirection
+                        , status = nextStatus
+                      }
+                    , Cmd.none
+                    )
 
 
 
@@ -73,8 +169,67 @@ nextTail model =
 
 
 subscriptions : Model -> Sub Msg
-subscriptions _ =
-    Time.every 500 (\_ -> Step)
+subscriptions model =
+    Sub.batch
+        [ case model.status of
+            Playing ->
+                Time.every 200 (\_ -> Step)
+
+            Paused ->
+                Sub.none
+        , Sub.map KeyBoardPressed (Browser.Events.onKeyDown keyDownDecoder)
+        ]
+
+
+keyDownDecoder : Decode.Decoder Key
+keyDownDecoder =
+    Decode.map toKey (Decode.field "key" Decode.string)
+
+
+toKey : String -> Key
+toKey key =
+    case key of
+        "ArrowLeft" ->
+            ArrowLeft
+
+        "ArrowRight" ->
+            ArrowRight
+
+        "ArrowDown" ->
+            ArrowDown
+
+        "ArrowUp" ->
+            ArrowUp
+
+        "W" ->
+            W
+
+        "A" ->
+            A
+
+        "S" ->
+            S
+
+        "D" ->
+            D
+
+        "w" ->
+            W
+
+        "a" ->
+            A
+
+        "s" ->
+            S
+
+        "d" ->
+            D
+
+        " " ->
+            SpaceBar
+
+        _ ->
+            Unknown
 
 
 
