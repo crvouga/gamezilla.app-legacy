@@ -1,11 +1,13 @@
 module Main exposing (..)
 
 import Browser
+import Browser.Navigation
 import Element
 import Element.Font as Font
 import Icons
 import InteropDefinitions exposing (FromElm(..), ToElm(..))
 import InteropPorts
+import Url exposing (..)
 import Widgets
 
 
@@ -15,7 +17,7 @@ import Widgets
 
 main : Program () Model Msg
 main =
-    Browser.document
+    Browser.application
         { update = update
         , view =
             \model ->
@@ -24,6 +26,8 @@ main =
                 }
         , subscriptions = subscriptions
         , init = init
+        , onUrlChange = \url -> ChangedUrl url
+        , onUrlRequest = \urlRequest -> ClickedLink urlRequest
         }
 
 
@@ -35,7 +39,7 @@ type alias Flags =
     InteropDefinitions.Flags
 
 
-type Model
+type Status
     = Loading
     | Unauthenticated
     | Unauthenticating
@@ -43,9 +47,15 @@ type Model
     | Authenticated
 
 
-init : () -> ( Model, Cmd Msg )
-init _ =
-    ( Loading
+type alias Model =
+    { status : Status
+    , navKey : Browser.Navigation.Key
+    }
+
+
+init : () -> Url.Url -> Browser.Navigation.Key -> ( Model, Cmd Msg )
+init _ _ navKey =
+    ( { status = Loading, navKey = navKey }
     , Cmd.none
     )
 
@@ -60,27 +70,49 @@ type Msg
     | Problem String
     | SignInWithGoogle
     | SignOut
+    | ChangedUrl Url
+    | ClickedLink Browser.UrlRequest
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        ClickedLink urlRequest ->
+            case urlRequest of
+                Browser.Internal url ->
+                    case url.fragment of
+                        Nothing ->
+                            ( model, Cmd.none )
+
+                        Just _ ->
+                            ( model
+                            , Browser.Navigation.pushUrl model.navKey (Url.toString url)
+                            )
+
+                Browser.External href ->
+                    ( model
+                    , Browser.Navigation.load href
+                    )
+
+        ChangedUrl _ ->
+            ( model, Cmd.none )
+
         Greet ->
             ( model, greet "Hello" )
 
         SignInWithGoogle ->
-            ( Authenticating, signIn "sign in" )
+            ( { model | status = Authenticating }, signIn "sign in" )
 
         SignOut ->
-            ( Unauthenticating, signOut "sign in" )
+            ( { model | status = Unauthenticating }, signOut "sign in" )
 
         ToElm toElm ->
             case toElm of
                 SignedIn _ ->
-                    ( Authenticated, Cmd.none )
+                    ( { model | status = Authenticated }, Cmd.none )
 
                 SignedOut ->
-                    ( Unauthenticated, Cmd.none )
+                    ( { model | status = Unauthenticated }, Cmd.none )
 
         Problem _ ->
             ( model, Cmd.none )
@@ -131,7 +163,7 @@ subscriptions _ =
 
 view : Model -> Element.Element Msg
 view model =
-    case model of
+    case model.status of
         Loading ->
             viewLoading
 
