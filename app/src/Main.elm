@@ -2,10 +2,7 @@ module Main exposing (..)
 
 import Browser
 import Element
-import Element.Background as Background
-import Element.Border
 import Element.Font as Font
-import Element.Input as Input
 import Icons
 import InteropDefinitions exposing (FromElm(..), ToElm(..))
 import InteropPorts
@@ -20,7 +17,11 @@ main : Program () Model Msg
 main =
     Browser.document
         { update = update
-        , view = view
+        , view =
+            \model ->
+                { title = "Gamezilla"
+                , body = [ Widgets.layout (view model) ]
+                }
         , subscriptions = subscriptions
         , init = init
         }
@@ -128,41 +129,44 @@ subscriptions _ =
 -- View
 
 
-view : Model -> Browser.Document Msg
+view : Model -> Element.Element Msg
 view model =
     case model of
         Loading ->
-            loadingLayout "Loading..."
+            viewLoading
 
         Unauthenticating ->
-            loadingLayout "Signing Out..."
+            viewLoading
 
         Authenticating ->
-            loadingLayout "Signing in..."
+            viewLoading
 
         Unauthenticated ->
-            Widgets.layout "Sign In" viewSignInScreen
+            viewUnauthenticated
 
         Authenticated ->
-            Widgets.layout "Sign Out"
-                (Element.column
-                    [ Element.centerX
-                    , Element.centerY
-                    , Element.spacing (Widgets.theme.spacing * 2)
-                    ]
-                    [ Element.el
-                        [ Font.size 48
-                        , Element.centerX
-                        , Element.centerY
-                        ]
-                        (Element.text "Welcome")
-                    , Widgets.button [] { onPress = Just SignOut, label = "Sign Out", icon = Nothing }
-                    ]
-                )
+            viewAuthenicated
 
 
-viewSignInScreen : Element.Element Msg
-viewSignInScreen =
+viewAuthenicated : Element.Element Msg
+viewAuthenicated =
+    Element.column
+        [ Element.centerX
+        , Element.centerY
+        , Element.spacing (Widgets.theme.spacing * 2)
+        ]
+        [ Element.el
+            [ Font.size 48
+            , Element.centerX
+            , Element.centerY
+            ]
+            (Element.text "Welcome")
+        , Widgets.button [] { onPress = Just SignOut, label = "Sign Out", icon = Nothing }
+        ]
+
+
+viewUnauthenticated : Element.Element Msg
+viewUnauthenticated =
     Element.column
         [ Element.centerX
         , Element.centerY
@@ -184,17 +188,19 @@ viewSignInScreen =
         ]
 
 
-loadingLayout : String -> Browser.Document msg
-loadingLayout title =
-    Widgets.layout title
-        (Element.column
-            [ Element.centerX
+viewLoading : Element.Element Msg
+viewLoading =
+    Element.column
+        [ Element.centerX
+        , Element.centerY
+        , Element.spacing (Widgets.theme.spacing * 2)
+        , Element.width Element.fill
+        , Element.padding (Widgets.theme.spacing * 2)
+        ]
+        [ Element.el
+            [ Font.size 48
+            , Element.centerX
             , Element.centerY
-            , Element.spacing (Widgets.theme.spacing * 2)
-            , Font.color Widgets.theme.fontSecondaryColor
-            , Font.size 16
             ]
-            [ Widgets.spinner [ Element.centerX ]
-            , Element.text title
-            ]
-        )
+            (Element.text "Loading...")
+        ]
