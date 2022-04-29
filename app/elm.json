@@ -16,7 +16,8 @@
             "elm/time": "1.0.0",
             "icidasset/elm-material-icons": "10.0.0",
             "mdgriffith/elm-animator": "1.1.1",
-            "mdgriffith/elm-ui": "1.1.8"
+            "mdgriffith/elm-ui": "1.1.8",
+            "rtfeldman/elm-css": "17.1.1"
         },
         "indirect": {
             "avh4/elm-color": "1.0.0",
@@ -28,6 +29,8 @@
             "fredcy/elm-parseint": "2.0.1",
             "ianmackenzie/elm-units": "2.9.0",
             "noahzgordon/elm-color-extra": "1.0.2",
+            "robinheghan/murmur3": "1.0.0",
+            "rtfeldman/elm-hex": "1.0.0",
             "turboMaCk/queue": "1.1.0"
         }
     },

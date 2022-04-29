@@ -3,6 +3,7 @@ module Widgets exposing (..)
 import Animator
 import Animator.Css
 import Browser
+import Css
 import Element
 import Element.Background as Background
 import Element.Border
@@ -10,6 +11,8 @@ import Element.Font as Font
 import Element.Input as Input
 import Html exposing (Html)
 import Html.Attributes exposing (attribute)
+import Html.Styled
+import Html.Styled.Attributes
 import Svg exposing (path, svg, text)
 import Svg.Attributes exposing (d, fill, viewBox)
 
@@ -38,33 +41,44 @@ theme =
 
 
 
+--
+
+
+typography : String -> Html.Styled.Html msg
+typography text =
+    Html.Styled.div
+        [ Html.Styled.Attributes.css
+            [ Css.color (Css.hex "#fff")
+            , Css.fontFamilies [ "Nunito" ]
+            ]
+        ]
+        [ Html.Styled.text text ]
+
+
+
 -- layout
 
 
-layout : String -> Element.Element msg -> Browser.Document msg
-layout title child =
-    { title = title
-    , body =
-        [ Element.layoutWith
-            { options =
-                [ Element.focusStyle
-                    { borderColor = Nothing
-                    , backgroundColor = Nothing
-                    , shadow = Nothing
-                    }
-                ]
-            }
-            [ Background.color theme.backgroundColor
-            , Font.color theme.fontColor
-            , Element.width Element.fill
-            , Element.height Element.fill
-            , Font.family
-                [ Font.typeface "Nunito"
-                ]
+layout : Element.Element msg -> Html.Html msg
+layout child =
+    Element.layoutWith
+        { options =
+            [ Element.focusStyle
+                { borderColor = Nothing
+                , backgroundColor = Nothing
+                , shadow = Nothing
+                }
             ]
-            child
+        }
+        [ Background.color theme.backgroundColor
+        , Font.color theme.fontColor
+        , Element.width Element.fill
+        , Element.height Element.fill
+        , Font.family
+            [ Font.typeface "Nunito"
+            ]
         ]
-    }
+        child
 
 
 
