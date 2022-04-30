@@ -192,7 +192,7 @@ viewUnauthenticated =
     { title = "Sign In"
     , body =
         [ View.layout [ class "flex flex-col justify-center items-center p-4" ]
-            [ View.typography [ class "mb-4 text-4xl" ] "Gamezilla"
+            [ View.typography [ class "mb-4 text-5xl" ] "Gamezilla"
             , View.button [ class "w-full", onClick SignInWithGoogle ] [ View.typography [] "Continue with Google" ]
             ]
         ]
@@ -204,7 +204,7 @@ viewAuthenticated =
     { title = "Welcome"
     , body =
         [ View.layout [ class "flex flex-col justify-center items-center" ]
-            [ View.typography [ class "mb-4 text-4xl" ] "Welcome"
+            [ View.typography [ class "mb-4 text-5xl" ] "Welcome"
             , View.button [ onClick SignOut ] [ View.typography [] "Sign Out" ]
             ]
         ]
