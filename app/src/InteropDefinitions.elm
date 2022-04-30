@@ -20,6 +20,7 @@ type FromElm
     = Alert String
     | SignIn String
     | SignOut String
+    | ProfileSubscribe String
 
 
 type ToElm
@@ -38,7 +39,7 @@ type alias Flags =
 fromElm : Encoder FromElm
 fromElm =
     TsEncode.union
-        (\vAlert vSignIn vSignOut value ->
+        (\vAlert vSignIn vSignOut vProfileSubscribe value ->
             case value of
                 Alert string ->
                     vAlert string
@@ -48,6 +49,9 @@ fromElm =
 
                 SignOut string ->
                     vSignOut string
+
+                ProfileSubscribe string ->
+                    vProfileSubscribe string
         )
         |> TsEncode.variantTagged "Alert"
             (TsEncode.object [ required "message" identity TsEncode.string ])
@@ -55,6 +59,8 @@ fromElm =
             (TsEncode.object [ required "message" identity TsEncode.string ])
         |> TsEncode.variantTagged "SignOut"
             (TsEncode.object [ required "message" identity TsEncode.string ])
+        |> TsEncode.variantTagged "ProfileSubscribe"
+            (TsEncode.object [ required "userId" identity TsEncode.string ])
         |> TsEncode.buildUnion
 
 

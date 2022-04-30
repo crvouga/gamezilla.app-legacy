@@ -2,13 +2,12 @@ module Main exposing (..)
 
 import Browser
 import Browser.Navigation
-import Element
-import Element.Font as Font
-import Icons
+import Html.Attributes exposing (..)
+import Html.Events exposing (onClick)
 import InteropDefinitions exposing (FromElm(..), ToElm(..))
 import InteropPorts
 import Url exposing (..)
-import Widgets
+import View
 
 
 
@@ -19,11 +18,7 @@ main : Program () Model Msg
 main =
     Browser.application
         { update = update
-        , view =
-            \model ->
-                { title = "Gamezilla"
-                , body = [ Widgets.layout (view model) ]
-                }
+        , view = view
         , subscriptions = subscriptions
         , init = init
         , onUrlChange = \url -> ChangedUrl url
@@ -161,7 +156,7 @@ subscriptions _ =
 -- View
 
 
-view : Model -> Element.Element Msg
+view : Model -> Browser.Document Msg
 view model =
     case model.status of
         Loading ->
@@ -177,62 +172,40 @@ view model =
             viewUnauthenticated
 
         Authenticated ->
-            viewAuthenicated
+            viewAuthenticated
 
 
-viewAuthenicated : Element.Element Msg
-viewAuthenicated =
-    Element.column
-        [ Element.centerX
-        , Element.centerY
-        , Element.spacing (Widgets.theme.spacing * 2)
-        ]
-        [ Element.el
-            [ Font.size 48
-            , Element.centerX
-            , Element.centerY
-            ]
-            (Element.text "Welcome")
-        , Widgets.button [] { onPress = Just SignOut, label = "Sign Out", icon = Nothing }
-        ]
-
-
-viewUnauthenticated : Element.Element Msg
-viewUnauthenticated =
-    Element.column
-        [ Element.centerX
-        , Element.centerY
-        , Element.spacing (Widgets.theme.spacing * 2)
-        , Element.width Element.fill
-        , Element.padding (Widgets.theme.spacing * 2)
-        ]
-        [ Element.el
-            [ Font.size 48
-            , Element.centerX
-            , Element.centerY
-            ]
-            (Element.text "Gamezilla")
-        , Widgets.button []
-            { onPress = Just SignInWithGoogle
-            , label = "Continue With Google"
-            , icon = Just (Icons.google [])
-            }
-        ]
-
-
-viewLoading : Element.Element Msg
+viewLoading : Browser.Document msg
 viewLoading =
-    Element.column
-        [ Element.centerX
-        , Element.centerY
-        , Element.spacing (Widgets.theme.spacing * 2)
-        , Element.width Element.fill
-        , Element.padding (Widgets.theme.spacing * 2)
-        ]
-        [ Element.el
-            [ Font.size 48
-            , Element.centerX
-            , Element.centerY
+    { title = "Loading..."
+    , body =
+        [ View.layout
+            [ class "flex justify-center items-center" ]
+            [ View.spinner []
             ]
-            (Element.text "Loading...")
         ]
+    }
+
+
+viewUnauthenticated : Browser.Document Msg
+viewUnauthenticated =
+    { title = "Sign In"
+    , body =
+        [ View.layout [ class "flex flex-col justify-center items-center p-4" ]
+            [ View.typography [ class "mb-4 text-4xl" ] "Gamezilla"
+            , View.button [ class "w-full", onClick SignInWithGoogle ] [ View.typography [] "Continue with Google" ]
+            ]
+        ]
+    }
+
+
+viewAuthenticated : Browser.Document Msg
+viewAuthenticated =
+    { title = "Welcome"
+    , body =
+        [ View.layout [ class "flex flex-col justify-center items-center" ]
+            [ View.typography [ class "mb-4 text-4xl" ] "Welcome"
+            , View.button [ onClick SignOut ] [ View.typography [] "Sign Out" ]
+            ]
+        ]
+    }

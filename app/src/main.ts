@@ -2,8 +2,14 @@ import { Session } from "@supabase/supabase-js";
 import { Elm } from "./Main.elm";
 import { supabaseClient } from "./supabase-client";
 
+const node = document.getElementById("root");
+
+if (!node) {
+  throw new Error("#root element is missing from html");
+}
+
 const app = Elm.Main.init({
-  node: document.body,
+  node: node,
   flags: null,
 });
 
@@ -28,6 +34,12 @@ app.ports.interopFromElm.subscribe((fromElm) => {
 
     case "SignOut":
       supabaseClient.auth.signOut();
+      break;
+
+    case "ProfileSubscribe":
+      const userId = fromElm.data.userId;
+      // supabaseClient.from<definitions["profile"]>("profile");
+      break;
   }
 });
 
