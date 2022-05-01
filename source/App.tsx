@@ -1,5 +1,12 @@
 import { LoadingButton } from "@mui/lab";
-import { Box, Button, CircularProgress, Typography } from "@mui/material";
+import {
+  Avatar,
+  Box,
+  Button,
+  CircularProgress,
+  Toolbar,
+  Typography,
+} from "@mui/material";
 import { cmd } from "elm-ts";
 import { Html } from "elm-ts/lib/React";
 import * as Sub from "elm-ts/lib/Sub";
@@ -103,23 +110,30 @@ const viewLoggedIn: Html<Msg> = (dispatch) => (
       width: "100%",
       height: "100%",
       display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
       flexDirection: "column",
-      p: 2,
     }}
   >
-    <Typography variant="h4" sx={{ marginBottom: 2 }}>
-      Welcome
-    </Typography>
-    <Button
-      size="large"
-      fullWidth
-      variant="outlined"
-      onClick={() => dispatch({ type: "LogOut" })}
+    <Toolbar>
+      <Typography sx={{ flex: 1 }} variant="h6">
+        Home
+      </Typography>
+      <Avatar />
+    </Toolbar>
+
+    <Box
+      sx={{
+        padding: 2,
+      }}
     >
-      Logout
-    </Button>
+      <Button
+        size="large"
+        fullWidth
+        variant="outlined"
+        onClick={() => dispatch({ type: "LogOut" })}
+      >
+        Logout
+      </Button>
+    </Box>
   </Box>
 );
 
