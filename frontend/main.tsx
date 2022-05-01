@@ -45,15 +45,19 @@ const main = program(App.init, App.update, App.view, App.subscriptions);
 
 const rootElement = document.getElementById("root");
 
-if (rootElement) {
-  const root = createRoot(rootElement);
-
-  Html.run(main, (dom) => {
-    root.render(
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        {dom}
-      </ThemeProvider>
-    );
-  });
+if (!rootElement) {
+  throw new Error("Failed to get root element");
 }
+
+const root = createRoot(rootElement);
+
+const renderer = (dom: React.Dom) => {
+  root.render(
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      {dom}
+    </ThemeProvider>
+  );
+};
+
+Html.run(main, renderer);
