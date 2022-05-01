@@ -7,6 +7,7 @@ import * as Sub from "elm-ts/lib/Sub";
 import * as React from "react";
 import * as Rx from "rxjs";
 import { supabaseClient } from "./supabase";
+import * as View from "./View";
 
 //  Model
 
@@ -64,7 +65,7 @@ const logOut = (): cmd.Cmd<Msg> => {
 const loginCancel = (): cmd.Cmd<Msg> => {
   return new Rx.Observable(() => {
     window.onbeforeunload = function () {
-      return "Are you sure you want to leave?";
+      return "Cancel login?";
     };
   });
 };
