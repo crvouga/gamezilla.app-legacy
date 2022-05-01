@@ -1,12 +1,11 @@
 import { LoadingButton } from "@mui/lab";
 import { Box, Button, CircularProgress, Typography } from "@mui/material";
-import * as Supabase from "@supabase/supabase-js";
 import { cmd } from "elm-ts";
 import { Html } from "elm-ts/lib/React";
 import * as Sub from "elm-ts/lib/Sub";
 import * as React from "react";
 import * as Rx from "rxjs";
-import { supabaseClient } from "./supabase";
+import * as Supabase from "./Supabase";
 
 //  Model
 
@@ -45,6 +44,28 @@ export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
     case "LogInCancel":
       return [{ type: "LoggedOut" }, loginCancel()];
   }
+};
+
+// Commands
+
+const logIn = (): cmd.Cmd<Msg> => {
+  return new Rx.Observable(() => {
+    Supabase.client.auth.signIn({ provider: "google" });
+  });
+};
+
+const logOut = (): cmd.Cmd<Msg> => {
+  return new Rx.Observable(() => {
+    Supabase.client.auth.signOut();
+  });
+};
+
+const loginCancel = (): cmd.Cmd<Msg> => {
+  return new Rx.Observable(() => {
+    window.onbeforeunload = function () {
+      return "Cancel login?";
+    };
+  });
 };
 
 //  View
@@ -163,28 +184,6 @@ const viewLoading =
     );
   };
 
-// Commands
-
-const logIn = (): cmd.Cmd<Msg> => {
-  return new Rx.Observable(() => {
-    supabaseClient.auth.signIn({ provider: "google" });
-  });
-};
-
-const logOut = (): cmd.Cmd<Msg> => {
-  return new Rx.Observable(() => {
-    supabaseClient.auth.signOut();
-  });
-};
-
-const loginCancel = (): cmd.Cmd<Msg> => {
-  return new Rx.Observable(() => {
-    window.onbeforeunload = function () {
-      return "Cancel login?";
-    };
-  });
-};
-
 // Subscriptions
 
 const authSubs = new Rx.Subject<Msg>();
@@ -209,10 +208,10 @@ export const sessionToMsg = (session: Supabase.Session | null): Msg => {
 };
 
 const timeout = setTimeout(() => {
-  authSubs.next(sessionToMsg(supabaseClient.auth.session()));
+  authSubs.next(sessionToMsg(Supabase.client.auth.session()));
 }, 1000);
 
-const { data } = supabaseClient.auth.onAuthStateChange((state, session) => {
+const { data } = Supabase.client.auth.onAuthStateChange((state, session) => {
   clearTimeout(timeout);
   authSubs.next(sessionToMsg(session));
 });
