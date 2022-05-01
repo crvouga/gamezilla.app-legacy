@@ -18,17 +18,17 @@ import * as Supabase from "./Supabase";
 
 export type Model =
   | { type: "Loading" }
-  | { type: "LoggedIn"; userId: string }
   | { type: "LoggedOut" }
   | { type: "LoggingIn" }
-  | { type: "LoggingOut" };
+  | { type: "LoggingOut" }
+  | { type: "LoggedIn"; userId: string };
 
 export const init: [Model, cmd.Cmd<Msg>] = [{ type: "Loading" }, cmd.none];
 
 //  Update
 
 export type Msg =
-  | { type: "LoggedIn"; userId: string }
+  | { type: "LoggedIn"; userId: string; defaultName: string }
   | { type: "LoggedOut" }
   | { type: "LogIn" }
   | { type: "LogInCancel" }
@@ -215,7 +215,7 @@ export const sessionToMsg = (session: Supabase.Session | null): Msg => {
     "";
 
   if (userId) {
-    return { type: "LoggedIn", userId };
+    return { type: "LoggedIn", userId, defaultName };
   }
 
   return { type: "LoggedOut" };
