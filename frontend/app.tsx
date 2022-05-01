@@ -26,8 +26,8 @@ export type Msg =
   | { type: "LoggedIn"; userId: string }
   | { type: "LoggedOut" }
   | { type: "LogIn" }
-  | { type: "LogOut" }
-  | { type: "LogInCancel" };
+  | { type: "LogInCancel" }
+  | { type: "LogOut" };
 
 export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
