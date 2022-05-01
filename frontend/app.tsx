@@ -7,7 +7,6 @@ import * as Sub from "elm-ts/lib/Sub";
 import * as React from "react";
 import * as Rx from "rxjs";
 import { supabaseClient } from "./supabase";
-import * as View from "./View";
 
 //  Model
 
@@ -48,59 +47,6 @@ export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   }
 };
 
-// Commands
-
-const logIn = (): cmd.Cmd<Msg> => {
-  return new Rx.Observable(() => {
-    supabaseClient.auth.signIn({ provider: "google" });
-  });
-};
-
-const logOut = (): cmd.Cmd<Msg> => {
-  return new Rx.Observable(() => {
-    supabaseClient.auth.signOut();
-  });
-};
-
-const loginCancel = (): cmd.Cmd<Msg> => {
-  return new Rx.Observable(() => {
-    window.onbeforeunload = function () {
-      return "Cancel login?";
-    };
-  });
-};
-
-// Subscriptions
-
-export const sessionToMsg = (session: Supabase.Session | null): Msg => {
-  const userId = session?.user?.id;
-  const defaultName =
-    session?.user?.user_metadata?.name ??
-    session?.user?.user_metadata?.full_name ??
-    "";
-
-  if (userId) {
-    return { type: "LoggedIn", userId };
-  }
-
-  return { type: "LoggedOut" };
-};
-
-const authSubs = new Rx.Subject<Msg>();
-
-const timeout = setTimeout(() => {
-  authSubs.next(sessionToMsg(supabaseClient.auth.session()));
-}, 1000);
-
-const { data } = supabaseClient.auth.onAuthStateChange((state, session) => {
-  clearTimeout(timeout);
-  authSubs.next(sessionToMsg(session));
-});
-
-export const subscriptions = (model: Model): Sub.Sub<Msg> => {
-  return authSubs;
-};
-
 //  View
 
 export const view = (model: Model): Html<Msg> => {
@@ -122,7 +68,9 @@ export const view = (model: Model): Html<Msg> => {
     case "LoggingIn":
       return viewLoading({
         subtitle: "Logging in...",
-        onCancel: { type: "LogInCancel" },
+        onCancel: {
+          type: "LogInCancel",
+        },
       });
   }
 };
@@ -214,3 +162,57 @@ const viewLoading =
       </Box>
     );
   };
+
+// Commands
+
+const logIn = (): cmd.Cmd<Msg> => {
+  return new Rx.Observable(() => {
+    supabaseClient.auth.signIn({ provider: "google" });
+  });
+};
+
+const logOut = (): cmd.Cmd<Msg> => {
+  return new Rx.Observable(() => {
+    supabaseClient.auth.signOut();
+  });
+};
+
+const loginCancel = (): cmd.Cmd<Msg> => {
+  return new Rx.Observable(() => {
+    window.onbeforeunload = function () {
+      return "Cancel login?";
+    };
+  });
+};
+
+// Subscriptions
+
+const authSubs = new Rx.Subject<Msg>();
+
+export const subscriptions = (model: Model): Sub.Sub<Msg> => {
+  return authSubs;
+};
+
+export const sessionToMsg = (session: Supabase.Session | null): Msg => {
+  const userId = session?.user?.id;
+
+  const defaultName =
+    session?.user?.user_metadata?.name ??
+    session?.user?.user_metadata?.full_name ??
+    "";
+
+  if (userId) {
+    return { type: "LoggedIn", userId };
+  }
+
+  return { type: "LoggedOut" };
+};
+
+const timeout = setTimeout(() => {
+  authSubs.next(sessionToMsg(supabaseClient.auth.session()));
+}, 1000);
+
+const { data } = supabaseClient.auth.onAuthStateChange((state, session) => {
+  clearTimeout(timeout);
+  authSubs.next(sessionToMsg(session));
+});
