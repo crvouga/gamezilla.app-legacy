@@ -1,207 +1,77 @@
-import { Box, CircularProgress, Typography } from "@mui/material";
-import { Session } from "@supabase/supabase-js";
-import { eventChannel } from "redux-saga";
-import { fork, put, takeEvery } from "redux-saga/effects";
-import * as ProfileCreate from "./Screen/ProfileCreate";
-import * as SignIn from "./Screen/SignIn";
-import { definitions, supabaseClient } from "./supabase";
+import { LoadingButton } from "@mui/lab";
+import { Box, Button, CircularProgress, Typography } from "@mui/material";
+import * as Supabase from "@supabase/supabase-js";
+import { cmd } from "elm-ts";
+import { Html } from "elm-ts/lib/React";
+import * as Sub from "elm-ts/lib/Sub";
+import * as React from "react";
+import * as Rx from "rxjs";
+import { supabaseClient } from "./supabase";
 
-/*
+//  Model
 
+export type Model =
+  | { type: "Loading" }
+  | { type: "LoggedIn"; userId: string }
+  | { type: "LoggedOut" }
+  | { type: "LoggingIn" }
+  | { type: "LoggingOut" };
 
+export const init: [Model, cmd.Cmd<Msg>] = [{ type: "Loading" }, cmd.none];
 
-State
+//  Update
 
+export type Msg =
+  | { type: "LoggedIn"; userId: string }
+  | { type: "LoggedOut" }
+  | { type: "LogIn" }
+  | { type: "LogOut" }
+  | { type: "LogInCancel" };
 
+export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
+  switch (msg.type) {
+    case "LoggedIn":
+      return [{ type: "LoggedIn", userId: msg.userId }, cmd.none];
 
-*/
+    case "LoggedOut":
+      return [{ type: "LoggedOut" }, cmd.none];
 
-type IProfile = {
-  userId: string;
-  avatarUrl: string;
-  name: string;
-  username: string;
-};
+    case "LogIn":
+      return [{ type: "LoggingIn" }, logIn()];
 
-export type IState =
-  | {
-      type: "AuthLoading";
-    }
-  | {
-      type: "AuthNotFound";
-      child: SignIn.IState;
-    }
-  | {
-      type: "ProfileLoading";
-      defaultName: string;
-      userId: string;
-    }
-  | {
-      type: "ProfileNotFound";
-      defaultName: string;
-      userId: string;
-      child: ProfileCreate.IState;
-    }
-  | {
-      type: "ProfileFound";
-      userId: string;
-      defaultName: string;
-      profile: IProfile;
-    };
+    case "LogOut":
+      return [{ type: "LoggingOut" }, logOut()];
 
-export const initialState: IState = {
-  type: "AuthLoading",
-};
-
-/*
-
-
-
-Actions
-
-
-
- */
-
-export type IAction =
-  | {
-      type: "account/AuthNotFound";
-    }
-  | {
-      type: "account/AuthFound";
-      payload: {
-        userId: string;
-        defaultName: string;
-      };
-    }
-  | {
-      type: "account/ProfileFound";
-      payload: {
-        profile: IProfile;
-      };
-    }
-  | {
-      type: "account/ProfileNotFound";
-    }
-  | {
-      type: "GotProfileCreate";
-      payload: ProfileCreate.IAction;
-    }
-  | {
-      type: "GotSignIn";
-      payload: SignIn.IAction;
-    }
-  | {
-      type: "UrlChanged";
-      payload: string;
-    };
-
-/*
-
-
-Reducer
-
-
-*/
-
-export const reducer = (state: IState, action: IAction): IState => {
-  switch (state.type) {
-    case "AuthLoading":
-      switch (action.type) {
-        case "account/AuthNotFound":
-          return { type: "AuthNotFound", child: SignIn.initialState };
-
-        case "account/AuthFound":
-          return {
-            type: "ProfileLoading",
-            userId: action.payload.userId,
-            defaultName: action.payload.defaultName,
-          };
-
-        default:
-          return state;
-      }
-
-    case "AuthNotFound":
-      switch (action.type) {
-        case "GotSignIn":
-          return {
-            ...state,
-            child: SignIn.reducer(state.child, action.payload),
-          };
-
-        default:
-          return state;
-      }
-
-    case "ProfileFound":
-      switch (action.type) {
-        case "account/ProfileFound":
-          return { ...state, profile: action.payload.profile };
-
-        case "account/ProfileNotFound":
-          return {
-            ...state,
-            type: "ProfileNotFound",
-            child: ProfileCreate.toInitialState(state),
-          };
-
-        default:
-          return state;
-      }
-
-    case "ProfileLoading":
-      switch (action.type) {
-        case "account/ProfileFound":
-          return {
-            ...state,
-            type: "ProfileFound",
-            profile: action.payload.profile,
-          };
-
-        case "account/ProfileNotFound":
-          return {
-            ...state,
-            type: "ProfileNotFound",
-            child: ProfileCreate.toInitialState(state),
-          };
-
-        default:
-          return state;
-      }
-
-    case "ProfileNotFound":
-      switch (action.type) {
-        case "account/ProfileFound":
-          return {
-            ...state,
-            type: "ProfileFound",
-            profile: action.payload.profile,
-          };
-
-        case "GotProfileCreate":
-          return {
-            ...state,
-            child: ProfileCreate.reducer(state.child, action.payload),
-          };
-
-        default:
-          return state;
-      }
+    case "LogInCancel":
+      return [{ type: "LoggedOut" }, loginCancel()];
   }
 };
 
-/*
- 
+// Commands
 
+const logIn = (): cmd.Cmd<Msg> => {
+  return new Rx.Observable(() => {
+    supabaseClient.auth.signIn({ provider: "google" });
+  });
+};
 
-Middleware
+const logOut = (): cmd.Cmd<Msg> => {
+  return new Rx.Observable(() => {
+    supabaseClient.auth.signOut();
+  });
+};
 
+const loginCancel = (): cmd.Cmd<Msg> => {
+  return new Rx.Observable(() => {
+    window.onbeforeunload = function () {
+      return "Are you sure you want to leave?";
+    };
+  });
+};
 
+// Subscriptions
 
-*/
-
-export const sessionToAction = (session: Session | null): IAction => {
+export const sessionToMsg = (session: Supabase.Session | null): Msg => {
   const userId = session?.user?.id;
   const defaultName =
     session?.user?.user_metadata?.name ??
@@ -209,205 +79,137 @@ export const sessionToAction = (session: Session | null): IAction => {
     "";
 
   if (userId) {
-    return {
-      type: "account/AuthFound",
-      payload: {
-        userId,
-        defaultName,
-      },
-    };
+    return { type: "LoggedIn", userId };
   }
 
-  return {
-    type: "account/AuthNotFound",
-  };
+  return { type: "LoggedOut" };
 };
 
-type Middleware<TState, TAction> = (store: {
-  getState: () => TState;
-  dispatch: (action: TAction) => void;
-}) => (next: (action: TAction) => void) => (action: TAction) => void;
+const authSubs = new Rx.Subject<Msg>();
 
-type IMiddleware = Middleware<IState, IAction>;
+const timeout = setTimeout(() => {
+  authSubs.next(sessionToMsg(supabaseClient.auth.session()));
+}, 1000);
 
-const authMiddleware: IMiddleware = ({ getState, dispatch }) => {
-  const timeoutHandler = setTimeout(() => {
-    dispatch(sessionToAction(supabaseClient.auth.session()));
-  }, 1000);
-
-  supabaseClient.auth.onAuthStateChange((_event, session) => {
-    clearTimeout(timeoutHandler);
-    dispatch(sessionToAction(session));
-  });
-
-  return (next) => async (action) => {
-    next(action);
-
-    const state = getState();
-
-    if (state.type === "AuthNotFound" && action.type === "GotSignIn") {
-    }
-  };
-};
-
-const rowToProfile = (row: definitions["profile"]): IProfile => {
-  return {
-    userId: row.id,
-    avatarUrl: row.avatar_url,
-    name: row.name,
-    username: row.username,
-  };
-};
-
-const getProfile = async ({
-  userId,
-}: {
-  userId: string;
-}): Promise<IProfile | null> => {
-  const { data } = await supabaseClient
-    .from<definitions["profile"]>("profile")
-    .select("*")
-    .eq("id", userId)
-    .single();
-
-  if (data) {
-    return rowToProfile(data);
-  }
-
-  return null;
-};
-
-const profileToAction = (profile: IProfile | null): IAction => {
-  if (profile) {
-    return {
-      type: "account/ProfileFound",
-      payload: {
-        profile,
-      },
-    };
-  }
-
-  return {
-    type: "account/ProfileNotFound",
-  };
-};
-
-const profileMiddleware: IMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    next(action);
-
-    if (action.type === "account/AuthFound") {
-      const { userId } = action.payload;
-
-      const result = await getProfile({ userId });
-
-      dispatch(profileToAction(result));
-
-      supabaseClient
-        .from<definitions["profile"]>(`profile:id=eq.${userId}`)
-        .on("INSERT", (payload) => {
-          dispatch(profileToAction(rowToProfile(payload.new)));
-        })
-        .on("UPDATE", (payload) => {
-          dispatch(profileToAction(rowToProfile(payload.new)));
-        })
-        .on("DELETE", () => {
-          dispatch(profileToAction(null));
-        })
-        .subscribe();
-    }
-  };
-
-const authChan = eventChannel<IAction>((emit) => {
-  setTimeout(() => {
-    emit(sessionToAction(supabaseClient.auth.session()));
-  }, 200);
-
-  const subscription = supabaseClient.auth.onAuthStateChange(
-    (_event, session) => {
-      emit(sessionToAction(session));
-    }
-  );
-
-  return () => {
-    subscription.data?.unsubscribe();
-  };
+const { data } = supabaseClient.auth.onAuthStateChange((state, session) => {
+  clearTimeout(timeout);
+  authSubs.next(sessionToMsg(session));
 });
 
-export function* saga() {
-  yield takeEvery(authChan, function* (action) {
-    yield put(action);
-  });
+export const subscriptions = (model: Model): Sub.Sub<Msg> => {
+  return authSubs;
+};
 
-  yield fork(SignIn.saga);
+//  View
 
-  yield fork(ProfileCreate.saga);
-}
+export const view = (model: Model): Html<Msg> => {
+  switch (model.type) {
+    case "Loading":
+      return viewLoading({ subtitle: "Loading..." });
 
-/*
+    case "LoggedIn":
+      return viewLoggedIn;
 
+    case "LoggedOut":
+      return viewLoggedOut;
 
-
-View
-
-
-
-*/
-
-export const view = ({
-  state,
-  dispatch,
-}: {
-  state: IState;
-  dispatch: (action: IAction) => void;
-}) => {
-  switch (state.type) {
-    case "AuthLoading":
-      return viewLoadingScreen({ subtitle: "Signing in..." });
-
-    case "AuthNotFound":
-      return SignIn.view({
-        state: state.child,
-        dispatch: (action) => {
-          dispatch({ type: "GotSignIn", payload: action });
-        },
+    case "LoggingOut":
+      return viewLoading({
+        subtitle: "Logging out...",
       });
 
-    case "ProfileLoading":
-      return viewLoadingScreen({ subtitle: "Loading profile..." });
-
-    case "ProfileNotFound":
-      return ProfileCreate.view({
-        state: state.child,
-        dispatch: (action) => {
-          dispatch({ type: "GotProfileCreate", payload: action });
-        },
+    case "LoggingIn":
+      return viewLoading({
+        subtitle: "Logging in...",
+        onCancel: { type: "LogInCancel" },
       });
-
-    case "ProfileFound":
-      return <>Loaded</>;
   }
 };
 
-const viewLoadingScreen = ({ subtitle }: { subtitle: string }) => {
-  return (
-    <Box
-      sx={{
-        position: "fixed",
-        width: "100%",
-        height: "100%",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        flexDirection: "column",
+const viewLoggedIn: Html<Msg> = (dispatch) => (
+  <Box
+    sx={{
+      position: "fixed",
+      width: "100%",
+      height: "100%",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      flexDirection: "column",
+      p: 2,
+    }}
+  >
+    <Typography variant="h4" sx={{ marginBottom: 2 }}>
+      Welcome
+    </Typography>
+    <Button
+      size="large"
+      fullWidth
+      variant="outlined"
+      onClick={() => dispatch({ type: "LogOut" })}
+    >
+      Logout
+    </Button>
+  </Box>
+);
+
+const viewLoggedOut: Html<Msg> = (dispatch) => (
+  <Box
+    sx={{
+      position: "fixed",
+      width: "100%",
+      height: "100%",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      p: 2,
+    }}
+  >
+    <Typography variant="h1" sx={{ marginBottom: 2 }}>
+      Gamezilla
+    </Typography>
+    <LoadingButton
+      variant="outlined"
+      size="large"
+      fullWidth
+      onClick={() => {
+        dispatch({ type: "LogIn" });
       }}
     >
-      <CircularProgress sx={{ marginBottom: 2 }} />
-      <Typography variant="subtitle2" color="text.secondary">
-        {subtitle}
-      </Typography>
-    </Box>
-  );
-};
+      Continue With Google
+    </LoadingButton>
+  </Box>
+);
+
+const viewLoading =
+  ({ subtitle, onCancel }: { subtitle: string; onCancel?: Msg }): Html<Msg> =>
+  (dispatch) => {
+    return (
+      <Box
+        sx={{
+          position: "fixed",
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          flexDirection: "column",
+        }}
+      >
+        <CircularProgress sx={{ marginBottom: 2 }} />
+        <Typography
+          variant="subtitle1"
+          color="text.secondary"
+          sx={{ marginBottom: 2 }}
+        >
+          {subtitle}
+        </Typography>
+        {onCancel && (
+          <Button variant="outlined" onClick={() => dispatch(onCancel)}>
+            Cancel
+          </Button>
+        )}
+      </Box>
+    );
+  };

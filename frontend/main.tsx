@@ -1,95 +1,59 @@
-import { createTheme, CssBaseline, ThemeProvider } from "@mui/material";
+import {
+  createTheme,
+  CssBaseline,
+  responsiveFontSizes,
+  ThemeProvider,
+} from "@mui/material";
 import { green } from "@mui/material/colors";
-import { configureStore } from "@reduxjs/toolkit";
-import React, { StrictMode } from "react";
-import ReactDOM from "react-dom";
-import { channel, runSaga, RunSagaOptions, stdChannel } from "redux-saga";
-import { fork, takeEvery } from "redux-saga/effects";
+import { programWithDebugger } from "elm-ts/lib/Debug/Html";
+import * as Html from "elm-ts/lib/Html";
+import * as React from "elm-ts/lib/React";
+import { createRoot } from "react-dom/client";
 import * as App from "./App";
 
-/* 
+// Theme
 
-
-
-
-*/
-
-const rootReducer = (
-  maybeState: App.IState | undefined,
-  action: App.IAction
-): App.IState => {
-  const previousState = maybeState ?? App.initialState;
-
-  const nextState = App.reducer(previousState, action) ?? previousState;
-
-  return nextState;
-};
-
-const store = configureStore({
-  reducer: rootReducer,
-});
-
-const sagaChan = stdChannel<App.IAction>();
-
-const myIO: RunSagaOptions<App.IAction, App.IState> = {
-  channel: sagaChan,
-
-  dispatch(output) {
-    store.dispatch(output);
-  },
-
-  getState() {
-    return store.getState();
-  },
-};
-
-runSaga(myIO, App.saga);
-
-/* 
-
-
-
-
-*/
-
-const theme = createTheme({
-  palette: {
-    mode: "dark",
-    primary: green,
-  },
-  typography: {
-    fontFamily: ["Nunito"].join(","),
-  },
-  components: {
-    MuiButton: {
-      styleOverrides: {
-        root: {
-          borderRadius: "120px",
+const theme = responsiveFontSizes(
+  createTheme({
+    palette: {
+      mode: "dark",
+      primary: green,
+    },
+    typography: {
+      fontFamily: ["Nunito"].join(","),
+    },
+    components: {
+      MuiButton: {
+        styleOverrides: {
+          root: {
+            borderRadius: "120px",
+          },
         },
       },
     },
-  },
-});
+  })
+);
 
-/* 
+// Program
 
+const program =
+  process.env.NODE_ENV === "production" ? React.program : programWithDebugger;
 
+const main = program(App.init, App.update, App.view, App.subscriptions);
 
+// Rendering
 
-*/
+const rootElement = document.getElementById("root");
 
-const render = () => {
-  ReactDOM.render(
-    <StrictMode>
+if (rootElement) {
+  const root = createRoot(rootElement);
+
+  Html.run(main, (dom) => {
+    root.render(
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <App.view dispatch={store.dispatch} state={store.getState()} />
+        {dom}
       </ThemeProvider>
-    </StrictMode>,
-    document.getElementById("root")
-  );
-};
-
-render();
-
-store.subscribe(render);
+    );
+  });
+}
