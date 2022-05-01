@@ -1,15 +1,39 @@
 {
-  "files": [],
+  "compilerOptions": {
+    "target": "ESNext",
+    "useDefineForClassFields": true,
+    "lib": [
+      "DOM",
+      "DOM.Iterable",
+      "ESNext"
+    ],
+    "allowJs": false,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "noFallthroughCasesInSwitch": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": false,
+    "jsx": "react",
+    "rootDir": ".",
+    "composite": true,
+    "skipDefaultLibCheck": true,
+  },
+  
+  "exclude": [
+    "node_modules"
+  ],
+  "include": [
+    "**/*.ts"
+  ],
   "references": [
     {
-      "path": "./backend"
-    },
-    {
-      "path": "./common"
-    },
-    {
-      "path": "./frontend"
+      "path": "./tsconfig.node.json" 
     }
-  ],
-  "compilerOptions": {},
+  ]
 }

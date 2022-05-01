@@ -1,6 +1,0 @@
-{
-    "compilerOptions": {
-        "allowUmdGlobalAccess": true,
-        "strict": true
-    }
-}
