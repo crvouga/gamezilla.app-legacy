@@ -166,10 +166,10 @@ view model =
             viewLoading
 
         Authenticating ->
-            viewLoading
+            viewUnauthenticated True
 
         Unauthenticated ->
-            viewUnauthenticated
+            viewUnauthenticated False
 
         Authenticated ->
             viewAuthenticated
@@ -187,13 +187,13 @@ viewLoading =
     }
 
 
-viewUnauthenticated : Browser.Document Msg
-viewUnauthenticated =
+viewUnauthenticated : Bool -> Browser.Document Msg
+viewUnauthenticated isLoading =
     { title = "Sign In"
     , body =
         [ View.layout [ class "flex flex-col justify-center items-center p-4" ]
-            [ View.typography [ class "mb-4 text-5xl" ] "Gamezilla"
-            , View.button [ class "w-full", onClick SignInWithGoogle ] [ View.typography [] "Continue with Google" ]
+            [ View.typography [ class "mb-4 text-4xl" ] "Gamezilla"
+            , View.button { title = "Continue with Google", class = "w-full" }
             ]
         ]
     }
@@ -204,8 +204,8 @@ viewAuthenticated =
     { title = "Welcome"
     , body =
         [ View.layout [ class "flex flex-col justify-center items-center" ]
-            [ View.typography [ class "mb-4 text-5xl" ] "Welcome"
-            , View.button [ onClick SignOut ] [ View.typography [] "Sign Out" ]
+            [ View.typography [ class "mb-4 text-4xl" ] "Welcome"
+            , View.button { class = "w-full", title = "Sign Out" }
             ]
         ]
     }

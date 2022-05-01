@@ -1,7 +1,7 @@
 module View exposing (..)
 
-import Html exposing (..)
-import Html.Attributes exposing (..)
+import Html
+import Html.Attributes as Attributes
 import Svg
 import Svg.Attributes
 
@@ -10,25 +10,23 @@ import Svg.Attributes
 -- typography
 
 
-typography : List (Attribute msg) -> String -> Html.Html msg
-typography attributes text_ =
-    div
-        (List.concat [ [ class "text-xl font-bold text-white" ], attributes ])
-        [ text text_ ]
+typography : List (Html.Attribute msg) -> String -> Html.Html msg
+typography attributes text =
+    Html.div
+        (List.concat [ [ Attributes.class "text-xl font-bold text-white" ], attributes ])
+        [ Html.text text ]
 
 
 
 -- loader
 
 
-spinner : List (Attribute msg) -> Html msg
+spinner : List (Html.Attribute msg) -> Html.Html msg
 spinner attributes =
     Svg.svg
         ([ Svg.Attributes.class "w-12 h-12 mr-2 text-gray-600 animate-spin fill-green-600"
          , Svg.Attributes.fill "currentColor"
-         , attribute "role" "status"
          , Svg.Attributes.viewBox "0 0 100 101"
-         , attribute "xmlns" "http://www.w3.org/2000/svg"
          ]
             ++ attributes
         )
@@ -51,11 +49,11 @@ spinner attributes =
 -- layout
 
 
-layout : List (Attribute msg) -> List (Html msg) -> Html msg
+layout : List (Html.Attribute msg) -> List (Html.Html msg) -> Html.Html msg
 layout attributes children =
-    div
+    Html.div
         (List.append
-            [ class "bg-black absolute w-full h-full"
+            [ Attributes.class "bg-black absolute w-full h-full"
             ]
             attributes
         )
@@ -66,8 +64,32 @@ layout attributes children =
 -- button
 
 
-button : List (Html.Attribute msg) -> List (Html.Html msg) -> Html.Html msg
-button attributes children =
+baseClassList : List String
+baseClassList =
+    [ "text-white"
+    , "border"
+    , "border-white"
+    , "rounded-full"
+    , "hover:text-gray-300"
+    , "hover:border-gray-300"
+    , "focus:outline-none"
+    , "font-medium"
+    , "text-lg"
+    , "px-5"
+    , "py-2.5"
+    , "text-center"
+    ]
+
+
+type alias ButtonConfig =
+    { class : String
+    , title : String
+    }
+
+
+button : ButtonConfig -> Html.Html msg
+button { class, title } =
     Html.button
-        (List.concat [ [ class "text-white bg-green-600 focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center" ], attributes ])
-        children
+        [ Attributes.class (String.join " " (List.append baseClassList [ class ]))
+        ]
+        [ Html.text title ]
