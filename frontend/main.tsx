@@ -9,7 +9,7 @@ import { programWithDebugger } from "elm-ts/lib/Debug/Html";
 import * as Html from "elm-ts/lib/Html";
 import * as React from "elm-ts/lib/React";
 import { createRoot } from "react-dom/client";
-import * as App from "./App";
+import * as App from "./app";
 
 // Theme
 

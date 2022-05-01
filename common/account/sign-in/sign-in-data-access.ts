@@ -55,7 +55,7 @@ export const dataAccess: IDataAccess = {
 
     return Result.Err(
       response.type === "error"
-        ? response.error?.message ?? "Sign in failed"
+        ? response.error?.description ?? "Sign in failed"
         : "Sign in failed"
     );
   },
