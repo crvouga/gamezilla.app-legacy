@@ -1,5 +1,0 @@
-export const COLYSEUS_DEV_PORT = 8001;
-export const COLYSEUS_DEV_URL = `ws://localhost:${COLYSEUS_DEV_PORT}`;
-export const RoomNames = {
-  Game: "Game",
-} as const;
