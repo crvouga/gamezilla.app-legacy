@@ -1,9 +1,11 @@
 import { LoadingButton } from "@mui/lab";
 import {
   Avatar,
+  Backdrop,
   Box,
   Button,
   CircularProgress,
+  LinearProgress,
   Toolbar,
   Typography,
 } from "@mui/material";
@@ -85,21 +87,16 @@ export const view = (model: Model): Html<Msg> => {
     case "LoggedIn":
       return viewLoggedIn;
 
-    case "LoggedOut":
-      return viewLoggedOut;
-
     case "LoggingOut":
       return viewLoading({
         subtitle: "Logging out...",
       });
 
+    case "LoggedOut":
+      return viewLoggedOut({ isLoading: false });
+
     case "LoggingIn":
-      return viewLoading({
-        subtitle: "Logging in...",
-        onCancel: {
-          type: "LogInCancel",
-        },
-      });
+      return viewLoggedOut({ isLoading: true });
   }
 };
 
@@ -137,37 +134,42 @@ const viewLoggedIn: Html<Msg> = (dispatch) => (
   </Box>
 );
 
-const viewLoggedOut: Html<Msg> = (dispatch) => (
-  <Box
-    sx={{
-      position: "fixed",
-      width: "100%",
-      height: "100%",
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-      justifyContent: "center",
-      p: 2,
-    }}
-  >
-    <Typography variant="h1" sx={{ marginBottom: 2 }}>
-      Gamezilla
-    </Typography>
-    <LoadingButton
-      variant="outlined"
-      size="large"
-      fullWidth
-      onClick={() => {
-        dispatch({ type: "LogIn" });
-      }}
-    >
-      Continue With Google
-    </LoadingButton>
-  </Box>
-);
+const viewLoggedOut =
+  ({ isLoading }: { isLoading: boolean }): Html<Msg> =>
+  (dispatch) =>
+    (
+      <Box
+        sx={{
+          position: "fixed",
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          p: 2,
+        }}
+      >
+        <Typography variant="h1" sx={{ marginBottom: 2 }}>
+          Gamezilla
+        </Typography>
+
+        <LoadingButton
+          variant="outlined"
+          size="large"
+          fullWidth
+          loading={isLoading}
+          onClick={() => {
+            dispatch({ type: "LogIn" });
+          }}
+        >
+          Continue With Google
+        </LoadingButton>
+      </Box>
+    );
 
 const viewLoading =
-  ({ subtitle, onCancel }: { subtitle: string; onCancel?: Msg }): Html<Msg> =>
+  ({ subtitle }: { subtitle: string }): Html<Msg> =>
   (dispatch) => {
     return (
       <Box
@@ -189,11 +191,6 @@ const viewLoading =
         >
           {subtitle}
         </Typography>
-        {onCancel && (
-          <Button variant="outlined" onClick={() => dispatch(onCancel)}>
-            Cancel
-          </Button>
-        )}
       </Box>
     );
   };
