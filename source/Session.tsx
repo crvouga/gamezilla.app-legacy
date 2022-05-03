@@ -1,37 +1,28 @@
+import { pipe } from "fp-ts/lib/function";
+import * as Option from "fp-ts/lib/Option";
+import * as Task from "fp-ts/lib/Task";
 import * as Rx from "rxjs";
 import * as Supabase from "./Supabase";
 
-/*
-
-
-Model
-
-
-*/
-
-type Session = {
+export type Session = {
   userId: string;
   defaultName: string;
 };
 
-/* 
-
-
-Update
-
-
-*/
-
 export const login = () => {
-  return new Rx.Observable(() => {
-    Supabase.client.auth.signIn({ provider: "google" });
-  });
+  return pipe(
+    () => Supabase.client.auth.signIn({ provider: "google" }),
+    Task.map((response) => fromSupabaseSession(response.session)),
+    Rx.of
+  );
 };
 
 export const logout = () => {
-  return new Rx.Observable(() => {
-    Supabase.client.auth.signOut();
-  });
+  return pipe(
+    () => Supabase.client.auth.signOut(),
+    Task.map(() => Option.none),
+    Rx.of
+  );
 };
 
 /* 
@@ -44,7 +35,7 @@ Subscription
 
 export const fromSupabaseSession = (
   session: Supabase.Session | null
-): Session | null => {
+): Option.Option<Session> => {
   const userId = session?.user?.id;
 
   const defaultName =
@@ -53,13 +44,13 @@ export const fromSupabaseSession = (
     "";
 
   if (userId) {
-    return { userId, defaultName };
+    return Option.some({ userId, defaultName });
   }
 
-  return null;
+  return Option.none;
 };
 
-export const subscription = new Rx.Subject<Session | null>();
+export const subscription = new Rx.Subject<Option.Option<Session>>();
 
 setTimeout(() => {
   subscription.next(fromSupabaseSession(Supabase.client.auth.session()));

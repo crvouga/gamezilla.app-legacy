@@ -1,4 +1,4 @@
-import { Cancel, Close, Logout } from "@mui/icons-material";
+import { Close } from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
 import {
   Avatar,
@@ -12,6 +12,7 @@ import {
 import { cmd, react } from "elm-ts";
 import * as React from "react";
 import * as ProfileAvatar from "../ProfileAvatar";
+import * as Session from "../Session";
 
 /* 
 
@@ -72,7 +73,7 @@ export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
       return [{ ...model, form: { ...model.form, ...msg } }, cmd.none];
 
     case "Logout":
-      return [model, cmd.none];
+      return [model, Session.logout()];
   }
 };
 

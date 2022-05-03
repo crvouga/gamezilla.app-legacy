@@ -1,6 +1,8 @@
 import { cmd } from "elm-ts";
 import { Sub } from "elm-ts/lib/Sub";
-import { task, option } from "fp-ts";
+import * as Task from "fp-ts/lib/Task";
+import * as Option from "fp-ts/lib/Option";
+import { flow, pipe } from "fp-ts/lib/function";
 import * as Rx from "rxjs";
 import * as Supabase from "./Supabase";
 import { definitions } from "./supabase-types";
@@ -37,44 +39,47 @@ const rowToProfile = (row: definitions["profile"]): Profile => {
   };
 };
 
-export const fetch = <Msg,>(
-  { userId }: { userId: string },
-  onSuccess: (profile: Profile) => Msg,
-  onFailure: () => Msg
-): cmd.Cmd<Msg> => {
-  return new Rx.Observable((subscriber) => {
-    Supabase.client
-      .from<definitions["profile"]>("profile")
-      .select("*")
-      .eq("id", userId)
-      .single()
-      .then((response) => {
-        subscriber.next(
-          task.of(
-            option.of(
-              option.fold(
-                onFailure,
-                onSuccess
-              )(option.map(rowToProfile)(option.fromNullable(response.data)))
-            )
-          )
-        );
-      });
-  });
+export const fetch = <Msg,>({
+  userId,
+  onSuccess,
+  onFailure,
+}: {
+  userId: string;
+  onSuccess: (profile: Profile) => Msg;
+  onFailure: () => Msg;
+}): cmd.Cmd<Msg> => {
+  return pipe(
+    async () =>
+      Supabase.client
+        .from<definitions["profile"]>("profile")
+        .select("*")
+        .eq("id", userId)
+        .single(),
+    Task.map(
+      flow(
+        (response) => response.data,
+        Option.fromNullable,
+        Option.map(rowToProfile),
+        Option.fold(onFailure, onSuccess),
+        Option.of
+      )
+    ),
+    Rx.of
+  );
 };
 
 export const subscription = ({ userId }: { userId: string }) => {
-  return new Rx.Observable<Profile | null>((subscriber) => {
+  return new Rx.Observable<Option.Option<Profile>>((subscriber) => {
     const subscription = Supabase.client
       .from<definitions["profile"]>(`profile:id=eq.${userId}`)
       .on("INSERT", (payload) => {
-        subscriber.next(rowToProfile(payload.new));
+        subscriber.next(Option.some(rowToProfile(payload.new)));
       })
       .on("UPDATE", (payload) => {
-        subscriber.next(rowToProfile(payload.new));
+        subscriber.next(Option.some(rowToProfile(payload.new)));
       })
       .on("DELETE", () => {
-        subscriber.next(null);
+        subscriber.next(Option.none);
       })
       .subscribe();
 
