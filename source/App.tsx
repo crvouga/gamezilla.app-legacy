@@ -1,11 +1,13 @@
 import { Box, CircularProgress } from "@mui/material";
 import { cmd, react, sub } from "elm-ts";
+import * as Navigation from "elm-ts/lib/Navigation";
 import { pipe } from "fp-ts/lib/function";
 import * as Option from "fp-ts/lib/Option";
 import React from "react";
 import * as Page from "./Page";
 import * as Profile from "./Profile";
 import * as Session from "./Session";
+import * as Router from "./Router";
 
 /* 
 
@@ -16,20 +18,41 @@ Model
 */
 
 export type Model =
-  | { type: "SessionLoading" }
-  | { type: "SessionNotFound"; child: Page.Login.Model }
-  | { type: "ProfileLoading"; session: Session.Session }
+  | {
+      type: "SessionLoading";
+    }
+  | {
+      type: "ProfileLoading";
+      session: Session.Session;
+    }
+  | {
+      type: "SessionNotFound";
+      page: Page.Login.Model;
+    }
   | {
       type: "ProfileNotFound";
       session: Session.Session;
-      child: Page.ProfileCreate.Model;
+      page: Page.ProfileCreate.Model;
     }
-  | { type: "ProfileFound"; profile: Profile.Profile };
+  | {
+      type: "ProfileFound";
+      profile: Profile.Profile;
+      router: Router.Model;
+    };
 
 type Flags = null;
 
-export const init = (_: Flags): [Model, cmd.Cmd<Msg>] => {
-  return [{ type: "SessionLoading" }, cmd.none];
+export const init =
+  (_flags: Flags) =>
+  (_location: Navigation.Location): [Model, cmd.Cmd<Msg>] => {
+    return [{ type: "SessionLoading" }, cmd.none];
+  };
+
+export const locationToMsg = (location: Navigation.Location): Msg => {
+  return {
+    type: "GotRouterMsg",
+    msg: Router.locationToMsg(location.pathname.substring(1)),
+  };
 };
 
 /*
@@ -45,8 +68,9 @@ export type Msg =
   | { type: "SessionNotFound" }
   | { type: "ProfileNotFound" }
   | { type: "ProfileFound"; profile: Profile.Profile }
-  | { type: "GotProfileCreateMsg"; msg: Page.ProfileCreate.Msg }
-  | { type: "GotLoginMsg"; msg: Page.Login.Msg };
+  | { type: "GotProfileCreatePageMsg"; msg: Page.ProfileCreate.Msg }
+  | { type: "GotLoginPageMsg"; msg: Page.Login.Msg }
+  | { type: "GotRouterMsg"; msg: Router.Msg };
 
 export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
@@ -56,15 +80,31 @@ export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
         Profile.fetch<Msg>({
           userId: msg.session.userId,
           onFailure: () => ({ type: "ProfileNotFound" }),
-          onSuccess: (profile) => ({ type: "ProfileFound", profile }),
+          onSuccess: (profile) => ({
+            type: "ProfileFound",
+            route: "Home",
+            profile,
+          }),
         }),
       ];
 
     case "SessionNotFound":
-      return [{ type: "SessionNotFound", child: Page.Login.init() }, cmd.none];
+      return [{ type: "SessionNotFound", page: Page.Login.init() }, cmd.none];
 
-    case "ProfileFound":
-      return [{ ...msg, type: "ProfileFound" }, cmd.none];
+    case "GotLoginPageMsg":
+      if (model.type === "SessionNotFound") {
+        const [pageModel, pageCmd] = Page.Login.update(msg.msg, model.page);
+
+        return [
+          { type: "SessionNotFound", page: pageModel },
+          pipe(
+            pageCmd,
+            cmd.map((msg) => ({ type: "GotLoginPageMsg", msg }))
+          ),
+        ];
+      }
+
+      return [model, cmd.none];
 
     case "ProfileNotFound":
       if (model.type === "ProfileLoading") {
@@ -72,7 +112,7 @@ export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
           {
             type: "ProfileNotFound",
             session: model.session,
-            child: Page.ProfileCreate.init(model.session),
+            page: Page.ProfileCreate.init(model.session),
           },
           cmd.none,
         ];
@@ -80,33 +120,43 @@ export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
 
       return [model, cmd.none];
 
-    case "GotProfileCreateMsg":
+    case "GotProfileCreatePageMsg":
       if (model.type === "ProfileNotFound") {
-        const [childModel, childCmd] = Page.ProfileCreate.update(model.session)(
+        const [pageModel, pageCmd] = Page.ProfileCreate.update(model.session)(
           msg.msg,
-          model.child
+          model.page
         );
 
         return [
-          { ...model, child: childModel },
+          {
+            ...model,
+            type: "ProfileNotFound",
+            page: pageModel,
+          },
           pipe(
-            childCmd,
-            cmd.map((msg) => ({ type: "GotProfileCreateMsg", msg }))
+            pageCmd,
+            cmd.map((msg) => ({ type: "GotProfileCreatePageMsg", msg }))
           ),
         ];
       }
 
       return [model, cmd.none];
 
-    case "GotLoginMsg":
-      if (model.type === "SessionNotFound") {
-        const [childModel, childCmd] = Page.Login.update(msg.msg, model.child);
+    case "ProfileFound":
+      return [
+        { ...msg, type: "ProfileFound", router: Router.init("") },
+        cmd.none,
+      ];
+
+    case "GotRouterMsg":
+      if (model.type === "ProfileFound") {
+        const [routerModel, routerCmd] = Router.update(msg.msg, model.router);
 
         return [
-          { ...model, child: childModel },
+          { ...model, router: routerModel },
           pipe(
-            childCmd,
-            cmd.map((msg) => ({ type: "GotLoginMsg", msg }))
+            routerCmd,
+            cmd.map((msg) => ({ type: "GotRouterMsg", msg }))
           ),
         ];
       }
@@ -133,18 +183,21 @@ export const view = (model: Model): react.Html<Msg> => {
 
     case "SessionNotFound":
       return pipe(
-        Page.Login.view(model.child),
-        react.map((msg) => ({ type: "GotLoginMsg", msg }))
+        Page.Login.view(model.page),
+        react.map((msg) => ({ type: "GotLoginPageMsg", msg }))
       );
 
     case "ProfileNotFound":
       return pipe(
-        Page.ProfileCreate.view(model.child),
-        react.map((msg) => ({ type: "GotProfileCreateMsg", msg }))
+        Page.ProfileCreate.view(model.page),
+        react.map((msg) => ({ type: "GotProfileCreatePageMsg", msg }))
       );
 
     case "ProfileFound":
-      return Page.Home.view();
+      return pipe(
+        Router.view(model.profile, model.router),
+        react.map((msg) => ({ type: "GotRouterMsg", msg }))
+      );
   }
 };
 
@@ -176,7 +229,7 @@ Subscriptions
 
 const profileToMsg = Option.fold<Profile.Profile, Msg>(
   () => ({ type: "ProfileNotFound" }),
-  (profile) => ({ type: "ProfileFound", profile })
+  (profile) => ({ type: "ProfileFound", route: "Home", profile })
 );
 
 const profileSub = (model: Model): sub.Sub<Msg> => {
