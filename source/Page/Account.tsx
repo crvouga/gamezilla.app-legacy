@@ -1,4 +1,4 @@
-import { ChevronRight, Logout } from "@mui/icons-material";
+import { ChevronRight, Delete, Logout } from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
 import {
   DialogActions,
@@ -27,10 +27,7 @@ Model
 
 */
 
-export type Model =
-  | { type: "Idle" }
-  | { type: "ConfirmingDeleteProfile" }
-  | { type: "DeletingProfile" };
+export type Model = { type: "Idle" };
 
 export const init: Model = { type: "Idle" };
 
@@ -50,17 +47,13 @@ export type Msg =
 export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "Logout":
-      if (model.type === "Idle") {
-        return [model, Router.push("Logout")];
-      }
-
-      return [model, cmd.none];
+      return [model, Router.push("Logout")];
 
     case "UpdateProfile":
       return [model, cmd.none];
 
     case "DeleteProfile":
-      return [model, cmd.none];
+      return [model, Router.push("ProfileDelete")];
   }
 };
 
@@ -91,6 +84,16 @@ export const view =
           </Typography>
         </Toolbar>
         <List>
+          <ListItemButton onClick={() => dispatch({ type: "DeleteProfile" })}>
+            <ListItemIcon>
+              <Delete />
+            </ListItemIcon>
+            <ListItemText primary="Delete Profile" />
+            <ListItemSecondaryAction>
+              <ChevronRight />
+            </ListItemSecondaryAction>
+          </ListItemButton>
+
           <ListItemButton onClick={() => dispatch({ type: "Logout" })}>
             <ListItemIcon>
               <Logout />

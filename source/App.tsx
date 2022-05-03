@@ -123,6 +123,21 @@ export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
         ];
       }
 
+      if (model.type === "ProfileFound") {
+        const session: Session.Session = {
+          defaultName: model.profile.name,
+          userId: model.profile.userId,
+        };
+        return [
+          {
+            type: "ProfileNotFound",
+            session,
+            page: Page.ProfileCreate.init(session),
+          },
+          cmd.none,
+        ];
+      }
+
       return [model, cmd.none];
 
     case "GotProfileCreatePageMsg":
@@ -155,7 +170,10 @@ export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
 
     case "GotRouterMsg":
       if (model.type === "ProfileFound") {
-        const [routerModel, routerCmd] = Router.update(msg.msg, model.router);
+        const [routerModel, routerCmd] = Router.update(model.profile)(
+          msg.msg,
+          model.router
+        );
 
         return [
           { ...model, router: routerModel },
