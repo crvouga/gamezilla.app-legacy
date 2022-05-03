@@ -144,7 +144,7 @@ export const view = (model: Model): react.Html<Msg> => {
       );
 
     case "ProfileFound":
-      return () => <>profileFound</>;
+      return Page.Home.view();
   }
 };
 
