@@ -55,7 +55,7 @@ export const subscription = new Rx.Subject<Option.Option<Session>>();
 
 const timeout = setTimeout(() => {
   subscription.next(fromSupabaseSession(Supabase.client.auth.session()));
-}, 200);
+}, 1000);
 
 Supabase.client.auth.onAuthStateChange((_, session) => {
   clearTimeout(timeout);
