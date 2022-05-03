@@ -1,5 +1,5 @@
-import { pipe } from "fp-ts/lib/function";
-import { cmd } from "elm-ts";
+import { flow, pipe } from "fp-ts/lib/function";
+import { cmd } from "./Framework";
 import * as Option from "fp-ts/lib/Option";
 import * as Task from "fp-ts/lib/Task";
 import * as Rx from "rxjs";
@@ -26,13 +26,18 @@ export const logout = <Msg,>(): cmd.Cmd<Msg> => {
   );
 };
 
-/* 
-
-
-Subscription
-
-
-*/
+export const fetch = <Msg,>({
+  onSuccess,
+  onFailure,
+}: {
+  onSuccess: (session: Session) => Msg;
+  onFailure: () => Msg;
+}): cmd.Cmd<Msg> => {
+  return Rx.of(async () => {
+    const session = fromSupabaseSession(Supabase.client.auth.session());
+    return Option.of(Option.fold(onFailure, onSuccess)(session));
+  });
+};
 
 export const fromSupabaseSession = (
   session: Supabase.Session | null
@@ -53,11 +58,6 @@ export const fromSupabaseSession = (
 
 export const subscription = new Rx.Subject<Option.Option<Session>>();
 
-const timeout = setTimeout(() => {
-  subscription.next(fromSupabaseSession(Supabase.client.auth.session()));
-}, 1000);
-
 Supabase.client.auth.onAuthStateChange((_, session) => {
-  clearTimeout(timeout);
   subscription.next(fromSupabaseSession(session));
 });

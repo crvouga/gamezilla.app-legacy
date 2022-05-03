@@ -14,7 +14,7 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-import { cmd, react } from "elm-ts";
+import { cmd, react } from "../Framework";
 import React from "react";
 import * as Session from "../Session";
 
@@ -42,39 +42,39 @@ Update
 */
 
 export type Msg =
-  | { type: "ClickedLogout" }
-  | { type: "ClickedLogoutCancel" }
-  | { type: "ClickedLogoutConfirmed" }
-  | { type: "ClickedDeleteProfile" }
-  | { type: "ClickedUpdateProfile" };
+  | { type: "Logout" }
+  | { type: "LogoutCancel" }
+  | { type: "LogoutConfirmed" }
+  | { type: "DeleteProfile" }
+  | { type: "UpdateProfile" };
 
 export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
-    case "ClickedLogout":
+    case "Logout":
       if (model.type === "Idle") {
         return [{ type: "ConfirmingLogout" }, cmd.none];
       }
 
       return [model, cmd.none];
 
-    case "ClickedLogoutCancel":
+    case "LogoutCancel":
       if (model.type === "ConfirmingLogout") {
         return [{ type: "Idle" }, cmd.none];
       }
 
       return [model, cmd.none];
 
-    case "ClickedLogoutConfirmed":
+    case "LogoutConfirmed":
       if (model.type === "ConfirmingLogout") {
         return [{ type: "LoggingOut" }, Session.logout()];
       }
 
       return [model, cmd.none];
 
-    case "ClickedUpdateProfile":
+    case "UpdateProfile":
       return [model, cmd.none];
 
-    case "ClickedDeleteProfile":
+    case "DeleteProfile":
       return [model, cmd.none];
   }
 };
@@ -110,25 +110,25 @@ export const view =
             open={
               model.type === "ConfirmingLogout" || model.type === "LoggingOut"
             }
-            onClose={() => dispatch({ type: "ClickedLogoutCancel" })}
+            onClose={() => dispatch({ type: "LogoutCancel" })}
           >
             <DialogTitle>Logout of Gamezilla?</DialogTitle>
             <DialogActions>
               <Button
                 disabled={model.type === "LoggingOut"}
-                onClick={() => dispatch({ type: "ClickedLogoutCancel" })}
+                onClick={() => dispatch({ type: "LogoutCancel" })}
               >
                 Cancel
               </Button>
               <LoadingButton
                 loading={model.type === "LoggingOut"}
-                onClick={() => dispatch({ type: "ClickedLogoutConfirmed" })}
+                onClick={() => dispatch({ type: "LogoutConfirmed" })}
               >
                 Logout
               </LoadingButton>
             </DialogActions>
           </Dialog>
-          <ListItemButton onClick={() => dispatch({ type: "ClickedLogout" })}>
+          <ListItemButton onClick={() => dispatch({ type: "Logout" })}>
             <ListItemIcon>
               <Logout />
             </ListItemIcon>

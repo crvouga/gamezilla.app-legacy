@@ -1,7 +1,7 @@
+import { flow, pipe } from "fp-ts/lib/function";
+import { cmd, react } from "./Framework";
+import * as Navigation from "./Framework/Navigation";
 import * as Page from "./Page";
-import * as Navigation from "elm-ts/lib/Navigation";
-import { cmd, react } from "elm-ts";
-import { pipe } from "fp-ts/lib/function";
 
 /* 
 
@@ -23,7 +23,7 @@ export type Model =
       page: Page.Home.Model;
     };
 
-const toInit = (type: Model["type"]): Model => {
+export const routeToInit = (type: Model["type"]): Model => {
   switch (type) {
     case "Home":
       return { type: "Home", page: Page.Home.init };
@@ -33,12 +33,11 @@ const toInit = (type: Model["type"]): Model => {
   }
 };
 
-export const init = (pathname: string): Model => {
-  return toInit(toRouteType(pathname));
-};
+export const locationToPathname = (location: Navigation.Location) =>
+  location.pathname.substring(1);
 
-const toRouteType = (routeString: string): Model["type"] => {
-  switch (routeString) {
+export const pathnameToRoute = (pathname: string): Model["type"] => {
+  switch (pathname) {
     case "Home":
       return "Home";
 
@@ -50,6 +49,12 @@ const toRouteType = (routeString: string): Model["type"] => {
   }
 };
 
+export const locationToRoute = flow(locationToPathname, pathnameToRoute);
+
+export const init = (location: Navigation.Location): Model => {
+  return routeToInit(pathnameToRoute(locationToPathname(location)));
+};
+
 export const push = <Msg,>(route: Model["type"]) => {
   return Navigation.push<Msg>(route);
 };
@@ -57,7 +62,7 @@ export const push = <Msg,>(route: Model["type"]) => {
 export const locationToMsg = (location: Navigation.Location): Msg => {
   return {
     type: "RouteChanged",
-    routeType: toRouteType(location),
+    routeType: locationToRoute(location),
   };
 };
 
@@ -77,7 +82,7 @@ export type Msg =
 export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "RouteChanged":
-      return [toInit(msg.routeType), cmd.none];
+      return [routeToInit(msg.routeType), cmd.none];
 
     case "GotAccountMsg":
       if (model.type === "Account") {

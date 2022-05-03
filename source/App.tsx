@@ -1,13 +1,13 @@
 import { Box, CircularProgress } from "@mui/material";
-import { cmd, react, sub } from "elm-ts";
-import * as Navigation from "elm-ts/lib/Navigation";
+import { cmd, react, sub } from "./Framework";
+import * as Navigation from "./Framework/Navigation";
 import { pipe } from "fp-ts/lib/function";
 import * as Option from "fp-ts/lib/Option";
 import React from "react";
 import * as Page from "./Page";
 import * as Profile from "./Profile";
-import * as Session from "./Session";
 import * as Router from "./Router";
+import * as Session from "./Session";
 
 /* 
 
@@ -40,18 +40,23 @@ export type Model =
       router: Router.Model;
     };
 
-type Flags = null;
+type Flags = void;
 
 export const init =
-  (_flags: Flags) =>
-  (_location: Navigation.Location): [Model, cmd.Cmd<Msg>] => {
-    return [{ type: "SessionLoading" }, cmd.none];
-  };
+  (flags: Flags) =>
+  (location: Navigation.Location): [Model, cmd.Cmd<Msg>] =>
+    [
+      { type: "SessionLoading" },
+      Session.fetch<Msg>({
+        onFailure: () => ({ type: "SessionNotFound" }),
+        onSuccess: (session) => ({ type: "SessionFound", session }),
+      }),
+    ];
 
 export const locationToMsg = (location: Navigation.Location): Msg => {
   return {
     type: "GotRouterMsg",
-    msg: Router.locationToMsg(location.pathname.substring(1)),
+    msg: Router.locationToMsg(location),
   };
 };
 
@@ -144,7 +149,7 @@ export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
 
     case "ProfileFound":
       return [
-        { ...msg, type: "ProfileFound", router: Router.init("") },
+        { ...msg, type: "ProfileFound", router: Router.routeToInit("Home") },
         cmd.none,
       ];
 
