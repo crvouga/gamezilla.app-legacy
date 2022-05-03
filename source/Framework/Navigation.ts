@@ -45,6 +45,19 @@ export function push<Msg>(url: string): Cmd<Msg> {
 }
 
 /**
+ * Generates a `Cmd` that removes current location from the history's list.
+ * @category utils
+ * @since 0.5.0
+ */
+export function back<Msg>(): Cmd<Msg> {
+  return of(() => {
+    history.back();
+
+    return Promise.resolve(O.none);
+  });
+}
+
+/**
  * Returns a `Program` specialized for `Navigation`.
  *
  * The `Program` is a `Html.Program` but it needs a `locationToMsg()` function which converts location changes to messages.

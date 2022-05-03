@@ -20,7 +20,10 @@ export const login = <Msg,>(): cmd.Cmd<Msg> => {
 
 export const logout = <Msg,>(): cmd.Cmd<Msg> => {
   return pipe(
-    () => Supabase.client.auth.signOut(),
+    async () => {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      Supabase.client.auth.signOut();
+    },
     Task.map(() => Option.none),
     Rx.of
   );

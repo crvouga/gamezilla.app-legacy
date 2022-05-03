@@ -21,6 +21,10 @@ export type Model =
   | {
       type: "Home";
       page: Page.Home.Model;
+    }
+  | {
+      type: "Logout";
+      page: Page.Logout.Model;
     };
 
 export const routeToInit = (type: Model["type"]): Model => {
@@ -30,6 +34,9 @@ export const routeToInit = (type: Model["type"]): Model => {
 
     case "Account":
       return { type: "Account", page: Page.Account.init };
+
+    case "Logout":
+      return { type: "Logout", page: Page.Logout.init };
   }
 };
 
@@ -44,6 +51,9 @@ export const pathnameToRoute = (pathname: string): Model["type"] => {
     case "Account":
       return "Account";
 
+    case "Logout":
+      return "Logout";
+
     default:
       return "Home";
   }
@@ -53,6 +63,10 @@ export const locationToRoute = flow(locationToPathname, pathnameToRoute);
 
 export const init = (location: Navigation.Location): Model => {
   return routeToInit(pathnameToRoute(locationToPathname(location)));
+};
+
+export const back = <Msg,>() => {
+  return Navigation.back<Msg>();
 };
 
 export const push = <Msg,>(route: Model["type"]) => {
@@ -77,7 +91,8 @@ Update
 export type Msg =
   | { type: "RouteChanged"; routeType: Model["type"] }
   | { type: "GotAccountMsg"; msg: Page.Account.Msg }
-  | { type: "GotHomeMsg"; msg: Page.Home.Msg };
+  | { type: "GotHomeMsg"; msg: Page.Home.Msg }
+  | { type: "GotLogoutMsg"; msg: Page.Logout.Msg };
 
 export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
@@ -111,6 +126,19 @@ export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
       }
 
       return [model, cmd.none];
+
+    case "GotLogoutMsg":
+      if (model.type === "Logout") {
+        const [pageModel, pageCmd] = Page.Logout.update(msg.msg, model.page);
+        return [
+          { ...model, page: pageModel },
+          pipe(
+            pageCmd,
+            cmd.map((msg) => ({ type: "GotLogoutMsg", msg }))
+          ),
+        ];
+      }
+      return [model, cmd.none];
   }
 };
 
@@ -138,6 +166,12 @@ export const view = (
       return pipe(
         Page.Home.view(profile, model.page),
         react.map((msg) => ({ type: "GotHomeMsg", msg }))
+      );
+
+    case "Logout":
+      return pipe(
+        Page.Logout.view(model.page),
+        react.map((msg) => ({ type: "GotLogoutMsg", msg }))
       );
   }
 };
