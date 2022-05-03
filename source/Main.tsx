@@ -50,7 +50,7 @@ const main = program(
   App.subscriptions
 );
 
-// Rendering
+// Run
 
 const rootElement = document.getElementById("root");
 
