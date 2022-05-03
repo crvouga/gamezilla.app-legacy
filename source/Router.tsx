@@ -25,6 +25,10 @@ export type Model =
   | {
       type: "Logout";
       page: Page.Logout.Model;
+    }
+  | {
+      type: "ProfileDelete";
+      page: Page.ProfileDelete.Model;
     };
 
 export const routeToInit = (type: Model["type"]): Model => {
@@ -37,6 +41,9 @@ export const routeToInit = (type: Model["type"]): Model => {
 
     case "Logout":
       return { type: "Logout", page: Page.Logout.init };
+
+    case "ProfileDelete":
+      return { type: "ProfileDelete", page: Page.ProfileDelete.init };
   }
 };
 
@@ -53,6 +60,9 @@ export const pathnameToRoute = (pathname: string): Model["type"] => {
 
     case "Logout":
       return "Logout";
+
+    case "ProfileDelete":
+      return "ProfileDelete";
 
     default:
       return "Home";
@@ -92,55 +102,77 @@ export type Msg =
   | { type: "RouteChanged"; routeType: Model["type"] }
   | { type: "GotAccountMsg"; msg: Page.Account.Msg }
   | { type: "GotHomeMsg"; msg: Page.Home.Msg }
-  | { type: "GotLogoutMsg"; msg: Page.Logout.Msg };
+  | { type: "GotLogoutMsg"; msg: Page.Logout.Msg }
+  | { type: "GotProfileDeleteMsg"; msg: Page.ProfileDelete.Msg };
 
-export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
-  switch (msg.type) {
-    case "RouteChanged":
-      return [routeToInit(msg.routeType), cmd.none];
+export const update =
+  (profile: { userId: string }) =>
+  (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
+    switch (msg.type) {
+      case "RouteChanged":
+        return [routeToInit(msg.routeType), cmd.none];
 
-    case "GotAccountMsg":
-      if (model.type === "Account") {
-        const [pageModel, pageCmd] = Page.Account.update(msg.msg, model.page);
-        return [
-          { ...model, page: pageModel },
-          pipe(
-            pageCmd,
-            cmd.map((msg) => ({ type: "GotAccountMsg", msg }))
-          ),
-        ];
-      }
+      case "GotAccountMsg":
+        if (model.type === "Account") {
+          const [pageModel, pageCmd] = Page.Account.update(msg.msg, model.page);
+          return [
+            { ...model, page: pageModel },
+            pipe(
+              pageCmd,
+              cmd.map((msg) => ({ type: "GotAccountMsg", msg }))
+            ),
+          ];
+        }
 
-      return [model, cmd.none];
+        return [model, cmd.none];
 
-    case "GotHomeMsg":
-      if (model.type === "Home") {
-        const [pageModel, pageCmd] = Page.Home.update(msg.msg, model.page);
-        return [
-          { ...model, page: pageModel },
-          pipe(
-            pageCmd,
-            cmd.map((msg) => ({ type: "GotHomeMsg", msg }))
-          ),
-        ];
-      }
+      case "GotHomeMsg":
+        if (model.type === "Home") {
+          const [pageModel, pageCmd] = Page.Home.update(msg.msg, model.page);
+          return [
+            { ...model, page: pageModel },
+            pipe(
+              pageCmd,
+              cmd.map((msg) => ({ type: "GotHomeMsg", msg }))
+            ),
+          ];
+        }
 
-      return [model, cmd.none];
+        return [model, cmd.none];
 
-    case "GotLogoutMsg":
-      if (model.type === "Logout") {
-        const [pageModel, pageCmd] = Page.Logout.update(msg.msg, model.page);
-        return [
-          { ...model, page: pageModel },
-          pipe(
-            pageCmd,
-            cmd.map((msg) => ({ type: "GotLogoutMsg", msg }))
-          ),
-        ];
-      }
-      return [model, cmd.none];
-  }
-};
+      case "GotLogoutMsg":
+        if (model.type === "Logout") {
+          const [pageModel, pageCmd] = Page.Logout.update(msg.msg, model.page);
+          return [
+            { ...model, page: pageModel },
+            pipe(
+              pageCmd,
+              cmd.map((msg) => ({ type: "GotLogoutMsg", msg }))
+            ),
+          ];
+        }
+
+        return [model, cmd.none];
+
+      case "GotProfileDeleteMsg":
+        if (model.type === "ProfileDelete") {
+          const [pageModel, pageCmd] = Page.ProfileDelete.update(profile)(
+            msg.msg,
+            model.page
+          );
+
+          return [
+            { ...model, page: pageModel },
+            pipe(
+              pageCmd,
+              cmd.map((msg) => ({ type: "GotProfileDeleteMsg", msg }))
+            ),
+          ];
+        }
+
+        return [model, cmd.none];
+    }
+  };
 
 /*
 
@@ -172,6 +204,12 @@ export const view = (
       return pipe(
         Page.Logout.view(model.page),
         react.map((msg) => ({ type: "GotLogoutMsg", msg }))
+      );
+
+    case "ProfileDelete":
+      return pipe(
+        Page.ProfileDelete.view(model.page),
+        react.map((msg) => ({ type: "GotProfileDeleteMsg", msg }))
       );
   }
 };
