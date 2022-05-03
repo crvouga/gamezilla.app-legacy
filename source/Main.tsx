@@ -5,8 +5,8 @@ import {
   ThemeProvider,
 } from "@mui/material";
 import { green } from "@mui/material/colors";
-import * as DebugHtml from "elm-ts/lib/Debug/Html";
-import * as Html from "elm-ts/lib/Html";
+import * as DebugNavigation from "elm-ts/lib/Debug/Navigation";
+import * as Navigation from "elm-ts/lib/Navigation";
 import * as React from "elm-ts/lib/React";
 import { createRoot } from "react-dom/client";
 import * as App from "./App";
@@ -38,10 +38,16 @@ const theme = responsiveFontSizes(
 
 const program =
   process.env.NODE_ENV === "production"
-    ? React.programWithFlags
-    : DebugHtml.programWithDebuggerWithFlags;
+    ? Navigation.programWithFlags
+    : DebugNavigation.programWithDebuggerWithFlags;
 
-const main = program(App.init, App.update, App.view, App.subscriptions);
+const main = program(
+  App.locationToMsg,
+  App.init,
+  App.update,
+  App.view,
+  App.subscriptions
+);
 
 // Rendering
 
