@@ -5,11 +5,12 @@ import {
   ThemeProvider,
 } from "@mui/material";
 import { green } from "@mui/material/colors";
-import * as DebugNavigation from "elm-ts/lib/Debug/Navigation";
-import * as Navigation from "elm-ts/lib/Navigation";
-import * as React from "elm-ts/lib/React";
+import React from "react";
 import { createRoot } from "react-dom/client";
 import * as App from "./App";
+import { react } from "./Framework";
+import * as DebugNavigation from "./Framework/Debug/Navigation";
+import * as Navigation from "./Framework/Navigation";
 
 // Theme
 
@@ -59,7 +60,7 @@ if (!rootElement) {
 
 const root = createRoot(rootElement);
 
-const renderer = (dom: React.Dom) => {
+const renderer = (dom: react.Dom) => {
   root.render(
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -68,4 +69,4 @@ const renderer = (dom: React.Dom) => {
   );
 };
 
-React.run(main(null), renderer);
+react.run(main(), renderer);

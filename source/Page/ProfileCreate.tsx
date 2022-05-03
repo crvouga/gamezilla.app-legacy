@@ -9,7 +9,7 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-import { cmd, react } from "elm-ts";
+import { cmd, react } from "../Framework";
 import * as React from "react";
 import * as ProfileAvatar from "../ProfileAvatar";
 import * as Session from "../Session";

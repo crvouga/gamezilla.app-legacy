@@ -1,6 +1,6 @@
 import React from "react";
 import { Avatar, Box, Toolbar, Typography } from "@mui/material";
-import { cmd, react } from "elm-ts";
+import { cmd, react } from "../Framework";
 import { LoadingButton } from "@mui/lab";
 import * as Routes from "../Router";
 
