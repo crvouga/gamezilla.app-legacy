@@ -1,11 +1,11 @@
 import { LoadingButton } from "@mui/lab";
 import {
   Avatar,
-  Backdrop,
   Box,
+  BoxProps,
   Button,
   CircularProgress,
-  LinearProgress,
+  TextField,
   Toolbar,
   Typography,
 } from "@mui/material";
@@ -15,31 +15,54 @@ import * as Sub from "elm-ts/lib/Sub";
 import * as React from "react";
 import * as Rx from "rxjs";
 import * as Supabase from "./Supabase";
+import { definitions } from "./supabase-types";
 
-//  Model
+/* 
+
+
+model
+
+
+*/
+
+type Profile = {
+  userId: string;
+  username: string;
+  name: string;
+  avatarUrl: string;
+};
 
 export type Model =
   | { type: "Loading" }
   | { type: "LoggedOut" }
-  | { type: "LoggingIn" }
   | { type: "LoggingOut" }
-  | { type: "LoggedIn"; userId: string };
+  | { type: "LoggingIn" }
+  | { type: "ProfileLoading"; defaultName: string; userId: string }
+  | { type: "ProfileNotFound"; defaultName: string; userId: string }
+  | { type: "ProfileFound"; profile: Profile };
 
 export const init: [Model, cmd.Cmd<Msg>] = [{ type: "Loading" }, cmd.none];
 
-//  Update
+/*
+
+
+update
+
+
+*/
 
 export type Msg =
   | { type: "LoggedIn"; userId: string; defaultName: string }
   | { type: "LoggedOut" }
   | { type: "LogIn" }
-  | { type: "LogInCancel" }
-  | { type: "LogOut" };
+  | { type: "LogOut" }
+  | { type: "ProfileNotFound" }
+  | { type: "ProfileFound"; profile: Profile };
 
 export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "LoggedIn":
-      return [{ type: "LoggedIn", userId: msg.userId }, cmd.none];
+      return [{ ...msg, type: "ProfileLoading" }, cmd.none];
 
     case "LoggedOut":
       return [{ type: "LoggedOut" }, cmd.none];
@@ -50,8 +73,15 @@ export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
     case "LogOut":
       return [{ type: "LoggingOut" }, logOut()];
 
-    case "LogInCancel":
-      return [{ type: "LoggedOut" }, loginCancel()];
+    case "ProfileFound":
+      return [{ ...msg, type: "ProfileFound" }, cmd.none];
+
+    case "ProfileNotFound":
+      if (model.type === "ProfileLoading") {
+        return [{ ...model, type: "ProfileNotFound" }, cmd.none];
+      }
+
+      return [model, cmd.none];
   }
 };
 
@@ -69,34 +99,36 @@ const logOut = (): cmd.Cmd<Msg> => {
   });
 };
 
-const loginCancel = (): cmd.Cmd<Msg> => {
-  return new Rx.Observable(() => {
-    window.onbeforeunload = function () {
-      return "Cancel login?";
-    };
-  });
-};
+/* 
 
-//  View
+
+view
+
+
+*/
 
 export const view = (model: Model): Html<Msg> => {
   switch (model.type) {
     case "Loading":
-      return viewLoading({ subtitle: "Loading..." });
+      return viewLoading;
 
-    case "LoggedIn":
-      return viewLoggedIn;
+    case "ProfileLoading":
+      return viewLoading;
 
     case "LoggingOut":
-      return viewLoading({
-        subtitle: "Logging out...",
-      });
+      return viewLoading;
 
     case "LoggedOut":
       return viewLoggedOut({ isLoading: false });
 
     case "LoggingIn":
       return viewLoggedOut({ isLoading: true });
+
+    case "ProfileFound":
+      return () => <>profileFound</>;
+
+    case "ProfileNotFound":
+      return viewProfileCreate;
   }
 };
 
@@ -168,40 +200,71 @@ const viewLoggedOut =
       </Box>
     );
 
-const viewLoading =
-  ({ subtitle }: { subtitle: string }): Html<Msg> =>
-  (dispatch) => {
-    return (
-      <Box
-        sx={{
-          position: "fixed",
-          width: "100%",
-          height: "100%",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          flexDirection: "column",
-        }}
-      >
-        <CircularProgress sx={{ marginBottom: 2 }} />
-        <Typography
-          variant="subtitle1"
-          color="text.secondary"
-          sx={{ marginBottom: 2 }}
-        >
-          {subtitle}
-        </Typography>
-      </Box>
-    );
-  };
-
-// Subscriptions
-
-const authSubs = new Rx.Subject<Msg>();
-
-export const subscriptions = (model: Model): Sub.Sub<Msg> => {
-  return authSubs;
+const viewLoading: Html<Msg> = () => {
+  return (
+    <Box
+      sx={{
+        position: "fixed",
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        flexDirection: "column",
+      }}
+    >
+      <CircularProgress size="4rem" />
+    </Box>
+  );
 };
+
+const viewProfileCreate: Html<Msg> = () => {
+  return (
+    <Box
+      sx={{
+        position: "fixed",
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        paddingX: 2,
+      }}
+    >
+      <Toolbar>
+        <Typography sx={{ flex: 1 }} align="center" variant="h6">
+          Create Profile
+        </Typography>
+      </Toolbar>
+
+      <Avatar
+        sx={{
+          marginX: "auto",
+          width: "150px",
+          height: "150px",
+          marginBottom: 1,
+        }}
+      />
+
+      <Button sx={{ marginBottom: 2 }}>Change Avatar</Button>
+
+      <TextField sx={{ marginBottom: 2 }} label="Username" fullWidth />
+
+      <TextField sx={{ marginBottom: 4 }} label="Name" fullWidth />
+
+      <Button fullWidth size="large" variant="contained">
+        Create Profile
+      </Button>
+    </Box>
+  );
+};
+
+/* 
+
+
+Subscriptions
+
+
+*/
 
 export const sessionToMsg = (session: Supabase.Session | null): Msg => {
   const userId = session?.user?.id;
@@ -218,11 +281,100 @@ export const sessionToMsg = (session: Supabase.Session | null): Msg => {
   return { type: "LoggedOut" };
 };
 
-const timeout = setTimeout(() => {
-  authSubs.next(sessionToMsg(Supabase.client.auth.session()));
-}, 1000);
+const authSubject = new Rx.Subject<Msg>();
 
-const { data } = Supabase.client.auth.onAuthStateChange((state, session) => {
-  clearTimeout(timeout);
-  authSubs.next(sessionToMsg(session));
+authSubject.next(sessionToMsg(Supabase.client.auth.session()));
+
+Supabase.client.auth.onAuthStateChange((state, session) => {
+  authSubject.next(sessionToMsg(session));
 });
+
+const rowToProfile = (row: definitions["profile"]): Profile => {
+  return {
+    userId: row.id,
+    avatarUrl: row.avatar_url,
+    name: row.name,
+    username: row.username,
+    // themeMode: row.theme_mode,
+    // gameRoomId: row.game_room_id,
+  };
+};
+
+const getProfile = async ({
+  userId,
+}: {
+  userId: string;
+}): Promise<Profile | null> => {
+  const { data } = await Supabase.client
+    .from<definitions["profile"]>("profile")
+    .select("*")
+    .eq("id", userId)
+    .single();
+
+  if (data) {
+    return rowToProfile(data);
+  }
+
+  return null;
+};
+
+const profileToMsg = (profile: Profile | null): Msg => {
+  if (profile) {
+    return {
+      type: "ProfileFound",
+      profile,
+    };
+  }
+
+  return {
+    type: "ProfileNotFound",
+  };
+};
+
+const profileSub = ({ userId }: { userId: string }) => {
+  return new Rx.Observable<Msg>((subscriber) => {
+    getProfile({ userId }).then((profile) => {
+      subscriber.next(profileToMsg(profile));
+    });
+
+    const subscription = Supabase.client
+      .from<definitions["profile"]>(`profile:id=eq.${userId}`)
+      .on("INSERT", (payload) => {
+        subscriber.next(profileToMsg(rowToProfile(payload.new)));
+      })
+      .on("UPDATE", (payload) => {
+        subscriber.next(profileToMsg(rowToProfile(payload.new)));
+      })
+      .on("DELETE", () => {
+        subscriber.next(profileToMsg(null));
+      })
+      .subscribe();
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  });
+};
+
+const toProfileSub = (model: Model): Sub.Sub<Msg> => {
+  switch (model.type) {
+    case "Loading":
+    case "LoggedOut":
+    case "LoggingIn":
+    case "LoggingOut":
+      return Sub.none;
+
+    case "ProfileFound":
+      return profileSub({ userId: model.profile.userId });
+
+    case "ProfileLoading":
+      return profileSub({ userId: model.userId });
+
+    case "ProfileNotFound":
+      return profileSub({ userId: model.userId });
+  }
+};
+
+export const subscriptions = (model: Model): Sub.Sub<Msg> => {
+  return Sub.batch([authSubject, toProfileSub(model)]);
+};
