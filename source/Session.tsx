@@ -1,4 +1,5 @@
 import { pipe } from "fp-ts/lib/function";
+import { cmd } from "elm-ts";
 import * as Option from "fp-ts/lib/Option";
 import * as Task from "fp-ts/lib/Task";
 import * as Rx from "rxjs";
@@ -9,7 +10,7 @@ export type Session = {
   defaultName: string;
 };
 
-export const login = () => {
+export const login = <Msg,>(): cmd.Cmd<Msg> => {
   return pipe(
     () => Supabase.client.auth.signIn({ provider: "google" }),
     Task.map((response) => fromSupabaseSession(response.session)),
@@ -17,7 +18,7 @@ export const login = () => {
   );
 };
 
-export const logout = () => {
+export const logout = <Msg,>(): cmd.Cmd<Msg> => {
   return pipe(
     () => Supabase.client.auth.signOut(),
     Task.map(() => Option.none),
@@ -52,10 +53,11 @@ export const fromSupabaseSession = (
 
 export const subscription = new Rx.Subject<Option.Option<Session>>();
 
-setTimeout(() => {
+const timeout = setTimeout(() => {
   subscription.next(fromSupabaseSession(Supabase.client.auth.session()));
-}, 1000);
+}, 200);
 
 Supabase.client.auth.onAuthStateChange((_, session) => {
+  clearTimeout(timeout);
   subscription.next(fromSupabaseSession(session));
 });

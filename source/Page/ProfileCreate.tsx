@@ -13,6 +13,7 @@ import { cmd, react } from "elm-ts";
 import * as React from "react";
 import * as ProfileAvatar from "../ProfileAvatar";
 import * as Session from "../Session";
+import * as Profile from "../Profile";
 
 /* 
 
@@ -41,12 +42,11 @@ const initForm = ({ defaultName }: { defaultName: string }): Form => {
   };
 };
 
-export type Model = {
-  form: Form;
-};
+export type Model = { status: "Idle" | "Loading"; form: Form };
 
 export const init = ({ defaultName }: { defaultName: string }): Model => {
   return {
+    status: "Idle",
     form: initForm({ defaultName }),
   };
 };
@@ -62,20 +62,42 @@ Update
 export type Msg =
   | { type: "EnteredUsername"; username: string }
   | { type: "EnteredName"; name: string }
+  | { type: "Submit" }
+  | { type: "SubmitSucceeded" }
+  | { type: "SubmitFailed" }
   | { type: "Logout" };
 
-export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
-  switch (msg.type) {
-    case "EnteredName":
-      return [{ ...model, form: { ...model.form, ...msg } }, cmd.none];
+export const update =
+  ({ userId }: { userId: string }) =>
+  (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
+    switch (msg.type) {
+      case "EnteredName":
+        return [{ ...model, form: { ...model.form, ...msg } }, cmd.none];
 
-    case "EnteredUsername":
-      return [{ ...model, form: { ...model.form, ...msg } }, cmd.none];
+      case "EnteredUsername":
+        return [{ ...model, form: { ...model.form, ...msg } }, cmd.none];
 
-    case "Logout":
-      return [model, Session.logout()];
-  }
-};
+      case "Submit":
+        return [
+          { ...model, status: "Loading" },
+          Profile.create<Msg>({
+            ...model.form,
+            userId,
+            onFailure: () => ({ type: "SubmitFailed" }),
+            onSuccess: () => ({ type: "SubmitSucceeded" }),
+          }),
+        ];
+
+      case "SubmitSucceeded":
+        return [{ ...model, status: "Idle" }, cmd.none];
+
+      case "SubmitFailed":
+        return [{ ...model, status: "Idle" }, cmd.none];
+
+      case "Logout":
+        return [model, Session.logout()];
+    }
+  };
 
 /* 
 
@@ -102,6 +124,7 @@ export const view =
           <Box sx={{ flex: 1 }}>
             <IconButton
               edge="start"
+              disabled={model.status === "Loading"}
               onClick={() => dispatch({ type: "Logout" })}
             >
               <Close />
@@ -156,7 +179,13 @@ export const view =
             }
           />
 
-          <LoadingButton fullWidth size="large" variant="contained">
+          <LoadingButton
+            fullWidth
+            size="large"
+            variant="contained"
+            loading={model.status === "Loading"}
+            onClick={() => dispatch({ type: "Submit" })}
+          >
             Create Profile
           </LoadingButton>
         </Box>

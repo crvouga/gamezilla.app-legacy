@@ -1,19 +1,10 @@
 import { cmd } from "elm-ts";
-import { Sub } from "elm-ts/lib/Sub";
-import * as Task from "fp-ts/lib/Task";
-import * as Option from "fp-ts/lib/Option";
 import { flow, pipe } from "fp-ts/lib/function";
+import * as Option from "fp-ts/lib/Option";
+import * as Task from "fp-ts/lib/Task";
 import * as Rx from "rxjs";
 import * as Supabase from "./Supabase";
 import { definitions } from "./supabase-types";
-
-/* 
-
-
-Model
-
-
-*/
 
 export type Profile = {
   userId: string;
@@ -21,14 +12,6 @@ export type Profile = {
   name: string;
   avatarUrl: string;
 };
-
-/* 
-
-
-Subscriptions
-
-
-*/
 
 const rowToProfile = (row: definitions["profile"]): Profile => {
   return {
@@ -55,15 +38,47 @@ export const fetch = <Msg,>({
         .select("*")
         .eq("id", userId)
         .single(),
-    Task.map(
-      flow(
-        (response) => response.data,
-        Option.fromNullable,
-        Option.map(rowToProfile),
-        Option.fold(onFailure, onSuccess),
-        Option.of
-      )
+
+    Task.map(({ data }) =>
+      Option.some(data ? onSuccess(rowToProfile(data)) : onFailure())
     ),
+
+    Rx.of
+  );
+};
+
+export const create = <Msg,>({
+  userId,
+  name,
+  username,
+  avatarUrl,
+  onSuccess,
+  onFailure,
+}: {
+  userId: string;
+  name: string;
+  username: string;
+  avatarUrl: string;
+  onSuccess: (profile: Profile) => Msg;
+  onFailure: () => Msg;
+}): cmd.Cmd<Msg> => {
+  return pipe(
+    async () =>
+      Supabase.client
+        .from<definitions["profile"]>("profile")
+        .insert({
+          id: userId,
+          name,
+          username,
+          avatar_url: avatarUrl,
+          theme_mode: "SYSTEM",
+        })
+        .single(),
+
+    Task.map(({ data }) =>
+      Option.some(data ? onSuccess(rowToProfile(data)) : onFailure)
+    ),
+
     Rx.of
   );
 };

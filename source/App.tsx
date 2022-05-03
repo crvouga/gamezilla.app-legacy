@@ -1,13 +1,10 @@
-import { LoadingButton } from "@mui/lab";
-import { Box, CircularProgress, Typography } from "@mui/material";
+import { Box, CircularProgress } from "@mui/material";
 import { cmd, react, sub } from "elm-ts";
 import { pipe } from "fp-ts/lib/function";
 import * as Option from "fp-ts/lib/Option";
 import React from "react";
-import * as Rx from "rxjs";
 import * as Page from "./Page";
 import * as Profile from "./Profile";
-import * as Supabase from "./Supabase";
 import * as Session from "./Session";
 
 /* 
@@ -85,7 +82,7 @@ export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
 
     case "GotProfileCreateMsg":
       if (model.type === "ProfileNotFound") {
-        const [childModel, childCmd] = Page.ProfileCreate.update(
+        const [childModel, childCmd] = Page.ProfileCreate.update(model.session)(
           msg.msg,
           model.child
         );
@@ -116,18 +113,6 @@ export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
 
       return [model, cmd.none];
   }
-};
-
-const logIn = (): cmd.Cmd<Msg> => {
-  return new Rx.Observable(() => {
-    Supabase.client.auth.signIn({ provider: "google" });
-  });
-};
-
-const logOut = (): cmd.Cmd<Msg> => {
-  return new Rx.Observable(() => {
-    Supabase.client.auth.signOut();
-  });
 };
 
 /* 
