@@ -1,7 +1,6 @@
-import React from "react";
 import { Avatar, Box, Toolbar, Typography } from "@mui/material";
+import React from "react";
 import { cmd, react } from "../Framework";
-import { LoadingButton } from "@mui/lab";
 import * as Routes from "../Router";
 
 /* 
@@ -64,8 +63,5 @@ export const view =
             src={avatarUrl}
           />
         </Toolbar>
-        <Box sx={{ p: 2 }}>
-          <LoadingButton fullWidth>Delete Profile</LoadingButton>
-        </Box>
       </Box>
     );
