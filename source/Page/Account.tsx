@@ -17,6 +17,7 @@ import {
 import { cmd, react } from "../Framework";
 import React from "react";
 import * as Session from "../Session";
+import * as Router from "../Router";
 
 /* 
 
@@ -28,8 +29,8 @@ Model
 
 export type Model =
   | { type: "Idle" }
-  | { type: "ConfirmingLogout" }
-  | { type: "LoggingOut" };
+  | { type: "ConfirmingDeleteProfile" }
+  | { type: "DeletingProfile" };
 
 export const init: Model = { type: "Idle" };
 
@@ -43,8 +44,6 @@ Update
 
 export type Msg =
   | { type: "Logout" }
-  | { type: "LogoutCancel" }
-  | { type: "LogoutConfirmed" }
   | { type: "DeleteProfile" }
   | { type: "UpdateProfile" };
 
@@ -52,21 +51,7 @@ export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "Logout":
       if (model.type === "Idle") {
-        return [{ type: "ConfirmingLogout" }, cmd.none];
-      }
-
-      return [model, cmd.none];
-
-    case "LogoutCancel":
-      if (model.type === "ConfirmingLogout") {
-        return [{ type: "Idle" }, cmd.none];
-      }
-
-      return [model, cmd.none];
-
-    case "LogoutConfirmed":
-      if (model.type === "ConfirmingLogout") {
-        return [{ type: "LoggingOut" }, Session.logout()];
+        return [model, Router.push("Logout")];
       }
 
       return [model, cmd.none];
@@ -106,28 +91,6 @@ export const view =
           </Typography>
         </Toolbar>
         <List>
-          <Dialog
-            open={
-              model.type === "ConfirmingLogout" || model.type === "LoggingOut"
-            }
-            onClose={() => dispatch({ type: "LogoutCancel" })}
-          >
-            <DialogTitle>Logout of Gamezilla?</DialogTitle>
-            <DialogActions>
-              <Button
-                disabled={model.type === "LoggingOut"}
-                onClick={() => dispatch({ type: "LogoutCancel" })}
-              >
-                Cancel
-              </Button>
-              <LoadingButton
-                loading={model.type === "LoggingOut"}
-                onClick={() => dispatch({ type: "LogoutConfirmed" })}
-              >
-                Logout
-              </LoadingButton>
-            </DialogActions>
-          </Dialog>
           <ListItemButton onClick={() => dispatch({ type: "Logout" })}>
             <ListItemIcon>
               <Logout />
