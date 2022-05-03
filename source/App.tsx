@@ -1,36 +1,20 @@
 import { LoadingButton } from "@mui/lab";
-import {
-  Avatar,
-  Box,
-  BoxProps,
-  Button,
-  CircularProgress,
-  TextField,
-  Toolbar,
-  Typography,
-} from "@mui/material";
-import { cmd } from "elm-ts";
-import { Html } from "elm-ts/lib/React";
-import * as Sub from "elm-ts/lib/Sub";
-import * as React from "react";
+import { Box, CircularProgress, Typography } from "@mui/material";
+import { cmd, react, sub } from "elm-ts";
+import { pipe } from "fp-ts/lib/function";
+import React from "react";
 import * as Rx from "rxjs";
+import * as ProfileCreate from "./Page/ProfileCreate";
+import * as Profile from "./Profile";
 import * as Supabase from "./Supabase";
-import { definitions } from "./supabase-types";
 
 /* 
 
 
-model
+Model
 
 
 */
-
-type Profile = {
-  userId: string;
-  username: string;
-  name: string;
-  avatarUrl: string;
-};
 
 export type Model =
   | { type: "Loading" }
@@ -38,15 +22,24 @@ export type Model =
   | { type: "LoggingOut" }
   | { type: "LoggingIn" }
   | { type: "ProfileLoading"; defaultName: string; userId: string }
-  | { type: "ProfileNotFound"; defaultName: string; userId: string }
-  | { type: "ProfileFound"; profile: Profile };
+  | {
+      type: "ProfileNotFound";
+      defaultName: string;
+      userId: string;
+      child: ProfileCreate.Model;
+    }
+  | { type: "ProfileFound"; profile: Profile.Profile };
 
-export const init: [Model, cmd.Cmd<Msg>] = [{ type: "Loading" }, cmd.none];
+type Flags = null;
+
+export const init = (flags: Flags): [Model, cmd.Cmd<Msg>] => {
+  return [{ type: "Loading" }, cmd.none];
+};
 
 /*
 
 
-update
+Update
 
 
 */
@@ -57,12 +50,20 @@ export type Msg =
   | { type: "LogIn" }
   | { type: "LogOut" }
   | { type: "ProfileNotFound" }
-  | { type: "ProfileFound"; profile: Profile };
+  | { type: "ProfileFound"; profile: Profile.Profile }
+  | { type: "ProfileCreateMsg"; msg: ProfileCreate.Msg };
 
 export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "LoggedIn":
-      return [{ ...msg, type: "ProfileLoading" }, cmd.none];
+      return [
+        { ...msg, type: "ProfileLoading" },
+        Profile.fetch<Msg>(
+          { userId: msg.userId },
+          (profile) => ({ type: "ProfileFound", profile }),
+          () => ({ type: "ProfileNotFound" })
+        ),
+      ];
 
     case "LoggedOut":
       return [{ type: "LoggedOut" }, cmd.none];
@@ -78,14 +79,26 @@ export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
 
     case "ProfileNotFound":
       if (model.type === "ProfileLoading") {
-        return [{ ...model, type: "ProfileNotFound" }, cmd.none];
+        return [
+          {
+            ...model,
+            type: "ProfileNotFound",
+            child: ProfileCreate.init(model),
+          },
+          cmd.none,
+        ];
+      }
+
+      return [model, cmd.none];
+
+    case "ProfileCreateMsg":
+      if (model.type === "ProfileNotFound") {
+        return [model, cmd.none];
       }
 
       return [model, cmd.none];
   }
 };
-
-// Commands
 
 const logIn = (): cmd.Cmd<Msg> => {
   return new Rx.Observable(() => {
@@ -102,12 +115,12 @@ const logOut = (): cmd.Cmd<Msg> => {
 /* 
 
 
-view
+View
 
 
 */
 
-export const view = (model: Model): Html<Msg> => {
+export const view = (model: Model): react.Html<Msg> => {
   switch (model.type) {
     case "Loading":
       return viewLoading;
@@ -128,46 +141,15 @@ export const view = (model: Model): Html<Msg> => {
       return () => <>profileFound</>;
 
     case "ProfileNotFound":
-      return viewProfileCreate;
+      return pipe(
+        ProfileCreate.view(model.child),
+        react.map((msg) => ({ type: "ProfileCreateMsg", msg }))
+      );
   }
 };
 
-const viewLoggedIn: Html<Msg> = (dispatch) => (
-  <Box
-    sx={{
-      position: "fixed",
-      width: "100%",
-      height: "100%",
-      display: "flex",
-      flexDirection: "column",
-    }}
-  >
-    <Toolbar>
-      <Typography sx={{ flex: 1 }} variant="h6">
-        Home
-      </Typography>
-      <Avatar />
-    </Toolbar>
-
-    <Box
-      sx={{
-        padding: 2,
-      }}
-    >
-      <Button
-        size="large"
-        fullWidth
-        variant="outlined"
-        onClick={() => dispatch({ type: "LogOut" })}
-      >
-        Logout
-      </Button>
-    </Box>
-  </Box>
-);
-
 const viewLoggedOut =
-  ({ isLoading }: { isLoading: boolean }): Html<Msg> =>
+  ({ isLoading }: { isLoading: boolean }): react.Html<Msg> =>
   (dispatch) =>
     (
       <Box
@@ -200,7 +182,7 @@ const viewLoggedOut =
       </Box>
     );
 
-const viewLoading: Html<Msg> = () => {
+const viewLoading: react.Html<Msg> = () => {
   return (
     <Box
       sx={{
@@ -218,46 +200,6 @@ const viewLoading: Html<Msg> = () => {
   );
 };
 
-const viewProfileCreate: Html<Msg> = () => {
-  return (
-    <Box
-      sx={{
-        position: "fixed",
-        width: "100%",
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-        paddingX: 2,
-      }}
-    >
-      <Toolbar>
-        <Typography sx={{ flex: 1 }} align="center" variant="h6">
-          Create Profile
-        </Typography>
-      </Toolbar>
-
-      <Avatar
-        sx={{
-          marginX: "auto",
-          width: "150px",
-          height: "150px",
-          marginBottom: 1,
-        }}
-      />
-
-      <Button sx={{ marginBottom: 2 }}>Change Avatar</Button>
-
-      <TextField sx={{ marginBottom: 2 }} label="Username" fullWidth />
-
-      <TextField sx={{ marginBottom: 4 }} label="Name" fullWidth />
-
-      <Button fullWidth size="large" variant="contained">
-        Create Profile
-      </Button>
-    </Box>
-  );
-};
-
 /* 
 
 
@@ -265,6 +207,48 @@ Subscriptions
 
 
 */
+
+const profileToMsg = (profile: Profile.Profile | null): Msg => {
+  if (profile) {
+    return { type: "ProfileFound", profile };
+  }
+
+  return { type: "ProfileNotFound" };
+};
+
+const profileSub = (model: Model): sub.Sub<Msg> => {
+  switch (model.type) {
+    case "Loading":
+      return sub.none;
+
+    case "LoggedOut":
+      return sub.none;
+
+    case "LoggingIn":
+      return sub.none;
+
+    case "LoggingOut":
+      return sub.none;
+
+    case "ProfileFound":
+      return pipe(
+        Profile.subscription({ userId: model.profile.userId }),
+        sub.map(profileToMsg)
+      );
+
+    case "ProfileLoading":
+      return pipe(
+        Profile.subscription({ userId: model.userId }),
+        sub.map(profileToMsg)
+      );
+
+    case "ProfileNotFound":
+      return pipe(
+        Profile.subscription({ userId: model.userId }),
+        sub.map(profileToMsg)
+      );
+  }
+};
 
 export const sessionToMsg = (session: Supabase.Session | null): Msg => {
   const userId = session?.user?.id;
@@ -283,98 +267,14 @@ export const sessionToMsg = (session: Supabase.Session | null): Msg => {
 
 const authSubject = new Rx.Subject<Msg>();
 
-authSubject.next(sessionToMsg(Supabase.client.auth.session()));
+setTimeout(() => {
+  authSubject.next(sessionToMsg(Supabase.client.auth.session()));
+}, 1000);
 
-Supabase.client.auth.onAuthStateChange((state, session) => {
+Supabase.client.auth.onAuthStateChange((_, session) => {
   authSubject.next(sessionToMsg(session));
 });
 
-const rowToProfile = (row: definitions["profile"]): Profile => {
-  return {
-    userId: row.id,
-    avatarUrl: row.avatar_url,
-    name: row.name,
-    username: row.username,
-    // themeMode: row.theme_mode,
-    // gameRoomId: row.game_room_id,
-  };
-};
-
-const getProfile = async ({
-  userId,
-}: {
-  userId: string;
-}): Promise<Profile | null> => {
-  const { data } = await Supabase.client
-    .from<definitions["profile"]>("profile")
-    .select("*")
-    .eq("id", userId)
-    .single();
-
-  if (data) {
-    return rowToProfile(data);
-  }
-
-  return null;
-};
-
-const profileToMsg = (profile: Profile | null): Msg => {
-  if (profile) {
-    return {
-      type: "ProfileFound",
-      profile,
-    };
-  }
-
-  return {
-    type: "ProfileNotFound",
-  };
-};
-
-const profileSub = ({ userId }: { userId: string }) => {
-  return new Rx.Observable<Msg>((subscriber) => {
-    getProfile({ userId }).then((profile) => {
-      subscriber.next(profileToMsg(profile));
-    });
-
-    const subscription = Supabase.client
-      .from<definitions["profile"]>(`profile:id=eq.${userId}`)
-      .on("INSERT", (payload) => {
-        subscriber.next(profileToMsg(rowToProfile(payload.new)));
-      })
-      .on("UPDATE", (payload) => {
-        subscriber.next(profileToMsg(rowToProfile(payload.new)));
-      })
-      .on("DELETE", () => {
-        subscriber.next(profileToMsg(null));
-      })
-      .subscribe();
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  });
-};
-
-const toProfileSub = (model: Model): Sub.Sub<Msg> => {
-  switch (model.type) {
-    case "Loading":
-    case "LoggedOut":
-    case "LoggingIn":
-    case "LoggingOut":
-      return Sub.none;
-
-    case "ProfileFound":
-      return profileSub({ userId: model.profile.userId });
-
-    case "ProfileLoading":
-      return profileSub({ userId: model.userId });
-
-    case "ProfileNotFound":
-      return profileSub({ userId: model.userId });
-  }
-};
-
-export const subscriptions = (model: Model): Sub.Sub<Msg> => {
-  return Sub.batch([authSubject, toProfileSub(model)]);
+export const subscriptions = (model: Model): sub.Sub<Msg> => {
+  return sub.batch([authSubject, profileSub(model)]);
 };

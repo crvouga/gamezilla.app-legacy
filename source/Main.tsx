@@ -5,7 +5,7 @@ import {
   ThemeProvider,
 } from "@mui/material";
 import { green } from "@mui/material/colors";
-import { programWithDebugger } from "elm-ts/lib/Debug/Html";
+import * as DebugHtml from "elm-ts/lib/Debug/Html";
 import * as Html from "elm-ts/lib/Html";
 import * as React from "elm-ts/lib/React";
 import { createRoot } from "react-dom/client";
@@ -37,7 +37,9 @@ const theme = responsiveFontSizes(
 // Program
 
 const program =
-  process.env.NODE_ENV === "production" ? React.program : programWithDebugger;
+  process.env.NODE_ENV === "production"
+    ? React.programWithFlags
+    : DebugHtml.programWithDebuggerWithFlags;
 
 const main = program(App.init, App.update, App.view, App.subscriptions);
 
@@ -60,4 +62,4 @@ const renderer = (dom: React.Dom) => {
   );
 };
 
-Html.run(main, renderer);
+React.run(main(null), renderer);
