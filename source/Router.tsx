@@ -34,6 +34,14 @@ export type Model =
   | {
       type: "ProfileUpdate";
       page: Page.ProfileUpdate.Model;
+    }
+  | {
+      type: "ProfileUpdateName";
+      page: Page.ProfileUpdateName.Model;
+    }
+  | {
+      type: "ProfileUpdateUsername";
+      page: Page.ProfileUpdateUsername.Model;
     };
 
 export const routeToInit = (
@@ -58,6 +66,18 @@ export const routeToInit = (
         type: "ProfileUpdate",
         page: Page.ProfileUpdate.init(profile),
       };
+
+    case "ProfileUpdateName":
+      return {
+        type: "ProfileUpdateName",
+        page: Page.ProfileUpdateName.init(profile),
+      };
+
+    case "ProfileUpdateUsername":
+      return {
+        type: "ProfileUpdateUsername",
+        page: Page.ProfileUpdateUsername.init(profile),
+      };
   }
 };
 
@@ -81,6 +101,12 @@ export const pathnameToRoute = (pathname: string): Model["type"] => {
     case "ProfileUpdate":
       return "ProfileUpdate";
 
+    case "ProfileUpdateName":
+      return "ProfileUpdateName";
+
+    case "ProfileUpdateUsername":
+      return "ProfileUpdateUsername";
+
     default:
       return "Home";
   }
@@ -97,6 +123,10 @@ export const init = (
 
 export const push = <Msg,>(route: Model["type"]) => {
   return Navigation.push<Msg>(route);
+};
+
+export const replace = <Msg,>(route: Model["type"]) => {
+  return Navigation.replace<Msg>(route);
 };
 
 export const locationToMsg = (location: Navigation.Location): Msg => {
@@ -120,7 +150,12 @@ export type Msg =
   | { type: "GotHomeMsg"; msg: Page.Home.Msg }
   | { type: "GotLogoutMsg"; msg: Page.Logout.Msg }
   | { type: "GotProfileDeleteMsg"; msg: Page.ProfileDelete.Msg }
-  | { type: "GotProfileUpdateMsg"; msg: Page.ProfileUpdate.Msg };
+  | { type: "GotProfileUpdateMsg"; msg: Page.ProfileUpdate.Msg }
+  | { type: "GotProfileUpdateNameMsg"; msg: Page.ProfileUpdateName.Msg }
+  | {
+      type: "GotProfileUpdateUsernameMsg";
+      msg: Page.ProfileUpdateUsername.Msg;
+    };
 
 export const update =
   (profile: Profile.Profile) =>
@@ -206,6 +241,41 @@ export const update =
         }
 
         return [model, cmd.none];
+
+      case "GotProfileUpdateNameMsg":
+        if (model.type === "ProfileUpdateName") {
+          const [pageModel, pageCmd] = Page.ProfileUpdateName.update(profile)(
+            msg.msg,
+            model.page
+          );
+
+          return [
+            { ...model, page: pageModel },
+            pipe(
+              pageCmd,
+              cmd.map((msg) => ({ type: "GotProfileUpdateNameMsg", msg }))
+            ),
+          ];
+        }
+
+        return [model, cmd.none];
+
+      case "GotProfileUpdateUsernameMsg":
+        if (model.type === "ProfileUpdateUsername") {
+          const [pageModel, pageCmd] = Page.ProfileUpdateUsername.update(
+            profile
+          )(msg.msg, model.page);
+
+          return [
+            { ...model, page: pageModel },
+            pipe(
+              pageCmd,
+              cmd.map((msg) => ({ type: "GotProfileUpdateUsernameMsg", msg }))
+            ),
+          ];
+        }
+
+        return [model, cmd.none];
     }
   };
 
@@ -219,7 +289,7 @@ View
 */
 
 export const view = (
-  profile: { avatarUrl: string; username: string },
+  profile: { name: string; avatarUrl: string; username: string },
   model: Model
 ): react.Html<Msg> => {
   switch (model.type) {
@@ -249,8 +319,20 @@ export const view = (
 
     case "ProfileUpdate":
       return pipe(
-        Page.ProfileUpdate.view(model.page),
+        Page.ProfileUpdate.view(profile, model.page),
         react.map((msg) => ({ type: "GotProfileUpdateMsg", msg }))
+      );
+
+    case "ProfileUpdateName":
+      return pipe(
+        Page.ProfileUpdateName.view(model.page),
+        react.map((msg) => ({ type: "GotProfileUpdateNameMsg", msg }))
+      );
+
+    case "ProfileUpdateUsername":
+      return pipe(
+        Page.ProfileUpdateUsername.view(model.page),
+        react.map((msg) => ({ type: "GotProfileUpdateUsernameMsg", msg }))
       );
   }
 };

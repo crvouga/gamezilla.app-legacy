@@ -1,4 +1,10 @@
-import { ChevronRight, Delete, Edit, Logout } from "@mui/icons-material";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Delete,
+  Edit,
+  Logout,
+} from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
 import {
   DialogActions,
@@ -13,6 +19,7 @@ import {
   ListItemText,
   Toolbar,
   Typography,
+  IconButton,
 } from "@mui/material";
 import { cmd, react } from "../Framework";
 import React from "react";
@@ -40,12 +47,16 @@ Update
 */
 
 export type Msg =
+  | { type: "Back" }
   | { type: "Logout" }
   | { type: "DeleteProfile" }
   | { type: "UpdateProfile" };
 
 export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
+    case "Back":
+      return [model, Router.replace("Home")];
+
     case "Logout":
       return [model, Router.push("Logout")];
 
@@ -79,9 +90,17 @@ export const view =
         }}
       >
         <Toolbar>
-          <Typography align="center" sx={{ flex: 1 }} variant="h6">
+          <Box sx={{ flex: 1 }}>
+            <IconButton edge="start" onClick={() => dispatch({ type: "Back" })}>
+              <ChevronLeft />
+            </IconButton>
+          </Box>
+
+          <Typography align="center" sx={{ flex: 2 }} variant="h6">
             {username}
           </Typography>
+
+          <Box sx={{ flex: 1 }} />
         </Toolbar>
         <List>
           <ListItemButton onClick={() => dispatch({ type: "UpdateProfile" })}>
