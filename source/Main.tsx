@@ -22,6 +22,35 @@ import * as Session from "./Session";
 /* 
 
 
+Main
+
+
+*/
+
+export const main = () => {
+  const program =
+    process.env.NODE_ENV === "production"
+      ? Navigation.programWithFlags
+      : DebugNavigation.programWithDebuggerWithFlags;
+
+  const mainProgram = program(locationToMsg, init, update, view, subscriptions);
+
+  const rootElement = document.getElementById("root");
+
+  if (!rootElement) {
+    throw new Error("Failed to get root element");
+  }
+
+  const root = createRoot(rootElement);
+
+  react.run(mainProgram(), (dom) => {
+    root.render(dom);
+  });
+};
+
+/* 
+
+
 Model
 
 
@@ -348,34 +377,3 @@ const theme = responsiveFontSizes(
     },
   })
 );
-
-/* 
-
-
-Main
-
-
-*/
-
-export const main = () => {
-  const program =
-    process.env.NODE_ENV === "production"
-      ? Navigation.programWithFlags
-      : DebugNavigation.programWithDebuggerWithFlags;
-
-  const mainProgram = program(locationToMsg, init, update, view, subscriptions);
-
-  const rootElement = document.getElementById("root");
-
-  if (!rootElement) {
-    throw new Error("Failed to get root element");
-  }
-
-  const root = createRoot(rootElement);
-
-  react.run(mainProgram(), (dom) => {
-    root.render(dom);
-  });
-};
-
-main();
