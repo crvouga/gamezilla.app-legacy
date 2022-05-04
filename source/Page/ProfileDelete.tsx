@@ -2,7 +2,7 @@ import { LoadingButton } from "@mui/lab";
 import { Button, Dialog, DialogActions, DialogTitle } from "@mui/material";
 import React from "react";
 import { cmd, react } from "../Framework";
-import * as Navigation from "../Framework/Navigation";
+import * as Router from "../Router";
 import * as Profile from "../Profile";
 
 /* 
@@ -36,7 +36,7 @@ export const update =
   (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
     switch (msg.type) {
       case "Cancel":
-        return [{ type: "Idle" }, Navigation.back()];
+        return [{ type: "Idle" }, Router.replace("Account")];
 
       case "Delete":
         return [
