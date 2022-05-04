@@ -19,6 +19,7 @@ import * as Profile from "../Profile";
 import * as Session from "../Session";
 import * as Router from "../Router";
 import * as Navigation from "../Framework/Navigation";
+import * as View from "../View";
 
 /* 
 
@@ -54,20 +55,24 @@ Update
 export type Msg =
   | { type: "ClickedBack" }
   | { type: "ClickedName" }
-  | { type: "ClickedUsername" };
+  | { type: "ClickedUsername" }
+  | { type: "ClickedAvatar" };
 
 export const update =
   ({ userId }: { userId: string }) =>
   (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
     switch (msg.type) {
+      case "ClickedAvatar":
+        return [model, Router.push("ProfileUpdateAvatar")];
+
       case "ClickedBack":
-        return [model, Navigation.replace("Account")];
+        return [model, Router.replace("Account")];
 
       case "ClickedName":
-        return [model, Navigation.push("ProfileUpdateName")];
+        return [model, Router.push("ProfileUpdateName")];
 
       case "ClickedUsername":
-        return [model, Navigation.push("ProfileUpdateUsername")];
+        return [model, Router.push("ProfileUpdateUsername")];
     }
   };
 
@@ -120,19 +125,23 @@ export const view =
             height: "150px",
             marginBottom: 1,
           }}
+          onClick={() => dispatch({ type: "ClickedAvatar" })}
         />
 
-        <Button sx={{ display: "block", marginX: "auto", marginBottom: 2 }}>
+        <Button
+          sx={{ display: "block", marginX: "auto", marginBottom: 2 }}
+          onClick={() => dispatch({ type: "ClickedAvatar" })}
+        >
           Change Avatar
         </Button>
 
         <List>
-          {viewField({
+          {View.viewField<Msg>({
             label: "Username",
             value: profile.username,
             onClick: () => dispatch({ type: "ClickedUsername" }),
           })(dispatch)}
-          {viewField({
+          {View.viewField<Msg>({
             label: "Name",
             value: profile.name,
             onClick: () => dispatch({ type: "ClickedName" }),
@@ -140,32 +149,3 @@ export const view =
         </List>
       </Box>
     );
-
-const viewField =
-  ({
-    label,
-    value,
-    onClick,
-  }: {
-    label: string;
-    value: string;
-    onClick: () => void;
-  }): react.Html<Msg> =>
-  () => {
-    return (
-      <ListItemButton onClick={onClick}>
-        <ListItemText
-          primaryTypographyProps={{
-            variant: "subtitle1",
-            color: "text.primary",
-          }}
-          primary={label}
-          secondaryTypographyProps={{ variant: "h6", color: "text.secondary" }}
-          secondary={value}
-        />
-        <ListItemSecondaryAction>
-          <ChevronRight />
-        </ListItemSecondaryAction>
-      </ListItemButton>
-    );
-  };

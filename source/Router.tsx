@@ -42,6 +42,10 @@ export type Model =
   | {
       type: "ProfileUpdateUsername";
       page: Page.ProfileUpdateUsername.Model;
+    }
+  | {
+      type: "ProfileUpdateAvatar";
+      page: Page.ProfileUpdateAvatar.Model;
     };
 
 export const routeToInit = (
@@ -78,6 +82,12 @@ export const routeToInit = (
         type: "ProfileUpdateUsername",
         page: Page.ProfileUpdateUsername.init(profile),
       };
+
+    case "ProfileUpdateAvatar":
+      return {
+        type: "ProfileUpdateAvatar",
+        page: Page.ProfileUpdateAvatar.init(profile),
+      };
   }
 };
 
@@ -106,6 +116,9 @@ export const pathnameToRoute = (pathname: string): Model["type"] => {
 
     case "ProfileUpdateUsername":
       return "ProfileUpdateUsername";
+
+    case "ProfileUpdateAvatar":
+      return "ProfileUpdateAvatar";
 
     default:
       return "Home";
@@ -155,6 +168,10 @@ export type Msg =
   | {
       type: "GotProfileUpdateUsernameMsg";
       msg: Page.ProfileUpdateUsername.Msg;
+    }
+  | {
+      type: "GotProfileUpdateAvatarMsg";
+      msg: Page.ProfileUpdateAvatar.Msg;
     };
 
 export const update =
@@ -276,6 +293,24 @@ export const update =
         }
 
         return [model, cmd.none];
+
+      case "GotProfileUpdateAvatarMsg":
+        if (model.type === "ProfileUpdateAvatar") {
+          const [pageModel, pageCmd] = Page.ProfileUpdateAvatar.update(profile)(
+            msg.msg,
+            model.page
+          );
+
+          return [
+            { ...model, page: pageModel },
+            pipe(
+              pageCmd,
+              cmd.map((msg) => ({ type: "GotProfileUpdateAvatarMsg", msg }))
+            ),
+          ];
+        }
+
+        return [model, cmd.none];
     }
   };
 
@@ -333,6 +368,12 @@ export const view = (
       return pipe(
         Page.ProfileUpdateUsername.view(model.page),
         react.map((msg) => ({ type: "GotProfileUpdateUsernameMsg", msg }))
+      );
+
+    case "ProfileUpdateAvatar":
+      return pipe(
+        Page.ProfileUpdateAvatar.view(profile, model.page),
+        react.map((msg) => ({ type: "GotProfileUpdateAvatarMsg", msg }))
       );
   }
 };
