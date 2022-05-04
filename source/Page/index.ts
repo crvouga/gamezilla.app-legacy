@@ -7,3 +7,4 @@ export * as ProfileDelete from "./ProfileDelete";
 export * as ProfileUpdate from "./ProfileUpdate";
 export * as ProfileUpdateName from "./ProfileUpdateName";
 export * as ProfileUpdateUsername from "./ProfileUpdateUsername";
+export * as ProfileUpdateAvatar from "./ProfileUpdateAvatar";
