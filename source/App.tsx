@@ -20,24 +20,29 @@ Model
 export type Model =
   | {
       type: "SessionLoading";
+      pathname: string;
     }
   | {
       type: "ProfileLoading";
       session: Session.Session;
+      pathname: string;
     }
   | {
       type: "SessionNotFound";
       page: Page.Login.Model;
+      pathname: string;
     }
   | {
       type: "ProfileNotFound";
       session: Session.Session;
       page: Page.ProfileCreate.Model;
+      pathname: string;
     }
   | {
       type: "ProfileFound";
       profile: Profile.Profile;
       router: Router.Model;
+      pathname: string;
     };
 
 type Flags = void;
@@ -46,11 +51,14 @@ export const init =
   (flags: Flags) =>
   (location: Navigation.Location): [Model, cmd.Cmd<Msg>] =>
     [
-      { type: "SessionLoading" },
-      Session.fetch<Msg>({
-        onFailure: () => ({ type: "SessionNotFound" }),
-        onSuccess: (session) => ({ type: "SessionFound", session }),
-      }),
+      { type: "SessionLoading", pathname: Router.locationToPathname(location) },
+      cmd.batch([
+        Router.push(Router.locationToRoute(location)),
+        Session.fetch<Msg>({
+          onFailure: () => ({ type: "SessionNotFound" }),
+          onSuccess: (session) => ({ type: "SessionFound", session }),
+        }),
+      ]),
     ];
 
 export const locationToMsg = (location: Navigation.Location): Msg => {
@@ -81,27 +89,30 @@ export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "SessionFound":
       return [
-        { type: "ProfileLoading", session: msg.session },
+        { ...model, type: "ProfileLoading", session: msg.session },
         Profile.fetch<Msg>({
           userId: msg.session.userId,
           onFailure: () => ({ type: "ProfileNotFound" }),
           onSuccess: (profile) => ({
             type: "ProfileFound",
-            route: "Home",
+            route: Router.pathnameToRoute(model.pathname),
             profile,
           }),
         }),
       ];
 
     case "SessionNotFound":
-      return [{ type: "SessionNotFound", page: Page.Login.init() }, cmd.none];
+      return [
+        { ...model, type: "SessionNotFound", page: Page.Login.init() },
+        cmd.none,
+      ];
 
     case "GotLoginPageMsg":
       if (model.type === "SessionNotFound") {
         const [pageModel, pageCmd] = Page.Login.update(msg.msg, model.page);
 
         return [
-          { type: "SessionNotFound", page: pageModel },
+          { ...model, type: "SessionNotFound", page: pageModel },
           pipe(
             pageCmd,
             cmd.map((msg) => ({ type: "GotLoginPageMsg", msg }))
@@ -115,6 +126,7 @@ export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
       if (model.type === "ProfileLoading") {
         return [
           {
+            ...model,
             type: "ProfileNotFound",
             session: model.session,
             page: Page.ProfileCreate.init(model.session),
@@ -130,6 +142,7 @@ export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
         };
         return [
           {
+            ...model,
             type: "ProfileNotFound",
             session,
             page: Page.ProfileCreate.init(session),
@@ -164,7 +177,15 @@ export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
 
     case "ProfileFound":
       return [
-        { ...msg, type: "ProfileFound", router: Router.routeToInit("Home") },
+        {
+          ...model,
+          ...msg,
+          type: "ProfileFound",
+          router: Router.routeToInit(
+            msg.profile,
+            Router.pathnameToRoute(model.pathname)
+          ),
+        },
         cmd.none,
       ];
 

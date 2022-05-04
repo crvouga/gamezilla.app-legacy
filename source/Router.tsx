@@ -2,6 +2,7 @@ import { flow, pipe } from "fp-ts/lib/function";
 import { cmd, react } from "./Framework";
 import * as Navigation from "./Framework/Navigation";
 import * as Page from "./Page";
+import * as Profile from "./Profile";
 
 /* 
 
@@ -29,9 +30,16 @@ export type Model =
   | {
       type: "ProfileDelete";
       page: Page.ProfileDelete.Model;
+    }
+  | {
+      type: "ProfileUpdate";
+      page: Page.ProfileUpdate.Model;
     };
 
-export const routeToInit = (type: Model["type"]): Model => {
+export const routeToInit = (
+  profile: Profile.Profile,
+  type: Model["type"]
+): Model => {
   switch (type) {
     case "Home":
       return { type: "Home", page: Page.Home.init };
@@ -44,6 +52,12 @@ export const routeToInit = (type: Model["type"]): Model => {
 
     case "ProfileDelete":
       return { type: "ProfileDelete", page: Page.ProfileDelete.init };
+
+    case "ProfileUpdate":
+      return {
+        type: "ProfileUpdate",
+        page: Page.ProfileUpdate.init(profile),
+      };
   }
 };
 
@@ -64,6 +78,9 @@ export const pathnameToRoute = (pathname: string): Model["type"] => {
     case "ProfileDelete":
       return "ProfileDelete";
 
+    case "ProfileUpdate":
+      return "ProfileUpdate";
+
     default:
       return "Home";
   }
@@ -71,12 +88,11 @@ export const pathnameToRoute = (pathname: string): Model["type"] => {
 
 export const locationToRoute = flow(locationToPathname, pathnameToRoute);
 
-export const init = (location: Navigation.Location): Model => {
-  return routeToInit(pathnameToRoute(locationToPathname(location)));
-};
-
-export const back = <Msg,>() => {
-  return Navigation.back<Msg>();
+export const init = (
+  profile: Profile.Profile,
+  location: Navigation.Location
+): Model => {
+  return routeToInit(profile, pathnameToRoute(locationToPathname(location)));
 };
 
 export const push = <Msg,>(route: Model["type"]) => {
@@ -103,14 +119,15 @@ export type Msg =
   | { type: "GotAccountMsg"; msg: Page.Account.Msg }
   | { type: "GotHomeMsg"; msg: Page.Home.Msg }
   | { type: "GotLogoutMsg"; msg: Page.Logout.Msg }
-  | { type: "GotProfileDeleteMsg"; msg: Page.ProfileDelete.Msg };
+  | { type: "GotProfileDeleteMsg"; msg: Page.ProfileDelete.Msg }
+  | { type: "GotProfileUpdateMsg"; msg: Page.ProfileUpdate.Msg };
 
 export const update =
-  (profile: { userId: string }) =>
+  (profile: Profile.Profile) =>
   (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
     switch (msg.type) {
       case "RouteChanged":
-        return [routeToInit(msg.routeType), cmd.none];
+        return [routeToInit(profile, msg.routeType), cmd.none];
 
       case "GotAccountMsg":
         if (model.type === "Account") {
@@ -171,6 +188,24 @@ export const update =
         }
 
         return [model, cmd.none];
+
+      case "GotProfileUpdateMsg":
+        if (model.type === "ProfileUpdate") {
+          const [pageModel, pageCmd] = Page.ProfileUpdate.update(profile)(
+            msg.msg,
+            model.page
+          );
+
+          return [
+            { ...model, page: pageModel },
+            pipe(
+              pageCmd,
+              cmd.map((msg) => ({ type: "GotProfileUpdateMsg", msg }))
+            ),
+          ];
+        }
+
+        return [model, cmd.none];
     }
   };
 
@@ -210,6 +245,12 @@ export const view = (
       return pipe(
         Page.ProfileDelete.view(model.page),
         react.map((msg) => ({ type: "GotProfileDeleteMsg", msg }))
+      );
+
+    case "ProfileUpdate":
+      return pipe(
+        Page.ProfileUpdate.view(model.page),
+        react.map((msg) => ({ type: "GotProfileUpdateMsg", msg }))
       );
   }
 };

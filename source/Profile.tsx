@@ -105,6 +105,38 @@ export const remove = <Msg,>({
   );
 };
 
+export const update = <Msg,>({
+  userId,
+  username,
+  name,
+  avatarUrl,
+  onSuccess,
+  onFailure,
+}: {
+  userId: string;
+  username: string;
+  name: string;
+  avatarUrl: string;
+  onSuccess: () => Msg;
+  onFailure: () => Msg;
+}): cmd.Cmd<Msg> => {
+  return pipe(
+    async () =>
+      Supabase.client
+        .from<definitions["profile"]>("profile")
+        .update({
+          username,
+          name,
+          avatar_url: avatarUrl,
+        })
+        .match({ id: userId }),
+
+    Task.map(({ data }) => Option.some(data ? onSuccess() : onFailure)),
+
+    Rx.of
+  );
+};
+
 export const subscription = ({ userId }: { userId: string }) => {
   return new Rx.Observable<Option.Option<Profile>>((subscriber) => {
     const subscription = Supabase.client
