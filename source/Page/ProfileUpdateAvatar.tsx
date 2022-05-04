@@ -116,7 +116,7 @@ export const view =
         <List>
           {View.viewField<Msg>({
             label: "Style",
-            value: model.style,
+            value: ProfileAvatar.formatStyle(model.style),
             onClick: () => dispatch({ type: "ClickedStyle" }),
           })(dispatch)}
 
