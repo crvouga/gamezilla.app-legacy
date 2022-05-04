@@ -2,6 +2,8 @@ import { Avatar, Box, Toolbar, Typography } from "@mui/material";
 import React from "react";
 import { cmd, react } from "../Framework";
 import * as Routes from "../Router";
+import * as TicTacToe from "../TicTacToe";
+import * as ConnectFour from "../ConnectFour";
 
 /* 
 
@@ -63,5 +65,34 @@ export const view =
             src={avatarUrl}
           />
         </Toolbar>
+
+        <Box
+          sx={{
+            p: 2,
+            display: "grid",
+            gridTemplateColumns: "repeat(3, 1fr)",
+            gap: 2,
+          }}
+        >
+          <GameIcon icon={<TicTacToe.Icon />} label="Tic Tac Toe" />
+          <GameIcon icon={<ConnectFour.Icon />} label="Connect Four" />
+        </Box>
       </Box>
     );
+
+const GameIcon = ({
+  icon,
+  label,
+}: {
+  icon: React.ReactNode;
+  label: string;
+}) => {
+  return (
+    <Box>
+      <Box sx={{ overflow: "hidden" }}>{icon}</Box>
+      <Typography align="center" variant="subtitle2">
+        {label}
+      </Typography>
+    </Box>
+  );
+};
