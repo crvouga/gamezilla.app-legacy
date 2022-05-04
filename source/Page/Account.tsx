@@ -1,4 +1,4 @@
-import { ChevronRight, Delete, Logout } from "@mui/icons-material";
+import { ChevronRight, Delete, Edit, Logout } from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
 import {
   DialogActions,
@@ -50,7 +50,7 @@ export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
       return [model, Router.push("Logout")];
 
     case "UpdateProfile":
-      return [model, cmd.none];
+      return [model, Router.push("ProfileUpdate")];
 
     case "DeleteProfile":
       return [model, Router.push("ProfileDelete")];
@@ -84,6 +84,16 @@ export const view =
           </Typography>
         </Toolbar>
         <List>
+          <ListItemButton onClick={() => dispatch({ type: "UpdateProfile" })}>
+            <ListItemIcon>
+              <Edit />
+            </ListItemIcon>
+            <ListItemText primary="Update Profile" />
+            <ListItemSecondaryAction>
+              <ChevronRight />
+            </ListItemSecondaryAction>
+          </ListItemButton>
+
           <ListItemButton onClick={() => dispatch({ type: "DeleteProfile" })}>
             <ListItemIcon>
               <Delete />
