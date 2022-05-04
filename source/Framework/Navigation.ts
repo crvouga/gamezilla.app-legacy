@@ -44,6 +44,14 @@ export function push<Msg>(url: string): Cmd<Msg> {
   });
 }
 
+export function replace<Msg>(url: string): Cmd<Msg> {
+  return of(() => {
+    history.replace(url);
+
+    return Promise.resolve(O.none);
+  });
+}
+
 /**
  * Generates a `Cmd` that removes current location from the history's list.
  * @category utils

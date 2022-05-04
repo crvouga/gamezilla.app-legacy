@@ -114,9 +114,9 @@ export const update = <Msg,>({
   onFailure,
 }: {
   userId: string;
-  username: string;
-  name: string;
-  avatarUrl: string;
+  username?: string;
+  name?: string;
+  avatarUrl?: string;
   onSuccess: () => Msg;
   onFailure: () => Msg;
 }): cmd.Cmd<Msg> => {

@@ -1,6 +1,9 @@
-import { ChevronLeft } from "@mui/icons-material";
+import { ChevronLeft, ChevronRight } from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
 import {
+  ListItemButton,
+  ListItemText,
+  ListItemSecondaryAction,
   Avatar,
   Box,
   Button,
@@ -8,11 +11,13 @@ import {
   TextField,
   Toolbar,
   Typography,
+  List,
 } from "@mui/material";
 import * as React from "react";
 import { cmd, react } from "../Framework";
 import * as Profile from "../Profile";
 import * as Session from "../Session";
+import * as Router from "../Router";
 import * as Navigation from "../Framework/Navigation";
 
 /* 
@@ -47,42 +52,22 @@ Update
 */
 
 export type Msg =
-  | { type: "EnteredUsername"; username: string }
-  | { type: "EnteredName"; name: string }
-  | { type: "Submit" }
-  | { type: "SubmitSucceeded" }
-  | { type: "SubmitFailed" }
-  | { type: "ClickedBackButton" };
+  | { type: "ClickedBack" }
+  | { type: "ClickedName" }
+  | { type: "ClickedUsername" };
 
 export const update =
   ({ userId }: { userId: string }) =>
   (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
     switch (msg.type) {
-      case "EnteredName":
-        return [{ ...model, form: { ...model.form, ...msg } }, cmd.none];
+      case "ClickedBack":
+        return [model, Navigation.replace("Account")];
 
-      case "EnteredUsername":
-        return [{ ...model, form: { ...model.form, ...msg } }, cmd.none];
+      case "ClickedName":
+        return [model, Navigation.push("ProfileUpdateName")];
 
-      case "Submit":
-        return [
-          { ...model, status: "Loading" },
-          Profile.update<Msg>({
-            ...model.form,
-            userId,
-            onFailure: () => ({ type: "SubmitFailed" }),
-            onSuccess: () => ({ type: "SubmitSucceeded" }),
-          }),
-        ];
-
-      case "SubmitSucceeded":
-        return [{ ...model, status: "Idle" }, cmd.none];
-
-      case "SubmitFailed":
-        return [{ ...model, status: "Idle" }, cmd.none];
-
-      case "ClickedBackButton":
-        return [model, Navigation.back()];
+      case "ClickedUsername":
+        return [model, Navigation.push("ProfileUpdateUsername")];
     }
   };
 
@@ -95,7 +80,10 @@ View
 */
 
 export const view =
-  (model: Model): react.Html<Msg> =>
+  (
+    profile: { username: string; name: string; avatarUrl: string },
+    model: Model
+  ): react.Html<Msg> =>
   (dispatch) =>
     (
       <Box
@@ -111,69 +99,73 @@ export const view =
           <Box sx={{ flex: 1 }}>
             <IconButton
               edge="start"
-              onClick={() => dispatch({ type: "ClickedBackButton" })}
+              onClick={() => dispatch({ type: "ClickedBack" })}
             >
               <ChevronLeft />
             </IconButton>
           </Box>
 
-          <Typography sx={{ flex: 1 }} align="center" variant="h6">
+          <Typography sx={{ flex: 2 }} align="center" variant="h6">
             Update Profile
           </Typography>
 
           <Box sx={{ flex: 1 }}></Box>
         </Toolbar>
 
-        <Box sx={{ p: 2, width: "100%" }}>
-          <Avatar
-            src={model.form.avatarUrl}
-            sx={{
-              marginX: "auto",
-              width: "150px",
-              height: "150px",
-              marginBottom: 1,
-            }}
-          />
+        <Avatar
+          src={profile.avatarUrl}
+          sx={{
+            marginX: "auto",
+            width: "150px",
+            height: "150px",
+            marginBottom: 1,
+          }}
+        />
 
-          <Button sx={{ display: "block", marginX: "auto", marginBottom: 2 }}>
-            Change Avatar
-          </Button>
+        <Button sx={{ display: "block", marginX: "auto", marginBottom: 2 }}>
+          Change Avatar
+        </Button>
 
-          <TextField
-            value={model.form.username}
-            sx={{ marginBottom: 2 }}
-            label="Username"
-            fullWidth
-            onChange={(event) =>
-              dispatch({
-                type: "EnteredUsername",
-                username: event.currentTarget.value,
-              })
-            }
-          />
-
-          <TextField
-            value={model.form.name}
-            sx={{ marginBottom: 4 }}
-            label="Name"
-            fullWidth
-            onChange={(event) =>
-              dispatch({
-                type: "EnteredName",
-                name: event.currentTarget.value,
-              })
-            }
-          />
-
-          <LoadingButton
-            fullWidth
-            size="large"
-            variant="contained"
-            loading={model.status === "Loading"}
-            onClick={() => dispatch({ type: "Submit" })}
-          >
-            Update Profile
-          </LoadingButton>
-        </Box>
+        <List>
+          {viewField({
+            label: "Username",
+            value: profile.username,
+            onClick: () => dispatch({ type: "ClickedUsername" }),
+          })(dispatch)}
+          {viewField({
+            label: "Name",
+            value: profile.name,
+            onClick: () => dispatch({ type: "ClickedName" }),
+          })(dispatch)}
+        </List>
       </Box>
     );
+
+const viewField =
+  ({
+    label,
+    value,
+    onClick,
+  }: {
+    label: string;
+    value: string;
+    onClick: () => void;
+  }): react.Html<Msg> =>
+  () => {
+    return (
+      <ListItemButton onClick={onClick}>
+        <ListItemText
+          primaryTypographyProps={{
+            variant: "subtitle1",
+            color: "text.primary",
+          }}
+          primary={label}
+          secondaryTypographyProps={{ variant: "h6", color: "text.secondary" }}
+          secondary={value}
+        />
+        <ListItemSecondaryAction>
+          <ChevronRight />
+        </ListItemSecondaryAction>
+      </ListItemButton>
+    );
+  };
