@@ -1,15 +1,4 @@
-import { ChevronLeft, ChevronRight } from "@mui/icons-material";
-import {
-  Avatar,
-  Box,
-  IconButton,
-  List,
-  ListItemButton,
-  ListItemSecondaryAction,
-  ListItemText,
-  Toolbar,
-  Typography,
-} from "@mui/material";
+import { Avatar, List } from "@mui/material";
 import * as React from "react";
 import { cmd, react } from "../Framework";
 import * as ProfileAvatar from "../ProfileAvatar";
@@ -80,28 +69,13 @@ export const view =
   ): react.Html<Msg> =>
   (dispatch) =>
     (
-      <Box
-        sx={{
-          position: "fixed",
-          width: "100%",
-          height: "100%",
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
-        <Toolbar>
-          <Box sx={{ flex: 1 }}>
-            <IconButton edge="start" onClick={() => dispatch({ type: "Back" })}>
-              <ChevronLeft />
-            </IconButton>
-          </Box>
-
-          <Typography sx={{ flex: 2 }} align="center" variant="h6">
-            Avatar
-          </Typography>
-
-          <Box sx={{ flex: 1 }}></Box>
-        </Toolbar>
+      <View.Page>
+        <View.Header
+          left={
+            <View.HeaderBackButton onClick={() => dispatch({ type: "Back" })} />
+          }
+          title="Avatar"
+        />
 
         <Avatar
           src={profile.avatarUrl}
@@ -126,5 +100,5 @@ export const view =
             onClick={() => dispatch({ type: "ClickedSeed" })}
           />
         </List>
-      </Box>
+      </View.Page>
     );
