@@ -1,13 +1,13 @@
 export * as Account from "./Account";
+export * as Chess from "./Chess";
+export * as ConnectFour from "./ConnectFour";
 export * as Home from "./Home";
 export * as Login from "./Login";
 export * as Logout from "./Logout";
 export * as ProfileCreate from "./ProfileCreate";
 export * as ProfileDelete from "./ProfileDelete";
 export * as ProfileUpdate from "./ProfileUpdate";
+export * as ProfileUpdateAvatar from "./ProfileUpdateAvatar";
 export * as ProfileUpdateName from "./ProfileUpdateName";
 export * as ProfileUpdateUsername from "./ProfileUpdateUsername";
-export * as ProfileUpdateAvatar from "./ProfileUpdateAvatar";
 export * as TicTacToe from "./TicTacToe";
-export * as ConnectFour from "./ConnectFour";
-export * as Chess from "./Chess";

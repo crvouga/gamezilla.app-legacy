@@ -5,6 +5,8 @@ export const theme = {
   line: "#0DA192",
   cross: "#545454",
   naught: "#F2EBD3",
+  lightSquare: "#EBEBD0",
+  darkSquare: "#779455",
 };
 
 const Slot = ({
@@ -64,21 +66,13 @@ export const Icon = () => {
 
   return (
     <svg width="100%" height="100%" viewBox="0 0 2 2">
-      <rect x={0} y={0} width={2} height={2} fill={theme.background} />
+      <rect x={0} y={0} width={1} height={1} fill={theme.lightSquare} />
 
-      {LINES.map((line, index) => (
-        <line key={index} {...line} stroke={theme.line} strokeWidth={0.1} />
-      ))}
+      <rect x={0} y={1} width={1} height={1} fill={theme.darkSquare} />
 
-      {positions.map(([{ column, row }, slot], index) => (
-        <Slot
-          key={index}
-          slot={slot}
-          cx={Number(column) + 0.5}
-          cy={Number(row) + 0.5}
-          r={0.3}
-        />
-      ))}
+      <rect x={1} y={1} width={1} height={1} fill={theme.lightSquare} />
+
+      <rect x={1} y={0} width={1} height={1} fill={theme.darkSquare} />
     </svg>
   );
 };
