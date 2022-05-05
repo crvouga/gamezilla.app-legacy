@@ -1,7 +1,7 @@
 import { Avatar, Button, List } from "@mui/material";
 import * as React from "react";
 import { cmd, react } from "../Framework";
-import * as Router from "../Router";
+import * as Router from "../Navigation";
 import * as View from "../View";
 
 /* 

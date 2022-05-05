@@ -16,7 +16,7 @@ import * as DebugNavigation from "./Framework/Debug/Navigation";
 import * as Navigation from "./Framework/Navigation";
 import * as Page from "./Page";
 import * as Profile from "./Profile";
-import * as Router from "./Router";
+import * as Router from "./Navigation";
 import * as Session from "./Session";
 
 /* 

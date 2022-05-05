@@ -1,6 +1,6 @@
 import React from "react";
 import { cmd, react } from "../Framework";
-import * as Routes from "../Router";
+import * as Routes from "../Navigation";
 import * as View from "../View";
 
 /* 
