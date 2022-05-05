@@ -1,9 +1,10 @@
 import { Avatar, Box, Toolbar, Typography } from "@mui/material";
 import React from "react";
+import * as ConnectFour from "../ConnectFour";
 import { cmd, react } from "../Framework";
 import * as Routes from "../Router";
 import * as TicTacToe from "../TicTacToe";
-import * as ConnectFour from "../ConnectFour";
+import * as View from "../View";
 
 /* 
 
@@ -57,15 +58,7 @@ export const view =
   ({ avatarUrl }: { avatarUrl: string }, _model: Model): react.Html<Msg> =>
   (dispatch) =>
     (
-      <Box
-        sx={{
-          position: "fixed",
-          width: "100%",
-          height: "100%",
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
+      <View.Page>
         <Toolbar>
           <Typography sx={{ flex: 1 }} variant="h6">
             Gamezilla
@@ -98,7 +91,7 @@ export const view =
             }
           />
         </Box>
-      </Box>
+      </View.Page>
     );
 
 const GameIcon = ({

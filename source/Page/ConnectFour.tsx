@@ -1,7 +1,8 @@
-import { Box, Toolbar, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 import React from "react";
 import { cmd, react } from "../Framework";
 import * as Routes from "../Router";
+import * as View from "../View";
 
 /* 
 
@@ -53,10 +54,11 @@ export const view =
           flexDirection: "column",
         }}
       >
-        <Toolbar>
-          <Typography sx={{ flex: 1 }} variant="h6">
-            Connect Four
-          </Typography>
-        </Toolbar>
+        <View.Header
+          left={
+            <View.HeaderBackButton onClick={() => dispatch({ type: "Back" })} />
+          }
+          title="Connect Four"
+        />
       </Box>
     );

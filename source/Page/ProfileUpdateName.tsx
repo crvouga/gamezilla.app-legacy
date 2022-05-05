@@ -5,6 +5,7 @@ import * as React from "react";
 import { cmd, react } from "../Framework";
 import * as Profile from "../Profile";
 import * as Router from "../Router";
+import * as View from "../View";
 
 /* 
 
@@ -79,28 +80,13 @@ export const view =
   (model: Model): react.Html<Msg> =>
   (dispatch) =>
     (
-      <Box
-        sx={{
-          position: "fixed",
-          width: "100%",
-          height: "100%",
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
-        <Toolbar>
-          <Box sx={{ flex: 1 }}>
-            <IconButton edge="start" onClick={() => dispatch({ type: "Back" })}>
-              <ChevronLeft />
-            </IconButton>
-          </Box>
-
-          <Typography sx={{ flex: 1 }} align="center" variant="h6">
-            Name
-          </Typography>
-
-          <Box sx={{ flex: 1 }}></Box>
-        </Toolbar>
+      <View.Page>
+        <View.Header
+          left={
+            <View.HeaderBackButton onClick={() => dispatch({ type: "Back" })} />
+          }
+          title="Name"
+        />
 
         <Box sx={{ p: 2, width: "100%" }}>
           <TextField
@@ -126,5 +112,5 @@ export const view =
             Update
           </LoadingButton>
         </Box>
-      </Box>
+      </View.Page>
     );

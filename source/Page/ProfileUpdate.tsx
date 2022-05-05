@@ -1,13 +1,4 @@
-import { ChevronLeft } from "@mui/icons-material";
-import {
-  Avatar,
-  Box,
-  Button,
-  IconButton,
-  List,
-  Toolbar,
-  Typography,
-} from "@mui/material";
+import { Avatar, Button, List } from "@mui/material";
 import * as React from "react";
 import { cmd, react } from "../Framework";
 import * as Router from "../Router";
@@ -83,31 +74,15 @@ export const view =
   ): react.Html<Msg> =>
   (dispatch) =>
     (
-      <Box
-        sx={{
-          position: "fixed",
-          width: "100%",
-          height: "100%",
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
-        <Toolbar>
-          <Box sx={{ flex: 1 }}>
-            <IconButton
-              edge="start"
+      <View.Page>
+        <View.Header
+          left={
+            <View.HeaderBackButton
               onClick={() => dispatch({ type: "ClickedBack" })}
-            >
-              <ChevronLeft />
-            </IconButton>
-          </Box>
-
-          <Typography sx={{ flex: 2 }} align="center" variant="h6">
-            Update Profile
-          </Typography>
-
-          <Box sx={{ flex: 1 }}></Box>
-        </Toolbar>
+            />
+          }
+          title="Update Profile"
+        />
 
         <Avatar
           src={profile.avatarUrl}
@@ -140,5 +115,5 @@ export const view =
             onClick={() => dispatch({ type: "ClickedName" })}
           />
         </List>
-      </Box>
+      </View.Page>
     );

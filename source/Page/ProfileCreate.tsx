@@ -1,19 +1,11 @@
-import { Close } from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
-import {
-  Avatar,
-  Box,
-  Button,
-  IconButton,
-  TextField,
-  Toolbar,
-  Typography,
-} from "@mui/material";
-import { cmd, react } from "../Framework";
+import { Avatar, Box, Button, TextField } from "@mui/material";
 import * as React from "react";
+import { cmd, react } from "../Framework";
+import * as Profile from "../Profile";
 import * as ProfileAvatar from "../ProfileAvatar";
 import * as Session from "../Session";
-import * as Profile from "../Profile";
+import * as View from "../View";
 
 /* 
 
@@ -111,32 +103,15 @@ export const view =
   (model: Model): react.Html<Msg> =>
   (dispatch) =>
     (
-      <Box
-        sx={{
-          position: "fixed",
-          width: "100%",
-          height: "100%",
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
-        <Toolbar>
-          <Box sx={{ flex: 1 }}>
-            <IconButton
-              edge="start"
-              disabled={model.status === "Loading"}
+      <View.Page>
+        <View.Header
+          left={
+            <View.HeaderBackButton
               onClick={() => dispatch({ type: "Logout" })}
-            >
-              <Close />
-            </IconButton>
-          </Box>
-
-          <Typography sx={{ flex: 1 }} align="center" variant="h6">
-            Create Profile
-          </Typography>
-
-          <Box sx={{ flex: 1 }}></Box>
-        </Toolbar>
+            />
+          }
+          title="Create Profile"
+        />
 
         <Box sx={{ p: 2, width: "100%" }}>
           <Avatar
@@ -189,5 +164,5 @@ export const view =
             Create Profile
           </LoadingButton>
         </Box>
-      </Box>
+      </View.Page>
     );
