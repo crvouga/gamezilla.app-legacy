@@ -25,12 +25,23 @@ Update
 
 */
 
-export type Msg = { type: "ClickedAvatar" };
+export type Msg =
+  | { type: "ClickedAvatar" }
+  | { type: "ClickedGame"; game: "TicTacToe" | "ConnectFour" };
 
 export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "ClickedAvatar":
       return [model, Routes.push("Account")];
+
+    case "ClickedGame":
+      switch (msg.game) {
+        case "ConnectFour":
+          return [model, Routes.push("ConnectFour")];
+
+        case "TicTacToe":
+          return [model, Routes.push("TicTacToe")];
+      }
   }
 };
 
@@ -74,8 +85,18 @@ export const view =
             gap: 2,
           }}
         >
-          <GameIcon icon={<TicTacToe.Icon />} label="Tic Tac Toe" />
-          <GameIcon icon={<ConnectFour.Icon />} label="Connect Four" />
+          <GameIcon
+            icon={<TicTacToe.Icon />}
+            label="Tic Tac Toe"
+            onClick={() => dispatch({ type: "ClickedGame", game: "TicTacToe" })}
+          />
+          <GameIcon
+            icon={<ConnectFour.Icon />}
+            label="Connect Four"
+            onClick={() =>
+              dispatch({ type: "ClickedGame", game: "ConnectFour" })
+            }
+          />
         </Box>
       </Box>
     );
@@ -83,12 +104,14 @@ export const view =
 const GameIcon = ({
   icon,
   label,
+  onClick,
 }: {
   icon: React.ReactNode;
   label: string;
+  onClick: () => void;
 }) => {
   return (
-    <Box>
+    <Box onClick={onClick}>
       <Box sx={{ overflow: "hidden" }}>{icon}</Box>
       <Typography align="center" variant="subtitle2">
         {label}

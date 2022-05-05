@@ -114,17 +114,17 @@ export const view =
         />
 
         <List>
-          {View.viewField<Msg>({
-            label: "Style",
-            value: ProfileAvatar.formatStyle(model.style),
-            onClick: () => dispatch({ type: "ClickedStyle" }),
-          })(dispatch)}
+          <View.Field
+            label="Style"
+            value={ProfileAvatar.formatStyle(model.style)}
+            onClick={() => dispatch({ type: "ClickedStyle" })}
+          />
 
-          {View.viewField<Msg>({
-            label: "Seed",
-            value: model.seed,
-            onClick: () => dispatch({ type: "ClickedSeed" }),
-          })(dispatch)}
+          <View.Field
+            label="Seed"
+            value={model.seed}
+            onClick={() => dispatch({ type: "ClickedSeed" })}
+          />
         </List>
       </Box>
     );
