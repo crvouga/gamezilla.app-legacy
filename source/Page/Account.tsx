@@ -1,24 +1,15 @@
+import { ChevronRight, Delete, Edit, Logout } from "@mui/icons-material";
 import {
-  ChevronLeft,
-  ChevronRight,
-  Delete,
-  Edit,
-  Logout,
-} from "@mui/icons-material";
-import {
-  Box,
-  IconButton,
   List,
   ListItemButton,
   ListItemIcon,
   ListItemSecondaryAction,
   ListItemText,
-  Toolbar,
-  Typography,
 } from "@mui/material";
 import React from "react";
 import { cmd, react } from "../Framework";
 import * as Router from "../Router";
+import * as View from "../View";
 
 /* 
 
@@ -74,28 +65,14 @@ export const view =
   ({ username }: { username: string }, model: Model): react.Html<Msg> =>
   (dispatch) =>
     (
-      <Box
-        sx={{
-          position: "fixed",
-          width: "100%",
-          height: "100%",
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
-        <Toolbar>
-          <Box sx={{ flex: 1 }}>
-            <IconButton edge="start" onClick={() => dispatch({ type: "Back" })}>
-              <ChevronLeft />
-            </IconButton>
-          </Box>
+      <View.Page>
+        <View.Header
+          left={
+            <View.HeaderBackButton onClick={() => dispatch({ type: "Back" })} />
+          }
+          title={username}
+        />
 
-          <Typography align="center" sx={{ flex: 2 }} variant="h6">
-            {username}
-          </Typography>
-
-          <Box sx={{ flex: 1 }} />
-        </Toolbar>
         <List>
           <ListItemButton onClick={() => dispatch({ type: "UpdateProfile" })}>
             <ListItemIcon>
@@ -127,5 +104,5 @@ export const view =
             </ListItemSecondaryAction>
           </ListItemButton>
         </List>
-      </Box>
+      </View.Page>
     );
