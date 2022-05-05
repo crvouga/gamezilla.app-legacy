@@ -4,7 +4,7 @@ import { Box, IconButton, TextField, Toolbar, Typography } from "@mui/material";
 import * as React from "react";
 import { cmd, react } from "../Framework";
 import * as Profile from "../Profile";
-import * as Router from "../Router";
+import * as Router from "../Navigation";
 import * as View from "../View";
 
 /* 

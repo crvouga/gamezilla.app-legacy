@@ -2,7 +2,7 @@ import { LoadingButton } from "@mui/lab";
 import { Button, Dialog, DialogActions, DialogTitle } from "@mui/material";
 import React from "react";
 import { cmd, react } from "../Framework";
-import * as Router from "../Router";
+import * as Router from "../Navigation";
 import * as Session from "../Session";
 
 /* 

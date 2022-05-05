@@ -3,7 +3,7 @@ import React from "react";
 import * as Chess from "../Chess";
 import * as ConnectFour from "../ConnectFour";
 import { cmd, react } from "../Framework";
-import * as Routes from "../Router";
+import * as Routes from "../Navigation";
 import * as TicTacToe from "../TicTacToe";
 import * as View from "../View";
 
