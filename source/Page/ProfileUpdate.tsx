@@ -1,24 +1,16 @@
-import { ChevronLeft, ChevronRight } from "@mui/icons-material";
-import { LoadingButton } from "@mui/lab";
+import { ChevronLeft } from "@mui/icons-material";
 import {
-  ListItemButton,
-  ListItemText,
-  ListItemSecondaryAction,
   Avatar,
   Box,
   Button,
   IconButton,
-  TextField,
+  List,
   Toolbar,
   Typography,
-  List,
 } from "@mui/material";
 import * as React from "react";
 import { cmd, react } from "../Framework";
-import * as Profile from "../Profile";
-import * as Session from "../Session";
 import * as Router from "../Router";
-import * as Navigation from "../Framework/Navigation";
 import * as View from "../View";
 
 /* 
@@ -136,16 +128,17 @@ export const view =
         </Button>
 
         <List>
-          {View.viewField<Msg>({
-            label: "Username",
-            value: profile.username,
-            onClick: () => dispatch({ type: "ClickedUsername" }),
-          })(dispatch)}
-          {View.viewField<Msg>({
-            label: "Name",
-            value: profile.name,
-            onClick: () => dispatch({ type: "ClickedName" }),
-          })(dispatch)}
+          <View.Field
+            label="Username"
+            value={profile.username}
+            onClick={() => dispatch({ type: "ClickedUsername" })}
+          />
+
+          <View.Field
+            label="Name"
+            value={profile.name}
+            onClick={() => dispatch({ type: "ClickedName" })}
+          />
         </List>
       </Box>
     );
