@@ -1,6 +1,6 @@
 import { Avatar, Box, ButtonBase, Toolbar, Typography } from "@mui/material";
 import React from "react";
-import * as Chess from "../Chess/Chess";
+import * as Chess from "../Chess";
 import * as ConnectFour from "../ConnectFour";
 import { cmd, react } from "../Framework";
 import * as Routes from "../Router";
