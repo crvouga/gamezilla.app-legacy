@@ -1,4 +1,4 @@
-import { Avatar, Box, Toolbar, Typography } from "@mui/material";
+import { Avatar, Box, ButtonBase, Toolbar, Typography } from "@mui/material";
 import React from "react";
 import * as ConnectFour from "../ConnectFour";
 import { cmd, react } from "../Framework";
@@ -104,9 +104,14 @@ const GameIcon = ({
   onClick: () => void;
 }) => {
   return (
-    <Box onClick={onClick}>
-      <Box sx={{ overflow: "hidden" }}>{icon}</Box>
-      <Typography align="center" variant="subtitle2">
+    <Box>
+      <ButtonBase
+        onClick={onClick}
+        sx={{ overflow: "hidden", borderRadius: 5 }}
+      >
+        {icon}
+      </ButtonBase>
+      <Typography sx={{ marginTop: 1 }} align="center">
         {label}
       </Typography>
     </Box>
