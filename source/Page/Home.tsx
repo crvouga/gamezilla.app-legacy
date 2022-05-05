@@ -1,5 +1,6 @@
 import { Avatar, Box, ButtonBase, Toolbar, Typography } from "@mui/material";
 import React from "react";
+import * as Chess from "../Chess";
 import * as ConnectFour from "../ConnectFour";
 import { cmd, react } from "../Framework";
 import * as Routes from "../Router";
@@ -28,7 +29,7 @@ Update
 
 export type Msg =
   | { type: "ClickedAvatar" }
-  | { type: "ClickedGame"; game: "TicTacToe" | "ConnectFour" };
+  | { type: "ClickedGame"; game: "TicTacToe" | "ConnectFour" | "Chess" };
 
 export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
@@ -42,6 +43,9 @@ export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
 
         case "TicTacToe":
           return [model, Routes.push("TicTacToe")];
+
+        case "Chess":
+          return [model, Routes.push("Chess")];
       }
   }
 };
@@ -83,12 +87,19 @@ export const view =
             label="Tic Tac Toe"
             onClick={() => dispatch({ type: "ClickedGame", game: "TicTacToe" })}
           />
+
           <GameIcon
             icon={<ConnectFour.Icon />}
             label="Connect Four"
             onClick={() =>
               dispatch({ type: "ClickedGame", game: "ConnectFour" })
             }
+          />
+
+          <GameIcon
+            icon={<Chess.Icon />}
+            label="Chess"
+            onClick={() => dispatch({ type: "ClickedGame", game: "Chess" })}
           />
         </Box>
       </View.Page>

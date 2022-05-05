@@ -10,3 +10,4 @@ export * as ProfileUpdateUsername from "./ProfileUpdateUsername";
 export * as ProfileUpdateAvatar from "./ProfileUpdateAvatar";
 export * as TicTacToe from "./TicTacToe";
 export * as ConnectFour from "./ConnectFour";
+export * as Chess from "./Chess";

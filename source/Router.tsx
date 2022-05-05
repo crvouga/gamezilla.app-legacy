@@ -54,6 +54,10 @@ export type Model =
   | {
       type: "TicTacToe";
       page: Page.TicTacToe.Model;
+    }
+  | {
+      type: "Chess";
+      page: Page.Chess.Model;
     };
 
 export const routeToInit = (
@@ -108,6 +112,12 @@ export const routeToInit = (
         type: "ConnectFour",
         page: Page.ConnectFour.init,
       };
+
+    case "Chess":
+      return {
+        type: "Chess",
+        page: Page.Chess.init,
+      };
   }
 };
 
@@ -145,6 +155,9 @@ export const pathnameToRoute = (pathname: string): Model["type"] => {
 
     case "ConnectFour":
       return "ConnectFour";
+
+    case "Chess":
+      return "Chess";
 
     default:
       return "Home";
@@ -200,7 +213,8 @@ export type Msg =
       msg: Page.ProfileUpdateAvatar.Msg;
     }
   | { type: "GotConnectFourMsg"; msg: Page.ConnectFour.Msg }
-  | { type: "GotTicTacToeMsg"; msg: Page.TicTacToe.Msg };
+  | { type: "GotTicTacToeMsg"; msg: Page.TicTacToe.Msg }
+  | { type: "GotChessMsg"; msg: Page.Chess.Msg };
 
 export const update =
   (profile: Profile.Profile) =>
@@ -375,6 +389,24 @@ export const update =
         }
 
         return [model, cmd.none];
+
+      case "GotChessMsg":
+        if (model.type === "Chess") {
+          const [pageModel, pageCmd] = Page.TicTacToe.update(
+            msg.msg,
+            model.page
+          );
+
+          return [
+            { ...model, page: pageModel },
+            pipe(
+              pageCmd,
+              cmd.map((msg) => ({ type: "GotChessMsg", msg }))
+            ),
+          ];
+        }
+
+        return [model, cmd.none];
     }
   };
 
@@ -450,6 +482,12 @@ export const view = (
       return pipe(
         Page.ConnectFour.view(model.page),
         react.map((msg) => ({ type: "GotConnectFourMsg", msg }))
+      );
+
+    case "Chess":
+      return pipe(
+        Page.Chess.view(model.page),
+        react.map((msg) => ({ type: "GotChessMsg", msg }))
       );
   }
 };
