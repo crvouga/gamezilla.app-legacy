@@ -49,7 +49,7 @@ export const Header = ({
     <Toolbar>
       <Box sx={{ flex: 1 }}>{left}</Box>
 
-      <Typography sx={{ flex: 2 }} align="center" variant="h5">
+      <Typography sx={{ flex: 2 }} align="center" variant="h6">
         {title}
       </Typography>
 
