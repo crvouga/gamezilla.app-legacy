@@ -1,6 +1,7 @@
 import { pipe } from "fp-ts/lib/function";
 import { cmd, react } from "../Framework";
 import * as Page from "../Page";
+import * as Routes from "./Routes";
 
 /* 
 
@@ -12,8 +13,17 @@ Model
 
 export type Model = { type: "Login"; model: Page.Login.Model };
 
-export const init = (): Model => {
-  return { type: "Login", model: Page.Login.init };
+export const init = (route: Routes.Route): [Model, cmd.Cmd<Msg>] => {
+  switch (route.type) {
+    case "Login":
+      return [{ type: "Login", model: Page.Login.init }, cmd.none];
+
+    default:
+      return [
+        { type: "Login", model: Page.Login.init },
+        Routes.replace({ type: "Login" }),
+      ];
+  }
 };
 
 /* 
