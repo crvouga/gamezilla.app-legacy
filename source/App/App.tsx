@@ -1,8 +1,11 @@
+import { option } from "fp-ts";
+import { pipe } from "fp-ts/lib/function";
+import * as React from "react";
+import * as Auth from "../Auth";
+import { cmd, react, sub } from "../Framework";
+import * as View from "../View";
 import * as LoggedInApp from "./LoggedInApp";
 import * as LoggedOutApp from "./LoggedOutApp";
-import * as Auth from "../Auth";
-import { cmd } from "../Framework";
-import { pipe } from "fp-ts/lib/function";
 
 /* 
 
@@ -16,20 +19,43 @@ export type Model = Loading | LoggedOut | LoggedIn;
 
 type Loading = { type: "Loading" };
 
-const initLoading = (): [Loading, cmd.Cmd<Msg>] => {
-  return [{ type: "Loading" }, cmd.none];
-};
-
-type LoggedOut = { type: "LoggedOut"; child: LoggedOutApp.Model };
-
-const initLoggedOut = (): [LoggedOut, cmd.Cmd<Msg>] => {
-  return [{ type: "LoggedOut", child: LoggedOutApp.init() }, cmd.none];
-};
-
 type LoggedIn = {
   type: "LoggedIn";
   session: Auth.Session;
   child: LoggedInApp.Model;
+};
+
+type LoggedOut = { type: "LoggedOut"; child: LoggedOutApp.Model };
+
+export const init = (): [Model, cmd.Cmd<Msg>] => {
+  return initLoggedOut();
+};
+
+const initLoggedOut = () => {
+  return mapLoggedOut(LoggedOutApp.init());
+};
+
+const initLoading = (): [Loading, cmd.Cmd<Msg>] => {
+  return [
+    { type: "Loading" },
+    Auth.fetch<Msg>({
+      onFailure: () => ({ type: "LoggedOut" }),
+      onSuccess: (session) => ({ type: "LoggedIn", session }),
+    }),
+  ];
+};
+
+const mapLoggedOut = ([subModel, subCmd]: [
+  LoggedOutApp.Model,
+  cmd.Cmd<LoggedOutApp.Msg>
+]): [Model, cmd.Cmd<Msg>] => {
+  return [
+    { type: "LoggedOut", child: subModel },
+    pipe(
+      subCmd,
+      cmd.map((msg) => ({ type: "LoggedOutAppMsg", msg }))
+    ),
+  ];
 };
 
 const initLoggedIn = (session: Auth.Session): [LoggedIn, cmd.Cmd<Msg>] => {
@@ -55,7 +81,8 @@ Update
 export type Msg =
   | { type: "LoggedIn"; session: Auth.Session }
   | { type: "LoggedOut" }
-  | { type: "LoggedInAppMsg"; msg: LoggedInApp.Msg };
+  | { type: "LoggedInAppMsg"; msg: LoggedInApp.Msg }
+  | { type: "LoggedOutAppMsg"; msg: LoggedOutApp.Msg };
 
 export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   switch (model.type) {
@@ -117,7 +144,56 @@ export const updateLoggedOut = (
     case "LoggedIn":
       return initLoggedIn(msg.session);
 
-    default:
+    case "LoggedOutAppMsg":
+      return mapLoggedOut(LoggedOutApp.update(msg.msg, model.child));
+
+    case "LoggedOut":
+    case "LoggedInAppMsg":
       return [model, cmd.none];
   }
+};
+
+/* 
+
+
+
+View
+
+
+
+*/
+
+export const view = (model: Model): react.Html<Msg> => {
+  switch (model.type) {
+    case "Loading":
+      return () => <View.LoadingPage />;
+
+    case "LoggedIn":
+      return () => <View.LoadingPage />;
+
+    case "LoggedOut":
+      return pipe(
+        LoggedOutApp.view(model.child),
+        react.map((msg) => ({ type: "LoggedOutAppMsg", msg }))
+      );
+  }
+};
+
+/* 
+
+
+
+Subscriptions
+
+
+
+*/
+
+const sessionToMsg = option.fold<Auth.Session, Msg>(
+  () => ({ type: "LoggedOut" }),
+  (session) => ({ type: "LoggedIn", session })
+);
+
+export const subscriptions = (model: Model): sub.Sub<Msg> => {
+  return sub.batch([sub.map(sessionToMsg)(Auth.subscription)]);
 };
