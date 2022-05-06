@@ -14,7 +14,7 @@ Model
 
 export type Model = { type: "Idle" } | { type: "Loading" };
 
-export const init: Model = { type: "Idle" };
+export const init = (): Model => ({ type: "Idle" });
 
 /*
 
