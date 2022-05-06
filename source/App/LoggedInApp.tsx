@@ -103,7 +103,27 @@ export const updateProfileFound = (
   msg: Msg,
   model: ProfileFound
 ): [Model, cmd.Cmd<Msg>] => {
-  return [model, cmd.none];
+  switch (msg.type) {
+    case "ProfileFound":
+      return [{ ...model, profile: msg.profile }, cmd.none];
+
+    case "ProfileFoundAppMsg":
+      const [childModel, childCmd] = ProfileFoundApp.update(
+        model.profile,
+        msg.msg,
+        model.child
+      );
+      return [
+        { ...model, child: childModel },
+        pipe(
+          childCmd,
+          cmd.map((msg) => ({ type: "ProfileFoundAppMsg", msg }))
+        ),
+      ];
+
+    case "ProfileMissing":
+      return [model, cmd.none];
+  }
 };
 
 export const updateProfileMissing = (

@@ -54,7 +54,8 @@ Location
 
 const locationToMsg = (location: Navigation.Location): Msg => {
   return {
-    type: "Noop",
+    type: "LocationChanged",
+    pathname: location.pathname,
   };
 };
 
@@ -70,7 +71,7 @@ Model
 
 type Model = {
   url: string;
-  app: App.Model;
+  child: App.Model;
 };
 
 const init = (location: Navigation.Location): [Model, cmd.Cmd<Msg>] => {
@@ -84,7 +85,7 @@ const mapAppUpdate = (
   [subModel, subCmd]: [App.Model, cmd.Cmd<App.Msg>]
 ): [Model, cmd.Cmd<Msg>] => {
   return [
-    { url, app: subModel },
+    { url, child: subModel },
     pipe(
       subCmd,
       cmd.map((msg) => ({ type: "AppMsg", msg }))
@@ -102,15 +103,20 @@ Update
 
 */
 
-type Msg = { type: "AppMsg"; msg: App.Msg } | { type: "Noop" };
+type Msg =
+  | { type: "AppMsg"; msg: App.Msg }
+  | { type: "LocationChanged"; pathname: string };
 
 const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "AppMsg":
-      return mapAppUpdate(model.url, App.update(model.url, msg.msg, model.app));
+      return mapAppUpdate(
+        model.url,
+        App.update(model.url, msg.msg, model.child)
+      );
 
-    case "Noop":
-      return [model, cmd.none];
+    case "LocationChanged":
+      return [{ ...model, url: msg.pathname }, cmd.none];
   }
 };
 
@@ -126,7 +132,7 @@ Subsciptions
 
 const subscriptions = (model: Model): sub.Sub<Msg> => {
   return pipe(
-    App.subscriptions(model.app),
+    App.subscriptions(model.child),
     sub.map((msg) => ({ type: "AppMsg", msg }))
   );
 };
@@ -175,7 +181,7 @@ const view =
 
 const viewMain = (model: Model): react.Html<Msg> => {
   return pipe(
-    App.view(model.app),
+    App.view(model.child),
     react.map((msg) => ({ type: "AppMsg", msg }))
   );
 };
