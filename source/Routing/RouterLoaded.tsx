@@ -29,7 +29,7 @@ export const init = (
   route: Routes.Route,
   profile: Profile.Profile
 ): [Model, cmd.Cmd<Msg>] => {
-  switch (route) {
+  switch (route.type) {
     case "Account":
       return [{ type: "Account", model: Page.Account.init }, cmd.none];
 
@@ -94,13 +94,22 @@ export const init = (
       ];
 
     case "ProfileCreate":
-      return [{ type: "Home", model: Page.Home.init }, Routes.replace("Home")];
+      return [
+        { type: "Home", model: Page.Home.init },
+        Routes.replace({ type: "Home" }),
+      ];
 
     case "Login":
-      return [{ type: "Home", model: Page.Home.init }, Routes.replace("Home")];
+      return [
+        { type: "Home", model: Page.Home.init },
+        Routes.replace({ type: "Home" }),
+      ];
 
     case "NotFound":
-      return [{ type: "Home", model: Page.Home.init }, Routes.replace("Home")];
+      return [
+        { type: "Home", model: Page.Home.init },
+        Routes.replace({ type: "Home" }),
+      ];
   }
 };
 

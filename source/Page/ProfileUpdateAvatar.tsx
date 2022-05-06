@@ -46,13 +46,13 @@ export const update = (
 ): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "Back":
-      return [model, Routing.Routes.replace("ProfileUpdate")];
+      return [model, Routing.Routes.replace({ type: "ProfileUpdate" })];
 
     case "ClickedSeed":
-      return [model, Routing.Routes.push("ProfileUpdate")];
+      return [model, Routing.Routes.push({ type: "ProfileUpdate" })];
 
     case "ClickedStyle":
-      return [model, Routing.Routes.push("ProfileUpdate")];
+      return [model, Routing.Routes.push({ type: "ProfileUpdate" })];
   }
 };
 

@@ -40,16 +40,16 @@ export type Msg =
 export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "Back":
-      return [model, Routing.Routes.replace("Home")];
+      return [model, Routing.Routes.replace({ type: "Home" })];
 
     case "Logout":
-      return [model, Routing.Routes.push("Logout")];
+      return [model, Routing.Routes.push({ type: "Logout" })];
 
     case "UpdateProfile":
-      return [model, Routing.Routes.push("ProfileUpdate")];
+      return [model, Routing.Routes.push({ type: "ProfileUpdate" })];
 
     case "DeleteProfile":
-      return [model, Routing.Routes.push("ProfileDelete")];
+      return [model, Routing.Routes.push({ type: "ProfileDelete" })];
   }
 };
 

@@ -32,7 +32,7 @@ export type Msg =
 export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "Cancel":
-      return [{ type: "Idle" }, Routing.Routes.replace("Account")];
+      return [{ type: "Idle" }, Routing.Routes.replace({ type: "Account" })];
 
     case "Confirm":
       return [{ type: "Loading" }, Auth.logout()];

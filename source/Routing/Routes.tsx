@@ -1,6 +1,22 @@
 import * as Navigation from "../Framework/Navigation";
 
-export const Routes = {
+export type Route =
+  | { type: "Account" }
+  | { type: "Chess" }
+  | { type: "ConnectFour" }
+  | { type: "Home" }
+  | { type: "Login" }
+  | { type: "Logout" }
+  | { type: "ProfileCreate" }
+  | { type: "ProfileDelete" }
+  | { type: "ProfileUpdate" }
+  | { type: "ProfileUpdateAvatar" }
+  | { type: "ProfileUpdateName" }
+  | { type: "ProfileUpdateUsername" }
+  | { type: "TicTacToe" }
+  | { type: "NotFound" };
+
+const routesTypes: { [routeType in Route["type"]]: string } = {
   Account: "Account",
   Chess: "Chess",
   ConnectFour: "ConnectFour",
@@ -17,22 +33,20 @@ export const Routes = {
   NotFound: "NotFound",
 };
 
-export type Route = keyof typeof Routes;
-
-export const encode = (route: Route): string => {
-  return route;
-};
-
-const isRoute = (route: string): route is Route => {
-  return route in Routes;
+const isRouteType = (routeType: string): routeType is Route["type"] => {
+  return routeType in routesTypes;
 };
 
 export const decode = (encoded: string): Route => {
-  if (isRoute(encoded)) {
-    return encoded;
+  if (isRouteType(encoded)) {
+    return { type: encoded };
   }
 
-  return "NotFound";
+  return { type: "NotFound" };
+};
+
+export const encode = (route: Route): string => {
+  return route.type;
 };
 
 export const push = <Msg,>(route: Route) => {
