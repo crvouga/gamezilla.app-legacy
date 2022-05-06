@@ -1,7 +1,7 @@
 import { Avatar, Button, List } from "@mui/material";
 import * as React from "react";
 import { cmd, react } from "../Framework";
-import * as Router from "../Navigation";
+import * as Routing from "../Routing";
 import * as View from "../View";
 
 /* 
@@ -36,28 +36,30 @@ Update
 */
 
 export type Msg =
-  | { type: "ClickedBack" }
-  | { type: "ClickedName" }
-  | { type: "ClickedUsername" }
-  | { type: "ClickedAvatar" };
+  | { group: "ProfileUpdate"; type: "ClickedBack" }
+  | { group: "ProfileUpdate"; type: "ClickedName" }
+  | { group: "ProfileUpdate"; type: "ClickedUsername" }
+  | { group: "ProfileUpdate"; type: "ClickedAvatar" };
 
-export const update =
-  ({ userId }: { userId: string }) =>
-  (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
-    switch (msg.type) {
-      case "ClickedAvatar":
-        return [model, Router.push("ProfileUpdateAvatar")];
+export const update = (
+  { userId }: { userId: string },
+  msg: Msg,
+  model: Model
+): [Model, cmd.Cmd<Msg>] => {
+  switch (msg.type) {
+    case "ClickedAvatar":
+      return [model, Routing.Routes.push("ProfileUpdateAvatar")];
 
-      case "ClickedBack":
-        return [model, Router.replace("Account")];
+    case "ClickedBack":
+      return [model, Routing.Routes.replace("Account")];
 
-      case "ClickedName":
-        return [model, Router.push("ProfileUpdateName")];
+    case "ClickedName":
+      return [model, Routing.Routes.push("ProfileUpdateName")];
 
-      case "ClickedUsername":
-        return [model, Router.push("ProfileUpdateUsername")];
-    }
-  };
+    case "ClickedUsername":
+      return [model, Routing.Routes.push("ProfileUpdateUsername")];
+  }
+};
 
 /* 
 
@@ -78,7 +80,9 @@ export const view =
         <View.Header
           left={
             <View.HeaderBackButton
-              onClick={() => dispatch({ type: "ClickedBack" })}
+              onClick={() =>
+                dispatch({ group: "ProfileUpdate", type: "ClickedBack" })
+              }
             />
           }
           title="Update Profile"
@@ -92,12 +96,16 @@ export const view =
             height: "150px",
             marginBottom: 1,
           }}
-          onClick={() => dispatch({ type: "ClickedAvatar" })}
+          onClick={() =>
+            dispatch({ group: "ProfileUpdate", type: "ClickedAvatar" })
+          }
         />
 
         <Button
           sx={{ display: "block", marginX: "auto", marginBottom: 2 }}
-          onClick={() => dispatch({ type: "ClickedAvatar" })}
+          onClick={() =>
+            dispatch({ group: "ProfileUpdate", type: "ClickedAvatar" })
+          }
         >
           Change Avatar
         </Button>
@@ -106,13 +114,17 @@ export const view =
           <View.Field
             label="Username"
             value={profile.username}
-            onClick={() => dispatch({ type: "ClickedUsername" })}
+            onClick={() =>
+              dispatch({ group: "ProfileUpdate", type: "ClickedUsername" })
+            }
           />
 
           <View.Field
             label="Name"
             value={profile.name}
-            onClick={() => dispatch({ type: "ClickedName" })}
+            onClick={() =>
+              dispatch({ group: "ProfileUpdate", type: "ClickedName" })
+            }
           />
         </List>
       </View.Page>

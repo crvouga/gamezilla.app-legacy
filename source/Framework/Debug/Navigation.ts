@@ -30,13 +30,19 @@
  * @since 0.5.3
  */
 
-import * as H from 'history'
-import { BehaviorSubject, EMPTY, Observable } from 'rxjs'
-import { Cmd } from '../Cmd'
-import { Html, Program } from '../Html'
-import { Location, program } from '../Navigation'
-import { Sub } from '../Sub'
-import { DebugData, DebuggerR, debugInit, runDebugger, updateWithDebug } from './commons'
+import * as H from "history";
+import { BehaviorSubject, EMPTY, Observable } from "rxjs";
+import { Cmd } from "../Cmd";
+import { Html, Program } from "../Html";
+import { Location, program } from "../Navigation";
+import { Sub } from "../Sub";
+import {
+  DebugData,
+  DebuggerR,
+  debugInit,
+  runDebugger,
+  updateWithDebug,
+} from "./commons";
 
 /**
  * Adds a debugging capability to a generic `Navigation` `Program`.
@@ -69,7 +75,14 @@ export function programWithDebugger<Model, Msg, Dom>(
   view: (model: Model) => Html<Dom, Msg>,
   subscriptions?: (model: Model) => Sub<Msg>
 ): Program<Model, Msg, Dom> {
-  return createProgram(EMPTY, locationToMessage, init, update, view, subscriptions)
+  return createProgram(
+    EMPTY,
+    locationToMessage,
+    init,
+    update,
+    view,
+    subscriptions
+  );
 }
 
 /**
@@ -87,7 +100,14 @@ export function programWithDebuggerWithStop<Model, Msg, Dom>(
   subscriptions?: (model: S) => Sub<M>
 ) => Program<S, M, D> {
   return (locationToMessage, init, update, view, subscriptions) =>
-    createProgram(stopDebuggerOn, locationToMessage, init, update, view, subscriptions)
+    createProgram(
+      stopDebuggerOn,
+      locationToMessage,
+      init,
+      update,
+      view,
+      subscriptions
+    );
 }
 
 /**
@@ -102,7 +122,14 @@ export function programWithDebuggerWithFlags<Flags, Model, Msg, Dom>(
   view: (model: Model) => Html<Dom, Msg>,
   subscriptions?: (model: Model) => Sub<Msg>
 ): (flags: Flags) => Program<Model, Msg, Dom> {
-  return flags => programWithDebugger(locationToMessage, init(flags), update, view, subscriptions)
+  return (flags) =>
+    programWithDebugger(
+      locationToMessage,
+      init(flags),
+      update,
+      view,
+      subscriptions
+    );
 }
 
 /**
@@ -119,8 +146,15 @@ export function programWithDebuggerWithFlagsWithStop<Model, Msg, Dom>(
   view: (model: S) => Html<D, M>,
   subscriptions?: (model: S) => Sub<M>
 ) => (flags: Flags) => Program<S, M, D> {
-  return (locationToMessage, init, update, view, subscriptions) => flags =>
-    createProgram(stopDebuggerOn, locationToMessage, init(flags), update, view, subscriptions)
+  return (locationToMessage, init, update, view, subscriptions) => (flags) =>
+    createProgram(
+      stopDebuggerOn,
+      locationToMessage,
+      init(flags),
+      update,
+      view,
+      subscriptions
+    );
 }
 
 // --- Internal
@@ -132,15 +166,24 @@ function createProgram<Model, Msg, Dom>(
   view: (model: Model) => Html<Dom, Msg>,
   subscriptions?: (model: Model) => Sub<Msg>
 ): Program<Model, Msg, Dom> {
-  const history = H.createHashHistory() // this is needed only to generate init model for debug$ :S
+  const history = H.createBrowserHistory(); // this is needed only to generate init model for debug$ :S
 
-  const Debugger = runDebugger<Model, Msg>(window, stopDebuggerOn)
+  const Debugger = runDebugger<Model, Msg>(window, stopDebuggerOn);
 
-  const initModel = init(history.location)[0]
+  const initModel = init(history.location)[0];
 
-  const debug$ = new BehaviorSubject<DebugData<Model, Msg>>([debugInit(), initModel])
+  const debug$ = new BehaviorSubject<DebugData<Model, Msg>>([
+    debugInit(),
+    initModel,
+  ]);
 
-  const p = program(locationToMessage, init, updateWithDebug(debug$, update), view, subscriptions)
+  const p = program(
+    locationToMessage,
+    init,
+    updateWithDebug(debug$, update),
+    view,
+    subscriptions
+  );
 
   // --- Run the debugger
   // --- we need to make a type assertion for `dispatch` because we cannot change the intrinsic `msg` type of `program`;
@@ -148,8 +191,8 @@ function createProgram<Model, Msg, Dom>(
   Debugger({
     debug$,
     init: initModel,
-    dispatch: p.dispatch as DebuggerR<Model, Msg>['dispatch']
-  })()
+    dispatch: p.dispatch as DebuggerR<Model, Msg>["dispatch"],
+  })();
 
-  return p
+  return p;
 }

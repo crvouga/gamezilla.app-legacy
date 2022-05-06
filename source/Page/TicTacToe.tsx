@@ -1,6 +1,6 @@
 import React from "react";
 import { cmd, react } from "../Framework";
-import * as Routes from "../Navigation";
+import * as Routing from "../Routing";
 import * as View from "../View";
 
 /* 
@@ -23,12 +23,12 @@ Update
 
 */
 
-export type Msg = { type: "Back" };
+export type Msg = { group: "TicTacToe"; type: "Back" };
 
 export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "Back":
-      return [model, Routes.replace("Home")];
+      return [model, Routing.Routes.replace("Home")];
   }
 };
 
@@ -47,7 +47,9 @@ export const view =
       <View.Page>
         <View.Header
           left={
-            <View.HeaderBackButton onClick={() => dispatch({ type: "Back" })} />
+            <View.HeaderBackButton
+              onClick={() => dispatch({ group: "TicTacToe", type: "Back" })}
+            />
           }
           title="Tic Tac Toe"
         />

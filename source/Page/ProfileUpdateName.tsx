@@ -1,10 +1,9 @@
-import { ChevronLeft } from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
-import { Box, IconButton, TextField, Toolbar, Typography } from "@mui/material";
+import { Box, TextField } from "@mui/material";
 import * as React from "react";
 import { cmd, react } from "../Framework";
 import * as Profile from "../Profile";
-import * as Router from "../Navigation";
+import * as Routing from "../Routing";
 import * as View from "../View";
 
 /* 
@@ -33,40 +32,48 @@ Update
 */
 
 export type Msg =
-  | { type: "EnteredName"; name: string }
-  | { type: "Submit" }
-  | { type: "SubmitSucceeded" }
-  | { type: "SubmitFailed" }
-  | { type: "Back" };
+  | { group: "ProfileUpdateName"; type: "EnteredName"; name: string }
+  | { group: "ProfileUpdateName"; type: "Submit" }
+  | { group: "ProfileUpdateName"; type: "SubmitSucceeded" }
+  | { group: "ProfileUpdateName"; type: "SubmitFailed" }
+  | { group: "ProfileUpdateName"; type: "Back" };
 
-export const update =
-  ({ userId }: { userId: string }) =>
-  (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
-    switch (msg.type) {
-      case "EnteredName":
-        return [{ ...model, ...msg }, cmd.none];
+export const update = (
+  { userId }: { userId: string },
+  msg: Msg,
+  model: Model
+): [Model, cmd.Cmd<Msg>] => {
+  switch (msg.type) {
+    case "EnteredName":
+      return [{ ...model, ...msg }, cmd.none];
 
-      case "Submit":
-        return [
-          { ...model, status: "Loading" },
-          Profile.update<Msg>({
-            ...model,
-            userId,
-            onFailure: () => ({ type: "SubmitFailed" }),
-            onSuccess: () => ({ type: "SubmitSucceeded" }),
+    case "Submit":
+      return [
+        { ...model, status: "Loading" },
+        Profile.update<Msg>({
+          ...model,
+          userId,
+          onFailure: () => ({
+            group: "ProfileUpdateName",
+            type: "SubmitFailed",
           }),
-        ];
+          onSuccess: () => ({
+            group: "ProfileUpdateName",
+            type: "SubmitSucceeded",
+          }),
+        }),
+      ];
 
-      case "SubmitSucceeded":
-        return [{ ...model, status: "Idle" }, cmd.none];
+    case "SubmitSucceeded":
+      return [{ ...model, status: "Idle" }, cmd.none];
 
-      case "SubmitFailed":
-        return [{ ...model, status: "Idle" }, cmd.none];
+    case "SubmitFailed":
+      return [{ ...model, status: "Idle" }, cmd.none];
 
-      case "Back":
-        return [model, Router.replace("Account")];
-    }
-  };
+    case "Back":
+      return [model, Routing.Routes.replace("Account")];
+  }
+};
 
 /* 
 
@@ -83,7 +90,11 @@ export const view =
       <View.Page>
         <View.Header
           left={
-            <View.HeaderBackButton onClick={() => dispatch({ type: "Back" })} />
+            <View.HeaderBackButton
+              onClick={() =>
+                dispatch({ group: "ProfileUpdateName", type: "Back" })
+              }
+            />
           }
           title="Name"
         />
@@ -96,6 +107,7 @@ export const view =
             fullWidth
             onChange={(event) =>
               dispatch({
+                group: "ProfileUpdateName",
                 type: "EnteredName",
                 name: event.currentTarget.value,
               })
@@ -107,7 +119,9 @@ export const view =
             size="large"
             variant="contained"
             loading={model.status === "Loading"}
-            onClick={() => dispatch({ type: "Submit" })}
+            onClick={() =>
+              dispatch({ group: "ProfileUpdateName", type: "Submit" })
+            }
           >
             Update
           </LoadingButton>

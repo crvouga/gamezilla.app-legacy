@@ -33,40 +33,52 @@ Update
 */
 
 export type Msg =
-  | { type: "EnteredUsername"; username: string }
-  | { type: "Submit" }
-  | { type: "SubmitSucceeded" }
-  | { type: "SubmitFailed" }
-  | { type: "Back" };
-
-export const update =
-  ({ userId }: { userId: string }) =>
-  (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
-    switch (msg.type) {
-      case "EnteredUsername":
-        return [{ ...model, ...msg }, cmd.none];
-
-      case "Submit":
-        return [
-          { ...model, status: "Loading" },
-          Profile.update<Msg>({
-            ...model,
-            userId,
-            onFailure: () => ({ type: "SubmitFailed" }),
-            onSuccess: () => ({ type: "SubmitSucceeded" }),
-          }),
-        ];
-
-      case "SubmitSucceeded":
-        return [{ ...model, status: "Idle" }, cmd.none];
-
-      case "SubmitFailed":
-        return [{ ...model, status: "Idle" }, cmd.none];
-
-      case "Back":
-        return [model, Navigation.replace("ProfileUpdate")];
+  | {
+      group: "ProfileUpdateUsername";
+      type: "EnteredUsername";
+      username: string;
     }
-  };
+  | { group: "ProfileUpdateUsername"; type: "Submit" }
+  | { group: "ProfileUpdateUsername"; type: "SubmitSucceeded" }
+  | { group: "ProfileUpdateUsername"; type: "SubmitFailed" }
+  | { group: "ProfileUpdateUsername"; type: "Back" };
+
+export const update = (
+  { userId }: { userId: string },
+  msg: Msg,
+  model: Model
+): [Model, cmd.Cmd<Msg>] => {
+  switch (msg.type) {
+    case "EnteredUsername":
+      return [{ ...model, ...msg }, cmd.none];
+
+    case "Submit":
+      return [
+        { ...model, status: "Loading" },
+        Profile.update<Msg>({
+          ...model,
+          userId,
+          onFailure: () => ({
+            group: "ProfileUpdateUsername",
+            type: "SubmitFailed",
+          }),
+          onSuccess: () => ({
+            group: "ProfileUpdateUsername",
+            type: "SubmitSucceeded",
+          }),
+        }),
+      ];
+
+    case "SubmitSucceeded":
+      return [{ ...model, status: "Idle" }, cmd.none];
+
+    case "SubmitFailed":
+      return [{ ...model, status: "Idle" }, cmd.none];
+
+    case "Back":
+      return [model, Navigation.replace("ProfileUpdate")];
+  }
+};
 
 /* 
 
@@ -83,7 +95,11 @@ export const view =
       <View.Page>
         <View.Header
           left={
-            <View.HeaderBackButton onClick={() => dispatch({ type: "Back" })} />
+            <View.HeaderBackButton
+              onClick={() =>
+                dispatch({ group: "ProfileUpdateUsername", type: "Back" })
+              }
+            />
           }
           title="Username"
         />
@@ -97,6 +113,7 @@ export const view =
             onChange={(event) =>
               dispatch({
                 type: "EnteredUsername",
+                group: "ProfileUpdateUsername",
                 username: event.currentTarget.value,
               })
             }
@@ -107,7 +124,9 @@ export const view =
             size="large"
             variant="contained"
             loading={model.status === "Loading"}
-            onClick={() => dispatch({ type: "Submit" })}
+            onClick={() =>
+              dispatch({ group: "ProfileUpdateUsername", type: "Submit" })
+            }
           >
             Update
           </LoadingButton>

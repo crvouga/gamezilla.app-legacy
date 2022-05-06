@@ -4,7 +4,7 @@ import * as React from "react";
 import { cmd, react } from "../Framework";
 import * as Profile from "../Profile";
 import * as ProfileAvatar from "../ProfileAvatar";
-import * as Session from "../Session";
+import * as Auth from "../Auth";
 import * as View from "../View";
 
 /* 
@@ -52,44 +52,52 @@ Update
 */
 
 export type Msg =
-  | { type: "EnteredUsername"; username: string }
-  | { type: "EnteredName"; name: string }
-  | { type: "Submit" }
-  | { type: "SubmitSucceeded" }
-  | { type: "SubmitFailed" }
-  | { type: "Logout" };
+  | { group: "ProfileCreate"; type: "EnteredUsername"; username: string }
+  | { group: "ProfileCreate"; type: "EnteredName"; name: string }
+  | { group: "ProfileCreate"; type: "Submit" }
+  | { group: "ProfileCreate"; type: "SubmitSucceeded" }
+  | { group: "ProfileCreate"; type: "SubmitFailed" }
+  | { group: "ProfileCreate"; type: "Logout" };
 
-export const update =
-  ({ userId }: { userId: string }) =>
-  (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
-    switch (msg.type) {
-      case "EnteredName":
-        return [{ ...model, form: { ...model.form, ...msg } }, cmd.none];
+export const update = (
+  { userId }: { userId: string },
+  msg: Msg,
+  model: Model
+): [Model, cmd.Cmd<Msg>] => {
+  switch (msg.type) {
+    case "EnteredName":
+      return [{ ...model, form: { ...model.form, ...msg } }, cmd.none];
 
-      case "EnteredUsername":
-        return [{ ...model, form: { ...model.form, ...msg } }, cmd.none];
+    case "EnteredUsername":
+      return [{ ...model, form: { ...model.form, ...msg } }, cmd.none];
 
-      case "Submit":
-        return [
-          { ...model, status: "Loading" },
-          Profile.create<Msg>({
-            ...model.form,
-            userId,
-            onFailure: () => ({ type: "SubmitFailed" }),
-            onSuccess: () => ({ type: "SubmitSucceeded" }),
+    case "Submit":
+      return [
+        { ...model, status: "Loading" },
+        Profile.create<Msg>({
+          ...model.form,
+          userId,
+          onFailure: () => ({
+            group: "ProfileCreate",
+            type: "SubmitFailed",
           }),
-        ];
+          onSuccess: () => ({
+            group: "ProfileCreate",
+            type: "SubmitSucceeded",
+          }),
+        }),
+      ];
 
-      case "SubmitSucceeded":
-        return [{ ...model, status: "Idle" }, cmd.none];
+    case "SubmitSucceeded":
+      return [{ ...model, status: "Idle" }, cmd.none];
 
-      case "SubmitFailed":
-        return [{ ...model, status: "Idle" }, cmd.none];
+    case "SubmitFailed":
+      return [{ ...model, status: "Idle" }, cmd.none];
 
-      case "Logout":
-        return [model, Session.logout()];
-    }
-  };
+    case "Logout":
+      return [model, Auth.logout()];
+  }
+};
 
 /* 
 
@@ -107,7 +115,9 @@ export const view =
         <View.Header
           left={
             <View.HeaderBackButton
-              onClick={() => dispatch({ type: "Logout" })}
+              onClick={() =>
+                dispatch({ group: "ProfileCreate", type: "Logout" })
+              }
             />
           }
           title="Create Profile"
@@ -135,6 +145,7 @@ export const view =
             fullWidth
             onChange={(event) =>
               dispatch({
+                group: "ProfileCreate",
                 type: "EnteredUsername",
                 username: event.currentTarget.value,
               })
@@ -148,6 +159,7 @@ export const view =
             fullWidth
             onChange={(event) =>
               dispatch({
+                group: "ProfileCreate",
                 type: "EnteredName",
                 name: event.currentTarget.value,
               })
@@ -159,7 +171,7 @@ export const view =
             size="large"
             variant="contained"
             loading={model.status === "Loading"}
-            onClick={() => dispatch({ type: "Submit" })}
+            onClick={() => dispatch({ group: "ProfileCreate", type: "Submit" })}
           >
             Create Profile
           </LoadingButton>

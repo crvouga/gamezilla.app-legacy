@@ -13,6 +13,20 @@ export type Profile = {
   avatarUrl: string;
 };
 
+export type Model =
+  | {
+      type: "Loading";
+    }
+  | {
+      type: "NotFound";
+    }
+  | {
+      type: "Found";
+      profile: Profile;
+    };
+
+export const init: Model = { type: "Loading" };
+
 const rowToProfile = (row: definitions["profile"]): Profile => {
   return {
     userId: row.id,

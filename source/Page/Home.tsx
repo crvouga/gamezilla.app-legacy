@@ -3,7 +3,7 @@ import React from "react";
 import * as Chess from "../Chess";
 import * as ConnectFour from "../ConnectFour";
 import { cmd, react } from "../Framework";
-import * as Routes from "../Navigation";
+import * as Routing from "../Routing";
 import * as TicTacToe from "../TicTacToe";
 import * as View from "../View";
 
@@ -28,24 +28,28 @@ Update
 */
 
 export type Msg =
-  | { type: "ClickedAvatar" }
-  | { type: "ClickedGame"; game: "TicTacToe" | "ConnectFour" | "Chess" };
+  | { group: "Home"; type: "ClickedAvatar" }
+  | {
+      group: "Home";
+      type: "ClickedGame";
+      game: "TicTacToe" | "ConnectFour" | "Chess";
+    };
 
 export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "ClickedAvatar":
-      return [model, Routes.push("Account")];
+      return [model, Routing.Routes.push("Account")];
 
     case "ClickedGame":
       switch (msg.game) {
         case "ConnectFour":
-          return [model, Routes.push("ConnectFour")];
+          return [model, Routing.Routes.push("ConnectFour")];
 
         case "TicTacToe":
-          return [model, Routes.push("TicTacToe")];
+          return [model, Routing.Routes.push("TicTacToe")];
 
         case "Chess":
-          return [model, Routes.push("Chess")];
+          return [model, Routing.Routes.push("Chess")];
       }
   }
 };
@@ -69,7 +73,7 @@ export const view =
           </Typography>
 
           <Avatar
-            onClick={() => dispatch({ type: "ClickedAvatar" })}
+            onClick={() => dispatch({ group: "Home", type: "ClickedAvatar" })}
             src={avatarUrl}
           />
         </Toolbar>
@@ -85,22 +89,32 @@ export const view =
           <GameIcon
             icon={<TicTacToe.Icon />}
             label="Tic Tac Toe"
-            onClick={() => dispatch({ type: "ClickedGame", game: "TicTacToe" })}
+            onClick={() =>
+              dispatch({
+                group: "Home",
+                type: "ClickedGame",
+                game: "TicTacToe",
+              })
+            }
           />
 
           <GameIcon
             icon={<ConnectFour.Icon />}
             label="Connect Four"
             onClick={() =>
-              dispatch({ type: "ClickedGame", game: "ConnectFour" })
+              dispatch({
+                group: "Home",
+                type: "ClickedGame",
+                game: "ConnectFour",
+              })
             }
           />
 
-          <GameIcon
+          {/* <GameIcon
             icon={<Chess.Icon />}
             label="Chess"
             onClick={() => dispatch({ type: "ClickedGame", game: "Chess" })}
-          />
+          /> */}
         </Box>
       </View.Page>
     );

@@ -1,14 +1,28 @@
-import { flow, pipe } from "fp-ts/lib/function";
-import { cmd } from "./Framework";
+import { pipe } from "fp-ts/lib/function";
 import * as Option from "fp-ts/lib/Option";
 import * as Task from "fp-ts/lib/Task";
 import * as Rx from "rxjs";
+import { cmd } from "./Framework";
 import * as Supabase from "./Supabase";
 
 export type Session = {
   userId: string;
   defaultName: string;
 };
+
+export type Model =
+  | {
+      type: "Loading";
+    }
+  | {
+      type: "NotFound";
+    }
+  | {
+      type: "Found";
+      session: Session;
+    };
+
+export const init: Model = { type: "Loading" };
 
 export const login = <Msg,>(): cmd.Cmd<Msg> => {
   return pipe(
@@ -36,10 +50,14 @@ export const fetch = <Msg,>({
   onSuccess: (session: Session) => Msg;
   onFailure: () => Msg;
 }): cmd.Cmd<Msg> => {
-  return Rx.of(async () => {
-    const session = fromSupabaseSession(Supabase.client.auth.session());
-    return Option.of(Option.fold(onFailure, onSuccess)(session));
-  });
+  return pipe(
+    Supabase.client.auth.session(),
+    Task.of,
+    Task.map(fromSupabaseSession),
+    Task.map(Option.fold(onFailure, onSuccess)),
+    Task.map(Option.some),
+    Rx.of
+  );
 };
 
 export const fromSupabaseSession = (
@@ -61,6 +79,6 @@ export const fromSupabaseSession = (
 
 export const subscription = new Rx.Subject<Option.Option<Session>>();
 
-Supabase.client.auth.onAuthStateChange((_, session) => {
-  subscription.next(fromSupabaseSession(session));
+Supabase.client.auth.onAuthStateChange((_, Auth) => {
+  subscription.next(fromSupabaseSession(Auth));
 });

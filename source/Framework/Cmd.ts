@@ -6,16 +6,16 @@
  * @since 0.5.0
  */
 
-import { Option, option, some } from 'fp-ts/lib/Option'
-import { Task, task } from 'fp-ts/lib/Task'
-import { EMPTY, Observable, merge, of as RxOf } from 'rxjs'
-import { map as RxMap } from 'rxjs/operators'
+import * as Option from "fp-ts/lib/Option";
+import * as Task from "fp-ts/lib/Task";
+import * as Rx from "rxjs";
 
 /**
  * @category model
  * @since 0.5.0
  */
-export interface Cmd<Msg> extends Observable<Task<Option<Msg>>> {}
+export interface Cmd<Msg>
+  extends Rx.Observable<Task.Task<Option.Option<Msg>>> {}
 
 /**
  * Creates a new `Cmd` that carries the provided `Msg`.
@@ -23,7 +23,7 @@ export interface Cmd<Msg> extends Observable<Task<Option<Msg>>> {}
  * @since 0.5.0
  */
 export function of<Msg>(m: Msg): Cmd<Msg> {
-  return RxOf(task.of(some(m)))
+  return Rx.of(Task.of(Option.some(m)));
 }
 
 /**
@@ -31,9 +31,11 @@ export function of<Msg>(m: Msg): Cmd<Msg> {
  * @category Functor
  * @since 0.5.0
  */
-export function map<A, Msg>(f: (a: A) => Msg): (cmd: Cmd<A>) => Cmd<Msg> {
-  return cmd => cmd.pipe(RxMap(t => task.map(t, o => option.map(o, f))))
-}
+export const map =
+  <A, B>(mapper: (a: A) => B) =>
+  (cmd: Cmd<A>) => {
+    return cmd.pipe(Rx.map(Task.map(Option.map(mapper))));
+  };
 
 /**
  * Batches the execution of a list of commands.
@@ -41,7 +43,7 @@ export function map<A, Msg>(f: (a: A) => Msg): (cmd: Cmd<A>) => Cmd<Msg> {
  * @since 0.5.0
  */
 export function batch<Msg>(arr: Array<Cmd<Msg>>): Cmd<Msg> {
-  return merge(...arr)
+  return Rx.merge(...arr);
 }
 
 /**
@@ -49,4 +51,4 @@ export function batch<Msg>(arr: Array<Cmd<Msg>>): Cmd<Msg> {
  * @category constructors
  * @since 0.5.0
  */
-export const none: Cmd<never> = EMPTY
+export const none: Cmd<never> = Rx.EMPTY;

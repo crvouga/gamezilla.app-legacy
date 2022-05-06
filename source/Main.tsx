@@ -11,13 +11,12 @@ import { pipe } from "fp-ts/lib/function";
 import * as Option from "fp-ts/lib/Option";
 import * as React from "react";
 import { createRoot } from "react-dom/client";
+import * as Auth from "./Auth";
 import { cmd, react, sub } from "./Framework";
 import * as DebugNavigation from "./Framework/Debug/Navigation";
 import * as Navigation from "./Framework/Navigation";
-import * as Page from "./Page";
 import * as Profile from "./Profile";
-import * as Router from "./Navigation";
-import * as Session from "./Session";
+import * as Routing from "./Routing";
 
 /* 
 
@@ -27,25 +26,25 @@ Main
 
 */
 
-export const main = () => {
+export const main = (): Error[] => {
   const program =
     process.env.NODE_ENV === "production"
-      ? Navigation.programWithFlags
-      : DebugNavigation.programWithDebuggerWithFlags;
+      ? Navigation.program
+      : DebugNavigation.programWithDebugger;
 
   const mainProgram = program(locationToMsg, init, update, view, subscriptions);
 
   const rootElement = document.getElementById("root");
 
   if (!rootElement) {
-    throw new Error("Failed to get root element");
+    return [new Error("Failed to get root element from html document")];
   }
 
   const root = createRoot(rootElement);
 
-  react.run(mainProgram(), (dom) => {
-    root.render(dom);
-  });
+  react.run(mainProgram, (node) => root.render(node));
+
+  return [];
 };
 
 /* 
@@ -59,51 +58,47 @@ Model
 export type Model =
   | {
       type: "SessionLoading";
-      pathname: string;
+      route: Routing.Routes.Route;
+    }
+  | {
+      type: "SessionMissing";
+      route: Routing.Routes.Route;
+      router: Routing.SessionMissing.Model;
     }
   | {
       type: "ProfileLoading";
-      session: Session.Session;
-      pathname: string;
+      session: Auth.Session;
+      route: Routing.Routes.Route;
     }
   | {
-      type: "SessionNotFound";
-      page: Page.Login.Model;
-      pathname: string;
+      type: "ProfileMissing";
+      session: Auth.Session;
+      route: Routing.Routes.Route;
+      router: Routing.ProfileMissing.Model;
     }
   | {
-      type: "ProfileNotFound";
-      session: Session.Session;
-      page: Page.ProfileCreate.Model;
-      pathname: string;
-    }
-  | {
-      type: "ProfileFound";
+      type: "Loaded";
+      session: Auth.Session;
       profile: Profile.Profile;
-      router: Router.Model;
-      pathname: string;
+      route: Routing.Routes.Route;
+      router: Routing.Loaded.Model;
     };
 
-type Flags = void;
-
-export const init =
-  (flags: Flags) =>
-  (location: Navigation.Location): [Model, cmd.Cmd<Msg>] =>
-    [
-      { type: "SessionLoading", pathname: Router.locationToPathname(location) },
-      cmd.batch([
-        Router.push(Router.locationToRoute(location)),
-        Session.fetch<Msg>({
-          onFailure: () => ({ type: "SessionNotFound" }),
-          onSuccess: (session) => ({ type: "SessionFound", session }),
-        }),
-      ]),
-    ];
+export const init = (location: Navigation.Location): [Model, cmd.Cmd<Msg>] => [
+  {
+    type: "SessionLoading",
+    route: Routing.Routes.decode(location.pathname.substring(1)),
+  },
+  Auth.fetch<Msg>({
+    onFailure: () => ({ type: "SessionNotFound" }),
+    onSuccess: (session) => ({ type: "SessionFound", session }),
+  }),
+];
 
 export const locationToMsg = (location: Navigation.Location): Msg => {
   return {
-    type: "GotRouterMsg",
-    msg: Router.locationToMsg(location),
+    type: "RouteChanged",
+    route: Routing.Routes.decode(location.pathname.substring(1)),
   };
 };
 
@@ -116,121 +111,130 @@ Update
 */
 
 export type Msg =
-  | { type: "SessionFound"; session: Session.Session }
   | { type: "SessionNotFound" }
-  | { type: "ProfileNotFound" }
-  | { type: "ProfileFound"; profile: Profile.Profile }
-  | { type: "GotProfileCreatePageMsg"; msg: Page.ProfileCreate.Msg }
-  | { type: "GotLoginPageMsg"; msg: Page.Login.Msg }
-  | { type: "GotRouterMsg"; msg: Router.Msg };
+  | { type: "SessionFound"; session: Auth.Session }
+  | { type: "ProfileNotFound"; session: Auth.Session }
+  | { type: "ProfileFound"; session: Auth.Session; profile: Profile.Profile }
+  | { type: "RouteChanged"; route: Routing.Routes.Route }
+  | { type: "GotSessionMissingRouterMsg"; msg: Routing.SessionMissing.Msg }
+  | { type: "GotProfileMissingRouterMsg"; msg: Routing.ProfileMissing.Msg }
+  | { type: "GotLoadedRouterMsg"; msg: Routing.Loaded.Msg };
 
 export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
+    case "RouteChanged":
+      switch (model.type) {
+        case "Loaded":
+          const [routerModel, routerCmd] = Routing.Loaded.init(
+            msg.route,
+            model.profile
+          );
+          return [
+            {
+              type: "Loaded",
+              profile: model.profile,
+              session: model.session,
+              route: msg.route,
+              router: routerModel,
+            },
+            pipe(
+              routerCmd,
+              cmd.map((msg) => ({ type: "GotLoadedRouterMsg", msg }))
+            ),
+          ];
+
+        case "ProfileLoading":
+          return [{ ...model, route: msg.route }, cmd.none];
+
+        case "ProfileMissing":
+          return [
+            {
+              ...model,
+              route: msg.route,
+              router: Routing.ProfileMissing.init(model.session),
+            },
+            cmd.none,
+          ];
+
+        case "SessionLoading":
+          return [{ ...model, route: msg.route }, cmd.none];
+
+        case "SessionMissing":
+          return [
+            {
+              ...model,
+              route: msg.route,
+              router: Routing.SessionMissing.init(),
+            },
+            cmd.none,
+          ];
+      }
+
+    case "ProfileFound":
+      const [routerModel, routerCmd] = Routing.Loaded.init(
+        model.route,
+        msg.profile
+      );
+      return [
+        {
+          type: "Loaded",
+          profile: msg.profile,
+          session: msg.session,
+          route: model.route,
+          router: routerModel,
+        },
+        pipe(
+          routerCmd,
+          cmd.map((msg) => ({ type: "GotLoadedRouterMsg", msg }))
+        ),
+      ];
+
+    case "ProfileNotFound":
+      return [
+        {
+          type: "ProfileMissing",
+          session: msg.session,
+          route: model.route,
+          router: Routing.ProfileMissing.init(msg.session),
+        },
+        cmd.none,
+      ];
+
     case "SessionFound":
       return [
-        { ...model, type: "ProfileLoading", session: msg.session },
+        {
+          ...model,
+          type: "ProfileLoading",
+          session: msg.session,
+        },
         Profile.fetch<Msg>({
           userId: msg.session.userId,
-          onFailure: () => ({ type: "ProfileNotFound" }),
+          onFailure: () => ({
+            type: "ProfileNotFound",
+            session: msg.session,
+          }),
           onSuccess: (profile) => ({
             type: "ProfileFound",
-            route: Router.pathnameToRoute(model.pathname),
             profile,
+            session: msg.session,
           }),
         }),
       ];
 
     case "SessionNotFound":
       return [
-        { ...model, type: "SessionNotFound", page: Page.Login.init() },
-        cmd.none,
-      ];
-
-    case "GotLoginPageMsg":
-      if (model.type === "SessionNotFound") {
-        const [pageModel, pageCmd] = Page.Login.update(msg.msg, model.page);
-
-        return [
-          { ...model, type: "SessionNotFound", page: pageModel },
-          pipe(
-            pageCmd,
-            cmd.map((msg) => ({ type: "GotLoginPageMsg", msg }))
-          ),
-        ];
-      }
-
-      return [model, cmd.none];
-
-    case "ProfileNotFound":
-      if (model.type === "ProfileLoading") {
-        return [
-          {
-            ...model,
-            type: "ProfileNotFound",
-            session: model.session,
-            page: Page.ProfileCreate.init(model.session),
-          },
-          cmd.none,
-        ];
-      }
-
-      if (model.type === "ProfileFound") {
-        const session: Session.Session = {
-          defaultName: model.profile.name,
-          userId: model.profile.userId,
-        };
-        return [
-          {
-            ...model,
-            type: "ProfileNotFound",
-            session,
-            page: Page.ProfileCreate.init(session),
-          },
-          cmd.none,
-        ];
-      }
-
-      return [model, cmd.none];
-
-    case "GotProfileCreatePageMsg":
-      if (model.type === "ProfileNotFound") {
-        const [pageModel, pageCmd] = Page.ProfileCreate.update(model.session)(
-          msg.msg,
-          model.page
-        );
-
-        return [
-          {
-            ...model,
-            type: "ProfileNotFound",
-            page: pageModel,
-          },
-          pipe(
-            pageCmd,
-            cmd.map((msg) => ({ type: "GotProfileCreatePageMsg", msg }))
-          ),
-        ];
-      }
-
-      return [model, cmd.none];
-
-    case "ProfileFound":
-      return [
         {
           ...model,
-          ...msg,
-          type: "ProfileFound",
-          router: Router.routeToInit(
-            msg.profile,
-            Router.pathnameToRoute(model.pathname)
-          ),
+          type: "SessionMissing",
+          router: Routing.SessionMissing.init(),
         },
         cmd.none,
       ];
 
-    case "GotRouterMsg":
-      if (model.type === "ProfileFound") {
-        const [routerModel, routerCmd] = Router.update(model.profile)(
+    case "GotLoadedRouterMsg":
+      if (model.type === "Loaded") {
+        const [routerModel, routerCmd] = Routing.Loaded.update(
+          model.profile,
           msg.msg,
           model.router
         );
@@ -239,7 +243,44 @@ export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
           { ...model, router: routerModel },
           pipe(
             routerCmd,
-            cmd.map((msg) => ({ type: "GotRouterMsg", msg }))
+            cmd.map((msg) => ({ type: "GotLoadedRouterMsg", msg }))
+          ),
+        ];
+      }
+
+      return [model, cmd.none];
+
+    case "GotSessionMissingRouterMsg":
+      if (model.type === "SessionMissing") {
+        const [routerModel, routerCmd] = Routing.SessionMissing.update(
+          msg.msg,
+          model.router
+        );
+
+        return [
+          { ...model, router: routerModel },
+          pipe(
+            routerCmd,
+            cmd.map((msg) => ({ type: "GotSessionMissingRouterMsg", msg }))
+          ),
+        ];
+      }
+
+      return [model, cmd.none];
+
+    case "GotProfileMissingRouterMsg":
+      if (model.type === "ProfileMissing") {
+        const [routerModel, routerCmd] = Routing.ProfileMissing.update(
+          model.session,
+          msg.msg,
+          model.router
+        );
+
+        return [
+          { ...model, router: routerModel },
+          pipe(
+            routerCmd,
+            cmd.map((msg) => ({ type: "GotProfileMissingRouterMsg", msg }))
           ),
         ];
       }
@@ -256,38 +297,48 @@ Subscriptions
 
 */
 
-const profileToMsg = Option.fold<Profile.Profile, Msg>(
-  () => ({ type: "ProfileNotFound" }),
-  (profile) => ({ type: "ProfileFound", route: "Home", profile })
-);
+const profileToMsg = (session: Auth.Session) =>
+  Option.fold<Profile.Profile, Msg>(
+    () => ({ type: "ProfileNotFound", session }),
+    (profile) => ({ type: "ProfileFound", profile, session })
+  );
 
 const profileSub = (model: Model): sub.Sub<Msg> => {
   switch (model.type) {
     case "SessionLoading":
       return sub.none;
 
-    case "SessionNotFound":
+    case "SessionMissing":
       return sub.none;
 
-    case "ProfileFound":
-      return pipe(Profile.subscription(model.profile), sub.map(profileToMsg));
-
     case "ProfileLoading":
-      return pipe(Profile.subscription(model.session), sub.map(profileToMsg));
+      return pipe(
+        Profile.subscription(model.session),
+        sub.map(profileToMsg(model.session))
+      );
 
-    case "ProfileNotFound":
-      return pipe(Profile.subscription(model.session), sub.map(profileToMsg));
+    case "ProfileMissing":
+      return pipe(
+        Profile.subscription(model.session),
+        sub.map(profileToMsg(model.session))
+      );
+
+    case "Loaded":
+      return pipe(
+        Profile.subscription(model.profile),
+        sub.map(profileToMsg(model.session))
+      );
   }
 };
 
-const sessionToMsg = Option.fold<Session.Session, Msg>(
+const sessionToMsg = Option.fold<Auth.Session, Msg>(
   () => ({ type: "SessionNotFound" }),
   (session) => ({ type: "SessionFound", session })
 );
 
 export const subscriptions = (model: Model): sub.Sub<Msg> => {
   return sub.batch([
-    pipe(Session.subscription, sub.map(sessionToMsg)),
+    pipe(Auth.subscription, sub.map(sessionToMsg)),
     profileSub(model),
   ]);
 };
@@ -319,22 +370,22 @@ export const viewMain = (model: Model): react.Html<Msg> => {
     case "ProfileLoading":
       return viewLoading;
 
-    case "SessionNotFound":
+    case "ProfileMissing":
       return pipe(
-        Page.Login.view(model.page),
-        react.map((msg) => ({ type: "GotLoginPageMsg", msg }))
+        Routing.ProfileMissing.view(model.router),
+        react.map((msg) => ({ type: "GotProfileMissingRouterMsg", msg }))
       );
 
-    case "ProfileNotFound":
+    case "SessionMissing":
       return pipe(
-        Page.ProfileCreate.view(model.page),
-        react.map((msg) => ({ type: "GotProfileCreatePageMsg", msg }))
+        Routing.SessionMissing.view(model.router),
+        react.map((msg) => ({ type: "GotSessionMissingRouterMsg", msg }))
       );
 
-    case "ProfileFound":
+    case "Loaded":
       return pipe(
-        Router.view(model.profile, model.router),
-        react.map((msg) => ({ type: "GotRouterMsg", msg }))
+        Routing.Loaded.view(model.profile, model.router),
+        react.map((msg) => ({ type: "GotLoadedRouterMsg", msg }))
       );
   }
 };
