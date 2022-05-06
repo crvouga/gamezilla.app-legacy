@@ -21,6 +21,10 @@ export type Model =
   | { type: "ProfileDelete"; model: Page.ProfileDelete.Model }
   | { type: "ProfileUpdate"; model: Page.ProfileUpdate.Model }
   | { type: "ProfileUpdateAvatar"; model: Page.ProfileUpdateAvatar.Model }
+  | {
+      type: "ProfileUpdateAvatarStyle";
+      model: Page.ProfileUpdateAvatarStyle.Model;
+    }
   | { type: "ProfileUpdateName"; model: Page.ProfileUpdateName.Model }
   | { type: "ProfileUpdateUsername"; model: Page.ProfileUpdateUsername.Model }
   | { type: "TicTacToe"; model: Page.TicTacToe.Model };
@@ -84,6 +88,15 @@ export const init = (
         cmd.none,
       ];
 
+    case "ProfileUpdateAvatarStyle":
+      return [
+        {
+          type: "ProfileUpdateAvatarStyle",
+          model: Page.ProfileUpdateAvatarStyle.init(profile),
+        },
+        cmd.none,
+      ];
+
     case "TicTacToe":
       return [
         {
@@ -130,6 +143,7 @@ export type Msg =
   | Page.ProfileDelete.Msg
   | Page.ProfileUpdate.Msg
   | Page.ProfileUpdateAvatar.Msg
+  | Page.ProfileUpdateAvatarStyle.Msg
   | Page.ProfileUpdateName.Msg
   | Page.ProfileUpdateUsername.Msg
   | Page.TicTacToe.Msg;
@@ -212,6 +226,17 @@ export const update = (
 
       return [model, cmd.none];
 
+    case "ProfileUpdateAvatarStyle":
+      if (msg.group === "ProfileUpdateAvatarStyle") {
+        const [pageModel, pageCmd] = Page.ProfileUpdateAvatarStyle.update(
+          msg,
+          model.model
+        );
+        return [{ ...model, model: pageModel }, pageCmd];
+      }
+
+      return [model, cmd.none];
+
     case "ProfileUpdateName":
       if (msg.group == "ProfileUpdateName") {
         const [pageModel, pageCmd] = Page.ProfileUpdateName.update(
@@ -282,6 +307,9 @@ export const view = (
 
     case "ProfileUpdateAvatar":
       return Page.ProfileUpdateAvatar.view(profile, model.model);
+
+    case "ProfileUpdateAvatarStyle":
+      return Page.ProfileUpdateAvatarStyle.view(model.model);
 
     case "ProfileUpdateName":
       return Page.ProfileUpdateName.view(model.model);

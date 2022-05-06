@@ -1,4 +1,5 @@
-import { Avatar, List } from "@mui/material";
+import { LoadingButton } from "@mui/lab";
+import { Box, Avatar, List } from "@mui/material";
 import * as React from "react";
 import { cmd, react } from "../Framework";
 import * as ProfileAvatar from "../ProfileAvatar";
@@ -49,10 +50,10 @@ export const update = (
       return [model, Routing.Routes.replace({ type: "ProfileUpdate" })];
 
     case "ClickedSeed":
-      return [model, Routing.Routes.push({ type: "ProfileUpdate" })];
+      return [model, Routing.Routes.push({ type: "ProfileUpdateAvatarStyle" })];
 
     case "ClickedStyle":
-      return [model, Routing.Routes.push({ type: "ProfileUpdate" })];
+      return [model, Routing.Routes.push({ type: "ProfileUpdateAvatarStyle" })];
   }
 };
 
@@ -110,5 +111,10 @@ export const view =
             }
           />
         </List>
+        <Box sx={{ paddingX: 2 }}>
+          <LoadingButton fullWidth variant="contained">
+            Update Avatar
+          </LoadingButton>
+        </Box>
       </View.Page>
     );

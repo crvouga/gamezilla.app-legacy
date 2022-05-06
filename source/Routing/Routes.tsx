@@ -11,6 +11,7 @@ export type Route =
   | { type: "ProfileDelete" }
   | { type: "ProfileUpdate" }
   | { type: "ProfileUpdateAvatar" }
+  | { type: "ProfileUpdateAvatarStyle" }
   | { type: "ProfileUpdateName" }
   | { type: "ProfileUpdateUsername" }
   | { type: "TicTacToe" }
@@ -27,6 +28,7 @@ const routesTypes: { [routeType in Route["type"]]: string } = {
   ProfileDelete: "ProfileDelete",
   ProfileUpdate: "ProfileUpdate",
   ProfileUpdateAvatar: "ProfileUpdateAvatar",
+  ProfileUpdateAvatarStyle: "ProfileUpdateAvatarStyle",
   ProfileUpdateName: "ProfileUpdateName",
   ProfileUpdateUsername: "ProfileUpdateUsername",
   TicTacToe: "TicTacToe",
