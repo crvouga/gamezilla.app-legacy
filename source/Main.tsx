@@ -68,18 +68,23 @@ Model
 
 */
 
-type Model = App.Model;
-
-const init = (location: Navigation.Location): [Model, cmd.Cmd<Msg>] => {
-  return mapAppUpdate(App.init());
+type Model = {
+  url: string;
+  app: App.Model;
 };
 
-const mapAppUpdate = ([subModel, subCmd]: [App.Model, cmd.Cmd<App.Msg>]): [
-  Model,
-  cmd.Cmd<Msg>
-] => {
+const init = (location: Navigation.Location): [Model, cmd.Cmd<Msg>] => {
+  const url = location.pathname.substring(1);
+
+  return mapAppUpdate(url, App.init());
+};
+
+const mapAppUpdate = (
+  url: string,
+  [subModel, subCmd]: [App.Model, cmd.Cmd<App.Msg>]
+): [Model, cmd.Cmd<Msg>] => {
   return [
-    subModel,
+    { url, app: subModel },
     pipe(
       subCmd,
       cmd.map((msg) => ({ type: "AppMsg", msg }))
@@ -102,7 +107,7 @@ type Msg = { type: "AppMsg"; msg: App.Msg } | { type: "Noop" };
 const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "AppMsg":
-      return mapAppUpdate(App.update(msg.msg, model));
+      return mapAppUpdate(model.url, App.update(model.url, msg.msg, model.app));
 
     case "Noop":
       return [model, cmd.none];
@@ -121,7 +126,7 @@ Subsciptions
 
 const subscriptions = (model: Model): sub.Sub<Msg> => {
   return pipe(
-    App.subscriptions(model),
+    App.subscriptions(model.app),
     sub.map((msg) => ({ type: "AppMsg", msg }))
   );
 };
@@ -170,7 +175,7 @@ const view =
 
 const viewMain = (model: Model): react.Html<Msg> => {
   return pipe(
-    App.view(model),
+    App.view(model.app),
     react.map((msg) => ({ type: "AppMsg", msg }))
   );
 };
