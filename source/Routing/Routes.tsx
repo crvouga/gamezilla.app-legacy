@@ -24,7 +24,7 @@ export const encode = (route: Route): string => {
 };
 
 const isRoute = (route: string): route is Route => {
-  return Object.hasOwn(Routes, route);
+  return route in Routes;
 };
 
 export const decode = (encoded: string): Route => {
