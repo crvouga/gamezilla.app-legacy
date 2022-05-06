@@ -56,33 +56,43 @@ Model
 */
 
 export type Model =
-  | {
-      type: "SessionLoading";
-      route: Routing.Routes.Route;
-    }
-  | {
-      type: "SessionMissing";
-      route: Routing.Routes.Route;
-      router: Routing.SessionMissing.Model;
-    }
-  | {
-      type: "ProfileLoading";
-      session: Auth.Session;
-      route: Routing.Routes.Route;
-    }
-  | {
-      type: "ProfileMissing";
-      session: Auth.Session;
-      route: Routing.Routes.Route;
-      router: Routing.ProfileMissing.Model;
-    }
-  | {
-      type: "Loaded";
-      session: Auth.Session;
-      profile: Profile.Profile;
-      route: Routing.Routes.Route;
-      router: Routing.Loaded.Model;
-    };
+  | SessionLoading
+  | SessionMissing
+  | ProfileLoading
+  | ProfileMissing
+  | Loaded;
+
+type SessionLoading = {
+  type: "SessionLoading";
+  route: Routing.Routes.Route;
+};
+
+type SessionMissing = {
+  type: "SessionMissing";
+  route: Routing.Routes.Route;
+  router: Routing.SessionMissing.Model;
+};
+
+type ProfileLoading = {
+  type: "ProfileLoading";
+  session: Auth.Session;
+  route: Routing.Routes.Route;
+};
+
+type ProfileMissing = {
+  type: "ProfileMissing";
+  session: Auth.Session;
+  route: Routing.Routes.Route;
+  router: Routing.ProfileMissing.Model;
+};
+
+type Loaded = {
+  type: "Loaded";
+  session: Auth.Session;
+  profile: Profile.Profile;
+  route: Routing.Routes.Route;
+  router: Routing.Loaded.Model;
+};
 
 export const init = (location: Navigation.Location): [Model, cmd.Cmd<Msg>] => [
   {
