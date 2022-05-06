@@ -146,28 +146,43 @@ export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
         case "ProfileLoading":
           return [{ ...model, route: msg.route }, cmd.none];
 
-        case "ProfileMissing":
+        case "ProfileMissing": {
+          const [subModel, subCmd] = Routing.ProfileMissing.init(
+            msg.route,
+            model.session
+          );
+
           return [
             {
               ...model,
               route: msg.route,
-              router: Routing.ProfileMissing.init(model.session),
+              router: subModel,
             },
-            cmd.none,
+            pipe(
+              subCmd,
+              cmd.map((msg) => ({ type: "GotProfileMissingRouterMsg", msg }))
+            ),
           ];
+        }
 
         case "SessionLoading":
           return [{ ...model, route: msg.route }, cmd.none];
 
-        case "SessionMissing":
+        case "SessionMissing": {
+          const [subModel, subCmd] = Routing.SessionMissing.init(msg.route);
+
           return [
             {
               ...model,
               route: msg.route,
-              router: Routing.SessionMissing.init(),
+              router: subModel,
             },
-            cmd.none,
+            pipe(
+              subCmd,
+              cmd.map((msg) => ({ type: "GotSessionMissingRouterMsg", msg }))
+            ),
           ];
+        }
       }
 
     case "ProfileFound":
@@ -189,16 +204,25 @@ export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
         ),
       ];
 
-    case "ProfileNotFound":
+    case "ProfileNotFound": {
+      const [subModel, subCmd] = Routing.ProfileMissing.init(
+        model.route,
+        msg.session
+      );
+
       return [
         {
           type: "ProfileMissing",
           session: msg.session,
           route: model.route,
-          router: Routing.ProfileMissing.init(msg.session),
+          router: subModel,
         },
-        cmd.none,
+        pipe(
+          subCmd,
+          cmd.map((msg) => ({ type: "GotProfileMissingRouterMsg", msg }))
+        ),
       ];
+    }
 
     case "SessionFound":
       return [
@@ -221,15 +245,21 @@ export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
         }),
       ];
 
-    case "SessionNotFound":
+    case "SessionNotFound": {
+      const [subModel, subCmd] = Routing.SessionMissing.init(model.route);
+
       return [
         {
-          ...model,
           type: "SessionMissing",
-          router: Routing.SessionMissing.init(),
+          route: model.route,
+          router: subModel,
         },
-        cmd.none,
+        pipe(
+          subCmd,
+          cmd.map((msg) => ({ type: "GotSessionMissingRouterMsg", msg }))
+        ),
       ];
+    }
 
     case "GotLoadedRouterMsg":
       if (model.type === "Loaded") {
