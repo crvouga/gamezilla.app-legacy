@@ -1,7 +1,9 @@
+import * as React from "react";
 import * as ProfileMissingApp from "./ProfileMissingApp";
 import * as ProfileFoundApp from "./ProfileMissingApp";
 import * as Auth from "../Auth";
-import { cmd } from "../Framework";
+import { cmd, react } from "../Framework";
+import * as View from "../View";
 
 /* 
 
@@ -29,3 +31,26 @@ Update
 */
 
 export type Msg = { type: "Noop" };
+
+/* 
+
+
+
+View
+
+
+
+*/
+
+export const view = (model: Model): react.Html<Msg> => {
+  switch (model.type) {
+    case "Loading":
+      return () => <View.LoadingPage />;
+
+    case "ProfileFound":
+      return () => <View.LoadingPage />;
+
+    case "ProfileMissing":
+      return () => <View.LoadingPage />;
+  }
+};

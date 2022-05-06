@@ -1,7 +1,8 @@
 import { ChevronLeft, ChevronRight } from "@mui/icons-material";
 import {
-  BoxProps,
   Box,
+  BoxProps,
+  CircularProgress,
   IconButton,
   ListItemButton,
   ListItemSecondaryAction,
@@ -86,5 +87,13 @@ export const Page = ({
     >
       {children}
     </Box>
+  );
+};
+
+export const LoadingPage = () => {
+  return (
+    <Page sx={{ justifyContent: "center", alignItems: "center" }}>
+      <CircularProgress />
+    </Page>
   );
 };
