@@ -17,6 +17,7 @@ import * as DebugNavigation from "./Framework/Debug/Navigation";
 import * as Navigation from "./Framework/Navigation";
 import * as Profile from "./Profile";
 import * as Routing from "./Routing";
+import * as Page from "./Page";
 
 /* 
 
@@ -54,6 +55,40 @@ Model
 
 
 */
+
+export type App =
+  | { type: "Loading" }
+  | { type: "Unauthenticated"; child: UnauthenticatedApp }
+  | { type: "Authenticated"; child: AuthenticatedApp };
+
+type UnauthenticatedApp = { type: "Login"; model: Page.Login.Model };
+
+type AuthenticatedApp =
+  | { type: "Loading" }
+  | { type: "ProfileMissing"; child: ProfileMissingApp }
+  | { type: "ProfileFound"; child: ProfileFoundApp };
+
+type ProfileMissingApp = {
+  type: "ProfileCreate";
+  child: Page.ProfileCreate.Model;
+};
+
+type ProfileFoundApp =
+  | { type: "Account"; child: Page.Account.Model }
+  | { type: "Chess"; child: Page.Chess.Model }
+  | { type: "ConnectFour"; child: Page.ConnectFour.Model }
+  | { type: "Home"; child: Page.Home.Model }
+  | { type: "Logout"; child: Page.Logout.Model }
+  | { type: "ProfileDelete"; child: Page.ProfileDelete.Model }
+  | { type: "ProfileUpdate"; child: Page.ProfileUpdate.Model }
+  | { type: "ProfileUpdateAvatar"; child: Page.ProfileUpdateAvatar.Model }
+  | {
+      type: "ProfileUpdateAvatarStyle";
+      child: Page.ProfileUpdateAvatarStyle.Model;
+    }
+  | { type: "ProfileUpdateName"; child: Page.ProfileUpdateName.Model }
+  | { type: "ProfileUpdateUsername"; child: Page.ProfileUpdateUsername.Model }
+  | { type: "TicTacToe"; child: Page.TicTacToe.Model };
 
 export type Model =
   | SessionLoading
