@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import React from "react";
 import { cmd, react } from "../Framework";
-import * as Router from "../Navigation";
+import * as Routing from "../Routing";
 import * as View from "../View";
 
 /* 
@@ -19,9 +19,9 @@ Model
 
 */
 
-export type Model = { type: "Idle" };
+export type Model = {};
 
-export const init: Model = { type: "Idle" };
+export const init: Model = {};
 
 /* 
 
@@ -32,24 +32,24 @@ Update
 */
 
 export type Msg =
-  | { type: "Back" }
-  | { type: "Logout" }
-  | { type: "DeleteProfile" }
-  | { type: "UpdateProfile" };
+  | { group: "Account"; type: "Back" }
+  | { group: "Account"; type: "Logout" }
+  | { group: "Account"; type: "DeleteProfile" }
+  | { group: "Account"; type: "UpdateProfile" };
 
 export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "Back":
-      return [model, Router.replace("Home")];
+      return [model, Routing.Routes.replace("Home")];
 
     case "Logout":
-      return [model, Router.push("Logout")];
+      return [model, Routing.Routes.push("Logout")];
 
     case "UpdateProfile":
-      return [model, Router.push("ProfileUpdate")];
+      return [model, Routing.Routes.push("ProfileUpdate")];
 
     case "DeleteProfile":
-      return [model, Router.push("ProfileDelete")];
+      return [model, Routing.Routes.push("ProfileDelete")];
   }
 };
 
@@ -68,13 +68,19 @@ export const view =
       <View.Page>
         <View.Header
           left={
-            <View.HeaderBackButton onClick={() => dispatch({ type: "Back" })} />
+            <View.HeaderBackButton
+              onClick={() => dispatch({ group: "Account", type: "Back" })}
+            />
           }
           title={username}
         />
 
         <List>
-          <ListItemButton onClick={() => dispatch({ type: "UpdateProfile" })}>
+          <ListItemButton
+            onClick={() =>
+              dispatch({ group: "Account", type: "UpdateProfile" })
+            }
+          >
             <ListItemIcon>
               <Edit />
             </ListItemIcon>
@@ -84,7 +90,11 @@ export const view =
             </ListItemSecondaryAction>
           </ListItemButton>
 
-          <ListItemButton onClick={() => dispatch({ type: "DeleteProfile" })}>
+          <ListItemButton
+            onClick={() =>
+              dispatch({ group: "Account", type: "DeleteProfile" })
+            }
+          >
             <ListItemIcon>
               <Delete />
             </ListItemIcon>
@@ -94,7 +104,9 @@ export const view =
             </ListItemSecondaryAction>
           </ListItemButton>
 
-          <ListItemButton onClick={() => dispatch({ type: "Logout" })}>
+          <ListItemButton
+            onClick={() => dispatch({ group: "Account", type: "Logout" })}
+          >
             <ListItemIcon>
               <Logout />
             </ListItemIcon>

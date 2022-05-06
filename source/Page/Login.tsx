@@ -2,7 +2,7 @@ import { LoadingButton } from "@mui/lab";
 import { Box, Typography } from "@mui/material";
 import React from "react";
 import { cmd, react } from "../Framework";
-import * as Session from "../Session";
+import * as Auth from "../Auth";
 
 /* 
 
@@ -14,9 +14,7 @@ Model
 
 export type Model = { type: "Idle" } | { type: "Loading" };
 
-export const init = (): Model => {
-  return { type: "Idle" };
-};
+export const init: Model = { type: "Idle" };
 
 /*
 
@@ -26,12 +24,12 @@ Update
 
 */
 
-export type Msg = { type: "Login" };
+export type Msg = { group: "Login"; type: "Login" };
 
 export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "Login":
-      return [{ type: "Loading" }, Session.login()];
+      return [{ type: "Loading" }, Auth.login()];
   }
 };
 
@@ -68,7 +66,7 @@ export const view =
           size="large"
           fullWidth
           loading={model.type === "Loading"}
-          onClick={() => dispatch({ type: "Login" })}
+          onClick={() => dispatch({ group: "Login", type: "Login" })}
         >
           Continue With Google
         </LoadingButton>

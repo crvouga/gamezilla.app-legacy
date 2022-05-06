@@ -1,13 +1,44 @@
-export * as Account from "./Account";
-export * as Chess from "./Chess";
-export * as ConnectFour from "./ConnectFour";
-export * as Home from "./Home";
-export * as Login from "./Login";
-export * as Logout from "./Logout";
-export * as ProfileCreate from "./ProfileCreate";
-export * as ProfileDelete from "./ProfileDelete";
-export * as ProfileUpdate from "./ProfileUpdate";
-export * as ProfileUpdateAvatar from "./ProfileUpdateAvatar";
-export * as ProfileUpdateName from "./ProfileUpdateName";
-export * as ProfileUpdateUsername from "./ProfileUpdateUsername";
-export * as TicTacToe from "./TicTacToe";
+import * as Account from "./Account";
+import * as Chess from "./Chess";
+import * as ConnectFour from "./ConnectFour";
+import * as Home from "./Home";
+import * as Login from "./Login";
+import * as Logout from "./Logout";
+import * as ProfileCreate from "./ProfileCreate";
+import * as ProfileDelete from "./ProfileDelete";
+import * as ProfileUpdate from "./ProfileUpdate";
+import * as ProfileUpdateAvatar from "./ProfileUpdateAvatar";
+import * as ProfileUpdateName from "./ProfileUpdateName";
+import * as ProfileUpdateUsername from "./ProfileUpdateUsername";
+import * as TicTacToe from "./TicTacToe";
+
+export type Msg =
+  | Account.Msg
+  | Chess.Msg
+  | ConnectFour.Msg
+  | Home.Msg
+  | Login.Msg
+  | Logout.Msg
+  | ProfileCreate.Msg
+  | ProfileDelete.Msg
+  | ProfileUpdate.Msg
+  | ProfileUpdateAvatar.Msg
+  | ProfileUpdateName.Msg
+  | ProfileUpdateUsername.Msg
+  | TicTacToe.Msg;
+
+export {
+  Account,
+  Chess,
+  ConnectFour,
+  Home,
+  Login,
+  Logout,
+  ProfileCreate,
+  ProfileDelete,
+  ProfileUpdate,
+  ProfileUpdateAvatar,
+  ProfileUpdateName,
+  ProfileUpdateUsername,
+  TicTacToe,
+};

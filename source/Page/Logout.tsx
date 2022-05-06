@@ -2,8 +2,8 @@ import { LoadingButton } from "@mui/lab";
 import { Button, Dialog, DialogActions, DialogTitle } from "@mui/material";
 import React from "react";
 import { cmd, react } from "../Framework";
-import * as Router from "../Navigation";
-import * as Session from "../Session";
+import * as Routing from "../Routing";
+import * as Auth from "../Auth";
 
 /* 
 
@@ -25,15 +25,17 @@ Update
 
 */
 
-export type Msg = { type: "Cancel" } | { type: "Confirm" };
+export type Msg =
+  | { group: "Logout"; type: "Cancel" }
+  | { group: "Logout"; type: "Confirm" };
 
 export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "Cancel":
-      return [{ type: "Idle" }, Router.replace("Account")];
+      return [{ type: "Idle" }, Routing.Routes.replace("Account")];
 
     case "Confirm":
-      return [{ type: "Loading" }, Session.logout()];
+      return [{ type: "Loading" }, Auth.logout()];
   }
 };
 
@@ -49,18 +51,21 @@ export const view =
   (model: Model): react.Html<Msg> =>
   (dispatch) =>
     (
-      <Dialog open onClose={() => dispatch({ type: "Cancel" })}>
+      <Dialog
+        open
+        onClose={() => dispatch({ group: "Logout", type: "Cancel" })}
+      >
         <DialogTitle>Logout of Gamezilla?</DialogTitle>
         <DialogActions>
           <Button
             disabled={model.type === "Loading"}
-            onClick={() => dispatch({ type: "Cancel" })}
+            onClick={() => dispatch({ group: "Logout", type: "Cancel" })}
           >
             Cancel
           </Button>
           <LoadingButton
             loading={model.type === "Loading"}
-            onClick={() => dispatch({ type: "Confirm" })}
+            onClick={() => dispatch({ group: "Logout", type: "Confirm" })}
           >
             Logout
           </LoadingButton>

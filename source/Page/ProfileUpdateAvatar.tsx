@@ -2,7 +2,7 @@ import { Avatar, List } from "@mui/material";
 import * as React from "react";
 import { cmd, react } from "../Framework";
 import * as ProfileAvatar from "../ProfileAvatar";
-import * as Router from "../Navigation";
+import * as Routing from "../Routing";
 import * as View from "../View";
 
 /* 
@@ -35,24 +35,26 @@ Update
 */
 
 export type Msg =
-  | { type: "Back" }
-  | { type: "ClickedStyle" }
-  | { type: "ClickedSeed" };
+  | { group: "ProfileUpdateAvatar"; type: "Back" }
+  | { group: "ProfileUpdateAvatar"; type: "ClickedStyle" }
+  | { group: "ProfileUpdateAvatar"; type: "ClickedSeed" };
 
-export const update =
-  ({ userId }: { userId: string }) =>
-  (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
-    switch (msg.type) {
-      case "Back":
-        return [model, Router.replace("ProfileUpdate")];
+export const update = (
+  { userId }: { userId: string },
+  msg: Msg,
+  model: Model
+): [Model, cmd.Cmd<Msg>] => {
+  switch (msg.type) {
+    case "Back":
+      return [model, Routing.Routes.replace("ProfileUpdate")];
 
-      case "ClickedSeed":
-        return [model, Router.push("ProfileUpdate")];
+    case "ClickedSeed":
+      return [model, Routing.Routes.push("ProfileUpdate")];
 
-      case "ClickedStyle":
-        return [model, Router.push("ProfileUpdate")];
-    }
-  };
+    case "ClickedStyle":
+      return [model, Routing.Routes.push("ProfileUpdate")];
+  }
+};
 
 /* 
 
@@ -72,7 +74,11 @@ export const view =
       <View.Page>
         <View.Header
           left={
-            <View.HeaderBackButton onClick={() => dispatch({ type: "Back" })} />
+            <View.HeaderBackButton
+              onClick={() =>
+                dispatch({ group: "ProfileUpdateAvatar", type: "Back" })
+              }
+            />
           }
           title="Avatar"
         />
@@ -91,13 +97,17 @@ export const view =
           <View.Field
             label="Style"
             value={ProfileAvatar.formatStyle(model.style)}
-            onClick={() => dispatch({ type: "ClickedStyle" })}
+            onClick={() =>
+              dispatch({ group: "ProfileUpdateAvatar", type: "ClickedStyle" })
+            }
           />
 
           <View.Field
             label="Seed"
             value={model.seed}
-            onClick={() => dispatch({ type: "ClickedSeed" })}
+            onClick={() =>
+              dispatch({ group: "ProfileUpdateAvatar", type: "ClickedSeed" })
+            }
           />
         </List>
       </View.Page>

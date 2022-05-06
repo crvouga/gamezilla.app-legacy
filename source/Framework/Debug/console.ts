@@ -4,9 +4,9 @@
  * @since 0.5.0
  */
 
-import { Option, alt, fromNullable, getOrElse } from 'fp-ts/lib/Option'
-import { pipe } from 'fp-ts/lib/pipeable'
-import { DebugMsg, Debugger } from './commons'
+import { Option, alt, fromNullable, getOrElse } from "fp-ts/lib/Option";
+import { pipe } from "fp-ts/lib/function";
+import { DebugMsg, Debugger } from "./commons";
 
 /**
  * **[UNSAFE]** Simple debugger that uses the standard browser's `console`
@@ -16,38 +16,41 @@ import { DebugMsg, Debugger } from './commons'
 export function consoleDebugger<Model, Msg>(): Debugger<Model, Msg> {
   return () => {
     return {
-      debug: data => {
-        const [action, model] = data
+      debug: (data) => {
+        const [action, model] = data;
 
-        console.group('%cELM-TS', 'background-color: green; color: black')
+        console.group("%cELM-TS", "background-color: green; color: black");
 
         // --- Action
-        if (action.type === 'INIT') {
-          console.log('[INIT]')
+        if (action.type === "INIT") {
+          console.log("[INIT]");
         }
 
-        if (action.type === 'MESSAGE') {
-          const showType = getOrElse(() => '')(getMsgType(action))
+        if (action.type === "MESSAGE") {
+          const showType = getOrElse(() => "")(getMsgType(action));
 
-          console.groupCollapsed(`[MESSAGE] %c${showType}`, 'font-weight: bold')
-          console.dir(action.payload)
-          console.groupEnd()
+          console.groupCollapsed(
+            `[MESSAGE] %c${showType}`,
+            "font-weight: bold"
+          );
+          console.dir(action.payload);
+          console.groupEnd();
         }
 
         // --- Model
-        console.groupCollapsed('[MODEL]')
-        console.dir(model)
-        console.groupEnd()
-        console.groupEnd()
+        console.groupCollapsed("[MODEL]");
+        console.dir(model);
+        console.groupEnd();
+        console.groupEnd();
       },
 
       stop: () => {
-        console.group('%cELM-TS', 'background-color: green; color: black')
-        console.log('--- stop debugger ---')
-        console.groupEnd()
-      }
-    }
-  }
+        console.group("%cELM-TS", "background-color: green; color: black");
+        console.log("--- stop debugger ---");
+        console.groupEnd();
+      },
+    };
+  };
 }
 
 /**
@@ -55,14 +58,14 @@ export function consoleDebugger<Model, Msg>(): Debugger<Model, Msg> {
  * @since 0.5.0
  */
 function getMsgType<Msg>(m: DebugMsg<Msg>): Option<string> {
-  const { payload } = m as any
+  const { payload } = m as any;
 
   return pipe(
-    fromNullable(payload['tag']),
-    alt(() => fromNullable(payload['_tag'])),
-    alt(() => fromNullable(payload['type'])),
-    alt(() => fromNullable(payload['_type'])),
-    alt(() => fromNullable(payload['kind'])),
-    alt(() => fromNullable(payload['_kind']))
-  )
+    fromNullable(payload["tag"]),
+    alt(() => fromNullable(payload["_tag"])),
+    alt(() => fromNullable(payload["type"])),
+    alt(() => fromNullable(payload["_type"])),
+    alt(() => fromNullable(payload["kind"])),
+    alt(() => fromNullable(payload["_kind"]))
+  );
 }
