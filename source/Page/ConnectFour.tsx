@@ -29,7 +29,7 @@ export type Msg = { group: "ConnectFour"; type: "Back" };
 export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "Back":
-      return [model, Routing.Routes.replace("Home")];
+      return [model, Routing.Routes.replace({ type: "Home" })];
   }
 };
 

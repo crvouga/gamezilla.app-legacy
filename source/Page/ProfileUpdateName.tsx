@@ -71,7 +71,7 @@ export const update = (
       return [{ ...model, status: "Idle" }, cmd.none];
 
     case "Back":
-      return [model, Routing.Routes.replace("Account")];
+      return [model, Routing.Routes.replace({ type: "Account" })];
   }
 };
 

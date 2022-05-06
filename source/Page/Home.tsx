@@ -38,18 +38,18 @@ export type Msg =
 export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "ClickedAvatar":
-      return [model, Routing.Routes.push("Account")];
+      return [model, Routing.Routes.push({ type: "Account" })];
 
     case "ClickedGame":
       switch (msg.game) {
         case "ConnectFour":
-          return [model, Routing.Routes.push("ConnectFour")];
+          return [model, Routing.Routes.push({ type: "ConnectFour" })];
 
         case "TicTacToe":
-          return [model, Routing.Routes.push("TicTacToe")];
+          return [model, Routing.Routes.push({ type: "TicTacToe" })];
 
         case "Chess":
-          return [model, Routing.Routes.push("Chess")];
+          return [model, Routing.Routes.push({ type: "Chess" })];
       }
   }
 };

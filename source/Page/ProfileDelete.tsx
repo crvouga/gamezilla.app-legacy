@@ -38,7 +38,7 @@ export const update = (
 ): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "Cancel":
-      return [{ type: "Idle" }, Routing.Routes.replace("Account")];
+      return [{ type: "Idle" }, Routing.Routes.replace({ type: "Account" })];
 
     case "Delete":
       return [
