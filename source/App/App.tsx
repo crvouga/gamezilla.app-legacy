@@ -28,7 +28,7 @@ type LoggedIn = {
 type LoggedOut = { type: "LoggedOut"; child: LoggedOutApp.Model };
 
 export const init = (): [Model, cmd.Cmd<Msg>] => {
-  return initLoggedOut();
+  return initLoading();
 };
 
 const initLoggedOut = () => {
@@ -48,7 +48,7 @@ const initLoading = (): [Loading, cmd.Cmd<Msg>] => {
 const mapLoggedOut = ([subModel, subCmd]: [
   LoggedOutApp.Model,
   cmd.Cmd<LoggedOutApp.Msg>
-]): [Model, cmd.Cmd<Msg>] => {
+]): [LoggedOut, cmd.Cmd<Msg>] => {
   return [
     { type: "LoggedOut", child: subModel },
     pipe(
@@ -59,12 +59,17 @@ const mapLoggedOut = ([subModel, subCmd]: [
 };
 
 const initLoggedIn = (session: Auth.Session): [LoggedIn, cmd.Cmd<Msg>] => {
-  const [childModel, childCmd] = LoggedInApp.init();
+  return mapLoggedIn(session, LoggedInApp.init(session));
+};
 
+const mapLoggedIn = (
+  session: Auth.Session,
+  [subModel, subCmd]: [LoggedInApp.Model, cmd.Cmd<LoggedInApp.Msg>]
+): [LoggedIn, cmd.Cmd<Msg>] => {
   return [
-    { type: "LoggedIn", session, child: childModel },
+    { type: "LoggedIn", session, child: subModel },
     pipe(
-      childCmd,
+      subCmd,
       cmd.map((msg) => ({ type: "LoggedInAppMsg", msg }))
     ),
   ];
@@ -84,23 +89,24 @@ export type Msg =
   | { type: "LoggedInAppMsg"; msg: LoggedInApp.Msg }
   | { type: "LoggedOutAppMsg"; msg: LoggedOutApp.Msg };
 
-export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
+export const update = (
+  url: string,
+  msg: Msg,
+  model: Model
+): [Model, cmd.Cmd<Msg>] => {
   switch (model.type) {
     case "Loading":
       return updateLoading(msg, model);
 
     case "LoggedIn":
-      return updateLoggedIn(msg, model);
+      return updateLoggedIn(url, msg, model);
 
     case "LoggedOut":
       return updateLoggedOut(msg, model);
   }
 };
 
-export const updateLoading = (
-  msg: Msg,
-  model: Loading
-): [Model, cmd.Cmd<Msg>] => {
+const updateLoading = (msg: Msg, model: Loading): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "LoggedIn":
       return initLoggedIn(msg.session);
@@ -113,7 +119,8 @@ export const updateLoading = (
   }
 };
 
-export const updateLoggedIn = (
+const updateLoggedIn = (
+  url: string,
   msg: Msg,
   model: LoggedIn
 ): [Model, cmd.Cmd<Msg>] => {
@@ -122,24 +129,18 @@ export const updateLoggedIn = (
       return initLoggedOut();
 
     case "LoggedInAppMsg":
-      return updateLoggedInChild(msg.msg, model);
+      return mapLoggedIn(
+        model.session,
+        LoggedInApp.update(url, msg.msg, model.child)
+      );
 
-    default:
+    case "LoggedIn":
+    case "LoggedOutAppMsg":
       return [model, cmd.none];
   }
 };
 
-const updateLoggedInChild = (
-  msg: LoggedInApp.Msg,
-  model: LoggedIn
-): [LoggedIn, cmd.Cmd<Msg>] => {
-  return [model, cmd.none];
-};
-
-export const updateLoggedOut = (
-  msg: Msg,
-  model: LoggedOut
-): [Model, cmd.Cmd<Msg>] => {
+const updateLoggedOut = (msg: Msg, model: LoggedOut): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "LoggedIn":
       return initLoggedIn(msg.session);
@@ -169,7 +170,10 @@ export const view = (model: Model): react.Html<Msg> => {
       return () => <View.LoadingPage />;
 
     case "LoggedIn":
-      return () => <View.LoadingPage />;
+      return pipe(
+        LoggedInApp.view(model.child),
+        react.map((msg) => ({ type: "LoggedInAppMsg", msg }))
+      );
 
     case "LoggedOut":
       return pipe(
@@ -194,6 +198,20 @@ const sessionToMsg = option.fold<Auth.Session, Msg>(
   (session) => ({ type: "LoggedIn", session })
 );
 
+const toMsg = (msg: LoggedInApp.Msg): Msg => ({ type: "LoggedInAppMsg", msg });
+
 export const subscriptions = (model: Model): sub.Sub<Msg> => {
-  return sub.batch([sub.map(sessionToMsg)(Auth.subscription)]);
+  switch (model.type) {
+    case "Loading":
+      return sub.map(sessionToMsg)(Auth.subscription);
+
+    case "LoggedOut":
+      return sub.map(sessionToMsg)(Auth.subscription);
+
+    case "LoggedIn":
+      return sub.batch([
+        sub.map(sessionToMsg)(Auth.subscription),
+        sub.map(toMsg)(LoggedInApp.subscriptions(model.session, model.child)),
+      ]);
+  }
 };
