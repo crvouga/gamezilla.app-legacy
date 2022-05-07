@@ -1,10 +1,9 @@
-import { ChevronLeft } from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
-import { Box, IconButton, TextField, Toolbar, Typography } from "@mui/material";
+import { Box, TextField } from "@mui/material";
 import * as React from "react";
 import { cmd, react } from "../Framework";
-import * as Navigation from "../Framework/Navigation";
 import * as Profile from "../Profile";
+import * as Routes from "../Routes";
 import * as View from "../View";
 
 /* 
@@ -76,7 +75,7 @@ export const update = (
       return [{ ...model, status: "Idle" }, cmd.none];
 
     case "Back":
-      return [model, Navigation.replace("ProfileUpdate")];
+      return [model, Routes.replace({ type: "ProfileUpdate" })];
   }
 };
 
