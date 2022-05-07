@@ -4,6 +4,7 @@ import * as Auth from "../Auth";
 import { cmd, react } from "../Framework";
 import * as Routes from "../Routes";
 import { pipe } from "fp-ts/lib/function";
+import { exhaustive } from "../Utility";
 
 /* 
 
@@ -30,15 +31,31 @@ export const init = (
     return fallback;
   }
 
-  switch (route.value.type) {
+  const routeType = route.value.type;
+  switch (routeType) {
     case "ProfileCreate":
       return [
         { type: "ProfileCreate", child: Page.ProfileCreate.init(session) },
         cmd.none,
       ];
 
-    default:
+    case "Account":
+    case "Chess":
+    case "ConnectFour":
+    case "Home":
+    case "Login":
+    case "Logout":
+    case "ProfileDelete":
+    case "TicTacToe":
+    case "ProfileUpdateUsername":
+    case "ProfileUpdateAvatar":
+    case "ProfileUpdateAvatarStyle":
+    case "ProfileUpdateName":
+    case "ProfileUpdate":
       return fallback;
+
+    default:
+      return exhaustive(routeType);
   }
 };
 

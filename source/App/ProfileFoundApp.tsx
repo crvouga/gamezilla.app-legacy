@@ -4,6 +4,7 @@ import { cmd, react } from "../Framework";
 import * as Page from "../Page";
 import * as Profile from "../Profile";
 import * as Routes from "../Routes";
+import { exhaustive } from "../Utility";
 
 /* 
 
@@ -41,7 +42,14 @@ export const init = (
     return fallback;
   }
 
-  switch (route.value.type) {
+  const routeType = route.value.type;
+
+  switch (routeType) {
+    case "ProfileCreate":
+    case "Login":
+    case "ProfileUpdateAvatarStyle":
+      return fallback;
+
     case "Account":
       return [{ type: "Account", child: Page.Account.init }, cmd.none];
 
@@ -105,14 +113,8 @@ export const init = (
         cmd.none,
       ];
 
-    case "ProfileCreate":
-      return fallback;
-
-    case "Login":
-      return fallback;
-
-    case "ProfileUpdateAvatarStyle":
-      return fallback;
+    default:
+      return exhaustive(routeType);
   }
 };
 
