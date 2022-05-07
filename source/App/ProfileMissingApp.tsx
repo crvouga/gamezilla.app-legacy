@@ -71,13 +71,11 @@ Update
 
 export type Msg = { type: "ProfileCreateMsg"; msg: Page.ProfileCreate.Msg };
 
-type update = (
+export const update = (
   session: Auth.Session,
   msg: Msg,
   model: Model
-) => [Model, cmd.Cmd<Msg>];
-
-export const update: update = (session, msg, model) => {
+): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "ProfileCreateMsg":
       if (model.type === "ProfileCreate") {
@@ -86,6 +84,7 @@ export const update: update = (session, msg, model) => {
           msg.msg,
           model.child
         );
+
         return [
           { ...model, child: childModel },
           pipe(
