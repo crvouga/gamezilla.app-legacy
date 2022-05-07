@@ -1,9 +1,9 @@
+import { Button } from "@mui/material";
 import React from "react";
 import { cmd, react } from "../Framework";
 import * as Routes from "../Routes";
-import * as View from "../View";
 import * as TicTacToe from "../TicTacToe";
-import { Box, Button } from "@mui/material";
+import * as View from "../View";
 
 /* 
 
@@ -86,19 +86,13 @@ export const view =
           board={model.board}
           onClick={(position) => dispatch({ type: "BoardClicked", position })}
         />
-        <Box sx={{ p: 2 }}>
-          <Button
-            fullWidth
-            sx={{
-              borderColor: TicTacToe.theme.background,
-              color: TicTacToe.theme.background,
-              fontWeight: 800,
-            }}
-            variant="outlined"
-            onClick={() => dispatch({ type: "RestartButtonClicked" })}
-          >
-            Restart
-          </Button>
-        </Box>
+
+        <Button
+          size="large"
+          fullWidth
+          onClick={() => dispatch({ type: "RestartButtonClicked" })}
+        >
+          Restart
+        </Button>
       </View.Page>
     );
