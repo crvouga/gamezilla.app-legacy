@@ -20,7 +20,10 @@
     "jsx": "react",
     "rootDir": ".",
     "composite": true,
-    "skipDefaultLibCheck": true
+    "skipDefaultLibCheck": true,
+    "noImplicitReturns": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true
   },
   "exclude": ["node_modules"],
   "include": ["source"],
