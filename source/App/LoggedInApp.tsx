@@ -18,7 +18,7 @@ Model
 
 export type Model = Loading | ProfileFound | ProfileMissing;
 
-type Loading = { type: "Loading" };
+type Loading = { type: "Loading"; location: { pathname: string } };
 
 type ProfileMissing = { type: "ProfileMissing" };
 
@@ -28,9 +28,12 @@ type ProfileFound = {
   child: ProfileFoundApp.Model;
 };
 
-export const init = (session: Auth.Session): [Model, cmd.Cmd<Msg>] => {
+export const init = (
+  location: { pathname: string },
+  session: Auth.Session
+): [Model, cmd.Cmd<Msg>] => {
   return [
-    { type: "Loading" },
+    { type: "Loading", location },
     Profile.fetch<Msg>({
       ...session,
       onSuccess: (profile) => ({ type: "ProfileFound", profile }),
@@ -40,10 +43,10 @@ export const init = (session: Auth.Session): [Model, cmd.Cmd<Msg>] => {
 };
 
 const initProfileFound = (
-  url: string,
+  location: { pathname: string },
   profile: Profile.Profile
 ): [ProfileFound, cmd.Cmd<Msg>] => {
-  const [childModel, childCmd] = ProfileFoundApp.init(url, profile);
+  const [childModel, childCmd] = ProfileFoundApp.init(location, profile);
 
   return [{ type: "ProfileFound", profile, child: childModel }, cmd.none];
 };
@@ -61,18 +64,15 @@ Update
 */
 
 export type Msg =
+  | { type: "LocationChanged"; location: { pathname: string } }
   | { type: "ProfileFound"; profile: Profile.Profile }
   | { type: "ProfileMissing" }
   | { type: "ProfileFoundAppMsg"; msg: ProfileFoundApp.Msg };
 
-export const update = (
-  url: string,
-  msg: Msg,
-  model: Model
-): [Model, cmd.Cmd<Msg>] => {
+export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   switch (model.type) {
     case "Loading":
-      return updateLoading(url, msg, model);
+      return updateLoading(msg, model);
 
     case "ProfileFound":
       return updateProfileFound(msg, model);
@@ -83,17 +83,17 @@ export const update = (
 };
 
 export const updateLoading = (
-  url: string,
   msg: Msg,
   model: Loading
 ): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "ProfileFound":
-      return initProfileFound(url, msg.profile);
+      return initProfileFound(model.location, msg.profile);
 
     case "ProfileMissing":
       return initProfileMissing();
 
+    case "LocationChanged":
     case "ProfileFoundAppMsg":
       return [model, cmd.none];
   }
@@ -120,6 +120,21 @@ export const updateProfileFound = (
           cmd.map((msg) => ({ type: "ProfileFoundAppMsg", msg }))
         ),
       ];
+
+    case "LocationChanged": {
+      const [childModel, childCmd] = ProfileFoundApp.update(
+        model.profile,
+        msg,
+        model.child
+      );
+      return [
+        { ...model, child: childModel },
+        pipe(
+          childCmd,
+          cmd.map((msg) => ({ type: "ProfileFoundAppMsg", msg }))
+        ),
+      ];
+    }
 
     case "ProfileMissing":
       return [model, cmd.none];
