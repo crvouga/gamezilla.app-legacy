@@ -14,17 +14,17 @@ Model
 */
 
 export type Model =
-  | { type: "Account"; model: Page.Account.Model }
-  | { type: "Chess"; model: Page.Chess.Model }
-  | { type: "ConnectFour"; model: Page.ConnectFour.Model }
-  | { type: "Home"; model: Page.Home.Model }
-  | { type: "Logout"; model: Page.Logout.Model }
-  | { type: "ProfileDelete"; model: Page.ProfileDelete.Model }
-  | { type: "ProfileUpdate"; model: Page.ProfileUpdate.Model }
-  | { type: "ProfileUpdateAvatar"; model: Page.ProfileUpdateAvatar.Model }
-  | { type: "ProfileUpdateName"; model: Page.ProfileUpdateName.Model }
-  | { type: "ProfileUpdateUsername"; model: Page.ProfileUpdateUsername.Model }
-  | { type: "TicTacToe"; model: Page.TicTacToe.Model };
+  | { type: "Account"; child: Page.Account.Model }
+  | { type: "Chess"; child: Page.Chess.Model }
+  | { type: "ConnectFour"; child: Page.ConnectFour.Model }
+  | { type: "Home"; child: Page.Home.Model }
+  | { type: "Logout"; child: Page.Logout.Model }
+  | { type: "ProfileDelete"; child: Page.ProfileDelete.Model }
+  | { type: "ProfileUpdate"; child: Page.ProfileUpdate.Model }
+  | { type: "ProfileUpdateAvatar"; child: Page.ProfileUpdateAvatar.Model }
+  | { type: "ProfileUpdateName"; child: Page.ProfileUpdateName.Model }
+  | { type: "ProfileUpdateUsername"; child: Page.ProfileUpdateUsername.Model }
+  | { type: "TicTacToe"; child: Page.TicTacToe.Model };
 
 const routes: { [routeType in Model["type"]]: string } = {
   Account: "Account",
@@ -66,36 +66,36 @@ export const init = (
 
   if (Option.isNone(route)) {
     return [
-      { type: "Home", model: Page.Home.init },
+      { type: "Home", child: Page.Home.init },
       Navigation.replace(encode("Home")),
     ];
   }
 
   switch (route.value) {
     case "Account":
-      return [{ type: "Account", model: Page.Account.init }, cmd.none];
+      return [{ type: "Account", child: Page.Account.init }, cmd.none];
 
     case "Chess":
-      return [{ type: "Chess", model: Page.Chess.init }, cmd.none];
+      return [{ type: "Chess", child: Page.Chess.init }, cmd.none];
 
     case "ConnectFour":
-      return [{ type: "ConnectFour", model: Page.ConnectFour.init }, cmd.none];
+      return [{ type: "ConnectFour", child: Page.ConnectFour.init }, cmd.none];
 
     case "Home":
-      return [{ type: "Home", model: Page.Home.init }, cmd.none];
+      return [{ type: "Home", child: Page.Home.init }, cmd.none];
 
     case "Logout":
-      return [{ type: "Logout", model: Page.Logout.init }, cmd.none];
+      return [{ type: "Logout", child: Page.Logout.init }, cmd.none];
 
     case "ProfileDelete":
       return [
-        { type: "ProfileDelete", model: Page.ProfileDelete.init },
+        { type: "ProfileDelete", child: Page.ProfileDelete.init },
         cmd.none,
       ];
 
     case "ProfileUpdate":
       return [
-        { type: "ProfileUpdate", model: Page.ProfileUpdate.init(profile) },
+        { type: "ProfileUpdate", child: Page.ProfileUpdate.init(profile) },
         cmd.none,
       ];
 
@@ -103,7 +103,7 @@ export const init = (
       return [
         {
           type: "ProfileUpdateAvatar",
-          model: Page.ProfileUpdateAvatar.init(profile),
+          child: Page.ProfileUpdateAvatar.init(profile),
         },
         cmd.none,
       ];
@@ -112,7 +112,7 @@ export const init = (
       return [
         {
           type: "ProfileUpdateName",
-          model: Page.ProfileUpdateName.init(profile),
+          child: Page.ProfileUpdateName.init(profile),
         },
         cmd.none,
       ];
@@ -121,7 +121,7 @@ export const init = (
       return [
         {
           type: "ProfileUpdateUsername",
-          model: Page.ProfileUpdateUsername.init(profile),
+          child: Page.ProfileUpdateUsername.init(profile),
         },
         cmd.none,
       ];
@@ -130,7 +130,7 @@ export const init = (
       return [
         {
           type: "TicTacToe",
-          model: Page.TicTacToe.init,
+          child: Page.TicTacToe.init,
         },
         cmd.none,
       ];
@@ -179,10 +179,10 @@ export const update = (
       if (msg.type === "AccountPageMsg") {
         const [childModel, childCmd] = Page.Account.update(
           msg.msg,
-          model.model
+          model.child
         );
         return [
-          { ...model, model: childModel },
+          { ...model, child: childModel },
           pipe(
             childCmd,
             cmd.map((msg) => ({ type: "AccountPageMsg", msg }))
@@ -194,10 +194,10 @@ export const update = (
 
     case "Chess":
       if (msg.type === "ChessPageMsg") {
-        const [childModel, childCmd] = Page.Chess.update(msg.msg, model.model);
+        const [childModel, childCmd] = Page.Chess.update(msg.msg, model.child);
 
         return [
-          { ...model, model: childModel },
+          { ...model, child: childModel },
           pipe(
             childCmd,
             cmd.map((msg) => ({ type: "ChessPageMsg", msg }))
@@ -211,11 +211,11 @@ export const update = (
       if (msg.type === "ConnectFourPageMsg") {
         const [childModel, childCmd] = Page.ConnectFour.update(
           msg.msg,
-          model.model
+          model.child
         );
 
         return [
-          { ...model, model: childModel },
+          { ...model, child: childModel },
           pipe(
             childCmd,
             cmd.map((msg) => ({ type: "ConnectFourPageMsg", msg }))
@@ -227,10 +227,10 @@ export const update = (
 
     case "Home":
       if (msg.type === "HomePageMsg") {
-        const [childModel, childCmd] = Page.Home.update(msg.msg, model.model);
+        const [childModel, childCmd] = Page.Home.update(msg.msg, model.child);
 
         return [
-          { ...model, model: childModel },
+          { ...model, child: childModel },
           pipe(
             childCmd,
             cmd.map((msg) => ({ type: "HomePageMsg", msg }))
@@ -242,10 +242,10 @@ export const update = (
 
     case "Logout":
       if (msg.type === "LogoutPageMsg") {
-        const [childModel, childCmd] = Page.Logout.update(msg.msg, model.model);
+        const [childModel, childCmd] = Page.Logout.update(msg.msg, model.child);
 
         return [
-          { ...model, model: childModel },
+          { ...model, child: childModel },
           pipe(
             childCmd,
             cmd.map((msg) => ({ type: "LogoutPageMsg", msg }))
@@ -260,11 +260,11 @@ export const update = (
         const [childModel, childCmd] = Page.ProfileDelete.update(
           profile,
           msg.msg,
-          model.model
+          model.child
         );
 
         return [
-          { ...model, model: childModel },
+          { ...model, child: childModel },
           pipe(
             childCmd,
             cmd.map((msg) => ({ type: "ProfileDeletePageMsg", msg }))
@@ -279,11 +279,11 @@ export const update = (
         const [childModel, childCmd] = Page.ProfileUpdate.update(
           profile,
           msg.msg,
-          model.model
+          model.child
         );
 
         return [
-          { ...model, model: childModel },
+          { ...model, child: childModel },
           pipe(
             childCmd,
             cmd.map((msg) => ({ type: "ProfileUpdatePageMsg", msg }))
@@ -298,11 +298,11 @@ export const update = (
         const [childModel, childCmd] = Page.ProfileUpdateAvatar.update(
           profile,
           msg.msg,
-          model.model
+          model.child
         );
 
         return [
-          { ...model, model: childModel },
+          { ...model, child: childModel },
           pipe(
             childCmd,
             cmd.map((msg) => ({ type: "ProfileUpdateAvatarPageMsg", msg }))
@@ -317,11 +317,11 @@ export const update = (
         const [childModel, childCmd] = Page.ProfileUpdateName.update(
           profile,
           msg.msg,
-          model.model
+          model.child
         );
 
         return [
-          { ...model, model: childModel },
+          { ...model, child: childModel },
           pipe(
             childCmd,
             cmd.map((msg) => ({ type: "ProfileUpdateNamePageMsg", msg }))
@@ -336,11 +336,11 @@ export const update = (
         const [childModel, childCmd] = Page.ProfileUpdateUsername.update(
           profile,
           msg.msg,
-          model.model
+          model.child
         );
 
         return [
-          { ...model, model: childModel },
+          { ...model, child: childModel },
           pipe(
             childCmd,
             cmd.map((msg) => ({
@@ -357,11 +357,11 @@ export const update = (
       if (msg.type === "TicTacToePageMsg") {
         const [childModel, childCmd] = Page.TicTacToe.update(
           msg.msg,
-          model.model
+          model.child
         );
 
         return [
-          { ...model, model: childModel },
+          { ...model, child: childModel },
           pipe(
             childCmd,
             cmd.map((msg) => ({
@@ -392,67 +392,67 @@ export const view = (
   switch (model.type) {
     case "Account":
       return pipe(
-        Page.Account.view(profile, model.model),
+        Page.Account.view(profile, model.child),
         react.map((msg) => ({ type: "AccountPageMsg", msg }))
       );
 
     case "Chess":
       return pipe(
-        Page.Chess.view(model.model),
+        Page.Chess.view(model.child),
         react.map((msg) => ({ type: "ChessPageMsg", msg }))
       );
 
     case "ConnectFour":
       return pipe(
-        Page.ConnectFour.view(model.model),
+        Page.ConnectFour.view(model.child),
         react.map((msg) => ({ type: "ConnectFourPageMsg", msg }))
       );
 
     case "Home":
       return pipe(
-        Page.Home.view(profile, model.model),
+        Page.Home.view(profile, model.child),
         react.map((msg) => ({ type: "HomePageMsg", msg }))
       );
 
     case "Logout":
       return pipe(
-        Page.Logout.view(model.model),
+        Page.Logout.view(model.child),
         react.map((msg) => ({ type: "LogoutPageMsg", msg }))
       );
 
     case "ProfileDelete":
       return pipe(
-        Page.ProfileDelete.view(model.model),
+        Page.ProfileDelete.view(model.child),
         react.map((msg) => ({ type: "ProfileDeletePageMsg", msg }))
       );
 
     case "ProfileUpdate":
       return pipe(
-        Page.ProfileUpdate.view(profile, model.model),
+        Page.ProfileUpdate.view(profile, model.child),
         react.map((msg) => ({ type: "ProfileUpdatePageMsg", msg }))
       );
 
     case "ProfileUpdateAvatar":
       return pipe(
-        Page.ProfileUpdateAvatar.view(profile, model.model),
+        Page.ProfileUpdateAvatar.view(profile, model.child),
         react.map((msg) => ({ type: "ProfileUpdateAvatarPageMsg", msg }))
       );
 
     case "ProfileUpdateName":
       return pipe(
-        Page.ProfileUpdateName.view(model.model),
+        Page.ProfileUpdateName.view(model.child),
         react.map((msg) => ({ type: "ProfileUpdateNamePageMsg", msg }))
       );
 
     case "ProfileUpdateUsername":
       return pipe(
-        Page.ProfileUpdateUsername.view(model.model),
+        Page.ProfileUpdateUsername.view(model.child),
         react.map((msg) => ({ type: "ProfileUpdateUsernamePageMsg", msg }))
       );
 
     case "TicTacToe":
       return pipe(
-        Page.TicTacToe.view(model.model),
+        Page.TicTacToe.view(model.child),
         react.map((msg) => ({ type: "TicTacToePageMsg", msg }))
       );
   }
