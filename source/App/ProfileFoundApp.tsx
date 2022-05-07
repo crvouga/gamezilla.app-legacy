@@ -1,7 +1,6 @@
 import { pipe } from "fp-ts/lib/function";
 import * as Option from "fp-ts/lib/Option";
 import { cmd, react } from "../Framework";
-import * as Navigation from "../Framework/Navigation";
 import * as Page from "../Page";
 import * as Profile from "../Profile";
 import * as Routes from "../Routes";
@@ -35,7 +34,7 @@ export const init = (
 
   const fallback: [Model, cmd.Cmd<Msg>] = [
     { type: "Home", child: Page.Home.init },
-    Navigation.replace(Routes.encode({ type: "Home" })),
+    Routes.replace({ type: "Home" }),
   ];
 
   if (Option.isNone(route)) {

@@ -2,7 +2,6 @@ import * as Page from "../Page";
 import { option } from "fp-ts";
 import * as Auth from "../Auth";
 import { cmd, react } from "../Framework";
-import * as Navigation from "../Framework/Navigation";
 import * as Routes from "../Routes";
 import { pipe } from "fp-ts/lib/function";
 
@@ -24,7 +23,7 @@ export const init = (
 
   const fallback: [Model, cmd.Cmd<Msg>] = [
     { type: "ProfileCreate", child: Page.ProfileCreate.init(session) },
-    Navigation.replace(Routes.encode({ type: "ProfileCreate" })),
+    Routes.replace({ type: "ProfileCreate" }),
   ];
 
   if (option.isNone(route)) {
