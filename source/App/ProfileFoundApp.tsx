@@ -4,6 +4,7 @@ import { cmd, react } from "../Framework";
 import * as Navigation from "../Framework/Navigation";
 import * as Page from "../Page";
 import * as Profile from "../Profile";
+import * as Routes from "../Routes";
 
 /* 
 
@@ -26,52 +27,22 @@ export type Model =
   | { type: "ProfileUpdateUsername"; child: Page.ProfileUpdateUsername.Model }
   | { type: "TicTacToe"; child: Page.TicTacToe.Model };
 
-const routes: { [routeType in Model["type"]]: string } = {
-  Account: "Account",
-  Chess: "Chess",
-  ConnectFour: "ConnectFour",
-  Home: "Home",
-  Logout: "Logout",
-  ProfileDelete: "ProfileDelete",
-  ProfileUpdate: "ProfileUpdate",
-  ProfileUpdateAvatar: "ProfileUpdateAvatar",
-  ProfileUpdateName: "ProfileUpdateName",
-  ProfileUpdateUsername: "ProfileUpdateUsername",
-  TicTacToe: "TicTacToe",
-};
-
-const isRoute = (route: string): route is Model["type"] => {
-  return route in routes;
-};
-
-export const decode = (location: { pathname: string }) => {
-  const url = location.pathname.substring(1);
-
-  if (isRoute(url)) {
-    return Option.some(url);
-  }
-
-  return Option.none;
-};
-
-const encode = (modelType: Model["type"]): string => {
-  return modelType;
-};
-
 export const init = (
   location: { pathname: string },
   profile: Profile.Profile
 ): [Model, cmd.Cmd<Msg>] => {
-  const route = decode(location);
+  const route = Routes.decode(location);
+
+  const fallback: [Model, cmd.Cmd<Msg>] = [
+    { type: "Home", child: Page.Home.init },
+    Navigation.replace(Routes.encode({ type: "Home" })),
+  ];
 
   if (Option.isNone(route)) {
-    return [
-      { type: "Home", child: Page.Home.init },
-      Navigation.replace(encode("Home")),
-    ];
+    return fallback;
   }
 
-  switch (route.value) {
+  switch (route.value.type) {
     case "Account":
       return [{ type: "Account", child: Page.Account.init }, cmd.none];
 
@@ -134,6 +105,15 @@ export const init = (
         },
         cmd.none,
       ];
+
+    case "ProfileCreate":
+      return fallback;
+
+    case "Login":
+      return fallback;
+
+    case "ProfileUpdateAvatarStyle":
+      return fallback;
   }
 };
 

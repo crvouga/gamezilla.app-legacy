@@ -1,4 +1,5 @@
-import * as Navigation from "../Framework/Navigation";
+import * as Navigation from "./Framework/Navigation";
+import { option } from "fp-ts";
 
 export type Route =
   | { type: "Account" }
@@ -14,8 +15,7 @@ export type Route =
   | { type: "ProfileUpdateAvatarStyle" }
   | { type: "ProfileUpdateName" }
   | { type: "ProfileUpdateUsername" }
-  | { type: "TicTacToe" }
-  | { type: "NotFound" };
+  | { type: "TicTacToe" };
 
 const routesTypes: { [routeType in Route["type"]]: string } = {
   Account: "Account",
@@ -32,19 +32,22 @@ const routesTypes: { [routeType in Route["type"]]: string } = {
   ProfileUpdateName: "ProfileUpdateName",
   ProfileUpdateUsername: "ProfileUpdateUsername",
   TicTacToe: "TicTacToe",
-  NotFound: "NotFound",
 };
 
 const isRouteType = (routeType: string): routeType is Route["type"] => {
   return routeType in routesTypes;
 };
 
-export const decode = (encoded: string): Route => {
-  if (isRouteType(encoded)) {
-    return { type: encoded };
+export type Location = { pathname: string };
+
+export const decode = (location: Location): option.Option<Route> => {
+  const path = location.pathname.substring(1);
+
+  if (isRouteType(path)) {
+    return option.some({ type: path });
   }
 
-  return { type: "NotFound" };
+  return option.none;
 };
 
 export const encode = (route: Route): string => {

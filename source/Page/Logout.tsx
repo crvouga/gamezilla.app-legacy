@@ -2,7 +2,7 @@ import { LoadingButton } from "@mui/lab";
 import { Button, Dialog, DialogActions, DialogTitle } from "@mui/material";
 import React from "react";
 import { cmd, react } from "../Framework";
-import * as Routing from "../Routing";
+import * as Routes from "../Routes";
 import * as Auth from "../Auth";
 
 /* 
@@ -32,7 +32,7 @@ export type Msg =
 export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "Cancel":
-      return [{ type: "Idle" }, Routing.Routes.replace({ type: "Account" })];
+      return [{ type: "Idle" }, Routes.replace({ type: "Account" })];
 
     case "Confirm":
       return [{ type: "Loading" }, Auth.logout()];

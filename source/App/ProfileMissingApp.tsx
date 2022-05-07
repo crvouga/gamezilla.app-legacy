@@ -3,6 +3,7 @@ import { option } from "fp-ts";
 import * as Auth from "../Auth";
 import { cmd, react } from "../Framework";
 import * as Navigation from "../Framework/Navigation";
+import * as Routes from "../Routes";
 import { pipe } from "fp-ts/lib/function";
 
 /* 
@@ -15,49 +16,30 @@ Model
 
 export type Model = { type: "ProfileCreate"; child: Page.ProfileCreate.Model };
 
-const routes: { [routeType in Model["type"]]: string } = {
-  ProfileCreate: "ProfileCreate",
-};
-
-const isRoute = (route: string): route is Model["type"] => {
-  return route in routes;
-};
-
-export const decode = (location: { pathname: string }) => {
-  const url = location.pathname.substring(1);
-
-  if (isRoute(url)) {
-    return option.some(url);
-  }
-
-  return option.none;
-};
-
-const encode = (modelType: Model["type"]): string => {
-  return modelType;
-};
-
-type init = (
+export const init = (
   location: { pathname: string },
   session: Auth.Session
-) => [Model, cmd.Cmd<Msg>];
+): [Model, cmd.Cmd<Msg>] => {
+  const route = Routes.decode(location);
 
-export const init: init = (location, session) => {
-  const route = decode(location);
+  const fallback: [Model, cmd.Cmd<Msg>] = [
+    { type: "ProfileCreate", child: Page.ProfileCreate.init(session) },
+    Navigation.replace(Routes.encode({ type: "ProfileCreate" })),
+  ];
 
   if (option.isNone(route)) {
-    return [
-      { type: "ProfileCreate", child: Page.ProfileCreate.init(session) },
-      Navigation.replace(encode("ProfileCreate")),
-    ];
+    return fallback;
   }
 
-  switch (route.value) {
+  switch (route.value.type) {
     case "ProfileCreate":
       return [
         { type: "ProfileCreate", child: Page.ProfileCreate.init(session) },
         cmd.none,
       ];
+
+    default:
+      return fallback;
   }
 };
 

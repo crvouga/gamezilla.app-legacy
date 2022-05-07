@@ -1,7 +1,7 @@
 import { Avatar, Button, List } from "@mui/material";
 import * as React from "react";
 import { cmd, react } from "../Framework";
-import * as Routing from "../Routing";
+import * as Routes from "../Routes";
 import * as View from "../View";
 
 /* 
@@ -48,16 +48,16 @@ export const update = (
 ): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "ClickedAvatar":
-      return [model, Routing.Routes.push({ type: "ProfileUpdateAvatar" })];
+      return [model, Routes.push({ type: "ProfileUpdateAvatar" })];
 
     case "ClickedBack":
-      return [model, Routing.Routes.replace({ type: "Account" })];
+      return [model, Routes.replace({ type: "Account" })];
 
     case "ClickedName":
-      return [model, Routing.Routes.push({ type: "ProfileUpdateName" })];
+      return [model, Routes.push({ type: "ProfileUpdateName" })];
 
     case "ClickedUsername":
-      return [model, Routing.Routes.push({ type: "ProfileUpdateUsername" })];
+      return [model, Routes.push({ type: "ProfileUpdateUsername" })];
   }
 };
 

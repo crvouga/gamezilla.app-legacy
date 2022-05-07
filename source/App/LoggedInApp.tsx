@@ -99,10 +99,10 @@ export const update = (
       return updateLoading(location, session, msg, model);
 
     case "ProfileFound":
-      return updateProfileFound(msg, model);
+      return updateProfileFound(session, msg, model);
 
     case "ProfileMissing":
-      return updateProfileMissing(location, msg, model);
+      return updateProfileMissing(location, session, msg, model);
   }
 };
 
@@ -131,6 +131,7 @@ export const updateLoading = (
 };
 
 export const updateProfileFound = (
+  session: Auth.Session,
   msg: Msg,
   model: ProfileFound
 ): [Model, cmd.Cmd<Msg>] => {
@@ -168,7 +169,7 @@ export const updateProfileFound = (
     }
 
     case "ProfileMissing":
-      return [model, cmd.none];
+      return initProfileMissing(location, session);
 
     case "ProfileMissingAppMsg":
       return [model, cmd.none];
@@ -177,6 +178,7 @@ export const updateProfileFound = (
 
 export const updateProfileMissing = (
   location: { pathname: string },
+  session: Auth.Session,
   msg: Msg,
   model: ProfileMissing
 ): [Model, cmd.Cmd<Msg>] => {
@@ -194,7 +196,19 @@ export const updateProfileMissing = (
       return [model, cmd.none];
 
     case "ProfileMissingAppMsg":
-      return [model, cmd.none];
+      const [childModel, childCmd] = ProfileMissingApp.update(
+        session,
+        msg.msg,
+        model.child
+      );
+
+      return [
+        { ...model, child: childModel },
+        pipe(
+          childCmd,
+          cmd.map((msg) => ({ type: "ProfileMissingAppMsg", msg }))
+        ),
+      ];
   }
 };
 

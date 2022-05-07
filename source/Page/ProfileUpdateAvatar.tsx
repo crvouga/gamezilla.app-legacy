@@ -3,7 +3,7 @@ import { Box, Avatar, List } from "@mui/material";
 import * as React from "react";
 import { cmd, react } from "../Framework";
 import * as ProfileAvatar from "../ProfileAvatar";
-import * as Routing from "../Routing";
+import * as Routes from "../Routes";
 import * as View from "../View";
 
 /* 
@@ -47,13 +47,13 @@ export const update = (
 ): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "Back":
-      return [model, Routing.Routes.replace({ type: "ProfileUpdate" })];
+      return [model, Routes.replace({ type: "ProfileUpdate" })];
 
     case "ClickedSeed":
-      return [model, Routing.Routes.push({ type: "ProfileUpdateAvatarStyle" })];
+      return [model, Routes.push({ type: "ProfileUpdateAvatarStyle" })];
 
     case "ClickedStyle":
-      return [model, Routing.Routes.push({ type: "ProfileUpdateAvatarStyle" })];
+      return [model, Routes.push({ type: "ProfileUpdateAvatarStyle" })];
   }
 };
 

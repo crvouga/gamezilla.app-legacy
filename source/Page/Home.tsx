@@ -3,7 +3,7 @@ import React from "react";
 import * as Chess from "../Chess";
 import * as ConnectFour from "../ConnectFour";
 import { cmd, react } from "../Framework";
-import * as Routing from "../Routing";
+import * as Routes from "../Routes";
 import * as TicTacToe from "../TicTacToe";
 import * as View from "../View";
 
@@ -38,18 +38,18 @@ export type Msg =
 export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "ClickedAvatar":
-      return [model, Routing.Routes.push({ type: "Account" })];
+      return [model, Routes.push({ type: "Account" })];
 
     case "ClickedGame":
       switch (msg.game) {
         case "ConnectFour":
-          return [model, Routing.Routes.push({ type: "ConnectFour" })];
+          return [model, Routes.push({ type: "ConnectFour" })];
 
         case "TicTacToe":
-          return [model, Routing.Routes.push({ type: "TicTacToe" })];
+          return [model, Routes.push({ type: "TicTacToe" })];
 
         case "Chess":
-          return [model, Routing.Routes.push({ type: "Chess" })];
+          return [model, Routes.push({ type: "Chess" })];
       }
   }
 };

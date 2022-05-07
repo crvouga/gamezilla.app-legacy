@@ -3,7 +3,7 @@ import { Button, Dialog, DialogActions, DialogTitle } from "@mui/material";
 import React from "react";
 import { cmd, react } from "../Framework";
 import * as Profile from "../Profile";
-import * as Routing from "../Routing";
+import * as Routes from "../Routes";
 
 /* 
 
@@ -38,7 +38,7 @@ export const update = (
 ): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "Cancel":
-      return [{ type: "Idle" }, Routing.Routes.replace({ type: "Account" })];
+      return [{ type: "Idle" }, Routes.replace({ type: "Account" })];
 
     case "Delete":
       return [
