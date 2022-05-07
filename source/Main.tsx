@@ -55,7 +55,7 @@ Location
 const locationToMsg = (location: Navigation.Location): Msg => {
   return {
     type: "LocationChanged",
-    pathname: location.pathname,
+    location: { pathname: location.pathname },
   };
 };
 
@@ -70,22 +70,20 @@ Model
 */
 
 type Model = {
-  url: string;
+  location: { pathname: string };
   child: App.Model;
 };
 
 const init = (location: Navigation.Location): [Model, cmd.Cmd<Msg>] => {
-  const url = location.pathname.substring(1);
-
-  return mapAppUpdate(url, App.init());
+  return mapAppUpdate({ pathname: location.pathname }, App.init());
 };
 
 const mapAppUpdate = (
-  url: string,
+  location: { pathname: string },
   [subModel, subCmd]: [App.Model, cmd.Cmd<App.Msg>]
 ): [Model, cmd.Cmd<Msg>] => {
   return [
-    { url, child: subModel },
+    { location, child: subModel },
     pipe(
       subCmd,
       cmd.map((msg) => ({ type: "AppMsg", msg }))
@@ -104,19 +102,22 @@ Update
 */
 
 type Msg =
-  | { type: "AppMsg"; msg: App.Msg }
-  | { type: "LocationChanged"; pathname: string };
+  | { type: "LocationChanged"; location: { pathname: string } }
+  | { type: "AppMsg"; msg: App.Msg };
 
 const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "AppMsg":
       return mapAppUpdate(
-        model.url,
-        App.update(model.url, msg.msg, model.child)
+        model.location,
+        App.update(model.location, msg.msg, model.child)
       );
 
     case "LocationChanged":
-      return [{ ...model, url: msg.pathname }, cmd.none];
+      return mapAppUpdate(
+        msg.location,
+        App.update(msg.location, msg, model.child)
+      );
   }
 };
 

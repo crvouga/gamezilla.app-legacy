@@ -58,8 +58,11 @@ const mapLoggedOut = ([subModel, subCmd]: [
   ];
 };
 
-const initLoggedIn = (session: Auth.Session): [LoggedIn, cmd.Cmd<Msg>] => {
-  return mapLoggedIn(session, LoggedInApp.init(session));
+const initLoggedIn = (
+  location: { pathname: string },
+  session: Auth.Session
+): [LoggedIn, cmd.Cmd<Msg>] => {
+  return mapLoggedIn(session, LoggedInApp.init(location, session));
 };
 
 const mapLoggedIn = (
@@ -84,46 +87,49 @@ Update
 */
 
 export type Msg =
+  | { type: "LocationChanged"; location: { pathname: string } }
   | { type: "LoggedIn"; session: Auth.Session }
   | { type: "LoggedOut" }
   | { type: "LoggedInAppMsg"; msg: LoggedInApp.Msg }
   | { type: "LoggedOutAppMsg"; msg: LoggedOutApp.Msg };
 
 export const update = (
-  url: string,
+  location: { pathname: string },
   msg: Msg,
   model: Model
 ): [Model, cmd.Cmd<Msg>] => {
   switch (model.type) {
     case "Loading":
-      return updateLoading(msg, model);
+      return updateLoading(location, msg, model);
 
     case "LoggedIn":
-      return updateLoggedIn(url, msg, model);
+      return updateLoggedIn(msg, model);
 
     case "LoggedOut":
-      return updateLoggedOut(msg, model);
+      return updateLoggedOut(location, msg, model);
   }
 };
 
-const updateLoading = (msg: Msg, model: Loading): [Model, cmd.Cmd<Msg>] => {
+const updateLoading = (
+  location: { pathname: string },
+  msg: Msg,
+  model: Loading
+): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "LoggedIn":
-      return initLoggedIn(msg.session);
+      return initLoggedIn(location, msg.session);
 
     case "LoggedOut":
       return initLoggedOut();
 
-    default:
+    case "LocationChanged":
+    case "LoggedInAppMsg":
+    case "LoggedOutAppMsg":
       return [model, cmd.none];
   }
 };
 
-const updateLoggedIn = (
-  url: string,
-  msg: Msg,
-  model: LoggedIn
-): [Model, cmd.Cmd<Msg>] => {
+const updateLoggedIn = (msg: Msg, model: LoggedIn): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "LoggedOut":
       return initLoggedOut();
@@ -131,8 +137,11 @@ const updateLoggedIn = (
     case "LoggedInAppMsg":
       return mapLoggedIn(
         model.session,
-        LoggedInApp.update(url, msg.msg, model.child)
+        LoggedInApp.update(msg.msg, model.child)
       );
+
+    case "LocationChanged":
+      return mapLoggedIn(model.session, LoggedInApp.update(msg, model.child));
 
     case "LoggedIn":
     case "LoggedOutAppMsg":
@@ -140,14 +149,19 @@ const updateLoggedIn = (
   }
 };
 
-const updateLoggedOut = (msg: Msg, model: LoggedOut): [Model, cmd.Cmd<Msg>] => {
+const updateLoggedOut = (
+  location: { pathname: string },
+  msg: Msg,
+  model: LoggedOut
+): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "LoggedIn":
-      return initLoggedIn(msg.session);
+      return initLoggedIn(location, msg.session);
 
     case "LoggedOutAppMsg":
       return mapLoggedOut(LoggedOutApp.update(msg.msg, model.child));
 
+    case "LocationChanged":
     case "LoggedOut":
     case "LoggedInAppMsg":
       return [model, cmd.none];

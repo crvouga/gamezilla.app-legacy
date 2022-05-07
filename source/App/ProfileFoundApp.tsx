@@ -1,6 +1,7 @@
 import { pipe } from "fp-ts/lib/function";
-import * as React from "react";
+import * as Option from "fp-ts/lib/Option";
 import { cmd, react } from "../Framework";
+import * as Navigation from "../Framework/Navigation";
 import * as Page from "../Page";
 import * as Profile from "../Profile";
 
@@ -23,8 +24,7 @@ export type Model =
   | { type: "ProfileUpdateAvatar"; model: Page.ProfileUpdateAvatar.Model }
   | { type: "ProfileUpdateName"; model: Page.ProfileUpdateName.Model }
   | { type: "ProfileUpdateUsername"; model: Page.ProfileUpdateUsername.Model }
-  | { type: "TicTacToe"; model: Page.TicTacToe.Model }
-  | { type: "NotFound" };
+  | { type: "TicTacToe"; model: Page.TicTacToe.Model };
 
 const routes: { [routeType in Model["type"]]: string } = {
   Account: "Account",
@@ -38,28 +38,40 @@ const routes: { [routeType in Model["type"]]: string } = {
   ProfileUpdateName: "ProfileUpdateName",
   ProfileUpdateUsername: "ProfileUpdateUsername",
   TicTacToe: "TicTacToe",
-  NotFound: "NotFound",
 };
 
 const isRoute = (route: string): route is Model["type"] => {
   return route in routes;
 };
 
-export const decode = (url: string) => {
+export const decode = (location: { pathname: string }) => {
+  const url = location.pathname.substring(1);
+
   if (isRoute(url)) {
-    return url;
+    return Option.some(url);
   }
 
-  return "NotFound";
+  return Option.none;
+};
+
+const encode = (modelType: Model["type"]): string => {
+  return modelType;
 };
 
 export const init = (
-  url: string,
+  location: { pathname: string },
   profile: Profile.Profile
 ): [Model, cmd.Cmd<Msg>] => {
-  const route = decode(url);
+  const route = decode(location);
 
-  switch (route) {
+  if (Option.isNone(route)) {
+    return [
+      { type: "Home", model: Page.Home.init },
+      Navigation.replace(encode("Home")),
+    ];
+  }
+
+  switch (route.value) {
     case "Account":
       return [{ type: "Account", model: Page.Account.init }, cmd.none];
 
@@ -74,9 +86,6 @@ export const init = (
 
     case "Logout":
       return [{ type: "Logout", model: Page.Logout.init }, cmd.none];
-
-    case "NotFound":
-      return [{ type: "Home", model: Page.Home.init }, cmd.none];
 
     case "ProfileDelete":
       return [
@@ -139,6 +148,7 @@ Update
 */
 
 export type Msg =
+  | { type: "LocationChanged"; location: { pathname: string } }
   | { type: "AccountPageMsg"; msg: Page.Account.Msg }
   | { type: "ChessPageMsg"; msg: Page.Chess.Msg }
   | { type: "ConnectFourPageMsg"; msg: Page.ConnectFour.Msg }
@@ -160,6 +170,10 @@ export const update = (
   msg: Msg,
   model: Model
 ): [Model, cmd.Cmd<Msg>] => {
+  if (msg.type === "LocationChanged") {
+    return init(msg.location, profile);
+  }
+
   switch (model.type) {
     case "Account":
       if (msg.type === "AccountPageMsg") {
@@ -358,13 +372,6 @@ export const update = (
         ];
       }
       return [model, cmd.none];
-
-    case "NotFound":
-      if (msg.type === "NotFoundPageMsg") {
-        return [model, cmd.none];
-      }
-
-      return [model, cmd.none];
   }
 };
 
@@ -448,8 +455,5 @@ export const view = (
         Page.TicTacToe.view(model.model),
         react.map((msg) => ({ type: "TicTacToePageMsg", msg }))
       );
-
-    case "NotFound":
-      return () => <>Not Found</>;
   }
 };
