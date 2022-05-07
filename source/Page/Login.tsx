@@ -14,8 +14,8 @@ Model
 
 export type Model = { type: "Idle" } | { type: "Loading" };
 
-export const init = (): [Model, cmd.Cmd<Msg>] => {
-  return [{ type: "Idle" }, cmd.none];
+export const init = (): Model => {
+  return { type: "Idle" };
 };
 
 /*

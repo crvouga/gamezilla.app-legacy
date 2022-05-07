@@ -1,6 +1,7 @@
 import { pipe } from "fp-ts/lib/function";
 import { cmd, react } from "../Framework";
 import * as Page from "../Page";
+import * as Routes from "../Routes";
 
 /* 
 
@@ -12,20 +13,23 @@ Model
 
 */
 
-export type Model = Page.Login.Model;
+export type Model = { type: "Login"; child: Page.Login.Model };
 
 export const init = (): [Model, cmd.Cmd<Msg>] => {
-  return mapPageLogin(Page.Login.init());
+  return [
+    { type: "Login", child: Page.Login.init() },
+    Routes.replace({ type: "Login" }),
+  ];
 };
 
-const mapPageLogin = ([subModel, subCmd]: [
+const mapPageLogin = ([childModel, childCmd]: [
   Page.Login.Model,
   cmd.Cmd<Page.Login.Msg>
 ]): [Model, cmd.Cmd<Msg>] => {
   return [
-    subModel,
+    { type: "Login", child: childModel },
     pipe(
-      subCmd,
+      childCmd,
       cmd.map((msg) => ({ type: "LoginMsg", msg }))
     ),
   ];
@@ -46,7 +50,7 @@ export type Msg = { type: "LoginMsg"; msg: Page.Login.Msg };
 export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "LoginMsg":
-      return mapPageLogin(Page.Login.update(msg.msg, model));
+      return mapPageLogin(Page.Login.update(msg.msg, model.child));
   }
 };
 
@@ -61,8 +65,11 @@ View
 */
 
 export const view = (model: Model): react.Html<Msg> => {
-  return pipe(
-    Page.Login.view(model),
-    react.map((msg) => ({ type: "LoginMsg", msg }))
-  );
+  switch (model.type) {
+    case "Login":
+      return pipe(
+        Page.Login.view(model.child),
+        react.map((msg) => ({ type: "LoginMsg", msg }))
+      );
+  }
 };
