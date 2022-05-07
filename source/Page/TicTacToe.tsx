@@ -1,6 +1,6 @@
 import React from "react";
 import { cmd, react } from "../Framework";
-import * as Routing from "../Routing";
+import * as Routes from "../Routes";
 import * as View from "../View";
 
 /* 
@@ -28,7 +28,7 @@ export type Msg = { group: "TicTacToe"; type: "Back" };
 export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "Back":
-      return [model, Routing.Routes.replace({ type: "Home" })];
+      return [model, Routes.replace({ type: "Home" })];
   }
 };
 

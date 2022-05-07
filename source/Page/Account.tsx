@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import React from "react";
 import { cmd, react } from "../Framework";
-import * as Routing from "../Routing";
+import * as Routes from "../Routes";
 import * as View from "../View";
 
 /* 
@@ -40,16 +40,16 @@ export type Msg =
 export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "Back":
-      return [model, Routing.Routes.replace({ type: "Home" })];
+      return [model, Routes.replace({ type: "Home" })];
 
     case "Logout":
-      return [model, Routing.Routes.push({ type: "Logout" })];
+      return [model, Routes.push({ type: "Logout" })];
 
     case "UpdateProfile":
-      return [model, Routing.Routes.push({ type: "ProfileUpdate" })];
+      return [model, Routes.push({ type: "ProfileUpdate" })];
 
     case "DeleteProfile":
-      return [model, Routing.Routes.push({ type: "ProfileDelete" })];
+      return [model, Routes.push({ type: "ProfileDelete" })];
   }
 };
 
