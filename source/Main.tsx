@@ -1,188 +1,65 @@
-import * as React from "react";
 import { createRoot } from "react-dom/client";
-import { sub, cmd, react } from "./Framework";
+import * as App from "./App/App";
+import { react } from "./Framework";
 import * as DebugNavigation from "./Framework/Debug/Navigation";
 import * as Navigation from "./Framework/Navigation";
-import * as App from "./App/App";
-import { pipe } from "fp-ts/lib/function";
-import {
-  createTheme,
-  CssBaseline,
-  responsiveFontSizes,
-  ThemeProvider,
-} from "@mui/material";
-import { green } from "@mui/material/colors";
 
-/* 
+//
+//
+//
+//
+// Main
+//
+//
+//
+//
 
-
-Main
-
-
-*/
-
-export const main = (): Error[] => {
-  const program =
-    process.env.NODE_ENV === "production"
-      ? Navigation.program
-      : DebugNavigation.programWithDebugger;
-
-  const mainProgram = program(locationToMsg, init, update, view, subscriptions);
+const main = () => {
+  const program = Program(
+    locationToMsg,
+    App.init,
+    App.update,
+    App.view,
+    App.subscriptions
+  );
 
   const rootElement = document.getElementById("root");
 
-  if (!rootElement) {
-    return [new Error("Failed to get root element from html document")];
+  if (rootElement) {
+    const root = createRoot(rootElement);
+
+    react.run(program, (node) => root.render(node));
   }
-
-  const root = createRoot(rootElement);
-
-  react.run(mainProgram, (node) => root.render(node));
-
-  return [];
 };
 
-/* 
+//
+// Location
+//
 
-
-
-Location
-
-
-
-*/
-
-const locationToMsg = (location: Navigation.Location): Msg => {
+const locationToMsg = (location: Navigation.Location): App.Msg => {
   return {
     type: "LocationChanged",
     location: { pathname: location.pathname },
   };
 };
 
-/* 
+//
+// Program
+//
 
+const Program =
+  process.env.NODE_ENV === "production"
+    ? Navigation.program
+    : DebugNavigation.programWithDebugger;
 
+//
+//
+//
+//
+// Run
+//
+//
+//
+//
 
-Model
-
-
-
-*/
-
-type Model = {
-  location: { pathname: string };
-  child: App.Model;
-};
-
-const init = (location: Navigation.Location): [Model, cmd.Cmd<Msg>] => {
-  return mapAppUpdate({ pathname: location.pathname }, App.init());
-};
-
-const mapAppUpdate = (
-  location: { pathname: string },
-  [subModel, subCmd]: [App.Model, cmd.Cmd<App.Msg>]
-): [Model, cmd.Cmd<Msg>] => {
-  return [
-    { location, child: subModel },
-    pipe(
-      subCmd,
-      cmd.map((msg) => ({ type: "AppMsg", msg }))
-    ),
-  ];
-};
-
-/* 
-
-
-
-Update
-
-
-
-*/
-
-type Msg =
-  | { type: "LocationChanged"; location: { pathname: string } }
-  | { type: "AppMsg"; msg: App.Msg };
-
-const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
-  switch (msg.type) {
-    case "AppMsg":
-      return mapAppUpdate(
-        model.location,
-        App.update(model.location, msg.msg, model.child)
-      );
-
-    case "LocationChanged":
-      return mapAppUpdate(
-        msg.location,
-        App.update(msg.location, msg, model.child)
-      );
-  }
-};
-
-/* 
-
-
-
-Subsciptions
-
-
-
-*/
-
-const subscriptions = (model: Model): sub.Sub<Msg> => {
-  return pipe(
-    App.subscriptions(model.child),
-    sub.map((msg) => ({ type: "AppMsg", msg }))
-  );
-};
-
-/* 
-
-
-
-View
-
-
-
-*/
-
-const theme = responsiveFontSizes(
-  createTheme({
-    palette: {
-      mode: "dark",
-      primary: green,
-    },
-    typography: {
-      fontFamily: ["Nunito"].join(","),
-    },
-    components: {
-      MuiButton: {
-        styleOverrides: {
-          root: {
-            borderRadius: "120px",
-          },
-        },
-      },
-    },
-  })
-);
-
-const view =
-  (model: Model): react.Html<Msg> =>
-  (dispatch) => {
-    return (
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        {viewMain(model)(dispatch)}
-      </ThemeProvider>
-    );
-  };
-
-const viewMain = (model: Model): react.Html<Msg> => {
-  return pipe(
-    App.view(model.child),
-    react.map((msg) => ({ type: "AppMsg", msg }))
-  );
-};
+main();

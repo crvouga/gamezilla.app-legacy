@@ -6,13 +6,15 @@ import * as Profile from "../Profile";
 import * as Routes from "../Routes";
 import { exhaustive } from "../Utility";
 
-/* 
-
-
-Model
-
-
-*/
+//
+//
+//
+//
+// Model
+//
+//
+//
+//
 
 export type Model =
   | { type: "Account"; child: Page.Account.Model }
@@ -26,6 +28,10 @@ export type Model =
   | { type: "ProfileUpdateName"; child: Page.ProfileUpdateName.Model }
   | { type: "ProfileUpdateUsername"; child: Page.ProfileUpdateUsername.Model }
   | { type: "TicTacToe"; child: Page.TicTacToe.Model };
+
+//
+// Init
+//
 
 export const init = (
   location: { pathname: string },
@@ -118,15 +124,17 @@ export const init = (
   }
 };
 
-/* 
-
-
-
-Update
-
-
-
-*/
+//
+//
+//
+//
+//
+// Update
+//
+//
+//
+//
+//
 
 export type Msg =
   | { type: "LocationChanged"; location: { pathname: string } }
@@ -356,15 +364,15 @@ export const update = (
   }
 };
 
-/* 
-
-
-
-View
-
-
-
-*/
+//
+//
+//
+//
+// View
+//
+//
+//
+//
 
 export const view = (
   profile: Profile.Profile,
