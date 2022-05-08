@@ -8,13 +8,15 @@ import * as Auth from "../Auth";
 import { option } from "fp-ts";
 import { pipe } from "fp-ts/lib/function";
 
-/* 
-
-
-Model
-
-
-*/
+//
+//
+//
+//
+// Model
+//
+//
+//
+//
 
 export type Model = Loading | ProfileFound | ProfileMissing;
 

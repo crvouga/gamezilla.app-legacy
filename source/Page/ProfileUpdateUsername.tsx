@@ -6,13 +6,15 @@ import * as Profile from "../Profile";
 import * as Routes from "../Routes";
 import * as View from "../View";
 
-/* 
-
-
-Model
-
-
-*/
+//
+//
+//
+//
+// Model
+//
+//
+//
+//
 
 export type Model = { status: "Idle" | "Loading"; username: string };
 
@@ -23,13 +25,15 @@ export const init = ({ username }: { username: string }): Model => {
   };
 };
 
-/* 
-
-
-Update
-
-
-*/
+//
+//
+//
+//
+// Update
+//
+//
+//
+//
 
 export type Msg =
   | {
@@ -79,13 +83,15 @@ export const update = (
   }
 };
 
-/* 
-
-
-View
-
-
-*/
+//
+//
+//
+//
+// View
+//
+//
+//
+//
 
 export const view =
   (model: Model): react.Html<Msg> =>

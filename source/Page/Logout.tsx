@@ -5,25 +5,29 @@ import { cmd, react } from "../Framework";
 import * as Routes from "../Routes";
 import * as Auth from "../Auth";
 
-/* 
-
-
-Model
-
-
-*/
+//
+//
+//
+//
+// Model
+//
+//
+//
+//
 
 export type Model = { type: "Idle" } | { type: "Loading" };
 
 export const init: Model = { type: "Idle" };
 
-/* 
-
-
-Update
-
-
-*/
+//
+//
+//
+//
+// Update
+//
+//
+//
+//
 
 export type Msg =
   | { group: "Logout"; type: "Cancel" }
@@ -39,13 +43,15 @@ export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   }
 };
 
-/* 
-
-
-View
-
-
-*/
+//
+//
+//
+//
+// View
+//
+//
+//
+//
 
 export const view =
   (model: Model): react.Html<Msg> =>

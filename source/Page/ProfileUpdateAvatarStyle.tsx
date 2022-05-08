@@ -10,13 +10,15 @@ import { cmd, react } from "../Framework";
 import * as ProfileAvatar from "../ProfileAvatar";
 import * as View from "../View";
 
-/* 
-
-
-Model
-
-
-*/
+//
+//
+//
+//
+// Model
+//
+//
+//
+//
 
 export type Model = {
   status: "Idle" | "Loading";
@@ -31,13 +33,15 @@ export const init = ({ avatarUrl }: { avatarUrl: string }): Model => {
   };
 };
 
-/* 
-
-
-Update
-
-
-*/
+//
+//
+//
+//
+// Update
+//
+//
+//
+//
 
 export type Msg =
   | { group: "ProfileUpdateAvatarStyle"; type: "SelectedStyle" }
@@ -47,13 +51,15 @@ export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   return [model, cmd.none];
 };
 
-/* 
-
-
-View
-
-
-*/
+//
+//
+//
+//
+// View
+//
+//
+//
+//
 
 export const view =
   (model: Model): react.Html<Msg> =>

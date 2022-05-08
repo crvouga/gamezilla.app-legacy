@@ -7,25 +7,29 @@ import * as Routes from "../Routes";
 import * as TicTacToe from "../TicTacToe";
 import * as View from "../View";
 
-/* 
-
-
-Model
-
-
-*/
+//
+//
+//
+//
+// Model
+//
+//
+//
+//
 
 export type Model = {};
 
 export const init: Model = {};
 
-/* 
-
-
-Update
-
-
-*/
+//
+//
+//
+//
+// Update
+//
+//
+//
+//
 
 export type Msg =
   | { group: "Home"; type: "ClickedAvatar" }
@@ -54,13 +58,15 @@ export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   }
 };
 
-/* 
-
-
-View
-
-
-*/
+//
+//
+//
+//
+// View
+//
+//
+//
+//
 
 export const view =
   ({ avatarUrl }: { avatarUrl: string }, _model: Model): react.Html<Msg> =>

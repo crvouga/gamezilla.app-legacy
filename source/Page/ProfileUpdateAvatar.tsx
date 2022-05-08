@@ -6,13 +6,15 @@ import * as ProfileAvatar from "../ProfileAvatar";
 import * as Routes from "../Routes";
 import * as View from "../View";
 
-/* 
-
-
-Model
-
-
-*/
+//
+//
+//
+//
+// Model
+//
+//
+//
+//
 
 export type Model = {
   status: "Idle" | "Loading";
@@ -27,13 +29,15 @@ export const init = ({ avatarUrl }: { avatarUrl: string }): Model => {
   };
 };
 
-/* 
-
-
-Update
-
-
-*/
+//
+//
+//
+//
+// Update
+//
+//
+//
+//
 
 export type Msg =
   | { group: "ProfileUpdateAvatar"; type: "Back" }
@@ -57,13 +61,15 @@ export const update = (
   }
 };
 
-/* 
-
-
-View
-
-
-*/
+//
+//
+//
+//
+// View
+//
+//
+//
+//
 
 export const view =
   (

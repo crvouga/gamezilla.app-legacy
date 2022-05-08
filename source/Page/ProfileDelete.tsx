@@ -5,25 +5,29 @@ import { cmd, react } from "../Framework";
 import * as Profile from "../Profile";
 import * as Routes from "../Routes";
 
-/* 
-
-
-Model
-
-
-*/
+//
+//
+//
+//
+// Model
+//
+//
+//
+//
 
 export type Model = { type: "Idle" } | { type: "Deleting" };
 
 export const init: Model = { type: "Idle" };
 
-/* 
-
-
-Update
-
-
-*/
+//
+//
+//
+//
+// Update
+//
+//
+//
+//
 
 export type Msg =
   | { group: "ProfileDelete"; type: "Cancel" }
@@ -64,13 +68,15 @@ export const update = (
   }
 };
 
-/* 
-
-
-View
-
-
-*/
+//
+//
+//
+//
+// View
+//
+//
+//
+//
 
 export const view =
   (model: Model): react.Html<Msg> =>
