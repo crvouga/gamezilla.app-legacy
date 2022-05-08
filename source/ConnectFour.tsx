@@ -1,13 +1,14 @@
 import * as React from "react";
 
-/* 
-
-
-
-Columns
-
-
-*/
+//
+//
+//
+//
+//  Board
+//
+//
+//
+//
 
 export type IPlayer = "PlayerOne" | "PlayerTwo";
 
@@ -184,29 +185,15 @@ function* filter<T>(predicate: (item: T) => boolean, generator: Generator<T>) {
   }
 }
 
-/* 
-
-
-View
-
-
-*/
-
-export const theme = {
-  primary: {
-    light: "#1976D2",
-    dark: "#2195F2",
-    darker: "#0D47A1",
-  },
-  playerOne: {
-    light: "#FFB74D",
-    dark: "#FFA623",
-  },
-  playerTwo: {
-    light: "#F24237",
-    dark: "#DB332F",
-  },
-};
+//
+//
+//
+//
+// View
+//
+//
+//
+//
 
 export const Icon = () => {
   const ids = {
@@ -291,4 +278,20 @@ export const Icon = () => {
       />
     </svg>
   );
+};
+
+export const theme = {
+  primary: {
+    light: "#1976D2",
+    dark: "#2195F2",
+    darker: "#0D47A1",
+  },
+  playerOne: {
+    light: "#FFB74D",
+    dark: "#FFA623",
+  },
+  playerTwo: {
+    light: "#F24237",
+    dark: "#DB332F",
+  },
 };

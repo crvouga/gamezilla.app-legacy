@@ -5,13 +5,15 @@ import * as Routes from "../Routes";
 import * as TicTacToe from "../TicTacToe";
 import * as View from "../View";
 
-/* 
-
-
-Model
-
-
-*/
+//
+//
+//
+//
+// Model
+//
+//
+//
+//
 
 export type Model = {
   board: TicTacToe.Board;
@@ -21,13 +23,15 @@ export const init: Model = {
   board: TicTacToe.emptyBoard,
 };
 
-/* 
-
-
-Update
-
-
-*/
+//
+//
+//
+//
+// Update
+//
+//
+//
+//
 
 export type Msg =
   | { type: "Back" }
@@ -63,13 +67,15 @@ export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   }
 };
 
-/* 
-
-
-View
-
-
-*/
+//
+//
+//
+//
+// View
+//
+//
+//
+//
 
 export const view =
   (model: Model): react.Html<Msg> =>

@@ -6,13 +6,15 @@ import * as Routes from "../Routes";
 import { pipe } from "fp-ts/lib/function";
 import { exhaustive } from "../Utility";
 
-/* 
-
-
-Model
-
-
-*/
+//
+//
+//
+//
+// Model
+//
+//
+//
+//
 
 export type Model = { type: "ProfileCreate"; child: Page.ProfileCreate.Model };
 

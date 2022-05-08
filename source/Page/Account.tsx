@@ -11,25 +11,29 @@ import { cmd, react } from "../Framework";
 import * as Routes from "../Routes";
 import * as View from "../View";
 
-/* 
-
-
-Model
-
-
-*/
+//
+//
+//
+//
+// Model
+//
+//
+//
+//
 
 export type Model = {};
 
 export const init: Model = {};
 
-/* 
-
-
-Update
-
-
-*/
+//
+//
+//
+//
+// Update
+//
+//
+//
+//
 
 export type Msg =
   | { group: "Account"; type: "Back" }
@@ -53,13 +57,15 @@ export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   }
 };
 
-/* 
-
-
-View
-
-
-*/
+//
+//
+//
+//
+// View
+//
+//
+//
+//
 
 export const view =
   ({ username }: { username: string }, model: Model): react.Html<Msg> =>

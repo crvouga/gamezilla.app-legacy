@@ -4,13 +4,15 @@ import { cmd, react } from "../Framework";
 import * as Routes from "../Routes";
 import * as View from "../View";
 
-/* 
-
-
-Model
-
-
-*/
+//
+//
+//
+//
+// Model
+//
+//
+//
+//
 
 type Form = {
   username: string;
@@ -27,13 +29,15 @@ export const init = (form: Form): Model => {
   };
 };
 
-/* 
-
-
-Update
-
-
-*/
+//
+//
+//
+//
+// Update
+//
+//
+//
+//
 
 export type Msg =
   | { group: "ProfileUpdate"; type: "ClickedBack" }
@@ -61,13 +65,15 @@ export const update = (
   }
 };
 
-/* 
-
-
-View
-
-
-*/
+//
+//
+//
+//
+// View
+//
+//
+//
+//
 
 export const view =
   (

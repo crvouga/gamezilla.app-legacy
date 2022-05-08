@@ -7,13 +7,15 @@ import * as ProfileAvatar from "../ProfileAvatar";
 import * as Auth from "../Auth";
 import * as View from "../View";
 
-/* 
-
-
-Model
-
-
-*/
+//
+//
+//
+//
+// Model
+//
+//
+//
+//
 
 type Form = {
   username: string;
@@ -43,13 +45,15 @@ export const init = ({ defaultName }: { defaultName: string }): Model => {
   };
 };
 
-/* 
-
-
-Update
-
-
-*/
+//
+//
+//
+//
+// Update
+//
+//
+//
+//
 
 export type Msg =
   | { group: "ProfileCreate"; type: "EnteredUsername"; username: string }
@@ -99,13 +103,15 @@ export const update = (
   }
 };
 
-/* 
-
-
-View
-
-
-*/
+//
+//
+//
+//
+// View
+//
+//
+//
+//
 
 export const view =
   (model: Model): react.Html<Msg> =>

@@ -4,13 +4,15 @@ import React from "react";
 import { cmd, react } from "../Framework";
 import * as Auth from "../Auth";
 
-/* 
-
-
-Model
-
-
-*/
+//
+//
+//
+//
+// Model
+//
+//
+//
+//
 
 export type Model = { type: "Idle" } | { type: "Loading" };
 
@@ -35,13 +37,15 @@ export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   }
 };
 
-/* 
-
-
-View
-
-
-*/
+//
+//
+//
+//
+// View
+//
+//
+//
+//
 
 export const view =
   (model: Model): react.Html<Msg> =>

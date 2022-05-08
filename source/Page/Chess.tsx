@@ -3,27 +3,31 @@ import { cmd, react } from "../Framework";
 import * as Routes from "../Routes";
 import * as View from "../View";
 
-/* 
-
-
-Model
-
-
-*/
+//
+//
+//
+//
+// Model
+//
+//
+//
+//
 
 export type Model = {};
 
 export const init: Model = {};
 
-/* 
+//
+//
+//
+//
+// Update
+//
+//
+//
+//
 
-
-Update
-
-
-*/
-
-export type Msg = { group: "Chess"; type: "Back" };
+export type Msg = { type: "Back" };
 
 export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
@@ -32,24 +36,24 @@ export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   }
 };
 
-/* 
-
-
-View
-
-
-*/
+//
+//
+//
+//
+// View
+//
+//
+//
+//
 
 export const view =
-  (_model: Model): react.Html<Msg> =>
+  (_: Model): react.Html<Msg> =>
   (dispatch) =>
     (
       <View.Page>
         <View.Header
           left={
-            <View.HeaderBackButton
-              onClick={() => dispatch({ group: "Chess", type: "Back" })}
-            />
+            <View.HeaderBackButton onClick={() => dispatch({ type: "Back" })} />
           }
           title="Chess"
         />

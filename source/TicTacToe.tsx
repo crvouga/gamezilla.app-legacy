@@ -1,12 +1,14 @@
 import * as React from "react";
 
-/* 
-
-
-Model
-
-
-*/
+//
+//
+//
+//
+// Model
+//
+//
+//
+//
 
 export type Player = "X" | "O";
 
