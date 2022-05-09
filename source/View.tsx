@@ -1,5 +1,6 @@
 import { ChevronLeft, ChevronRight } from "@mui/icons-material";
 import {
+  Backdrop,
   Box,
   BoxProps,
   CircularProgress,
@@ -95,5 +96,13 @@ export const LoadingPage = () => {
     <Page sx={{ justifyContent: "center", alignItems: "center" }}>
       <CircularProgress />
     </Page>
+  );
+};
+
+export const LoadingBackdrop = ({ open }: { open?: boolean }) => {
+  return (
+    <Backdrop open={Boolean(open)}>
+      <CircularProgress />
+    </Backdrop>
   );
 };
