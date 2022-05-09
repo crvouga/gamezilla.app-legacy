@@ -1,31 +1,28 @@
 {
   "private": true,
   "scripts": {
+    "backend:dev": "ts-node-dev source/Backend/Main.ts",
     "build": "vite build --emptyOutDir",
     "dev": "vite",
     "preview": "vite preview",
-    "sort": "npx sort-package-json",
     "supabase-types": "npx openapi-typescript https://ldxpcprlgecjvqwzuxgv.supabase.co/rest/v1/?apikey=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTYzNzA0MDQ5NywiZXhwIjoxOTUyNjE2NDk3fQ.ReI8CpIFbLB9Q53Az7CDBIyrn_o1JeGhPoZXdqx8Ac4 --output source/supabase-types.ts",
     "typecheck": "tsc -w",
-    "backend:dev": "ts-node-dev source/Backend/Main.ts",
-    "s": "nodemon dist/source/Backend/Main.js"
+    "utils:sort": "npx sort-package-json"
   },
   "dependencies": {
-    "@colyseus/monitor": "^0.14.22",
     "@emotion/react": "^11.9.0",
     "@emotion/styled": "^11.8.1",
     "@mui/icons-material": "^5.6.2",
     "@mui/lab": "^5.0.0-alpha.79",
     "@mui/material": "^5.6.3",
     "@supabase/supabase-js": "^1.30.0",
-    "colyseus": "^0.14.23",
+    "colyseus": "^0.14.17",
     "colyseus.js": "^0.14.13",
     "fp-ts": "^2.12.1",
     "history": "^5.3.0",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
-    "rxjs": "^7.5.5",
-    "ts-pattern": "^4.0.2"
+    "rxjs": "^7.5.5"
   },
   "devDependencies": {
     "@types/express": "^4.17.13",
