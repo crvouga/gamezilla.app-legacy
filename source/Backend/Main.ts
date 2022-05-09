@@ -1,17 +1,42 @@
-import { Server } from "colyseus";
-import { createServer } from "http";
+import { Client, Room, Server } from "colyseus";
 import express from "express";
+import http, { createServer } from "http";
+import { AppRoom } from "./Room";
 
-const app = express();
+//
+//
+//
+//
+// Main
+//
+//
+//
+//
 
-app.use(express.json());
+const main = () => {
+  const app = express();
 
-const gameServer = new Server({
-  server: createServer(app),
-});
+  app.use(express.json());
 
-const port = Number(process.env.port) || 5000;
+  const gameServer = new Server({
+    server: createServer(app),
+  });
 
-gameServer.listen(port);
+  const port = Number(process.env.port) || 5000;
 
-console.log("HELLO");
+  gameServer.listen(port);
+
+  gameServer.define("App", AppRoom);
+};
+
+//
+//
+//
+//
+// Run
+//
+//
+//
+//
+
+main();
