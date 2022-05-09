@@ -16,6 +16,11 @@ import { exhaustive } from "../Utility";
 //
 //
 
+type Dependencies = {
+  location: { pathname: string };
+  profile: Profile.Profile;
+};
+
 export type Model =
   | { type: "Account"; child: Page.Account.Model }
   | { type: "Chess"; child: Page.Chess.Model }
@@ -33,10 +38,10 @@ export type Model =
 // Init
 //
 
-export const init = (
-  location: { pathname: string },
-  profile: Profile.Profile
-): [Model, cmd.Cmd<Msg>] => {
+export const init = ({
+  location,
+  profile,
+}: Dependencies): [Model, cmd.Cmd<Msg>] => {
   const route = Routes.decode(location);
 
   const fallback: [Model, cmd.Cmd<Msg>] = [
@@ -155,12 +160,12 @@ export type Msg =
   | { type: "NotFoundPageMsg" };
 
 export const update = (
-  profile: Profile.Profile,
+  { profile }: Dependencies,
   msg: Msg,
   model: Model
 ): [Model, cmd.Cmd<Msg>] => {
   if (msg.type === "LocationChanged") {
-    return init(msg.location, profile);
+    return init({ location: msg.location, profile });
   }
 
   switch (model.type) {
@@ -375,7 +380,7 @@ export const update = (
 //
 
 export const view = (
-  profile: Profile.Profile,
+  { profile }: { profile: Profile.Profile },
   model: Model
 ): react.Html<Msg> => {
   switch (model.type) {

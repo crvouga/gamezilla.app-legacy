@@ -16,12 +16,14 @@ import { exhaustive } from "../Utility";
 //
 //
 
+type Dependencies = { session: Auth.Session; location: { pathname: string } };
+
 export type Model = { type: "ProfileCreate"; child: Page.ProfileCreate.Model };
 
-export const init = (
-  location: { pathname: string },
-  session: Auth.Session
-): [Model, cmd.Cmd<Msg>] => {
+export const init = ({
+  session,
+  location,
+}: Dependencies): [Model, cmd.Cmd<Msg>] => {
   const route = Routes.decode(location);
 
   const fallback: [Model, cmd.Cmd<Msg>] = [
@@ -74,7 +76,7 @@ Update
 export type Msg = { type: "ProfileCreateMsg"; msg: Page.ProfileCreate.Msg };
 
 export const update = (
-  session: Auth.Session,
+  { session }: Dependencies,
   msg: Msg,
   model: Model
 ): [Model, cmd.Cmd<Msg>] => {

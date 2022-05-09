@@ -35,53 +35,39 @@ type ProfileFound = {
   child: ProfileFoundApp.Model;
 };
 
-export const init = (session: Auth.Session): [Model, cmd.Cmd<Msg>] => {
+//
+// dependencies
+//
+
+type Dependencies = {
+  location: { pathname: string };
+  session: Auth.Session;
+};
+
+//
+// init
+//
+
+export const init = ({ session }: Dependencies): [Model, cmd.Cmd<Msg>] => {
   return [
     { type: "Loading" },
     Profile.fetch<Msg>({
-      ...session,
+      userId: session.userId,
       onSuccess: (profile) => ({ type: "ProfileFound", profile }),
       onFailure: () => ({ type: "ProfileMissing" }),
     }),
   ];
 };
 
-const initProfileFound = (
-  location: { pathname: string },
-  profile: Profile.Profile
-): [ProfileFound, cmd.Cmd<Msg>] => {
-  const [childModel, childCmd] = ProfileFoundApp.init(location, profile);
-
-  return [
-    { type: "ProfileFound", profile, child: childModel },
-    pipe(
-      childCmd,
-      cmd.map((msg) => ({ type: "ProfileFoundAppMsg", msg }))
-    ),
-  ];
-};
-
-const initProfileMissing = (
-  location: { pathname: string },
-  session: Auth.Session
-): [ProfileMissing, cmd.Cmd<Msg>] => {
-  const [childModel, childCmd] = ProfileMissingApp.init(location, session);
-  return [
-    { type: "ProfileMissing", child: childModel },
-    pipe(
-      childCmd,
-      cmd.map((msg) => ({ type: "ProfileMissingAppMsg", msg }))
-    ),
-  ];
-};
-
-/* 
-  
-  
-Update  
-  
-  
-*/
+//
+//
+//
+//
+// Update
+//
+//
+//
+//
 
 export type Msg =
   | { type: "LocationChanged"; location: { pathname: string } }
@@ -91,35 +77,36 @@ export type Msg =
   | { type: "ProfileMissingAppMsg"; msg: ProfileMissingApp.Msg };
 
 export const update = (
-  location: { pathname: string },
-  session: Auth.Session,
+  deps: Dependencies,
   msg: Msg,
   model: Model
 ): [Model, cmd.Cmd<Msg>] => {
   switch (model.type) {
     case "Loading":
-      return updateLoading(location, session, msg, model);
+      return updateLoading(deps, msg, model);
 
     case "ProfileFound":
-      return updateProfileFound(session, msg, model);
+      return updateProfileFound(deps, msg, model);
 
     case "ProfileMissing":
-      return updateProfileMissing(location, session, msg, model);
+      return updateProfileMissing(deps, msg, model);
   }
 };
 
 export const updateLoading = (
-  location: { pathname: string },
-  session: Auth.Session,
+  { location, session }: Dependencies,
   msg: Msg,
   model: Loading
 ): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "ProfileFound":
-      return initProfileFound(location, msg.profile);
+      return toProfileFound(
+        msg.profile,
+        ProfileFoundApp.init({ location, profile: msg.profile })
+      );
 
     case "ProfileMissing":
-      return initProfileMissing(location, session);
+      return toProfileMissing(ProfileMissingApp.init({ location, session }));
 
     case "LocationChanged":
       return [model, cmd.none];
@@ -133,45 +120,34 @@ export const updateLoading = (
 };
 
 export const updateProfileFound = (
-  session: Auth.Session,
+  { location, session }: Dependencies,
   msg: Msg,
   model: ProfileFound
 ): [Model, cmd.Cmd<Msg>] => {
+  const profileFoundDeps = { location, session, profile: model.profile };
+
   switch (msg.type) {
     case "ProfileFound":
-      return [{ ...model, profile: msg.profile }, cmd.none];
+      return [
+        { type: "ProfileFound", profile: msg.profile, child: model.child },
+        cmd.none,
+      ];
 
     case "ProfileFoundAppMsg":
-      const [childModel, childCmd] = ProfileFoundApp.update(
+      return toProfileFound(
         model.profile,
-        msg.msg,
-        model.child
+        ProfileFoundApp.update(profileFoundDeps, msg.msg, model.child)
       );
-      return [
-        { ...model, child: childModel },
-        pipe(
-          childCmd,
-          cmd.map((msg) => ({ type: "ProfileFoundAppMsg", msg }))
-        ),
-      ];
 
     case "LocationChanged": {
-      const [childModel, childCmd] = ProfileFoundApp.update(
+      return toProfileFound(
         model.profile,
-        msg,
-        model.child
+        ProfileFoundApp.update(profileFoundDeps, msg, model.child)
       );
-      return [
-        { ...model, child: childModel },
-        pipe(
-          childCmd,
-          cmd.map((msg) => ({ type: "ProfileFoundAppMsg", msg }))
-        ),
-      ];
     }
 
     case "ProfileMissing":
-      return initProfileMissing(location, session);
+      return toProfileMissing(ProfileMissingApp.init(profileFoundDeps));
 
     case "ProfileMissingAppMsg":
       return [model, cmd.none];
@@ -179,8 +155,7 @@ export const updateProfileFound = (
 };
 
 export const updateProfileMissing = (
-  location: { pathname: string },
-  session: Auth.Session,
+  { location, session }: Dependencies,
   msg: Msg,
   model: ProfileMissing
 ): [Model, cmd.Cmd<Msg>] => {
@@ -189,7 +164,10 @@ export const updateProfileMissing = (
       return [model, cmd.none];
 
     case "ProfileFound":
-      return initProfileFound(location, msg.profile);
+      return toProfileFound(
+        msg.profile,
+        ProfileFoundApp.init({ location, profile: msg.profile })
+      );
 
     case "ProfileFoundAppMsg":
       return [model, cmd.none];
@@ -198,31 +176,21 @@ export const updateProfileMissing = (
       return [model, cmd.none];
 
     case "ProfileMissingAppMsg":
-      const [childModel, childCmd] = ProfileMissingApp.update(
-        session,
-        msg.msg,
-        model.child
+      return toProfileMissing(
+        ProfileMissingApp.update({ session, location }, msg.msg, model.child)
       );
-
-      return [
-        { ...model, child: childModel },
-        pipe(
-          childCmd,
-          cmd.map((msg) => ({ type: "ProfileMissingAppMsg", msg }))
-        ),
-      ];
   }
 };
 
-/* 
-
-
-
-View
-
-
-
-*/
+//
+//
+//
+//
+// View
+//
+//
+//
+//
 
 export const view = (model: Model): react.Html<Msg> => {
   switch (model.type) {
@@ -231,7 +199,7 @@ export const view = (model: Model): react.Html<Msg> => {
 
     case "ProfileFound":
       return pipe(
-        ProfileFoundApp.view(model.profile, model.child),
+        ProfileFoundApp.view({ profile: model.profile }, model.child),
         react.map((msg) => ({ type: "ProfileFoundAppMsg", msg }))
       );
 
@@ -243,15 +211,15 @@ export const view = (model: Model): react.Html<Msg> => {
   }
 };
 
-/* 
-
-
-
-Subscriptions
-
-
-
-*/
+//
+//
+//
+//
+// Subscriptions
+//
+//
+//
+//
 
 const profileToMsg = option.fold<Profile.Profile, Msg>(
   () => ({ type: "ProfileMissing" }),
@@ -263,4 +231,36 @@ export const subscriptions = (
   model: Model
 ): sub.Sub<Msg> => {
   return sub.map(profileToMsg)(Profile.subscription(session));
+};
+
+//
+//
+// helpers
+//
+//
+
+const toProfileMissing = ([childModel, childCmd]: [
+  ProfileMissingApp.Model,
+  cmd.Cmd<ProfileMissingApp.Msg>
+]): [Model, cmd.Cmd<Msg>] => {
+  return [
+    { type: "ProfileMissing", child: childModel },
+    pipe(
+      childCmd,
+      cmd.map((msg) => ({ type: "ProfileMissingAppMsg", msg }))
+    ),
+  ];
+};
+
+const toProfileFound = (
+  profile: Profile.Profile,
+  [childModel, childCmd]: [ProfileFoundApp.Model, cmd.Cmd<ProfileFoundApp.Msg>]
+): [Model, cmd.Cmd<Msg>] => {
+  return [
+    { type: "ProfileFound", profile, child: childModel },
+    pipe(
+      childCmd,
+      cmd.map((msg) => ({ type: "ProfileFoundAppMsg", msg }))
+    ),
+  ];
 };

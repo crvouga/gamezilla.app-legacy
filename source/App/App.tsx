@@ -109,14 +109,14 @@ const updateLoggedIn = (msg: Msg, model: LoggedIn): [Model, cmd.Cmd<Msg>] => {
       return toLoggedIn(
         model.location,
         model.session,
-        LoggedInApp.update(model.location, model.session, msg.msg, model.child)
+        LoggedInApp.update(model, msg.msg, model.child)
       );
 
     case "LocationChanged":
       return toLoggedIn(
         model.location,
         model.session,
-        LoggedInApp.update(model.location, model.session, msg, model.child)
+        LoggedInApp.update(model, msg, model.child)
       );
 
     case "LoggedIn":
@@ -266,7 +266,7 @@ const initLoggedIn = (
   location: Location,
   session: Auth.Session
 ): [LoggedIn, cmd.Cmd<Msg>] => {
-  return toLoggedIn(location, session, LoggedInApp.init(session));
+  return toLoggedIn(location, session, LoggedInApp.init({ session, location }));
 };
 
 const toLoggedIn = (
