@@ -4,14 +4,57 @@ import {
   Box,
   BoxProps,
   CircularProgress,
+  createTheme,
+  CssBaseline,
   IconButton,
   ListItemButton,
   ListItemSecondaryAction,
   ListItemText,
+  responsiveFontSizes,
+  ThemeProvider as MuiThemeProvider,
   Toolbar,
   Typography,
 } from "@mui/material";
+import { green } from "@mui/material/colors";
 import * as React from "react";
+
+//
+// theme
+//
+
+const theme = responsiveFontSizes(
+  createTheme({
+    palette: {
+      mode: "dark",
+      primary: green,
+    },
+    typography: {
+      fontFamily: ["Nunito"].join(","),
+    },
+    components: {
+      MuiButton: {
+        styleOverrides: {
+          root: {
+            borderRadius: "120px",
+          },
+        },
+      },
+    },
+  })
+);
+
+export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <MuiThemeProvider theme={theme}>
+      <CssBaseline />
+      {children}
+    </MuiThemeProvider>
+  );
+};
+
+//
+//
+//
 
 export const Field = ({
   label,
