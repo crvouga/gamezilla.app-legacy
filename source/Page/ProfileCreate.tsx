@@ -36,7 +36,7 @@ const initForm = ({ defaultName }: { defaultName: string }): Form => {
   };
 };
 
-export type Model = { status: "Idle" | "Loading"; form: Form };
+export type Model = { status: "Idle" | "Loading" | "LoggingOut"; form: Form };
 
 export const init = ({ defaultName }: { defaultName: string }): Model => {
   return {
@@ -56,12 +56,12 @@ export const init = ({ defaultName }: { defaultName: string }): Model => {
 //
 
 export type Msg =
-  | { group: "ProfileCreate"; type: "EnteredUsername"; username: string }
-  | { group: "ProfileCreate"; type: "EnteredName"; name: string }
-  | { group: "ProfileCreate"; type: "Submit" }
-  | { group: "ProfileCreate"; type: "SubmitSucceeded" }
-  | { group: "ProfileCreate"; type: "SubmitFailed" }
-  | { group: "ProfileCreate"; type: "Logout" };
+  | { type: "EnteredUsername"; username: string }
+  | { type: "EnteredName"; name: string }
+  | { type: "Submit" }
+  | { type: "SubmitSucceeded" }
+  | { type: "SubmitFailed" }
+  | { type: "Logout" };
 
 export const update = (
   { userId }: { userId: string },
@@ -82,11 +82,9 @@ export const update = (
           ...model.form,
           userId,
           onFailure: () => ({
-            group: "ProfileCreate",
             type: "SubmitFailed",
           }),
           onSuccess: () => ({
-            group: "ProfileCreate",
             type: "SubmitSucceeded",
           }),
         }),
@@ -99,7 +97,7 @@ export const update = (
       return [{ ...model, status: "Idle" }, cmd.none];
 
     case "Logout":
-      return [model, Auth.logout()];
+      return [{ ...model, status: "LoggingOut" }, Auth.logout()];
   }
 };
 
@@ -121,13 +119,13 @@ export const view =
         <View.Header
           left={
             <View.HeaderBackButton
-              onClick={() =>
-                dispatch({ group: "ProfileCreate", type: "Logout" })
-              }
+              onClick={() => dispatch({ type: "Logout" })}
             />
           }
           title="Create Profile"
         />
+
+        <View.LoadingBackdrop open={model.status === "LoggingOut"} />
 
         <Box sx={{ p: 2, width: "100%" }}>
           <Avatar
@@ -151,7 +149,6 @@ export const view =
             fullWidth
             onChange={(event) =>
               dispatch({
-                group: "ProfileCreate",
                 type: "EnteredUsername",
                 username: event.currentTarget.value,
               })
@@ -165,7 +162,6 @@ export const view =
             fullWidth
             onChange={(event) =>
               dispatch({
-                group: "ProfileCreate",
                 type: "EnteredName",
                 name: event.currentTarget.value,
               })
@@ -177,7 +173,7 @@ export const view =
             size="large"
             variant="contained"
             loading={model.status === "Loading"}
-            onClick={() => dispatch({ group: "ProfileCreate", type: "Submit" })}
+            onClick={() => dispatch({ type: "Submit" })}
           >
             Create Profile
           </LoadingButton>
