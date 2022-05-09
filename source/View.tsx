@@ -14,6 +14,7 @@ import {
   ThemeProvider as MuiThemeProvider,
   Toolbar,
   Typography,
+  useTheme,
 } from "@mui/material";
 import { green } from "@mui/material/colors";
 import * as React from "react";
@@ -118,6 +119,7 @@ export const Page = ({
   children: React.ReactNode;
   sx?: BoxProps["sx"];
 }) => {
+  const theme = useTheme();
   return (
     <Box
       sx={{
@@ -129,7 +131,14 @@ export const Page = ({
         display: "flex",
         flexDirection: "column",
         left: "50%",
-        transform: "translateX(-50%)",
+        top: "50%",
+        transform: "translate(-50%, -50%)",
+        border: {
+          sm: `2px ${theme.palette.divider} solid`,
+        },
+        maxHeight: {
+          sm: "900px",
+        },
         ...sx,
       }}
     >

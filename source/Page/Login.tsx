@@ -1,8 +1,9 @@
 import { LoadingButton } from "@mui/lab";
-import { Box, Typography } from "@mui/material";
+import { Typography } from "@mui/material";
 import React from "react";
-import { cmd, react } from "../Framework";
 import * as Auth from "../Auth";
+import { cmd, react } from "../Framework";
+import * as View from "../View";
 
 //
 //
@@ -51,13 +52,8 @@ export const view =
   (model: Model): react.Html<Msg> =>
   (dispatch) =>
     (
-      <Box
+      <View.Page
         sx={{
-          position: "fixed",
-          width: "100%",
-          height: "100%",
-          display: "flex",
-          flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
           p: 2,
@@ -76,5 +72,5 @@ export const view =
         >
           Continue With Google
         </LoadingButton>
-      </Box>
+      </View.Page>
     );
