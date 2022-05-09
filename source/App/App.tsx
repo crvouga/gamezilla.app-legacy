@@ -1,4 +1,5 @@
 import {
+  Container,
   createTheme,
   CssBaseline,
   responsiveFontSizes,
@@ -156,12 +157,7 @@ const updateLoggedOut = (msg: Msg, model: LoggedOut): [Model, cmd.Cmd<Msg>] => {
 export const view =
   (model: Model): react.Html<Msg> =>
   (dispatch) => {
-    return (
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        {viewMain(model)(dispatch)}
-      </ThemeProvider>
-    );
+    return <View.ThemeProvider>{viewMain(model)(dispatch)}</View.ThemeProvider>;
   };
 
 const viewMain = (model: Model): react.Html<Msg> => {
@@ -182,31 +178,6 @@ const viewMain = (model: Model): react.Html<Msg> => {
       );
   }
 };
-
-//
-// theme
-//
-
-const theme = responsiveFontSizes(
-  createTheme({
-    palette: {
-      mode: "dark",
-      primary: green,
-    },
-    typography: {
-      fontFamily: ["Nunito"].join(","),
-    },
-    components: {
-      MuiButton: {
-        styleOverrides: {
-          root: {
-            borderRadius: "120px",
-          },
-        },
-      },
-    },
-  })
-);
 
 //
 //
