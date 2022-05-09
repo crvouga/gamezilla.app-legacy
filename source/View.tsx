@@ -121,11 +121,15 @@ export const Page = ({
   return (
     <Box
       sx={{
+        maxWidth: "sm",
+        marginX: "auto",
         position: "fixed",
         width: "100%",
         height: "100%",
         display: "flex",
         flexDirection: "column",
+        left: "50%",
+        transform: "translateX(-50%)",
         ...sx,
       }}
     >
