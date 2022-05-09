@@ -51,15 +51,7 @@ export const view =
   (_model: Model): react.Html<Msg> =>
   (dispatch) =>
     (
-      <Box
-        sx={{
-          position: "fixed",
-          width: "100%",
-          height: "100%",
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
+      <View.Page>
         <View.Header
           left={
             <View.HeaderBackButton
@@ -68,5 +60,5 @@ export const view =
           }
           title="Connect Four"
         />
-      </Box>
+      </View.Page>
     );
