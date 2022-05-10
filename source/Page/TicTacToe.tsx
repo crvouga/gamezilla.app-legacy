@@ -2,7 +2,7 @@ import { Button } from "@mui/material";
 import React from "react";
 import { cmd, react } from "../Framework";
 import * as Routes from "../Routes";
-import * as TicTacToe from "../TicTacToe";
+import * as Game from "../Game";
 import * as View from "../View";
 
 //
@@ -16,11 +16,11 @@ import * as View from "../View";
 //
 
 export type Model = {
-  board: TicTacToe.Board;
+  board: Game.TicTacToe.Board;
 };
 
 export const init: Model = {
-  board: TicTacToe.emptyBoard,
+  board: Game.TicTacToe.emptyBoard,
 };
 
 //
@@ -35,7 +35,7 @@ export const init: Model = {
 
 export type Msg =
   | { type: "Back" }
-  | { type: "BoardClicked"; position: TicTacToe.Position }
+  | { type: "BoardClicked"; position: Game.TicTacToe.Position }
   | { type: "RestartButtonClicked" };
 
 export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
@@ -47,7 +47,7 @@ export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
       return [
         {
           ...model,
-          board: TicTacToe.emptyBoard,
+          board: Game.TicTacToe.emptyBoard,
         },
         cmd.none,
       ];
@@ -56,9 +56,9 @@ export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
       return [
         {
           ...model,
-          board: TicTacToe.move(
+          board: Game.TicTacToe.move(
             model.board,
-            TicTacToe.toTurn(model.board),
+            Game.TicTacToe.toTurn(model.board),
             msg.position
           ),
         },
@@ -88,7 +88,7 @@ export const view =
           }
           title="Tic Tac Toe"
         />
-        <TicTacToe.Board
+        <Game.TicTacToe.Board
           board={model.board}
           onClick={(position) => dispatch({ type: "BoardClicked", position })}
         />
