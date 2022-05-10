@@ -1,11 +1,9 @@
 import { Avatar, Box, ButtonBase, Toolbar, Typography } from "@mui/material";
 import React from "react";
-import * as Chess from "../Chess";
-import * as ConnectFour from "../ConnectFour";
 import { cmd, react } from "../Framework";
 import * as Routes from "../Routes";
-import * as TicTacToe from "../TicTacToe";
 import * as View from "../View";
+import * as Game from "../Game";
 
 //
 //
@@ -34,7 +32,6 @@ export const init: Model = {};
 export type Msg =
   | { group: "Home"; type: "ClickedAvatar" }
   | {
-      group: "Home";
       type: "ClickedGame";
       game: "TicTacToe" | "ConnectFour" | "Chess";
     };
@@ -93,11 +90,10 @@ export const view =
           }}
         >
           <GameIcon
-            icon={<TicTacToe.Icon />}
+            icon={<Game.TicTacToe.Icon />}
             label="Tic Tac Toe"
             onClick={() =>
               dispatch({
-                group: "Home",
                 type: "ClickedGame",
                 game: "TicTacToe",
               })
@@ -105,22 +101,21 @@ export const view =
           />
 
           <GameIcon
-            icon={<ConnectFour.Icon />}
+            icon={<Game.ConnectFour.Icon />}
             label="Connect Four"
             onClick={() =>
               dispatch({
-                group: "Home",
                 type: "ClickedGame",
                 game: "ConnectFour",
               })
             }
           />
 
-          {/* <GameIcon
-            icon={<Chess.Icon />}
+          <GameIcon
+            icon={<Game.Chess.Icon />}
             label="Chess"
             onClick={() => dispatch({ type: "ClickedGame", game: "Chess" })}
-          /> */}
+          />
         </Box>
       </View.Page>
     );
