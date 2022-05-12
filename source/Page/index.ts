@@ -1,3 +1,8 @@
+import { option } from "fp-ts";
+import { pipe } from "fp-ts/lib/function";
+import { cmd } from "../Framework";
+import * as Navigation from "../Framework/Navigation";
+import * as Page from "../Page";
 import * as Account from "./Account";
 import * as Chess from "./Chess";
 import * as ConnectFour from "./ConnectFour";
@@ -13,13 +18,7 @@ import * as ProfileUpdateName from "./ProfileUpdateName";
 import * as ProfileUpdateUsername from "./ProfileUpdateUsername";
 import * as TicTacToe from "./TicTacToe";
 
-import * as React from "react";
-import { cmd, react, sub } from "../Framework";
-import * as Navigation from "../Framework/Navigation";
-import * as Profile from "../Profile";
-import * as Session from "../Session";
-import * as View from "../View";
-import * as Page from "../Page";
+import UrlPattern from "url-pattern";
 
 //
 //
@@ -30,11 +29,33 @@ import * as Page from "../Page";
 //
 
 export type Model =
+  | { type: "Home"; child: Home.Model }
   | { type: "Login"; child: Login.Model }
-  | { type: "Home"; child: Home.Model };
+  | { type: "Account"; child: Account.Model };
 
-export const init = (_: Navigation.Location): [Model, cmd.Cmd<Msg>] => {
-  return [{ type: "Login", child: Page.Login.init() }, cmd.none];
+export const init = (location: Location): [Model, cmd.Cmd<Msg>] => {
+  return pipe(
+    location,
+    decode,
+    option.fold<Page, Page>(
+      () => ({ type: "Home" }),
+      (page) => page
+    ),
+    initPage
+  );
+};
+
+const initPage = (page: Page): [Model, cmd.Cmd<Msg>] => {
+  switch (page.type) {
+    case "Home":
+      return [{ type: "Home", child: Home.init }, cmd.none];
+
+    case "Login":
+      return [{ type: "Login", child: Login.init() }, cmd.none];
+
+    case "Account":
+      return [{ type: "Account", child: Account.init }, cmd.none];
+  }
 };
 
 //
@@ -45,33 +66,19 @@ export const init = (_: Navigation.Location): [Model, cmd.Cmd<Msg>] => {
 //
 //
 
-export type Msg =
-  | {
-      group: "Location";
-      type: "LocationChanged";
-      location: { pathname: string };
-    }
-  | Login.Msg
-  | Home.Msg;
-
-export const locationToMsg = (location: Navigation.Location): Msg => {
-  return {
-    group: "Location",
-    type: "LocationChanged",
-    location: { pathname: location.pathname },
-  };
-};
+export type Msg = LocationChanged | Login.Msg | Home.Msg | Account.Msg;
 
 export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   switch (msg.group) {
     case "Location":
-      switch (msg.location.pathname) {
-        case "/Home":
-          return [{ type: "Home", child: Home.init }, cmd.none];
+      return init(msg.location);
 
-        default:
-          return [model, cmd.none];
+    case "Account":
+      if (model.type === "Account") {
+        const [child, childCmd] = Account.update(msg, model.child);
+        return [{ type: "Account", child }, childCmd];
       }
+      return [model, cmd.none];
 
     case "Home":
       if (model.type === "Home") {
@@ -93,9 +100,78 @@ export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   }
 };
 
-export const navigate = <Msg>(location: { type: Model["type"] }) => {
-  return Navigation.push<Msg>(location.type);
+//
+//
+//
+// Navigation
+//
+//
+//
+
+type LocationChanged = {
+  group: "Location";
+  type: "LocationChanged";
+  location: Location;
 };
+
+type Location = { pathname: string };
+
+export const locationToMsg = (location: Navigation.Location): Msg => {
+  return {
+    group: "Location",
+    type: "LocationChanged",
+    location: { pathname: location.pathname },
+  };
+};
+
+export const navigate = <Msg>(page: Page) => {
+  return Navigation.push<Msg>(encode(page).pathname);
+};
+
+const match = (pattern: string, url: string): boolean => {
+  return Boolean(new UrlPattern(pattern).match(url));
+};
+
+type Page = { type: Model["type"] };
+
+const decode = (location: Location): option.Option<Page> => {
+  const { pathname } = location;
+
+  if (match("/home", pathname)) {
+    return option.some({ type: "Home" });
+  }
+
+  if (match("/login", pathname)) {
+    return option.some({ type: "Login" });
+  }
+
+  if (match(encode({ type: "Account" }).pathname, pathname)) {
+    return option.some({ type: "Account" });
+  }
+
+  return option.none;
+};
+
+const encode = (page: Page): Location => {
+  switch (page.type) {
+    case "Home":
+      return { pathname: "/home" };
+
+    case "Login":
+      return { pathname: "/login" };
+
+    case "Account":
+      return { pathname: "/account" };
+  }
+};
+
+//
+//
+//
+// exports
+//
+//
+//
 
 export {
   Account,

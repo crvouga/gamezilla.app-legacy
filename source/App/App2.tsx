@@ -17,21 +17,14 @@ import * as Page from "../Page";
 export type Model = {
   session: Session.Model;
   profile: Profile.Model;
-  page:
-    | { type: "Login"; child: Page.Login.Model }
-    | { type: "Home"; child: Page.Home.Model };
+  page: Page.Model;
 };
 
-export const init = (_: Navigation.Location): [Model, cmd.Cmd<Msg>] => {
+export const init = (location: Navigation.Location): [Model, cmd.Cmd<Msg>] => {
   const [session, sessionCmd] = Session.init();
-  return [
-    {
-      session,
-      profile: Profile.init,
-      page: { type: "Login", child: Page.Login.init() },
-    },
-    sessionCmd,
-  ];
+  const [page, pageCmd] = Page.init(location);
+  const profile = Profile.init;
+  return [{ session, profile, page }, cmd.batch<Msg>([sessionCmd, pageCmd])];
 };
 
 type Location = { pathname: string };
@@ -77,6 +70,7 @@ export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
     case "Location":
     case "Home":
     case "Login":
+    case "Account":
       const [page, pageCmd] = Page.update(msg, model.page);
       return [{ ...model, page }, pageCmd];
   }
@@ -104,15 +98,18 @@ const viewMain = (model: Model): react.Html<Msg> => {
       switch (model.profile.type) {
         case "Found":
           switch (model.page.type) {
-            case "Login":
-              return () => <>page not found</>;
-
             case "Home":
               return Page.Home.view(model.profile.profile, model.page.child);
+
+            case "Account":
+              return Page.Account.view(model.profile.profile, model.page.child);
+
+            case "Login":
+              return () => <>page not found</>;
           }
 
         case "Loading":
-          return () => <>loading profile</>;
+          return () => <View.LoadingPage />;
 
         case "Missing":
           return () => <>profile missing</>;
@@ -123,6 +120,7 @@ const viewMain = (model: Model): react.Html<Msg> => {
         case "Login":
           return Page.Login.view(model.page.child);
 
+        case "Account":
         case "Home":
           return () => <>not found</>;
       }
