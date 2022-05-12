@@ -4,6 +4,7 @@ import { cmd, react } from "../Framework";
 import * as Routes from "../Routes";
 import * as View from "../View";
 import * as Game from "../Game";
+import { navigate } from ".";
 
 //
 //
@@ -40,7 +41,7 @@ export type Msg =
 export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "ClickedAvatar":
-      return [model, Routes.push({ type: "Account" })];
+      return [model, navigate({ type: "Home" })];
 
     case "ClickedGame":
       switch (msg.game) {
