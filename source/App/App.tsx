@@ -1,11 +1,3 @@
-import {
-  Container,
-  createTheme,
-  CssBaseline,
-  responsiveFontSizes,
-  ThemeProvider,
-} from "@mui/material";
-import { green } from "@mui/material/colors";
 import { option } from "fp-ts";
 import { pipe } from "fp-ts/lib/function";
 import * as React from "react";
