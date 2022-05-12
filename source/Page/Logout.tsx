@@ -3,7 +3,7 @@ import { Button, Dialog, DialogActions, DialogTitle } from "@mui/material";
 import React from "react";
 import { cmd, react } from "../Framework";
 import * as Routes from "../Routes";
-import * as Auth from "../Auth";
+import * as Session from "../Session";
 
 //
 //
@@ -39,7 +39,8 @@ export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
       return [{ type: "Idle" }, Routes.replace({ type: "Account" })];
 
     case "Confirm":
-      return [{ type: "Loading" }, Auth.logout()];
+      return [{ type: "Loading" }, cmd.none];
+    // Session.logout()];
   }
 };
 

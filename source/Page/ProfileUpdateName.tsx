@@ -54,7 +54,7 @@ export const update = (
     case "Submit":
       return [
         { ...model, status: "Loading" },
-        Profile.update<Msg>({
+        Profile.edit<Msg>({
           ...model,
           userId,
           onFailure: () => ({

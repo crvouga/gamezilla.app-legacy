@@ -2,9 +2,30 @@ import { pipe } from "fp-ts/lib/function";
 import * as Option from "fp-ts/lib/Option";
 import * as Task from "fp-ts/lib/Task";
 import * as Rx from "rxjs";
-import { cmd } from "./Framework";
+import { cmd, sub } from "./Framework";
 import * as Supabase from "./Supabase";
 import { definitions } from "./supabase-types";
+import * as Page from "./Page";
+
+//
+//
+//
+// Model
+//
+//
+//
+
+export type Model =
+  | {
+      type: "Loading";
+    }
+  | {
+      type: "Missing";
+    }
+  | {
+      type: "Found";
+      profile: Profile;
+    };
 
 export type Profile = {
   userId: string;
@@ -13,19 +34,48 @@ export type Profile = {
   avatarUrl: string;
 };
 
-export type Model =
-  | {
-      type: "Loading";
-    }
-  | {
-      type: "NotFound";
-    }
-  | {
-      type: "Found";
-      profile: Profile;
-    };
-
 export const init: Model = { type: "Loading" };
+
+//
+//
+//
+// Update
+//
+//
+//
+
+export type Msg = Missing | Found;
+
+type Found = { group: "Profile"; type: "ProfileFound"; profile: Profile };
+const Found = (profile: Profile): Msg => ({
+  group: "Profile",
+  type: "ProfileFound",
+  profile,
+});
+
+type Missing = { group: "Profile"; type: "ProfileMissing" };
+const Missing = (): Msg => ({ group: "Profile", type: "ProfileMissing" });
+
+export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
+  switch (msg.type) {
+    case "ProfileFound":
+      return [
+        { type: "Found", profile: msg.profile },
+        Page.navigate({ type: "Home" }),
+      ];
+
+    case "ProfileMissing":
+      return [{ type: "Missing" }, cmd.none];
+  }
+};
+
+//
+//
+//
+//
+//
+//
+//
 
 const rowToProfile = (row: definitions["profile"]): Profile => {
   return {
@@ -119,7 +169,7 @@ export const remove = <Msg,>({
   );
 };
 
-export const update = <Msg,>({
+export const edit = <Msg,>({
   userId,
   username,
   name,
@@ -151,18 +201,53 @@ export const update = <Msg,>({
   );
 };
 
-export const subscription = ({ userId }: { userId: string }) => {
-  return new Rx.Observable<Option.Option<Profile>>((subscriber) => {
+export const subscriptions = (
+  { userId }: { userId: string },
+  model: Model
+): sub.Sub<Msg> => {
+  switch (model.type) {
+    case "Found":
+      return sub.none;
+
+    case "Loading":
+      return new Rx.Observable<Msg>((subscriber) => {
+        Supabase.client
+          .from<definitions["profile"]>("profile")
+          .select("*")
+          .eq("id", userId)
+          .single()
+          .then(({ data }) => {
+            if (data) {
+              subscriber.next(Found(rowToProfile(data)));
+            }
+          });
+      });
+
+    case "Missing":
+      return sub.none;
+  }
+  return new Rx.Observable<Msg>((subscriber) => {
+    // Supabase.client
+    //   .from<definitions["profile"]>("profile")
+    //   .select("*")
+    //   .eq("id", userId)
+    //   .single()
+    //   .then(({ data }) => {
+    //     if (data) {
+    //       subscriber.next(Found(rowToProfile(data)));
+    //     }
+    //   });
+
     const subscription = Supabase.client
       .from<definitions["profile"]>(`profile:id=eq.${userId}`)
       .on("INSERT", (payload) => {
-        subscriber.next(Option.some(rowToProfile(payload.new)));
+        subscriber.next(Found(rowToProfile(payload.new)));
       })
       .on("UPDATE", (payload) => {
-        subscriber.next(Option.some(rowToProfile(payload.new)));
+        subscriber.next(Found(rowToProfile(payload.new)));
       })
       .on("DELETE", () => {
-        subscriber.next(Option.none);
+        subscriber.next(Missing());
       })
       .subscribe();
 
