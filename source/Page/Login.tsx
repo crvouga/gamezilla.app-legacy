@@ -1,9 +1,12 @@
 import { LoadingButton } from "@mui/lab";
 import { Typography } from "@mui/material";
 import React from "react";
-import * as Auth from "../Auth";
+import * as Session from "../Session";
 import { cmd, react } from "../Framework";
 import * as View from "../View";
+import { pipe } from "fp-ts/lib/function";
+import { attempt, perform } from "../Framework/Task";
+import { either, option } from "fp-ts";
 
 //
 //
@@ -29,12 +32,40 @@ Update
 
 */
 
-export type Msg = { group: "Login"; type: "Login" };
+export type Msg = Login | LoginSucceeded | LoginFailed;
+
+type Login = { group: "Login"; type: "Login" };
+type LoginFailed = { group: "Login"; type: "LoginFailed" };
+type LoginSucceeded = { group: "Login"; type: "LoginSucceeded" };
+
+const Login = (): Msg => ({
+  group: "Login",
+  type: "Login",
+});
+
+const LoginFailed = (): Msg => ({
+  group: "Login",
+  type: "LoginFailed",
+});
+
+const LoginSucceeded = (): Msg => ({
+  group: "Login",
+  type: "LoginSucceeded",
+});
 
 export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "Login":
-      return [{ type: "Loading" }, Auth.login()];
+      return [
+        { type: "Loading" },
+        pipe(Session.login, attempt(either.fold(LoginFailed, LoginSucceeded))),
+      ];
+
+    case "LoginFailed":
+      return [model, cmd.none];
+
+    case "LoginSucceeded":
+      return [model, cmd.none];
   }
 };
 
@@ -68,7 +99,7 @@ export const view =
           size="large"
           fullWidth
           loading={model.type === "Loading"}
-          onClick={() => dispatch({ group: "Login", type: "Login" })}
+          onClick={() => dispatch(Login())}
         >
           Continue With Google
         </LoadingButton>

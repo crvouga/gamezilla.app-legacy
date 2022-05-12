@@ -4,7 +4,7 @@ import * as React from "react";
 import { cmd, react } from "../Framework";
 import * as Profile from "../Profile";
 import * as ProfileAvatar from "../ProfileAvatar";
-import * as Auth from "../Auth";
+import * as Session from "../Session";
 import * as View from "../View";
 
 //
@@ -97,7 +97,11 @@ export const update = (
       return [{ ...model, status: "Idle" }, cmd.none];
 
     case "Logout":
-      return [{ ...model, status: "LoggingOut" }, Auth.logout()];
+      return [
+        { ...model, status: "LoggingOut" },
+        // Session.logout()
+        cmd.none,
+      ];
   }
 };
 

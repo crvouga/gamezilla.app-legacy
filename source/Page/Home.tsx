@@ -32,6 +32,7 @@ export const init: Model = {};
 export type Msg =
   | { group: "Home"; type: "ClickedAvatar" }
   | {
+      group: "Home";
       type: "ClickedGame";
       game: "TicTacToe" | "ConnectFour" | "Chess";
     };
@@ -94,6 +95,7 @@ export const view =
             label="Tic Tac Toe"
             onClick={() =>
               dispatch({
+                group: "Home",
                 type: "ClickedGame",
                 game: "TicTacToe",
               })
@@ -105,6 +107,7 @@ export const view =
             label="Connect Four"
             onClick={() =>
               dispatch({
+                group: "Home",
                 type: "ClickedGame",
                 game: "ConnectFour",
               })
@@ -114,7 +117,9 @@ export const view =
           <GameIcon
             icon={<Game.Chess.Icon />}
             label="Chess"
-            onClick={() => dispatch({ type: "ClickedGame", game: "Chess" })}
+            onClick={() =>
+              dispatch({ group: "Home", type: "ClickedGame", game: "Chess" })
+            }
           />
         </Box>
       </View.Page>

@@ -1,6 +1,6 @@
 import * as Page from "../Page";
 import { option } from "fp-ts";
-import * as Auth from "../Auth";
+import * as Session from "../Session";
 import { cmd, react } from "../Framework";
 import * as Routes from "../Routes";
 import { pipe } from "fp-ts/lib/function";
@@ -16,7 +16,10 @@ import { exhaustive } from "../Utility";
 //
 //
 
-type Dependencies = { session: Auth.Session; location: { pathname: string } };
+type Dependencies = {
+  session: Session.Session;
+  location: { pathname: string };
+};
 
 export type Model = { type: "ProfileCreate"; child: Page.ProfileCreate.Model };
 
