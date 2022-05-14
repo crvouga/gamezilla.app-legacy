@@ -1,11 +1,9 @@
-import { pipe } from "fp-ts/lib/function";
 import { either, option, task, taskEither } from "fp-ts";
-
+import { pipe } from "fp-ts/lib/function";
 import * as Rx from "rxjs";
 import { cmd, sub } from "./Framework";
-import * as Supabase from "./Supabase";
 import { perform } from "./Framework/Task";
-import { Option } from "fp-ts/lib/Option";
+import * as Supabase from "./Supabase";
 
 //
 //
@@ -24,7 +22,7 @@ export type Session = { userId: string; defaultName: string };
 
 export const init = (): [Model, cmd.Cmd<Msg>] => [
   { type: "Loading" },
-  pipe(getSession, perform(option.fold<Session, Msg>(NotFound, Found))),
+  pipe(load(), perform(option.fold<Session, Msg>(NotFound, Found))),
 ];
 
 //
@@ -92,7 +90,7 @@ export const login: taskEither.TaskEither<
 //   );
 // };
 
-export const getSession: task.Task<option.Option<Session>> = async () => {
+export const load: () => task.Task<option.Option<Session>> = () => async () => {
   const session = Supabase.client.auth.session();
 
   const userId = session?.user?.id;
@@ -101,6 +99,8 @@ export const getSession: task.Task<option.Option<Session>> = async () => {
     session?.user?.user_metadata?.name ??
     session?.user?.user_metadata?.full_name ??
     "";
+
+  await new Promise((resolve) => setTimeout(resolve, 1000));
 
   if (userId) {
     return option.some({ defaultName, userId });

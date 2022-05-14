@@ -1,10 +1,9 @@
 import { Avatar, Box, ButtonBase, Toolbar, Typography } from "@mui/material";
 import React from "react";
 import { cmd, react } from "../Framework";
+import * as Game from "../Game";
 import * as Routes from "../Routes";
 import * as View from "../View";
-import * as Game from "../Game";
-import { navigate } from ".";
 
 //
 //
@@ -41,7 +40,7 @@ export type Msg =
 export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "ClickedAvatar":
-      return [model, navigate({ type: "Home" })];
+      return [model, Routes.push({ type: "Account" })];
 
     case "ClickedGame":
       switch (msg.game) {
