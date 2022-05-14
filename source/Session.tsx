@@ -1,8 +1,6 @@
 import { either, option, task, taskEither } from "fp-ts";
-import { pipe } from "fp-ts/lib/function";
 import * as Rx from "rxjs";
-import { cmd, sub } from "./Framework";
-import { perform } from "./Framework/Task";
+import { sub } from "./Framework";
 import * as Supabase from "./Supabase";
 
 //
@@ -13,55 +11,12 @@ import * as Supabase from "./Supabase";
 //
 //
 
-export type Model =
-  | { type: "Loading" }
-  | { type: "NotFound" }
-  | { type: "Found"; session: Session };
-
-export type Session = { userId: string; defaultName: string };
-
-export const init = (): [Model, cmd.Cmd<Msg>] => [
-  { type: "Loading" },
-  pipe(load(), perform(option.fold<Session, Msg>(NotFound, Found))),
-];
+export type Session = { defaultName: string; userId: string };
 
 //
 //
 //
-// Update
-//
-//
-//
-
-export type Msg = Found | NotFound;
-
-type Found = { group: "Session"; type: "SessionFound"; session: Session };
-type NotFound = { group: "Session"; type: "SessionNotFound" };
-
-const Found = (session: Session): Found => ({
-  group: "Session",
-  type: "SessionFound",
-  session,
-});
-const NotFound = (): NotFound => ({
-  group: "Session",
-  type: "SessionNotFound",
-});
-
-export const update = (msg: Msg): Model => {
-  switch (msg.type) {
-    case "SessionFound":
-      return { type: "Found", session: msg.session };
-
-    case "SessionNotFound":
-      return { type: "NotFound" };
-  }
-};
-
-//
-//
-//
-// Authentication
+// Auth
 //
 //
 //
@@ -117,7 +72,9 @@ export const load: () => task.Task<option.Option<Session>> = () => async () => {
 //
 //
 
-export const fromSupabaseSession = (session: Supabase.Session | null): Msg => {
+export const fromSupabaseSession = (
+  session: Supabase.Session | null
+): option.Option<Session> => {
   const userId = session?.user?.id;
 
   const defaultName =
@@ -126,22 +83,18 @@ export const fromSupabaseSession = (session: Supabase.Session | null): Msg => {
     "";
 
   if (userId) {
-    return {
-      type: "SessionFound",
-      group: "Session",
-      session: { userId, defaultName },
-    };
+    return option.some({ userId, defaultName });
   }
 
-  return { type: "SessionNotFound", group: "Session" };
+  return option.none;
 };
 
-export const subscription = new Rx.Subject<Msg>();
+export const subscription = new Rx.Subject<option.Option<Session>>();
 
 Supabase.client.auth.onAuthStateChange((_, Auth) => {
   subscription.next(fromSupabaseSession(Auth));
 });
 
-export const subscriptions = (): sub.Sub<Msg> => {
+export const subscriptions = (): sub.Sub<option.Option<Session>> => {
   return subscription;
 };

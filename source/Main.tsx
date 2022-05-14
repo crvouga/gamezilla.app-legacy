@@ -86,10 +86,6 @@ type Ready = {
 
 type Location = { pathname: string };
 
-//
-//
-//
-
 export const init = (location: navigation.Location): [Model, cmd.Cmd<Msg>] => [
   { type: "SessionLoading", location: location },
   pipe(Session.load(), perform(maybeSessionToMsg)),
@@ -260,6 +256,9 @@ const updateReady = (msg: Msg, model: Ready): [Model, cmd.Cmd<Msg>] => {
         case "LocationChanged":
           const [page, pageCmd] = initReadyPage(model.profile, msg.location);
           return [{ ...model, location: msg.location, page }, pageCmd];
+
+        case "ProfileFound":
+          return [{ ...model, profile: msg.profile, page }, pageCmd];
 
         default:
           return [model, cmd.none];
@@ -506,21 +505,38 @@ const updateReadyPage = (
 export const subscriptions = (model: Model): sub.Sub<Msg> => {
   switch (model.type) {
     case "ProfileLoading":
-      return sub.none;
+      return sub.batch([
+        pipe(Session.subscriptions(), sub.map(maybeSessionToMsg)),
+      ]);
 
     case "ProfileMissing":
-      return sub.none;
+      return sub.batch([
+        pipe(Session.subscriptions(), sub.map(maybeSessionToMsg)),
+        pipe(Profile.subscriptions(model), sub.map(maybeProfileToMsg)),
+      ]);
 
     case "Ready":
-      return sub.none;
+      return sub.batch([
+        pipe(Session.subscriptions(), sub.map(maybeSessionToMsg)),
+        pipe(Profile.subscriptions(model.profile), sub.map(maybeProfileToMsg)),
+      ]);
 
     case "SessionLoading":
-      return sub.none;
+      return sub.batch([
+        pipe(Session.subscriptions(), sub.map(maybeSessionToMsg)),
+      ]);
 
     case "SessionMissing":
-      return sub.none;
+      return sub.batch([
+        pipe(Session.subscriptions(), sub.map(maybeSessionToMsg)),
+      ]);
   }
 };
+
+const maybeProfileToMsg = option.fold<Profile.Profile, Msg>(
+  () => ({ type: "ProfileNotFound", group: "Main" }),
+  (profile) => ({ type: "ProfileFound", profile, group: "Main" })
+);
 
 //
 //

@@ -220,53 +220,22 @@ export const edit = <Msg,>({
   );
 };
 
-export const subscriptions = (
-  { userId }: { userId: string },
-  model: Model
-): sub.Sub<Msg> => {
-  switch (model.type) {
-    case "Found":
-      return sub.none;
-
-    case "Loading":
-      return new Rx.Observable<Msg>((subscriber) => {
-        Supabase.client
-          .from<definitions["profile"]>("profile")
-          .select("*")
-          .eq("id", userId)
-          .single()
-          .then(({ data }) => {
-            if (data) {
-              subscriber.next(Found(rowToProfile(data)));
-            }
-          });
-      });
-
-    case "Missing":
-      return sub.none;
-  }
-  return new Rx.Observable<Msg>((subscriber) => {
-    // Supabase.client
-    //   .from<definitions["profile"]>("profile")
-    //   .select("*")
-    //   .eq("id", userId)
-    //   .single()
-    //   .then(({ data }) => {
-    //     if (data) {
-    //       subscriber.next(Found(rowToProfile(data)));
-    //     }
-    //   });
-
+export const subscriptions = ({
+  userId,
+}: {
+  userId: string;
+}): sub.Sub<option.Option<Profile>> => {
+  return new Rx.Observable<option.Option<Profile>>((subscriber) => {
     const subscription = Supabase.client
       .from<definitions["profile"]>(`profile:id=eq.${userId}`)
       .on("INSERT", (payload) => {
-        subscriber.next(Found(rowToProfile(payload.new)));
+        subscriber.next(option.some(rowToProfile(payload.new)));
       })
       .on("UPDATE", (payload) => {
-        subscriber.next(Found(rowToProfile(payload.new)));
+        subscriber.next(option.some(rowToProfile(payload.new)));
       })
       .on("DELETE", () => {
-        subscriber.next(Missing());
+        subscriber.next(option.none);
       })
       .subscribe();
 
