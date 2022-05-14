@@ -1,5 +1,11 @@
-import * as Navigation from "./Framework/Navigation";
 import { option } from "fp-ts";
+import * as Navigation from "./Framework/Navigation";
+
+//
+//
+// Model
+//
+//
 
 export type Route =
   | { type: "Account" }
@@ -16,6 +22,12 @@ export type Route =
   | { type: "ProfileUpdateName" }
   | { type: "ProfileUpdateUsername" }
   | { type: "TicTacToe" };
+
+//
+//
+// encode/decode
+//
+//
 
 const routesTypes: { [routeType in Route["type"]]: string } = {
   Account: "Account",
@@ -38,9 +50,9 @@ const isRouteType = (routeType: string): routeType is Route["type"] => {
   return routeType in routesTypes;
 };
 
-export type Location = { pathname: string };
-
-export const decode = (location: Location): option.Option<Route> => {
+export const decode = (location: {
+  pathname: string;
+}): option.Option<Route> => {
   const path = location.pathname.substring(1);
 
   if (isRouteType(path)) {
@@ -53,6 +65,12 @@ export const decode = (location: Location): option.Option<Route> => {
 export const encode = (route: Route): string => {
   return route.type;
 };
+
+//
+//
+// Cmds
+//
+//
 
 export const push = <Msg,>(route: Route) => {
   return Navigation.push<Msg>(encode(route));

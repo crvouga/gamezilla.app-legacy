@@ -34,9 +34,13 @@ export const init: Model = {
 //
 
 export type Msg =
-  | { type: "Back" }
-  | { type: "BoardClicked"; position: Game.TicTacToe.Position }
-  | { type: "RestartButtonClicked" };
+  | { group: "TicTacToe"; type: "Back" }
+  | {
+      group: "TicTacToe";
+      type: "BoardClicked";
+      position: Game.TicTacToe.Position;
+    }
+  | { group: "TicTacToe"; type: "RestartButtonClicked" };
 
 export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
@@ -84,19 +88,25 @@ export const view =
       <View.Page>
         <View.Header
           left={
-            <View.HeaderBackButton onClick={() => dispatch({ type: "Back" })} />
+            <View.HeaderBackButton
+              onClick={() => dispatch({ group: "TicTacToe", type: "Back" })}
+            />
           }
           title="Tic Tac Toe"
         />
         <Game.TicTacToe.Board
           board={model.board}
-          onClick={(position) => dispatch({ type: "BoardClicked", position })}
+          onClick={(position) =>
+            dispatch({ group: "TicTacToe", type: "BoardClicked", position })
+          }
         />
 
         <Button
           size="large"
           fullWidth
-          onClick={() => dispatch({ type: "RestartButtonClicked" })}
+          onClick={() =>
+            dispatch({ group: "TicTacToe", type: "RestartButtonClicked" })
+          }
         >
           Restart
         </Button>

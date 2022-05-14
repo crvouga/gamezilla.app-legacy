@@ -3,12 +3,14 @@ import {
   List,
   ListItem,
   ListItemAvatar,
+  ListItemButton,
   ListItemText,
 } from "@mui/material";
 import * as React from "react";
 import { cmd, react } from "../Framework";
 import * as ProfileAvatar from "../ProfileAvatar";
 import * as View from "../View";
+import * as Routes from "../Routes";
 
 //
 //
@@ -48,6 +50,10 @@ export type Msg =
   | { group: "ProfileUpdateAvatarStyle"; type: "Back" };
 
 export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
+  switch (msg.type) {
+    case "Back":
+      return [model, Routes.replace<Msg>({ type: "ProfileUpdateAvatar" })];
+  }
   return [model, cmd.none];
 };
 
@@ -78,7 +84,14 @@ export const view =
         />
         <List sx={{ overflowY: "scroll" }}>
           {ProfileAvatar.ALL_STYLES.map((style) => (
-            <ListItem>
+            <ListItemButton
+              onClick={() =>
+                dispatch({
+                  group: "ProfileUpdateAvatarStyle",
+                  type: "SelectedStyle",
+                })
+              }
+            >
               <ListItemAvatar>
                 <Avatar
                   src={ProfileAvatar.toUrl({
@@ -88,7 +101,7 @@ export const view =
                 />
               </ListItemAvatar>
               <ListItemText primary={ProfileAvatar.formatStyle(style)} />
-            </ListItem>
+            </ListItemButton>
           ))}
         </List>
       </View.Page>
