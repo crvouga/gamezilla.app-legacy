@@ -80,8 +80,7 @@ type Ready = {
       }
     | { type: "ProfileUpdateName"; child: Page.ProfileUpdateName.Model }
     | { type: "ProfileUpdateUsername"; child: Page.ProfileUpdateUsername.Model }
-    | { type: "TicTacToe"; child: Page.TicTacToe.Model }
-    | { type: "NotFound" };
+    | { type: "TicTacToe"; child: Page.TicTacToe.Model };
 };
 
 type Location = { pathname: string };
@@ -90,6 +89,17 @@ export const init = (location: navigation.Location): [Model, cmd.Cmd<Msg>] => [
   { type: "SessionLoading", location: location },
   pipe(Session.load(), perform(maybeSessionToMsg)),
 ];
+
+const initSessionMissing = (
+  location: Location
+): [SessionMissing, cmd.Cmd<Msg>] => {
+  const child = Page.Login.init();
+
+  return [
+    { type: "SessionMissing", location, page: { type: "Login", child } },
+    Routes.replace({ type: "Login" }),
+  ];
+};
 
 const maybeSessionToMsg = option.fold<Session.Session, Msg>(
   () => ({ group: "Main", type: "SessionNotFound" }),
@@ -181,7 +191,7 @@ const updateSessionMissing = (
 const updateSessionLoading = (
   msg: Msg,
   model: SessionLoading
-): [Model, cmd.Cmd<Msg>] => {
+): [ProfileLoading | SessionLoading | SessionMissing, cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "LocationChanged":
       return [{ ...model, location: msg.location }, cmd.none];
@@ -193,15 +203,7 @@ const updateSessionLoading = (
       ];
 
     case "SessionNotFound":
-      const child = Page.Login.init();
-      return [
-        {
-          type: "SessionMissing",
-          location: model.location,
-          page: { type: "Login", child: child },
-        },
-        cmd.none,
-      ];
+      return initSessionMissing(model.location);
 
     default:
       return [model, cmd.none];
@@ -260,6 +262,9 @@ const updateReady = (msg: Msg, model: Ready): [Model, cmd.Cmd<Msg>] => {
         case "ProfileFound":
           return [{ ...model, profile: msg.profile, page }, pageCmd];
 
+        case "SessionNotFound":
+          return initSessionMissing(model.location);
+
         default:
           return [model, cmd.none];
       }
@@ -283,6 +288,11 @@ const initReadyPage = (
     )
   );
 
+  const notFound: [Ready["page"], cmd.Cmd<Msg>] = [
+    { type: "Home", child: Page.Home.init },
+    Routes.push({ type: "Home" }),
+  ];
+
   switch (route.type) {
     case "Account":
       return [{ type: "Account", child: Page.Account.init }, cmd.none];
@@ -297,16 +307,16 @@ const initReadyPage = (
       return [{ type: "Home", child: Page.Home.init }, cmd.none];
 
     case "Login":
-      return [{ type: "NotFound" }, cmd.none];
+      return notFound;
 
     case "Logout":
       return [{ type: "Logout", child: Page.Logout.init }, cmd.none];
 
     case "NotFound":
-      return [{ type: "NotFound" }, cmd.none];
+      return notFound;
 
     case "ProfileCreate":
-      return [{ type: "NotFound" }, cmd.none];
+      return notFound;
 
     case "ProfileDelete":
       return [
@@ -486,9 +496,6 @@ const updateReadyPage = (
       }
       return [page, cmd.none];
 
-    case "NotFound":
-      return [page, cmd.none];
-
     default:
       return exhaustive(page);
   }
@@ -619,9 +626,6 @@ const viewReadyPage = (
 
     case "TicTacToe":
       return Page.TicTacToe.view(page.child);
-
-    case "NotFound":
-      return () => <>not found</>;
 
     default:
       return exhaustive(page);
