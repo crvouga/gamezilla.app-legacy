@@ -6,6 +6,7 @@ import { cmd, sub } from "./Framework";
 import * as Supabase from "./Supabase";
 import { definitions } from "./supabase-types";
 import * as Page from "./Page";
+import { either, option, task } from "fp-ts";
 
 //
 //
@@ -46,9 +47,14 @@ export const init: Model = { type: "Loading" };
 
 export type Msg = Missing | Found;
 
-type Found = { group: "Profile"; type: "ProfileFound"; profile: Profile };
+type Found = {
+  group: "Profile";
+  type: "ProfileFound";
+  profile: Profile;
+};
 const Found = (profile: Profile): Msg => ({
   group: "Profile",
+
   type: "ProfileFound",
   profile,
 });
@@ -59,10 +65,7 @@ const Missing = (): Msg => ({ group: "Profile", type: "ProfileMissing" });
 export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "ProfileFound":
-      return [
-        { type: "Found", profile: msg.profile },
-        Page.navigate({ type: "Home" }),
-      ];
+      return [{ type: "Found", profile: msg.profile }, cmd.none];
 
     case "ProfileMissing":
       return [{ type: "Missing" }, cmd.none];
@@ -110,6 +113,22 @@ export const fetch = <Msg,>({
     Rx.of
   );
 };
+
+export const load =
+  ({ userId }: { userId: string }): task.Task<either.Either<Error, Profile>> =>
+  async () => {
+    const response = await Supabase.client
+      .from<definitions["profile"]>("profile")
+      .select("*")
+      .eq("id", userId)
+      .single();
+
+    if (response.error) {
+      return either.left(new Error(response.error.message));
+    }
+
+    return either.right(rowToProfile(response.data));
+  };
 
 export const create = <Msg,>({
   userId,
