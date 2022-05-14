@@ -34,18 +34,28 @@ export const login: taskEither.TaskEither<
   return either.right({ message: "Successfully logged in" });
 };
 
-// export const logout = <Msg,>(): cmd.Cmd<Msg> => {
-//   return pipe(
-//     async () => {
-//       await new Promise((resolve) => setTimeout(resolve, 1000));
-//       Supabase.client.auth.signOut();
-//     },
-//     Task.map(() => Option.none),
-//     Rx.of
-//   );
-// };
+type Failure = { type: "Failure"; message: string };
+type Success = { type: "Success"; message: string };
+
+export const logout =
+  (): task.Task<either.Either<Failure, Success>> => async () => {
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
+    const response = await Supabase.client.auth.signOut();
+
+    if (response.error) {
+      return either.left({ type: "Failure", message: "Failed to logout" });
+    }
+
+    return either.right({
+      type: "Success",
+      message: "Successfully logged out",
+    });
+  };
 
 export const load: () => task.Task<option.Option<Session>> = () => async () => {
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+
   const session = Supabase.client.auth.session();
 
   const userId = session?.user?.id;
@@ -54,8 +64,6 @@ export const load: () => task.Task<option.Option<Session>> = () => async () => {
     session?.user?.user_metadata?.name ??
     session?.user?.user_metadata?.full_name ??
     "";
-
-  await new Promise((resolve) => setTimeout(resolve, 1000));
 
   if (userId) {
     return option.some({ defaultName, userId });
@@ -89,12 +97,12 @@ export const fromSupabaseSession = (
   return option.none;
 };
 
-export const subscription = new Rx.Subject<option.Option<Session>>();
+const subject = new Rx.Subject<option.Option<Session>>();
 
 Supabase.client.auth.onAuthStateChange((_, Auth) => {
-  subscription.next(fromSupabaseSession(Auth));
+  subject.next(fromSupabaseSession(Auth));
 });
 
 export const subscriptions = (): sub.Sub<option.Option<Session>> => {
-  return subscription;
+  return subject;
 };
