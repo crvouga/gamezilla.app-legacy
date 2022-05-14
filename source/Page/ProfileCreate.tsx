@@ -56,12 +56,12 @@ export const init = ({ defaultName }: { defaultName: string }): Model => {
 //
 
 export type Msg =
-  | { type: "EnteredUsername"; username: string }
-  | { type: "EnteredName"; name: string }
-  | { type: "Submit" }
-  | { type: "SubmitSucceeded" }
-  | { type: "SubmitFailed" }
-  | { type: "Logout" };
+  | { group: "ProfileCreate"; type: "EnteredUsername"; username: string }
+  | { group: "ProfileCreate"; type: "EnteredName"; name: string }
+  | { group: "ProfileCreate"; type: "Submit" }
+  | { group: "ProfileCreate"; type: "SubmitSucceeded" }
+  | { group: "ProfileCreate"; type: "SubmitFailed" }
+  | { group: "ProfileCreate"; type: "Logout" };
 
 export const update = (
   { userId }: { userId: string },
@@ -82,9 +82,11 @@ export const update = (
           ...model.form,
           userId,
           onFailure: () => ({
+            group: "ProfileCreate",
             type: "SubmitFailed",
           }),
           onSuccess: () => ({
+            group: "ProfileCreate",
             type: "SubmitSucceeded",
           }),
         }),
@@ -123,7 +125,9 @@ export const view =
         <View.Header
           left={
             <View.HeaderBackButton
-              onClick={() => dispatch({ type: "Logout" })}
+              onClick={() =>
+                dispatch({ group: "ProfileCreate", type: "Logout" })
+              }
             />
           }
           title="Create Profile"
@@ -153,6 +157,7 @@ export const view =
             fullWidth
             onChange={(event) =>
               dispatch({
+                group: "ProfileCreate",
                 type: "EnteredUsername",
                 username: event.currentTarget.value,
               })
@@ -166,6 +171,7 @@ export const view =
             fullWidth
             onChange={(event) =>
               dispatch({
+                group: "ProfileCreate",
                 type: "EnteredName",
                 name: event.currentTarget.value,
               })
@@ -177,7 +183,7 @@ export const view =
             size="large"
             variant="contained"
             loading={model.status === "Loading"}
-            onClick={() => dispatch({ type: "Submit" })}
+            onClick={() => dispatch({ group: "ProfileCreate", type: "Submit" })}
           >
             Create Profile
           </LoadingButton>

@@ -27,7 +27,7 @@ export const init: Model = {};
 //
 //
 
-export type Msg = { type: "Back" };
+export type Msg = { group: "Chess"; type: "Back" };
 
 export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
@@ -53,7 +53,9 @@ export const view =
       <View.Page>
         <View.Header
           left={
-            <View.HeaderBackButton onClick={() => dispatch({ type: "Back" })} />
+            <View.HeaderBackButton
+              onClick={() => dispatch({ group: "Chess", type: "Back" })}
+            />
           }
           title="Chess"
         />
