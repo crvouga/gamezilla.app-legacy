@@ -151,13 +151,56 @@ export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
       return updateProfileLoading(msg, model);
 
     case "ProfileMissing":
-      return [model, cmd.none];
+      return updateProfileMissing(msg, model);
 
     case "Ready":
       return updateReady(msg, model);
 
     case "SessionMissing":
       return updateSessionMissing(msg, model);
+  }
+};
+
+const updateProfileMissing = (
+  msg: Msg,
+  model: ProfileMissing
+): [Model, cmd.Cmd<Msg>] => {
+  switch (msg.group) {
+    case "Main":
+      switch (msg.type) {
+        case "LocationChanged":
+          return [{ ...model, location: msg.location }, cmd.none];
+
+        case "ProfileFound":
+          return initReady({ location: model.location, profile: msg.profile });
+
+        default:
+          return [model, cmd.none];
+      }
+    default: {
+      switch (model.page.type) {
+        case "Logout":
+          if (msg.group === "Logout") {
+            const [child, childCmd] = Page.Logout.update(msg, model.page.child);
+            return [{ ...model, page: { type: "Logout", child } }, childCmd];
+          }
+          return [model, cmd.none];
+
+        case "ProfileCreate":
+          if (msg.group === "ProfileCreate") {
+            const [child, childCmd] = Page.ProfileCreate.update(
+              model,
+              msg,
+              model.page.child
+            );
+            return [
+              { ...model, page: { type: "ProfileCreate", child } },
+              childCmd,
+            ];
+          }
+          return [model, cmd.none];
+      }
+    }
   }
 };
 
@@ -215,6 +258,25 @@ const profileResultToMsg = either.fold<Error, Profile.Profile, Msg>(
   (profile) => ({ group: "Main", type: "ProfileFound", profile })
 );
 
+const initReady = ({
+  location,
+  profile,
+}: {
+  location: Location;
+  profile: Profile;
+}): [Ready, cmd.Cmd<Msg>] => {
+  const [page, pageCmd] = initReadyPage(profile, location);
+  return [
+    {
+      type: "Ready",
+      location: location,
+      profile: profile,
+      page: page,
+    },
+    pageCmd,
+  ];
+};
+
 const updateProfileLoading = (
   msg: Msg,
   model: ProfileLoading
@@ -224,23 +286,32 @@ const updateProfileLoading = (
       return [{ ...model, location: msg.location }, cmd.none];
 
     case "ProfileFound":
-      const [page, pageCmd] = initReadyPage(msg.profile, model.location);
-      return [
-        {
-          type: "Ready",
-          location: model.location,
-          profile: msg.profile,
-          page: page,
-        },
-        pageCmd,
-      ];
+      return initReady({ ...model, ...msg });
 
     case "ProfileNotFound":
-      return [model, cmd.none];
+      return initProfileMissing(model);
 
     default:
       return [model, cmd.none];
   }
+};
+
+const initProfileMissing = (deps: {
+  userId: string;
+  defaultName: string;
+}): [ProfileMissing, cmd.Cmd<Msg>] => {
+  return [
+    {
+      ...deps,
+      type: "ProfileMissing",
+      location: location,
+      page: {
+        type: "ProfileCreate",
+        child: Page.ProfileCreate.init(deps),
+      },
+    },
+    Routes.replace({ type: "ProfileCreate" }),
+  ];
 };
 
 //
@@ -261,6 +332,12 @@ const updateReady = (msg: Msg, model: Ready): [Model, cmd.Cmd<Msg>] => {
 
         case "ProfileFound":
           return [{ ...model, profile: msg.profile, page }, pageCmd];
+
+        case "ProfileNotFound":
+          return initProfileMissing({
+            userId: model.profile.userId,
+            defaultName: model.profile.name,
+          });
 
         case "SessionNotFound":
           return initSessionMissing(model.location);
@@ -564,7 +641,16 @@ export const viewMain = (model: Model): react.Html<Msg> => {
       return () => <View.LoadingPage />;
 
     case "ProfileMissing":
-      return () => <View.LoadingPage />;
+      switch (model.page.type) {
+        case "Logout":
+          return Page.Logout.view(model.page.child);
+
+        case "ProfileCreate":
+          return Page.ProfileCreate.view(model.page.child);
+
+        default:
+          return exhaustive(model.page);
+      }
 
     case "SessionLoading":
       return () => <View.LoadingPage />;
@@ -647,7 +733,11 @@ const locationToMsg = (location: navigation.Location): Msg => {
 //
 //
 //
+//
+//
 // Main
+//
+//
 //
 //
 //

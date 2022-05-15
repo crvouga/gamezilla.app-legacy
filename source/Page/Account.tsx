@@ -2,6 +2,9 @@ import { ChevronRight, Delete, Edit, Logout } from "@mui/icons-material";
 import {
   Box,
   Button,
+  Card,
+  CardActions,
+  CardHeader,
   CircularProgress,
   Dialog,
   DialogActions,
@@ -12,6 +15,7 @@ import {
   ListItemIcon,
   ListItemSecondaryAction,
   ListItemText,
+  Paper,
   Typography,
 } from "@mui/material";
 import React from "react";
@@ -147,9 +151,9 @@ export const view =
               <Delete />
             </ListItemIcon>
             <ListItemText primary="Delete Profile" />
-            <ListItemSecondaryAction>
+            {/* <ListItemSecondaryAction>
               <ChevronRight />
-            </ListItemSecondaryAction>
+            </ListItemSecondaryAction> */}
           </ListItemButton>
 
           <Dialog open={model.type === "DeletingProfile"}>
@@ -202,9 +206,6 @@ export const view =
               <Logout />
             </ListItemIcon>
             <ListItemText primary="Logout" />
-            <ListItemSecondaryAction>
-              <ChevronRight />
-            </ListItemSecondaryAction>
           </ListItemButton>
         </List>
       </View.Page>

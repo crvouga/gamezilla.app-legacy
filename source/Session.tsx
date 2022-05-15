@@ -54,7 +54,7 @@ export const logout =
   };
 
 export const load: () => task.Task<option.Option<Session>> = () => async () => {
-  await new Promise((resolve) => setTimeout(resolve, 1000));
+  await new Promise((resolve) => setTimeout(resolve, 100));
 
   const session = Supabase.client.auth.session();
 
