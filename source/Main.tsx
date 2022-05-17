@@ -704,14 +704,14 @@ const maybeProfileToMsg = option.fold<Profile.Profile, Msg>(
   (profile) => ({ type: "ProfileFound", profile, group: "Main" })
 );
 
-//              88
-//              ""
-
-// 8b       d8  88   ,adPPYba,  8b      db      d8
-// `8b     d8'  88  a8P_____88  `8b    d88b    d8'
-//  `8b   d8'   88  8PP"""""""   `8b  d8'`8b  d8'
-//   `8b,d8'    88  "8b,   ,aa    `8bd8'  `8bd8'
-//     "8"      88   `"Ybbd8"'      YP      YP
+// 8b           d8  88
+// `8b         d8'  ""
+//  `8b       d8'
+//   `8b     d8'    88   ,adPPYba,  8b      db      d8
+//    `8b   d8'     88  a8P_____88  `8b    d88b    d8'
+//     `8b d8'      88  8PP"""""""   `8b  d8'`8b  d8'
+//      `888'       88  "8b,   ,aa    `8bd8'  `8bd8'
+//       `8'        88   `"Ybbd8"'      YP      YP
 
 const view =
   (model: Model): react.Html<Msg> =>
