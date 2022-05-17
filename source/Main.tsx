@@ -8,7 +8,7 @@ import { attempt, perform } from "./Framework/Task";
 import * as Session from "./Session";
 import * as Profile from "./Profile";
 import * as View from "./View";
-import * as Page from "./Page";
+import * as Pages from "./Pages";
 import * as Routes from "./Routes";
 import { exhaustive } from "./Utility";
 
@@ -36,7 +36,7 @@ type SessionLoadingModel = {
 type SessionMissingModel = {
   type: "SessionMissing";
   location: Location;
-  page: { type: "Login"; child: Page.Login.Model };
+  page: { type: "Login"; child: Pages.Login.Model };
 };
 
 type ProfileLoadingModel = {
@@ -52,8 +52,8 @@ type ProfileMissingModel = {
   userId: string;
   defaultName: string;
   page:
-    | { type: "ProfileCreate"; child: Page.ProfileCreate.Model }
-    | { type: "Logout"; child: Page.Logout.Model };
+    | { type: "ProfileCreate"; child: Pages.ProfileCreate.Model }
+    | { type: "Logout"; child: Pages.Logout.Model };
 };
 
 type ReadyModel = {
@@ -61,22 +61,25 @@ type ReadyModel = {
   location: Location;
   profile: Profile;
   page:
-    | { type: "Home"; child: Page.Home.Model }
-    | { type: "Account"; child: Page.Account.Model }
-    | { type: "Chess"; child: Page.Chess.Model }
-    | { type: "ConnectFour"; child: Page.ConnectFour.Model }
-    | { type: "Logout"; child: Page.Logout.Model }
-    | { type: "ProfileCreate"; child: Page.ProfileCreate.Model }
-    | { type: "ProfileDelete"; child: Page.ProfileDelete.Model }
-    | { type: "ProfileUpdate"; child: Page.ProfileUpdate.Model }
-    | { type: "ProfileUpdateAvatar"; child: Page.ProfileUpdateAvatar.Model }
+    | { type: "Home"; child: Pages.Home.Model }
+    | { type: "Account"; child: Pages.Account.Model }
+    | { type: "Chess"; child: Pages.Chess.Model }
+    | { type: "ConnectFour"; child: Pages.ConnectFour.Model }
+    | { type: "Logout"; child: Pages.Logout.Model }
+    | { type: "ProfileCreate"; child: Pages.ProfileCreate.Model }
+    | { type: "ProfileDelete"; child: Pages.ProfileDelete.Model }
+    | { type: "ProfileUpdate"; child: Pages.ProfileUpdate.Model }
+    | { type: "ProfileUpdateAvatar"; child: Pages.ProfileUpdateAvatar.Model }
     | {
         type: "ProfileUpdateAvatarStyle";
-        child: Page.ProfileUpdateAvatarStyle.Model;
+        child: Pages.ProfileUpdateAvatarStyle.Model;
       }
-    | { type: "ProfileUpdateName"; child: Page.ProfileUpdateName.Model }
-    | { type: "ProfileUpdateUsername"; child: Page.ProfileUpdateUsername.Model }
-    | { type: "TicTacToe"; child: Page.TicTacToe.Model };
+    | { type: "ProfileUpdateName"; child: Pages.ProfileUpdateName.Model }
+    | {
+        type: "ProfileUpdateUsername";
+        child: Pages.ProfileUpdateUsername.Model;
+      }
+    | { type: "TicTacToe"; child: Pages.TicTacToe.Model };
 };
 
 type Location = { pathname: string };
@@ -105,7 +108,7 @@ const init = (location: navigation.Location): [Model, cmd.Cmd<Msg>] => [
 const initSessionMissing = (
   location: Location
 ): [SessionMissingModel, cmd.Cmd<Msg>] => {
-  const child = Page.Login.init();
+  const child = Pages.Login.init();
 
   return [
     { type: "SessionMissing", location, page: { type: "Login", child } },
@@ -147,7 +150,7 @@ const initProfileMissing = (deps: {
       location: location,
       page: {
         type: "ProfileCreate",
-        child: Page.ProfileCreate.init(deps),
+        child: Pages.ProfileCreate.init(deps),
       },
     },
     Routes.replace({ type: "ProfileCreate" }),
@@ -187,28 +190,28 @@ const initPageReady = (
   );
 
   const notFound: [ReadyModel["page"], cmd.Cmd<Msg>] = [
-    { type: "Home", child: Page.Home.init },
+    { type: "Home", child: Pages.Home.init },
     Routes.push({ type: "Home" }),
   ];
 
   switch (route.type) {
     case "Account":
-      return [{ type: "Account", child: Page.Account.init }, cmd.none];
+      return [{ type: "Account", child: Pages.Account.init }, cmd.none];
 
     case "Chess":
-      return [{ type: "Chess", child: Page.Chess.init }, cmd.none];
+      return [{ type: "Chess", child: Pages.Chess.init }, cmd.none];
 
     case "ConnectFour":
-      return [{ type: "ConnectFour", child: Page.ConnectFour.init }, cmd.none];
+      return [{ type: "ConnectFour", child: Pages.ConnectFour.init }, cmd.none];
 
     case "Home":
-      return [{ type: "Home", child: Page.Home.init }, cmd.none];
+      return [{ type: "Home", child: Pages.Home.init }, cmd.none];
 
     case "Login":
       return notFound;
 
     case "Logout":
-      return [{ type: "Logout", child: Page.Logout.init }, cmd.none];
+      return [{ type: "Logout", child: Pages.Logout.init }, cmd.none];
 
     case "NotFound":
       return notFound;
@@ -218,13 +221,13 @@ const initPageReady = (
 
     case "ProfileDelete":
       return [
-        { type: "ProfileDelete", child: Page.ProfileDelete.init },
+        { type: "ProfileDelete", child: Pages.ProfileDelete.init },
         cmd.none,
       ];
 
     case "ProfileUpdate":
       return [
-        { type: "ProfileUpdate", child: Page.ProfileUpdate.init(profile) },
+        { type: "ProfileUpdate", child: Pages.ProfileUpdate.init(profile) },
         cmd.none,
       ];
 
@@ -232,7 +235,7 @@ const initPageReady = (
       return [
         {
           type: "ProfileUpdateAvatar",
-          child: Page.ProfileUpdateAvatar.init(profile),
+          child: Pages.ProfileUpdateAvatar.init(profile),
         },
         cmd.none,
       ];
@@ -241,7 +244,7 @@ const initPageReady = (
       return [
         {
           type: "ProfileUpdateAvatarStyle",
-          child: Page.ProfileUpdateAvatarStyle.init(profile),
+          child: Pages.ProfileUpdateAvatarStyle.init(profile),
         },
         cmd.none,
       ];
@@ -250,7 +253,7 @@ const initPageReady = (
       return [
         {
           type: "ProfileUpdateName",
-          child: Page.ProfileUpdateName.init(profile),
+          child: Pages.ProfileUpdateName.init(profile),
         },
         cmd.none,
       ];
@@ -259,13 +262,13 @@ const initPageReady = (
       return [
         {
           type: "ProfileUpdateUsername",
-          child: Page.ProfileUpdateUsername.init(profile),
+          child: Pages.ProfileUpdateUsername.init(profile),
         },
         cmd.none,
       ];
 
     case "TicTacToe":
-      return [{ type: "TicTacToe", child: Page.TicTacToe.init }, cmd.none];
+      return [{ type: "TicTacToe", child: Pages.TicTacToe.init }, cmd.none];
   }
 };
 
@@ -289,20 +292,20 @@ type Msg =
   | PageMsg;
 
 type PageMsg =
-  | (Page.Account.Msg & { group: "Account" })
-  | (Page.Chess.Msg & { group: "Chess" })
-  | (Page.ConnectFour.Msg & { group: "ConnectFour" })
-  | (Page.Home.Msg & { group: "Home" })
-  | (Page.Login.Msg & { group: "Login" })
-  | (Page.Logout.Msg & { group: "Logout" })
-  | (Page.ProfileCreate.Msg & { group: "ProfileCreate" })
-  | (Page.ProfileDelete.Msg & { group: "ProfileDelete" })
-  | (Page.ProfileUpdate.Msg & { group: "ProfileUpdate" })
-  | (Page.ProfileUpdateAvatar.Msg & { group: "ProfileUpdateAvatar" })
-  | (Page.ProfileUpdateAvatarStyle.Msg & { group: "ProfileUpdateAvatarStyle" })
-  | (Page.ProfileUpdateName.Msg & { group: "ProfileUpdateName" })
-  | (Page.ProfileUpdateUsername.Msg & { group: "ProfileUpdateUsername" })
-  | (Page.TicTacToe.Msg & { group: "TicTacToe" });
+  | (Pages.Account.Msg & { group: "Account" })
+  | (Pages.Chess.Msg & { group: "Chess" })
+  | (Pages.ConnectFour.Msg & { group: "ConnectFour" })
+  | (Pages.Home.Msg & { group: "Home" })
+  | (Pages.Login.Msg & { group: "Login" })
+  | (Pages.Logout.Msg & { group: "Logout" })
+  | (Pages.ProfileCreate.Msg & { group: "ProfileCreate" })
+  | (Pages.ProfileDelete.Msg & { group: "ProfileDelete" })
+  | (Pages.ProfileUpdate.Msg & { group: "ProfileUpdate" })
+  | (Pages.ProfileUpdateAvatar.Msg & { group: "ProfileUpdateAvatar" })
+  | (Pages.ProfileUpdateAvatarStyle.Msg & { group: "ProfileUpdateAvatarStyle" })
+  | (Pages.ProfileUpdateName.Msg & { group: "ProfileUpdateName" })
+  | (Pages.ProfileUpdateUsername.Msg & { group: "ProfileUpdateUsername" })
+  | (Pages.TicTacToe.Msg & { group: "TicTacToe" });
 
 const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   return pipe(
@@ -443,16 +446,12 @@ const updateReady = (msg: Msg, model: ReadyModel): [Model, cmd.Cmd<Msg>] => {
   }
 };
 
-//                                    88
-//                                    88                ,d
-//                                    88                88
-// 88       88  8b,dPPYba,    ,adPPYb,88  ,adPPYYba,  MM88MMM  ,adPPYba,     8b,dPPYba,   ,adPPYYba,   ,adPPYb,d8   ,adPPYba,
-// 88       88  88P'    "8a  a8"    `Y88  ""     `Y8    88    a8P_____88     88P'    "8a  ""     `Y8  a8"    `Y88  a8P_____88
-// 88       88  88       d8  8b       88  ,adPPPPP88    88    8PP"""""""     88       d8  ,adPPPPP88  8b       88  8PP"""""""
-// "8a,   ,a88  88b,   ,a8"  "8a,   ,d88  88,    ,88    88,   "8b,   ,aa     88b,   ,a8"  88,    ,88  "8a,   ,d88  "8b,   ,aa
-//  `"YbbdP'Y8  88`YbbdP"'    `"8bbdP"Y8  `"8bbdP"Y8    "Y888  `"Ybbd8"'     88`YbbdP"'   `"8bbdP"Y8   `"YbbdP"Y8   `"Ybbd8"'
-//              88                                                           88                        aa,    ,88
-//              88                                                           88                         "Y8bbdP"
+// ██╗   ██╗██████╗ ██████╗  █████╗ ████████╗███████╗
+// ██║   ██║██╔══██╗██╔══██╗██╔══██╗╚══██╔══╝██╔════╝
+// ██║   ██║██████╔╝██║  ██║███████║   ██║   █████╗
+// ██║   ██║██╔═══╝ ██║  ██║██╔══██║   ██║   ██╔══╝
+// ╚██████╔╝██║     ██████╔╝██║  ██║   ██║   ███████╗
+//  ╚═════╝ ╚═╝     ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚══════╝
 
 const updatePage = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   switch (model.type) {
@@ -490,7 +489,7 @@ const updatePageSessionMissing = (
   switch (page.type) {
     case "Login":
       if (msg.group === "Login") {
-        const [child, childCmd] = Page.Login.update(msg, page.child);
+        const [child, childCmd] = Pages.Login.update(msg, page.child);
         return [{ type: "Login", child }, childCmd];
       }
 
@@ -506,14 +505,14 @@ const updatePageProfileMissing = (
   switch (page.type) {
     case "Logout":
       if (msg.group === "Logout") {
-        const [child, childCmd] = Page.Logout.update(msg, page.child);
+        const [child, childCmd] = Pages.Logout.update(msg, page.child);
         return [{ type: "Logout", child }, childCmd];
       }
       return [page, cmd.none];
 
     case "ProfileCreate":
       if (msg.group === "ProfileCreate") {
-        const [child, childCmd] = Page.ProfileCreate.update(
+        const [child, childCmd] = Pages.ProfileCreate.update(
           model,
           msg,
           page.child
@@ -532,28 +531,32 @@ const updatePageReady = (
   switch (page.type) {
     case "Account":
       if (msg.group === "Account") {
-        const [child, childCmd] = Page.Account.update(profile, msg, page.child);
+        const [child, childCmd] = Pages.Account.update(
+          profile,
+          msg,
+          page.child
+        );
         return [{ type: "Account", child }, childCmd];
       }
       return [page, cmd.none];
 
     case "Chess":
       if (msg.group === "Chess") {
-        const [child, childCmd] = Page.Chess.update(msg, page.child);
+        const [child, childCmd] = Pages.Chess.update(msg, page.child);
         return [{ type: "Chess", child }, childCmd];
       }
       return [page, cmd.none];
 
     case "ConnectFour":
       if (msg.group === "ConnectFour") {
-        const [child, childCmd] = Page.ConnectFour.update(msg, page.child);
+        const [child, childCmd] = Pages.ConnectFour.update(msg, page.child);
         return [{ type: "ConnectFour", child }, childCmd];
       }
       return [page, cmd.none];
 
     case "Home":
       if (msg.group === "Home") {
-        const [child, childCmd] = Page.Home.update(msg, page.child);
+        const [child, childCmd] = Pages.Home.update(msg, page.child);
         return [{ type: "Home", child }, childCmd];
       }
 
@@ -561,14 +564,14 @@ const updatePageReady = (
 
     case "Logout":
       if (msg.group === "Logout") {
-        const [child, childCmd] = Page.Logout.update(msg, page.child);
+        const [child, childCmd] = Pages.Logout.update(msg, page.child);
         return [{ type: "Logout", child }, childCmd];
       }
       return [page, cmd.none];
 
     case "ProfileCreate":
       if (msg.group === "ProfileCreate") {
-        const [child, childCmd] = Page.ProfileCreate.update(
+        const [child, childCmd] = Pages.ProfileCreate.update(
           profile,
           msg,
           page.child
@@ -579,7 +582,7 @@ const updatePageReady = (
 
     case "ProfileDelete":
       if (msg.group === "ProfileDelete") {
-        const [child, childCmd] = Page.ProfileDelete.update(
+        const [child, childCmd] = Pages.ProfileDelete.update(
           profile,
           msg,
           page.child
@@ -590,7 +593,7 @@ const updatePageReady = (
 
     case "ProfileUpdate":
       if (msg.group === "ProfileUpdate") {
-        const [child, childCmd] = Page.ProfileUpdate.update(
+        const [child, childCmd] = Pages.ProfileUpdate.update(
           profile,
           msg,
           page.child
@@ -601,7 +604,7 @@ const updatePageReady = (
 
     case "ProfileUpdateAvatar":
       if (msg.group === "ProfileUpdateAvatar") {
-        const [child, childCmd] = Page.ProfileUpdateAvatar.update(
+        const [child, childCmd] = Pages.ProfileUpdateAvatar.update(
           { userId: profile.userId, location },
           msg,
           page.child
@@ -615,7 +618,7 @@ const updatePageReady = (
 
     case "ProfileUpdateAvatarStyle":
       if (msg.group === "ProfileUpdateAvatarStyle") {
-        const [child, childCmd] = Page.ProfileUpdateAvatarStyle.update(
+        const [child, childCmd] = Pages.ProfileUpdateAvatarStyle.update(
           msg,
           page.child
         );
@@ -625,7 +628,7 @@ const updatePageReady = (
 
     case "ProfileUpdateName":
       if (msg.group === "ProfileUpdateName") {
-        const [child, childCmd] = Page.ProfileUpdateName.update(
+        const [child, childCmd] = Pages.ProfileUpdateName.update(
           profile,
           msg,
           page.child
@@ -636,7 +639,7 @@ const updatePageReady = (
 
     case "ProfileUpdateUsername":
       if (msg.group === "ProfileUpdateUsername") {
-        const [child, childCmd] = Page.ProfileUpdateUsername.update(
+        const [child, childCmd] = Pages.ProfileUpdateUsername.update(
           profile,
           msg,
           page.child
@@ -647,7 +650,7 @@ const updatePageReady = (
 
     case "TicTacToe":
       if (msg.group === "TicTacToe") {
-        const [child, childCmd] = Page.TicTacToe.update(msg, page.child);
+        const [child, childCmd] = Pages.TicTacToe.update(msg, page.child);
         return [
           { type: "TicTacToe", child },
           pipe(childCmd, cmd.map(groupMsg("TicTacToe"))),
@@ -743,10 +746,10 @@ const viewProfileLoading = (model: ProfileLoadingModel): react.Html<Msg> => {
 const viewProfileMissing = (model: ProfileMissingModel): react.Html<Msg> => {
   switch (model.page.type) {
     case "Logout":
-      return Page.Logout.view(model.page.child);
+      return Pages.Logout.view(model.page.child);
 
     case "ProfileCreate":
-      return Page.ProfileCreate.view(model.page.child);
+      return Pages.ProfileCreate.view(model.page.child);
 
     default:
       return exhaustive(model.page);
@@ -760,7 +763,7 @@ const viewSessionLoading = (model: SessionLoadingModel): react.Html<Msg> => {
 const viewSessionMissing = (model: SessionMissingModel): react.Html<Msg> => {
   switch (model.page.type) {
     case "Login":
-      return Page.Login.view(model.page.child);
+      return Pages.Login.view(model.page.child);
 
     default:
       return exhaustive(model.page.type);
@@ -770,47 +773,47 @@ const viewSessionMissing = (model: SessionMissingModel): react.Html<Msg> => {
 const viewReady = ({ page, profile }: ReadyModel): react.Html<Msg> => {
   switch (page.type) {
     case "Account":
-      return Page.Account.view(profile, page.child);
+      return Pages.Account.view(profile, page.child);
 
     case "Chess":
-      return Page.Chess.view(page.child);
+      return Pages.Chess.view(page.child);
 
     case "Home":
-      return Page.Home.view(profile, page.child);
+      return Pages.Home.view(profile, page.child);
 
     case "ConnectFour":
-      return Page.ConnectFour.view(page.child);
+      return Pages.ConnectFour.view(page.child);
 
     case "Logout":
-      return Page.Logout.view(page.child);
+      return Pages.Logout.view(page.child);
 
     case "ProfileCreate":
-      return Page.ProfileCreate.view(page.child);
+      return Pages.ProfileCreate.view(page.child);
 
     case "ProfileDelete":
-      return Page.ProfileDelete.view(page.child);
+      return Pages.ProfileDelete.view(page.child);
 
     case "ProfileUpdate":
-      return Page.ProfileUpdate.view(profile, page.child);
+      return Pages.ProfileUpdate.view(profile, page.child);
 
     case "ProfileUpdateAvatar":
       return pipe(
-        Page.ProfileUpdateAvatar.view(profile, page.child),
+        Pages.ProfileUpdateAvatar.view(profile, page.child),
         react.map(groupMsg("ProfileUpdateAvatar"))
       );
 
     case "ProfileUpdateAvatarStyle":
-      return Page.ProfileUpdateAvatarStyle.view(page.child);
+      return Pages.ProfileUpdateAvatarStyle.view(page.child);
 
     case "ProfileUpdateName":
-      return Page.ProfileUpdateName.view(page.child);
+      return Pages.ProfileUpdateName.view(page.child);
 
     case "ProfileUpdateUsername":
-      return Page.ProfileUpdateUsername.view(page.child);
+      return Pages.ProfileUpdateUsername.view(page.child);
 
     case "TicTacToe":
       return pipe(
-        Page.TicTacToe.view(page.child),
+        Pages.TicTacToe.view(page.child),
         react.map(groupMsg("TicTacToe"))
       );
 
