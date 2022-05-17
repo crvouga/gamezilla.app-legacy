@@ -1,10 +1,10 @@
 import { LoadingButton } from "@mui/lab";
 import { Box, TextField } from "@mui/material";
 import * as React from "react";
-import { cmd, react } from "../../Framework";
-import * as Profile from "..";
-import * as Routes from "../../Routes";
-import * as View from "../../View";
+import { cmd, react } from "Framework";
+import * as Profile from "Profile";
+import * as Routes from "Routes";
+import * as View from "View";
 
 //
 //

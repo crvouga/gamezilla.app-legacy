@@ -23,7 +23,8 @@
     "skipDefaultLibCheck": true,
     "noImplicitReturns": true,
     "noImplicitAny": true,
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "baseUrl": "./source"
   },
   "exclude": ["node_modules"],
   "include": ["source"],

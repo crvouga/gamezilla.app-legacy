@@ -2,10 +2,10 @@ import { LoadingButton } from "@mui/lab";
 import { Typography } from "@mui/material";
 import React from "react";
 import * as Session from "../Session";
-import { cmd, react } from "../Framework";
+import { cmd, react } from "Framework";
 import * as View from "../View";
 import { pipe } from "fp-ts/lib/function";
-import { attempt, perform } from "../Framework/Task";
+import { attempt, perform } from "Framework/Task";
 import { either, option } from "fp-ts";
 
 //

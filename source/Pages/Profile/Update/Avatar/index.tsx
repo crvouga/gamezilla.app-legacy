@@ -7,12 +7,11 @@ import {
   ListItemButton,
   ListItemText,
 } from "@mui/material";
+import { cmd, react } from "Framework";
+import * as ProfileAvatar from "ProfileAvatar";
 import * as React from "react";
-import UrlPattern from "url-pattern";
-import { cmd, react } from "../../Framework";
-import * as ProfileAvatar from "../../ProfileAvatar";
-import * as Routes from "../../Routes";
-import * as View from "../../View";
+import * as Routes from "Routes";
+import * as View from "View";
 
 // ███╗   ███╗ ██████╗ ██████╗ ███████╗██╗
 // ████╗ ████║██╔═══██╗██╔══██╗██╔════╝██║

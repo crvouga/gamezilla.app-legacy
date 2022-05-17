@@ -1,11 +1,11 @@
 import { LoadingButton } from "@mui/lab";
 import { Avatar, Box, Button, TextField } from "@mui/material";
 import * as React from "react";
-import { cmd, react } from "../../Framework";
+import { cmd, react } from "Framework";
 import * as Profile from "../../Profile";
 import * as ProfileAvatar from "../../ProfileAvatar";
 import * as Session from "../../Session";
-import * as View from "../../View";
+import * as View from "View";
 
 //
 //

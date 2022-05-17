@@ -3,9 +3,9 @@ import { Button, Dialog, DialogActions, DialogTitle } from "@mui/material";
 import { either } from "fp-ts";
 import { pipe } from "fp-ts/lib/function";
 import React from "react";
-import { cmd, react } from "../Framework";
-import { attempt } from "../Framework/Task";
-import * as Routes from "../Routes";
+import { cmd, react } from "Framework";
+import { attempt } from "Framework/Task";
+import * as Routes from "Routes";
 import * as Session from "../Session";
 
 //
