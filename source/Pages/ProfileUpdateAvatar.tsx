@@ -1,26 +1,25 @@
 import { LoadingButton } from "@mui/lab";
 import {
-  ListItemText,
-  Box,
   Avatar,
+  Box,
   List,
-  ListItemButton,
   ListItemAvatar,
+  ListItemButton,
+  ListItemText,
 } from "@mui/material";
 import * as React from "react";
+import UrlPattern from "url-pattern";
 import { cmd, react } from "../Framework";
 import * as ProfileAvatar from "../ProfileAvatar";
 import * as Routes from "../Routes";
 import * as View from "../View";
 
-// 88b           d88                        88              88
-// 888b         d888                        88              88
-// 88`8b       d8'88                        88              88
-// 88 `8b     d8' 88   ,adPPYba,    ,adPPYb,88   ,adPPYba,  88
-// 88  `8b   d8'  88  a8"     "8a  a8"    `Y88  a8P_____88  88
-// 88   `8b d8'   88  8b       d8  8b       88  8PP"""""""  88
-// 88    `888'    88  "8a,   ,a8"  "8a,   ,d88  "8b,   ,aa  88
-// 88     `8'     88   `"YbbdP"'    `"8bbdP"Y8   `"Ybbd8"'  88
+// ███╗   ███╗ ██████╗ ██████╗ ███████╗██╗
+// ████╗ ████║██╔═══██╗██╔══██╗██╔════╝██║
+// ██╔████╔██║██║   ██║██║  ██║█████╗  ██║
+// ██║╚██╔╝██║██║   ██║██║  ██║██╔══╝  ██║
+// ██║ ╚═╝ ██║╚██████╔╝██████╔╝███████╗███████╗
+// ╚═╝     ╚═╝ ╚═════╝ ╚═════╝ ╚══════╝╚══════╝
 
 export type Model = {
   status: "Idle" | "Loading";
@@ -37,32 +36,29 @@ export const init = ({ avatarUrl }: { avatarUrl: string }): Model => {
   };
 };
 
-// 88        88                        88
-// 88        88                        88                ,d
-// 88        88                        88                88
-// 88        88  8b,dPPYba,    ,adPPYb,88  ,adPPYYba,  MM88MMM  ,adPPYba,
-// 88        88  88P'    "8a  a8"    `Y88  ""     `Y8    88    a8P_____88
-// 88        88  88       d8  8b       88  ,adPPPPP88    88    8PP"""""""
-// Y8a.    .a8P  88b,   ,a8"  "8a,   ,d88  88,    ,88    88,   "8b,   ,aa
-//  `"Y8888Y"'   88`YbbdP"'    `"8bbdP"Y8  `"8bbdP"Y8    "Y888  `"Ybbd8"'
-//               88
-//               88
+// ██╗   ██╗██████╗ ██████╗  █████╗ ████████╗███████╗
+// ██║   ██║██╔══██╗██╔══██╗██╔══██╗╚══██╔══╝██╔════╝
+// ██║   ██║██████╔╝██║  ██║███████║   ██║   █████╗
+// ██║   ██║██╔═══╝ ██║  ██║██╔══██║   ██║   ██╔══╝
+// ╚██████╔╝██║     ██████╔╝██║  ██║   ██║   ███████╗
+//  ╚═════╝ ╚═╝     ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚══════╝
 
 export type Msg =
   | { type: "ClickedBackButton" }
   | { type: "ClickedStyle" }
   | { type: "ClickedSeed" }
-  | { type: "ClickedStyleListItem"; style: ProfileAvatar.Style };
+  | { type: "ClickedStyleListItem"; style: ProfileAvatar.Style }
+  | { type: "LocationChanged"; location: { pathname: string } };
 
 export const update = (
-  {
-    userId,
-    location: { pathname: string },
-  }: { userId: string; location: { pathname: string } },
+  { userId }: { userId: string },
   msg: Msg,
   model: Model
 ): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
+    case "LocationChanged":
+      return [model, cmd.none];
+
     case "ClickedStyleListItem":
       return [{ ...model, style: msg.style }, cmd.none];
 
@@ -70,21 +66,19 @@ export const update = (
       return [model, Routes.replace({ type: "ProfileUpdate" })];
 
     case "ClickedSeed":
-      return [model, Routes.push({ type: "ProfileUpdateAvatarStyle" })];
+      return [model, cmd.none];
 
     case "ClickedStyle":
-      return [model, Routes.push({ type: "ProfileUpdateAvatarStyle" })];
+      return [model, cmd.none];
   }
 };
 
-// 8b           d8  88
-// `8b         d8'  ""
-//  `8b       d8'
-//   `8b     d8'    88   ,adPPYba,  8b      db      d8
-//    `8b   d8'     88  a8P_____88  `8b    d88b    d8'
-//     `8b d8'      88  8PP"""""""   `8b  d8'`8b  d8'
-//      `888'       88  "8b,   ,aa    `8bd8'  `8bd8'
-//       `8'        88   `"Ybbd8"'      YP      YP
+// ██╗   ██╗██╗███████╗██╗    ██╗
+// ██║   ██║██║██╔════╝██║    ██║
+// ██║   ██║██║█████╗  ██║ █╗ ██║
+// ╚██╗ ██╔╝██║██╔══╝  ██║███╗██║
+//  ╚████╔╝ ██║███████╗╚███╔███╔╝
+//   ╚═══╝  ╚═╝╚══════╝ ╚══╝╚══╝
 
 type Profile = { username: string; name: string; avatarUrl: string };
 
