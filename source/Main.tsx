@@ -12,40 +12,45 @@ import * as Page from "./Page";
 import * as Routes from "./Routes";
 import { exhaustive } from "./Utility";
 
-//
-//
-//
-// Model
-//
-//
-//
+/* 
+
+888b     d888               888          888 
+8888b   d8888               888          888 
+88888b.d88888               888          888 
+888Y88888P888  .d88b.   .d88888  .d88b.  888 
+888 Y888P 888 d88""88b d88" 888 d8P  Y8b 888 
+888  Y8P  888 888  888 888  888 88888888 888 
+888   "   888 Y88..88P Y88b 888 Y8b.     888 
+888       888  "Y88P"   "Y88888  "Y8888  888 
+
+*/
 
 export type Model =
-  | SessionLoading
-  | SessionMissing
-  | ProfileLoading
-  | ProfileMissing
-  | Ready;
+  | SessionLoadingModel
+  | SessionMissingModel
+  | ProfileLoadingModel
+  | ProfileMissingModel
+  | ReadyModel;
 
-type SessionLoading = {
+type SessionLoadingModel = {
   type: "SessionLoading";
   location: Location;
 };
 
-type SessionMissing = {
+type SessionMissingModel = {
   type: "SessionMissing";
   location: Location;
   page: { type: "Login"; child: Page.Login.Model };
 };
 
-type ProfileLoading = {
+type ProfileLoadingModel = {
   type: "ProfileLoading";
   location: Location;
   userId: string;
   defaultName: string;
 };
 
-type ProfileMissing = {
+type ProfileMissingModel = {
   type: "ProfileMissing";
   location: Location;
   userId: string;
@@ -55,15 +60,10 @@ type ProfileMissing = {
     | { type: "Logout"; child: Page.Logout.Model };
 };
 
-type Ready = {
+type ReadyModel = {
   type: "Ready";
   location: Location;
-  profile: {
-    userId: string;
-    name: string;
-    avatarUrl: string;
-    username: string;
-  };
+  profile: Profile;
   page:
     | { type: "Home"; child: Page.Home.Model }
     | { type: "Account"; child: Page.Account.Model }
@@ -85,6 +85,26 @@ type Ready = {
 
 type Location = { pathname: string };
 
+type Profile = {
+  name: string;
+  avatarUrl: string;
+  username: string;
+  userId: string;
+};
+
+/* 
+
+d8b          d8b 888
+Y8P          Y8P 888
+                 888
+888 88888b.  888 888888
+888 888 "88b 888 888
+888 888  888 888 888
+888 888  888 888 Y88b.
+888 888  888 888  "Y888
+
+*/
+
 export const init = (location: navigation.Location): [Model, cmd.Cmd<Msg>] => [
   { type: "SessionLoading", location: location },
   pipe(Session.load(), perform(maybeSessionToMsg)),
@@ -92,7 +112,7 @@ export const init = (location: navigation.Location): [Model, cmd.Cmd<Msg>] => [
 
 const initSessionMissing = (
   location: Location
-): [SessionMissing, cmd.Cmd<Msg>] => {
+): [SessionMissingModel, cmd.Cmd<Msg>] => {
   const child = Page.Login.init();
 
   return [
@@ -106,183 +126,13 @@ const maybeSessionToMsg = option.fold<Session.Session, Msg>(
   (session) => ({ group: "Main", type: "SessionFound", ...session })
 );
 
-//
-//
-//
-// Update
-//
-//
-//
-
-type Profile = {
-  name: string;
-  avatarUrl: string;
-  username: string;
-  userId: string;
-};
-
-export type Msg =
-  | { group: "Main"; type: "LocationChanged"; location: Location }
-  | { group: "Main"; type: "SessionFound"; userId: string; defaultName: string }
-  | { group: "Main"; type: "SessionNotFound" }
-  | { group: "Main"; type: "ProfileFound"; profile: Profile }
-  | { group: "Main"; type: "ProfileNotFound" }
-  | Page.Account.Msg
-  | Page.Chess.Msg
-  | Page.ConnectFour.Msg
-  | Page.Home.Msg
-  | Page.Login.Msg
-  | Page.Logout.Msg
-  | Page.ProfileCreate.Msg
-  | Page.ProfileDelete.Msg
-  | Page.ProfileUpdate.Msg
-  | Page.ProfileUpdateAvatar.Msg
-  | Page.ProfileUpdateAvatarStyle.Msg
-  | Page.ProfileUpdateName.Msg
-  | Page.ProfileUpdateUsername.Msg
-  | Page.TicTacToe.Msg;
-
-export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
-  switch (model.type) {
-    case "SessionLoading":
-      return updateSessionLoading(msg, model);
-
-    case "ProfileLoading":
-      return updateProfileLoading(msg, model);
-
-    case "ProfileMissing":
-      return updateProfileMissing(msg, model);
-
-    case "Ready":
-      return updateReady(msg, model);
-
-    case "SessionMissing":
-      return updateSessionMissing(msg, model);
-  }
-};
-
-const updateProfileMissing = (
-  msg: Msg,
-  model: ProfileMissing
-): [Model, cmd.Cmd<Msg>] => {
-  switch (msg.group) {
-    case "Main":
-      switch (msg.type) {
-        case "LocationChanged":
-          return [{ ...model, location: msg.location }, cmd.none];
-
-        case "ProfileFound":
-          return initReady({ location: model.location, profile: msg.profile });
-
-        default:
-          return [model, cmd.none];
-      }
-    default: {
-      switch (model.page.type) {
-        case "Logout":
-          if (msg.group === "Logout") {
-            const [child, childCmd] = Page.Logout.update(msg, model.page.child);
-            return [{ ...model, page: { type: "Logout", child } }, childCmd];
-          }
-          return [model, cmd.none];
-
-        case "ProfileCreate":
-          if (msg.group === "ProfileCreate") {
-            const [child, childCmd] = Page.ProfileCreate.update(
-              model,
-              msg,
-              model.page.child
-            );
-            return [
-              { ...model, page: { type: "ProfileCreate", child } },
-              childCmd,
-            ];
-          }
-          return [model, cmd.none];
-      }
-    }
-  }
-};
-
-const updateSessionMissing = (
-  msg: Msg,
-  model: SessionMissing
-): [Model, cmd.Cmd<Msg>] => {
-  switch (msg.group) {
-    case "Main":
-      switch (msg.type) {
-        case "LocationChanged":
-          return [{ ...model, location: msg.location }, cmd.none];
-
-        case "SessionFound":
-          return initProfileLoading({ session: msg, location: model.location });
-
-        default:
-          return [model, cmd.none];
-      }
-
-    default:
-      switch (model.page.type) {
-        case "Login":
-          if (msg.group === "Login") {
-            const [child, childCmd] = Page.Login.update(msg, model.page.child);
-            return [{ ...model, page: { type: "Login", child } }, childCmd];
-          }
-
-          return [model, cmd.none];
-      }
-  }
-};
-
-const initProfileLoading = ({
-  session,
-  location,
-}: {
-  session: Session.Session;
-  location: Location;
-}): [ProfileLoading, cmd.Cmd<Msg>] => {
-  return [
-    {
-      type: "ProfileLoading",
-      location,
-      defaultName: session.defaultName,
-      userId: session.userId,
-    },
-    pipe(Profile.load(session), attempt(profileResultToMsg)),
-  ];
-};
-
-const updateSessionLoading = (
-  msg: Msg,
-  model: SessionLoading
-): [ProfileLoading | SessionLoading | SessionMissing, cmd.Cmd<Msg>] => {
-  switch (msg.type) {
-    case "LocationChanged":
-      return [{ ...model, location: msg.location }, cmd.none];
-
-    case "SessionFound":
-      return initProfileLoading({ session: msg, location: model.location });
-
-    case "SessionNotFound":
-      return initSessionMissing(model.location);
-
-    default:
-      return [model, cmd.none];
-  }
-};
-
-const profileResultToMsg = either.fold<Error, Profile.Profile, Msg>(
-  (_error) => ({ group: "Main", type: "ProfileNotFound" }),
-  (profile) => ({ group: "Main", type: "ProfileFound", profile })
-);
-
 const initReady = ({
   location,
   profile,
 }: {
   location: Location;
   profile: Profile;
-}): [Ready, cmd.Cmd<Msg>] => {
+}): [ReadyModel, cmd.Cmd<Msg>] => {
   const [page, pageCmd] = initReadyPage(profile, location);
   return [
     {
@@ -295,85 +145,10 @@ const initReady = ({
   ];
 };
 
-const updateProfileLoading = (
-  msg: Msg,
-  model: ProfileLoading
-): [Model, cmd.Cmd<Msg>] => {
-  switch (msg.type) {
-    case "LocationChanged":
-      return [{ ...model, location: msg.location }, cmd.none];
-
-    case "ProfileFound":
-      return initReady({ ...model, ...msg });
-
-    case "ProfileNotFound":
-      return initProfileMissing(model);
-
-    default:
-      return [model, cmd.none];
-  }
-};
-
-const initProfileMissing = (deps: {
-  userId: string;
-  defaultName: string;
-}): [ProfileMissing, cmd.Cmd<Msg>] => {
-  return [
-    {
-      ...deps,
-      type: "ProfileMissing",
-      location: location,
-      page: {
-        type: "ProfileCreate",
-        child: Page.ProfileCreate.init(deps),
-      },
-    },
-    Routes.replace({ type: "ProfileCreate" }),
-  ];
-};
-
-//
-//
-//
-// Update Ready
-//
-//
-//
-
-const updateReady = (msg: Msg, model: Ready): [Model, cmd.Cmd<Msg>] => {
-  switch (msg.group) {
-    case "Main":
-      switch (msg.type) {
-        case "LocationChanged":
-          const [page, pageCmd] = initReadyPage(model.profile, msg.location);
-          return [{ ...model, location: msg.location, page }, pageCmd];
-
-        case "ProfileFound":
-          return [{ ...model, profile: msg.profile, page }, pageCmd];
-
-        case "ProfileNotFound":
-          return initProfileMissing({
-            userId: model.profile.userId,
-            defaultName: model.profile.name,
-          });
-
-        case "SessionNotFound":
-          return initSessionMissing(model.location);
-
-        default:
-          return [model, cmd.none];
-      }
-    default: {
-      const [page, pageCmd] = updateReadyPage(model.profile, msg, model.page);
-      return [{ ...model, page }, pageCmd];
-    }
-  }
-};
-
 const initReadyPage = (
   profile: Profile,
   location: { pathname: string }
-): [Ready["page"], cmd.Cmd<Msg>] => {
+): [ReadyModel["page"], cmd.Cmd<Msg>] => {
   const route = pipe(
     location,
     Routes.decode,
@@ -383,7 +158,7 @@ const initReadyPage = (
     )
   );
 
-  const notFound: [Ready["page"], cmd.Cmd<Msg>] = [
+  const notFound: [ReadyModel["page"], cmd.Cmd<Msg>] = [
     { type: "Home", child: Page.Home.init },
     Routes.push({ type: "Home" }),
   ];
@@ -466,11 +241,267 @@ const initReadyPage = (
   }
 };
 
+const initProfileLoading = ({
+  session,
+  location,
+}: {
+  session: Session.Session;
+  location: Location;
+}): [ProfileLoadingModel, cmd.Cmd<Msg>] => {
+  return [
+    {
+      type: "ProfileLoading",
+      location,
+      defaultName: session.defaultName,
+      userId: session.userId,
+    },
+    pipe(Profile.load(session), attempt(profileResultToMsg)),
+  ];
+};
+
+const initProfileMissing = (deps: {
+  userId: string;
+  defaultName: string;
+}): [ProfileMissingModel, cmd.Cmd<Msg>] => {
+  return [
+    {
+      ...deps,
+      type: "ProfileMissing",
+      location: location,
+      page: {
+        type: "ProfileCreate",
+        child: Page.ProfileCreate.init(deps),
+      },
+    },
+    Routes.replace({ type: "ProfileCreate" }),
+  ];
+};
+
+/* 
+
+888b     d888                   
+8888b   d8888                   
+88888b.d88888                   
+888Y88888P888 .d8888b   .d88b.  
+888 Y888P 888 88K      d88P"88b 
+888  Y8P  888 "Y8888b. 888  888 
+888   "   888      X88 Y88b 888 
+888       888  88888P'  "Y88888 
+                            888 
+                       Y8b d88P 
+                        "Y88P"  
+
+*/
+
+export type Msg =
+  | { group: "Main"; type: "LocationChanged"; location: Location }
+  | { group: "Main"; type: "SessionFound"; userId: string; defaultName: string }
+  | { group: "Main"; type: "SessionNotFound" }
+  | { group: "Main"; type: "ProfileFound"; profile: Profile }
+  | { group: "Main"; type: "ProfileNotFound" }
+  | Page.Account.Msg
+  | Page.Chess.Msg
+  | Page.ConnectFour.Msg
+  | Page.Home.Msg
+  | Page.Login.Msg
+  | Page.Logout.Msg
+  | Page.ProfileCreate.Msg
+  | Page.ProfileDelete.Msg
+  | Page.ProfileUpdate.Msg
+  | Page.ProfileUpdateAvatar.Msg
+  | Page.ProfileUpdateAvatarStyle.Msg
+  | Page.ProfileUpdateName.Msg
+  | Page.ProfileUpdateUsername.Msg
+  | Page.TicTacToe.Msg;
+
+/* 
+
+888     888               888          888
+888     888               888          888
+888     888               888          888
+888     888 88888b.   .d88888  8888b.  888888 .d88b.
+888     888 888 "88b d88" 888     "88b 888   d8P  Y8b
+888     888 888  888 888  888 .d888888 888   88888888
+Y88b. .d88P 888 d88P Y88b 888 888  888 Y88b. Y8b.
+ "Y88888P"  88888P"   "Y88888 "Y888888  "Y888 "Y8888
+            888
+            888
+            888
+*/
+
+export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
+  switch (model.type) {
+    case "SessionLoading":
+      return updateSessionLoading(msg, model);
+
+    case "ProfileLoading":
+      return updateProfileLoading(msg, model);
+
+    case "ProfileMissing":
+      return updateProfileMissing(msg, model);
+
+    case "Ready":
+      return updateReady(msg, model);
+
+    case "SessionMissing":
+      return updateSessionMissing(msg, model);
+  }
+};
+
+const updateProfileMissing = (
+  msg: Msg,
+  model: ProfileMissingModel
+): [Model, cmd.Cmd<Msg>] => {
+  switch (msg.group) {
+    case "Main":
+      switch (msg.type) {
+        case "LocationChanged":
+          return [{ ...model, location: msg.location }, cmd.none];
+
+        case "ProfileFound":
+          return initReady({ location: model.location, profile: msg.profile });
+
+        default:
+          return [model, cmd.none];
+      }
+    default: {
+      switch (model.page.type) {
+        case "Logout":
+          if (msg.group === "Logout") {
+            const [child, childCmd] = Page.Logout.update(msg, model.page.child);
+            return [{ ...model, page: { type: "Logout", child } }, childCmd];
+          }
+          return [model, cmd.none];
+
+        case "ProfileCreate":
+          if (msg.group === "ProfileCreate") {
+            const [child, childCmd] = Page.ProfileCreate.update(
+              model,
+              msg,
+              model.page.child
+            );
+            return [
+              { ...model, page: { type: "ProfileCreate", child } },
+              childCmd,
+            ];
+          }
+          return [model, cmd.none];
+      }
+    }
+  }
+};
+
+const updateSessionMissing = (
+  msg: Msg,
+  model: SessionMissingModel
+): [Model, cmd.Cmd<Msg>] => {
+  switch (msg.group) {
+    case "Main":
+      switch (msg.type) {
+        case "LocationChanged":
+          return [{ ...model, location: msg.location }, cmd.none];
+
+        case "SessionFound":
+          return initProfileLoading({ session: msg, location: model.location });
+
+        default:
+          return [model, cmd.none];
+      }
+
+    default:
+      switch (model.page.type) {
+        case "Login":
+          if (msg.group === "Login") {
+            const [child, childCmd] = Page.Login.update(msg, model.page.child);
+            return [{ ...model, page: { type: "Login", child } }, childCmd];
+          }
+
+          return [model, cmd.none];
+      }
+  }
+};
+
+const updateSessionLoading = (
+  msg: Msg,
+  model: SessionLoadingModel
+): [
+  ProfileLoadingModel | SessionLoadingModel | SessionMissingModel,
+  cmd.Cmd<Msg>
+] => {
+  switch (msg.type) {
+    case "LocationChanged":
+      return [{ ...model, location: msg.location }, cmd.none];
+
+    case "SessionFound":
+      return initProfileLoading({ session: msg, location: model.location });
+
+    case "SessionNotFound":
+      return initSessionMissing(model.location);
+
+    default:
+      return [model, cmd.none];
+  }
+};
+
+const profileResultToMsg = either.fold<Error, Profile.Profile, Msg>(
+  (_error) => ({ group: "Main", type: "ProfileNotFound" }),
+  (profile) => ({ group: "Main", type: "ProfileFound", profile })
+);
+
+const updateProfileLoading = (
+  msg: Msg,
+  model: ProfileLoadingModel
+): [Model, cmd.Cmd<Msg>] => {
+  switch (msg.type) {
+    case "LocationChanged":
+      return [{ ...model, location: msg.location }, cmd.none];
+
+    case "ProfileFound":
+      return initReady({ ...model, ...msg });
+
+    case "ProfileNotFound":
+      return initProfileMissing(model);
+
+    default:
+      return [model, cmd.none];
+  }
+};
+
+const updateReady = (msg: Msg, model: ReadyModel): [Model, cmd.Cmd<Msg>] => {
+  switch (msg.group) {
+    case "Main":
+      switch (msg.type) {
+        case "LocationChanged":
+          const [page, pageCmd] = initReadyPage(model.profile, msg.location);
+          return [{ ...model, location: msg.location, page }, pageCmd];
+
+        case "ProfileFound":
+          return [{ ...model, profile: msg.profile, page }, pageCmd];
+
+        case "ProfileNotFound":
+          return initProfileMissing({
+            userId: model.profile.userId,
+            defaultName: model.profile.name,
+          });
+
+        case "SessionNotFound":
+          return initSessionMissing(model.location);
+
+        default:
+          return [model, cmd.none];
+      }
+    default: {
+      const [page, pageCmd] = updateReadyPage(model.profile, msg, model.page);
+      return [{ ...model, page }, pageCmd];
+    }
+  }
+};
+
 const updateReadyPage = (
   profile: Profile,
   msg: Msg,
-  page: Ready["page"]
-): [Ready["page"], cmd.Cmd<Msg>] => {
+  page: ReadyModel["page"]
+): [ReadyModel["page"], cmd.Cmd<Msg>] => {
   switch (page.type) {
     case "Account":
       if (msg.group === "Account") {
@@ -596,43 +627,46 @@ const updateReadyPage = (
   }
 };
 
-//
-//
-//
-// Subscriptions
-//
-//
-//
+/* 
+
+ .d8888b.           888                                d8b          888    d8b                            
+d88P  Y88b          888                                Y8P          888    Y8P                            
+Y88b.               888                                             888                                   
+ "Y888b.   888  888 88888b.  .d8888b   .d8888b 888d888 888 88888b.  888888 888  .d88b.  88888b.  .d8888b  
+    "Y88b. 888  888 888 "88b 88K      d88P"    888P"   888 888 "88b 888    888 d88""88b 888 "88b 88K      
+      "888 888  888 888  888 "Y8888b. 888      888     888 888  888 888    888 888  888 888  888 "Y8888b. 
+Y88b  d88P Y88b 888 888 d88P      X88 Y88b.    888     888 888 d88P Y88b.  888 Y88..88P 888  888      X88 
+ "Y8888P"   "Y88888 88888P"   88888P'  "Y8888P 888     888 88888P"   "Y888 888  "Y88P"  888  888  88888P' 
+                                                           888                                            
+                                                           888                                            
+                                                           888                                            
+*/
 
 export const subscriptions = (model: Model): sub.Sub<Msg> => {
   switch (model.type) {
     case "ProfileLoading":
-      return sub.batch([
-        pipe(Session.subscriptions(), sub.map(maybeSessionToMsg)),
-      ]);
+      return sessionSub();
 
     case "ProfileMissing":
-      return sub.batch([
-        pipe(Session.subscriptions(), sub.map(maybeSessionToMsg)),
-        pipe(Profile.subscriptions(model), sub.map(maybeProfileToMsg)),
-      ]);
+      return sub.batch([sessionSub(), profileSub(model)]);
 
     case "Ready":
-      return sub.batch([
-        pipe(Session.subscriptions(), sub.map(maybeSessionToMsg)),
-        pipe(Profile.subscriptions(model.profile), sub.map(maybeProfileToMsg)),
-      ]);
+      return sub.batch([sessionSub(), profileSub(model.profile)]);
 
     case "SessionLoading":
-      return sub.batch([
-        pipe(Session.subscriptions(), sub.map(maybeSessionToMsg)),
-      ]);
+      return sessionSub();
 
     case "SessionMissing":
-      return sub.batch([
-        pipe(Session.subscriptions(), sub.map(maybeSessionToMsg)),
-      ]);
+      return sessionSub();
   }
+};
+
+const profileSub = ({ userId }: { userId: string }) => {
+  return pipe(Profile.subscriptions({ userId }), sub.map(maybeProfileToMsg));
+};
+
+const sessionSub = () => {
+  return pipe(Session.subscriptions(), sub.map(maybeSessionToMsg));
 };
 
 const maybeProfileToMsg = option.fold<Profile.Profile, Msg>(
@@ -640,13 +674,18 @@ const maybeProfileToMsg = option.fold<Profile.Profile, Msg>(
   (profile) => ({ type: "ProfileFound", profile, group: "Main" })
 );
 
-//
-//
-//
-// View
-//
-//
-//
+/* 
+
+888     888 d8b                        
+888     888 Y8P                        
+888     888                            
+Y88b   d88P 888  .d88b.  888  888  888 
+ Y88b d88P  888 d8P  Y8b 888  888  888 
+  Y88o88P   888 88888888 888  888  888 
+   Y888P    888 Y8b.     Y88b 888 d88P 
+    Y8P     888  "Y8888   "Y8888888P"  
+
+*/
 
 export const view =
   (model: Model): react.Html<Msg> =>
@@ -656,41 +695,54 @@ export const view =
 export const viewMain = (model: Model): react.Html<Msg> => {
   switch (model.type) {
     case "ProfileLoading":
-      return () => <View.LoadingPage />;
+      return viewProfileLoading(model);
 
     case "ProfileMissing":
-      switch (model.page.type) {
-        case "Logout":
-          return Page.Logout.view(model.page.child);
-
-        case "ProfileCreate":
-          return Page.ProfileCreate.view(model.page.child);
-
-        default:
-          return exhaustive(model.page);
-      }
+      return viewProfileMissing(model);
 
     case "SessionLoading":
-      return () => <View.LoadingPage />;
+      return viewSessionLoading(model);
 
     case "SessionMissing":
-      switch (model.page.type) {
-        case "Login":
-          return Page.Login.view(model.page.child);
-
-        default:
-          return exhaustive(model.page.type);
-      }
+      return viewSessionMissing(model);
 
     case "Ready":
-      return viewReadyPage(model.profile, model.page);
+      return viewReady(model);
   }
 };
 
-const viewReadyPage = (
-  profile: Profile,
-  page: Ready["page"]
-): react.Html<Msg> => {
+const viewProfileLoading = (model: ProfileLoadingModel): react.Html<Msg> => {
+  return () => <View.LoadingPage />;
+};
+
+const viewProfileMissing = (model: ProfileMissingModel): react.Html<Msg> => {
+  switch (model.page.type) {
+    case "Logout":
+      return Page.Logout.view(model.page.child);
+
+    case "ProfileCreate":
+      return Page.ProfileCreate.view(model.page.child);
+
+    default:
+      return exhaustive(model.page);
+  }
+};
+
+const viewSessionLoading = (model: SessionLoadingModel): react.Html<Msg> => {
+  return () => <View.LoadingPage />;
+};
+
+const viewSessionMissing = (model: SessionMissingModel): react.Html<Msg> => {
+  switch (model.page.type) {
+    case "Login":
+      return Page.Login.view(model.page.child);
+
+    default:
+      return exhaustive(model.page.type);
+  }
+};
+
+const viewReady = ({ page, profile }: ReadyModel): react.Html<Msg> => {
   switch (page.type) {
     case "Account":
       return Page.Account.view(profile, page.child);
@@ -736,51 +788,65 @@ const viewReadyPage = (
   }
 };
 
-//
-//
-//
-// Location
-//
-//
-//
+/* 
+
+888b     d888          d8b          
+8888b   d8888          Y8P          
+88888b.d88888                       
+888Y88888P888  8888b.  888 88888b.  
+888 Y888P 888     "88b 888 888 "88b 
+888  Y8P  888 .d888888 888 888  888 
+888   "   888 888  888 888 888  888 
+888       888 "Y888888 888 888  888 
+
+*/
 
 const locationToMsg = (location: navigation.Location): Msg => {
   return { group: "Main", type: "LocationChanged", location: location };
 };
 
-//
-//
-//
-//
-//
-// Main
-//
-//
-//
-//
-//
+const Program =
+  process.env.NODE_ENV === "production"
+    ? navigation.program
+    : programWithDebugger;
 
-const main = () => {
-  const Program =
-    process.env.NODE_ENV === "production"
-      ? navigation.program
-      : programWithDebugger;
+const program = Program(locationToMsg, init, update, view, subscriptions);
 
-  const program = Program(locationToMsg, init, update, view, subscriptions);
+const rootElement = document.getElementById("root");
 
-  const rootElement = document.getElementById("root");
+if (!rootElement) {
+  throw new Error("Failed to get root dom node");
+}
 
-  if (rootElement) {
-    const root = createRoot(rootElement);
+const root = createRoot(rootElement);
 
-    react.run(program, (dom) => {
-      root.render(dom);
-    });
-  }
-};
+react.run(program, (dom) => {
+  root.render(dom);
+});
 
-//
-//
-//
+/* 
 
-main();
+888               888                                    
+888               888                                    
+888               888                                    
+88888b.   .d88b.  888 88888b.   .d88b.  888d888 .d8888b  
+888 "88b d8P  Y8b 888 888 "88b d8P  Y8b 888P"   88K      
+888  888 88888888 888 888  888 88888888 888     "Y8888b. 
+888  888 Y8b.     888 888 d88P Y8b.     888          X88 
+888  888  "Y8888  888 88888P"   "Y8888  888      88888P' 
+                      888                                
+                      888                                
+                      888                                
+
+*/
+
+const andThen =
+  <Msg, Model>(
+    update: (msg: Msg, model: Model) => [Model, cmd.Cmd<Msg>],
+    msg: Msg
+  ) =>
+  ([model, cmdPrev]: [Model, cmd.Cmd<Msg>]): [Model, cmd.Cmd<Msg>] => {
+    const [modelNew, cmdNew] = update(msg, model);
+
+    return [modelNew, cmd.batch([cmdPrev, cmdNew])];
+  };
