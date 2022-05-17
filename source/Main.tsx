@@ -817,14 +817,14 @@ const viewReady = ({ page, profile }: ReadyModel): react.Html<Msg> => {
   }
 };
 
-//                                 88
-//                                 ""
-
-// 88,dPYba,,adPYba,   ,adPPYYba,  88  8b,dPPYba,
-// 88P'   "88"    "8a  ""     `Y8  88  88P'   `"8a
-// 88      88      88  ,adPPPPP88  88  88       88
-// 88      88      88  88,    ,88  88  88       88
-// 88      88      88  `"8bbdP"Y8  88  88       88
+// 88b           d88              88
+// 888b         d888              ""
+// 88`8b       d8'88
+// 88 `8b     d8' 88  ,adPPYYba,  88  8b,dPPYba,
+// 88  `8b   d8'  88  ""     `Y8  88  88P'   `"8a
+// 88   `8b d8'   88  ,adPPPPP88  88  88       88
+// 88    `888'    88  88,    ,88  88  88       88
+// 88     `8'     88  `"8bbdP"Y8  88  88       88
 
 const locationToMsg = (location: navigation.Location): Msg => {
   return { group: "Main", type: "LocationChanged", location: location };
@@ -859,7 +859,6 @@ react.run(program, (dom) => {
 // 88       88   `"Ybbd8"'  88  88`YbbdP"'    `"Ybbd8"'  88          `"YbbdP"'
 //                              88
 //                              88
-// helpers
 
 const andThen =
   <Msg, Model>(
