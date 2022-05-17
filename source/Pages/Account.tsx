@@ -2,37 +2,29 @@ import { ChevronRight, Delete, Edit, Logout } from "@mui/icons-material";
 import {
   Box,
   Button,
-  Card,
-  CardActions,
-  CardHeader,
   CircularProgress,
   Dialog,
   DialogActions,
-  DialogContent,
   DialogTitle,
   List,
   ListItemButton,
   ListItemIcon,
   ListItemSecondaryAction,
   ListItemText,
-  Paper,
   Typography,
 } from "@mui/material";
 import React from "react";
 import { cmd, react } from "../Framework";
+import * as Profile from "../Profile";
 import * as Routes from "../Routes";
 import * as View from "../View";
-import * as Profile from "../Profile";
 
-//
-//
-//
-//
-// Model
-//
-//
-//
-//
+// ███╗   ███╗ ██████╗ ██████╗ ███████╗██╗
+// ████╗ ████║██╔═══██╗██╔══██╗██╔════╝██║
+// ██╔████╔██║██║   ██║██║  ██║█████╗  ██║
+// ██║╚██╔╝██║██║   ██║██║  ██║██╔══╝  ██║
+// ██║ ╚═╝ ██║╚██████╔╝██████╔╝███████╗███████╗
+// ╚═╝     ╚═╝ ╚═════╝ ╚═════╝ ╚══════╝╚══════╝
 
 export type Model =
   | { type: "Idle" }
@@ -41,15 +33,12 @@ export type Model =
 
 export const init: Model = { type: "Idle" };
 
-//
-//
-//
-//
-// Update
-//
-//
-//
-//
+// ██╗   ██╗██████╗ ██████╗  █████╗ ████████╗███████╗
+// ██║   ██║██╔══██╗██╔══██╗██╔══██╗╚══██╔══╝██╔════╝
+// ██║   ██║██████╔╝██║  ██║███████║   ██║   █████╗
+// ██║   ██║██╔═══╝ ██║  ██║██╔══██║   ██║   ██╔══╝
+// ╚██████╔╝██║     ██████╔╝██║  ██║   ██║   ███████╗
+//  ╚═════╝ ╚═╝     ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚══════╝
 
 export type Msg =
   | { group: "Account"; type: "Back" }
@@ -103,15 +92,12 @@ export const update = (
   }
 };
 
-//
-//
-//
-//
-// View
-//
-//
-//
-//
+// ██╗   ██╗██╗███████╗██╗    ██╗
+// ██║   ██║██║██╔════╝██║    ██║
+// ██║   ██║██║█████╗  ██║ █╗ ██║
+// ╚██╗ ██╔╝██║██╔══╝  ██║███╗██║
+//  ╚████╔╝ ██║███████╗╚███╔███╔╝
+//   ╚═══╝  ╚═╝╚══════╝ ╚══╝╚══╝
 
 export const view =
   ({ username }: { username: string }, model: Model): react.Html<Msg> =>
