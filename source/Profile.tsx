@@ -5,7 +5,7 @@ import * as Rx from "rxjs";
 import { cmd, sub } from "./Framework";
 import * as Supabase from "./Supabase";
 import { definitions } from "./supabase-types";
-import * as Page from "./Page";
+import * as Pages from "./Pages";
 import { either, option, task } from "fp-ts";
 
 //
