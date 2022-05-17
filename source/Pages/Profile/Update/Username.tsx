@@ -1,10 +1,10 @@
 import { LoadingButton } from "@mui/lab";
 import { Box, TextField } from "@mui/material";
 import * as React from "react";
-import { cmd, react } from "../Framework";
-import * as Profile from "../Profile";
-import * as Routes from "../Routes";
-import * as View from "../View";
+import { cmd, react } from "../../Framework";
+import * as Profile from "..";
+import * as Routes from "../../Routes";
+import * as View from "../../View";
 
 //
 //
@@ -16,12 +16,12 @@ import * as View from "../View";
 //
 //
 
-export type Model = { status: "Idle" | "Loading"; name: string };
+export type Model = { status: "Idle" | "Loading"; username: string };
 
-export const init = ({ name }: { name: string }): Model => {
+export const init = ({ username }: { username: string }): Model => {
   return {
     status: "Idle",
-    name,
+    username,
   };
 };
 
@@ -36,11 +36,15 @@ export const init = ({ name }: { name: string }): Model => {
 //
 
 export type Msg =
-  | { group: "ProfileUpdateName"; type: "EnteredName"; name: string }
-  | { group: "ProfileUpdateName"; type: "Submit" }
-  | { group: "ProfileUpdateName"; type: "SubmitSucceeded" }
-  | { group: "ProfileUpdateName"; type: "SubmitFailed" }
-  | { group: "ProfileUpdateName"; type: "Back" };
+  | {
+      group: "ProfileUpdateUsername";
+      type: "EnteredUsername";
+      username: string;
+    }
+  | { group: "ProfileUpdateUsername"; type: "Submit" }
+  | { group: "ProfileUpdateUsername"; type: "SubmitSucceeded" }
+  | { group: "ProfileUpdateUsername"; type: "SubmitFailed" }
+  | { group: "ProfileUpdateUsername"; type: "Back" };
 
 export const update = (
   { userId }: { userId: string },
@@ -48,7 +52,7 @@ export const update = (
   model: Model
 ): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
-    case "EnteredName":
+    case "EnteredUsername":
       return [{ ...model, ...msg }, cmd.none];
 
     case "Submit":
@@ -58,11 +62,11 @@ export const update = (
           ...model,
           userId,
           onFailure: () => ({
-            group: "ProfileUpdateName",
+            group: "ProfileUpdateUsername",
             type: "SubmitFailed",
           }),
           onSuccess: () => ({
-            group: "ProfileUpdateName",
+            group: "ProfileUpdateUsername",
             type: "SubmitSucceeded",
           }),
         }),
@@ -75,7 +79,7 @@ export const update = (
       return [{ ...model, status: "Idle" }, cmd.none];
 
     case "Back":
-      return [model, Routes.replace({ type: "Account" })];
+      return [model, Routes.replace({ type: "ProfileUpdate" })];
   }
 };
 
@@ -98,24 +102,24 @@ export const view =
           left={
             <View.HeaderBackButton
               onClick={() =>
-                dispatch({ group: "ProfileUpdateName", type: "Back" })
+                dispatch({ group: "ProfileUpdateUsername", type: "Back" })
               }
             />
           }
-          title="Name"
+          title="Username"
         />
 
         <Box sx={{ p: 2, width: "100%" }}>
           <TextField
-            value={model.name}
+            value={model.username}
             sx={{ marginBottom: 4 }}
-            label="Name"
+            label="Username"
             fullWidth
             onChange={(event) =>
               dispatch({
-                group: "ProfileUpdateName",
-                type: "EnteredName",
-                name: event.currentTarget.value,
+                type: "EnteredUsername",
+                group: "ProfileUpdateUsername",
+                username: event.currentTarget.value,
               })
             }
           />
@@ -126,7 +130,7 @@ export const view =
             variant="contained"
             loading={model.status === "Loading"}
             onClick={() =>
-              dispatch({ group: "ProfileUpdateName", type: "Submit" })
+              dispatch({ group: "ProfileUpdateUsername", type: "Submit" })
             }
           >
             Update

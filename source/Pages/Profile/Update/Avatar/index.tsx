@@ -9,10 +9,10 @@ import {
 } from "@mui/material";
 import * as React from "react";
 import UrlPattern from "url-pattern";
-import { cmd, react } from "../Framework";
-import * as ProfileAvatar from "../ProfileAvatar";
-import * as Routes from "../Routes";
-import * as View from "../View";
+import { cmd, react } from "../../Framework";
+import * as ProfileAvatar from "../../ProfileAvatar";
+import * as Routes from "../../Routes";
+import * as View from "../../View";
 
 // ███╗   ███╗ ██████╗ ██████╗ ███████╗██╗
 // ████╗ ████║██╔═══██╗██╔══██╗██╔════╝██║

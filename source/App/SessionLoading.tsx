@@ -1,0 +1,5 @@
+import React from "react";
+
+export const view = () => {
+  return () => <>session loading</>;
+};
