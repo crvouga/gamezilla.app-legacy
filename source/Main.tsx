@@ -214,6 +214,9 @@ const updateSessionMissing = (
         case "LocationChanged":
           return [{ ...model, location: msg.location }, cmd.none];
 
+        case "SessionFound":
+          return initProfileLoading({ session: msg, location: model.location });
+
         default:
           return [model, cmd.none];
       }
@@ -231,6 +234,24 @@ const updateSessionMissing = (
   }
 };
 
+const initProfileLoading = ({
+  session,
+  location,
+}: {
+  session: Session.Session;
+  location: Location;
+}): [ProfileLoading, cmd.Cmd<Msg>] => {
+  return [
+    {
+      type: "ProfileLoading",
+      location,
+      defaultName: session.defaultName,
+      userId: session.userId,
+    },
+    pipe(Profile.load(session), attempt(profileResultToMsg)),
+  ];
+};
+
 const updateSessionLoading = (
   msg: Msg,
   model: SessionLoading
@@ -240,10 +261,7 @@ const updateSessionLoading = (
       return [{ ...model, location: msg.location }, cmd.none];
 
     case "SessionFound":
-      return [
-        { ...msg, location: model.location, type: "ProfileLoading" },
-        pipe(Profile.load(msg), attempt(profileResultToMsg)),
-      ];
+      return initProfileLoading({ session: msg, location: model.location });
 
     case "SessionNotFound":
       return initSessionMissing(model.location);
