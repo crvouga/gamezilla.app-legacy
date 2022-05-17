@@ -8,7 +8,6 @@ export * as ProfileCreate from "./ProfileCreate";
 export * as ProfileDelete from "./ProfileDelete";
 export * as ProfileUpdate from "./ProfileUpdate";
 export * as ProfileUpdateAvatar from "./ProfileUpdateAvatar";
-export * as ProfileUpdateAvatarStyle from "./ProfileUpdateAvatarStyle";
 export * as ProfileUpdateName from "./ProfileUpdateName";
 export * as ProfileUpdateUsername from "./ProfileUpdateUsername";
 export * as TicTacToe from "./TicTacToe";

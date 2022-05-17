@@ -11,15 +11,14 @@ import * as View from "./View";
 import * as Pages from "./Pages";
 import * as Routes from "./Routes";
 import { exhaustive } from "./Utility";
+import UrlPattern from "url-pattern";
 
-//                                           88              88
-//                                           88              88
-//                                           88              88
-// 88,dPYba,,adPYba,    ,adPPYba,    ,adPPYb,88   ,adPPYba,  88
-// 88P'   "88"    "8a  a8"     "8a  a8"    `Y88  a8P_____88  88
-// 88      88      88  8b       d8  8b       88  8PP"""""""  88
-// 88      88      88  "8a,   ,a8"  "8a,   ,d88  "8b,   ,aa  88
-// 88      88      88   `"YbbdP"'    `"8bbdP"Y8   `"Ybbd8"'  88
+// ███╗   ███╗ ██████╗ ██████╗ ███████╗██╗
+// ████╗ ████║██╔═══██╗██╔══██╗██╔════╝██║
+// ██╔████╔██║██║   ██║██║  ██║█████╗  ██║
+// ██║╚██╔╝██║██║   ██║██║  ██║██╔══╝  ██║
+// ██║ ╚═╝ ██║╚██████╔╝██████╔╝███████╗███████╗
+// ╚═╝     ╚═╝ ╚═════╝ ╚═════╝ ╚══════╝╚══════╝
 
 type Model =
   | SessionLoadingModel
@@ -70,10 +69,6 @@ type ReadyModel = {
     | { type: "ProfileDelete"; child: Pages.ProfileDelete.Model }
     | { type: "ProfileUpdate"; child: Pages.ProfileUpdate.Model }
     | { type: "ProfileUpdateAvatar"; child: Pages.ProfileUpdateAvatar.Model }
-    | {
-        type: "ProfileUpdateAvatarStyle";
-        child: Pages.ProfileUpdateAvatarStyle.Model;
-      }
     | { type: "ProfileUpdateName"; child: Pages.ProfileUpdateName.Model }
     | {
         type: "ProfileUpdateUsername";
@@ -91,14 +86,12 @@ type Profile = {
   userId: string;
 };
 
-// 88               88
-// ""               ""    ,d
-//                        88
-// 88  8b,dPPYba,   88  MM88MMM
-// 88  88P'   `"8a  88    88
-// 88  88       88  88    88
-// 88  88       88  88    88,
-// 88  88       88  88    "Y888
+// ██╗███╗   ██╗██╗████████╗
+// ██║████╗  ██║██║╚══██╔══╝
+// ██║██╔██╗ ██║██║   ██║
+// ██║██║╚██╗██║██║   ██║
+// ██║██║ ╚████║██║   ██║
+// ╚═╝╚═╝  ╚═══╝╚═╝   ╚═╝
 
 const init = (location: navigation.Location): [Model, cmd.Cmd<Msg>] => [
   { type: "SessionLoading", location: location },
@@ -180,6 +173,10 @@ const initPageReady = (
   profile: Profile,
   location: { pathname: string }
 ): [ReadyModel["page"], cmd.Cmd<Msg>] => {
+  const isMatch = (pattern: string) => {
+    return new UrlPattern(pattern).match(location.pathname);
+  };
+
   const route = pipe(
     location,
     Routes.decode,
@@ -240,15 +237,6 @@ const initPageReady = (
         cmd.none,
       ];
 
-    case "ProfileUpdateAvatarStyle":
-      return [
-        {
-          type: "ProfileUpdateAvatarStyle",
-          child: Pages.ProfileUpdateAvatarStyle.init(profile),
-        },
-        cmd.none,
-      ];
-
     case "ProfileUpdateName":
       return [
         {
@@ -269,19 +257,18 @@ const initPageReady = (
 
     case "TicTacToe":
       return [{ type: "TicTacToe", child: Pages.TicTacToe.init }, cmd.none];
+
+    default:
+      return exhaustive(route);
   }
 };
 
-//                                    88
-//                                    88                ,d
-//                                    88                88
-// 88       88  8b,dPPYba,    ,adPPYb,88  ,adPPYYba,  MM88MMM  ,adPPYba,
-// 88       88  88P'    "8a  a8"    `Y88  ""     `Y8    88    a8P_____88
-// 88       88  88       d8  8b       88  ,adPPPPP88    88    8PP"""""""
-// "8a,   ,a88  88b,   ,a8"  "8a,   ,d88  88,    ,88    88,   "8b,   ,aa
-//  `"YbbdP'Y8  88`YbbdP"'    `"8bbdP"Y8  `"8bbdP"Y8    "Y888  `"Ybbd8"'
-//              88
-//              88
+// ██╗   ██╗██████╗ ██████╗  █████╗ ████████╗███████╗
+// ██║   ██║██╔══██╗██╔══██╗██╔══██╗╚══██╔══╝██╔════╝
+// ██║   ██║██████╔╝██║  ██║███████║   ██║   █████╗
+// ██║   ██║██╔═══╝ ██║  ██║██╔══██║   ██║   ██╔══╝
+// ╚██████╔╝██║     ██████╔╝██║  ██║   ██║   ███████╗
+//  ╚═════╝ ╚═╝     ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚══════╝
 
 type Msg =
   | { group: "Main"; type: "LocationChanged"; location: Location }
@@ -302,7 +289,6 @@ type PageMsg =
   | (Pages.ProfileDelete.Msg & { group: "ProfileDelete" })
   | (Pages.ProfileUpdate.Msg & { group: "ProfileUpdate" })
   | (Pages.ProfileUpdateAvatar.Msg & { group: "ProfileUpdateAvatar" })
-  | (Pages.ProfileUpdateAvatarStyle.Msg & { group: "ProfileUpdateAvatarStyle" })
   | (Pages.ProfileUpdateName.Msg & { group: "ProfileUpdateName" })
   | (Pages.ProfileUpdateUsername.Msg & { group: "ProfileUpdateUsername" })
   | (Pages.TicTacToe.Msg & { group: "TicTacToe" });
@@ -315,16 +301,12 @@ const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   );
 };
 
-//                                    88                                                                     88
-//                                    88                ,d                                                   ""
-//                                    88                88
-// 88       88  8b,dPPYba,    ,adPPYb,88  ,adPPYYba,  MM88MMM  ,adPPYba,     88,dPYba,,adPYba,   ,adPPYYba,  88  8b,dPPYba,
-// 88       88  88P'    "8a  a8"    `Y88  ""     `Y8    88    a8P_____88     88P'   "88"    "8a  ""     `Y8  88  88P'   `"8a
-// 88       88  88       d8  8b       88  ,adPPPPP88    88    8PP"""""""     88      88      88  ,adPPPPP88  88  88       88
-// "8a,   ,a88  88b,   ,a8"  "8a,   ,d88  88,    ,88    88,   "8b,   ,aa     88      88      88  88,    ,88  88  88       88
-//  `"YbbdP'Y8  88`YbbdP"'    `"8bbdP"Y8  `"8bbdP"Y8    "Y888  `"Ybbd8"'     88      88      88  `"8bbdP"Y8  88  88       88
-//              88
-//              88
+// ██╗   ██╗██████╗ ██████╗  █████╗ ████████╗███████╗    ███╗   ███╗ █████╗ ██╗███╗   ██╗
+// ██║   ██║██╔══██╗██╔══██╗██╔══██╗╚══██╔══╝██╔════╝    ████╗ ████║██╔══██╗██║████╗  ██║
+// ██║   ██║██████╔╝██║  ██║███████║   ██║   █████╗      ██╔████╔██║███████║██║██╔██╗ ██║
+// ██║   ██║██╔═══╝ ██║  ██║██╔══██║   ██║   ██╔══╝      ██║╚██╔╝██║██╔══██║██║██║╚██╗██║
+// ╚██████╔╝██║     ██████╔╝██║  ██║   ██║   ███████╗    ██║ ╚═╝ ██║██║  ██║██║██║ ╚████║
+//  ╚═════╝ ╚═╝     ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚══════╝    ╚═╝     ╚═╝╚═╝  ╚═╝╚═╝╚═╝  ╚═══╝
 
 const updateMain = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   switch (model.type) {
@@ -446,12 +428,12 @@ const updateReady = (msg: Msg, model: ReadyModel): [Model, cmd.Cmd<Msg>] => {
   }
 };
 
-// ██╗   ██╗██████╗ ██████╗  █████╗ ████████╗███████╗
-// ██║   ██║██╔══██╗██╔══██╗██╔══██╗╚══██╔══╝██╔════╝
-// ██║   ██║██████╔╝██║  ██║███████║   ██║   █████╗
-// ██║   ██║██╔═══╝ ██║  ██║██╔══██║   ██║   ██╔══╝
-// ╚██████╔╝██║     ██████╔╝██║  ██║   ██║   ███████╗
-//  ╚═════╝ ╚═╝     ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚══════╝
+// ██╗   ██╗██████╗ ██████╗  █████╗ ████████╗███████╗    ██████╗  █████╗  ██████╗ ███████╗
+// ██║   ██║██╔══██╗██╔══██╗██╔══██╗╚══██╔══╝██╔════╝    ██╔══██╗██╔══██╗██╔════╝ ██╔════╝
+// ██║   ██║██████╔╝██║  ██║███████║   ██║   █████╗      ██████╔╝███████║██║  ███╗█████╗
+// ██║   ██║██╔═══╝ ██║  ██║██╔══██║   ██║   ██╔══╝      ██╔═══╝ ██╔══██║██║   ██║██╔══╝
+// ╚██████╔╝██║     ██████╔╝██║  ██║   ██║   ███████╗    ██║     ██║  ██║╚██████╔╝███████╗
+//  ╚═════╝ ╚═╝     ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚══════╝    ╚═╝     ╚═╝  ╚═╝ ╚═════╝ ╚══════╝
 
 const updatePage = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   switch (model.type) {
@@ -603,9 +585,12 @@ const updatePageReady = (
       return [page, cmd.none];
 
     case "ProfileUpdateAvatar":
-      if (msg.group === "ProfileUpdateAvatar") {
+      if (
+        msg.group === "ProfileUpdateAvatar" ||
+        msg.type === "LocationChanged"
+      ) {
         const [child, childCmd] = Pages.ProfileUpdateAvatar.update(
-          { userId: profile.userId, location },
+          { userId: profile.userId },
           msg,
           page.child
         );
@@ -613,16 +598,6 @@ const updatePageReady = (
           { type: "ProfileUpdateAvatar", child },
           pipe(childCmd, cmd.map(groupMsg("ProfileUpdateAvatar"))),
         ];
-      }
-      return [page, cmd.none];
-
-    case "ProfileUpdateAvatarStyle":
-      if (msg.group === "ProfileUpdateAvatarStyle") {
-        const [child, childCmd] = Pages.ProfileUpdateAvatarStyle.update(
-          msg,
-          page.child
-        );
-        return [{ type: "ProfileUpdateAvatarStyle", child }, childCmd];
       }
       return [page, cmd.none];
 
@@ -802,9 +777,6 @@ const viewReady = ({ page, profile }: ReadyModel): react.Html<Msg> => {
         react.map(groupMsg("ProfileUpdateAvatar"))
       );
 
-    case "ProfileUpdateAvatarStyle":
-      return Pages.ProfileUpdateAvatarStyle.view(page.child);
-
     case "ProfileUpdateName":
       return Pages.ProfileUpdateName.view(page.child);
 
@@ -822,14 +794,12 @@ const viewReady = ({ page, profile }: ReadyModel): react.Html<Msg> => {
   }
 };
 
-// 88b           d88              88
-// 888b         d888              ""
-// 88`8b       d8'88
-// 88 `8b     d8' 88  ,adPPYYba,  88  8b,dPPYba,
-// 88  `8b   d8'  88  ""     `Y8  88  88P'   `"8a
-// 88   `8b d8'   88  ,adPPPPP88  88  88       88
-// 88    `888'    88  88,    ,88  88  88       88
-// 88     `8'     88  `"8bbdP"Y8  88  88       88
+// ███╗   ███╗ █████╗ ██╗███╗   ██╗
+// ████╗ ████║██╔══██╗██║████╗  ██║
+// ██╔████╔██║███████║██║██╔██╗ ██║
+// ██║╚██╔╝██║██╔══██║██║██║╚██╗██║
+// ██║ ╚═╝ ██║██║  ██║██║██║ ╚████║
+// ╚═╝     ╚═╝╚═╝  ╚═╝╚═╝╚═╝  ╚═══╝
 
 const locationToMsg = (location: navigation.Location): Msg => {
   return { group: "Main", type: "LocationChanged", location: location };
