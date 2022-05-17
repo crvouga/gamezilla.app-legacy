@@ -14,9 +14,9 @@ import {
   Typography,
 } from "@mui/material";
 import React from "react";
-import { cmd, react } from "../Framework";
+import { cmd, react } from "Framework";
 import * as Profile from "../Profile";
-import * as Routes from "../Routes";
+import * as Routes from "Routes";
 import * as View from "../View";
 
 // ███╗   ███╗ ██████╗ ██████╗ ███████╗██╗

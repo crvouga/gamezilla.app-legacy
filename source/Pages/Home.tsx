@@ -1,8 +1,8 @@
 import { Avatar, Box, ButtonBase, Toolbar, Typography } from "@mui/material";
 import React from "react";
-import { cmd, react } from "../Framework";
+import { cmd, react } from "Framework";
 import * as Game from "../Game";
-import * as Routes from "../Routes";
+import * as Routes from "Routes";
 import * as View from "../View";
 
 //

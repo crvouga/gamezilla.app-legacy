@@ -1,16 +1,16 @@
-export * as Account from "./Account";
-export * as Chess from "./Chess";
-export * as ConnectFour from "./ConnectFour";
-export * as Home from "./Home";
-export * as Login from "./Login";
-export * as Logout from "./Logout";
-export * as ProfileCreate from "./Profile/Create";
-export * as ProfileDelete from "./Profile/Delete";
-export * as ProfileUpdate from "./Profile/Update";
-export * as ProfileUpdateAvatar from "./Profile/Update/Avatar";
-export * as ProfileUpdateName from "./Profile/Profile/Update/Name";
-export * as ProfileUpdateUsername from "./Profile/Update/Username";
-export * as TicTacToe from "./TicTacToe";
+import * as Account from "./Account";
+import * as Chess from "./Chess";
+import * as ConnectFour from "./ConnectFour";
+import * as Home from "./Home";
+import * as Login from "./Login";
+import * as Logout from "./Logout";
+import * as ProfileCreate from "./Profile/Create";
+import * as ProfileDelete from "./Profile/Delete";
+import * as ProfileUpdate from "./Profile/Update";
+import * as ProfileUpdateAvatar from "./Profile/Update/Avatar";
+import * as ProfileUpdateName from "./Profile/Update/Name";
+import * as ProfileUpdateUsername from "./Profile/Update/Username";
+import * as TicTacToe from "./TicTacToe";
 
 export type Route =
   | {
@@ -35,5 +35,20 @@ export type Route =
     }
   | {
       type: "/profile";
-      child: Profile.Model;
     };
+
+export {
+  Account,
+  Chess,
+  ConnectFour,
+  Home,
+  Login,
+  Logout,
+  ProfileCreate,
+  ProfileDelete,
+  ProfileUpdate,
+  ProfileUpdateAvatar,
+  ProfileUpdateName,
+  ProfileUpdateUsername,
+  TicTacToe,
+};
