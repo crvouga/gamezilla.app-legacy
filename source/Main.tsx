@@ -289,19 +289,19 @@ type Msg =
   | PageMsg;
 
 type PageMsg =
-  | Page.Account.Msg
-  | Page.Chess.Msg
-  | Page.ConnectFour.Msg
-  | Page.Home.Msg
-  | Page.Login.Msg
-  | Page.Logout.Msg
-  | Page.ProfileCreate.Msg
-  | Page.ProfileDelete.Msg
-  | Page.ProfileUpdate.Msg
-  | Page.ProfileUpdateAvatar.Msg
-  | Page.ProfileUpdateAvatarStyle.Msg
-  | Page.ProfileUpdateName.Msg
-  | Page.ProfileUpdateUsername.Msg
+  | (Page.Account.Msg & { group: "Account" })
+  | (Page.Chess.Msg & { group: "Chess" })
+  | (Page.ConnectFour.Msg & { group: "ConnectFour" })
+  | (Page.Home.Msg & { group: "Home" })
+  | (Page.Login.Msg & { group: "Login" })
+  | (Page.Logout.Msg & { group: "Logout" })
+  | (Page.ProfileCreate.Msg & { group: "ProfileCreate" })
+  | (Page.ProfileDelete.Msg & { group: "ProfileDelete" })
+  | (Page.ProfileUpdate.Msg & { group: "ProfileUpdate" })
+  | (Page.ProfileUpdateAvatar.Msg & { group: "ProfileUpdateAvatar" })
+  | (Page.ProfileUpdateAvatarStyle.Msg & { group: "ProfileUpdateAvatarStyle" })
+  | (Page.ProfileUpdateName.Msg & { group: "ProfileUpdateName" })
+  | (Page.ProfileUpdateUsername.Msg & { group: "ProfileUpdateUsername" })
   | (Page.TicTacToe.Msg & { group: "TicTacToe" });
 
 const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
@@ -469,11 +469,7 @@ const updatePage = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
     }
 
     case "Ready": {
-      const [modelPage, cmdPage] = updatePageReady(
-        model.profile,
-        msg,
-        model.page
-      );
+      const [modelPage, cmdPage] = updatePageReady(model, msg, model.page);
       return [{ ...model, page: modelPage }, cmdPage];
     }
 
@@ -529,7 +525,7 @@ const updatePageProfileMissing = (
 };
 
 const updatePageReady = (
-  profile: Profile,
+  { profile }: { profile: Profile; location: Location },
   msg: Msg,
   page: ReadyModel["page"]
 ): [ReadyModel["page"], cmd.Cmd<Msg>] => {
@@ -606,11 +602,14 @@ const updatePageReady = (
     case "ProfileUpdateAvatar":
       if (msg.group === "ProfileUpdateAvatar") {
         const [child, childCmd] = Page.ProfileUpdateAvatar.update(
-          profile,
+          { userId: profile.userId, location },
           msg,
           page.child
         );
-        return [{ type: "ProfileUpdateAvatar", child }, childCmd];
+        return [
+          { type: "ProfileUpdateAvatar", child },
+          pipe(childCmd, cmd.map(groupMsg("ProfileUpdateAvatar"))),
+        ];
       }
       return [page, cmd.none];
 
@@ -795,7 +794,10 @@ const viewReady = ({ page, profile }: ReadyModel): react.Html<Msg> => {
       return Page.ProfileUpdate.view(profile, page.child);
 
     case "ProfileUpdateAvatar":
-      return Page.ProfileUpdateAvatar.view(profile, page.child);
+      return pipe(
+        Page.ProfileUpdateAvatar.view(profile, page.child),
+        react.map(groupMsg("ProfileUpdateAvatar"))
+      );
 
     case "ProfileUpdateAvatarStyle":
       return Page.ProfileUpdateAvatarStyle.view(page.child);
