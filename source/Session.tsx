@@ -34,24 +34,17 @@ export const login: taskEither.TaskEither<
   return either.right({ message: "Successfully logged in" });
 };
 
-type Failure = { type: "Failure"; message: string };
-type Success = { type: "Success"; message: string };
+export const logout: task.Task<either.Either<{}, {}>> = async () => {
+  await new Promise((resolve) => setTimeout(resolve, 1000));
 
-export const logout =
-  (): task.Task<either.Either<Failure, Success>> => async () => {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+  const response = await Supabase.client.auth.signOut();
 
-    const response = await Supabase.client.auth.signOut();
+  if (response.error) {
+    return either.left({});
+  }
 
-    if (response.error) {
-      return either.left({ type: "Failure", message: "Failed to logout" });
-    }
-
-    return either.right({
-      type: "Success",
-      message: "Successfully logged out",
-    });
-  };
+  return either.right({});
+};
 
 export const load: () => task.Task<option.Option<Session>> = () => async () => {
   await new Promise((resolve) => setTimeout(resolve, 100));

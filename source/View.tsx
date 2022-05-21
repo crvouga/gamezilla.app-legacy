@@ -1,4 +1,5 @@
 import { ChevronLeft, ChevronRight } from "@mui/icons-material";
+import { LoadingButton, LoadingButtonProps } from "@mui/lab";
 import {
   Backdrop,
   Box,
@@ -112,6 +113,10 @@ export const HeaderBackButton = ({ onClick }: { onClick: () => void }) => {
   );
 };
 
+export const Button = (props: LoadingButtonProps) => {
+  return <LoadingButton {...props} />;
+};
+
 export const Page = ({
   children,
   sx,
@@ -157,7 +162,7 @@ export const LoadingPage = () => {
 
 export const LoadingBackdrop = ({ open }: { open?: boolean }) => {
   return (
-    <Backdrop open={Boolean(open)}>
+    <Backdrop sx={{ zIndex: 10 }} open={Boolean(open)}>
       <CircularProgress />
     </Backdrop>
   );

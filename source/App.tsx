@@ -63,7 +63,6 @@ type ReadyModel = {
     | { type: "Chess"; child: Pages.Chess.Model }
     | { type: "ConnectFour"; child: Pages.ConnectFour.Model }
     | { type: "Logout"; child: Pages.Logout.Model }
-    | { type: "ProfileCreate"; child: Pages.ProfileCreate.Model }
     | { type: "ProfileDelete"; child: Pages.ProfileDelete.Model }
     | { type: "ProfileUpdate"; child: Pages.ProfileUpdate.Model }
     | { type: "ProfileUpdateAvatar"; child: Pages.ProfileUpdateAvatar.Model }
@@ -497,7 +496,10 @@ const updatePageProfileMissing = (
           msg,
           page.child
         );
-        return [{ type: "ProfileCreate", child }, childCmd];
+        return [
+          { type: "ProfileCreate", child },
+          pipe(childCmd, cmd.map(groupMsg("ProfileCreate"))),
+        ];
       }
       return [page, cmd.none];
   }
@@ -546,17 +548,6 @@ const updatePageReady = (
       if (msg.group === "Logout") {
         const [child, childCmd] = Pages.Logout.update(msg, page.child);
         return [{ type: "Logout", child }, childCmd];
-      }
-      return [page, cmd.none];
-
-    case "ProfileCreate":
-      if (msg.group === "ProfileCreate") {
-        const [child, childCmd] = Pages.ProfileCreate.update(
-          profile,
-          msg,
-          page.child
-        );
-        return [{ type: "ProfileCreate", child }, childCmd];
       }
       return [page, cmd.none];
 
@@ -716,7 +707,10 @@ const viewProfileMissing = (model: ProfileMissingModel): react.Html<Msg> => {
       return Pages.Logout.view(model.page.child);
 
     case "ProfileCreate":
-      return Pages.ProfileCreate.view(model.page.child);
+      return pipe(
+        Pages.ProfileCreate.view(model.page.child),
+        react.map(groupMsg("ProfileCreate"))
+      );
 
     default:
       return exhaustive(model.page);
@@ -753,9 +747,6 @@ const viewReady = ({ page, profile }: ReadyModel): react.Html<Msg> => {
 
     case "Logout":
       return Pages.Logout.view(page.child);
-
-    case "ProfileCreate":
-      return Pages.ProfileCreate.view(page.child);
 
     case "ProfileDelete":
       return Pages.ProfileDelete.view(page.child);

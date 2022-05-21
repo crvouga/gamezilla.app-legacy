@@ -47,9 +47,9 @@ export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
       return [
         { type: "Loading" },
         pipe(
-          Session.logout(),
+          Session.logout,
           attempt(
-            either.fold<{ message: string }, { message: string }, Msg>(
+            either.fold<{}, {}, Msg>(
               () => ({ group: "Logout", type: "LogoutFailed" }),
               () => ({ group: "Logout", type: "LogoutSucceeded" })
             )
