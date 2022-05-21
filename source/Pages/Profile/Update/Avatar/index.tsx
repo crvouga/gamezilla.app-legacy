@@ -10,7 +10,6 @@ import {
 import { cmd, navigation, react } from "Framework";
 import * as ProfileAvatar from "ProfileAvatar";
 import * as React from "react";
-import * as Routes from "Routes";
 import * as View from "View";
 
 //
@@ -25,13 +24,13 @@ export type Model = {
   status: "Idle" | "Loading";
   seed: ProfileAvatar.Seed;
   style: ProfileAvatar.Style;
-  page: "Main" | "Style" | "Seed";
+  page: { type: "Main" } | { type: "Style" } | { type: "Seed" };
 };
 
 export const init = ({ avatarUrl }: { avatarUrl: string }): Model => {
   return {
     status: "Idle",
-    page: "Main",
+    page: { type: "Main" },
     ...ProfileAvatar.parseUrl(avatarUrl),
   };
 };
@@ -85,7 +84,7 @@ export const update = (
 type Profile = { username: string; name: string; avatarUrl: string };
 
 export const view = (profile: Profile, model: Model): react.Html<Msg> => {
-  switch (model.page) {
+  switch (model.page.type) {
     case "Main":
       return viewMain(profile, model);
 
