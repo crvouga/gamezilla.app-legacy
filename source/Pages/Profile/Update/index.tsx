@@ -1,6 +1,6 @@
 import { Avatar, Button, List } from "@mui/material";
 import * as React from "react";
-import { cmd, react } from "Framework";
+import { cmd, navigation, react } from "Framework";
 import * as Routes from "Routes";
 import * as View from "View";
 
@@ -52,16 +52,25 @@ export const update = (
 ): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "ClickedAvatar":
-      return [model, Routes.push({ type: "ProfileUpdateAvatar" })];
+      return [
+        model,
+        navigation.push(Routes.encode({ type: "ProfileUpdateAvatar" })),
+      ];
 
     case "ClickedBack":
-      return [model, Routes.replace({ type: "Account" })];
+      return [model, navigation.back()];
 
     case "ClickedName":
-      return [model, Routes.push({ type: "ProfileUpdateName" })];
+      return [
+        model,
+        navigation.push(Routes.encode({ type: "ProfileUpdateName" })),
+      ];
 
     case "ClickedUsername":
-      return [model, Routes.push({ type: "ProfileUpdateUsername" })];
+      return [
+        model,
+        navigation.push(Routes.encode({ type: "ProfileUpdateUsername" })),
+      ];
   }
 };
 

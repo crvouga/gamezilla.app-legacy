@@ -1,33 +1,27 @@
 import { ChevronRight, Delete, Edit, Logout } from "@mui/icons-material";
 import {
-  Box,
-  Button,
-  CircularProgress,
-  Dialog,
-  DialogActions,
-  DialogTitle,
   List,
   ListItemButton,
   ListItemIcon,
   ListItemSecondaryAction,
   ListItemText,
-  Typography,
 } from "@mui/material";
-import React from "react";
-import { cmd, react } from "Framework";
-import * as Profile from "../Profile";
-import * as Routes from "Routes";
-import * as View from "../View";
-import { pipe } from "fp-ts/lib/function";
-import { attempt } from "Framework/Task";
 import { either } from "fp-ts";
+import { pipe } from "fp-ts/lib/function";
+import { cmd, navigation, react } from "Framework";
+import { attempt } from "Framework/Task";
+import React from "react";
+import * as Routes from "Routes";
+import * as Profile from "../Profile";
+import * as View from "../View";
 
-// ███╗   ███╗ ██████╗ ██████╗ ███████╗██╗
-// ████╗ ████║██╔═══██╗██╔══██╗██╔════╝██║
-// ██╔████╔██║██║   ██║██║  ██║█████╗  ██║
-// ██║╚██╔╝██║██║   ██║██║  ██║██╔══╝  ██║
-// ██║ ╚═╝ ██║╚██████╔╝██████╔╝███████╗███████╗
-// ╚═╝     ╚═╝ ╚═════╝ ╚═════╝ ╚══════╝╚══════╝
+//
+//
+//
+// Model
+//
+//
+//
 
 export type Model =
   | { type: "Idle" }
@@ -36,12 +30,13 @@ export type Model =
 
 export const init: Model = { type: "Idle" };
 
-// ██╗   ██╗██████╗ ██████╗  █████╗ ████████╗███████╗
-// ██║   ██║██╔══██╗██╔══██╗██╔══██╗╚══██╔══╝██╔════╝
-// ██║   ██║██████╔╝██║  ██║███████║   ██║   █████╗
-// ██║   ██║██╔═══╝ ██║  ██║██╔══██║   ██║   ██╔══╝
-// ╚██████╔╝██║     ██████╔╝██║  ██║   ██║   ███████╗
-//  ╚═════╝ ╚═╝     ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚══════╝
+//
+//
+//
+// Update
+//
+//
+//
 
 export type Msg =
   | { type: "Back" }
@@ -60,13 +55,13 @@ export const update = (
 ): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "Back":
-      return [model, Routes.replace({ type: "Home" })];
+      return [model, navigation.back()];
 
     case "Logout":
-      return [model, Routes.push({ type: "Logout" })];
+      return [model, navigation.push(Routes.encode({ type: "Logout" }))];
 
     case "UpdateProfile":
-      return [model, Routes.push({ type: "ProfileUpdate" })];
+      return [model, navigation.push(Routes.encode({ type: "ProfileUpdate" }))];
 
     case "DeleteProfile":
       return [{ ...model, type: "ComfirmDeleteProfile" }, cmd.none];
@@ -98,12 +93,13 @@ export const update = (
   }
 };
 
-// ██╗   ██╗██╗███████╗██╗    ██╗
-// ██║   ██║██║██╔════╝██║    ██║
-// ██║   ██║██║█████╗  ██║ █╗ ██║
-// ╚██╗ ██╔╝██║██╔══╝  ██║███╗██║
-//  ╚████╔╝ ██║███████╗╚███╔███╔╝
-//   ╚═══╝  ╚═╝╚══════╝ ╚══╝╚══╝
+//
+//
+//
+// View
+//
+//
+//
 
 export const view =
   ({ username }: { username: string }, model: Model): react.Html<Msg> =>

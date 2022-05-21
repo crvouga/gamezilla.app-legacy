@@ -2,7 +2,7 @@ import { LoadingButton } from "@mui/lab";
 import { Box, TextField } from "@mui/material";
 import { either } from "fp-ts";
 import { pipe } from "fp-ts/lib/function";
-import { cmd, react } from "Framework";
+import { cmd, navigation, react } from "Framework";
 import { attempt } from "Framework/Task";
 import * as Profile from "Profile";
 import * as React from "react";
@@ -88,7 +88,7 @@ export const update = (
       return [{ ...model, status: "Idle" }, cmd.none];
 
     case "Back":
-      return [model, Routes.replace({ type: "ProfileUpdate" })];
+      return [model, navigation.back()];
   }
 };
 

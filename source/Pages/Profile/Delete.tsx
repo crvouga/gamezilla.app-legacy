@@ -1,19 +1,16 @@
 import { LoadingButton } from "@mui/lab";
 import { Button, Dialog, DialogActions, DialogTitle } from "@mui/material";
-import React from "react";
-import { cmd, react } from "Framework";
-import * as Profile from "Profile";
-import * as Routes from "Routes";
-import { pipe } from "fp-ts/lib/function";
-import { attempt } from "Framework/Task";
 import { either } from "fp-ts";
+import { pipe } from "fp-ts/lib/function";
+import { cmd, navigation, react } from "Framework";
+import { attempt } from "Framework/Task";
+import * as Profile from "Profile";
+import React from "react";
 
 //
 //
 //
-//
 // Model
-//
 //
 //
 //
@@ -25,9 +22,7 @@ export const init: Model = { type: "Idle" };
 //
 //
 //
-//
 // Update
-//
 //
 //
 //
@@ -45,7 +40,7 @@ export const update = (
 ): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "Cancel":
-      return [{ type: "Idle" }, Routes.replace({ type: "Account" })];
+      return [{ type: "Idle" }, navigation.back()];
 
     case "Delete":
       return [
@@ -80,9 +75,7 @@ export const update = (
 //
 //
 //
-//
 // View
-//
 //
 //
 //

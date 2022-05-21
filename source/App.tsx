@@ -28,25 +28,25 @@ type Model =
 
 type SessionLoadingModel = {
   type: "SessionLoading";
-  location: Location;
+  location: navigation.Location;
 };
 
 type SessionMissingModel = {
   type: "SessionMissing";
-  location: Location;
+  location: navigation.Location;
   page: { type: "Login"; child: Pages.Login.Model };
 };
 
 type ProfileLoadingModel = {
   type: "ProfileLoading";
-  location: Location;
-  session: Session;
+  location: navigation.Location;
+  session: Session.Session;
 };
 
 type ProfileMissingModel = {
   type: "ProfileMissing";
-  location: Location;
-  session: Session;
+  location: navigation.Location;
+  session: Session.Session;
   page:
     | { type: "ProfileCreate"; child: Pages.ProfileCreate.Model }
     | { type: "Logout"; child: Pages.Logout.Model };
@@ -54,9 +54,9 @@ type ProfileMissingModel = {
 
 type ReadyModel = {
   type: "Ready";
-  location: Location;
+  location: navigation.Location;
   profile: Profile.Profile;
-  session: Session;
+  session: Session.Session;
   game: option.Option<Game.Game>;
   page:
     | { type: "Home"; child: Pages.Home.Model }
@@ -75,10 +75,6 @@ type ReadyModel = {
     | { type: "TicTacToe"; child: Pages.TicTacToe.Model };
 };
 
-type Location = { pathname: string };
-
-type Session = { userId: string; defaultName: string };
-
 //
 //
 //
@@ -95,13 +91,13 @@ export const init = (location: navigation.Location): [Model, cmd.Cmd<Msg>] => [
 const initSessionMissing = ({
   location,
 }: {
-  location: Location;
+  location: navigation.Location;
 }): [SessionMissingModel, cmd.Cmd<Msg>] => {
   const child = Pages.Login.init();
 
   return [
     { type: "SessionMissing", location, page: { type: "Login", child } },
-    Routes.replace({ type: "Login" }),
+    navigation.push(Routes.encode({ type: "Login" })),
   ];
 };
 
@@ -115,7 +111,7 @@ const initProfileLoading = ({
   location,
 }: {
   session: Session.Session;
-  location: Location;
+  location: navigation.Location;
 }): [ProfileLoadingModel, cmd.Cmd<Msg>] => {
   return [
     {
@@ -128,21 +124,23 @@ const initProfileLoading = ({
 };
 
 const initProfileMissing = ({
+  location,
   session,
 }: {
-  session: Session;
+  location: navigation.Location;
+  session: Session.Session;
 }): [ProfileMissingModel, cmd.Cmd<Msg>] => {
   return [
     {
       type: "ProfileMissing",
       session,
-      location: location,
+      location,
       page: {
         type: "ProfileCreate",
         child: Pages.ProfileCreate.init(session),
       },
     },
-    Routes.replace({ type: "ProfileCreate" }),
+    navigation.push(Routes.encode({ type: "ProfileCreate" })),
   ];
 };
 
@@ -151,9 +149,9 @@ const initReady = ({
   profile,
   session,
 }: {
-  location: Location;
+  location: navigation.Location;
   profile: Profile.Profile;
-  session: Session;
+  session: Session.Session;
 }): [ReadyModel, cmd.Cmd<Msg>] => {
   const [page, pageCmd] = initPageReady({ profile, location });
   return [
@@ -174,7 +172,7 @@ const initPageReady = ({
   location,
 }: {
   profile: Profile.Profile;
-  location: Location;
+  location: navigation.Location;
 }): [ReadyModel["page"], cmd.Cmd<Msg>] => {
   const route = pipe(
     location,
@@ -187,7 +185,7 @@ const initPageReady = ({
 
   const notFound: [ReadyModel["page"], cmd.Cmd<Msg>] = [
     { type: "Home", child: Pages.Home.init },
-    Routes.push({ type: "Home" }),
+    navigation.replace(Routes.encode({ type: "Home" })),
   ];
 
   switch (route.type) {
@@ -271,8 +269,8 @@ const initPageReady = ({
 //
 
 export type Msg =
-  | { group: "Main"; type: "LocationChanged"; location: Location }
-  | { group: "Main"; type: "SessionFound"; session: Session }
+  | { group: "Main"; type: "LocationChanged"; location: navigation.Location }
+  | { group: "Main"; type: "SessionFound"; session: Session.Session }
   | { group: "Main"; type: "SessionNotFound" }
   | { group: "Main"; type: "ProfileFound"; profile: Profile.Profile }
   | { group: "Main"; type: "ProfileNotFound" }
@@ -517,7 +515,7 @@ const updatePageProfileMissing = (
 };
 
 const updatePageReady = (
-  { profile }: { profile: Profile.Profile; location: Location },
+  { profile }: { profile: Profile.Profile; location: navigation.Location },
   msg: Msg,
   page: ReadyModel["page"]
 ): [ReadyModel["page"], cmd.Cmd<Msg>] => {
