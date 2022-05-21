@@ -40,15 +40,13 @@ type SessionMissingModel = {
 type ProfileLoadingModel = {
   type: "ProfileLoading";
   location: Location;
-  userId: string;
-  defaultName: string;
+  session: Session;
 };
 
 type ProfileMissingModel = {
   type: "ProfileMissing";
   location: Location;
-  userId: string;
-  defaultName: string;
+  session: Session;
   page:
     | { type: "ProfileCreate"; child: Pages.ProfileCreate.Model }
     | { type: "Logout"; child: Pages.Logout.Model };
@@ -58,6 +56,7 @@ type ReadyModel = {
   type: "Ready";
   location: Location;
   profile: Profile;
+  session: Session;
   page:
     | { type: "Home"; child: Pages.Home.Model }
     | { type: "Account"; child: Pages.Account.Model }
@@ -76,6 +75,8 @@ type ReadyModel = {
 };
 
 type Location = { pathname: string };
+
+type Session = { userId: string; defaultName: string };
 
 type Profile = {
   name: string;
@@ -111,7 +112,7 @@ const initSessionMissing = ({
 
 const maybeSessionToMsg = option.fold<Session.Session, Msg>(
   () => ({ group: "Main", type: "SessionNotFound" }),
-  (session) => ({ group: "Main", type: "SessionFound", ...session })
+  (session) => ({ group: "Main", type: "SessionFound", session })
 );
 
 const initProfileLoading = ({
@@ -125,25 +126,25 @@ const initProfileLoading = ({
     {
       type: "ProfileLoading",
       location,
-      defaultName: session.defaultName,
-      userId: session.userId,
+      session,
     },
     pipe(Profile.load(session), attempt(profileResultToMsg)),
   ];
 };
 
-const initProfileMissing = (deps: {
-  userId: string;
-  defaultName: string;
+const initProfileMissing = ({
+  session,
+}: {
+  session: Session;
 }): [ProfileMissingModel, cmd.Cmd<Msg>] => {
   return [
     {
-      ...deps,
       type: "ProfileMissing",
+      session,
       location: location,
       page: {
         type: "ProfileCreate",
-        child: Pages.ProfileCreate.init(deps),
+        child: Pages.ProfileCreate.init(session),
       },
     },
     Routes.replace({ type: "ProfileCreate" }),
@@ -153,15 +154,18 @@ const initProfileMissing = (deps: {
 const initReady = ({
   location,
   profile,
+  session,
 }: {
   location: Location;
   profile: Profile;
+  session: Session;
 }): [ReadyModel, cmd.Cmd<Msg>] => {
   const [page, pageCmd] = initPageReady(profile, location);
   return [
     {
       type: "Ready",
       location: location,
+      session: session,
       profile: profile,
       page: page,
     },
@@ -268,7 +272,7 @@ const initPageReady = (
 
 export type Msg =
   | { group: "Main"; type: "LocationChanged"; location: Location }
-  | { group: "Main"; type: "SessionFound"; userId: string; defaultName: string }
+  | { group: "Main"; type: "SessionFound"; session: Session }
   | { group: "Main"; type: "SessionNotFound" }
   | { group: "Main"; type: "ProfileFound"; profile: Profile }
   | { group: "Main"; type: "ProfileNotFound" }
@@ -301,13 +305,6 @@ export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   );
 };
 
-// ██╗   ██╗██████╗ ██████╗  █████╗ ████████╗███████╗    ███╗   ███╗ █████╗ ██╗███╗   ██╗
-// ██║   ██║██╔══██╗██╔══██╗██╔══██╗╚══██╔══╝██╔════╝    ████╗ ████║██╔══██╗██║████╗  ██║
-// ██║   ██║██████╔╝██║  ██║███████║   ██║   █████╗      ██╔████╔██║███████║██║██╔██╗ ██║
-// ██║   ██║██╔═══╝ ██║  ██║██╔══██║   ██║   ██╔══╝      ██║╚██╔╝██║██╔══██║██║██║╚██╗██║
-// ╚██████╔╝██║     ██████╔╝██║  ██║   ██║   ███████╗    ██║ ╚═╝ ██║██║  ██║██║██║ ╚████║
-//  ╚═════╝ ╚═╝     ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚══════╝    ╚═╝     ╚═╝╚═╝  ╚═╝╚═╝╚═╝  ╚═══╝
-
 const updateMain = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   switch (model.type) {
     case "SessionLoading":
@@ -336,10 +333,10 @@ const updateProfileMissing = (
       return [{ ...model, location: msg.location }, cmd.none];
 
     case "ProfileFound":
-      return initReady({ location: model.location, profile: msg.profile });
+      return initReady({ ...model, profile: msg.profile });
 
     case "SessionNotFound":
-      return initSessionMissing({ location: model.location });
+      return initSessionMissing(model);
 
     default:
       return [model, cmd.none];
@@ -355,7 +352,7 @@ const updateSessionMissing = (
       return [{ ...model, location: msg.location }, cmd.none];
 
     case "SessionFound":
-      return initProfileLoading({ session: msg, location: model.location });
+      return initProfileLoading({ ...model, session: msg.session });
 
     default:
       return [model, cmd.none];
@@ -374,7 +371,7 @@ const updateSessionLoading = (
       return [{ ...model, location: msg.location }, cmd.none];
 
     case "SessionFound":
-      return initProfileLoading({ session: msg, location: model.location });
+      return initProfileLoading({ ...model, session: msg.session });
 
     case "SessionNotFound":
       return initSessionMissing({ location: model.location });
@@ -418,13 +415,10 @@ const updateReady = (msg: Msg, model: ReadyModel): [Model, cmd.Cmd<Msg>] => {
       return [{ ...model, profile: msg.profile, page }, pageCmd];
 
     case "ProfileNotFound":
-      return initProfileMissing({
-        userId: model.profile.userId,
-        defaultName: model.profile.name,
-      });
+      return initProfileMissing(model);
 
     case "SessionNotFound":
-      return initSessionMissing({ location: model.location });
+      return initSessionMissing(model);
 
     default:
       return [model, cmd.none];
@@ -498,7 +492,7 @@ const updatePageProfileMissing = (
     case "ProfileCreate":
       if (msg.group === "ProfileCreate") {
         const [child, childCmd] = Pages.ProfileCreate.update(
-          model,
+          model.session,
           msg,
           page.child
         );
@@ -646,7 +640,7 @@ export const subscriptions = (model: Model): sub.Sub<Msg> => {
       return sessionSub();
 
     case "ProfileMissing":
-      return sub.batch([sessionSub(), profileSub(model)]);
+      return sub.batch([sessionSub(), profileSub(model.session)]);
 
     case "Ready":
       return sub.batch([sessionSub(), profileSub(model.profile)]);
