@@ -7,6 +7,7 @@ import {
   ListItemButton,
   ListItemText,
 } from "@mui/material";
+import { option } from "fp-ts";
 import { cmd, navigation, react } from "Framework";
 import * as ProfileAvatar from "ProfileAvatar";
 import * as React from "react";
@@ -66,7 +67,7 @@ export const update = (
       return [model, navigation.back()];
 
     case "ClickedSeed":
-      return [model, cmd.none];
+      return [model, navigation.push("/ProfileUpdateAvatar/Seed")];
 
     case "ClickedStyle":
       return [model, cmd.none];
@@ -181,3 +182,39 @@ const viewPageStyle =
         </List>
       </View.Page>
     );
+
+//
+//
+//
+// Routes
+//
+//
+//
+
+type Route = { type: "Main" } | { type: "Style" } | { type: "Seed" };
+
+const routesTypes: { [routeType in Route["type"]]: string } = {
+  Main: "Main",
+  Style: "Style",
+  Seed: "Seed",
+};
+
+const isRouteType = (routeType: string): routeType is Route["type"] => {
+  return routeType in routesTypes;
+};
+
+export const decode = (location: {
+  pathname: string;
+}): option.Option<Route> => {
+  const path = location.pathname.substring(1);
+
+  if (isRouteType(path)) {
+    return option.some({ type: path });
+  }
+
+  return option.none;
+};
+
+export const encode = (route: Route): string => {
+  return route.type;
+};
