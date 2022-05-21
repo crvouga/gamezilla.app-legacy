@@ -14,7 +14,8 @@ import {
   responsiveFontSizes,
   ThemeProvider as MuiThemeProvider,
   Toolbar,
-  Typography,
+  Typography as MuiTypography,
+  TypographyProps,
   useTheme,
 } from "@mui/material";
 import { green } from "@mui/material/colors";
@@ -117,6 +118,10 @@ export const HeaderBackButton = ({ onClick }: { onClick: () => void }) => {
 
 export const Button = (props: LoadingButtonProps) => {
   return <LoadingButton {...props} />;
+};
+
+export const Typography = (props: TypographyProps) => {
+  return <MuiTypography {...props} />;
 };
 
 export const Page = ({

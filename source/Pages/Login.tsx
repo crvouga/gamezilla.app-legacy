@@ -1,19 +1,15 @@
-import { LoadingButton } from "@mui/lab";
-import { Typography } from "@mui/material";
+import { either } from "fp-ts";
+import { pipe } from "fp-ts/lib/function";
+import { cmd, react } from "Framework";
+import { attempt } from "Framework/Task";
 import React from "react";
 import * as Session from "../Session";
-import { cmd, react } from "Framework";
 import * as View from "../View";
-import { pipe } from "fp-ts/lib/function";
-import { attempt, perform } from "Framework/Task";
-import { either, option } from "fp-ts";
 
 //
 //
 //
-//
 // Model
-//
 //
 //
 //
@@ -24,41 +20,33 @@ export const init = (): Model => {
   return { type: "Idle" };
 };
 
-/*
+//
+//
+//
+// Update
+//
+//
+//
 
-
-Update
-
-
-*/
-
-export type Msg = Login | LoginSucceeded | LoginFailed;
-
-type Login = { group: "Login"; type: "Login" };
-type LoginFailed = { group: "Login"; type: "LoginFailed" };
-type LoginSucceeded = { group: "Login"; type: "LoginSucceeded" };
-
-const Login = (): Msg => ({
-  group: "Login",
-  type: "Login",
-});
-
-const LoginFailed = (): Msg => ({
-  group: "Login",
-  type: "LoginFailed",
-});
-
-const LoginSucceeded = (): Msg => ({
-  group: "Login",
-  type: "LoginSucceeded",
-});
+export type Msg =
+  | { type: "Login" }
+  | { type: "LoginFailed" }
+  | { type: "LoginSucceeded" };
 
 export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "Login":
       return [
         { type: "Loading" },
-        pipe(Session.login, attempt(either.fold(LoginFailed, LoginSucceeded))),
+        pipe(
+          Session.login,
+          attempt(
+            either.fold<{}, {}, Msg>(
+              () => ({ type: "LoginFailed" }),
+              () => ({ type: "LoginSucceeded" })
+            )
+          )
+        ),
       ];
 
     case "LoginFailed":
@@ -72,9 +60,7 @@ export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
 //
 //
 //
-//
 // View
-//
 //
 //
 //
@@ -90,18 +76,18 @@ export const view =
           p: 2,
         }}
       >
-        <Typography variant="h1" sx={{ marginBottom: 2 }}>
+        <View.Typography variant="h1" sx={{ marginBottom: 2 }}>
           Gamezilla
-        </Typography>
+        </View.Typography>
 
-        <LoadingButton
-          variant="outlined"
+        <View.Button
+          variant="contained"
           size="large"
           fullWidth
           loading={model.type === "Loading"}
-          onClick={() => dispatch(Login())}
+          onClick={() => dispatch({ type: "Login" })}
         >
           Continue With Google
-        </LoadingButton>
+        </View.Button>
       </View.Page>
     );
