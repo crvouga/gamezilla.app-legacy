@@ -1,5 +1,6 @@
 import { either, option } from "fp-ts";
 import { pipe } from "fp-ts/lib/function";
+import { Cmd } from "Framework/Cmd";
 import React from "react";
 import UrlPattern from "url-pattern";
 import { cmd, navigation, react, sub } from "./Framework";
