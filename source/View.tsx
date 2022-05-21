@@ -37,6 +37,8 @@ const theme = responsiveFontSizes(
       MuiButton: {
         styleOverrides: {
           root: {
+            textTransform: "capitalize",
+            fontWeight: 800,
             borderRadius: "120px",
           },
         },
