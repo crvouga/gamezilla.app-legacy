@@ -1,75 +1,15 @@
-import { pipe } from "fp-ts/lib/function";
-import * as Option from "fp-ts/lib/Option";
-import * as Task from "fp-ts/lib/Task";
+import { either, option, task } from "fp-ts";
 import * as Rx from "rxjs";
+import { pipe } from "fp-ts/lib/function";
 import { cmd, sub } from "./Framework";
 import * as Supabase from "./Supabase";
 import { definitions } from "./supabase-types";
-import * as Pages from "./Pages";
-import { either, option, task } from "fp-ts";
-
-//
-//
-//
-// Model
-//
-//
-//
-
-export type Model =
-  | {
-      type: "Loading";
-    }
-  | {
-      type: "Missing";
-    }
-  | {
-      type: "Found";
-      profile: Profile;
-    };
 
 export type Profile = {
   userId: string;
   username: string;
   name: string;
   avatarUrl: string;
-};
-
-export const init: Model = { type: "Loading" };
-
-//
-//
-//
-// Update
-//
-//
-//
-
-export type Msg = Missing | Found;
-
-type Found = {
-  group: "Profile";
-  type: "ProfileFound";
-  profile: Profile;
-};
-const Found = (profile: Profile): Msg => ({
-  group: "Profile",
-
-  type: "ProfileFound",
-  profile,
-});
-
-type Missing = { group: "Profile"; type: "ProfileMissing" };
-const Missing = (): Msg => ({ group: "Profile", type: "ProfileMissing" });
-
-export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
-  switch (msg.type) {
-    case "ProfileFound":
-      return [{ type: "Found", profile: msg.profile }, cmd.none];
-
-    case "ProfileMissing":
-      return [{ type: "Missing" }, cmd.none];
-  }
 };
 
 //
@@ -89,31 +29,6 @@ const rowToProfile = (row: definitions["profile"]): Profile => {
   };
 };
 
-export const fetch = <Msg,>({
-  userId,
-  onSuccess,
-  onFailure,
-}: {
-  userId: string;
-  onSuccess: (profile: Profile) => Msg;
-  onFailure: () => Msg;
-}): cmd.Cmd<Msg> => {
-  return pipe(
-    async () =>
-      Supabase.client
-        .from<definitions["profile"]>("profile")
-        .select("*")
-        .eq("id", userId)
-        .single(),
-
-    Task.map(({ data }) =>
-      Option.some(data ? onSuccess(rowToProfile(data)) : onFailure())
-    ),
-
-    Rx.of
-  );
-};
-
 export const load =
   ({ userId }: { userId: string }): task.Task<either.Either<Error, Profile>> =>
   async () => {
@@ -130,97 +45,82 @@ export const load =
     return either.right(rowToProfile(response.data));
   };
 
-export const create = <Msg,>({
-  userId,
-  name,
-  username,
-  avatarUrl,
-  onSuccess,
-  onFailure,
-}: {
-  userId: string;
-  name: string;
-  username: string;
-  avatarUrl: string;
-  onSuccess: (profile: Profile) => Msg;
-  onFailure: () => Msg;
-}): cmd.Cmd<Msg> => {
-  return pipe(
-    async () =>
-      Supabase.client
-        .from<definitions["profile"]>("profile")
-        .insert({
-          id: userId,
-          name,
-          username,
-          avatar_url: avatarUrl,
-          theme_mode: "SYSTEM",
-        })
-        .single(),
+export const create =
+  ({
+    userId,
+    name,
+    username,
+    avatarUrl,
+  }: {
+    userId: string;
+    name: string;
+    username: string;
+    avatarUrl: string;
+  }): task.Task<either.Either<{}, Profile>> =>
+  async () => {
+    const response = await Supabase.client
+      .from<definitions["profile"]>("profile")
+      .insert({
+        id: userId,
+        name,
+        username,
+        avatar_url: avatarUrl,
+        theme_mode: "SYSTEM",
+      })
+      .single();
 
-    Task.map(({ data }) =>
-      Option.some(data ? onSuccess(rowToProfile(data)) : onFailure)
-    ),
+    if (response.data) {
+      return either.right(rowToProfile(response.data));
+    }
 
-    Rx.of
-  );
-};
+    return either.left({});
+  };
 
-export const remove = <Msg,>({
-  userId,
-  onSuccess,
-  onFailure,
-}: {
-  userId: string;
-  onSuccess: () => Msg;
-  onFailure: () => Msg;
-}): cmd.Cmd<Msg> => {
-  return pipe(
-    async () =>
-      Supabase.client
-        .from<definitions["profile"]>("profile")
-        .delete()
-        .match({ id: userId }),
+export const deleteForever =
+  <Msg,>({ userId }: { userId: string }): task.Task<either.Either<{}, {}>> =>
+  async () => {
+    const response = await Supabase.client
+      .from<definitions["profile"]>("profile")
+      .delete()
+      .match({ id: userId });
 
-    Task.map(({ data }) => Option.some(data ? onSuccess() : onFailure)),
+    if (response.error) {
+      return either.left({});
+    }
 
-    Rx.of
-  );
-};
+    return either.right({});
+  };
 
-export const edit = <Msg,>({
-  userId,
-  username,
-  name,
-  avatarUrl,
-  onSuccess,
-  onFailure,
-}: {
-  userId: string;
-  username?: string;
-  name?: string;
-  avatarUrl?: string;
-  onSuccess: () => Msg;
-  onFailure: () => Msg;
-}): cmd.Cmd<Msg> => {
-  return pipe(
-    async () =>
-      Supabase.client
-        .from<definitions["profile"]>("profile")
-        .update({
-          username,
-          name,
-          avatar_url: avatarUrl,
-        })
-        .match({ id: userId }),
+export const edit =
+  ({
+    userId,
+    username,
+    name,
+    avatarUrl,
+  }: {
+    userId: string;
+    username?: string;
+    name?: string;
+    avatarUrl?: string;
+  }): task.Task<either.Either<{}, {}>> =>
+  async () => {
+    const response = await Supabase.client
+      .from<definitions["profile"]>("profile")
+      .update({
+        username,
+        name,
+        avatar_url: avatarUrl,
+      })
+      .match({ id: userId });
 
-    Task.map(({ data }) => Option.some(data ? onSuccess() : onFailure)),
+    if (response.error) {
+      return either.left({});
+    }
 
-    Rx.of
-  );
-};
+    return either.right({});
+  };
 
-export const subscriptions = ({
+export const subscribe = ({
   userId,
 }: {
   userId: string;

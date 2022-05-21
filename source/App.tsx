@@ -524,7 +524,10 @@ const updatePageReady = (
           msg,
           page.child
         );
-        return [{ type: "Account", child }, childCmd];
+        return [
+          { type: "Account", child },
+          pipe(childCmd, cmd.map(groupMsg("Account"))),
+        ];
       }
       return [page, cmd.none];
 
@@ -663,11 +666,11 @@ export const subscriptions = (model: Model): sub.Sub<Msg> => {
 };
 
 const profileSub = ({ userId }: { userId: string }) => {
-  return pipe(Profile.subscriptions({ userId }), sub.map(maybeProfileToMsg));
+  return pipe(Profile.subscribe({ userId }), sub.map(maybeProfileToMsg));
 };
 
 const sessionSub = () => {
-  return pipe(Session.subscriptions(), sub.map(maybeSessionToMsg));
+  return pipe(Session.subscribe(), sub.map(maybeSessionToMsg));
 };
 
 const maybeProfileToMsg = option.fold<Profile.Profile, Msg>(
@@ -749,7 +752,10 @@ const viewSessionMissing = (model: SessionMissingModel): react.Html<Msg> => {
 const viewReady = ({ page, profile }: ReadyModel): react.Html<Msg> => {
   switch (page.type) {
     case "Account":
-      return Pages.Account.view(profile, page.child);
+      return pipe(
+        Pages.Account.view(profile, page.child),
+        react.map(groupMsg("Account"))
+      );
 
     case "Chess":
       return Pages.Chess.view(page.child);

@@ -4,6 +4,9 @@ import React from "react";
 import { cmd, react } from "Framework";
 import * as Profile from "Profile";
 import * as Routes from "Routes";
+import { pipe } from "fp-ts/lib/function";
+import { attempt } from "Framework/Task";
+import { either } from "fp-ts";
 
 //
 //
@@ -47,17 +50,23 @@ export const update = (
     case "Delete":
       return [
         { type: "Deleting" },
-        Profile.remove<Msg>({
-          userId,
-          onSuccess: () => ({
-            group: "ProfileDelete",
-            type: "DeleteSucceeded",
+        pipe(
+          Profile.deleteForever({
+            userId,
           }),
-          onFailure: () => ({
-            group: "ProfileDelete",
-            type: "DeleteFailed",
-          }),
-        }),
+          attempt(
+            either.fold<{}, {}, Msg>(
+              () => ({
+                group: "ProfileDelete",
+                type: "DeleteFailed",
+              }),
+              () => ({
+                group: "ProfileDelete",
+                type: "DeleteSucceeded",
+              })
+            )
+          )
+        ),
       ];
 
     case "DeleteFailed":

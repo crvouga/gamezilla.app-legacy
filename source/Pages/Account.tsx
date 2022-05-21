@@ -18,6 +18,9 @@ import { cmd, react } from "Framework";
 import * as Profile from "../Profile";
 import * as Routes from "Routes";
 import * as View from "../View";
+import { pipe } from "fp-ts/lib/function";
+import { attempt } from "Framework/Task";
+import { either } from "fp-ts";
 
 // ███╗   ███╗ ██████╗ ██████╗ ███████╗██╗
 // ████╗ ████║██╔═══██╗██╔══██╗██╔════╝██║
@@ -41,14 +44,14 @@ export const init: Model = { type: "Idle" };
 //  ╚═════╝ ╚═╝     ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚══════╝
 
 export type Msg =
-  | { group: "Account"; type: "Back" }
-  | { group: "Account"; type: "Logout" }
-  | { group: "Account"; type: "DeleteProfile" }
-  | { group: "Account"; type: "CancelledDeleteProfile" }
-  | { group: "Account"; type: "ConfirmedDeleteProfile" }
-  | { group: "Account"; type: "DeleteProfileSucceeded" }
-  | { group: "Account"; type: "DeleteProfileFailed" }
-  | { group: "Account"; type: "UpdateProfile" };
+  | { type: "Back" }
+  | { type: "Logout" }
+  | { type: "DeleteProfile" }
+  | { type: "CancelledDeleteProfile" }
+  | { type: "ConfirmedDeleteProfile" }
+  | { type: "DeleteProfileSucceeded" }
+  | { type: "DeleteProfileFailed" }
+  | { type: "UpdateProfile" };
 
 export const update = (
   { userId }: { userId: string },
@@ -74,14 +77,17 @@ export const update = (
     case "ConfirmedDeleteProfile":
       return [
         { ...model, type: "DeletingProfile" },
-        Profile.remove<Msg>({
-          userId,
-          onSuccess: () => ({
-            group: "Account",
-            type: "DeleteProfileSucceeded",
+        pipe(
+          Profile.deleteForever({
+            userId,
           }),
-          onFailure: () => ({ group: "Account", type: "DeleteProfileFailed" }),
-        }),
+          attempt(
+            either.fold<{}, {}, Msg>(
+              () => ({ type: "DeleteProfileFailed" }),
+              () => ({ type: "DeleteProfileSucceeded" })
+            )
+          )
+        ),
       ];
 
     case "DeleteProfileFailed":
@@ -106,19 +112,13 @@ export const view =
       <View.Page>
         <View.Header
           left={
-            <View.HeaderBackButton
-              onClick={() => dispatch({ group: "Account", type: "Back" })}
-            />
+            <View.HeaderBackButton onClick={() => dispatch({ type: "Back" })} />
           }
           title={username}
         />
 
         <List>
-          <ListItemButton
-            onClick={() =>
-              dispatch({ group: "Account", type: "UpdateProfile" })
-            }
-          >
+          <ListItemButton onClick={() => dispatch({ type: "UpdateProfile" })}>
             <ListItemIcon>
               <Edit />
             </ListItemIcon>
@@ -128,66 +128,27 @@ export const view =
             </ListItemSecondaryAction>
           </ListItemButton>
 
-          <ListItemButton
-            onClick={() =>
-              dispatch({ group: "Account", type: "DeleteProfile" })
-            }
-          >
+          <ListItemButton onClick={() => dispatch({ type: "DeleteProfile" })}>
             <ListItemIcon>
               <Delete />
             </ListItemIcon>
             <ListItemText primary="Delete Profile" />
-            {/* <ListItemSecondaryAction>
-              <ChevronRight />
-            </ListItemSecondaryAction> */}
           </ListItemButton>
 
-          <Dialog open={model.type === "DeletingProfile"}>
-            <Box
-              sx={{
-                paddingX: 4,
-                paddingY: 2,
-                // flexDirection: "column",
-                display: "flex",
-                alignItems: "center",
-              }}
-            >
-              <Typography sx={{ mr: 2 }}>Deleting profile...</Typography>
-              <CircularProgress sx={{ mb: 1 }} />
-            </Box>
-          </Dialog>
+          <View.LoadingDialog
+            open={model.type === "DeletingProfile"}
+            title="Deleting profile..."
+          />
 
-          <Dialog
+          <View.ConformationDialog
             open={model.type === "ComfirmDeleteProfile"}
-            onClose={() =>
-              dispatch({ type: "CancelledDeleteProfile", group: "Account" })
-            }
-          >
-            <DialogTitle>Delete your profile forever?</DialogTitle>
-            <DialogActions>
-              <Button
-                onClick={() =>
-                  dispatch({
-                    type: "CancelledDeleteProfile",
-                    group: "Account",
-                  })
-                }
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={() =>
-                  dispatch({ type: "ConfirmedDeleteProfile", group: "Account" })
-                }
-              >
-                Delete
-              </Button>
-            </DialogActions>
-          </Dialog>
+            onCancel={() => dispatch({ type: "CancelledDeleteProfile" })}
+            title="Delete profile forever?"
+            onConfirm={() => dispatch({ type: "ConfirmedDeleteProfile" })}
+            confirmTitle="Delete"
+          />
 
-          <ListItemButton
-            onClick={() => dispatch({ group: "Account", type: "Logout" })}
-          >
+          <ListItemButton onClick={() => dispatch({ type: "Logout" })}>
             <ListItemIcon>
               <Logout />
             </ListItemIcon>

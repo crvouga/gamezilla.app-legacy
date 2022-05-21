@@ -1,5 +1,13 @@
 import { LoadingButton } from "@mui/lab";
-import { Avatar, Box, Button, TextField } from "@mui/material";
+import {
+  DialogTitle,
+  Avatar,
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  TextField,
+} from "@mui/material";
 import * as React from "react";
 import { cmd, react } from "Framework";
 import * as Profile from "../../Profile";
@@ -40,7 +48,10 @@ const initForm = ({ defaultName }: { defaultName: string }): Form => {
   };
 };
 
-export type Model = { status: "Idle" | "Loading" | "LoggingOut"; form: Form };
+export type Model = {
+  status: "Idle" | "CreatingProfile" | "ConfirmLogout" | "LoggingOut";
+  form: Form;
+};
 
 export const init = ({ defaultName }: { defaultName: string }): Model => {
   return {
@@ -65,6 +76,8 @@ export type Msg =
   | { type: "Submit" }
   | { type: "SubmitSucceeded" }
   | { type: "SubmitFailed" }
+  | { type: "CancelledLogout" }
+  | { type: "ClickedLogoutButton" }
   | { type: "Logout" }
   | { type: "LogoutFailed" }
   | { type: "LogoutSucceeded" };
@@ -83,19 +96,19 @@ export const update = (
 
     case "Submit":
       return [
-        { ...model, status: "Loading" },
-        Profile.create<Msg>({
-          ...model.form,
-          userId,
-          onFailure: () => ({
-            group: "ProfileCreate",
-            type: "SubmitFailed",
+        { ...model, status: "CreatingProfile" },
+        pipe(
+          Profile.create({
+            userId,
+            ...model.form,
           }),
-          onSuccess: () => ({
-            group: "ProfileCreate",
-            type: "SubmitSucceeded",
-          }),
-        }),
+          attempt(
+            either.fold<{}, Profile.Profile, Msg>(
+              () => ({ type: "SubmitFailed" }),
+              () => ({ type: "SubmitSucceeded" })
+            )
+          )
+        ),
       ];
 
     case "SubmitSucceeded":
@@ -123,6 +136,12 @@ export const update = (
 
     case "LogoutSucceeded":
       return [model, cmd.none];
+
+    case "ClickedLogoutButton":
+      return [{ ...model, status: "ConfirmLogout" }, cmd.none];
+
+    case "CancelledLogout":
+      return [{ ...model, status: "Idle" }, cmd.none];
   }
 };
 
@@ -146,7 +165,7 @@ export const view =
             <View.Button
               loading={model.status === "LoggingOut"}
               sx={{ marginLeft: -1 }}
-              onClick={() => dispatch({ type: "Logout" })}
+              onClick={() => dispatch({ type: "ClickedLogoutButton" })}
             >
               Logout
             </View.Button>
@@ -154,7 +173,23 @@ export const view =
           title="Create Profile"
         />
 
-        <View.LoadingBackdrop open={model.status === "LoggingOut"} />
+        <View.ConformationDialog
+          open={model.status === "ConfirmLogout"}
+          title="Logout of Gamezilla?"
+          onCancel={() => dispatch({ type: "CancelledLogout" })}
+          onConfirm={() => dispatch({ type: "Logout" })}
+          confirmTitle="Logout"
+        />
+
+        <View.LoadingDialog
+          open={model.status === "LoggingOut"}
+          title="Logging out..."
+        />
+
+        <View.LoadingDialog
+          open={model.status === "CreatingProfile"}
+          title="Creating profile..."
+        />
 
         <Box sx={{ p: 2, width: "100%" }}>
           <Avatar
@@ -198,7 +233,7 @@ export const view =
             fullWidth
             size="large"
             variant="contained"
-            loading={model.status === "Loading"}
+            loading={model.status === "CreatingProfile"}
             onClick={() => dispatch({ type: "Submit" })}
           >
             Create Profile
