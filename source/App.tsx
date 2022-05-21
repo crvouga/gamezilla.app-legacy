@@ -95,9 +95,11 @@ export const init = (location: navigation.Location): [Model, cmd.Cmd<Msg>] => [
   pipe(Session.load(), perform(maybeSessionToMsg)),
 ];
 
-const initSessionMissing = (
-  location: Location
-): [SessionMissingModel, cmd.Cmd<Msg>] => {
+const initSessionMissing = ({
+  location,
+}: {
+  location: Location;
+}): [SessionMissingModel, cmd.Cmd<Msg>] => {
   const child = Pages.Login.init();
 
   return [
@@ -335,6 +337,9 @@ const updateProfileMissing = (
     case "ProfileFound":
       return initReady({ location: model.location, profile: msg.profile });
 
+    case "SessionNotFound":
+      return initSessionMissing({ location: model.location });
+
     default:
       return [model, cmd.none];
   }
@@ -371,7 +376,7 @@ const updateSessionLoading = (
       return initProfileLoading({ session: msg, location: model.location });
 
     case "SessionNotFound":
-      return initSessionMissing(model.location);
+      return initSessionMissing({ location: model.location });
 
     default:
       return [model, cmd.none];
@@ -418,7 +423,7 @@ const updateReady = (msg: Msg, model: ReadyModel): [Model, cmd.Cmd<Msg>] => {
       });
 
     case "SessionNotFound":
-      return initSessionMissing(model.location);
+      return initSessionMissing({ location: model.location });
 
     default:
       return [model, cmd.none];
