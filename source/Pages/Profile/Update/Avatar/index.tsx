@@ -7,18 +7,19 @@ import {
   ListItemButton,
   ListItemText,
 } from "@mui/material";
-import { cmd, react } from "Framework";
+import { cmd, navigation, react } from "Framework";
 import * as ProfileAvatar from "ProfileAvatar";
 import * as React from "react";
 import * as Routes from "Routes";
 import * as View from "View";
 
-// ███╗   ███╗ ██████╗ ██████╗ ███████╗██╗
-// ████╗ ████║██╔═══██╗██╔══██╗██╔════╝██║
-// ██╔████╔██║██║   ██║██║  ██║█████╗  ██║
-// ██║╚██╔╝██║██║   ██║██║  ██║██╔══╝  ██║
-// ██║ ╚═╝ ██║╚██████╔╝██████╔╝███████╗███████╗
-// ╚═╝     ╚═╝ ╚═════╝ ╚═════╝ ╚══════╝╚══════╝
+//
+//
+//
+// Model
+//
+//
+//
 
 export type Model = {
   status: "Idle" | "Loading";
@@ -35,19 +36,20 @@ export const init = ({ avatarUrl }: { avatarUrl: string }): Model => {
   };
 };
 
-// ██╗   ██╗██████╗ ██████╗  █████╗ ████████╗███████╗
-// ██║   ██║██╔══██╗██╔══██╗██╔══██╗╚══██╔══╝██╔════╝
-// ██║   ██║██████╔╝██║  ██║███████║   ██║   █████╗
-// ██║   ██║██╔═══╝ ██║  ██║██╔══██║   ██║   ██╔══╝
-// ╚██████╔╝██║     ██████╔╝██║  ██║   ██║   ███████╗
-//  ╚═════╝ ╚═╝     ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚══════╝
+//
+//
+//
+// Update
+//
+//
+//
 
 export type Msg =
   | { type: "ClickedBackButton" }
   | { type: "ClickedStyle" }
   | { type: "ClickedSeed" }
   | { type: "ClickedStyleListItem"; style: ProfileAvatar.Style }
-  | { type: "LocationChanged"; location: { pathname: string } };
+  | { type: "LocationChanged"; location: navigation.Location };
 
 export const update = (
   { userId }: { userId: string },
@@ -62,7 +64,7 @@ export const update = (
       return [{ ...model, style: msg.style }, cmd.none];
 
     case "ClickedBackButton":
-      return [model, Routes.replace({ type: "ProfileUpdate" })];
+      return [model, navigation.back()];
 
     case "ClickedSeed":
       return [model, cmd.none];
@@ -72,12 +74,13 @@ export const update = (
   }
 };
 
-// ██╗   ██╗██╗███████╗██╗    ██╗
-// ██║   ██║██║██╔════╝██║    ██║
-// ██║   ██║██║█████╗  ██║ █╗ ██║
-// ╚██╗ ██╔╝██║██╔══╝  ██║███╗██║
-//  ╚████╔╝ ██║███████╗╚███╔███╔╝
-//   ╚═══╝  ╚═╝╚══════╝ ╚══╝╚══╝
+//
+//
+//
+// Update
+//
+//
+//
 
 type Profile = { username: string; name: string; avatarUrl: string };
 

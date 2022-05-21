@@ -1,6 +1,6 @@
 import { Avatar, Box, ButtonBase, Toolbar, Typography } from "@mui/material";
 import React from "react";
-import { cmd, react } from "Framework";
+import { cmd, navigation, react } from "Framework";
 import * as Games from "../Games";
 import * as Routes from "Routes";
 import * as View from "../View";
@@ -40,18 +40,21 @@ export type Msg =
 export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "ClickedAvatar":
-      return [model, Routes.push({ type: "Account" })];
+      return [model, navigation.push(Routes.encode({ type: "Account" }))];
 
     case "ClickedGame":
       switch (msg.game) {
         case "ConnectFour":
-          return [model, Routes.push({ type: "ConnectFour" })];
+          return [
+            model,
+            navigation.push(Routes.encode({ type: "ConnectFour" })),
+          ];
 
         case "TicTacToe":
-          return [model, Routes.push({ type: "TicTacToe" })];
+          return [model, navigation.push(Routes.encode({ type: "TicTacToe" }))];
 
         case "Chess":
-          return [model, Routes.push({ type: "Chess" })];
+          return [model, navigation.push(Routes.encode({ type: "Chess" }))];
       }
   }
 };

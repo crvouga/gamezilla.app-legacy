@@ -63,17 +63,3 @@ export const decode = (location: {
 export const encode = (route: Route): string => {
   return route.type;
 };
-
-//
-//
-// Cmds
-//
-//
-
-export const push = <Msg,>(route: Route) => {
-  return Navigation.push<Msg>(encode(route));
-};
-
-export const replace = <Msg,>(route: Route) => {
-  return Navigation.replace<Msg>(encode(route));
-};

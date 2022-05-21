@@ -3,7 +3,7 @@ import { Button, Dialog, DialogActions, DialogTitle } from "@mui/material";
 import { either } from "fp-ts";
 import { pipe } from "fp-ts/lib/function";
 import React from "react";
-import { cmd, react } from "Framework";
+import { cmd, navigation, react } from "Framework";
 import { attempt } from "Framework/Task";
 import * as Routes from "Routes";
 import * as Session from "../Session";
@@ -41,7 +41,10 @@ export type Msg =
 export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "Cancel":
-      return [{ type: "Idle" }, Routes.replace({ type: "Account" })];
+      return [
+        { type: "Idle" },
+        navigation.replace(Routes.encode({ type: "Account" })),
+      ];
 
     case "Logout":
       return [

@@ -1,7 +1,7 @@
 import { LoadingButton } from "@mui/lab";
 import { Box, TextField } from "@mui/material";
 import * as React from "react";
-import { cmd, react } from "Framework";
+import { cmd, navigation, react } from "Framework";
 import * as Profile from "Profile";
 import * as Routes from "Routes";
 import * as View from "View";
@@ -84,7 +84,7 @@ export const update = (
       return [{ ...model, status: "Idle" }, cmd.none];
 
     case "Back":
-      return [model, Routes.replace({ type: "Account" })];
+      return [model, navigation.back()];
   }
 };
 
