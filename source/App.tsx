@@ -469,7 +469,10 @@ const updatePageSessionMissing = (
     case "Login":
       if (msg.group === "Login") {
         const [child, childCmd] = Pages.Login.update(msg, page.child);
-        return [{ type: "Login", child }, childCmd];
+        return [
+          { type: "Login", child },
+          pipe(childCmd, cmd.map(groupMsg("Login"))),
+        ];
       }
 
       return [page, cmd.none];
@@ -724,7 +727,10 @@ const viewSessionLoading = (model: SessionLoadingModel): react.Html<Msg> => {
 const viewSessionMissing = (model: SessionMissingModel): react.Html<Msg> => {
   switch (model.page.type) {
     case "Login":
-      return Pages.Login.view(model.page.child);
+      return pipe(
+        Pages.Login.view(model.page.child),
+        react.map(groupMsg("Login"))
+      );
 
     default:
       return exhaustive(model.page.type);
