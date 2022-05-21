@@ -1,6 +1,9 @@
 import { LoadingButton } from "@mui/lab";
 import { Box, TextField } from "@mui/material";
+import { either } from "fp-ts";
+import { pipe } from "fp-ts/lib/function";
 import { cmd, react } from "Framework";
+import { attempt } from "Framework/Task";
 import * as Profile from "Profile";
 import * as React from "react";
 import * as Routes from "Routes";
@@ -58,18 +61,24 @@ export const update = (
     case "Submit":
       return [
         { ...model, status: "Loading" },
-        Profile.edit<Msg>({
-          ...model,
-          userId,
-          onFailure: () => ({
-            group: "ProfileUpdateUsername",
-            type: "SubmitFailed",
+        pipe(
+          Profile.edit({
+            userId,
+            ...model,
           }),
-          onSuccess: () => ({
-            group: "ProfileUpdateUsername",
-            type: "SubmitSucceeded",
-          }),
-        }),
+          attempt(
+            either.fold<{}, {}, Msg>(
+              () => ({
+                group: "ProfileUpdateUsername",
+                type: "SubmitFailed",
+              }),
+              () => ({
+                group: "ProfileUpdateUsername",
+                type: "SubmitSucceeded",
+              })
+            )
+          )
+        ),
       ];
 
     case "SubmitSucceeded":

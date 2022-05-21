@@ -1,12 +1,15 @@
 import { ChevronLeft, ChevronRight } from "@mui/icons-material";
 import { LoadingButton, LoadingButtonProps } from "@mui/lab";
 import {
+  DialogTitle,
+  DialogActions,
   Backdrop,
   Box,
   BoxProps,
   CircularProgress,
   createTheme,
   CssBaseline,
+  Dialog,
   IconButton,
   ListItemButton,
   ListItemSecondaryAction,
@@ -172,5 +175,48 @@ export const LoadingBackdrop = ({ open }: { open?: boolean }) => {
     <Backdrop sx={{ zIndex: 10 }} open={Boolean(open)}>
       <CircularProgress />
     </Backdrop>
+  );
+};
+
+export const LoadingDialog = ({
+  open,
+  title,
+}: {
+  open: boolean;
+  title: string;
+}) => {
+  return (
+    <Dialog open={open}>
+      <Box sx={{ display: "flex", alignItems: "center", p: 2 }}>
+        <CircularProgress sx={{ marginRight: 2 }} />
+        <Typography variant="h6">{title}</Typography>
+      </Box>
+    </Dialog>
+  );
+};
+
+export const ConformationDialog = ({
+  open,
+  onCancel,
+  onConfirm,
+  title,
+  confirmTitle,
+  cancelTitle = "Cancel",
+}: {
+  open: boolean;
+  onCancel: () => void;
+  onConfirm: () => void;
+  title: string;
+  confirmTitle: string;
+  cancelTitle?: string;
+}) => {
+  return (
+    <Dialog open={open} onClose={onCancel}>
+      <DialogTitle>{title}</DialogTitle>
+      <DialogActions>
+        <Button onClick={onCancel}>{cancelTitle}</Button>
+        <Button onClick={onConfirm}>{confirmTitle}</Button>
+      </DialogActions>
+    </Dialog>
   );
 };

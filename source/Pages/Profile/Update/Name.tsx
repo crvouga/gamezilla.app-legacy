@@ -5,6 +5,9 @@ import { cmd, react } from "Framework";
 import * as Profile from "Profile";
 import * as Routes from "Routes";
 import * as View from "View";
+import { pipe } from "fp-ts/lib/function";
+import { attempt } from "Framework/Task";
+import { either } from "fp-ts";
 
 //
 //
@@ -54,18 +57,24 @@ export const update = (
     case "Submit":
       return [
         { ...model, status: "Loading" },
-        Profile.edit<Msg>({
-          ...model,
-          userId,
-          onFailure: () => ({
-            group: "ProfileUpdateName",
-            type: "SubmitFailed",
+        pipe(
+          Profile.edit({
+            userId,
+            ...model,
           }),
-          onSuccess: () => ({
-            group: "ProfileUpdateName",
-            type: "SubmitSucceeded",
-          }),
-        }),
+          attempt(
+            either.fold<{}, {}, Msg>(
+              () => ({
+                group: "ProfileUpdateName",
+                type: "SubmitFailed",
+              }),
+              () => ({
+                group: "ProfileUpdateName",
+                type: "SubmitSucceeded",
+              })
+            )
+          )
+        ),
       ];
 
     case "SubmitSucceeded":
