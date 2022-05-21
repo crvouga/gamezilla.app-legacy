@@ -33,17 +33,17 @@ export const init: Model = { type: "Idle" };
 //
 
 export type Msg =
-  | { group: "Logout"; type: "Cancel" }
-  | { group: "Logout"; type: "LogoutSucceeded" }
-  | { group: "Logout"; type: "LogoutFailed" }
-  | { group: "Logout"; type: "Confirm" };
+  | { type: "Cancel" }
+  | { type: "Logout" }
+  | { type: "LogoutFailed" }
+  | { type: "LogoutSucceeded" };
 
 export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "Cancel":
       return [{ type: "Idle" }, Routes.replace({ type: "Account" })];
 
-    case "Confirm":
+    case "Logout":
       return [
         { type: "Loading" },
         pipe(
@@ -79,21 +79,18 @@ export const view =
   (model: Model): react.Html<Msg> =>
   (dispatch) =>
     (
-      <Dialog
-        open
-        onClose={() => dispatch({ group: "Logout", type: "Cancel" })}
-      >
+      <Dialog open onClose={() => dispatch({ type: "Cancel" })}>
         <DialogTitle>Logout of Gamezilla?</DialogTitle>
         <DialogActions>
           <Button
             disabled={model.type === "Loading"}
-            onClick={() => dispatch({ group: "Logout", type: "Cancel" })}
+            onClick={() => dispatch({ type: "Cancel" })}
           >
             Cancel
           </Button>
           <LoadingButton
             loading={model.type === "Loading"}
-            onClick={() => dispatch({ group: "Logout", type: "Confirm" })}
+            onClick={() => dispatch({ type: "Logout" })}
           >
             Logout
           </LoadingButton>
