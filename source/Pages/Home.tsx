@@ -1,7 +1,7 @@
 import { Avatar, Box, ButtonBase, Toolbar, Typography } from "@mui/material";
 import React from "react";
 import { cmd, react } from "Framework";
-import * as Game from "../Game";
+import * as Games from "../Games";
 import * as Routes from "Routes";
 import * as View from "../View";
 
@@ -91,7 +91,7 @@ export const view =
           }}
         >
           <GameIcon
-            icon={<Game.TicTacToe.Icon />}
+            icon={<Games.TicTacToe.Icon />}
             label="Tic Tac Toe"
             onClick={() =>
               dispatch({
@@ -103,7 +103,7 @@ export const view =
           />
 
           <GameIcon
-            icon={<Game.ConnectFour.Icon />}
+            icon={<Games.ConnectFour.Icon />}
             label="Connect Four"
             onClick={() =>
               dispatch({
@@ -115,7 +115,7 @@ export const view =
           />
 
           <GameIcon
-            icon={<Game.Chess.Icon />}
+            icon={<Games.Chess.Icon />}
             label="Chess"
             onClick={() =>
               dispatch({ group: "Home", type: "ClickedGame", game: "Chess" })

@@ -2,7 +2,7 @@ import { Button } from "@mui/material";
 import React from "react";
 import { cmd, react } from "Framework";
 import * as Routes from "Routes";
-import * as Game from "../Game";
+import * as Game from "../Games";
 import * as View from "../View";
 
 /* 
