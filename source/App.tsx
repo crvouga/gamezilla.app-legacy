@@ -488,7 +488,10 @@ const updatePageProfileMissing = (
     case "Logout":
       if (msg.group === "Logout") {
         const [child, childCmd] = Pages.Logout.update(msg, page.child);
-        return [{ type: "Logout", child }, childCmd];
+        return [
+          { type: "Logout", child },
+          pipe(childCmd, cmd.map(groupMsg("Logout"))),
+        ];
       }
       return [page, cmd.none];
 
@@ -550,7 +553,10 @@ const updatePageReady = (
     case "Logout":
       if (msg.group === "Logout") {
         const [child, childCmd] = Pages.Logout.update(msg, page.child);
-        return [{ type: "Logout", child }, childCmd];
+        return [
+          { type: "Logout", child },
+          pipe(childCmd, cmd.map(groupMsg("Logout"))),
+        ];
       }
       return [page, cmd.none];
 
@@ -707,7 +713,10 @@ const viewProfileLoading = (model: ProfileLoadingModel): react.Html<Msg> => {
 const viewProfileMissing = (model: ProfileMissingModel): react.Html<Msg> => {
   switch (model.page.type) {
     case "Logout":
-      return Pages.Logout.view(model.page.child);
+      return pipe(
+        Pages.Logout.view(model.page.child),
+        react.map(groupMsg("Logout"))
+      );
 
     case "ProfileCreate":
       return pipe(
@@ -752,7 +761,7 @@ const viewReady = ({ page, profile }: ReadyModel): react.Html<Msg> => {
       return Pages.ConnectFour.view(page.child);
 
     case "Logout":
-      return Pages.Logout.view(page.child);
+      return pipe(Pages.Logout.view(page.child), react.map(groupMsg("Logout")));
 
     case "ProfileDelete":
       return Pages.ProfileDelete.view(page.child);
