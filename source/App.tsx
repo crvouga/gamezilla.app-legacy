@@ -1,5 +1,6 @@
 import { either, option } from "fp-ts";
 import { pipe } from "fp-ts/lib/function";
+import * as Game from "Game";
 import React from "react";
 import { cmd, navigation, react, sub } from "./Framework";
 import { attempt, perform } from "./Framework/Task";
@@ -54,8 +55,9 @@ type ProfileMissingModel = {
 type ReadyModel = {
   type: "Ready";
   location: Location;
-  profile: Profile;
+  profile: Profile.Profile;
   session: Session;
+  game: option.Option<Game.Game>;
   page:
     | { type: "Home"; child: Pages.Home.Model }
     | { type: "Account"; child: Pages.Account.Model }
@@ -76,13 +78,6 @@ type ReadyModel = {
 type Location = { pathname: string };
 
 type Session = { userId: string; defaultName: string };
-
-type Profile = {
-  name: string;
-  avatarUrl: string;
-  username: string;
-  userId: string;
-};
 
 //
 //
@@ -157,26 +152,30 @@ const initReady = ({
   session,
 }: {
   location: Location;
-  profile: Profile;
+  profile: Profile.Profile;
   session: Session;
 }): [ReadyModel, cmd.Cmd<Msg>] => {
-  const [page, pageCmd] = initPageReady(profile, location);
+  const [page, pageCmd] = initPageReady({ profile, location });
   return [
     {
       type: "Ready",
       location: location,
       session: session,
       profile: profile,
+      game: option.none,
       page: page,
     },
     pageCmd,
   ];
 };
 
-const initPageReady = (
-  profile: Profile,
-  location: { pathname: string }
-): [ReadyModel["page"], cmd.Cmd<Msg>] => {
+const initPageReady = ({
+  profile,
+  location,
+}: {
+  profile: Profile.Profile;
+  location: Location;
+}): [ReadyModel["page"], cmd.Cmd<Msg>] => {
   const route = pipe(
     location,
     Routes.decode,
@@ -275,7 +274,7 @@ export type Msg =
   | { group: "Main"; type: "LocationChanged"; location: Location }
   | { group: "Main"; type: "SessionFound"; session: Session }
   | { group: "Main"; type: "SessionNotFound" }
-  | { group: "Main"; type: "ProfileFound"; profile: Profile }
+  | { group: "Main"; type: "ProfileFound"; profile: Profile.Profile }
   | { group: "Main"; type: "ProfileNotFound" }
   | (Pages.Account.Msg & { group: "Account" })
   | (Pages.Chess.Msg & { group: "Chess" })
@@ -410,7 +409,10 @@ const updateProfileLoading = (
 const updateReady = (msg: Msg, model: ReadyModel): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "LocationChanged":
-      const [page, pageCmd] = initPageReady(model.profile, msg.location);
+      const [page, pageCmd] = initPageReady({
+        profile: model.profile,
+        location: msg.location,
+      });
       return [{ ...model, location: msg.location, page }, pageCmd];
 
     case "ProfileFound":
@@ -515,7 +517,7 @@ const updatePageProfileMissing = (
 };
 
 const updatePageReady = (
-  { profile }: { profile: Profile; location: Location },
+  { profile }: { profile: Profile.Profile; location: Location },
   msg: Msg,
   page: ReadyModel["page"]
 ): [ReadyModel["page"], cmd.Cmd<Msg>] => {
