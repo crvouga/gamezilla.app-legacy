@@ -6,6 +6,10 @@ import * as Profile from "../../Profile";
 import * as ProfileAvatar from "../../ProfileAvatar";
 import * as Session from "../../Session";
 import * as View from "View";
+import { Logout } from "@mui/icons-material";
+import { pipe } from "fp-ts/lib/function";
+import { attempt } from "Framework/Task";
+import { either } from "fp-ts";
 
 //
 //
@@ -56,12 +60,14 @@ export const init = ({ defaultName }: { defaultName: string }): Model => {
 //
 
 export type Msg =
-  | { group: "ProfileCreate"; type: "EnteredUsername"; username: string }
-  | { group: "ProfileCreate"; type: "EnteredName"; name: string }
-  | { group: "ProfileCreate"; type: "Submit" }
-  | { group: "ProfileCreate"; type: "SubmitSucceeded" }
-  | { group: "ProfileCreate"; type: "SubmitFailed" }
-  | { group: "ProfileCreate"; type: "Logout" };
+  | { type: "EnteredUsername"; username: string }
+  | { type: "EnteredName"; name: string }
+  | { type: "Submit" }
+  | { type: "SubmitSucceeded" }
+  | { type: "SubmitFailed" }
+  | { type: "Logout" }
+  | { type: "LogoutFailed" }
+  | { type: "LogoutSucceeded" };
 
 export const update = (
   { userId }: { userId: string },
@@ -101,9 +107,22 @@ export const update = (
     case "Logout":
       return [
         { ...model, status: "LoggingOut" },
-        // Session.logout()
-        cmd.none,
+        pipe(
+          Session.logout,
+          attempt(
+            either.fold<{}, {}, Msg>(
+              () => ({ type: "LogoutFailed" }),
+              () => ({ type: "LogoutSucceeded" })
+            )
+          )
+        ),
       ];
+
+    case "LogoutFailed":
+      return [model, cmd.none];
+
+    case "LogoutSucceeded":
+      return [model, cmd.none];
   }
 };
 
@@ -124,11 +143,13 @@ export const view =
       <View.Page>
         <View.Header
           left={
-            <View.HeaderBackButton
-              onClick={() =>
-                dispatch({ group: "ProfileCreate", type: "Logout" })
-              }
-            />
+            <View.Button
+              loading={model.status === "LoggingOut"}
+              sx={{ marginLeft: -1 }}
+              onClick={() => dispatch({ type: "Logout" })}
+            >
+              Logout
+            </View.Button>
           }
           title="Create Profile"
         />
@@ -157,7 +178,6 @@ export const view =
             fullWidth
             onChange={(event) =>
               dispatch({
-                group: "ProfileCreate",
                 type: "EnteredUsername",
                 username: event.currentTarget.value,
               })
@@ -169,12 +189,8 @@ export const view =
             sx={{ marginBottom: 4 }}
             label="Name"
             fullWidth
-            onChange={(event) =>
-              dispatch({
-                group: "ProfileCreate",
-                type: "EnteredName",
-                name: event.currentTarget.value,
-              })
+            onChange={({ currentTarget: { value: name } }) =>
+              dispatch({ type: "EnteredName", name })
             }
           />
 
@@ -183,7 +199,7 @@ export const view =
             size="large"
             variant="contained"
             loading={model.status === "Loading"}
-            onClick={() => dispatch({ group: "ProfileCreate", type: "Submit" })}
+            onClick={() => dispatch({ type: "Submit" })}
           >
             Create Profile
           </LoadingButton>
