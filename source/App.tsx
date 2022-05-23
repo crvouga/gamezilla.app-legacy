@@ -95,10 +95,12 @@ export const locationToMsg = (location: navigation.Location): Msg => {
 //
 //
 
-export const init = (location: navigation.Location): [Model, cmd.Cmd<Msg>] => [
-  { type: "SessionLoading", location: location },
-  pipe(Session.load, perform(maybeSessionToMsg)),
-];
+export const init = (location: navigation.Location): [Model, cmd.Cmd<Msg>] => {
+  return [
+    { type: "SessionLoading", location: location },
+    pipe(Session.load, perform(maybeSessionToMsg)),
+  ];
+};
 
 const initSessionMissing = ({
   location,
@@ -182,7 +184,7 @@ const initPageReady = ({
   location: navigation.Location;
 }): [ReadyModel["page"], cmd.Cmd<Msg>] => {
   const route = pipe(
-    location,
+    location.pathname,
     Route.decode,
     option.fold<Route.Route, Route.Route | { type: "NotFound" }>(
       () => ({ type: "NotFound" }),
@@ -192,7 +194,7 @@ const initPageReady = ({
 
   const notFound: [ReadyModel["page"], cmd.Cmd<Msg>] = [
     { type: "Home", child: Pages.Home.init },
-    navigation.replace(Route.encode({ type: "Home" })),
+    navigation.push(Route.encode({ type: "Home" })),
   ];
 
   switch (route.type) {
@@ -413,15 +415,17 @@ const updateProfileLoading = (
 
 const updateReady = (msg: Msg, model: ReadyModel): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
-    case "LocationChanged":
+    case "LocationChanged": {
       const [page, pageCmd] = initPageReady({
         profile: model.profile,
         location: msg.location,
       });
+
       return [{ ...model, location: msg.location, page }, pageCmd];
+    }
 
     case "ProfileFound":
-      return [{ ...model, profile: msg.profile, page }, pageCmd];
+      return [{ ...model, profile: msg.profile }, cmd.none];
 
     case "ProfileNotFound":
       return initProfileMissing(model);
@@ -583,7 +587,7 @@ const updatePageReady = (
 
   if (
     page.type === "ProfileUpdateAvatar" &&
-    (msg.group === "ProfileUpdateAvatar" || msg.type === "LocationChanged")
+    msg.group === "ProfileUpdateAvatar"
   ) {
     const [child, childCmd] = Pages.ProfileUpdateAvatar.update(
       { userId: profile.userId },
@@ -778,7 +782,7 @@ const viewReady = ({ page, profile }: ReadyModel): react.Html<Msg> => {
 
     case "ProfileUpdateAvatar":
       return pipe(
-        Pages.ProfileUpdateAvatar.view(profile, page.child),
+        Pages.ProfileUpdateAvatar.view(page.child),
         react.map(groupMsg("ProfileUpdateAvatar"))
       );
 

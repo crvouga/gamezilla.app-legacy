@@ -57,7 +57,6 @@ export const update = (
         navigation.push(
           Route.encode({
             type: "ProfileUpdateAvatar",
-            child: { type: "Main" },
           })
         ),
       ];

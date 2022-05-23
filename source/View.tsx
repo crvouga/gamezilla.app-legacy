@@ -100,13 +100,31 @@ export const Header = ({
 }) => {
   return (
     <Toolbar>
-      <Box sx={{ flex: 1 }}>{left}</Box>
+      <Box
+        sx={{
+          flex: 1,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "flex-start",
+        }}
+      >
+        {left}
+      </Box>
 
       <Typography sx={{ flex: 2 }} align="center" variant="h6">
         {title}
       </Typography>
 
-      <Box sx={{ flex: 1 }}>{right}</Box>
+      <Box
+        sx={{
+          flex: 1,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "flex-end",
+        }}
+      >
+        {right}
+      </Box>
     </Toolbar>
   );
 };
