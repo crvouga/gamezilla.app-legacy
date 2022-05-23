@@ -97,7 +97,7 @@ export const locationToMsg = (location: navigation.Location): Msg => {
 
 export const init = (location: navigation.Location): [Model, cmd.Cmd<Msg>] => [
   { type: "SessionLoading", location: location },
-  cmd.none,
+  pipe(Session.load, perform(maybeSessionToMsg)),
 ];
 
 const initSessionMissing = ({
@@ -112,11 +112,6 @@ const initSessionMissing = ({
     navigation.push(Routes.encode({ type: "Login" })),
   ];
 };
-
-const maybeSessionToMsg = option.fold<Session.Session, Msg>(
-  () => ({ group: "Main", type: "SessionNotFound" }),
-  (session) => ({ group: "Main", type: "SessionFound", session })
-);
 
 const initProfileLoading = ({
   session,
@@ -531,127 +526,100 @@ const updatePageReady = (
   msg: Msg,
   page: ReadyModel["page"]
 ): [ReadyModel["page"], cmd.Cmd<Msg>] => {
-  switch (page.type) {
-    case "Account":
-      if (msg.group === "Account") {
-        const [child, childCmd] = Pages.Account.update(
-          profile,
-          msg,
-          page.child
-        );
-        return [
-          { type: "Account", child },
-          pipe(childCmd, cmd.map(groupMsg("Account"))),
-        ];
-      }
-      return [page, cmd.none];
-
-    case "Chess":
-      if (msg.group === "Chess") {
-        const [child, childCmd] = Pages.Chess.update(msg, page.child);
-        return [{ type: "Chess", child }, childCmd];
-      }
-      return [page, cmd.none];
-
-    case "ConnectFour":
-      if (msg.group === "ConnectFour") {
-        const [child, childCmd] = Pages.ConnectFour.update(msg, page.child);
-        return [{ type: "ConnectFour", child }, childCmd];
-      }
-      return [page, cmd.none];
-
-    case "Home":
-      if (msg.group === "Home") {
-        const [child, childCmd] = Pages.Home.update(msg, page.child);
-        return [{ type: "Home", child }, childCmd];
-      }
-
-      return [page, cmd.none];
-
-    case "Logout":
-      if (msg.group === "Logout") {
-        const [child, childCmd] = Pages.Logout.update(msg, page.child);
-        return [
-          { type: "Logout", child },
-          pipe(childCmd, cmd.map(groupMsg("Logout"))),
-        ];
-      }
-      return [page, cmd.none];
-
-    case "ProfileDelete":
-      if (msg.group === "ProfileDelete") {
-        const [child, childCmd] = Pages.ProfileDelete.update(
-          profile,
-          msg,
-          page.child
-        );
-        return [{ type: "ProfileDelete", child }, childCmd];
-      }
-      return [page, cmd.none];
-
-    case "ProfileUpdate":
-      if (msg.group === "ProfileUpdate") {
-        const [child, childCmd] = Pages.ProfileUpdate.update(
-          profile,
-          msg,
-          page.child
-        );
-        return [{ type: "ProfileUpdate", child }, childCmd];
-      }
-      return [page, cmd.none];
-
-    case "ProfileUpdateAvatar":
-      if (
-        msg.group === "ProfileUpdateAvatar" ||
-        msg.type === "LocationChanged"
-      ) {
-        const [child, childCmd] = Pages.ProfileUpdateAvatar.update(
-          { userId: profile.userId },
-          msg,
-          page.child
-        );
-        return [
-          { type: "ProfileUpdateAvatar", child },
-          pipe(childCmd, cmd.map(groupMsg("ProfileUpdateAvatar"))),
-        ];
-      }
-      return [page, cmd.none];
-
-    case "ProfileUpdateName":
-      if (msg.group === "ProfileUpdateName") {
-        const [child, childCmd] = Pages.ProfileUpdateName.update(
-          profile,
-          msg,
-          page.child
-        );
-        return [{ type: "ProfileUpdateName", child }, childCmd];
-      }
-      return [page, cmd.none];
-
-    case "ProfileUpdateUsername":
-      if (msg.group === "ProfileUpdateUsername") {
-        const [child, childCmd] = Pages.ProfileUpdateUsername.update(
-          profile,
-          msg,
-          page.child
-        );
-        return [{ type: "ProfileUpdateUsername", child }, childCmd];
-      }
-      return [page, cmd.none];
-
-    case "TicTacToe":
-      if (msg.group === "TicTacToe") {
-        const [child, childCmd] = Pages.TicTacToe.update(msg, page.child);
-        return [
-          { type: "TicTacToe", child },
-          pipe(childCmd, cmd.map(groupMsg("TicTacToe"))),
-        ];
-      }
-      return [page, cmd.none];
-
-    default:
-      return exhaustive(page);
+  if (page.type === "Account" && msg.group === "Account") {
+    const [child, childCmd] = Pages.Account.update(profile, msg, page.child);
+    return [
+      { type: "Account", child },
+      pipe(childCmd, cmd.map(groupMsg("Account"))),
+    ];
   }
+
+  if (page.type === "Chess" && msg.group === "Chess") {
+    const [child, childCmd] = Pages.Chess.update(msg, page.child);
+    return [{ type: "Chess", child }, childCmd];
+  }
+
+  if (page.type === "ConnectFour" && msg.group === "ConnectFour") {
+    const [child, childCmd] = Pages.ConnectFour.update(msg, page.child);
+    return [{ type: "ConnectFour", child }, childCmd];
+  }
+
+  if (page.type === "Home" && msg.group === "Home") {
+    const [child, childCmd] = Pages.Home.update(msg, page.child);
+    return [{ type: "Home", child }, childCmd];
+  }
+
+  if (page.type === "Logout" && msg.group === "Logout") {
+    const [child, childCmd] = Pages.Logout.update(msg, page.child);
+    return [
+      { type: "Logout", child },
+      pipe(childCmd, cmd.map(groupMsg("Logout"))),
+    ];
+  }
+
+  if (page.type === "ProfileDelete" && msg.group === "ProfileDelete") {
+    const [child, childCmd] = Pages.ProfileDelete.update(
+      profile,
+      msg,
+      page.child
+    );
+    return [{ type: "ProfileDelete", child }, childCmd];
+  }
+
+  if (page.type === "ProfileUpdate" && msg.group === "ProfileUpdate") {
+    const [child, childCmd] = Pages.ProfileUpdate.update(
+      profile,
+      msg,
+      page.child
+    );
+    return [{ type: "ProfileUpdate", child }, childCmd];
+  }
+
+  if (
+    page.type === "ProfileUpdateAvatar" &&
+    (msg.group === "ProfileUpdateAvatar" || msg.type === "LocationChanged")
+  ) {
+    const [child, childCmd] = Pages.ProfileUpdateAvatar.update(
+      { userId: profile.userId },
+      msg,
+      page.child
+    );
+    return [
+      { type: "ProfileUpdateAvatar", child },
+      pipe(childCmd, cmd.map(groupMsg("ProfileUpdateAvatar"))),
+    ];
+  }
+
+  if (page.type === "ProfileUpdateName" && msg.group === "ProfileUpdateName") {
+    const [child, childCmd] = Pages.ProfileUpdateName.update(
+      profile,
+      msg,
+      page.child
+    );
+    return [{ type: "ProfileUpdateName", child }, childCmd];
+  }
+
+  if (
+    page.type === "ProfileUpdateUsername" &&
+    msg.group === "ProfileUpdateUsername"
+  ) {
+    const [child, childCmd] = Pages.ProfileUpdateUsername.update(
+      profile,
+      msg,
+      page.child
+    );
+    return [{ type: "ProfileUpdateUsername", child }, childCmd];
+  }
+
+  if (page.type === "TicTacToe" && msg.group === "TicTacToe") {
+    const [child, childCmd] = Pages.TicTacToe.update(msg, page.child);
+    return [
+      { type: "TicTacToe", child },
+      pipe(childCmd, cmd.map(groupMsg("TicTacToe"))),
+    ];
+  }
+
+  return [page, cmd.none];
 };
 
 //
@@ -665,35 +633,35 @@ const updatePageReady = (
 export const subscriptions = (model: Model): sub.Sub<Msg> => {
   switch (model.type) {
     case "ProfileLoading":
-      return sessionSubcription;
+      return sessionSubcription();
 
     case "ProfileMissing":
-      return sub.batch([sessionSubcription, profileSubription(model.session)]);
+      return sub.batch([
+        sessionSubcription(),
+        profileSubscription(model.session),
+      ]);
 
     case "Ready":
-      return sub.batch([sessionSubcription, profileSubription(model.profile)]);
+      return sub.batch([
+        sessionSubcription(),
+        profileSubscription(model.profile),
+      ]);
 
     case "SessionLoading":
-      return sessionSubcription;
+      return sessionSubcription();
 
     case "SessionMissing":
-      return sessionSubcription;
+      return sessionSubcription();
   }
 };
 
-const profileSubription = ({ userId }: { userId: string }) => {
+const profileSubscription = ({ userId }: { userId: string }) => {
   return pipe(Profile.subscription({ userId }), sub.map(maybeProfileToMsg));
 };
 
-const sessionSubcription = pipe(
-  Session.subscription,
-  sub.map(maybeSessionToMsg)
-);
-
-const maybeProfileToMsg = option.fold<Profile.Profile, Msg>(
-  () => ({ type: "ProfileNotFound", group: "Main" }),
-  (profile) => ({ type: "ProfileFound", profile, group: "Main" })
-);
+const sessionSubcription = () => {
+  return pipe(Session.subscription, sub.map(maybeSessionToMsg));
+};
 
 //
 //
@@ -820,6 +788,24 @@ const viewReady = ({ page, profile }: ReadyModel): react.Html<Msg> => {
 //
 //
 // Helpers
+//
+//
+//
+
+const maybeSessionToMsg = option.fold<Session.Session, Msg>(
+  () => ({ group: "Main", type: "SessionNotFound" }),
+  (session) => ({ group: "Main", type: "SessionFound", session })
+);
+
+const maybeProfileToMsg = option.fold<Profile.Profile, Msg>(
+  () => ({ type: "ProfileNotFound", group: "Main" }),
+  (profile) => ({ type: "ProfileFound", profile, group: "Main" })
+);
+
+//
+//
+//
+// Utils
 //
 //
 //

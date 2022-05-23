@@ -72,12 +72,7 @@ export const load: task.Task<option.Option<Session>> = async () => {
 
 const subject = new Rx.Subject<option.Option<Session>>();
 
-const timeout = setTimeout(() => {
-  load().then(subject.next);
-}, 100);
-
 Supabase.client.auth.onAuthStateChange((_, supabaseSession) => {
-  clearTimeout(timeout);
   subject.next(fromSupabaseSession(supabaseSession));
 });
 
