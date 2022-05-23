@@ -81,9 +81,7 @@ Supabase.client.auth.onAuthStateChange((_, supabaseSession) => {
   subject.next(fromSupabaseSession(supabaseSession));
 });
 
-export const subscribe = (): sub.Sub<option.Option<Session>> => {
-  return subject;
-};
+export const subscription: sub.Sub<option.Option<Session>> = subject;
 
 //
 //
