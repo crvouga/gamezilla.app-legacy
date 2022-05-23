@@ -85,7 +85,7 @@ type ReadyModel = {
 
 export const init = (location: navigation.Location): [Model, cmd.Cmd<Msg>] => [
   { type: "SessionLoading", location: location },
-  pipe(Session.load(), perform(maybeSessionToMsg)),
+  cmd.none,
 ];
 
 const initSessionMissing = ({

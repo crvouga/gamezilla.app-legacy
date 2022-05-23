@@ -1,4 +1,4 @@
-import { either, option, task, taskEither } from "fp-ts";
+import { either, option, task } from "fp-ts";
 import * as Rx from "rxjs";
 import { sub } from "./Framework";
 import * as Supabase from "./Supabase";
@@ -21,32 +21,29 @@ export type Session = { defaultName: string; userId: string };
 //
 //
 
-export const login: taskEither.TaskEither<
-  { message: string },
-  { message: string }
-> = async () => {
-  const response = await Supabase.client.auth.signIn({ provider: "google" });
+export const login: task.Task<either.Either<{}, {}>> = async () => {
+  const { error } = await Supabase.client.auth.signIn({ provider: "google" });
 
-  if (response.error) {
-    return either.left({ message: response.error.message });
-  }
-
-  return either.right({ message: "Successfully logged in" });
-};
-
-export const logout: task.Task<either.Either<{}, {}>> = async () => {
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-
-  const response = await Supabase.client.auth.signOut();
-
-  if (response.error) {
+  if (error) {
     return either.left({});
   }
 
   return either.right({});
 };
 
-export const load: () => task.Task<option.Option<Session>> = () => async () => {
+export const logout: task.Task<either.Either<{}, {}>> = async () => {
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+
+  const { error } = await Supabase.client.auth.signOut();
+
+  if (error) {
+    return either.left({});
+  }
+
+  return either.right({});
+};
+
+export const load: task.Task<option.Option<Session>> = async () => {
   await new Promise((resolve) => setTimeout(resolve, 100));
 
   const session = Supabase.client.auth.session();
@@ -91,6 +88,10 @@ export const fromSupabaseSession = (
 };
 
 const subject = new Rx.Subject<option.Option<Session>>();
+
+setTimeout(() => {
+  load().then(subject.next);
+}, 100);
 
 Supabase.client.auth.onAuthStateChange((_, Auth) => {
   subject.next(fromSupabaseSession(Auth));
