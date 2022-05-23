@@ -120,7 +120,7 @@ export const edit =
     return either.right({});
   };
 
-export const subscribe = ({
+export const subscription = ({
   userId,
 }: {
   userId: string;

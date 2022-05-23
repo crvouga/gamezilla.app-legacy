@@ -653,29 +653,30 @@ const updatePageReady = (
 export const subscriptions = (model: Model): sub.Sub<Msg> => {
   switch (model.type) {
     case "ProfileLoading":
-      return sessionSub();
+      return sessionSubcription;
 
     case "ProfileMissing":
-      return sub.batch([sessionSub(), profileSub(model.session)]);
+      return sub.batch([sessionSubcription, profileSubription(model.session)]);
 
     case "Ready":
-      return sub.batch([sessionSub(), profileSub(model.profile)]);
+      return sub.batch([sessionSubcription, profileSubription(model.profile)]);
 
     case "SessionLoading":
-      return sessionSub();
+      return sessionSubcription;
 
     case "SessionMissing":
-      return sessionSub();
+      return sessionSubcription;
   }
 };
 
-const profileSub = ({ userId }: { userId: string }) => {
-  return pipe(Profile.subscribe({ userId }), sub.map(maybeProfileToMsg));
+const profileSubription = ({ userId }: { userId: string }) => {
+  return pipe(Profile.subscription({ userId }), sub.map(maybeProfileToMsg));
 };
 
-const sessionSub = () => {
-  return pipe(Session.subscribe(), sub.map(maybeSessionToMsg));
-};
+const sessionSubcription = pipe(
+  Session.subscription,
+  sub.map(maybeSessionToMsg)
+);
 
 const maybeProfileToMsg = option.fold<Profile.Profile, Msg>(
   () => ({ type: "ProfileNotFound", group: "Main" }),
