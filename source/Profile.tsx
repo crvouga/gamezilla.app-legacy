@@ -140,6 +140,7 @@ export const subscription = ({
       .subscribe();
 
     return () => {
+      Supabase.client.removeSubscription(subscription);
       subscription.unsubscribe();
     };
   });

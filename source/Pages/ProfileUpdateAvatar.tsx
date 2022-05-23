@@ -1,17 +1,12 @@
-import { LoadingButton } from "@mui/lab";
-import {
-  Avatar,
-  Box,
-  List,
-  ListItemAvatar,
-  ListItemButton,
-  ListItemText,
-} from "@mui/material";
-import { option } from "fp-ts";
+import { Avatar, Box, MenuItem, Select, TextField } from "@mui/material";
+import { pipe } from "fp-ts/lib/function";
 import { cmd, navigation, react } from "Framework";
+import { attempt, perform } from "Framework/Task";
 import * as ProfileAvatar from "ProfileAvatar";
+import * as Profile from "Profile";
 import * as React from "react";
 import * as View from "View";
+import { either } from "fp-ts";
 
 //
 //
@@ -22,17 +17,18 @@ import * as View from "View";
 //
 
 export type Model = {
-  status: "Idle" | "Loading";
+  status: "Idle" | "GeneratingSeed" | "StyleSelectOpened" | "UpdatingAvatar";
   seed: ProfileAvatar.Seed;
   style: ProfileAvatar.Style;
-  page: { type: "Main" } | { type: "Style" } | { type: "Seed" };
 };
 
 export const init = ({ avatarUrl }: { avatarUrl: string }): Model => {
+  const { seed, style } = ProfileAvatar.parseUrl(avatarUrl);
+
   return {
     status: "Idle",
-    page: { type: "Main" },
-    ...ProfileAvatar.parseUrl(avatarUrl),
+    seed,
+    style,
   };
 };
 
@@ -45,11 +41,16 @@ export const init = ({ avatarUrl }: { avatarUrl: string }): Model => {
 //
 
 export type Msg =
-  | { type: "ClickedBackButton" }
-  | { type: "ClickedStyle" }
-  | { type: "ClickedSeed" }
-  | { type: "ClickedStyleListItem"; style: ProfileAvatar.Style }
-  | { type: "LocationChanged"; location: navigation.Location };
+  | { type: "UserClickedCancelButton" }
+  | { type: "UserClickedDoneButton" }
+  | { type: "StyleSelectClosed" }
+  | { type: "StyleSelectOpened" }
+  | { type: "UserSelectedStyle"; style: ProfileAvatar.Style }
+  | { type: "UserEnteredSeed"; seed: ProfileAvatar.Seed }
+  | { type: "UserClickedRandomSeedButton" }
+  | { type: "RandomSeedGenerated"; seed: ProfileAvatar.Seed }
+  | { type: "AvatarUpdateFailed" }
+  | { type: "AvatarUpdateSucceeded" };
 
 export const update = (
   { userId }: { userId: string },
@@ -57,20 +58,58 @@ export const update = (
   model: Model
 ): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
-    case "LocationChanged":
-      return [model, cmd.none];
-
-    case "ClickedStyleListItem":
-      return [{ ...model, style: msg.style }, cmd.none];
-
-    case "ClickedBackButton":
+    case "UserClickedCancelButton":
       return [model, navigation.back()];
 
-    case "ClickedSeed":
-      return [model, navigation.push("/ProfileUpdateAvatar/Seed")];
+    case "StyleSelectClosed":
+      return [{ ...model, status: "Idle" }, cmd.none];
 
-    case "ClickedStyle":
-      return [model, cmd.none];
+    case "StyleSelectOpened":
+      return [{ ...model, status: "StyleSelectOpened" }, cmd.none];
+
+    case "UserEnteredSeed":
+      return [{ ...model, seed: msg.seed }, cmd.none];
+
+    case "UserClickedRandomSeedButton":
+      return [
+        { ...model, status: "GeneratingSeed" },
+        pipe(
+          ProfileAvatar.generateRandomSeed,
+          perform((seed) => ({ type: "RandomSeedGenerated", seed }))
+        ),
+      ];
+
+    case "RandomSeedGenerated":
+      return [{ ...model, status: "Idle", seed: msg.seed }, cmd.none];
+
+    case "UserSelectedStyle":
+      return [{ ...model, style: msg.style }, cmd.none];
+
+    case "UserClickedDoneButton":
+      return [
+        { ...model, status: "UpdatingAvatar" },
+        pipe(
+          Profile.edit({
+            userId,
+            avatarUrl: ProfileAvatar.toUrl({
+              seed: model.seed,
+              style: model.style,
+            }),
+          }),
+          attempt(
+            either.fold<{}, {}, Msg>(
+              () => ({ type: "AvatarUpdateFailed" }),
+              () => ({ type: "AvatarUpdateSucceeded" })
+            )
+          )
+        ),
+      ];
+
+    case "AvatarUpdateFailed":
+      return [{ ...model, status: "Idle" }, cmd.none];
+
+    case "AvatarUpdateSucceeded":
+      return [{ ...model, status: "Idle" }, navigation.back()];
   }
 };
 
@@ -82,35 +121,31 @@ export const update = (
 //
 //
 
-type Profile = { username: string; name: string; avatarUrl: string };
-
-export const view = (profile: Profile, model: Model): react.Html<Msg> => {
-  switch (model.page.type) {
-    case "Main":
-      return viewMain(profile, model);
-
-    case "Seed":
-      return () => <>view seed</>;
-
-    case "Style":
-      return viewPageStyle(model);
-  }
-};
-
-const viewMain = (profile: Profile, model: Model): react.Html<Msg> => {
+export const view = (model: Model): react.Html<Msg> => {
   return (dispatch) => (
     <View.Page>
       <View.Header
         left={
-          <View.HeaderBackButton
-            onClick={() => dispatch({ type: "ClickedBackButton" })}
-          />
+          <View.Button
+            sx={{ marginLeft: -1 }}
+            onClick={() => dispatch({ type: "UserClickedCancelButton" })}
+          >
+            Cancel
+          </View.Button>
         }
         title="Avatar"
+        right={
+          <View.Button
+            sx={{ marginRight: -1 }}
+            onClick={() => dispatch({ type: "UserClickedDoneButton" })}
+          >
+            Done
+          </View.Button>
+        }
       />
 
       <Avatar
-        src={profile.avatarUrl}
+        src={ProfileAvatar.toUrl(model)}
         sx={{
           marginX: "auto",
           width: "150px",
@@ -119,98 +154,99 @@ const viewMain = (profile: Profile, model: Model): react.Html<Msg> => {
         }}
       />
 
-      <List>
-        <View.Field
-          label="Style"
-          value={ProfileAvatar.formatStyle(model.style)}
-          onClick={() => dispatch({ type: "ClickedStyle" })}
-        />
+      <View.LoadingDialog
+        open={model.status === "UpdatingAvatar"}
+        title="Updating avatar..."
+      />
 
-        <View.Field
-          label="Seed"
-          value={model.seed}
-          onClick={() => dispatch({ type: "ClickedSeed" })}
-        />
-      </List>
-      <Box sx={{ paddingX: 2 }}>
-        <LoadingButton fullWidth variant="contained">
-          Update Avatar
-        </LoadingButton>
-      </Box>
-    </View.Page>
-  );
-};
-
-const viewPageStyle =
-  (model: Model): react.Html<Msg> =>
-  (dispatch) =>
-    (
-      <View.Page>
-        <View.Header
-          left={
-            <View.HeaderBackButton
-              onClick={() =>
-                dispatch({
-                  type: "ClickedBackButton",
-                })
-              }
-            />
-          }
-          title="Choose Style"
-        />
-        <List sx={{ overflowY: "scroll" }}>
+      <Box sx={{ padding: 2 }}>
+        <View.Typography variant="subtitle1" sx={{ marginBottom: 1 }}>
+          Style
+        </View.Typography>
+        <Select
+          sx={{ marginBottom: 2 }}
+          open={model.status === "StyleSelectOpened"}
+          fullWidth
+          value={model.style}
+          onOpen={() => dispatch({ type: "StyleSelectOpened" })}
+          onClose={() => dispatch({ type: "StyleSelectClosed" })}
+          renderValue={(style) => (
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+              }}
+            >
+              <Avatar
+                sx={{ marginRight: 1 }}
+                src={ProfileAvatar.toUrl({
+                  style,
+                  seed: ProfileAvatar.toSeed(model.seed),
+                })}
+              />
+              <View.Typography>
+                {ProfileAvatar.formatStyle(style)}
+              </View.Typography>
+            </Box>
+          )}
+        >
           {ProfileAvatar.ALL_STYLES.map((style) => (
-            <ListItemButton
+            <MenuItem
+              key={style}
+              value={style}
+              sx={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+              }}
               onClick={() =>
                 dispatch({
-                  type: "ClickedStyleListItem",
+                  type: "UserSelectedStyle",
                   style,
                 })
               }
             >
-              <ListItemAvatar>
-                <Avatar
-                  src={ProfileAvatar.toUrl({
-                    style,
-                    seed: ProfileAvatar.toSeed("hello"),
-                  })}
-                />
-              </ListItemAvatar>
-              <ListItemText primary={ProfileAvatar.formatStyle(style)} />
-            </ListItemButton>
+              <Avatar
+                sx={{ marginRight: 1 }}
+                src={ProfileAvatar.toUrl({
+                  style,
+                  seed: ProfileAvatar.toSeed(model.seed),
+                })}
+              />
+              <View.Typography>
+                {ProfileAvatar.formatStyle(style)}
+              </View.Typography>
+            </MenuItem>
           ))}
-        </List>
-      </View.Page>
-    );
+        </Select>
 
-//
-//
-//
-// Route
-//
-//
-//
+        <View.Typography variant="subtitle1" sx={{ marginBottom: 1 }}>
+          Seed
+        </View.Typography>
 
-export type Route = { type: "Main" } | { type: "Style" } | { type: "Seed" };
+        <TextField
+          fullWidth
+          value={model.seed}
+          onChange={(event) =>
+            dispatch({
+              type: "UserEnteredSeed",
+              seed: ProfileAvatar.toSeed(event.currentTarget.value),
+            })
+          }
+          sx={{ marginBottom: 2 }}
+        />
 
-const routesTypes: { [routeType in Route["type"]]: string } = {
-  Main: "Main",
-  Style: "Style",
-  Seed: "Seed",
-};
-
-const isRouteType = (routeType: string): routeType is Route["type"] => {
-  return routeType in routesTypes;
-};
-
-export const decode = (path: string): option.Option<Route> => {
-  if (isRouteType(path)) {
-    return option.some({ type: path });
-  }
-
-  return option.none;
-};
-
-export const encode = (route: Route): string => {
-  return route.type;
+        <View.Button
+          loading={model.status === "GeneratingSeed"}
+          fullWidth
+          variant="outlined"
+          onClick={() => dispatch({ type: "UserClickedRandomSeedButton" })}
+          sx={{ marginBottom: 4 }}
+        >
+          Random Seed
+        </View.Button>
+      </Box>
+    </View.Page>
+  );
 };

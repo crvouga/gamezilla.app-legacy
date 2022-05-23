@@ -1,5 +1,4 @@
 import { option } from "fp-ts";
-import * as Pages from "Pages";
 
 //
 //
@@ -17,7 +16,7 @@ export type Route =
   | { type: "ProfileCreate" }
   | { type: "ProfileDelete" }
   | { type: "ProfileUpdate" }
-  | { type: "ProfileUpdateAvatar"; child: Pages.ProfileUpdateAvatar.Route }
+  | { type: "ProfileUpdateAvatar" }
   | { type: "ProfileUpdateName" }
   | { type: "ProfileUpdateUsername" }
   | { type: "TicTacToe" };
@@ -48,22 +47,16 @@ const isRouteType = (routeType: string): routeType is Route["type"] => {
   return routeType in routesTypes;
 };
 
-export const decode = (location: {
-  pathname: string;
-}): option.Option<Route> => {
-  const path = location.pathname.substring(1);
+export const decode = (pathname: string): option.Option<Route> => {
+  const parts = pathname.substring(1).split("/");
 
-  if (isRouteType(path)) {
-    switch (path) {
-      case "ProfileUpdateAvatar":
-        return option.some({ type: path, child: { type: "Main" } });
+  const part0 = parts[0];
 
-      default:
-        return option.some({ type: path });
-    }
+  if (!isRouteType(part0)) {
+    return option.none;
   }
 
-  return option.none;
+  return option.some({ type: part0 });
 };
 
 export const encode = (route: Route): string => {

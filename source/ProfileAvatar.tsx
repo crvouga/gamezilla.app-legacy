@@ -1,3 +1,5 @@
+import { Task } from "fp-ts/lib/Task";
+
 export type Style =
   | "adventurer"
   | "adventurer-neutral"
@@ -110,6 +112,7 @@ export const parseUrl = (
   }
 };
 
-export const generateRandomAvatarSeed = () => {
+export const generateRandomSeed: Task<Seed> = async () => {
+  await new Promise((resolve) => setTimeout(resolve, 100));
   return toSeed(String(Math.floor(Math.random() * 10000)));
 };
