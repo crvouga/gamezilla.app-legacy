@@ -1,4 +1,5 @@
 import { option } from "fp-ts";
+import * as Pages from "Pages";
 
 //
 //
@@ -16,7 +17,7 @@ export type Route =
   | { type: "ProfileCreate" }
   | { type: "ProfileDelete" }
   | { type: "ProfileUpdate" }
-  | { type: "ProfileUpdateAvatar" }
+  | { type: "ProfileUpdateAvatar"; child: Pages.ProfileUpdateAvatar.Route }
   | { type: "ProfileUpdateName" }
   | { type: "ProfileUpdateUsername" }
   | { type: "TicTacToe" };
@@ -53,7 +54,13 @@ export const decode = (location: {
   const path = location.pathname.substring(1);
 
   if (isRouteType(path)) {
-    return option.some({ type: path });
+    switch (path) {
+      case "ProfileUpdateAvatar":
+        return option.some({ type: path, child: { type: "Main" } });
+
+      default:
+        return option.some({ type: path });
+    }
   }
 
   return option.none;
@@ -62,51 +69,3 @@ export const decode = (location: {
 export const encode = (route: Route): string => {
   return route.type;
 };
-
-type Leaf = { type: "Index"; _tag: "Leaf" };
-
-export type Route_ =
-  | {
-      type: "Home";
-    }
-  | {
-      type: "Profile";
-      child: {
-        type: "Update";
-        child:
-          | {
-              type: "Index";
-            }
-          | {
-              type: "Username";
-            }
-          | {
-              type: "Name";
-            }
-          | {
-              type: "Avatar";
-              child:
-                | {
-                    type: "Index";
-                  }
-                | {
-                    type: "Style";
-                  }
-                | {
-                    type: "Seed";
-                  };
-            };
-      };
-    };
-
-// const decode = (url: string) => {
-//   const parts = url.split("/");
-
-//   if (parts[0] === "Profile") {
-//     if (parts[1] === "Update") {
-//       if (parts[2] === "Username") {
-//         return "/profile/update/username";
-//       }
-//     }
-//   }
-// };

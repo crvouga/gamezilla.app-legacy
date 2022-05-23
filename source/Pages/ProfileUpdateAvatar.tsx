@@ -191,7 +191,7 @@ const viewPageStyle =
 //
 //
 
-type Route = { type: "Main" } | { type: "Style" } | { type: "Seed" };
+export type Route = { type: "Main" } | { type: "Style" } | { type: "Seed" };
 
 const routesTypes: { [routeType in Route["type"]]: string } = {
   Main: "Main",
@@ -203,11 +203,7 @@ const isRouteType = (routeType: string): routeType is Route["type"] => {
   return routeType in routesTypes;
 };
 
-export const decode = (location: {
-  pathname: string;
-}): option.Option<Route> => {
-  const path = location.pathname.substring(1);
-
+export const decode = (path: string): option.Option<Route> => {
   if (isRouteType(path)) {
     return option.some({ type: path });
   }

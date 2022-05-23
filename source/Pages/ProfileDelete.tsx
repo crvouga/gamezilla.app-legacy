@@ -28,10 +28,10 @@ export const init: Model = { type: "Idle" };
 //
 
 export type Msg =
-  | { group: "ProfileDelete"; type: "Cancel" }
-  | { group: "ProfileDelete"; type: "Delete" }
-  | { group: "ProfileDelete"; type: "DeleteSucceeded" }
-  | { group: "ProfileDelete"; type: "DeleteFailed" };
+  | { type: "Cancel" }
+  | { type: "Delete" }
+  | { type: "DeleteSucceeded" }
+  | { type: "DeleteFailed" };
 
 export const update = (
   { userId }: { userId: string },
@@ -52,11 +52,9 @@ export const update = (
           attempt(
             either.fold<{}, {}, Msg>(
               () => ({
-                group: "ProfileDelete",
                 type: "DeleteFailed",
               }),
               () => ({
-                group: "ProfileDelete",
                 type: "DeleteSucceeded",
               })
             )
@@ -84,21 +82,18 @@ export const view =
   (model: Model): react.Html<Msg> =>
   (dispatch) =>
     (
-      <Dialog
-        open
-        onClose={() => dispatch({ group: "ProfileDelete", type: "Cancel" })}
-      >
+      <Dialog open onClose={() => dispatch({ type: "Cancel" })}>
         <DialogTitle>Delete your profile forever?</DialogTitle>
         <DialogActions>
           <Button
             disabled={model.type === "Deleting"}
-            onClick={() => dispatch({ group: "ProfileDelete", type: "Cancel" })}
+            onClick={() => dispatch({ type: "Cancel" })}
           >
             Cancel
           </Button>
           <LoadingButton
             loading={model.type === "Deleting"}
-            onClick={() => dispatch({ group: "ProfileDelete", type: "Delete" })}
+            onClick={() => dispatch({ type: "Delete" })}
           >
             Delete
           </LoadingButton>

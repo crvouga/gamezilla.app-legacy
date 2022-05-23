@@ -54,7 +54,12 @@ export const update = (
     case "ClickedAvatar":
       return [
         model,
-        navigation.push(Routes.encode({ type: "ProfileUpdateAvatar" })),
+        navigation.push(
+          Routes.encode({
+            type: "ProfileUpdateAvatar",
+            child: { type: "Main" },
+          })
+        ),
       ];
 
     case "ClickedBack":
