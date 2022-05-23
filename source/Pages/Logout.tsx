@@ -1,14 +1,10 @@
-import { LoadingButton } from "@mui/lab";
-import { Button, Dialog, DialogActions, DialogTitle } from "@mui/material";
 import { either } from "fp-ts";
 import { pipe } from "fp-ts/lib/function";
+import { cmd, navigation, react, task } from "Framework";
 import React from "react";
-import { cmd, navigation, react } from "Framework";
-import { attempt } from "Framework/Task";
-import * as Routes from "Routes";
-import * as Session from "../Session";
+import * as Session from "Session";
+import * as View from "View";
 
-//
 //
 //
 //
@@ -16,18 +12,15 @@ import * as Session from "../Session";
 //
 //
 //
-//
 
-export type Model = { type: "Idle" } | { type: "Loading" };
+export type Model = { type: "Idle" } | { type: "LoggingOut" };
 
 export const init: Model = { type: "Idle" };
 
 //
 //
 //
-//
 // Update
-//
 //
 //
 //
@@ -41,24 +34,10 @@ export type Msg =
 export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "Cancel":
-      return [
-        { type: "Idle" },
-        navigation.replace(Routes.encode({ type: "Account" })),
-      ];
+      return [{ type: "Idle" }, navigation.back()];
 
     case "Logout":
-      return [
-        { type: "Loading" },
-        pipe(
-          Session.logout,
-          attempt(
-            either.fold<{}, {}, Msg>(
-              () => ({ group: "Logout", type: "LogoutFailed" }),
-              () => ({ group: "Logout", type: "LogoutSucceeded" })
-            )
-          )
-        ),
-      ];
+      return [{ type: "LoggingOut" }, logoutCmd];
 
     case "LogoutFailed":
       return [model, cmd.none];
@@ -71,9 +50,25 @@ export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
 //
 //
 //
+// Logout
+//
+//
+//
+
+const logoutCmd = pipe(
+  Session.logout,
+  task.attempt(
+    either.fold<{}, {}, Msg>(
+      () => ({ type: "LogoutFailed" }),
+      () => ({ type: "LogoutSucceeded" })
+    )
+  )
+);
+
+//
+//
 //
 // View
-//
 //
 //
 //
@@ -82,21 +77,18 @@ export const view =
   (model: Model): react.Html<Msg> =>
   (dispatch) =>
     (
-      <Dialog open onClose={() => dispatch({ type: "Cancel" })}>
-        <DialogTitle>Logout of Gamezilla?</DialogTitle>
-        <DialogActions>
-          <Button
-            disabled={model.type === "Loading"}
-            onClick={() => dispatch({ type: "Cancel" })}
-          >
-            Cancel
-          </Button>
-          <LoadingButton
-            loading={model.type === "Loading"}
-            onClick={() => dispatch({ type: "Logout" })}
-          >
-            Logout
-          </LoadingButton>
-        </DialogActions>
-      </Dialog>
+      <>
+        <View.ConformationDialog
+          open={model.type === "Idle"}
+          title="Logout of Gamezilla?"
+          onCancel={() => dispatch({ type: "Cancel" })}
+          onConfirm={() => dispatch({ type: "Logout" })}
+          confirmTitle="Logout"
+        />
+
+        <View.LoadingDialog
+          open={model.type === "LoggingOut"}
+          title="Logging out..."
+        />
+      </>
     );

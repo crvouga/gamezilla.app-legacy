@@ -6,7 +6,7 @@ import { cmd, navigation, react, sub } from "./Framework";
 import { attempt, perform } from "./Framework/Task";
 import * as Pages from "./Pages";
 import * as Profile from "./Profile";
-import * as Routes from "./Routes";
+import * as Route from "./Route";
 import * as Session from "./Session";
 import { exhaustive } from "./Utility";
 import * as View from "./View";
@@ -109,7 +109,7 @@ const initSessionMissing = ({
 
   return [
     { type: "SessionMissing", location, page: { type: "Login", child } },
-    navigation.push(Routes.encode({ type: "Login" })),
+    navigation.push(Route.encode({ type: "Login" })),
   ];
 };
 
@@ -147,7 +147,7 @@ const initProfileMissing = ({
         child: Pages.ProfileCreate.init(session),
       },
     },
-    navigation.push(Routes.encode({ type: "ProfileCreate" })),
+    navigation.push(Route.encode({ type: "ProfileCreate" })),
   ];
 };
 
@@ -183,8 +183,8 @@ const initPageReady = ({
 }): [ReadyModel["page"], cmd.Cmd<Msg>] => {
   const route = pipe(
     location,
-    Routes.decode,
-    option.fold<Routes.Route, Routes.Route | { type: "NotFound" }>(
+    Route.decode,
+    option.fold<Route.Route, Route.Route | { type: "NotFound" }>(
       () => ({ type: "NotFound" }),
       (route) => route
     )
@@ -192,7 +192,7 @@ const initPageReady = ({
 
   const notFound: [ReadyModel["page"], cmd.Cmd<Msg>] = [
     { type: "Home", child: Pages.Home.init },
-    navigation.replace(Routes.encode({ type: "Home" })),
+    navigation.replace(Route.encode({ type: "Home" })),
   ];
 
   switch (route.type) {
@@ -575,7 +575,10 @@ const updatePageReady = (
       msg,
       page.child
     );
-    return [{ type: "ProfileUpdate", child }, childCmd];
+    return [
+      { type: "ProfileUpdate", child },
+      pipe(childCmd, cmd.map(groupMsg("ProfileUpdate"))),
+    ];
   }
 
   if (
@@ -611,7 +614,10 @@ const updatePageReady = (
       msg,
       page.child
     );
-    return [{ type: "ProfileUpdateUsername", child }, childCmd];
+    return [
+      { type: "ProfileUpdateUsername", child },
+      pipe(childCmd, cmd.map(groupMsg("ProfileUpdateUsername"))),
+    ];
   }
 
   if (page.type === "TicTacToe" && msg.group === "TicTacToe") {
@@ -765,7 +771,10 @@ const viewReady = ({ page, profile }: ReadyModel): react.Html<Msg> => {
       );
 
     case "ProfileUpdate":
-      return Pages.ProfileUpdate.view(profile, page.child);
+      return pipe(
+        Pages.ProfileUpdate.view(profile, page.child),
+        react.map(groupMsg("ProfileUpdate"))
+      );
 
     case "ProfileUpdateAvatar":
       return pipe(
@@ -777,7 +786,10 @@ const viewReady = ({ page, profile }: ReadyModel): react.Html<Msg> => {
       return Pages.ProfileUpdateName.view(page.child);
 
     case "ProfileUpdateUsername":
-      return Pages.ProfileUpdateUsername.view(page.child);
+      return pipe(
+        Pages.ProfileUpdateUsername.view(page.child),
+        react.map(groupMsg("ProfileUpdateUsername"))
+      );
 
     case "TicTacToe":
       return pipe(
