@@ -70,6 +70,29 @@ export const load: task.Task<option.Option<Session>> = async () => {
 //
 //
 
+const subject = new Rx.Subject<option.Option<Session>>();
+
+const timeout = setTimeout(() => {
+  load().then(subject.next);
+}, 100);
+
+Supabase.client.auth.onAuthStateChange((_, supabaseSession) => {
+  clearTimeout(timeout);
+  subject.next(fromSupabaseSession(supabaseSession));
+});
+
+export const subscribe = (): sub.Sub<option.Option<Session>> => {
+  return subject;
+};
+
+//
+//
+//
+// helpers
+//
+//
+//
+
 export const fromSupabaseSession = (
   session: Supabase.Session | null
 ): option.Option<Session> => {
@@ -85,18 +108,4 @@ export const fromSupabaseSession = (
   }
 
   return option.none;
-};
-
-const subject = new Rx.Subject<option.Option<Session>>();
-
-setTimeout(() => {
-  load().then(subject.next);
-}, 100);
-
-Supabase.client.auth.onAuthStateChange((_, Auth) => {
-  subject.next(fromSupabaseSession(Auth));
-});
-
-export const subscribe = (): sub.Sub<option.Option<Session>> => {
-  return subject;
 };
