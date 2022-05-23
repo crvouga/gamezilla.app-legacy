@@ -78,6 +78,18 @@ type ReadyModel = {
 //
 //
 //
+// Location
+//
+//
+//
+
+export const locationToMsg = (location: navigation.Location): Msg => {
+  return { group: "Main", type: "LocationChanged", location: location };
+};
+
+//
+//
+//
 // Init
 //
 //
