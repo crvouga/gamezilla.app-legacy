@@ -1,26 +1,18 @@
 import * as App from "App";
 import { createRoot } from "react-dom/client";
-import { navigation, react } from "./Framework";
+import { react } from "./Framework";
 import { programWithDebugger } from "./Framework/Debug/Navigation";
 
-// ███╗   ███╗ █████╗ ██╗███╗   ██╗
-// ████╗ ████║██╔══██╗██║████╗  ██║
-// ██╔████╔██║███████║██║██╔██╗ ██║
-// ██║╚██╔╝██║██╔══██║██║██║╚██╗██║
-// ██║ ╚═╝ ██║██║  ██║██║██║ ╚████║
-// ╚═╝     ╚═╝╚═╝  ╚═╝╚═╝╚═╝  ╚═══╝
+//
+//
+//
+// Main
+//
+//
+//
 
-const Program =
-  process.env.NODE_ENV === "production"
-    ? navigation.program
-    : programWithDebugger;
-
-export const locationToMsg = (location: navigation.Location): App.Msg => {
-  return { group: "Main", type: "LocationChanged", location: location };
-};
-
-const program = Program(
-  locationToMsg,
+const program = programWithDebugger(
+  App.locationToMsg,
   App.init,
   App.update,
   App.view,
