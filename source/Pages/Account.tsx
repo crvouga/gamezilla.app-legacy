@@ -11,7 +11,7 @@ import { pipe } from "fp-ts/lib/function";
 import { cmd, navigation, react } from "Framework";
 import { attempt } from "Framework/Task";
 import React from "react";
-import * as Routes from "Routes";
+import * as Route from "Route";
 import * as Profile from "../Profile";
 import * as View from "../View";
 
@@ -58,10 +58,10 @@ export const update = (
       return [model, navigation.back()];
 
     case "Logout":
-      return [model, navigation.push(Routes.encode({ type: "Logout" }))];
+      return [model, navigation.push(Route.encode({ type: "Logout" }))];
 
     case "UpdateProfile":
-      return [model, navigation.push(Routes.encode({ type: "ProfileUpdate" }))];
+      return [model, navigation.push(Route.encode({ type: "ProfileUpdate" }))];
 
     case "DeleteProfile":
       return [{ ...model, type: "ComfirmDeleteProfile" }, cmd.none];

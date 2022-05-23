@@ -3,7 +3,7 @@ import { Box, TextField } from "@mui/material";
 import * as React from "react";
 import { cmd, navigation, react } from "Framework";
 import * as Profile from "Profile";
-import * as Routes from "Routes";
+import * as Route from "Route";
 import * as View from "View";
 import { pipe } from "fp-ts/lib/function";
 import { attempt } from "Framework/Task";

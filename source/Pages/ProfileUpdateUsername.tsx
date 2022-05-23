@@ -6,15 +6,12 @@ import { cmd, navigation, react } from "Framework";
 import { attempt } from "Framework/Task";
 import * as Profile from "Profile";
 import * as React from "react";
-import * as Routes from "Routes";
 import * as View from "View";
 
 //
 //
 //
-//
 // Model
-//
 //
 //
 //
@@ -31,23 +28,17 @@ export const init = ({ username }: { username: string }): Model => {
 //
 //
 //
-//
 // Update
-//
 //
 //
 //
 
 export type Msg =
-  | {
-      group: "ProfileUpdateUsername";
-      type: "EnteredUsername";
-      username: string;
-    }
-  | { group: "ProfileUpdateUsername"; type: "Submit" }
-  | { group: "ProfileUpdateUsername"; type: "SubmitSucceeded" }
-  | { group: "ProfileUpdateUsername"; type: "SubmitFailed" }
-  | { group: "ProfileUpdateUsername"; type: "Back" };
+  | { type: "EnteredUsername"; username: string }
+  | { type: "Submit" }
+  | { type: "SubmitSucceeded" }
+  | { type: "SubmitFailed" }
+  | { type: "ClickedBackButton" };
 
 export const update = (
   { userId }: { userId: string },
@@ -59,27 +50,7 @@ export const update = (
       return [{ ...model, ...msg }, cmd.none];
 
     case "Submit":
-      return [
-        { ...model, status: "Loading" },
-        pipe(
-          Profile.edit({
-            userId,
-            ...model,
-          }),
-          attempt(
-            either.fold<{}, {}, Msg>(
-              () => ({
-                group: "ProfileUpdateUsername",
-                type: "SubmitFailed",
-              }),
-              () => ({
-                group: "ProfileUpdateUsername",
-                type: "SubmitSucceeded",
-              })
-            )
-          )
-        ),
-      ];
+      return [{ ...model, status: "Loading" }, editProfileCmd(userId, model)];
 
     case "SubmitSucceeded":
       return [{ ...model, status: "Idle" }, cmd.none];
@@ -87,7 +58,7 @@ export const update = (
     case "SubmitFailed":
       return [{ ...model, status: "Idle" }, cmd.none];
 
-    case "Back":
+    case "ClickedBackButton":
       return [model, navigation.back()];
   }
 };
@@ -95,9 +66,33 @@ export const update = (
 //
 //
 //
+// edit profile
+//
+//
+//
+
+const editProfileCmd = (userId: string, model: Model) =>
+  pipe(
+    Profile.edit({
+      userId,
+      ...model,
+    }),
+    attempt(
+      either.fold<{}, {}, Msg>(
+        () => ({
+          type: "SubmitFailed",
+        }),
+        () => ({
+          type: "SubmitSucceeded",
+        })
+      )
+    )
+  );
+
+//
+//
 //
 // View
-//
 //
 //
 //
@@ -110,9 +105,7 @@ export const view =
         <View.Header
           left={
             <View.HeaderBackButton
-              onClick={() =>
-                dispatch({ group: "ProfileUpdateUsername", type: "Back" })
-              }
+              onClick={() => dispatch({ type: "ClickedBackButton" })}
             />
           }
           title="Username"
@@ -127,7 +120,6 @@ export const view =
             onChange={(event) =>
               dispatch({
                 type: "EnteredUsername",
-                group: "ProfileUpdateUsername",
                 username: event.currentTarget.value,
               })
             }
@@ -138,9 +130,7 @@ export const view =
             size="large"
             variant="contained"
             loading={model.status === "Loading"}
-            onClick={() =>
-              dispatch({ group: "ProfileUpdateUsername", type: "Submit" })
-            }
+            onClick={() => dispatch({ type: "Submit" })}
           >
             Update
           </LoadingButton>
