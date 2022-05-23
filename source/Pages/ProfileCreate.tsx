@@ -1,23 +1,14 @@
 import { LoadingButton } from "@mui/lab";
-import {
-  DialogTitle,
-  Avatar,
-  Box,
-  Button,
-  Dialog,
-  DialogActions,
-  TextField,
-} from "@mui/material";
-import * as React from "react";
-import { cmd, react } from "Framework";
-import * as Profile from "../../Profile";
-import * as ProfileAvatar from "../../ProfileAvatar";
-import * as Session from "../../Session";
-import * as View from "View";
-import { Logout } from "@mui/icons-material";
-import { pipe } from "fp-ts/lib/function";
-import { attempt } from "Framework/Task";
+import { Avatar, Box, Button, TextField } from "@mui/material";
 import { either } from "fp-ts";
+import { pipe } from "fp-ts/lib/function";
+import { cmd, react } from "Framework";
+import { attempt } from "Framework/Task";
+import * as Profile from "Profile";
+import * as ProfileAvatar from "ProfileAvatar";
+import * as React from "react";
+import * as Session from "Session";
+import * as View from "View";
 
 //
 //

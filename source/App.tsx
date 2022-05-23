@@ -563,7 +563,10 @@ const updatePageReady = (
       msg,
       page.child
     );
-    return [{ type: "ProfileDelete", child }, childCmd];
+    return [
+      { type: "ProfileDelete", child },
+      pipe(childCmd, cmd.map(groupMsg("ProfileDelete"))),
+    ];
   }
 
   if (page.type === "ProfileUpdate" && msg.group === "ProfileUpdate") {
@@ -756,7 +759,10 @@ const viewReady = ({ page, profile }: ReadyModel): react.Html<Msg> => {
       return pipe(Pages.Logout.view(page.child), react.map(groupMsg("Logout")));
 
     case "ProfileDelete":
-      return Pages.ProfileDelete.view(page.child);
+      return pipe(
+        Pages.ProfileDelete.view(page.child),
+        react.map(groupMsg("ProfileDelete"))
+      );
 
     case "ProfileUpdate":
       return Pages.ProfileUpdate.view(profile, page.child);
