@@ -10,7 +10,7 @@ import * as Pages from "./Pages";
 import * as Profile from "./Profile";
 import * as Route from "./Route";
 import * as Session from "./Session";
-import { exhaustive } from "./Utility";
+import { exhaustive, groupMsg } from "./Utility";
 import * as View from "./View";
 import * as Snackbar from "Snackbar";
 import { Cmd } from "Framework/Cmd";
@@ -1098,12 +1098,6 @@ const andThen =
     const [modelNew, cmdNew] = update(msg, model);
 
     return [modelNew, cmd.batch([cmdPrev, cmdNew])];
-  };
-
-const groupMsg =
-  <Msg, Group extends string>(group: Group) =>
-  (msg: Msg): Msg & { group: Group } => {
-    return { ...msg, group: group } as const;
   };
 
 //

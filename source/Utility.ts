@@ -3,3 +3,9 @@ export const exhaustive = (
 ): never => {
   throw new Error(`Missing case for: ${discriminatedUnionType}`);
 };
+
+export const groupMsg =
+  <Msg, Group extends string>(group: Group) =>
+  (msg: Msg): Msg & { group: Group } => {
+    return { ...msg, group: group } as const;
+  };
