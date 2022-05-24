@@ -1,7 +1,6 @@
 import { either, option, task } from "fp-ts";
 import * as Rx from "rxjs";
-import { pipe } from "fp-ts/lib/function";
-import { cmd, sub } from "./Framework";
+import { sub } from "./Framework";
 import * as Supabase from "./Supabase";
 import { definitions } from "./supabase-types";
 
