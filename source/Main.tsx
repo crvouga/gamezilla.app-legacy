@@ -86,7 +86,7 @@ type ReadyModel = {
 //
 
 export const locationToMsg = (location: navigation.Location): Msg => {
-  return { group: "Main", type: "LocationChanged", location: location };
+  return { group: "Main", type: "RecievedLocation", location: location };
 };
 
 //
@@ -100,7 +100,14 @@ export const locationToMsg = (location: navigation.Location): Msg => {
 export const init = (location: navigation.Location): [Model, cmd.Cmd<Msg>] => {
   return [
     { type: "SessionLoading", location: location },
-    pipe(Session.load, perform(maybeSessionToMsg)),
+    pipe(
+      Session.load,
+      perform((session) => ({
+        type: "RecievedSession",
+        session,
+        group: "Main",
+      }))
+    ),
   ];
 };
 
@@ -280,11 +287,21 @@ const initPageReady = ({
 //
 
 export type Msg =
-  | { group: "Main"; type: "LocationChanged"; location: navigation.Location }
-  | { group: "Main"; type: "SessionFound"; session: Session.Session }
-  | { group: "Main"; type: "SessionNotFound" }
-  | { group: "Main"; type: "ProfileFound"; profile: Profile.Profile }
-  | { group: "Main"; type: "ProfileNotFound" }
+  | {
+      type: "RecievedLocation";
+      location: navigation.Location;
+      group: "Main";
+    }
+  | {
+      type: "RecievedSession";
+      session: option.Option<Session.Session>;
+      group: "Main";
+    }
+  | {
+      type: "RecievedProfile";
+      profile: option.Option<Profile.Profile>;
+      group: "Main";
+    }
   | (Pages.Account.Msg & { group: "Account" })
   | (Pages.Chess.Msg & { group: "Chess" })
   | (Pages.ConnectFour.Msg & { group: "ConnectFour" })
@@ -310,9 +327,20 @@ export type Msg =
 export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   return pipe(
     [model, cmd.none],
+    andThen(updateLocation, msg),
     andThen(updateMain, msg),
     andThen(updatePage, msg)
   );
+};
+
+const updateLocation = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
+  switch (msg.type) {
+    case "RecievedLocation":
+      return [{ ...model, location: msg.location }, cmd.none];
+
+    default:
+      return [model, cmd.none];
+  }
 };
 
 const updateMain = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
@@ -339,14 +367,19 @@ const updateProfileMissing = (
   model: ProfileMissingModel
 ): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
-    case "LocationChanged":
-      return [{ ...model, location: msg.location }, cmd.none];
+    case "RecievedProfile":
+      if (option.isNone(msg.profile)) {
+        return [model, cmd.none];
+      }
 
-    case "ProfileFound":
-      return initReady({ ...model, profile: msg.profile });
+      return initReady({ ...model, profile: msg.profile.value });
 
-    case "SessionNotFound":
-      return initSessionMissing(model);
+    case "RecievedSession":
+      if (option.isNone(msg.session)) {
+        return initSessionMissing(model);
+      }
+
+      return [{ ...model, session: msg.session.value }, cmd.none];
 
     default:
       return [model, cmd.none];
@@ -358,11 +391,12 @@ const updateSessionMissing = (
   model: SessionMissingModel
 ): [ProfileLoadingModel | SessionMissingModel, cmd.Cmd<Msg>] => {
   switch (msg.type) {
-    case "LocationChanged":
-      return [{ ...model, location: msg.location }, cmd.none];
+    case "RecievedSession":
+      if (option.isNone(msg.session)) {
+        return [model, cmd.none];
+      }
 
-    case "SessionFound":
-      return initProfileLoading({ ...model, session: msg.session });
+      return initProfileLoading({ ...model, session: msg.session.value });
 
     default:
       return [model, cmd.none];
@@ -377,14 +411,12 @@ const updateSessionLoading = (
   cmd.Cmd<Msg>
 ] => {
   switch (msg.type) {
-    case "LocationChanged":
-      return [{ ...model, location: msg.location }, cmd.none];
+    case "RecievedSession":
+      if (option.isNone(msg.session)) {
+        return initSessionMissing({ location: model.location });
+      }
 
-    case "SessionFound":
-      return initProfileLoading({ ...model, session: msg.session });
-
-    case "SessionNotFound":
-      return initSessionMissing({ location: model.location });
+      return initProfileLoading({ ...model, session: msg.session.value });
 
     default:
       return [model, cmd.none];
@@ -392,8 +424,16 @@ const updateSessionLoading = (
 };
 
 const profileResultToMsg = either.fold<Error, Profile.Profile, Msg>(
-  (_error) => ({ group: "Main", type: "ProfileNotFound" }),
-  (profile) => ({ group: "Main", type: "ProfileFound", profile })
+  (_error) => ({
+    group: "Main",
+    type: "RecievedProfile",
+    profile: option.none,
+  }),
+  (profile) => ({
+    group: "Main",
+    type: "RecievedProfile",
+    profile: option.some(profile),
+  })
 );
 
 const updateProfileLoading = (
@@ -401,14 +441,12 @@ const updateProfileLoading = (
   model: ProfileLoadingModel
 ): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
-    case "LocationChanged":
-      return [{ ...model, location: msg.location }, cmd.none];
+    case "RecievedProfile":
+      if (option.isNone(msg.profile)) {
+        return initProfileMissing(model);
+      }
 
-    case "ProfileFound":
-      return initReady({ ...model, ...msg });
-
-    case "ProfileNotFound":
-      return initProfileMissing(model);
+      return initReady({ ...model, profile: msg.profile.value });
 
     default:
       return [model, cmd.none];
@@ -417,23 +455,28 @@ const updateProfileLoading = (
 
 const updateReady = (msg: Msg, model: ReadyModel): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
-    case "LocationChanged": {
+    case "RecievedLocation": {
       const [page, pageCmd] = initPageReady({
         profile: model.profile,
         location: msg.location,
       });
 
-      return [{ ...model, location: msg.location, page }, pageCmd];
+      return [{ ...model, page }, pageCmd];
     }
 
-    case "ProfileFound":
-      return [{ ...model, profile: msg.profile }, cmd.none];
+    case "RecievedProfile":
+      if (option.isNone(msg.profile)) {
+        return initProfileMissing(model);
+      }
 
-    case "ProfileNotFound":
-      return initProfileMissing(model);
+      return [{ ...model, profile: msg.profile.value }, cmd.none];
 
-    case "SessionNotFound":
-      return initSessionMissing(model);
+    case "RecievedSession":
+      if (option.isNone(msg.session)) {
+        return initSessionMissing(model);
+      }
+
+      return [{ ...model, session: msg.session.value }, cmd.none];
 
     default:
       return [model, cmd.none];
@@ -673,12 +716,18 @@ export const subscriptions = (model: Model): sub.Sub<Msg> => {
   }
 };
 
-const profileSubscription = ({ userId }: { userId: string }) => {
-  return pipe(Profile.subscription({ userId }), sub.map(maybeProfileToMsg));
+const profileSubscription = ({ userId }: { userId: string }): sub.Sub<Msg> => {
+  return pipe(
+    Profile.subscription({ userId }),
+    sub.map((profile) => ({ type: "RecievedProfile", profile, group: "Main" }))
+  );
 };
 
-const sessionSubcription = () => {
-  return pipe(Session.subscription, sub.map(maybeSessionToMsg));
+const sessionSubcription = (): sub.Sub<Msg> => {
+  return pipe(
+    Session.subscription,
+    sub.map((session) => ({ type: "RecievedSession", session, group: "Main" }))
+  );
 };
 
 //
@@ -813,24 +862,6 @@ const viewReady = ({ page, profile }: ReadyModel): react.Html<Msg> => {
       return exhaustive(page);
   }
 };
-
-//
-//
-//
-// Helpers
-//
-//
-//
-
-const maybeSessionToMsg = option.fold<Session.Session, Msg>(
-  () => ({ group: "Main", type: "SessionNotFound" }),
-  (session) => ({ group: "Main", type: "SessionFound", session })
-);
-
-const maybeProfileToMsg = option.fold<Profile.Profile, Msg>(
-  () => ({ type: "ProfileNotFound", group: "Main" }),
-  (profile) => ({ type: "ProfileFound", profile, group: "Main" })
-);
 
 //
 //
