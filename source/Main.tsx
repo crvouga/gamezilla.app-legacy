@@ -170,6 +170,19 @@ const initProfileLoading = ({
   ];
 };
 
+const profileResultToMsg = either.fold<Error, Profile.Profile, Msg>(
+  (_error) => ({
+    group: "Main",
+    type: "RecievedProfile",
+    profile: option.none,
+  }),
+  (profile) => ({
+    group: "Main",
+    type: "RecievedProfile",
+    profile: option.some(profile),
+  })
+);
+
 const initProfileMissing = ({
   location,
   session,
@@ -495,19 +508,6 @@ const updateSessionLoading = (
       return [model, cmd.none];
   }
 };
-
-const profileResultToMsg = either.fold<Error, Profile.Profile, Msg>(
-  (_error) => ({
-    group: "Main",
-    type: "RecievedProfile",
-    profile: option.none,
-  }),
-  (profile) => ({
-    group: "Main",
-    type: "RecievedProfile",
-    profile: option.some(profile),
-  })
-);
 
 const updateProfileLoading = (
   msg: Msg,
