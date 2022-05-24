@@ -168,8 +168,6 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
 
   const msgs = [msg, ...sharedMsgs];
 
-  console.log(sharedMsgs);
-
   const [modelNew, cmdNew] = msgs.reduce<[Model, Cmd<Msg>]>(
     ([modelPrev, cmdPrev], msg) => {
       const [modelNew, cmdNew] = updateShared(msg, modelPrev);
