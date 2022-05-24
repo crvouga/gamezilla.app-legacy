@@ -396,20 +396,9 @@ export type Msg =
 export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   return pipe(
     [model, cmd.none],
-    andThen(updateLocation, msg),
     andThen(updateMain, msg),
     andThen(updatePage, msg)
   );
-};
-
-const updateLocation = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
-  switch (msg.type) {
-    case "RecievedLocation":
-      return [{ ...model, location: msg.location }, cmd.none];
-
-    default:
-      return [model, cmd.none];
-  }
 };
 
 const updateMain = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
@@ -442,7 +431,7 @@ const updateProfileMissing = (
         location: msg.location,
       });
 
-      return [{ ...model, page }, pageCmd];
+      return [{ ...model, location: msg.location, page }, pageCmd];
     }
 
     case "RecievedProfile":
@@ -469,6 +458,9 @@ const updateSessionMissing = (
   model: SessionMissingModel
 ): [ProfileLoadingModel | SessionMissingModel, cmd.Cmd<Msg>] => {
   switch (msg.type) {
+    case "RecievedLocation":
+      return [{ ...model, location: msg.location }, cmd.none];
+
     case "RecievedSession":
       if (option.isNone(msg.session)) {
         return [model, cmd.none];
@@ -489,6 +481,9 @@ const updateSessionLoading = (
   cmd.Cmd<Msg>
 ] => {
   switch (msg.type) {
+    case "RecievedLocation":
+      return [{ ...model, location: msg.location }, cmd.none];
+
     case "RecievedSession":
       if (option.isNone(msg.session)) {
         return initSessionMissing(model);
@@ -519,6 +514,9 @@ const updateProfileLoading = (
   model: ProfileLoadingModel
 ): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
+    case "RecievedLocation":
+      return [{ ...model, location: msg.location }, cmd.none];
+
     case "RecievedProfile":
       if (option.isNone(msg.profile)) {
         return initProfileMissing(model);
@@ -539,7 +537,7 @@ const updateReady = (msg: Msg, model: ReadyModel): [Model, cmd.Cmd<Msg>] => {
         location: msg.location,
       });
 
-      return [{ ...model, page }, pageCmd];
+      return [{ ...model, location: msg.location, page }, pageCmd];
     }
 
     case "RecievedProfile":
