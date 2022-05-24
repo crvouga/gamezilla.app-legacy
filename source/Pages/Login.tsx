@@ -107,7 +107,7 @@ const viewLoadingDialog = (model: Model) => {
     case "LoggingIn":
       switch (model.loginMethod.type) {
         case "Google":
-          return <View.LoadingDialog open title="Redirecting to Google" />;
+          return <View.LoadingDialog open title="Redirecting to Google..." />;
       }
 
     default:
