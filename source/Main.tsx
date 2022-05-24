@@ -13,6 +13,7 @@ import * as Session from "./Session";
 import { exhaustive } from "./Utility";
 import * as View from "./View";
 import * as Snackbar from "Snackbar";
+import { Cmd } from "Framework/Cmd";
 
 //
 //
@@ -103,7 +104,7 @@ export const locationToMsg = (location: navigation.Location): Msg => {
 //
 //
 
-export const init = (location: navigation.Location): [Model, cmd.Cmd<Msg>] => {
+export const init = (location: navigation.Location): [Model, Cmd<Msg>] => {
   return initSessionLoading({ location });
 };
 
@@ -111,7 +112,7 @@ const initSessionLoading = ({
   location,
 }: {
   location: navigation.Location;
-}): [SessionLoadingModel, cmd.Cmd<Msg>] => {
+}): [SessionLoadingModel, Cmd<Msg>] => {
   return [
     {
       type: "SessionLoading",
@@ -135,7 +136,7 @@ const initSessionMissing = ({
 }: {
   snackbar: Snackbar.Model;
   location: navigation.Location;
-}): [SessionMissingModel, cmd.Cmd<Msg>] => {
+}): [SessionMissingModel, Cmd<Msg>] => {
   const child = Pages.Login.init;
 
   return [
@@ -157,7 +158,7 @@ const initProfileLoading = ({
   session: Session.Session;
   snackbar: Snackbar.Model;
   location: navigation.Location;
-}): [ProfileLoadingModel, cmd.Cmd<Msg>] => {
+}): [ProfileLoadingModel, Cmd<Msg>] => {
   return [
     {
       type: "ProfileLoading",
@@ -177,7 +178,7 @@ const initProfileMissing = ({
   location: navigation.Location;
   snackbar: Snackbar.Model;
   session: Session.Session;
-}): [ProfileMissingModel, cmd.Cmd<Msg>] => {
+}): [ProfileMissingModel, Cmd<Msg>] => {
   const [page, pageCmd] = initPageProfileMissing({ location, session });
   return [
     {
@@ -197,7 +198,7 @@ const initPageProfileMissing = ({
 }: {
   session: Session.Session;
   location: navigation.Location;
-}): [ProfileMissingModel["page"], cmd.Cmd<Msg>] => {
+}): [ProfileMissingModel["page"], Cmd<Msg>] => {
   const route = pipe(
     location.pathname,
     Route.decode,
@@ -207,7 +208,7 @@ const initPageProfileMissing = ({
     )
   );
 
-  const notFound: [ProfileMissingModel["page"], cmd.Cmd<Msg>] = [
+  const notFound: [ProfileMissingModel["page"], Cmd<Msg>] = [
     { type: "ProfileCreate", child: Pages.ProfileCreate.init(session) },
     navigation.push(Route.encode({ type: "ProfileCreate" })),
   ];
@@ -237,7 +238,7 @@ const initReady = ({
   snackbar: Snackbar.Model;
   profile: Profile.Profile;
   session: Session.Session;
-}): [ReadyModel, cmd.Cmd<Msg>] => {
+}): [ReadyModel, Cmd<Msg>] => {
   const [page, pageCmd] = initPageReady({ profile, location });
   return [
     {
@@ -259,7 +260,7 @@ const initPageReady = ({
 }: {
   profile: Profile.Profile;
   location: navigation.Location;
-}): [ReadyModel["page"], cmd.Cmd<Msg>] => {
+}): [ReadyModel["page"], Cmd<Msg>] => {
   const route = pipe(
     location.pathname,
     Route.decode,
@@ -269,7 +270,7 @@ const initPageReady = ({
     )
   );
 
-  const notFound: [ReadyModel["page"], cmd.Cmd<Msg>] = [
+  const notFound: [ReadyModel["page"], Cmd<Msg>] = [
     { type: "Home", child: Pages.Home.init },
     navigation.push(Route.encode({ type: "Home" })),
   ];
@@ -354,7 +355,9 @@ const initPageReady = ({
 //
 //
 
-export type Msg =
+export type Msg = MainMsg | SharedMsg | PageMsg;
+
+type MainMsg =
   | {
       type: "RecievedLocation";
       location: navigation.Location;
@@ -369,8 +372,9 @@ export type Msg =
       type: "RecievedProfile";
       profile: option.Option<Profile.Profile>;
       group: "Main";
-    }
-  | ChildMsg
+    };
+
+type PageMsg =
   | (Pages.Account.Msg & { group: "Account" })
   | (Pages.Chess.Msg & { group: "Chess" })
   | (Pages.ConnectFour.Msg & { group: "ConnectFour" })
@@ -384,7 +388,6 @@ export type Msg =
   | (Pages.ProfileUpdateName.Msg & { group: "ProfileUpdateName" })
   | (Pages.ProfileUpdateUsername.Msg & { group: "ProfileUpdateUsername" })
   | (Pages.TicTacToe.Msg & { group: "TicTacToe" });
-
 //
 //
 //
@@ -393,7 +396,7 @@ export type Msg =
 //
 //
 
-export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
+export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
   return pipe(
     [model, cmd.none],
     andThen(updateMain, msg),
@@ -401,7 +404,7 @@ export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   );
 };
 
-const updateMain = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
+const updateMain = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
   switch (model.type) {
     case "SessionLoading":
       return updateSessionLoading(msg, model);
@@ -423,7 +426,7 @@ const updateMain = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
 const updateProfileMissing = (
   msg: Msg,
   model: ProfileMissingModel
-): [Model, cmd.Cmd<Msg>] => {
+): [Model, Cmd<Msg>] => {
   switch (msg.type) {
     case "RecievedLocation": {
       const [page, pageCmd] = initPageProfileMissing({
@@ -456,7 +459,7 @@ const updateProfileMissing = (
 const updateSessionMissing = (
   msg: Msg,
   model: SessionMissingModel
-): [ProfileLoadingModel | SessionMissingModel, cmd.Cmd<Msg>] => {
+): [Model, Cmd<Msg>] => {
   switch (msg.type) {
     case "RecievedLocation":
       return [{ ...model, location: msg.location }, cmd.none];
@@ -476,10 +479,7 @@ const updateSessionMissing = (
 const updateSessionLoading = (
   msg: Msg,
   model: SessionLoadingModel
-): [
-  ProfileLoadingModel | SessionLoadingModel | SessionMissingModel,
-  cmd.Cmd<Msg>
-] => {
+): [Model, Cmd<Msg>] => {
   switch (msg.type) {
     case "RecievedLocation":
       return [{ ...model, location: msg.location }, cmd.none];
@@ -512,7 +512,7 @@ const profileResultToMsg = either.fold<Error, Profile.Profile, Msg>(
 const updateProfileLoading = (
   msg: Msg,
   model: ProfileLoadingModel
-): [Model, cmd.Cmd<Msg>] => {
+): [Model, Cmd<Msg>] => {
   switch (msg.type) {
     case "RecievedLocation":
       return [{ ...model, location: msg.location }, cmd.none];
@@ -529,7 +529,7 @@ const updateProfileLoading = (
   }
 };
 
-const updateReady = (msg: Msg, model: ReadyModel): [Model, cmd.Cmd<Msg>] => {
+const updateReady = (msg: Msg, model: ReadyModel): [Model, Cmd<Msg>] => {
   switch (msg.type) {
     case "RecievedLocation": {
       const [page, pageCmd] = initPageReady({
@@ -567,9 +567,9 @@ const updateReady = (msg: Msg, model: ReadyModel): [Model, cmd.Cmd<Msg>] => {
 //
 //
 
-type ChildMsg = Snackbar.Msg & { group: "Snackbar" };
+type SharedMsg = Snackbar.Msg & { group: "Snackbar" };
 
-const updateChildMsg = (msg: ChildMsg, model: Model): [Model, cmd.Cmd<Msg>] => {
+const updateChildMsg = (msg: SharedMsg, model: Model): [Model, Cmd<Msg>] => {
   switch (msg.group) {
     case "Snackbar":
       const [snackbarModel, snackbarCmd] = Snackbar.update(msg, model.snackbar);
@@ -580,13 +580,13 @@ const updateChildMsg = (msg: ChildMsg, model: Model): [Model, cmd.Cmd<Msg>] => {
   }
 };
 
-const updatePage = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
+const updatePage = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
   const [updatedPage, pageCmd, childMsgs] = updatePageWithChildMsgs(msg, model);
 
   const reducer = (
-    [prevModel, prevCmd]: [Model, cmd.Cmd<Msg>],
-    childMsg: ChildMsg
-  ): [Model, cmd.Cmd<Msg>] => {
+    [prevModel, prevCmd]: [Model, Cmd<Msg>],
+    childMsg: SharedMsg
+  ): [Model, Cmd<Msg>] => {
     const [nextModel, nextCmd] = updateChildMsg(childMsg, prevModel);
 
     return [nextModel, cmd.batch([prevCmd, nextCmd])];
@@ -603,7 +603,7 @@ const updatePage = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
 const updatePageWithChildMsgs = (
   msg: Msg,
   model: Model
-): [Model, cmd.Cmd<Msg>, ChildMsg[]] => {
+): [Model, Cmd<Msg>, SharedMsg[]] => {
   switch (model.type) {
     case "ProfileLoading":
       return [model, cmd.none, []];
@@ -618,7 +618,7 @@ const updatePageWithChildMsgs = (
     }
 
     case "Ready": {
-      const [modelPage, cmdPage, msgs] = updatePageReady(
+      const [modelPage, cmdPage, msgs] = updateReadyPageField(
         model,
         msg,
         model.page
@@ -639,7 +639,7 @@ const updatePageWithChildMsgs = (
 const updatePageSessionMissing = (
   msg: Msg,
   page: SessionMissingModel["page"]
-): [SessionMissingModel["page"], cmd.Cmd<Msg>] => {
+): [SessionMissingModel["page"], Cmd<Msg>] => {
   switch (page.type) {
     case "Login":
       if (msg.group === "Login") {
@@ -658,7 +658,7 @@ const updatePageProfileMissing = (
   model: ProfileMissingModel,
   msg: Msg,
   page: ProfileMissingModel["page"]
-): [ProfileMissingModel["page"], cmd.Cmd<Msg>] => {
+): [ProfileMissingModel["page"], Cmd<Msg>] => {
   if (page.type === "Logout" && msg.group === "Logout") {
     const [child, childCmd] = Pages.Logout.update(msg, page.child);
     return [
@@ -682,11 +682,11 @@ const updatePageProfileMissing = (
   return [page, cmd.none];
 };
 
-const updatePageReady = (
+const updateReadyPageField = (
   { profile }: { profile: Profile.Profile; location: navigation.Location },
   msg: Msg,
   page: ReadyModel["page"]
-): [ReadyModel["page"], cmd.Cmd<Msg>, ChildMsg[]] => {
+): [ReadyModel["page"], Cmd<Msg>, SharedMsg[]] => {
   if (page.type === "Account" && msg.group === "Account") {
     const [child, childCmd] = Pages.Account.update(profile, msg, page.child);
     return [
@@ -1009,10 +1009,10 @@ const viewReady = ({ page, profile }: ReadyModel): react.Html<Msg> => {
 
 const andThen =
   <Msg, Model>(
-    update: (msg: Msg, model: Model) => [Model, cmd.Cmd<Msg>],
+    update: (msg: Msg, model: Model) => [Model, Cmd<Msg>],
     msg: Msg
   ) =>
-  ([model, cmdPrev]: [Model, cmd.Cmd<Msg>]): [Model, cmd.Cmd<Msg>] => {
+  ([model, cmdPrev]: [Model, Cmd<Msg>]): [Model, Cmd<Msg>] => {
     const [modelNew, cmdNew] = update(msg, model);
 
     return [modelNew, cmd.batch([cmdPrev, cmdNew])];
