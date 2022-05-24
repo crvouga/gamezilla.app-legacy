@@ -9,3 +9,7 @@ export const groupMsg =
   (msg: Msg): Msg & { group: Group } => {
     return { ...msg, group: group } as const;
   };
+
+export type Group<GroupName extends string, Msg> = {
+  group: GroupName;
+} & Msg;

@@ -1,6 +1,8 @@
 import { Button } from "@mui/material";
 import { cmd, navigation, react } from "Framework";
+import { Cmd } from "Framework/Cmd";
 import React from "react";
+import { Group } from "Utility";
 import * as Game from "../Games";
 import * as View from "../View";
 
@@ -33,7 +35,7 @@ export type Msg =
   | { type: "BoardClicked"; position: Game.TicTacToe.Position }
   | { type: "RestartButtonClicked" };
 
-export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
+export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
   switch (msg.type) {
     case "PressedBackButton":
       return [model, navigation.back()];
