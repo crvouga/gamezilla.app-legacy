@@ -23,12 +23,9 @@ import * as View from "../View";
 //
 //
 
-export type Model =
-  | { type: "Idle" }
-  | { type: "ComfirmDeleteProfile" }
-  | { type: "DeletingProfile" };
+export type Model = {};
 
-export const init: Model = { type: "Idle" };
+export const init: Model = {};
 
 //
 //
@@ -39,14 +36,10 @@ export const init: Model = { type: "Idle" };
 //
 
 export type Msg =
-  | { type: "Back" }
-  | { type: "Logout" }
-  | { type: "DeleteProfile" }
-  | { type: "CancelledDeleteProfile" }
-  | { type: "ConfirmedDeleteProfile" }
-  | { type: "DeleteProfileSucceeded" }
-  | { type: "DeleteProfileFailed" }
-  | { type: "UpdateProfile" };
+  | { type: "UserClickedBackButton" }
+  | { type: "UserClickedLogoutLink" }
+  | { type: "UserClickedDeleteProfileLink" }
+  | { type: "UserClickedUpdateProfileLink" };
 
 export const update = (
   { userId }: { userId: string },
@@ -54,42 +47,17 @@ export const update = (
   model: Model
 ): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
-    case "Back":
+    case "UserClickedBackButton":
       return [model, navigation.back()];
 
-    case "Logout":
+    case "UserClickedLogoutLink":
       return [model, navigation.push(Route.encode({ type: "Logout" }))];
 
-    case "UpdateProfile":
+    case "UserClickedUpdateProfileLink":
       return [model, navigation.push(Route.encode({ type: "ProfileUpdate" }))];
 
-    case "DeleteProfile":
-      return [{ ...model, type: "ComfirmDeleteProfile" }, cmd.none];
-
-    case "CancelledDeleteProfile":
-      return [{ ...model, type: "Idle" }, cmd.none];
-
-    case "ConfirmedDeleteProfile":
-      return [
-        { ...model, type: "DeletingProfile" },
-        pipe(
-          Profile.deleteForever({
-            userId,
-          }),
-          attempt(
-            either.fold<{}, {}, Msg>(
-              () => ({ type: "DeleteProfileFailed" }),
-              () => ({ type: "DeleteProfileSucceeded" })
-            )
-          )
-        ),
-      ];
-
-    case "DeleteProfileFailed":
-      return [model, cmd.none];
-
-    case "DeleteProfileSucceeded":
-      return [model, cmd.none];
+    case "UserClickedDeleteProfileLink":
+      return [model, navigation.push(Route.encode({ type: "ProfileDelete" }))];
   }
 };
 
@@ -108,13 +76,17 @@ export const view =
       <View.Page>
         <View.Header
           left={
-            <View.HeaderBackButton onClick={() => dispatch({ type: "Back" })} />
+            <View.HeaderBackButton
+              onClick={() => dispatch({ type: "UserClickedBackButton" })}
+            />
           }
           title={username}
         />
 
         <List>
-          <ListItemButton onClick={() => dispatch({ type: "UpdateProfile" })}>
+          <ListItemButton
+            onClick={() => dispatch({ type: "UserClickedUpdateProfileLink" })}
+          >
             <ListItemIcon>
               <Edit />
             </ListItemIcon>
@@ -124,27 +96,18 @@ export const view =
             </ListItemSecondaryAction>
           </ListItemButton>
 
-          <ListItemButton onClick={() => dispatch({ type: "DeleteProfile" })}>
+          <ListItemButton
+            onClick={() => dispatch({ type: "UserClickedDeleteProfileLink" })}
+          >
             <ListItemIcon>
               <Delete />
             </ListItemIcon>
             <ListItemText primary="Delete Profile" />
           </ListItemButton>
 
-          <View.LoadingDialog
-            open={model.type === "DeletingProfile"}
-            title="Deleting profile..."
-          />
-
-          <View.ConformationDialog
-            open={model.type === "ComfirmDeleteProfile"}
-            onCancel={() => dispatch({ type: "CancelledDeleteProfile" })}
-            title="Delete profile forever?"
-            onConfirm={() => dispatch({ type: "ConfirmedDeleteProfile" })}
-            confirmTitle="Delete"
-          />
-
-          <ListItemButton onClick={() => dispatch({ type: "Logout" })}>
+          <ListItemButton
+            onClick={() => dispatch({ type: "UserClickedLogoutLink" })}
+          >
             <ListItemIcon>
               <Logout />
             </ListItemIcon>
