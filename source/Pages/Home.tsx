@@ -2,6 +2,7 @@ import { Avatar, Box, ButtonBase, Toolbar, Typography } from "@mui/material";
 import React from "react";
 import { cmd, navigation, react } from "Framework";
 import * as Games from "../Games";
+import * as Game from "Game";
 import * as Route from "Route";
 import * as View from "../View";
 
@@ -27,39 +28,27 @@ export const init: Model = {};
 
 export type Msg =
   | { type: "UserClickedAvatar" }
-  | { type: "UserClickedGame"; game: Game };
+  | { type: "UserClickedGame"; game: Game.Game };
 
-type Game = "TicTacToe" | "ConnectFour" | "Chess";
+export type OutMsg = Game.GroupedMsg;
 
-export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
+export const update = (
+  msg: Msg,
+  model: Model
+): [Model, cmd.Cmd<Msg>, OutMsg[]] => {
   switch (msg.type) {
     case "UserClickedAvatar":
-      return [model, navigation.push(Route.encode({ type: "Account" }))];
+      return [model, navigation.push(Route.encode({ type: "Account" })), []];
 
     case "UserClickedGame":
-      return [model, gameToCmd(msg.game)];
+      return [model, cmd.none, [Game.UserOpenedGame(msg.game)]];
   }
 };
 
-const gameToCmd = (game: Game): cmd.Cmd<Msg> => {
-  switch (game) {
-    case "Chess":
-      return navigation.push(Route.encode({ type: "Chess" }));
-
-    case "ConnectFour":
-      return navigation.push(Route.encode({ type: "ConnectFour" }));
-
-    case "TicTacToe":
-      return navigation.push(Route.encode({ type: "TicTacToe" }));
-  }
-};
-
-//
 //
 //
 //
 // View
-//
 //
 //
 //
