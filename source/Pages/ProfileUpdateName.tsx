@@ -39,11 +39,11 @@ export const init = ({ name }: { name: string }): Model => {
 //
 
 export type Msg =
-  | { group: "ProfileUpdateName"; type: "EnteredName"; name: string }
-  | { group: "ProfileUpdateName"; type: "Submit" }
-  | { group: "ProfileUpdateName"; type: "SubmitSucceeded" }
-  | { group: "ProfileUpdateName"; type: "SubmitFailed" }
-  | { group: "ProfileUpdateName"; type: "Back" };
+  | { type: "EnteredName"; name: string }
+  | { type: "Submit" }
+  | { type: "SubmitSucceeded" }
+  | { type: "SubmitFailed" }
+  | { type: "Back" };
 
 export const update = (
   { userId }: { userId: string },
@@ -105,11 +105,7 @@ export const view =
       <View.Page>
         <View.Header
           left={
-            <View.HeaderBackButton
-              onClick={() =>
-                dispatch({ group: "ProfileUpdateName", type: "Back" })
-              }
-            />
+            <View.HeaderBackButton onClick={() => dispatch({ type: "Back" })} />
           }
           title="Name"
         />
@@ -122,7 +118,6 @@ export const view =
             fullWidth
             onChange={(event) =>
               dispatch({
-                group: "ProfileUpdateName",
                 type: "EnteredName",
                 name: event.currentTarget.value,
               })
@@ -134,9 +129,7 @@ export const view =
             size="large"
             variant="contained"
             loading={model.status === "Loading"}
-            onClick={() =>
-              dispatch({ group: "ProfileUpdateName", type: "Submit" })
-            }
+            onClick={() => dispatch({ type: "Submit" })}
           >
             Update
           </LoadingButton>
