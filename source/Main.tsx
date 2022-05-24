@@ -239,7 +239,7 @@ const initPageReady = ({
 
     case "ProfileUpdate":
       return [
-        { type: "ProfileUpdate", child: Pages.ProfileUpdate.init(profile) },
+        { type: "ProfileUpdate", child: Pages.ProfileUpdate.init },
         cmd.none,
       ];
 
