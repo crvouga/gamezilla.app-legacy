@@ -40,11 +40,13 @@ export type Msg =
   | { type: "UsernameUpdateFailed" }
   | { type: "UsernameUpdateSucceeded" };
 
+export type OutMsg = Snackbar.GroupedMsg;
+
 export const update = (
   { userId }: { userId: string },
   msg: Msg,
   model: Model
-): [Model, cmd.Cmd<Msg>, Snackbar.Msg[]] => {
+): [Model, cmd.Cmd<Msg>, OutMsg[]] => {
   switch (msg.type) {
     case "UserEnteredUsername":
       return [{ ...model, username: msg.username }, cmd.none, []];
@@ -66,7 +68,7 @@ export const update = (
       return [
         { ...model, status: "Idle" },
         navigation.back(),
-        [Snackbar.Enqueue({ message: "Updated username." })],
+        [Snackbar.EnqueuedSnackbar({ message: "Updated username." })],
       ];
   }
 };

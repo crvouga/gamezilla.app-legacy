@@ -136,7 +136,7 @@ type MainMsg =
       group: "Main";
     };
 
-type SharedMsg = Snackbar.Msg & { group: "Snackbar" };
+type SharedMsg = Snackbar.GroupedMsg;
 
 type PageMsg =
   | (Pages.Account.Msg & { group: "Account" })
@@ -869,7 +869,7 @@ const updateReadyPage = (
     page.type === "ProfileUpdateAvatar" &&
     msg.group === "ProfileUpdateAvatar"
   ) {
-    const [child, childCmd] = Pages.ProfileUpdateAvatar.update(
+    const [child, childCmd, msgs] = Pages.ProfileUpdateAvatar.update(
       { userId: profile.userId },
       msg,
       page.child
@@ -877,12 +877,12 @@ const updateReadyPage = (
     return [
       { type: "ProfileUpdateAvatar", child },
       pipe(childCmd, cmd.map(groupMsg("ProfileUpdateAvatar"))),
-      [],
+      msgs.map(groupMsg("Snackbar")),
     ];
   }
 
   if (page.type === "ProfileUpdateName" && msg.group === "ProfileUpdateName") {
-    const [child, childCmd] = Pages.ProfileUpdateName.update(
+    const [child, childCmd, outMsgs] = Pages.ProfileUpdateName.update(
       profile,
       msg,
       page.child
@@ -890,7 +890,7 @@ const updateReadyPage = (
     return [
       { type: "ProfileUpdateName", child },
       pipe(childCmd, cmd.map(groupMsg("ProfileUpdateName"))),
-      [],
+      outMsgs,
     ];
   }
 

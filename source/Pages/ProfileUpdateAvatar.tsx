@@ -5,6 +5,7 @@ import { attempt, perform } from "Framework/Task";
 import * as ProfileAvatar from "ProfileAvatar";
 import * as Profile from "Profile";
 import * as React from "react";
+import * as Snackbar from "Snackbar";
 import * as View from "View";
 import { either } from "fp-ts";
 
@@ -40,6 +41,8 @@ export const init = ({ avatarUrl }: { avatarUrl: string }): Model => {
 //
 //
 
+export type GroupedMsg = { group: "ProfileUpdateAvatar" } & Msg;
+
 export type Msg =
   | { type: "UserClickedCancelButton" }
   | { type: "UserClickedDoneButton" }
@@ -52,23 +55,25 @@ export type Msg =
   | { type: "AvatarUpdateFailed" }
   | { type: "AvatarUpdateSucceeded" };
 
+type OutMsg = Snackbar.GroupedMsg;
+
 export const update = (
   { userId }: { userId: string },
   msg: Msg,
   model: Model
-): [Model, cmd.Cmd<Msg>] => {
+): [Model, cmd.Cmd<Msg>, OutMsg[]] => {
   switch (msg.type) {
     case "UserClickedCancelButton":
-      return [model, navigation.back()];
+      return [model, navigation.back(), []];
 
     case "StyleSelectClosed":
-      return [{ ...model, status: "Idle" }, cmd.none];
+      return [{ ...model, status: "Idle" }, cmd.none, []];
 
     case "StyleSelectOpened":
-      return [{ ...model, status: "StyleSelectOpened" }, cmd.none];
+      return [{ ...model, status: "StyleSelectOpened" }, cmd.none, []];
 
     case "UserEnteredSeed":
-      return [{ ...model, seed: msg.seed }, cmd.none];
+      return [{ ...model, seed: msg.seed }, cmd.none, []];
 
     case "UserClickedRandomSeedButton":
       return [
@@ -77,13 +82,14 @@ export const update = (
           ProfileAvatar.generateRandomSeed,
           perform((seed) => ({ type: "RandomSeedGenerated", seed }))
         ),
+        [],
       ];
 
     case "RandomSeedGenerated":
-      return [{ ...model, status: "Idle", seed: msg.seed }, cmd.none];
+      return [{ ...model, status: "Idle", seed: msg.seed }, cmd.none, []];
 
     case "UserSelectedStyle":
-      return [{ ...model, style: msg.style }, cmd.none];
+      return [{ ...model, style: msg.style }, cmd.none, []];
 
     case "UserClickedDoneButton":
       return [
@@ -103,13 +109,18 @@ export const update = (
             )
           )
         ),
+        [],
       ];
 
     case "AvatarUpdateFailed":
-      return [{ ...model, status: "Idle" }, cmd.none];
+      return [{ ...model, status: "Idle" }, cmd.none, []];
 
     case "AvatarUpdateSucceeded":
-      return [{ ...model, status: "Idle" }, navigation.back()];
+      return [
+        { ...model, status: "Idle" },
+        navigation.back(),
+        [Snackbar.EnqueuedSnackbar({ message: "Updated avatar." })],
+      ];
   }
 };
 
