@@ -24,7 +24,8 @@
     "noImplicitReturns": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
-    "baseUrl": "./source"
+    "baseUrl": "./source",
+    "noUncheckedIndexedAccess": true
   },
   "exclude": ["node_modules"],
   "include": ["source"],

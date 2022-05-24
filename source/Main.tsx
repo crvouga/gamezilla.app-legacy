@@ -1,19 +1,18 @@
 import { either, option } from "fp-ts";
 import { pipe } from "fp-ts/lib/function";
+import { cmd, navigation, react, sub, task } from "Framework";
+import { Cmd } from "Framework/Cmd";
 import { programWithDebugger } from "Framework/Debug/Navigation";
 import * as Game from "Game";
+import * as Pages from "Pages";
+import * as Profile from "Profile";
 import React from "react";
 import { createRoot } from "react-dom/client";
-import { cmd, navigation, react, sub } from "./Framework";
-import { attempt, perform } from "./Framework/Task";
-import * as Pages from "./Pages";
-import * as Profile from "./Profile";
-import * as Route from "./Route";
-import * as Session from "./Session";
-import { exhaustive, groupMsg } from "./Utility";
-import * as View from "./View";
+import * as Route from "Route";
+import * as Session from "Session";
 import * as Snackbar from "Snackbar";
-import { Cmd } from "Framework/Cmd";
+import { exhaustive, groupTag } from "Utility";
+import * as View from "View";
 
 //
 //
@@ -54,65 +53,6 @@ export const init = (location: navigation.Location): [Model, Cmd<Msg>] => {
   return initSessionLoading({ location });
 };
 
-const initSessionMissing = (
-  {
-    location,
-    snackbar,
-  }: {
-    snackbar: Snackbar.Model;
-    location: navigation.Location;
-  },
-  sharedMsgs: SharedMsg[]
-): [SessionMissingModel, Cmd<Msg>, SharedMsg[]] => {
-  const child = Pages.Login.init;
-
-  return [
-    {
-      type: "SessionMissing",
-      snackbar,
-      location,
-      page: { type: "Login", child },
-    },
-    navigation.push(Route.encode({ type: "Login" })),
-    sharedMsgs,
-  ];
-};
-
-const initProfileLoading = ({
-  session,
-  location,
-  snackbar,
-}: {
-  session: Session.Session;
-  snackbar: Snackbar.Model;
-  location: navigation.Location;
-}): [ProfileLoadingModel, Cmd<Msg>, SharedMsg[]] => {
-  return [
-    {
-      type: "ProfileLoading",
-      snackbar,
-      location,
-      session,
-    },
-    pipe(Profile.load(session), attempt(profileResultToMsg)),
-    [],
-  ];
-};
-
-const profileResultToMsg = either.fold<Error, Profile.Profile, Msg>(
-  (_error) => ({
-    group: "Main",
-    type: "RecievedProfile",
-    profile: option.none,
-  }),
-  (profile) => ({
-    group: "Main",
-    type: "RecievedProfile",
-    profile: option.some(profile),
-  })
-);
-
-//
 //
 //
 // Msg
@@ -131,12 +71,12 @@ type MainMsg =
   | {
       type: "RecievedSession";
       session: option.Option<Session.Session>;
-      group: "Main";
+      group: "Session";
     }
   | {
       type: "RecievedProfile";
       profile: option.Option<Profile.Profile>;
-      group: "Main";
+      group: "Profile";
     };
 
 type SharedMsg = Snackbar.GroupedMsg;
@@ -155,6 +95,7 @@ type PageMsg =
   | (Pages.ProfileUpdateName.Msg & { group: "ProfileUpdateName" })
   | (Pages.ProfileUpdateUsername.Msg & { group: "ProfileUpdateUsername" })
   | (Pages.TicTacToe.Msg & { group: "TicTacToe" });
+
 //
 //
 //
@@ -164,9 +105,9 @@ type PageMsg =
 //
 
 export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
-  const [modelPrev, cmdPrev, sharedMsgs] = updateMain(msg, model);
+  const [modelPrev, cmdPrev, outMsgs] = updateMain(msg, model);
 
-  const msgs = [msg, ...sharedMsgs];
+  const msgs = [msg, ...outMsgs];
 
   const [modelNew, cmdNew] = msgs.reduce<[Model, Cmd<Msg>]>(
     ([modelPrev, cmdPrev], msg) => {
@@ -185,7 +126,7 @@ const updateShared = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
       const [snackbarModel, snackbarCmd] = Snackbar.update(msg, model.snackbar);
       return [
         { ...model, snackbar: snackbarModel },
-        pipe(snackbarCmd, cmd.map(groupMsg("Snackbar"))),
+        pipe(snackbarCmd, cmd.map(groupTag("Snackbar"))),
       ];
 
     case "Location":
@@ -217,7 +158,9 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd<Msg>, SharedMsg[]] => {
 
 //
 //
+//
 // View
+//
 //
 //
 
@@ -230,7 +173,7 @@ export const view =
 
         {pipe(
           Snackbar.view(model.snackbar),
-          react.map(groupMsg("Snackbar"))
+          react.map(groupTag("Snackbar"))
         )(dispatch)}
       </View.ThemeProvider>
     );
@@ -266,10 +209,6 @@ const viewMain = (model: Model): react.Html<Msg> => {
 //
 //
 //
-//
-
-//
-// Model
 //
 
 type ProfileMissingModel = {
@@ -341,10 +280,6 @@ const initProfileMissingPage = ({
   }
 };
 
-//
-// Update
-//
-
 const updateProfileMissing = (
   msg: Msg,
   model: ProfileMissingModel
@@ -400,7 +335,7 @@ const updateProfileMissingPage = (
     );
     return [
       { type: "Logout", child },
-      pipe(childCmd, cmd.map(groupMsg("Logout"))),
+      pipe(childCmd, cmd.map(groupTag("Logout"))),
       outMsgs,
     ];
   }
@@ -413,7 +348,7 @@ const updateProfileMissingPage = (
     );
     return [
       { type: "ProfileCreate", child },
-      pipe(childCmd, cmd.map(groupMsg("ProfileCreate"))),
+      pipe(childCmd, cmd.map(groupTag("ProfileCreate"))),
       [],
     ];
   }
@@ -435,10 +370,6 @@ const updateProfileMissingPage = (
 //
 //
 
-//
-// Model
-//
-
 type SessionMissingModel = {
   type: "SessionMissing";
   location: navigation.Location;
@@ -446,9 +377,29 @@ type SessionMissingModel = {
   page: { type: "Login"; child: Pages.Login.Model };
 };
 
-//
-// Update
-//
+const initSessionMissing = (
+  {
+    location,
+    snackbar,
+  }: {
+    snackbar: Snackbar.Model;
+    location: navigation.Location;
+  },
+  outMsgs: SharedMsg[]
+): [SessionMissingModel, Cmd<Msg>, SharedMsg[]] => {
+  const child = Pages.Login.init;
+
+  return [
+    {
+      type: "SessionMissing",
+      snackbar,
+      location,
+      page: { type: "Login", child },
+    },
+    navigation.push(Route.encode({ type: "Login" })),
+    outMsgs,
+  ];
+};
 
 const updateSessionMissing = (
   msg: Msg,
@@ -479,7 +430,7 @@ const updateSessionMissingPage = (
         const [child, childCmd] = Pages.Login.update(msg, page.child);
         return [
           { type: "Login", child },
-          pipe(childCmd, cmd.map(groupMsg("Login"))),
+          pipe(childCmd, cmd.map(groupTag("Login"))),
         ];
       }
 
@@ -497,10 +448,6 @@ const updateSessionMissingPage = (
 //
 //
 //
-//
-//
-//
-
 //
 //
 //
@@ -524,10 +471,10 @@ const initSessionLoading = ({
     },
     pipe(
       Session.load,
-      perform((session) => ({
+      task.perform((session) => ({
         type: "RecievedSession",
         session,
-        group: "Main",
+        group: "Session",
       }))
     ),
   ];
@@ -564,10 +511,6 @@ const updateSessionLoading = (
 //
 //
 
-//
-// Model
-//
-
 type ProfileLoadingModel = {
   type: "ProfileLoading";
   location: navigation.Location;
@@ -575,9 +518,39 @@ type ProfileLoadingModel = {
   session: Session.Session;
 };
 
-//
-// Update
-//
+const initProfileLoading = ({
+  session,
+  location,
+  snackbar,
+}: {
+  session: Session.Session;
+  snackbar: Snackbar.Model;
+  location: navigation.Location;
+}): [ProfileLoadingModel, Cmd<Msg>, SharedMsg[]] => {
+  return [
+    {
+      type: "ProfileLoading",
+      snackbar,
+      location,
+      session,
+    },
+    pipe(Profile.load(session), task.attempt(profileResultToMsg)),
+    [],
+  ];
+};
+
+const profileResultToMsg = either.fold<Error, Profile.Profile, Msg>(
+  (_error) => ({
+    group: "Profile",
+    type: "RecievedProfile",
+    profile: option.none,
+  }),
+  (profile) => ({
+    group: "Profile",
+    type: "RecievedProfile",
+    profile: option.some(profile),
+  })
+);
 
 const updateProfileLoading = (
   msg: Msg,
@@ -616,7 +589,7 @@ type ReadyModel = {
   snackbar: Snackbar.Model;
   profile: Profile.Profile;
   session: Session.Session;
-  game: option.Option<Game.Game>;
+  game: Game.Model;
   page: ReadyPage;
 };
 
@@ -643,7 +616,7 @@ const initReady = ({
       snackbar: snackbar,
       session: session,
       profile: profile,
-      game: option.none,
+      game: Game.init,
       page: page,
     },
     pageCmd,
@@ -819,7 +792,7 @@ const updateReadyPage = (
     const [child, childCmd] = Pages.Account.update(profile, msg, page.child);
     return [
       { type: "Account", child },
-      pipe(childCmd, cmd.map(groupMsg("Account"))),
+      pipe(childCmd, cmd.map(groupTag("Account"))),
       [],
     ];
   }
@@ -838,7 +811,7 @@ const updateReadyPage = (
     const [child, childCmd] = Pages.Home.update(msg, page.child);
     return [
       { type: "Home", child },
-      pipe(childCmd, cmd.map(groupMsg("Home"))),
+      pipe(childCmd, cmd.map(groupTag("Home"))),
       [],
     ];
   }
@@ -851,7 +824,7 @@ const updateReadyPage = (
     );
     return [
       { type: "Logout", child },
-      pipe(childCmd, cmd.map(groupMsg("Logout"))),
+      pipe(childCmd, cmd.map(groupTag("Logout"))),
       outMsgs,
     ];
   }
@@ -864,7 +837,7 @@ const updateReadyPage = (
     );
     return [
       { type: "ProfileDelete", child },
-      pipe(childCmd, cmd.map(groupMsg("ProfileDelete"))),
+      pipe(childCmd, cmd.map(groupTag("ProfileDelete"))),
       [],
     ];
   }
@@ -877,7 +850,7 @@ const updateReadyPage = (
     );
     return [
       { type: "ProfileUpdate", child },
-      pipe(childCmd, cmd.map(groupMsg("ProfileUpdate"))),
+      pipe(childCmd, cmd.map(groupTag("ProfileUpdate"))),
       [],
     ];
   }
@@ -893,8 +866,8 @@ const updateReadyPage = (
     );
     return [
       { type: "ProfileUpdateAvatar", child },
-      pipe(childCmd, cmd.map(groupMsg("ProfileUpdateAvatar"))),
-      msgs.map(groupMsg("Snackbar")),
+      pipe(childCmd, cmd.map(groupTag("ProfileUpdateAvatar"))),
+      msgs.map(groupTag("Snackbar")),
     ];
   }
 
@@ -906,7 +879,7 @@ const updateReadyPage = (
     );
     return [
       { type: "ProfileUpdateName", child },
-      pipe(childCmd, cmd.map(groupMsg("ProfileUpdateName"))),
+      pipe(childCmd, cmd.map(groupTag("ProfileUpdateName"))),
       outMsgs,
     ];
   }
@@ -922,8 +895,8 @@ const updateReadyPage = (
     );
     return [
       { type: "ProfileUpdateUsername", child },
-      pipe(childCmd, cmd.map(groupMsg("ProfileUpdateUsername"))),
-      msgs.map(groupMsg("Snackbar")),
+      pipe(childCmd, cmd.map(groupTag("ProfileUpdateUsername"))),
+      msgs.map(groupTag("Snackbar")),
     ];
   }
 
@@ -931,7 +904,7 @@ const updateReadyPage = (
     const [child, childCmd] = Pages.TicTacToe.update(msg, page.child);
     return [
       { type: "TicTacToe", child },
-      pipe(childCmd, cmd.map(groupMsg("TicTacToe"))),
+      pipe(childCmd, cmd.map(groupTag("TicTacToe"))),
       [],
     ];
   }
@@ -948,7 +921,7 @@ const viewReady = ({ page, profile }: ReadyModel): react.Html<Msg> => {
     case "Account":
       return pipe(
         Pages.Account.view(profile, page.child),
-        react.map(groupMsg("Account"))
+        react.map(groupTag("Account"))
       );
 
     case "Chess":
@@ -957,49 +930,49 @@ const viewReady = ({ page, profile }: ReadyModel): react.Html<Msg> => {
     case "Home":
       return pipe(
         Pages.Home.view(profile, page.child),
-        react.map(groupMsg("Home"))
+        react.map(groupTag("Home"))
       );
 
     case "ConnectFour":
       return Pages.ConnectFour.view(page.child);
 
     case "Logout":
-      return pipe(Pages.Logout.view(page.child), react.map(groupMsg("Logout")));
+      return pipe(Pages.Logout.view(page.child), react.map(groupTag("Logout")));
 
     case "ProfileDelete":
       return pipe(
         Pages.ProfileDelete.view(page.child),
-        react.map(groupMsg("ProfileDelete"))
+        react.map(groupTag("ProfileDelete"))
       );
 
     case "ProfileUpdate":
       return pipe(
         Pages.ProfileUpdate.view(profile, page.child),
-        react.map(groupMsg("ProfileUpdate"))
+        react.map(groupTag("ProfileUpdate"))
       );
 
     case "ProfileUpdateAvatar":
       return pipe(
         Pages.ProfileUpdateAvatar.view(page.child),
-        react.map(groupMsg("ProfileUpdateAvatar"))
+        react.map(groupTag("ProfileUpdateAvatar"))
       );
 
     case "ProfileUpdateName":
       return pipe(
         Pages.ProfileUpdateName.view(page.child),
-        react.map(groupMsg("ProfileUpdateName"))
+        react.map(groupTag("ProfileUpdateName"))
       );
 
     case "ProfileUpdateUsername":
       return pipe(
         Pages.ProfileUpdateUsername.view(page.child),
-        react.map(groupMsg("ProfileUpdateUsername"))
+        react.map(groupTag("ProfileUpdateUsername"))
       );
 
     case "TicTacToe":
       return pipe(
         Pages.TicTacToe.view(page.child),
-        react.map(groupMsg("TicTacToe"))
+        react.map(groupTag("TicTacToe"))
       );
 
     default:
@@ -1041,14 +1014,22 @@ export const subscriptions = (model: Model): sub.Sub<Msg> => {
 const profileSubscription = ({ userId }: { userId: string }): sub.Sub<Msg> => {
   return pipe(
     Profile.subscription({ userId }),
-    sub.map((profile) => ({ type: "RecievedProfile", profile, group: "Main" }))
+    sub.map((profile) => ({
+      type: "RecievedProfile",
+      profile,
+      group: "Profile",
+    }))
   );
 };
 
 const sessionSubcription = (): sub.Sub<Msg> => {
   return pipe(
     Session.subscription,
-    sub.map((session) => ({ type: "RecievedSession", session, group: "Main" }))
+    sub.map((session) => ({
+      type: "RecievedSession",
+      session,
+      group: "Session",
+    }))
   );
 };
 
@@ -1067,13 +1048,13 @@ const viewProfileMissing = (model: ProfileMissingModel): react.Html<Msg> => {
     case "Logout":
       return pipe(
         Pages.Logout.view(model.page.child),
-        react.map(groupMsg("Logout"))
+        react.map(groupTag("Logout"))
       );
 
     case "ProfileCreate":
       return pipe(
         Pages.ProfileCreate.view(model.page.child),
-        react.map(groupMsg("ProfileCreate"))
+        react.map(groupTag("ProfileCreate"))
       );
 
     default:
@@ -1090,7 +1071,7 @@ const viewSessionMissing = (model: SessionMissingModel): react.Html<Msg> => {
     case "Login":
       return pipe(
         Pages.Login.view(model.page.child),
-        react.map(groupMsg("Login"))
+        react.map(groupTag("Login"))
       );
 
     default:

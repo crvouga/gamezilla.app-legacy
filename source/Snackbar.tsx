@@ -18,22 +18,6 @@ import React from "react";
 
 export type Model = {
   queue: Snack[];
-  current:
-    | {
-        type: "Appearing";
-        snack: Snack;
-      }
-    | {
-        type: "Appeared";
-        snack: Snack;
-      }
-    | {
-        type: "Disappearing";
-        snack: Snack;
-      }
-    | {
-        type: "Disappeared";
-      };
 };
 
 export type Snack = {
@@ -44,7 +28,6 @@ export type Snack = {
 
 export const init: Model = {
   queue: [],
-  current: { type: "Disappeared" },
 };
 
 //
@@ -117,21 +100,22 @@ const removeById = (
 
 export const view =
   (model: Model): react.Html<Msg> =>
-  (dispatch) =>
-    (
+  (dispatch) => {
+    const snack = model.queue[0];
+    return (
       <>
-        {model.queue[0] && (
+        {snack && (
           <Snackbar
-            open={Boolean(model.queue[0])}
-            message={model.queue[0].message}
-            sx={{ color: "black" }}
+            open
+            message={snack.message}
             onClose={() =>
               dispatch({
                 type: "UserClosedSnackbar",
-                snackId: model.queue[0].snackId,
+                snackId: snack.snackId,
               })
             }
           />
         )}
       </>
     );
+  };
