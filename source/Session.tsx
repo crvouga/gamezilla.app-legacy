@@ -21,15 +21,24 @@ export type Session = { defaultName: string; userId: string };
 //
 //
 
-export const login: task.Task<either.Either<{}, {}>> = async () => {
-  const { error } = await Supabase.client.auth.signIn({ provider: "google" });
+export type LoginMethod = { type: "Google" };
 
-  if (error) {
-    return either.left({});
-  }
+export const login =
+  (method: LoginMethod): task.Task<either.Either<{}, {}>> =>
+  async () => {
+    switch (method.type) {
+      case "Google":
+        const { error } = await Supabase.client.auth.signIn({
+          provider: "google",
+        });
 
-  return either.right({});
-};
+        if (error) {
+          return either.left({});
+        }
+
+        return either.right({});
+    }
+  };
 
 export const logout: task.Task<either.Either<{}, {}>> = async () => {
   await new Promise((resolve) => setTimeout(resolve, 1000));
