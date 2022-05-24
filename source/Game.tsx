@@ -65,21 +65,21 @@ const initGame = ({ game }: { game: Game }): Opened["child"] => {
 export type GroupedMsg = { group: "Game" } & Msg;
 
 type Msg =
-  | { type: "UserOpenedGame"; game: Game; gameTag: "None" }
-  | (Games.Chess.Msg & { gameTag: "Chess" })
-  | (Games.ConnectFour.Msg & { gameTag: "ConnectFour" })
-  | (Games.TicTacToe.Msg & { gameTag: "TicTacToe" });
+  | { type: "UserOpenedGame"; game: Game; groupGame: "None" }
+  | (Games.Chess.Msg & { groupGame: "Chess" })
+  | (Games.ConnectFour.Msg & { groupGame: "ConnectFour" })
+  | (Games.TicTacToe.Msg & { groupGame: "TicTacToe" });
 
-const gameTag =
-  <Msg, GameName extends string>(game: GameName) =>
-  (msg: Msg): Msg & { gameTag: GameName } => {
-    return { ...msg, gameTag: game } as const;
+const groupGameTag =
+  <Msg, GameName extends string>(gameName: GameName) =>
+  (msg: Msg): Msg & { groupGame: GameName } => {
+    return { ...msg, groupGame: gameName } as const;
   };
 
 export const UserOpenedGame = (game: Game): GroupedMsg => {
   return {
     group: "Game",
-    gameTag: "None",
+    groupGame: "None",
     type: "UserOpenedGame",
     game,
   };
@@ -113,27 +113,27 @@ const updateGame = (
   msg: Msg,
   model: Opened["child"]
 ): [Opened["child"], cmd.Cmd<Msg>] => {
-  if (model.type === "Chess" && msg.gameTag === "Chess") {
+  if (model.type === "Chess" && msg.groupGame === "Chess") {
     const [modelChild, cmdChild] = Games.Chess.update(msg, model.child);
     return [
       { type: "Chess", child: modelChild },
-      pipe(cmdChild, cmd.map(gameTag("Chess"))),
+      pipe(cmdChild, cmd.map(groupGameTag("Chess"))),
     ];
   }
 
-  if (model.type === "ConnectFour" && msg.gameTag === "ConnectFour") {
+  if (model.type === "ConnectFour" && msg.groupGame === "ConnectFour") {
     const [modelChild, cmdChild] = Games.ConnectFour.update(msg, model.child);
     return [
       { type: "ConnectFour", child: modelChild },
-      pipe(cmdChild, cmd.map(gameTag("ConnectFour"))),
+      pipe(cmdChild, cmd.map(groupGameTag("ConnectFour"))),
     ];
   }
 
-  if (model.type === "TicTacToe" && msg.gameTag === "TicTacToe") {
+  if (model.type === "TicTacToe" && msg.groupGame === "TicTacToe") {
     const [modelChild, cmdChild] = Games.TicTacToe.update(msg, model.child);
     return [
       { type: "TicTacToe", child: modelChild },
-      pipe(cmdChild, cmd.map(gameTag("TicTacToe"))),
+      pipe(cmdChild, cmd.map(groupGameTag("TicTacToe"))),
     ];
   }
 
@@ -173,19 +173,19 @@ const viewOpened = (model: Opened): react.Html<Msg> => {
     case "Chess":
       return pipe(
         Games.Chess.view(model.child.child),
-        react.map(gameTag("Chess"))
+        react.map(groupGameTag("Chess"))
       );
 
     case "ConnectFour":
       return pipe(
         Games.ConnectFour.view(model.child.child),
-        react.map(gameTag("ConnectFour"))
+        react.map(groupGameTag("ConnectFour"))
       );
 
     case "TicTacToe":
       return pipe(
         Games.TicTacToe.view(model.child.child),
-        react.map(gameTag("TicTacToe"))
+        react.map(groupGameTag("TicTacToe"))
       );
   }
 };
