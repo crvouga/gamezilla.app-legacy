@@ -190,7 +190,7 @@ export const view = (model: Model): react.Html<Msg> => {
               }}
             >
               <Avatar
-                sx={{ marginRight: 1 }}
+                sx={{ marginRight: 1, width: 24, height: 24 }}
                 src={ProfileAvatar.toUrl({
                   style,
                   seed: ProfileAvatar.toSeed(model.seed),
