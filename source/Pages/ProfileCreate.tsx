@@ -2,13 +2,14 @@ import { LoadingButton } from "@mui/lab";
 import { Avatar, Box, Button, TextField } from "@mui/material";
 import { either } from "fp-ts";
 import { pipe } from "fp-ts/lib/function";
-import { cmd, react } from "Framework";
+import { cmd, navigation, react } from "Framework";
 import { attempt } from "Framework/Task";
 import * as Profile from "Profile";
 import * as ProfileAvatar from "ProfileAvatar";
 import * as React from "react";
 import * as Session from "Session";
 import * as View from "View";
+import * as Route from "Route";
 
 //
 //
@@ -67,11 +68,7 @@ export type Msg =
   | { type: "Submit" }
   | { type: "SubmitSucceeded" }
   | { type: "SubmitFailed" }
-  | { type: "CancelledLogout" }
-  | { type: "ClickedLogoutButton" }
-  | { type: "Logout" }
-  | { type: "LogoutFailed" }
-  | { type: "LogoutSucceeded" };
+  | { type: "UserClickedLogoutButton" };
 
 export const update = (
   { userId }: { userId: string },
@@ -108,31 +105,8 @@ export const update = (
     case "SubmitFailed":
       return [{ ...model, status: "Idle" }, cmd.none];
 
-    case "Logout":
-      return [
-        { ...model, status: "LoggingOut" },
-        pipe(
-          Session.logout,
-          attempt(
-            either.fold<{}, {}, Msg>(
-              () => ({ type: "LogoutFailed" }),
-              () => ({ type: "LogoutSucceeded" })
-            )
-          )
-        ),
-      ];
-
-    case "LogoutFailed":
-      return [model, cmd.none];
-
-    case "LogoutSucceeded":
-      return [model, cmd.none];
-
-    case "ClickedLogoutButton":
-      return [{ ...model, status: "ConfirmLogout" }, cmd.none];
-
-    case "CancelledLogout":
-      return [{ ...model, status: "Idle" }, cmd.none];
+    case "UserClickedLogoutButton":
+      return [model, navigation.push(Route.encode({ type: "Logout" }))];
   }
 };
 
@@ -154,28 +128,13 @@ export const view =
         <View.Header
           left={
             <View.Button
-              loading={model.status === "LoggingOut"}
               sx={{ marginLeft: -1 }}
-              onClick={() => dispatch({ type: "ClickedLogoutButton" })}
+              onClick={() => dispatch({ type: "UserClickedLogoutButton" })}
             >
               Logout
             </View.Button>
           }
           title="Create Profile"
-        />
-
-        <View.ConformationDialog
-          open={model.status === "ConfirmLogout"}
-          title="Logout of Gamezilla?"
-          onClose={() => dispatch({ type: "CancelledLogout" })}
-          onCancel={() => dispatch({ type: "CancelledLogout" })}
-          onConfirm={() => dispatch({ type: "Logout" })}
-          confirmTitle="Logout"
-        />
-
-        <View.LoadingDialog
-          open={model.status === "LoggingOut"}
-          title="Logging out..."
         />
 
         <View.LoadingDialog
