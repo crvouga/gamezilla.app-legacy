@@ -14,11 +14,11 @@ import * as View from "../View";
 //
 //
 
-export type Model = { type: "Idle" } | { type: "Loading" };
+export type Model =
+  | { type: "Idle" }
+  | { type: "LoggingIn"; loginMethod: Session.LoginMethod };
 
-export const init = (): Model => {
-  return { type: "Idle" };
-};
+export const init: Model = { type: "Idle" };
 
 //
 //
@@ -29,24 +29,16 @@ export const init = (): Model => {
 //
 
 export type Msg =
-  | { type: "Login" }
+  | { type: "UserClickedLoginButton"; loginMethod: Session.LoginMethod }
   | { type: "LoginFailed" }
   | { type: "LoginSucceeded" };
 
 export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
-    case "Login":
+    case "UserClickedLoginButton":
       return [
-        { type: "Loading" },
-        pipe(
-          Session.login,
-          attempt(
-            either.fold<{}, {}, Msg>(
-              () => ({ type: "LoginFailed" }),
-              () => ({ type: "LoginSucceeded" })
-            )
-          )
-        ),
+        { type: "LoggingIn", loginMethod: msg.loginMethod },
+        loginCmd(msg.loginMethod),
       ];
 
     case "LoginFailed":
@@ -55,6 +47,18 @@ export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
     case "LoginSucceeded":
       return [model, cmd.none];
   }
+};
+
+const loginCmd = (loginMethod: Session.LoginMethod) => {
+  return pipe(
+    Session.login(loginMethod),
+    attempt(
+      either.fold<{}, {}, Msg>(
+        () => ({ type: "LoginFailed" }),
+        () => ({ type: "LoginSucceeded" })
+      )
+    )
+  );
 };
 
 //
@@ -84,10 +88,29 @@ export const view =
           variant="contained"
           size="large"
           fullWidth
-          loading={model.type === "Loading"}
-          onClick={() => dispatch({ type: "Login" })}
+          onClick={() =>
+            dispatch({
+              type: "UserClickedLoginButton",
+              loginMethod: { type: "Google" },
+            })
+          }
         >
           Continue With Google
         </View.Button>
+
+        {viewLoadingDialog(model)}
       </View.Page>
     );
+
+const viewLoadingDialog = (model: Model) => {
+  switch (model.type) {
+    case "LoggingIn":
+      switch (model.loginMethod.type) {
+        case "Google":
+          return <View.LoadingDialog open title="Redirecting to Google" />;
+      }
+
+    default:
+      return <></>;
+  }
+};

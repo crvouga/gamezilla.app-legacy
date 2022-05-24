@@ -116,7 +116,7 @@ const initSessionMissing = ({
 }: {
   location: navigation.Location;
 }): [SessionMissingModel, cmd.Cmd<Msg>] => {
-  const child = Pages.Login.init();
+  const child = Pages.Login.init;
 
   return [
     { type: "SessionMissing", location, page: { type: "Login", child } },
