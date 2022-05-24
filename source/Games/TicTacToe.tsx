@@ -326,13 +326,13 @@ export const view =
           }
           title="Tic Tac Toe"
         />
+        hello
         <Board
           board={model.board}
           onClick={(position) =>
             dispatch({ type: "UserClickedBoard", position })
           }
         />
-
         <Button
           size="large"
           fullWidth

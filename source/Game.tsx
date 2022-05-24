@@ -1,10 +1,11 @@
-import React from "react";
+import { Box, Collapse } from "@mui/material";
+import { pipe } from "fp-ts/lib/function";
 import { cmd, navigation, react } from "Framework";
 import { Cmd } from "Framework/Cmd";
-import * as Games from "./Games";
+import React from "react";
 import * as Route from "Route";
-import { groupTag } from "Utility";
-import { pipe } from "fp-ts/lib/function";
+import * as View from "View";
+import * as Games from "./Games";
 
 //
 //
@@ -66,6 +67,7 @@ export type GroupedMsg = { group: "Game" } & Msg;
 
 type Msg =
   | { type: "UserOpenedGame"; game: Game; groupGame: "None" }
+  | { type: "UserClickedGameBanner"; groupGame: "None" }
   | (Games.Chess.Msg & { groupGame: "Chess" })
   | (Games.ConnectFour.Msg & { groupGame: "ConnectFour" })
   | (Games.TicTacToe.Msg & { groupGame: "TicTacToe" });
@@ -102,6 +104,9 @@ const updateOpened = (msg: Msg, model: Opened): [Model, Cmd<Msg>] => {
         return [model, navigation.push(Route.encode({ type: "Game" }))];
       }
       return [model, cmd.none];
+
+    case "UserClickedGameBanner":
+      return [model, navigation.push(Route.encode({ type: "Game" }))];
 
     default:
       const [modelChild, cmdChild] = updateGame(msg, model.child);
@@ -193,3 +198,24 @@ const viewOpened = (model: Opened): react.Html<Msg> => {
 const viewClosed: react.Html<Msg> = () => {
   return <>game is closed</>;
 };
+
+export const viewBanner =
+  (isOpen: boolean, model: Model): react.Html<Msg> =>
+  (dispatch) =>
+    (
+      <Collapse in={isOpen && model.type === "Opened"}>
+        <Box
+          onClick={() =>
+            dispatch({ type: "UserClickedGameBanner", groupGame: "None" })
+          }
+          sx={{
+            width: "100%",
+            paddingX: 2,
+            paddingY: 1,
+            backgroundColor: "primary.main",
+          }}
+        >
+          <View.Typography>You're in a game...</View.Typography>
+        </Box>
+      </Collapse>
+    );

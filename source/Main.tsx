@@ -1,3 +1,4 @@
+import { Box } from "@mui/material";
 import { either, option } from "fp-ts";
 import { pipe } from "fp-ts/lib/function";
 import { cmd, navigation, react, sub, task } from "Framework";
@@ -898,11 +899,34 @@ const updateReadyPage = (
   return [page, cmd.none, []];
 };
 
-//
-// View
-//
+const viewReady =
+  (model: ReadyModel): react.Html<Msg> =>
+  (dispatch) =>
+    (
+      <Box
+        sx={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+        }}
+      >
+        {pipe(
+          Game.viewBanner(model.page.type !== "Game", model.game),
+          react.map(groupTag("Game"))
+        )(dispatch)}
+        <Box sx={{ position: "relative", width: "100%", height: "100%" }}>
+          {viewReadyPage(model)(dispatch)}
+        </Box>
+      </Box>
+    );
 
-const viewReady = ({ page, profile, game }: ReadyModel): react.Html<Msg> => {
+const viewReadyPage = ({
+  page,
+  profile,
+  game,
+}: ReadyModel): react.Html<Msg> => {
   switch (page.type) {
     case "Account":
       return pipe(
