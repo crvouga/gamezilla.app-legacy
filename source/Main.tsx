@@ -608,7 +608,10 @@ const updatePageReady = (
       msg,
       page.child
     );
-    return [{ type: "ProfileUpdateName", child }, childCmd];
+    return [
+      { type: "ProfileUpdateName", child },
+      pipe(childCmd, cmd.map(groupMsg("ProfileUpdateName"))),
+    ];
   }
 
   if (
@@ -789,7 +792,10 @@ const viewReady = ({ page, profile }: ReadyModel): react.Html<Msg> => {
       );
 
     case "ProfileUpdateName":
-      return Pages.ProfileUpdateName.view(page.child);
+      return pipe(
+        Pages.ProfileUpdateName.view(page.child),
+        react.map(groupMsg("ProfileUpdateName"))
+      );
 
     case "ProfileUpdateUsername":
       return pipe(
