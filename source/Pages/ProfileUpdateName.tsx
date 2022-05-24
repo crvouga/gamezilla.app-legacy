@@ -12,14 +12,12 @@ import { either } from "fp-ts";
 //
 //
 //
-//
 // Model
 //
 //
 //
-//
 
-export type Model = { status: "Idle" | "Loading"; name: string };
+export type Model = { status: "Idle" | "UpdatingName"; name: string };
 
 export const init = ({ name }: { name: string }): Model => {
   return {
@@ -31,19 +29,17 @@ export const init = ({ name }: { name: string }): Model => {
 //
 //
 //
-//
 // Update
-//
 //
 //
 //
 
 export type Msg =
-  | { type: "EnteredName"; name: string }
-  | { type: "Submit" }
-  | { type: "SubmitSucceeded" }
-  | { type: "SubmitFailed" }
-  | { type: "Back" };
+  | { type: "UserEnteredName"; name: string }
+  | { type: "UserClickedCancelButton" }
+  | { type: "UserClickedSubmitButton" }
+  | { type: "UpdateProfileNameFailed" }
+  | { type: "UpdateProfileNameSucceeded" };
 
 export const update = (
   { userId }: { userId: string },
@@ -51,49 +47,56 @@ export const update = (
   model: Model
 ): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
-    case "EnteredName":
+    case "UserEnteredName":
       return [{ ...model, ...msg }, cmd.none];
 
-    case "Submit":
+    case "UserClickedSubmitButton":
       return [
-        { ...model, status: "Loading" },
-        pipe(
-          Profile.edit({
-            userId,
-            ...model,
-          }),
-          attempt(
-            either.fold<{}, {}, Msg>(
-              () => ({
-                group: "ProfileUpdateName",
-                type: "SubmitFailed",
-              }),
-              () => ({
-                group: "ProfileUpdateName",
-                type: "SubmitSucceeded",
-              })
-            )
-          )
-        ),
+        { ...model, status: "UpdatingName" },
+        updateProfileNameCmd({ userId, name: model.name }),
       ];
 
-    case "SubmitSucceeded":
+    case "UpdateProfileNameSucceeded":
+      return [{ ...model, status: "Idle" }, navigation.back()];
+
+    case "UpdateProfileNameFailed":
       return [{ ...model, status: "Idle" }, cmd.none];
 
-    case "SubmitFailed":
-      return [{ ...model, status: "Idle" }, cmd.none];
-
-    case "Back":
+    case "UserClickedCancelButton":
       return [model, navigation.back()];
   }
 };
 
 //
 //
+// cmds
+//
+//
+
+const updateProfileNameCmd = ({
+  userId,
+  name,
+}: {
+  userId: string;
+  name: string;
+}) =>
+  pipe(
+    Profile.edit({
+      userId,
+      name,
+    }),
+    attempt(
+      either.fold<{}, {}, Msg>(
+        () => ({ type: "UpdateProfileNameFailed" }),
+        () => ({ type: "UpdateProfileNameSucceeded" })
+      )
+    )
+  );
+
+//
 //
 //
 // View
-//
 //
 //
 //
@@ -105,12 +108,30 @@ export const view =
       <View.Page>
         <View.Header
           left={
-            <View.HeaderBackButton onClick={() => dispatch({ type: "Back" })} />
+            <View.Button
+              sx={{ marginLeft: -1 }}
+              onClick={() => dispatch({ type: "UserClickedCancelButton" })}
+            >
+              Cancel
+            </View.Button>
           }
           title="Name"
+          right={
+            <View.Button
+              sx={{ marginRight: -1 }}
+              onClick={() => dispatch({ type: "UserClickedSubmitButton" })}
+            >
+              Done
+            </View.Button>
+          }
         />
 
-        <Box sx={{ p: 2, width: "100%" }}>
+        <View.LoadingDialog
+          open={model.status === "UpdatingName"}
+          title="Updating name..."
+        />
+
+        <Box sx={{ padding: 2 }}>
           <TextField
             value={model.name}
             sx={{ marginBottom: 4 }}
@@ -118,21 +139,11 @@ export const view =
             fullWidth
             onChange={(event) =>
               dispatch({
-                type: "EnteredName",
+                type: "UserEnteredName",
                 name: event.currentTarget.value,
               })
             }
           />
-
-          <LoadingButton
-            fullWidth
-            size="large"
-            variant="contained"
-            loading={model.status === "Loading"}
-            onClick={() => dispatch({ type: "Submit" })}
-          >
-            Update
-          </LoadingButton>
         </Box>
       </View.Page>
     );
