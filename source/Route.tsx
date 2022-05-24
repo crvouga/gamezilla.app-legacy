@@ -8,8 +8,6 @@ import { option } from "fp-ts";
 
 export type Route =
   | { type: "Account" }
-  | { type: "Chess" }
-  | { type: "ConnectFour" }
   | { type: "Home" }
   | { type: "Login" }
   | { type: "Logout" }
@@ -19,7 +17,7 @@ export type Route =
   | { type: "ProfileUpdateAvatar" }
   | { type: "ProfileUpdateName" }
   | { type: "ProfileUpdateUsername" }
-  | { type: "TicTacToe" };
+  | { type: "Game" };
 
 //
 //
@@ -29,8 +27,6 @@ export type Route =
 
 const routesTypes: { [routeType in Route["type"]]: string } = {
   Account: "Account",
-  Chess: "Chess",
-  ConnectFour: "ConnectFour",
   Home: "Home",
   Login: "Login",
   Logout: "Logout",
@@ -40,7 +36,7 @@ const routesTypes: { [routeType in Route["type"]]: string } = {
   ProfileUpdateAvatar: "ProfileUpdateAvatar",
   ProfileUpdateName: "ProfileUpdateName",
   ProfileUpdateUsername: "ProfileUpdateUsername",
-  TicTacToe: "TicTacToe",
+  Game: "Game",
 };
 
 const isRouteType = (routeType: unknown): routeType is Route["type"] => {

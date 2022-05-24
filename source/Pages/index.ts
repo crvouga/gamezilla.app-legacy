@@ -1,6 +1,4 @@
 export * as Account from "./Account";
-export * as Chess from "./Chess";
-export * as ConnectFour from "./ConnectFour";
 export * as Home from "./Home";
 export * as Login from "./Login";
 export * as Logout from "./Logout";
@@ -10,4 +8,3 @@ export * as ProfileUpdate from "./ProfileUpdate";
 export * as ProfileUpdateAvatar from "./ProfileUpdateAvatar";
 export * as ProfileUpdateName from "./ProfileUpdateName";
 export * as ProfileUpdateUsername from "./ProfileUpdateUsername";
-export * as TicTacToe from "./TicTacToe";

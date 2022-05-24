@@ -79,12 +79,10 @@ type MainMsg =
       group: "Profile";
     };
 
-type SharedMsg = Snackbar.GroupedMsg;
+type SharedMsg = Snackbar.GroupedMsg | Game.GroupedMsg;
 
 type PageMsg =
   | (Pages.Account.Msg & { group: "Account" })
-  | (Pages.Chess.Msg & { group: "Chess" })
-  | (Pages.ConnectFour.Msg & { group: "ConnectFour" })
   | (Pages.Home.Msg & { group: "Home" })
   | (Pages.Login.Msg & { group: "Login" })
   | (Pages.Logout.Msg & { group: "Logout" })
@@ -93,8 +91,7 @@ type PageMsg =
   | (Pages.ProfileUpdate.Msg & { group: "ProfileUpdate" })
   | (Pages.ProfileUpdateAvatar.Msg & { group: "ProfileUpdateAvatar" })
   | (Pages.ProfileUpdateName.Msg & { group: "ProfileUpdateName" })
-  | (Pages.ProfileUpdateUsername.Msg & { group: "ProfileUpdateUsername" })
-  | (Pages.TicTacToe.Msg & { group: "TicTacToe" });
+  | (Pages.ProfileUpdateUsername.Msg & { group: "ProfileUpdateUsername" });
 
 //
 //
@@ -131,6 +128,18 @@ const updateShared = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
 
     case "Location":
       return [{ ...model, location: msg.location }, cmd.none];
+
+    case "Game":
+      if (model.type === "Ready") {
+        const [gameModel, gameCmd] = Game.update(msg, model.game);
+
+        return [
+          { ...model, game: gameModel },
+          pipe(gameCmd, cmd.map(groupTag("Game"))),
+        ];
+      }
+
+      return [model, cmd.none];
 
     default:
       return [model, cmd.none];
@@ -677,8 +686,6 @@ const updateReady = (
 type ReadyPage =
   | { type: "Home"; child: Pages.Home.Model }
   | { type: "Account"; child: Pages.Account.Model }
-  | { type: "Chess"; child: Pages.Chess.Model }
-  | { type: "ConnectFour"; child: Pages.ConnectFour.Model }
   | { type: "Logout"; child: Pages.Logout.Model }
   | { type: "ProfileDelete"; child: Pages.ProfileDelete.Model }
   | { type: "ProfileUpdate"; child: Pages.ProfileUpdate.Model }
@@ -688,7 +695,7 @@ type ReadyPage =
       type: "ProfileUpdateUsername";
       child: Pages.ProfileUpdateUsername.Model;
     }
-  | { type: "TicTacToe"; child: Pages.TicTacToe.Model };
+  | { type: "Game" };
 
 const initReadyPage = ({
   profile,
@@ -714,12 +721,6 @@ const initReadyPage = ({
   switch (route.type) {
     case "Account":
       return [{ type: "Account", child: Pages.Account.init }, cmd.none];
-
-    case "Chess":
-      return [{ type: "Chess", child: Pages.Chess.init }, cmd.none];
-
-    case "ConnectFour":
-      return [{ type: "ConnectFour", child: Pages.ConnectFour.init }, cmd.none];
 
     case "Home":
       return [{ type: "Home", child: Pages.Home.init }, cmd.none];
@@ -775,8 +776,8 @@ const initReadyPage = ({
         cmd.none,
       ];
 
-    case "TicTacToe":
-      return [{ type: "TicTacToe", child: Pages.TicTacToe.init }, cmd.none];
+    case "Game":
+      return [{ type: "Game" }, cmd.none];
 
     default:
       return exhaustive(route);
@@ -797,22 +798,12 @@ const updateReadyPage = (
     ];
   }
 
-  if (page.type === "Chess" && msg.group === "Chess") {
-    const [child, childCmd] = Pages.Chess.update(msg, page.child);
-    return [{ type: "Chess", child }, childCmd, []];
-  }
-
-  if (page.type === "ConnectFour" && msg.group === "ConnectFour") {
-    const [child, childCmd] = Pages.ConnectFour.update(msg, page.child);
-    return [{ type: "ConnectFour", child }, childCmd, []];
-  }
-
   if (page.type === "Home" && msg.group === "Home") {
-    const [child, childCmd] = Pages.Home.update(msg, page.child);
+    const [child, childCmd, outMsgs] = Pages.Home.update(msg, page.child);
     return [
       { type: "Home", child },
       pipe(childCmd, cmd.map(groupTag("Home"))),
-      [],
+      outMsgs,
     ];
   }
 
@@ -900,13 +891,8 @@ const updateReadyPage = (
     ];
   }
 
-  if (page.type === "TicTacToe" && msg.group === "TicTacToe") {
-    const [child, childCmd] = Pages.TicTacToe.update(msg, page.child);
-    return [
-      { type: "TicTacToe", child },
-      pipe(childCmd, cmd.map(groupTag("TicTacToe"))),
-      [],
-    ];
+  if (page.type === "Game" && msg.group === "Game") {
+    return [page, cmd.none, []];
   }
 
   return [page, cmd.none, []];
@@ -916,7 +902,7 @@ const updateReadyPage = (
 // View
 //
 
-const viewReady = ({ page, profile }: ReadyModel): react.Html<Msg> => {
+const viewReady = ({ page, profile, game }: ReadyModel): react.Html<Msg> => {
   switch (page.type) {
     case "Account":
       return pipe(
@@ -924,17 +910,11 @@ const viewReady = ({ page, profile }: ReadyModel): react.Html<Msg> => {
         react.map(groupTag("Account"))
       );
 
-    case "Chess":
-      return Pages.Chess.view(page.child);
-
     case "Home":
       return pipe(
         Pages.Home.view(profile, page.child),
         react.map(groupTag("Home"))
       );
-
-    case "ConnectFour":
-      return Pages.ConnectFour.view(page.child);
 
     case "Logout":
       return pipe(Pages.Logout.view(page.child), react.map(groupTag("Logout")));
@@ -969,11 +949,8 @@ const viewReady = ({ page, profile }: ReadyModel): react.Html<Msg> => {
         react.map(groupTag("ProfileUpdateUsername"))
       );
 
-    case "TicTacToe":
-      return pipe(
-        Pages.TicTacToe.view(page.child),
-        react.map(groupTag("TicTacToe"))
-      );
+    case "Game":
+      return pipe(Game.view(game), react.map(groupTag("Game")));
 
     default:
       return exhaustive(page);

@@ -1,4 +1,59 @@
+import * as View from "View";
 import * as React from "react";
+import { navigation, react } from "Framework";
+import { Cmd } from "Framework/Cmd";
+
+//
+//
+//
+// Model
+//
+//
+//
+
+export type Model = {};
+
+export const init: Model = {};
+
+//
+//
+//
+// Update
+//
+//
+//
+
+export type Msg = { type: "UserClickedBackButton" };
+
+export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
+  switch (msg.type) {
+    case "UserClickedBackButton":
+      return [model, navigation.back()];
+  }
+};
+//
+//
+//
+// View
+//
+//
+//
+
+export const view =
+  (_model: Model): react.Html<Msg> =>
+  (dispatch) =>
+    (
+      <View.Page>
+        <View.Header
+          left={
+            <View.HeaderBackButton
+              onClick={() => dispatch({ type: "UserClickedBackButton" })}
+            />
+          }
+          title="Chess"
+        />
+      </View.Page>
+    );
 
 export const theme = {
   lightSquare: "#EBEBD0",

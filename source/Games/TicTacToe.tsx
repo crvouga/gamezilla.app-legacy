@@ -1,11 +1,13 @@
-import * as React from "react";
+import { Button } from "@mui/material";
+import { cmd, navigation, react } from "Framework";
+import { Cmd } from "Framework/Cmd";
+import React from "react";
+import * as View from "../View";
 
 //
 //
 //
-//
-// Model
-//
+// Board
 //
 //
 //
@@ -101,13 +103,13 @@ export const move = (
   return board;
 };
 
-/*
-
-
-View
-
-
-*/
+//
+//
+//
+// View
+//
+//
+//
 
 export const theme = {
   background: "#14BDAC",
@@ -248,3 +250,95 @@ export const Icon = () => {
     </svg>
   );
 };
+
+//
+//
+//
+// Model
+//
+//
+//
+
+export type Model = {
+  board: Board;
+};
+
+export const init: Model = {
+  board: emptyBoard,
+};
+
+//
+//
+//
+// Update
+//
+//
+//
+
+export type Msg =
+  | { type: "UserClickedBackButton" }
+  | { type: "UserClickedBoard"; position: Position }
+  | { type: "UserClickedRestartButton" };
+
+export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
+  switch (msg.type) {
+    case "UserClickedBackButton":
+      return [model, navigation.back()];
+
+    case "UserClickedRestartButton":
+      return [
+        {
+          ...model,
+          board: emptyBoard,
+        },
+        cmd.none,
+      ];
+
+    case "UserClickedBoard":
+      return [
+        {
+          ...model,
+          board: move(model.board, toTurn(model.board), msg.position),
+        },
+        cmd.none,
+      ];
+  }
+};
+
+//
+//
+//
+// View
+//
+//
+//
+
+export const view =
+  (model: Model): react.Html<Msg> =>
+  (dispatch) =>
+    (
+      <View.Page>
+        <View.Header
+          left={
+            <View.HeaderBackButton
+              onClick={() => dispatch({ type: "UserClickedBackButton" })}
+            />
+          }
+          title="Tic Tac Toe"
+        />
+        <Board
+          board={model.board}
+          onClick={(position) =>
+            dispatch({ type: "UserClickedBoard", position })
+          }
+        />
+
+        <Button
+          size="large"
+          fullWidth
+          onClick={() => dispatch({ type: "UserClickedRestartButton" })}
+        >
+          Restart
+        </Button>
+      </View.Page>
+    );

@@ -1,4 +1,6 @@
-import * as React from "react";
+import { cmd, navigation, react } from "Framework";
+import React from "react";
+import * as View from "../View";
 
 //
 //
@@ -14,19 +16,19 @@ export type IPlayer = "PlayerOne" | "PlayerTwo";
 
 export type IColumn = readonly IPlayer[];
 
-export type IColumns = readonly IColumn[];
+export type Columns = readonly IColumn[];
 
 export const MAX_COLUMN_HEIGHT = 6;
 
 export const COLUMN_COUNT = 7;
 
-export const emptyColumns: IColumns = [...Array(COLUMN_COUNT)].map(() => []);
+export const emptyColumns: Columns = [...Array(COLUMN_COUNT)].map(() => []);
 
 export const move = (
-  columns: IColumns,
+  columns: Columns,
   columnIndex: number,
   player: IPlayer
-): IColumns => {
+): Columns => {
   return columns.map((column, index) => {
     if (index === columnIndex && toTurn(columns) === player) {
       return column.concat([player]).slice(0, MAX_COLUMN_HEIGHT);
@@ -37,7 +39,7 @@ export const move = (
 };
 
 export const toSlot = (
-  columns: IColumns,
+  columns: Columns,
   { x, y }: { x: number; y: number }
 ): IPlayer | "Empty" => {
   const slot = columns?.[x]?.[y];
@@ -51,11 +53,11 @@ export const toSlot = (
 
 const isEven = (x: number) => x % 2 === 0;
 
-export const toTurn = (columns: IColumns): IPlayer => {
+export const toTurn = (columns: Columns): IPlayer => {
   return isEven(columns.flat().length) ? "PlayerTwo" : "PlayerOne";
 };
 
-const isFull = (columns: IColumns) => {
+const isFull = (columns: Columns) => {
   return columns.flat().length >= MAX_COLUMN_HEIGHT * COLUMN_COUNT;
 };
 
@@ -71,7 +73,7 @@ type IStatus =
       type: "Tie";
     };
 
-export const toStatus = (columns: IColumns): IStatus => {
+export const toStatus = (columns: Columns): IStatus => {
   const winningLines = Array.from(
     filter((line) => line.length >= 5, yieldLines(columns))
   );
@@ -112,11 +114,27 @@ export const toStatus = (columns: IColumns): IStatus => {
   };
 };
 
+//
+//
+//
+// Model
+//
+//
+//
+
+export type Model = {
+  columns: Columns;
+};
+
+export const init: Model = {
+  columns: emptyColumns,
+};
+
 /* 
 Check win
 */
 
-function* yieldPositionsAndDirections(columns: IColumns) {
+function* yieldPositionsAndDirections(columns: Columns) {
   for (let x = 0; x <= columns.length; x++) {
     const column = columns[x];
     const columnLength = column?.length ?? 0;
@@ -142,7 +160,7 @@ function* yieldLine({
   dx,
   dy,
 }: {
-  columns: IColumns;
+  columns: Columns;
   x: number;
   y: number;
   dx: number;
@@ -171,7 +189,7 @@ function* yieldLine({
   }
 }
 
-function* yieldLines(columns: IColumns) {
+function* yieldLines(columns: Columns) {
   const visited = new Set();
 
   for (const { x, y, dx, dy } of yieldPositionsAndDirections(columns)) {
@@ -307,3 +325,48 @@ export const theme = {
     dark: "#DB332F",
   },
 };
+
+//
+//
+//
+//
+// Update
+//
+//
+//
+//
+
+export type Msg = { group: "ConnectFour"; type: "Back" };
+
+export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
+  switch (msg.type) {
+    case "Back":
+      return [model, navigation.back()];
+  }
+};
+
+//
+//
+//
+//
+// View
+//
+//
+//
+//
+
+export const view =
+  (_model: Model): react.Html<Msg> =>
+  (dispatch) =>
+    (
+      <View.Page>
+        <View.Header
+          left={
+            <View.HeaderBackButton
+              onClick={() => dispatch({ group: "ConnectFour", type: "Back" })}
+            />
+          }
+          title="Connect Four"
+        />
+      </View.Page>
+    );
