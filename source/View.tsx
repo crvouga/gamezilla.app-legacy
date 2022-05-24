@@ -216,6 +216,7 @@ export const LoadingDialog = ({
 export const ConformationDialog = ({
   open,
   onCancel,
+  onClose,
   onConfirm,
   title,
   confirmTitle,
@@ -223,13 +224,14 @@ export const ConformationDialog = ({
 }: {
   open: boolean;
   onCancel: () => void;
+  onClose: () => void;
   onConfirm: () => void;
   title: string;
   confirmTitle: string;
   cancelTitle?: string;
 }) => {
   return (
-    <Dialog open={open} onClose={onCancel}>
+    <Dialog open={open} onClose={onClose}>
       <DialogTitle>{title}</DialogTitle>
       <DialogActions>
         <Button onClick={onCancel}>{cancelTitle}</Button>

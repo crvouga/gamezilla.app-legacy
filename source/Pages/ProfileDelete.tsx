@@ -5,6 +5,7 @@ import { pipe } from "fp-ts/lib/function";
 import { cmd, navigation, react } from "Framework";
 import { attempt } from "Framework/Task";
 import * as Profile from "Profile";
+import * as View from "View";
 import React from "react";
 
 //
@@ -15,7 +16,7 @@ import React from "react";
 //
 //
 
-export type Model = { type: "Idle" } | { type: "Deleting" };
+export type Model = { type: "Idle" } | { type: "DeletingProfile" };
 
 export const init: Model = { type: "Idle" };
 
@@ -28,10 +29,11 @@ export const init: Model = { type: "Idle" };
 //
 
 export type Msg =
-  | { type: "Cancel" }
-  | { type: "Delete" }
-  | { type: "DeleteSucceeded" }
-  | { type: "DeleteFailed" };
+  | { type: "UserClickedCancelButton" }
+  | { type: "UserClickedBackdrop" }
+  | { type: "UserClickedDeleteButton" }
+  | { type: "DeleteProfileSucceeded" }
+  | { type: "DeleteProfileFailed" };
 
 export const update = (
   { userId }: { userId: string },
@@ -39,33 +41,32 @@ export const update = (
   model: Model
 ): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
-    case "Cancel":
-      return [{ type: "Idle" }, navigation.back()];
+    case "UserClickedCancelButton":
+      return [model, navigation.back()];
 
-    case "Delete":
+    case "UserClickedDeleteButton":
       return [
-        { type: "Deleting" },
+        { type: "DeletingProfile" },
         pipe(
           Profile.deleteForever({
             userId,
           }),
           attempt(
             either.fold<{}, {}, Msg>(
-              () => ({
-                type: "DeleteFailed",
-              }),
-              () => ({
-                type: "DeleteSucceeded",
-              })
+              () => ({ type: "DeleteProfileFailed" }),
+              () => ({ type: "DeleteProfileSucceeded" })
             )
           )
         ),
       ];
 
-    case "DeleteFailed":
+    case "UserClickedBackdrop":
+      return [model, navigation.back()];
+
+    case "DeleteProfileFailed":
       return [{ type: "Idle" }, cmd.none];
 
-    case "DeleteSucceeded":
+    case "DeleteProfileSucceeded":
       return [{ type: "Idle" }, cmd.none];
   }
 };
@@ -82,21 +83,19 @@ export const view =
   (model: Model): react.Html<Msg> =>
   (dispatch) =>
     (
-      <Dialog open onClose={() => dispatch({ type: "Cancel" })}>
-        <DialogTitle>Delete your profile forever?</DialogTitle>
-        <DialogActions>
-          <Button
-            disabled={model.type === "Deleting"}
-            onClick={() => dispatch({ type: "Cancel" })}
-          >
-            Cancel
-          </Button>
-          <LoadingButton
-            loading={model.type === "Deleting"}
-            onClick={() => dispatch({ type: "Delete" })}
-          >
-            Delete
-          </LoadingButton>
-        </DialogActions>
-      </Dialog>
+      <>
+        <View.LoadingDialog
+          open={model.type === "DeletingProfile"}
+          title="Deleting profile..."
+        />
+
+        <View.ConformationDialog
+          open={model.type === "Idle"}
+          title="Delete profile forever?"
+          onClose={() => dispatch({ type: "UserClickedBackdrop" })}
+          onCancel={() => dispatch({ type: "UserClickedCancelButton" })}
+          confirmTitle="Delete"
+          onConfirm={() => dispatch({ type: "UserClickedDeleteButton" })}
+        />
+      </>
     );
