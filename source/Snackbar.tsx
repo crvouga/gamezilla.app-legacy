@@ -62,11 +62,7 @@ type Msg =
   | { type: "SnackbarDurationElapsed"; snackId: string }
   | { type: "UserClosedSnackbar"; snackId: string };
 
-export const EnqueuedSnackbar = ({
-  message,
-}: {
-  message: string;
-}): GroupedMsg => {
+export const EnqueuedSnackbar = (message: string): GroupedMsg => {
   return {
     group: "Snackbar",
     type: "EnqueuedSnackbar",

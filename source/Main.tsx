@@ -54,13 +54,16 @@ export const init = (location: navigation.Location): [Model, Cmd<Msg>] => {
   return initSessionLoading({ location });
 };
 
-const initSessionMissing = ({
-  location,
-  snackbar,
-}: {
-  snackbar: Snackbar.Model;
-  location: navigation.Location;
-}): [SessionMissingModel, Cmd<Msg>, SharedMsg[]] => {
+const initSessionMissing = (
+  {
+    location,
+    snackbar,
+  }: {
+    snackbar: Snackbar.Model;
+    location: navigation.Location;
+  },
+  sharedMsgs: SharedMsg[]
+): [SessionMissingModel, Cmd<Msg>, SharedMsg[]] => {
   const child = Pages.Login.init;
 
   return [
@@ -71,7 +74,7 @@ const initSessionMissing = ({
       page: { type: "Login", child },
     },
     navigation.push(Route.encode({ type: "Login" })),
-    [],
+    sharedMsgs,
   ];
 };
 
@@ -164,6 +167,8 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
   const [modelPrev, cmdPrev, sharedMsgs] = updateMain(msg, model);
 
   const msgs = [msg, ...sharedMsgs];
+
+  console.log(sharedMsgs);
 
   const [modelNew, cmdNew] = msgs.reduce<[Model, Cmd<Msg>]>(
     ([modelPrev, cmdPrev], msg) => {
@@ -365,7 +370,11 @@ const updateProfileMissing = (
 
     case "RecievedSession":
       if (option.isNone(msg.session)) {
-        return initSessionMissing(model);
+        return initSessionMissing(model, [
+          Snackbar.EnqueuedSnackbar(
+            `Logged out of ${model.session.defaultName}`
+          ),
+        ]);
       }
 
       return [{ ...model, session: msg.session.value }, cmd.none, []];
@@ -384,12 +393,17 @@ const updateProfileMissingPage = (
   model: ProfileMissingModel,
   msg: Msg,
   page: ProfileMissingModel["page"]
-): [ProfileMissingModel["page"], Cmd<Msg>] => {
+): [ProfileMissingModel["page"], Cmd<Msg>, SharedMsg[]] => {
   if (page.type === "Logout" && msg.group === "Logout") {
-    const [child, childCmd] = Pages.Logout.update(msg, page.child);
+    const [child, childCmd, outMsgs] = Pages.Logout.update(
+      { name: model.session.defaultName },
+      msg,
+      page.child
+    );
     return [
       { type: "Logout", child },
       pipe(childCmd, cmd.map(groupMsg("Logout"))),
+      outMsgs,
     ];
   }
 
@@ -402,10 +416,11 @@ const updateProfileMissingPage = (
     return [
       { type: "ProfileCreate", child },
       pipe(childCmd, cmd.map(groupMsg("ProfileCreate"))),
+      [],
     ];
   }
 
-  return [page, cmd.none];
+  return [page, cmd.none, []];
 };
 
 //
@@ -527,7 +542,7 @@ const updateSessionLoading = (
   switch (msg.type) {
     case "RecievedSession":
       if (option.isNone(msg.session)) {
-        return initSessionMissing(model);
+        return initSessionMissing(model, []);
       }
 
       return initProfileLoading({ ...model, session: msg.session.value });
@@ -634,7 +649,7 @@ const initReady = ({
       page: page,
     },
     pageCmd,
-    [],
+    [Snackbar.EnqueuedSnackbar(`Signed in as ${profile.username}.`)],
   ];
 };
 
@@ -665,7 +680,7 @@ const updateReady = (
 
     case "RecievedSession":
       if (option.isNone(msg.session)) {
-        return initSessionMissing(model);
+        return initSessionMissing(model, []);
       }
 
       return [{ ...model, session: msg.session.value }, cmd.none, []];
@@ -831,11 +846,15 @@ const updateReadyPage = (
   }
 
   if (page.type === "Logout" && msg.group === "Logout") {
-    const [child, childCmd] = Pages.Logout.update(msg, page.child);
+    const [child, childCmd, outMsgs] = Pages.Logout.update(
+      { name: profile.username },
+      msg,
+      page.child
+    );
     return [
       { type: "Logout", child },
       pipe(childCmd, cmd.map(groupMsg("Logout"))),
-      [],
+      outMsgs,
     ];
   }
 

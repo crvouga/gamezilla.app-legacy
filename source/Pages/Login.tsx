@@ -87,6 +87,7 @@ export const view =
         <View.Button
           variant="contained"
           size="large"
+          loading={model.type === "LoggingIn"}
           fullWidth
           onClick={() =>
             dispatch({

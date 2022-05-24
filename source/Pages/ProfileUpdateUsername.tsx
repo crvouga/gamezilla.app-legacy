@@ -68,7 +68,7 @@ export const update = (
       return [
         { ...model, status: "Idle" },
         navigation.back(),
-        [Snackbar.EnqueuedSnackbar({ message: "Updated username." })],
+        [Snackbar.EnqueuedSnackbar("Updated username.")],
       ];
   }
 };
