@@ -148,18 +148,52 @@ const initProfileMissing = ({
   location: navigation.Location;
   session: Session.Session;
 }): [ProfileMissingModel, cmd.Cmd<Msg>] => {
+  const [page, pageCmd] = initPageProfileMissing({ location, session });
   return [
     {
       type: "ProfileMissing",
       session,
       location,
-      page: {
-        type: "ProfileCreate",
-        child: Pages.ProfileCreate.init(session),
-      },
+      page: page,
     },
+    pageCmd,
+  ];
+};
+
+const initPageProfileMissing = ({
+  location,
+  session,
+}: {
+  session: Session.Session;
+  location: navigation.Location;
+}): [ProfileMissingModel["page"], cmd.Cmd<Msg>] => {
+  const route = pipe(
+    location.pathname,
+    Route.decode,
+    option.fold<Route.Route, Route.Route | { type: "NotFound" }>(
+      () => ({ type: "NotFound" }),
+      (route) => route
+    )
+  );
+
+  const notFound: [ProfileMissingModel["page"], cmd.Cmd<Msg>] = [
+    { type: "ProfileCreate", child: Pages.ProfileCreate.init(session) },
     navigation.push(Route.encode({ type: "ProfileCreate" })),
   ];
+
+  switch (route.type) {
+    case "ProfileCreate":
+      return [
+        { type: "ProfileCreate", child: Pages.ProfileCreate.init(session) },
+        cmd.none,
+      ];
+
+    case "Logout":
+      return [{ type: "Logout", child: Pages.Logout.init }, cmd.none];
+
+    default:
+      return notFound;
+  }
 };
 
 const initReady = ({
@@ -367,6 +401,15 @@ const updateProfileMissing = (
   model: ProfileMissingModel
 ): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
+    case "RecievedLocation": {
+      const [page, pageCmd] = initPageProfileMissing({
+        session: model.session,
+        location: msg.location,
+      });
+
+      return [{ ...model, page }, pageCmd];
+    }
+
     case "RecievedProfile":
       if (option.isNone(msg.profile)) {
         return [model, cmd.none];
@@ -543,31 +586,27 @@ const updatePageProfileMissing = (
   msg: Msg,
   page: ProfileMissingModel["page"]
 ): [ProfileMissingModel["page"], cmd.Cmd<Msg>] => {
-  switch (page.type) {
-    case "Logout":
-      if (msg.group === "Logout") {
-        const [child, childCmd] = Pages.Logout.update(msg, page.child);
-        return [
-          { type: "Logout", child },
-          pipe(childCmd, cmd.map(groupMsg("Logout"))),
-        ];
-      }
-      return [page, cmd.none];
-
-    case "ProfileCreate":
-      if (msg.group === "ProfileCreate") {
-        const [child, childCmd] = Pages.ProfileCreate.update(
-          model.session,
-          msg,
-          page.child
-        );
-        return [
-          { type: "ProfileCreate", child },
-          pipe(childCmd, cmd.map(groupMsg("ProfileCreate"))),
-        ];
-      }
-      return [page, cmd.none];
+  if (page.type === "Logout" && msg.group === "Logout") {
+    const [child, childCmd] = Pages.Logout.update(msg, page.child);
+    return [
+      { type: "Logout", child },
+      pipe(childCmd, cmd.map(groupMsg("Logout"))),
+    ];
   }
+
+  if (page.type === "ProfileCreate" && msg.group === "ProfileCreate") {
+    const [child, childCmd] = Pages.ProfileCreate.update(
+      model.session,
+      msg,
+      page.child
+    );
+    return [
+      { type: "ProfileCreate", child },
+      pipe(childCmd, cmd.map(groupMsg("ProfileCreate"))),
+    ];
+  }
+
+  return [page, cmd.none];
 };
 
 const updatePageReady = (
