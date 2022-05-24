@@ -3,7 +3,7 @@ import { Box, TextField } from "@mui/material";
 import * as React from "react";
 import { cmd, navigation, react } from "Framework";
 import * as Profile from "Profile";
-import * as Route from "Route";
+import * as Snackbar from "Snackbar";
 import * as View from "View";
 import { pipe } from "fp-ts/lib/function";
 import { attempt } from "Framework/Task";
@@ -41,29 +41,36 @@ export type Msg =
   | { type: "UpdateProfileNameFailed" }
   | { type: "UpdateProfileNameSucceeded" };
 
+type OutMsg = Snackbar.GroupedMsg;
+
 export const update = (
   { userId }: { userId: string },
   msg: Msg,
   model: Model
-): [Model, cmd.Cmd<Msg>] => {
+): [Model, cmd.Cmd<Msg>, OutMsg[]] => {
   switch (msg.type) {
     case "UserEnteredName":
-      return [{ ...model, ...msg }, cmd.none];
+      return [{ ...model, ...msg }, cmd.none, []];
 
     case "UserClickedSubmitButton":
       return [
         { ...model, status: "UpdatingName" },
         updateProfileNameCmd({ userId, name: model.name }),
+        [],
       ];
 
     case "UpdateProfileNameSucceeded":
-      return [{ ...model, status: "Idle" }, navigation.back()];
+      return [
+        { ...model, status: "Idle" },
+        navigation.back(),
+        [Snackbar.EnqueuedSnackbar({ message: "Updated name" })],
+      ];
 
     case "UpdateProfileNameFailed":
-      return [{ ...model, status: "Idle" }, cmd.none];
+      return [{ ...model, status: "Idle" }, cmd.none, []];
 
     case "UserClickedCancelButton":
-      return [model, navigation.back()];
+      return [model, navigation.back(), []];
   }
 };
 

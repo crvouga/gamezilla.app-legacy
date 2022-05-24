@@ -1,8 +1,10 @@
-import { Snackbar } from "@mui/material";
-import { task } from "fp-ts";
+import { Close } from "@mui/icons-material";
+import { IconButton, Snackbar } from "@mui/material";
+import { option, task } from "fp-ts";
 import { pipe } from "fp-ts/lib/function";
 import { delay } from "fp-ts/lib/Task";
 import { cmd, react } from "Framework";
+import { Cmd } from "Framework/Cmd";
 import { perform } from "Framework/Task";
 import React from "react";
 
@@ -16,11 +18,34 @@ import React from "react";
 
 export type Model = {
   queue: Snack[];
+  current:
+    | {
+        type: "Appearing";
+        snack: Snack;
+      }
+    | {
+        type: "Appeared";
+        snack: Snack;
+      }
+    | {
+        type: "Disappearing";
+        snack: Snack;
+      }
+    | {
+        type: "Disappeared";
+      };
 };
 
-export type Snack = { type: "Info"; message: string; snackId: string };
+export type Snack = {
+  type: "Info";
+  snackId: string;
+  message: string;
+};
 
-export const init: Model = { queue: [] };
+export const init: Model = {
+  queue: [],
+  current: { type: "Disappeared" },
+};
 
 //
 //
@@ -30,13 +55,21 @@ export const init: Model = { queue: [] };
 //
 //
 
-export type Msg =
-  | { type: "Enqueue"; snack: Snack }
-  | { type: "Dequeue"; snackId: string };
+export type GroupedMsg = { group: "Snackbar" } & Msg;
 
-export const Enqueue = ({ message }: { message: string }): Msg => {
+type Msg =
+  | { type: "EnqueuedSnackbar"; snack: Snack }
+  | { type: "SnackbarDurationElapsed"; snackId: string }
+  | { type: "UserClosedSnackbar"; snackId: string };
+
+export const EnqueuedSnackbar = ({
+  message,
+}: {
+  message: string;
+}): GroupedMsg => {
   return {
-    type: "Enqueue",
+    group: "Snackbar",
+    type: "EnqueuedSnackbar",
     snack: {
       type: "Info",
       message,
@@ -46,27 +79,37 @@ export const Enqueue = ({ message }: { message: string }): Msg => {
 };
 
 export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
-  console.log(msg, model);
   switch (msg.type) {
-    case "Enqueue":
+    case "EnqueuedSnackbar":
       return [
-        { ...model, queue: [...model.queue, msg.snack] },
+        { ...model, queue: [msg.snack, ...model.queue] },
         pipe(
-          delay(1000)(task.of({})),
-          perform(() => ({ type: "Dequeue", snackId: msg.snack.snackId }))
+          delay(4000)(task.of({})),
+          perform(() => ({
+            type: "SnackbarDurationElapsed",
+            snackId: msg.snack.snackId,
+          }))
         ),
       ];
 
-    case "Dequeue":
-      return [
-        {
-          ...model,
-          queue: model.queue.filter((snack) => snack.snackId !== msg.snackId),
-        },
-        cmd.none,
-      ];
+    case "SnackbarDurationElapsed":
+      return removeById(msg, model);
+
+    case "UserClosedSnackbar":
+      return removeById(msg, model);
   }
 };
+
+const removeById = (
+  { snackId }: { snackId: string },
+  model: Model
+): [Model, Cmd<Msg>] => [
+  {
+    ...model,
+    queue: model.queue.filter((snack) => snack.snackId !== snackId),
+  },
+  cmd.none,
+];
 
 //
 //
@@ -81,8 +124,18 @@ export const view =
   (dispatch) =>
     (
       <>
-        {model.queue.map((snack) => (
-          <Snackbar open key={snack.message} message={snack.message} />
-        ))}
+        {model.queue[0] && (
+          <Snackbar
+            open={Boolean(model.queue[0])}
+            message={model.queue[0].message}
+            sx={{ color: "black" }}
+            onClose={() =>
+              dispatch({
+                type: "UserClosedSnackbar",
+                snackId: model.queue[0].snackId,
+              })
+            }
+          />
+        )}
       </>
     );
