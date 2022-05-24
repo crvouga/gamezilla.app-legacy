@@ -12,6 +12,7 @@ import * as Route from "./Route";
 import * as Session from "./Session";
 import { exhaustive } from "./Utility";
 import * as View from "./View";
+import * as Snackbar from "Snackbar";
 
 //
 //
@@ -31,23 +32,27 @@ type Model =
 type SessionLoadingModel = {
   type: "SessionLoading";
   location: navigation.Location;
+  snackbar: Snackbar.Model;
 };
 
 type SessionMissingModel = {
   type: "SessionMissing";
   location: navigation.Location;
+  snackbar: Snackbar.Model;
   page: { type: "Login"; child: Pages.Login.Model };
 };
 
 type ProfileLoadingModel = {
   type: "ProfileLoading";
   location: navigation.Location;
+  snackbar: Snackbar.Model;
   session: Session.Session;
 };
 
 type ProfileMissingModel = {
   type: "ProfileMissing";
   location: navigation.Location;
+  snackbar: Snackbar.Model;
   session: Session.Session;
   page:
     | { type: "ProfileCreate"; child: Pages.ProfileCreate.Model }
@@ -57,6 +62,7 @@ type ProfileMissingModel = {
 type ReadyModel = {
   type: "Ready";
   location: navigation.Location;
+  snackbar: Snackbar.Model;
   profile: Profile.Profile;
   session: Session.Session;
   game: option.Option<Game.Game>;
@@ -98,8 +104,20 @@ export const locationToMsg = (location: navigation.Location): Msg => {
 //
 
 export const init = (location: navigation.Location): [Model, cmd.Cmd<Msg>] => {
+  return initSessionLoading({ location });
+};
+
+const initSessionLoading = ({
+  location,
+}: {
+  location: navigation.Location;
+}): [SessionLoadingModel, cmd.Cmd<Msg>] => {
   return [
-    { type: "SessionLoading", location: location },
+    {
+      type: "SessionLoading",
+      location: location,
+      snackbar: Snackbar.init,
+    },
     pipe(
       Session.load,
       perform((session) => ({
@@ -113,13 +131,20 @@ export const init = (location: navigation.Location): [Model, cmd.Cmd<Msg>] => {
 
 const initSessionMissing = ({
   location,
+  snackbar,
 }: {
+  snackbar: Snackbar.Model;
   location: navigation.Location;
 }): [SessionMissingModel, cmd.Cmd<Msg>] => {
   const child = Pages.Login.init;
 
   return [
-    { type: "SessionMissing", location, page: { type: "Login", child } },
+    {
+      type: "SessionMissing",
+      snackbar,
+      location,
+      page: { type: "Login", child },
+    },
     navigation.push(Route.encode({ type: "Login" })),
   ];
 };
@@ -127,13 +152,16 @@ const initSessionMissing = ({
 const initProfileLoading = ({
   session,
   location,
+  snackbar,
 }: {
   session: Session.Session;
+  snackbar: Snackbar.Model;
   location: navigation.Location;
 }): [ProfileLoadingModel, cmd.Cmd<Msg>] => {
   return [
     {
       type: "ProfileLoading",
+      snackbar,
       location,
       session,
     },
@@ -144,8 +172,10 @@ const initProfileLoading = ({
 const initProfileMissing = ({
   location,
   session,
+  snackbar,
 }: {
   location: navigation.Location;
+  snackbar: Snackbar.Model;
   session: Session.Session;
 }): [ProfileMissingModel, cmd.Cmd<Msg>] => {
   const [page, pageCmd] = initPageProfileMissing({ location, session });
@@ -153,6 +183,7 @@ const initProfileMissing = ({
     {
       type: "ProfileMissing",
       session,
+      snackbar,
       location,
       page: page,
     },
@@ -199,9 +230,11 @@ const initPageProfileMissing = ({
 const initReady = ({
   location,
   profile,
+  snackbar,
   session,
 }: {
   location: navigation.Location;
+  snackbar: Snackbar.Model;
   profile: Profile.Profile;
   session: Session.Session;
 }): [ReadyModel, cmd.Cmd<Msg>] => {
@@ -210,6 +243,7 @@ const initReady = ({
     {
       type: "Ready",
       location: location,
+      snackbar: snackbar,
       session: session,
       profile: profile,
       game: option.none,
@@ -456,7 +490,7 @@ const updateSessionLoading = (
   switch (msg.type) {
     case "RecievedSession":
       if (option.isNone(msg.session)) {
-        return initSessionMissing({ location: model.location });
+        return initSessionMissing(model);
       }
 
       return initProfileLoading({ ...model, session: msg.session.value });

@@ -6,13 +6,9 @@ import {
   ListItemSecondaryAction,
   ListItemText,
 } from "@mui/material";
-import { either } from "fp-ts";
-import { pipe } from "fp-ts/lib/function";
 import { cmd, navigation, react } from "Framework";
-import { attempt } from "Framework/Task";
 import React from "react";
 import * as Route from "Route";
-import * as Profile from "../Profile";
 import * as View from "../View";
 
 //
