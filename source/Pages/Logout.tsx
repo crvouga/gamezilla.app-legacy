@@ -26,17 +26,21 @@ export const init: Model = { type: "Idle" };
 //
 
 export type Msg =
-  | { type: "Cancel" }
-  | { type: "Logout" }
+  | { type: "UserClickedCancelButton" }
+  | { type: "UserClickedBackdrop" }
+  | { type: "UserClickedLogoutButton" }
   | { type: "LogoutFailed" }
   | { type: "LogoutSucceeded" };
 
 export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
-    case "Cancel":
-      return [{ type: "Idle" }, navigation.back()];
+    case "UserClickedCancelButton":
+      return [model, navigation.back()];
 
-    case "Logout":
+    case "UserClickedBackdrop":
+      return [model, navigation.back()];
+
+    case "UserClickedLogoutButton":
       return [{ type: "LoggingOut" }, logoutCmd];
 
     case "LogoutFailed":
@@ -46,14 +50,6 @@ export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
       return [model, cmd.none];
   }
 };
-
-//
-//
-//
-// Logout
-//
-//
-//
 
 const logoutCmd = pipe(
   Session.logout,
@@ -81,10 +77,10 @@ export const view =
         <View.ConformationDialog
           open={model.type === "Idle"}
           title="Logout of Gamezilla?"
-          onClose={() => dispatch({ type: "Cancel" })}
-          onCancel={() => dispatch({ type: "Cancel" })}
-          onConfirm={() => dispatch({ type: "Logout" })}
+          onClose={() => dispatch({ type: "UserClickedBackdrop" })}
+          onCancel={() => dispatch({ type: "UserClickedCancelButton" })}
           confirmTitle="Logout"
+          onConfirm={() => dispatch({ type: "UserClickedLogoutButton" })}
         />
 
         <View.LoadingDialog
