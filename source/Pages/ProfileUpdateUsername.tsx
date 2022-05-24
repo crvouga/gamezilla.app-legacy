@@ -1,11 +1,12 @@
 import { Box, TextField } from "@mui/material";
-import { either } from "fp-ts";
+import { option, either } from "fp-ts";
 import { pipe } from "fp-ts/lib/function";
 import { cmd, navigation, react } from "Framework";
 import { attempt } from "Framework/Task";
 import * as Profile from "Profile";
 import * as React from "react";
 import * as View from "View";
+import * as Snackbar from "Snackbar";
 
 //
 //
@@ -43,25 +44,30 @@ export const update = (
   { userId }: { userId: string },
   msg: Msg,
   model: Model
-): [Model, cmd.Cmd<Msg>] => {
+): [Model, cmd.Cmd<Msg>, Snackbar.Msg[]] => {
   switch (msg.type) {
     case "UserEnteredUsername":
-      return [{ ...model, username: msg.username }, cmd.none];
+      return [{ ...model, username: msg.username }, cmd.none, []];
 
     case "UserClickedSubmitButton":
       return [
         { ...model, status: "UpdatingUsername" },
         updateUsernameCmd(userId, model),
+        [],
       ];
 
     case "UserClickedCancelButton":
-      return [model, navigation.back()];
+      return [model, navigation.back(), []];
 
     case "UsernameUpdateFailed":
-      return [{ ...model, status: "Idle" }, cmd.none];
+      return [{ ...model, status: "Idle" }, cmd.none, []];
 
     case "UsernameUpdateSucceeded":
-      return [{ ...model, status: "Idle" }, navigation.back()];
+      return [
+        { ...model, status: "Idle" },
+        navigation.back(),
+        [Snackbar.Enqueue({ message: "Updated username." })],
+      ];
   }
 };
 

@@ -370,6 +370,7 @@ export type Msg =
       profile: option.Option<Profile.Profile>;
       group: "Main";
     }
+  | ChildMsg
   | (Pages.Account.Msg & { group: "Account" })
   | (Pages.Chess.Msg & { group: "Chess" })
   | (Pages.ConnectFour.Msg & { group: "ConnectFour" })
@@ -568,10 +569,46 @@ const updateReady = (msg: Msg, model: ReadyModel): [Model, cmd.Cmd<Msg>] => {
 //
 //
 
+type ChildMsg = Snackbar.Msg & { group: "Snackbar" };
+
+const updateChildMsg = (msg: ChildMsg, model: Model): [Model, cmd.Cmd<Msg>] => {
+  switch (msg.group) {
+    case "Snackbar":
+      const [snackbarModel, snackbarCmd] = Snackbar.update(msg, model.snackbar);
+      return [
+        { ...model, snackbar: snackbarModel },
+        pipe(snackbarCmd, cmd.map(groupMsg("Snackbar"))),
+      ];
+  }
+};
+
 const updatePage = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
+  const [updatedPage, pageCmd, childMsgs] = updatePageWithChildMsgs(msg, model);
+
+  const reducer = (
+    [prevModel, prevCmd]: [Model, cmd.Cmd<Msg>],
+    childMsg: ChildMsg
+  ): [Model, cmd.Cmd<Msg>] => {
+    const [nextModel, nextCmd] = updateChildMsg(childMsg, prevModel);
+
+    return [nextModel, cmd.batch([prevCmd, nextCmd])];
+  };
+
+  const [nextModel, nextCmd] = childMsgs.reduce(reducer, [
+    updatedPage,
+    pageCmd,
+  ]);
+
+  return [nextModel, nextCmd];
+};
+
+const updatePageWithChildMsgs = (
+  msg: Msg,
+  model: Model
+): [Model, cmd.Cmd<Msg>, ChildMsg[]] => {
   switch (model.type) {
     case "ProfileLoading":
-      return [model, cmd.none];
+      return [model, cmd.none, []];
 
     case "ProfileMissing": {
       const [modelPage, cmdPage] = updatePageProfileMissing(
@@ -579,20 +616,24 @@ const updatePage = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
         msg,
         model.page
       );
-      return [{ ...model, page: modelPage }, cmdPage];
+      return [{ ...model, page: modelPage }, cmdPage, []];
     }
 
     case "Ready": {
-      const [modelPage, cmdPage] = updatePageReady(model, msg, model.page);
-      return [{ ...model, page: modelPage }, cmdPage];
+      const [modelPage, cmdPage, msgs] = updatePageReady(
+        model,
+        msg,
+        model.page
+      );
+      return [{ ...model, page: modelPage }, cmdPage, msgs];
     }
 
     case "SessionLoading":
-      return [model, cmd.none];
+      return [model, cmd.none, []];
 
     case "SessionMissing": {
       const [modelPage, cmdPage] = updatePageSessionMissing(msg, model.page);
-      return [{ ...model, page: modelPage }, cmdPage];
+      return [{ ...model, page: modelPage }, cmdPage, []];
     }
   }
 };
@@ -647,28 +688,33 @@ const updatePageReady = (
   { profile }: { profile: Profile.Profile; location: navigation.Location },
   msg: Msg,
   page: ReadyModel["page"]
-): [ReadyModel["page"], cmd.Cmd<Msg>] => {
+): [ReadyModel["page"], cmd.Cmd<Msg>, ChildMsg[]] => {
   if (page.type === "Account" && msg.group === "Account") {
     const [child, childCmd] = Pages.Account.update(profile, msg, page.child);
     return [
       { type: "Account", child },
       pipe(childCmd, cmd.map(groupMsg("Account"))),
+      [],
     ];
   }
 
   if (page.type === "Chess" && msg.group === "Chess") {
     const [child, childCmd] = Pages.Chess.update(msg, page.child);
-    return [{ type: "Chess", child }, childCmd];
+    return [{ type: "Chess", child }, childCmd, []];
   }
 
   if (page.type === "ConnectFour" && msg.group === "ConnectFour") {
     const [child, childCmd] = Pages.ConnectFour.update(msg, page.child);
-    return [{ type: "ConnectFour", child }, childCmd];
+    return [{ type: "ConnectFour", child }, childCmd, []];
   }
 
   if (page.type === "Home" && msg.group === "Home") {
     const [child, childCmd] = Pages.Home.update(msg, page.child);
-    return [{ type: "Home", child }, pipe(childCmd, cmd.map(groupMsg("Home")))];
+    return [
+      { type: "Home", child },
+      pipe(childCmd, cmd.map(groupMsg("Home"))),
+      [],
+    ];
   }
 
   if (page.type === "Logout" && msg.group === "Logout") {
@@ -676,6 +722,7 @@ const updatePageReady = (
     return [
       { type: "Logout", child },
       pipe(childCmd, cmd.map(groupMsg("Logout"))),
+      [],
     ];
   }
 
@@ -688,6 +735,7 @@ const updatePageReady = (
     return [
       { type: "ProfileDelete", child },
       pipe(childCmd, cmd.map(groupMsg("ProfileDelete"))),
+      [],
     ];
   }
 
@@ -700,6 +748,7 @@ const updatePageReady = (
     return [
       { type: "ProfileUpdate", child },
       pipe(childCmd, cmd.map(groupMsg("ProfileUpdate"))),
+      [],
     ];
   }
 
@@ -715,6 +764,7 @@ const updatePageReady = (
     return [
       { type: "ProfileUpdateAvatar", child },
       pipe(childCmd, cmd.map(groupMsg("ProfileUpdateAvatar"))),
+      [],
     ];
   }
 
@@ -727,6 +777,7 @@ const updatePageReady = (
     return [
       { type: "ProfileUpdateName", child },
       pipe(childCmd, cmd.map(groupMsg("ProfileUpdateName"))),
+      [],
     ];
   }
 
@@ -734,7 +785,7 @@ const updatePageReady = (
     page.type === "ProfileUpdateUsername" &&
     msg.group === "ProfileUpdateUsername"
   ) {
-    const [child, childCmd] = Pages.ProfileUpdateUsername.update(
+    const [child, childCmd, msgs] = Pages.ProfileUpdateUsername.update(
       profile,
       msg,
       page.child
@@ -742,6 +793,7 @@ const updatePageReady = (
     return [
       { type: "ProfileUpdateUsername", child },
       pipe(childCmd, cmd.map(groupMsg("ProfileUpdateUsername"))),
+      msgs.map(groupMsg("Snackbar")),
     ];
   }
 
@@ -750,10 +802,11 @@ const updatePageReady = (
     return [
       { type: "TicTacToe", child },
       pipe(childCmd, cmd.map(groupMsg("TicTacToe"))),
+      [],
     ];
   }
 
-  return [page, cmd.none];
+  return [page, cmd.none, []];
 };
 
 //
@@ -814,7 +867,16 @@ const sessionSubcription = (): sub.Sub<Msg> => {
 export const view =
   (model: Model): react.Html<Msg> =>
   (dispatch) =>
-    <View.ThemeProvider>{viewMain(model)(dispatch)}</View.ThemeProvider>;
+    (
+      <View.ThemeProvider>
+        {viewMain(model)(dispatch)}
+
+        {pipe(
+          Snackbar.view(model.snackbar),
+          react.map(groupMsg("Snackbar"))
+        )(dispatch)}
+      </View.ThemeProvider>
+    );
 
 const viewMain = (model: Model): react.Html<Msg> => {
   switch (model.type) {
