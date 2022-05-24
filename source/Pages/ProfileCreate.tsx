@@ -100,7 +100,7 @@ export const update = (
       ];
 
     case "SubmitSucceeded":
-      return [{ ...model, status: "Idle" }, cmd.none];
+      return [model, navigation.reload()];
 
     case "SubmitFailed":
       return [{ ...model, status: "Idle" }, cmd.none];

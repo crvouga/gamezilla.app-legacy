@@ -22,6 +22,14 @@ export type Location = H.Location;
 
 const history = H.createBrowserHistory();
 
+export const reload = <Msg>(): Cmd<Msg> => {
+  return of(() => {
+    window.location.reload();
+
+    return Promise.resolve(O.none);
+  });
+};
+
 /**
  * Location changes are expressed as a stream
  */
