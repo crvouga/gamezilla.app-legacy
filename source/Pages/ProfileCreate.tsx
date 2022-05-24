@@ -167,6 +167,7 @@ export const view =
         <View.ConformationDialog
           open={model.status === "ConfirmLogout"}
           title="Logout of Gamezilla?"
+          onClose={() => dispatch({ type: "CancelledLogout" })}
           onCancel={() => dispatch({ type: "CancelledLogout" })}
           onConfirm={() => dispatch({ type: "Logout" })}
           confirmTitle="Logout"
