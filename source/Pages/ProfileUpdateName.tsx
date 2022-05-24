@@ -63,7 +63,7 @@ export const update = (
       return [
         { ...model, status: "Idle" },
         navigation.back(),
-        [Snackbar.EnqueuedSnackbar({ message: "Updated name" })],
+        [Snackbar.EnqueuedSnackbar("Updated name.")],
       ];
 
     case "UpdateProfileNameFailed":

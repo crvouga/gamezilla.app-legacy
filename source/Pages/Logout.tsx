@@ -3,6 +3,7 @@ import { pipe } from "fp-ts/lib/function";
 import { cmd, navigation, react, task } from "Framework";
 import React from "react";
 import * as Session from "Session";
+import * as Snackbar from "Snackbar";
 import * as View from "View";
 
 //
@@ -32,22 +33,28 @@ export type Msg =
   | { type: "LogoutFailed" }
   | { type: "LogoutSucceeded" };
 
-export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
+type OutMsg = Snackbar.GroupedMsg;
+
+export const update = (
+  { name }: { name: string },
+  msg: Msg,
+  model: Model
+): [Model, cmd.Cmd<Msg>, OutMsg[]] => {
   switch (msg.type) {
     case "UserClickedCancelButton":
-      return [model, navigation.back()];
+      return [model, navigation.back(), []];
 
     case "UserClickedBackdrop":
-      return [model, navigation.back()];
+      return [model, navigation.back(), []];
 
     case "UserClickedLogoutButton":
-      return [{ type: "LoggingOut" }, logoutCmd];
+      return [{ type: "LoggingOut" }, logoutCmd, []];
 
     case "LogoutFailed":
-      return [model, cmd.none];
+      return [model, cmd.none, []];
 
     case "LogoutSucceeded":
-      return [model, cmd.none];
+      return [model, cmd.none, []];
   }
 };
 

@@ -119,7 +119,7 @@ export const update = (
       return [
         { ...model, status: "Idle" },
         navigation.back(),
-        [Snackbar.EnqueuedSnackbar({ message: "Updated avatar." })],
+        [Snackbar.EnqueuedSnackbar("Updated avatar.")],
       ];
   }
 };
