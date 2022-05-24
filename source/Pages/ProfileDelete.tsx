@@ -65,7 +65,7 @@ export const update = (
       return [{ type: "Idle" }, cmd.none];
 
     case "DeleteProfileSucceeded":
-      return [{ type: "Idle" }, cmd.none];
+      return [model, navigation.reload()];
   }
 };
 
