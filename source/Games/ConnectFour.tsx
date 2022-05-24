@@ -76,8 +76,18 @@ export const toStatus = (columns: IColumns): IStatus => {
     filter((line) => line.length >= 5, yieldLines(columns))
   );
 
-  if (winningLines.length > 0) {
-    const winner = toSlot(columns, winningLines[0][0]);
+  const [winningLine] = winningLines;
+
+  if (winningLine) {
+    const [position] = winningLine;
+
+    if (!position) {
+      return {
+        type: "Playing",
+      };
+    }
+
+    const winner = toSlot(columns, position);
 
     if (winner === "Empty") {
       return {
@@ -108,7 +118,9 @@ Check win
 
 function* yieldPositionsAndDirections(columns: IColumns) {
   for (let x = 0; x <= columns.length; x++) {
-    for (let y = 0; y <= columns[x].length; y++) {
+    const column = columns[x];
+    const columnLength = column?.length ?? 0;
+    for (let y = 0; y <= columnLength; y++) {
       for (let dx = -1; dx <= 1; dx++) {
         for (let dy = -1; dy <= dy; dx++) {
           yield {

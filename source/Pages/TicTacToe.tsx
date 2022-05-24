@@ -31,16 +31,16 @@ export const init: Model = {
 //
 
 export type Msg =
-  | { type: "PressedBackButton" }
-  | { type: "BoardClicked"; position: Game.TicTacToe.Position }
-  | { type: "RestartButtonClicked" };
+  | { type: "UserClickedBackButton" }
+  | { type: "UserClickedBoard"; position: Game.TicTacToe.Position }
+  | { type: "UserClickedRestartButton" };
 
 export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
   switch (msg.type) {
-    case "PressedBackButton":
+    case "UserClickedBackButton":
       return [model, navigation.back()];
 
-    case "RestartButtonClicked":
+    case "UserClickedRestartButton":
       return [
         {
           ...model,
@@ -49,7 +49,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
         cmd.none,
       ];
 
-    case "BoardClicked":
+    case "UserClickedBoard":
       return [
         {
           ...model,
@@ -80,20 +80,22 @@ export const view =
         <View.Header
           left={
             <View.HeaderBackButton
-              onClick={() => dispatch({ type: "PressedBackButton" })}
+              onClick={() => dispatch({ type: "UserClickedBackButton" })}
             />
           }
           title="Tic Tac Toe"
         />
         <Game.TicTacToe.Board
           board={model.board}
-          onClick={(position) => dispatch({ type: "BoardClicked", position })}
+          onClick={(position) =>
+            dispatch({ type: "UserClickedBoard", position })
+          }
         />
 
         <Button
           size="large"
           fullWidth
-          onClick={() => dispatch({ type: "RestartButtonClicked" })}
+          onClick={() => dispatch({ type: "UserClickedRestartButton" })}
         >
           Restart
         </Button>

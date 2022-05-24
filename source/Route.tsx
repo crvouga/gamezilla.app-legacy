@@ -43,14 +43,12 @@ const routesTypes: { [routeType in Route["type"]]: string } = {
   TicTacToe: "TicTacToe",
 };
 
-const isRouteType = (routeType: string): routeType is Route["type"] => {
-  return routeType in routesTypes;
+const isRouteType = (routeType: unknown): routeType is Route["type"] => {
+  return typeof routeType === "string" && routeType in routesTypes;
 };
 
 export const decode = (pathname: string): option.Option<Route> => {
-  const parts = pathname.substring(1).split("/");
-
-  const part0 = parts[0];
+  const [part0] = pathname.substring(1).split("/");
 
   if (!isRouteType(part0)) {
     return option.none;

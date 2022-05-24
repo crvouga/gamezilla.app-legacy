@@ -229,6 +229,7 @@ function handleIncomingMsg<Model, Msg>({
               E.map((liftedState) =>
                 pipe(
                   update(
+                    // @ts-ignore
                     liftedState.computedStates[
                       liftedState.computedStates.length - 1
                     ].state
