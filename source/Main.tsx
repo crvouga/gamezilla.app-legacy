@@ -595,7 +595,7 @@ const updatePageReady = (
 
   if (page.type === "Home" && msg.group === "Home") {
     const [child, childCmd] = Pages.Home.update(msg, page.child);
-    return [{ type: "Home", child }, childCmd];
+    return [{ type: "Home", child }, pipe(childCmd, cmd.map(groupMsg("Home")))];
   }
 
   if (page.type === "Logout" && msg.group === "Logout") {
@@ -814,7 +814,10 @@ const viewReady = ({ page, profile }: ReadyModel): react.Html<Msg> => {
       return Pages.Chess.view(page.child);
 
     case "Home":
-      return Pages.Home.view(profile, page.child);
+      return pipe(
+        Pages.Home.view(profile, page.child),
+        react.map(groupMsg("Home"))
+      );
 
     case "ConnectFour":
       return Pages.ConnectFour.view(page.child);
