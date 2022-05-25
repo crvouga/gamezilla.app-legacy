@@ -1,5 +1,5 @@
 import { Close } from "@mui/icons-material";
-import { IconButton, Snackbar } from "@mui/material";
+import { IconButton, Snackbar, SnackbarProps } from "@mui/material";
 import { option, task } from "fp-ts";
 import { pipe } from "fp-ts/lib/function";
 import { delay } from "fp-ts/lib/Task";
@@ -63,7 +63,7 @@ export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
       return [
         { ...model, queue: [msg.snack, ...model.queue] },
         pipe(
-          delay(4000)(task.of({})),
+          delay(3000)(task.of({})),
           perform(() => ({
             type: "SnackbarDurationElapsed",
             snackId: msg.snack.snackId,
@@ -75,7 +75,8 @@ export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
       return removeById(msg, model);
 
     case "UserClosedSnackbar":
-      return removeById(msg, model);
+      return [model, cmd.none];
+    // return removeById(msg, model);
   }
 };
 
@@ -99,7 +100,7 @@ const removeById = (
 //
 
 export const view =
-  (model: Model): react.Html<Msg> =>
+  (props: SnackbarProps, model: Model): react.Html<Msg> =>
   (dispatch) => {
     const snack = model.queue[0];
 
@@ -109,7 +110,7 @@ export const view =
 
     return (
       <Snackbar
-        sx={{ bottom: 72 }}
+        {...props}
         open
         message={snack.message}
         onClose={() =>
