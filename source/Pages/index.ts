@@ -8,3 +8,5 @@ export * as ProfileUpdate from "./ProfileUpdate";
 export * as ProfileUpdateAvatar from "./ProfileUpdateAvatar";
 export * as ProfileUpdateName from "./ProfileUpdateName";
 export * as ProfileUpdateUsername from "./ProfileUpdateUsername";
+export * as Chat from "./Chat";
+export * as ChatNew from "./ChatNew";

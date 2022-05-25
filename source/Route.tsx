@@ -17,7 +17,9 @@ export type Route =
   | { type: "ProfileUpdateAvatar" }
   | { type: "ProfileUpdateName" }
   | { type: "ProfileUpdateUsername" }
-  | { type: "Game" };
+  | { type: "Game" }
+  | { type: "Chat" }
+  | { type: "ChatNew" };
 
 //
 //
@@ -37,6 +39,8 @@ const routesTypes: { [routeType in Route["type"]]: string } = {
   ProfileUpdateName: "ProfileUpdateName",
   ProfileUpdateUsername: "ProfileUpdateUsername",
   Game: "Game",
+  Chat: "Chat",
+  ChatNew: "ChatNew",
 };
 
 const isRouteType = (routeType: unknown): routeType is Route["type"] => {
