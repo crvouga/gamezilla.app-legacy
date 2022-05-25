@@ -1,9 +1,16 @@
-import { Avatar, Box, ButtonBase, Toolbar, Typography } from "@mui/material";
-import React from "react";
+import {
+  Avatar,
+  Box,
+  ButtonBase,
+  Toolbar,
+  Typography,
+  useTheme,
+} from "@mui/material";
 import { cmd, navigation, react } from "Framework";
-import * as Games from "../Games";
 import * as Game from "Game";
+import React from "react";
 import * as Route from "Route";
+import * as Games from "../Games";
 import * as View from "../View";
 
 //
@@ -53,8 +60,19 @@ export const update = (
 //
 //
 
+const isOpen = (game: Game.Model, gameName: Game.Game) => {
+  return game.type === "Opened" && game.child.type === gameName;
+};
+
+const canOpen = (game: Game.Model, gameName: Game.Game) => {
+  return game.type === "Closed" || isOpen(game, gameName);
+};
+
 export const view =
-  ({ avatarUrl }: { avatarUrl: string }, _model: Model): react.Html<Msg> =>
+  (
+    { profile, game }: { profile: { avatarUrl: string }; game: Game.Model },
+    _model: Model
+  ): react.Html<Msg> =>
   (dispatch) =>
     (
       <View.Page>
@@ -65,7 +83,7 @@ export const view =
 
           <Avatar
             onClick={() => dispatch({ type: "UserClickedAvatar" })}
-            src={avatarUrl}
+            src={profile.avatarUrl}
           />
         </Toolbar>
 
@@ -78,6 +96,7 @@ export const view =
           <GameCard
             icon={<Games.TicTacToe.Icon />}
             label="Tic Tac Toe"
+            disabled={!canOpen(game, "TicTacToe")}
             onClick={() =>
               dispatch({
                 type: "UserClickedGame",
@@ -89,6 +108,7 @@ export const view =
           <GameCard
             icon={<Games.ConnectFour.Icon />}
             label="Connect Four"
+            disabled={!canOpen(game, "ConnectFour")}
             onClick={() =>
               dispatch({
                 type: "UserClickedGame",
@@ -100,6 +120,7 @@ export const view =
           <GameCard
             icon={<Games.Chess.Icon />}
             label="Chess"
+            disabled={!canOpen(game, "Chess")}
             onClick={() => dispatch({ type: "UserClickedGame", game: "Chess" })}
           />
         </Box>
@@ -110,14 +131,24 @@ const GameCard = ({
   icon,
   label,
   onClick,
+  disabled = false,
 }: {
   icon: React.ReactNode;
   label: string;
   onClick: () => void;
+  disabled?: boolean;
 }) => {
+  // const theme = useTheme();
   return (
     <ButtonBase
-      sx={{ position: "relative", overflow: "hidden" }}
+      disabled={disabled}
+      sx={{
+        position: "relative",
+        overflow: "hidden",
+        opacity: disabled ? 0.3 : 1,
+        // border: `4px solid ${theme.palette.primary.main}`,
+        // borderRadius: "2px",
+      }}
       onClick={onClick}
     >
       {icon}
