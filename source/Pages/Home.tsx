@@ -1,7 +1,9 @@
+import { Chat as ChatIcon } from "@mui/icons-material";
 import {
   Avatar,
   Box,
   ButtonBase,
+  IconButton,
   Toolbar,
   Typography,
   useTheme,
@@ -35,6 +37,7 @@ export const init: Model = {};
 
 export type Msg =
   | { type: "UserClickedAvatar" }
+  | { type: "UserClickedChatButton" }
   | { type: "UserClickedGame"; game: Game.Game };
 
 export type OutMsg = Game.GroupedMsg;
@@ -49,6 +52,9 @@ export const update = (
 
     case "UserClickedGame":
       return [model, cmd.none, [Game.UserOpenedGame(msg.game)]];
+
+    case "UserClickedChatButton":
+      return [model, navigation.push(Route.encode({ type: "Chat" })), []];
   }
 };
 
@@ -80,6 +86,13 @@ export const view =
           <Typography sx={{ flex: 1 }} variant="h6">
             Gamezilla
           </Typography>
+
+          <IconButton
+            sx={{ marginRight: 1 }}
+            onClick={() => dispatch({ type: "UserClickedChatButton" })}
+          >
+            <ChatIcon />
+          </IconButton>
 
           <Avatar
             onClick={() => dispatch({ type: "UserClickedAvatar" })}

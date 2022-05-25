@@ -92,7 +92,9 @@ type PageMsg =
   | (Pages.ProfileUpdate.Msg & { group: "ProfileUpdate" })
   | (Pages.ProfileUpdateAvatar.Msg & { group: "ProfileUpdateAvatar" })
   | (Pages.ProfileUpdateName.Msg & { group: "ProfileUpdateName" })
-  | (Pages.ProfileUpdateUsername.Msg & { group: "ProfileUpdateUsername" });
+  | (Pages.ProfileUpdateUsername.Msg & { group: "ProfileUpdateUsername" })
+  | (Pages.Chat.Msg & { group: "Chat" })
+  | (Pages.ChatNew.Msg & { group: "ChatNew" });
 
 //
 //
@@ -722,6 +724,7 @@ const updateReady = (
 //
 
 type ReadyPage =
+  | { type: "Game" }
   | { type: "Home"; child: Pages.Home.Model }
   | { type: "Account"; child: Pages.Account.Model }
   | { type: "Logout"; child: Pages.Logout.Model }
@@ -733,7 +736,8 @@ type ReadyPage =
       type: "ProfileUpdateUsername";
       child: Pages.ProfileUpdateUsername.Model;
     }
-  | { type: "Game" };
+  | { type: "Chat"; child: Pages.Chat.Model }
+  | { type: "ChatNew"; child: Pages.ChatNew.Model };
 
 const initReadyPage = ({
   profile,
@@ -816,6 +820,12 @@ const initReadyPage = ({
 
     case "Game":
       return [{ type: "Game" }, cmd.none];
+
+    case "Chat":
+      return [{ type: "Chat", child: Pages.Chat.init }, cmd.none];
+
+    case "ChatNew":
+      return [{ type: "ChatNew", child: Pages.ChatNew.init }, cmd.none];
 
     default:
       return exhaustive(route);
@@ -933,6 +943,25 @@ const updateReadyPage = (
     return [page, cmd.none, []];
   }
 
+  if (page.type === "Chat" && msg.group === "Chat") {
+    const [child, childCmd] = Pages.Chat.update(msg, page.child);
+    return [
+      { type: "Chat", child },
+      pipe(childCmd, cmd.map(groupTag("Chat"))),
+      [],
+    ];
+  }
+
+  if (page.type === "ChatNew" && msg.group === "ChatNew") {
+    const [child, childCmd] = Pages.ChatNew.update(msg, page.child);
+
+    return [
+      { type: "ChatNew", child },
+      pipe(childCmd, cmd.map(groupTag("ChatNew"))),
+      [],
+    ];
+  }
+
   return [page, cmd.none, []];
 };
 
@@ -994,6 +1023,15 @@ const viewReadyPage = ({
 
     case "Game":
       return pipe(Game.view(game), react.map(groupTag("Game")));
+
+    case "Chat":
+      return pipe(Pages.Chat.view(page.child), react.map(groupTag("Chat")));
+
+    case "ChatNew":
+      return pipe(
+        Pages.ChatNew.view(page.child),
+        react.map(groupTag("ChatNew"))
+      );
 
     default:
       return exhaustive(page);
