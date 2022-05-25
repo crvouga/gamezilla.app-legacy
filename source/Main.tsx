@@ -1,4 +1,4 @@
-import { Box } from "@mui/material";
+import { Box, Divider } from "@mui/material";
 import { either, option } from "fp-ts";
 import { pipe } from "fp-ts/lib/function";
 import { cmd, navigation, react, sub, task } from "Framework";
@@ -12,7 +12,7 @@ import { createRoot } from "react-dom/client";
 import * as Route from "Route";
 import * as Session from "Session";
 import * as Snackbar from "Snackbar";
-import { exhaustive, groupTag } from "Utility";
+import { andThen, andThenMany, exhaustive, groupTag } from "Utility";
 import * as View from "View";
 
 //
@@ -119,32 +119,36 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
 };
 
 const updateShared = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
-  switch (msg.group) {
-    case "Snackbar":
-      const [snackbarModel, snackbarCmd] = Snackbar.update(msg, model.snackbar);
-      return [
-        { ...model, snackbar: snackbarModel },
-        pipe(snackbarCmd, cmd.map(groupTag("Snackbar"))),
-      ];
+  return pipe(
+    [model, cmd.none],
+    andThen(updateGame, msg),
+    andThen(updateSnackbar, msg)
+  );
+};
 
-    case "Location":
-      return [{ ...model, location: msg.location }, cmd.none];
+const updateGame = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
+  if (msg.group === "Game" && model.type === "Ready") {
+    const [gameModel, gameCmd, outMsgs] = Game.update(msg, model.game);
 
-    case "Game":
-      if (model.type === "Ready") {
-        const [gameModel, gameCmd] = Game.update(msg, model.game);
-
-        return [
-          { ...model, game: gameModel },
-          pipe(gameCmd, cmd.map(groupTag("Game"))),
-        ];
-      }
-
-      return [model, cmd.none];
-
-    default:
-      return [model, cmd.none];
+    return pipe(
+      [{ ...model, game: gameModel }, pipe(gameCmd, cmd.map(groupTag("Game")))],
+      andThenMany(updateSnackbar, outMsgs)
+    );
   }
+
+  return [model, cmd.none];
+};
+
+const updateSnackbar = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
+  if (msg.group === "Snackbar") {
+    const [snackbarModel, snackbarCmd] = Snackbar.update(msg, model.snackbar);
+    return [
+      { ...model, snackbar: snackbarModel },
+      pipe(snackbarCmd, cmd.map(groupTag("Snackbar"))),
+    ];
+  }
+
+  return [model, cmd.none];
 };
 
 const updateMain = (msg: Msg, model: Model): [Model, Cmd<Msg>, SharedMsg[]] => {
@@ -179,12 +183,39 @@ export const view =
   (dispatch) =>
     (
       <View.ThemeProvider>
-        {viewMain(model)(dispatch)}
+        <Box
+          sx={{
+            maxWidth: "sm",
+            marginX: "auto",
+            position: "fixed",
+            width: "100%",
+            height: "100%",
+            display: "flex",
+            flexDirection: "column",
+            left: "50%",
+            top: "50%",
+            transform: "translate(-50%, -50%)",
+          }}
+        >
+          {viewMain(model)(dispatch)}
 
-        {pipe(
-          Snackbar.view(model.snackbar),
-          react.map(groupTag("Snackbar"))
-        )(dispatch)}
+          {model.type === "Ready" &&
+            model.page.type !== "Game" &&
+            model.game.type === "Opened" && (
+              <>
+                <Divider />
+                {pipe(
+                  Game.viewBanner(model.game),
+                  react.map(groupTag("Game"))
+                )(dispatch)}
+              </>
+            )}
+
+          {pipe(
+            Snackbar.view(model.snackbar),
+            react.map(groupTag("Snackbar"))
+          )(dispatch)}
+        </Box>
       </View.ThemeProvider>
     );
 
@@ -902,25 +933,7 @@ const updateReadyPage = (
 const viewReady =
   (model: ReadyModel): react.Html<Msg> =>
   (dispatch) =>
-    (
-      <Box
-        sx={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
-        }}
-      >
-        {pipe(
-          Game.viewBanner(model.page.type !== "Game", model.game),
-          react.map(groupTag("Game"))
-        )(dispatch)}
-        <Box sx={{ position: "relative", width: "100%", height: "100%" }}>
-          {viewReadyPage(model)(dispatch)}
-        </Box>
-      </Box>
-    );
+    <>{viewReadyPage(model)(dispatch)}</>;
 
 const viewReadyPage = ({
   page,
@@ -1034,12 +1047,6 @@ const sessionSubcription = (): sub.Sub<Msg> => {
   );
 };
 
-//
-//
-// View
-//
-//
-
 const viewProfileLoading = (model: ProfileLoadingModel): react.Html<Msg> => {
   return () => <View.LoadingPage />;
 };
@@ -1079,25 +1086,6 @@ const viewSessionMissing = (model: SessionMissingModel): react.Html<Msg> => {
       return exhaustive(model.page.type);
   }
 };
-
-//
-//
-//
-// Utils
-//
-//
-//
-
-const andThen =
-  <Msg, Model>(
-    update: (msg: Msg, model: Model) => [Model, Cmd<Msg>],
-    msg: Msg
-  ) =>
-  ([model, cmdPrev]: [Model, Cmd<Msg>]): [Model, Cmd<Msg>] => {
-    const [modelNew, cmdNew] = update(msg, model);
-
-    return [modelNew, cmd.batch([cmdPrev, cmdNew])];
-  };
 
 //
 //

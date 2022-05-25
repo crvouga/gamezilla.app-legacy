@@ -156,22 +156,10 @@ export const Page = ({
   return (
     <Box
       sx={{
-        maxWidth: "sm",
-        marginX: "auto",
-        position: "absolute",
-        width: "100%",
-        height: "100%",
         display: "flex",
         flexDirection: "column",
-        left: "50%",
-        top: "50%",
-        transform: "translate(-50%, -50%)",
-        border: {
-          sm: `2px ${theme.palette.divider} solid`,
-        },
-        maxHeight: {
-          sm: "900px",
-        },
+        width: "100%",
+        height: "100%",
         ...sx,
       }}
     >
