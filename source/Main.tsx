@@ -955,7 +955,7 @@ const viewReadyPage = ({
 
     case "Home":
       return pipe(
-        Pages.Home.view(profile, page.child),
+        Pages.Home.view({ profile, game }, page.child),
         react.map(groupTag("Home"))
       );
 
