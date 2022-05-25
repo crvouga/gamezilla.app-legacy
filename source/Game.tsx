@@ -240,6 +240,7 @@ export const viewBanner =
           }}
         >
           <ButtonBase
+            sx={{ flex: 1 }}
             onClick={() => dispatch({ type: "UserClickedGameBanner" })}
           >
             <Box sx={{ width: "20%", marginRight: 2 }}>
@@ -249,6 +250,7 @@ export const viewBanner =
               {gameToName(model.child.type)}
             </View.Typography>
           </ButtonBase>
+
           <ButtonBase
             sx={{ width: "15%", height: "100%", p: 2 }}
             onClick={() =>

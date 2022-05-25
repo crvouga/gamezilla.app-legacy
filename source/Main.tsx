@@ -197,24 +197,30 @@ export const view =
             transform: "translate(-50%, -50%)",
           }}
         >
-          {viewMain(model)(dispatch)}
+          <Box sx={{ width: "100%", flex: 1 }}>{viewMain(model)(dispatch)}</Box>
 
           {model.type === "Ready" &&
-            model.page.type !== "Game" &&
-            model.game.type === "Opened" && (
-              <>
-                <Divider />
-                {pipe(
-                  Game.viewBanner(model.game),
-                  react.map(groupTag("Game"))
-                )(dispatch)}
-              </>
-            )}
-
-          {pipe(
-            Snackbar.view(model.snackbar),
-            react.map(groupTag("Snackbar"))
-          )(dispatch)}
+          model.page.type !== "Game" &&
+          model.game.type === "Opened" ? (
+            <>
+              <Divider />
+              {pipe(
+                Snackbar.view({ sx: { bottom: 80 } }, model.snackbar),
+                react.map(groupTag("Snackbar"))
+              )(dispatch)}
+              {pipe(
+                Game.viewBanner(model.game),
+                react.map(groupTag("Game"))
+              )(dispatch)}
+            </>
+          ) : (
+            <>
+              {pipe(
+                Snackbar.view({}, model.snackbar),
+                react.map(groupTag("Snackbar"))
+              )(dispatch)}
+            </>
+          )}
         </Box>
       </View.ThemeProvider>
     );
