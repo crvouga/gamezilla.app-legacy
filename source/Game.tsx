@@ -1,9 +1,11 @@
-import { Box, Collapse } from "@mui/material";
+import { Close } from "@mui/icons-material";
+import { Box, ButtonBase } from "@mui/material";
 import { pipe } from "fp-ts/lib/function";
 import { cmd, navigation, react } from "Framework";
 import { Cmd } from "Framework/Cmd";
 import React from "react";
 import * as Route from "Route";
+import * as Snackbar from "Snackbar";
 import * as View from "View";
 import * as Games from "./Games";
 
@@ -17,10 +19,13 @@ import * as Games from "./Games";
 
 export type Model = Closed | Opened;
 
-type Closed = { type: "Closed" };
+type Closed = {
+  type: "Closed";
+};
 
 type Opened = {
   type: "Opened";
+  status: "Idle" | "ConfirmingClose";
   child:
     | { type: "TicTacToe"; child: Games.TicTacToe.Model }
     | { type: "ConnectFour"; child: Games.ConnectFour.Model }
@@ -35,10 +40,11 @@ export type Game = Opened["child"]["type"];
 
 export const init: Model = { type: "Closed" };
 
-const initOpened = ({ game }: { game: Game }): [Opened, Cmd<Msg>] => {
+const initOpened = ({ game }: { game: Game }): [Opened, Cmd<Msg>, OutMsg[]] => {
   return [
-    { type: "Opened", child: initGame({ game }) },
+    { type: "Opened", status: "Idle", child: initGame({ game }) },
     navigation.push(Route.encode({ type: "Game" })),
+    [],
   ];
 };
 
@@ -66,28 +72,35 @@ const initGame = ({ game }: { game: Game }): Opened["child"] => {
 export type GroupedMsg = { group: "Game" } & Msg;
 
 type Msg =
-  | { type: "UserOpenedGame"; game: Game; groupGame: "None" }
-  | { type: "UserClickedGameBanner"; groupGame: "None" }
-  | (Games.Chess.Msg & { groupGame: "Chess" })
-  | (Games.ConnectFour.Msg & { groupGame: "ConnectFour" })
-  | (Games.TicTacToe.Msg & { groupGame: "TicTacToe" });
+  | { type: "UserOpenedGame"; game: Game }
+  | { type: "UserClickedGameBanner" }
+  | { type: "UserClickedCloseGameButton" }
+  | { type: "CancelledCloseGame" }
+  | { type: "ConfirmedCloseGame" }
+  | GameMsg;
+
+type GameMsg =
+  | (Games.Chess.Msg & { gameGroup: "Chess" })
+  | (Games.ConnectFour.Msg & { gameGroup: "ConnectFour" })
+  | (Games.TicTacToe.Msg & { gameGroup: "TicTacToe" });
+
+type OutMsg = Snackbar.GroupedMsg;
 
 const groupGameTag =
   <Msg, GameName extends string>(gameName: GameName) =>
-  (msg: Msg): Msg & { groupGame: GameName } => {
-    return { ...msg, groupGame: gameName } as const;
+  (msg: Msg): Msg & { gameGroup: GameName } => {
+    return { ...msg, gameGroup: gameName } as const;
   };
 
 export const UserOpenedGame = (game: Game): GroupedMsg => {
   return {
     group: "Game",
-    groupGame: "None",
     type: "UserOpenedGame",
     game,
   };
 };
 
-export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
+export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>, OutMsg[]] => {
   switch (model.type) {
     case "Closed":
       return updateClosed(msg, model);
@@ -97,28 +110,43 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
   }
 };
 
-const updateOpened = (msg: Msg, model: Opened): [Model, Cmd<Msg>] => {
+const updateOpened = (msg: Msg, model: Opened): [Model, Cmd<Msg>, OutMsg[]] => {
+  if ("gameGroup" in msg) {
+    const [modelChild, cmdChild] = updateGame(msg, model.child);
+
+    return [{ ...model, child: modelChild }, cmdChild, []];
+  }
+
   switch (msg.type) {
     case "UserOpenedGame":
       if (msg.game === model.child.type) {
-        return [model, navigation.push(Route.encode({ type: "Game" }))];
+        return [model, navigation.push(Route.encode({ type: "Game" })), []];
       }
-      return [model, cmd.none];
+      return [
+        model,
+        cmd.none,
+        [Snackbar.EnqueuedSnackbar("A game is already opened.")],
+      ];
+
+    case "UserClickedCloseGameButton":
+      return [{ ...model, status: "ConfirmingClose" }, cmd.none, []];
 
     case "UserClickedGameBanner":
-      return [model, navigation.push(Route.encode({ type: "Game" }))];
+      return [model, navigation.push(Route.encode({ type: "Game" })), []];
 
-    default:
-      const [modelChild, cmdChild] = updateGame(msg, model.child);
-      return [{ ...model, child: modelChild }, cmdChild];
+    case "CancelledCloseGame":
+      return [{ ...model, status: "Idle" }, cmd.none, []];
+
+    case "ConfirmedCloseGame":
+      return [{ type: "Closed" }, cmd.none, []];
   }
 };
 
 const updateGame = (
-  msg: Msg,
+  msg: GameMsg,
   model: Opened["child"]
 ): [Opened["child"], cmd.Cmd<Msg>] => {
-  if (model.type === "Chess" && msg.groupGame === "Chess") {
+  if (model.type === "Chess" && msg.gameGroup === "Chess") {
     const [modelChild, cmdChild] = Games.Chess.update(msg, model.child);
     return [
       { type: "Chess", child: modelChild },
@@ -126,7 +154,7 @@ const updateGame = (
     ];
   }
 
-  if (model.type === "ConnectFour" && msg.groupGame === "ConnectFour") {
+  if (model.type === "ConnectFour" && msg.gameGroup === "ConnectFour") {
     const [modelChild, cmdChild] = Games.ConnectFour.update(msg, model.child);
     return [
       { type: "ConnectFour", child: modelChild },
@@ -134,7 +162,7 @@ const updateGame = (
     ];
   }
 
-  if (model.type === "TicTacToe" && msg.groupGame === "TicTacToe") {
+  if (model.type === "TicTacToe" && msg.gameGroup === "TicTacToe") {
     const [modelChild, cmdChild] = Games.TicTacToe.update(msg, model.child);
     return [
       { type: "TicTacToe", child: modelChild },
@@ -145,13 +173,13 @@ const updateGame = (
   return [model, cmd.none];
 };
 
-const updateClosed = (msg: Msg, model: Closed): [Model, Cmd<Msg>] => {
+const updateClosed = (msg: Msg, model: Closed): [Model, Cmd<Msg>, OutMsg[]] => {
   switch (msg.type) {
     case "UserOpenedGame":
       return initOpened(msg);
 
     default:
-      return [model, cmd.none];
+      return [model, cmd.none, []];
   }
 };
 
@@ -200,22 +228,72 @@ const viewClosed: react.Html<Msg> = () => {
 };
 
 export const viewBanner =
-  (isOpen: boolean, model: Model): react.Html<Msg> =>
+  (model: Opened): react.Html<Msg> =>
   (dispatch) =>
     (
-      <Collapse in={isOpen && model.type === "Opened"}>
+      <>
         <Box
-          onClick={() =>
-            dispatch({ type: "UserClickedGameBanner", groupGame: "None" })
-          }
           sx={{
             width: "100%",
-            paddingX: 2,
-            paddingY: 1,
-            backgroundColor: "primary.main",
+            display: "flex",
+            alignItems: "center",
           }}
         >
-          <View.Typography>You're in a game...</View.Typography>
+          <ButtonBase
+            onClick={() => dispatch({ type: "UserClickedGameBanner" })}
+          >
+            <Box sx={{ width: "20%", marginRight: 2 }}>
+              <GameIcon game={model.child.type} />
+            </Box>
+            <View.Typography align="left" sx={{ flex: 1 }}>
+              {gameToName(model.child.type)}
+            </View.Typography>
+          </ButtonBase>
+          <ButtonBase
+            sx={{ width: "15%", height: "100%", p: 2 }}
+            onClick={() =>
+              dispatch({
+                type: "UserClickedCloseGameButton",
+              })
+            }
+          >
+            <Close />
+          </ButtonBase>
         </Box>
-      </Collapse>
+
+        <View.ConformationDialog
+          open={model.status === "ConfirmingClose"}
+          title={`Close ${gameToName(model.child.type)}?`}
+          confirmTitle="Close Game"
+          onClose={() => dispatch({ type: "CancelledCloseGame" })}
+          onCancel={() => dispatch({ type: "CancelledCloseGame" })}
+          onConfirm={() => dispatch({ type: "ConfirmedCloseGame" })}
+        />
+      </>
     );
+
+export const gameToName = (game: Game): string => {
+  switch (game) {
+    case "Chess":
+      return "Chess";
+
+    case "ConnectFour":
+      return "Connect Four";
+
+    case "TicTacToe":
+      return "Tic Tac Toe";
+  }
+};
+
+const GameIcon = ({ game }: { game: Game }) => {
+  switch (game) {
+    case "Chess":
+      return <Games.Chess.Icon />;
+
+    case "ConnectFour":
+      return <Games.ConnectFour.Icon />;
+
+    case "TicTacToe":
+      return <Games.TicTacToe.Icon />;
+  }
+};

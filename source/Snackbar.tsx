@@ -102,20 +102,22 @@ export const view =
   (model: Model): react.Html<Msg> =>
   (dispatch) => {
     const snack = model.queue[0];
+
+    if (!snack) {
+      return <></>;
+    }
+
     return (
-      <>
-        {snack && (
-          <Snackbar
-            open
-            message={snack.message}
-            onClose={() =>
-              dispatch({
-                type: "UserClosedSnackbar",
-                snackId: snack.snackId,
-              })
-            }
-          />
-        )}
-      </>
+      <Snackbar
+        sx={{ bottom: 72 }}
+        open
+        message={snack.message}
+        onClose={() =>
+          dispatch({
+            type: "UserClosedSnackbar",
+            snackId: snack.snackId,
+          })
+        }
+      />
     );
   };
