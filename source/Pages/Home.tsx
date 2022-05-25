@@ -71,13 +71,11 @@ export const view =
 
         <Box
           sx={{
-            p: 2,
             display: "grid",
             gridTemplateColumns: "repeat(3, 1fr)",
-            gap: 2,
           }}
         >
-          <GameIcon
+          <GameCard
             icon={<Games.TicTacToe.Icon />}
             label="Tic Tac Toe"
             onClick={() =>
@@ -88,7 +86,7 @@ export const view =
             }
           />
 
-          <GameIcon
+          <GameCard
             icon={<Games.ConnectFour.Icon />}
             label="Connect Four"
             onClick={() =>
@@ -99,7 +97,7 @@ export const view =
             }
           />
 
-          <GameIcon
+          <GameCard
             icon={<Games.Chess.Icon />}
             label="Chess"
             onClick={() => dispatch({ type: "UserClickedGame", game: "Chess" })}
@@ -108,7 +106,7 @@ export const view =
       </View.Page>
     );
 
-const GameIcon = ({
+const GameCard = ({
   icon,
   label,
   onClick,
@@ -118,16 +116,37 @@ const GameIcon = ({
   onClick: () => void;
 }) => {
   return (
-    <Box>
-      <ButtonBase
-        onClick={onClick}
-        sx={{ overflow: "hidden", borderRadius: 5 }}
+    <ButtonBase
+      sx={{ position: "relative", overflow: "hidden" }}
+      onClick={onClick}
+    >
+      {icon}
+
+      <Box
+        sx={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "flex-end",
+        }}
       >
-        {icon}
-      </ButtonBase>
-      <Typography sx={{ marginTop: 1 }} align="center">
-        {label}
-      </Typography>
-    </Box>
+        <Box
+          sx={{
+            width: "100%",
+            padding: 1,
+            paddingTop: 2,
+            background: `linear-gradient(transparent, rgba(0, 0, 0, 0.6))`,
+          }}
+        >
+          <Typography align="left" fontWeight={800}>
+            {label}
+          </Typography>
+        </Box>
+      </Box>
+    </ButtonBase>
   );
 };
