@@ -8,7 +8,8 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import { cmd, navigation, react } from "Framework";
+import { cmd, react } from "Framework";
+import * as Navigation from "Navigation";
 import * as Game from "Game";
 import React from "react";
 import * as Route from "Route";
@@ -48,13 +49,13 @@ export const update = (
 ): [Model, cmd.Cmd<Msg>, OutMsg[]] => {
   switch (msg.type) {
     case "UserClickedAvatar":
-      return [model, navigation.push(Route.encode({ type: "Account" })), []];
+      return [model, Navigation.push(Route.encode({ type: "Account" })), []];
 
     case "UserClickedGame":
       return [model, cmd.none, [Game.UserOpenedGame(msg.game)]];
 
     case "UserClickedChatButton":
-      return [model, navigation.push(Route.encode({ type: "Chat" })), []];
+      return [model, Navigation.push(Route.encode({ type: "Chat" })), []];
   }
 };
 

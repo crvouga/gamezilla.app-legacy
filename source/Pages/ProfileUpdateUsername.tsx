@@ -1,7 +1,8 @@
 import { Box, TextField } from "@mui/material";
 import { option, either } from "fp-ts";
 import { pipe } from "fp-ts/lib/function";
-import { cmd, navigation, react } from "Framework";
+import { cmd, react } from "Framework";
+import * as Navigation from "Navigation";
 import { attempt } from "Framework/Task";
 import * as Profile from "Profile";
 import * as React from "react";
@@ -59,7 +60,7 @@ export const update = (
       ];
 
     case "UserClickedCancelButton":
-      return [model, navigation.back(), []];
+      return [model, Navigation.back(), []];
 
     case "UsernameUpdateFailed":
       return [{ ...model, status: "Idle" }, cmd.none, []];
@@ -67,7 +68,7 @@ export const update = (
     case "UsernameUpdateSucceeded":
       return [
         { ...model, status: "Idle" },
-        navigation.back(),
+        Navigation.back(),
         [Snackbar.EnqueuedSnackbar("Updated username.")],
       ];
   }

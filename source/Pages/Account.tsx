@@ -6,10 +6,11 @@ import {
   ListItemSecondaryAction,
   ListItemText,
 } from "@mui/material";
-import { cmd, navigation, react } from "Framework";
+import { cmd, react } from "Framework";
+import * as Navigation from "Navigation";
 import React from "react";
 import * as Route from "Route";
-import * as View from "../View";
+import * as View from "View";
 
 //
 //
@@ -44,16 +45,16 @@ export const update = (
 ): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "UserClickedBackButton":
-      return [model, navigation.back()];
+      return [model, Navigation.back()];
 
     case "UserClickedLogoutLink":
-      return [model, navigation.push(Route.encode({ type: "Logout" }))];
+      return [model, Navigation.push(Route.encode({ type: "Logout" }))];
 
     case "UserClickedUpdateProfileLink":
-      return [model, navigation.push(Route.encode({ type: "ProfileUpdate" }))];
+      return [model, Navigation.push(Route.encode({ type: "ProfileUpdate" }))];
 
     case "UserClickedDeleteProfileLink":
-      return [model, navigation.push(Route.encode({ type: "ProfileDelete" }))];
+      return [model, Navigation.push(Route.encode({ type: "ProfileDelete" }))];
   }
 };
 

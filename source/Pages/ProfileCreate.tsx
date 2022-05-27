@@ -2,7 +2,8 @@ import { LoadingButton } from "@mui/lab";
 import { Avatar, Box, Button, TextField } from "@mui/material";
 import { either } from "fp-ts";
 import { pipe } from "fp-ts/lib/function";
-import { cmd, navigation, react } from "Framework";
+import { cmd, react } from "Framework";
+import * as Navigation from "Navigation";
 import { attempt } from "Framework/Task";
 import * as Profile from "Profile";
 import * as ProfileAvatar from "ProfileAvatar";
@@ -100,13 +101,13 @@ export const update = (
       ];
 
     case "SubmitSucceeded":
-      return [model, navigation.reload()];
+      return [model, Navigation.reload()];
 
     case "SubmitFailed":
       return [{ ...model, status: "Idle" }, cmd.none];
 
     case "UserClickedLogoutButton":
-      return [model, navigation.push(Route.encode({ type: "Logout" }))];
+      return [model, Navigation.push(Route.encode({ type: "Logout" }))];
   }
 };
 

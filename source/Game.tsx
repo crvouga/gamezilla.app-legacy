@@ -1,7 +1,8 @@
 import { Close } from "@mui/icons-material";
 import { Box, ButtonBase } from "@mui/material";
 import { pipe } from "fp-ts/lib/function";
-import { cmd, navigation, react } from "Framework";
+import { cmd, react } from "Framework";
+import * as Navigation from "Navigation";
 import { Cmd } from "Framework/Cmd";
 import React from "react";
 import * as Route from "Route";
@@ -43,7 +44,7 @@ export const init: Model = { type: "Closed" };
 const initOpened = ({ game }: { game: Game }): [Opened, Cmd<Msg>, OutMsg[]] => {
   return [
     { type: "Opened", status: "Idle", child: initGame({ game }) },
-    navigation.push(Route.encode({ type: "Game" })),
+    Navigation.push(Route.encode({ type: "Game" })),
     [],
   ];
 };
@@ -120,7 +121,7 @@ const updateOpened = (msg: Msg, model: Opened): [Model, Cmd<Msg>, OutMsg[]] => {
   switch (msg.type) {
     case "UserOpenedGame":
       if (msg.game === model.child.type) {
-        return [model, navigation.push(Route.encode({ type: "Game" })), []];
+        return [model, Navigation.push(Route.encode({ type: "Game" })), []];
       }
       return [
         model,
@@ -132,7 +133,7 @@ const updateOpened = (msg: Msg, model: Opened): [Model, Cmd<Msg>, OutMsg[]] => {
       return [{ ...model, status: "ConfirmingClose" }, cmd.none, []];
 
     case "UserClickedGameBanner":
-      return [model, navigation.push(Route.encode({ type: "Game" })), []];
+      return [model, Navigation.push(Route.encode({ type: "Game" })), []];
 
     case "CancelledCloseGame":
       return [{ ...model, status: "Idle" }, cmd.none, []];

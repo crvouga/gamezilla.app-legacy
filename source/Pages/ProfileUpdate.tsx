@@ -1,5 +1,6 @@
 import { Avatar, Button, List } from "@mui/material";
-import { cmd, navigation, react } from "Framework";
+import { cmd, react } from "Framework";
+import * as Navigation from "Navigation";
 import * as React from "react";
 import * as Route from "Route";
 import * as View from "View";
@@ -40,7 +41,7 @@ export const update = (
     case "UserClickedAvatar":
       return [
         model,
-        navigation.push(
+        Navigation.push(
           Route.encode({
             type: "ProfileUpdateAvatar",
           })
@@ -50,7 +51,7 @@ export const update = (
     case "UserClickedChangeAvatarButton":
       return [
         model,
-        navigation.push(
+        Navigation.push(
           Route.encode({
             type: "ProfileUpdateAvatar",
           })
@@ -58,18 +59,18 @@ export const update = (
       ];
 
     case "UserClickedBackButton":
-      return [model, navigation.back()];
+      return [model, Navigation.back()];
 
     case "UserClickedNameLink":
       return [
         model,
-        navigation.push(Route.encode({ type: "ProfileUpdateName" })),
+        Navigation.push(Route.encode({ type: "ProfileUpdateName" })),
       ];
 
     case "UserClickedUsernameLink":
       return [
         model,
-        navigation.push(Route.encode({ type: "ProfileUpdateUsername" })),
+        Navigation.push(Route.encode({ type: "ProfileUpdateUsername" })),
       ];
   }
 };

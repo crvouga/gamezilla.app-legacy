@@ -1,6 +1,7 @@
 import { either } from "fp-ts";
 import { pipe } from "fp-ts/lib/function";
-import { cmd, navigation, react, task } from "Framework";
+import { cmd, react, task } from "Framework";
+import * as Navigation from "Navigation";
 import React from "react";
 import * as Session from "Session";
 import * as Snackbar from "Snackbar";
@@ -42,10 +43,10 @@ export const update = (
 ): [Model, cmd.Cmd<Msg>, OutMsg[]] => {
   switch (msg.type) {
     case "UserClickedCancelButton":
-      return [model, navigation.back(), []];
+      return [model, Navigation.back(), []];
 
     case "UserClickedBackdrop":
-      return [model, navigation.back(), []];
+      return [model, Navigation.back(), []];
 
     case "UserClickedLogoutButton":
       return [{ type: "LoggingOut" }, logoutCmd, []];

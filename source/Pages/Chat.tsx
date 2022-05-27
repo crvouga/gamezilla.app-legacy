@@ -1,9 +1,10 @@
 import { Box } from "@mui/material";
-import { cmd, navigation, react } from "Framework";
+import { react } from "Framework";
 import { Cmd } from "Framework/Cmd";
+import * as Navigation from "Navigation";
 import * as React from "react";
-import * as View from "View";
 import * as Route from "Route";
+import * as View from "View";
 
 //
 //
@@ -32,10 +33,10 @@ export type Msg =
 export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
   switch (msg.type) {
     case "UserClickedBackButton":
-      return [model, navigation.back()];
+      return [model, Navigation.back()];
 
     case "UserClickedSendMessageButton":
-      return [model, navigation.push(Route.encode({ type: "ChatNew" }))];
+      return [model, Navigation.push(Route.encode({ type: "ChatNew" }))];
   }
 };
 
