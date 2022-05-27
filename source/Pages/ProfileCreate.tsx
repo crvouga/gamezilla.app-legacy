@@ -5,7 +5,6 @@ import { attempt } from "Framework/Task";
 import * as Navigation from "Navigation";
 import * as Profile from "Profile";
 import * as ProfileAvatar from "ProfileAvatar";
-import * as React from "react";
 import * as Route from "Route";
 import * as View from "View";
 

@@ -2,11 +2,10 @@ import { pipe } from "fp-ts/lib/function";
 import { cmd } from "Framework";
 import { Cmd } from "Framework/Cmd";
 import * as Navigation from "Navigation";
-import React from "react";
 import * as Route from "Route";
 import * as Snackbar from "Snackbar";
 import * as View from "View";
-import * as Games from "./Games";
+import * as Games from "Games";
 
 //
 //

@@ -1,6 +1,5 @@
 import { Cmd } from "Framework/Cmd";
 import * as Navigation from "Navigation";
-import * as React from "react";
 import * as View from "View";
 
 //
