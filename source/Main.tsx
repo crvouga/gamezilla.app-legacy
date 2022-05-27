@@ -22,13 +22,13 @@ import * as View from "View";
 //
 
 type Model =
-  | SessionLoadingModel
+  | SessionLoading
   | SessionMissing
   | ProfileLoading
   | ProfileMissing
   | Ready;
 
-type SessionLoadingModel = {
+type SessionLoading = {
   type: "SessionLoading";
   location: Navigation.Location;
   snackbar: Snackbar.Model;
@@ -329,7 +329,7 @@ const updateSessionMissingPage = (
 
 const updateSessionLoading = (
   msg: Msg,
-  model: SessionLoadingModel
+  model: SessionLoading
 ): [Model, Cmd<Msg>, SharedMsg[]] => {
   switch (msg.type) {
     case "RecievedSession":
@@ -707,7 +707,7 @@ const viewProfileMissing = (model: ProfileMissing): View.View<Msg> => {
   }
 };
 
-const viewSessionLoading = (model: SessionLoadingModel): View.View<Msg> => {
+const viewSessionLoading = (model: SessionLoading): View.View<Msg> => {
   return () => <View.LoadingPage />;
 };
 
@@ -807,7 +807,7 @@ const initSessionLoading = ({
   location,
 }: {
   location: Navigation.Location;
-}): [SessionLoadingModel, Cmd<Msg>] => {
+}): [SessionLoading, Cmd<Msg>] => {
   return [
     {
       type: "SessionLoading",
