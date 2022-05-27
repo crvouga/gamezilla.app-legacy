@@ -1,15 +1,13 @@
-import { Box, Divider } from "@mui/material";
 import { either, option } from "fp-ts";
 import { pipe } from "fp-ts/lib/function";
-import { cmd, react, sub, task } from "Framework";
+import { cmd, sub, task } from "Framework";
 import { Cmd } from "Framework/Cmd";
-import { programWithDebuggerWithFlags } from "Framework/Debug/Html";
+import { programWithDebugger } from "Framework/Debug/Html";
 import * as Game from "Game";
 import * as Navigation from "Navigation";
 import * as Pages from "Pages";
 import * as Profile from "Profile";
 import React from "react";
-import { createRoot } from "react-dom/client";
 import * as Route from "Route";
 import * as Session from "Session";
 import * as Snackbar from "Snackbar";
@@ -620,11 +618,11 @@ export const locationToMsg = (location: Navigation.Location): Msg => {
 //
 
 export const view =
-  (model: Model): react.Html<Msg> =>
+  (model: Model): View.View<Msg> =>
   (dispatch) =>
     (
       <View.ThemeProvider>
-        <Box
+        <View.Box
           sx={{
             maxWidth: "sm",
             marginX: "auto",
@@ -638,35 +636,37 @@ export const view =
             transform: "translate(-50%, -50%)",
           }}
         >
-          <Box sx={{ width: "100%", flex: 1 }}>{viewMain(model)(dispatch)}</Box>
+          <View.Box sx={{ width: "100%", flex: 1 }}>
+            {viewMain(model)(dispatch)}
+          </View.Box>
 
           {model.type === "Ready" &&
           model.page.type !== "Game" &&
           model.game.type === "Opened" ? (
             <>
-              <Divider />
+              <View.Divider />
               {pipe(
-                Snackbar.view({ sx: { bottom: 80 } }, model.snackbar),
-                react.map(groupTag("Snackbar"))
+                Snackbar.view({ bottom: 80 }, model.snackbar),
+                View.map(groupTag("Snackbar"))
               )(dispatch)}
               {pipe(
                 Game.viewBanner(model.game),
-                react.map(groupTag("Game"))
+                View.map(groupTag("Game"))
               )(dispatch)}
             </>
           ) : (
             <>
               {pipe(
                 Snackbar.view({}, model.snackbar),
-                react.map(groupTag("Snackbar"))
+                View.map(groupTag("Snackbar"))
               )(dispatch)}
             </>
           )}
-        </Box>
+        </View.Box>
       </View.ThemeProvider>
     );
 
-const viewMain = (model: Model): react.Html<Msg> => {
+const viewMain = (model: Model): View.View<Msg> => {
   switch (model.type) {
     case "ProfileLoading":
       return viewProfileLoading(model);
@@ -685,22 +685,22 @@ const viewMain = (model: Model): react.Html<Msg> => {
   }
 };
 
-const viewProfileLoading = (model: ProfileLoading): react.Html<Msg> => {
+const viewProfileLoading = (model: ProfileLoading): View.View<Msg> => {
   return () => <View.LoadingPage />;
 };
 
-const viewProfileMissing = (model: ProfileMissing): react.Html<Msg> => {
+const viewProfileMissing = (model: ProfileMissing): View.View<Msg> => {
   switch (model.page.type) {
     case "Logout":
       return pipe(
         Pages.Logout.view(model.page.child),
-        react.map(groupTag("Logout"))
+        View.map(groupTag("Logout"))
       );
 
     case "ProfileCreate":
       return pipe(
         Pages.ProfileCreate.view(model.page.child),
-        react.map(groupTag("ProfileCreate"))
+        View.map(groupTag("ProfileCreate"))
       );
 
     default:
@@ -708,16 +708,16 @@ const viewProfileMissing = (model: ProfileMissing): react.Html<Msg> => {
   }
 };
 
-const viewSessionLoading = (model: SessionLoadingModel): react.Html<Msg> => {
+const viewSessionLoading = (model: SessionLoadingModel): View.View<Msg> => {
   return () => <View.LoadingPage />;
 };
 
-const viewSessionMissing = (model: SessionMissing): react.Html<Msg> => {
+const viewSessionMissing = (model: SessionMissing): View.View<Msg> => {
   switch (model.page.type) {
     case "Login":
       return pipe(
         Pages.Login.view(model.page.child),
-        react.map(groupTag("Login"))
+        View.map(groupTag("Login"))
       );
 
     default:
@@ -726,67 +726,67 @@ const viewSessionMissing = (model: SessionMissing): react.Html<Msg> => {
 };
 
 const viewReady =
-  (model: Ready): react.Html<Msg> =>
+  (model: Ready): View.View<Msg> =>
   (dispatch) =>
     <>{viewReadyPage(model)(dispatch)}</>;
 
-const viewReadyPage = ({ page, profile, game }: Ready): react.Html<Msg> => {
+const viewReadyPage = ({ page, profile, game }: Ready): View.View<Msg> => {
   switch (page.type) {
     case "Account":
       return pipe(
         Pages.Account.view(profile, page.child),
-        react.map(groupTag("Account"))
+        View.map(groupTag("Account"))
       );
 
     case "Home":
       return pipe(
         Pages.Home.view({ profile, game }, page.child),
-        react.map(groupTag("Home"))
+        View.map(groupTag("Home"))
       );
 
     case "Logout":
-      return pipe(Pages.Logout.view(page.child), react.map(groupTag("Logout")));
+      return pipe(Pages.Logout.view(page.child), View.map(groupTag("Logout")));
 
     case "ProfileDelete":
       return pipe(
         Pages.ProfileDelete.view(page.child),
-        react.map(groupTag("ProfileDelete"))
+        View.map(groupTag("ProfileDelete"))
       );
 
     case "ProfileUpdate":
       return pipe(
         Pages.ProfileUpdate.view(profile, page.child),
-        react.map(groupTag("ProfileUpdate"))
+        View.map(groupTag("ProfileUpdate"))
       );
 
     case "ProfileUpdateAvatar":
       return pipe(
         Pages.ProfileUpdateAvatar.view(page.child),
-        react.map(groupTag("ProfileUpdateAvatar"))
+        View.map(groupTag("ProfileUpdateAvatar"))
       );
 
     case "ProfileUpdateName":
       return pipe(
         Pages.ProfileUpdateName.view(page.child),
-        react.map(groupTag("ProfileUpdateName"))
+        View.map(groupTag("ProfileUpdateName"))
       );
 
     case "ProfileUpdateUsername":
       return pipe(
         Pages.ProfileUpdateUsername.view(page.child),
-        react.map(groupTag("ProfileUpdateUsername"))
+        View.map(groupTag("ProfileUpdateUsername"))
       );
 
     case "Game":
-      return pipe(Game.view(game), react.map(groupTag("Game")));
+      return pipe(Game.view(game), View.map(groupTag("Game")));
 
     case "Chat":
-      return pipe(Pages.Chat.view(page.child), react.map(groupTag("Chat")));
+      return pipe(Pages.Chat.view(page.child), View.map(groupTag("Chat")));
 
     case "ChatNew":
       return pipe(
         Pages.ChatNew.view(page.child),
-        react.map(groupTag("ChatNew"))
+        View.map(groupTag("ChatNew"))
       );
 
     default:
@@ -1071,20 +1071,10 @@ const profileResultToMsg = either.fold<Error, Profile.Profile, Msg>(
 //
 //
 
-const program = programWithDebuggerWithFlags(init, update, view, subscriptions);
-
-const rootElement = document.getElementById("root");
-
-if (!rootElement) {
-  throw new Error("Failed to get root dom node");
-}
-
-const root = createRoot(rootElement);
-
 const flags: Flags = {
   location: Navigation.getLocation(),
 };
 
-react.run(program(flags), (dom) => {
-  root.render(dom);
-});
+const program = programWithDebugger(init(flags), update, view, subscriptions);
+
+View.run(program);

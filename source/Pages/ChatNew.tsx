@@ -1,7 +1,5 @@
-import { Autocomplete, TextField } from "@mui/material";
-import { react } from "Framework";
-import * as Navigation from "Navigation";
 import { Cmd } from "Framework/Cmd";
+import * as Navigation from "Navigation";
 import * as React from "react";
 import * as View from "View";
 
@@ -43,7 +41,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
 //
 
 export const view =
-  (model: Model): react.Html<Msg> =>
+  (model: Model): View.View<Msg> =>
   (dispatch) =>
     (
       <View.Page>
@@ -58,11 +56,11 @@ export const view =
           }
           title="New message"
         />
-        <Autocomplete
+        <View.Autocomplete
           disablePortal
           options={top100Films}
           fullWidth
-          renderInput={(params) => <TextField {...params} label="Movie" />}
+          renderInput={(params) => <View.TextField {...params} label="Movie" />}
         />
       </View.Page>
     );

@@ -1,5 +1,3 @@
-import { Box } from "@mui/material";
-import { react } from "Framework";
 import { Cmd } from "Framework/Cmd";
 import * as Navigation from "Navigation";
 import * as React from "react";
@@ -49,7 +47,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
 //
 
 export const view =
-  (model: Model): react.Html<Msg> =>
+  (model: Model): View.View<Msg> =>
   (dispatch) =>
     (
       <View.Page>
@@ -61,7 +59,7 @@ export const view =
           }
           title="Chat"
         />
-        <Box sx={{ p: 2 }}>
+        <View.Box sx={{ p: 2 }}>
           <View.Button
             fullWidth
             variant="contained"
@@ -69,6 +67,6 @@ export const view =
           >
             Send Message
           </View.Button>
-        </Box>
+        </View.Box>
       </View.Page>
     );

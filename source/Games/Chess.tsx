@@ -1,8 +1,7 @@
-import * as View from "View";
-import * as React from "react";
-import { react } from "Framework";
-import * as Navigation from "Navigation";
 import { Cmd } from "Framework/Cmd";
+import * as Navigation from "Navigation";
+import * as React from "react";
+import * as View from "View";
 
 //
 //
@@ -41,7 +40,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
 //
 
 export const view =
-  (_model: Model): react.Html<Msg> =>
+  (_model: Model): View.View<Msg> =>
   (dispatch) =>
     (
       <View.Page>

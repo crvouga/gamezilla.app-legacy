@@ -1,8 +1,8 @@
 import { either } from "fp-ts";
 import { pipe } from "fp-ts/lib/function";
-import { cmd, react } from "Framework";
-import * as Navigation from "Navigation";
+import { cmd } from "Framework";
 import { attempt } from "Framework/Task";
+import * as Navigation from "Navigation";
 import * as Profile from "Profile";
 import React from "react";
 import * as View from "View";
@@ -79,7 +79,7 @@ export const update = (
 //
 
 export const view =
-  (model: Model): react.Html<Msg> =>
+  (model: Model): View.View<Msg> =>
   (dispatch) =>
     (
       <>

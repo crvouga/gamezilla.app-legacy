@@ -7,11 +7,11 @@
  * @since 0.5.0
  */
 
-import { Observable } from 'rxjs'
-import { map as RxMap, takeUntil } from 'rxjs/operators'
-import { Cmd } from './Cmd'
-import * as platform from './Platform'
-import { Sub, none } from './Sub'
+import { Observable } from "rxjs";
+import { map as RxMap, takeUntil } from "rxjs/operators";
+import { Cmd } from "./Cmd";
+import * as platform from "./Platform";
+import { none, Sub } from "./Sub";
 
 /**
  * It is defined as a function that takes a `dispatch()` function as input and returns a `Dom` as output,
@@ -20,7 +20,7 @@ import { Sub, none } from './Sub'
  * @since 0.5.0
  */
 export interface Html<Dom, Msg> {
-  (dispatch: platform.Dispatch<Msg>): Dom
+  (dispatch: platform.Dispatch<Msg>): Dom;
 }
 
 /**
@@ -31,7 +31,7 @@ export interface Html<Dom, Msg> {
  * @since 0.5.0
  */
 export interface Renderer<Dom> {
-  (dom: Dom): void
+  (dom: Dom): void;
 }
 
 /**
@@ -40,7 +40,7 @@ export interface Renderer<Dom> {
  * @since 0.5.0
  */
 export interface Program<Model, Msg, Dom> extends platform.Program<Model, Msg> {
-  html$: Observable<Html<Dom, Msg>>
+  html$: Observable<Html<Dom, Msg>>;
 }
 
 /**
@@ -48,8 +48,10 @@ export interface Program<Model, Msg, Dom> extends platform.Program<Model, Msg> {
  * @category Functor
  * @since 0.5.0
  */
-export function map<Dom, A, Msg>(f: (a: A) => Msg): (ha: Html<Dom, A>) => Html<Dom, Msg> {
-  return ha => dispatch => ha(a => dispatch(f(a)))
+export function map<Dom, A, Msg>(
+  f: (a: A) => Msg
+): (ha: Html<Dom, A>) => Html<Dom, Msg> {
+  return (ha) => (dispatch) => ha((a) => dispatch(f(a)));
 }
 
 /**
@@ -67,11 +69,15 @@ export function program<Model, Msg, Dom>(
   view: (model: Model) => Html<Dom, Msg>,
   subscriptions: (model: Model) => Sub<Msg> = () => none
 ): Program<Model, Msg, Dom> {
-  const { dispatch, cmd$, sub$, model$ } = platform.program(init, update, subscriptions)
+  const { dispatch, cmd$, sub$, model$ } = platform.program(
+    init,
+    update,
+    subscriptions
+  );
 
-  const html$ = model$.pipe(RxMap(view))
+  const html$ = model$.pipe(RxMap(view));
 
-  return { dispatch, cmd$, sub$, model$, html$ }
+  return { dispatch, cmd$, sub$, model$, html$ };
 }
 
 /**
@@ -85,7 +91,7 @@ export function programWithFlags<Flags, Model, Msg, Dom>(
   view: (model: Model) => Html<Dom, Msg>,
   subscriptions?: (model: Model) => Sub<Msg>
 ): (flags: Flags) => Program<Model, Msg, Dom> {
-  return flags => program(init(flags), update, view, subscriptions)
+  return (flags) => program(init(flags), update, view, subscriptions);
 }
 
 /**
@@ -95,16 +101,18 @@ export function programWithFlags<Flags, Model, Msg, Dom>(
  */
 export function withStop(
   signal: Observable<unknown>
-): <Model, Msg, Dom>(program: Program<Model, Msg, Dom>) => Program<Model, Msg, Dom> {
-  return program => {
-    const platformProgram = platform.withStop(signal)(program)
+): <Model, Msg, Dom>(
+  program: Program<Model, Msg, Dom>
+) => Program<Model, Msg, Dom> {
+  return (program) => {
+    const platformProgram = platform.withStop(signal)(program);
 
     return {
       ...platformProgram,
 
-      html$: program.html$.pipe(takeUntil(signal))
-    }
-  }
+      html$: program.html$.pipe(takeUntil(signal)),
+    };
+  };
 }
 
 /**
@@ -116,10 +124,13 @@ export function withStop(
  * @category utils
  * @since 0.5.0
  */
-export function run<Model, Msg, Dom>(program: Program<Model, Msg, Dom>, renderer: Renderer<Dom>): Observable<Model> {
-  const { dispatch, html$ } = program
+export function run<Model, Msg, Dom>(
+  program: Program<Model, Msg, Dom>,
+  renderer: Renderer<Dom>
+): Observable<Model> {
+  const { dispatch, html$ } = program;
 
-  html$.subscribe(html => renderer(html(dispatch)))
+  html$.subscribe((html) => renderer(html(dispatch)));
 
-  return platform.run(program)
+  return platform.run(program);
 }

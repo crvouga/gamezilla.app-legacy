@@ -6,18 +6,25 @@
  * @since 0.5.0
  */
 
-import * as O from 'fp-ts/lib/Option'
-import { BehaviorSubject, Observable } from 'rxjs'
-import { distinctUntilChanged, map, mergeAll, startWith, switchMap, takeUntil } from 'rxjs/operators'
-import { Cmd } from './Cmd'
-import { Sub, none } from './Sub'
+import * as O from "fp-ts/lib/Option";
+import { BehaviorSubject, Observable } from "rxjs";
+import {
+  distinctUntilChanged,
+  map,
+  mergeAll,
+  startWith,
+  switchMap,
+  takeUntil,
+} from "rxjs/operators";
+import { Cmd } from "./Cmd";
+import { none, Sub } from "./Sub";
 
 /**
  * @category model
  * @since 0.5.0
  */
 export interface Dispatch<Msg> {
-  (msg: Msg): void
+  (msg: Msg): void;
 }
 
 /**
@@ -27,10 +34,10 @@ export interface Dispatch<Msg> {
  * @since 0.5.0
  */
 export interface Program<Model, Msg> {
-  dispatch: Dispatch<Msg>
-  cmd$: Cmd<Msg>
-  sub$: Sub<Msg>
-  model$: Observable<Model>
+  dispatch: Dispatch<Msg>;
+  cmd$: Cmd<Msg>;
+  sub$: Sub<Msg>;
+  model$: Observable<Model>;
 }
 
 /**
@@ -47,24 +54,25 @@ export function program<Model, Msg>(
   update: (msg: Msg, model: Model) => [Model, Cmd<Msg>],
   subscriptions: (model: Model) => Sub<Msg> = () => none
 ): Program<Model, Msg> {
-  const state$ = new BehaviorSubject(init)
-  const dispatch: Dispatch<Msg> = msg => state$.next(update(msg, state$.getValue()[0]))
+  const state$ = new BehaviorSubject(init);
+  const dispatch: Dispatch<Msg> = (msg) =>
+    state$.next(update(msg, state$.getValue()[0]));
 
   const cmd$ = state$.pipe(
     startWith(init),
-    map(state => state[1]),
+    map((state) => state[1]),
     distinctUntilChanged(),
     mergeAll()
-  )
+  );
 
   const model$ = state$.pipe(
-    map(state => state[0]),
+    map((state) => state[0]),
     distinctUntilChanged()
-  )
+  );
 
-  const sub$ = model$.pipe(switchMap(model => subscriptions(model)))
+  const sub$ = model$.pipe(switchMap((model) => subscriptions(model)));
 
-  return { dispatch, cmd$, sub$, model$ }
+  return { dispatch, cmd$, sub$, model$ };
 }
 
 /**
@@ -77,7 +85,7 @@ export function programWithFlags<Flags, Model, Msg>(
   update: (msg: Msg, model: Model) => [Model, Cmd<Msg>],
   subscriptions: (model: Model) => Sub<Msg> = () => none
 ): (flags: Flags) => Program<Model, Msg> {
-  return flags => program(init(flags), update, subscriptions)
+  return (flags) => program(init(flags), update, subscriptions);
 }
 
 /**
@@ -88,16 +96,16 @@ export function programWithFlags<Flags, Model, Msg>(
 export function withStop(
   signal: Observable<unknown>
 ): <Model, Msg>(program: Program<Model, Msg>) => Program<Model, Msg> {
-  return program => {
-    const { cmd$, model$, sub$, ...rest } = program
+  return (program) => {
+    const { cmd$, model$, sub$, ...rest } = program;
 
     return {
       ...rest,
       model$: model$.pipe(takeUntil(signal)),
       cmd$: cmd$.pipe(takeUntil(signal)),
-      sub$: sub$.pipe(takeUntil(signal))
-    }
-  }
+      sub$: sub$.pipe(takeUntil(signal)),
+    };
+  };
 }
 
 /**
@@ -107,12 +115,14 @@ export function withStop(
  * @category utils
  * @since 0.5.0
  */
-export function run<Model, Msg>(program: Program<Model, Msg>): Observable<Model> {
-  const { dispatch, cmd$, sub$, model$ } = program
+export function run<Model, Msg>(
+  program: Program<Model, Msg>
+): Observable<Model> {
+  const { dispatch, cmd$, sub$, model$ } = program;
 
-  cmd$.subscribe(task => task().then(O.map(dispatch)))
+  cmd$.subscribe((task) => task().then(O.map(dispatch)));
 
-  sub$.subscribe(dispatch)
+  sub$.subscribe(dispatch);
 
-  return model$
+  return model$;
 }

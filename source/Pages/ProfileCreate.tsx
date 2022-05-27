@@ -1,16 +1,13 @@
-import { LoadingButton } from "@mui/lab";
-import { Avatar, Box, Button, TextField } from "@mui/material";
 import { either } from "fp-ts";
 import { pipe } from "fp-ts/lib/function";
-import { cmd, react } from "Framework";
-import * as Navigation from "Navigation";
+import { cmd } from "Framework";
 import { attempt } from "Framework/Task";
+import * as Navigation from "Navigation";
 import * as Profile from "Profile";
 import * as ProfileAvatar from "ProfileAvatar";
 import * as React from "react";
-import * as Session from "Session";
-import * as View from "View";
 import * as Route from "Route";
+import * as View from "View";
 
 //
 //
@@ -122,7 +119,7 @@ export const update = (
 //
 
 export const view =
-  (model: Model): react.Html<Msg> =>
+  (model: Model): View.View<Msg> =>
   (dispatch) =>
     (
       <View.Page>
@@ -143,8 +140,8 @@ export const view =
           title="Creating profile..."
         />
 
-        <Box sx={{ p: 2, width: "100%" }}>
-          <Avatar
+        <View.Box sx={{ p: 2, width: "100%" }}>
+          <View.Avatar
             src={model.form.avatarUrl}
             sx={{
               marginX: "auto",
@@ -154,11 +151,13 @@ export const view =
             }}
           />
 
-          <Button sx={{ display: "block", marginX: "auto", marginBottom: 2 }}>
+          <View.Button
+            sx={{ display: "block", marginX: "auto", marginBottom: 2 }}
+          >
             Change Avatar
-          </Button>
+          </View.Button>
 
-          <TextField
+          <View.TextField
             value={model.form.username}
             sx={{ marginBottom: 2 }}
             label="Username"
@@ -171,7 +170,7 @@ export const view =
             }
           />
 
-          <TextField
+          <View.TextField
             value={model.form.name}
             sx={{ marginBottom: 4 }}
             label="Name"
@@ -181,7 +180,7 @@ export const view =
             }
           />
 
-          <LoadingButton
+          <View.Button
             fullWidth
             size="large"
             variant="contained"
@@ -189,7 +188,7 @@ export const view =
             onClick={() => dispatch({ type: "Submit" })}
           >
             Create Profile
-          </LoadingButton>
-        </Box>
+          </View.Button>
+        </View.Box>
       </View.Page>
     );

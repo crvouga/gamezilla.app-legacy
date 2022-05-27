@@ -1,6 +1,6 @@
 import { either } from "fp-ts";
 import { pipe } from "fp-ts/lib/function";
-import { cmd, react, task } from "Framework";
+import { cmd, task } from "Framework";
 import * as Navigation from "Navigation";
 import React from "react";
 import * as Session from "Session";
@@ -78,7 +78,7 @@ const logoutCmd = pipe(
 //
 
 export const view =
-  (model: Model): react.Html<Msg> =>
+  (model: Model): View.View<Msg> =>
   (dispatch) =>
     (
       <>

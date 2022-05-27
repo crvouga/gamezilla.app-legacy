@@ -3,9 +3,9 @@
  *
  * @since 0.5.0
  */
-import { IO, chain, map } from "fp-ts/lib/IO";
-import { fold } from "fp-ts/lib/Option";
 import { pipe } from "fp-ts/lib/function";
+import { chain, IO, map } from "fp-ts/lib/IO";
+import { fold } from "fp-ts/lib/Option";
 import { BehaviorSubject, Observable } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 import { Cmd, none } from "../Cmd";

@@ -1,9 +1,8 @@
 import { Close } from "@mui/icons-material";
-import { Box, ButtonBase } from "@mui/material";
 import { pipe } from "fp-ts/lib/function";
-import { cmd, react } from "Framework";
-import * as Navigation from "Navigation";
+import { cmd } from "Framework";
 import { Cmd } from "Framework/Cmd";
+import * as Navigation from "Navigation";
 import React from "react";
 import * as Route from "Route";
 import * as Snackbar from "Snackbar";
@@ -192,7 +191,7 @@ const updateClosed = (msg: Msg, model: Closed): [Model, Cmd<Msg>, OutMsg[]] => {
 //
 //
 
-export const view = (model: Model): react.Html<Msg> => {
+export const view = (model: Model): View.View<Msg> => {
   switch (model.type) {
     case "Closed":
       return viewClosed;
@@ -202,57 +201,57 @@ export const view = (model: Model): react.Html<Msg> => {
   }
 };
 
-const viewOpened = (model: Opened): react.Html<Msg> => {
+const viewOpened = (model: Opened): View.View<Msg> => {
   switch (model.child.type) {
     case "Chess":
       return pipe(
         Games.Chess.view(model.child.child),
-        react.map(groupGameTag("Chess"))
+        View.map(groupGameTag("Chess"))
       );
 
     case "ConnectFour":
       return pipe(
         Games.ConnectFour.view(model.child.child),
-        react.map(groupGameTag("ConnectFour"))
+        View.map(groupGameTag("ConnectFour"))
       );
 
     case "TicTacToe":
       return pipe(
         Games.TicTacToe.view(model.child.child),
-        react.map(groupGameTag("TicTacToe"))
+        View.map(groupGameTag("TicTacToe"))
       );
   }
 };
 
-const viewClosed: react.Html<Msg> = () => {
+const viewClosed: View.View<Msg> = () => {
   return <>game is closed</>;
 };
 
 export const viewBanner =
-  (model: Opened): react.Html<Msg> =>
+  (model: Opened): View.View<Msg> =>
   (dispatch) =>
     (
       <>
-        <Box
+        <View.Box
           sx={{
             width: "100%",
             display: "flex",
             alignItems: "center",
           }}
         >
-          <ButtonBase
+          <View.ButtonBase
             sx={{ flex: 1 }}
             onClick={() => dispatch({ type: "UserClickedGameBanner" })}
           >
-            <Box sx={{ width: "20%", marginRight: 2 }}>
+            <View.Box sx={{ width: "20%", marginRight: 2 }}>
               <GameIcon game={model.child.type} />
-            </Box>
+            </View.Box>
             <View.Typography align="left" sx={{ flex: 1 }}>
               {gameToName(model.child.type)}
             </View.Typography>
-          </ButtonBase>
+          </View.ButtonBase>
 
-          <ButtonBase
+          <View.ButtonBase
             sx={{ width: "15%", height: "100%", p: 2 }}
             onClick={() =>
               dispatch({
@@ -261,8 +260,8 @@ export const viewBanner =
             }
           >
             <Close />
-          </ButtonBase>
-        </Box>
+          </View.ButtonBase>
+        </View.Box>
 
         <View.ConformationDialog
           open={model.status === "ConfirmingClose"}

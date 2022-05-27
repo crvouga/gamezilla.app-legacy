@@ -1,12 +1,4 @@
-import { ChevronRight, Delete, Edit, Logout } from "@mui/icons-material";
-import {
-  List,
-  ListItemButton,
-  ListItemIcon,
-  ListItemSecondaryAction,
-  ListItemText,
-} from "@mui/material";
-import { cmd, react } from "Framework";
+import { cmd } from "Framework";
 import * as Navigation from "Navigation";
 import React from "react";
 import * as Route from "Route";
@@ -67,7 +59,7 @@ export const update = (
 //
 
 export const view =
-  ({ username }: { username: string }, model: Model): react.Html<Msg> =>
+  ({ username }: { username: string }, model: Model): View.View<Msg> =>
   (dispatch) =>
     (
       <View.Page>
@@ -80,36 +72,36 @@ export const view =
           title={username}
         />
 
-        <List>
-          <ListItemButton
+        <View.List>
+          <View.ListItemButton
             onClick={() => dispatch({ type: "UserClickedUpdateProfileLink" })}
           >
-            <ListItemIcon>
-              <Edit />
-            </ListItemIcon>
-            <ListItemText primary="Update Profile" />
-            <ListItemSecondaryAction>
-              <ChevronRight />
-            </ListItemSecondaryAction>
-          </ListItemButton>
+            <View.ListItemIcon>
+              <View.Icons.Edit />
+            </View.ListItemIcon>
+            <View.ListItemText primary="Update Profile" />
+            <View.ListItemSecondaryAction>
+              <View.Icons.ChevronRight />
+            </View.ListItemSecondaryAction>
+          </View.ListItemButton>
 
-          <ListItemButton
+          <View.ListItemButton
             onClick={() => dispatch({ type: "UserClickedDeleteProfileLink" })}
           >
-            <ListItemIcon>
-              <Delete />
-            </ListItemIcon>
-            <ListItemText primary="Delete Profile" />
-          </ListItemButton>
+            <View.ListItemIcon>
+              <View.Icons.Delete />
+            </View.ListItemIcon>
+            <View.ListItemText primary="Delete Profile" />
+          </View.ListItemButton>
 
-          <ListItemButton
+          <View.ListItemButton
             onClick={() => dispatch({ type: "UserClickedLogoutLink" })}
           >
-            <ListItemIcon>
-              <Logout />
-            </ListItemIcon>
-            <ListItemText primary="Logout" />
-          </ListItemButton>
-        </List>
+            <View.ListItemIcon>
+              <View.Icons.Logout />
+            </View.ListItemIcon>
+            <View.ListItemText primary="Logout" />
+          </View.ListItemButton>
+        </View.List>
       </View.Page>
     );
