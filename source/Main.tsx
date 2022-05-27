@@ -25,22 +25,66 @@ import * as View from "View";
 
 type Model =
   | SessionLoadingModel
-  | SessionMissingModel
-  | ProfileLoadingModel
-  | ProfileMissingModel
-  | ReadyModel;
+  | SessionMissing
+  | ProfileLoading
+  | ProfileMissing
+  | Ready;
 
-//
-//
-//
-// Location
-//
-//
-//
-
-export const locationToMsg = (location: navigation.Location): Msg => {
-  return { group: "Location", type: "RecievedLocation", location: location };
+type SessionLoadingModel = {
+  type: "SessionLoading";
+  location: navigation.Location;
+  snackbar: Snackbar.Model;
 };
+
+type SessionMissing = {
+  type: "SessionMissing";
+  location: navigation.Location;
+  snackbar: Snackbar.Model;
+  page: { type: "Login"; child: Pages.Login.Model };
+};
+
+type ProfileLoading = {
+  type: "ProfileLoading";
+  location: navigation.Location;
+  snackbar: Snackbar.Model;
+  session: Session.Session;
+};
+
+type ProfileMissing = {
+  type: "ProfileMissing";
+  location: navigation.Location;
+  snackbar: Snackbar.Model;
+  session: Session.Session;
+  page:
+    | { type: "ProfileCreate"; child: Pages.ProfileCreate.Model }
+    | { type: "Logout"; child: Pages.Logout.Model };
+};
+
+type Ready = {
+  type: "Ready";
+  location: navigation.Location;
+  snackbar: Snackbar.Model;
+  profile: Profile.Profile;
+  session: Session.Session;
+  game: Game.Model;
+  page: ReadyPage;
+};
+
+type ReadyPage =
+  | { type: "Game" }
+  | { type: "Home"; child: Pages.Home.Model }
+  | { type: "Account"; child: Pages.Account.Model }
+  | { type: "Logout"; child: Pages.Logout.Model }
+  | { type: "ProfileDelete"; child: Pages.ProfileDelete.Model }
+  | { type: "ProfileUpdate"; child: Pages.ProfileUpdate.Model }
+  | { type: "ProfileUpdateAvatar"; child: Pages.ProfileUpdateAvatar.Model }
+  | { type: "ProfileUpdateName"; child: Pages.ProfileUpdateName.Model }
+  | {
+      type: "ProfileUpdateUsername";
+      child: Pages.ProfileUpdateUsername.Model;
+    }
+  | { type: "Chat"; child: Pages.Chat.Model }
+  | { type: "ChatNew"; child: Pages.ChatNew.Model };
 
 //
 //
@@ -107,14 +151,9 @@ type PageMsg =
 export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
   const [modelPrev, cmdPrev, outMsgs] = updateMain(msg, model);
 
-  const msgs = [msg, ...outMsgs];
-
-  const [modelNew, cmdNew] = msgs.reduce<[Model, Cmd<Msg>]>(
-    ([modelPrev, cmdPrev], msg) => {
-      const [modelNew, cmdNew] = updateShared(msg, modelPrev);
-      return [modelNew, cmd.batch([cmdPrev, cmdNew])];
-    },
-    [modelPrev, cmdPrev]
+  const [modelNew, cmdNew] = pipe(
+    [modelPrev, cmdPrev],
+    andThenMany(updateShared, [msg, ...outMsgs])
   );
 
   return [modelNew, cmdNew];
@@ -172,166 +211,9 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd<Msg>, SharedMsg[]] => {
   }
 };
 
-//
-//
-//
-// View
-//
-//
-//
-
-export const view =
-  (model: Model): react.Html<Msg> =>
-  (dispatch) =>
-    (
-      <View.ThemeProvider>
-        <Box
-          sx={{
-            maxWidth: "sm",
-            marginX: "auto",
-            position: "fixed",
-            width: "100%",
-            height: "100%",
-            display: "flex",
-            flexDirection: "column",
-            left: "50%",
-            top: "50%",
-            transform: "translate(-50%, -50%)",
-          }}
-        >
-          <Box sx={{ width: "100%", flex: 1 }}>{viewMain(model)(dispatch)}</Box>
-
-          {model.type === "Ready" &&
-          model.page.type !== "Game" &&
-          model.game.type === "Opened" ? (
-            <>
-              <Divider />
-              {pipe(
-                Snackbar.view({ sx: { bottom: 80 } }, model.snackbar),
-                react.map(groupTag("Snackbar"))
-              )(dispatch)}
-              {pipe(
-                Game.viewBanner(model.game),
-                react.map(groupTag("Game"))
-              )(dispatch)}
-            </>
-          ) : (
-            <>
-              {pipe(
-                Snackbar.view({}, model.snackbar),
-                react.map(groupTag("Snackbar"))
-              )(dispatch)}
-            </>
-          )}
-        </Box>
-      </View.ThemeProvider>
-    );
-
-const viewMain = (model: Model): react.Html<Msg> => {
-  switch (model.type) {
-    case "ProfileLoading":
-      return viewProfileLoading(model);
-
-    case "ProfileMissing":
-      return viewProfileMissing(model);
-
-    case "SessionLoading":
-      return viewSessionLoading(model);
-
-    case "SessionMissing":
-      return viewSessionMissing(model);
-
-    case "Ready":
-      return viewReady(model);
-  }
-};
-
-//
-//
-//
-//
-//
-//
-// ProfileMissing
-//
-//
-//
-//
-//
-//
-
-type ProfileMissingModel = {
-  type: "ProfileMissing";
-  location: navigation.Location;
-  snackbar: Snackbar.Model;
-  session: Session.Session;
-  page:
-    | { type: "ProfileCreate"; child: Pages.ProfileCreate.Model }
-    | { type: "Logout"; child: Pages.Logout.Model };
-};
-
-const initProfileMissing = ({
-  location,
-  session,
-  snackbar,
-}: {
-  location: navigation.Location;
-  snackbar: Snackbar.Model;
-  session: Session.Session;
-}): [ProfileMissingModel, Cmd<Msg>, SharedMsg[]] => {
-  const [page, pageCmd] = initProfileMissingPage({ location, session });
-  return [
-    {
-      type: "ProfileMissing",
-      session,
-      snackbar,
-      location,
-      page: page,
-    },
-    pageCmd,
-    [],
-  ];
-};
-
-const initProfileMissingPage = ({
-  location,
-  session,
-}: {
-  session: Session.Session;
-  location: navigation.Location;
-}): [ProfileMissingModel["page"], Cmd<Msg>] => {
-  const route = pipe(
-    location.pathname,
-    Route.decode,
-    option.fold<Route.Route, Route.Route | { type: "NotFound" }>(
-      () => ({ type: "NotFound" }),
-      (route) => route
-    )
-  );
-
-  const notFound: [ProfileMissingModel["page"], Cmd<Msg>] = [
-    { type: "ProfileCreate", child: Pages.ProfileCreate.init(session) },
-    navigation.push(Route.encode({ type: "ProfileCreate" })),
-  ];
-
-  switch (route.type) {
-    case "ProfileCreate":
-      return [
-        { type: "ProfileCreate", child: Pages.ProfileCreate.init(session) },
-        cmd.none,
-      ];
-
-    case "Logout":
-      return [{ type: "Logout", child: Pages.Logout.init }, cmd.none];
-
-    default:
-      return notFound;
-  }
-};
-
 const updateProfileMissing = (
   msg: Msg,
-  model: ProfileMissingModel
+  model: ProfileMissing
 ): [Model, Cmd<Msg>, SharedMsg[]] => {
   switch (msg.type) {
     case "RecievedLocation": {
@@ -372,10 +254,10 @@ const updateProfileMissing = (
 };
 
 const updateProfileMissingPage = (
-  model: ProfileMissingModel,
+  model: ProfileMissing,
   msg: Msg,
-  page: ProfileMissingModel["page"]
-): [ProfileMissingModel["page"], Cmd<Msg>, SharedMsg[]] => {
+  page: ProfileMissing["page"]
+): [ProfileMissing["page"], Cmd<Msg>, SharedMsg[]] => {
   if (page.type === "Logout" && msg.group === "Logout") {
     const [child, childCmd, outMsgs] = Pages.Logout.update(
       { name: model.session.defaultName },
@@ -405,54 +287,9 @@ const updateProfileMissingPage = (
   return [page, cmd.none, []];
 };
 
-//
-//
-//
-//
-//
-//
-// SessionMissing
-//
-//
-//
-//
-//
-//
-
-type SessionMissingModel = {
-  type: "SessionMissing";
-  location: navigation.Location;
-  snackbar: Snackbar.Model;
-  page: { type: "Login"; child: Pages.Login.Model };
-};
-
-const initSessionMissing = (
-  {
-    location,
-    snackbar,
-  }: {
-    snackbar: Snackbar.Model;
-    location: navigation.Location;
-  },
-  outMsgs: SharedMsg[]
-): [SessionMissingModel, Cmd<Msg>, SharedMsg[]] => {
-  const child = Pages.Login.init;
-
-  return [
-    {
-      type: "SessionMissing",
-      snackbar,
-      location,
-      page: { type: "Login", child },
-    },
-    navigation.push(Route.encode({ type: "Login" })),
-    outMsgs,
-  ];
-};
-
 const updateSessionMissing = (
   msg: Msg,
-  model: SessionMissingModel
+  model: SessionMissing
 ): [Model, Cmd<Msg>, SharedMsg[]] => {
   switch (msg.type) {
     case "RecievedSession":
@@ -471,8 +308,8 @@ const updateSessionMissing = (
 
 const updateSessionMissingPage = (
   msg: Msg,
-  page: SessionMissingModel["page"]
-): [SessionMissingModel["page"], Cmd<Msg>] => {
+  page: SessionMissing["page"]
+): [SessionMissing["page"], Cmd<Msg>] => {
   switch (page.type) {
     case "Login":
       if (msg.group === "Login") {
@@ -485,48 +322,6 @@ const updateSessionMissingPage = (
 
       return [page, cmd.none];
   }
-};
-
-//
-//
-//
-//
-//
-//
-// SessionLoading
-//
-//
-//
-//
-//
-//
-
-type SessionLoadingModel = {
-  type: "SessionLoading";
-  location: navigation.Location;
-  snackbar: Snackbar.Model;
-};
-
-const initSessionLoading = ({
-  location,
-}: {
-  location: navigation.Location;
-}): [SessionLoadingModel, Cmd<Msg>] => {
-  return [
-    {
-      type: "SessionLoading",
-      location: location,
-      snackbar: Snackbar.init,
-    },
-    pipe(
-      Session.load,
-      task.perform((session) => ({
-        type: "RecievedSession",
-        session,
-        group: "Session",
-      }))
-    ),
-  ];
 };
 
 const updateSessionLoading = (
@@ -546,64 +341,9 @@ const updateSessionLoading = (
   }
 };
 
-//
-//
-//
-//
-//
-//
-// ProfileLoading
-//
-//
-//
-//
-//
-//
-
-type ProfileLoadingModel = {
-  type: "ProfileLoading";
-  location: navigation.Location;
-  snackbar: Snackbar.Model;
-  session: Session.Session;
-};
-
-const initProfileLoading = ({
-  session,
-  location,
-  snackbar,
-}: {
-  session: Session.Session;
-  snackbar: Snackbar.Model;
-  location: navigation.Location;
-}): [ProfileLoadingModel, Cmd<Msg>, SharedMsg[]] => {
-  return [
-    {
-      type: "ProfileLoading",
-      snackbar,
-      location,
-      session,
-    },
-    pipe(Profile.load(session), task.attempt(profileResultToMsg)),
-    [],
-  ];
-};
-
-const profileResultToMsg = either.fold<Error, Profile.Profile, Msg>(
-  (_error) => ({
-    group: "Profile",
-    type: "RecievedProfile",
-    profile: option.none,
-  }),
-  (profile) => ({
-    group: "Profile",
-    type: "RecievedProfile",
-    profile: option.some(profile),
-  })
-);
-
 const updateProfileLoading = (
   msg: Msg,
-  model: ProfileLoadingModel
+  model: ProfileLoading
 ): [Model, Cmd<Msg>, SharedMsg[]] => {
   switch (msg.type) {
     case "RecievedProfile":
@@ -618,68 +358,9 @@ const updateProfileLoading = (
   }
 };
 
-//
-//
-//
-//
-//
-//
-// Ready
-//
-//
-//
-//
-//
-//
-
-type ReadyModel = {
-  type: "Ready";
-  location: navigation.Location;
-  snackbar: Snackbar.Model;
-  profile: Profile.Profile;
-  session: Session.Session;
-  game: Game.Model;
-  page: ReadyPage;
-};
-
-//
-// Init
-//
-
-const initReady = ({
-  location,
-  profile,
-  snackbar,
-  session,
-}: {
-  location: navigation.Location;
-  snackbar: Snackbar.Model;
-  profile: Profile.Profile;
-  session: Session.Session;
-}): [ReadyModel, Cmd<Msg>, SharedMsg[]] => {
-  const [page, pageCmd] = initReadyPage({ profile, location });
-  return [
-    {
-      type: "Ready",
-      location: location,
-      snackbar: snackbar,
-      session: session,
-      profile: profile,
-      game: Game.init,
-      page: page,
-    },
-    pageCmd,
-    [Snackbar.EnqueuedSnackbar(`Signed in as ${profile.username}.`)],
-  ];
-};
-
-//
-// Update
-//
-
 const updateReady = (
   msg: Msg,
-  model: ReadyModel
+  model: Ready
 ): [Model, Cmd<Msg>, SharedMsg[]] => {
   switch (msg.type) {
     case "RecievedLocation": {
@@ -715,128 +396,11 @@ const updateReady = (
   }
 };
 
-//
-//
-//
-// Ready Page
-//
-//
-//
-
-type ReadyPage =
-  | { type: "Game" }
-  | { type: "Home"; child: Pages.Home.Model }
-  | { type: "Account"; child: Pages.Account.Model }
-  | { type: "Logout"; child: Pages.Logout.Model }
-  | { type: "ProfileDelete"; child: Pages.ProfileDelete.Model }
-  | { type: "ProfileUpdate"; child: Pages.ProfileUpdate.Model }
-  | { type: "ProfileUpdateAvatar"; child: Pages.ProfileUpdateAvatar.Model }
-  | { type: "ProfileUpdateName"; child: Pages.ProfileUpdateName.Model }
-  | {
-      type: "ProfileUpdateUsername";
-      child: Pages.ProfileUpdateUsername.Model;
-    }
-  | { type: "Chat"; child: Pages.Chat.Model }
-  | { type: "ChatNew"; child: Pages.ChatNew.Model };
-
-const initReadyPage = ({
-  profile,
-  location,
-}: {
-  profile: Profile.Profile;
-  location: navigation.Location;
-}): [ReadyPage, Cmd<Msg>] => {
-  const route = pipe(
-    location.pathname,
-    Route.decode,
-    option.fold<Route.Route, Route.Route | { type: "NotFound" }>(
-      () => ({ type: "NotFound" }),
-      (route) => route
-    )
-  );
-
-  const notFound: [ReadyPage, Cmd<Msg>] = [
-    { type: "Home", child: Pages.Home.init },
-    navigation.push(Route.encode({ type: "Home" })),
-  ];
-
-  switch (route.type) {
-    case "Account":
-      return [{ type: "Account", child: Pages.Account.init }, cmd.none];
-
-    case "Home":
-      return [{ type: "Home", child: Pages.Home.init }, cmd.none];
-
-    case "Login":
-      return notFound;
-
-    case "Logout":
-      return [{ type: "Logout", child: Pages.Logout.init }, cmd.none];
-
-    case "NotFound":
-      return notFound;
-
-    case "ProfileCreate":
-      return notFound;
-
-    case "ProfileDelete":
-      return [
-        { type: "ProfileDelete", child: Pages.ProfileDelete.init },
-        cmd.none,
-      ];
-
-    case "ProfileUpdate":
-      return [
-        { type: "ProfileUpdate", child: Pages.ProfileUpdate.init },
-        cmd.none,
-      ];
-
-    case "ProfileUpdateAvatar":
-      return [
-        {
-          type: "ProfileUpdateAvatar",
-          child: Pages.ProfileUpdateAvatar.init(profile),
-        },
-        cmd.none,
-      ];
-
-    case "ProfileUpdateName":
-      return [
-        {
-          type: "ProfileUpdateName",
-          child: Pages.ProfileUpdateName.init(profile),
-        },
-        cmd.none,
-      ];
-
-    case "ProfileUpdateUsername":
-      return [
-        {
-          type: "ProfileUpdateUsername",
-          child: Pages.ProfileUpdateUsername.init(profile),
-        },
-        cmd.none,
-      ];
-
-    case "Game":
-      return [{ type: "Game" }, cmd.none];
-
-    case "Chat":
-      return [{ type: "Chat", child: Pages.Chat.init }, cmd.none];
-
-    case "ChatNew":
-      return [{ type: "ChatNew", child: Pages.ChatNew.init }, cmd.none];
-
-    default:
-      return exhaustive(route);
-  }
-};
-
 const updateReadyPage = (
   { profile }: { profile: Profile.Profile; location: navigation.Location },
   msg: Msg,
-  page: ReadyModel["page"]
-): [ReadyModel["page"], Cmd<Msg>, SharedMsg[]] => {
+  page: Ready["page"]
+): [Ready["page"], Cmd<Msg>, SharedMsg[]] => {
   if (page.type === "Account" && msg.group === "Account") {
     const [child, childCmd] = Pages.Account.update(profile, msg, page.child);
     return [
@@ -965,16 +529,187 @@ const updateReadyPage = (
   return [page, cmd.none, []];
 };
 
+//
+//
+//
+// Subscriptions
+//
+//
+//
+
+export const subscriptions = (model: Model): sub.Sub<Msg> => {
+  switch (model.type) {
+    case "ProfileLoading":
+      return sessionSubcription();
+
+    case "ProfileMissing":
+      return sub.batch([
+        sessionSubcription(),
+        profileSubscription(model.session),
+      ]);
+
+    case "Ready":
+      return sub.batch([
+        sessionSubcription(),
+        profileSubscription(model.profile),
+      ]);
+
+    case "SessionLoading":
+      return sessionSubcription();
+
+    case "SessionMissing":
+      return sessionSubcription();
+  }
+};
+
+const profileSubscription = ({ userId }: { userId: string }): sub.Sub<Msg> => {
+  return pipe(
+    Profile.subscription({ userId }),
+    sub.map((profile) => ({
+      type: "RecievedProfile",
+      profile,
+      group: "Profile",
+    }))
+  );
+};
+
+const sessionSubcription = (): sub.Sub<Msg> => {
+  return pipe(
+    Session.subscription,
+    sub.map((session) => ({
+      type: "RecievedSession",
+      session,
+      group: "Session",
+    }))
+  );
+};
+
+// Location
+
+export const locationToMsg = (location: navigation.Location): Msg => {
+  return { group: "Location", type: "RecievedLocation", location: location };
+};
+
+//
+//
+//
+// View
+//
+//
+//
+
+export const view =
+  (model: Model): react.Html<Msg> =>
+  (dispatch) =>
+    (
+      <View.ThemeProvider>
+        <Box
+          sx={{
+            maxWidth: "sm",
+            marginX: "auto",
+            position: "fixed",
+            width: "100%",
+            height: "100%",
+            display: "flex",
+            flexDirection: "column",
+            left: "50%",
+            top: "50%",
+            transform: "translate(-50%, -50%)",
+          }}
+        >
+          <Box sx={{ width: "100%", flex: 1 }}>{viewMain(model)(dispatch)}</Box>
+
+          {model.type === "Ready" &&
+          model.page.type !== "Game" &&
+          model.game.type === "Opened" ? (
+            <>
+              <Divider />
+              {pipe(
+                Snackbar.view({ sx: { bottom: 80 } }, model.snackbar),
+                react.map(groupTag("Snackbar"))
+              )(dispatch)}
+              {pipe(
+                Game.viewBanner(model.game),
+                react.map(groupTag("Game"))
+              )(dispatch)}
+            </>
+          ) : (
+            <>
+              {pipe(
+                Snackbar.view({}, model.snackbar),
+                react.map(groupTag("Snackbar"))
+              )(dispatch)}
+            </>
+          )}
+        </Box>
+      </View.ThemeProvider>
+    );
+
+const viewMain = (model: Model): react.Html<Msg> => {
+  switch (model.type) {
+    case "ProfileLoading":
+      return viewProfileLoading(model);
+
+    case "ProfileMissing":
+      return viewProfileMissing(model);
+
+    case "SessionLoading":
+      return viewSessionLoading(model);
+
+    case "SessionMissing":
+      return viewSessionMissing(model);
+
+    case "Ready":
+      return viewReady(model);
+  }
+};
+
+const viewProfileLoading = (model: ProfileLoading): react.Html<Msg> => {
+  return () => <View.LoadingPage />;
+};
+
+const viewProfileMissing = (model: ProfileMissing): react.Html<Msg> => {
+  switch (model.page.type) {
+    case "Logout":
+      return pipe(
+        Pages.Logout.view(model.page.child),
+        react.map(groupTag("Logout"))
+      );
+
+    case "ProfileCreate":
+      return pipe(
+        Pages.ProfileCreate.view(model.page.child),
+        react.map(groupTag("ProfileCreate"))
+      );
+
+    default:
+      return exhaustive(model.page);
+  }
+};
+
+const viewSessionLoading = (model: SessionLoadingModel): react.Html<Msg> => {
+  return () => <View.LoadingPage />;
+};
+
+const viewSessionMissing = (model: SessionMissing): react.Html<Msg> => {
+  switch (model.page.type) {
+    case "Login":
+      return pipe(
+        Pages.Login.view(model.page.child),
+        react.map(groupTag("Login"))
+      );
+
+    default:
+      return exhaustive(model.page.type);
+  }
+};
+
 const viewReady =
-  (model: ReadyModel): react.Html<Msg> =>
+  (model: Ready): react.Html<Msg> =>
   (dispatch) =>
     <>{viewReadyPage(model)(dispatch)}</>;
 
-const viewReadyPage = ({
-  page,
-  profile,
-  game,
-}: ReadyModel): react.Html<Msg> => {
+const viewReadyPage = ({ page, profile, game }: Ready): react.Html<Msg> => {
   switch (page.type) {
     case "Account":
       return pipe(
@@ -1040,96 +775,272 @@ const viewReadyPage = ({
 
 //
 //
-// Subscriptions
+//
+//
+// Helpers
+//
+//
 //
 //
 
-export const subscriptions = (model: Model): sub.Sub<Msg> => {
-  switch (model.type) {
-    case "ProfileLoading":
-      return sessionSubcription();
+const initSessionLoading = ({
+  location,
+}: {
+  location: navigation.Location;
+}): [SessionLoadingModel, Cmd<Msg>] => {
+  return [
+    {
+      type: "SessionLoading",
+      location: location,
+      snackbar: Snackbar.init,
+    },
+    pipe(
+      Session.load,
+      task.perform((session) => ({
+        type: "RecievedSession",
+        session,
+        group: "Session",
+      }))
+    ),
+  ];
+};
 
-    case "ProfileMissing":
-      return sub.batch([
-        sessionSubcription(),
-        profileSubscription(model.session),
-      ]);
+const initSessionMissing = (
+  {
+    location,
+    snackbar,
+  }: {
+    snackbar: Snackbar.Model;
+    location: navigation.Location;
+  },
+  outMsgs: SharedMsg[]
+): [SessionMissing, Cmd<Msg>, SharedMsg[]] => {
+  const child = Pages.Login.init;
 
-    case "Ready":
-      return sub.batch([
-        sessionSubcription(),
-        profileSubscription(model.profile),
-      ]);
+  return [
+    {
+      type: "SessionMissing",
+      snackbar,
+      location,
+      page: { type: "Login", child },
+    },
+    navigation.push(Route.encode({ type: "Login" })),
+    outMsgs,
+  ];
+};
 
-    case "SessionLoading":
-      return sessionSubcription();
+const initProfileMissing = ({
+  location,
+  session,
+  snackbar,
+}: {
+  location: navigation.Location;
+  snackbar: Snackbar.Model;
+  session: Session.Session;
+}): [ProfileMissing, Cmd<Msg>, SharedMsg[]] => {
+  const [page, pageCmd] = initProfileMissingPage({ location, session });
+  return [
+    {
+      type: "ProfileMissing",
+      session,
+      snackbar,
+      location,
+      page: page,
+    },
+    pageCmd,
+    [],
+  ];
+};
 
-    case "SessionMissing":
-      return sessionSubcription();
+const initProfileMissingPage = ({
+  location,
+  session,
+}: {
+  session: Session.Session;
+  location: navigation.Location;
+}): [ProfileMissing["page"], Cmd<Msg>] => {
+  const route = pipe(
+    location.pathname,
+    Route.decode,
+    option.fold<Route.Route, Route.Route | { type: "NotFound" }>(
+      () => ({ type: "NotFound" }),
+      (route) => route
+    )
+  );
+
+  const notFound: [ProfileMissing["page"], Cmd<Msg>] = [
+    { type: "ProfileCreate", child: Pages.ProfileCreate.init(session) },
+    navigation.push(Route.encode({ type: "ProfileCreate" })),
+  ];
+
+  switch (route.type) {
+    case "ProfileCreate":
+      return [
+        { type: "ProfileCreate", child: Pages.ProfileCreate.init(session) },
+        cmd.none,
+      ];
+
+    case "Logout":
+      return [{ type: "Logout", child: Pages.Logout.init }, cmd.none];
+
+    default:
+      return notFound;
   }
 };
 
-const profileSubscription = ({ userId }: { userId: string }): sub.Sub<Msg> => {
-  return pipe(
-    Profile.subscription({ userId }),
-    sub.map((profile) => ({
-      type: "RecievedProfile",
-      profile,
-      group: "Profile",
-    }))
+const initReady = ({
+  location,
+  profile,
+  snackbar,
+  session,
+}: {
+  location: navigation.Location;
+  snackbar: Snackbar.Model;
+  profile: Profile.Profile;
+  session: Session.Session;
+}): [Ready, Cmd<Msg>, SharedMsg[]] => {
+  const [page, pageCmd] = initReadyPage({ profile, location });
+  return [
+    {
+      type: "Ready",
+      location: location,
+      snackbar: snackbar,
+      session: session,
+      profile: profile,
+      game: Game.init,
+      page: page,
+    },
+    pageCmd,
+    [Snackbar.EnqueuedSnackbar(`Signed in as ${profile.username}.`)],
+  ];
+};
+
+const initReadyPage = ({
+  profile,
+  location,
+}: {
+  profile: Profile.Profile;
+  location: navigation.Location;
+}): [ReadyPage, Cmd<Msg>] => {
+  const route = pipe(
+    location.pathname,
+    Route.decode,
+    option.fold<Route.Route, Route.Route | { type: "NotFound" }>(
+      () => ({ type: "NotFound" }),
+      (route) => route
+    )
   );
-};
 
-const sessionSubcription = (): sub.Sub<Msg> => {
-  return pipe(
-    Session.subscription,
-    sub.map((session) => ({
-      type: "RecievedSession",
-      session,
-      group: "Session",
-    }))
-  );
-};
+  const notFound: [ReadyPage, Cmd<Msg>] = [
+    { type: "Home", child: Pages.Home.init },
+    navigation.push(Route.encode({ type: "Home" })),
+  ];
 
-const viewProfileLoading = (model: ProfileLoadingModel): react.Html<Msg> => {
-  return () => <View.LoadingPage />;
-};
+  switch (route.type) {
+    case "Account":
+      return [{ type: "Account", child: Pages.Account.init }, cmd.none];
 
-const viewProfileMissing = (model: ProfileMissingModel): react.Html<Msg> => {
-  switch (model.page.type) {
+    case "Home":
+      return [{ type: "Home", child: Pages.Home.init }, cmd.none];
+
+    case "Login":
+      return notFound;
+
     case "Logout":
-      return pipe(
-        Pages.Logout.view(model.page.child),
-        react.map(groupTag("Logout"))
-      );
+      return [{ type: "Logout", child: Pages.Logout.init }, cmd.none];
+
+    case "NotFound":
+      return notFound;
 
     case "ProfileCreate":
-      return pipe(
-        Pages.ProfileCreate.view(model.page.child),
-        react.map(groupTag("ProfileCreate"))
-      );
+      return notFound;
+
+    case "ProfileDelete":
+      return [
+        { type: "ProfileDelete", child: Pages.ProfileDelete.init },
+        cmd.none,
+      ];
+
+    case "ProfileUpdate":
+      return [
+        { type: "ProfileUpdate", child: Pages.ProfileUpdate.init },
+        cmd.none,
+      ];
+
+    case "ProfileUpdateAvatar":
+      return [
+        {
+          type: "ProfileUpdateAvatar",
+          child: Pages.ProfileUpdateAvatar.init(profile),
+        },
+        cmd.none,
+      ];
+
+    case "ProfileUpdateName":
+      return [
+        {
+          type: "ProfileUpdateName",
+          child: Pages.ProfileUpdateName.init(profile),
+        },
+        cmd.none,
+      ];
+
+    case "ProfileUpdateUsername":
+      return [
+        {
+          type: "ProfileUpdateUsername",
+          child: Pages.ProfileUpdateUsername.init(profile),
+        },
+        cmd.none,
+      ];
+
+    case "Game":
+      return [{ type: "Game" }, cmd.none];
+
+    case "Chat":
+      return [{ type: "Chat", child: Pages.Chat.init }, cmd.none];
+
+    case "ChatNew":
+      return [{ type: "ChatNew", child: Pages.ChatNew.init }, cmd.none];
 
     default:
-      return exhaustive(model.page);
+      return exhaustive(route);
   }
 };
 
-const viewSessionLoading = (model: SessionLoadingModel): react.Html<Msg> => {
-  return () => <View.LoadingPage />;
+const initProfileLoading = ({
+  session,
+  location,
+  snackbar,
+}: {
+  session: Session.Session;
+  snackbar: Snackbar.Model;
+  location: navigation.Location;
+}): [ProfileLoading, Cmd<Msg>, SharedMsg[]] => {
+  return [
+    {
+      type: "ProfileLoading",
+      snackbar,
+      location,
+      session,
+    },
+    pipe(Profile.load(session), task.attempt(profileResultToMsg)),
+    [],
+  ];
 };
 
-const viewSessionMissing = (model: SessionMissingModel): react.Html<Msg> => {
-  switch (model.page.type) {
-    case "Login":
-      return pipe(
-        Pages.Login.view(model.page.child),
-        react.map(groupTag("Login"))
-      );
-
-    default:
-      return exhaustive(model.page.type);
-  }
-};
+const profileResultToMsg = either.fold<Error, Profile.Profile, Msg>(
+  (_error) => ({
+    group: "Profile",
+    type: "RecievedProfile",
+    profile: option.none,
+  }),
+  (profile) => ({
+    group: "Profile",
+    type: "RecievedProfile",
+    profile: option.some(profile),
+  })
+);
 
 //
 //
