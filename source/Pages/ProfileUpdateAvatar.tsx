@@ -1,14 +1,13 @@
-import { Avatar, Box, MenuItem, Select, TextField } from "@mui/material";
+import { either } from "fp-ts";
 import { pipe } from "fp-ts/lib/function";
-import { cmd, react } from "Framework";
-import * as Navigation from "Navigation";
+import { cmd } from "Framework";
 import { attempt, perform } from "Framework/Task";
-import * as ProfileAvatar from "ProfileAvatar";
+import * as Navigation from "Navigation";
 import * as Profile from "Profile";
+import * as ProfileAvatar from "ProfileAvatar";
 import * as React from "react";
 import * as Snackbar from "Snackbar";
 import * as View from "View";
-import { either } from "fp-ts";
 
 //
 //
@@ -133,7 +132,7 @@ export const update = (
 //
 //
 
-export const view = (model: Model): react.Html<Msg> => {
+export const view = (model: Model): View.View<Msg> => {
   return (dispatch) => (
     <View.Page>
       <View.Header
@@ -156,7 +155,7 @@ export const view = (model: Model): react.Html<Msg> => {
         }
       />
 
-      <Avatar
+      <View.Avatar
         src={ProfileAvatar.toUrl(model)}
         sx={{
           marginX: "auto",
@@ -171,11 +170,11 @@ export const view = (model: Model): react.Html<Msg> => {
         title="Updating avatar..."
       />
 
-      <Box sx={{ padding: 2 }}>
+      <View.Box sx={{ padding: 2 }}>
         <View.Typography variant="subtitle1" sx={{ marginBottom: 1 }}>
           Style
         </View.Typography>
-        <Select
+        <View.Select
           sx={{ marginBottom: 2 }}
           open={model.status === "StyleSelectOpened"}
           fullWidth
@@ -183,14 +182,14 @@ export const view = (model: Model): react.Html<Msg> => {
           onOpen={() => dispatch({ type: "StyleSelectOpened" })}
           onClose={() => dispatch({ type: "StyleSelectClosed" })}
           renderValue={(style) => (
-            <Box
+            <View.Box
               sx={{
                 display: "flex",
                 flexDirection: "row",
                 alignItems: "center",
               }}
             >
-              <Avatar
+              <View.Avatar
                 sx={{ marginRight: 1, width: 24, height: 24 }}
                 src={ProfileAvatar.toUrl({
                   style,
@@ -200,11 +199,11 @@ export const view = (model: Model): react.Html<Msg> => {
               <View.Typography>
                 {ProfileAvatar.formatStyle(style)}
               </View.Typography>
-            </Box>
+            </View.Box>
           )}
         >
           {ProfileAvatar.ALL_STYLES.map((style) => (
-            <MenuItem
+            <View.MenuItem
               key={style}
               value={style}
               sx={{
@@ -219,7 +218,7 @@ export const view = (model: Model): react.Html<Msg> => {
                 })
               }
             >
-              <Avatar
+              <View.Avatar
                 sx={{ marginRight: 1 }}
                 src={ProfileAvatar.toUrl({
                   style,
@@ -229,15 +228,15 @@ export const view = (model: Model): react.Html<Msg> => {
               <View.Typography>
                 {ProfileAvatar.formatStyle(style)}
               </View.Typography>
-            </MenuItem>
+            </View.MenuItem>
           ))}
-        </Select>
+        </View.Select>
 
         <View.Typography variant="subtitle1" sx={{ marginBottom: 1 }}>
           Seed
         </View.Typography>
 
-        <TextField
+        <View.TextField
           fullWidth
           value={model.seed}
           onChange={(event) =>
@@ -258,7 +257,7 @@ export const view = (model: Model): react.Html<Msg> => {
         >
           Random Seed
         </View.Button>
-      </Box>
+      </View.Box>
     </View.Page>
   );
 };

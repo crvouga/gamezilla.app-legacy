@@ -1,4 +1,6 @@
 export * as Account from "./Account";
+export * as Chat from "./Chat";
+export * as ChatNew from "./ChatNew";
 export * as Home from "./Home";
 export * as Login from "./Login";
 export * as Logout from "./Logout";
@@ -8,5 +10,3 @@ export * as ProfileUpdate from "./ProfileUpdate";
 export * as ProfileUpdateAvatar from "./ProfileUpdateAvatar";
 export * as ProfileUpdateName from "./ProfileUpdateName";
 export * as ProfileUpdateUsername from "./ProfileUpdateUsername";
-export * as Chat from "./Chat";
-export * as ChatNew from "./ChatNew";

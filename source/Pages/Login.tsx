@@ -1,10 +1,10 @@
 import { either } from "fp-ts";
 import { pipe } from "fp-ts/lib/function";
-import { cmd, react } from "Framework";
+import { cmd } from "Framework";
 import { attempt } from "Framework/Task";
 import React from "react";
-import * as Session from "../Session";
-import * as View from "../View";
+import * as Session from "Session";
+import * as View from "View";
 
 //
 //
@@ -70,7 +70,7 @@ const loginCmd = (loginMethod: Session.LoginMethod) => {
 //
 
 export const view =
-  (model: Model): react.Html<Msg> =>
+  (model: Model): View.View<Msg> =>
   (dispatch) =>
     (
       <View.Page

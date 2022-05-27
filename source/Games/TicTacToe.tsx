@@ -1,9 +1,8 @@
-import { Button } from "@mui/material";
-import { cmd, react } from "Framework";
-import * as Navigation from "Navigation";
+import { cmd } from "Framework";
 import { Cmd } from "Framework/Cmd";
+import * as Navigation from "Navigation";
 import React from "react";
-import * as View from "../View";
+import * as View from "View";
 
 //
 //
@@ -315,7 +314,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
 //
 
 export const view =
-  (model: Model): react.Html<Msg> =>
+  (model: Model): View.View<Msg> =>
   (dispatch) =>
     (
       <View.Page>
@@ -333,12 +332,12 @@ export const view =
             dispatch({ type: "UserClickedBoard", position })
           }
         />
-        <Button
+        <View.Button
           size="large"
           fullWidth
           onClick={() => dispatch({ type: "UserClickedRestartButton" })}
         >
           Restart
-        </Button>
+        </View.Button>
       </View.Page>
     );

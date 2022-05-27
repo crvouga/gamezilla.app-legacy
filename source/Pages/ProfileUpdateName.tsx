@@ -1,7 +1,6 @@
-import { Box, TextField } from "@mui/material";
 import { either } from "fp-ts";
 import { pipe } from "fp-ts/lib/function";
-import { cmd, react } from "Framework";
+import { cmd } from "Framework";
 import { attempt } from "Framework/Task";
 import * as Navigation from "Navigation";
 import * as Profile from "Profile";
@@ -109,7 +108,7 @@ const updateProfileNameCmd = ({
 //
 
 export const view =
-  (model: Model): react.Html<Msg> =>
+  (model: Model): View.View<Msg> =>
   (dispatch) =>
     (
       <View.Page>
@@ -138,8 +137,8 @@ export const view =
           title="Updating name..."
         />
 
-        <Box sx={{ padding: 2 }}>
-          <TextField
+        <View.Box sx={{ padding: 2 }}>
+          <View.TextField
             value={model.name}
             sx={{ marginBottom: 4 }}
             label="Name"
@@ -151,6 +150,6 @@ export const view =
               })
             }
           />
-        </Box>
+        </View.Box>
       </View.Page>
     );

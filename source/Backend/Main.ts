@@ -1,6 +1,6 @@
-import { Client, Room, Server } from "colyseus";
+import { Server } from "colyseus";
 import express from "express";
-import http, { createServer } from "http";
+import { createServer } from "http";
 import { AppRoom } from "./Room";
 
 //

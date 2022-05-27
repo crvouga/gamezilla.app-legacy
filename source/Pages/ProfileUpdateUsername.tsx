@@ -1,13 +1,12 @@
-import { Box, TextField } from "@mui/material";
-import { option, either } from "fp-ts";
+import { either } from "fp-ts";
 import { pipe } from "fp-ts/lib/function";
-import { cmd, react } from "Framework";
-import * as Navigation from "Navigation";
+import { cmd } from "Framework";
 import { attempt } from "Framework/Task";
+import * as Navigation from "Navigation";
 import * as Profile from "Profile";
 import * as React from "react";
-import * as View from "View";
 import * as Snackbar from "Snackbar";
+import * as View from "View";
 
 //
 //
@@ -97,7 +96,7 @@ const updateUsernameCmd = (userId: string, model: Model) =>
 //
 
 export const view =
-  (model: Model): react.Html<Msg> =>
+  (model: Model): View.View<Msg> =>
   (dispatch) =>
     (
       <View.Page>
@@ -126,8 +125,8 @@ export const view =
           title="Updating username..."
         />
 
-        <Box sx={{ p: 2, width: "100%" }}>
-          <TextField
+        <View.Box sx={{ p: 2, width: "100%" }}>
+          <View.TextField
             value={model.username}
             sx={{ marginBottom: 4 }}
             label="Username"
@@ -139,6 +138,6 @@ export const view =
               })
             }
           />
-        </Box>
+        </View.Box>
       </View.Page>
     );

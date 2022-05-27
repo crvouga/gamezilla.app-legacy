@@ -4,16 +4,11 @@
 import * as cmd from "./Cmd";
 import * as html from "./Html";
 import * as platform from "./Platform";
-import * as react from "./React";
 import * as sub from "./Sub";
 import * as task from "./Task";
 import * as time from "./Time";
 
 export {
-  /**
-   * @category instances
-   * @since 0.5.0
-   */
   cmd,
   /**
    * @category instances
@@ -25,11 +20,6 @@ export {
    * @since 0.5.0
    */
   platform,
-  /**
-   * @category instances
-   * @since 0.5.0
-   */
-  react,
   /**
    * @category instances
    * @since 0.5.0

@@ -1,20 +1,10 @@
-import { Chat as ChatIcon } from "@mui/icons-material";
-import {
-  Avatar,
-  Box,
-  ButtonBase,
-  IconButton,
-  Toolbar,
-  Typography,
-  useTheme,
-} from "@mui/material";
-import { cmd, react } from "Framework";
-import * as Navigation from "Navigation";
+import { cmd } from "Framework";
 import * as Game from "Game";
+import * as Navigation from "Navigation";
 import React from "react";
 import * as Route from "Route";
-import * as Games from "../Games";
-import * as View from "../View";
+import * as View from "View";
+import * as Games from "Games";
 
 //
 //
@@ -79,29 +69,29 @@ export const view =
   (
     { profile, game }: { profile: { avatarUrl: string }; game: Game.Model },
     _model: Model
-  ): react.Html<Msg> =>
+  ): View.View<Msg> =>
   (dispatch) =>
     (
       <View.Page>
-        <Toolbar>
-          <Typography sx={{ flex: 1 }} variant="h6">
+        <View.Toolbar>
+          <View.Typography sx={{ flex: 1 }} variant="h6">
             Gamezilla
-          </Typography>
+          </View.Typography>
 
-          <IconButton
+          <View.IconButton
             sx={{ marginRight: 1 }}
             onClick={() => dispatch({ type: "UserClickedChatButton" })}
           >
-            <ChatIcon />
-          </IconButton>
+            <View.Icons.Chat />
+          </View.IconButton>
 
-          <Avatar
+          <View.Avatar
             onClick={() => dispatch({ type: "UserClickedAvatar" })}
             src={profile.avatarUrl}
           />
-        </Toolbar>
+        </View.Toolbar>
 
-        <Box
+        <View.Box
           sx={{
             display: "grid",
             gridTemplateColumns: "repeat(3, 1fr)",
@@ -137,7 +127,7 @@ export const view =
             disabled={!canOpen(game, "Chess")}
             onClick={() => dispatch({ type: "UserClickedGame", game: "Chess" })}
           />
-        </Box>
+        </View.Box>
       </View.Page>
     );
 
@@ -154,7 +144,7 @@ const GameCard = ({
 }) => {
   // const theme = useTheme();
   return (
-    <ButtonBase
+    <View.ButtonBase
       disabled={disabled}
       sx={{
         position: "relative",
@@ -167,7 +157,7 @@ const GameCard = ({
     >
       {icon}
 
-      <Box
+      <View.Box
         sx={{
           position: "absolute",
           top: 0,
@@ -179,7 +169,7 @@ const GameCard = ({
           justifyContent: "flex-end",
         }}
       >
-        <Box
+        <View.Box
           sx={{
             width: "100%",
             padding: 1,
@@ -187,11 +177,11 @@ const GameCard = ({
             background: `linear-gradient(transparent, rgba(0, 0, 0, 0.6))`,
           }}
         >
-          <Typography align="left" fontWeight={800}>
+          <View.Typography align="left" fontWeight={800}>
             {label}
-          </Typography>
-        </Box>
-      </Box>
-    </ButtonBase>
+          </View.Typography>
+        </View.Box>
+      </View.Box>
+    </View.ButtonBase>
   );
 };

@@ -7,11 +7,11 @@
  */
 
 import { Either } from "fp-ts/lib/Either";
+import { pipe } from "fp-ts/lib/function";
 import * as Option from "fp-ts/lib/Option";
 import * as Task from "fp-ts/lib/Task";
 import * as Rx from "rxjs";
 import { Cmd } from "./Cmd";
-import { pipe } from "fp-ts/lib/function";
 
 /**
  * Executes a `Task` as a `Cmd` mapping the result to a `Msg`.

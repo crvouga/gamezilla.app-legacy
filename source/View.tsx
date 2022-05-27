@@ -1,35 +1,61 @@
-import { ChevronLeft, ChevronRight } from "@mui/icons-material";
-import { LoadingButton, LoadingButtonProps } from "@mui/lab";
-import {
-  DialogTitle,
-  DialogActions,
-  Backdrop,
-  Box,
-  BoxProps,
-  CircularProgress,
-  createTheme,
-  CssBaseline,
-  Dialog,
-  IconButton,
-  ListItemButton,
-  ListItemSecondaryAction,
-  ListItemText,
-  responsiveFontSizes,
-  ThemeProvider as MuiThemeProvider,
-  Toolbar,
-  Typography as MuiTypography,
-  TypographyProps,
-  useTheme,
-} from "@mui/material";
+import * as MuiIcons from "@mui/icons-material";
+import * as MuiLab from "@mui/lab";
+import * as Mui from "@mui/material";
 import { green } from "@mui/material/colors";
+import { html, platform } from "Framework";
 import * as React from "react";
+import { createRoot } from "react-dom/client";
 
 //
-// theme
+//
+//
+// Model
+//
+//
 //
 
-const theme = responsiveFontSizes(
-  createTheme({
+type Dom = React.ReactElement<unknown>;
+
+export type View<Msg> = (dispatch: platform.Dispatch<Msg>) => Dom;
+
+export const map = <A, Msg>(
+  f: (a: A) => Msg
+): ((ha: html.Html<Dom, A>) => html.Html<Dom, Msg>) => {
+  return html.map(f);
+};
+
+//
+//
+//
+// Run
+//
+//
+//
+
+export const run = <Model, Msg>(program: html.Program<Model, Msg, Dom>) => {
+  const rootElement = document.getElementById("root");
+
+  if (!rootElement) {
+    throw new Error("Failed to get root dom node");
+  }
+
+  const root = createRoot(rootElement);
+
+  html.run(program, (dom) => {
+    root.render(dom);
+  });
+};
+
+//
+//
+//
+// Theme
+//
+//
+//
+
+const theme = Mui.responsiveFontSizes(
+  Mui.createTheme({
     palette: {
       mode: "dark",
       primary: green,
@@ -53,16 +79,68 @@ const theme = responsiveFontSizes(
 
 export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   return (
-    <MuiThemeProvider theme={theme}>
-      <CssBaseline />
+    <Mui.ThemeProvider theme={theme}>
+      <Mui.CssBaseline />
       {children}
-    </MuiThemeProvider>
+    </Mui.ThemeProvider>
   );
 };
+
+export const useTheme = Mui.useTheme;
 
 //
 //
 //
+// Components
+//
+//
+//
+
+export const Icons = MuiIcons;
+
+export const TextField = Mui.TextField;
+
+export const Snackbar = Mui.Snackbar;
+
+export const Box = Mui.Box;
+
+export const Divider = Mui.Divider;
+
+export const ListItemButton = Mui.ListItemButton;
+
+export const ListItemText = Mui.ListItemText;
+
+export const ListItemIcon = Mui.ListItemIcon;
+
+export const ListItemSecondaryAction = Mui.ListItemSecondaryAction;
+
+export const Button = MuiLab.LoadingButton;
+
+export const Typography = Mui.Typography;
+
+export const Dialog = Mui.Dialog;
+
+export const DialogTitle = Mui.DialogTitle;
+
+export const DialogActions = Mui.DialogActions;
+
+export const CircularProgress = Mui.CircularProgress;
+
+export const Avatar = Mui.Avatar;
+
+export const MenuItem = Mui.MenuItem;
+
+export const Autocomplete = Mui.Autocomplete;
+
+export const Select = Mui.Select;
+
+export const List = Mui.List;
+
+export const ButtonBase = Mui.ButtonBase;
+
+export const Toolbar = Mui.Toolbar;
+
+export const IconButton = Mui.IconButton;
 
 export const Field = ({
   label,
@@ -84,7 +162,7 @@ export const Field = ({
       secondary={value}
     />
     <ListItemSecondaryAction>
-      <ChevronRight />
+      <Icons.ChevronRight />
     </ListItemSecondaryAction>
   </ListItemButton>
 );
@@ -99,7 +177,7 @@ export const Header = ({
   right?: React.ReactNode;
 }) => {
   return (
-    <Toolbar>
+    <Mui.Toolbar>
       <Box
         sx={{
           flex: 1,
@@ -125,33 +203,19 @@ export const Header = ({
       >
         {right}
       </Box>
-    </Toolbar>
+    </Mui.Toolbar>
   );
 };
 
 export const HeaderBackButton = ({ onClick }: { onClick: () => void }) => {
   return (
-    <IconButton edge="start" onClick={onClick}>
-      <ChevronLeft />
-    </IconButton>
+    <Mui.IconButton edge="start" onClick={onClick}>
+      <Icons.ChevronLeft />
+    </Mui.IconButton>
   );
 };
 
-export const Button = (props: LoadingButtonProps) => {
-  return <LoadingButton {...props} />;
-};
-
-export const Typography = (props: TypographyProps) => {
-  return <MuiTypography {...props} />;
-};
-
-export const Page = ({
-  children,
-  sx,
-}: {
-  children: React.ReactNode;
-  sx?: BoxProps["sx"];
-}) => {
+export const Page = ({ children, sx }: Mui.BoxProps) => {
   const theme = useTheme();
   return (
     <Box
@@ -178,9 +242,9 @@ export const LoadingPage = () => {
 
 export const LoadingBackdrop = ({ open }: { open?: boolean }) => {
   return (
-    <Backdrop sx={{ zIndex: 10 }} open={Boolean(open)}>
+    <Mui.Backdrop sx={{ zIndex: 10 }} open={Boolean(open)}>
       <CircularProgress />
-    </Backdrop>
+    </Mui.Backdrop>
   );
 };
 

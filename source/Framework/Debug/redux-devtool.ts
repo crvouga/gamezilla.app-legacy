@@ -8,9 +8,9 @@
 
 import { sequenceT } from "fp-ts/lib/Apply";
 import * as E from "fp-ts/lib/Either";
+import { pipe } from "fp-ts/lib/function";
 import * as IO_ from "fp-ts/lib/IO";
 import * as O from "fp-ts/lib/Option";
-import { pipe } from "fp-ts/lib/function";
 import { Dispatch } from "../Platform";
 import { Debug, Debugger, DebuggerR, Global, MsgWithDebug } from "./commons";
 

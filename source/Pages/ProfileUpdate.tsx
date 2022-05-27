@@ -1,5 +1,4 @@
-import { Avatar, Button, List } from "@mui/material";
-import { cmd, react } from "Framework";
+import { cmd } from "Framework";
 import * as Navigation from "Navigation";
 import * as React from "react";
 import * as Route from "Route";
@@ -86,7 +85,7 @@ export const update = (
 type Profile = { username: string; name: string; avatarUrl: string };
 
 export const view =
-  (profile: Profile, _model: Model): react.Html<Msg> =>
+  (profile: Profile, _model: Model): View.View<Msg> =>
   (dispatch) =>
     (
       <View.Page>
@@ -99,7 +98,7 @@ export const view =
           title="Update Profile"
         />
 
-        <Avatar
+        <View.Avatar
           src={profile.avatarUrl}
           sx={{
             marginX: "auto",
@@ -110,14 +109,14 @@ export const view =
           onClick={() => dispatch({ type: "UserClickedAvatar" })}
         />
 
-        <Button
+        <View.Button
           sx={{ display: "block", marginX: "auto", marginBottom: 2 }}
           onClick={() => dispatch({ type: "UserClickedChangeAvatarButton" })}
         >
           Change Avatar
-        </Button>
+        </View.Button>
 
-        <List>
+        <View.List>
           <View.Field
             label="Username"
             value={profile.username}
@@ -129,6 +128,6 @@ export const view =
             value={profile.name}
             onClick={() => dispatch({ type: "UserClickedNameLink" })}
           />
-        </List>
+        </View.List>
       </View.Page>
     );
