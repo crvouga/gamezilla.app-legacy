@@ -1,5 +1,6 @@
 import { Button } from "@mui/material";
-import { cmd, navigation, react } from "Framework";
+import { cmd, react } from "Framework";
+import * as Navigation from "Navigation";
 import { Cmd } from "Framework/Cmd";
 import React from "react";
 import * as View from "../View";
@@ -283,7 +284,7 @@ export type Msg =
 export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
   switch (msg.type) {
     case "UserClickedBackButton":
-      return [model, navigation.back()];
+      return [model, Navigation.back()];
 
     case "UserClickedRestartButton":
       return [

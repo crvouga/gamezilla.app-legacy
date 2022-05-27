@@ -1,6 +1,7 @@
 import * as View from "View";
 import * as React from "react";
-import { navigation, react } from "Framework";
+import { react } from "Framework";
+import * as Navigation from "Navigation";
 import { Cmd } from "Framework/Cmd";
 
 //
@@ -28,7 +29,7 @@ export type Msg = { type: "UserClickedBackButton" };
 export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
   switch (msg.type) {
     case "UserClickedBackButton":
-      return [model, navigation.back()];
+      return [model, Navigation.back()];
   }
 };
 //

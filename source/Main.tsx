@@ -1,10 +1,11 @@
 import { Box, Divider } from "@mui/material";
 import { either, option } from "fp-ts";
 import { pipe } from "fp-ts/lib/function";
-import { cmd, navigation, react, sub, task } from "Framework";
+import { cmd, react, sub, task } from "Framework";
 import { Cmd } from "Framework/Cmd";
-import { programWithDebugger } from "Framework/Debug/Navigation";
+import { programWithDebuggerWithFlags } from "Framework/Debug/Html";
 import * as Game from "Game";
+import * as Navigation from "Navigation";
 import * as Pages from "Pages";
 import * as Profile from "Profile";
 import React from "react";
@@ -32,27 +33,27 @@ type Model =
 
 type SessionLoadingModel = {
   type: "SessionLoading";
-  location: navigation.Location;
+  location: Navigation.Location;
   snackbar: Snackbar.Model;
 };
 
 type SessionMissing = {
   type: "SessionMissing";
-  location: navigation.Location;
+  location: Navigation.Location;
   snackbar: Snackbar.Model;
   page: { type: "Login"; child: Pages.Login.Model };
 };
 
 type ProfileLoading = {
   type: "ProfileLoading";
-  location: navigation.Location;
+  location: Navigation.Location;
   snackbar: Snackbar.Model;
   session: Session.Session;
 };
 
 type ProfileMissing = {
   type: "ProfileMissing";
-  location: navigation.Location;
+  location: Navigation.Location;
   snackbar: Snackbar.Model;
   session: Session.Session;
   page:
@@ -62,7 +63,7 @@ type ProfileMissing = {
 
 type Ready = {
   type: "Ready";
-  location: navigation.Location;
+  location: Navigation.Location;
   snackbar: Snackbar.Model;
   profile: Profile.Profile;
   session: Session.Session;
@@ -94,8 +95,12 @@ type ReadyPage =
 //
 //
 
-export const init = (location: navigation.Location): [Model, Cmd<Msg>] => {
-  return initSessionLoading({ location });
+type Flags = {
+  location: Navigation.Location;
+};
+
+export const init = (flags: Flags): [Model, Cmd<Msg>] => {
+  return initSessionLoading(flags);
 };
 
 //
@@ -111,7 +116,7 @@ export type Msg = MainMsg | SharedMsg | PageMsg;
 type MainMsg =
   | {
       type: "RecievedLocation";
-      location: navigation.Location;
+      location: Navigation.Location;
       group: "Location";
     }
   | {
@@ -398,7 +403,7 @@ const updateReady = (
 };
 
 const updateReadyPage = (
-  { profile }: { profile: Profile.Profile; location: navigation.Location },
+  { profile }: { profile: Profile.Profile; location: Navigation.Location },
   msg: Msg,
   page: Ready["page"]
 ): [Ready["page"], Cmd<Msg>, SharedMsg[]] => {
@@ -541,27 +546,42 @@ const updateReadyPage = (
 export const subscriptions = (model: Model): sub.Sub<Msg> => {
   switch (model.type) {
     case "ProfileLoading":
-      return sessionSubcription();
+      return sub.batch([navigationSubscrption, sessionSubcription()]);
 
     case "ProfileMissing":
       return sub.batch([
+        navigationSubscrption,
         sessionSubcription(),
         profileSubscription(model.session),
       ]);
 
     case "Ready":
       return sub.batch([
+        navigationSubscrption,
         sessionSubcription(),
         profileSubscription(model.profile),
       ]);
 
     case "SessionLoading":
-      return sessionSubcription();
+      return sub.batch([navigationSubscrption, sessionSubcription()]);
 
     case "SessionMissing":
-      return sessionSubcription();
+      return sub.batch([navigationSubscrption, sessionSubcription()]);
   }
 };
+
+const navigationSubscrption: sub.Sub<Msg> = pipe(
+  Navigation.subscription,
+  sub.map((x) => {
+    console.log(x);
+    return x;
+  }),
+  sub.map((location) => ({
+    type: "RecievedLocation",
+    location,
+    group: "Location",
+  }))
+);
 
 const profileSubscription = ({ userId }: { userId: string }): sub.Sub<Msg> => {
   return pipe(
@@ -587,7 +607,7 @@ const sessionSubcription = (): sub.Sub<Msg> => {
 
 // Location
 
-export const locationToMsg = (location: navigation.Location): Msg => {
+export const locationToMsg = (location: Navigation.Location): Msg => {
   return { group: "Location", type: "RecievedLocation", location: location };
 };
 
@@ -787,7 +807,7 @@ const viewReadyPage = ({ page, profile, game }: Ready): react.Html<Msg> => {
 const initSessionLoading = ({
   location,
 }: {
-  location: navigation.Location;
+  location: Navigation.Location;
 }): [SessionLoadingModel, Cmd<Msg>] => {
   return [
     {
@@ -812,7 +832,7 @@ const initSessionMissing = (
     snackbar,
   }: {
     snackbar: Snackbar.Model;
-    location: navigation.Location;
+    location: Navigation.Location;
   },
   outMsgs: SharedMsg[]
 ): [SessionMissing, Cmd<Msg>, SharedMsg[]] => {
@@ -825,7 +845,7 @@ const initSessionMissing = (
       location,
       page: { type: "Login", child },
     },
-    navigation.push(Route.encode({ type: "Login" })),
+    Navigation.push(Route.encode({ type: "Login" })),
     outMsgs,
   ];
 };
@@ -835,7 +855,7 @@ const initProfileMissing = ({
   session,
   snackbar,
 }: {
-  location: navigation.Location;
+  location: Navigation.Location;
   snackbar: Snackbar.Model;
   session: Session.Session;
 }): [ProfileMissing, Cmd<Msg>, SharedMsg[]] => {
@@ -858,7 +878,7 @@ const initProfileMissingPage = ({
   session,
 }: {
   session: Session.Session;
-  location: navigation.Location;
+  location: Navigation.Location;
 }): [ProfileMissing["page"], Cmd<Msg>] => {
   const route = pipe(
     location.pathname,
@@ -871,7 +891,7 @@ const initProfileMissingPage = ({
 
   const notFound: [ProfileMissing["page"], Cmd<Msg>] = [
     { type: "ProfileCreate", child: Pages.ProfileCreate.init(session) },
-    navigation.push(Route.encode({ type: "ProfileCreate" })),
+    Navigation.push(Route.encode({ type: "ProfileCreate" })),
   ];
 
   switch (route.type) {
@@ -895,7 +915,7 @@ const initReady = ({
   snackbar,
   session,
 }: {
-  location: navigation.Location;
+  location: Navigation.Location;
   snackbar: Snackbar.Model;
   profile: Profile.Profile;
   session: Session.Session;
@@ -921,7 +941,7 @@ const initReadyPage = ({
   location,
 }: {
   profile: Profile.Profile;
-  location: navigation.Location;
+  location: Navigation.Location;
 }): [ReadyPage, Cmd<Msg>] => {
   const route = pipe(
     location.pathname,
@@ -934,7 +954,7 @@ const initReadyPage = ({
 
   const notFound: [ReadyPage, Cmd<Msg>] = [
     { type: "Home", child: Pages.Home.init },
-    navigation.push(Route.encode({ type: "Home" })),
+    Navigation.push(Route.encode({ type: "Home" })),
   ];
 
   switch (route.type) {
@@ -1016,7 +1036,7 @@ const initProfileLoading = ({
 }: {
   session: Session.Session;
   snackbar: Snackbar.Model;
-  location: navigation.Location;
+  location: Navigation.Location;
 }): [ProfileLoading, Cmd<Msg>, SharedMsg[]] => {
   return [
     {
@@ -1051,13 +1071,7 @@ const profileResultToMsg = either.fold<Error, Profile.Profile, Msg>(
 //
 //
 
-const program = programWithDebugger(
-  locationToMsg,
-  init,
-  update,
-  view,
-  subscriptions
-);
+const program = programWithDebuggerWithFlags(init, update, view, subscriptions);
 
 const rootElement = document.getElementById("root");
 
@@ -1067,6 +1081,10 @@ if (!rootElement) {
 
 const root = createRoot(rootElement);
 
-react.run(program, (dom) => {
+const flags: Flags = {
+  location: Navigation.getLocation(),
+};
+
+react.run(program(flags), (dom) => {
   root.render(dom);
 });

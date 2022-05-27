@@ -1,6 +1,7 @@
 import { Avatar, Box, MenuItem, Select, TextField } from "@mui/material";
 import { pipe } from "fp-ts/lib/function";
-import { cmd, navigation, react } from "Framework";
+import { cmd, react } from "Framework";
+import * as Navigation from "Navigation";
 import { attempt, perform } from "Framework/Task";
 import * as ProfileAvatar from "ProfileAvatar";
 import * as Profile from "Profile";
@@ -64,7 +65,7 @@ export const update = (
 ): [Model, cmd.Cmd<Msg>, OutMsg[]] => {
   switch (msg.type) {
     case "UserClickedCancelButton":
-      return [model, navigation.back(), []];
+      return [model, Navigation.back(), []];
 
     case "StyleSelectClosed":
       return [{ ...model, status: "Idle" }, cmd.none, []];
@@ -118,7 +119,7 @@ export const update = (
     case "AvatarUpdateSucceeded":
       return [
         { ...model, status: "Idle" },
-        navigation.back(),
+        Navigation.back(),
         [Snackbar.EnqueuedSnackbar("Updated avatar.")],
       ];
   }

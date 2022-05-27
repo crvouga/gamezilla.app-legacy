@@ -1,6 +1,7 @@
 import { either } from "fp-ts";
 import { pipe } from "fp-ts/lib/function";
-import { cmd, navigation, react } from "Framework";
+import { cmd, react } from "Framework";
+import * as Navigation from "Navigation";
 import { attempt } from "Framework/Task";
 import * as Profile from "Profile";
 import React from "react";
@@ -40,7 +41,7 @@ export const update = (
 ): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "UserClickedCancelButton":
-      return [model, navigation.back()];
+      return [model, Navigation.back()];
 
     case "UserClickedDeleteButton":
       return [
@@ -59,13 +60,13 @@ export const update = (
       ];
 
     case "UserClickedBackdrop":
-      return [model, navigation.back()];
+      return [model, Navigation.back()];
 
     case "DeleteProfileFailed":
       return [{ type: "Idle" }, cmd.none];
 
     case "DeleteProfileSucceeded":
-      return [model, navigation.reload()];
+      return [model, Navigation.reload()];
   }
 };
 

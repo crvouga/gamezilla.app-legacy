@@ -1,13 +1,13 @@
-import { LoadingButton } from "@mui/lab";
 import { Box, TextField } from "@mui/material";
-import * as React from "react";
-import { cmd, navigation, react } from "Framework";
+import { either } from "fp-ts";
+import { pipe } from "fp-ts/lib/function";
+import { cmd, react } from "Framework";
+import { attempt } from "Framework/Task";
+import * as Navigation from "Navigation";
 import * as Profile from "Profile";
+import * as React from "react";
 import * as Snackbar from "Snackbar";
 import * as View from "View";
-import { pipe } from "fp-ts/lib/function";
-import { attempt } from "Framework/Task";
-import { either } from "fp-ts";
 
 //
 //
@@ -62,7 +62,7 @@ export const update = (
     case "UpdateProfileNameSucceeded":
       return [
         { ...model, status: "Idle" },
-        navigation.back(),
+        Navigation.back(),
         [Snackbar.EnqueuedSnackbar("Updated name.")],
       ];
 
@@ -70,7 +70,7 @@ export const update = (
       return [{ ...model, status: "Idle" }, cmd.none, []];
 
     case "UserClickedCancelButton":
-      return [model, navigation.back(), []];
+      return [model, Navigation.back(), []];
   }
 };
 
