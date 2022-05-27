@@ -3,7 +3,6 @@ import * as MuiLab from "@mui/lab";
 import * as Mui from "@mui/material";
 import { green } from "@mui/material/colors";
 import { html, platform } from "Framework";
-import * as React from "react";
 import { createRoot } from "react-dom/client";
 
 //

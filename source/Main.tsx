@@ -7,7 +7,6 @@ import * as Game from "Game";
 import * as Navigation from "Navigation";
 import * as Pages from "Pages";
 import * as Profile from "Profile";
-import React from "react";
 import * as Route from "Route";
 import * as Session from "Session";
 import * as Snackbar from "Snackbar";

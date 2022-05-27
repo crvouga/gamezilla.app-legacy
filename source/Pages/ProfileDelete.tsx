@@ -4,7 +4,6 @@ import { cmd } from "Framework";
 import { attempt } from "Framework/Task";
 import * as Navigation from "Navigation";
 import * as Profile from "Profile";
-import React from "react";
 import * as View from "View";
 
 //

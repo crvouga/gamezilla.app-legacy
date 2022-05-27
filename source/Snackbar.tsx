@@ -3,7 +3,6 @@ import { pipe } from "fp-ts/lib/function";
 import { cmd } from "Framework";
 import { Cmd } from "Framework/Cmd";
 import { perform } from "Framework/Task";
-import React from "react";
 import * as View from "View";
 
 //
