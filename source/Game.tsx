@@ -1,4 +1,3 @@
-import { Close } from "@mui/icons-material";
 import { pipe } from "fp-ts/lib/function";
 import { cmd } from "Framework";
 import { Cmd } from "Framework/Cmd";
@@ -259,7 +258,7 @@ export const viewBanner =
               })
             }
           >
-            <Close />
+            <View.Icons.Close />
           </View.ButtonBase>
         </View.Box>
 
