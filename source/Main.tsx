@@ -112,9 +112,7 @@ export const init = (flags: Flags): [Model, Cmd<Msg>] => {
 //
 //
 
-export type Msg = MainMsg | SharedMsg | PageMsg;
-
-type MainMsg =
+export type Msg =
   | {
       type: "RecievedLocation";
       location: Navigation.Location;
@@ -129,9 +127,11 @@ type MainMsg =
       type: "RecievedProfile";
       profile: option.Option<Profile.Profile>;
       group: "Profile";
-    };
+    }
+  | OutMsg
+  | PageMsg;
 
-type SharedMsg = Snackbar.GroupedMsg | Game.GroupedMsg;
+type OutMsg = Snackbar.GroupedMsg | Game.GroupedMsg;
 
 type PageMsg =
   | (Pages.Account.Msg & { group: "Account" })
@@ -199,7 +199,7 @@ const updateSnackbar = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   return [model, cmd.none];
 };
 
-const updateMain = (msg: Msg, model: Model): [Model, Cmd<Msg>, SharedMsg[]] => {
+const updateMain = (msg: Msg, model: Model): [Model, Cmd<Msg>, OutMsg[]] => {
   switch (model.type) {
     case "SessionLoading":
       return updateSessionLoading(msg, model);
@@ -221,7 +221,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd<Msg>, SharedMsg[]] => {
 const updateProfileMissing = (
   msg: Msg,
   model: ProfileMissing
-): [Model, Cmd<Msg>, SharedMsg[]] => {
+): [Model, Cmd<Msg>, OutMsg[]] => {
   switch (msg.type) {
     case "RecievedLocation": {
       const [page, pageCmd] = initProfileMissingPage({
@@ -264,7 +264,7 @@ const updateProfileMissingPage = (
   model: ProfileMissing,
   msg: Msg,
   page: ProfileMissingPage
-): [ProfileMissingPage, Cmd<Msg>, SharedMsg[]] => {
+): [ProfileMissingPage, Cmd<Msg>, OutMsg[]] => {
   if (page.type === "Logout" && msg.group === "Logout") {
     const [child, childCmd, outMsgs] = Pages.Logout.update(
       { name: model.session.defaultName },
@@ -297,7 +297,7 @@ const updateProfileMissingPage = (
 const updateSessionMissing = (
   msg: Msg,
   model: SessionMissing
-): [Model, Cmd<Msg>, SharedMsg[]] => {
+): [Model, Cmd<Msg>, OutMsg[]] => {
   switch (msg.type) {
     case "RecievedSession":
       if (option.isNone(msg.session)) {
@@ -334,7 +334,7 @@ const updateSessionMissingPage = (
 const updateSessionLoading = (
   msg: Msg,
   model: SessionLoading
-): [Model, Cmd<Msg>, SharedMsg[]] => {
+): [Model, Cmd<Msg>, OutMsg[]] => {
   switch (msg.type) {
     case "RecievedSession":
       if (option.isNone(msg.session)) {
@@ -351,7 +351,7 @@ const updateSessionLoading = (
 const updateProfileLoading = (
   msg: Msg,
   model: ProfileLoading
-): [Model, Cmd<Msg>, SharedMsg[]] => {
+): [Model, Cmd<Msg>, OutMsg[]] => {
   switch (msg.type) {
     case "RecievedProfile":
       if (option.isNone(msg.profile)) {
@@ -365,10 +365,7 @@ const updateProfileLoading = (
   }
 };
 
-const updateReady = (
-  msg: Msg,
-  model: Ready
-): [Model, Cmd<Msg>, SharedMsg[]] => {
+const updateReady = (msg: Msg, model: Ready): [Model, Cmd<Msg>, OutMsg[]] => {
   switch (msg.type) {
     case "RecievedLocation": {
       const [page, pageCmd] = initReadyPage({
@@ -407,7 +404,7 @@ const updateReadyPage = (
   { profile }: { profile: Profile.Profile; location: Navigation.Location },
   msg: Msg,
   page: Ready["page"]
-): [Ready["page"], Cmd<Msg>, SharedMsg[]] => {
+): [Ready["page"], Cmd<Msg>, OutMsg[]] => {
   if (page.type === "Account" && msg.group === "Account") {
     const [child, childCmd] = Pages.Account.update(profile, msg, page.child);
     return [
@@ -827,8 +824,8 @@ const initSessionMissing = (
     snackbar: Snackbar.Model;
     location: Navigation.Location;
   },
-  outMsgs: SharedMsg[]
-): [SessionMissing, Cmd<Msg>, SharedMsg[]] => {
+  outMsgs: OutMsg[]
+): [SessionMissing, Cmd<Msg>, OutMsg[]] => {
   const child = Pages.Login.init;
 
   return [
@@ -851,7 +848,7 @@ const initProfileMissing = ({
   location: Navigation.Location;
   snackbar: Snackbar.Model;
   session: Session.Session;
-}): [ProfileMissing, Cmd<Msg>, SharedMsg[]] => {
+}): [ProfileMissing, Cmd<Msg>, OutMsg[]] => {
   const [page, pageCmd] = initProfileMissingPage({ location, session });
   return [
     {
@@ -912,7 +909,7 @@ const initReady = ({
   snackbar: Snackbar.Model;
   profile: Profile.Profile;
   session: Session.Session;
-}): [Ready, Cmd<Msg>, SharedMsg[]] => {
+}): [Ready, Cmd<Msg>, OutMsg[]] => {
   const [page, pageCmd] = initReadyPage({ profile, location });
   return [
     {
@@ -1030,7 +1027,7 @@ const initProfileLoading = ({
   session: Session.Session;
   snackbar: Snackbar.Model;
   location: Navigation.Location;
-}): [ProfileLoading, Cmd<Msg>, SharedMsg[]] => {
+}): [ProfileLoading, Cmd<Msg>, OutMsg[]] => {
   return [
     {
       type: "ProfileLoading",
