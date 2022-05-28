@@ -573,10 +573,6 @@ export const subscriptions = (model: Model): sub.Sub<Msg> => {
 
 const navigationSubscrption: sub.Sub<Msg> = pipe(
   Navigation.subscription,
-  sub.map((x) => {
-    console.log(x);
-    return x;
-  }),
   sub.map((location) => ({
     type: "RecievedLocation",
     location,
