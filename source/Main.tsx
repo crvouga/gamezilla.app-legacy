@@ -38,8 +38,10 @@ type SessionMissing = {
   type: "SessionMissing";
   location: Navigation.Location;
   snackbar: Snackbar.Model;
-  page: { type: "Login"; child: Pages.Login.Model };
+  page: SessionMissingPage;
 };
+
+type SessionMissingPage = { type: "Login"; child: Pages.Login.Model };
 
 type ProfileLoading = {
   type: "ProfileLoading";
@@ -53,10 +55,12 @@ type ProfileMissing = {
   location: Navigation.Location;
   snackbar: Snackbar.Model;
   session: Session.Session;
-  page:
-    | { type: "ProfileCreate"; child: Pages.ProfileCreate.Model }
-    | { type: "Logout"; child: Pages.Logout.Model };
+  page: ProfileMissingPage;
 };
+
+type ProfileMissingPage =
+  | { type: "ProfileCreate"; child: Pages.ProfileCreate.Model }
+  | { type: "Logout"; child: Pages.Logout.Model };
 
 type Ready = {
   type: "Ready";
@@ -259,8 +263,8 @@ const updateProfileMissing = (
 const updateProfileMissingPage = (
   model: ProfileMissing,
   msg: Msg,
-  page: ProfileMissing["page"]
-): [ProfileMissing["page"], Cmd<Msg>, SharedMsg[]] => {
+  page: ProfileMissingPage
+): [ProfileMissingPage, Cmd<Msg>, SharedMsg[]] => {
   if (page.type === "Logout" && msg.group === "Logout") {
     const [child, childCmd, outMsgs] = Pages.Logout.update(
       { name: model.session.defaultName },
@@ -311,8 +315,8 @@ const updateSessionMissing = (
 
 const updateSessionMissingPage = (
   msg: Msg,
-  page: SessionMissing["page"]
-): [SessionMissing["page"], Cmd<Msg>] => {
+  page: SessionMissingPage
+): [SessionMissingPage, Cmd<Msg>] => {
   switch (page.type) {
     case "Login":
       if (msg.group === "Login") {
