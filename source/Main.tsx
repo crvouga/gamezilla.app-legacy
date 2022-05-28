@@ -606,12 +606,6 @@ const sessionSubcription = (): sub.Sub<Msg> => {
   );
 };
 
-// Location
-
-export const locationToMsg = (location: Navigation.Location): Msg => {
-  return { group: "Location", type: "RecievedLocation", location: location };
-};
-
 //
 //
 //
