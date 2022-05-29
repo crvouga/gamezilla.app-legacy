@@ -26,28 +26,6 @@ export const map = <A, Msg>(
 //
 //
 //
-// Run
-//
-//
-//
-
-export const run = <Model, Msg>(program: html.Program<Model, Msg, Dom>) => {
-  const rootElement = document.getElementById("root");
-
-  if (!rootElement) {
-    throw new Error("Failed to get root dom node");
-  }
-
-  const root = createRoot(rootElement);
-
-  html.run(program, (dom) => {
-    root.render(dom);
-  });
-};
-
-//
-//
-//
 // Theme
 //
 //

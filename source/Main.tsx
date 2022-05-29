@@ -1,8 +1,9 @@
 import { either, option } from "fp-ts";
 import { pipe } from "fp-ts/lib/function";
-import { cmd, sub, task } from "Framework";
+import { html, cmd, sub, task } from "Framework";
 import { Cmd } from "Framework/Cmd";
 import { programWithDebugger } from "Framework/Debug/Html";
+import * as ReactDom from "react-dom/client";
 import * as Game from "Game";
 import * as Navigation from "Navigation";
 import * as Pages from "Pages";
@@ -1067,4 +1068,14 @@ const flags: Flags = {
 
 const program = programWithDebugger(init(flags), update, view, subscriptions);
 
-View.run(program);
+const rootElement = document.getElementById("root");
+
+if (!rootElement) {
+  throw new Error("Failed to get root dom node");
+}
+
+const root = ReactDom.createRoot(rootElement);
+
+html.run(program, (dom) => {
+  root.render(dom);
+});
