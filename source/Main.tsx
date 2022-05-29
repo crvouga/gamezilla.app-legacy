@@ -636,10 +636,12 @@ export const view =
           model.game.type === "Opened" ? (
             <>
               <View.Divider />
+
               {pipe(
-                Snackbar.view({ bottom: 80 }, model.snackbar),
+                Snackbar.view({ sx: { bottom: 80 } }, model.snackbar),
                 View.map(groupTag("Snackbar"))
               )(dispatch)}
+
               {pipe(
                 Game.viewBanner(model.game),
                 View.map(groupTag("Game"))
@@ -676,7 +678,7 @@ const viewMain = (model: Model): View.View<Msg> => {
   }
 };
 
-const viewProfileLoading = (model: ProfileLoading): View.View<Msg> => {
+const viewProfileLoading = (_model: ProfileLoading): View.View<Msg> => {
   return () => <View.LoadingPage />;
 };
 
