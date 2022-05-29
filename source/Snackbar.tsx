@@ -1,3 +1,4 @@
+import { SxProps } from "@mui/material";
 import { task } from "fp-ts";
 import { pipe } from "fp-ts/lib/function";
 import { cmd } from "Framework";
@@ -73,7 +74,6 @@ export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
 
     case "UserClosedSnackbar":
       return [model, cmd.none];
-    // return removeById(msg, model);
   }
 };
 
@@ -97,7 +97,7 @@ const removeById = (
 //
 
 export const view =
-  (props: { bottom?: number }, model: Model): View.View<Msg> =>
+  ({ sx }: { sx?: SxProps }, model: Model): View.View<Msg> =>
   (dispatch) => {
     const snack = model.queue[0];
 
@@ -107,7 +107,7 @@ export const view =
 
     return (
       <View.Snackbar
-        sx={{ bottom: props.bottom ?? 0 }}
+        sx={sx}
         open
         message={snack.message}
         onClose={() =>
