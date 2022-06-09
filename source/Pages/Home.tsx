@@ -126,6 +126,13 @@ export const view =
             disabled={!canOpen(game, "Chess")}
             onClick={() => dispatch({ type: "UserClickedGame", game: "Chess" })}
           />
+
+          <GameCard
+            icon={<Games.Snake.Icon />}
+            label="Snake"
+            disabled={!canOpen(game, "Snake")}
+            onClick={() => dispatch({ type: "UserClickedGame", game: "Snake" })}
+          />
         </View.Box>
       </View.Page>
     );

@@ -3,7 +3,7 @@ import { cmd } from "Framework";
 import { Cmd } from "Framework/Cmd";
 
 export const exhaustive = (
-  discriminatedUnionType: "There is a missing case when switching on discriminated union"
+  discriminatedUnionType: "Missing Case Error"
 ): never => {
   throw new Error(`Missing case for: ${discriminatedUnionType}`);
 };

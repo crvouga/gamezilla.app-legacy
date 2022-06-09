@@ -1,11 +1,13 @@
 import { pipe } from "fp-ts/lib/function";
-import { cmd } from "Framework";
+import { cmd, sub } from "Framework";
 import { Cmd } from "Framework/Cmd";
+import { Sub } from "Framework/Sub";
+import * as Games from "Games";
 import * as Navigation from "Navigation";
 import * as Route from "Route";
 import * as Snackbar from "Snackbar";
+import { exhaustive } from "Utility";
 import * as View from "View";
-import * as Games from "Games";
 
 //
 //
@@ -27,7 +29,8 @@ type Opened = {
   child:
     | { type: "TicTacToe"; child: Games.TicTacToe.Model }
     | { type: "ConnectFour"; child: Games.ConnectFour.Model }
-    | { type: "Chess"; child: Games.Chess.Model };
+    | { type: "Chess"; child: Games.Chess.Model }
+    | { type: "Snake"; child: Games.Snake.Model };
 };
 
 export type Game = Opened["child"]["type"];
@@ -56,6 +59,9 @@ const initGame = ({ game }: { game: Game }): Opened["child"] => {
 
     case "TicTacToe":
       return { type: "TicTacToe", child: Games.TicTacToe.init };
+
+    case "Snake":
+      return { type: "Snake", child: Games.Snake.init };
   }
 };
 
@@ -80,7 +86,8 @@ type Msg =
 type GameMsg =
   | (Games.Chess.Msg & { gameGroup: "Chess" })
   | (Games.ConnectFour.Msg & { gameGroup: "ConnectFour" })
-  | (Games.TicTacToe.Msg & { gameGroup: "TicTacToe" });
+  | (Games.TicTacToe.Msg & { gameGroup: "TicTacToe" })
+  | (Games.Snake.Msg & { gameGroup: "Snake" });
 
 type OutMsg = Snackbar.GroupedMsg;
 
@@ -144,31 +151,60 @@ const updateGame = (
   msg: GameMsg,
   model: Opened["child"]
 ): [Opened["child"], cmd.Cmd<Msg>] => {
-  if (model.type === "Chess" && msg.gameGroup === "Chess") {
-    const [modelChild, cmdChild] = Games.Chess.update(msg, model.child);
-    return [
-      { type: "Chess", child: modelChild },
-      pipe(cmdChild, cmd.map(groupGameTag("Chess"))),
-    ];
-  }
+  switch (model.type) {
+    case "Chess":
+      if (msg.gameGroup === "Chess") {
+        const [modelChild, cmdChild] = Games.Chess.update(msg, model.child);
 
-  if (model.type === "ConnectFour" && msg.gameGroup === "ConnectFour") {
-    const [modelChild, cmdChild] = Games.ConnectFour.update(msg, model.child);
-    return [
-      { type: "ConnectFour", child: modelChild },
-      pipe(cmdChild, cmd.map(groupGameTag("ConnectFour"))),
-    ];
-  }
+        return [
+          { type: "Chess", child: modelChild },
+          pipe(cmdChild, cmd.map(groupGameTag("Chess"))),
+        ];
+      }
 
-  if (model.type === "TicTacToe" && msg.gameGroup === "TicTacToe") {
-    const [modelChild, cmdChild] = Games.TicTacToe.update(msg, model.child);
-    return [
-      { type: "TicTacToe", child: modelChild },
-      pipe(cmdChild, cmd.map(groupGameTag("TicTacToe"))),
-    ];
-  }
+      return [model, cmd.none];
 
-  return [model, cmd.none];
+    case "ConnectFour":
+      if (msg.gameGroup === "ConnectFour") {
+        const [modelChild, cmdChild] = Games.ConnectFour.update(
+          msg,
+          model.child
+        );
+
+        return [
+          { type: "ConnectFour", child: modelChild },
+          pipe(cmdChild, cmd.map(groupGameTag("ConnectFour"))),
+        ];
+      }
+      return [model, cmd.none];
+
+    case "TicTacToe":
+      if (msg.gameGroup === "TicTacToe") {
+        const [modelChild, cmdChild] = Games.TicTacToe.update(msg, model.child);
+
+        return [
+          { type: "TicTacToe", child: modelChild },
+          pipe(cmdChild, cmd.map(groupGameTag("TicTacToe"))),
+        ];
+      }
+
+      return [model, cmd.none];
+
+    case "Snake":
+      if (msg.gameGroup === "Snake") {
+        const [modelChild, cmdChild] = Games.Snake.update(msg, model.child);
+
+        return [
+          { type: "Snake", child: modelChild },
+          pipe(cmdChild, cmd.map(groupGameTag("Snake"))),
+        ];
+      }
+
+      return [model, cmd.none];
+
+    default:
+      return exhaustive(model);
+  }
 };
 
 const updateClosed = (msg: Msg, model: Closed): [Model, Cmd<Msg>, OutMsg[]] => {
@@ -178,6 +214,39 @@ const updateClosed = (msg: Msg, model: Closed): [Model, Cmd<Msg>, OutMsg[]] => {
 
     default:
       return [model, cmd.none, []];
+  }
+};
+
+//
+//
+//
+// Subscriptions
+//
+//
+//
+
+export const subscriptions = (model: Model): Sub<Msg> => {
+  switch (model.type) {
+    case "Closed":
+      return sub.none;
+
+    case "Opened":
+      switch (model.child.type) {
+        case "Chess":
+          return sub.none;
+
+        case "ConnectFour":
+          return sub.none;
+
+        case "Snake":
+          return pipe(
+            Games.Snake.subscriptions(model.child.child),
+            sub.map(groupGameTag("Snake"))
+          );
+
+        case "TicTacToe":
+          return sub.none;
+      }
   }
 };
 
@@ -217,6 +286,12 @@ const viewOpened = (model: Opened): View.View<Msg> => {
       return pipe(
         Games.TicTacToe.view(model.child.child),
         View.map(groupGameTag("TicTacToe"))
+      );
+
+    case "Snake":
+      return pipe(
+        Games.Snake.view(model.child.child),
+        View.map(groupGameTag("Snake"))
       );
   }
 };
@@ -282,6 +357,9 @@ export const gameToName = (game: Game): string => {
 
     case "TicTacToe":
       return "Tic Tac Toe";
+
+    case "Snake":
+      return "Snake";
   }
 };
 
@@ -295,5 +373,8 @@ const GameIcon = ({ game }: { game: Game }) => {
 
     case "TicTacToe":
       return <Games.TicTacToe.Icon />;
+
+    case "Snake":
+      return <Games.Snake.Icon />;
   }
 };
