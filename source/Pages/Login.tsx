@@ -41,7 +41,7 @@ export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
       ];
 
     case "LoginFailed":
-      return [model, cmd.none];
+      return [{ type: "Idle" }, cmd.none];
 
     case "LoginSucceeded":
       return [model, cmd.none];
@@ -97,20 +97,5 @@ export const view =
         >
           Continue With Google
         </View.Button>
-
-        {viewLoadingDialog(model)}
       </View.Page>
     );
-
-const viewLoadingDialog = (model: Model) => {
-  switch (model.type) {
-    case "LoggingIn":
-      switch (model.loginMethod.type) {
-        case "Google":
-          return <View.LoadingDialog open title="Redirecting to Google..." />;
-      }
-
-    default:
-      return <></>;
-  }
-};
