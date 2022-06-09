@@ -4,6 +4,8 @@ import * as Keyboard from "Framework/Keyboard";
 import { Sub } from "Framework/Sub";
 import * as Navigation from "Navigation";
 import * as View from "View";
+import * as Position from "./Position";
+import * as Direction from "./Direction";
 
 //
 //
@@ -15,23 +17,15 @@ import * as View from "View";
 
 export type Model = {
   status: Status;
-  head: Position;
-  tail: Position[];
-  apple: Position;
+  head: Position.Position;
+  tail: Position.Position[];
+  apple: Position.Position;
   tailLength: number;
-  direction: Direction;
-  bounds: Bounds;
-};
-
-type Direction = "left" | "up" | "right" | "down";
-
-type Position = { x: number; y: number };
-
-type Bounds = {
-  minX: number;
-  maxX: number;
-  minY: number;
-  maxY: number;
+  direction: Direction.Direction;
+  bounds: {
+    lower: Position.Position;
+    upper: Position.Position;
+  };
 };
 
 export const init: Model = {
@@ -45,10 +39,14 @@ export const init: Model = {
   direction: "right",
   tailLength: 4,
   bounds: {
-    minX: 0,
-    maxX: 12,
-    minY: 0,
-    maxY: 12,
+    lower: {
+      x: 0,
+      y: 0,
+    },
+    upper: {
+      x: 12,
+      y: 12,
+    },
   },
 };
 
@@ -64,26 +62,6 @@ const toggle = (status: Status): Status => {
   }
 };
 
-const toAllPositions = ({ minX, maxX, minY, maxY }: Bounds): Position[] => {
-  const positions: Position[] = [];
-
-  for (let x = minX; x <= maxX; x++) {
-    for (let y = minY; y <= maxY; y++) {
-      positions.push({ x, y });
-    }
-  }
-
-  return positions;
-};
-
-const add = (a: Position, b: Position): Position => {
-  return { x: a.x + b.x, y: a.y + b.y };
-};
-
-const equals = (a: Position, b: Position): boolean => {
-  return a.x === b.x && a.y === b.y;
-};
-
 const shuffle = <T,>(xs: T[]): T[] => {
   const ys = [...xs];
 
@@ -92,44 +70,6 @@ const shuffle = <T,>(xs: T[]): T[] => {
   return ys;
 };
 
-const toVector = (direction: Direction): Position => {
-  switch (direction) {
-    case "down":
-      return { x: 0, y: 1 };
-
-    case "left":
-      return { x: -1, y: 0 };
-
-    case "right":
-      return { x: 1, y: 0 };
-
-    case "up":
-      return { x: 0, y: -1 };
-  }
-};
-
-const toDirection = (key: Keyboard.Key, fallback: Direction): Direction => {
-  switch (key) {
-    case "w":
-    case "W":
-      return "up";
-
-    case "s":
-    case "S":
-      return "down";
-
-    case "a":
-    case "A":
-      return "left";
-
-    case "d":
-    case "D":
-      return "right";
-
-    case "Space":
-      return fallback;
-  }
-};
 //
 //
 //
@@ -154,14 +94,17 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
     case "Tick":
       const tailNew = [model.head, ...model.tail].slice(0, model.tailLength);
 
-      const headNew = add(model.head, toVector(model.direction));
+      const headNew = Position.add(
+        model.head,
+        Direction.toVector(model.direction)
+      );
 
       const isEatingApple = [headNew, ...tailNew].some((position) =>
-        equals(position, model.apple)
+        Position.equals(position, model.apple)
       );
 
       const appleNew = isEatingApple
-        ? shuffle(toAllPositions(model.bounds))[0] ?? model.apple
+        ? shuffle(Position.range(model.bounds))[0] ?? model.apple
         : model.apple;
 
       const tailLengthNew = isEatingApple
@@ -186,7 +129,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
       return [model, cmd.none];
 
     case "UserPressedKeyDown":
-      const directionNew = toDirection(msg.key, model.direction);
+      const directionNew = Direction.fromKey(msg.key, model.direction);
 
       const statusNew =
         msg.key === "Space" ? toggle(model.status) : model.status;
@@ -257,7 +200,7 @@ export const view =
           title="Snake"
         />
         <svg width="100%" viewBox={toViewbox(model.bounds)}>
-          {toAllPositions(model.bounds).map(({ x, y }, index) => (
+          {Position.range(model.bounds).map(({ x, y }, index) => (
             <rect
               key={`${x} ${y} ${index}`}
               x={x}
@@ -323,7 +266,7 @@ const viewApple = ({ apple }: Model) => {
 
 type TileVariant = "light" | "dark";
 
-const toTileVariant = (position: Position): TileVariant => {
+const toTileVariant = (position: Position.Position): TileVariant => {
   if (
     (isEven(position.x) && isOdd(position.y)) ||
     (isOdd(position.x) && isEven(position.y))
@@ -336,28 +279,33 @@ const toTileVariant = (position: Position): TileVariant => {
 const isEven = (x: number) => x % 2 === 0;
 const isOdd = (x: number) => !isEven(x);
 
-const toViewbox = (bounds: Bounds) =>
-  [bounds.minX, bounds.minY, bounds.maxX, bounds.maxY].join(", ");
+const toViewbox = ({ lower, upper }: Model["bounds"]) =>
+  [lower.x, lower.y, upper.x, upper.y].join(", ");
 
 export const Icon = () => {
+  const bounds: Model["bounds"] = {
+    lower: {
+      x: 0,
+      y: 0,
+    },
+    upper: {
+      x: 4,
+      y: 4,
+    },
+  };
   return (
-    <svg
-      width="100%"
-      viewBox={toViewbox({ minX: 0, minY: 0, maxX: 4, maxY: 4 })}
-    >
-      {toAllPositions({ minX: 0, minY: 0, maxX: 4, maxY: 4 }).map(
-        ({ x, y }, index) => (
-          <rect
-            key={`${x} ${y} ${index}`}
-            x={x}
-            y={y}
-            width={1}
-            height={1}
-            fill={theme[toTileVariant({ x, y })]}
-            stroke="none"
-          />
-        )
-      )}
+    <svg width="100%" viewBox={toViewbox(bounds)}>
+      {Position.range(bounds).map(({ x, y }, index) => (
+        <rect
+          key={`${x} ${y} ${index}`}
+          x={x}
+          y={y}
+          width={1}
+          height={1}
+          fill={theme[toTileVariant({ x, y })]}
+          stroke="none"
+        />
+      ))}
     </svg>
   );
 };
