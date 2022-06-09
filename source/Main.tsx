@@ -559,6 +559,7 @@ export const subscriptions = (model: Model): sub.Sub<Msg> => {
         navigationSubscrption,
         sessionSubcription(),
         profileSubscription(model.profile),
+        pipe(Game.subscriptions(model.game), sub.map(groupTag("Game"))),
       ]);
 
     case "SessionLoading":
