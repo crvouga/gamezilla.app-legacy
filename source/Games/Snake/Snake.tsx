@@ -1,11 +1,15 @@
 import { cmd, sub, time } from "Framework";
 import { Cmd } from "Framework/Cmd";
 import * as Keyboard from "Framework/Keyboard";
+import * as Audio from "Framework/Audio";
 import { Sub } from "Framework/Sub";
 import * as Navigation from "Navigation";
 import * as View from "View";
 import * as Position from "./Position";
 import * as Direction from "./Direction";
+import { attempt } from "Framework/Task";
+import { pipe } from "fp-ts/lib/function";
+import { either } from "fp-ts";
 
 //
 //
@@ -79,13 +83,15 @@ export const init: Model = {
 //
 
 export type Msg =
-  | { type: "TimeElapsed" }
+  | { type: "Ticked" }
   | { type: "UserClickedBoard" }
   | { type: "UserClickedBackButton" }
   | { type: "UserClickedRestartButton" }
   | { type: "UserClickedToggleButton" }
   | { type: "UserSwipedBoard" }
-  | { type: "UserPressedKeyDown"; key: Keyboard.Key };
+  | { type: "UserPressedKeyDown"; key: Keyboard.Key }
+  | { type: "AudioFailed" }
+  | { type: "AudioSucceeded" };
 
 export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
   switch (msg.type) {
@@ -95,7 +101,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
     case "UserSwipedBoard":
       return [model, cmd.none];
 
-    case "TimeElapsed":
+    case "Ticked":
       switch (model.status) {
         case "paused":
           return [model, cmd.none];
@@ -139,7 +145,20 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
       return [model, Navigation.back()];
 
     case "UserClickedBoard":
-      return [model, cmd.none];
+      return [
+        model,
+        pipe(
+          Audio.play(
+            "https://interactive-examples.mdn.mozilla.net/media/cc0-audio/t-rex-roar.mp3"
+          ),
+          attempt(
+            either.fold<{}, {}, Msg>(
+              () => ({ type: "AudioFailed" }),
+              () => ({ type: "AudioSucceeded" })
+            )
+          )
+        ),
+      ];
 
     case "UserPressedKeyDown":
       const directionNew = Direction.fromKey(msg.key, model.direction);
@@ -164,6 +183,12 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
         case "playing":
           return [{ ...model, status: "paused" }, cmd.none];
       }
+
+    case "AudioFailed":
+      return [model, cmd.none];
+
+    case "AudioSucceeded":
+      return [model, cmd.none];
   }
 };
 
@@ -185,7 +210,7 @@ export const subscriptions = (model: Model): Sub<Msg> => {
   }
 };
 
-const timeElapses = time.every<Msg>(1000 / 5, () => ({ type: "TimeElapsed" }));
+const timeElapses = time.every<Msg>(1000 / 6, () => ({ type: "Ticked" }));
 
 const keyDowns = Keyboard.keyDowns<Msg>((key) => ({
   type: "UserPressedKeyDown",
@@ -221,12 +246,14 @@ export const view =
           title="Snake"
         />
         <svg
+          id="board"
           onTouchMove={() => dispatch({ type: "UserSwipedBoard" })}
           width="100%"
           viewBox={toViewbox(model.bounds)}
         >
           {Position.range(model.bounds).map(({ x, y }, index) => (
             <rect
+              onClick={() => dispatch({ type: "UserClickedBoard" })}
               key={`${x} ${y} ${index}`}
               x={x}
               y={y}
@@ -253,7 +280,9 @@ export const view =
           <View.Button
             size="large"
             fullWidth
-            onClick={() => dispatch({ type: "UserClickedToggleButton" })}
+            onClick={(event) => {
+              dispatch({ type: "UserClickedToggleButton" });
+            }}
           >
             {model.status === "playing" ? "pause" : "play"}
           </View.Button>
