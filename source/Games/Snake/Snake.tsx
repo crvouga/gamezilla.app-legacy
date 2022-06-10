@@ -70,8 +70,8 @@ export const init: Model = {
       y: 0,
     },
     upper: {
-      x: 12,
-      y: 12,
+      x: 24,
+      y: 24,
     },
   },
 };
@@ -234,39 +234,18 @@ const soundAssets = {
 //
 //
 
-const memoize = <X, Y>(f: (x: X) => Y) => {
-  const cache = new Map<string, Y>();
-
-  return (x: X) => {
-    const key = JSON.stringify(x);
-
-    const cached = cache.get(key);
-
-    if (cached) {
-      return cached;
-    }
-
-    const y = f(x);
-
-    cache.set(key, y);
-
-    console.log(cache);
-
-    return y;
-  };
-};
-
 export const subscriptions = (model: Model): Sub<Msg> => {
   switch (model.status) {
     case "paused":
       return keyDowns;
 
     case "playing":
-      return sub.batch([keyDowns, timeElapses]);
+      return sub.batch([
+        keyDowns,
+        time.every<Msg>(1000 / 6, () => ({ type: "Ticked" })),
+      ]);
   }
 };
-
-const timeElapses = time.every<Msg>(1000 / 6, () => ({ type: "Ticked" }));
 
 const keyDowns = Keyboard.keyDowns<Msg>((key) => ({
   type: "UserPressedKeyDown",
