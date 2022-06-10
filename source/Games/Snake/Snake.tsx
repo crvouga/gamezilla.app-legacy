@@ -27,6 +27,7 @@ export type Model = {
   tailLength: number;
   direction: Direction.Direction;
   eatenAppleCount: number;
+  tick: number;
   bounds: {
     lower: Position.Position;
     upper: Position.Position;
@@ -55,6 +56,7 @@ const toggle = (status: Status): Status => {
 
 export const init: Model = {
   status: "paused",
+  tick: 1000 / 8,
   head: { x: 4, y: 4 },
   tail: [
     { x: 3, y: 4 },
@@ -242,7 +244,7 @@ export const subscriptions = (model: Model): Sub<Msg> => {
     case "playing":
       return sub.batch([
         keyDowns,
-        time.every<Msg>(1000 / 6, () => ({ type: "Ticked" })),
+        time.every<Msg>(model.tick, () => ({ type: "Ticked" })),
       ]);
   }
 };
