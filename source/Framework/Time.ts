@@ -7,8 +7,8 @@
  */
 
 import { Task } from "fp-ts/lib/Task";
-import { interval } from "rxjs";
-import { map } from "rxjs/operators";
+import * as Rx from "rxjs";
+
 import { Sub } from "./Sub";
 
 /**
@@ -20,11 +20,39 @@ export function now(): Task<number> {
   return () => Promise.resolve(new Date().getTime());
 }
 
-/**
- * Get the current unix time periodically.
- * @category utils
- * @since 0.5.0
- */
-export function every<Msg>(time: number, f: (time: number) => Msg): Sub<Msg> {
-  return interval(time).pipe(map(() => f(new Date().getTime())));
-}
+//
+//
+//
+// why?: https://github.com/gcanti/elm-ts/issues/20
+//
+//
+//
+
+export type Time = number;
+
+const intervals: { [interval: number]: Rx.Subject<number> } = {};
+
+const onTimeout = (time: number) => {
+  const subj = intervals[time];
+
+  if (subj && subj.observed) {
+    subj.next(new Date().getTime());
+    setTimeout(() => onTimeout(time), time);
+
+    return;
+  }
+
+  delete intervals[time];
+};
+
+export const every = <Msg>(time: number, f: (time: Time) => Msg): Sub<Msg> => {
+  let subj = intervals[time];
+
+  if (subj === undefined) {
+    intervals[time] = subj = new Rx.Subject<number>();
+
+    setTimeout(() => onTimeout(time), time);
+  }
+
+  return subj.pipe(Rx.map(() => f(new Date().getTime())));
+};

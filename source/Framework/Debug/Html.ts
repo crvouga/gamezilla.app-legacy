@@ -165,8 +165,6 @@ function createProgram<Model, Msg, Dom>(
 
       // ignored subscriptions when time travel debugging
 
-      console.log("ignoring subscriptions");
-
       return sub.none;
     }
   );
