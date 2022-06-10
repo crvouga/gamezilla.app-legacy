@@ -26,6 +26,7 @@ export type Model = {
   apple: Position.Position;
   tailLength: number;
   direction: Direction.Direction;
+  eatenAppleCount: number;
   bounds: {
     lower: Position.Position;
     upper: Position.Position;
@@ -62,6 +63,7 @@ export const init: Model = {
   apple: { x: 7, y: 4 },
   direction: "right",
   tailLength: 4,
+  eatenAppleCount: 0,
   bounds: {
     lower: {
       x: 0,
@@ -129,6 +131,10 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
             ? model.tailLength + 1
             : model.tailLength;
 
+          const eatenAppleCountNew = isEatingApple
+            ? model.eatenAppleCount + 1
+            : model.eatenAppleCount;
+
           return [
             {
               ...model,
@@ -136,6 +142,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
               tail: tailNew,
               apple: appleNew,
               tailLength: tailLengthNew,
+              eatenAppleCount: eatenAppleCountNew,
             },
             cmd.none,
           ];
@@ -145,12 +152,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
       return [model, Navigation.back()];
 
     case "UserClickedBoard":
-      return [
-        model,
-        playSound(
-          "https://interactive-examples.mdn.mozilla.net/media/cc0-audio/t-rex-roar.mp3"
-        ),
-      ];
+      return [model, cmd.none];
 
     case "UserPressedKeyDown":
       const directionNew = Direction.fromKey(msg.key, model.direction);
@@ -169,7 +171,8 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
           status: statusNew,
           direction: directionNew,
         },
-        soundCmd,
+        // soundCmd,
+        cmd.none,
       ];
 
     case "UserClickedToggleButton":
@@ -219,6 +222,8 @@ const soundAssets = {
 
   changedDirectionLeft:
     "https://carolinegabriel.com/demo/js-keyboard/sounds/040.wav",
+
+  roar: "https://interactive-examples.mdn.mozilla.net/media/cc0-audio/t-rex-roar.mp3",
 };
 
 //
@@ -229,10 +234,32 @@ const soundAssets = {
 //
 //
 
+const memoize = <X, Y>(f: (x: X) => Y) => {
+  const cache = new Map<string, Y>();
+
+  return (x: X) => {
+    const key = JSON.stringify(x);
+
+    const cached = cache.get(key);
+
+    if (cached) {
+      return cached;
+    }
+
+    const y = f(x);
+
+    cache.set(key, y);
+
+    console.log(cache);
+
+    return y;
+  };
+};
+
 export const subscriptions = (model: Model): Sub<Msg> => {
   switch (model.status) {
     case "paused":
-      return sub.batch([keyDowns]);
+      return keyDowns;
 
     case "playing":
       return sub.batch([keyDowns, timeElapses]);
@@ -272,7 +299,11 @@ export const view =
               onClick={() => dispatch({ type: "UserClickedBackButton" })}
             />
           }
-          title="Snake"
+          title={
+            model.status === "playing"
+              ? `${model.eatenAppleCount} apples`
+              : "Snake"
+          }
         />
         <svg
           id="board"
