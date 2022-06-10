@@ -6,6 +6,8 @@
 import { pipe } from "fp-ts/lib/function";
 import { chain, IO, map } from "fp-ts/lib/IO";
 import { fold } from "fp-ts/lib/Option";
+import { sub } from "Framework";
+import { Sub } from "Framework/Sub";
 import { BehaviorSubject, Observable } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 import { Cmd, none } from "../Cmd";
@@ -105,6 +107,14 @@ export interface DebuggerR<Model, Msg> {
   dispatch: Dispatch<MsgWithDebug<Model, Msg>>;
 }
 
+//
+//
+//
+//
+//
+
+export const DEBUG_ID = "_id";
+
 /**
  * Adds debugging capability to the provided `update` function.
  *
@@ -129,10 +139,16 @@ export interface DebuggerR<Model, Msg> {
  * @category utils
  * @since 0.5.3
  */
-export function updateWithDebug<Model, Msg>(
-  debug$: BehaviorSubject<DebugData<Model, Msg>>,
-  update: (msg: Msg, model: Model) => [Model, Cmd<Msg>]
-): (msg: MsgWithDebug<Model, Msg>, model: Model) => [Model, Cmd<Msg>] {
+
+export function updateWithDebug<Model, Msg>({
+  debug$,
+  update,
+  onDebugId,
+}: {
+  debug$: BehaviorSubject<DebugData<Model, Msg>>;
+  update: (msg: Msg, model: Model) => [Model, Cmd<Msg>];
+  onDebugId: (id: string) => void;
+}): (msg: MsgWithDebug<Model, Msg>, model: Model) => [Model, Cmd<Msg>] {
   return (msg, model) => {
     if ("type" in msg) {
       switch (msg.type) {
@@ -144,11 +160,30 @@ export function updateWithDebug<Model, Msg>(
       }
     }
 
-    const result = update(msg, model);
+    //
+    //
+    //
 
-    debug$.next([debugMsg(msg), result[0]]);
+    const [modelNew, cmdNew] = update(msg, model);
 
-    return result;
+    debug$.next([debugMsg(msg), modelNew]);
+
+    //
+    //
+    //
+
+    const debugId = String(Math.floor(Math.random() * 10 ** 12));
+
+    // @ts-ignore
+    modelNew[DEBUG_ID] = debugId;
+
+    onDebugId(debugId);
+
+    //
+    //
+    //
+
+    return [modelNew, cmdNew];
   };
 }
 

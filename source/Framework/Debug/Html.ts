@@ -28,6 +28,7 @@
  * @since 0.5.3
  */
 
+import { sub } from "Framework";
 import { BehaviorSubject, EMPTY, Observable } from "rxjs";
 import { Cmd } from "../Cmd";
 import { Html, Program, program } from "../Html";
@@ -36,6 +37,7 @@ import {
   DebugData,
   DebuggerR,
   debugInit,
+  DEBUG_ID,
   runDebugger,
   updateWithDebug,
 } from "./commons";
@@ -122,6 +124,8 @@ export function programWithDebuggerWithFlagsWithStop<Model, Msg, Dom>(
     createProgram(stopDebuggerOn, init(flags), update, view, subscriptions);
 }
 
+const subNone = () => sub.none;
+
 // --- Internal
 function createProgram<Model, Msg, Dom>(
   stopDebuggerOn: Observable<unknown>,
@@ -139,11 +143,32 @@ function createProgram<Model, Msg, Dom>(
     initModel,
   ]);
 
+  let currentDebugId: string | null = null;
+
   const p = program(
     init,
-    updateWithDebug<Model, Msg>(debug$, update),
+    updateWithDebug<Model, Msg>({
+      debug$,
+      update,
+      onDebugId: (debugId) => {
+        currentDebugId = debugId;
+      },
+    }),
     view,
-    subscriptions
+    (model: Model): Sub<Msg> => {
+      if (
+        // @ts-ignore
+        model[DEBUG_ID] === currentDebugId
+      ) {
+        return subscriptions?.(model) ?? sub.none;
+      }
+
+      // ignored subscriptions when time travel debugging
+
+      console.log("ignoring subscriptions");
+
+      return sub.none;
+    }
   );
 
   // --- Run the debugger

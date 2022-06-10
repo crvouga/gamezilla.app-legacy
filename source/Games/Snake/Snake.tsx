@@ -28,6 +28,26 @@ export type Model = {
   };
 };
 
+type Status = "paused" | "playing";
+
+const toggle = (status: Status): Status => {
+  switch (status) {
+    case "paused":
+      return "playing";
+
+    case "playing":
+      return "paused";
+  }
+};
+
+//
+//
+//
+// Init
+//
+//
+//
+
 export const init: Model = {
   status: "paused",
   head: { x: 4, y: 4 },
@@ -50,26 +70,6 @@ export const init: Model = {
   },
 };
 
-type Status = "paused" | "playing";
-
-const toggle = (status: Status): Status => {
-  switch (status) {
-    case "paused":
-      return "playing";
-
-    case "playing":
-      return "paused";
-  }
-};
-
-const shuffle = <T,>(xs: T[]): T[] => {
-  const ys = [...xs];
-
-  ys.sort(() => (Math.random() > 0.5 ? 1 : -1));
-
-  return ys;
-};
-
 //
 //
 //
@@ -79,11 +79,12 @@ const shuffle = <T,>(xs: T[]): T[] => {
 //
 
 export type Msg =
-  | { type: "Tick" }
+  | { type: "TimeElapsed" }
   | { type: "UserClickedBoard" }
   | { type: "UserClickedBackButton" }
   | { type: "UserClickedRestartButton" }
   | { type: "UserClickedToggleButton" }
+  | { type: "UserSwipedBoard" }
   | { type: "UserPressedKeyDown"; key: Keyboard.Key };
 
 export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
@@ -91,36 +92,48 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
     case "UserClickedRestartButton":
       return [init, cmd.none];
 
-    case "Tick":
-      const tailNew = [model.head, ...model.tail].slice(0, model.tailLength);
+    case "UserSwipedBoard":
+      return [model, cmd.none];
 
-      const headNew = Position.add(
-        model.head,
-        Direction.toVector(model.direction)
-      );
+    case "TimeElapsed":
+      switch (model.status) {
+        case "paused":
+          return [model, cmd.none];
 
-      const isEatingApple = [headNew, ...tailNew].some((position) =>
-        Position.equals(position, model.apple)
-      );
+        case "playing":
+          const tailNew = [model.head, ...model.tail].slice(
+            0,
+            model.tailLength
+          );
 
-      const appleNew = isEatingApple
-        ? shuffle(Position.range(model.bounds))[0] ?? model.apple
-        : model.apple;
+          const headNew = Position.add(
+            model.head,
+            Direction.toVector(model.direction)
+          );
 
-      const tailLengthNew = isEatingApple
-        ? model.tailLength + 1
-        : model.tailLength;
+          const isEatingApple = [headNew, ...tailNew].some((position) =>
+            Position.equals(position, model.apple)
+          );
 
-      return [
-        {
-          ...model,
-          head: headNew,
-          tail: tailNew,
-          apple: appleNew,
-          tailLength: tailLengthNew,
-        },
-        cmd.none,
-      ];
+          const appleNew = isEatingApple
+            ? shuffle(Position.range(model.bounds))[0] ?? model.apple
+            : model.apple;
+
+          const tailLengthNew = isEatingApple
+            ? model.tailLength + 1
+            : model.tailLength;
+
+          return [
+            {
+              ...model,
+              head: headNew,
+              tail: tailNew,
+              apple: appleNew,
+              tailLength: tailLengthNew,
+            },
+            cmd.none,
+          ];
+      }
 
     case "UserClickedBackButton":
       return [model, Navigation.back()];
@@ -163,13 +176,21 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
 //
 
 export const subscriptions = (model: Model): Sub<Msg> => {
-  return sub.batch<Msg>([
-    model.status === "playing"
-      ? time.every(1000 / 4, () => ({ type: "Tick" }))
-      : sub.none,
-    Keyboard.keyDowns((key) => ({ type: "UserPressedKeyDown", key })),
-  ]);
+  switch (model.status) {
+    case "paused":
+      return sub.batch([keyDowns]);
+
+    case "playing":
+      return sub.batch([keyDowns, timeElapses]);
+  }
 };
+
+const timeElapses = time.every<Msg>(1000 / 5, () => ({ type: "TimeElapsed" }));
+
+const keyDowns = Keyboard.keyDowns<Msg>((key) => ({
+  type: "UserPressedKeyDown",
+  key,
+}));
 
 //
 //
@@ -199,7 +220,11 @@ export const view =
           }
           title="Snake"
         />
-        <svg width="100%" viewBox={toViewbox(model.bounds)}>
+        <svg
+          onTouchMove={() => dispatch({ type: "UserSwipedBoard" })}
+          width="100%"
+          viewBox={toViewbox(model.bounds)}
+        >
           {Position.range(model.bounds).map(({ x, y }, index) => (
             <rect
               key={`${x} ${y} ${index}`}
@@ -308,4 +333,20 @@ export const Icon = () => {
       ))}
     </svg>
   );
+};
+
+//
+//
+//
+// Helpers
+//
+//
+//
+
+const shuffle = <T,>(xs: T[]): T[] => {
+  const ys = [...xs];
+
+  ys.sort(() => (Math.random() > 0.5 ? 1 : -1));
+
+  return ys;
 };
