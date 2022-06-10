@@ -147,16 +147,8 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
     case "UserClickedBoard":
       return [
         model,
-        pipe(
-          Audio.play(
-            "https://interactive-examples.mdn.mozilla.net/media/cc0-audio/t-rex-roar.mp3"
-          ),
-          attempt(
-            either.fold<{}, {}, Msg>(
-              () => ({ type: "AudioFailed" }),
-              () => ({ type: "AudioSucceeded" })
-            )
-          )
+        playSound(
+          "https://interactive-examples.mdn.mozilla.net/media/cc0-audio/t-rex-roar.mp3"
         ),
       ];
 
@@ -166,13 +158,18 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
       const statusNew =
         msg.key === "Space" ? toggle(model.status) : model.status;
 
+      const soundCmd =
+        model.direction !== directionNew
+          ? playSound(soundAssets.changedDirectionDown)
+          : cmd.none;
+
       return [
         {
           ...model,
           status: statusNew,
           direction: directionNew,
         },
-        cmd.none,
+        soundCmd,
       ];
 
     case "UserClickedToggleButton":
@@ -190,6 +187,38 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
     case "AudioSucceeded":
       return [model, cmd.none];
   }
+};
+
+//
+//
+// Sounds
+//
+//
+
+const playSound = (file: string) => {
+  return pipe(
+    Audio.play(file),
+    attempt(
+      either.fold<{}, {}, Msg>(
+        () => ({ type: "AudioFailed" }),
+        () => ({ type: "AudioSucceeded" })
+      )
+    )
+  );
+};
+
+const soundAssets = {
+  changedDirectionUp:
+    "https://carolinegabriel.com/demo/js-keyboard/sounds/040.wav",
+
+  changedDirectionDown:
+    "https://carolinegabriel.com/demo/js-keyboard/sounds/040.wav",
+
+  changedDirectionRight:
+    "https://carolinegabriel.com/demo/js-keyboard/sounds/040.wav",
+
+  changedDirectionLeft:
+    "https://carolinegabriel.com/demo/js-keyboard/sounds/040.wav",
 };
 
 //
