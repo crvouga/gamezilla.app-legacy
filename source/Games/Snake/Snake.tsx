@@ -10,6 +10,8 @@ import * as Direction from "./Direction";
 import { attempt } from "Framework/Task";
 import { pipe } from "fp-ts/lib/function";
 import { either } from "fp-ts";
+import { useEffect, useRef } from "react";
+import { BreakfastDiningOutlined } from "@mui/icons-material";
 
 //
 //
@@ -72,8 +74,8 @@ export const init: Model = {
       y: 0,
     },
     upper: {
-      x: 24,
-      y: 24,
+      x: 20,
+      y: 20,
     },
   },
 };
@@ -286,28 +288,8 @@ export const view =
               : "Snake"
           }
         />
-        <svg
-          id="board"
-          onTouchMove={() => dispatch({ type: "UserSwipedBoard" })}
-          width="100%"
-          viewBox={toViewbox(model.bounds)}
-        >
-          {Position.range(model.bounds).map(({ x, y }, index) => (
-            <rect
-              onClick={() => dispatch({ type: "UserClickedBoard" })}
-              key={`${x} ${y} ${index}`}
-              x={x}
-              y={y}
-              width={1}
-              height={1}
-              fill={theme[toTileVariant({ x, y })]}
-              stroke="none"
-            />
-          ))}
 
-          {viewApple(model)}
-          {viewSnake(model)}
-        </svg>
+        <Canvas {...model} />
 
         <View.Box sx={{ paddingX: 2, paddingY: 1 }}>
           <View.Button
@@ -332,31 +314,64 @@ export const view =
     );
   };
 
-const viewSnake = ({ head, tail }: Model) => {
-  return (
-    <g>
-      {[head, ...tail].map(({ x, y }, index) => (
-        <rect
-          key={`x ${x} y ${y} index ${index}`}
-          x={x}
-          y={y}
-          width={1}
-          height={1}
-          fill={theme.snake}
-          stroke="none"
-        />
-      ))}
-    </g>
-  );
+const Canvas = (model: Model) => {
+  const ref = useRef<HTMLCanvasElement | null>(null);
+
+  useEffect(() => {
+    const canvas = ref.current;
+    const ctx = canvas?.getContext("2d");
+
+    if (ctx) {
+      draw(model, ctx);
+    }
+  }, [ref.current, model]);
+
+  return <canvas width="100%" ref={ref} />;
 };
 
-const viewApple = ({ apple }: Model) => {
-  const { x, y } = apple;
-  return (
-    <g>
-      <rect x={x} y={y} width={1} height={1} fill={theme.apple} stroke="none" />
-    </g>
-  );
+const draw = (model: Model, ctx: CanvasRenderingContext2D): void => {
+  const width = window.innerWidth;
+  const height = window.innerWidth;
+
+  ctx.canvas.width = width;
+  ctx.canvas.height = height;
+
+  ctx.fillStyle = theme.light;
+  ctx.fillRect(0, 0, width, height);
+
+  const tileWidth = width / (model.bounds.upper.x - model.bounds.lower.x);
+  const tileHeight = height / (model.bounds.upper.y - model.bounds.lower.y);
+
+  for (const position of Position.range(model.bounds)) {
+    const tileVariant = toTileVariant(position);
+    ctx.fillStyle = theme[tileVariant];
+    ctx.fillRect(
+      position.x * tileWidth,
+      position.y * tileHeight,
+      tileWidth,
+      tileHeight
+    );
+  }
+
+  for (const position of [model.head, ...model.tail]) {
+    ctx.fillStyle = theme.snake;
+    ctx.fillRect(
+      position.x * tileWidth,
+      position.y * tileHeight,
+      tileWidth,
+      tileHeight
+    );
+  }
+
+  for (const position of [model.apple]) {
+    ctx.fillStyle = theme.apple;
+    ctx.fillRect(
+      position.x * tileWidth,
+      position.y * tileHeight,
+      tileWidth,
+      tileHeight
+    );
+  }
 };
 
 type TileVariant = "light" | "dark";
