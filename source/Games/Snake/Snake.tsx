@@ -1,17 +1,16 @@
+import { either } from "fp-ts";
+import { pipe } from "fp-ts/lib/function";
 import { cmd, sub, time } from "Framework";
+import * as Audio from "Framework/Audio";
 import { Cmd } from "Framework/Cmd";
 import * as Keyboard from "Framework/Keyboard";
-import * as Audio from "Framework/Audio";
 import { Sub } from "Framework/Sub";
-import * as Navigation from "Navigation";
-import * as View from "View";
-import * as Position from "./Position";
-import * as Direction from "./Direction";
 import { attempt } from "Framework/Task";
-import { pipe } from "fp-ts/lib/function";
-import { either } from "fp-ts";
-import { useEffect, useRef } from "react";
-import { BreakfastDiningOutlined } from "@mui/icons-material";
+import * as Navigation from "Navigation";
+import { useEffect, useRef, useState } from "react";
+import * as View from "View";
+import * as Direction from "./Direction";
+import * as Position from "./Position";
 
 //
 //
@@ -34,6 +33,7 @@ export type Model = {
     lower: Position.Position;
     upper: Position.Position;
   };
+  touched?: Position.Position;
 };
 
 type Status = "paused" | "playing";
@@ -97,7 +97,8 @@ export type Msg =
   | { type: "UserSwipedBoard" }
   | { type: "UserPressedKeyDown"; key: Keyboard.Key }
   | { type: "AudioFailed" }
-  | { type: "AudioSucceeded" };
+  | { type: "AudioSucceeded" }
+  | { type: "UserTouchedBoard"; position: Position.Position };
 
 export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
   switch (msg.type) {
@@ -193,6 +194,29 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
 
     case "AudioSucceeded":
       return [model, cmd.none];
+
+    case "UserTouchedBoard":
+      const previous = model.touched;
+
+      if (!previous) {
+        return [{ ...model, touched: msg.position }, cmd.none];
+      }
+
+      const current = msg.position;
+
+      const delta = Position.subtract(previous, current);
+
+      const xDirection = delta.x > 0 ? "left" : "right";
+
+      const yDirection = delta.y > 0 ? "up" : "down";
+
+      const direction =
+        Math.abs(delta.x) > Math.abs(delta.y) ? xDirection : yDirection;
+
+      return [
+        { ...model, direction: direction, touched: msg.position },
+        cmd.none,
+      ];
   }
 };
 
@@ -289,7 +313,7 @@ export const view =
           }
         />
 
-        <Canvas {...model} />
+        <Canvas model={model} dispatch={dispatch} />
 
         <View.Box sx={{ paddingX: 2, paddingY: 1 }}>
           <View.Button
@@ -314,7 +338,13 @@ export const view =
     );
   };
 
-const Canvas = (model: Model) => {
+const Canvas = ({
+  model,
+  dispatch,
+}: {
+  model: Model;
+  dispatch: (msg: Msg) => void;
+}) => {
   const ref = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
@@ -326,12 +356,26 @@ const Canvas = (model: Model) => {
     }
   }, [ref.current, model]);
 
-  return <canvas width="100%" ref={ref} />;
+  return (
+    <canvas
+      ref={ref}
+      onTouchMove={(event) => {
+        const x = event.touches[0]?.clientX;
+        const y = event.touches[0]?.clientY;
+
+        if (x && y) {
+          dispatch({ type: "UserTouchedBoard", position: { x, y } });
+        }
+      }}
+    />
+  );
 };
 
 const draw = (model: Model, ctx: CanvasRenderingContext2D): void => {
   const width = window.innerWidth;
   const height = window.innerWidth;
+  const tileWidth = width / (model.bounds.upper.x - model.bounds.lower.x);
+  const tileHeight = height / (model.bounds.upper.y - model.bounds.lower.y);
 
   ctx.canvas.width = width;
   ctx.canvas.height = height;
@@ -339,12 +383,8 @@ const draw = (model: Model, ctx: CanvasRenderingContext2D): void => {
   ctx.fillStyle = theme.light;
   ctx.fillRect(0, 0, width, height);
 
-  const tileWidth = width / (model.bounds.upper.x - model.bounds.lower.x);
-  const tileHeight = height / (model.bounds.upper.y - model.bounds.lower.y);
-
   for (const position of Position.range(model.bounds)) {
-    const tileVariant = toTileVariant(position);
-    ctx.fillStyle = theme[tileVariant];
+    ctx.fillStyle = theme[toTileVariant(position)];
     ctx.fillRect(
       position.x * tileWidth,
       position.y * tileHeight,
@@ -434,4 +474,12 @@ const shuffle = <T,>(xs: T[]): T[] => {
   ys.sort(() => (Math.random() > 0.5 ? 1 : -1));
 
   return ys;
+};
+
+const minBy = <T,>(keyFn: (a: T) => number, a: T, b: T) => {
+  if (keyFn(a) < keyFn(b)) {
+    return a;
+  }
+
+  return b;
 };

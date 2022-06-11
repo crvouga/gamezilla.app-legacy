@@ -19,6 +19,13 @@ export const toVector = (direction: Direction): Position.Position => {
   }
 };
 
+export const directions: { [direction in Direction]: Direction } = {
+  left: "left",
+  right: "right",
+  up: "up",
+  down: "down",
+};
+
 export const fromKey = (key: Keyboard.Key, fallback: Direction): Direction => {
   switch (key) {
     case "w":
