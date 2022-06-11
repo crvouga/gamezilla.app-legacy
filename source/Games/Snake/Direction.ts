@@ -48,3 +48,19 @@ export const fromKey = (key: Keyboard.Key, fallback: Direction): Direction => {
       return fallback;
   }
 };
+
+export const toOpposite = (direction: Direction): Direction => {
+  switch (direction) {
+    case "down":
+      return "up";
+
+    case "left":
+      return "right";
+
+    case "right":
+      return "left";
+
+    case "up":
+      return "down";
+  }
+};
