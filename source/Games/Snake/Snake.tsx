@@ -83,7 +83,7 @@ export const init: Model = {
 //
 //
 //
-// Update
+// Msg
 //
 //
 //
@@ -99,6 +99,14 @@ export type Msg =
   | { type: "AudioFailed" }
   | { type: "AudioSucceeded" }
   | { type: "UserTouchedBoard"; position: Position.Position };
+
+//
+//
+//
+// Update
+//
+//
+//
 
 export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
   switch (msg.type) {
@@ -222,7 +230,9 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
 
 //
 //
+//
 // Sounds
+//
 //
 //
 
