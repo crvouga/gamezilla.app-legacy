@@ -5,7 +5,7 @@ import { Cmd } from "Framework/Cmd";
 import { programWithDebugger } from "Framework/Debug/Html";
 import * as ReactDom from "react-dom/client";
 import * as Game from "Game";
-import * as Navigation from "Navigation";
+import * as Navigation from "Framework/Navigation";
 import * as Pages from "Pages";
 import * as Profile from "Profile";
 import * as Route from "Route";

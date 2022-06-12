@@ -2,7 +2,7 @@ import { either } from "fp-ts";
 import { pipe } from "fp-ts/lib/function";
 import { cmd } from "Framework";
 import { attempt } from "Framework/Task";
-import * as Navigation from "Navigation";
+import * as Navigation from "Framework/Navigation";
 import * as Profile from "Profile";
 import * as ProfileAvatar from "ProfileAvatar";
 import * as Route from "Route";

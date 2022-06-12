@@ -6,7 +6,7 @@ import { Cmd } from "Framework/Cmd";
 import * as Keyboard from "Framework/Keyboard";
 import { Sub } from "Framework/Sub";
 import { attempt } from "Framework/Task";
-import * as Navigation from "Navigation";
+import * as Navigation from "Framework/Navigation";
 import { useEffect, useRef, useState } from "react";
 import * as View from "View";
 import * as Direction from "./Direction";

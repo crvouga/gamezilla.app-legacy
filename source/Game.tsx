@@ -3,7 +3,7 @@ import { cmd, sub } from "Framework";
 import { Cmd } from "Framework/Cmd";
 import { Sub } from "Framework/Sub";
 import * as Games from "Games";
-import * as Navigation from "Navigation";
+import * as Navigation from "Framework/Navigation";
 import * as Route from "Route";
 import * as Snackbar from "Snackbar";
 import { exhaustive } from "Utility";

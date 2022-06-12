@@ -1,6 +1,6 @@
 import { cmd } from "Framework";
 import { Cmd } from "Framework/Cmd";
-import * as Navigation from "Navigation";
+import * as Navigation from "Framework/Navigation";
 import * as View from "View";
 
 //
