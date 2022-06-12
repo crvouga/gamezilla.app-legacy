@@ -1,5 +1,6 @@
+import { cmd } from "Framework";
 import { Cmd } from "Framework/Cmd";
-import * as Navigation from "Navigation";
+import * as Navigation from "Framework/Navigation";
 import * as View from "View";
 
 //
@@ -10,9 +11,13 @@ import * as View from "View";
 //
 //
 
-export type Model = {};
+export type Model = {
+  searchText: string;
+};
 
-export const init: Model = {};
+export const init: Model = {
+  searchText: "",
+};
 
 //
 //
@@ -22,12 +27,17 @@ export const init: Model = {};
 //
 //
 
-export type Msg = { type: "ClickedCancelButton" };
+export type Msg =
+  | { type: "ClickedCancelButton" }
+  | { type: "UserEnteredSearchText"; searchText: string };
 
 export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
   switch (msg.type) {
     case "ClickedCancelButton":
       return [model, Navigation.back()];
+
+    case "UserEnteredSearchText":
+      return [{ ...model, searchText: msg.searchText }, cmd.none];
   }
 };
 
@@ -58,8 +68,13 @@ export const view =
         <View.Autocomplete
           disablePortal
           options={top100Films}
+          freeSolo
           fullWidth
-          renderInput={(params) => <View.TextField {...params} label="Movie" />}
+          inputValue={model.searchText}
+          onInputChange={(_event, valueNew) => {
+            dispatch({ type: "UserEnteredSearchText", searchText: valueNew });
+          }}
+          renderInput={(params) => <View.TextField {...params} label="Users" />}
         />
       </View.Page>
     );
