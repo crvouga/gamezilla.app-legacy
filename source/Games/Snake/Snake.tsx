@@ -137,7 +137,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
           );
 
           const foodNew = isSnakeEatingFood
-            ? shuffle(Position.range(model.bounds))[0] ?? model.food
+            ? shuffle(toEmptyPositions(model))[0] ?? model.food
             : model.food;
 
           const tailLengthNew = isSnakeEatingFood
@@ -226,6 +226,13 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
         cmd.none,
       ];
   }
+};
+
+const toEmptyPositions = (model: Model) => {
+  const snake = [model.head, ...model.tail];
+  return Position.range(model.bounds).filter((position) =>
+    snake.every((snakePosition) => !Position.equals(position, snakePosition))
+  );
 };
 
 //
