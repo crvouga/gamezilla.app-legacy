@@ -1,9 +1,10 @@
+import { keyframes } from "@mui/system";
 import { pipe } from "fp-ts/lib/function";
 import { cmd, sub } from "Framework";
 import { Cmd } from "Framework/Cmd";
+import * as Navigation from "Framework/Navigation";
 import { Sub } from "Framework/Sub";
 import * as Games from "Games";
-import * as Navigation from "Framework/Navigation";
 import * as Route from "Route";
 import * as Snackbar from "Snackbar";
 import { exhaustive } from "Utility";
@@ -300,6 +301,15 @@ const viewClosed: View.View<Msg> = () => {
   return <>game is closed</>;
 };
 
+const spin = keyframes`
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+`;
+
 export const viewBanner =
   (model: Opened): View.View<Msg> =>
   (dispatch) =>
@@ -307,19 +317,21 @@ export const viewBanner =
       <>
         <View.Box
           sx={{
+            backgroundColor: "#212121",
             width: "100%",
             display: "flex",
             alignItems: "center",
+            // animation: `${spin} 1s infinite ease`,
           }}
         >
           <View.ButtonBase
             sx={{ flex: 1 }}
             onClick={() => dispatch({ type: "UserClickedGameBanner" })}
           >
-            <View.Box sx={{ width: "20%", marginRight: 2 }}>
+            <View.Box sx={{ width: 64, marginRight: 2 }}>
               <GameIcon game={model.child.type} />
             </View.Box>
-            <View.Typography align="left" sx={{ flex: 1 }}>
+            <View.Typography align="left" variant="h5" sx={{ flex: 1 }}>
               {gameToName(model.child.type)}
             </View.Typography>
           </View.ButtonBase>
@@ -339,7 +351,7 @@ export const viewBanner =
         <View.ConformationDialog
           open={model.status === "ConfirmingClose"}
           title={`Close ${gameToName(model.child.type)}?`}
-          confirmTitle="Close Game"
+          confirmTitle={`Close ${gameToName(model.child.type)}`}
           onClose={() => dispatch({ type: "CancelledCloseGame" })}
           onCancel={() => dispatch({ type: "CancelledCloseGame" })}
           onConfirm={() => dispatch({ type: "ConfirmedCloseGame" })}
