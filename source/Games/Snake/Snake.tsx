@@ -24,7 +24,7 @@ export type Model = {
   status: Status;
   head: Position.Position;
   tail: Position.Position[];
-  apple: Position.Position;
+  food: Position.Position;
   tailLength: number;
   direction: Direction.Direction;
   eatenAppleCount: number;
@@ -64,7 +64,7 @@ export const init: Model = {
     { x: 3, y: 4 },
     { x: 2, y: 4 },
   ],
-  apple: { x: 7, y: 4 },
+  food: { x: 7, y: 4 },
   direction: "right",
   tailLength: 4,
   eatenAppleCount: 0,
@@ -132,19 +132,19 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
             Direction.toVector(model.direction)
           );
 
-          const isEatingApple = [headNew, ...tailNew].some((position) =>
-            Position.equals(position, model.apple)
+          const isSnakeEatingFood = [headNew, ...tailNew].some((position) =>
+            Position.equals(position, model.food)
           );
 
-          const appleNew = isEatingApple
-            ? shuffle(Position.range(model.bounds))[0] ?? model.apple
-            : model.apple;
+          const foodNew = isSnakeEatingFood
+            ? shuffle(Position.range(model.bounds))[0] ?? model.food
+            : model.food;
 
-          const tailLengthNew = isEatingApple
+          const tailLengthNew = isSnakeEatingFood
             ? model.tailLength + 1
             : model.tailLength;
 
-          const eatenAppleCountNew = isEatingApple
+          const eatenAppleCountNew = isSnakeEatingFood
             ? model.eatenAppleCount + 1
             : model.eatenAppleCount;
 
@@ -153,7 +153,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
               ...model,
               head: headNew,
               tail: tailNew,
-              apple: appleNew,
+              food: foodNew,
               tailLength: tailLengthNew,
               eatenAppleCount: eatenAppleCountNew,
             },
@@ -364,7 +364,7 @@ const Canvas = ({
     if (ctx) {
       draw(model, ctx);
     }
-  }, [ref.current, model]);
+  }, [model]);
 
   return (
     <canvas
@@ -413,7 +413,7 @@ const draw = (model: Model, ctx: CanvasRenderingContext2D): void => {
     );
   }
 
-  for (const position of [model.apple]) {
+  for (const position of [model.food]) {
     ctx.fillStyle = theme.apple;
     ctx.fillRect(
       position.x * tileWidth,
@@ -435,9 +435,6 @@ const toTileVariant = (position: Position.Position): TileVariant => {
   }
   return "dark";
 };
-
-const isEven = (x: number) => x % 2 === 0;
-const isOdd = (x: number) => !isEven(x);
 
 const toViewbox = ({ lower, upper }: Model["bounds"]) =>
   [lower.x, lower.y, upper.x, upper.y].join(", ");
@@ -493,3 +490,7 @@ const minBy = <T,>(keyFn: (a: T) => number, a: T, b: T) => {
 
   return b;
 };
+
+const isEven = (x: number) => x % 2 === 0;
+
+const isOdd = (x: number) => !isEven(x);
