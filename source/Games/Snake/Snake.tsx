@@ -28,7 +28,7 @@ export type Model = {
   tailLength: number;
   direction: Direction.Direction;
   eatenAppleCount: number;
-  tick: number;
+  tickRate: number;
   bounds: {
     lower: Position.Position;
     upper: Position.Position;
@@ -58,13 +58,13 @@ const toggle = (status: Status): Status => {
 
 export const init: Model = {
   status: "paused",
-  tick: 1000 / 8,
-  head: { x: 4, y: 4 },
+  tickRate: 1000 / 6,
+  head: { x: 4, y: 6 },
   tail: [
-    { x: 3, y: 4 },
-    { x: 2, y: 4 },
+    { x: 3, y: 6 },
+    { x: 2, y: 6 },
   ],
-  food: { x: 7, y: 4 },
+  food: { x: 7, y: 6 },
   direction: "right",
   tailLength: 4,
   eatenAppleCount: 0,
@@ -74,8 +74,8 @@ export const init: Model = {
       y: 0,
     },
     upper: {
-      x: 20,
-      y: 20,
+      x: 13,
+      y: 16,
     },
   },
 };
@@ -168,23 +168,18 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
       return [model, cmd.none];
 
     case "UserPressedKeyDown":
-      const directionNew = Direction.fromKey(msg.key, model.direction);
-
       const statusNew =
         msg.key === "Space" ? toggle(model.status) : model.status;
 
-      const soundCmd =
-        model.direction !== directionNew
-          ? playSound(soundAssets.changedDirectionDown)
-          : cmd.none;
+      const directionFromKey = Direction.fromKey(msg.key, model.direction);
+
+      const directionNew =
+        directionFromKey === Direction.toOpposite(model.direction)
+          ? model.direction
+          : directionFromKey;
 
       return [
-        {
-          ...model,
-          status: statusNew,
-          direction: directionNew,
-        },
-        // soundCmd,
+        { ...model, status: statusNew, direction: directionNew },
         cmd.none,
       ];
 
@@ -287,7 +282,7 @@ export const subscriptions = (model: Model): Sub<Msg> => {
     case "playing":
       return sub.batch([
         keyDowns,
-        time.every<Msg>(model.tick, () => ({ type: "Ticked" })),
+        time.every<Msg>(model.tickRate, () => ({ type: "Ticked" })),
       ]);
   }
 };
