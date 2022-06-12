@@ -85,6 +85,8 @@ export const Divider = Mui.Divider;
 
 export const ListItemButton = Mui.ListItemButton;
 
+export const Chip = Mui.Chip;
+
 export const ListItemText = Mui.ListItemText;
 
 export const ListItemIcon = Mui.ListItemIcon;
@@ -102,6 +104,8 @@ export const DialogTitle = Mui.DialogTitle;
 export const DialogActions = Mui.DialogActions;
 
 export const CircularProgress = Mui.CircularProgress;
+
+export const ListItemAvatar = Mui.ListItemAvatar;
 
 export const Avatar = Mui.Avatar;
 
