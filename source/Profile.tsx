@@ -90,6 +90,27 @@ export const deleteForever =
     return either.right({});
   };
 
+export const search =
+  ({
+    nameOrUsername,
+  }: {
+    nameOrUsername: string;
+  }): task.Task<either.Either<{ message: string }, Profile[]>> =>
+  async () => {
+    const response = await Supabase.client
+      .from<definitions["profile"]>("profile")
+      .select("*")
+      .ilike("name", `%${nameOrUsername}%`);
+
+    if (response.error) {
+      return either.left({ message: response.error.message });
+    }
+
+    const profiles = response.data.map(rowToProfile);
+
+    return either.right(profiles);
+  };
+
 export const edit =
   ({
     userId,
