@@ -125,6 +125,8 @@ export const view =
           title="New message"
         />
 
+        <View.Box sx={{ flex: 1 }} />
+
         <View.Autocomplete
           multiple
           options={model.searchResults}
@@ -186,5 +188,9 @@ export const view =
             );
           }}
         />
+        <View.Box sx={{ display: "flex" }}>
+          <View.TextField fullWidth label="Message" />
+          <View.Button>Send</View.Button>
+        </View.Box>
       </View.Page>
     );
