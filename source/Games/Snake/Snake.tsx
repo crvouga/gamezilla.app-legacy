@@ -27,7 +27,7 @@ export type Model = {
   food: Position.Position;
   tailLength: number;
   direction: Direction.Direction;
-  eatenAppleCount: number;
+  foodEatenCount: number;
   tickRate: number;
   bounds: {
     lower: Position.Position;
@@ -67,7 +67,7 @@ export const init: Model = {
   food: { x: 7, y: 6 },
   direction: "right",
   tailLength: 4,
-  eatenAppleCount: 0,
+  foodEatenCount: 0,
   bounds: {
     lower: {
       x: 0,
@@ -144,9 +144,9 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
             ? model.tailLength + 1
             : model.tailLength;
 
-          const eatenAppleCountNew = isSnakeEatingFood
-            ? model.eatenAppleCount + 1
-            : model.eatenAppleCount;
+          const foodEatenCountNew = isSnakeEatingFood
+            ? model.foodEatenCount + 1
+            : model.foodEatenCount;
 
           return [
             {
@@ -155,7 +155,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
               tail: tailNew,
               food: foodNew,
               tailLength: tailLengthNew,
-              eatenAppleCount: eatenAppleCountNew,
+              foodEatenCount: foodEatenCountNew,
             },
             cmd.none,
           ];
@@ -320,7 +320,7 @@ export const view =
           }
           title={
             model.status === "playing"
-              ? `${model.eatenAppleCount} apples`
+              ? `${model.foodEatenCount} apples`
               : "Snake"
           }
         />
