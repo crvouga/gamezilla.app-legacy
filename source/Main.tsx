@@ -1016,7 +1016,11 @@ const initReadyPage = ({
       return [{ type: "Chat", child: Pages.Chat.init }, cmd.none];
 
     case "ChatNew":
-      return [{ type: "ChatNew", child: Pages.ChatNew.init }, cmd.none];
+      const [modelChild, cmdChild] = Pages.ChatNew.init;
+      return [
+        { type: "ChatNew", child: modelChild },
+        pipe(cmdChild, cmd.map(groupTag("ChatNew"))),
+      ];
 
     default:
       return exhaustive(route);

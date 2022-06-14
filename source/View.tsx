@@ -39,6 +39,7 @@ const theme = Mui.responsiveFontSizes(
     },
     typography: {
       fontFamily: ["Nunito"].join(","),
+      fontWeightRegular: "bold",
     },
     components: {
       MuiButton: {
@@ -77,6 +78,8 @@ export const Icons = MuiIcons;
 
 export const TextField = Mui.TextField;
 
+export const InputBase = Mui.InputBase;
+
 export const Snackbar = Mui.Snackbar;
 
 export const Box = Mui.Box;
@@ -90,6 +93,8 @@ export const Chip = Mui.Chip;
 export const ListItemText = Mui.ListItemText;
 
 export const ListItemIcon = Mui.ListItemIcon;
+
+export const Checkbox = Mui.Checkbox;
 
 export const ListItemSecondaryAction = Mui.ListItemSecondaryAction;
 
