@@ -4,10 +4,10 @@ import { cmd, sub, time } from "Framework";
 import * as Audio from "Framework/Audio";
 import { Cmd } from "Framework/Cmd";
 import * as Keyboard from "Framework/Keyboard";
+import * as Navigation from "Framework/Navigation";
 import { Sub } from "Framework/Sub";
 import { attempt } from "Framework/Task";
-import * as Navigation from "Framework/Navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import * as View from "View";
 import * as Direction from "./Direction";
 import * as Position from "./Position";
@@ -21,14 +21,16 @@ import * as Position from "./Position";
 //
 
 export type Model = {
+  mouseStatus: MouseStatus;
   status: Status;
   head: Position.Position;
   tail: Position.Position[];
   food: Position.Position;
   tailLength: number;
-  direction: Direction.Direction;
   foodEatenCount: number;
   tickRate: number;
+  direction: Direction.Direction;
+  directionQueue: Direction.Direction[];
   bounds: {
     lower: Position.Position;
     upper: Position.Position;
@@ -38,15 +40,7 @@ export type Model = {
 
 type Status = "paused" | "playing";
 
-const toggle = (status: Status): Status => {
-  switch (status) {
-    case "paused":
-      return "playing";
-
-    case "playing":
-      return "paused";
-  }
-};
+type MouseStatus = "active" | "inactive";
 
 //
 //
@@ -58,6 +52,7 @@ const toggle = (status: Status): Status => {
 
 export const init: Model = {
   status: "paused",
+  mouseStatus: "inactive",
   tickRate: 1000 / 6,
   head: { x: 4, y: 6 },
   tail: [
@@ -65,9 +60,10 @@ export const init: Model = {
     { x: 2, y: 6 },
   ],
   food: { x: 7, y: 6 },
-  direction: "right",
   tailLength: 4,
   foodEatenCount: 0,
+  direction: "right",
+  directionQueue: [],
   bounds: {
     lower: {
       x: 0,
@@ -75,7 +71,7 @@ export const init: Model = {
     },
     upper: {
       x: 13,
-      y: 16,
+      y: 13,
     },
   },
 };
@@ -89,16 +85,17 @@ export const init: Model = {
 //
 
 export type Msg =
-  | { type: "Ticked" }
-  | { type: "UserClickedBoard" }
+  | { type: "Elapsed" }
   | { type: "UserClickedBackButton" }
   | { type: "UserClickedRestartButton" }
   | { type: "UserClickedToggleButton" }
-  | { type: "UserSwipedBoard" }
   | { type: "UserPressedKeyDown"; key: Keyboard.Key }
   | { type: "AudioFailed" }
   | { type: "AudioSucceeded" }
-  | { type: "UserTouchedBoard"; position: Position.Position };
+  | { type: "UserTouchMovedBoard"; position: Position.Position }
+  | { type: "UserMouseMovedBoard"; position: Position.Position }
+  | { type: "UserMouseDownBoard" }
+  | { type: "UserMouseUpBoard" };
 
 //
 //
@@ -113,10 +110,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
     case "UserClickedRestartButton":
       return [init, cmd.none];
 
-    case "UserSwipedBoard":
-      return [model, cmd.none];
-
-    case "Ticked":
+    case "Elapsed":
       switch (model.status) {
         case "paused":
           return [model, cmd.none];
@@ -127,9 +121,18 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
             model.tailLength
           );
 
+          const [queued, ...directionQueueNew] = model.directionQueue;
+
+          const directionQueued = queued ?? model.direction;
+
+          const directionNew =
+            Direction.toOpposite(directionQueued) === model.direction
+              ? model.direction
+              : directionQueued;
+
           const headNew = Position.add(
             model.head,
-            Direction.toVector(model.direction)
+            Direction.toVector(directionNew)
           );
 
           const isSnakeEatingFood = [headNew, ...tailNew].some((position) =>
@@ -156,6 +159,8 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
               food: foodNew,
               tailLength: tailLengthNew,
               foodEatenCount: foodEatenCountNew,
+              directionQueue: directionQueueNew,
+              direction: directionNew,
             },
             cmd.none,
           ];
@@ -164,22 +169,27 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
     case "UserClickedBackButton":
       return [model, Navigation.back()];
 
-    case "UserClickedBoard":
-      return [model, cmd.none];
+    case "UserMouseUpBoard":
+      return [{ ...model, mouseStatus: "inactive" }, cmd.none];
+
+    case "UserMouseDownBoard":
+      return [{ ...model, mouseStatus: "active" }, cmd.none];
 
     case "UserPressedKeyDown":
       const statusNew =
-        msg.key === "Space" ? toggle(model.status) : model.status;
+        msg.key === "Space"
+          ? model.status === "paused"
+            ? "playing"
+            : "paused"
+          : model.status;
 
       const directionFromKey = Direction.fromKey(msg.key, model.direction);
 
-      const directionNew =
-        directionFromKey === Direction.toOpposite(model.direction)
-          ? model.direction
-          : directionFromKey;
-
       return [
-        { ...model, status: statusNew, direction: directionNew },
+        enqueueDirection(directionFromKey, {
+          ...model,
+          status: statusNew,
+        }),
         cmd.none,
       ];
 
@@ -198,29 +208,50 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
     case "AudioSucceeded":
       return [model, cmd.none];
 
-    case "UserTouchedBoard":
+    case "UserMouseMovedBoard":
+    case "UserTouchMovedBoard":
       const previous = model.touched;
 
       if (!previous) {
         return [{ ...model, touched: msg.position }, cmd.none];
       }
 
-      const current = msg.position;
+      const touchedNew = msg.position;
 
-      const delta = Position.subtract(previous, current);
+      const delta = Position.subtract(previous, touchedNew);
+
+      const maxDeltaMagnitude = Math.max(Math.abs(delta.x), Math.abs(delta.y));
+
+      if (maxDeltaMagnitude < 3) {
+        return [{ ...model, touched: touchedNew }, cmd.none];
+      }
 
       const xDirection = delta.x > 0 ? "left" : "right";
 
       const yDirection = delta.y > 0 ? "up" : "down";
 
-      const direction =
+      const directionFromSwipe =
         Math.abs(delta.x) > Math.abs(delta.y) ? xDirection : yDirection;
 
       return [
-        { ...model, direction: direction, touched: msg.position },
+        enqueueDirection(directionFromSwipe, { ...model, touched: touchedNew }),
         cmd.none,
       ];
   }
+};
+
+const enqueueDirection = (
+  direction: Direction.Direction,
+  model: Model
+): Model => {
+  const directionQueueNew = unqiue(
+    [...model.directionQueue, direction].slice(0, 2)
+  );
+
+  return {
+    ...model,
+    directionQueue: directionQueueNew,
+  };
 };
 
 const toEmptyPositions = (model: Model) => {
@@ -228,42 +259,6 @@ const toEmptyPositions = (model: Model) => {
   return Position.range(model.bounds).filter((position) =>
     snake.every((snakePosition) => !Position.equals(position, snakePosition))
   );
-};
-
-//
-//
-//
-// Sounds
-//
-//
-//
-
-const playSound = (file: string) => {
-  return pipe(
-    Audio.play(file),
-    attempt(
-      either.fold<{}, {}, Msg>(
-        () => ({ type: "AudioFailed" }),
-        () => ({ type: "AudioSucceeded" })
-      )
-    )
-  );
-};
-
-const soundAssets = {
-  changedDirectionUp:
-    "https://carolinegabriel.com/demo/js-keyboard/sounds/040.wav",
-
-  changedDirectionDown:
-    "https://carolinegabriel.com/demo/js-keyboard/sounds/040.wav",
-
-  changedDirectionRight:
-    "https://carolinegabriel.com/demo/js-keyboard/sounds/040.wav",
-
-  changedDirectionLeft:
-    "https://carolinegabriel.com/demo/js-keyboard/sounds/040.wav",
-
-  roar: "https://interactive-examples.mdn.mozilla.net/media/cc0-audio/t-rex-roar.mp3",
 };
 
 //
@@ -282,7 +277,7 @@ export const subscriptions = (model: Model): Sub<Msg> => {
     case "playing":
       return sub.batch([
         keyDowns,
-        time.every<Msg>(model.tickRate, () => ({ type: "Ticked" })),
+        time.every<Msg>(model.tickRate, () => ({ type: "Elapsed" })),
       ]);
   }
 };
@@ -339,7 +334,7 @@ export const view =
           <View.Button
             size="large"
             fullWidth
-            onClick={(event) => {
+            onClick={() => {
               dispatch({ type: "UserClickedToggleButton" });
             }}
           >
@@ -363,29 +358,51 @@ const Canvas = ({
     const canvas = ref.current;
     const ctx = canvas?.getContext("2d");
 
-    if (ctx) {
-      draw(model, ctx);
+    if (canvas && ctx) {
+      const width = canvas.offsetWidth;
+      const height = width;
+
+      draw({ width, height }, model, ctx);
+    }
+
+    if (model.status === "playing") {
     }
   }, [model]);
 
   return (
     <canvas
+      style={{ width: "100%" }}
       ref={ref}
+      onMouseDown={() => {
+        dispatch({ type: "UserMouseDownBoard" });
+      }}
+      onMouseUp={() => {
+        dispatch({ type: "UserMouseUpBoard" });
+      }}
+      onMouseMove={(event) => {
+        if (model.mouseStatus === "active") {
+          const x = event.clientX;
+          const y = event.clientY;
+          dispatch({ type: "UserMouseMovedBoard", position: { x, y } });
+        }
+      }}
       onTouchMove={(event) => {
-        const x = event.touches[0]?.clientX;
-        const y = event.touches[0]?.clientY;
-
-        if (x && y) {
-          dispatch({ type: "UserTouchedBoard", position: { x, y } });
+        const touch = event.touches[0];
+        if (touch) {
+          const x = touch.clientX;
+          const y = touch.clientY;
+          dispatch({ type: "UserTouchMovedBoard", position: { x, y } });
         }
       }}
     />
   );
 };
 
-const draw = (model: Model, ctx: CanvasRenderingContext2D): void => {
-  const width = window.innerWidth;
-  const height = window.innerWidth;
+const draw = (
+  { width, height }: { width: number; height: number },
+  model: Model,
+  ctx: CanvasRenderingContext2D
+): void => {
   const tileWidth = width / (model.bounds.upper.x - model.bounds.lower.x);
   const tileHeight = height / (model.bounds.upper.y - model.bounds.lower.y);
 
@@ -472,6 +489,42 @@ export const Icon = () => {
 //
 //
 //
+// Sounds
+//
+//
+//
+
+const playSound = (file: string) => {
+  return pipe(
+    Audio.play(file),
+    attempt(
+      either.fold<{}, {}, Msg>(
+        () => ({ type: "AudioFailed" }),
+        () => ({ type: "AudioSucceeded" })
+      )
+    )
+  );
+};
+
+const soundAssets = {
+  changedDirectionUp:
+    "https://carolinegabriel.com/demo/js-keyboard/sounds/040.wav",
+
+  changedDirectionDown:
+    "https://carolinegabriel.com/demo/js-keyboard/sounds/040.wav",
+
+  changedDirectionRight:
+    "https://carolinegabriel.com/demo/js-keyboard/sounds/040.wav",
+
+  changedDirectionLeft:
+    "https://carolinegabriel.com/demo/js-keyboard/sounds/040.wav",
+
+  roar: "https://interactive-examples.mdn.mozilla.net/media/cc0-audio/t-rex-roar.mp3",
+};
+
+//
+//
+//
 // Helpers
 //
 //
@@ -496,3 +549,7 @@ const minBy = <T,>(keyFn: (a: T) => number, a: T, b: T) => {
 const isEven = (x: number) => x % 2 === 0;
 
 const isOdd = (x: number) => !isEven(x);
+
+const unqiue = <T,>(as: T[]): T[] => {
+  return Array.from(new Set(as));
+};
