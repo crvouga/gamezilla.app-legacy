@@ -20,6 +20,7 @@ export type Model = {
   searchResults: SearchResult[];
   selected: { [userId: string]: SearchResult };
   searchStatus: "Idle" | "Searching";
+  status: "Idle" | "Creating";
 };
 
 type SearchResult = { userId: string; username: string; avatarUrl: string };
@@ -38,6 +39,7 @@ export const init: [Model, Cmd<Msg>] = [
     searchResults: [],
     selected: {},
     searchStatus: "Idle",
+    status: "Idle",
   },
   pipe(
     Profile.search({ nameOrUsername: "" }),
@@ -62,16 +64,20 @@ export const init: [Model, Cmd<Msg>] = [
 //
 
 export type Msg =
-  | { type: "ClickedCancelButton" }
+  | { type: "UserClickedCancelButton" }
   | { type: "UserEnteredSearchText"; searchText: string }
   | { type: "RecievedSearchResults"; searchResults: SearchResult[] }
   | { type: "UserClickedSearchResult"; searchResult: SearchResult }
   | { type: "Problem" }
-  | { type: "UserClickedSelectedDeleteButton"; userId: string };
+  | { type: "UserClickedSelectedDeleteButton"; userId: string }
+  | { type: "UserClickedCreateButton" };
 
 export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
   switch (msg.type) {
-    case "ClickedCancelButton":
+    case "UserClickedCreateButton":
+      return [{ ...model, status: "Creating" }, cmd.none];
+
+    case "UserClickedCancelButton":
       return [model, Navigation.back()];
 
     case "UserEnteredSearchText":
@@ -161,14 +167,15 @@ export const view =
         <View.Header
           left={
             <View.HeaderBackButton
-              onClick={() => dispatch({ type: "ClickedCancelButton" })}
+              onClick={() => dispatch({ type: "UserClickedCancelButton" })}
             />
           }
           title="New message"
           right={
             <View.Button
+              loading={model.status === "Creating"}
               sx={{ marginRight: -1 }}
-              onClick={() => dispatch({ type: "ClickedCancelButton" })}
+              onClick={() => dispatch({ type: "UserClickedCreateButton" })}
             >
               Chat
             </View.Button>
@@ -194,9 +201,11 @@ export const view =
             />
           ))}
           <View.InputBase
-            sx={{ paddingLeft: 2 }}
+            sx={{ paddingLeft: 2, flex: 1 }}
             autoFocus
-            placeholder="Search"
+            placeholder={
+              Object.values(model.selected).length === 0 ? "Search" : ""
+            }
             value={model.searchText}
             onKeyDown={(event) => {
               console.log(event);
