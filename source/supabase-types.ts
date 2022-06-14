@@ -12,6 +12,96 @@ export interface paths {
       };
     };
   };
+  "/conversation": {
+    get: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.conversation.id"];
+          created_at?: parameters["rowFilter.conversation.created_at"];
+          /** Filtering Columns */
+          select?: parameters["select"];
+          /** Ordering */
+          order?: parameters["order"];
+          /** Limiting and Pagination */
+          offset?: parameters["offset"];
+          /** Limiting and Pagination */
+          limit?: parameters["limit"];
+        };
+        header: {
+          /** Limiting and Pagination */
+          Range?: parameters["range"];
+          /** Limiting and Pagination */
+          "Range-Unit"?: parameters["rangeUnit"];
+          /** Preference */
+          Prefer?: parameters["preferCount"];
+        };
+      };
+      responses: {
+        /** OK */
+        200: {
+          schema: definitions["conversation"][];
+        };
+        /** Partial Content */
+        206: unknown;
+      };
+    };
+    post: {
+      parameters: {
+        body: {
+          /** conversation */
+          conversation?: definitions["conversation"];
+        };
+        query: {
+          /** Filtering Columns */
+          select?: parameters["select"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** Created */
+        201: unknown;
+      };
+    };
+    delete: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.conversation.id"];
+          created_at?: parameters["rowFilter.conversation.created_at"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+    patch: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.conversation.id"];
+          created_at?: parameters["rowFilter.conversation.created_at"];
+        };
+        body: {
+          /** conversation */
+          conversation?: definitions["conversation"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+  };
   "/profile": {
     get: {
       parameters: {
@@ -114,9 +204,119 @@ export interface paths {
       };
     };
   };
+  "/profiles_conversations": {
+    get: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.profiles_conversations.id"];
+          created_at?: parameters["rowFilter.profiles_conversations.created_at"];
+          user_id?: parameters["rowFilter.profiles_conversations.user_id"];
+          conversation_id?: parameters["rowFilter.profiles_conversations.conversation_id"];
+          /** Filtering Columns */
+          select?: parameters["select"];
+          /** Ordering */
+          order?: parameters["order"];
+          /** Limiting and Pagination */
+          offset?: parameters["offset"];
+          /** Limiting and Pagination */
+          limit?: parameters["limit"];
+        };
+        header: {
+          /** Limiting and Pagination */
+          Range?: parameters["range"];
+          /** Limiting and Pagination */
+          "Range-Unit"?: parameters["rangeUnit"];
+          /** Preference */
+          Prefer?: parameters["preferCount"];
+        };
+      };
+      responses: {
+        /** OK */
+        200: {
+          schema: definitions["profiles_conversations"][];
+        };
+        /** Partial Content */
+        206: unknown;
+      };
+    };
+    post: {
+      parameters: {
+        body: {
+          /** profiles_conversations */
+          profiles_conversations?: definitions["profiles_conversations"];
+        };
+        query: {
+          /** Filtering Columns */
+          select?: parameters["select"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** Created */
+        201: unknown;
+      };
+    };
+    delete: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.profiles_conversations.id"];
+          created_at?: parameters["rowFilter.profiles_conversations.created_at"];
+          user_id?: parameters["rowFilter.profiles_conversations.user_id"];
+          conversation_id?: parameters["rowFilter.profiles_conversations.conversation_id"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+    patch: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.profiles_conversations.id"];
+          created_at?: parameters["rowFilter.profiles_conversations.created_at"];
+          user_id?: parameters["rowFilter.profiles_conversations.user_id"];
+          conversation_id?: parameters["rowFilter.profiles_conversations.conversation_id"];
+        };
+        body: {
+          /** profiles_conversations */
+          profiles_conversations?: definitions["profiles_conversations"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+  };
 }
 
 export interface definitions {
+  conversation: {
+    /**
+     * Format: uuid
+     * @description Note:
+     * This is a Primary Key.<pk/>
+     * @default extensions.uuid_generate_v4()
+     */
+    id: string;
+    /**
+     * Format: timestamp with time zone
+     * @default now()
+     */
+    created_at: string;
+  };
   profile: {
     /**
      * Format: uuid
@@ -138,6 +338,32 @@ export interface definitions {
     theme_mode: "LIGHT" | "SYSTEM" | "DARK";
     /** Format: text */
     game_room_id?: string;
+  };
+  profiles_conversations: {
+    /**
+     * Format: uuid
+     * @description Note:
+     * This is a Primary Key.<pk/>
+     * @default extensions.uuid_generate_v4()
+     */
+    id: string;
+    /**
+     * Format: timestamp with time zone
+     * @default now()
+     */
+    created_at: string;
+    /**
+     * Format: uuid
+     * @description Note:
+     * This is a Foreign Key to `profile.id`.<fk table='profile' column='id'/>
+     */
+    user_id: string;
+    /**
+     * Format: uuid
+     * @description Note:
+     * This is a Foreign Key to `conversation.id`.<fk table='conversation' column='id'/>
+     */
+    conversation_id: string;
   };
 }
 
@@ -174,6 +400,12 @@ export interface parameters {
   offset: string;
   /** @description Limiting and Pagination */
   limit: string;
+  /** @description conversation */
+  "body.conversation": definitions["conversation"];
+  /** Format: uuid */
+  "rowFilter.conversation.id": string;
+  /** Format: timestamp with time zone */
+  "rowFilter.conversation.created_at": string;
   /** @description profile */
   "body.profile": definitions["profile"];
   /** Format: uuid */
@@ -188,6 +420,16 @@ export interface parameters {
   "rowFilter.profile.theme_mode": string;
   /** Format: text */
   "rowFilter.profile.game_room_id": string;
+  /** @description profiles_conversations */
+  "body.profiles_conversations": definitions["profiles_conversations"];
+  /** Format: uuid */
+  "rowFilter.profiles_conversations.id": string;
+  /** Format: timestamp with time zone */
+  "rowFilter.profiles_conversations.created_at": string;
+  /** Format: uuid */
+  "rowFilter.profiles_conversations.user_id": string;
+  /** Format: uuid */
+  "rowFilter.profiles_conversations.conversation_id": string;
 }
 
 export interface operations {}
