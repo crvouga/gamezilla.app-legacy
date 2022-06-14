@@ -3,6 +3,7 @@ import { Cmd } from "Framework/Cmd";
 import * as Navigation from "Framework/Navigation";
 import * as View from "View";
 import * as Profile from "Profile";
+import * as Store from "Store";
 import { pipe } from "fp-ts/lib/function";
 import { attempt } from "Framework/Task";
 import { either } from "fp-ts";
