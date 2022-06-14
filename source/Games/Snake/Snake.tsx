@@ -359,7 +359,7 @@ const Canvas = ({
     const ctx = canvas?.getContext("2d");
 
     if (canvas && ctx) {
-      const width = canvas.offsetWidth;
+      const width = canvas.width;
       const height = width;
 
       draw({ width, height }, model, ctx);
@@ -422,8 +422,8 @@ const draw = (
     );
   }
 
-  for (const position of [model.head, ...model.tail]) {
-    ctx.fillStyle = theme.snake;
+  for (const position of [model.food]) {
+    ctx.fillStyle = theme.apple;
     ctx.fillRect(
       position.x * tileWidth,
       position.y * tileHeight,
@@ -432,8 +432,15 @@ const draw = (
     );
   }
 
-  for (const position of [model.food]) {
-    ctx.fillStyle = theme.apple;
+  for (const position of [model.head, ...model.tail]) {
+    ctx.fillStyle = theme.snake;
+    ctx.strokeStyle = theme.snake;
+    ctx.strokeRect(
+      position.x * tileWidth,
+      position.y * tileHeight,
+      tileWidth,
+      tileHeight
+    );
     ctx.fillRect(
       position.x * tileWidth,
       position.y * tileHeight,
