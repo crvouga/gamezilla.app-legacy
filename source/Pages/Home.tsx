@@ -1,9 +1,8 @@
 import { cmd } from "Framework";
-import * as Game from "Game";
 import * as Navigation from "Framework/Navigation";
+import * as Games from "Games";
 import * as Route from "Route";
 import * as View from "View";
-import * as Games from "Games";
 
 //
 //
@@ -28,9 +27,9 @@ export const init: Model = {};
 export type Msg =
   | { type: "UserClickedAvatar" }
   | { type: "UserClickedChatButton" }
-  | { type: "UserClickedGame"; game: Game.Game };
+  | { type: "UserClickedGame"; game: Games.Game };
 
-export type OutMsg = Game.GroupedMsg;
+export type OutMsg = Games.GroupedMsg;
 
 export const update = (
   msg: Msg,
@@ -41,7 +40,7 @@ export const update = (
       return [model, Navigation.push(Route.encode({ type: "Account" })), []];
 
     case "UserClickedGame":
-      return [model, cmd.none, [Game.UserOpenedGame(msg.game)]];
+      return [model, cmd.none, [Games.UserOpenedGame(msg.game)]];
 
     case "UserClickedChatButton":
       return [model, Navigation.push(Route.encode({ type: "Chat" })), []];
@@ -56,17 +55,17 @@ export const update = (
 //
 //
 
-const isOpen = (game: Game.Model, gameName: Game.Game) => {
+const isOpen = (game: Games.Model, gameName: Games.Game) => {
   return game.type === "Opened" && game.child.type === gameName;
 };
 
-const canOpen = (game: Game.Model, gameName: Game.Game) => {
+const canOpen = (game: Games.Model, gameName: Games.Game) => {
   return game.type === "Closed" || isOpen(game, gameName);
 };
 
 export const view =
   (
-    { profile, game }: { profile: { avatarUrl: string }; game: Game.Model },
+    { profile, game }: { profile: { avatarUrl: string }; game: Games.Model },
     _model: Model
   ): View.View<Msg> =>
   (dispatch) =>
@@ -148,7 +147,6 @@ const GameCard = ({
   onClick: () => void;
   disabled?: boolean;
 }) => {
-  // const theme = useTheme();
   return (
     <View.ButtonBase
       disabled={disabled}
@@ -156,8 +154,6 @@ const GameCard = ({
         position: "relative",
         overflow: "hidden",
         opacity: disabled ? 0.3 : 1,
-        // border: `4px solid ${theme.palette.primary.main}`,
-        // borderRadius: "2px",
       }}
       onClick={onClick}
     >

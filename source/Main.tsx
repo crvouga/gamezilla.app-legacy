@@ -1,13 +1,13 @@
 import { either, option } from "fp-ts";
 import { pipe } from "fp-ts/lib/function";
-import { html, cmd, sub, task } from "Framework";
+import { cmd, html, sub, task } from "Framework";
 import { Cmd } from "Framework/Cmd";
 import { programWithDebugger } from "Framework/Debug/Html";
-import * as ReactDom from "react-dom/client";
-import * as Game from "Game";
 import * as Navigation from "Framework/Navigation";
+import * as Games from "Games";
 import * as Pages from "Pages";
 import * as Profile from "Profile";
+import * as ReactDom from "react-dom/client";
 import * as Route from "Route";
 import * as Session from "Session";
 import * as Snackbar from "Snackbar";
@@ -69,7 +69,7 @@ type Ready = {
   snackbar: Snackbar.Model;
   profile: Profile.Profile;
   session: Session.Session;
-  game: Game.Model;
+  game: Games.Model;
   page: ReadyPage;
 };
 
@@ -132,7 +132,7 @@ export type Msg =
   | OutMsg
   | PageMsg;
 
-type OutMsg = Snackbar.GroupedMsg | Game.GroupedMsg;
+type OutMsg = Snackbar.GroupedMsg | Games.GroupedMsg;
 
 type PageMsg =
   | (Pages.Account.Msg & { group: "Account" })
@@ -177,7 +177,7 @@ const updateShared = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
 
 const updateGame = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   if (msg.group === "Game" && model.type === "Ready") {
-    const [gameModel, gameCmd, outMsgs] = Game.update(msg, model.game);
+    const [gameModel, gameCmd, outMsgs] = Games.update(msg, model.game);
 
     return pipe(
       [{ ...model, game: gameModel }, pipe(gameCmd, cmd.map(groupTag("Game")))],
@@ -559,7 +559,7 @@ export const subscriptions = (model: Model): sub.Sub<Msg> => {
         navigationSubscrption,
         sessionSubcription(),
         profileSubscription(model.profile),
-        pipe(Game.subscriptions(model.game), sub.map(groupTag("Game"))),
+        pipe(Games.subscriptions(model.game), sub.map(groupTag("Game"))),
       ]);
 
     case "SessionLoading":
@@ -644,7 +644,7 @@ export const view =
               )(dispatch)}
 
               {pipe(
-                Game.viewBanner(model.game),
+                Games.viewBanner(model.game),
                 View.map(groupTag("Game"))
               )(dispatch)}
             </>
@@ -772,7 +772,7 @@ const viewReadyPage = ({ page, profile, game }: Ready): View.View<Msg> => {
       );
 
     case "Game":
-      return pipe(Game.view(game), View.map(groupTag("Game")));
+      return pipe(Games.view(game), View.map(groupTag("Game")));
 
     case "Chat":
       return pipe(Pages.Chat.view(page.child), View.map(groupTag("Chat")));
@@ -922,7 +922,7 @@ const initReady = ({
       snackbar: snackbar,
       session: session,
       profile: profile,
-      game: Game.init,
+      game: Games.init,
       page: page,
     },
     pageCmd,
