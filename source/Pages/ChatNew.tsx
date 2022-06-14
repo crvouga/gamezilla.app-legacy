@@ -19,7 +19,7 @@ export type Model = {
   searchText: string;
   searchResults: SearchResult[];
   selected: { [userId: string]: SearchResult };
-  status: "Idle" | "Searching";
+  searchStatus: "Idle" | "Searching";
 };
 
 type SearchResult = { userId: string; username: string; avatarUrl: string };
@@ -37,7 +37,7 @@ export const init: [Model, Cmd<Msg>] = [
     searchText: "",
     searchResults: [],
     selected: {},
-    status: "Idle",
+    searchStatus: "Idle",
   },
   pipe(
     Profile.search({ nameOrUsername: "" }),
@@ -76,7 +76,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
 
     case "UserEnteredSearchText":
       return [
-        { ...model, searchText: msg.searchText, status: "Searching" },
+        { ...model, searchText: msg.searchText, searchStatus: "Searching" },
         pipe(
           Profile.search({ nameOrUsername: msg.searchText }),
           attempt(
@@ -97,12 +97,12 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
 
     case "RecievedSearchResults":
       return [
-        { ...model, searchResults: msg.searchResults, status: "Idle" },
+        { ...model, searchResults: msg.searchResults, searchStatus: "Idle" },
         cmd.none,
       ];
 
     case "Problem":
-      return [{ ...model, status: "Idle" }, cmd.none];
+      return [{ ...model, searchStatus: "Idle" }, cmd.none];
 
     case "UserClickedSearchResult":
       const userId = msg.searchResult.userId;
@@ -161,7 +161,6 @@ export const view =
         <View.Header
           left={
             <View.HeaderBackButton
-              sx={{ marginLeft: -1 }}
               onClick={() => dispatch({ type: "ClickedCancelButton" })}
             />
           }
@@ -212,7 +211,7 @@ export const view =
         <View.Divider />
 
         <View.List>
-          {model.status === "Idle" && model.searchResults.length === 0 && (
+          {model.searchStatus === "Idle" && model.searchResults.length === 0 && (
             <View.Typography sx={{ p: 2 }} color="text.secondary">
               No account found.
             </View.Typography>
@@ -238,7 +237,7 @@ export const view =
             </View.ListItemButton>
           ))}
 
-          {model.status === "Searching" && (
+          {model.searchStatus === "Searching" && (
             <View.Box
               sx={{
                 width: "100%",
