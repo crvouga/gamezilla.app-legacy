@@ -1016,7 +1016,7 @@ const initReadyPage = ({
       return [{ type: "Chat", child: Pages.Chat.init }, cmd.none];
 
     case "ChatNew":
-      const [modelChild, cmdChild] = Pages.ChatNew.init;
+      const [modelChild, cmdChild] = Pages.ChatNew.init();
       return [
         { type: "ChatNew", child: modelChild },
         pipe(cmdChild, cmd.map(groupTag("ChatNew"))),
