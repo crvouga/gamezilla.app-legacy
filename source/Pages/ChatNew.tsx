@@ -34,26 +34,15 @@ type SearchResult = { userId: string; username: string; avatarUrl: string };
 //
 //
 
-export const init: [Model, Cmd<Msg>] = [
+export const init = (): [Model, Cmd<Msg>] => [
   {
     searchText: "",
     searchResults: [],
     selected: {},
-    searchStatus: "Idle",
+    searchStatus: "Searching",
     status: "Idle",
   },
-  pipe(
-    Profile.search({ nameOrUsername: "" }),
-    attempt(
-      either.fold<{ message: string }, Profile.Profile[], Msg>(
-        () => ({ type: "Problem" }),
-        (searchResults) => ({
-          type: "RecievedSearchResults",
-          searchResults,
-        })
-      )
-    )
-  ),
+  searchUsers(""),
 ];
 
 //
@@ -84,18 +73,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
     case "UserEnteredSearchText":
       return [
         { ...model, searchText: msg.searchText, searchStatus: "Searching" },
-        pipe(
-          Profile.search({ nameOrUsername: msg.searchText }),
-          attempt(
-            either.fold<{ message: string }, Profile.Profile[], Msg>(
-              () => ({ type: "Problem" }),
-              (searchResults) => ({
-                type: "RecievedSearchResults",
-                searchResults,
-              })
-            )
-          )
-        ),
+        searchUsers(msg.searchText),
       ];
 
     case "UserClickedSelectedDeleteButton":
@@ -114,19 +92,6 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
     case "UserClickedSearchResult":
       const userId = msg.searchResult.userId;
 
-      const cmdNew = pipe(
-        Profile.search({ nameOrUsername: "" }),
-        attempt(
-          either.fold<{ message: string }, Profile.Profile[], Msg>(
-            () => ({ type: "Problem" }),
-            (searchResults) => ({
-              type: "RecievedSearchResults",
-              searchResults,
-            })
-          )
-        )
-      );
-
       if (userId in model.selected) {
         return [
           {
@@ -134,7 +99,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
             searchText: "",
             selected: removeKey(userId, model.selected),
           },
-          cmdNew,
+          searchUsers(""),
         ];
       }
 
@@ -147,9 +112,24 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
             [msg.searchResult.userId]: msg.searchResult,
           },
         },
-        cmdNew,
+        searchUsers(""),
       ];
   }
+};
+
+const searchUsers = (nameOrUsername: string) => {
+  return pipe(
+    Profile.search({ nameOrUsername }),
+    attempt(
+      either.fold<{ message: string }, Profile.Profile[], Msg>(
+        () => ({ type: "Problem" }),
+        (searchResults) => ({
+          type: "RecievedSearchResults",
+          searchResults,
+        })
+      )
+    )
+  );
 };
 
 //
