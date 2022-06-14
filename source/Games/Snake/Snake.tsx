@@ -70,8 +70,8 @@ export const init: Model = {
       y: 0,
     },
     upper: {
-      x: 13,
-      y: 13,
+      x: 12,
+      y: 21,
     },
   },
 };
@@ -222,7 +222,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
 
       const maxDeltaMagnitude = Math.max(Math.abs(delta.x), Math.abs(delta.y));
 
-      if (maxDeltaMagnitude < 3) {
+      if (maxDeltaMagnitude < 4) {
         return [{ ...model, touched: touchedNew }, cmd.none];
       }
 
@@ -306,7 +306,7 @@ export const view =
   (model: Model): View.View<Msg> =>
   (dispatch) => {
     return (
-      <>
+      <View.Page>
         <View.Header
           left={
             <View.HeaderBackButton
@@ -320,9 +320,7 @@ export const view =
           }
         />
 
-        <Canvas model={model} dispatch={dispatch} />
-
-        <View.Box sx={{ paddingX: 2, paddingY: 1 }}>
+        {/* <View.Box sx={{ paddingX: 2, paddingY: 1 }}>
           <View.Button
             size="large"
             fullWidth
@@ -340,8 +338,10 @@ export const view =
           >
             {model.status === "playing" ? "pause" : "play"}
           </View.Button>
-        </View.Box>
-      </>
+        </View.Box> */}
+
+        <Canvas model={model} dispatch={dispatch} />
+      </View.Page>
     );
   };
 
@@ -360,41 +360,45 @@ const Canvas = ({
 
     if (canvas && ctx) {
       const width = canvas.width;
-      const height = width;
+      const height = canvas.height;
 
       draw({ width, height }, model, ctx);
-    }
-
-    if (model.status === "playing") {
     }
   }, [model]);
 
   return (
-    <canvas
-      style={{ width: "100%" }}
-      ref={ref}
-      onMouseDown={() => {
-        dispatch({ type: "UserMouseDownBoard" });
-      }}
-      onMouseUp={() => {
-        dispatch({ type: "UserMouseUpBoard" });
-      }}
-      onMouseMove={(event) => {
-        if (model.mouseStatus === "active") {
-          const x = event.clientX;
-          const y = event.clientY;
-          dispatch({ type: "UserMouseMovedBoard", position: { x, y } });
-        }
-      }}
-      onTouchMove={(event) => {
-        const touch = event.touches[0];
-        if (touch) {
-          const x = touch.clientX;
-          const y = touch.clientY;
-          dispatch({ type: "UserTouchMovedBoard", position: { x, y } });
-        }
-      }}
-    />
+    <View.Box sx={{ flex: 1, width: "100%" }}>
+      <canvas
+        style={{
+          width: "100%",
+          height: "100%",
+          maxHeight: "100%",
+          minHeight: "100%",
+        }}
+        ref={ref}
+        onMouseDown={() => {
+          dispatch({ type: "UserMouseDownBoard" });
+        }}
+        onMouseUp={() => {
+          dispatch({ type: "UserMouseUpBoard" });
+        }}
+        onMouseMove={(event) => {
+          if (model.mouseStatus === "active") {
+            const x = event.clientX;
+            const y = event.clientY;
+            dispatch({ type: "UserMouseMovedBoard", position: { x, y } });
+          }
+        }}
+        onTouchMove={(event) => {
+          const touch = event.touches[0];
+          if (touch) {
+            const x = touch.clientX;
+            const y = touch.clientY;
+            dispatch({ type: "UserTouchMovedBoard", position: { x, y } });
+          }
+        }}
+      />
+    </View.Box>
   );
 };
 
