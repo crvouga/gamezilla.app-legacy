@@ -6,18 +6,7 @@
 //
 //
 
-export type Model = {
-  conversations: {
-    [conversationId: string]: Conversation;
-  };
-};
-
 export type Conversation = {
-  conversationId: string;
-};
-
-export type Message = {
-  messageId: string;
   conversationId: string;
 };
 
