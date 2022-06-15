@@ -2,6 +2,7 @@ import { cmd } from "Framework";
 import * as Navigation from "Framework/Navigation";
 import * as Route from "Route";
 import * as View from "View";
+import * as Profile from "Profile";
 
 //
 //
@@ -28,7 +29,8 @@ export type Msg =
   | { type: "UserClickedNameLink" }
   | { type: "UserClickedUsernameLink" }
   | { type: "UserClickedAvatar" }
-  | { type: "UserClickedChangeAvatarButton" };
+  | { type: "UserClickedChangeAvatarButton" }
+  | { type: "UserClickedThemeLink" };
 
 export const update = (
   { userId }: { userId: string },
@@ -70,6 +72,12 @@ export const update = (
         model,
         Navigation.push(Route.encode({ type: "ProfileUpdateUsername" })),
       ];
+
+    case "UserClickedThemeLink":
+      return [
+        model,
+        Navigation.push(Route.encode({ type: "ProfileUpdateTheme" })),
+      ];
   }
 };
 
@@ -81,10 +89,8 @@ export const update = (
 //
 //
 
-type Profile = { username: string; name: string; avatarUrl: string };
-
 export const view =
-  (profile: Profile, _model: Model): View.View<Msg> =>
+  (profile: Profile.Profile, _model: Model): View.View<Msg> =>
   (dispatch) =>
     (
       <View.Page>
@@ -126,6 +132,12 @@ export const view =
             label="Name"
             value={profile.name}
             onClick={() => dispatch({ type: "UserClickedNameLink" })}
+          />
+
+          <View.Field
+            label="Theme"
+            value={profile.themeMode}
+            onClick={() => dispatch({ type: "UserClickedThemeLink" })}
           />
         </View.List>
       </View.Page>

@@ -179,7 +179,7 @@ const GameCard = ({
             background: `linear-gradient(transparent, rgba(0, 0, 0, 0.6))`,
           }}
         >
-          <View.Typography align="left" fontWeight={800}>
+          <View.Typography color="white" align="left" fontWeight={800}>
             {label}
           </View.Typography>
         </View.Box>
