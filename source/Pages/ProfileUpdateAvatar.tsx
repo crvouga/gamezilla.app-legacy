@@ -3,7 +3,7 @@ import { pipe } from "fp-ts/lib/function";
 import { cmd } from "Framework";
 import { attempt, perform } from "Framework/Task";
 import * as Navigation from "Framework/Navigation";
-import * as Profile from "Profile";
+import * as Profile from "Store/Profile";
 import * as ProfileAvatar from "ProfileAvatar";
 import * as Snackbar from "Snackbar";
 import * as View from "View";

@@ -6,7 +6,7 @@ import { programWithDebugger } from "Framework/Debug/Html";
 import * as Navigation from "Framework/Navigation";
 import * as Games from "Games";
 import * as Pages from "Pages";
-import * as Profile from "Profile";
+import * as Profile from "Store/Profile";
 import * as ReactDom from "react-dom/client";
 import * as Route from "Route";
 import * as Session from "Session";

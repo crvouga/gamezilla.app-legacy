@@ -2,7 +2,7 @@ import { cmd } from "Framework";
 import * as Navigation from "Framework/Navigation";
 import * as Route from "Route";
 import * as View from "View";
-import * as Profile from "Profile";
+import * as Profile from "Store/Profile";
 
 //
 //

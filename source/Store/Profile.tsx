@@ -1,7 +1,7 @@
 import { either, option, task } from "fp-ts";
 import * as Rx from "rxjs";
-import { sub } from "Framework";
-import * as Supabase from "Supabase";
+import { sub } from "../Framework";
+import * as Supabase from "../Supabase";
 import { definitions } from "../supabase-types";
 
 export type Profile = {
@@ -9,7 +9,10 @@ export type Profile = {
   username: string;
   name: string;
   avatarUrl: string;
+  themeMode: ThemeMode;
 };
+
+export type ThemeMode = "Light" | "Dark" | "System";
 
 //
 //
@@ -18,6 +21,36 @@ export type Profile = {
 //
 //
 //
+
+const toThemeMode = (
+  themeMode: definitions["profile"]["theme_mode"]
+): ThemeMode => {
+  switch (themeMode) {
+    case "DARK":
+      return "Dark";
+
+    case "LIGHT":
+      return "Light";
+
+    case "SYSTEM":
+      return "System";
+  }
+};
+
+const fromThemeMode = (
+  themeMode: ThemeMode
+): definitions["profile"]["theme_mode"] => {
+  switch (themeMode) {
+    case "Dark":
+      return "DARK";
+
+    case "Light":
+      return "LIGHT";
+
+    case "System":
+      return "SYSTEM";
+  }
+};
 
 const rowToProfile = (row: definitions["profile"]): Profile => {
   return {
@@ -25,6 +58,7 @@ const rowToProfile = (row: definitions["profile"]): Profile => {
     avatarUrl: row.avatar_url,
     name: row.name,
     username: row.username,
+    themeMode: toThemeMode(row.theme_mode),
   };
 };
 
@@ -117,11 +151,13 @@ export const edit =
     username,
     name,
     avatarUrl,
+    themeMode,
   }: {
     userId: string;
     username?: string;
     name?: string;
     avatarUrl?: string;
+    themeMode?: ThemeMode;
   }): task.Task<either.Either<{}, {}>> =>
   async () => {
     const response = await Supabase.client
@@ -130,6 +166,7 @@ export const edit =
         username,
         name,
         avatar_url: avatarUrl,
+        theme_mode: themeMode ? fromThemeMode(themeMode) : undefined,
       })
       .match({ id: userId });
 
