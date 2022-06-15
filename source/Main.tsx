@@ -1,4 +1,4 @@
-import { either, option } from "fp-ts";
+import { option } from "fp-ts";
 import { pipe } from "fp-ts/lib/function";
 import { cmd, html, sub, task } from "Framework";
 import { Cmd } from "Framework/Cmd";
