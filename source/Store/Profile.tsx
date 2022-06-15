@@ -110,7 +110,7 @@ export const create =
   };
 
 export const deleteForever =
-  <Msg,>({ userId }: { userId: string }): task.Task<either.Either<{}, {}>> =>
+  ({ userId }: { userId: string }): task.Task<either.Either<{}, {}>> =>
   async () => {
     const response = await Supabase.client
       .from<definitions["profile"]>("profile")
