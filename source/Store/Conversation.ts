@@ -1,5 +1,7 @@
 import { definitions } from "supabase-types";
 import * as Supabase from "Supabase";
+import { either, task } from "fp-ts";
+
 //
 //
 //
@@ -7,8 +9,6 @@ import * as Supabase from "Supabase";
 //
 //
 //
-
-import { either, task } from "fp-ts";
 
 export type Conversation = {
   conversationId: string;
