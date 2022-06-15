@@ -4,6 +4,14 @@ import { sub } from "../Framework";
 import * as Supabase from "../Supabase";
 import { definitions } from "../supabase-types";
 
+//
+//
+//
+// Model
+//
+//
+//
+
 export type Profile = {
   userId: string;
   username: string;

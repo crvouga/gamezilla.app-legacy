@@ -6,6 +6,7 @@ import { programWithDebugger } from "Framework/Debug/Html";
 import * as Navigation from "Framework/Navigation";
 import * as Games from "Games";
 import * as Pages from "Pages";
+import * as Store from "Store";
 import * as Profile from "Store/Profile";
 import * as ReactDom from "react-dom/client";
 import * as Route from "Route";
@@ -33,12 +34,14 @@ type SessionLoading = {
   type: "SessionLoading";
   location: Navigation.Location;
   snackbar: Snackbar.Model;
+  store: Store.Model;
 };
 
 type SessionMissing = {
   type: "SessionMissing";
   location: Navigation.Location;
   snackbar: Snackbar.Model;
+  store: Store.Model;
   page: SessionMissingPage;
 };
 
@@ -48,6 +51,7 @@ type ProfileLoading = {
   type: "ProfileLoading";
   location: Navigation.Location;
   snackbar: Snackbar.Model;
+  store: Store.Model;
   session: Session.Session;
 };
 
@@ -56,6 +60,7 @@ type ProfileMissing = {
   location: Navigation.Location;
   snackbar: Snackbar.Model;
   session: Session.Session;
+  store: Store.Model;
   page: ProfileMissingPage;
 };
 
@@ -67,6 +72,7 @@ type Ready = {
   type: "Ready";
   location: Navigation.Location;
   snackbar: Snackbar.Model;
+  store: Store.Model;
   profile: Profile.Profile;
   session: Session.Session;
   game: Games.Model;
@@ -133,7 +139,7 @@ export type Msg =
   | OutMsg
   | PageMsg;
 
-type OutMsg = Snackbar.GroupedMsg | Games.GroupedMsg;
+type OutMsg = Snackbar.GroupedMsg | Games.GroupedMsg | Store.GroupedMsg;
 
 type PageMsg =
   | (Pages.Account.Msg & { group: "Account" })
@@ -173,7 +179,8 @@ const updateShared = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   return pipe(
     [model, cmd.none],
     andThen(updateGame, msg),
-    andThen(updateSnackbar, msg)
+    andThen(updateSnackbar, msg),
+    andThen(updateStore, msg)
   );
 };
 
@@ -196,6 +203,18 @@ const updateSnackbar = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
     return [
       { ...model, snackbar: snackbarModel },
       pipe(snackbarCmd, cmd.map(groupTag("Snackbar"))),
+    ];
+  }
+
+  return [model, cmd.none];
+};
+
+const updateStore = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
+  if (msg.group === "Store") {
+    const [storeModel, storeCmd] = Store.update(msg, model.store);
+    return [
+      { ...model, store: storeModel },
+      pipe(storeCmd, cmd.map(groupTag("Store"))),
     ];
   }
 
@@ -861,6 +880,7 @@ const initSessionLoading = ({
       type: "SessionLoading",
       location: location,
       snackbar: Snackbar.init,
+      store: Store.init,
     },
     pipe(
       Session.load,
@@ -877,9 +897,11 @@ const initSessionMissing = (
   {
     location,
     snackbar,
+    store,
   }: {
     snackbar: Snackbar.Model;
     location: Navigation.Location;
+    store: Store.Model;
   },
   outMsgs: OutMsg[]
 ): [SessionMissing, Cmd<Msg>, OutMsg[]] => {
@@ -890,6 +912,7 @@ const initSessionMissing = (
       type: "SessionMissing",
       snackbar,
       location,
+      store,
       page: { type: "Login", child },
     },
     Navigation.push(Route.encode({ type: "Login" })),
@@ -901,10 +924,12 @@ const initProfileMissing = ({
   location,
   session,
   snackbar,
+  store,
 }: {
   location: Navigation.Location;
   snackbar: Snackbar.Model;
   session: Session.Session;
+  store: Store.Model;
 }): [ProfileMissing, Cmd<Msg>, OutMsg[]] => {
   const [page, pageCmd] = initProfileMissingPage({ location, session });
   return [
@@ -914,6 +939,7 @@ const initProfileMissing = ({
       snackbar,
       location,
       page: page,
+      store,
     },
     pageCmd,
     [],
@@ -961,10 +987,12 @@ const initReady = ({
   profile,
   snackbar,
   session,
+  store,
 }: {
   location: Navigation.Location;
   snackbar: Snackbar.Model;
   profile: Profile.Profile;
+  store: Store.Model;
   session: Session.Session;
 }): [Ready, Cmd<Msg>, OutMsg[]] => {
   const [page, pageCmd] = initReadyPage({ profile, location });
@@ -974,6 +1002,7 @@ const initReady = ({
       location: location,
       snackbar: snackbar,
       session: session,
+      store: store,
       profile: profile,
       game: Games.init,
       page: page,
@@ -1091,9 +1120,11 @@ const initProfileLoading = ({
   session,
   location,
   snackbar,
+  store,
 }: {
   session: Session.Session;
   snackbar: Snackbar.Model;
+  store: Store.Model;
   location: Navigation.Location;
 }): [ProfileLoading, Cmd<Msg>, OutMsg[]] => {
   return [
@@ -1102,9 +1133,10 @@ const initProfileLoading = ({
       snackbar,
       location,
       session,
+      store,
     },
     pipe(Profile.load(session), task.attempt(profileResultToMsg)),
-    [],
+    [{ group: "Store", type: "GetProfile", userId: session.userId }],
   ];
 };
 
