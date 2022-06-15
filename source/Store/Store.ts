@@ -1,9 +1,12 @@
+import * as Conversation from "./Conversation";
+import * as Profile from "./Profile";
+
 export type Store = {
   profiles: {
-    [userId: string]: Profile;
+    [userId: string]: Profile.Profile;
   };
   conversation: {
-    [conversationId: string]: Conversation;
+    [conversationId: string]: Conversation.Conversation;
   };
   profiles_conversations: {
     [id: string]: {
@@ -12,7 +15,3 @@ export type Store = {
     };
   };
 };
-
-type Profile = {};
-
-type Conversation = {};
