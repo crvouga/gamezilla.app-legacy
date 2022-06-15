@@ -22,6 +22,16 @@ export type Profile = {
 
 export type ThemeMode = "Light" | "Dark" | "System";
 
+export type Edit = {
+  group: "Store";
+  type: "Edit";
+  userId: string;
+};
+
+export const Edit = (userId: string, edits: Partial<Profile>): Edit => {
+  return { group: "Store", type: "Edit", userId };
+};
+
 //
 //
 //
