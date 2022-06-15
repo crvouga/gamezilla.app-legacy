@@ -170,7 +170,7 @@ export const view =
         <View.Box sx={{ display: "flex", alignItems: "center", paddingY: 2 }}>
           {Object.values(model.selected).map((searchResult) => (
             <View.Chip
-              sx={{ marginLeft: 1, backgroundColor: "primary.dark" }}
+              sx={{ marginLeft: 1 }}
               key={searchResult.userId}
               label={searchResult.username}
               onDelete={() => {

@@ -86,6 +86,7 @@ type ReadyPage =
       type: "ProfileUpdateUsername";
       child: Pages.ProfileUpdateUsername.Model;
     }
+  | { type: "ProfileUpdateTheme"; child: Pages.ProfileUpdateTheme.Model }
   | { type: "Chat"; child: Pages.Chat.Model }
   | { type: "ChatNew"; child: Pages.ChatNew.Model };
 
@@ -146,7 +147,8 @@ type PageMsg =
   | (Pages.ProfileUpdateName.Msg & { group: "ProfileUpdateName" })
   | (Pages.ProfileUpdateUsername.Msg & { group: "ProfileUpdateUsername" })
   | (Pages.Chat.Msg & { group: "Chat" })
-  | (Pages.ChatNew.Msg & { group: "ChatNew" });
+  | (Pages.ChatNew.Msg & { group: "ChatNew" })
+  | (Pages.ProfileUpdateTheme.Msg & { group: "ProfileUpdateTheme" });
 
 //
 //
@@ -406,132 +408,175 @@ const updateReadyPage = (
   msg: Msg,
   page: Ready["page"]
 ): [Ready["page"], Cmd<Msg>, OutMsg[]] => {
-  if (page.type === "Account" && msg.group === "Account") {
-    const [child, childCmd] = Pages.Account.update(profile, msg, page.child);
-    return [
-      { type: "Account", child },
-      pipe(childCmd, cmd.map(groupTag("Account"))),
-      [],
-    ];
+  const fallback: [Ready["page"], Cmd<Msg>, OutMsg[]] = [page, cmd.none, []];
+
+  switch (page.type) {
+    case "Account":
+      if (msg.group === "Account") {
+        const [child, childCmd] = Pages.Account.update(
+          profile,
+          msg,
+          page.child
+        );
+        return [
+          { type: "Account", child },
+          pipe(childCmd, cmd.map(groupTag("Account"))),
+          [],
+        ];
+      }
+      return fallback;
+
+    case "Home":
+      if (msg.group === "Home") {
+        const [child, childCmd, outMsgs] = Pages.Home.update(msg, page.child);
+        return [
+          { type: "Home", child },
+          pipe(childCmd, cmd.map(groupTag("Home"))),
+          outMsgs,
+        ];
+      }
+      return fallback;
+
+    case "Logout":
+      if (msg.group === "Logout") {
+        const [child, childCmd, outMsgs] = Pages.Logout.update(
+          { name: profile.username },
+          msg,
+          page.child
+        );
+        return [
+          { type: "Logout", child },
+          pipe(childCmd, cmd.map(groupTag("Logout"))),
+          outMsgs,
+        ];
+      }
+      return fallback;
+
+    case "ProfileDelete":
+      if (msg.group === "ProfileDelete") {
+        const [child, childCmd] = Pages.ProfileDelete.update(
+          profile,
+          msg,
+          page.child
+        );
+        return [
+          { type: "ProfileDelete", child },
+          pipe(childCmd, cmd.map(groupTag("ProfileDelete"))),
+          [],
+        ];
+      }
+      return fallback;
+
+    case "ProfileUpdate":
+      if (msg.group === "ProfileUpdate") {
+        const [child, childCmd] = Pages.ProfileUpdate.update(
+          profile,
+          msg,
+          page.child
+        );
+        return [
+          { type: "ProfileUpdate", child },
+          pipe(childCmd, cmd.map(groupTag("ProfileUpdate"))),
+          [],
+        ];
+      }
+      return fallback;
+
+    case "ProfileUpdateAvatar":
+      if (msg.group === "ProfileUpdateAvatar") {
+        const [child, childCmd, msgs] = Pages.ProfileUpdateAvatar.update(
+          { userId: profile.userId },
+          msg,
+          page.child
+        );
+        return [
+          { type: "ProfileUpdateAvatar", child },
+          pipe(childCmd, cmd.map(groupTag("ProfileUpdateAvatar"))),
+          msgs.map(groupTag("Snackbar")),
+        ];
+      }
+      return fallback;
+
+    case "ProfileUpdateName":
+      if (msg.group === "ProfileUpdateName") {
+        const [child, childCmd, outMsgs] = Pages.ProfileUpdateName.update(
+          profile,
+          msg,
+          page.child
+        );
+        return [
+          { type: "ProfileUpdateName", child },
+          pipe(childCmd, cmd.map(groupTag("ProfileUpdateName"))),
+          outMsgs,
+        ];
+      }
+      return fallback;
+
+    case "ProfileUpdateUsername":
+      if (msg.group === "ProfileUpdateUsername") {
+        const [child, childCmd, msgs] = Pages.ProfileUpdateUsername.update(
+          profile,
+          msg,
+          page.child
+        );
+        return [
+          { type: "ProfileUpdateUsername", child },
+          pipe(childCmd, cmd.map(groupTag("ProfileUpdateUsername"))),
+          msgs.map(groupTag("Snackbar")),
+        ];
+      }
+      return fallback;
+
+    case "Game":
+      if (msg.group === "Game") {
+        return [page, cmd.none, []];
+      }
+      return fallback;
+
+    case "Chat":
+      if (msg.group === "Chat") {
+        const [child, childCmd] = Pages.Chat.update(msg, page.child);
+        return [
+          { type: "Chat", child },
+          pipe(childCmd, cmd.map(groupTag("Chat"))),
+          [],
+        ];
+      }
+      return fallback;
+
+    case "ChatNew":
+      if (msg.group === "ChatNew") {
+        const [child, childCmd] = Pages.ChatNew.update(msg, page.child);
+
+        return [
+          { type: "ChatNew", child },
+          pipe(childCmd, cmd.map(groupTag("ChatNew"))),
+          [],
+        ];
+      }
+
+      return fallback;
+
+    case "ProfileUpdateTheme":
+      if (msg.group === "ProfileUpdateTheme") {
+        const [child, childCmd] = Pages.ProfileUpdateTheme.update(
+          profile,
+          msg,
+          page.child
+        );
+
+        return [
+          { type: "ProfileUpdateTheme", child },
+          pipe(childCmd, cmd.map(groupTag("ProfileUpdateTheme"))),
+          [],
+        ];
+      }
+
+      return fallback;
+
+    default:
+      return exhaustive(page);
   }
-
-  if (page.type === "Home" && msg.group === "Home") {
-    const [child, childCmd, outMsgs] = Pages.Home.update(msg, page.child);
-    return [
-      { type: "Home", child },
-      pipe(childCmd, cmd.map(groupTag("Home"))),
-      outMsgs,
-    ];
-  }
-
-  if (page.type === "Logout" && msg.group === "Logout") {
-    const [child, childCmd, outMsgs] = Pages.Logout.update(
-      { name: profile.username },
-      msg,
-      page.child
-    );
-    return [
-      { type: "Logout", child },
-      pipe(childCmd, cmd.map(groupTag("Logout"))),
-      outMsgs,
-    ];
-  }
-
-  if (page.type === "ProfileDelete" && msg.group === "ProfileDelete") {
-    const [child, childCmd] = Pages.ProfileDelete.update(
-      profile,
-      msg,
-      page.child
-    );
-    return [
-      { type: "ProfileDelete", child },
-      pipe(childCmd, cmd.map(groupTag("ProfileDelete"))),
-      [],
-    ];
-  }
-
-  if (page.type === "ProfileUpdate" && msg.group === "ProfileUpdate") {
-    const [child, childCmd] = Pages.ProfileUpdate.update(
-      profile,
-      msg,
-      page.child
-    );
-    return [
-      { type: "ProfileUpdate", child },
-      pipe(childCmd, cmd.map(groupTag("ProfileUpdate"))),
-      [],
-    ];
-  }
-
-  if (
-    page.type === "ProfileUpdateAvatar" &&
-    msg.group === "ProfileUpdateAvatar"
-  ) {
-    const [child, childCmd, msgs] = Pages.ProfileUpdateAvatar.update(
-      { userId: profile.userId },
-      msg,
-      page.child
-    );
-    return [
-      { type: "ProfileUpdateAvatar", child },
-      pipe(childCmd, cmd.map(groupTag("ProfileUpdateAvatar"))),
-      msgs.map(groupTag("Snackbar")),
-    ];
-  }
-
-  if (page.type === "ProfileUpdateName" && msg.group === "ProfileUpdateName") {
-    const [child, childCmd, outMsgs] = Pages.ProfileUpdateName.update(
-      profile,
-      msg,
-      page.child
-    );
-    return [
-      { type: "ProfileUpdateName", child },
-      pipe(childCmd, cmd.map(groupTag("ProfileUpdateName"))),
-      outMsgs,
-    ];
-  }
-
-  if (
-    page.type === "ProfileUpdateUsername" &&
-    msg.group === "ProfileUpdateUsername"
-  ) {
-    const [child, childCmd, msgs] = Pages.ProfileUpdateUsername.update(
-      profile,
-      msg,
-      page.child
-    );
-    return [
-      { type: "ProfileUpdateUsername", child },
-      pipe(childCmd, cmd.map(groupTag("ProfileUpdateUsername"))),
-      msgs.map(groupTag("Snackbar")),
-    ];
-  }
-
-  if (page.type === "Game" && msg.group === "Game") {
-    return [page, cmd.none, []];
-  }
-
-  if (page.type === "Chat" && msg.group === "Chat") {
-    const [child, childCmd] = Pages.Chat.update(msg, page.child);
-    return [
-      { type: "Chat", child },
-      pipe(childCmd, cmd.map(groupTag("Chat"))),
-      [],
-    ];
-  }
-
-  if (page.type === "ChatNew" && msg.group === "ChatNew") {
-    const [child, childCmd] = Pages.ChatNew.update(msg, page.child);
-
-    return [
-      { type: "ChatNew", child },
-      pipe(childCmd, cmd.map(groupTag("ChatNew"))),
-      [],
-    ];
-  }
-
-  return [page, cmd.none, []];
 };
 
 //
@@ -613,7 +658,9 @@ export const view =
   (model: Model): View.View<Msg> =>
   (dispatch) =>
     (
-      <View.ThemeProvider>
+      <View.ThemeProvider
+        themeMode={model.type === "Ready" ? model.profile.themeMode : "System"}
+      >
         <View.Box
           sx={{
             maxWidth: "sm",
@@ -781,6 +828,12 @@ const viewReadyPage = ({ page, profile, game }: Ready): View.View<Msg> => {
       return pipe(
         Pages.ChatNew.view(page.child),
         View.map(groupTag("ChatNew"))
+      );
+
+    case "ProfileUpdateTheme":
+      return pipe(
+        Pages.ProfileUpdateTheme.view(profile, page.child),
+        View.map(groupTag("ProfileUpdateTheme"))
       );
 
     default:
@@ -1021,6 +1074,13 @@ const initReadyPage = ({
         { type: "ChatNew", child: modelChild },
         pipe(cmdChild, cmd.map(groupTag("ChatNew"))),
       ];
+
+    case "ProfileUpdateTheme": {
+      return [
+        { type: "ProfileUpdateTheme", child: Pages.ProfileUpdateTheme.init },
+        cmd.none,
+      ];
+    }
 
     default:
       return exhaustive(route);

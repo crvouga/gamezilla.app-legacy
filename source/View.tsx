@@ -3,6 +3,7 @@ import * as MuiLab from "@mui/lab";
 import * as Mui from "@mui/material";
 import { green } from "@mui/material/colors";
 import { html, platform } from "Framework";
+import { useMemo } from "react";
 import { createRoot } from "react-dom/client";
 
 //
@@ -31,31 +32,58 @@ export const map = <A, Msg>(
 //
 //
 
-const theme = Mui.responsiveFontSizes(
-  Mui.createTheme({
-    palette: {
-      mode: "dark",
-      primary: green,
-    },
-    typography: {
-      fontFamily: ["Nunito"].join(","),
-      fontWeightRegular: "bold",
-    },
-    components: {
-      MuiButton: {
-        styleOverrides: {
-          root: {
-            textTransform: "capitalize",
-            fontWeight: 800,
-            borderRadius: "120px",
+const createTheme = ({ mode }: { mode: "light" | "dark" }) =>
+  Mui.responsiveFontSizes(
+    Mui.createTheme({
+      palette: {
+        mode: mode,
+        primary: green,
+      },
+      typography: {
+        fontFamily: ["Nunito"].join(","),
+        fontWeightRegular: "bold",
+      },
+      components: {
+        MuiButton: {
+          styleOverrides: {
+            root: {
+              textTransform: "capitalize",
+              fontWeight: 800,
+              borderRadius: "120px",
+            },
           },
         },
       },
-    },
-  })
-);
+    })
+  );
 
-export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
+const darkTheme = createTheme({ mode: "dark" });
+const lightTheme = createTheme({ mode: "light" });
+
+export const ThemeProvider = ({
+  children,
+  themeMode,
+}: {
+  children: React.ReactNode;
+  themeMode: ThemeMode;
+}) => {
+  const prefersDarkMode = Mui.useMediaQuery("(prefers-color-scheme: dark)");
+
+  const theme = useMemo(() => {
+    switch (themeMode) {
+      case "Dark":
+        return darkTheme;
+
+      case "Light":
+        return lightTheme;
+      case "System":
+        if (prefersDarkMode) {
+          return darkTheme;
+        }
+        return lightTheme;
+    }
+  }, [themeMode, prefersDarkMode]);
+
   return (
     <Mui.ThemeProvider theme={theme}>
       <Mui.CssBaseline />
@@ -65,6 +93,65 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
 };
 
 export const useTheme = Mui.useTheme;
+
+export type ThemeMode = "Light" | "Dark" | "System";
+
+export const ThemeModeIcon = ({ themeMode }: { themeMode: ThemeMode }) => {
+  switch (themeMode) {
+    case "Dark":
+      return <Icons.DarkMode />;
+
+    case "Light":
+      return <Icons.LightMode />;
+
+    case "System":
+      return <Icons.SettingsBrightness />;
+  }
+};
+
+const themeModes: { [key in ThemeMode]: ThemeMode } = {
+  Light: "Light",
+  Dark: "Dark",
+  System: "System",
+};
+
+const isThemeMode = (themeMode: unknown): themeMode is ThemeMode => {
+  return typeof themeMode === "string" && themeMode in themeModes;
+};
+
+export const ThemeModeToggleButtons = ({
+  themeMode,
+  onChange,
+}: {
+  themeMode: ThemeMode;
+  onChange: (themeMode: ThemeMode) => void;
+}) => {
+  return (
+    <Mui.ToggleButtonGroup
+      fullWidth
+      value={themeMode}
+      exclusive
+      orientation="vertical"
+      onChange={(event, value) => {
+        console.log(value);
+        if (isThemeMode(value)) {
+          onChange(value);
+        }
+      }}
+    >
+      {Object.values(themeModes).map((themeMode) => (
+        <Mui.ToggleButton key={themeMode} value={themeMode}>
+          <Mui.Box
+            sx={{ marginRight: 1, alignItems: "center", display: "flex" }}
+          >
+            <ThemeModeIcon themeMode={themeMode} />
+          </Mui.Box>
+          {themeMode}
+        </Mui.ToggleButton>
+      ))}
+    </Mui.ToggleButtonGroup>
+  );
+};
 
 //
 //

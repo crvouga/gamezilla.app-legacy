@@ -17,6 +17,7 @@ export type Route =
   | { type: "ProfileUpdateAvatar" }
   | { type: "ProfileUpdateName" }
   | { type: "ProfileUpdateUsername" }
+  | { type: "ProfileUpdateTheme" }
   | { type: "Game" }
   | { type: "Chat" }
   | { type: "ChatNew" };
@@ -38,6 +39,7 @@ const routesTypes: { [routeType in Route["type"]]: string } = {
   ProfileUpdateAvatar: "ProfileUpdateAvatar",
   ProfileUpdateName: "ProfileUpdateName",
   ProfileUpdateUsername: "ProfileUpdateUsername",
+  ProfileUpdateTheme: "ProfileUpdateTheme",
   Game: "Game",
   Chat: "Chat",
   ChatNew: "ChatNew",
