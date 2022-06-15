@@ -4,6 +4,7 @@ import { cmd } from "Framework";
 import { Cmd } from "Framework/Cmd";
 import * as RemoteData from "Framework/RemoteData";
 import { attempt } from "Framework/Task";
+import { exhaustive } from "Utility";
 import * as Conversation from "./Conversation";
 import * as Profile from "./Profile";
 
@@ -17,19 +18,19 @@ import * as Profile from "./Profile";
 
 export type Model = {
   profile: {
-    [id: string]: Row<Profile.Profile>;
+    [id: string]: StoreData<Profile.Profile>;
   };
   conversation: {
-    [id: string]: Row<Conversation.Conversation>;
+    [id: string]: StoreData<Conversation.Conversation>;
   };
   profiles_conversations: {
-    [id: string]: Row<ProfilesConversations>;
+    [id: string]: StoreData<ProfilesConversations>;
   };
 };
 
 type Problem = { message: string };
 
-type Row<T> = RemoteData.RemoteData<Problem, T>;
+type StoreData<T> = RemoteData.RemoteData<Problem, T>;
 
 type ProfilesConversations = { userId: string; conversationId: string };
 
@@ -50,11 +51,11 @@ export const init: Model = {
 export type Msg =
   | { type: "GetProfile"; userId: string }
   | { type: "GotProfile"; profile: Profile.Profile }
+  | { type: "GotProfileProblem"; userId: string; problem: Problem }
   | { type: "EditedProfile"; profile: Profile.Profile }
   | { type: "DeletedProfile"; userId: string }
   | { type: "EditProfile"; userId: string; edits: Partial<Profile.Profile> }
   | { type: "DeleteProfile"; userId: string }
-  | { type: "GotProblem" }
   | {
       type: "CreateProfile";
       profile: {
@@ -108,8 +109,12 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
         pipe(
           Profile.load(msg),
           attempt(
-            either.fold<{}, Profile.Profile, Msg>(
-              () => ({ type: "GotProblem" }),
+            either.fold<Problem, Profile.Profile, Msg>(
+              (problem) => ({
+                type: "GotProfileProblem",
+                problem,
+                userId: msg.userId,
+              }),
               (profile) => ({ type: "GotProfile", profile })
             )
           )
@@ -128,8 +133,20 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
         cmd.none,
       ];
 
-    case "GotProblem":
-      return [model, cmd.none];
+    case "GotProfileProblem":
+      return [
+        {
+          ...model,
+          profile: {
+            ...model.profile,
+            [msg.userId]: RemoteData.Failure(msg.problem),
+          },
+        },
+        cmd.none,
+      ];
+
+    default:
+      return exhaustive(msg);
   }
 };
 
@@ -140,3 +157,10 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
 //
 //
 //
+
+export const toProfile = (
+  model: Model,
+  userId: string
+): StoreData<Profile.Profile> => {
+  return model.profile[userId] ?? RemoteData.NotAsked;
+};

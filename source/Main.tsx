@@ -23,12 +23,7 @@ import * as View from "View";
 //
 //
 
-type Model =
-  | SessionLoading
-  | SessionMissing
-  | ProfileLoading
-  | ProfileMissing
-  | Ready;
+type Model = SessionLoading | SessionMissing | Ready;
 
 type SessionLoading = {
   type: "SessionLoading";
@@ -47,37 +42,21 @@ type SessionMissing = {
 
 type SessionMissingPage = { type: "Login"; child: Pages.Login.Model };
 
-type ProfileLoading = {
-  type: "ProfileLoading";
-  location: Navigation.Location;
-  snackbar: Snackbar.Model;
-  store: Store.Model;
-  session: Session.Session;
-};
-
-type ProfileMissing = {
-  type: "ProfileMissing";
-  location: Navigation.Location;
-  snackbar: Snackbar.Model;
-  session: Session.Session;
-  store: Store.Model;
-  page: ProfileMissingPage;
-};
-
-type ProfileMissingPage =
-  | { type: "ProfileCreate"; child: Pages.ProfileCreate.Model }
-  | { type: "Logout"; child: Pages.Logout.Model };
-
 type Ready = {
   type: "Ready";
   location: Navigation.Location;
   snackbar: Snackbar.Model;
   store: Store.Model;
-  profile: Profile.Profile;
   session: Session.Session;
   game: Games.Model;
-  page: ReadyPage;
+  page: ReadyPage | ProfileMissingPage | ProfileLoadingPage;
 };
+
+type ProfileLoadingPage = { type: "Loading" };
+
+type ProfileMissingPage =
+  | { type: "ProfileCreate"; child: Pages.ProfileCreate.Model }
+  | { type: "Logout"; child: Pages.Logout.Model };
 
 type ReadyPage =
   | { type: "Game" }
@@ -131,11 +110,6 @@ export type Msg =
       session: option.Option<Session.Session>;
       group: "Session";
     }
-  | {
-      type: "RecievedProfile";
-      profile: option.Option<Profile.Profile>;
-      group: "Profile";
-    }
   | OutMsg
   | PageMsg;
 
@@ -165,14 +139,16 @@ type PageMsg =
 //
 
 export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
-  const [modelPrev, cmdPrev, outMsgs] = updateMain(msg, model);
+  const [model_, cmd_] = updateStore(msg, model);
+
+  const [modelPrev, cmdPrev, outMsgs] = updateMain(msg, model_);
 
   const [modelNew, cmdNew] = pipe(
     [modelPrev, cmdPrev],
     andThenMany(updateShared, [msg, ...outMsgs])
   );
 
-  return [modelNew, cmdNew];
+  return [modelNew, cmd.batch([cmdNew, cmd_])];
 };
 
 const updateShared = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
@@ -226,12 +202,6 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd<Msg>, OutMsg[]] => {
     case "SessionLoading":
       return updateSessionLoading(msg, model);
 
-    case "ProfileLoading":
-      return updateProfileLoading(msg, model);
-
-    case "ProfileMissing":
-      return updateProfileMissing(msg, model);
-
     case "Ready":
       return updateReady(msg, model);
 
@@ -240,56 +210,14 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd<Msg>, OutMsg[]] => {
   }
 };
 
-const updateProfileMissing = (
-  msg: Msg,
-  model: ProfileMissing
-): [Model, Cmd<Msg>, OutMsg[]] => {
-  switch (msg.type) {
-    case "RecievedLocation": {
-      const [page, pageCmd] = initProfileMissingPage({
-        session: model.session,
-        location: msg.location,
-      });
-
-      return [{ ...model, location: msg.location, page }, pageCmd, []];
-    }
-
-    case "RecievedProfile":
-      if (option.isNone(msg.profile)) {
-        return [model, cmd.none, []];
-      }
-
-      return initReady({ ...model, profile: msg.profile.value });
-
-    case "RecievedSession":
-      if (option.isNone(msg.session)) {
-        return initSessionMissing(model, [
-          Snackbar.EnqueuedSnackbar(
-            `Logged out of ${model.session.defaultName}`
-          ),
-        ]);
-      }
-
-      return [{ ...model, session: msg.session.value }, cmd.none, []];
-
-    default:
-      const [modelPage, cmdPage] = updateProfileMissingPage(
-        model,
-        msg,
-        model.page
-      );
-      return [{ ...model, page: modelPage }, cmdPage, []];
-  }
-};
-
 const updateProfileMissingPage = (
-  model: ProfileMissing,
+  { session }: { session: Session.Session },
   msg: Msg,
   page: ProfileMissingPage
 ): [ProfileMissingPage, Cmd<Msg>, OutMsg[]] => {
   if (page.type === "Logout" && msg.group === "Logout") {
     const [child, childCmd, outMsgs] = Pages.Logout.update(
-      { name: model.session.defaultName },
+      { name: session.defaultName },
       msg,
       page.child
     );
@@ -302,7 +230,7 @@ const updateProfileMissingPage = (
 
   if (page.type === "ProfileCreate" && msg.group === "ProfileCreate") {
     const [child, childCmd] = Pages.ProfileCreate.update(
-      model.session,
+      session,
       msg,
       page.child
     );
@@ -326,7 +254,7 @@ const updateSessionMissing = (
         return [model, cmd.none, []];
       }
 
-      return initProfileLoading({ ...model, session: msg.session.value });
+      return initReady({ ...model, session: msg.session.value });
 
     default:
       const [modelPage, cmdPage] = updateSessionMissingPage(msg, model.page);
@@ -363,24 +291,7 @@ const updateSessionLoading = (
         return initSessionMissing(model, []);
       }
 
-      return initProfileLoading({ ...model, session: msg.session.value });
-
-    default:
-      return [model, cmd.none, []];
-  }
-};
-
-const updateProfileLoading = (
-  msg: Msg,
-  model: ProfileLoading
-): [Model, Cmd<Msg>, OutMsg[]] => {
-  switch (msg.type) {
-    case "RecievedProfile":
-      if (option.isNone(msg.profile)) {
-        return initProfileMissing(model);
-      }
-
-      return initReady({ ...model, profile: msg.profile.value });
+      return initReady({ ...model, session: msg.session.value });
 
     default:
       return [model, cmd.none, []];
@@ -388,46 +299,84 @@ const updateProfileLoading = (
 };
 
 const updateReady = (msg: Msg, model: Ready): [Model, Cmd<Msg>, OutMsg[]] => {
-  switch (msg.type) {
-    case "RecievedLocation": {
-      const [page, pageCmd] = initReadyPage({
-        profile: model.profile,
-        location: msg.location,
-      });
+  const storeData = Store.toProfile(model.store, model.session.userId);
 
-      return [{ ...model, location: msg.location, page }, pageCmd, []];
+  if (msg.type === "RecievedSession") {
+    return initSessionMissing(model, []);
+  }
+
+  switch (storeData.type) {
+    case "Failure": {
+      if (msg.type === "RecievedLocation") {
+        const [page, pageCmd] = initProfileMissingPage({
+          ...model,
+          location: msg.location,
+        });
+
+        return [{ ...model, location: msg.location, page }, pageCmd, []];
+      }
+
+      if (model.page.type === "ProfileCreate" || model.page.type === "Logout") {
+        const [page, pageCmd, outMsgs] = updateProfileMissingPage(
+          model,
+          msg,
+          model.page
+        );
+
+        return [{ ...model, page }, pageCmd, outMsgs];
+      }
+
+      const [page, pageCmd] = initProfileMissingPage(model);
+
+      return [{ ...model, page }, pageCmd, []];
     }
 
-    case "RecievedProfile":
-      if (option.isNone(msg.profile)) {
-        return initProfileMissing(model);
+    case "Loading":
+      return [model, cmd.none, []];
+
+    case "NotAsked":
+      return [model, cmd.none, []];
+
+    case "Success":
+      const profile = storeData.value;
+
+      if (msg.type === "RecievedLocation") {
+        const [page, pageCmd] = initReadyPage({
+          profile,
+          location: msg.location,
+        });
+
+        return [{ ...model, location: msg.location, page }, pageCmd, []];
       }
 
-      return [{ ...model, profile: msg.profile.value }, cmd.none, []];
+      if (
+        model.page.type === "ProfileCreate" ||
+        model.page.type === "Loading"
+      ) {
+        const [page, pageCmd] = initReadyPage({
+          profile,
+          location: model.location,
+        });
 
-    case "RecievedSession":
-      if (option.isNone(msg.session)) {
-        return initSessionMissing(model, []);
+        return [{ ...model, page }, pageCmd, []];
       }
 
-      return [{ ...model, session: msg.session.value }, cmd.none, []];
-
-    default:
-      const [modelPage, cmdPage, msgs] = updateReadyPage(
-        model,
+      const [page, pageCmd, outMsgs] = updateReadyPage(
+        { profile },
         msg,
         model.page
       );
-      return [{ ...model, page: modelPage }, cmdPage, msgs];
+
+      return [{ ...model, page }, pageCmd, outMsgs];
   }
 };
 
 const updateReadyPage = (
-  { profile }: { profile: Profile.Profile; location: Navigation.Location },
+  { profile }: { profile: Profile.Profile },
   msg: Msg,
-  page: Ready["page"]
-): [Ready["page"], Cmd<Msg>, OutMsg[]] => {
-  const fallback: [Ready["page"], Cmd<Msg>, OutMsg[]] = [page, cmd.none, []];
+  page: ReadyPage
+): [ReadyPage, Cmd<Msg>, OutMsg[]] => {
+  const fallback: [ReadyPage, Cmd<Msg>, OutMsg[]] = [page, cmd.none, []];
 
   switch (page.type) {
     case "Account":
@@ -608,21 +557,10 @@ const updateReadyPage = (
 
 export const subscriptions = (model: Model): sub.Sub<Msg> => {
   switch (model.type) {
-    case "ProfileLoading":
-      return sub.batch([navigationSubscrption, sessionSubcription()]);
-
-    case "ProfileMissing":
-      return sub.batch([
-        navigationSubscrption,
-        sessionSubcription(),
-        profileSubscription(model.session),
-      ]);
-
     case "Ready":
       return sub.batch([
         navigationSubscrption,
         sessionSubcription(),
-        profileSubscription(model.profile),
         pipe(Games.subscriptions(model.game), sub.map(groupTag("Game"))),
       ]);
 
@@ -642,17 +580,6 @@ const navigationSubscrption: sub.Sub<Msg> = pipe(
     group: "Location",
   }))
 );
-
-const profileSubscription = ({ userId }: { userId: string }): sub.Sub<Msg> => {
-  return pipe(
-    Profile.subscription({ userId }),
-    sub.map((profile) => ({
-      type: "RecievedProfile",
-      profile,
-      group: "Profile",
-    }))
-  );
-};
 
 const sessionSubcription = (): sub.Sub<Msg> => {
   return pipe(
@@ -677,9 +604,7 @@ export const view =
   (model: Model): View.View<Msg> =>
   (dispatch) =>
     (
-      <View.ThemeProvider
-        themeMode={model.type === "Ready" ? model.profile.themeMode : "System"}
-      >
+      <View.ThemeProvider themeMode={"Dark"}>
         <View.Box
           sx={{
             maxWidth: "sm",
@@ -728,12 +653,6 @@ export const view =
 
 const viewMain = (model: Model): View.View<Msg> => {
   switch (model.type) {
-    case "ProfileLoading":
-      return viewProfileLoading(model);
-
-    case "ProfileMissing":
-      return viewProfileMissing(model);
-
     case "SessionLoading":
       return viewSessionLoading(model);
 
@@ -745,26 +664,21 @@ const viewMain = (model: Model): View.View<Msg> => {
   }
 };
 
-const viewProfileLoading = (_model: ProfileLoading): View.View<Msg> => {
-  return () => <View.LoadingPage />;
-};
+const viewLoading: View.View<Msg> = () => <View.LoadingPage />;
 
-const viewProfileMissing = (model: ProfileMissing): View.View<Msg> => {
-  switch (model.page.type) {
+const viewProfileMissing = (page: ProfileMissingPage): View.View<Msg> => {
+  switch (page.type) {
     case "Logout":
-      return pipe(
-        Pages.Logout.view(model.page.child),
-        View.map(groupTag("Logout"))
-      );
+      return pipe(Pages.Logout.view(page.child), View.map(groupTag("Logout")));
 
     case "ProfileCreate":
       return pipe(
-        Pages.ProfileCreate.view(model.page.child),
+        Pages.ProfileCreate.view(page.child),
         View.map(groupTag("ProfileCreate"))
       );
 
     default:
-      return exhaustive(model.page);
+      return exhaustive(page);
   }
 };
 
@@ -785,12 +699,34 @@ const viewSessionMissing = (model: SessionMissing): View.View<Msg> => {
   }
 };
 
-const viewReady =
-  (model: Ready): View.View<Msg> =>
-  (dispatch) =>
-    <>{viewReadyPage(model)(dispatch)}</>;
+const viewReady = (model: Ready): View.View<Msg> => {
+  const storeData = Store.toProfile(model.store, model.session.userId);
 
-const viewReadyPage = ({ page, profile, game }: Ready): View.View<Msg> => {
+  switch (storeData.type) {
+    case "NotAsked":
+      return viewLoading;
+
+    case "Loading":
+      return viewLoading;
+
+    case "Failure":
+      if (model.page.type === "Logout" || model.page.type === "ProfileCreate") {
+        return viewProfileMissing(model.page);
+      }
+
+      return viewLoading;
+
+    case "Success":
+      const profile = storeData.value;
+
+      return viewProfileFound(profile, model);
+  }
+};
+
+const viewProfileFound = (
+  profile: Profile.Profile,
+  { page, game }: Ready
+): View.View<Msg> => {
   switch (page.type) {
     case "Account":
       return pipe(
@@ -854,6 +790,15 @@ const viewReadyPage = ({ page, profile, game }: Ready): View.View<Msg> => {
         Pages.ProfileUpdateTheme.view(profile, page.child),
         View.map(groupTag("ProfileUpdateTheme"))
       );
+
+    case "ProfileCreate":
+      return pipe(
+        Pages.ProfileCreate.view(page.child),
+        View.map(groupTag("ProfileCreate"))
+      );
+
+    case "Loading":
+      return viewLoading;
 
     default:
       return exhaustive(page);
@@ -920,39 +865,13 @@ const initSessionMissing = (
   ];
 };
 
-const initProfileMissing = ({
-  location,
-  session,
-  snackbar,
-  store,
-}: {
-  location: Navigation.Location;
-  snackbar: Snackbar.Model;
-  session: Session.Session;
-  store: Store.Model;
-}): [ProfileMissing, Cmd<Msg>, OutMsg[]] => {
-  const [page, pageCmd] = initProfileMissingPage({ location, session });
-  return [
-    {
-      type: "ProfileMissing",
-      session,
-      snackbar,
-      location,
-      page: page,
-      store,
-    },
-    pageCmd,
-    [],
-  ];
-};
-
 const initProfileMissingPage = ({
   location,
   session,
 }: {
   session: Session.Session;
   location: Navigation.Location;
-}): [ProfileMissing["page"], Cmd<Msg>] => {
+}): [ProfileMissingPage, Cmd<Msg>] => {
   const route = pipe(
     location.pathname,
     Route.decode,
@@ -962,7 +881,7 @@ const initProfileMissingPage = ({
     )
   );
 
-  const notFound: [ProfileMissing["page"], Cmd<Msg>] = [
+  const notFound: [ProfileMissingPage, Cmd<Msg>] = [
     { type: "ProfileCreate", child: Pages.ProfileCreate.init(session) },
     Navigation.push(Route.encode({ type: "ProfileCreate" })),
   ];
@@ -984,32 +903,54 @@ const initProfileMissingPage = ({
 
 const initReady = ({
   location,
-  profile,
   snackbar,
   session,
   store,
 }: {
   location: Navigation.Location;
   snackbar: Snackbar.Model;
-  profile: Profile.Profile;
+
   store: Store.Model;
   session: Session.Session;
 }): [Ready, Cmd<Msg>, OutMsg[]] => {
-  const [page, pageCmd] = initReadyPage({ profile, location });
-  return [
-    {
-      type: "Ready",
-      location: location,
-      snackbar: snackbar,
-      session: session,
-      store: store,
-      profile: profile,
-      game: Games.init,
-      page: page,
-    },
-    pageCmd,
-    [Snackbar.EnqueuedSnackbar(`Signed in as ${profile.username}.`)],
-  ];
+  const partial = {
+    type: "Ready",
+    location,
+    snackbar,
+    session,
+    store,
+    game: Games.init,
+  } as const;
+
+  const storeData = Store.toProfile(store, session.userId);
+  switch (storeData.type) {
+    case "Failure": {
+      const [page, pageCmd] = initProfileMissingPage({ location, session });
+
+      return [{ ...partial, page }, pageCmd, []];
+    }
+
+    case "Loading":
+      return [{ ...partial, page: { type: "Loading" } }, cmd.none, []];
+
+    case "NotAsked":
+      return [
+        { ...partial, page: { type: "Loading" } },
+        cmd.none,
+        [{ group: "Store", type: "GetProfile", userId: session.userId }],
+      ];
+
+    case "Success":
+      const profile = storeData.value;
+
+      const [page, pageCmd] = initReadyPage({ profile, location });
+
+      return [
+        { ...partial, page: page },
+        pageCmd,
+        [Snackbar.EnqueuedSnackbar(`Signed in as ${profile.username}.`)],
+      ];
+  }
 };
 
 const initReadyPage = ({
@@ -1115,43 +1056,6 @@ const initReadyPage = ({
       return exhaustive(route);
   }
 };
-
-const initProfileLoading = ({
-  session,
-  location,
-  snackbar,
-  store,
-}: {
-  session: Session.Session;
-  snackbar: Snackbar.Model;
-  store: Store.Model;
-  location: Navigation.Location;
-}): [ProfileLoading, Cmd<Msg>, OutMsg[]] => {
-  return [
-    {
-      type: "ProfileLoading",
-      snackbar,
-      location,
-      session,
-      store,
-    },
-    pipe(Profile.load(session), task.attempt(profileResultToMsg)),
-    [{ group: "Store", type: "GetProfile", userId: session.userId }],
-  ];
-};
-
-const profileResultToMsg = either.fold<Error, Profile.Profile, Msg>(
-  (_error) => ({
-    group: "Profile",
-    type: "RecievedProfile",
-    profile: option.none,
-  }),
-  (profile) => ({
-    group: "Profile",
-    type: "RecievedProfile",
-    profile: option.some(profile),
-  })
-);
 
 //
 //
