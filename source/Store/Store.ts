@@ -15,22 +15,23 @@ import * as Profile from "./Profile";
 //
 //
 
-type Problem = { message: string };
-
 export type Model = {
   profile: {
-    [userId: string]: RemoteData.RemoteData<Problem, Profile.Profile>;
+    [id: string]: Row<Profile.Profile>;
   };
   conversation: {
-    [conversationId: string]: Conversation.Conversation;
+    [id: string]: Row<Conversation.Conversation>;
   };
   profiles_conversations: {
-    [id: string]: {
-      userId: string;
-      conversationId: string;
-    };
+    [id: string]: Row<ProfilesConversations>;
   };
 };
+
+type Problem = { message: string };
+
+type Row<T> = RemoteData.RemoteData<Problem, T>;
+
+type ProfilesConversations = { userId: string; conversationId: string };
 
 export const init: Model = {
   profile: {},
