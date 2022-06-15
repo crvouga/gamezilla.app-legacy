@@ -70,8 +70,14 @@ const rowToProfile = (row: definitions["profile"]): Profile => {
   };
 };
 
+type Problem = { message: string };
+
 export const load =
-  ({ userId }: { userId: string }): task.Task<either.Either<Error, Profile>> =>
+  ({
+    userId,
+  }: {
+    userId: string;
+  }): task.Task<either.Either<Problem, Profile>> =>
   async () => {
     const response = await Supabase.client
       .from<definitions["profile"]>("profile")
@@ -80,7 +86,7 @@ export const load =
       .single();
 
     if (response.error) {
-      return either.left(new Error(response.error.message));
+      return either.left({ message: response.error.message });
     }
 
     return either.right(rowToProfile(response.data));
