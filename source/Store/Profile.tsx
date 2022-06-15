@@ -134,7 +134,13 @@ export const search =
     const response = await Supabase.client
       .from<definitions["profile"]>("profile")
       .select("*")
-      .ilike("name", `%${nameOrUsername}%`);
+      .ilike(
+        "name",
+        `%${nameOrUsername
+          .split(" ")
+          .map((_) => _.replace(" ", ""))
+          .join("%")}%`
+      );
 
     if (response.error) {
       return either.left({ message: response.error.message });
