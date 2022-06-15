@@ -4,6 +4,7 @@ import { cmd } from "Framework";
 import { attempt } from "Framework/Task";
 import * as Navigation from "Framework/Navigation";
 import * as Profile from "Store/Profile";
+import * as Store from "Store";
 import * as Snackbar from "Snackbar";
 import * as View from "View";
 
