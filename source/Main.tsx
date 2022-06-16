@@ -422,7 +422,7 @@ const updateReadyPage = (
 
     case "ProfileDelete":
       if (msg.group === "ProfileDelete") {
-        const [child, childCmd] = Pages.ProfileDelete.update(
+        const [child, childCmd, actions] = Pages.ProfileDelete.update(
           profile,
           msg,
           page.child
@@ -430,7 +430,7 @@ const updateReadyPage = (
         return [
           { type: "ProfileDelete", child },
           pipe(childCmd, cmd.map(groupTag("ProfileDelete"))),
-          [],
+          actions,
         ];
       }
       return fallback;

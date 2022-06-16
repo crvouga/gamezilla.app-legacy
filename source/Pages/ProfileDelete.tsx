@@ -1,10 +1,7 @@
-import { either } from "fp-ts";
-import { pipe } from "fp-ts/lib/function";
 import { cmd } from "Framework";
-import { attempt } from "Framework/Task";
 import * as Navigation from "Framework/Navigation";
-import * as Profile from "Store/Profile";
 import * as View from "View";
+import * as Store from "Store";
 
 //
 //
@@ -14,9 +11,9 @@ import * as View from "View";
 //
 //
 
-export type Model = { type: "Idle" } | { type: "DeletingProfile" };
+export type Model = {};
 
-export const init: Model = { type: "Idle" };
+export const init: Model = {};
 
 //
 //
@@ -29,43 +26,24 @@ export const init: Model = { type: "Idle" };
 export type Msg =
   | { type: "UserClickedCancelButton" }
   | { type: "UserClickedBackdrop" }
-  | { type: "UserClickedDeleteButton" }
-  | { type: "DeleteProfileSucceeded" }
-  | { type: "DeleteProfileFailed" };
+  | { type: "UserClickedDeleteButton" };
+
+export type Action = Store.GroupedMsg;
 
 export const update = (
   { userId }: { userId: string },
   msg: Msg,
   model: Model
-): [Model, cmd.Cmd<Msg>] => {
+): [Model, cmd.Cmd<Msg>, Action[]] => {
   switch (msg.type) {
     case "UserClickedCancelButton":
-      return [model, Navigation.back()];
-
-    case "UserClickedDeleteButton":
-      return [
-        { type: "DeletingProfile" },
-        pipe(
-          Profile.deleteForever({
-            userId,
-          }),
-          attempt(
-            either.fold<{}, {}, Msg>(
-              () => ({ type: "DeleteProfileFailed" }),
-              () => ({ type: "DeleteProfileSucceeded" })
-            )
-          )
-        ),
-      ];
+      return [model, Navigation.back(), []];
 
     case "UserClickedBackdrop":
-      return [model, Navigation.back()];
+      return [model, Navigation.back(), []];
 
-    case "DeleteProfileFailed":
-      return [{ type: "Idle" }, cmd.none];
-
-    case "DeleteProfileSucceeded":
-      return [model, Navigation.reload()];
+    case "UserClickedDeleteButton":
+      return [model, cmd.none, [Store.Profile.DeleteForever(userId)]];
   }
 };
 
@@ -81,19 +59,12 @@ export const view =
   (model: Model): View.View<Msg> =>
   (dispatch) =>
     (
-      <>
-        <View.LoadingDialog
-          open={model.type === "DeletingProfile"}
-          title="Deleting profile..."
-        />
-
-        <View.ConformationDialog
-          open={model.type === "Idle"}
-          title="Delete profile forever?"
-          onClose={() => dispatch({ type: "UserClickedBackdrop" })}
-          onCancel={() => dispatch({ type: "UserClickedCancelButton" })}
-          confirmTitle="Delete"
-          onConfirm={() => dispatch({ type: "UserClickedDeleteButton" })}
-        />
-      </>
+      <View.ConformationDialog
+        open
+        title="Delete profile forever?"
+        onClose={() => dispatch({ type: "UserClickedBackdrop" })}
+        onCancel={() => dispatch({ type: "UserClickedCancelButton" })}
+        confirmTitle="Delete"
+        onConfirm={() => dispatch({ type: "UserClickedDeleteButton" })}
+      />
     );
