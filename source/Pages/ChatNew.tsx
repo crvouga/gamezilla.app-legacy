@@ -42,7 +42,7 @@ export const init = (): [Model, Cmd<Msg>] => [
     searchStatus: "Searching",
     status: "Idle",
   },
-  searchUsers(""),
+  cmd.none,
 ];
 
 //
@@ -73,7 +73,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
     case "UserEnteredSearchText":
       return [
         { ...model, searchText: msg.searchText, searchStatus: "Searching" },
-        searchUsers(msg.searchText),
+        cmd.none,
       ];
 
     case "UserClickedSelectedDeleteButton":
@@ -99,7 +99,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
             searchText: "",
             selected: removeKey(userId, model.selected),
           },
-          searchUsers(""),
+          cmd.none,
         ];
       }
 
@@ -112,24 +112,9 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
             [msg.searchResult.userId]: msg.searchResult,
           },
         },
-        searchUsers(""),
+        cmd.none,
       ];
   }
-};
-
-const searchUsers = (nameOrUsername: string) => {
-  return pipe(
-    Profile.search({ nameOrUsername }),
-    attempt(
-      either.fold<{ message: string }, Profile.Profile[], Msg>(
-        () => ({ type: "Problem" }),
-        (searchResults) => ({
-          type: "RecievedSearchResults",
-          searchResults,
-        })
-      )
-    )
-  );
 };
 
 //
