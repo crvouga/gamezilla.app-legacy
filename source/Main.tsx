@@ -299,7 +299,7 @@ const updateSessionLoading = (
 };
 
 const updateReady = (msg: Msg, model: Ready): [Model, Cmd<Msg>, OutMsg[]] => {
-  const storeData = Store.toProfile(model.store, model.session.userId);
+  const storeData = Store.toProfile(model.session.userId, model.store);
 
   if (msg.type === "RecievedSession") {
     return initSessionMissing(model, []);
@@ -609,7 +609,7 @@ const toThemeMode = (model: Model): View.ThemeMode => {
       return fallback;
 
     case "Ready":
-      const remoteData = Store.toProfile(model.store, model.session.userId);
+      const remoteData = Store.toProfile(model.session.userId, model.store);
 
       switch (remoteData.type) {
         case "Failure":
@@ -723,7 +723,7 @@ const viewSessionMissing = (model: SessionMissing): View.View<Msg> => {
 };
 
 const viewReady = (model: Ready): View.View<Msg> => {
-  const storeData = Store.toProfile(model.store, model.session.userId);
+  const storeData = Store.toProfile(model.session.userId, model.store);
 
   switch (storeData.type) {
     case "NotAsked":
@@ -945,7 +945,8 @@ const initReady = ({
     game: Games.init,
   } as const;
 
-  const storeData = Store.toProfile(store, session.userId);
+  const storeData = Store.toProfile(session.userId, store);
+
   switch (storeData.type) {
     case "Failure": {
       const [page, pageCmd] = initProfileMissingPage({ location, session });

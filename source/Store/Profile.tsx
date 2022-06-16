@@ -150,6 +150,26 @@ export const Created = (
 
 export type Created = ReturnType<typeof Created>;
 
+export const Search = (searchText: string) => {
+  return {
+    group: "Store",
+    type: "Profile/Search",
+    searchText,
+  } as const;
+};
+
+export type Search = ReturnType<typeof Search>;
+
+export const Searched = (result: Result.Result<Problem, Profile[]>) => {
+  return {
+    group: "Store",
+    type: "Profile/Searched",
+    result,
+  } as const;
+};
+
+export type Searched = ReturnType<typeof Searched>;
+
 export type Msg =
   | Edited
   | Edit
@@ -158,7 +178,9 @@ export type Msg =
   | DeleteForever
   | DeletedForever
   | Create
-  | Created;
+  | Created
+  | Search
+  | Searched;
 
 //
 //
@@ -281,7 +303,7 @@ export const search =
     nameOrUsername,
   }: {
     nameOrUsername: string;
-  }): task.Task<either.Either<{ message: string }, Profile[]>> =>
+  }): task.Task<Result.Result<Problem, Profile[]>> =>
   async () => {
     const response = await Supabase.client
       .from<definitions["profile"]>("profile")
@@ -295,12 +317,12 @@ export const search =
       );
 
     if (response.error) {
-      return either.left({ message: response.error.message });
+      return Result.Err({ message: response.error.message });
     }
 
     const profiles = response.data.map(rowToProfile);
 
-    return either.right(profiles);
+    return Result.Ok(profiles);
   };
 
 export const edit =

@@ -64,7 +64,7 @@ export type GroupedMsg = Msg & { group: "Store" };
 export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
   switch (msg.type) {
     case "Profile/Edit":
-      const remoteDataProfile = toProfile(model, msg.userId);
+      const remoteDataProfile = toProfile(msg.userId, model);
 
       switch (remoteDataProfile.type) {
         case "Success":
@@ -117,7 +117,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
       ];
 
     case "Profile/DeleteForever": {
-      const remoteDataProfile = toProfile(model, msg.userId);
+      const remoteDataProfile = toProfile(msg.userId, model);
 
       switch (remoteDataProfile.type) {
         case "Success":
@@ -169,12 +169,23 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
         ),
       ];
 
-    case "Profile/Created": {
+    case "Profile/Created":
       return [
         mapProfile(msg.userId, () => RemoteData.fromResult(msg.result), model),
         cmd.none,
       ];
-    }
+
+    case "Profile/Search":
+      return [
+        model,
+        pipe(
+          Profile.search({ nameOrUsername: msg.searchText }),
+          perform((result) => Profile.Searched(result))
+        ),
+      ];
+
+    case "Profile/Searched":
+      return [{ ...model, profile: { ...model.profile } }, cmd.none];
 
     default:
       return exhaustive(msg);
@@ -205,11 +216,11 @@ const mapProfile = (
     ...model,
     profile: {
       ...model.profile,
-      [userId]: mapper(toProfile(model, userId)),
+      [userId]: mapper(toProfile(userId, model)),
     },
   };
 };
 
-export const toProfile = (model: Model, userId: string): RemoteDataProfile => {
+export const toProfile = (userId: string, model: Model): RemoteDataProfile => {
   return model.profile[userId] ?? RemoteData.NotAsked;
 };
