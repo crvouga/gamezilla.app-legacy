@@ -1,3 +1,4 @@
+import { Delete } from "@mui/icons-material";
 import { either, option, task } from "fp-ts";
 import * as Result from "Framework/Result";
 import * as Rx from "rxjs";
@@ -80,7 +81,33 @@ export const Got = (
 
 export type Got = ReturnType<typeof Got>;
 
-export type Msg = Edited | Edit | Get | Got;
+export const DeleteForever = (userId: string) => {
+  return {
+    group: "Store",
+    type: "Profile/DeleteForever",
+    userId,
+  } as const;
+};
+
+export type DeleteForever = ReturnType<typeof DeleteForever>;
+
+export const DeletedForever = (
+  userId: string,
+  previous: Profile,
+  result: Result.Result<Problem, {}>
+) => {
+  return {
+    group: "Store",
+    type: "Profile/DeletedForever",
+    userId,
+    previous,
+    result,
+  } as const;
+};
+
+export type DeletedForever = ReturnType<typeof DeletedForever>;
+
+export type Msg = Edited | Edit | Get | Got | DeleteForever | DeletedForever;
 
 //
 //
@@ -184,7 +211,7 @@ export const create =
   };
 
 export const deleteForever =
-  ({ userId }: { userId: string }): task.Task<either.Either<{}, {}>> =>
+  (userId: string): task.Task<Result.Result<Problem, {}>> =>
   async () => {
     const response = await Supabase.client
       .from<definitions["profile"]>("profile")
@@ -192,10 +219,10 @@ export const deleteForever =
       .match({ id: userId });
 
     if (response.error) {
-      return either.left({});
+      return Result.Err({ message: response.error.message });
     }
 
-    return either.right({});
+    return Result.Ok({});
   };
 
 export const search =

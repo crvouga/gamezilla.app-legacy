@@ -129,6 +129,53 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
         cmd.none,
       ];
 
+    case "Profile/DeleteForever": {
+      const remoteDataProfile = toProfile(model, msg.userId);
+
+      switch (remoteDataProfile.type) {
+        case "Success":
+          const previous = remoteDataProfile.value;
+
+          return [
+            mapProfile(msg.userId, () => RemoteData.NotAsked, model),
+            pipe(
+              Profile.deleteForever(msg.userId),
+              perform((result) =>
+                Profile.DeletedForever(msg.userId, previous, result)
+              )
+            ),
+          ];
+
+        default:
+          return [model, cmd.none];
+      }
+    }
+
+    case "Profile/DeletedForever": {
+      const result = msg.result;
+
+      switch (result.type) {
+        case "Err":
+          return [
+            mapProfile(
+              msg.userId,
+              () => RemoteData.Success(msg.previous),
+              model
+            ),
+            cmd.none,
+          ];
+
+        case "Ok":
+          return [
+            mapProfile(msg.userId, () => RemoteData.NotAsked, model),
+            pipe(
+              Profile.load(msg),
+              perform((result) => Profile.Got(msg.userId, result))
+            ),
+          ];
+      }
+    }
+
     default:
       return exhaustive(msg);
   }
