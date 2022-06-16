@@ -1,9 +1,11 @@
 import { either } from "fp-ts";
+import { Either } from "fp-ts/lib/Either";
 import { pipe } from "fp-ts/lib/function";
 import { cmd } from "Framework";
 import { Cmd } from "Framework/Cmd";
 import * as RemoteData from "Framework/RemoteData";
-import { attempt } from "Framework/Task";
+import { Result } from "Framework/Result";
+import { attempt, perform } from "Framework/Task";
 import { exhaustive } from "Utility";
 import * as Conversation from "./Conversation";
 import * as Profile from "./Profile";
@@ -18,7 +20,7 @@ import * as Profile from "./Profile";
 
 export type Model = {
   profile: {
-    [id: string]: StoreData<Profile.Profile>;
+    [id: string]: RemoteDataProfile;
   };
   conversation: {
     [id: string]: StoreData<Conversation.Conversation>;
@@ -27,6 +29,8 @@ export type Model = {
     [id: string]: StoreData<ProfilesConversations>;
   };
 };
+
+type RemoteDataProfile = RemoteData.RemoteData<Problem, Profile.Profile>;
 
 type Problem = { message: string };
 
@@ -48,24 +52,7 @@ export const init: Model = {
 //
 //
 
-export type Msg =
-  | { type: "GetProfile"; userId: string }
-  | { type: "GotProfile"; profile: Profile.Profile }
-  | { type: "GotProfileProblem"; userId: string; problem: Problem }
-  | { type: "EditedProfile"; profile: Profile.Profile }
-  | { type: "DeletedProfile"; userId: string }
-  | { type: "EditProfile"; userId: string; edits: Partial<Profile.Profile> }
-  | { type: "DeleteProfile"; userId: string }
-  | {
-      type: "CreateProfile";
-      profile: {
-        userId: string;
-        name: string;
-        username: string;
-        avatarUrl: string;
-      };
-    }
-  | { type: "CreatedProfile"; profile: Profile.Profile };
+export type Msg = Profile.Msg;
 
 export type GroupedMsg = Msg & { group: "Store" };
 
@@ -79,69 +66,66 @@ export type GroupedMsg = Msg & { group: "Store" };
 
 export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
   switch (msg.type) {
-    case "CreateProfile":
-      return [model, cmd.none];
+    case "Profile/Edit":
+      const remoteDataProfile = toProfile(model, msg.userId);
 
-    case "CreatedProfile":
-      return [model, cmd.none];
+      switch (remoteDataProfile.type) {
+        case "Success":
+          const prev = remoteDataProfile.value;
+          const next = { ...prev, ...msg.edits };
+          return [
+            mapProfile(
+              msg.userId,
+              RemoteData.map(() => next),
+              model
+            ),
+            pipe(
+              Profile.edit(msg.userId, msg.edits),
+              perform((result) => Profile.Edited(msg.userId, prev, result))
+            ),
+          ];
 
-    case "DeleteProfile":
-      return [model, cmd.none];
+        default:
+          return [model, cmd.none];
+      }
 
-    case "DeletedProfile":
-      return [model, cmd.none];
+    case "Profile/Edited":
+      const result = msg.result;
 
-    case "EditProfile":
-      return [model, cmd.none];
+      switch (result.type) {
+        case "Err":
+          return [
+            mapProfile(
+              msg.userId,
+              RemoteData.map(() => msg.previous),
+              model
+            ),
+            cmd.none,
+          ];
 
-    case "EditedProfile":
-      return [model, cmd.none];
+        case "Ok":
+          return [
+            mapProfile(
+              msg.userId,
+              RemoteData.map(() => result.value),
+              model
+            ),
+            cmd.none,
+          ];
+      }
 
-    case "GetProfile":
+    case "Profile/Get":
       return [
-        {
-          ...model,
-          profile: {
-            ...model.profile,
-            [msg.userId]: RemoteData.Loading,
-          },
-        },
+        mapProfile(msg.userId, () => RemoteData.Loading, model),
         pipe(
           Profile.load(msg),
-          attempt(
-            either.fold<Problem, Profile.Profile, Msg>(
-              (problem) => ({
-                type: "GotProfileProblem",
-                problem,
-                userId: msg.userId,
-              }),
-              (profile) => ({ type: "GotProfile", profile })
-            )
-          )
+          perform((result) => Profile.Got(msg.userId, result))
         ),
       ];
 
-    case "GotProfile":
+    case "Profile/Got":
       return [
-        {
-          ...model,
-          profile: {
-            ...model.profile,
-            [msg.profile.userId]: RemoteData.Success(msg.profile),
-          },
-        },
-        cmd.none,
-      ];
-
-    case "GotProfileProblem":
-      return [
-        {
-          ...model,
-          profile: {
-            ...model.profile,
-            [msg.userId]: RemoteData.Failure(msg.problem),
-          },
-        },
+        mapProfile(msg.userId, () => RemoteData.fromResult(msg.result), model),
         cmd.none,
       ];
 
@@ -158,9 +142,20 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
 //
 //
 
-export const toProfile = (
-  model: Model,
-  userId: string
-): StoreData<Profile.Profile> => {
+const mapProfile = (
+  userId: string,
+  mapper: (remoteDataProfile: RemoteDataProfile) => RemoteDataProfile,
+  model: Model
+): Model => {
+  return {
+    ...model,
+    profile: {
+      ...model.profile,
+      [userId]: mapper(toProfile(model, userId)),
+    },
+  };
+};
+
+export const toProfile = (model: Model, userId: string): RemoteDataProfile => {
   return model.profile[userId] ?? RemoteData.NotAsked;
 };

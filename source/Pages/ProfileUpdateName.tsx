@@ -1,10 +1,6 @@
-import { either } from "fp-ts";
-import { pipe } from "fp-ts/lib/function";
 import { cmd } from "Framework";
-import { attempt } from "Framework/Task";
 import * as Navigation from "Framework/Navigation";
-import * as Profile from "Store/Profile";
-import * as Snackbar from "Snackbar";
+import * as Store from "Store";
 import * as View from "View";
 
 //
@@ -15,11 +11,10 @@ import * as View from "View";
 //
 //
 
-export type Model = { status: "Idle" | "UpdatingName"; name: string };
+export type Model = { name: string };
 
 export const init = ({ name }: { name: string }): Model => {
   return {
-    status: "Idle",
     name,
   };
 };
@@ -35,11 +30,9 @@ export const init = ({ name }: { name: string }): Model => {
 export type Msg =
   | { type: "UserEnteredName"; name: string }
   | { type: "UserClickedCancelButton" }
-  | { type: "UserClickedSubmitButton" }
-  | { type: "UpdateProfileNameFailed" }
-  | { type: "UpdateProfileNameSucceeded" };
+  | { type: "UserClickedSubmitButton" };
 
-type OutMsg = Snackbar.GroupedMsg;
+type OutMsg = Store.GroupedMsg;
 
 export const update = (
   { userId }: { userId: string },
@@ -52,51 +45,15 @@ export const update = (
 
     case "UserClickedSubmitButton":
       return [
-        { ...model, status: "UpdatingName" },
-        updateProfileNameCmd({ userId, name: model.name }),
-        [],
-      ];
-
-    case "UpdateProfileNameSucceeded":
-      return [
-        { ...model, status: "Idle" },
+        model,
         Navigation.back(),
-        [Snackbar.EnqueuedSnackbar("Updated name.")],
+        [Store.Profile.Edit(userId, { name: model.name })],
       ];
-
-    case "UpdateProfileNameFailed":
-      return [{ ...model, status: "Idle" }, cmd.none, []];
 
     case "UserClickedCancelButton":
       return [model, Navigation.back(), []];
   }
 };
-
-//
-//
-// cmds
-//
-//
-
-const updateProfileNameCmd = ({
-  userId,
-  name,
-}: {
-  userId: string;
-  name: string;
-}) =>
-  pipe(
-    Profile.edit({
-      userId,
-      name,
-    }),
-    attempt(
-      either.fold<{}, {}, Msg>(
-        () => ({ type: "UpdateProfileNameFailed" }),
-        () => ({ type: "UpdateProfileNameSucceeded" })
-      )
-    )
-  );
 
 //
 //
@@ -129,11 +86,6 @@ export const view =
               Done
             </View.Button>
           }
-        />
-
-        <View.LoadingDialog
-          open={model.status === "UpdatingName"}
-          title="Updating name..."
         />
 
         <View.Box sx={{ padding: 2 }}>

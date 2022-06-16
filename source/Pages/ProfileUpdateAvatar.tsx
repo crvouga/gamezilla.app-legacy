@@ -1,11 +1,10 @@
-import { either } from "fp-ts";
 import { pipe } from "fp-ts/lib/function";
 import { cmd } from "Framework";
-import { attempt, perform } from "Framework/Task";
 import * as Navigation from "Framework/Navigation";
-import * as Profile from "Store/Profile";
+import { perform } from "Framework/Task";
 import * as ProfileAvatar from "ProfileAvatar";
 import * as Snackbar from "Snackbar";
+import * as Store from "Store";
 import * as View from "View";
 
 //
@@ -50,11 +49,9 @@ export type Msg =
   | { type: "UserSelectedStyle"; style: ProfileAvatar.Style }
   | { type: "UserEnteredSeed"; seed: ProfileAvatar.Seed }
   | { type: "UserClickedRandomSeedButton" }
-  | { type: "RandomSeedGenerated"; seed: ProfileAvatar.Seed }
-  | { type: "AvatarUpdateFailed" }
-  | { type: "AvatarUpdateSucceeded" };
+  | { type: "RandomSeedGenerated"; seed: ProfileAvatar.Seed };
 
-type OutMsg = Snackbar.GroupedMsg;
+type OutMsg = Snackbar.GroupedMsg | Store.GroupedMsg;
 
 export const update = (
   { userId }: { userId: string },
@@ -92,33 +89,9 @@ export const update = (
 
     case "UserClickedDoneButton":
       return [
-        { ...model, status: "UpdatingAvatar" },
-        pipe(
-          Profile.edit({
-            userId,
-            avatarUrl: ProfileAvatar.toUrl({
-              seed: model.seed,
-              style: model.style,
-            }),
-          }),
-          attempt(
-            either.fold<{}, {}, Msg>(
-              () => ({ type: "AvatarUpdateFailed" }),
-              () => ({ type: "AvatarUpdateSucceeded" })
-            )
-          )
-        ),
-        [],
-      ];
-
-    case "AvatarUpdateFailed":
-      return [{ ...model, status: "Idle" }, cmd.none, []];
-
-    case "AvatarUpdateSucceeded":
-      return [
-        { ...model, status: "Idle" },
+        { ...model },
         Navigation.back(),
-        [Snackbar.EnqueuedSnackbar("Updated avatar.")],
+        [Store.Profile.Edit(userId, { avatarUrl: ProfileAvatar.toUrl(model) })],
       ];
   }
 };

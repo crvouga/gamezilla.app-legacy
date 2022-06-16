@@ -1,4 +1,5 @@
 import { either, option, task } from "fp-ts";
+import * as Result from "Framework/Result";
 import * as Rx from "rxjs";
 import { sub } from "../Framework";
 import * as Supabase from "../Supabase";
@@ -22,15 +23,64 @@ export type Profile = {
 
 export type ThemeMode = "Light" | "Dark" | "System";
 
-export type Edit = {
-  group: "Store";
-  type: "Edit";
-  userId: string;
+//
+//
+//
+// Msg
+//
+//
+//
+
+export const Edit = (userId: string, edits: Partial<Profile>) =>
+  ({
+    group: "Store",
+    type: "Profile/Edit",
+    userId,
+    edits,
+  } as const);
+
+export type Edit = ReturnType<typeof Edit>;
+
+export const Edited = (
+  userId: string,
+  previous: Profile,
+  result: Result.Result<Problem, Profile>
+) =>
+  ({
+    group: "Store",
+    type: "Profile/Edited",
+    result,
+    userId,
+    previous,
+  } as const);
+
+export type Edited = ReturnType<typeof Edited>;
+
+export const Get = (userId: string) => {
+  return {
+    group: "Store",
+    type: "Profile/Get",
+    userId,
+  } as const;
 };
 
-export const Edit = (userId: string, edits: Partial<Profile>): Edit => {
-  return { group: "Store", type: "Edit", userId };
+export type Get = ReturnType<typeof Get>;
+
+export const Got = (
+  userId: string,
+  result: Result.Result<Problem, Profile>
+) => {
+  return {
+    group: "Store",
+    type: "Profile/Got",
+    userId,
+    result,
+  } as const;
 };
+
+export type Got = ReturnType<typeof Got>;
+
+export type Msg = Edited | Edit | Get | Got;
 
 //
 //
@@ -87,7 +137,7 @@ export const load =
     userId,
   }: {
     userId: string;
-  }): task.Task<either.Either<Problem, Profile>> =>
+  }): task.Task<Result.Result<Problem, Profile>> =>
   async () => {
     const response = await Supabase.client
       .from<definitions["profile"]>("profile")
@@ -96,10 +146,10 @@ export const load =
       .single();
 
     if (response.error) {
-      return either.left({ message: response.error.message });
+      return Result.Err({ message: response.error.message });
     }
 
-    return either.right(rowToProfile(response.data));
+    return Result.Ok(rowToProfile(response.data));
   };
 
 export const create =
@@ -176,35 +226,29 @@ export const search =
   };
 
 export const edit =
-  ({
-    userId,
-    username,
-    name,
-    avatarUrl,
-    themeMode,
-  }: {
-    userId: string;
-    username?: string;
-    name?: string;
-    avatarUrl?: string;
-    themeMode?: ThemeMode;
-  }): task.Task<either.Either<{}, {}>> =>
+  (
+    userId: string,
+    edits: Partial<Profile>
+  ): task.Task<Result.Result<Problem, Profile>> =>
   async () => {
     const response = await Supabase.client
       .from<definitions["profile"]>("profile")
       .update({
-        username,
-        name,
-        avatar_url: avatarUrl,
-        theme_mode: themeMode ? fromThemeMode(themeMode) : undefined,
+        username: edits.username,
+        name: edits.name,
+        avatar_url: edits.avatarUrl,
+        theme_mode: edits.themeMode
+          ? fromThemeMode(edits.themeMode)
+          : undefined,
       })
-      .match({ id: userId });
+      .match({ id: userId })
+      .single();
 
     if (response.error) {
-      return either.left({});
+      return Result.Err({ message: response.error.message });
     }
 
-    return either.right({});
+    return Result.Ok(rowToProfile(response.data));
   };
 
 export const subscription = ({

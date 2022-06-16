@@ -1,11 +1,7 @@
-import { either } from "fp-ts";
-import { pipe } from "fp-ts/lib/function";
 import { cmd } from "Framework";
-import { attempt } from "Framework/Task";
 import * as Navigation from "Framework/Navigation";
-import * as Profile from "Store/Profile";
 import * as Store from "Store";
-import * as Snackbar from "Snackbar";
+import * as Profile from "Store/Profile";
 import * as View from "View";
 
 //
@@ -32,11 +28,9 @@ export const init: Model = {
 
 export type Msg =
   | { type: "UserClickedBackButton" }
-  | { type: "UpdateThemeFailed" }
-  | { type: "UpdateThemeSucceeded" }
   | { type: "UserClickedThemeModeOption"; themeMode: Profile.ThemeMode };
 
-type OutMsg = Snackbar.GroupedMsg;
+type OutMsg = Store.GroupedMsg;
 
 export const update = (
   { userId }: { userId: string },
@@ -44,35 +38,14 @@ export const update = (
   model: Model
 ): [Model, cmd.Cmd<Msg>, OutMsg[]] => {
   switch (msg.type) {
-    case "UpdateThemeSucceeded":
-      return [
-        { ...model, status: "Idle" },
-        cmd.none,
-        [Snackbar.EnqueuedSnackbar("Updated name.")],
-      ];
-
-    case "UpdateThemeFailed":
-      return [{ ...model, status: "Idle" }, cmd.none, []];
-
     case "UserClickedBackButton":
       return [model, Navigation.back(), []];
 
     case "UserClickedThemeModeOption":
       return [
-        { ...model, status: "Updating" },
-        pipe(
-          Profile.edit({
-            userId,
-            themeMode: msg.themeMode,
-          }),
-          attempt(
-            either.fold<{}, {}, Msg>(
-              () => ({ type: "UpdateThemeFailed" }),
-              () => ({ type: "UpdateThemeSucceeded" })
-            )
-          )
-        ),
-        [],
+        model,
+        cmd.none,
+        [Store.Profile.Edit(userId, { themeMode: msg.themeMode })],
       ];
   }
 };
