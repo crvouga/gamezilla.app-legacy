@@ -32,13 +32,13 @@ export type Msg =
   | { type: "UserClickedCancelButton" }
   | { type: "UserClickedSubmitButton" };
 
-type OutMsg = Store.GroupedMsg;
+type Action = Store.GroupedMsg;
 
 export const update = (
   { userId }: { userId: string },
   msg: Msg,
   model: Model
-): [Model, cmd.Cmd<Msg>, OutMsg[]] => {
+): [Model, cmd.Cmd<Msg>, Action[]] => {
   switch (msg.type) {
     case "UserEnteredName":
       return [{ ...model, ...msg }, cmd.none, []];
