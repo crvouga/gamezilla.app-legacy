@@ -1,11 +1,8 @@
-import { either } from "fp-ts";
-import { pipe } from "fp-ts/lib/function";
 import { cmd } from "Framework";
-import { attempt } from "Framework/Task";
 import * as Navigation from "Framework/Navigation";
-import * as Profile from "Store/Profile";
 import * as ProfileAvatar from "ProfileAvatar";
 import * as Route from "Route";
+import * as Store from "Store";
 import * as View from "View";
 
 //
@@ -17,6 +14,16 @@ import * as View from "View";
 //
 //
 //
+
+export type Model = {
+  form: Form;
+};
+
+export const init = ({ defaultName }: { defaultName: string }): Model => {
+  return {
+    form: initForm({ defaultName }),
+  };
+};
 
 type Form = {
   username: string;
@@ -37,18 +44,6 @@ const initForm = ({ defaultName }: { defaultName: string }): Form => {
   };
 };
 
-export type Model = {
-  status: "Idle" | "CreatingProfile" | "ConfirmLogout" | "LoggingOut";
-  form: Form;
-};
-
-export const init = ({ defaultName }: { defaultName: string }): Model => {
-  return {
-    status: "Idle",
-    form: initForm({ defaultName }),
-  };
-};
-
 //
 //
 //
@@ -62,48 +57,28 @@ export const init = ({ defaultName }: { defaultName: string }): Model => {
 export type Msg =
   | { type: "EnteredUsername"; username: string }
   | { type: "EnteredName"; name: string }
-  | { type: "Submit" }
-  | { type: "SubmitSucceeded" }
-  | { type: "SubmitFailed" }
+  | { type: "UserClickedSubmitButton" }
   | { type: "UserClickedLogoutButton" };
+
+export type Action = Store.GroupedMsg;
 
 export const update = (
   { userId }: { userId: string },
   msg: Msg,
   model: Model
-): [Model, cmd.Cmd<Msg>] => {
+): [Model, cmd.Cmd<Msg>, Action[]] => {
   switch (msg.type) {
     case "EnteredName":
-      return [{ ...model, form: { ...model.form, ...msg } }, cmd.none];
+      return [{ ...model, form: { ...model.form, ...msg } }, cmd.none, []];
 
     case "EnteredUsername":
-      return [{ ...model, form: { ...model.form, ...msg } }, cmd.none];
+      return [{ ...model, form: { ...model.form, ...msg } }, cmd.none, []];
 
-    case "Submit":
-      return [
-        { ...model, status: "CreatingProfile" },
-        pipe(
-          Profile.create({
-            userId,
-            ...model.form,
-          }),
-          attempt(
-            either.fold<{}, Profile.Profile, Msg>(
-              () => ({ type: "SubmitFailed" }),
-              () => ({ type: "SubmitSucceeded" })
-            )
-          )
-        ),
-      ];
-
-    case "SubmitSucceeded":
-      return [model, Navigation.reload()];
-
-    case "SubmitFailed":
-      return [{ ...model, status: "Idle" }, cmd.none];
+    case "UserClickedSubmitButton":
+      return [model, cmd.none, [Store.Profile.Create(userId, model.form)]];
 
     case "UserClickedLogoutButton":
-      return [model, Navigation.push(Route.encode({ type: "Logout" }))];
+      return [model, Navigation.push(Route.encode({ type: "Logout" })), []];
   }
 };
 
@@ -132,11 +107,6 @@ export const view =
             </View.Button>
           }
           title="Create Profile"
-        />
-
-        <View.LoadingDialog
-          open={model.status === "CreatingProfile"}
-          title="Creating profile..."
         />
 
         <View.Box sx={{ p: 2, width: "100%" }}>
@@ -183,8 +153,7 @@ export const view =
             fullWidth
             size="large"
             variant="contained"
-            loading={model.status === "CreatingProfile"}
-            onClick={() => dispatch({ type: "Submit" })}
+            onClick={() => dispatch({ type: "UserClickedSubmitButton" })}
           >
             Create Profile
           </View.Button>

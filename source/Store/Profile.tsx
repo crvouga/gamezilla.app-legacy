@@ -107,7 +107,58 @@ export const DeletedForever = (
 
 export type DeletedForever = ReturnType<typeof DeletedForever>;
 
-export type Msg = Edited | Edit | Get | Got | DeleteForever | DeletedForever;
+export const Create = (
+  userId: string,
+  {
+    username,
+    name,
+    avatarUrl,
+  }: {
+    username: string;
+    name: string;
+    avatarUrl: string;
+  }
+) => {
+  const profile: Profile = {
+    username,
+    name,
+    avatarUrl,
+    themeMode: "System",
+    userId,
+  };
+
+  return {
+    group: "Store",
+    type: "Profile/Create",
+    profile,
+  } as const;
+};
+
+export type Create = ReturnType<typeof Create>;
+
+export const Created = (
+  userId: string,
+  result: Result.Result<Problem, Profile>
+) => {
+  return {
+    group: "Store",
+    type: "Profile/Created",
+    userId,
+    result,
+  } as const;
+};
+
+export type Created = ReturnType<typeof Created>;
+
+export type Msg =
+  | Edited
+  | Edit
+  | Get
+  | Got
+  | DeleteForever
+  | DeletedForever
+  | Create
+  | Created;
 
 //
 //
@@ -190,7 +241,7 @@ export const create =
     name: string;
     username: string;
     avatarUrl: string;
-  }): task.Task<either.Either<{}, Profile>> =>
+  }): task.Task<Result.Result<Problem, Profile>> =>
   async () => {
     const response = await Supabase.client
       .from<definitions["profile"]>("profile")
@@ -204,10 +255,10 @@ export const create =
       .single();
 
     if (response.data) {
-      return either.right(rowToProfile(response.data));
+      return Result.Ok(rowToProfile(response.data));
     }
 
-    return either.left({});
+    return Result.Err({ message: response.error.message });
   };
 
 export const deleteForever =

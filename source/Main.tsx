@@ -141,11 +141,11 @@ type PageMsg =
 export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
   const [model_, cmd_] = updateStore(msg, model);
 
-  const [modelPrev, cmdPrev, outMsgs] = updateMain(msg, model_);
+  const [modelPrev, cmdPrev, actions] = updateMain(msg, model_);
 
   const [modelNew, cmdNew] = pipe(
     [modelPrev, cmdPrev],
-    andThenMany(updateShared, [msg, ...outMsgs])
+    andThenMany(updateShared, [msg, ...actions])
   );
 
   return [modelNew, cmd.batch([cmdNew, cmd_])];
@@ -229,7 +229,7 @@ const updateProfileMissingPage = (
   }
 
   if (page.type === "ProfileCreate" && msg.group === "ProfileCreate") {
-    const [child, childCmd] = Pages.ProfileCreate.update(
+    const [child, childCmd, actions] = Pages.ProfileCreate.update(
       session,
       msg,
       page.child
@@ -237,7 +237,7 @@ const updateProfileMissingPage = (
     return [
       { type: "ProfileCreate", child },
       pipe(childCmd, cmd.map(groupTag("ProfileCreate"))),
-      [],
+      actions,
     ];
   }
 

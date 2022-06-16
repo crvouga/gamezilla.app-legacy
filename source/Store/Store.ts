@@ -1,11 +1,8 @@
-import { either } from "fp-ts";
-import { Either } from "fp-ts/lib/Either";
 import { pipe } from "fp-ts/lib/function";
 import { cmd } from "Framework";
 import { Cmd } from "Framework/Cmd";
 import * as RemoteData from "Framework/RemoteData";
-import { Result } from "Framework/Result";
-import { attempt, perform } from "Framework/Task";
+import { perform } from "Framework/Task";
 import { exhaustive } from "Utility";
 import * as Conversation from "./Conversation";
 import * as Profile from "./Profile";
@@ -161,6 +158,22 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
             loadProfile(msg.userId),
           ];
       }
+    }
+
+    case "Profile/Create":
+      return [
+        mapProfile(msg.profile.userId, () => RemoteData.Loading, model),
+        pipe(
+          Profile.create(msg.profile),
+          perform((result) => Profile.Created(msg.profile.userId, result))
+        ),
+      ];
+
+    case "Profile/Created": {
+      return [
+        mapProfile(msg.userId, () => RemoteData.fromResult(msg.result), model),
+        cmd.none,
+      ];
     }
 
     default:
