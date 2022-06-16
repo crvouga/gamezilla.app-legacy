@@ -104,23 +104,13 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
           ];
 
         case "Ok":
-          return [
-            mapProfile(
-              msg.userId,
-              RemoteData.map(() => result.value),
-              model
-            ),
-            cmd.none,
-          ];
+          return [model, cmd.none];
       }
 
     case "Profile/Get":
       return [
         mapProfile(msg.userId, () => RemoteData.Loading, model),
-        pipe(
-          Profile.load(msg),
-          perform((result) => Profile.Got(msg.userId, result))
-        ),
+        loadProfile(msg.userId),
       ];
 
     case "Profile/Got":
@@ -168,10 +158,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
         case "Ok":
           return [
             mapProfile(msg.userId, () => RemoteData.NotAsked, model),
-            pipe(
-              Profile.load(msg),
-              perform((result) => Profile.Got(msg.userId, result))
-            ),
+            loadProfile(msg.userId),
           ];
       }
     }
@@ -179,6 +166,13 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
     default:
       return exhaustive(msg);
   }
+};
+
+const loadProfile = (userId: string) => {
+  return pipe(
+    Profile.load({ userId }),
+    perform((result) => Profile.Got(userId, result))
+  );
 };
 
 //
