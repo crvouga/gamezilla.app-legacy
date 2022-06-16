@@ -1,10 +1,6 @@
-import { either } from "fp-ts";
-import { pipe } from "fp-ts/lib/function";
 import { cmd } from "Framework";
-import { attempt } from "Framework/Task";
 import * as Navigation from "Framework/Navigation";
-import * as Profile from "Store/Profile";
-import * as Snackbar from "Snackbar";
+import * as Store from "Store";
 import * as View from "View";
 
 //
@@ -15,11 +11,10 @@ import * as View from "View";
 //
 //
 
-export type Model = { status: "Idle" | "UpdatingUsername"; username: string };
+export type Model = { username: string };
 
 export const init = ({ username }: { username: string }): Model => {
   return {
-    status: "Idle",
     username,
   };
 };
@@ -35,11 +30,9 @@ export const init = ({ username }: { username: string }): Model => {
 export type Msg =
   | { type: "UserClickedCancelButton" }
   | { type: "UserEnteredUsername"; username: string }
-  | { type: "UserClickedSubmitButton" }
-  | { type: "UsernameUpdateFailed" }
-  | { type: "UsernameUpdateSucceeded" };
+  | { type: "UserClickedSubmitButton" };
 
-export type OutMsg = Snackbar.GroupedMsg;
+export type OutMsg = Store.GroupedMsg;
 
 export const update = (
   { userId }: { userId: string },
@@ -50,41 +43,17 @@ export const update = (
     case "UserEnteredUsername":
       return [{ ...model, username: msg.username }, cmd.none, []];
 
-    case "UserClickedSubmitButton":
-      return [
-        { ...model, status: "UpdatingUsername" },
-        updateUsernameCmd(userId, model),
-        [],
-      ];
-
     case "UserClickedCancelButton":
       return [model, Navigation.back(), []];
 
-    case "UsernameUpdateFailed":
-      return [{ ...model, status: "Idle" }, cmd.none, []];
-
-    case "UsernameUpdateSucceeded":
+    case "UserClickedSubmitButton":
       return [
-        { ...model, status: "Idle" },
+        model,
         Navigation.back(),
-        [Snackbar.EnqueuedSnackbar("Updated username.")],
+        [Store.Profile.Edit(userId, { username: model.username })],
       ];
   }
 };
-
-const updateUsernameCmd = (userId: string, model: Model) =>
-  pipe(
-    Profile.edit({
-      userId,
-      ...model,
-    }),
-    attempt(
-      either.fold<{}, {}, Msg>(
-        () => ({ type: "UsernameUpdateFailed" }),
-        () => ({ type: "UsernameUpdateSucceeded" })
-      )
-    )
-  );
 
 //
 //
@@ -117,11 +86,6 @@ export const view =
               Done
             </View.Button>
           }
-        />
-
-        <View.LoadingDialog
-          open={model.status === "UpdatingUsername"}
-          title="Updating username..."
         />
 
         <View.Box sx={{ p: 2, width: "100%" }}>

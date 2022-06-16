@@ -452,7 +452,7 @@ const updateReadyPage = (
 
     case "ProfileUpdateAvatar":
       if (msg.group === "ProfileUpdateAvatar") {
-        const [child, childCmd, msgs] = Pages.ProfileUpdateAvatar.update(
+        const [child, childCmd, outMsgs] = Pages.ProfileUpdateAvatar.update(
           { userId: profile.userId },
           msg,
           page.child
@@ -460,7 +460,7 @@ const updateReadyPage = (
         return [
           { type: "ProfileUpdateAvatar", child },
           pipe(childCmd, cmd.map(groupTag("ProfileUpdateAvatar"))),
-          msgs.map(groupTag("Snackbar")),
+          outMsgs,
         ];
       }
       return fallback;
@@ -490,7 +490,7 @@ const updateReadyPage = (
         return [
           { type: "ProfileUpdateUsername", child },
           pipe(childCmd, cmd.map(groupTag("ProfileUpdateUsername"))),
-          msgs.map(groupTag("Snackbar")),
+          msgs,
         ];
       }
       return fallback;
@@ -527,7 +527,7 @@ const updateReadyPage = (
 
     case "ProfileUpdateTheme":
       if (msg.group === "ProfileUpdateTheme") {
-        const [child, childCmd] = Pages.ProfileUpdateTheme.update(
+        const [child, childCmd, actions] = Pages.ProfileUpdateTheme.update(
           profile,
           msg,
           page.child
@@ -536,7 +536,7 @@ const updateReadyPage = (
         return [
           { type: "ProfileUpdateTheme", child },
           pipe(childCmd, cmd.map(groupTag("ProfileUpdateTheme"))),
-          [],
+          actions,
         ];
       }
 
@@ -600,11 +600,34 @@ const sessionSubcription = (): sub.Sub<Msg> => {
 //
 //
 
+const toThemeMode = (model: Model): View.ThemeMode => {
+  const fallback: View.ThemeMode = "Dark";
+
+  switch (model.type) {
+    case "SessionLoading":
+    case "SessionMissing":
+      return fallback;
+
+    case "Ready":
+      const remoteData = Store.toProfile(model.store, model.session.userId);
+
+      switch (remoteData.type) {
+        case "Failure":
+        case "Loading":
+        case "NotAsked":
+          return fallback;
+
+        case "Success":
+          return remoteData.value.themeMode;
+      }
+  }
+};
+
 export const view =
   (model: Model): View.View<Msg> =>
   (dispatch) =>
     (
-      <View.ThemeProvider themeMode={"Dark"}>
+      <View.ThemeProvider themeMode={toThemeMode(model)}>
         <View.Box
           sx={{
             maxWidth: "sm",
@@ -937,7 +960,7 @@ const initReady = ({
       return [
         { ...partial, page: { type: "Loading" } },
         cmd.none,
-        [{ group: "Store", type: "GetProfile", userId: session.userId }],
+        [Store.Profile.Get(session.userId)],
       ];
 
     case "Success":
