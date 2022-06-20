@@ -11,3 +11,4 @@ export * as ProfileUpdateAvatar from "./ProfileUpdateAvatar";
 export * as ProfileUpdateName from "./ProfileUpdateName";
 export * as ProfileUpdateTheme from "./ProfileUpdateTheme";
 export * as ProfileUpdateUsername from "./ProfileUpdateUsername";
+export * from "./Pages";
