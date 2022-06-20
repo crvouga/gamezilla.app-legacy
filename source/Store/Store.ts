@@ -17,7 +17,7 @@ import * as Profile from "./Profile";
 
 export type Model = {
   profile: {
-    [id: string]: RemoteDataProfile;
+    [id: string]: ProfileModel;
   };
   conversation: {
     [id: string]: StoreData<Conversation.Conversation>;
@@ -27,7 +27,7 @@ export type Model = {
   };
 };
 
-type RemoteDataProfile = RemoteData.RemoteData<Problem, Profile.Profile>;
+export type ProfileModel = RemoteData.RemoteData<Problem, Profile.Profile>;
 
 type Problem = { message: string };
 
@@ -209,7 +209,7 @@ const loadProfile = (userId: string) => {
 
 const mapProfile = (
   userId: string,
-  mapper: (remoteDataProfile: RemoteDataProfile) => RemoteDataProfile,
+  mapper: (remoteDataProfile: ProfileModel) => ProfileModel,
   model: Model
 ): Model => {
   return {
@@ -221,6 +221,6 @@ const mapProfile = (
   };
 };
 
-export const toProfile = (userId: string, model: Model): RemoteDataProfile => {
+export const toProfile = (userId: string, model: Model): ProfileModel => {
   return model.profile[userId] ?? RemoteData.NotAsked;
 };
