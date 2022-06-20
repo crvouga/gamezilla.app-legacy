@@ -27,14 +27,14 @@ type Model = {
   store: Store.Model;
   session: Session.Model;
   game: Games.Model;
-  route: Route.Model;
   page: Pages.Model;
+  route: Route.Route;
 };
 
 type Status =
   | { type: "SessionLoading" }
   | { type: "SessionMissing" }
-  | { type: "ProfileLoading" }
+  | { type: "ProfileLoading"; session: Session.LoggedIn }
   | { type: "ProfileMissing"; session: Session.LoggedIn }
   | { type: "Ready"; profile: Profile.Profile };
 
@@ -55,10 +55,10 @@ export const toStatus = (model: Pick<Model, "session" | "store">): Status => {
 
       switch (profile.type) {
         case "NotAsked":
-          return { type: "SessionLoading" };
+          return { type: "ProfileLoading", session };
 
         case "Loading":
-          return { type: "SessionLoading" };
+          return { type: "ProfileLoading", session };
 
         case "Failure":
           return { type: "ProfileMissing", session };
@@ -87,7 +87,7 @@ export const init = (flags: Flags): [Model, Cmd<Msg>] => {
   const snackbar = Snackbar.init;
   const store = Store.init;
   const game = Games.init;
-  const [page, pageCmd] = Pages.initSessionMissing(route);
+  const [page, pageCmd] = Pages.initLoading();
 
   return [
     {
@@ -129,13 +129,46 @@ export type Msg =
 //
 //
 
-export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
-  const [modelNew, cmdNew, actions] = updateMain(msg, model);
+export const update = (msg: Msg, modelPrev: Model): [Model, Cmd<Msg>] => {
+  const [modelNew, cmdNew, actions] = updateMain(msg, modelPrev);
 
-  const statusPrev = toStatus(model);
+  const statusPrev = toStatus(modelPrev);
   const statusNew = toStatus(modelNew);
 
-  return pipe([modelNew, cmdNew], andThenMany(updateActions, actions));
+  const reactions: Msg[] = [];
+  const cmds: Cmd<Msg>[] = [];
+
+  if (
+    statusPrev.type !== statusNew.type &&
+    statusNew.type === "ProfileLoading"
+  ) {
+    reactions.push(Store.Profile.Get(statusNew.session.userId));
+  }
+
+  if (statusPrev.type === "ProfileLoading" && statusNew.type === "Ready") {
+    cmds.push(Route.push({ type: "Home" }));
+  }
+
+  if (
+    statusPrev.type === "ProfileLoading" &&
+    statusNew.type === "ProfileMissing"
+  ) {
+    cmds.push(Route.push({ type: "ProfileCreate" }));
+  }
+
+  if (
+    modelPrev.session.type !== modelNew.session.type &&
+    modelNew.session.type === "LoggedOut"
+  ) {
+    console.log("CHANGE");
+    cmds.push(Route.push({ type: "Login" }));
+  }
+
+  return pipe(
+    [modelNew, cmd.batch([cmdNew, ...cmds])],
+    andThenMany(updateActions, actions),
+    andThenMany(updateActions, reactions)
+  );
 };
 
 const updateMain = (msg: Msg, model: Model): [Model, Cmd<Msg>, Msg[]] => {
@@ -147,6 +180,30 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd<Msg>, Msg[]] => {
         { ...model, store: storeNew },
         pipe(storeCmd, cmd.map(groupTag("Store"))),
         [],
+      ];
+    }
+
+    case "Session": {
+      const sessionNew = Session.update(msg);
+      return [{ ...model, session: sessionNew }, cmd.none, []];
+    }
+
+    case "Snackbar":
+      const [snackbarNew, snackbarCmd] = Snackbar.update(msg, model.snackbar);
+
+      return [
+        { ...model, snackbar: snackbarNew },
+        pipe(snackbarCmd, cmd.map(groupTag("Snackbar"))),
+        [],
+      ];
+
+    case "Game": {
+      const [gameNew, gameCmd, actions] = Games.update(msg, model.game);
+
+      return [
+        { ...model, game: gameNew },
+        pipe(gameCmd, cmd.map(groupTag("Game"))),
+        actions,
       ];
     }
 
@@ -202,31 +259,49 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd<Msg>, Msg[]] => {
       }
     }
 
-    case "Session":
-      const sessionNew = Session.update(msg);
-      const modelNew = { ...model, session: sessionNew };
-
-      switch (sessionNew.type) {
-        case "Loading":
-          return [modelNew, cmd.none, []];
-
-        case "LoggedOut":
-          return [modelNew, cmd.none, []];
-
-        case "LoggedIn":
-          return [modelNew, cmd.none, [Store.Profile.Get(sessionNew.userId)]];
-      }
-
-    case "Snackbar":
-      return [{ ...model }, cmd.none, []];
-
-    case "Game":
-      return [{ ...model }, cmd.none, []];
-
     case "Route": {
+      const route = msg.route;
+
       const status = toStatus(model);
 
-      return [{ ...model }, cmd.none, []];
+      switch (status.type) {
+        case "ProfileLoading":
+          return [model, cmd.none, []];
+
+        case "ProfileMissing": {
+          const [page, pageCmd] = Pages.initProfileMissing(
+            route,
+            status.session
+          );
+
+          return [
+            { ...model, page },
+            pipe(pageCmd, cmd.map(groupTag("Page"))),
+            [],
+          ];
+        }
+
+        case "Ready": {
+          const [page, pageCmd] = Pages.initReady(route, status.profile);
+          return [
+            { ...model, page },
+            pipe(pageCmd, cmd.map(groupTag("Page"))),
+            [],
+          ];
+        }
+
+        case "SessionLoading":
+          return [model, cmd.none, []];
+
+        case "SessionMissing": {
+          const [page, pageCmd] = Pages.initSessionMissing(route);
+          return [
+            { ...model, page },
+            pipe(pageCmd, cmd.map(groupTag("Page"))),
+            [],
+          ];
+        }
+      }
     }
 
     default:
@@ -255,7 +330,11 @@ const updateActions = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
       return [model, cmd.none];
 
     case "Game":
-      return [model, cmd.none];
+      const [gameNew, gameCmd, actions] = Games.update(msg, model.game);
+      return pipe(
+        [{ ...model, game: gameNew }, pipe(gameCmd, cmd.map(groupTag("Game")))],
+        andThenMany(updateActions, actions)
+      );
 
     case "Route":
       return [model, cmd.none];
@@ -274,7 +353,10 @@ const updateActions = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
 //
 
 export const subscriptions = (model: Model): sub.Sub<Msg> => {
-  return sub.batch([pipe(Route.subscriptions(), sub.map(groupTag("Route")))]);
+  return sub.batch<Msg>([
+    pipe(Route.subscriptions(), sub.map(groupTag("Route"))),
+    pipe(Session.subscriptions, sub.map(groupTag("Session"))),
+  ]);
 };
 
 // const navigationSubscrption: sub.Sub<Msg> = pipe(
@@ -371,7 +453,10 @@ const viewMain = (model: Model): View.View<Msg> => {
 
     case "Ready":
       return pipe(
-        Pages.view({ profile: status.profile, game: model.game }, model.page),
+        Pages.viewReady(
+          { profile: status.profile, game: model.game },
+          model.page
+        ),
         View.map(groupTag("Page"))
       );
   }

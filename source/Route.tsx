@@ -86,7 +86,7 @@ export const encode = (route: Route): string => {
 //
 //
 //
-// Subscriptions
+// Msg
 //
 //
 //
@@ -95,18 +95,25 @@ export type GroupedMsg = Msg & { group: "Route" };
 
 export type Msg = RecievedRoute;
 
-const RecievedRouteChange = (route: Route) =>
-  ({ type: "RecievedRouteChange", route } as const);
+export const RecievedRoute = (route: Route) =>
+  ({ type: "RecievedRoute", route } as const);
 
-type RecievedRoute = ReturnType<typeof RecievedRouteChange>;
+export type RecievedRoute = ReturnType<typeof RecievedRoute>;
+
+//
+//
+//
+// Subscriptions
+//
+//
+//
 
 export const subscriptions = (): Sub<Msg> => {
   return pipe(
     Navigation.subscription,
-    sub.map((location) => {
-      const route = decode(location.pathname) ?? { type: "Home" };
-      return RecievedRouteChange(route);
-    })
+    sub.map((location) =>
+      RecievedRoute(decode(location.pathname) ?? { type: "Home" })
+    )
   );
 };
 
