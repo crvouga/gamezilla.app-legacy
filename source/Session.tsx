@@ -142,25 +142,15 @@ export const load: task.Task<option.Option<Session>> = async () => {
 //
 //
 
-const subject = new Rx.Subject<option.Option<Session>>();
+const subject = new Rx.Subject<Msg>();
 
 Supabase.client.auth.onAuthStateChange((_, supabaseSession) => {
   subject.next(fromSupabaseSession(supabaseSession));
 });
 
-export const subscription: sub.Sub<option.Option<Session>> = subject;
+export const subscriptions: sub.Sub<Msg> = subject;
 
-//
-//
-//
-// helpers
-//
-//
-//
-
-export const fromSupabaseSession = (
-  session: Supabase.Session | null
-): option.Option<Session> => {
+export const fromSupabaseSession = (session: Supabase.Session | null): Msg => {
   const userId = session?.user?.id;
 
   const defaultName =
@@ -169,8 +159,8 @@ export const fromSupabaseSession = (
     "";
 
   if (userId) {
-    return option.some({ userId, defaultName });
+    return { type: "UserLoggedIn", session: { userId, defaultName } };
   }
 
-  return option.none;
+  return { type: "UserLoggedOut" };
 };

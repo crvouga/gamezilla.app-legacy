@@ -47,7 +47,8 @@ export type Model =
   | (ProfileUpdateTheme.Model & { page: "ProfileUpdateTheme" })
   | (Chat.Model & { page: "Chat" })
   | (ChatNew.Model & { page: "ChatNew" })
-  | (Games.Model & { page: "Game" });
+  | (Games.Model & { page: "Game" })
+  | { page: "Loading" };
 
 type Status =
   | { type: "SessionLoading" }
@@ -98,6 +99,10 @@ export const toStatus = ({
 //
 //
 //
+
+export const initLoading = (): [Model, Cmd<Msg>] => {
+  return [{ page: "Loading" }, cmd.none];
+};
 
 export const initReady = (
   route: Route.Route,
@@ -263,7 +268,8 @@ export type Msg =
   | (ProfileUpdateUsername.Msg & { page: "ProfileUpdateUsername" })
   | (Chat.Msg & { page: "Chat" })
   | (ChatNew.Msg & { page: "ChatNew" })
-  | (ProfileUpdateTheme.Msg & { page: "ProfileUpdateTheme" });
+  | (ProfileUpdateTheme.Msg & { page: "ProfileUpdateTheme" })
+  | (Games.GroupedMsg & { page: "Games" });
 
 export type GroupedMsg = Msg & { group: "Page" };
 
@@ -375,6 +381,7 @@ export const updateReady = (
       return [model, cmd.none, []];
 
     case "Login":
+    case "Loading":
     case "ProfileCreate":
       return [model, Navigation.push(Route.encode({ type: "Home" })), []];
 
@@ -419,6 +426,7 @@ export const updateProfileMissing = (
     case "ChatNew":
     case "ProfileUpdateTheme":
     case "Game":
+    case "Loading":
       return [
         model,
         Navigation.push(Route.encode({ type: "ProfileCreate" })),
@@ -453,6 +461,7 @@ export const updateSessionMissing = (
     case "ChatNew":
     case "ProfileUpdateTheme":
     case "Game":
+    case "Loading":
     case "Logout":
       return [model, Navigation.push(Route.encode({ type: "Login" })), []];
 
@@ -485,6 +494,7 @@ export const subscriptions = (model: Model): Sub<Msg> => {
     case "ProfileUpdateTheme":
     case "ProfileUpdateUsername":
     case "ProfileUpdateName":
+    case "Loading":
       return sub.none;
 
     default:
@@ -500,7 +510,7 @@ export const subscriptions = (model: Model): Sub<Msg> => {
 //
 //
 
-export const view = (
+export const viewReady = (
   { profile, game }: { game: Games.Model; profile: Store.Profile.Profile },
   model: Model
 ): View.View<Msg> => {
@@ -546,11 +556,15 @@ export const view = (
 
     case "Game":
       return viewLoading;
+    // return Games.view(game);
 
     case "Login":
       return viewLoading;
 
     case "ProfileCreate":
+      return viewLoading;
+
+    case "Loading":
       return viewLoading;
 
     default:
@@ -581,6 +595,7 @@ export const viewProfileMissing = (
     case "ProfileUpdateTheme":
     case "ProfileUpdateUsername":
     case "Game":
+    case "Loading":
       return viewLoading;
 
     default:
@@ -606,6 +621,7 @@ export const viewSessionMissing = (model: Model): View.View<Msg> => {
     case "ProfileUpdateTheme":
     case "ProfileUpdateUsername":
     case "Game":
+    case "Loading":
       return viewLoading;
 
     default:
