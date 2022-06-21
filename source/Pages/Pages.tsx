@@ -13,6 +13,7 @@ import * as View from "View";
 import * as Account from "./Account";
 import * as Chat from "./Chat";
 import * as ChatNew from "./ChatNew";
+import * as Game from "./Game";
 import * as Home from "./Home";
 import * as Login from "./Login";
 import * as Logout from "./Logout";
@@ -47,7 +48,7 @@ export type Model =
   | (ProfileUpdateTheme.Model & { page: "ProfileUpdateTheme" })
   | (Chat.Model & { page: "Chat" })
   | (ChatNew.Model & { page: "ChatNew" })
-  | (Games.Model & { page: "Game" })
+  | { page: "Game" }
   | { page: "Loading" };
 
 //
@@ -85,7 +86,7 @@ export const initReady = (
       ];
 
     case "Game":
-      return [{ ...Games.init, page: "Game" }, cmd.none];
+      return [{ page: "Game" }, cmd.none];
 
     case "Home":
       return [{ ...Home.init, page: "Home" }, cmd.none];
@@ -227,7 +228,7 @@ export type Msg =
   | (Chat.Msg & { page: "Chat" })
   | (ChatNew.Msg & { page: "ChatNew" })
   | (ProfileUpdateTheme.Msg & { page: "ProfileUpdateTheme" })
-  | (Games.GroupedMsg & { page: "Games" });
+  | (Game.Msg & { page: "Games" });
 
 export type GroupedMsg = Msg & { group: "Page" };
 
@@ -469,7 +470,7 @@ export const subscriptions = (model: Model): Sub<Msg> => {
 //
 
 export const viewReady = (
-  { profile, game }: { game: Games.Model; profile: Store.Profile.Profile },
+  { profile, game }: { game: Game.Model; profile: Store.Profile.Profile },
   model: Model
 ): View.View<Msg> => {
   switch (model.page) {
@@ -513,8 +514,7 @@ export const viewReady = (
       );
 
     case "Game":
-      return viewLoading;
-    // return Games.view(game);
+      return tagView("Games", Game.view(game));
 
     case "Login":
       return viewLoading;
