@@ -407,6 +407,8 @@ const draw = (
   model: Model,
   ctx: CanvasRenderingContext2D
 ): void => {
+  const scale = 100;
+
   const tileWidth = width / (model.bounds.upper.x - model.bounds.lower.x);
   const tileHeight = height / (model.bounds.upper.y - model.bounds.lower.y);
 
