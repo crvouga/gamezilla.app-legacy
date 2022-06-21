@@ -190,6 +190,14 @@ const updateStatusChanged =
       }
 
       case "Ready": {
+        if (model.route.type === "Game" && model.game.type === "Closed") {
+          return [
+            model,
+            Navigation.replace(Route.encode({ type: "Home" })),
+            [],
+          ];
+        }
+
         const [page, pageCmd] = Pages.initReady(model.route, statusNew.profile);
         return [
           { ...model, page },
@@ -276,6 +284,14 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd<Msg>, Msg[]] => {
         }
 
         case "Ready": {
+          if (model.page.page === "Game" && model.game.type === "Closed") {
+            return [
+              model,
+              Navigation.replace(Route.encode({ type: "Home" })),
+              [],
+            ];
+          }
+
           const [pageNew, pageCmd, actions] = Pages.updateReady(
             status.profile,
             msg,
