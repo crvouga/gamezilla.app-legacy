@@ -4,7 +4,6 @@ import * as Mui from "@mui/material";
 import { green } from "@mui/material/colors";
 import { html, platform } from "Framework";
 import { useMemo } from "react";
-import { createRoot } from "react-dom/client";
 
 //
 //
@@ -42,6 +41,8 @@ const createTheme = ({ mode }: { mode: "light" | "dark" }) =>
       typography: {
         fontFamily: ["Nunito"].join(","),
         fontWeightRegular: "bold",
+        fontWeightMedium: "bold",
+        fontWeightLight: "bold",
       },
       components: {
         MuiButton: {
