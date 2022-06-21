@@ -50,48 +50,6 @@ export type Model =
   | (Games.Model & { page: "Game" })
   | { page: "Loading" };
 
-type Status =
-  | { type: "SessionLoading" }
-  | { type: "SessionMissing" }
-  | { type: "ProfileLoading" }
-  | { type: "ProfileMissing"; session: Session.LoggedIn }
-  | { type: "Ready"; profile: Store.Profile.Profile };
-
-export const toStatus = ({
-  store,
-  session,
-}: {
-  store: Store.Model;
-  session: Session.Model;
-}): Status => {
-  switch (session.type) {
-    case "Loading":
-      return { type: "SessionLoading" };
-
-    case "LoggedOut":
-      return { type: "SessionMissing" };
-
-    case "LoggedIn":
-      const { userId } = session;
-
-      const profile = Store.toProfile(userId, store);
-
-      switch (profile.type) {
-        case "NotAsked":
-          return { type: "SessionLoading" };
-
-        case "Loading":
-          return { type: "SessionLoading" };
-
-        case "Failure":
-          return { type: "ProfileMissing", session };
-
-        case "Success":
-          return { type: "Ready", profile: profile.value };
-      }
-  }
-};
-
 //
 //
 //
@@ -238,8 +196,8 @@ export const initProfileMissing = (
     case "ProfileUpdateUsername":
     case "ProfileUpdateTheme":
       return [
-        { ...Login.init, page: "Login" },
-        Navigation.push(Route.encode({ type: "Login" })),
+        { ...ProfileCreate.init(session), page: "ProfileCreate" },
+        Navigation.push(Route.encode({ type: "ProfileCreate" })),
       ];
 
     default:

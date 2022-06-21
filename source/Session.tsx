@@ -85,8 +85,6 @@ export const login =
   };
 
 export const logout: task.Task<either.Either<{}, {}>> = async () => {
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-
   const { error } = await Supabase.client.auth.signOut();
 
   if (error) {
@@ -97,8 +95,6 @@ export const logout: task.Task<either.Either<{}, {}>> = async () => {
 };
 
 export const loadSession: task.Task<Msg> = async () => {
-  await new Promise((resolve) => setTimeout(resolve, 100));
-
   const session = Supabase.client.auth.session();
 
   const userId = session?.user?.id;

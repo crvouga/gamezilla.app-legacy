@@ -315,17 +315,18 @@ export const viewBanner =
   (dispatch) =>
     (
       <>
-        <View.Box
+        <View.Paper
+          variant="outlined"
           sx={{
-            backgroundColor: "#212121",
             width: "100%",
             display: "flex",
             alignItems: "center",
-            // animation: `${spin} 1s infinite ease`,
+            margin: 0,
+            padding: 0,
           }}
         >
           <View.ButtonBase
-            sx={{ flex: 1 }}
+            sx={{ flex: 1, margin: 0, padding: 0 }}
             onClick={() => dispatch({ type: "UserClickedGameBanner" })}
           >
             <View.Box sx={{ width: 64, marginRight: 2 }}>
@@ -337,7 +338,7 @@ export const viewBanner =
           </View.ButtonBase>
 
           <View.ButtonBase
-            sx={{ width: "15%", height: "100%", p: 2 }}
+            sx={{ width: "15%", height: "100%", p: 2, margin: 0 }}
             onClick={() =>
               dispatch({
                 type: "UserClickedCloseGameButton",
@@ -346,7 +347,7 @@ export const viewBanner =
           >
             <View.Icons.Close />
           </View.ButtonBase>
-        </View.Box>
+        </View.Paper>
 
         <View.ConformationDialog
           open={model.status === "ConfirmingClose"}
