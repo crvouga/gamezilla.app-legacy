@@ -19,14 +19,23 @@ export const groupTag =
   };
 
 export const andThen =
-  <Msg, Model>(
-    update: (msg: Msg, model: Model) => [Model, Cmd<Msg>],
+  <Msg, Model, Action>(
+    update: (
+      msg: Msg,
+      model: Model
+    ) => [Model, Cmd<Msg>] | [Model, Cmd<Msg>, Action[]],
     msg: Msg
   ) =>
-  ([model, cmdPrev]: [Model, Cmd<Msg>]): [Model, Cmd<Msg>] => {
-    const [modelNew, cmdNew] = update(msg, model);
+  ([model, cmdPrev, actionsPrev = []]:
+    | [Model, Cmd<Msg>]
+    | [Model, Cmd<Msg>, Action[]]): [Model, Cmd<Msg>, Action[]] => {
+    const [modelNew, cmdNew, actionsNew = []] = update(msg, model);
 
-    return [modelNew, cmd.batch([cmdPrev, cmdNew])];
+    return [
+      modelNew,
+      cmd.batch([cmdPrev, cmdNew]),
+      [...actionsPrev, ...(actionsNew ?? [])],
+    ];
   };
 
 export const andThenMany =

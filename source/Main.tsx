@@ -11,7 +11,7 @@ import * as Session from "Session";
 import * as Snackbar from "Snackbar";
 import * as Store from "Store";
 import * as Profile from "Store/Profile";
-import { andThenMany, exhaustive, groupTag } from "Utility";
+import { andThen, andThenMany, exhaustive, groupTag } from "Utility";
 import * as View from "View";
 
 //
@@ -31,16 +31,28 @@ type Model = {
   route: Route.Route;
 };
 
+//
+//
+//
+// Status
+//
+//
+//
+
 type Status =
   | { type: "SessionLoading" }
   | { type: "SessionMissing" }
   | { type: "ProfileLoading"; session: Session.LoggedIn }
   | { type: "ProfileMissing"; session: Session.LoggedIn }
-  | { type: "Ready"; profile: Profile.Profile };
+  | { type: "Ready"; profile: Profile.Profile; session: Session.LoggedIn };
 
-export const toStatus = (model: Pick<Model, "session" | "store">): Status => {
-  const { session, store } = model;
-
+export const toStatus = ({
+  store,
+  session,
+}: {
+  store: Store.Model;
+  session: Session.Model;
+}): Status => {
   switch (session.type) {
     case "Loading":
       return { type: "SessionLoading" };
@@ -64,7 +76,7 @@ export const toStatus = (model: Pick<Model, "session" | "store">): Status => {
           return { type: "ProfileMissing", session };
 
         case "Success":
-          return { type: "Ready", profile: profile.value };
+          return { type: "Ready", session, profile: profile.value };
       }
   }
 };
@@ -130,56 +142,76 @@ export type Msg =
 //
 
 export const update = (msg: Msg, modelPrev: Model): [Model, Cmd<Msg>] => {
-  const [modelNew, cmdNew, actions] = updateMain(msg, modelPrev);
-
-  const statusPrev = toStatus(modelPrev);
-  const statusNew = toStatus(modelNew);
-
-  const reactions: Msg[] = [];
-  const cmds: Cmd<Msg>[] = [];
-
-  if (
-    statusPrev.type !== statusNew.type &&
-    statusNew.type === "ProfileLoading"
-  ) {
-    reactions.push(Store.Profile.Get(statusNew.session.userId));
-  }
-
-  if (statusPrev.type === "ProfileLoading" && statusNew.type === "Ready") {
-    cmds.push(Route.push({ type: "Home" }));
-  }
-
-  if (
-    statusPrev.type === "ProfileLoading" &&
-    statusNew.type === "ProfileMissing"
-  ) {
-    cmds.push(Route.push({ type: "ProfileCreate" }));
-  }
-
-  if (
-    modelPrev.session.type !== modelNew.session.type &&
-    modelNew.session.type === "LoggedOut"
-  ) {
-    console.log("CHANGE");
-    cmds.push(Route.push({ type: "Login" }));
-  }
-
-  return pipe(
-    [modelNew, cmd.batch([cmdNew, ...cmds])],
-    andThenMany(updateActions, actions),
-    andThenMany(updateActions, reactions)
+  const [modelNew, cmdNew, actions] = pipe(
+    [modelPrev, cmd.none],
+    andThen(updateMain, msg),
+    andThen(updateStatusChanged(modelPrev), msg)
   );
+
+  return pipe([modelNew, cmdNew], andThenMany(updateAction, actions));
 };
+
+const updateStatusChanged =
+  (modelPrev: Model) =>
+  (msg: Msg, model: Model): [Model, Cmd<Msg>, Msg[]] => {
+    const statusPrev = toStatus(modelPrev);
+    const statusNew = toStatus(model);
+
+    if (statusNew.type === statusPrev.type) {
+      return [model, cmd.none, []];
+    }
+
+    switch (statusNew.type) {
+      case "ProfileLoading":
+        return [model, cmd.none, [Store.Profile.Get(statusNew.session.userId)]];
+
+      case "ProfileMissing": {
+        const [page, pageCmd] = Pages.initProfileMissing(
+          model.route,
+          statusNew.session
+        );
+        return [
+          { ...model, page },
+          pipe(pageCmd, cmd.map(groupTag("Page"))),
+          [],
+        ];
+      }
+
+      case "SessionLoading":
+        return [model, cmd.none, []];
+
+      case "SessionMissing": {
+        const [page, pageCmd] = Pages.initSessionMissing(model.route);
+        return [
+          { ...model, page },
+          pipe(pageCmd, cmd.map(groupTag("Page"))),
+          [],
+        ];
+      }
+
+      case "Ready": {
+        const [page, pageCmd] = Pages.initReady(model.route, statusNew.profile);
+        return [
+          { ...model, page },
+          pipe(pageCmd, cmd.map(groupTag("Page"))),
+          [],
+        ];
+      }
+
+      default:
+        return exhaustive(statusNew);
+    }
+  };
 
 const updateMain = (msg: Msg, model: Model): [Model, Cmd<Msg>, Msg[]] => {
   switch (msg.group) {
     case "Store": {
-      const [storeNew, storeCmd] = Store.update(msg, model.store);
+      const [storeNew, storeCmd, actions] = Store.update(msg, model.store);
 
       return [
         { ...model, store: storeNew },
         pipe(storeCmd, cmd.map(groupTag("Store"))),
-        [],
+        actions,
       ];
     }
 
@@ -262,11 +294,13 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd<Msg>, Msg[]] => {
     case "Route": {
       const route = msg.route;
 
-      const status = toStatus(model);
+      const modelNew = { ...model, route };
+
+      const status = toStatus(modelNew);
 
       switch (status.type) {
         case "ProfileLoading":
-          return [model, cmd.none, []];
+          return [modelNew, cmd.none, []];
 
         case "ProfileMissing": {
           const [page, pageCmd] = Pages.initProfileMissing(
@@ -275,7 +309,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd<Msg>, Msg[]] => {
           );
 
           return [
-            { ...model, page },
+            { ...modelNew, page },
             pipe(pageCmd, cmd.map(groupTag("Page"))),
             [],
           ];
@@ -284,19 +318,19 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd<Msg>, Msg[]] => {
         case "Ready": {
           const [page, pageCmd] = Pages.initReady(route, status.profile);
           return [
-            { ...model, page },
+            { ...modelNew, page },
             pipe(pageCmd, cmd.map(groupTag("Page"))),
             [],
           ];
         }
 
         case "SessionLoading":
-          return [model, cmd.none, []];
+          return [modelNew, cmd.none, []];
 
         case "SessionMissing": {
           const [page, pageCmd] = Pages.initSessionMissing(route);
           return [
-            { ...model, page },
+            { ...modelNew, page },
             pipe(pageCmd, cmd.map(groupTag("Page"))),
             [],
           ];
@@ -309,12 +343,12 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd<Msg>, Msg[]] => {
   }
 };
 
-const updateActions = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
-  const { group } = msg;
+const updateAction = (action: Msg, model: Model): [Model, Cmd<Msg>] => {
+  const { group } = action;
 
   switch (group) {
     case "Store":
-      const [storeNew, storeCmd] = Store.update(msg, model.store);
+      const [storeNew, storeCmd] = Store.update(action, model.store);
       return [
         { ...model, store: storeNew },
         pipe(storeCmd, cmd.map(groupTag("Store"))),
@@ -327,13 +361,20 @@ const updateActions = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
       return [model, cmd.none];
 
     case "Snackbar":
-      return [model, cmd.none];
+      const [snackbarNew, snackbarCmd] = Snackbar.update(
+        action,
+        model.snackbar
+      );
+      return [
+        { ...model, snackbar: snackbarNew },
+        pipe(snackbarCmd, cmd.map(groupTag("Snackbar"))),
+      ];
 
     case "Game":
-      const [gameNew, gameCmd, actions] = Games.update(msg, model.game);
+      const [gameNew, gameCmd, actions] = Games.update(action, model.game);
       return pipe(
         [{ ...model, game: gameNew }, pipe(gameCmd, cmd.map(groupTag("Game")))],
-        andThenMany(updateActions, actions)
+        andThenMany(updateAction, actions)
       );
 
     case "Route":

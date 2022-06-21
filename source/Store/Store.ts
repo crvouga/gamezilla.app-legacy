@@ -4,6 +4,7 @@ import { Cmd } from "Framework/Cmd";
 import * as RemoteData from "Framework/RemoteData";
 import { perform } from "Framework/Task";
 import { exhaustive } from "Utility";
+import * as Snackbar from "Snackbar";
 import * as Conversation from "./Conversation";
 import * as Profile from "./Profile";
 
@@ -53,6 +54,8 @@ export type Msg = Profile.Msg;
 
 export type GroupedMsg = Msg & { group: "Store" };
 
+type Action = Snackbar.GroupedMsg;
+
 //
 //
 //
@@ -61,7 +64,7 @@ export type GroupedMsg = Msg & { group: "Store" };
 //
 //
 
-export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
+export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>, Action[]] => {
   switch (msg.type) {
     case "Profile/Edit":
       const remoteDataProfile = toProfile(msg.userId, model);
@@ -80,10 +83,11 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
               Profile.edit(msg.userId, msg.edits),
               perform((result) => Profile.Edited(msg.userId, prev, result))
             ),
+            [],
           ];
 
         default:
-          return [model, cmd.none];
+          return [model, cmd.none, []];
       }
 
     case "Profile/Edited":
@@ -98,22 +102,25 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
               model
             ),
             cmd.none,
+            [],
           ];
 
         case "Ok":
-          return [model, cmd.none];
+          return [model, cmd.none, []];
       }
 
     case "Profile/Get":
       return [
         mapProfile(msg.userId, () => RemoteData.Loading, model),
         loadProfile(msg.userId),
+        [],
       ];
 
     case "Profile/Got":
       return [
         mapProfile(msg.userId, () => RemoteData.fromResult(msg.result), model),
         cmd.none,
+        [],
       ];
 
     case "Profile/DeleteForever": {
@@ -131,10 +138,11 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
                 Profile.DeletedForever(msg.userId, previous, result)
               )
             ),
+            [],
           ];
 
         default:
-          return [model, cmd.none];
+          return [model, cmd.none, []];
       }
     }
 
@@ -150,12 +158,14 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
               model
             ),
             cmd.none,
+            [],
           ];
 
         case "Ok":
           return [
             mapProfile(msg.userId, () => RemoteData.NotAsked, model),
             loadProfile(msg.userId),
+            [],
           ];
       }
     }
@@ -167,12 +177,14 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
           Profile.create(msg.profile),
           perform((result) => Profile.Created(msg.profile.userId, result))
         ),
+        [],
       ];
 
     case "Profile/Created":
       return [
         mapProfile(msg.userId, () => RemoteData.fromResult(msg.result), model),
         cmd.none,
+        [],
       ];
 
     case "Profile/Search":
@@ -182,10 +194,11 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
           Profile.search({ nameOrUsername: msg.searchText }),
           perform((result) => Profile.Searched(result))
         ),
+        [],
       ];
 
     case "Profile/Searched":
-      return [{ ...model, profile: { ...model.profile } }, cmd.none];
+      return [{ ...model, profile: { ...model.profile } }, cmd.none, []];
 
     default:
       return exhaustive(msg);

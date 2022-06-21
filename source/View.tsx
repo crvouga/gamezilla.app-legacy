@@ -133,7 +133,6 @@ export const ThemeModeToggleButtons = ({
       exclusive
       orientation="vertical"
       onChange={(event, value) => {
-        console.log(value);
         if (isThemeMode(value)) {
           onChange(value);
         }
@@ -184,6 +183,8 @@ export const ListItemIcon = Mui.ListItemIcon;
 export const Checkbox = Mui.Checkbox;
 
 export const ListItemSecondaryAction = Mui.ListItemSecondaryAction;
+
+export const Paper = Mui.Paper;
 
 export const Button = MuiLab.LoadingButton;
 
