@@ -397,28 +397,9 @@ export const subscriptions = (model: Model): sub.Sub<Msg> => {
   return sub.batch<Msg>([
     pipe(Route.subscriptions(), sub.map(groupTag("Route"))),
     pipe(Session.subscriptions, sub.map(groupTag("Session"))),
+    pipe(Games.subscriptions(model.game), sub.map(groupTag("Game"))),
   ]);
 };
-
-// const navigationSubscrption: sub.Sub<Msg> = pipe(
-//   Navigation.subscription,
-//   sub.map((location) => ({
-//     type: "RecievedLocation",
-//     location,
-//     group: "Location",
-//   }))
-// );
-
-// const sessionSubcription = (): sub.Sub<Msg> => {
-//   return pipe(
-//     Session.subscription,
-//     sub.map((session) => ({
-//       type: "RecievedSession",
-//       session,
-//       group: "Session",
-//     }))
-//   );
-// };
 
 //
 //
@@ -493,6 +474,10 @@ const viewMain = (model: Model): View.View<Msg> => {
       );
 
     case "Ready":
+      if (model.route.type === "Game") {
+        return pipe(Games.view(model.game), View.map(groupTag("Game")));
+      }
+
       return pipe(
         Pages.viewReady(
           { profile: status.profile, game: model.game },
@@ -520,6 +505,17 @@ const viewSnackbar =
         );
 
       case "Opened":
+        if (model.page.page === "Game") {
+          return (
+            <>
+              {pipe(
+                Snackbar.view({}, model.snackbar),
+                View.map(groupTag("Snackbar"))
+              )(dispatch)}
+            </>
+          );
+        }
+
         return (
           <>
             {pipe(
