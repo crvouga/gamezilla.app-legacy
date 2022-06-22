@@ -359,6 +359,9 @@ const Canvas = ({
     const ctx = canvas?.getContext("2d");
 
     if (canvas && ctx) {
+      const dpi = 1000;
+      ctx.scale(dpi, dpi);
+
       const width = canvas.width;
       const height = canvas.height;
 
@@ -388,6 +391,9 @@ const Canvas = ({
             const y = event.clientY;
             dispatch({ type: "UserMouseMovedBoard", position: { x, y } });
           }
+        }}
+        onClick={() => {
+          // dispatch({ type: "UserClicj" });
         }}
         onTouchMove={(event) => {
           const touch = event.touches[0];
