@@ -38,7 +38,7 @@ export type Model = {
   touched?: Position.Position;
 };
 
-type Status = "paused" | "playing";
+type Status = { type: "Paused" } | { type: "Playing" };
 
 type MouseStatus = "active" | "inactive";
 
@@ -51,7 +51,7 @@ type MouseStatus = "active" | "inactive";
 //
 
 export const init: Model = {
-  status: "paused",
+  status: { type: "Paused" },
   mouseStatus: "inactive",
   tickRate: 1000 / 6,
   head: { x: 4, y: 6 },
@@ -95,7 +95,8 @@ export type Msg =
   | { type: "UserTouchMovedBoard"; position: Position.Position }
   | { type: "UserMouseMovedBoard"; position: Position.Position }
   | { type: "UserMouseDownBoard" }
-  | { type: "UserMouseUpBoard" };
+  | { type: "UserMouseUpBoard" }
+  | { type: "UserClickedRestartButton" };
 
 //
 //
@@ -111,24 +112,25 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
       return [init, cmd.none];
 
     case "Elapsed":
-      switch (model.status) {
-        case "paused":
+      switch (model.status.type) {
+        case "Paused":
           return [model, cmd.none];
 
-        case "playing":
-          const tailNew = [model.head, ...model.tail].slice(
-            0,
-            model.tailLength
-          );
+        case "Playing":
+          const tailNew = [model.head]
+            .concat(model.tail)
+            .slice(0, model.tailLength);
 
-          const [queued, ...directionQueueNew] = model.directionQueue;
+          const queuedDirection = model.directionQueue[0] ?? model.direction;
 
-          const directionQueued = queued ?? model.direction;
+          const [_, ...directionQueueNew] = model.directionQueue;
 
-          const directionNew =
-            Direction.toOpposite(directionQueued) === model.direction
-              ? model.direction
-              : directionQueued;
+          const directionNew = Direction.isOpposite(
+            queuedDirection,
+            model.direction
+          )
+            ? model.direction
+            : queuedDirection;
 
           const headNew = Position.add(
             model.head,
@@ -176,11 +178,11 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
       return [{ ...model, mouseStatus: "active" }, cmd.none];
 
     case "UserPressedKeyDown":
-      const statusNew =
+      const statusNew: Status =
         msg.key === "Space"
-          ? model.status === "paused"
-            ? "playing"
-            : "paused"
+          ? model.status.type === "Paused"
+            ? { type: "Playing" }
+            : { type: "Paused" }
           : model.status;
 
       const directionFromKey = Direction.fromKey(msg.key, model.direction);
@@ -194,12 +196,12 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
       ];
 
     case "UserClickedToggleButton":
-      switch (model.status) {
-        case "paused":
-          return [{ ...model, status: "playing" }, cmd.none];
+      switch (model.status.type) {
+        case "Paused":
+          return [{ ...model, status: { type: "Playing" } }, cmd.none];
 
-        case "playing":
-          return [{ ...model, status: "paused" }, cmd.none];
+        case "Playing":
+          return [{ ...model, status: { type: "Paused" } }, cmd.none];
       }
 
     case "AudioFailed":
@@ -270,11 +272,11 @@ const toEmptyPositions = (model: Model) => {
 //
 
 export const subscriptions = (model: Model): Sub<Msg> => {
-  switch (model.status) {
-    case "paused":
+  switch (model.status.type) {
+    case "Paused":
       return keyDowns;
 
-    case "playing":
+    case "Playing":
       return sub.batch([
         keyDowns,
         time.every<Msg>(model.tickRate, () => ({ type: "Elapsed" })),
@@ -314,9 +316,27 @@ export const view =
             />
           }
           title={
-            model.status === "playing"
+            model.status.type === "Playing"
               ? `${model.foodEatenCount} apples`
               : "Snake"
+          }
+          right={
+            <>
+              <View.IconButton
+                onClick={() => dispatch({ type: "UserClickedToggleButton" })}
+              >
+                {model.status.type === "Paused" ? (
+                  <View.Icons.PlayArrow />
+                ) : (
+                  <View.Icons.Pause />
+                )}
+              </View.IconButton>
+              <View.IconButton
+                onClick={() => dispatch({ type: "UserClickedRestartButton" })}
+              >
+                <View.Icons.RestartAlt />
+              </View.IconButton>
+            </>
           }
         />
 
