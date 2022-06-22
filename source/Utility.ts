@@ -158,3 +158,68 @@ export function debounce<Args extends any[], F extends (...args: Args) => any>(
 
   return debouncedFunction;
 }
+
+/**
+ *
+ *
+ *
+ * source: https://www.tutorialspoint.com/levenshtein-distance-in-javascript
+ *
+ *
+ */
+
+export const editDistance = (str1 = "", str2 = ""): number => {
+  const track = Array(str2.length + 1)
+    .fill(null)
+    .map(() => Array(str1.length + 1).fill(null));
+
+  for (let i = 0; i <= str1.length; i += 1) {
+    // @ts-ignore
+    track[0][i] = i;
+  }
+  for (let j = 0; j <= str2.length; j += 1) {
+    // @ts-ignore
+    track[j][0] = j;
+  }
+  for (let j = 1; j <= str2.length; j += 1) {
+    for (let i = 1; i <= str1.length; i += 1) {
+      const indicator = str1[i - 1] === str2[j - 1] ? 0 : 1;
+
+      // @ts-ignore
+      track[j][i] = Math.min(
+        // @ts-ignore
+        track[j][i - 1] + 1, // deletion
+        // @ts-ignore
+        track[j - 1][i] + 1, // insertion
+        // @ts-ignore
+        track[j - 1][i - 1] + indicator // substitution
+      );
+    }
+  }
+  // @ts-ignore
+  return track[str2.length][str1.length];
+};
+
+export const sort = <T>(compare: (a: T, b: T) => number, items: T[]): T[] => {
+  const ret = [...items];
+
+  ret.sort(compare);
+
+  return ret;
+};
+
+export const ascend =
+  <T>(keyFn: (a: T) => number) =>
+  (a: T, b: T): number => {
+    const aa = keyFn(a);
+    const bb = keyFn(b);
+    return aa < bb ? -1 : aa > bb ? 1 : 0;
+  };
+
+export const descend =
+  <T>(keyFn: (a: T) => number) =>
+  (a: T, b: T): number => {
+    const aa = keyFn(a);
+    const bb = keyFn(b);
+    return aa < bb ? -1 : aa > bb ? 1 : 0;
+  };

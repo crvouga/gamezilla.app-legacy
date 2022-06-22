@@ -1,12 +1,8 @@
 import { cmd } from "Framework";
 import { Cmd } from "Framework/Cmd";
 import * as Navigation from "Framework/Navigation";
-import * as View from "View";
-import * as Profile from "Store/Profile";
 import * as Store from "Store";
-import { pipe } from "fp-ts/lib/function";
-import { attempt } from "Framework/Task";
-import { either } from "fp-ts";
+import * as View from "View";
 
 //
 //
@@ -18,7 +14,6 @@ import { either } from "fp-ts";
 
 export type Model = {
   searchText: string;
-  searchResults: SearchResult[];
   selected: { [userId: string]: SearchResult };
   searchStatus: "Idle" | "Searching";
   status: "Idle" | "Creating";
@@ -37,9 +32,8 @@ type SearchResult = { userId: string; username: string; avatarUrl: string };
 export const init = (): [Model, Cmd<Msg>] => [
   {
     searchText: "",
-    searchResults: [],
     selected: {},
-    searchStatus: "Searching",
+    searchStatus: "Idle",
     status: "Idle",
   },
   cmd.none,
@@ -56,38 +50,35 @@ export const init = (): [Model, Cmd<Msg>] => [
 export type Msg =
   | { type: "UserClickedCancelButton" }
   | { type: "UserEnteredSearchText"; searchText: string }
-  | { type: "RecievedSearchResults"; searchResults: SearchResult[] }
   | { type: "UserClickedSearchResult"; searchResult: SearchResult }
-  | { type: "Problem" }
   | { type: "UserClickedSelectedDeleteButton"; userId: string }
   | { type: "UserClickedCreateButton" };
 
-export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
+export type Action = Store.GroupedMsg;
+
+export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>, Action[]] => {
   switch (msg.type) {
     case "UserClickedCreateButton":
-      return [{ ...model, status: "Creating" }, cmd.none];
+      return [{ ...model, status: "Creating" }, cmd.none, []];
 
     case "UserClickedCancelButton":
-      return [model, Navigation.back()];
+      return [model, Navigation.back(), []];
 
     case "UserEnteredSearchText":
+      const searchAction = Store.Profile.Search(msg.searchText);
       return [
-        { ...model, searchText: msg.searchText, searchStatus: "Searching" },
+        {
+          ...model,
+          searchText: msg.searchText,
+          searchStatus: "Searching",
+        },
         cmd.none,
+        [searchAction],
       ];
 
     case "UserClickedSelectedDeleteButton":
       const selectedNew = removeKey(msg.userId, model.selected);
-      return [{ ...model, selected: selectedNew }, cmd.none];
-
-    case "RecievedSearchResults":
-      return [
-        { ...model, searchResults: msg.searchResults, searchStatus: "Idle" },
-        cmd.none,
-      ];
-
-    case "Problem":
-      return [{ ...model, searchStatus: "Idle" }, cmd.none];
+      return [{ ...model, selected: selectedNew }, cmd.none, []];
 
     case "UserClickedSearchResult":
       const userId = msg.searchResult.userId;
@@ -100,6 +91,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
             selected: removeKey(userId, model.selected),
           },
           cmd.none,
+          [],
         ];
       }
 
@@ -113,6 +105,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
           },
         },
         cmd.none,
+        [],
       ];
   }
 };
@@ -126,7 +119,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
 //
 
 export const view =
-  (model: Model): View.View<Msg> =>
+  (store: Store.Model, model: Model): View.View<Msg> =>
   (dispatch) =>
     (
       <View.Page>
@@ -174,7 +167,7 @@ export const view =
             }
             value={model.searchText}
             onKeyDown={(event) => {
-              console.log(event);
+              // console.log(event);
             }}
             onChange={(event) => {
               const searchText = event.currentTarget.value;
@@ -186,13 +179,13 @@ export const view =
         <View.Divider />
 
         <View.List>
-          {model.searchStatus === "Idle" && model.searchResults.length === 0 && (
+          {/* {model.searchStatus === "Idle" && model.searchResults.length === 0 && (
             <View.Typography sx={{ p: 2 }} color="text.secondary">
               No account found.
             </View.Typography>
-          )}
+          )} */}
 
-          {model.searchResults.map((searchResult) => (
+          {Store.searchProfiles(model.searchText, store).map((searchResult) => (
             <View.ListItemButton
               key={searchResult.userId}
               onClick={() => {
@@ -202,7 +195,10 @@ export const view =
               <View.ListItemAvatar>
                 <View.Avatar src={searchResult.avatarUrl} />
               </View.ListItemAvatar>
-              <View.ListItemText primary={searchResult.username} />
+              <View.ListItemText
+                primary={searchResult.username}
+                secondary={searchResult.name}
+              />
 
               <View.ListItemSecondaryAction>
                 <View.Checkbox
