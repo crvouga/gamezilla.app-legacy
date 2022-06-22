@@ -299,6 +299,7 @@ export const Page = ({ children, sx }: Mui.BoxProps) => {
         flexDirection: "column",
         width: "100%",
         height: "100%",
+        userSelect: "none",
         ...sx,
       }}
     >
