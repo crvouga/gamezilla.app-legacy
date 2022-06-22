@@ -497,7 +497,11 @@ const viewMain = (model: Model): View.View<Msg> => {
 
       return pipe(
         Pages.viewReady(
-          { profile: status.profile, game: model.game },
+          {
+            profile: status.profile,
+            game: model.game,
+            store: model.store,
+          },
           model.page
         ),
         View.map(groupTag("Page"))

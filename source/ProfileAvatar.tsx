@@ -116,3 +116,16 @@ export const generateRandomSeed: Task<Seed> = async () => {
   await new Promise((resolve) => setTimeout(resolve, 100));
   return toSeed(String(Math.floor(Math.random() * 10000)));
 };
+
+export const randomStyle = (): Style => {
+  const styles = shuffle(ALL_STYLES);
+  return styles[0] ?? "adventurer-neutral";
+};
+
+const shuffle = <T,>(xs: T[]): T[] => {
+  const ys = [...xs];
+
+  ys.sort(() => (Math.random() > 0.5 ? 1 : -1));
+
+  return ys;
+};

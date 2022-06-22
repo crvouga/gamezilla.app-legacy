@@ -470,7 +470,11 @@ export const subscriptions = (model: Model): Sub<Msg> => {
 //
 
 export const viewReady = (
-  { profile, game }: { game: Game.Model; profile: Store.Profile.Profile },
+  {
+    profile,
+    game,
+    store,
+  }: { game: Game.Model; profile: Store.Profile.Profile; store: Store.Model },
   model: Model
 ): View.View<Msg> => {
   switch (model.page) {
@@ -481,7 +485,7 @@ export const viewReady = (
       return tagView("Chat", Chat.view(model));
 
     case "ChatNew":
-      return tagView("ChatNew", ChatNew.view(model));
+      return tagView("ChatNew", ChatNew.view(store, model));
 
     case "Home":
       return tagView("Home", Home.view({ profile, game }, model));

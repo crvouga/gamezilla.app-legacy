@@ -3,7 +3,7 @@ import { cmd } from "Framework";
 import { Cmd } from "Framework/Cmd";
 import * as RemoteData from "Framework/RemoteData";
 import { perform } from "Framework/Task";
-import { exhaustive } from "Utility";
+import { sort, ascend, editDistance, exhaustive } from "Utility";
 import * as Snackbar from "Snackbar";
 import * as Conversation from "./Conversation";
 import * as Profile from "./Profile";
@@ -26,7 +26,10 @@ export type Model = {
   profiles_conversations: {
     [id: string]: StoreData<ProfilesConversations>;
   };
+  queries: { [id: string]: Query };
 };
+
+type Query = {};
 
 export type ProfileModel = RemoteData.RemoteData<Problem, Profile.Profile>;
 
@@ -40,6 +43,7 @@ export const init: Model = {
   profile: {},
   conversation: {},
   profiles_conversations: {},
+  queries: {},
 };
 
 //
@@ -197,8 +201,32 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>, Action[]] => {
         [],
       ];
 
-    case "Profile/Searched":
-      return [{ ...model, profile: { ...model.profile } }, cmd.none, []];
+    case "Profile/Searched": {
+      const { result } = msg;
+
+      switch (result.type) {
+        case "Err":
+          return [model, cmd.none, []];
+
+        case "Ok":
+          const profilesById = result.value.reduce<Model["profile"]>(
+            (byId, profile) => ({
+              ...byId,
+              [profile.userId]: RemoteData.Success({
+                ...(byId?.[profile.userId] ?? {}),
+                ...profile,
+              }),
+            }),
+            {}
+          );
+
+          return [
+            { ...model, profile: { ...model.profile, ...profilesById } },
+            cmd.none,
+            [],
+          ];
+      }
+    }
 
     default:
       return exhaustive(msg);
@@ -236,4 +264,30 @@ const mapProfile = (
 
 export const toProfile = (userId: string, model: Model): ProfileModel => {
   return model.profile[userId] ?? RemoteData.NotAsked;
+};
+
+export const searchProfiles = (nameOrUsername: string, store: Model) => {
+  return pipe(
+    store,
+
+    (store) => Object.values(store.profile),
+
+    (profiles) =>
+      profiles.reduce<Profile.Profile[]>(
+        (profiles, p) =>
+          p.type === "Success" ? [...profiles, p.value] : profiles,
+        []
+      ),
+
+    (profiles) =>
+      sort(
+        ascend((profile) =>
+          Math.min(
+            editDistance(profile.name, nameOrUsername),
+            editDistance(profile.username, nameOrUsername)
+          )
+        ),
+        profiles
+      )
+  );
 };
