@@ -106,6 +106,20 @@ export type Msg =
 //
 //
 
+const circularIndex = (index: number, length: number): number => {
+  return ((index % length) + length) % length;
+};
+
+const circular = (
+  model: Model,
+  position: Position.Position
+): Position.Position => {
+  return {
+    x: circularIndex(position.x, model.bounds.upper.x),
+    y: circularIndex(position.y, model.bounds.upper.y),
+  };
+};
+
 export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
   switch (msg.type) {
     case "UserClickedRestartButton":
@@ -119,7 +133,8 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
         case "Playing":
           const tailNew = [model.head]
             .concat(model.tail)
-            .slice(0, model.tailLength);
+            .slice(0, model.tailLength)
+            .map((position) => circular(model, position));
 
           const queuedDirection = model.directionQueue[0] ?? model.direction;
 
@@ -132,9 +147,9 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
             ? model.direction
             : queuedDirection;
 
-          const headNew = Position.add(
-            model.head,
-            Direction.toVector(directionNew)
+          const headNew = circular(
+            model,
+            Position.add(model.head, Direction.toVector(directionNew))
           );
 
           const isSnakeEatingFood = [headNew, ...tailNew].some((position) =>
