@@ -336,12 +336,28 @@ export const theme = {
 //
 //
 
-export type Msg = { group: "ConnectFour"; type: "Back" };
+export type Msg =
+  | { type: "UserClickedBackButton" }
+  | { type: "UserClickedBoard"; columnIndex: number }
+  | { type: "UserClickedRestartButton" };
+
+export type GroupedMsg = { group: "ConnectFour" } & Msg;
 
 export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
-    case "Back":
+    case "UserClickedBackButton":
       return [model, Navigation.back()];
+
+    case "UserClickedBoard":
+      const columnsNew = move(
+        model.columns,
+        msg.columnIndex,
+        toTurn(model.columns)
+      );
+      return [{ ...model, columns: columnsNew }, cmd.none];
+
+    case "UserClickedRestartButton":
+      return [{ ...model, columns: emptyColumns }, cmd.none];
   }
 };
 
@@ -356,17 +372,135 @@ export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
 //
 
 export const view =
-  (_model: Model): View.View<Msg> =>
+  (model: Model): View.View<Msg> =>
   (dispatch) =>
     (
       <View.Page>
         <View.Header
           left={
             <View.HeaderBackButton
-              onClick={() => dispatch({ group: "ConnectFour", type: "Back" })}
+              onClick={() => dispatch({ type: "UserClickedBackButton" })}
             />
           }
-          title="Connect Four"
+          title={`${toTurn(model.columns)}'s turn`}
         />
+        <Board
+          columns={model.columns}
+          onClick={(columnIndex) =>
+            dispatch({ type: "UserClickedBoard", columnIndex })
+          }
+        />
+        <View.Button
+          fullWidth
+          size="large"
+          onClick={() => dispatch({ type: "UserClickedRestartButton" })}
+        >
+          Restart
+        </View.Button>
       </View.Page>
     );
+
+const Board = ({
+  columns,
+  onClick,
+}: {
+  columns: Columns;
+  onClick: (columnIndex: number) => void;
+}) => {
+  const ids = {
+    playerOneGradient: "playerOneGradient",
+    playerTwoGradient: "playerTwoGradient",
+    holePattern: "holePattern",
+    columnGradient: "columnGradient",
+    holemask: "holemask",
+  };
+
+  const playerOneFill = `url(#${ids.playerOneGradient})`;
+  const playerTwoFill = `url(#${ids.playerTwoGradient})`;
+
+  return (
+    <svg width="100%" viewBox={"0 0 7 6"}>
+      <defs>
+        <pattern
+          id={ids.holePattern}
+          patternUnits="userSpaceOnUse"
+          width={1}
+          height={1}
+        >
+          <circle cx={0.5} cy={0.5} r={0.425} fill="black"></circle>
+        </pattern>
+
+        <mask id={ids.holemask}>
+          <rect
+            x={0}
+            y={0}
+            width={COLUMN_COUNT}
+            height={MAX_COLUMN_HEIGHT}
+            fill="white"
+          ></rect>
+          <rect
+            x={0}
+            y={0}
+            width={COLUMN_COUNT}
+            height={MAX_COLUMN_HEIGHT}
+            fill={`url(#${ids.holePattern})`}
+          ></rect>
+        </mask>
+
+        <linearGradient id={ids.columnGradient} gradientTransform="rotate(90)">
+          <stop offset="0%" stopColor={theme.primary.light} />
+          <stop offset="100%" stopColor={theme.primary.dark} />
+        </linearGradient>
+
+        <linearGradient
+          id={ids.playerOneGradient}
+          gradientTransform="rotate(90)"
+        >
+          <stop offset="0%" stopColor={theme.playerOne.light} />
+          <stop offset="100%" stopColor={theme.playerOne.dark} />
+        </linearGradient>
+
+        <linearGradient
+          id={ids.playerTwoGradient}
+          gradientTransform="rotate(90)"
+        >
+          <stop offset="0%" stopColor={theme.playerTwo.light} />
+          <stop offset="100%" stopColor={theme.playerTwo.dark} />
+        </linearGradient>
+      </defs>
+
+      <rect x={0} y={0} width={7} height={6} fill={theme.primary.darker} />
+
+      {columns.map((column, columnIndex) =>
+        column.map((player, rowIndex) => (
+          <circle
+            key={[columnIndex, rowIndex].join(", ")}
+            cx={columnIndex + 0.5}
+            cy={MAX_COLUMN_HEIGHT - (rowIndex + 0.5)}
+            r={0.5}
+            fill={player === "PlayerOne" ? playerOneFill : playerTwoFill}
+          />
+        ))
+      )}
+
+      {[...new Array(COLUMN_COUNT)].map((_, columnIndex) => (
+        <rect
+          style={{
+            cursor:
+              (columns[columnIndex]?.length ?? 0) >= MAX_COLUMN_HEIGHT
+                ? "not-allowed"
+                : "pointer",
+          }}
+          onClick={() => onClick(columnIndex)}
+          key={columnIndex}
+          x={columnIndex}
+          y={0}
+          width={1}
+          height={MAX_COLUMN_HEIGHT}
+          fill={`url(#${ids.columnGradient})`}
+          mask={`url(#${ids.holemask})`}
+        />
+      ))}
+    </svg>
+  );
+};
