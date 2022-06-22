@@ -446,6 +446,7 @@ export const view =
       <View.ThemeProvider themeMode={toThemeMode(model)}>
         <View.Box
           sx={{
+            userSelect: "none",
             maxWidth: "sm",
             marginX: "auto",
             position: "fixed",

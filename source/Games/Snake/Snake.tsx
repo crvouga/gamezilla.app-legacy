@@ -355,26 +355,6 @@ export const view =
           }
         />
 
-        {/* <View.Box sx={{ paddingX: 2, paddingY: 1 }}>
-          <View.Button
-            size="large"
-            fullWidth
-            onClick={() => dispatch({ type: "UserClickedRestartButton" })}
-            sx={{ marginBottom: 2 }}
-          >
-            Restart
-          </View.Button>
-          <View.Button
-            size="large"
-            fullWidth
-            onClick={() => {
-              dispatch({ type: "UserClickedToggleButton" });
-            }}
-          >
-            {model.status === "playing" ? "pause" : "play"}
-          </View.Button>
-        </View.Box> */}
-
         <Canvas model={model} dispatch={dispatch} />
       </View.Page>
     );
@@ -405,9 +385,11 @@ const Canvas = ({
   }, [model]);
 
   return (
-    <View.Box sx={{ flex: 1, width: "100%" }}>
+    <View.Box sx={{ flex: 1, width: "100%", userSelect: "none" }}>
       <canvas
         style={{
+          cursor: model.mouseStatus === "active" ? "grabbing" : "grab",
+          userSelect: "none",
           width: "100%",
           height: "100%",
           maxHeight: "100%",
