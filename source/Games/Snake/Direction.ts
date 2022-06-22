@@ -64,3 +64,7 @@ export const toOpposite = (direction: Direction): Direction => {
       return "down";
   }
 };
+
+export const isOpposite = (a: Direction, b: Direction): boolean => {
+  return toOpposite(a) === b;
+};
