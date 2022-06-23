@@ -138,7 +138,8 @@ export const update = (
 
           return toggleSelected(selectedResult, model);
 
-        default:
+        case "ArrowLeft":
+        case "ArrowRight":
           return [model, cmd.none, []];
       }
 
