@@ -293,7 +293,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd<Msg>, Msg[]] => {
           }
 
           const [pageNew, pageCmd, actions] = Pages.updateReady(
-            status.profile,
+            { profile: status.profile, store: model.store },
             msg,
             model.page
           );
@@ -414,6 +414,7 @@ export const subscriptions = (model: Model): sub.Sub<Msg> => {
     pipe(Route.subscriptions(), sub.map(groupTag("Route"))),
     pipe(Session.subscriptions, sub.map(groupTag("Session"))),
     pipe(Games.subscriptions(model.game), sub.map(groupTag("Game"))),
+    pipe(Pages.subscriptions(model.page), sub.map(groupTag("Page"))),
   ]);
 };
 

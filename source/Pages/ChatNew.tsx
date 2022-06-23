@@ -1,8 +1,11 @@
-import { cmd } from "Core";
+import { cmd, sub } from "Core";
 import { Cmd } from "Core/Cmd";
 import * as Navigation from "Core/Navigation";
+import * as Keyboard from "Core/Keyboard";
+import { Sub } from "Core/Sub";
 import * as Store from "Store";
 import * as View from "View";
+import { pipe } from "fp-ts/lib/function";
 
 //
 //
@@ -17,6 +20,7 @@ export type Model = {
   selected: { [userId: string]: SearchResult };
   searchStatus: "Idle" | "Searching";
   status: "Idle" | "Creating";
+  selectedResultIndex: "None" | number;
 };
 
 type SearchResult = { userId: string; username: string; avatarUrl: string };
@@ -35,6 +39,7 @@ export const init = (): [Model, Cmd<Msg>] => [
     selected: {},
     searchStatus: "Idle",
     status: "Idle",
+    selectedResultIndex: "None",
   },
   cmd.none,
 ];
@@ -52,11 +57,16 @@ export type Msg =
   | { type: "UserEnteredSearchText"; searchText: string }
   | { type: "UserClickedSearchResult"; searchResult: SearchResult }
   | { type: "UserClickedSelectedDeleteButton"; userId: string }
-  | { type: "UserClickedCreateButton" };
+  | { type: "UserClickedCreateButton" }
+  | { type: "UserPressedKeyDown"; key: Keyboard.ArrowKey | Keyboard.EnterKey };
 
 export type Action = Store.GroupedMsg;
 
-export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>, Action[]] => {
+export const update = (
+  store: Store.Model,
+  msg: Msg,
+  model: Model
+): [Model, Cmd<Msg>, Action[]] => {
   switch (msg.type) {
     case "UserClickedCreateButton":
       return [{ ...model, status: "Creating" }, cmd.none, []];
@@ -65,49 +75,124 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>, Action[]] => {
       return [model, Navigation.back(), []];
 
     case "UserEnteredSearchText":
-      const searchAction = Store.Profile.Search(msg.searchText);
       return [
         {
           ...model,
           searchText: msg.searchText,
-          searchStatus: "Searching",
+          selectedResultIndex: "None",
         },
         cmd.none,
-        [searchAction],
+        [Store.Profile.Search(msg.searchText)],
       ];
 
     case "UserClickedSelectedDeleteButton":
       const selectedNew = removeKey(msg.userId, model.selected);
       return [{ ...model, selected: selectedNew }, cmd.none, []];
 
-    case "UserClickedSearchResult":
-      const userId = msg.searchResult.userId;
+    case "UserPressedKeyDown":
+      const searchResults = Store.searchProfiles(model.searchText, store);
 
-      if (userId in model.selected) {
-        return [
-          {
-            ...model,
-            searchText: "",
-            selected: removeKey(userId, model.selected),
-          },
-          cmd.none,
-          [],
-        ];
+      switch (msg.key) {
+        case "ArrowDown":
+          return [
+            {
+              ...model,
+              selectedResultIndex:
+                model.selectedResultIndex === "None"
+                  ? 0
+                  : circularIndex(
+                      model.selectedResultIndex + 1,
+                      searchResults.length
+                    ),
+            },
+            cmd.none,
+            [],
+          ];
+
+        case "ArrowUp":
+          return [
+            {
+              ...model,
+              selectedResultIndex:
+                model.selectedResultIndex === "None"
+                  ? 0
+                  : circularIndex(
+                      model.selectedResultIndex - 1,
+                      searchResults.length
+                    ),
+            },
+            cmd.none,
+            [],
+          ];
+
+        case "Enter":
+          if (model.selectedResultIndex === "None") {
+            return [model, cmd.none, []];
+          }
+
+          const selectedResult = searchResults[model.selectedResultIndex];
+
+          if (!selectedResult) {
+            return [model, cmd.none, []];
+          }
+
+          return toggleSelected(selectedResult, model);
+
+        default:
+          return [model, cmd.none, []];
       }
 
-      return [
-        {
-          ...model,
-          searchText: "",
-          selected: {
-            ...model.selected,
-            [msg.searchResult.userId]: msg.searchResult,
-          },
-        },
-        cmd.none,
-        [],
-      ];
+    case "UserClickedSearchResult":
+      return toggleSelected(msg.searchResult, model);
   }
+};
+
+const toggleSelected = (
+  searchResult: SearchResult,
+  model: Model
+): [Model, Cmd<Msg>, Action[]] => {
+  if (searchResult.userId in model.selected) {
+    return [
+      {
+        ...model,
+        searchText: "",
+        selected: removeKey(searchResult.userId, model.selected),
+      },
+      cmd.none,
+      [],
+    ];
+  }
+
+  return [
+    {
+      ...model,
+      searchText: "",
+      selected: {
+        ...model.selected,
+        [searchResult.userId]: searchResult,
+      },
+    },
+    cmd.none,
+    [],
+  ];
+};
+
+//
+//
+//
+// Subscriptions
+//
+//
+//
+
+export const subscriptions = (model: Model): Sub<Msg> => {
+  return pipe(
+    Keyboard.keyDowns((key) =>
+      Keyboard.isArrowKey(key) || Keyboard.isEnterKey(key)
+        ? { type: "UserPressedKeyDown", key }
+        : Keyboard.SkipFlag
+    )
+  );
 };
 
 //
@@ -120,8 +205,9 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>, Action[]] => {
 
 export const view =
   (store: Store.Model, model: Model): View.View<Msg> =>
-  (dispatch) =>
-    (
+  (dispatch) => {
+    const searchResults = Store.searchProfiles(model.searchText, store);
+    return (
       <View.Page>
         <View.Header
           left={
@@ -145,7 +231,14 @@ export const view =
           To
         </View.Typography>
 
-        <View.Box sx={{ display: "flex", alignItems: "center", paddingY: 2 }}>
+        <View.Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            paddingBottom: 2,
+            paddingTop: 1,
+          }}
+        >
           {Object.values(model.selected).map((searchResult) => (
             <View.Chip
               sx={{ marginLeft: 1 }}
@@ -178,15 +271,22 @@ export const view =
 
         <View.Divider />
 
-        <View.List>
+        <View.List sx={{ overflowY: "scroll", flex: 1 }}>
           {/* {model.searchStatus === "Idle" && model.searchResults.length === 0 && (
             <View.Typography sx={{ p: 2 }} color="text.secondary">
               No account found.
             </View.Typography>
           )} */}
 
-          {Store.searchProfiles(model.searchText, store).map((searchResult) => (
+          {searchResults.map((searchResult, index) => (
             <View.ListItemButton
+              selected={
+                model.selectedResultIndex !== "None" &&
+                circularIndex(
+                  model.selectedResultIndex,
+                  searchResults.length
+                ) === index
+              }
               key={searchResult.userId}
               onClick={() => {
                 dispatch({ type: "UserClickedSearchResult", searchResult });
@@ -223,6 +323,7 @@ export const view =
         </View.List>
       </View.Page>
     );
+  };
 
 //
 //
@@ -235,4 +336,8 @@ export const view =
 const removeKey = <T,>(key: keyof T, a: T): Omit<T, keyof T> => {
   const { [key]: _value, ...rest } = a;
   return rest;
+};
+
+const circularIndex = (index: number, length: number): number => {
+  return ((index % length) + length) % length;
 };
