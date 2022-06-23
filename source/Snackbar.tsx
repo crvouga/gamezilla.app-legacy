@@ -19,7 +19,7 @@ export type Model = {
 };
 
 export type Snack = {
-  type: "Info";
+  type: "Info" | "Error";
   snackId: string;
   message: string;
 };
@@ -49,6 +49,18 @@ export const EnqueuedSnackbar = (message: string): GroupedMsg => {
     type: "EnqueuedSnackbar",
     snack: {
       type: "Info",
+      message,
+      snackId: String(Math.random()),
+    },
+  };
+};
+
+export const EnqueuedSnackbarError = (message: string): GroupedMsg => {
+  return {
+    group: "Snackbar",
+    type: "EnqueuedSnackbar",
+    snack: {
+      type: "Error",
       message,
       snackId: String(Math.random()),
     },
@@ -116,6 +128,20 @@ export const view =
             snackId: snack.snackId,
           })
         }
-      />
+      >
+        <View.Alert
+          variant="filled"
+          onClose={() =>
+            dispatch({
+              type: "UserClosedSnackbar",
+              snackId: snack.snackId,
+            })
+          }
+          severity={snack.type === "Error" ? "error" : "info"}
+          sx={{ width: "100%" }}
+        >
+          {snack.message}
+        </View.Alert>
+      </View.Snackbar>
     );
   };
