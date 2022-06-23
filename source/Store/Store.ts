@@ -7,7 +7,7 @@ import { sort, ascend, editDistance, exhaustive } from "Utility";
 import * as Snackbar from "Snackbar";
 import * as Conversation from "./Conversation";
 import * as Profile from "./Profile";
-
+import { matchSorter } from "match-sorter";
 //
 //
 //
@@ -323,14 +323,15 @@ export const searchProfiles = (nameOrUsername: string, store: Model) => {
       ),
 
     (profiles) =>
-      sort(
-        ascend((profile) =>
-          Math.min(
-            editDistance(profile.name, nameOrUsername),
-            editDistance(profile.username, nameOrUsername)
-          )
-        ),
-        profiles
-      )
+      matchSorter(profiles, nameOrUsername, { keys: ["name", "username"] })
+    // sort(
+    //   ascend((profile) =>
+    //     Math.min(
+    //       editDistance(profile.name, nameOrUsername),
+    //       editDistance(profile.username, nameOrUsername)
+    //     )
+    //   ),
+    //   profiles
+    // )
   );
 };

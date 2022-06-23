@@ -44,7 +44,7 @@ export const fromKey = (key: Keyboard.Key, fallback: Direction): Direction => {
     case "D":
       return "right";
 
-    case "Space":
+    default:
       return fallback;
   }
 };

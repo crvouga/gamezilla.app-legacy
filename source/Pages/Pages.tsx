@@ -255,7 +255,7 @@ export type Action =
 //
 
 export const updateReady = (
-  profile: Store.Profile.Profile,
+  { profile, store }: { profile: Store.Profile.Profile; store: Store.Model },
   msg: Msg,
   model: Model
 ): [Model, Cmd<Msg>, Action[]] => {
@@ -331,7 +331,7 @@ export const updateReady = (
 
     case "ChatNew":
       if (msg.page === "ChatNew") {
-        return tagUpdate("ChatNew", ChatNew.update(msg, model));
+        return tagUpdate("ChatNew", ChatNew.update(store, msg, model));
       }
       return [model, cmd.none, []];
 
@@ -460,34 +460,52 @@ export const subscriptions = (model: Model): Sub<Msg> => {
   switch (model.page) {
     case "Account":
       return sub.none;
+
     case "Chat":
       return sub.none;
+
     case "ChatNew":
-      return sub.none;
+      return pipe(
+        ChatNew.subscriptions(model),
+        sub.map((msg) => ({ ...msg, page: "ChatNew" }))
+      );
+
     case "ChatConversation":
       return sub.none;
+
     case "Game":
       return sub.none;
+
     case "Home":
       return sub.none;
+
     case "Login":
       return sub.none;
+
     case "Logout":
       return sub.none;
+
     case "ProfileCreate":
       return sub.none;
+
     case "ProfileDelete":
       return sub.none;
+
     case "ProfileUpdate":
       return sub.none;
+
     case "ProfileUpdateAvatar":
       return sub.none;
+
     case "ProfileUpdateTheme":
       return sub.none;
+
     case "ProfileUpdateUsername":
       return sub.none;
+
     case "ProfileUpdateName":
       return sub.none;
+
     case "Loading":
       return sub.none;
 
