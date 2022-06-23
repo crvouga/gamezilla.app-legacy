@@ -1,7 +1,7 @@
-import { cmd } from "Core";
-import * as Navigation from "Core/Navigation";
-import * as Store from "Store";
-import * as View from "View";
+import { cmd } from "Core"
+import * as Navigation from "Core/Navigation"
+import * as Store from "Store"
+import * as View from "View"
 
 //
 //
@@ -11,13 +11,13 @@ import * as View from "View";
 //
 //
 
-export type Model = { username: string };
+export type Model = { username: string }
 
 export const init = ({ username }: { username: string }): Model => {
   return {
     username,
-  };
-};
+  }
+}
 
 //
 //
@@ -30,9 +30,9 @@ export const init = ({ username }: { username: string }): Model => {
 export type Msg =
   | { type: "UserClickedCancelButton" }
   | { type: "UserEnteredUsername"; username: string }
-  | { type: "UserClickedSubmitButton" };
+  | { type: "UserClickedSubmitButton" }
 
-export type OutMsg = Store.GroupedMsg;
+export type OutMsg = Store.GroupedMsg
 
 export const update = (
   { userId }: { userId: string },
@@ -41,19 +41,19 @@ export const update = (
 ): [Model, cmd.Cmd<Msg>, OutMsg[]] => {
   switch (msg.type) {
     case "UserEnteredUsername":
-      return [{ ...model, username: msg.username }, cmd.none, []];
+      return [{ ...model, username: msg.username }, cmd.none, []]
 
     case "UserClickedCancelButton":
-      return [model, Navigation.back(), []];
+      return [model, Navigation.back(), []]
 
     case "UserClickedSubmitButton":
       return [
         model,
         Navigation.back(),
         [Store.Profile.Edit(userId, { username: model.username })],
-      ];
+      ]
   }
-};
+}
 
 //
 //
@@ -103,4 +103,4 @@ export const view =
           />
         </View.Box>
       </View.Page>
-    );
+    )

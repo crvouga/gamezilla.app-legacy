@@ -1,8 +1,8 @@
-import { cmd } from "Core";
-import { Cmd } from "Core/Cmd";
-import * as Navigation from "Core/Navigation";
-import * as View from "View";
-import * as Board from "./Board";
+import { cmd } from "Core"
+import { Cmd } from "Core/Cmd"
+import * as Navigation from "Core/Navigation"
+import * as View from "View"
+import * as Board from "./Board"
 
 //
 //
@@ -13,12 +13,12 @@ import * as Board from "./Board";
 //
 
 export type Model = {
-  board: Board.Board;
-};
+  board: Board.Board
+}
 
 export const init: Model = {
   board: Board.emptyBoard,
-};
+}
 
 //
 //
@@ -31,12 +31,12 @@ export const init: Model = {
 export type Msg =
   | { type: "UserClickedBackButton" }
   | { type: "UserClickedBoard"; position: Board.Position }
-  | { type: "UserClickedRestartButton" };
+  | { type: "UserClickedRestartButton" }
 
 export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
   switch (msg.type) {
     case "UserClickedBackButton":
-      return [model, Navigation.back()];
+      return [model, Navigation.back()]
 
     case "UserClickedRestartButton":
       return [
@@ -45,7 +45,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
           board: Board.emptyBoard,
         },
         cmd.none,
-      ];
+      ]
 
     case "UserClickedBoard":
       return [
@@ -58,9 +58,9 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
           ),
         },
         cmd.none,
-      ];
+      ]
   }
-};
+}
 
 //
 //
@@ -73,13 +73,13 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
 export const view =
   (model: Model): View.View<Msg> =>
   (dispatch) => {
-    const status = Board.toStatus(model.board);
+    const status = Board.toStatus(model.board)
     const title =
       status.type === "Turn"
         ? `${status.turn} Turn`
         : status.type === "Win"
         ? `${status.winner} Won`
-        : "Tie";
+        : "Tie"
 
     return (
       <View.Page>
@@ -105,8 +105,8 @@ export const view =
           Restart
         </View.Button>
       </View.Page>
-    );
-  };
+    )
+  }
 
 export const Icon = () => {
   const positions: [Board.Position, Board.Slot][] = [
@@ -114,12 +114,12 @@ export const Icon = () => {
     [{ row: 0, column: 1 }, "Empty"],
     [{ row: 1, column: 0 }, "Empty"],
     [{ row: 1, column: 1 }, "O"],
-  ];
+  ]
 
   const LINES = [
     { x1: 1, y1: 0, x2: 1, y2: 3 },
     { x1: 0, y1: 1, x2: 3, y2: 1 },
-  ] as const;
+  ] as const
 
   return (
     <svg width="100%" height="100%" viewBox="0 0 2 2">
@@ -144,5 +144,5 @@ export const Icon = () => {
         />
       ))}
     </svg>
-  );
-};
+  )
+}

@@ -1,11 +1,11 @@
-import { pipe } from "fp-ts/lib/function";
-import { cmd } from "Core";
-import * as Navigation from "Core/Navigation";
-import { perform } from "Core/Task";
-import * as ProfileAvatar from "ProfileAvatar";
-import * as Snackbar from "Snackbar";
-import * as Store from "Store";
-import * as View from "View";
+import { pipe } from "fp-ts/lib/function"
+import { cmd } from "Core"
+import * as Navigation from "Core/Navigation"
+import { perform } from "Core/Task"
+import * as ProfileAvatar from "ProfileAvatar"
+import * as Snackbar from "Snackbar"
+import * as Store from "Store"
+import * as View from "View"
 
 //
 //
@@ -16,20 +16,20 @@ import * as View from "View";
 //
 
 export type Model = {
-  status: "Idle" | "GeneratingSeed" | "StyleSelectOpened" | "UpdatingAvatar";
-  seed: ProfileAvatar.Seed;
-  style: ProfileAvatar.Style;
-};
+  status: "Idle" | "GeneratingSeed" | "StyleSelectOpened" | "UpdatingAvatar"
+  seed: ProfileAvatar.Seed
+  style: ProfileAvatar.Style
+}
 
 export const init = ({ avatarUrl }: { avatarUrl: string }): Model => {
-  const { seed, style } = ProfileAvatar.parseUrl(avatarUrl);
+  const { seed, style } = ProfileAvatar.parseUrl(avatarUrl)
 
   return {
     status: "Idle",
     seed,
     style,
-  };
-};
+  }
+}
 
 //
 //
@@ -39,7 +39,7 @@ export const init = ({ avatarUrl }: { avatarUrl: string }): Model => {
 //
 //
 
-export type GroupedMsg = { group: "ProfileUpdateAvatar" } & Msg;
+export type GroupedMsg = { group: "ProfileUpdateAvatar" } & Msg
 
 export type Msg =
   | { type: "UserClickedCancelButton" }
@@ -49,9 +49,9 @@ export type Msg =
   | { type: "UserSelectedStyle"; style: ProfileAvatar.Style }
   | { type: "UserEnteredSeed"; seed: ProfileAvatar.Seed }
   | { type: "UserClickedRandomSeedButton" }
-  | { type: "RandomSeedGenerated"; seed: ProfileAvatar.Seed };
+  | { type: "RandomSeedGenerated"; seed: ProfileAvatar.Seed }
 
-type OutMsg = Snackbar.GroupedMsg | Store.GroupedMsg;
+type OutMsg = Snackbar.GroupedMsg | Store.GroupedMsg
 
 export const update = (
   { userId }: { userId: string },
@@ -60,16 +60,16 @@ export const update = (
 ): [Model, cmd.Cmd<Msg>, OutMsg[]] => {
   switch (msg.type) {
     case "UserClickedCancelButton":
-      return [model, Navigation.back(), []];
+      return [model, Navigation.back(), []]
 
     case "StyleSelectClosed":
-      return [{ ...model, status: "Idle" }, cmd.none, []];
+      return [{ ...model, status: "Idle" }, cmd.none, []]
 
     case "StyleSelectOpened":
-      return [{ ...model, status: "StyleSelectOpened" }, cmd.none, []];
+      return [{ ...model, status: "StyleSelectOpened" }, cmd.none, []]
 
     case "UserEnteredSeed":
-      return [{ ...model, seed: msg.seed }, cmd.none, []];
+      return [{ ...model, seed: msg.seed }, cmd.none, []]
 
     case "UserClickedRandomSeedButton":
       return [
@@ -79,22 +79,22 @@ export const update = (
           perform((seed) => ({ type: "RandomSeedGenerated", seed }))
         ),
         [],
-      ];
+      ]
 
     case "RandomSeedGenerated":
-      return [{ ...model, status: "Idle", seed: msg.seed }, cmd.none, []];
+      return [{ ...model, status: "Idle", seed: msg.seed }, cmd.none, []]
 
     case "UserSelectedStyle":
-      return [{ ...model, style: msg.style }, cmd.none, []];
+      return [{ ...model, style: msg.style }, cmd.none, []]
 
     case "UserClickedDoneButton":
       return [
         { ...model },
         Navigation.back(),
         [Store.Profile.Edit(userId, { avatarUrl: ProfileAvatar.toUrl(model) })],
-      ];
+      ]
   }
-};
+}
 
 //
 //
@@ -231,5 +231,5 @@ export const view = (model: Model): View.View<Msg> => {
         </View.Button>
       </View.Box>
     </View.Page>
-  );
-};
+  )
+}

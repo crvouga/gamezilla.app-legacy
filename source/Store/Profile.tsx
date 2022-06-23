@@ -1,9 +1,9 @@
-import { option, task } from "fp-ts";
-import * as Result from "Core/Result";
-import * as Rx from "rxjs";
-import { sub } from "../Core";
-import * as Supabase from "../Supabase";
-import { definitions } from "../supabase-types";
+import { option, task } from "fp-ts"
+import * as Result from "Core/Result"
+import * as Rx from "rxjs"
+import { sub } from "../Core"
+import * as Supabase from "../Supabase"
+import { definitions } from "../supabase-types"
 
 //
 //
@@ -14,14 +14,14 @@ import { definitions } from "../supabase-types";
 //
 
 export type Profile = {
-  userId: string;
-  username: string;
-  name: string;
-  avatarUrl: string;
-  themeMode: ThemeMode;
-};
+  userId: string
+  username: string
+  name: string
+  avatarUrl: string
+  themeMode: ThemeMode
+}
 
-export type ThemeMode = "Light" | "Dark" | "System";
+export type ThemeMode = "Light" | "Dark" | "System"
 
 //
 //
@@ -37,9 +37,9 @@ export const Edit = (userId: string, edits: Partial<Profile>) =>
     type: "Profile/Edit",
     userId,
     edits,
-  } as const);
+  } as const)
 
-export type Edit = ReturnType<typeof Edit>;
+export type Edit = ReturnType<typeof Edit>
 
 export const Edited = (
   userId: string,
@@ -52,19 +52,19 @@ export const Edited = (
     result,
     userId,
     previous,
-  } as const);
+  } as const)
 
-export type Edited = ReturnType<typeof Edited>;
+export type Edited = ReturnType<typeof Edited>
 
 export const Get = (userId: string) => {
   return {
     group: "Store",
     type: "Profile/Get",
     userId,
-  } as const;
-};
+  } as const
+}
 
-export type Get = ReturnType<typeof Get>;
+export type Get = ReturnType<typeof Get>
 
 export const Got = (
   userId: string,
@@ -75,20 +75,20 @@ export const Got = (
     type: "Profile/Got",
     userId,
     result,
-  } as const;
-};
+  } as const
+}
 
-export type Got = ReturnType<typeof Got>;
+export type Got = ReturnType<typeof Got>
 
 export const DeleteForever = (userId: string) => {
   return {
     group: "Store",
     type: "Profile/DeleteForever",
     userId,
-  } as const;
-};
+  } as const
+}
 
-export type DeleteForever = ReturnType<typeof DeleteForever>;
+export type DeleteForever = ReturnType<typeof DeleteForever>
 
 export const DeletedForever = (
   userId: string,
@@ -101,10 +101,10 @@ export const DeletedForever = (
     userId,
     previous,
     result,
-  } as const;
-};
+  } as const
+}
 
-export type DeletedForever = ReturnType<typeof DeletedForever>;
+export type DeletedForever = ReturnType<typeof DeletedForever>
 
 export const Create = (
   userId: string,
@@ -113,9 +113,9 @@ export const Create = (
     name,
     avatarUrl,
   }: {
-    username: string;
-    name: string;
-    avatarUrl: string;
+    username: string
+    name: string
+    avatarUrl: string
   }
 ) => {
   const profile: Profile = {
@@ -124,16 +124,16 @@ export const Create = (
     avatarUrl,
     themeMode: "System",
     userId,
-  };
+  }
 
   return {
     group: "Store",
     type: "Profile/Create",
     profile,
-  } as const;
-};
+  } as const
+}
 
-export type Create = ReturnType<typeof Create>;
+export type Create = ReturnType<typeof Create>
 
 export const Created = (
   userId: string,
@@ -144,30 +144,30 @@ export const Created = (
     type: "Profile/Created",
     userId,
     result,
-  } as const;
-};
+  } as const
+}
 
-export type Created = ReturnType<typeof Created>;
+export type Created = ReturnType<typeof Created>
 
 export const Search = (searchText: string) => {
   return {
     group: "Store",
     type: "Profile/Search",
     searchText,
-  } as const;
-};
+  } as const
+}
 
-export type Search = ReturnType<typeof Search>;
+export type Search = ReturnType<typeof Search>
 
 export const Searched = (result: Result.Result<Problem, Profile[]>) => {
   return {
     group: "Store",
     type: "Profile/Searched",
     result,
-  } as const;
-};
+  } as const
+}
 
-export type Searched = ReturnType<typeof Searched>;
+export type Searched = ReturnType<typeof Searched>
 
 export type Msg =
   | Edited
@@ -179,7 +179,7 @@ export type Msg =
   | Create
   | Created
   | Search
-  | Searched;
+  | Searched
 
 //
 //
@@ -194,30 +194,30 @@ const toThemeMode = (
 ): ThemeMode => {
   switch (themeMode) {
     case "DARK":
-      return "Dark";
+      return "Dark"
 
     case "LIGHT":
-      return "Light";
+      return "Light"
 
     case "SYSTEM":
-      return "System";
+      return "System"
   }
-};
+}
 
 const fromThemeMode = (
   themeMode: ThemeMode
 ): definitions["profile"]["theme_mode"] => {
   switch (themeMode) {
     case "Dark":
-      return "DARK";
+      return "DARK"
 
     case "Light":
-      return "LIGHT";
+      return "LIGHT"
 
     case "System":
-      return "SYSTEM";
+      return "SYSTEM"
   }
-};
+}
 
 const rowToProfile = (row: definitions["profile"]): Profile => {
   return {
@@ -226,30 +226,30 @@ const rowToProfile = (row: definitions["profile"]): Profile => {
     name: row.name,
     username: row.username,
     themeMode: toThemeMode(row.theme_mode),
-  };
-};
+  }
+}
 
-type Problem = { message: string };
+type Problem = { message: string }
 
 export const load =
   ({
     userId,
   }: {
-    userId: string;
+    userId: string
   }): task.Task<Result.Result<Problem, Profile>> =>
   async () => {
     const response = await Supabase.client
       .from<definitions["profile"]>("profile")
       .select("*")
       .eq("id", userId)
-      .single();
+      .single()
 
     if (response.error) {
-      return Result.Err({ message: response.error.message });
+      return Result.Err({ message: response.error.message })
     }
 
-    return Result.Ok(rowToProfile(response.data));
-  };
+    return Result.Ok(rowToProfile(response.data))
+  }
 
 export const create =
   ({
@@ -258,10 +258,10 @@ export const create =
     username,
     avatarUrl,
   }: {
-    userId: string;
-    name: string;
-    username: string;
-    avatarUrl: string;
+    userId: string
+    name: string
+    username: string
+    avatarUrl: string
   }): task.Task<Result.Result<Problem, Profile>> =>
   async () => {
     const response = await Supabase.client
@@ -273,14 +273,14 @@ export const create =
         avatar_url: avatarUrl,
         theme_mode: "SYSTEM",
       })
-      .single();
+      .single()
 
     if (response.data) {
-      return Result.Ok(rowToProfile(response.data));
+      return Result.Ok(rowToProfile(response.data))
     }
 
-    return Result.Err({ message: response.error.message });
-  };
+    return Result.Err({ message: response.error.message })
+  }
 
 export const deleteForever =
   (userId: string): task.Task<Result.Result<Problem, {}>> =>
@@ -288,20 +288,20 @@ export const deleteForever =
     const response = await Supabase.client
       .from<definitions["profile"]>("profile")
       .delete()
-      .match({ id: userId });
+      .match({ id: userId })
 
     if (response.error) {
-      return Result.Err({ message: response.error.message });
+      return Result.Err({ message: response.error.message })
     }
 
-    return Result.Ok({});
-  };
+    return Result.Ok({})
+  }
 
 export const search =
   ({
     nameOrUsername,
   }: {
-    nameOrUsername: string;
+    nameOrUsername: string
   }): task.Task<Result.Result<Problem, Profile[]>> =>
   async () => {
     const response = await Supabase.client
@@ -313,16 +313,16 @@ export const search =
           .split(" ")
           .map((_) => _.replace(" ", ""))
           .join("%")}%`
-      );
+      )
 
     if (response.error) {
-      return Result.Err({ message: response.error.message });
+      return Result.Err({ message: response.error.message })
     }
 
-    const profiles = response.data.map(rowToProfile);
+    const profiles = response.data.map(rowToProfile)
 
-    return Result.Ok(profiles);
-  };
+    return Result.Ok(profiles)
+  }
 
 export const edit =
   (
@@ -341,37 +341,37 @@ export const edit =
           : undefined,
       })
       .match({ id: userId })
-      .single();
+      .single()
 
     if (response.error) {
-      return Result.Err({ message: response.error.message });
+      return Result.Err({ message: response.error.message })
     }
 
-    return Result.Ok(rowToProfile(response.data));
-  };
+    return Result.Ok(rowToProfile(response.data))
+  }
 
 export const subscription = ({
   userId,
 }: {
-  userId: string;
+  userId: string
 }): sub.Sub<option.Option<Profile>> => {
   return new Rx.Observable<option.Option<Profile>>((subscriber) => {
     const subscription = Supabase.client
       .from<definitions["profile"]>(`profile:id=eq.${userId}`)
       .on("INSERT", (payload) => {
-        subscriber.next(option.some(rowToProfile(payload.new)));
+        subscriber.next(option.some(rowToProfile(payload.new)))
       })
       .on("UPDATE", (payload) => {
-        subscriber.next(option.some(rowToProfile(payload.new)));
+        subscriber.next(option.some(rowToProfile(payload.new)))
       })
       .on("DELETE", () => {
-        subscriber.next(option.none);
+        subscriber.next(option.none)
       })
-      .subscribe();
+      .subscribe()
 
     return () => {
-      Supabase.client.removeSubscription(subscription);
-      subscription.unsubscribe();
-    };
-  });
-};
+      Supabase.client.removeSubscription(subscription)
+      subscription.unsubscribe()
+    }
+  })
+}

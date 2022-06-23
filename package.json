@@ -7,6 +7,7 @@
     "preview": "vite preview",
     "supabase-types": "npx openapi-typescript https://ldxpcprlgecjvqwzuxgv.supabase.co/rest/v1/?apikey=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTYzNzA0MDQ5NywiZXhwIjoxOTUyNjE2NDk3fQ.ReI8CpIFbLB9Q53Az7CDBIyrn_o1JeGhPoZXdqx8Ac4 --output source/supabase-types.ts",
     "typecheck": "tsc -w",
+    "format": "npx prettier --write .",
     "utils:sort": "npx sort-package-json"
   },
   "dependencies": {
@@ -38,6 +39,7 @@
     "esbuild": "^0.14.38",
     "jest": "^27.5.1",
     "nodemon": "^2.0.16",
+    "prettier": "2.7.1",
     "ts-node-dev": "^1.1.8",
     "tsc-watch": "^5.0.3",
     "typescript": "^4.6.2",

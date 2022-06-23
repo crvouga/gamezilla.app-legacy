@@ -1,8 +1,8 @@
-import { cmd } from "Core";
-import * as Navigation from "Core/Navigation";
-import * as Store from "Store";
-import * as Profile from "Store/Profile";
-import * as View from "View";
+import { cmd } from "Core"
+import * as Navigation from "Core/Navigation"
+import * as Store from "Store"
+import * as Profile from "Store/Profile"
+import * as View from "View"
 
 //
 //
@@ -12,11 +12,11 @@ import * as View from "View";
 //
 //
 
-export type Model = { status: "Idle" | "Updating" };
+export type Model = { status: "Idle" | "Updating" }
 
 export const init: Model = {
   status: "Idle",
-};
+}
 
 //
 //
@@ -28,9 +28,9 @@ export const init: Model = {
 
 export type Msg =
   | { type: "UserClickedBackButton" }
-  | { type: "UserClickedThemeModeOption"; themeMode: Profile.ThemeMode };
+  | { type: "UserClickedThemeModeOption"; themeMode: Profile.ThemeMode }
 
-type OutMsg = Store.GroupedMsg;
+type OutMsg = Store.GroupedMsg
 
 export const update = (
   { userId }: { userId: string },
@@ -39,16 +39,16 @@ export const update = (
 ): [Model, cmd.Cmd<Msg>, OutMsg[]] => {
   switch (msg.type) {
     case "UserClickedBackButton":
-      return [model, Navigation.back(), []];
+      return [model, Navigation.back(), []]
 
     case "UserClickedThemeModeOption":
       return [
         model,
         cmd.none,
         [Store.Profile.Edit(userId, { themeMode: msg.themeMode })],
-      ];
+      ]
   }
-};
+}
 
 //
 //
@@ -86,4 +86,4 @@ export const view =
           />
         </View.Box>
       </View.Page>
-    );
+    )

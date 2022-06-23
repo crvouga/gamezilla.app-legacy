@@ -1,9 +1,9 @@
-import { cmd } from "Core";
-import * as Navigation from "Core/Navigation";
-import * as ProfileAvatar from "ProfileAvatar";
-import * as Route from "Route";
-import * as Store from "Store";
-import * as View from "View";
+import { cmd } from "Core"
+import * as Navigation from "Core/Navigation"
+import * as ProfileAvatar from "ProfileAvatar"
+import * as Route from "Route"
+import * as Store from "Store"
+import * as View from "View"
 
 //
 //
@@ -16,23 +16,23 @@ import * as View from "View";
 //
 
 export type Model = {
-  form: Form;
-};
+  form: Form
+}
 
 export const init = ({ defaultName }: { defaultName: string }): Model => {
   return {
     form: initForm({ defaultName }),
-  };
-};
+  }
+}
 
 type Form = {
-  username: string;
-  name: string;
-  avatarUrl: string;
-};
+  username: string
+  name: string
+  avatarUrl: string
+}
 
 const initForm = ({ defaultName }: { defaultName: string }): Form => {
-  const username = defaultName.replace(" ", "").toLowerCase();
+  const username = defaultName.replace(" ", "").toLowerCase()
 
   return {
     username,
@@ -41,8 +41,8 @@ const initForm = ({ defaultName }: { defaultName: string }): Form => {
       seed: ProfileAvatar.toSeed(username),
       style: "adventurer-neutral",
     }),
-  };
-};
+  }
+}
 
 //
 //
@@ -58,9 +58,9 @@ export type Msg =
   | { type: "EnteredUsername"; username: string }
   | { type: "EnteredName"; name: string }
   | { type: "UserClickedSubmitButton" }
-  | { type: "UserClickedLogoutButton" };
+  | { type: "UserClickedLogoutButton" }
 
-export type Action = Store.GroupedMsg;
+export type Action = Store.GroupedMsg
 
 export const update = (
   { userId }: { userId: string },
@@ -69,18 +69,18 @@ export const update = (
 ): [Model, cmd.Cmd<Msg>, Action[]] => {
   switch (msg.type) {
     case "EnteredName":
-      return [{ ...model, form: { ...model.form, ...msg } }, cmd.none, []];
+      return [{ ...model, form: { ...model.form, ...msg } }, cmd.none, []]
 
     case "EnteredUsername":
-      return [{ ...model, form: { ...model.form, ...msg } }, cmd.none, []];
+      return [{ ...model, form: { ...model.form, ...msg } }, cmd.none, []]
 
     case "UserClickedSubmitButton":
-      return [model, cmd.none, [Store.Profile.Create(userId, model.form)]];
+      return [model, cmd.none, [Store.Profile.Create(userId, model.form)]]
 
     case "UserClickedLogoutButton":
-      return [model, Navigation.push(Route.encode({ type: "Logout" })), []];
+      return [model, Navigation.push(Route.encode({ type: "Logout" })), []]
   }
-};
+}
 
 //
 //
@@ -159,4 +159,4 @@ export const view =
           </View.Button>
         </View.Box>
       </View.Page>
-    );
+    )

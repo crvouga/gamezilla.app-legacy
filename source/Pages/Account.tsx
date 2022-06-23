@@ -1,7 +1,7 @@
-import { cmd } from "Core";
-import * as Navigation from "Core/Navigation";
-import * as Route from "Route";
-import * as View from "View";
+import { cmd } from "Core"
+import * as Navigation from "Core/Navigation"
+import * as Route from "Route"
+import * as View from "View"
 
 //
 //
@@ -11,9 +11,9 @@ import * as View from "View";
 //
 //
 
-export type Model = {};
+export type Model = {}
 
-export const init: Model = {};
+export const init: Model = {}
 
 //
 //
@@ -27,7 +27,7 @@ export type Msg =
   | { type: "UserClickedBackButton" }
   | { type: "UserClickedLogoutLink" }
   | { type: "UserClickedDeleteProfileLink" }
-  | { type: "UserClickedUpdateProfileLink" };
+  | { type: "UserClickedUpdateProfileLink" }
 
 export const update = (
   { userId }: { userId: string },
@@ -36,18 +36,18 @@ export const update = (
 ): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "UserClickedBackButton":
-      return [model, Navigation.back()];
+      return [model, Navigation.back()]
 
     case "UserClickedLogoutLink":
-      return [model, Navigation.push(Route.encode({ type: "Logout" }))];
+      return [model, Navigation.push(Route.encode({ type: "Logout" }))]
 
     case "UserClickedUpdateProfileLink":
-      return [model, Navigation.push(Route.encode({ type: "ProfileUpdate" }))];
+      return [model, Navigation.push(Route.encode({ type: "ProfileUpdate" }))]
 
     case "UserClickedDeleteProfileLink":
-      return [model, Navigation.push(Route.encode({ type: "ProfileDelete" }))];
+      return [model, Navigation.push(Route.encode({ type: "ProfileDelete" }))]
   }
-};
+}
 
 //
 //
@@ -103,4 +103,4 @@ export const view =
           </View.ListItemButton>
         </View.List>
       </View.Page>
-    );
+    )

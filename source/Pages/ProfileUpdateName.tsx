@@ -1,7 +1,7 @@
-import { cmd } from "Core";
-import * as Navigation from "Core/Navigation";
-import * as Store from "Store";
-import * as View from "View";
+import { cmd } from "Core"
+import * as Navigation from "Core/Navigation"
+import * as Store from "Store"
+import * as View from "View"
 
 //
 //
@@ -11,13 +11,13 @@ import * as View from "View";
 //
 //
 
-export type Model = { name: string };
+export type Model = { name: string }
 
 export const init = ({ name }: { name: string }): Model => {
   return {
     name,
-  };
-};
+  }
+}
 
 //
 //
@@ -30,9 +30,9 @@ export const init = ({ name }: { name: string }): Model => {
 export type Msg =
   | { type: "UserEnteredName"; name: string }
   | { type: "UserClickedCancelButton" }
-  | { type: "UserClickedSubmitButton" };
+  | { type: "UserClickedSubmitButton" }
 
-type Action = Store.GroupedMsg;
+type Action = Store.GroupedMsg
 
 export const update = (
   { userId }: { userId: string },
@@ -41,19 +41,19 @@ export const update = (
 ): [Model, cmd.Cmd<Msg>, Action[]] => {
   switch (msg.type) {
     case "UserEnteredName":
-      return [{ ...model, ...msg }, cmd.none, []];
+      return [{ ...model, ...msg }, cmd.none, []]
 
     case "UserClickedSubmitButton":
       return [
         model,
         Navigation.back(),
         [Store.Profile.Edit(userId, { name: model.name })],
-      ];
+      ]
 
     case "UserClickedCancelButton":
-      return [model, Navigation.back(), []];
+      return [model, Navigation.back(), []]
   }
-};
+}
 
 //
 //
@@ -103,4 +103,4 @@ export const view =
           />
         </View.Box>
       </View.Page>
-    );
+    )

@@ -1,8 +1,8 @@
-import { cmd } from "Core";
-import * as Navigation from "Core/Navigation";
-import * as Games from "Games";
-import * as Route from "Route";
-import * as View from "View";
+import { cmd } from "Core"
+import * as Navigation from "Core/Navigation"
+import * as Games from "Games"
+import * as Route from "Route"
+import * as View from "View"
 
 //
 //
@@ -12,9 +12,9 @@ import * as View from "View";
 //
 //
 
-export type Model = {};
+export type Model = {}
 
-export const init: Model = {};
+export const init: Model = {}
 
 //
 //
@@ -27,9 +27,9 @@ export const init: Model = {};
 export type Msg =
   | { type: "UserClickedAvatar" }
   | { type: "UserClickedChatButton" }
-  | { type: "UserClickedGame"; game: Games.Game };
+  | { type: "UserClickedGame"; game: Games.Game }
 
-export type OutMsg = Games.GroupedMsg;
+export type OutMsg = Games.GroupedMsg
 
 export const update = (
   msg: Msg,
@@ -37,15 +37,15 @@ export const update = (
 ): [Model, cmd.Cmd<Msg>, OutMsg[]] => {
   switch (msg.type) {
     case "UserClickedAvatar":
-      return [model, Navigation.push(Route.encode({ type: "Account" })), []];
+      return [model, Navigation.push(Route.encode({ type: "Account" })), []]
 
     case "UserClickedGame":
-      return [model, cmd.none, [Games.UserOpenedGame(msg.game)]];
+      return [model, cmd.none, [Games.UserOpenedGame(msg.game)]]
 
     case "UserClickedChatButton":
-      return [model, Navigation.push(Route.encode({ type: "Chat" })), []];
+      return [model, Navigation.push(Route.encode({ type: "Chat" })), []]
   }
-};
+}
 
 //
 //
@@ -56,12 +56,12 @@ export const update = (
 //
 
 const isOpen = (game: Games.Model, gameName: Games.Game) => {
-  return game.type === "Opened" && game.child.type === gameName;
-};
+  return game.type === "Opened" && game.child.type === gameName
+}
 
 const canOpen = (game: Games.Model, gameName: Games.Game) => {
-  return game.type === "Closed" || isOpen(game, gameName);
-};
+  return game.type === "Closed" || isOpen(game, gameName)
+}
 
 export const view =
   (
@@ -134,7 +134,7 @@ export const view =
           />
         </View.Box>
       </View.Page>
-    );
+    )
 
 const GameCard = ({
   icon,
@@ -142,10 +142,10 @@ const GameCard = ({
   onClick,
   disabled = false,
 }: {
-  icon: React.ReactNode;
-  label: string;
-  onClick: () => void;
-  disabled?: boolean;
+  icon: React.ReactNode
+  label: string
+  onClick: () => void
+  disabled?: boolean
 }) => {
   return (
     <View.ButtonBase
@@ -185,5 +185,5 @@ const GameCard = ({
         </View.Box>
       </View.Box>
     </View.ButtonBase>
-  );
-};
+  )
+}

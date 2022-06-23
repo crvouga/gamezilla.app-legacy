@@ -8,298 +8,298 @@ export interface paths {
     get: {
       responses: {
         /** OK */
-        200: unknown;
-      };
-    };
-  };
+        200: unknown
+      }
+    }
+  }
   "/conversation": {
     get: {
       parameters: {
         query: {
-          id?: parameters["rowFilter.conversation.id"];
-          created_at?: parameters["rowFilter.conversation.created_at"];
+          id?: parameters["rowFilter.conversation.id"]
+          created_at?: parameters["rowFilter.conversation.created_at"]
           /** Filtering Columns */
-          select?: parameters["select"];
+          select?: parameters["select"]
           /** Ordering */
-          order?: parameters["order"];
+          order?: parameters["order"]
           /** Limiting and Pagination */
-          offset?: parameters["offset"];
+          offset?: parameters["offset"]
           /** Limiting and Pagination */
-          limit?: parameters["limit"];
-        };
+          limit?: parameters["limit"]
+        }
         header: {
           /** Limiting and Pagination */
-          Range?: parameters["range"];
+          Range?: parameters["range"]
           /** Limiting and Pagination */
-          "Range-Unit"?: parameters["rangeUnit"];
+          "Range-Unit"?: parameters["rangeUnit"]
           /** Preference */
-          Prefer?: parameters["preferCount"];
-        };
-      };
+          Prefer?: parameters["preferCount"]
+        }
+      }
       responses: {
         /** OK */
         200: {
-          schema: definitions["conversation"][];
-        };
+          schema: definitions["conversation"][]
+        }
         /** Partial Content */
-        206: unknown;
-      };
-    };
+        206: unknown
+      }
+    }
     post: {
       parameters: {
         body: {
           /** conversation */
-          conversation?: definitions["conversation"];
-        };
+          conversation?: definitions["conversation"]
+        }
         query: {
           /** Filtering Columns */
-          select?: parameters["select"];
-        };
+          select?: parameters["select"]
+        }
         header: {
           /** Preference */
-          Prefer?: parameters["preferReturn"];
-        };
-      };
+          Prefer?: parameters["preferReturn"]
+        }
+      }
       responses: {
         /** Created */
-        201: unknown;
-      };
-    };
+        201: unknown
+      }
+    }
     delete: {
       parameters: {
         query: {
-          id?: parameters["rowFilter.conversation.id"];
-          created_at?: parameters["rowFilter.conversation.created_at"];
-        };
+          id?: parameters["rowFilter.conversation.id"]
+          created_at?: parameters["rowFilter.conversation.created_at"]
+        }
         header: {
           /** Preference */
-          Prefer?: parameters["preferReturn"];
-        };
-      };
+          Prefer?: parameters["preferReturn"]
+        }
+      }
       responses: {
         /** No Content */
-        204: never;
-      };
-    };
+        204: never
+      }
+    }
     patch: {
       parameters: {
         query: {
-          id?: parameters["rowFilter.conversation.id"];
-          created_at?: parameters["rowFilter.conversation.created_at"];
-        };
+          id?: parameters["rowFilter.conversation.id"]
+          created_at?: parameters["rowFilter.conversation.created_at"]
+        }
         body: {
           /** conversation */
-          conversation?: definitions["conversation"];
-        };
+          conversation?: definitions["conversation"]
+        }
         header: {
           /** Preference */
-          Prefer?: parameters["preferReturn"];
-        };
-      };
+          Prefer?: parameters["preferReturn"]
+        }
+      }
       responses: {
         /** No Content */
-        204: never;
-      };
-    };
-  };
+        204: never
+      }
+    }
+  }
   "/profile": {
     get: {
       parameters: {
         query: {
-          id?: parameters["rowFilter.profile.id"];
-          avatar_url?: parameters["rowFilter.profile.avatar_url"];
-          name?: parameters["rowFilter.profile.name"];
-          username?: parameters["rowFilter.profile.username"];
-          theme_mode?: parameters["rowFilter.profile.theme_mode"];
-          game_room_id?: parameters["rowFilter.profile.game_room_id"];
+          id?: parameters["rowFilter.profile.id"]
+          avatar_url?: parameters["rowFilter.profile.avatar_url"]
+          name?: parameters["rowFilter.profile.name"]
+          username?: parameters["rowFilter.profile.username"]
+          theme_mode?: parameters["rowFilter.profile.theme_mode"]
+          game_room_id?: parameters["rowFilter.profile.game_room_id"]
           /** Filtering Columns */
-          select?: parameters["select"];
+          select?: parameters["select"]
           /** Ordering */
-          order?: parameters["order"];
+          order?: parameters["order"]
           /** Limiting and Pagination */
-          offset?: parameters["offset"];
+          offset?: parameters["offset"]
           /** Limiting and Pagination */
-          limit?: parameters["limit"];
-        };
+          limit?: parameters["limit"]
+        }
         header: {
           /** Limiting and Pagination */
-          Range?: parameters["range"];
+          Range?: parameters["range"]
           /** Limiting and Pagination */
-          "Range-Unit"?: parameters["rangeUnit"];
+          "Range-Unit"?: parameters["rangeUnit"]
           /** Preference */
-          Prefer?: parameters["preferCount"];
-        };
-      };
+          Prefer?: parameters["preferCount"]
+        }
+      }
       responses: {
         /** OK */
         200: {
-          schema: definitions["profile"][];
-        };
+          schema: definitions["profile"][]
+        }
         /** Partial Content */
-        206: unknown;
-      };
-    };
+        206: unknown
+      }
+    }
     post: {
       parameters: {
         body: {
           /** profile */
-          profile?: definitions["profile"];
-        };
+          profile?: definitions["profile"]
+        }
         query: {
           /** Filtering Columns */
-          select?: parameters["select"];
-        };
+          select?: parameters["select"]
+        }
         header: {
           /** Preference */
-          Prefer?: parameters["preferReturn"];
-        };
-      };
+          Prefer?: parameters["preferReturn"]
+        }
+      }
       responses: {
         /** Created */
-        201: unknown;
-      };
-    };
+        201: unknown
+      }
+    }
     delete: {
       parameters: {
         query: {
-          id?: parameters["rowFilter.profile.id"];
-          avatar_url?: parameters["rowFilter.profile.avatar_url"];
-          name?: parameters["rowFilter.profile.name"];
-          username?: parameters["rowFilter.profile.username"];
-          theme_mode?: parameters["rowFilter.profile.theme_mode"];
-          game_room_id?: parameters["rowFilter.profile.game_room_id"];
-        };
+          id?: parameters["rowFilter.profile.id"]
+          avatar_url?: parameters["rowFilter.profile.avatar_url"]
+          name?: parameters["rowFilter.profile.name"]
+          username?: parameters["rowFilter.profile.username"]
+          theme_mode?: parameters["rowFilter.profile.theme_mode"]
+          game_room_id?: parameters["rowFilter.profile.game_room_id"]
+        }
         header: {
           /** Preference */
-          Prefer?: parameters["preferReturn"];
-        };
-      };
+          Prefer?: parameters["preferReturn"]
+        }
+      }
       responses: {
         /** No Content */
-        204: never;
-      };
-    };
+        204: never
+      }
+    }
     patch: {
       parameters: {
         query: {
-          id?: parameters["rowFilter.profile.id"];
-          avatar_url?: parameters["rowFilter.profile.avatar_url"];
-          name?: parameters["rowFilter.profile.name"];
-          username?: parameters["rowFilter.profile.username"];
-          theme_mode?: parameters["rowFilter.profile.theme_mode"];
-          game_room_id?: parameters["rowFilter.profile.game_room_id"];
-        };
+          id?: parameters["rowFilter.profile.id"]
+          avatar_url?: parameters["rowFilter.profile.avatar_url"]
+          name?: parameters["rowFilter.profile.name"]
+          username?: parameters["rowFilter.profile.username"]
+          theme_mode?: parameters["rowFilter.profile.theme_mode"]
+          game_room_id?: parameters["rowFilter.profile.game_room_id"]
+        }
         body: {
           /** profile */
-          profile?: definitions["profile"];
-        };
+          profile?: definitions["profile"]
+        }
         header: {
           /** Preference */
-          Prefer?: parameters["preferReturn"];
-        };
-      };
+          Prefer?: parameters["preferReturn"]
+        }
+      }
       responses: {
         /** No Content */
-        204: never;
-      };
-    };
-  };
+        204: never
+      }
+    }
+  }
   "/profiles_conversations": {
     get: {
       parameters: {
         query: {
-          id?: parameters["rowFilter.profiles_conversations.id"];
-          created_at?: parameters["rowFilter.profiles_conversations.created_at"];
-          user_id?: parameters["rowFilter.profiles_conversations.user_id"];
-          conversation_id?: parameters["rowFilter.profiles_conversations.conversation_id"];
+          id?: parameters["rowFilter.profiles_conversations.id"]
+          created_at?: parameters["rowFilter.profiles_conversations.created_at"]
+          user_id?: parameters["rowFilter.profiles_conversations.user_id"]
+          conversation_id?: parameters["rowFilter.profiles_conversations.conversation_id"]
           /** Filtering Columns */
-          select?: parameters["select"];
+          select?: parameters["select"]
           /** Ordering */
-          order?: parameters["order"];
+          order?: parameters["order"]
           /** Limiting and Pagination */
-          offset?: parameters["offset"];
+          offset?: parameters["offset"]
           /** Limiting and Pagination */
-          limit?: parameters["limit"];
-        };
+          limit?: parameters["limit"]
+        }
         header: {
           /** Limiting and Pagination */
-          Range?: parameters["range"];
+          Range?: parameters["range"]
           /** Limiting and Pagination */
-          "Range-Unit"?: parameters["rangeUnit"];
+          "Range-Unit"?: parameters["rangeUnit"]
           /** Preference */
-          Prefer?: parameters["preferCount"];
-        };
-      };
+          Prefer?: parameters["preferCount"]
+        }
+      }
       responses: {
         /** OK */
         200: {
-          schema: definitions["profiles_conversations"][];
-        };
+          schema: definitions["profiles_conversations"][]
+        }
         /** Partial Content */
-        206: unknown;
-      };
-    };
+        206: unknown
+      }
+    }
     post: {
       parameters: {
         body: {
           /** profiles_conversations */
-          profiles_conversations?: definitions["profiles_conversations"];
-        };
+          profiles_conversations?: definitions["profiles_conversations"]
+        }
         query: {
           /** Filtering Columns */
-          select?: parameters["select"];
-        };
+          select?: parameters["select"]
+        }
         header: {
           /** Preference */
-          Prefer?: parameters["preferReturn"];
-        };
-      };
+          Prefer?: parameters["preferReturn"]
+        }
+      }
       responses: {
         /** Created */
-        201: unknown;
-      };
-    };
+        201: unknown
+      }
+    }
     delete: {
       parameters: {
         query: {
-          id?: parameters["rowFilter.profiles_conversations.id"];
-          created_at?: parameters["rowFilter.profiles_conversations.created_at"];
-          user_id?: parameters["rowFilter.profiles_conversations.user_id"];
-          conversation_id?: parameters["rowFilter.profiles_conversations.conversation_id"];
-        };
+          id?: parameters["rowFilter.profiles_conversations.id"]
+          created_at?: parameters["rowFilter.profiles_conversations.created_at"]
+          user_id?: parameters["rowFilter.profiles_conversations.user_id"]
+          conversation_id?: parameters["rowFilter.profiles_conversations.conversation_id"]
+        }
         header: {
           /** Preference */
-          Prefer?: parameters["preferReturn"];
-        };
-      };
+          Prefer?: parameters["preferReturn"]
+        }
+      }
       responses: {
         /** No Content */
-        204: never;
-      };
-    };
+        204: never
+      }
+    }
     patch: {
       parameters: {
         query: {
-          id?: parameters["rowFilter.profiles_conversations.id"];
-          created_at?: parameters["rowFilter.profiles_conversations.created_at"];
-          user_id?: parameters["rowFilter.profiles_conversations.user_id"];
-          conversation_id?: parameters["rowFilter.profiles_conversations.conversation_id"];
-        };
+          id?: parameters["rowFilter.profiles_conversations.id"]
+          created_at?: parameters["rowFilter.profiles_conversations.created_at"]
+          user_id?: parameters["rowFilter.profiles_conversations.user_id"]
+          conversation_id?: parameters["rowFilter.profiles_conversations.conversation_id"]
+        }
         body: {
           /** profiles_conversations */
-          profiles_conversations?: definitions["profiles_conversations"];
-        };
+          profiles_conversations?: definitions["profiles_conversations"]
+        }
         header: {
           /** Preference */
-          Prefer?: parameters["preferReturn"];
-        };
-      };
+          Prefer?: parameters["preferReturn"]
+        }
+      }
       responses: {
         /** No Content */
-        204: never;
-      };
-    };
-  };
+        204: never
+      }
+    }
+  }
 }
 
 export interface definitions {
@@ -310,35 +310,35 @@ export interface definitions {
      * This is a Primary Key.<pk/>
      * @default extensions.uuid_generate_v4()
      */
-    id: string;
+    id: string
     /**
      * Format: timestamp with time zone
      * @default now()
      */
-    created_at: string;
-  };
+    created_at: string
+  }
   profile: {
     /**
      * Format: uuid
      * @description Note:
      * This is a Primary Key.<pk/>
      */
-    id: string;
+    id: string
     /** Format: text */
-    avatar_url: string;
+    avatar_url: string
     /** Format: text */
-    name: string;
+    name: string
     /** Format: text */
-    username: string;
+    username: string
     /**
      * Format: public.theme_mode
      * @default SYSTEM
      * @enum {string}
      */
-    theme_mode: "LIGHT" | "SYSTEM" | "DARK";
+    theme_mode: "LIGHT" | "SYSTEM" | "DARK"
     /** Format: text */
-    game_room_id?: string;
-  };
+    game_room_id?: string
+  }
   profiles_conversations: {
     /**
      * Format: uuid
@@ -346,25 +346,25 @@ export interface definitions {
      * This is a Primary Key.<pk/>
      * @default extensions.uuid_generate_v4()
      */
-    id: string;
+    id: string
     /**
      * Format: timestamp with time zone
      * @default now()
      */
-    created_at: string;
+    created_at: string
     /**
      * Format: uuid
      * @description Note:
      * This is a Foreign Key to `profile.id`.<fk table='profile' column='id'/>
      */
-    user_id: string;
+    user_id: string
     /**
      * Format: uuid
      * @description Note:
      * This is a Foreign Key to `conversation.id`.<fk table='conversation' column='id'/>
      */
-    conversation_id: string;
-  };
+    conversation_id: string
+  }
 }
 
 export interface parameters {
@@ -372,64 +372,64 @@ export interface parameters {
    * @description Preference
    * @enum {string}
    */
-  preferParams: "params=single-object";
+  preferParams: "params=single-object"
   /**
    * @description Preference
    * @enum {string}
    */
-  preferReturn: "return=representation" | "return=minimal" | "return=none";
+  preferReturn: "return=representation" | "return=minimal" | "return=none"
   /**
    * @description Preference
    * @enum {string}
    */
-  preferCount: "count=none";
+  preferCount: "count=none"
   /** @description Filtering Columns */
-  select: string;
+  select: string
   /** @description On Conflict */
-  on_conflict: string;
+  on_conflict: string
   /** @description Ordering */
-  order: string;
+  order: string
   /** @description Limiting and Pagination */
-  range: string;
+  range: string
   /**
    * @description Limiting and Pagination
    * @default items
    */
-  rangeUnit: string;
+  rangeUnit: string
   /** @description Limiting and Pagination */
-  offset: string;
+  offset: string
   /** @description Limiting and Pagination */
-  limit: string;
+  limit: string
   /** @description conversation */
-  "body.conversation": definitions["conversation"];
+  "body.conversation": definitions["conversation"]
   /** Format: uuid */
-  "rowFilter.conversation.id": string;
+  "rowFilter.conversation.id": string
   /** Format: timestamp with time zone */
-  "rowFilter.conversation.created_at": string;
+  "rowFilter.conversation.created_at": string
   /** @description profile */
-  "body.profile": definitions["profile"];
+  "body.profile": definitions["profile"]
   /** Format: uuid */
-  "rowFilter.profile.id": string;
+  "rowFilter.profile.id": string
   /** Format: text */
-  "rowFilter.profile.avatar_url": string;
+  "rowFilter.profile.avatar_url": string
   /** Format: text */
-  "rowFilter.profile.name": string;
+  "rowFilter.profile.name": string
   /** Format: text */
-  "rowFilter.profile.username": string;
+  "rowFilter.profile.username": string
   /** Format: public.theme_mode */
-  "rowFilter.profile.theme_mode": string;
+  "rowFilter.profile.theme_mode": string
   /** Format: text */
-  "rowFilter.profile.game_room_id": string;
+  "rowFilter.profile.game_room_id": string
   /** @description profiles_conversations */
-  "body.profiles_conversations": definitions["profiles_conversations"];
+  "body.profiles_conversations": definitions["profiles_conversations"]
   /** Format: uuid */
-  "rowFilter.profiles_conversations.id": string;
+  "rowFilter.profiles_conversations.id": string
   /** Format: timestamp with time zone */
-  "rowFilter.profiles_conversations.created_at": string;
+  "rowFilter.profiles_conversations.created_at": string
   /** Format: uuid */
-  "rowFilter.profiles_conversations.user_id": string;
+  "rowFilter.profiles_conversations.user_id": string
   /** Format: uuid */
-  "rowFilter.profiles_conversations.conversation_id": string;
+  "rowFilter.profiles_conversations.conversation_id": string
 }
 
 export interface operations {}

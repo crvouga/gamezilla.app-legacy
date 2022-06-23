@@ -1,30 +1,30 @@
-import { pipe } from "fp-ts/lib/function";
-import { cmd, sub } from "Core";
-import { Cmd } from "Core/Cmd";
-import * as Navigation from "Core/Navigation";
-import { Sub } from "Core/Sub";
-import * as Games from "Games";
-import * as Route from "Route";
-import * as Session from "Session";
-import * as Snackbar from "Snackbar";
-import * as Store from "Store";
-import { exhaustive } from "Utility";
-import * as View from "View";
-import * as Account from "./Account";
-import * as Chat from "./Chat";
-import * as ChatNew from "./ChatNew";
-import * as Game from "./Game";
-import * as Home from "./Home";
-import * as Login from "./Login";
-import * as Logout from "./Logout";
-import * as ProfileCreate from "./ProfileCreate";
-import * as ProfileDelete from "./ProfileDelete";
-import * as ProfileUpdate from "./ProfileUpdate";
-import * as ProfileUpdateAvatar from "./ProfileUpdateAvatar";
-import * as ProfileUpdateName from "./ProfileUpdateName";
-import * as ProfileUpdateTheme from "./ProfileUpdateTheme";
-import * as ProfileUpdateUsername from "./ProfileUpdateUsername";
-import * as ChatConversation from "./ChatConversation";
+import { pipe } from "fp-ts/lib/function"
+import { cmd, sub } from "Core"
+import { Cmd } from "Core/Cmd"
+import * as Navigation from "Core/Navigation"
+import { Sub } from "Core/Sub"
+import * as Games from "Games"
+import * as Route from "Route"
+import * as Session from "Session"
+import * as Snackbar from "Snackbar"
+import * as Store from "Store"
+import { exhaustive } from "Utility"
+import * as View from "View"
+import * as Account from "./Account"
+import * as Chat from "./Chat"
+import * as ChatNew from "./ChatNew"
+import * as Game from "./Game"
+import * as Home from "./Home"
+import * as Login from "./Login"
+import * as Logout from "./Logout"
+import * as ProfileCreate from "./ProfileCreate"
+import * as ProfileDelete from "./ProfileDelete"
+import * as ProfileUpdate from "./ProfileUpdate"
+import * as ProfileUpdateAvatar from "./ProfileUpdateAvatar"
+import * as ProfileUpdateName from "./ProfileUpdateName"
+import * as ProfileUpdateTheme from "./ProfileUpdateTheme"
+import * as ProfileUpdateUsername from "./ProfileUpdateUsername"
+import * as ChatConversation from "./ChatConversation"
 
 //
 //
@@ -51,7 +51,7 @@ export type Model =
   | (ChatNew.Model & { page: "ChatNew" })
   | (ChatConversation.Model & { page: "ChatConversation" })
   | { page: "Game" }
-  | { page: "Loading" };
+  | { page: "Loading" }
 
 //
 //
@@ -62,8 +62,8 @@ export type Model =
 //
 
 export const initLoading = (): [Model, Cmd<Msg>] => {
-  return [{ page: "Loading" }, cmd.none];
-};
+  return [{ page: "Loading" }, cmd.none]
+}
 
 export const initReady = (
   route: Route.Route,
@@ -71,13 +71,13 @@ export const initReady = (
 ): [Model, Cmd<Msg>] => {
   switch (route.type) {
     case "Account":
-      return [{ ...Account.init, page: "Account" }, cmd.none];
+      return [{ ...Account.init, page: "Account" }, cmd.none]
 
     case "Chat":
-      return [{ ...Chat.init, page: "Chat" }, cmd.none];
+      return [{ ...Chat.init, page: "Chat" }, cmd.none]
 
     case "ChatNew":
-      const [chatNew, chatNewCmd] = ChatNew.init();
+      const [chatNew, chatNewCmd] = ChatNew.init()
 
       return [
         { ...chatNew, page: "ChatNew" },
@@ -85,37 +85,37 @@ export const initReady = (
           chatNewCmd,
           cmd.map((msg) => ({ ...msg, page: "ChatNew" }))
         ),
-      ];
+      ]
 
     case "ChatConversation":
-      return [{ ...ChatConversation.init, page: "ChatConversation" }, cmd.none];
+      return [{ ...ChatConversation.init, page: "ChatConversation" }, cmd.none]
 
     case "Game":
-      return [{ page: "Game" }, cmd.none];
+      return [{ page: "Game" }, cmd.none]
 
     case "Home":
-      return [{ ...Home.init, page: "Home" }, cmd.none];
+      return [{ ...Home.init, page: "Home" }, cmd.none]
 
     case "Logout":
-      return [{ ...Logout.init, page: "Logout" }, cmd.none];
+      return [{ ...Logout.init, page: "Logout" }, cmd.none]
 
     case "ProfileDelete":
-      return [{ ...ProfileDelete.init, page: "ProfileDelete" }, cmd.none];
+      return [{ ...ProfileDelete.init, page: "ProfileDelete" }, cmd.none]
 
     case "ProfileUpdate":
-      return [{ ...ProfileUpdate.init, page: "ProfileUpdate" }, cmd.none];
+      return [{ ...ProfileUpdate.init, page: "ProfileUpdate" }, cmd.none]
 
     case "ProfileUpdateAvatar":
       return [
         { ...ProfileUpdateAvatar.init(profile), page: "ProfileUpdateAvatar" },
         cmd.none,
-      ];
+      ]
 
     case "ProfileUpdateName":
       return [
         { ...ProfileUpdateName.init(profile), page: "ProfileUpdateName" },
         cmd.none,
-      ];
+      ]
 
     case "ProfileUpdateUsername":
       return [
@@ -124,7 +124,7 @@ export const initReady = (
           page: "ProfileUpdateUsername",
         },
         cmd.none,
-      ];
+      ]
 
     case "ProfileUpdateTheme":
       return [
@@ -133,24 +133,24 @@ export const initReady = (
           page: "ProfileUpdateTheme",
         },
         cmd.none,
-      ];
+      ]
 
     case "ProfileCreate":
     case "Login":
       return [
         { ...Home.init, page: "Home" },
         Navigation.push(Route.encode({ type: "Home" })),
-      ];
+      ]
 
     default:
-      return exhaustive(route);
+      return exhaustive(route)
   }
-};
+}
 
 export const initSessionMissing = (route: Route.Route): [Model, Cmd<Msg>] => {
   switch (route.type) {
     case "Login":
-      return [{ ...Login.init, page: "Login" }, cmd.none];
+      return [{ ...Login.init, page: "Login" }, cmd.none]
 
     case "Account":
     case "Chat":
@@ -169,12 +169,12 @@ export const initSessionMissing = (route: Route.Route): [Model, Cmd<Msg>] => {
       return [
         { ...Login.init, page: "Login" },
         Navigation.push(Route.encode({ type: "Login" })),
-      ];
+      ]
 
     default:
-      return exhaustive(route);
+      return exhaustive(route)
   }
-};
+}
 
 export const initProfileMissing = (
   route: Route.Route,
@@ -185,10 +185,10 @@ export const initProfileMissing = (
       return [
         { ...ProfileCreate.init(session), page: "ProfileCreate" },
         cmd.none,
-      ];
+      ]
 
     case "Logout":
-      return [{ ...Logout.init, page: "Logout" }, cmd.none];
+      return [{ ...Logout.init, page: "Logout" }, cmd.none]
 
     case "Login":
     case "Account":
@@ -206,12 +206,12 @@ export const initProfileMissing = (
       return [
         { ...ProfileCreate.init(session), page: "ProfileCreate" },
         Navigation.push(Route.encode({ type: "ProfileCreate" })),
-      ];
+      ]
 
     default:
-      return exhaustive(route);
+      return exhaustive(route)
   }
-};
+}
 
 //
 //
@@ -236,15 +236,15 @@ export type Msg =
   | (ChatNew.Msg & { page: "ChatNew" })
   | (ChatConversation.Msg & { page: "ChatConversation" })
   | (ProfileUpdateTheme.Msg & { page: "ProfileUpdateTheme" })
-  | (Game.Msg & { page: "Games" });
+  | (Game.Msg & { page: "Games" })
 
-export type GroupedMsg = Msg & { group: "Page" };
+export type GroupedMsg = Msg & { group: "Page" }
 
 export type Action =
   | Session.GroupedMsg
   | Store.GroupedMsg
   | Snackbar.GroupedMsg
-  | Games.GroupedMsg;
+  | Games.GroupedMsg
 
 //
 //
@@ -262,109 +262,109 @@ export const updateReady = (
   switch (model.page) {
     case "Account":
       if (msg.page === "Account") {
-        return tagUpdate("Account", Account.update(profile, msg, model));
+        return tagUpdate("Account", Account.update(profile, msg, model))
       }
-      return [model, cmd.none, []];
+      return [model, cmd.none, []]
 
     case "Home":
       if (msg.page === "Home") {
-        return tagUpdate("Home", Home.update(msg, model));
+        return tagUpdate("Home", Home.update(msg, model))
       }
-      return [model, cmd.none, []];
+      return [model, cmd.none, []]
 
     case "Logout":
       if (msg.page === "Logout") {
-        return tagUpdate("Logout", Logout.update(profile, msg, model));
+        return tagUpdate("Logout", Logout.update(profile, msg, model))
       }
-      return [model, cmd.none, []];
+      return [model, cmd.none, []]
 
     case "ProfileDelete":
       if (msg.page === "ProfileDelete") {
         return tagUpdate(
           "ProfileDelete",
           ProfileDelete.update(profile, msg, model)
-        );
+        )
       }
-      return [model, cmd.none, []];
+      return [model, cmd.none, []]
 
     case "ProfileUpdate":
       if (msg.page === "ProfileUpdate") {
         return tagUpdate(
           "ProfileUpdate",
           ProfileUpdate.update(profile, msg, model)
-        );
+        )
       }
-      return [model, cmd.none, []];
+      return [model, cmd.none, []]
 
     case "ProfileUpdateAvatar":
       if (msg.page === "ProfileUpdateAvatar") {
         return tagUpdate(
           "ProfileUpdateAvatar",
           ProfileUpdateAvatar.update(profile, msg, model)
-        );
+        )
       }
-      return [model, cmd.none, []];
+      return [model, cmd.none, []]
 
     case "ProfileUpdateName":
       if (msg.page === "ProfileUpdateName") {
         return tagUpdate(
           "ProfileUpdateName",
           ProfileUpdateName.update(profile, msg, model)
-        );
+        )
       }
-      return [model, cmd.none, []];
+      return [model, cmd.none, []]
 
     case "ProfileUpdateUsername":
       if (msg.page === "ProfileUpdateUsername") {
         return tagUpdate(
           "ProfileUpdateUsername",
           ProfileUpdateUsername.update(profile, msg, model)
-        );
+        )
       }
-      return [model, cmd.none, []];
+      return [model, cmd.none, []]
 
     case "Chat":
       if (msg.page === "Chat") {
-        return tagUpdate("Chat", Chat.update(msg, model));
+        return tagUpdate("Chat", Chat.update(msg, model))
       }
-      return [model, cmd.none, []];
+      return [model, cmd.none, []]
 
     case "ChatNew":
       if (msg.page === "ChatNew") {
-        return tagUpdate("ChatNew", ChatNew.update(store, msg, model));
+        return tagUpdate("ChatNew", ChatNew.update(store, msg, model))
       }
-      return [model, cmd.none, []];
+      return [model, cmd.none, []]
 
     case "ChatConversation":
       if (msg.page === "ChatConversation") {
         return tagUpdate(
           "ChatConversation",
           ChatConversation.update(msg, model)
-        );
+        )
       }
-      return [model, cmd.none, []];
+      return [model, cmd.none, []]
 
     case "ProfileUpdateTheme":
       if (msg.page === "ProfileUpdateTheme") {
         return tagUpdate(
           "ProfileUpdateTheme",
           ProfileUpdateTheme.update(profile, msg, model)
-        );
+        )
       }
-      return [model, cmd.none, []];
+      return [model, cmd.none, []]
 
     case "Game":
-      return [model, cmd.none, []];
+      return [model, cmd.none, []]
 
     case "Login":
     case "Loading":
     case "ProfileCreate":
-      return [model, Navigation.push(Route.encode({ type: "Home" })), []];
+      return [model, Navigation.push(Route.encode({ type: "Home" })), []]
 
     default:
-      return exhaustive(model);
+      return exhaustive(model)
   }
-};
+}
 
 export const updateProfileMissing = (
   session: Session.Session,
@@ -377,18 +377,18 @@ export const updateProfileMissing = (
         return tagUpdate(
           "Logout",
           Logout.update({ name: session.defaultName }, msg, model)
-        );
+        )
       }
-      return [model, cmd.none, []];
+      return [model, cmd.none, []]
 
     case "ProfileCreate":
       if (msg.page === "ProfileCreate") {
         return tagUpdate(
           "ProfileCreate",
           ProfileCreate.update(session, msg, model)
-        );
+        )
       }
-      return [model, cmd.none, []];
+      return [model, cmd.none, []]
 
     case "Home":
     case "Account":
@@ -408,12 +408,12 @@ export const updateProfileMissing = (
         model,
         Navigation.push(Route.encode({ type: "ProfileCreate" })),
         [],
-      ];
+      ]
 
     default:
-      return exhaustive(model);
+      return exhaustive(model)
   }
-};
+}
 
 export const updateSessionMissing = (
   msg: Msg,
@@ -422,9 +422,9 @@ export const updateSessionMissing = (
   switch (model.page) {
     case "Login":
       if (msg.page === "Login") {
-        return tagUpdate("Login", Login.update(msg, model));
+        return tagUpdate("Login", Login.update(msg, model))
       }
-      return [model, cmd.none, []];
+      return [model, cmd.none, []]
 
     case "ProfileCreate":
     case "Home":
@@ -441,12 +441,12 @@ export const updateSessionMissing = (
     case "Game":
     case "Loading":
     case "Logout":
-      return [model, Navigation.push(Route.encode({ type: "Login" })), []];
+      return [model, Navigation.push(Route.encode({ type: "Login" })), []]
 
     default:
-      return exhaustive(model);
+      return exhaustive(model)
   }
-};
+}
 
 //
 //
@@ -459,60 +459,60 @@ export const updateSessionMissing = (
 export const subscriptions = (model: Model): Sub<Msg> => {
   switch (model.page) {
     case "Account":
-      return sub.none;
+      return sub.none
 
     case "Chat":
-      return sub.none;
+      return sub.none
 
     case "ChatNew":
       return pipe(
         ChatNew.subscriptions(model),
         sub.map((msg) => ({ ...msg, page: "ChatNew" }))
-      );
+      )
 
     case "ChatConversation":
-      return sub.none;
+      return sub.none
 
     case "Game":
-      return sub.none;
+      return sub.none
 
     case "Home":
-      return sub.none;
+      return sub.none
 
     case "Login":
-      return sub.none;
+      return sub.none
 
     case "Logout":
-      return sub.none;
+      return sub.none
 
     case "ProfileCreate":
-      return sub.none;
+      return sub.none
 
     case "ProfileDelete":
-      return sub.none;
+      return sub.none
 
     case "ProfileUpdate":
-      return sub.none;
+      return sub.none
 
     case "ProfileUpdateAvatar":
-      return sub.none;
+      return sub.none
 
     case "ProfileUpdateTheme":
-      return sub.none;
+      return sub.none
 
     case "ProfileUpdateUsername":
-      return sub.none;
+      return sub.none
 
     case "ProfileUpdateName":
-      return sub.none;
+      return sub.none
 
     case "Loading":
-      return sub.none;
+      return sub.none
 
     default:
-      return exhaustive(model);
+      return exhaustive(model)
   }
-};
+}
 
 //
 //
@@ -532,63 +532,60 @@ export const viewReady = (
 ): View.View<Msg> => {
   switch (model.page) {
     case "Account":
-      return tagView("Account", Account.view(profile, model));
+      return tagView("Account", Account.view(profile, model))
 
     case "Chat":
-      return tagView("Chat", Chat.view(model));
+      return tagView("Chat", Chat.view(model))
 
     case "ChatNew":
-      return tagView("ChatNew", ChatNew.view(store, model));
+      return tagView("ChatNew", ChatNew.view(store, model))
 
     case "ChatConversation":
-      return tagView("ChatConversation", ChatConversation.view(model));
+      return tagView("ChatConversation", ChatConversation.view(model))
 
     case "Home":
-      return tagView("Home", Home.view({ profile, game }, model));
+      return tagView("Home", Home.view({ profile, game }, model))
 
     case "Logout":
-      return tagView("Logout", Logout.view(model));
+      return tagView("Logout", Logout.view(model))
 
     case "ProfileDelete":
-      return tagView("ProfileDelete", ProfileDelete.view(model));
+      return tagView("ProfileDelete", ProfileDelete.view(model))
 
     case "ProfileUpdate":
-      return tagView("ProfileUpdate", ProfileUpdate.view(profile, model));
+      return tagView("ProfileUpdate", ProfileUpdate.view(profile, model))
 
     case "ProfileUpdateAvatar":
-      return tagView("ProfileUpdateAvatar", ProfileUpdateAvatar.view(model));
+      return tagView("ProfileUpdateAvatar", ProfileUpdateAvatar.view(model))
 
     case "ProfileUpdateName":
-      return tagView("ProfileUpdateName", ProfileUpdateName.view(model));
+      return tagView("ProfileUpdateName", ProfileUpdateName.view(model))
 
     case "ProfileUpdateTheme":
       return tagView(
         "ProfileUpdateTheme",
         ProfileUpdateTheme.view(profile, model)
-      );
+      )
 
     case "ProfileUpdateUsername":
-      return tagView(
-        "ProfileUpdateUsername",
-        ProfileUpdateUsername.view(model)
-      );
+      return tagView("ProfileUpdateUsername", ProfileUpdateUsername.view(model))
 
     case "Game":
-      return tagView("Games", Game.view(game));
+      return tagView("Games", Game.view(game))
 
     case "Login":
-      return viewLoading;
+      return viewLoading
 
     case "ProfileCreate":
-      return viewLoading;
+      return viewLoading
 
     case "Loading":
-      return viewLoading;
+      return viewLoading
 
     default:
-      return exhaustive(model);
+      return exhaustive(model)
   }
-};
+}
 
 export const viewProfileMissing = (
   session: Session.Session,
@@ -596,10 +593,10 @@ export const viewProfileMissing = (
 ): View.View<Msg> => {
   switch (model.page) {
     case "Logout":
-      return tagView("Logout", Logout.view(model));
+      return tagView("Logout", Logout.view(model))
 
     case "ProfileCreate":
-      return tagView("ProfileCreate", ProfileCreate.view(model));
+      return tagView("ProfileCreate", ProfileCreate.view(model))
 
     case "Account":
     case "Chat":
@@ -615,17 +612,17 @@ export const viewProfileMissing = (
     case "ProfileUpdateUsername":
     case "Game":
     case "Loading":
-      return viewLoading;
+      return viewLoading
 
     default:
-      return exhaustive(model);
+      return exhaustive(model)
   }
-};
+}
 
 export const viewSessionMissing = (model: Model): View.View<Msg> => {
   switch (model.page) {
     case "Login":
-      return tagView("Login", Login.view(model));
+      return tagView("Login", Login.view(model))
 
     case "Account":
     case "Chat":
@@ -642,14 +639,14 @@ export const viewSessionMissing = (model: Model): View.View<Msg> => {
     case "ProfileUpdateUsername":
     case "Game":
     case "Loading":
-      return viewLoading;
+      return viewLoading
 
     default:
-      return exhaustive(model);
+      return exhaustive(model)
   }
-};
+}
 
-const viewLoading: View.View<Msg> = () => <View.LoadingPage />;
+const viewLoading: View.View<Msg> = () => <View.LoadingPage />
 
 //
 //
@@ -666,8 +663,8 @@ const tagView = <TMsg, TPage extends Msg["page"]>(
   return pipe(
     dom,
     View.map((msg) => ({ ...msg, page }))
-  );
-};
+  )
+}
 
 const tagUpdate = <TModel, TMsg, TAction, TPage extends Msg["page"]>(
   page: TPage,
@@ -685,5 +682,5 @@ const tagUpdate = <TModel, TMsg, TAction, TPage extends Msg["page"]>(
       cmd.map((msg) => ({ ...msg, page }))
     ),
     [...actionsPrev],
-  ];
-};
+  ]
+}

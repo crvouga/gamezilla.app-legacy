@@ -1,7 +1,7 @@
-import { cmd } from "Core";
-import * as Navigation from "Core/Navigation";
-import * as View from "View";
-import * as Store from "Store";
+import { cmd } from "Core"
+import * as Navigation from "Core/Navigation"
+import * as View from "View"
+import * as Store from "Store"
 
 //
 //
@@ -11,9 +11,9 @@ import * as Store from "Store";
 //
 //
 
-export type Model = {};
+export type Model = {}
 
-export const init: Model = {};
+export const init: Model = {}
 
 //
 //
@@ -26,9 +26,9 @@ export const init: Model = {};
 export type Msg =
   | { type: "UserClickedCancelButton" }
   | { type: "UserClickedBackdrop" }
-  | { type: "UserClickedDeleteButton" };
+  | { type: "UserClickedDeleteButton" }
 
-export type Action = Store.GroupedMsg;
+export type Action = Store.GroupedMsg
 
 export const update = (
   { userId }: { userId: string },
@@ -37,15 +37,15 @@ export const update = (
 ): [Model, cmd.Cmd<Msg>, Action[]] => {
   switch (msg.type) {
     case "UserClickedCancelButton":
-      return [model, Navigation.back(), []];
+      return [model, Navigation.back(), []]
 
     case "UserClickedBackdrop":
-      return [model, Navigation.back(), []];
+      return [model, Navigation.back(), []]
 
     case "UserClickedDeleteButton":
-      return [model, cmd.none, [Store.Profile.DeleteForever(userId)]];
+      return [model, cmd.none, [Store.Profile.DeleteForever(userId)]]
   }
-};
+}
 
 //
 //
@@ -67,4 +67,4 @@ export const view =
         confirmTitle="Delete"
         onConfirm={() => dispatch({ type: "UserClickedDeleteButton" })}
       />
-    );
+    )

@@ -1,10 +1,10 @@
-import { SxProps } from "@mui/material";
-import { task } from "fp-ts";
-import { pipe } from "fp-ts/lib/function";
-import { cmd } from "Core";
-import { Cmd } from "Core/Cmd";
-import { perform } from "Core/Task";
-import * as View from "View";
+import { SxProps } from "@mui/material"
+import { task } from "fp-ts"
+import { pipe } from "fp-ts/lib/function"
+import { cmd } from "Core"
+import { Cmd } from "Core/Cmd"
+import { perform } from "Core/Task"
+import * as View from "View"
 
 //
 //
@@ -15,18 +15,18 @@ import * as View from "View";
 //
 
 export type Model = {
-  queue: Snack[];
-};
+  queue: Snack[]
+}
 
 export type Snack = {
-  type: "Info" | "Error";
-  snackId: string;
-  message: string;
-};
+  type: "Info" | "Error"
+  snackId: string
+  message: string
+}
 
 export const init: Model = {
   queue: [],
-};
+}
 
 //
 //
@@ -36,12 +36,12 @@ export const init: Model = {
 //
 //
 
-export type GroupedMsg = { group: "Snackbar" } & Msg;
+export type GroupedMsg = { group: "Snackbar" } & Msg
 
 type Msg =
   | { type: "EnqueuedSnackbar"; snack: Snack }
   | { type: "SnackbarDurationElapsed"; snackId: string }
-  | { type: "UserClosedSnackbar"; snackId: string };
+  | { type: "UserClosedSnackbar"; snackId: string }
 
 export const EnqueuedSnackbar = (message: string): GroupedMsg => {
   return {
@@ -52,8 +52,8 @@ export const EnqueuedSnackbar = (message: string): GroupedMsg => {
       message,
       snackId: String(Math.random()),
     },
-  };
-};
+  }
+}
 
 export const EnqueuedSnackbarError = (message: string): GroupedMsg => {
   return {
@@ -64,8 +64,8 @@ export const EnqueuedSnackbarError = (message: string): GroupedMsg => {
       message,
       snackId: String(Math.random()),
     },
-  };
-};
+  }
+}
 
 export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
@@ -79,15 +79,15 @@ export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
             snackId: msg.snack.snackId,
           }))
         ),
-      ];
+      ]
 
     case "SnackbarDurationElapsed":
-      return removeById(msg, model);
+      return removeById(msg, model)
 
     case "UserClosedSnackbar":
-      return [model, cmd.none];
+      return [model, cmd.none]
   }
-};
+}
 
 const removeById = (
   { snackId }: { snackId: string },
@@ -98,7 +98,7 @@ const removeById = (
     queue: model.queue.filter((snack) => snack.snackId !== snackId),
   },
   cmd.none,
-];
+]
 
 //
 //
@@ -111,10 +111,10 @@ const removeById = (
 export const view =
   ({ sx }: { sx?: SxProps }, model: Model): View.View<Msg> =>
   (dispatch) => {
-    const snack = model.queue[0];
+    const snack = model.queue[0]
 
     if (!snack) {
-      return <></>;
+      return <></>
     }
 
     return (
@@ -143,5 +143,5 @@ export const view =
           {snack.message}
         </View.Alert>
       </View.Snackbar>
-    );
-  };
+    )
+  }

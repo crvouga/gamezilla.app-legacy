@@ -1,9 +1,9 @@
-import { flow, pipe } from "fp-ts/lib/function";
-import { cmd } from "Core";
-import { Cmd } from "Core/Cmd";
-import * as Games from "Games";
-import { groupTag } from "Utility";
-import * as View from "View";
+import { flow, pipe } from "fp-ts/lib/function"
+import { cmd } from "Core"
+import { Cmd } from "Core/Cmd"
+import * as Games from "Games"
+import { groupTag } from "Utility"
+import * as View from "View"
 
 //
 //
@@ -13,7 +13,7 @@ import * as View from "View";
 //
 //
 
-export type Model = Games.Model;
+export type Model = Games.Model
 
 //
 //
@@ -23,7 +23,7 @@ export type Model = Games.Model;
 //
 //
 
-export const init = Games.init;
+export const init = Games.init
 
 //
 //
@@ -33,7 +33,7 @@ export const init = Games.init;
 //
 //
 
-export type Msg = Games.GroupedMsg;
+export type Msg = Games.GroupedMsg
 
 //
 //
@@ -44,8 +44,8 @@ export type Msg = Games.GroupedMsg;
 //
 
 export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
-  return [model, cmd.none];
-};
+  return [model, cmd.none]
+}
 
 //
 //
@@ -56,5 +56,5 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
 //
 
 export const view = (model: Model): View.View<Msg> => {
-  return pipe(Games.view(model), View.map(groupTag("Game")));
-};
+  return pipe(Games.view(model), View.map(groupTag("Game")))
+}

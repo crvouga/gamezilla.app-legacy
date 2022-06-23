@@ -1,9 +1,9 @@
-import { either } from "fp-ts";
-import { pipe } from "fp-ts/lib/function";
-import { cmd } from "Core";
-import { attempt } from "Core/Task";
-import * as Session from "Session";
-import * as View from "View";
+import { either } from "fp-ts"
+import { pipe } from "fp-ts/lib/function"
+import { cmd } from "Core"
+import { attempt } from "Core/Task"
+import * as Session from "Session"
+import * as View from "View"
 
 //
 //
@@ -15,9 +15,9 @@ import * as View from "View";
 
 export type Model =
   | { type: "Idle" }
-  | { type: "LoggingIn"; loginMethod: Session.LoginMethod };
+  | { type: "LoggingIn"; loginMethod: Session.LoginMethod }
 
-export const init: Model = { type: "Idle" };
+export const init: Model = { type: "Idle" }
 
 //
 //
@@ -30,7 +30,7 @@ export const init: Model = { type: "Idle" };
 export type Msg =
   | { type: "UserClickedLoginButton"; loginMethod: Session.LoginMethod }
   | { type: "LoginFailed" }
-  | { type: "LoginSucceeded" };
+  | { type: "LoginSucceeded" }
 
 export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
@@ -38,15 +38,15 @@ export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
       return [
         { type: "LoggingIn", loginMethod: msg.loginMethod },
         loginCmd(msg.loginMethod),
-      ];
+      ]
 
     case "LoginFailed":
-      return [{ type: "Idle" }, cmd.none];
+      return [{ type: "Idle" }, cmd.none]
 
     case "LoginSucceeded":
-      return [model, cmd.none];
+      return [model, cmd.none]
   }
-};
+}
 
 const loginCmd = (loginMethod: Session.LoginMethod) => {
   return pipe(
@@ -57,8 +57,8 @@ const loginCmd = (loginMethod: Session.LoginMethod) => {
         () => ({ type: "LoginSucceeded" })
       )
     )
-  );
-};
+  )
+}
 
 //
 //
@@ -98,4 +98,4 @@ export const view =
           Continue With Google
         </View.Button>
       </View.Page>
-    );
+    )
