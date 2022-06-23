@@ -63,6 +63,6 @@ function getMsgType<Msg>(m: DebugMsg<Msg>): Option<string> {
     alt(() => fromNullable(payload["type"])),
     alt(() => fromNullable(payload["_type"])),
     alt(() => fromNullable(payload["kind"])),
-    alt(() => fromNullable(payload["_kind"]))
+    alt(() => fromNullable(payload["_kind"])),
   )
 }

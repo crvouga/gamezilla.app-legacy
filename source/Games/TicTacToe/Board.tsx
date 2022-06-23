@@ -46,7 +46,7 @@ export const toSlot = (board: Board, position: Position): Slot =>
 export const setSlot = (
   board: Board,
   { column, row }: Position,
-  slot: Slot
+  slot: Slot,
 ): Board => ({
   ...board,
   [column]: {
@@ -138,7 +138,7 @@ const toWins = (board: Board): Wins => {
       X: [],
       O: [],
       None: [],
-    }
+    },
   )
 }
 
@@ -166,7 +166,7 @@ type SlotFrequency = { X: number; O: number; Empty: number }
 const toSlotFrequency = (board: Board): SlotFrequency => {
   return toSlots(board).reduce(
     (frequency, slot) => ({ ...frequency, [slot]: frequency[slot] + 1 }),
-    { X: 0, O: 0, Empty: 0 }
+    { X: 0, O: 0, Empty: 0 },
   )
 }
 
@@ -178,7 +178,7 @@ export const toTurn = (board: Board): Player => {
 export const move = (
   board: Board,
   player: Player,
-  position: Position
+  position: Position,
 ): Board => {
   const status = toStatus(board)
 
@@ -232,7 +232,7 @@ export const Board = ({
       {allPositions.map((position) => (
         <Slot
           key={[position.column, position.row, toSlot(board, position)].join(
-            " "
+            " ",
           )}
           slot={toSlot(board, position)}
           cx={Number(position.column) + 0.5}
@@ -244,7 +244,7 @@ export const Board = ({
       {allPositions.map((position) => (
         <rect
           key={[position.column, position.row, toSlot(board, position)].join(
-            " "
+            " ",
           )}
           x={Number(position.column)}
           y={Number(position.row)}

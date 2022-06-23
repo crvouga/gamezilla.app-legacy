@@ -25,7 +25,7 @@ export const Success = <T>(value: T): Success<T> => ({
 })
 
 export const fromResult = <E, A>(
-  result: Result.Result<E, A>
+  result: Result.Result<E, A>,
 ): RemoteData<E, A> => {
   return Result.fold<E, A, RemoteData<E, A>>(Failure, Success)(result)
 }

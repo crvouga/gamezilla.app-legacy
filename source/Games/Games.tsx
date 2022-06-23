@@ -150,7 +150,7 @@ const updateOpened = (msg: Msg, model: Opened): [Model, Cmd<Msg>, OutMsg[]] => {
 
 const updateGame = (
   msg: GameMsg,
-  model: Opened["child"]
+  model: Opened["child"],
 ): [Opened["child"], cmd.Cmd<Msg>] => {
   switch (model.type) {
     case "Chess":
@@ -169,7 +169,7 @@ const updateGame = (
       if (msg.gameGroup === "ConnectFour") {
         const [modelChild, cmdChild] = Games.ConnectFour.update(
           msg,
-          model.child
+          model.child,
         )
 
         return [
@@ -242,7 +242,7 @@ export const subscriptions = (model: Model): Sub<Msg> => {
         case "Snake":
           return pipe(
             Games.Snake.subscriptions(model.child.child),
-            sub.map(groupGameTag("Snake"))
+            sub.map(groupGameTag("Snake")),
           )
 
         case "TicTacToe":
@@ -274,25 +274,25 @@ const viewOpened = (model: Opened): View.View<Msg> => {
     case "Chess":
       return pipe(
         Games.Chess.view(model.child.child),
-        View.map(groupGameTag("Chess"))
+        View.map(groupGameTag("Chess")),
       )
 
     case "ConnectFour":
       return pipe(
         Games.ConnectFour.view(model.child.child),
-        View.map(groupGameTag("ConnectFour"))
+        View.map(groupGameTag("ConnectFour")),
       )
 
     case "TicTacToe":
       return pipe(
         Games.TicTacToe.view(model.child.child),
-        View.map(groupGameTag("TicTacToe"))
+        View.map(groupGameTag("TicTacToe")),
       )
 
     case "Snake":
       return pipe(
         Games.Snake.view(model.child.child),
-        View.map(groupGameTag("Snake"))
+        View.map(groupGameTag("Snake")),
       )
   }
 }

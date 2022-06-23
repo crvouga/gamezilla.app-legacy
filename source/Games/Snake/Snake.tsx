@@ -112,7 +112,7 @@ const circularIndex = (index: number, length: number): number => {
 
 const circular = (
   model: Model,
-  position: Position.Position
+  position: Position.Position,
 ): Position.Position => {
   return {
     x: circularIndex(position.x, model.bounds.upper.x),
@@ -142,18 +142,18 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
 
           const directionNew = Direction.isOpposite(
             queuedDirection,
-            model.direction
+            model.direction,
           )
             ? model.direction
             : queuedDirection
 
           const headNew = circular(
             model,
-            Position.add(model.head, Direction.toVector(directionNew))
+            Position.add(model.head, Direction.toVector(directionNew)),
           )
 
           const isSnakeEatingFood = [headNew, ...tailNew].some((position) =>
-            Position.equals(position, model.food)
+            Position.equals(position, model.food),
           )
 
           const foodNew = isSnakeEatingFood
@@ -259,10 +259,10 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
 
 const enqueueDirection = (
   direction: Direction.Direction,
-  model: Model
+  model: Model,
 ): Model => {
   const directionQueueNew = unqiue(
-    [...model.directionQueue, direction].slice(0, 2)
+    [...model.directionQueue, direction].slice(0, 2),
   )
 
   return {
@@ -274,7 +274,7 @@ const enqueueDirection = (
 const toEmptyPositions = (model: Model) => {
   const snake = [model.head, ...model.tail]
   return Position.range(model.bounds).filter((position) =>
-    snake.every((snakePosition) => !Position.equals(position, snakePosition))
+    snake.every((snakePosition) => !Position.equals(position, snakePosition)),
   )
 }
 
@@ -428,7 +428,7 @@ const Canvas = ({
 const draw = (
   { width, height }: { width: number; height: number },
   model: Model,
-  ctx: CanvasRenderingContext2D
+  ctx: CanvasRenderingContext2D,
 ): void => {
   const scale = 100
 
@@ -447,7 +447,7 @@ const draw = (
       position.x * tileWidth,
       position.y * tileHeight,
       tileWidth,
-      tileHeight
+      tileHeight,
     )
   }
 
@@ -457,7 +457,7 @@ const draw = (
       position.x * tileWidth,
       position.y * tileHeight,
       tileWidth,
-      tileHeight
+      tileHeight,
     )
   }
 
@@ -468,13 +468,13 @@ const draw = (
       position.x * tileWidth,
       position.y * tileHeight,
       tileWidth,
-      tileHeight
+      tileHeight,
     )
     ctx.fillRect(
       position.x * tileWidth,
       position.y * tileHeight,
       tileWidth,
-      tileHeight
+      tileHeight,
     )
   }
 }
@@ -536,9 +536,9 @@ const playSound = (file: string) => {
     attempt(
       either.fold<{}, {}, Msg>(
         () => ({ type: "AudioFailed" }),
-        () => ({ type: "AudioSucceeded" })
-      )
-    )
+        () => ({ type: "AudioSucceeded" }),
+      ),
+    ),
   )
 }
 

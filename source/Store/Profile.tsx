@@ -44,7 +44,7 @@ export type Edit = ReturnType<typeof Edit>
 export const Edited = (
   userId: string,
   previous: Profile,
-  result: Result.Result<Problem, Profile>
+  result: Result.Result<Problem, Profile>,
 ) =>
   ({
     group: "Store",
@@ -68,7 +68,7 @@ export type Get = ReturnType<typeof Get>
 
 export const Got = (
   userId: string,
-  result: Result.Result<Problem, Profile>
+  result: Result.Result<Problem, Profile>,
 ) => {
   return {
     group: "Store",
@@ -93,7 +93,7 @@ export type DeleteForever = ReturnType<typeof DeleteForever>
 export const DeletedForever = (
   userId: string,
   previous: Profile,
-  result: Result.Result<Problem, {}>
+  result: Result.Result<Problem, {}>,
 ) => {
   return {
     group: "Store",
@@ -116,7 +116,7 @@ export const Create = (
     username: string
     name: string
     avatarUrl: string
-  }
+  },
 ) => {
   const profile: Profile = {
     username,
@@ -137,7 +137,7 @@ export type Create = ReturnType<typeof Create>
 
 export const Created = (
   userId: string,
-  result: Result.Result<Problem, Profile>
+  result: Result.Result<Problem, Profile>,
 ) => {
   return {
     group: "Store",
@@ -190,7 +190,7 @@ export type Msg =
 //
 
 const toThemeMode = (
-  themeMode: definitions["profile"]["theme_mode"]
+  themeMode: definitions["profile"]["theme_mode"],
 ): ThemeMode => {
   switch (themeMode) {
     case "DARK":
@@ -205,7 +205,7 @@ const toThemeMode = (
 }
 
 const fromThemeMode = (
-  themeMode: ThemeMode
+  themeMode: ThemeMode,
 ): definitions["profile"]["theme_mode"] => {
   switch (themeMode) {
     case "Dark":
@@ -312,7 +312,7 @@ export const search =
         `%${nameOrUsername
           .split(" ")
           .map((_) => _.replace(" ", ""))
-          .join("%")}%`
+          .join("%")}%`,
       )
 
     if (response.error) {
@@ -327,7 +327,7 @@ export const search =
 export const edit =
   (
     userId: string,
-    edits: Partial<Profile>
+    edits: Partial<Profile>,
   ): task.Task<Result.Result<Problem, Profile>> =>
   async () => {
     const response = await Supabase.client

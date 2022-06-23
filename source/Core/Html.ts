@@ -49,7 +49,7 @@ export interface Program<Model, Msg, Dom> extends platform.Program<Model, Msg> {
  * @since 0.5.0
  */
 export function map<Dom, A, Msg>(
-  f: (a: A) => Msg
+  f: (a: A) => Msg,
 ): (ha: Html<Dom, A>) => Html<Dom, Msg> {
   return (ha) => (dispatch) => ha((a) => dispatch(f(a)))
 }
@@ -67,12 +67,12 @@ export function program<Model, Msg, Dom>(
   init: [Model, Cmd<Msg>],
   update: (msg: Msg, model: Model) => [Model, Cmd<Msg>],
   view: (model: Model) => Html<Dom, Msg>,
-  subscriptions: (model: Model) => Sub<Msg> = () => none
+  subscriptions: (model: Model) => Sub<Msg> = () => none,
 ): Program<Model, Msg, Dom> {
   const { dispatch, cmd$, sub$, model$ } = platform.program(
     init,
     update,
-    subscriptions
+    subscriptions,
   )
 
   const html$ = model$.pipe(RxMap(view))
@@ -89,7 +89,7 @@ export function programWithFlags<Flags, Model, Msg, Dom>(
   init: (flags: Flags) => [Model, Cmd<Msg>],
   update: (msg: Msg, model: Model) => [Model, Cmd<Msg>],
   view: (model: Model) => Html<Dom, Msg>,
-  subscriptions?: (model: Model) => Sub<Msg>
+  subscriptions?: (model: Model) => Sub<Msg>,
 ): (flags: Flags) => Program<Model, Msg, Dom> {
   return (flags) => program(init(flags), update, view, subscriptions)
 }
@@ -100,9 +100,9 @@ export function programWithFlags<Flags, Model, Msg, Dom>(
  * @since 0.5.4
  */
 export function withStop(
-  signal: Observable<unknown>
+  signal: Observable<unknown>,
 ): <Model, Msg, Dom>(
-  program: Program<Model, Msg, Dom>
+  program: Program<Model, Msg, Dom>,
 ) => Program<Model, Msg, Dom> {
   return (program) => {
     const platformProgram = platform.withStop(signal)(program)
@@ -126,7 +126,7 @@ export function withStop(
  */
 export function run<Model, Msg, Dom>(
   program: Program<Model, Msg, Dom>,
-  renderer: Renderer<Dom>
+  renderer: Renderer<Dom>,
 ): Observable<Model> {
   const { dispatch, html$ } = program
 

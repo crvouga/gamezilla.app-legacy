@@ -35,7 +35,7 @@ type OutMsg = Store.GroupedMsg
 export const update = (
   { userId }: { userId: string },
   msg: Msg,
-  model: Model
+  model: Model,
 ): [Model, cmd.Cmd<Msg>, OutMsg[]] => {
   switch (msg.type) {
     case "UserClickedBackButton":

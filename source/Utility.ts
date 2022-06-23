@@ -3,7 +3,7 @@ import { cmd } from "Core"
 import { Cmd } from "Core/Cmd"
 
 export const exhaustive = (
-  discriminatedUnionType: "Missing Case Error"
+  discriminatedUnionType: "Missing Case Error",
 ): never => {
   throw new Error(`Missing case for: ${discriminatedUnionType}`)
 }
@@ -22,9 +22,9 @@ export const andThen =
   <Msg, Model, Action>(
     update: (
       msg: Msg,
-      model: Model
+      model: Model,
     ) => [Model, Cmd<Msg>] | [Model, Cmd<Msg>, Action[]],
-    msg: Msg
+    msg: Msg,
   ) =>
   ([model, cmdPrev, actionsPrev = []]:
     | [Model, Cmd<Msg>]
@@ -41,7 +41,7 @@ export const andThen =
 export const andThenMany =
   <Msg, Model>(
     update: (msg: Msg, model: Model) => [Model, Cmd<Msg>],
-    msgs: Msg[]
+    msgs: Msg[],
   ) =>
   ([modelPrev, cmdPrev]: [Model, Cmd<Msg>]): [Model, Cmd<Msg>] => {
     const [msg, ...msgsRest] = msgs
@@ -54,7 +54,7 @@ export const andThenMany =
 
     return pipe(
       [modelNew, cmd.batch([cmdPrev, cmdNew])],
-      andThenMany(update, msgsRest)
+      andThenMany(update, msgsRest),
     )
   }
 
@@ -76,7 +76,7 @@ export type Options<Result> = {
 
 export interface DebouncedFunction<
   Args extends any[],
-  F extends (...args: Args) => any
+  F extends (...args: Args) => any,
 > {
   (this: ThisParameterType<F>, ...args: Args & Parameters<F>): Promise<
     ReturnType<F>
@@ -92,7 +92,7 @@ interface DebouncedPromise<FunctionReturn> {
 export function debounce<Args extends any[], F extends (...args: Args) => any>(
   func: F,
   waitMilliseconds = 50,
-  options: Options<ReturnType<F>> = {}
+  options: Options<ReturnType<F>> = {},
 ): DebouncedFunction<Args, F> {
   let timeoutId: ReturnType<typeof setTimeout> | undefined
   const isImmediate = options.isImmediate ?? false
@@ -192,7 +192,7 @@ export const editDistance = (str1 = "", str2 = ""): number => {
         // @ts-ignore
         track[j - 1][i] + 1, // insertion
         // @ts-ignore
-        track[j - 1][i - 1] + indicator // substitution
+        track[j - 1][i - 1] + indicator, // substitution
       )
     }
   }

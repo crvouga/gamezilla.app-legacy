@@ -33,7 +33,7 @@ export type Action = Store.GroupedMsg
 export const update = (
   { userId }: { userId: string },
   msg: Msg,
-  model: Model
+  model: Model,
 ): [Model, cmd.Cmd<Msg>, Action[]] => {
   switch (msg.type) {
     case "UserClickedCancelButton":

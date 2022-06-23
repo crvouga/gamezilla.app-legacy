@@ -54,7 +54,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
           board: Board.move(
             model.board,
             Board.toTurn(model.board),
-            msg.position
+            msg.position,
           ),
         },
         cmd.none,

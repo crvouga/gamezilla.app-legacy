@@ -93,7 +93,7 @@ interface DevToolHandlerR<Model, Msg> extends DebuggerR<Model, Msg> {
  * @since 0.5.0
  */
 export function getConnection<Model, Msg>(
-  global: Global
+  global: Global,
 ): IO<Option<Connection<Model, Msg>>> {
   return () =>
     hasExtension(global)
@@ -108,7 +108,7 @@ export function getConnection<Model, Msg>(
  * @since 0.5.0
  */
 function hasExtension(
-  global: Global
+  global: Global,
 ): global is Global & { __REDUX_DEVTOOLS_EXTENSION__: Extension } {
   return "__REDUX_DEVTOOLS_EXTENSION__" in global
 }
@@ -119,7 +119,7 @@ function hasExtension(
  * @since 0.5.4
  */
 export function reduxDevToolDebugger<Model, Msg>(
-  connection: Connection<Model, Msg>
+  connection: Connection<Model, Msg>,
 ): Debugger<Model, Msg> {
   return (d) => {
     const deps = { ...d, connection }
@@ -139,7 +139,7 @@ export function reduxDevToolDebugger<Model, Msg>(
  * @since 0.5.0
  */
 function handleSubscription<Model, Msg>(
-  deps: DevToolHandlerR<Model, Msg>
+  deps: DevToolHandlerR<Model, Msg>,
 ): (msg: DevToolMsg) => void {
   const handler = handleIncomingMsg(deps)
 
@@ -148,8 +148,8 @@ function handleSubscription<Model, Msg>(
       handler(msg),
       E.fold(
         (err) => console.warn("[REDUX DEV TOOL]", err),
-        (eff) => eff()
-      )
+        (eff) => eff(),
+      ),
     )
 }
 
@@ -192,7 +192,7 @@ function handleIncomingMsg<Model, Msg>({
       case "ACTION":
         return pipe(
           E.parseJSON(String(msg.payload), E.toError),
-          E.bimap((e) => e.message, dispatchToApp)
+          E.bimap((e) => e.message, dispatchToApp),
         )
 
       case "DISPATCH":
@@ -205,8 +205,8 @@ function handleIncomingMsg<Model, Msg>({
             return E.right(
               pipe(
                 update(init),
-                IO_.chain(() => reinit)
-              )
+                IO_.chain(() => reinit),
+              ),
             )
 
           case "ROLLBACK":
@@ -215,9 +215,9 @@ function handleIncomingMsg<Model, Msg>({
               E.map((m) =>
                 pipe(
                   update(m),
-                  IO_.chain(() => restart(m))
-                )
-              )
+                  IO_.chain(() => restart(m)),
+                ),
+              ),
             )
 
           case "COMMIT":
@@ -232,19 +232,19 @@ function handleIncomingMsg<Model, Msg>({
                     // @ts-ignore
                     liftedState.computedStates[
                       liftedState.computedStates.length - 1
-                    ].state
+                    ].state,
                   ),
-                  IO_.chain(() => liftState(liftedState))
-                )
-              )
+                  IO_.chain(() => liftState(liftedState)),
+                ),
+              ),
             )
 
           case "TOGGLE_ACTION":
             return pipe(
               parseToggleAction<Model>(msg),
               E.map(([id, liftedState]) =>
-                pipe(toggle(id, liftedState), IO_.chain(liftState))
-              )
+                pipe(toggle(id, liftedState), IO_.chain(liftState)),
+              ),
             )
 
           default:
@@ -280,8 +280,8 @@ function parseJump<Model>(msg: Monitor): Either<string, Model> {
     E.bimap(
       (e) => e.message,
       // @ts-ignore
-      (u) => u as Model
-    )
+      (u) => u as Model,
+    ),
   )
 }
 
@@ -296,8 +296,8 @@ function parseRollback<Model>(msg: Monitor): Either<string, Model> {
     E.bimap(
       (e) => e.message,
       // @ts-ignore
-      (u) => u as Model
-    )
+      (u) => u as Model,
+    ),
   )
 }
 
@@ -307,7 +307,7 @@ function parseRollback<Model>(msg: Monitor): Either<string, Model> {
  * @since 0.5.0
  */
 function parseImportState<Model>(
-  msg: Monitor
+  msg: Monitor,
 ): Either<string, LiftedState<Model>> {
   return typeof msg.payload.nextLiftedState === "object" &&
     msg.payload.nextLiftedState !== null
@@ -321,12 +321,12 @@ function parseImportState<Model>(
  * @since 0.5.0
  */
 function parseToggleAction<Model>(
-  msg: Monitor
+  msg: Monitor,
 ): Either<string, [number, LiftedState<Model>]> {
   const getId = pipe(
     msg.payload.id,
     E.fromNullable("TOGGLE_ACTION message has some bad payload..."),
-    E.map((x) => x as number)
+    E.map((x) => x as number),
   )
 
   const parseState = pipe(
@@ -334,8 +334,8 @@ function parseToggleAction<Model>(
     E.bimap(
       (e) => e.message,
       // @ts-ignore
-      (u) => u as LiftedState<Model>
-    )
+      (u) => u as LiftedState<Model>,
+    ),
   )
 
   return sequenceTEither(getId, parseState)
@@ -351,7 +351,7 @@ function parseToggleAction<Model>(
  * @since 0.5.0
  */
 function toggleAction<Model, Msg>(
-  dispatch: Dispatch<MsgWithDebug<Model, Msg>>
+  dispatch: Dispatch<MsgWithDebug<Model, Msg>>,
 ): (id: number, liftedState: LiftedState<Model>) => IO<LiftedState<Model>> {
   return (id, liftedState) => () => {
     const state = JSON.parse(JSON.stringify(liftedState)) // poor man deep clone...

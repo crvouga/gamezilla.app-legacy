@@ -30,7 +30,7 @@ export const perform =
  * @since 0.5.0
  */
 export function attempt<E, A, Msg>(
-  f: (e: Either<E, A>) => Msg
+  f: (e: Either<E, A>) => Msg,
 ): (task: Task.Task<Either<E, A>>) => Cmd<Msg> {
   return perform(f)
 }

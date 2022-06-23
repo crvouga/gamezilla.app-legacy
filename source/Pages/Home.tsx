@@ -33,7 +33,7 @@ export type OutMsg = Games.GroupedMsg
 
 export const update = (
   msg: Msg,
-  model: Model
+  model: Model,
 ): [Model, cmd.Cmd<Msg>, OutMsg[]] => {
   switch (msg.type) {
     case "UserClickedAvatar":
@@ -66,7 +66,7 @@ const canOpen = (game: Games.Model, gameName: Games.Game) => {
 export const view =
   (
     { profile, game }: { profile: { avatarUrl: string }; game: Games.Model },
-    _model: Model
+    _model: Model,
   ): View.View<Msg> =>
   (dispatch) =>
     (

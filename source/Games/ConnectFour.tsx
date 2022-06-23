@@ -27,7 +27,7 @@ export const emptyColumns: Columns = [...Array(COLUMN_COUNT)].map(() => [])
 export const move = (
   columns: Columns,
   columnIndex: number,
-  player: IPlayer
+  player: IPlayer,
 ): Columns => {
   return columns.map((column, index) => {
     if (index === columnIndex && toTurn(columns) === player) {
@@ -40,7 +40,7 @@ export const move = (
 
 export const toSlot = (
   columns: Columns,
-  { x, y }: { x: number; y: number }
+  { x, y }: { x: number; y: number },
 ): IPlayer | "Empty" => {
   const slot = columns?.[x]?.[y]
 
@@ -75,7 +75,7 @@ type IStatus =
 
 export const toStatus = (columns: Columns): IStatus => {
   const winningLines = Array.from(
-    filter((line) => line.length >= 5, yieldLines(columns))
+    filter((line) => line.length >= 5, yieldLines(columns)),
   )
 
   const [winningLine] = winningLines
@@ -352,7 +352,7 @@ export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
       const columnsNew = move(
         model.columns,
         msg.columnIndex,
-        toTurn(model.columns)
+        toTurn(model.columns),
       )
       return [{ ...model, columns: columnsNew }, cmd.none]
 
@@ -480,7 +480,7 @@ const Board = ({
             r={0.5}
             fill={player === "PlayerOne" ? playerOneFill : playerTwoFill}
           />
-        ))
+        )),
       )}
 
       {[...new Array(COLUMN_COUNT)].map((_, columnIndex) => (

@@ -82,7 +82,7 @@ export const toUrl = ({ seed, style }: { style: Style; seed: Seed }) => {
 }
 
 export const parseUrl = (
-  avatarUrl?: string
+  avatarUrl?: string,
 ): {
   seed: Seed
   style: Style

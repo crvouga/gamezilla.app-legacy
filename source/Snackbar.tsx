@@ -77,7 +77,7 @@ export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
           perform(() => ({
             type: "SnackbarDurationElapsed",
             snackId: msg.snack.snackId,
-          }))
+          })),
         ),
       ]
 
@@ -91,7 +91,7 @@ export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
 
 const removeById = (
   { snackId }: { snackId: string },
-  model: Model
+  model: Model,
 ): [Model, Cmd<Msg>] => [
   {
     ...model,

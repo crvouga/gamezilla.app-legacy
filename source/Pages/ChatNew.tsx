@@ -65,7 +65,7 @@ export type Action = Store.GroupedMsg
 export const update = (
   store: Store.Model,
   msg: Msg,
-  model: Model
+  model: Model,
 ): [Model, Cmd<Msg>, Action[]] => {
   switch (msg.type) {
     case "UserClickedCreateButton":
@@ -102,7 +102,7 @@ export const update = (
                   ? 0
                   : circularIndex(
                       model.selectedResultIndex + 1,
-                      searchResults.length
+                      searchResults.length,
                     ),
             },
             cmd.none,
@@ -118,7 +118,7 @@ export const update = (
                   ? 0
                   : circularIndex(
                       model.selectedResultIndex - 1,
-                      searchResults.length
+                      searchResults.length,
                     ),
             },
             cmd.none,
@@ -150,7 +150,7 @@ export const update = (
 
 const toggleSelected = (
   searchResult: SearchResult,
-  model: Model
+  model: Model,
 ): [Model, Cmd<Msg>, Action[]] => {
   if (searchResult.userId in model.selected) {
     return [
@@ -191,8 +191,8 @@ export const subscriptions = (model: Model): Sub<Msg> => {
     Keyboard.keyDowns((key) =>
       Keyboard.isArrowKey(key) || Keyboard.isEnterKey(key)
         ? { type: "UserPressedKeyDown", key }
-        : Keyboard.SkipFlag
-    )
+        : Keyboard.SkipFlag,
+    ),
   )
 }
 
@@ -285,7 +285,7 @@ export const view =
                 model.selectedResultIndex !== "None" &&
                 circularIndex(
                   model.selectedResultIndex,
-                  searchResults.length
+                  searchResults.length,
                 ) === index
               }
               key={searchResult.userId}
