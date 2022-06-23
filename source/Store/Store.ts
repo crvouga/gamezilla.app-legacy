@@ -21,29 +21,45 @@ export type Model = {
     [id: string]: ProfileModel;
   };
   conversation: {
-    [id: string]: StoreData<Conversation.Conversation>;
+    [id: string]: ConversationModel;
   };
   profiles_conversations: {
-    [id: string]: StoreData<ProfilesConversations>;
+    [id: string]: ProfilesConversationsModel;
   };
-  queries: { [id: string]: Query };
 };
-
-type Query = {};
 
 export type ProfileModel = RemoteData.RemoteData<Problem, Profile.Profile>;
 
-type Problem = { message: string };
+export type ConversationModel = RemoteData.RemoteData<
+  Problem,
+  Conversation.Conversation
+>;
 
-type StoreData<T> = RemoteData.RemoteData<Problem, T>;
+export type ProfilesConversationsModel = RemoteData.RemoteData<
+  Problem,
+  ProfilesConversations
+>;
 
 type ProfilesConversations = { userId: string; conversationId: string };
+
+//
+//
+//
+
+type Problem = { message: string };
+
+//
+//
+//
+// Init
+//
+//
+//
 
 export const init: Model = {
   profile: {},
   conversation: {},
   profiles_conversations: {},
-  queries: {},
 };
 
 //
@@ -54,7 +70,7 @@ export const init: Model = {
 //
 //
 
-export type Msg = Profile.Msg;
+export type Msg = Profile.Msg | Conversation.Msg;
 
 export type GroupedMsg = Msg & { group: "Store" };
 
@@ -70,6 +86,12 @@ type Action = Snackbar.GroupedMsg;
 
 export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>, Action[]] => {
   switch (msg.type) {
+    case "Conversation/Create":
+      return [model, cmd.none, []];
+
+    case "Conversation/Created":
+      return [model, cmd.none, []];
+
     case "Profile/Edit":
       const remoteDataProfile = toProfile(msg.userId, model);
 
