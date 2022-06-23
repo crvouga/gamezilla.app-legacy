@@ -56,7 +56,7 @@ type OutMsg = Snackbar.GroupedMsg | Store.GroupedMsg
 export const update = (
   { userId }: { userId: string },
   msg: Msg,
-  model: Model
+  model: Model,
 ): [Model, cmd.Cmd<Msg>, OutMsg[]] => {
   switch (msg.type) {
     case "UserClickedCancelButton":
@@ -76,7 +76,7 @@ export const update = (
         { ...model, status: "GeneratingSeed" },
         pipe(
           ProfileAvatar.generateRandomSeed,
-          perform((seed) => ({ type: "RandomSeedGenerated", seed }))
+          perform((seed) => ({ type: "RandomSeedGenerated", seed })),
         ),
         [],
       ]

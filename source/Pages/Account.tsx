@@ -32,7 +32,7 @@ export type Msg =
 export const update = (
   { userId }: { userId: string },
   msg: Msg,
-  model: Model
+  model: Model,
 ): [Model, cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "UserClickedBackButton":

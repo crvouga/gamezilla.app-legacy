@@ -103,11 +103,11 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>, Action[]] => {
             mapProfile(
               msg.userId,
               RemoteData.map(() => next),
-              model
+              model,
             ),
             pipe(
               Profile.edit(msg.userId, msg.edits),
-              perform((result) => Profile.Edited(msg.userId, prev, result))
+              perform((result) => Profile.Edited(msg.userId, prev, result)),
             ),
             [],
           ]
@@ -125,7 +125,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>, Action[]] => {
             mapProfile(
               msg.userId,
               RemoteData.map(() => msg.previous),
-              model
+              model,
             ),
             cmd.none,
             [],
@@ -161,8 +161,8 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>, Action[]] => {
             pipe(
               Profile.deleteForever(msg.userId),
               perform((result) =>
-                Profile.DeletedForever(msg.userId, previous, result)
-              )
+                Profile.DeletedForever(msg.userId, previous, result),
+              ),
             ),
             [],
           ]
@@ -181,7 +181,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>, Action[]] => {
             mapProfile(
               msg.userId,
               () => RemoteData.Success(msg.previous),
-              model
+              model,
             ),
             cmd.none,
             [],
@@ -201,7 +201,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>, Action[]] => {
         mapProfile(msg.profile.userId, () => RemoteData.Loading, model),
         pipe(
           Profile.create(msg.profile),
-          perform((result) => Profile.Created(msg.profile.userId, result))
+          perform((result) => Profile.Created(msg.profile.userId, result)),
         ),
         [],
       ]
@@ -215,7 +215,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>, Action[]] => {
             mapProfile(
               msg.userId,
               () => RemoteData.Failure(result.error),
-              model
+              model,
             ),
             cmd.none,
             [Snackbar.EnqueuedSnackbarError(result.error.message)],
@@ -226,7 +226,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>, Action[]] => {
             mapProfile(
               msg.userId,
               () => RemoteData.Success(result.value),
-              model
+              model,
             ),
             cmd.none,
             [],
@@ -239,7 +239,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>, Action[]] => {
         model,
         pipe(
           Profile.search({ nameOrUsername: msg.searchText }),
-          perform((result) => Profile.Searched(result))
+          perform((result) => Profile.Searched(result)),
         ),
         [],
       ]
@@ -260,7 +260,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>, Action[]] => {
                 ...profile,
               }),
             }),
-            {}
+            {},
           )
 
           return [
@@ -279,7 +279,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>, Action[]] => {
 const loadProfile = (userId: string) => {
   return pipe(
     Profile.load({ userId }),
-    perform((result) => Profile.Got(userId, result))
+    perform((result) => Profile.Got(userId, result)),
   )
 }
 
@@ -294,7 +294,7 @@ const loadProfile = (userId: string) => {
 const mapProfile = (
   userId: string,
   mapper: (remoteDataProfile: ProfileModel) => ProfileModel,
-  model: Model
+  model: Model,
 ): Model => {
   return {
     ...model,
@@ -319,11 +319,11 @@ export const searchProfiles = (nameOrUsername: string, store: Model) => {
       profiles.reduce<Profile.Profile[]>(
         (profiles, p) =>
           p.type === "Success" ? [...profiles, p.value] : profiles,
-        []
+        [],
       ),
 
     (profiles) =>
-      matchSorter(profiles, nameOrUsername, { keys: ["name", "username"] })
+      matchSorter(profiles, nameOrUsername, { keys: ["name", "username"] }),
     // sort(
     //   ascend((profile) =>
     //     Math.min(

@@ -54,9 +54,9 @@ const loginCmd = (loginMethod: Session.LoginMethod) => {
     attempt(
       either.fold<{}, {}, Msg>(
         () => ({ type: "LoginFailed" }),
-        () => ({ type: "LoginSucceeded" })
-      )
-    )
+        () => ({ type: "LoginSucceeded" }),
+      ),
+    ),
   )
 }
 

@@ -38,7 +38,7 @@ type OutMsg = Snackbar.GroupedMsg
 export const update = (
   { name }: { name: string },
   msg: Msg,
-  model: Model
+  model: Model,
 ): [Model, cmd.Cmd<Msg>, OutMsg[]] => {
   switch (msg.type) {
     case "UserClickedCancelButton":
@@ -63,9 +63,9 @@ const logoutCmd = pipe(
   task.attempt(
     either.fold<{}, {}, Msg>(
       () => ({ type: "LogoutFailed" }),
-      () => ({ type: "LogoutSucceeded" })
-    )
-  )
+      () => ({ type: "LogoutSucceeded" }),
+    ),
+  ),
 )
 
 //

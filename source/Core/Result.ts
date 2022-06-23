@@ -15,7 +15,7 @@ export const Err = <T>(error: T): Err<T> => {
 export const fold =
   <TError, TValue, T>(
     onErr: (error: TError) => T,
-    onValue: (value: TValue) => T
+    onValue: (value: TValue) => T,
   ) =>
   (result: Result<TError, TValue>): T => {
     if (result.type === "Ok") {

@@ -130,8 +130,8 @@ export const subscriptions = (): Sub<Msg> => {
   return pipe(
     Navigation.subscription,
     sub.map((location) =>
-      RecievedRoute(decode(location.pathname) ?? { type: "Home" })
-    )
+      RecievedRoute(decode(location.pathname) ?? { type: "Home" }),
+    ),
   )
 }
 

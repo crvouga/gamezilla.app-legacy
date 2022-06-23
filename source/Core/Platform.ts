@@ -53,7 +53,7 @@ export interface Program<Model, Msg> {
 export function program<Model, Msg>(
   init: [Model, Cmd<Msg>],
   update: (msg: Msg, model: Model) => [Model, Cmd<Msg>],
-  subscriptions: (model: Model) => Sub<Msg> = () => none
+  subscriptions: (model: Model) => Sub<Msg> = () => none,
 ): Program<Model, Msg> {
   const state$ = new BehaviorSubject(init)
   const dispatch: Dispatch<Msg> = (msg) =>
@@ -63,12 +63,12 @@ export function program<Model, Msg>(
     startWith(init),
     map((state) => state[1]),
     distinctUntilChanged(),
-    mergeAll()
+    mergeAll(),
   )
 
   const model$ = state$.pipe(
     map((state) => state[0]),
-    distinctUntilChanged()
+    distinctUntilChanged(),
   )
 
   const sub$ = model$.pipe(switchMap((model) => subscriptions(model)))
@@ -84,7 +84,7 @@ export function program<Model, Msg>(
 export function programWithFlags<Flags, Model, Msg>(
   init: (flags: Flags) => [Model, Cmd<Msg>],
   update: (msg: Msg, model: Model) => [Model, Cmd<Msg>],
-  subscriptions: (model: Model) => Sub<Msg> = () => none
+  subscriptions: (model: Model) => Sub<Msg> = () => none,
 ): (flags: Flags) => Program<Model, Msg> {
   return (flags) => program(init(flags), update, subscriptions)
 }
@@ -95,7 +95,7 @@ export function programWithFlags<Flags, Model, Msg>(
  * @since 0.5.4
  */
 export function withStop(
-  signal: Observable<unknown>
+  signal: Observable<unknown>,
 ): <Model, Msg>(program: Program<Model, Msg>) => Program<Model, Msg> {
   return (program) => {
     const { cmd$, model$, sub$, ...rest } = program
@@ -117,7 +117,7 @@ export function withStop(
  * @since 0.5.0
  */
 export function run<Model, Msg>(
-  program: Program<Model, Msg>
+  program: Program<Model, Msg>,
 ): Observable<Model> {
   const { dispatch, cmd$, sub$, model$ } = program
 

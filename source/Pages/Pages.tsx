@@ -67,7 +67,7 @@ export const initLoading = (): [Model, Cmd<Msg>] => {
 
 export const initReady = (
   route: Route.Route,
-  profile: Store.Profile.Profile
+  profile: Store.Profile.Profile,
 ): [Model, Cmd<Msg>] => {
   switch (route.type) {
     case "Account":
@@ -83,7 +83,7 @@ export const initReady = (
         { ...chatNew, page: "ChatNew" },
         pipe(
           chatNewCmd,
-          cmd.map((msg) => ({ ...msg, page: "ChatNew" }))
+          cmd.map((msg) => ({ ...msg, page: "ChatNew" })),
         ),
       ]
 
@@ -178,7 +178,7 @@ export const initSessionMissing = (route: Route.Route): [Model, Cmd<Msg>] => {
 
 export const initProfileMissing = (
   route: Route.Route,
-  session: Session.Session
+  session: Session.Session,
 ): [Model, Cmd<Msg>] => {
   switch (route.type) {
     case "ProfileCreate":
@@ -257,7 +257,7 @@ export type Action =
 export const updateReady = (
   { profile, store }: { profile: Store.Profile.Profile; store: Store.Model },
   msg: Msg,
-  model: Model
+  model: Model,
 ): [Model, Cmd<Msg>, Action[]] => {
   switch (model.page) {
     case "Account":
@@ -282,7 +282,7 @@ export const updateReady = (
       if (msg.page === "ProfileDelete") {
         return tagUpdate(
           "ProfileDelete",
-          ProfileDelete.update(profile, msg, model)
+          ProfileDelete.update(profile, msg, model),
         )
       }
       return [model, cmd.none, []]
@@ -291,7 +291,7 @@ export const updateReady = (
       if (msg.page === "ProfileUpdate") {
         return tagUpdate(
           "ProfileUpdate",
-          ProfileUpdate.update(profile, msg, model)
+          ProfileUpdate.update(profile, msg, model),
         )
       }
       return [model, cmd.none, []]
@@ -300,7 +300,7 @@ export const updateReady = (
       if (msg.page === "ProfileUpdateAvatar") {
         return tagUpdate(
           "ProfileUpdateAvatar",
-          ProfileUpdateAvatar.update(profile, msg, model)
+          ProfileUpdateAvatar.update(profile, msg, model),
         )
       }
       return [model, cmd.none, []]
@@ -309,7 +309,7 @@ export const updateReady = (
       if (msg.page === "ProfileUpdateName") {
         return tagUpdate(
           "ProfileUpdateName",
-          ProfileUpdateName.update(profile, msg, model)
+          ProfileUpdateName.update(profile, msg, model),
         )
       }
       return [model, cmd.none, []]
@@ -318,7 +318,7 @@ export const updateReady = (
       if (msg.page === "ProfileUpdateUsername") {
         return tagUpdate(
           "ProfileUpdateUsername",
-          ProfileUpdateUsername.update(profile, msg, model)
+          ProfileUpdateUsername.update(profile, msg, model),
         )
       }
       return [model, cmd.none, []]
@@ -339,7 +339,7 @@ export const updateReady = (
       if (msg.page === "ChatConversation") {
         return tagUpdate(
           "ChatConversation",
-          ChatConversation.update(msg, model)
+          ChatConversation.update(msg, model),
         )
       }
       return [model, cmd.none, []]
@@ -348,7 +348,7 @@ export const updateReady = (
       if (msg.page === "ProfileUpdateTheme") {
         return tagUpdate(
           "ProfileUpdateTheme",
-          ProfileUpdateTheme.update(profile, msg, model)
+          ProfileUpdateTheme.update(profile, msg, model),
         )
       }
       return [model, cmd.none, []]
@@ -369,14 +369,14 @@ export const updateReady = (
 export const updateProfileMissing = (
   session: Session.Session,
   msg: Msg,
-  model: Model
+  model: Model,
 ): [Model, Cmd<Msg>, Action[]] => {
   switch (model.page) {
     case "Logout":
       if (msg.page === "Logout") {
         return tagUpdate(
           "Logout",
-          Logout.update({ name: session.defaultName }, msg, model)
+          Logout.update({ name: session.defaultName }, msg, model),
         )
       }
       return [model, cmd.none, []]
@@ -385,7 +385,7 @@ export const updateProfileMissing = (
       if (msg.page === "ProfileCreate") {
         return tagUpdate(
           "ProfileCreate",
-          ProfileCreate.update(session, msg, model)
+          ProfileCreate.update(session, msg, model),
         )
       }
       return [model, cmd.none, []]
@@ -417,7 +417,7 @@ export const updateProfileMissing = (
 
 export const updateSessionMissing = (
   msg: Msg,
-  model: Model
+  model: Model,
 ): [Model, Cmd<Msg>, Action[]] => {
   switch (model.page) {
     case "Login":
@@ -467,7 +467,7 @@ export const subscriptions = (model: Model): Sub<Msg> => {
     case "ChatNew":
       return pipe(
         ChatNew.subscriptions(model),
-        sub.map((msg) => ({ ...msg, page: "ChatNew" }))
+        sub.map((msg) => ({ ...msg, page: "ChatNew" })),
       )
 
     case "ChatConversation":
@@ -528,7 +528,7 @@ export const viewReady = (
     game,
     store,
   }: { game: Game.Model; profile: Store.Profile.Profile; store: Store.Model },
-  model: Model
+  model: Model,
 ): View.View<Msg> => {
   switch (model.page) {
     case "Account":
@@ -564,7 +564,7 @@ export const viewReady = (
     case "ProfileUpdateTheme":
       return tagView(
         "ProfileUpdateTheme",
-        ProfileUpdateTheme.view(profile, model)
+        ProfileUpdateTheme.view(profile, model),
       )
 
     case "ProfileUpdateUsername":
@@ -589,7 +589,7 @@ export const viewReady = (
 
 export const viewProfileMissing = (
   session: Session.Session,
-  model: Model
+  model: Model,
 ): View.View<Msg> => {
   switch (model.page) {
     case "Logout":
@@ -658,11 +658,11 @@ const viewLoading: View.View<Msg> = () => <View.LoadingPage />
 
 const tagView = <TMsg, TPage extends Msg["page"]>(
   page: TPage,
-  dom: View.View<TMsg>
+  dom: View.View<TMsg>,
 ): View.View<TMsg & { page: TPage }> => {
   return pipe(
     dom,
-    View.map((msg) => ({ ...msg, page }))
+    View.map((msg) => ({ ...msg, page })),
   )
 }
 
@@ -670,7 +670,7 @@ const tagUpdate = <TModel, TMsg, TAction, TPage extends Msg["page"]>(
   page: TPage,
   [modelPrev, cmdPrev, actionsPrev = []]:
     | [TModel, Cmd<TMsg>, TAction[]]
-    | [TModel, Cmd<TMsg>]
+    | [TModel, Cmd<TMsg>],
 ): [TModel & { page: TPage }, Cmd<TMsg & { page: TPage }>, TAction[]] => {
   return [
     {
@@ -679,7 +679,7 @@ const tagUpdate = <TModel, TMsg, TAction, TPage extends Msg["page"]>(
     },
     pipe(
       cmdPrev,
-      cmd.map((msg) => ({ ...msg, page }))
+      cmd.map((msg) => ({ ...msg, page })),
     ),
     [...actionsPrev],
   ]

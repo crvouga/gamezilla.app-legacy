@@ -145,7 +145,7 @@ export const update = (msg: Msg, modelPrev: Model): [Model, Cmd<Msg>] => {
   const [modelNew, cmdNew, actions] = pipe(
     [modelPrev, cmd.none],
     andThen(updateMain, msg),
-    andThen(updateStatusChanged(modelPrev), msg)
+    andThen(updateStatusChanged(modelPrev), msg),
   )
 
   return pipe([modelNew, cmdNew], andThenMany(updateAction, actions))
@@ -168,7 +168,7 @@ const updateStatusChanged =
       case "ProfileMissing": {
         const [page, pageCmd] = Pages.initProfileMissing(
           model.route,
-          statusNew.session
+          statusNew.session,
         )
         return [
           { ...model, page },
@@ -253,7 +253,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd<Msg>, Msg[]] => {
         case "SessionMissing": {
           const [pageNew, pageCmd, actions] = Pages.updateSessionMissing(
             msg,
-            model.page
+            model.page,
           )
 
           return [
@@ -270,7 +270,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd<Msg>, Msg[]] => {
           const [pageNew, pageCmd, actions] = Pages.updateProfileMissing(
             status.session,
             msg,
-            model.page
+            model.page,
           )
           return [
             { ...model, page: pageNew },
@@ -291,7 +291,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd<Msg>, Msg[]] => {
           const [pageNew, pageCmd, actions] = Pages.updateReady(
             { profile: status.profile, store: model.store },
             msg,
-            model.page
+            model.page,
           )
 
           return [
@@ -317,7 +317,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd<Msg>, Msg[]] => {
         case "ProfileMissing": {
           const [page, pageCmd] = Pages.initProfileMissing(
             route,
-            status.session
+            status.session,
           )
 
           return [
@@ -383,7 +383,7 @@ const updateAction = (action: Msg, model: Model): [Model, Cmd<Msg>] => {
       const [gameNew, gameCmd, actions] = Games.update(action, model.game)
       return pipe(
         [{ ...model, game: gameNew }, pipe(gameCmd, cmd.map(groupTag("Game")))],
-        andThenMany(updateAction, actions)
+        andThenMany(updateAction, actions),
       )
 
     case "Route":
@@ -475,13 +475,13 @@ const viewMain = (model: Model): View.View<Msg> => {
     case "SessionMissing":
       return pipe(
         Pages.viewSessionMissing(model.page),
-        View.map(groupTag("Page"))
+        View.map(groupTag("Page")),
       )
 
     case "ProfileMissing":
       return pipe(
         Pages.viewProfileMissing(status.session, model.page),
-        View.map(groupTag("Page"))
+        View.map(groupTag("Page")),
       )
 
     case "Ready":
@@ -496,9 +496,9 @@ const viewMain = (model: Model): View.View<Msg> => {
             game: model.game,
             store: model.store,
           },
-          model.page
+          model.page,
         ),
-        View.map(groupTag("Page"))
+        View.map(groupTag("Page")),
       )
   }
 }
@@ -514,7 +514,7 @@ const viewSnackbar =
           <>
             {pipe(
               Snackbar.view({}, model.snackbar),
-              View.map(groupTag("Snackbar"))
+              View.map(groupTag("Snackbar")),
             )(dispatch)}
           </>
         )
@@ -525,7 +525,7 @@ const viewSnackbar =
             <>
               {pipe(
                 Snackbar.view({}, model.snackbar),
-                View.map(groupTag("Snackbar"))
+                View.map(groupTag("Snackbar")),
               )(dispatch)}
             </>
           )
@@ -535,12 +535,12 @@ const viewSnackbar =
           <>
             {pipe(
               Snackbar.view({ sx: { bottom: 80 } }, model.snackbar),
-              View.map(groupTag("Snackbar"))
+              View.map(groupTag("Snackbar")),
             )(dispatch)}
 
             {pipe(
               Games.viewBanner(model.game),
-              View.map(groupTag("Game"))
+              View.map(groupTag("Game")),
             )(dispatch)}
           </>
         )

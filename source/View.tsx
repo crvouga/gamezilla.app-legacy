@@ -18,7 +18,7 @@ type Dom = React.ReactElement<unknown>
 export type View<Msg> = (dispatch: platform.Dispatch<Msg>) => Dom
 
 export const map = <A, Msg>(
-  f: (a: A) => Msg
+  f: (a: A) => Msg,
 ): ((ha: html.Html<Dom, A>) => html.Html<Dom, Msg>) => {
   return html.map(f)
 }
@@ -55,7 +55,7 @@ const createTheme = ({ mode }: { mode: "light" | "dark" }) =>
           },
         },
       },
-    })
+    }),
   )
 
 const darkTheme = createTheme({ mode: "dark" })

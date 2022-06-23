@@ -196,7 +196,7 @@ export function updateWithDebug<Model, Msg>({
  */
 export function runDebugger<Model, Msg>(
   win: Global,
-  stop$: Observable<unknown>
+  stop$: Observable<unknown>,
 ): (deps: DebuggerR<Model, Msg>) => IO<void> {
   return (deps) =>
     pipe(
@@ -209,6 +209,6 @@ export function runDebugger<Model, Msg>(
           next: debug,
           complete: stop,
         })
-      })
+      }),
     )
 }
