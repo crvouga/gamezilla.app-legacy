@@ -1,7 +1,7 @@
-import { pipe } from "fp-ts/lib/function";
-import { sub } from "Core";
-import * as Navigation from "Core/Navigation";
-import { Sub } from "Core/Sub";
+import { pipe } from "fp-ts/lib/function"
+import { sub } from "Core"
+import * as Navigation from "Core/Navigation"
+import { Sub } from "Core/Sub"
 
 //
 //
@@ -9,7 +9,7 @@ import { Sub } from "Core/Sub";
 //
 //
 
-export type Model = Route;
+export type Model = Route
 
 export type Route =
   | Account
@@ -26,26 +26,26 @@ export type Route =
   | Game
   | Chat
   | ChatNew
-  | ChatConversation;
+  | ChatConversation
 
-export type Account = { type: "Account" };
-export type Home = { type: "Home" };
-export type Login = { type: "Login" };
-export type Logout = { type: "Logout" };
-export type ProfileCreate = { type: "ProfileCreate" };
-export type ProfileDelete = { type: "ProfileDelete" };
-export type ProfileUpdate = { type: "ProfileUpdate" };
-export type ProfileUpdateAvatar = { type: "ProfileUpdateAvatar" };
-export type ProfileUpdateName = { type: "ProfileUpdateName" };
-export type ProfileUpdateUsername = { type: "ProfileUpdateUsername" };
-export type ProfileUpdateTheme = { type: "ProfileUpdateTheme" };
-export type Game = { type: "Game" };
-export type Chat = { type: "Chat" };
-export type ChatNew = { type: "ChatNew" };
+export type Account = { type: "Account" }
+export type Home = { type: "Home" }
+export type Login = { type: "Login" }
+export type Logout = { type: "Logout" }
+export type ProfileCreate = { type: "ProfileCreate" }
+export type ProfileDelete = { type: "ProfileDelete" }
+export type ProfileUpdate = { type: "ProfileUpdate" }
+export type ProfileUpdateAvatar = { type: "ProfileUpdateAvatar" }
+export type ProfileUpdateName = { type: "ProfileUpdateName" }
+export type ProfileUpdateUsername = { type: "ProfileUpdateUsername" }
+export type ProfileUpdateTheme = { type: "ProfileUpdateTheme" }
+export type Game = { type: "Game" }
+export type Chat = { type: "Chat" }
+export type ChatNew = { type: "ChatNew" }
 export type ChatConversation = {
-  type: "ChatConversation";
-  conversationId: string;
-};
+  type: "ChatConversation"
+  conversationId: string
+}
 
 //
 //
@@ -69,37 +69,37 @@ const routesTypes: { [routeType in Route["type"]]: string } = {
   Chat: "Chat",
   ChatNew: "ChatNew",
   ChatConversation: "ChatConversation",
-};
+}
 
 const isRouteType = (routeType: unknown): routeType is Route["type"] => {
-  return typeof routeType === "string" && routeType in routesTypes;
-};
+  return typeof routeType === "string" && routeType in routesTypes
+}
 
 export const decode = (pathname: string): Route | undefined => {
-  const [part0, part1] = pathname.substring(1).split("/");
+  const [part0, part1] = pathname.substring(1).split("/")
 
   if (isRouteType(part0)) {
     if (part0 === "ChatConversation") {
       if (typeof part1 === "string") {
-        return { type: "ChatConversation", conversationId: part1 };
+        return { type: "ChatConversation", conversationId: part1 }
       }
 
-      return undefined;
+      return undefined
     }
 
-    return { type: part0 };
+    return { type: part0 }
   }
 
-  return undefined;
-};
+  return undefined
+}
 
 export const encode = (route: Route): string => {
   if (route.type === "ChatConversation") {
-    return [route.type, route.conversationId].join("/");
+    return [route.type, route.conversationId].join("/")
   }
 
-  return route.type;
-};
+  return route.type
+}
 
 //
 //
@@ -109,14 +109,14 @@ export const encode = (route: Route): string => {
 //
 //
 
-export type GroupedMsg = Msg & { group: "Route" };
+export type GroupedMsg = Msg & { group: "Route" }
 
-export type Msg = RecievedRoute;
+export type Msg = RecievedRoute
 
 export const RecievedRoute = (route: Route) =>
-  ({ type: "RecievedRoute", route } as const);
+  ({ type: "RecievedRoute", route } as const)
 
-export type RecievedRoute = ReturnType<typeof RecievedRoute>;
+export type RecievedRoute = ReturnType<typeof RecievedRoute>
 
 //
 //
@@ -132,8 +132,8 @@ export const subscriptions = (): Sub<Msg> => {
     sub.map((location) =>
       RecievedRoute(decode(location.pathname) ?? { type: "Home" })
     )
-  );
-};
+  )
+}
 
 //
 //
@@ -144,5 +144,5 @@ export const subscriptions = (): Sub<Msg> => {
 //
 
 export const push = <TMsg,>(route: Route) => {
-  return Navigation.push<TMsg>(encode(route));
-};
+  return Navigation.push<TMsg>(encode(route))
+}

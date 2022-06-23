@@ -1,10 +1,10 @@
-import { either } from "fp-ts";
-import { pipe } from "fp-ts/lib/function";
-import { cmd, task } from "Core";
-import * as Navigation from "Core/Navigation";
-import * as Session from "Session";
-import * as Snackbar from "Snackbar";
-import * as View from "View";
+import { either } from "fp-ts"
+import { pipe } from "fp-ts/lib/function"
+import { cmd, task } from "Core"
+import * as Navigation from "Core/Navigation"
+import * as Session from "Session"
+import * as Snackbar from "Snackbar"
+import * as View from "View"
 
 //
 //
@@ -14,9 +14,9 @@ import * as View from "View";
 //
 //
 
-export type Model = { type: "Idle" } | { type: "LoggingOut" };
+export type Model = { type: "Idle" } | { type: "LoggingOut" }
 
-export const init: Model = { type: "Idle" };
+export const init: Model = { type: "Idle" }
 
 //
 //
@@ -31,9 +31,9 @@ export type Msg =
   | { type: "UserClickedBackdrop" }
   | { type: "UserClickedLogoutButton" }
   | { type: "LogoutFailed" }
-  | { type: "LogoutSucceeded" };
+  | { type: "LogoutSucceeded" }
 
-type OutMsg = Snackbar.GroupedMsg;
+type OutMsg = Snackbar.GroupedMsg
 
 export const update = (
   { name }: { name: string },
@@ -42,21 +42,21 @@ export const update = (
 ): [Model, cmd.Cmd<Msg>, OutMsg[]] => {
   switch (msg.type) {
     case "UserClickedCancelButton":
-      return [model, Navigation.back(), []];
+      return [model, Navigation.back(), []]
 
     case "UserClickedBackdrop":
-      return [model, Navigation.back(), []];
+      return [model, Navigation.back(), []]
 
     case "UserClickedLogoutButton":
-      return [{ type: "LoggingOut" }, logoutCmd, []];
+      return [{ type: "LoggingOut" }, logoutCmd, []]
 
     case "LogoutFailed":
-      return [model, cmd.none, []];
+      return [model, cmd.none, []]
 
     case "LogoutSucceeded":
-      return [model, cmd.none, []];
+      return [model, cmd.none, []]
   }
-};
+}
 
 const logoutCmd = pipe(
   Session.logout,
@@ -66,7 +66,7 @@ const logoutCmd = pipe(
       () => ({ type: "LogoutSucceeded" })
     )
   )
-);
+)
 
 //
 //
@@ -95,4 +95,4 @@ export const view =
           title="Logging out..."
         />
       </>
-    );
+    )

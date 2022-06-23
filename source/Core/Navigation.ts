@@ -1,8 +1,8 @@
-import { option } from "fp-ts";
-import { Cmd } from "Core/Cmd";
-import { Sub } from "Core/Sub";
-import * as History from "history";
-import * as Rx from "rxjs";
+import { option } from "fp-ts"
+import { Cmd } from "Core/Cmd"
+import { Sub } from "Core/Sub"
+import * as History from "history"
+import * as Rx from "rxjs"
 
 //
 //
@@ -12,7 +12,7 @@ import * as Rx from "rxjs";
 //
 //
 
-export type Location = History.Location;
+export type Location = History.Location
 
 //
 //
@@ -22,7 +22,7 @@ export type Location = History.Location;
 //
 //
 
-const history = History.createBrowserHistory();
+const history = History.createBrowserHistory()
 
 //
 //
@@ -32,17 +32,17 @@ const history = History.createBrowserHistory();
 //
 //
 
-const location$ = new Rx.Subject<Location>();
+const location$ = new Rx.Subject<Location>()
 
 history.listen((location) => {
-  location$.next(location.location);
-});
+  location$.next(location.location)
+})
 
 export const getLocation = () => {
-  return history.location;
-};
+  return history.location
+}
 
-export const subscription: Sub<Location> = location$;
+export const subscription: Sub<Location> = location$
 
 //
 //
@@ -54,32 +54,32 @@ export const subscription: Sub<Location> = location$;
 
 export const reload = <Msg>(): Cmd<Msg> => {
   return Rx.of(async () => {
-    window.location.reload();
+    window.location.reload()
 
-    return option.none;
-  });
-};
+    return option.none
+  })
+}
 
 export const push = <Msg>(url: string): Cmd<Msg> => {
   return Rx.of(async () => {
-    history.push(url);
+    history.push(url)
 
-    return option.none;
-  });
-};
+    return option.none
+  })
+}
 
 export const replace = <Msg>(url: string): Cmd<Msg> => {
   return Rx.of(async () => {
-    history.replace(url);
+    history.replace(url)
 
-    return option.none;
-  });
-};
+    return option.none
+  })
+}
 
 export const back = <Msg>(): Cmd<Msg> => {
   return Rx.of(async () => {
-    history.back();
+    history.back()
 
-    return option.none;
-  });
-};
+    return option.none
+  })
+}

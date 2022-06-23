@@ -3,57 +3,57 @@
  *
  * @since 0.5.0
  */
-import { pipe } from "fp-ts/lib/function";
-import { chain, IO, map } from "fp-ts/lib/IO";
-import { fold } from "fp-ts/lib/Option";
-import { sub } from "Core";
-import { Sub } from "Core/Sub";
-import { BehaviorSubject, Observable } from "rxjs";
-import { takeUntil } from "rxjs/operators";
-import { Cmd, none } from "../Cmd";
-import { Dispatch } from "../Platform";
-import { consoleDebugger } from "./console";
-import { getConnection, reduxDevToolDebugger } from "./redux-devtool";
+import { pipe } from "fp-ts/lib/function"
+import { chain, IO, map } from "fp-ts/lib/IO"
+import { fold } from "fp-ts/lib/Option"
+import { sub } from "Core"
+import { Sub } from "Core/Sub"
+import { BehaviorSubject, Observable } from "rxjs"
+import { takeUntil } from "rxjs/operators"
+import { Cmd, none } from "../Cmd"
+import { Dispatch } from "../Platform"
+import { consoleDebugger } from "./console"
+import { getConnection, reduxDevToolDebugger } from "./redux-devtool"
 
 /**
  * @category model
  * @since 0.5.0
  */
-export type Global = typeof window;
+export type Global = typeof window
 
 /**
  * @category model
  * @since 0.5.0
  */
-export type DebugData<Model, Msg> = [DebugAction<Msg>, Model];
+export type DebugData<Model, Msg> = [DebugAction<Msg>, Model]
 
 /**
  * @category model
  * @since 0.5.0
  */
-export type DebugAction<Msg> = DebugInit | DebugMsg<Msg>;
+export type DebugAction<Msg> = DebugInit | DebugMsg<Msg>
 
 /**
  * @category model
  * @since 0.5.0
  */
 export interface DebugInit {
-  type: "INIT";
+  type: "INIT"
 }
 /**
  * Creates a `DebugInit`
  * @category constructos
  * @since 0.5.0
  */
-export const debugInit = (): DebugInit => ({ type: "INIT" });
+export const debugInit = (): DebugInit => ({ type: "INIT" })
 
 /**
  * @category model
  * @since 0.5.0
  */
 export interface DebugMsg<Msg> {
-  type: "MESSAGE";
-  payload: Msg;
+  type: "MESSAGE"
+  payload: Msg
 }
 /**
  * Creates a `DebugMsg`
@@ -63,7 +63,7 @@ export interface DebugMsg<Msg> {
 export const debugMsg = <Msg>(payload: Msg): DebugMsg<Msg> => ({
   type: "MESSAGE",
   payload,
-});
+})
 
 /**
  * Extends `Msg` with a special kind of message from Debugger
@@ -73,7 +73,7 @@ export const debugMsg = <Msg>(payload: Msg): DebugMsg<Msg> => ({
 export type MsgWithDebug<Model, Msg> =
   | Msg
   | { type: "__DebugUpdateModel__"; payload: Model }
-  | { type: "__DebugApplyMsg__"; payload: Msg };
+  | { type: "__DebugApplyMsg__"; payload: Msg }
 
 /**
  * Defines a generic debugging function
@@ -81,7 +81,7 @@ export type MsgWithDebug<Model, Msg> =
  * @since 0.5.0
  */
 export interface Debug<Model, Msg> {
-  (data: DebugData<Model, Msg>): void;
+  (data: DebugData<Model, Msg>): void
 }
 
 /**
@@ -91,9 +91,9 @@ export interface Debug<Model, Msg> {
  */
 export interface Debugger<Model, Msg> {
   (d: DebuggerR<Model, Msg>): {
-    debug: Debug<Model, Msg>;
-    stop: () => void;
-  };
+    debug: Debug<Model, Msg>
+    stop: () => void
+  }
 }
 
 /**
@@ -102,9 +102,9 @@ export interface Debugger<Model, Msg> {
  * @since 0.5.0
  */
 export interface DebuggerR<Model, Msg> {
-  init: Model;
-  debug$: BehaviorSubject<DebugData<Model, Msg>>;
-  dispatch: Dispatch<MsgWithDebug<Model, Msg>>;
+  init: Model
+  debug$: BehaviorSubject<DebugData<Model, Msg>>
+  dispatch: Dispatch<MsgWithDebug<Model, Msg>>
 }
 
 //
@@ -113,7 +113,7 @@ export interface DebuggerR<Model, Msg> {
 //
 //
 
-export const DEBUG_ID = "_id";
+export const DEBUG_ID = "_id"
 
 /**
  * Adds debugging capability to the provided `update` function.
@@ -145,18 +145,18 @@ export function updateWithDebug<Model, Msg>({
   update,
   onDebugId,
 }: {
-  debug$: BehaviorSubject<DebugData<Model, Msg>>;
-  update: (msg: Msg, model: Model) => [Model, Cmd<Msg>];
-  onDebugId: (id: string) => void;
+  debug$: BehaviorSubject<DebugData<Model, Msg>>
+  update: (msg: Msg, model: Model) => [Model, Cmd<Msg>]
+  onDebugId: (id: string) => void
 }): (msg: MsgWithDebug<Model, Msg>, model: Model) => [Model, Cmd<Msg>] {
   return (msg, model) => {
     if ("type" in msg) {
       switch (msg.type) {
         case "__DebugUpdateModel__":
-          return [msg.payload, none];
+          return [msg.payload, none]
 
         case "__DebugApplyMsg__":
-          return [update(msg.payload, model)[0], none];
+          return [update(msg.payload, model)[0], none]
       }
     }
 
@@ -164,27 +164,27 @@ export function updateWithDebug<Model, Msg>({
     //
     //
 
-    const [modelNew, cmdNew] = update(msg, model);
+    const [modelNew, cmdNew] = update(msg, model)
 
-    debug$.next([debugMsg(msg), modelNew]);
+    debug$.next([debugMsg(msg), modelNew])
 
     //
     //
     //
 
-    const debugId = String(Math.floor(Math.random() * 10 ** 12));
+    const debugId = String(Math.floor(Math.random() * 10 ** 12))
 
     // @ts-ignore
-    modelNew[DEBUG_ID] = debugId;
+    modelNew[DEBUG_ID] = debugId
 
-    onDebugId(debugId);
+    onDebugId(debugId)
 
     //
     //
     //
 
-    return [modelNew, cmdNew];
-  };
+    return [modelNew, cmdNew]
+  }
 }
 
 /**
@@ -203,12 +203,12 @@ export function runDebugger<Model, Msg>(
       getConnection<Model, Msg>(win),
       map(fold(() => consoleDebugger<Model, Msg>(), reduxDevToolDebugger)),
       chain((Debugger) => () => {
-        const { debug, stop } = Debugger(deps);
+        const { debug, stop } = Debugger(deps)
 
         deps.debug$.pipe(takeUntil(stop$)).subscribe({
           next: debug,
           complete: stop,
-        });
+        })
       })
-    );
+    )
 }

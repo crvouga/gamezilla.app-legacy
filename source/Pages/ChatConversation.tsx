@@ -1,7 +1,7 @@
-import { Cmd } from "Core/Cmd";
-import * as Navigation from "Core/Navigation";
-import * as Route from "Route";
-import * as View from "View";
+import { Cmd } from "Core/Cmd"
+import * as Navigation from "Core/Navigation"
+import * as Route from "Route"
+import * as View from "View"
 
 //
 //
@@ -11,9 +11,9 @@ import * as View from "View";
 //
 //
 
-export type Model = {};
+export type Model = {}
 
-export const init: Model = {};
+export const init: Model = {}
 
 //
 //
@@ -25,17 +25,17 @@ export const init: Model = {};
 
 export type Msg =
   | { type: "UserClickedBackButton" }
-  | { type: "UserClickedSendMessageButton" };
+  | { type: "UserClickedSendMessageButton" }
 
 export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
   switch (msg.type) {
     case "UserClickedBackButton":
-      return [model, Navigation.back()];
+      return [model, Navigation.back()]
 
     case "UserClickedSendMessageButton":
-      return [model, Navigation.push(Route.encode({ type: "ChatNew" }))];
+      return [model, Navigation.push(Route.encode({ type: "ChatNew" }))]
   }
-};
+}
 
 //
 //
@@ -59,4 +59,4 @@ export const view =
           title="Chat"
         />
       </View.Page>
-    );
+    )

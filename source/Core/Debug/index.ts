@@ -8,7 +8,7 @@
  * @since 0.5.0
  */
 
-import * as HtmlDebugger from './Html'
+import * as HtmlDebugger from "./Html"
 
 /**
  * @deprecated Please use the specialized version exposed by `Debug/Html` module
@@ -22,4 +22,5 @@ export const programWithDebugger = HtmlDebugger.programWithDebugger
  * @category constructors
  * @since 0.5.0
  */
-export const programWithDebuggerWithFlags = HtmlDebugger.programWithDebuggerWithFlags
+export const programWithDebuggerWithFlags =
+  HtmlDebugger.programWithDebuggerWithFlags

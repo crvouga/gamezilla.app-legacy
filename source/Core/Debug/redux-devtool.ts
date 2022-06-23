@@ -6,22 +6,22 @@
  * @since 0.5.0
  */
 
-import { sequenceT } from "fp-ts/lib/Apply";
-import * as E from "fp-ts/lib/Either";
-import { pipe } from "fp-ts/lib/function";
-import * as IO_ from "fp-ts/lib/IO";
-import * as O from "fp-ts/lib/Option";
-import { Dispatch } from "../Platform";
-import { Debug, Debugger, DebuggerR, Global, MsgWithDebug } from "./commons";
+import { sequenceT } from "fp-ts/lib/Apply"
+import * as E from "fp-ts/lib/Either"
+import { pipe } from "fp-ts/lib/function"
+import * as IO_ from "fp-ts/lib/IO"
+import * as O from "fp-ts/lib/Option"
+import { Dispatch } from "../Platform"
+import { Debug, Debugger, DebuggerR, Global, MsgWithDebug } from "./commons"
 
 // --- Aliases for docs
-import Option = O.Option;
-import Either = E.Either;
-import IO = IO_.IO;
+import Option = O.Option
+import Either = E.Either
+import IO = IO_.IO
 
-const sequenceTEither = sequenceT(E.either);
+const sequenceTEither = sequenceT(E.either)
 
-type Unsubscription = () => void;
+type Unsubscription = () => void
 
 /**
  * Defines a _Redux DevTool Extension_ object.
@@ -29,7 +29,7 @@ type Unsubscription = () => void;
  * @since 0.5.0
  */
 export interface Extension {
-  connect: <Model, Msg>() => Connection<Model, Msg>;
+  connect: <Model, Msg>() => Connection<Model, Msg>
 }
 
 /**
@@ -38,27 +38,27 @@ export interface Extension {
  * @since 0.5.0
  */
 export interface Connection<Model, Msg> {
-  subscribe: (listener?: Dispatch<DevToolMsg>) => Unsubscription;
-  send(action: null, state: LiftedState<Model>): void;
-  send(action: Msg, state: Model): void;
-  init: (state: Model) => void;
-  error: (message: unknown) => void;
-  unsubscribe: () => void;
+  subscribe: (listener?: Dispatch<DevToolMsg>) => Unsubscription
+  send(action: null, state: LiftedState<Model>): void
+  send(action: Msg, state: Model): void
+  init: (state: Model) => void
+  error: (message: unknown) => void
+  unsubscribe: () => void
 }
 
-type DevToolMsg = Start | Action | Monitor;
+type DevToolMsg = Start | Action | Monitor
 
 interface Start {
-  type: "START";
+  type: "START"
 }
 
 interface Action {
-  type: "ACTION";
-  payload: unknown;
+  type: "ACTION"
+  payload: unknown
 }
 
 interface Monitor {
-  type: "DISPATCH";
+  type: "DISPATCH"
   payload: {
     type:
       | "JUMP_TO_STATE"
@@ -67,24 +67,24 @@ interface Monitor {
       | "ROLLBACK"
       | "COMMIT"
       | "IMPORT_STATE"
-      | "TOGGLE_ACTION";
-    [k: string]: unknown;
-  };
-  [k: string]: unknown;
+      | "TOGGLE_ACTION"
+    [k: string]: unknown
+  }
+  [k: string]: unknown
 }
 
 interface LiftedState<Model> {
-  actionsById: Record<string, unknown>;
-  computedStates: Array<{ state: Model }>;
-  currentStateIndex: number;
-  nextActionId: number;
-  skippedActionIds: number[];
-  stagedActionIds: number[];
-  isPaused: boolean;
+  actionsById: Record<string, unknown>
+  computedStates: Array<{ state: Model }>
+  currentStateIndex: number
+  nextActionId: number
+  skippedActionIds: number[]
+  stagedActionIds: number[]
+  isPaused: boolean
 }
 
 interface DevToolHandlerR<Model, Msg> extends DebuggerR<Model, Msg> {
-  connection: Connection<Model, Msg>;
+  connection: Connection<Model, Msg>
 }
 
 /**
@@ -98,7 +98,7 @@ export function getConnection<Model, Msg>(
   return () =>
     hasExtension(global)
       ? O.some(global.__REDUX_DEVTOOLS_EXTENSION__.connect())
-      : O.none;
+      : O.none
 }
 
 /**
@@ -110,7 +110,7 @@ export function getConnection<Model, Msg>(
 function hasExtension(
   global: Global
 ): global is Global & { __REDUX_DEVTOOLS_EXTENSION__: Extension } {
-  return "__REDUX_DEVTOOLS_EXTENSION__" in global;
+  return "__REDUX_DEVTOOLS_EXTENSION__" in global
 }
 
 /**
@@ -122,16 +122,16 @@ export function reduxDevToolDebugger<Model, Msg>(
   connection: Connection<Model, Msg>
 ): Debugger<Model, Msg> {
   return (d) => {
-    const deps = { ...d, connection };
+    const deps = { ...d, connection }
 
     // --- Subscribe to extension in order to receive messages from monitor
-    connection.subscribe(handleSubscription(deps));
+    connection.subscribe(handleSubscription(deps))
 
     return {
       debug: handleActions(deps),
       stop: connection.unsubscribe,
-    };
-  };
+    }
+  }
 }
 
 /**
@@ -141,7 +141,7 @@ export function reduxDevToolDebugger<Model, Msg>(
 function handleSubscription<Model, Msg>(
   deps: DevToolHandlerR<Model, Msg>
 ): (msg: DevToolMsg) => void {
-  const handler = handleIncomingMsg(deps);
+  const handler = handleIncomingMsg(deps)
 
   return (msg) =>
     pipe(
@@ -150,7 +150,7 @@ function handleSubscription<Model, Msg>(
         (err) => console.warn("[REDUX DEV TOOL]", err),
         (eff) => eff()
       )
-    );
+    )
 }
 
 /**
@@ -170,36 +170,36 @@ function handleIncomingMsg<Model, Msg>({
   const dispatchToApp =
     (m: unknown): IO<void> =>
     () =>
-      dispatch(m as Msg);
-  const reinit: IO<void> = () => connection.init(init);
+      dispatch(m as Msg)
+  const reinit: IO<void> = () => connection.init(init)
   const update = (payload: Model): IO<void> =>
-    dispatchToApp({ type: "__DebugUpdateModel__", payload });
+    dispatchToApp({ type: "__DebugUpdateModel__", payload })
   const restart =
     (model: Model): IO<void> =>
     () =>
-      connection.init(model);
+      connection.init(model)
   const liftState =
     (state: LiftedState<Model>): IO<void> =>
     () =>
-      connection.send(null, state);
-  const toggle = toggleAction(dispatch);
+      connection.send(null, state)
+  const toggle = toggleAction(dispatch)
 
   return (msg) => {
     switch (msg.type) {
       case "START":
-        return E.right(reinit);
+        return E.right(reinit)
 
       case "ACTION":
         return pipe(
           E.parseJSON(String(msg.payload), E.toError),
           E.bimap((e) => e.message, dispatchToApp)
-        );
+        )
 
       case "DISPATCH":
         switch (msg.payload.type) {
           case "JUMP_TO_STATE":
           case "JUMP_TO_ACTION":
-            return pipe(parseJump<Model>(msg), E.map(update));
+            return pipe(parseJump<Model>(msg), E.map(update))
 
           case "RESET":
             return E.right(
@@ -207,7 +207,7 @@ function handleIncomingMsg<Model, Msg>({
                 update(init),
                 IO_.chain(() => reinit)
               )
-            );
+            )
 
           case "ROLLBACK":
             return pipe(
@@ -218,10 +218,10 @@ function handleIncomingMsg<Model, Msg>({
                   IO_.chain(() => restart(m))
                 )
               )
-            );
+            )
 
           case "COMMIT":
-            return E.right(restart(debug$.getValue()[1]));
+            return E.right(restart(debug$.getValue()[1]))
 
           case "IMPORT_STATE":
             return pipe(
@@ -237,7 +237,7 @@ function handleIncomingMsg<Model, Msg>({
                   IO_.chain(() => liftState(liftedState))
                 )
               )
-            );
+            )
 
           case "TOGGLE_ACTION":
             return pipe(
@@ -245,13 +245,13 @@ function handleIncomingMsg<Model, Msg>({
               E.map(([id, liftedState]) =>
                 pipe(toggle(id, liftedState), IO_.chain(liftState))
               )
-            );
+            )
 
           default:
-            return E.left(msg.payload.type);
+            return E.left(msg.payload.type)
         }
     }
-  };
+  }
 }
 
 /**
@@ -266,7 +266,7 @@ function handleActions<Model, Msg>({
   return ([action, model]) =>
     action.type === "MESSAGE"
       ? connection.send(action.payload, model)
-      : undefined;
+      : undefined
 }
 
 /**
@@ -282,7 +282,7 @@ function parseJump<Model>(msg: Monitor): Either<string, Model> {
       // @ts-ignore
       (u) => u as Model
     )
-  );
+  )
 }
 
 /**
@@ -298,7 +298,7 @@ function parseRollback<Model>(msg: Monitor): Either<string, Model> {
       // @ts-ignore
       (u) => u as Model
     )
-  );
+  )
 }
 
 /**
@@ -312,7 +312,7 @@ function parseImportState<Model>(
   return typeof msg.payload.nextLiftedState === "object" &&
     msg.payload.nextLiftedState !== null
     ? E.right(msg.payload.nextLiftedState as LiftedState<Model>)
-    : E.left("IMPORT_STATE message has some bad payload...");
+    : E.left("IMPORT_STATE message has some bad payload...")
 }
 
 /**
@@ -327,7 +327,7 @@ function parseToggleAction<Model>(
     msg.payload.id,
     E.fromNullable("TOGGLE_ACTION message has some bad payload..."),
     E.map((x) => x as number)
-  );
+  )
 
   const parseState = pipe(
     E.parseJSON(String(msg.state), E.toError),
@@ -336,9 +336,9 @@ function parseToggleAction<Model>(
       // @ts-ignore
       (u) => u as LiftedState<Model>
     )
-  );
+  )
 
-  return sequenceTEither(getId, parseState);
+  return sequenceTEither(getId, parseState)
 }
 
 /**
@@ -354,49 +354,49 @@ function toggleAction<Model, Msg>(
   dispatch: Dispatch<MsgWithDebug<Model, Msg>>
 ): (id: number, liftedState: LiftedState<Model>) => IO<LiftedState<Model>> {
   return (id, liftedState) => () => {
-    const state = JSON.parse(JSON.stringify(liftedState)); // poor man deep clone...
+    const state = JSON.parse(JSON.stringify(liftedState)) // poor man deep clone...
 
     const { skippedActionIds, stagedActionIds, computedStates, actionsById } =
-      state;
+      state
 
-    const skippedIndex = skippedActionIds.indexOf(id);
-    const skipped = skippedIndex !== -1;
-    const actionIndex = stagedActionIds.indexOf(id);
+    const skippedIndex = skippedActionIds.indexOf(id)
+    const skipped = skippedIndex !== -1
+    const actionIndex = stagedActionIds.indexOf(id)
 
     if (actionIndex === -1) {
-      return state;
+      return state
     }
 
     dispatch({
       type: "__DebugUpdateModel__",
       payload: computedStates[actionIndex - 1].state,
-    });
+    })
 
-    const start = skipped ? actionIndex : actionIndex + 1;
-    const end = stagedActionIds.length;
+    const start = skipped ? actionIndex : actionIndex + 1
+    const end = stagedActionIds.length
 
     for (let i = start; i < end; i++) {
-      const currentActionId = stagedActionIds[i];
+      const currentActionId = stagedActionIds[i]
 
       if (
         i !== actionIndex &&
         skippedActionIds.indexOf(currentActionId) !== -1
       ) {
-        continue; // it's already skipped
+        continue // it's already skipped
       }
 
       dispatch({
         type: "__DebugApplyMsg__",
         payload: actionsById[currentActionId].action,
-      });
+      })
     }
 
     if (skipped) {
-      skippedActionIds.splice(skippedIndex, 1);
+      skippedActionIds.splice(skippedIndex, 1)
     } else {
-      skippedActionIds.push(id);
+      skippedActionIds.push(id)
     }
 
-    return state;
-  };
+    return state
+  }
 }

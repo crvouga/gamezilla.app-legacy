@@ -28,11 +28,11 @@
  * @since 0.5.3
  */
 
-import { sub } from "Core";
-import { BehaviorSubject, EMPTY, Observable } from "rxjs";
-import { Cmd } from "../Cmd";
-import { Html, Program, program } from "../Html";
-import { Sub } from "../Sub";
+import { sub } from "Core"
+import { BehaviorSubject, EMPTY, Observable } from "rxjs"
+import { Cmd } from "../Cmd"
+import { Html, Program, program } from "../Html"
+import { Sub } from "../Sub"
 import {
   DebugData,
   DebuggerR,
@@ -40,7 +40,7 @@ import {
   DEBUG_ID,
   runDebugger,
   updateWithDebug,
-} from "./commons";
+} from "./commons"
 
 /**
  * Adds a debugging capability to a generic `Html` `Program`.
@@ -72,7 +72,7 @@ export function programWithDebugger<Model, Msg, Dom>(
   view: (model: Model) => Html<Dom, Msg>,
   subscriptions?: (model: Model) => Sub<Msg>
 ): Program<Model, Msg, Dom> {
-  return createProgram(EMPTY, init, update, view, subscriptions);
+  return createProgram(EMPTY, init, update, view, subscriptions)
 }
 
 /**
@@ -89,7 +89,7 @@ export function programWithDebuggerWithStop<Model, Msg, Dom>(
   subscriptions?: (model: S) => Sub<M>
 ) => Program<S, M, D> {
   return (init, update, view, subscriptions) =>
-    createProgram(stopDebuggerOn, init, update, view, subscriptions);
+    createProgram(stopDebuggerOn, init, update, view, subscriptions)
 }
 
 /**
@@ -104,7 +104,7 @@ export function programWithDebuggerWithFlags<Flags, Model, Msg, Dom>(
   subscriptions?: (model: Model) => Sub<Msg>
 ): (flags: Flags) => Program<Model, Msg, Dom> {
   return (flags) =>
-    programWithDebugger(init(flags), update, view, subscriptions);
+    programWithDebugger(init(flags), update, view, subscriptions)
 }
 
 /**
@@ -121,10 +121,10 @@ export function programWithDebuggerWithFlagsWithStop<Model, Msg, Dom>(
   subscriptions?: (model: S) => Sub<M>
 ) => (flags: Flags) => Program<S, M, D> {
   return (init, update, view, subscriptions) => (flags) =>
-    createProgram(stopDebuggerOn, init(flags), update, view, subscriptions);
+    createProgram(stopDebuggerOn, init(flags), update, view, subscriptions)
 }
 
-const subNone = () => sub.none;
+const subNone = () => sub.none
 
 // --- Internal
 function createProgram<Model, Msg, Dom>(
@@ -134,16 +134,16 @@ function createProgram<Model, Msg, Dom>(
   view: (model: Model) => Html<Dom, Msg>,
   subscriptions?: (model: Model) => Sub<Msg>
 ): Program<Model, Msg, Dom> {
-  const Debugger = runDebugger<Model, Msg>(window, stopDebuggerOn);
+  const Debugger = runDebugger<Model, Msg>(window, stopDebuggerOn)
 
-  const initModel = init[0];
+  const initModel = init[0]
 
   const debug$ = new BehaviorSubject<DebugData<Model, Msg>>([
     debugInit(),
     initModel,
-  ]);
+  ])
 
-  let currentDebugId: string | null = null;
+  let currentDebugId: string | null = null
 
   const p = program(
     init,
@@ -151,7 +151,7 @@ function createProgram<Model, Msg, Dom>(
       debug$,
       update,
       onDebugId: (debugId) => {
-        currentDebugId = debugId;
+        currentDebugId = debugId
       },
     }),
     view,
@@ -160,14 +160,14 @@ function createProgram<Model, Msg, Dom>(
         // @ts-ignore
         model[DEBUG_ID] === currentDebugId
       ) {
-        return subscriptions?.(model) ?? sub.none;
+        return subscriptions?.(model) ?? sub.none
       }
 
       // ignored subscriptions when time travel debugging
 
-      return sub.none;
+      return sub.none
     }
-  );
+  )
 
   // --- Run the debugger
   // --- we need to make a type assertion for `dispatch` because we cannot change the intrinsic `msg` type of `program`;
@@ -176,7 +176,7 @@ function createProgram<Model, Msg, Dom>(
     debug$,
     init: initModel,
     dispatch: p.dispatch as DebuggerR<Model, Msg>["dispatch"],
-  })();
+  })()
 
-  return p;
+  return p
 }

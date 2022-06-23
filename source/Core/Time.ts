@@ -6,10 +6,10 @@
  * @since 0.5.0
  */
 
-import { Task } from "fp-ts/lib/Task";
-import * as Rx from "rxjs";
+import { Task } from "fp-ts/lib/Task"
+import * as Rx from "rxjs"
 
-import { Sub } from "./Sub";
+import { Sub } from "./Sub"
 
 /**
  * Get the current unix time as a `Task`.
@@ -17,7 +17,7 @@ import { Sub } from "./Sub";
  * @since 0.5.0
  */
 export function now(): Task<number> {
-  return () => Promise.resolve(new Date().getTime());
+  return () => Promise.resolve(new Date().getTime())
 }
 
 //
@@ -28,31 +28,31 @@ export function now(): Task<number> {
 //
 //
 
-export type Time = number;
+export type Time = number
 
-const intervals: { [interval: number]: Rx.Subject<number> } = {};
+const intervals: { [interval: number]: Rx.Subject<number> } = {}
 
 const onTimeout = (time: number) => {
-  const subj = intervals[time];
+  const subj = intervals[time]
 
   if (subj && subj.observed) {
-    subj.next(new Date().getTime());
-    setTimeout(() => onTimeout(time), time);
+    subj.next(new Date().getTime())
+    setTimeout(() => onTimeout(time), time)
 
-    return;
+    return
   }
 
-  delete intervals[time];
-};
+  delete intervals[time]
+}
 
 export const every = <Msg>(time: number, f: (time: Time) => Msg): Sub<Msg> => {
-  let subj = intervals[time];
+  let subj = intervals[time]
 
   if (subj === undefined) {
-    intervals[time] = subj = new Rx.Subject<number>();
+    intervals[time] = subj = new Rx.Subject<number>()
 
-    setTimeout(() => onTimeout(time), time);
+    setTimeout(() => onTimeout(time), time)
   }
 
-  return subj.pipe(Rx.map(() => f(new Date().getTime())));
-};
+  return subj.pipe(Rx.map(() => f(new Date().getTime())))
+}

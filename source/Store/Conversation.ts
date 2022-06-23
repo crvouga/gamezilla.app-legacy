@@ -1,7 +1,7 @@
-import { definitions } from "supabase-types";
-import * as Supabase from "Supabase";
-import { either, task } from "fp-ts";
-import * as Result from "Core/Result";
+import { definitions } from "supabase-types"
+import * as Supabase from "Supabase"
+import { either, task } from "fp-ts"
+import * as Result from "Core/Result"
 
 //
 //
@@ -12,10 +12,10 @@ import * as Result from "Core/Result";
 //
 
 export type Conversation = {
-  conversationId: string;
-};
+  conversationId: string
+}
 
-type Problem = { message: string };
+type Problem = { message: string }
 
 //
 //
@@ -25,27 +25,27 @@ type Problem = { message: string };
 //
 //
 
-export type Msg = Created | Create;
+export type Msg = Created | Create
 
 export const Create = (userIds: string[]) => {
   return {
     type: "Conversation/Create",
     group: "Store",
     userIds,
-  } as const;
-};
+  } as const
+}
 
-export type Create = ReturnType<typeof Create>;
+export type Create = ReturnType<typeof Create>
 
 export const Created = (result: Result.Result<Problem, Conversation>) => {
   return {
     type: "Conversation/Created",
     group: "Store",
     result,
-  } as const;
-};
+  } as const
+}
 
-export type Created = ReturnType<typeof Created>;
+export type Created = ReturnType<typeof Created>
 
 //
 //
@@ -58,19 +58,19 @@ export type Created = ReturnType<typeof Created>;
 const fromRow = (row: definitions["conversation"]): Conversation => {
   return {
     conversationId: row.id,
-  };
-};
+  }
+}
 
 export const insert =
   (): task.Task<either.Either<Problem, Conversation>> => async () => {
     const response = await Supabase.client
       .from<definitions["conversation"]>("conversation")
       .insert({})
-      .single();
+      .single()
 
     if (response.error) {
-      return either.left({ message: response.error.message });
+      return either.left({ message: response.error.message })
     }
 
-    return either.right(fromRow(response.data));
-  };
+    return either.right(fromRow(response.data))
+  }
