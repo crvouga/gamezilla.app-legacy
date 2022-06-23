@@ -26,6 +26,7 @@ export type Model = {
   profiles_conversations: {
     [id: string]: ProfilesConversationsModel
   }
+  queries: { [id: string]: Query }
 }
 
 export type ProfileModel = RemoteData.RemoteData<Problem, Profile.Profile>
@@ -41,6 +42,20 @@ export type ProfilesConversationsModel = RemoteData.RemoteData<
 >
 
 type ProfilesConversations = { userId: string; conversationId: string }
+
+type Query =
+  | {
+      type: "Profile/Search"
+      id: string
+      searchText: string
+      query: RemoteData.RemoteData<Problem, string[]>
+    }
+  | {
+      type: "Profile/Get"
+      id: string
+      userId: string
+      query: RemoteData.RemoteData<Problem, string>
+    }
 
 //
 //
@@ -60,6 +75,7 @@ export const init: Model = {
   profile: {},
   conversation: {},
   profiles_conversations: {},
+  queries: {},
 }
 
 //
@@ -137,8 +153,18 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>, Action[]] => {
 
     case "Profile/Get":
       return [
-        mapProfile(msg.userId, () => RemoteData.Loading, model),
-        loadProfile(msg.userId),
+        {
+          ...mapProfile(msg.userId, () => RemoteData.Loading, model),
+          queries: {
+            ...model.queries,
+            [`Profile/Get/${msg.userId}`]: {
+              type: "Profile/Get",
+              userId: msg.userId,
+              query: RemoteData.Loading,
+            },
+          },
+        },
+        getProfile(msg.userId),
         [],
       ]
 
@@ -190,7 +216,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>, Action[]] => {
         case "Ok":
           return [
             mapProfile(msg.userId, () => RemoteData.NotAsked, model),
-            loadProfile(msg.userId),
+            getProfile(msg.userId),
             [],
           ]
       }
@@ -276,7 +302,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>, Action[]] => {
   }
 }
 
-const loadProfile = (userId: string) => {
+const getProfile = (userId: string) => {
   return pipe(
     Profile.load({ userId }),
     perform((result) => Profile.Got(userId, result)),
