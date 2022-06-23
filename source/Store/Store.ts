@@ -1,8 +1,8 @@
 import { pipe } from "fp-ts/lib/function";
-import { cmd } from "Framework";
-import { Cmd } from "Framework/Cmd";
-import * as RemoteData from "Framework/RemoteData";
-import { perform } from "Framework/Task";
+import { cmd } from "Core";
+import { Cmd } from "Core/Cmd";
+import * as RemoteData from "Core/RemoteData";
+import { perform } from "Core/Task";
 import { sort, ascend, editDistance, exhaustive } from "Utility";
 import * as Snackbar from "Snackbar";
 import * as Conversation from "./Conversation";

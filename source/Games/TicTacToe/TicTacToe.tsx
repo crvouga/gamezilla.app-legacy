@@ -1,6 +1,6 @@
-import { cmd } from "Framework";
-import { Cmd } from "Framework/Cmd";
-import * as Navigation from "Framework/Navigation";
+import { cmd } from "Core";
+import { Cmd } from "Core/Cmd";
+import * as Navigation from "Core/Navigation";
 import * as View from "View";
 import * as Board from "./Board";
 

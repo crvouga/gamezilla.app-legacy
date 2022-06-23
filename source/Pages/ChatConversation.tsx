@@ -1,5 +1,5 @@
-import { Cmd } from "Framework/Cmd";
-import * as Navigation from "Framework/Navigation";
+import { Cmd } from "Core/Cmd";
+import * as Navigation from "Core/Navigation";
 import * as Route from "Route";
 import * as View from "View";
 

@@ -1,7 +1,7 @@
 import { pipe } from "fp-ts/lib/function";
-import { cmd } from "Framework";
-import * as Navigation from "Framework/Navigation";
-import { perform } from "Framework/Task";
+import { cmd } from "Core";
+import * as Navigation from "Core/Navigation";
+import { perform } from "Core/Task";
 import * as ProfileAvatar from "ProfileAvatar";
 import * as Snackbar from "Snackbar";
 import * as Store from "Store";
