@@ -197,6 +197,8 @@ export const DialogTitle = Mui.DialogTitle;
 
 export const DialogActions = Mui.DialogActions;
 
+export const Alert = Mui.Alert;
+
 export const CircularProgress = Mui.CircularProgress;
 
 export const ListItemAvatar = Mui.ListItemAvatar;

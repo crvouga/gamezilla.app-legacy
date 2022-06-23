@@ -206,12 +206,33 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>, Action[]] => {
         [],
       ];
 
-    case "Profile/Created":
-      return [
-        mapProfile(msg.userId, () => RemoteData.fromResult(msg.result), model),
-        cmd.none,
-        [],
-      ];
+    case "Profile/Created": {
+      const { result } = msg;
+
+      switch (result.type) {
+        case "Err":
+          return [
+            mapProfile(
+              msg.userId,
+              () => RemoteData.Failure(result.error),
+              model
+            ),
+            cmd.none,
+            [Snackbar.EnqueuedSnackbarError(result.error.message)],
+          ];
+
+        case "Ok":
+          return [
+            mapProfile(
+              msg.userId,
+              () => RemoteData.Success(result.value),
+              model
+            ),
+            cmd.none,
+            [],
+          ];
+      }
+    }
 
     case "Profile/Search":
       return [
