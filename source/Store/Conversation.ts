@@ -1,6 +1,7 @@
 import { definitions } from "supabase-types";
 import * as Supabase from "Supabase";
 import { either, task } from "fp-ts";
+import * as Result from "Core/Result";
 
 //
 //
@@ -13,6 +14,38 @@ import { either, task } from "fp-ts";
 export type Conversation = {
   conversationId: string;
 };
+
+type Problem = { message: string };
+
+//
+//
+//
+// Msg
+//
+//
+//
+
+export type Msg = Created | Create;
+
+export const Create = (userIds: string[]) => {
+  return {
+    type: "Conversation/Create",
+    group: "Store",
+    userIds,
+  } as const;
+};
+
+export type Create = ReturnType<typeof Create>;
+
+export const Created = (result: Result.Result<Problem, Conversation>) => {
+  return {
+    type: "Conversation/Created",
+    group: "Store",
+    result,
+  } as const;
+};
+
+export type Created = ReturnType<typeof Created>;
 
 //
 //
@@ -27,8 +60,6 @@ const fromRow = (row: definitions["conversation"]): Conversation => {
     conversationId: row.id,
   };
 };
-
-type Problem = { message: string };
 
 export const insert =
   (): task.Task<either.Either<Problem, Conversation>> => async () => {
