@@ -24,6 +24,7 @@ import * as ProfileUpdateAvatar from "./ProfileUpdateAvatar";
 import * as ProfileUpdateName from "./ProfileUpdateName";
 import * as ProfileUpdateTheme from "./ProfileUpdateTheme";
 import * as ProfileUpdateUsername from "./ProfileUpdateUsername";
+import * as ChatConversation from "./ChatConversation";
 
 //
 //
@@ -48,6 +49,7 @@ export type Model =
   | (ProfileUpdateTheme.Model & { page: "ProfileUpdateTheme" })
   | (Chat.Model & { page: "Chat" })
   | (ChatNew.Model & { page: "ChatNew" })
+  | (ChatConversation.Model & { page: "ChatConversation" })
   | { page: "Game" }
   | { page: "Loading" };
 
@@ -84,6 +86,9 @@ export const initReady = (
           cmd.map((msg) => ({ ...msg, page: "ChatNew" }))
         ),
       ];
+
+    case "ChatConversation":
+      return [{ ...ChatConversation.init, page: "ChatConversation" }, cmd.none];
 
     case "Game":
       return [{ page: "Game" }, cmd.none];
@@ -149,6 +154,7 @@ export const initSessionMissing = (route: Route.Route): [Model, Cmd<Msg>] => {
 
     case "Account":
     case "Chat":
+    case "ChatConversation":
     case "ChatNew":
     case "Game":
     case "Home":
@@ -188,6 +194,7 @@ export const initProfileMissing = (
     case "Account":
     case "Chat":
     case "ChatNew":
+    case "ChatConversation":
     case "Game":
     case "Home":
     case "ProfileDelete":
@@ -227,6 +234,7 @@ export type Msg =
   | (ProfileUpdateUsername.Msg & { page: "ProfileUpdateUsername" })
   | (Chat.Msg & { page: "Chat" })
   | (ChatNew.Msg & { page: "ChatNew" })
+  | (ChatConversation.Msg & { page: "ChatConversation" })
   | (ProfileUpdateTheme.Msg & { page: "ProfileUpdateTheme" })
   | (Game.Msg & { page: "Games" });
 
@@ -327,6 +335,15 @@ export const updateReady = (
       }
       return [model, cmd.none, []];
 
+    case "ChatConversation":
+      if (msg.page === "ChatConversation") {
+        return tagUpdate(
+          "ChatConversation",
+          ChatConversation.update(msg, model)
+        );
+      }
+      return [model, cmd.none, []];
+
     case "ProfileUpdateTheme":
       if (msg.page === "ProfileUpdateTheme") {
         return tagUpdate(
@@ -383,6 +400,7 @@ export const updateProfileMissing = (
     case "ProfileUpdateUsername":
     case "Chat":
     case "ChatNew":
+    case "ChatConversation":
     case "ProfileUpdateTheme":
     case "Game":
     case "Loading":
@@ -418,6 +436,7 @@ export const updateSessionMissing = (
     case "ProfileUpdateUsername":
     case "Chat":
     case "ChatNew":
+    case "ChatConversation":
     case "ProfileUpdateTheme":
     case "Game":
     case "Loading":
@@ -440,19 +459,35 @@ export const updateSessionMissing = (
 export const subscriptions = (model: Model): Sub<Msg> => {
   switch (model.page) {
     case "Account":
+      return sub.none;
     case "Chat":
+      return sub.none;
     case "ChatNew":
+      return sub.none;
+    case "ChatConversation":
+      return sub.none;
     case "Game":
+      return sub.none;
     case "Home":
+      return sub.none;
     case "Login":
+      return sub.none;
     case "Logout":
+      return sub.none;
     case "ProfileCreate":
+      return sub.none;
     case "ProfileDelete":
+      return sub.none;
     case "ProfileUpdate":
+      return sub.none;
     case "ProfileUpdateAvatar":
+      return sub.none;
     case "ProfileUpdateTheme":
+      return sub.none;
     case "ProfileUpdateUsername":
+      return sub.none;
     case "ProfileUpdateName":
+      return sub.none;
     case "Loading":
       return sub.none;
 
@@ -486,6 +521,9 @@ export const viewReady = (
 
     case "ChatNew":
       return tagView("ChatNew", ChatNew.view(store, model));
+
+    case "ChatConversation":
+      return tagView("ChatConversation", ChatConversation.view(model));
 
     case "Home":
       return tagView("Home", Home.view({ profile, game }, model));
@@ -548,6 +586,7 @@ export const viewProfileMissing = (
     case "Account":
     case "Chat":
     case "ChatNew":
+    case "ChatConversation":
     case "Home":
     case "Login":
     case "ProfileDelete":
@@ -573,6 +612,7 @@ export const viewSessionMissing = (model: Model): View.View<Msg> => {
     case "Account":
     case "Chat":
     case "ChatNew":
+    case "ChatConversation":
     case "Home":
     case "ProfileCreate":
     case "Logout":

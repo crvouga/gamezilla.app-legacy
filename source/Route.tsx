@@ -25,7 +25,8 @@ export type Route =
   | ProfileUpdateTheme
   | Game
   | Chat
-  | ChatNew;
+  | ChatNew
+  | ChatConversation;
 
 export type Account = { type: "Account" };
 export type Home = { type: "Home" };
@@ -41,6 +42,10 @@ export type ProfileUpdateTheme = { type: "ProfileUpdateTheme" };
 export type Game = { type: "Game" };
 export type Chat = { type: "Chat" };
 export type ChatNew = { type: "ChatNew" };
+export type ChatConversation = {
+  type: "ChatConversation";
+  conversationId: string;
+};
 
 //
 //
@@ -63,6 +68,7 @@ const routesTypes: { [routeType in Route["type"]]: string } = {
   Game: "Game",
   Chat: "Chat",
   ChatNew: "ChatNew",
+  ChatConversation: "ChatConversation",
 };
 
 const isRouteType = (routeType: unknown): routeType is Route["type"] => {
@@ -70,9 +76,17 @@ const isRouteType = (routeType: unknown): routeType is Route["type"] => {
 };
 
 export const decode = (pathname: string): Route | undefined => {
-  const [part0] = pathname.substring(1).split("/");
+  const [part0, part1] = pathname.substring(1).split("/");
 
   if (isRouteType(part0)) {
+    if (part0 === "ChatConversation") {
+      if (typeof part1 === "string") {
+        return { type: "ChatConversation", conversationId: part1 };
+      }
+
+      return undefined;
+    }
+
     return { type: part0 };
   }
 
@@ -80,6 +94,10 @@ export const decode = (pathname: string): Route | undefined => {
 };
 
 export const encode = (route: Route): string => {
+  if (route.type === "ChatConversation") {
+    return [route.type, route.conversationId].join("/");
+  }
+
   return route.type;
 };
 
