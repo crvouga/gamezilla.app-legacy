@@ -28,7 +28,7 @@
  * @since 0.5.3
  */
 
-import { sub } from "Framework";
+import { sub } from "Core";
 import { BehaviorSubject, EMPTY, Observable } from "rxjs";
 import { Cmd } from "../Cmd";
 import { Html, Program, program } from "../Html";

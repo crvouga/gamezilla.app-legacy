@@ -1,6 +1,6 @@
 import { pipe } from "fp-ts/lib/function";
-import { cmd } from "Framework";
-import { Cmd } from "Framework/Cmd";
+import { cmd } from "Core";
+import { Cmd } from "Core/Cmd";
 
 export const exhaustive = (
   discriminatedUnionType: "Missing Case Error"

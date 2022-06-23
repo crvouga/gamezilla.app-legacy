@@ -1,4 +1,4 @@
-import * as Keyboard from "Framework/Keyboard";
+import * as Keyboard from "Core/Keyboard";
 import * as Position from "./Position";
 
 export type Direction = "left" | "up" | "right" | "down";

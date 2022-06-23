@@ -1,7 +1,7 @@
 import { pipe } from "fp-ts/lib/function";
-import { sub } from "Framework";
-import * as Navigation from "Framework/Navigation";
-import { Sub } from "Framework/Sub";
+import { sub } from "Core";
+import * as Navigation from "Core/Navigation";
+import { Sub } from "Core/Sub";
 
 //
 //

@@ -1,9 +1,9 @@
 import { SxProps } from "@mui/material";
 import { task } from "fp-ts";
 import { pipe } from "fp-ts/lib/function";
-import { cmd } from "Framework";
-import { Cmd } from "Framework/Cmd";
-import { perform } from "Framework/Task";
+import { cmd } from "Core";
+import { Cmd } from "Core/Cmd";
+import { perform } from "Core/Task";
 import * as View from "View";
 
 //

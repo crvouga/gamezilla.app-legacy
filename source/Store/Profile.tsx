@@ -1,7 +1,7 @@
 import { option, task } from "fp-ts";
-import * as Result from "Framework/Result";
+import * as Result from "Core/Result";
 import * as Rx from "rxjs";
-import { sub } from "../Framework";
+import { sub } from "../Core";
 import * as Supabase from "../Supabase";
 import { definitions } from "../supabase-types";
 

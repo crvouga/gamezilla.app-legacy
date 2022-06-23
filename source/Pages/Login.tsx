@@ -1,7 +1,7 @@
 import { either } from "fp-ts";
 import { pipe } from "fp-ts/lib/function";
-import { cmd } from "Framework";
-import { attempt } from "Framework/Task";
+import { cmd } from "Core";
+import { attempt } from "Core/Task";
 import * as Session from "Session";
 import * as View from "View";
 

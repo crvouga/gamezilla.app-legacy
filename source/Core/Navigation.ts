@@ -1,6 +1,6 @@
 import { option } from "fp-ts";
-import { Cmd } from "Framework/Cmd";
-import { Sub } from "Framework/Sub";
+import { Cmd } from "Core/Cmd";
+import { Sub } from "Core/Sub";
 import * as History from "history";
 import * as Rx from "rxjs";
 

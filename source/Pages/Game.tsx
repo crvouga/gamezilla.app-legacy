@@ -1,6 +1,6 @@
 import { flow, pipe } from "fp-ts/lib/function";
-import { cmd } from "Framework";
-import { Cmd } from "Framework/Cmd";
+import { cmd } from "Core";
+import { Cmd } from "Core/Cmd";
 import * as Games from "Games";
 import { groupTag } from "Utility";
 import * as View from "View";

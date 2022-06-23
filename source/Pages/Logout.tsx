@@ -1,7 +1,7 @@
 import { either } from "fp-ts";
 import { pipe } from "fp-ts/lib/function";
-import { cmd, task } from "Framework";
-import * as Navigation from "Framework/Navigation";
+import { cmd, task } from "Core";
+import * as Navigation from "Core/Navigation";
 import * as Session from "Session";
 import * as Snackbar from "Snackbar";
 import * as View from "View";

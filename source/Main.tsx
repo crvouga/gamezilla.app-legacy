@@ -1,8 +1,8 @@
 import { pipe } from "fp-ts/lib/function";
-import { cmd, html, sub } from "Framework";
-import { Cmd } from "Framework/Cmd";
-import { programWithDebugger } from "Framework/Debug/Html";
-import * as Navigation from "Framework/Navigation";
+import { cmd, html, sub } from "Core";
+import { Cmd } from "Core/Cmd";
+import { programWithDebugger } from "Core/Debug/Html";
+import * as Navigation from "Core/Navigation";
 import * as Games from "Games";
 import * as Pages from "Pages";
 import * as ReactDom from "react-dom/client";

@@ -1,8 +1,8 @@
 import { pipe } from "fp-ts/lib/function";
-import { cmd, sub } from "Framework";
-import { Cmd } from "Framework/Cmd";
-import * as Navigation from "Framework/Navigation";
-import { Sub } from "Framework/Sub";
+import { cmd, sub } from "Core";
+import { Cmd } from "Core/Cmd";
+import * as Navigation from "Core/Navigation";
+import { Sub } from "Core/Sub";
 import * as Games from "Games";
 import * as Route from "Route";
 import * as Session from "Session";

@@ -1,9 +1,9 @@
 import { either, option, task } from "fp-ts";
 import { identity, pipe } from "fp-ts/lib/function";
-import { Cmd } from "Framework/Cmd";
-import { perform } from "Framework/Task";
+import { Cmd } from "Core/Cmd";
+import { perform } from "Core/Task";
 import * as Rx from "rxjs";
-import { cmd, sub } from "./Framework";
+import { cmd, sub } from "./Core";
 import * as Supabase from "./Supabase";
 
 //
