@@ -18,15 +18,8 @@ import { useEffect, useRef } from "react"
 
 export type Model = {
   searchText: string
-  selected: { [userId: string]: SearchResult }
+  selected: { [userId: string]: string }
   highlightedIndex: "None" | number
-}
-
-type SearchResult = {
-  userId: string
-  username: string
-  avatarUrl: string
-  name: string
 }
 
 //
@@ -57,7 +50,7 @@ export const init = (): [Model, Cmd<Msg>] => [
 export type Msg =
   | { type: "UserClickedCancelButton" }
   | { type: "UserEnteredSearchText"; searchText: string }
-  | { type: "UserClickedSearchResult"; searchResult: SearchResult }
+  | { type: "UserClickedSearchResult"; userId: string }
   | { type: "UserClickedSelectedDeleteButton"; userId: string }
   | { type: "UserClickedCreateButton" }
   | { type: "UserPressedKeyDown"; key: Keyboard.ArrowKey | Keyboard.EnterKey }
@@ -92,7 +85,7 @@ export const update = (
       return [{ ...model, selected: selectedNew }, cmd.none, []]
 
     case "UserPressedKeyDown":
-      const searchResults = Store.searchProfiles(model.searchText, store)
+      const profiles = Store.searchProfiles(model.searchText, store)
 
       switch (msg.key) {
         case "ArrowDown":
@@ -102,10 +95,7 @@ export const update = (
               highlightedIndex:
                 model.highlightedIndex === "None"
                   ? 0
-                  : circularIndex(
-                      model.highlightedIndex + 1,
-                      searchResults.length,
-                    ),
+                  : circularIndex(model.highlightedIndex + 1, profiles.length),
             },
             cmd.none,
             [],
@@ -118,10 +108,7 @@ export const update = (
               highlightedIndex:
                 model.highlightedIndex === "None"
                   ? 0
-                  : circularIndex(
-                      model.highlightedIndex - 1,
-                      searchResults.length,
-                    ),
+                  : circularIndex(model.highlightedIndex - 1, profiles.length),
             },
             cmd.none,
             [],
@@ -132,13 +119,13 @@ export const update = (
             return [model, cmd.none, []]
           }
 
-          const selectedResult = searchResults[model.highlightedIndex]
+          const profile = profiles[model.highlightedIndex]
 
-          if (!selectedResult) {
+          if (!profile) {
             return [model, cmd.none, []]
           }
 
-          return toggleSelected(selectedResult, model)
+          return toggleSelected(profile.userId, model)
 
         case "ArrowLeft":
         case "ArrowRight":
@@ -146,24 +133,21 @@ export const update = (
       }
 
     case "UserClickedSearchResult":
-      const [modelNew, cmdNew, actions] = toggleSelected(
-        msg.searchResult,
-        model,
-      )
+      const [modelNew, cmdNew, actions] = toggleSelected(msg.userId, model)
       return [{ ...modelNew, highlightedIndex: "None" }, cmdNew, actions]
   }
 }
 
 const toggleSelected = (
-  searchResult: SearchResult,
+  userId: string,
   model: Model,
 ): [Model, Cmd<Msg>, Action[]] => {
-  if (searchResult.userId in model.selected) {
+  if (userId in model.selected) {
     return [
       {
         ...model,
         searchText: "",
-        selected: removeKey(searchResult.userId, model.selected),
+        selected: removeKey(userId, model.selected),
       },
       cmd.none,
       [],
@@ -176,7 +160,7 @@ const toggleSelected = (
       searchText: "",
       selected: {
         ...model.selected,
-        [searchResult.userId]: searchResult,
+        [userId]: userId,
       },
     },
     cmd.none,
@@ -215,6 +199,14 @@ export const view =
   (dispatch) => {
     const searchQuery = Store.toProfileSearchQuery(model.searchText, store)
     const searchResults = Store.searchProfiles(model.searchText, store)
+
+    const selected = Object.keys(model.selected).flatMap((userId) => {
+      const profile = store.Profile[userId]
+      if (profile) {
+        return [profile]
+      }
+      return []
+    })
     return (
       <View.Page>
         <View.Header
@@ -247,15 +239,15 @@ export const view =
             paddingTop: 1,
           }}
         >
-          {Object.values(model.selected).map((searchResult) => (
+          {selected.map((profile) => (
             <View.Chip
               sx={{ marginLeft: 1 }}
-              key={searchResult.userId}
-              label={searchResult.username}
+              key={profile.userId}
+              label={profile.username}
               onDelete={() => {
                 dispatch({
                   type: "UserClickedSelectedDeleteButton",
-                  userId: searchResult.userId,
+                  userId: profile.userId,
                 })
               }}
             />
@@ -263,9 +255,7 @@ export const view =
           <View.InputBase
             sx={{ paddingLeft: 2, flex: 1 }}
             autoFocus
-            placeholder={
-              Object.values(model.selected).length === 0 ? "Search" : ""
-            }
+            placeholder={selected.length === 0 ? "Search" : ""}
             value={model.searchText}
             onKeyDown={(event) => {
               // console.log(event);
@@ -286,14 +276,17 @@ export const view =
             </View.Typography>
           )}
 
-          {searchResults.map((searchResult, index) => (
+          {searchResults.map((profile, index) => (
             <SearchResultListItem
-              key={searchResult.userId}
-              searchResult={searchResult}
+              key={profile.userId}
+              profile={profile}
               onClick={() => {
-                dispatch({ type: "UserClickedSearchResult", searchResult })
+                dispatch({
+                  type: "UserClickedSearchResult",
+                  userId: profile.userId,
+                })
               }}
-              selected={searchResult.userId in model.selected}
+              selected={profile.userId in model.selected}
               highlighted={
                 model.highlightedIndex !== "None" &&
                 circularIndex(model.highlightedIndex, searchResults.length) ===
@@ -320,15 +313,14 @@ export const view =
   }
 
 const SearchResultListItem = ({
-  searchResult,
-
+  profile: searchResult,
   onClick,
   highlighted,
   selected,
 }: {
   highlighted: boolean
   selected: boolean
-  searchResult: SearchResult
+  profile: Store.Profile.Profile
   onClick: () => void
 }) => {
   const ref = useRef<HTMLDivElement | null>(null)
