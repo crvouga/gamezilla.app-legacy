@@ -19,9 +19,7 @@ import { useEffect, useRef } from "react"
 export type Model = {
   searchText: string
   selected: { [userId: string]: SearchResult }
-  searchStatus: "Idle" | "Searching"
-  status: "Idle" | "Creating"
-  selectedResultIndex: "None" | number
+  highlightedIndex: "None" | number
 }
 
 type SearchResult = {
@@ -43,9 +41,7 @@ export const init = (): [Model, Cmd<Msg>] => [
   {
     searchText: "",
     selected: {},
-    searchStatus: "Idle",
-    status: "Idle",
-    selectedResultIndex: "None",
+    highlightedIndex: "None",
   },
   cmd.none,
 ]
@@ -75,7 +71,7 @@ export const update = (
 ): [Model, Cmd<Msg>, Action[]] => {
   switch (msg.type) {
     case "UserClickedCreateButton":
-      return [{ ...model, status: "Creating" }, cmd.none, []]
+      return [model, cmd.none, []]
 
     case "UserClickedCancelButton":
       return [model, Navigation.back(), []]
@@ -85,7 +81,7 @@ export const update = (
         {
           ...model,
           searchText: msg.searchText,
-          selectedResultIndex: "None",
+          highlightedIndex: "None",
         },
         cmd.none,
         [Store.Profile.Search(msg.searchText)],
@@ -103,11 +99,11 @@ export const update = (
           return [
             {
               ...model,
-              selectedResultIndex:
-                model.selectedResultIndex === "None"
+              highlightedIndex:
+                model.highlightedIndex === "None"
                   ? 0
                   : circularIndex(
-                      model.selectedResultIndex + 1,
+                      model.highlightedIndex + 1,
                       searchResults.length,
                     ),
             },
@@ -119,11 +115,11 @@ export const update = (
           return [
             {
               ...model,
-              selectedResultIndex:
-                model.selectedResultIndex === "None"
+              highlightedIndex:
+                model.highlightedIndex === "None"
                   ? 0
                   : circularIndex(
-                      model.selectedResultIndex - 1,
+                      model.highlightedIndex - 1,
                       searchResults.length,
                     ),
             },
@@ -132,11 +128,11 @@ export const update = (
           ]
 
         case "Enter":
-          if (model.selectedResultIndex === "None") {
+          if (model.highlightedIndex === "None") {
             return [model, cmd.none, []]
           }
 
-          const selectedResult = searchResults[model.selectedResultIndex]
+          const selectedResult = searchResults[model.highlightedIndex]
 
           if (!selectedResult) {
             return [model, cmd.none, []]
@@ -154,7 +150,7 @@ export const update = (
         msg.searchResult,
         model,
       )
-      return [{ ...modelNew, selectedResultIndex: "None" }, cmdNew, actions]
+      return [{ ...modelNew, highlightedIndex: "None" }, cmdNew, actions]
   }
 }
 
@@ -217,6 +213,7 @@ export const subscriptions = (model: Model): Sub<Msg> => {
 export const view =
   (store: Store.Model, model: Model): View.View<Msg> =>
   (dispatch) => {
+    const searchQuery = Store.toProfileSearchQuery(model.searchText, store)
     const searchResults = Store.searchProfiles(model.searchText, store)
     return (
       <View.Page>
@@ -229,7 +226,7 @@ export const view =
           title="New message"
           right={
             <View.Button
-              loading={model.status === "Creating"}
+              disabled={Object.values(model.selected).length === 0}
               sx={{ marginRight: -1 }}
               onClick={() => dispatch({ type: "UserClickedCreateButton" })}
             >
@@ -298,16 +295,14 @@ export const view =
               }}
               selected={searchResult.userId in model.selected}
               highlighted={
-                model.selectedResultIndex !== "None" &&
-                circularIndex(
-                  model.selectedResultIndex,
-                  searchResults.length,
-                ) === index
+                model.highlightedIndex !== "None" &&
+                circularIndex(model.highlightedIndex, searchResults.length) ===
+                  index
               }
             />
           ))}
 
-          {model.searchStatus === "Searching" && (
+          {searchQuery.type === "Loading" && (
             <View.Box
               sx={{
                 width: "100%",
