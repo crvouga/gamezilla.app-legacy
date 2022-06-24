@@ -301,7 +301,10 @@ export const Page = ({ children, sx }: Mui.BoxProps) => {
         flexDirection: "column",
         width: "100%",
         height: "100%",
+        maxHeight: "100%",
+        maxWidth: "100%",
         userSelect: "none",
+        overflow: "hidden",
         ...sx,
       }}
     >

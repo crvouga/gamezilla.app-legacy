@@ -273,11 +273,11 @@ export const view =
         <View.Divider />
 
         <View.List sx={{ overflowY: "scroll", flex: 1 }}>
-          {/* {model.searchStatus === "Idle" && model.searchResults.length === 0 && (
+          {searchResults.length === 0 && (
             <View.Typography sx={{ p: 2 }} color="text.secondary">
               No account found.
             </View.Typography>
-          )} */}
+          )}
 
           {searchResults.map((searchResult, index) => (
             <View.ListItemButton
@@ -289,7 +289,7 @@ export const view =
                 ) === index
               }
               key={searchResult.userId}
-              onClick={() => {
+              onMouseDown={() => {
                 dispatch({ type: "UserClickedSearchResult", searchResult })
               }}
             >
