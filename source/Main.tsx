@@ -63,9 +63,9 @@ export const toStatus = ({
     case "LoggedIn":
       const { userId } = session
 
-      const profile = Store.toProfile(userId, store)
+      const profileQuery = Store.toProfileGetQuery(userId, store)
 
-      switch (profile.type) {
+      switch (profileQuery.type) {
         case "NotAsked":
           return { type: "ProfileLoading", session }
 
@@ -76,7 +76,7 @@ export const toStatus = ({
           return { type: "ProfileMissing", session }
 
         case "Success":
-          return { type: "Ready", session, profile: profile.value }
+          return { type: "Ready", session, profile: profileQuery.value }
       }
   }
 }
@@ -142,13 +142,22 @@ export type Msg =
 //
 
 export const update = (msg: Msg, modelPrev: Model): [Model, Cmd<Msg>] => {
-  const [modelNew, cmdNew, actions] = pipe(
+  return pipe(
     [modelPrev, cmd.none],
-    andThen(updateMain, msg),
-    andThen(updateStatusChanged(modelPrev), msg),
-  )
 
-  return pipe([modelNew, cmdNew], andThenMany(updateAction, actions))
+    andThen(updateMain, msg),
+
+    andThen(updateStatusChanged(modelPrev), msg),
+
+    ([modelNew, cmdNew, actions]) =>
+      pipe([modelNew, cmdNew], andThenMany(updateAction, actions)),
+
+    ([modelNew, cmdNew]) =>
+      pipe([modelNew, cmdNew], andThen(updateStatusChanged(modelPrev), msg)),
+
+    ([modelNew, cmdNew, actions]) =>
+      pipe([modelNew, cmdNew], andThenMany(updateAction, actions)),
+  )
 }
 
 const updateStatusChanged =
@@ -170,6 +179,7 @@ const updateStatusChanged =
           model.route,
           statusNew.session,
         )
+
         return [
           { ...model, page },
           pipe(pageCmd, cmd.map(groupTag("Page"))),

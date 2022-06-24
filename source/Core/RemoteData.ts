@@ -31,8 +31,8 @@ export const fromResult = <E, A>(
 }
 
 export const map =
-  <E, A>(mapper: (a: A) => A) =>
-  (remoteData: RemoteData<E, A>): RemoteData<E, A> => {
+  <E, A, B>(mapper: (a: A) => B) =>
+  (remoteData: RemoteData<E, A>): RemoteData<E, B> => {
     switch (remoteData.type) {
       case "NotAsked":
       case "Loading":

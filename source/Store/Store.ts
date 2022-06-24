@@ -1,13 +1,14 @@
-import { pipe } from "fp-ts/lib/function"
 import { cmd } from "Core"
 import { Cmd } from "Core/Cmd"
 import * as RemoteData from "Core/RemoteData"
+import * as Result from "Core/Result"
 import { perform } from "Core/Task"
-import { sort, ascend, editDistance, exhaustive } from "Utility"
+import { pipe } from "fp-ts/lib/function"
+import { matchSorter } from "match-sorter"
 import * as Snackbar from "Snackbar"
+import { exhaustive } from "Utility"
 import * as Conversation from "./Conversation"
 import * as Profile from "./Profile"
-import { matchSorter } from "match-sorter"
 //
 //
 //
@@ -17,49 +18,46 @@ import { matchSorter } from "match-sorter"
 //
 
 export type Model = {
-  profile: {
-    [id: string]: ProfileModel
+  Profile: {
+    [id: string]: Profile.Profile
   }
-  conversation: {
-    [id: string]: ConversationModel
+  Conversation: {
+    [id: string]: Conversation.Conversation
   }
-  profiles_conversations: {
-    [id: string]: ProfilesConversationsModel
-  }
-  queries: { [id: string]: Query }
-}
-
-export type ProfileModel = RemoteData.RemoteData<Problem, Profile.Profile>
-
-export type ConversationModel = RemoteData.RemoteData<
-  Problem,
-  Conversation.Conversation
->
-
-export type ProfilesConversationsModel = RemoteData.RemoteData<
-  Problem,
-  ProfilesConversations
->
-
-type ProfilesConversations = { userId: string; conversationId: string }
-
-type Query =
-  | {
-      type: "Profile/Search"
-      id: string
-      searchText: string
-      query: RemoteData.RemoteData<Problem, string[]>
-    }
-  | {
-      type: "Profile/Get"
+  ProfilesConversations: {
+    [id: string]: {
       id: string
       userId: string
-      query: RemoteData.RemoteData<Problem, string>
+      conversationId: string
     }
+  }
+  queries: {
+    [id: string]: Query
+  }
+  mutations: {
+    [id: string]: Mutation
+  }
+}
 
-//
-//
-//
+type Mutation =
+  | (RemoteData.RemoteData<Problem, string> & { tag: "Profile/DeleteForever" })
+  | (RemoteData.RemoteData<Problem, string> & { tag: "Profile/Edit" })
+
+const toProfileEditMutationId = (userId: string) =>
+  ["Profile", "Edit", userId].join("/")
+
+const toProfileDeleteForeverMutationId = (userId: string) =>
+  ["Profile", "DeleteForever", userId].join("/")
+
+type Query =
+  | (RemoteData.RemoteData<Problem, string> & { tag: "Profile/Get" })
+  | (RemoteData.RemoteData<Problem, string[]> & { tag: "Profile/Search" })
+
+const toProfileGetQueryId = (userId: string) =>
+  ["Profile", "Get", userId].join("/")
+
+const toProfileSearchQueryId = (searchText: string) =>
+  ["Profile", "Search", searchText].join("/")
 
 type Problem = { message: string }
 
@@ -72,10 +70,12 @@ type Problem = { message: string }
 //
 
 export const init: Model = {
-  profile: {},
-  conversation: {},
-  profiles_conversations: {},
+  Profile: {},
+  Conversation: {},
+  ProfilesConversations: {},
+
   queries: {},
+  mutations: {},
 }
 
 //
@@ -108,123 +108,159 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>, Action[]] => {
     case "Conversation/Created":
       return [model, cmd.none, []]
 
-    case "Profile/Edit":
-      const remoteDataProfile = toProfile(msg.userId, model)
+    case "Profile/Edit": {
+      const { userId, edits } = msg
+      const query = toProfileGetQuery(userId, model)
 
-      switch (remoteDataProfile.type) {
-        case "Success":
-          const prev = remoteDataProfile.value
-          const next = { ...prev, ...msg.edits }
-          return [
-            mapProfile(
-              msg.userId,
-              RemoteData.map(() => next),
-              model,
-            ),
-            pipe(
-              Profile.edit(msg.userId, msg.edits),
-              perform((result) => Profile.Edited(msg.userId, prev, result)),
-            ),
-            [],
-          ]
-
-        default:
-          return [model, cmd.none, []]
+      if (query.type !== "Success") {
+        return [model, cmd.none, []]
+      }
+      const mutationId = toProfileEditMutationId(userId)
+      const mutationsNew: Model["mutations"] = {
+        ...model.mutations,
+        [mutationId]: {
+          tag: "Profile/Edit",
+          ...RemoteData.Loading,
+        },
       }
 
-    case "Profile/Edited":
-      const result = msg.result
+      const ProfileNew = {
+        ...model.Profile,
+        [userId]: { ...query.value, ...edits },
+      }
+
+      return [
+        { ...model, Profile: ProfileNew, mutations: mutationsNew },
+        pipe(
+          Profile.edit(msg.userId, msg.edits),
+          perform((result) => Profile.Edited(msg.userId, query.value, result)),
+        ),
+        [],
+      ]
+    }
+
+    case "Profile/Edited": {
+      const { result, userId } = msg
+
+      const mutationId = toProfileEditMutationId(userId)
+      const mutationsNew: Model["mutations"] = {
+        ...model.mutations,
+        [mutationId]: {
+          ...pipe(
+            result,
+            RemoteData.fromResult,
+            RemoteData.map((profile) => profile.userId),
+          ),
+          tag: "Profile/Edit",
+        },
+      }
 
       switch (result.type) {
-        case "Err":
+        case "Err": {
+          const ProfileNew = removeKey(userId, model.Profile)
           return [
-            mapProfile(
-              msg.userId,
-              RemoteData.map(() => msg.previous),
-              model,
-            ),
+            { ...model, Profile: ProfileNew, mutations: mutationsNew },
             cmd.none,
             [],
           ]
+        }
 
-        case "Ok":
-          return [model, cmd.none, []]
-      }
-
-    case "Profile/Get":
-      return [
-        {
-          ...mapProfile(msg.userId, () => RemoteData.Loading, model),
-          queries: {
-            ...model.queries,
-            [`Profile/Get/${msg.userId}`]: {
-              type: "Profile/Get",
-              userId: msg.userId,
-              query: RemoteData.Loading,
-            },
-          },
-        },
-        getProfile(msg.userId),
-        [],
-      ]
-
-    case "Profile/Got":
-      return [
-        mapProfile(msg.userId, () => RemoteData.fromResult(msg.result), model),
-        cmd.none,
-        [],
-      ]
-
-    case "Profile/DeleteForever": {
-      const remoteDataProfile = toProfile(msg.userId, model)
-
-      switch (remoteDataProfile.type) {
-        case "Success":
-          const previous = remoteDataProfile.value
-
+        case "Ok": {
+          const ProfileNew = {
+            ...model.Profile,
+            [result.value.userId]: result.value,
+          }
           return [
-            mapProfile(msg.userId, () => RemoteData.NotAsked, model),
-            pipe(
-              Profile.deleteForever(msg.userId),
-              perform((result) =>
-                Profile.DeletedForever(msg.userId, previous, result),
-              ),
-            ),
+            { ...model, Profile: ProfileNew, mutations: mutationsNew },
+            cmd.none,
             [],
           ]
-
-        default:
-          return [model, cmd.none, []]
+        }
       }
     }
 
+    case "Profile/Get": {
+      const { userId } = msg
+      const query = toProfileGetQuery(userId, model)
+
+      if (query.type === "Loading") {
+        return [model, cmd.none, []]
+      }
+
+      const queryId = toProfileGetQueryId(userId)
+
+      const queriesNew: Model["queries"] = {
+        ...model.queries,
+        [queryId]: {
+          tag: "Profile/Get",
+          ...RemoteData.Loading,
+        },
+      }
+
+      return [
+        { ...model, queries: queriesNew },
+        pipe(
+          Profile.load({ userId }),
+          perform((result) => Profile.Got(userId, result)),
+        ),
+        [],
+      ]
+    }
+
+    case "Profile/Got": {
+      const modelNew = updateGotProfile(msg.userId, msg.result, model)
+      return [modelNew, cmd.none, []]
+    }
+
+    case "Profile/DeleteForever": {
+      const query = toProfileGetQuery(msg.userId, model)
+
+      if (query.type !== "Success") {
+        return [model, cmd.none, []]
+      }
+
+      const modelNew = updateGotProfile(
+        msg.userId,
+        Result.Err({ message: "Profile was deleted" }),
+        model,
+      )
+
+      return [
+        modelNew,
+        pipe(
+          Profile.deleteForever(msg.userId),
+          perform((result) =>
+            Profile.DeletedForever(msg.userId, query.value, result),
+          ),
+        ),
+        [],
+      ]
+    }
+
     case "Profile/DeletedForever": {
-      const result = msg.result
+      const { result, userId, previous } = msg
 
       switch (result.type) {
-        case "Err":
-          return [
-            mapProfile(
-              msg.userId,
-              () => RemoteData.Success(msg.previous),
-              model,
-            ),
-            cmd.none,
-            [],
-          ]
+        case "Err": {
+          const ProfileNew = { ...model.Profile, [userId]: previous }
+          return [{ ...model, Profile: ProfileNew }, cmd.none, []]
+        }
 
-        case "Ok":
-          return [
-            mapProfile(msg.userId, () => RemoteData.NotAsked, model),
-            getProfile(msg.userId),
-            [],
-          ]
+        case "Ok": {
+          return [model, cmd.none, []]
+        }
       }
     }
 
     case "Profile/Create":
+      const modelNew = updateGotProfile(
+        msg.profile.userId,
+        Result.Ok(msg.profile),
+        model,
+      )
+
       return [
-        mapProfile(msg.profile.userId, () => RemoteData.Loading, model),
+        modelNew,
         pipe(
           Profile.create(msg.profile),
           perform((result) => Profile.Created(msg.profile.userId, result)),
@@ -233,39 +269,26 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>, Action[]] => {
       ]
 
     case "Profile/Created": {
-      const { result } = msg
+      const modelNew = updateGotProfile(msg.userId, msg.result, model)
 
-      switch (result.type) {
-        case "Err":
-          return [
-            mapProfile(
-              msg.userId,
-              () => RemoteData.Failure(result.error),
-              model,
-            ),
-            cmd.none,
-            [Snackbar.EnqueuedSnackbarError(result.error.message)],
-          ]
-
-        case "Ok":
-          return [
-            mapProfile(
-              msg.userId,
-              () => RemoteData.Success(result.value),
-              model,
-            ),
-            cmd.none,
-            [],
-          ]
-      }
+      return [modelNew, cmd.none, []]
     }
 
     case "Profile/Search":
+      const nameOrUsername = msg.searchText
+      const queryId = toProfileSearchQueryId(nameOrUsername)
+      const queriesNew: Model["queries"] = {
+        ...model.queries,
+        [queryId]: {
+          tag: "Profile/Search",
+          ...RemoteData.Loading,
+        },
+      }
       return [
-        model,
+        { ...model, queries: queriesNew },
         pipe(
-          Profile.search({ nameOrUsername: msg.searchText }),
-          perform((result) => Profile.Searched(result)),
+          Profile.search({ nameOrUsername }),
+          perform((result) => Profile.Searched(nameOrUsername, result)),
         ),
         [],
       ]
@@ -278,19 +301,34 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>, Action[]] => {
           return [model, cmd.none, []]
 
         case "Ok":
-          const profilesById = result.value.reduce<Model["profile"]>(
-            (byId, profile) => ({
-              ...byId,
-              [profile.userId]: RemoteData.Success({
-                ...(byId?.[profile.userId] ?? {}),
+          const ProfileNew = result.value.reduce<Model["Profile"]>(
+            (Profile, profile) => ({
+              ...Profile,
+              [profile.userId]: {
+                ...(Profile?.[profile.userId] ?? {}),
                 ...profile,
-              }),
+              },
             }),
-            {},
+            model.Profile,
           )
 
+          const queryId = toProfileSearchQueryId(msg.searchText)
+          const queriesNew: Model["queries"] = {
+            ...model.queries,
+            [queryId]: {
+              ...RemoteData.Success(
+                result.value.map((profile) => profile.userId),
+              ),
+              tag: "Profile/Search",
+            },
+          }
+
           return [
-            { ...model, profile: { ...model.profile, ...profilesById } },
+            {
+              ...model,
+              queries: queriesNew,
+              Profile: ProfileNew,
+            },
             cmd.none,
             [],
           ]
@@ -302,62 +340,106 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>, Action[]] => {
   }
 }
 
-const getProfile = (userId: string) => {
-  return pipe(
-    Profile.load({ userId }),
-    perform((result) => Profile.Got(userId, result)),
-  )
-}
-
-//
-//
-//
-//
-//
-//
-//
-
-const mapProfile = (
+const updateGotProfile = (
   userId: string,
-  mapper: (remoteDataProfile: ProfileModel) => ProfileModel,
+  result: Result.Result<Problem, Profile.Profile>,
   model: Model,
 ): Model => {
-  return {
-    ...model,
-    profile: {
-      ...model.profile,
-      [userId]: mapper(toProfile(userId, model)),
+  const queryId = toProfileGetQueryId(userId)
+
+  const queriesNew: Model["queries"] = {
+    ...model.queries,
+    [queryId]: {
+      tag: "Profile/Get",
+      ...pipe(
+        result,
+        RemoteData.fromResult,
+        RemoteData.map((profile) => profile.userId),
+      ),
     },
+  }
+
+  switch (result.type) {
+    case "Err": {
+      return {
+        ...model,
+        Profile: removeKey(userId, model.Profile),
+        queries: queriesNew,
+      }
+    }
+
+    case "Ok": {
+      const ProfileNew = {
+        ...model.Profile,
+        [result.value.userId]: result.value,
+      }
+
+      return {
+        ...model,
+        Profile: ProfileNew,
+        queries: queriesNew,
+      }
+    }
   }
 }
 
-export const toProfile = (userId: string, model: Model): ProfileModel => {
-  return model.profile[userId] ?? RemoteData.NotAsked
+//
+//
+//
+//
+//
+//
+//
+
+export const toProfileGetQuery = (
+  userId: string,
+  model: Model,
+): RemoteData.RemoteData<Problem, Profile.Profile> => {
+  const query = model.queries[toProfileGetQueryId(userId)]
+
+  if (!query) {
+    return RemoteData.NotAsked
+  }
+
+  if (query.tag !== "Profile/Get") {
+    return RemoteData.NotAsked
+  }
+
+  switch (query.type) {
+    case "Failure":
+    case "Loading":
+    case "NotAsked":
+      return query
+    case "Success":
+      const userId = query.value
+      const profile = model.Profile[userId]
+      if (!profile) {
+        return RemoteData.Failure({ message: "Not present" })
+      }
+
+      return RemoteData.Success(profile)
+  }
 }
 
 export const searchProfiles = (nameOrUsername: string, store: Model) => {
   return pipe(
     store,
-
-    (store) => Object.values(store.profile),
-
-    (profiles) =>
-      profiles.reduce<Profile.Profile[]>(
-        (profiles, p) =>
-          p.type === "Success" ? [...profiles, p.value] : profiles,
-        [],
-      ),
-
+    (store) => Object.values(store.Profile),
     (profiles) =>
       matchSorter(profiles, nameOrUsername, { keys: ["name", "username"] }),
-    // sort(
-    //   ascend((profile) =>
-    //     Math.min(
-    //       editDistance(profile.name, nameOrUsername),
-    //       editDistance(profile.username, nameOrUsername)
-    //     )
-    //   ),
-    //   profiles
-    // )
   )
+}
+
+//
+//
+//
+// Helpers
+//
+//
+//
+
+const removeKey = <T>(key: keyof T, record: T): Omit<T, keyof T> => {
+  const { [key]: _value, ...removed } = record
+
+  return removed
 }
