@@ -159,11 +159,15 @@ export const Search = (searchText: string) => {
 
 export type Search = ReturnType<typeof Search>
 
-export const Searched = (result: Result.Result<Problem, Profile[]>) => {
+export const Searched = (
+  searchText: string,
+  result: Result.Result<Problem, Profile[]>,
+) => {
   return {
     group: "Store",
     type: "Profile/Searched",
     result,
+    searchText,
   } as const
 }
 
