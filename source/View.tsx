@@ -293,7 +293,6 @@ export const HeaderBackButton = ({ onClick }: { onClick: () => void }) => {
 }
 
 export const Page = ({ children, sx }: Mui.BoxProps) => {
-  const theme = useTheme()
   return (
     <Box
       sx={{
