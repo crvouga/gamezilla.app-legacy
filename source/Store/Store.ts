@@ -73,7 +73,6 @@ export const init: Model = {
   Profile: {},
   Conversation: {},
   ProfilesConversations: {},
-
   queries: {},
   mutations: {},
 }
