@@ -483,6 +483,15 @@ const Board = ({
         )),
       )}
 
+      <rect
+        x={0}
+        y={0}
+        width={COLUMN_COUNT}
+        height={MAX_COLUMN_HEIGHT}
+        fill={`url(#${ids.columnGradient})`}
+        mask={`url(#${ids.holemask})`}
+      />
+
       {[...new Array(COLUMN_COUNT)].map((_, columnIndex) => (
         <rect
           style={{
@@ -497,8 +506,7 @@ const Board = ({
           y={0}
           width={1}
           height={MAX_COLUMN_HEIGHT}
-          fill={`url(#${ids.columnGradient})`}
-          mask={`url(#${ids.holemask})`}
+          fill="transparent"
         />
       ))}
     </svg>
