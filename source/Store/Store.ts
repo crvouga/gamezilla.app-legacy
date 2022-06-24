@@ -420,6 +420,23 @@ export const toProfileGetQuery = (
   }
 }
 
+export const toProfileSearchQuery = (
+  searchText: string,
+  model: Model,
+): RemoteData.RemoteData<Problem, string[]> => {
+  const query = model.queries[toProfileSearchQueryId(searchText)]
+
+  if (!query) {
+    return RemoteData.NotAsked
+  }
+
+  if (query.tag !== "Profile/Search") {
+    return RemoteData.NotAsked
+  }
+
+  return query
+}
+
 export const searchProfiles = (nameOrUsername: string, store: Model) => {
   return pipe(
     store,
