@@ -30,14 +30,18 @@ export type Model = {
 //
 //
 
-export const init = (): [Model, Cmd<Msg>] => [
-  {
-    searchText: "",
-    selected: {},
-    highlightedIndex: "None",
-  },
-  cmd.none,
-]
+export const init = (): [Model, Cmd<Msg>, Action[]] => {
+  const searchText = ""
+  return [
+    {
+      searchText,
+      selected: {},
+      highlightedIndex: "None",
+    },
+    cmd.none,
+    [Store.Profile.Search(searchText)],
+  ]
+}
 
 //
 //
@@ -64,7 +68,8 @@ export const update = (
 ): [Model, Cmd<Msg>, Action[]] => {
   switch (msg.type) {
     case "UserClickedCreateButton":
-      return [model, cmd.none, []]
+      const userIds = Object.values(model.selected)
+      return [model, cmd.none, [Store.Conversation.Create(userIds)]]
 
     case "UserClickedCancelButton":
       return [model, Navigation.back(), []]
@@ -85,7 +90,7 @@ export const update = (
       return [{ ...model, selected: selectedNew }, cmd.none, []]
 
     case "UserPressedKeyDown":
-      const profiles = Store.searchProfiles(model.searchText, store)
+      const profiles = Store.Profile.searchProfiles(model.searchText, store)
 
       switch (msg.key) {
         case "ArrowDown":
@@ -195,10 +200,22 @@ export const subscriptions = (model: Model): Sub<Msg> => {
 //
 
 export const view =
-  (store: Store.Model, model: Model): View.View<Msg> =>
+  (
+    {
+      store,
+      currentUserProfile,
+    }: {
+      store: Store.Model
+      currentUserProfile: Store.Profile.Profile
+    },
+    model: Model,
+  ): View.View<Msg> =>
   (dispatch) => {
-    const searchQuery = Store.toProfileSearchQuery(model.searchText, store)
-    const searchResults = Store.searchProfiles(model.searchText, store)
+    const searchQuery = Store.Profile.toSearchQuery(model.searchText, store)
+    const profiles = Store.Profile.searchProfiles(
+      model.searchText,
+      store,
+    ).filter((profile) => profile.userId !== currentUserProfile.userId)
 
     const selected = Object.keys(model.selected).flatMap((userId) => {
       const profile = store.Profile[userId]
@@ -270,13 +287,13 @@ export const view =
         <View.Divider />
 
         <View.List sx={{ overflowY: "scroll", flex: 1 }}>
-          {searchResults.length === 0 && (
+          {profiles.length === 0 && (
             <View.Typography sx={{ p: 2 }} color="text.secondary">
               No account found.
             </View.Typography>
           )}
 
-          {searchResults.map((profile, index) => (
+          {profiles.map((profile, index) => (
             <SearchResultListItem
               key={profile.userId}
               profile={profile}
@@ -289,8 +306,7 @@ export const view =
               selected={profile.userId in model.selected}
               highlighted={
                 model.highlightedIndex !== "None" &&
-                circularIndex(model.highlightedIndex, searchResults.length) ===
-                  index
+                circularIndex(model.highlightedIndex, profiles.length) === index
               }
             />
           ))}

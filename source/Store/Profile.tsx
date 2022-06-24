@@ -1,9 +1,19 @@
-import { option, task } from "fp-ts"
+import { cmd } from "Core"
+import { Cmd } from "Core/Cmd"
+import * as RemoteData from "Core/RemoteData"
 import * as Result from "Core/Result"
+import { Sub } from "Core/Sub"
+import { perform } from "Core/Task"
+import { option, task } from "fp-ts"
+import { pipe } from "fp-ts/lib/function"
+import { matchSorter } from "match-sorter"
 import * as Rx from "rxjs"
+import * as Snackbar from "Snackbar"
+import { exhaustive } from "Utility"
 import { sub } from "../Core"
 import * as Supabase from "../Supabase"
 import { definitions } from "../supabase-types"
+import * as Store from "./Store"
 
 //
 //
@@ -12,6 +22,8 @@ import { definitions } from "../supabase-types"
 //
 //
 //
+
+type Model = Store.Model
 
 export type Profile = {
   userId: string
@@ -22,6 +34,28 @@ export type Profile = {
 }
 
 export type ThemeMode = "Light" | "Dark" | "System"
+
+export type Mutation =
+  | (RemoteData.RemoteData<Problem, string> & { tag: "Profile/DeleteForever" })
+  | (RemoteData.RemoteData<Problem, string> & { tag: "Profile/Edit" })
+  | (RemoteData.RemoteData<Problem, string> & { tag: "Profile/Create" })
+
+export type Query =
+  | (RemoteData.RemoteData<Problem, string> & { tag: "Profile/Get" })
+  | (RemoteData.RemoteData<Problem, string[]> & { tag: "Profile/Search" })
+
+const toGetId = (userId: string) => ["Profile", "Get", userId].join("/")
+
+const toSearchId = (searchText: string) =>
+  ["Profile", "Search", searchText].join("/")
+
+export const toEditId = (userId: string) =>
+  ["Profile", "Edit", userId].join("/")
+
+export const toDeleteId = (userId: string) =>
+  ["Profile", "DeleteForever", userId].join("/")
+
+type Problem = { message: string }
 
 //
 //
@@ -34,6 +68,7 @@ export type ThemeMode = "Light" | "Dark" | "System"
 export const Edit = (userId: string, edits: Partial<Profile>) =>
   ({
     group: "Store",
+    entity: "Profile",
     type: "Profile/Edit",
     userId,
     edits,
@@ -49,6 +84,7 @@ export const Edited = (
   ({
     group: "Store",
     type: "Profile/Edited",
+    entity: "Profile",
     result,
     userId,
     previous,
@@ -60,6 +96,7 @@ export const Get = (userId: string) => {
   return {
     group: "Store",
     type: "Profile/Get",
+    entity: "Profile",
     userId,
   } as const
 }
@@ -73,6 +110,7 @@ export const Got = (
   return {
     group: "Store",
     type: "Profile/Got",
+    entity: "Profile",
     userId,
     result,
   } as const
@@ -84,6 +122,7 @@ export const DeleteForever = (userId: string) => {
   return {
     group: "Store",
     type: "Profile/DeleteForever",
+    entity: "Profile",
     userId,
   } as const
 }
@@ -97,6 +136,7 @@ export const DeletedForever = (
 ) => {
   return {
     group: "Store",
+    entity: "Profile",
     type: "Profile/DeletedForever",
     userId,
     previous,
@@ -128,6 +168,7 @@ export const Create = (
 
   return {
     group: "Store",
+    entity: "Profile",
     type: "Profile/Create",
     profile,
   } as const
@@ -141,6 +182,7 @@ export const Created = (
 ) => {
   return {
     group: "Store",
+    entity: "Profile",
     type: "Profile/Created",
     userId,
     result,
@@ -152,6 +194,7 @@ export type Created = ReturnType<typeof Created>
 export const Search = (searchText: string) => {
   return {
     group: "Store",
+    entity: "Profile",
     type: "Profile/Search",
     searchText,
   } as const
@@ -165,6 +208,7 @@ export const Searched = (
 ) => {
   return {
     group: "Store",
+    entity: "Profile",
     type: "Profile/Searched",
     result,
     searchText,
@@ -172,6 +216,17 @@ export const Searched = (
 }
 
 export type Searched = ReturnType<typeof Searched>
+
+export const Received = (profile: Profile) => {
+  return {
+    entity: "Profile",
+    group: "Store",
+    type: "Profile/Received",
+    profile,
+  } as const
+}
+
+export type Received = ReturnType<typeof Received>
 
 export type Msg =
   | Edited
@@ -184,11 +239,371 @@ export type Msg =
   | Created
   | Search
   | Searched
+  | Received
 
 //
 //
 //
+// Update
 //
+//
+//
+
+type Action = Snackbar.GroupedMsg
+
+export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>, Action[]] => {
+  switch (msg.type) {
+    case "Profile/Received":
+      const ProfileNew = {
+        ...model.Profile,
+        [msg.profile.userId]: {
+          ...(model.Profile[msg.profile.userId] ?? {}),
+          ...msg.profile,
+        },
+      }
+      return [{ ...model, Profile: ProfileNew }, cmd.none, []]
+
+    case "Profile/Edit": {
+      const { userId, edits } = msg
+      const query = toGetQuery(userId, model)
+
+      if (query.type !== "Success") {
+        return [model, cmd.none, []]
+      }
+      const mutationId = toEditId(userId)
+      const mutationsNew: Model["mutations"] = {
+        ...model.mutations,
+        [mutationId]: {
+          tag: "Profile/Edit",
+          ...RemoteData.Loading,
+        },
+      }
+
+      const ProfileNew = {
+        ...model.Profile,
+        [userId]: { ...query.value, ...edits },
+      }
+
+      return [
+        { ...model, Profile: ProfileNew, mutations: mutationsNew },
+        pipe(
+          edit(msg.userId, msg.edits),
+          perform((result) => Edited(msg.userId, query.value, result)),
+        ),
+        [],
+      ]
+    }
+
+    case "Profile/Edited": {
+      const { result, userId } = msg
+
+      const mutationId = toEditId(userId)
+      const mutationsNew: Model["mutations"] = {
+        ...model.mutations,
+        [mutationId]: {
+          ...pipe(
+            result,
+            RemoteData.fromResult,
+            RemoteData.map((profile) => profile.userId),
+          ),
+          tag: "Profile/Edit",
+        },
+      }
+
+      switch (result.type) {
+        case "Err": {
+          const ProfileNew = removeKey(userId, model.Profile)
+          return [
+            { ...model, Profile: ProfileNew, mutations: mutationsNew },
+            cmd.none,
+            [],
+          ]
+        }
+
+        case "Ok": {
+          const ProfileNew = {
+            ...model.Profile,
+            [result.value.userId]: result.value,
+          }
+          return [
+            { ...model, Profile: ProfileNew, mutations: mutationsNew },
+            cmd.none,
+            [],
+          ]
+        }
+      }
+    }
+
+    case "Profile/Get": {
+      const { userId } = msg
+      const query = toGetQuery(userId, model)
+
+      if (query.type === "Loading") {
+        return [model, cmd.none, []]
+      }
+
+      const queryId = toGetId(userId)
+
+      const queriesNew: Model["queries"] = {
+        ...model.queries,
+        [queryId]: {
+          tag: "Profile/Get",
+          ...RemoteData.Loading,
+        },
+      }
+
+      return [
+        { ...model, queries: queriesNew },
+        pipe(
+          load({ userId }),
+          perform((result) => Got(userId, result)),
+        ),
+        [],
+      ]
+    }
+
+    case "Profile/Got": {
+      const modelNew = updateGotProfile(msg.userId, msg.result, model)
+      return [modelNew, cmd.none, []]
+    }
+
+    case "Profile/DeleteForever": {
+      const query = toGetQuery(msg.userId, model)
+
+      if (query.type !== "Success") {
+        return [model, cmd.none, []]
+      }
+
+      const modelNew = updateGotProfile(
+        msg.userId,
+        Result.Err({ message: "Profile was deleted" }),
+        model,
+      )
+
+      return [
+        modelNew,
+        pipe(
+          deleteForever(msg.userId),
+          perform((result) => DeletedForever(msg.userId, query.value, result)),
+        ),
+        [],
+      ]
+    }
+
+    case "Profile/DeletedForever": {
+      const { result, userId, previous } = msg
+
+      switch (result.type) {
+        case "Err": {
+          const ProfileNew = { ...model.Profile, [userId]: previous }
+          return [{ ...model, Profile: ProfileNew }, cmd.none, []]
+        }
+
+        case "Ok": {
+          return [model, cmd.none, []]
+        }
+      }
+    }
+
+    case "Profile/Create":
+      const modelNew = updateGotProfile(
+        msg.profile.userId,
+        Result.Ok(msg.profile),
+        model,
+      )
+
+      return [
+        modelNew,
+        pipe(
+          create(msg.profile),
+          perform((result) => Created(msg.profile.userId, result)),
+        ),
+        [],
+      ]
+
+    case "Profile/Created": {
+      const modelNew = updateGotProfile(msg.userId, msg.result, model)
+
+      return [modelNew, cmd.none, []]
+    }
+
+    case "Profile/Search":
+      const nameOrUsername = msg.searchText
+      const queryId = toSearchId(nameOrUsername)
+      const queriesNew: Model["queries"] = {
+        ...model.queries,
+        [queryId]: {
+          tag: "Profile/Search",
+          ...RemoteData.Loading,
+        },
+      }
+      return [
+        { ...model, queries: queriesNew },
+        pipe(
+          search({ nameOrUsername }),
+          perform((result) => Searched(nameOrUsername, result)),
+        ),
+        [],
+      ]
+
+    case "Profile/Searched": {
+      const { result } = msg
+
+      switch (result.type) {
+        case "Err":
+          return [model, cmd.none, []]
+
+        case "Ok":
+          const ProfileNew = result.value.reduce<Model["Profile"]>(
+            (Profile, profile) => ({
+              ...Profile,
+              [profile.userId]: {
+                ...(Profile?.[profile.userId] ?? {}),
+                ...profile,
+              },
+            }),
+            model.Profile,
+          )
+
+          const queryId = toSearchId(msg.searchText)
+          const queriesNew: Model["queries"] = {
+            ...model.queries,
+            [queryId]: {
+              ...RemoteData.Success(
+                result.value.map((profile) => profile.userId),
+              ),
+              tag: "Profile/Search",
+            },
+          }
+
+          return [
+            {
+              ...model,
+              queries: queriesNew,
+              Profile: ProfileNew,
+            },
+            cmd.none,
+            [],
+          ]
+      }
+    }
+
+    default:
+      return exhaustive(msg)
+  }
+}
+
+const updateGotProfile = (
+  userId: string,
+  result: Result.Result<Problem, Profile>,
+  model: Model,
+): Model => {
+  const queryId = toGetId(userId)
+
+  const queriesNew: Model["queries"] = {
+    ...model.queries,
+    [queryId]: {
+      tag: "Profile/Get",
+      ...pipe(
+        result,
+        RemoteData.fromResult,
+        RemoteData.map((profile) => profile.userId),
+      ),
+    },
+  }
+
+  switch (result.type) {
+    case "Err": {
+      return {
+        ...model,
+        Profile: removeKey(userId, model.Profile),
+        queries: queriesNew,
+      }
+    }
+
+    case "Ok": {
+      const ProfileNew = {
+        ...model.Profile,
+        [result.value.userId]: result.value,
+      }
+
+      return {
+        ...model,
+        Profile: ProfileNew,
+        queries: queriesNew,
+      }
+    }
+  }
+}
+
+//
+//
+//
+// Selectors
+//
+//
+//
+
+export const toGetQuery = (
+  userId: string,
+  model: Model,
+): RemoteData.RemoteData<Problem, Profile> => {
+  const query = model.queries[toGetId(userId)]
+
+  if (!query) {
+    return RemoteData.NotAsked
+  }
+
+  if (query.tag !== "Profile/Get") {
+    return RemoteData.NotAsked
+  }
+
+  switch (query.type) {
+    case "Failure":
+    case "Loading":
+    case "NotAsked":
+      return query
+    case "Success":
+      const userId = query.value
+      const profile = model.Profile[userId]
+      if (!profile) {
+        return RemoteData.Failure({ message: "Not present" })
+      }
+
+      return RemoteData.Success(profile)
+  }
+}
+
+export const toSearchQuery = (
+  searchText: string,
+  model: Model,
+): RemoteData.RemoteData<Problem, string[]> => {
+  const query = model.queries[toSearchId(searchText)]
+
+  if (!query) {
+    return RemoteData.NotAsked
+  }
+
+  if (query.tag !== "Profile/Search") {
+    return RemoteData.NotAsked
+  }
+
+  return query
+}
+
+export const searchProfiles = (nameOrUsername: string, store: Model) => {
+  return pipe(
+    store,
+    (store) => Object.values(store.Profile),
+    (profiles) =>
+      matchSorter(profiles, nameOrUsername, { keys: ["name", "username"] }),
+  )
+}
+
+//
+//
+//
+// Data Access
 //
 //
 //
@@ -232,8 +647,6 @@ const rowToProfile = (row: definitions["profile"]): Profile => {
     themeMode: toThemeMode(row.theme_mode),
   }
 }
-
-type Problem = { message: string }
 
 export const load =
   ({
@@ -354,22 +767,20 @@ export const edit =
     return Result.Ok(rowToProfile(response.data))
   }
 
-export const subscription = ({
-  userId,
-}: {
-  userId: string
-}): sub.Sub<option.Option<Profile>> => {
-  return new Rx.Observable<option.Option<Profile>>((subscriber) => {
+export const subscriptions = ({ userId }: { userId: string }): Sub<Msg> => {
+  return new Rx.Observable<Msg>((subscriber) => {
     const subscription = Supabase.client
       .from<definitions["profile"]>(`profile:id=eq.${userId}`)
       .on("INSERT", (payload) => {
-        subscriber.next(option.some(rowToProfile(payload.new)))
+        const profile = rowToProfile(payload.new)
+        subscriber.next(Received(profile))
       })
       .on("UPDATE", (payload) => {
-        subscriber.next(option.some(rowToProfile(payload.new)))
+        const profile = rowToProfile(payload.new)
+        subscriber.next(Received(profile))
       })
       .on("DELETE", () => {
-        subscriber.next(option.none)
+        // todo
       })
       .subscribe()
 
@@ -378,4 +789,18 @@ export const subscription = ({
       subscription.unsubscribe()
     }
   })
+}
+
+//
+//
+//
+// Helpers
+//
+//
+//
+
+const removeKey = <T,>(key: keyof T, record: T): Omit<T, keyof T> => {
+  const { [key]: _value, ...removed } = record
+
+  return removed
 }

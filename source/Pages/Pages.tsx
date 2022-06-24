@@ -68,16 +68,16 @@ export const initLoading = (): [Model, Cmd<Msg>] => {
 export const initReady = (
   route: Route.Route,
   profile: Store.Profile.Profile,
-): [Model, Cmd<Msg>] => {
+): [Model, Cmd<Msg>, Action[]] => {
   switch (route.type) {
     case "Account":
-      return [{ ...Account.init, page: "Account" }, cmd.none]
+      return [{ ...Account.init, page: "Account" }, cmd.none, []]
 
     case "Chat":
-      return [{ ...Chat.init, page: "Chat" }, cmd.none]
+      return [{ ...Chat.init, page: "Chat" }, cmd.none, []]
 
     case "ChatNew":
-      const [chatNew, chatNewCmd] = ChatNew.init()
+      const [chatNew, chatNewCmd, actions] = ChatNew.init()
 
       return [
         { ...chatNew, page: "ChatNew" },
@@ -85,36 +85,43 @@ export const initReady = (
           chatNewCmd,
           cmd.map((msg) => ({ ...msg, page: "ChatNew" })),
         ),
+        actions,
       ]
 
     case "ChatConversation":
-      return [{ ...ChatConversation.init, page: "ChatConversation" }, cmd.none]
+      return [
+        { ...ChatConversation.init, page: "ChatConversation" },
+        cmd.none,
+        [],
+      ]
 
     case "Game":
-      return [{ page: "Game" }, cmd.none]
+      return [{ page: "Game" }, cmd.none, []]
 
     case "Home":
-      return [{ ...Home.init, page: "Home" }, cmd.none]
+      return [{ ...Home.init, page: "Home" }, cmd.none, []]
 
     case "Logout":
-      return [{ ...Logout.init, page: "Logout" }, cmd.none]
+      return [{ ...Logout.init, page: "Logout" }, cmd.none, []]
 
     case "ProfileDelete":
-      return [{ ...ProfileDelete.init, page: "ProfileDelete" }, cmd.none]
+      return [{ ...ProfileDelete.init, page: "ProfileDelete" }, cmd.none, []]
 
     case "ProfileUpdate":
-      return [{ ...ProfileUpdate.init, page: "ProfileUpdate" }, cmd.none]
+      return [{ ...ProfileUpdate.init, page: "ProfileUpdate" }, cmd.none, []]
 
     case "ProfileUpdateAvatar":
       return [
         { ...ProfileUpdateAvatar.init(profile), page: "ProfileUpdateAvatar" },
         cmd.none,
+        [],
       ]
 
     case "ProfileUpdateName":
       return [
         { ...ProfileUpdateName.init(profile), page: "ProfileUpdateName" },
         cmd.none,
+        [],
       ]
 
     case "ProfileUpdateUsername":
@@ -124,6 +131,7 @@ export const initReady = (
           page: "ProfileUpdateUsername",
         },
         cmd.none,
+        [],
       ]
 
     case "ProfileUpdateTheme":
@@ -133,6 +141,7 @@ export const initReady = (
           page: "ProfileUpdateTheme",
         },
         cmd.none,
+        [],
       ]
 
     case "ProfileCreate":
@@ -140,6 +149,7 @@ export const initReady = (
       return [
         { ...Home.init, page: "Home" },
         Navigation.push(Route.encode({ type: "Home" })),
+        [],
       ]
 
     default:
@@ -527,7 +537,11 @@ export const viewReady = (
     profile,
     game,
     store,
-  }: { game: Game.Model; profile: Store.Profile.Profile; store: Store.Model },
+  }: {
+    game: Game.Model
+    profile: Store.Profile.Profile
+    store: Store.Model
+  },
   model: Model,
 ): View.View<Msg> => {
   switch (model.page) {
@@ -538,7 +552,10 @@ export const viewReady = (
       return tagView("Chat", Chat.view(model))
 
     case "ChatNew":
-      return tagView("ChatNew", ChatNew.view(store, model))
+      return tagView(
+        "ChatNew",
+        ChatNew.view({ store, currentUserProfile: profile }, model),
+      )
 
     case "ChatConversation":
       return tagView("ChatConversation", ChatConversation.view(model))
