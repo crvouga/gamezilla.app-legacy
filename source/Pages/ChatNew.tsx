@@ -6,6 +6,7 @@ import { Sub } from "Core/Sub"
 import * as Store from "Store"
 import * as View from "View"
 import { pipe } from "fp-ts/lib/function"
+import { useEffect, useRef } from "react"
 
 //
 //
@@ -23,7 +24,12 @@ export type Model = {
   selectedResultIndex: "None" | number
 }
 
-type SearchResult = { userId: string; username: string; avatarUrl: string }
+type SearchResult = {
+  userId: string
+  username: string
+  avatarUrl: string
+  name: string
+}
 
 //
 //
@@ -144,7 +150,11 @@ export const update = (
       }
 
     case "UserClickedSearchResult":
-      return toggleSelected(msg.searchResult, model)
+      const [modelNew, cmdNew, actions] = toggleSelected(
+        msg.searchResult,
+        model,
+      )
+      return [{ ...modelNew, selectedResultIndex: "None" }, cmdNew, actions]
   }
 }
 
@@ -280,33 +290,21 @@ export const view =
           )}
 
           {searchResults.map((searchResult, index) => (
-            <View.ListItemButton
-              selected={
+            <SearchResultListItem
+              key={searchResult.userId}
+              searchResult={searchResult}
+              onClick={() => {
+                dispatch({ type: "UserClickedSearchResult", searchResult })
+              }}
+              selected={searchResult.userId in model.selected}
+              highlighted={
                 model.selectedResultIndex !== "None" &&
                 circularIndex(
                   model.selectedResultIndex,
                   searchResults.length,
                 ) === index
               }
-              key={searchResult.userId}
-              onMouseDown={() => {
-                dispatch({ type: "UserClickedSearchResult", searchResult })
-              }}
-            >
-              <View.ListItemAvatar>
-                <View.Avatar src={searchResult.avatarUrl} />
-              </View.ListItemAvatar>
-              <View.ListItemText
-                primary={searchResult.username}
-                secondary={searchResult.name}
-              />
-
-              <View.ListItemSecondaryAction>
-                <View.Checkbox
-                  checked={searchResult.userId in model.selected}
-                />
-              </View.ListItemSecondaryAction>
-            </View.ListItemButton>
+            />
           ))}
 
           {model.searchStatus === "Searching" && (
@@ -325,6 +323,48 @@ export const view =
       </View.Page>
     )
   }
+
+const SearchResultListItem = ({
+  searchResult,
+
+  onClick,
+  highlighted,
+  selected,
+}: {
+  highlighted: boolean
+  selected: boolean
+  searchResult: SearchResult
+  onClick: () => void
+}) => {
+  const ref = useRef<HTMLDivElement | null>(null)
+  useEffect(() => {
+    if (highlighted && ref.current) {
+      ref.current.scrollIntoView({ behavior: "smooth" })
+    }
+  }, [highlighted])
+  return (
+    <div ref={ref}>
+      <View.ListItemButton
+        id={searchResult.userId}
+        selected={highlighted}
+        key={searchResult.userId}
+        onMouseDown={onClick}
+      >
+        <View.ListItemAvatar>
+          <View.Avatar src={searchResult.avatarUrl} />
+        </View.ListItemAvatar>
+        <View.ListItemText
+          primary={searchResult.username}
+          secondary={searchResult.name}
+        />
+
+        <View.ListItemSecondaryAction>
+          <View.Checkbox checked={selected} />
+        </View.ListItemSecondaryAction>
+      </View.ListItemButton>
+    </div>
+  )
+}
 
 //
 //
