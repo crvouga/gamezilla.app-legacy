@@ -456,6 +456,8 @@ export const view =
             position: "fixed",
             width: "100%",
             height: "100%",
+            overflow: "hidden",
+            maxHeight: "100%",
             display: "flex",
             flexDirection: "column",
             left: "50%",
@@ -463,7 +465,13 @@ export const view =
             transform: "translate(-50%, -50%)",
           }}
         >
-          <View.Box sx={{ width: "100%", flex: 1 }}>
+          <View.Box
+            sx={{
+              width: "100%",
+              overflow: "hidden",
+              flex: 1,
+            }}
+          >
             {viewMain(model)(dispatch)}
           </View.Box>
 
