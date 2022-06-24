@@ -63,7 +63,7 @@ export const toStatus = ({
     case "LoggedIn":
       const { userId } = session
 
-      const profileQuery = Store.toProfileGetQuery(userId, store)
+      const profileQuery = Store.Profile.toGetQuery(userId, store)
 
       switch (profileQuery.type) {
         case "NotAsked":
@@ -204,11 +204,14 @@ const updateStatusChanged =
           return [model, Navigation.replace(Route.encode({ type: "Home" })), []]
         }
 
-        const [page, pageCmd] = Pages.initReady(model.route, statusNew.profile)
+        const [page, pageCmd, actions] = Pages.initReady(
+          model.route,
+          statusNew.profile,
+        )
         return [
           { ...model, page },
           pipe(pageCmd, cmd.map(groupTag("Page"))),
-          [],
+          actions,
         ]
       }
 
@@ -338,11 +341,14 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd<Msg>, Msg[]] => {
         }
 
         case "Ready": {
-          const [page, pageCmd] = Pages.initReady(route, status.profile)
+          const [page, pageCmd, actions] = Pages.initReady(
+            route,
+            status.profile,
+          )
           return [
             { ...modelNew, page },
             pipe(pageCmd, cmd.map(groupTag("Page"))),
-            [],
+            actions,
           ]
         }
 

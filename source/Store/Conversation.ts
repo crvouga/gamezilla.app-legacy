@@ -31,6 +31,7 @@ export const Create = (userIds: string[]) => {
   return {
     type: "Conversation/Create",
     group: "Store",
+    entity: "Conversation",
     userIds,
   } as const
 }
@@ -41,6 +42,7 @@ export const Created = (result: Result.Result<Problem, Conversation>) => {
   return {
     type: "Conversation/Created",
     group: "Store",
+    entity: "Conversation",
     result,
   } as const
 }
