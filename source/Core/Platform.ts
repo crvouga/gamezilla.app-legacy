@@ -5,7 +5,6 @@
  *
  * @since 0.5.0
  */
-
 import * as O from "fp-ts/lib/Option"
 import { BehaviorSubject, Observable } from "rxjs"
 import {
@@ -13,12 +12,11 @@ import {
   map,
   mergeAll,
   startWith,
-  mergeMap,
   switchMap,
   takeUntil,
 } from "rxjs/operators"
-import { Cmd } from "./Cmd"
-import { none, Sub } from "./Sub"
+import * as Cmd from "./Cmd"
+import * as Sub from "./Sub"
 
 /**
  * @category model
@@ -36,8 +34,8 @@ export interface Dispatch<Msg> {
  */
 export interface Program<Model, Msg> {
   dispatch: Dispatch<Msg>
-  cmd$: Cmd<Msg>
-  sub$: Sub<Msg>
+  cmd$: Cmd.Cmd<Msg>
+  sub$: Sub.Sub<Msg>
   model$: Observable<Model>
 }
 
@@ -51,9 +49,9 @@ export interface Program<Model, Msg> {
  * @since 0.5.0
  */
 export function program<Model, Msg>(
-  init: [Model, Cmd<Msg>],
-  update: (msg: Msg, model: Model) => [Model, Cmd<Msg>],
-  subscriptions: (model: Model) => Sub<Msg> = () => none,
+  init: [Model, Cmd.Cmd<Msg>],
+  update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>],
+  subscriptions: (model: Model) => Sub.Sub<Msg> = () => Sub.none,
 ): Program<Model, Msg> {
   const state$ = new BehaviorSubject(init)
   const dispatch: Dispatch<Msg> = (msg) =>
@@ -82,9 +80,9 @@ export function program<Model, Msg>(
  * @since 0.5.0
  */
 export function programWithFlags<Flags, Model, Msg>(
-  init: (flags: Flags) => [Model, Cmd<Msg>],
-  update: (msg: Msg, model: Model) => [Model, Cmd<Msg>],
-  subscriptions: (model: Model) => Sub<Msg> = () => none,
+  init: (flags: Flags) => [Model, Cmd.Cmd<Msg>],
+  update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>],
+  subscriptions: (model: Model) => Sub.Sub<Msg> = () => Sub.none,
 ): (flags: Flags) => Program<Model, Msg> {
   return (flags) => program(init(flags), update, subscriptions)
 }

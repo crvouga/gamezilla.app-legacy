@@ -7,15 +7,15 @@
  *
  * This is an example of usage:
  * ```ts
- * import {react, cmd} from 'elm-ts'
+ * import {react, Cmd} from 'elm-ts'
  * import {programWithDebugger} from 'elm-ts/lib/Debug/Html'
  * import { render } from 'react-dom'
  *
  * type Model = number
  * type Msg = 'INCREMENT' | 'DECREMENT'
  *
- * declare const init: [Model, cmd.none]
- * declare function update(msg: Msg, model: Model): [Model, cmd.Cmd<Msg>]
+ * declare const init: [Model, Cmd.none]
+ * declare function update(msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>]
  * declare function view(model: Model): View.View<Msg>
  *
  * const program = process.NODE_ENV === 'production' ? react.program : programWithDebugger
@@ -27,17 +27,15 @@
  *
  * @since 0.5.3
  */
-
-import { sub } from "Core"
 import { BehaviorSubject, EMPTY, Observable } from "rxjs"
-import { Cmd } from "../Cmd"
+import * as Cmd from "../Cmd"
+import * as Sub from "../Sub"
 import { Html, Program, program } from "../Html"
-import { Sub } from "../Sub"
 import {
+  DEBUG_ID,
   DebugData,
   DebuggerR,
   debugInit,
-  DEBUG_ID,
   runDebugger,
   updateWithDebug,
 } from "./commons"
@@ -67,10 +65,10 @@ import {
  * @since 0.5.3
  */
 export function programWithDebugger<Model, Msg, Dom>(
-  init: [Model, Cmd<Msg>],
-  update: (msg: Msg, model: Model) => [Model, Cmd<Msg>],
+  init: [Model, Cmd.Cmd<Msg>],
+  update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>],
   view: (model: Model) => Html<Dom, Msg>,
-  subscriptions?: (model: Model) => Sub<Msg>,
+  subscriptions?: (model: Model) => Sub.Sub<Msg>,
 ): Program<Model, Msg, Dom> {
   return createProgram(EMPTY, init, update, view, subscriptions)
 }
@@ -83,10 +81,10 @@ export function programWithDebugger<Model, Msg, Dom>(
 export function programWithDebuggerWithStop<Model, Msg, Dom>(
   stopDebuggerOn: Observable<unknown>,
 ): <S extends Model, M extends Msg, D extends Dom>(
-  init: [S, Cmd<M>],
-  update: (msg: M, model: S) => [S, Cmd<M>],
+  init: [S, Cmd.Cmd<M>],
+  update: (msg: M, model: S) => [S, Cmd.Cmd<M>],
   view: (model: S) => Html<D, M>,
-  subscriptions?: (model: S) => Sub<M>,
+  subscriptions?: (model: S) => Sub.Sub<M>,
 ) => Program<S, M, D> {
   return (init, update, view, subscriptions) =>
     createProgram(stopDebuggerOn, init, update, view, subscriptions)
@@ -98,10 +96,10 @@ export function programWithDebuggerWithStop<Model, Msg, Dom>(
  * @since 0.5.3
  */
 export function programWithDebuggerWithFlags<Flags, Model, Msg, Dom>(
-  init: (flags: Flags) => [Model, Cmd<Msg>],
-  update: (msg: Msg, model: Model) => [Model, Cmd<Msg>],
+  init: (flags: Flags) => [Model, Cmd.Cmd<Msg>],
+  update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>],
   view: (model: Model) => Html<Dom, Msg>,
-  subscriptions?: (model: Model) => Sub<Msg>,
+  subscriptions?: (model: Model) => Sub.Sub<Msg>,
 ): (flags: Flags) => Program<Model, Msg, Dom> {
   return (flags) =>
     programWithDebugger(init(flags), update, view, subscriptions)
@@ -115,24 +113,24 @@ export function programWithDebuggerWithFlags<Flags, Model, Msg, Dom>(
 export function programWithDebuggerWithFlagsWithStop<Model, Msg, Dom>(
   stopDebuggerOn: Observable<unknown>,
 ): <Flags, S extends Model, M extends Msg, D extends Dom>(
-  init: (flags: Flags) => [S, Cmd<M>],
-  update: (msg: M, model: S) => [S, Cmd<M>],
+  init: (flags: Flags) => [S, Cmd.Cmd<M>],
+  update: (msg: M, model: S) => [S, Cmd.Cmd<M>],
   view: (model: S) => Html<D, M>,
-  subscriptions?: (model: S) => Sub<M>,
+  subscriptions?: (model: S) => Sub.Sub<M>,
 ) => (flags: Flags) => Program<S, M, D> {
   return (init, update, view, subscriptions) => (flags) =>
     createProgram(stopDebuggerOn, init(flags), update, view, subscriptions)
 }
 
-const subNone = () => sub.none
+const subNone = () => Sub.none
 
 // --- Internal
 function createProgram<Model, Msg, Dom>(
   stopDebuggerOn: Observable<unknown>,
-  init: [Model, Cmd<Msg>],
-  update: (msg: Msg, model: Model) => [Model, Cmd<Msg>],
+  init: [Model, Cmd.Cmd<Msg>],
+  update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>],
   view: (model: Model) => Html<Dom, Msg>,
-  subscriptions?: (model: Model) => Sub<Msg>,
+  subscriptions?: (model: Model) => Sub.Sub<Msg>,
 ): Program<Model, Msg, Dom> {
   const Debugger = runDebugger<Model, Msg>(window, stopDebuggerOn)
 
@@ -155,17 +153,17 @@ function createProgram<Model, Msg, Dom>(
       },
     }),
     view,
-    (model: Model): Sub<Msg> => {
+    (model: Model): Sub.Sub<Msg> => {
       if (
         // @ts-ignore
         model[DEBUG_ID] === currentDebugId
       ) {
-        return subscriptions?.(model) ?? sub.none
+        return subscriptions?.(model) ?? Sub.none
       }
 
       // ignored subscriptions when time travel debugging
 
-      return sub.none
+      return Sub.none
     },
   )
 

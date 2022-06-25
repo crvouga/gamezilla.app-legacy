@@ -1,5 +1,4 @@
 import { Server } from "colyseus"
-import express from "express"
 import { createServer } from "http"
 import { AppRoom } from "./Room"
 
@@ -14,13 +13,9 @@ import { AppRoom } from "./Room"
 //
 
 const main = () => {
-  const app = express()
+  const server = createServer()
 
-  app.use(express.json())
-
-  const gameServer = new Server({
-    server: createServer(app),
-  })
+  const gameServer = new Server({ server })
 
   const port = Number(process.env.port) || 5000
 

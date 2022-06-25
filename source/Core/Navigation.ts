@@ -1,8 +1,8 @@
-import { option } from "fp-ts"
-import { Cmd } from "Core/Cmd"
-import { Sub } from "Core/Sub"
 import * as History from "history"
 import * as Rx from "rxjs"
+import { option } from "fp-ts"
+import * as Cmd from "./Cmd"
+import * as Sub from "./Sub"
 
 //
 //
@@ -42,7 +42,7 @@ export const getLocation = () => {
   return history.location
 }
 
-export const subscription: Sub<Location> = location$
+export const subscription: Sub.Sub<Location> = location$
 
 //
 //
@@ -52,7 +52,7 @@ export const subscription: Sub<Location> = location$
 //
 //
 
-export const reload = <Msg>(): Cmd<Msg> => {
+export const reload = <Msg>(): Cmd.Cmd<Msg> => {
   return Rx.of(async () => {
     window.location.reload()
 
@@ -60,7 +60,7 @@ export const reload = <Msg>(): Cmd<Msg> => {
   })
 }
 
-export const push = <Msg>(url: string): Cmd<Msg> => {
+export const push = <Msg>(url: string): Cmd.Cmd<Msg> => {
   return Rx.of(async () => {
     history.push(url)
 
@@ -68,7 +68,7 @@ export const push = <Msg>(url: string): Cmd<Msg> => {
   })
 }
 
-export const replace = <Msg>(url: string): Cmd<Msg> => {
+export const replace = <Msg>(url: string): Cmd.Cmd<Msg> => {
   return Rx.of(async () => {
     history.replace(url)
 
@@ -76,7 +76,7 @@ export const replace = <Msg>(url: string): Cmd<Msg> => {
   })
 }
 
-export const back = <Msg>(): Cmd<Msg> => {
+export const back = <Msg>(): Cmd.Cmd<Msg> => {
   return Rx.of(async () => {
     history.back()
 

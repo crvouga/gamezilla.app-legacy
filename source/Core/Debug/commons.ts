@@ -3,14 +3,12 @@
  *
  * @since 0.5.0
  */
-import { pipe } from "fp-ts/lib/function"
-import { chain, IO, map } from "fp-ts/lib/IO"
+import { IO, chain, map } from "fp-ts/lib/IO"
 import { fold } from "fp-ts/lib/Option"
-import { sub } from "Core"
-import { Sub } from "Core/Sub"
+import { pipe } from "fp-ts/lib/function"
 import { BehaviorSubject, Observable } from "rxjs"
 import { takeUntil } from "rxjs/operators"
-import { Cmd, none } from "../Cmd"
+import * as Cmd from "../Cmd"
 import { Dispatch } from "../Platform"
 import { consoleDebugger } from "./console"
 import { getConnection, reduxDevToolDebugger } from "./redux-devtool"
@@ -146,17 +144,17 @@ export function updateWithDebug<Model, Msg>({
   onDebugId,
 }: {
   debug$: BehaviorSubject<DebugData<Model, Msg>>
-  update: (msg: Msg, model: Model) => [Model, Cmd<Msg>]
+  update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>]
   onDebugId: (id: string) => void
-}): (msg: MsgWithDebug<Model, Msg>, model: Model) => [Model, Cmd<Msg>] {
+}): (msg: MsgWithDebug<Model, Msg>, model: Model) => [Model, Cmd.Cmd<Msg>] {
   return (msg, model) => {
     if ("type" in msg) {
       switch (msg.type) {
         case "__DebugUpdateModel__":
-          return [msg.payload, none]
+          return [msg.payload, Cmd.none]
 
         case "__DebugApplyMsg__":
-          return [update(msg.payload, model)[0], none]
+          return [update(msg.payload, model)[0], Cmd.none]
       }
     }
 

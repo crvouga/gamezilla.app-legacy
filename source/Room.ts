@@ -1,6 +1,6 @@
+import * as Rx from "rxjs"
 import Colyseus from "colyseus.js"
 import { Task } from "fp-ts/lib/Task"
-import * as Rx from "rxjs"
 
 const client = new Colyseus.Client("ws://localhost:5000")
 

@@ -1,6 +1,5 @@
-import { cmd } from "Core"
-import { Cmd } from "Core/Cmd"
 import * as Snackbar from "Snackbar"
+import { Cmd } from "Core"
 import * as Conversation from "./Conversation"
 import * as Profile from "./Profile"
 import * as ProfilesConversations from "./ProfilesConversations"
@@ -73,10 +72,13 @@ type Action = Snackbar.GroupedMsg
 //
 //
 
-export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>, Action[]] => {
+export const update = (
+  msg: Msg,
+  model: Model,
+): [Model, Cmd.Cmd<Msg>, Action[]] => {
   switch (msg.entity) {
     case "Conversation":
-      return [model, cmd.none, []]
+      return [model, Cmd.none, []]
 
     case "Profile":
       const [modelNew, cmdNew, actions] = Profile.update(msg, model)

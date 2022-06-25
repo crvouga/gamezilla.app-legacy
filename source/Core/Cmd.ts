@@ -5,11 +5,10 @@
  *
  * @since 0.5.0
  */
-
-import { pipe } from "fp-ts/lib/function"
 import * as Option from "fp-ts/lib/Option"
 import * as Task from "fp-ts/lib/Task"
 import * as Rx from "rxjs"
+import { pipe } from "fp-ts/lib/function"
 
 /**
  * @category model
@@ -34,8 +33,8 @@ export function of<Msg>(m: Msg): Cmd<Msg> {
  */
 export const map =
   <A, B>(mapper: (a: A) => B) =>
-  (cmd: Cmd<A>) => {
-    return cmd.pipe(Rx.map(Task.map(Option.map(mapper))))
+  (Cmd: Cmd<A>) => {
+    return Cmd.pipe(Rx.map(Task.map(Option.map(mapper))))
   }
 
 /**

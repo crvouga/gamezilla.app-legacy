@@ -1,6 +1,5 @@
+import { Cmd } from "Core"
 import { pipe } from "fp-ts/lib/function"
-import { cmd } from "Core"
-import { Cmd } from "Core/Cmd"
 
 export const exhaustive = (
   discriminatedUnionType: "Missing Case Error",
@@ -23,27 +22,27 @@ export const andThen =
     update: (
       msg: Msg,
       model: Model,
-    ) => [Model, Cmd<Msg>] | [Model, Cmd<Msg>, Action[]],
+    ) => [Model, Cmd.Cmd<Msg>] | [Model, Cmd.Cmd<Msg>, Action[]],
     msg: Msg,
   ) =>
   ([model, cmdPrev, actionsPrev = []]:
-    | [Model, Cmd<Msg>]
-    | [Model, Cmd<Msg>, Action[]]): [Model, Cmd<Msg>, Action[]] => {
+    | [Model, Cmd.Cmd<Msg>]
+    | [Model, Cmd.Cmd<Msg>, Action[]]): [Model, Cmd.Cmd<Msg>, Action[]] => {
     const [modelNew, cmdNew, actionsNew = []] = update(msg, model)
 
     return [
       modelNew,
-      cmd.batch([cmdPrev, cmdNew]),
+      Cmd.batch([cmdPrev, cmdNew]),
       [...actionsPrev, ...(actionsNew ?? [])],
     ]
   }
 
 export const andThenMany =
   <Msg, Model>(
-    update: (msg: Msg, model: Model) => [Model, Cmd<Msg>],
+    update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>],
     msgs: Msg[],
   ) =>
-  ([modelPrev, cmdPrev]: [Model, Cmd<Msg>]): [Model, Cmd<Msg>] => {
+  ([modelPrev, cmdPrev]: [Model, Cmd.Cmd<Msg>]): [Model, Cmd.Cmd<Msg>] => {
     const [msg, ...msgsRest] = msgs
 
     if (!msg) {
@@ -53,7 +52,7 @@ export const andThenMany =
     const [modelNew, cmdNew] = update(msg, modelPrev)
 
     return pipe(
-      [modelNew, cmd.batch([cmdPrev, cmdNew])],
+      [modelNew, Cmd.batch([cmdPrev, cmdNew])],
       andThenMany(update, msgsRest),
     )
   }

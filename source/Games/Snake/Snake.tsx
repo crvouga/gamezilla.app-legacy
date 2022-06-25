@@ -1,14 +1,8 @@
+import * as View from "View"
+import { Audio, Cmd, Keyboard, Navigation, Sub, Time } from "Core"
 import { either } from "fp-ts"
 import { pipe } from "fp-ts/lib/function"
-import { cmd, sub, time } from "Core"
-import * as Audio from "Core/Audio"
-import { Cmd } from "Core/Cmd"
-import * as Keyboard from "Core/Keyboard"
-import * as Navigation from "Core/Navigation"
-import { Sub } from "Core/Sub"
-import { attempt } from "Core/Task"
 import { useEffect, useRef } from "react"
-import * as View from "View"
 import * as Direction from "./Direction"
 import * as Position from "./Position"
 
@@ -120,15 +114,15 @@ const circular = (
   }
 }
 
-export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
+export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "UserClickedRestartButton":
-      return [init, cmd.none]
+      return [init, Cmd.none]
 
     case "Elapsed":
       switch (model.status.type) {
         case "Paused":
-          return [model, cmd.none]
+          return [model, Cmd.none]
 
         case "Playing":
           const tailNew = [model.head]
@@ -179,7 +173,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
               directionQueue: directionQueueNew,
               direction: directionNew,
             },
-            cmd.none,
+            Cmd.none,
           ]
       }
 
@@ -187,10 +181,10 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
       return [model, Navigation.back()]
 
     case "UserMouseUpBoard":
-      return [{ ...model, mouseStatus: "inactive" }, cmd.none]
+      return [{ ...model, mouseStatus: "inactive" }, Cmd.none]
 
     case "UserMouseDownBoard":
-      return [{ ...model, mouseStatus: "active" }, cmd.none]
+      return [{ ...model, mouseStatus: "active" }, Cmd.none]
 
     case "UserPressedKeyDown":
       const statusNew: Status =
@@ -207,30 +201,30 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
           ...model,
           status: statusNew,
         }),
-        cmd.none,
+        Cmd.none,
       ]
 
     case "UserClickedToggleButton":
       switch (model.status.type) {
         case "Paused":
-          return [{ ...model, status: { type: "Playing" } }, cmd.none]
+          return [{ ...model, status: { type: "Playing" } }, Cmd.none]
 
         case "Playing":
-          return [{ ...model, status: { type: "Paused" } }, cmd.none]
+          return [{ ...model, status: { type: "Paused" } }, Cmd.none]
       }
 
     case "AudioFailed":
-      return [model, cmd.none]
+      return [model, Cmd.none]
 
     case "AudioSucceeded":
-      return [model, cmd.none]
+      return [model, Cmd.none]
 
     case "UserMouseMovedBoard":
     case "UserTouchMovedBoard":
       const previous = model.touched
 
       if (!previous) {
-        return [{ ...model, touched: msg.position }, cmd.none]
+        return [{ ...model, touched: msg.position }, Cmd.none]
       }
 
       const touchedNew = msg.position
@@ -240,7 +234,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
       const maxDeltaMagnitude = Math.max(Math.abs(delta.x), Math.abs(delta.y))
 
       if (maxDeltaMagnitude < 4) {
-        return [{ ...model, touched: touchedNew }, cmd.none]
+        return [{ ...model, touched: touchedNew }, Cmd.none]
       }
 
       const xDirection = delta.x > 0 ? "left" : "right"
@@ -252,7 +246,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
 
       return [
         enqueueDirection(directionFromSwipe, { ...model, touched: touchedNew }),
-        cmd.none,
+        Cmd.none,
       ]
   }
 }
@@ -286,15 +280,15 @@ const toEmptyPositions = (model: Model) => {
 //
 //
 
-export const subscriptions = (model: Model): Sub<Msg> => {
+export const subscriptions = (model: Model): Sub.Sub<Msg> => {
   switch (model.status.type) {
     case "Paused":
       return keyDowns
 
     case "Playing":
-      return sub.batch([
+      return Sub.batch([
         keyDowns,
-        time.every<Msg>(model.tickRate, () => ({ type: "Elapsed" })),
+        Time.every<Msg>(model.tickRate, () => ({ type: "Elapsed" })),
       ])
   }
 }
@@ -533,7 +527,7 @@ export const Icon = () => {
 const playSound = (file: string) => {
   return pipe(
     Audio.play(file),
-    attempt(
+    Cmd.fromTask(
       either.fold<{}, {}, Msg>(
         () => ({ type: "AudioFailed" }),
         () => ({ type: "AudioSucceeded" }),

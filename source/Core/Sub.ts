@@ -3,15 +3,13 @@
  *
  * @since 0.5.0
  */
-
-import { EMPTY, merge, Observable } from "rxjs"
-import { map as RxMap } from "rxjs/operators"
+import * as Rx from "rxjs"
 
 /**
  * @category model
  * @since 0.5.0
  */
-export interface Sub<Msg> extends Observable<Msg> {}
+export interface Sub<Msg> extends Rx.Observable<Msg> {}
 
 /**
  * Maps `Msg` of a `Sub` into another `Msg`.
@@ -19,7 +17,7 @@ export interface Sub<Msg> extends Observable<Msg> {}
  * @since 0.5.0
  */
 export function map<A, Msg>(f: (a: A) => Msg): (sub: Sub<A>) => Sub<Msg> {
-  return (sub) => sub.pipe(RxMap(f))
+  return (sub) => sub.pipe(Rx.map(f))
 }
 
 /**
@@ -28,7 +26,7 @@ export function map<A, Msg>(f: (a: A) => Msg): (sub: Sub<A>) => Sub<Msg> {
  * @since 0.5.0
  */
 export function batch<Msg>(arr: Array<Sub<Msg>>): Sub<Msg> {
-  return merge(...arr)
+  return Rx.merge(...arr)
 }
 
 /**
@@ -36,4 +34,4 @@ export function batch<Msg>(arr: Array<Sub<Msg>>): Sub<Msg> {
  * @category constructors
  * @since 0.5.0
  */
-export const none: Sub<never> = EMPTY
+export const none: Sub<never> = Rx.EMPTY

@@ -1,14 +1,11 @@
-import { keyframes } from "@mui/system"
-import { pipe } from "fp-ts/lib/function"
-import { cmd, sub } from "Core"
-import { Cmd } from "Core/Cmd"
-import * as Navigation from "Core/Navigation"
-import { Sub } from "Core/Sub"
 import * as Games from "Games"
 import * as Route from "Route"
 import * as Snackbar from "Snackbar"
-import { exhaustive } from "Utility"
 import * as View from "View"
+import { keyframes } from "@mui/system"
+import { Cmd, Navigation, Sub } from "Core"
+import { exhaustive } from "Utility"
+import { pipe } from "fp-ts/lib/function"
 
 //
 //
@@ -42,7 +39,11 @@ export type Game = Opened["child"]["type"]
 
 export const init: Model = { type: "Closed" }
 
-const initOpened = ({ game }: { game: Game }): [Opened, Cmd<Msg>, OutMsg[]] => {
+const initOpened = ({
+  game,
+}: {
+  game: Game
+}): [Opened, Cmd.Cmd<Msg>, OutMsg[]] => {
   return [
     { type: "Opened", status: "Idle", child: initGame({ game }) },
     Navigation.push(Route.encode({ type: "Game" })),
@@ -106,7 +107,10 @@ export const UserOpenedGame = (game: Game): GroupedMsg => {
   }
 }
 
-export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>, OutMsg[]] => {
+export const update = (
+  msg: Msg,
+  model: Model,
+): [Model, Cmd.Cmd<Msg>, OutMsg[]] => {
   switch (model.type) {
     case "Closed":
       return updateClosed(msg, model)
@@ -116,11 +120,14 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>, OutMsg[]] => {
   }
 }
 
-const updateOpened = (msg: Msg, model: Opened): [Model, Cmd<Msg>, OutMsg[]] => {
+const updateOpened = (
+  msg: Msg,
+  model: Opened,
+): [Model, Cmd.Cmd<Msg>, OutMsg[]] => {
   if ("gameGroup" in msg) {
-    const [modelChild, cmdChild] = updateGame(msg, model.child)
+    const [modelChild, CmdChild] = updateGame(msg, model.child)
 
-    return [{ ...model, child: modelChild }, cmdChild, []]
+    return [{ ...model, child: modelChild }, CmdChild, []]
   }
 
   switch (msg.type) {
@@ -130,91 +137,94 @@ const updateOpened = (msg: Msg, model: Opened): [Model, Cmd<Msg>, OutMsg[]] => {
       }
       return [
         model,
-        cmd.none,
+        Cmd.none,
         [Snackbar.EnqueuedSnackbar("A game is already opened.")],
       ]
 
     case "UserClickedCloseGameButton":
-      return [{ ...model, status: "ConfirmingClose" }, cmd.none, []]
+      return [{ ...model, status: "ConfirmingClose" }, Cmd.none, []]
 
     case "UserClickedGameBanner":
       return [model, Navigation.push(Route.encode({ type: "Game" })), []]
 
     case "CancelledCloseGame":
-      return [{ ...model, status: "Idle" }, cmd.none, []]
+      return [{ ...model, status: "Idle" }, Cmd.none, []]
 
     case "ConfirmedCloseGame":
-      return [{ type: "Closed" }, cmd.none, []]
+      return [{ type: "Closed" }, Cmd.none, []]
   }
 }
 
 const updateGame = (
   msg: GameMsg,
   model: Opened["child"],
-): [Opened["child"], cmd.Cmd<Msg>] => {
+): [Opened["child"], Cmd.Cmd<Msg>] => {
   switch (model.type) {
     case "Chess":
       if (msg.gameGroup === "Chess") {
-        const [modelChild, cmdChild] = Games.Chess.update(msg, model.child)
+        const [modelChild, CmdChild] = Games.Chess.update(msg, model.child)
 
         return [
           { type: "Chess", child: modelChild },
-          pipe(cmdChild, cmd.map(groupGameTag("Chess"))),
+          pipe(CmdChild, Cmd.map(groupGameTag("Chess"))),
         ]
       }
 
-      return [model, cmd.none]
+      return [model, Cmd.none]
 
     case "ConnectFour":
       if (msg.gameGroup === "ConnectFour") {
-        const [modelChild, cmdChild] = Games.ConnectFour.update(
+        const [modelChild, CmdChild] = Games.ConnectFour.update(
           msg,
           model.child,
         )
 
         return [
           { type: "ConnectFour", child: modelChild },
-          pipe(cmdChild, cmd.map(groupGameTag("ConnectFour"))),
+          pipe(CmdChild, Cmd.map(groupGameTag("ConnectFour"))),
         ]
       }
-      return [model, cmd.none]
+      return [model, Cmd.none]
 
     case "TicTacToe":
       if (msg.gameGroup === "TicTacToe") {
-        const [modelChild, cmdChild] = Games.TicTacToe.update(msg, model.child)
+        const [modelChild, CmdChild] = Games.TicTacToe.update(msg, model.child)
 
         return [
           { type: "TicTacToe", child: modelChild },
-          pipe(cmdChild, cmd.map(groupGameTag("TicTacToe"))),
+          pipe(CmdChild, Cmd.map(groupGameTag("TicTacToe"))),
         ]
       }
 
-      return [model, cmd.none]
+      return [model, Cmd.none]
 
     case "Snake":
       if (msg.gameGroup === "Snake") {
-        const [modelChild, cmdChild] = Games.Snake.update(msg, model.child)
+        const [modelChild, CmdChild] = Games.Snake.update(msg, model.child)
 
         return [
           { type: "Snake", child: modelChild },
-          pipe(cmdChild, cmd.map(groupGameTag("Snake"))),
+          pipe(CmdChild, Cmd.map(groupGameTag("Snake"))),
         ]
       }
 
-      return [model, cmd.none]
+      return [model, Cmd.none]
 
     default:
       return exhaustive(model)
   }
 }
 
-const updateClosed = (msg: Msg, model: Closed): [Model, Cmd<Msg>, OutMsg[]] => {
+const updateClosed = (
+  msg: Msg,
+  model: Closed,
+): [Model, Cmd.Cmd<Msg>, OutMsg[]] => {
   switch (msg.type) {
     case "UserOpenedGame":
       return initOpened(msg)
 
     default:
-      return [model, cmd.none, []]
+      return [model, Cmd.none, []]
   }
 }
 
@@ -226,27 +236,27 @@ const updateClosed = (msg: Msg, model: Closed): [Model, Cmd<Msg>, OutMsg[]] => {
 //
 //
 
-export const subscriptions = (model: Model): Sub<Msg> => {
+export const subscriptions = (model: Model): Sub.Sub<Msg> => {
   switch (model.type) {
     case "Closed":
-      return sub.none
+      return Sub.none
 
     case "Opened":
       switch (model.child.type) {
         case "Chess":
-          return sub.none
+          return Sub.none
 
         case "ConnectFour":
-          return sub.none
+          return Sub.none
 
         case "Snake":
           return pipe(
             Games.Snake.subscriptions(model.child.child),
-            sub.map(groupGameTag("Snake")),
+            Sub.map(groupGameTag("Snake")),
           )
 
         case "TicTacToe":
-          return sub.none
+          return Sub.none
       }
   }
 }

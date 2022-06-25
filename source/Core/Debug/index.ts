@@ -7,7 +7,6 @@
  *
  * @since 0.5.0
  */
-
 import * as HtmlDebugger from "./Html"
 
 /**

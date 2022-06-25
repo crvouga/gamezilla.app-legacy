@@ -1,18 +1,16 @@
-import { cmd, html, sub } from "Core"
-import { Cmd } from "Core/Cmd"
-import { programWithDebugger } from "Core/Debug/Html"
-import * as Navigation from "Core/Navigation"
-import { pipe } from "fp-ts/lib/function"
 import * as Games from "Games"
 import * as Pages from "Pages"
-import * as ReactDom from "react-dom/client"
 import * as Route from "Route"
 import * as Session from "Session"
 import * as Snackbar from "Snackbar"
 import * as Store from "Store"
 import * as Profile from "Store/Profile"
-import { andThen, andThenMany, exhaustive, groupTag } from "Utility"
 import * as View from "View"
+import * as ReactDom from "react-dom/client"
+import { Cmd, Html, Navigation, Sub } from "Core"
+import { programWithDebugger } from "Core/Debug/Html"
+import { andThen, andThenMany, exhaustive, groupTag } from "Utility"
+import { pipe } from "fp-ts/lib/function"
 
 //
 //
@@ -93,7 +91,7 @@ type Flags = {
   location: Navigation.Location
 }
 
-export const init = (flags: Flags): [Model, Cmd<Msg>] => {
+export const init = (flags: Flags): [Model, Cmd.Cmd<Msg>] => {
   const route = Route.decode(flags.location.pathname) ?? { type: "Home" }
   const [session, sessionCmd] = Session.init()
   const snackbar = Snackbar.init
@@ -110,9 +108,9 @@ export const init = (flags: Flags): [Model, Cmd<Msg>] => {
       session,
       page,
     },
-    cmd.batch<Msg>([
-      pipe(sessionCmd, cmd.map(groupTag("Session"))),
-      pipe(pageCmd, cmd.map(groupTag("Page"))),
+    Cmd.batch<Msg>([
+      pipe(sessionCmd, Cmd.map(groupTag("Session"))),
+      pipe(pageCmd, Cmd.map(groupTag("Page"))),
     ]),
   ]
 }
@@ -141,9 +139,9 @@ export type Msg =
 //
 //
 
-export const update = (msg: Msg, modelPrev: Model): [Model, Cmd<Msg>] => {
+export const update = (msg: Msg, modelPrev: Model): [Model, Cmd.Cmd<Msg>] => {
   return pipe(
-    [modelPrev, cmd.none],
+    [modelPrev, Cmd.none],
 
     andThen(updateMain, msg),
 
@@ -162,17 +160,17 @@ export const update = (msg: Msg, modelPrev: Model): [Model, Cmd<Msg>] => {
 
 const updateStatusChanged =
   (modelPrev: Model) =>
-  (msg: Msg, model: Model): [Model, Cmd<Msg>, Msg[]] => {
+  (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>, Msg[]] => {
     const statusPrev = toStatus(modelPrev)
     const statusNew = toStatus(model)
 
     if (statusNew.type === statusPrev.type) {
-      return [model, cmd.none, []]
+      return [model, Cmd.none, []]
     }
 
     switch (statusNew.type) {
       case "ProfileLoading":
-        return [model, cmd.none, [Store.Profile.Get(statusNew.session.userId)]]
+        return [model, Cmd.none, [Store.Profile.Get(statusNew.session.userId)]]
 
       case "ProfileMissing": {
         const [page, pageCmd] = Pages.initProfileMissing(
@@ -182,19 +180,19 @@ const updateStatusChanged =
 
         return [
           { ...model, page },
-          pipe(pageCmd, cmd.map(groupTag("Page"))),
+          pipe(pageCmd, Cmd.map(groupTag("Page"))),
           [],
         ]
       }
 
       case "SessionLoading":
-        return [model, cmd.none, []]
+        return [model, Cmd.none, []]
 
       case "SessionMissing": {
         const [page, pageCmd] = Pages.initSessionMissing(model.route)
         return [
           { ...model, page },
-          pipe(pageCmd, cmd.map(groupTag("Page"))),
+          pipe(pageCmd, Cmd.map(groupTag("Page"))),
           [],
         ]
       }
@@ -210,7 +208,7 @@ const updateStatusChanged =
         )
         return [
           { ...model, page },
-          pipe(pageCmd, cmd.map(groupTag("Page"))),
+          pipe(pageCmd, Cmd.map(groupTag("Page"))),
           actions,
         ]
       }
@@ -220,21 +218,21 @@ const updateStatusChanged =
     }
   }
 
-const updateMain = (msg: Msg, model: Model): [Model, Cmd<Msg>, Msg[]] => {
+const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>, Msg[]] => {
   switch (msg.group) {
     case "Store": {
       const [storeNew, storeCmd, actions] = Store.update(msg, model.store)
 
       return [
         { ...model, store: storeNew },
-        pipe(storeCmd, cmd.map(groupTag("Store"))),
+        pipe(storeCmd, Cmd.map(groupTag("Store"))),
         actions,
       ]
     }
 
     case "Session": {
       const sessionNew = Session.update(msg)
-      return [{ ...model, session: sessionNew }, cmd.none, []]
+      return [{ ...model, session: sessionNew }, Cmd.none, []]
     }
 
     case "Snackbar":
@@ -242,7 +240,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd<Msg>, Msg[]] => {
 
       return [
         { ...model, snackbar: snackbarNew },
-        pipe(snackbarCmd, cmd.map(groupTag("Snackbar"))),
+        pipe(snackbarCmd, Cmd.map(groupTag("Snackbar"))),
         [],
       ]
 
@@ -251,7 +249,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd<Msg>, Msg[]] => {
 
       return [
         { ...model, game: gameNew },
-        pipe(gameCmd, cmd.map(groupTag("Game"))),
+        pipe(gameCmd, Cmd.map(groupTag("Game"))),
         actions,
       ]
     }
@@ -261,7 +259,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd<Msg>, Msg[]] => {
 
       switch (status.type) {
         case "SessionLoading":
-          return [model, cmd.none, []]
+          return [model, Cmd.none, []]
 
         case "SessionMissing": {
           const [pageNew, pageCmd, actions] = Pages.updateSessionMissing(
@@ -271,13 +269,13 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd<Msg>, Msg[]] => {
 
           return [
             { ...model, page: pageNew },
-            pipe(pageCmd, cmd.map(groupTag("Page"))),
+            pipe(pageCmd, Cmd.map(groupTag("Page"))),
             actions,
           ]
         }
 
         case "ProfileLoading":
-          return [model, cmd.none, []]
+          return [model, Cmd.none, []]
 
         case "ProfileMissing": {
           const [pageNew, pageCmd, actions] = Pages.updateProfileMissing(
@@ -287,7 +285,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd<Msg>, Msg[]] => {
           )
           return [
             { ...model, page: pageNew },
-            pipe(pageCmd, cmd.map(groupTag("Page"))),
+            pipe(pageCmd, Cmd.map(groupTag("Page"))),
             actions,
           ]
         }
@@ -309,7 +307,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd<Msg>, Msg[]] => {
 
           return [
             { ...model, page: pageNew },
-            pipe(pageCmd, cmd.map(groupTag("Page"))),
+            pipe(pageCmd, Cmd.map(groupTag("Page"))),
             actions,
           ]
         }
@@ -325,7 +323,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd<Msg>, Msg[]] => {
 
       switch (status.type) {
         case "ProfileLoading":
-          return [modelNew, cmd.none, []]
+          return [modelNew, Cmd.none, []]
 
         case "ProfileMissing": {
           const [page, pageCmd] = Pages.initProfileMissing(
@@ -335,7 +333,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd<Msg>, Msg[]] => {
 
           return [
             { ...modelNew, page },
-            pipe(pageCmd, cmd.map(groupTag("Page"))),
+            pipe(pageCmd, Cmd.map(groupTag("Page"))),
             [],
           ]
         }
@@ -347,19 +345,19 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd<Msg>, Msg[]] => {
           )
           return [
             { ...modelNew, page },
-            pipe(pageCmd, cmd.map(groupTag("Page"))),
+            pipe(pageCmd, Cmd.map(groupTag("Page"))),
             actions,
           ]
         }
 
         case "SessionLoading":
-          return [modelNew, cmd.none, []]
+          return [modelNew, Cmd.none, []]
 
         case "SessionMissing": {
           const [page, pageCmd] = Pages.initSessionMissing(route)
           return [
             { ...modelNew, page },
-            pipe(pageCmd, cmd.map(groupTag("Page"))),
+            pipe(pageCmd, Cmd.map(groupTag("Page"))),
             [],
           ]
         }
@@ -371,7 +369,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd<Msg>, Msg[]] => {
   }
 }
 
-const updateAction = (action: Msg, model: Model): [Model, Cmd<Msg>] => {
+const updateAction = (action: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   const { group } = action
 
   switch (group) {
@@ -379,31 +377,31 @@ const updateAction = (action: Msg, model: Model): [Model, Cmd<Msg>] => {
       const [storeNew, storeCmd] = Store.update(action, model.store)
       return [
         { ...model, store: storeNew },
-        pipe(storeCmd, cmd.map(groupTag("Store"))),
+        pipe(storeCmd, Cmd.map(groupTag("Store"))),
       ]
 
     case "Page":
-      return [model, cmd.none]
+      return [model, Cmd.none]
 
     case "Session":
-      return [model, cmd.none]
+      return [model, Cmd.none]
 
     case "Snackbar":
       const [snackbarNew, snackbarCmd] = Snackbar.update(action, model.snackbar)
       return [
         { ...model, snackbar: snackbarNew },
-        pipe(snackbarCmd, cmd.map(groupTag("Snackbar"))),
+        pipe(snackbarCmd, Cmd.map(groupTag("Snackbar"))),
       ]
 
     case "Game":
       const [gameNew, gameCmd, actions] = Games.update(action, model.game)
       return pipe(
-        [{ ...model, game: gameNew }, pipe(gameCmd, cmd.map(groupTag("Game")))],
+        [{ ...model, game: gameNew }, pipe(gameCmd, Cmd.map(groupTag("Game")))],
         andThenMany(updateAction, actions),
       )
 
     case "Route":
-      return [model, cmd.none]
+      return [model, Cmd.none]
 
     default:
       return exhaustive(group)
@@ -418,12 +416,12 @@ const updateAction = (action: Msg, model: Model): [Model, Cmd<Msg>] => {
 //
 //
 
-export const subscriptions = (model: Model): sub.Sub<Msg> => {
-  return sub.batch<Msg>([
-    pipe(Route.subscriptions(), sub.map(groupTag("Route"))),
-    pipe(Session.subscriptions, sub.map(groupTag("Session"))),
-    pipe(Games.subscriptions(model.game), sub.map(groupTag("Game"))),
-    pipe(Pages.subscriptions(model.page), sub.map(groupTag("Page"))),
+export const subscriptions = (model: Model): Sub.Sub<Msg> => {
+  return Sub.batch<Msg>([
+    pipe(Route.subscriptions(), Sub.map(groupTag("Route"))),
+    pipe(Session.subscriptions, Sub.map(groupTag("Session"))),
+    pipe(Games.subscriptions(model.game), Sub.map(groupTag("Game"))),
+    pipe(Pages.subscriptions(model.page), Sub.map(groupTag("Page"))),
   ])
 }
 
@@ -593,6 +591,6 @@ if (!rootElement) {
 
 const root = ReactDom.createRoot(rootElement)
 
-html.run(program, (dom) => {
+Html.run(program, (dom) => {
   root.render(dom)
 })

@@ -1,10 +1,8 @@
+import * as View from "View"
 import { SxProps } from "@mui/material"
+import { Cmd } from "Core"
 import { task } from "fp-ts"
 import { pipe } from "fp-ts/lib/function"
-import { cmd } from "Core"
-import { Cmd } from "Core/Cmd"
-import { perform } from "Core/Task"
-import * as View from "View"
 
 //
 //
@@ -67,14 +65,14 @@ export const EnqueuedSnackbarError = (message: string): GroupedMsg => {
   }
 }
 
-export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
+export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "EnqueuedSnackbar":
       return [
         { ...model, queue: [msg.snack, ...model.queue] },
         pipe(
           task.delay(3000)(task.of({})),
-          perform(() => ({
+          Cmd.fromTask(() => ({
             type: "SnackbarDurationElapsed",
             snackId: msg.snack.snackId,
           })),
@@ -85,19 +83,19 @@ export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
       return removeById(msg, model)
 
     case "UserClosedSnackbar":
-      return [model, cmd.none]
+      return [model, Cmd.none]
   }
 }
 
 const removeById = (
   { snackId }: { snackId: string },
   model: Model,
-): [Model, Cmd<Msg>] => [
+): [Model, Cmd.Cmd<Msg>] => [
   {
     ...model,
     queue: model.queue.filter((snack) => snack.snackId !== snackId),
   },
-  cmd.none,
+  Cmd.none,
 ]
 
 //

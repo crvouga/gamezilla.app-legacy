@@ -1,8 +1,7 @@
-import { cmd } from "Core"
-import * as Navigation from "Core/Navigation"
 import * as Store from "Store"
 import * as Profile from "Store/Profile"
 import * as View from "View"
+import { Cmd, Navigation } from "Core"
 
 //
 //
@@ -36,7 +35,7 @@ export const update = (
   { userId }: { userId: string },
   msg: Msg,
   model: Model,
-): [Model, cmd.Cmd<Msg>, OutMsg[]] => {
+): [Model, Cmd.Cmd<Msg>, OutMsg[]] => {
   switch (msg.type) {
     case "UserClickedBackButton":
       return [model, Navigation.back(), []]
@@ -44,7 +43,7 @@ export const update = (
     case "UserClickedThemeModeOption":
       return [
         model,
-        cmd.none,
+        Cmd.none,
         [Store.Profile.Edit(userId, { themeMode: msg.themeMode })],
       ]
   }

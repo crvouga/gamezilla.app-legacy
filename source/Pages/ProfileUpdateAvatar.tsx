@@ -1,11 +1,9 @@
-import { pipe } from "fp-ts/lib/function"
-import { cmd } from "Core"
-import * as Navigation from "Core/Navigation"
-import { perform } from "Core/Task"
 import * as ProfileAvatar from "ProfileAvatar"
 import * as Snackbar from "Snackbar"
 import * as Store from "Store"
 import * as View from "View"
+import { Cmd, Navigation } from "Core"
+import { pipe } from "fp-ts/lib/function"
 
 //
 //
@@ -57,35 +55,35 @@ export const update = (
   { userId }: { userId: string },
   msg: Msg,
   model: Model,
-): [Model, cmd.Cmd<Msg>, OutMsg[]] => {
+): [Model, Cmd.Cmd<Msg>, OutMsg[]] => {
   switch (msg.type) {
     case "UserClickedCancelButton":
       return [model, Navigation.back(), []]
 
     case "StyleSelectClosed":
-      return [{ ...model, status: "Idle" }, cmd.none, []]
+      return [{ ...model, status: "Idle" }, Cmd.none, []]
 
     case "StyleSelectOpened":
-      return [{ ...model, status: "StyleSelectOpened" }, cmd.none, []]
+      return [{ ...model, status: "StyleSelectOpened" }, Cmd.none, []]
 
     case "UserEnteredSeed":
-      return [{ ...model, seed: msg.seed }, cmd.none, []]
+      return [{ ...model, seed: msg.seed }, Cmd.none, []]
 
     case "UserClickedRandomSeedButton":
       return [
         { ...model, status: "GeneratingSeed" },
         pipe(
           ProfileAvatar.generateRandomSeed,
-          perform((seed) => ({ type: "RandomSeedGenerated", seed })),
+          Cmd.fromTask((seed) => ({ type: "RandomSeedGenerated", seed })),
         ),
         [],
       ]
 
     case "RandomSeedGenerated":
-      return [{ ...model, status: "Idle", seed: msg.seed }, cmd.none, []]
+      return [{ ...model, status: "Idle", seed: msg.seed }, Cmd.none, []]
 
     case "UserSelectedStyle":
-      return [{ ...model, style: msg.style }, cmd.none, []]
+      return [{ ...model, style: msg.style }, Cmd.none, []]
 
     case "UserClickedDoneButton":
       return [

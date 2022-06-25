@@ -1,38 +1,10 @@
-/**
- * @since 0.5.0
- */
-import * as cmd from "./Cmd"
-import * as html from "./Html"
-import * as platform from "./Platform"
-import * as sub from "./Sub"
-import * as task from "./Task"
-import * as time from "./Time"
-
-export {
-  cmd,
-  /**
-   * @category instances
-   * @since 0.5.0
-   */
-  html,
-  /**
-   * @category instances
-   * @since 0.5.0
-   */
-  platform,
-  /**
-   * @category instances
-   * @since 0.5.0
-   */
-  sub,
-  /**
-   * @category instances
-   * @since 0.5.0
-   */
-  task,
-  /**
-   * @category instances
-   * @since 0.5.0
-   */
-  time,
-}
+export * as Audio from "./Audio"
+export * as Cmd from "./Cmd"
+export * as Html from "./Html"
+export * as Keyboard from "./Keyboard"
+export * as Navigation from "./Navigation"
+export * as Platform from "./Platform"
+export * as RemoteData from "./RemoteData"
+export * as Result from "./Result"
+export * as Sub from "./Sub"
+export * as Time from "./Time"

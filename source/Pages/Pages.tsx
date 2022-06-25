@@ -1,17 +1,15 @@
-import { pipe } from "fp-ts/lib/function"
-import { cmd, sub } from "Core"
-import { Cmd } from "Core/Cmd"
-import * as Navigation from "Core/Navigation"
-import { Sub } from "Core/Sub"
 import * as Games from "Games"
 import * as Route from "Route"
 import * as Session from "Session"
 import * as Snackbar from "Snackbar"
 import * as Store from "Store"
-import { exhaustive } from "Utility"
 import * as View from "View"
+import { Cmd, Navigation, Sub } from "Core"
+import { exhaustive } from "Utility"
+import { pipe } from "fp-ts/lib/function"
 import * as Account from "./Account"
 import * as Chat from "./Chat"
+import * as ChatConversation from "./ChatConversation"
 import * as ChatNew from "./ChatNew"
 import * as Game from "./Game"
 import * as Home from "./Home"
@@ -24,7 +22,6 @@ import * as ProfileUpdateAvatar from "./ProfileUpdateAvatar"
 import * as ProfileUpdateName from "./ProfileUpdateName"
 import * as ProfileUpdateTheme from "./ProfileUpdateTheme"
 import * as ProfileUpdateUsername from "./ProfileUpdateUsername"
-import * as ChatConversation from "./ChatConversation"
 
 //
 //
@@ -61,20 +58,20 @@ export type Model =
 //
 //
 
-export const initLoading = (): [Model, Cmd<Msg>] => {
-  return [{ page: "Loading" }, cmd.none]
+export const initLoading = (): [Model, Cmd.Cmd<Msg>] => {
+  return [{ page: "Loading" }, Cmd.none]
 }
 
 export const initReady = (
   route: Route.Route,
   profile: Store.Profile.Profile,
-): [Model, Cmd<Msg>, Action[]] => {
+): [Model, Cmd.Cmd<Msg>, Action[]] => {
   switch (route.type) {
     case "Account":
-      return [{ ...Account.init, page: "Account" }, cmd.none, []]
+      return [{ ...Account.init, page: "Account" }, Cmd.none, []]
 
     case "Chat":
-      return [{ ...Chat.init, page: "Chat" }, cmd.none, []]
+      return [{ ...Chat.init, page: "Chat" }, Cmd.none, []]
 
     case "ChatNew":
       const [chatNew, chatNewCmd, actions] = ChatNew.init()
@@ -83,7 +80,7 @@ export const initReady = (
         { ...chatNew, page: "ChatNew" },
         pipe(
           chatNewCmd,
-          cmd.map((msg) => ({ ...msg, page: "ChatNew" })),
+          Cmd.map((msg) => ({ ...msg, page: "ChatNew" })),
         ),
         actions,
       ]
@@ -91,36 +88,36 @@ export const initReady = (
     case "ChatConversation":
       return [
         { ...ChatConversation.init, page: "ChatConversation" },
-        cmd.none,
+        Cmd.none,
         [],
       ]
 
     case "Game":
-      return [{ page: "Game" }, cmd.none, []]
+      return [{ page: "Game" }, Cmd.none, []]
 
     case "Home":
-      return [{ ...Home.init, page: "Home" }, cmd.none, []]
+      return [{ ...Home.init, page: "Home" }, Cmd.none, []]
 
     case "Logout":
-      return [{ ...Logout.init, page: "Logout" }, cmd.none, []]
+      return [{ ...Logout.init, page: "Logout" }, Cmd.none, []]
 
     case "ProfileDelete":
-      return [{ ...ProfileDelete.init, page: "ProfileDelete" }, cmd.none, []]
+      return [{ ...ProfileDelete.init, page: "ProfileDelete" }, Cmd.none, []]
 
     case "ProfileUpdate":
-      return [{ ...ProfileUpdate.init, page: "ProfileUpdate" }, cmd.none, []]
+      return [{ ...ProfileUpdate.init, page: "ProfileUpdate" }, Cmd.none, []]
 
     case "ProfileUpdateAvatar":
       return [
         { ...ProfileUpdateAvatar.init(profile), page: "ProfileUpdateAvatar" },
-        cmd.none,
+        Cmd.none,
         [],
       ]
 
     case "ProfileUpdateName":
       return [
         { ...ProfileUpdateName.init(profile), page: "ProfileUpdateName" },
-        cmd.none,
+        Cmd.none,
         [],
       ]
 
@@ -130,7 +127,7 @@ export const initReady = (
           ...ProfileUpdateUsername.init(profile),
           page: "ProfileUpdateUsername",
         },
-        cmd.none,
+        Cmd.none,
         [],
       ]
 
@@ -140,7 +137,7 @@ export const initReady = (
           ...ProfileUpdateTheme.init,
           page: "ProfileUpdateTheme",
         },
-        cmd.none,
+        Cmd.none,
         [],
       ]
 
@@ -157,10 +154,12 @@ export const initReady = (
   }
 }
 
-export const initSessionMissing = (route: Route.Route): [Model, Cmd<Msg>] => {
+export const initSessionMissing = (
+  route: Route.Route,
+): [Model, Cmd.Cmd<Msg>] => {
   switch (route.type) {
     case "Login":
-      return [{ ...Login.init, page: "Login" }, cmd.none]
+      return [{ ...Login.init, page: "Login" }, Cmd.none]
 
     case "Account":
     case "Chat":
@@ -189,16 +188,16 @@ export const initSessionMissing = (route: Route.Route): [Model, Cmd<Msg>] => {
 export const initProfileMissing = (
   route: Route.Route,
   session: Session.Session,
-): [Model, Cmd<Msg>] => {
+): [Model, Cmd.Cmd<Msg>] => {
   switch (route.type) {
     case "ProfileCreate":
       return [
         { ...ProfileCreate.init(session), page: "ProfileCreate" },
-        cmd.none,
+        Cmd.none,
       ]
 
     case "Logout":
-      return [{ ...Logout.init, page: "Logout" }, cmd.none]
+      return [{ ...Logout.init, page: "Logout" }, Cmd.none]
 
     case "Login":
     case "Account":
@@ -268,25 +267,25 @@ export const updateReady = (
   { profile, store }: { profile: Store.Profile.Profile; store: Store.Model },
   msg: Msg,
   model: Model,
-): [Model, Cmd<Msg>, Action[]] => {
+): [Model, Cmd.Cmd<Msg>, Action[]] => {
   switch (model.page) {
     case "Account":
       if (msg.page === "Account") {
         return tagUpdate("Account", Account.update(profile, msg, model))
       }
-      return [model, cmd.none, []]
+      return [model, Cmd.none, []]
 
     case "Home":
       if (msg.page === "Home") {
         return tagUpdate("Home", Home.update(msg, model))
       }
-      return [model, cmd.none, []]
+      return [model, Cmd.none, []]
 
     case "Logout":
       if (msg.page === "Logout") {
         return tagUpdate("Logout", Logout.update(profile, msg, model))
       }
-      return [model, cmd.none, []]
+      return [model, Cmd.none, []]
 
     case "ProfileDelete":
       if (msg.page === "ProfileDelete") {
@@ -295,7 +294,7 @@ export const updateReady = (
           ProfileDelete.update(profile, msg, model),
         )
       }
-      return [model, cmd.none, []]
+      return [model, Cmd.none, []]
 
     case "ProfileUpdate":
       if (msg.page === "ProfileUpdate") {
@@ -304,7 +303,7 @@ export const updateReady = (
           ProfileUpdate.update(profile, msg, model),
         )
       }
-      return [model, cmd.none, []]
+      return [model, Cmd.none, []]
 
     case "ProfileUpdateAvatar":
       if (msg.page === "ProfileUpdateAvatar") {
@@ -313,7 +312,7 @@ export const updateReady = (
           ProfileUpdateAvatar.update(profile, msg, model),
         )
       }
-      return [model, cmd.none, []]
+      return [model, Cmd.none, []]
 
     case "ProfileUpdateName":
       if (msg.page === "ProfileUpdateName") {
@@ -322,7 +321,7 @@ export const updateReady = (
           ProfileUpdateName.update(profile, msg, model),
         )
       }
-      return [model, cmd.none, []]
+      return [model, Cmd.none, []]
 
     case "ProfileUpdateUsername":
       if (msg.page === "ProfileUpdateUsername") {
@@ -331,19 +330,19 @@ export const updateReady = (
           ProfileUpdateUsername.update(profile, msg, model),
         )
       }
-      return [model, cmd.none, []]
+      return [model, Cmd.none, []]
 
     case "Chat":
       if (msg.page === "Chat") {
         return tagUpdate("Chat", Chat.update(msg, model))
       }
-      return [model, cmd.none, []]
+      return [model, Cmd.none, []]
 
     case "ChatNew":
       if (msg.page === "ChatNew") {
         return tagUpdate("ChatNew", ChatNew.update(store, msg, model))
       }
-      return [model, cmd.none, []]
+      return [model, Cmd.none, []]
 
     case "ChatConversation":
       if (msg.page === "ChatConversation") {
@@ -352,7 +351,7 @@ export const updateReady = (
           ChatConversation.update(msg, model),
         )
       }
-      return [model, cmd.none, []]
+      return [model, Cmd.none, []]
 
     case "ProfileUpdateTheme":
       if (msg.page === "ProfileUpdateTheme") {
@@ -361,10 +360,10 @@ export const updateReady = (
           ProfileUpdateTheme.update(profile, msg, model),
         )
       }
-      return [model, cmd.none, []]
+      return [model, Cmd.none, []]
 
     case "Game":
-      return [model, cmd.none, []]
+      return [model, Cmd.none, []]
 
     case "Login":
     case "Loading":
@@ -380,7 +379,7 @@ export const updateProfileMissing = (
   session: Session.Session,
   msg: Msg,
   model: Model,
-): [Model, Cmd<Msg>, Action[]] => {
+): [Model, Cmd.Cmd<Msg>, Action[]] => {
   switch (model.page) {
     case "Logout":
       if (msg.page === "Logout") {
@@ -389,7 +388,7 @@ export const updateProfileMissing = (
           Logout.update({ name: session.defaultName }, msg, model),
         )
       }
-      return [model, cmd.none, []]
+      return [model, Cmd.none, []]
 
     case "ProfileCreate":
       if (msg.page === "ProfileCreate") {
@@ -398,7 +397,7 @@ export const updateProfileMissing = (
           ProfileCreate.update(session, msg, model),
         )
       }
-      return [model, cmd.none, []]
+      return [model, Cmd.none, []]
 
     case "Home":
     case "Account":
@@ -428,13 +427,13 @@ export const updateProfileMissing = (
 export const updateSessionMissing = (
   msg: Msg,
   model: Model,
-): [Model, Cmd<Msg>, Action[]] => {
+): [Model, Cmd.Cmd<Msg>, Action[]] => {
   switch (model.page) {
     case "Login":
       if (msg.page === "Login") {
         return tagUpdate("Login", Login.update(msg, model))
       }
-      return [model, cmd.none, []]
+      return [model, Cmd.none, []]
 
     case "ProfileCreate":
     case "Home":
@@ -466,58 +465,58 @@ export const updateSessionMissing = (
 //
 //
 
-export const subscriptions = (model: Model): Sub<Msg> => {
+export const subscriptions = (model: Model): Sub.Sub<Msg> => {
   switch (model.page) {
     case "Account":
-      return sub.none
+      return Sub.none
 
     case "Chat":
-      return sub.none
+      return Sub.none
 
     case "ChatNew":
       return pipe(
         ChatNew.subscriptions(model),
-        sub.map((msg) => ({ ...msg, page: "ChatNew" })),
+        Sub.map((msg) => ({ ...msg, page: "ChatNew" })),
       )
 
     case "ChatConversation":
-      return sub.none
+      return Sub.none
 
     case "Game":
-      return sub.none
+      return Sub.none
 
     case "Home":
-      return sub.none
+      return Sub.none
 
     case "Login":
-      return sub.none
+      return Sub.none
 
     case "Logout":
-      return sub.none
+      return Sub.none
 
     case "ProfileCreate":
-      return sub.none
+      return Sub.none
 
     case "ProfileDelete":
-      return sub.none
+      return Sub.none
 
     case "ProfileUpdate":
-      return sub.none
+      return Sub.none
 
     case "ProfileUpdateAvatar":
-      return sub.none
+      return Sub.none
 
     case "ProfileUpdateTheme":
-      return sub.none
+      return Sub.none
 
     case "ProfileUpdateUsername":
-      return sub.none
+      return Sub.none
 
     case "ProfileUpdateName":
-      return sub.none
+      return Sub.none
 
     case "Loading":
-      return sub.none
+      return Sub.none
 
     default:
       return exhaustive(model)
@@ -686,9 +685,9 @@ const tagView = <TMsg, TPage extends Msg["page"]>(
 const tagUpdate = <TModel, TMsg, TAction, TPage extends Msg["page"]>(
   page: TPage,
   [modelPrev, cmdPrev, actionsPrev = []]:
-    | [TModel, Cmd<TMsg>, TAction[]]
-    | [TModel, Cmd<TMsg>],
-): [TModel & { page: TPage }, Cmd<TMsg & { page: TPage }>, TAction[]] => {
+    | [TModel, Cmd.Cmd<TMsg>, TAction[]]
+    | [TModel, Cmd.Cmd<TMsg>],
+): [TModel & { page: TPage }, Cmd.Cmd<TMsg & { page: TPage }>, TAction[]] => {
   return [
     {
       ...modelPrev,
@@ -696,7 +695,7 @@ const tagUpdate = <TModel, TMsg, TAction, TPage extends Msg["page"]>(
     },
     pipe(
       cmdPrev,
-      cmd.map((msg) => ({ ...msg, page })),
+      Cmd.map((msg) => ({ ...msg, page })),
     ),
     [...actionsPrev],
   ]

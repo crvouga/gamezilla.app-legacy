@@ -1,6 +1,6 @@
+import * as Rx from "rxjs"
 import { Client, Room } from "colyseus"
 import http from "http"
-import * as Rx from "rxjs"
 
 export type Msg =
   | { type: "Created" }
