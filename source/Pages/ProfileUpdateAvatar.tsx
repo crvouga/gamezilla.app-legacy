@@ -2,8 +2,7 @@ import * as ProfileAvatar from "ProfileAvatar"
 import * as Snackbar from "Snackbar"
 import * as Store from "Store"
 import * as View from "View"
-import { Cmd, Navigation } from "Core"
-import { pipe } from "fp-ts/lib/function"
+import { Cmd, Navigation, pipe } from "Core"
 
 //
 //

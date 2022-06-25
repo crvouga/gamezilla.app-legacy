@@ -1,6 +1,5 @@
 import * as View from "View"
-import { Audio, Cmd, Keyboard, Navigation, Result, Sub, Time } from "Core"
-import { pipe } from "fp-ts/lib/function"
+import { Audio, Cmd, Keyboard, Navigation, Result, Sub, Time, pipe } from "Core"
 import { useEffect, useRef } from "react"
 import * as Direction from "./Direction"
 import * as Position from "./Position"

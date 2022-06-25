@@ -6,9 +6,9 @@
  * @since 0.5.0
  */
 import * as Rx from "rxjs"
-import { pipe } from "fp-ts/lib/function"
 import * as Option from "./Option"
 import * as Task from "./Task"
+import { pipe } from "./pipe"
 
 /**
  * @category model

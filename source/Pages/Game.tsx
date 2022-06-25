@@ -1,8 +1,7 @@
 import * as Games from "Games"
 import * as View from "View"
-import { Cmd } from "Core"
+import { Cmd, pipe } from "Core"
 import { groupTag } from "Utility"
-import { pipe } from "fp-ts/lib/function"
 
 //
 //

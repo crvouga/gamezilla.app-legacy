@@ -1,7 +1,6 @@
 import * as Store from "Store"
 import * as View from "View"
-import { Cmd, Keyboard, Navigation, Sub } from "Core"
-import { pipe } from "fp-ts/lib/function"
+import { Cmd, Keyboard, Navigation, Sub, pipe } from "Core"
 import { useEffect, useRef } from "react"
 
 //
