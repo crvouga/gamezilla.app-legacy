@@ -1,5 +1,4 @@
-import { Navigation, Sub } from "Core"
-import { pipe } from "fp-ts/lib/function"
+import { Navigation, Sub, pipe } from "Core"
 
 //
 //

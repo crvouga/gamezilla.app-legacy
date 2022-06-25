@@ -1,8 +1,7 @@
 import * as Session from "Session"
 import * as Snackbar from "Snackbar"
 import * as View from "View"
-import { Cmd, Navigation, Result } from "Core"
-import { pipe } from "fp-ts/lib/function"
+import { Cmd, Navigation, Result, pipe } from "Core"
 
 //
 //

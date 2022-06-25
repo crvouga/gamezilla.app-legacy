@@ -3,9 +3,8 @@ import * as Route from "Route"
 import * as Snackbar from "Snackbar"
 import * as View from "View"
 import { keyframes } from "@mui/system"
-import { Cmd, Navigation, Sub } from "Core"
+import { Cmd, Navigation, Sub, pipe } from "Core"
 import { exhaustive } from "Utility"
-import { pipe } from "fp-ts/lib/function"
 
 //
 //

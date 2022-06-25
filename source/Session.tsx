@@ -1,7 +1,6 @@
 import * as Rx from "rxjs"
-import { identity, pipe } from "fp-ts/lib/function"
 import * as Supabase from "./Supabase"
-import { Cmd, Result, Sub, Task } from "./Core"
+import { Cmd, Result, Sub, Task, pipe } from "./Core"
 
 //
 //
@@ -27,7 +26,10 @@ export type LoggedIn = {
 
 export const init = (): [Model, Cmd.Cmd<Msg>] => [
   { type: "Loading" },
-  pipe(loadSession, Cmd.fromTask(identity)),
+  pipe(
+    loadSession,
+    Cmd.fromTask((msg) => msg),
+  ),
 ]
 
 //

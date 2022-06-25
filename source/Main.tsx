@@ -7,10 +7,9 @@ import * as Store from "Store"
 import * as Profile from "Store/Profile"
 import * as View from "View"
 import * as ReactDom from "react-dom/client"
-import { Cmd, Html, Navigation, Sub } from "Core"
+import { Cmd, Html, Navigation, Sub, pipe } from "Core"
 import { programWithDebugger } from "Core/Debug/Html"
 import { andThen, andThenMany, exhaustive, groupTag } from "Utility"
-import { pipe } from "fp-ts/lib/function"
 
 //
 //

@@ -1,7 +1,6 @@
 import * as Session from "Session"
 import * as View from "View"
-import { Cmd, Result } from "Core"
-import { pipe } from "fp-ts/lib/function"
+import { Cmd, Result, pipe } from "Core"
 
 //
 //
