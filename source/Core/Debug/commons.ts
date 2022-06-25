@@ -3,11 +3,11 @@
  *
  * @since 0.5.0
  */
-import { IO, chain, map } from "fp-ts/lib/IO"
 import { BehaviorSubject, Observable } from "rxjs"
 import { takeUntil } from "rxjs/operators"
 import * as Cmd from "../Cmd"
 import * as Option from "../Option"
+import * as Task from "../Task"
 import { Dispatch } from "../Platform"
 import { pipe } from "../pipe"
 import { consoleDebugger } from "./console"
@@ -195,14 +195,14 @@ export function updateWithDebug<Model, Msg>({
 export function runDebugger<Model, Msg>(
   win: Global,
   stop$: Observable<unknown>,
-): (deps: DebuggerR<Model, Msg>) => IO<void> {
+): (deps: DebuggerR<Model, Msg>) => Task.Task<void> {
   return (deps) =>
     pipe(
       getConnection<Model, Msg>(win),
-      map(
+      Task.map(
         Option.fold(() => consoleDebugger<Model, Msg>(), reduxDevToolDebugger),
       ),
-      chain((Debugger) => () => {
+      Task.chain((Debugger) => async () => {
         const { debug, stop } = Debugger(deps)
 
         deps.debug$.pipe(takeUntil(stop$)).subscribe({
