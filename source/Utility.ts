@@ -31,8 +31,8 @@ export const andThen =
 
     return [
       modelNew,
-      Cmd.batch([cmdPrev, cmdNew]),
-      [...actionsPrev, ...(actionsNew ?? [])],
+      Cmd.batch([cmdNew, cmdPrev]),
+      [...(actionsNew ?? []), ...actionsPrev],
     ]
   }
 

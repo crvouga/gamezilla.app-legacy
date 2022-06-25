@@ -100,6 +100,7 @@ export const replace = <TMsg,>(route: Model) => {
 export const subscriptions = (): Sub.Sub<Msg> => {
   return pipe(
     Navigation.subscription,
+
     Sub.map((location) =>
       RecievedRoute(decode(location.pathname) ?? { type: "Home" }),
     ),
