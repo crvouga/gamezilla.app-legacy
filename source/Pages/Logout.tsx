@@ -1,8 +1,7 @@
 import * as Session from "Session"
 import * as Snackbar from "Snackbar"
 import * as View from "View"
-import { Cmd, Navigation } from "Core"
-import { either } from "fp-ts"
+import { Cmd, Navigation, Result } from "Core"
 import { pipe } from "fp-ts/lib/function"
 
 //
@@ -52,7 +51,7 @@ export const update = (
         pipe(
           Session.logout,
           Cmd.fromTask(
-            either.fold<{}, {}, Msg>(
+            Result.fold<{}, {}, Msg>(
               () => ({ type: "LogoutFailed" }),
               () => ({ type: "LogoutSucceeded" }),
             ),

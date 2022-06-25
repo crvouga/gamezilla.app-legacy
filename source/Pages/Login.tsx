@@ -1,7 +1,6 @@
 import * as Session from "Session"
 import * as View from "View"
-import { Cmd } from "Core"
-import { either } from "fp-ts"
+import { Cmd, Result } from "Core"
 import { pipe } from "fp-ts/lib/function"
 
 //
@@ -36,7 +35,15 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
     case "UserClickedLoginButton":
       return [
         { type: "LoggingIn", loginMethod: msg.loginMethod },
-        loginCmd(msg.loginMethod),
+        pipe(
+          Session.login(msg.loginMethod),
+          Cmd.fromTask(
+            Result.fold<{}, {}, Msg>(
+              () => ({ type: "LoginFailed" }),
+              () => ({ type: "LoginSucceeded" }),
+            ),
+          ),
+        ),
       ]
 
     case "LoginFailed":
@@ -45,18 +52,6 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
     case "LoginSucceeded":
       return [model, Cmd.none]
   }
-}
-
-const loginCmd = (loginMethod: Session.LoginMethod) => {
-  return pipe(
-    Session.login(loginMethod),
-    Cmd.fromTask(
-      either.fold<{}, {}, Msg>(
-        () => ({ type: "LoginFailed" }),
-        () => ({ type: "LoginSucceeded" }),
-      ),
-    ),
-  )
 }
 
 //

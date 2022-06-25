@@ -1,8 +1,8 @@
 import * as Rx from "rxjs"
-import { either, option, task } from "fp-ts"
+import { option, task } from "fp-ts"
 import { identity, pipe } from "fp-ts/lib/function"
 import * as Supabase from "./Supabase"
-import { Cmd, Sub } from "./Core"
+import { Cmd, Result, Sub } from "./Core"
 
 //
 //
@@ -66,7 +66,7 @@ export const update = (msg: Msg): Model => {
 export type LoginMethod = { type: "Google" }
 
 export const login =
-  (method: LoginMethod): task.Task<either.Either<{}, {}>> =>
+  (method: LoginMethod): task.Task<Result.Result<{}, {}>> =>
   async () => {
     switch (method.type) {
       case "Google":
@@ -75,21 +75,21 @@ export const login =
         })
 
         if (error) {
-          return either.left({})
+          return Result.Err({})
         }
 
-        return either.right({})
+        return Result.Ok({})
     }
   }
 
-export const logout: task.Task<either.Either<{}, {}>> = async () => {
+export const logout: task.Task<Result.Result<{}, {}>> = async () => {
   const { error } = await Supabase.client.auth.signOut()
 
   if (error) {
-    return either.left({})
+    return Result.Err({})
   }
 
-  return either.right({})
+  return Result.Ok({})
 }
 
 export const loadSession: task.Task<Msg> = async () => {

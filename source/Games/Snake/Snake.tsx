@@ -1,6 +1,5 @@
 import * as View from "View"
-import { Audio, Cmd, Keyboard, Navigation, Sub, Time } from "Core"
-import { either } from "fp-ts"
+import { Audio, Cmd, Keyboard, Navigation, Result, Sub, Time } from "Core"
 import { pipe } from "fp-ts/lib/function"
 import { useEffect, useRef } from "react"
 import * as Direction from "./Direction"
@@ -524,11 +523,11 @@ export const Icon = () => {
 //
 //
 
-const playSound = (file: string) => {
+export const playSound = (src: string) => {
   return pipe(
-    Audio.play(file),
+    Audio.play(src),
     Cmd.fromTask(
-      either.fold<{}, {}, Msg>(
+      Result.fold<{}, {}, Msg>(
         () => ({ type: "AudioFailed" }),
         () => ({ type: "AudioSucceeded" }),
       ),

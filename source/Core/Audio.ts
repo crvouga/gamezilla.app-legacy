@@ -1,19 +1,18 @@
-import { either } from "fp-ts"
-import { Either } from "fp-ts/lib/Either"
 import { Task } from "fp-ts/lib/Task"
+import * as Result from "./Result"
 
 type Problem = "Unknown"
 
 export const play =
-  (file: string): Task<Either<Problem, {}>> =>
+  (file: string): Task<Result.Result<Problem, {}>> =>
   async () => {
     try {
       const audio = new Audio(file)
 
       await audio.play()
 
-      return either.right({})
+      return Result.Ok({})
     } catch (error) {
-      return either.left("Unknown")
+      return Result.Err("Unknown")
     }
   }
