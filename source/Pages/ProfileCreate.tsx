@@ -1,9 +1,8 @@
-import { cmd } from "Core"
-import * as Navigation from "Core/Navigation"
 import * as ProfileAvatar from "ProfileAvatar"
 import * as Route from "Route"
 import * as Store from "Store"
 import * as View from "View"
+import { Cmd, Navigation } from "Core"
 
 //
 //
@@ -66,16 +65,16 @@ export const update = (
   { userId }: { userId: string },
   msg: Msg,
   model: Model,
-): [Model, cmd.Cmd<Msg>, Action[]] => {
+): [Model, Cmd.Cmd<Msg>, Action[]] => {
   switch (msg.type) {
     case "EnteredName":
-      return [{ ...model, form: { ...model.form, ...msg } }, cmd.none, []]
+      return [{ ...model, form: { ...model.form, ...msg } }, Cmd.none, []]
 
     case "EnteredUsername":
-      return [{ ...model, form: { ...model.form, ...msg } }, cmd.none, []]
+      return [{ ...model, form: { ...model.form, ...msg } }, Cmd.none, []]
 
     case "UserClickedSubmitButton":
-      return [model, cmd.none, [Store.Profile.Create(userId, model.form)]]
+      return [model, Cmd.none, [Store.Profile.Create(userId, model.form)]]
 
     case "UserClickedLogoutButton":
       return [model, Navigation.push(Route.encode({ type: "Logout" })), []]

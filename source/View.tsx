@@ -2,7 +2,7 @@ import * as MuiIcons from "@mui/icons-material"
 import * as MuiLab from "@mui/lab"
 import * as Mui from "@mui/material"
 import { blue } from "@mui/material/colors"
-import { html, platform } from "Core"
+import { Html, Platform } from "Core"
 import { useMemo } from "react"
 
 //
@@ -15,12 +15,12 @@ import { useMemo } from "react"
 
 type Dom = React.ReactElement<unknown>
 
-export type View<Msg> = (dispatch: platform.Dispatch<Msg>) => Dom
+export type View<Msg> = (dispatch: Platform.Dispatch<Msg>) => Dom
 
 export const map = <A, Msg>(
   f: (a: A) => Msg,
-): ((ha: html.Html<Dom, A>) => html.Html<Dom, Msg>) => {
-  return html.map(f)
+): ((ha: Html.Html<Dom, A>) => Html.Html<Dom, Msg>) => {
+  return Html.map(f)
 }
 
 //

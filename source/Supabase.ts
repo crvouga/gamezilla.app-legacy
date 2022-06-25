@@ -1,4 +1,4 @@
-import { createClient, Session as SupabaseSession } from "@supabase/supabase-js"
+import { Session as SupabaseSession, createClient } from "@supabase/supabase-js"
 
 export type Session = SupabaseSession
 

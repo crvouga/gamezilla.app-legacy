@@ -1,10 +1,6 @@
-import { cmd, sub } from "Core"
-import { Cmd } from "Core/Cmd"
-import * as Navigation from "Core/Navigation"
-import * as Keyboard from "Core/Keyboard"
-import { Sub } from "Core/Sub"
 import * as Store from "Store"
 import * as View from "View"
+import { Cmd, Keyboard, Navigation, Sub } from "Core"
 import { pipe } from "fp-ts/lib/function"
 import { useEffect, useRef } from "react"
 
@@ -30,7 +26,7 @@ export type Model = {
 //
 //
 
-export const init = (): [Model, Cmd<Msg>, Action[]] => {
+export const init = (): [Model, Cmd.Cmd<Msg>, Action[]] => {
   const searchText = ""
   return [
     {
@@ -38,7 +34,7 @@ export const init = (): [Model, Cmd<Msg>, Action[]] => {
       selected: {},
       highlightedIndex: "None",
     },
-    cmd.none,
+    Cmd.none,
     [Store.Profile.Search(searchText)],
   ]
 }
@@ -65,11 +61,11 @@ export const update = (
   store: Store.Model,
   msg: Msg,
   model: Model,
-): [Model, Cmd<Msg>, Action[]] => {
+): [Model, Cmd.Cmd<Msg>, Action[]] => {
   switch (msg.type) {
     case "UserClickedCreateButton":
       const userIds = Object.values(model.selected)
-      return [model, cmd.none, [Store.Conversation.Create(userIds)]]
+      return [model, Cmd.none, [Store.Conversation.Create(userIds)]]
 
     case "UserClickedCancelButton":
       return [model, Navigation.back(), []]
@@ -81,13 +77,13 @@ export const update = (
           searchText: msg.searchText,
           highlightedIndex: "None",
         },
-        cmd.none,
+        Cmd.none,
         [Store.Profile.Search(msg.searchText)],
       ]
 
     case "UserClickedSelectedDeleteButton":
       const selectedNew = removeKey(msg.userId, model.selected)
-      return [{ ...model, selected: selectedNew }, cmd.none, []]
+      return [{ ...model, selected: selectedNew }, Cmd.none, []]
 
     case "UserPressedKeyDown":
       const profiles = Store.Profile.searchProfiles(model.searchText, store)
@@ -102,7 +98,7 @@ export const update = (
                   ? 0
                   : circularIndex(model.highlightedIndex + 1, profiles.length),
             },
-            cmd.none,
+            Cmd.none,
             [],
           ]
 
@@ -115,26 +111,26 @@ export const update = (
                   ? 0
                   : circularIndex(model.highlightedIndex - 1, profiles.length),
             },
-            cmd.none,
+            Cmd.none,
             [],
           ]
 
         case "Enter":
           if (model.highlightedIndex === "None") {
-            return [model, cmd.none, []]
+            return [model, Cmd.none, []]
           }
 
           const profile = profiles[model.highlightedIndex]
 
           if (!profile) {
-            return [model, cmd.none, []]
+            return [model, Cmd.none, []]
           }
 
           return toggleSelected(profile.userId, model)
 
         case "ArrowLeft":
         case "ArrowRight":
-          return [model, cmd.none, []]
+          return [model, Cmd.none, []]
       }
 
     case "UserClickedSearchResult":
@@ -146,7 +142,7 @@ export const update = (
 const toggleSelected = (
   userId: string,
   model: Model,
-): [Model, Cmd<Msg>, Action[]] => {
+): [Model, Cmd.Cmd<Msg>, Action[]] => {
   if (userId in model.selected) {
     return [
       {
@@ -154,7 +150,7 @@ const toggleSelected = (
         searchText: "",
         selected: removeKey(userId, model.selected),
       },
-      cmd.none,
+      Cmd.none,
       [],
     ]
   }
@@ -168,7 +164,7 @@ const toggleSelected = (
         [userId]: userId,
       },
     },
-    cmd.none,
+    Cmd.none,
     [],
   ]
 }
@@ -181,7 +177,7 @@ const toggleSelected = (
 //
 //
 
-export const subscriptions = (model: Model): Sub<Msg> => {
+export const subscriptions = (model: Model): Sub.Sub<Msg> => {
   return pipe(
     Keyboard.keyDowns((key) =>
       Keyboard.isArrowKey(key) || Keyboard.isEnterKey(key)

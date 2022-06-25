@@ -5,11 +5,9 @@
  *
  * @since 0.5.0
  */
-
-import { Task } from "fp-ts/lib/Task"
 import * as Rx from "rxjs"
-
-import { Sub } from "./Sub"
+import { Task } from "fp-ts/lib/Task"
+import * as Sub from "./Sub"
 
 /**
  * Get the current unix time as a `Task`.
@@ -45,7 +43,10 @@ const onTimeout = (time: number) => {
   delete intervals[time]
 }
 
-export const every = <Msg>(time: number, f: (time: Time) => Msg): Sub<Msg> => {
+export const every = <Msg>(
+  time: number,
+  f: (time: Time) => Msg,
+): Sub.Sub<Msg> => {
   let subj = intervals[time]
 
   if (subj === undefined) {

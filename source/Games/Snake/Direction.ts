@@ -1,4 +1,4 @@
-import * as Keyboard from "Core/Keyboard"
+import { Keyboard } from "Core"
 import * as Position from "./Position"
 
 export type Direction = "left" | "up" | "right" | "down"

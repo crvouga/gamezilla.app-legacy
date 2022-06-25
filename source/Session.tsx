@@ -1,10 +1,8 @@
+import * as Rx from "rxjs"
 import { either, option, task } from "fp-ts"
 import { identity, pipe } from "fp-ts/lib/function"
-import { Cmd } from "Core/Cmd"
-import { perform } from "Core/Task"
-import * as Rx from "rxjs"
-import { cmd, sub } from "./Core"
 import * as Supabase from "./Supabase"
+import { Cmd, Sub } from "./Core"
 
 //
 //
@@ -28,9 +26,9 @@ export type LoggedIn = {
   userId: string
 }
 
-export const init = (): [Model, Cmd<Msg>] => [
+export const init = (): [Model, Cmd.Cmd<Msg>] => [
   { type: "Loading" },
-  pipe(loadSession, perform(identity)),
+  pipe(loadSession, Cmd.fromTask(identity)),
 ]
 
 //
@@ -144,7 +142,7 @@ Supabase.client.auth.onAuthStateChange((_, supabaseSession) => {
   subject.next(fromSupabaseSession(supabaseSession))
 })
 
-export const subscriptions: sub.Sub<Msg> = subject
+export const subscriptions: Sub.Sub<Msg> = subject
 
 export const fromSupabaseSession = (session: Supabase.Session | null): Msg => {
   const userId = session?.user?.id

@@ -1,7 +1,6 @@
-import { cmd } from "Core"
-import * as Navigation from "Core/Navigation"
 import * as Store from "Store"
 import * as View from "View"
+import { Cmd, Navigation } from "Core"
 
 //
 //
@@ -38,10 +37,10 @@ export const update = (
   { userId }: { userId: string },
   msg: Msg,
   model: Model,
-): [Model, cmd.Cmd<Msg>, OutMsg[]] => {
+): [Model, Cmd.Cmd<Msg>, OutMsg[]] => {
   switch (msg.type) {
     case "UserEnteredUsername":
-      return [{ ...model, username: msg.username }, cmd.none, []]
+      return [{ ...model, username: msg.username }, Cmd.none, []]
 
     case "UserClickedCancelButton":
       return [model, Navigation.back(), []]

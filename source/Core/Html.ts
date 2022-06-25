@@ -6,12 +6,11 @@
  *
  * @since 0.5.0
  */
-
 import { Observable } from "rxjs"
 import { map as RxMap, takeUntil } from "rxjs/operators"
-import { Cmd } from "./Cmd"
-import * as platform from "./Platform"
-import { none, Sub } from "./Sub"
+import * as Cmd from "./Cmd"
+import * as Platform from "./Platform"
+import * as Sub from "./Sub"
 
 /**
  * It is defined as a function that takes a `dispatch()` function as input and returns a `Dom` as output,
@@ -20,7 +19,7 @@ import { none, Sub } from "./Sub"
  * @since 0.5.0
  */
 export interface Html<Dom, Msg> {
-  (dispatch: platform.Dispatch<Msg>): Dom
+  (dispatch: Platform.Dispatch<Msg>): Dom
 }
 
 /**
@@ -39,7 +38,7 @@ export interface Renderer<Dom> {
  * @category model
  * @since 0.5.0
  */
-export interface Program<Model, Msg, Dom> extends platform.Program<Model, Msg> {
+export interface Program<Model, Msg, Dom> extends Platform.Program<Model, Msg> {
   html$: Observable<Html<Dom, Msg>>
 }
 
@@ -64,12 +63,12 @@ export function map<Dom, A, Msg>(
  * @since 0.5.0
  */
 export function program<Model, Msg, Dom>(
-  init: [Model, Cmd<Msg>],
-  update: (msg: Msg, model: Model) => [Model, Cmd<Msg>],
+  init: [Model, Cmd.Cmd<Msg>],
+  update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>],
   view: (model: Model) => Html<Dom, Msg>,
-  subscriptions: (model: Model) => Sub<Msg> = () => none,
+  subscriptions: (model: Model) => Sub.Sub<Msg> = () => Sub.none,
 ): Program<Model, Msg, Dom> {
-  const { dispatch, cmd$, sub$, model$ } = platform.program(
+  const { dispatch, cmd$, sub$, model$ } = Platform.program(
     init,
     update,
     subscriptions,
@@ -86,10 +85,10 @@ export function program<Model, Msg, Dom>(
  * @since 0.5.0
  */
 export function programWithFlags<Flags, Model, Msg, Dom>(
-  init: (flags: Flags) => [Model, Cmd<Msg>],
-  update: (msg: Msg, model: Model) => [Model, Cmd<Msg>],
+  init: (flags: Flags) => [Model, Cmd.Cmd<Msg>],
+  update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>],
   view: (model: Model) => Html<Dom, Msg>,
-  subscriptions?: (model: Model) => Sub<Msg>,
+  subscriptions?: (model: Model) => Sub.Sub<Msg>,
 ): (flags: Flags) => Program<Model, Msg, Dom> {
   return (flags) => program(init(flags), update, view, subscriptions)
 }
@@ -105,7 +104,7 @@ export function withStop(
   program: Program<Model, Msg, Dom>,
 ) => Program<Model, Msg, Dom> {
   return (program) => {
-    const platformProgram = platform.withStop(signal)(program)
+    const platformProgram = Platform.withStop(signal)(program)
 
     return {
       ...platformProgram,
@@ -132,5 +131,5 @@ export function run<Model, Msg, Dom>(
 
   html$.subscribe((html) => renderer(html(dispatch)))
 
-  return platform.run(program)
+  return Platform.run(program)
 }

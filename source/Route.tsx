@@ -1,7 +1,5 @@
+import { Navigation, Sub } from "Core"
 import { pipe } from "fp-ts/lib/function"
-import { sub } from "Core"
-import * as Navigation from "Core/Navigation"
-import { Sub } from "Core/Sub"
 
 //
 //
@@ -126,10 +124,10 @@ export type RecievedRoute = ReturnType<typeof RecievedRoute>
 //
 //
 
-export const subscriptions = (): Sub<Msg> => {
+export const subscriptions = (): Sub.Sub<Msg> => {
   return pipe(
     Navigation.subscription,
-    sub.map((location) =>
+    Sub.map((location) =>
       RecievedRoute(decode(location.pathname) ?? { type: "Home" }),
     ),
   )

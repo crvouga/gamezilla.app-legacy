@@ -1,6 +1,5 @@
-import { cmd } from "Core"
-import * as Navigation from "Core/Navigation"
 import * as View from "View"
+import { Cmd, Navigation } from "Core"
 
 //
 //
@@ -343,7 +342,7 @@ export type Msg =
 
 export type GroupedMsg = { group: "ConnectFour" } & Msg
 
-export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
+export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "UserClickedBackButton":
       return [model, Navigation.back()]
@@ -354,10 +353,10 @@ export const update = (msg: Msg, model: Model): [Model, cmd.Cmd<Msg>] => {
         msg.columnIndex,
         toTurn(model.columns),
       )
-      return [{ ...model, columns: columnsNew }, cmd.none]
+      return [{ ...model, columns: columnsNew }, Cmd.none]
 
     case "UserClickedRestartButton":
-      return [{ ...model, columns: emptyColumns }, cmd.none]
+      return [{ ...model, columns: emptyColumns }, Cmd.none]
   }
 }
 

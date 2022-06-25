@@ -1,8 +1,7 @@
-import { cmd } from "Core"
-import * as Navigation from "Core/Navigation"
 import * as Route from "Route"
-import * as View from "View"
 import * as Profile from "Store/Profile"
+import * as View from "View"
+import { Cmd, Navigation } from "Core"
 
 //
 //
@@ -36,7 +35,7 @@ export const update = (
   { userId }: { userId: string },
   msg: Msg,
   model: Model,
-): [Model, cmd.Cmd<Msg>] => {
+): [Model, Cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "UserClickedAvatar":
       return [

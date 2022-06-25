@@ -3,10 +3,9 @@
  *
  * @since 0.5.0
  */
-
+import { Option, alt, fromNullable, getOrElse } from "fp-ts/lib/Option"
 import { pipe } from "fp-ts/lib/function"
-import { alt, fromNullable, getOrElse, Option } from "fp-ts/lib/Option"
-import { Debugger, DebugMsg } from "./commons"
+import { DebugMsg, Debugger } from "./commons"
 
 /**
  * **[UNSAFE]** Simple debugger that uses the standard browser's `console`

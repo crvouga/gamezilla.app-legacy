@@ -1,19 +1,14 @@
-import { cmd } from "Core"
-import { Cmd } from "Core/Cmd"
-import * as RemoteData from "Core/RemoteData"
-import * as Result from "Core/Result"
-import { Sub } from "Core/Sub"
-import { perform } from "Core/Task"
-import { option, task } from "fp-ts"
+import * as Snackbar from "Snackbar"
+import * as Rx from "rxjs"
+import { Cmd, RemoteData, Result } from "Core"
+import { exhaustive } from "Utility"
+import { task } from "fp-ts"
 import { pipe } from "fp-ts/lib/function"
 import { matchSorter } from "match-sorter"
-import * as Rx from "rxjs"
-import * as Snackbar from "Snackbar"
-import { exhaustive } from "Utility"
-import { sub } from "../Core"
 import * as Supabase from "../Supabase"
-import { definitions } from "../supabase-types"
 import * as Store from "./Store"
+import { Sub } from "../Core"
+import { definitions } from "../supabase-types"
 
 //
 //
@@ -251,7 +246,10 @@ export type Msg =
 
 type Action = Snackbar.GroupedMsg
 
-export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>, Action[]] => {
+export const update = (
+  msg: Msg,
+  model: Model,
+): [Model, Cmd.Cmd<Msg>, Action[]] => {
   switch (msg.type) {
     case "Profile/Received":
       const ProfileNew = {
@@ -261,14 +259,14 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>, Action[]] => {
           ...msg.profile,
         },
       }
-      return [{ ...model, Profile: ProfileNew }, cmd.none, []]
+      return [{ ...model, Profile: ProfileNew }, Cmd.none, []]
 
     case "Profile/Edit": {
       const { userId, edits } = msg
       const query = toGetQuery(userId, model)
 
       if (query.type !== "Success") {
-        return [model, cmd.none, []]
+        return [model, Cmd.none, []]
       }
       const mutationId = toEditId(userId)
       const mutationsNew: Model["mutations"] = {
@@ -288,7 +286,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>, Action[]] => {
         { ...model, Profile: ProfileNew, mutations: mutationsNew },
         pipe(
           edit(msg.userId, msg.edits),
-          perform((result) => Edited(msg.userId, query.value, result)),
+          Cmd.fromTask((result) => Edited(msg.userId, query.value, result)),
         ),
         [],
       ]
@@ -315,7 +313,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>, Action[]] => {
           const ProfileNew = removeKey(userId, model.Profile)
           return [
             { ...model, Profile: ProfileNew, mutations: mutationsNew },
-            cmd.none,
+            Cmd.none,
             [],
           ]
         }
@@ -327,7 +325,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>, Action[]] => {
           }
           return [
             { ...model, Profile: ProfileNew, mutations: mutationsNew },
-            cmd.none,
+            Cmd.none,
             [],
           ]
         }
@@ -339,7 +337,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>, Action[]] => {
       const query = toGetQuery(userId, model)
 
       if (query.type === "Loading") {
-        return [model, cmd.none, []]
+        return [model, Cmd.none, []]
       }
 
       const queryId = toGetId(userId)
@@ -356,7 +354,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>, Action[]] => {
         { ...model, queries: queriesNew },
         pipe(
           load({ userId }),
-          perform((result) => Got(userId, result)),
+          Cmd.fromTask((result) => Got(userId, result)),
         ),
         [],
       ]
@@ -364,14 +362,14 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>, Action[]] => {
 
     case "Profile/Got": {
       const modelNew = updateGotProfile(msg.userId, msg.result, model)
-      return [modelNew, cmd.none, []]
+      return [modelNew, Cmd.none, []]
     }
 
     case "Profile/DeleteForever": {
       const query = toGetQuery(msg.userId, model)
 
       if (query.type !== "Success") {
-        return [model, cmd.none, []]
+        return [model, Cmd.none, []]
       }
 
       const modelNew = updateGotProfile(
@@ -384,7 +382,9 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>, Action[]] => {
         modelNew,
         pipe(
           deleteForever(msg.userId),
-          perform((result) => DeletedForever(msg.userId, query.value, result)),
+          Cmd.fromTask((result) =>
+            DeletedForever(msg.userId, query.value, result),
+          ),
         ),
         [],
       ]
@@ -396,11 +396,11 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>, Action[]] => {
       switch (result.type) {
         case "Err": {
           const ProfileNew = { ...model.Profile, [userId]: previous }
-          return [{ ...model, Profile: ProfileNew }, cmd.none, []]
+          return [{ ...model, Profile: ProfileNew }, Cmd.none, []]
         }
 
         case "Ok": {
-          return [model, cmd.none, []]
+          return [model, Cmd.none, []]
         }
       }
     }
@@ -416,7 +416,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>, Action[]] => {
         modelNew,
         pipe(
           create(msg.profile),
-          perform((result) => Created(msg.profile.userId, result)),
+          Cmd.fromTask((result) => Created(msg.profile.userId, result)),
         ),
         [],
       ]
@@ -424,7 +424,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>, Action[]] => {
     case "Profile/Created": {
       const modelNew = updateGotProfile(msg.userId, msg.result, model)
 
-      return [modelNew, cmd.none, []]
+      return [modelNew, Cmd.none, []]
     }
 
     case "Profile/Search":
@@ -441,7 +441,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>, Action[]] => {
         { ...model, queries: queriesNew },
         pipe(
           search({ nameOrUsername }),
-          perform((result) => Searched(nameOrUsername, result)),
+          Cmd.fromTask((result) => Searched(nameOrUsername, result)),
         ),
         [],
       ]
@@ -451,7 +451,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>, Action[]] => {
 
       switch (result.type) {
         case "Err":
-          return [model, cmd.none, []]
+          return [model, Cmd.none, []]
 
         case "Ok":
           const ProfileNew = result.value.reduce<Model["Profile"]>(
@@ -482,7 +482,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>, Action[]] => {
               queries: queriesNew,
               Profile: ProfileNew,
             },
-            cmd.none,
+            Cmd.none,
             [],
           ]
       }
@@ -767,7 +767,7 @@ export const edit =
     return Result.Ok(rowToProfile(response.data))
   }
 
-export const subscriptions = ({ userId }: { userId: string }): Sub<Msg> => {
+export const subscriptions = ({ userId }: { userId: string }): Sub.Sub<Msg> => {
   return new Rx.Observable<Msg>((subscriber) => {
     const subscription = Supabase.client
       .from<definitions["profile"]>(`profile:id=eq.${userId}`)

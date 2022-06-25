@@ -1,9 +1,7 @@
-import { cmd } from "Core"
-import { Cmd } from "Core/Cmd"
-import * as Result from "Core/Result"
-import { either, task } from "fp-ts"
 import * as Snackbar from "Snackbar"
 import * as Supabase from "Supabase"
+import { Cmd, Result } from "Core"
+import { either, task } from "fp-ts"
 import { definitions } from "supabase-types"
 import * as Store from "./Store"
 
@@ -65,8 +63,11 @@ export type Created = ReturnType<typeof Created>
 
 type Action = Snackbar.GroupedMsg
 
-export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>, Action[]] => {
-  return [model, cmd.none, []]
+export const update = (
+  msg: Msg,
+  model: Model,
+): [Model, Cmd.Cmd<Msg>, Action[]] => {
+  return [model, Cmd.none, []]
 }
 
 //

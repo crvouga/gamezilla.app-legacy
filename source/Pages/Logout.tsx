@@ -1,10 +1,9 @@
-import { either } from "fp-ts"
-import { pipe } from "fp-ts/lib/function"
-import { cmd, task } from "Core"
-import * as Navigation from "Core/Navigation"
 import * as Session from "Session"
 import * as Snackbar from "Snackbar"
 import * as View from "View"
+import { Cmd, Navigation } from "Core"
+import { either } from "fp-ts"
+import { pipe } from "fp-ts/lib/function"
 
 //
 //
@@ -39,7 +38,7 @@ export const update = (
   { name }: { name: string },
   msg: Msg,
   model: Model,
-): [Model, cmd.Cmd<Msg>, OutMsg[]] => {
+): [Model, Cmd.Cmd<Msg>, OutMsg[]] => {
   switch (msg.type) {
     case "UserClickedCancelButton":
       return [model, Navigation.back(), []]
@@ -48,25 +47,27 @@ export const update = (
       return [model, Navigation.back(), []]
 
     case "UserClickedLogoutButton":
-      return [{ type: "LoggingOut" }, logoutCmd, []]
+      return [
+        { type: "LoggingOut" },
+        pipe(
+          Session.logout,
+          Cmd.fromTask(
+            either.fold<{}, {}, Msg>(
+              () => ({ type: "LogoutFailed" }),
+              () => ({ type: "LogoutSucceeded" }),
+            ),
+          ),
+        ),
+        [],
+      ]
 
     case "LogoutFailed":
-      return [model, cmd.none, []]
+      return [model, Cmd.none, []]
 
     case "LogoutSucceeded":
-      return [model, cmd.none, []]
+      return [model, Cmd.none, []]
   }
 }
-
-const logoutCmd = pipe(
-  Session.logout,
-  task.attempt(
-    either.fold<{}, {}, Msg>(
-      () => ({ type: "LogoutFailed" }),
-      () => ({ type: "LogoutSucceeded" }),
-    ),
-  ),
-)
 
 //
 //

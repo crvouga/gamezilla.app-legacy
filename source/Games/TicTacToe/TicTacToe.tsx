@@ -1,7 +1,5 @@
-import { cmd } from "Core"
-import { Cmd } from "Core/Cmd"
-import * as Navigation from "Core/Navigation"
 import * as View from "View"
+import { Cmd, Navigation } from "Core"
 import * as Board from "./Board"
 
 //
@@ -33,7 +31,7 @@ export type Msg =
   | { type: "UserClickedBoard"; position: Board.Position }
   | { type: "UserClickedRestartButton" }
 
-export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
+export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "UserClickedBackButton":
       return [model, Navigation.back()]
@@ -44,7 +42,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
           ...model,
           board: Board.emptyBoard,
         },
-        cmd.none,
+        Cmd.none,
       ]
 
     case "UserClickedBoard":
@@ -57,7 +55,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
             msg.position,
           ),
         },
-        cmd.none,
+        Cmd.none,
       ]
   }
 }

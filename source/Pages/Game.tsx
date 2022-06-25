@@ -1,9 +1,8 @@
-import { flow, pipe } from "fp-ts/lib/function"
-import { cmd } from "Core"
-import { Cmd } from "Core/Cmd"
 import * as Games from "Games"
-import { groupTag } from "Utility"
 import * as View from "View"
+import { Cmd } from "Core"
+import { groupTag } from "Utility"
+import { pipe } from "fp-ts/lib/function"
 
 //
 //
@@ -43,8 +42,8 @@ export type Msg = Games.GroupedMsg
 //
 //
 
-export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
-  return [model, cmd.none]
+export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
+  return [model, Cmd.none]
 }
 
 //

@@ -1,8 +1,7 @@
-import { cmd } from "Core"
-import * as Navigation from "Core/Navigation"
 import * as Games from "Games"
 import * as Route from "Route"
 import * as View from "View"
+import { Cmd, Navigation } from "Core"
 
 //
 //
@@ -34,13 +33,13 @@ export type OutMsg = Games.GroupedMsg
 export const update = (
   msg: Msg,
   model: Model,
-): [Model, cmd.Cmd<Msg>, OutMsg[]] => {
+): [Model, Cmd.Cmd<Msg>, OutMsg[]] => {
   switch (msg.type) {
     case "UserClickedAvatar":
       return [model, Navigation.push(Route.encode({ type: "Account" })), []]
 
     case "UserClickedGame":
-      return [model, cmd.none, [Games.UserOpenedGame(msg.game)]]
+      return [model, Cmd.none, [Games.UserOpenedGame(msg.game)]]
 
     case "UserClickedChatButton":
       return [model, Navigation.push(Route.encode({ type: "Chat" })), []]
