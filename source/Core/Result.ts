@@ -24,3 +24,41 @@ export const fold =
 
     return onErr(result.error)
   }
+
+export const map =
+  <TError, A, B>(mapper: (a: A) => B) =>
+  (result: Result<TError, A>): Result<TError, B> => {
+    switch (result.type) {
+      case "Err":
+        return result
+
+      case "Ok":
+        return Ok(mapper(result.value))
+    }
+  }
+
+export const mapError =
+  <A, B, TValue>(mapper: (a: A) => B) =>
+  (result: Result<A, TValue>): Result<B, TValue> => {
+    switch (result.type) {
+      case "Err":
+        return Err(mapper(result.error))
+
+      case "Ok":
+        return result
+    }
+  }
+
+export const fromNullable =
+  <TError, TValue>(err: TError) =>
+  (value: TValue | undefined | null): Result<TError, TValue> => {
+    if (value === undefined) {
+      return Err(err)
+    }
+
+    if (value === null) {
+      return Err(err)
+    }
+
+    return Ok(value)
+  }
