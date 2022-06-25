@@ -59,6 +59,14 @@ export const RecievedRoute = (route: Model) =>
   ({ group: "Route", type: "RecievedRoute", route } as const)
 export type RecievedRoute = ReturnType<typeof RecievedRoute>
 
+export const Push = (route: Model) => {
+  return {
+    group: "Route",
+    type: "Push",
+    route,
+  } as const
+}
+
 export type Msg = RecievedRoute
 
 //
