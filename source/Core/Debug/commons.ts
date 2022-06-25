@@ -5,11 +5,11 @@
  */
 import { IO, chain, map } from "fp-ts/lib/IO"
 import { fold } from "fp-ts/lib/Option"
-import { pipe } from "fp-ts/lib/function"
 import { BehaviorSubject, Observable } from "rxjs"
 import { takeUntil } from "rxjs/operators"
 import * as Cmd from "../Cmd"
 import { Dispatch } from "../Platform"
+import { pipe } from "../pipe"
 import { consoleDebugger } from "./console"
 import { getConnection, reduxDevToolDebugger } from "./redux-devtool"
 
