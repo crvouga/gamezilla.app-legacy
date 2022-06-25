@@ -7,14 +7,14 @@
  */
 import * as E from "fp-ts/lib/Either"
 import * as IO_ from "fp-ts/lib/IO"
-import * as O from "fp-ts/lib/Option"
 import { sequenceT } from "fp-ts/lib/Apply"
+import * as Option from "../Option"
 import { Dispatch } from "../Platform"
 import { pipe } from "../pipe"
 import { Debug, Debugger, DebuggerR, Global, MsgWithDebug } from "./commons"
 
 // --- Aliases for docs
-import Option = O.Option
+
 import Either = E.Either
 import IO = IO_.IO
 
@@ -93,11 +93,11 @@ interface DevToolHandlerR<Model, Msg> extends DebuggerR<Model, Msg> {
  */
 export function getConnection<Model, Msg>(
   global: Global,
-): IO<Option<Connection<Model, Msg>>> {
+): IO<Option.Option<Connection<Model, Msg>>> {
   return () =>
     hasExtension(global)
-      ? O.some(global.__REDUX_DEVTOOLS_EXTENSION__.connect())
-      : O.none
+      ? Option.Some(global.__REDUX_DEVTOOLS_EXTENSION__.connect())
+      : Option.None
 }
 
 /**

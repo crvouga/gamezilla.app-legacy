@@ -4,10 +4,10 @@
  * @since 0.5.0
  */
 import { IO, chain, map } from "fp-ts/lib/IO"
-import { fold } from "fp-ts/lib/Option"
 import { BehaviorSubject, Observable } from "rxjs"
 import { takeUntil } from "rxjs/operators"
 import * as Cmd from "../Cmd"
+import * as Option from "../Option"
 import { Dispatch } from "../Platform"
 import { pipe } from "../pipe"
 import { consoleDebugger } from "./console"
@@ -199,7 +199,9 @@ export function runDebugger<Model, Msg>(
   return (deps) =>
     pipe(
       getConnection<Model, Msg>(win),
-      map(fold(() => consoleDebugger<Model, Msg>(), reduxDevToolDebugger)),
+      map(
+        Option.fold(() => consoleDebugger<Model, Msg>(), reduxDevToolDebugger),
+      ),
       chain((Debugger) => () => {
         const { debug, stop } = Debugger(deps)
 
