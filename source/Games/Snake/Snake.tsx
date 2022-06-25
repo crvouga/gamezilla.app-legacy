@@ -244,7 +244,10 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
         Math.abs(delta.x) > Math.abs(delta.y) ? xDirection : yDirection
 
       return [
-        enqueueDirection(directionFromSwipe, { ...model, touched: touchedNew }),
+        enqueueDirection(directionFromSwipe, {
+          ...model,
+          touched: touchedNew,
+        }),
         Cmd.none,
       ]
   }
@@ -331,7 +334,11 @@ export const view =
           right={
             <>
               <View.IconButton
-                onClick={() => dispatch({ type: "UserClickedToggleButton" })}
+                onClick={() =>
+                  dispatch({
+                    type: "UserClickedToggleButton",
+                  })
+                }
               >
                 {model.status.type === "Paused" ? (
                   <View.Icons.PlayArrow />
@@ -340,7 +347,11 @@ export const view =
                 )}
               </View.IconButton>
               <View.IconButton
-                onClick={() => dispatch({ type: "UserClickedRestartButton" })}
+                onClick={() =>
+                  dispatch({
+                    type: "UserClickedRestartButton",
+                  })
+                }
               >
                 <View.Icons.RestartAlt />
               </View.IconButton>
@@ -399,7 +410,10 @@ const Canvas = ({
           if (model.mouseStatus === "active") {
             const x = event.clientX
             const y = event.clientY
-            dispatch({ type: "UserMouseMovedBoard", position: { x, y } })
+            dispatch({
+              type: "UserMouseMovedBoard",
+              position: { x, y },
+            })
           }
         }}
         onClick={() => {
@@ -410,7 +424,10 @@ const Canvas = ({
           if (touch) {
             const x = touch.clientX
             const y = touch.clientY
-            dispatch({ type: "UserTouchMovedBoard", position: { x, y } })
+            dispatch({
+              type: "UserTouchMovedBoard",
+              position: { x, y },
+            })
           }
         }}
       />

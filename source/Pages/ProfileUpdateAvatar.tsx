@@ -74,7 +74,10 @@ export const update = (
         { ...model, status: "GeneratingSeed" },
         pipe(
           ProfileAvatar.generateRandomSeed,
-          Cmd.fromTask((seed) => ({ type: "RandomSeedGenerated", seed })),
+          Cmd.fromTask((seed) => ({
+            type: "RandomSeedGenerated",
+            seed,
+          })),
         ),
         [],
       ]
@@ -89,7 +92,11 @@ export const update = (
       return [
         { ...model },
         Route.back(),
-        [Store.Profile.Edit(userId, { avatarUrl: ProfileAvatar.toUrl(model) })],
+        [
+          Store.Profile.Edit(userId, {
+            avatarUrl: ProfileAvatar.toUrl(model),
+          }),
+        ],
       ]
   }
 }

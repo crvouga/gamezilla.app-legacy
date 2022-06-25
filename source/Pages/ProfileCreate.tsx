@@ -120,7 +120,11 @@ export const view =
           />
 
           <View.Button
-            sx={{ display: "block", marginX: "auto", marginBottom: 2 }}
+            sx={{
+              display: "block",
+              marginX: "auto",
+              marginBottom: 2,
+            }}
           >
             Change Avatar
           </View.Button>
