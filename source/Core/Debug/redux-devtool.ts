@@ -5,17 +5,13 @@
  *
  * @since 0.5.0
  */
-import * as IO_ from "fp-ts/lib/IO"
 import * as Json from "../Json"
 import * as Option from "../Option"
 import * as Result from "../Result"
+import * as Task from "../Task"
 import { Dispatch } from "../Platform"
 import { pipe } from "../pipe"
 import { Debug, Debugger, DebuggerR, Global, MsgWithDebug } from "./commons"
-
-// --- Aliases for docs
-
-import IO = IO_.IO
 
 type Unsubscription = () => void
 
@@ -90,8 +86,8 @@ interface DevToolHandlerR<Model, Msg> extends DebuggerR<Model, Msg> {
  */
 export function getConnection<Model, Msg>(
   global: Global,
-): IO<Option.Option<Connection<Model, Msg>>> {
-  return () =>
+): Task.Task<Option.Option<Connection<Model, Msg>>> {
+  return async () =>
     hasExtension(global)
       ? Option.Some(global.__REDUX_DEVTOOLS_EXTENSION__.connect())
       : Option.None
@@ -164,25 +160,25 @@ function handleIncomingMsg<Model, Msg>({
   dispatch,
 }: DevToolHandlerR<Model, Msg>): (
   msg: DevToolMsg,
-) => Result.Result<string, IO<void>> {
+) => Result.Result<string, Task.Task<void>> {
   const dispatchToApp =
-    (m: unknown): IO<void> =>
-    () =>
+    (m: unknown): Task.Task<void> =>
+    async () =>
       dispatch(m as Msg)
 
-  const reinit: IO<void> = () => connection.init(init)
+  const reinit: Task.Task<void> = async () => connection.init(init)
 
-  const update = (payload: Model): IO<void> =>
+  const update = (payload: Model): Task.Task<void> =>
     dispatchToApp({ type: "__DebugUpdateModel__", payload })
 
   const restart =
-    (model: Model): IO<void> =>
-    () =>
+    (model: Model): Task.Task<void> =>
+    async () =>
       connection.init(model)
 
   const liftState =
-    (state: LiftedState<Model>): IO<void> =>
-    () =>
+    (state: LiftedState<Model>): Task.Task<void> =>
+    async () =>
       connection.send(null, state)
 
   const toggle = toggleAction(dispatch)
@@ -213,7 +209,7 @@ function handleIncomingMsg<Model, Msg>({
             return Result.Ok(
               pipe(
                 update(init),
-                IO_.chain(() => reinit),
+                Task.chain(() => reinit),
               ),
             )
 
@@ -223,7 +219,7 @@ function handleIncomingMsg<Model, Msg>({
               Result.map((m) =>
                 pipe(
                   update(m),
-                  IO_.chain(() => restart(m)),
+                  Task.chain(() => restart(m)),
                 ),
               ),
             )
@@ -242,7 +238,7 @@ function handleIncomingMsg<Model, Msg>({
                       liftedState.computedStates.length - 1
                     ].state,
                   ),
-                  IO_.chain(() => liftState(liftedState)),
+                  Task.chain(() => liftState(liftedState)),
                 ),
               ),
             )
@@ -251,7 +247,7 @@ function handleIncomingMsg<Model, Msg>({
             return pipe(
               parseToggleAction<Model>(msg),
               Result.map(([id, liftedState]) =>
-                pipe(toggle(id, liftedState), IO_.chain(liftState)),
+                pipe(toggle(id, liftedState), Task.chain(liftState)),
               ),
             )
 
@@ -370,8 +366,11 @@ function parseToggleAction<Model>(
  */
 function toggleAction<Model, Msg>(
   dispatch: Dispatch<MsgWithDebug<Model, Msg>>,
-): (id: number, liftedState: LiftedState<Model>) => IO<LiftedState<Model>> {
-  return (id, liftedState) => () => {
+): (
+  id: number,
+  liftedState: LiftedState<Model>,
+) => Task.Task<LiftedState<Model>> {
+  return (id, liftedState) => async () => {
     const state = JSON.parse(JSON.stringify(liftedState)) // poor man deep clone...
 
     const { skippedActionIds, stagedActionIds, computedStates, actionsById } =
