@@ -3,6 +3,7 @@ import { Cmd } from "Core/Cmd"
 import * as Snackbar from "Snackbar"
 import * as Conversation from "./Conversation"
 import * as Profile from "./Profile"
+import * as ProfilesConversations from "./ProfilesConversations"
 
 //
 //
@@ -20,11 +21,7 @@ export type Model = {
     [id: string]: Conversation.Conversation
   }
   ProfilesConversations: {
-    [id: string]: {
-      id: string
-      userId: string
-      conversationId: string
-    }
+    [id: string]: ProfilesConversations.ProfilesConversations
   }
   queries: {
     [id: string]: Query
