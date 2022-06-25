@@ -1,7 +1,11 @@
-import { definitions } from "supabase-types"
-import * as Supabase from "Supabase"
-import { either, task } from "fp-ts"
+import { cmd } from "Core"
+import { Cmd } from "Core/Cmd"
 import * as Result from "Core/Result"
+import { either, task } from "fp-ts"
+import * as Snackbar from "Snackbar"
+import * as Supabase from "Supabase"
+import { definitions } from "supabase-types"
+import * as Store from "./Store"
 
 //
 //
@@ -10,6 +14,8 @@ import * as Result from "Core/Result"
 //
 //
 //
+
+type Model = Store.Model
 
 export type Conversation = {
   conversationId: string
@@ -52,7 +58,21 @@ export type Created = ReturnType<typeof Created>
 //
 //
 //
+// Update
 //
+//
+//
+
+type Action = Snackbar.GroupedMsg
+
+export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>, Action[]] => {
+  return [model, cmd.none, []]
+}
+
+//
+//
+//
+// Data Access
 //
 //
 //
