@@ -1,7 +1,7 @@
 import * as History from "history"
 import * as Rx from "rxjs"
-import { option } from "fp-ts"
 import * as Cmd from "./Cmd"
+import * as Option from "./Option"
 import * as Sub from "./Sub"
 
 //
@@ -56,7 +56,7 @@ export const reload = <Msg>(): Cmd.Cmd<Msg> => {
   return Rx.of(async () => {
     window.location.reload()
 
-    return option.none
+    return Option.None
   })
 }
 
@@ -64,7 +64,7 @@ export const push = <Msg>(url: string): Cmd.Cmd<Msg> => {
   return Rx.of(async () => {
     history.push(url)
 
-    return option.none
+    return Option.None
   })
 }
 
@@ -72,7 +72,7 @@ export const replace = <Msg>(url: string): Cmd.Cmd<Msg> => {
   return Rx.of(async () => {
     history.replace(url)
 
-    return option.none
+    return Option.None
   })
 }
 
@@ -80,6 +80,6 @@ export const back = <Msg>(): Cmd.Cmd<Msg> => {
   return Rx.of(async () => {
     history.back()
 
-    return option.none
+    return Option.None
   })
 }

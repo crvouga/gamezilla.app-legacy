@@ -109,25 +109,6 @@ export const loadSession: task.Task<Msg> = async () => {
   return { type: "UserLoggedOut" }
 }
 
-export const load: task.Task<option.Option<Session>> = async () => {
-  await new Promise((resolve) => setTimeout(resolve, 100))
-
-  const session = Supabase.client.auth.session()
-
-  const userId = session?.user?.id
-
-  const defaultName =
-    session?.user?.user_metadata?.name ??
-    session?.user?.user_metadata?.full_name ??
-    ""
-
-  if (userId) {
-    return option.some({ defaultName, userId })
-  }
-
-  return option.none
-}
-
 //
 //
 //

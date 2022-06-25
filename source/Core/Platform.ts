@@ -5,17 +5,9 @@
  *
  * @since 0.5.0
  */
-import * as O from "fp-ts/lib/Option"
-import { BehaviorSubject, Observable } from "rxjs"
-import {
-  distinctUntilChanged,
-  map,
-  mergeAll,
-  startWith,
-  switchMap,
-  takeUntil,
-} from "rxjs/operators"
+import * as Rx from "rxjs"
 import * as Cmd from "./Cmd"
+import * as Option from "./Option"
 import * as Sub from "./Sub"
 
 /**
@@ -36,7 +28,7 @@ export interface Program<Model, Msg> {
   dispatch: Dispatch<Msg>
   cmd$: Cmd.Cmd<Msg>
   sub$: Sub.Sub<Msg>
-  model$: Observable<Model>
+  model$: Rx.Observable<Model>
 }
 
 /**
@@ -53,23 +45,23 @@ export function program<Model, Msg>(
   update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>],
   subscriptions: (model: Model) => Sub.Sub<Msg> = () => Sub.none,
 ): Program<Model, Msg> {
-  const state$ = new BehaviorSubject(init)
+  const state$ = new Rx.BehaviorSubject(init)
   const dispatch: Dispatch<Msg> = (msg) =>
     state$.next(update(msg, state$.getValue()[0]))
 
   const cmd$ = state$.pipe(
-    startWith(init),
-    map((state) => state[1]),
-    distinctUntilChanged(),
-    mergeAll(),
+    Rx.startWith(init),
+    Rx.map((state) => state[1]),
+    Rx.distinctUntilChanged(),
+    Rx.mergeAll(),
   )
 
   const model$ = state$.pipe(
-    map((state) => state[0]),
-    distinctUntilChanged(),
+    Rx.map((state) => state[0]),
+    Rx.distinctUntilChanged(),
   )
 
-  const sub$ = model$.pipe(switchMap((model) => subscriptions(model)))
+  const sub$ = model$.pipe(Rx.switchMap((model) => subscriptions(model)))
 
   return { dispatch, cmd$, sub$, model$ }
 }
@@ -93,16 +85,16 @@ export function programWithFlags<Flags, Model, Msg>(
  * @since 0.5.4
  */
 export function withStop(
-  signal: Observable<unknown>,
+  signal: Rx.Observable<unknown>,
 ): <Model, Msg>(program: Program<Model, Msg>) => Program<Model, Msg> {
   return (program) => {
     const { cmd$, model$, sub$, ...rest } = program
 
     return {
       ...rest,
-      model$: model$.pipe(takeUntil(signal)),
-      cmd$: cmd$.pipe(takeUntil(signal)),
-      sub$: sub$.pipe(takeUntil(signal)),
+      model$: model$.pipe(Rx.takeUntil(signal)),
+      cmd$: cmd$.pipe(Rx.takeUntil(signal)),
+      sub$: sub$.pipe(Rx.takeUntil(signal)),
     }
   }
 }
@@ -116,10 +108,10 @@ export function withStop(
  */
 export function run<Model, Msg>(
   program: Program<Model, Msg>,
-): Observable<Model> {
+): Rx.Observable<Model> {
   const { dispatch, cmd$, sub$, model$ } = program
 
-  cmd$.subscribe((task) => task().then(O.map(dispatch)))
+  cmd$.subscribe((task) => task().then(Option.map(dispatch)))
 
   sub$.subscribe(dispatch)
 

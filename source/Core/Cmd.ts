@@ -5,10 +5,10 @@
  *
  * @since 0.5.0
  */
-import * as Option from "fp-ts/lib/Option"
 import * as Task from "fp-ts/lib/Task"
 import * as Rx from "rxjs"
 import { pipe } from "fp-ts/lib/function"
+import * as Option from "./Option"
 
 /**
  * @category model
@@ -23,7 +23,7 @@ export interface Cmd<Msg>
  * @since 0.5.0
  */
 export function of<Msg>(m: Msg): Cmd<Msg> {
-  return Rx.of(Task.of(Option.some(m)))
+  return Rx.of(Task.of(Option.Some(m)))
 }
 
 /**
@@ -61,5 +61,5 @@ export const none: Cmd<never> = Rx.EMPTY
 export const fromTask =
   <A, Msg>(f: (a: A) => Msg) =>
   (task: Task.Task<A>): Cmd<Msg> => {
-    return pipe(task, Task.map(f), Task.map(Option.some), Rx.of)
+    return pipe(task, Task.map(f), Task.map(Option.Some), Rx.of)
   }
