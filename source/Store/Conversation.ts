@@ -66,7 +66,16 @@ export const update = (
   msg: Msg,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>, Action[]] => {
-  return [model, Cmd.none, []]
+  switch (msg.type) {
+    case "Conversation/Create":
+      const mutationsNew: Model["mutations"] = {
+        ...model.mutations,
+      }
+      return [{ ...model, mutations: mutationsNew }, Cmd.none, []]
+
+    case "Conversation/Created":
+      return [model, Cmd.none, []]
+  }
 }
 
 //

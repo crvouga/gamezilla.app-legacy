@@ -77,12 +77,16 @@ export const update = (
   model: Model,
 ): [Model, Cmd.Cmd<Msg>, Action[]] => {
   switch (msg.entity) {
-    case "Conversation":
-      return [model, Cmd.none, []]
+    case "Conversation": {
+      const [modelNew, cmdNew, actions] = Conversation.update(msg, model)
 
-    case "Profile":
+      return [modelNew, cmdNew, actions]
+    }
+
+    case "Profile": {
       const [modelNew, cmdNew, actions] = Profile.update(msg, model)
 
       return [modelNew, cmdNew, actions]
+    }
   }
 }
