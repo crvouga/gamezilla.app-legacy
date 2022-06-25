@@ -1,22 +1,5 @@
-/**
- * Pipes the value of an expression into a pipeline of functions.
- *
- * See also [`flow`](#flow).
- *
- * @example
- * import { pipe } from 'fp-ts/function'
- *
- * const len = (s: string): number => s.length
- * const double = (n: number): number => n * 2
- *
- * // without pipe
- * assert.strictEqual(double(len('aaa')), 6)
- *
- * // with pipe
- * assert.strictEqual(pipe('aaa', len, double), 6)
- *
- * @since 2.6.3
- */
+// Source: https://github.com/gcanti/fp-ts/blob/master/src/function.ts
+
 export function pipe<A>(a: A): A
 export function pipe<A, B>(a: A, ab: (a: A) => B): B
 export function pipe<A, B, C>(a: A, ab: (a: A) => B, bc: (b: B) => C): C
