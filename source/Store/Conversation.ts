@@ -1,7 +1,7 @@
 import * as Snackbar from "Snackbar"
 import * as Supabase from "Supabase"
 import { Cmd, Result } from "Core"
-import { either, task } from "fp-ts"
+import { task } from "fp-ts"
 import { definitions } from "supabase-types"
 import * as Store from "./Store"
 
@@ -85,15 +85,15 @@ const fromRow = (row: definitions["conversation"]): Conversation => {
 }
 
 export const insert =
-  (): task.Task<either.Either<Problem, Conversation>> => async () => {
+  (): task.Task<Result.Result<Problem, Conversation>> => async () => {
     const response = await Supabase.client
       .from<definitions["conversation"]>("conversation")
       .insert({})
       .single()
 
     if (response.error) {
-      return either.left({ message: response.error.message })
+      return Result.Err({ message: response.error.message })
     }
 
-    return either.right(fromRow(response.data))
+    return Result.Ok(fromRow(response.data))
   }
