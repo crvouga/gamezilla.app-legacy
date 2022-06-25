@@ -3,8 +3,7 @@
  *
  * @since 0.5.0
  */
-import { Option, alt, fromNullable, getOrElse } from "fp-ts/lib/Option"
-import { pipe } from "../pipe"
+import * as Option from "../Option"
 import { DebugMsg, Debugger } from "./commons"
 
 /**
@@ -26,7 +25,7 @@ export function consoleDebugger<Model, Msg>(): Debugger<Model, Msg> {
         }
 
         if (action.type === "MESSAGE") {
-          const showType = getOrElse(() => "")(getMsgType(action))
+          const showType = Option.withDefault("", getMsgType(action))
 
           console.groupCollapsed(`[MESSAGE] %c${showType}`, "font-weight: bold")
           console.dir(action.payload)
@@ -53,15 +52,45 @@ export function consoleDebugger<Model, Msg>(): Debugger<Model, Msg> {
  * Tries to extract the "type" of a `Message` reading the value of the [_discriminant_ property](http://www.typescriptlang.org/docs/handbook/advanced-types.html#discriminated-unions) (iterating through a list of commonly used names - e.g. "tag", "type", "kind" etc.)
  * @since 0.5.0
  */
-function getMsgType<Msg>(m: DebugMsg<Msg>): Option<string> {
+function getMsgType<Msg>(m: DebugMsg<Msg>): Option.Option<string> {
+  // todo: remove any
   const { payload } = m as any
 
-  return pipe(
-    fromNullable(payload["tag"]),
-    alt(() => fromNullable(payload["_tag"])),
-    alt(() => fromNullable(payload["type"])),
-    alt(() => fromNullable(payload["_type"])),
-    alt(() => fromNullable(payload["kind"])),
-    alt(() => fromNullable(payload["_kind"])),
-  )
+  const tag = Option.fromNullable(payload["tag"])
+
+  if (tag.type === "Some") {
+    return tag
+  }
+
+  const _tag = Option.fromNullable(payload["_tag"])
+
+  if (_tag.type === "Some") {
+    return _tag
+  }
+
+  const type = Option.fromNullable(payload["type"])
+
+  if (type.type === "Some") {
+    return type
+  }
+
+  const _type = Option.fromNullable(payload["_type"])
+
+  if (_type.type === "Some") {
+    return _type
+  }
+
+  const kind = Option.fromNullable(payload["kind"])
+
+  if (kind.type === "Some") {
+    return kind
+  }
+
+  const _kind = Option.fromNullable(payload["_kind"])
+
+  if (_kind.type === "Some") {
+    return _kind
+  }
+
+  return Option.None
 }
