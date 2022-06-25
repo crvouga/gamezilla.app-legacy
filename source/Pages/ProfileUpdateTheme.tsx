@@ -1,7 +1,8 @@
+import * as Route from "Route"
 import * as Store from "Store"
 import * as Profile from "Store/Profile"
 import * as View from "View"
-import { Cmd, Navigation } from "Core"
+import { Cmd } from "Core"
 
 //
 //
@@ -38,7 +39,7 @@ export const update = (
 ): [Model, Cmd.Cmd<Msg>, OutMsg[]] => {
   switch (msg.type) {
     case "UserClickedBackButton":
-      return [model, Navigation.back(), []]
+      return [model, Route.back(), []]
 
     case "UserClickedThemeModeOption":
       return [

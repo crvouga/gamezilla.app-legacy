@@ -1,5 +1,6 @@
+import * as Route from "Route"
 import * as View from "View"
-import { Cmd, Navigation } from "Core"
+import { Cmd } from "Core"
 
 //
 //
@@ -26,7 +27,7 @@ export type Msg = { type: "UserClickedBackButton" }
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "UserClickedBackButton":
-      return [model, Navigation.back()]
+      return [model, Route.back()]
   }
 }
 //

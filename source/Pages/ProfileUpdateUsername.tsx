@@ -1,6 +1,7 @@
+import * as Route from "Route"
 import * as Store from "Store"
 import * as View from "View"
-import { Cmd, Navigation } from "Core"
+import { Cmd } from "Core"
 
 //
 //
@@ -43,12 +44,12 @@ export const update = (
       return [{ ...model, username: msg.username }, Cmd.none, []]
 
     case "UserClickedCancelButton":
-      return [model, Navigation.back(), []]
+      return [model, Route.back(), []]
 
     case "UserClickedSubmitButton":
       return [
         model,
-        Navigation.back(),
+        Route.back(),
         [Store.Profile.Edit(userId, { username: model.username })],
       ]
   }

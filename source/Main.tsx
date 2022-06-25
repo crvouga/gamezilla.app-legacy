@@ -7,7 +7,7 @@ import * as Store from "Store"
 import * as Profile from "Store/Profile"
 import * as View from "View"
 import * as ReactDom from "react-dom/client"
-import { Cmd, Html, Navigation, Sub, pipe } from "Core"
+import { Cmd, Html, Sub, Task, pipe } from "Core"
 import { programWithDebugger } from "Core/Debug/Html"
 import { andThen, andThenMany, exhaustive, groupTag } from "Utility"
 
@@ -86,12 +86,10 @@ export const toStatus = ({
 //
 //
 
-type Flags = {
-  location: Navigation.Location
-}
+export type Flags = Route.Flags
 
 export const init = (flags: Flags): [Model, Cmd.Cmd<Msg>] => {
-  const route = Route.decode(flags.location.pathname) ?? { type: "Home" }
+  const route = Route.init(flags)
   const [session, sessionCmd] = Session.init()
   const snackbar = Snackbar.init
   const store = Store.init
@@ -198,7 +196,7 @@ const updateStatusChanged =
 
       case "Ready": {
         if (model.route.type === "Game" && model.game.type === "Closed") {
-          return [model, Navigation.replace(Route.encode({ type: "Home" })), []]
+          return [model, Route.replace({ type: "Home" }), []]
         }
 
         const [page, pageCmd, actions] = Pages.initReady(
@@ -291,11 +289,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>, Msg[]] => {
 
         case "Ready": {
           if (model.page.page === "Game" && model.game.type === "Closed") {
-            return [
-              model,
-              Navigation.replace(Route.encode({ type: "Home" })),
-              [],
-            ]
+            return [model, Route.replace({ type: "Home" }), []]
           }
 
           const [pageNew, pageCmd, actions] = Pages.updateReady(
@@ -576,20 +570,26 @@ const viewSnackbar =
 //
 //
 
-const flags: Flags = {
-  location: Navigation.getLocation(),
+const getFlags: Task.Task<Flags> = async () => {
+  return Route.getFlags()
 }
 
-const program = programWithDebugger(init(flags), update, view, subscriptions)
+const main: Task.Task<void> = async () => {
+  const flags = await getFlags()
 
-const rootElement = document.getElementById("root")
+  const program = programWithDebugger(init(flags), update, view, subscriptions)
 
-if (!rootElement) {
-  throw new Error("Failed to get root dom node")
+  const rootElement = document.getElementById("root")
+
+  if (!rootElement) {
+    throw new Error("Failed to get root dom node")
+  }
+
+  const root = ReactDom.createRoot(rootElement)
+
+  Html.run(program, (dom) => {
+    root.render(dom)
+  })
 }
 
-const root = ReactDom.createRoot(rootElement)
-
-Html.run(program, (dom) => {
-  root.render(dom)
-})
+main()

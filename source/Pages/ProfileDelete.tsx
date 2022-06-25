@@ -1,6 +1,7 @@
+import * as Route from "Route"
 import * as Store from "Store"
 import * as View from "View"
-import { Cmd, Navigation } from "Core"
+import { Cmd } from "Core"
 
 //
 //
@@ -36,10 +37,10 @@ export const update = (
 ): [Model, Cmd.Cmd<Msg>, Action[]] => {
   switch (msg.type) {
     case "UserClickedCancelButton":
-      return [model, Navigation.back(), []]
+      return [model, Route.back(), []]
 
     case "UserClickedBackdrop":
-      return [model, Navigation.back(), []]
+      return [model, Route.back(), []]
 
     case "UserClickedDeleteButton":
       return [model, Cmd.none, [Store.Profile.DeleteForever(userId)]]

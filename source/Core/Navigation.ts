@@ -3,6 +3,7 @@ import * as Rx from "rxjs"
 import * as Cmd from "./Cmd"
 import * as Option from "./Option"
 import * as Sub from "./Sub"
+import * as Task from "./Task"
 
 //
 //
@@ -38,7 +39,7 @@ history.listen((location) => {
   location$.next(location.location)
 })
 
-export const getLocation = () => {
+export const getLocation: Task.Task<Location> = async () => {
   return history.location
 }
 

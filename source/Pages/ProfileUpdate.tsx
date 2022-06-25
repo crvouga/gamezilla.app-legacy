@@ -1,7 +1,7 @@
 import * as Route from "Route"
 import * as Profile from "Store/Profile"
 import * as View from "View"
-import { Cmd, Navigation } from "Core"
+import { Cmd } from "Core"
 
 //
 //
@@ -40,43 +40,30 @@ export const update = (
     case "UserClickedAvatar":
       return [
         model,
-        Navigation.push(
-          Route.encode({
-            type: "ProfileUpdateAvatar",
-          }),
-        ),
+        Route.push({
+          type: "ProfileUpdateAvatar",
+        }),
       ]
 
     case "UserClickedChangeAvatarButton":
       return [
         model,
-        Navigation.push(
-          Route.encode({
-            type: "ProfileUpdateAvatar",
-          }),
-        ),
+        Route.push({
+          type: "ProfileUpdateAvatar",
+        }),
       ]
 
     case "UserClickedBackButton":
-      return [model, Navigation.back()]
+      return [model, Route.back()]
 
     case "UserClickedNameLink":
-      return [
-        model,
-        Navigation.push(Route.encode({ type: "ProfileUpdateName" })),
-      ]
+      return [model, Route.push({ type: "ProfileUpdateName" })]
 
     case "UserClickedUsernameLink":
-      return [
-        model,
-        Navigation.push(Route.encode({ type: "ProfileUpdateUsername" })),
-      ]
+      return [model, Route.push({ type: "ProfileUpdateUsername" })]
 
     case "UserClickedThemeLink":
-      return [
-        model,
-        Navigation.push(Route.encode({ type: "ProfileUpdateTheme" })),
-      ]
+      return [model, Route.push({ type: "ProfileUpdateTheme" })]
   }
 }
 

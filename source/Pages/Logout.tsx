@@ -1,7 +1,8 @@
+import * as Route from "Route"
 import * as Session from "Session"
 import * as Snackbar from "Snackbar"
 import * as View from "View"
-import { Cmd, Navigation, Result, pipe } from "Core"
+import { Cmd, Result, pipe } from "Core"
 
 //
 //
@@ -39,10 +40,10 @@ export const update = (
 ): [Model, Cmd.Cmd<Msg>, OutMsg[]] => {
   switch (msg.type) {
     case "UserClickedCancelButton":
-      return [model, Navigation.back(), []]
+      return [model, Route.back(), []]
 
     case "UserClickedBackdrop":
-      return [model, Navigation.back(), []]
+      return [model, Route.back(), []]
 
     case "UserClickedLogoutButton":
       return [
