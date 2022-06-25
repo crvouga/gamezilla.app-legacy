@@ -25,7 +25,7 @@ type Model = {
   session: Session.Model
   game: Games.Model
   page: Pages.Model
-  route: Route.Route
+  route: Route.Model
 }
 
 //
@@ -121,7 +121,7 @@ export const init = (flags: Flags): [Model, Cmd.Cmd<Msg>] => {
 //
 
 export type Msg =
-  | Route.GroupedMsg
+  | Route.Msg
   | Snackbar.GroupedMsg
   | Games.GroupedMsg
   | Store.GroupedMsg

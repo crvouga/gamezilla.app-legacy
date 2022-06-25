@@ -2,54 +2,39 @@ import { Navigation, Sub, Task, pipe } from "Core"
 
 //
 //
+//
 // Model
 //
 //
+//
 
-export type Model = Route
+export type Model =
+  | { type: "Account" }
+  | { type: "Home" }
+  | { type: "Login" }
+  | { type: "Logout" }
+  | { type: "ProfileCreate" }
+  | { type: "ProfileDelete" }
+  | { type: "ProfileUpdate" }
+  | { type: "ProfileUpdateAvatar" }
+  | { type: "ProfileUpdateName" }
+  | { type: "ProfileUpdateUsername" }
+  | { type: "ProfileUpdateTheme" }
+  | { type: "Game" }
+  | { type: "Chat" }
+  | { type: "ChatNew" }
+  | { type: "ChatConversation"; conversationId: string }
 
-export type Route =
-  | Account
-  | Home
-  | Login
-  | Logout
-  | ProfileCreate
-  | ProfileDelete
-  | ProfileUpdate
-  | ProfileUpdateAvatar
-  | ProfileUpdateName
-  | ProfileUpdateUsername
-  | ProfileUpdateTheme
-  | Game
-  | Chat
-  | ChatNew
-  | ChatConversation
-
-export type Account = { type: "Account" }
-export type Home = { type: "Home" }
-export type Login = { type: "Login" }
-export type Logout = { type: "Logout" }
-export type ProfileCreate = { type: "ProfileCreate" }
-export type ProfileDelete = { type: "ProfileDelete" }
-export type ProfileUpdate = { type: "ProfileUpdate" }
-export type ProfileUpdateAvatar = { type: "ProfileUpdateAvatar" }
-export type ProfileUpdateName = { type: "ProfileUpdateName" }
-export type ProfileUpdateUsername = { type: "ProfileUpdateUsername" }
-export type ProfileUpdateTheme = { type: "ProfileUpdateTheme" }
-export type Game = { type: "Game" }
-export type Chat = { type: "Chat" }
-export type ChatNew = { type: "ChatNew" }
-export type ChatConversation = {
-  type: "ChatConversation"
-  conversationId: string
-}
+//
+//
+//
+// Init
+//
+//
+//
 
 export type Flags = {
   location: Navigation.Location
-}
-
-export const init = (flags: Flags): Model => {
-  return decode(flags.location.pathname) ?? { type: "Home" }
 }
 
 export const getFlags: Task.Task<Flags> = async () => {
@@ -58,58 +43,8 @@ export const getFlags: Task.Task<Flags> = async () => {
   }
 }
 
-//
-//
-// encode/decode
-//
-//
-
-const routesTypes: { [routeType in Route["type"]]: string } = {
-  Account: "Account",
-  Home: "Home",
-  Login: "Login",
-  Logout: "Logout",
-  ProfileCreate: "ProfileCreate",
-  ProfileDelete: "ProfileDelete",
-  ProfileUpdate: "ProfileUpdate",
-  ProfileUpdateAvatar: "ProfileUpdateAvatar",
-  ProfileUpdateName: "ProfileUpdateName",
-  ProfileUpdateUsername: "ProfileUpdateUsername",
-  ProfileUpdateTheme: "ProfileUpdateTheme",
-  Game: "Game",
-  Chat: "Chat",
-  ChatNew: "ChatNew",
-  ChatConversation: "ChatConversation",
-}
-
-const isRouteType = (routeType: unknown): routeType is Route["type"] => {
-  return typeof routeType === "string" && routeType in routesTypes
-}
-
-export const decode = (pathname: string): Route | undefined => {
-  const [part0, part1] = pathname.substring(1).split("/")
-
-  if (isRouteType(part0)) {
-    if (part0 === "ChatConversation") {
-      if (typeof part1 === "string") {
-        return { type: "ChatConversation", conversationId: part1 }
-      }
-
-      return undefined
-    }
-
-    return { type: part0 }
-  }
-
-  return undefined
-}
-
-export const encode = (route: Route): string => {
-  if (route.type === "ChatConversation") {
-    return [route.type, route.conversationId].join("/")
-  }
-
-  return route.type
+export const init = (flags: Flags): Model => {
+  return decode(flags.location.pathname) ?? { type: "Home" }
 }
 
 //
@@ -120,14 +55,31 @@ export const encode = (route: Route): string => {
 //
 //
 
-export type GroupedMsg = Msg & { group: "Route" }
+export const RecievedRoute = (route: Model) =>
+  ({ group: "Route", type: "RecievedRoute", route } as const)
+export type RecievedRoute = ReturnType<typeof RecievedRoute>
 
 export type Msg = RecievedRoute
 
-export const RecievedRoute = (route: Route) =>
-  ({ type: "RecievedRoute", route } as const)
+//
+//
+//
+// Cmds
+//
+//
+//
 
-export type RecievedRoute = ReturnType<typeof RecievedRoute>
+export const push = <TMsg,>(route: Model) => {
+  return Navigation.push<TMsg>(encode(route))
+}
+
+export const back = <TMsg,>() => {
+  return Navigation.back<TMsg>()
+}
+
+export const replace = <TMsg,>(route: Model) => {
+  return Navigation.replace<TMsg>(encode(route))
+}
 
 //
 //
@@ -149,19 +101,55 @@ export const subscriptions = (): Sub.Sub<Msg> => {
 //
 //
 //
-// Cmds
+// Encode/Decode
 //
 //
 //
 
-export const push = <TMsg,>(route: Route) => {
-  return Navigation.push<TMsg>(encode(route))
+const routesTypes: { [routeType in Model["type"]]: string } = {
+  Account: "Account",
+  Home: "Home",
+  Login: "Login",
+  Logout: "Logout",
+  ProfileCreate: "ProfileCreate",
+  ProfileDelete: "ProfileDelete",
+  ProfileUpdate: "ProfileUpdate",
+  ProfileUpdateAvatar: "ProfileUpdateAvatar",
+  ProfileUpdateName: "ProfileUpdateName",
+  ProfileUpdateUsername: "ProfileUpdateUsername",
+  ProfileUpdateTheme: "ProfileUpdateTheme",
+  Game: "Game",
+  Chat: "Chat",
+  ChatNew: "ChatNew",
+  ChatConversation: "ChatConversation",
 }
 
-export const back = <TMsg,>() => {
-  return Navigation.back<TMsg>()
+const isRouteType = (routeType: unknown): routeType is Model["type"] => {
+  return typeof routeType === "string" && routeType in routesTypes
 }
 
-export const replace = <TMsg,>(route: Route) => {
-  return Navigation.replace<TMsg>(encode(route))
+export const decode = (pathname: string): Model | undefined => {
+  const [first, second] = pathname.substring(1).split("/")
+
+  if (isRouteType(first)) {
+    if (first === "ChatConversation") {
+      if (typeof second === "string") {
+        return { type: "ChatConversation", conversationId: second }
+      }
+
+      return undefined
+    }
+
+    return { type: first }
+  }
+
+  return undefined
+}
+
+export const encode = (route: Model): string => {
+  if (route.type === "ChatConversation") {
+    return [route.type, route.conversationId].join("/")
+  }
+
+  return route.type
 }
