@@ -149,13 +149,7 @@ export const update = (msg: Msg, modelPrev: Model): [Model, Cmd.Cmd<Msg>] => {
     andThen(updateStatusChanged(modelPrev), msg),
 
     ([modelNew, cmdNew, actions]) =>
-      pipe([modelNew, cmdNew], andThenMany(updateAction, actions)),
-
-    ([modelNew, cmdNew]) =>
-      pipe([modelNew, cmdNew], andThen(updateStatusChanged(modelPrev), msg)),
-
-    ([modelNew, cmdNew, actions]) =>
-      pipe([modelNew, cmdNew], andThenMany(updateAction, actions)),
+      pipe([modelNew, cmdNew], andThenMany(updateAction, [msg, ...actions])),
   )
 }
 
