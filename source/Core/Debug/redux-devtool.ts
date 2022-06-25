@@ -5,20 +5,17 @@
  *
  * @since 0.5.0
  */
-import * as E from "fp-ts/lib/Either"
 import * as IO_ from "fp-ts/lib/IO"
-import { sequenceT } from "fp-ts/lib/Apply"
+import * as Json from "../Json"
 import * as Option from "../Option"
+import * as Result from "../Result"
 import { Dispatch } from "../Platform"
 import { pipe } from "../pipe"
 import { Debug, Debugger, DebuggerR, Global, MsgWithDebug } from "./commons"
 
 // --- Aliases for docs
 
-import Either = E.Either
 import IO = IO_.IO
-
-const sequenceTEither = sequenceT(E.either)
 
 type Unsubscription = () => void
 
@@ -145,7 +142,7 @@ function handleSubscription<Model, Msg>(
   return (msg) =>
     pipe(
       handler(msg),
-      E.fold(
+      Result.fold(
         (err) => console.warn("[REDUX DEV TOOL]", err),
         (eff) => eff(),
       ),
@@ -165,43 +162,55 @@ function handleIncomingMsg<Model, Msg>({
   init,
   debug$,
   dispatch,
-}: DevToolHandlerR<Model, Msg>): (msg: DevToolMsg) => Either<string, IO<void>> {
+}: DevToolHandlerR<Model, Msg>): (
+  msg: DevToolMsg,
+) => Result.Result<string, IO<void>> {
   const dispatchToApp =
     (m: unknown): IO<void> =>
     () =>
       dispatch(m as Msg)
+
   const reinit: IO<void> = () => connection.init(init)
+
   const update = (payload: Model): IO<void> =>
     dispatchToApp({ type: "__DebugUpdateModel__", payload })
+
   const restart =
     (model: Model): IO<void> =>
     () =>
       connection.init(model)
+
   const liftState =
     (state: LiftedState<Model>): IO<void> =>
     () =>
       connection.send(null, state)
+
   const toggle = toggleAction(dispatch)
 
   return (msg) => {
     switch (msg.type) {
       case "START":
-        return E.right(reinit)
+        return Result.Ok(reinit)
 
-      case "ACTION":
-        return pipe(
-          E.parseJSON(String(msg.payload), E.toError),
-          E.bimap((e) => e.message, dispatchToApp),
-        )
+      case "ACTION": {
+        const result = Json.parse(String(msg.payload))
+        switch (result.type) {
+          case "Err":
+            return Result.Err(result.error.message)
+
+          case "Ok":
+            return Result.Ok(dispatchToApp(result.value))
+        }
+      }
 
       case "DISPATCH":
         switch (msg.payload.type) {
           case "JUMP_TO_STATE":
           case "JUMP_TO_ACTION":
-            return pipe(parseJump<Model>(msg), E.map(update))
+            return pipe(parseJump<Model>(msg), Result.map(update))
 
           case "RESET":
-            return E.right(
+            return Result.Ok(
               pipe(
                 update(init),
                 IO_.chain(() => reinit),
@@ -211,7 +220,7 @@ function handleIncomingMsg<Model, Msg>({
           case "ROLLBACK":
             return pipe(
               parseRollback<Model>(msg),
-              E.map((m) =>
+              Result.map((m) =>
                 pipe(
                   update(m),
                   IO_.chain(() => restart(m)),
@@ -220,12 +229,12 @@ function handleIncomingMsg<Model, Msg>({
             )
 
           case "COMMIT":
-            return E.right(restart(debug$.getValue()[1]))
+            return Result.Ok(restart(debug$.getValue()[1]))
 
           case "IMPORT_STATE":
             return pipe(
               parseImportState<Model>(msg),
-              E.map((liftedState) =>
+              Result.map((liftedState) =>
                 pipe(
                   update(
                     // @ts-ignore
@@ -241,13 +250,13 @@ function handleIncomingMsg<Model, Msg>({
           case "TOGGLE_ACTION":
             return pipe(
               parseToggleAction<Model>(msg),
-              E.map(([id, liftedState]) =>
+              Result.map(([id, liftedState]) =>
                 pipe(toggle(id, liftedState), IO_.chain(liftState)),
               ),
             )
 
           default:
-            return E.left(msg.payload.type)
+            return Result.Err(msg.payload.type)
         }
     }
   }
@@ -273,13 +282,14 @@ function handleActions<Model, Msg>({
  *
  * @since 0.5.0
  */
-function parseJump<Model>(msg: Monitor): Either<string, Model> {
+function parseJump<Model>(msg: Monitor): Result.Result<string, Model> {
   return pipe(
-    E.parseJSON(String(msg.state), E.toError),
-    E.bimap(
-      (e) => e.message,
-      // @ts-ignore
-      (u) => u as Model,
+    Json.parse(String(msg.state)),
+    Result.mapError((problem) => problem.message),
+    Result.map(
+      (value) =>
+        // @ts-ignore
+        value as Model,
     ),
   )
 }
@@ -289,13 +299,14 @@ function parseJump<Model>(msg: Monitor): Either<string, Model> {
  *
  * @since 0.5.0
  */
-function parseRollback<Model>(msg: Monitor): Either<string, Model> {
+function parseRollback<Model>(msg: Monitor): Result.Result<string, Model> {
   return pipe(
-    E.parseJSON(String(msg.state), E.toError),
-    E.bimap(
-      (e) => e.message,
-      // @ts-ignore
-      (u) => u as Model,
+    Json.parse(String(msg.state)),
+    Result.mapError((problem) => problem.message),
+    Result.map(
+      (u) =>
+        // @ts-ignore
+        u as Model,
     ),
   )
 }
@@ -307,11 +318,11 @@ function parseRollback<Model>(msg: Monitor): Either<string, Model> {
  */
 function parseImportState<Model>(
   msg: Monitor,
-): Either<string, LiftedState<Model>> {
+): Result.Result<string, LiftedState<Model>> {
   return typeof msg.payload.nextLiftedState === "object" &&
     msg.payload.nextLiftedState !== null
-    ? E.right(msg.payload.nextLiftedState as LiftedState<Model>)
-    : E.left("IMPORT_STATE message has some bad payload...")
+    ? Result.Ok(msg.payload.nextLiftedState as LiftedState<Model>)
+    : Result.Err("IMPORT_STATE message has some bad payload...")
 }
 
 /**
@@ -321,23 +332,31 @@ function parseImportState<Model>(
  */
 function parseToggleAction<Model>(
   msg: Monitor,
-): Either<string, [number, LiftedState<Model>]> {
+): Result.Result<string, [number, LiftedState<Model>]> {
   const getId = pipe(
     msg.payload.id,
-    E.fromNullable("TOGGLE_ACTION message has some bad payload..."),
-    E.map((x) => x as number),
+    Result.fromNullable("TOGGLE_ACTION message has some bad payload..."),
+    Result.map((x) => x as number),
   )
 
+  if (getId.type === "Err") {
+    return getId
+  }
+
   const parseState = pipe(
-    E.parseJSON(String(msg.state), E.toError),
-    E.bimap(
-      (e) => e.message,
+    Json.parse(String(msg.state)),
+    Result.map(
       // @ts-ignore
       (u) => u as LiftedState<Model>,
     ),
+    Result.mapError((problem) => problem.message),
   )
 
-  return sequenceTEither(getId, parseState)
+  if (parseState.type === "Err") {
+    return parseState
+  }
+
+  return Result.Ok([getId.value, parseState.value])
 }
 
 /**
