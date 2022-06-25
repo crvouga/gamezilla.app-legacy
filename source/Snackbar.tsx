@@ -1,7 +1,6 @@
 import * as View from "View"
 import { SxProps } from "@mui/material"
-import { Cmd } from "Core"
-import { task } from "fp-ts"
+import { Cmd, Task } from "Core"
 import { pipe } from "fp-ts/lib/function"
 
 //
@@ -71,7 +70,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
       return [
         { ...model, queue: [msg.snack, ...model.queue] },
         pipe(
-          task.delay(3000)(task.of({})),
+          Task.timeout(4000, {}),
           Cmd.fromTask(() => ({
             type: "SnackbarDurationElapsed",
             snackId: msg.snack.snackId,

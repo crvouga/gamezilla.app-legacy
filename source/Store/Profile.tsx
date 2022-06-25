@@ -1,8 +1,7 @@
 import * as Snackbar from "Snackbar"
 import * as Rx from "rxjs"
-import { Cmd, RemoteData, Result } from "Core"
+import { Cmd, RemoteData, Result, Task } from "Core"
 import { exhaustive } from "Utility"
-import { task } from "fp-ts"
 import { pipe } from "fp-ts/lib/function"
 import { matchSorter } from "match-sorter"
 import * as Supabase from "../Supabase"
@@ -653,7 +652,7 @@ export const load =
     userId,
   }: {
     userId: string
-  }): task.Task<Result.Result<Problem, Profile>> =>
+  }): Task.Task<Result.Result<Problem, Profile>> =>
   async () => {
     const response = await Supabase.client
       .from<definitions["profile"]>("profile")
@@ -679,7 +678,7 @@ export const create =
     name: string
     username: string
     avatarUrl: string
-  }): task.Task<Result.Result<Problem, Profile>> =>
+  }): Task.Task<Result.Result<Problem, Profile>> =>
   async () => {
     const response = await Supabase.client
       .from<definitions["profile"]>("profile")
@@ -700,7 +699,7 @@ export const create =
   }
 
 export const deleteForever =
-  (userId: string): task.Task<Result.Result<Problem, {}>> =>
+  (userId: string): Task.Task<Result.Result<Problem, {}>> =>
   async () => {
     const response = await Supabase.client
       .from<definitions["profile"]>("profile")
@@ -719,7 +718,7 @@ export const search =
     nameOrUsername,
   }: {
     nameOrUsername: string
-  }): task.Task<Result.Result<Problem, Profile[]>> =>
+  }): Task.Task<Result.Result<Problem, Profile[]>> =>
   async () => {
     const response = await Supabase.client
       .from<definitions["profile"]>("profile")
@@ -745,7 +744,7 @@ export const edit =
   (
     userId: string,
     edits: Partial<Profile>,
-  ): task.Task<Result.Result<Problem, Profile>> =>
+  ): Task.Task<Result.Result<Problem, Profile>> =>
   async () => {
     const response = await Supabase.client
       .from<definitions["profile"]>("profile")

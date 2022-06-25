@@ -6,15 +6,15 @@
  * @since 0.5.0
  */
 import * as Rx from "rxjs"
-import { Task } from "fp-ts/lib/Task"
 import * as Sub from "./Sub"
+import * as Task from "./Task"
 
 /**
  * Get the current unix time as a `Task`.
  * @category constructors
  * @since 0.5.0
  */
-export function now(): Task<number> {
+export function now(): Task.Task<number> {
   return () => Promise.resolve(new Date().getTime())
 }
 
