@@ -1,7 +1,7 @@
 import * as MuiIcons from "@mui/icons-material"
 import * as MuiLab from "@mui/lab"
 import * as Mui from "@mui/material"
-import { green } from "@mui/material/colors"
+import { blue } from "@mui/material/colors"
 import { html, platform } from "Core"
 import { useMemo } from "react"
 
@@ -36,7 +36,7 @@ const createTheme = ({ mode }: { mode: "light" | "dark" }) =>
     Mui.createTheme({
       palette: {
         mode: mode,
-        primary: green,
+        primary: blue,
       },
       typography: {
         fontFamily: ["Nunito"].join(","),
