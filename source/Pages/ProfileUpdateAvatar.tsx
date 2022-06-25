@@ -1,8 +1,9 @@
 import * as ProfileAvatar from "ProfileAvatar"
+import * as Route from "Route"
 import * as Snackbar from "Snackbar"
 import * as Store from "Store"
 import * as View from "View"
-import { Cmd, Navigation, pipe } from "Core"
+import { Cmd, pipe } from "Core"
 
 //
 //
@@ -57,7 +58,7 @@ export const update = (
 ): [Model, Cmd.Cmd<Msg>, OutMsg[]] => {
   switch (msg.type) {
     case "UserClickedCancelButton":
-      return [model, Navigation.back(), []]
+      return [model, Route.back(), []]
 
     case "StyleSelectClosed":
       return [{ ...model, status: "Idle" }, Cmd.none, []]
@@ -87,7 +88,7 @@ export const update = (
     case "UserClickedDoneButton":
       return [
         { ...model },
-        Navigation.back(),
+        Route.back(),
         [Store.Profile.Edit(userId, { avatarUrl: ProfileAvatar.toUrl(model) })],
       ]
   }

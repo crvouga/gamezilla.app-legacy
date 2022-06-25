@@ -3,7 +3,7 @@ import * as Route from "Route"
 import * as Snackbar from "Snackbar"
 import * as View from "View"
 import { keyframes } from "@mui/system"
-import { Cmd, Navigation, Sub, pipe } from "Core"
+import { Cmd, Sub, pipe } from "Core"
 import { exhaustive } from "Utility"
 
 //
@@ -45,7 +45,7 @@ const initOpened = ({
 }): [Opened, Cmd.Cmd<Msg>, OutMsg[]] => {
   return [
     { type: "Opened", status: "Idle", child: initGame({ game }) },
-    Navigation.push(Route.encode({ type: "Game" })),
+    Route.push({ type: "Game" }),
     [],
   ]
 }
@@ -132,7 +132,7 @@ const updateOpened = (
   switch (msg.type) {
     case "UserOpenedGame":
       if (msg.game === model.child.type) {
-        return [model, Navigation.push(Route.encode({ type: "Game" })), []]
+        return [model, Route.push({ type: "Game" }), []]
       }
       return [
         model,
@@ -144,7 +144,7 @@ const updateOpened = (
       return [{ ...model, status: "ConfirmingClose" }, Cmd.none, []]
 
     case "UserClickedGameBanner":
-      return [model, Navigation.push(Route.encode({ type: "Game" })), []]
+      return [model, Route.push({ type: "Game" }), []]
 
     case "CancelledCloseGame":
       return [{ ...model, status: "Idle" }, Cmd.none, []]

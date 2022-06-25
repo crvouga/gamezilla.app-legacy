@@ -1,4 +1,4 @@
-import { Navigation, Sub, pipe } from "Core"
+import { Navigation, Sub, Task, pipe } from "Core"
 
 //
 //
@@ -42,6 +42,20 @@ export type ChatNew = { type: "ChatNew" }
 export type ChatConversation = {
   type: "ChatConversation"
   conversationId: string
+}
+
+export type Flags = {
+  location: Navigation.Location
+}
+
+export const init = (flags: Flags): Model => {
+  return decode(flags.location.pathname) ?? { type: "Home" }
+}
+
+export const getFlags: Task.Task<Flags> = async () => {
+  return {
+    location: await Navigation.getLocation(),
+  }
 }
 
 //
@@ -135,11 +149,19 @@ export const subscriptions = (): Sub.Sub<Msg> => {
 //
 //
 //
-// Navigation
+// Cmds
 //
 //
 //
 
 export const push = <TMsg,>(route: Route) => {
   return Navigation.push<TMsg>(encode(route))
+}
+
+export const back = <TMsg,>() => {
+  return Navigation.back<TMsg>()
+}
+
+export const replace = <TMsg,>(route: Route) => {
+  return Navigation.replace<TMsg>(encode(route))
 }

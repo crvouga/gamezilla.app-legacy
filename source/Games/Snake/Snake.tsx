@@ -1,5 +1,6 @@
+import * as Route from "Route"
 import * as View from "View"
-import { Audio, Cmd, Keyboard, Navigation, Result, Sub, Time, pipe } from "Core"
+import { Audio, Cmd, Keyboard, Result, Sub, Time, pipe } from "Core"
 import { useEffect, useRef } from "react"
 import * as Direction from "./Direction"
 import * as Position from "./Position"
@@ -176,7 +177,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
       }
 
     case "UserClickedBackButton":
-      return [model, Navigation.back()]
+      return [model, Route.back()]
 
     case "UserMouseUpBoard":
       return [{ ...model, mouseStatus: "inactive" }, Cmd.none]

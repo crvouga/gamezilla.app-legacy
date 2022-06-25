@@ -4,7 +4,7 @@ import * as Session from "Session"
 import * as Snackbar from "Snackbar"
 import * as Store from "Store"
 import * as View from "View"
-import { Cmd, Navigation, Sub, pipe } from "Core"
+import { Cmd, Sub, pipe } from "Core"
 import { exhaustive } from "Utility"
 import * as Account from "./Account"
 import * as Chat from "./Chat"
@@ -142,11 +142,7 @@ export const initReady = (
 
     case "ProfileCreate":
     case "Login":
-      return [
-        { ...Home.init, page: "Home" },
-        Navigation.push(Route.encode({ type: "Home" })),
-        [],
-      ]
+      return [{ ...Home.init, page: "Home" }, Route.push({ type: "Home" }), []]
 
     default:
       return exhaustive(route)
@@ -174,10 +170,7 @@ export const initSessionMissing = (
     case "ProfileUpdateName":
     case "ProfileUpdateUsername":
     case "ProfileUpdateTheme":
-      return [
-        { ...Login.init, page: "Login" },
-        Navigation.push(Route.encode({ type: "Login" })),
-      ]
+      return [{ ...Login.init, page: "Login" }, Route.push({ type: "Login" })]
 
     default:
       return exhaustive(route)
@@ -213,7 +206,7 @@ export const initProfileMissing = (
     case "ProfileUpdateTheme":
       return [
         { ...ProfileCreate.init(session), page: "ProfileCreate" },
-        Navigation.push(Route.encode({ type: "ProfileCreate" })),
+        Route.push({ type: "ProfileCreate" }),
       ]
 
     default:
@@ -367,7 +360,7 @@ export const updateReady = (
     case "Login":
     case "Loading":
     case "ProfileCreate":
-      return [model, Navigation.push(Route.encode({ type: "Home" })), []]
+      return [model, Route.push({ type: "Home" }), []]
 
     default:
       return exhaustive(model)
@@ -412,11 +405,7 @@ export const updateProfileMissing = (
     case "ProfileUpdateTheme":
     case "Game":
     case "Loading":
-      return [
-        model,
-        Navigation.push(Route.encode({ type: "ProfileCreate" })),
-        [],
-      ]
+      return [model, Route.push({ type: "ProfileCreate" }), []]
 
     default:
       return exhaustive(model)
@@ -449,7 +438,7 @@ export const updateSessionMissing = (
     case "Game":
     case "Loading":
     case "Logout":
-      return [model, Navigation.push(Route.encode({ type: "Login" })), []]
+      return [model, Route.push({ type: "Login" }), []]
 
     default:
       return exhaustive(model)

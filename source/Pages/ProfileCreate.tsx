@@ -2,7 +2,7 @@ import * as ProfileAvatar from "ProfileAvatar"
 import * as Route from "Route"
 import * as Store from "Store"
 import * as View from "View"
-import { Cmd, Navigation } from "Core"
+import { Cmd } from "Core"
 
 //
 //
@@ -77,7 +77,7 @@ export const update = (
       return [model, Cmd.none, [Store.Profile.Create(userId, model.form)]]
 
     case "UserClickedLogoutButton":
-      return [model, Navigation.push(Route.encode({ type: "Logout" })), []]
+      return [model, Route.push({ type: "Logout" }), []]
   }
 }
 

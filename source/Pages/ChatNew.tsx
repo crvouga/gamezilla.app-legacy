@@ -1,6 +1,7 @@
+import * as Route from "Route"
 import * as Store from "Store"
 import * as View from "View"
-import { Cmd, Keyboard, Navigation, Sub, pipe } from "Core"
+import { Cmd, Keyboard, Sub, pipe } from "Core"
 import { useEffect, useRef } from "react"
 
 //
@@ -67,7 +68,7 @@ export const update = (
       return [model, Cmd.none, [Store.Conversation.Create(userIds)]]
 
     case "UserClickedCancelButton":
-      return [model, Navigation.back(), []]
+      return [model, Route.back(), []]
 
     case "UserEnteredSearchText":
       return [

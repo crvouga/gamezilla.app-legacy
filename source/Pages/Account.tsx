@@ -1,6 +1,6 @@
 import * as Route from "Route"
 import * as View from "View"
-import { Cmd, Navigation } from "Core"
+import { Cmd } from "Core"
 
 //
 //
@@ -35,16 +35,16 @@ export const update = (
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "UserClickedBackButton":
-      return [model, Navigation.back()]
+      return [model, Route.back()]
 
     case "UserClickedLogoutLink":
-      return [model, Navigation.push(Route.encode({ type: "Logout" }))]
+      return [model, Route.push({ type: "Logout" })]
 
     case "UserClickedUpdateProfileLink":
-      return [model, Navigation.push(Route.encode({ type: "ProfileUpdate" }))]
+      return [model, Route.push({ type: "ProfileUpdate" })]
 
     case "UserClickedDeleteProfileLink":
-      return [model, Navigation.push(Route.encode({ type: "ProfileDelete" }))]
+      return [model, Route.push({ type: "ProfileDelete" })]
   }
 }
 
