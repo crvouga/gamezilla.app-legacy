@@ -1,7 +1,6 @@
 import * as Snackbar from "Snackbar"
 import * as Supabase from "Supabase"
-import { Cmd, Result } from "Core"
-import { task } from "fp-ts"
+import { Cmd, Result, Task } from "Core"
 import { definitions } from "supabase-types"
 import * as Store from "./Store"
 
@@ -85,7 +84,7 @@ const fromRow = (row: definitions["conversation"]): Conversation => {
 }
 
 export const insert =
-  (): task.Task<Result.Result<Problem, Conversation>> => async () => {
+  (): Task.Task<Result.Result<Problem, Conversation>> => async () => {
     const response = await Supabase.client
       .from<definitions["conversation"]>("conversation")
       .insert({})
