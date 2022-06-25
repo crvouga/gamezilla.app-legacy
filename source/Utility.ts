@@ -17,29 +17,20 @@ export const groupTag =
   }
 
 export const andThen =
-  <Msg, Model, Action>(
-    update: (
-      msg: Msg,
-      model: Model,
-    ) => [Model, Cmd.Cmd<Msg>] | [Model, Cmd.Cmd<Msg>, Action[]],
+  <Msg, Model>(
+    update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>],
     msg: Msg,
   ) =>
-  ([model, cmdPrev, actionsPrev = []]:
-    | [Model, Cmd.Cmd<Msg>]
-    | [Model, Cmd.Cmd<Msg>, Action[]]): [Model, Cmd.Cmd<Msg>, Action[]] => {
-    const [modelNew, cmdNew, actionsNew = []] = update(msg, model)
+  ([model, cmdPrev]: [Model, Cmd.Cmd<Msg>]): [Model, Cmd.Cmd<Msg>] => {
+    const [modelNew, cmdNew] = update(msg, model)
 
-    return [
-      modelNew,
-      Cmd.batch([cmdNew, cmdPrev]),
-      [...(actionsNew ?? []), ...actionsPrev],
-    ]
+    return [modelNew, Cmd.batch([cmdNew, cmdPrev])]
   }
 
 export const andThenMany =
-  <Msg, Model>(
-    update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>],
-    msgs: Msg[],
+  <Action, Model, Msg>(
+    update: (msg: Action, model: Model) => [Model, Cmd.Cmd<Msg>],
+    msgs: Action[],
   ) =>
   ([modelPrev, cmdPrev]: [Model, Cmd.Cmd<Msg>]): [Model, Cmd.Cmd<Msg>] => {
     const [msg, ...msgsRest] = msgs

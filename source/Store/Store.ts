@@ -62,7 +62,7 @@ export type Msg = Profile.Msg | Conversation.Msg
 
 export type GroupedMsg = Msg & { group: "Store" }
 
-type Action = Snackbar.GroupedMsg
+export type Action = Profile.Msg | Conversation.Msg
 
 //
 //
@@ -72,10 +72,12 @@ type Action = Snackbar.GroupedMsg
 //
 //
 
+type OutAction = Snackbar.Action
+
 export const update = (
   msg: Msg,
   model: Model,
-): [Model, Cmd.Cmd<Msg>, Action[]] => {
+): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (msg.entity) {
     case "Conversation": {
       const [modelNew, cmdNew, actions] = Conversation.update(msg, model)
@@ -87,6 +89,25 @@ export const update = (
       const [modelNew, cmdNew, actions] = Profile.update(msg, model)
 
       return [modelNew, cmdNew, actions]
+    }
+  }
+}
+
+export const runAction = (
+  action: Action,
+  model: Model,
+): [Model, Cmd.Cmd<Msg>] => {
+  switch (action.entity) {
+    case "Conversation": {
+      const [modelNew, cmdNew, actions] = Conversation.update(action, model)
+
+      return [modelNew, cmdNew]
+    }
+
+    case "Profile": {
+      const [modelNew, cmdNew, actions] = Profile.update(action, model)
+
+      return [modelNew, cmdNew]
     }
   }
 }

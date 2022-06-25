@@ -64,7 +64,7 @@ export const initLoading = (): [Model, Cmd.Cmd<Msg>] => {
 export const initReady = (
   route: Route.Model,
   profile: Store.Profile.Profile,
-): [Model, Cmd.Cmd<Msg>, Action[]] => {
+): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (route.type) {
     case "Account":
       return [{ ...Account.init, page: "Account" }, Cmd.none, []]
@@ -247,11 +247,7 @@ export type Msg =
 
 export type GroupedMsg = Msg & { group: "Page" }
 
-export type Action =
-  | Session.GroupedMsg
-  | Store.GroupedMsg
-  | Snackbar.GroupedMsg
-  | Games.GroupedMsg
+export type OutAction = Store.Action | Snackbar.Action | Games.Action
 
 //
 //
@@ -265,7 +261,7 @@ export const updateReady = (
   { profile, store }: { profile: Store.Profile.Profile; store: Store.Model },
   msg: Msg,
   model: Model,
-): [Model, Cmd.Cmd<Msg>, Action[]] => {
+): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (model.page) {
     case "Account":
       if (msg.page === "Account") {
@@ -377,7 +373,7 @@ export const updateProfileMissing = (
   session: Session.Session,
   msg: Msg,
   model: Model,
-): [Model, Cmd.Cmd<Msg>, Action[]] => {
+): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (model.page) {
     case "Logout":
       if (msg.page === "Logout") {
@@ -421,7 +417,7 @@ export const updateProfileMissing = (
 export const updateSessionMissing = (
   msg: Msg,
   model: Model,
-): [Model, Cmd.Cmd<Msg>, Action[]] => {
+): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (model.page) {
     case "Login":
       if (msg.page === "Login") {
