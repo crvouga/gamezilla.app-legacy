@@ -235,6 +235,7 @@ export const view =
           title="New message"
           right={
             <View.Button
+              size="large"
               disabled={Object.values(model.selected).length === 0}
               sx={{ marginRight: -1 }}
               onClick={() => dispatch({ type: "UserClickedCreateButton" })}
