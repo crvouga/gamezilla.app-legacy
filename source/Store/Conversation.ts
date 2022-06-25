@@ -60,7 +60,7 @@ export type Created = ReturnType<typeof Created>
 //
 //
 
-type Action = Snackbar.GroupedMsg
+type Action = Snackbar.Action
 
 export const update = (
   msg: Msg,

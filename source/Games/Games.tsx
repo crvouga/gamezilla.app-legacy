@@ -38,15 +38,10 @@ export type Game = Opened["child"]["type"]
 
 export const init: Model = { type: "Closed" }
 
-const initOpened = ({
-  game,
-}: {
-  game: Game
-}): [Opened, Cmd.Cmd<Msg>, OutMsg[]] => {
+const initOpened = ({ game }: { game: Game }): [Opened, Cmd.Cmd<Msg>] => {
   return [
     { type: "Opened", status: "Idle", child: initGame({ game }) },
     Route.push({ type: "Game" }),
-    [],
   ]
 }
 
@@ -77,7 +72,6 @@ const initGame = ({ game }: { game: Game }): Opened["child"] => {
 export type GroupedMsg = { group: "Game" } & Msg
 
 type Msg =
-  | { type: "UserOpenedGame"; game: Game }
   | { type: "UserClickedGameBanner" }
   | { type: "UserClickedCloseGameButton" }
   | { type: "CancelledCloseGame" }
@@ -90,7 +84,7 @@ type GameMsg =
   | (Games.TicTacToe.Msg & { gameGroup: "TicTacToe" })
   | (Games.Snake.Msg & { gameGroup: "Snake" })
 
-type OutMsg = Snackbar.GroupedMsg
+type OutMsg = Snackbar.Action
 
 const groupGameTag =
   <Msg, GameName extends string>(gameName: GameName) =>
@@ -98,14 +92,35 @@ const groupGameTag =
     return { ...msg, gameGroup: gameName } as const
   }
 
-export const UserOpenedGame = (game: Game): GroupedMsg => {
+export const OpenGame = (game: Game) => {
   return {
     group: "Game",
-    type: "UserOpenedGame",
+    type: "OpenGame",
     game,
-  }
+  } as const
 }
 
+type OpenGame = ReturnType<typeof OpenGame>
+
+export type Action = OpenGame
+
+export const runAction = (
+  action: Action,
+  model: Model,
+): [Model, Cmd.Cmd<Msg>] => {
+  switch (action.type) {
+    case "OpenGame":
+      if (model.type === "Closed") {
+        return initOpened(action)
+      }
+
+      if (action.game === model.child.type) {
+        return [model, Route.push({ type: "Game" })]
+      }
+
+      return [model, Cmd.none]
+  }
+}
 export const update = (
   msg: Msg,
   model: Model,
@@ -130,16 +145,6 @@ const updateOpened = (
   }
 
   switch (msg.type) {
-    case "UserOpenedGame":
-      if (msg.game === model.child.type) {
-        return [model, Route.push({ type: "Game" }), []]
-      }
-      return [
-        model,
-        Cmd.none,
-        [Snackbar.EnqueuedSnackbar("A game is already opened.")],
-      ]
-
     case "UserClickedCloseGameButton":
       return [{ ...model, status: "ConfirmingClose" }, Cmd.none, []]
 
@@ -218,13 +223,7 @@ const updateClosed = (
   msg: Msg,
   model: Closed,
 ): [Model, Cmd.Cmd<Msg>, OutMsg[]] => {
-  switch (msg.type) {
-    case "UserOpenedGame":
-      return initOpened(msg)
-
-    default:
-      return [model, Cmd.none, []]
-  }
+  return [model, Cmd.none, []]
 }
 
 //

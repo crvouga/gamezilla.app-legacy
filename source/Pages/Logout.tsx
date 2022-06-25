@@ -31,7 +31,7 @@ export type Msg =
   | { type: "LogoutFailed" }
   | { type: "LogoutSucceeded" }
 
-type OutMsg = Snackbar.GroupedMsg
+type OutMsg = Snackbar.Action
 
 export const update = (
   { name }: { name: string },

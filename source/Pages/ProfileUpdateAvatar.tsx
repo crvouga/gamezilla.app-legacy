@@ -49,13 +49,13 @@ export type Msg =
   | { type: "UserClickedRandomSeedButton" }
   | { type: "RandomSeedGenerated"; seed: ProfileAvatar.Seed }
 
-type OutMsg = Snackbar.GroupedMsg | Store.GroupedMsg
+type OutAction = Snackbar.Action | Store.Action
 
 export const update = (
   { userId }: { userId: string },
   msg: Msg,
   model: Model,
-): [Model, Cmd.Cmd<Msg>, OutMsg[]] => {
+): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (msg.type) {
     case "UserClickedCancelButton":
       return [model, Route.back(), []]

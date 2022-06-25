@@ -28,18 +28,18 @@ export type Msg =
   | { type: "UserClickedChatButton" }
   | { type: "UserClickedGame"; game: Games.Game }
 
-export type OutMsg = Games.GroupedMsg
+export type OutAction = Games.Action
 
 export const update = (
   msg: Msg,
   model: Model,
-): [Model, Cmd.Cmd<Msg>, OutMsg[]] => {
+): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (msg.type) {
     case "UserClickedAvatar":
       return [model, Route.push({ type: "Account" }), []]
 
     case "UserClickedGame":
-      return [model, Cmd.none, [Games.UserOpenedGame(msg.game)]]
+      return [model, Cmd.none, [Games.OpenGame(msg.game)]]
 
     case "UserClickedChatButton":
       return [model, Route.push({ type: "Chat" }), []]

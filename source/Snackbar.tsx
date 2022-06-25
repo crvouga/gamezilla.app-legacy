@@ -35,11 +35,10 @@ export const init: Model = {
 export type GroupedMsg = { group: "Snackbar" } & Msg
 
 type Msg =
-  | { type: "EnqueuedSnackbar"; snack: Snack }
   | { type: "SnackbarDurationElapsed"; snackId: string }
   | { type: "UserClosedSnackbar"; snackId: string }
 
-export const EnqueuedSnackbar = (message: string): GroupedMsg => {
+export const EnqueueSnackbar = (variant: "Info" | "Error", message: string) => {
   return {
     group: "Snackbar",
     type: "EnqueuedSnackbar",
@@ -48,40 +47,40 @@ export const EnqueuedSnackbar = (message: string): GroupedMsg => {
       message,
       snackId: String(Math.random()),
     },
-  }
+  } as const
 }
 
-export const EnqueuedSnackbarError = (message: string): GroupedMsg => {
-  return {
-    group: "Snackbar",
-    type: "EnqueuedSnackbar",
-    snack: {
-      type: "Error",
-      message,
-      snackId: String(Math.random()),
-    },
-  }
-}
+export type EnqueueSnackbar = ReturnType<typeof EnqueueSnackbar>
+
+export type Action = EnqueueSnackbar
 
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg.type) {
-    case "EnqueuedSnackbar":
-      return [
-        { ...model, queue: [msg.snack, ...model.queue] },
-        pipe(
-          Task.timeout(4000, {}),
-          Cmd.fromTask(() => ({
-            type: "SnackbarDurationElapsed",
-            snackId: msg.snack.snackId,
-          })),
-        ),
-      ]
-
     case "SnackbarDurationElapsed":
       return removeById(msg, model)
 
     case "UserClosedSnackbar":
       return [model, Cmd.none]
+  }
+}
+
+export const runAction = (
+  action: Action,
+  model: Model,
+): [Model, Cmd.Cmd<Msg>] => {
+  switch (action.type) {
+    case "EnqueuedSnackbar":
+      const { snack } = action
+      return [
+        { ...model, queue: [snack, ...model.queue] },
+        pipe(
+          Task.timeout(4000, {}),
+          Cmd.fromTask(() => ({
+            type: "SnackbarDurationElapsed",
+            snackId: snack.snackId,
+          })),
+        ),
+      ]
   }
 }
 
