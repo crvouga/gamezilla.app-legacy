@@ -4,7 +4,7 @@
  * @since 0.5.0
  */
 import { Option, alt, fromNullable, getOrElse } from "fp-ts/lib/Option"
-import { pipe } from "fp-ts/lib/function"
+import { pipe } from "../pipe"
 import { DebugMsg, Debugger } from "./commons"
 
 /**
