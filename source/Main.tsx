@@ -73,7 +73,11 @@ export const toStatus = ({
           return { type: "ProfileMissing", session }
 
         case "Success":
-          return { type: "Ready", session, profile: profileQuery.value }
+          return {
+            type: "Ready",
+            session,
+            profile: profileQuery.value,
+          }
       }
   }
 }

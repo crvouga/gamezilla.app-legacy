@@ -142,7 +142,11 @@ export const ThemeModeToggleButtons = ({
       {Object.values(themeModes).map((themeMode) => (
         <Mui.ToggleButton key={themeMode} value={themeMode}>
           <Mui.Box
-            sx={{ marginRight: 1, alignItems: "center", display: "flex" }}
+            sx={{
+              marginRight: 1,
+              alignItems: "center",
+              display: "flex",
+            }}
           >
             <ThemeModeIcon themeMode={themeMode} />
           </Mui.Box>

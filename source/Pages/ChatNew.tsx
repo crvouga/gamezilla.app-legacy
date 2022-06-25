@@ -276,7 +276,10 @@ export const view =
             }}
             onChange={(event) => {
               const searchText = event.currentTarget.value
-              dispatch({ type: "UserEnteredSearchText", searchText })
+              dispatch({
+                type: "UserEnteredSearchText",
+                searchText,
+              })
             }}
           />
         </View.Box>

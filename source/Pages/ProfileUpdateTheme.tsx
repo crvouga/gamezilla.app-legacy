@@ -81,7 +81,10 @@ export const view =
           <View.ThemeModeToggleButtons
             themeMode={profile.themeMode}
             onChange={(themeMode) =>
-              dispatch({ type: "UserClickedThemeModeOption", themeMode })
+              dispatch({
+                type: "UserClickedThemeModeOption",
+                themeMode,
+              })
             }
           />
         </View.Box>

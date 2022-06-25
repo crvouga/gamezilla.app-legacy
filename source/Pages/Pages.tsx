@@ -108,14 +108,20 @@ export const initReady = (
 
     case "ProfileUpdateAvatar":
       return [
-        { ...ProfileUpdateAvatar.init(profile), page: "ProfileUpdateAvatar" },
+        {
+          ...ProfileUpdateAvatar.init(profile),
+          page: "ProfileUpdateAvatar",
+        },
         Cmd.none,
         [],
       ]
 
     case "ProfileUpdateName":
       return [
-        { ...ProfileUpdateName.init(profile), page: "ProfileUpdateName" },
+        {
+          ...ProfileUpdateName.init(profile),
+          page: "ProfileUpdateName",
+        },
         Cmd.none,
         [],
       ]

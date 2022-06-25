@@ -29,7 +29,9 @@ export type Profile = {
 export type ThemeMode = "Light" | "Dark" | "System"
 
 export type Mutation =
-  | (RemoteData.RemoteData<Problem, string> & { tag: "Profile/DeleteForever" })
+  | (RemoteData.RemoteData<Problem, string> & {
+      tag: "Profile/DeleteForever"
+    })
   | (RemoteData.RemoteData<Problem, string> & { tag: "Profile/Edit" })
   | (RemoteData.RemoteData<Problem, string> & { tag: "Profile/Create" })
 
@@ -310,7 +312,11 @@ export const update = (
         case "Err": {
           const ProfileNew = removeKey(userId, model.Profile)
           return [
-            { ...model, Profile: ProfileNew, mutations: mutationsNew },
+            {
+              ...model,
+              Profile: ProfileNew,
+              mutations: mutationsNew,
+            },
             Cmd.none,
             [],
           ]
@@ -322,7 +328,11 @@ export const update = (
             [result.value.userId]: result.value,
           }
           return [
-            { ...model, Profile: ProfileNew, mutations: mutationsNew },
+            {
+              ...model,
+              Profile: ProfileNew,
+              mutations: mutationsNew,
+            },
             Cmd.none,
             [],
           ]
@@ -594,7 +604,9 @@ export const searchProfiles = (nameOrUsername: string, store: Model) => {
     store,
     (store) => Object.values(store.Profile),
     (profiles) =>
-      matchSorter(profiles, nameOrUsername, { keys: ["name", "username"] }),
+      matchSorter(profiles, nameOrUsername, {
+        keys: ["name", "username"],
+      }),
   )
 }
 
