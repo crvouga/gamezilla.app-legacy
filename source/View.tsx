@@ -181,6 +181,10 @@ export const ListItemButton = Mui.ListItemButton
 
 export const LinearProgress = Mui.LinearProgress
 
+export const BottomNavigation = Mui.BottomNavigation
+
+export const BottomNavigationAction = Mui.BottomNavigationAction
+
 export const Chip = Mui.Chip
 
 export const ListItemText = Mui.ListItemText
