@@ -62,7 +62,7 @@ export const initLoading = (): [Model, Cmd.Cmd<Msg>] => {
 }
 
 export const initReady = (
-  route: Route.Model,
+  route: Route.Route,
   profile: Store.Profile.Profile,
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (route.type) {
@@ -156,7 +156,7 @@ export const initReady = (
 }
 
 export const initSessionMissing = (
-  route: Route.Model,
+  route: Route.Route,
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (route.type) {
     case "Login":
@@ -184,7 +184,7 @@ export const initSessionMissing = (
 }
 
 export const initProfileMissing = (
-  route: Route.Model,
+  route: Route.Route,
   session: Session.Session,
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (route.type) {

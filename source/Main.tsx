@@ -7,8 +7,7 @@ import * as Store from "Store"
 import * as Profile from "Store/Profile"
 import * as View from "View"
 import * as ReactDom from "react-dom/client"
-import { Cmd, Html, Sub, Task, pipe } from "Core"
-import { programWithDebugger } from "Core/Debug/Html"
+import { Cmd, Debug, Html, Navigation, Sub, Task, pipe } from "Core"
 import { andThen, andThenMany, exhaustive, groupTag } from "Utility"
 
 //
@@ -25,7 +24,7 @@ type Model = {
   session: Session.Model
   game: Games.Model
   page: Pages.Model
-  route: Route.Model
+  route: Route.Route
 }
 
 //
@@ -90,10 +89,8 @@ export const toStatus = ({
 //
 //
 
-export type Flags = Route.Flags
-
-export const init = (flags: Flags): [Model, Cmd.Cmd<Msg>] => {
-  const route = Route.init(flags)
+export const init = (location: Navigation.Location): [Model, Cmd.Cmd<Msg>] => {
+  const route = Route.decode(location.pathname) ?? { type: "Home" }
   const [session, sessionCmd] = Session.init()
   const snackbar = Snackbar.init
   const store = Store.init
@@ -396,11 +393,8 @@ const runAction = (action: Action, model: Model): [Model, Cmd.Cmd<Msg>] => {
 //
 //
 
-const routeSubscriptions = pipe(Route.subscriptions, Sub.map(groupTag("Route")))
-
 export const subscriptions = (model: Model): Sub.Sub<Msg> => {
   return Sub.batch<Msg>([
-    routeSubscriptions,
     pipe(Session.subscriptions, Sub.map(groupTag("Session"))),
     pipe(Games.subscriptions(model.game), Sub.map(groupTag("Game"))),
     pipe(Pages.subscriptions(model.page), Sub.map(groupTag("Page"))),
@@ -551,6 +545,10 @@ const viewSnackbar =
     }
   }
 
+const locationToMessage = (location: Navigation.Location) => {
+  return Route.GotRoute(Route.decode(location.pathname) ?? { type: "Home" })
+}
+
 //
 //
 //
@@ -559,26 +557,20 @@ const viewSnackbar =
 //
 //
 
-const getFlags: Task.Task<Flags> = async () => {
-  return Route.getFlags()
-}
+const program = Debug.Navigation.program(
+  locationToMessage,
+  init,
+  update,
+  view,
+  subscriptions,
+)
 
-const main: Task.Task<void> = async () => {
-  const flags = await getFlags()
+const rootElement = document.getElementById("root")
 
-  const program = programWithDebugger(init(flags), update, view, subscriptions)
-
-  const rootElement = document.getElementById("root")
-
-  if (!rootElement) {
-    throw new Error("Failed to get root dom node")
-  }
-
+if (rootElement) {
   const root = ReactDom.createRoot(rootElement)
 
   Html.run(program, (dom) => {
     root.render(dom)
   })
 }
-
-main()

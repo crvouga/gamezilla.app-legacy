@@ -1,5 +1,6 @@
 export * as Audio from "./Audio"
 export * as Cmd from "./Cmd"
+export * as Debug from "./Debug"
 export * as Html from "./Html"
 export * as Keyboard from "./Keyboard"
 export * as Navigation from "./Navigation"

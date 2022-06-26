@@ -76,7 +76,13 @@ export function program<Model, Msg, Dom>(
 
   const html$ = model$.pipe(RxMap(view))
 
-  return { dispatch, cmd$, sub$, model$, html$ }
+  return {
+    dispatch,
+    cmd$,
+    sub$,
+    model$,
+    html$,
+  }
 }
 
 /**

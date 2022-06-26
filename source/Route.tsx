@@ -1,4 +1,4 @@
-import { Navigation, Sub, Task, pipe } from "Core"
+import { Navigation } from "Core"
 
 //
 //
@@ -8,7 +8,7 @@ import { Navigation, Sub, Task, pipe } from "Core"
 //
 //
 
-export type Model =
+export type Route =
   | { type: "Account" }
   | { type: "Home" }
   | { type: "Login" }
@@ -28,91 +28,12 @@ export type Model =
 //
 //
 //
-// Init
-//
-//
-//
-
-export type Flags = {
-  location: Navigation.Location
-}
-
-export const getFlags: Task.Task<Flags> = async () => {
-  return {
-    location: await Navigation.getLocation(),
-  }
-}
-
-export const init = (flags: Flags): Model => {
-  return decode(flags.location.pathname) ?? { type: "Home" }
-}
-
-//
-//
-//
-// Msg
-//
-//
-//
-
-export const RecievedRoute = (route: Model) =>
-  ({ group: "Route", type: "RecievedRoute", route } as const)
-export type RecievedRoute = ReturnType<typeof RecievedRoute>
-
-export const Push = (route: Model) => {
-  return {
-    group: "Route",
-    type: "Push",
-    route,
-  } as const
-}
-
-export type Msg = RecievedRoute
-
-//
-//
-//
-// Cmds
-//
-//
-//
-
-export const push = <TMsg,>(route: Model) => {
-  return Navigation.push<TMsg>(encode(route))
-}
-
-export const back = <TMsg,>() => {
-  return Navigation.back<TMsg>()
-}
-
-export const replace = <TMsg,>(route: Model) => {
-  return Navigation.replace<TMsg>(encode(route))
-}
-
-//
-//
-//
-// Subscriptions
-//
-//
-//
-
-export const subscriptions: Sub.Sub<Msg> = pipe(
-  Navigation.subscription,
-  Sub.map((location) =>
-    RecievedRoute(decode(location.pathname) ?? { type: "Home" }),
-  ),
-)
-
-//
-//
-//
 // Encode/Decode
 //
 //
 //
 
-const routesTypes: { [routeType in Model["type"]]: string } = {
+const routesTypes: { [routeType in Route["type"]]: string } = {
   Account: "Account",
   Home: "Home",
   Login: "Login",
@@ -130,11 +51,11 @@ const routesTypes: { [routeType in Model["type"]]: string } = {
   ChatConversation: "ChatConversation",
 }
 
-const isRouteType = (routeType: unknown): routeType is Model["type"] => {
+const isRouteType = (routeType: unknown): routeType is Route["type"] => {
   return typeof routeType === "string" && routeType in routesTypes
 }
 
-export const decode = (pathname: string): Model | undefined => {
+export const decode = (pathname: string): Route | undefined => {
   const [first, second] = pathname.substring(1).split("/")
 
   if (isRouteType(first)) {
@@ -152,10 +73,50 @@ export const decode = (pathname: string): Model | undefined => {
   return undefined
 }
 
-export const encode = (route: Model): string => {
+export const encode = (route: Route): string => {
   if (route.type === "ChatConversation") {
     return [route.type, route.conversationId].join("/")
   }
 
   return route.type
 }
+
+//
+//
+//
+// Cmds
+//
+//
+//
+
+export const push = <TMsg,>(route: Route) => {
+  return Navigation.push<TMsg>(encode(route))
+}
+
+export const back = <TMsg,>() => {
+  return Navigation.back<TMsg>()
+}
+
+export const replace = <TMsg,>(route: Route) => {
+  return Navigation.replace<TMsg>(encode(route))
+}
+
+//
+//
+//
+// Msg
+//
+//
+//
+
+export const GotRoute = (route: Route) => {
+  return {
+    group: "Route",
+    type: "GotRoute",
+    route,
+  } as const
+}
+
+export type GotRoute = ReturnType<typeof GotRoute>
+
+export type Msg = GotRoute
