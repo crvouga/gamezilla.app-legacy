@@ -287,7 +287,7 @@ export const view =
         <View.Divider />
 
         <View.List sx={{ overflowY: "scroll", flex: 1 }}>
-          {profiles.length === 0 && (
+          {searchQuery.type === "Success" && profiles.length === 0 && (
             <View.Typography sx={{ p: 2 }} color="text.secondary">
               No account found.
             </View.Typography>
