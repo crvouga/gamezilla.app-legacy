@@ -30,7 +30,7 @@ export type Msg =
   | { type: "UserClickedBackButton" }
   | { type: "UserClickedThemeModeOption"; themeMode: Profile.ThemeMode }
 
-type OutMsg = Store.GroupedMsg
+type OutMsg = Store.Action
 
 export const update = (
   { userId }: { userId: string },

@@ -179,6 +179,8 @@ export const Divider = Mui.Divider
 
 export const ListItemButton = Mui.ListItemButton
 
+export const LinearProgress = Mui.LinearProgress
+
 export const Chip = Mui.Chip
 
 export const ListItemText = Mui.ListItemText

@@ -32,7 +32,7 @@ export type Msg =
   | { type: "UserEnteredUsername"; username: string }
   | { type: "UserClickedSubmitButton" }
 
-export type OutMsg = Store.GroupedMsg
+export type OutMsg = Store.Action
 
 export const update = (
   { userId }: { userId: string },

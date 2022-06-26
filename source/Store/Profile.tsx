@@ -29,9 +29,7 @@ export type Profile = {
 export type ThemeMode = "Light" | "Dark" | "System"
 
 export type Mutation =
-  | (RemoteData.RemoteData<Problem, string> & {
-      tag: "Profile/DeleteForever"
-    })
+  | (RemoteData.RemoteData<Problem, string> & { tag: "Profile/DeleteForever" })
   | (RemoteData.RemoteData<Problem, string> & { tag: "Profile/Edit" })
   | (RemoteData.RemoteData<Problem, string> & { tag: "Profile/Create" })
 

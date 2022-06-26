@@ -28,29 +28,29 @@ export const init = ({ name }: { name: string }): Model => {
 //
 
 export type Msg =
-  | { type: "UserEnteredName"; name: string }
-  | { type: "UserClickedCancelButton" }
-  | { type: "UserClickedSubmitButton" }
+  | { type: "EnteredName"; name: string }
+  | { type: "ClickedCancel" }
+  | { type: "ClickedSubmit" }
 
-type Action = Store.GroupedMsg
+export type OutAction = Store.Action
 
 export const update = (
   { userId }: { userId: string },
   msg: Msg,
   model: Model,
-): [Model, Cmd.Cmd<Msg>, Action[]] => {
+): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (msg.type) {
-    case "UserEnteredName":
+    case "EnteredName":
       return [{ ...model, ...msg }, Cmd.none, []]
 
-    case "UserClickedSubmitButton":
+    case "ClickedSubmit":
       return [
         model,
         Route.back(),
         [Store.Profile.Edit(userId, { name: model.name })],
       ]
 
-    case "UserClickedCancelButton":
+    case "ClickedCancel":
       return [model, Route.back(), []]
   }
 }
@@ -72,7 +72,7 @@ export const view =
           left={
             <View.Button
               sx={{ marginLeft: -1 }}
-              onClick={() => dispatch({ type: "UserClickedCancelButton" })}
+              onClick={() => dispatch({ type: "ClickedCancel" })}
             >
               Cancel
             </View.Button>
@@ -81,7 +81,7 @@ export const view =
           right={
             <View.Button
               sx={{ marginRight: -1 }}
-              onClick={() => dispatch({ type: "UserClickedSubmitButton" })}
+              onClick={() => dispatch({ type: "ClickedSubmit" })}
             >
               Done
             </View.Button>
@@ -96,7 +96,7 @@ export const view =
             fullWidth
             onChange={(event) =>
               dispatch({
-                type: "UserEnteredName",
+                type: "EnteredName",
                 name: event.currentTarget.value,
               })
             }

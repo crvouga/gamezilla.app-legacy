@@ -59,13 +59,13 @@ export type Msg =
   | { type: "UserClickedSubmitButton" }
   | { type: "UserClickedLogoutButton" }
 
-export type Action = Store.GroupedMsg
+export type OutAction = Store.Action
 
 export const update = (
   { userId }: { userId: string },
   msg: Msg,
   model: Model,
-): [Model, Cmd.Cmd<Msg>, Action[]] => {
+): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (msg.type) {
     case "EnteredName":
       return [{ ...model, form: { ...model.form, ...msg } }, Cmd.none, []]
