@@ -8,7 +8,7 @@ import { useMemo } from "react"
 //
 //
 //
-// Model
+// View
 //
 //
 //

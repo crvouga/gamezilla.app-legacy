@@ -32,7 +32,7 @@ import * as Cmd from "../Cmd"
 import * as Sub from "../Sub"
 import { Html, Program, program } from "../Html"
 import {
-  DEBUG_ID,
+  DEBUG_ID_KEY,
   DebugData,
   DebuggerR,
   debugInit,
@@ -156,7 +156,7 @@ function createProgram<Model, Msg, Dom>(
     (model: Model): Sub.Sub<Msg> => {
       if (
         // @ts-ignore
-        model[DEBUG_ID] === currentDebugId
+        model[DEBUG_ID_KEY] === currentDebugId
       ) {
         return subscriptions?.(model) ?? Sub.none
       }

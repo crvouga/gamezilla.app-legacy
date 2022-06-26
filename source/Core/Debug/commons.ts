@@ -111,7 +111,7 @@ export interface DebuggerR<Model, Msg> {
 //
 //
 
-export const DEBUG_ID = "_id"
+export const DEBUG_ID_KEY = "debugId"
 
 /**
  * Adds debugging capability to the provided `update` function.
@@ -173,7 +173,7 @@ export function updateWithDebug<Model, Msg>({
     const debugId = String(Math.floor(Math.random() * 10 ** 12))
 
     // @ts-ignore
-    modelNew[DEBUG_ID] = debugId
+    modelNew[DEBUG_ID_KEY] = debugId
 
     onDebugId(debugId)
 
