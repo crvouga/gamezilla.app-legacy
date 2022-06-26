@@ -30,9 +30,9 @@ export type Model = {
   }
 }
 
-type Mutation = Profile.Mutation
+export type Mutation = Profile.Mutation | Conversation.Mutation
 
-type Query = Profile.Query
+export type Query = Profile.Query | Conversation.Query
 
 //
 //
@@ -62,7 +62,7 @@ export type Msg = Profile.Msg | Conversation.Msg
 
 export type GroupedMsg = Msg & { group: "Store" }
 
-export type Action = Profile.Msg | Conversation.Msg
+export type Action = Profile.Msg | Conversation.Action
 
 //
 //
@@ -99,7 +99,7 @@ export const runAction = (
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (action.entity) {
     case "Conversation": {
-      const [modelNew, cmdNew, actions] = Conversation.update(action, model)
+      const [modelNew, cmdNew] = Conversation.runAction(action, model)
 
       return [modelNew, cmdNew]
     }

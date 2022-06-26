@@ -28,7 +28,7 @@ export type Msg =
   | { type: "UserClickedBackdrop" }
   | { type: "UserClickedDeleteButton" }
 
-export type Action = Store.GroupedMsg
+export type Action = Store.Action
 
 export const update = (
   { userId }: { userId: string },

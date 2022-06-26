@@ -48,14 +48,14 @@ export const init = (): [Model, Cmd.Cmd<Msg>, Action[]] => {
 //
 
 export type Msg =
-  | { type: "UserClickedCancelButton" }
-  | { type: "UserEnteredSearchText"; searchText: string }
-  | { type: "UserClickedSearchResult"; userId: string }
-  | { type: "UserClickedSelectedDeleteButton"; userId: string }
-  | { type: "UserClickedCreateButton" }
-  | { type: "UserPressedKeyDown"; key: Keyboard.ArrowKey | Keyboard.EnterKey }
+  | { type: "ClickedCancel" }
+  | { type: "InputtedSearch"; searchText: string }
+  | { type: "ClickedResult"; userId: string }
+  | { type: "ClickedSelectedDelete"; userId: string }
+  | { type: "ClickedCreate" }
+  | { type: "PressedKeyDown"; key: Keyboard.ArrowKey | Keyboard.EnterKey }
 
-export type Action = Store.GroupedMsg
+export type Action = Store.Action
 
 export const update = (
   store: Store.Model,
@@ -63,14 +63,14 @@ export const update = (
   model: Model,
 ): [Model, Cmd.Cmd<Msg>, Action[]] => {
   switch (msg.type) {
-    case "UserClickedCreateButton":
+    case "ClickedCreate":
       const userIds = Object.values(model.selected)
       return [model, Cmd.none, [Store.Conversation.Create(userIds)]]
 
-    case "UserClickedCancelButton":
+    case "ClickedCancel":
       return [model, Route.back(), []]
 
-    case "UserEnteredSearchText":
+    case "InputtedSearch":
       return [
         {
           ...model,
@@ -81,11 +81,11 @@ export const update = (
         [Store.Profile.Search(msg.searchText)],
       ]
 
-    case "UserClickedSelectedDeleteButton":
+    case "ClickedSelectedDelete":
       const selectedNew = removeKey(msg.userId, model.selected)
       return [{ ...model, selected: selectedNew }, Cmd.none, []]
 
-    case "UserPressedKeyDown":
+    case "PressedKeyDown":
       const profiles = Store.Profile.searchProfiles(model.searchText, store)
 
       switch (msg.key) {
@@ -133,7 +133,7 @@ export const update = (
           return [model, Cmd.none, []]
       }
 
-    case "UserClickedSearchResult":
+    case "ClickedResult":
       const [modelNew, cmdNew, actions] = toggleSelected(msg.userId, model)
       return [{ ...modelNew, highlightedIndex: "None" }, cmdNew, actions]
   }
@@ -181,7 +181,7 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
   return pipe(
     Keyboard.keyDowns((key) =>
       Keyboard.isArrowKey(key) || Keyboard.isEnterKey(key)
-        ? { type: "UserPressedKeyDown", key }
+        ? { type: "PressedKeyDown", key }
         : Keyboard.SkipFlag,
     ),
   )
@@ -207,7 +207,13 @@ export const view =
     model: Model,
   ): View.View<Msg> =>
   (dispatch) => {
-    const searchQuery = Store.Profile.toSearchQuery(model.searchText, store)
+    const mutation = Store.Conversation.toCreateMutation(store)
+
+    const profileSearchQuery = Store.Profile.toSearchQuery(
+      model.searchText,
+      store,
+    )
+
     const profiles = Store.Profile.searchProfiles(
       model.searchText,
       store,
@@ -222,10 +228,12 @@ export const view =
     })
     return (
       <View.Page>
+        {/* <View.LinearProgress /> */}
+
         <View.Header
           left={
             <View.HeaderBackButton
-              onClick={() => dispatch({ type: "UserClickedCancelButton" })}
+              onClick={() => dispatch({ type: "ClickedCancel" })}
             />
           }
           title="New message"
@@ -234,7 +242,8 @@ export const view =
               size="large"
               disabled={Object.values(model.selected).length === 0}
               sx={{ marginRight: -1 }}
-              onClick={() => dispatch({ type: "UserClickedCreateButton" })}
+              onClick={() => dispatch({ type: "ClickedCreate" })}
+              loading={mutation.type === "Loading"}
             >
               Chat
             </View.Button>
@@ -260,7 +269,7 @@ export const view =
               label={profile.username}
               onDelete={() => {
                 dispatch({
-                  type: "UserClickedSelectedDeleteButton",
+                  type: "ClickedSelectedDelete",
                   userId: profile.userId,
                 })
               }}
@@ -277,7 +286,7 @@ export const view =
             onChange={(event) => {
               const searchText = event.currentTarget.value
               dispatch({
-                type: "UserEnteredSearchText",
+                type: "InputtedSearch",
                 searchText,
               })
             }}
@@ -287,7 +296,7 @@ export const view =
         <View.Divider />
 
         <View.List sx={{ overflowY: "scroll", flex: 1 }}>
-          {searchQuery.type === "Success" && profiles.length === 0 && (
+          {profileSearchQuery.type === "Success" && profiles.length === 0 && (
             <View.Typography sx={{ p: 2 }} color="text.secondary">
               No account found.
             </View.Typography>
@@ -299,7 +308,7 @@ export const view =
               profile={profile}
               onClick={() => {
                 dispatch({
-                  type: "UserClickedSearchResult",
+                  type: "ClickedResult",
                   userId: profile.userId,
                 })
               }}
@@ -311,7 +320,7 @@ export const view =
             />
           ))}
 
-          {searchQuery.type === "Loading" && (
+          {profileSearchQuery.type === "Loading" && (
             <View.Box
               sx={{
                 width: "100%",
