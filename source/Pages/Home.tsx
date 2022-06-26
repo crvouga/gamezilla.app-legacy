@@ -133,6 +133,23 @@ export const view =
             onClick={() => dispatch({ type: "UserClickedGame", game: "Snake" })}
           />
         </View.Box>
+
+        <View.Box sx={{ flex: 1 }} />
+
+        {/* <View.BottomNavigation showLabels>
+          <View.BottomNavigationAction
+            icon={<View.Icons.Home />}
+            label="Home"
+          />
+          <View.BottomNavigationAction
+            icon={<View.Icons.Chat />}
+            label="Chat"
+          />
+          <View.BottomNavigationAction
+            icon={<View.Icons.Person />}
+            label="Profile"
+          />
+        </View.BottomNavigation> */}
       </View.Page>
     )
 
