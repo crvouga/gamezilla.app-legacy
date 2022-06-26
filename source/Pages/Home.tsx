@@ -83,6 +83,7 @@ export const view =
           </View.IconButton>
 
           <View.Avatar
+            sx={{ cursor: "pointer" }}
             onClick={() => dispatch({ type: "UserClickedAvatar" })}
             src={profile.avatarUrl}
           />
