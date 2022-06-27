@@ -72,7 +72,7 @@ export const back = <Msg>(): Cmd.Cmd<Msg> => {
  * @category constructors
  * @since 0.5.0
  */
-export const program = <Model, Msg, Dom>(
+export const Program = <Model, Msg, Dom>(
   locationToMessage: (location: Location) => Msg,
   init: (location: Location) => [Model, Cmd.Cmd<Msg>],
   update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>],
@@ -86,5 +86,5 @@ export const program = <Model, Msg, Dom>(
   const subs = (model: Model): Sub.Sub<Msg> =>
     Sub.batch([subscriptions(model), onChangeLocation$])
 
-  return Html.program(init(history.location), update, view, subs)
+  return Html.Program(init(history.location), update, view, subs)
 }

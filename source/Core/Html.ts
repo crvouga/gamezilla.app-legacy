@@ -62,13 +62,13 @@ export function map<Dom, A, Msg>(
  * @category constructors
  * @since 0.5.0
  */
-export function program<Model, Msg, Dom>(
+export function Program<Model, Msg, Dom>(
   init: [Model, Cmd.Cmd<Msg>],
   update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>],
   view: (model: Model) => Html<Dom, Msg>,
   subscriptions: (model: Model) => Sub.Sub<Msg> = () => Sub.none,
 ): Program<Model, Msg, Dom> {
-  const { dispatch, cmd$, sub$, model$ } = Platform.program(
+  const { dispatch, cmd$, sub$, model$ } = Platform.Program(
     init,
     update,
     subscriptions,
@@ -90,13 +90,13 @@ export function program<Model, Msg, Dom>(
  * @category constructors
  * @since 0.5.0
  */
-export function programWithFlags<Flags, Model, Msg, Dom>(
+export function ProgramWithFlags<Flags, Model, Msg, Dom>(
   init: (flags: Flags) => [Model, Cmd.Cmd<Msg>],
   update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>],
   view: (model: Model) => Html<Dom, Msg>,
   subscriptions?: (model: Model) => Sub.Sub<Msg>,
 ): (flags: Flags) => Program<Model, Msg, Dom> {
-  return (flags) => program(init(flags), update, view, subscriptions)
+  return (flags) => Program(init(flags), update, view, subscriptions)
 }
 
 /**
