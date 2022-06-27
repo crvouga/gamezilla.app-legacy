@@ -8,7 +8,7 @@
  * This is an example of usage:
  * ```ts
  * import {react, cmd} from 'elm-ts'
- * import {programWithDebugger} from 'elm-ts/lib/Debug/Navigation'
+ * import {program} from 'elm-ts/lib/Debug/Navigation'
  * import {Location, program} from 'elm-ts/lib/Navigation'
  * import {render} from 'react-dom'
  *
@@ -20,7 +20,7 @@
  * declare function update(msg: Msg, model: Model): [Model, cmd.Cmd<Msg>]
  * declare function view(model: Model): react.Html<Msg>
  *
- * const program = process.NODE_ENV === 'production' ? program : programWithDebugger
+ * const program = process.NODE_ENV === 'production' ? program : program
  *
  * const main = program(locationToMsg, init, update, view)
  *
@@ -31,10 +31,10 @@
  */
 import * as H from "history"
 import { BehaviorSubject, EMPTY, Observable } from "rxjs"
+import * as Html from "../Html"
 import * as Navigation from "../Navigation"
 import * as Sub from "../Sub"
 import { Cmd } from "../Cmd"
-import { Html, Program } from "../Html"
 import {
   DEBUG_ID_KEY,
   DebugData,
@@ -68,13 +68,13 @@ import {
  * @category constructors
  * @since 0.5.3
  */
-export function program<Model, Msg, Dom>(
+export function Program<Model, Msg, Dom>(
   locationToMessage: (location: Navigation.Location) => Msg,
   init: (location: Navigation.Location) => [Model, Cmd<Msg>],
   update: (msg: Msg, model: Model) => [Model, Cmd<Msg>],
-  view: (model: Model) => Html<Dom, Msg>,
+  view: (model: Model) => Html.Html<Dom, Msg>,
   subscriptions: (model: Model) => Sub.Sub<Msg>,
-): Program<Model, Msg, Dom> {
+): Html.Program<Model, Msg, Dom> {
   return createProgram(
     EMPTY,
     locationToMessage,
@@ -86,19 +86,19 @@ export function program<Model, Msg, Dom>(
 }
 
 /**
- * A function that requires an `Observable` and returns a `programWithDebugger()` function: the underlying debugger will stop when the `Observable` emits a value.
+ * A function that requires an `Observable` and returns a `program()` function: the underlying debugger will stop when the `Observable` emits a value.
  * @category constructors
  * @since 0.5.4
  */
-export function programWithDebuggerWithStop<Model, Msg, Dom>(
+export function ProgramWithStop<Model, Msg, Dom>(
   stopDebuggerOn: Observable<unknown>,
 ): <S extends Model, M extends Msg, D extends Dom>(
   locationToMessage: (location: Navigation.Location) => M,
   init: (location: Navigation.Location) => [S, Cmd<M>],
   update: (msg: M, model: S) => [S, Cmd<M>],
-  view: (model: S) => Html<D, M>,
+  view: (model: S) => Html.Html<D, M>,
   subscriptions: (model: S) => Sub.Sub<M>,
-) => Program<S, M, D> {
+) => Html.Program<S, M, D> {
   return (locationToMessage, init, update, view, subscriptions) =>
     createProgram(
       stopDebuggerOn,
@@ -111,35 +111,35 @@ export function programWithDebuggerWithStop<Model, Msg, Dom>(
 }
 
 /**
- * Same as `programWithDebugger()` but with `Flags` that can be passed when the `Program` is created in order to manage initial values.
+ * Same as `program()` but with `Flags` that can be passed when the `Program` is created in order to manage initial values.
  * @category constructors
  * @since 0.5.3
  */
-export function programWithDebuggerWithFlags<Flags, Model, Msg, Dom>(
+export function ProgramWithFlags<Flags, Model, Msg, Dom>(
   locationToMessage: (location: Navigation.Location) => Msg,
   init: (flags: Flags) => (location: Navigation.Location) => [Model, Cmd<Msg>],
   update: (msg: Msg, model: Model) => [Model, Cmd<Msg>],
-  view: (model: Model) => Html<Dom, Msg>,
+  view: (model: Model) => Html.Html<Dom, Msg>,
   subscriptions: (model: Model) => Sub.Sub<Msg>,
-): (flags: Flags) => Program<Model, Msg, Dom> {
+): (flags: Flags) => Html.Program<Model, Msg, Dom> {
   return (flags) =>
-    program(locationToMessage, init(flags), update, view, subscriptions)
+    Program(locationToMessage, init(flags), update, view, subscriptions)
 }
 
 /**
- * Same as `programWithDebuggerWithStop()` but with `Flags` that can be passed when the `Program` is created in order to manage initial values.
+ * Same as `programWithStop()` but with `Flags` that can be passed when the `Program` is created in order to manage initial values.
  * @category constructors
  * @since 0.5.4
  */
-export function programWithDebuggerWithFlagsWithStop<Model, Msg, Dom>(
+export function ProgramWithFlagsWithStop<Model, Msg, Dom>(
   stopDebuggerOn: Observable<unknown>,
 ): <Flags, S extends Model, M extends Msg, D extends Dom>(
   locationToMessage: (location: Navigation.Location) => M,
   init: (flags: Flags) => (location: Navigation.Location) => [S, Cmd<M>],
   update: (msg: M, model: S) => [S, Cmd<M>],
-  view: (model: S) => Html<D, M>,
+  view: (model: S) => Html.Html<D, M>,
   subscriptions: (model: S) => Sub.Sub<M>,
-) => (flags: Flags) => Program<S, M, D> {
+) => (flags: Flags) => Html.Program<S, M, D> {
   return (locationToMessage, init, update, view, subscriptions) => (flags) =>
     createProgram(
       stopDebuggerOn,
@@ -157,9 +157,9 @@ function createProgram<Model, Msg, Dom>(
   locationToMessage: (location: Navigation.Location) => Msg,
   init: (location: Navigation.Location) => [Model, Cmd<Msg>],
   update: (msg: Msg, model: Model) => [Model, Cmd<Msg>],
-  view: (model: Model) => Html<Dom, Msg>,
+  view: (model: Model) => Html.Html<Dom, Msg>,
   subscriptions: (model: Model) => Sub.Sub<Msg>,
-): Program<Model, Msg, Dom> {
+): Html.Program<Model, Msg, Dom> {
   const history = H.createHashHistory() // this is needed only to generate init model for debug$ :S
 
   const Debugger = runDebugger<Model, Msg>(window, stopDebuggerOn)
@@ -173,7 +173,7 @@ function createProgram<Model, Msg, Dom>(
 
   let currentDebugId: string | null = null
 
-  const p = Navigation.program(
+  const p = Navigation.Program(
     locationToMessage,
     init,
     updateWithDebug({
@@ -198,7 +198,7 @@ function createProgram<Model, Msg, Dom>(
 
   // --- Run the debugger
   // --- we need to make a type assertion for `dispatch` because we cannot change the intrinsic `msg` type of `program`;
-  // --- otherwise `programWithDebugger` won't be usable as a transparent extension/substitution of `Html`'s programs
+  // --- otherwise `program` won't be usable as a transparent extension/substitution of `Html`'s programs
   Debugger({
     debug$,
     init: initModel,

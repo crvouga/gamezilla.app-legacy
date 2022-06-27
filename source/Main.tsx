@@ -557,7 +557,7 @@ const locationToMessage = (location: Navigation.Location) => {
 //
 //
 
-const program = Debug.Navigation.program(
+const program = Debug.Navigation.Program(
   locationToMessage,
   init,
   update,

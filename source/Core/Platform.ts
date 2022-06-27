@@ -40,7 +40,7 @@ export interface Program<Model, Msg> {
  * @category constructors
  * @since 0.5.0
  */
-export function program<Model, Msg>(
+export function Program<Model, Msg>(
   init: [Model, Cmd.Cmd<Msg>],
   update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>],
   subscriptions: (model: Model) => Sub.Sub<Msg> = () => Sub.none,
@@ -71,12 +71,12 @@ export function program<Model, Msg>(
  * @category constructors
  * @since 0.5.0
  */
-export function programWithFlags<Flags, Model, Msg>(
+export function ProgramWithFlags<Flags, Model, Msg>(
   init: (flags: Flags) => [Model, Cmd.Cmd<Msg>],
   update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>],
   subscriptions: (model: Model) => Sub.Sub<Msg> = () => Sub.none,
 ): (flags: Flags) => Program<Model, Msg> {
-  return (flags) => program(init(flags), update, subscriptions)
+  return (flags) => Program(init(flags), update, subscriptions)
 }
 
 /**
