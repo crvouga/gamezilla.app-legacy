@@ -1,7 +1,7 @@
 import * as Route from "Route"
 import * as Store from "Store"
 import * as View from "View"
-import { Cmd, Keyboard, Sub, pipe } from "Core"
+import { Cmd, Keyboard, RemoteData, Sub, pipe } from "Core"
 import { useEffect, useRef } from "react"
 
 //
@@ -205,12 +205,10 @@ export const view =
     model: Model,
   ): View.View<Msg> =>
   (dispatch) => {
-    const mutation = Store.Conversation.toCreateMutation(store)
+    const mutation = store.mutations.Conversation.GetElseCreate
 
-    const profileSearchQuery = Store.Profile.toSearchQuery(
-      model.searchText,
-      store,
-    )
+    const searchQuery =
+      store.queries.Profile.Search[model.searchText] ?? RemoteData.NotAsked
 
     const profiles = Store.Profile.searchProfiles(
       model.searchText,
@@ -294,7 +292,7 @@ export const view =
         <View.Divider />
 
         <View.List sx={{ overflowY: "scroll", flex: 1 }}>
-          {profileSearchQuery.type === "Success" && profiles.length === 0 && (
+          {searchQuery.type === "Success" && profiles.length === 0 && (
             <View.Typography sx={{ p: 2 }} color="text.secondary">
               No account found.
             </View.Typography>
@@ -318,7 +316,7 @@ export const view =
             />
           ))}
 
-          {profileSearchQuery.type === "Loading" && (
+          {searchQuery.type === "Loading" && (
             <View.Box
               sx={{
                 width: "100%",

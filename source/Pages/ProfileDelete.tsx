@@ -1,7 +1,7 @@
 import * as Route from "Route"
 import * as Store from "Store"
 import * as View from "View"
-import { Cmd } from "Core"
+import { Cmd, RemoteData } from "Core"
 
 //
 //
@@ -13,7 +13,7 @@ import { Cmd } from "Core"
 
 export type Model = {}
 
-export const init: Model = {}
+export const init: [Model, Cmd.Cmd<Msg>, OutAction[]] = [{}, Cmd.none, []]
 
 //
 //
@@ -27,14 +27,15 @@ export type Msg =
   | { type: "UserClickedCancelButton" }
   | { type: "UserClickedBackdrop" }
   | { type: "UserClickedDeleteButton" }
+  | { type: "ClickedCloseFailureAlert" }
 
-export type Action = Store.Action
+export type OutAction = Store.Action
 
 export const update = (
   { userId }: { userId: string },
   msg: Msg,
   model: Model,
-): [Model, Cmd.Cmd<Msg>, Action[]] => {
+): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (msg.type) {
     case "UserClickedCancelButton":
       return [model, Route.back(), []]
@@ -44,6 +45,9 @@ export const update = (
 
     case "UserClickedDeleteButton":
       return [model, Cmd.none, [Store.Profile.DeleteForever(userId)]]
+
+    case "ClickedCloseFailureAlert":
+      return [model, Cmd.none, [Store.Profile.ResetMutations()]]
   }
 }
 
@@ -61,13 +65,40 @@ export const view =
     model: Model,
   ): View.View<Msg> =>
   (dispatch) => {
-    const mutation = Store.Profile.toDeleteForeverMutation(profileId, store)
+    const mutation =
+      store.mutations.Profile.DeleteForever[profileId] ?? RemoteData.NotAsked
 
     switch (mutation.type) {
       case "Loading":
         return <View.LoadingDialog open title="Deleting profile..." />
 
       case "Failure":
+        return (
+          <View.Backdrop open>
+            <View.Alert variant="filled" severity="error" sx={{ margin: 2 }}>
+              <View.AlertTitle>Failed to delete profile.</View.AlertTitle>
+              {mutation.problem.message}
+              <View.Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  marginTop: 2,
+                }}
+              >
+                <View.Button
+                  variant="outlined"
+                  size="large"
+                  color="inherit"
+                  startIcon={<View.Icons.Close />}
+                  onClick={() => dispatch({ type: "ClickedCloseFailureAlert" })}
+                >
+                  Close
+                </View.Button>
+              </View.Box>
+            </View.Alert>
+          </View.Backdrop>
+        )
+
       case "NotAsked":
       case "Success":
         return (

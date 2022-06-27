@@ -1,5 +1,5 @@
 import * as Snackbar from "Snackbar"
-import { Cmd } from "Core"
+import { Cmd, RemoteData } from "Core"
 import * as Conversation from "./Conversation"
 import * as Profile from "./Profile"
 import * as ProfilesConversations from "./ProfilesConversations"
@@ -23,16 +23,14 @@ export type Model = {
     [id: string]: ProfilesConversations.ProfilesConversations
   }
   queries: {
-    [id: string]: Query
+    Profile: Profile.Queries
+    Conversation: Conversation.Queries
   }
   mutations: {
-    [id: string]: Mutation
+    Profile: Profile.Mutations
+    Conversation: Conversation.Mutations
   }
 }
-
-export type Mutation = Profile.Mutation | Conversation.Mutation
-
-export type Query = Profile.Query | Conversation.Query
 
 //
 //
@@ -46,8 +44,25 @@ export const init: Model = {
   Profile: {},
   Conversation: {},
   ProfilesConversations: {},
-  queries: {},
-  mutations: {},
+  queries: {
+    Conversation: {
+      Get: {},
+    },
+    Profile: {
+      Get: {},
+      Search: {},
+    },
+  },
+  mutations: {
+    Conversation: {
+      GetElseCreate: RemoteData.NotAsked,
+    },
+    Profile: {
+      Create: {},
+      Edit: {},
+      DeleteForever: {},
+    },
+  },
 }
 
 //

@@ -191,6 +191,8 @@ export const ListItemText = Mui.ListItemText
 
 export const ListItemIcon = Mui.ListItemIcon
 
+export const Backdrop = Mui.Backdrop
+
 export const Checkbox = Mui.Checkbox
 
 export const ListItemSecondaryAction = Mui.ListItemSecondaryAction
@@ -207,7 +209,11 @@ export const DialogTitle = Mui.DialogTitle
 
 export const DialogActions = Mui.DialogActions
 
+export const DialogContent = Mui.DialogContent
+
 export const Alert = Mui.Alert
+
+export const AlertTitle = Mui.AlertTitle
 
 export const CircularProgress = Mui.CircularProgress
 
