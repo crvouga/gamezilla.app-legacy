@@ -570,7 +570,7 @@ const rootElement = document.getElementById("root")
 if (rootElement) {
   const root = ReactDom.createRoot(rootElement)
 
-  Html.run(program, (dom) => {
+  Debug.Html.run(program, (dom) => {
     root.render(dom)
   })
 }

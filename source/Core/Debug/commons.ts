@@ -3,7 +3,7 @@
  *
  * @since 0.5.0
  */
-import { BehaviorSubject, Observable } from "rxjs"
+import { BehaviorSubject, Observable, Subject } from "rxjs"
 import { takeUntil } from "rxjs/operators"
 import * as Cmd from "../Cmd"
 import * as Option from "../Option"
@@ -140,16 +140,14 @@ export const DEBUG_ID_KEY = "debugId"
 
 export function updateWithDebug<Model, Msg>({
   debug$,
+  debugId$,
   update,
-  onDebugId,
 }: {
   debug$: BehaviorSubject<DebugData<Model, Msg>>
+  debugId$: BehaviorSubject<string>
   update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>]
-  onDebugId: (id: string) => void
 }): (msg: MsgWithDebug<Model, Msg>, model: Model) => [Model, Cmd.Cmd<Msg>] {
   return (msg, model) => {
-    console.log(msg)
-
     if ("type" in msg) {
       switch (msg.type) {
         case "__DebugUpdateModel__":
@@ -172,12 +170,12 @@ export function updateWithDebug<Model, Msg>({
     //
     //
 
-    const debugId = crypto.randomUUID()
+    const debugIdNew = crypto.randomUUID()
 
     // @ts-ignore
-    modelNew[DEBUG_ID_KEY] = debugId
+    modelNew[DEBUG_ID_KEY] = debugIdNew
 
-    onDebugId(debugId)
+    debugId$.next(debugIdNew)
 
     //
     //
@@ -194,13 +192,13 @@ export function updateWithDebug<Model, Msg>({
  * @category utils
  * @since 0.5.4
  */
-export function runDebugger<Model, Msg>(
-  win: Global,
-  stop$: Observable<unknown>,
+export function RunDebugger<Model, Msg>(
+  global: Global,
+  stopSignal: Observable<unknown>,
 ): (deps: DebuggerR<Model, Msg>) => Task.Task<void> {
   return (deps) => {
     return pipe(
-      ReduxDevtool.getConnection<Model, Msg>(win),
+      ReduxDevtool.getConnection<Model, Msg>(global),
       Task.map(
         Option.fold(
           () => Console.makeDebugger<Model, Msg>(),
@@ -210,7 +208,7 @@ export function runDebugger<Model, Msg>(
       Task.chain((debugger_) => async () => {
         const { debug, stop } = debugger_(deps)
 
-        deps.debug$.pipe(takeUntil(stop$)).subscribe({
+        deps.debug$.pipe(takeUntil(stopSignal)).subscribe({
           next: debug,
           complete: stop,
         })
