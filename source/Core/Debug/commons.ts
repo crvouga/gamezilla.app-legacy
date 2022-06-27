@@ -8,6 +8,7 @@ import { takeUntil } from "rxjs/operators"
 import * as Cmd from "../Cmd"
 import * as Option from "../Option"
 import * as Task from "../Task"
+import * as Uuid from "../Uuid"
 import * as Console from "./console"
 import * as ReduxDevtool from "./redux-devtool"
 import { Dispatch } from "../Platform"
@@ -170,7 +171,7 @@ export function updateWithDebug<Model, Msg>({
     //
     //
 
-    const debugIdNew = crypto.randomUUID()
+    const debugIdNew = Uuid.generateSync()
 
     // @ts-ignore
     modelNew[DEBUG_ID_KEY] = debugIdNew
