@@ -1,6 +1,6 @@
 import * as View from "View"
 import { SxProps } from "@mui/material"
-import { Cmd, Task, pipe } from "Core"
+import { Cmd, Task, Uuid, pipe } from "Core"
 
 //
 //
@@ -45,7 +45,7 @@ export const EnqueueSnackbar = (variant: "Info" | "Error", message: string) => {
     snack: {
       type: variant,
       message,
-      snackId: crypto.randomUUID(),
+      snackId: Uuid.generateSync(),
     },
   } as const
 }
