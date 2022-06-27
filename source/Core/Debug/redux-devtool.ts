@@ -184,7 +184,6 @@ function handleIncomingMsg<Model, Msg>({
   const toggle = toggleAction(dispatch)
 
   return (msg) => {
-    console.log(msg)
     switch (msg.type) {
       case "START":
         return Result.Ok(reinit)

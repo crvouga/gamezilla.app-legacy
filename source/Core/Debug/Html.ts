@@ -27,7 +27,7 @@
  *
  * @since 0.5.3
  */
-import { BehaviorSubject, EMPTY, Observable } from "rxjs"
+import * as Rx from "rxjs"
 import * as Cmd from "../Cmd"
 import * as Html from "../Html"
 import * as Sub from "../Sub"
@@ -35,8 +35,8 @@ import {
   DEBUG_ID_KEY,
   DebugData,
   DebuggerR,
+  RunDebugger,
   debugInit,
-  runDebugger,
   updateWithDebug,
 } from "./commons"
 
@@ -68,9 +68,9 @@ export function Program<Model, Msg, Dom>(
   init: [Model, Cmd.Cmd<Msg>],
   update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>],
   view: (model: Model) => Html.Html<Dom, Msg>,
-  subscriptions?: (model: Model) => Sub.Sub<Msg>,
+  subscriptions: (model: Model) => Sub.Sub<Msg>,
 ): Html.Program<Model, Msg, Dom> {
-  return createProgram(EMPTY, init, update, view, subscriptions)
+  return createProgram(Rx.EMPTY, init, update, view, subscriptions)
 }
 
 /**
@@ -79,12 +79,12 @@ export function Program<Model, Msg, Dom>(
  * @since 0.5.4
  */
 export function ProgramWithStop<Model, Msg, Dom>(
-  stopDebuggerOn: Observable<unknown>,
+  stopDebuggerOn: Rx.Observable<unknown>,
 ): <S extends Model, M extends Msg, D extends Dom>(
   init: [S, Cmd.Cmd<M>],
   update: (msg: M, model: S) => [S, Cmd.Cmd<M>],
   view: (model: S) => Html.Html<D, M>,
-  subscriptions?: (model: S) => Sub.Sub<M>,
+  subscriptions: (model: S) => Sub.Sub<M>,
 ) => Html.Program<S, M, D> {
   return (init, update, view, subscriptions) =>
     createProgram(stopDebuggerOn, init, update, view, subscriptions)
@@ -99,7 +99,7 @@ export function ProgramWithFlags<Flags, Model, Msg, Dom>(
   init: (flags: Flags) => [Model, Cmd.Cmd<Msg>],
   update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>],
   view: (model: Model) => Html.Html<Dom, Msg>,
-  subscriptions?: (model: Model) => Sub.Sub<Msg>,
+  subscriptions: (model: Model) => Sub.Sub<Msg>,
 ): (flags: Flags) => Html.Program<Model, Msg, Dom> {
   return (flags) => Program(init(flags), update, view, subscriptions)
 }
@@ -110,12 +110,12 @@ export function ProgramWithFlags<Flags, Model, Msg, Dom>(
  * @since 0.5.4
  */
 export function ProgramWithFlagsWithStop<Model, Msg, Dom>(
-  stopDebuggerOn: Observable<unknown>,
+  stopDebuggerOn: Rx.Observable<unknown>,
 ): <Flags, S extends Model, M extends Msg, D extends Dom>(
   init: (flags: Flags) => [S, Cmd.Cmd<M>],
   update: (msg: M, model: S) => [S, Cmd.Cmd<M>],
   view: (model: S) => Html.Html<D, M>,
-  subscriptions?: (model: S) => Sub.Sub<M>,
+  subscriptions: (model: S) => Sub.Sub<M>,
 ) => (flags: Flags) => Html.Program<S, M, D> {
   return (init, update, view, subscriptions) => (flags) =>
     createProgram(stopDebuggerOn, init(flags), update, view, subscriptions)
@@ -123,39 +123,37 @@ export function ProgramWithFlagsWithStop<Model, Msg, Dom>(
 
 // --- Internal
 function createProgram<Model, Msg, Dom>(
-  stopDebuggerOn: Observable<unknown>,
+  stopDebuggerOn: Rx.Observable<unknown>,
   init: [Model, Cmd.Cmd<Msg>],
   update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>],
   view: (model: Model) => Html.Html<Dom, Msg>,
-  subscriptions?: (model: Model) => Sub.Sub<Msg>,
+  subscriptions: (model: Model) => Sub.Sub<Msg>,
 ): Html.Program<Model, Msg, Dom> {
-  const Debugger = runDebugger<Model, Msg>(window, stopDebuggerOn)
+  const runDebugger = RunDebugger<Model, Msg>(window, stopDebuggerOn)
 
   const initModel = init[0]
 
-  const debug$ = new BehaviorSubject<DebugData<Model, Msg>>([
+  const debug$ = new Rx.BehaviorSubject<DebugData<Model, Msg>>([
     debugInit(),
     initModel,
   ])
 
-  let currentDebugId: string | null = null
+  const debugId$ = new Rx.BehaviorSubject<string>("")
 
-  const p = Html.Program(
+  const program = Html.Program(
     init,
     updateWithDebug<Model, Msg>({
       debug$,
+      debugId$,
       update,
-      onDebugId: (debugId) => {
-        currentDebugId = debugId
-      },
     }),
     view,
-    (model: Model): Sub.Sub<Msg> => {
+    (model): Sub.Sub<Msg> => {
       if (
         // @ts-ignore
-        model[DEBUG_ID_KEY] === currentDebugId
+        model[DEBUG_ID_KEY] === debugId$.value
       ) {
-        return subscriptions?.(model) ?? Sub.none
+        return subscriptions(model)
       }
 
       // ignored subscriptions when time travel debugging
@@ -167,11 +165,32 @@ function createProgram<Model, Msg, Dom>(
   // --- Run the debugger
   // --- we need to make a type assertion for `dispatch` because we cannot change the intrinsic `msg` type of `program`;
   // --- otherwise `programWithDebugger` won't be usable as a transparent extension/substitution of `Html`'s programs
-  Debugger({
+  runDebugger({
     debug$,
     init: initModel,
-    dispatch: p.dispatch as DebuggerR<Model, Msg>["dispatch"],
+    dispatch: program.dispatch as DebuggerR<Model, Msg>["dispatch"],
   })()
 
-  return p
+  return program
+}
+
+export function run<Model, Msg, Dom>(
+  program: Html.Program<Model, Msg, Dom>,
+  renderer: Html.Renderer<Dom>,
+): Rx.Observable<Model> {
+  const model$ = new Rx.Subject<Model>()
+
+  // why?
+  // wait for redux devtools debugger to start before running program
+  // because messages were being dispatched before the dev tools started
+  // resulting in initial messages not being logged
+  //
+  // todo: actually subscribe to the redux dev tools start message instead of using a timeout
+  setTimeout(() => {
+    Html.run(program, renderer).subscribe((model) => {
+      model$.next(model)
+    })
+  }, 100)
+
+  return model$
 }

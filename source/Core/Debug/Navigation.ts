@@ -29,18 +29,18 @@
  *
  * @since 0.5.3
  */
-import * as H from "history"
-import { BehaviorSubject, EMPTY, Observable } from "rxjs"
+import * as History from "history"
+import * as Rx from "rxjs"
+import * as Cmd from "../Cmd"
 import * as Html from "../Html"
 import * as Navigation from "../Navigation"
 import * as Sub from "../Sub"
-import { Cmd } from "../Cmd"
 import {
   DEBUG_ID_KEY,
   DebugData,
   DebuggerR,
+  RunDebugger,
   debugInit,
-  runDebugger,
   updateWithDebug,
 } from "./commons"
 
@@ -70,13 +70,13 @@ import {
  */
 export function Program<Model, Msg, Dom>(
   locationToMessage: (location: Navigation.Location) => Msg,
-  init: (location: Navigation.Location) => [Model, Cmd<Msg>],
-  update: (msg: Msg, model: Model) => [Model, Cmd<Msg>],
+  init: (location: Navigation.Location) => [Model, Cmd.Cmd<Msg>],
+  update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>],
   view: (model: Model) => Html.Html<Dom, Msg>,
   subscriptions: (model: Model) => Sub.Sub<Msg>,
 ): Html.Program<Model, Msg, Dom> {
   return createProgram(
-    EMPTY,
+    Rx.EMPTY,
     locationToMessage,
     init,
     update,
@@ -91,17 +91,17 @@ export function Program<Model, Msg, Dom>(
  * @since 0.5.4
  */
 export function ProgramWithStop<Model, Msg, Dom>(
-  stopDebuggerOn: Observable<unknown>,
+  stopSignal: Rx.Observable<unknown>,
 ): <S extends Model, M extends Msg, D extends Dom>(
   locationToMessage: (location: Navigation.Location) => M,
-  init: (location: Navigation.Location) => [S, Cmd<M>],
-  update: (msg: M, model: S) => [S, Cmd<M>],
+  init: (location: Navigation.Location) => [S, Cmd.Cmd<M>],
+  update: (msg: M, model: S) => [S, Cmd.Cmd<M>],
   view: (model: S) => Html.Html<D, M>,
   subscriptions: (model: S) => Sub.Sub<M>,
 ) => Html.Program<S, M, D> {
   return (locationToMessage, init, update, view, subscriptions) =>
     createProgram(
-      stopDebuggerOn,
+      stopSignal,
       locationToMessage,
       init,
       update,
@@ -117,8 +117,10 @@ export function ProgramWithStop<Model, Msg, Dom>(
  */
 export function ProgramWithFlags<Flags, Model, Msg, Dom>(
   locationToMessage: (location: Navigation.Location) => Msg,
-  init: (flags: Flags) => (location: Navigation.Location) => [Model, Cmd<Msg>],
-  update: (msg: Msg, model: Model) => [Model, Cmd<Msg>],
+  init: (
+    flags: Flags,
+  ) => (location: Navigation.Location) => [Model, Cmd.Cmd<Msg>],
+  update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>],
   view: (model: Model) => Html.Html<Dom, Msg>,
   subscriptions: (model: Model) => Sub.Sub<Msg>,
 ): (flags: Flags) => Html.Program<Model, Msg, Dom> {
@@ -132,17 +134,17 @@ export function ProgramWithFlags<Flags, Model, Msg, Dom>(
  * @since 0.5.4
  */
 export function ProgramWithFlagsWithStop<Model, Msg, Dom>(
-  stopDebuggerOn: Observable<unknown>,
+  stopSignal: Rx.Observable<unknown>,
 ): <Flags, S extends Model, M extends Msg, D extends Dom>(
   locationToMessage: (location: Navigation.Location) => M,
-  init: (flags: Flags) => (location: Navigation.Location) => [S, Cmd<M>],
-  update: (msg: M, model: S) => [S, Cmd<M>],
+  init: (flags: Flags) => (location: Navigation.Location) => [S, Cmd.Cmd<M>],
+  update: (msg: M, model: S) => [S, Cmd.Cmd<M>],
   view: (model: S) => Html.Html<D, M>,
   subscriptions: (model: S) => Sub.Sub<M>,
 ) => (flags: Flags) => Html.Program<S, M, D> {
   return (locationToMessage, init, update, view, subscriptions) => (flags) =>
     createProgram(
-      stopDebuggerOn,
+      stopSignal,
       locationToMessage,
       init(flags),
       update,
@@ -153,40 +155,38 @@ export function ProgramWithFlagsWithStop<Model, Msg, Dom>(
 
 // --- Internal
 function createProgram<Model, Msg, Dom>(
-  stopDebuggerOn: Observable<unknown>,
+  stopSignal: Rx.Observable<unknown>,
   locationToMessage: (location: Navigation.Location) => Msg,
-  init: (location: Navigation.Location) => [Model, Cmd<Msg>],
-  update: (msg: Msg, model: Model) => [Model, Cmd<Msg>],
+  init: (location: Navigation.Location) => [Model, Cmd.Cmd<Msg>],
+  update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>],
   view: (model: Model) => Html.Html<Dom, Msg>,
   subscriptions: (model: Model) => Sub.Sub<Msg>,
 ): Html.Program<Model, Msg, Dom> {
-  const history = H.createHashHistory() // this is needed only to generate init model for debug$ :S
+  const history = History.createHashHistory() // this is needed only to generate init model for debug$ :S
 
-  const Debugger = runDebugger<Model, Msg>(window, stopDebuggerOn)
+  const runDebugger = RunDebugger<Model, Msg>(window, stopSignal)
 
   const initModel = init(history.location)[0]
 
-  const debug$ = new BehaviorSubject<DebugData<Model, Msg>>([
+  const debug$ = new Rx.BehaviorSubject<DebugData<Model, Msg>>([
     debugInit(),
     initModel,
   ])
 
-  let currentDebugId: string | null = null
+  const debugId$ = new Rx.BehaviorSubject<string>("")
 
-  const p = Navigation.Program(
+  const program = Navigation.Program(
     locationToMessage,
     init,
     updateWithDebug({
       debug$,
+      debugId$,
       update,
-      onDebugId: (debugId) => {
-        currentDebugId = debugId
-      },
     }),
     view,
     (model) => {
       // @ts-ignore
-      if (model[DEBUG_ID_KEY] === currentDebugId) {
+      if (model[DEBUG_ID_KEY] === debugId$.value) {
         return subscriptions(model)
       }
 
@@ -199,11 +199,11 @@ function createProgram<Model, Msg, Dom>(
   // --- Run the debugger
   // --- we need to make a type assertion for `dispatch` because we cannot change the intrinsic `msg` type of `program`;
   // --- otherwise `program` won't be usable as a transparent extension/substitution of `Html`'s programs
-  Debugger({
+  runDebugger({
     debug$,
     init: initModel,
-    dispatch: p.dispatch as DebuggerR<Model, Msg>["dispatch"],
+    dispatch: program.dispatch as DebuggerR<Model, Msg>["dispatch"],
   })()
 
-  return p
+  return program
 }
