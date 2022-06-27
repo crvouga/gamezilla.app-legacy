@@ -190,7 +190,7 @@ export function run<Model, Msg, Dom>(
     Html.run(program, renderer).subscribe((model) => {
       model$.next(model)
     })
-  }, 100)
+  }, 1000)
 
   return model$
 }

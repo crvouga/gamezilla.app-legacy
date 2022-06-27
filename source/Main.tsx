@@ -7,7 +7,7 @@ import * as Store from "Store"
 import * as Profile from "Store/Profile"
 import * as View from "View"
 import * as ReactDom from "react-dom/client"
-import { Cmd, Debug, Html, Navigation, Sub, Task, pipe } from "Core"
+import { Cmd, Debug, Html, Navigation, Option, Sub, Task, pipe } from "Core"
 import { andThen, andThenMany, exhaustive, groupTag } from "Utility"
 
 //
@@ -90,7 +90,10 @@ export const toStatus = ({
 //
 
 export const init = (location: Navigation.Location): [Model, Cmd.Cmd<Msg>] => {
-  const route = Route.decode(location.pathname) ?? { type: "Home" }
+  const route = Option.withDefault(
+    { type: "Home" },
+    Route.decode(location.pathname),
+  )
   const [session, sessionCmd] = Session.init()
   const snackbar = Snackbar.init
   const store = Store.init
@@ -126,7 +129,7 @@ export type Msg =
   | Snackbar.GroupedMsg
   | Games.GroupedMsg
   | Store.GroupedMsg
-  | Session.GroupedMsg
+  | Session.Msg
   | Pages.GroupedMsg
 
 type Action = Snackbar.Action | Store.Action | Games.Action
@@ -395,7 +398,7 @@ const runAction = (action: Action, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
 export const subscriptions = (model: Model): Sub.Sub<Msg> => {
   return Sub.batch<Msg>([
-    pipe(Session.subscriptions, Sub.map(groupTag("Session"))),
+    Session.subscriptions,
     pipe(Games.subscriptions(model.game), Sub.map(groupTag("Game"))),
     pipe(Pages.subscriptions(model.page), Sub.map(groupTag("Page"))),
   ])
@@ -546,7 +549,13 @@ const viewSnackbar =
   }
 
 const locationToMessage = (location: Navigation.Location) => {
-  return Route.GotRoute(Route.decode(location.pathname) ?? { type: "Home" })
+  return pipe(
+    location,
+    (location) => location.pathname,
+    Route.decode,
+    (decoded) => Option.withDefault({ type: "Home" }, decoded),
+    Route.GotRoute,
+  )
 }
 
 //
