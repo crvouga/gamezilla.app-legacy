@@ -58,14 +58,14 @@ export type Msg =
 export type Action = Store.Action
 
 export const update = (
-  store: Store.Model,
+  { authUserId, store }: { authUserId: string; store: Store.Model },
   msg: Msg,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>, Action[]] => {
   switch (msg.type) {
     case "ClickedCreate":
       const userIds = Object.values(model.selected)
-      return [model, Cmd.none, [Store.Conversation.Create(userIds)]]
+      return [model, Cmd.none, [Store.Conversation.Create(authUserId, userIds)]]
 
     case "ClickedCancel":
       return [model, Route.back(), []]
@@ -178,12 +178,10 @@ const toggleSelected = (
 //
 
 export const subscriptions = (model: Model): Sub.Sub<Msg> => {
-  return pipe(
-    Keyboard.keyDowns((key) =>
-      Keyboard.isArrowKey(key) || Keyboard.isEnterKey(key)
-        ? { type: "PressedKeyDown", key }
-        : Keyboard.SkipFlag,
-    ),
+  return Keyboard.keyDowns((key) =>
+    Keyboard.isArrowKey(key) || Keyboard.isEnterKey(key)
+      ? { type: "PressedKeyDown", key }
+      : Keyboard.SkipFlag,
   )
 }
 

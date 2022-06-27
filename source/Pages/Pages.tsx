@@ -334,7 +334,10 @@ export const updateReady = (
 
     case "ChatNew":
       if (msg.page === "ChatNew") {
-        return tagUpdate("ChatNew", ChatNew.update(store, msg, model))
+        return tagUpdate(
+          "ChatNew",
+          ChatNew.update({ store, authUserId: profile.userId }, msg, model),
+        )
       }
       return [model, Cmd.none, []]
 
