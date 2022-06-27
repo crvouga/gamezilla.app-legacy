@@ -110,9 +110,9 @@ function hasExtension(
  * @category constructors
  * @since 0.5.4
  */
-export function reduxDevToolDebugger<Model, Msg>(
+export const makeDebugger = <Model, Msg>(
   connection: Connection<Model, Msg>,
-): Debugger<Model, Msg> {
+): Debugger<Model, Msg> => {
   return (d) => {
     const deps = { ...d, connection }
 
@@ -184,6 +184,7 @@ function handleIncomingMsg<Model, Msg>({
   const toggle = toggleAction(dispatch)
 
   return (msg) => {
+    console.log(msg)
     switch (msg.type) {
       case "START":
         return Result.Ok(reinit)

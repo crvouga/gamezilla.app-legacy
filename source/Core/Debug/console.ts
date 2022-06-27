@@ -11,7 +11,8 @@ import { DebugMsg, Debugger } from "./commons"
  * @category constructors
  * @since 0.5.4
  */
-export function consoleDebugger<Model, Msg>(): Debugger<Model, Msg> {
+
+export const makeDebugger = <Model, Msg>(): Debugger<Model, Msg> => {
   return () => {
     return {
       debug: (data) => {
