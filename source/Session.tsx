@@ -1,6 +1,6 @@
 import * as Rx from "rxjs"
 import * as Supabase from "./Supabase"
-import { Cmd, Result, Sub, Task, pipe } from "./Core"
+import { Cmd, Option, Result, Sub, Task, pipe } from "./Core"
 
 //
 //
@@ -35,24 +35,40 @@ export const init = (): [Model, Cmd.Cmd<Msg>] => [
 //
 //
 //
+// Msg
+//
+//
+//
+
+export type Msg = GotSession
+
+const GotSession = (session: Option.Option<Session>) => {
+  return {
+    group: "Session",
+    type: "GotSession",
+    session,
+  } as const
+}
+type GotSession = ReturnType<typeof GotSession>
+
+//
+//
+//
 // Update
 //
 //
 //
 
-export type Msg =
-  | { type: "UserLoggedOut" }
-  | { type: "UserLoggedIn"; session: Session }
-
-export type GroupedMsg = Msg & { group: "Session" }
-
 export const update = (msg: Msg): Model => {
   switch (msg.type) {
-    case "UserLoggedIn":
-      return { type: "LoggedIn", ...msg.session }
+    case "GotSession":
+      switch (msg.session.type) {
+        case "None":
+          return { type: "LoggedOut" }
 
-    case "UserLoggedOut":
-      return { type: "LoggedOut" }
+        case "Some":
+          return { type: "LoggedIn", ...msg.session.value }
+      }
   }
 }
 
@@ -104,10 +120,10 @@ export const loadSession: Task.Task<Msg> = async () => {
     ""
 
   if (userId) {
-    return { type: "UserLoggedIn", session: { defaultName, userId } }
+    return GotSession(Option.Some({ userId, defaultName }))
   }
 
-  return { type: "UserLoggedOut" }
+  return GotSession(Option.None)
 }
 
 //
@@ -135,8 +151,8 @@ export const fromSupabaseSession = (session: Supabase.Session | null): Msg => {
     ""
 
   if (userId) {
-    return { type: "UserLoggedIn", session: { userId, defaultName } }
+    return GotSession(Option.Some({ userId, defaultName }))
   }
 
-  return { type: "UserLoggedOut" }
+  return GotSession(Option.None)
 }

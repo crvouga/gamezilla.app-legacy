@@ -162,7 +162,7 @@ function createProgram<Model, Msg, Dom>(
   view: (model: Model) => Html.Html<Dom, Msg>,
   subscriptions: (model: Model) => Sub.Sub<Msg>,
 ): Html.Program<Model, Msg, Dom> {
-  const history = History.createHashHistory() // this is needed only to generate init model for debug$ :S
+  const history = History.createBrowserHistory() // this is needed only to generate init model for debug$ :S
 
   const runDebugger = RunDebugger<Model, Msg>(window, stopSignal)
 

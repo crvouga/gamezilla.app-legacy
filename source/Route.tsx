@@ -1,4 +1,4 @@
-import { Navigation } from "Core"
+import { Navigation, Option } from "Core"
 
 //
 //
@@ -55,22 +55,22 @@ const isRouteType = (routeType: unknown): routeType is Route["type"] => {
   return typeof routeType === "string" && routeType in routesTypes
 }
 
-export const decode = (pathname: string): Route | undefined => {
+export const decode = (pathname: string): Option.Option<Route> => {
   const [first, second] = pathname.substring(1).split("/")
 
   if (isRouteType(first)) {
     if (first === "ChatConversation") {
       if (typeof second === "string") {
-        return { type: "ChatConversation", conversationId: second }
+        return Option.Some({ type: "ChatConversation", conversationId: second })
       }
 
-      return undefined
+      return Option.None
     }
 
-    return { type: first }
+    return Option.Some({ type: first })
   }
 
-  return undefined
+  return Option.None
 }
 
 export const encode = (route: Route): string => {
