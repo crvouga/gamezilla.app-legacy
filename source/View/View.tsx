@@ -171,6 +171,8 @@ export const InputBase = Mui.InputBase
 
 export const Snackbar = Mui.Snackbar
 
+export const Portal = Mui.Portal
+
 export const Box = Mui.Box
 
 export const Divider = Mui.Divider

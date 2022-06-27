@@ -59,23 +59,35 @@ export const toStatus = ({
     case "LoggedIn":
       const { userId } = session
 
-      const profileQuery = Store.Profile.toGetQuery(userId, store)
+      const result = Store.Profile.select(userId, store)
 
-      switch (profileQuery.type) {
-        case "NotAsked":
-          return { type: "ProfileLoading", session }
-
-        case "Loading":
-          return { type: "ProfileLoading", session }
-
-        case "Failure":
-          return { type: "ProfileMissing", session }
-
-        case "Success":
+      switch (result.type) {
+        case "Some":
           return {
             type: "Ready",
             session,
-            profile: profileQuery.value,
+            profile: result.value,
+          }
+
+        case "None":
+          const profileQuery = Store.Profile.toGetQuery(userId, store)
+
+          switch (profileQuery.type) {
+            case "NotAsked":
+              return { type: "ProfileLoading", session }
+
+            case "Loading":
+              return { type: "ProfileLoading", session }
+
+            case "Failure":
+              return { type: "ProfileMissing", session }
+
+            case "Success":
+              return {
+                type: "Ready",
+                session,
+                profile: profileQuery.value,
+              }
           }
       }
   }

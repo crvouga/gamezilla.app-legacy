@@ -43,9 +43,9 @@ export const EnqueueSnackbar = (variant: "Info" | "Error", message: string) => {
     group: "Snackbar",
     type: "EnqueuedSnackbar",
     snack: {
-      type: "Info",
+      type: variant,
       message,
-      snackId: String(Math.random()),
+      snackId: crypto.randomUUID(),
     },
   } as const
 }
@@ -113,30 +113,32 @@ export const view =
     }
 
     return (
-      <View.Snackbar
-        sx={sx}
-        open
-        message={snack.message}
-        onClose={() =>
-          dispatch({
-            type: "UserClosedSnackbar",
-            snackId: snack.snackId,
-          })
-        }
-      >
-        <View.Alert
-          variant="filled"
+      <View.Portal>
+        <View.Snackbar
+          sx={sx}
+          open
+          message={snack.message}
           onClose={() =>
             dispatch({
               type: "UserClosedSnackbar",
               snackId: snack.snackId,
             })
           }
-          severity={snack.type === "Error" ? "error" : "info"}
-          sx={{ width: "100%" }}
         >
-          {snack.message}
-        </View.Alert>
-      </View.Snackbar>
+          <View.Alert
+            variant="filled"
+            onClose={() =>
+              dispatch({
+                type: "UserClosedSnackbar",
+                snackId: snack.snackId,
+              })
+            }
+            severity={snack.type === "Error" ? "error" : "info"}
+            sx={{ width: "100%" }}
+          >
+            {snack.message}
+          </View.Alert>
+        </View.Snackbar>
+      </View.Portal>
     )
   }

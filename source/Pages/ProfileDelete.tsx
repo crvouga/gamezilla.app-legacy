@@ -56,15 +56,29 @@ export const update = (
 //
 
 export const view =
-  (model: Model): View.View<Msg> =>
-  (dispatch) =>
-    (
-      <View.ConformationDialog
-        open
-        title="Delete profile forever?"
-        onClose={() => dispatch({ type: "UserClickedBackdrop" })}
-        onCancel={() => dispatch({ type: "UserClickedCancelButton" })}
-        confirmTitle="Delete"
-        onConfirm={() => dispatch({ type: "UserClickedDeleteButton" })}
-      />
-    )
+  (
+    { store, profileId }: { store: Store.Model; profileId: string },
+    model: Model,
+  ): View.View<Msg> =>
+  (dispatch) => {
+    const mutation = Store.Profile.toDeleteForeverMutation(profileId, store)
+
+    switch (mutation.type) {
+      case "Loading":
+        return <View.LoadingDialog open title="Deleting profile..." />
+
+      case "Failure":
+      case "NotAsked":
+      case "Success":
+        return (
+          <View.ConformationDialog
+            open
+            title="Delete profile forever?"
+            onClose={() => dispatch({ type: "UserClickedBackdrop" })}
+            onCancel={() => dispatch({ type: "UserClickedCancelButton" })}
+            confirmTitle="Delete"
+            onConfirm={() => dispatch({ type: "UserClickedDeleteButton" })}
+          />
+        )
+    }
+  }
