@@ -28,7 +28,10 @@ export const init: Model = {
 
 export type Msg =
   | { type: "UserClickedBackButton" }
-  | { type: "UserClickedThemeModeOption"; themeMode: Profile.ThemeMode }
+  | {
+      type: "UserClickedThemeModeOption"
+      themeMode: Profile.Profile["themeMode"]
+    }
 
 type OutMsg = Store.Action
 

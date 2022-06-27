@@ -59,7 +59,7 @@ export const toStatus = ({
     case "LoggedIn":
       const { userId } = session
 
-      const result = Store.Profile.select(userId, store)
+      const result = Option.fromNullable(store.Profile[userId])
 
       switch (result.type) {
         case "Some":

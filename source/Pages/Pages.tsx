@@ -100,8 +100,17 @@ export const initReady = (
     case "Logout":
       return [{ ...Logout.init, page: "Logout" }, Cmd.none, []]
 
-    case "ProfileDelete":
-      return [{ ...ProfileDelete.init, page: "ProfileDelete" }, Cmd.none, []]
+    case "ProfileDelete": {
+      const [modelNew, cmdNew, actions] = ProfileDelete.init
+      return [
+        { ...modelNew, page: "ProfileDelete" },
+        pipe(
+          cmdNew,
+          Cmd.map((msg) => ({ ...msg, page: "ProfileDelete" })),
+        ),
+        actions,
+      ]
+    }
 
     case "ProfileUpdate":
       return [{ ...ProfileUpdate.init, page: "ProfileUpdate" }, Cmd.none, []]

@@ -3,6 +3,7 @@ import * as Snackbar from "Snackbar"
 import * as Supabase from "Supabase"
 import { Cmd, RemoteData, Result, Task, pipe } from "Core"
 import { Conversation, ProfilesConversations } from "Store"
+import produce from "immer"
 import { definitions } from "supabase-types"
 import * as Store from "./Store"
 
@@ -14,42 +15,21 @@ import * as Store from "./Store"
 //
 //
 
-type Model = Store.Model
-
-export type ChatId = string
-
 export type Conversation = {
-  conversationId: ChatId
+  conversationId: string
+}
+
+export type Mutations = {
+  GetElseCreate: RemoteData.RemoteData<Problem, string>
+}
+
+export type Queries = {
+  Get: {
+    [id: string]: RemoteData.RemoteData<Problem, string>
+  }
 }
 
 type Problem = { message: string }
-
-export type Mutation = CreateMutation
-
-export type CreateMutation = RemoteData.RemoteData<Problem, ChatId> & {
-  tag: "Conversation/Create"
-}
-
-export type Query = RemoteData.RemoteData<Problem, ChatId> & {
-  tag: "Converation/Get"
-}
-
-export const CreateId = "Conversation/Create" as const
-
-export const toCreateMutation = (model: Model): CreateMutation => {
-  const fallback: Mutation = {
-    ...RemoteData.NotAsked,
-    tag: "Conversation/Create",
-  }
-
-  const mutation = model.mutations[CreateId] ?? fallback
-
-  if (mutation.tag === "Conversation/Create") {
-    return mutation
-  }
-
-  return fallback
-}
 
 //
 //
@@ -107,79 +87,59 @@ type OutAction = Snackbar.Action
 
 export const update = (
   msg: Msg,
-  model: Model,
-): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
+  model: Store.Model,
+): [Store.Model, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (msg.type) {
     case "Conversation/Created":
-      const modelNew: Model = {
-        ...model,
-        mutations: {
-          ...model.mutations,
-          [CreateId]: {
-            ...pipe(
-              msg.result,
-              RemoteData.fromResult,
-              RemoteData.mapSuccess(
-                (conversation) => conversation.conversation.conversationId,
-              ),
-            ),
-            tag: "Conversation/Create",
-          },
-        },
-      }
+      const { result } = msg
 
-      switch (msg.result.type) {
-        case "Err":
-          return [modelNew, Cmd.none, []]
+      const modelNew = produce(model, (model) => {
+        model.mutations.Conversation.GetElseCreate = pipe(
+          result,
+          RemoteData.fromResult,
+          RemoteData.mapSuccess((value) => value.conversation.conversationId),
+        )
 
-        case "Ok":
-          const { conversation, profilesConversations } = msg.result.value
-          const { conversationId } = conversation
+        switch (result.type) {
+          case "Err":
+            break
 
-          return [
-            {
-              ...modelNew,
-              Conversation: {
-                ...modelNew.Conversation,
-                [conversationId]: conversation,
-              },
-              ProfilesConversations: {
-                ...modelNew.ProfilesConversations,
-                ...profilesConversations.reduce<Model["ProfilesConversations"]>(
-                  (byId, item) => ({
-                    ...byId,
-                    [`${item.conversationId}.${item.userId}`]: item,
-                  }),
-                  {},
-                ),
-              },
-            },
-            Route.replace({
+          case "Ok":
+            const { conversation, profilesConversations } = result.value
+            const { conversationId } = conversation
+            model.Conversation[conversationId] = conversation
+            for (const item of profilesConversations) {
+              const id = [item.conversationId, item.userId].join(",")
+              model.ProfilesConversations[id] = item
+            }
+            break
+        }
+      })
+
+      const cmdNew: Cmd.Cmd<Msg> =
+        result.type === "Ok"
+          ? Route.replace({
               type: "ChatConversation",
-              conversationId: msg.result.value.conversation.conversationId,
-            }),
-            [],
-          ]
-      }
+              conversationId: result.value.conversation.conversationId,
+            })
+          : Cmd.none
+
+      return [modelNew, cmdNew, []]
   }
 }
 
 export const runAction = (
   action: Action,
-  model: Model,
-): [Model, Cmd.Cmd<Msg>] => {
+  model: Store.Model,
+): [Store.Model, Cmd.Cmd<Msg>] => {
   switch (action.type) {
     case "Conversation/Create":
-      const mutationsNew: Model["mutations"] = {
-        ...model.mutations,
-        [CreateId]: {
-          ...RemoteData.Loading,
-          tag: "Conversation/Create",
-        },
-      }
+      const modelNew = produce(model, (model) => {
+        model.mutations.Conversation.GetElseCreate = RemoteData.Loading
+      })
 
       return [
-        { ...model, mutations: mutationsNew },
+        modelNew,
 
         pipe(
           insert({
