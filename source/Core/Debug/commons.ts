@@ -8,10 +8,10 @@ import { takeUntil } from "rxjs/operators"
 import * as Cmd from "../Cmd"
 import * as Option from "../Option"
 import * as Task from "../Task"
+import * as Console from "./console"
+import * as ReduxDevtool from "./redux-devtool"
 import { Dispatch } from "../Platform"
 import { pipe } from "../pipe"
-import { consoleDebugger } from "./console"
-import { getConnection, reduxDevToolDebugger } from "./redux-devtool"
 
 /**
  * @category model
@@ -148,6 +148,8 @@ export function updateWithDebug<Model, Msg>({
   onDebugId: (id: string) => void
 }): (msg: MsgWithDebug<Model, Msg>, model: Model) => [Model, Cmd.Cmd<Msg>] {
   return (msg, model) => {
+    console.log(msg)
+
     if ("type" in msg) {
       switch (msg.type) {
         case "__DebugUpdateModel__":
@@ -170,7 +172,7 @@ export function updateWithDebug<Model, Msg>({
     //
     //
 
-    const debugId = String(Math.floor(Math.random() * 10 ** 12))
+    const debugId = crypto.randomUUID()
 
     // @ts-ignore
     modelNew[DEBUG_ID_KEY] = debugId
@@ -196,14 +198,17 @@ export function runDebugger<Model, Msg>(
   win: Global,
   stop$: Observable<unknown>,
 ): (deps: DebuggerR<Model, Msg>) => Task.Task<void> {
-  return (deps) =>
-    pipe(
-      getConnection<Model, Msg>(win),
+  return (deps) => {
+    return pipe(
+      ReduxDevtool.getConnection<Model, Msg>(win),
       Task.map(
-        Option.fold(() => consoleDebugger<Model, Msg>(), reduxDevToolDebugger),
+        Option.fold(
+          () => Console.makeDebugger<Model, Msg>(),
+          ReduxDevtool.makeDebugger,
+        ),
       ),
-      Task.chain((Debugger) => async () => {
-        const { debug, stop } = Debugger(deps)
+      Task.chain((debugger_) => async () => {
+        const { debug, stop } = debugger_(deps)
 
         deps.debug$.pipe(takeUntil(stop$)).subscribe({
           next: debug,
@@ -211,4 +216,5 @@ export function runDebugger<Model, Msg>(
         })
       }),
     )
+  }
 }
