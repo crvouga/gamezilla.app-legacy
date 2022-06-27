@@ -300,7 +300,7 @@ export const update = (
           ...pipe(
             result,
             RemoteData.fromResult,
-            RemoteData.map((profile) => profile.userId),
+            RemoteData.mapSuccess((profile) => profile.userId),
           ),
           tag: "Profile/Edit",
         },
@@ -513,7 +513,7 @@ const updateGotProfile = (
       ...pipe(
         result,
         RemoteData.fromResult,
-        RemoteData.map((profile) => profile.userId),
+        RemoteData.mapSuccess((profile) => profile.userId),
       ),
     },
   }

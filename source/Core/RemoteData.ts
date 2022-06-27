@@ -30,7 +30,7 @@ export const fromResult = <E, A>(
   return Result.fold<E, A, RemoteData<E, A>>(Failure, Success)(result)
 }
 
-export const map =
+export const mapSuccess =
   <E, A, B>(mapper: (a: A) => B) =>
   (remoteData: RemoteData<E, A>): RemoteData<E, B> => {
     switch (remoteData.type) {
