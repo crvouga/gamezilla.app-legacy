@@ -18,7 +18,7 @@ export const makeDebugger = <Model, Msg>(): Debugger<Model, Msg> => {
       debug: (data) => {
         const [action, model] = data
 
-        console.group("%cELM-TS", "background-color: green; color: black")
+        console.group("%cLOG", "background-color: green; color: black")
 
         // --- Action
         if (action.type === "INIT") {
@@ -41,7 +41,7 @@ export const makeDebugger = <Model, Msg>(): Debugger<Model, Msg> => {
       },
 
       stop: () => {
-        console.group("%cELM-TS", "background-color: green; color: black")
+        console.group("%cLOG", "background-color: green; color: black")
         console.log("--- stop debugger ---")
         console.groupEnd()
       },
