@@ -1,9 +1,9 @@
-import * as MuiIcons from "@mui/icons-material"
 import * as MuiLab from "@mui/lab"
 import * as Mui from "@mui/material"
 import { blue } from "@mui/material/colors"
 import { Html, Platform } from "Core"
 import { useMemo } from "react"
+import * as Icons from "./Icons"
 
 //
 //
@@ -164,8 +164,6 @@ export const ThemeModeToggleButtons = ({
 //
 //
 //
-
-export const Icons = MuiIcons
 
 export const TextField = Mui.TextField
 
