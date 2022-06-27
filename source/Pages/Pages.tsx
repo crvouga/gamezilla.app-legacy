@@ -559,7 +559,10 @@ export const viewReady = (
       return tagView("Logout", Logout.view(model))
 
     case "ProfileDelete":
-      return tagView("ProfileDelete", ProfileDelete.view(model))
+      return tagView(
+        "ProfileDelete",
+        ProfileDelete.view({ store, profileId: profile.userId }, model),
+      )
 
     case "ProfileUpdate":
       return tagView("ProfileUpdate", ProfileUpdate.view(profile, model))

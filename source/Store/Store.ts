@@ -72,7 +72,7 @@ export type Action = Profile.Msg | Conversation.Action
 //
 //
 
-type OutAction = Snackbar.Action
+type OutAction = Snackbar.Action | Profile.Action
 
 export const update = (
   msg: Msg,

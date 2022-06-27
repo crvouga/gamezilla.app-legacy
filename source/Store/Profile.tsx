@@ -1,7 +1,8 @@
 import * as Snackbar from "Snackbar"
 import * as Rx from "rxjs"
-import { Cmd, RemoteData, Result, Task, pipe } from "Core"
+import { Cmd, Option, RemoteData, Result, Task, pipe } from "Core"
 import { exhaustive } from "Utility"
+import produce from "immer"
 import { matchSorter } from "match-sorter"
 import * as Supabase from "../Supabase"
 import * as Store from "./Store"
@@ -27,6 +28,30 @@ export type Profile = {
 }
 
 export type ThemeMode = "Light" | "Dark" | "System"
+
+export type Queries = {
+  Edit: {
+    [userId: string]: RemoteData.RemoteData<Problem, string>
+  }
+  DeleteForever: {
+    [userId: string]: RemoteData.RemoteData<Problem, string>
+  }
+  Create: {
+    [userId: string]: RemoteData.RemoteData<Problem, string>
+  }
+}
+
+export type Mutations = {
+  Edit: {
+    [userId: string]: RemoteData.RemoteData<Problem, string>
+  }
+  DeleteForever: {
+    [userId: string]: RemoteData.RemoteData<Problem, string>
+  }
+  Create: {
+    [userId: string]: RemoteData.RemoteData<Problem, string>
+  }
+}
 
 export type Mutation =
   | (RemoteData.RemoteData<Problem, string> & { tag: "Profile/DeleteForever" })
@@ -125,7 +150,7 @@ export type DeleteForever = ReturnType<typeof DeleteForever>
 export const DeletedForever = (
   userId: string,
   previous: Profile,
-  result: Result.Result<Problem, {}>,
+  result: Result.Result<Problem, string>,
 ) => {
   return {
     group: "Store",
@@ -234,6 +259,8 @@ export type Msg =
   | Searched
   | Received
 
+export type Action = Search | Get | DeleteForever | Edit
+
 //
 //
 //
@@ -242,12 +269,12 @@ export type Msg =
 //
 //
 
-type Action = Snackbar.Action
+type OutAction = Snackbar.Action | Action
 
 export const update = (
   msg: Msg,
   model: Model,
-): [Model, Cmd.Cmd<Msg>, Action[]] => {
+): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (msg.type) {
     case "Profile/Received":
       const ProfileNew = {
@@ -266,22 +293,17 @@ export const update = (
       if (query.type !== "Success") {
         return [model, Cmd.none, []]
       }
-      const mutationId = toEditId(userId)
-      const mutationsNew: Model["mutations"] = {
-        ...model.mutations,
-        [mutationId]: {
-          tag: "Profile/Edit",
-          ...RemoteData.Loading,
-        },
-      }
 
-      const ProfileNew = {
-        ...model.Profile,
-        [userId]: { ...query.value, ...edits },
-      }
+      const modelNew = produce(model, (model) => {
+        model.mutations[toEditId(userId)] = {
+          ...RemoteData.Loading,
+          tag: "Profile/Edit",
+        }
+        model.Profile[userId] = { ...query.value, ...edits }
+      })
 
       return [
-        { ...model, Profile: ProfileNew, mutations: mutationsNew },
+        modelNew,
         pipe(
           edit(msg.userId, msg.edits),
           Cmd.fromTask((result) => Edited(msg.userId, query.value, result)),
@@ -375,14 +397,24 @@ export const update = (
       const query = toGetQuery(msg.userId, model)
 
       if (query.type !== "Success") {
-        return [model, Cmd.none, []]
+        return [
+          model,
+          Cmd.none,
+          [
+            Snackbar.EnqueueSnackbar(
+              "Error",
+              "Must get profile before deleting",
+            ),
+          ],
+        ]
       }
 
-      const modelNew = updateGotProfile(
-        msg.userId,
-        Result.Err({ message: "Profile was deleted" }),
-        model,
-      )
+      const modelNew = produce(model, (model) => {
+        model.mutations[toDeleteId(msg.userId)] = {
+          tag: "Profile/DeleteForever" as const,
+          ...RemoteData.Loading,
+        }
+      })
 
       return [
         modelNew,
@@ -399,14 +431,37 @@ export const update = (
     case "Profile/DeletedForever": {
       const { result, userId, previous } = msg
 
+      const mutationsNew: Model["mutations"] = {
+        ...model.mutations,
+        [toDeleteId(msg.userId)]: {
+          tag: "Profile/DeleteForever" as const,
+          ...pipe(msg.result, RemoteData.fromResult),
+        },
+      }
+
       switch (result.type) {
         case "Err": {
-          const ProfileNew = { ...model.Profile, [userId]: previous }
-          return [{ ...model, Profile: ProfileNew }, Cmd.none, []]
+          const modelNew = {
+            ...model,
+            Profile: { ...model.Profile, [userId]: previous },
+            mutations: mutationsNew,
+          }
+          return [
+            modelNew,
+            Cmd.none,
+            [
+              Snackbar.EnqueueSnackbar("Error", result.error.message),
+              Get(userId),
+            ],
+          ]
         }
 
         case "Ok": {
-          return [model, Cmd.none, []]
+          const modelNew = {
+            ...model,
+            mutations: mutationsNew,
+          }
+          return [modelNew, Cmd.none, [Get(userId)]]
         }
       }
     }
@@ -549,6 +604,30 @@ const updateGotProfile = (
 //
 //
 //
+
+export const select = (
+  userId: string,
+  model: Model,
+): Option.Option<Profile> => {
+  return Option.fromNullable(model.Profile[userId])
+}
+
+export const toDeleteForeverMutation = (
+  userId: string,
+  model: Model,
+): RemoteData.RemoteData<Problem, string> => {
+  const mutation = model.mutations[toDeleteId(userId)]
+
+  if (!mutation) {
+    return RemoteData.NotAsked
+  }
+
+  if (mutation.tag !== "Profile/DeleteForever") {
+    return RemoteData.NotAsked
+  }
+
+  return mutation
+}
 
 export const toGetQuery = (
   userId: string,
@@ -708,7 +787,7 @@ export const create =
   }
 
 export const deleteForever =
-  (userId: string): Task.Task<Result.Result<Problem, {}>> =>
+  (userId: string): Task.Task<Result.Result<Problem, string>> =>
   async () => {
     const response = await Supabase.client
       .from<definitions["profile"]>("profile")
@@ -719,7 +798,7 @@ export const deleteForever =
       return Result.Err({ message: response.error.message })
     }
 
-    return Result.Ok({})
+    return Result.Ok(userId)
   }
 
 export const search =
