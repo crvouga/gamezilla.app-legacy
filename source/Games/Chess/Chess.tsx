@@ -27,7 +27,7 @@ export type Msg = { type: "UserClickedBackButton" }
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "UserClickedBackButton":
-      return [model, Route.back()]
+      return [model, Route.back]
   }
 }
 //

@@ -38,10 +38,10 @@ export const update = (
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (msg.type) {
     case "UserClickedCancelButton":
-      return [model, Route.back(), []]
+      return [model, Route.back, []]
 
     case "UserClickedBackdrop":
-      return [model, Route.back(), []]
+      return [model, Route.back, []]
 
     case "UserClickedDeleteButton":
       return [model, Cmd.None, [Store.Profile.DeleteForever(userId)]]

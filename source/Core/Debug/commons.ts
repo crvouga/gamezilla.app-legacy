@@ -167,16 +167,6 @@ export function updateWithDebug<Model, Msg>({
 
     const debugId = debugIdGen.next().value
 
-    console.log(
-      "updateWithDebug",
-      debugId,
-      " ",
-      "type" in msg
-        ? // @ts-ignore
-          msg["type"]
-        : msg,
-    )
-
     // @ts-ignore
     modelNew[DEBUG_ID_KEY] = debugId
 
@@ -209,12 +199,10 @@ export const subscriptionsWithDebug =
     const latestDebugId = debugId$.getValue()
 
     if (latestDebugId === debugId) {
-      console.log("subs listening", { debugId, latestDebugId })
-
       return subscriptions(model)
     }
 
-    console.log("sub ignoring", { debugId, latestDebugId })
+    console.log("Ignoring subscriptions...")
 
     return Sub.None
   }

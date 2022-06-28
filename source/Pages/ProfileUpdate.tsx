@@ -54,7 +54,7 @@ export const update = (
       ]
 
     case "UserClickedBackButton":
-      return [model, Route.back()]
+      return [model, Route.back]
 
     case "UserClickedNameLink":
       return [model, Route.push({ type: "ProfileUpdateName" })]

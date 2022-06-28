@@ -177,7 +177,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
       }
 
     case "UserClickedBackButton":
-      return [model, Route.back()]
+      return [model, Route.back]
 
     case "UserMouseUpBoard":
       return [{ ...model, mouseStatus: "inactive" }, Cmd.None]

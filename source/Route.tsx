@@ -89,16 +89,14 @@ export const encode = (route: Route): string => {
 //
 //
 
-export const push = <TMsg,>(route: Route) => {
-  return Navigation.push<TMsg>(encode(route))
+export const push = (route: Route) => {
+  return Navigation.push(encode(route))
 }
 
-export const back = <TMsg,>() => {
-  return Navigation.back<TMsg>()
-}
+export const back = Navigation.back
 
-export const replace = <TMsg,>(route: Route) => {
-  return Navigation.replace<TMsg>(encode(route))
+export const replace = (route: Route) => {
+  return Navigation.replace(encode(route))
 }
 
 //

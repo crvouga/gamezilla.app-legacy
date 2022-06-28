@@ -42,7 +42,7 @@ export const update = (
 ): [Model, Cmd.Cmd<Msg>, OutMsg[]] => {
   switch (msg.type) {
     case "UserClickedBackButton":
-      return [model, Route.back(), []]
+      return [model, Route.back, []]
 
     case "UserClickedThemeModeOption":
       return [

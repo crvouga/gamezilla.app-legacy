@@ -44,12 +44,12 @@ export const update = (
       return [{ ...model, username: msg.username }, Cmd.None, []]
 
     case "UserClickedCancelButton":
-      return [model, Route.back(), []]
+      return [model, Route.back, []]
 
     case "UserClickedSubmitButton":
       return [
         model,
-        Route.back(),
+        Route.back,
         [Store.Profile.Edit(userId, { username: model.username })],
       ]
   }
