@@ -39,7 +39,7 @@ export const update = (
       return [model, Route.push({ type: "Account" }), []]
 
     case "UserClickedGame":
-      return [model, Cmd.none, [Games.OpenGame(msg.game)]]
+      return [model, Cmd.None, [Games.OpenGame(msg.game)]]
 
     case "UserClickedChatButton":
       return [model, Route.push({ type: "Chat" }), []]

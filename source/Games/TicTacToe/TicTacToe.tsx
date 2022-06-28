@@ -43,7 +43,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
           ...model,
           board: Board.emptyBoard,
         },
-        Cmd.none,
+        Cmd.None,
       ]
 
     case "UserClickedBoard":
@@ -56,7 +56,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
             msg.position,
           ),
         },
-        Cmd.none,
+        Cmd.None,
       ]
   }
 }

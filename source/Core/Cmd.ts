@@ -1,63 +1,26 @@
-/**
- * Defines `Cmd`s as streams of asynchronous operations which can not fail and that can optionally carry a message.
- *
- * See the [Platform.Cmd](https://package.elm-lang.org/packages/elm/core/latest/Platform-Cmd) Elm package.
- *
- * @since 0.5.0
- */
 import * as Rx from "rxjs"
 import * as Option from "./Option"
 import * as Task from "./Task"
 import { pipe } from "./pipe"
 
-/**
- * @category model
- * @since 0.5.0
- */
-export interface Cmd<Msg>
-  extends Rx.Observable<Task.Task<Option.Option<Msg>>> {}
+export type Cmd<Msg> = Rx.Observable<Task.Task<Option.Option<Msg>>>
 
-/**
- * Creates a new `Cmd` that carries the provided `Msg`.
- * @category Applicative
- * @since 0.5.0
- */
-export function of<Msg>(m: Msg): Cmd<Msg> {
+export const of = <Msg>(m: Msg): Cmd<Msg> => {
   return Rx.of(Task.of(Option.Some(m)))
 }
 
-/**
- * Maps the carried `Msg` of a `Cmd` into another `Msg`.
- * @category Functor
- * @since 0.5.0
- */
 export const map =
   <A, B>(mapper: (a: A) => B) =>
   (Cmd: Cmd<A>) => {
     return Cmd.pipe(Rx.map(Task.map(Option.map(mapper))))
   }
 
-/**
- * Batches the execution of a list of commands.
- * @category utils
- * @since 0.5.0
- */
-export function batch<Msg>(arr: Array<Cmd<Msg>>): Cmd<Msg> {
-  return Rx.merge(...arr)
+export const batch = <Msg>(cmds: Cmd<Msg>[]): Cmd<Msg> => {
+  return Rx.merge(...cmds)
 }
 
-/**
- * A `none` command is an empty stream.
- * @category constructors
- * @since 0.5.0
- */
-export const none: Cmd<never> = Rx.EMPTY
+export const None: Cmd<never> = Rx.EMPTY
 
-/**
- * Executes a `Task` as a `Cmd` mapping the result to a `Msg`.
- * @category utils
- * @since 0.5.0
- */
 export const fromTask =
   <A, Msg>(f: (a: A) => Msg) =>
   (task: Task.Task<A>): Cmd<Msg> => {

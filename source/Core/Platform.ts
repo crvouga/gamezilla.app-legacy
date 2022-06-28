@@ -43,7 +43,7 @@ export interface Program<Model, Msg> {
 export function Program<Model, Msg>(
   init: [Model, Cmd.Cmd<Msg>],
   update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>],
-  subscriptions: (model: Model) => Sub.Sub<Msg> = () => Sub.none,
+  subscriptions: (model: Model) => Sub.Sub<Msg> = () => Sub.None,
 ): Program<Model, Msg> {
   const state$ = new Rx.BehaviorSubject(init)
   const dispatch: Dispatch<Msg> = (msg) =>
@@ -74,7 +74,7 @@ export function Program<Model, Msg>(
 export function ProgramWithFlags<Flags, Model, Msg>(
   init: (flags: Flags) => [Model, Cmd.Cmd<Msg>],
   update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>],
-  subscriptions: (model: Model) => Sub.Sub<Msg> = () => Sub.none,
+  subscriptions: (model: Model) => Sub.Sub<Msg> = () => Sub.None,
 ): (flags: Flags) => Program<Model, Msg> {
   return (flags) => Program(init(flags), update, subscriptions)
 }

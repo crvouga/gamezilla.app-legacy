@@ -39,15 +39,15 @@ export const update = (
     case "UserClickedLoginButton":
       return [
         { type: "LoggingIn", loginMethod: msg.loginMethod },
-        Cmd.none,
+        Cmd.None,
         [Session.Login(msg.loginMethod)],
       ]
 
     case "LoginFailed":
-      return [{ type: "Idle" }, Cmd.none, []]
+      return [{ type: "Idle" }, Cmd.None, []]
 
     case "LoginSucceeded":
-      return [model, Cmd.none, []]
+      return [model, Cmd.None, []]
   }
 }
 

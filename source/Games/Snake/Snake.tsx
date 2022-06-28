@@ -116,12 +116,12 @@ const circular = (
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "UserClickedRestartButton":
-      return [init, Cmd.none]
+      return [init, Cmd.None]
 
     case "Elapsed":
       switch (model.status.type) {
         case "Paused":
-          return [model, Cmd.none]
+          return [model, Cmd.None]
 
         case "Playing":
           const tailNew = [model.head]
@@ -172,7 +172,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
               directionQueue: directionQueueNew,
               direction: directionNew,
             },
-            Cmd.none,
+            Cmd.None,
           ]
       }
 
@@ -180,10 +180,10 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
       return [model, Route.back()]
 
     case "UserMouseUpBoard":
-      return [{ ...model, mouseStatus: "inactive" }, Cmd.none]
+      return [{ ...model, mouseStatus: "inactive" }, Cmd.None]
 
     case "UserMouseDownBoard":
-      return [{ ...model, mouseStatus: "active" }, Cmd.none]
+      return [{ ...model, mouseStatus: "active" }, Cmd.None]
 
     case "UserPressedKeyDown":
       const statusNew: Status =
@@ -200,30 +200,30 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
           ...model,
           status: statusNew,
         }),
-        Cmd.none,
+        Cmd.None,
       ]
 
     case "UserClickedToggleButton":
       switch (model.status.type) {
         case "Paused":
-          return [{ ...model, status: { type: "Playing" } }, Cmd.none]
+          return [{ ...model, status: { type: "Playing" } }, Cmd.None]
 
         case "Playing":
-          return [{ ...model, status: { type: "Paused" } }, Cmd.none]
+          return [{ ...model, status: { type: "Paused" } }, Cmd.None]
       }
 
     case "AudioFailed":
-      return [model, Cmd.none]
+      return [model, Cmd.None]
 
     case "AudioSucceeded":
-      return [model, Cmd.none]
+      return [model, Cmd.None]
 
     case "UserMouseMovedBoard":
     case "UserTouchMovedBoard":
       const previous = model.touched
 
       if (!previous) {
-        return [{ ...model, touched: msg.position }, Cmd.none]
+        return [{ ...model, touched: msg.position }, Cmd.None]
       }
 
       const touchedNew = msg.position
@@ -233,7 +233,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
       const maxDeltaMagnitude = Math.max(Math.abs(delta.x), Math.abs(delta.y))
 
       if (maxDeltaMagnitude < 4) {
-        return [{ ...model, touched: touchedNew }, Cmd.none]
+        return [{ ...model, touched: touchedNew }, Cmd.None]
       }
 
       const xDirection = delta.x > 0 ? "left" : "right"
@@ -248,7 +248,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
           ...model,
           touched: touchedNew,
         }),
-        Cmd.none,
+        Cmd.None,
       ]
   }
 }

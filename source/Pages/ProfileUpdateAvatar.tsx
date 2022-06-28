@@ -61,13 +61,13 @@ export const update = (
       return [model, Route.back(), []]
 
     case "StyleSelectClosed":
-      return [{ ...model, status: "Idle" }, Cmd.none, []]
+      return [{ ...model, status: "Idle" }, Cmd.None, []]
 
     case "StyleSelectOpened":
-      return [{ ...model, status: "StyleSelectOpened" }, Cmd.none, []]
+      return [{ ...model, status: "StyleSelectOpened" }, Cmd.None, []]
 
     case "UserEnteredSeed":
-      return [{ ...model, seed: msg.seed }, Cmd.none, []]
+      return [{ ...model, seed: msg.seed }, Cmd.None, []]
 
     case "UserClickedRandomSeedButton":
       return [
@@ -83,10 +83,10 @@ export const update = (
       ]
 
     case "RandomSeedGenerated":
-      return [{ ...model, status: "Idle", seed: msg.seed }, Cmd.none, []]
+      return [{ ...model, status: "Idle", seed: msg.seed }, Cmd.None, []]
 
     case "UserSelectedStyle":
-      return [{ ...model, style: msg.style }, Cmd.none, []]
+      return [{ ...model, style: msg.style }, Cmd.None, []]
 
     case "UserClickedDoneButton":
       return [

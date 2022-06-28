@@ -47,7 +47,7 @@ export const update = (
     case "UserClickedThemeModeOption":
       return [
         model,
-        Cmd.none,
+        Cmd.None,
         [Store.Profile.Edit(userId, { themeMode: msg.themeMode })],
       ]
   }

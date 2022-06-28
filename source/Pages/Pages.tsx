@@ -58,7 +58,7 @@ export type Model =
 //
 
 export const initLoading = (): [Model, Cmd.Cmd<Msg>] => {
-  return [{ page: "Loading" }, Cmd.none]
+  return [{ page: "Loading" }, Cmd.None]
 }
 
 export const initReady = (
@@ -67,10 +67,10 @@ export const initReady = (
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (route.type) {
     case "Account":
-      return [{ ...Account.init, page: "Account" }, Cmd.none, []]
+      return [{ ...Account.init, page: "Account" }, Cmd.None, []]
 
     case "Chat":
-      return [{ ...Chat.init, page: "Chat" }, Cmd.none, []]
+      return [{ ...Chat.init, page: "Chat" }, Cmd.None, []]
 
     case "ChatNew":
       const [chatNew, chatNewCmd, actions] = ChatNew.init()
@@ -87,18 +87,18 @@ export const initReady = (
     case "ChatConversation":
       return [
         { ...ChatConversation.init, page: "ChatConversation" },
-        Cmd.none,
+        Cmd.None,
         [],
       ]
 
     case "Game":
-      return [{ page: "Game" }, Cmd.none, []]
+      return [{ page: "Game" }, Cmd.None, []]
 
     case "Home":
-      return [{ ...Home.init, page: "Home" }, Cmd.none, []]
+      return [{ ...Home.init, page: "Home" }, Cmd.None, []]
 
     case "Logout":
-      return [{ ...Logout.init, page: "Logout" }, Cmd.none, []]
+      return [{ ...Logout.init, page: "Logout" }, Cmd.None, []]
 
     case "ProfileDelete": {
       const [modelNew, cmdNew, actions] = ProfileDelete.init
@@ -113,7 +113,7 @@ export const initReady = (
     }
 
     case "ProfileUpdate":
-      return [{ ...ProfileUpdate.init, page: "ProfileUpdate" }, Cmd.none, []]
+      return [{ ...ProfileUpdate.init, page: "ProfileUpdate" }, Cmd.None, []]
 
     case "ProfileUpdateAvatar":
       return [
@@ -121,7 +121,7 @@ export const initReady = (
           ...ProfileUpdateAvatar.init(profile),
           page: "ProfileUpdateAvatar",
         },
-        Cmd.none,
+        Cmd.None,
         [],
       ]
 
@@ -131,7 +131,7 @@ export const initReady = (
           ...ProfileUpdateName.init(profile),
           page: "ProfileUpdateName",
         },
-        Cmd.none,
+        Cmd.None,
         [],
       ]
 
@@ -141,7 +141,7 @@ export const initReady = (
           ...ProfileUpdateUsername.init(profile),
           page: "ProfileUpdateUsername",
         },
-        Cmd.none,
+        Cmd.None,
         [],
       ]
 
@@ -151,7 +151,7 @@ export const initReady = (
           ...ProfileUpdateTheme.init,
           page: "ProfileUpdateTheme",
         },
-        Cmd.none,
+        Cmd.None,
         [],
       ]
 
@@ -169,7 +169,7 @@ export const initSessionMissing = (
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (route.type) {
     case "Login":
-      return [{ ...Login.init, page: "Login" }, Cmd.none]
+      return [{ ...Login.init, page: "Login" }, Cmd.None]
 
     case "Account":
     case "Chat":
@@ -200,11 +200,11 @@ export const initProfileMissing = (
     case "ProfileCreate":
       return [
         { ...ProfileCreate.init(session), page: "ProfileCreate" },
-        Cmd.none,
+        Cmd.None,
       ]
 
     case "Logout":
-      return [{ ...Logout.init, page: "Logout" }, Cmd.none]
+      return [{ ...Logout.init, page: "Logout" }, Cmd.None]
 
     case "Login":
     case "Account":
@@ -280,19 +280,19 @@ export const updateReady = (
       if (msg.page === "Account") {
         return tagUpdate("Account", Account.update(profile, msg, model))
       }
-      return [model, Cmd.none, []]
+      return [model, Cmd.None, []]
 
     case "Home":
       if (msg.page === "Home") {
         return tagUpdate("Home", Home.update(msg, model))
       }
-      return [model, Cmd.none, []]
+      return [model, Cmd.None, []]
 
     case "Logout":
       if (msg.page === "Logout") {
         return tagUpdate("Logout", Logout.update(profile, msg, model))
       }
-      return [model, Cmd.none, []]
+      return [model, Cmd.None, []]
 
     case "ProfileDelete":
       if (msg.page === "ProfileDelete") {
@@ -301,7 +301,7 @@ export const updateReady = (
           ProfileDelete.update(profile, msg, model),
         )
       }
-      return [model, Cmd.none, []]
+      return [model, Cmd.None, []]
 
     case "ProfileUpdate":
       if (msg.page === "ProfileUpdate") {
@@ -310,7 +310,7 @@ export const updateReady = (
           ProfileUpdate.update(profile, msg, model),
         )
       }
-      return [model, Cmd.none, []]
+      return [model, Cmd.None, []]
 
     case "ProfileUpdateAvatar":
       if (msg.page === "ProfileUpdateAvatar") {
@@ -319,7 +319,7 @@ export const updateReady = (
           ProfileUpdateAvatar.update(profile, msg, model),
         )
       }
-      return [model, Cmd.none, []]
+      return [model, Cmd.None, []]
 
     case "ProfileUpdateName":
       if (msg.page === "ProfileUpdateName") {
@@ -328,7 +328,7 @@ export const updateReady = (
           ProfileUpdateName.update(profile, msg, model),
         )
       }
-      return [model, Cmd.none, []]
+      return [model, Cmd.None, []]
 
     case "ProfileUpdateUsername":
       if (msg.page === "ProfileUpdateUsername") {
@@ -337,13 +337,13 @@ export const updateReady = (
           ProfileUpdateUsername.update(profile, msg, model),
         )
       }
-      return [model, Cmd.none, []]
+      return [model, Cmd.None, []]
 
     case "Chat":
       if (msg.page === "Chat") {
         return tagUpdate("Chat", Chat.update(msg, model))
       }
-      return [model, Cmd.none, []]
+      return [model, Cmd.None, []]
 
     case "ChatNew":
       if (msg.page === "ChatNew") {
@@ -352,7 +352,7 @@ export const updateReady = (
           ChatNew.update({ store, authUserId: profile.userId }, msg, model),
         )
       }
-      return [model, Cmd.none, []]
+      return [model, Cmd.None, []]
 
     case "ChatConversation":
       if (msg.page === "ChatConversation") {
@@ -361,7 +361,7 @@ export const updateReady = (
           ChatConversation.update(msg, model),
         )
       }
-      return [model, Cmd.none, []]
+      return [model, Cmd.None, []]
 
     case "ProfileUpdateTheme":
       if (msg.page === "ProfileUpdateTheme") {
@@ -370,10 +370,10 @@ export const updateReady = (
           ProfileUpdateTheme.update(profile, msg, model),
         )
       }
-      return [model, Cmd.none, []]
+      return [model, Cmd.None, []]
 
     case "Game":
-      return [model, Cmd.none, []]
+      return [model, Cmd.None, []]
 
     case "Login":
     case "Loading":
@@ -398,7 +398,7 @@ export const updateProfileMissing = (
           Logout.update({ name: session.defaultName }, msg, model),
         )
       }
-      return [model, Cmd.none, []]
+      return [model, Cmd.None, []]
 
     case "ProfileCreate":
       if (msg.page === "ProfileCreate") {
@@ -407,7 +407,7 @@ export const updateProfileMissing = (
           ProfileCreate.update(session, msg, model),
         )
       }
-      return [model, Cmd.none, []]
+      return [model, Cmd.None, []]
 
     case "Home":
     case "Account":
@@ -439,7 +439,7 @@ export const updateSessionMissing = (
       if (msg.page === "Login") {
         return tagUpdate("Login", Login.update(msg, model))
       }
-      return [model, Cmd.none, []]
+      return [model, Cmd.None, []]
 
     case "ProfileCreate":
     case "Home":
@@ -474,10 +474,10 @@ export const updateSessionMissing = (
 export const subscriptions = (model: Model): Sub.Sub<Msg> => {
   switch (model.page) {
     case "Account":
-      return Sub.none
+      return Sub.None
 
     case "Chat":
-      return Sub.none
+      return Sub.None
 
     case "ChatNew":
       return pipe(
@@ -486,43 +486,43 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
       )
 
     case "ChatConversation":
-      return Sub.none
+      return Sub.None
 
     case "Game":
-      return Sub.none
+      return Sub.None
 
     case "Home":
-      return Sub.none
+      return Sub.None
 
     case "Login":
-      return Sub.none
+      return Sub.None
 
     case "Logout":
-      return Sub.none
+      return Sub.None
 
     case "ProfileCreate":
-      return Sub.none
+      return Sub.None
 
     case "ProfileDelete":
-      return Sub.none
+      return Sub.None
 
     case "ProfileUpdate":
-      return Sub.none
+      return Sub.None
 
     case "ProfileUpdateAvatar":
-      return Sub.none
+      return Sub.None
 
     case "ProfileUpdateTheme":
-      return Sub.none
+      return Sub.None
 
     case "ProfileUpdateUsername":
-      return Sub.none
+      return Sub.None
 
     case "ProfileUpdateName":
-      return Sub.none
+      return Sub.None
 
     case "Loading":
-      return Sub.none
+      return Sub.None
 
     default:
       return exhaustive(model)

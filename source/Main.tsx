@@ -156,7 +156,7 @@ type Action = Snackbar.Action | Store.Action | Games.Action | Session.Action
 
 const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   return pipe(
-    [model, Cmd.none],
+    [model, Cmd.None],
     andThen(updateMain, msg),
     andThen(updateStatusChanged(model), msg),
   )
@@ -204,10 +204,10 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
       switch (status.type) {
         case "SessionLoading":
-          return [model, Cmd.none]
+          return [model, Cmd.None]
 
         case "ProfileLoading":
-          return [model, Cmd.none]
+          return [model, Cmd.None]
 
         case "SessionMissing": {
           const [pageNew, pageCmd, actions] = Pages.updateSessionMissing(
@@ -270,7 +270,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
       switch (status.type) {
         case "ProfileLoading":
-          return [modelNew, Cmd.none]
+          return [modelNew, Cmd.None]
 
         case "ProfileMissing": {
           const [page, pageCmd] = Pages.initProfileMissing(
@@ -296,7 +296,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
         }
 
         case "SessionLoading":
-          return [modelNew, Cmd.none]
+          return [modelNew, Cmd.None]
 
         case "SessionMissing": {
           const [page, pageCmd] = Pages.initSessionMissing(route)
@@ -321,13 +321,13 @@ const updateStatusChanged =
     const statusNew = toStatus(model)
 
     if (statusNew.type === statusPrev.type) {
-      return [model, Cmd.none]
+      return [model, Cmd.None]
     }
 
     switch (statusNew.type) {
       case "ProfileLoading":
         const actions = [Store.Profile.Get(statusNew.session.userId)]
-        return pipe([model, Cmd.none], andThenMany(runAction, actions))
+        return pipe([model, Cmd.None], andThenMany(runAction, actions))
 
       case "ProfileMissing": {
         const [page, pageCmd] = Pages.initProfileMissing(
@@ -339,7 +339,7 @@ const updateStatusChanged =
       }
 
       case "SessionLoading":
-        return [model, Cmd.none]
+        return [model, Cmd.None]
 
       case "SessionMissing": {
         const [page, pageCmd] = Pages.initSessionMissing(model.route)

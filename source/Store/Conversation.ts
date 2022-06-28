@@ -122,7 +122,7 @@ export const update = (
               type: "ChatConversation",
               conversationId: result.value.conversation.conversationId,
             })
-          : Cmd.none
+          : Cmd.None
 
       return [modelNew, cmdNew, []]
   }

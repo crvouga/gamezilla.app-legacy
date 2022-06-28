@@ -156,10 +156,10 @@ export function updateWithDebug<Model, Msg>({
     if ("type" in msg) {
       switch (msg.type) {
         case "__DebugUpdateModel__":
-          return [msg.payload, Cmd.none]
+          return [msg.payload, Cmd.None]
 
         case "__DebugApplyMsg__":
-          return [update(msg.payload, model)[0], Cmd.none]
+          return [update(msg.payload, model)[0], Cmd.None]
       }
     }
 
@@ -216,7 +216,7 @@ export const subscriptionsWithDebug =
 
     console.log("sub ignoring", { debugId, latestDebugId })
 
-    return Sub.none
+    return Sub.None
   }
 
 /**

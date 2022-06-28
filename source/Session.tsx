@@ -101,22 +101,22 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
     case "GotSession":
       switch (msg.session.type) {
         case "None":
-          return [{ type: "LoggedOut" }, Cmd.none]
+          return [{ type: "LoggedOut" }, Cmd.None]
 
         case "Some":
-          return [{ type: "LoggedIn", ...msg.session.value }, Cmd.none]
+          return [{ type: "LoggedIn", ...msg.session.value }, Cmd.None]
       }
 
     case "LoginResulted":
-      return [model, Cmd.none]
+      return [model, Cmd.None]
 
     case "LogoutResulted":
       switch (msg.result.type) {
         case "Err":
-          return [model, Cmd.none]
+          return [model, Cmd.None]
 
         case "Ok":
-          return [{ type: "LoggedOut" }, Cmd.none]
+          return [{ type: "LoggedOut" }, Cmd.None]
       }
   }
 }

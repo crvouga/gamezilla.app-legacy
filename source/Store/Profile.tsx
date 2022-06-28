@@ -267,14 +267,14 @@ export const update = (
           ...msg.profile,
         },
       }
-      return [{ ...model, Profile: ProfileNew }, Cmd.none, []]
+      return [{ ...model, Profile: ProfileNew }, Cmd.None, []]
 
     case "Profile/Edit": {
       const { userId, edits } = msg
       const query = toGetQuery(userId, model)
 
       if (query.type !== "Success") {
-        return [model, Cmd.none, []]
+        return [model, Cmd.None, []]
       }
 
       const modelNew = produce(model, (model) => {
@@ -313,7 +313,7 @@ export const update = (
         }
       })
 
-      return [modeNew, Cmd.none, []]
+      return [modeNew, Cmd.None, []]
     }
 
     case "Profile/Get": {
@@ -351,7 +351,7 @@ export const update = (
             break
         }
       })
-      return [modelNew, Cmd.none, []]
+      return [modelNew, Cmd.None, []]
     }
 
     case "Profile/DeleteForever": {
@@ -379,7 +379,7 @@ export const update = (
         }
       })
 
-      return [modelNew, Cmd.none, [Get(msg.userId)]]
+      return [modelNew, Cmd.None, [Get(msg.userId)]]
     }
 
     case "Profile/Create": {
@@ -421,7 +421,7 @@ export const update = (
         }
       })
 
-      return [modelNew, Cmd.none, [Get(msg.userId)]]
+      return [modelNew, Cmd.None, [Get(msg.userId)]]
     }
 
     case "Profile/Search": {
@@ -465,7 +465,7 @@ export const update = (
         }
       })
 
-      return [modelNew, Cmd.none, []]
+      return [modelNew, Cmd.None, []]
     }
 
     case "Profile/ResetMutations": {
@@ -477,7 +477,7 @@ export const update = (
         }
       })
 
-      return [modelNew, Cmd.none, []]
+      return [modelNew, Cmd.None, []]
     }
 
     default:
