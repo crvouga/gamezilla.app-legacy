@@ -354,10 +354,10 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
         msg.columnIndex,
         toTurn(model.columns),
       )
-      return [{ ...model, columns: columnsNew }, Cmd.none]
+      return [{ ...model, columns: columnsNew }, Cmd.None]
 
     case "UserClickedRestartButton":
-      return [{ ...model, columns: emptyColumns }, Cmd.none]
+      return [{ ...model, columns: emptyColumns }, Cmd.None]
   }
 }
 

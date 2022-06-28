@@ -42,7 +42,7 @@ export type Msg = Games.GroupedMsg
 //
 
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
-  return [model, Cmd.none]
+  return [model, Cmd.None]
 }
 
 //

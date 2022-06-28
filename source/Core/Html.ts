@@ -66,7 +66,7 @@ export function Program<Model, Msg, Dom>(
   init: [Model, Cmd.Cmd<Msg>],
   update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>],
   view: (model: Model) => Html<Dom, Msg>,
-  subscriptions: (model: Model) => Sub.Sub<Msg> = () => Sub.none,
+  subscriptions: (model: Model) => Sub.Sub<Msg> = () => Sub.None,
 ): Program<Model, Msg, Dom> {
   const { dispatch, cmd$, sub$, model$ } = Platform.Program(
     init,

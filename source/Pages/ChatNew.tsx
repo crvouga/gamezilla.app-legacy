@@ -34,7 +34,7 @@ export const init = (): [Model, Cmd.Cmd<Msg>, Action[]] => {
       selected: {},
       highlightedIndex: "None",
     },
-    Cmd.none,
+    Cmd.None,
     [Store.Profile.Search(searchText)],
   ]
 }
@@ -65,7 +65,7 @@ export const update = (
   switch (msg.type) {
     case "ClickedCreate":
       const userIds = Object.values(model.selected)
-      return [model, Cmd.none, [Store.Conversation.Create(authUserId, userIds)]]
+      return [model, Cmd.None, [Store.Conversation.Create(authUserId, userIds)]]
 
     case "ClickedCancel":
       return [model, Route.back(), []]
@@ -77,13 +77,13 @@ export const update = (
           searchText: msg.searchText,
           highlightedIndex: "None",
         },
-        Cmd.none,
+        Cmd.None,
         [Store.Profile.Search(msg.searchText)],
       ]
 
     case "ClickedSelectedDelete":
       const selectedNew = removeKey(msg.userId, model.selected)
-      return [{ ...model, selected: selectedNew }, Cmd.none, []]
+      return [{ ...model, selected: selectedNew }, Cmd.None, []]
 
     case "PressedKeyDown":
       const profiles = Store.Profile.searchProfiles(model.searchText, store)
@@ -98,7 +98,7 @@ export const update = (
                   ? 0
                   : circularIndex(model.highlightedIndex + 1, profiles.length),
             },
-            Cmd.none,
+            Cmd.None,
             [],
           ]
 
@@ -111,26 +111,26 @@ export const update = (
                   ? 0
                   : circularIndex(model.highlightedIndex - 1, profiles.length),
             },
-            Cmd.none,
+            Cmd.None,
             [],
           ]
 
         case "Enter":
           if (model.highlightedIndex === "None") {
-            return [model, Cmd.none, []]
+            return [model, Cmd.None, []]
           }
 
           const profile = profiles[model.highlightedIndex]
 
           if (!profile) {
-            return [model, Cmd.none, []]
+            return [model, Cmd.None, []]
           }
 
           return toggleSelected(profile.userId, model)
 
         case "ArrowLeft":
         case "ArrowRight":
-          return [model, Cmd.none, []]
+          return [model, Cmd.None, []]
       }
 
     case "ClickedResult":
@@ -150,7 +150,7 @@ const toggleSelected = (
         searchText: "",
         selected: removeKey(userId, model.selected),
       },
-      Cmd.none,
+      Cmd.None,
       [],
     ]
   }
@@ -164,7 +164,7 @@ const toggleSelected = (
         [userId]: userId,
       },
     },
-    Cmd.none,
+    Cmd.None,
     [],
   ]
 }

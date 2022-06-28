@@ -60,7 +60,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
       return removeById(msg, model)
 
     case "UserClosedSnackbar":
-      return [model, Cmd.none]
+      return [model, Cmd.None]
   }
 }
 
@@ -92,7 +92,7 @@ const removeById = (
     ...model,
     queue: model.queue.filter((snack) => snack.snackId !== snackId),
   },
-  Cmd.none,
+  Cmd.None,
 ]
 
 //

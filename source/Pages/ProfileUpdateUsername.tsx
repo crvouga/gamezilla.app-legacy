@@ -41,7 +41,7 @@ export const update = (
 ): [Model, Cmd.Cmd<Msg>, OutMsg[]] => {
   switch (msg.type) {
     case "UserEnteredUsername":
-      return [{ ...model, username: msg.username }, Cmd.none, []]
+      return [{ ...model, username: msg.username }, Cmd.None, []]
 
     case "UserClickedCancelButton":
       return [model, Route.back(), []]

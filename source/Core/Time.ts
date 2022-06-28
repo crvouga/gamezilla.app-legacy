@@ -1,21 +1,9 @@
-/**
- * Exposes some utilities to work with unix time.
- *
- * See [Time](https://package.elm-lang.org/packages/elm/time/latest/Time) Elm package.
- *
- * @since 0.5.0
- */
 import * as Rx from "rxjs"
 import * as Sub from "./Sub"
 import * as Task from "./Task"
 
-/**
- * Get the current unix time as a `Task`.
- * @category constructors
- * @since 0.5.0
- */
-export function now(): Task.Task<number> {
-  return () => Promise.resolve(new Date().getTime())
+export const now = (): Task.Task<number> => {
+  return async () => new Date().getTime()
 }
 
 //

@@ -118,7 +118,7 @@ export const runAction = (
         return [model, Route.push({ type: "Game" })]
       }
 
-      return [model, Cmd.none]
+      return [model, Cmd.None]
   }
 }
 export const update = (
@@ -146,16 +146,16 @@ const updateOpened = (
 
   switch (msg.type) {
     case "UserClickedCloseGameButton":
-      return [{ ...model, status: "ConfirmingClose" }, Cmd.none, []]
+      return [{ ...model, status: "ConfirmingClose" }, Cmd.None, []]
 
     case "UserClickedGameBanner":
       return [model, Route.push({ type: "Game" }), []]
 
     case "CancelledCloseGame":
-      return [{ ...model, status: "Idle" }, Cmd.none, []]
+      return [{ ...model, status: "Idle" }, Cmd.None, []]
 
     case "ConfirmedCloseGame":
-      return [{ type: "Closed" }, Cmd.none, []]
+      return [{ type: "Closed" }, Cmd.None, []]
   }
 }
 
@@ -174,7 +174,7 @@ const updateGame = (
         ]
       }
 
-      return [model, Cmd.none]
+      return [model, Cmd.None]
 
     case "ConnectFour":
       if (msg.gameGroup === "ConnectFour") {
@@ -188,7 +188,7 @@ const updateGame = (
           pipe(CmdChild, Cmd.map(groupGameTag("ConnectFour"))),
         ]
       }
-      return [model, Cmd.none]
+      return [model, Cmd.None]
 
     case "TicTacToe":
       if (msg.gameGroup === "TicTacToe") {
@@ -200,7 +200,7 @@ const updateGame = (
         ]
       }
 
-      return [model, Cmd.none]
+      return [model, Cmd.None]
 
     case "Snake":
       if (msg.gameGroup === "Snake") {
@@ -212,7 +212,7 @@ const updateGame = (
         ]
       }
 
-      return [model, Cmd.none]
+      return [model, Cmd.None]
 
     default:
       return exhaustive(model)
@@ -223,7 +223,7 @@ const updateClosed = (
   msg: Msg,
   model: Closed,
 ): [Model, Cmd.Cmd<Msg>, OutMsg[]] => {
-  return [model, Cmd.none, []]
+  return [model, Cmd.None, []]
 }
 
 //
@@ -237,15 +237,15 @@ const updateClosed = (
 export const subscriptions = (model: Model): Sub.Sub<Msg> => {
   switch (model.type) {
     case "Closed":
-      return Sub.none
+      return Sub.None
 
     case "Opened":
       switch (model.child.type) {
         case "Chess":
-          return Sub.none
+          return Sub.None
 
         case "ConnectFour":
-          return Sub.none
+          return Sub.None
 
         case "Snake":
           return pipe(
@@ -254,7 +254,7 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
           )
 
         case "TicTacToe":
-          return Sub.none
+          return Sub.None
       }
   }
 }

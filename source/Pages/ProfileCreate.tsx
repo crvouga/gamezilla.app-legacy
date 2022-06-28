@@ -68,13 +68,13 @@ export const update = (
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (msg.type) {
     case "EnteredName":
-      return [{ ...model, form: { ...model.form, ...msg } }, Cmd.none, []]
+      return [{ ...model, form: { ...model.form, ...msg } }, Cmd.None, []]
 
     case "EnteredUsername":
-      return [{ ...model, form: { ...model.form, ...msg } }, Cmd.none, []]
+      return [{ ...model, form: { ...model.form, ...msg } }, Cmd.None, []]
 
     case "UserClickedSubmitButton":
-      return [model, Cmd.none, [Store.Profile.Create(userId, model.form)]]
+      return [model, Cmd.None, [Store.Profile.Create(userId, model.form)]]
 
     case "UserClickedLogoutButton":
       return [model, Route.push({ type: "Logout" }), []]

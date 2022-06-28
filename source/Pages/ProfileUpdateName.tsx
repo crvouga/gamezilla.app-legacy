@@ -41,7 +41,7 @@ export const update = (
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (msg.type) {
     case "EnteredName":
-      return [{ ...model, ...msg }, Cmd.none, []]
+      return [{ ...model, ...msg }, Cmd.None, []]
 
     case "ClickedSubmit":
       return [

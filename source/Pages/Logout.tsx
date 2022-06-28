@@ -46,13 +46,13 @@ export const update = (
       return [model, Route.back(), []]
 
     case "UserClickedLogoutButton":
-      return [{ type: "LoggingOut" }, Cmd.none, [Session.Logout()]]
+      return [{ type: "LoggingOut" }, Cmd.None, [Session.Logout()]]
 
     case "LogoutFailed":
-      return [model, Cmd.none, []]
+      return [model, Cmd.None, []]
 
     case "LogoutSucceeded":
-      return [model, Cmd.none, []]
+      return [model, Cmd.None, []]
   }
 }
 

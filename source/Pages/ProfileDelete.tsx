@@ -13,7 +13,7 @@ import { Cmd, RemoteData } from "Core"
 
 export type Model = {}
 
-export const init: [Model, Cmd.Cmd<Msg>, OutAction[]] = [{}, Cmd.none, []]
+export const init: [Model, Cmd.Cmd<Msg>, OutAction[]] = [{}, Cmd.None, []]
 
 //
 //
@@ -44,10 +44,10 @@ export const update = (
       return [model, Route.back(), []]
 
     case "UserClickedDeleteButton":
-      return [model, Cmd.none, [Store.Profile.DeleteForever(userId)]]
+      return [model, Cmd.None, [Store.Profile.DeleteForever(userId)]]
 
     case "ClickedCloseFailureAlert":
-      return [model, Cmd.none, [Store.Profile.ResetMutations()]]
+      return [model, Cmd.None, [Store.Profile.ResetMutations()]]
   }
 }
 
