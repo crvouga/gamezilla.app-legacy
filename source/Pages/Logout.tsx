@@ -31,13 +31,13 @@ export type Msg =
   | { type: "LogoutFailed" }
   | { type: "LogoutSucceeded" }
 
-type OutMsg = Snackbar.Action
+type OutAction = Snackbar.Action | Session.Action
 
 export const update = (
   { name }: { name: string },
   msg: Msg,
   model: Model,
-): [Model, Cmd.Cmd<Msg>, OutMsg[]] => {
+): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (msg.type) {
     case "UserClickedCancelButton":
       return [model, Route.back(), []]
@@ -46,19 +46,7 @@ export const update = (
       return [model, Route.back(), []]
 
     case "UserClickedLogoutButton":
-      return [
-        { type: "LoggingOut" },
-        pipe(
-          Session.logout,
-          Cmd.fromTask(
-            Result.fold<{}, {}, Msg>(
-              () => ({ type: "LogoutFailed" }),
-              () => ({ type: "LogoutSucceeded" }),
-            ),
-          ),
-        ),
-        [],
-      ]
+      return [{ type: "LoggingOut" }, Cmd.none, [Session.Logout()]]
 
     case "LogoutFailed":
       return [model, Cmd.none, []]

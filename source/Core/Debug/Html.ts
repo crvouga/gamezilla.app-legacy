@@ -32,11 +32,11 @@ import * as Cmd from "../Cmd"
 import * as Html from "../Html"
 import * as Sub from "../Sub"
 import {
-  DEBUG_ID_KEY,
   DebugData,
   DebuggerR,
   RunDebugger,
   debugInit,
+  subscriptionsWithDebug,
   updateWithDebug,
 } from "./commons"
 
@@ -129,16 +129,13 @@ function createProgram<Model, Msg, Dom>(
   view: (model: Model) => Html.Html<Dom, Msg>,
   subscriptions: (model: Model) => Sub.Sub<Msg>,
 ): Html.Program<Model, Msg, Dom> {
-  const runDebugger = RunDebugger<Model, Msg>(window, stopDebuggerOn)
-
   const initModel = init[0]
 
   const debug$ = new Rx.BehaviorSubject<DebugData<Model, Msg>>([
     debugInit(),
     initModel,
   ])
-
-  const debugId$ = new Rx.BehaviorSubject<string>("")
+  const debugId$ = new Rx.BehaviorSubject<string | undefined>(undefined)
 
   const program = Html.Program(
     init,
@@ -148,23 +145,17 @@ function createProgram<Model, Msg, Dom>(
       update,
     }),
     view,
-    (model): Sub.Sub<Msg> => {
-      if (
-        // @ts-ignore
-        model[DEBUG_ID_KEY] === debugId$.value
-      ) {
-        return subscriptions(model)
-      }
-
-      // ignored subscriptions when time travel debugging
-
-      return Sub.none
-    },
+    subscriptionsWithDebug({
+      subscriptions,
+      debugId$,
+    }),
   )
 
   // --- Run the debugger
   // --- we need to make a type assertion for `dispatch` because we cannot change the intrinsic `msg` type of `program`;
   // --- otherwise `programWithDebugger` won't be usable as a transparent extension/substitution of `Html`'s programs
+  const runDebugger = RunDebugger<Model, Msg>(window, stopDebuggerOn)
+
   runDebugger({
     debug$,
     init: initModel,
@@ -177,9 +168,7 @@ function createProgram<Model, Msg, Dom>(
 export function run<Model, Msg, Dom>(
   program: Html.Program<Model, Msg, Dom>,
   renderer: Html.Renderer<Dom>,
-): Rx.Observable<Model> {
-  const model$ = new Rx.Subject<Model>()
-
+): void {
   // why?
   // wait for redux devtools debugger to start before running program
   // because messages were being dispatched before the dev tools started
@@ -187,10 +176,6 @@ export function run<Model, Msg, Dom>(
   //
   // todo: actually subscribe to the redux dev tools start message instead of using a timeout
   setTimeout(() => {
-    Html.run(program, renderer).subscribe((model) => {
-      model$.next(model)
-    })
+    Html.run(program, renderer)
   }, 1000)
-
-  return model$
 }

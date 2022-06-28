@@ -29,27 +29,25 @@ export type Msg =
   | { type: "LoginFailed" }
   | { type: "LoginSucceeded" }
 
-export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
+type OutAction = Session.Action
+
+export const update = (
+  msg: Msg,
+  model: Model,
+): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (msg.type) {
     case "UserClickedLoginButton":
       return [
         { type: "LoggingIn", loginMethod: msg.loginMethod },
-        pipe(
-          Session.login(msg.loginMethod),
-          Cmd.fromTask(
-            Result.fold<{}, {}, Msg>(
-              () => ({ type: "LoginFailed" }),
-              () => ({ type: "LoginSucceeded" }),
-            ),
-          ),
-        ),
+        Cmd.none,
+        [Session.Login(msg.loginMethod)],
       ]
 
     case "LoginFailed":
-      return [{ type: "Idle" }, Cmd.none]
+      return [{ type: "Idle" }, Cmd.none, []]
 
     case "LoginSucceeded":
-      return [model, Cmd.none]
+      return [model, Cmd.none, []]
   }
 }
 

@@ -27,7 +27,7 @@ export type LoggedIn = {
 export const init = (): [Model, Cmd.Cmd<Msg>] => [
   { type: "Loading" },
   pipe(
-    loadSession,
+    getSession,
     Cmd.fromTask((msg) => msg),
   ),
 ]
@@ -40,7 +40,9 @@ export const init = (): [Model, Cmd.Cmd<Msg>] => [
 //
 //
 
-export type Msg = GotSession
+export type Msg = GotSession | LoginResulted | LogoutResulted
+
+export type Action = Logout | Login
 
 const GotSession = (session: Option.Option<Session>) => {
   return {
@@ -51,6 +53,41 @@ const GotSession = (session: Option.Option<Session>) => {
 }
 type GotSession = ReturnType<typeof GotSession>
 
+const LoginResulted = (result: Result.Result<{}, {}>) => {
+  return {
+    group: "Session",
+    type: "LoginResulted",
+    result,
+  } as const
+}
+type LoginResulted = ReturnType<typeof LoginResulted>
+
+const LogoutResulted = (result: Result.Result<{}, {}>) => {
+  return {
+    group: "Session",
+    type: "LogoutResulted",
+    result,
+  } as const
+}
+type LogoutResulted = ReturnType<typeof LogoutResulted>
+
+export const Logout = () => {
+  return {
+    group: "Session",
+    type: "Logout",
+  } as const
+}
+export type Logout = ReturnType<typeof Logout>
+
+export const Login = (method: LoginMethod) => {
+  return {
+    group: "Session",
+    type: "Login",
+    method,
+  } as const
+}
+export type Login = ReturnType<typeof Login>
+
 //
 //
 //
@@ -59,16 +96,41 @@ type GotSession = ReturnType<typeof GotSession>
 //
 //
 
-export const update = (msg: Msg): Model => {
+export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "GotSession":
       switch (msg.session.type) {
         case "None":
-          return { type: "LoggedOut" }
+          return [{ type: "LoggedOut" }, Cmd.none]
 
         case "Some":
-          return { type: "LoggedIn", ...msg.session.value }
+          return [{ type: "LoggedIn", ...msg.session.value }, Cmd.none]
       }
+
+    case "LoginResulted":
+      return [model, Cmd.none]
+
+    case "LogoutResulted":
+      switch (msg.result.type) {
+        case "Err":
+          return [model, Cmd.none]
+
+        case "Ok":
+          return [{ type: "LoggedOut" }, Cmd.none]
+      }
+  }
+}
+
+export const runAction = (
+  action: Action,
+  model: Model,
+): [Model, Cmd.Cmd<Msg>] => {
+  switch (action.type) {
+    case "Login":
+      return [model, pipe(login(action.method), Cmd.fromTask(LoginResulted))]
+
+    case "Logout":
+      return [model, pipe(logout, Cmd.fromTask(LogoutResulted))]
   }
 }
 
@@ -82,7 +144,7 @@ export const update = (msg: Msg): Model => {
 
 export type LoginMethod = { type: "Google" }
 
-export const login =
+const login =
   (method: LoginMethod): Task.Task<Result.Result<{}, {}>> =>
   async () => {
     switch (method.type) {
@@ -99,7 +161,7 @@ export const login =
     }
   }
 
-export const logout: Task.Task<Result.Result<{}, {}>> = async () => {
+const logout: Task.Task<Result.Result<{}, {}>> = async () => {
   const { error } = await Supabase.client.auth.signOut()
 
   if (error) {
@@ -109,21 +171,10 @@ export const logout: Task.Task<Result.Result<{}, {}>> = async () => {
   return Result.Ok({})
 }
 
-export const loadSession: Task.Task<Msg> = async () => {
+const getSession: Task.Task<Msg> = async () => {
   const session = Supabase.client.auth.session()
 
-  const userId = session?.user?.id
-
-  const defaultName =
-    session?.user?.user_metadata?.name ??
-    session?.user?.user_metadata?.full_name ??
-    ""
-
-  if (userId) {
-    return GotSession(Option.Some({ userId, defaultName }))
-  }
-
-  return GotSession(Option.None)
+  return fromSupabaseSession(session)
 }
 
 //
@@ -137,10 +188,19 @@ export const loadSession: Task.Task<Msg> = async () => {
 const subject = new Rx.Subject<Msg>()
 
 Supabase.client.auth.onAuthStateChange((_, supabaseSession) => {
-  subject.next(fromSupabaseSession(supabaseSession))
+  const msg = fromSupabaseSession(supabaseSession)
+  subject.next(msg)
 })
 
 export const subscriptions: Sub.Sub<Msg> = subject
+
+//
+//
+//
+// Helper
+//
+//
+//
 
 export const fromSupabaseSession = (session: Supabase.Session | null): Msg => {
   const userId = session?.user?.id

@@ -5,10 +5,10 @@
  *
  * @since 0.5.0
  */
+import * as IO from "../IO"
 import * as Json from "../Json"
 import * as Option from "../Option"
 import * as Result from "../Result"
-import * as Task from "../Task"
 import { Dispatch } from "../Platform"
 import { pipe } from "../pipe"
 import { Debug, Debugger, DebuggerR, Global, MsgWithDebug } from "./commons"
@@ -84,14 +84,13 @@ interface DevToolHandlerR<Model, Msg> extends DebuggerR<Model, Msg> {
  * @category utils
  * @since 0.5.0
  */
-export function getConnection<Model, Msg>(
-  global: Global,
-): Task.Task<Option.Option<Connection<Model, Msg>>> {
-  return async () =>
-    hasExtension(global)
+export const getConnection =
+  <Model, Msg>(global: Global): IO.IO<Option.Option<Connection<Model, Msg>>> =>
+  () => {
+    return hasExtension(global)
       ? Option.Some(global.__REDUX_DEVTOOLS_EXTENSION__.connect())
       : Option.None
-}
+  }
 
 /**
  * **[UNSAFE]** Type guard to check if _Redux DevTool Extension_ is available.
@@ -99,9 +98,9 @@ export function getConnection<Model, Msg>(
  * This is "tagged" as unsafe because the check is really loose.
  * @since 0.5.0
  */
-function hasExtension(
+const hasExtension = (
   global: Global,
-): global is Global & { __REDUX_DEVTOOLS_EXTENSION__: Extension } {
+): global is Global & { __REDUX_DEVTOOLS_EXTENSION__: Extension } => {
   return "__REDUX_DEVTOOLS_EXTENSION__" in global
 }
 
@@ -160,25 +159,25 @@ function handleIncomingMsg<Model, Msg>({
   dispatch,
 }: DevToolHandlerR<Model, Msg>): (
   msg: DevToolMsg,
-) => Result.Result<string, Task.Task<void>> {
+) => Result.Result<string, IO.IO<void>> {
   const dispatchToApp =
-    (m: unknown): Task.Task<void> =>
-    async () =>
+    (m: unknown): IO.IO<void> =>
+    () =>
       dispatch(m as Msg)
 
-  const reinit: Task.Task<void> = async () => connection.init(init)
+  const reinit: IO.IO<void> = () => connection.init(init)
 
-  const update = (payload: Model): Task.Task<void> =>
+  const update = (payload: Model): IO.IO<void> =>
     dispatchToApp({ type: "__DebugUpdateModel__", payload })
 
   const restart =
-    (model: Model): Task.Task<void> =>
-    async () =>
+    (model: Model): IO.IO<void> =>
+    () =>
       connection.init(model)
 
   const liftState =
-    (state: LiftedState<Model>): Task.Task<void> =>
-    async () =>
+    (state: LiftedState<Model>): IO.IO<void> =>
+    () =>
       connection.send(null, state)
 
   const toggle = toggleAction(dispatch)
@@ -209,7 +208,7 @@ function handleIncomingMsg<Model, Msg>({
             return Result.Ok(
               pipe(
                 update(init),
-                Task.chain(() => reinit),
+                IO.chain(() => reinit),
               ),
             )
 
@@ -219,7 +218,7 @@ function handleIncomingMsg<Model, Msg>({
               Result.map((m) =>
                 pipe(
                   update(m),
-                  Task.chain(() => restart(m)),
+                  IO.chain(() => restart(m)),
                 ),
               ),
             )
@@ -238,7 +237,7 @@ function handleIncomingMsg<Model, Msg>({
                       liftedState.computedStates.length - 1
                     ].state,
                   ),
-                  Task.chain(() => liftState(liftedState)),
+                  IO.chain(() => liftState(liftedState)),
                 ),
               ),
             )
@@ -247,7 +246,7 @@ function handleIncomingMsg<Model, Msg>({
             return pipe(
               parseToggleAction<Model>(msg),
               Result.map(([id, liftedState]) =>
-                pipe(toggle(id, liftedState), Task.chain(liftState)),
+                pipe(toggle(id, liftedState), IO.chain(liftState)),
               ),
             )
 
@@ -366,11 +365,8 @@ function parseToggleAction<Model>(
  */
 function toggleAction<Model, Msg>(
   dispatch: Dispatch<MsgWithDebug<Model, Msg>>,
-): (
-  id: number,
-  liftedState: LiftedState<Model>,
-) => Task.Task<LiftedState<Model>> {
-  return (id, liftedState) => async () => {
+): (id: number, liftedState: LiftedState<Model>) => IO.IO<LiftedState<Model>> {
+  return (id, liftedState) => () => {
     const state = JSON.parse(JSON.stringify(liftedState)) // poor man deep clone...
 
     const { skippedActionIds, stagedActionIds, computedStates, actionsById } =
