@@ -23,10 +23,6 @@ history.listen((location) => {
   location$.next(location.location)
 })
 
-export const getLocation = (): Location => {
-  return history.location
-}
-
 //
 //
 //
@@ -35,15 +31,13 @@ export const getLocation = (): Location => {
 //
 //
 
-export const reload = <Msg>(): Cmd.Cmd<Msg> => {
-  return Rx.of(async () => {
-    window.location.reload()
+export const reload: Cmd.Cmd<never> = Rx.of(async () => {
+  window.location.reload()
 
-    return Option.None
-  })
-}
+  return Option.None
+})
 
-export const push = <Msg>(url: string): Cmd.Cmd<Msg> => {
+export const push = (url: string): Cmd.Cmd<never> => {
   return Rx.of(async () => {
     history.push(url)
 
@@ -51,7 +45,7 @@ export const push = <Msg>(url: string): Cmd.Cmd<Msg> => {
   })
 }
 
-export const replace = <Msg>(url: string): Cmd.Cmd<Msg> => {
+export const replace = (url: string): Cmd.Cmd<never> => {
   return Rx.of(async () => {
     history.replace(url)
 
@@ -59,13 +53,11 @@ export const replace = <Msg>(url: string): Cmd.Cmd<Msg> => {
   })
 }
 
-export const back = <Msg>(): Cmd.Cmd<Msg> => {
-  return Rx.of(async () => {
-    history.back()
+export const back: Cmd.Cmd<never> = Rx.of(async () => {
+  history.back()
 
-    return Option.None
-  })
-}
+  return Option.None
+})
 
 //
 //

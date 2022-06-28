@@ -40,10 +40,10 @@ export const update = (
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (msg.type) {
     case "UserClickedCancelButton":
-      return [model, Route.back(), []]
+      return [model, Route.back, []]
 
     case "UserClickedBackdrop":
-      return [model, Route.back(), []]
+      return [model, Route.back, []]
 
     case "UserClickedLogoutButton":
       return [{ type: "LoggingOut" }, Cmd.None, [Session.Logout()]]

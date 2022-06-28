@@ -46,12 +46,12 @@ export const update = (
     case "ClickedSubmit":
       return [
         model,
-        Route.back(),
+        Route.back,
         [Store.Profile.Edit(userId, { name: model.name })],
       ]
 
     case "ClickedCancel":
-      return [model, Route.back(), []]
+      return [model, Route.back, []]
   }
 }
 

@@ -29,7 +29,7 @@ export type Msg =
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "UserClickedBackButton":
-      return [model, Route.back()]
+      return [model, Route.back]
 
     case "UserClickedSendMessageButton":
       return [model, Route.push({ type: "ChatNew" })]

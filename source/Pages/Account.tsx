@@ -35,7 +35,7 @@ export const update = (
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "UserClickedBackButton":
-      return [model, Route.back()]
+      return [model, Route.back]
 
     case "UserClickedLogoutLink":
       return [model, Route.push({ type: "Logout" })]

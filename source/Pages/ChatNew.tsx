@@ -68,7 +68,7 @@ export const update = (
       return [model, Cmd.None, [Store.Conversation.Create(authUserId, userIds)]]
 
     case "ClickedCancel":
-      return [model, Route.back(), []]
+      return [model, Route.back, []]
 
     case "InputtedSearch":
       return [
@@ -277,7 +277,7 @@ export const view =
             placeholder={selected.length === 0 ? "Search" : ""}
             value={model.searchText}
             onKeyDown={(event) => {
-              // console.log(event);
+              //
             }}
             onChange={(event) => {
               const searchText = event.currentTarget.value

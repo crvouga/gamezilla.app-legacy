@@ -18,20 +18,14 @@ export const Program = <Model, Msg>(
   subscriptions: (model: Model) => Sub.Sub<Msg>,
 ): Program<Model, Msg> => {
   const state$ = new Rx.BehaviorSubject(init)
-  const dispatch: Dispatch<Msg> = (msg) =>
+
+  const dispatch: Dispatch<Msg> = (msg) => {
     state$.next(update(msg, state$.getValue()[0]))
+  }
 
-  const cmd$ = state$.pipe(
-    Rx.startWith(init),
-    Rx.map((state) => state[1]),
-    Rx.distinctUntilChanged(),
-    Rx.mergeAll(),
-  )
+  const cmd$ = state$.pipe(Rx.mergeMap((state) => state[1]))
 
-  const model$ = state$.pipe(
-    Rx.map((state) => state[0]),
-    Rx.distinctUntilChanged(),
-  )
+  const model$ = state$.pipe(Rx.map((state) => state[0]))
 
   const sub$ = model$.pipe(Rx.switchMap((model) => subscriptions(model)))
 
@@ -66,9 +60,13 @@ export const run = <Model, Msg>(
 ): Rx.Observable<Model> => {
   const { dispatch, cmd$, sub$, model$ } = program
 
-  cmd$.subscribe((task) => task().then(Option.map(dispatch)))
+  // WARNING
+  // Order matters!
+  // to prevent bugs sub$.subscribe must happen before cmd$.subscribe
 
   sub$.subscribe(dispatch)
+
+  cmd$.subscribe((task) => task().then(Option.map(dispatch)))
 
   return model$
 }

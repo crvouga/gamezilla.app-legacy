@@ -58,7 +58,7 @@ export const update = (
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (msg.type) {
     case "UserClickedCancelButton":
-      return [model, Route.back(), []]
+      return [model, Route.back, []]
 
     case "StyleSelectClosed":
       return [{ ...model, status: "Idle" }, Cmd.None, []]
@@ -91,7 +91,7 @@ export const update = (
     case "UserClickedDoneButton":
       return [
         { ...model },
-        Route.back(),
+        Route.back,
         [
           Store.Profile.Edit(userId, {
             avatarUrl: ProfileAvatar.toUrl(model),
