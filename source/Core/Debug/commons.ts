@@ -209,12 +209,12 @@ export const subscriptionsWithDebug =
     const latestDebugId = debugId$.getValue()
 
     if (latestDebugId === debugId) {
-      console.log("subscriptions-listening", { debugId, latestDebugId })
+      console.log("subs listening", { debugId, latestDebugId })
 
       return subscriptions(model)
     }
 
-    console.log("subscriptions-ignoring", { debugId, latestDebugId })
+    console.log("sub ignoring", { debugId, latestDebugId })
 
     return Sub.none
   }
