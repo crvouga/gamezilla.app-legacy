@@ -1,50 +1,22 @@
-/**
- * The `Platform` module is the backbone of `elm-ts`.
- * It defines the base `program()` and `run()` functions which will be extended by more specialized modules.
- * _The Elm Architecture_ is implemented via **RxJS** `Observables`.
- *
- * @since 0.5.0
- */
 import * as Rx from "rxjs"
 import * as Cmd from "./Cmd"
 import * as Option from "./Option"
 import * as Sub from "./Sub"
 
-/**
- * @category model
- * @since 0.5.0
- */
-export interface Dispatch<Msg> {
-  (msg: Msg): void
-}
+export type Dispatch<Msg> = (msg: Msg) => void
 
-/**
- * `Program` is just an object that exposes the underlying streams which compose _The Elm Architecture_.
- * Even **Commands** and **Subscriptions** are expressed as `Observables` in order to mix them with ease.
- * @category model
- * @since 0.5.0
- */
-export interface Program<Model, Msg> {
+export type Program<Model, Msg> = {
   dispatch: Dispatch<Msg>
   cmd$: Cmd.Cmd<Msg>
   sub$: Sub.Sub<Msg>
   model$: Rx.Observable<Model>
 }
 
-/**
- * `program()` is the real core of `elm-ts`.
- *
- * When a new `Program` is defined, a `BehaviorSubject` is created (because an initial value is needed) that will track every change to the `Model` and every `Cmd` executed.
- *
- * Every time `dispatch()` is called a new value, computed by the `update()` function, is added to the the stream.
- * @category constructors
- * @since 0.5.0
- */
-export function Program<Model, Msg>(
+export const Program = <Model, Msg>(
   init: [Model, Cmd.Cmd<Msg>],
   update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>],
-  subscriptions: (model: Model) => Sub.Sub<Msg> = () => Sub.None,
-): Program<Model, Msg> {
+  subscriptions: (model: Model) => Sub.Sub<Msg>,
+): Program<Model, Msg> => {
   const state$ = new Rx.BehaviorSubject(init)
   const dispatch: Dispatch<Msg> = (msg) =>
     state$.next(update(msg, state$.getValue()[0]))
@@ -66,27 +38,17 @@ export function Program<Model, Msg>(
   return { dispatch, cmd$, sub$, model$ }
 }
 
-/**
- * Same as `program()` but with `Flags` that can be passed when the `Program` is created in order to manage initial values.
- * @category constructors
- * @since 0.5.0
- */
-export function ProgramWithFlags<Flags, Model, Msg>(
+export const ProgramWithFlags = <Flags, Model, Msg>(
   init: (flags: Flags) => [Model, Cmd.Cmd<Msg>],
   update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>],
-  subscriptions: (model: Model) => Sub.Sub<Msg> = () => Sub.None,
-): (flags: Flags) => Program<Model, Msg> {
+  subscriptions: (model: Model) => Sub.Sub<Msg>,
+): ((flags: Flags) => Program<Model, Msg>) => {
   return (flags) => Program(init(flags), update, subscriptions)
 }
 
-/**
- * Stops the `program` when `signal` Observable emits a value.
- * @category combinators
- * @since 0.5.4
- */
-export function withStop(
+export const withStop = (
   signal: Rx.Observable<unknown>,
-): <Model, Msg>(program: Program<Model, Msg>) => Program<Model, Msg> {
+): (<Model, Msg>(program: Program<Model, Msg>) => Program<Model, Msg>) => {
   return (program) => {
     const { cmd$, model$, sub$, ...rest } = program
 
@@ -99,16 +61,9 @@ export function withStop(
   }
 }
 
-/**
- * Runs the `Program`.
- *
- * Because the program essentially is an object of streams, "running it" means subscribing to these streams and starting to consume values.
- * @category utils
- * @since 0.5.0
- */
-export function run<Model, Msg>(
+export const run = <Model, Msg>(
   program: Program<Model, Msg>,
-): Rx.Observable<Model> {
+): Rx.Observable<Model> => {
   const { dispatch, cmd$, sub$, model$ } = program
 
   cmd$.subscribe((task) => task().then(Option.map(dispatch)))
