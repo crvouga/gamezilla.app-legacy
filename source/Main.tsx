@@ -144,7 +144,7 @@ export type Msg =
   | Session.Msg
   | Pages.GroupedMsg
 
-type Action = Snackbar.Action | Store.Action | Games.Action
+type Action = Snackbar.Action | Store.Action | Games.Action | Session.Action
 
 //
 //
@@ -177,9 +177,9 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
     }
 
     case "Session": {
-      const sessionNew = Session.update(msg)
+      const [sessionNew, sessionCmd] = Session.update(msg, model.session)
 
-      return [{ ...model, session: sessionNew }, Cmd.none]
+      return [{ ...model, session: sessionNew }, sessionCmd]
     }
 
     case "Snackbar":
@@ -395,6 +395,14 @@ const runAction = (action: Action, model: Model): [Model, Cmd.Cmd<Msg>] => {
       ]
     }
 
+    case "Session": {
+      const [sessionNew, sessionCmd] = Session.runAction(action, model.session)
+      return [
+        { ...model, session: sessionNew },
+        pipe(sessionCmd, Cmd.map(groupTag("Session"))),
+      ]
+    }
+
     default:
       return exhaustive(action)
   }
@@ -410,9 +418,9 @@ const runAction = (action: Action, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
 export const subscriptions = (model: Model): Sub.Sub<Msg> => {
   return Sub.batch<Msg>([
-    Session.subscriptions,
     pipe(Games.subscriptions(model.game), Sub.map(groupTag("Game"))),
     pipe(Pages.subscriptions(model.page), Sub.map(groupTag("Page"))),
+    Session.subscriptions,
   ])
 }
 
@@ -560,6 +568,14 @@ const viewSnackbar =
     }
   }
 
+//
+//
+//
+// Main
+//
+//
+//
+
 const locationToMessage = (location: Navigation.Location) => {
   return pipe(
     location,
@@ -569,14 +585,6 @@ const locationToMessage = (location: Navigation.Location) => {
     Route.GotRoute,
   )
 }
-
-//
-//
-//
-// Main
-//
-//
-//
 
 const program = Debug.Navigation.Program(
   locationToMessage,

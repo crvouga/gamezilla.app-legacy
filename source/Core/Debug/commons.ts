@@ -3,12 +3,12 @@
  *
  * @since 0.5.0
  */
-import { BehaviorSubject, Observable, Subject } from "rxjs"
+import { BehaviorSubject, Observable } from "rxjs"
 import { takeUntil } from "rxjs/operators"
 import * as Cmd from "../Cmd"
+import * as IO from "../IO"
 import * as Option from "../Option"
-import * as Task from "../Task"
-import * as Uuid from "../Uuid"
+import * as Sub from "../Sub"
 import * as Console from "./console"
 import * as ReduxDevtool from "./redux-devtool"
 import { Dispatch } from "../Platform"
@@ -106,14 +106,6 @@ export interface DebuggerR<Model, Msg> {
   dispatch: Dispatch<MsgWithDebug<Model, Msg>>
 }
 
-//
-//
-//
-//
-//
-
-export const DEBUG_ID_KEY = "debugId"
-
 /**
  * Adds debugging capability to the provided `update` function.
  *
@@ -139,13 +131,25 @@ export const DEBUG_ID_KEY = "debugId"
  * @since 0.5.3
  */
 
+export const DEBUG_ID_KEY = "debugId"
+
+const makeDebugIdGen = function* () {
+  let id = 0
+  while (true) {
+    yield `debugId-${id}`
+    id = id + 1
+  }
+}
+
+const debugIdGen = makeDebugIdGen()
+
 export function updateWithDebug<Model, Msg>({
   debug$,
   debugId$,
   update,
 }: {
   debug$: BehaviorSubject<DebugData<Model, Msg>>
-  debugId$: BehaviorSubject<string>
+  debugId$: BehaviorSubject<string | undefined>
   update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>]
 }): (msg: MsgWithDebug<Model, Msg>, model: Model) => [Model, Cmd.Cmd<Msg>] {
   return (msg, model) => {
@@ -159,32 +163,61 @@ export function updateWithDebug<Model, Msg>({
       }
     }
 
-    //
-    //
-    //
-
     const [modelNew, cmdNew] = update(msg, model)
 
-    debug$.next([debugMsg(msg), modelNew])
+    const debugId = debugIdGen.next().value
 
-    //
-    //
-    //
-
-    const debugIdNew = Uuid.generateSync()
+    console.log(
+      "updateWithDebug",
+      debugId,
+      " ",
+      "type" in msg
+        ? // @ts-ignore
+          msg["type"]
+        : msg,
+    )
 
     // @ts-ignore
-    modelNew[DEBUG_ID_KEY] = debugIdNew
+    modelNew[DEBUG_ID_KEY] = debugId
 
-    debugId$.next(debugIdNew)
+    debugId$.next(debugId)
 
-    //
-    //
-    //
+    debug$.next([debugMsg(msg), model])
 
     return [modelNew, cmdNew]
   }
 }
+
+/**
+ *
+ * We want to ignore subscriptions when time travel debugging
+ *
+ **/
+
+export const subscriptionsWithDebug =
+  <Model, Msg>({
+    subscriptions,
+    debugId$,
+  }: {
+    subscriptions: (model: Model) => Sub.Sub<Msg>
+    debugId$: BehaviorSubject<string | undefined>
+  }) =>
+  (model: Model) => {
+    // @ts-ignore
+    const debugId: string = model[DEBUG_ID_KEY]
+
+    const latestDebugId = debugId$.getValue()
+
+    if (latestDebugId === debugId) {
+      console.log("subscriptions-listening", { debugId, latestDebugId })
+
+      return subscriptions(model)
+    }
+
+    console.log("subscriptions-ignoring", { debugId, latestDebugId })
+
+    return Sub.none
+  }
 
 /**
  * Checks which type of debugger can be used (standard `console` or _Redux DevTool Extension_) based on provided `window` and prepares the subscription to the "debug" stream
@@ -196,18 +229,18 @@ export function updateWithDebug<Model, Msg>({
 export function RunDebugger<Model, Msg>(
   global: Global,
   stopSignal: Observable<unknown>,
-): (deps: DebuggerR<Model, Msg>) => Task.Task<void> {
+): (deps: DebuggerR<Model, Msg>) => IO.IO<void> {
   return (deps) => {
     return pipe(
       ReduxDevtool.getConnection<Model, Msg>(global),
-      Task.map(
+      IO.map(
         Option.fold(
           () => Console.makeDebugger<Model, Msg>(),
           ReduxDevtool.makeDebugger,
         ),
       ),
-      Task.chain((debugger_) => async () => {
-        const { debug, stop } = debugger_(deps)
+      IO.chain((debuggerInstance) => () => {
+        const { debug, stop } = debuggerInstance(deps)
 
         deps.debug$.pipe(takeUntil(stopSignal)).subscribe({
           next: debug,

@@ -13,13 +13,6 @@ export const map =
     return mapper(await task())
   }
 
-export const timeout =
-  <T>(milliseconds: number, value: T): Task<T> =>
-  async () => {
-    await new Promise((resolve) => setTimeout(resolve, milliseconds))
-    return value
-  }
-
 export const chain =
   <A, B>(mapper: (a: A) => Task<B>) =>
   (taskA: Task<A>): Task<B> =>
@@ -31,4 +24,11 @@ export const chain =
     const b = await taskB()
 
     return b
+  }
+
+export const timeout =
+  <T>(milliseconds: number, value: T): Task<T> =>
+  async () => {
+    await new Promise((resolve) => setTimeout(resolve, milliseconds))
+    return value
   }

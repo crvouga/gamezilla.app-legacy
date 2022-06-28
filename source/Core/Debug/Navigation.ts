@@ -36,11 +36,11 @@ import * as Html from "../Html"
 import * as Navigation from "../Navigation"
 import * as Sub from "../Sub"
 import {
-  DEBUG_ID_KEY,
   DebugData,
   DebuggerR,
   RunDebugger,
   debugInit,
+  subscriptionsWithDebug,
   updateWithDebug,
 } from "./commons"
 
@@ -164,41 +164,34 @@ function createProgram<Model, Msg, Dom>(
 ): Html.Program<Model, Msg, Dom> {
   const history = History.createBrowserHistory() // this is needed only to generate init model for debug$ :S
 
-  const runDebugger = RunDebugger<Model, Msg>(window, stopSignal)
-
   const initModel = init(history.location)[0]
 
   const debug$ = new Rx.BehaviorSubject<DebugData<Model, Msg>>([
     debugInit(),
     initModel,
   ])
-
-  const debugId$ = new Rx.BehaviorSubject<string>("")
+  const debugId$ = new Rx.BehaviorSubject<string | undefined>(undefined)
 
   const program = Navigation.Program(
     locationToMessage,
     init,
     updateWithDebug({
+      update,
       debug$,
       debugId$,
-      update,
     }),
     view,
-    (model) => {
-      // @ts-ignore
-      if (model[DEBUG_ID_KEY] === debugId$.value) {
-        return subscriptions(model)
-      }
-
-      // ignore subscriptions when time travel debugging
-
-      return Sub.none
-    },
+    subscriptionsWithDebug({
+      subscriptions,
+      debugId$,
+    }),
   )
 
   // --- Run the debugger
   // --- we need to make a type assertion for `dispatch` because we cannot change the intrinsic `msg` type of `program`;
   // --- otherwise `program` won't be usable as a transparent extension/substitution of `Html`'s programs
+  const runDebugger = RunDebugger<Model, Msg>(window, stopSignal)
+
   runDebugger({
     debug$,
     init: initModel,

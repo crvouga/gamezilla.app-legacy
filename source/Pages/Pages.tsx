@@ -256,7 +256,11 @@ export type Msg =
 
 export type GroupedMsg = Msg & { group: "Page" }
 
-export type OutAction = Store.Action | Snackbar.Action | Games.Action
+export type OutAction =
+  | Store.Action
+  | Snackbar.Action
+  | Games.Action
+  | Session.Action
 
 //
 //

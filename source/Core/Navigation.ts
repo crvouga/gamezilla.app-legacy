@@ -17,11 +17,15 @@ export type Location = History.Location
 
 const history = History.createBrowserHistory()
 
-const location$ = new Rx.Subject<Location>()
+export const location$ = new Rx.Subject<Location>()
 
 history.listen((location) => {
   location$.next(location.location)
 })
+
+export const getLocation = (): Location => {
+  return history.location
+}
 
 //
 //
@@ -62,6 +66,16 @@ export const back = <Msg>(): Cmd.Cmd<Msg> => {
     return Option.None
   })
 }
+
+//
+//
+//
+// Subscription
+//
+//
+//
+
+export const subscription: Sub.Sub<Location> = location$
 
 /**
  * Returns a `Program` specialized for `Navigation`.
