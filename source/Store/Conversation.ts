@@ -25,13 +25,13 @@ export type Conversation = Types.Conversation
 //
 //
 
-export type Msg = Created
+export type Msg = Inserted
 
-export type Action = Create
+export type Action = Insert
 
-export const Create = (creatorId: string, userIds: string[]) => {
+export const Insert = (creatorId: string, userIds: string[]) => {
   return {
-    type: "Conversation/Create",
+    type: "Conversation/Insert",
     group: "Store",
     entity: "Conversation",
     userIds,
@@ -39,19 +39,20 @@ export const Create = (creatorId: string, userIds: string[]) => {
   } as const
 }
 
-export type Create = ReturnType<typeof Create>
+export type Insert = ReturnType<typeof Insert>
 
-type CreateResult = Result.Result<
-  Problem,
-  {
-    conversation: Conversation
-    profilesConversations: ProfilesConversations[]
-  }
->
-
-export const Created = (userIds: string[], result: CreateResult) => {
+export const Inserted = (
+  userIds: string[],
+  result: Result.Result<
+    Problem,
+    {
+      conversation: Conversation
+      profilesConversations: ProfilesConversations[]
+    }
+  >,
+) => {
   return {
-    type: "Conversation/Created",
+    type: "Conversation/Inserted",
     group: "Store",
     entity: "Conversation",
     userIds,
@@ -59,7 +60,7 @@ export const Created = (userIds: string[], result: CreateResult) => {
   } as const
 }
 
-export type Created = ReturnType<typeof Created>
+export type Inserted = ReturnType<typeof Inserted>
 
 //
 //
@@ -76,7 +77,7 @@ export const update = (
   model: Store,
 ): [Store, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (msg.type) {
-    case "Conversation/Created":
+    case "Conversation/Inserted":
       const { result } = msg
 
       const modelNew = produce(model, (model) => {
@@ -119,7 +120,7 @@ export const runAction = (
   model: Store,
 ): [Store, Cmd.Cmd<Msg>] => {
   switch (action.type) {
-    case "Conversation/Create":
+    case "Conversation/Insert":
       const modelNew = produce(model, (model) => {
         model.mutations.Conversation.GetElseCreate = RemoteData.Loading
       })
@@ -132,7 +133,7 @@ export const runAction = (
             creatorId: action.creatorId,
             userIds: action.userIds,
           }),
-          Cmd.fromTask((result) => Created(action.userIds, result)),
+          Cmd.fromTask((result) => Inserted(action.userIds, result)),
         ),
       ]
   }
@@ -159,7 +160,15 @@ export const insert =
   }: {
     creatorId: string
     userIds: string[]
-  }): Task.Task<CreateResult> =>
+  }): Task.Task<
+    Result.Result<
+      Problem,
+      {
+        conversation: Conversation
+        profilesConversations: ProfilesConversations[]
+      }
+    >
+  > =>
   async () => {
     const { data: conversationData, error: conversationError } =
       await Supabase.client

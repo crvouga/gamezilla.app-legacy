@@ -473,14 +473,21 @@ export const toGetQuery = (
 
   switch (query.type) {
     case "Failure":
+      return query
+
     case "Loading":
+      return query
+
     case "NotAsked":
       return query
+
     case "Success":
       const userId = query.value
+
       const profile = model.Profile[userId]
+
       if (!profile) {
-        return RemoteData.Failure({ message: "Not present" })
+        return RemoteData.Failure({ message: "Invalid state" })
       }
 
       return RemoteData.Success(profile)
