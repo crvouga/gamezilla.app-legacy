@@ -4,14 +4,14 @@ import * as Browser from "../Browser"
 import * as Cmd from "../Cmd"
 import * as Html from "../Html"
 import * as Sub from "../Sub"
+import { RunDebugger } from "./debugger"
 import {
   DebugData,
   DebuggerDeps,
-  RunDebugger,
   debugInit,
   subscriptionsWithDebug,
   updateWithDebug,
-} from "./commons"
+} from "./debugger-commons"
 
 export const Application = <Model, Msg, Dom>({
   init,
@@ -76,9 +76,6 @@ const createApplication = <Model, Msg, Dom>({
     }),
   })
 
-  // --- Run the debugger
-  // --- we need to make a type assertion for `dispatch` because we cannot change the intrinsic `msg` type of `program`;
-  // --- otherwise `program` won't be usable as a transparent extension/substitution of `Html`'s programs
   const runDebugger = RunDebugger<Model, Msg>(window, stopSignal)
 
   runDebugger({

@@ -4,7 +4,7 @@
  * @since 0.5.0
  */
 import * as Option from "../Option"
-import { DebugMsg, Debugger } from "./commons"
+import { DebugMsg, Debugger } from "./debugger-commons"
 
 /**
  * **[UNSAFE]** Simple debugger that uses the standard browser's `console`
