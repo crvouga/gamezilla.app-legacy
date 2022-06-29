@@ -23,17 +23,15 @@ export const init: Model = {}
 //
 //
 
-export type Msg =
-  | { type: "UserClickedBackButton" }
-  | { type: "UserClickedSendMessageButton" }
+export type Msg = { type: "ClickedBack" } | { type: "ClickedSend" }
 
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg.type) {
-    case "UserClickedBackButton":
+    case "ClickedBack":
       return [model, Route.back]
 
-    case "UserClickedSendMessageButton":
-      return [model, Route.push({ type: "ChatNew" })]
+    case "ClickedSend":
+      return [model, Cmd.None]
   }
 }
 
@@ -53,7 +51,7 @@ export const view =
         <View.Header
           left={
             <View.HeaderBackButton
-              onClick={() => dispatch({ type: "UserClickedBackButton" })}
+              onClick={() => dispatch({ type: "ClickedBack" })}
             />
           }
           title="Chat"
