@@ -11,9 +11,13 @@ import { Cmd } from "Core"
 //
 //
 
-export type Model = {}
+export type Model = {
+  text: string
+}
 
-export const init: Model = {}
+export const init: Model = {
+  text: "",
+}
 
 //
 //
@@ -23,7 +27,10 @@ export const init: Model = {}
 //
 //
 
-export type Msg = { type: "ClickedBack" } | { type: "ClickedSend" }
+export type Msg =
+  | { type: "ClickedBack" }
+  | { type: "ClickedSend" }
+  | { type: "InputtedText"; text: string }
 
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg.type) {
@@ -32,6 +39,9 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
     case "ClickedSend":
       return [model, Cmd.None]
+
+    case "InputtedText":
+      return [{ ...model, text: msg.text }, Cmd.None]
   }
 }
 
@@ -56,6 +66,28 @@ export const view =
           }
           title="Chat"
         />
+        <View.Box sx={{ flex: 1 }}></View.Box>
+        <View.Divider />
+        <View.Box sx={{ width: "100%", display: "flex", p: 1 }}>
+          <View.InputBase
+            value={model.text}
+            onChange={(event) => {
+              const textNew = event.currentTarget.value
+              dispatch({ type: "InputtedText", text: textNew })
+            }}
+            sx={{ flex: 1 }}
+            placeholder="Message..."
+          />
+
+          <View.Button
+            variant="text"
+            size="large"
+            disabled={model.text.length === 0}
+            onClick={() => dispatch({ type: "ClickedSend" })}
+          >
+            Send
+          </View.Button>
+        </View.Box>
       </View.Page>
     )
   }
