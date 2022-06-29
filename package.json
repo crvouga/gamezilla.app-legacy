@@ -9,7 +9,7 @@
     "typecheck": "tsc -w",
     "format": "npx prettier --write .",
     "utils:sort": "npx sort-package-json",
-    "utils:circular-depedencies": " madge --ts-config tsconfig.json --circular source/Main.tsx"
+    "utils:find-circular-deps": "npx madge --ts-config tsconfig.json --circular source/Main.tsx"
   },
   "dependencies": {
     "@emotion/react": "^11.9.0",
