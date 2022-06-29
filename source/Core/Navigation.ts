@@ -69,22 +69,19 @@ export const back: Cmd.Cmd<never> = Rx.of(async () => {
 
 export const subscription: Sub.Sub<Location> = location$
 
-/**
- * Returns a `Program` specialized for `Navigation`.
- *
- * The `Program` is a `Html.Program` but it needs a `locationToMsg()` function which converts location changes to messages.
- *
- * Underneath it consumes `location$` stream (applying `locationToMsg()` on its values).
- * @category constructors
- * @since 0.5.0
- */
-export const Program = <Model, Msg, Dom>(
-  locationToMessage: (location: Location) => Msg,
-  init: (location: Location) => [Model, Cmd.Cmd<Msg>],
-  update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>],
-  view: (model: Model) => Html.Html<Dom, Msg>,
-  subscriptions: (model: Model) => Sub.Sub<Msg>,
-): Html.Program<Model, Msg, Dom> => {
+export const Program = <Model, Msg, Dom>({
+  locationToMessage,
+  init,
+  update,
+  view,
+  subscriptions,
+}: {
+  locationToMessage: (location: Location) => Msg
+  init: (location: Location) => [Model, Cmd.Cmd<Msg>]
+  update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>]
+  view: (model: Model) => Html.Html<Dom, Msg>
+  subscriptions: (model: Model) => Sub.Sub<Msg>
+}): Html.Program<Model, Msg, Dom> => {
   const onChangeLocation$ = location$.pipe(
     Rx.map((location) => locationToMessage(location)),
   )
@@ -92,5 +89,10 @@ export const Program = <Model, Msg, Dom>(
   const subs = (model: Model): Sub.Sub<Msg> =>
     Sub.batch([subscriptions(model), onChangeLocation$])
 
-  return Html.Program(init(history.location), update, view, subs)
+  return Html.Program({
+    init: init(history.location),
+    update,
+    view,
+    subscriptions: subs,
+  })
 }

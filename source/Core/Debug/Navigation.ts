@@ -1,34 +1,3 @@
-/**
- * This module makes available a debugging utility for `elm-ts` applications running `Navigation` programs.
- *
- * `elm-ts` ships with a [Redux DevTool Extension](https://github.com/zalmoxisus/redux-devtools-extension) integration, falling back to a simple debugger via standard browser's [`console`](https://developer.mozilla.org/en-US/docs/Web/API/Console) in case the extension is not available.
- *
- * **Note:** debugging is to be considered unsafe by design so it should be used only in **development**.
- *
- * This is an example of usage:
- * ```ts
- * import {react, cmd} from 'elm-ts'
- * import {program} from 'elm-ts/lib/Debug/Navigation'
- * import {Location, program} from 'elm-ts/lib/Navigation'
- * import {render} from 'react-dom'
- *
- * type Model = number
- * type Msg = 'INCREMENT' | 'DECREMENT'
- *
- * declare function locationToMsg(location: Location): Msg
- * declare function init(location: Location): [Model, cmd.none]
- * declare function update(msg: Msg, model: Model): [Model, cmd.Cmd<Msg>]
- * declare function view(model: Model): react.Html<Msg>
- *
- * const program = process.NODE_ENV === 'production' ? program : program
- *
- * const main = program(locationToMsg, init, update, view)
- *
- * react.run(main, dom => render(dom, document.getElementById('app')))
- * ```
- *
- * @since 0.5.3
- */
 import * as History from "history"
 import * as Rx from "rxjs"
 import * as Cmd from "../Cmd"
@@ -65,103 +34,45 @@ import {
  *   payload: Msg
  * }
  * ```
- * @category constructors
- * @since 0.5.3
  */
-export function Program<Model, Msg, Dom>(
-  locationToMessage: (location: Navigation.Location) => Msg,
-  init: (location: Navigation.Location) => [Model, Cmd.Cmd<Msg>],
-  update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>],
-  view: (model: Model) => Html.Html<Dom, Msg>,
-  subscriptions: (model: Model) => Sub.Sub<Msg>,
-): Html.Program<Model, Msg, Dom> {
-  return createProgram(
-    Rx.EMPTY,
+export const Program = <Model, Msg, Dom>({
+  init,
+  locationToMessage,
+  subscriptions,
+  update,
+  view,
+}: {
+  locationToMessage: (location: Navigation.Location) => Msg
+  init: (location: Navigation.Location) => [Model, Cmd.Cmd<Msg>]
+  update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>]
+  view: (model: Model) => Html.Html<Dom, Msg>
+  subscriptions: (model: Model) => Sub.Sub<Msg>
+}): Html.Program<Model, Msg, Dom> => {
+  return createProgram({
+    stopSignal: Rx.EMPTY,
     locationToMessage,
     init,
     update,
     view,
     subscriptions,
-  )
+  })
 }
 
-/**
- * A function that requires an `Observable` and returns a `program()` function: the underlying debugger will stop when the `Observable` emits a value.
- * @category constructors
- * @since 0.5.4
- */
-export function ProgramWithStop<Model, Msg, Dom>(
-  stopSignal: Rx.Observable<unknown>,
-): <S extends Model, M extends Msg, D extends Dom>(
-  locationToMessage: (location: Navigation.Location) => M,
-  init: (location: Navigation.Location) => [S, Cmd.Cmd<M>],
-  update: (msg: M, model: S) => [S, Cmd.Cmd<M>],
-  view: (model: S) => Html.Html<D, M>,
-  subscriptions: (model: S) => Sub.Sub<M>,
-) => Html.Program<S, M, D> {
-  return (locationToMessage, init, update, view, subscriptions) =>
-    createProgram(
-      stopSignal,
-      locationToMessage,
-      init,
-      update,
-      view,
-      subscriptions,
-    )
-}
-
-/**
- * Same as `program()` but with `Flags` that can be passed when the `Program` is created in order to manage initial values.
- * @category constructors
- * @since 0.5.3
- */
-export function ProgramWithFlags<Flags, Model, Msg, Dom>(
-  locationToMessage: (location: Navigation.Location) => Msg,
-  init: (
-    flags: Flags,
-  ) => (location: Navigation.Location) => [Model, Cmd.Cmd<Msg>],
-  update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>],
-  view: (model: Model) => Html.Html<Dom, Msg>,
-  subscriptions: (model: Model) => Sub.Sub<Msg>,
-): (flags: Flags) => Html.Program<Model, Msg, Dom> {
-  return (flags) =>
-    Program(locationToMessage, init(flags), update, view, subscriptions)
-}
-
-/**
- * Same as `programWithStop()` but with `Flags` that can be passed when the `Program` is created in order to manage initial values.
- * @category constructors
- * @since 0.5.4
- */
-export function ProgramWithFlagsWithStop<Model, Msg, Dom>(
-  stopSignal: Rx.Observable<unknown>,
-): <Flags, S extends Model, M extends Msg, D extends Dom>(
-  locationToMessage: (location: Navigation.Location) => M,
-  init: (flags: Flags) => (location: Navigation.Location) => [S, Cmd.Cmd<M>],
-  update: (msg: M, model: S) => [S, Cmd.Cmd<M>],
-  view: (model: S) => Html.Html<D, M>,
-  subscriptions: (model: S) => Sub.Sub<M>,
-) => (flags: Flags) => Html.Program<S, M, D> {
-  return (locationToMessage, init, update, view, subscriptions) => (flags) =>
-    createProgram(
-      stopSignal,
-      locationToMessage,
-      init(flags),
-      update,
-      view,
-      subscriptions,
-    )
-}
-
-// --- Internal
-function createProgram<Model, Msg, Dom>(
-  stopSignal: Rx.Observable<unknown>,
-  locationToMessage: (location: Navigation.Location) => Msg,
-  init: (location: Navigation.Location) => [Model, Cmd.Cmd<Msg>],
-  update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>],
-  view: (model: Model) => Html.Html<Dom, Msg>,
-  subscriptions: (model: Model) => Sub.Sub<Msg>,
-): Html.Program<Model, Msg, Dom> {
+const createProgram = <Model, Msg, Dom>({
+  stopSignal,
+  locationToMessage,
+  init,
+  subscriptions,
+  update,
+  view,
+}: {
+  stopSignal: Rx.Observable<unknown>
+  locationToMessage: (location: Navigation.Location) => Msg
+  init: (location: Navigation.Location) => [Model, Cmd.Cmd<Msg>]
+  update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>]
+  view: (model: Model) => Html.Html<Dom, Msg>
+  subscriptions: (model: Model) => Sub.Sub<Msg>
+}): Html.Program<Model, Msg, Dom> => {
   const history = History.createBrowserHistory() // this is needed only to generate init model for debug$ :S
 
   const initModel = init(history.location)[0]
@@ -172,20 +83,20 @@ function createProgram<Model, Msg, Dom>(
   ])
   const debugId$ = new Rx.BehaviorSubject<string | undefined>(undefined)
 
-  const program = Navigation.Program(
+  const program = Navigation.Program({
     locationToMessage,
     init,
-    updateWithDebug({
+    update: updateWithDebug({
       update,
       debug$,
       debugId$,
     }),
     view,
-    subscriptionsWithDebug({
+    subscriptions: subscriptionsWithDebug({
       subscriptions,
       debugId$,
     }),
-  )
+  })
 
   // --- Run the debugger
   // --- we need to make a type assertion for `dispatch` because we cannot change the intrinsic `msg` type of `program`;
