@@ -2,7 +2,6 @@ import * as History from "history"
 import * as Rx from "rxjs"
 import * as Browser from "../Browser"
 import * as Cmd from "../Cmd"
-import * as HMR from "../HMR"
 import * as Html from "../Html"
 import * as Sub from "../Sub"
 import * as Task from "../Task"
@@ -93,6 +92,9 @@ const createApplication = <Model, Msg, Dom>({
     })
 
     await task()
+
+    // wait for debugger to actually start
+    await new Promise((resolve) => setTimeout(resolve, 1000))
   }
 
   return { ...program, startDebugger }
@@ -138,10 +140,7 @@ const createElement = <Model, Msg, Dom>({
     debugInit(),
     initModel,
   ])
-  const debugId$ = HMR.getData(
-    "debugId",
-    () => new Rx.BehaviorSubject<string | undefined>(undefined),
-  )
+  const debugId$ = new Rx.BehaviorSubject<string | undefined>(undefined)
 
   const program = Browser.Element({
     init,
@@ -167,6 +166,9 @@ const createElement = <Model, Msg, Dom>({
     })
 
     await task()
+
+    // wait for debugger to actually start
+    await new Promise((resolve) => setTimeout(resolve, 1000))
   }
 
   return { ...program, startDebugger }
