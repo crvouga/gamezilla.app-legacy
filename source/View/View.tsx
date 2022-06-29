@@ -173,6 +173,8 @@ export const Snackbar = Mui.Snackbar
 
 export const Portal = Mui.Portal
 
+export const Grow = Mui.Grow
+
 export const Box = Mui.Box
 
 export const Divider = Mui.Divider
