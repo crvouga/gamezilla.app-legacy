@@ -4,7 +4,7 @@ export const getData = <T>(key: string, getFallback: () => T): T => {
 
     import.meta.hot.data[key] = value
 
-    return value
+    return import.meta.hot.data[key]
   }
 
   return getFallback()

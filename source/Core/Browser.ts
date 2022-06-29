@@ -138,6 +138,19 @@ export const Element = <Model, Msg, Dom>({
   }
 }
 
+export const withStop =
+  (signal: Rx.Subject<unknown>) =>
+  <Model, Msg, Dom>(
+    program: Program<Model, Msg, Dom>,
+  ): Program<Model, Msg, Dom> => {
+    const { html$, ...rest } = program
+
+    return {
+      ...Platform.withStop(signal)(rest),
+      html$: html$.pipe(Rx.takeUntil(signal)),
+    }
+  }
+
 export const run = <Model, Msg, Dom>(
   program: Program<Model, Msg, Dom>,
   renderer: Renderer<Dom>,
