@@ -152,8 +152,8 @@ export const subscriptionsWithDebug =
       return subscriptions(model)
     }
 
-    console.warn(
-      "[debugger] Detected time traveling so subscriptions are being ignored.",
+    console.info(
+      `[debugger] Detected time traveling so subscriptions are being ignored. latestDebugId: ${latestDebugId} debugId: ${debugId}`,
     )
 
     return Sub.None

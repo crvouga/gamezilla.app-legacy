@@ -1,4 +1,5 @@
 import * as Rx from "rxjs"
+import * as HMR from "./HMR"
 import * as Sub from "./Sub"
 import * as Task from "./Task"
 
@@ -16,7 +17,10 @@ export const now = (): Task.Task<number> => {
 
 export type Time = number
 
-const intervals: { [interval: number]: Rx.Subject<number> } = {}
+const intervals = HMR.getData(
+  "intervals",
+  (): { [interval: number]: Rx.Subject<number> } => ({}),
+)
 
 const onTimeout = (time: number) => {
   const subj = intervals[time]
@@ -25,10 +29,13 @@ const onTimeout = (time: number) => {
     subj.next(new Date().getTime())
     setTimeout(() => onTimeout(time), time)
 
+    HMR.setData("intervals", intervals)
     return
   }
 
   delete intervals[time]
+
+  HMR.setData("intervals", intervals)
 }
 
 export const every = <Msg>(
@@ -39,9 +46,14 @@ export const every = <Msg>(
 
   if (subj === undefined) {
     intervals[time] = subj = new Rx.Subject<number>()
+    HMR.setData("intervals", intervals)
 
     setTimeout(() => onTimeout(time), time)
   }
 
-  return subj.pipe(Rx.map(() => f(new Date().getTime())))
+  const ret = subj.pipe(Rx.map(() => f(new Date().getTime())))
+
+  HMR.setData("intervals", intervals)
+
+  return ret
 }

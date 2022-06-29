@@ -1,4 +1,5 @@
 import * as ReactDomClient from "react-dom/client"
+import * as Rx from "rxjs"
 import { Browser, Debug } from "Core"
 import * as App from "./App"
 
@@ -47,7 +48,11 @@ const development = async () => {
 
   import.meta.hot.accept()
 
-  const program = Debug.Browser.Application({
+  const isInitialLoad = getData("isInitialLoad", () => true)
+
+  setData("isInitialLoad", false)
+
+  const { startDebugger, ...rest } = Debug.Browser.Application({
     onLocationChange: App.onLocationChange,
     init: App.init,
     update: App.update,
@@ -55,7 +60,13 @@ const development = async () => {
     subscriptions: App.subscriptions,
   })
 
+  const stopSignal = new Rx.Subject<unknown>()
+
+  const program = Browser.withStop(stopSignal)(rest)
+
   const appState = getData("appState", () => program.state$.getValue())
+
+  console.info("[program] preloading state...")
 
   program.state$.next(appState)
 
@@ -66,21 +77,37 @@ const development = async () => {
   const rootNode = document.getElementById("root")
 
   if (rootNode === null) {
-    throw new Error("root node is missing from document")
+    console.error("[program] fail to get root dom node")
+    return
   }
 
   const reactRoot = getData("reactRoot", () =>
     ReactDomClient.createRoot(rootNode),
   )
 
-  await program.startDebugger()
+  if (isInitialLoad) {
+    await startDebugger()
+  }
 
   Browser.run(program, (dom) => {
     reactRoot.render(dom)
   })
 
-  console.log(import.meta.hot.data)
+  import.meta.hot.on("vite:beforeUpdate", () => {
+    stopSignal.next("EMIT")
+  })
+
+  // console.dir(import.meta.hot.data)
 }
+
+//
+//
+//
+// Utils
+//
+//
+//
+
 export const getData = <T,>(key: string, getFallback: () => T): T => {
   if (import.meta.hot) {
     const value = import.meta.hot.data[key] ?? getFallback()

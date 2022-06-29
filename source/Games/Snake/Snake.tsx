@@ -291,7 +291,7 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
       return Sub.batch([
         keyDowns,
         Time.every<Msg>(
-          100,
+          1000 / 6,
           // model.tickRate
           () => ({ type: "Elapsed" }),
         ),

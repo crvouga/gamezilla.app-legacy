@@ -138,7 +138,10 @@ const createElement = <Model, Msg, Dom>({
     debugInit(),
     initModel,
   ])
-  const debugId$ = new Rx.BehaviorSubject<string | undefined>(undefined)
+  const debugId$ = HMR.getData(
+    "debugId",
+    () => new Rx.BehaviorSubject<string | undefined>(undefined),
+  )
 
   const program = Browser.Element({
     init,
