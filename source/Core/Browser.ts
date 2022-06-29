@@ -121,19 +121,16 @@ export const Element = <Model, Msg, Dom>({
   view: (model: Model) => Html.Html<Dom, Msg>
   subscriptions: (model: Model) => Sub.Sub<Msg>
 }): Program<Model, Msg, Dom> => {
-  const { dispatch, cmd$, sub$, model$ } = Platform.Worker({
+  const program = Platform.Worker({
     init,
     update,
     subscriptions,
   })
 
-  const html$ = model$.pipe(Rx.map(view))
+  const html$ = program.model$.pipe(Rx.map(view))
 
   return {
-    dispatch,
-    cmd$,
-    sub$,
-    model$,
+    ...program,
     html$,
   }
 }

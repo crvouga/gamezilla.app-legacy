@@ -1,10 +1,13 @@
-import * as Games from "Games"
 import * as Route from "Route"
 import * as Snackbar from "Snackbar"
 import * as View from "View"
 import { keyframes } from "@mui/system"
 import { Cmd, Sub, pipe } from "Core"
 import { exhaustive } from "Utility"
+import * as Chess from "./Chess"
+import * as ConnectFour from "./ConnectFour"
+import * as Snake from "./Snake"
+import * as TicTacToe from "./TicTacToe"
 
 //
 //
@@ -24,10 +27,10 @@ type Opened = {
   type: "Opened"
   status: "Idle" | "ConfirmingClose"
   child:
-    | { type: "TicTacToe"; child: Games.TicTacToe.Model }
-    | { type: "ConnectFour"; child: Games.ConnectFour.Model }
-    | { type: "Chess"; child: Games.Chess.Model }
-    | { type: "Snake"; child: Games.Snake.Model }
+    | { type: "TicTacToe"; child: TicTacToe.Model }
+    | { type: "ConnectFour"; child: ConnectFour.Model }
+    | { type: "Chess"; child: Chess.Model }
+    | { type: "Snake"; child: Snake.Model }
 }
 
 export type Game = Opened["child"]["type"]
@@ -48,16 +51,16 @@ const initOpened = ({ game }: { game: Game }): [Opened, Cmd.Cmd<Msg>] => {
 const initGame = ({ game }: { game: Game }): Opened["child"] => {
   switch (game) {
     case "Chess":
-      return { type: "Chess", child: Games.Chess.init }
+      return { type: "Chess", child: Chess.init }
 
     case "ConnectFour":
-      return { type: "ConnectFour", child: Games.ConnectFour.init }
+      return { type: "ConnectFour", child: ConnectFour.init }
 
     case "TicTacToe":
-      return { type: "TicTacToe", child: Games.TicTacToe.init }
+      return { type: "TicTacToe", child: TicTacToe.init }
 
     case "Snake":
-      return { type: "Snake", child: Games.Snake.init }
+      return { type: "Snake", child: Snake.init }
   }
 }
 
@@ -79,10 +82,10 @@ type Msg =
   | GameMsg
 
 type GameMsg =
-  | (Games.Chess.Msg & { gameGroup: "Chess" })
-  | (Games.ConnectFour.Msg & { gameGroup: "ConnectFour" })
-  | (Games.TicTacToe.Msg & { gameGroup: "TicTacToe" })
-  | (Games.Snake.Msg & { gameGroup: "Snake" })
+  | (Chess.Msg & { gameGroup: "Chess" })
+  | (ConnectFour.Msg & { gameGroup: "ConnectFour" })
+  | (TicTacToe.Msg & { gameGroup: "TicTacToe" })
+  | (Snake.Msg & { gameGroup: "Snake" })
 
 type OutMsg = Snackbar.Action
 
@@ -166,7 +169,7 @@ const updateGame = (
   switch (model.type) {
     case "Chess":
       if (msg.gameGroup === "Chess") {
-        const [modelChild, CmdChild] = Games.Chess.update(msg, model.child)
+        const [modelChild, CmdChild] = Chess.update(msg, model.child)
 
         return [
           { type: "Chess", child: modelChild },
@@ -178,10 +181,7 @@ const updateGame = (
 
     case "ConnectFour":
       if (msg.gameGroup === "ConnectFour") {
-        const [modelChild, CmdChild] = Games.ConnectFour.update(
-          msg,
-          model.child,
-        )
+        const [modelChild, CmdChild] = ConnectFour.update(msg, model.child)
 
         return [
           { type: "ConnectFour", child: modelChild },
@@ -192,7 +192,7 @@ const updateGame = (
 
     case "TicTacToe":
       if (msg.gameGroup === "TicTacToe") {
-        const [modelChild, CmdChild] = Games.TicTacToe.update(msg, model.child)
+        const [modelChild, CmdChild] = TicTacToe.update(msg, model.child)
 
         return [
           { type: "TicTacToe", child: modelChild },
@@ -204,7 +204,7 @@ const updateGame = (
 
     case "Snake":
       if (msg.gameGroup === "Snake") {
-        const [modelChild, CmdChild] = Games.Snake.update(msg, model.child)
+        const [modelChild, CmdChild] = Snake.update(msg, model.child)
 
         return [
           { type: "Snake", child: modelChild },
@@ -249,7 +249,7 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
 
         case "Snake":
           return pipe(
-            Games.Snake.subscriptions(model.child.child),
+            Snake.subscriptions(model.child.child),
             Sub.map(groupGameTag("Snake")),
           )
 
@@ -281,25 +281,25 @@ const viewOpened = (model: Opened): View.View<Msg> => {
   switch (model.child.type) {
     case "Chess":
       return pipe(
-        Games.Chess.view(model.child.child),
+        Chess.view(model.child.child),
         View.map(groupGameTag("Chess")),
       )
 
     case "ConnectFour":
       return pipe(
-        Games.ConnectFour.view(model.child.child),
+        ConnectFour.view(model.child.child),
         View.map(groupGameTag("ConnectFour")),
       )
 
     case "TicTacToe":
       return pipe(
-        Games.TicTacToe.view(model.child.child),
+        TicTacToe.view(model.child.child),
         View.map(groupGameTag("TicTacToe")),
       )
 
     case "Snake":
       return pipe(
-        Games.Snake.view(model.child.child),
+        Snake.view(model.child.child),
         View.map(groupGameTag("Snake")),
       )
   }
@@ -387,15 +387,15 @@ export const gameToName = (game: Game): string => {
 const GameIcon = ({ game }: { game: Game }) => {
   switch (game) {
     case "Chess":
-      return <Games.Chess.Icon />
+      return <Chess.Icon />
 
     case "ConnectFour":
-      return <Games.ConnectFour.Icon />
+      return <ConnectFour.Icon />
 
     case "TicTacToe":
-      return <Games.TicTacToe.Icon />
+      return <TicTacToe.Icon />
 
     case "Snake":
-      return <Games.Snake.Icon />
+      return <Snake.Icon />
   }
 }

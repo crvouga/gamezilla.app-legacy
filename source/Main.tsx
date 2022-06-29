@@ -7,7 +7,7 @@ import * as Store from "Store"
 import * as Profile from "Store/Profile"
 import * as View from "View"
 import * as ReactDom from "react-dom/client"
-import { Browser, Cmd, Debug, Html, Option, Sub, Task, pipe } from "Core"
+import { Browser, Cmd, Debug, Option, Sub, pipe } from "Core"
 import { andThen, andThenMany, exhaustive, groupTag } from "Utility"
 
 //
@@ -586,20 +586,48 @@ const onLocationChange = (location: Browser.Location): Msg => {
   )
 }
 
-const program = Debug.Browser.Application({
-  onLocationChange,
-  init,
-  update,
-  view,
-  subscriptions,
-})
+const initialize = () => {
+  console.log("INITIALIZE program!")
+  const program = Debug.Browser.Application({
+    onLocationChange,
+    init,
+    update,
+    view,
+    subscriptions,
+  })
 
-const rootElement = document.getElementById("root")
+  const rootElement = document.getElementById("root")
 
-if (rootElement) {
+  if (rootElement === null) {
+    throw new Error("root element is missing")
+  }
+
   const root = ReactDom.createRoot(rootElement)
 
   Debug.Browser.run(program, (dom) => {
     root.render(dom)
   })
+
+  return {
+    root,
+    program,
+  }
+}
+
+if (import.meta.hot) {
+  import.meta.hot.accept()
+  const key = "app"
+
+  const { program, root }: ReturnType<typeof initialize> =
+    import.meta.hot.data[key] ?? initialize()
+
+  import.meta.hot.data[key] = { program, root }
+
+  console.log(import.meta.hot.data)
+
+  const [model] = program.state$.getValue()
+
+  root.render(view(model)(program.dispatch))
+} else {
+  initialize()
 }

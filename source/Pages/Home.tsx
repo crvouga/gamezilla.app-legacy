@@ -74,21 +74,18 @@ export const view =
           <View.Typography sx={{ flex: 1 }} variant="h6">
             Home
           </View.Typography>
-
           <View.IconButton
             sx={{ marginRight: 1 }}
             onClick={() => dispatch({ type: "UserClickedChatButton" })}
           >
             <View.Icons.Chat />
           </View.IconButton>
-
           <View.Avatar
             sx={{ cursor: "pointer" }}
             onClick={() => dispatch({ type: "UserClickedAvatar" })}
             src={profile.avatarUrl}
           />
         </View.Toolbar>
-
         <View.Box
           sx={{
             display: "grid",
@@ -133,9 +130,7 @@ export const view =
             onClick={() => dispatch({ type: "UserClickedGame", game: "Snake" })}
           />
         </View.Box>
-
         <View.Box sx={{ flex: 1 }} />
-
         {/* <View.BottomNavigation showLabels>
           <View.BottomNavigationAction
             icon={<View.Icons.Home />}

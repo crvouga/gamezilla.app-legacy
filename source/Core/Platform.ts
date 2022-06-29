@@ -16,6 +16,7 @@ export type Program<Model, Msg> = {
   cmd$: Cmd.Cmd<Msg>
   sub$: Sub.Sub<Msg>
   model$: Rx.Observable<Model>
+  state$: Rx.BehaviorSubject<[Model, Cmd.Cmd<Msg>]>
 }
 
 export type Dispatch<Msg> = (msg: Msg) => void
@@ -54,6 +55,7 @@ export const Worker = <Model, Msg>({
     cmd$,
     sub$,
     model$,
+    state$,
   }
 }
 
