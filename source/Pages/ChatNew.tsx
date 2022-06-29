@@ -224,8 +224,6 @@ export const view =
     })
     return (
       <View.Page>
-        {/* <View.LinearProgress /> */}
-
         <View.Header
           left={
             <View.HeaderBackButton

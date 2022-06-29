@@ -49,6 +49,7 @@ export const view =
   (dispatch) =>
     (
       <View.Page>
+        {/* <View.LinearProgress /> */}
         <View.Header
           left={
             <View.HeaderBackButton
