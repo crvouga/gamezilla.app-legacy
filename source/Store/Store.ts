@@ -2,7 +2,7 @@ import * as Snackbar from "Snackbar"
 import { Cmd, RemoteData } from "Core"
 import * as Conversation from "./Conversation"
 import * as Profile from "./Profile"
-import * as ProfilesConversations from "./ProfilesConversations"
+import { Store } from "./Types"
 
 //
 //
@@ -12,26 +12,7 @@ import * as ProfilesConversations from "./ProfilesConversations"
 //
 //
 
-export type Model = {
-  Profile: {
-    [id: string]: Profile.Profile
-  }
-  Conversation: {
-    [id: string]: Conversation.Conversation
-  }
-  ProfilesConversations: {
-    [id: string]: ProfilesConversations.ProfilesConversations
-  }
-  queries: {
-    Profile: Profile.Queries
-    Conversation: Conversation.Queries
-  }
-  mutations: {
-    Profile: Profile.Mutations
-    Conversation: Conversation.Mutations
-  }
-}
-
+export type Model = Store
 //
 //
 //

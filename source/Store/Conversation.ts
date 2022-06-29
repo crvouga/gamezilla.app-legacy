@@ -2,10 +2,10 @@ import * as Route from "Route"
 import * as Snackbar from "Snackbar"
 import * as Supabase from "Supabase"
 import { Cmd, RemoteData, Result, Task, pipe } from "Core"
-import { Conversation, ProfilesConversations } from "Store"
 import produce from "immer"
 import { definitions } from "supabase-types"
-import * as Store from "./Store"
+import * as Types from "./Types"
+import { Problem, ProfilesConversations, Store } from "./Types"
 
 //
 //
@@ -15,21 +15,7 @@ import * as Store from "./Store"
 //
 //
 
-export type Conversation = {
-  conversationId: string
-}
-
-export type Mutations = {
-  GetElseCreate: RemoteData.RemoteData<Problem, string>
-}
-
-export type Queries = {
-  Get: {
-    [id: string]: RemoteData.RemoteData<Problem, string>
-  }
-}
-
-type Problem = { message: string }
+export type Conversation = Types.Conversation
 
 //
 //
@@ -59,7 +45,7 @@ type CreateResult = Result.Result<
   Problem,
   {
     conversation: Conversation
-    profilesConversations: ProfilesConversations.ProfilesConversations[]
+    profilesConversations: ProfilesConversations[]
   }
 >
 
@@ -87,8 +73,8 @@ type OutAction = Snackbar.Action
 
 export const update = (
   msg: Msg,
-  model: Store.Model,
-): [Store.Model, Cmd.Cmd<Msg>, OutAction[]] => {
+  model: Store,
+): [Store, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (msg.type) {
     case "Conversation/Created":
       const { result } = msg
@@ -130,8 +116,8 @@ export const update = (
 
 export const runAction = (
   action: Action,
-  model: Store.Model,
-): [Store.Model, Cmd.Cmd<Msg>] => {
+  model: Store,
+): [Store, Cmd.Cmd<Msg>] => {
   switch (action.type) {
     case "Conversation/Create":
       const modelNew = produce(model, (model) => {

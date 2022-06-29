@@ -1,13 +1,14 @@
 import * as Snackbar from "Snackbar"
 import * as Rx from "rxjs"
-import { Cmd, Option, RemoteData, Result, Task, pipe } from "Core"
+import { Cmd, RemoteData, Result, Task, pipe } from "Core"
 import { exhaustive } from "Utility"
 import produce from "immer"
 import { matchSorter } from "match-sorter"
 import * as Supabase from "../Supabase"
-import * as Store from "./Store"
+import * as Types from "./Types"
 import { Sub } from "../Core"
 import { definitions } from "../supabase-types"
+import { Problem, Store } from "./Types"
 
 //
 //
@@ -17,38 +18,9 @@ import { definitions } from "../supabase-types"
 //
 //
 
-type Model = Store.Model
+type Model = Store
 
-export type Profile = {
-  userId: string
-  username: string
-  name: string
-  avatarUrl: string
-  themeMode: "Light" | "Dark" | "System"
-}
-
-export type Queries = {
-  Get: {
-    [userId: string]: RemoteData.RemoteData<Problem, string>
-  }
-  Search: {
-    [searchText: string]: RemoteData.RemoteData<Problem, string[]>
-  }
-}
-
-export type Mutations = {
-  Edit: {
-    [userId: string]: RemoteData.RemoteData<Problem, string>
-  }
-  DeleteForever: {
-    [userId: string]: RemoteData.RemoteData<Problem, string>
-  }
-  Create: {
-    [userId: string]: RemoteData.RemoteData<Problem, string>
-  }
-}
-
-type Problem = { message: string }
+export type Profile = Types.Profile
 
 //
 //
