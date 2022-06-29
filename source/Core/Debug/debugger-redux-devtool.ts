@@ -11,7 +11,13 @@ import * as Result from "../Result"
 import * as Task from "../Task"
 import { Dispatch } from "../Platform"
 import { pipe } from "../pipe"
-import { Debug, Debugger, DebuggerDeps, Global, MsgWithDebug } from "./commons"
+import {
+  Debug,
+  Debugger,
+  DebuggerDeps,
+  Global,
+  MsgWithDebug,
+} from "./debugger-commons"
 
 type Unsubscription = () => void
 
