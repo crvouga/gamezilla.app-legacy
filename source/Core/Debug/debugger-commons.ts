@@ -1,6 +1,5 @@
 import * as Rx from "rxjs"
 import * as Cmd from "../Cmd"
-import * as HMR from "../HMR"
 import * as Platform from "../Platform"
 import * as Sub from "../Sub"
 
@@ -91,7 +90,7 @@ const makeDebugIdGen = function* () {
   }
 }
 
-const debugIdGen = HMR.getData("debugIdGen", () => makeDebugIdGen())
+const debugIdGen = makeDebugIdGen()
 
 export const updateWithDebug =
   <Model, Msg>({

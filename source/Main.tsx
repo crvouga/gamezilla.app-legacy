@@ -42,7 +42,11 @@ const production = () => {
 //
 
 const development = async () => {
+  console.info("[program] starting development mode")
+
   if (!import.meta.hot) {
+    console.error("[program] failed to start development mode")
+
     return
   }
 
@@ -134,4 +138,16 @@ export const setData = <T,>(key: string, value: T): void => {
 //
 //
 
-development()
+const main = (mode: "development" | "production") => {
+  switch (mode) {
+    case "development":
+      development()
+      return
+
+    case "production":
+      production()
+      return
+  }
+}
+
+main(import.meta.env.PROD ? "production" : "development")
