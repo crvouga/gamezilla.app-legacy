@@ -65,7 +65,7 @@ export const update = (
   switch (msg.type) {
     case "ClickedCreate":
       const userIds = Object.values(model.selected)
-      return [model, Cmd.None, [Store.Conversation.Create(authUserId, userIds)]]
+      return [model, Cmd.None, [Store.Conversation.Insert(authUserId, userIds)]]
 
     case "ClickedCancel":
       return [model, Route.back, []]
