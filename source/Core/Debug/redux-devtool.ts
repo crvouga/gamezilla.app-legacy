@@ -5,10 +5,10 @@
  *
  * @since 0.5.0
  */
-import * as IO from "../IO"
 import * as Json from "../Json"
 import * as Option from "../Option"
 import * as Result from "../Result"
+import * as Task from "../Task"
 import { Dispatch } from "../Platform"
 import { pipe } from "../pipe"
 import { Debug, Debugger, DebuggerR, Global, MsgWithDebug } from "./commons"
@@ -85,8 +85,10 @@ interface DevToolHandlerR<Model, Msg> extends DebuggerR<Model, Msg> {
  * @since 0.5.0
  */
 export const getConnection =
-  <Model, Msg>(global: Global): IO.IO<Option.Option<Connection<Model, Msg>>> =>
-  () => {
+  <Model, Msg>(
+    global: Global,
+  ): Task.Task<Option.Option<Connection<Model, Msg>>> =>
+  async () => {
     return hasExtension(global)
       ? Option.Some(global.__REDUX_DEVTOOLS_EXTENSION__.connect())
       : Option.None
@@ -159,25 +161,25 @@ function handleIncomingMsg<Model, Msg>({
   dispatch,
 }: DevToolHandlerR<Model, Msg>): (
   msg: DevToolMsg,
-) => Result.Result<string, IO.IO<void>> {
+) => Result.Result<string, Task.Task<void>> {
   const dispatchToApp =
-    (m: unknown): IO.IO<void> =>
-    () =>
+    (m: unknown): Task.Task<void> =>
+    async () =>
       dispatch(m as Msg)
 
-  const reinit: IO.IO<void> = () => connection.init(init)
+  const reinit: Task.Task<void> = async () => connection.init(init)
 
-  const update = (payload: Model): IO.IO<void> =>
+  const update = (payload: Model): Task.Task<void> =>
     dispatchToApp({ type: "__DebugUpdateModel__", payload })
 
   const restart =
-    (model: Model): IO.IO<void> =>
-    () =>
+    (model: Model): Task.Task<void> =>
+    async () =>
       connection.init(model)
 
   const liftState =
-    (state: LiftedState<Model>): IO.IO<void> =>
-    () =>
+    (state: LiftedState<Model>): Task.Task<void> =>
+    async () =>
       connection.send(null, state)
 
   const toggle = toggleAction(dispatch)
@@ -208,7 +210,7 @@ function handleIncomingMsg<Model, Msg>({
             return Result.Ok(
               pipe(
                 update(init),
-                IO.chain(() => reinit),
+                Task.chain(() => reinit),
               ),
             )
 
@@ -218,7 +220,7 @@ function handleIncomingMsg<Model, Msg>({
               Result.map((m) =>
                 pipe(
                   update(m),
-                  IO.chain(() => restart(m)),
+                  Task.chain(() => restart(m)),
                 ),
               ),
             )
@@ -237,7 +239,7 @@ function handleIncomingMsg<Model, Msg>({
                       liftedState.computedStates.length - 1
                     ].state,
                   ),
-                  IO.chain(() => liftState(liftedState)),
+                  Task.chain(() => liftState(liftedState)),
                 ),
               ),
             )
@@ -246,7 +248,7 @@ function handleIncomingMsg<Model, Msg>({
             return pipe(
               parseToggleAction<Model>(msg),
               Result.map(([id, liftedState]) =>
-                pipe(toggle(id, liftedState), IO.chain(liftState)),
+                pipe(toggle(id, liftedState), Task.chain(liftState)),
               ),
             )
 
@@ -363,11 +365,15 @@ function parseToggleAction<Model>(
  *
  * @since 0.5.0
  */
-function toggleAction<Model, Msg>(
-  dispatch: Dispatch<MsgWithDebug<Model, Msg>>,
-): (id: number, liftedState: LiftedState<Model>) => IO.IO<LiftedState<Model>> {
-  return (id, liftedState) => () => {
-    const state = JSON.parse(JSON.stringify(liftedState)) // poor man deep clone...
+
+const toggleAction =
+  <Model, Msg>(dispatch: Dispatch<MsgWithDebug<Model, Msg>>) =>
+  (
+    id: number,
+    liftedState: LiftedState<Model>,
+  ): Task.Task<LiftedState<Model>> =>
+  async () => {
+    const state = unsafeCopy(liftedState)
 
     const { skippedActionIds, stagedActionIds, computedStates, actionsById } =
       state
@@ -382,6 +388,7 @@ function toggleAction<Model, Msg>(
 
     dispatch({
       type: "__DebugUpdateModel__",
+      // @ts-ignore
       payload: computedStates[actionIndex - 1].state,
     })
 
@@ -393,15 +400,19 @@ function toggleAction<Model, Msg>(
 
       if (
         i !== actionIndex &&
+        currentActionId &&
         skippedActionIds.indexOf(currentActionId) !== -1
       ) {
         continue // it's already skipped
       }
 
-      dispatch({
-        type: "__DebugApplyMsg__",
-        payload: actionsById[currentActionId].action,
-      })
+      if (currentActionId) {
+        dispatch({
+          type: "__DebugApplyMsg__",
+          // @ts-ignore
+          payload: actionsById[currentActionId].action,
+        })
+      }
     }
 
     if (skipped) {
@@ -412,4 +423,9 @@ function toggleAction<Model, Msg>(
 
     return state
   }
+
+// poor man deep clone...
+const unsafeCopy = <A>(a: A): A => {
+  const copied: A = JSON.parse(JSON.stringify(a))
+  return copied
 }

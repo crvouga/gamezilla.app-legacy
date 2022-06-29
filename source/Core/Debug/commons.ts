@@ -3,13 +3,12 @@
  *
  * @since 0.5.0
  */
-import { Model } from "Snackbar"
 import { BehaviorSubject, Observable } from "rxjs"
 import { takeUntil } from "rxjs/operators"
 import * as Cmd from "../Cmd"
-import * as IO from "../IO"
 import * as Option from "../Option"
 import * as Sub from "../Sub"
+import * as Task from "../Task"
 import * as Console from "./console"
 import * as ReduxDevtool from "./redux-devtool"
 import { Dispatch } from "../Platform"
@@ -219,16 +218,16 @@ export const subscriptionsWithDebug =
  */
 export const RunDebugger =
   <Model, Msg>(global: Global, stopSignal: Observable<unknown>) =>
-  (deps: DebuggerR<Model, Msg>): IO.IO<void> => {
+  (deps: DebuggerR<Model, Msg>): Task.Task<void> => {
     return pipe(
       ReduxDevtool.getConnection<Model, Msg>(global),
-      IO.map(
+      Task.map(
         Option.fold(
           () => Console.makeDebugger<Model, Msg>(),
           ReduxDevtool.makeDebugger,
         ),
       ),
-      IO.chain((debuggerInstance) => () => {
+      Task.chain((debuggerInstance) => async () => {
         const { debug, stop } = debuggerInstance(deps)
 
         deps.debug$.pipe(takeUntil(stopSignal)).subscribe({
