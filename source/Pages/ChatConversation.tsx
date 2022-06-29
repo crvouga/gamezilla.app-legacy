@@ -1,4 +1,5 @@
 import * as Route from "Route"
+import * as Store from "Store"
 import * as View from "View"
 import { Cmd } from "Core"
 
@@ -45,9 +46,9 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 //
 
 export const view =
-  (model: Model): View.View<Msg> =>
-  (dispatch) =>
-    (
+  (store: Store.Model, coversationId: string, model: Model): View.View<Msg> =>
+  (dispatch) => {
+    return (
       <View.Page>
         <View.Header
           left={
@@ -59,3 +60,4 @@ export const view =
         />
       </View.Page>
     )
+  }
