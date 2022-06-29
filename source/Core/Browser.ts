@@ -32,10 +32,13 @@ export type Location = History.Location
 
 const history = History.createBrowserHistory()
 
-export const location$ = new Rx.Subject<Location>()
-
-history.listen((location) => {
-  location$.next(location.location)
+const location$ = new Rx.Observable<Location>((subscriber) => {
+  const unlisten = history.listen((location) => {
+    subscriber.next(location.location)
+  })
+  return () => {
+    unlisten()
+  }
 })
 
 //

@@ -1,5 +1,6 @@
 import * as Rx from "rxjs"
 import * as Cmd from "../Cmd"
+import * as HMR from "../HMR"
 import * as Platform from "../Platform"
 import * as Sub from "../Sub"
 
@@ -90,7 +91,7 @@ const makeDebugIdGen = function* () {
   }
 }
 
-const debugIdGen = makeDebugIdGen()
+const debugIdGen = HMR.getData("debugIdGen", () => makeDebugIdGen())
 
 export const updateWithDebug =
   <Model, Msg>({
@@ -151,8 +152,8 @@ export const subscriptionsWithDebug =
       return subscriptions(model)
     }
 
-    console.info(
-      "[DEBUGGER] Detected time traveling so subscriptions are being ignored.",
+    console.warn(
+      "[debugger] Detected time traveling so subscriptions are being ignored.",
     )
 
     return Sub.None

@@ -46,7 +46,7 @@ type MouseStatus = "active" | "inactive"
 export const init: Model = {
   status: { type: "Paused" },
   mouseStatus: "inactive",
-  tickRate: 1000 / 6,
+  tickRate: 1000,
   head: { x: 4, y: 6 },
   tail: [
     { x: 3, y: 6 },
@@ -290,7 +290,11 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
     case "Playing":
       return Sub.batch([
         keyDowns,
-        Time.every<Msg>(model.tickRate, () => ({ type: "Elapsed" })),
+        Time.every<Msg>(
+          100,
+          // model.tickRate
+          () => ({ type: "Elapsed" }),
+        ),
       ])
   }
 }

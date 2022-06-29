@@ -2,8 +2,10 @@ import * as History from "history"
 import * as Rx from "rxjs"
 import * as Browser from "../Browser"
 import * as Cmd from "../Cmd"
+import * as HMR from "../HMR"
 import * as Html from "../Html"
 import * as Sub from "../Sub"
+import * as Task from "../Task"
 import { RunDebugger } from "./debugger"
 import {
   DebugData,
@@ -12,6 +14,10 @@ import {
   subscriptionsWithDebug,
   updateWithDebug,
 } from "./debugger-commons"
+
+type Program<Model, Msg, Dom> = Browser.Program<Model, Msg, Dom> & {
+  startDebugger: Task.Task<void>
+}
 
 export const Application = <Model, Msg, Dom>({
   init,
@@ -25,7 +31,7 @@ export const Application = <Model, Msg, Dom>({
   update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>]
   view: (model: Model) => Html.Html<Dom, Msg>
   subscriptions: (model: Model) => Sub.Sub<Msg>
-}): Browser.Program<Model, Msg, Dom> => {
+}): Program<Model, Msg, Dom> => {
   return createApplication({
     stopSignal: Rx.EMPTY,
     onLocationChange,
@@ -50,7 +56,7 @@ const createApplication = <Model, Msg, Dom>({
   update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>]
   view: (model: Model) => Html.Html<Dom, Msg>
   subscriptions: (model: Model) => Sub.Sub<Msg>
-}): Browser.Program<Model, Msg, Dom> => {
+}): Program<Model, Msg, Dom> => {
   const history = History.createBrowserHistory() // this is needed only to generate init model for debug$ :S
 
   const initModel = init(history.location)[0]
@@ -59,6 +65,7 @@ const createApplication = <Model, Msg, Dom>({
     debugInit(),
     initModel,
   ])
+
   const debugId$ = new Rx.BehaviorSubject<string | undefined>(undefined)
 
   const program = Browser.Application({
@@ -78,13 +85,17 @@ const createApplication = <Model, Msg, Dom>({
 
   const runDebugger = RunDebugger<Model, Msg>(window, stopSignal)
 
-  runDebugger({
-    debug$,
-    init: initModel,
-    dispatch: program.dispatch as DebuggerDeps<Model, Msg>["dispatch"],
-  })()
+  const startDebugger = async () => {
+    const task = runDebugger({
+      debug$,
+      init: initModel,
+      dispatch: program.dispatch as DebuggerDeps<Model, Msg>["dispatch"],
+    })
 
-  return program
+    await task()
+  }
+
+  return { ...program, startDebugger }
 }
 
 export const Element = <Model, Msg, Dom>({
@@ -97,7 +108,7 @@ export const Element = <Model, Msg, Dom>({
   update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>]
   view: (model: Model) => Html.Html<Dom, Msg>
   subscriptions: (model: Model) => Sub.Sub<Msg>
-}): Browser.Program<Model, Msg, Dom> => {
+}): Program<Model, Msg, Dom> => {
   return createElement({
     stopSignal: Rx.EMPTY,
     init,
@@ -120,7 +131,7 @@ const createElement = <Model, Msg, Dom>({
   update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>]
   view: (model: Model) => Html.Html<Dom, Msg>
   subscriptions: (model: Model) => Sub.Sub<Msg>
-}): Browser.Program<Model, Msg, Dom> => {
+}): Program<Model, Msg, Dom> => {
   const initModel = init[0]
 
   const debug$ = new Rx.BehaviorSubject<DebugData<Model, Msg>>([
@@ -145,13 +156,17 @@ const createElement = <Model, Msg, Dom>({
 
   const runDebugger = RunDebugger<Model, Msg>(window, stopSignal)
 
-  runDebugger({
-    debug$,
-    init: initModel,
-    dispatch: program.dispatch as DebuggerDeps<Model, Msg>["dispatch"],
-  })()
+  const startDebugger = async () => {
+    const task = runDebugger({
+      debug$,
+      init: initModel,
+      dispatch: program.dispatch as DebuggerDeps<Model, Msg>["dispatch"],
+    })
 
-  return program
+    await task()
+  }
+
+  return { ...program, startDebugger }
 }
 
 //
@@ -163,6 +178,7 @@ const createElement = <Model, Msg, Dom>({
 //
 
 export const run = <Model, Msg, Dom>(
+  wait: number,
   program: Browser.Program<Model, Msg, Dom>,
   renderer: Browser.Renderer<Dom>,
 ): Rx.Observable<Model> => {
@@ -181,7 +197,7 @@ export const run = <Model, Msg, Dom>(
     model$.subscribe((model) => {
       out$.next(model)
     })
-  }, 1000)
+  }, wait)
 
   return out$
 }

@@ -13,6 +13,7 @@ import { DebuggerDeps, Global } from "./debugger-commons"
  * @category utils
  * @since 0.5.4
  */
+
 export const RunDebugger =
   <Model, Msg>(global: Global, stopSignal: Rx.Observable<unknown>) =>
   (deps: DebuggerDeps<Model, Msg>): Task.Task<void> => {
@@ -25,6 +26,8 @@ export const RunDebugger =
         ),
       ),
       Task.chain((debuggerInstance) => async () => {
+        console.info("[debugger] starting")
+
         const { debug, stop } = debuggerInstance(deps)
 
         deps.debug$.pipe(Rx.takeUntil(stopSignal)).subscribe({
