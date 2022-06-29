@@ -3,6 +3,7 @@
  *
  * @since 0.5.0
  */
+import { Model } from "Snackbar"
 import { BehaviorSubject, Observable } from "rxjs"
 import { takeUntil } from "rxjs/operators"
 import * as Cmd from "../Cmd"
@@ -143,16 +144,17 @@ const makeDebugIdGen = function* () {
 
 const debugIdGen = makeDebugIdGen()
 
-export function updateWithDebug<Model, Msg>({
-  debug$,
-  debugId$,
-  update,
-}: {
-  debug$: BehaviorSubject<DebugData<Model, Msg>>
-  debugId$: BehaviorSubject<string | undefined>
-  update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>]
-}): (msg: MsgWithDebug<Model, Msg>, model: Model) => [Model, Cmd.Cmd<Msg>] {
-  return (msg, model) => {
+export const updateWithDebug =
+  <Model, Msg>({
+    debug$,
+    debugId$,
+    update,
+  }: {
+    debug$: BehaviorSubject<DebugData<Model, Msg>>
+    debugId$: BehaviorSubject<string | undefined>
+    update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>]
+  }) =>
+  (msg: MsgWithDebug<Model, Msg>, model: Model): [Model, Cmd.Cmd<Msg>] => {
     if ("type" in msg) {
       switch (msg.type) {
         case "__DebugUpdateModel__":
@@ -176,7 +178,6 @@ export function updateWithDebug<Model, Msg>({
 
     return [modelNew, cmdNew]
   }
-}
 
 /**
  *
@@ -202,7 +203,9 @@ export const subscriptionsWithDebug =
       return subscriptions(model)
     }
 
-    console.log("Ignoring subscriptions...")
+    console.info(
+      "[DEBUGGER] Detected time traveling so subscriptions are being ignored.",
+    )
 
     return Sub.None
   }
@@ -214,11 +217,9 @@ export const subscriptionsWithDebug =
  * @category utils
  * @since 0.5.4
  */
-export function RunDebugger<Model, Msg>(
-  global: Global,
-  stopSignal: Observable<unknown>,
-): (deps: DebuggerR<Model, Msg>) => IO.IO<void> {
-  return (deps) => {
+export const RunDebugger =
+  <Model, Msg>(global: Global, stopSignal: Observable<unknown>) =>
+  (deps: DebuggerR<Model, Msg>): IO.IO<void> => {
     return pipe(
       ReduxDevtool.getConnection<Model, Msg>(global),
       IO.map(
@@ -237,4 +238,3 @@ export function RunDebugger<Model, Msg>(
       }),
     )
   }
-}

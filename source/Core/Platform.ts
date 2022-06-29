@@ -12,11 +12,15 @@ export type Program<Model, Msg> = {
   model$: Rx.Observable<Model>
 }
 
-export const Program = <Model, Msg>(
-  init: [Model, Cmd.Cmd<Msg>],
-  update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>],
-  subscriptions: (model: Model) => Sub.Sub<Msg>,
-): Program<Model, Msg> => {
+export const Program = <Model, Msg>({
+  init,
+  update,
+  subscriptions,
+}: {
+  init: [Model, Cmd.Cmd<Msg>]
+  update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>]
+  subscriptions: (model: Model) => Sub.Sub<Msg>
+}): Program<Model, Msg> => {
   const state$ = new Rx.BehaviorSubject(init)
 
   const dispatch: Dispatch<Msg> = (msg) => {
@@ -32,29 +36,6 @@ export const Program = <Model, Msg>(
   return { dispatch, cmd$, sub$, model$ }
 }
 
-export const ProgramWithFlags = <Flags, Model, Msg>(
-  init: (flags: Flags) => [Model, Cmd.Cmd<Msg>],
-  update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>],
-  subscriptions: (model: Model) => Sub.Sub<Msg>,
-): ((flags: Flags) => Program<Model, Msg>) => {
-  return (flags) => Program(init(flags), update, subscriptions)
-}
-
-export const withStop = (
-  signal: Rx.Observable<unknown>,
-): (<Model, Msg>(program: Program<Model, Msg>) => Program<Model, Msg>) => {
-  return (program) => {
-    const { cmd$, model$, sub$, ...rest } = program
-
-    return {
-      ...rest,
-      model$: model$.pipe(Rx.takeUntil(signal)),
-      cmd$: cmd$.pipe(Rx.takeUntil(signal)),
-      sub$: sub$.pipe(Rx.takeUntil(signal)),
-    }
-  }
-}
-
 export const run = <Model, Msg>(
   program: Program<Model, Msg>,
 ): Rx.Observable<Model> => {
@@ -62,7 +43,7 @@ export const run = <Model, Msg>(
 
   // WARNING
   // Order matters!
-  // to prevent bugs sub$.subscribe must happen before cmd$.subscribe
+  // sub$.subscribe must happen before cmd$.subscribe to prevent bugs when using the dev tools debugger
 
   sub$.subscribe(dispatch)
 

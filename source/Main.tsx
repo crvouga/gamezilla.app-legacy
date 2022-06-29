@@ -586,13 +586,13 @@ const locationToMessage = (location: Navigation.Location) => {
   )
 }
 
-const program = Debug.Navigation.Program(
+const program = Debug.Navigation.Program({
   locationToMessage,
   init,
   update,
   view,
   subscriptions,
-)
+})
 
 const rootElement = document.getElementById("root")
 
