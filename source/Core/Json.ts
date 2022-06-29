@@ -21,3 +21,15 @@ export const parse = (s: string): Result.Result<Problem, Json> => {
     return Result.Err({ message })
   }
 }
+
+export const stringify = (json: Json): Result.Result<Problem, string> => {
+  try {
+    const stringified: string = JSON.stringify(json)
+
+    return Result.Ok(stringified)
+  } catch (error) {
+    // todo make better
+    const message = String(error)
+    return Result.Err({ message })
+  }
+}
