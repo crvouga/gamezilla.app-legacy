@@ -45,7 +45,10 @@ export type Model =
   | (ProfileUpdateTheme.Model & { page: "ProfileUpdateTheme" })
   | (Chat.Model & { page: "Chat" })
   | (ChatNew.Model & { page: "ChatNew" })
-  | (ChatConversation.Model & { page: "ChatConversation" })
+  | (ChatConversation.Model & {
+      page: "ChatConversation"
+      conversationId: string
+    })
   | { page: "Game" }
   | { page: "Loading" }
 
@@ -86,7 +89,11 @@ export const initReady = (
 
     case "ChatConversation":
       return [
-        { ...ChatConversation.init, page: "ChatConversation" },
+        {
+          ...ChatConversation.init,
+          page: "ChatConversation",
+          conversationId: route.conversationId,
+        },
         Cmd.None,
         [],
       ]
@@ -356,10 +363,22 @@ export const updateReady = (
 
     case "ChatConversation":
       if (msg.page === "ChatConversation") {
-        return tagUpdate(
-          "ChatConversation",
-          ChatConversation.update(msg, model),
+        const [modelPage, cmdPage, actions = []] = ChatConversation.update(
+          msg,
+          model,
         )
+        return [
+          {
+            ...modelPage,
+            conversationId: model.conversationId,
+            page: "ChatConversation",
+          },
+          pipe(
+            cmdPage,
+            Cmd.map((msg) => ({ ...msg, page: "ChatConversation" })),
+          ),
+          actions,
+        ]
       }
       return [model, Cmd.None, []]
 
@@ -563,7 +582,10 @@ export const viewReady = (
       )
 
     case "ChatConversation":
-      return tagView("ChatConversation", ChatConversation.view(model))
+      return tagView(
+        "ChatConversation",
+        ChatConversation.view(store, model.conversationId, model),
+      )
 
     case "Home":
       return tagView("Home", Home.view({ profile, game }, model))
