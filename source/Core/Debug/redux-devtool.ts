@@ -11,7 +11,7 @@ import * as Result from "../Result"
 import * as Task from "../Task"
 import { Dispatch } from "../Platform"
 import { pipe } from "../pipe"
-import { Debug, Debugger, DebuggerR, Global, MsgWithDebug } from "./commons"
+import { Debug, Debugger, DebuggerDeps, Global, MsgWithDebug } from "./commons"
 
 type Unsubscription = () => void
 
@@ -75,7 +75,7 @@ interface LiftedState<Model> {
   isPaused: boolean
 }
 
-interface DevToolHandlerR<Model, Msg> extends DebuggerR<Model, Msg> {
+interface DevToolHandlerR<Model, Msg> extends DebuggerDeps<Model, Msg> {
   connection: Connection<Model, Msg>
 }
 
@@ -131,9 +131,9 @@ export const makeDebugger = <Model, Msg>(
  * **[UNSAFE]** Handles the execution of an effect related to an incoming messages sent from extension monitor.
  * @since 0.5.0
  */
-function handleSubscription<Model, Msg>(
+const handleSubscription = <Model, Msg>(
   deps: DevToolHandlerR<Model, Msg>,
-): (msg: DevToolMsg) => void {
+): ((msg: DevToolMsg) => void) => {
   const handler = handleIncomingMsg(deps)
 
   return (msg) =>
@@ -154,14 +154,14 @@ function handleSubscription<Model, Msg>(
  * **Note:** the monitor can dispatch messages of any shape that will be re-dispatched into the application; these messages **are not validated** and can lead to unexpected behaviours.
  * @since 0.5.0
  */
-function handleIncomingMsg<Model, Msg>({
+const handleIncomingMsg = <Model, Msg>({
   connection,
   init,
   debug$,
   dispatch,
-}: DevToolHandlerR<Model, Msg>): (
+}: DevToolHandlerR<Model, Msg>): ((
   msg: DevToolMsg,
-) => Result.Result<string, Task.Task<void>> {
+) => Result.Result<string, Task.Task<void>>) => {
   const dispatchToApp =
     (m: unknown): Task.Task<void> =>
     async () =>
@@ -265,9 +265,9 @@ function handleIncomingMsg<Model, Msg>({
  * The `MESSAGE` action will send the message payload and state to the connected extension (`connection`).
  * @since 0.5.0
  */
-function handleActions<Model, Msg>({
+const handleActions = <Model, Msg>({
   connection,
-}: DevToolHandlerR<Model, Msg>): Debug<Model, Msg> {
+}: DevToolHandlerR<Model, Msg>): Debug<Model, Msg> => {
   return ([action, model]) =>
     action.type === "MESSAGE"
       ? connection.send(action.payload, model)
@@ -279,7 +279,7 @@ function handleActions<Model, Msg>({
  *
  * @since 0.5.0
  */
-function parseJump<Model>(msg: Monitor): Result.Result<string, Model> {
+const parseJump = <Model>(msg: Monitor): Result.Result<string, Model> => {
   return pipe(
     Json.parse(String(msg.state)),
     Result.mapError((problem) => problem.message),
@@ -296,7 +296,7 @@ function parseJump<Model>(msg: Monitor): Result.Result<string, Model> {
  *
  * @since 0.5.0
  */
-function parseRollback<Model>(msg: Monitor): Result.Result<string, Model> {
+const parseRollback = <Model>(msg: Monitor): Result.Result<string, Model> => {
   return pipe(
     Json.parse(String(msg.state)),
     Result.mapError((problem) => problem.message),
@@ -313,9 +313,9 @@ function parseRollback<Model>(msg: Monitor): Result.Result<string, Model> {
  *
  * @since 0.5.0
  */
-function parseImportState<Model>(
+const parseImportState = <Model>(
   msg: Monitor,
-): Result.Result<string, LiftedState<Model>> {
+): Result.Result<string, LiftedState<Model>> => {
   return typeof msg.payload.nextLiftedState === "object" &&
     msg.payload.nextLiftedState !== null
     ? Result.Ok(msg.payload.nextLiftedState as LiftedState<Model>)
@@ -327,9 +327,9 @@ function parseImportState<Model>(
  *
  * @since 0.5.0
  */
-function parseToggleAction<Model>(
+const parseToggleAction = <Model>(
   msg: Monitor,
-): Result.Result<string, [number, LiftedState<Model>]> {
+): Result.Result<string, [number, LiftedState<Model>]> => {
   const getId = pipe(
     msg.payload.id,
     Result.fromNullable("TOGGLE_ACTION message has some bad payload..."),

@@ -1,0 +1,190 @@
+import * as History from "history"
+import * as Rx from "rxjs"
+import * as Browser from "../Browser"
+import * as Cmd from "../Cmd"
+import * as Html from "../Html"
+import * as Sub from "../Sub"
+import {
+  DebugData,
+  DebuggerDeps,
+  RunDebugger,
+  debugInit,
+  subscriptionsWithDebug,
+  updateWithDebug,
+} from "./commons"
+
+export const Application = <Model, Msg, Dom>({
+  init,
+  onLocationChange,
+  subscriptions,
+  update,
+  view,
+}: {
+  onLocationChange: (location: Browser.Location) => Msg
+  init: (location: Browser.Location) => [Model, Cmd.Cmd<Msg>]
+  update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>]
+  view: (model: Model) => Html.Html<Dom, Msg>
+  subscriptions: (model: Model) => Sub.Sub<Msg>
+}): Browser.Program<Model, Msg, Dom> => {
+  return createApplication({
+    stopSignal: Rx.EMPTY,
+    onLocationChange,
+    init,
+    update,
+    view,
+    subscriptions,
+  })
+}
+
+const createApplication = <Model, Msg, Dom>({
+  stopSignal,
+  onLocationChange,
+  init,
+  subscriptions,
+  update,
+  view,
+}: {
+  stopSignal: Rx.Observable<unknown>
+  onLocationChange: (location: Browser.Location) => Msg
+  init: (location: Browser.Location) => [Model, Cmd.Cmd<Msg>]
+  update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>]
+  view: (model: Model) => Html.Html<Dom, Msg>
+  subscriptions: (model: Model) => Sub.Sub<Msg>
+}): Browser.Program<Model, Msg, Dom> => {
+  const history = History.createBrowserHistory() // this is needed only to generate init model for debug$ :S
+
+  const initModel = init(history.location)[0]
+
+  const debug$ = new Rx.BehaviorSubject<DebugData<Model, Msg>>([
+    debugInit(),
+    initModel,
+  ])
+  const debugId$ = new Rx.BehaviorSubject<string | undefined>(undefined)
+
+  const program = Browser.Application({
+    onLocationChange,
+    init,
+    update: updateWithDebug({
+      update,
+      debug$,
+      debugId$,
+    }),
+    view,
+    subscriptions: subscriptionsWithDebug({
+      subscriptions,
+      debugId$,
+    }),
+  })
+
+  // --- Run the debugger
+  // --- we need to make a type assertion for `dispatch` because we cannot change the intrinsic `msg` type of `program`;
+  // --- otherwise `program` won't be usable as a transparent extension/substitution of `Html`'s programs
+  const runDebugger = RunDebugger<Model, Msg>(window, stopSignal)
+
+  runDebugger({
+    debug$,
+    init: initModel,
+    dispatch: program.dispatch as DebuggerDeps<Model, Msg>["dispatch"],
+  })()
+
+  return program
+}
+
+export const Element = <Model, Msg, Dom>({
+  init,
+  update,
+  view,
+  subscriptions,
+}: {
+  init: [Model, Cmd.Cmd<Msg>]
+  update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>]
+  view: (model: Model) => Html.Html<Dom, Msg>
+  subscriptions: (model: Model) => Sub.Sub<Msg>
+}): Browser.Program<Model, Msg, Dom> => {
+  return createElement({
+    stopSignal: Rx.EMPTY,
+    init,
+    update,
+    view,
+    subscriptions,
+  })
+}
+
+// --- Internal
+const createElement = <Model, Msg, Dom>({
+  stopSignal,
+  init,
+  update,
+  view,
+  subscriptions,
+}: {
+  stopSignal: Rx.Observable<unknown>
+  init: [Model, Cmd.Cmd<Msg>]
+  update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>]
+  view: (model: Model) => Html.Html<Dom, Msg>
+  subscriptions: (model: Model) => Sub.Sub<Msg>
+}): Browser.Program<Model, Msg, Dom> => {
+  const initModel = init[0]
+
+  const debug$ = new Rx.BehaviorSubject<DebugData<Model, Msg>>([
+    debugInit(),
+    initModel,
+  ])
+  const debugId$ = new Rx.BehaviorSubject<string | undefined>(undefined)
+
+  const program = Browser.Element({
+    init,
+    update: updateWithDebug<Model, Msg>({
+      debug$,
+      debugId$,
+      update,
+    }),
+    view,
+    subscriptions: subscriptionsWithDebug({
+      subscriptions,
+      debugId$,
+    }),
+  })
+
+  const runDebugger = RunDebugger<Model, Msg>(window, stopSignal)
+
+  runDebugger({
+    debug$,
+    init: initModel,
+    dispatch: program.dispatch as DebuggerDeps<Model, Msg>["dispatch"],
+  })()
+
+  return program
+}
+
+//
+//
+//
+//
+//
+//
+//
+
+export const run = <Model, Msg, Dom>(
+  program: Browser.Program<Model, Msg, Dom>,
+  renderer: Browser.Renderer<Dom>,
+): Rx.Observable<Model> => {
+  // why?
+  // wait for redux devtools debugger to start before running program
+  // because messages were being dispatched before the dev tools started
+  // resulting in initial messages not being logged
+  //
+  // todo: actually subscribe to the redux dev tools start message instead of using a timeout
+
+  const out$ = new Rx.Subject<Model>()
+
+  setTimeout(() => {
+    const model$ = Browser.run(program, renderer)
+
+    model$.subscribe((model) => {
+      out$.next(model)
+    })
+  }, 1000)
+
+  return out$
+}

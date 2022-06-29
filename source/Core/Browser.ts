@@ -3,7 +3,22 @@ import * as Rx from "rxjs"
 import * as Cmd from "./Cmd"
 import * as Html from "./Html"
 import * as Option from "./Option"
+import * as Platform from "./Platform"
 import * as Sub from "./Sub"
+
+//
+//
+//
+// Model
+//
+//
+//
+
+export type Program<Model, Msg, Dom> = Platform.Program<Model, Msg> & {
+  html$: Rx.Observable<Html.Html<Dom, Msg>>
+}
+
+export type Renderer<Dom> = (dom: Dom) => void
 
 //
 //
@@ -26,7 +41,7 @@ history.listen((location) => {
 //
 //
 //
-// Cmd
+// Navigation
 //
 //
 //
@@ -62,37 +77,74 @@ export const back: Cmd.Cmd<never> = Rx.of(async () => {
 //
 //
 //
-// Subscription
+// Program
 //
 //
 //
 
-export const subscription: Sub.Sub<Location> = location$
-
-export const Program = <Model, Msg, Dom>({
-  locationToMessage,
+export const Application = <Model, Msg, Dom>({
+  onLocationChange,
   init,
   update,
   view,
   subscriptions,
 }: {
-  locationToMessage: (location: Location) => Msg
+  onLocationChange: (location: Location) => Msg
   init: (location: Location) => [Model, Cmd.Cmd<Msg>]
   update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>]
   view: (model: Model) => Html.Html<Dom, Msg>
   subscriptions: (model: Model) => Sub.Sub<Msg>
-}): Html.Program<Model, Msg, Dom> => {
+}): Program<Model, Msg, Dom> => {
   const onChangeLocation$ = location$.pipe(
-    Rx.map((location) => locationToMessage(location)),
+    Rx.map((location) => onLocationChange(location)),
   )
 
   const subs = (model: Model): Sub.Sub<Msg> =>
     Sub.batch([subscriptions(model), onChangeLocation$])
 
-  return Html.Program({
+  return Element({
     init: init(history.location),
     update,
     view,
     subscriptions: subs,
   })
+}
+
+export const Element = <Model, Msg, Dom>({
+  init,
+  view,
+  update,
+  subscriptions,
+}: {
+  init: [Model, Cmd.Cmd<Msg>]
+  update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>]
+  view: (model: Model) => Html.Html<Dom, Msg>
+  subscriptions: (model: Model) => Sub.Sub<Msg>
+}): Program<Model, Msg, Dom> => {
+  const { dispatch, cmd$, sub$, model$ } = Platform.Worker({
+    init,
+    update,
+    subscriptions,
+  })
+
+  const html$ = model$.pipe(Rx.map(view))
+
+  return {
+    dispatch,
+    cmd$,
+    sub$,
+    model$,
+    html$,
+  }
+}
+
+export const run = <Model, Msg, Dom>(
+  program: Program<Model, Msg, Dom>,
+  renderer: Renderer<Dom>,
+): Rx.Observable<Model> => {
+  const { dispatch, html$ } = program
+
+  html$.subscribe((html) => renderer(html(dispatch)))
+
+  return Platform.run(program)
 }

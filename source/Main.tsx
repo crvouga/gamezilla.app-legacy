@@ -7,7 +7,7 @@ import * as Store from "Store"
 import * as Profile from "Store/Profile"
 import * as View from "View"
 import * as ReactDom from "react-dom/client"
-import { Cmd, Debug, Html, Navigation, Option, Sub, Task, pipe } from "Core"
+import { Browser, Cmd, Debug, Html, Option, Sub, Task, pipe } from "Core"
 import { andThen, andThenMany, exhaustive, groupTag } from "Utility"
 
 //
@@ -101,7 +101,7 @@ export const toStatus = ({
 //
 //
 
-export const init = (location: Navigation.Location): [Model, Cmd.Cmd<Msg>] => {
+export const init = (location: Browser.Location): [Model, Cmd.Cmd<Msg>] => {
   const route = Option.withDefault(
     { type: "Home" },
     Route.decode(location.pathname),
@@ -576,7 +576,7 @@ const viewSnackbar =
 //
 //
 
-const locationToMessage = (location: Navigation.Location) => {
+const onLocationChange = (location: Browser.Location): Msg => {
   return pipe(
     location,
     (location) => location.pathname,
@@ -586,8 +586,8 @@ const locationToMessage = (location: Navigation.Location) => {
   )
 }
 
-const program = Debug.Navigation.Program({
-  locationToMessage,
+const program = Debug.Browser.Application({
+  onLocationChange,
   init,
   update,
   view,
@@ -599,7 +599,7 @@ const rootElement = document.getElementById("root")
 if (rootElement) {
   const root = ReactDom.createRoot(rootElement)
 
-  Debug.Html.run(program, (dom) => {
+  Debug.Browser.run(program, (dom) => {
     root.render(dom)
   })
 }
