@@ -1,109 +1,63 @@
-/**
- * Common utilities and type definitions for the `Debug` module.
- *
- * @since 0.5.0
- */
-import { BehaviorSubject, Observable } from "rxjs"
-import { takeUntil } from "rxjs/operators"
+import * as Rx from "rxjs"
 import * as Cmd from "../Cmd"
 import * as Option from "../Option"
+import * as Platform from "../Platform"
 import * as Sub from "../Sub"
 import * as Task from "../Task"
 import * as Console from "./console"
 import * as ReduxDevtool from "./redux-devtool"
-import { Dispatch } from "../Platform"
 import { pipe } from "../pipe"
 
-/**
- * @category model
- * @since 0.5.0
- */
+//
+//
+//
+// Model
+//
+//
+//
+
 export type Global = typeof window
 
-/**
- * @category model
- * @since 0.5.0
- */
 export type DebugData<Model, Msg> = [DebugAction<Msg>, Model]
 
-/**
- * @category model
- * @since 0.5.0
- */
 export type DebugAction<Msg> = DebugInit | DebugMsg<Msg>
 
-/**
- * @category model
- * @since 0.5.0
- */
 export interface DebugInit {
   type: "INIT"
 }
-/**
- * Creates a `DebugInit`
- * @category constructos
- * @since 0.5.0
- */
+
 export const debugInit = (): DebugInit => ({ type: "INIT" })
 
-/**
- * @category model
- * @since 0.5.0
- */
 export interface DebugMsg<Msg> {
   type: "MESSAGE"
   payload: Msg
 }
-/**
- * Creates a `DebugMsg`
- * @category constructors
- * @since 0.5.0
- */
+
 export const debugMsg = <Msg>(payload: Msg): DebugMsg<Msg> => ({
   type: "MESSAGE",
   payload,
 })
 
-/**
- * Extends `Msg` with a special kind of message from Debugger
- * @category model
- * @since 0.5.0
- */
 export type MsgWithDebug<Model, Msg> =
   | Msg
   | { type: "__DebugUpdateModel__"; payload: Model }
   | { type: "__DebugApplyMsg__"; payload: Msg }
 
-/**
- * Defines a generic debugging function
- * @category model
- * @since 0.5.0
- */
 export interface Debug<Model, Msg> {
   (data: DebugData<Model, Msg>): void
 }
 
-/**
- * Defines a generic `Debugger`
- * @category model
- * @since 0.5.4
- */
 export interface Debugger<Model, Msg> {
-  (d: DebuggerR<Model, Msg>): {
+  (d: DebuggerDeps<Model, Msg>): {
     debug: Debug<Model, Msg>
     stop: () => void
   }
 }
 
-/**
- * Defines the dependencies for a `Debugger` function.
- * @category model
- * @since 0.5.0
- */
-export interface DebuggerR<Model, Msg> {
+export interface DebuggerDeps<Model, Msg> {
   init: Model
-  debug$: BehaviorSubject<DebugData<Model, Msg>>
-  dispatch: Dispatch<MsgWithDebug<Model, Msg>>
+  debug$: Rx.BehaviorSubject<DebugData<Model, Msg>>
+  dispatch: Platform.Dispatch<MsgWithDebug<Model, Msg>>
 }
 
 /**
@@ -149,8 +103,8 @@ export const updateWithDebug =
     debugId$,
     update,
   }: {
-    debug$: BehaviorSubject<DebugData<Model, Msg>>
-    debugId$: BehaviorSubject<string | undefined>
+    debug$: Rx.BehaviorSubject<DebugData<Model, Msg>>
+    debugId$: Rx.BehaviorSubject<string | undefined>
     update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>]
   }) =>
   (msg: MsgWithDebug<Model, Msg>, model: Model): [Model, Cmd.Cmd<Msg>] => {
@@ -190,7 +144,7 @@ export const subscriptionsWithDebug =
     debugId$,
   }: {
     subscriptions: (model: Model) => Sub.Sub<Msg>
-    debugId$: BehaviorSubject<string | undefined>
+    debugId$: Rx.BehaviorSubject<string | undefined>
   }) =>
   (model: Model) => {
     // @ts-ignore
@@ -217,8 +171,8 @@ export const subscriptionsWithDebug =
  * @since 0.5.4
  */
 export const RunDebugger =
-  <Model, Msg>(global: Global, stopSignal: Observable<unknown>) =>
-  (deps: DebuggerR<Model, Msg>): Task.Task<void> => {
+  <Model, Msg>(global: Global, stopSignal: Rx.Observable<unknown>) =>
+  (deps: DebuggerDeps<Model, Msg>): Task.Task<void> => {
     return pipe(
       ReduxDevtool.getConnection<Model, Msg>(global),
       Task.map(
@@ -230,7 +184,7 @@ export const RunDebugger =
       Task.chain((debuggerInstance) => async () => {
         const { debug, stop } = debuggerInstance(deps)
 
-        deps.debug$.pipe(takeUntil(stopSignal)).subscribe({
+        deps.debug$.pipe(Rx.takeUntil(stopSignal)).subscribe({
           next: debug,
           complete: stop,
         })

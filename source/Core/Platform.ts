@@ -3,7 +3,13 @@ import * as Cmd from "./Cmd"
 import * as Option from "./Option"
 import * as Sub from "./Sub"
 
-export type Dispatch<Msg> = (msg: Msg) => void
+//
+//
+//
+//  Model
+//
+//
+//
 
 export type Program<Model, Msg> = {
   dispatch: Dispatch<Msg>
@@ -12,7 +18,17 @@ export type Program<Model, Msg> = {
   model$: Rx.Observable<Model>
 }
 
-export const Program = <Model, Msg>({
+export type Dispatch<Msg> = (msg: Msg) => void
+
+//
+//
+//
+// Program
+//
+//
+//
+
+export const Worker = <Model, Msg>({
   init,
   update,
   subscriptions,
@@ -33,7 +49,12 @@ export const Program = <Model, Msg>({
 
   const sub$ = model$.pipe(Rx.switchMap((model) => subscriptions(model)))
 
-  return { dispatch, cmd$, sub$, model$ }
+  return {
+    dispatch,
+    cmd$,
+    sub$,
+    model$,
+  }
 }
 
 export const run = <Model, Msg>(

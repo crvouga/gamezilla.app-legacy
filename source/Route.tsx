@@ -1,4 +1,4 @@
-import { Navigation, Option, Sub, pipe } from "Core"
+import { Browser, Option } from "Core"
 
 //
 //
@@ -90,13 +90,13 @@ export const encode = (route: Route): string => {
 //
 
 export const push = (route: Route) => {
-  return Navigation.push(encode(route))
+  return Browser.push(encode(route))
 }
 
-export const back = Navigation.back
+export const back = Browser.back
 
 export const replace = (route: Route) => {
-  return Navigation.replace(encode(route))
+  return Browser.replace(encode(route))
 }
 
 //
