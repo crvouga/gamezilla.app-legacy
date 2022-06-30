@@ -54,8 +54,12 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 //
 
 export const view =
-  (store: Store.Model, coversationId: string, model: Model): View.View<Msg> =>
+  (store: Store.Model, conversationId: string, model: Model): View.View<Msg> =>
   (dispatch) => {
+    const conversation = Store.Conversation.toConversation(
+      conversationId,
+      store,
+    )
     return (
       <View.Page>
         <View.Header
@@ -66,6 +70,16 @@ export const view =
           }
           title="Chat"
         />
+        <View.List>
+          {conversation.profiles.map((profile) => (
+            <View.ListItemButton key={profile.userId}>
+              <View.ListItemAvatar>
+                <View.Avatar src={profile.avatarUrl} />
+              </View.ListItemAvatar>
+              <View.ListItemText primary={profile.username} />
+            </View.ListItemButton>
+          ))}
+        </View.List>
         <View.Box sx={{ flex: 1 }}></View.Box>
         <View.Divider />
         <View.Box sx={{ width: "100%", display: "flex", p: 1 }}>
