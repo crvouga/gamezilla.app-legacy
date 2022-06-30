@@ -16,7 +16,19 @@ export const now = (): Task.Task<number> => {
 
 export type Time = number
 
-const intervals: { [interval: number]: Rx.Subject<number> } = {}
+let intervals: { [interval: number]: Rx.Subject<number> } = {}
+
+const cleanup = () => {
+  const subs = Object.values(intervals)
+
+  for (const sub of subs) {
+    sub.unsubscribe()
+  }
+
+  intervals = {}
+
+  console.log(`[time] cleaned up ${subs.length} subs`)
+}
 
 const onTimeout = (time: number) => {
   const subj = intervals[time]
@@ -47,4 +59,18 @@ export const every = <Msg>(
   const ret = subj.pipe(Rx.map(() => f(new Date().getTime())))
 
   return ret
+}
+
+//
+//
+//
+// HMR
+//
+//
+
+if (import.meta.hot) {
+  // import.meta.hot.accept()
+  // import.meta.hot.dispose(() => {
+  //   cleanup()
+  // })
 }

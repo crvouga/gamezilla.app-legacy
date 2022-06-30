@@ -30,15 +30,12 @@ export type Renderer<Dom> = (dom: Dom) => void
 
 export type Location = History.Location
 
-const history = History.createBrowserHistory()
+export const history = History.createBrowserHistory()
 
-const location$ = new Rx.Observable<Location>((subscriber) => {
-  const unlisten = history.listen((location) => {
-    subscriber.next(location.location)
-  })
-  return () => {
-    unlisten()
-  }
+export const location$ = new Rx.Subject<Location>()
+
+history.listen((historyUpdate) => {
+  location$.next(historyUpdate.location)
 })
 
 //

@@ -1,7 +1,7 @@
 import * as Route from "Route"
 import * as View from "View"
 import { Audio, Cmd, Keyboard, Result, Sub, Time, pipe } from "Core"
-import { useEffect, useRef } from "react"
+import { useEffect, useLayoutEffect, useRef } from "react"
 import * as Direction from "./Direction"
 import * as Position from "./Position"
 
@@ -46,7 +46,7 @@ type MouseStatus = "active" | "inactive"
 export const init: Model = {
   status: { type: "Paused" },
   mouseStatus: "inactive",
-  tickRate: 1000,
+  tickRate: 1000 / 8,
   head: { x: 4, y: 6 },
   tail: [
     { x: 3, y: 6 },
@@ -121,59 +121,12 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
     case "Elapsed":
       switch (model.status.type) {
         case "Paused":
-          return [model, Cmd.None]
+          // return [model, Cmd.None]
+          return [updatePlaying(model), Cmd.None]
 
         case "Playing":
-          const tailNew = [model.head]
-            .concat(model.tail)
-            .slice(0, model.tailLength)
-            .map((position) => circular(model, position))
-
-          const queuedDirection = model.directionQueue[0] ?? model.direction
-
-          const [_, ...directionQueueNew] = model.directionQueue
-
-          const directionNew = Direction.isOpposite(
-            queuedDirection,
-            model.direction,
-          )
-            ? model.direction
-            : queuedDirection
-
-          const headNew = circular(
-            model,
-            Position.add(model.head, Direction.toVector(directionNew)),
-          )
-
-          const isSnakeEatingFood = [headNew, ...tailNew].some((position) =>
-            Position.equals(position, model.food),
-          )
-
-          const foodNew = isSnakeEatingFood
-            ? shuffle(toEmptyPositions(model))[0] ?? model.food
-            : model.food
-
-          const tailLengthNew = isSnakeEatingFood
-            ? model.tailLength + 1
-            : model.tailLength
-
-          const foodEatenCountNew = isSnakeEatingFood
-            ? model.foodEatenCount + 1
-            : model.foodEatenCount
-
-          return [
-            {
-              ...model,
-              head: headNew,
-              tail: tailNew,
-              food: foodNew,
-              tailLength: tailLengthNew,
-              foodEatenCount: foodEatenCountNew,
-              directionQueue: directionQueueNew,
-              direction: directionNew,
-            },
-            Cmd.None,
-          ]
+          // return [model, Cmd.None]
+          return [updatePlaying(model), Cmd.None]
       }
 
     case "UserClickedBackButton":
@@ -274,6 +227,55 @@ const toEmptyPositions = (model: Model) => {
   )
 }
 
+const updatePlaying = (model: Model): Model => {
+  const tailNew = [model.head]
+    .concat(model.tail)
+    .slice(0, model.tailLength)
+    .map((position) => circular(model, position))
+
+  const queuedDirection = model.directionQueue[0] ?? model.direction
+
+  const [_, ...directionQueueNew] = model.directionQueue
+
+  const directionNew = Direction.isOpposite(queuedDirection, model.direction)
+    ? model.direction
+    : queuedDirection
+
+  const headNew = circular(
+    model,
+    Position.add(model.head, Direction.toVector(directionNew)),
+  )
+
+  const isSnakeEatingFood = [headNew, ...tailNew].some((position) =>
+    Position.equals(position, model.food),
+  )
+
+  const foodNew = isSnakeEatingFood
+    ? shuffle(toEmptyPositions(model))[0] ?? model.food
+    : model.food
+
+  const tailLengthNew = isSnakeEatingFood
+    ? model.tailLength + 1
+    : model.tailLength
+
+  const foodEatenCountNew = isSnakeEatingFood
+    ? model.foodEatenCount + 1
+    : model.foodEatenCount
+
+  const modelNew = {
+    ...model,
+    head: headNew,
+    tail: tailNew,
+    food: foodNew,
+    tailLength: tailLengthNew,
+    foodEatenCount: foodEatenCountNew,
+    directionQueue: directionQueueNew,
+    direction: directionNew,
+  }
+
+  return modelNew
+}
+
 //
 //
 //
@@ -285,19 +287,24 @@ const toEmptyPositions = (model: Model) => {
 export const subscriptions = (model: Model): Sub.Sub<Msg> => {
   switch (model.status.type) {
     case "Paused":
-      return keyDowns
+      return Sub.batch([
+        keyDowns,
+        // tick,
+      ])
 
     case "Playing":
       return Sub.batch([
         keyDowns,
-        Time.every<Msg>(
+        tick(
           1000 / 6,
           // model.tickRate
-          () => ({ type: "Elapsed" }),
         ),
       ])
   }
 }
+
+const tick = (tickRate: number) =>
+  Time.every<Msg>(tickRate, () => ({ type: "Elapsed" }))
 
 const keyDowns = Keyboard.keyDowns<Msg>((key) => ({
   type: "UserPressedKeyDown",
@@ -306,7 +313,7 @@ const keyDowns = Keyboard.keyDowns<Msg>((key) => ({
 
 //
 //
-//
+//a
 // View
 //
 //
@@ -377,7 +384,7 @@ const Canvas = ({
 }) => {
   const ref = useRef<HTMLCanvasElement | null>(null)
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const canvas = ref.current
     const ctx = canvas?.getContext("2d")
 

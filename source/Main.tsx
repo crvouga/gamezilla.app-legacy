@@ -1,153 +1,137 @@
 import * as ReactDomClient from "react-dom/client"
 import * as Rx from "rxjs"
-import { Browser, Debug } from "Core"
+import { Browser, Option } from "Core"
+import { useEffect } from "react"
 import * as App from "./App"
 
 //
 //
 //
-//
+// Helpers
 //
 //
 //
 
-const production = () => {
-  const program = Debug.Browser.Application({
-    onLocationChange: App.onLocationChange,
-    init: App.init,
-    update: App.update,
-    view: App.view,
-    subscriptions: App.subscriptions,
-  })
+const getReactRoot = () => {
+  const htmlRoot = document.getElementById("root")
 
-  const rootNode = document.getElementById("root")
-
-  if (!rootNode) {
-    return
+  if (!htmlRoot) {
+    throw new Error("#root element is missing from the html document")
   }
 
-  const reactRoot = ReactDomClient.createRoot(rootNode)
+  if (import.meta.hot) {
+    const reactRoot: ReactDomClient.Root =
+      import.meta.hot.data["reactRoot"] ?? ReactDomClient.createRoot(htmlRoot)
 
-  Browser.run(program, (dom) => {
-    reactRoot.render(dom)
-  })
+    import.meta.hot.data["reactRoot"] = reactRoot
+
+    return reactRoot
+  }
+
+  return ReactDomClient.createRoot(htmlRoot)
 }
 
 //
 //
 //
-//
+// program
 //
 //
 //
 
-const development = async () => {
-  console.info("[program] starting development mode")
+const state$ = new Rx.BehaviorSubject(App.init(Browser.history.location))
 
-  if (!import.meta.hot) {
-    console.error("[program] failed to start development mode")
+const dispatch = (msg: App.Msg) => {
+  console.log("[app]", msg.type)
 
-    return
-  }
+  state$.next(App.update(msg, state$.getValue()[0]))
+}
+
+//
+//
+//
+// run program
+//
+//
+//
+
+const reactRoot = getReactRoot()
+
+const CleanupComponent = () => {
+  useEffect(() => {
+    console.log("[component] mount")
+    return () => {
+      console.log("[component] unmount")
+      cleanup()
+    }
+  }, [])
+  return <div></div>
+}
+
+const viewSub = state$.subscribe((state) => {
+  reactRoot.render(
+    <>
+      {App.view(state[0])(dispatch)}
+
+      <CleanupComponent />
+    </>,
+  )
+})
+
+const subSub = state$
+  .pipe(Rx.switchMap((state) => App.subscriptions(state[0])))
+  .subscribe(dispatch)
+
+const cmdSub = state$
+  .pipe(
+    Rx.map((state) => state[1]),
+    Rx.mergeAll(),
+  )
+  .subscribe((task) => task().then(Option.map(dispatch)))
+
+console.log("[app] started")
+
+const cleanup = () => {
+  subSub.unsubscribe()
+  cmdSub.unsubscribe()
+  viewSub.unsubscribe()
+  // state$.unsubscribe()
+}
+
+//
+//
+//
+// HMR clean up
+//
+//
+//
+
+type HotEvent =
+  | "vite:beforeUpdate"
+  | "vite:beforeFullReload"
+  | "vite:beforePrune"
+  | "vite:error"
+
+if (import.meta.hot) {
+  const fallback = state$.getValue()
+
+  const initialState = import.meta.hot.data["initialState"] ?? fallback
+
+  state$.next(initialState)
+
+  console.log("[app] initialized state")
+
+  const initialStateSub = state$.subscribe((state) => {
+    if (import.meta.hot) {
+      import.meta.hot.data["initialState"] = state
+    }
+  })
 
   import.meta.hot.accept()
 
-  const isInitialLoad = getData("isInitialLoad", () => true)
-
-  setData("isInitialLoad", false)
-
-  const { startDebugger, ...rest } = Debug.Browser.Application({
-    onLocationChange: App.onLocationChange,
-    init: App.init,
-    update: App.update,
-    view: App.view,
-    subscriptions: App.subscriptions,
+  import.meta.hot.dispose(() => {
+    initialStateSub.unsubscribe()
+    cleanup()
+    console.log("[app] cleaned up")
   })
-
-  const stopSignal = new Rx.Subject<unknown>()
-
-  const program = Browser.withStop(stopSignal)(rest)
-
-  const appState = getData("appState", () => program.state$.getValue())
-
-  console.info("[program] preloading state...")
-
-  program.state$.next(appState)
-
-  program.state$.subscribe((state) => {
-    setData("appState", state)
-  })
-
-  const rootNode = document.getElementById("root")
-
-  if (rootNode === null) {
-    console.error("[program] fail to get root dom node")
-    return
-  }
-
-  const reactRoot = getData("reactRoot", () =>
-    ReactDomClient.createRoot(rootNode),
-  )
-
-  if (isInitialLoad) {
-    await startDebugger()
-  }
-
-  Browser.run(program, (dom) => {
-    reactRoot.render(dom)
-  })
-
-  import.meta.hot.on("vite:beforeUpdate", () => {
-    stopSignal.next("EMIT")
-  })
-
-  // console.dir(import.meta.hot.data)
 }
-
-//
-//
-//
-// Utils
-//
-//
-//
-
-export const getData = <T,>(key: string, getFallback: () => T): T => {
-  if (import.meta.hot) {
-    const value = import.meta.hot.data[key] ?? getFallback()
-
-    import.meta.hot.data[key] = value
-
-    return value
-  }
-
-  return getFallback()
-}
-
-export const setData = <T,>(key: string, value: T): void => {
-  if (import.meta.hot) {
-    import.meta.hot.data[key] = value
-  }
-}
-
-//
-//
-//
-// Main
-//
-//
-//
-
-const main = (mode: "development" | "production") => {
-  switch (mode) {
-    case "development":
-      development()
-      return
-
-    case "production":
-      production()
-      return
-  }
-}
-
-main(import.meta.env.PROD ? "production" : "development")
