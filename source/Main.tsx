@@ -132,6 +132,7 @@ const dispatch: DebuggerDeps<Model, App.Msg>["dispatch"] = (msg) => {
 //
 //
 
+// this is a hack so the clean up function is always called
 const CleanUp = () => {
   useEffect(() => {
     console.log("[app] mount")
@@ -250,14 +251,14 @@ if (import.meta.hot) {
   //
   //
 
-  import.meta.hot.accept()
-
   import.meta.hot.dispose(() => {
     initialStateSub.unsubscribe()
     initialDebugSub.unsubscribe()
     debugSub.unsubscribe()
     cleanup()
   })
+
+  import.meta.hot.accept()
 }
 
 const cleanup = () => {
