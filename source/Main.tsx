@@ -1,6 +1,6 @@
 import * as ReactDomClient from "react-dom/client"
 import * as Rx from "rxjs"
-import { Browser, Cmd, Option } from "Core"
+import { Browser, Cmd, Option, Sub } from "Core"
 import {
   DebugAction,
   DebugData,
@@ -29,6 +29,22 @@ const getHotData = <T,>(key: string, fallback: () => T): T => {
   }
 
   return fallback()
+}
+
+const setHotData = <T,>(key: string, value: T): void => {
+  if (import.meta.hot) {
+    import.meta.hot.data[key] = value
+  }
+}
+
+const getDebugId = () => getHotData("debugId", () => 0)
+
+const getNextDebugId = (): number => {
+  const next = getHotData("debugId", () => 0) + 1
+
+  setHotData("debugId", next)
+
+  return next
 }
 
 //
@@ -69,28 +85,41 @@ const reactDomRoot = getReactDomRoot()
 //
 //
 
-const state$ = new Rx.BehaviorSubject(App.init(Browser.history.location))
+const initial = App.init(Browser.history.location)
 
-const debug$ = new Rx.BehaviorSubject<DebugData<App.Model, App.Msg>>([
-  debugInit(),
-  state$.getValue()[0],
+type Model = App.Model & { debugId: number }
+
+const modelInit = { ...initial[0], debugId: getNextDebugId() }
+
+const state$ = new Rx.BehaviorSubject<[Model, Cmd.Cmd<App.Msg>]>([
+  modelInit,
+  initial[1],
 ])
 
-const dispatch: DebuggerDeps<App.Model, App.Msg>["dispatch"] = (msg) => {
+const debug$ = new Rx.BehaviorSubject<DebugData<Model, App.Msg>>([
+  debugInit(),
+  modelInit,
+])
+
+const dispatch: DebuggerDeps<Model, App.Msg>["dispatch"] = (msg) => {
   switch (msg.type) {
-    case "__DebugApplyMsg__":
-      state$.next(App.update(msg.payload, state$.getValue()[0]))
+    case "__DebugApplyMsg__": {
+      const stateNew = App.update(msg.payload, state$.getValue()[0])
+      state$.next([{ ...stateNew[0], debugId: getNextDebugId() }, stateNew[1]])
       return
+    }
 
     case "__DebugUpdateModel__":
       state$.next([msg.payload, Cmd.None])
       return
 
-    default:
-      const [modelNew, cmdNew] = App.update(msg, state$.getValue()[0])
-      state$.next([modelNew, cmdNew])
+    default: {
+      const stateNew = App.update(msg, state$.getValue()[0])
+      const modelNew = { ...stateNew[0], debugId: getNextDebugId() }
+      state$.next([modelNew, stateNew[1]])
       debug$.next([debugMsg(msg), modelNew])
       return
+    }
   }
 }
 
@@ -106,8 +135,18 @@ const viewSub = state$.subscribe((state) => {
   reactDomRoot.render(App.view(state[0])(dispatch))
 })
 
+const subscriptions = (model: Model) => {
+  if (model.debugId === getDebugId()) {
+    return App.subscriptions(model)
+  }
+
+  console.log("[app] ignoring subscriptions when time traveling")
+
+  return Sub.None
+}
+
 const subSub = state$
-  .pipe(Rx.switchMap((state) => App.subscriptions(state[0])))
+  .pipe(Rx.switchMap((state) => subscriptions(state[0])))
   .subscribe(dispatch)
 
 const cmdSub = state$
@@ -172,7 +211,9 @@ if (import.meta.hot) {
 
   const connection = maybeConnection.value
 
-  const debuggerInstance = ReduxDevTools.makeDebugger(connection)({
+  const debuggerInstance = ReduxDevTools.makeDebugger<Model, App.Msg>(
+    connection,
+  )({
     debug$,
     dispatch,
     init: debug$.getValue()[1],
