@@ -15,7 +15,7 @@ export const run = async () => {
       .delete()
       .eq("id", user.id)
 
-    console.log("deleted user's profile: ", user.id)
+    console.info("deleted user's profile: ", user.id)
 
     const { error } = await supabaseClient.auth.api.deleteUser(user.id)
 
@@ -24,7 +24,7 @@ export const run = async () => {
       break
     }
 
-    console.log("deleted user: ", user.id)
+    console.info("deleted user: ", user.id)
   }
 }
 

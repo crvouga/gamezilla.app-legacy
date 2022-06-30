@@ -64,11 +64,6 @@ export const withStop =
   <Model, Msg>(program: Program<Model, Msg>): Program<Model, Msg> => {
     const { cmd$, model$, sub$, state$, dispatch } = program
 
-    signal.subscribe(() => {
-      console.info("[program] stopping...")
-      state$.complete()
-    })
-
     return {
       model$: model$.pipe(Rx.takeUntil(signal)),
       cmd$: cmd$.pipe(Rx.takeUntil(signal)),
@@ -90,8 +85,6 @@ export const run = <Model, Msg>(
   sub$.subscribe(dispatch)
 
   cmd$.subscribe((task) => task().then(Option.map(dispatch)))
-
-  console.info("[program] running...")
 
   return model$
 }
