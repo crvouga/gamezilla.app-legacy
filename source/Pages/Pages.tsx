@@ -178,24 +178,8 @@ export const initSessionMissing = (
     case "Login":
       return [{ ...Login.init, page: "Login" }, Cmd.None]
 
-    case "Account":
-    case "Chat":
-    case "ChatConversation":
-    case "ChatNew":
-    case "Game":
-    case "Home":
-    case "Logout":
-    case "ProfileCreate":
-    case "ProfileDelete":
-    case "ProfileUpdate":
-    case "ProfileUpdateAvatar":
-    case "ProfileUpdateName":
-    case "ProfileUpdateUsername":
-    case "ProfileUpdateTheme":
-      return [{ ...Login.init, page: "Login" }, Route.push({ type: "Login" })]
-
     default:
-      return exhaustive(route)
+      return [{ ...Login.init, page: "Login" }, Route.push({ type: "Login" })]
   }
 }
 
@@ -213,26 +197,11 @@ export const initProfileMissing = (
     case "Logout":
       return [{ ...Logout.init, page: "Logout" }, Cmd.None]
 
-    case "Login":
-    case "Account":
-    case "Chat":
-    case "ChatNew":
-    case "ChatConversation":
-    case "Game":
-    case "Home":
-    case "ProfileDelete":
-    case "ProfileUpdate":
-    case "ProfileUpdateAvatar":
-    case "ProfileUpdateName":
-    case "ProfileUpdateUsername":
-    case "ProfileUpdateTheme":
+    default:
       return [
         { ...ProfileCreate.init(session), page: "ProfileCreate" },
         Route.push({ type: "ProfileCreate" }),
       ]
-
-    default:
-      return exhaustive(route)
   }
 }
 
@@ -260,7 +229,13 @@ export type Msg =
   | (ChatConversation.Msg & { page: "ChatConversation" })
   | (ProfileUpdateTheme.Msg & { page: "ProfileUpdateTheme" })
   | (Game.Msg & { page: "Games" })
-  | { type: "ClickedBottomNavigationLink"; route: Route.Route; page: "None" }
+  | ClickedBottomNavigationLink
+
+type ClickedBottomNavigationLink = {
+  type: "ClickedBottomNavigationLink"
+  route: Route.Route
+  page: "Home" | "Chat" | "Account"
+}
 
 export type GroupedMsg = Msg & { group: "Page" }
 
@@ -580,7 +555,7 @@ export const viewReady = (
       return (dispatch) => (
         <View.Page>
           {tagView("Account", Account.view(profile, model))(dispatch)}
-          {viewBottomNavigation(route)(dispatch)}
+          {viewBottomNavigation("Account", route)(dispatch)}
         </View.Page>
       )
 
@@ -588,7 +563,7 @@ export const viewReady = (
       return (dispatch) => (
         <View.Page>
           {tagView("Chat", Chat.view(model))(dispatch)}
-          {viewBottomNavigation(route)(dispatch)}
+          {viewBottomNavigation("Chat", route)(dispatch)}
         </View.Page>
       )
 
@@ -599,7 +574,7 @@ export const viewReady = (
             "Home",
             Home.view({ route, profile, game }, model),
           )(dispatch)}
-          {viewBottomNavigation(route)(dispatch)}
+          {viewBottomNavigation("Home", route)(dispatch)}
         </View.Page>
       )
 
@@ -697,7 +672,10 @@ const viewLoading: View.View<Msg> = () => <View.LoadingPage />
 //
 
 const viewBottomNavigation =
-  (route: Route.Route): View.View<Msg> =>
+  (
+    page: ClickedBottomNavigationLink["page"],
+    route: Route.Route,
+  ): View.View<Msg> =>
   (dispatch) => {
     return (
       <View.BottomNavigation
@@ -707,7 +685,7 @@ const viewBottomNavigation =
           if (valueNew in Route.routesTypes) {
             dispatch({
               type: "ClickedBottomNavigationLink",
-              page: "None",
+              page,
               route: { type: valueNew },
             })
           }
