@@ -109,7 +109,6 @@ export const updateWithDebug =
           return [msg.payload, Cmd.None]
 
         case "__DebugApplyMsg__":
-          console.log("hello", msg)
           return [update(msg.payload, model)[0], Cmd.None]
       }
     }
