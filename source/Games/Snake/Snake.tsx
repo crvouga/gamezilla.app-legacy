@@ -526,6 +526,14 @@ export const Icon = () => {
       y: 4,
     },
   }
+
+  const tail: Model["tail"] = [
+    { x: 0, y: 1 },
+    { x: 1, y: 1 },
+  ]
+
+  const food: Model["food"] = { x: 2, y: 2 }
+
   return (
     <svg width="100%" viewBox={toViewbox(bounds)}>
       {Position.range(bounds).map(({ x, y }, index) => (
@@ -536,6 +544,30 @@ export const Icon = () => {
           width={1}
           height={1}
           fill={theme[toTileVariant({ x, y })]}
+          stroke="none"
+        />
+      ))}
+
+      {tail.map(({ x, y }, index) => (
+        <rect
+          key={`${x} ${y} ${index}`}
+          x={x}
+          y={y}
+          width={1}
+          height={1}
+          fill={theme.snake}
+          stroke="none"
+        />
+      ))}
+
+      {[food].map(({ x, y }, index) => (
+        <rect
+          key={`${x} ${y} ${index}`}
+          x={x}
+          y={y}
+          width={1}
+          height={1}
+          fill={theme.apple}
           stroke="none"
         />
       ))}
