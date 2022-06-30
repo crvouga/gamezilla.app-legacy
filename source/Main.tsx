@@ -14,6 +14,26 @@ import * as ReduxDevTools from "./Core/Debug/ReduxDevTools"
 //
 //
 //
+// Helpers
+//
+//
+//
+
+const getHotData = <T,>(key: string, fallback: () => T): T => {
+  if (import.meta.hot) {
+    const value = import.meta.hot.data[key] ?? fallback()
+
+    import.meta.hot.data[key] = value
+
+    return value
+  }
+
+  return fallback()
+}
+
+//
+//
+//
 // React
 //
 //
@@ -108,6 +128,12 @@ console.log("[app] started")
 //
 
 if (import.meta.hot) {
+  //
+  //
+  // App State
+  //
+  //
+
   const initialState = import.meta.hot.data["initialState"] ?? state$.getValue()
 
   state$.next(initialState)
@@ -120,6 +146,51 @@ if (import.meta.hot) {
     }
   })
 
+  //
+  //
+  //
+  //
+  //
+
+  const initialDebug = import.meta.hot.data["initialDebug"] ?? debug$.getValue()
+
+  debug$.next(initialDebug)
+
+  const initialDebugSub = debug$.subscribe((debug) => {
+    if (import.meta.hot) {
+      import.meta.hot.data["initialDebug"] = debug
+    }
+  })
+
+  const maybeConnection = getHotData("devToolsConnection", () =>
+    ReduxDevTools.getConnection<App.Model, App.Msg>(window),
+  )
+
+  if (maybeConnection.type === "None") {
+    throw new Error("")
+  }
+
+  const connection = maybeConnection.value
+
+  const debuggerInstance = ReduxDevTools.makeDebugger(connection)({
+    debug$,
+    dispatch,
+    init: debug$.getValue()[1],
+  })
+
+  const debugSub = debug$.subscribe({
+    next: debuggerInstance.debug,
+    complete: debuggerInstance.stop,
+  })
+
+  console.log("[debugger] started")
+
+  //
+  //
+  //
+  //
+  //
+
   import.meta.hot.accept()
 
   import.meta.hot.dispose(() => {
@@ -127,41 +198,8 @@ if (import.meta.hot) {
     subSub.unsubscribe()
     cmdSub.unsubscribe()
     viewSub.unsubscribe()
+    initialDebugSub.unsubscribe()
+    debugSub.unsubscribe()
     console.log("[hmr] cleaned up")
   })
-}
-
-//
-//
-//
-// redux devtools
-//
-//
-//
-
-const maybeConnection = ReduxDevTools.getConnection<App.Model, App.Msg>(window)
-
-switch (maybeConnection.type) {
-  case "None": {
-    break
-  }
-
-  case "Some": {
-    const connection = maybeConnection.value
-
-    const debuggerInstance = ReduxDevTools.makeDebugger(connection)({
-      debug$,
-      dispatch,
-      init: state$.getValue()[0],
-    })
-
-    debug$.subscribe({
-      next: debuggerInstance.debug,
-      complete: debuggerInstance.stop,
-    })
-
-    console.log("[debugger] started")
-
-    break
-  }
 }
