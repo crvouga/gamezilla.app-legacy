@@ -2,7 +2,6 @@ import * as ReactDomClient from "react-dom/client"
 import * as Rx from "rxjs"
 import { Browser, Cmd, Option, Sub } from "Core"
 import {
-  DebugAction,
   DebugData,
   DebuggerDeps,
   debugInit,
@@ -132,7 +131,7 @@ const dispatch: DebuggerDeps<Model, App.Msg>["dispatch"] = (msg) => {
 //
 //
 
-// this is a hack so the clean up function is always called
+// todo. this is a hack so the clean up function is always called between hot reloads
 const CleanUp = () => {
   useEffect(() => {
     console.log("[app] mount")
