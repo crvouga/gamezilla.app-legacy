@@ -64,28 +64,21 @@ const canOpen = (game: Games.Model, gameName: Games.Game) => {
 
 export const view =
   (
-    { profile, game }: { profile: { avatarUrl: string }; game: Games.Model },
+    {
+      profile,
+      game,
+      route,
+    }: {
+      profile: { avatarUrl: string }
+      game: Games.Model
+      route: Route.Route
+    },
     _model: Model,
   ): View.View<Msg> =>
   (dispatch) =>
     (
       <View.Page>
-        <View.Toolbar>
-          <View.Typography sx={{ flex: 1 }} variant="h6">
-            Home
-          </View.Typography>
-          <View.IconButton
-            sx={{ marginRight: 1 }}
-            onClick={() => dispatch({ type: "UserClickedChatButton" })}
-          >
-            <View.Icons.Chat />
-          </View.IconButton>
-          <View.Avatar
-            sx={{ cursor: "pointer" }}
-            onClick={() => dispatch({ type: "UserClickedAvatar" })}
-            src={profile.avatarUrl}
-          />
-        </View.Toolbar>
+        <View.Header title="Home" />
         <View.Box
           sx={{
             display: "grid",
@@ -130,21 +123,6 @@ export const view =
             onClick={() => dispatch({ type: "UserClickedGame", game: "Snake" })}
           />
         </View.Box>
-        <View.Box sx={{ flex: 1 }} />
-        {/* <View.BottomNavigation showLabels>
-          <View.BottomNavigationAction
-            icon={<View.Icons.Home />}
-            label="Home"
-          />
-          <View.BottomNavigationAction
-            icon={<View.Icons.Chat />}
-            label="Chat"
-          />
-          <View.BottomNavigationAction
-            icon={<View.Icons.Person />}
-            label="Profile"
-          />
-        </View.BottomNavigation> */}
       </View.Page>
     )
 

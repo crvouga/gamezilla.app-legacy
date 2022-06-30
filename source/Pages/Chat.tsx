@@ -50,14 +50,7 @@ export const view =
     (
       <View.Page>
         {/* <View.LinearProgress /> */}
-        <View.Header
-          left={
-            <View.HeaderBackButton
-              onClick={() => dispatch({ type: "UserClickedBackButton" })}
-            />
-          }
-          title="Chat"
-        />
+        <View.Header title="Chat" />
         <View.Box sx={{ p: 2 }}>
           <View.Button
             fullWidth

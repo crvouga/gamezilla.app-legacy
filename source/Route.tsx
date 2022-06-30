@@ -33,7 +33,7 @@ export type Route =
 //
 //
 
-const routesTypes: { [routeType in Route["type"]]: string } = {
+export const routesTypes: { [routeType in Route["type"]]: string } = {
   Account: "Account",
   Home: "Home",
   Login: "Login",

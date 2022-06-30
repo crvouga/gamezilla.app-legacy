@@ -61,14 +61,7 @@ export const view =
   (dispatch) =>
     (
       <View.Page>
-        <View.Header
-          left={
-            <View.HeaderBackButton
-              onClick={() => dispatch({ type: "UserClickedBackButton" })}
-            />
-          }
-          title={username}
-        />
+        <View.Header title={username} />
 
         <View.List>
           <View.ListItemButton

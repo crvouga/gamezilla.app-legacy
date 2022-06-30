@@ -143,7 +143,6 @@ export type Msg =
   | Store.GroupedMsg
   | Session.Msg
   | Pages.GroupedMsg
-  | { type: "AppHotReloaded" }
 
 type Action = Snackbar.Action | Store.Action | Games.Action | Session.Action
 
@@ -164,16 +163,6 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 }
 
 const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
-  if (msg.type === "AppHotReloaded") {
-    return [model, Cmd.None]
-    // return pipe(
-    //   [model, Cmd.None],
-    //   andThenMany(runAction, [
-    //     Snackbar.EnqueueSnackbar("Info", "AppHotReloaded"),
-    //   ]),
-    // )
-  }
-
   switch (msg.group) {
     case "Store": {
       const [storeNew, storeCmd, actions] = Store.update(msg, model.store)
@@ -526,6 +515,7 @@ const viewMain = (model: Model): View.View<Msg> => {
       return pipe(
         Pages.viewReady(
           {
+            route: model.route,
             profile: status.profile,
             game: model.game,
             store: model.store,
