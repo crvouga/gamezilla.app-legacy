@@ -75,10 +75,10 @@ export const decode = (pathname: string): Option.Option<Route> => {
 
 export const encode = (route: Route): string => {
   if (route.type === "ChatConversation") {
-    return [route.type, route.conversationId].join("/")
+    return `/${route.type}/${route.conversationId}`
   }
 
-  return route.type
+  return `/${route.type}`
 }
 
 //

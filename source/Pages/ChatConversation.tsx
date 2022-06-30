@@ -62,27 +62,70 @@ export const view =
     )
     return (
       <View.Page>
-        <View.Header
-          left={
+        <View.Toolbar>
+          <View.Box
+            sx={{
+              flex: 1,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "flex-start",
+            }}
+          >
             <View.HeaderBackButton
               onClick={() => dispatch({ type: "ClickedBack" })}
             />
-          }
-          title="Chat"
-        />
-        <View.List>
-          {conversation.profiles.map((profile) => (
-            <View.ListItemButton key={profile.userId}>
-              <View.ListItemAvatar>
-                <View.Avatar src={profile.avatarUrl} />
-              </View.ListItemAvatar>
-              <View.ListItemText primary={profile.username} />
-            </View.ListItemButton>
-          ))}
-        </View.List>
+          </View.Box>
+
+          <View.Typography align="left" noWrap>
+            {conversation.profiles
+              .map((profile) => profile.username)
+              .join(", ")}
+          </View.Typography>
+
+          <View.Box sx={{ paddingX: 2 }}></View.Box>
+        </View.Toolbar>
+
+        <View.Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            p: 2,
+            marginX: 4,
+            textOverflow: "ellipsis",
+          }}
+        >
+          <View.AvatarGroup
+            sx={{ marginBottom: 2 }}
+            max={4}
+            componentsProps={{
+              additionalAvatar: { sx: { width: 64, height: 64 } },
+            }}
+          >
+            {conversation.profiles.map((profile) => (
+              <View.Avatar
+                key={profile.userId}
+                src={profile.avatarUrl}
+                sx={{ width: 64, height: 64 }}
+              />
+            ))}
+          </View.AvatarGroup>
+
+          <View.Typography
+            variant="h5"
+            align="center"
+            noWrap
+            sx={{ width: "100%" }}
+          >
+            {conversation.profiles
+              .map((profile) => profile.username)
+              .join(", ")}
+          </View.Typography>
+        </View.Box>
+
         <View.Box sx={{ flex: 1 }}></View.Box>
         <View.Divider />
-        <View.Box sx={{ width: "100%", display: "flex", p: 1 }}>
+        <View.Box sx={{ width: "100%", display: "flex", p: 2 }}>
           <View.InputBase
             value={model.text}
             onChange={(event) => {
@@ -94,7 +137,7 @@ export const view =
           />
 
           <View.Button
-            variant="text"
+            variant="contained"
             size="large"
             disabled={model.text.length === 0}
             onClick={() => dispatch({ type: "ClickedSend" })}

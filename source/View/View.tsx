@@ -223,6 +223,8 @@ export const ListItemAvatar = Mui.ListItemAvatar
 
 export const Avatar = Mui.Avatar
 
+export const AvatarGroup = Mui.AvatarGroup
+
 export const MenuItem = Mui.MenuItem
 
 export const Autocomplete = Mui.Autocomplete
