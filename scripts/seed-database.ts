@@ -35,7 +35,7 @@ const run = async () => {
 
     await supabaseClient.from<definitions["profile"]>("profile").insert([row])
 
-    console.log("created user ", user.id)
+    console.info("created user ", user.id)
   }
 }
 

@@ -22,7 +22,7 @@ export const makeDebugger = <Model, Msg>(): Debugger<Model, Msg> => {
 
         // --- Action
         if (action.type === "INIT") {
-          console.log("[INIT]")
+          console.info("[INIT]")
         }
 
         if (action.type === "MESSAGE") {
@@ -42,7 +42,7 @@ export const makeDebugger = <Model, Msg>(): Debugger<Model, Msg> => {
 
       stop: () => {
         console.group("%cLOG", "background-color: green; color: black")
-        console.log("--- stop debugger ---")
+        console.info("--- stop debugger ---")
         console.groupEnd()
       },
     }
