@@ -116,12 +116,12 @@ export const view =
             }
           />
 
-          <GameCard
+          {/* <GameCard
             icon={<Games.Chess.Icon />}
             label="Chess"
             disabled={!canOpen(game, "Chess")}
             onClick={() => dispatch({ type: "UserClickedGame", game: "Chess" })}
-          />
+          /> */}
 
           <GameCard
             icon={<Games.Snake.Icon />}
