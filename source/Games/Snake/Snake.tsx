@@ -289,17 +289,12 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
     case "Paused":
       return Sub.batch([
         keyDowns,
-        // tick,
+        // tick(1000 / 12)
+        //
       ])
 
     case "Playing":
-      return Sub.batch([
-        keyDowns,
-        tick(
-          // 1000 / 12,
-          model.tickRate,
-        ),
-      ])
+      return Sub.batch([keyDowns, tick(model.tickRate)])
   }
 }
 
