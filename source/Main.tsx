@@ -8,6 +8,7 @@ import {
   debugInit,
   debugMsg,
 } from "Core/Debug/debugger-commons"
+import { useEffect } from "react"
 import * as App from "./App"
 import * as ReduxDevTools from "./Core/Debug/ReduxDevTools"
 
@@ -131,8 +132,25 @@ const dispatch: DebuggerDeps<Model, App.Msg>["dispatch"] = (msg) => {
 //
 //
 
+const CleanUp = () => {
+  useEffect(() => {
+    console.log("[app] mount")
+    return () => {
+      console.log("[app] unmount")
+      cleanup()
+    }
+  }, [])
+  return <div></div>
+}
+
 const viewSub = state$.subscribe((state) => {
-  reactDomRoot.render(App.view(state[0])(dispatch))
+  const dom = App.view(state[0])(dispatch)
+  reactDomRoot.render(
+    <>
+      {dom}
+      <CleanUp />
+    </>,
+  )
 })
 
 const subscriptions = (model: Model) => {
@@ -236,11 +254,15 @@ if (import.meta.hot) {
 
   import.meta.hot.dispose(() => {
     initialStateSub.unsubscribe()
-    subSub.unsubscribe()
-    cmdSub.unsubscribe()
-    viewSub.unsubscribe()
     initialDebugSub.unsubscribe()
     debugSub.unsubscribe()
-    console.log("[hmr] cleaned up")
+    cleanup()
   })
+}
+
+const cleanup = () => {
+  subSub.unsubscribe()
+  cmdSub.unsubscribe()
+  viewSub.unsubscribe()
+  console.log("[hmr] cleaned up")
 }
