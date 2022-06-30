@@ -38,7 +38,6 @@ export const Insert = (creatorId: string, userIds: string[]) => {
     creatorId,
   } as const
 }
-
 export type Insert = ReturnType<typeof Insert>
 
 export const Inserted = (
@@ -59,8 +58,36 @@ export const Inserted = (
     result,
   } as const
 }
-
 export type Inserted = ReturnType<typeof Inserted>
+
+export const FindManyByUserId = (userId: string) => {
+  return {
+    type: "Conversation/FindManyByUserId",
+    group: "Store",
+    entity: "Conversation",
+    userId,
+  } as const
+}
+export type FindManyByUserId = ReturnType<typeof FindManyByUserId>
+
+type FindResult = Result.Result<
+  Problem,
+  {
+    conversations: Conversation[]
+    profiles: Profile[]
+    profilesConversations: ProfilesConversations[]
+  }
+>
+
+export const FindManyByUserIdResulted = (result: FindResult) => {
+  return {
+    type: "Conversation/FindManyResulted",
+    group: "Store",
+    entity: "Conversation",
+    result,
+  } as const
+}
+export type FindManyResulted = ReturnType<typeof FindManyByUserIdResulted>
 
 //
 //
