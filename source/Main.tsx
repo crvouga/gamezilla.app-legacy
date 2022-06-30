@@ -1,18 +1,17 @@
 import * as ReactDomClient from "react-dom/client"
 import * as Rx from "rxjs"
 import { Browser, Option } from "Core"
-import { useEffect } from "react"
 import * as App from "./App"
 
 //
 //
 //
-// Helpers
+// React
 //
 //
 //
 
-const getReactRoot = () => {
+const getReactDomRoot = () => {
   const htmlRoot = document.getElementById("root")
 
   if (!htmlRoot) {
@@ -20,16 +19,19 @@ const getReactRoot = () => {
   }
 
   if (import.meta.hot) {
-    const reactRoot: ReactDomClient.Root =
-      import.meta.hot.data["reactRoot"] ?? ReactDomClient.createRoot(htmlRoot)
+    const reactDomRoot: ReactDomClient.Root =
+      import.meta.hot.data["reactDomRoot"] ??
+      ReactDomClient.createRoot(htmlRoot)
 
-    import.meta.hot.data["reactRoot"] = reactRoot
+    import.meta.hot.data["reactDomRoot"] = reactDomRoot
 
-    return reactRoot
+    return reactDomRoot
   }
 
   return ReactDomClient.createRoot(htmlRoot)
 }
+
+const reactDomRoot = getReactDomRoot()
 
 //
 //
@@ -55,27 +57,8 @@ const dispatch = (msg: App.Msg) => {
 //
 //
 
-const reactRoot = getReactRoot()
-
-const CleanupHackComponent = () => {
-  useEffect(() => {
-    console.log("[component] mount")
-    return () => {
-      console.log("[component] unmount")
-      cleanup()
-    }
-  }, [])
-  return <div></div>
-}
-
 const viewSub = state$.subscribe((state) => {
-  reactRoot.render(
-    <>
-      {App.view(state[0])(dispatch)}
-
-      <CleanupHackComponent />
-    </>,
-  )
+  reactDomRoot.render(App.view(state[0])(dispatch))
 })
 
 const subSub = state$
@@ -89,27 +72,15 @@ const cmdSub = state$
   )
   .subscribe((task) => task().then(Option.map(dispatch)))
 
-const cleanup = () => {
-  subSub.unsubscribe()
-  cmdSub.unsubscribe()
-  viewSub.unsubscribe()
-}
-
 console.log("[app] started")
 
 //
 //
 //
-// HMR clean up
+// Hot Reload
 //
 //
 //
-
-type HotEvent =
-  | "vite:beforeUpdate"
-  | "vite:beforeFullReload"
-  | "vite:beforePrune"
-  | "vite:error"
 
 if (import.meta.hot) {
   const fallback = state$.getValue()
@@ -130,7 +101,9 @@ if (import.meta.hot) {
 
   import.meta.hot.dispose(() => {
     initialStateSub.unsubscribe()
-    cleanup()
-    console.log("[hmr] disposed")
+    subSub.unsubscribe()
+    cmdSub.unsubscribe()
+    viewSub.unsubscribe()
+    console.log("[hmr] cleaned up")
   })
 }
