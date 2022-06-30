@@ -57,7 +57,7 @@ const dispatch = (msg: App.Msg) => {
 
 const reactRoot = getReactRoot()
 
-const CleanupComponent = () => {
+const CleanupHackComponent = () => {
   useEffect(() => {
     console.log("[component] mount")
     return () => {
@@ -73,7 +73,7 @@ const viewSub = state$.subscribe((state) => {
     <>
       {App.view(state[0])(dispatch)}
 
-      <CleanupComponent />
+      <CleanupHackComponent />
     </>,
   )
 })
@@ -89,14 +89,13 @@ const cmdSub = state$
   )
   .subscribe((task) => task().then(Option.map(dispatch)))
 
-console.log("[app] started")
-
 const cleanup = () => {
   subSub.unsubscribe()
   cmdSub.unsubscribe()
   viewSub.unsubscribe()
-  // state$.unsubscribe()
 }
+
+console.log("[app] started")
 
 //
 //
@@ -132,6 +131,6 @@ if (import.meta.hot) {
   import.meta.hot.dispose(() => {
     initialStateSub.unsubscribe()
     cleanup()
-    console.log("[app] cleaned up")
+    console.log("[hmr] disposed")
   })
 }
