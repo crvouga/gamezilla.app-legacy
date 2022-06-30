@@ -5,7 +5,7 @@ import { Cmd, RemoteData, Result, Task, pipe } from "Core"
 import produce from "immer"
 import { definitions } from "supabase-types"
 import * as Types from "./Types"
-import { Problem, ProfilesConversations, Store } from "./Types"
+import { Problem, Profile, ProfilesConversations, Store } from "./Types"
 
 //
 //
@@ -136,6 +136,37 @@ export const runAction = (
           Cmd.fromTask((result) => Inserted(action.userIds, result)),
         ),
       ]
+  }
+}
+
+//
+//
+//
+// Selectors
+//
+//
+//
+
+export const toConversation = (
+  conversationId: string,
+  store: Store,
+): {
+  conversationId: string
+  profiles: Profile[]
+} => {
+  const profiles = Object.values(store.ProfilesConversations)
+    .filter((row) => row.conversationId === conversationId)
+    .flatMap((row) => {
+      const maybeProfile = store.Profile[row.userId]
+      if (maybeProfile) {
+        return [maybeProfile]
+      }
+      return []
+    })
+
+  return {
+    conversationId: conversationId,
+    profiles,
   }
 }
 
