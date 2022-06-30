@@ -470,6 +470,7 @@ export const view =
             // backgroundColor: "red",
           }}
         >
+          {viewGameBanner(model)(dispatch)}
           <View.Box
             sx={{
               width: "100%",
@@ -479,7 +480,11 @@ export const view =
           >
             {viewMain(model)(dispatch)}
           </View.Box>
-          {viewSnackbar(model)(dispatch)}
+
+          {pipe(
+            Snackbar.view({}, model.snackbar),
+            View.map(groupTag("Snackbar")),
+          )(dispatch)}
         </View.Box>
       </View.ThemeProvider>
     )
@@ -529,39 +534,20 @@ const viewMain = (model: Model): View.View<Msg> => {
 
 const viewLoading: View.View<Msg> = () => <View.LoadingPage />
 
-const viewSnackbar =
+const viewGameBanner =
   (model: Model): View.View<Msg> =>
   (dispatch) => {
     switch (model.game.type) {
       case "Closed":
-        return (
-          <>
-            {pipe(
-              Snackbar.view({}, model.snackbar),
-              View.map(groupTag("Snackbar")),
-            )(dispatch)}
-          </>
-        )
+        return <></>
 
       case "Opened":
         if (model.page.page === "Game") {
-          return (
-            <>
-              {pipe(
-                Snackbar.view({}, model.snackbar),
-                View.map(groupTag("Snackbar")),
-              )(dispatch)}
-            </>
-          )
+          return <></>
         }
 
         return (
           <>
-            {pipe(
-              Snackbar.view({ sx: { bottom: 80 } }, model.snackbar),
-              View.map(groupTag("Snackbar")),
-            )(dispatch)}
-
             {pipe(
               Games.viewBanner(model.game),
               View.map(groupTag("Game")),
