@@ -95,6 +95,17 @@ interface DevToolHandlerR<Model, Msg> extends DebuggerDeps<Model, Msg> {
  * Gets a _Redux DevTool Extension_ connection in case the extension is available
  */
 
+export const NoopConnection = <Model, Msg>(): Connection<Model, Msg> => {
+  return {
+    error: () => {},
+    send: () => {},
+    subscribe: () => () => {},
+    unsubscribe: () => {},
+    // @ts-ignore
+    init: null,
+  }
+}
+
 export const getConnection = <Model, Msg>(
   global: Global,
 ): Option.Option<Connection<Model, Msg>> => {
@@ -450,24 +461,21 @@ const unsafeCopy = <A>(a: A): A => {
 
 export const withDebugger = <Model, Msg, Dom>(
   program: Browser.Program<Model, Msg, Dom>,
+  connection: Connection<Model, Msg>,
 ): Browser.Program<Model, Msg, Dom> => {
-  const maybeConnection = getConnection<Model, Msg>(window)
+  const init = program.state$.getValue()[0]
 
-  switch (maybeConnection.type) {
-    case "None":
-      return program
+  const debug$ = new Rx.BehaviorSubject<DebugData<Model, Msg>>([
+    debugInit(),
+    init,
+  ])
 
-    case "Some":
-      const connection = maybeConnection.value
-
-      const init = program.state$.getValue()[0]
-
-      const debug$ = new Rx.BehaviorSubject<DebugData<Model, Msg>>([
-        debugInit(),
-        init,
-      ])
-
-      const dispatch: DebuggerDeps<Model, Msg>["dispatch"] = (msg) => {
+  connection.subscribe(
+    handleSubscription({
+      debug$,
+      init,
+      connection,
+      dispatch: (msg) => {
         if ("type" in msg) {
           switch (msg.type) {
             case "__DebugApplyMsg__":
@@ -479,25 +487,17 @@ export const withDebugger = <Model, Msg, Dom>(
               break
           }
         }
-      }
+      },
+    }),
+  )
 
-      connection.subscribe(
-        handleSubscription({
-          debug$,
-          dispatch,
-          init,
-          connection,
-        }),
-      )
+  program.state$.subscribe((state) => {
+    const [model, cmd, msg] = state
 
-      program.state$.subscribe((state) => {
-        console.log(state)
-        const [model, cmd, msg] = state
-        if (msg) {
-          connection.send(msg, model)
-        }
-      })
+    if (msg) {
+      connection.send(msg, model)
+    }
+  })
 
-      return program
-  }
+  return program
 }

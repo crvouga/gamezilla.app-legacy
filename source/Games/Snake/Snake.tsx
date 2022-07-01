@@ -294,7 +294,11 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
       ])
 
     case "Playing":
-      return Sub.batch([keyDowns, tick(model.tickRate)])
+      return Sub.batch([
+        keyDowns,
+        // tick(model.tickRate)
+        tick(model.tickRate),
+      ])
   }
 }
 

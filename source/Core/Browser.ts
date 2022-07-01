@@ -151,10 +151,15 @@ export const withStop =
 export const run = <Model, Msg, Dom>(
   program: Program<Model, Msg, Dom>,
   renderer: Renderer<Dom>,
-): Rx.Observable<Model> => {
+): (() => void) => {
   const { dispatch, html$ } = program
 
-  html$.subscribe((html) => renderer(html(dispatch)))
+  const htmlSub = html$.subscribe((html) => renderer(html(dispatch)))
 
-  return Platform.run(program)
+  const stop = Platform.run(program)
+
+  return () => {
+    htmlSub.unsubscribe()
+    stop()
+  }
 }

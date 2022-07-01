@@ -182,27 +182,27 @@ const createElement = <Model, Msg, Dom>({
 //
 //
 
-export const run = <Model, Msg, Dom>(
-  wait: number,
-  program: Browser.Program<Model, Msg, Dom>,
-  renderer: Browser.Renderer<Dom>,
-): Rx.Observable<Model> => {
-  // why?
-  // wait for redux devtools debugger to start before running program
-  // because messages were being dispatched before the dev tools started
-  // resulting in initial messages not being logged
-  //
-  // todo: actually subscribe to the redux dev tools start message instead of using a timeout
+// export const run = <Model, Msg, Dom>(
+//   wait: number,
+//   program: Browser.Program<Model, Msg, Dom>,
+//   renderer: Browser.Renderer<Dom>,
+// ): Rx.Observable<Model> => {
+//   // why?
+//   // wait for redux devtools debugger to start before running program
+//   // because messages were being dispatched before the dev tools started
+//   // resulting in initial messages not being logged
+//   //
+//   // todo: actually subscribe to the redux dev tools start message instead of using a timeout
 
-  const out$ = new Rx.Subject<Model>()
+//   const out$ = new Rx.Subject<Model>()
 
-  setTimeout(() => {
-    const model$ = Browser.run(program, renderer)
+//   setTimeout(() => {
+//     const model$ = Browser.run(program, renderer)
 
-    model$.subscribe((model) => {
-      out$.next(model)
-    })
-  }, wait)
+//     model$.subscribe((model) => {
+//       out$.next(model)
+//     })
+//   }, wait)
 
-  return out$
-}
+//   return out$
+// }
