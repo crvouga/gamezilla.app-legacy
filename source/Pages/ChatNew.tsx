@@ -254,6 +254,7 @@ export const view =
             alignItems: "center",
             paddingBottom: 2,
             paddingTop: 1,
+            overflowX: "scroll",
           }}
         >
           {selected.map((profile) => (
@@ -270,7 +271,7 @@ export const view =
             />
           ))}
           <View.InputBase
-            sx={{ paddingLeft: 2, flex: 1 }}
+            sx={{ paddingX: 2, flex: 1 }}
             autoFocus
             placeholder={selected.length === 0 ? "Search" : ""}
             value={model.searchText}
