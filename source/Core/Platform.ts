@@ -75,18 +75,23 @@ export const withStop =
     }
   }
 
-export const run = <Model, Msg>(
-  program: Program<Model, Msg>,
-): Rx.Observable<Model> => {
+export const run = <Model, Msg>(program: Program<Model, Msg>): (() => void) => {
   const { dispatch, cmd$, sub$, model$ } = program
 
   // WARNING
   // Order matters!
   // sub$.subscribe must happen before cmd$.subscribe to prevent bugs when using the dev tools debugger
 
-  sub$.subscribe(dispatch)
+  const subSub = sub$.subscribe(dispatch)
 
-  cmd$.subscribe((task) => task().then(Option.map(dispatch)))
+  const cmdSub = cmd$.subscribe((task) => task().then(Option.map(dispatch)))
 
-  return model$
+  console.log("[program] started")
+
+  return () => {
+    cmdSub.unsubscribe()
+    subSub.unsubscribe()
+
+    console.log("[program] stopped")
+  }
 }

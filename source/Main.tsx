@@ -1,5 +1,5 @@
 import * as ReactDomClient from "react-dom/client"
-import { Browser, pipe } from "Core"
+import { Browser, Option, pipe } from "Core"
 import * as App from "./App"
 import * as ReduxDevTools from "./Core/Debug/ReduxDevTools"
 
@@ -11,25 +11,72 @@ import * as ReduxDevTools from "./Core/Debug/ReduxDevTools"
 //
 //
 
-const program = pipe(
-  Browser.Application({
-    onLocationChange: App.onLocationChange,
-    init: App.init,
-    update: App.update,
-    subscriptions: App.subscriptions,
-    view: App.view,
-  }),
-  ReduxDevTools.withDebugger,
+const connection = getHotData("connection", () =>
+  ReduxDevTools.getConnection<App.Model, App.Msg>(window),
 )
 
-const htmlRoot = document.getElementById("root")
+const program = Browser.Application({
+  onLocationChange: App.onLocationChange,
+  init: App.init,
+  update: App.update,
+  subscriptions: App.subscriptions,
+  view: App.view,
+})
 
-if (!htmlRoot) {
-  throw new Error("root node is missing from html document")
+const programWithDebugger =
+  connection.type === "None"
+    ? program
+    : ReduxDevTools.withDebugger(program, connection.value)
+
+const container = document.getElementById("root")
+
+const root = getHotData("root", () => ReactDomClient.createRoot(container!))
+
+const stop = Browser.run(programWithDebugger, (dom) => {
+  root.render(dom)
+})
+
+//
+//
+//
+// HMR
+//
+//
+//
+
+if (import.meta.hot) {
+  import.meta.hot.accept()
+  import.meta.hot.dispose(stop)
+
+  const initialState = getHotData("initialState", () =>
+    program.state$.getValue(),
+  )
+  program.state$.next(initialState)
+  program.state$.subscribe((state) => setHotData("initialState", state))
 }
 
-const reactDomRoot = ReactDomClient.createRoot(htmlRoot)
+//
+//
+//
+// Helpers
+//
+//
+//
 
-Browser.run(program, (dom) => {
-  reactDomRoot.render(dom)
-})
+function setHotData<T>(key: string, value: T) {
+  if (import.meta.hot) {
+    import.meta.hot.data[key] = value
+  }
+}
+
+function getHotData<T>(key: string, fallback: () => T): T {
+  if (import.meta.hot) {
+    const value = import.meta.hot.data[key] ?? fallback()
+
+    import.meta.hot.data[key] = value
+
+    return value
+  }
+
+  return fallback()
+}
