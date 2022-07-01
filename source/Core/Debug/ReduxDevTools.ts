@@ -5,6 +5,9 @@
  *
  * @since 0.5.0
  */
+import * as Rx from "rxjs"
+import { Cmd } from "Core"
+import * as Browser from "../Browser"
 import * as Json from "../Json"
 import * as Option from "../Option"
 import * as Result from "../Result"
@@ -13,10 +16,13 @@ import { Dispatch } from "../Platform"
 import { pipe } from "../pipe"
 import {
   Debug,
+  DebugData,
   Debugger,
   DebuggerDeps,
   Global,
   MsgWithDebug,
+  debugInit,
+  debugMsg,
 } from "./debugger-commons"
 
 type Unsubscription = () => void
@@ -431,4 +437,67 @@ const toggleAction =
 const unsafeCopy = <A>(a: A): A => {
   const copied: A = JSON.parse(JSON.stringify(a))
   return copied
+}
+
+/**
+ *
+ *
+ *
+ *
+ *
+ *
+ */
+
+export const withDebugger = <Model, Msg, Dom>(
+  program: Browser.Program<Model, Msg, Dom>,
+): Browser.Program<Model, Msg, Dom> => {
+  const maybeConnection = getConnection<Model, Msg>(window)
+
+  switch (maybeConnection.type) {
+    case "None":
+      return program
+
+    case "Some":
+      const connection = maybeConnection.value
+
+      const init = program.state$.getValue()[0]
+
+      const debug$ = new Rx.BehaviorSubject<DebugData<Model, Msg>>([
+        debugInit(),
+        init,
+      ])
+
+      const dispatch: DebuggerDeps<Model, Msg>["dispatch"] = (msg) => {
+        if ("type" in msg) {
+          switch (msg.type) {
+            case "__DebugApplyMsg__":
+              program.dispatch(msg.payload)
+              break
+
+            case "__DebugUpdateModel__":
+              program.state$.next([msg.payload, Cmd.None])
+              break
+          }
+        }
+      }
+
+      connection.subscribe(
+        handleSubscription({
+          debug$,
+          dispatch,
+          init,
+          connection,
+        }),
+      )
+
+      program.state$.subscribe((state) => {
+        console.log(state)
+        const [model, cmd, msg] = state
+        if (msg) {
+          connection.send(msg, model)
+        }
+      })
+
+      return program
+  }
 }

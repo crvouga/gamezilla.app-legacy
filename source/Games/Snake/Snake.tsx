@@ -289,8 +289,8 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
     case "Paused":
       return Sub.batch([
         keyDowns,
-        // tick(1000 / 12)
-        //
+        // tick(1000 / 12),
+        // myTick,
       ])
 
     case "Playing":

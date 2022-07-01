@@ -17,15 +17,6 @@ interface ViteHotContext {
   invalidate(): void
 
   // `InferCustomEventPayload` provides types for built-in Vite events
-  on<HotEvent>(
-    event: HotEvent,
-    cb: (payload: InferCustomEventPayload<T>) => void,
-  ): void
-  send<HotEvent>(event: HotEvent, data?: InferCustomEventPayload<T>): void
+  on<T>(event: T, cb: (payload: InferCustomEventPayload<T>) => void): void
+  send<T extends string>(event: T, data?: InferCustomEventPayload<T>): void
 }
-
-type HotEvent =
-  | "vite:beforeUpdate"
-  | "vite:beforeFullReload"
-  | "vite:beforePrune"
-  | "vite:error"
