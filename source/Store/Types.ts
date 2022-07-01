@@ -42,6 +42,15 @@ export type ProfilesConversations = {
   userId: string
   conversationId: string
 }
+export const toProfilesConversationsId = ({
+  userId,
+  conversationId,
+}: {
+  userId: string
+  conversationId: string
+}): string => {
+  return [userId, conversationId].join(",")
+}
 
 export type Conversation = {
   conversationId: string
@@ -68,6 +77,16 @@ export type Queries = {
   Conversation: {
     Get: {
       [id: string]: RemoteData.RemoteData<Problem, string>
+    }
+    FindManyByUserId: {
+      [userId: string]: RemoteData.RemoteData<
+        Problem,
+        {
+          profile: string[]
+          conversation: string[]
+          profilesConversations: string[]
+        }
+      >
     }
   }
 }

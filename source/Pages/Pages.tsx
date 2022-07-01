@@ -72,10 +72,19 @@ export const initReady = (
     case "Account":
       return [{ ...Account.init, page: "Account" }, Cmd.None, []]
 
-    case "Chat":
-      return [{ ...Chat.init, page: "Chat" }, Cmd.None, []]
+    case "Chat": {
+      const [model, cmd, actions] = Chat.init(profile)
+      return [
+        { ...model, page: "Chat" },
+        pipe(
+          cmd,
+          Cmd.map((msg) => ({ ...msg, page: "Chat" })),
+        ),
+        actions,
+      ]
+    }
 
-    case "ChatNew":
+    case "ChatNew": {
       const [chatNew, chatNewCmd, actions] = ChatNew.init()
 
       return [
@@ -86,6 +95,7 @@ export const initReady = (
         ),
         actions,
       ]
+    }
 
     case "ChatConversation":
       return [
@@ -562,7 +572,7 @@ export const viewReady = (
     case "Chat":
       return (dispatch) => (
         <View.Page>
-          {tagView("Chat", Chat.view(model))(dispatch)}
+          {tagView("Chat", Chat.view({ profile, store }, model))(dispatch)}
           {viewBottomNavigation("Chat", route)(dispatch)}
         </View.Page>
       )

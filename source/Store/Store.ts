@@ -28,6 +28,7 @@ export const init: Model = {
   queries: {
     Conversation: {
       Get: {},
+      FindManyByUserId: {},
     },
     Profile: {
       Get: {},
