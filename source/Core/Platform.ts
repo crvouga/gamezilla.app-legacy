@@ -2,6 +2,7 @@ import * as Rx from "rxjs"
 import * as Cmd from "./Cmd"
 import * as Option from "./Option"
 import * as Sub from "./Sub"
+import * as Time from "./Time"
 
 //
 //
@@ -11,7 +12,12 @@ import * as Sub from "./Sub"
 //
 //
 
-type State<Model, Msg> = [Model, Cmd.Cmd<Msg>] | [Model, Cmd.Cmd<Msg>, Msg]
+type State<Model, Msg> = {
+  model: Model
+  cmd: Cmd.Cmd<Msg>
+  msg?: Msg
+  subscriptionStatus: "Subscribed" | "Unsubscribed"
+}
 
 export type Program<Model, Msg> = {
   dispatch: Dispatch<Msg>
@@ -40,17 +46,34 @@ export const Worker = <Model, Msg>({
   update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>]
   subscriptions: (model: Model) => Sub.Sub<Msg>
 }): Program<Model, Msg> => {
-  const state$ = new Rx.BehaviorSubject<State<Model, Msg>>(init)
+  const state$ = new Rx.BehaviorSubject<State<Model, Msg>>({
+    model: init[0],
+    cmd: init[1],
+    subscriptionStatus: "Subscribed",
+  })
 
   const dispatch: Dispatch<Msg> = (msg) => {
-    state$.next([...update(msg, state$.getValue()[0]), msg])
+    const prev = state$.getValue()
+    const [model, cmd] = update(msg, prev.model)
+    state$.next({
+      model,
+      cmd,
+      msg,
+      subscriptionStatus: prev.subscriptionStatus,
+    })
   }
 
-  const cmd$ = state$.pipe(Rx.mergeMap((state) => state[1]))
+  const cmd$ = state$.pipe(Rx.mergeMap((state) => state.cmd))
 
-  const model$ = state$.pipe(Rx.map((state) => state[0]))
+  const model$ = state$.pipe(Rx.map((state) => state.model))
 
-  const sub$ = model$.pipe(Rx.switchMap((model) => subscriptions(model)))
+  const sub$ = state$.pipe(
+    Rx.switchMap((state) =>
+      state.subscriptionStatus === "Subscribed"
+        ? subscriptions(state.model)
+        : Sub.None,
+    ),
+  )
 
   return {
     dispatch,
@@ -61,22 +84,36 @@ export const Worker = <Model, Msg>({
   }
 }
 
+//
+//
+//
+//
+//
+//
+//
+
 export const withStop =
   (signal: Rx.Subject<unknown>) =>
   <Model, Msg>(program: Program<Model, Msg>): Program<Model, Msg> => {
-    const { cmd$, model$, sub$, state$, dispatch } = program
+    const { cmd$, model$, sub$, ...rest } = program
 
     return {
+      ...rest,
       model$: model$.pipe(Rx.takeUntil(signal)),
       cmd$: cmd$.pipe(Rx.takeUntil(signal)),
       sub$: sub$.pipe(Rx.takeUntil(signal)),
-      state$,
-      dispatch,
     }
   }
 
+//
+//
+//
+//
+//
+//
+
 export const run = <Model, Msg>(program: Program<Model, Msg>): (() => void) => {
-  const { dispatch, cmd$, sub$, model$ } = program
+  const { dispatch, cmd$, sub$ } = program
 
   // WARNING
   // Order matters!
@@ -91,7 +128,6 @@ export const run = <Model, Msg>(program: Program<Model, Msg>): (() => void) => {
   return () => {
     cmdSub.unsubscribe()
     subSub.unsubscribe()
-
     console.log("[program] stopped")
   }
 }
