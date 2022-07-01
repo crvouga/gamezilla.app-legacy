@@ -323,6 +323,7 @@ export const toConversation = (
 ): {
   conversationId: string;
   profiles: Profile[];
+  messages: Message[];
 } => {
   const profiles = Object.values(store.ProfilesConversations)
     .filter((row) => row.conversationId === conversationId)
@@ -334,9 +335,14 @@ export const toConversation = (
       return [];
     });
 
+  const messages = Object.values(store.Message).filter(
+    (item) => item.conversationId === conversationId,
+  );
+
   return {
     conversationId: conversationId,
     profiles,
+    messages,
   };
 };
 

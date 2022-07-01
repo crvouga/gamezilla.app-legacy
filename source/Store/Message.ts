@@ -1,5 +1,8 @@
 import * as Snackbar from "Snackbar";
-import { Cmd, Result } from "Core";
+import * as Supabase from "Supabase";
+import { Cmd, RemoteData, Result, Task, pipe } from "Core";
+import produce from "immer";
+import { definitions } from "supabase-types";
 import * as Types from "./Types";
 import { Problem, Store } from "./Types";
 
@@ -21,34 +24,43 @@ export type Message = Types.Message;
 //
 //
 
-export type Msg = Inserted;
+export type Msg = InsertResulted;
 
 export type Action = Insert;
 
-export const Insert = (creatorId: string, userIds: string[]) => {
+export const Insert = ({
+  userId,
+  conversationId,
+  message,
+}: {
+  userId: string;
+  conversationId: string;
+  message: string;
+}) => {
   return {
     type: "Message/Insert",
     group: "Store",
     entity: "Message",
-    userIds,
-    creatorId,
+    userId,
+    conversationId,
+    message,
   } as const;
 };
 export type Insert = ReturnType<typeof Insert>;
 
-export const Inserted = (
-  userIds: string[],
-  result: Result.Result<Problem, { message: Message }>,
+export const InsertResulted = (
+  conversationId: string,
+  result: Result.Result<Problem, Message>,
 ) => {
   return {
-    type: "Message/Inserted",
+    type: "Message/InsertResulted",
     group: "Store",
     entity: "Message",
-    userIds,
+    conversationId,
     result,
   } as const;
 };
-export type Inserted = ReturnType<typeof Inserted>;
+export type InsertResulted = ReturnType<typeof InsertResulted>;
 
 //
 //
@@ -65,8 +77,20 @@ export const update = (
   model: Store,
 ): [Store, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (msg.type) {
-    case "Message/Inserted":
-      return [model, Cmd.None, []];
+    case "Message/InsertResulted":
+      const modelNew = produce(model, (model) => {
+        model.mutations.Message.Insert[msg.conversationId] = pipe(
+          msg.result,
+          RemoteData.fromResult,
+          RemoteData.mapSuccess((item) => item.messageId),
+        );
+        if (msg.result.type === "Ok") {
+          const data = msg.result.value;
+          model.Message[data.messageId] = data;
+        }
+      });
+
+      return [modelNew, Cmd.None, []];
   }
 };
 
@@ -76,7 +100,24 @@ export const runAction = (
 ): [Store, Cmd.Cmd<Msg>] => {
   switch (action.type) {
     case "Message/Insert":
-      return [model, Cmd.None];
+      const modelNew = produce(model, (model) => {
+        model.mutations.Message.Insert[action.conversationId] =
+          RemoteData.Loading;
+      });
+
+      return [
+        modelNew,
+        pipe(
+          insert({
+            userId: action.userId,
+            conversationId: action.conversationId,
+            message: action.message,
+          }),
+          Cmd.fromTask((result) =>
+            InsertResulted(action.conversationId, result),
+          ),
+        ),
+      ];
   }
 };
 
@@ -87,3 +128,33 @@ export const runAction = (
 //
 //
 //
+
+const insert =
+  ({
+    message,
+    userId,
+    conversationId,
+  }: {
+    conversationId: string;
+    message: string;
+    userId: string;
+  }): Task.Task<Result.Result<Problem, Message>> =>
+  async () => {
+    const messageResponse = await Supabase.client
+      .from<definitions["message"]>("message")
+      .insert({ message, user_id: userId, conversation_id: conversationId })
+      .single();
+
+    if (messageResponse.error) {
+      return Result.Err({ message: messageResponse.error.message });
+    }
+
+    const data = messageResponse.data;
+
+    return Result.Ok({
+      messageId: data.id,
+      conversationId: data.conversation_id,
+      userId: data.user_id,
+      message: data.message,
+    });
+  };
