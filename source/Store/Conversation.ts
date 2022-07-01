@@ -5,6 +5,7 @@ import { Cmd, RemoteData, Result, Task, pipe } from "Core"
 import produce from "immer"
 import { definitions } from "supabase-types"
 import * as Types from "./Types"
+import { rowThemeModeToThemeMode } from "./Profile"
 import { Problem, Profile, ProfilesConversations, Store } from "./Types"
 
 //
@@ -25,9 +26,9 @@ export type Conversation = Types.Conversation
 //
 //
 
-export type Msg = Inserted
+export type Msg = Inserted | FindManyResulted
 
-export type Action = Insert
+export type Action = Insert | FindManyByUserId
 
 export const Insert = (creatorId: string, userIds: string[]) => {
   return {
@@ -79,12 +80,16 @@ type FindResult = Result.Result<
   }
 >
 
-export const FindManyByUserIdResulted = (result: FindResult) => {
+export const FindManyByUserIdResulted = (
+  userId: string,
+  result: FindResult,
+) => {
   return {
-    type: "Conversation/FindManyResulted",
+    type: "Conversation/FindManyByUserIdResulted",
     group: "Store",
     entity: "Conversation",
     result,
+    userId,
   } as const
 }
 export type FindManyResulted = ReturnType<typeof FindManyByUserIdResulted>
@@ -104,32 +109,67 @@ export const update = (
   model: Store,
 ): [Store, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (msg.type) {
-    case "Conversation/Inserted":
-      const { result } = msg
+    case "Conversation/FindManyByUserIdResulted": {
+      const modelNew = produce(model, (model) => {
+        model.queries.Conversation.FindManyByUserId[msg.userId] = pipe(
+          msg.result,
+          RemoteData.fromResult,
+          RemoteData.mapSuccess((data) => ({
+            conversation: data.conversations.map((item) => item.conversationId),
+            profile: data.profiles.map((item) => item.userId),
+            profilesConversations: data.profilesConversations.map(
+              Types.toProfilesConversationsId,
+            ),
+          })),
+        )
 
+        if (msg.result.type === "Ok") {
+          const data = msg.result.value
+          data.conversations.forEach((item) => {
+            model.Conversation[item.conversationId] = item
+          })
+
+          data.profiles.forEach((item) => {
+            model.Profile[item.userId] = item
+          })
+
+          data.profilesConversations.forEach((item) => [
+            (model.ProfilesConversations[
+              Types.toProfilesConversationsId(item)
+            ] = item),
+          ])
+        }
+      })
+
+      return [modelNew, Cmd.None, []]
+    }
+
+    case "Conversation/Inserted":
       const modelNew = produce(model, (model) => {
         model.mutations.Conversation.GetElseCreate = pipe(
-          result,
+          msg.result,
           RemoteData.fromResult,
           RemoteData.mapSuccess((value) => value.conversation.conversationId),
         )
 
-        if (result.type === "Ok") {
-          const { conversation, profilesConversations } = result.value
-          const { conversationId } = conversation
-          model.Conversation[conversationId] = conversation
-          for (const item of profilesConversations) {
-            const id = [item.conversationId, item.userId].join(",")
-            model.ProfilesConversations[id] = item
-          }
+        if (msg.result.type === "Ok") {
+          const data = msg.result.value
+
+          model.Conversation[data.conversation.conversationId] =
+            data.conversation
+
+          data.profilesConversations.forEach((item) => {
+            model.ProfilesConversations[Types.toProfilesConversationsId(item)] =
+              item
+          })
         }
       })
 
       const cmdNew: Cmd.Cmd<Msg> =
-        result.type === "Ok"
+        msg.result.type === "Ok"
           ? Route.replace({
               type: "ChatConversation",
-              conversationId: result.value.conversation.conversationId,
+              conversationId: msg.result.value.conversation.conversationId,
             })
           : Cmd.None
 
@@ -142,6 +182,31 @@ export const runAction = (
   model: Store,
 ): [Store, Cmd.Cmd<Msg>] => {
   switch (action.type) {
+    case "Conversation/FindManyByUserId": {
+      const query =
+        model.queries.Conversation.FindManyByUserId[action.userId] ??
+        RemoteData.NotAsked
+
+      if (query.type === "Success") {
+        return [model, Cmd.None]
+      }
+
+      const modelNew = produce(model, (model) => {
+        model.queries.Conversation.FindManyByUserId[action.userId] =
+          RemoteData.Loading
+      })
+
+      return [
+        modelNew,
+        pipe(
+          findManyByUserId({ userId: action.userId }),
+          Cmd.fromTask((result) =>
+            FindManyByUserIdResulted(action.userId, result),
+          ),
+        ),
+      ]
+    }
+
     case "Conversation/Insert":
       const modelNew = produce(model, (model) => {
         model.mutations.Conversation.GetElseCreate = RemoteData.Loading
@@ -206,7 +271,93 @@ const fromRow = (row: definitions["conversation"]): Conversation => {
   }
 }
 
-export const insert =
+const findManyByUserId =
+  ({
+    userId,
+  }: {
+    userId: string
+  }): Task.Task<
+    Result.Result<
+      Problem,
+      {
+        conversations: Conversation[]
+        profiles: Profile[]
+        profilesConversations: ProfilesConversations[]
+      }
+    >
+  > =>
+  async () => {
+    const matchUserIdResponse = await Supabase.client
+      .from<definitions["profiles_conversations"]>("profiles_conversations")
+      .select("*")
+      .match({ user_id: userId })
+
+    if (matchUserIdResponse.error) {
+      return Result.Err({
+        message: matchUserIdResponse.error.message,
+      })
+    }
+
+    const conversationResponse = await Supabase.client
+      .from<definitions["conversation"]>("conversation")
+      .select("*")
+      .in(
+        "id",
+        matchUserIdResponse.data.map((item) => item.conversation_id),
+      )
+
+    if (conversationResponse.error) {
+      return Result.Err({ message: conversationResponse.error.message })
+    }
+
+    const matchConversationIdResponse = await Supabase.client
+      .from<definitions["profiles_conversations"]>("profiles_conversations")
+      .select("*")
+      .in(
+        "conversation_id",
+        conversationResponse.data.map((item) => item.id),
+      )
+
+    if (matchConversationIdResponse.error) {
+      return Result.Err({ message: matchConversationIdResponse.error.message })
+    }
+
+    const profileResponse = await Supabase.client
+      .from<definitions["profile"]>("profile")
+      .select("*")
+      .in("id", [
+        ...new Set(
+          matchConversationIdResponse.data.map((item) => item.user_id),
+        ),
+      ])
+
+    if (profileResponse.error) {
+      console.log("ERROR", profileResponse.error)
+      return Result.Err({ message: profileResponse.error.message })
+    }
+
+    return Result.Ok({
+      profilesConversations: [
+        ...matchUserIdResponse.data,
+        ...matchConversationIdResponse.data,
+      ].map((item) => ({
+        userId: item.user_id,
+        conversationId: item.conversation_id,
+      })),
+      conversations: conversationResponse.data.map((item) => ({
+        conversationId: item.id,
+      })),
+      profiles: profileResponse.data.map((item) => ({
+        userId: item.id,
+        name: item.name,
+        username: item.username,
+        themeMode: rowThemeModeToThemeMode(item.theme_mode),
+        avatarUrl: item.avatar_url,
+      })),
+    })
+  }
+
+const insert =
   ({
     creatorId,
     userIds,

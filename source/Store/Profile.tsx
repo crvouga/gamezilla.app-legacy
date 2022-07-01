@@ -513,7 +513,7 @@ export const searchProfiles = (nameOrUsername: string, store: Model) => {
 //
 //
 
-const toThemeMode = (
+export const rowThemeModeToThemeMode = (
   themeMode: definitions["profile"]["theme_mode"],
 ): Profile["themeMode"] => {
   switch (themeMode) {
@@ -549,7 +549,7 @@ const rowToProfile = (row: definitions["profile"]): Profile => {
     avatarUrl: row.avatar_url,
     name: row.name,
     username: row.username,
-    themeMode: toThemeMode(row.theme_mode),
+    themeMode: rowThemeModeToThemeMode(row.theme_mode),
   }
 }
 
