@@ -4,9 +4,8 @@ import * as Supabase from "Supabase";
 import { Cmd, RemoteData, Result, Task, pipe } from "Core";
 import produce from "immer";
 import { definitions } from "supabase-types";
-import { isUnionTypeNode } from "typescript";
 import * as Types from "./Types";
-import { rowThemeModeToThemeMode, rowToProfile } from "./Profile";
+import { rowToProfile } from "./Profile";
 import {
   Message,
   Problem,

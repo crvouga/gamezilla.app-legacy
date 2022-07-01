@@ -1,6 +1,7 @@
 import * as Snackbar from "Snackbar";
 import { Cmd, RemoteData } from "Core";
 import * as Conversation from "./Conversation";
+import * as Message from "./Message";
 import * as Profile from "./Profile";
 import { Store } from "./Types";
 
@@ -56,11 +57,11 @@ export const init: Model = {
 //
 //
 
-export type Msg = Profile.Msg | Conversation.Msg;
+export type Msg = Profile.Msg | Conversation.Msg | Message.Msg;
 
 export type GroupedMsg = Msg & { group: "Store" };
 
-export type Action = Profile.Msg | Conversation.Action;
+export type Action = Profile.Msg | Conversation.Action | Message.Action;
 
 //
 //
@@ -78,15 +79,15 @@ export const update = (
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (msg.entity) {
     case "Conversation": {
-      const [modelNew, cmdNew, actions] = Conversation.update(msg, model);
-
-      return [modelNew, cmdNew, actions];
+      return Conversation.update(msg, model);
     }
 
     case "Profile": {
-      const [modelNew, cmdNew, actions] = Profile.update(msg, model);
+      return Profile.update(msg, model);
+    }
 
-      return [modelNew, cmdNew, actions];
+    case "Message": {
+      return Message.update(msg, model);
     }
   }
 };
@@ -97,13 +98,15 @@ export const runAction = (
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (action.entity) {
     case "Conversation": {
-      const [modelNew, cmdNew] = Conversation.runAction(action, model);
+      return Conversation.runAction(action, model);
+    }
 
-      return [modelNew, cmdNew];
+    case "Message": {
+      return Message.runAction(action, model);
     }
 
     case "Profile": {
-      const [modelNew, cmdNew, actions] = Profile.update(action, model);
+      const [modelNew, cmdNew, _actions] = Profile.update(action, model);
 
       return [modelNew, cmdNew];
     }
