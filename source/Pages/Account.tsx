@@ -1,6 +1,6 @@
-import * as Route from "Route"
-import * as View from "View"
-import { Cmd } from "Core"
+import * as Route from "Route";
+import * as View from "View";
+import { Cmd } from "Core";
 
 //
 //
@@ -10,9 +10,9 @@ import { Cmd } from "Core"
 //
 //
 
-export type Model = {}
+export type Model = {};
 
-export const init: Model = {}
+export const init: Model = {};
 
 //
 //
@@ -26,7 +26,7 @@ export type Msg =
   | { type: "UserClickedBackButton" }
   | { type: "UserClickedLogoutLink" }
   | { type: "UserClickedDeleteProfileLink" }
-  | { type: "UserClickedUpdateProfileLink" }
+  | { type: "UserClickedUpdateProfileLink" };
 
 export const update = (
   { userId }: { userId: string },
@@ -35,18 +35,18 @@ export const update = (
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "UserClickedBackButton":
-      return [model, Route.back]
+      return [model, Route.back];
 
     case "UserClickedLogoutLink":
-      return [model, Route.push({ type: "Logout" })]
+      return [model, Route.push({ type: "Logout" })];
 
     case "UserClickedUpdateProfileLink":
-      return [model, Route.push({ type: "ProfileUpdate" })]
+      return [model, Route.push({ type: "ProfileUpdate" })];
 
     case "UserClickedDeleteProfileLink":
-      return [model, Route.push({ type: "ProfileDelete" })]
+      return [model, Route.push({ type: "ProfileDelete" })];
   }
-}
+};
 
 //
 //
@@ -95,4 +95,4 @@ export const view =
           </View.ListItemButton>
         </View.List>
       </View.Page>
-    )
+    );

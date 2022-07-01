@@ -1,4 +1,4 @@
-import { Browser, Option } from "Core"
+import { Browser, Option } from "Core";
 
 //
 //
@@ -23,7 +23,7 @@ export type Route =
   | { type: "Game" }
   | { type: "Chat" }
   | { type: "ChatNew" }
-  | { type: "ChatConversation"; conversationId: string }
+  | { type: "ChatConversation"; conversationId: string };
 
 //
 //
@@ -49,37 +49,40 @@ export const routesTypes: { [routeType in Route["type"]]: string } = {
   Chat: "Chat",
   ChatNew: "ChatNew",
   ChatConversation: "ChatConversation",
-}
+};
 
 const isRouteType = (routeType: unknown): routeType is Route["type"] => {
-  return typeof routeType === "string" && routeType in routesTypes
-}
+  return typeof routeType === "string" && routeType in routesTypes;
+};
 
 export const decode = (pathname: string): Option.Option<Route> => {
-  const [first, second] = pathname.substring(1).split("/")
+  const [first, second] = pathname.substring(1).split("/");
 
   if (isRouteType(first)) {
     if (first === "ChatConversation") {
       if (typeof second === "string") {
-        return Option.Some({ type: "ChatConversation", conversationId: second })
+        return Option.Some({
+          type: "ChatConversation",
+          conversationId: second,
+        });
       }
 
-      return Option.None
+      return Option.None;
     }
 
-    return Option.Some({ type: first })
+    return Option.Some({ type: first });
   }
 
-  return Option.None
-}
+  return Option.None;
+};
 
 export const encode = (route: Route): string => {
   if (route.type === "ChatConversation") {
-    return `/${route.type}/${route.conversationId}`
+    return `/${route.type}/${route.conversationId}`;
   }
 
-  return `/${route.type}`
-}
+  return `/${route.type}`;
+};
 
 //
 //
@@ -90,14 +93,14 @@ export const encode = (route: Route): string => {
 //
 
 export const push = (route: Route) => {
-  return Browser.push(encode(route))
-}
+  return Browser.push(encode(route));
+};
 
-export const back = Browser.back
+export const back = Browser.back;
 
 export const replace = (route: Route) => {
-  return Browser.replace(encode(route))
-}
+  return Browser.replace(encode(route));
+};
 
 //
 //
@@ -112,9 +115,9 @@ export const GotRoute = (route: Route) => {
     group: "Route",
     type: "GotRoute",
     route,
-  } as const
-}
+  } as const;
+};
 
-export type GotRoute = ReturnType<typeof GotRoute>
+export type GotRoute = ReturnType<typeof GotRoute>;
 
-export type Msg = GotRoute
+export type Msg = GotRoute;

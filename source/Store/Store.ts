@@ -1,8 +1,8 @@
-import * as Snackbar from "Snackbar"
-import { Cmd, RemoteData } from "Core"
-import * as Conversation from "./Conversation"
-import * as Profile from "./Profile"
-import { Store } from "./Types"
+import * as Snackbar from "Snackbar";
+import { Cmd, RemoteData } from "Core";
+import * as Conversation from "./Conversation";
+import * as Profile from "./Profile";
+import { Store } from "./Types";
 
 //
 //
@@ -12,7 +12,7 @@ import { Store } from "./Types"
 //
 //
 
-export type Model = Store
+export type Model = Store;
 //
 //
 //
@@ -25,9 +25,10 @@ export const init: Model = {
   Profile: {},
   Conversation: {},
   ProfilesConversations: {},
+  Message: {},
   queries: {
     Conversation: {
-      Get: {},
+      FindOne: {},
       FindManyByUserId: {},
     },
     Profile: {
@@ -45,7 +46,7 @@ export const init: Model = {
       DeleteForever: {},
     },
   },
-}
+};
 
 //
 //
@@ -55,11 +56,11 @@ export const init: Model = {
 //
 //
 
-export type Msg = Profile.Msg | Conversation.Msg
+export type Msg = Profile.Msg | Conversation.Msg;
 
-export type GroupedMsg = Msg & { group: "Store" }
+export type GroupedMsg = Msg & { group: "Store" };
 
-export type Action = Profile.Msg | Conversation.Action
+export type Action = Profile.Msg | Conversation.Action;
 
 //
 //
@@ -69,7 +70,7 @@ export type Action = Profile.Msg | Conversation.Action
 //
 //
 
-type OutAction = Snackbar.Action | Profile.Action
+type OutAction = Snackbar.Action | Profile.Action;
 
 export const update = (
   msg: Msg,
@@ -77,18 +78,18 @@ export const update = (
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (msg.entity) {
     case "Conversation": {
-      const [modelNew, cmdNew, actions] = Conversation.update(msg, model)
+      const [modelNew, cmdNew, actions] = Conversation.update(msg, model);
 
-      return [modelNew, cmdNew, actions]
+      return [modelNew, cmdNew, actions];
     }
 
     case "Profile": {
-      const [modelNew, cmdNew, actions] = Profile.update(msg, model)
+      const [modelNew, cmdNew, actions] = Profile.update(msg, model);
 
-      return [modelNew, cmdNew, actions]
+      return [modelNew, cmdNew, actions];
     }
   }
-}
+};
 
 export const runAction = (
   action: Action,
@@ -96,15 +97,15 @@ export const runAction = (
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (action.entity) {
     case "Conversation": {
-      const [modelNew, cmdNew] = Conversation.runAction(action, model)
+      const [modelNew, cmdNew] = Conversation.runAction(action, model);
 
-      return [modelNew, cmdNew]
+      return [modelNew, cmdNew];
     }
 
     case "Profile": {
-      const [modelNew, cmdNew, actions] = Profile.update(action, model)
+      const [modelNew, cmdNew, actions] = Profile.update(action, model);
 
-      return [modelNew, cmdNew]
+      return [modelNew, cmdNew];
     }
   }
-}
+};

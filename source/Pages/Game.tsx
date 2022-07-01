@@ -1,7 +1,7 @@
-import * as Games from "Games"
-import * as View from "View"
-import { Cmd, pipe } from "Core"
-import { groupTag } from "Utility"
+import * as Games from "Games";
+import * as View from "View";
+import { Cmd, pipe } from "Core";
+import { groupTag } from "Utility";
 
 //
 //
@@ -11,7 +11,7 @@ import { groupTag } from "Utility"
 //
 //
 
-export type Model = Games.Model
+export type Model = Games.Model;
 
 //
 //
@@ -21,7 +21,7 @@ export type Model = Games.Model
 //
 //
 
-export const init = Games.init
+export const init = Games.init;
 
 //
 //
@@ -31,7 +31,7 @@ export const init = Games.init
 //
 //
 
-export type Msg = Games.GroupedMsg
+export type Msg = Games.GroupedMsg;
 
 //
 //
@@ -42,8 +42,8 @@ export type Msg = Games.GroupedMsg
 //
 
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
-  return [model, Cmd.None]
-}
+  return [model, Cmd.None];
+};
 
 //
 //
@@ -54,5 +54,5 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 //
 
 export const view = (model: Model): View.View<Msg> => {
-  return pipe(Games.view(model), View.map(groupTag("Game")))
-}
+  return pipe(Games.view(model), View.map(groupTag("Game")));
+};

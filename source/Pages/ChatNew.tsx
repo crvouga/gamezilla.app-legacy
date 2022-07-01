@@ -1,8 +1,8 @@
-import * as Route from "Route"
-import * as Store from "Store"
-import * as View from "View"
-import { Cmd, Keyboard, RemoteData, Sub, pipe } from "Core"
-import { useEffect, useRef } from "react"
+import * as Route from "Route";
+import * as Store from "Store";
+import * as View from "View";
+import { Cmd, Keyboard, RemoteData, Sub, pipe } from "Core";
+import { useEffect, useRef } from "react";
 
 //
 //
@@ -13,10 +13,10 @@ import { useEffect, useRef } from "react"
 //
 
 export type Model = {
-  searchText: string
-  selected: { [userId: string]: string }
-  highlightedIndex: "None" | number
-}
+  searchText: string;
+  selected: { [userId: string]: string };
+  highlightedIndex: "None" | number;
+};
 
 //
 //
@@ -27,7 +27,7 @@ export type Model = {
 //
 
 export const init = (): [Model, Cmd.Cmd<Msg>, Action[]] => {
-  const searchText = ""
+  const searchText = "";
   return [
     {
       searchText,
@@ -36,8 +36,8 @@ export const init = (): [Model, Cmd.Cmd<Msg>, Action[]] => {
     },
     Cmd.None,
     [Store.Profile.Search(searchText)],
-  ]
-}
+  ];
+};
 
 //
 //
@@ -53,9 +53,9 @@ export type Msg =
   | { type: "ClickedResult"; userId: string }
   | { type: "ClickedSelectedDelete"; userId: string }
   | { type: "ClickedCreate" }
-  | { type: "PressedKeyDown"; key: Keyboard.ArrowKey | Keyboard.EnterKey }
+  | { type: "PressedKeyDown"; key: Keyboard.ArrowKey | Keyboard.EnterKey };
 
-export type Action = Store.Action
+export type Action = Store.Action;
 
 export const update = (
   { authUserId, store }: { authUserId: string; store: Store.Model },
@@ -64,11 +64,15 @@ export const update = (
 ): [Model, Cmd.Cmd<Msg>, Action[]] => {
   switch (msg.type) {
     case "ClickedCreate":
-      const userIds = Object.values(model.selected)
-      return [model, Cmd.None, [Store.Conversation.Insert(authUserId, userIds)]]
+      const userIds = Object.values(model.selected);
+      return [
+        model,
+        Cmd.None,
+        [Store.Conversation.Insert(authUserId, userIds)],
+      ];
 
     case "ClickedCancel":
-      return [model, Route.back, []]
+      return [model, Route.back, []];
 
     case "InputtedSearch":
       return [
@@ -79,14 +83,14 @@ export const update = (
         },
         Cmd.None,
         [Store.Profile.Search(msg.searchText)],
-      ]
+      ];
 
     case "ClickedSelectedDelete":
-      const selectedNew = removeKey(msg.userId, model.selected)
-      return [{ ...model, selected: selectedNew }, Cmd.None, []]
+      const selectedNew = removeKey(msg.userId, model.selected);
+      return [{ ...model, selected: selectedNew }, Cmd.None, []];
 
     case "PressedKeyDown":
-      const profiles = Store.Profile.searchProfiles(model.searchText, store)
+      const profiles = Store.Profile.searchProfiles(model.searchText, store);
 
       switch (msg.key) {
         case "ArrowDown":
@@ -100,7 +104,7 @@ export const update = (
             },
             Cmd.None,
             [],
-          ]
+          ];
 
         case "ArrowUp":
           return [
@@ -113,31 +117,31 @@ export const update = (
             },
             Cmd.None,
             [],
-          ]
+          ];
 
         case "Enter":
           if (model.highlightedIndex === "None") {
-            return [model, Cmd.None, []]
+            return [model, Cmd.None, []];
           }
 
-          const profile = profiles[model.highlightedIndex]
+          const profile = profiles[model.highlightedIndex];
 
           if (!profile) {
-            return [model, Cmd.None, []]
+            return [model, Cmd.None, []];
           }
 
-          return toggleSelected(profile.userId, model)
+          return toggleSelected(profile.userId, model);
 
         case "ArrowLeft":
         case "ArrowRight":
-          return [model, Cmd.None, []]
+          return [model, Cmd.None, []];
       }
 
     case "ClickedResult":
-      const [modelNew, cmdNew, actions] = toggleSelected(msg.userId, model)
-      return [{ ...modelNew, highlightedIndex: "None" }, cmdNew, actions]
+      const [modelNew, cmdNew, actions] = toggleSelected(msg.userId, model);
+      return [{ ...modelNew, highlightedIndex: "None" }, cmdNew, actions];
   }
-}
+};
 
 const toggleSelected = (
   userId: string,
@@ -152,7 +156,7 @@ const toggleSelected = (
       },
       Cmd.None,
       [],
-    ]
+    ];
   }
 
   return [
@@ -166,8 +170,8 @@ const toggleSelected = (
     },
     Cmd.None,
     [],
-  ]
-}
+  ];
+};
 
 //
 //
@@ -182,8 +186,8 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
     Keyboard.isArrowKey(key) || Keyboard.isEnterKey(key)
       ? { type: "PressedKeyDown", key }
       : Keyboard.SkipFlag,
-  )
-}
+  );
+};
 
 //
 //
@@ -199,29 +203,29 @@ export const view =
       store,
       currentUserProfile,
     }: {
-      store: Store.Model
-      currentUserProfile: Store.Profile.Profile
+      store: Store.Model;
+      currentUserProfile: Store.Profile.Profile;
     },
     model: Model,
   ): View.View<Msg> =>
   (dispatch) => {
-    const mutation = store.mutations.Conversation.GetElseCreate
+    const mutation = store.mutations.Conversation.GetElseCreate;
 
     const searchQuery =
-      store.queries.Profile.Search[model.searchText] ?? RemoteData.NotAsked
+      store.queries.Profile.Search[model.searchText] ?? RemoteData.NotAsked;
 
     const profiles = Store.Profile.searchProfiles(
       model.searchText,
       store,
-    ).filter((profile) => profile.userId !== currentUserProfile.userId)
+    ).filter((profile) => profile.userId !== currentUserProfile.userId);
 
     const selected = Object.keys(model.selected).flatMap((userId) => {
-      const profile = store.Profile[userId]
+      const profile = store.Profile[userId];
       if (profile) {
-        return [profile]
+        return [profile];
       }
-      return []
-    })
+      return [];
+    });
     return (
       <View.Page>
         <View.Header
@@ -266,7 +270,7 @@ export const view =
                 dispatch({
                   type: "ClickedSelectedDelete",
                   userId: profile.userId,
-                })
+                });
               }}
             />
           ))}
@@ -279,11 +283,11 @@ export const view =
               //
             }}
             onChange={(event) => {
-              const searchText = event.currentTarget.value
+              const searchText = event.currentTarget.value;
               dispatch({
                 type: "InputtedSearch",
                 searchText,
-              })
+              });
             }}
           />
         </View.Box>
@@ -305,7 +309,7 @@ export const view =
                 dispatch({
                   type: "ClickedResult",
                   userId: profile.userId,
-                })
+                });
               }}
               selected={profile.userId in model.selected}
               highlighted={
@@ -329,8 +333,8 @@ export const view =
           )}
         </View.List>
       </View.Page>
-    )
-  }
+    );
+  };
 
 const SearchResultListItem = ({
   profile: searchResult,
@@ -338,17 +342,17 @@ const SearchResultListItem = ({
   highlighted,
   selected,
 }: {
-  highlighted: boolean
-  selected: boolean
-  profile: Store.Profile.Profile
-  onClick: () => void
+  highlighted: boolean;
+  selected: boolean;
+  profile: Store.Profile.Profile;
+  onClick: () => void;
 }) => {
-  const ref = useRef<HTMLDivElement | null>(null)
+  const ref = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
     if (highlighted && ref.current) {
-      ref.current.scrollIntoView({ behavior: "smooth" })
+      ref.current.scrollIntoView({ behavior: "smooth" });
     }
-  }, [highlighted])
+  }, [highlighted]);
   return (
     <div ref={ref}>
       <View.ListItemButton
@@ -370,8 +374,8 @@ const SearchResultListItem = ({
         </View.ListItemSecondaryAction>
       </View.ListItemButton>
     </div>
-  )
-}
+  );
+};
 
 //
 //
@@ -382,10 +386,10 @@ const SearchResultListItem = ({
 //
 
 const removeKey = <T,>(key: keyof T, a: T): Omit<T, keyof T> => {
-  const { [key]: _value, ...rest } = a
-  return rest
-}
+  const { [key]: _value, ...rest } = a;
+  return rest;
+};
 
 const circularIndex = (index: number, length: number): number => {
-  return ((index % length) + length) % length
-}
+  return ((index % length) + length) % length;
+};

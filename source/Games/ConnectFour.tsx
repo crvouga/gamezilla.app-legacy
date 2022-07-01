@@ -1,6 +1,6 @@
-import * as Route from "Route"
-import * as View from "View"
-import { Cmd } from "Core"
+import * as Route from "Route";
+import * as View from "View";
+import { Cmd } from "Core";
 
 //
 //
@@ -12,17 +12,17 @@ import { Cmd } from "Core"
 //
 //
 
-export type IPlayer = "PlayerOne" | "PlayerTwo"
+export type IPlayer = "PlayerOne" | "PlayerTwo";
 
-export type IColumn = readonly IPlayer[]
+export type IColumn = readonly IPlayer[];
 
-export type Columns = readonly IColumn[]
+export type Columns = readonly IColumn[];
 
-export const MAX_COLUMN_HEIGHT = 6
+export const MAX_COLUMN_HEIGHT = 6;
 
-export const COLUMN_COUNT = 7
+export const COLUMN_COUNT = 7;
 
-export const emptyColumns: Columns = [...Array(COLUMN_COUNT)].map(() => [])
+export const emptyColumns: Columns = [...Array(COLUMN_COUNT)].map(() => []);
 
 export const move = (
   columns: Columns,
@@ -31,88 +31,88 @@ export const move = (
 ): Columns => {
   return columns.map((column, index) => {
     if (index === columnIndex && toTurn(columns) === player) {
-      return column.concat([player]).slice(0, MAX_COLUMN_HEIGHT)
+      return column.concat([player]).slice(0, MAX_COLUMN_HEIGHT);
     }
 
-    return column
-  })
-}
+    return column;
+  });
+};
 
 export const toSlot = (
   columns: Columns,
   { x, y }: { x: number; y: number },
 ): IPlayer | "Empty" => {
-  const slot = columns?.[x]?.[y]
+  const slot = columns?.[x]?.[y];
 
   if (slot) {
-    return slot
+    return slot;
   }
 
-  return "Empty"
-}
+  return "Empty";
+};
 
-const isEven = (x: number) => x % 2 === 0
+const isEven = (x: number) => x % 2 === 0;
 
 export const toTurn = (columns: Columns): IPlayer => {
-  return isEven(columns.flat().length) ? "PlayerTwo" : "PlayerOne"
-}
+  return isEven(columns.flat().length) ? "PlayerTwo" : "PlayerOne";
+};
 
 const isFull = (columns: Columns) => {
-  return columns.flat().length >= MAX_COLUMN_HEIGHT * COLUMN_COUNT
-}
+  return columns.flat().length >= MAX_COLUMN_HEIGHT * COLUMN_COUNT;
+};
 
 type IStatus =
   | {
-      type: "Playing"
+      type: "Playing";
     }
   | {
-      type: "Winner"
-      winner: IPlayer
+      type: "Winner";
+      winner: IPlayer;
     }
   | {
-      type: "Tie"
-    }
+      type: "Tie";
+    };
 
 export const toStatus = (columns: Columns): IStatus => {
   const winningLines = Array.from(
     filter((line) => line.length >= 5, yieldLines(columns)),
-  )
+  );
 
-  const [winningLine] = winningLines
+  const [winningLine] = winningLines;
 
   if (winningLine) {
-    const [position] = winningLine
+    const [position] = winningLine;
 
     if (!position) {
       return {
         type: "Playing",
-      }
+      };
     }
 
-    const winner = toSlot(columns, position)
+    const winner = toSlot(columns, position);
 
     if (winner === "Empty") {
       return {
         type: "Playing",
-      }
+      };
     }
 
     return {
       type: "Winner",
       winner,
-    }
+    };
   }
 
   if (isFull(columns)) {
     return {
       type: "Tie",
-    }
+    };
   }
 
   return {
     type: "Playing",
-  }
-}
+  };
+};
 
 //
 //
@@ -123,12 +123,12 @@ export const toStatus = (columns: Columns): IStatus => {
 //
 
 export type Model = {
-  columns: Columns
-}
+  columns: Columns;
+};
 
 export const init: Model = {
   columns: emptyColumns,
-}
+};
 
 /* 
 Check win
@@ -136,8 +136,8 @@ Check win
 
 function* yieldPositionsAndDirections(columns: Columns) {
   for (let x = 0; x <= columns.length; x++) {
-    const column = columns[x]
-    const columnLength = column?.length ?? 0
+    const column = columns[x];
+    const columnLength = column?.length ?? 0;
     for (let y = 0; y <= columnLength; y++) {
       for (let dx = -1; dx <= 1; dx++) {
         for (let dy = -1; dy <= dy; dx++) {
@@ -146,7 +146,7 @@ function* yieldPositionsAndDirections(columns: Columns) {
             y,
             dx,
             dy,
-          }
+          };
         }
       }
     }
@@ -160,57 +160,57 @@ function* yieldLine({
   dx,
   dy,
 }: {
-  columns: Columns
-  x: number
-  y: number
-  dx: number
-  dy: number
+  columns: Columns;
+  x: number;
+  y: number;
+  dx: number;
+  dy: number;
 }) {
   yield {
     x,
     y,
-  }
+  };
 
   while (true) {
     const adjancentPosition = {
       x: x + dx,
       y: y + dy,
-    }
+    };
 
-    const adjancentSlot = toSlot(columns, adjancentPosition)
+    const adjancentSlot = toSlot(columns, adjancentPosition);
 
-    const slot = toSlot(columns, { x, y })
+    const slot = toSlot(columns, { x, y });
 
     if (adjancentSlot === slot) {
-      yield adjancentPosition
+      yield adjancentPosition;
     } else {
-      break
+      break;
     }
   }
 }
 
 function* yieldLines(columns: Columns) {
-  const visited = new Set()
+  const visited = new Set();
 
   for (const { x, y, dx, dy } of yieldPositionsAndDirections(columns)) {
-    const key = `${x}${y}${dx}${dy}`
+    const key = `${x}${y}${dx}${dy}`;
 
     if (visited.has(key)) {
-      continue
+      continue;
     }
 
-    visited.add(key)
+    visited.add(key);
 
-    const line = Array.from(yieldLine({ columns, x, y, dx, dy }))
+    const line = Array.from(yieldLine({ columns, x, y, dx, dy }));
 
-    yield line
+    yield line;
   }
 }
 
 function* filter<T>(predicate: (item: T) => boolean, generator: Generator<T>) {
   for (const item of generator) {
     if (predicate(item)) {
-      yield item
+      yield item;
     }
   }
 }
@@ -232,10 +232,10 @@ export const Icon = () => {
     holePattern: "holePattern",
     columnGradient: "columnGradient",
     holemask: "holemask",
-  }
+  };
 
-  const playerOneFill = `url(#${ids.playerOneGradient})`
-  const playerTwoFill = `url(#${ids.playerTwoGradient})`
+  const playerOneFill = `url(#${ids.playerOneGradient})`;
+  const playerTwoFill = `url(#${ids.playerTwoGradient})`;
 
   return (
     <svg width="100%" viewBox={"0 0 2 2"}>
@@ -307,8 +307,8 @@ export const Icon = () => {
         mask={`url(#${ids.holemask})`}
       />
     </svg>
-  )
-}
+  );
+};
 
 export const theme = {
   primary: {
@@ -324,7 +324,7 @@ export const theme = {
     light: "#F24237",
     dark: "#DB332F",
   },
-}
+};
 
 //
 //
@@ -339,27 +339,27 @@ export const theme = {
 export type Msg =
   | { type: "UserClickedBackButton" }
   | { type: "UserClickedBoard"; columnIndex: number }
-  | { type: "UserClickedRestartButton" }
+  | { type: "UserClickedRestartButton" };
 
-export type GroupedMsg = { group: "ConnectFour" } & Msg
+export type GroupedMsg = { group: "ConnectFour" } & Msg;
 
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "UserClickedBackButton":
-      return [model, Route.back]
+      return [model, Route.back];
 
     case "UserClickedBoard":
       const columnsNew = move(
         model.columns,
         msg.columnIndex,
         toTurn(model.columns),
-      )
-      return [{ ...model, columns: columnsNew }, Cmd.None]
+      );
+      return [{ ...model, columns: columnsNew }, Cmd.None];
 
     case "UserClickedRestartButton":
-      return [{ ...model, columns: emptyColumns }, Cmd.None]
+      return [{ ...model, columns: emptyColumns }, Cmd.None];
   }
-}
+};
 
 //
 //
@@ -398,14 +398,14 @@ export const view =
           Restart
         </View.Button>
       </View.Page>
-    )
+    );
 
 const Board = ({
   columns,
   onClick,
 }: {
-  columns: Columns
-  onClick: (columnIndex: number) => void
+  columns: Columns;
+  onClick: (columnIndex: number) => void;
 }) => {
   const ids = {
     playerOneGradient: "playerOneGradient",
@@ -413,10 +413,10 @@ const Board = ({
     holePattern: "holePattern",
     columnGradient: "columnGradient",
     holemask: "holemask",
-  }
+  };
 
-  const playerOneFill = `url(#${ids.playerOneGradient})`
-  const playerTwoFill = `url(#${ids.playerTwoGradient})`
+  const playerOneFill = `url(#${ids.playerOneGradient})`;
+  const playerTwoFill = `url(#${ids.playerTwoGradient})`;
 
   return (
     <svg width="100%" viewBox={"0 0 7 6"}>
@@ -510,5 +510,5 @@ const Board = ({
         />
       ))}
     </svg>
-  )
-}
+  );
+};

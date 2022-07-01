@@ -1,24 +1,24 @@
-import * as Rx from "rxjs"
-import { Sub } from "./Sub"
+import * as Rx from "rxjs";
+import { Sub } from "./Sub";
 
-export type ArrowKey = "ArrowUp" | "ArrowDown" | "ArrowRight" | "ArrowLeft"
+export type ArrowKey = "ArrowUp" | "ArrowDown" | "ArrowRight" | "ArrowLeft";
 
 const arrowKeys: { [key in ArrowKey]: ArrowKey } = {
   ArrowDown: "ArrowDown",
   ArrowUp: "ArrowUp",
   ArrowLeft: "ArrowLeft",
   ArrowRight: "ArrowRight",
-}
+};
 
 export const isArrowKey = (key: unknown): key is ArrowKey => {
-  return typeof key === "string" && key in arrowKeys
-}
+  return typeof key === "string" && key in arrowKeys;
+};
 
-export type EnterKey = "Enter"
+export type EnterKey = "Enter";
 
 export const isEnterKey = (key: unknown): key is EnterKey => {
-  return typeof key === "string" && key === "Enter"
-}
+  return typeof key === "string" && key === "Enter";
+};
 
 export type Key =
   | "w"
@@ -31,7 +31,7 @@ export type Key =
   | "D"
   | "Space"
   | ArrowKey
-  | EnterKey
+  | EnterKey;
 
 const keys: { [key in Key]: Key } = {
   //
@@ -53,46 +53,46 @@ const keys: { [key in Key]: Key } = {
   ArrowRight: "ArrowRight",
   //
   Enter: "Enter",
-}
+};
 
 const is = (key: unknown): key is Key => {
-  return typeof key === "string" && key in keys
-}
+  return typeof key === "string" && key in keys;
+};
 
-type SkipFlag = "Keyboard/SkipFlag"
+type SkipFlag = "Keyboard/SkipFlag";
 
-export const SkipFlag: SkipFlag = "Keyboard/SkipFlag"
+export const SkipFlag: SkipFlag = "Keyboard/SkipFlag";
 
 const isSkipFlag = (unknown: unknown): unknown is SkipFlag => {
-  return unknown === SkipFlag
-}
+  return unknown === SkipFlag;
+};
 
 export const keyDowns = <T>(callback: (key: Key) => T | SkipFlag): Sub<T> => {
   return new Rx.Observable((subscriber) => {
     const handler = (event: KeyboardEvent) => {
-      const key = event.key
+      const key = event.key;
 
       if (key === " ") {
-        const result = callback("Space")
+        const result = callback("Space");
         if (isSkipFlag(result)) {
-          return
+          return;
         }
-        subscriber.next(result)
+        subscriber.next(result);
       }
 
       if (is(key)) {
-        const result = callback(key)
+        const result = callback(key);
         if (isSkipFlag(result)) {
-          return
+          return;
         }
 
-        subscriber.next(result)
+        subscriber.next(result);
       }
-    }
+    };
 
-    document.addEventListener("keydown", handler)
+    document.addEventListener("keydown", handler);
     return () => {
-      document.removeEventListener("keydown", handler)
-    }
-  })
-}
+      document.removeEventListener("keydown", handler);
+    };
+  });
+};

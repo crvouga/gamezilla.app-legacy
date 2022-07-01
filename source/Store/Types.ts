@@ -1,4 +1,4 @@
-import { RemoteData } from "Core"
+import { RemoteData } from "Core";
 
 //
 //
@@ -10,17 +10,20 @@ import { RemoteData } from "Core"
 
 export type Store = {
   Profile: {
-    [id: string]: Profile
-  }
+    [id: string]: Profile;
+  };
   Conversation: {
-    [id: string]: Conversation
-  }
+    [id: string]: Conversation;
+  };
+  Message: {
+    [id: string]: Message;
+  };
   ProfilesConversations: {
-    [id: string]: ProfilesConversations
-  }
-  queries: Queries
-  mutations: Mutations
-}
+    [id: string]: ProfilesConversations;
+  };
+  queries: Queries;
+  mutations: Mutations;
+};
 
 //
 //
@@ -31,30 +34,37 @@ export type Store = {
 //
 
 export type Profile = {
-  userId: string
-  username: string
-  name: string
-  avatarUrl: string
-  themeMode: "Light" | "Dark" | "System"
-}
+  userId: string;
+  username: string;
+  name: string;
+  avatarUrl: string;
+  themeMode: "Light" | "Dark" | "System";
+};
 
 export type ProfilesConversations = {
-  userId: string
-  conversationId: string
-}
+  userId: string;
+  conversationId: string;
+};
 export const toProfilesConversationsId = ({
   userId,
   conversationId,
 }: {
-  userId: string
-  conversationId: string
+  userId: string;
+  conversationId: string;
 }): string => {
-  return [userId, conversationId].join(",")
-}
+  return [userId, conversationId].join(",");
+};
 
 export type Conversation = {
-  conversationId: string
-}
+  conversationId: string;
+};
+
+export type Message = {
+  messageId: string;
+  conversationId: string;
+  userId: string;
+  message: string;
+};
 
 //
 //
@@ -67,29 +77,36 @@ export type Conversation = {
 export type Queries = {
   Profile: {
     Get: {
-      [userId: string]: RemoteData.RemoteData<Problem, string>
-    }
+      [userId: string]: RemoteData.RemoteData<Problem, string>;
+    };
     Search: {
-      [searchText: string]: RemoteData.RemoteData<Problem, string[]>
-    }
-  }
+      [searchText: string]: RemoteData.RemoteData<Problem, string[]>;
+    };
+  };
 
   Conversation: {
-    Get: {
-      [id: string]: RemoteData.RemoteData<Problem, string>
-    }
+    FindOne: {
+      [id: string]: RemoteData.RemoteData<
+        Problem,
+        {
+          conversation: string;
+          messages: string[];
+          profile: string[];
+        }
+      >;
+    };
     FindManyByUserId: {
       [userId: string]: RemoteData.RemoteData<
         Problem,
         {
-          profile: string[]
-          conversation: string[]
-          profilesConversations: string[]
+          profile: string[];
+          conversation: string[];
+          profilesConversations: string[];
         }
-      >
-    }
-  }
-}
+      >;
+    };
+  };
+};
 
 //
 //
@@ -102,19 +119,19 @@ export type Queries = {
 export type Mutations = {
   Profile: {
     Edit: {
-      [userId: string]: RemoteData.RemoteData<Problem, string>
-    }
+      [userId: string]: RemoteData.RemoteData<Problem, string>;
+    };
     DeleteForever: {
-      [userId: string]: RemoteData.RemoteData<Problem, string>
-    }
+      [userId: string]: RemoteData.RemoteData<Problem, string>;
+    };
     Create: {
-      [userId: string]: RemoteData.RemoteData<Problem, string>
-    }
-  }
+      [userId: string]: RemoteData.RemoteData<Problem, string>;
+    };
+  };
   Conversation: {
-    GetElseCreate: RemoteData.RemoteData<Problem, string>
-  }
-}
+    GetElseCreate: RemoteData.RemoteData<Problem, string>;
+  };
+};
 
 //
 //
@@ -124,4 +141,4 @@ export type Mutations = {
 //
 //
 
-export type Problem = { message: string }
+export type Problem = { message: string };

@@ -1,7 +1,7 @@
-import * as Route from "Route"
-import * as Store from "Store"
-import * as View from "View"
-import { Cmd } from "Core"
+import * as Route from "Route";
+import * as Store from "Store";
+import * as View from "View";
+import { Cmd } from "Core";
 
 //
 //
@@ -11,13 +11,13 @@ import { Cmd } from "Core"
 //
 //
 
-export type Model = { username: string }
+export type Model = { username: string };
 
 export const init = ({ username }: { username: string }): Model => {
   return {
     username,
-  }
-}
+  };
+};
 
 //
 //
@@ -30,9 +30,9 @@ export const init = ({ username }: { username: string }): Model => {
 export type Msg =
   | { type: "UserClickedCancelButton" }
   | { type: "UserEnteredUsername"; username: string }
-  | { type: "UserClickedSubmitButton" }
+  | { type: "UserClickedSubmitButton" };
 
-export type OutMsg = Store.Action
+export type OutMsg = Store.Action;
 
 export const update = (
   { userId }: { userId: string },
@@ -41,19 +41,19 @@ export const update = (
 ): [Model, Cmd.Cmd<Msg>, OutMsg[]] => {
   switch (msg.type) {
     case "UserEnteredUsername":
-      return [{ ...model, username: msg.username }, Cmd.None, []]
+      return [{ ...model, username: msg.username }, Cmd.None, []];
 
     case "UserClickedCancelButton":
-      return [model, Route.back, []]
+      return [model, Route.back, []];
 
     case "UserClickedSubmitButton":
       return [
         model,
         Route.back,
         [Store.Profile.Edit(userId, { username: model.username })],
-      ]
+      ];
   }
-}
+};
 
 //
 //
@@ -103,4 +103,4 @@ export const view =
           />
         </View.Box>
       </View.Page>
-    )
+    );

@@ -1,10 +1,10 @@
-import * as History from "history"
-import * as Rx from "rxjs"
-import * as Cmd from "./Cmd"
-import * as Html from "./Html"
-import * as Option from "./Option"
-import * as Platform from "./Platform"
-import * as Sub from "./Sub"
+import * as History from "history";
+import * as Rx from "rxjs";
+import * as Cmd from "./Cmd";
+import * as Html from "./Html";
+import * as Option from "./Option";
+import * as Platform from "./Platform";
+import * as Sub from "./Sub";
 
 //
 //
@@ -15,10 +15,10 @@ import * as Sub from "./Sub"
 //
 
 export type Program<Model, Msg, Dom> = Platform.Program<Model, Msg> & {
-  html$: Rx.Observable<Html.Html<Dom, Msg>>
-}
+  html$: Rx.Observable<Html.Html<Dom, Msg>>;
+};
 
-export type Renderer<Dom> = (dom: Dom) => void
+export type Renderer<Dom> = (dom: Dom) => void;
 
 //
 //
@@ -28,15 +28,15 @@ export type Renderer<Dom> = (dom: Dom) => void
 //
 //
 
-export type Location = History.Location
+export type Location = History.Location;
 
-export const history = History.createBrowserHistory()
+export const history = History.createBrowserHistory();
 
-export const location$ = new Rx.Subject<Location>()
+export const location$ = new Rx.Subject<Location>();
 
 history.listen((historyUpdate) => {
-  location$.next(historyUpdate.location)
-})
+  location$.next(historyUpdate.location);
+});
 
 //
 //
@@ -47,32 +47,32 @@ history.listen((historyUpdate) => {
 //
 
 export const reload: Cmd.Cmd<never> = Rx.of(async () => {
-  window.location.reload()
+  window.location.reload();
 
-  return Option.None
-})
+  return Option.None;
+});
 
 export const push = (url: string): Cmd.Cmd<never> => {
   return Rx.of(async () => {
-    history.push(url)
+    history.push(url);
 
-    return Option.None
-  })
-}
+    return Option.None;
+  });
+};
 
 export const replace = (url: string): Cmd.Cmd<never> => {
   return Rx.of(async () => {
-    history.replace(url)
+    history.replace(url);
 
-    return Option.None
-  })
-}
+    return Option.None;
+  });
+};
 
 export const back: Cmd.Cmd<never> = Rx.of(async () => {
-  history.back()
+  history.back();
 
-  return Option.None
-})
+  return Option.None;
+});
 
 //
 //
@@ -89,26 +89,26 @@ export const Application = <Model, Msg, Dom>({
   view,
   subscriptions,
 }: {
-  onLocationChange: (location: Location) => Msg
-  init: (location: Location) => [Model, Cmd.Cmd<Msg>]
-  update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>]
-  view: (model: Model) => Html.Html<Dom, Msg>
-  subscriptions: (model: Model) => Sub.Sub<Msg>
+  onLocationChange: (location: Location) => Msg;
+  init: (location: Location) => [Model, Cmd.Cmd<Msg>];
+  update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>];
+  view: (model: Model) => Html.Html<Dom, Msg>;
+  subscriptions: (model: Model) => Sub.Sub<Msg>;
 }): Program<Model, Msg, Dom> => {
   const onChangeLocation$ = location$.pipe(
     Rx.map((location) => onLocationChange(location)),
-  )
+  );
 
   const subs = (model: Model): Sub.Sub<Msg> =>
-    Sub.batch([subscriptions(model), onChangeLocation$])
+    Sub.batch([subscriptions(model), onChangeLocation$]);
 
   return Element({
     init: init(history.location),
     update,
     view,
     subscriptions: subs,
-  })
-}
+  });
+};
 
 export const Element = <Model, Msg, Dom>({
   init,
@@ -116,50 +116,50 @@ export const Element = <Model, Msg, Dom>({
   update,
   subscriptions,
 }: {
-  init: [Model, Cmd.Cmd<Msg>]
-  update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>]
-  view: (model: Model) => Html.Html<Dom, Msg>
-  subscriptions: (model: Model) => Sub.Sub<Msg>
+  init: [Model, Cmd.Cmd<Msg>];
+  update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>];
+  view: (model: Model) => Html.Html<Dom, Msg>;
+  subscriptions: (model: Model) => Sub.Sub<Msg>;
 }): Program<Model, Msg, Dom> => {
   const program = Platform.Worker({
     init,
     update,
     subscriptions,
-  })
+  });
 
-  const html$ = program.model$.pipe(Rx.map(view))
+  const html$ = program.model$.pipe(Rx.map(view));
 
   return {
     ...program,
     html$,
-  }
-}
+  };
+};
 
 export const withStop =
   (signal: Rx.Subject<unknown>) =>
   <Model, Msg, Dom>(
     program: Program<Model, Msg, Dom>,
   ): Program<Model, Msg, Dom> => {
-    const { html$, ...rest } = program
+    const { html$, ...rest } = program;
 
     return {
       ...Platform.withStop(signal)(rest),
       html$: html$.pipe(Rx.takeUntil(signal)),
-    }
-  }
+    };
+  };
 
 export const run = <Model, Msg, Dom>(
   program: Program<Model, Msg, Dom>,
   renderer: Renderer<Dom>,
 ): (() => void) => {
-  const { dispatch, html$ } = program
+  const { dispatch, html$ } = program;
 
-  const htmlSub = html$.subscribe((html) => renderer(html(dispatch)))
+  const htmlSub = html$.subscribe((html) => renderer(html(dispatch)));
 
-  const stop = Platform.run(program)
+  const stop = Platform.run(program);
 
   return () => {
-    htmlSub.unsubscribe()
-    stop()
-  }
-}
+    htmlSub.unsubscribe();
+    stop();
+  };
+};

@@ -1,9 +1,9 @@
-import * as ProfileAvatar from "ProfileAvatar"
-import * as Route from "Route"
-import * as Snackbar from "Snackbar"
-import * as Store from "Store"
-import * as View from "View"
-import { Cmd, pipe } from "Core"
+import * as ProfileAvatar from "ProfileAvatar";
+import * as Route from "Route";
+import * as Snackbar from "Snackbar";
+import * as Store from "Store";
+import * as View from "View";
+import { Cmd, pipe } from "Core";
 
 //
 //
@@ -14,20 +14,20 @@ import { Cmd, pipe } from "Core"
 //
 
 export type Model = {
-  status: "Idle" | "GeneratingSeed" | "StyleSelectOpened" | "UpdatingAvatar"
-  seed: ProfileAvatar.Seed
-  style: ProfileAvatar.Style
-}
+  status: "Idle" | "GeneratingSeed" | "StyleSelectOpened" | "UpdatingAvatar";
+  seed: ProfileAvatar.Seed;
+  style: ProfileAvatar.Style;
+};
 
 export const init = ({ avatarUrl }: { avatarUrl: string }): Model => {
-  const { seed, style } = ProfileAvatar.parseUrl(avatarUrl)
+  const { seed, style } = ProfileAvatar.parseUrl(avatarUrl);
 
   return {
     status: "Idle",
     seed,
     style,
-  }
-}
+  };
+};
 
 //
 //
@@ -37,7 +37,7 @@ export const init = ({ avatarUrl }: { avatarUrl: string }): Model => {
 //
 //
 
-export type GroupedMsg = { group: "ProfileUpdateAvatar" } & Msg
+export type GroupedMsg = { group: "ProfileUpdateAvatar" } & Msg;
 
 export type Msg =
   | { type: "UserClickedCancelButton" }
@@ -47,9 +47,9 @@ export type Msg =
   | { type: "UserSelectedStyle"; style: ProfileAvatar.Style }
   | { type: "UserEnteredSeed"; seed: ProfileAvatar.Seed }
   | { type: "UserClickedRandomSeedButton" }
-  | { type: "RandomSeedGenerated"; seed: ProfileAvatar.Seed }
+  | { type: "RandomSeedGenerated"; seed: ProfileAvatar.Seed };
 
-type OutAction = Snackbar.Action | Store.Action
+type OutAction = Snackbar.Action | Store.Action;
 
 export const update = (
   { userId }: { userId: string },
@@ -58,16 +58,16 @@ export const update = (
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (msg.type) {
     case "UserClickedCancelButton":
-      return [model, Route.back, []]
+      return [model, Route.back, []];
 
     case "StyleSelectClosed":
-      return [{ ...model, status: "Idle" }, Cmd.None, []]
+      return [{ ...model, status: "Idle" }, Cmd.None, []];
 
     case "StyleSelectOpened":
-      return [{ ...model, status: "StyleSelectOpened" }, Cmd.None, []]
+      return [{ ...model, status: "StyleSelectOpened" }, Cmd.None, []];
 
     case "UserEnteredSeed":
-      return [{ ...model, seed: msg.seed }, Cmd.None, []]
+      return [{ ...model, seed: msg.seed }, Cmd.None, []];
 
     case "UserClickedRandomSeedButton":
       return [
@@ -80,13 +80,13 @@ export const update = (
           })),
         ),
         [],
-      ]
+      ];
 
     case "RandomSeedGenerated":
-      return [{ ...model, status: "Idle", seed: msg.seed }, Cmd.None, []]
+      return [{ ...model, status: "Idle", seed: msg.seed }, Cmd.None, []];
 
     case "UserSelectedStyle":
-      return [{ ...model, style: msg.style }, Cmd.None, []]
+      return [{ ...model, style: msg.style }, Cmd.None, []];
 
     case "UserClickedDoneButton":
       return [
@@ -97,9 +97,9 @@ export const update = (
             avatarUrl: ProfileAvatar.toUrl(model),
           }),
         ],
-      ]
+      ];
   }
-}
+};
 
 //
 //
@@ -236,5 +236,5 @@ export const view = (model: Model): View.View<Msg> => {
         </View.Button>
       </View.Box>
     </View.Page>
-  )
-}
+  );
+};
