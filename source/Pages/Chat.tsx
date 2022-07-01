@@ -85,11 +85,7 @@ export const view =
             Send Message
           </View.Button>
         </View.Box>
-        {query.type === "Loading" && (
-          <View.Box sx={{ p: 4, display: "flex", justifyContent: "center" }}>
-            <View.CircularProgress />
-          </View.Box>
-        )}
+
         <View.List sx={{ overflowY: "scroll" }}>
           {Object.values(store.ProfilesConversations)
             .filter((item) => item.userId === profile.userId)
@@ -124,6 +120,12 @@ export const view =
               </View.ListItemButton>
             ))}
         </View.List>
+
+        {query.type === "Loading" && (
+          <View.Box sx={{ p: 4, display: "flex", justifyContent: "center" }}>
+            <View.CircularProgress />
+          </View.Box>
+        )}
       </View.Page>
     );
   };
