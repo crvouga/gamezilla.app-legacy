@@ -68,6 +68,7 @@ export const view =
   (dispatch) => {
     const query =
       store.queries.Conversation.FindOne[conversationId] ?? RemoteData.NotAsked;
+
     const conversation = Store.Conversation.toConversation(
       conversationId,
       store,
