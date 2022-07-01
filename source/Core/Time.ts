@@ -9,29 +9,30 @@ export const now = (): Task.Task<number> => {
 //
 //
 //
-// why?: https://github.com/gcanti/elm-ts/issues/20
+// why not use rxjs for intervals?: https://github.com/gcanti/elm-ts/issues/20
 //
 //
 //
 
-export type Time = number
+// NOTE: needs to be cleaned up when using HMR
+let __intervals: { [interval: number]: Rx.Subject<number> } = {}
 
-let intervals: { [interval: number]: Rx.Subject<number> } = {}
-
-const cleanup = () => {
-  const subs = Object.values(intervals)
+const cleanupIntervals = () => {
+  const subs = Object.values(__intervals)
 
   for (const sub of subs) {
     sub.unsubscribe()
   }
 
-  intervals = {}
+  __intervals = {}
 
   console.log(`[time] cleaned up ${subs.length} subs`)
 }
 
+export type Time = number
+
 const onTimeout = (time: number) => {
-  const subj = intervals[time]
+  const subj = __intervals[time]
 
   if (subj && subj.observed) {
     subj.next(new Date().getTime())
@@ -41,17 +42,17 @@ const onTimeout = (time: number) => {
     return
   }
 
-  delete intervals[time]
+  delete __intervals[time]
 }
 
 export const every = <Msg>(
   time: number,
   f: (time: Time) => Msg,
 ): Sub.Sub<Msg> => {
-  let subj = intervals[time]
+  let subj = __intervals[time]
 
   if (subj === undefined) {
-    intervals[time] = subj = new Rx.Subject<number>()
+    __intervals[time] = subj = new Rx.Subject<number>()
 
     setTimeout(() => onTimeout(time), time)
   }
@@ -59,18 +60,4 @@ export const every = <Msg>(
   const ret = subj.pipe(Rx.map(() => f(new Date().getTime())))
 
   return ret
-}
-
-//
-//
-//
-// HMR
-//
-//
-
-if (import.meta.hot) {
-  // import.meta.hot.accept()
-  // import.meta.hot.dispose(() => {
-  //   cleanup()
-  // })
 }

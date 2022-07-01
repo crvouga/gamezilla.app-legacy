@@ -10,6 +10,7 @@ import { Cmd } from "Core"
 import * as Browser from "../Browser"
 import * as Json from "../Json"
 import * as Option from "../Option"
+import * as Platform from "../Platform"
 import * as Result from "../Result"
 import * as Task from "../Task"
 import { Dispatch } from "../Platform"
@@ -87,24 +88,16 @@ interface LiftedState<Model> {
   isPaused: boolean
 }
 
-interface DevToolHandlerR<Model, Msg> extends DebuggerDeps<Model, Msg> {
+interface DevToolHandlerR<Model, Msg> {
+  init: Model
+  //   debug$: Rx.BehaviorSubject<DebugData<Model, Msg>>
+  dispatch: Platform.Dispatch<MsgWithDebug<Model, Msg>>
   connection: Connection<Model, Msg>
 }
 
 /**
  * Gets a _Redux DevTool Extension_ connection in case the extension is available
  */
-
-export const NoopConnection = <Model, Msg>(): Connection<Model, Msg> => {
-  return {
-    error: () => {},
-    send: () => {},
-    subscribe: () => () => {},
-    unsubscribe: () => {},
-    // @ts-ignore
-    init: null,
-  }
-}
 
 export const getConnection = <Model, Msg>(
   global: Global,
@@ -177,7 +170,7 @@ const handleSubscription = <Model, Msg>(
 const handleIncomingMsg = <Model, Msg>({
   connection,
   init,
-  debug$,
+  //   debug$,
   dispatch,
 }: DevToolHandlerR<Model, Msg>): ((
   msg: DevToolMsg,
@@ -246,7 +239,8 @@ const handleIncomingMsg = <Model, Msg>({
             )
 
           case "COMMIT":
-            return Result.Ok(restart(debug$.getValue()[1]))
+            return Result.Ok(async () => {})
+          // return Result.Ok(restart(debug$.getValue()[1]))
 
           case "IMPORT_STATE":
             return pipe(
@@ -461,20 +455,29 @@ const unsafeCopy = <A>(a: A): A => {
 
 export const withDebugger = <Model, Msg, Dom>(
   program: Browser.Program<Model, Msg, Dom>,
-  connection: Connection<Model, Msg>,
 ): Browser.Program<Model, Msg, Dom> => {
-  const init = program.state$.getValue()[0]
+  const maybeConnection = getConnection<Model, Msg>(window)
 
-  const debug$ = new Rx.BehaviorSubject<DebugData<Model, Msg>>([
-    debugInit(),
-    init,
-  ])
+  if (maybeConnection.type === "None") {
+    return program
+  }
+
+  const connection = maybeConnection.value
+
+  //   const init = program.state$.getValue()[0]
+
+  //   const debug$ = new Rx.BehaviorSubject<DebugData<Model, Msg>>([
+  //     debugInit(),
+  //     init,
+  //   ])
+
+  let runningDebugId = 0
 
   connection.subscribe(
     handleSubscription({
-      debug$,
-      init,
+      //   debug$,
       connection,
+      init: program.state$.getValue().model,
       dispatch: (msg) => {
         if ("type" in msg) {
           switch (msg.type) {
@@ -483,7 +486,17 @@ export const withDebugger = <Model, Msg, Dom>(
               break
 
             case "__DebugUpdateModel__":
-              program.state$.next([msg.payload, Cmd.None])
+              const debugId =
+                // @ts-ignore
+                msg.payload["debugId"]
+
+              program.state$.next({
+                model: msg.payload,
+                cmd: Cmd.None,
+                //why? pause subscription when time travelling
+                subscriptionStatus:
+                  debugId === runningDebugId ? "Subscribed" : "Unsubscribed",
+              })
               break
           }
         }
@@ -492,10 +505,14 @@ export const withDebugger = <Model, Msg, Dom>(
   )
 
   program.state$.subscribe((state) => {
-    const [model, cmd, msg] = state
+    if (state.msg) {
+      const model = state.model
 
-    if (msg) {
-      connection.send(msg, model)
+      runningDebugId = runningDebugId + 1
+      // @ts-ignore
+      model["debugId"] = runningDebugId
+
+      connection.send(state.msg, state.model)
     }
   })
 

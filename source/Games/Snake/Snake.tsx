@@ -287,23 +287,15 @@ const updatePlaying = (model: Model): Model => {
 export const subscriptions = (model: Model): Sub.Sub<Msg> => {
   switch (model.status.type) {
     case "Paused":
-      return Sub.batch([
-        keyDowns,
-        // tick(1000 / 12),
-        // myTick,
-      ])
+      return Sub.batch([keyDowns])
 
     case "Playing":
       return Sub.batch([
         keyDowns,
-        // tick(model.tickRate)
-        tick(model.tickRate),
+        Time.every<Msg>(model.tickRate, () => ({ type: "Elapsed" })),
       ])
   }
 }
-
-const tick = (tickRate: number) =>
-  Time.every<Msg>(tickRate, () => ({ type: "Elapsed" }))
 
 const keyDowns = Keyboard.keyDowns<Msg>((key) => ({
   type: "UserPressedKeyDown",
