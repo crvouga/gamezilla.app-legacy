@@ -90,12 +90,6 @@ export const view =
           <View.Box sx={{ paddingX: 2 }}></View.Box>
         </View.Toolbar>
 
-        {query.type === "Loading" && (
-          <View.Box>
-            <View.CircularProgress />
-          </View.Box>
-        )}
-
         <View.Box
           sx={{
             display: "flex",
@@ -133,6 +127,12 @@ export const view =
               .join(", ")}
           </View.Typography>
         </View.Box>
+
+        {query.type === "Loading" && (
+          <View.Box sx={{ display: "flex", justifyContent: "center", p: 2 }}>
+            <View.CircularProgress />
+          </View.Box>
+        )}
 
         <View.Box sx={{ flex: 1 }}></View.Box>
         <View.Divider />
