@@ -1,10 +1,3 @@
-/**
- * Integration with _Redux DevTool Extension_.
- *
- * Please check the [docs](https://github.com/zalmoxisus/redux-devtools-extension/tree/master/docs/API) fur further information.
- *
- * @since 0.5.0
- */
 import * as Rx from "rxjs"
 import { Cmd } from "Core"
 import * as Browser from "../Browser"
@@ -15,16 +8,7 @@ import * as Result from "../Result"
 import * as Task from "../Task"
 import { Dispatch } from "../Platform"
 import { pipe } from "../pipe"
-import {
-  Debug,
-  DebugData,
-  Debugger,
-  DebuggerDeps,
-  Global,
-  MsgWithDebug,
-  debugInit,
-  debugMsg,
-} from "./debugger-commons"
+import { Debug, Debugger, Global, MsgWithDebug } from "./debugger-commons"
 
 type Unsubscription = () => void
 
@@ -180,7 +164,12 @@ const handleIncomingMsg = <Model, Msg>({
     async () =>
       dispatch(m as Msg)
 
-  const reinit: Task.Task<void> = async () => connection.init(init)
+  const reinit: Task.Task<void> = pipe(
+    async () => {
+      connection.init(init)
+    },
+    Task.chain(() => dispatchToApp({ type: "__DebugStarted__" })),
+  )
 
   const update = (payload: Model): Task.Task<void> =>
     dispatchToApp({ type: "__DebugUpdateModel__", payload })
@@ -464,14 +453,8 @@ export const withDebugger = <Model, Msg, Dom>(
 
   const connection = maybeConnection.value
 
-  //   const init = program.state$.getValue()[0]
-
-  //   const debug$ = new Rx.BehaviorSubject<DebugData<Model, Msg>>([
-  //     debugInit(),
-  //     init,
-  //   ])
-
-  let runningDebugId = 0
+  const debugId$ = new Rx.BehaviorSubject(1)
+  const debuggerStarted$ = new Rx.Subject<"STARTED">()
 
   connection.subscribe(
     handleSubscription({
@@ -485,6 +468,10 @@ export const withDebugger = <Model, Msg, Dom>(
               program.dispatch(msg.payload)
               break
 
+            case "__DebugStarted__":
+              debuggerStarted$.next("STARTED")
+              break
+
             case "__DebugUpdateModel__":
               const debugId =
                 // @ts-ignore
@@ -493,9 +480,11 @@ export const withDebugger = <Model, Msg, Dom>(
               program.state$.next({
                 model: msg.payload,
                 cmd: Cmd.None,
-                //why? pause subscription when time travelling
+                //why? becuase we want to pause subscriptions when time travelling
                 subscriptionStatus:
-                  debugId === runningDebugId ? "Subscribed" : "Unsubscribed",
+                  debugId === debugId$.getValue()
+                    ? "Subscribed"
+                    : "Unsubscribed",
               })
               break
           }
@@ -504,17 +493,34 @@ export const withDebugger = <Model, Msg, Dom>(
     }),
   )
 
-  program.state$.subscribe((state) => {
-    if (state.msg) {
-      const model = state.model
-
-      runningDebugId = runningDebugId + 1
-      // @ts-ignore
-      model["debugId"] = runningDebugId
-
-      connection.send(state.msg, state.model)
+  program.state$.pipe(waitFor(debuggerStarted$)).subscribe((state) => {
+    if (!state.msg) {
+      return
     }
+
+    const debugId = debugId$.getValue() + 1
+    // @ts-ignore
+    state.model["debugId"] = debugId
+    debugId$.next(debugId)
+
+    connection.send(state.msg, state.model)
   })
 
   return program
+}
+
+//
+//
+//
+// Helpers
+//
+//
+//
+
+const waitFor = <T>(signal: Rx.Observable<unknown>) => {
+  return (source: Rx.Observable<T>) =>
+    signal.pipe(
+      Rx.first(),
+      Rx.switchMap((_) => source),
+    )
 }

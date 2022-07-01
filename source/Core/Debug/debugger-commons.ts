@@ -37,6 +37,7 @@ export type MsgWithDebug<Model, Msg> =
   | Msg
   | { type: "__DebugUpdateModel__"; payload: Model }
   | { type: "__DebugApplyMsg__"; payload: Msg }
+  | { type: "__DebugStarted__" }
 
 export interface Debug<Model, Msg> {
   (data: DebugData<Model, Msg>): void
@@ -110,6 +111,9 @@ export const updateWithDebug =
 
         case "__DebugApplyMsg__":
           return [update(msg.payload, model)[0], Cmd.None]
+
+        case "__DebugStarted__":
+          return [model, Cmd.None]
       }
     }
 
