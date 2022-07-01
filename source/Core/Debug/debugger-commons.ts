@@ -122,7 +122,7 @@ export const updateWithDebug =
 
     debugId$.next(debugId)
 
-    debug$.next([debugMsg(msg), model])
+    debug$.next([debugMsg(msg), modelNew])
 
     return [modelNew, cmdNew]
   }

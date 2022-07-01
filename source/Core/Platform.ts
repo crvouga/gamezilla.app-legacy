@@ -11,12 +11,14 @@ import * as Sub from "./Sub"
 //
 //
 
+type State<Model, Msg> = [Model, Cmd.Cmd<Msg>] | [Model, Cmd.Cmd<Msg>, Msg]
+
 export type Program<Model, Msg> = {
   dispatch: Dispatch<Msg>
   cmd$: Cmd.Cmd<Msg>
   sub$: Sub.Sub<Msg>
   model$: Rx.Observable<Model>
-  state$: Rx.BehaviorSubject<[Model, Cmd.Cmd<Msg>]>
+  state$: Rx.BehaviorSubject<State<Model, Msg>>
 }
 
 export type Dispatch<Msg> = (msg: Msg) => void
@@ -38,10 +40,10 @@ export const Worker = <Model, Msg>({
   update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>]
   subscriptions: (model: Model) => Sub.Sub<Msg>
 }): Program<Model, Msg> => {
-  const state$ = new Rx.BehaviorSubject(init)
+  const state$ = new Rx.BehaviorSubject<State<Model, Msg>>(init)
 
   const dispatch: Dispatch<Msg> = (msg) => {
-    state$.next(update(msg, state$.getValue()[0]))
+    state$.next([...update(msg, state$.getValue()[0]), msg])
   }
 
   const cmd$ = state$.pipe(Rx.mergeMap((state) => state[1]))

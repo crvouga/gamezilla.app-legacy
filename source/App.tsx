@@ -418,7 +418,6 @@ const runAction = (action: Action, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
 export const subscriptions = (model: Model): Sub.Sub<Msg> => {
   return Sub.batch<Msg>([
-    pipe(Browser.location$, Sub.map(onLocationChange)),
     pipe(Games.subscriptions(model.game), Sub.map(groupTag("Game"))),
     pipe(Pages.subscriptions(model.page), Sub.map(groupTag("Page"))),
     Session.subscriptions,
