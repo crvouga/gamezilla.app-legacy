@@ -187,7 +187,7 @@ console.log("[app] started")
 if (import.meta.hot) {
   //
   //
-  // App State
+  //
   //
   //
 
@@ -195,13 +195,13 @@ if (import.meta.hot) {
 
   state$.next(initialState)
 
-  console.log("[app] initialized state")
-
   const initialStateSub = state$.subscribe((state) => {
     if (import.meta.hot) {
       import.meta.hot.data["initialState"] = state
     }
   })
+
+  console.log("[app] initialized state")
 
   //
   //
