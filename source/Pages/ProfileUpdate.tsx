@@ -1,7 +1,7 @@
-import * as Route from "Route"
-import * as Profile from "Store/Profile"
-import * as View from "View"
-import { Cmd } from "Core"
+import * as Route from "Route";
+import * as Profile from "Store/Profile";
+import * as View from "View";
+import { Cmd } from "Core";
 
 //
 //
@@ -11,9 +11,9 @@ import { Cmd } from "Core"
 //
 //
 
-export type Model = {}
+export type Model = {};
 
-export const init: Model = {}
+export const init: Model = {};
 
 //
 //
@@ -29,7 +29,7 @@ export type Msg =
   | { type: "UserClickedUsernameLink" }
   | { type: "UserClickedAvatar" }
   | { type: "UserClickedChangeAvatarButton" }
-  | { type: "UserClickedThemeLink" }
+  | { type: "UserClickedThemeLink" };
 
 export const update = (
   { userId }: { userId: string },
@@ -43,7 +43,7 @@ export const update = (
         Route.push({
           type: "ProfileUpdateAvatar",
         }),
-      ]
+      ];
 
     case "UserClickedChangeAvatarButton":
       return [
@@ -51,21 +51,21 @@ export const update = (
         Route.push({
           type: "ProfileUpdateAvatar",
         }),
-      ]
+      ];
 
     case "UserClickedBackButton":
-      return [model, Route.back]
+      return [model, Route.back];
 
     case "UserClickedNameLink":
-      return [model, Route.push({ type: "ProfileUpdateName" })]
+      return [model, Route.push({ type: "ProfileUpdateName" })];
 
     case "UserClickedUsernameLink":
-      return [model, Route.push({ type: "ProfileUpdateUsername" })]
+      return [model, Route.push({ type: "ProfileUpdateUsername" })];
 
     case "UserClickedThemeLink":
-      return [model, Route.push({ type: "ProfileUpdateTheme" })]
+      return [model, Route.push({ type: "ProfileUpdateTheme" })];
   }
-}
+};
 
 //
 //
@@ -127,4 +127,4 @@ export const view =
           />
         </View.List>
       </View.Page>
-    )
+    );

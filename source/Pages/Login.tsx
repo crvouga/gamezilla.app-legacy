@@ -1,6 +1,6 @@
-import * as Session from "Session"
-import * as View from "View"
-import { Cmd, Result, pipe } from "Core"
+import * as Session from "Session";
+import * as View from "View";
+import { Cmd, Result, pipe } from "Core";
 
 //
 //
@@ -12,9 +12,9 @@ import { Cmd, Result, pipe } from "Core"
 
 export type Model =
   | { type: "Idle" }
-  | { type: "LoggingIn"; loginMethod: Session.LoginMethod }
+  | { type: "LoggingIn"; loginMethod: Session.LoginMethod };
 
-export const init: Model = { type: "Idle" }
+export const init: Model = { type: "Idle" };
 
 //
 //
@@ -27,9 +27,9 @@ export const init: Model = { type: "Idle" }
 export type Msg =
   | { type: "UserClickedLoginButton"; loginMethod: Session.LoginMethod }
   | { type: "LoginFailed" }
-  | { type: "LoginSucceeded" }
+  | { type: "LoginSucceeded" };
 
-type OutAction = Session.Action
+type OutAction = Session.Action;
 
 export const update = (
   msg: Msg,
@@ -41,15 +41,15 @@ export const update = (
         { type: "LoggingIn", loginMethod: msg.loginMethod },
         Cmd.None,
         [Session.Login(msg.loginMethod)],
-      ]
+      ];
 
     case "LoginFailed":
-      return [{ type: "Idle" }, Cmd.None, []]
+      return [{ type: "Idle" }, Cmd.None, []];
 
     case "LoginSucceeded":
-      return [model, Cmd.None, []]
+      return [model, Cmd.None, []];
   }
-}
+};
 
 //
 //
@@ -89,4 +89,4 @@ export const view =
           Continue With Google
         </View.Button>
       </View.Page>
-    )
+    );

@@ -1,70 +1,70 @@
-import { Keyboard } from "Core"
-import * as Position from "./Position"
+import { Keyboard } from "Core";
+import * as Position from "./Position";
 
-export type Direction = "left" | "up" | "right" | "down"
+export type Direction = "left" | "up" | "right" | "down";
 
 export const toVector = (direction: Direction): Position.Position => {
   switch (direction) {
     case "down":
-      return { x: 0, y: 1 }
+      return { x: 0, y: 1 };
 
     case "left":
-      return { x: -1, y: 0 }
+      return { x: -1, y: 0 };
 
     case "right":
-      return { x: 1, y: 0 }
+      return { x: 1, y: 0 };
 
     case "up":
-      return { x: 0, y: -1 }
+      return { x: 0, y: -1 };
   }
-}
+};
 
 export const directions: { [direction in Direction]: Direction } = {
   left: "left",
   right: "right",
   up: "up",
   down: "down",
-}
+};
 
 export const fromKey = (key: Keyboard.Key, fallback: Direction): Direction => {
   switch (key) {
     case "w":
     case "W":
-      return "up"
+      return "up";
 
     case "s":
     case "S":
-      return "down"
+      return "down";
 
     case "a":
     case "A":
-      return "left"
+      return "left";
 
     case "d":
     case "D":
-      return "right"
+      return "right";
 
     default:
-      return fallback
+      return fallback;
   }
-}
+};
 
 export const toOpposite = (direction: Direction): Direction => {
   switch (direction) {
     case "down":
-      return "up"
+      return "up";
 
     case "left":
-      return "right"
+      return "right";
 
     case "right":
-      return "left"
+      return "left";
 
     case "up":
-      return "down"
+      return "down";
   }
-}
+};
 
 export const isOpposite = (a: Direction, b: Direction): boolean => {
-  return toOpposite(a) === b
-}
+  return toOpposite(a) === b;
+};

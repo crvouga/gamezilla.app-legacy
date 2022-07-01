@@ -1,6 +1,6 @@
-import * as View from "View"
-import { SxProps } from "@mui/material"
-import { Cmd, Task, Uuid, pipe } from "Core"
+import * as View from "View";
+import { SxProps } from "@mui/material";
+import { Cmd, Task, Uuid, pipe } from "Core";
 
 //
 //
@@ -11,18 +11,18 @@ import { Cmd, Task, Uuid, pipe } from "Core"
 //
 
 export type Model = {
-  queue: Snack[]
-}
+  queue: Snack[];
+};
 
 export type Snack = {
-  type: "Info" | "Error"
-  snackId: string
-  message: string
-}
+  type: "Info" | "Error";
+  snackId: string;
+  message: string;
+};
 
 export const init: Model = {
   queue: [],
-}
+};
 
 //
 //
@@ -32,11 +32,11 @@ export const init: Model = {
 //
 //
 
-export type GroupedMsg = { group: "Snackbar" } & Msg
+export type GroupedMsg = { group: "Snackbar" } & Msg;
 
 type Msg =
   | { type: "SnackbarDurationElapsed"; snackId: string }
-  | { type: "UserClosedSnackbar"; snackId: string }
+  | { type: "UserClosedSnackbar"; snackId: string };
 
 export const EnqueueSnackbar = (variant: "Info" | "Error", message: string) => {
   return {
@@ -47,22 +47,22 @@ export const EnqueueSnackbar = (variant: "Info" | "Error", message: string) => {
       message,
       snackId: Uuid.generateSync(),
     },
-  } as const
-}
+  } as const;
+};
 
-export type EnqueueSnackbar = ReturnType<typeof EnqueueSnackbar>
+export type EnqueueSnackbar = ReturnType<typeof EnqueueSnackbar>;
 
-export type Action = EnqueueSnackbar
+export type Action = EnqueueSnackbar;
 
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "SnackbarDurationElapsed":
-      return removeById(msg, model)
+      return removeById(msg, model);
 
     case "UserClosedSnackbar":
-      return [model, Cmd.None]
+      return [model, Cmd.None];
   }
-}
+};
 
 export const runAction = (
   action: Action,
@@ -70,7 +70,7 @@ export const runAction = (
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (action.type) {
     case "EnqueuedSnackbar":
-      const { snack } = action
+      const { snack } = action;
       return [
         { ...model, queue: [snack, ...model.queue] },
         pipe(
@@ -80,9 +80,9 @@ export const runAction = (
             snackId: snack.snackId,
           })),
         ),
-      ]
+      ];
   }
-}
+};
 
 const removeById = (
   { snackId }: { snackId: string },
@@ -93,7 +93,7 @@ const removeById = (
     queue: model.queue.filter((snack) => snack.snackId !== snackId),
   },
   Cmd.None,
-]
+];
 
 //
 //
@@ -106,10 +106,10 @@ const removeById = (
 export const view =
   ({ sx }: { sx?: SxProps }, model: Model): View.View<Msg> =>
   (dispatch) => {
-    const snack = model.queue[0]
+    const snack = model.queue[0];
 
     if (!snack) {
-      return <></>
+      return <></>;
     }
 
     return (
@@ -140,5 +140,5 @@ export const view =
           </View.Alert>
         </View.Snackbar>
       </View.Portal>
-    )
-  }
+    );
+  };

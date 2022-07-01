@@ -1,1 +1,1 @@
-export * from "./Snake"
+export * from "./Snake";

@@ -1,7 +1,7 @@
-import * as Route from "Route"
-import * as Store from "Store"
-import * as View from "View"
-import { Cmd, RemoteData, pipe } from "Core"
+import * as Route from "Route";
+import * as Store from "Store";
+import * as View from "View";
+import { Cmd, RemoteData, pipe } from "Core";
 
 //
 //
@@ -11,15 +11,15 @@ import { Cmd, RemoteData, pipe } from "Core"
 //
 //
 
-export type Model = {}
+export type Model = {};
 
 export const init = ({
   userId,
 }: {
-  userId: string
+  userId: string;
 }): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
-  return [{}, Cmd.None, [Store.Conversation.FindManyByUserId(userId)]]
-}
+  return [{}, Cmd.None, [Store.Conversation.FindManyByUserId(userId)]];
+};
 
 //
 //
@@ -32,17 +32,17 @@ export const init = ({
 export type Msg =
   | { type: "ClickedBack" }
   | { type: "ClickedSendMessage" }
-  | { type: "ClickedConversationItem"; conversationId: string }
+  | { type: "ClickedConversationItem"; conversationId: string };
 
-type OutAction = Store.Action
+type OutAction = Store.Action;
 
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "ClickedBack":
-      return [model, Route.back]
+      return [model, Route.back];
 
     case "ClickedSendMessage":
-      return [model, Route.push({ type: "ChatNew" })]
+      return [model, Route.push({ type: "ChatNew" })];
 
     case "ClickedConversationItem":
       return [
@@ -51,9 +51,9 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
           type: "ChatConversation",
           conversationId: msg.conversationId,
         }),
-      ]
+      ];
   }
-}
+};
 
 //
 //
@@ -71,7 +71,7 @@ export const view =
   (dispatch) => {
     const query =
       store.queries.Conversation.FindManyByUserId[profile.userId] ??
-      RemoteData.NotAsked
+      RemoteData.NotAsked;
 
     return (
       <View.Page>
@@ -125,5 +125,5 @@ export const view =
             ))}
         </View.List>
       </View.Page>
-    )
-  }
+    );
+  };

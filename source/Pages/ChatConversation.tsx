@@ -1,7 +1,7 @@
-import * as Route from "Route"
-import * as Store from "Store"
-import * as View from "View"
-import { Cmd } from "Core"
+import * as Route from "Route";
+import * as Store from "Store";
+import * as View from "View";
+import { Cmd } from "Core";
 
 //
 //
@@ -12,12 +12,20 @@ import { Cmd } from "Core"
 //
 
 export type Model = {
-  text: string
-}
+  text: string;
+};
 
-export const init: Model = {
-  text: "",
-}
+export const init = ({
+  conversationId,
+}: {
+  conversationId: string;
+}): [Model, Cmd.Cmd<Msg>, OutAction[]] => [
+  {
+    text: "",
+  },
+  Cmd.None,
+  [Store.Conversation.FindOne(conversationId)],
+];
 
 //
 //
@@ -30,20 +38,22 @@ export const init: Model = {
 export type Msg =
   | { type: "ClickedBack" }
   | { type: "ClickedSend" }
-  | { type: "InputtedText"; text: string }
+  | { type: "InputtedText"; text: string };
+
+export type OutAction = Store.Action;
 
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "ClickedBack":
-      return [model, Route.back]
+      return [model, Route.back];
 
     case "ClickedSend":
-      return [model, Cmd.None]
+      return [model, Cmd.None];
 
     case "InputtedText":
-      return [{ ...model, text: msg.text }, Cmd.None]
+      return [{ ...model, text: msg.text }, Cmd.None];
   }
-}
+};
 
 //
 //
@@ -59,7 +69,7 @@ export const view =
     const conversation = Store.Conversation.toConversation(
       conversationId,
       store,
-    )
+    );
     return (
       <View.Page>
         <View.Toolbar>
@@ -120,8 +130,8 @@ export const view =
           <View.InputBase
             value={model.text}
             onChange={(event) => {
-              const textNew = event.currentTarget.value
-              dispatch({ type: "InputtedText", text: textNew })
+              const textNew = event.currentTarget.value;
+              dispatch({ type: "InputtedText", text: textNew });
             }}
             sx={{ flex: 1 }}
             placeholder="Message..."
@@ -137,5 +147,5 @@ export const view =
           </View.Button>
         </View.Box>
       </View.Page>
-    )
-  }
+    );
+  };

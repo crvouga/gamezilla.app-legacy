@@ -1,34 +1,34 @@
-import * as Result from "./Result"
+import * as Result from "./Result";
 
 export type RemoteData<TError, TValue> =
   | NotAsked
   | Loading
   | Failure<TError>
-  | Success<TValue>
+  | Success<TValue>;
 
-export type NotAsked = { type: "NotAsked" }
-export const NotAsked: NotAsked = { type: "NotAsked" }
+export type NotAsked = { type: "NotAsked" };
+export const NotAsked: NotAsked = { type: "NotAsked" };
 
-export type Loading = { type: "Loading" }
-export const Loading: Loading = { type: "Loading" }
+export type Loading = { type: "Loading" };
+export const Loading: Loading = { type: "Loading" };
 
-export type Failure<TProblem> = { type: "Failure"; problem: TProblem }
+export type Failure<TProblem> = { type: "Failure"; problem: TProblem };
 export const Failure = <T>(problem: T): Failure<T> => ({
   type: "Failure",
   problem,
-})
+});
 
-export type Success<TValue> = { type: "Success"; value: TValue }
+export type Success<TValue> = { type: "Success"; value: TValue };
 export const Success = <T>(value: T): Success<T> => ({
   type: "Success",
   value,
-})
+});
 
 export const fromResult = <E, A>(
   result: Result.Result<E, A>,
 ): RemoteData<E, A> => {
-  return Result.fold<E, A, RemoteData<E, A>>(Failure, Success)(result)
-}
+  return Result.fold<E, A, RemoteData<E, A>>(Failure, Success)(result);
+};
 
 export const mapSuccess =
   <E, A, B>(mapper: (a: A) => B) =>
@@ -37,9 +37,9 @@ export const mapSuccess =
       case "NotAsked":
       case "Loading":
       case "Failure":
-        return remoteData
+        return remoteData;
 
       case "Success":
-        return Success(mapper(remoteData.value))
+        return Success(mapper(remoteData.value));
     }
-  }
+  };

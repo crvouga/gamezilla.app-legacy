@@ -1,12 +1,12 @@
-import * as Route from "Route"
-import * as Snackbar from "Snackbar"
-import * as Supabase from "Supabase"
-import { Cmd, RemoteData, Result, Task, pipe } from "Core"
-import produce from "immer"
-import { definitions } from "supabase-types"
-import * as Types from "./Types"
-import { rowThemeModeToThemeMode } from "./Profile"
-import { Problem, Profile, ProfilesConversations, Store } from "./Types"
+import * as Route from "Route";
+import * as Snackbar from "Snackbar";
+import * as Supabase from "Supabase";
+import { Cmd, RemoteData, Result, Task, pipe } from "Core";
+import produce from "immer";
+import { definitions } from "supabase-types";
+import * as Types from "./Types";
+import { rowThemeModeToThemeMode } from "./Profile";
+import { Problem, Profile, ProfilesConversations, Store } from "./Types";
 
 //
 //
@@ -16,7 +16,7 @@ import { Problem, Profile, ProfilesConversations, Store } from "./Types"
 //
 //
 
-export type Conversation = Types.Conversation
+export type Conversation = Types.Conversation;
 
 //
 //
@@ -26,9 +26,9 @@ export type Conversation = Types.Conversation
 //
 //
 
-export type Msg = Inserted | FindManyResulted
+export type Msg = Inserted | FindManyResulted | FindOneResulted;
 
-export type Action = Insert | FindManyByUserId
+export type Action = Insert | FindManyByUserId | FindOne;
 
 export const Insert = (creatorId: string, userIds: string[]) => {
   return {
@@ -37,17 +37,17 @@ export const Insert = (creatorId: string, userIds: string[]) => {
     entity: "Conversation",
     userIds,
     creatorId,
-  } as const
-}
-export type Insert = ReturnType<typeof Insert>
+  } as const;
+};
+export type Insert = ReturnType<typeof Insert>;
 
 export const Inserted = (
   userIds: string[],
   result: Result.Result<
     Problem,
     {
-      conversation: Conversation
-      profilesConversations: ProfilesConversations[]
+      conversation: Conversation;
+      profilesConversations: ProfilesConversations[];
     }
   >,
 ) => {
@@ -57,9 +57,9 @@ export const Inserted = (
     entity: "Conversation",
     userIds,
     result,
-  } as const
-}
-export type Inserted = ReturnType<typeof Inserted>
+  } as const;
+};
+export type Inserted = ReturnType<typeof Inserted>;
 
 export const FindManyByUserId = (userId: string) => {
   return {
@@ -67,18 +67,18 @@ export const FindManyByUserId = (userId: string) => {
     group: "Store",
     entity: "Conversation",
     userId,
-  } as const
-}
-export type FindManyByUserId = ReturnType<typeof FindManyByUserId>
+  } as const;
+};
+export type FindManyByUserId = ReturnType<typeof FindManyByUserId>;
 
 type FindResult = Result.Result<
   Problem,
   {
-    conversations: Conversation[]
-    profiles: Profile[]
-    profilesConversations: ProfilesConversations[]
+    conversations: Conversation[];
+    profiles: Profile[];
+    profilesConversations: ProfilesConversations[];
   }
->
+>;
 
 export const FindManyByUserIdResulted = (
   userId: string,
@@ -90,9 +90,36 @@ export const FindManyByUserIdResulted = (
     entity: "Conversation",
     result,
     userId,
-  } as const
-}
-export type FindManyResulted = ReturnType<typeof FindManyByUserIdResulted>
+  } as const;
+};
+export type FindManyResulted = ReturnType<typeof FindManyByUserIdResulted>;
+
+export const FindOne = (conversationId: string) => {
+  return {
+    type: "Conversation/FindOne",
+    group: "Store",
+    entity: "Conversation",
+    conversationId,
+  } as const;
+};
+export type FindOne = ReturnType<typeof FindOne>;
+
+export const FindOneResulted = (
+  conversationId: string,
+  result: Result.Result<
+    Problem,
+    { conversation: string; profile: string[]; message: string[] }
+  >,
+) => {
+  return {
+    type: "Conversation/FindOneResulted",
+    group: "Store",
+    entity: "Conversation",
+    conversationId,
+    result,
+  } as const;
+};
+export type FindOneResulted = ReturnType<typeof FindOneResulted>;
 
 //
 //
@@ -102,13 +129,17 @@ export type FindManyResulted = ReturnType<typeof FindManyByUserIdResulted>
 //
 //
 
-type OutAction = Snackbar.Action
+type OutAction = Snackbar.Action;
 
 export const update = (
   msg: Msg,
   model: Store,
 ): [Store, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (msg.type) {
+    case "Conversation/FindOneResulted":
+      console.log("TODO handle Conversation/FindOneResulted");
+      return [model, Cmd.None, []];
+
     case "Conversation/FindManyByUserIdResulted": {
       const modelNew = produce(model, (model) => {
         model.queries.Conversation.FindManyByUserId[msg.userId] = pipe(
@@ -121,27 +152,27 @@ export const update = (
               Types.toProfilesConversationsId,
             ),
           })),
-        )
+        );
 
         if (msg.result.type === "Ok") {
-          const data = msg.result.value
+          const data = msg.result.value;
           data.conversations.forEach((item) => {
-            model.Conversation[item.conversationId] = item
-          })
+            model.Conversation[item.conversationId] = item;
+          });
 
           data.profiles.forEach((item) => {
-            model.Profile[item.userId] = item
-          })
+            model.Profile[item.userId] = item;
+          });
 
           data.profilesConversations.forEach((item) => [
             (model.ProfilesConversations[
               Types.toProfilesConversationsId(item)
             ] = item),
-          ])
+          ]);
         }
-      })
+      });
 
-      return [modelNew, Cmd.None, []]
+      return [modelNew, Cmd.None, []];
     }
 
     case "Conversation/Inserted":
@@ -150,20 +181,20 @@ export const update = (
           msg.result,
           RemoteData.fromResult,
           RemoteData.mapSuccess((value) => value.conversation.conversationId),
-        )
+        );
 
         if (msg.result.type === "Ok") {
-          const data = msg.result.value
+          const data = msg.result.value;
 
           model.Conversation[data.conversation.conversationId] =
-            data.conversation
+            data.conversation;
 
           data.profilesConversations.forEach((item) => {
             model.ProfilesConversations[Types.toProfilesConversationsId(item)] =
-              item
-          })
+              item;
+          });
         }
-      })
+      });
 
       const cmdNew: Cmd.Cmd<Msg> =
         msg.result.type === "Ok"
@@ -171,30 +202,39 @@ export const update = (
               type: "ChatConversation",
               conversationId: msg.result.value.conversation.conversationId,
             })
-          : Cmd.None
+          : Cmd.None;
 
-      return [modelNew, cmdNew, []]
+      return [modelNew, cmdNew, []];
   }
-}
+};
 
 export const runAction = (
   action: Action,
   model: Store,
 ): [Store, Cmd.Cmd<Msg>] => {
   switch (action.type) {
+    case "Conversation/FindOne": {
+      console.log("TODO handle Conversation/FindOne");
+      const modelNew = produce(model, (model) => {
+        model.queries.Conversation.FindOne[action.conversationId] =
+          RemoteData.Loading;
+      });
+      return [modelNew, Cmd.None];
+    }
+
     case "Conversation/FindManyByUserId": {
       const query =
         model.queries.Conversation.FindManyByUserId[action.userId] ??
-        RemoteData.NotAsked
+        RemoteData.NotAsked;
 
       if (query.type === "Success") {
-        return [model, Cmd.None]
+        return [model, Cmd.None];
       }
 
       const modelNew = produce(model, (model) => {
         model.queries.Conversation.FindManyByUserId[action.userId] =
-          RemoteData.Loading
-      })
+          RemoteData.Loading;
+      });
 
       return [
         modelNew,
@@ -204,13 +244,13 @@ export const runAction = (
             FindManyByUserIdResulted(action.userId, result),
           ),
         ),
-      ]
+      ];
     }
 
     case "Conversation/Insert":
       const modelNew = produce(model, (model) => {
-        model.mutations.Conversation.GetElseCreate = RemoteData.Loading
-      })
+        model.mutations.Conversation.GetElseCreate = RemoteData.Loading;
+      });
 
       return [
         modelNew,
@@ -222,9 +262,9 @@ export const runAction = (
           }),
           Cmd.fromTask((result) => Inserted(action.userIds, result)),
         ),
-      ]
+      ];
   }
-}
+};
 
 //
 //
@@ -238,24 +278,24 @@ export const toConversation = (
   conversationId: string,
   store: Store,
 ): {
-  conversationId: string
-  profiles: Profile[]
+  conversationId: string;
+  profiles: Profile[];
 } => {
   const profiles = Object.values(store.ProfilesConversations)
     .filter((row) => row.conversationId === conversationId)
     .flatMap((row) => {
-      const maybeProfile = store.Profile[row.userId]
+      const maybeProfile = store.Profile[row.userId];
       if (maybeProfile) {
-        return [maybeProfile]
+        return [maybeProfile];
       }
-      return []
-    })
+      return [];
+    });
 
   return {
     conversationId: conversationId,
     profiles,
-  }
-}
+  };
+};
 
 //
 //
@@ -268,21 +308,40 @@ export const toConversation = (
 const fromRow = (row: definitions["conversation"]): Conversation => {
   return {
     conversationId: row.id,
-  }
-}
+  };
+};
+
+const findOneById =
+  ({
+    conversationId,
+  }: {
+    conversationId: string;
+  }): Task.Task<
+    Result.Result<
+      Problem,
+      {
+        conversation: Conversation;
+        profiles: Profile[];
+        messages: Types.Message[];
+      }
+    >
+  > =>
+  async () => {
+    return Result.Err({ message: "unimplemented" });
+  };
 
 const findManyByUserId =
   ({
     userId,
   }: {
-    userId: string
+    userId: string;
   }): Task.Task<
     Result.Result<
       Problem,
       {
-        conversations: Conversation[]
-        profiles: Profile[]
-        profilesConversations: ProfilesConversations[]
+        conversations: Conversation[];
+        profiles: Profile[];
+        profilesConversations: ProfilesConversations[];
       }
     >
   > =>
@@ -290,12 +349,12 @@ const findManyByUserId =
     const matchUserIdResponse = await Supabase.client
       .from<definitions["profiles_conversations"]>("profiles_conversations")
       .select("*")
-      .match({ user_id: userId })
+      .match({ user_id: userId });
 
     if (matchUserIdResponse.error) {
       return Result.Err({
         message: matchUserIdResponse.error.message,
-      })
+      });
     }
 
     const conversationResponse = await Supabase.client
@@ -304,10 +363,10 @@ const findManyByUserId =
       .in(
         "id",
         matchUserIdResponse.data.map((item) => item.conversation_id),
-      )
+      );
 
     if (conversationResponse.error) {
-      return Result.Err({ message: conversationResponse.error.message })
+      return Result.Err({ message: conversationResponse.error.message });
     }
 
     const matchConversationIdResponse = await Supabase.client
@@ -316,10 +375,10 @@ const findManyByUserId =
       .in(
         "conversation_id",
         conversationResponse.data.map((item) => item.id),
-      )
+      );
 
     if (matchConversationIdResponse.error) {
-      return Result.Err({ message: matchConversationIdResponse.error.message })
+      return Result.Err({ message: matchConversationIdResponse.error.message });
     }
 
     const profileResponse = await Supabase.client
@@ -329,11 +388,11 @@ const findManyByUserId =
         ...new Set(
           matchConversationIdResponse.data.map((item) => item.user_id),
         ),
-      ])
+      ]);
 
     if (profileResponse.error) {
-      console.log("ERROR", profileResponse.error)
-      return Result.Err({ message: profileResponse.error.message })
+      console.log("ERROR", profileResponse.error);
+      return Result.Err({ message: profileResponse.error.message });
     }
 
     return Result.Ok({
@@ -354,22 +413,22 @@ const findManyByUserId =
         themeMode: rowThemeModeToThemeMode(item.theme_mode),
         avatarUrl: item.avatar_url,
       })),
-    })
-  }
+    });
+  };
 
 const insert =
   ({
     creatorId,
     userIds,
   }: {
-    creatorId: string
-    userIds: string[]
+    creatorId: string;
+    userIds: string[];
   }): Task.Task<
     Result.Result<
       Problem,
       {
-        conversation: Conversation
-        profilesConversations: ProfilesConversations[]
+        conversation: Conversation;
+        profilesConversations: ProfilesConversations[];
       }
     >
   > =>
@@ -378,13 +437,13 @@ const insert =
       await Supabase.client
         .from<definitions["conversation"]>("conversation")
         .insert({})
-        .single()
+        .single();
 
     if (conversationError) {
-      return Result.Err({ message: conversationError.message })
+      return Result.Err({ message: conversationError.message });
     }
 
-    const conversation = fromRow(conversationData)
+    const conversation = fromRow(conversationData);
 
     const {
       data: profilesConversationsData,
@@ -396,21 +455,21 @@ const insert =
           conversation_id: conversation.conversationId,
           user_id: userId,
         })),
-      )
+      );
 
     if (profilesConversationsError) {
       const rollbackResponse = await Supabase.client
         .from<definitions["conversation"]>("conversation")
         .delete()
-        .eq("id", conversation.conversationId)
+        .eq("id", conversation.conversationId);
 
       if (rollbackResponse.error) {
         return Result.Err({
           message: `${profilesConversationsError.message}. ${rollbackResponse.error}`,
-        })
+        });
       }
 
-      return Result.Err({ message: profilesConversationsError.message })
+      return Result.Err({ message: profilesConversationsError.message });
     }
 
     const profilesConversations = profilesConversationsData.map(
@@ -418,7 +477,7 @@ const insert =
         userId: user_id,
         conversationId: conversation_id,
       }),
-    )
+    );
 
-    return Result.Ok({ conversation, profilesConversations })
-  }
+    return Result.Ok({ conversation, profilesConversations });
+  };

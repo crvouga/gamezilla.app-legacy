@@ -102,6 +102,105 @@ export interface paths {
       };
     };
   };
+  "/message": {
+    get: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.message.id"];
+          created_at?: parameters["rowFilter.message.created_at"];
+          message?: parameters["rowFilter.message.message"];
+          conversation_id?: parameters["rowFilter.message.conversation_id"];
+          user_id?: parameters["rowFilter.message.user_id"];
+          /** Filtering Columns */
+          select?: parameters["select"];
+          /** Ordering */
+          order?: parameters["order"];
+          /** Limiting and Pagination */
+          offset?: parameters["offset"];
+          /** Limiting and Pagination */
+          limit?: parameters["limit"];
+        };
+        header: {
+          /** Limiting and Pagination */
+          Range?: parameters["range"];
+          /** Limiting and Pagination */
+          "Range-Unit"?: parameters["rangeUnit"];
+          /** Preference */
+          Prefer?: parameters["preferCount"];
+        };
+      };
+      responses: {
+        /** OK */
+        200: {
+          schema: definitions["message"][];
+        };
+        /** Partial Content */
+        206: unknown;
+      };
+    };
+    post: {
+      parameters: {
+        body: {
+          /** message */
+          message?: definitions["message"];
+        };
+        query: {
+          /** Filtering Columns */
+          select?: parameters["select"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** Created */
+        201: unknown;
+      };
+    };
+    delete: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.message.id"];
+          created_at?: parameters["rowFilter.message.created_at"];
+          message?: parameters["rowFilter.message.message"];
+          conversation_id?: parameters["rowFilter.message.conversation_id"];
+          user_id?: parameters["rowFilter.message.user_id"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+    patch: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.message.id"];
+          created_at?: parameters["rowFilter.message.created_at"];
+          message?: parameters["rowFilter.message.message"];
+          conversation_id?: parameters["rowFilter.message.conversation_id"];
+          user_id?: parameters["rowFilter.message.user_id"];
+        };
+        body: {
+          /** message */
+          message?: definitions["message"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+  };
   "/profile": {
     get: {
       parameters: {
@@ -317,6 +416,37 @@ export interface definitions {
      */
     created_at: string;
   };
+  message: {
+    /**
+     * Format: uuid
+     * @description Note:
+     * This is a Primary Key.<pk/>
+     * @default extensions.uuid_generate_v4()
+     */
+    id: string;
+    /**
+     * Format: timestamp with time zone
+     * @default now()
+     */
+    created_at?: string;
+    /**
+     * Format: text
+     * @default
+     */
+    message: string;
+    /**
+     * Format: uuid
+     * @description Note:
+     * This is a Foreign Key to `conversation.id`.<fk table='conversation' column='id'/>
+     */
+    conversation_id: string;
+    /**
+     * Format: uuid
+     * @description Note:
+     * This is a Foreign Key to `profile.id`.<fk table='profile' column='id'/>
+     */
+    user_id: string;
+  };
   profile: {
     /**
      * Format: uuid
@@ -406,6 +536,18 @@ export interface parameters {
   "rowFilter.conversation.id": string;
   /** Format: timestamp with time zone */
   "rowFilter.conversation.created_at": string;
+  /** @description message */
+  "body.message": definitions["message"];
+  /** Format: uuid */
+  "rowFilter.message.id": string;
+  /** Format: timestamp with time zone */
+  "rowFilter.message.created_at": string;
+  /** Format: text */
+  "rowFilter.message.message": string;
+  /** Format: uuid */
+  "rowFilter.message.conversation_id": string;
+  /** Format: uuid */
+  "rowFilter.message.user_id": string;
   /** @description profile */
   "body.profile": definitions["profile"];
   /** Format: uuid */

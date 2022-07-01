@@ -1,13 +1,13 @@
-import * as Route from "Route"
-import * as Snackbar from "Snackbar"
-import * as View from "View"
-import { keyframes } from "@mui/system"
-import { Cmd, Sub, pipe } from "Core"
-import { exhaustive } from "Utility"
-import * as Chess from "./Chess"
-import * as ConnectFour from "./ConnectFour"
-import * as Snake from "./Snake"
-import * as TicTacToe from "./TicTacToe"
+import * as Route from "Route";
+import * as Snackbar from "Snackbar";
+import * as View from "View";
+import { keyframes } from "@mui/system";
+import { Cmd, Sub, pipe } from "Core";
+import { exhaustive } from "Utility";
+import * as Chess from "./Chess";
+import * as ConnectFour from "./ConnectFour";
+import * as Snake from "./Snake";
+import * as TicTacToe from "./TicTacToe";
 
 //
 //
@@ -17,52 +17,52 @@ import * as TicTacToe from "./TicTacToe"
 //
 //
 
-export type Model = Closed | Opened
+export type Model = Closed | Opened;
 
 type Closed = {
-  type: "Closed"
-}
+  type: "Closed";
+};
 
 type Opened = {
-  type: "Opened"
-  status: "Idle" | "ConfirmingClose"
+  type: "Opened";
+  status: "Idle" | "ConfirmingClose";
   child:
     | { type: "TicTacToe"; child: TicTacToe.Model }
     | { type: "ConnectFour"; child: ConnectFour.Model }
     | { type: "Chess"; child: Chess.Model }
-    | { type: "Snake"; child: Snake.Model }
-}
+    | { type: "Snake"; child: Snake.Model };
+};
 
-export type Game = Opened["child"]["type"]
+export type Game = Opened["child"]["type"];
 
 //
 // init
 //
 
-export const init: Model = { type: "Closed" }
+export const init: Model = { type: "Closed" };
 
 const initOpened = ({ game }: { game: Game }): [Opened, Cmd.Cmd<Msg>] => {
   return [
     { type: "Opened", status: "Idle", child: initGame({ game }) },
     Route.push({ type: "Game" }),
-  ]
-}
+  ];
+};
 
 const initGame = ({ game }: { game: Game }): Opened["child"] => {
   switch (game) {
     case "Chess":
-      return { type: "Chess", child: Chess.init }
+      return { type: "Chess", child: Chess.init };
 
     case "ConnectFour":
-      return { type: "ConnectFour", child: ConnectFour.init }
+      return { type: "ConnectFour", child: ConnectFour.init };
 
     case "TicTacToe":
-      return { type: "TicTacToe", child: TicTacToe.init }
+      return { type: "TicTacToe", child: TicTacToe.init };
 
     case "Snake":
-      return { type: "Snake", child: Snake.init }
+      return { type: "Snake", child: Snake.init };
   }
-}
+};
 
 //
 //
@@ -72,40 +72,40 @@ const initGame = ({ game }: { game: Game }): Opened["child"] => {
 //
 //
 
-export type GroupedMsg = { group: "Game" } & Msg
+export type GroupedMsg = { group: "Game" } & Msg;
 
 type Msg =
   | { type: "UserClickedGameBanner" }
   | { type: "UserClickedCloseGameButton" }
   | { type: "CancelledCloseGame" }
   | { type: "ConfirmedCloseGame" }
-  | GameMsg
+  | GameMsg;
 
 type GameMsg =
   | (Chess.Msg & { gameGroup: "Chess" })
   | (ConnectFour.Msg & { gameGroup: "ConnectFour" })
   | (TicTacToe.Msg & { gameGroup: "TicTacToe" })
-  | (Snake.Msg & { gameGroup: "Snake" })
+  | (Snake.Msg & { gameGroup: "Snake" });
 
-type OutMsg = Snackbar.Action
+type OutMsg = Snackbar.Action;
 
 const groupGameTag =
   <Msg, GameName extends string>(gameName: GameName) =>
   (msg: Msg): Msg & { gameGroup: GameName } => {
-    return { ...msg, gameGroup: gameName } as const
-  }
+    return { ...msg, gameGroup: gameName } as const;
+  };
 
 export const OpenGame = (game: Game) => {
   return {
     group: "Game",
     type: "OpenGame",
     game,
-  } as const
-}
+  } as const;
+};
 
-type OpenGame = ReturnType<typeof OpenGame>
+type OpenGame = ReturnType<typeof OpenGame>;
 
-export type Action = OpenGame
+export type Action = OpenGame;
 
 export const runAction = (
   action: Action,
@@ -114,53 +114,53 @@ export const runAction = (
   switch (action.type) {
     case "OpenGame":
       if (model.type === "Closed") {
-        return initOpened(action)
+        return initOpened(action);
       }
 
       if (action.game === model.child.type) {
-        return [model, Route.push({ type: "Game" })]
+        return [model, Route.push({ type: "Game" })];
       }
 
-      return [model, Cmd.None]
+      return [model, Cmd.None];
   }
-}
+};
 export const update = (
   msg: Msg,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>, OutMsg[]] => {
   switch (model.type) {
     case "Closed":
-      return updateClosed(msg, model)
+      return updateClosed(msg, model);
 
     case "Opened":
-      return updateOpened(msg, model)
+      return updateOpened(msg, model);
   }
-}
+};
 
 const updateOpened = (
   msg: Msg,
   model: Opened,
 ): [Model, Cmd.Cmd<Msg>, OutMsg[]] => {
   if ("gameGroup" in msg) {
-    const [modelChild, CmdChild] = updateGame(msg, model.child)
+    const [modelChild, CmdChild] = updateGame(msg, model.child);
 
-    return [{ ...model, child: modelChild }, CmdChild, []]
+    return [{ ...model, child: modelChild }, CmdChild, []];
   }
 
   switch (msg.type) {
     case "UserClickedCloseGameButton":
-      return [{ ...model, status: "ConfirmingClose" }, Cmd.None, []]
+      return [{ ...model, status: "ConfirmingClose" }, Cmd.None, []];
 
     case "UserClickedGameBanner":
-      return [model, Route.push({ type: "Game" }), []]
+      return [model, Route.push({ type: "Game" }), []];
 
     case "CancelledCloseGame":
-      return [{ ...model, status: "Idle" }, Cmd.None, []]
+      return [{ ...model, status: "Idle" }, Cmd.None, []];
 
     case "ConfirmedCloseGame":
-      return [{ type: "Closed" }, Cmd.None, []]
+      return [{ type: "Closed" }, Cmd.None, []];
   }
-}
+};
 
 const updateGame = (
   msg: GameMsg,
@@ -169,62 +169,62 @@ const updateGame = (
   switch (model.type) {
     case "Chess":
       if (msg.gameGroup === "Chess") {
-        const [modelChild, CmdChild] = Chess.update(msg, model.child)
+        const [modelChild, CmdChild] = Chess.update(msg, model.child);
 
         return [
           { type: "Chess", child: modelChild },
           pipe(CmdChild, Cmd.map(groupGameTag("Chess"))),
-        ]
+        ];
       }
 
-      return [model, Cmd.None]
+      return [model, Cmd.None];
 
     case "ConnectFour":
       if (msg.gameGroup === "ConnectFour") {
-        const [modelChild, CmdChild] = ConnectFour.update(msg, model.child)
+        const [modelChild, CmdChild] = ConnectFour.update(msg, model.child);
 
         return [
           { type: "ConnectFour", child: modelChild },
           pipe(CmdChild, Cmd.map(groupGameTag("ConnectFour"))),
-        ]
+        ];
       }
-      return [model, Cmd.None]
+      return [model, Cmd.None];
 
     case "TicTacToe":
       if (msg.gameGroup === "TicTacToe") {
-        const [modelChild, CmdChild] = TicTacToe.update(msg, model.child)
+        const [modelChild, CmdChild] = TicTacToe.update(msg, model.child);
 
         return [
           { type: "TicTacToe", child: modelChild },
           pipe(CmdChild, Cmd.map(groupGameTag("TicTacToe"))),
-        ]
+        ];
       }
 
-      return [model, Cmd.None]
+      return [model, Cmd.None];
 
     case "Snake":
       if (msg.gameGroup === "Snake") {
-        const [modelChild, CmdChild] = Snake.update(msg, model.child)
+        const [modelChild, CmdChild] = Snake.update(msg, model.child);
 
         return [
           { type: "Snake", child: modelChild },
           pipe(CmdChild, Cmd.map(groupGameTag("Snake"))),
-        ]
+        ];
       }
 
-      return [model, Cmd.None]
+      return [model, Cmd.None];
 
     default:
-      return exhaustive(model)
+      return exhaustive(model);
   }
-}
+};
 
 const updateClosed = (
   msg: Msg,
   model: Closed,
 ): [Model, Cmd.Cmd<Msg>, OutMsg[]] => {
-  return [model, Cmd.None, []]
-}
+  return [model, Cmd.None, []];
+};
 
 //
 //
@@ -237,27 +237,27 @@ const updateClosed = (
 export const subscriptions = (model: Model): Sub.Sub<Msg> => {
   switch (model.type) {
     case "Closed":
-      return Sub.None
+      return Sub.None;
 
     case "Opened":
       switch (model.child.type) {
         case "Chess":
-          return Sub.None
+          return Sub.None;
 
         case "ConnectFour":
-          return Sub.None
+          return Sub.None;
 
         case "Snake":
           return pipe(
             Snake.subscriptions(model.child.child),
             Sub.map(groupGameTag("Snake")),
-          )
+          );
 
         case "TicTacToe":
-          return Sub.None
+          return Sub.None;
       }
   }
-}
+};
 
 //
 //
@@ -270,12 +270,12 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
 export const view = (model: Model): View.View<Msg> => {
   switch (model.type) {
     case "Closed":
-      return viewClosed
+      return viewClosed;
 
     case "Opened":
-      return viewOpened(model)
+      return viewOpened(model);
   }
-}
+};
 
 const viewOpened = (model: Opened): View.View<Msg> => {
   switch (model.child.type) {
@@ -283,31 +283,31 @@ const viewOpened = (model: Opened): View.View<Msg> => {
       return pipe(
         Chess.view(model.child.child),
         View.map(groupGameTag("Chess")),
-      )
+      );
 
     case "ConnectFour":
       return pipe(
         ConnectFour.view(model.child.child),
         View.map(groupGameTag("ConnectFour")),
-      )
+      );
 
     case "TicTacToe":
       return pipe(
         TicTacToe.view(model.child.child),
         View.map(groupGameTag("TicTacToe")),
-      )
+      );
 
     case "Snake":
       return pipe(
         Snake.view(model.child.child),
         View.map(groupGameTag("Snake")),
-      )
+      );
   }
-}
+};
 
 const viewClosed: View.View<Msg> = () => {
-  return <>game is closed</>
-}
+  return <>game is closed</>;
+};
 
 const spin = keyframes`
   from {
@@ -316,7 +316,7 @@ const spin = keyframes`
   to {
     transform: rotate(360deg);
   }
-`
+`;
 
 export const viewBanner =
   (model: Opened): View.View<Msg> =>
@@ -366,36 +366,36 @@ export const viewBanner =
           onConfirm={() => dispatch({ type: "ConfirmedCloseGame" })}
         />
       </>
-    )
+    );
 
 export const gameToName = (game: Game): string => {
   switch (game) {
     case "Chess":
-      return "Chess"
+      return "Chess";
 
     case "ConnectFour":
-      return "Connect Four"
+      return "Connect Four";
 
     case "TicTacToe":
-      return "Tic Tac Toe"
+      return "Tic Tac Toe";
 
     case "Snake":
-      return "Snake"
+      return "Snake";
   }
-}
+};
 
 const GameIcon = ({ game }: { game: Game }) => {
   switch (game) {
     case "Chess":
-      return <Chess.Icon />
+      return <Chess.Icon />;
 
     case "ConnectFour":
-      return <ConnectFour.Icon />
+      return <ConnectFour.Icon />;
 
     case "TicTacToe":
-      return <TicTacToe.Icon />
+      return <TicTacToe.Icon />;
 
     case "Snake":
-      return <Snake.Icon />
+      return <Snake.Icon />;
   }
-}
+};

@@ -1,7 +1,7 @@
-import * as Route from "Route"
-import * as Store from "Store"
-import * as View from "View"
-import { Cmd, RemoteData } from "Core"
+import * as Route from "Route";
+import * as Store from "Store";
+import * as View from "View";
+import { Cmd, RemoteData } from "Core";
 
 //
 //
@@ -11,9 +11,9 @@ import { Cmd, RemoteData } from "Core"
 //
 //
 
-export type Model = {}
+export type Model = {};
 
-export const init: [Model, Cmd.Cmd<Msg>, OutAction[]] = [{}, Cmd.None, []]
+export const init: [Model, Cmd.Cmd<Msg>, OutAction[]] = [{}, Cmd.None, []];
 
 //
 //
@@ -27,9 +27,9 @@ export type Msg =
   | { type: "UserClickedCancelButton" }
   | { type: "UserClickedBackdrop" }
   | { type: "UserClickedDeleteButton" }
-  | { type: "ClickedCloseFailureAlert" }
+  | { type: "ClickedCloseFailureAlert" };
 
-export type OutAction = Store.Action
+export type OutAction = Store.Action;
 
 export const update = (
   { userId }: { userId: string },
@@ -38,18 +38,18 @@ export const update = (
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (msg.type) {
     case "UserClickedCancelButton":
-      return [model, Route.back, []]
+      return [model, Route.back, []];
 
     case "UserClickedBackdrop":
-      return [model, Route.back, []]
+      return [model, Route.back, []];
 
     case "UserClickedDeleteButton":
-      return [model, Cmd.None, [Store.Profile.DeleteForever(userId)]]
+      return [model, Cmd.None, [Store.Profile.DeleteForever(userId)]];
 
     case "ClickedCloseFailureAlert":
-      return [model, Cmd.None, [Store.Profile.ResetMutations()]]
+      return [model, Cmd.None, [Store.Profile.ResetMutations()]];
   }
-}
+};
 
 //
 //
@@ -66,11 +66,11 @@ export const view =
   ): View.View<Msg> =>
   (dispatch) => {
     const mutation =
-      store.mutations.Profile.DeleteForever[profileId] ?? RemoteData.NotAsked
+      store.mutations.Profile.DeleteForever[profileId] ?? RemoteData.NotAsked;
 
     switch (mutation.type) {
       case "Loading":
-        return <View.LoadingDialog open title="Deleting profile..." />
+        return <View.LoadingDialog open title="Deleting profile..." />;
 
       case "Failure":
         return (
@@ -97,7 +97,7 @@ export const view =
               </View.Box>
             </View.Alert>
           </View.Backdrop>
-        )
+        );
 
       case "NotAsked":
       case "Success":
@@ -110,6 +110,6 @@ export const view =
             confirmTitle="Delete"
             onConfirm={() => dispatch({ type: "UserClickedDeleteButton" })}
           />
-        )
+        );
     }
-  }
+  };

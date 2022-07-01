@@ -1,7 +1,7 @@
-import * as ReactDomClient from "react-dom/client"
-import { Browser, Option, pipe } from "Core"
-import * as App from "./App"
-import * as ReduxDevTools from "./Core/Debug/ReduxDevTools"
+import * as ReactDomClient from "react-dom/client";
+import { Browser, Option, pipe } from "Core";
+import * as App from "./App";
+import * as ReduxDevTools from "./Core/Debug/ReduxDevTools";
 
 //
 //
@@ -19,12 +19,12 @@ const program = ReduxDevTools.withDebugger(
     subscriptions: App.subscriptions,
     view: App.view,
   }),
-)
+);
 
-const container = document.getElementById("root")
+const container = document.getElementById("root");
 
-const root = ReactDomClient.createRoot(container!)
+const root = ReactDomClient.createRoot(container!);
 
 Browser.run(program, (dom) => {
-  root.render(dom)
-})
+  root.render(dom);
+});

@@ -1,7 +1,7 @@
-import * as Route from "Route"
-import * as Store from "Store"
-import * as View from "View"
-import { Cmd } from "Core"
+import * as Route from "Route";
+import * as Store from "Store";
+import * as View from "View";
+import { Cmd } from "Core";
 
 //
 //
@@ -11,13 +11,13 @@ import { Cmd } from "Core"
 //
 //
 
-export type Model = { name: string }
+export type Model = { name: string };
 
 export const init = ({ name }: { name: string }): Model => {
   return {
     name,
-  }
-}
+  };
+};
 
 //
 //
@@ -30,9 +30,9 @@ export const init = ({ name }: { name: string }): Model => {
 export type Msg =
   | { type: "EnteredName"; name: string }
   | { type: "ClickedCancel" }
-  | { type: "ClickedSubmit" }
+  | { type: "ClickedSubmit" };
 
-export type OutAction = Store.Action
+export type OutAction = Store.Action;
 
 export const update = (
   { userId }: { userId: string },
@@ -41,19 +41,19 @@ export const update = (
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (msg.type) {
     case "EnteredName":
-      return [{ ...model, ...msg }, Cmd.None, []]
+      return [{ ...model, ...msg }, Cmd.None, []];
 
     case "ClickedSubmit":
       return [
         model,
         Route.back,
         [Store.Profile.Edit(userId, { name: model.name })],
-      ]
+      ];
 
     case "ClickedCancel":
-      return [model, Route.back, []]
+      return [model, Route.back, []];
   }
-}
+};
 
 //
 //
@@ -103,4 +103,4 @@ export const view =
           />
         </View.Box>
       </View.Page>
-    )
+    );

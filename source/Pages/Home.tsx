@@ -1,7 +1,7 @@
-import * as Games from "Games"
-import * as Route from "Route"
-import * as View from "View"
-import { Cmd } from "Core"
+import * as Games from "Games";
+import * as Route from "Route";
+import * as View from "View";
+import { Cmd } from "Core";
 
 //
 //
@@ -11,9 +11,9 @@ import { Cmd } from "Core"
 //
 //
 
-export type Model = {}
+export type Model = {};
 
-export const init: Model = {}
+export const init: Model = {};
 
 //
 //
@@ -26,9 +26,9 @@ export const init: Model = {}
 export type Msg =
   | { type: "UserClickedAvatar" }
   | { type: "UserClickedChatButton" }
-  | { type: "UserClickedGame"; game: Games.Game }
+  | { type: "UserClickedGame"; game: Games.Game };
 
-export type OutAction = Games.Action
+export type OutAction = Games.Action;
 
 export const update = (
   msg: Msg,
@@ -36,15 +36,15 @@ export const update = (
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (msg.type) {
     case "UserClickedAvatar":
-      return [model, Route.push({ type: "Account" }), []]
+      return [model, Route.push({ type: "Account" }), []];
 
     case "UserClickedGame":
-      return [model, Cmd.None, [Games.OpenGame(msg.game)]]
+      return [model, Cmd.None, [Games.OpenGame(msg.game)]];
 
     case "UserClickedChatButton":
-      return [model, Route.push({ type: "Chat" }), []]
+      return [model, Route.push({ type: "Chat" }), []];
   }
-}
+};
 
 //
 //
@@ -55,12 +55,12 @@ export const update = (
 //
 
 const isOpen = (game: Games.Model, gameName: Games.Game) => {
-  return game.type === "Opened" && game.child.type === gameName
-}
+  return game.type === "Opened" && game.child.type === gameName;
+};
 
 const canOpen = (game: Games.Model, gameName: Games.Game) => {
-  return game.type === "Closed" || isOpen(game, gameName)
-}
+  return game.type === "Closed" || isOpen(game, gameName);
+};
 
 export const view =
   (
@@ -69,9 +69,9 @@ export const view =
       game,
       route,
     }: {
-      profile: { avatarUrl: string }
-      game: Games.Model
-      route: Route.Route
+      profile: { avatarUrl: string };
+      game: Games.Model;
+      route: Route.Route;
     },
     _model: Model,
   ): View.View<Msg> =>
@@ -124,7 +124,7 @@ export const view =
           />
         </View.Box>
       </View.Page>
-    )
+    );
 
 const GameCard = ({
   icon,
@@ -132,10 +132,10 @@ const GameCard = ({
   onClick,
   disabled = false,
 }: {
-  icon: React.ReactNode
-  label: string
-  onClick: () => void
-  disabled?: boolean
+  icon: React.ReactNode;
+  label: string;
+  onClick: () => void;
+  disabled?: boolean;
 }) => {
   return (
     <View.ButtonBase
@@ -175,5 +175,5 @@ const GameCard = ({
         </View.Box>
       </View.Box>
     </View.ButtonBase>
-  )
-}
+  );
+};

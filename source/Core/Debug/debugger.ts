@@ -1,10 +1,10 @@
-import * as Rx from "rxjs"
-import * as Option from "../Option"
-import * as Task from "../Task"
-import * as Console from "./debugger-console"
-import * as ReduxDevtool from "./debugger-redux-devtool"
-import { pipe } from "../pipe"
-import { DebuggerDeps, Global } from "./debugger-commons"
+import * as Rx from "rxjs";
+import * as Option from "../Option";
+import * as Task from "../Task";
+import * as Console from "./debugger-console";
+import * as ReduxDevtool from "./debugger-redux-devtool";
+import { pipe } from "../pipe";
+import { DebuggerDeps, Global } from "./debugger-commons";
 
 /**
  * Checks which type of debugger can be used (standard `console` or _Redux DevTool Extension_) based on provided `window` and prepares the subscription to the "debug" stream
@@ -26,14 +26,14 @@ export const RunDebugger =
         ),
       ),
       Task.chain((debuggerInstance) => async () => {
-        console.info("[debugger] starting")
+        console.info("[debugger] starting");
 
-        const { debug, stop } = debuggerInstance(deps)
+        const { debug, stop } = debuggerInstance(deps);
 
         deps.debug$.pipe(Rx.takeUntil(stopSignal)).subscribe({
           next: debug,
           complete: stop,
-        })
+        });
       }),
-    )
-  }
+    );
+  };

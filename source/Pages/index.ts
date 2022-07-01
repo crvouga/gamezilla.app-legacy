@@ -1,15 +1,15 @@
-export * as Account from "./Account"
-export * as Chat from "./Chat"
-export * as ChatNew from "./ChatNew"
-export * as Game from "./Game"
-export * as Home from "./Home"
-export * as Login from "./Login"
-export * as Logout from "./Logout"
-export * from "./Pages"
-export * as ProfileCreate from "./ProfileCreate"
-export * as ProfileDelete from "./ProfileDelete"
-export * as ProfileUpdate from "./ProfileUpdate"
-export * as ProfileUpdateAvatar from "./ProfileUpdateAvatar"
-export * as ProfileUpdateName from "./ProfileUpdateName"
-export * as ProfileUpdateTheme from "./ProfileUpdateTheme"
-export * as ProfileUpdateUsername from "./ProfileUpdateUsername"
+export * as Account from "./Account";
+export * as Chat from "./Chat";
+export * as ChatNew from "./ChatNew";
+export * as Game from "./Game";
+export * as Home from "./Home";
+export * as Login from "./Login";
+export * as Logout from "./Logout";
+export * from "./Pages";
+export * as ProfileCreate from "./ProfileCreate";
+export * as ProfileDelete from "./ProfileDelete";
+export * as ProfileUpdate from "./ProfileUpdate";
+export * as ProfileUpdateAvatar from "./ProfileUpdateAvatar";
+export * as ProfileUpdateName from "./ProfileUpdateName";
+export * as ProfileUpdateTheme from "./ProfileUpdateTheme";
+export * as ProfileUpdateUsername from "./ProfileUpdateUsername";

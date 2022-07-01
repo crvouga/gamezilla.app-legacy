@@ -1,14 +1,14 @@
-import * as Games from "Games"
-import * as Pages from "Pages"
-import * as Route from "Route"
-import * as Session from "Session"
-import * as Snackbar from "Snackbar"
-import * as Store from "Store"
-import * as Profile from "Store/Profile"
-import * as View from "View"
-import * as ReactDom from "react-dom/client"
-import { Browser, Cmd, Debug, Option, Sub, pipe } from "Core"
-import { andThen, andThenMany, exhaustive, groupTag } from "Utility"
+import * as Games from "Games";
+import * as Pages from "Pages";
+import * as Route from "Route";
+import * as Session from "Session";
+import * as Snackbar from "Snackbar";
+import * as Store from "Store";
+import * as Profile from "Store/Profile";
+import * as View from "View";
+import * as ReactDom from "react-dom/client";
+import { Browser, Cmd, Debug, Option, Sub, pipe } from "Core";
+import { andThen, andThenMany, exhaustive, groupTag } from "Utility";
 
 //
 //
@@ -19,13 +19,13 @@ import { andThen, andThenMany, exhaustive, groupTag } from "Utility"
 //
 
 export type Model = {
-  snackbar: Snackbar.Model
-  store: Store.Model
-  session: Session.Model
-  game: Games.Model
-  page: Pages.Model
-  route: Route.Route
-}
+  snackbar: Snackbar.Model;
+  store: Store.Model;
+  session: Session.Model;
+  game: Games.Model;
+  page: Pages.Model;
+  route: Route.Route;
+};
 
 //
 //
@@ -40,26 +40,26 @@ type Status =
   | { type: "SessionMissing" }
   | { type: "ProfileLoading"; session: Session.LoggedIn }
   | { type: "ProfileMissing"; session: Session.LoggedIn }
-  | { type: "Ready"; profile: Profile.Profile; session: Session.LoggedIn }
+  | { type: "Ready"; profile: Profile.Profile; session: Session.LoggedIn };
 
 export const toStatus = ({
   store,
   session,
 }: {
-  store: Store.Model
-  session: Session.Model
+  store: Store.Model;
+  session: Session.Model;
 }): Status => {
   switch (session.type) {
     case "Loading":
-      return { type: "SessionLoading" }
+      return { type: "SessionLoading" };
 
     case "LoggedOut":
-      return { type: "SessionMissing" }
+      return { type: "SessionMissing" };
 
     case "LoggedIn":
-      const { userId } = session
+      const { userId } = session;
 
-      const result = Option.fromNullable(store.Profile[userId])
+      const result = Option.fromNullable(store.Profile[userId]);
 
       switch (result.type) {
         case "Some":
@@ -67,31 +67,31 @@ export const toStatus = ({
             type: "Ready",
             session,
             profile: result.value,
-          }
+          };
 
         case "None":
-          const profileQuery = Store.Profile.toGetQuery(userId, store)
+          const profileQuery = Store.Profile.toGetQuery(userId, store);
 
           switch (profileQuery.type) {
             case "NotAsked":
-              return { type: "ProfileLoading", session }
+              return { type: "ProfileLoading", session };
 
             case "Loading":
-              return { type: "ProfileLoading", session }
+              return { type: "ProfileLoading", session };
 
             case "Failure":
-              return { type: "ProfileMissing", session }
+              return { type: "ProfileMissing", session };
 
             case "Success":
               return {
                 type: "Ready",
                 session,
                 profile: profileQuery.value,
-              }
+              };
           }
       }
   }
-}
+};
 
 //
 //
@@ -105,12 +105,12 @@ export const init = (location: Browser.Location): [Model, Cmd.Cmd<Msg>] => {
   const route = Option.withDefault(
     { type: "Home" },
     Route.decode(location.pathname),
-  )
-  const [session, sessionCmd] = Session.init()
-  const snackbar = Snackbar.init
-  const store = Store.init
-  const game = Games.init
-  const [page, pageCmd] = Pages.initLoading()
+  );
+  const [session, sessionCmd] = Session.init();
+  const snackbar = Snackbar.init;
+  const store = Store.init;
+  const game = Games.init;
+  const [page, pageCmd] = Pages.initLoading();
 
   return [
     {
@@ -125,8 +125,8 @@ export const init = (location: Browser.Location): [Model, Cmd.Cmd<Msg>] => {
       pipe(sessionCmd, Cmd.map(groupTag("Session"))),
       pipe(pageCmd, Cmd.map(groupTag("Page"))),
     ]),
-  ]
-}
+  ];
+};
 
 //
 //
@@ -142,9 +142,9 @@ export type Msg =
   | Games.GroupedMsg
   | Store.GroupedMsg
   | Session.Msg
-  | Pages.GroupedMsg
+  | Pages.GroupedMsg;
 
-type Action = Snackbar.Action | Store.Action | Games.Action | Session.Action
+type Action = Snackbar.Action | Store.Action | Games.Action | Session.Action;
 
 //
 //
@@ -159,13 +159,13 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
     [model, Cmd.None],
     andThen(updateMain, msg),
     andThen(updateStatusChanged(model), msg),
-  )
-}
+  );
+};
 
 const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg.group) {
     case "Store": {
-      const [storeNew, storeCmd, actions] = Store.update(msg, model.store)
+      const [storeNew, storeCmd, actions] = Store.update(msg, model.store);
 
       return pipe(
         [
@@ -173,47 +173,47 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
           pipe(storeCmd, Cmd.map(groupTag("Store"))),
         ],
         andThenMany(runAction, actions),
-      )
+      );
     }
 
     case "Session": {
-      const [sessionNew, sessionCmd] = Session.update(msg, model.session)
+      const [sessionNew, sessionCmd] = Session.update(msg, model.session);
 
-      return [{ ...model, session: sessionNew }, sessionCmd]
+      return [{ ...model, session: sessionNew }, sessionCmd];
     }
 
     case "Snackbar":
-      const [snackbarNew, snackbarCmd] = Snackbar.update(msg, model.snackbar)
+      const [snackbarNew, snackbarCmd] = Snackbar.update(msg, model.snackbar);
 
       return [
         { ...model, snackbar: snackbarNew },
         pipe(snackbarCmd, Cmd.map(groupTag("Snackbar"))),
-      ]
+      ];
 
     case "Game": {
-      const [gameNew, gameCmd, actions] = Games.update(msg, model.game)
+      const [gameNew, gameCmd, actions] = Games.update(msg, model.game);
 
       return pipe(
         [{ ...model, game: gameNew }, pipe(gameCmd, Cmd.map(groupTag("Game")))],
         andThenMany(runAction, actions),
-      )
+      );
     }
 
     case "Page": {
-      const status = toStatus(model)
+      const status = toStatus(model);
 
       switch (status.type) {
         case "SessionLoading":
-          return [model, Cmd.None]
+          return [model, Cmd.None];
 
         case "ProfileLoading":
-          return [model, Cmd.None]
+          return [model, Cmd.None];
 
         case "SessionMissing": {
           const [pageNew, pageCmd, actions] = Pages.updateSessionMissing(
             msg,
             model.page,
-          )
+          );
 
           return pipe(
             [
@@ -221,7 +221,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
               pipe(pageCmd, Cmd.map(groupTag("Page"))),
             ],
             andThenMany(runAction, actions),
-          )
+          );
         }
 
         case "ProfileMissing": {
@@ -229,26 +229,26 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
             status.session,
             msg,
             model.page,
-          )
+          );
           return pipe(
             [
               { ...model, page: pageNew },
               pipe(pageCmd, Cmd.map(groupTag("Page"))),
             ],
             andThenMany(runAction, actions),
-          )
+          );
         }
 
         case "Ready": {
           if (model.page.page === "Game" && model.game.type === "Closed") {
-            return [model, Route.replace({ type: "Home" })]
+            return [model, Route.replace({ type: "Home" })];
           }
 
           const [pageNew, pageCmd, actions] = Pages.updateReady(
             { profile: status.profile, store: model.store },
             msg,
             model.page,
-          )
+          );
 
           return pipe(
             [
@@ -256,157 +256,157 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
               pipe(pageCmd, Cmd.map(groupTag("Page"))),
             ],
             andThenMany(runAction, actions),
-          )
+          );
         }
       }
     }
 
     case "Route": {
-      const route = msg.route
+      const route = msg.route;
 
-      const modelNew = { ...model, route }
+      const modelNew = { ...model, route };
 
-      const status = toStatus(modelNew)
+      const status = toStatus(modelNew);
 
       switch (status.type) {
         case "ProfileLoading":
-          return [modelNew, Cmd.None]
+          return [modelNew, Cmd.None];
 
         case "ProfileMissing": {
           const [page, pageCmd] = Pages.initProfileMissing(
             route,
             status.session,
-          )
+          );
 
           return [
             { ...modelNew, page },
             pipe(pageCmd, Cmd.map(groupTag("Page"))),
-          ]
+          ];
         }
 
         case "Ready": {
           const [page, pageCmd, actions] = Pages.initReady(
             route,
             status.profile,
-          )
+          );
           return pipe(
             [{ ...modelNew, page }, pipe(pageCmd, Cmd.map(groupTag("Page")))],
             andThenMany(runAction, actions),
-          )
+          );
         }
 
         case "SessionLoading":
-          return [modelNew, Cmd.None]
+          return [modelNew, Cmd.None];
 
         case "SessionMissing": {
-          const [page, pageCmd] = Pages.initSessionMissing(route)
+          const [page, pageCmd] = Pages.initSessionMissing(route);
 
           return [
             { ...modelNew, page },
             pipe(pageCmd, Cmd.map(groupTag("Page"))),
-          ]
+          ];
         }
       }
     }
 
     default:
-      return exhaustive(msg)
+      return exhaustive(msg);
   }
-}
+};
 
 const updateStatusChanged =
   (modelPrev: Model) =>
   (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
-    const statusPrev = toStatus(modelPrev)
-    const statusNew = toStatus(model)
+    const statusPrev = toStatus(modelPrev);
+    const statusNew = toStatus(model);
 
     if (statusNew.type === statusPrev.type) {
-      return [model, Cmd.None]
+      return [model, Cmd.None];
     }
 
     switch (statusNew.type) {
       case "ProfileLoading":
-        const actions = [Store.Profile.Get(statusNew.session.userId)]
-        return pipe([model, Cmd.None], andThenMany(runAction, actions))
+        const actions = [Store.Profile.Get(statusNew.session.userId)];
+        return pipe([model, Cmd.None], andThenMany(runAction, actions));
 
       case "ProfileMissing": {
         const [page, pageCmd] = Pages.initProfileMissing(
           model.route,
           statusNew.session,
-        )
+        );
 
-        return [{ ...model, page }, pipe(pageCmd, Cmd.map(groupTag("Page")))]
+        return [{ ...model, page }, pipe(pageCmd, Cmd.map(groupTag("Page")))];
       }
 
       case "SessionLoading":
-        return [model, Cmd.None]
+        return [model, Cmd.None];
 
       case "SessionMissing": {
-        const [page, pageCmd] = Pages.initSessionMissing(model.route)
-        return [{ ...model, page }, pipe(pageCmd, Cmd.map(groupTag("Page")))]
+        const [page, pageCmd] = Pages.initSessionMissing(model.route);
+        return [{ ...model, page }, pipe(pageCmd, Cmd.map(groupTag("Page")))];
       }
 
       case "Ready": {
         if (model.route.type === "Game" && model.game.type === "Closed") {
-          return [model, Route.replace({ type: "Home" })]
+          return [model, Route.replace({ type: "Home" })];
         }
 
         const [page, pageCmd, actions] = Pages.initReady(
           model.route,
           statusNew.profile,
-        )
+        );
         return pipe(
           [{ ...model, page }, pipe(pageCmd, Cmd.map(groupTag("Page")))],
           andThenMany(runAction, actions),
-        )
+        );
       }
 
       default:
-        return exhaustive(statusNew)
+        return exhaustive(statusNew);
     }
-  }
+  };
 
 const runAction = (action: Action, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (action.group) {
     case "Store": {
-      const [storeNew, storeCmd] = Store.runAction(action, model.store)
+      const [storeNew, storeCmd] = Store.runAction(action, model.store);
       return [
         { ...model, store: storeNew },
         pipe(storeCmd, Cmd.map(groupTag("Store"))),
-      ]
+      ];
     }
 
     case "Snackbar": {
       const [snackbarNew, snackbarCmd] = Snackbar.runAction(
         action,
         model.snackbar,
-      )
+      );
       return [
         { ...model, snackbar: snackbarNew },
         pipe(snackbarCmd, Cmd.map(groupTag("Snackbar"))),
-      ]
+      ];
     }
 
     case "Game": {
-      const [gamesNew, gamesCmd] = Games.runAction(action, model.game)
+      const [gamesNew, gamesCmd] = Games.runAction(action, model.game);
       return [
         { ...model, game: gamesNew },
         pipe(gamesCmd, Cmd.map(groupTag("Game"))),
-      ]
+      ];
     }
 
     case "Session": {
-      const [sessionNew, sessionCmd] = Session.runAction(action, model.session)
+      const [sessionNew, sessionCmd] = Session.runAction(action, model.session);
       return [
         { ...model, session: sessionNew },
         pipe(sessionCmd, Cmd.map(groupTag("Session"))),
-      ]
+      ];
     }
 
     default:
-      return exhaustive(action)
+      return exhaustive(action);
   }
-}
+};
 
 //
 //
@@ -421,8 +421,8 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
     pipe(Games.subscriptions(model.game), Sub.map(groupTag("Game"))),
     pipe(Pages.subscriptions(model.page), Sub.map(groupTag("Page"))),
     Session.subscriptions,
-  ])
-}
+  ]);
+};
 
 //
 //
@@ -433,18 +433,18 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
 //
 
 const toThemeMode = (model: Model): View.ThemeMode => {
-  const status = toStatus(model)
+  const status = toStatus(model);
 
   switch (status.type) {
     case "SessionLoading":
     case "SessionMissing":
     case "ProfileLoading":
     case "ProfileMissing":
-      return "Dark"
+      return "Dark";
     case "Ready":
-      return status.profile.themeMode
+      return status.profile.themeMode;
   }
-}
+};
 
 export const view =
   (model: Model): View.View<Msg> =>
@@ -485,34 +485,34 @@ export const view =
           )(dispatch)}
         </View.Box>
       </View.ThemeProvider>
-    )
-  }
+    );
+  };
 
 const viewMain = (model: Model): View.View<Msg> => {
-  const status = toStatus(model)
+  const status = toStatus(model);
 
   switch (status.type) {
     case "SessionLoading":
-      return viewLoading
+      return viewLoading;
 
     case "ProfileLoading":
-      return viewLoading
+      return viewLoading;
 
     case "SessionMissing":
       return pipe(
         Pages.viewSessionMissing(model.page),
         View.map(groupTag("Page")),
-      )
+      );
 
     case "ProfileMissing":
       return pipe(
         Pages.viewProfileMissing(status.session, model.page),
         View.map(groupTag("Page")),
-      )
+      );
 
     case "Ready":
       if (model.route.type === "Game") {
-        return pipe(Games.view(model.game), View.map(groupTag("Game")))
+        return pipe(Games.view(model.game), View.map(groupTag("Game")));
       }
 
       return pipe(
@@ -526,22 +526,22 @@ const viewMain = (model: Model): View.View<Msg> => {
           model.page,
         ),
         View.map(groupTag("Page")),
-      )
+      );
   }
-}
+};
 
-const viewLoading: View.View<Msg> = () => <View.LoadingPage />
+const viewLoading: View.View<Msg> = () => <View.LoadingPage />;
 
 const viewGameBanner =
   (model: Model): View.View<Msg> =>
   (dispatch) => {
     switch (model.game.type) {
       case "Closed":
-        return <></>
+        return <></>;
 
       case "Opened":
         if (model.page.page === "Game") {
-          return <></>
+          return <></>;
         }
 
         return (
@@ -551,9 +551,9 @@ const viewGameBanner =
               View.map(groupTag("Game")),
             )(dispatch)}
           </>
-        )
+        );
     }
-  }
+  };
 
 //
 //
@@ -570,5 +570,5 @@ export const onLocationChange = (location: Browser.Location): Msg => {
     Route.decode,
     (decoded) => Option.withDefault({ type: "Home" }, decoded),
     Route.GotRoute,
-  )
-}
+  );
+};

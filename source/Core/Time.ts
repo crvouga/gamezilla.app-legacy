@@ -1,10 +1,10 @@
-import * as Rx from "rxjs"
-import * as Sub from "./Sub"
-import * as Task from "./Task"
+import * as Rx from "rxjs";
+import * as Sub from "./Sub";
+import * as Task from "./Task";
 
 export const now = (): Task.Task<number> => {
-  return async () => new Date().getTime()
-}
+  return async () => new Date().getTime();
+};
 
 //
 //
@@ -15,49 +15,49 @@ export const now = (): Task.Task<number> => {
 //
 
 // NOTE: needs to be cleaned up when using HMR
-let __intervals: { [interval: number]: Rx.Subject<number> } = {}
+let __intervals: { [interval: number]: Rx.Subject<number> } = {};
 
 const cleanupIntervals = () => {
-  const subs = Object.values(__intervals)
+  const subs = Object.values(__intervals);
 
   for (const sub of subs) {
-    sub.unsubscribe()
+    sub.unsubscribe();
   }
 
-  __intervals = {}
+  __intervals = {};
 
-  console.log(`[time] cleaned up ${subs.length} subs`)
-}
+  console.log(`[time] cleaned up ${subs.length} subs`);
+};
 
-export type Time = number
+export type Time = number;
 
 const onTimeout = (time: number) => {
-  const subj = __intervals[time]
+  const subj = __intervals[time];
 
   if (subj && subj.observed) {
-    subj.next(new Date().getTime())
+    subj.next(new Date().getTime());
 
-    setTimeout(() => onTimeout(time), time)
+    setTimeout(() => onTimeout(time), time);
 
-    return
+    return;
   }
 
-  delete __intervals[time]
-}
+  delete __intervals[time];
+};
 
 export const every = <Msg>(
   time: number,
   f: (time: Time) => Msg,
 ): Sub.Sub<Msg> => {
-  let subj = __intervals[time]
+  let subj = __intervals[time];
 
   if (subj === undefined) {
-    __intervals[time] = subj = new Rx.Subject<number>()
+    __intervals[time] = subj = new Rx.Subject<number>();
 
-    setTimeout(() => onTimeout(time), time)
+    setTimeout(() => onTimeout(time), time);
   }
 
-  const ret = subj.pipe(Rx.map(() => f(new Date().getTime())))
+  const ret = subj.pipe(Rx.map(() => f(new Date().getTime())));
 
-  return ret
-}
+  return ret;
+};

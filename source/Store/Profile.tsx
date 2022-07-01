@@ -1,14 +1,14 @@
-import * as Snackbar from "Snackbar"
-import * as Rx from "rxjs"
-import { Cmd, RemoteData, Result, Task, pipe } from "Core"
-import { exhaustive } from "Utility"
-import produce from "immer"
-import { matchSorter } from "match-sorter"
-import * as Supabase from "../Supabase"
-import * as Types from "./Types"
-import { Sub } from "../Core"
-import { definitions } from "../supabase-types"
-import { Problem, Store } from "./Types"
+import * as Snackbar from "Snackbar";
+import * as Rx from "rxjs";
+import { Cmd, RemoteData, Result, Task, pipe } from "Core";
+import { exhaustive } from "Utility";
+import produce from "immer";
+import { matchSorter } from "match-sorter";
+import * as Supabase from "../Supabase";
+import * as Types from "./Types";
+import { Sub } from "../Core";
+import { definitions } from "../supabase-types";
+import { Problem, Store } from "./Types";
 
 //
 //
@@ -18,9 +18,9 @@ import { Problem, Store } from "./Types"
 //
 //
 
-type Model = Store
+type Model = Store;
 
-export type Profile = Types.Profile
+export type Profile = Types.Profile;
 
 //
 //
@@ -35,9 +35,9 @@ export const ResetMutations = () => {
     entity: "Profile",
     group: "Store",
     type: "Profile/ResetMutations",
-  } as const
-}
-export type ResetMutations = ReturnType<typeof ResetMutations>
+  } as const;
+};
+export type ResetMutations = ReturnType<typeof ResetMutations>;
 
 export const Edit = (userId: string, edits: Partial<Profile>) =>
   ({
@@ -46,9 +46,9 @@ export const Edit = (userId: string, edits: Partial<Profile>) =>
     type: "Profile/Edit",
     userId,
     edits,
-  } as const)
+  } as const);
 
-export type Edit = ReturnType<typeof Edit>
+export type Edit = ReturnType<typeof Edit>;
 
 export const Edited = (
   userId: string,
@@ -62,9 +62,9 @@ export const Edited = (
     result,
     userId,
     previous,
-  } as const)
+  } as const);
 
-export type Edited = ReturnType<typeof Edited>
+export type Edited = ReturnType<typeof Edited>;
 
 export const Get = (userId: string) => {
   return {
@@ -72,10 +72,10 @@ export const Get = (userId: string) => {
     type: "Profile/Get",
     entity: "Profile",
     userId,
-  } as const
-}
+  } as const;
+};
 
-export type Get = ReturnType<typeof Get>
+export type Get = ReturnType<typeof Get>;
 
 export const Got = (
   userId: string,
@@ -87,10 +87,10 @@ export const Got = (
     entity: "Profile",
     userId,
     result,
-  } as const
-}
+  } as const;
+};
 
-export type Got = ReturnType<typeof Got>
+export type Got = ReturnType<typeof Got>;
 
 export const DeleteForever = (userId: string) => {
   return {
@@ -98,10 +98,10 @@ export const DeleteForever = (userId: string) => {
     type: "Profile/DeleteForever",
     entity: "Profile",
     userId,
-  } as const
-}
+  } as const;
+};
 
-export type Delete = ReturnType<typeof DeleteForever>
+export type Delete = ReturnType<typeof DeleteForever>;
 
 export const DeleteResulted = (
   userId: string,
@@ -113,10 +113,10 @@ export const DeleteResulted = (
     type: "Profile/Delete/Resulted",
     userId,
     result,
-  } as const
-}
+  } as const;
+};
 
-export type DeleteResulted = ReturnType<typeof DeleteResulted>
+export type DeleteResulted = ReturnType<typeof DeleteResulted>;
 
 export const Create = (
   userId: string,
@@ -125,9 +125,9 @@ export const Create = (
     name,
     avatarUrl,
   }: {
-    username: string
-    name: string
-    avatarUrl: string
+    username: string;
+    name: string;
+    avatarUrl: string;
   },
 ) => {
   const profile: Profile = {
@@ -136,17 +136,17 @@ export const Create = (
     avatarUrl,
     themeMode: "System",
     userId,
-  }
+  };
 
   return {
     group: "Store",
     entity: "Profile",
     type: "Profile/Create",
     profile,
-  } as const
-}
+  } as const;
+};
 
-export type Create = ReturnType<typeof Create>
+export type Create = ReturnType<typeof Create>;
 
 export const CreateResulted = (
   userId: string,
@@ -158,10 +158,10 @@ export const CreateResulted = (
     type: "Profile/CreateResulted",
     userId,
     result,
-  } as const
-}
+  } as const;
+};
 
-export type CreateResulted = ReturnType<typeof CreateResulted>
+export type CreateResulted = ReturnType<typeof CreateResulted>;
 
 export const Search = (searchText: string) => {
   return {
@@ -169,10 +169,10 @@ export const Search = (searchText: string) => {
     entity: "Profile",
     type: "Profile/Search",
     searchText,
-  } as const
-}
+  } as const;
+};
 
-export type Search = ReturnType<typeof Search>
+export type Search = ReturnType<typeof Search>;
 
 export const Searched = (
   searchText: string,
@@ -184,10 +184,10 @@ export const Searched = (
     type: "Profile/Searched",
     result,
     searchText,
-  } as const
-}
+  } as const;
+};
 
-export type Searched = ReturnType<typeof Searched>
+export type Searched = ReturnType<typeof Searched>;
 
 export const Received = (profile: Profile) => {
   return {
@@ -195,10 +195,10 @@ export const Received = (profile: Profile) => {
     group: "Store",
     type: "Profile/Received",
     profile,
-  } as const
-}
+  } as const;
+};
 
-export type Received = ReturnType<typeof Received>
+export type Received = ReturnType<typeof Received>;
 
 export type Msg =
   | Edited
@@ -212,9 +212,9 @@ export type Msg =
   | Search
   | Searched
   | Received
-  | ResetMutations
+  | ResetMutations;
 
-export type Action = Search | Get | Delete | Edit | ResetMutations
+export type Action = Search | Get | Delete | Edit | ResetMutations;
 
 //
 //
@@ -224,7 +224,7 @@ export type Action = Search | Get | Delete | Edit | ResetMutations
 //
 //
 
-type OutAction = Snackbar.Action | Action
+type OutAction = Snackbar.Action | Action;
 
 export const update = (
   msg: Msg,
@@ -238,21 +238,21 @@ export const update = (
           ...(model.Profile[msg.profile.userId] ?? {}),
           ...msg.profile,
         },
-      }
-      return [{ ...model, Profile: ProfileNew }, Cmd.None, []]
+      };
+      return [{ ...model, Profile: ProfileNew }, Cmd.None, []];
 
     case "Profile/Edit": {
-      const { userId, edits } = msg
-      const query = toGetQuery(userId, model)
+      const { userId, edits } = msg;
+      const query = toGetQuery(userId, model);
 
       if (query.type !== "Success") {
-        return [model, Cmd.None, []]
+        return [model, Cmd.None, []];
       }
 
       const modelNew = produce(model, (model) => {
-        model.mutations.Profile.Edit[msg.userId] = RemoteData.Loading
-        model.Profile[userId] = { ...query.value, ...edits }
-      })
+        model.mutations.Profile.Edit[msg.userId] = RemoteData.Loading;
+        model.Profile[userId] = { ...query.value, ...edits };
+      });
 
       return [
         modelNew,
@@ -261,39 +261,39 @@ export const update = (
           Cmd.fromTask((result) => Edited(msg.userId, query.value, result)),
         ),
         [],
-      ]
+      ];
     }
 
     case "Profile/Edited": {
-      const { userId, result } = msg
+      const { userId, result } = msg;
 
       const modeNew = produce(model, (model) => {
         model.mutations.Profile.Edit[userId] = pipe(
           msg.result,
           RemoteData.fromResult,
           RemoteData.mapSuccess((profile) => profile.userId),
-        )
+        );
 
         switch (result.type) {
           case "Err":
-            delete model.Profile[userId]
-            break
+            delete model.Profile[userId];
+            break;
 
           case "Ok":
-            model.Profile[result.value.userId] = result.value
-            break
+            model.Profile[result.value.userId] = result.value;
+            break;
         }
-      })
+      });
 
-      return [modeNew, Cmd.None, []]
+      return [modeNew, Cmd.None, []];
     }
 
     case "Profile/Get": {
-      const { userId } = msg
+      const { userId } = msg;
 
       const modelNew = produce(model, (model) => {
-        model.queries.Profile.Get[userId] = RemoteData.Loading
-      })
+        model.queries.Profile.Get[userId] = RemoteData.Loading;
+      });
 
       return [
         modelNew,
@@ -302,34 +302,34 @@ export const update = (
           Cmd.fromTask((result) => Got(userId, result)),
         ),
         [],
-      ]
+      ];
     }
 
     case "Profile/Got": {
-      const { userId, result } = msg
+      const { userId, result } = msg;
       const modelNew = produce(model, (model) => {
         model.queries.Profile.Get[userId] = pipe(
           result,
           RemoteData.fromResult,
           RemoteData.mapSuccess((profile) => profile.userId),
-        )
+        );
 
         switch (result.type) {
           case "Err":
-            break
+            break;
 
           case "Ok":
-            model.Profile[result.value.userId] = result.value
-            break
+            model.Profile[result.value.userId] = result.value;
+            break;
         }
-      })
-      return [modelNew, Cmd.None, []]
+      });
+      return [modelNew, Cmd.None, []];
     }
 
     case "Profile/DeleteForever": {
       const modelNew = produce(model, (model) => {
-        model.mutations.Profile.DeleteForever[msg.userId] = RemoteData.Loading
-      })
+        model.mutations.Profile.DeleteForever[msg.userId] = RemoteData.Loading;
+      });
 
       return [
         modelNew,
@@ -338,30 +338,30 @@ export const update = (
           Cmd.fromTask((result) => DeleteResulted(msg.userId, result)),
         ),
         [],
-      ]
+      ];
     }
 
     case "Profile/Delete/Resulted": {
       const modelNew = produce(model, (model) => {
         model.mutations.Profile.DeleteForever[msg.userId] =
-          RemoteData.fromResult(msg.result)
+          RemoteData.fromResult(msg.result);
 
         if (msg.result.type === "Ok") {
-          delete model.Profile[msg.userId]
+          delete model.Profile[msg.userId];
         }
-      })
+      });
 
-      return [modelNew, Cmd.None, [Get(msg.userId)]]
+      return [modelNew, Cmd.None, [Get(msg.userId)]];
     }
 
     case "Profile/Create": {
-      const { profile } = msg
-      const { userId } = profile
+      const { profile } = msg;
+      const { userId } = profile;
 
       const modelNew = produce(model, (model) => {
-        model.mutations.Profile.Create[userId] = RemoteData.Loading
-        model.Profile[userId] = profile
-      })
+        model.mutations.Profile.Create[userId] = RemoteData.Loading;
+        model.Profile[userId] = profile;
+      });
 
       return [
         modelNew,
@@ -370,38 +370,38 @@ export const update = (
           Cmd.fromTask((result) => CreateResulted(userId, result)),
         ),
         [],
-      ]
+      ];
     }
 
     case "Profile/CreateResulted": {
-      const { userId, result } = msg
+      const { userId, result } = msg;
 
       const modelNew = produce(model, (model) => {
         model.mutations.Profile.Create[userId] = pipe(
           result,
           RemoteData.fromResult,
           RemoteData.mapSuccess((profile) => profile.userId),
-        )
+        );
         switch (result.type) {
           case "Err":
-            delete model.Profile[userId]
-            break
+            delete model.Profile[userId];
+            break;
 
           case "Ok":
-            model.Profile[userId] = result.value
-            break
+            model.Profile[userId] = result.value;
+            break;
         }
-      })
+      });
 
-      return [modelNew, Cmd.None, [Get(msg.userId)]]
+      return [modelNew, Cmd.None, [Get(msg.userId)]];
     }
 
     case "Profile/Search": {
-      const { searchText } = msg
+      const { searchText } = msg;
 
       const modelNew = produce(model, (model) => {
-        model.queries.Profile.Search[searchText] = RemoteData.Loading
-      })
+        model.queries.Profile.Search[searchText] = RemoteData.Loading;
+      });
 
       return [
         modelNew,
@@ -410,11 +410,11 @@ export const update = (
           Cmd.fromTask((result) => Searched(searchText, result)),
         ),
         [],
-      ]
+      ];
     }
 
     case "Profile/Searched": {
-      const { result, searchText } = msg
+      const { result, searchText } = msg;
 
       const modelNew = produce(model, (model) => {
         model.queries.Profile.Search[searchText] = pipe(
@@ -423,21 +423,21 @@ export const update = (
           RemoteData.mapSuccess((profiles) =>
             profiles.map((profile) => profile.userId),
           ),
-        )
+        );
 
         switch (result.type) {
           case "Err":
-            break
+            break;
 
           case "Ok":
             for (const profile of result.value) {
-              model.Profile[profile.userId] = profile
+              model.Profile[profile.userId] = profile;
             }
-            break
+            break;
         }
-      })
+      });
 
-      return [modelNew, Cmd.None, []]
+      return [modelNew, Cmd.None, []];
     }
 
     case "Profile/ResetMutations": {
@@ -446,16 +446,16 @@ export const update = (
           Create: {},
           Edit: {},
           DeleteForever: {},
-        }
-      })
+        };
+      });
 
-      return [modelNew, Cmd.None, []]
+      return [modelNew, Cmd.None, []];
     }
 
     default:
-      return exhaustive(msg)
+      return exhaustive(msg);
   }
-}
+};
 
 //
 //
@@ -469,30 +469,30 @@ export const toGetQuery = (
   userId: string,
   model: Model,
 ): RemoteData.RemoteData<Problem, Profile> => {
-  const query = model.queries.Profile.Get[userId] ?? RemoteData.NotAsked
+  const query = model.queries.Profile.Get[userId] ?? RemoteData.NotAsked;
 
   switch (query.type) {
     case "Failure":
-      return query
+      return query;
 
     case "Loading":
-      return query
+      return query;
 
     case "NotAsked":
-      return query
+      return query;
 
     case "Success":
-      const userId = query.value
+      const userId = query.value;
 
-      const profile = model.Profile[userId]
+      const profile = model.Profile[userId];
 
       if (!profile) {
-        return RemoteData.Failure({ message: "Invalid state" })
+        return RemoteData.Failure({ message: "Invalid state" });
       }
 
-      return RemoteData.Success(profile)
+      return RemoteData.Success(profile);
   }
-}
+};
 
 export const searchProfiles = (nameOrUsername: string, store: Model) => {
   return pipe(
@@ -502,8 +502,8 @@ export const searchProfiles = (nameOrUsername: string, store: Model) => {
       matchSorter(profiles, nameOrUsername, {
         keys: ["name", "username"],
       }),
-  )
-}
+  );
+};
 
 //
 //
@@ -518,30 +518,30 @@ export const rowThemeModeToThemeMode = (
 ): Profile["themeMode"] => {
   switch (themeMode) {
     case "DARK":
-      return "Dark"
+      return "Dark";
 
     case "LIGHT":
-      return "Light"
+      return "Light";
 
     case "SYSTEM":
-      return "System"
+      return "System";
   }
-}
+};
 
 const fromThemeMode = (
   themeMode: Profile["themeMode"],
 ): definitions["profile"]["theme_mode"] => {
   switch (themeMode) {
     case "Dark":
-      return "DARK"
+      return "DARK";
 
     case "Light":
-      return "LIGHT"
+      return "LIGHT";
 
     case "System":
-      return "SYSTEM"
+      return "SYSTEM";
   }
-}
+};
 
 const rowToProfile = (row: definitions["profile"]): Profile => {
   return {
@@ -550,28 +550,28 @@ const rowToProfile = (row: definitions["profile"]): Profile => {
     name: row.name,
     username: row.username,
     themeMode: rowThemeModeToThemeMode(row.theme_mode),
-  }
-}
+  };
+};
 
 export const load =
   ({
     userId,
   }: {
-    userId: string
+    userId: string;
   }): Task.Task<Result.Result<Problem, Profile>> =>
   async () => {
     const response = await Supabase.client
       .from<definitions["profile"]>("profile")
       .select("*")
       .eq("id", userId)
-      .single()
+      .single();
 
     if (response.error) {
-      return Result.Err({ message: response.error.message })
+      return Result.Err({ message: response.error.message });
     }
 
-    return Result.Ok(rowToProfile(response.data))
-  }
+    return Result.Ok(rowToProfile(response.data));
+  };
 
 export const create =
   ({
@@ -580,10 +580,10 @@ export const create =
     username,
     avatarUrl,
   }: {
-    userId: string
-    name: string
-    username: string
-    avatarUrl: string
+    userId: string;
+    name: string;
+    username: string;
+    avatarUrl: string;
   }): Task.Task<Result.Result<Problem, Profile>> =>
   async () => {
     const response = await Supabase.client
@@ -595,37 +595,37 @@ export const create =
         avatar_url: avatarUrl,
         theme_mode: "SYSTEM",
       })
-      .single()
+      .single();
 
     if (response.data) {
-      return Result.Ok(rowToProfile(response.data))
+      return Result.Ok(rowToProfile(response.data));
     }
 
-    return Result.Err({ message: response.error.message })
-  }
+    return Result.Err({ message: response.error.message });
+  };
 
 export const deleteForever =
   (userId: string): Task.Task<Result.Result<Problem, string>> =>
   async () => {
-    await new Promise((resolve) => setTimeout(resolve, 1000))
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
     const response = await Supabase.client
       .from<definitions["profile"]>("profile")
       .delete()
-      .match({ id: userId })
+      .match({ id: userId });
 
     if (response.error) {
-      return Result.Err({ message: response.error.message })
+      return Result.Err({ message: response.error.message });
     }
 
-    return Result.Ok(userId)
-  }
+    return Result.Ok(userId);
+  };
 
 export const search =
   ({
     nameOrUsername,
   }: {
-    nameOrUsername: string
+    nameOrUsername: string;
   }): Task.Task<Result.Result<Problem, Profile[]>> =>
   async () => {
     const response = await Supabase.client
@@ -637,16 +637,16 @@ export const search =
           .split(" ")
           .map((_) => _.replace(" ", ""))
           .join("%")}%`,
-      )
+      );
 
     if (response.error) {
-      return Result.Err({ message: response.error.message })
+      return Result.Err({ message: response.error.message });
     }
 
-    const profiles = response.data.map(rowToProfile)
+    const profiles = response.data.map(rowToProfile);
 
-    return Result.Ok(profiles)
-  }
+    return Result.Ok(profiles);
+  };
 
 export const edit =
   (
@@ -665,38 +665,38 @@ export const edit =
           : undefined,
       })
       .match({ id: userId })
-      .single()
+      .single();
 
     if (response.error) {
-      return Result.Err({ message: response.error.message })
+      return Result.Err({ message: response.error.message });
     }
 
-    return Result.Ok(rowToProfile(response.data))
-  }
+    return Result.Ok(rowToProfile(response.data));
+  };
 
 export const subscriptions = ({ userId }: { userId: string }): Sub.Sub<Msg> => {
   return new Rx.Observable<Msg>((subscriber) => {
     const subscription = Supabase.client
       .from<definitions["profile"]>(`profile:id=eq.${userId}`)
       .on("INSERT", (payload) => {
-        const profile = rowToProfile(payload.new)
-        subscriber.next(Received(profile))
+        const profile = rowToProfile(payload.new);
+        subscriber.next(Received(profile));
       })
       .on("UPDATE", (payload) => {
-        const profile = rowToProfile(payload.new)
-        subscriber.next(Received(profile))
+        const profile = rowToProfile(payload.new);
+        subscriber.next(Received(profile));
       })
       .on("DELETE", () => {
         // todo
       })
-      .subscribe()
+      .subscribe();
 
     return () => {
-      Supabase.client.removeSubscription(subscription)
-      subscription.unsubscribe()
-    }
-  })
-}
+      Supabase.client.removeSubscription(subscription);
+      subscription.unsubscribe();
+    };
+  });
+};
 
 //
 //
@@ -707,7 +707,7 @@ export const subscriptions = ({ userId }: { userId: string }): Sub.Sub<Msg> => {
 //
 
 const removeKey = <T,>(key: keyof T, record: T): Omit<T, keyof T> => {
-  const { [key]: _value, ...removed } = record
+  const { [key]: _value, ...removed } = record;
 
-  return removed
-}
+  return removed;
+};

@@ -1,8 +1,8 @@
-import * as Route from "Route"
-import * as Session from "Session"
-import * as Snackbar from "Snackbar"
-import * as View from "View"
-import { Cmd, Result, pipe } from "Core"
+import * as Route from "Route";
+import * as Session from "Session";
+import * as Snackbar from "Snackbar";
+import * as View from "View";
+import { Cmd, Result, pipe } from "Core";
 
 //
 //
@@ -12,9 +12,9 @@ import { Cmd, Result, pipe } from "Core"
 //
 //
 
-export type Model = { type: "Idle" } | { type: "LoggingOut" }
+export type Model = { type: "Idle" } | { type: "LoggingOut" };
 
-export const init: Model = { type: "Idle" }
+export const init: Model = { type: "Idle" };
 
 //
 //
@@ -29,9 +29,9 @@ export type Msg =
   | { type: "UserClickedBackdrop" }
   | { type: "UserClickedLogoutButton" }
   | { type: "LogoutFailed" }
-  | { type: "LogoutSucceeded" }
+  | { type: "LogoutSucceeded" };
 
-type OutAction = Snackbar.Action | Session.Action
+type OutAction = Snackbar.Action | Session.Action;
 
 export const update = (
   { name }: { name: string },
@@ -40,21 +40,21 @@ export const update = (
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (msg.type) {
     case "UserClickedCancelButton":
-      return [model, Route.back, []]
+      return [model, Route.back, []];
 
     case "UserClickedBackdrop":
-      return [model, Route.back, []]
+      return [model, Route.back, []];
 
     case "UserClickedLogoutButton":
-      return [{ type: "LoggingOut" }, Cmd.None, [Session.Logout()]]
+      return [{ type: "LoggingOut" }, Cmd.None, [Session.Logout()]];
 
     case "LogoutFailed":
-      return [model, Cmd.None, []]
+      return [model, Cmd.None, []];
 
     case "LogoutSucceeded":
-      return [model, Cmd.None, []]
+      return [model, Cmd.None, []];
   }
-}
+};
 
 //
 //
@@ -83,4 +83,4 @@ export const view =
           title="Logging out..."
         />
       </>
-    )
+    );
