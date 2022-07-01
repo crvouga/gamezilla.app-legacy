@@ -4,9 +4,16 @@ import * as Supabase from "Supabase";
 import { Cmd, RemoteData, Result, Task, pipe } from "Core";
 import produce from "immer";
 import { definitions } from "supabase-types";
+import { isUnionTypeNode } from "typescript";
 import * as Types from "./Types";
-import { rowThemeModeToThemeMode } from "./Profile";
-import { Problem, Profile, ProfilesConversations, Store } from "./Types";
+import { rowThemeModeToThemeMode, rowToProfile } from "./Profile";
+import {
+  Message,
+  Problem,
+  Profile,
+  ProfilesConversations,
+  Store,
+} from "./Types";
 
 //
 //
@@ -108,7 +115,7 @@ export const FindOneResulted = (
   conversationId: string,
   result: Result.Result<
     Problem,
-    { conversation: string; profile: string[]; message: string[] }
+    { conversation: Conversation; profiles: Profile[]; messages: Message[] }
   >,
 ) => {
   return {
@@ -136,9 +143,40 @@ export const update = (
   model: Store,
 ): [Store, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (msg.type) {
-    case "Conversation/FindOneResulted":
+    case "Conversation/FindOneResulted": {
+      const modelNew = produce(model, (model) => {
+        model.queries.Conversation.FindOne[msg.conversationId] = pipe(
+          msg.result,
+          RemoteData.fromResult,
+          RemoteData.mapSuccess((data) => ({
+            conversation: data.conversation.conversationId,
+            profile: data.profiles.map((item) => item.userId),
+            message: data.messages.map((item) => item.messageId),
+          })),
+        );
+        if (msg.result.type === "Ok") {
+          const data = msg.result.value;
+          model.Conversation[data.conversation.conversationId] =
+            data.conversation;
+          data.messages.forEach((item) => {
+            model.Message[item.messageId] = item;
+          });
+          data.profiles.forEach((item) => {
+            model.Profile[item.userId] = item;
+            const profileConversation = {
+              userId: item.userId,
+              conversationId: data.conversation.conversationId,
+            };
+            model.ProfilesConversations[
+              Types.toProfilesConversationsId(profileConversation)
+            ] = profileConversation;
+          });
+        }
+      });
+
       console.log("TODO handle Conversation/FindOneResulted");
-      return [model, Cmd.None, []];
+      return [modelNew, Cmd.None, []];
+    }
 
     case "Conversation/FindManyByUserIdResulted": {
       const modelNew = produce(model, (model) => {
@@ -219,7 +257,15 @@ export const runAction = (
         model.queries.Conversation.FindOne[action.conversationId] =
           RemoteData.Loading;
       });
-      return [modelNew, Cmd.None];
+      return [
+        modelNew,
+        pipe(
+          findOneById({ conversationId: action.conversationId }),
+          Cmd.fromTask((result) =>
+            FindOneResulted(action.conversationId, result),
+          ),
+        ),
+      ];
     }
 
     case "Conversation/FindManyByUserId": {
@@ -322,12 +368,54 @@ const findOneById =
       {
         conversation: Conversation;
         profiles: Profile[];
-        messages: Types.Message[];
+        messages: Message[];
       }
     >
   > =>
   async () => {
-    return Result.Err({ message: "unimplemented" });
+    const matchConversationIdResponse = await Supabase.client
+      .from<definitions["profiles_conversations"]>("profiles_conversations")
+      .select("*")
+      .eq("conversation_id", conversationId);
+
+    if (matchConversationIdResponse.error) {
+      return Result.Err({ message: matchConversationIdResponse.error.message });
+    }
+
+    const userIds = Array.from(
+      new Set(matchConversationIdResponse.data.map((item) => item.user_id)),
+    );
+
+    const profilesResponse = await Supabase.client
+      .from<definitions["profile"]>("profile")
+      .select("*")
+      .in("id", userIds);
+
+    if (profilesResponse.error) {
+      return Result.Err({ message: profilesResponse.error.message });
+    }
+
+    const messagesResponse = await Supabase.client
+      .from<definitions["message"]>("message")
+      .select("*")
+      .eq("conversation_id", conversationId);
+
+    if (messagesResponse.error) {
+      return Result.Err({ message: messagesResponse.error.message });
+    }
+
+    return Result.Ok({
+      conversation: {
+        conversationId,
+      },
+      profiles: profilesResponse.data.map(rowToProfile),
+      messages: messagesResponse.data.map((item) => ({
+        messageId: item.id,
+        message: item.message,
+        userId: item.user_id,
+        conversationId: item.conversation_id,
+      })),
+    });
   };
 
 const findManyByUserId =
@@ -406,13 +494,7 @@ const findManyByUserId =
       conversations: conversationResponse.data.map((item) => ({
         conversationId: item.id,
       })),
-      profiles: profileResponse.data.map((item) => ({
-        userId: item.id,
-        name: item.name,
-        username: item.username,
-        themeMode: rowThemeModeToThemeMode(item.theme_mode),
-        avatarUrl: item.avatar_url,
-      })),
+      profiles: profileResponse.data.map(rowToProfile),
     });
   };
 

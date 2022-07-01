@@ -543,7 +543,7 @@ const fromThemeMode = (
   }
 };
 
-const rowToProfile = (row: definitions["profile"]): Profile => {
+export const rowToProfile = (row: definitions["profile"]): Profile => {
   return {
     userId: row.id,
     avatarUrl: row.avatar_url,

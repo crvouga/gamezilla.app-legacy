@@ -90,7 +90,7 @@ export type Queries = {
         Problem,
         {
           conversation: string;
-          messages: string[];
+          message: string[];
           profile: string[];
         }
       >;

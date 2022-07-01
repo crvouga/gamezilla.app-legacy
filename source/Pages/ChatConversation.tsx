@@ -1,7 +1,7 @@
 import * as Route from "Route";
 import * as Store from "Store";
 import * as View from "View";
-import { Cmd } from "Core";
+import { Cmd, RemoteData } from "Core";
 
 //
 //
@@ -66,10 +66,13 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 export const view =
   (store: Store.Model, conversationId: string, model: Model): View.View<Msg> =>
   (dispatch) => {
+    const query =
+      store.queries.Conversation.FindOne[conversationId] ?? RemoteData.NotAsked;
     const conversation = Store.Conversation.toConversation(
       conversationId,
       store,
     );
+
     return (
       <View.Page>
         <View.Toolbar>
@@ -85,6 +88,12 @@ export const view =
 
           <View.Box sx={{ paddingX: 2 }}></View.Box>
         </View.Toolbar>
+
+        {query.type === "Loading" && (
+          <View.Box>
+            <View.CircularProgress />
+          </View.Box>
+        )}
 
         <View.Box
           sx={{
