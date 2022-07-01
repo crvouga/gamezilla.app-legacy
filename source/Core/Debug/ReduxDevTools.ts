@@ -498,10 +498,10 @@ export const withDebugger = <Model, Msg, Dom>(
       return
     }
 
-    const debugId = debugId$.getValue() + 1
+    const debugId = debugId$.getValue()
     // @ts-ignore
     state.model["debugId"] = debugId
-    debugId$.next(debugId)
+    debugId$.next(debugId + 1)
 
     connection.send(state.msg, state.model)
   })
