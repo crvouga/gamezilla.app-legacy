@@ -453,7 +453,6 @@ export const withDebugger = <Model, Msg, Dom>(
 
   const connection = maybeConnection.value
 
-  const debugId$ = new Rx.BehaviorSubject(1)
   const debuggerStarted$ = new Rx.Subject<"STARTED">()
 
   connection.subscribe(
@@ -473,18 +472,13 @@ export const withDebugger = <Model, Msg, Dom>(
               break
 
             case "__DebugUpdateModel__":
-              const debugId =
-                // @ts-ignore
-                msg.payload["debugId"]
+              //   const debugId =
+              //     // @ts-ignore
+              //     msg.payload["debugId"]
 
               program.state$.next({
                 model: msg.payload,
                 cmd: Cmd.None,
-                //why? becuase we want to pause subscriptions when time travelling
-                subscriptionStatus:
-                  debugId === debugId$.getValue()
-                    ? "Subscribed"
-                    : "Unsubscribed",
               })
               break
           }
@@ -497,11 +491,6 @@ export const withDebugger = <Model, Msg, Dom>(
     if (!state.msg) {
       return
     }
-
-    const debugId = debugId$.getValue()
-    // @ts-ignore
-    state.model["debugId"] = debugId
-    debugId$.next(debugId + 1)
 
     connection.send(state.msg, state.model)
   })

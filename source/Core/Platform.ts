@@ -2,7 +2,6 @@ import * as Rx from "rxjs"
 import * as Cmd from "./Cmd"
 import * as Option from "./Option"
 import * as Sub from "./Sub"
-import * as Time from "./Time"
 
 //
 //
@@ -16,7 +15,7 @@ type State<Model, Msg> = {
   model: Model
   cmd: Cmd.Cmd<Msg>
   msg?: Msg
-  subscriptionStatus: "Subscribed" | "Unsubscribed"
+  // subscriptionStatus: "Subscribed" | "Unsubscribed"
 }
 
 export type Program<Model, Msg> = {
@@ -49,7 +48,7 @@ export const Worker = <Model, Msg>({
   const state$ = new Rx.BehaviorSubject<State<Model, Msg>>({
     model: init[0],
     cmd: init[1],
-    subscriptionStatus: "Subscribed",
+    // subscriptionStatus: "Subscribed",
   })
 
   const dispatch: Dispatch<Msg> = (msg) => {
@@ -59,7 +58,7 @@ export const Worker = <Model, Msg>({
       model,
       cmd,
       msg,
-      subscriptionStatus: prev.subscriptionStatus,
+      // subscriptionStatus: prev.subscriptionStatus,
     })
   }
 
@@ -68,10 +67,11 @@ export const Worker = <Model, Msg>({
   const model$ = state$.pipe(Rx.map((state) => state.model))
 
   const sub$ = state$.pipe(
-    Rx.switchMap((state) =>
-      state.subscriptionStatus === "Subscribed"
-        ? subscriptions(state.model)
-        : Sub.None,
+    Rx.switchMap(
+      (state) => subscriptions(state.model),
+      // state.subscriptionStatus === "Subscribed"
+      //   ? subscriptions(state.model)
+      //   : Sub.None,
     ),
   )
 
