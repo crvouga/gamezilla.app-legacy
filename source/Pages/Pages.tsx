@@ -360,7 +360,8 @@ export const updateReady = (
 
     case "ChatConversation":
       if (msg.page === "ChatConversation") {
-        const [modelPage, cmdPage, actions = []] = ChatConversation.update(
+        const [modelPage, cmdPage, actions] = ChatConversation.update(
+          { userId: profile.userId, conversationId: model.conversationId },
           msg,
           model,
         );

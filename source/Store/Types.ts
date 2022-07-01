@@ -131,6 +131,11 @@ export type Mutations = {
   Conversation: {
     GetElseCreate: RemoteData.RemoteData<Problem, string>;
   };
+  Message: {
+    Insert: {
+      [conversationId: string]: RemoteData.RemoteData<Problem, string>;
+    };
+  };
 };
 
 //

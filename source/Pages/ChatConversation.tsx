@@ -42,16 +42,24 @@ export type Msg =
 
 export type OutAction = Store.Action;
 
-export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
+export const update = (
+  { userId, conversationId }: { userId: string; conversationId: string },
+  msg: Msg,
+  model: Model,
+): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (msg.type) {
     case "ClickedBack":
-      return [model, Route.back];
+      return [model, Route.back, []];
 
     case "ClickedSend":
-      return [model, Cmd.None];
+      return [
+        model,
+        Cmd.None,
+        [Store.Message.Insert({ userId, conversationId, message: model.text })],
+      ];
 
     case "InputtedText":
-      return [{ ...model, text: msg.text }, Cmd.None];
+      return [{ ...model, text: msg.text }, Cmd.None, []];
   }
 };
 
@@ -73,6 +81,9 @@ export const view =
       conversationId,
       store,
     );
+
+    const messageInsertMutation =
+      store.mutations.Message.Insert[conversationId] ?? RemoteData.NotAsked;
 
     return (
       <View.Page>
@@ -135,6 +146,11 @@ export const view =
         )}
 
         <View.Box sx={{ flex: 1 }}></View.Box>
+        {conversation.messages.map((message) => (
+          <View.Typography key={message.messageId}>
+            {message.message}
+          </View.Typography>
+        ))}
         <View.Divider />
         <View.Box sx={{ width: "100%", display: "flex", p: 2 }}>
           <View.InputBase
@@ -152,6 +168,7 @@ export const view =
             size="large"
             disabled={model.text.length === 0}
             onClick={() => dispatch({ type: "ClickedSend" })}
+            loading={messageInsertMutation.type === "Loading"}
           >
             Send
           </View.Button>

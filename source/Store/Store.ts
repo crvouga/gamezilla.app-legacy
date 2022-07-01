@@ -46,6 +46,9 @@ export const init: Model = {
       Edit: {},
       DeleteForever: {},
     },
+    Message: {
+      Insert: {},
+    },
   },
 };
 
