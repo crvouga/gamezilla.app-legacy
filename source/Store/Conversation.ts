@@ -174,7 +174,6 @@ export const update = (
         }
       });
 
-      console.log("TODO handle Conversation/FindOneResulted");
       return [modelNew, Cmd.None, []];
     }
 
@@ -252,7 +251,6 @@ export const runAction = (
 ): [Store, Cmd.Cmd<Msg>] => {
   switch (action.type) {
     case "Conversation/FindOne": {
-      console.log("TODO handle Conversation/FindOne");
       const modelNew = produce(model, (model) => {
         model.queries.Conversation.FindOne[action.conversationId] =
           RemoteData.Loading;
