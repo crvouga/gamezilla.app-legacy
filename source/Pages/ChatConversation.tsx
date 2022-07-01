@@ -63,18 +63,9 @@ export const view =
     return (
       <View.Page>
         <View.Toolbar>
-          <View.Box
-            sx={{
-              flex: 1,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "flex-start",
-            }}
-          >
-            <View.HeaderBackButton
-              onClick={() => dispatch({ type: "ClickedBack" })}
-            />
-          </View.Box>
+          <View.HeaderBackButton
+            onClick={() => dispatch({ type: "ClickedBack" })}
+          />
 
           <View.Typography align="left" noWrap>
             {conversation.profiles

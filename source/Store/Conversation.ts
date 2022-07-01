@@ -114,19 +114,14 @@ export const update = (
           RemoteData.mapSuccess((value) => value.conversation.conversationId),
         )
 
-        switch (result.type) {
-          case "Err":
-            break
-
-          case "Ok":
-            const { conversation, profilesConversations } = result.value
-            const { conversationId } = conversation
-            model.Conversation[conversationId] = conversation
-            for (const item of profilesConversations) {
-              const id = [item.conversationId, item.userId].join(",")
-              model.ProfilesConversations[id] = item
-            }
-            break
+        if (result.type === "Ok") {
+          const { conversation, profilesConversations } = result.value
+          const { conversationId } = conversation
+          model.Conversation[conversationId] = conversation
+          for (const item of profilesConversations) {
+            const id = [item.conversationId, item.userId].join(",")
+            model.ProfilesConversations[id] = item
+          }
         }
       })
 
