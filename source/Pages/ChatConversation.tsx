@@ -2,7 +2,7 @@ import * as Route from "Route";
 import * as Store from "Store";
 import * as View from "View";
 import { Cmd, Html, RemoteData } from "Core";
-import { ReactNode, useEffect, useLayoutEffect, useRef } from "react";
+import { ReactNode, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { refCount } from "rxjs";
 
 //
@@ -15,6 +15,7 @@ import { refCount } from "rxjs";
 
 export type Model = {
   text: string;
+  focusedMessageId?: string;
 };
 
 export const init = ({
@@ -40,6 +41,9 @@ export const init = ({
 export type Msg =
   | { type: "ClickedBack" }
   | { type: "ClickedSend" }
+  | { type: "ClickedMessage"; messageId: string }
+  | { type: "ClosedMessageMenu"; messageId: string }
+  | { type: "ClickedDeleteMessage"; messageId: string }
   | { type: "InputtedText"; text: string };
 
 export type OutAction = Store.Action;
@@ -68,6 +72,15 @@ export const update = (
 
     case "InputtedText":
       return [{ ...model, text: msg.text }, Cmd.None, []];
+
+    case "ClickedMessage":
+      return [{ ...model, focusedMessageId: msg.messageId }, Cmd.None, []];
+
+    case "ClosedMessageMenu":
+      return [{ ...model, focusedMessageId: undefined }, Cmd.None, []];
+
+    case "ClickedDeleteMessage":
+      return [model, Cmd.None, []];
   }
 };
 
@@ -152,8 +165,27 @@ export const view =
                 }}
               >
                 <ChatBubble
+                  status={
+                    model.focusedMessageId
+                      ? message.messageId === model.focusedMessageId
+                        ? "focused"
+                        : "blurred"
+                      : "idle"
+                  }
                   variant={
                     message.userId === authUser.userId ? "sented" : "received"
+                  }
+                  onMenuClose={() =>
+                    dispatch({
+                      type: "ClosedMessageMenu",
+                      messageId: message.messageId,
+                    })
+                  }
+                  onClick={() =>
+                    dispatch({
+                      type: "ClickedMessage",
+                      messageId: message.messageId,
+                    })
                   }
                   message={message.message}
                 />
@@ -315,11 +347,17 @@ const viewHeader =
     );
 
 const ChatBubble = ({
+  status,
   message,
   variant,
+  onClick,
+  onMenuClose,
 }: {
+  status: "focused" | "blurred" | "idle";
   message: string;
   variant: "sented" | "received";
+  onClick: () => void;
+  onMenuClose: () => void;
 }) => {
   const theme = View.useTheme();
   const backgroundColor =
@@ -328,17 +366,48 @@ const ChatBubble = ({
       : theme.palette.grey["200"];
   const textColor = theme.palette.getContrastText(backgroundColor);
 
+  const anchorRef = useRef<null | HTMLElement>(null);
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+    onClick();
+  };
+
   return (
-    <View.Typography
-      sx={{
-        borderRadius: theme.spacing(2),
-        display: "inline-block",
-        padding: 1,
-        backgroundColor,
-        color: textColor,
-      }}
-    >
-      {message}
-    </View.Typography>
+    <>
+      <View.Typography
+        ref={anchorRef}
+        onClick={handleClick}
+        onContextMenu={handleClick}
+        sx={{
+          opacity: status === "blurred" ? 0.5 : 1,
+          borderRadius: theme.spacing(2),
+          display: "inline-block",
+          padding: 1,
+          backgroundColor,
+          color: textColor,
+        }}
+      >
+        {message}
+      </View.Typography>
+      <View.Menu
+        anchorEl={anchorRef.current}
+        open={status === "focused"}
+        onClose={onMenuClose}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "left",
+        }}
+        transformOrigin={{
+          vertical: "center",
+          horizontal: "right",
+        }}
+      >
+        <View.MenuItem sx={{ color: theme.palette.error.main }}>
+          Delete Forever
+        </View.MenuItem>
+      </View.Menu>
+    </>
   );
 };

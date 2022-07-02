@@ -232,6 +232,8 @@ export const Avatar = Mui.Avatar;
 
 export const AvatarGroup = Mui.AvatarGroup;
 
+export const Menu = Mui.Menu;
+
 export const MenuItem = Mui.MenuItem;
 
 export const Autocomplete = Mui.Autocomplete;
