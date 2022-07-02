@@ -52,7 +52,7 @@ export type Msg =
   | { type: "InputtedSearch"; searchText: string }
   | { type: "ClickedResult"; userId: string }
   | { type: "ClickedSelectedDelete"; userId: string }
-  | { type: "ClickedCreate" }
+  | { type: "ClickedChat" }
   | { type: "PressedKeyDown"; key: Keyboard.ArrowKey | Keyboard.EnterKey };
 
 export type Action = Store.Action;
@@ -63,12 +63,12 @@ export const update = (
   model: Model,
 ): [Model, Cmd.Cmd<Msg>, Action[]] => {
   switch (msg.type) {
-    case "ClickedCreate":
+    case "ClickedChat":
       const userIds = Object.values(model.selected);
       return [
         model,
         Cmd.None,
-        [Store.Conversation.Insert(authUserId, userIds)],
+        [Store.Conversation.FindOneElseInsert(authUserId, userIds)],
       ];
 
     case "ClickedCancel":
@@ -209,7 +209,7 @@ export const view =
     model: Model,
   ): View.View<Msg> =>
   (dispatch) => {
-    const mutation = store.mutations.Conversation.GetElseCreate;
+    const mutation = store.mutations.Conversation.FindElseInsert;
 
     const searchQuery =
       store.queries.Profile.Search[model.searchText] ?? RemoteData.NotAsked;
@@ -240,7 +240,7 @@ export const view =
               size="large"
               disabled={Object.values(model.selected).length === 0}
               sx={{ marginRight: -1 }}
-              onClick={() => dispatch({ type: "ClickedCreate" })}
+              onClick={() => dispatch({ type: "ClickedChat" })}
               loading={mutation.type === "Loading"}
             >
               Chat

@@ -39,7 +39,7 @@ export const init: Model = {
   },
   mutations: {
     Conversation: {
-      GetElseCreate: RemoteData.NotAsked,
+      FindElseInsert: RemoteData.NotAsked,
     },
     Profile: {
       Create: {},
