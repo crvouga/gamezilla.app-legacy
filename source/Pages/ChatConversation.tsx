@@ -242,7 +242,7 @@ const MessageContainer = ({
   return (
     <View.Box
       ref={containerRef}
-      sx={{ flex: 1, overflowY: "scroll", width: "100%", paddingBottom: 4 }}
+      sx={{ flex: 1, overflowY: "scroll", width: "100%", paddingBottom: 2 }}
     >
       {children}
       <div ref={ref} />
