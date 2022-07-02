@@ -57,7 +57,13 @@ export const update = (
       return [
         model,
         Cmd.None,
-        [Store.Message.Insert({ userId, conversationId, message: model.text })],
+        [
+          Store.Message.Insert({
+            userId,
+            conversationId,
+            messageText: model.text,
+          }),
+        ],
       ];
 
     case "InputtedText":
@@ -135,7 +141,7 @@ export const view =
                 justifyContent: "flex-end",
               }}
             >
-              <Bubble
+              <ChatBubble
                 variant={
                   message.userId === authUser.userId ? "sented" : "received"
                 }
@@ -145,34 +151,71 @@ export const view =
           ))}
         </MessageContainer>
 
-        <View.Divider />
-
-        <View.Box
-          sx={{ width: "100%", display: "flex", paddingX: 2, paddingY: 1 }}
-        >
-          <View.InputBase
-            value={model.text}
-            onChange={(event) => {
-              const textNew = event.currentTarget.value;
-              dispatch({ type: "InputtedText", text: textNew });
-            }}
-            sx={{ flex: 1 }}
-            placeholder="Message..."
-          />
-
-          <View.Button
-            variant="contained"
-            size="large"
-            disabled={model.text.length === 0}
-            onClick={() => dispatch({ type: "ClickedSend" })}
-            loading={messageInsertMutation.type === "Loading"}
-          >
-            Send
-          </View.Button>
-        </View.Box>
+        <ChatInput
+          value={model.text}
+          onChange={(text) => dispatch({ type: "InputtedText", text })}
+          onSend={() => dispatch({ type: "ClickedSend" })}
+          isSending={messageInsertMutation.type === "Loading"}
+        />
       </View.Page>
     );
   };
+
+const ChatInput = ({
+  value,
+  onChange,
+  onSend,
+  isSending,
+}: {
+  value: string;
+  onChange: (valueNew: string) => void;
+  onSend: () => void;
+  isSending: boolean;
+}) => {
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const theme = View.useTheme();
+
+  return (
+    <View.Box
+      sx={{
+        width: "100%",
+        display: "flex",
+        paddingX: 2,
+        paddingY: 1 / 2,
+        backgroundColor: theme.palette.grey["100"],
+        borderRadius: theme.spacing(4),
+      }}
+    >
+      <View.InputBase
+        ref={inputRef}
+        value={value}
+        onChange={(event) => {
+          onChange(event.currentTarget.value);
+        }}
+        sx={{ paddingLeft: 1, flex: 1 }}
+        placeholder="Message..."
+      />
+
+      <View.Grow in={value.length > 0}>
+        <View.Button
+          variant="text"
+          size="large"
+          disabled={value.length === 0}
+          onClick={() => {
+            onSend();
+
+            if (inputRef.current) {
+              inputRef.current.focus();
+            }
+          }}
+          loading={isSending}
+        >
+          Send
+        </View.Button>
+      </View.Grow>
+    </View.Box>
+  );
+};
 
 const MessageContainer = ({
   scrollKey,
@@ -248,7 +291,7 @@ const viewHeader =
       </View.Box>
     );
 
-const Bubble = ({
+const ChatBubble = ({
   message,
   variant,
 }: {
@@ -259,13 +302,13 @@ const Bubble = ({
   const backgroundColor =
     variant === "sented"
       ? theme.palette.primary.main
-      : theme.palette.background.paper;
+      : theme.palette.grey["200"];
   const textColor = theme.palette.getContrastText(backgroundColor);
 
   return (
     <View.Typography
       sx={{
-        borderRadius: 2,
+        borderRadius: theme.spacing(3),
         display: "inline-block",
         padding: 1,
         backgroundColor,
