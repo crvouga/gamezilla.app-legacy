@@ -409,6 +409,8 @@ const ChatBubble = ({
           backgroundColor,
           color: textColor,
           cursor: status === "idle" ? "pointer" : "default",
+          maxWidth: "80%",
+          wordBreak: "break-all",
         }}
       >
         {message}
