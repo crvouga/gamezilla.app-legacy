@@ -37,7 +37,6 @@ export const Insert = ({
   conversationId: string;
   messageText: string;
 }) => {
-  const messageId = Uuid.generateSync();
   return {
     type: "Message/Insert",
     group: "Store",
@@ -45,7 +44,6 @@ export const Insert = ({
     userId,
     conversationId,
     message,
-    messageId,
   } as const;
 };
 export type Insert = ReturnType<typeof Insert>;
@@ -63,6 +61,17 @@ export const InsertResulted = (
   } as const;
 };
 export type InsertResulted = ReturnType<typeof InsertResulted>;
+
+export const DeleteForever = ({ messageId }: { messageId: string }) => {
+  return {
+    type: "Message/DeleteForever",
+    group: "Store",
+    entity: "Message",
+
+    messageId,
+  } as const;
+};
+export type DeleteForever = ReturnType<typeof DeleteForever>;
 
 //
 //
