@@ -80,7 +80,11 @@ export const update = (
       return [{ ...model, focusedMessageId: undefined }, Cmd.None, []];
 
     case "ClickedDeleteMessage":
-      return [model, Cmd.None, []];
+      return [
+        model,
+        Cmd.None,
+        [Store.Message.DeleteForever({ messageId: msg.messageId })],
+      ];
   }
 };
 
@@ -165,8 +169,15 @@ export const view =
                 }}
               >
                 <ChatBubble
+                  isDeleting={
+                    store.mutations.Message.DeleteForever[message.messageId]
+                      ?.type === "Loading"
+                  }
                   status={
-                    model.focusedMessageId
+                    model.focusedMessageId &&
+                    conversation.messages.some(
+                      (message) => message.messageId === model.focusedMessageId,
+                    )
                       ? message.messageId === model.focusedMessageId
                         ? "focused"
                         : "blurred"
@@ -184,6 +195,12 @@ export const view =
                   onClick={() =>
                     dispatch({
                       type: "ClickedMessage",
+                      messageId: message.messageId,
+                    })
+                  }
+                  onDeleteForever={() =>
+                    dispatch({
+                      type: "ClickedDeleteMessage",
                       messageId: message.messageId,
                     })
                   }
@@ -352,12 +369,16 @@ const ChatBubble = ({
   variant,
   onClick,
   onMenuClose,
+  onDeleteForever,
+  isDeleting,
 }: {
+  isDeleting: boolean;
   status: "focused" | "blurred" | "idle";
   message: string;
   variant: "sented" | "received";
   onClick: () => void;
   onMenuClose: () => void;
+  onDeleteForever: () => void;
 }) => {
   const theme = View.useTheme();
   const backgroundColor =
@@ -366,7 +387,7 @@ const ChatBubble = ({
       : theme.palette.grey["200"];
   const textColor = theme.palette.getContrastText(backgroundColor);
 
-  const anchorRef = useRef<null | HTMLElement>(null);
+  const [anchorRef, setAnchorRef] = useState<null | HTMLElement>(null);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -377,7 +398,7 @@ const ChatBubble = ({
   return (
     <>
       <View.Typography
-        ref={anchorRef}
+        ref={(ref) => setAnchorRef(ref)}
         onClick={handleClick}
         onContextMenu={handleClick}
         sx={{
@@ -393,7 +414,7 @@ const ChatBubble = ({
         {message}
       </View.Typography>
       <View.Menu
-        anchorEl={anchorRef.current}
+        anchorEl={anchorRef}
         open={status === "focused"}
         onClose={onMenuClose}
         anchorOrigin={{
@@ -406,7 +427,14 @@ const ChatBubble = ({
         }}
       >
         <View.MenuItem>Copy Text</View.MenuItem>
-        <View.MenuItem sx={{ color: theme.palette.error.main }}>
+        <View.MenuItem
+          sx={{
+            color: isDeleting
+              ? theme.palette.action.disabled
+              : theme.palette.error.main,
+          }}
+          onClick={onDeleteForever}
+        >
           Delete Forever
         </View.MenuItem>
       </View.Menu>

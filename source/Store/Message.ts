@@ -24,9 +24,9 @@ export type Message = Types.Message;
 //
 //
 
-export type Msg = InsertResulted;
+export type Msg = InsertResulted | DeleteForeverResulted;
 
-export type Action = Insert;
+export type Action = Insert | DeleteForever;
 
 export const Insert = ({
   userId,
@@ -73,6 +73,20 @@ export const DeleteForever = ({ messageId }: { messageId: string }) => {
 };
 export type DeleteForever = ReturnType<typeof DeleteForever>;
 
+export const DeleteForeverResulted = (
+  messageId: string,
+  result: Result.Result<Problem, string>,
+) => {
+  return {
+    type: "Message/DeleteForeverResulted",
+    group: "Store",
+    entity: "Message",
+    messageId,
+    result,
+  } as const;
+};
+export type DeleteForeverResulted = ReturnType<typeof DeleteForeverResulted>;
+
 //
 //
 //
@@ -88,7 +102,21 @@ export const update = (
   model: Store,
 ): [Store, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (msg.type) {
-    case "Message/InsertResulted":
+    case "Message/DeleteForeverResulted": {
+      const modelNew = produce(model, (model) => {
+        model.mutations.Message.DeleteForever[msg.messageId] = pipe(
+          msg.result,
+          RemoteData.fromResult,
+        );
+        if (msg.result.type === "Ok") {
+          delete model.Message[msg.messageId];
+        }
+      });
+
+      return [modelNew, Cmd.None, []];
+    }
+
+    case "Message/InsertResulted": {
       const modelNew = produce(model, (model) => {
         model.mutations.Message.Insert[msg.conversationId] = pipe(
           msg.result,
@@ -102,6 +130,7 @@ export const update = (
       });
 
       return [modelNew, Cmd.None, []];
+    }
   }
 };
 
@@ -110,7 +139,23 @@ export const runAction = (
   model: Store,
 ): [Store, Cmd.Cmd<Msg>] => {
   switch (action.type) {
-    case "Message/Insert":
+    case "Message/DeleteForever": {
+      const modelNew = produce(model, (modelNew) => {
+        modelNew.mutations.Message.DeleteForever[action.messageId] =
+          RemoteData.Loading;
+      });
+      return [
+        modelNew,
+        pipe(
+          deleteForever({ messageId: action.messageId }),
+          Cmd.fromTask((result) =>
+            DeleteForeverResulted(action.messageId, result),
+          ),
+        ),
+      ];
+    }
+
+    case "Message/Insert": {
       const modelNew = produce(model, (model) => {
         model.mutations.Message.Insert[action.conversationId] =
           RemoteData.Loading;
@@ -129,6 +174,7 @@ export const runAction = (
           ),
         ),
       ];
+    }
   }
 };
 
@@ -168,4 +214,23 @@ const insert =
       userId: data.user_id,
       message: data.message,
     });
+  };
+
+const deleteForever =
+  ({
+    messageId,
+  }: {
+    messageId: string;
+  }): Task.Task<Result.Result<Problem, string>> =>
+  async () => {
+    const response = await Supabase.client
+      .from<definitions["message"]>("message")
+      .delete()
+      .eq("id", messageId);
+
+    if (response.error) {
+      return Result.Err({ message: response.error.message });
+    }
+
+    return Result.Ok(messageId);
   };

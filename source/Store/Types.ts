@@ -135,6 +135,9 @@ export type Mutations = {
     Insert: {
       [conversationId: string]: RemoteData.RemoteData<Problem, string>;
     };
+    DeleteForever: {
+      [messageId: string]: RemoteData.RemoteData<Problem, string>;
+    };
   };
 };
 
