@@ -1,7 +1,9 @@
 import * as Route from "Route";
 import * as Store from "Store";
 import * as View from "View";
-import { Cmd, RemoteData } from "Core";
+import { Cmd, Html, RemoteData } from "Core";
+import { ReactNode, useEffect, useLayoutEffect, useRef } from "react";
+import { refCount } from "rxjs";
 
 //
 //
@@ -101,58 +103,28 @@ export const view =
           <View.Box sx={{ paddingX: 2 }}></View.Box>
         </View.Toolbar>
 
-        <View.Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            p: 2,
-            marginX: 4,
-            textOverflow: "ellipsis",
-          }}
-        >
-          <View.AvatarGroup
-            sx={{ marginBottom: 2 }}
-            max={4}
-            componentsProps={{
-              additionalAvatar: { sx: { width: 64, height: 64 } },
-            }}
-          >
-            {conversation.profiles.map((profile) => (
-              <View.Avatar
-                key={profile.userId}
-                src={profile.avatarUrl}
-                sx={{ width: 64, height: 64 }}
-              />
-            ))}
-          </View.AvatarGroup>
+        <MessageContainer scrollKey={String(conversation.messages.length)}>
+          {viewHeader(conversation)(dispatch)}
 
-          <View.Typography
-            variant="h5"
-            align="center"
-            noWrap
-            sx={{ width: "100%" }}
-          >
-            {conversation.profiles
-              .map((profile) => profile.username)
-              .join(", ")}
-          </View.Typography>
-        </View.Box>
+          {query.type === "Loading" && (
+            <View.Box sx={{ display: "flex", justifyContent: "center", p: 2 }}>
+              <View.CircularProgress />
+            </View.Box>
+          )}
 
-        {query.type === "Loading" && (
-          <View.Box sx={{ display: "flex", justifyContent: "center", p: 2 }}>
-            <View.CircularProgress />
-          </View.Box>
-        )}
+          <View.Box sx={{ flex: 1 }}></View.Box>
+          {conversation.messages.map((message) => (
+            <View.Typography key={message.messageId}>
+              {message.message}
+            </View.Typography>
+          ))}
+        </MessageContainer>
 
-        <View.Box sx={{ flex: 1 }}></View.Box>
-        {conversation.messages.map((message) => (
-          <View.Typography key={message.messageId}>
-            {message.message}
-          </View.Typography>
-        ))}
         <View.Divider />
-        <View.Box sx={{ width: "100%", display: "flex", p: 2 }}>
+
+        <View.Box
+          sx={{ width: "100%", display: "flex", paddingX: 2, paddingY: 1 }}
+        >
           <View.InputBase
             value={model.text}
             onChange={(event) => {
@@ -176,3 +148,74 @@ export const view =
       </View.Page>
     );
   };
+
+const MessageContainer = ({
+  scrollKey,
+  children,
+}: {
+  scrollKey: string;
+  children: ReactNode;
+}) => {
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const ref = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (ref.current) {
+      ref.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [scrollKey]);
+
+  useLayoutEffect(() => {
+    if (ref.current) {
+      ref.current.scrollTop = ref.current.scrollHeight;
+    }
+  }, []);
+
+  return (
+    <View.Box ref={containerRef} sx={{ flex: 1, overflowY: "scroll" }}>
+      {children}
+      <div ref={ref} />
+    </View.Box>
+  );
+};
+
+const viewHeader =
+  (conversation: { profiles: Store.Profile.Profile[] }): View.View<Msg> =>
+  () =>
+    (
+      <View.Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          p: 2,
+          marginX: 4,
+          textOverflow: "ellipsis",
+        }}
+      >
+        <View.AvatarGroup
+          sx={{ marginBottom: 2 }}
+          max={4}
+          componentsProps={{
+            additionalAvatar: { sx: { width: 64, height: 64 } },
+          }}
+        >
+          {conversation.profiles.map((profile) => (
+            <View.Avatar
+              key={profile.userId}
+              src={profile.avatarUrl}
+              sx={{ width: 64, height: 64 }}
+            />
+          ))}
+        </View.AvatarGroup>
+
+        <View.Typography
+          variant="h5"
+          align="center"
+          noWrap
+          sx={{ width: "100%" }}
+        >
+          {conversation.profiles.map((profile) => profile.username).join(", ")}
+        </View.Typography>
+      </View.Box>
+    );

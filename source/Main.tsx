@@ -28,3 +28,11 @@ const root = ReactDomClient.createRoot(container!);
 Browser.run(program, (dom) => {
   root.render(dom);
 });
+
+program.state$.subscribe((state) => {
+  const size = new TextEncoder().encode(JSON.stringify(state.model)).length;
+  const kiloBytes = Math.round(size / 1024);
+  // const megaBytes = kiloBytes / 1024;
+
+  console.log(`[app] model memory size is ${kiloBytes} kiloBytes`);
+});
