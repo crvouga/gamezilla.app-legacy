@@ -13,6 +13,7 @@ import * as ChatNew from "./ChatNew";
 import * as Game from "./Game";
 import * as Home from "./Home";
 import * as Login from "./Login";
+import * as LoginEmail from "./LoginEmail";
 import * as Logout from "./Logout";
 import * as ProfileCreate from "./ProfileCreate";
 import * as ProfileDelete from "./ProfileDelete";
@@ -49,6 +50,7 @@ export type Model =
       page: "ChatConversation";
       conversationId: string;
     })
+  | (LoginEmail.Model & { page: "LoginEmail" })
   | { page: "Game" }
   | { page: "Loading" };
 
@@ -181,6 +183,7 @@ export const initReady = (
 
     case "ProfileCreate":
     case "Login":
+    case "LoginEmail":
       return [{ ...Home.init, page: "Home" }, Route.push({ type: "Home" }), []];
 
     default:
@@ -194,6 +197,9 @@ export const initSessionMissing = (
   switch (route.type) {
     case "Login":
       return [{ ...Login.init, page: "Login" }, Cmd.None];
+
+    case "LoginEmail":
+      return [{ ...LoginEmail.init, page: "LoginEmail" }, Cmd.None];
 
     default:
       return [{ ...Login.init, page: "Login" }, Route.push({ type: "Login" })];
@@ -234,6 +240,7 @@ export type Msg =
   | (Account.Msg & { page: "Account" })
   | (Home.Msg & { page: "Home" })
   | (Login.Msg & { page: "Login" })
+  | (LoginEmail.Msg & { page: "LoginEmail" })
   | (Logout.Msg & { page: "Logout" })
   | (ProfileCreate.Msg & { page: "ProfileCreate" })
   | (ProfileDelete.Msg & { page: "ProfileDelete" })
@@ -395,6 +402,7 @@ export const updateReady = (
     case "Login":
     case "Loading":
     case "ProfileCreate":
+    case "LoginEmail":
       return [model, Route.push({ type: "Home" }), []];
 
     default:
@@ -440,6 +448,7 @@ export const updateProfileMissing = (
     case "ProfileUpdateTheme":
     case "Game":
     case "Loading":
+    case "LoginEmail":
       return [model, Route.push({ type: "ProfileCreate" }), []];
 
     default:
@@ -455,6 +464,12 @@ export const updateSessionMissing = (
     case "Login":
       if (msg.page === "Login") {
         return tagUpdate("Login", Login.update(msg, model));
+      }
+      return [model, Cmd.None, []];
+
+    case "LoginEmail":
+      if (msg.page === "LoginEmail") {
+        return tagUpdate("LoginEmail", LoginEmail.update(msg, model));
       }
       return [model, Cmd.None, []];
 
@@ -539,6 +554,9 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
       return Sub.None;
 
     case "Loading":
+      return Sub.None;
+
+    case "LoginEmail":
       return Sub.None;
 
     default:
@@ -653,6 +671,9 @@ export const viewReady = (
     case "Loading":
       return viewLoading;
 
+    case "LoginEmail":
+      return viewLoading;
+
     default:
       return exhaustive(model);
   }
@@ -678,6 +699,9 @@ export const viewSessionMissing = (model: Model): View.View<Msg> => {
   switch (model.page) {
     case "Login":
       return tagView("Login", Login.view(model));
+
+    case "LoginEmail":
+      return tagView("LoginEmail", LoginEmail.view(model));
 
     default:
       return viewLoading;

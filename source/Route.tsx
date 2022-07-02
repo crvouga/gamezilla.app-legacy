@@ -12,6 +12,7 @@ export type Route =
   | { type: "Account" }
   | { type: "Home" }
   | { type: "Login" }
+  | { type: "LoginEmail" }
   | { type: "Logout" }
   | { type: "ProfileCreate" }
   | { type: "ProfileDelete" }
@@ -37,6 +38,7 @@ export const routesTypes: { [routeType in Route["type"]]: string } = {
   Account: "Account",
   Home: "Home",
   Login: "Login",
+  LoginEmail: "LoginEmail",
   Logout: "Logout",
   ProfileCreate: "ProfileCreate",
   ProfileDelete: "ProfileDelete",
