@@ -387,6 +387,7 @@ const ChatBubble = ({
           padding: 1,
           backgroundColor,
           color: textColor,
+          cursor: status === "idle" ? "pointer" : "default",
         }}
       >
         {message}
@@ -404,6 +405,7 @@ const ChatBubble = ({
           horizontal: "right",
         }}
       >
+        <View.MenuItem>Copy Text</View.MenuItem>
         <View.MenuItem sx={{ color: theme.palette.error.main }}>
           Delete Forever
         </View.MenuItem>
