@@ -440,7 +440,7 @@ const toThemeMode = (model: Model): View.ThemeMode => {
     case "SessionMissing":
     case "ProfileLoading":
     case "ProfileMissing":
-      return "Dark";
+      return "System";
     case "Ready":
       return status.profile.themeMode;
   }
