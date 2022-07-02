@@ -605,7 +605,10 @@ export const viewReady = (
     case "ChatConversation":
       return tagView(
         "ChatConversation",
-        ChatConversation.view(store, model.conversationId, model),
+        ChatConversation.view(
+          { store, conversationId: model.conversationId, authUser: profile },
+          model,
+        ),
       );
 
     case "Logout":
