@@ -331,7 +331,7 @@ const ChatBubble = ({
   return (
     <View.Typography
       sx={{
-        borderRadius: theme.spacing(3),
+        borderRadius: theme.spacing(2),
         display: "inline-block",
         padding: 1,
         backgroundColor,
