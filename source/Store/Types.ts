@@ -129,7 +129,7 @@ export type Mutations = {
     };
   };
   Conversation: {
-    GetElseCreate: RemoteData.RemoteData<Problem, string>;
+    FindElseInsert: RemoteData.RemoteData<Problem, string>;
   };
   Message: {
     Insert: {

@@ -1,7 +1,7 @@
 import * as Route from "Route";
 import * as Snackbar from "Snackbar";
 import * as Supabase from "Supabase";
-import { Cmd, RemoteData, Result, Task, pipe } from "Core";
+import { Cmd, Option, RemoteData, Result, Task, pipe } from "Core";
 import produce from "immer";
 import { definitions } from "supabase-types";
 import * as Types from "./Types";
@@ -32,40 +32,49 @@ export type Conversation = Types.Conversation;
 //
 //
 
-export type Msg = Inserted | FindManyResulted | FindOneResulted;
+export type Msg =
+  | FindOneElseInsertResulted
+  | FindManyResulted
+  | FindOneResulted;
 
-export type Action = Insert | FindManyByUserId | FindOne;
+export type Action = FindOneElseInsert | FindManyByUserId | FindOne;
 
-export const Insert = (creatorId: string, userIds: string[]) => {
+type FindOneResult = Result.Result<
+  Problem,
+  {
+    conversation: Conversation;
+    profiles: Profile[];
+    profilesConversations: ProfilesConversations[];
+    messages: Message[];
+  }
+>;
+
+export const FindOneElseInsert = (creatorId: string, userIds: string[]) => {
   return {
-    type: "Conversation/Insert",
+    type: "Conversation/FindOneElseInsert",
     group: "Store",
     entity: "Conversation",
     userIds,
     creatorId,
   } as const;
 };
-export type Insert = ReturnType<typeof Insert>;
+export type FindOneElseInsert = ReturnType<typeof FindOneElseInsert>;
 
-export const Inserted = (
+export const FindOneElseInsertResulted = (
   userIds: string[],
-  result: Result.Result<
-    Problem,
-    {
-      conversation: Conversation;
-      profilesConversations: ProfilesConversations[];
-    }
-  >,
+  result: FindOneResult,
 ) => {
   return {
-    type: "Conversation/Inserted",
+    type: "Conversation/FindOneElseInsertResulted",
     group: "Store",
     entity: "Conversation",
     userIds,
     result,
   } as const;
 };
-export type Inserted = ReturnType<typeof Inserted>;
+export type FindOneElseInsertResulted = ReturnType<
+  typeof FindOneElseInsertResulted
+>;
 
 export const FindManyByUserId = (userId: string) => {
   return {
@@ -77,18 +86,16 @@ export const FindManyByUserId = (userId: string) => {
 };
 export type FindManyByUserId = ReturnType<typeof FindManyByUserId>;
 
-type FindResult = Result.Result<
-  Problem,
-  {
-    conversations: Conversation[];
-    profiles: Profile[];
-    profilesConversations: ProfilesConversations[];
-  }
->;
-
 export const FindManyByUserIdResulted = (
   userId: string,
-  result: FindResult,
+  result: Result.Result<
+    Problem,
+    {
+      conversations: Conversation[];
+      profiles: Profile[];
+      profilesConversations: ProfilesConversations[];
+    }
+  >,
 ) => {
   return {
     type: "Conversation/FindManyByUserIdResulted",
@@ -112,10 +119,7 @@ export type FindOne = ReturnType<typeof FindOne>;
 
 export const FindOneResulted = (
   conversationId: string,
-  result: Result.Result<
-    Problem,
-    { conversation: Conversation; profiles: Profile[]; messages: Message[] }
-  >,
+  result: FindOneResult,
 ) => {
   return {
     type: "Conversation/FindOneResulted",
@@ -211,9 +215,9 @@ export const update = (
       return [modelNew, Cmd.None, []];
     }
 
-    case "Conversation/Inserted":
+    case "Conversation/FindOneElseInsertResulted":
       const modelNew = produce(model, (model) => {
-        model.mutations.Conversation.GetElseCreate = pipe(
+        model.mutations.Conversation.FindElseInsert = pipe(
           msg.result,
           RemoteData.fromResult,
           RemoteData.mapSuccess((value) => value.conversation.conversationId),
@@ -232,6 +236,7 @@ export const update = (
         }
       });
 
+      // todo put this logic elsewhere
       const cmdNew: Cmd.Cmd<Msg> =
         msg.result.type === "Ok"
           ? Route.replace({
@@ -290,22 +295,23 @@ export const runAction = (
       ];
     }
 
-    case "Conversation/Insert":
+    case "Conversation/FindOneElseInsert": {
       const modelNew = produce(model, (model) => {
-        model.mutations.Conversation.GetElseCreate = RemoteData.Loading;
+        model.mutations.Conversation.FindElseInsert = RemoteData.Loading;
       });
+
+      const userIds = [action.creatorId, ...action.userIds];
 
       return [
         modelNew,
-
         pipe(
-          insert({
-            creatorId: action.creatorId,
-            userIds: action.userIds,
-          }),
-          Cmd.fromTask((result) => Inserted(action.userIds, result)),
+          findOneElseInsert({ userIds }),
+          Cmd.fromTask((result) =>
+            FindOneElseInsertResulted(action.userIds, result),
+          ),
         ),
       ];
+    }
   }
 };
 
@@ -327,13 +333,8 @@ export const toConversation = (
 } => {
   const profiles = Object.values(store.ProfilesConversations)
     .filter((row) => row.conversationId === conversationId)
-    .flatMap((row) => {
-      const maybeProfile = store.Profile[row.userId];
-      if (maybeProfile) {
-        return [maybeProfile];
-      }
-      return [];
-    });
+    .map((item) => store.Profile[item.userId])
+    .flatMap((item) => (item ? [item] : []));
 
   const messages = Object.values(store.Message).filter(
     (item) => item.conversationId === conversationId,
@@ -361,20 +362,7 @@ const fromRow = (row: definitions["conversation"]): Conversation => {
 };
 
 const findOneById =
-  ({
-    conversationId,
-  }: {
-    conversationId: string;
-  }): Task.Task<
-    Result.Result<
-      Problem,
-      {
-        conversation: Conversation;
-        profiles: Profile[];
-        messages: Message[];
-      }
-    >
-  > =>
+  ({ conversationId }: { conversationId: string }): Task.Task<FindOneResult> =>
   async () => {
     const matchConversationIdResponse = await Supabase.client
       .from<definitions["profiles_conversations"]>("profiles_conversations")
@@ -411,6 +399,10 @@ const findOneById =
       conversation: {
         conversationId,
       },
+      profilesConversations: profilesResponse.data.map((item) => ({
+        conversationId,
+        userId: item.id,
+      })),
       profiles: profilesResponse.data.map(rowToProfile),
       messages: messagesResponse.data.map((item) => ({
         messageId: item.id,
@@ -501,12 +493,75 @@ const findManyByUserId =
     });
   };
 
-const insert =
+const findIdByUserIds =
   ({
-    creatorId,
     userIds,
   }: {
-    creatorId: string;
+    userIds: string[];
+  }): Task.Task<Result.Result<Problem, Option.Option<string>>> =>
+  async () => {
+    const profilesConversationsResponse = await Supabase.client
+      .from<definitions["profiles_conversations"]>("profiles_conversations")
+      .select("*")
+      .in("user_id", userIds);
+
+    if (profilesConversationsResponse.error) {
+      return Result.Err({
+        message: profilesConversationsResponse.error.message,
+      });
+    }
+
+    // todo. this should be in the database query
+    const userIdsbyConversationId = profilesConversationsResponse.data.reduce<{
+      [conversationId: string]: { [userId: string]: string };
+    }>(
+      (byId, item) => ({
+        ...byId,
+        [item.conversation_id]: {
+          ...(byId[item.conversation_id] ?? {}),
+          [item.user_id]: item.user_id,
+        },
+      }),
+      {},
+    );
+
+    const conversationId = Object.entries(userIdsbyConversationId)
+      .filter((entry) => userIds.every((userId) => userId in entry[1]))
+      .map((entry) => entry[0])
+      .at(0);
+
+    return Result.Ok(Option.fromNullable(conversationId));
+  };
+
+const findOneElseInsert =
+  ({ userIds }: { userIds: string[] }): Task.Task<FindOneResult> =>
+  async () => {
+    const findIdResult = await findIdByUserIds({ userIds })();
+
+    if (findIdResult.type === "Err") {
+      return findIdResult;
+    }
+    if (findIdResult.value.type === "None") {
+      const insertResult = await insert({ userIds })();
+
+      if (insertResult.type === "Err") {
+        return insertResult;
+      }
+
+      const conversationId = insertResult.value.conversation.conversationId;
+
+      return findOneById({ conversationId })();
+    }
+
+    const conversationId = findIdResult.value.value;
+
+    return findOneById({ conversationId })();
+  };
+
+const insert =
+  ({
+    userIds,
+  }: {
     userIds: string[];
   }): Task.Task<
     Result.Result<
@@ -536,7 +591,7 @@ const insert =
     } = await Supabase.client
       .from<definitions["profiles_conversations"]>("profiles_conversations")
       .insert(
-        [...userIds, creatorId].map((userId) => ({
+        userIds.map((userId) => ({
           conversation_id: conversation.conversationId,
           user_id: userId,
         })),
