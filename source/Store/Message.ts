@@ -1,6 +1,6 @@
 import * as Snackbar from "Snackbar";
 import * as Supabase from "Supabase";
-import { Cmd, RemoteData, Result, Task, pipe } from "Core";
+import { Cmd, RemoteData, Result, Task, Uuid, pipe } from "Core";
 import produce from "immer";
 import { definitions } from "supabase-types";
 import * as Types from "./Types";
@@ -31,12 +31,13 @@ export type Action = Insert;
 export const Insert = ({
   userId,
   conversationId,
-  message,
+  messageText: message,
 }: {
   userId: string;
   conversationId: string;
-  message: string;
+  messageText: string;
 }) => {
+  const messageId = Uuid.generateSync();
   return {
     type: "Message/Insert",
     group: "Store",
@@ -44,6 +45,7 @@ export const Insert = ({
     userId,
     conversationId,
     message,
+    messageId,
   } as const;
 };
 export type Insert = ReturnType<typeof Insert>;
