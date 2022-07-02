@@ -74,7 +74,18 @@ export const update = (
 //
 
 export const view =
-  (store: Store.Model, conversationId: string, model: Model): View.View<Msg> =>
+  (
+    {
+      store,
+      conversationId,
+      authUser,
+    }: {
+      store: Store.Model;
+      conversationId: string;
+      authUser: { userId: string };
+    },
+    model: Model,
+  ): View.View<Msg> =>
   (dispatch) => {
     const query =
       store.queries.Conversation.FindOne[conversationId] ?? RemoteData.NotAsked;
@@ -114,9 +125,23 @@ export const view =
 
           <View.Box sx={{ flex: 1 }}></View.Box>
           {conversation.messages.map((message) => (
-            <View.Typography key={message.messageId}>
-              {message.message}
-            </View.Typography>
+            <View.Box
+              key={message.messageId}
+              sx={{
+                paddingY: 1 / 2,
+                paddingX: 1,
+                width: "100%",
+                display: "flex",
+                justifyContent: "flex-end",
+              }}
+            >
+              <Bubble
+                variant={
+                  message.userId === authUser.userId ? "sented" : "received"
+                }
+                message={message.message}
+              />
+            </View.Box>
           ))}
         </MessageContainer>
 
@@ -172,7 +197,10 @@ const MessageContainer = ({
   }, []);
 
   return (
-    <View.Box ref={containerRef} sx={{ flex: 1, overflowY: "scroll" }}>
+    <View.Box
+      ref={containerRef}
+      sx={{ flex: 1, overflowY: "scroll", width: "100%", paddingBottom: 4 }}
+    >
       {children}
       <div ref={ref} />
     </View.Box>
@@ -219,3 +247,32 @@ const viewHeader =
         </View.Typography>
       </View.Box>
     );
+
+const Bubble = ({
+  message,
+  variant,
+}: {
+  message: string;
+  variant: "sented" | "received";
+}) => {
+  const theme = View.useTheme();
+  const backgroundColor =
+    variant === "sented"
+      ? theme.palette.primary.main
+      : theme.palette.background.paper;
+  const textColor = theme.palette.getContrastText(backgroundColor);
+
+  return (
+    <View.Typography
+      sx={{
+        borderRadius: 2,
+        display: "inline-block",
+        padding: 1,
+        backgroundColor,
+        color: textColor,
+      }}
+    >
+      {message}
+    </View.Typography>
+  );
+};
