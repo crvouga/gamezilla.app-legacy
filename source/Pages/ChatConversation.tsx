@@ -120,36 +120,47 @@ export const view =
           <View.Box sx={{ paddingX: 2 }}></View.Box>
         </View.Toolbar>
 
-        <MessageContainer scrollKey={String(conversation.messages.length)}>
-          {viewHeader(conversation)(dispatch)}
+        {query.type === "Loading" && (
+          <View.Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              p: 2,
+              flex: 1,
+            }}
+          >
+            <View.CircularProgress />
+          </View.Box>
+        )}
 
-          {query.type === "Loading" && (
-            <View.Box sx={{ display: "flex", justifyContent: "center", p: 2 }}>
-              <View.CircularProgress />
-            </View.Box>
-          )}
+        {query.type === "Success" && (
+          <MessageContainer scrollKey={String(conversation.messages.length)}>
+            {viewHeader(conversation)(dispatch)}
 
-          <View.Box sx={{ flex: 1 }}></View.Box>
-          {conversation.messages.map((message) => (
-            <View.Box
-              key={message.messageId}
-              sx={{
-                paddingY: 1 / 2,
-                paddingX: 1,
-                width: "100%",
-                display: "flex",
-                justifyContent: "flex-end",
-              }}
-            >
-              <ChatBubble
-                variant={
-                  message.userId === authUser.userId ? "sented" : "received"
-                }
-                message={message.message}
-              />
-            </View.Box>
-          ))}
-        </MessageContainer>
+            <View.Box sx={{ flex: 1 }}></View.Box>
+
+            {conversation.messages.map((message) => (
+              <View.Box
+                key={message.messageId}
+                sx={{
+                  paddingY: 1 / 2,
+                  paddingX: 1,
+                  width: "100%",
+                  display: "flex",
+                  justifyContent: "flex-end",
+                }}
+              >
+                <ChatBubble
+                  variant={
+                    message.userId === authUser.userId ? "sented" : "received"
+                  }
+                  message={message.message}
+                />
+              </View.Box>
+            ))}
+          </MessageContainer>
+        )}
 
         <ChatInput
           value={model.text}
@@ -174,15 +185,20 @@ const ChatInput = ({
 }) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const theme = View.useTheme();
-
+  const backgroundColor =
+    theme.palette.mode === "light"
+      ? theme.palette.grey["100"]
+      : theme.palette.grey["900"];
+  const textColor = theme.palette.getContrastText(backgroundColor);
   return (
-    <View.Box
+    <View.Paper
+      variant="outlined"
       sx={{
         width: "100%",
         display: "flex",
         paddingX: 2,
         paddingY: 1 / 2,
-        backgroundColor: theme.palette.grey["100"],
+        backgroundColor,
         borderRadius: theme.spacing(4),
       }}
     >
@@ -192,7 +208,7 @@ const ChatInput = ({
         onChange={(event) => {
           onChange(event.currentTarget.value);
         }}
-        sx={{ paddingLeft: 1, flex: 1 }}
+        sx={{ color: textColor, paddingLeft: 1, flex: 1 }}
         placeholder="Message..."
       />
 
@@ -213,7 +229,7 @@ const ChatInput = ({
           Send
         </View.Button>
       </View.Grow>
-    </View.Box>
+    </View.Paper>
   );
 };
 
@@ -227,7 +243,7 @@ const MessageContainer = ({
   const containerRef = useRef<HTMLDivElement | null>(null);
   const ref = useRef<HTMLDivElement | null>(null);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (ref.current) {
       ref.current.scrollIntoView({ behavior: "smooth" });
     }
@@ -242,7 +258,14 @@ const MessageContainer = ({
   return (
     <View.Box
       ref={containerRef}
-      sx={{ flex: 1, overflowY: "scroll", width: "100%", paddingBottom: 2 }}
+      sx={{
+        flex: 1,
+        overflowY: "scroll",
+        width: "100%",
+        paddingBottom: 2,
+        display: "flex",
+        flexDirection: "column",
+      }}
     >
       {children}
       <div ref={ref} />
