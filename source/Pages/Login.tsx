@@ -43,8 +43,8 @@ export const update = (
       return [
         { type: "LoggingIn", loginMethod: { type: "Google" } },
         Cmd.None,
-        [],
-        // [Session.Login({ type: "Google" })],
+
+        [Session.Login({ type: "Google" })],
       ];
 
     case "LoginFailed":
@@ -94,7 +94,10 @@ export const view =
             model.type === "LoggingIn" ? undefined : <View.Icons.GoogleAlt />
           }
           color="inherit"
-          sx={{ color: "text.secondary", marginBottom: 2 }}
+          sx={{
+            color: (theme) => theme.palette.grey[800],
+            marginBottom: 2,
+          }}
           onClick={() => {
             dispatch({ type: "ClickedGoogleLogin" });
           }}
@@ -105,9 +108,8 @@ export const view =
         <View.Button
           variant="contained"
           size="large"
-          disabled={model.type === "LoggingIn"}
           fullWidth
-          startIcon={<View.Icons.Email />}
+          // startIcon={<View.Icons.Email />}
           color="primary"
           sx={{ marginBottom: 1 }}
           onClick={() => {
