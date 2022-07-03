@@ -390,7 +390,7 @@ const GameIcon = ({ game }: { game: Game }) => {
       return <Chess.Icon />;
 
     case "ConnectFour":
-      return <ConnectFour.Icon />;
+      return <ConnectFour.Icon id="gameicon" />;
 
     case "TicTacToe":
       return <TicTacToe.Icon />;

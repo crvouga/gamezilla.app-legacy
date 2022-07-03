@@ -98,7 +98,7 @@ export const view =
           />
 
           <GameCard
-            icon={<Games.ConnectFour.Icon />}
+            icon={<Games.ConnectFour.Icon id="homepage" />}
             label="Connect Four"
             disabled={!canOpen(game, "ConnectFour")}
             onClick={() =>

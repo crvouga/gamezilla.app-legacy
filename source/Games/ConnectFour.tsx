@@ -225,13 +225,13 @@ function* filter<T>(predicate: (item: T) => boolean, generator: Generator<T>) {
 //
 //
 
-export const Icon = () => {
+export const Icon = ({ id }: { id: string }) => {
   const ids = {
-    playerOneGradient: "playerOneGradient",
-    playerTwoGradient: "playerTwoGradient",
-    holePattern: "holePattern",
-    columnGradient: "columnGradient",
-    holemask: "holemask",
+    playerOneGradient: `${id}-playerOneGradient`,
+    playerTwoGradient: `${id}-playerTwoGradient`,
+    holePattern: `${id}-holePattern`,
+    columnGradient: `${id}-columnGradient`,
+    holemask: `${id}-holemask`,
   };
 
   const playerOneFill = `url(#${ids.playerOneGradient})`;
