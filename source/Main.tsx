@@ -1,5 +1,6 @@
 import * as ReactDomClient from "react-dom/client";
-import { Browser, Option, pipe } from "Core";
+import { Browser } from "Core";
+import { useEffect } from "react";
 import * as App from "./App";
 import * as ReduxDevTools from "./Core/Debug/ReduxDevTools";
 
@@ -25,8 +26,22 @@ const container = document.getElementById("root");
 
 const root = ReactDomClient.createRoot(container!);
 
-Browser.run(program, (dom) => {
-  root.render(dom);
+const CleanUp = () => {
+  useEffect(() => {
+    return () => {
+      stop();
+    };
+  }, []);
+  return <div />;
+};
+
+const stop = Browser.run(program, (dom) => {
+  root.render(
+    <>
+      {dom}
+      <CleanUp />
+    </>,
+  );
 });
 
 program.state$.subscribe((state) => {
