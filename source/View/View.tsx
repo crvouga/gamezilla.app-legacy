@@ -46,11 +46,14 @@ const createTheme = ({ mode }: { mode: "light" | "dark" }) =>
       },
       components: {
         MuiButton: {
+          defaultProps: {
+            disableElevation: true,
+          },
           styleOverrides: {
             root: {
               textTransform: "capitalize",
               fontWeight: 800,
-              borderRadius: "120px",
+              // borderRadius: "120px",
             },
           },
         },
@@ -208,7 +211,9 @@ export const ListItemSecondaryAction = Mui.ListItemSecondaryAction;
 
 export const Paper = Mui.Paper;
 
-export const Button = MuiLab.LoadingButton;
+export const Button = (props: MuiLab.LoadingButtonProps) => {
+  return <MuiLab.LoadingButton {...props} />;
+};
 
 export const Typography = Mui.Typography;
 
@@ -295,7 +300,7 @@ export const Header = ({
         {left}
       </Box>
 
-      <Typography sx={{ flex: 2 }} align="center" variant="h6">
+      <Typography sx={{ flex: 3 }} align="center" variant="h6">
         {title}
       </Typography>
 
