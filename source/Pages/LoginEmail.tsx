@@ -59,9 +59,9 @@ export const view =
               onClick={() => dispatch({ type: "ClickedBack" })}
             />
           }
-          title="Email"
+          title="Continue With Email"
         />
-        <View.Box sx={{ p: 2 }}>
+        <View.Box sx={{ paddingX: 2 }}>
           <View.TextField
             autoFocus
             sx={{ marginBottom: 2 }}
@@ -76,12 +76,8 @@ export const view =
               });
             }}
           />
-          <View.Button
-            sx={{ marginTop: 1 }}
-            variant="contained"
-            size="large"
-            fullWidth
-          >
+
+          <View.Button variant="contained" size="large" fullWidth>
             Next
           </View.Button>
         </View.Box>
