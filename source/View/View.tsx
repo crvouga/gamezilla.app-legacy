@@ -211,9 +211,7 @@ export const ListItemSecondaryAction = Mui.ListItemSecondaryAction;
 
 export const Paper = Mui.Paper;
 
-export const Button = (props: MuiLab.LoadingButtonProps) => {
-  return <MuiLab.LoadingButton {...props} />;
-};
+export const Button = MuiLab.LoadingButton;
 
 export const Typography = Mui.Typography;
 
