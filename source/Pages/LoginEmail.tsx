@@ -61,7 +61,8 @@ export const view =
           }
           title="Continue With Email"
         />
-        <View.Box sx={{ paddingX: 2 }}>
+        <View.Divider />
+        <View.Box sx={{ padding: 2 }}>
           <View.TextField
             autoFocus
             sx={{ marginBottom: 2 }}
