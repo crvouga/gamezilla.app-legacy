@@ -1,6 +1,6 @@
 import * as MuiLab from "@mui/lab";
 import * as Mui from "@mui/material";
-import { blue } from "@mui/material/colors";
+import { blue, purple } from "@mui/material/colors";
 import { Html, Platform } from "Core";
 import { useMemo } from "react";
 import * as Icons from "./Icons";
@@ -37,6 +37,7 @@ const createTheme = ({ mode }: { mode: "light" | "dark" }) =>
       palette: {
         mode: mode,
         primary: blue,
+        // primary: purple,
       },
       typography: {
         fontFamily: ["Nunito"].join(","),
@@ -286,7 +287,7 @@ export const Header = ({
   right?: React.ReactNode;
 }) => {
   return (
-    <Mui.Toolbar>
+    <Mui.Toolbar sx={{ position: "sticky", top: 0 }}>
       <Box
         sx={{
           flex: 1,
