@@ -527,8 +527,7 @@ const findIdByUserIds =
 
     const conversationId = Object.entries(userIdsbyConversationId)
       .filter((entry) => userIds.every((userId) => userId in entry[1]))
-      .map((entry) => entry[0])
-      .at(0);
+      .map((entry) => entry[0])[0];
 
     return Result.Ok(Option.fromNullable(conversationId));
   };
