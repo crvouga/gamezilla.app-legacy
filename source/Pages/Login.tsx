@@ -119,6 +119,7 @@ const ContinueWithGoogleButton = ({
       variant="contained"
       size="large"
       loading={isLoading}
+      //todo fix this hack
       disabled={isLoading}
       fullWidth
       startIcon={
@@ -130,7 +131,8 @@ const ContinueWithGoogleButton = ({
         isLoading ? undefined : "inherit"
       }
       sx={{
-        color: (theme) => theme.palette.grey[800],
+        //todo fix this hack
+        color: (theme) => (isLoading ? undefined : theme.palette.grey[800]),
       }}
       onClick={onClick}
     >
