@@ -236,10 +236,15 @@ export const view =
           <View.Box sx={{ flex: 1 }} />
 
           <View.Typography align="center" color="text.secondary" sx={{ p: 2 }}>
-            Or don't already have an account?
+            Don't already have an account?
           </View.Typography>
 
-          <View.Button size="large" fullWidth variant="outlined">
+          <View.Button
+            size="large"
+            fullWidth
+            variant="outlined"
+            sx={{ marginBottom: 1 }}
+          >
             Create New Account
           </View.Button>
         </View.Box>
