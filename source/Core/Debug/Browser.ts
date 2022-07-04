@@ -56,9 +56,9 @@ const createApplication = <Model, Msg, Dom>({
   view: (model: Model) => Html.Html<Dom, Msg>;
   subscriptions: (model: Model) => Sub.Sub<Msg>;
 }): Program<Model, Msg, Dom> => {
-  const history = History.createBrowserHistory(); // this is needed only to generate init model for debug$ :S
+  // const history = History.createBrowserHistory(); // this is needed only to generate init model for debug$ :S
 
-  const initModel = init(history.location)[0];
+  const initModel = init(Browser.getLocation())[0];
 
   const debug$ = new Rx.BehaviorSubject<DebugData<Model, Msg>>([
     debugInit(),

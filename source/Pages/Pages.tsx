@@ -1,3 +1,4 @@
+import * as EmailAddress from "EmailAddress";
 import * as Games from "Games";
 import * as Route from "Route";
 import * as Session from "Session";
@@ -14,6 +15,7 @@ import * as Game from "./Game";
 import * as Home from "./Home";
 import * as Login from "./Login";
 import * as LoginEmail from "./LoginEmail";
+import * as LoginEmailPassword from "./LoginEmailPassword";
 import * as Logout from "./Logout";
 import * as ProfileCreate from "./ProfileCreate";
 import * as ProfileDelete from "./ProfileDelete";
@@ -51,6 +53,10 @@ export type Model =
       conversationId: string;
     })
   | (LoginEmail.Model & { page: "LoginEmail" })
+  | (LoginEmailPassword.Model & {
+      page: "LoginEmailPassword";
+      emailAddress: EmailAddress.EmailAddress;
+    })
   | { page: "Game" }
   | { page: "Loading" };
 
@@ -184,6 +190,7 @@ export const initReady = (
     case "ProfileCreate":
     case "Login":
     case "LoginEmail":
+    case "LoginEmailPassword":
       return [{ ...Home.init, page: "Home" }, Route.push({ type: "Home" }), []];
 
     default:
@@ -201,8 +208,34 @@ export const initSessionMissing = (
     case "LoginEmail":
       return [{ ...LoginEmail.init, page: "LoginEmail" }, Cmd.None];
 
-    default:
+    case "LoginEmailPassword":
+      return [
+        {
+          ...LoginEmailPassword.init,
+          emailAddress: route.emailAddress,
+          page: "LoginEmailPassword",
+        },
+        Cmd.None,
+      ];
+
+    case "Account":
+    case "Chat":
+    case "ChatConversation":
+    case "ChatNew":
+    case "Game":
+    case "Home":
+    case "Logout":
+    case "ProfileCreate":
+    case "ProfileDelete":
+    case "ProfileUpdate":
+    case "ProfileUpdateAvatar":
+    case "ProfileUpdateTheme":
+    case "ProfileUpdateName":
+    case "ProfileUpdateUsername":
       return [{ ...Login.init, page: "Login" }, Route.push({ type: "Login" })];
+
+    default:
+      return exhaustive(route);
   }
 };
 
@@ -220,11 +253,27 @@ export const initProfileMissing = (
     case "Logout":
       return [{ ...Logout.init, page: "Logout" }, Cmd.None];
 
-    default:
+    case "Account":
+    case "Chat":
+    case "ChatConversation":
+    case "ChatNew":
+    case "Game":
+    case "Home":
+    case "ProfileDelete":
+    case "ProfileUpdate":
+    case "ProfileUpdateAvatar":
+    case "ProfileUpdateTheme":
+    case "ProfileUpdateName":
+    case "ProfileUpdateUsername":
+    case "Login":
+    case "LoginEmail":
+    case "LoginEmailPassword":
       return [
         { ...ProfileCreate.init(session), page: "ProfileCreate" },
         Route.push({ type: "ProfileCreate" }),
       ];
+    default:
+      return exhaustive(route);
   }
 };
 
@@ -241,6 +290,7 @@ export type Msg =
   | (Home.Msg & { page: "Home" })
   | (Login.Msg & { page: "Login" })
   | (LoginEmail.Msg & { page: "LoginEmail" })
+  | (LoginEmailPassword.Msg & { page: "LoginEmailPassword" })
   | (Logout.Msg & { page: "Logout" })
   | (ProfileCreate.Msg & { page: "ProfileCreate" })
   | (ProfileDelete.Msg & { page: "ProfileDelete" })
@@ -403,6 +453,7 @@ export const updateReady = (
     case "Loading":
     case "ProfileCreate":
     case "LoginEmail":
+    case "LoginEmailPassword":
       return [model, Route.push({ type: "Home" }), []];
 
     default:
@@ -449,6 +500,7 @@ export const updateProfileMissing = (
     case "Game":
     case "Loading":
     case "LoginEmail":
+    case "LoginEmailPassword":
       return [model, Route.push({ type: "ProfileCreate" }), []];
 
     default:
@@ -470,6 +522,28 @@ export const updateSessionMissing = (
     case "LoginEmail":
       if (msg.page === "LoginEmail") {
         return tagUpdate("LoginEmail", LoginEmail.update(msg, model));
+      }
+      return [model, Cmd.None, []];
+
+    case "LoginEmailPassword":
+      if (msg.page === "LoginEmailPassword") {
+        const [modelNew, cmd, actions = []] = LoginEmailPassword.update(
+          msg,
+          model,
+        );
+
+        return [
+          {
+            ...modelNew,
+            emailAddress: model.emailAddress,
+            page: "LoginEmailPassword",
+          },
+          pipe(
+            cmd,
+            Cmd.map((msg) => ({ ...msg, page: "LoginEmailPassword" })),
+          ),
+          actions,
+        ];
       }
       return [model, Cmd.None, []];
 
@@ -557,6 +631,9 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
       return Sub.None;
 
     case "LoginEmail":
+      return Sub.None;
+
+    case "LoginEmailPassword":
       return Sub.None;
 
     default:
@@ -674,6 +751,9 @@ export const viewReady = (
     case "LoginEmail":
       return viewLoading;
 
+    case "LoginEmailPassword":
+      return viewLoading;
+
     default:
       return exhaustive(model);
   }
@@ -690,8 +770,26 @@ export const viewProfileMissing = (
     case "ProfileCreate":
       return tagView("ProfileCreate", ProfileCreate.view(model));
 
-    default:
+    case "Account":
+    case "Chat":
+    case "ChatConversation":
+    case "ChatNew":
+    case "Game":
+    case "Home":
+    case "ProfileDelete":
+    case "ProfileUpdate":
+    case "ProfileUpdateAvatar":
+    case "ProfileUpdateTheme":
+    case "ProfileUpdateName":
+    case "ProfileUpdateUsername":
+    case "Login":
+    case "LoginEmail":
+    case "LoginEmailPassword":
+    case "Loading":
       return viewLoading;
+
+    default:
+      return exhaustive(model);
   }
 };
 
@@ -703,8 +801,31 @@ export const viewSessionMissing = (model: Model): View.View<Msg> => {
     case "LoginEmail":
       return tagView("LoginEmail", LoginEmail.view(model));
 
-    default:
+    case "LoginEmailPassword":
+      return tagView(
+        "LoginEmailPassword",
+        LoginEmailPassword.view({ emailAddress: model.emailAddress }, model),
+      );
+
+    case "Account":
+    case "Chat":
+    case "ChatConversation":
+    case "ChatNew":
+    case "Game":
+    case "Home":
+    case "Logout":
+    case "ProfileCreate":
+    case "ProfileDelete":
+    case "ProfileUpdate":
+    case "ProfileUpdateAvatar":
+    case "ProfileUpdateTheme":
+    case "ProfileUpdateName":
+    case "ProfileUpdateUsername":
+    case "Loading":
       return viewLoading;
+
+    default:
+      return exhaustive(model);
   }
 };
 

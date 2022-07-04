@@ -259,7 +259,7 @@ export const Field = ({
 }: {
   label: string;
   value: string;
-  onClick: () => void;
+  onClick?: () => void;
 }) => (
   <ListItemButton onClick={onClick}>
     <ListItemText

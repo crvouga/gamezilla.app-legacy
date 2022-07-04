@@ -1,3 +1,4 @@
+import * as EmailAddress from "EmailAddress";
 import { Browser, Option } from "Core";
 
 //
@@ -13,6 +14,7 @@ export type Route =
   | { type: "Home" }
   | { type: "Login" }
   | { type: "LoginEmail" }
+  | { type: "LoginEmailPassword"; emailAddress: EmailAddress.EmailAddress }
   | { type: "Logout" }
   | { type: "ProfileCreate" }
   | { type: "ProfileDelete" }
@@ -39,6 +41,7 @@ export const routesTypes: { [routeType in Route["type"]]: string } = {
   Home: "Home",
   Login: "Login",
   LoginEmail: "LoginEmail",
+  LoginEmailPassword: "LoginEmailPassword",
   Logout: "Logout",
   ProfileCreate: "ProfileCreate",
   ProfileDelete: "ProfileDelete",
@@ -53,37 +56,65 @@ export const routesTypes: { [routeType in Route["type"]]: string } = {
   ChatConversation: "ChatConversation",
 };
 
+const emailAddressQueryKey = "emailAddress";
+
 const isRouteType = (routeType: unknown): routeType is Route["type"] => {
   return typeof routeType === "string" && routeType in routesTypes;
 };
 
-export const decode = (pathname: string): Option.Option<Route> => {
-  const [first, second] = pathname.substring(1).split("/");
+export const decode = (location: Browser.Location): Option.Option<Route> => {
+  const [first, second] = location.pathname.substring(1).split("/");
 
-  if (isRouteType(first)) {
-    if (first === "ChatConversation") {
-      if (typeof second === "string") {
-        return Option.Some({
-          type: "ChatConversation",
-          conversationId: second,
-        });
-      }
-
-      return Option.None;
-    }
-
-    return Option.Some({ type: first });
+  if (!isRouteType(first)) {
+    return Option.None;
   }
 
-  return Option.None;
+  switch (first) {
+    case "ChatConversation": {
+      if (typeof second !== "string") {
+        return Option.None;
+      }
+      return Option.Some({
+        type: "ChatConversation",
+        conversationId: second,
+      });
+    }
+
+    case "LoginEmailPassword":
+      const value = location.query[emailAddressQueryKey];
+
+      console.log(value);
+      if (!value) {
+        return Option.None;
+      }
+
+      const decoded = EmailAddress.decode(value);
+
+      console.log(decoded);
+
+      if (decoded.type === "Err") {
+        return Option.None;
+      }
+
+      return Option.Some({ type: first, emailAddress: decoded.value });
+
+    default: {
+      return Option.Some({ type: first });
+    }
+  }
 };
 
 export const encode = (route: Route): string => {
-  if (route.type === "ChatConversation") {
-    return `/${route.type}/${route.conversationId}`;
-  }
+  switch (route.type) {
+    case "ChatConversation":
+      return `/${route.type}/${route.conversationId}`;
 
-  return `/${route.type}`;
+    case "LoginEmailPassword":
+      return `/${route.type}?${emailAddressQueryKey}=${route.emailAddress}`;
+
+    default:
+      return `/${route.type}`;
+  }
 };
 
 //

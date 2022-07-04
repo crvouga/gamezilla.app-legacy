@@ -5,6 +5,7 @@ import * as Html from "./Html";
 import * as Option from "./Option";
 import * as Platform from "./Platform";
 import * as Sub from "./Sub";
+import { pipe } from "./pipe";
 
 //
 //
@@ -28,14 +29,33 @@ export type Renderer<Dom> = (dom: Dom) => void;
 //
 //
 
-export type Location = History.Location;
+export type Location = {
+  pathname: string;
+  query: { [key: string]: string };
+};
 
 export const history = History.createBrowserHistory();
 
 export const location$ = new Rx.Subject<Location>();
 
+const fromHistoryLocation = (location: History.Location): Location => {
+  const query = pipe(
+    location.search,
+    (search) => new URLSearchParams(search).entries(),
+    (entries) => Object.fromEntries(entries),
+  );
+  return {
+    pathname: location.pathname,
+    query: query,
+  };
+};
+
+export const getLocation = () => {
+  return fromHistoryLocation(history.location);
+};
+
 history.listen((historyUpdate) => {
-  location$.next(historyUpdate.location);
+  location$.next(fromHistoryLocation(historyUpdate.location));
 });
 
 //
@@ -103,7 +123,7 @@ export const Application = <Model, Msg, Dom>({
     Sub.batch([subscriptions(model), onChangeLocation$]);
 
   return Element({
-    init: init(history.location),
+    init: init(getLocation()),
     update,
     view,
     subscriptions: subs,

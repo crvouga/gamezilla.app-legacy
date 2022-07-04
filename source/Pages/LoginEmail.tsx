@@ -2,7 +2,7 @@ import * as EmailAddress from "EmailAddress";
 import * as Route from "Route";
 import * as Store from "Store";
 import * as View from "View";
-import { Cmd, pipe } from "Core";
+import { Cmd, Option, pipe } from "Core";
 
 //
 //
@@ -13,7 +13,7 @@ import { Cmd, pipe } from "Core";
 //
 
 export type Model = {
-  emailAddress: string;
+  emailAddressInput: string;
   submission:
     | { type: "Idle" }
     | { type: "Loading" }
@@ -23,7 +23,7 @@ export type Model = {
 
 export const init: Model = {
   submission: { type: "Idle" },
-  emailAddress: "",
+  emailAddressInput: "",
 };
 
 //
@@ -36,9 +36,13 @@ export const init: Model = {
 
 export type Msg =
   | { type: "ClickedBack" }
-  | { type: "InputtedEmailAddress"; emailAddress: string }
-  | { type: "ClickedSubmit" }
-  | { type: "FindAccountResulted"; result: Store.Account.FindResult };
+  | { type: "InputtedEmailAddress"; emailAddressInput: string }
+  | { type: "ClickedContinue" }
+  | {
+      type: "FindAccountResulted";
+      emailAddress: EmailAddress.EmailAddress;
+      result: Store.Account.FindResult;
+    };
 
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg.type) {
@@ -55,13 +59,13 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
         {
           ...model,
           submission: submissionNew,
-          emailAddress: msg.emailAddress,
+          emailAddressInput: msg.emailAddressInput,
         },
         Cmd.None,
       ];
 
-    case "ClickedSubmit":
-      const decoded = EmailAddress.decode(model.emailAddress);
+    case "ClickedContinue":
+      const decoded = EmailAddress.decode(model.emailAddressInput);
       switch (decoded.type) {
         case "Err":
           return [
@@ -87,6 +91,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
               }),
               Cmd.fromTask((result) => ({
                 type: "FindAccountResulted",
+                emailAddress: decoded.value,
                 result,
               })),
             ),
@@ -108,7 +113,25 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
           ];
 
         case "Ok":
-          return [{ ...model, submission: { type: "Idle" } }, Cmd.None];
+          switch (msg.result.value.type) {
+            case "None":
+              return [
+                { ...model, submission: { type: "Idle" } },
+                Route.push({
+                  type: "LoginEmailPassword",
+                  emailAddress: msg.emailAddress,
+                }),
+              ];
+
+            case "Some":
+              return [
+                { ...model, submission: { type: "Idle" } },
+                Route.push({
+                  type: "LoginEmailPassword",
+                  emailAddress: msg.emailAddress,
+                }),
+              ];
+          }
       }
   }
 };
@@ -123,8 +146,8 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
 export const view =
   (model: Model): View.View<Msg> =>
-  (dispatch) =>
-    (
+  (dispatch) => {
+    return (
       <View.Page>
         <View.Header
           left={
@@ -143,7 +166,7 @@ export const view =
             fullWidth
             inputMode="email"
             label="Email Address"
-            value={model.emailAddress}
+            value={model.emailAddressInput}
             helperText={
               model.submission.type === "ProblemValidation"
                 ? model.submission.message
@@ -153,7 +176,7 @@ export const view =
             onChange={(event) => {
               dispatch({
                 type: "InputtedEmailAddress",
-                emailAddress: event.target.value,
+                emailAddressInput: event.target.value,
               });
             }}
           />
@@ -163,7 +186,7 @@ export const view =
             size="large"
             fullWidth
             loading={model.submission.type === "Loading"}
-            onClick={() => dispatch({ type: "ClickedSubmit" })}
+            onClick={() => dispatch({ type: "ClickedContinue" })}
           >
             Continue
           </View.Button>
@@ -176,3 +199,4 @@ export const view =
         </View.Box>
       </View.Page>
     );
+  };
