@@ -3,6 +3,8 @@ import * as ProfileAvatar from "../source/ProfileAvatar";
 import { definitions } from "../source/supabase-types";
 import { supabaseClient } from "./supabase-client";
 
+const password = "password";
+
 const run = async () => {
   for (let i = 0; i < 10; i++) {
     const name = faker.name.findName();
@@ -11,7 +13,7 @@ const run = async () => {
     const { data: user, error: createUserError } =
       await supabaseClient.auth.api.createUser({
         email,
-        password: "password",
+        password,
       });
 
     if (createUserError) {
@@ -25,7 +27,7 @@ const run = async () => {
       style: ProfileAvatar.randomStyle(),
     });
 
-    const row: definitions["profile"] = {
+    const row: definitions["user_profile"] = {
       id: user.id,
       name,
       username,
@@ -33,7 +35,9 @@ const run = async () => {
       avatar_url,
     };
 
-    await supabaseClient.from<definitions["profile"]>("profile").insert([row]);
+    await supabaseClient
+      .from<definitions["user_profile"]>("profile")
+      .insert([row]);
 
     console.info("created user ", user.id);
   }

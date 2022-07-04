@@ -11,7 +11,7 @@ export const run = async () => {
 
   for (const user of users) {
     await supabaseClient
-      .from<definitions["profile"]>("profile")
+      .from<definitions["user_profile"]>("profile")
       .delete()
       .eq("id", user.id);
 

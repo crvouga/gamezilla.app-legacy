@@ -1,6 +1,6 @@
 import * as Snackbar from "Snackbar";
 import * as Rx from "rxjs";
-import { Cmd, RemoteData, Result, Task, pipe } from "Core";
+import { Cmd, Option, RemoteData, Result, Task, pipe } from "Core";
 import { exhaustive } from "Utility";
 import produce from "immer";
 import { matchSorter } from "match-sorter";
@@ -514,7 +514,7 @@ export const searchProfiles = (nameOrUsername: string, store: Model) => {
 //
 
 export const rowThemeModeToThemeMode = (
-  themeMode: definitions["profile"]["theme_mode"],
+  themeMode: definitions["user_profile"]["theme_mode"],
 ): Profile["themeMode"] => {
   switch (themeMode) {
     case "DARK":
@@ -530,7 +530,7 @@ export const rowThemeModeToThemeMode = (
 
 const fromThemeMode = (
   themeMode: Profile["themeMode"],
-): definitions["profile"]["theme_mode"] => {
+): definitions["user_profile"]["theme_mode"] => {
   switch (themeMode) {
     case "Dark":
       return "DARK";
@@ -543,7 +543,7 @@ const fromThemeMode = (
   }
 };
 
-export const rowToProfile = (row: definitions["profile"]): Profile => {
+export const rowToProfile = (row: definitions["user_profile"]): Profile => {
   return {
     userId: row.id,
     avatarUrl: row.avatar_url,
@@ -561,7 +561,7 @@ export const load =
   }): Task.Task<Result.Result<Problem, Profile>> =>
   async () => {
     const response = await Supabase.client
-      .from<definitions["profile"]>("profile")
+      .from<definitions["user_profile"]>("profile")
       .select("*")
       .eq("id", userId)
       .single();
@@ -587,7 +587,7 @@ export const create =
   }): Task.Task<Result.Result<Problem, Profile>> =>
   async () => {
     const response = await Supabase.client
-      .from<definitions["profile"]>("profile")
+      .from<definitions["user_profile"]>("profile")
       .insert({
         id: userId,
         name,
@@ -610,7 +610,7 @@ export const deleteForever =
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
     const response = await Supabase.client
-      .from<definitions["profile"]>("profile")
+      .from<definitions["user_profile"]>("profile")
       .delete()
       .match({ id: userId });
 
@@ -629,7 +629,7 @@ export const search =
   }): Task.Task<Result.Result<Problem, Profile[]>> =>
   async () => {
     const response = await Supabase.client
-      .from<definitions["profile"]>("profile")
+      .from<definitions["user_profile"]>("profile")
       .select("*")
       .ilike(
         "name",
@@ -655,7 +655,7 @@ export const edit =
   ): Task.Task<Result.Result<Problem, Profile>> =>
   async () => {
     const response = await Supabase.client
-      .from<definitions["profile"]>("profile")
+      .from<definitions["user_profile"]>("profile")
       .update({
         username: edits.username,
         name: edits.name,
@@ -677,7 +677,7 @@ export const edit =
 export const subscriptions = ({ userId }: { userId: string }): Sub.Sub<Msg> => {
   return new Rx.Observable<Msg>((subscriber) => {
     const subscription = Supabase.client
-      .from<definitions["profile"]>(`profile:id=eq.${userId}`)
+      .from<definitions["user_profile"]>(`profile:id=eq.${userId}`)
       .on("INSERT", (payload) => {
         const profile = rowToProfile(payload.new);
         subscriber.next(Received(profile));
@@ -696,18 +696,4 @@ export const subscriptions = ({ userId }: { userId: string }): Sub.Sub<Msg> => {
       subscription.unsubscribe();
     };
   });
-};
-
-//
-//
-//
-// Helpers
-//
-//
-//
-
-const removeKey = <T,>(key: keyof T, record: T): Omit<T, keyof T> => {
-  const { [key]: _value, ...removed } = record;
-
-  return removed;
 };

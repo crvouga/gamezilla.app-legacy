@@ -1,6 +1,8 @@
+import * as EmailAddress from "EmailAddress";
 import * as Route from "Route";
+import * as Store from "Store";
 import * as View from "View";
-import { Cmd } from "Core";
+import { Cmd, Result, pipe } from "Core";
 
 //
 //
@@ -12,9 +14,15 @@ import { Cmd } from "Core";
 
 export type Model = {
   emailAddress: string;
+  submission:
+    | { type: "Idle" }
+    | { type: "Loading" }
+    | { type: "ProblemValidation"; message: string }
+    | { type: "Problem"; message: string };
 };
 
 export const init: Model = {
+  submission: { type: "Idle" },
   emailAddress: "",
 };
 
@@ -29,7 +37,8 @@ export const init: Model = {
 export type Msg =
   | { type: "ClickedBack" }
   | { type: "InputtedEmailAddress"; emailAddress: string }
-  | { type: "ClickedSubmit" };
+  | { type: "ClickedSubmit" }
+  | { type: "FindUserResulted"; result: Store.User.FindResult };
 
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg.type) {
@@ -37,10 +46,67 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
       return [model, Route.back];
 
     case "InputtedEmailAddress":
-      return [{ ...model, emailAddress: msg.emailAddress }, Cmd.None];
+      const submissionNew: Model["submission"] =
+        model.submission.type === "ProblemValidation"
+          ? { type: "Idle" }
+          : model.submission;
+
+      return [
+        {
+          ...model,
+          submission: submissionNew,
+          emailAddress: msg.emailAddress,
+        },
+        Cmd.None,
+      ];
 
     case "ClickedSubmit":
-      return [model, Cmd.None];
+      const decoded = EmailAddress.decode(model.emailAddress);
+      switch (decoded.type) {
+        case "Err":
+          return [
+            {
+              ...model,
+              submission: {
+                type: "ProblemValidation",
+                message: decoded.error.message,
+              },
+            },
+            Cmd.None,
+          ];
+
+        case "Ok":
+          return [
+            {
+              ...model,
+              submission: { type: "Loading" },
+            },
+            pipe(
+              Store.User.findByEmailAddress({
+                emailAddress: decoded.value,
+              }),
+              Cmd.fromTask((result) => ({ type: "FindUserResulted", result })),
+            ),
+          ];
+      }
+
+    case "FindUserResulted":
+      switch (msg.result.type) {
+        case "Err":
+          return [
+            {
+              ...model,
+              submission: {
+                type: "Problem",
+                message: msg.result.error.message,
+              },
+            },
+            Cmd.None,
+          ];
+
+        case "Ok":
+          return [{ ...model, submission: { type: "Idle" } }, Cmd.None];
+      }
   }
 };
 
@@ -72,8 +138,15 @@ export const view =
             sx={{ marginBottom: 2 }}
             type="email"
             fullWidth
+            inputMode="email"
             label="Email Address"
             value={model.emailAddress}
+            helperText={
+              model.submission.type === "ProblemValidation"
+                ? model.submission.message
+                : ""
+            }
+            error={model.submission.type === "ProblemValidation"}
             onChange={(event) => {
               dispatch({
                 type: "InputtedEmailAddress",
@@ -86,10 +159,17 @@ export const view =
             variant="contained"
             size="large"
             fullWidth
+            loading={model.submission.type === "Loading"}
             onClick={() => dispatch({ type: "ClickedSubmit" })}
           >
             Continue
           </View.Button>
+
+          {model.submission.type === "Problem" && (
+            <View.Alert severity="error" sx={{ marginTop: 2 }}>
+              {model.submission.message}
+            </View.Alert>
+          )}
         </View.Box>
       </View.Page>
     );

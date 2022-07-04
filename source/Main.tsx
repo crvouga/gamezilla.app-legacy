@@ -53,4 +53,5 @@ program.state$.subscribe((state) => {
 
 if (import.meta.hot) {
   import.meta.hot.accept();
+  import.meta.hot.dispose(stop);
 }
