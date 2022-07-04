@@ -1,4 +1,5 @@
 import * as EmailAddress from "EmailAddress";
+import * as Password from "Password";
 import * as Route from "Route";
 import * as Store from "Store";
 import * as View from "View";
@@ -18,8 +19,8 @@ export type Model = {
   submission:
     | { type: "Idle" }
     | { type: "Loading" }
-    | { type: "ProblemPasswordEmpty" }
-    | { type: "ProblemPasswordMismatch" }
+    | { type: "PasswordValidationProblem"; problem: Password.Problem }
+    | { type: "PasswordRepeatMismatch" }
     | { type: "Problem"; message: string };
 };
 
@@ -58,20 +59,25 @@ export type Msg =
   | { type: "InputtedPassword"; password: string }
   | { type: "InputtedPasswordRepeat"; passwordRepeat: string }
   | { type: "ClickedCreateAccount" }
+  | { type: "CreateAccountResulted"; result: Store.Account.CreateResult }
   | {
       type: "FindAccountResulted";
       emailAddress: EmailAddress.EmailAddress;
       result: Store.Account.FindResult;
     };
 
-export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
+export const update = (
+  { emailAddress }: { emailAddress: EmailAddress.EmailAddress },
+  msg: Msg,
+  model: Model,
+): [Model, Cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "ClickedBack":
       return [model, Route.back];
 
     case "InputtedPassword": {
       const submissionNew: Model["submission"] =
-        model.submission.type === "ProblemPasswordEmpty"
+        model.submission.type === "PasswordValidationProblem"
           ? { type: "Idle" }
           : model.submission;
       return [
@@ -86,7 +92,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
     case "InputtedPasswordRepeat": {
       const submissionNew: Model["submission"] =
-        model.submission.type === "ProblemPasswordMismatch"
+        model.submission.type === "PasswordRepeatMismatch"
           ? { type: "Idle" }
           : model.submission;
       return [
@@ -100,23 +106,61 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
     }
 
     case "ClickedCreateAccount":
-      if (model.password.length === 0) {
-        return [
-          { ...model, submission: { type: "ProblemPasswordEmpty" } },
-          Cmd.None,
-        ];
-      }
-
       if (model.password !== model.passwordRepeat) {
         return [
-          { ...model, submission: { type: "ProblemPasswordMismatch" } },
+          { ...model, submission: { type: "PasswordRepeatMismatch" } },
           Cmd.None,
         ];
       }
 
-      return [model, Cmd.None];
+      const result = Password.validate(model.password);
 
-    case "FindAccountResulted":
+      switch (result.type) {
+        case "Err":
+          return [
+            {
+              ...model,
+              submission: {
+                type: "PasswordValidationProblem",
+                problem: result.error,
+              },
+            },
+            Cmd.None,
+          ];
+
+        case "Ok":
+          return [
+            model,
+            pipe(
+              Store.Account.createWithEmailAndPassword({
+                emailAddress,
+                password: result.value,
+              }),
+              Cmd.fromTask((result) => ({
+                type: "CreateAccountResulted",
+                result,
+              })),
+            ),
+          ];
+      }
+
+    case "CreateAccountResulted": {
+      switch (msg.result.type) {
+        case "InsertFailed":
+          return [model, Cmd.None];
+
+        case "SignUpFailed":
+          return [model, Cmd.None];
+
+        case "UserAlreadyRegisted":
+          return [model, Cmd.None];
+
+        case "Succeeded":
+          return [model, Cmd.None];
+      }
+    }
+
+    case "FindAccountResulted": {
       switch (msg.result.type) {
         case "Err":
           return [model, Cmd.None];
@@ -137,6 +181,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
               ];
           }
       }
+    }
   }
 };
 
@@ -187,10 +232,10 @@ export const view =
                 password: event.target.value,
               })
             }
-            error={model.submission.type === "ProblemPasswordEmpty"}
+            error={model.submission.type === "PasswordValidationProblem"}
             helperText={
-              model.submission.type === "ProblemPasswordEmpty"
-                ? "Password can not be empty"
+              model.submission.type === "PasswordValidationProblem"
+                ? model.submission.problem.message
                 : ""
             }
           />
@@ -207,9 +252,9 @@ export const view =
             }
             fullWidth
             label="Repeat Password"
-            error={model.submission.type === "ProblemPasswordMismatch"}
+            error={model.submission.type === "PasswordRepeatMismatch"}
             helperText={
-              model.submission.type === "ProblemPasswordMismatch"
+              model.submission.type === "PasswordRepeatMismatch"
                 ? "Does not match password"
                 : ""
             }

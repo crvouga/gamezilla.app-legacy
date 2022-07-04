@@ -580,6 +580,7 @@ export const updateSessionMissing = (
     case "LoginEmailCreateAccount": {
       if (msg.page === "LoginEmailCreateAccount") {
         const [modelNew, cmd, actions = []] = LoginEmailCreateAccount.update(
+          { emailAddress: model.emailAddress },
           msg,
           model,
         );

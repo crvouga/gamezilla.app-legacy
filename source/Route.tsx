@@ -143,7 +143,7 @@ export const encode = (route: Route): string => {
       return `/${route.type}/${route.conversationId}`;
 
     case "LoginEmailPassword":
-      return `/${route.type}?${emailAddressQueryKey}=${route.emailAddress}`;
+      return `/${route.type}?${emailAddressQueryKey}=${route.emailAddress}&${userIdQueryKey}=${route.userId}`;
 
     case "LoginEmailCreateAccount":
       return `/${route.type}?${emailAddressQueryKey}=${route.emailAddress}`;
