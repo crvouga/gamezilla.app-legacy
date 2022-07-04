@@ -14,6 +14,7 @@ import { Cmd, Option, pipe } from "Core";
 
 export type Model = {
   emailAddress: string;
+  password: string;
   submission:
     | { type: "Idle" }
     | { type: "Loading" }
@@ -24,6 +25,7 @@ export type Model = {
 export const init: Model = {
   submission: { type: "Idle" },
   emailAddress: "",
+  password: "",
 };
 
 //
@@ -37,6 +39,7 @@ export const init: Model = {
 export type Msg =
   | { type: "ClickedBack" }
   | { type: "InputtedEmailAddress"; emailAddress: string }
+  | { type: "InputtedPassword"; password: string }
   | { type: "ClickedContinue" }
   | {
       type: "FindAccountResulted";
@@ -63,6 +66,10 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
         },
         Cmd.None,
       ];
+
+    case "InputtedPassword": {
+      return [{ ...model, password: msg.password }, Cmd.None];
+    }
 
     case "ClickedContinue":
       const decoded = EmailAddress.decode(model.emailAddress);
@@ -159,7 +166,15 @@ export const view =
           title="Continue With Email"
         />
 
-        <View.Box sx={{ padding: 2 }}>
+        <View.Box
+          sx={{
+            padding: 2,
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            flex: 1,
+          }}
+        >
           <View.TextField
             autoFocus
             sx={{ marginBottom: 2 }}
@@ -182,6 +197,26 @@ export const view =
             }}
           />
 
+          <View.TextField
+            sx={{ marginBottom: 2 }}
+            type="password"
+            fullWidth
+            label="Password"
+            value={model.password}
+            // helperText={
+            //   model.submission.type === "ProblemValidation"
+            //     ? model.submission.message
+            //     : ""
+            // }
+            // error={model.submission.type === "ProblemValidation"}
+            onChange={(event) => {
+              dispatch({
+                type: "InputtedPassword",
+                password: event.target.value,
+              });
+            }}
+          />
+
           <View.Button
             variant="contained"
             size="large"
@@ -189,7 +224,7 @@ export const view =
             loading={model.submission.type === "Loading"}
             onClick={() => dispatch({ type: "ClickedContinue" })}
           >
-            Continue
+            Login
           </View.Button>
 
           {model.submission.type === "Problem" && (
@@ -197,6 +232,16 @@ export const view =
               {model.submission.message}
             </View.Alert>
           )}
+
+          <View.Box sx={{ flex: 1 }} />
+
+          <View.Typography align="center" color="text.secondary" sx={{ p: 2 }}>
+            Or don't already have an account?
+          </View.Typography>
+
+          <View.Button size="large" fullWidth variant="outlined">
+            Create New Account
+          </View.Button>
         </View.Box>
       </View.Page>
     );
