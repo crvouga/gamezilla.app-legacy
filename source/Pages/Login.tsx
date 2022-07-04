@@ -1,8 +1,7 @@
 import * as Route from "Route";
 import * as Session from "Session";
 import * as View from "View";
-import { SvgIconProps } from "@mui/material";
-import { Cmd, Result, pipe } from "Core";
+import { Cmd } from "Core";
 
 //
 //
@@ -93,7 +92,10 @@ export const view =
             //todo fix this hack
             model.type === "LoggingIn" ? undefined : <View.Icons.GoogleAlt />
           }
-          color="inherit"
+          color={
+            //todo fix this hack
+            model.type === "LoggingIn" ? undefined : "inherit"
+          }
           sx={{
             color: (theme) => theme.palette.grey[800],
           }}
