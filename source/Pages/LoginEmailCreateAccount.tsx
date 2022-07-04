@@ -2,7 +2,7 @@ import * as EmailAddress from "EmailAddress";
 import * as Route from "Route";
 import * as Store from "Store";
 import * as View from "View";
-import { Cmd, Result, pipe } from "Core";
+import { Cmd, pipe } from "Core";
 
 //
 //
