@@ -102,10 +102,7 @@ export const toStatus = ({
 //
 
 export const init = (location: Browser.Location): [Model, Cmd.Cmd<Msg>] => {
-  const route = Option.withDefault(
-    { type: "Home" },
-    Route.decode(location.pathname),
-  );
+  const route = Option.withDefault({ type: "Home" }, Route.decode(location));
   const [session, sessionCmd] = Session.init();
   const snackbar = Snackbar.init;
   const store = Store.init;
@@ -566,7 +563,6 @@ const viewGameBanner =
 export const onLocationChange = (location: Browser.Location): Msg => {
   return pipe(
     location,
-    (location) => location.pathname,
     Route.decode,
     (decoded) => Option.withDefault({ type: "Home" }, decoded),
     Route.GotRoute,
