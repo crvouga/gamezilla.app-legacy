@@ -2,7 +2,7 @@ import * as EmailAddress from "EmailAddress";
 import * as Route from "Route";
 import * as Store from "Store";
 import * as View from "View";
-import { Cmd, Result, pipe } from "Core";
+import { Cmd, pipe } from "Core";
 
 //
 //
@@ -38,7 +38,7 @@ export type Msg =
   | { type: "ClickedBack" }
   | { type: "InputtedEmailAddress"; emailAddress: string }
   | { type: "ClickedSubmit" }
-  | { type: "FindUserResulted"; result: Store.User.FindResult };
+  | { type: "FindAccountResulted"; result: Store.Account.FindResult };
 
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg.type) {
@@ -82,15 +82,18 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
               submission: { type: "Loading" },
             },
             pipe(
-              Store.User.findByEmailAddress({
+              Store.Account.findByEmailAddress({
                 emailAddress: decoded.value,
               }),
-              Cmd.fromTask((result) => ({ type: "FindUserResulted", result })),
+              Cmd.fromTask((result) => ({
+                type: "FindAccountResulted",
+                result,
+              })),
             ),
           ];
       }
 
-    case "FindUserResulted":
+    case "FindAccountResulted":
       switch (msg.result.type) {
         case "Err":
           return [

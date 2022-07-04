@@ -11,7 +11,7 @@ import { definitions } from "supabase-types";
 //
 //
 
-export type User = {
+export type Account = {
   userId: string;
   emailAddress?: EmailAddress.EmailAddress;
 };
@@ -26,7 +26,7 @@ export type User = {
 
 const decodeRow = (
   row: definitions["user_account"],
-): Result.Result<Problem, User> => {
+): Result.Result<Problem, Account> => {
   if (!row.email_address) {
     return Result.Ok({ userId: row.id });
   }
@@ -45,7 +45,7 @@ const decodeRow = (
   });
 };
 
-export type FindResult = Result.Result<Problem, Option.Option<User>>;
+export type FindResult = Result.Result<Problem, Option.Option<Account>>;
 
 export const findByEmailAddress =
   ({
@@ -63,17 +63,15 @@ export const findByEmailAddress =
       return Result.Err({ message: response.error.message });
     }
 
-    return Result.Err({ message: "Something went wrong." });
+    const row = response.data[0];
 
-    // const row = response.data[0];
+    if (!row) {
+      return Result.Ok(Option.None);
+    }
 
-    // if (!row) {
-    //   return Result.Ok(Option.None);
-    // }
+    const decoded = decodeRow(row);
 
-    // const decoded = decodeRow(row);
-
-    // return pipe(decoded, Result.map(Option.Some));
+    return pipe(decoded, Result.map(Option.Some));
   };
 
 //
