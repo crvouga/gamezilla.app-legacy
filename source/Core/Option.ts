@@ -1,3 +1,6 @@
+import { Option } from "Core";
+import * as Result from "./Result";
+
 export type Option<T> = Some<T> | None;
 
 export type Some<T> = { type: "Some"; value: T };
@@ -52,4 +55,16 @@ export const fromNullable = <T>(value: T | null | undefined): Option<T> => {
   }
 
   return Some(value);
+};
+
+export const fromResult = <TErr, TOk>(
+  result: Result.Result<TErr, TOk>,
+): Option<TOk> => {
+  switch (result.type) {
+    case "Err":
+      return Option.None;
+
+    case "Ok":
+      return Option.Some(result.value);
+  }
 };

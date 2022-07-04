@@ -13,7 +13,7 @@ import { Cmd, Option, pipe } from "Core";
 //
 
 export type Model = {
-  emailAddressInput: string;
+  emailAddress: string;
   submission:
     | { type: "Idle" }
     | { type: "Loading" }
@@ -23,7 +23,7 @@ export type Model = {
 
 export const init: Model = {
   submission: { type: "Idle" },
-  emailAddressInput: "",
+  emailAddress: "",
 };
 
 //
@@ -36,7 +36,7 @@ export const init: Model = {
 
 export type Msg =
   | { type: "ClickedBack" }
-  | { type: "InputtedEmailAddress"; emailAddressInput: string }
+  | { type: "InputtedEmailAddress"; emailAddress: string }
   | { type: "ClickedContinue" }
   | {
       type: "FindAccountResulted";
@@ -59,13 +59,13 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
         {
           ...model,
           submission: submissionNew,
-          emailAddressInput: msg.emailAddressInput,
+          emailAddress: msg.emailAddress,
         },
         Cmd.None,
       ];
 
     case "ClickedContinue":
-      const decoded = EmailAddress.decode(model.emailAddressInput);
+      const decoded = EmailAddress.decode(model.emailAddress);
       switch (decoded.type) {
         case "Err":
           return [
@@ -118,7 +118,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
               return [
                 { ...model, submission: { type: "Idle" } },
                 Route.push({
-                  type: "LoginEmailPassword",
+                  type: "LoginEmailCreateAccount",
                   emailAddress: msg.emailAddress,
                 }),
               ];
@@ -129,6 +129,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
                 Route.push({
                   type: "LoginEmailPassword",
                   emailAddress: msg.emailAddress,
+                  userId: msg.result.value.value.userId,
                 }),
               ];
           }
@@ -166,7 +167,7 @@ export const view =
             fullWidth
             inputMode="email"
             label="Email Address"
-            value={model.emailAddressInput}
+            value={model.emailAddress}
             helperText={
               model.submission.type === "ProblemValidation"
                 ? model.submission.message
@@ -176,7 +177,7 @@ export const view =
             onChange={(event) => {
               dispatch({
                 type: "InputtedEmailAddress",
-                emailAddressInput: event.target.value,
+                emailAddress: event.target.value,
               });
             }}
           />

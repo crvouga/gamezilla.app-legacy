@@ -1,5 +1,5 @@
 import * as EmailAddress from "EmailAddress";
-import { Browser, Option } from "Core";
+import { Browser, Option, pipe } from "Core";
 
 //
 //
@@ -14,7 +14,12 @@ export type Route =
   | { type: "Home" }
   | { type: "Login" }
   | { type: "LoginEmail" }
-  | { type: "LoginEmailPassword"; emailAddress: EmailAddress.EmailAddress }
+  | {
+      type: "LoginEmailPassword";
+      userId: string;
+      emailAddress: EmailAddress.EmailAddress;
+    }
+  | { type: "LoginEmailCreateAccount"; emailAddress: EmailAddress.EmailAddress }
   | { type: "Logout" }
   | { type: "ProfileCreate" }
   | { type: "ProfileDelete" }
@@ -42,6 +47,7 @@ export const routesTypes: { [routeType in Route["type"]]: string } = {
   Login: "Login",
   LoginEmail: "LoginEmail",
   LoginEmailPassword: "LoginEmailPassword",
+  LoginEmailCreateAccount: "LoginEmailCreateAccount",
   Logout: "Logout",
   ProfileCreate: "ProfileCreate",
   ProfileDelete: "ProfileDelete",
@@ -56,10 +62,32 @@ export const routesTypes: { [routeType in Route["type"]]: string } = {
   ChatConversation: "ChatConversation",
 };
 
-const emailAddressQueryKey = "emailAddress";
-
 const isRouteType = (routeType: unknown): routeType is Route["type"] => {
   return typeof routeType === "string" && routeType in routesTypes;
+};
+
+const emailAddressQueryKey = "emailAddress";
+
+const decodeEmailAddressQuery = (
+  location: Browser.Location,
+): Option.Option<EmailAddress.EmailAddress> => {
+  const value = location.query[emailAddressQueryKey];
+
+  if (!value) {
+    return Option.None;
+  }
+
+  const decoded = EmailAddress.decode(value);
+
+  return Option.fromResult(decoded);
+};
+
+const userIdQueryKey = "userId";
+
+const decodeUserIdQuery = (
+  location: Browser.Location,
+): Option.Option<string> => {
+  return Option.fromNullable(location.query[userIdQueryKey]);
 };
 
 export const decode = (location: Browser.Location): Option.Option<Route> => {
@@ -80,23 +108,28 @@ export const decode = (location: Browser.Location): Option.Option<Route> => {
       });
     }
 
-    case "LoginEmailPassword":
-      const value = location.query[emailAddressQueryKey];
+    case "LoginEmailPassword": {
+      const userId = decodeUserIdQuery(location);
+      const emailAddress = decodeEmailAddressQuery(location);
 
-      console.log(value);
-      if (!value) {
-        return Option.None;
+      if (userId.type === "Some" && emailAddress.type === "Some") {
+        return Option.Some({
+          type: first,
+          emailAddress: emailAddress.value,
+          userId: userId.value,
+        });
       }
 
-      const decoded = EmailAddress.decode(value);
+      return Option.None;
+    }
 
-      console.log(decoded);
-
-      if (decoded.type === "Err") {
-        return Option.None;
-      }
-
-      return Option.Some({ type: first, emailAddress: decoded.value });
+    case "LoginEmailCreateAccount": {
+      return pipe(
+        location,
+        decodeEmailAddressQuery,
+        Option.map((emailAddress) => ({ type: first, emailAddress })),
+      );
+    }
 
     default: {
       return Option.Some({ type: first });
@@ -110,6 +143,9 @@ export const encode = (route: Route): string => {
       return `/${route.type}/${route.conversationId}`;
 
     case "LoginEmailPassword":
+      return `/${route.type}?${emailAddressQueryKey}=${route.emailAddress}`;
+
+    case "LoginEmailCreateAccount":
       return `/${route.type}?${emailAddressQueryKey}=${route.emailAddress}`;
 
     default:
