@@ -561,7 +561,7 @@ export const load =
   }): Task.Task<Result.Result<Problem, Profile>> =>
   async () => {
     const response = await Supabase.client
-      .from<definitions["user_profile"]>("profile")
+      .from<definitions["user_profile"]>("user_profile")
       .select("*")
       .eq("id", userId)
       .single();
@@ -587,7 +587,7 @@ export const create =
   }): Task.Task<Result.Result<Problem, Profile>> =>
   async () => {
     const response = await Supabase.client
-      .from<definitions["user_profile"]>("profile")
+      .from<definitions["user_profile"]>("user_profile")
       .insert({
         id: userId,
         name,
@@ -610,7 +610,7 @@ export const deleteForever =
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
     const response = await Supabase.client
-      .from<definitions["user_profile"]>("profile")
+      .from<definitions["user_profile"]>("user_profile")
       .delete()
       .match({ id: userId });
 
@@ -629,7 +629,7 @@ export const search =
   }): Task.Task<Result.Result<Problem, Profile[]>> =>
   async () => {
     const response = await Supabase.client
-      .from<definitions["user_profile"]>("profile")
+      .from<definitions["user_profile"]>("user_profile")
       .select("*")
       .ilike(
         "name",
@@ -655,7 +655,7 @@ export const edit =
   ): Task.Task<Result.Result<Problem, Profile>> =>
   async () => {
     const response = await Supabase.client
-      .from<definitions["user_profile"]>("profile")
+      .from<definitions["user_profile"]>("user_profile")
       .update({
         username: edits.username,
         name: edits.name,

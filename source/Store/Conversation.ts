@@ -378,7 +378,7 @@ const findOneById =
     );
 
     const profilesResponse = await Supabase.client
-      .from<definitions["user_profile"]>("profile")
+      .from<definitions["user_profile"]>("user_profile")
       .select("*")
       .in("id", userIds);
 
@@ -465,7 +465,7 @@ const findManyByUserId =
     }
 
     const profileResponse = await Supabase.client
-      .from<definitions["user_profile"]>("profile")
+      .from<definitions["user_profile"]>("user_profile")
       .select("*")
       .in("id", [
         ...new Set(
