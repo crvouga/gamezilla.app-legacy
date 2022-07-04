@@ -96,7 +96,6 @@ export const view =
           color="inherit"
           sx={{
             color: (theme) => theme.palette.grey[800],
-            marginBottom: 2,
           }}
           onClick={() => {
             dispatch({ type: "ClickedGoogleLogin" });
@@ -105,11 +104,18 @@ export const view =
           Continue With Google
         </View.Button>
 
+        <View.Typography
+          sx={{ marginY: 2 }}
+          align="center"
+          color="text.secondary"
+        >
+          Or
+        </View.Typography>
+
         <View.Button
           variant="contained"
           size="large"
           fullWidth
-          // startIcon={<View.Icons.Email />}
           color="primary"
           sx={{ marginBottom: 1 }}
           onClick={() => {
