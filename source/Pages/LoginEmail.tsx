@@ -28,7 +28,8 @@ export const init: Model = {
 
 export type Msg =
   | { type: "ClickedBack" }
-  | { type: "InputtedEmailAddress"; emailAddress: string };
+  | { type: "InputtedEmailAddress"; emailAddress: string }
+  | { type: "ClickedSubmit" };
 
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg.type) {
@@ -37,6 +38,9 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
     case "InputtedEmailAddress":
       return [{ ...model, emailAddress: msg.emailAddress }, Cmd.None];
+
+    case "ClickedSubmit":
+      return [model, Cmd.None];
   }
 };
 
@@ -61,7 +65,7 @@ export const view =
           }
           title="Continue With Email"
         />
-        <View.Divider />
+
         <View.Box sx={{ padding: 2 }}>
           <View.TextField
             autoFocus
@@ -78,8 +82,13 @@ export const view =
             }}
           />
 
-          <View.Button variant="contained" size="large" fullWidth>
-            Next
+          <View.Button
+            variant="contained"
+            size="large"
+            fullWidth
+            onClick={() => dispatch({ type: "ClickedSubmit" })}
+          >
+            Continue
           </View.Button>
         </View.Box>
       </View.Page>
