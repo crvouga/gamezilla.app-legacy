@@ -18,6 +18,8 @@ export type Model = {
   submission:
     | { type: "Idle" }
     | { type: "Loading" }
+    | { type: "ProblemPasswordEmpty" }
+    | { type: "ProblemPasswordMismatch" }
     | { type: "Problem"; message: string };
 };
 
@@ -67,13 +69,51 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
     case "ClickedBack":
       return [model, Route.back];
 
-    case "InputtedPassword":
-      return [{ ...model, password: msg.password }, Cmd.None];
+    case "InputtedPassword": {
+      const submissionNew: Model["submission"] =
+        model.submission.type === "ProblemPasswordEmpty"
+          ? { type: "Idle" }
+          : model.submission;
+      return [
+        {
+          ...model,
+          submission: submissionNew,
+          password: msg.password,
+        },
+        Cmd.None,
+      ];
+    }
 
-    case "InputtedPasswordRepeat":
-      return [{ ...model, passwordRepeat: msg.passwordRepeat }, Cmd.None];
+    case "InputtedPasswordRepeat": {
+      const submissionNew: Model["submission"] =
+        model.submission.type === "ProblemPasswordMismatch"
+          ? { type: "Idle" }
+          : model.submission;
+      return [
+        {
+          ...model,
+          submission: submissionNew,
+          passwordRepeat: msg.passwordRepeat,
+        },
+        Cmd.None,
+      ];
+    }
 
     case "ClickedCreateAccount":
+      if (model.password.length === 0) {
+        return [
+          { ...model, submission: { type: "ProblemPasswordEmpty" } },
+          Cmd.None,
+        ];
+      }
+
+      if (model.password !== model.passwordRepeat) {
+        return [
+          { ...model, submission: { type: "ProblemPasswordMismatch" } },
+          Cmd.None,
+        ];
+      }
+
       return [model, Cmd.None];
 
     case "FindAccountResulted":
@@ -140,13 +180,39 @@ export const view =
             type="password"
             fullWidth
             label="Password"
+            value={model.password}
+            onChange={(event) =>
+              dispatch({
+                type: "InputtedPassword",
+                password: event.target.value,
+              })
+            }
+            error={model.submission.type === "ProblemPasswordEmpty"}
+            helperText={
+              model.submission.type === "ProblemPasswordEmpty"
+                ? "Password can not be empty"
+                : ""
+            }
           />
 
           <View.TextField
             sx={{ marginBottom: 2 }}
             type="password"
+            value={model.passwordRepeat}
+            onChange={(event) =>
+              dispatch({
+                type: "InputtedPasswordRepeat",
+                passwordRepeat: event.target.value,
+              })
+            }
             fullWidth
             label="Repeat Password"
+            error={model.submission.type === "ProblemPasswordMismatch"}
+            helperText={
+              model.submission.type === "ProblemPasswordMismatch"
+                ? "Does not match password"
+                : ""
+            }
           />
 
           <View.Button
