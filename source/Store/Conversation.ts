@@ -572,22 +572,19 @@ const insert =
     >
   > =>
   async () => {
-    const { data: conversationData, error: conversationError } =
-      await Supabase.client
-        .from<definitions["conversation"]>("conversation")
-        .insert({})
-        .single();
+    const conversationResponse = await Supabase.client
+      .from<definitions["conversation"]>("conversation")
+      .insert({})
+      .single();
 
-    if (conversationError) {
-      return Result.Err({ message: conversationError.message });
+    console.log({ conversationResponse });
+    if (conversationResponse.error) {
+      return Result.Err({ message: conversationResponse.error.message });
     }
 
-    const conversation = fromRow(conversationData);
+    const conversation = fromRow(conversationResponse.data);
 
-    const {
-      data: profilesConversationsData,
-      error: profilesConversationsError,
-    } = await Supabase.client
+    const usersConversationsResponse = await Supabase.client
       .from<definitions["users_conversations"]>("users_conversations")
       .insert(
         userIds.map((userId) => ({
@@ -596,7 +593,9 @@ const insert =
         })),
       );
 
-    if (profilesConversationsError) {
+    console.log({ usersConversationsResponse });
+
+    if (usersConversationsResponse.error) {
       const rollbackResponse = await Supabase.client
         .from<definitions["conversation"]>("conversation")
         .delete()
@@ -604,14 +603,14 @@ const insert =
 
       if (rollbackResponse.error) {
         return Result.Err({
-          message: `${profilesConversationsError.message}. ${rollbackResponse.error}`,
+          message: `${usersConversationsResponse.error.message}. ${rollbackResponse.error}`,
         });
       }
 
-      return Result.Err({ message: profilesConversationsError.message });
+      return Result.Err({ message: usersConversationsResponse.error.message });
     }
 
-    const profilesConversations = profilesConversationsData.map(
+    const profilesConversations = usersConversationsResponse.data.map(
       ({ user_id, conversation_id }) => ({
         userId: user_id,
         conversationId: conversation_id,

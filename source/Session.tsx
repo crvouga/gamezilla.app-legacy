@@ -198,13 +198,11 @@ const getSession: Task.Task<Msg> = async () => {
 //
 //
 //
-
 const subject = new Rx.Subject<Msg>();
 
 Supabase.client.auth.onAuthStateChange((event, supabaseSession) => {
   switch (event) {
     case "PASSWORD_RECOVERY":
-      return;
     case "SIGNED_IN":
     case "SIGNED_OUT":
     case "TOKEN_REFRESHED":

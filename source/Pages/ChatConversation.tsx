@@ -158,55 +158,45 @@ export const view =
             <View.Box sx={{ flex: 1 }}></View.Box>
 
             {conversation.messages.map((message) => (
-              <View.Box
+              <ChatMessage
                 key={message.messageId}
-                sx={{
-                  paddingY: 1 / 2,
-                  paddingX: 1,
-                  width: "100%",
-                  display: "flex",
-                  justifyContent: "flex-end",
-                }}
-              >
-                <ChatBubble
-                  isDeleting={
-                    store.mutations.Message.DeleteForever[message.messageId]
-                      ?.type === "Loading"
-                  }
-                  status={
-                    model.focusedMessageId &&
-                    conversation.messages.some(
-                      (message) => message.messageId === model.focusedMessageId,
-                    )
-                      ? message.messageId === model.focusedMessageId
-                        ? "focused"
-                        : "blurred"
-                      : "idle"
-                  }
-                  variant={
-                    message.userId === authUser.userId ? "sented" : "received"
-                  }
-                  onMenuClose={() =>
-                    dispatch({
-                      type: "ClosedMessageMenu",
-                      messageId: message.messageId,
-                    })
-                  }
-                  onClick={() =>
-                    dispatch({
-                      type: "ClickedMessage",
-                      messageId: message.messageId,
-                    })
-                  }
-                  onDeleteForever={() =>
-                    dispatch({
-                      type: "ClickedDeleteMessage",
-                      messageId: message.messageId,
-                    })
-                  }
-                  message={message.message}
-                />
-              </View.Box>
+                isDeleting={
+                  store.mutations.Message.DeleteForever[message.messageId]
+                    ?.type === "Loading"
+                }
+                status={
+                  model.focusedMessageId &&
+                  conversation.messages.some(
+                    (message) => message.messageId === model.focusedMessageId,
+                  )
+                    ? message.messageId === model.focusedMessageId
+                      ? "focused"
+                      : "blurred"
+                    : "idle"
+                }
+                variant={
+                  message.userId === authUser.userId ? "sented" : "received"
+                }
+                onMenuClose={() =>
+                  dispatch({
+                    type: "ClosedMessageMenu",
+                    messageId: message.messageId,
+                  })
+                }
+                onClick={() =>
+                  dispatch({
+                    type: "ClickedMessage",
+                    messageId: message.messageId,
+                  })
+                }
+                onDeleteForever={() =>
+                  dispatch({
+                    type: "ClickedDeleteMessage",
+                    messageId: message.messageId,
+                  })
+                }
+                message={message.message}
+              />
             ))}
           </MessageContainer>
         )}
@@ -363,7 +353,7 @@ const viewHeader =
       </View.Box>
     );
 
-const ChatBubble = ({
+const ChatMessage = ({
   status,
   message,
   variant,
@@ -396,7 +386,15 @@ const ChatBubble = ({
   };
 
   return (
-    <>
+    <View.Box
+      sx={{
+        paddingY: 1 / 2,
+        paddingX: 1,
+        width: "100%",
+        display: "flex",
+        justifyContent: variant === "received" ? "flex-start" : "flex-end",
+      }}
+    >
       <View.Typography
         ref={(ref) => setAnchorRef(ref)}
         onClick={handleClick}
@@ -429,17 +427,19 @@ const ChatBubble = ({
         }}
       >
         <View.MenuItem>Copy Text</View.MenuItem>
-        <View.MenuItem
-          sx={{
-            color: isDeleting
-              ? theme.palette.action.disabled
-              : theme.palette.error.main,
-          }}
-          onClick={onDeleteForever}
-        >
-          Delete Forever
-        </View.MenuItem>
+        {variant === "sented" && (
+          <View.MenuItem
+            sx={{
+              color: isDeleting
+                ? theme.palette.action.disabled
+                : theme.palette.error.main,
+            }}
+            onClick={onDeleteForever}
+          >
+            Delete Forever
+          </View.MenuItem>
+        )}
       </View.Menu>
-    </>
+    </View.Box>
   );
 };
