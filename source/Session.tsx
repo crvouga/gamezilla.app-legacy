@@ -201,9 +201,19 @@ const getSession: Task.Task<Msg> = async () => {
 
 const subject = new Rx.Subject<Msg>();
 
-Supabase.client.auth.onAuthStateChange((_, supabaseSession) => {
-  const msg = fromSupabaseSession(supabaseSession);
-  subject.next(msg);
+Supabase.client.auth.onAuthStateChange((event, supabaseSession) => {
+  switch (event) {
+    case "PASSWORD_RECOVERY":
+      return;
+    case "SIGNED_IN":
+    case "SIGNED_OUT":
+    case "TOKEN_REFRESHED":
+    case "USER_DELETED":
+    case "USER_UPDATED": {
+      const msg = fromSupabaseSession(supabaseSession);
+      subject.next(msg);
+    }
+  }
 });
 
 export const subscriptions: Sub.Sub<Msg> = subject;

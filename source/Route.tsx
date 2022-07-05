@@ -15,6 +15,7 @@ export type Route =
   | { type: "Login" }
   | { type: "LoginEmail" }
   | { type: "AccountCreate" }
+  | { type: "PasswordReset" }
   | { type: "Logout" }
   | { type: "ProfileCreate" }
   | { type: "ProfileDelete" }
@@ -50,6 +51,7 @@ export const routesTypes: { [routeType in Route["type"]]: string } = {
   ProfileUpdateName: "ProfileUpdateName",
   ProfileUpdateUsername: "ProfileUpdateUsername",
   ProfileUpdateTheme: "ProfileUpdateTheme",
+  PasswordReset: "PasswordReset",
   Game: "Game",
   Chat: "Chat",
   ChatNew: "ChatNew",

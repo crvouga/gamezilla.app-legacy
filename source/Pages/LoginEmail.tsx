@@ -54,6 +54,7 @@ export type Msg =
   | { type: "FocusResulted"; result: Browser.FocusResult }
   | { type: "ClickedLogin" }
   | { type: "ClickedCreateAccount" }
+  | { type: "ClickedResetPassword" }
   | { type: "LoginResulted"; result: Session.LoginResult };
 
 const passwordFieldId = "password";
@@ -120,6 +121,9 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
     case "ClickedCreateAccount":
       return [model, Route.push({ type: "AccountCreate" })];
+
+    case "ClickedResetPassword":
+      return [model, Route.push({ type: "PasswordReset" })];
   }
 };
 
@@ -238,10 +242,27 @@ export const view =
             size="large"
             fullWidth
             variant="outlined"
-            sx={{ marginBottom: 1 }}
+            sx={{ marginBottom: 2 }}
             onClick={() => dispatch({ type: "ClickedCreateAccount" })}
           >
             Create Account
+          </View.Button>
+          <View.Typography
+            align="center"
+            color="text.secondary"
+            sx={{ marginBottom: 1 }}
+          >
+            Forgot password?
+          </View.Typography>
+
+          <View.Button
+            size="large"
+            fullWidth
+            variant="outlined"
+            sx={{ marginBottom: 1 }}
+            onClick={() => dispatch({ type: "ClickedResetPassword" })}
+          >
+            Reset Password
           </View.Button>
         </View.Box>
       </View.Page>
