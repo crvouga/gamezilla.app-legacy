@@ -49,6 +49,9 @@ const createTheme = ({ mode }: { mode: "light" | "dark" }) =>
         MuiButton: {
           defaultProps: {
             disableElevation: true,
+            size: "large",
+            variant: "contained",
+            fullWidth: true,
           },
           styleOverrides: {
             root: {

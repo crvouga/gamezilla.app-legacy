@@ -14,12 +14,7 @@ export type Route =
   | { type: "Home" }
   | { type: "Login" }
   | { type: "LoginEmail" }
-  | {
-      type: "LoginEmailPassword";
-      userId: string;
-      emailAddress: EmailAddress.EmailAddress;
-    }
-  | { type: "LoginEmailCreateAccount"; emailAddress: EmailAddress.EmailAddress }
+  | { type: "AccountCreate" }
   | { type: "Logout" }
   | { type: "ProfileCreate" }
   | { type: "ProfileDelete" }
@@ -46,8 +41,7 @@ export const routesTypes: { [routeType in Route["type"]]: string } = {
   Home: "Home",
   Login: "Login",
   LoginEmail: "LoginEmail",
-  LoginEmailPassword: "LoginEmailPassword",
-  LoginEmailCreateAccount: "LoginEmailCreateAccount",
+  AccountCreate: "AccountCreate",
   Logout: "Logout",
   ProfileCreate: "ProfileCreate",
   ProfileDelete: "ProfileDelete",
@@ -64,30 +58,6 @@ export const routesTypes: { [routeType in Route["type"]]: string } = {
 
 const isRouteType = (routeType: unknown): routeType is Route["type"] => {
   return typeof routeType === "string" && routeType in routesTypes;
-};
-
-const emailAddressQueryKey = "emailAddress";
-
-const decodeEmailAddressQuery = (
-  location: Browser.Location,
-): Option.Option<EmailAddress.EmailAddress> => {
-  const value = location.query[emailAddressQueryKey];
-
-  if (!value) {
-    return Option.None;
-  }
-
-  const decoded = EmailAddress.decode(value);
-
-  return Option.fromResult(decoded);
-};
-
-const userIdQueryKey = "userId";
-
-const decodeUserIdQuery = (
-  location: Browser.Location,
-): Option.Option<string> => {
-  return Option.fromNullable(location.query[userIdQueryKey]);
 };
 
 export const decode = (location: Browser.Location): Option.Option<Route> => {
@@ -108,29 +78,6 @@ export const decode = (location: Browser.Location): Option.Option<Route> => {
       });
     }
 
-    case "LoginEmailPassword": {
-      const userId = decodeUserIdQuery(location);
-      const emailAddress = decodeEmailAddressQuery(location);
-
-      if (userId.type === "Some" && emailAddress.type === "Some") {
-        return Option.Some({
-          type: first,
-          emailAddress: emailAddress.value,
-          userId: userId.value,
-        });
-      }
-
-      return Option.None;
-    }
-
-    case "LoginEmailCreateAccount": {
-      return pipe(
-        location,
-        decodeEmailAddressQuery,
-        Option.map((emailAddress) => ({ type: first, emailAddress })),
-      );
-    }
-
     default: {
       return Option.Some({ type: first });
     }
@@ -141,12 +88,6 @@ export const encode = (route: Route): string => {
   switch (route.type) {
     case "ChatConversation":
       return `/${route.type}/${route.conversationId}`;
-
-    case "LoginEmailPassword":
-      return `/${route.type}?${emailAddressQueryKey}=${route.emailAddress}&${userIdQueryKey}=${route.userId}`;
-
-    case "LoginEmailCreateAccount":
-      return `/${route.type}?${emailAddressQueryKey}=${route.emailAddress}`;
 
     default:
       return `/${route.type}`;

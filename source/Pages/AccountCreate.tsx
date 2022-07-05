@@ -1,0 +1,316 @@
+import * as EmailAddress from "EmailAddress";
+import * as Password from "Password";
+import * as Route from "Route";
+import * as Store from "Store";
+import * as View from "View";
+import { Browser, Cmd, pipe } from "Core";
+
+//
+//
+//
+// Model
+//
+//
+//
+
+export type Model = {
+  emailAddress: string;
+  password: string;
+  passwordVisibility: Visibility;
+  submission:
+    | { type: "NotAsked" }
+    | { type: "Loading" }
+    | {
+        type: "ProblemValidation";
+        emailAddress: Problem[];
+        password: Problem[];
+      }
+    | { type: "Problem"; message: string }
+    | { type: "Succeeded" };
+};
+
+type Visibility = "Showing" | "Hiding";
+
+type Problem = { message: string };
+
+//
+//
+//
+// Init
+//
+//
+//
+
+export const init = (): [Model, Cmd.Cmd<Msg>] => {
+  return [
+    {
+      submission: { type: "NotAsked" },
+      emailAddress: "",
+      password: "",
+      passwordVisibility: "Hiding",
+    },
+    Cmd.None,
+  ];
+};
+
+//
+//
+//
+// Update
+//
+//
+//
+
+export type Msg =
+  | { type: "ClickedBack" }
+  | { type: "ClickedLogin" }
+  | { type: "InputtedEmailAddress"; emailAddress: string }
+  | { type: "InputtedPassword"; password: string }
+  | { type: "ClickedTogglePasswordVisibility" }
+  | { type: "ClickedCreateAccount" }
+  | { type: "CreateAccountResulted"; result: Store.Account.CreateResult }
+  | { type: "FocusResulted"; result: Browser.FocusResult };
+
+const emailAddressId = "emailAddress";
+const passwordId = "password";
+
+export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
+  switch (msg.type) {
+    case "ClickedBack":
+      return [model, Route.back];
+
+    case "InputtedPassword": {
+      return [
+        {
+          ...model,
+          submission:
+            model.submission.type === "ProblemValidation"
+              ? { ...model.submission, password: [] }
+              : model.submission,
+          password: msg.password,
+        },
+        Cmd.None,
+      ];
+    }
+
+    case "InputtedEmailAddress": {
+      return [
+        {
+          ...model,
+          submission:
+            model.submission.type === "ProblemValidation"
+              ? { ...model.submission, emailAddress: [] }
+              : model.submission,
+          emailAddress: msg.emailAddress,
+        },
+        Cmd.None,
+      ];
+    }
+
+    case "FocusResulted":
+      return [model, Cmd.None];
+
+    case "ClickedTogglePasswordVisibility":
+      return [
+        {
+          ...model,
+          passwordVisibility: toggleVisibility(model.passwordVisibility),
+        },
+        pipe(
+          Browser.focus(passwordId),
+          Cmd.fromTask((result) => ({ type: "FocusResulted", result })),
+        ),
+      ];
+
+    case "ClickedCreateAccount": {
+      const emailAddress = EmailAddress.decode(model.emailAddress);
+      const password = Password.decode(model.password);
+
+      if (emailAddress.type === "Err" || password.type === "Err") {
+        const submissionNew: Model["submission"] = {
+          type: "ProblemValidation",
+          emailAddress: emailAddress.type === "Err" ? [emailAddress.error] : [],
+          password: password.type === "Err" ? [password.error] : [],
+        };
+
+        const focusId =
+          submissionNew.emailAddress.length > 0 ? emailAddressId : passwordId;
+
+        return [
+          { ...model, submission: submissionNew },
+          pipe(
+            Browser.focus(focusId),
+            Cmd.fromTask((result) => ({ type: "FocusResulted", result })),
+          ),
+        ];
+      }
+
+      return [
+        { ...model, submission: { type: "Loading" } },
+        pipe(
+          Store.Account.createWithEmailAndPassword({
+            emailAddress: emailAddress.value,
+            password: password.value,
+          }),
+          Cmd.fromTask((result) => ({ type: "CreateAccountResulted", result })),
+        ),
+      ];
+    }
+
+    case "CreateAccountResulted": {
+      switch (msg.result.type) {
+        case "Err":
+          return [
+            {
+              ...model,
+              submission: {
+                type: "Problem",
+                message: msg.result.error.message,
+              },
+            },
+            Cmd.None,
+          ];
+        case "Ok":
+          return [{ ...model, submission: { type: "Succeeded" } }, Cmd.None];
+      }
+    }
+
+    case "ClickedLogin":
+      return [model, Route.push({ type: "Login" })];
+  }
+};
+
+const toggleVisibility = (visibility: Visibility): Visibility => {
+  switch (visibility) {
+    case "Hiding":
+      return "Showing";
+
+    case "Showing":
+      return "Hiding";
+  }
+};
+
+//
+//
+//
+// View
+//
+//
+//
+
+export const view =
+  (model: Model): View.View<Msg> =>
+  (dispatch) => {
+    return (
+      <View.Page>
+        <View.Header
+          left={
+            <View.HeaderBackButton
+              onClick={() => dispatch({ type: "ClickedBack" })}
+            />
+          }
+          title="Create Account"
+        />
+
+        <View.Box
+          sx={{ padding: 2, flex: 1, display: "flex", flexDirection: "column" }}
+        >
+          <View.TextField
+            id={emailAddressId}
+            autoFocus
+            sx={{ marginBottom: 2 }}
+            type="email"
+            fullWidth
+            inputMode="email"
+            label="Email Address"
+            value={model.emailAddress}
+            onChange={(event) =>
+              dispatch({
+                type: "InputtedEmailAddress",
+                emailAddress: event.target.value,
+              })
+            }
+            error={
+              model.submission.type === "ProblemValidation" &&
+              model.submission.emailAddress.length > 0
+            }
+            helperText={
+              model.submission.type === "ProblemValidation"
+                ? model.submission.emailAddress[0]?.message ?? ""
+                : ""
+            }
+          />
+
+          <View.TextField
+            id={passwordId}
+            sx={{ marginBottom: 2 }}
+            type={model.passwordVisibility === "Hiding" ? "password" : "text"}
+            fullWidth
+            label="Password"
+            value={model.password}
+            onChange={(event) =>
+              dispatch({
+                type: "InputtedPassword",
+                password: event.target.value,
+              })
+            }
+            error={
+              model.submission.type === "ProblemValidation" &&
+              model.submission.password.length > 0
+            }
+            helperText={
+              model.submission.type === "ProblemValidation"
+                ? model.submission.password[0]?.message ?? ""
+                : ""
+            }
+            InputProps={{
+              endAdornment: (
+                <View.InputAdornment position="end">
+                  <View.Button
+                    onClick={() =>
+                      dispatch({ type: "ClickedTogglePasswordVisibility" })
+                    }
+                  >
+                    {model.passwordVisibility === "Hiding" ? "Show" : "Hide"}
+                  </View.Button>
+                </View.InputAdornment>
+              ),
+            }}
+          />
+
+          <View.Button
+            variant="contained"
+            size="large"
+            fullWidth
+            loading={model.submission.type === "Loading"}
+            onClick={() => dispatch({ type: "ClickedCreateAccount" })}
+          >
+            Create Account
+          </View.Button>
+
+          {model.submission.type === "Problem" && (
+            <View.Alert severity="error" sx={{ marginTop: 2 }}>
+              {model.submission.message}
+            </View.Alert>
+          )}
+
+          <View.Box sx={{ flex: 1 }} />
+          <View.Typography
+            align="center"
+            color="text.secondary"
+            sx={{ marginBottom: 1 }}
+          >
+            Already have an account?
+          </View.Typography>
+          <View.Button
+            variant="outlined"
+            fullWidth
+            sx={{ marginBottom: 1 }}
+            onClick={() => dispatch({ type: "ClickedLogin" })}
+          >
+            Login
+          </View.Button>
+        </View.Box>
+      </View.Page>
+    );
+  };

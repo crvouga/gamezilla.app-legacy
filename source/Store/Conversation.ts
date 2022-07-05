@@ -365,7 +365,7 @@ const findOneById =
   ({ conversationId }: { conversationId: string }): Task.Task<FindOneResult> =>
   async () => {
     const matchConversationIdResponse = await Supabase.client
-      .from<definitions["profiles_conversations"]>("profiles_conversations")
+      .from<definitions["users_conversations"]>("users_conversations")
       .select("*")
       .eq("conversation_id", conversationId);
 
@@ -430,7 +430,7 @@ const findManyByUserId =
   > =>
   async () => {
     const matchUserIdResponse = await Supabase.client
-      .from<definitions["profiles_conversations"]>("profiles_conversations")
+      .from<definitions["users_conversations"]>("users_conversations")
       .select("*")
       .match({ user_id: userId });
 
@@ -453,7 +453,7 @@ const findManyByUserId =
     }
 
     const matchConversationIdResponse = await Supabase.client
-      .from<definitions["profiles_conversations"]>("profiles_conversations")
+      .from<definitions["users_conversations"]>("users_conversations")
       .select("*")
       .in(
         "conversation_id",
@@ -501,7 +501,7 @@ const findIdByUserIds =
   }): Task.Task<Result.Result<Problem, Option.Option<string>>> =>
   async () => {
     const profilesConversationsResponse = await Supabase.client
-      .from<definitions["profiles_conversations"]>("profiles_conversations")
+      .from<definitions["users_conversations"]>("users_conversations")
       .select("*")
       .in("user_id", userIds);
 
@@ -588,7 +588,7 @@ const insert =
       data: profilesConversationsData,
       error: profilesConversationsError,
     } = await Supabase.client
-      .from<definitions["profiles_conversations"]>("profiles_conversations")
+      .from<definitions["users_conversations"]>("users_conversations")
       .insert(
         userIds.map((userId) => ({
           conversation_id: conversation.conversationId,

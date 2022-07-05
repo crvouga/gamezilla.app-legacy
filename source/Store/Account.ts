@@ -75,11 +75,10 @@ export const findByEmailAddress =
     return pipe(decoded, Result.map(Option.Some));
   };
 
-export type CreateResult =
-  | { type: "UserAlreadyRegisted" }
-  | { type: "SignUpFailed"; message: string }
-  | { type: "InsertFailed"; message: string }
-  | { type: "Succeeded"; userId: string };
+export type CreateResult = Result.Result<
+  Problem,
+  Option.Option<{ userId: string }>
+>;
 
 export const createWithEmailAndPassword =
   ({
@@ -90,41 +89,30 @@ export const createWithEmailAndPassword =
     password: Password.Password;
   }): Task.Task<CreateResult> =>
   async () => {
-    const signUpResponse = await Supabase.client.auth.signUp({
+    const response = await Supabase.client.auth.signUp({
       email: emailAddress,
       password: password,
     });
 
-    if (signUpResponse.error) {
-      const UserAlreadyRegistered = "User already registered";
-      const message = signUpResponse.error.message;
-
-      if (message === UserAlreadyRegistered) {
-        return { type: "UserAlreadyRegisted" };
-      }
-
-      return { type: "SignUpFailed", message };
+    if (response.error) {
+      return Result.Err({ message: response.error.message });
     }
 
-    if (!signUpResponse.user) {
-      return {
-        type: "InsertFailed",
-        message: "sign up response did not return an user id",
-      };
-    }
+    //
+    //
+    //
+    // Note!
+    // a supabase trigger is expected to insert an row into a public table after sign up
+    //
+    //
+    //
 
-    const insertResponse = await Supabase.client
-      .from<definitions["user_account"]>("user_account")
-      .insert({ id: signUpResponse.user.id, email_address: emailAddress });
-
-    if (insertResponse.error) {
-      return {
-        type: "InsertFailed",
-        message: `Sign up response succeeded but inserting account failed. ${insertResponse.error.message}`,
-      };
-    }
-
-    return { type: "Succeeded", userId: signUpResponse.user.id };
+    return Result.Ok(
+      pipe(
+        Option.fromNullable(response.user),
+        Option.map((user) => ({ userId: user.id })),
+      ),
+    );
   };
 
 //
