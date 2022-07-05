@@ -50,9 +50,10 @@ export type Msg =
   | { type: "ClickedBack" }
   | { type: "InputtedEmailAddress"; emailAddress: string }
   | { type: "InputtedPassword"; password: string }
-  | { type: "ToggledPasswordVisibility" }
+  | { type: "ClickedTogglePasswordVisibility" }
   | { type: "FocusResulted"; result: Browser.FocusResult }
   | { type: "ClickedLogin" }
+  | { type: "ClickedCreateAccount" }
   | { type: "LoginResulted"; result: Session.LoginResult };
 
 const passwordFieldId = "password";
@@ -69,7 +70,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
       return [{ ...model, password: msg.password }, Cmd.None];
     }
 
-    case "ToggledPasswordVisibility":
+    case "ClickedTogglePasswordVisibility":
       return [
         {
           ...model,
@@ -116,6 +117,9 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
         case "Ok":
           return [model, Cmd.None];
       }
+
+    case "ClickedCreateAccount":
+      return [model, Route.push({ type: "AccountCreate" })];
   }
 };
 
@@ -194,7 +198,7 @@ export const view =
                 <View.InputAdornment position="end">
                   <View.Button
                     onClick={() =>
-                      dispatch({ type: "ToggledPasswordVisibility" })
+                      dispatch({ type: "ClickedTogglePasswordVisibility" })
                     }
                   >
                     {model.passwordVisibility === "Hiding" ? "Show" : "Hide"}
@@ -235,8 +239,9 @@ export const view =
             fullWidth
             variant="outlined"
             sx={{ marginBottom: 1 }}
+            onClick={() => dispatch({ type: "ClickedCreateAccount" })}
           >
-            Create New Account
+            Create Account
           </View.Button>
         </View.Box>
       </View.Page>

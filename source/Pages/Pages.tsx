@@ -1,13 +1,13 @@
-import * as EmailAddress from "EmailAddress";
 import * as Games from "Games";
 import * as Route from "Route";
 import * as Session from "Session";
 import * as Snackbar from "Snackbar";
 import * as Store from "Store";
 import * as View from "View";
-import { Cmd, Option, Sub, pipe } from "Core";
+import { Cmd, Sub, pipe } from "Core";
 import { exhaustive } from "Utility";
 import * as Account from "./Account";
+import * as AccountCreate from "./AccountCreate";
 import * as Chat from "./Chat";
 import * as ChatConversation from "./ChatConversation";
 import * as ChatNew from "./ChatNew";
@@ -15,8 +15,6 @@ import * as Game from "./Game";
 import * as Home from "./Home";
 import * as Login from "./Login";
 import * as LoginEmail from "./LoginEmail";
-import * as LoginEmailCreateAccount from "./LoginEmailCreateAccount";
-import * as LoginEmailPassword from "./LoginEmailPassword";
 import * as Logout from "./Logout";
 import * as ProfileCreate from "./ProfileCreate";
 import * as ProfileDelete from "./ProfileDelete";
@@ -54,15 +52,7 @@ export type Model =
       conversationId: string;
     })
   | (LoginEmail.Model & { page: "LoginEmail" })
-  | (LoginEmailPassword.Model & {
-      page: "LoginEmailPassword";
-      userId: string;
-      emailAddress: EmailAddress.EmailAddress;
-    })
-  | (LoginEmailCreateAccount.Model & {
-      page: "LoginEmailCreateAccount";
-      emailAddress: EmailAddress.EmailAddress;
-    })
+  | (AccountCreate.Model & { page: "AccountCreate" })
   | { page: "Game" }
   | { page: "Loading" };
 
@@ -196,8 +186,7 @@ export const initReady = (
     case "ProfileCreate":
     case "Login":
     case "LoginEmail":
-    case "LoginEmailPassword":
-    case "LoginEmailCreateAccount":
+    case "AccountCreate":
       return [{ ...Home.init, page: "Home" }, Route.push({ type: "Home" }), []];
 
     default:
@@ -215,30 +204,17 @@ export const initSessionMissing = (
     case "LoginEmail":
       return [{ ...LoginEmail.init, page: "LoginEmail" }, Cmd.None];
 
-    case "LoginEmailPassword":
-      return [
-        {
-          ...LoginEmailPassword.init,
-          emailAddress: route.emailAddress,
-          userId: route.userId,
-          page: "LoginEmailPassword",
-        },
-        Cmd.None,
-      ];
-
-    case "LoginEmailCreateAccount":
-      const [modelNew, cmd] = LoginEmailCreateAccount.init({
-        emailAddress: route.emailAddress,
-      });
+    case "AccountCreate":
+      const [modelNew, cmd] = AccountCreate.init();
       return [
         {
           ...modelNew,
-          emailAddress: route.emailAddress,
-          page: "LoginEmailCreateAccount",
+
+          page: "AccountCreate",
         },
         pipe(
           cmd,
-          Cmd.map((msg) => ({ ...msg, page: "LoginEmailCreateAccount" })),
+          Cmd.map((msg) => ({ ...msg, page: "AccountCreate" })),
         ),
       ];
 
@@ -291,8 +267,7 @@ export const initProfileMissing = (
     case "ProfileUpdateUsername":
     case "Login":
     case "LoginEmail":
-    case "LoginEmailPassword":
-    case "LoginEmailCreateAccount":
+    case "AccountCreate":
       return [
         { ...ProfileCreate.init(session), page: "ProfileCreate" },
         Route.push({ type: "ProfileCreate" }),
@@ -315,8 +290,7 @@ export type Msg =
   | (Home.Msg & { page: "Home" })
   | (Login.Msg & { page: "Login" })
   | (LoginEmail.Msg & { page: "LoginEmail" })
-  | (LoginEmailPassword.Msg & { page: "LoginEmailPassword" })
-  | (LoginEmailCreateAccount.Msg & { page: "LoginEmailCreateAccount" })
+  | (AccountCreate.Msg & { page: "AccountCreate" })
   | (Logout.Msg & { page: "Logout" })
   | (ProfileCreate.Msg & { page: "ProfileCreate" })
   | (ProfileDelete.Msg & { page: "ProfileDelete" })
@@ -479,8 +453,7 @@ export const updateReady = (
     case "Loading":
     case "ProfileCreate":
     case "LoginEmail":
-    case "LoginEmailPassword":
-    case "LoginEmailCreateAccount":
+    case "AccountCreate":
       return [model, Route.push({ type: "Home" }), []];
 
     default:
@@ -527,8 +500,7 @@ export const updateProfileMissing = (
     case "Game":
     case "Loading":
     case "LoginEmail":
-    case "LoginEmailPassword":
-    case "LoginEmailCreateAccount":
+    case "AccountCreate":
       return [model, Route.push({ type: "ProfileCreate" }), []];
 
     default:
@@ -553,50 +525,9 @@ export const updateSessionMissing = (
       }
       return [model, Cmd.None, []];
 
-    case "LoginEmailPassword": {
-      if (msg.page === "LoginEmailPassword") {
-        const [modelNew, cmd, actions = []] = LoginEmailPassword.update(
-          msg,
-          model,
-        );
-
-        return [
-          {
-            ...modelNew,
-            emailAddress: model.emailAddress,
-            userId: model.userId,
-            page: "LoginEmailPassword",
-          },
-          pipe(
-            cmd,
-            Cmd.map((msg) => ({ ...msg, page: "LoginEmailPassword" })),
-          ),
-          actions,
-        ];
-      }
-      return [model, Cmd.None, []];
-    }
-
-    case "LoginEmailCreateAccount": {
-      if (msg.page === "LoginEmailCreateAccount") {
-        const [modelNew, cmd, actions = []] = LoginEmailCreateAccount.update(
-          { emailAddress: model.emailAddress },
-          msg,
-          model,
-        );
-
-        return [
-          {
-            ...modelNew,
-            emailAddress: model.emailAddress,
-            page: "LoginEmailCreateAccount",
-          },
-          pipe(
-            cmd,
-            Cmd.map((msg) => ({ ...msg, page: "LoginEmailCreateAccount" })),
-          ),
-          actions,
-        ];
+    case "AccountCreate": {
+      if (msg.page === "AccountCreate") {
+        return tagUpdate("AccountCreate", AccountCreate.update(msg, model));
       }
       return [model, Cmd.None, []];
     }
@@ -687,10 +618,7 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
     case "LoginEmail":
       return Sub.None;
 
-    case "LoginEmailPassword":
-      return Sub.None;
-
-    case "LoginEmailCreateAccount":
+    case "AccountCreate":
       return Sub.None;
 
     default:
@@ -808,10 +736,7 @@ export const viewReady = (
     case "LoginEmail":
       return viewLoading;
 
-    case "LoginEmailPassword":
-      return viewLoading;
-
-    case "LoginEmailCreateAccount":
+    case "AccountCreate":
       return viewLoading;
 
     default:
@@ -844,9 +769,8 @@ export const viewProfileMissing = (
     case "ProfileUpdateUsername":
     case "Login":
     case "LoginEmail":
-    case "LoginEmailPassword":
     case "Loading":
-    case "LoginEmailCreateAccount":
+    case "AccountCreate":
       return viewLoading;
 
     default:
@@ -862,23 +786,8 @@ export const viewSessionMissing = (model: Model): View.View<Msg> => {
     case "LoginEmail":
       return tagView("LoginEmail", LoginEmail.view(model));
 
-    case "LoginEmailPassword":
-      return tagView(
-        "LoginEmailPassword",
-        LoginEmailPassword.view(
-          { userId: model.userId, emailAddress: model.emailAddress },
-          model,
-        ),
-      );
-
-    case "LoginEmailCreateAccount":
-      return tagView(
-        "LoginEmailCreateAccount",
-        LoginEmailCreateAccount.view(
-          { emailAddress: model.emailAddress },
-          model,
-        ),
-      );
+    case "AccountCreate":
+      return tagView("AccountCreate", AccountCreate.view(model));
 
     case "Account":
     case "Chat":

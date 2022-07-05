@@ -12,9 +12,7 @@ export const is = (password: unknown): password is Password => {
 
 export type Problem = { message: string };
 
-export const validate = (
-  password: string,
-): Result.Result<Problem, Password> => {
+export const decode = (password: string): Result.Result<Problem, Password> => {
   if (password.length < passwordMinLength) {
     return Result.Err({
       message: `Password must be longer than ${passwordMinLength} characters.`,
