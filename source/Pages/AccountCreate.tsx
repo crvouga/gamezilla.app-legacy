@@ -280,8 +280,6 @@ export const view =
 
           <View.Button
             variant="contained"
-            size="large"
-            fullWidth
             loading={model.submission.type === "Loading"}
             onClick={() => dispatch({ type: "ClickedCreateAccount" })}
           >
@@ -295,19 +293,10 @@ export const view =
           )}
 
           <View.Box sx={{ flex: 1 }} />
-          <View.Typography
-            align="center"
-            color="text.secondary"
-            sx={{ marginBottom: 1 }}
-          >
+          <View.Typography align="center" color="text.secondary">
             Already have an account?
           </View.Typography>
-          <View.Button
-            variant="outlined"
-            fullWidth
-            sx={{ marginBottom: 1 }}
-            onClick={() => dispatch({ type: "ClickedLogin" })}
-          >
+          <View.Button onClick={() => dispatch({ type: "ClickedLogin" })}>
             Login
           </View.Button>
         </View.Box>
