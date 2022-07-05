@@ -230,36 +230,22 @@ export const view =
 
           <View.Box sx={{ flex: 1 }} />
 
-          <View.Typography
-            align="center"
-            color="text.secondary"
-            sx={{ marginBottom: 1 }}
-          >
+          <View.Typography align="center" color="text.secondary">
             Don't have an account?
           </View.Typography>
 
           <View.Button
-            size="large"
-            fullWidth
-            variant="outlined"
+            key="create account"
             sx={{ marginBottom: 2 }}
             onClick={() => dispatch({ type: "ClickedCreateAccount" })}
           >
             Create Account
           </View.Button>
-          <View.Typography
-            align="center"
-            color="text.secondary"
-            sx={{ marginBottom: 1 }}
-          >
+          <View.Typography align="center" color="text.secondary">
             Forgot password?
           </View.Typography>
 
           <View.Button
-            size="large"
-            fullWidth
-            variant="outlined"
-            sx={{ marginBottom: 1 }}
             onClick={() => dispatch({ type: "ClickedResetPassword" })}
           >
             Reset Password
