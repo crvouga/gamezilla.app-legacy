@@ -214,6 +214,8 @@ export const Paper = Mui.Paper;
 
 export const Button = MuiLab.LoadingButton;
 
+export const InputAdornment = Mui.InputAdornment;
+
 export const Typography = Mui.Typography;
 
 export const Dialog = Mui.Dialog;

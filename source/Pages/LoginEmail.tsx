@@ -1,8 +1,7 @@
-import * as EmailAddress from "EmailAddress";
 import * as Route from "Route";
-import * as Store from "Store";
+import * as Session from "Session";
 import * as View from "View";
-import { Cmd, Option, pipe } from "Core";
+import { Browser, Cmd, pipe } from "Core";
 
 //
 //
@@ -15,15 +14,26 @@ import { Cmd, Option, pipe } from "Core";
 export type Model = {
   emailAddress: string;
   password: string;
+  passwordVisibility: Visibility;
   submission:
     | { type: "Idle" }
     | { type: "Loading" }
-    | { type: "ProblemValidation"; message: string }
     | { type: "Problem"; message: string };
 };
 
+type Visibility = "Showing" | "Hiding";
+
+//
+//
+//
+// Init
+//
+//
+//
+
 export const init: Model = {
   submission: { type: "Idle" },
+  passwordVisibility: "Hiding",
   emailAddress: "",
   password: "",
 };
@@ -40,12 +50,12 @@ export type Msg =
   | { type: "ClickedBack" }
   | { type: "InputtedEmailAddress"; emailAddress: string }
   | { type: "InputtedPassword"; password: string }
-  | { type: "ClickedContinue" }
-  | {
-      type: "FindAccountResulted";
-      emailAddress: EmailAddress.EmailAddress;
-      result: Store.Account.FindResult;
-    };
+  | { type: "ToggledPasswordVisibility" }
+  | { type: "FocusResulted"; result: Browser.FocusResult }
+  | { type: "ClickedLogin" }
+  | { type: "LoginResulted"; result: Session.LoginResult };
+
+const passwordFieldId = "password";
 
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg.type) {
@@ -53,59 +63,43 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
       return [model, Route.back];
 
     case "InputtedEmailAddress":
-      const submissionNew: Model["submission"] =
-        model.submission.type === "ProblemValidation"
-          ? { type: "Idle" }
-          : model.submission;
-
-      return [
-        {
-          ...model,
-          submission: submissionNew,
-          emailAddress: msg.emailAddress,
-        },
-        Cmd.None,
-      ];
+      return [{ ...model, emailAddress: msg.emailAddress }, Cmd.None];
 
     case "InputtedPassword": {
       return [{ ...model, password: msg.password }, Cmd.None];
     }
 
-    case "ClickedContinue":
-      const decoded = EmailAddress.decode(model.emailAddress);
-      switch (decoded.type) {
-        case "Err":
-          return [
-            {
-              ...model,
-              submission: {
-                type: "ProblemValidation",
-                message: decoded.error.message,
-              },
-            },
-            Cmd.None,
-          ];
+    case "ToggledPasswordVisibility":
+      return [
+        {
+          ...model,
+          passwordVisibility: toggleVisibility(model.passwordVisibility),
+        },
+        pipe(
+          Browser.focus(passwordFieldId),
+          Cmd.fromTask((result) => ({ type: "FocusResulted", result })),
+        ),
+      ];
 
-        case "Ok":
-          return [
-            {
-              ...model,
-              submission: { type: "Loading" },
-            },
-            pipe(
-              Store.Account.findByEmailAddress({
-                emailAddress: decoded.value,
-              }),
-              Cmd.fromTask((result) => ({
-                type: "FindAccountResulted",
-                emailAddress: decoded.value,
-                result,
-              })),
-            ),
-          ];
-      }
+    case "FocusResulted":
+      return [model, Cmd.None];
 
-    case "FindAccountResulted":
+    case "ClickedLogin":
+      return [
+        {
+          ...model,
+          submission: { type: "Loading" },
+        },
+        pipe(
+          Session.loginWithEmailAndPassword({
+            emailAddress: model.emailAddress,
+            password: model.password,
+          }),
+          Cmd.fromTask((result) => ({ type: "LoginResulted", result })),
+        ),
+      ];
+
+    case "LoginResulted":
       switch (msg.result.type) {
         case "Err":
           return [
@@ -120,27 +114,18 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
           ];
 
         case "Ok":
-          switch (msg.result.value.type) {
-            case "None":
-              return [
-                { ...model, submission: { type: "Idle" } },
-                Route.push({
-                  type: "LoginEmailCreateAccount",
-                  emailAddress: msg.emailAddress,
-                }),
-              ];
-
-            case "Some":
-              return [
-                { ...model, submission: { type: "Idle" } },
-                Route.push({
-                  type: "LoginEmailPassword",
-                  emailAddress: msg.emailAddress,
-                  userId: msg.result.value.value.userId,
-                }),
-              ];
-          }
+          return [model, Cmd.None];
       }
+  }
+};
+
+const toggleVisibility = (visibility: Visibility): Visibility => {
+  switch (visibility) {
+    case "Hiding":
+      return "Showing";
+
+    case "Showing":
+      return "Hiding";
   }
 };
 
@@ -183,12 +168,6 @@ export const view =
             inputMode="email"
             label="Email Address"
             value={model.emailAddress}
-            helperText={
-              model.submission.type === "ProblemValidation"
-                ? model.submission.message
-                : ""
-            }
-            error={model.submission.type === "ProblemValidation"}
             onChange={(event) => {
               dispatch({
                 type: "InputtedEmailAddress",
@@ -199,21 +178,29 @@ export const view =
 
           <View.TextField
             sx={{ marginBottom: 2 }}
-            type="password"
+            id={passwordFieldId}
+            type={model.passwordVisibility === "Hiding" ? "password" : "text"}
             fullWidth
             label="Password"
             value={model.password}
-            // helperText={
-            //   model.submission.type === "ProblemValidation"
-            //     ? model.submission.message
-            //     : ""
-            // }
-            // error={model.submission.type === "ProblemValidation"}
             onChange={(event) => {
               dispatch({
                 type: "InputtedPassword",
                 password: event.target.value,
               });
+            }}
+            InputProps={{
+              endAdornment: (
+                <View.InputAdornment position="end">
+                  <View.Button
+                    onClick={() =>
+                      dispatch({ type: "ToggledPasswordVisibility" })
+                    }
+                  >
+                    {model.passwordVisibility === "Hiding" ? "Show" : "Hide"}
+                  </View.Button>
+                </View.InputAdornment>
+              ),
             }}
           />
 
@@ -222,7 +209,7 @@ export const view =
             size="large"
             fullWidth
             loading={model.submission.type === "Loading"}
-            onClick={() => dispatch({ type: "ClickedContinue" })}
+            onClick={() => dispatch({ type: "ClickedLogin" })}
           >
             Login
           </View.Button>
@@ -235,8 +222,12 @@ export const view =
 
           <View.Box sx={{ flex: 1 }} />
 
-          <View.Typography align="center" color="text.secondary" sx={{ p: 2 }}>
-            Don't already have an account?
+          <View.Typography
+            align="center"
+            color="text.secondary"
+            sx={{ marginBottom: 1 }}
+          >
+            Don't have an account?
           </View.Typography>
 
           <View.Button
