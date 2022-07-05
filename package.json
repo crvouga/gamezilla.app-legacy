@@ -1,7 +1,7 @@
 {
   "private": true,
   "scripts": {
-    "backend:dev": "ts-node-dev source/Backend/Main.ts",
+    "backend:dev": "npx nodemon -e ts,js --exec ts-node -r tsconfig-paths/register ./source/Backend/Main.ts",
     "build": "vite build --emptyOutDir",
     "dev": "vite",
     "preview": "vite preview",
@@ -25,15 +25,16 @@
     "match-sorter": "^6.3.1",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
-    "rxjs": "^7.5.5"
+    "rxjs": "^7.5.5",
+    "socket.io": "^4.5.1"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^5.29.0",
     "@faker-js/faker": "^7.3.0",
     "@trivago/prettier-plugin-sort-imports": "^3.2.0",
     "@types/jest": "^27.4.1",
     "@types/react": "^18.0.8",
     "@types/react-dom": "^18.0.3",
+    "@typescript-eslint/eslint-plugin": "^5.29.0",
     "@typescript-eslint/parser": "^5.29.0",
     "@vitejs/plugin-react": "^1.0.7",
     "concurrently": "^7.1.0",
@@ -45,6 +46,7 @@
     "prettier": "^2.7.1",
     "ts-node-dev": "^1.1.8",
     "tsc-watch": "^5.0.3",
+    "tsconfig-paths": "^4.0.0",
     "tsutils": "^3.21.0",
     "typescript": "^4.6.2",
     "vite": "^2.8.6",
