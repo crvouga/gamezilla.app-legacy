@@ -115,6 +115,26 @@ export const createWithEmailAndPassword =
     );
   };
 
+export type SendResetPasswordLinkResult = Result.Result<Problem, {}>;
+
+export const sendResetPasswordLink =
+  ({
+    emailAddress,
+  }: {
+    emailAddress: string;
+  }): Task.Task<SendResetPasswordLinkResult> =>
+  async () => {
+    const response = await Supabase.client.auth.api.resetPasswordForEmail(
+      emailAddress,
+    );
+
+    if (response.error) {
+      return Result.Err({ message: response.error.message });
+    }
+
+    return Result.Ok({});
+  };
+
 //
 //
 //

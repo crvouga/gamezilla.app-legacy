@@ -16,6 +16,7 @@ import * as Home from "./Home";
 import * as Login from "./Login";
 import * as LoginEmail from "./LoginEmail";
 import * as Logout from "./Logout";
+import * as PasswordReset from "./PasswordReset";
 import * as ProfileCreate from "./ProfileCreate";
 import * as ProfileDelete from "./ProfileDelete";
 import * as ProfileUpdate from "./ProfileUpdate";
@@ -47,6 +48,7 @@ export type Model =
   | (ProfileUpdateTheme.Model & { page: "ProfileUpdateTheme" })
   | (Chat.Model & { page: "Chat" })
   | (ChatNew.Model & { page: "ChatNew" })
+  | (PasswordReset.Model & { page: "PasswordReset" })
   | (ChatConversation.Model & {
       page: "ChatConversation";
       conversationId: string;
@@ -187,6 +189,7 @@ export const initReady = (
     case "Login":
     case "LoginEmail":
     case "AccountCreate":
+    case "PasswordReset":
       return [{ ...Home.init, page: "Home" }, Route.push({ type: "Home" }), []];
 
     default:
@@ -217,6 +220,9 @@ export const initSessionMissing = (
           Cmd.map((msg) => ({ ...msg, page: "AccountCreate" })),
         ),
       ];
+
+    case "PasswordReset":
+      return [{ ...PasswordReset.init, page: "PasswordReset" }, Cmd.None];
 
     case "Account":
     case "Chat":
@@ -268,6 +274,7 @@ export const initProfileMissing = (
     case "Login":
     case "LoginEmail":
     case "AccountCreate":
+    case "PasswordReset":
       return [
         { ...ProfileCreate.init(session), page: "ProfileCreate" },
         Route.push({ type: "ProfileCreate" }),
@@ -299,6 +306,7 @@ export type Msg =
   | (ProfileUpdateName.Msg & { page: "ProfileUpdateName" })
   | (ProfileUpdateUsername.Msg & { page: "ProfileUpdateUsername" })
   | (Chat.Msg & { page: "Chat" })
+  | (PasswordReset.Msg & { page: "PasswordReset" })
   | (ChatNew.Msg & { page: "ChatNew" })
   | (ChatConversation.Msg & { page: "ChatConversation" })
   | (ProfileUpdateTheme.Msg & { page: "ProfileUpdateTheme" })
@@ -454,6 +462,7 @@ export const updateReady = (
     case "ProfileCreate":
     case "LoginEmail":
     case "AccountCreate":
+    case "PasswordReset":
       return [model, Route.push({ type: "Home" }), []];
 
     default:
@@ -501,6 +510,7 @@ export const updateProfileMissing = (
     case "Loading":
     case "LoginEmail":
     case "AccountCreate":
+    case "PasswordReset":
       return [model, Route.push({ type: "ProfileCreate" }), []];
 
     default:
@@ -528,6 +538,13 @@ export const updateSessionMissing = (
     case "AccountCreate": {
       if (msg.page === "AccountCreate") {
         return tagUpdate("AccountCreate", AccountCreate.update(msg, model));
+      }
+      return [model, Cmd.None, []];
+    }
+
+    case "PasswordReset": {
+      if (msg.page === "PasswordReset") {
+        return tagUpdate("PasswordReset", PasswordReset.update(msg, model));
       }
       return [model, Cmd.None, []];
     }
@@ -564,61 +581,30 @@ export const updateSessionMissing = (
 
 export const subscriptions = (model: Model): Sub.Sub<Msg> => {
   switch (model.page) {
-    case "Account":
-      return Sub.None;
-
-    case "Chat":
-      return Sub.None;
-
     case "ChatNew":
       return pipe(
         ChatNew.subscriptions(model),
         Sub.map((msg) => ({ ...msg, page: "ChatNew" })),
       );
 
+    case "Account":
+    case "Chat":
     case "ChatConversation":
-      return Sub.None;
-
     case "Game":
-      return Sub.None;
-
     case "Home":
-      return Sub.None;
-
     case "Login":
-      return Sub.None;
-
     case "Logout":
-      return Sub.None;
-
     case "ProfileCreate":
-      return Sub.None;
-
     case "ProfileDelete":
-      return Sub.None;
-
     case "ProfileUpdate":
-      return Sub.None;
-
     case "ProfileUpdateAvatar":
-      return Sub.None;
-
     case "ProfileUpdateTheme":
-      return Sub.None;
-
     case "ProfileUpdateUsername":
-      return Sub.None;
-
     case "ProfileUpdateName":
-      return Sub.None;
-
     case "Loading":
-      return Sub.None;
-
     case "LoginEmail":
-      return Sub.None;
-
     case "AccountCreate":
+    case "PasswordReset":
       return Sub.None;
 
     default:
@@ -725,17 +711,10 @@ export const viewReady = (
       return tagView("Games", Game.view(game));
 
     case "Login":
-      return viewLoading;
-
     case "ProfileCreate":
-      return viewLoading;
-
     case "Loading":
-      return viewLoading;
-
     case "LoginEmail":
-      return viewLoading;
-
+    case "PasswordReset":
     case "AccountCreate":
       return viewLoading;
 
@@ -771,6 +750,7 @@ export const viewProfileMissing = (
     case "LoginEmail":
     case "Loading":
     case "AccountCreate":
+    case "PasswordReset":
       return viewLoading;
 
     default:
@@ -788,6 +768,9 @@ export const viewSessionMissing = (model: Model): View.View<Msg> => {
 
     case "AccountCreate":
       return tagView("AccountCreate", AccountCreate.view(model));
+
+    case "PasswordReset":
+      return tagView("PasswordReset", PasswordReset.view(model));
 
     case "Account":
     case "Chat":
