@@ -26,32 +26,20 @@ const container = document.getElementById("root");
 
 const root = ReactDomClient.createRoot(container!);
 
-const CleanUp = () => {
-  useEffect(() => {
-    return () => {
-      stop();
-    };
-  }, []);
-  return <div />;
-};
+root.render(<>hello</>);
 
 const stop = Browser.run(program, (dom) => {
-  root.render(
-    <>
-      {dom}
-      <CleanUp />
-    </>,
-  );
+  root.render(dom);
 });
 
-program.state$.subscribe((state) => {
-  const size = new TextEncoder().encode(JSON.stringify(state.model)).length;
-  const kiloBytes = Math.round(size / 1024);
-  // const megaBytes = kiloBytes / 1024;
-  console.log(`[app] model memory size is ${kiloBytes} kiloBytes`);
-});
+// program.state$.subscribe((state) => {
+//   const size = new TextEncoder().encode(JSON.stringify(state.model)).length;
+//   const kiloBytes = Math.round(size / 1024);
+//   // const megaBytes = kiloBytes / 1024;
+//   console.log(`[app] model memory size is ${kiloBytes} kiloBytes`);
+// });
 
-if (import.meta.hot) {
-  import.meta.hot.accept();
-  import.meta.hot.dispose(stop);
-}
+// if (import.meta.hot) {
+//   import.meta.hot.accept();
+//   import.meta.hot.dispose(stop);
+// }

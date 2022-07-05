@@ -235,7 +235,6 @@ export const view =
           </View.Typography>
 
           <View.Button
-            key="create account"
             sx={{ marginBottom: 2 }}
             onClick={() => dispatch({ type: "ClickedCreateAccount" })}
           >

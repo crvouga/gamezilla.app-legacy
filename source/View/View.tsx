@@ -51,7 +51,6 @@ const createTheme = ({ mode }: { mode: "light" | "dark" }) =>
             disableElevation: true,
             size: "large",
             variant: "contained",
-            fullWidth: true,
           },
           styleOverrides: {
             root: {
