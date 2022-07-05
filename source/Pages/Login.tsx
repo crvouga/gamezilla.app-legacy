@@ -88,7 +88,7 @@ export const view =
         />
 
         <View.Typography
-          sx={{ marginY: 2 }}
+          sx={{ marginY: 1 }}
           align="center"
           color="text.secondary"
         >
