@@ -1,7 +1,7 @@
 import * as Route from "Route";
 import * as Session from "Session";
 import * as View from "View";
-import { Cmd, Option } from "Core";
+import { Cmd, Option, pipe } from "Core";
 
 //
 //
@@ -13,7 +13,7 @@ import { Cmd, Option } from "Core";
 
 export type Model =
   | { type: "Idle" }
-  | { type: "LoggingIn"; loginMethod: Session.LoginMethod };
+  | { type: "LoggingInWithProvider"; provider: Session.Provider };
 
 export const init: Model = { type: "Idle" };
 
@@ -28,32 +28,33 @@ export const init: Model = { type: "Idle" };
 export type Msg =
   | { type: "ClickedGoogleLogin" }
   | { type: "ClickedEmailLogin" }
-  | { type: "LoginFailed" }
-  | { type: "LoginSucceeded" };
+  | { type: "LoginWithProviderResulted"; result: Session.LoginResult };
 
-type OutAction = Session.Action;
-
-export const update = (
-  msg: Msg,
-  model: Model,
-): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
+export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg.type) {
+    case "ClickedEmailLogin":
+      return [model, Route.push({ type: "LoginEmail" })];
+
     case "ClickedGoogleLogin":
       return [
-        { type: "LoggingIn", loginMethod: { type: "Google" } },
-        Cmd.None,
-
-        [Session.Login({ type: "Google" })],
+        { type: "LoggingInWithProvider", provider: "Google" },
+        pipe(
+          Session.loginWithProvider({ provider: "Google" }),
+          Cmd.fromTask((result) => ({
+            type: "LoginWithProviderResulted",
+            result,
+          })),
+        ),
       ];
 
-    case "LoginFailed":
-      return [{ type: "Idle" }, Cmd.None, []];
+    case "LoginWithProviderResulted":
+      switch (msg.result.type) {
+        case "Err":
+          return [{ type: "Idle" }, Cmd.None];
 
-    case "LoginSucceeded":
-      return [model, Cmd.None, []];
-
-    case "ClickedEmailLogin":
-      return [model, Route.push({ type: "LoginEmail" }), []];
+        case "Ok":
+          return [model, Cmd.None];
+      }
   }
 };
 
@@ -82,7 +83,8 @@ export const view =
 
         <ContinueWithGoogleButton
           isLoading={
-            model.type === "LoggingIn" && model.loginMethod.type === "Google"
+            model.type === "LoggingInWithProvider" &&
+            model.provider === "Google"
           }
           onClick={() => dispatch({ type: "ClickedGoogleLogin" })}
         />

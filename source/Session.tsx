@@ -42,7 +42,7 @@ export const init = (): [Model, Cmd.Cmd<Msg>] => [
 
 export type Msg = GotSession | LoginResulted | LogoutResulted;
 
-export type Action = Logout | Login;
+export type Action = Logout;
 
 const GotSession = (session: Option.Option<Session>) => {
   return {
@@ -78,15 +78,6 @@ export const Logout = () => {
   } as const;
 };
 export type Logout = ReturnType<typeof Logout>;
-
-export const Login = (method: LoginMethod) => {
-  return {
-    group: "Session",
-    type: "Login",
-    method,
-  } as const;
-};
-export type Login = ReturnType<typeof Login>;
 
 //
 //
@@ -126,9 +117,6 @@ export const runAction = (
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (action.type) {
-    case "Login":
-      return [model, pipe(login(action.method), Cmd.fromTask(LoginResulted))];
-
     case "Logout":
       return [model, pipe(logout, Cmd.fromTask(LogoutResulted))];
   }
@@ -142,22 +130,48 @@ export const runAction = (
 //
 //
 
-export type LoginMethod = { type: "Google" };
+type Problem = { message: string };
 
-const login =
-  (method: LoginMethod): Task.Task<Result.Result<{}, {}>> =>
+export type LoginResult = Result.Result<Problem, {}>;
+
+export const loginWithEmailAndPassword =
+  ({
+    emailAddress,
+    password,
+  }: {
+    emailAddress: string;
+    password: string;
+  }): Task.Task<LoginResult> =>
   async () => {
-    switch (method.type) {
-      case "Google":
-        const { error } = await Supabase.client.auth.signIn({
+    const response = await Supabase.client.auth.signIn({
+      email: emailAddress,
+      password: password,
+    });
+
+    if (response.error) {
+      return Result.Err({ message: response.error.message });
+    }
+
+    return Result.Ok({});
+  };
+
+export type Provider = "Google";
+
+export const loginWithProvider =
+  ({ provider }: { provider: Provider }): Task.Task<LoginResult> =>
+  async () => {
+    switch (provider) {
+      case "Google": {
+        const response = await Supabase.client.auth.signIn({
           provider: "google",
         });
 
-        if (error) {
-          return Result.Err({});
+        if (response.error) {
+          return Result.Err({ message: response.error.message });
         }
 
         return Result.Ok({});
+      }
     }
   };
 

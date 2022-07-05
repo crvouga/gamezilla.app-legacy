@@ -1,10 +1,12 @@
 import * as History from "history";
 import * as Rx from "rxjs";
+import { Result } from "Core";
 import * as Cmd from "./Cmd";
 import * as Html from "./Html";
 import * as Option from "./Option";
 import * as Platform from "./Platform";
 import * as Sub from "./Sub";
+import * as Task from "./Task";
 import { pipe } from "./pipe";
 
 //
@@ -93,6 +95,46 @@ export const back: Cmd.Cmd<never> = Rx.of(async () => {
 
   return Option.None;
 });
+
+//
+//
+//
+// Dom
+//
+//
+//
+
+export type Problem = { type: "ElementNotFound" };
+
+export type FocusResult = Result.Result<Problem, {}>;
+
+export const focus =
+  (htmlId: string): Task.Task<FocusResult> =>
+  async () => {
+    const element = document.getElementById(htmlId);
+
+    if (element) {
+      element.focus();
+      return Result.Ok({});
+    }
+
+    return Result.Err({ type: "ElementNotFound" });
+  };
+
+export type BlurResult = Result.Result<Problem, {}>;
+
+export const blur =
+  (htmlId: string): Task.Task<BlurResult> =>
+  async () => {
+    const element = document.getElementById(htmlId);
+
+    if (element) {
+      element.blur();
+      return Result.Ok({});
+    }
+
+    return Result.Err({ type: "ElementNotFound" });
+  };
 
 //
 //
