@@ -1,4 +1,5 @@
 import * as ReactDomClient from "react-dom/client";
+import * as Socket from "socket.io-client";
 import { Browser } from "Core";
 import { useEffect } from "react";
 import * as App from "./App";
@@ -28,16 +29,25 @@ const root = ReactDomClient.createRoot(container!);
 
 root.render(<>hello</>);
 
-const stop = Browser.run(program, (dom) => {
+Browser.run(program, (dom) => {
   root.render(dom);
 });
 
-// program.state$.subscribe((state) => {
-//   const size = new TextEncoder().encode(JSON.stringify(state.model)).length;
-//   const kiloBytes = Math.round(size / 1024);
-//   // const megaBytes = kiloBytes / 1024;
-//   console.log(`[app] model memory size is ${kiloBytes} kiloBytes`);
-// });
+program.state$.subscribe((state) => {
+  const size = new TextEncoder().encode(JSON.stringify(state.model)).length;
+  const kiloBytes = Math.round(size / 1024);
+  // const megaBytes = kiloBytes / 1024;
+  console.log(`[app] model memory size is ${kiloBytes} kiloBytes`);
+});
+
+const backendUrl = "http://localhost:5000/";
+
+const socket = Socket.io(backendUrl);
+console.log(socket);
+
+socket.on("connect", () => {
+  console.log("connected to backend");
+});
 
 // if (import.meta.hot) {
 //   import.meta.hot.accept();

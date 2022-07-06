@@ -1,4 +1,3 @@
-import * as History from "history";
 import * as Rx from "rxjs";
 import * as Browser from "../Browser";
 import * as Cmd from "../Cmd";

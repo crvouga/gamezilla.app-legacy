@@ -1,4 +1,3 @@
-import * as History from "history";
 import * as Rx from "rxjs";
 import { Result } from "Core";
 import * as Cmd from "./Cmd";
@@ -7,7 +6,6 @@ import * as Option from "./Option";
 import * as Platform from "./Platform";
 import * as Sub from "./Sub";
 import * as Task from "./Task";
-import { pipe } from "./pipe";
 
 //
 //
@@ -36,29 +34,16 @@ export type Location = {
   query: { [key: string]: string };
 };
 
-export const history = History.createBrowserHistory();
-
 export const location$ = new Rx.Subject<Location>();
 
-const fromHistoryLocation = (location: History.Location): Location => {
-  const query = pipe(
-    location.search,
-    (search) => new URLSearchParams(search).entries(),
-    (entries) => Object.fromEntries(entries),
-  );
+export const getLocation = () => {
   return {
-    pathname: location.pathname,
-    query: query,
+    pathname: window.location.pathname,
+    query: Object.fromEntries(
+      new URLSearchParams(window.location.search).entries(),
+    ),
   };
 };
-
-export const getLocation = () => {
-  return fromHistoryLocation(history.location);
-};
-
-history.listen((historyUpdate) => {
-  location$.next(fromHistoryLocation(historyUpdate.location));
-});
 
 //
 //
@@ -70,29 +55,29 @@ history.listen((historyUpdate) => {
 
 export const reload: Cmd.Cmd<never> = Rx.of(async () => {
   window.location.reload();
-
+  location$.next(getLocation());
   return Option.None;
 });
 
 export const push = (url: string): Cmd.Cmd<never> => {
   return Rx.of(async () => {
-    history.push(url);
-
+    window.history.pushState(null, "", url);
+    location$.next(getLocation());
     return Option.None;
   });
 };
 
 export const replace = (url: string): Cmd.Cmd<never> => {
   return Rx.of(async () => {
-    history.replace(url);
-
+    window.history.replaceState(null, "", url);
+    location$.next(getLocation());
     return Option.None;
   });
 };
 
 export const back: Cmd.Cmd<never> = Rx.of(async () => {
-  history.back();
-
+  window.history.back();
+  location$.next(getLocation());
   return Option.None;
 });
 
