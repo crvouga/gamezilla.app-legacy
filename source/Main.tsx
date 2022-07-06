@@ -25,11 +25,17 @@ const container = document.getElementById("root");
 
 const root = ReactDomClient.createRoot(container!);
 
-root.render(<>hello</>);
-
 Browser.run(program, (dom) => {
   root.render(dom);
 });
+
+//
+//
+//
+// Monitoring
+//
+//
+//
 
 program.state$.subscribe((state) => {
   const size = new TextEncoder().encode(JSON.stringify(state.model)).length;
@@ -37,6 +43,14 @@ program.state$.subscribe((state) => {
   // const megaBytes = kiloBytes / 1024;
   console.log(`[app] model memory size is ${kiloBytes} kiloBytes`);
 });
+
+//
+//
+//
+// Backend Connection
+//
+//
+//
 
 const backendUrl = "http://localhost:5000/";
 
@@ -46,6 +60,14 @@ console.log(socket);
 socket.on("connect", () => {
   console.log("connected to backend");
 });
+
+//
+//
+//
+// Hot Reload
+//
+//
+//
 
 // if (import.meta.hot) {
 //   import.meta.hot.accept();
