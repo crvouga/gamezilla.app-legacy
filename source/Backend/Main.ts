@@ -28,13 +28,35 @@ export const init: [Model, Cmd.Cmd<Msg>] = [
 //
 //
 
-export type Msg = { type: "ClientConnected"; clientId: string };
+export type Msg =
+  | { type: "ClientConnected"; clientId: string }
+  | { type: "ClientDisconnected"; clientId: string };
 
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "ClientConnected":
-      return [model, Cmd.None];
+      return [
+        {
+          ...model,
+          clients: { ...model.clients, [msg.clientId]: msg.clientId },
+        },
+        Cmd.None,
+      ];
+
+    case "ClientDisconnected":
+      return [
+        {
+          ...model,
+          clients: removeKey(msg.clientId, model.clients),
+        },
+        Cmd.None,
+      ];
   }
+};
+
+const removeKey = <T>(key: keyof T, object: T): Omit<T, typeof key> => {
+  const { [key]: value, ...without } = object;
+  return without;
 };
 
 //
@@ -71,15 +93,22 @@ program.state$.subscribe((state) => {
 //
 //
 
-const io = new Server();
+const server = new Server({
+  cors: {
+    origin: "*",
+  },
+});
 
-io.on("connection", (socket) => {
+server.on("connection", (socket) => {
   program.dispatch({
     type: "ClientConnected",
     clientId: socket.id,
   });
   socket.on("ToBackend", (msg) => {
     program.dispatch(msg);
+  });
+  socket.on("disconnect", () => {
+    program.dispatch({ type: "ClientDisconnected", clientId: socket.id });
   });
   // toFrontend$.subscribe(msg => {
   //   socket.to(msg.clientIds)
@@ -88,4 +117,8 @@ io.on("connection", (socket) => {
 
 const port = 5000;
 
-io.listen(port);
+server.listen(port);
+
+console.log(
+  `backend server running at:\n\n> Local: http://localhost:${port}/\n\n`,
+);
