@@ -1,5 +1,5 @@
 import * as Route from "Route";
-import * as View from "View";
+import * as UI from "UI";
 import { Cmd } from "Core";
 import * as Board from "./Board";
 
@@ -70,7 +70,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 //
 
 export const view =
-  (model: Model): View.View<Msg> =>
+  (model: Model): UI.View<Msg> =>
   (dispatch) => {
     const status = Board.toStatus(model.board);
     const title =
@@ -81,10 +81,10 @@ export const view =
         : "Tie";
 
     return (
-      <View.Page>
-        <View.Header
+      <UI.Page>
+        <UI.Header
           left={
-            <View.HeaderBackButton
+            <UI.HeaderBackButton
               onClick={() => dispatch({ type: "UserClickedBackButton" })}
             />
           }
@@ -96,14 +96,14 @@ export const view =
             dispatch({ type: "UserClickedBoard", position })
           }
         />
-        <View.Button
+        <UI.Button
           size="large"
           fullWidth
           onClick={() => dispatch({ type: "UserClickedRestartButton" })}
         >
           Restart
-        </View.Button>
-      </View.Page>
+        </UI.Button>
+      </UI.Page>
     );
   };
 

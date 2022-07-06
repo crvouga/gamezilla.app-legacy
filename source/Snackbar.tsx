@@ -1,4 +1,4 @@
-import * as View from "View";
+import * as UI from "UI";
 import { SxProps } from "@mui/material";
 import { Cmd, Task, Uuid, pipe } from "Core";
 
@@ -104,7 +104,7 @@ const removeById = (
 //
 
 export const view =
-  ({ sx }: { sx?: SxProps }, model: Model): View.View<Msg> =>
+  ({ sx }: { sx?: SxProps }, model: Model): UI.View<Msg> =>
   (dispatch) => {
     const snack = model.queue[0];
 
@@ -113,8 +113,8 @@ export const view =
     }
 
     return (
-      <View.Portal>
-        <View.Snackbar
+      <UI.Portal>
+        <UI.Snackbar
           sx={sx}
           open
           message={snack.message}
@@ -125,7 +125,7 @@ export const view =
             })
           }
         >
-          <View.Alert
+          <UI.Alert
             variant="filled"
             onClose={() =>
               dispatch({
@@ -137,8 +137,8 @@ export const view =
             sx={{ width: "100%" }}
           >
             {snack.message}
-          </View.Alert>
-        </View.Snackbar>
-      </View.Portal>
+          </UI.Alert>
+        </UI.Snackbar>
+      </UI.Portal>
     );
   };

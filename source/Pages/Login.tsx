@@ -1,6 +1,6 @@
 import * as Route from "Route";
 import * as Session from "Session";
-import * as View from "View";
+import * as UI from "UI";
 import { Cmd, Option, pipe } from "Core";
 
 //
@@ -67,19 +67,19 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 //
 
 export const view =
-  (model: Model): View.View<Msg> =>
+  (model: Model): UI.View<Msg> =>
   (dispatch) =>
     (
-      <View.Page
+      <UI.Page
         sx={{
           alignItems: "center",
           justifyContent: "center",
           p: 2,
         }}
       >
-        <View.Typography variant="h1" sx={{ marginBottom: 2 }}>
+        <UI.Typography variant="h1" sx={{ marginBottom: 2 }}>
           Gamezilla
-        </View.Typography>
+        </UI.Typography>
 
         <ContinueWithGoogleButton
           isLoading={
@@ -89,15 +89,15 @@ export const view =
           onClick={() => dispatch({ type: "ClickedGoogleLogin" })}
         />
 
-        <View.Typography
+        <UI.Typography
           sx={{ marginY: 1 }}
           align="center"
           color="text.secondary"
         >
           Or
-        </View.Typography>
+        </UI.Typography>
 
-        <View.Button
+        <UI.Button
           variant="contained"
           size="large"
           fullWidth
@@ -105,8 +105,8 @@ export const view =
           onClick={() => dispatch({ type: "ClickedEmailLogin" })}
         >
           Continue With Email
-        </View.Button>
-      </View.Page>
+        </UI.Button>
+      </UI.Page>
     );
 
 const ContinueWithGoogleButton = ({
@@ -117,7 +117,7 @@ const ContinueWithGoogleButton = ({
   isLoading: boolean;
 }) => {
   return (
-    <View.Button
+    <UI.Button
       variant="contained"
       size="large"
       loading={isLoading}
@@ -126,7 +126,7 @@ const ContinueWithGoogleButton = ({
       fullWidth
       startIcon={
         //todo fix this hack
-        isLoading ? undefined : <View.Icons.GoogleAlt />
+        isLoading ? undefined : <UI.Icons.GoogleAlt />
       }
       color={
         //todo fix this hack
@@ -139,6 +139,6 @@ const ContinueWithGoogleButton = ({
       onClick={onClick}
     >
       Continue With Google
-    </View.Button>
+    </UI.Button>
   );
 };

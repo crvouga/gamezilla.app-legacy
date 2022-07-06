@@ -1,7 +1,7 @@
 import * as Route from "Route";
 import * as Store from "Store";
 import * as Profile from "Store/Profile";
-import * as View from "View";
+import * as UI from "UI";
 import { Cmd } from "Core";
 
 //
@@ -62,26 +62,26 @@ export const update = (
 //
 
 export const view =
-  (profile: Profile.Profile, model: Model): View.View<Msg> =>
+  (profile: Profile.Profile, model: Model): UI.View<Msg> =>
   (dispatch) =>
     (
-      <View.Page>
-        <View.Header
+      <UI.Page>
+        <UI.Header
           left={
-            <View.HeaderBackButton
+            <UI.HeaderBackButton
               onClick={() => dispatch({ type: "UserClickedBackButton" })}
             />
           }
           title="Theme"
         />
 
-        <View.LoadingDialog
+        <UI.LoadingDialog
           open={model.status === "Updating"}
           title="Updating theme..."
         />
 
-        <View.Box sx={{ padding: 2 }}>
-          <View.ThemeModeToggleButtons
+        <UI.Box sx={{ padding: 2 }}>
+          <UI.ThemeModeToggleButtons
             themeMode={profile.themeMode}
             onChange={(themeMode) =>
               dispatch({
@@ -90,6 +90,6 @@ export const view =
               })
             }
           />
-        </View.Box>
-      </View.Page>
+        </UI.Box>
+      </UI.Page>
     );

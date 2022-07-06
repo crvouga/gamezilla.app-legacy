@@ -1,6 +1,6 @@
 import * as Route from "Route";
 import * as Store from "Store";
-import * as View from "View";
+import * as UI from "UI";
 import { Cmd, Keyboard, RemoteData, Sub, pipe } from "Core";
 import { useEffect, useRef } from "react";
 
@@ -207,7 +207,7 @@ export const view =
       currentUserProfile: Store.Profile.Profile;
     },
     model: Model,
-  ): View.View<Msg> =>
+  ): UI.View<Msg> =>
   (dispatch) => {
     const mutation = store.mutations.Conversation.FindElseInsert;
 
@@ -227,16 +227,16 @@ export const view =
       return [];
     });
     return (
-      <View.Page>
-        <View.Header
+      <UI.Page>
+        <UI.Header
           left={
-            <View.HeaderBackButton
+            <UI.HeaderBackButton
               onClick={() => dispatch({ type: "ClickedCancel" })}
             />
           }
           title="New message"
           right={
-            <View.Button
+            <UI.Button
               size="large"
               disabled={Object.values(model.selected).length === 0}
               sx={{ marginRight: -1 }}
@@ -244,15 +244,15 @@ export const view =
               loading={mutation.type === "Loading"}
             >
               Chat
-            </View.Button>
+            </UI.Button>
           }
         />
 
-        <View.Typography variant="h6" sx={{ fontWeight: "bold", paddingX: 2 }}>
+        <UI.Typography variant="h6" sx={{ fontWeight: "bold", paddingX: 2 }}>
           To
-        </View.Typography>
+        </UI.Typography>
 
-        <View.Box
+        <UI.Box
           sx={{
             display: "flex",
             alignItems: "center",
@@ -262,7 +262,7 @@ export const view =
           }}
         >
           {selected.map((profile) => (
-            <View.Chip
+            <UI.Chip
               sx={{ marginLeft: 1 }}
               key={profile.userId}
               label={profile.username}
@@ -274,7 +274,7 @@ export const view =
               }}
             />
           ))}
-          <View.InputBase
+          <UI.InputBase
             sx={{ paddingX: 2, flex: 1 }}
             autoFocus
             placeholder={selected.length === 0 ? "Search" : ""}
@@ -290,15 +290,15 @@ export const view =
               });
             }}
           />
-        </View.Box>
+        </UI.Box>
 
-        <View.Divider />
+        <UI.Divider />
 
-        <View.List sx={{ overflowY: "scroll", flex: 1 }}>
+        <UI.List sx={{ overflowY: "scroll", flex: 1 }}>
           {searchQuery.type === "Success" && profiles.length === 0 && (
-            <View.Typography sx={{ p: 2 }} color="text.secondary">
+            <UI.Typography sx={{ p: 2 }} color="text.secondary">
               No account found.
-            </View.Typography>
+            </UI.Typography>
           )}
 
           {profiles.map((profile, index) => (
@@ -320,7 +320,7 @@ export const view =
           ))}
 
           {searchQuery.type === "Loading" && (
-            <View.Box
+            <UI.Box
               sx={{
                 width: "100%",
                 p: 2,
@@ -328,11 +328,11 @@ export const view =
                 justifyContent: "center",
               }}
             >
-              <View.CircularProgress />
-            </View.Box>
+              <UI.CircularProgress />
+            </UI.Box>
           )}
-        </View.List>
-      </View.Page>
+        </UI.List>
+      </UI.Page>
     );
   };
 
@@ -355,24 +355,24 @@ const SearchResultListItem = ({
   }, [highlighted]);
   return (
     <div ref={ref}>
-      <View.ListItemButton
+      <UI.ListItemButton
         id={searchResult.userId}
         selected={highlighted}
         key={searchResult.userId}
         onMouseDown={onClick}
       >
-        <View.ListItemAvatar>
-          <View.Avatar src={searchResult.avatarUrl} />
-        </View.ListItemAvatar>
-        <View.ListItemText
+        <UI.ListItemAvatar>
+          <UI.Avatar src={searchResult.avatarUrl} />
+        </UI.ListItemAvatar>
+        <UI.ListItemText
           primary={searchResult.username}
           secondary={searchResult.name}
         />
 
-        <View.ListItemSecondaryAction>
-          <View.Checkbox checked={selected} />
-        </View.ListItemSecondaryAction>
-      </View.ListItemButton>
+        <UI.ListItemSecondaryAction>
+          <UI.Checkbox checked={selected} />
+        </UI.ListItemSecondaryAction>
+      </UI.ListItemButton>
     </div>
   );
 };

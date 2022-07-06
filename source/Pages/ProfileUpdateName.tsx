@@ -1,6 +1,6 @@
 import * as Route from "Route";
 import * as Store from "Store";
-import * as View from "View";
+import * as UI from "UI";
 import { Cmd } from "Core";
 
 //
@@ -64,32 +64,32 @@ export const update = (
 //
 
 export const view =
-  (model: Model): View.View<Msg> =>
+  (model: Model): UI.View<Msg> =>
   (dispatch) =>
     (
-      <View.Page>
-        <View.Header
+      <UI.Page>
+        <UI.Header
           left={
-            <View.Button
+            <UI.Button
               sx={{ marginLeft: -1 }}
               onClick={() => dispatch({ type: "ClickedCancel" })}
             >
               Cancel
-            </View.Button>
+            </UI.Button>
           }
           title="Name"
           right={
-            <View.Button
+            <UI.Button
               sx={{ marginRight: -1 }}
               onClick={() => dispatch({ type: "ClickedSubmit" })}
             >
               Done
-            </View.Button>
+            </UI.Button>
           }
         />
 
-        <View.Box sx={{ padding: 2 }}>
-          <View.TextField
+        <UI.Box sx={{ padding: 2 }}>
+          <UI.TextField
             value={model.name}
             sx={{ marginBottom: 4 }}
             label="Name"
@@ -101,6 +101,6 @@ export const view =
               })
             }
           />
-        </View.Box>
-      </View.Page>
+        </UI.Box>
+      </UI.Page>
     );

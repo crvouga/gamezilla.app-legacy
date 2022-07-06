@@ -1,6 +1,6 @@
 import * as Route from "Route";
 import * as Profile from "Store/Profile";
-import * as View from "View";
+import * as UI from "UI";
 import { Cmd } from "Core";
 
 //
@@ -76,20 +76,20 @@ export const update = (
 //
 
 export const view =
-  (profile: Profile.Profile, _model: Model): View.View<Msg> =>
+  (profile: Profile.Profile, _model: Model): UI.View<Msg> =>
   (dispatch) =>
     (
-      <View.Page>
-        <View.Header
+      <UI.Page>
+        <UI.Header
           left={
-            <View.HeaderBackButton
+            <UI.HeaderBackButton
               onClick={() => dispatch({ type: "UserClickedBackButton" })}
             />
           }
           title="Update Profile"
         />
 
-        <View.Avatar
+        <UI.Avatar
           src={profile.avatarUrl}
           sx={{
             marginX: "auto",
@@ -100,31 +100,31 @@ export const view =
           onClick={() => dispatch({ type: "UserClickedAvatar" })}
         />
 
-        <View.Button
+        <UI.Button
           sx={{ display: "block", marginX: "auto", marginBottom: 2 }}
           onClick={() => dispatch({ type: "UserClickedChangeAvatarButton" })}
         >
           Change Avatar
-        </View.Button>
+        </UI.Button>
 
-        <View.List>
-          <View.Field
+        <UI.List>
+          <UI.Field
             label="Username"
             value={profile.username}
             onClick={() => dispatch({ type: "UserClickedUsernameLink" })}
           />
 
-          <View.Field
+          <UI.Field
             label="Name"
             value={profile.name}
             onClick={() => dispatch({ type: "UserClickedNameLink" })}
           />
 
-          <View.Field
+          <UI.Field
             label="Theme"
             value={profile.themeMode}
             onClick={() => dispatch({ type: "UserClickedThemeLink" })}
           />
-        </View.List>
-      </View.Page>
+        </UI.List>
+      </UI.Page>
     );

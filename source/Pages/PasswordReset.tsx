@@ -1,7 +1,7 @@
 import * as Route from "Route";
 import * as Store from "Store";
-import * as View from "View";
-import { Browser, Cmd, pipe } from "Core";
+import * as UI from "UI";
+import { Cmd, pipe } from "Core";
 
 //
 //
@@ -106,20 +106,20 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 //
 
 export const view =
-  (model: Model): View.View<Msg> =>
+  (model: Model): UI.View<Msg> =>
   (dispatch) => {
     return (
-      <View.Page>
-        <View.Header
+      <UI.Page>
+        <UI.Header
           left={
-            <View.HeaderBackButton
+            <UI.HeaderBackButton
               onClick={() => dispatch({ type: "ClickedBack" })}
             />
           }
           title="Reset Password"
         />
 
-        <View.Box
+        <UI.Box
           sx={{
             padding: 2,
             display: "flex",
@@ -128,7 +128,7 @@ export const view =
             flex: 1,
           }}
         >
-          <View.TextField
+          <UI.TextField
             autoFocus
             sx={{ marginBottom: 2 }}
             type="email"
@@ -144,7 +144,7 @@ export const view =
             }}
           />
 
-          <View.Button
+          <UI.Button
             variant="contained"
             size="large"
             fullWidth
@@ -152,20 +152,20 @@ export const view =
             onClick={() => dispatch({ type: "ClickedSend" })}
           >
             Send Password Reset Link
-          </View.Button>
+          </UI.Button>
 
           {model.submission.type === "Problem" && (
-            <View.Alert severity="error" sx={{ marginTop: 2 }}>
+            <UI.Alert severity="error" sx={{ marginTop: 2 }}>
               {model.submission.message}
-            </View.Alert>
+            </UI.Alert>
           )}
           {model.submission.type === "Succeeded" && (
-            <View.Alert severity="success" sx={{ marginTop: 2 }}>
+            <UI.Alert severity="success" sx={{ marginTop: 2 }}>
               Password reset link was sent to {model.submission.sentTo}
-            </View.Alert>
+            </UI.Alert>
           )}
-          <View.Box sx={{ flex: 1 }} />
-        </View.Box>
-      </View.Page>
+          <UI.Box sx={{ flex: 1 }} />
+        </UI.Box>
+      </UI.Page>
     );
   };

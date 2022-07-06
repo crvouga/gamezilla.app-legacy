@@ -1,5 +1,5 @@
 import * as Route from "Route";
-import * as View from "View";
+import * as UI from "UI";
 import { Cmd } from "Core";
 
 //
@@ -372,13 +372,13 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 //
 
 export const view =
-  (model: Model): View.View<Msg> =>
+  (model: Model): UI.View<Msg> =>
   (dispatch) =>
     (
-      <View.Page>
-        <View.Header
+      <UI.Page>
+        <UI.Header
           left={
-            <View.HeaderBackButton
+            <UI.HeaderBackButton
               onClick={() => dispatch({ type: "UserClickedBackButton" })}
             />
           }
@@ -390,14 +390,14 @@ export const view =
             dispatch({ type: "UserClickedBoard", columnIndex })
           }
         />
-        <View.Button
+        <UI.Button
           fullWidth
           size="large"
           onClick={() => dispatch({ type: "UserClickedRestartButton" })}
         >
           Restart
-        </View.Button>
-      </View.Page>
+        </UI.Button>
+      </UI.Page>
     );
 
 const Board = ({

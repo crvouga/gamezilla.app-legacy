@@ -79,7 +79,7 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
 //
 //
 
-const program = Platform.Worker({ init, update, subscriptions });
+const program = Platform.worker({ init, update, subscriptions });
 
 program.state$.subscribe((state) => {
   console.log(state);

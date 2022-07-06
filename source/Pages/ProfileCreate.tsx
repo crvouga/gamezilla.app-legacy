@@ -1,7 +1,7 @@
 import * as ProfileAvatar from "ProfileAvatar";
 import * as Route from "Route";
 import * as Store from "Store";
-import * as View from "View";
+import * as UI from "UI";
 import { Cmd } from "Core";
 
 //
@@ -92,24 +92,24 @@ export const update = (
 //
 
 export const view =
-  (model: Model): View.View<Msg> =>
+  (model: Model): UI.View<Msg> =>
   (dispatch) =>
     (
-      <View.Page>
-        <View.Header
+      <UI.Page>
+        <UI.Header
           left={
-            <View.Button
+            <UI.Button
               sx={{ marginLeft: -1 }}
               onClick={() => dispatch({ type: "UserClickedLogoutButton" })}
             >
               Logout
-            </View.Button>
+            </UI.Button>
           }
           title="Create Profile"
         />
 
-        <View.Box sx={{ p: 2, width: "100%" }}>
-          <View.Avatar
+        <UI.Box sx={{ p: 2, width: "100%" }}>
+          <UI.Avatar
             src={model.form.avatarUrl}
             sx={{
               marginX: "auto",
@@ -119,7 +119,7 @@ export const view =
             }}
           />
 
-          <View.Button
+          <UI.Button
             sx={{
               display: "block",
               marginX: "auto",
@@ -127,9 +127,9 @@ export const view =
             }}
           >
             Change Avatar
-          </View.Button>
+          </UI.Button>
 
-          <View.TextField
+          <UI.TextField
             value={model.form.username}
             sx={{ marginBottom: 2 }}
             label="Username"
@@ -142,7 +142,7 @@ export const view =
             }
           />
 
-          <View.TextField
+          <UI.TextField
             value={model.form.name}
             sx={{ marginBottom: 4 }}
             label="Name"
@@ -152,14 +152,14 @@ export const view =
             }
           />
 
-          <View.Button
+          <UI.Button
             fullWidth
             size="large"
             variant="contained"
             onClick={() => dispatch({ type: "UserClickedSubmitButton" })}
           >
             Create Profile
-          </View.Button>
-        </View.Box>
-      </View.Page>
+          </UI.Button>
+        </UI.Box>
+      </UI.Page>
     );

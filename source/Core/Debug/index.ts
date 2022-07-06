@@ -1,1 +1,1 @@
-export * as Browser from "./Browser";
+export * as ReduxDevTools from "./ReduxDevTools";

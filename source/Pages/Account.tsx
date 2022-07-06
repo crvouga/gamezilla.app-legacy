@@ -1,5 +1,5 @@
 import * as Route from "Route";
-import * as View from "View";
+import * as UI from "UI";
 import { Cmd } from "Core";
 
 //
@@ -57,42 +57,42 @@ export const update = (
 //
 
 export const view =
-  ({ username }: { username: string }, model: Model): View.View<Msg> =>
+  ({ username }: { username: string }, model: Model): UI.View<Msg> =>
   (dispatch) =>
     (
-      <View.Page>
-        <View.Header title={username} />
+      <UI.Page>
+        <UI.Header title={username} />
 
-        <View.List>
-          <View.ListItemButton
+        <UI.List>
+          <UI.ListItemButton
             onClick={() => dispatch({ type: "UserClickedUpdateProfileLink" })}
           >
-            <View.ListItemIcon>
-              <View.Icons.Edit />
-            </View.ListItemIcon>
-            <View.ListItemText primary="Update Profile" />
-            <View.ListItemSecondaryAction>
-              <View.Icons.ChevronRight />
-            </View.ListItemSecondaryAction>
-          </View.ListItemButton>
+            <UI.ListItemIcon>
+              <UI.Icons.Edit />
+            </UI.ListItemIcon>
+            <UI.ListItemText primary="Update Profile" />
+            <UI.ListItemSecondaryAction>
+              <UI.Icons.ChevronRight />
+            </UI.ListItemSecondaryAction>
+          </UI.ListItemButton>
 
-          <View.ListItemButton
+          <UI.ListItemButton
             onClick={() => dispatch({ type: "UserClickedDeleteProfileLink" })}
           >
-            <View.ListItemIcon>
-              <View.Icons.Delete />
-            </View.ListItemIcon>
-            <View.ListItemText primary="Delete Profile" />
-          </View.ListItemButton>
+            <UI.ListItemIcon>
+              <UI.Icons.Delete />
+            </UI.ListItemIcon>
+            <UI.ListItemText primary="Delete Profile" />
+          </UI.ListItemButton>
 
-          <View.ListItemButton
+          <UI.ListItemButton
             onClick={() => dispatch({ type: "UserClickedLogoutLink" })}
           >
-            <View.ListItemIcon>
-              <View.Icons.Logout />
-            </View.ListItemIcon>
-            <View.ListItemText primary="Logout" />
-          </View.ListItemButton>
-        </View.List>
-      </View.Page>
+            <UI.ListItemIcon>
+              <UI.Icons.Logout />
+            </UI.ListItemIcon>
+            <UI.ListItemText primary="Logout" />
+          </UI.ListItemButton>
+        </UI.List>
+      </UI.Page>
     );

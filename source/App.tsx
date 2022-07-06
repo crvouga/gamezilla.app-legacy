@@ -5,7 +5,7 @@ import * as Session from "Session";
 import * as Snackbar from "Snackbar";
 import * as Store from "Store";
 import * as Profile from "Store/Profile";
-import * as View from "View";
+import * as UI from "UI";
 import * as ReactDom from "react-dom/client";
 import { Browser, Cmd, Debug, Option, Sub, pipe } from "Core";
 import { andThen, andThenMany, exhaustive, groupTag } from "Utility";
@@ -429,7 +429,7 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
 //
 //
 
-const toThemeMode = (model: Model): View.ThemeMode => {
+const toThemeMode = (model: Model): UI.ThemeMode => {
   const status = toStatus(model);
 
   switch (status.type) {
@@ -444,11 +444,11 @@ const toThemeMode = (model: Model): View.ThemeMode => {
 };
 
 export const view =
-  (model: Model): View.View<Msg> =>
+  (model: Model): UI.View<Msg> =>
   (dispatch) => {
     return (
-      <View.ThemeProvider themeMode={toThemeMode(model)}>
-        <View.Box
+      <UI.ThemeProvider themeMode={toThemeMode(model)}>
+        <UI.Box
           sx={{
             userSelect: "none",
             maxWidth: "sm",
@@ -466,7 +466,7 @@ export const view =
           }}
         >
           {viewGameBanner(model)(dispatch)}
-          <View.Box
+          <UI.Box
             sx={{
               width: "100%",
               overflow: "hidden",
@@ -474,18 +474,18 @@ export const view =
             }}
           >
             {viewMain(model)(dispatch)}
-          </View.Box>
+          </UI.Box>
 
           {pipe(
             Snackbar.view({}, model.snackbar),
-            View.map(groupTag("Snackbar")),
+            UI.map(groupTag("Snackbar")),
           )(dispatch)}
-        </View.Box>
-      </View.ThemeProvider>
+        </UI.Box>
+      </UI.ThemeProvider>
     );
   };
 
-const viewMain = (model: Model): View.View<Msg> => {
+const viewMain = (model: Model): UI.View<Msg> => {
   const status = toStatus(model);
 
   switch (status.type) {
@@ -498,18 +498,18 @@ const viewMain = (model: Model): View.View<Msg> => {
     case "SessionMissing":
       return pipe(
         Pages.viewSessionMissing(model.page),
-        View.map(groupTag("Page")),
+        UI.map(groupTag("Page")),
       );
 
     case "ProfileMissing":
       return pipe(
         Pages.viewProfileMissing(status.session, model.page),
-        View.map(groupTag("Page")),
+        UI.map(groupTag("Page")),
       );
 
     case "Ready":
       if (model.route.type === "Game") {
-        return pipe(Games.view(model.game), View.map(groupTag("Game")));
+        return pipe(Games.view(model.game), UI.map(groupTag("Game")));
       }
 
       return pipe(
@@ -522,15 +522,15 @@ const viewMain = (model: Model): View.View<Msg> => {
           },
           model.page,
         ),
-        View.map(groupTag("Page")),
+        UI.map(groupTag("Page")),
       );
   }
 };
 
-const viewLoading: View.View<Msg> = () => <View.LoadingPage />;
+const viewLoading: UI.View<Msg> = () => <UI.LoadingPage />;
 
 const viewGameBanner =
-  (model: Model): View.View<Msg> =>
+  (model: Model): UI.View<Msg> =>
   (dispatch) => {
     switch (model.game.type) {
       case "Closed":
@@ -545,7 +545,7 @@ const viewGameBanner =
           <>
             {pipe(
               Games.viewBanner(model.game),
-              View.map(groupTag("Game")),
+              UI.map(groupTag("Game")),
             )(dispatch)}
           </>
         );

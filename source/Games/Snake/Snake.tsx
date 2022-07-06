@@ -1,5 +1,5 @@
 import * as Route from "Route";
-import * as View from "View";
+import * as UI from "UI";
 import { Audio, Cmd, Keyboard, Result, Sub, Time, pipe } from "Core";
 import { useEffect, useLayoutEffect, useRef } from "react";
 import * as Direction from "./Direction";
@@ -318,13 +318,13 @@ const theme = {
 };
 
 export const view =
-  (model: Model): View.View<Msg> =>
+  (model: Model): UI.View<Msg> =>
   (dispatch) => {
     return (
-      <View.Page>
-        <View.Header
+      <UI.Page>
+        <UI.Header
           left={
-            <View.HeaderBackButton
+            <UI.HeaderBackButton
               onClick={() => dispatch({ type: "UserClickedBackButton" })}
             />
           }
@@ -335,7 +335,7 @@ export const view =
           }
           right={
             <>
-              <View.IconButton
+              <UI.IconButton
                 onClick={() =>
                   dispatch({
                     type: "UserClickedToggleButton",
@@ -343,26 +343,26 @@ export const view =
                 }
               >
                 {model.status.type === "Paused" ? (
-                  <View.Icons.PlayArrow />
+                  <UI.Icons.PlayArrow />
                 ) : (
-                  <View.Icons.Pause />
+                  <UI.Icons.Pause />
                 )}
-              </View.IconButton>
-              <View.IconButton
+              </UI.IconButton>
+              <UI.IconButton
                 onClick={() =>
                   dispatch({
                     type: "UserClickedRestartButton",
                   })
                 }
               >
-                <View.Icons.RestartAlt />
-              </View.IconButton>
+                <UI.Icons.RestartAlt />
+              </UI.IconButton>
             </>
           }
         />
 
         <Canvas model={model} dispatch={dispatch} />
-      </View.Page>
+      </UI.Page>
     );
   };
 
@@ -391,7 +391,7 @@ const Canvas = ({
   }, [model]);
 
   return (
-    <View.Box sx={{ flex: 1, width: "100%", userSelect: "none" }}>
+    <UI.Box sx={{ flex: 1, width: "100%", userSelect: "none" }}>
       <canvas
         style={{
           cursor: model.mouseStatus === "active" ? "grabbing" : "grab",
@@ -433,7 +433,7 @@ const Canvas = ({
           }
         }}
       />
-    </View.Box>
+    </UI.Box>
   );
 };
 
