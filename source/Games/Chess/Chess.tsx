@@ -1,5 +1,5 @@
 import * as Route from "Route";
-import * as View from "View";
+import * as UI from "UI";
 import { Cmd } from "Core";
 
 //
@@ -39,19 +39,19 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 //
 
 export const view =
-  (_model: Model): View.View<Msg> =>
+  (_model: Model): UI.View<Msg> =>
   (dispatch) =>
     (
-      <View.Page>
-        <View.Header
+      <UI.Page>
+        <UI.Header
           left={
-            <View.HeaderBackButton
+            <UI.HeaderBackButton
               onClick={() => dispatch({ type: "UserClickedBackButton" })}
             />
           }
           title="Chess"
         />
-      </View.Page>
+      </UI.Page>
     );
 
 export const theme = {

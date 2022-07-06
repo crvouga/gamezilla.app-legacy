@@ -2,7 +2,7 @@ import * as ProfileAvatar from "ProfileAvatar";
 import * as Route from "Route";
 import * as Snackbar from "Snackbar";
 import * as Store from "Store";
-import * as View from "View";
+import * as UI from "UI";
 import { Cmd, pipe } from "Core";
 
 //
@@ -109,30 +109,30 @@ export const update = (
 //
 //
 
-export const view = (model: Model): View.View<Msg> => {
+export const view = (model: Model): UI.View<Msg> => {
   return (dispatch) => (
-    <View.Page>
-      <View.Header
+    <UI.Page>
+      <UI.Header
         left={
-          <View.Button
+          <UI.Button
             sx={{ marginLeft: -1 }}
             onClick={() => dispatch({ type: "UserClickedCancelButton" })}
           >
             Cancel
-          </View.Button>
+          </UI.Button>
         }
         title="Avatar"
         right={
-          <View.Button
+          <UI.Button
             sx={{ marginRight: -1 }}
             onClick={() => dispatch({ type: "UserClickedDoneButton" })}
           >
             Done
-          </View.Button>
+          </UI.Button>
         }
       />
 
-      <View.Avatar
+      <UI.Avatar
         src={ProfileAvatar.toUrl(model)}
         sx={{
           marginX: "auto",
@@ -142,16 +142,16 @@ export const view = (model: Model): View.View<Msg> => {
         }}
       />
 
-      <View.LoadingDialog
+      <UI.LoadingDialog
         open={model.status === "UpdatingAvatar"}
         title="Updating avatar..."
       />
 
-      <View.Box sx={{ padding: 2 }}>
-        <View.Typography variant="subtitle1" sx={{ marginBottom: 1 }}>
+      <UI.Box sx={{ padding: 2 }}>
+        <UI.Typography variant="subtitle1" sx={{ marginBottom: 1 }}>
           Style
-        </View.Typography>
-        <View.Select
+        </UI.Typography>
+        <UI.Select
           sx={{ marginBottom: 2 }}
           open={model.status === "StyleSelectOpened"}
           fullWidth
@@ -159,28 +159,26 @@ export const view = (model: Model): View.View<Msg> => {
           onOpen={() => dispatch({ type: "StyleSelectOpened" })}
           onClose={() => dispatch({ type: "StyleSelectClosed" })}
           renderValue={(style) => (
-            <View.Box
+            <UI.Box
               sx={{
                 display: "flex",
                 flexDirection: "row",
                 alignItems: "center",
               }}
             >
-              <View.Avatar
+              <UI.Avatar
                 sx={{ marginRight: 1, width: 24, height: 24 }}
                 src={ProfileAvatar.toUrl({
                   style,
                   seed: ProfileAvatar.toSeed(model.seed),
                 })}
               />
-              <View.Typography>
-                {ProfileAvatar.formatStyle(style)}
-              </View.Typography>
-            </View.Box>
+              <UI.Typography>{ProfileAvatar.formatStyle(style)}</UI.Typography>
+            </UI.Box>
           )}
         >
           {ProfileAvatar.ALL_STYLES.map((style) => (
-            <View.MenuItem
+            <UI.MenuItem
               key={style}
               value={style}
               sx={{
@@ -195,25 +193,23 @@ export const view = (model: Model): View.View<Msg> => {
                 })
               }
             >
-              <View.Avatar
+              <UI.Avatar
                 sx={{ marginRight: 1 }}
                 src={ProfileAvatar.toUrl({
                   style,
                   seed: ProfileAvatar.toSeed(model.seed),
                 })}
               />
-              <View.Typography>
-                {ProfileAvatar.formatStyle(style)}
-              </View.Typography>
-            </View.MenuItem>
+              <UI.Typography>{ProfileAvatar.formatStyle(style)}</UI.Typography>
+            </UI.MenuItem>
           ))}
-        </View.Select>
+        </UI.Select>
 
-        <View.Typography variant="subtitle1" sx={{ marginBottom: 1 }}>
+        <UI.Typography variant="subtitle1" sx={{ marginBottom: 1 }}>
           Seed
-        </View.Typography>
+        </UI.Typography>
 
-        <View.TextField
+        <UI.TextField
           fullWidth
           value={model.seed}
           onChange={(event) =>
@@ -225,7 +221,7 @@ export const view = (model: Model): View.View<Msg> => {
           sx={{ marginBottom: 2 }}
         />
 
-        <View.Button
+        <UI.Button
           loading={model.status === "GeneratingSeed"}
           fullWidth
           variant="outlined"
@@ -233,8 +229,8 @@ export const view = (model: Model): View.View<Msg> => {
           sx={{ marginBottom: 4 }}
         >
           Random Seed
-        </View.Button>
-      </View.Box>
-    </View.Page>
+        </UI.Button>
+      </UI.Box>
+    </UI.Page>
   );
 };

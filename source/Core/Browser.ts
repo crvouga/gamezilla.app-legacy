@@ -1,11 +1,11 @@
 import * as Rx from "rxjs";
 import { Result } from "Core";
 import * as Cmd from "./Cmd";
-import * as Html from "./Html";
 import * as Option from "./Option";
 import * as Platform from "./Platform";
 import * as Sub from "./Sub";
 import * as Task from "./Task";
+import * as View from "./View";
 
 //
 //
@@ -16,7 +16,7 @@ import * as Task from "./Task";
 //
 
 export type Program<Model, Msg, Dom> = Platform.Program<Model, Msg> & {
-  html$: Rx.Observable<Html.Html<Dom, Msg>>;
+  view$: Rx.Observable<View.View<Dom, Msg>>;
 };
 
 export type Renderer<Dom> = (dom: Dom) => void;
@@ -137,7 +137,7 @@ export const blur =
 //
 //
 
-export const Application = <Model, Msg, Dom>({
+export const application = <Model, Msg, Dom>({
   onLocationChange,
   init,
   update,
@@ -147,7 +147,7 @@ export const Application = <Model, Msg, Dom>({
   onLocationChange: (location: Location) => Msg;
   init: (location: Location) => [Model, Cmd.Cmd<Msg>];
   update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>];
-  view: (model: Model) => Html.Html<Dom, Msg>;
+  view: (model: Model) => View.View<Dom, Msg>;
   subscriptions: (model: Model) => Sub.Sub<Msg>;
 }): Program<Model, Msg, Dom> => {
   const onChangeLocation$ = location$.pipe(
@@ -157,7 +157,7 @@ export const Application = <Model, Msg, Dom>({
   const subs = (model: Model): Sub.Sub<Msg> =>
     Sub.batch([subscriptions(model), onChangeLocation$]);
 
-  return Element({
+  return element({
     init: init(getLocation()),
     update,
     view,
@@ -165,7 +165,7 @@ export const Application = <Model, Msg, Dom>({
   });
 };
 
-export const Element = <Model, Msg, Dom>({
+export const element = <Model, Msg, Dom>({
   init,
   view,
   update,
@@ -173,20 +173,20 @@ export const Element = <Model, Msg, Dom>({
 }: {
   init: [Model, Cmd.Cmd<Msg>];
   update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>];
-  view: (model: Model) => Html.Html<Dom, Msg>;
+  view: (model: Model) => View.View<Dom, Msg>;
   subscriptions: (model: Model) => Sub.Sub<Msg>;
 }): Program<Model, Msg, Dom> => {
-  const program = Platform.Worker({
+  const program = Platform.worker({
     init,
     update,
     subscriptions,
   });
 
-  const html$ = program.model$.pipe(Rx.map(view));
+  const view$ = program.state$.pipe(Rx.map((state) => view(state.model)));
 
   return {
     ...program,
-    html$,
+    view$: view$,
   };
 };
 
@@ -195,11 +195,11 @@ export const withStop =
   <Model, Msg, Dom>(
     program: Program<Model, Msg, Dom>,
   ): Program<Model, Msg, Dom> => {
-    const { html$, ...rest } = program;
+    const { view$, ...rest } = program;
 
     return {
       ...Platform.withStop(signal)(rest),
-      html$: html$.pipe(Rx.takeUntil(signal)),
+      view$: view$.pipe(Rx.takeUntil(signal)),
     };
   };
 
@@ -207,9 +207,9 @@ export const run = <Model, Msg, Dom>(
   program: Program<Model, Msg, Dom>,
   renderer: Renderer<Dom>,
 ): (() => void) => {
-  const { dispatch, html$ } = program;
+  const { dispatch, view$ } = program;
 
-  const htmlSub = html$.subscribe((html) => renderer(html(dispatch)));
+  const htmlSub = view$.subscribe((view) => renderer(view(dispatch)));
 
   const stop = Platform.run(program);
 

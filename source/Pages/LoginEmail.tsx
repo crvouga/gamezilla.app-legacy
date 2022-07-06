@@ -1,6 +1,6 @@
 import * as Route from "Route";
 import * as Session from "Session";
-import * as View from "View";
+import * as UI from "UI";
 import { Browser, Cmd, pipe } from "Core";
 
 //
@@ -146,20 +146,20 @@ const toggleVisibility = (visibility: Visibility): Visibility => {
 //
 
 export const view =
-  (model: Model): View.View<Msg> =>
+  (model: Model): UI.View<Msg> =>
   (dispatch) => {
     return (
-      <View.Page>
-        <View.Header
+      <UI.Page>
+        <UI.Header
           left={
-            <View.HeaderBackButton
+            <UI.HeaderBackButton
               onClick={() => dispatch({ type: "ClickedBack" })}
             />
           }
           title="Continue With Email"
         />
 
-        <View.Box
+        <UI.Box
           sx={{
             padding: 2,
             display: "flex",
@@ -168,7 +168,7 @@ export const view =
             flex: 1,
           }}
         >
-          <View.TextField
+          <UI.TextField
             autoFocus
             sx={{ marginBottom: 2 }}
             type="email"
@@ -184,7 +184,7 @@ export const view =
             }}
           />
 
-          <View.TextField
+          <UI.TextField
             sx={{ marginBottom: 2 }}
             id={passwordFieldId}
             type={model.passwordVisibility === "Hiding" ? "password" : "text"}
@@ -199,20 +199,20 @@ export const view =
             }}
             InputProps={{
               endAdornment: (
-                <View.InputAdornment position="end">
-                  <View.Button
+                <UI.InputAdornment position="end">
+                  <UI.Button
                     onClick={() =>
                       dispatch({ type: "ClickedTogglePasswordVisibility" })
                     }
                   >
                     {model.passwordVisibility === "Hiding" ? "Show" : "Hide"}
-                  </View.Button>
-                </View.InputAdornment>
+                  </UI.Button>
+                </UI.InputAdornment>
               ),
             }}
           />
 
-          <View.Button
+          <UI.Button
             variant="contained"
             size="large"
             fullWidth
@@ -220,36 +220,34 @@ export const view =
             onClick={() => dispatch({ type: "ClickedLogin" })}
           >
             Login
-          </View.Button>
+          </UI.Button>
 
           {model.submission.type === "Problem" && (
-            <View.Alert severity="error" sx={{ marginTop: 2 }}>
+            <UI.Alert severity="error" sx={{ marginTop: 2 }}>
               {model.submission.message}
-            </View.Alert>
+            </UI.Alert>
           )}
 
-          <View.Box sx={{ flex: 1 }} />
+          <UI.Box sx={{ flex: 1 }} />
 
-          <View.Typography align="center" color="text.secondary">
+          <UI.Typography align="center" color="text.secondary">
             Don't have an account?
-          </View.Typography>
+          </UI.Typography>
 
-          <View.Button
+          <UI.Button
             sx={{ marginBottom: 2 }}
             onClick={() => dispatch({ type: "ClickedCreateAccount" })}
           >
             Create Account
-          </View.Button>
-          <View.Typography align="center" color="text.secondary">
+          </UI.Button>
+          <UI.Typography align="center" color="text.secondary">
             Forgot password?
-          </View.Typography>
+          </UI.Typography>
 
-          <View.Button
-            onClick={() => dispatch({ type: "ClickedResetPassword" })}
-          >
+          <UI.Button onClick={() => dispatch({ type: "ClickedResetPassword" })}>
             Reset Password
-          </View.Button>
-        </View.Box>
-      </View.Page>
+          </UI.Button>
+        </UI.Box>
+      </UI.Page>
     );
   };

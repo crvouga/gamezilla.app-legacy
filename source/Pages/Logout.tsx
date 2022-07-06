@@ -1,7 +1,7 @@
 import * as Route from "Route";
 import * as Session from "Session";
 import * as Snackbar from "Snackbar";
-import * as View from "View";
+import * as UI from "UI";
 import { Cmd, Result, pipe } from "Core";
 
 //
@@ -65,11 +65,11 @@ export const update = (
 //
 
 export const view =
-  (model: Model): View.View<Msg> =>
+  (model: Model): UI.View<Msg> =>
   (dispatch) =>
     (
       <>
-        <View.ConformationDialog
+        <UI.ConformationDialog
           open={model.type === "Idle"}
           title="Logout of Gamezilla?"
           onClose={() => dispatch({ type: "UserClickedBackdrop" })}
@@ -78,7 +78,7 @@ export const view =
           onConfirm={() => dispatch({ type: "UserClickedLogoutButton" })}
         />
 
-        <View.LoadingDialog
+        <UI.LoadingDialog
           open={model.type === "LoggingOut"}
           title="Logging out..."
         />

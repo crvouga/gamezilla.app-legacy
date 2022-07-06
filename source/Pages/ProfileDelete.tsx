@@ -1,6 +1,6 @@
 import * as Route from "Route";
 import * as Store from "Store";
-import * as View from "View";
+import * as UI from "UI";
 import { Cmd, RemoteData } from "Core";
 
 //
@@ -63,46 +63,46 @@ export const view =
   (
     { store, profileId }: { store: Store.Model; profileId: string },
     model: Model,
-  ): View.View<Msg> =>
+  ): UI.View<Msg> =>
   (dispatch) => {
     const mutation =
       store.mutations.Profile.DeleteForever[profileId] ?? RemoteData.NotAsked;
 
     switch (mutation.type) {
       case "Loading":
-        return <View.LoadingDialog open title="Deleting profile..." />;
+        return <UI.LoadingDialog open title="Deleting profile..." />;
 
       case "Failure":
         return (
-          <View.Backdrop open>
-            <View.Alert variant="filled" severity="error" sx={{ margin: 2 }}>
-              <View.AlertTitle>Failed to delete profile.</View.AlertTitle>
+          <UI.Backdrop open>
+            <UI.Alert variant="filled" severity="error" sx={{ margin: 2 }}>
+              <UI.AlertTitle>Failed to delete profile.</UI.AlertTitle>
               {mutation.problem.message}
-              <View.Box
+              <UI.Box
                 sx={{
                   display: "flex",
                   justifyContent: "flex-end",
                   marginTop: 2,
                 }}
               >
-                <View.Button
+                <UI.Button
                   variant="outlined"
                   size="large"
                   color="inherit"
-                  startIcon={<View.Icons.Close />}
+                  startIcon={<UI.Icons.Close />}
                   onClick={() => dispatch({ type: "ClickedCloseFailureAlert" })}
                 >
                   Close
-                </View.Button>
-              </View.Box>
-            </View.Alert>
-          </View.Backdrop>
+                </UI.Button>
+              </UI.Box>
+            </UI.Alert>
+          </UI.Backdrop>
         );
 
       case "NotAsked":
       case "Success":
         return (
-          <View.ConformationDialog
+          <UI.ConformationDialog
             open
             title="Delete profile forever?"
             onClose={() => dispatch({ type: "UserClickedBackdrop" })}

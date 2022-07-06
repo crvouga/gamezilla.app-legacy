@@ -3,7 +3,7 @@ import * as Route from "Route";
 import * as Session from "Session";
 import * as Snackbar from "Snackbar";
 import * as Store from "Store";
-import * as View from "View";
+import * as UI from "UI";
 import { Cmd, Sub, pipe } from "Core";
 import { exhaustive } from "Utility";
 import * as Account from "./Account";
@@ -633,33 +633,33 @@ export const viewReady = (
     store: Store.Model;
   },
   model: Model,
-): View.View<Msg> => {
+): UI.View<Msg> => {
   switch (model.page) {
     case "Account":
       return (dispatch) => (
-        <View.Page>
+        <UI.Page>
           {tagView("Account", Account.view(profile, model))(dispatch)}
           {viewBottomNavigation("Account", route)(dispatch)}
-        </View.Page>
+        </UI.Page>
       );
 
     case "Chat":
       return (dispatch) => (
-        <View.Page>
+        <UI.Page>
           {tagView("Chat", Chat.view({ profile, store }, model))(dispatch)}
           {viewBottomNavigation("Chat", route)(dispatch)}
-        </View.Page>
+        </UI.Page>
       );
 
     case "Home":
       return (dispatch) => (
-        <View.Page>
+        <UI.Page>
           {tagView(
             "Home",
             Home.view({ route, profile, game }, model),
           )(dispatch)}
           {viewBottomNavigation("Home", route)(dispatch)}
-        </View.Page>
+        </UI.Page>
       );
 
     case "ChatNew":
@@ -726,7 +726,7 @@ export const viewReady = (
 export const viewProfileMissing = (
   _session: Session.Session,
   model: Model,
-): View.View<Msg> => {
+): UI.View<Msg> => {
   switch (model.page) {
     case "Logout":
       return tagView("Logout", Logout.view(model));
@@ -758,7 +758,7 @@ export const viewProfileMissing = (
   }
 };
 
-export const viewSessionMissing = (model: Model): View.View<Msg> => {
+export const viewSessionMissing = (model: Model): UI.View<Msg> => {
   switch (model.page) {
     case "Login":
       return tagView("Login", Login.view(model));
@@ -794,7 +794,7 @@ export const viewSessionMissing = (model: Model): View.View<Msg> => {
   }
 };
 
-const viewLoading: View.View<Msg> = () => <View.LoadingPage />;
+const viewLoading: UI.View<Msg> = () => <UI.LoadingPage />;
 
 //
 //
@@ -809,10 +809,10 @@ const viewBottomNavigation =
   (
     page: ClickedBottomNavigationLink["page"],
     route: Route.Route,
-  ): View.View<Msg> =>
+  ): UI.View<Msg> =>
   (dispatch) => {
     return (
-      <View.BottomNavigation
+      <UI.BottomNavigation
         showLabels
         value={route.type}
         onChange={(_event, valueNew) => {
@@ -825,22 +825,22 @@ const viewBottomNavigation =
           }
         }}
       >
-        <View.BottomNavigationAction
-          icon={<View.Icons.Home />}
+        <UI.BottomNavigationAction
+          icon={<UI.Icons.Home />}
           label="Home"
           value={Route.routesTypes.Home}
         />
-        <View.BottomNavigationAction
-          icon={<View.Icons.Chat />}
+        <UI.BottomNavigationAction
+          icon={<UI.Icons.Chat />}
           label="Chat"
           value={Route.routesTypes.Chat}
         />
-        <View.BottomNavigationAction
-          icon={<View.Icons.Person />}
+        <UI.BottomNavigationAction
+          icon={<UI.Icons.Person />}
           label="Profile"
           value={Route.routesTypes.Account}
         />
-      </View.BottomNavigation>
+      </UI.BottomNavigation>
     );
   };
 
@@ -854,11 +854,11 @@ const viewBottomNavigation =
 
 const tagView = <TMsg, TPage extends Msg["page"]>(
   page: TPage,
-  dom: View.View<TMsg>,
-): View.View<TMsg & { page: TPage }> => {
+  dom: UI.View<TMsg>,
+): UI.View<TMsg & { page: TPage }> => {
   return pipe(
     dom,
-    View.map((msg) => ({ ...msg, page })),
+    UI.map((msg) => ({ ...msg, page })),
   );
 };
 

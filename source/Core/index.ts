@@ -1,9 +1,8 @@
 export * as Audio from "./Audio";
+export * as Browser from "./Browser";
 export * as Cmd from "./Cmd";
 export * as Debug from "./Debug";
-export * as Html from "./Html";
 export * as Keyboard from "./Keyboard";
-export * as Browser from "./Browser";
 export * as Option from "./Option";
 export * from "./pipe";
 export * as Platform from "./Platform";
@@ -13,3 +12,4 @@ export * as Sub from "./Sub";
 export * as Task from "./Task";
 export * as Time from "./Time";
 export * as Uuid from "./Uuid";
+export * as View from "./View";

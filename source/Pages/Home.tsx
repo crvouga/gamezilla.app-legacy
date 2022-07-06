@@ -1,6 +1,6 @@
 import * as Games from "Games";
 import * as Route from "Route";
-import * as View from "View";
+import * as UI from "UI";
 import { Cmd } from "Core";
 
 //
@@ -74,12 +74,12 @@ export const view =
       route: Route.Route;
     },
     _model: Model,
-  ): View.View<Msg> =>
+  ): UI.View<Msg> =>
   (dispatch) =>
     (
-      <View.Page>
-        <View.Header title="Home" />
-        <View.Box
+      <UI.Page>
+        <UI.Header title="Home" />
+        <UI.Box
           sx={{
             display: "grid",
             gridTemplateColumns: "repeat(3, 1fr)",
@@ -122,8 +122,8 @@ export const view =
             disabled={!canOpen(game, "Snake")}
             onClick={() => dispatch({ type: "UserClickedGame", game: "Snake" })}
           />
-        </View.Box>
-      </View.Page>
+        </UI.Box>
+      </UI.Page>
     );
 
 const GameCard = ({
@@ -138,7 +138,7 @@ const GameCard = ({
   disabled?: boolean;
 }) => {
   return (
-    <View.ButtonBase
+    <UI.ButtonBase
       disabled={disabled}
       sx={{
         position: "relative",
@@ -149,7 +149,7 @@ const GameCard = ({
     >
       {icon}
 
-      <View.Box
+      <UI.Box
         sx={{
           position: "absolute",
           top: 0,
@@ -161,7 +161,7 @@ const GameCard = ({
           justifyContent: "flex-end",
         }}
       >
-        <View.Box
+        <UI.Box
           sx={{
             width: "100%",
             padding: 1,
@@ -169,11 +169,11 @@ const GameCard = ({
             background: `linear-gradient(transparent, rgba(0, 0, 0, 0.6))`,
           }}
         >
-          <View.Typography color="white" align="left" fontWeight={800}>
+          <UI.Typography color="white" align="left" fontWeight={800}>
             {label}
-          </View.Typography>
-        </View.Box>
-      </View.Box>
-    </View.ButtonBase>
+          </UI.Typography>
+        </UI.Box>
+      </UI.Box>
+    </UI.ButtonBase>
   );
 };

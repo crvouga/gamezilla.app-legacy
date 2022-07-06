@@ -1,6 +1,6 @@
 import * as Route from "Route";
 import * as Snackbar from "Snackbar";
-import * as View from "View";
+import * as UI from "UI";
 import { keyframes } from "@mui/system";
 import { Cmd, Sub, pipe } from "Core";
 import { exhaustive } from "Utility";
@@ -267,7 +267,7 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
 //
 //
 
-export const view = (model: Model): View.View<Msg> => {
+export const view = (model: Model): UI.View<Msg> => {
   switch (model.type) {
     case "Closed":
       return viewClosed;
@@ -277,35 +277,29 @@ export const view = (model: Model): View.View<Msg> => {
   }
 };
 
-const viewOpened = (model: Opened): View.View<Msg> => {
+const viewOpened = (model: Opened): UI.View<Msg> => {
   switch (model.child.type) {
     case "Chess":
-      return pipe(
-        Chess.view(model.child.child),
-        View.map(groupGameTag("Chess")),
-      );
+      return pipe(Chess.view(model.child.child), UI.map(groupGameTag("Chess")));
 
     case "ConnectFour":
       return pipe(
         ConnectFour.view(model.child.child),
-        View.map(groupGameTag("ConnectFour")),
+        UI.map(groupGameTag("ConnectFour")),
       );
 
     case "TicTacToe":
       return pipe(
         TicTacToe.view(model.child.child),
-        View.map(groupGameTag("TicTacToe")),
+        UI.map(groupGameTag("TicTacToe")),
       );
 
     case "Snake":
-      return pipe(
-        Snake.view(model.child.child),
-        View.map(groupGameTag("Snake")),
-      );
+      return pipe(Snake.view(model.child.child), UI.map(groupGameTag("Snake")));
   }
 };
 
-const viewClosed: View.View<Msg> = () => {
+const viewClosed: UI.View<Msg> = () => {
   return <>game is closed</>;
 };
 
@@ -319,11 +313,11 @@ const spin = keyframes`
 `;
 
 export const viewBanner =
-  (model: Opened): View.View<Msg> =>
+  (model: Opened): UI.View<Msg> =>
   (dispatch) =>
     (
       <>
-        <View.Paper
+        <UI.Paper
           variant="outlined"
           sx={{
             width: "100%",
@@ -333,19 +327,19 @@ export const viewBanner =
             padding: 0,
           }}
         >
-          <View.ButtonBase
+          <UI.ButtonBase
             sx={{ flex: 1, margin: 0, padding: 0 }}
             onClick={() => dispatch({ type: "UserClickedGameBanner" })}
           >
-            <View.Box sx={{ width: 64, marginRight: 2 }}>
+            <UI.Box sx={{ width: 64, marginRight: 2 }}>
               <GameIcon game={model.child.type} />
-            </View.Box>
-            <View.Typography align="left" variant="h5" sx={{ flex: 1 }}>
+            </UI.Box>
+            <UI.Typography align="left" variant="h5" sx={{ flex: 1 }}>
               {gameToName(model.child.type)}
-            </View.Typography>
-          </View.ButtonBase>
+            </UI.Typography>
+          </UI.ButtonBase>
 
-          <View.ButtonBase
+          <UI.ButtonBase
             sx={{ width: "15%", height: "100%", p: 2, margin: 0 }}
             onClick={() =>
               dispatch({
@@ -353,11 +347,11 @@ export const viewBanner =
               })
             }
           >
-            <View.Icons.Close />
-          </View.ButtonBase>
-        </View.Paper>
+            <UI.Icons.Close />
+          </UI.ButtonBase>
+        </UI.Paper>
 
-        <View.ConformationDialog
+        <UI.ConformationDialog
           open={model.status === "ConfirmingClose"}
           title={`Close ${gameToName(model.child.type)}?`}
           confirmTitle={`Close ${gameToName(model.child.type)}`}

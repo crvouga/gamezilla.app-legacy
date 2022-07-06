@@ -1,9 +1,7 @@
 import * as ReactDomClient from "react-dom/client";
 import * as Socket from "socket.io-client";
-import { Browser } from "Core";
-import { useEffect } from "react";
+import { Browser, Debug } from "Core";
 import * as App from "./App";
-import * as ReduxDevTools from "./Core/Debug/ReduxDevTools";
 
 //
 //
@@ -13,8 +11,8 @@ import * as ReduxDevTools from "./Core/Debug/ReduxDevTools";
 //
 //
 
-const program = ReduxDevTools.withDebugger(
-  Browser.Application({
+const program = Debug.ReduxDevTools.withDebugger(
+  Browser.application({
     onLocationChange: App.onLocationChange,
     init: App.init,
     update: App.update,

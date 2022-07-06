@@ -1,9 +1,8 @@
 import * as Route from "Route";
 import * as Store from "Store";
-import * as View from "View";
-import { Cmd, Html, RemoteData } from "Core";
-import { ReactNode, useEffect, useLayoutEffect, useRef, useState } from "react";
-import { refCount } from "rxjs";
+import * as UI from "UI";
+import { Cmd, RemoteData } from "Core";
+import { ReactNode, useLayoutEffect, useRef, useState } from "react";
 
 //
 //
@@ -108,7 +107,7 @@ export const view =
       authUser: { userId: string };
     },
     model: Model,
-  ): View.View<Msg> =>
+  ): UI.View<Msg> =>
   (dispatch) => {
     const query =
       store.queries.Conversation.FindOne[conversationId] ?? RemoteData.NotAsked;
@@ -122,23 +121,23 @@ export const view =
       store.mutations.Message.Insert[conversationId] ?? RemoteData.NotAsked;
 
     return (
-      <View.Page>
-        <View.Toolbar>
-          <View.HeaderBackButton
+      <UI.Page>
+        <UI.Toolbar>
+          <UI.HeaderBackButton
             onClick={() => dispatch({ type: "ClickedBack" })}
           />
 
-          <View.Typography align="left" noWrap>
+          <UI.Typography align="left" noWrap>
             {conversation.profiles
               .map((profile) => profile.username)
               .join(", ")}
-          </View.Typography>
+          </UI.Typography>
 
-          <View.Box sx={{ paddingX: 2 }}></View.Box>
-        </View.Toolbar>
+          <UI.Box sx={{ paddingX: 2 }}></UI.Box>
+        </UI.Toolbar>
 
         {query.type === "Loading" && (
-          <View.Box
+          <UI.Box
             sx={{
               display: "flex",
               alignItems: "center",
@@ -147,15 +146,15 @@ export const view =
               flex: 1,
             }}
           >
-            <View.CircularProgress />
-          </View.Box>
+            <UI.CircularProgress />
+          </UI.Box>
         )}
 
         {query.type === "Success" && (
           <MessageContainer scrollKey={String(conversation.messages.length)}>
             {viewHeader(conversation)(dispatch)}
 
-            <View.Box sx={{ flex: 1 }}></View.Box>
+            <UI.Box sx={{ flex: 1 }}></UI.Box>
 
             {conversation.messages.map((message) => (
               <ChatMessage
@@ -207,7 +206,7 @@ export const view =
           onSend={() => dispatch({ type: "ClickedSend" })}
           isSending={messageInsertMutation.type === "Loading"}
         />
-      </View.Page>
+      </UI.Page>
     );
   };
 
@@ -223,14 +222,14 @@ const ChatInput = ({
   isSending: boolean;
 }) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const theme = View.useTheme();
+  const theme = UI.useTheme();
   const backgroundColor =
     theme.palette.mode === "light"
       ? theme.palette.grey["100"]
       : theme.palette.grey["900"];
   const textColor = theme.palette.getContrastText(backgroundColor);
   return (
-    <View.Paper
+    <UI.Paper
       variant="outlined"
       sx={{
         width: "100%",
@@ -241,7 +240,7 @@ const ChatInput = ({
         borderRadius: theme.spacing(4),
       }}
     >
-      <View.InputBase
+      <UI.InputBase
         ref={inputRef}
         value={value}
         onChange={(event) => {
@@ -251,8 +250,8 @@ const ChatInput = ({
         placeholder="Message..."
       />
 
-      <View.Grow in={value.length > 0}>
-        <View.Button
+      <UI.Grow in={value.length > 0}>
+        <UI.Button
           variant="text"
           size="large"
           disabled={value.length === 0}
@@ -266,9 +265,9 @@ const ChatInput = ({
           loading={isSending}
         >
           Send
-        </View.Button>
-      </View.Grow>
-    </View.Paper>
+        </UI.Button>
+      </UI.Grow>
+    </UI.Paper>
   );
 };
 
@@ -295,7 +294,7 @@ const MessageContainer = ({
   }, []);
 
   return (
-    <View.Box
+    <UI.Box
       ref={containerRef}
       sx={{
         flex: 1,
@@ -308,15 +307,15 @@ const MessageContainer = ({
     >
       {children}
       <div ref={ref} />
-    </View.Box>
+    </UI.Box>
   );
 };
 
 const viewHeader =
-  (conversation: { profiles: Store.Profile.Profile[] }): View.View<Msg> =>
+  (conversation: { profiles: Store.Profile.Profile[] }): UI.View<Msg> =>
   () =>
     (
-      <View.Box
+      <UI.Box
         sx={{
           display: "flex",
           flexDirection: "column",
@@ -326,7 +325,7 @@ const viewHeader =
           textOverflow: "ellipsis",
         }}
       >
-        <View.AvatarGroup
+        <UI.AvatarGroup
           sx={{ marginBottom: 2 }}
           max={4}
           componentsProps={{
@@ -334,23 +333,23 @@ const viewHeader =
           }}
         >
           {conversation.profiles.map((profile) => (
-            <View.Avatar
+            <UI.Avatar
               key={profile.userId}
               src={profile.avatarUrl}
               sx={{ width: 64, height: 64 }}
             />
           ))}
-        </View.AvatarGroup>
+        </UI.AvatarGroup>
 
-        <View.Typography
+        <UI.Typography
           variant="h5"
           align="center"
           noWrap
           sx={{ width: "100%" }}
         >
           {conversation.profiles.map((profile) => profile.username).join(", ")}
-        </View.Typography>
-      </View.Box>
+        </UI.Typography>
+      </UI.Box>
     );
 
 const ChatMessage = ({
@@ -370,7 +369,7 @@ const ChatMessage = ({
   onMenuClose: () => void;
   onDeleteForever: () => void;
 }) => {
-  const theme = View.useTheme();
+  const theme = UI.useTheme();
   const backgroundColor =
     variant === "sented"
       ? theme.palette.primary.main
@@ -386,7 +385,7 @@ const ChatMessage = ({
   };
 
   return (
-    <View.Box
+    <UI.Box
       sx={{
         paddingY: 1 / 2,
         paddingX: 1,
@@ -395,7 +394,7 @@ const ChatMessage = ({
         justifyContent: variant === "received" ? "flex-start" : "flex-end",
       }}
     >
-      <View.Typography
+      <UI.Typography
         ref={(ref) => setAnchorRef(ref)}
         onClick={handleClick}
         onContextMenu={handleClick}
@@ -412,8 +411,8 @@ const ChatMessage = ({
         }}
       >
         {message}
-      </View.Typography>
-      <View.Menu
+      </UI.Typography>
+      <UI.Menu
         anchorEl={anchorRef}
         open={status === "focused"}
         onClose={onMenuClose}
@@ -426,9 +425,9 @@ const ChatMessage = ({
           horizontal: "right",
         }}
       >
-        <View.MenuItem>Copy Text</View.MenuItem>
+        <UI.MenuItem>Copy Text</UI.MenuItem>
         {variant === "sented" && (
-          <View.MenuItem
+          <UI.MenuItem
             sx={{
               color: isDeleting
                 ? theme.palette.action.disabled
@@ -437,9 +436,9 @@ const ChatMessage = ({
             onClick={onDeleteForever}
           >
             Delete Forever
-          </View.MenuItem>
+          </UI.MenuItem>
         )}
-      </View.Menu>
-    </View.Box>
+      </UI.Menu>
+    </UI.Box>
   );
 };

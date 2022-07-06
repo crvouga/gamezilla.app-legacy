@@ -1,6 +1,6 @@
 import * as Route from "Route";
 import * as Store from "Store";
-import * as View from "View";
+import * as UI from "UI";
 import { Cmd, RemoteData, pipe } from "Core";
 
 //
@@ -67,33 +67,33 @@ export const view =
   (
     { store, profile }: { store: Store.Model; profile: { userId: string } },
     model: Model,
-  ): View.View<Msg> =>
+  ): UI.View<Msg> =>
   (dispatch) => {
     const query =
       store.queries.Conversation.FindManyByUserId[profile.userId] ??
       RemoteData.NotAsked;
 
     return (
-      <View.Page>
-        <View.Header title="Chat" />
-        <View.Box sx={{ p: 2 }}>
-          <View.Button
+      <UI.Page>
+        <UI.Header title="Chat" />
+        <UI.Box sx={{ p: 2 }}>
+          <UI.Button
             fullWidth
             variant="contained"
             onClick={() => dispatch({ type: "ClickedSendMessage" })}
           >
             Send Message
-          </View.Button>
-        </View.Box>
+          </UI.Button>
+        </UI.Box>
 
-        <View.List sx={{ overflowY: "scroll" }}>
+        <UI.List sx={{ overflowY: "scroll" }}>
           {Object.values(store.ProfilesConversations)
             .filter((item) => item.userId === profile.userId)
             .map((item) =>
               Store.Conversation.toConversation(item.conversationId, store),
             )
             .map((item) => (
-              <View.ListItemButton
+              <UI.ListItemButton
                 key={item.conversationId}
                 onClick={() =>
                   dispatch({
@@ -102,30 +102,27 @@ export const view =
                   })
                 }
               >
-                <View.ListItemAvatar>
-                  <View.AvatarGroup>
+                <UI.ListItemAvatar>
+                  <UI.AvatarGroup>
                     {item.profiles.map((profile) => (
-                      <View.Avatar
-                        key={profile.userId}
-                        src={profile.avatarUrl}
-                      />
+                      <UI.Avatar key={profile.userId} src={profile.avatarUrl} />
                     ))}
-                  </View.AvatarGroup>
-                </View.ListItemAvatar>
-                <View.ListItemText
+                  </UI.AvatarGroup>
+                </UI.ListItemAvatar>
+                <UI.ListItemText
                   primary={item.profiles
                     .map((item) => item.username)
                     .join(", ")}
                 />
-              </View.ListItemButton>
+              </UI.ListItemButton>
             ))}
-        </View.List>
+        </UI.List>
 
         {query.type === "Loading" && (
-          <View.Box sx={{ p: 4, display: "flex", justifyContent: "center" }}>
-            <View.CircularProgress />
-          </View.Box>
+          <UI.Box sx={{ p: 4, display: "flex", justifyContent: "center" }}>
+            <UI.CircularProgress />
+          </UI.Box>
         )}
-      </View.Page>
+      </UI.Page>
     );
   };
