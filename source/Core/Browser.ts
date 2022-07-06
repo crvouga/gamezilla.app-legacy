@@ -34,9 +34,17 @@ export type Location = {
   query: { [key: string]: string };
 };
 
-export const location$ = new Rx.Subject<Location>();
+export const location$ = new Rx.Observable<Location>((subscriber) => {
+  const handler = () => {
+    subscriber.next(getLocation());
+  };
+  window.addEventListener("popstate", handler);
+  return () => {
+    window.removeEventListener("popstate", handler);
+  };
+});
 
-export const getLocation = () => {
+export const getLocation = (): Location => {
   return {
     pathname: window.location.pathname,
     query: Object.fromEntries(
@@ -55,14 +63,14 @@ export const getLocation = () => {
 
 export const reload: Cmd.Cmd<never> = Rx.of(async () => {
   window.location.reload();
-  location$.next(getLocation());
+  window.dispatchEvent(new Event("popstate"));
   return Option.None;
 });
 
 export const push = (url: string): Cmd.Cmd<never> => {
   return Rx.of(async () => {
     window.history.pushState(null, "", url);
-    location$.next(getLocation());
+    window.dispatchEvent(new Event("popstate"));
     return Option.None;
   });
 };
@@ -70,14 +78,14 @@ export const push = (url: string): Cmd.Cmd<never> => {
 export const replace = (url: string): Cmd.Cmd<never> => {
   return Rx.of(async () => {
     window.history.replaceState(null, "", url);
-    location$.next(getLocation());
+    window.dispatchEvent(new Event("popstate"));
     return Option.None;
   });
 };
 
 export const back: Cmd.Cmd<never> = Rx.of(async () => {
   window.history.back();
-  location$.next(getLocation());
+  window.dispatchEvent(new Event("popstate"));
   return Option.None;
 });
 
