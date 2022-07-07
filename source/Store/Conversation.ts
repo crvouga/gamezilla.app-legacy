@@ -493,26 +493,26 @@ const findManyByUserId =
     });
   };
 
-const findIdByUserIds =
+const findUniqueByUserIds =
   ({
     userIds,
   }: {
     userIds: string[];
   }): Task.Task<Result.Result<Problem, Option.Option<string>>> =>
   async () => {
-    const profilesConversationsResponse = await Supabase.client
+    const usersConversationsResponse = await Supabase.client
       .from<definitions["users_conversations"]>("users_conversations")
       .select("*")
       .in("user_id", userIds);
 
-    if (profilesConversationsResponse.error) {
+    if (usersConversationsResponse.error) {
       return Result.Err({
-        message: profilesConversationsResponse.error.message,
+        message: usersConversationsResponse.error.message,
       });
     }
 
     // todo. this should be in the database query
-    const userIdsbyConversationId = profilesConversationsResponse.data.reduce<{
+    const userIdsbyConversationId = usersConversationsResponse.data.reduce<{
       [conversationId: string]: { [userId: string]: string };
     }>(
       (byId, item) => ({
@@ -525,8 +525,13 @@ const findIdByUserIds =
       {},
     );
 
+    console.log({ userIdsbyConversationId, userIds });
     const conversationId = Object.entries(userIdsbyConversationId)
-      .filter((entry) => userIds.every((userId) => userId in entry[1]))
+      .filter(
+        (entry) =>
+          userIds.every((userId) => userId in entry[1]) &&
+          userIds.length === Object.values(entry[1]).length,
+      )
       .map((entry) => entry[0])[0];
 
     return Result.Ok(Option.fromNullable(conversationId));
@@ -535,7 +540,7 @@ const findIdByUserIds =
 const findOneElseInsert =
   ({ userIds }: { userIds: string[] }): Task.Task<FindOneResult> =>
   async () => {
-    const findIdResult = await findIdByUserIds({ userIds })();
+    const findIdResult = await findUniqueByUserIds({ userIds })();
 
     if (findIdResult.type === "Err") {
       return findIdResult;

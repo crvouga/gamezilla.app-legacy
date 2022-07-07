@@ -64,6 +64,7 @@ const createTheme = ({ mode }: { mode: "light" | "dark" }) =>
           styleOverrides: {
             root: {
               backgroundColor: "White",
+              border: "1px solid #dedede",
             },
           },
         },
@@ -291,7 +292,7 @@ export const Header = ({
   right?: React.ReactNode;
 }) => {
   return (
-    <Mui.Toolbar sx={{ position: "sticky", top: 0 }}>
+    <Mui.Toolbar sx={{ position: "sticky", top: 0, width: "100%" }}>
       <Box
         sx={{
           flex: 1,
