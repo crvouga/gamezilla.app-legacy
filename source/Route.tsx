@@ -17,6 +17,7 @@ export type Route =
   | { type: "AccountCreate" }
   | { type: "PasswordReset" }
   | { type: "Logout" }
+  | { type: "Profile" }
   | { type: "ProfileCreate" }
   | { type: "ProfileDelete" }
   | { type: "ProfileUpdate" }
@@ -44,6 +45,7 @@ export const routesTypes: { [routeType in Route["type"]]: string } = {
   LoginEmail: "LoginEmail",
   AccountCreate: "AccountCreate",
   Logout: "Logout",
+  Profile: "Profile",
   ProfileCreate: "ProfileCreate",
   ProfileDelete: "ProfileDelete",
   ProfileUpdate: "ProfileUpdate",
@@ -71,13 +73,24 @@ export const decode = (location: Browser.Location): Option.Option<Route> => {
 
   switch (first) {
     case "ChatConversation": {
-      if (typeof second !== "string") {
-        return Option.None;
+      if (typeof second === "string") {
+        return Option.Some({
+          type: "ChatConversation",
+          conversationId: second,
+        });
       }
-      return Option.Some({
-        type: "ChatConversation",
-        conversationId: second,
-      });
+
+      return Option.None;
+    }
+
+    case "Profile": {
+      if (typeof second === "string") {
+        return Option.Some({
+          type: "Profile",
+          userId: second,
+        });
+      }
+      return Option.None;
     }
 
     default: {
