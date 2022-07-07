@@ -90,7 +90,7 @@ export const update = (
       return [{ ...model, selected: selectedNew }, Cmd.None, []];
 
     case "PressedKeyDown":
-      const profiles = Store.Profile.searchProfiles(model.searchText, store);
+      const profiles = Store.Profile.toSearch(model.searchText, store);
 
       switch (msg.key) {
         case "ArrowDown":
@@ -214,10 +214,9 @@ export const view =
     const searchQuery =
       store.queries.Profile.Search[model.searchText] ?? RemoteData.NotAsked;
 
-    const profiles = Store.Profile.searchProfiles(
-      model.searchText,
-      store,
-    ).filter((profile) => profile.userId !== currentUserProfile.userId);
+    const profiles = Store.Profile.toSearch(model.searchText, store).filter(
+      (profile) => profile.userId !== currentUserProfile.userId,
+    );
 
     const selected = Object.keys(model.selected).flatMap((userId) => {
       const profile = store.Profile[userId];

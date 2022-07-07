@@ -17,7 +17,7 @@ export type Route =
   | { type: "AccountCreate" }
   | { type: "PasswordReset" }
   | { type: "Logout" }
-  | { type: "Profile" }
+  | { type: "Profile"; userId: string }
   | { type: "ProfileCreate" }
   | { type: "ProfileDelete" }
   | { type: "ProfileUpdate" }
@@ -105,6 +105,9 @@ export const encode = (route: Route): string => {
   switch (route.type) {
     case "ChatConversation":
       return `/${route.type}/${route.conversationId}`;
+
+    case "Profile":
+      return `/${route.type}/${route.userId}`;
 
     default:
       return `/${route.type}`;

@@ -494,15 +494,10 @@ export const toGetQuery = (
   }
 };
 
-export const searchProfiles = (nameOrUsername: string, store: Model) => {
-  return pipe(
-    store,
-    (store) => Object.values(store.Profile),
-    (profiles) =>
-      matchSorter(profiles, nameOrUsername, {
-        keys: ["name", "username"],
-      }),
-  );
+export const toSearch = (nameOrUsername: string, store: Model) => {
+  return matchSorter(Object.values(store.Profile), nameOrUsername, {
+    keys: ["name", "username"],
+  });
 };
 
 //

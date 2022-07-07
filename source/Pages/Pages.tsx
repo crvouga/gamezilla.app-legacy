@@ -55,12 +55,57 @@ export type Model =
       page: "ChatConversation";
       conversationId: string;
     })
-  | (Profile.Model & { page: "Profile" })
+  | (Profile.Model & { page: "Profile"; userId: string })
   | (LoginEmail.Model & { page: "LoginEmail" })
   | (AccountCreate.Model & { page: "AccountCreate" })
   | (Search.Model & { page: "Search" })
   | { page: "Game" }
   | { page: "Loading" };
+
+//
+//
+//
+// Msg
+//
+//
+//
+
+export type Msg =
+  | (Account.Msg & { page: "Account" })
+  | (Home.Msg & { page: "Home" })
+  | (Login.Msg & { page: "Login" })
+  | (LoginEmail.Msg & { page: "LoginEmail" })
+  | (AccountCreate.Msg & { page: "AccountCreate" })
+  | (Logout.Msg & { page: "Logout" })
+  | (Profile.Msg & { page: "Profile" })
+  | (ProfileCreate.Msg & { page: "ProfileCreate" })
+  | (ProfileDelete.Msg & { page: "ProfileDelete" })
+  | (ProfileUpdate.Msg & { page: "ProfileUpdate" })
+  | (ProfileUpdateAvatar.Msg & { page: "ProfileUpdateAvatar" })
+  | (ProfileUpdateName.Msg & { page: "ProfileUpdateName" })
+  | (ProfileUpdateUsername.Msg & { page: "ProfileUpdateUsername" })
+  | (ProfileUpdateTheme.Msg & { page: "ProfileUpdateTheme" })
+  | (Chat.Msg & { page: "Chat" })
+  | (PasswordReset.Msg & { page: "PasswordReset" })
+  | (ChatNew.Msg & { page: "ChatNew" })
+  | (ChatConversation.Msg & { page: "ChatConversation" })
+  | (Game.Msg & { page: "Games" })
+  | (Search.Msg & { page: "Search" })
+  | ClickedBottomNavigationLink;
+
+type ClickedBottomNavigationLink = {
+  type: "ClickedBottomNavigationLink";
+  route: Route.Route;
+  page: "Home" | "Chat" | "Account" | "Search";
+};
+
+export type GroupedMsg = Msg & { group: "Page" };
+
+export type OutAction =
+  | Store.Action
+  | Snackbar.Action
+  | Games.Action
+  | Session.Action;
 
 //
 //
@@ -189,11 +234,31 @@ export const initReady = (
         [],
       ];
 
-    case "Profile":
-      return [{ ...Profile.init, page: "Profile" }, Cmd.None, []];
+    case "Profile": {
+      const [modelInit, cmdInit, actions] = Profile.init({
+        userId: route.userId,
+      });
+      return [
+        { ...modelInit, page: "Profile", userId: route.userId },
+        pipe(
+          cmdInit,
+          Cmd.map((m) => ({ ...m, page: "Profile" })),
+        ),
+        actions,
+      ];
+    }
 
-    case "Search":
-      return [{ ...Search.init, page: "Search" }, Cmd.None, []];
+    case "Search": {
+      const [modelInit, cmdInit, actionsInit] = Search.init;
+      return [
+        { ...modelInit, page: "Search" },
+        pipe(
+          cmdInit,
+          Cmd.map((msg) => ({ ...msg, page: "Search" })),
+        ),
+        actionsInit,
+      ];
+    }
 
     case "ProfileCreate":
     case "Login":
@@ -297,51 +362,6 @@ export const initProfileMissing = (
       return exhaustive(route);
   }
 };
-
-//
-//
-//
-// Msg
-//
-//
-//
-
-export type Msg =
-  | (Account.Msg & { page: "Account" })
-  | (Home.Msg & { page: "Home" })
-  | (Login.Msg & { page: "Login" })
-  | (LoginEmail.Msg & { page: "LoginEmail" })
-  | (AccountCreate.Msg & { page: "AccountCreate" })
-  | (Logout.Msg & { page: "Logout" })
-  | (Profile.Msg & { page: "Profile" })
-  | (ProfileCreate.Msg & { page: "ProfileCreate" })
-  | (ProfileDelete.Msg & { page: "ProfileDelete" })
-  | (ProfileUpdate.Msg & { page: "ProfileUpdate" })
-  | (ProfileUpdateAvatar.Msg & { page: "ProfileUpdateAvatar" })
-  | (ProfileUpdateName.Msg & { page: "ProfileUpdateName" })
-  | (ProfileUpdateUsername.Msg & { page: "ProfileUpdateUsername" })
-  | (ProfileUpdateTheme.Msg & { page: "ProfileUpdateTheme" })
-  | (Chat.Msg & { page: "Chat" })
-  | (PasswordReset.Msg & { page: "PasswordReset" })
-  | (ChatNew.Msg & { page: "ChatNew" })
-  | (ChatConversation.Msg & { page: "ChatConversation" })
-  | (Game.Msg & { page: "Games" })
-  | (Search.Msg & { page: "Search" })
-  | ClickedBottomNavigationLink;
-
-type ClickedBottomNavigationLink = {
-  type: "ClickedBottomNavigationLink";
-  route: Route.Route;
-  page: "Home" | "Chat" | "Account" | "Search";
-};
-
-export type GroupedMsg = Msg & { group: "Page" };
-
-export type OutAction =
-  | Store.Action
-  | Snackbar.Action
-  | Games.Action
-  | Session.Action;
 
 //
 //
@@ -475,7 +495,19 @@ export const updateReady = (
 
     case "Profile":
       if (msg.page === "Profile") {
-        return tagUpdate("Profile", Profile.update(msg, model));
+        const [modelPage, cmdPage, actions] = Profile.update(
+          { authUserId: profile.userId, userId: model.userId },
+          msg,
+          model,
+        );
+        return [
+          { ...modelPage, page: "Profile", userId: model.userId },
+          pipe(
+            cmdPage,
+            Cmd.map((m) => ({ ...m, page: "Profile" })),
+          ),
+          actions,
+        ];
       }
 
       return [model, Cmd.None, []];
@@ -701,7 +733,7 @@ export const viewReady = (
     case "Search":
       return (dispatch) => (
         <UI.Page>
-          {tagView("Search", Search.view(model))(dispatch)}
+          {tagView("Search", Search.view({ store }, model))(dispatch)}
           {viewBottomNavigation("Search", route)(dispatch)}
         </UI.Page>
       );
@@ -755,7 +787,10 @@ export const viewReady = (
       return tagView("Games", Game.view(game));
 
     case "Profile":
-      return tagView("Profile", Profile.view(model));
+      return tagView(
+        "Profile",
+        Profile.view({ store, userId: model.userId }, model),
+      );
 
     case "Login":
     case "ProfileCreate":
