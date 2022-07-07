@@ -21,7 +21,7 @@ export const init: Model = {};
 //
 //
 
-export type Msg = {};
+export type Msg = { type: "Noop" };
 
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   return [model, Cmd.None];
