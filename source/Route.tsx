@@ -28,7 +28,8 @@ export type Route =
   | { type: "Game" }
   | { type: "Chat" }
   | { type: "ChatNew" }
-  | { type: "ChatConversation"; conversationId: string };
+  | { type: "ChatConversation"; conversationId: string }
+  | { type: "Search" };
 
 //
 //
@@ -58,6 +59,7 @@ export const routesTypes: { [routeType in Route["type"]]: string } = {
   Chat: "Chat",
   ChatNew: "ChatNew",
   ChatConversation: "ChatConversation",
+  Search: "Search",
 };
 
 const isRouteType = (routeType: unknown): routeType is Route["type"] => {

@@ -25,6 +25,7 @@ import * as ProfileUpdateAvatar from "./ProfileUpdateAvatar";
 import * as ProfileUpdateName from "./ProfileUpdateName";
 import * as ProfileUpdateTheme from "./ProfileUpdateTheme";
 import * as ProfileUpdateUsername from "./ProfileUpdateUsername";
+import * as Search from "./Search";
 
 //
 //
@@ -57,6 +58,7 @@ export type Model =
   | (Profile.Model & { page: "Profile" })
   | (LoginEmail.Model & { page: "LoginEmail" })
   | (AccountCreate.Model & { page: "AccountCreate" })
+  | (Search.Model & { page: "Search" })
   | { page: "Game" }
   | { page: "Loading" };
 
@@ -190,6 +192,9 @@ export const initReady = (
     case "Profile":
       return [{ ...Profile.init, page: "Profile" }, Cmd.None, []];
 
+    case "Search":
+      return [{ ...Search.init, page: "Search" }, Cmd.None, []];
+
     case "ProfileCreate":
     case "Login":
     case "LoginEmail":
@@ -241,6 +246,7 @@ export const initSessionMissing = (
     case "ProfileDelete":
     case "ProfileUpdate":
     case "ProfileUpdateAvatar":
+    case "Search":
     case "ProfileUpdateTheme":
     case "ProfileUpdateName":
     case "ProfileUpdateUsername":
@@ -270,6 +276,7 @@ export const initProfileMissing = (
     case "ChatConversation":
     case "ChatNew":
     case "Game":
+    case "Search":
     case "Home":
     case "Profile":
     case "ProfileDelete":
@@ -319,12 +326,13 @@ export type Msg =
   | (ChatNew.Msg & { page: "ChatNew" })
   | (ChatConversation.Msg & { page: "ChatConversation" })
   | (Game.Msg & { page: "Games" })
+  | (Search.Msg & { page: "Search" })
   | ClickedBottomNavigationLink;
 
 type ClickedBottomNavigationLink = {
   type: "ClickedBottomNavigationLink";
   route: Route.Route;
-  page: "Home" | "Chat" | "Account";
+  page: "Home" | "Chat" | "Account" | "Search";
 };
 
 export type GroupedMsg = Msg & { group: "Page" };
@@ -472,6 +480,13 @@ export const updateReady = (
 
       return [model, Cmd.None, []];
 
+    case "Search":
+      if (msg.page === "Search") {
+        return tagUpdate("Search", Search.update(msg, model));
+      }
+
+      return [model, Cmd.None, []];
+
     case "Login":
     case "Loading":
     case "ProfileCreate":
@@ -527,6 +542,7 @@ export const updateProfileMissing = (
     case "LoginEmail":
     case "AccountCreate":
     case "PasswordReset":
+    case "Search":
       return [model, Route.push({ type: "ProfileCreate" }), []];
 
     default:
@@ -581,6 +597,7 @@ export const updateSessionMissing = (
     case "Loading":
     case "Logout":
     case "Profile":
+    case "Search":
       return [model, Route.push({ type: "Login" }), []];
 
     default:
@@ -623,6 +640,7 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
     case "AccountCreate":
     case "PasswordReset":
     case "Profile":
+    case "Search":
       return Sub.None;
 
     default:
@@ -677,6 +695,14 @@ export const viewReady = (
             Home.view({ route, profile, game }, model),
           )(dispatch)}
           {viewBottomNavigation("Home", route)(dispatch)}
+        </UI.Page>
+      );
+
+    case "Search":
+      return (dispatch) => (
+        <UI.Page>
+          {tagView("Search", Search.view(model))(dispatch)}
+          {viewBottomNavigation("Search", route)(dispatch)}
         </UI.Page>
       );
 
@@ -770,6 +796,7 @@ export const viewProfileMissing = (
     case "Login":
     case "LoginEmail":
     case "Loading":
+    case "Search":
     case "AccountCreate":
     case "PasswordReset":
     case "Profile":
@@ -809,6 +836,7 @@ export const viewSessionMissing = (model: Model): UI.View<Msg> => {
     case "ProfileUpdateName":
     case "ProfileUpdateUsername":
     case "Profile":
+    case "Search":
     case "Loading":
       return viewLoading;
 
@@ -852,6 +880,11 @@ const viewBottomNavigation =
           icon={<UI.Icons.Home />}
           label="Home"
           value={Route.routesTypes.Home}
+        />
+        <UI.BottomNavigationAction
+          icon={<UI.Icons.Search />}
+          label="Search"
+          value={Route.routesTypes.Search}
         />
         <UI.BottomNavigationAction
           icon={<UI.Icons.Chat />}
