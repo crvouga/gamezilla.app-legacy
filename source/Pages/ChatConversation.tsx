@@ -404,7 +404,8 @@ const ChatMessage = ({
         onClick={handleClick}
         onContextMenu={handleClick}
         sx={{
-          opacity: status === "blurred" ? 0.5 : 1,
+          // opacity: status === "blurred" ? 0.3 : 1,
+          filter: status === "blurred" ? "blur(4px)" : undefined,
           borderRadius: theme.spacing(2),
           display: "inline-block",
           padding: 1,
@@ -423,11 +424,11 @@ const ChatMessage = ({
         onClose={onMenuClose}
         anchorOrigin={{
           vertical: "bottom",
-          horizontal: "left",
+          horizontal: variant === "sented" ? "left" : "right",
         }}
         transformOrigin={{
           vertical: "center",
-          horizontal: "right",
+          horizontal: variant === "sented" ? "right" : "left",
         }}
       >
         <UI.MenuItem>Copy Text</UI.MenuItem>
