@@ -83,7 +83,8 @@ export const view =
         profiles: item.profiles.filter(
           (item) => item.userId !== profile.userId,
         ),
-      }));
+      }))
+      .filter((item) => item.profiles.length > 0);
 
     return (
       <UI.Page>
