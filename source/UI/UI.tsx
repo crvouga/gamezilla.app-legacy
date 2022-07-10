@@ -383,30 +383,79 @@ export const LoadingDialog = ({
   );
 };
 
-export const ConformationDialog = ({
-  open,
-  onCancel,
-  onClose,
-  onConfirm,
-  title,
-  confirmTitle,
-  cancelTitle = "Cancel",
-}: {
-  open: boolean;
-  onCancel: () => void;
-  onClose: () => void;
-  onConfirm: () => void;
-  title: string;
-  confirmTitle: string;
-  cancelTitle?: string;
-}) => {
-  return (
-    <Dialog open={open} onClose={onClose}>
-      <DialogTitle>{title}</DialogTitle>
-      <DialogActions>
-        <Button onClick={onCancel}>{cancelTitle}</Button>
-        <Button onClick={onConfirm}>{confirmTitle}</Button>
-      </DialogActions>
-    </Dialog>
-  );
-};
+// export const ConformationDialog = ({
+//   open,
+//   onCancel,
+//   onClose,
+//   onConfirm,
+//   title,
+//   confirmTitle,
+//   cancelTitle = "Cancel",
+// }: {
+//   open: boolean;
+//   onCancel: () => void;
+//   onClose: () => void;
+//   onConfirm: () => void;
+//   title: string;
+//   confirmTitle: string;
+//   cancelTitle?: string;
+// }) => {
+//   return (
+//     <Dialog open={open} onClose={onClose}>
+//       <DialogTitle>{title}</DialogTitle>
+//       <DialogActions>
+//         <Button onClick={onCancel}>{cancelTitle}</Button>
+//         <Button onClick={onConfirm}>{confirmTitle}</Button>
+//       </DialogActions>
+//     </Dialog>
+//   );
+// };
+
+export const conformationDialog =
+  <TMsg,>({
+    open,
+    onCancel,
+    onClose,
+    onConfirm,
+    title,
+    confirmTitle,
+    cancelTitle = "Cancel",
+  }: {
+    open: boolean;
+    onCancel: TMsg;
+    onClose: TMsg;
+    onConfirm: TMsg;
+    title: string;
+    confirmTitle: string;
+    cancelTitle?: string;
+  }): View<TMsg> =>
+  (dispatch) => {
+    return (
+      <Dialog open={open} onClose={() => dispatch(onClose)}>
+        <DialogTitle>{title}</DialogTitle>
+        <DialogActions>
+          <Button onClick={() => dispatch(onCancel)}>{cancelTitle}</Button>
+          <Button onClick={() => dispatch(onConfirm)}>{confirmTitle}</Button>
+        </DialogActions>
+      </Dialog>
+    );
+  };
+
+export const loadingDialog =
+  <TMsg,>({ open, title }: { open: boolean; title: string }): View<TMsg> =>
+  (dispatch) => {
+    return (
+      <Dialog open={open}>
+        <Box sx={{ display: "flex", alignItems: "center", p: 2 }}>
+          <CircularProgress sx={{ marginRight: 2 }} />
+          <Typography variant="h6">{title}</Typography>
+        </Box>
+      </Dialog>
+    );
+  };
+
+export const fragement =
+  <TMsg,>(...children: View<TMsg>[]): View<TMsg> =>
+  (dispatch) => {
+    return <>{children.map((child) => child(dispatch))}</>;
+  };

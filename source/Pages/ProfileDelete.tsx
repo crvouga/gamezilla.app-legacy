@@ -101,15 +101,13 @@ export const view =
 
       case "NotAsked":
       case "Success":
-        return (
-          <UI.ConformationDialog
-            open
-            title="Delete profile forever?"
-            onClose={() => dispatch({ type: "UserClickedBackdrop" })}
-            onCancel={() => dispatch({ type: "UserClickedCancelButton" })}
-            confirmTitle="Delete"
-            onConfirm={() => dispatch({ type: "UserClickedDeleteButton" })}
-          />
-        );
+        return UI.conformationDialog<Msg>({
+          open: true,
+          title: "Delete profile forever?",
+          onClose: { type: "UserClickedBackdrop" },
+          onCancel: { type: "UserClickedCancelButton" },
+          confirmTitle: "Delete",
+          onConfirm: { type: "UserClickedDeleteButton" },
+        })(dispatch);
     }
   };

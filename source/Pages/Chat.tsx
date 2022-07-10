@@ -73,6 +73,18 @@ export const view =
       store.queries.Conversation.FindManyByUserId[profile.userId] ??
       RemoteData.NotAsked;
 
+    const conversations = Object.values(store.ProfilesConversations)
+      .filter((item) => item.userId === profile.userId)
+      .map((item) =>
+        Store.Conversation.toConversation(item.conversationId, store),
+      )
+      .map((item) => ({
+        ...item,
+        profiles: item.profiles.filter(
+          (item) => item.userId !== profile.userId,
+        ),
+      }));
+
     return (
       <UI.Page>
         <UI.Header title="Chat" />
@@ -87,35 +99,28 @@ export const view =
         </UI.Box>
 
         <UI.List sx={{ overflowY: "scroll" }}>
-          {Object.values(store.ProfilesConversations)
-            .filter((item) => item.userId === profile.userId)
-            .map((item) =>
-              Store.Conversation.toConversation(item.conversationId, store),
-            )
-            .map((item) => (
-              <UI.ListItemButton
-                key={item.conversationId}
-                onClick={() =>
-                  dispatch({
-                    type: "ClickedConversationItem",
-                    conversationId: item.conversationId,
-                  })
-                }
-              >
-                <UI.ListItemAvatar>
-                  <UI.AvatarGroup>
-                    {item.profiles.map((profile) => (
-                      <UI.Avatar key={profile.userId} src={profile.avatarUrl} />
-                    ))}
-                  </UI.AvatarGroup>
-                </UI.ListItemAvatar>
-                <UI.ListItemText
-                  primary={item.profiles
-                    .map((item) => item.username)
-                    .join(", ")}
-                />
-              </UI.ListItemButton>
-            ))}
+          {conversations.map((item) => (
+            <UI.ListItemButton
+              key={item.conversationId}
+              onClick={() =>
+                dispatch({
+                  type: "ClickedConversationItem",
+                  conversationId: item.conversationId,
+                })
+              }
+            >
+              <UI.ListItemAvatar>
+                <UI.AvatarGroup max={2}>
+                  {item.profiles.map((profile) => (
+                    <UI.Avatar key={profile.userId} src={profile.avatarUrl} />
+                  ))}
+                </UI.AvatarGroup>
+              </UI.ListItemAvatar>
+              <UI.ListItemText
+                primary={item.profiles.map((item) => item.username).join(", ")}
+              />
+            </UI.ListItemButton>
+          ))}
         </UI.List>
 
         {query.type === "Loading" && (
