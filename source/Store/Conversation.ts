@@ -239,7 +239,7 @@ export const update = (
       // todo put this logic elsewhere
       const cmdNew: Cmd.Cmd<Msg> =
         msg.result.type === "Ok"
-          ? Route.replace({
+          ? Route.push({
               type: "ChatConversation",
               conversationId: msg.result.value.conversation.conversationId,
             })

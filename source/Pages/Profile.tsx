@@ -129,6 +129,9 @@ export const view =
               </UI.Button>
               <UI.Button
                 fullWidth
+                loading={
+                  store.mutations.Conversation.FindElseInsert.type === "Loading"
+                }
                 variant="contained"
                 onClick={() => dispatch({ type: "ClickedSendMessage" })}
               >

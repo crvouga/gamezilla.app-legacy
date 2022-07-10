@@ -1,7 +1,7 @@
 import * as Route from "Route";
 import * as Store from "Store";
 import * as UI from "UI";
-import { Cmd, RemoteData } from "Core";
+import { Cmd, RemoteData, pipe } from "Core";
 import { ReactNode, useLayoutEffect, useRef, useState } from "react";
 
 //
@@ -112,9 +112,14 @@ export const view =
     const query =
       store.queries.Conversation.FindOne[conversationId] ?? RemoteData.NotAsked;
 
-    const conversation = Store.Conversation.toConversation(
-      conversationId,
-      store,
+    const conversation = pipe(
+      Store.Conversation.toConversation(conversationId, store),
+      (conversation) => ({
+        ...conversation,
+        profiles: conversation.profiles.filter(
+          (item) => item.userId !== authUser.userId,
+        ),
+      }),
     );
 
     const messageInsertMutation =
