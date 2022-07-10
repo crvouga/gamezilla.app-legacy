@@ -1,10 +1,18 @@
 import * as Rx from "rxjs";
+import { Cmd } from "Core";
 import * as Sub from "./Sub";
 import * as Task from "./Task";
 
 export const now = (): Task.Task<number> => {
   return async () => new Date().getTime();
 };
+
+export const delay =
+  <TMsg>(timeout: number, msg: TMsg): Task.Task<TMsg> =>
+  async () => {
+    await new Promise((resolve) => setTimeout(resolve, timeout));
+    return msg;
+  };
 
 //
 //
