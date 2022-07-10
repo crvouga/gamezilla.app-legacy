@@ -56,8 +56,8 @@ const initForm = ({ defaultName }: { defaultName: string }): Form => {
 export type Msg =
   | { type: "EnteredUsername"; username: string }
   | { type: "EnteredName"; name: string }
-  | { type: "UserClickedSubmitButton" }
-  | { type: "UserClickedLogoutButton" };
+  | { type: "ClickedSubmit" }
+  | { type: "ClickedLogout" };
 
 export type OutAction = Store.Action;
 
@@ -73,10 +73,10 @@ export const update = (
     case "EnteredUsername":
       return [{ ...model, form: { ...model.form, ...msg } }, Cmd.None, []];
 
-    case "UserClickedSubmitButton":
+    case "ClickedSubmit":
       return [model, Cmd.None, [Store.Profile.Create(userId, model.form)]];
 
-    case "UserClickedLogoutButton":
+    case "ClickedLogout":
       return [model, Route.push({ type: "Logout" }), []];
   }
 };
@@ -100,7 +100,7 @@ export const view =
           left={
             <UI.Button
               sx={{ marginLeft: -1 }}
-              onClick={() => dispatch({ type: "UserClickedLogoutButton" })}
+              onClick={() => dispatch({ type: "ClickedLogout" })}
             >
               Logout
             </UI.Button>
@@ -156,7 +156,7 @@ export const view =
             fullWidth
             size="large"
             variant="contained"
-            onClick={() => dispatch({ type: "UserClickedSubmitButton" })}
+            onClick={() => dispatch({ type: "ClickedSubmit" })}
           >
             Create Profile
           </UI.Button>

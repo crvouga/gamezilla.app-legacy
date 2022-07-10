@@ -351,14 +351,14 @@ export const viewBanner =
           </UI.ButtonBase>
         </UI.Paper>
 
-        <UI.ConformationDialog
-          open={model.status === "ConfirmingClose"}
-          title={`Close ${gameToName(model.child.type)}?`}
-          confirmTitle={`Close ${gameToName(model.child.type)}`}
-          onClose={() => dispatch({ type: "CancelledCloseGame" })}
-          onCancel={() => dispatch({ type: "CancelledCloseGame" })}
-          onConfirm={() => dispatch({ type: "ConfirmedCloseGame" })}
-        />
+        {UI.conformationDialog<Msg>({
+          open: model.status === "ConfirmingClose",
+          title: `Close ${gameToName(model.child.type)}?`,
+          confirmTitle: `Close ${gameToName(model.child.type)}`,
+          onClose: { type: "CancelledCloseGame" },
+          onCancel: { type: "CancelledCloseGame" },
+          onConfirm: { type: "ConfirmedCloseGame" },
+        })(dispatch)}
       </>
     );
 

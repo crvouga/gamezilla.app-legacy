@@ -25,7 +25,7 @@ const container = document.getElementById("root");
 
 const root = ReactDomClient.createRoot(container!);
 
-Browser.run(program, (dom) => {
+const stop = Browser.run(program, (dom) => {
   root.render(dom);
 });
 
@@ -69,7 +69,15 @@ socket.on("connect", () => {
 //
 //
 
-// if (import.meta.hot) {
-//   import.meta.hot.accept();
-//   import.meta.hot.dispose(stop);
-// }
+const dispose = () => {
+  stop();
+  socket.disconnect();
+};
+
+// @ts-ignore
+if (import.meta.hot) {
+  // @ts-ignore
+  import.meta.hot.accept();
+  // @ts-ignore
+  import.meta.hot.dispose(dispose);
+}
