@@ -1,8 +1,8 @@
 import * as Route from "Route";
 import * as Store from "Store";
 import * as UI from "UI";
-import { Cmd, RemoteData, pipe } from "Core";
-import { ReactNode, useLayoutEffect, useRef, useState } from "react";
+import { Browser, Cmd, RemoteData, Time, pipe } from "Core";
+import { ReactNode, useEffect, useLayoutEffect, useRef, useState } from "react";
 
 //
 //
@@ -12,9 +12,19 @@ import { ReactNode, useLayoutEffect, useRef, useState } from "react";
 //
 //
 
+type focusedModel =
+  | {
+      type: "Blurred";
+    }
+  | {
+      type: "Focused";
+      messageId: string;
+      copyStatus: "Failed" | "NotAsked" | "Succeeded" | "Loading";
+    };
+
 export type Model = {
   text: string;
-  focusedMessageId?: string;
+  focused: focusedModel;
 };
 
 export const init = ({
@@ -24,6 +34,7 @@ export const init = ({
 }): [Model, Cmd.Cmd<Msg>, OutAction[]] => [
   {
     text: "",
+    focused: { type: "Blurred" },
   },
   Cmd.None,
   [Store.Conversation.FindOne(conversationId)],
@@ -43,7 +54,9 @@ export type Msg =
   | { type: "ClickedMessage"; messageId: string }
   | { type: "ClosedMessageMenu"; messageId: string }
   | { type: "ClickedDeleteMessage"; messageId: string }
-  | { type: "InputtedText"; text: string };
+  | { type: "ClickedCopyMessageText"; text: string }
+  | { type: "InputtedText"; text: string }
+  | { type: "ClipboardCopyResulted"; result: Browser.Clipboard.CopyResult };
 
 export type OutAction = Store.Action;
 
@@ -53,6 +66,19 @@ export const update = (
   model: Model,
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (msg.type) {
+    case "ClipboardCopyResulted":
+      return [{ ...model, focused: { type: "Blurred" } }, Cmd.None, []];
+
+    case "ClickedCopyMessageText":
+      return [
+        model,
+        pipe(
+          Browser.Clipboard.copy(msg.text),
+          Cmd.fromTask((result) => ({ type: "ClipboardCopyResulted", result })),
+        ),
+        [],
+      ];
+
     case "ClickedBack":
       return [model, Route.back, []];
 
@@ -73,10 +99,30 @@ export const update = (
       return [{ ...model, text: msg.text }, Cmd.None, []];
 
     case "ClickedMessage":
-      return [{ ...model, focusedMessageId: msg.messageId }, Cmd.None, []];
+      return [
+        {
+          ...model,
+          focused: {
+            type: "Focused",
+            messageId: msg.messageId,
+            copyStatus: "NotAsked",
+          },
+        },
+        Cmd.None,
+        [],
+      ];
 
     case "ClosedMessageMenu":
-      return [{ ...model, focusedMessageId: undefined }, Cmd.None, []];
+      return [
+        {
+          ...model,
+          focused: {
+            type: "Blurred",
+          },
+        },
+        Cmd.None,
+        [],
+      ];
 
     case "ClickedDeleteMessage":
       return [
@@ -164,42 +210,11 @@ export const view =
             {conversation.messages.map((message) => (
               <ChatMessage
                 key={message.messageId}
-                isDeleting={
-                  store.mutations.Message.DeleteForever[message.messageId]
-                    ?.type === "Loading"
-                }
-                status={
-                  model.focusedMessageId &&
-                  conversation.messages.some(
-                    (message) => message.messageId === model.focusedMessageId,
-                  )
-                    ? message.messageId === model.focusedMessageId
-                      ? "focused"
-                      : "blurred"
-                    : "idle"
-                }
-                variant={
-                  message.userId === authUser.userId ? "sented" : "received"
-                }
-                onMenuClose={() =>
-                  dispatch({
-                    type: "ClosedMessageMenu",
-                    messageId: message.messageId,
-                  })
-                }
-                onClick={() =>
-                  dispatch({
-                    type: "ClickedMessage",
-                    messageId: message.messageId,
-                  })
-                }
-                onDeleteForever={() =>
-                  dispatch({
-                    type: "ClickedDeleteMessage",
-                    messageId: message.messageId,
-                  })
-                }
-                message={message.message}
+                message={message}
+                authUserId={authUser.userId}
+                dispatch={dispatch}
+                model={model}
+                store={store}
               />
             ))}
           </MessageContainer>
@@ -358,22 +373,26 @@ const viewHeader =
     );
 
 const ChatMessage = ({
-  status,
   message,
-  variant,
-  onClick,
-  onMenuClose,
-  onDeleteForever,
-  isDeleting,
+  authUserId,
+  model,
+  store,
+  dispatch,
 }: {
-  isDeleting: boolean;
-  status: "focused" | "blurred" | "idle";
-  message: string;
-  variant: "sented" | "received";
-  onClick: () => void;
-  onMenuClose: () => void;
-  onDeleteForever: () => void;
+  message: Store.Message.Message;
+  authUserId: string;
+  model: Model;
+  dispatch: (msg: Msg) => void;
+  store: Store.Model;
 }) => {
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+    dispatch({ type: "ClickedMessage", messageId: message.messageId });
+  };
+
+  const variant = authUserId === message.userId ? "sented" : "recieved";
+
   const theme = UI.useTheme();
   const backgroundColor =
     variant === "sented"
@@ -383,12 +402,6 @@ const ChatMessage = ({
 
   const [anchorRef, setAnchorRef] = useState<null | HTMLElement>(null);
 
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-    event.stopPropagation();
-    onClick();
-  };
-
   return (
     <UI.Box
       sx={{
@@ -396,7 +409,7 @@ const ChatMessage = ({
         paddingX: 1,
         width: "100%",
         display: "flex",
-        justifyContent: variant === "received" ? "flex-start" : "flex-end",
+        justifyContent: variant === "recieved" ? "flex-start" : "flex-end",
       }}
     >
       <UI.Typography
@@ -404,24 +417,32 @@ const ChatMessage = ({
         onClick={handleClick}
         onContextMenu={handleClick}
         sx={{
-          // opacity: status === "blurred" ? 0.3 : 1,
-          filter: status === "blurred" ? "blur(4px)" : undefined,
+          // filter:
+          //   model.focused.type === "Focused" &&
+          //   model.focused.messageId !== message.messageId
+          //     ? "blur(4px)"
+          //     : undefined,
           borderRadius: theme.spacing(2),
           display: "inline-block",
           padding: 1,
           backgroundColor,
           color: textColor,
-          cursor: status === "idle" ? "pointer" : "default",
+          cursor: model.focused.type === "Blurred" ? "pointer" : "default",
           maxWidth: "80%",
           wordBreak: "break-all",
         }}
       >
-        {message}
+        {message.message}
       </UI.Typography>
       <UI.Menu
         anchorEl={anchorRef}
-        open={status === "focused"}
-        onClose={onMenuClose}
+        open={
+          model.focused.type === "Focused" &&
+          model.focused.messageId === message.messageId
+        }
+        onClose={() =>
+          dispatch({ type: "ClosedMessageMenu", messageId: message.messageId })
+        }
         anchorOrigin={{
           vertical: "bottom",
           horizontal: variant === "sented" ? "left" : "right",
@@ -431,19 +452,41 @@ const ChatMessage = ({
           horizontal: variant === "sented" ? "right" : "left",
         }}
       >
-        <UI.MenuItem>Copy Text</UI.MenuItem>
-        {variant === "sented" && (
-          <UI.MenuItem
-            sx={{
-              color: isDeleting
-                ? theme.palette.action.disabled
-                : theme.palette.error.main,
-            }}
-            onClick={onDeleteForever}
+        <UI.Box sx={{ display: "flex", flexDirection: "column" }}>
+          <UI.Button
+            loading={
+              model.focused.type === "Focused" &&
+              model.focused.copyStatus === "Loading"
+            }
+            onClick={() =>
+              dispatch({
+                type: "ClickedCopyMessageText",
+                text: message.message,
+              })
+            }
           >
-            Delete Forever
-          </UI.MenuItem>
-        )}
+            {model.focused.type === "Focused" &&
+            model.focused.copyStatus === "Succeeded"
+              ? "Copied"
+              : "Copy Text"}
+          </UI.Button>
+          {variant === "sented" && (
+            <UI.Button
+              loading={
+                store.mutations.Message.DeleteForever[message.messageId]
+                  ?.type === "Loading"
+              }
+              onClick={() =>
+                dispatch({
+                  type: "ClickedDeleteMessage",
+                  messageId: message.messageId,
+                })
+              }
+            >
+              Delete Forever
+            </UI.Button>
+          )}
+        </UI.Box>
       </UI.Menu>
     </UI.Box>
   );
