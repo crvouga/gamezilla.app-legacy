@@ -1,8 +1,8 @@
 import * as Rx from "rxjs";
-import { Result } from "Core";
 import * as Cmd from "../Cmd";
 import * as Option from "../Option";
 import * as Platform from "../Platform";
+import * as Result from "../Result";
 import * as Sub from "../Sub";
 import * as Task from "../Task";
 import * as View from "../View";

@@ -1,6 +1,6 @@
 import * as Rx from "rxjs";
-import { Cmd } from "Core";
 import * as Browser from "../Browser";
+import * as Cmd from "../Cmd";
 import * as Json from "../Json";
 import * as Option from "../Option";
 import * as Platform from "../Platform";

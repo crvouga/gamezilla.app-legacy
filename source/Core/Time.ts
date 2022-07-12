@@ -1,5 +1,4 @@
 import * as Rx from "rxjs";
-import { Cmd } from "Core";
 import * as Sub from "./Sub";
 import * as Task from "./Task";
 

@@ -136,7 +136,8 @@ export const backend = <Model, Msg, ToBackend>({
     // start server
     //
 
-    const port = 5000;
+    const port = Number(process.env.PORT) || 5000;
+
     server.listen(port);
     console.clear();
     console.log(

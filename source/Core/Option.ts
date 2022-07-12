@@ -1,4 +1,3 @@
-import { Option } from "Core";
 import * as Result from "./Result";
 
 export type Option<T> = Some<T> | None;
@@ -62,9 +61,9 @@ export const fromResult = <TErr, TOk>(
 ): Option<TOk> => {
   switch (result.type) {
     case "Err":
-      return Option.None;
+      return None;
 
     case "Ok":
-      return Option.Some(result.value);
+      return Some(result.value);
   }
 };
