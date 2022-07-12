@@ -645,9 +645,21 @@ const onSocketChanged = (socket: Fullstack.FrontendSocket): Msg => {
 //
 //
 
+// todo put this in env var
+const productionBackendUrl = "https://gamezilla.herokuapp.com/";
+
+const developmentBackendUrl = "http://localhost:5000/";
+
+const backendUrl =
+  process.env.NODE_ENV === "production"
+    ? productionBackendUrl
+    : developmentBackendUrl;
+
+console.log(`using backendUrl: ${backendUrl}`);
+
 const program = Debug.ReduxDevTools.withDebugger(
   Fullstack.frontend({
-    backendUrl: "http://localhost:5000/",
+    backendUrl: backendUrl,
     onLocationChange: onLocationChange,
     onSocketChanged: onSocketChanged,
     init: init,
