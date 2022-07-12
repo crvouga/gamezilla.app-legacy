@@ -79,29 +79,46 @@ export const view =
     model: Model,
   ): UI.View<Msg> =>
   (dispatch) => {
-    const query = Store.Profile.toGetQuery(userId, store);
+    const maybeProfile = Option.fromNullable(store.Profile[userId]);
 
-    const backButton = (
-      <UI.HeaderBackButton onClick={() => dispatch({ type: "ClickedBack" })} />
-    );
-
-    switch (query.type) {
-      case "Failure":
+    switch (maybeProfile.type) {
+      case "None":
         return (
-          <>
-            <UI.Header left={backButton} title="Something went wrong" />
-          </>
+          <UI.Page>
+            <UI.Header
+              left={
+                <UI.HeaderBackButton
+                  onClick={() => dispatch({ type: "ClickedBack" })}
+                />
+              }
+              title={"..."}
+            />
+            <UI.Box
+              sx={{
+                flex: 1,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <UI.CircularProgress />
+            </UI.Box>
+          </UI.Page>
         );
 
-      case "NotAsked":
-      case "Loading":
-        return <UI.LoadingPage />;
-
-      case "Success":
-        const profile = query.value;
+      case "Some":
+        const profile = maybeProfile.value;
         return (
-          <>
-            <UI.Header left={backButton} title={profile.username} />
+          <UI.Page>
+            <UI.Header
+              left={
+                <UI.HeaderBackButton
+                  onClick={() => dispatch({ type: "ClickedBack" })}
+                />
+              }
+              title={profile.username}
+            />
+
             <UI.Box
               sx={{
                 display: "flex",
@@ -113,15 +130,15 @@ export const view =
             >
               <UI.Avatar
                 sx={{ width: 120, height: 120, marginBottom: 1 }}
-                src={query.value.avatarUrl}
+                src={profile.avatarUrl}
               />
-              <UI.Typography variant="h3">{query.value.username}</UI.Typography>
+              <UI.Typography variant="h3">{profile.username}</UI.Typography>
               <UI.Typography
                 variant="h6"
                 color="text.secondary"
                 sx={{ marginBottom: 2 }}
               >
-                {query.value.name}
+                {profile.name}
               </UI.Typography>
 
               <UI.Button fullWidth variant="contained" sx={{ marginBottom: 2 }}>
@@ -138,7 +155,7 @@ export const view =
                 Send Message
               </UI.Button>
             </UI.Box>
-          </>
+          </UI.Page>
         );
     }
   };
