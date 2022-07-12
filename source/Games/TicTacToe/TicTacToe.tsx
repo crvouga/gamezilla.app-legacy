@@ -12,11 +12,21 @@ import * as Board from "./Board";
 //
 
 export type Model = {
+  players: {
+    x: Player;
+    o: Player;
+  };
   board: Board.Board;
 };
 
+type Player = { type: "Local" } | { type: "Remote"; userId: string };
+
 export const init: Model = {
   board: Board.emptyBoard,
+  players: {
+    x: { type: "Local" },
+    o: { type: "Local" },
+  },
 };
 
 //
@@ -28,25 +38,24 @@ export const init: Model = {
 //
 
 export type Msg =
-  | { type: "UserClickedBackButton" }
-  | { type: "UserClickedBoard"; position: Board.Position }
-  | { type: "UserClickedRestartButton" };
+  | { type: "ClickedBack" }
+  | { type: "ClickedBoard"; position: Board.Position }
+  | { type: "ClickedNewRoom" };
 
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg.type) {
-    case "UserClickedBackButton":
+    case "ClickedBack":
       return [model, Route.back];
 
-    case "UserClickedRestartButton":
+    case "ClickedNewRoom":
       return [
         {
           ...model,
-          board: Board.emptyBoard,
         },
         Cmd.None,
       ];
 
-    case "UserClickedBoard":
+    case "ClickedBoard":
       return [
         {
           ...model,
@@ -85,24 +94,22 @@ export const view =
         <UI.Header
           left={
             <UI.HeaderBackButton
-              onClick={() => dispatch({ type: "UserClickedBackButton" })}
+              onClick={() => dispatch({ type: "ClickedBack" })}
             />
           }
-          title={title}
+          title="Tic Tac Toe"
         />
-        <Board.Board
-          board={model.board}
-          onClick={(position) =>
-            dispatch({ type: "UserClickedBoard", position })
-          }
-        />
-        <UI.Button
-          size="large"
-          fullWidth
-          onClick={() => dispatch({ type: "UserClickedRestartButton" })}
-        >
-          Restart
-        </UI.Button>
+
+        <UI.Box sx={{ p: 2 }}>
+          <UI.Button
+            size="large"
+            fullWidth
+            onClick={() => dispatch({ type: "ClickedNewRoom" })}
+            variant="contained"
+          >
+            New Room
+          </UI.Button>
+        </UI.Box>
       </UI.Page>
     );
   };
