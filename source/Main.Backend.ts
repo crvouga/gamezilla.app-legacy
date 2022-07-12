@@ -64,10 +64,12 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
           ...model,
           clients: { ...model.clients, [msg.clientId]: msg.clientId },
         },
-        sendToFrontend(msg.clientId, {
-          type: "GotCounter",
-          counter: model.counter,
-        }),
+        Cmd.batch([
+          sendToFrontend(msg.clientId, {
+            type: "GotCounter",
+            counter: model.counter,
+          }),
+        ]),
       ];
 
     case "ClientDisconnected":
@@ -139,6 +141,20 @@ const toggleStatus = (status: Counter["status"]): Counter["status"] => {
 //
 
 export const subscriptions = (model: Model): Sub.Sub<Msg> => {
+  return Sub.batch([
+    counterSubs(model),
+    Fullstack.onConnected<Msg>((clientId) => ({
+      type: "ClientConnected",
+      clientId,
+    })),
+    Fullstack.onDisconnected<Msg>((clientId) => ({
+      type: "ClientDisconnected",
+      clientId,
+    })),
+  ]);
+};
+
+export const counterSubs = (model: Model): Sub.Sub<Msg> => {
   switch (model.counter.status) {
     case "Idle":
       return Sub.None;
@@ -147,7 +163,6 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
       return Time.every<Msg>(1000, () => ({ type: "TimeElapsed" }));
   }
 };
-
 //
 //
 //

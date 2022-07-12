@@ -235,6 +235,8 @@ export const AlertTitle = Mui.AlertTitle;
 
 export const CircularProgress = Mui.CircularProgress;
 
+export const Collapse = Mui.Collapse;
+
 export const ListItemAvatar = Mui.ListItemAvatar;
 
 export const Avatar = Mui.Avatar;

@@ -111,6 +111,7 @@ export const init = (location: Browser.Location): [Model, Cmd.Cmd<Msg>] => {
       game,
       session,
       page,
+      socket: { type: "Connecting" },
     },
     Cmd.batch<Msg>([
       pipe(sessionCmd, Cmd.map(groupTag("Session"))),
@@ -321,6 +322,12 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
           ];
       }
 
+    case "Socket":
+      switch (msg.type) {
+        case "SocketChanged":
+          return [{ ...model, socket: msg.socket }, Cmd.None];
+      }
+
     default:
       return exhaustive(msg);
   }
@@ -480,6 +487,23 @@ export const view =
             transform: "translate(-50%, -50%)",
           }}
         >
+          <UI.Collapse
+            in={
+              model.socket.type === "Reconnecting" ||
+              model.socket.type === "Disconnected"
+            }
+          >
+            <UI.Alert
+              severity={model.socket.type === "Disconnected" ? "error" : "info"}
+              sx={{ display: "flex", alignItems: "center" }}
+              icon={<UI.CircularProgress disableShrink size={18} />}
+            >
+              {model.socket.type === "Reconnecting"
+                ? `Reconnecting to backend...`
+                : "Failed to connect to backend."}
+            </UI.Alert>
+          </UI.Collapse>
+
           <UI.Box sx={{ p: 2, display: "flex", alignItems: "center" }}>
             <UI.Typography sx={{ flex: 1 }}>
               {model.counter?.count ?? "Loading..."}
@@ -609,6 +633,10 @@ export const onLocationChange = (location: Browser.Location): Msg => {
   );
 };
 
+const onSocketChanged = (socket: Fullstack.FrontendSocket): Msg => {
+  return { group: "Socket", type: "SocketChanged", socket };
+};
+
 //
 //
 //
@@ -621,6 +649,7 @@ const program = Debug.ReduxDevTools.withDebugger(
   Fullstack.frontend({
     backendUrl: "http://localhost:5000/",
     onLocationChange: onLocationChange,
+    onSocketChanged: onSocketChanged,
     init: init,
     update: update,
     updateFromBackend: updateFromBackend,

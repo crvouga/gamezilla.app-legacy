@@ -14,6 +14,7 @@ export type FrontendModel = {
   page: Pages.Model;
   route: Route.Route;
   counter?: Counter;
+  socket: Fullstack.FrontendSocket;
 };
 
 export type Counter = {
@@ -34,7 +35,12 @@ export type FrontendMsg =
   | Session.Msg
   | Pages.GroupedMsg
   | { group: "Counter"; type: "ClickedToggle" }
-  | { group: "Counter"; type: "ClickedReset" };
+  | { group: "Counter"; type: "ClickedReset" }
+  | {
+      group: "Socket";
+      type: "SocketChanged";
+      socket: Fullstack.FrontendSocket;
+    };
 
 export type ToBackend = { type: "Toggle" } | { type: "Reset" };
 
@@ -43,10 +49,7 @@ export type BackendMsg =
   | { type: "ClientDisconnected"; clientId: string }
   | { type: "TimeElapsed" };
 
-export type ToFrontend = {
-  type: "GotCounter";
-  counter: Counter;
-};
+export type ToFrontend = { type: "GotCounter"; counter: Counter };
 
 //
 //

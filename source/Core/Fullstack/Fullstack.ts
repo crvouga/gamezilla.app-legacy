@@ -1,4 +1,5 @@
 import * as Rx from "rxjs";
+import { pipe } from "Core/pipe";
 import * as Browser from "../Browser";
 import * as Cmd from "../Cmd";
 import * as Option from "../Option";
@@ -42,16 +43,25 @@ export const sendToBackend = <ToBackend>(msg: ToBackend): Cmd.Cmd<never> => {
   });
 };
 
+const onConnected$ = new Rx.Subject<{ clientId: string }>();
+const onDisconnected$ = new Rx.Subject<{ clientId: string }>();
+
 export const onConnected = <Msg>(
   mapper: (clientId: string) => Msg,
 ): Sub.Sub<Msg> => {
-  return Sub.None;
+  return pipe(
+    onConnected$,
+    Sub.map(({ clientId }) => mapper(clientId)),
+  );
 };
 
 export const onDisconnected = <Msg>(
   mapper: (clientId: string) => Msg,
 ): Sub.Sub<Msg> => {
-  return Sub.None;
+  return pipe(
+    onDisconnected$,
+    Sub.map(({ clientId }) => mapper(clientId)),
+  );
 };
 
 //
@@ -101,6 +111,12 @@ export const backend = <Model, Msg, ToBackend>({
           msg,
         });
       });
+
+      socket.on("disconnect", () => {
+        onDisconnected$.next({ clientId: socket.id });
+      });
+
+      onConnected$.next({ clientId: socket.id });
     });
 
     //
@@ -139,8 +155,15 @@ export const backend = <Model, Msg, ToBackend>({
 //
 //
 
+export type FrontendSocket =
+  | { type: "Connecting" }
+  | { type: "Reconnecting" }
+  | { type: "Connected" }
+  | { type: "Disconnected" };
+
 export const frontend = <Model, Msg, Dom, ToFrontend>({
   onLocationChange,
+  onSocketChanged,
   init,
   update,
   updateFromBackend,
@@ -149,6 +172,7 @@ export const frontend = <Model, Msg, Dom, ToFrontend>({
   backendUrl,
 }: {
   onLocationChange: (location: Browser.Location) => Msg;
+  onSocketChanged: (socket: FrontendSocket) => Msg;
   init: (location: Browser.Location) => [Model, Cmd.Cmd<Msg>];
   update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>];
   updateFromBackend: (msg: ToFrontend, model: Model) => [Model, Cmd.Cmd<Msg>];
@@ -156,19 +180,39 @@ export const frontend = <Model, Msg, Dom, ToFrontend>({
   subscriptions: (model: Model) => Sub.Sub<Msg>;
   backendUrl: string;
 }): Browser.Program<Model, Msg, Dom> => {
+  const socketChanged$ = new Rx.Subject<Msg>();
+
+  const subs = (model: Model): Sub.Sub<Msg> => {
+    return Sub.batch([socketChanged$, subscriptions(model)]);
+  };
+
   const program = Browser.application({
     onLocationChange,
     init,
     update,
     view,
-    subscriptions,
+    subscriptions: subs,
   });
 
   import("socket.io-client").then((Socket) => {
     const socket = Socket.io(backendUrl);
 
+    socketChanged$.next(onSocketChanged({ type: "Connecting" }));
+
     socket.on("connect", () => {
-      console.log("connected to backend");
+      socketChanged$.next(onSocketChanged({ type: "Connected" }));
+    });
+
+    socket.on("connect_error", () => {
+      socketChanged$.next(
+        onSocketChanged({
+          type: "Reconnecting",
+        }),
+      );
+    });
+
+    socket.on("diconnect", () => {
+      onSocketChanged({ type: "Disconnected" });
     });
 
     //
