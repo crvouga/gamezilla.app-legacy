@@ -2,14 +2,16 @@
   "private": true,
   "scripts": {
     "backend:dev": "npx nodemon -e ts,js --exec ts-node -r tsconfig-paths/register ./source/Main.Backend.ts",
-    "build": "vite build --emptyOutDir",
-    "dev": "vite",
-    "preview": "vite preview",
+    "backend:start": "ts-node -r tsconfig-paths/register ./source/Main.Backend.ts",
+    "format": "npx prettier --write .",
+    "frontend:build": "vite build --emptyOutDir",
+    "frontend:dev": "vite",
+    "heroku:start": "npm run backend:start",
+    "heroku:local": "PORT=9001 npx heroku local",
     "supabase-types": "npx openapi-typescript https://ldxpcprlgecjvqwzuxgv.supabase.co/rest/v1/?apikey=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTYzNzA0MDQ5NywiZXhwIjoxOTUyNjE2NDk3fQ.ReI8CpIFbLB9Q53Az7CDBIyrn_o1JeGhPoZXdqx8Ac4 --output source/supabase-types.ts",
     "typecheck": "tsc -w",
-    "format": "npx prettier --write .",
-    "utils:sort": "npx sort-package-json",
-    "utils:find-circular-deps": "npx madge --ts-config tsconfig.json --circular source/Main.tsx"
+    "utils:find-circular-deps": "npx madge --ts-config tsconfig.json --circular source/Main.tsx",
+    "utils:sort": "npx sort-package-json"
   },
   "dependencies": {
     "@emotion/react": "^11.9.0",

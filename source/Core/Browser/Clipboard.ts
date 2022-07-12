@@ -1,4 +1,5 @@
-import { Result, Task } from "Core";
+import * as Result from "../Result";
+import * as Task from "../Task";
 
 export type CopyResult = Result.Result<Problem, {}>;
 
