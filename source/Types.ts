@@ -4,7 +4,7 @@ import * as Route from "Route";
 import * as Session from "Session";
 import * as Snackbar from "Snackbar";
 import * as Store from "Store";
-import { Fullstack } from "Core";
+import { Fullstack, Result } from "Core";
 
 export type FrontendModel = {
   snackbar: Snackbar.Model;
@@ -53,6 +53,7 @@ export type BackendMsg =
   | { type: "TimeElapsed" };
 
 export type ToFrontend = { type: "GotCounter"; counter: Counter };
+// | ["Game", "TicTacToe", "NewRoomResulted", Result.Result<{}, {}>];
 
 //
 //

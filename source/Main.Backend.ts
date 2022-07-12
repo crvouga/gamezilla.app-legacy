@@ -170,7 +170,7 @@ export const counterSubs = (model: Model): Sub.Sub<Msg> => {
       return Sub.None;
 
     case "Incrementing":
-      return Time.every<Msg>(1000, () => ({ type: "TimeElapsed" }));
+      return Sub.None;
   }
 };
 //
