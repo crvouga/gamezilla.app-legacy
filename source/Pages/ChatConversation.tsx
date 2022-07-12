@@ -174,51 +174,53 @@ export const view =
     return (
       <UI.Page>
         <UI.Toolbar>
-          <UI.HeaderBackButton
-            onClick={() => dispatch({ type: "ClickedBack" })}
-          />
+          <UI.Box sx={{ flex: 1 }}>
+            <UI.HeaderBackButton
+              onClick={() => dispatch({ type: "ClickedBack" })}
+            />
+          </UI.Box>
 
-          <UI.Typography align="left" noWrap>
-            {conversation.profiles
-              .map((profile) => profile.username)
-              .join(", ")}
-          </UI.Typography>
-
-          <UI.Box sx={{ paddingX: 2 }}></UI.Box>
-        </UI.Toolbar>
-
-        {query.type === "Loading" && (
           <UI.Box
             sx={{
+              flex: 3,
+              paddingY: 2,
               display: "flex",
+              flexDirection: "column",
               alignItems: "center",
               justifyContent: "center",
-              p: 2,
-              flex: 1,
             }}
           >
-            <UI.CircularProgress />
+            <UI.AvatarGroup>
+              {conversation.profiles.map((item) => (
+                <UI.Avatar key={item.userId} src={item.avatarUrl} />
+              ))}
+            </UI.AvatarGroup>
+            <UI.Typography align="center" noWrap>
+              {conversation.profiles
+                .map((profile) => profile.username)
+                .join(", ")}
+            </UI.Typography>
           </UI.Box>
-        )}
+          <UI.Box sx={{ flex: 1 }}></UI.Box>
+        </UI.Toolbar>
 
-        {query.type === "Success" && (
-          <MessageContainer scrollKey={String(conversation.messages.length)}>
-            {viewHeader(conversation)(dispatch)}
+        <MessageContainer
+          isLoading={query.type === "Loading"}
+          scrollKey={String(conversation.messages.length)}
+        >
+          <UI.Box sx={{ flex: 1 }}></UI.Box>
 
-            <UI.Box sx={{ flex: 1 }}></UI.Box>
-
-            {conversation.messages.map((message) => (
-              <ChatMessage
-                key={message.messageId}
-                message={message}
-                authUserId={authUser.userId}
-                dispatch={dispatch}
-                model={model}
-                store={store}
-              />
-            ))}
-          </MessageContainer>
-        )}
+          {conversation.messages.map((message) => (
+            <ChatMessage
+              key={message.messageId}
+              message={message}
+              authUserId={authUser.userId}
+              dispatch={dispatch}
+              model={model}
+              store={store}
+            />
+          ))}
+        </MessageContainer>
 
         <ChatInput
           value={model.text}
@@ -294,7 +296,9 @@ const ChatInput = ({
 const MessageContainer = ({
   scrollKey,
   children,
+  isLoading,
 }: {
+  isLoading: boolean;
   scrollKey: string;
   children: ReactNode;
 }) => {
@@ -323,10 +327,28 @@ const MessageContainer = ({
         paddingBottom: 2,
         display: "flex",
         flexDirection: "column",
+        position: "relative",
+        zIndex: 0,
       }}
     >
       {children}
       <div ref={ref} />
+      {isLoading && (
+        <UI.Box
+          sx={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <UI.CircularProgress />
+        </UI.Box>
+      )}
     </UI.Box>
   );
 };
