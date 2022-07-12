@@ -6,9 +6,10 @@ import * as Snackbar from "Snackbar";
 import * as Store from "Store";
 import * as Profile from "Store/Profile";
 import * as UI from "UI";
-import * as ReactDom from "react-dom/client";
-import { Browser, Cmd, Debug, Option, Sub, pipe } from "Core";
+import { Browser, Cmd, Option, Sub, pipe } from "Core";
+import "Core/Fullstack";
 import { andThen, andThenMany, exhaustive, groupTag } from "Utility";
+import { FrontendModel, FrontendMsg, ToFrontend, sendToBackend } from "./Types";
 
 //
 //
@@ -18,14 +19,7 @@ import { andThen, andThenMany, exhaustive, groupTag } from "Utility";
 //
 //
 
-export type Model = {
-  snackbar: Snackbar.Model;
-  store: Store.Model;
-  session: Session.Model;
-  game: Games.Model;
-  page: Pages.Model;
-  route: Route.Route;
-};
+export type Model = FrontendModel;
 
 //
 //
@@ -133,13 +127,7 @@ export const init = (location: Browser.Location): [Model, Cmd.Cmd<Msg>] => {
 //
 //
 
-export type Msg =
-  | Route.Msg
-  | Snackbar.GroupedMsg
-  | Games.GroupedMsg
-  | Store.GroupedMsg
-  | Session.Msg
-  | Pages.GroupedMsg;
+export type Msg = FrontendMsg;
 
 type Action = Snackbar.Action | Store.Action | Games.Action | Session.Action;
 
@@ -157,6 +145,16 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
     andThen(updateMain, msg),
     andThen(updateStatusChanged(model), msg),
   );
+};
+
+export const updateFromBackend = (
+  msg: ToFrontend,
+  model: Model,
+): [Model, Cmd.Cmd<Msg>] => {
+  switch (msg.type) {
+    case "GotCounter":
+      return [{ ...model, counter: msg.counter }, Cmd.None];
+  }
 };
 
 const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
@@ -305,6 +303,12 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
         }
       }
     }
+
+    case "Counter":
+      switch (msg.type) {
+        case "ClickedToggle":
+          return [model, sendToBackend({ type: "Toggle" })];
+      }
 
     default:
       return exhaustive(msg);
@@ -465,6 +469,23 @@ export const view =
             transform: "translate(-50%, -50%)",
           }}
         >
+          <UI.Box sx={{ p: 2, display: "flex", alignItems: "center" }}>
+            <UI.Typography sx={{ flex: 1 }}>
+              {model.counter?.count ?? "Loading..."}
+            </UI.Typography>
+            <UI.Button
+              onClick={() =>
+                dispatch({ group: "Counter", type: "ClickedToggle" })
+              }
+              disabled={model.counter === undefined}
+            >
+              {model.counter
+                ? model.counter.status === "Idle"
+                  ? "Play"
+                  : "Pause"
+                : "..."}
+            </UI.Button>
+          </UI.Box>
           {viewGameBanner(model)(dispatch)}
           <UI.Box
             sx={{

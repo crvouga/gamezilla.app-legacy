@@ -495,6 +495,14 @@ export const withDebugger = <Model, Msg, Dom>(
     connection.send(state.msg, state.model);
   });
 
+  // Todo put somewhere else has nothing do to with redux dev tools
+  program.state$.subscribe((state) => {
+    const size = new TextEncoder().encode(JSON.stringify(state.model)).length;
+    const kiloBytes = Math.round(size / 1024);
+    // const megaBytes = kiloBytes / 1024;
+    console.log(`[app] model memory size is ${kiloBytes} kiloBytes`);
+  });
+
   return program;
 };
 
