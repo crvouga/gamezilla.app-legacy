@@ -103,6 +103,20 @@ export const updateFromFrontend = (
         },
         broadcast({ type: "GotCounter", counter: counterNew }),
       ];
+
+    case "Reset": {
+      const counterNew: Counter = {
+        ...model.counter,
+        count: 0,
+      };
+      return [
+        {
+          ...model,
+          counter: counterNew,
+        },
+        broadcast({ type: "GotCounter", counter: counterNew }),
+      ];
+    }
   }
 };
 
@@ -125,7 +139,13 @@ const toggleStatus = (status: Counter["status"]): Counter["status"] => {
 //
 
 export const subscriptions = (model: Model): Sub.Sub<Msg> => {
-  return Time.every<Msg>(1000, () => ({ type: "TimeElapsed" }));
+  switch (model.counter.status) {
+    case "Idle":
+      return Sub.None;
+
+    case "Incrementing":
+      return Time.every<Msg>(1000, () => ({ type: "TimeElapsed" }));
+  }
 };
 
 //

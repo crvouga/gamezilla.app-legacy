@@ -33,11 +33,10 @@ export type FrontendMsg =
   | Store.GroupedMsg
   | Session.Msg
   | Pages.GroupedMsg
-  | { group: "Counter"; type: "ClickedToggle" };
+  | { group: "Counter"; type: "ClickedToggle" }
+  | { group: "Counter"; type: "ClickedReset" };
 
-export type ToBackend = {
-  type: "Toggle";
-};
+export type ToBackend = { type: "Toggle" } | { type: "Reset" };
 
 export type BackendMsg =
   | { type: "ClientConnected"; clientId: string }
