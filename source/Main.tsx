@@ -155,6 +155,13 @@ export const updateFromBackend = (
   switch (msg.type) {
     case "GotCounter":
       return [{ ...model, counter: msg.counter }, Cmd.None];
+
+    case "NewRoomResulted":
+      const gameNew =
+        model.game.type === "Opened" && model.game.child.type === "TicTacToe"
+          ? model.game
+          : model.game;
+      return [{ ...model, game: gameNew }, Cmd.None];
   }
 };
 

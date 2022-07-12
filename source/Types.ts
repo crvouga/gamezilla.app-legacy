@@ -45,14 +45,20 @@ export type FrontendMsg =
 export type ToBackend =
   | { group: "Counter"; type: "Toggle" }
   | { group: "Counter"; type: "Reset" }
-  | { group: "TicTacToe"; type: "NewRoom" };
+  | { group: "TicTacToe"; type: "NewRoom"; userId: string };
 
 export type BackendMsg =
   | { type: "ClientConnected"; clientId: string }
   | { type: "ClientDisconnected"; clientId: string }
   | { type: "TimeElapsed" };
 
-export type ToFrontend = { type: "GotCounter"; counter: Counter };
+export type ToFrontend =
+  | { type: "GotCounter"; counter: Counter }
+  | {
+      group: "TicTacToe";
+      type: "NewRoomResulted";
+      result: Result.Result<{}, {}>;
+    };
 // | ["Game", "TicTacToe", "NewRoomResulted", Result.Result<{}, {}>];
 
 //
