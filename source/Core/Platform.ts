@@ -11,7 +11,7 @@ import * as Sub from "./Sub";
 //
 //
 
-type State<Model, Msg> = {
+export type State<Model, Msg> = {
   model: Model;
   cmd: Cmd.Cmd<Msg>;
   msg?: Msg;

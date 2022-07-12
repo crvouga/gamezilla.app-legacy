@@ -1,7 +1,6 @@
+import * as App from "App";
 import * as ReactDomClient from "react-dom/client";
-import * as Socket from "socket.io-client";
-import { Browser, Debug } from "Core";
-import * as App from "./App";
+import { Browser, Debug, Fullstack } from "Core";
 
 //
 //
@@ -12,10 +11,12 @@ import * as App from "./App";
 //
 
 const program = Debug.ReduxDevTools.withDebugger(
-  Browser.application({
+  Fullstack.frontend({
+    backendUrl: "http://localhost:5000/",
     onLocationChange: App.onLocationChange,
     init: App.init,
     update: App.update,
+    updateFromBackend: App.updateFromBackend,
     subscriptions: App.subscriptions,
     view: App.view,
   }),
@@ -32,52 +33,19 @@ const stop = Browser.run(program, (dom) => {
 //
 //
 //
-// Monitoring
-//
-//
-//
-
-program.state$.subscribe((state) => {
-  const size = new TextEncoder().encode(JSON.stringify(state.model)).length;
-  const kiloBytes = Math.round(size / 1024);
-  // const megaBytes = kiloBytes / 1024;
-  console.log(`[app] model memory size is ${kiloBytes} kiloBytes`);
-});
-
-//
-//
-//
-// Backend Connection
-//
-//
-//
-
-const backendUrl = "http://localhost:5000/";
-
-const socket = Socket.io(backendUrl);
-console.log(socket);
-
-socket.on("connect", () => {
-  console.log("connected to backend");
-});
-
-//
-//
-//
 // Hot Reload
 //
 //
 //
 
-const dispose = () => {
-  stop();
-  socket.disconnect();
-};
+// const dispose = () => {
+//   stop();
+// };
 
-// @ts-ignore
-if (import.meta.hot) {
-  // @ts-ignore
-  import.meta.hot.accept();
-  // @ts-ignore
-  import.meta.hot.dispose(dispose);
-}
+// // @ts-ignore
+// if (import.meta.hot) {
+//   // @ts-ignore
+//   import.meta.hot.accept();
+//   // @ts-ignore
+//   import.meta.hot.dispose(dispose);
+// }
