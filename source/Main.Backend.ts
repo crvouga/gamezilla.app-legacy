@@ -92,32 +92,42 @@ export const updateFromFrontend = (
   msg: ToBackend,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
-  switch (msg.type) {
-    case "Toggle":
-      const counterNew: Counter = {
-        ...model.counter,
-        status: toggleStatus(model.counter.status),
-      };
-      return [
-        {
-          ...model,
-          counter: counterNew,
-        },
-        broadcast({ type: "GotCounter", counter: counterNew }),
-      ];
+  switch (msg.group) {
+    case "TicTacToe": {
+      switch (msg.type) {
+        case "NewRoom":
+          return [model, Cmd.None];
+      }
+    }
+    case "Counter": {
+      switch (msg.type) {
+        case "Toggle":
+          const counterNew: Counter = {
+            ...model.counter,
+            status: toggleStatus(model.counter.status),
+          };
+          return [
+            {
+              ...model,
+              counter: counterNew,
+            },
+            broadcast({ type: "GotCounter", counter: counterNew }),
+          ];
 
-    case "Reset": {
-      const counterNew: Counter = {
-        ...model.counter,
-        count: 0,
-      };
-      return [
-        {
-          ...model,
-          counter: counterNew,
-        },
-        broadcast({ type: "GotCounter", counter: counterNew }),
-      ];
+        case "Reset": {
+          const counterNew: Counter = {
+            ...model.counter,
+            count: 0,
+          };
+          return [
+            {
+              ...model,
+              counter: counterNew,
+            },
+            broadcast({ type: "GotCounter", counter: counterNew }),
+          ];
+        }
+      }
     }
   }
 };

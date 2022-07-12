@@ -308,7 +308,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
     case "Counter":
       switch (msg.type) {
         case "ClickedToggle":
-          return [model, sendToBackend({ type: "Toggle" })];
+          return [model, sendToBackend({ group: "Counter", type: "Toggle" })];
 
         case "ClickedReset":
           return [
@@ -318,7 +318,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
                 ? { ...model.counter, count: 0 }
                 : undefined,
             },
-            sendToBackend({ type: "Reset" }),
+            sendToBackend({ group: "Counter", type: "Reset" }),
           ];
       }
 

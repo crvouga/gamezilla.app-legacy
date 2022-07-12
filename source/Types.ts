@@ -42,7 +42,10 @@ export type FrontendMsg =
       socket: Fullstack.FrontendSocket;
     };
 
-export type ToBackend = { type: "Toggle" } | { type: "Reset" };
+export type ToBackend =
+  | { group: "Counter"; type: "Toggle" }
+  | { group: "Counter"; type: "Reset" }
+  | { group: "TicTacToe"; type: "NewRoom" };
 
 export type BackendMsg =
   | { type: "ClientConnected"; clientId: string }
