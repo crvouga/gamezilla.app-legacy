@@ -4,6 +4,7 @@
  * @since 0.5.0
  */
 import * as Option from "../Option";
+import { pipe } from "../pipe";
 import { DebugMsg, Debugger } from "./debugger-commons";
 
 /**
@@ -26,7 +27,7 @@ export const makeDebugger = <Model, Msg>(): Debugger<Model, Msg> => {
         }
 
         if (action.type === "MESSAGE") {
-          const showType = Option.withDefault("", getMsgType(action));
+          const showType = pipe(action, getMsgType, Option.withDefault(""));
 
           console.groupCollapsed(
             `[MESSAGE] %c${showType}`,

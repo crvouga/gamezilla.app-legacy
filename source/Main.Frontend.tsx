@@ -96,7 +96,11 @@ export const toStatus = ({
 //
 
 export const init = (location: Browser.Location): [Model, Cmd.Cmd<Msg>] => {
-  const route = Option.withDefault({ type: "Home" }, Route.decode(location));
+  const route = pipe(
+    location,
+    Route.decode,
+    Option.withDefault<Route.Route>({ type: "Home" }),
+  );
   const [session, sessionCmd] = Session.init();
   const snackbar = Snackbar.init;
   const store = Store.init;
@@ -635,7 +639,7 @@ export const onLocationChange = (location: Browser.Location): Msg => {
   return pipe(
     location,
     Route.decode,
-    (decoded) => Option.withDefault({ type: "Home" }, decoded),
+    Option.withDefault<Route.Route>({ type: "Home" }),
     Route.GotRoute,
   );
 };
