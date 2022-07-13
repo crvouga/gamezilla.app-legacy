@@ -2,6 +2,7 @@ import * as Route from "Route";
 import * as UI from "UI";
 import { Cmd } from "Core";
 import * as Board from "./Board";
+import { FrontendModel, FrontendMsg } from "./Types";
 
 //
 //
@@ -11,22 +12,10 @@ import * as Board from "./Board";
 //
 //
 
-export type Model = {
-  players: {
-    x: Player;
-    o: Player;
-  };
-  board: Board.Board;
-};
-
-type Player = { type: "Local" } | { type: "Remote"; userId: string };
+export type Model = FrontendModel;
 
 export const init: Model = {
-  board: Board.emptyBoard,
-  players: {
-    x: { type: "Local" },
-    o: { type: "Local" },
-  },
+  rooms: {},
 };
 
 //
@@ -37,36 +26,15 @@ export const init: Model = {
 //
 //
 
-export type Msg =
-  | { type: "ClickedBack" }
-  | { type: "ClickedBoard"; position: Board.Position }
-  | { type: "ClickedNewRoom" };
+export type Msg = FrontendMsg;
 
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg.type) {
+    case "ClickedNewRoom":
+      return [model, Cmd.None];
+
     case "ClickedBack":
       return [model, Route.back];
-
-    case "ClickedNewRoom":
-      return [
-        {
-          ...model,
-        },
-        Cmd.None,
-      ];
-
-    case "ClickedBoard":
-      return [
-        {
-          ...model,
-          board: Board.move(
-            model.board,
-            Board.toTurn(model.board),
-            msg.position,
-          ),
-        },
-        Cmd.None,
-      ];
   }
 };
 
@@ -81,20 +49,14 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 export const view =
   (model: Model): UI.View<Msg> =>
   (dispatch) => {
-    const status = Board.toStatus(model.board);
-    const title =
-      status.type === "Turn"
-        ? `${status.turn} Turn`
-        : status.type === "Win"
-        ? `${status.winner} Won`
-        : "Tie";
-
     return (
       <UI.Page>
         <UI.Header
           left={
             <UI.HeaderBackButton
-              onClick={() => dispatch({ type: "ClickedBack" })}
+              onClick={() =>
+                dispatch({ group: "TicTacToe", type: "ClickedBack" })
+              }
             />
           }
           title="Tic Tac Toe"
@@ -104,7 +66,9 @@ export const view =
           <UI.Button
             size="large"
             fullWidth
-            onClick={() => dispatch({ type: "ClickedNewRoom" })}
+            onClick={() =>
+              dispatch({ group: "TicTacToe", type: "ClickedNewRoom" })
+            }
             variant="contained"
           >
             New Room

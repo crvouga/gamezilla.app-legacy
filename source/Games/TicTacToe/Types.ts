@@ -7,16 +7,19 @@ export type BackendModel = {
   };
 };
 
+type Player =
+  | { type: "User"; userId: string }
+  | { type: "Computer" }
+  | { type: "None" };
+
 export type Room = {
   board: Board;
   players: {
-    X: Option.Option<{ clientId: string }>;
-    O: Option.Option<{ clientId: string }>;
+    X: Player;
+    O: Player;
   };
-  host: {
-    clientId: string;
-  };
-  clients: { [clientId: string]: string };
+  hostUserId: string;
+  userIds: { [userId: string]: string };
 };
 
 export type FrontendModel = {
@@ -25,10 +28,16 @@ export type FrontendModel = {
   };
 };
 
-export type BackendMsg = { type: "Noop" };
+export type BackendMsg = { group: "TicTacToe"; type: "Noop" };
 
-export type FrontendMsg = { type: "ClickedNewRoom" };
+export type FrontendMsg =
+  | { group: "TicTacToe"; type: "ClickedNewRoom" }
+  | { group: "TicTacToe"; type: "ClickedBack" };
 
-export type ToFrontend = { type: "CurrentRoom"; room: Room };
+export type ToFrontend = {
+  group: "TicTacToe";
+  type: "CurrentRoom";
+  room: Room;
+};
 
-export type ToFronend = { type: "NewRoom" };
+export type ToFronend = { group: "TicTacToe"; type: "NewRoom" };

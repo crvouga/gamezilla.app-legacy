@@ -337,16 +337,16 @@ export const theme = {
 //
 
 export type Msg =
-  | { type: "UserClickedBackButton" }
-  | { type: "UserClickedBoard"; columnIndex: number }
-  | { type: "UserClickedRestartButton" };
+  | { group: "ConnectFour"; type: "ClickecBack" }
+  | { group: "ConnectFour"; type: "ClickedBoard"; columnIndex: number }
+  | { group: "ConnectFour"; type: "ClickedRestart" };
 
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg.type) {
-    case "UserClickedBackButton":
+    case "ClickecBack":
       return [model, Route.back];
 
-    case "UserClickedBoard":
+    case "ClickedBoard":
       const columnsNew = move(
         model.columns,
         msg.columnIndex,
@@ -354,7 +354,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
       );
       return [{ ...model, columns: columnsNew }, Cmd.None];
 
-    case "UserClickedRestartButton":
+    case "ClickedRestart":
       return [{ ...model, columns: emptyColumns }, Cmd.None];
   }
 };
@@ -377,7 +377,9 @@ export const view =
         <UI.Header
           left={
             <UI.HeaderBackButton
-              onClick={() => dispatch({ type: "UserClickedBackButton" })}
+              onClick={() =>
+                dispatch({ group: "ConnectFour", type: "ClickecBack" })
+              }
             />
           }
           title={`${toTurn(model.columns)}'s turn`}
@@ -385,13 +387,19 @@ export const view =
         <Board
           columns={model.columns}
           onClick={(columnIndex) =>
-            dispatch({ type: "UserClickedBoard", columnIndex })
+            dispatch({
+              group: "ConnectFour",
+              type: "ClickedBoard",
+              columnIndex,
+            })
           }
         />
         <UI.Button
           fullWidth
           size="large"
-          onClick={() => dispatch({ type: "UserClickedRestartButton" })}
+          onClick={() =>
+            dispatch({ group: "ConnectFour", type: "ClickedRestart" })
+          }
         >
           Restart
         </UI.Button>
