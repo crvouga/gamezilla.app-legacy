@@ -37,8 +37,6 @@ export const init = ({ avatarUrl }: { avatarUrl: string }): Model => {
 //
 //
 
-export type GroupedMsg = { group: "ProfileUpdateAvatar" } & Msg;
-
 export type Msg =
   | { type: "UserClickedCancelButton" }
   | { type: "UserClickedDoneButton" }

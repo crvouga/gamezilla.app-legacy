@@ -25,11 +25,11 @@ export type BackendModel = {
 
 export type FrontendMsg =
   | Route.Msg
-  | Snackbar.GroupedMsg
-  | Games.GroupedMsg
-  | Store.GroupedMsg
+  | Snackbar.Msg
+  | Games.Msg
+  | Store.Msg
   | Session.Msg
-  | Pages.GroupedMsg
+  | Pages.Msg
   | Counter.FrontendMsg
   | {
       group: "Socket";

@@ -32,11 +32,9 @@ export const init: Model = {
 //
 //
 
-export type GroupedMsg = { group: "Snackbar" } & Msg;
-
-type Msg =
-  | { type: "SnackbarDurationElapsed"; snackId: string }
-  | { type: "UserClosedSnackbar"; snackId: string };
+export type Msg =
+  | { group: "Snackbar"; type: "SnackbarDurationElapsed"; snackId: string }
+  | { group: "Snackbar"; type: "UserClosedSnackbar"; snackId: string };
 
 export const EnqueueSnackbar = (variant: "Info" | "Error", message: string) => {
   return {
@@ -76,6 +74,7 @@ export const runAction = (
         pipe(
           Task.timeout(4000, {}),
           Cmd.fromTask(() => ({
+            group: "Snackbar",
             type: "SnackbarDurationElapsed",
             snackId: snack.snackId,
           })),
@@ -120,6 +119,7 @@ export const view =
           message={snack.message}
           onClose={() =>
             dispatch({
+              group: "Snackbar",
               type: "UserClosedSnackbar",
               snackId: snack.snackId,
             })
@@ -129,6 +129,7 @@ export const view =
             variant="filled"
             onClose={() =>
               dispatch({
+                group: "Snackbar",
                 type: "UserClosedSnackbar",
                 snackId: snack.snackId,
               })

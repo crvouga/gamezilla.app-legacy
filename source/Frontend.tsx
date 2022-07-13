@@ -494,7 +494,13 @@ export const view =
           >
             <UI.Alert
               variant="filled"
-              severity={model.socket.type === "Disconnected" ? "error" : "info"}
+              severity={
+                model.socket.type === "Disconnected"
+                  ? "error"
+                  : model.socket.type === "Connected"
+                  ? "info"
+                  : "info"
+              }
               sx={{ display: "flex", alignItems: "center" }}
               icon={
                 <UI.CircularProgress color="inherit" disableShrink size={18} />
@@ -502,7 +508,9 @@ export const view =
             >
               {model.socket.type === "Reconnecting"
                 ? `Reconnecting to backend...`
-                : "Failed to connect to backend."}
+                : model.socket.type === "Disconnected"
+                ? "Failed to connect to backend."
+                : "Connected."}
             </UI.Alert>
           </UI.Collapse>
 
@@ -517,10 +525,7 @@ export const view =
             {viewMain(model)(dispatch)}
           </UI.Box>
 
-          {pipe(
-            Snackbar.view({}, model.snackbar),
-            UI.map(groupTag("Snackbar")),
-          )(dispatch)}
+          {Snackbar.view({}, model.snackbar)(dispatch)}
 
           {viewGameBanner(model)(dispatch)}
         </UI.Box>

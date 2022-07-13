@@ -70,7 +70,7 @@ export type Model =
 //
 //
 
-export type Msg =
+export type Msg = { group: "Page" } & (
   | (Account.Msg & { page: "Account" })
   | (Home.Msg & { page: "Home" })
   | (Login.Msg & { page: "Login" })
@@ -89,17 +89,15 @@ export type Msg =
   | (PasswordReset.Msg & { page: "PasswordReset" })
   | (ChatNew.Msg & { page: "ChatNew" })
   | (ChatConversation.Msg & { page: "ChatConversation" })
-  | (Game.Msg & { page: "Games" })
   | (Search.Msg & { page: "Search" })
-  | ClickedBottomNavigationLink;
+  | ClickedBottomNavigationLink
+);
 
 type ClickedBottomNavigationLink = {
   type: "ClickedBottomNavigationLink";
   route: Route.Route;
   page: "Home" | "Chat" | "Account" | "Search";
 };
-
-export type GroupedMsg = Msg & { group: "Page" };
 
 export type OutAction =
   | Store.Action
@@ -133,7 +131,7 @@ export const initReady = (
         { ...model, page: "Chat" },
         pipe(
           cmd,
-          Cmd.map((msg) => ({ ...msg, page: "Chat" })),
+          Cmd.map((msg) => ({ ...msg, group: "Page", page: "Chat" })),
         ),
         actions,
       ];
@@ -146,7 +144,7 @@ export const initReady = (
         { ...chatNew, page: "ChatNew" },
         pipe(
           chatNewCmd,
-          Cmd.map((msg) => ({ ...msg, page: "ChatNew" })),
+          Cmd.map((msg) => ({ ...msg, group: "Page", page: "ChatNew" })),
         ),
         actions,
       ];
@@ -164,7 +162,11 @@ export const initReady = (
         },
         pipe(
           cmd,
-          Cmd.map((msg) => ({ ...msg, page: "ChatConversation" })),
+          Cmd.map((msg) => ({
+            ...msg,
+            group: "Page",
+            page: "ChatConversation",
+          })),
         ),
         actions,
       ];
@@ -185,7 +187,7 @@ export const initReady = (
         { ...modelNew, page: "ProfileDelete" },
         pipe(
           cmdNew,
-          Cmd.map((msg) => ({ ...msg, page: "ProfileDelete" })),
+          Cmd.map((msg) => ({ ...msg, group: "Page", page: "ProfileDelete" })),
         ),
         actions,
       ];
@@ -242,7 +244,7 @@ export const initReady = (
         { ...modelInit, page: "Profile", userId: route.userId },
         pipe(
           cmdInit,
-          Cmd.map((m) => ({ ...m, page: "Profile" })),
+          Cmd.map((m) => ({ ...m, group: "Page", page: "Profile" })),
         ),
         actions,
       ];
@@ -254,7 +256,7 @@ export const initReady = (
         { ...modelInit, page: "Search" },
         pipe(
           cmdInit,
-          Cmd.map((msg) => ({ ...msg, page: "Search" })),
+          Cmd.map((msg) => ({ ...msg, group: "Page", page: "Search" })),
         ),
         actionsInit,
       ];
@@ -292,7 +294,7 @@ export const initSessionMissing = (
         },
         pipe(
           cmd,
-          Cmd.map((msg) => ({ ...msg, page: "AccountCreate" })),
+          Cmd.map((msg) => ({ ...msg, group: "Page", page: "AccountCreate" })),
         ),
       ];
 
@@ -474,7 +476,11 @@ export const updateReady = (
           },
           pipe(
             cmdPage,
-            Cmd.map((msg) => ({ ...msg, page: "ChatConversation" })),
+            Cmd.map((msg) => ({
+              ...msg,
+              group: "Page",
+              page: "ChatConversation",
+            })),
           ),
           actions,
         ];
@@ -504,7 +510,7 @@ export const updateReady = (
           { ...modelPage, page: "Profile", userId: model.userId },
           pipe(
             cmdPage,
-            Cmd.map((m) => ({ ...m, page: "Profile" })),
+            Cmd.map((m) => ({ ...m, group: "Page", page: "Profile" })),
           ),
           actions,
         ];
@@ -650,7 +656,7 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
     case "ChatNew":
       return pipe(
         ChatNew.subscriptions(model),
-        Sub.map((msg) => ({ ...msg, page: "ChatNew" })),
+        Sub.map((msg) => ({ ...msg, group: "Page", page: "ChatNew" })),
       );
 
     case "Account":
@@ -784,7 +790,8 @@ export const viewReady = (
       );
 
     case "Game":
-      return tagView("Games", Game.view(game));
+      return () => <></>;
+    // return tagView("Game", Game.view(game));
 
     case "Profile":
       return tagView(
@@ -904,6 +911,7 @@ const viewBottomNavigation =
         onChange={(_event, valueNew) => {
           if (valueNew in Route.routesTypes) {
             dispatch({
+              group: "Page",
               type: "ClickedBottomNavigationLink",
               page,
               route: { type: valueNew },
@@ -946,10 +954,10 @@ const viewBottomNavigation =
 const tagView = <TMsg, TPage extends Msg["page"]>(
   page: TPage,
   dom: UI.View<TMsg>,
-): UI.View<TMsg & { page: TPage }> => {
+): UI.View<TMsg & { page: TPage; group: "Page" }> => {
   return pipe(
     dom,
-    UI.map((msg) => ({ ...msg, page })),
+    UI.map((msg) => ({ ...msg, page, group: "Page" })),
   );
 };
 
@@ -958,7 +966,11 @@ const tagUpdate = <TModel, TMsg, TAction, TPage extends Msg["page"]>(
   [modelPrev, cmdPrev, actionsPrev = []]:
     | [TModel, Cmd.Cmd<TMsg>, TAction[]]
     | [TModel, Cmd.Cmd<TMsg>],
-): [TModel & { page: TPage }, Cmd.Cmd<TMsg & { page: TPage }>, TAction[]] => {
+): [
+  TModel & { page: TPage },
+  Cmd.Cmd<TMsg & { page: TPage; group: "Page" }>,
+  TAction[],
+] => {
   return [
     {
       ...modelPrev,
@@ -966,7 +978,7 @@ const tagUpdate = <TModel, TMsg, TAction, TPage extends Msg["page"]>(
     },
     pipe(
       cmdPrev,
-      Cmd.map((msg) => ({ ...msg, page })),
+      Cmd.map((msg) => ({ ...msg, page, group: "Page" })),
     ),
     [...actionsPrev],
   ];

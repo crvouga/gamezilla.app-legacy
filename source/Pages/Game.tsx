@@ -31,7 +31,7 @@ export const init = Games.init;
 //
 //
 
-export type Msg = Games.GroupedMsg;
+export type Msg = Games.Msg;
 
 //
 //
