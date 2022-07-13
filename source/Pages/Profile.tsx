@@ -11,11 +11,19 @@ import { Cmd, Option, Sub } from "Core";
 //
 //
 
-export type Model = {};
+export type Model = {
+  userId: string;
+};
 
-export type Msg = { type: "ClickedBack" } | { type: "ClickedSendMessage" };
-
-type OutAction = Store.Action;
+export const init = ({
+  userId,
+}: {
+  userId: string;
+}): [Model, Cmd.Cmd<Msg>, OutAction[]] => [
+  { userId },
+  Cmd.None,
+  [["Store", Store.Profile.Get(userId)]],
+];
 
 //
 //
@@ -25,22 +33,16 @@ type OutAction = Store.Action;
 //
 //
 
-export const init = ({
-  userId,
-}: {
-  userId: string;
-}): [Model, Cmd.Cmd<Msg>, OutAction[]] => [
-  {},
-  Cmd.None,
-  [Store.Profile.Get(userId)],
-];
+export type Msg = ["ClickedBack"] | ["ClickedSendMessage"];
+
+type OutAction = ["Store", Store.Action];
 
 export const update = (
-  { authUserId, userId }: { userId: string; authUserId: string },
+  { authUserId }: { authUserId: string },
   msg: Msg,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
-  switch (msg.type) {
+  switch (msg[0]) {
     case "ClickedBack":
       return [model, Route.back, []];
 
@@ -48,7 +50,12 @@ export const update = (
       return [
         model,
         Cmd.None,
-        [Store.Conversation.FindOneElseInsert(authUserId, [userId])],
+        [
+          [
+            "Store",
+            Store.Conversation.FindOneElseInsert(authUserId, [model.userId]),
+          ],
+        ],
       ];
   }
 };
@@ -74,12 +81,9 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
 //
 
 export const view =
-  (
-    { userId, store }: { userId: string; store: Store.Model },
-    model: Model,
-  ): UI.View<Msg> =>
+  ({ store }: { store: Store.Model }, model: Model): UI.View<Msg> =>
   (dispatch) => {
-    const maybeProfile = Option.fromNullable(store.Profile[userId]);
+    const maybeProfile = Option.fromNullable(store.Profile[model.userId]);
 
     switch (maybeProfile.type) {
       case "None":
@@ -88,7 +92,7 @@ export const view =
             <UI.Header
               left={
                 <UI.HeaderBackButton
-                  onClick={() => dispatch({ type: "ClickedBack" })}
+                  onClick={() => dispatch(["ClickedBack"])}
                 />
               }
               title={"..."}
@@ -113,7 +117,7 @@ export const view =
             <UI.Header
               left={
                 <UI.HeaderBackButton
-                  onClick={() => dispatch({ type: "ClickedBack" })}
+                  onClick={() => dispatch(["ClickedBack"])}
                 />
               }
               title={profile.username}
@@ -150,7 +154,7 @@ export const view =
                   store.mutations.Conversation.FindElseInsert.type === "Loading"
                 }
                 variant="contained"
-                onClick={() => dispatch({ type: "ClickedSendMessage" })}
+                onClick={() => dispatch(["ClickedSendMessage"])}
               >
                 Send Message
               </UI.Button>

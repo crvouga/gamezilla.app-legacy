@@ -28,16 +28,10 @@ export type FrontendModel = {
   };
 };
 
-export type BackendMsg = { group: "TicTacToe"; type: "Noop" };
+export type BackendMsg = ["Noop"];
 
-export type FrontendMsg =
-  | { group: "TicTacToe"; type: "ClickedNewRoom" }
-  | { group: "TicTacToe"; type: "ClickedBack" };
+export type FrontendMsg = ["ClickedNewRoom"] | ["ClickedBack"];
 
-export type ToFrontend = {
-  group: "TicTacToe";
-  type: "CurrentRoom";
-  room: Room;
-};
+export type ToFrontend = ["CurrentRoom", Room];
 
-export type ToFronend = { group: "TicTacToe"; type: "NewRoom" };
+export type ToFronend = ["NewRoom"];

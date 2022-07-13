@@ -33,8 +33,8 @@ export const init: Model = {
 //
 
 export type Msg =
-  | { group: "Snackbar"; type: "SnackbarDurationElapsed"; snackId: string }
-  | { group: "Snackbar"; type: "UserClosedSnackbar"; snackId: string };
+  | ["SnackbarDurationElapsed", string]
+  | ["UserClosedSnackbar", string];
 
 export const EnqueueSnackbar = (variant: "Info" | "Error", message: string) => {
   return {
@@ -53,9 +53,9 @@ export type EnqueueSnackbar = ReturnType<typeof EnqueueSnackbar>;
 export type Action = EnqueueSnackbar;
 
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
-  switch (msg.type) {
+  switch (msg[0]) {
     case "SnackbarDurationElapsed":
-      return removeById(msg, model);
+      return removeById(msg[1], model);
 
     case "UserClosedSnackbar":
       return [model, Cmd.None];
@@ -73,20 +73,13 @@ export const runAction = (
         { ...model, queue: [snack, ...model.queue] },
         pipe(
           Task.timeout(4000, {}),
-          Cmd.fromTask(() => ({
-            group: "Snackbar",
-            type: "SnackbarDurationElapsed",
-            snackId: snack.snackId,
-          })),
+          Cmd.fromTask((): Msg => ["SnackbarDurationElapsed", snack.snackId]),
         ),
       ];
   }
 };
 
-const removeById = (
-  { snackId }: { snackId: string },
-  model: Model,
-): [Model, Cmd.Cmd<Msg>] => [
+const removeById = (snackId: string, model: Model): [Model, Cmd.Cmd<Msg>] => [
   {
     ...model,
     queue: model.queue.filter((snack) => snack.snackId !== snackId),
@@ -117,23 +110,11 @@ export const view =
           sx={sx}
           open
           message={snack.message}
-          onClose={() =>
-            dispatch({
-              group: "Snackbar",
-              type: "UserClosedSnackbar",
-              snackId: snack.snackId,
-            })
-          }
+          onClose={() => dispatch(["UserClosedSnackbar", snack.snackId])}
         >
           <UI.Alert
             variant="filled"
-            onClose={() =>
-              dispatch({
-                group: "Snackbar",
-                type: "UserClosedSnackbar",
-                snackId: snack.snackId,
-              })
-            }
+            onClose={() => dispatch(["UserClosedSnackbar", snack.snackId])}
             severity={snack.type === "Error" ? "error" : "info"}
             sx={{ width: "100%" }}
           >

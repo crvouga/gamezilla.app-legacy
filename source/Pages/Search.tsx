@@ -21,7 +21,7 @@ export const init: [Model, Cmd.Cmd<Msg>, OutAction[]] = [
     searchText: "",
   },
   Cmd.None,
-  [Store.Profile.Search("")],
+  [["Store", Store.Profile.Search("")]],
 ];
 
 //
@@ -33,12 +33,12 @@ export const init: [Model, Cmd.Cmd<Msg>, OutAction[]] = [
 //
 
 export type Msg =
-  | { type: "InputtedSearchText"; searchText: string }
-  | { type: "ClickedClear" }
-  | { type: "ClickedResult"; userId: string }
-  | { type: "FocusResulted" };
+  | ["ClickedClear"]
+  | ["FocusResulted", Browser.FocusResult]
+  | ["InputtedSearchText", string]
+  | ["ClickedResult", { userId: string }];
 
-export type OutAction = Store.Action;
+export type OutAction = ["Store", Store.Action];
 
 const SearchInputId = "SearchInput";
 
@@ -46,7 +46,7 @@ export const update = (
   msg: Msg,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
-  switch (msg.type) {
+  switch (msg[0]) {
     case "FocusResulted":
       return [model, Cmd.None, []];
 
@@ -55,20 +55,24 @@ export const update = (
         { ...model, searchText: "" },
         pipe(
           Browser.focus(SearchInputId),
-          Cmd.fromTask((result) => ({ type: "FocusResulted", result })),
+          Cmd.fromTask((result) => ["FocusResulted", result]),
         ),
         [],
       ];
 
     case "ClickedResult":
-      return [model, Route.push({ type: "Profile", userId: msg.userId }), []];
+      return [
+        model,
+        Route.push({ type: "Profile", userId: msg[1].userId }),
+        [],
+      ];
 
     case "InputtedSearchText":
-      const seachTextNew = msg.searchText;
+      const seachTextNew = msg[1];
       return [
         { ...model, searchText: seachTextNew },
         Cmd.None,
-        [Store.Profile.Search(seachTextNew)],
+        [["Store", Store.Profile.Search(seachTextNew)]],
       ];
   }
 };
@@ -108,17 +112,12 @@ export const view =
           fullWidth
           value={model.searchText}
           onChange={(event) =>
-            dispatch({
-              type: "InputtedSearchText",
-              searchText: event.target.value,
-            })
+            dispatch(["InputtedSearchText", event.target.value])
           }
           InputProps={{
             endAdornment: (
               <UI.InputAdornment position="end">
-                <UI.IconButton
-                  onClick={() => dispatch({ type: "ClickedClear" })}
-                >
+                <UI.IconButton onClick={() => dispatch(["ClickedClear"])}>
                   <UI.Icons.Close />
                 </UI.IconButton>
               </UI.InputAdornment>
@@ -135,7 +134,7 @@ export const view =
               key={result.userId}
               sx={{ flex: 1, width: "100%" }}
               onClick={() =>
-                dispatch({ type: "ClickedResult", userId: result.userId })
+                dispatch(["ClickedResult", { userId: result.userId }])
               }
             >
               <UI.ListItemAvatar>

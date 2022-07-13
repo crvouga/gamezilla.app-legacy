@@ -23,27 +23,27 @@ export const init: Model = {};
 //
 
 export type Msg =
-  | { type: "UserClickedBackButton" }
-  | { type: "UserClickedLogoutLink" }
-  | { type: "UserClickedDeleteProfileLink" }
-  | { type: "UserClickedUpdateProfileLink" };
+  | ["ClickedBack"]
+  | ["ClickedLogout"]
+  | ["ClickedDeleteProfile"]
+  | ["ClickedUpdateProfile"];
 
 export const update = (
   { userId }: { userId: string },
   msg: Msg,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
-  switch (msg.type) {
-    case "UserClickedBackButton":
+  switch (msg[0]) {
+    case "ClickedBack":
       return [model, Route.back];
 
-    case "UserClickedLogoutLink":
+    case "ClickedLogout":
       return [model, Route.push({ type: "Logout" })];
 
-    case "UserClickedUpdateProfileLink":
+    case "ClickedUpdateProfile":
       return [model, Route.push({ type: "ProfileUpdate" })];
 
-    case "UserClickedDeleteProfileLink":
+    case "ClickedDeleteProfile":
       return [model, Route.push({ type: "ProfileDelete" })];
   }
 };
@@ -64,9 +64,7 @@ export const view =
         <UI.Header title={username} />
 
         <UI.List>
-          <UI.ListItemButton
-            onClick={() => dispatch({ type: "UserClickedUpdateProfileLink" })}
-          >
+          <UI.ListItemButton onClick={() => dispatch(["ClickedUpdateProfile"])}>
             <UI.ListItemIcon>
               <UI.Icons.Edit />
             </UI.ListItemIcon>
@@ -76,18 +74,14 @@ export const view =
             </UI.ListItemSecondaryAction>
           </UI.ListItemButton>
 
-          <UI.ListItemButton
-            onClick={() => dispatch({ type: "UserClickedDeleteProfileLink" })}
-          >
+          <UI.ListItemButton onClick={() => dispatch(["ClickedDeleteProfile"])}>
             <UI.ListItemIcon>
               <UI.Icons.Delete />
             </UI.ListItemIcon>
             <UI.ListItemText primary="Delete Profile" />
           </UI.ListItemButton>
 
-          <UI.ListItemButton
-            onClick={() => dispatch({ type: "UserClickedLogoutLink" })}
-          >
+          <UI.ListItemButton onClick={() => dispatch(["ClickedLogout"])}>
             <UI.ListItemIcon>
               <UI.Icons.Logout />
             </UI.ListItemIcon>

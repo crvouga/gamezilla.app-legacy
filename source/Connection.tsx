@@ -22,16 +22,12 @@ export const init: Model = { type: "Connecting" };
 //
 //
 
-export type Msg = {
-  group: "Connection";
-  type: "ConnectionChanged";
-  status: Model;
-};
+export type Msg = ["ConnectionChanged", Model];
 
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
-  switch (msg.type) {
+  switch (msg[0]) {
     case "ConnectionChanged":
-      return [msg.status, Cmd.None];
+      return [msg[1], Cmd.None];
   }
 };
 

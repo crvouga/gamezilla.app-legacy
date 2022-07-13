@@ -24,19 +24,16 @@ export const init: Model = { type: "Idle" };
 //
 //
 
-export type Msg =
-  | { type: "ClickedCancel" }
-  | { type: "ClickedBackdrop" }
-  | { type: "ClickedLogout" };
+export type Msg = ["ClickedCancel"] | ["ClickedBackdrop"] | ["ClickedLogout"];
 
-type OutAction = Snackbar.Action | Session.Action;
+type OutAction = ["Session", Session.Action];
 
 export const update = (
   { name }: { name: string },
   msg: Msg,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
-  switch (msg.type) {
+  switch (msg[0]) {
     case "ClickedCancel":
       return [model, Route.back, []];
 
@@ -44,7 +41,7 @@ export const update = (
       return [model, Route.back, []];
 
     case "ClickedLogout":
-      return [{ type: "LoggingOut" }, Cmd.None, [Session.Logout()]];
+      return [{ type: "LoggingOut" }, Cmd.None, [["Session", ["Logout"]]]];
   }
 };
 
@@ -62,10 +59,10 @@ export const view = (model: Model): UI.View<Msg> => {
       return UI.conformationDialog<Msg>({
         open: model.type === "Idle",
         title: "Logout of Gamezilla?",
-        onConfirm: { type: "ClickedLogout" },
+        onConfirm: ["ClickedLogout"],
         confirmTitle: "Logout",
-        onClose: { type: "ClickedBackdrop" },
-        onCancel: { type: "ClickedCancel" },
+        onClose: ["ClickedBackdrop"],
+        onCancel: ["ClickedCancel"],
       });
 
     case "LoggingOut":

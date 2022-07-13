@@ -28,29 +28,29 @@ export const init = ({ username }: { username: string }): Model => {
 //
 
 export type Msg =
-  | { type: "UserClickedCancelButton" }
-  | { type: "UserEnteredUsername"; username: string }
-  | { type: "UserClickedSubmitButton" };
+  | ["ClickedCancel"]
+  | ["ClickedSubmit"]
+  | ["InputtedUsername", string];
 
-export type OutMsg = Store.Action;
+export type OutMsg = ["Store", Store.Action];
 
 export const update = (
   { userId }: { userId: string },
   msg: Msg,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>, OutMsg[]] => {
-  switch (msg.type) {
-    case "UserEnteredUsername":
-      return [{ ...model, username: msg.username }, Cmd.None, []];
+  switch (msg[0]) {
+    case "InputtedUsername":
+      return [{ ...model, username: msg[1] }, Cmd.None, []];
 
-    case "UserClickedCancelButton":
+    case "ClickedCancel":
       return [model, Route.back, []];
 
-    case "UserClickedSubmitButton":
+    case "ClickedSubmit":
       return [
         model,
         Route.back,
-        [Store.Profile.Edit(userId, { username: model.username })],
+        [["Store", Store.Profile.Edit(userId, { username: model.username })]],
       ];
   }
 };
@@ -72,7 +72,7 @@ export const view =
           left={
             <UI.Button
               sx={{ marginLeft: -1 }}
-              onClick={() => dispatch({ type: "UserClickedCancelButton" })}
+              onClick={() => dispatch(["ClickedCancel"])}
             >
               Cancel
             </UI.Button>
@@ -81,7 +81,7 @@ export const view =
           right={
             <UI.Button
               sx={{ marginRight: -1 }}
-              onClick={() => dispatch({ type: "UserClickedSubmitButton" })}
+              onClick={() => dispatch(["ClickedSubmit"])}
             >
               Done
             </UI.Button>
@@ -95,10 +95,7 @@ export const view =
             label="Username"
             fullWidth
             onChange={(event) =>
-              dispatch({
-                type: "UserEnteredUsername",
-                username: event.currentTarget.value,
-              })
+              dispatch(["InputtedUsername", event.currentTarget.value])
             }
           />
         </UI.Box>

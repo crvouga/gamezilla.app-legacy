@@ -18,7 +18,11 @@ export const init = ({
 }: {
   userId: string;
 }): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
-  return [{}, Cmd.None, [Store.Conversation.FindManyByUserId(userId)]];
+  return [
+    {},
+    Cmd.None,
+    [["Store", Store.Conversation.FindManyByUserId(userId)]],
+  ];
 };
 
 //
@@ -30,14 +34,14 @@ export const init = ({
 //
 
 export type Msg =
-  | { type: "ClickedBack" }
-  | { type: "ClickedSendMessage" }
-  | { type: "ClickedConversationItem"; conversationId: string };
+  | ["ClickedBack"]
+  | ["ClickedSendMessage"]
+  | ["ClickedConversationItem", string];
 
-type OutAction = Store.Action;
+type OutAction = ["Store", Store.Action];
 
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
-  switch (msg.type) {
+  switch (msg[0]) {
     case "ClickedBack":
       return [model, Route.back];
 
@@ -49,7 +53,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
         model,
         Route.push({
           type: "ChatConversation",
-          conversationId: msg.conversationId,
+          conversationId: msg[1],
         }),
       ];
   }
@@ -93,7 +97,7 @@ export const view =
           <UI.Button
             fullWidth
             variant="contained"
-            onClick={() => dispatch({ type: "ClickedSendMessage" })}
+            onClick={() => dispatch(["ClickedSendMessage"])}
           >
             Send Message
           </UI.Button>
@@ -104,10 +108,7 @@ export const view =
             <UI.ListItemButton
               key={item.conversationId}
               onClick={() =>
-                dispatch({
-                  type: "ClickedConversationItem",
-                  conversationId: item.conversationId,
-                })
+                dispatch(["ClickedConversationItem", item.conversationId])
               }
             >
               <UI.ListItemAvatar>

@@ -27,28 +27,25 @@ export const init: Model = {
 //
 
 export type Msg =
-  | { type: "UserClickedBackButton" }
-  | {
-      type: "UserClickedThemeModeOption";
-      themeMode: Profile.Profile["themeMode"];
-    };
+  | ["ClickedBack"]
+  | ["ClickedThemeMode", Profile.Profile["themeMode"]];
 
-type OutMsg = Store.Action;
+type OutMsg = ["Store", Store.Action];
 
 export const update = (
   { userId }: { userId: string },
   msg: Msg,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>, OutMsg[]] => {
-  switch (msg.type) {
-    case "UserClickedBackButton":
+  switch (msg[0]) {
+    case "ClickedBack":
       return [model, Route.back, []];
 
-    case "UserClickedThemeModeOption":
+    case "ClickedThemeMode":
       return [
         model,
         Cmd.None,
-        [Store.Profile.Edit(userId, { themeMode: msg.themeMode })],
+        [["Store", Store.Profile.Edit(userId, { themeMode: msg[1] })]],
       ];
   }
 };
@@ -68,9 +65,7 @@ export const view =
       <UI.Page>
         <UI.Header
           left={
-            <UI.HeaderBackButton
-              onClick={() => dispatch({ type: "UserClickedBackButton" })}
-            />
+            <UI.HeaderBackButton onClick={() => dispatch(["ClickedBack"])} />
           }
           title="Theme"
         />
@@ -83,12 +78,7 @@ export const view =
         <UI.Box sx={{ padding: 2 }}>
           <UI.ThemeModeToggleButtons
             themeMode={profile.themeMode}
-            onChange={(themeMode) =>
-              dispatch({
-                type: "UserClickedThemeModeOption",
-                themeMode,
-              })
-            }
+            onChange={(themeMode) => dispatch(["ClickedThemeMode", themeMode])}
           />
         </UI.Box>
       </UI.Page>

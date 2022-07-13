@@ -29,7 +29,7 @@ export const init: Model = {
 export type Msg = FrontendMsg;
 
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
-  switch (msg.type) {
+  switch (msg[0]) {
     case "ClickedNewRoom":
       return [model, Cmd.None];
 
@@ -53,11 +53,7 @@ export const view =
       <UI.Page>
         <UI.Header
           left={
-            <UI.HeaderBackButton
-              onClick={() =>
-                dispatch({ group: "TicTacToe", type: "ClickedBack" })
-              }
-            />
+            <UI.HeaderBackButton onClick={() => dispatch(["ClickedBack"])} />
           }
           title="Tic Tac Toe"
         />
@@ -66,9 +62,7 @@ export const view =
           <UI.Button
             size="large"
             fullWidth
-            onClick={() =>
-              dispatch({ group: "TicTacToe", type: "ClickedNewRoom" })
-            }
+            onClick={() => dispatch(["ClickedNewRoom"])}
             variant="contained"
           >
             New Room
@@ -77,6 +71,14 @@ export const view =
       </UI.Page>
     );
   };
+
+//
+//
+//
+// Icon
+//
+//
+//
 
 export const Icon = () => {
   const positions: [Board.Position, Board.Slot][] = [

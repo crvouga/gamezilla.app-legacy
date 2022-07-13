@@ -224,12 +224,7 @@ export type Action = Search | Get | Delete | Edit | ResetMutations;
 //
 //
 
-type OutAction = Snackbar.Action | Action;
-
-export const update = (
-  msg: Msg,
-  model: Model,
-): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
+export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "Profile/Received":
       const ProfileNew = {
@@ -239,14 +234,14 @@ export const update = (
           ...msg.profile,
         },
       };
-      return [{ ...model, Profile: ProfileNew }, Cmd.None, []];
+      return [{ ...model, Profile: ProfileNew }, Cmd.None];
 
     case "Profile/Edit": {
       const { userId, edits } = msg;
       const query = toGetQuery(userId, model);
 
       if (query.type !== "Success") {
-        return [model, Cmd.None, []];
+        return [model, Cmd.None];
       }
 
       const modelNew = produce(model, (model) => {
@@ -260,7 +255,6 @@ export const update = (
           edit(msg.userId, msg.edits),
           Cmd.fromTask((result) => Edited(msg.userId, query.value, result)),
         ),
-        [],
       ];
     }
 
@@ -285,7 +279,7 @@ export const update = (
         }
       });
 
-      return [modeNew, Cmd.None, []];
+      return [modeNew, Cmd.None];
     }
 
     case "Profile/Get": {
@@ -301,7 +295,6 @@ export const update = (
           load({ userId }),
           Cmd.fromTask((result) => Got(userId, result)),
         ),
-        [],
       ];
     }
 
@@ -323,7 +316,7 @@ export const update = (
             break;
         }
       });
-      return [modelNew, Cmd.None, []];
+      return [modelNew, Cmd.None];
     }
 
     case "Profile/DeleteForever": {
@@ -337,7 +330,6 @@ export const update = (
           deleteForever(msg.userId),
           Cmd.fromTask((result) => DeleteResulted(msg.userId, result)),
         ),
-        [],
       ];
     }
 
@@ -351,7 +343,7 @@ export const update = (
         }
       });
 
-      return [modelNew, Cmd.None, [Get(msg.userId)]];
+      return [modelNew, Cmd.None];
     }
 
     case "Profile/Create": {
@@ -369,7 +361,6 @@ export const update = (
           create(msg.profile),
           Cmd.fromTask((result) => CreateResulted(userId, result)),
         ),
-        [],
       ];
     }
 
@@ -393,7 +384,7 @@ export const update = (
         }
       });
 
-      return [modelNew, Cmd.None, [Get(msg.userId)]];
+      return [modelNew, Cmd.None];
     }
 
     case "Profile/Search": {
@@ -409,7 +400,6 @@ export const update = (
           search({ nameOrUsername: searchText }),
           Cmd.fromTask((result) => Searched(searchText, result)),
         ),
-        [],
       ];
     }
 
@@ -437,7 +427,7 @@ export const update = (
         }
       });
 
-      return [modelNew, Cmd.None, []];
+      return [modelNew, Cmd.None];
     }
 
     case "Profile/ResetMutations": {
@@ -449,7 +439,7 @@ export const update = (
         };
       });
 
-      return [modelNew, Cmd.None, []];
+      return [modelNew, Cmd.None];
     }
 
     default:

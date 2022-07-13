@@ -24,20 +24,20 @@ export const init: Model = {};
 //
 
 export type Msg =
-  | { type: "UserClickedBackButton" }
-  | { type: "UserClickedNameLink" }
-  | { type: "UserClickedUsernameLink" }
-  | { type: "UserClickedAvatar" }
-  | { type: "UserClickedChangeAvatarButton" }
-  | { type: "UserClickedThemeLink" };
+  | ["ClickedBack"]
+  | ["ClickedName"]
+  | ["ClickedUsername"]
+  | ["ClickedAvatar"]
+  | ["ClickedChangedAvatar"]
+  | ["ClickedTheme"];
 
 export const update = (
   { userId }: { userId: string },
   msg: Msg,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
-  switch (msg.type) {
-    case "UserClickedAvatar":
+  switch (msg[0]) {
+    case "ClickedAvatar":
       return [
         model,
         Route.push({
@@ -45,7 +45,7 @@ export const update = (
         }),
       ];
 
-    case "UserClickedChangeAvatarButton":
+    case "ClickedChangedAvatar":
       return [
         model,
         Route.push({
@@ -53,16 +53,16 @@ export const update = (
         }),
       ];
 
-    case "UserClickedBackButton":
+    case "ClickedBack":
       return [model, Route.back];
 
-    case "UserClickedNameLink":
+    case "ClickedName":
       return [model, Route.push({ type: "ProfileUpdateName" })];
 
-    case "UserClickedUsernameLink":
+    case "ClickedUsername":
       return [model, Route.push({ type: "ProfileUpdateUsername" })];
 
-    case "UserClickedThemeLink":
+    case "ClickedTheme":
       return [model, Route.push({ type: "ProfileUpdateTheme" })];
   }
 };
@@ -82,9 +82,7 @@ export const view =
       <UI.Page>
         <UI.Header
           left={
-            <UI.HeaderBackButton
-              onClick={() => dispatch({ type: "UserClickedBackButton" })}
-            />
+            <UI.HeaderBackButton onClick={() => dispatch(["ClickedBack"])} />
           }
           title="Update Profile"
         />
@@ -97,12 +95,12 @@ export const view =
             height: "150px",
             marginBottom: 1,
           }}
-          onClick={() => dispatch({ type: "UserClickedAvatar" })}
+          onClick={() => dispatch(["ClickedAvatar"])}
         />
 
         <UI.Button
           sx={{ display: "block", marginX: "auto", marginBottom: 2 }}
-          onClick={() => dispatch({ type: "UserClickedChangeAvatarButton" })}
+          onClick={() => dispatch(["ClickedChangedAvatar"])}
         >
           Change Avatar
         </UI.Button>
@@ -111,19 +109,19 @@ export const view =
           <UI.Field
             label="Username"
             value={profile.username}
-            onClick={() => dispatch({ type: "UserClickedUsernameLink" })}
+            onClick={() => dispatch(["ClickedUsername"])}
           />
 
           <UI.Field
             label="Name"
             value={profile.name}
-            onClick={() => dispatch({ type: "UserClickedNameLink" })}
+            onClick={() => dispatch(["ClickedName"])}
           />
 
           <UI.Field
             label="Theme"
             value={profile.themeMode}
-            onClick={() => dispatch({ type: "UserClickedThemeLink" })}
+            onClick={() => dispatch(["ClickedTheme"])}
           />
         </UI.List>
       </UI.Page>

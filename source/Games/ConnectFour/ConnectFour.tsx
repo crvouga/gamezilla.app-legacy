@@ -337,19 +337,19 @@ export const theme = {
 //
 
 export type Msg =
-  | { group: "ConnectFour"; type: "ClickecBack" }
-  | { group: "ConnectFour"; type: "ClickedBoard"; columnIndex: number }
-  | { group: "ConnectFour"; type: "ClickedRestart" };
+  | ["ClickecBack"]
+  | ["ClickedBoard", { columnIndex: number }]
+  | ["ClickedRestart"];
 
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
-  switch (msg.type) {
+  switch (msg[0]) {
     case "ClickecBack":
       return [model, Route.back];
 
     case "ClickedBoard":
       const columnsNew = move(
         model.columns,
-        msg.columnIndex,
+        msg[1].columnIndex,
         toTurn(model.columns),
       );
       return [{ ...model, columns: columnsNew }, Cmd.None];
@@ -376,30 +376,25 @@ export const view =
       <UI.Page>
         <UI.Header
           left={
-            <UI.HeaderBackButton
-              onClick={() =>
-                dispatch({ group: "ConnectFour", type: "ClickecBack" })
-              }
-            />
+            <UI.HeaderBackButton onClick={() => dispatch(["ClickecBack"])} />
           }
           title={`${toTurn(model.columns)}'s turn`}
         />
         <Board
           columns={model.columns}
           onClick={(columnIndex) =>
-            dispatch({
-              group: "ConnectFour",
-              type: "ClickedBoard",
-              columnIndex,
-            })
+            dispatch([
+              "ClickedBoard",
+              {
+                columnIndex,
+              },
+            ])
           }
         />
         <UI.Button
           fullWidth
           size="large"
-          onClick={() =>
-            dispatch({ group: "ConnectFour", type: "ClickedRestart" })
-          }
+          onClick={() => dispatch(["ClickedRestart"])}
         >
           Restart
         </UI.Button>

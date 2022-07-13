@@ -28,26 +28,26 @@ export const init = ({ name }: { name: string }): Model => {
 //
 
 export type Msg =
-  | { type: "EnteredName"; name: string }
-  | { type: "ClickedCancel" }
-  | { type: "ClickedSubmit" };
+  | ["EnteredName", string]
+  | ["ClickedCancel"]
+  | ["ClickedSubmit"];
 
-export type OutAction = Store.Action;
+export type OutAction = ["Store", Store.Action];
 
 export const update = (
   { userId }: { userId: string },
   msg: Msg,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
-  switch (msg.type) {
+  switch (msg[0]) {
     case "EnteredName":
-      return [{ ...model, ...msg }, Cmd.None, []];
+      return [{ ...model, name: msg[1] }, Cmd.None, []];
 
     case "ClickedSubmit":
       return [
         model,
         Route.back,
-        [Store.Profile.Edit(userId, { name: model.name })],
+        [["Store", Store.Profile.Edit(userId, { name: model.name })]],
       ];
 
     case "ClickedCancel":
@@ -72,7 +72,7 @@ export const view =
           left={
             <UI.Button
               sx={{ marginLeft: -1 }}
-              onClick={() => dispatch({ type: "ClickedCancel" })}
+              onClick={() => dispatch(["ClickedCancel"])}
             >
               Cancel
             </UI.Button>
@@ -81,7 +81,7 @@ export const view =
           right={
             <UI.Button
               sx={{ marginRight: -1 }}
-              onClick={() => dispatch({ type: "ClickedSubmit" })}
+              onClick={() => dispatch(["ClickedSubmit"])}
             >
               Done
             </UI.Button>
@@ -95,10 +95,7 @@ export const view =
             label="Name"
             fullWidth
             onChange={(event) =>
-              dispatch({
-                type: "EnteredName",
-                name: event.currentTarget.value,
-              })
+              dispatch(["EnteredName", event.currentTarget.value])
             }
           />
         </UI.Box>

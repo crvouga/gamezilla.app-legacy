@@ -11,11 +11,9 @@ import { Cmd, Option, pipe } from "Core";
 //
 //
 
-export type Model =
-  | { type: "Idle" }
-  | { type: "LoggingInWithProvider"; provider: Session.Provider };
+export type Model = ["Idle"] | ["LoggingInWithProvider", Session.Provider];
 
-export const init: Model = { type: "Idle" };
+export const init: Model = ["Idle"];
 
 //
 //
@@ -26,31 +24,28 @@ export const init: Model = { type: "Idle" };
 //
 
 export type Msg =
-  | { type: "ClickedGoogleLogin" }
-  | { type: "ClickedEmailLogin" }
-  | { type: "LoginWithProviderResulted"; result: Session.LoginResult };
+  | ["ClickedGoogleLogin"]
+  | ["ClickedEmailLogin"]
+  | ["LoginWithProviderResulted", Session.LoginResult];
 
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
-  switch (msg.type) {
+  switch (msg[0]) {
     case "ClickedEmailLogin":
       return [model, Route.push({ type: "LoginEmail" })];
 
     case "ClickedGoogleLogin":
       return [
-        { type: "LoggingInWithProvider", provider: "Google" },
+        ["LoggingInWithProvider", "Google"],
         pipe(
           Session.loginWithProvider({ provider: "Google" }),
-          Cmd.fromTask((result) => ({
-            type: "LoginWithProviderResulted",
-            result,
-          })),
+          Cmd.fromTask((result) => ["LoginWithProviderResulted", result]),
         ),
       ];
 
     case "LoginWithProviderResulted":
-      switch (msg.result.type) {
+      switch (msg[1].type) {
         case "Err":
-          return [{ type: "Idle" }, Cmd.None];
+          return [["Idle"], Cmd.None];
 
         case "Ok":
           return [model, Cmd.None];
@@ -83,10 +78,9 @@ export const view =
 
         <ContinueWithGoogleButton
           isLoading={
-            model.type === "LoggingInWithProvider" &&
-            model.provider === "Google"
+            model[0] === "LoggingInWithProvider" && model[1] === "Google"
           }
-          onClick={() => dispatch({ type: "ClickedGoogleLogin" })}
+          onClick={() => dispatch(["ClickedGoogleLogin"])}
         />
 
         <UI.Typography
@@ -102,7 +96,7 @@ export const view =
           size="large"
           fullWidth
           color="primary"
-          onClick={() => dispatch({ type: "ClickedEmailLogin" })}
+          onClick={() => dispatch(["ClickedEmailLogin"])}
         >
           Continue With Email
         </UI.Button>

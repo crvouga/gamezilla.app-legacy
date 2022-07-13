@@ -42,22 +42,24 @@ export const init: Model = {
 //
 
 export type Msg =
-  | { type: "ClickedBack" }
-  | { type: "InputtedEmailAddress"; emailAddress: string }
-  | { type: "ClickedSend" }
-  | {
-      type: "SendResulted";
-      sentTo: string;
-      result: Store.Account.SendResetPasswordLinkResult;
-    };
+  | ["ClickedBack"]
+  | ["ClickedSend"]
+  | ["InputtedEmailAddress", string]
+  | [
+      "SendResulted",
+      {
+        sentTo: string;
+        result: Store.Account.SendResetPasswordLinkResult;
+      },
+    ];
 
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
-  switch (msg.type) {
+  switch (msg[0]) {
     case "ClickedBack":
       return [model, Route.back];
 
     case "InputtedEmailAddress":
-      return [{ ...model, emailAddress: msg.emailAddress }, Cmd.None];
+      return [{ ...model, emailAddress: msg[1] }, Cmd.None];
 
     case "ClickedSend":
       return [
@@ -66,23 +68,26 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
           Store.Account.sendResetPasswordLink({
             emailAddress: model.emailAddress,
           }),
-          Cmd.fromTask((result) => ({
-            type: "SendResulted",
-            sentTo: model.emailAddress,
-            result,
-          })),
+          Cmd.fromTask((result) => [
+            "SendResulted",
+            {
+              sentTo: model.emailAddress,
+              result,
+            },
+          ]),
         ),
       ];
 
     case "SendResulted":
-      switch (msg.result.type) {
+      const result = msg[1].result;
+      switch (result.type) {
         case "Err":
           return [
             {
               ...model,
               submission: {
                 type: "Problem",
-                message: msg.result.error.message,
+                message: result.error.message,
               },
             },
             Cmd.None,
@@ -90,7 +95,10 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
         case "Ok":
           return [
-            { ...model, submission: { type: "Succeeded", sentTo: msg.sentTo } },
+            {
+              ...model,
+              submission: { type: "Succeeded", sentTo: msg[1].sentTo },
+            },
             Cmd.None,
           ];
       }
@@ -112,9 +120,7 @@ export const view =
       <UI.Page>
         <UI.Header
           left={
-            <UI.HeaderBackButton
-              onClick={() => dispatch({ type: "ClickedBack" })}
-            />
+            <UI.HeaderBackButton onClick={() => dispatch(["ClickedBack"])} />
           }
           title="Reset Password"
         />
@@ -137,10 +143,7 @@ export const view =
             label="Email Address"
             value={model.emailAddress}
             onChange={(event) => {
-              dispatch({
-                type: "InputtedEmailAddress",
-                emailAddress: event.target.value,
-              });
+              dispatch(["InputtedEmailAddress", event.target.value]);
             }}
           />
 
@@ -149,7 +152,7 @@ export const view =
             size="large"
             fullWidth
             loading={model.submission.type === "Loading"}
-            onClick={() => dispatch({ type: "ClickedSend" })}
+            onClick={() => dispatch(["ClickedSend"])}
           >
             Send Password Reset Link
           </UI.Button>

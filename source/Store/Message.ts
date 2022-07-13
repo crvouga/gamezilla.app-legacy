@@ -95,12 +95,7 @@ export type DeleteForeverResulted = ReturnType<typeof DeleteForeverResulted>;
 //
 //
 
-type OutAction = Snackbar.Action;
-
-export const update = (
-  msg: Msg,
-  model: Store,
-): [Store, Cmd.Cmd<Msg>, OutAction[]] => {
+export const update = (msg: Msg, model: Store): [Store, Cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "Message/DeleteForeverResulted": {
       const modelNew = produce(model, (model) => {
@@ -113,7 +108,7 @@ export const update = (
         }
       });
 
-      return [modelNew, Cmd.None, []];
+      return [modelNew, Cmd.None];
     }
 
     case "Message/InsertResulted": {
@@ -129,7 +124,7 @@ export const update = (
         }
       });
 
-      return [modelNew, Cmd.None, []];
+      return [modelNew, Cmd.None];
     }
   }
 };

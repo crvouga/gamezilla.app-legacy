@@ -47,6 +47,11 @@ export const andThenMany =
     );
   };
 
+export const tag =
+  <Tag extends string>(tag: Tag) =>
+  <Value>(value: Value): [Tag, Value] =>
+    [tag, value];
+
 /**
  *
  *
