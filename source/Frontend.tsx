@@ -493,9 +493,12 @@ export const view =
             }
           >
             <UI.Alert
+              variant="filled"
               severity={model.socket.type === "Disconnected" ? "error" : "info"}
               sx={{ display: "flex", alignItems: "center" }}
-              icon={<UI.CircularProgress disableShrink size={18} />}
+              icon={
+                <UI.CircularProgress color="inherit" disableShrink size={18} />
+              }
             >
               {model.socket.type === "Reconnecting"
                 ? `Reconnecting to backend...`
@@ -504,7 +507,6 @@ export const view =
           </UI.Collapse>
 
           {Counter.view(model.counter)(dispatch)}
-          {viewGameBanner(model)(dispatch)}
           <UI.Box
             sx={{
               width: "100%",
@@ -519,6 +521,8 @@ export const view =
             Snackbar.view({}, model.snackbar),
             UI.map(groupTag("Snackbar")),
           )(dispatch)}
+
+          {viewGameBanner(model)(dispatch)}
         </UI.Box>
       </UI.ThemeProvider>
     );
@@ -636,7 +640,7 @@ const program = Debug.ReduxDevTools.withDebugger(
   Fullstack.frontend({
     backendUrl: backendUrl,
     onLocationChange: onLocationChange,
-    onSocketChanged: onSocketChanged,
+    onSocketChange: onSocketChanged,
     init: init,
     update: update,
     updateFromBackend: updateFromBackend,

@@ -1,8 +1,8 @@
 {
   "private": true,
   "scripts": {
-    "backend:dev": "npx nodemon -e ts,js --exec ts-node -r tsconfig-paths/register ./source/Main.Backend.ts",
-    "backend:start": "npx ts-node -r tsconfig-paths/register ./source/Main.Backend.ts",
+    "backend:dev": "npx nodemon -e ts,js --exec ts-node -r tsconfig-paths/register ./source/Backend.ts",
+    "backend:start": "npx ts-node -r tsconfig-paths/register ./source/Backend.ts",
     "format": "npx prettier --write .",
     "frontend:build": "vite build --emptyOutDir",
     "frontend:dev": "vite",
