@@ -86,10 +86,8 @@ export type Msg =
   | ["PasswordReset", PasswordReset.Msg]
   | ["ChatNew", ChatNew.Msg]
   | ["ChatConversation", ChatConversation.Msg]
-  | ["Search", Search.Msg];
-// | ["None", ClickedBottomNavigationLink];
-
-type ClickedBottomNavigationLink = ["ClickedBottomNavigationLink", Route.Route];
+  | ["Search", Search.Msg]
+  | ["ClickedBottomNavigationLink", Route.Route];
 
 export type OutAction =
   | ["Store", Store.Action]
@@ -315,6 +313,10 @@ export const updateReady = (
   msg: Msg,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
+  if (msg[0] === "ClickedBottomNavigationLink") {
+    return [model, Route.push(msg[1]), []];
+  }
+
   switch (model[0]) {
     case "Account":
       if (msg[0] === "Account") {
@@ -832,9 +834,9 @@ const viewBottomNavigation =
       <UI.BottomNavigation
         showLabels
         value={route.type}
-        onChange={(_event, valueNew) => {
-          if (valueNew in Route.routesTypes) {
-            // dispatch([page, ["", valueNew]]);
+        onChange={(_event, routeType) => {
+          if (routeType in Route.routesTypes) {
+            dispatch(["ClickedBottomNavigationLink", { type: routeType }]);
           }
         }}
       >
