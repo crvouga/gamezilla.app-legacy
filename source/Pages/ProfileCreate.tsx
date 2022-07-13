@@ -54,27 +54,39 @@ const initForm = ({ defaultName }: { defaultName: string }): Form => {
 //
 
 export type Msg =
-  | { type: "EnteredUsername"; username: string }
-  | { type: "EnteredName"; name: string }
-  | { type: "ClickedSubmit" }
-  | { type: "ClickedLogout" };
+  | ["EnteredUsername", string]
+  | ["EnteredName", string]
+  | ["ClickedSubmit"]
+  | ["ClickedLogout"];
 
-export type OutAction = Store.Action;
+export type OutAction = ["Store", Store.Action];
 
 export const update = (
   { userId }: { userId: string },
   msg: Msg,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
-  switch (msg.type) {
+  switch (msg[0]) {
     case "EnteredName":
-      return [{ ...model, form: { ...model.form, ...msg } }, Cmd.None, []];
+      return [
+        { ...model, form: { ...model.form, name: msg[1] } },
+        Cmd.None,
+        [],
+      ];
 
     case "EnteredUsername":
-      return [{ ...model, form: { ...model.form, ...msg } }, Cmd.None, []];
+      return [
+        { ...model, form: { ...model.form, username: msg[1] } },
+        Cmd.None,
+        [],
+      ];
 
     case "ClickedSubmit":
-      return [model, Cmd.None, [Store.Profile.Create(userId, model.form)]];
+      return [
+        model,
+        Cmd.None,
+        [["Store", Store.Profile.Create(userId, model.form)]],
+      ];
 
     case "ClickedLogout":
       return [model, Route.push({ type: "Logout" }), []];
@@ -100,7 +112,7 @@ export const view =
           left={
             <UI.Button
               sx={{ marginLeft: -1 }}
-              onClick={() => dispatch({ type: "ClickedLogout" })}
+              onClick={() => dispatch(["ClickedLogout"])}
             >
               Logout
             </UI.Button>
@@ -135,10 +147,7 @@ export const view =
             label="Username"
             fullWidth
             onChange={(event) =>
-              dispatch({
-                type: "EnteredUsername",
-                username: event.currentTarget.value,
-              })
+              dispatch(["EnteredUsername", event.currentTarget.value])
             }
           />
 
@@ -148,7 +157,7 @@ export const view =
             label="Name"
             fullWidth
             onChange={({ currentTarget: { value: name } }) =>
-              dispatch({ type: "EnteredName", name })
+              dispatch(["EnteredName", name])
             }
           />
 
@@ -156,7 +165,7 @@ export const view =
             fullWidth
             size="large"
             variant="contained"
-            onClick={() => dispatch({ type: "ClickedSubmit" })}
+            onClick={() => dispatch(["ClickedSubmit"])}
           >
             Create Profile
           </UI.Button>

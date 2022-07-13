@@ -22,10 +22,10 @@ export const init: Model = {};
 //
 //
 
-export type Msg = { group: "Chess"; type: "ClickedBack" };
+export type Msg = ["ClickedBack"];
 
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
-  switch (msg.type) {
+  switch (msg[0]) {
     case "ClickedBack":
       return [model, Route.back];
   }
@@ -45,9 +45,7 @@ export const view =
       <UI.Page>
         <UI.Header
           left={
-            <UI.HeaderBackButton
-              onClick={() => dispatch({ group: "Chess", type: "ClickedBack" })}
-            />
+            <UI.HeaderBackButton onClick={() => dispatch(["ClickedBack"])} />
           }
           title="Chess"
         />

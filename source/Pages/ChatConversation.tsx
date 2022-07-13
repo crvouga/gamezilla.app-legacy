@@ -23,6 +23,7 @@ type focusedModel =
     };
 
 export type Model = {
+  conversationId: string;
   text: string;
   focused: focusedModel;
 };
@@ -33,11 +34,12 @@ export const init = ({
   conversationId: string;
 }): [Model, Cmd.Cmd<Msg>, OutAction[]] => [
   {
+    conversationId,
     text: "",
     focused: { type: "Blurred" },
   },
   Cmd.None,
-  [Store.Conversation.FindOne(conversationId)],
+  [["Store", Store.Conversation.FindOne(conversationId)]],
 ];
 
 //
@@ -49,23 +51,23 @@ export const init = ({
 //
 
 export type Msg =
-  | { type: "ClickedBack" }
-  | { type: "ClickedSend" }
-  | { type: "ClickedMessage"; messageId: string }
-  | { type: "ClosedMessageMenu"; messageId: string }
-  | { type: "ClickedDeleteMessage"; messageId: string }
-  | { type: "ClickedCopyMessageText"; text: string }
-  | { type: "InputtedText"; text: string }
-  | { type: "ClipboardCopyResulted"; result: Browser.Clipboard.CopyResult };
+  | ["ClickedBack"]
+  | ["ClickedSend"]
+  | ["ClickedMessage", { messageId: string }]
+  | ["ClosedMessageMenu", { messageId: string }]
+  | ["ClickedDeleteMessage", { messageId: string }]
+  | ["ClickedCopyMessageText", string]
+  | ["InputtedText", string]
+  | ["ClipboardCopyResulted", Browser.Clipboard.CopyResult];
 
-export type OutAction = Store.Action;
+export type OutAction = ["Store", Store.Action];
 
 export const update = (
-  { userId, conversationId }: { userId: string; conversationId: string },
+  { userId }: { userId: string },
   msg: Msg,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
-  switch (msg.type) {
+  switch (msg[0]) {
     case "ClipboardCopyResulted":
       return [{ ...model, focused: { type: "Blurred" } }, Cmd.None, []];
 
@@ -73,8 +75,8 @@ export const update = (
       return [
         model,
         pipe(
-          Browser.Clipboard.copy(msg.text),
-          Cmd.fromTask((result) => ({ type: "ClipboardCopyResulted", result })),
+          Browser.Clipboard.copy(msg[1]),
+          Cmd.fromTask((result) => ["ClipboardCopyResulted", result]),
         ),
         [],
       ];
@@ -87,16 +89,19 @@ export const update = (
         model,
         Cmd.None,
         [
-          Store.Message.Insert({
-            userId,
-            conversationId,
-            messageText: model.text,
-          }),
+          [
+            "Store",
+            Store.Message.Insert({
+              userId,
+              conversationId: model.conversationId,
+              messageText: model.text,
+            }),
+          ],
         ],
       ];
 
     case "InputtedText":
-      return [{ ...model, text: msg.text }, Cmd.None, []];
+      return [{ ...model, text: msg[1] }, Cmd.None, []];
 
     case "ClickedMessage":
       return [
@@ -104,7 +109,7 @@ export const update = (
           ...model,
           focused: {
             type: "Focused",
-            messageId: msg.messageId,
+            messageId: msg[1].messageId,
             copyStatus: "NotAsked",
           },
         },
@@ -128,7 +133,12 @@ export const update = (
       return [
         model,
         Cmd.None,
-        [Store.Message.DeleteForever({ messageId: msg.messageId })],
+        [
+          [
+            "Store",
+            Store.Message.DeleteForever({ messageId: msg[1].messageId }),
+          ],
+        ],
       ];
   }
 };
@@ -145,21 +155,20 @@ export const view =
   (
     {
       store,
-      conversationId,
       authUser,
     }: {
       store: Store.Model;
-      conversationId: string;
       authUser: { userId: string };
     },
     model: Model,
   ): UI.View<Msg> =>
   (dispatch) => {
     const query =
-      store.queries.Conversation.FindOne[conversationId] ?? RemoteData.NotAsked;
+      store.queries.Conversation.FindOne[model.conversationId] ??
+      RemoteData.NotAsked;
 
     const conversation = pipe(
-      Store.Conversation.toConversation(conversationId, store),
+      Store.Conversation.toConversation(model.conversationId, store),
       (conversation) => ({
         ...conversation,
         profiles: conversation.profiles.filter(
@@ -169,15 +178,14 @@ export const view =
     );
 
     const messageInsertMutation =
-      store.mutations.Message.Insert[conversationId] ?? RemoteData.NotAsked;
+      store.mutations.Message.Insert[model.conversationId] ??
+      RemoteData.NotAsked;
 
     return (
       <UI.Page>
         <UI.Toolbar>
           <UI.Box sx={{ flex: 1 }}>
-            <UI.HeaderBackButton
-              onClick={() => dispatch({ type: "ClickedBack" })}
-            />
+            <UI.HeaderBackButton onClick={() => dispatch(["ClickedBack"])} />
           </UI.Box>
 
           <UI.Box
@@ -224,8 +232,8 @@ export const view =
 
         <ChatInput
           value={model.text}
-          onChange={(text) => dispatch({ type: "InputtedText", text })}
-          onSend={() => dispatch({ type: "ClickedSend" })}
+          onChange={(text) => dispatch(["InputtedText", text])}
+          onSend={() => dispatch(["ClickedSend"])}
           isSending={messageInsertMutation.type === "Loading"}
         />
       </UI.Page>
@@ -410,7 +418,7 @@ const ChatMessage = ({
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     event.stopPropagation();
-    dispatch({ type: "ClickedMessage", messageId: message.messageId });
+    dispatch(["ClickedMessage", message]);
   };
 
   const variant = authUserId === message.userId ? "sented" : "recieved";
@@ -462,9 +470,7 @@ const ChatMessage = ({
           model.focused.type === "Focused" &&
           model.focused.messageId === message.messageId
         }
-        onClose={() =>
-          dispatch({ type: "ClosedMessageMenu", messageId: message.messageId })
-        }
+        onClose={() => dispatch(["ClosedMessageMenu", message])}
         anchorOrigin={{
           vertical: "bottom",
           horizontal: variant === "sented" ? "left" : "right",
@@ -481,10 +487,7 @@ const ChatMessage = ({
               model.focused.copyStatus === "Loading"
             }
             onClick={() =>
-              dispatch({
-                type: "ClickedCopyMessageText",
-                text: message.message,
-              })
+              dispatch(["ClickedCopyMessageText", message.message])
             }
           >
             {model.focused.type === "Focused" &&
@@ -498,12 +501,7 @@ const ChatMessage = ({
                 store.mutations.Message.DeleteForever[message.messageId]
                   ?.type === "Loading"
               }
-              onClick={() =>
-                dispatch({
-                  type: "ClickedDeleteMessage",
-                  messageId: message.messageId,
-                })
-              }
+              onClick={() => dispatch(["ClickedDeleteMessage", message])}
             >
               Delete Forever
             </UI.Button>

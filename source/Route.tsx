@@ -1,5 +1,4 @@
-import * as EmailAddress from "EmailAddress";
-import { Browser, Option, pipe } from "Core";
+import { Browser, Option } from "Core";
 
 //
 //
@@ -140,14 +139,6 @@ export const replace = (route: Route) => {
 //
 //
 
-export const GotRoute = (route: Route) => {
-  return {
-    group: "Route",
-    type: "GotRoute",
-    route,
-  } as const;
-};
-
-export type GotRoute = ReturnType<typeof GotRoute>;
+export type GotRoute = ["GotRoute", Route];
 
 export type Msg = GotRoute;

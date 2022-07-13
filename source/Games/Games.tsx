@@ -3,7 +3,7 @@ import * as Snackbar from "Snackbar";
 import * as UI from "UI";
 import { keyframes } from "@mui/system";
 import { Cmd, Sub, pipe } from "Core";
-import { andThen, exhaustive } from "Utility";
+import { andThen, exhaustive, tag } from "Utility";
 import * as Chess from "./Chess";
 import * as ConnectFour from "./ConnectFour";
 import * as Snake from "./Snake";
@@ -77,15 +77,16 @@ const initGame = ({ game }: { game: Game }): Opened["child"] => {
 //
 
 export type Msg =
-  | { group: "Game"; type: "ConfirmedClose" }
-  | { group: "Game"; type: "CancelledClose" }
-  | { group: "Game"; type: "ClickedClose" }
-  | { group: "Game"; type: "ClickedBanner" }
-  | GameMsg;
+  | ["ConfirmedClose"]
+  | ["CancelledClose"]
+  | ["ClickedClose"]
+  | ["ClickedBanner"]
+  | ["Chess", Chess.Msg]
+  | ["ConnectFour", ConnectFour.Msg]
+  | ["TicTacToe", TicTacToe.Msg]
+  | ["Snake", Snake.Msg];
 
-type GameMsg = Chess.Msg | ConnectFour.Msg | TicTacToe.Msg | Snake.Msg;
-
-type OutAction = Snackbar.Action;
+type OutAction = ["Snackbar", Snackbar.Action];
 
 export type Action = Open | Close;
 
@@ -143,22 +144,19 @@ const updateOpened = (
   msg: Msg,
   model: Opened,
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
-  switch (msg.group) {
-    case "Game": {
-      switch (msg.type) {
-        case "ClickedClose":
-          return [{ ...model, status: "ConfirmingClose" }, Cmd.None, []];
+  switch (msg[0]) {
+    case "ClickedClose":
+      return [{ ...model, status: "ConfirmingClose" }, Cmd.None, []];
 
-        case "ClickedBanner":
-          return [model, Route.push({ type: "Game" }), []];
+    case "ClickedBanner":
+      return [model, Route.push({ type: "Game" }), []];
 
-        case "CancelledClose":
-          return [{ ...model, status: "Idle" }, Cmd.None, []];
+    case "CancelledClose":
+      return [{ ...model, status: "Idle" }, Cmd.None, []];
 
-        case "ConfirmedClose":
-          return [{ type: "Closed" }, Cmd.None, []];
-      }
-    }
+    case "ConfirmedClose":
+      return [{ type: "Closed" }, Cmd.None, []];
+
     case "Chess":
     case "ConnectFour":
     case "Snake":
@@ -169,39 +167,51 @@ const updateOpened = (
 };
 
 const updateGame = (
-  msg: GameMsg,
+  msg: Msg,
   model: Opened["child"],
-): [Opened["child"], Cmd.Cmd<GameMsg>] => {
+): [Opened["child"], Cmd.Cmd<Msg>] => {
   switch (model.type) {
     case "Chess":
-      if (msg.group === "Chess") {
-        const [modelChild, cmdChild] = Chess.update(msg, model.child);
-        return [{ type: "Chess", child: modelChild }, cmdChild];
+      if (msg[0] === "Chess") {
+        const [modelChild, cmdChild] = Chess.update(msg[1], model.child);
+        return [
+          { type: "Chess", child: modelChild },
+          pipe(cmdChild, Cmd.map(tag("Chess"))),
+        ];
       }
       return [model, Cmd.None];
 
     case "ConnectFour":
-      if (msg.group === "ConnectFour") {
-        const [modelChild, cmdChild] = ConnectFour.update(msg, model.child);
+      if (msg[0] === "ConnectFour") {
+        const [modelChild, cmdChild] = ConnectFour.update(msg[1], model.child);
 
-        return [{ type: "ConnectFour", child: modelChild }, cmdChild];
+        return [
+          { type: "ConnectFour", child: modelChild },
+          pipe(cmdChild, Cmd.map(tag("ConnectFour"))),
+        ];
       }
       return [model, Cmd.None];
 
     case "TicTacToe":
-      if (msg.group === "TicTacToe") {
-        const [modelChild, cmdChild] = TicTacToe.update(msg, model.child);
+      if (msg[0] === "TicTacToe") {
+        const [modelChild, cmdChild] = TicTacToe.update(msg[1], model.child);
 
-        return [{ type: "TicTacToe", child: modelChild }, cmdChild];
+        return [
+          { type: "TicTacToe", child: modelChild },
+          pipe(cmdChild, Cmd.map(tag("TicTacToe"))),
+        ];
       }
 
       return [model, Cmd.None];
 
     case "Snake":
-      if (msg.group === "Snake") {
-        const [modelChild, cmdChild] = Snake.update(msg, model.child);
+      if (msg[0] === "Snake") {
+        const [modelChild, cmdChild] = Snake.update(msg[1], model.child);
 
-        return [{ type: "Snake", child: modelChild }, cmdChild];
+        return [
+          { type: "Snake", child: modelChild },
+          pipe(cmdChild, Cmd.map(tag("Snake"))),
+        ];
       }
 
       return [model, Cmd.None];
@@ -240,7 +250,10 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
           return Sub.None;
 
         case "Snake":
-          return Snake.subscriptions(model.child.child);
+          return pipe(
+            Snake.subscriptions(model.child.child),
+            Sub.map(tag("Snake")),
+          );
 
         case "TicTacToe":
           return Sub.None;
@@ -269,16 +282,19 @@ export const view = (model: Model): UI.View<Msg> => {
 const viewOpened = (model: Opened): UI.View<Msg> => {
   switch (model.child.type) {
     case "Chess":
-      return Chess.view(model.child.child);
+      return pipe(Chess.view(model.child.child), UI.map(tag("Chess")));
 
     case "ConnectFour":
-      return ConnectFour.view(model.child.child);
+      return pipe(
+        ConnectFour.view(model.child.child),
+        UI.map(tag("ConnectFour")),
+      );
 
     case "TicTacToe":
-      return TicTacToe.view(model.child.child);
+      return pipe(TicTacToe.view(model.child.child), UI.map(tag("TicTacToe")));
 
     case "Snake":
-      return Snake.view(model.child.child);
+      return pipe(Snake.view(model.child.child), UI.map(tag("Snake")));
   }
 };
 
@@ -312,7 +328,7 @@ export const viewBanner =
         >
           <UI.ButtonBase
             sx={{ flex: 1, margin: 0, padding: 0 }}
-            onClick={() => dispatch({ group: "Game", type: "ClickedBanner" })}
+            onClick={() => dispatch(["ClickedBanner"])}
           >
             <UI.Box sx={{ width: 64, marginRight: 2 }}>
               <GameIcon game={model.child.type} />
@@ -324,12 +340,7 @@ export const viewBanner =
 
           <UI.ButtonBase
             sx={{ width: "15%", height: "100%", p: 2, margin: 0 }}
-            onClick={() =>
-              dispatch({
-                group: "Game",
-                type: "ClickedClose",
-              })
-            }
+            onClick={() => dispatch(["ClickedClose"])}
           >
             <UI.Icons.Close />
           </UI.ButtonBase>
@@ -339,9 +350,9 @@ export const viewBanner =
           open: model.status === "ConfirmingClose",
           title: `Close ${gameToName(model.child.type)}?`,
           confirmTitle: `Close ${gameToName(model.child.type)}`,
-          onClose: { group: "Game", type: "CancelledClose" },
-          onCancel: { group: "Game", type: "CancelledClose" },
-          onConfirm: { group: "Game", type: "ConfirmedClose" },
+          onClose: ["CancelledClose"],
+          onCancel: ["CancelledClose"],
+          onConfirm: ["ConfirmedClose"],
         })(dispatch)}
       </>
     );

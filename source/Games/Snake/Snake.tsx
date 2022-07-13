@@ -78,17 +78,17 @@ export const init: Model = {
 //
 
 export type Msg =
-  | { group: "Snake"; type: "Elapsed" }
-  | { group: "Snake"; type: "ClickedBack" }
-  | { group: "Snake"; type: "ClickedRestart" }
-  | { group: "Snake"; type: "ClickedToggle" }
-  | { group: "Snake"; type: "PressedKeyDown"; key: Keyboard.Key }
-  | { group: "Snake"; type: "AudioFailed" }
-  | { group: "Snake"; type: "AudioSucceeded" }
-  | { group: "Snake"; type: "TouchMoveBoard"; position: Position.Position }
-  | { group: "Snake"; type: "MouseMovedBoard"; position: Position.Position }
-  | { group: "Snake"; type: "MouseDownBoard" }
-  | { group: "Snake"; type: "MouseUpBoard" };
+  | ["Elapsed"]
+  | ["ClickedBack"]
+  | ["ClickedRestart"]
+  | ["ClickedToggle"]
+  | ["AudioFailed"]
+  | ["AudioSucceeded"]
+  | ["MouseDownBoard"]
+  | ["MouseUpBoard"]
+  | ["PressedKeyDown", Keyboard.Key]
+  | ["MouseMovedBoard", Position.Position]
+  | ["TouchMoveBoard", Position.Position];
 
 //
 //
@@ -113,7 +113,7 @@ const circular = (
 };
 
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
-  switch (msg.type) {
+  switch (msg[0]) {
     case "ClickedRestart":
       return [init, Cmd.None];
 
@@ -139,13 +139,13 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
     case "PressedKeyDown":
       const statusNew: Status =
-        msg.key === "Space"
+        msg[1] === "Space"
           ? model.status.type === "Paused"
             ? { type: "Playing" }
             : { type: "Paused" }
           : model.status;
 
-      const directionFromKey = Direction.fromKey(msg.key, model.direction);
+      const directionFromKey = Direction.fromKey(msg[1], model.direction);
 
       return [
         enqueueDirection(directionFromKey, {
@@ -175,10 +175,10 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
       const previous = model.touched;
 
       if (!previous) {
-        return [{ ...model, touched: msg.position }, Cmd.None];
+        return [{ ...model, touched: msg[1] }, Cmd.None];
       }
 
-      const touchedNew = msg.position;
+      const touchedNew = msg[1];
 
       const delta = Position.subtract(previous, touchedNew);
 
@@ -291,19 +291,12 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
     case "Playing":
       return Sub.batch([
         keyDowns,
-        Time.every<Msg>(model.tickRate, () => ({
-          group: "Snake",
-          type: "Elapsed",
-        })),
+        Time.every<Msg>(model.tickRate, () => ["Elapsed"]),
       ]);
   }
 };
 
-const keyDowns = Keyboard.keyDowns<Msg>((key) => ({
-  group: "Snake",
-  type: "PressedKeyDown",
-  key,
-}));
+const keyDowns = Keyboard.keyDowns<Msg>((key) => ["PressedKeyDown", key]);
 
 //
 //
@@ -327,9 +320,7 @@ export const view =
       <UI.Page>
         <UI.Header
           left={
-            <UI.HeaderBackButton
-              onClick={() => dispatch({ group: "Snake", type: "ClickedBack" })}
-            />
+            <UI.HeaderBackButton onClick={() => dispatch(["ClickedBack"])} />
           }
           title={
             model.status.type === "Playing"
@@ -338,28 +329,14 @@ export const view =
           }
           right={
             <>
-              <UI.IconButton
-                onClick={() =>
-                  dispatch({
-                    group: "Snake",
-                    type: "ClickedToggle",
-                  })
-                }
-              >
+              <UI.IconButton onClick={() => dispatch(["ClickedToggle"])}>
                 {model.status.type === "Paused" ? (
                   <UI.Icons.PlayArrow />
                 ) : (
                   <UI.Icons.Pause />
                 )}
               </UI.IconButton>
-              <UI.IconButton
-                onClick={() =>
-                  dispatch({
-                    group: "Snake",
-                    type: "ClickedRestart",
-                  })
-                }
-              >
+              <UI.IconButton onClick={() => dispatch(["ClickedRestart"])}>
                 <UI.Icons.RestartAlt />
               </UI.IconButton>
             </>
@@ -408,20 +385,16 @@ const Canvas = ({
         }}
         ref={ref}
         onMouseDown={() => {
-          dispatch({ group: "Snake", type: "MouseDownBoard" });
+          dispatch(["MouseDownBoard"]);
         }}
         onMouseUp={() => {
-          dispatch({ group: "Snake", type: "MouseUpBoard" });
+          dispatch(["MouseUpBoard"]);
         }}
         onMouseMove={(event) => {
           if (model.mouseStatus === "active") {
             const x = event.clientX;
             const y = event.clientY;
-            dispatch({
-              group: "Snake",
-              type: "MouseMovedBoard",
-              position: { x, y },
-            });
+            dispatch(["MouseMovedBoard", { x, y }]);
           }
         }}
         onClick={() => {}}
@@ -430,11 +403,7 @@ const Canvas = ({
           if (touch) {
             const x = touch.clientX;
             const y = touch.clientY;
-            dispatch({
-              group: "Snake",
-              type: "TouchMoveBoard",
-              position: { x, y },
-            });
+            dispatch(["TouchMoveBoard", { x, y }]);
           }
         }}
       />
@@ -584,8 +553,8 @@ export const playSound = (src: string) => {
     Audio.play(src),
     Cmd.fromTask(
       Result.fold<{}, {}, Msg>(
-        () => ({ group: "Snake", type: "AudioFailed" }),
-        () => ({ group: "Snake", type: "AudioSucceeded" }),
+        () => ["AudioFailed"],
+        () => ["AudioSucceeded"],
       ),
     ),
   );

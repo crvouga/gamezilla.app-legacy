@@ -47,28 +47,28 @@ export const init: Model = {
 //
 
 export type Msg =
-  | { type: "ClickedBack" }
-  | { type: "InputtedEmailAddress"; emailAddress: string }
-  | { type: "InputtedPassword"; password: string }
-  | { type: "ClickedTogglePasswordVisibility" }
-  | { type: "FocusResulted"; result: Browser.FocusResult }
-  | { type: "ClickedLogin" }
-  | { type: "ClickedCreateAccount" }
-  | { type: "ClickedResetPassword" }
-  | { type: "LoginResulted"; result: Session.LoginResult };
+  | ["ClickedBack"]
+  | ["ClickedTogglePasswordVisibility"]
+  | ["ClickedLogin"]
+  | ["ClickedCreateAccount"]
+  | ["ClickedResetPassword"]
+  | ["InputtedEmailAddress", string]
+  | ["InputtedPassword", string]
+  | ["FocusResulted", Browser.FocusResult]
+  | ["LoginResulted", Session.LoginResult];
 
 const passwordFieldId = "password";
 
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
-  switch (msg.type) {
+  switch (msg[0]) {
     case "ClickedBack":
       return [model, Route.back];
 
     case "InputtedEmailAddress":
-      return [{ ...model, emailAddress: msg.emailAddress }, Cmd.None];
+      return [{ ...model, emailAddress: msg[1] }, Cmd.None];
 
     case "InputtedPassword": {
-      return [{ ...model, password: msg.password }, Cmd.None];
+      return [{ ...model, password: msg[1] }, Cmd.None];
     }
 
     case "ClickedTogglePasswordVisibility":
@@ -79,7 +79,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
         },
         pipe(
           Browser.focus(passwordFieldId),
-          Cmd.fromTask((result) => ({ type: "FocusResulted", result })),
+          Cmd.fromTask((result) => ["FocusResulted", result]),
         ),
       ];
 
@@ -97,19 +97,19 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
             emailAddress: model.emailAddress,
             password: model.password,
           }),
-          Cmd.fromTask((result) => ({ type: "LoginResulted", result })),
+          Cmd.fromTask((result) => ["LoginResulted", result]),
         ),
       ];
 
     case "LoginResulted":
-      switch (msg.result.type) {
+      switch (msg[1].type) {
         case "Err":
           return [
             {
               ...model,
               submission: {
                 type: "Problem",
-                message: msg.result.error.message,
+                message: msg[1].error.message,
               },
             },
             Cmd.None,
@@ -152,9 +152,7 @@ export const view =
       <UI.Page>
         <UI.Header
           left={
-            <UI.HeaderBackButton
-              onClick={() => dispatch({ type: "ClickedBack" })}
-            />
+            <UI.HeaderBackButton onClick={() => dispatch(["ClickedBack"])} />
           }
           title="Continue With Email"
         />
@@ -177,10 +175,7 @@ export const view =
             label="Email Address"
             value={model.emailAddress}
             onChange={(event) => {
-              dispatch({
-                type: "InputtedEmailAddress",
-                emailAddress: event.target.value,
-              });
+              dispatch(["InputtedEmailAddress", event.target.value]);
             }}
           />
 
@@ -192,17 +187,14 @@ export const view =
             label="Password"
             value={model.password}
             onChange={(event) => {
-              dispatch({
-                type: "InputtedPassword",
-                password: event.target.value,
-              });
+              dispatch(["InputtedPassword", event.target.value]);
             }}
             InputProps={{
               endAdornment: (
                 <UI.InputAdornment position="end">
                   <UI.Button
                     onClick={() =>
-                      dispatch({ type: "ClickedTogglePasswordVisibility" })
+                      dispatch(["ClickedTogglePasswordVisibility"])
                     }
                   >
                     {model.passwordVisibility === "Hiding" ? "Show" : "Hide"}
@@ -217,7 +209,7 @@ export const view =
             size="large"
             fullWidth
             loading={model.submission.type === "Loading"}
-            onClick={() => dispatch({ type: "ClickedLogin" })}
+            onClick={() => dispatch(["ClickedLogin"])}
           >
             Login
           </UI.Button>
@@ -236,7 +228,7 @@ export const view =
 
           <UI.Button
             sx={{ marginBottom: 2 }}
-            onClick={() => dispatch({ type: "ClickedCreateAccount" })}
+            onClick={() => dispatch(["ClickedCreateAccount"])}
           >
             Create Account
           </UI.Button>
@@ -244,7 +236,7 @@ export const view =
             Forgot password?
           </UI.Typography>
 
-          <UI.Button onClick={() => dispatch({ type: "ClickedResetPassword" })}>
+          <UI.Button onClick={() => dispatch(["ClickedResetPassword"])}>
             Reset Password
           </UI.Button>
         </UI.Box>

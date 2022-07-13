@@ -492,7 +492,17 @@ export const withDebugger = <Model, Msg, Dom>(
       return;
     }
 
-    connection.send(state.msg, state.model);
+    const toTypeString = (action: unknown): string => {
+      if (Array.isArray(action) && typeof action[0] === "string") {
+        return `${action[0]}.${toTypeString(action[1])}`;
+      }
+      return "";
+    };
+
+    const action = { type: toTypeString(state.msg), payload: state.msg };
+
+    // @ts-ignore
+    connection.send(action, state.model);
   });
 
   // Todo put somewhere else has nothing do to with redux dev tools

@@ -40,44 +40,12 @@ export const init = (): [Model, Cmd.Cmd<Msg>] => [
 //
 //
 
-export type Msg = GotSession | LoginResulted | LogoutResulted;
+export type Msg =
+  | ["GotSession", Option.Option<Session>]
+  | ["LoginResulted", Result.Result<{}, {}>]
+  | ["LogoutResulted", Result.Result<{}, {}>];
 
-export type Action = Logout;
-
-const GotSession = (session: Option.Option<Session>) => {
-  return {
-    group: "Session",
-    type: "GotSession",
-    session,
-  } as const;
-};
-type GotSession = ReturnType<typeof GotSession>;
-
-const LoginResulted = (result: Result.Result<{}, {}>) => {
-  return {
-    group: "Session",
-    type: "LoginResulted",
-    result,
-  } as const;
-};
-type LoginResulted = ReturnType<typeof LoginResulted>;
-
-const LogoutResulted = (result: Result.Result<{}, {}>) => {
-  return {
-    group: "Session",
-    type: "LogoutResulted",
-    result,
-  } as const;
-};
-type LogoutResulted = ReturnType<typeof LogoutResulted>;
-
-export const Logout = () => {
-  return {
-    group: "Session",
-    type: "Logout",
-  } as const;
-};
-export type Logout = ReturnType<typeof Logout>;
+export type Action = ["Logout"];
 
 //
 //
@@ -88,21 +56,21 @@ export type Logout = ReturnType<typeof Logout>;
 //
 
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
-  switch (msg.type) {
+  switch (msg[0]) {
     case "GotSession":
-      switch (msg.session.type) {
+      switch (msg[1].type) {
         case "None":
           return [{ type: "LoggedOut" }, Cmd.None];
 
         case "Some":
-          return [{ type: "LoggedIn", ...msg.session.value }, Cmd.None];
+          return [{ type: "LoggedIn", ...msg[1].value }, Cmd.None];
       }
 
     case "LoginResulted":
       return [model, Cmd.None];
 
     case "LogoutResulted":
-      switch (msg.result.type) {
+      switch (msg[1].type) {
         case "Err":
           return [model, Cmd.None];
 
@@ -116,9 +84,15 @@ export const runAction = (
   action: Action,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
-  switch (action.type) {
+  switch (action[0]) {
     case "Logout":
-      return [model, pipe(logout, Cmd.fromTask(LogoutResulted))];
+      return [
+        model,
+        pipe(
+          logout,
+          Cmd.fromTask((result): Msg => ["LogoutResulted", result]),
+        ),
+      ];
   }
 };
 
@@ -233,8 +207,8 @@ export const fromSupabaseSession = (session: Supabase.Session | null): Msg => {
     "";
 
   if (userId) {
-    return GotSession(Option.Some({ userId, defaultName }));
+    return ["GotSession", Option.Some({ userId, defaultName })];
   }
 
-  return GotSession(Option.None);
+  return ["GotSession", Option.None];
 };

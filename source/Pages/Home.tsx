@@ -23,26 +23,17 @@ export const init: Model = {};
 //
 //
 
-export type Msg =
-  | { type: "UserClickedAvatar" }
-  | { type: "UserClickedChatButton" }
-  | { type: "UserClickedGame"; game: Games.Game };
+export type Msg = ["ClickedGame", Games.Game];
 
-export type OutAction = Games.Action;
+export type OutAction = ["Games", Games.Action];
 
 export const update = (
   msg: Msg,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
-  switch (msg.type) {
-    case "UserClickedAvatar":
-      return [model, Route.push({ type: "Account" }), []];
-
-    case "UserClickedGame":
-      return [model, Cmd.None, [Games.Open(msg.game)]];
-
-    case "UserClickedChatButton":
-      return [model, Route.push({ type: "Chat" }), []];
+  switch (msg[0]) {
+    case "ClickedGame":
+      return [model, Cmd.None, [["Games", Games.Open(msg[1])]]];
   }
 };
 
@@ -89,38 +80,28 @@ export const view =
             icon={<Games.TicTacToe.Icon />}
             label="Tic Tac Toe"
             disabled={!canOpen(game, "TicTacToe")}
-            onClick={() =>
-              dispatch({
-                type: "UserClickedGame",
-                game: "TicTacToe",
-              })
-            }
+            onClick={() => dispatch(["ClickedGame", "TicTacToe"])}
           />
 
           <GameCard
             icon={<Games.ConnectFour.Icon id="homepage" />}
             label="Connect Four"
             disabled={!canOpen(game, "ConnectFour")}
-            onClick={() =>
-              dispatch({
-                type: "UserClickedGame",
-                game: "ConnectFour",
-              })
-            }
+            onClick={() => dispatch(["ClickedGame", "ConnectFour"])}
           />
 
-          {/* <GameCard
+          <GameCard
             icon={<Games.Chess.Icon />}
             label="Chess"
             disabled={!canOpen(game, "Chess")}
-            onClick={() => dispatch({ type: "UserClickedGame", game: "Chess" })}
-          /> */}
+            onClick={() => dispatch(["ClickedGame", "Chess"])}
+          />
 
           <GameCard
             icon={<Games.Snake.Icon />}
             label="Snake"
             disabled={!canOpen(game, "Snake")}
-            onClick={() => dispatch({ type: "UserClickedGame", game: "Snake" })}
+            onClick={() => dispatch(["ClickedGame", "Snake"])}
           />
         </UI.Box>
       </UI.Page>

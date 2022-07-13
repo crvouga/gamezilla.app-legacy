@@ -1,5 +1,4 @@
 import * as Route from "Route";
-import * as Snackbar from "Snackbar";
 import * as Supabase from "Supabase";
 import { Cmd, Option, RemoteData, Result, Task, pipe } from "Core";
 import produce from "immer";
@@ -139,12 +138,7 @@ export type FindOneResulted = ReturnType<typeof FindOneResulted>;
 //
 //
 
-type OutAction = Snackbar.Action;
-
-export const update = (
-  msg: Msg,
-  model: Store,
-): [Store, Cmd.Cmd<Msg>, OutAction[]] => {
+export const update = (msg: Msg, model: Store): [Store, Cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "Conversation/FindOneResulted": {
       const modelNew = produce(model, (model) => {
@@ -177,7 +171,7 @@ export const update = (
         }
       });
 
-      return [modelNew, Cmd.None, []];
+      return [modelNew, Cmd.None];
     }
 
     case "Conversation/FindManyByUserIdResulted": {
@@ -212,7 +206,7 @@ export const update = (
         }
       });
 
-      return [modelNew, Cmd.None, []];
+      return [modelNew, Cmd.None];
     }
 
     case "Conversation/FindOneElseInsertResulted":
@@ -245,7 +239,7 @@ export const update = (
             })
           : Cmd.None;
 
-      return [modelNew, cmdNew, []];
+      return [modelNew, cmdNew];
   }
 };
 

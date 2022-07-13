@@ -35,7 +35,7 @@ export const init = (): [Model, Cmd.Cmd<Msg>, Action[]] => {
       highlightedIndex: "None",
     },
     Cmd.None,
-    [Store.Profile.Search(searchText)],
+    [["Store", Store.Profile.Search(searchText)]],
   ];
 };
 
@@ -48,27 +48,27 @@ export const init = (): [Model, Cmd.Cmd<Msg>, Action[]] => {
 //
 
 export type Msg =
-  | { type: "ClickedCancel" }
-  | { type: "InputtedSearch"; searchText: string }
-  | { type: "ClickedResult"; userId: string }
-  | { type: "ClickedSelectedDelete"; userId: string }
-  | { type: "ClickedChat" }
-  | { type: "PressedKeyDown"; key: Keyboard.ArrowKey | Keyboard.EnterKey };
+  | ["ClickedCancel"]
+  | ["ClickedChat"]
+  | ["InputtedSearch", string]
+  | ["ClickedResult", { userId: string }]
+  | ["ClickedSelectedDelete", { userId: string }]
+  | ["PressedKeyDown", Keyboard.ArrowKey | Keyboard.EnterKey];
 
-export type Action = Store.Action;
+export type Action = ["Store", Store.Action];
 
 export const update = (
   { authUserId, store }: { authUserId: string; store: Store.Model },
   msg: Msg,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>, Action[]] => {
-  switch (msg.type) {
+  switch (msg[0]) {
     case "ClickedChat":
       const userIds = Object.values(model.selected);
       return [
         model,
         Cmd.None,
-        [Store.Conversation.FindOneElseInsert(authUserId, userIds)],
+        [["Store", Store.Conversation.FindOneElseInsert(authUserId, userIds)]],
       ];
 
     case "ClickedCancel":
@@ -78,21 +78,21 @@ export const update = (
       return [
         {
           ...model,
-          searchText: msg.searchText,
+          searchText: msg[1],
           highlightedIndex: "None",
         },
         Cmd.None,
-        [Store.Profile.Search(msg.searchText)],
+        [["Store", Store.Profile.Search(msg[1])]],
       ];
 
     case "ClickedSelectedDelete":
-      const selectedNew = removeKey(msg.userId, model.selected);
+      const selectedNew = removeKey(msg[1].userId, model.selected);
       return [{ ...model, selected: selectedNew }, Cmd.None, []];
 
     case "PressedKeyDown":
       const profiles = Store.Profile.toSearch(model.searchText, store);
 
-      switch (msg.key) {
+      switch (msg[1]) {
         case "ArrowDown":
           return [
             {
@@ -138,7 +138,7 @@ export const update = (
       }
 
     case "ClickedResult":
-      const [modelNew, cmdNew, actions] = toggleSelected(msg.userId, model);
+      const [modelNew, cmdNew, actions] = toggleSelected(msg[1].userId, model);
       return [{ ...modelNew, highlightedIndex: "None" }, cmdNew, actions];
   }
 };
@@ -181,10 +181,10 @@ const toggleSelected = (
 //
 //
 
-export const subscriptions = (model: Model): Sub.Sub<Msg> => {
+export const subscriptions = (_model: Model): Sub.Sub<Msg> => {
   return Keyboard.keyDowns((key) =>
     Keyboard.isArrowKey(key) || Keyboard.isEnterKey(key)
-      ? { type: "PressedKeyDown", key }
+      ? ["PressedKeyDown", key]
       : Keyboard.SkipFlag,
   );
 };
@@ -229,9 +229,7 @@ export const view =
       <UI.Page>
         <UI.Header
           left={
-            <UI.HeaderBackButton
-              onClick={() => dispatch({ type: "ClickedCancel" })}
-            />
+            <UI.HeaderBackButton onClick={() => dispatch(["ClickedCancel"])} />
           }
           title="New message"
           right={
@@ -239,7 +237,7 @@ export const view =
               size="large"
               disabled={Object.values(model.selected).length === 0}
               sx={{ marginRight: -1 }}
-              onClick={() => dispatch({ type: "ClickedChat" })}
+              onClick={() => dispatch(["ClickedChat"])}
               loading={mutation.type === "Loading"}
             >
               Chat
@@ -266,10 +264,12 @@ export const view =
               key={profile.userId}
               label={profile.username}
               onDelete={() => {
-                dispatch({
-                  type: "ClickedSelectedDelete",
-                  userId: profile.userId,
-                });
+                dispatch([
+                  "ClickedSelectedDelete",
+                  {
+                    userId: profile.userId,
+                  },
+                ]);
               }}
             />
           ))}
@@ -283,10 +283,7 @@ export const view =
             }}
             onChange={(event) => {
               const searchText = event.currentTarget.value;
-              dispatch({
-                type: "InputtedSearch",
-                searchText,
-              });
+              dispatch(["InputtedSearch", searchText]);
             }}
           />
         </UI.Box>
@@ -305,10 +302,12 @@ export const view =
               key={profile.userId}
               profile={profile}
               onClick={() => {
-                dispatch({
-                  type: "ClickedResult",
-                  userId: profile.userId,
-                });
+                dispatch([
+                  "ClickedResult",
+                  {
+                    userId: profile.userId,
+                  },
+                ]);
               }}
               selected={profile.userId in model.selected}
               highlighted={

@@ -26,14 +26,14 @@ export type BackendModel = {
 };
 
 export type FrontendMsg =
-  | Route.Msg
-  | Snackbar.Msg
-  | Games.Msg
-  | Store.Msg
-  | Session.Msg
-  | Pages.Msg
-  | Connection.Msg
-  | Counter.FrontendMsg;
+  | ["Route", Route.Msg]
+  | ["Snackbar", Snackbar.Msg]
+  | ["Game", Games.Msg]
+  | ["Store", Store.Msg]
+  | ["Session", Session.Msg]
+  | ["Page", Pages.Msg]
+  | ["Connection", Connection.Msg]
+  | ["Counter", Counter.FrontendMsg];
 
 export type ToBackend = Counter.ToBackend;
 

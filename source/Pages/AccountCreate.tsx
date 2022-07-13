@@ -62,20 +62,20 @@ export const init = (): [Model, Cmd.Cmd<Msg>] => {
 //
 
 export type Msg =
-  | { type: "ClickedBack" }
-  | { type: "ClickedLogin" }
-  | { type: "InputtedEmailAddress"; emailAddress: string }
-  | { type: "InputtedPassword"; password: string }
-  | { type: "ClickedTogglePasswordVisibility" }
-  | { type: "ClickedCreateAccount" }
-  | { type: "CreateAccountResulted"; result: Store.Account.CreateResult }
-  | { type: "FocusResulted"; result: Browser.FocusResult };
+  | ["ClickedBack"]
+  | ["ClickedLogin"]
+  | ["ClickedTogglePasswordVisibility"]
+  | ["ClickedCreateAccount"]
+  | ["InputtedEmailAddress", string]
+  | ["InputtedPassword", string]
+  | ["CreateAccountResulted", Store.Account.CreateResult]
+  | ["FocusResulted", Browser.FocusResult];
 
 const emailAddressId = "emailAddress";
 const passwordId = "password";
 
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
-  switch (msg.type) {
+  switch (msg[0]) {
     case "ClickedBack":
       return [model, Route.back];
 
@@ -87,7 +87,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
             model.submission.type === "ProblemValidation"
               ? { ...model.submission, password: [] }
               : model.submission,
-          password: msg.password,
+          password: msg[1],
         },
         Cmd.None,
       ];
@@ -101,7 +101,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
             model.submission.type === "ProblemValidation"
               ? { ...model.submission, emailAddress: [] }
               : model.submission,
-          emailAddress: msg.emailAddress,
+          emailAddress: msg[1],
         },
         Cmd.None,
       ];
@@ -118,7 +118,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
         },
         pipe(
           Browser.focus(passwordId),
-          Cmd.fromTask((result) => ({ type: "FocusResulted", result })),
+          Cmd.fromTask((result) => ["FocusResulted", result]),
         ),
       ];
 
@@ -140,7 +140,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
           { ...model, submission: submissionNew },
           pipe(
             Browser.focus(focusId),
-            Cmd.fromTask((result) => ({ type: "FocusResulted", result })),
+            Cmd.fromTask((result) => ["FocusResulted", result]),
           ),
         ];
       }
@@ -152,20 +152,21 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
             emailAddress: emailAddress.value,
             password: password.value,
           }),
-          Cmd.fromTask((result) => ({ type: "CreateAccountResulted", result })),
+          Cmd.fromTask((result) => ["CreateAccountResulted", result]),
         ),
       ];
     }
 
     case "CreateAccountResulted": {
-      switch (msg.result.type) {
+      const result = msg[1];
+      switch (result.type) {
         case "Err":
           return [
             {
               ...model,
               submission: {
                 type: "Problem",
-                message: msg.result.error.message,
+                message: result.error.message,
               },
             },
             Cmd.None,
@@ -205,9 +206,7 @@ export const view =
       <UI.Page>
         <UI.Header
           left={
-            <UI.HeaderBackButton
-              onClick={() => dispatch({ type: "ClickedBack" })}
-            />
+            <UI.HeaderBackButton onClick={() => dispatch(["ClickedBack"])} />
           }
           title="Create Account"
         />
@@ -225,10 +224,7 @@ export const view =
             label="Email Address"
             value={model.emailAddress}
             onChange={(event) =>
-              dispatch({
-                type: "InputtedEmailAddress",
-                emailAddress: event.target.value,
-              })
+              dispatch(["InputtedEmailAddress", event.target.value])
             }
             error={
               model.submission.type === "ProblemValidation" &&
@@ -249,10 +245,7 @@ export const view =
             label="Password"
             value={model.password}
             onChange={(event) =>
-              dispatch({
-                type: "InputtedPassword",
-                password: event.target.value,
-              })
+              dispatch(["InputtedPassword", event.target.value])
             }
             error={
               model.submission.type === "ProblemValidation" &&
@@ -268,7 +261,7 @@ export const view =
                 <UI.InputAdornment position="end">
                   <UI.Button
                     onClick={() =>
-                      dispatch({ type: "ClickedTogglePasswordVisibility" })
+                      dispatch(["ClickedTogglePasswordVisibility"])
                     }
                   >
                     {model.passwordVisibility === "Hiding" ? "Show" : "Hide"}
@@ -281,7 +274,7 @@ export const view =
           <UI.Button
             variant="contained"
             loading={model.submission.type === "Loading"}
-            onClick={() => dispatch({ type: "ClickedCreateAccount" })}
+            onClick={() => dispatch(["ClickedCreateAccount"])}
           >
             Create Account
           </UI.Button>
@@ -296,7 +289,7 @@ export const view =
           <UI.Typography align="center" color="text.secondary">
             Already have an account?
           </UI.Typography>
-          <UI.Button onClick={() => dispatch({ type: "ClickedLogin" })}>
+          <UI.Button onClick={() => dispatch(["ClickedLogin"])}>
             Login
           </UI.Button>
         </UI.Box>

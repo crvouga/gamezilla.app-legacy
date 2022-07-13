@@ -73,12 +73,7 @@ export type Action = Profile.Msg | Conversation.Action | Message.Action;
 //
 //
 
-type OutAction = Snackbar.Action | Profile.Action;
-
-export const update = (
-  msg: Msg,
-  model: Model,
-): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
+export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg.entity) {
     case "Conversation": {
       return Conversation.update(msg, model);
@@ -108,7 +103,7 @@ export const runAction = (
     }
 
     case "Profile": {
-      const [modelNew, cmdNew, _actions] = Profile.update(action, model);
+      const [modelNew, cmdNew] = Profile.update(action, model);
 
       return [modelNew, cmdNew];
     }

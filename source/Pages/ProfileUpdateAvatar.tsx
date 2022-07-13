@@ -38,24 +38,24 @@ export const init = ({ avatarUrl }: { avatarUrl: string }): Model => {
 //
 
 export type Msg =
-  | { type: "UserClickedCancelButton" }
-  | { type: "UserClickedDoneButton" }
-  | { type: "StyleSelectClosed" }
-  | { type: "StyleSelectOpened" }
-  | { type: "UserSelectedStyle"; style: ProfileAvatar.Style }
-  | { type: "UserEnteredSeed"; seed: ProfileAvatar.Seed }
-  | { type: "UserClickedRandomSeedButton" }
-  | { type: "RandomSeedGenerated"; seed: ProfileAvatar.Seed };
+  | ["ClickedCancel"]
+  | ["ClickedDone"]
+  | ["StyleSelectClosed"]
+  | ["StyleSelectOpened"]
+  | ["ClickedRandomSeed"]
+  | ["ClickedStyle", ProfileAvatar.Style]
+  | ["InputtedSeed", ProfileAvatar.Seed]
+  | ["RandomSeedGenerated", ProfileAvatar.Seed];
 
-type OutAction = Snackbar.Action | Store.Action;
+type OutAction = ["Snackbar", Snackbar.Action] | ["Store", Store.Action];
 
 export const update = (
   { userId }: { userId: string },
   msg: Msg,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
-  switch (msg.type) {
-    case "UserClickedCancelButton":
+  switch (msg[0]) {
+    case "ClickedCancel":
       return [model, Route.back, []];
 
     case "StyleSelectClosed":
@@ -64,36 +64,36 @@ export const update = (
     case "StyleSelectOpened":
       return [{ ...model, status: "StyleSelectOpened" }, Cmd.None, []];
 
-    case "UserEnteredSeed":
-      return [{ ...model, seed: msg.seed }, Cmd.None, []];
+    case "InputtedSeed":
+      return [{ ...model, seed: msg[1] }, Cmd.None, []];
 
-    case "UserClickedRandomSeedButton":
+    case "ClickedRandomSeed":
       return [
         { ...model, status: "GeneratingSeed" },
         pipe(
           ProfileAvatar.generateRandomSeed,
-          Cmd.fromTask((seed) => ({
-            type: "RandomSeedGenerated",
-            seed,
-          })),
+          Cmd.fromTask((seed) => ["RandomSeedGenerated", seed]),
         ),
         [],
       ];
 
     case "RandomSeedGenerated":
-      return [{ ...model, status: "Idle", seed: msg.seed }, Cmd.None, []];
+      return [{ ...model, status: "Idle", seed: msg[1] }, Cmd.None, []];
 
-    case "UserSelectedStyle":
-      return [{ ...model, style: msg.style }, Cmd.None, []];
+    case "ClickedStyle":
+      return [{ ...model, style: msg[1] }, Cmd.None, []];
 
-    case "UserClickedDoneButton":
+    case "ClickedDone":
       return [
         { ...model },
         Route.back,
         [
-          Store.Profile.Edit(userId, {
-            avatarUrl: ProfileAvatar.toUrl(model),
-          }),
+          [
+            "Store",
+            Store.Profile.Edit(userId, {
+              avatarUrl: ProfileAvatar.toUrl(model),
+            }),
+          ],
         ],
       ];
   }
@@ -114,7 +114,7 @@ export const view = (model: Model): UI.View<Msg> => {
         left={
           <UI.Button
             sx={{ marginLeft: -1 }}
-            onClick={() => dispatch({ type: "UserClickedCancelButton" })}
+            onClick={() => dispatch(["ClickedCancel"])}
           >
             Cancel
           </UI.Button>
@@ -123,7 +123,7 @@ export const view = (model: Model): UI.View<Msg> => {
         right={
           <UI.Button
             sx={{ marginRight: -1 }}
-            onClick={() => dispatch({ type: "UserClickedDoneButton" })}
+            onClick={() => dispatch(["ClickedDone"])}
           >
             Done
           </UI.Button>
@@ -154,8 +154,8 @@ export const view = (model: Model): UI.View<Msg> => {
           open={model.status === "StyleSelectOpened"}
           fullWidth
           value={model.style}
-          onOpen={() => dispatch({ type: "StyleSelectOpened" })}
-          onClose={() => dispatch({ type: "StyleSelectClosed" })}
+          onOpen={() => dispatch(["StyleSelectOpened"])}
+          onClose={() => dispatch(["StyleSelectClosed"])}
           renderValue={(style) => (
             <UI.Box
               sx={{
@@ -184,12 +184,7 @@ export const view = (model: Model): UI.View<Msg> => {
                 flexDirection: "row",
                 alignItems: "center",
               }}
-              onClick={() =>
-                dispatch({
-                  type: "UserSelectedStyle",
-                  style,
-                })
-              }
+              onClick={() => dispatch(["ClickedStyle", style])}
             >
               <UI.Avatar
                 sx={{ marginRight: 1 }}
@@ -211,10 +206,10 @@ export const view = (model: Model): UI.View<Msg> => {
           fullWidth
           value={model.seed}
           onChange={(event) =>
-            dispatch({
-              type: "UserEnteredSeed",
-              seed: ProfileAvatar.toSeed(event.currentTarget.value),
-            })
+            dispatch([
+              "InputtedSeed",
+              ProfileAvatar.toSeed(event.currentTarget.value),
+            ])
           }
           sx={{ marginBottom: 2 }}
         />
@@ -223,7 +218,7 @@ export const view = (model: Model): UI.View<Msg> => {
           loading={model.status === "GeneratingSeed"}
           fullWidth
           variant="outlined"
-          onClick={() => dispatch({ type: "UserClickedRandomSeedButton" })}
+          onClick={() => dispatch(["ClickedRandomSeed"])}
           sx={{ marginBottom: 4 }}
         >
           Random Seed

@@ -24,30 +24,34 @@ export const init: [Model, Cmd.Cmd<Msg>, OutAction[]] = [{}, Cmd.None, []];
 //
 
 export type Msg =
-  | { type: "UserClickedCancelButton" }
-  | { type: "UserClickedBackdrop" }
-  | { type: "UserClickedDeleteButton" }
-  | { type: "ClickedCloseFailureAlert" };
+  | ["ClickedCancel"]
+  | ["ClickedBackdrop"]
+  | ["ClickedDelete"]
+  | ["ClickedCloseFailure"];
 
-export type OutAction = Store.Action;
+export type OutAction = ["Store", Store.Action];
 
 export const update = (
   { userId }: { userId: string },
   msg: Msg,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
-  switch (msg.type) {
-    case "UserClickedCancelButton":
+  switch (msg[0]) {
+    case "ClickedCancel":
       return [model, Route.back, []];
 
-    case "UserClickedBackdrop":
+    case "ClickedBackdrop":
       return [model, Route.back, []];
 
-    case "UserClickedDeleteButton":
-      return [model, Cmd.None, [Store.Profile.DeleteForever(userId)]];
+    case "ClickedDelete":
+      return [
+        model,
+        Cmd.None,
+        [["Store", Store.Profile.DeleteForever(userId)]],
+      ];
 
-    case "ClickedCloseFailureAlert":
-      return [model, Cmd.None, [Store.Profile.ResetMutations()]];
+    case "ClickedCloseFailure":
+      return [model, Cmd.None, [["Store", Store.Profile.ResetMutations()]]];
   }
 };
 
@@ -90,7 +94,7 @@ export const view =
                   size="large"
                   color="inherit"
                   startIcon={<UI.Icons.Close />}
-                  onClick={() => dispatch({ type: "ClickedCloseFailureAlert" })}
+                  onClick={() => dispatch(["ClickedCloseFailure"])}
                 >
                   Close
                 </UI.Button>
@@ -104,10 +108,10 @@ export const view =
         return UI.conformationDialog<Msg>({
           open: true,
           title: "Delete profile forever?",
-          onClose: { type: "UserClickedBackdrop" },
-          onCancel: { type: "UserClickedCancelButton" },
           confirmTitle: "Delete",
-          onConfirm: { type: "UserClickedDeleteButton" },
+          onCancel: ["ClickedCancel"],
+          onClose: ["ClickedBackdrop"],
+          onConfirm: ["ClickedDelete"],
         })(dispatch);
     }
   };
