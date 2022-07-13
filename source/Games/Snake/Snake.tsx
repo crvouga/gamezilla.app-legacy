@@ -78,18 +78,17 @@ export const init: Model = {
 //
 
 export type Msg =
-  | { type: "Elapsed" }
-  | { type: "UserClickedBackButton" }
-  | { type: "UserClickedRestartButton" }
-  | { type: "UserClickedToggleButton" }
-  | { type: "UserPressedKeyDown"; key: Keyboard.Key }
-  | { type: "AudioFailed" }
-  | { type: "AudioSucceeded" }
-  | { type: "UserTouchMovedBoard"; position: Position.Position }
-  | { type: "UserMouseMovedBoard"; position: Position.Position }
-  | { type: "UserMouseDownBoard" }
-  | { type: "UserMouseUpBoard" }
-  | { type: "UserClickedRestartButton" };
+  | { group: "Snake"; type: "Elapsed" }
+  | { group: "Snake"; type: "ClickedBack" }
+  | { group: "Snake"; type: "ClickedRestart" }
+  | { group: "Snake"; type: "ClickedToggle" }
+  | { group: "Snake"; type: "PressedKeyDown"; key: Keyboard.Key }
+  | { group: "Snake"; type: "AudioFailed" }
+  | { group: "Snake"; type: "AudioSucceeded" }
+  | { group: "Snake"; type: "TouchMoveBoard"; position: Position.Position }
+  | { group: "Snake"; type: "MouseMovedBoard"; position: Position.Position }
+  | { group: "Snake"; type: "MouseDownBoard" }
+  | { group: "Snake"; type: "MouseUpBoard" };
 
 //
 //
@@ -115,7 +114,7 @@ const circular = (
 
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg.type) {
-    case "UserClickedRestartButton":
+    case "ClickedRestart":
       return [init, Cmd.None];
 
     case "Elapsed":
@@ -129,16 +128,16 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
           return [updatePlaying(model), Cmd.None];
       }
 
-    case "UserClickedBackButton":
+    case "ClickedBack":
       return [model, Route.back];
 
-    case "UserMouseUpBoard":
+    case "MouseUpBoard":
       return [{ ...model, mouseStatus: "inactive" }, Cmd.None];
 
-    case "UserMouseDownBoard":
+    case "MouseDownBoard":
       return [{ ...model, mouseStatus: "active" }, Cmd.None];
 
-    case "UserPressedKeyDown":
+    case "PressedKeyDown":
       const statusNew: Status =
         msg.key === "Space"
           ? model.status.type === "Paused"
@@ -156,7 +155,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
         Cmd.None,
       ];
 
-    case "UserClickedToggleButton":
+    case "ClickedToggle":
       switch (model.status.type) {
         case "Paused":
           return [{ ...model, status: { type: "Playing" } }, Cmd.None];
@@ -171,8 +170,8 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
     case "AudioSucceeded":
       return [model, Cmd.None];
 
-    case "UserMouseMovedBoard":
-    case "UserTouchMovedBoard":
+    case "MouseMovedBoard":
+    case "TouchMoveBoard":
       const previous = model.touched;
 
       if (!previous) {
@@ -292,13 +291,17 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
     case "Playing":
       return Sub.batch([
         keyDowns,
-        Time.every<Msg>(model.tickRate, () => ({ type: "Elapsed" })),
+        Time.every<Msg>(model.tickRate, () => ({
+          group: "Snake",
+          type: "Elapsed",
+        })),
       ]);
   }
 };
 
 const keyDowns = Keyboard.keyDowns<Msg>((key) => ({
-  type: "UserPressedKeyDown",
+  group: "Snake",
+  type: "PressedKeyDown",
   key,
 }));
 
@@ -325,7 +328,7 @@ export const view =
         <UI.Header
           left={
             <UI.HeaderBackButton
-              onClick={() => dispatch({ type: "UserClickedBackButton" })}
+              onClick={() => dispatch({ group: "Snake", type: "ClickedBack" })}
             />
           }
           title={
@@ -338,7 +341,8 @@ export const view =
               <UI.IconButton
                 onClick={() =>
                   dispatch({
-                    type: "UserClickedToggleButton",
+                    group: "Snake",
+                    type: "ClickedToggle",
                   })
                 }
               >
@@ -351,7 +355,8 @@ export const view =
               <UI.IconButton
                 onClick={() =>
                   dispatch({
-                    type: "UserClickedRestartButton",
+                    group: "Snake",
+                    type: "ClickedRestart",
                   })
                 }
               >
@@ -403,31 +408,31 @@ const Canvas = ({
         }}
         ref={ref}
         onMouseDown={() => {
-          dispatch({ type: "UserMouseDownBoard" });
+          dispatch({ group: "Snake", type: "MouseDownBoard" });
         }}
         onMouseUp={() => {
-          dispatch({ type: "UserMouseUpBoard" });
+          dispatch({ group: "Snake", type: "MouseUpBoard" });
         }}
         onMouseMove={(event) => {
           if (model.mouseStatus === "active") {
             const x = event.clientX;
             const y = event.clientY;
             dispatch({
-              type: "UserMouseMovedBoard",
+              group: "Snake",
+              type: "MouseMovedBoard",
               position: { x, y },
             });
           }
         }}
-        onClick={() => {
-          // dispatch({ type: "UserClicj" });
-        }}
+        onClick={() => {}}
         onTouchMove={(event) => {
           const touch = event.touches[0];
           if (touch) {
             const x = touch.clientX;
             const y = touch.clientY;
             dispatch({
-              type: "UserTouchMovedBoard",
+              group: "Snake",
+              type: "TouchMoveBoard",
               position: { x, y },
             });
           }
@@ -579,8 +584,8 @@ export const playSound = (src: string) => {
     Audio.play(src),
     Cmd.fromTask(
       Result.fold<{}, {}, Msg>(
-        () => ({ type: "AudioFailed" }),
-        () => ({ type: "AudioSucceeded" }),
+        () => ({ group: "Snake", type: "AudioFailed" }),
+        () => ({ group: "Snake", type: "AudioSucceeded" }),
       ),
     ),
   );

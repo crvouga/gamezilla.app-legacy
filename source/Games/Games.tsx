@@ -3,7 +3,7 @@ import * as Snackbar from "Snackbar";
 import * as UI from "UI";
 import { keyframes } from "@mui/system";
 import { Cmd, Sub, pipe } from "Core";
-import { exhaustive } from "Utility";
+import { andThen, exhaustive } from "Utility";
 import * as Chess from "./Chess";
 import * as ConnectFour from "./ConnectFour";
 import * as Snake from "./Snake";
@@ -36,7 +36,11 @@ type Opened = {
 export type Game = Opened["child"]["type"];
 
 //
-// init
+//
+//
+// Init
+//
+//
 //
 
 export const init: Model = { type: "Closed" };
@@ -67,50 +71,46 @@ const initGame = ({ game }: { game: Game }): Opened["child"] => {
 //
 //
 //
-// Update
+// Msg
 //
 //
 //
 
 export type Msg =
-  | { group: "Game"; type: "ClickedGameBannder" }
-  | { group: "Game"; type: "ClickedClose" }
+  | { group: "Game"; type: "ConfirmedClose" }
   | { group: "Game"; type: "CancelledClose" }
-  | { group: "Game"; type: "ConfirmedCloseGame" }
-  | ({ group: "Game" } & GameMsg);
+  | { group: "Game"; type: "ClickedClose" }
+  | { group: "Game"; type: "ClickedBanner" }
+  | GameMsg;
 
-type GameMsg =
-  | (Chess.Msg & { gameGroup: "Chess" })
-  | (ConnectFour.Msg & { gameGroup: "ConnectFour" })
-  | (TicTacToe.Msg & { gameGroup: "TicTacToe" })
-  | (Snake.Msg & { gameGroup: "Snake" });
+type GameMsg = Chess.Msg | ConnectFour.Msg | TicTacToe.Msg | Snake.Msg;
 
-type OutMsg = Snackbar.Action;
+type OutAction = Snackbar.Action;
 
-const groupGameTag =
-  <Msg, GameName extends string>(gameName: GameName) =>
-  (msg: Msg): Msg & { gameGroup: GameName } => {
-    return { ...msg, gameGroup: gameName } as const;
-  };
+export type Action = Open | Close;
 
-export const OpenGame = (game: Game) => {
-  return {
-    group: "Game",
-    type: "OpenGame",
-    game,
-  } as const;
-};
+export const Open = (game: Game) =>
+  ({ group: "Game", type: "Open", game } as const);
+export type Open = ReturnType<typeof Open>;
 
-type OpenGame = ReturnType<typeof OpenGame>;
+export const Close = (game: Game) =>
+  ({ group: "Game", type: "Close", game } as const);
+export type Close = ReturnType<typeof Close>;
 
-export type Action = OpenGame;
+//
+//
+//
+// Update
+//
+//
+//
 
 export const runAction = (
   action: Action,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (action.type) {
-    case "OpenGame":
+    case "Open":
       if (model.type === "Closed") {
         return initOpened(action);
       }
@@ -120,13 +120,16 @@ export const runAction = (
       }
 
       return [model, Cmd.None];
+
+    case "Close":
+      return [model, Cmd.None];
   }
 };
 
 export const update = (
   msg: Msg,
   model: Model,
-): [Model, Cmd.Cmd<Msg>, OutMsg[]] => {
+): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (model.type) {
     case "Closed":
       return updateClosed(msg, model);
@@ -139,96 +142,66 @@ export const update = (
 const updateOpened = (
   msg: Msg,
   model: Opened,
-): [Model, Cmd.Cmd<Msg>, OutMsg[]] => {
-  if ("gameGroup" in msg) {
-    const [modelChild, CmdChild] = updateGame(msg, model.child);
+): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
+  switch (msg.group) {
+    case "Game": {
+      switch (msg.type) {
+        case "ClickedClose":
+          return [{ ...model, status: "ConfirmingClose" }, Cmd.None, []];
 
-    return [{ ...model, child: modelChild }, CmdChild, []];
-  }
+        case "ClickedBanner":
+          return [model, Route.push({ type: "Game" }), []];
 
-  switch (msg.type) {
-    case "ClickedClose":
-      return [{ ...model, status: "ConfirmingClose" }, Cmd.None, []];
+        case "CancelledClose":
+          return [{ ...model, status: "Idle" }, Cmd.None, []];
 
-    case "ClickedGameBannder":
-      return [model, Route.push({ type: "Game" }), []];
-
-    case "CancelledClose":
-      return [{ ...model, status: "Idle" }, Cmd.None, []];
-
-    case "ConfirmedCloseGame":
-      return [{ type: "Closed" }, Cmd.None, []];
+        case "ConfirmedClose":
+          return [{ type: "Closed" }, Cmd.None, []];
+      }
+    }
+    case "Chess":
+    case "ConnectFour":
+    case "Snake":
+    case "TicTacToe":
+      const [child, childCmd] = updateGame(msg, model.child);
+      return [{ ...model, child }, childCmd, []];
   }
 };
 
 const updateGame = (
   msg: GameMsg,
   model: Opened["child"],
-): [Opened["child"], Cmd.Cmd<Msg>] => {
+): [Opened["child"], Cmd.Cmd<GameMsg>] => {
   switch (model.type) {
     case "Chess":
-      if (msg.gameGroup === "Chess") {
-        const [modelChild, CmdChild] = Chess.update(msg, model.child);
-
-        return [
-          { type: "Chess", child: modelChild },
-          pipe(
-            CmdChild,
-            Cmd.map((msg) => ({ ...msg, gameGroup: "Chess", group: "Game" })),
-          ),
-        ];
+      if (msg.group === "Chess") {
+        const [modelChild, cmdChild] = Chess.update(msg, model.child);
+        return [{ type: "Chess", child: modelChild }, cmdChild];
       }
-
       return [model, Cmd.None];
 
     case "ConnectFour":
-      if (msg.gameGroup === "ConnectFour") {
-        const [modelChild, CmdChild] = ConnectFour.update(msg, model.child);
+      if (msg.group === "ConnectFour") {
+        const [modelChild, cmdChild] = ConnectFour.update(msg, model.child);
 
-        return [
-          { type: "ConnectFour", child: modelChild },
-          pipe(
-            CmdChild,
-            Cmd.map((msg) => ({
-              ...msg,
-              gameGroup: "ConnectFour",
-              group: "Game",
-            })),
-          ),
-        ];
+        return [{ type: "ConnectFour", child: modelChild }, cmdChild];
       }
       return [model, Cmd.None];
 
     case "TicTacToe":
-      if (msg.gameGroup === "TicTacToe") {
-        const [modelChild, CmdChild] = TicTacToe.update(msg, model.child);
+      if (msg.group === "TicTacToe") {
+        const [modelChild, cmdChild] = TicTacToe.update(msg, model.child);
 
-        return [
-          { type: "TicTacToe", child: modelChild },
-          pipe(
-            CmdChild,
-            Cmd.map((msg) => ({
-              ...msg,
-              gameGroup: "TicTacToe",
-              group: "Game",
-            })),
-          ),
-        ];
+        return [{ type: "TicTacToe", child: modelChild }, cmdChild];
       }
 
       return [model, Cmd.None];
 
     case "Snake":
-      if (msg.gameGroup === "Snake") {
-        const [modelChild, CmdChild] = Snake.update(msg, model.child);
+      if (msg.group === "Snake") {
+        const [modelChild, cmdChild] = Snake.update(msg, model.child);
 
-        return [
-          { type: "Snake", child: modelChild },
-          pipe(
-            CmdChild,
-            Cmd.map((msg) => ({ ...msg, gameGroup: "Snake", group: "Game" })),
-          ),
-        ];
+        return [{ type: "Snake", child: modelChild }, cmdChild];
       }
 
       return [model, Cmd.None];
@@ -241,7 +214,7 @@ const updateGame = (
 const updateClosed = (
   msg: Msg,
   model: Closed,
-): [Model, Cmd.Cmd<Msg>, OutMsg[]] => {
+): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   return [model, Cmd.None, []];
 };
 
@@ -267,10 +240,7 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
           return Sub.None;
 
         case "Snake":
-          return pipe(
-            Snake.subscriptions(model.child.child),
-            Sub.map((msg) => ({ ...msg, gameGroup: "Snake", group: "Game" })),
-          );
+          return Snake.subscriptions(model.child.child);
 
         case "TicTacToe":
           return Sub.None;
@@ -299,28 +269,16 @@ export const view = (model: Model): UI.View<Msg> => {
 const viewOpened = (model: Opened): UI.View<Msg> => {
   switch (model.child.type) {
     case "Chess":
-      return pipe(
-        Chess.view(model.child.child),
-        UI.map((msg) => ({ ...msg, gameGroup: "Chess", group: "Game" })),
-      );
+      return Chess.view(model.child.child);
 
     case "ConnectFour":
-      return pipe(
-        ConnectFour.view(model.child.child),
-        UI.map((msg) => ({ ...msg, gameGroup: "ConnectFour", group: "Game" })),
-      );
+      return ConnectFour.view(model.child.child);
 
     case "TicTacToe":
-      return pipe(
-        TicTacToe.view(model.child.child),
-        UI.map((msg) => ({ ...msg, gameGroup: "TicTacToe", group: "Game" })),
-      );
+      return TicTacToe.view(model.child.child);
 
     case "Snake":
-      return pipe(
-        Snake.view(model.child.child),
-        UI.map((msg) => ({ ...msg, gameGroup: "Snake", group: "Game" })),
-      );
+      return Snake.view(model.child.child);
   }
 };
 
@@ -354,9 +312,7 @@ export const viewBanner =
         >
           <UI.ButtonBase
             sx={{ flex: 1, margin: 0, padding: 0 }}
-            onClick={() =>
-              dispatch({ group: "Game", type: "ClickedGameBannder" })
-            }
+            onClick={() => dispatch({ group: "Game", type: "ClickedBanner" })}
           >
             <UI.Box sx={{ width: 64, marginRight: 2 }}>
               <GameIcon game={model.child.type} />
@@ -385,7 +341,7 @@ export const viewBanner =
           confirmTitle: `Close ${gameToName(model.child.type)}`,
           onClose: { group: "Game", type: "CancelledClose" },
           onCancel: { group: "Game", type: "CancelledClose" },
-          onConfirm: { group: "Game", type: "ConfirmedCloseGame" },
+          onConfirm: { group: "Game", type: "ConfirmedClose" },
         })(dispatch)}
       </>
     );

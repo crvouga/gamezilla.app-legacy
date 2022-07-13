@@ -1,7 +1,6 @@
 import * as Games from "Games";
 import * as UI from "UI";
-import { Cmd, pipe } from "Core";
-import { groupTag } from "Utility";
+import { Cmd } from "Core";
 
 //
 //
@@ -54,5 +53,5 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 //
 
 export const view = (model: Model): UI.View<Msg> => {
-  return pipe(Games.view(model), UI.map(groupTag("Game")));
+  return Games.view(model);
 };

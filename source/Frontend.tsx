@@ -200,6 +200,10 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
         pipe(snackbarCmd, Cmd.map(groupTag("Snackbar"))),
       ];
 
+    case "Chess":
+    case "TicTacToe":
+    case "ConnectFour":
+    case "Snake":
     case "Game": {
       const [gameNew, gameCmd, actions] = Games.update(msg, model.game);
 
@@ -490,7 +494,7 @@ export const view =
           }}
         >
           {Connection.view(model.connection)(dispatch)}
-          {Counter.view(model.counter)(dispatch)}
+          {/* {Counter.view(model.counter)(dispatch)} */}
           <UI.Box
             sx={{
               width: "100%",
