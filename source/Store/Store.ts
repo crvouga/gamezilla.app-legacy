@@ -63,8 +63,6 @@ export const init: Model = {
 
 export type Msg = Profile.Msg | Conversation.Msg | Message.Msg;
 
-export type GroupedMsg = Msg & { group: "Store" };
-
 export type Action = Profile.Msg | Conversation.Action | Message.Action;
 
 //

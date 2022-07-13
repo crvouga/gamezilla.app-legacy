@@ -341,8 +341,6 @@ export type Msg =
   | { type: "UserClickedBoard"; columnIndex: number }
   | { type: "UserClickedRestartButton" };
 
-export type GroupedMsg = { group: "ConnectFour" } & Msg;
-
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "UserClickedBackButton":
