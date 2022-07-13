@@ -43,27 +43,6 @@ export const unsafe_sendToBackend = (msg: unknown): Cmd.Cmd<never> => {
   });
 };
 
-const onConnected$ = new Rx.Subject<{ clientId: string }>();
-const onDisconnected$ = new Rx.Subject<{ clientId: string }>();
-
-export const onConnected = <Msg>(
-  mapper: (clientId: string) => Msg,
-): Sub.Sub<Msg> => {
-  return pipe(
-    onConnected$,
-    Sub.map(({ clientId }) => mapper(clientId)),
-  );
-};
-
-export const onDisconnected = <Msg>(
-  mapper: (clientId: string) => Msg,
-): Sub.Sub<Msg> => {
-  return pipe(
-    onDisconnected$,
-    Sub.map(({ clientId }) => mapper(clientId)),
-  );
-};
-
 //
 //
 //
@@ -77,16 +56,26 @@ export const backend = <Model, Msg, ToBackend>({
   update,
   updateFromFrontend,
   subscriptions,
+  onDisconnected,
+  onConnected,
 }: {
   init: [Model, Cmd.Cmd<Msg>];
   update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>];
   updateFromFrontend: (msg: ToBackend, model: Model) => [Model, Cmd.Cmd<Msg>];
   subscriptions: (model: Model) => Sub.Sub<Msg>;
+  onConnected: (clientId: string) => Msg;
+  onDisconnected: (clientId: string) => Msg;
 }): Platform.Program<Model, Msg> => {
+  const connectionMsg$ = new Rx.Subject<Msg>();
+
+  const subs = (model: Model): Sub.Sub<Msg> => {
+    return Sub.batch([connectionMsg$, subscriptions(model)]);
+  };
+
   const program = Platform.worker({
     init,
     update,
-    subscriptions,
+    subscriptions: subs,
   });
 
   import("socket.io").then((Socket) => {
@@ -113,10 +102,10 @@ export const backend = <Model, Msg, ToBackend>({
       });
 
       socket.on("disconnect", () => {
-        onDisconnected$.next({ clientId: socket.id });
+        connectionMsg$.next(onDisconnected(socket.id));
       });
 
-      onConnected$.next({ clientId: socket.id });
+      connectionMsg$.next(onConnected(socket.id));
     });
 
     //
@@ -156,7 +145,7 @@ export const backend = <Model, Msg, ToBackend>({
 //
 //
 
-export type FrontendSocket =
+export type ConnectionStatus =
   | { type: "Connecting" }
   | { type: "Reconnecting" }
   | { type: "Connected" }
@@ -164,7 +153,7 @@ export type FrontendSocket =
 
 export const frontend = <Model, Msg, Dom, ToFrontend>({
   onLocationChange,
-  onSocketChange,
+  onConnectionChange,
   init,
   update,
   updateFromBackend,
@@ -173,7 +162,7 @@ export const frontend = <Model, Msg, Dom, ToFrontend>({
   backendUrl,
 }: {
   onLocationChange: (location: Browser.Location) => Msg;
-  onSocketChange: (socket: FrontendSocket) => Msg;
+  onConnectionChange: (status: ConnectionStatus) => Msg;
   init: (location: Browser.Location) => [Model, Cmd.Cmd<Msg>];
   update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>];
   updateFromBackend: (msg: ToFrontend, model: Model) => [Model, Cmd.Cmd<Msg>];
@@ -181,10 +170,10 @@ export const frontend = <Model, Msg, Dom, ToFrontend>({
   subscriptions: (model: Model) => Sub.Sub<Msg>;
   backendUrl: string;
 }): Browser.Program<Model, Msg, Dom> => {
-  const socketChanged$ = new Rx.Subject<Msg>();
+  const connectionMsg$ = new Rx.Subject<Msg>();
 
   const subs = (model: Model): Sub.Sub<Msg> => {
-    return Sub.batch([socketChanged$, subscriptions(model)]);
+    return Sub.batch([connectionMsg$, subscriptions(model)]);
   };
 
   const program = Browser.application({
@@ -198,22 +187,22 @@ export const frontend = <Model, Msg, Dom, ToFrontend>({
   import("socket.io-client").then((Socket) => {
     const socket = Socket.io(backendUrl);
 
-    socketChanged$.next(onSocketChange({ type: "Connecting" }));
+    connectionMsg$.next(onConnectionChange({ type: "Connecting" }));
 
     socket.on("connect", () => {
-      socketChanged$.next(onSocketChange({ type: "Connected" }));
+      connectionMsg$.next(onConnectionChange({ type: "Connected" }));
     });
 
     socket.on("connect_error", () => {
-      socketChanged$.next(
-        onSocketChange({
+      connectionMsg$.next(
+        onConnectionChange({
           type: "Reconnecting",
         }),
       );
     });
 
     socket.on("diconnect", () => {
-      onSocketChange({ type: "Disconnected" });
+      onConnectionChange({ type: "Disconnected" });
     });
 
     //
