@@ -34,15 +34,17 @@ export const fold =
     }
   };
 
-export const withDefault = <T>(value: T, option: Option<T>): T => {
-  switch (option.type) {
-    case "None":
-      return value;
+export const withDefault =
+  <T>(fallback: T) =>
+  (option: Option<T>): T => {
+    switch (option.type) {
+      case "None":
+        return fallback;
 
-    case "Some":
-      return option.value;
-  }
-};
+      case "Some":
+        return option.value;
+    }
+  };
 
 export const fromNullable = <T>(value: T | null | undefined): Option<T> => {
   if (value === null) {
