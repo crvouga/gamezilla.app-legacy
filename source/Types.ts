@@ -42,3 +42,23 @@ export type ToBackend = Counter.ToBackend;
 export type BackendMsg = Counter.BackendMsg;
 
 export type ToFrontend = Counter.ToFrontend;
+
+//
+//
+//
+// Bridge
+//
+//
+//
+
+export const sendToFrontend = (clientId: string, msg: ToFrontend) => {
+  return Fullstack.unsafe_sendToFrontend<ToFrontend>(clientId, msg);
+};
+
+export const broadcast = (msg: ToFrontend) => {
+  return Fullstack.unsafe_broadcast<ToFrontend>(msg);
+};
+
+export const sendToBackend = (msg: ToBackend) => {
+  return Fullstack.unsafe_sendToBackend<ToBackend>(msg);
+};

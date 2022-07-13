@@ -1,6 +1,6 @@
 import * as UI from "UI";
-import { sendToBackend } from "Bridge";
-import { Cmd, Fullstack, Option, Sub, pipe } from "Core";
+import { Cmd, Option, Sub, pipe } from "Core";
+import { sendToBackend } from "Types";
 import { exhaustive } from "Utility";
 import { FrontendModel, FrontendMsg, ToFrontend } from "./Types";
 
