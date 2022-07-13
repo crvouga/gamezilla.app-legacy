@@ -52,13 +52,13 @@ export type ToFrontend = Counter.ToFrontend;
 //
 
 export const sendToFrontend = (clientId: string, msg: ToFrontend) => {
-  return Fullstack.unsafe_sendToFrontend<ToFrontend>(clientId, msg);
+  return Fullstack.unsafe_sendToFrontend(clientId, msg);
 };
 
 export const broadcast = (msg: ToFrontend) => {
-  return Fullstack.unsafe_broadcast<ToFrontend>(msg);
+  return Fullstack.unsafe_broadcast(msg);
 };
 
 export const sendToBackend = (msg: ToBackend) => {
-  return Fullstack.unsafe_sendToBackend<ToBackend>(msg);
+  return Fullstack.unsafe_sendToBackend(msg);
 };

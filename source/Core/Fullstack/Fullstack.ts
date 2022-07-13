@@ -19,18 +19,16 @@ const sendToFrontend$ = new Rx.Subject<{ clientId: string; msg: unknown }>();
 const broadcast$ = new Rx.Subject<{ msg: unknown }>();
 const sendToBackend$ = new Rx.Subject<{ msg: unknown }>();
 
-export const unsafe_broadcast = <ToFrontend>(
-  msg: ToFrontend,
-): Cmd.Cmd<never> => {
+export const unsafe_broadcast = (msg: unknown): Cmd.Cmd<never> => {
   return Rx.of(async () => {
     broadcast$.next({ msg });
     return Option.None;
   });
 };
 
-export const unsafe_sendToFrontend = <ToFrontend>(
+export const unsafe_sendToFrontend = (
   clientId: string,
-  msg: ToFrontend,
+  msg: unknown,
 ): Cmd.Cmd<never> => {
   return Rx.of(async () => {
     sendToFrontend$.next({ clientId, msg });
@@ -38,9 +36,7 @@ export const unsafe_sendToFrontend = <ToFrontend>(
   });
 };
 
-export const unsafe_sendToBackend = <ToBackend>(
-  msg: ToBackend,
-): Cmd.Cmd<never> => {
+export const unsafe_sendToBackend = (msg: unknown): Cmd.Cmd<never> => {
   return Rx.of(async () => {
     sendToBackend$.next({ msg });
     return Option.None;
@@ -168,7 +164,7 @@ export type FrontendSocket =
 
 export const frontend = <Model, Msg, Dom, ToFrontend>({
   onLocationChange,
-  onSocketChanged,
+  onSocketChange,
   init,
   update,
   updateFromBackend,
@@ -177,7 +173,7 @@ export const frontend = <Model, Msg, Dom, ToFrontend>({
   backendUrl,
 }: {
   onLocationChange: (location: Browser.Location) => Msg;
-  onSocketChanged: (socket: FrontendSocket) => Msg;
+  onSocketChange: (socket: FrontendSocket) => Msg;
   init: (location: Browser.Location) => [Model, Cmd.Cmd<Msg>];
   update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>];
   updateFromBackend: (msg: ToFrontend, model: Model) => [Model, Cmd.Cmd<Msg>];
@@ -202,22 +198,22 @@ export const frontend = <Model, Msg, Dom, ToFrontend>({
   import("socket.io-client").then((Socket) => {
     const socket = Socket.io(backendUrl);
 
-    socketChanged$.next(onSocketChanged({ type: "Connecting" }));
+    socketChanged$.next(onSocketChange({ type: "Connecting" }));
 
     socket.on("connect", () => {
-      socketChanged$.next(onSocketChanged({ type: "Connected" }));
+      socketChanged$.next(onSocketChange({ type: "Connected" }));
     });
 
     socket.on("connect_error", () => {
       socketChanged$.next(
-        onSocketChanged({
+        onSocketChange({
           type: "Reconnecting",
         }),
       );
     });
 
     socket.on("diconnect", () => {
-      onSocketChanged({ type: "Disconnected" });
+      onSocketChange({ type: "Disconnected" });
     });
 
     //
