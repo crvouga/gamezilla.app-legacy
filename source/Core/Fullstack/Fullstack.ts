@@ -19,14 +19,16 @@ const sendToFrontend$ = new Rx.Subject<{ clientId: string; msg: unknown }>();
 const broadcast$ = new Rx.Subject<{ msg: unknown }>();
 const sendToBackend$ = new Rx.Subject<{ msg: unknown }>();
 
-export const broadcast = <ToFrontend>(msg: ToFrontend): Cmd.Cmd<never> => {
+export const unsafe_broadcast = <ToFrontend>(
+  msg: ToFrontend,
+): Cmd.Cmd<never> => {
   return Rx.of(async () => {
     broadcast$.next({ msg });
     return Option.None;
   });
 };
 
-export const sendToFrontend = <ToFrontend>(
+export const unsafe_sendToFrontend = <ToFrontend>(
   clientId: string,
   msg: ToFrontend,
 ): Cmd.Cmd<never> => {
@@ -36,7 +38,9 @@ export const sendToFrontend = <ToFrontend>(
   });
 };
 
-export const sendToBackend = <ToBackend>(msg: ToBackend): Cmd.Cmd<never> => {
+export const unsafe_sendToBackend = <ToBackend>(
+  msg: ToBackend,
+): Cmd.Cmd<never> => {
   return Rx.of(async () => {
     sendToBackend$.next({ msg });
     return Option.None;

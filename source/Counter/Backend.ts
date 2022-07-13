@@ -1,5 +1,5 @@
-import { broadcast } from "Bridge";
 import { Cmd, Sub, Time } from "Core";
+import { broadcast } from "Types";
 import { BackendModel, BackendMsg, Counter, ToBackend } from "./Types";
 
 //

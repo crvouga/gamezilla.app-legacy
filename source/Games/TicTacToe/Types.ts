@@ -24,3 +24,11 @@ export type FrontendModel = {
     [roomId: string]: Room;
   };
 };
+
+export type BackendMsg = { type: "Noop" };
+
+export type FrontendMsg = { type: "ClickedNewRoom" };
+
+export type ToFrontend = { type: "CurrentRoom"; room: Room };
+
+export type ToFronend = { type: "NewRoom" };
