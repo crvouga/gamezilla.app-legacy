@@ -1,3 +1,4 @@
+import * as Connection from "Connection";
 import * as Counter from "Counter/Frontend";
 import * as Games from "Games";
 import * as Pages from "Pages";
@@ -108,6 +109,7 @@ export const init = (location: Browser.Location): [Model, Cmd.Cmd<Msg>] => {
   const game = Games.init;
   const [page, pageCmd] = Pages.initLoading();
   const [counter, counterCmd] = Counter.init;
+  const connection = Connection.init;
   return [
     {
       route,
@@ -116,7 +118,7 @@ export const init = (location: Browser.Location): [Model, Cmd.Cmd<Msg>] => {
       game,
       session,
       page,
-      socket: { type: "Connecting" },
+      connection,
       counter,
     },
     Cmd.batch<Msg>([
@@ -321,11 +323,12 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
       const [counterNew, counterCmd] = Counter.update(msg, model.counter);
       return [{ ...model, counter: counterNew }, counterCmd];
 
-    case "Socket":
-      switch (msg.type) {
-        case "SocketChanged":
-          return [{ ...model, socket: msg.socket }, Cmd.None];
-      }
+    case "Connection":
+      const [connectionNew, connectionCmd] = Connection.update(
+        msg,
+        model.connection,
+      );
+      return [{ ...model, connection: connectionNew }, connectionCmd];
 
     default:
       return exhaustive(msg);
@@ -486,34 +489,7 @@ export const view =
             transform: "translate(-50%, -50%)",
           }}
         >
-          <UI.Collapse
-            in={
-              model.socket.type === "Reconnecting" ||
-              model.socket.type === "Disconnected"
-            }
-          >
-            <UI.Alert
-              variant="filled"
-              severity={
-                model.socket.type === "Disconnected"
-                  ? "error"
-                  : model.socket.type === "Connected"
-                  ? "info"
-                  : "info"
-              }
-              sx={{ display: "flex", alignItems: "center" }}
-              icon={
-                <UI.CircularProgress color="inherit" disableShrink size={18} />
-              }
-            >
-              {model.socket.type === "Reconnecting"
-                ? `Reconnecting to backend...`
-                : model.socket.type === "Disconnected"
-                ? "Failed to connect to backend."
-                : "Connected."}
-            </UI.Alert>
-          </UI.Collapse>
-
+          {Connection.view(model.connection)(dispatch)}
           {Counter.view(model.counter)(dispatch)}
           <UI.Box
             sx={{
@@ -603,7 +579,7 @@ const viewGameBanner =
 //
 //
 //
-// Location
+//
 //
 //
 //
@@ -617,8 +593,8 @@ export const onLocationChange = (location: Browser.Location): Msg => {
   );
 };
 
-const onSocketChanged = (socket: Fullstack.FrontendSocket): Msg => {
-  return { group: "Socket", type: "SocketChanged", socket };
+const onConnectionChange = (status: Fullstack.ConnectionStatus): Msg => {
+  return { group: "Connection", type: "ConnectionChanged", status };
 };
 
 //
@@ -645,7 +621,7 @@ const program = Debug.ReduxDevTools.withDebugger(
   Fullstack.frontend({
     backendUrl: backendUrl,
     onLocationChange: onLocationChange,
-    onSocketChange: onSocketChanged,
+    onConnectionChange: onConnectionChange,
     init: init,
     update: update,
     updateFromBackend: updateFromBackend,

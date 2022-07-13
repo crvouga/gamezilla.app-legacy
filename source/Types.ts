@@ -1,3 +1,5 @@
+import * as Clients from "Clients";
+import * as Connection from "Connection";
 import * as Counter from "Counter";
 import * as Games from "Games";
 import * as Pages from "Pages";
@@ -14,12 +16,12 @@ export type FrontendModel = {
   game: Games.Model;
   page: Pages.Model;
   route: Route.Route;
-  socket: Fullstack.FrontendSocket;
+  connection: Connection.Model;
   counter: Counter.FrontendModel;
 };
 
 export type BackendModel = {
-  clients: { [userId: string]: string };
+  clients: Clients.Model;
   counter: Counter.BackendModel;
 };
 
@@ -30,16 +32,12 @@ export type FrontendMsg =
   | Store.Msg
   | Session.Msg
   | Pages.Msg
-  | Counter.FrontendMsg
-  | {
-      group: "Socket";
-      type: "SocketChanged";
-      socket: Fullstack.FrontendSocket;
-    };
+  | Connection.Msg
+  | Counter.FrontendMsg;
 
 export type ToBackend = Counter.ToBackend;
 
-export type BackendMsg = Counter.BackendMsg;
+export type BackendMsg = Clients.Msg | Counter.BackendMsg;
 
 export type ToFrontend = Counter.ToFrontend;
 
