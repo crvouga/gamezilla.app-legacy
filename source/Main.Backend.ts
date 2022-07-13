@@ -1,12 +1,6 @@
-import { Cmd, Fullstack, Platform, Sub, Time } from "Core";
-import {
-  BackendModel,
-  BackendMsg,
-  Counter,
-  ToBackend,
-  broadcast,
-  sendToFrontend,
-} from "Types";
+import * as Counter from "Counter/Backend";
+import { Cmd, Fullstack, Platform, Sub } from "Core";
+import { BackendModel, BackendMsg, ToBackend } from "Types";
 
 //
 //
@@ -21,12 +15,9 @@ export type Model = BackendModel;
 export const init: [Model, Cmd.Cmd<Msg>] = [
   {
     clients: {},
-    counter: {
-      count: 0,
-      status: "Incrementing",
-    },
+    counter: Counter.init[0],
   },
-  Cmd.None,
+  Cmd.batch([Counter.init[1]]),
 ];
 
 //
@@ -40,52 +31,11 @@ export const init: [Model, Cmd.Cmd<Msg>] = [
 export type Msg = BackendMsg;
 
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
-  switch (msg.type) {
-    case "TimeElapsed":
-      switch (model.counter.status) {
-        case "Idle":
-          return [model, Cmd.None];
-
-        case "Incrementing": {
-          const counterNew: Counter = {
-            ...model.counter,
-            count: model.counter.count + 1,
-          };
-          return [
-            { ...model, counter: counterNew },
-            broadcast({ type: "GotCounter", counter: counterNew }),
-          ];
-        }
-      }
-
-    case "ClientConnected":
-      return [
-        {
-          ...model,
-          clients: { ...model.clients, [msg.clientId]: msg.clientId },
-        },
-        Cmd.batch([
-          sendToFrontend(msg.clientId, {
-            type: "GotCounter",
-            counter: model.counter,
-          }),
-        ]),
-      ];
-
-    case "ClientDisconnected":
-      return [
-        {
-          ...model,
-          clients: removeKey(msg.clientId, model.clients),
-        },
-        Cmd.None,
-      ];
+  switch (msg.group) {
+    case "Counter":
+      const [counterNew, counterCmd] = Counter.update(msg, model.counter);
+      return [{ ...model, counter: counterNew }, counterCmd];
   }
-};
-
-const removeKey = <T>(key: keyof T, object: T): Omit<T, typeof key> => {
-  const { [key]: value, ...without } = object;
-  return without;
 };
 
 export const updateFromFrontend = (
@@ -93,52 +43,13 @@ export const updateFromFrontend = (
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg.group) {
-    case "TicTacToe": {
-      switch (msg.type) {
-        case "NewRoom":
-          return [model, Cmd.None];
-      }
-    }
     case "Counter": {
-      switch (msg.type) {
-        case "Toggle":
-          const counterNew: Counter = {
-            ...model.counter,
-            status: toggleStatus(model.counter.status),
-          };
-          return [
-            {
-              ...model,
-              counter: counterNew,
-            },
-            broadcast({ type: "GotCounter", counter: counterNew }),
-          ];
-
-        case "Reset": {
-          const counterNew: Counter = {
-            ...model.counter,
-            count: 0,
-          };
-          return [
-            {
-              ...model,
-              counter: counterNew,
-            },
-            broadcast({ type: "GotCounter", counter: counterNew }),
-          ];
-        }
-      }
+      const [counterNew, counterCmd] = Counter.updateFromFrontend(
+        msg,
+        model.counter,
+      );
+      return [{ ...model, counter: counterNew }, counterCmd];
     }
-  }
-};
-
-const toggleStatus = (status: Counter["status"]): Counter["status"] => {
-  switch (status) {
-    case "Idle":
-      return "Incrementing";
-
-    case "Incrementing":
-      return "Idle";
   }
 };
 
@@ -151,28 +62,9 @@ const toggleStatus = (status: Counter["status"]): Counter["status"] => {
 //
 
 export const subscriptions = (model: Model): Sub.Sub<Msg> => {
-  return Sub.batch([
-    counterSubs(model),
-    Fullstack.onConnected<Msg>((clientId) => ({
-      type: "ClientConnected",
-      clientId,
-    })),
-    Fullstack.onDisconnected<Msg>((clientId) => ({
-      type: "ClientDisconnected",
-      clientId,
-    })),
-  ]);
+  return Sub.batch([Counter.subscriptions(model.counter)]);
 };
 
-export const counterSubs = (model: Model): Sub.Sub<Msg> => {
-  switch (model.counter.status) {
-    case "Idle":
-      return Sub.None;
-
-    case "Incrementing":
-      return Time.every<Msg>(1000, () => ({ type: "TimeElapsed" }));
-  }
-};
 //
 //
 //

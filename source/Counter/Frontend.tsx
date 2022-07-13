@@ -1,4 +1,5 @@
 import * as UI from "UI";
+import { sendToBackend } from "Bridge";
 import { Cmd, Fullstack, Option, Sub, pipe } from "Core";
 import { exhaustive } from "Utility";
 import { FrontendModel, FrontendMsg, ToFrontend } from "./Types";
@@ -28,12 +29,7 @@ type Msg = FrontendMsg;
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg.type) {
     case "ClickedToggle":
-      return [
-        model,
-        Fullstack.sendToBackend({ group: "Counter", type: "Toggle" }),
-        // sendToBackend({ group: "Counter", type: "Toggle" })
-        // Cmd.None,
-      ];
+      return [model, sendToBackend({ group: "Counter", type: "Toggle" })];
 
     default:
       return exhaustive(msg.type);

@@ -1,10 +1,11 @@
+import * as Counter from "Counter";
 import * as Games from "Games";
 import * as Pages from "Pages";
 import * as Route from "Route";
 import * as Session from "Session";
 import * as Snackbar from "Snackbar";
 import * as Store from "Store";
-import { Fullstack, Result } from "Core";
+import { Fullstack } from "Core";
 
 export type FrontendModel = {
   snackbar: Snackbar.Model;
@@ -13,18 +14,13 @@ export type FrontendModel = {
   game: Games.Model;
   page: Pages.Model;
   route: Route.Route;
-  counter?: Counter;
   socket: Fullstack.FrontendSocket;
-};
-
-export type Counter = {
-  count: number;
-  status: "Incrementing" | "Idle";
+  counter: Counter.FrontendModel;
 };
 
 export type BackendModel = {
   clients: { [userId: string]: string };
-  counter: Counter;
+  counter: Counter.BackendModel;
 };
 
 export type FrontendMsg =
@@ -34,49 +30,15 @@ export type FrontendMsg =
   | Store.GroupedMsg
   | Session.Msg
   | Pages.GroupedMsg
-  | { group: "Counter"; type: "ClickedToggle" }
-  | { group: "Counter"; type: "ClickedReset" }
+  | Counter.FrontendMsg
   | {
       group: "Socket";
       type: "SocketChanged";
       socket: Fullstack.FrontendSocket;
     };
 
-export type ToBackend =
-  | { group: "Counter"; type: "Toggle" }
-  | { group: "Counter"; type: "Reset" }
-  | { group: "TicTacToe"; type: "NewRoom"; userId: string };
+export type ToBackend = Counter.ToBackend;
 
-export type BackendMsg =
-  | { type: "ClientConnected"; clientId: string }
-  | { type: "ClientDisconnected"; clientId: string }
-  | { type: "TimeElapsed" };
+export type BackendMsg = Counter.BackendMsg;
 
-export type ToFrontend =
-  | { type: "GotCounter"; counter: Counter }
-  | {
-      group: "TicTacToe";
-      type: "NewRoomResulted";
-      result: Result.Result<{}, {}>;
-    };
-// | ["Game", "TicTacToe", "NewRoomResulted", Result.Result<{}, {}>];
-
-//
-//
-//
-// Bridge
-//
-//
-//
-
-export const sendToFrontend = (clientId: string, msg: ToFrontend) => {
-  return Fullstack.sendToFrontend<ToFrontend>(clientId, msg);
-};
-
-export const broadcast = (msg: ToFrontend) => {
-  return Fullstack.broadcast<ToFrontend>(msg);
-};
-
-export const sendToBackend = (msg: ToBackend) => {
-  return Fullstack.sendToBackend<ToBackend>(msg);
-};
+export type ToFrontend = Counter.ToFrontend;

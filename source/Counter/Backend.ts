@@ -1,3 +1,4 @@
+import { broadcast } from "Bridge";
 import { Cmd, Sub, Time } from "Core";
 import { BackendModel, BackendMsg, Counter, ToBackend } from "./Types";
 
@@ -43,17 +44,15 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
           };
           return [
             modelNew,
-            Cmd.None,
-            // broadcast({ type: "GotCounter", counter: counterNew }),
+            broadcast({
+              type: "CounterNew",
+              group: "Counter",
+              counter: modelNew,
+            }),
           ];
         }
       }
   }
-};
-
-const removeKey = <T>(key: keyof T, object: T): Omit<T, typeof key> => {
-  const { [key]: value, ...without } = object;
-  return without;
 };
 
 export const updateFromFrontend = (
@@ -68,8 +67,11 @@ export const updateFromFrontend = (
       };
       return [
         modelNew,
-        Cmd.None,
-        // broadcast({ type: "GotCounter", counter: counterNew }),
+        broadcast({
+          type: "CounterNew",
+          group: "Counter",
+          counter: modelNew,
+        }),
       ];
     }
   }
@@ -99,6 +101,9 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
       return Sub.None;
 
     case "Incrementing":
-      return Time.every<Msg>(1000, () => ({ type: "Ticked" }));
+      return Time.every<Msg>(1000, () => ({
+        group: "Counter",
+        type: "Ticked",
+      }));
   }
 };

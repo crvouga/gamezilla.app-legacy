@@ -13,7 +13,7 @@ export type FrontendMsg = { type: "ClickedToggle"; group: "Counter" };
 
 export type ToBackend = { type: "Toggle"; group: "Counter" };
 
-export type BackendMsg = { type: "Ticked" };
+export type BackendMsg = { group: "Counter"; type: "Ticked" };
 
 export type ToFrontend = {
   group: "Counter";
