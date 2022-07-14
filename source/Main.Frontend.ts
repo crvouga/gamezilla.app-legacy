@@ -7,8 +7,8 @@ import {
   bridge$,
 } from "Bridge";
 import { Browser, Debug, pipe } from "Core";
-import { ToFrontend } from "Types";
-import { Socket, io } from "socket.io-client";
+import io from "socket.io-client";
+import type { Socket } from "socket.io-client";
 
 //
 //
