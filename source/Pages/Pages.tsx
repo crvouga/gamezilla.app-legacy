@@ -1,4 +1,4 @@
-import * as Games from "Games";
+import * as Games from "Games/Frontend";
 import * as Route from "Route";
 import * as Session from "Session";
 import * as Snackbar from "Snackbar";

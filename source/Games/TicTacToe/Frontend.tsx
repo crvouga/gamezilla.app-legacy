@@ -2,7 +2,7 @@ import * as Route from "Route";
 import * as UI from "UI";
 import { Cmd } from "Core";
 import * as Board from "./Board";
-import { FrontendModel, FrontendMsg } from "./Types";
+import { FrontendModel, FrontendMsg, ToFrontend } from "./Types";
 
 //
 //
@@ -35,6 +35,16 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
     case "ClickedBack":
       return [model, Route.back];
+  }
+};
+
+export const updateFromBackend = (
+  msg: ToFrontend,
+  model: Model,
+): [Model, Cmd.Cmd<Msg>] => {
+  switch (msg[0]) {
+    case "CurrentRoom":
+      return [model, Cmd.None];
   }
 };
 

@@ -1,4 +1,4 @@
-import * as Games from "Games";
+import * as Games from "Games/Frontend";
 import * as UI from "UI";
 import { Cmd } from "Core";
 

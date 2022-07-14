@@ -1,5 +1,1 @@
-export * as Chess from "./Chess";
-export * as ConnectFour from "./ConnectFour/ConnectFour";
-export * from "./Games";
-export * as Snake from "./Snake";
-export * as TicTacToe from "./TicTacToe";
+export * from "./Types";

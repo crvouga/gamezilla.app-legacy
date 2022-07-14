@@ -1,7 +1,8 @@
-import * as Games from "Games";
+import * as Games from "Games/Frontend";
 import * as Route from "Route";
 import * as UI from "UI";
 import { Cmd } from "Core";
+import { GameName } from "Games";
 
 //
 //
@@ -23,7 +24,7 @@ export const init: Model = {};
 //
 //
 
-export type Msg = ["ClickedGame", Games.Game];
+export type Msg = ["ClickedGame", GameName];
 
 export type OutAction = ["Games", Games.Action];
 
@@ -45,11 +46,11 @@ export const update = (
 //
 //
 
-const isOpen = (game: Games.Model, gameName: Games.Game) => {
+const isOpen = (game: Games.Model, gameName: GameName) => {
   return game.type === "Opened" && game.child.type === gameName;
 };
 
-const canOpen = (game: Games.Model, gameName: Games.Game) => {
+const canOpen = (game: Games.Model, gameName: GameName) => {
   return game.type === "Closed" || isOpen(game, gameName);
 };
 
@@ -77,28 +78,28 @@ export const view =
           }}
         >
           <GameCard
-            icon={<Games.TicTacToe.Icon />}
+            icon={<Games.GameIcon game="TicTacToe" />}
             label="Tic Tac Toe"
             disabled={!canOpen(game, "TicTacToe")}
             onClick={() => dispatch(["ClickedGame", "TicTacToe"])}
           />
 
           <GameCard
-            icon={<Games.ConnectFour.Icon id="homepage" />}
+            icon={<Games.GameIcon game="ConnectFour" />}
             label="Connect Four"
             disabled={!canOpen(game, "ConnectFour")}
             onClick={() => dispatch(["ClickedGame", "ConnectFour"])}
           />
 
           <GameCard
-            icon={<Games.Chess.Icon />}
+            icon={<Games.GameIcon game="Chess" />}
             label="Chess"
             disabled={!canOpen(game, "Chess")}
             onClick={() => dispatch(["ClickedGame", "Chess"])}
           />
 
           <GameCard
-            icon={<Games.Snake.Icon />}
+            icon={<Games.GameIcon game="Snake" />}
             label="Snake"
             disabled={!canOpen(game, "Snake")}
             onClick={() => dispatch(["ClickedGame", "Snake"])}
