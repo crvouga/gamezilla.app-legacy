@@ -1,5 +1,5 @@
 import * as UI from "UI";
-import { sendToBackend } from "Bridge";
+import { sendToBackend } from "Bridge/Frontend";
 import { Cmd, Option, Sub, pipe } from "Core";
 import { FrontendModel, FrontendMsg, ToFrontend } from "./Types";
 

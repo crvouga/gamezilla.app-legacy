@@ -8,6 +8,7 @@ import * as Snackbar from "Snackbar";
 import * as Store from "Store";
 import * as Profile from "Store/Profile";
 import * as UI from "UI";
+import { fromBackend } from "Bridge/Frontend";
 import { Browser, Cmd, Option, Sub, pipe } from "Core";
 import { andThen, andThenMany, exhaustive, tag } from "Utility";
 import { FrontendModel, FrontendMsg, ToFrontend } from "./Types";
@@ -330,7 +331,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
         pipe(connectionCmd, Cmd.map(tag("ConnectionStatus"))),
       ];
 
-    case "FromBackend":
+    case "ToFrontend":
       return updateFromBackend(msg[1], model);
 
     default:
@@ -453,6 +454,7 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
     pipe(Pages.subscriptions(model.page), Sub.map(tag("Page"))),
     pipe(Session.subscriptions, Sub.map(tag("Session"))),
     pipe(ConnectionStatus.subscriptions, Sub.map(tag("ConnectionStatus"))),
+    fromBackend((toFrontend) => ["ToFrontend", toFrontend]),
   ]);
 };
 
