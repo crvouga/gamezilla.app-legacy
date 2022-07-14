@@ -1,4 +1,3 @@
-import * as Option from "Core/Option";
 import { Board } from "./Board";
 
 export type BackendModel = {
@@ -6,6 +5,20 @@ export type BackendModel = {
     [roomId: string]: Room;
   };
 };
+
+export type FrontendModel = {
+  rooms: {
+    [roomId: string]: Room;
+  };
+};
+
+export type BackendMsg = ["Noop"];
+
+export type FrontendMsg = ["ClickedNewRoom"] | ["ClickedBack"];
+
+export type ToFrontend = ["CurrentRoom", Room];
+
+export type ToBackend = ["ClickedNewRoom"];
 
 type Player =
   | { type: "User"; userId: string }
@@ -21,17 +34,3 @@ export type Room = {
   hostUserId: string;
   userIds: { [userId: string]: string };
 };
-
-export type FrontendModel = {
-  rooms: {
-    [roomId: string]: Room;
-  };
-};
-
-export type BackendMsg = ["Noop"];
-
-export type FrontendMsg = ["ClickedNewRoom"] | ["ClickedBack"];
-
-export type ToFrontend = ["CurrentRoom", Room];
-
-export type ToFronend = ["NewRoom"];

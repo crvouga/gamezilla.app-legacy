@@ -1,6 +1,6 @@
 import * as ConnectionStatus from "ConnectionStatus";
 import * as Counter from "Counter/Frontend";
-import * as Games from "Games";
+import * as Games from "Games/Frontend";
 import * as Pages from "Pages";
 import * as Route from "Route";
 import * as Session from "Session";
@@ -8,8 +8,9 @@ import * as Snackbar from "Snackbar";
 import * as Store from "Store";
 import * as Profile from "Store/Profile";
 import * as UI from "UI";
+import * as ReactDomClient from "react-dom/client";
 import { fromBackend } from "Bridge/Frontend";
-import { Browser, Cmd, Option, Sub, pipe } from "Core";
+import { Browser, Cmd, Debug, Option, Sub, pipe } from "Core";
 import { andThen, andThenMany, exhaustive, tag } from "Utility";
 import { FrontendModel, FrontendMsg, ToFrontend } from "./Types";
 
@@ -175,6 +176,12 @@ export const updateFromBackend = (
         { ...model, counter: counterNew },
         pipe(counterCmd, Cmd.map(tag("Counter"))),
       ];
+    }
+
+    case "Games": {
+      const [gameNew, gameCmd] = Games.updateFromBackend(msg[1], model.game);
+
+      return [{ ...model, game: gameNew }, pipe(gameCmd, Cmd.map(tag("Game")))];
     }
   }
 };
@@ -605,3 +612,48 @@ export const onLocationChange = (location: Browser.Location): Msg => {
     (route) => ["Route", ["GotRoute", route]],
   );
 };
+
+//
+//
+//
+// Main
+//
+//
+//
+
+const program = pipe(
+  Browser.application({
+    init,
+    onLocationChange,
+    subscriptions,
+    update,
+    view,
+  }),
+  Debug.ReduxDevTools.withDebugger,
+);
+
+const root = ReactDomClient.createRoot(document.getElementById("root")!);
+
+Browser.run(program, (dom) => {
+  root.render(dom);
+});
+
+//
+//
+//
+// Hot Reload
+//
+//
+//
+
+// const dispose = () => {
+//   stop();
+// };
+
+// // @ts-ignore
+// if (import.meta.hot) {
+//   // @ts-ignore
+//   import.meta.hot.accept();
+//   // @ts-ignore
+//   import.meta.hot.dispose(dispose);
+// }

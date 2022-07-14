@@ -3,11 +3,19 @@ import * as Snackbar from "Snackbar";
 import * as UI from "UI";
 import { keyframes } from "@mui/system";
 import { Cmd, Sub, pipe } from "Core";
-import { andThen, exhaustive, tag } from "Utility";
+import { exhaustive, tag } from "Utility";
 import * as Chess from "./Chess";
 import * as ConnectFour from "./ConnectFour";
 import * as Snake from "./Snake";
-import * as TicTacToe from "./TicTacToe";
+import * as TicTacToe from "./TicTacToe/Frontend";
+import {
+  Closed,
+  FrontendModel,
+  FrontendMsg,
+  GameName,
+  Opened,
+  ToFrontend,
+} from "./Types";
 
 //
 //
@@ -17,23 +25,7 @@ import * as TicTacToe from "./TicTacToe";
 //
 //
 
-export type Model = Closed | Opened;
-
-type Closed = {
-  type: "Closed";
-};
-
-type Opened = {
-  type: "Opened";
-  status: "Idle" | "ConfirmingClose";
-  child:
-    | { type: "TicTacToe"; child: TicTacToe.Model }
-    | { type: "ConnectFour"; child: ConnectFour.Model }
-    | { type: "Chess"; child: Chess.Model }
-    | { type: "Snake"; child: Snake.Model };
-};
-
-export type Game = Opened["child"]["type"];
+export type Model = FrontendModel;
 
 //
 //
@@ -45,14 +37,14 @@ export type Game = Opened["child"]["type"];
 
 export const init: Model = { type: "Closed" };
 
-const initOpened = ({ game }: { game: Game }): [Opened, Cmd.Cmd<Msg>] => {
+const initOpened = ({ game }: { game: GameName }): [Opened, Cmd.Cmd<Msg>] => {
   return [
     { type: "Opened", status: "Idle", child: initGame({ game }) },
     Route.push({ type: "Game" }),
   ];
 };
 
-const initGame = ({ game }: { game: Game }): Opened["child"] => {
+const initGame = ({ game }: { game: GameName }): Opened["child"] => {
   switch (game) {
     case "Chess":
       return { type: "Chess", child: Chess.init };
@@ -76,25 +68,17 @@ const initGame = ({ game }: { game: Game }): Opened["child"] => {
 //
 //
 
-export type Msg =
-  | ["ConfirmedClose"]
-  | ["CancelledClose"]
-  | ["ClickedClose"]
-  | ["ClickedBanner"]
-  | ["Chess", Chess.Msg]
-  | ["ConnectFour", ConnectFour.Msg]
-  | ["TicTacToe", TicTacToe.Msg]
-  | ["Snake", Snake.Msg];
+export type Msg = FrontendMsg;
 
 type OutAction = ["Snackbar", Snackbar.Action];
 
 export type Action = Open | Close;
 
-export const Open = (game: Game) =>
+export const Open = (game: GameName) =>
   ({ group: "Game", type: "Open", game } as const);
 export type Open = ReturnType<typeof Open>;
 
-export const Close = (game: Game) =>
+export const Close = (game: GameName) =>
   ({ group: "Game", type: "Close", game } as const);
 export type Close = ReturnType<typeof Close>;
 
@@ -137,6 +121,54 @@ export const update = (
 
     case "Opened":
       return updateOpened(msg, model);
+  }
+};
+
+export const updateFromBackend = (
+  msg: ToFrontend,
+  model: Model,
+): [Model, Cmd.Cmd<Msg>] => {
+  switch (model.type) {
+    case "Closed":
+      return [model, Cmd.None];
+
+    case "Opened":
+      const [childNew, childCmd] = updateGameFromBackend(msg, model.child);
+      return [{ ...model, child: childNew }, childCmd];
+  }
+};
+
+const updateGameFromBackend = (
+  msg: ToFrontend,
+  model: Opened["child"],
+): [Opened["child"], Cmd.Cmd<Msg>] => {
+  switch (model.type) {
+    case "Chess":
+      return [model, Cmd.None];
+
+    case "ConnectFour":
+      return [model, Cmd.None];
+
+    case "Snake":
+      return [model, Cmd.None];
+
+    case "TicTacToe":
+      if (msg[0] === "TicTacToe") {
+        const [modelChild, cmdChild] = TicTacToe.updateFromBackend(
+          msg[1],
+          model.child,
+        );
+
+        return [
+          { type: "TicTacToe", child: modelChild },
+          pipe(cmdChild, Cmd.map(tag("TicTacToe"))),
+        ];
+      }
+
+      return [model, Cmd.None];
+
+    default:
+      return exhaustive(model);
   }
 };
 
@@ -357,7 +389,7 @@ export const viewBanner =
       </>
     );
 
-export const gameToName = (game: Game): string => {
+export const gameToName = (game: GameName): string => {
   switch (game) {
     case "Chess":
       return "Chess";
@@ -373,7 +405,7 @@ export const gameToName = (game: Game): string => {
   }
 };
 
-const GameIcon = ({ game }: { game: Game }) => {
+export const GameIcon = ({ game }: { game: GameName }) => {
   switch (game) {
     case "Chess":
       return <Chess.Icon />;

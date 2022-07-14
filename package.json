@@ -1,8 +1,8 @@
 {
   "private": true,
   "scripts": {
-    "backend:dev": "npx nodemon -e ts,js --exec ts-node -r tsconfig-paths/register ./source/Main.Backend.ts",
-    "backend:start": "npx ts-node -r tsconfig-paths/register ./source/Main.Backend.ts",
+    "backend:dev": "npx nodemon -e ts,js --exec ts-node -r tsconfig-paths/register ./source/Backend.ts",
+    "backend:start": "npx ts-node -r tsconfig-paths/register ./source/Backend.ts",
     "format": "npx prettier --write .",
     "frontend:build": "vite build --emptyOutDir",
     "frontend:dev": "vite",
@@ -46,6 +46,7 @@
     "eslint-plugin-functional": "^4.2.1",
     "jest": "^27.5.1",
     "prettier": "^2.7.1",
+    "ts-node": "^10.9.1",
     "ts-node-dev": "^1.1.8",
     "tsc-watch": "^5.0.3",
     "tsutils": "^3.21.0",

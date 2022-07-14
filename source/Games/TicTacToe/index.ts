@@ -1,1 +1,1 @@
-export * from "./Frontend";
+export * from "./Types";

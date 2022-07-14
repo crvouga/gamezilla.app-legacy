@@ -12,22 +12,23 @@ export type FrontendModel = {
   snackbar: Snackbar.Model;
   store: Store.Model;
   session: Session.Model;
-  game: Games.Model;
   page: Pages.Model;
   route: Route.Route;
   connectionStatus: ConnectionStatus.Model;
+  game: Games.FrontendModel;
   counter: Counter.FrontendModel;
 };
 
 export type BackendModel = {
   clients: Clients.Model;
   counter: Counter.BackendModel;
+  games: Games.BackendModel;
 };
 
 export type FrontendMsg =
   | ["Route", Route.Msg]
   | ["Snackbar", Snackbar.Msg]
-  | ["Game", Games.Msg]
+  | ["Game", Games.FrontendMsg]
   | ["Store", Store.Msg]
   | ["Session", Session.Msg]
   | ["Page", Pages.Msg]
@@ -35,11 +36,16 @@ export type FrontendMsg =
   | ["Counter", Counter.FrontendMsg]
   | ["ToFrontend", ToFrontend];
 
-export type ToBackend = ["Counter", Counter.ToBackend];
+export type ToBackend =
+  | ["Counter", Counter.ToBackend]
+  | ["Games", Games.ToBackend];
 
 export type BackendMsg =
   | ["Clients", Clients.Msg]
   | ["Counter", Counter.BackendMsg]
-  | ["ToBackend", string, ToBackend];
+  | ["ToBackend", string, ToBackend]
+  | ["Games", Games.BackendMsg];
 
-export type ToFrontend = ["Counter", Counter.ToFrontend];
+export type ToFrontend =
+  | ["Counter", Counter.ToFrontend]
+  | ["Games", Games.ToFrontend];
