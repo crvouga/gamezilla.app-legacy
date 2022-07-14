@@ -218,12 +218,27 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
       ];
 
     case "Game": {
-      const [gameNew, gameCmd, actions] = Games.update(msg[1], model.game);
+      const status = toStatus(model);
+      switch (status.type) {
+        case "ProfileLoading":
+        case "ProfileMissing":
+        case "SessionLoading":
+        case "SessionMissing":
+          return [model, Cmd.None];
+        case "Ready": {
+          const { profile } = status;
+          const [gameNew, gameCmd, actions] = Games.update(
+            { authUserId: profile.userId },
+            msg[1],
+            model.game,
+          );
 
-      return pipe(
-        [{ ...model, game: gameNew }, pipe(gameCmd, Cmd.map(tag("Game")))],
-        andThenMany(runAction, actions),
-      );
+          return pipe(
+            [{ ...model, game: gameNew }, pipe(gameCmd, Cmd.map(tag("Game")))],
+            andThenMany(runAction, actions),
+          );
+        }
+      }
     }
 
     case "Page": {

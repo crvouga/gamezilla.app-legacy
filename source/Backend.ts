@@ -108,6 +108,7 @@ export const updateFromFrontend = (
 export const subscriptions = (model: Model): Sub.Sub<BackendMsg> => {
   return Sub.batch([
     pipe(Counter.subscriptions(model.counter), Sub.map(tag("Counter"))),
+    pipe(Games.subscriptions(model.games), Sub.map(tag("Games"))),
     fromFrontend<BackendMsg>((clientId, toBackend) => [
       "ToBackend",
       clientId,

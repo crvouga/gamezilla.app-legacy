@@ -42,13 +42,14 @@ export const update = (
 };
 
 export const updateFromFrontend = (
-  _clientId: ClientId,
+  clientId: ClientId,
   msg: ToBackend,
   model: Model,
 ): [Model, Cmd.Cmd<BackendMsg>] => {
   switch (msg[0]) {
     case "TicTacToe": {
       const [childNew, childCmd] = TicTacToe.updateFromFrontend(
+        clientId,
         msg[1],
         model.ticTacToe,
       );
@@ -69,5 +70,7 @@ export const updateFromFrontend = (
 //
 
 export const subscriptions = (model: Model): Sub.Sub<BackendMsg> => {
-  return Sub.None;
+  return Sub.batch([
+    pipe(TicTacToe.subscriptions(model.ticTacToe), Sub.map(tag("TicTacToe"))),
+  ]);
 };

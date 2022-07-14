@@ -38,25 +38,35 @@ export type Model = FrontendModel;
 export const init: Model = { type: "Closed" };
 
 const initOpened = ({ game }: { game: GameName }): [Opened, Cmd.Cmd<Msg>] => {
+  const [child, childCmd] = initGame({ game });
   return [
-    { type: "Opened", status: "Idle", child: initGame({ game }) },
-    Route.push({ type: "Game" }),
+    { type: "Opened", status: "Idle", child },
+    Cmd.batch([Route.push({ type: "Game" }), childCmd]),
   ];
 };
 
-const initGame = ({ game }: { game: GameName }): Opened["child"] => {
+const initGame = ({
+  game,
+}: {
+  game: GameName;
+}): [Opened["child"], Cmd.Cmd<Msg>] => {
   switch (game) {
     case "Chess":
-      return { type: "Chess", child: Chess.init };
+      return [{ type: "Chess", child: Chess.init }, Cmd.None];
 
     case "ConnectFour":
-      return { type: "ConnectFour", child: ConnectFour.init };
+      return [{ type: "ConnectFour", child: ConnectFour.init }, Cmd.None];
 
-    case "TicTacToe":
-      return { type: "TicTacToe", child: TicTacToe.init };
+    case "TicTacToe": {
+      const [child, childCmd] = TicTacToe.init;
+      return [
+        { type: "TicTacToe", child: child },
+        pipe(childCmd, Cmd.map(tag("TicTacToe"))),
+      ];
+    }
 
     case "Snake":
-      return { type: "Snake", child: Snake.init };
+      return [{ type: "Snake", child: Snake.init }, Cmd.None];
   }
 };
 
@@ -112,6 +122,7 @@ export const runAction = (
 };
 
 export const update = (
+  { authUserId }: { authUserId: string },
   msg: Msg,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
@@ -120,7 +131,7 @@ export const update = (
       return updateClosed(msg, model);
 
     case "Opened":
-      return updateOpened(msg, model);
+      return updateOpened({ authUserId }, msg, model);
   }
 };
 
@@ -173,6 +184,7 @@ const updateGameFromBackend = (
 };
 
 const updateOpened = (
+  { authUserId }: { authUserId: string },
   msg: Msg,
   model: Opened,
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
@@ -193,12 +205,13 @@ const updateOpened = (
     case "ConnectFour":
     case "Snake":
     case "TicTacToe":
-      const [child, childCmd] = updateGame(msg, model.child);
+      const [child, childCmd] = updateGame({ authUserId }, msg, model.child);
       return [{ ...model, child }, childCmd, []];
   }
 };
 
 const updateGame = (
+  { authUserId }: { authUserId: string },
   msg: Msg,
   model: Opened["child"],
 ): [Opened["child"], Cmd.Cmd<Msg>] => {
@@ -226,7 +239,11 @@ const updateGame = (
 
     case "TicTacToe":
       if (msg[0] === "TicTacToe") {
-        const [modelChild, cmdChild] = TicTacToe.update(msg[1], model.child);
+        const [modelChild, cmdChild] = TicTacToe.update(
+          { authUserId },
+          msg[1],
+          model.child,
+        );
 
         return [
           { type: "TicTacToe", child: modelChild },
