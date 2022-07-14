@@ -2,7 +2,6 @@ export * as Audio from "./Audio";
 export * as Browser from "./Browser";
 export * as Cmd from "./Cmd";
 export * as Debug from "./Debug";
-export * as Fullstack from "./Fullstack";
 export * as Keyboard from "./Keyboard";
 export * as Option from "./Option";
 export * from "./pipe";

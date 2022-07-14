@@ -1,7 +1,8 @@
 import * as UI from "UI";
-import { Cmd } from "Core";
-import { ConnectionStatus } from "Core/Fullstack";
+import { onConnectionStatus } from "Bridge";
+import { Cmd, Sub } from "Core";
 
+//
 //
 //
 //
@@ -10,9 +11,13 @@ import { ConnectionStatus } from "Core/Fullstack";
 //
 //
 
-export type Model = ConnectionStatus;
+export type Model =
+  | "Connecting"
+  | "Reconnecting"
+  | "Disconnected"
+  | "Connected";
 
-export const init: Model = { type: "Connecting" };
+export const init: Model = "Connecting";
 
 //
 //
@@ -22,14 +27,26 @@ export const init: Model = { type: "Connecting" };
 //
 //
 
-export type Msg = ["ConnectionChanged", Model];
+export type Msg = ["Got", Model];
 
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
-    case "ConnectionChanged":
+    case "Got":
       return [msg[1], Cmd.None];
   }
 };
+
+//
+//
+//
+// Subscriptions
+//
+//
+//
+
+export const subscriptions: Sub.Sub<Msg> = onConnectionStatus(
+  (connectionStatus): Msg => ["Got", connectionStatus],
+);
 
 //
 //
@@ -43,24 +60,22 @@ export const view =
   (model: Model): UI.View<Msg> =>
   (_dispatch) => {
     return (
-      <UI.Collapse
-        in={model.type === "Reconnecting" || model.type === "Disconnected"}
-      >
+      <UI.Collapse in={model === "Reconnecting" || model === "Disconnected"}>
         <UI.Alert
           variant="filled"
           severity={
-            model.type === "Disconnected"
+            model === "Disconnected"
               ? "error"
-              : model.type === "Connected"
+              : model === "Connected"
               ? "info"
               : "info"
           }
           sx={{ display: "flex", alignItems: "center" }}
           icon={<UI.CircularProgress color="inherit" disableShrink size={18} />}
         >
-          {model.type === "Reconnecting"
+          {model === "Reconnecting"
             ? `Reconnecting to backend...`
-            : model.type === "Disconnected"
+            : model === "Disconnected"
             ? "Failed to connect to backend."
             : "Connected."}
         </UI.Alert>

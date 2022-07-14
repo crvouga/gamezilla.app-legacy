@@ -1,4 +1,4 @@
-import * as Connection from "Connection";
+import * as ConnectionStatus from "ConnectionStatus";
 import * as Counter from "Counter/Frontend";
 import * as Games from "Games";
 import * as Pages from "Pages";
@@ -8,8 +8,7 @@ import * as Snackbar from "Snackbar";
 import * as Store from "Store";
 import * as Profile from "Store/Profile";
 import * as UI from "UI";
-import * as ReactDomClient from "react-dom/client";
-import { Browser, Cmd, Debug, Fullstack, Option, Sub, pipe } from "Core";
+import { Browser, Cmd, Option, Sub, pipe } from "Core";
 import { andThen, andThenMany, exhaustive, tag } from "Utility";
 import { FrontendModel, FrontendMsg, ToFrontend } from "./Types";
 
@@ -21,7 +20,7 @@ import { FrontendModel, FrontendMsg, ToFrontend } from "./Types";
 //
 //
 
-export type Model = FrontendModel;
+type Model = FrontendModel;
 
 //
 //
@@ -109,7 +108,7 @@ export const init = (location: Browser.Location): [Model, Cmd.Cmd<Msg>] => {
   const game = Games.init;
   const [page, pageCmd] = Pages.initLoading();
   const [counter, counterCmd] = Counter.init;
-  const connection = Connection.init;
+  const connectionStatus = ConnectionStatus.init;
   return [
     {
       route,
@@ -118,7 +117,7 @@ export const init = (location: Browser.Location): [Model, Cmd.Cmd<Msg>] => {
       game,
       session,
       page,
-      connection,
+      connectionStatus,
       counter,
     },
     Cmd.batch<Msg>([
@@ -137,7 +136,7 @@ export const init = (location: Browser.Location): [Model, Cmd.Cmd<Msg>] => {
 //
 //
 
-export type Msg = FrontendMsg;
+type Msg = FrontendMsg;
 
 type Action =
   | ["Snackbar", Snackbar.Action]
@@ -321,15 +320,18 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
         pipe(counterCmd, Cmd.map(tag("Counter"))),
       ];
 
-    case "Connection":
-      const [connectionNew, connectionCmd] = Connection.update(
+    case "ConnectionStatus":
+      const [connectionNew, connectionCmd] = ConnectionStatus.update(
         msg[1],
-        model.connection,
+        model.connectionStatus,
       );
       return [
-        { ...model, connection: connectionNew },
-        pipe(connectionCmd, Cmd.map(tag("Connection"))),
+        { ...model, connectionStatus: connectionNew },
+        pipe(connectionCmd, Cmd.map(tag("ConnectionStatus"))),
       ];
+
+    case "FromBackend":
+      return updateFromBackend(msg[1], model);
 
     default:
       return exhaustive(msg);
@@ -450,6 +452,7 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
     pipe(Games.subscriptions(model.game), Sub.map(tag("Game"))),
     pipe(Pages.subscriptions(model.page), Sub.map(tag("Page"))),
     pipe(Session.subscriptions, Sub.map(tag("Session"))),
+    pipe(ConnectionStatus.subscriptions, Sub.map(tag("ConnectionStatus"))),
   ]);
 };
 
@@ -498,8 +501,8 @@ export const view =
           }}
         >
           {pipe(
-            Connection.view(model.connection),
-            UI.map(tag("Connection")),
+            ConnectionStatus.view(model.connectionStatus),
+            UI.map(tag("ConnectionStatus")),
           )(dispatch)}
           {pipe(Counter.view(model.counter), UI.map(tag("Counter")))(dispatch)}
           <UI.Box
@@ -587,7 +590,7 @@ const viewGameBanner =
 //
 //
 //
-//
+// Location
 //
 //
 //
@@ -600,69 +603,3 @@ export const onLocationChange = (location: Browser.Location): Msg => {
     (route) => ["Route", ["GotRoute", route]],
   );
 };
-
-const onConnectionChange = (status: Fullstack.ConnectionStatus): Msg => [
-  "Connection",
-  ["ConnectionChanged", status],
-];
-
-//
-//
-//
-// Main
-//
-//
-//
-
-// todo put this in env var
-const productionBackendUrl = "https://gamezilla.herokuapp.com/";
-
-const developmentBackendUrl = "http://localhost:5000/";
-
-const backendUrl =
-  process.env.NODE_ENV === "production"
-    ? productionBackendUrl
-    : developmentBackendUrl;
-
-console.log(`using backendUrl: ${backendUrl}`);
-
-const program = Debug.ReduxDevTools.withDebugger(
-  Fullstack.frontend({
-    backendUrl: backendUrl,
-    onLocationChange: onLocationChange,
-    onConnectionChange: onConnectionChange,
-    init: init,
-    update: update,
-    updateFromBackend: updateFromBackend,
-    subscriptions: subscriptions,
-    view: view,
-  }),
-);
-
-const container = document.getElementById("root");
-
-const root = ReactDomClient.createRoot(container!);
-
-const stop = Browser.run(program, (dom) => {
-  root.render(dom);
-});
-
-//
-//
-//
-// Hot Reload
-//
-//
-//
-
-// const dispose = () => {
-//   stop();
-// };
-
-// // @ts-ignore
-// if (import.meta.hot) {
-//   // @ts-ignore
-//   import.meta.hot.accept();
-//   // @ts-ignore
-//   import.meta.hot.dispose(dispose);
-// }

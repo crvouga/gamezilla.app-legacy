@@ -1,5 +1,5 @@
+import { broadcast, onConnect, sendToFrontend } from "Bridge";
 import { Cmd, Sub, Time } from "Core";
-import { broadcast } from "Core/Fullstack";
 import { BackendModel, BackendMsg, CounterModel, ToBackend } from "./Types";
 
 //
@@ -42,6 +42,12 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
           return [modelNew, broadcast(["Counter", ["CounterNew", modelNew]])];
         }
       }
+
+    case "ClientConnected":
+      return [
+        model,
+        sendToFrontend(msg[1], ["Counter", ["CounterNew", model]]),
+      ];
   }
 };
 
@@ -81,6 +87,13 @@ const toggleStatus = (
 //
 
 export const subscriptions = (model: Model): Sub.Sub<Msg> => {
+  return Sub.batch([
+    tickSubs(model),
+    onConnect<Msg>((clientId) => ["ClientConnected", clientId]),
+  ]);
+};
+
+const tickSubs = (model: Model): Sub.Sub<Msg> => {
   switch (model.status) {
     case "Idle":
       return Sub.None;
