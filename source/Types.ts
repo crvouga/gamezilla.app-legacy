@@ -7,7 +7,6 @@ import * as Route from "Route";
 import * as Session from "Session";
 import * as Snackbar from "Snackbar";
 import * as Store from "Store";
-import { Fullstack } from "Core";
 
 export type FrontendModel = {
   snackbar: Snackbar.Model;
@@ -35,28 +34,10 @@ export type FrontendMsg =
   | ["Connection", Connection.Msg]
   | ["Counter", Counter.FrontendMsg];
 
-export type ToBackend = Counter.ToBackend;
+export type ToBackend = ["Counter", Counter.ToBackend];
 
-export type BackendMsg = Clients.Msg | Counter.BackendMsg;
+export type BackendMsg =
+  | ["Clients", Clients.Msg]
+  | ["Counter", Counter.BackendMsg];
 
-export type ToFrontend = Counter.ToFrontend;
-
-//
-//
-//
-// Bridge
-//
-//
-//
-
-export const sendToFrontend = (clientId: string, msg: ToFrontend) => {
-  return Fullstack.unsafe_sendToFrontend(clientId, msg);
-};
-
-export const broadcast = (msg: ToFrontend) => {
-  return Fullstack.unsafe_broadcast(msg);
-};
-
-export const sendToBackend = (msg: ToBackend) => {
-  return Fullstack.unsafe_sendToBackend(msg);
-};
+export type ToFrontend = ["Counter", Counter.ToFrontend];

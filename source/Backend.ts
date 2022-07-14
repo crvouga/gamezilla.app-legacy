@@ -1,7 +1,8 @@
 import * as Clients from "Clients";
 import * as Counter from "Counter/Backend";
-import { Cmd, Fullstack, Platform, Sub } from "Core";
+import { Cmd, Fullstack, Platform, Sub, pipe } from "Core";
 import { BackendModel, BackendMsg, ToBackend } from "Types";
+import { tag } from "Utility";
 
 //
 //
@@ -13,12 +14,12 @@ import { BackendModel, BackendMsg, ToBackend } from "Types";
 
 export type Model = BackendModel;
 
-export const init: [Model, Cmd.Cmd<Msg>] = [
+export const init: [Model, Cmd.Cmd<BackendMsg>] = [
   {
     clients: Clients.init,
-    counter: Counter.init[0],
+    counter: Counter.init,
   },
-  Cmd.batch([Counter.init[1]]),
+  Cmd.None,
 ];
 
 //
@@ -29,31 +30,41 @@ export const init: [Model, Cmd.Cmd<Msg>] = [
 //
 //
 
-export type Msg = BackendMsg;
-
-export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
-  switch (msg.group) {
+export const update = (
+  msg: BackendMsg,
+  model: Model,
+): [Model, Cmd.Cmd<BackendMsg>] => {
+  switch (msg[0]) {
     case "Clients":
-      const [clientsNew, clientsCmd] = Clients.update(msg, model.clients);
-      return [{ ...model, clients: clientsNew }, clientsCmd];
+      const [clientsNew, clientsCmd] = Clients.update(msg[1], model.clients);
+      return [
+        { ...model, clients: clientsNew },
+        pipe(clientsCmd, Cmd.map(tag("Clients"))),
+      ];
 
     case "Counter":
-      const [counterNew, counterCmd] = Counter.update(msg, model.counter);
-      return [{ ...model, counter: counterNew }, counterCmd];
+      const [counterNew, counterCmd] = Counter.update(msg[1], model.counter);
+      return [
+        { ...model, counter: counterNew },
+        pipe(counterCmd, Cmd.map(tag("Counter"))),
+      ];
   }
 };
 
 export const updateFromFrontend = (
   msg: ToBackend,
   model: Model,
-): [Model, Cmd.Cmd<Msg>] => {
-  switch (msg.group) {
+): [Model, Cmd.Cmd<BackendMsg>] => {
+  switch (msg[0]) {
     case "Counter": {
       const [counterNew, counterCmd] = Counter.updateFromFrontend(
-        msg,
+        msg[1],
         model.counter,
       );
-      return [{ ...model, counter: counterNew }, counterCmd];
+      return [
+        { ...model, counter: counterNew },
+        pipe(counterCmd, Cmd.map(tag("Counter"))),
+      ];
     }
   }
 };
@@ -66,8 +77,10 @@ export const updateFromFrontend = (
 //
 //
 
-export const subscriptions = (model: Model): Sub.Sub<Msg> => {
-  return Sub.batch([Counter.subscriptions(model.counter)]);
+export const subscriptions = (model: Model): Sub.Sub<BackendMsg> => {
+  return Sub.batch([
+    pipe(Counter.subscriptions(model.counter), Sub.map(tag("Counter"))),
+  ]);
 };
 
 //
@@ -78,12 +91,12 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
 //
 //
 
-const onConnected = (clientId: string): Msg => {
-  return { type: "Connected", group: "Clients", clientId };
+const onConnected = (clientId: string): BackendMsg => {
+  return ["Clients", ["Connected", clientId]];
 };
 
-const onDisconnected = (clientId: string): Msg => {
-  return { type: "Disconnected", group: "Clients", clientId };
+const onDisconnected = (clientId: string): BackendMsg => {
+  return ["Clients", ["Disconnected", clientId]];
 };
 
 //

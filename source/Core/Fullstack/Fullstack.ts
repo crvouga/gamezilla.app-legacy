@@ -1,5 +1,5 @@
 import * as Rx from "rxjs";
-import { pipe } from "Core/pipe";
+import { ToBackend, ToFrontend } from "Types";
 import * as Browser from "../Browser";
 import * as Cmd from "../Cmd";
 import * as Option from "../Option";
@@ -19,16 +19,16 @@ const sendToFrontend$ = new Rx.Subject<{ clientId: string; msg: unknown }>();
 const broadcast$ = new Rx.Subject<{ msg: unknown }>();
 const sendToBackend$ = new Rx.Subject<{ msg: unknown }>();
 
-export const unsafe_broadcast = (msg: unknown): Cmd.Cmd<never> => {
+export const broadcast = (msg: ToFrontend): Cmd.Cmd<never> => {
   return Rx.of(async () => {
     broadcast$.next({ msg });
     return Option.None;
   });
 };
 
-export const unsafe_sendToFrontend = (
+export const sendToFrontend = (
   clientId: string,
-  msg: unknown,
+  msg: ToFrontend,
 ): Cmd.Cmd<never> => {
   return Rx.of(async () => {
     sendToFrontend$.next({ clientId, msg });
@@ -36,7 +36,7 @@ export const unsafe_sendToFrontend = (
   });
 };
 
-export const unsafe_sendToBackend = (msg: unknown): Cmd.Cmd<never> => {
+export const sendToBackend = (msg: ToBackend): Cmd.Cmd<never> => {
   return Rx.of(async () => {
     sendToBackend$.next({ msg });
     return Option.None;

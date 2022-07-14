@@ -1,3 +1,5 @@
+import { Cmd } from "Core";
+
 //
 //
 //
@@ -5,7 +7,6 @@
 //
 //
 //
-import { Cmd } from "Core";
 
 export type Model = { [clientId: string]: string };
 
@@ -19,17 +20,15 @@ export const init: Model = {};
 //
 //
 
-export type Msg =
-  | { group: "Clients"; type: "Connected"; clientId: string }
-  | { group: "Clients"; type: "Disconnected"; clientId: string };
+export type Msg = ["Connected", string] | ["Disconnected", string];
 
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
-  switch (msg.type) {
+  switch (msg[0]) {
     case "Connected":
-      return [{ ...model, [msg.clientId]: msg.clientId }, Cmd.None];
+      return [{ ...model, [msg[1]]: msg[1] }, Cmd.None];
 
     case "Disconnected":
-      return [dissoc(msg.clientId, model), Cmd.None];
+      return [dissoc(msg[1], model), Cmd.None];
   }
 };
 
