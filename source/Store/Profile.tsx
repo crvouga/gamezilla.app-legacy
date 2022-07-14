@@ -1,6 +1,5 @@
-import * as Snackbar from "Snackbar";
 import * as Rx from "rxjs";
-import { Cmd, Option, RemoteData, Result, Task, pipe } from "Core";
+import { Cmd, RemoteData, Result, Task, pipe } from "Core";
 import { exhaustive } from "Utility";
 import produce from "immer";
 import { matchSorter } from "match-sorter";
