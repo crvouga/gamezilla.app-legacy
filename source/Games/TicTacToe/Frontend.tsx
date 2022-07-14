@@ -1,6 +1,7 @@
 import * as Route from "Route";
 import * as UI from "UI";
-import { Cmd } from "Core";
+import { sendToBackend } from "Bridge/Frontend";
+import { Cmd, RemoteData } from "Core";
 import * as Board from "./Board";
 import { FrontendModel, FrontendMsg, ToFrontend } from "./Types";
 
@@ -14,9 +15,14 @@ import { FrontendModel, FrontendMsg, ToFrontend } from "./Types";
 
 export type Model = FrontendModel;
 
-export const init: Model = {
-  rooms: {},
-};
+export const init: [Model, Cmd.Cmd<Msg>] = [
+  {
+    createRoom: RemoteData.NotAsked,
+    getRooms: RemoteData.Loading,
+    rooms: {},
+  },
+  sendToBackend(["Games", ["TicTacToe", ["GetRooms"]]]),
+];
 
 //
 //
@@ -28,10 +34,24 @@ export const init: Model = {
 
 export type Msg = FrontendMsg;
 
-export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
+export const update = (
+  { authUserId }: { authUserId: string },
+  msg: Msg,
+  model: Model,
+): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
     case "ClickedNewRoom":
-      return [model, Cmd.None];
+      return [
+        {
+          ...model,
+          getRooms: RemoteData.Loading,
+          createRoom: RemoteData.Loading,
+        },
+        sendToBackend([
+          "Games",
+          ["TicTacToe", ["CreateRoom", { creatorId: authUserId }]],
+        ]),
+      ];
 
     case "ClickedBack":
       return [model, Route.back];
@@ -43,8 +63,33 @@ export const updateFromBackend = (
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
-    case "CurrentRoom":
-      return [model, Cmd.None];
+    case "GotRooms":
+      return [
+        {
+          ...model,
+          getRooms: RemoteData.Success({}),
+          rooms: msg[1],
+        },
+        Cmd.None,
+      ];
+
+    case "CreateRoomResulted":
+      const roomsNew =
+        msg[1].type === "Err"
+          ? model.rooms
+          : {
+              ...model.rooms,
+              [msg[1].value.roomId]: msg[1].value,
+            };
+
+      return [
+        {
+          ...model,
+          createRoom: RemoteData.fromResult(msg[1]),
+          rooms: roomsNew,
+        },
+        Cmd.None,
+      ];
   }
 };
 
@@ -72,12 +117,33 @@ export const view =
           <UI.Button
             size="large"
             fullWidth
+            loading={model.createRoom.type === "Loading"}
             onClick={() => dispatch(["ClickedNewRoom"])}
             variant="contained"
           >
             New Room
           </UI.Button>
         </UI.Box>
+
+        <UI.List sx={{ overflowY: "scroll" }}>
+          {Object.values(model.rooms).map((room) => (
+            <UI.ListItemButton key={room.roomId}>
+              <UI.ListItemText primary={room.roomId} />
+            </UI.ListItemButton>
+          ))}
+          {model.getRooms.type === "Loading" && (
+            <UI.Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                py: 2,
+              }}
+            >
+              <UI.CircularProgress />
+            </UI.Box>
+          )}
+        </UI.List>
       </UI.Page>
     );
   };
@@ -105,19 +171,14 @@ export const Icon = () => {
 
   return (
     <svg width="100%" height="100%" viewBox="0 0 2 2">
-      <rect x={0} y={0} width={2} height={2} fill={Board.theme.background} />
+      <rect x={0} y={0} width={2} height={2} fill={theme.background} />
 
       {LINES.map((line, index) => (
-        <line
-          key={index}
-          {...line}
-          stroke={Board.theme.line}
-          strokeWidth={0.1}
-        />
+        <line key={index} {...line} stroke={theme.line} strokeWidth={0.1} />
       ))}
 
       {positions.map(([{ column, row }, slot], index) => (
-        <Board.Slot
+        <ViewSlot
           key={index}
           slot={slot}
           cx={Number(column) + 0.5}
@@ -126,5 +187,128 @@ export const Icon = () => {
         />
       ))}
     </svg>
+  );
+};
+
+//
+//
+//
+// View
+//
+//
+//
+
+export const theme = {
+  background: "#14BDAC",
+  line: "#0DA192",
+  cross: "#545454",
+  naught: "#F2EBD3",
+};
+
+export const ViewBoard = ({
+  board,
+  onClick,
+}: {
+  board: Board.Board;
+  onClick: (position: Board.Position) => void;
+}) => {
+  return (
+    <svg width={"100%"} viewBox="0 0 3 3">
+      <rect width="100%" height="100%" fill={theme.background} />
+      {lines.map((line, index) => (
+        <line
+          key={index}
+          x1={line.x1}
+          y1={line.y1}
+          x2={line.x2}
+          y2={line.y2}
+          stroke={theme.line}
+          strokeWidth={0.1}
+        />
+      ))}
+      {Board.allPositions.map((position) => (
+        <ViewSlot
+          key={[
+            position.column,
+            position.row,
+            Board.toSlot(board, position),
+          ].join(" ")}
+          slot={Board.toSlot(board, position)}
+          cx={Number(position.column) + 0.5}
+          cy={Number(position.row) + 0.5}
+          r={0.3}
+        />
+      ))}
+
+      {Board.allPositions.map((position) => (
+        <rect
+          key={[
+            position.column,
+            position.row,
+            Board.toSlot(board, position),
+          ].join(" ")}
+          x={Number(position.column)}
+          y={Number(position.row)}
+          width={1}
+          height={1}
+          onClick={() => onClick(position)}
+          fill="transparent"
+        />
+      ))}
+    </svg>
+  );
+};
+
+const lines = [
+  { x1: 1, y1: 0, x2: 1, y2: 3 },
+  { x1: 2, y1: 0, x2: 2, y2: 3 },
+  { x1: 0, y1: 1, x2: 3, y2: 1 },
+  { x1: 0, y1: 2, x2: 3, y2: 2 },
+];
+
+export const ViewSlot = ({
+  slot,
+  cx,
+  cy,
+  r,
+}: {
+  slot: Board.Slot;
+  r: number;
+  cx: number;
+  cy: number;
+}) => {
+  switch (slot) {
+    case "Empty":
+      return <g></g>;
+
+    case "O":
+      return <Naught r={r} cx={cx} cy={cy} />;
+
+    case "X":
+      return <Cross r={r} cx={cx} cy={cy} />;
+  }
+};
+
+const Cross = ({ cx, cy, r }: { r: number; cx: number; cy: number }) => {
+  return (
+    <g strokeWidth={0.1} stroke={theme.cross}>
+      {/* direction: \ */}
+      <line x1={cx - r} y1={cy - r} x2={cx + r} y2={cy + r} />
+      {/* direction: / */}
+      <line x1={cx + r} y1={cy - r} x2={cx - r} y2={cy + r} />
+    </g>
+  );
+};
+
+const Naught = ({ cx, cy, r }: { r: number; cx: number; cy: number }) => {
+  return (
+    <circle
+      r={r}
+      cx={cx}
+      cy={cy}
+      stroke={theme.naught}
+      strokeWidth={0.1}
+      fill="transparent"
+    />
   );
 };

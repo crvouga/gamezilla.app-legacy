@@ -14,7 +14,7 @@ export type Model = BackendModel;
 
 export const init: Model = {
   count: 0,
-  status: "Incrementing",
+  status: "Idle",
 };
 
 //

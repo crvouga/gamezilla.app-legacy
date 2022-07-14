@@ -85,7 +85,9 @@ export const fromBackend = <Msg>(
 
 export const sendToBackend = (msg: ToBackend): Cmd.Cmd<never> => {
   return Rx.of(async () => {
-    socket.emit("ToBackend", msg);
+    setTimeout(() => {
+      socket.emit("ToBackend", msg);
+    }, 500);
     return Option.None;
   });
 };

@@ -27,18 +27,6 @@ const toBackend$ = new Rx.Subject<[ClientId, ToBackend]>();
 const onConnect$ = new Rx.Subject<ClientId>();
 const onDisconnect$ = new Rx.Subject<ClientId>();
 
-io.on("connection", (socket) => {
-  onConnect$.next(socket.id);
-
-  socket.on("disconnect", () => {
-    onDisconnect$.next(socket.id);
-  });
-
-  socket.on("ToBackend", (msg) => {
-    toBackend$.next([socket.id, msg]);
-  });
-});
-
 //
 //
 //
@@ -107,3 +95,15 @@ io.listen(port);
 console.clear();
 console.log(`[backend] server running at:`);
 console.log(`[backend] http://localhost:${backendServerPort}/`);
+
+io.on("connection", (socket) => {
+  onConnect$.next(socket.id);
+
+  socket.on("disconnect", () => {
+    onDisconnect$.next(socket.id);
+  });
+
+  socket.on("ToBackend", (msg) => {
+    toBackend$.next([socket.id, msg]);
+  });
+});
