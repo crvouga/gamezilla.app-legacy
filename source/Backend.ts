@@ -35,7 +35,7 @@ export const update = (
   model: Model,
 ): [Model, Cmd.Cmd<BackendMsg>] => {
   switch (msg[0]) {
-    case "FromFrontend":
+    case "ToBackend":
       return updateFromFrontend(msg[1], msg[2], model);
 
     case "Clients":

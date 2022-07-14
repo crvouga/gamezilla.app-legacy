@@ -33,13 +33,13 @@ export type FrontendMsg =
   | ["Page", Pages.Msg]
   | ["ConnectionStatus", ConnectionStatus.Msg]
   | ["Counter", Counter.FrontendMsg]
-  | ["FromBackend", ToFrontend];
+  | ["ToFrontend", ToFrontend];
 
 export type ToBackend = ["Counter", Counter.ToBackend];
 
 export type BackendMsg =
   | ["Clients", Clients.Msg]
   | ["Counter", Counter.BackendMsg]
-  | ["FromFrontend", string, ToBackend];
+  | ["ToBackend", string, ToBackend];
 
 export type ToFrontend = ["Counter", Counter.ToFrontend];
