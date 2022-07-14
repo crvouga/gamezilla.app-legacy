@@ -23,7 +23,7 @@ const io = new Server<ClientToServerEvents, ServerToClientEvents>({
   },
 });
 
-const toBackend$ = new Rx.Subject<ToBackend>();
+const toBackend$ = new Rx.Subject<[ClientId, ToBackend]>();
 const onConnect$ = new Rx.Subject<ClientId>();
 const onDisconnect$ = new Rx.Subject<ClientId>();
 
@@ -35,7 +35,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("ToBackend", (msg) => {
-    toBackend$.next(msg);
+    toBackend$.next([socket.id, msg]);
   });
 });
 
@@ -60,9 +60,12 @@ export const onDisconnect = <Msg>(
 };
 
 export const fromFrontend = <Msg>(
-  mapper: (msg: ToBackend) => Msg,
+  mapper: (clientId: ClientId, msg: ToBackend) => Msg,
 ): Sub.Sub<Msg> => {
-  return pipe(toBackend$, Rx.map(mapper));
+  return pipe(
+    toBackend$,
+    Rx.map(([clientId, msg]) => mapper(clientId, msg)),
+  );
 };
 
 //

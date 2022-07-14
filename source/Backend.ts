@@ -1,6 +1,7 @@
 import * as Clients from "Clients";
 import * as Counter from "Counter/Backend";
 import * as Games from "Games/Backend";
+import { fromFrontend } from "Bridge/Backend";
 import { ClientId } from "Bridge/Bridge";
 import { Cmd, Platform, Sub, pipe } from "Core";
 import { formatMsg } from "Core/Debug";
@@ -107,6 +108,11 @@ export const updateFromFrontend = (
 export const subscriptions = (model: Model): Sub.Sub<BackendMsg> => {
   return Sub.batch([
     pipe(Counter.subscriptions(model.counter), Sub.map(tag("Counter"))),
+    fromFrontend<BackendMsg>((clientId, toBackend) => [
+      "ToBackend",
+      clientId,
+      toBackend,
+    ]),
   ]);
 };
 
