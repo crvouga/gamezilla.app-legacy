@@ -1,5 +1,5 @@
 import * as Clients from "Clients";
-import * as Connection from "Connection";
+import * as ConnectionStatus from "ConnectionStatus";
 import * as Counter from "Counter";
 import * as Games from "Games";
 import * as Pages from "Pages";
@@ -15,7 +15,7 @@ export type FrontendModel = {
   game: Games.Model;
   page: Pages.Model;
   route: Route.Route;
-  connection: Connection.Model;
+  connectionStatus: ConnectionStatus.Model;
   counter: Counter.FrontendModel;
 };
 
@@ -31,13 +31,15 @@ export type FrontendMsg =
   | ["Store", Store.Msg]
   | ["Session", Session.Msg]
   | ["Page", Pages.Msg]
-  | ["Connection", Connection.Msg]
-  | ["Counter", Counter.FrontendMsg];
+  | ["ConnectionStatus", ConnectionStatus.Msg]
+  | ["Counter", Counter.FrontendMsg]
+  | ["FromBackend", ToFrontend];
 
 export type ToBackend = ["Counter", Counter.ToBackend];
 
 export type BackendMsg =
   | ["Clients", Clients.Msg]
-  | ["Counter", Counter.BackendMsg];
+  | ["Counter", Counter.BackendMsg]
+  | ["FromFrontend", string, ToBackend];
 
 export type ToFrontend = ["Counter", Counter.ToFrontend];

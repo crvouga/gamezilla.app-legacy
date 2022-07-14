@@ -1,6 +1,6 @@
 import * as Clients from "Clients";
 import * as Counter from "Counter/Backend";
-import { Cmd, Fullstack, Platform, Sub, pipe } from "Core";
+import { Cmd, Sub, pipe } from "Core";
 import { BackendModel, BackendMsg, ToBackend } from "Types";
 import { tag } from "Utility";
 
@@ -12,7 +12,7 @@ import { tag } from "Utility";
 //
 //
 
-export type Model = BackendModel;
+type Model = BackendModel;
 
 export const init: [Model, Cmd.Cmd<BackendMsg>] = [
   {
@@ -35,6 +35,9 @@ export const update = (
   model: Model,
 ): [Model, Cmd.Cmd<BackendMsg>] => {
   switch (msg[0]) {
+    case "FromFrontend":
+      return updateFromFrontend(msg[1], msg[2], model);
+
     case "Clients":
       const [clientsNew, clientsCmd] = Clients.update(msg[1], model.clients);
       return [
@@ -52,6 +55,7 @@ export const update = (
 };
 
 export const updateFromFrontend = (
+  _clientId: string,
   msg: ToBackend,
   model: Model,
 ): [Model, Cmd.Cmd<BackendMsg>] => {
@@ -82,42 +86,3 @@ export const subscriptions = (model: Model): Sub.Sub<BackendMsg> => {
     pipe(Counter.subscriptions(model.counter), Sub.map(tag("Counter"))),
   ]);
 };
-
-//
-//
-//
-//
-//
-//
-//
-
-const onConnected = (clientId: string): BackendMsg => {
-  return ["Clients", ["Connected", clientId]];
-};
-
-const onDisconnected = (clientId: string): BackendMsg => {
-  return ["Clients", ["Disconnected", clientId]];
-};
-
-//
-//
-//
-// Main
-//
-//
-//
-
-const program = Fullstack.backend({
-  init,
-  update,
-  updateFromFrontend,
-  subscriptions,
-  onConnected,
-  onDisconnected,
-});
-
-Platform.run(program);
-
-program.state$.subscribe((state) => {
-  console.log(JSON.stringify(state, null, 4));
-});

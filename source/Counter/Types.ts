@@ -13,6 +13,6 @@ export type FrontendMsg = ["ClickedToggle"];
 
 export type ToBackend = ["ClickedToggle"];
 
-export type BackendMsg = ["Ticked"];
+export type BackendMsg = ["Ticked"] | ["ClientConnected", string];
 
 export type ToFrontend = ["CounterNew", CounterModel];
