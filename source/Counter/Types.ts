@@ -1,22 +1,18 @@
 import { Option } from "Core";
 
-export type Counter = {
+export type CounterModel = {
   status: "Incrementing" | "Idle";
   count: number;
 };
 
-export type BackendModel = Counter;
+export type BackendModel = CounterModel;
 
-export type FrontendModel = Option.Option<Counter>;
+export type FrontendModel = Option.Option<CounterModel>;
 
-export type FrontendMsg = { type: "ClickedToggle"; group: "Counter" };
+export type FrontendMsg = ["ClickedToggle"];
 
-export type ToBackend = { type: "Toggle"; group: "Counter" };
+export type ToBackend = ["ClickedToggle"];
 
-export type BackendMsg = { group: "Counter"; type: "Ticked" };
+export type BackendMsg = ["Ticked"];
 
-export type ToFrontend = {
-  group: "Counter";
-  type: "CounterNew";
-  counter: Counter;
-};
+export type ToFrontend = ["CounterNew", CounterModel];

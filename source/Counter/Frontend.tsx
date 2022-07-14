@@ -1,6 +1,6 @@
 import * as UI from "UI";
 import { Cmd, Option, Sub, pipe } from "Core";
-import { sendToBackend } from "Types";
+import { sendToBackend } from "Core/Fullstack";
 import { exhaustive } from "Utility";
 import { FrontendModel, FrontendMsg, ToFrontend } from "./Types";
 
@@ -14,7 +14,7 @@ import { FrontendModel, FrontendMsg, ToFrontend } from "./Types";
 
 export type Model = FrontendModel;
 
-export const init: [Model, Cmd.Cmd<Msg>] = [Option.None, Cmd.None];
+export const init: [Model, Cmd.Cmd<FrontendMsg>] = [Option.None, Cmd.None];
 
 //
 //
@@ -24,25 +24,23 @@ export const init: [Model, Cmd.Cmd<Msg>] = [Option.None, Cmd.None];
 //
 //
 
-type Msg = FrontendMsg;
-
-export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
-  switch (msg.type) {
+export const update = (
+  msg: FrontendMsg,
+  model: Model,
+): [Model, Cmd.Cmd<FrontendMsg>] => {
+  switch (msg[0]) {
     case "ClickedToggle":
-      return [model, sendToBackend({ group: "Counter", type: "Toggle" })];
-
-    default:
-      return exhaustive(msg.type);
+      return [model, sendToBackend(["Counter", ["ClickedToggle"]])];
   }
 };
 
 export const updateFromBackend = (
   msg: ToFrontend,
   _model: Model,
-): [Model, Cmd.Cmd<Msg>] => {
-  switch (msg.type) {
+): [Model, Cmd.Cmd<FrontendMsg>] => {
+  switch (msg[0]) {
     case "CounterNew":
-      return [Option.Some(msg.counter), Cmd.None];
+      return [Option.Some(msg[1]), Cmd.None];
   }
 };
 
@@ -54,7 +52,7 @@ export const updateFromBackend = (
 //
 //
 
-export const subscriptions = (model: Model): Sub.Sub<Msg> => {
+export const subscriptions = (model: Model): Sub.Sub<FrontendMsg> => {
   return Sub.None;
 };
 
@@ -67,7 +65,7 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
 //
 
 export const view =
-  (model: Model): UI.View<Msg> =>
+  (model: Model): UI.View<FrontendMsg> =>
   (dispatch) => {
     return (
       <UI.Box sx={{ p: 2, display: "flex", alignItems: "center" }}>
@@ -85,7 +83,7 @@ export const view =
           Reset
         </UI.Button>
         <UI.Button
-          onClick={() => dispatch({ group: "Counter", type: "ClickedToggle" })}
+          onClick={() => dispatch(["ClickedToggle"])}
           disabled={model.type == "None"}
         >
           {pipe(

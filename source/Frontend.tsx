@@ -165,10 +165,10 @@ export const updateFromBackend = (
   msg: ToFrontend,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
-  switch (msg.group) {
+  switch (msg[0]) {
     case "Counter": {
       const [counterNew, counterCmd] = Counter.updateFromBackend(
-        msg,
+        msg[1],
         model.counter,
       );
       return [
@@ -501,7 +501,7 @@ export const view =
             Connection.view(model.connection),
             UI.map(tag("Connection")),
           )(dispatch)}
-          {/* {Counter.view(model.counter)(dispatch)} */}
+          {pipe(Counter.view(model.counter), UI.map(tag("Counter")))(dispatch)}
           <UI.Box
             sx={{
               width: "100%",

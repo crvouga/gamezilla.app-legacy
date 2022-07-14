@@ -494,7 +494,11 @@ export const withDebugger = <Model, Msg, Dom>(
 
     const toTypeString = (action: unknown): string => {
       if (Array.isArray(action) && typeof action[0] === "string") {
-        return `${action[0]}.${toTypeString(action[1])}`;
+        const next = toTypeString(action[1]);
+        if (next === "") {
+          return action[0];
+        }
+        return `${action[0]}.${next}`;
       }
       return "";
     };
@@ -506,12 +510,12 @@ export const withDebugger = <Model, Msg, Dom>(
   });
 
   // Todo put somewhere else has nothing do to with redux dev tools
-  program.state$.subscribe((state) => {
-    const size = new TextEncoder().encode(JSON.stringify(state.model)).length;
-    const kiloBytes = Math.round(size / 1024);
-    // const megaBytes = kiloBytes / 1024;
-    console.log(`[app] model memory size is ${kiloBytes} kiloBytes`);
-  });
+  // program.state$.subscribe((state) => {
+  //   const size = new TextEncoder().encode(JSON.stringify(state.model)).length;
+  //   const kiloBytes = Math.round(size / 1024);
+  //   // const megaBytes = kiloBytes / 1024;
+  //   console.log(`[app] model memory size is ${kiloBytes} kiloBytes`);
+  // });
 
   return program;
 };
