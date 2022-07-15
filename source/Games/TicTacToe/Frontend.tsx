@@ -247,6 +247,15 @@ const viewInRoom =
     model: Model,
   ): UI.View<Msg> =>
   (dispatch) => {
+    const x =
+      room.players.X.type === "User"
+        ? store.Profile[room.players.X.userId]
+        : undefined;
+
+    const o =
+      room.players.O.type === "User"
+        ? store.Profile[room.players.O.userId]
+        : undefined;
     return (
       <>
         <UI.Header
@@ -259,24 +268,29 @@ const viewInRoom =
         <UI.Box
           sx={{
             display: "flex",
-            paddingX: 2,
+
             alignItems: "center",
           }}
         >
-          <UI.Avatar />
-          <svg width={60} viewBox="0 0 1 1">
-            <ViewSlot slot="X" cx={0.5} cy={0.5} r={0.3} />
-          </svg>
+          {x ? (
+            <ScoreCard
+              avatarUrl={x.avatarUrl}
+              player="X"
+              score={room.scores.X}
+            />
+          ) : (
+            <></>
+          )}
 
-          <UI.Typography sx={{ flex: 1 }} align="center">
-            00:00
-          </UI.Typography>
-
-          <svg width={60} viewBox="0 0 1 1">
-            {/* <rect  width={1} height={1} fill={theme.background} /> */}
-            <ViewSlot slot="O" cx={0.5} cy={0.5} r={0.3} />
-          </svg>
-          <UI.Avatar />
+          {o ? (
+            <ScoreCard
+              avatarUrl={o.avatarUrl}
+              player="O"
+              score={room.scores.O}
+            />
+          ) : (
+            <></>
+          )}
         </UI.Box>
 
         <ViewBoard
@@ -305,6 +319,34 @@ const viewInRoom =
       </>
     );
   };
+
+const ScoreCard = ({
+  avatarUrl,
+  player,
+  score,
+}: {
+  avatarUrl: string;
+  player: Board.Player;
+  score: number;
+}) => {
+  return (
+    <UI.Box
+      sx={{
+        flex: 1,
+        display: "flex",
+        alignItems: "center",
+        paddingX: 2,
+      }}
+    >
+      <UI.Avatar src={avatarUrl} />
+      <svg width={60} viewBox="0 0 1 1">
+        <ViewSlot slot={player} cx={0.5} cy={0.5} r={0.3} />
+      </svg>
+      <UI.Box sx={{ flex: 1 }} />
+      <UI.Typography variant="h2">{score}</UI.Typography>
+    </UI.Box>
+  );
+};
 
 //
 //

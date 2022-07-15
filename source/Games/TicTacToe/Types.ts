@@ -92,8 +92,12 @@ export type Room = {
   roomId: RoomId;
   board: Board.Board;
   players: {
-    X: Player;
-    O: Player;
+    X: RoomPlayer;
+    O: RoomPlayer;
+  };
+  scores: {
+    X: number;
+    O: number;
   };
   hostId: string;
 };
@@ -106,14 +110,15 @@ export const initRoom = (roomId: RoomId, hostId: string): Room => {
       X: { type: "User", userId: hostId },
       O: { type: "User", userId: hostId },
     },
+    scores: {
+      X: 0,
+      O: 0,
+    },
     hostId,
   };
 };
 
-export type Player =
-  | { type: "User"; userId: string }
-  | { type: "Computer" }
-  | { type: "None" };
+export type RoomPlayer = { type: "User"; userId: string } | { type: "None" };
 
 export const toPlayer = (userId: string, room: Room): Board.Player | "None" => {
   const { X, O } = room.players;
@@ -141,4 +146,4 @@ export const toCurrentRoom = (
   return Option.fromNullable(subset[0]);
 };
 
-type RoomStatus = ["MissingPlayers", Board.Player];
+export type RoomStatus = ["MissingPlayers", Board.Player] | ["Ready"];
