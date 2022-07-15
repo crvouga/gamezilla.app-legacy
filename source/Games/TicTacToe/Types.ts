@@ -53,14 +53,16 @@ export type FrontendMsg =
   | ["ClickedJoinRoom", { roomId: RoomId }]
   | ["ClickedBack"]
   | ["ClickedBoard", Board.Position]
-  | ["ClickedProfile", { userId: string }];
+  | ["ClickedProfile", { userId: string }]
+  | ["ClickedRestart"];
 
 export type ToBackend =
   | ["Init"]
   | ["CreateRoom", { userId: string }]
   | ["LeaveRoom", { userId: string }]
   | ["JoinRoom", { userId: string; roomId: RoomId }]
-  | ["Move", { userId: string; position: Board.Position }];
+  | ["Move", { userId: string; position: Board.Position }]
+  | ["Restart", { userId: string }];
 
 export type BackendMsg =
   | ["ClientConnected", ClientId]
@@ -77,7 +79,8 @@ export type ToFrontend =
   | ["CreateRoomResulted", Result.Result<string, {}>]
   | ["LeaveRoomResulted", Result.Result<string, {}>]
   | ["JoinRoomResulted", Result.Result<string, {}>]
-  | ["MoveResulted", Result.Result<string, {}>];
+  | ["MoveResulted", Result.Result<string, {}>]
+  | ["RestartResulted", Result.Result<string, {}>];
 
 //
 //
