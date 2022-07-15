@@ -84,7 +84,13 @@ export const update = (
       return [model, Route.back];
 
     case "ClickedBoard":
-      return [model, Route.back];
+      return [
+        { ...model, move: RemoteData.Loading },
+        sendToBackend([
+          "Games",
+          ["TicTacToe", ["Move", { position: msg[1], userId: authUserId }]],
+        ]),
+      ];
   }
 };
 
@@ -238,7 +244,10 @@ const viewInRoom =
           title="Tic Tac Toe"
         />
 
-        <ViewBoard board={room.board} onClick={(position) => {}} />
+        <ViewBoard
+          board={room.board}
+          onClick={(position) => dispatch(["ClickedBoard", position])}
+        />
 
         <UI.Box sx={{ p: 2 }}>
           <UI.Button

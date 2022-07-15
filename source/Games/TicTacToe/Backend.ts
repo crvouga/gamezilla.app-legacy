@@ -7,12 +7,14 @@ import {
 import { ClientId } from "Bridge/Bridge";
 import { Cmd, Result, Sub, Uuid } from "Core";
 import { get, remove } from "Core/Record";
+import * as Board from "./Board";
 import {
   BackendModel,
   BackendMsg,
   ToBackend,
   initRoom,
   toCurrentRoom,
+  toPlayer,
 } from "./Types";
 
 //
@@ -60,7 +62,70 @@ export const updateFromFrontend = (
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
     case "Move": {
-      return [model, Cmd.None];
+      const currentUserId = msg[1].userId;
+
+      const maybeCurrentRoom = toCurrentRoom(currentUserId, model);
+      if (maybeCurrentRoom.type === "None") {
+        const result = Result.Err("User is not in a room");
+        return [
+          model,
+          sendToFrontend(clientId, [
+            "Games",
+            ["TicTacToe", ["MoveResulted", result]],
+          ]),
+        ];
+      }
+
+      const room = maybeCurrentRoom.value;
+
+      const player = toPlayer(currentUserId, room);
+
+      if (player === "None") {
+        const result = Result.Err("User is not a player");
+        return [
+          model,
+          sendToFrontend(clientId, [
+            "Games",
+            ["TicTacToe", ["MoveResulted", result]],
+          ]),
+        ];
+      }
+
+      const moveResult = Board.move(room.board, player, msg[1].position);
+
+      if (moveResult.type === "Err") {
+        return [
+          model,
+          sendToFrontend(clientId, [
+            "Games",
+            ["TicTacToe", ["MoveResulted", moveResult]],
+          ]),
+        ];
+      }
+
+      const roomNew = {
+        ...room,
+        board: moveResult.value,
+      };
+
+      const modelNew = {
+        ...model,
+        rooms: {
+          ...model.rooms,
+          [roomNew.roomId]: roomNew,
+        },
+      };
+
+      return [
+        modelNew,
+        Cmd.batch([
+          broadcast(["Games", ["TicTacToe", ["Sync", modelNew]]]),
+          sendToFrontend(clientId, [
+            "Games",
+            ["TicTacToe", ["MoveResulted", Result.Ok({})]],
+          ]),
+        ]),
+      ];
     }
 
     case "JoinRoom": {
