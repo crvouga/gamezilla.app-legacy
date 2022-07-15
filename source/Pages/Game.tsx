@@ -52,6 +52,9 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 //
 //
 
-export const view = (model: Model): UI.View<Msg> => {
-  return Games.view(model);
+export const view = (
+  { authUser }: { authUser: { userId: string } },
+  model: Model,
+): UI.View<Msg> => {
+  return Games.view({ authUser }, model);
 };

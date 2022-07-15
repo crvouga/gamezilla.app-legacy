@@ -3,7 +3,13 @@ import * as UI from "UI";
 import { sendToBackend } from "Bridge/Frontend";
 import { Cmd, RemoteData } from "Core";
 import * as Board from "./Board";
-import { FrontendModel, FrontendMsg, ToFrontend } from "./Types";
+import {
+  FrontendModel,
+  FrontendMsg,
+  Room,
+  ToFrontend,
+  toCurrentRoom,
+} from "./Types";
 
 //
 //
@@ -18,8 +24,10 @@ export type Model = FrontendModel;
 export const init: [Model, Cmd.Cmd<Msg>] = [
   {
     createRoom: RemoteData.NotAsked,
+    leaveRoom: RemoteData.NotAsked,
     getRooms: RemoteData.Loading,
     rooms: {},
+    users: {},
   },
   sendToBackend(["Games", ["TicTacToe", ["GetRooms"]]]),
 ];
@@ -40,20 +48,28 @@ export const update = (
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
-    case "ClickedNewRoom":
+    case "ClickedLeaveRoom":
       return [
-        {
-          ...model,
-          getRooms: RemoteData.Loading,
-          createRoom: RemoteData.Loading,
-        },
+        { ...model, leaveRoom: RemoteData.Loading },
         sendToBackend([
           "Games",
-          ["TicTacToe", ["CreateRoom", { creatorId: authUserId }]],
+          ["TicTacToe", ["LeaveRoom", { userId: authUserId }]],
+        ]),
+      ];
+
+    case "ClickedNewRoom":
+      return [
+        { ...model, createRoom: RemoteData.Loading },
+        sendToBackend([
+          "Games",
+          ["TicTacToe", ["CreateRoom", { userId: authUserId }]],
         ]),
       ];
 
     case "ClickedBack":
+      return [model, Route.back];
+
+    case "ClickedBoard":
       return [model, Route.back];
   }
 };
@@ -68,10 +84,18 @@ export const updateFromBackend = (
         {
           ...model,
           getRooms: RemoteData.Success({}),
-          rooms: msg[1],
+          rooms: msg[1].rooms,
+          users: msg[1].users,
         },
         Cmd.None,
       ];
+
+    case "LeaveRoomResulted":
+      const modelNew: Model = {
+        ...model,
+        leaveRoom: RemoteData.fromResult(msg[1]),
+      };
+      return [modelNew, Cmd.None];
 
     case "CreateRoomResulted":
       const roomsNew =
@@ -101,7 +125,23 @@ export const updateFromBackend = (
 //
 //
 
-export const view =
+export const view = (
+  { authUser }: { authUser: { userId: string } },
+  model: Model,
+): UI.View<Msg> => {
+  const maybeCurrentRoom = toCurrentRoom(authUser.userId, model);
+
+  switch (maybeCurrentRoom.type) {
+    case "None":
+      return viewNotInRoom(model);
+
+    case "Some":
+      const currentRoom = maybeCurrentRoom.value;
+      return viewInRoom(currentRoom, model);
+  }
+};
+
+const viewNotInRoom =
   (model: Model): UI.View<Msg> =>
   (dispatch) => {
     return (
@@ -145,6 +185,34 @@ export const view =
           )}
         </UI.List>
       </UI.Page>
+    );
+  };
+
+const viewInRoom =
+  (room: Room, model: Model): UI.View<Msg> =>
+  (dispatch) => {
+    return (
+      <>
+        <UI.Header
+          left={
+            <UI.HeaderBackButton onClick={() => dispatch(["ClickedBack"])} />
+          }
+          title="Tic Tac Toe"
+        />
+
+        <ViewBoard board={room.board} onClick={(position) => {}} />
+
+        <UI.Box sx={{ p: 2 }}>
+          <UI.Button
+            onClick={() => dispatch(["ClickedLeaveRoom"])}
+            loading={model.leaveRoom.type === "Loading"}
+            fullWidth
+            variant="contained"
+          >
+            Leave Room
+          </UI.Button>
+        </UI.Box>
+      </>
     );
   };
 
