@@ -1,4 +1,5 @@
 import * as Route from "Route";
+import * as Store from "Store";
 import * as UI from "UI";
 import { sendToBackend } from "Bridge/Frontend";
 import { Cmd, RemoteData } from "Core";
@@ -154,7 +155,7 @@ export const updateFromBackend = (
 //
 
 export const view = (
-  { currentUserId }: { currentUserId: string },
+  { currentUserId, store }: { currentUserId: string; store: Store.Model },
   model: Model,
 ): UI.View<Msg> => {
   const maybeCurrentRoom = toCurrentRoom(currentUserId, model);
@@ -165,7 +166,7 @@ export const view = (
 
     case "Some":
       const room = maybeCurrentRoom.value;
-      return viewInRoom({ room, currentUserId }, model);
+      return viewInRoom({ room, currentUserId, store }, model);
   }
 };
 
@@ -234,7 +235,15 @@ const viewNotInRoom =
 
 const viewInRoom =
   (
-    { currentUserId, room }: { currentUserId: string; room: Room },
+    {
+      currentUserId,
+      room,
+      store,
+    }: {
+      currentUserId: string;
+      room: Room;
+      store: Store.Model;
+    },
     model: Model,
   ): UI.View<Msg> =>
   (dispatch) => {

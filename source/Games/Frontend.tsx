@@ -1,5 +1,6 @@
 import * as Route from "Route";
 import * as Snackbar from "Snackbar";
+import * as Store from "Store";
 import * as UI from "UI";
 import { keyframes } from "@mui/system";
 import { Cmd, Sub, pipe } from "Core";
@@ -319,45 +320,34 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
 //
 
 export const view = (
-  { currentUserId }: { currentUserId: string },
+  { currentUserId, store }: { currentUserId: string; store: Store.Model },
   model: Model,
 ): UI.View<Msg> => {
   switch (model.type) {
     case "Closed":
-      return viewClosed;
+      return () => <>game is closed</>;
 
     case "Opened":
-      return viewOpened({ currentUserId }, model);
+      switch (model.child.type) {
+        case "Chess":
+          return pipe(Chess.view(model.child.child), UI.map(tag("Chess")));
+
+        case "ConnectFour":
+          return pipe(
+            ConnectFour.view(model.child.child),
+            UI.map(tag("ConnectFour")),
+          );
+
+        case "TicTacToe":
+          return pipe(
+            TicTacToe.view({ currentUserId, store }, model.child.child),
+            UI.map(tag("TicTacToe")),
+          );
+
+        case "Snake":
+          return pipe(Snake.view(model.child.child), UI.map(tag("Snake")));
+      }
   }
-};
-
-const viewOpened = (
-  { currentUserId }: { currentUserId: string },
-  model: Opened,
-): UI.View<Msg> => {
-  switch (model.child.type) {
-    case "Chess":
-      return pipe(Chess.view(model.child.child), UI.map(tag("Chess")));
-
-    case "ConnectFour":
-      return pipe(
-        ConnectFour.view(model.child.child),
-        UI.map(tag("ConnectFour")),
-      );
-
-    case "TicTacToe":
-      return pipe(
-        TicTacToe.view({ currentUserId }, model.child.child),
-        UI.map(tag("TicTacToe")),
-      );
-
-    case "Snake":
-      return pipe(Snake.view(model.child.child), UI.map(tag("Snake")));
-  }
-};
-
-const viewClosed: UI.View<Msg> = () => {
-  return <>game is closed</>;
 };
 
 const spin = keyframes`
