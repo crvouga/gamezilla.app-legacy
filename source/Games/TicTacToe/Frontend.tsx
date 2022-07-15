@@ -25,6 +25,7 @@ export const init: [Model, Cmd.Cmd<Msg>] = [
   {
     createRoom: RemoteData.NotAsked,
     leaveRoom: RemoteData.NotAsked,
+    joinRoom: RemoteData.NotAsked,
     getRooms: RemoteData.Loading,
     rooms: {},
     users: {},
@@ -57,7 +58,19 @@ export const update = (
         ]),
       ];
 
-    case "ClickedNewRoom":
+    case "ClickedJoinRoom":
+      return [
+        { ...model, joinRoom: RemoteData.Loading },
+        sendToBackend([
+          "Games",
+          [
+            "TicTacToe",
+            ["JoinRoom", { userId: authUserId, roomId: msg[1].roomId }],
+          ],
+        ]),
+      ];
+
+    case "ClickedCreateRoom":
       return [
         { ...model, createRoom: RemoteData.Loading },
         sendToBackend([
@@ -79,7 +92,7 @@ export const updateFromBackend = (
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
-    case "GotRooms":
+    case "Sync":
       return [
         {
           ...model,
@@ -90,27 +103,31 @@ export const updateFromBackend = (
         Cmd.None,
       ];
 
-    case "LeaveRoomResulted":
-      const modelNew: Model = {
-        ...model,
-        leaveRoom: RemoteData.fromResult(msg[1]),
-      };
-      return [modelNew, Cmd.None];
+    case "JoinRoomResulted": {
+      return [
+        {
+          ...model,
+          joinRoom: RemoteData.fromResult(msg[1]),
+        },
+        Cmd.None,
+      ];
+    }
+
+    case "LeaveRoomResulted": {
+      return [
+        {
+          ...model,
+          leaveRoom: RemoteData.fromResult(msg[1]),
+        },
+        Cmd.None,
+      ];
+    }
 
     case "CreateRoomResulted":
-      const roomsNew =
-        msg[1].type === "Err"
-          ? model.rooms
-          : {
-              ...model.rooms,
-              [msg[1].value.roomId]: msg[1].value,
-            };
-
       return [
         {
           ...model,
           createRoom: RemoteData.fromResult(msg[1]),
-          rooms: roomsNew,
         },
         Cmd.None,
       ];
@@ -126,14 +143,14 @@ export const updateFromBackend = (
 //
 
 export const view = (
-  { authUser }: { authUser: { userId: string } },
+  { currentUserId }: { currentUserId: string },
   model: Model,
 ): UI.View<Msg> => {
-  const maybeCurrentRoom = toCurrentRoom(authUser.userId, model);
+  const maybeCurrentRoom = toCurrentRoom(currentUserId, model);
 
   switch (maybeCurrentRoom.type) {
     case "None":
-      return viewNotInRoom(model);
+      return viewNotInRoom({ currentUserId }, model);
 
     case "Some":
       const currentRoom = maybeCurrentRoom.value;
@@ -142,7 +159,7 @@ export const view = (
 };
 
 const viewNotInRoom =
-  (model: Model): UI.View<Msg> =>
+  ({ currentUserId }: { currentUserId: string }, model: Model): UI.View<Msg> =>
   (dispatch) => {
     return (
       <UI.Page>
@@ -158,7 +175,7 @@ const viewNotInRoom =
             size="large"
             fullWidth
             loading={model.createRoom.type === "Loading"}
-            onClick={() => dispatch(["ClickedNewRoom"])}
+            onClick={() => dispatch(["ClickedCreateRoom"])}
             variant="contained"
           >
             New Room
@@ -167,7 +184,12 @@ const viewNotInRoom =
 
         <UI.List sx={{ overflowY: "scroll" }}>
           {Object.values(model.rooms).map((room) => (
-            <UI.ListItemButton key={room.roomId}>
+            <UI.ListItemButton
+              key={room.roomId}
+              onClick={() =>
+                dispatch(["ClickedJoinRoom", { roomId: room.roomId }])
+              }
+            >
               <UI.ListItemText primary={room.roomId} />
             </UI.ListItemButton>
           ))}

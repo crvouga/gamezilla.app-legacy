@@ -572,7 +572,7 @@ const viewMain = (model: Model): UI.View<Msg> => {
     case "Ready":
       if (model.route.type === "Game") {
         return pipe(
-          Games.view({ authUser: status.profile }, model.game),
+          Games.view({ currentUserId: status.profile.userId }, model.game),
           UI.map(tag("Game")),
         );
       }
