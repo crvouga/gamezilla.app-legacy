@@ -5,6 +5,7 @@
 //
 //
 //
+import { Result } from "Core";
 
 export type Player = "X" | "O";
 
@@ -175,20 +176,28 @@ export const toTurn = (board: Board): Player => {
   return frequency["X"] <= frequency["O"] ? "X" : "O";
 };
 
+export type MoveProblem = "NotTurn" | "PositionTaken" | "Gameover";
+
 export const move = (
   board: Board,
   player: Player,
   position: Position,
-): Board => {
+): Result.Result<MoveProblem, Board> => {
   const status = toStatus(board);
 
-  if (
-    status.type === "Turn" &&
-    status.turn === player &&
-    toSlot(board, position) === "Empty"
-  ) {
-    return setSlot(board, position, player);
+  if (status.type === "Tie" || status.type === "Win") {
+    return Result.Err("Gameover");
   }
 
-  return board;
+  if (status.turn !== player) {
+    return Result.Err("NotTurn");
+  }
+
+  const slot = toSlot(board, position);
+
+  if (slot !== "Empty") {
+    return Result.Err("PositionTaken");
+  }
+
+  return Result.Ok(setSlot(board, position, player));
 };

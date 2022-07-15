@@ -115,6 +115,20 @@ export type Player =
   | { type: "Computer" }
   | { type: "None" };
 
+export const toPlayer = (userId: string, room: Room): Board.Player | "None" => {
+  const { X, O } = room.players;
+
+  if (X.type === "User" && X.userId === userId) {
+    return "X";
+  }
+
+  if (O.type === "User" && O.userId === userId) {
+    return "O";
+  }
+
+  return "None";
+};
+
 export const toCurrentRoom = (
   userId: string,
   { rooms, users }: { rooms: Rooms; users: Users },
