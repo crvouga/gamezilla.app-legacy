@@ -59,6 +59,10 @@ export const updateFromFrontend = (
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
+    case "Move": {
+      return [model, Cmd.None];
+    }
+
     case "JoinRoom": {
       const roomId = msg[1].roomId;
       const currentUserId = msg[1].userId;
@@ -169,7 +173,7 @@ export const updateFromFrontend = (
       ];
     }
 
-    case "GetRooms":
+    case "Init":
       return [
         model,
         sendToFrontend(clientId, ["Games", ["TicTacToe", ["Sync", model]]]),

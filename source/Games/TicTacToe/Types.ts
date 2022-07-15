@@ -20,8 +20,9 @@ export type FrontendModel = {
   createRoom: RemoteData.RemoteData<string, {}>;
   leaveRoom: RemoteData.RemoteData<string, {}>;
   joinRoom: RemoteData.RemoteData<string, {}>;
+  move: RemoteData.RemoteData<string, {}>;
   // queries
-  getRooms: RemoteData.RemoteData<string, {}>;
+  init: RemoteData.RemoteData<string, {}>;
   //
   rooms: Rooms;
   users: Users;
@@ -46,10 +47,6 @@ export type Users = {
 //
 //
 
-export type BackendMsg =
-  | ["ClientConnected", ClientId]
-  | ["ClientDisconnected", ClientId];
-
 export type FrontendMsg =
   | ["ClickedCreateRoom"]
   | ["ClickedLeaveRoom"]
@@ -57,23 +54,29 @@ export type FrontendMsg =
   | ["ClickedBack"]
   | ["ClickedBoard", Board.Position];
 
+export type ToBackend =
+  | ["Init"]
+  | ["CreateRoom", { userId: string }]
+  | ["LeaveRoom", { userId: string }]
+  | ["JoinRoom", { userId: string; roomId: RoomId }]
+  | ["Move", { userId: string; position: Board.Position }];
+
+export type BackendMsg =
+  | ["ClientConnected", ClientId]
+  | ["ClientDisconnected", ClientId];
+
 export type ToFrontend =
-  | ["CreateRoomResulted", Result.Result<string, {}>]
-  | ["LeaveRoomResulted", Result.Result<string, {}>]
-  | ["JoinRoomResulted", Result.Result<string, {}>]
   | [
       "Sync",
       {
         rooms: Rooms;
         users: Users;
       },
-    ];
-
-export type ToBackend =
-  | ["CreateRoom", { userId: string }]
-  | ["GetRooms"]
-  | ["LeaveRoom", { userId: string }]
-  | ["JoinRoom", { userId: string; roomId: RoomId }];
+    ]
+  | ["CreateRoomResulted", Result.Result<string, {}>]
+  | ["LeaveRoomResulted", Result.Result<string, {}>]
+  | ["JoinRoomResulted", Result.Result<string, {}>]
+  | ["MoveResulted", Result.Result<string, {}>];
 
 //
 //
