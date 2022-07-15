@@ -26,11 +26,12 @@ export const init: [Model, Cmd.Cmd<Msg>] = [
     createRoom: RemoteData.NotAsked,
     leaveRoom: RemoteData.NotAsked,
     joinRoom: RemoteData.NotAsked,
-    getRooms: RemoteData.Loading,
+    init: RemoteData.Loading,
+    move: RemoteData.NotAsked,
     rooms: {},
     users: {},
   },
-  sendToBackend(["Games", ["TicTacToe", ["GetRooms"]]]),
+  sendToBackend(["Games", ["TicTacToe", ["Init"]]]),
 ];
 
 //
@@ -96,12 +97,16 @@ export const updateFromBackend = (
       return [
         {
           ...model,
-          getRooms: RemoteData.Success({}),
+          init: RemoteData.Success({}),
           rooms: msg[1].rooms,
           users: msg[1].users,
         },
         Cmd.None,
       ];
+
+    case "MoveResulted": {
+      return [model, Cmd.None];
+    }
 
     case "JoinRoomResulted": {
       return [
@@ -190,10 +195,21 @@ const viewNotInRoom =
                 dispatch(["ClickedJoinRoom", { roomId: room.roomId }])
               }
             >
-              <UI.ListItemText primary={room.roomId} />
+              <UI.ListItemText
+                primaryTypographyProps={{
+                  noWrap: true,
+                  sx: { wordWrap: "break-word" },
+                }}
+                primary={room.roomId}
+              />
             </UI.ListItemButton>
           ))}
-          {model.getRooms.type === "Loading" && (
+
+          <UI.Backdrop open={model.joinRoom.type === "Loading"}>
+            <UI.CircularProgress />
+          </UI.Backdrop>
+
+          {model.init.type === "Loading" && (
             <UI.Box
               sx={{
                 display: "flex",
