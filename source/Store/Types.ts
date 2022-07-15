@@ -79,6 +79,7 @@ export type Queries = {
     Get: {
       [userId: string]: RemoteData.RemoteData<Problem, string>;
     };
+    GetMany: RemoteData.RemoteData<Problem, string[]>;
     Search: {
       [searchText: string]: RemoteData.RemoteData<Problem, string[]>;
     };

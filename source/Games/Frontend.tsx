@@ -81,7 +81,7 @@ const initGame = ({
 
 export type Msg = FrontendMsg;
 
-type OutAction = ["Snackbar", Snackbar.Action];
+type OutAction = ["Snackbar", Snackbar.Action] | ["Store", Store.Action];
 
 export type Action = Open | Close;
 
@@ -139,34 +139,37 @@ export const update = (
 export const updateFromBackend = (
   msg: ToFrontend,
   model: Model,
-): [Model, Cmd.Cmd<Msg>] => {
+): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (model.type) {
     case "Closed":
-      return [model, Cmd.None];
+      return [model, Cmd.None, []];
 
     case "Opened":
-      const [childNew, childCmd] = updateGameFromBackend(msg, model.child);
-      return [{ ...model, child: childNew }, childCmd];
+      const [childNew, childCmd, actions] = updateGameFromBackend(
+        msg,
+        model.child,
+      );
+      return [{ ...model, child: childNew }, childCmd, actions];
   }
 };
 
 const updateGameFromBackend = (
   msg: ToFrontend,
   model: Opened["child"],
-): [Opened["child"], Cmd.Cmd<Msg>] => {
+): [Opened["child"], Cmd.Cmd<Msg>, OutAction[]] => {
   switch (model.type) {
     case "Chess":
-      return [model, Cmd.None];
+      return [model, Cmd.None, []];
 
     case "ConnectFour":
-      return [model, Cmd.None];
+      return [model, Cmd.None, []];
 
     case "Snake":
-      return [model, Cmd.None];
+      return [model, Cmd.None, []];
 
     case "TicTacToe":
       if (msg[0] === "TicTacToe") {
-        const [modelChild, cmdChild] = TicTacToe.updateFromBackend(
+        const [modelChild, cmdChild, actions] = TicTacToe.updateFromBackend(
           msg[1],
           model.child,
         );
@@ -174,10 +177,11 @@ const updateGameFromBackend = (
         return [
           { type: "TicTacToe", child: modelChild },
           pipe(cmdChild, Cmd.map(tag("TicTacToe"))),
+          actions,
         ];
       }
 
-      return [model, Cmd.None];
+      return [model, Cmd.None, []];
 
     default:
       return exhaustive(model);
