@@ -140,3 +140,5 @@ export const toCurrentRoom = (
 
   return Option.fromNullable(subset[0]);
 };
+
+type RoomStatus = ["MissingPlayers", Board.Player];
