@@ -528,7 +528,7 @@ export const view =
             ConnectionStatus.view(model.connectionStatus),
             UI.map(tag("ConnectionStatus")),
           )(dispatch)}
-          {pipe(Counter.view(model.counter), UI.map(tag("Counter")))(dispatch)}
+          {/* {pipe(Counter.view(model.counter), UI.map(tag("Counter")))(dispatch)} */}
           <UI.Box
             sx={{
               width: "100%",
@@ -571,7 +571,10 @@ const viewMain = (model: Model): UI.View<Msg> => {
 
     case "Ready":
       if (model.route.type === "Game") {
-        return pipe(Games.view(model.game), UI.map(tag("Game")));
+        return pipe(
+          Games.view({ authUser: status.profile }, model.game),
+          UI.map(tag("Game")),
+        );
       }
 
       return pipe(
