@@ -34,6 +34,7 @@ export const init: Model = {
     },
     Profile: {
       Get: {},
+      GetMany: RemoteData.NotAsked,
       Search: {},
     },
   },

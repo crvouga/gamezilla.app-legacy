@@ -45,6 +45,8 @@ export const init: [Model, Cmd.Cmd<Msg>] = [
 
 export type Msg = FrontendMsg;
 
+export type OutAction = ["Store", Store.Action];
+
 export const update = (
   { authUserId }: { authUserId: string },
   msg: Msg,
@@ -98,9 +100,10 @@ export const update = (
 export const updateFromBackend = (
   msg: ToFrontend,
   model: Model,
-): [Model, Cmd.Cmd<Msg>] => {
+): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
     case "Sync":
+      const userIds = Object.keys(msg[1].users);
       return [
         {
           ...model,
@@ -109,10 +112,11 @@ export const updateFromBackend = (
           users: msg[1].users,
         },
         Cmd.None,
+        [["Store", Store.Profile.GetMany(userIds)]],
       ];
 
     case "MoveResulted": {
-      return [model, Cmd.None];
+      return [model, Cmd.None, []];
     }
 
     case "JoinRoomResulted": {
@@ -122,6 +126,7 @@ export const updateFromBackend = (
           joinRoom: RemoteData.fromResult(msg[1]),
         },
         Cmd.None,
+        [],
       ];
     }
 
@@ -132,6 +137,7 @@ export const updateFromBackend = (
           leaveRoom: RemoteData.fromResult(msg[1]),
         },
         Cmd.None,
+        [],
       ];
     }
 
@@ -142,6 +148,7 @@ export const updateFromBackend = (
           createRoom: RemoteData.fromResult(msg[1]),
         },
         Cmd.None,
+        [],
       ];
   }
 };
@@ -162,7 +169,7 @@ export const view = (
 
   switch (maybeCurrentRoom.type) {
     case "None":
-      return viewNotInRoom({ currentUserId }, model);
+      return viewNotInRoom({ currentUserId, store }, model);
 
     case "Some":
       const room = maybeCurrentRoom.value;
@@ -171,7 +178,10 @@ export const view = (
 };
 
 const viewNotInRoom =
-  ({ currentUserId }: { currentUserId: string }, model: Model): UI.View<Msg> =>
+  (
+    { currentUserId, store }: { currentUserId: string; store: Store.Model },
+    model: Model,
+  ): UI.View<Msg> =>
   (dispatch) => {
     return (
       <UI.Page>
@@ -194,23 +204,47 @@ const viewNotInRoom =
           </UI.Button>
         </UI.Box>
 
+        <UI.Box sx={{ paddingX: 2 }}>
+          <UI.Typography variant="h5">Rooms</UI.Typography>
+
+          {Object.values(model.rooms).length === 0 &&
+            model.init.type !== "Loading" && (
+              <UI.Typography sx={{ marginTop: 1 }} color="text.secondary">
+                No rooms found.
+              </UI.Typography>
+            )}
+        </UI.Box>
+
         <UI.List sx={{ overflowY: "scroll" }}>
-          {Object.values(model.rooms).map((room) => (
-            <UI.ListItemButton
-              key={room.roomId}
-              onClick={() =>
-                dispatch(["ClickedJoinRoom", { roomId: room.roomId }])
-              }
-            >
-              <UI.ListItemText
-                primaryTypographyProps={{
-                  noWrap: true,
-                  sx: { wordWrap: "break-word" },
-                }}
-                primary={room.roomId}
-              />
-            </UI.ListItemButton>
-          ))}
+          {Object.values(model.rooms)
+            .map((room) => ({
+              room,
+              profiles: Object.values(store.Profile).filter(
+                (profile) =>
+                  model.users[profile.userId]?.roomId === room.roomId,
+              ),
+            }))
+            .map(({ room, profiles }) => (
+              <UI.ListItemButton
+                key={room.roomId}
+                onClick={() =>
+                  dispatch(["ClickedJoinRoom", { roomId: room.roomId }])
+                }
+              >
+                <UI.AvatarGroup>
+                  {profiles.map((item) => (
+                    <UI.Avatar key={item.userId} src={item.avatarUrl} />
+                  ))}
+                </UI.AvatarGroup>
+                <UI.ListItemText
+                  primaryTypographyProps={{
+                    noWrap: true,
+                    sx: { wordWrap: "break-word" },
+                  }}
+                  primary={profiles.map((item) => item.username).join(",")}
+                />
+              </UI.ListItemButton>
+            ))}
 
           <UI.Backdrop open={model.joinRoom.type === "Loading"}>
             <UI.CircularProgress />
@@ -309,12 +343,46 @@ const viewInRoom =
           </UI.Button>
         </UI.Box>
 
-        {Object.values(model.users)
-          .filter((user) => user.roomId === room.roomId)
-          .map((user) => (
-            <UI.Box key={user.userId} sx={{ p: 2 }}>
-              <UI.Typography>{user.userId}</UI.Typography>
-            </UI.Box>
+        {Object.values(store.Profile)
+          .filter(
+            (profile) =>
+              model.users[profile.userId] &&
+              model.users[profile.userId]?.roomId === room.roomId,
+          )
+          .map((profile) => (
+            <UI.ButtonBase
+              key={profile.userId}
+              sx={{ width: "100%", display: "flex" }}
+            >
+              <UI.Box
+                key={profile.userId}
+                sx={{
+                  p: 2,
+                  width: "100%",
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <UI.Avatar src={profile.avatarUrl} sx={{ marginRight: 2 }} />
+                <UI.Typography>{profile.username}</UI.Typography>
+
+                <UI.Box sx={{ flex: 1 }} />
+                {profile.userId === room.hostId && (
+                  <UI.Typography
+                    color="text.secondary"
+                    sx={{
+                      fontStyle: "italic",
+                      display: "flex",
+                      flexDirection: "row",
+                      alignItems: "center",
+                    }}
+                  >
+                    <UI.Icons.Star sx={{ marginRight: 1 / 2 }} />
+                    Host
+                  </UI.Typography>
+                )}
+              </UI.Box>
+            </UI.ButtonBase>
           ))}
       </>
     );

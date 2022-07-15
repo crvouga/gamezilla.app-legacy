@@ -179,9 +179,15 @@ export const updateFromBackend = (
     }
 
     case "Games": {
-      const [gameNew, gameCmd] = Games.updateFromBackend(msg[1], model.game);
+      const [gameNew, gameCmd, actions] = Games.updateFromBackend(
+        msg[1],
+        model.game,
+      );
 
-      return [{ ...model, game: gameNew }, pipe(gameCmd, Cmd.map(tag("Game")))];
+      return pipe(
+        [{ ...model, game: gameNew }, pipe(gameCmd, Cmd.map(tag("Game")))],
+        andThenMany(runAction, actions),
+      );
     }
   }
 };

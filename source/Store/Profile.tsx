@@ -29,6 +29,30 @@ export type Profile = Types.Profile;
 //
 //
 
+export const GetMany = (userIds: string[]) => {
+  return {
+    group: "Store",
+    entity: "Profile",
+    type: "Profile/GetMany",
+    userIds,
+  } as const;
+};
+export type GetMany = ReturnType<typeof GetMany>;
+
+export const GotMany = (
+  userIds: string[],
+  result: Result.Result<Problem, Profile[]>,
+) => {
+  return {
+    group: "Store",
+    entity: "Profile",
+    type: "Profile/GotMany",
+    userIds,
+    result,
+  } as const;
+};
+export type GotMany = ReturnType<typeof GotMany>;
+
 export const ResetMutations = () => {
   return {
     entity: "Profile",
@@ -202,12 +226,20 @@ export type Received = ReturnType<typeof Received>;
 export type Msg =
   | Edited
   | Got
+  | GotMany
   | DeleteResulted
   | CreateResulted
   | Searched
   | Received;
 
-export type Action = Search | Get | Delete | Edit | Create | ResetMutations;
+export type Action =
+  | Search
+  | Get
+  | GetMany
+  | Delete
+  | Edit
+  | Create
+  | ResetMutations;
 
 //
 //
@@ -268,6 +300,31 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
           case "Ok":
             model.Profile[result.value.userId] = result.value;
+            break;
+        }
+      });
+      return [modelNew, Cmd.None];
+    }
+
+    case "Profile/GotMany": {
+      const { userIds, result } = msg;
+      const modelNew = produce(model, (model) => {
+        model.queries.Profile.GetMany = pipe(
+          result,
+          RemoteData.fromResult,
+          RemoteData.mapSuccess((profiles) =>
+            profiles.map((profile) => profile.userId),
+          ),
+        );
+
+        switch (result.type) {
+          case "Err":
+            break;
+
+          case "Ok":
+            for (const profile of result.value) {
+              model.Profile[profile.userId] = profile;
+            }
             break;
         }
       });
@@ -378,6 +435,22 @@ export const runAction = (msg: Action, model: Model): [Model, Cmd.Cmd<Msg>] => {
         pipe(
           load({ userId }),
           Cmd.fromTask((result) => Got(userId, result)),
+        ),
+      ];
+    }
+
+    case "Profile/GetMany": {
+      const { userIds } = msg;
+
+      const modelNew = produce(model, (model) => {
+        model.queries.Profile.GetMany = RemoteData.Loading;
+      });
+
+      return [
+        modelNew,
+        pipe(
+          loadMany({ userIds }),
+          Cmd.fromTask((result) => GotMany(userIds, result)),
         ),
       ];
     }
@@ -556,6 +629,25 @@ export const load =
     }
 
     return Result.Ok(rowToProfile(response.data));
+  };
+
+export const loadMany =
+  ({
+    userIds,
+  }: {
+    userIds: string[];
+  }): Task.Task<Result.Result<Problem, Profile[]>> =>
+  async () => {
+    const response = await Supabase.client
+      .from<definitions["user_profile"]>("user_profile")
+      .select("*")
+      .in("id", userIds);
+
+    if (response.error) {
+      return Result.Err({ message: response.error.message });
+    }
+
+    return Result.Ok(response.data.map(rowToProfile));
   };
 
 export const create =
