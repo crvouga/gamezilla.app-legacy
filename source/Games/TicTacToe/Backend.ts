@@ -91,7 +91,10 @@ export const updateFromFrontend = (
         ];
       }
 
-      const moveResult = Board.move(room.board, player, msg[1].position);
+      const moveResult =
+        player === "Both"
+          ? Board.move(room.board, Board.toTurn(room.board), msg[1].position)
+          : Board.move(room.board, player, msg[1].position);
 
       if (moveResult.type === "Err") {
         return [
@@ -119,11 +122,11 @@ export const updateFromFrontend = (
       return [
         modelNew,
         Cmd.batch([
-          broadcast(["Games", ["TicTacToe", ["Sync", modelNew]]]),
           sendToFrontend(clientId, [
             "Games",
             ["TicTacToe", ["MoveResulted", Result.Ok({})]],
           ]),
+          broadcast(["Games", ["TicTacToe", ["Sync", modelNew]]]),
         ]),
       ];
     }

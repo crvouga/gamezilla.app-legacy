@@ -62,3 +62,15 @@ export const fromNullable =
 
     return Ok(value);
   };
+
+export const withDefault =
+  <T>(fallback: T) =>
+  (result: Result<unknown, T>): T => {
+    switch (result.type) {
+      case "Err":
+        return fallback;
+
+      case "Ok":
+        return result.value;
+    }
+  };

@@ -2,7 +2,7 @@ import * as Route from "Route";
 import * as Store from "Store";
 import * as UI from "UI";
 import { sendToBackend } from "Bridge/Frontend";
-import { Cmd, RemoteData } from "Core";
+import { Cmd, Option, RemoteData, Result, pipe } from "Core";
 import * as Board from "./Board";
 import {
   FrontendModel,
@@ -10,6 +10,7 @@ import {
   Room,
   ToFrontend,
   toCurrentRoom,
+  toPlayer,
 } from "./Types";
 
 //
@@ -62,6 +63,9 @@ export const update = (
         ]),
       ];
 
+    case "ClickedProfile":
+      return [model, Route.push({ type: "Profile", userId: msg[1].userId })];
+
     case "ClickedJoinRoom":
       return [
         { ...model, joinRoom: RemoteData.Loading },
@@ -87,8 +91,42 @@ export const update = (
       return [model, Route.back];
 
     case "ClickedBoard":
+      const maybeRoom = pipe(
+        toCurrentRoom(authUserId, model),
+        Option.map((room) => {
+          const player = toPlayer(authUserId, room);
+
+          if (player === "None") {
+            return room;
+          }
+
+          const boardNew = pipe(
+            Board.move(
+              room.board,
+              player === "Both" ? Board.toTurn(room.board) : player,
+              msg[1],
+            ),
+            Result.withDefault(room.board),
+          );
+
+          return {
+            ...room,
+            board: boardNew,
+          };
+        }),
+      );
+
+      const roomsNew =
+        maybeRoom.type === "None"
+          ? model.rooms
+          : {
+              ...model.rooms,
+
+              [maybeRoom.value.roomId]: maybeRoom.value,
+            };
+
       return [
-        { ...model, move: RemoteData.Loading },
+        { ...model, rooms: roomsNew, move: RemoteData.Loading },
         sendToBackend([
           "Games",
           ["TicTacToe", ["Move", { position: msg[1], userId: authUserId }]],
@@ -353,6 +391,7 @@ const viewInRoom =
             <UI.ButtonBase
               key={profile.userId}
               sx={{ width: "100%", display: "flex" }}
+              onClick={() => dispatch(["ClickedProfile", profile])}
             >
               <UI.Box
                 key={profile.userId}

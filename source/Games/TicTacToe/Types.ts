@@ -52,7 +52,8 @@ export type FrontendMsg =
   | ["ClickedLeaveRoom"]
   | ["ClickedJoinRoom", { roomId: RoomId }]
   | ["ClickedBack"]
-  | ["ClickedBoard", Board.Position];
+  | ["ClickedBoard", Board.Position]
+  | ["ClickedProfile", { userId: string }];
 
 export type ToBackend =
   | ["Init"]
@@ -120,15 +121,26 @@ export const initRoom = (roomId: RoomId, hostId: string): Room => {
 
 export type RoomPlayer = { type: "User"; userId: string } | { type: "None" };
 
-export const toPlayer = (userId: string, room: Room): Board.Player | "None" => {
+export const toPlayer = (
+  userId: string,
+  room: Room,
+): Board.Player | "None" | "Both" => {
   const { X, O } = room.players;
 
-  if (X.type === "User" && X.userId === userId) {
-    return "X";
+  const isX = X.type === "User" && X.userId === userId;
+
+  const isO = O.type === "User" && O.userId === userId;
+
+  if (isX && isO) {
+    return "Both";
   }
 
-  if (O.type === "User" && O.userId === userId) {
+  if (isO) {
     return "O";
+  }
+
+  if (isX) {
+    return "X";
   }
 
   return "None";
