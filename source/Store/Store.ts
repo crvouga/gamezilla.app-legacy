@@ -63,7 +63,7 @@ export const init: Model = {
 
 export type Msg = Profile.Msg | Conversation.Msg | Message.Msg;
 
-export type Action = Profile.Msg | Conversation.Action | Message.Action;
+export type Action = Profile.Action | Conversation.Action | Message.Action;
 
 //
 //
@@ -103,9 +103,7 @@ export const runAction = (
     }
 
     case "Profile": {
-      const [modelNew, cmdNew] = Profile.update(action, model);
-
-      return [modelNew, cmdNew];
+      return Profile.runAction(action, model);
     }
   }
 };
