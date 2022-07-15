@@ -340,13 +340,21 @@ const viewInRoom =
       room.players.O.type === "User"
         ? store.Profile[room.players.O.userId]
         : undefined;
+
+    const status = Board.toStatus(room.board);
     return (
       <>
         <UI.Header
           left={
             <UI.HeaderBackButton onClick={() => dispatch(["ClickedBack"])} />
           }
-          title="Tic Tac Toe"
+          title={
+            status.type === "Turn"
+              ? `${status.turn}'s turn`
+              : status.type === "Tie"
+              ? "Tie"
+              : `${status.winner} Won`
+          }
         />
 
         <UI.Box
@@ -387,7 +395,6 @@ const viewInRoom =
             <UI.Button
               sx={{ marginBottom: 2 }}
               onClick={() => dispatch(["ClickedRestart"])}
-              loading={model.leaveRoom.type === "Loading"}
               fullWidth
               variant="contained"
             >
@@ -427,7 +434,22 @@ const viewInRoom =
                 }}
               >
                 <UI.Avatar src={profile.avatarUrl} sx={{ marginRight: 2 }} />
-                <UI.Typography>{profile.username}</UI.Typography>
+                <UI.Box sx={{ display: "flex" }}>
+                  <UI.Typography>{profile.username}</UI.Typography>
+                  {profile.userId === currentUserId && (
+                    <UI.Typography
+                      color="text.secondary"
+                      sx={{
+                        fontStyle: "italic",
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "center",
+                      }}
+                    >
+                      {" (You)"}
+                    </UI.Typography>
+                  )}
+                </UI.Box>
 
                 <UI.Box sx={{ flex: 1 }} />
                 {profile.userId === room.hostId && (
