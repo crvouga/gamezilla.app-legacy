@@ -201,19 +201,13 @@ export type Received = ReturnType<typeof Received>;
 
 export type Msg =
   | Edited
-  | Edit
-  | Get
   | Got
-  | Delete
   | DeleteResulted
-  | Create
   | CreateResulted
-  | Search
   | Searched
-  | Received
-  | ResetMutations;
+  | Received;
 
-export type Action = Search | Get | Delete | Edit | ResetMutations;
+export type Action = Search | Get | Delete | Edit | Create | ResetMutations;
 
 //
 //
@@ -234,28 +228,6 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
         },
       };
       return [{ ...model, Profile: ProfileNew }, Cmd.None];
-
-    case "Profile/Edit": {
-      const { userId, edits } = msg;
-      const query = toGetQuery(userId, model);
-
-      if (query.type !== "Success") {
-        return [model, Cmd.None];
-      }
-
-      const modelNew = produce(model, (model) => {
-        model.mutations.Profile.Edit[msg.userId] = RemoteData.Loading;
-        model.Profile[userId] = { ...query.value, ...edits };
-      });
-
-      return [
-        modelNew,
-        pipe(
-          edit(msg.userId, msg.edits),
-          Cmd.fromTask((result) => Edited(msg.userId, query.value, result)),
-        ),
-      ];
-    }
 
     case "Profile/Edited": {
       const { userId, result } = msg;
@@ -281,22 +253,6 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
       return [modeNew, Cmd.None];
     }
 
-    case "Profile/Get": {
-      const { userId } = msg;
-
-      const modelNew = produce(model, (model) => {
-        model.queries.Profile.Get[userId] = RemoteData.Loading;
-      });
-
-      return [
-        modelNew,
-        pipe(
-          load({ userId }),
-          Cmd.fromTask((result) => Got(userId, result)),
-        ),
-      ];
-    }
-
     case "Profile/Got": {
       const { userId, result } = msg;
       const modelNew = produce(model, (model) => {
@@ -318,20 +274,6 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
       return [modelNew, Cmd.None];
     }
 
-    case "Profile/DeleteForever": {
-      const modelNew = produce(model, (model) => {
-        model.mutations.Profile.DeleteForever[msg.userId] = RemoteData.Loading;
-      });
-
-      return [
-        modelNew,
-        pipe(
-          deleteForever(msg.userId),
-          Cmd.fromTask((result) => DeleteResulted(msg.userId, result)),
-        ),
-      ];
-    }
-
     case "Profile/Delete/Resulted": {
       const modelNew = produce(model, (model) => {
         model.mutations.Profile.DeleteForever[msg.userId] =
@@ -343,24 +285,6 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
       });
 
       return [modelNew, Cmd.None];
-    }
-
-    case "Profile/Create": {
-      const { profile } = msg;
-      const { userId } = profile;
-
-      const modelNew = produce(model, (model) => {
-        model.mutations.Profile.Create[userId] = RemoteData.Loading;
-        model.Profile[userId] = profile;
-      });
-
-      return [
-        modelNew,
-        pipe(
-          create(msg.profile),
-          Cmd.fromTask((result) => CreateResulted(userId, result)),
-        ),
-      ];
     }
 
     case "Profile/CreateResulted": {
@@ -384,22 +308,6 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
       });
 
       return [modelNew, Cmd.None];
-    }
-
-    case "Profile/Search": {
-      const { searchText } = msg;
-
-      const modelNew = produce(model, (model) => {
-        model.queries.Profile.Search[searchText] = RemoteData.Loading;
-      });
-
-      return [
-        modelNew,
-        pipe(
-          search({ nameOrUsername: searchText }),
-          Cmd.fromTask((result) => Searched(searchText, result)),
-        ),
-      ];
     }
 
     case "Profile/Searched": {
@@ -427,6 +335,99 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
       });
 
       return [modelNew, Cmd.None];
+    }
+
+    default:
+      return exhaustive(msg);
+  }
+};
+
+export const runAction = (msg: Action, model: Model): [Model, Cmd.Cmd<Msg>] => {
+  switch (msg.type) {
+    case "Profile/Edit": {
+      const { userId, edits } = msg;
+      const query = toGetQuery(userId, model);
+
+      if (query.type !== "Success") {
+        return [model, Cmd.None];
+      }
+
+      const modelNew = produce(model, (model) => {
+        model.mutations.Profile.Edit[msg.userId] = RemoteData.Loading;
+        model.Profile[userId] = { ...query.value, ...edits };
+      });
+
+      return [
+        modelNew,
+        pipe(
+          edit(msg.userId, msg.edits),
+          Cmd.fromTask((result) => Edited(msg.userId, query.value, result)),
+        ),
+      ];
+    }
+
+    case "Profile/Get": {
+      const { userId } = msg;
+
+      const modelNew = produce(model, (model) => {
+        model.queries.Profile.Get[userId] = RemoteData.Loading;
+      });
+
+      return [
+        modelNew,
+        pipe(
+          load({ userId }),
+          Cmd.fromTask((result) => Got(userId, result)),
+        ),
+      ];
+    }
+
+    case "Profile/DeleteForever": {
+      const modelNew = produce(model, (model) => {
+        model.mutations.Profile.DeleteForever[msg.userId] = RemoteData.Loading;
+      });
+
+      return [
+        modelNew,
+        pipe(
+          deleteForever(msg.userId),
+          Cmd.fromTask((result) => DeleteResulted(msg.userId, result)),
+        ),
+      ];
+    }
+
+    case "Profile/Create": {
+      const { profile } = msg;
+      const { userId } = profile;
+
+      const modelNew = produce(model, (model) => {
+        model.mutations.Profile.Create[userId] = RemoteData.Loading;
+        model.Profile[userId] = profile;
+      });
+
+      return [
+        modelNew,
+        pipe(
+          create(msg.profile),
+          Cmd.fromTask((result) => CreateResulted(userId, result)),
+        ),
+      ];
+    }
+
+    case "Profile/Search": {
+      const { searchText } = msg;
+
+      const modelNew = produce(model, (model) => {
+        model.queries.Profile.Search[searchText] = RemoteData.Loading;
+      });
+
+      return [
+        modelNew,
+        pipe(
+          search({ nameOrUsername: searchText }),
+          Cmd.fromTask((result) => Searched(searchText, result)),
+        ),
+      ];
     }
 
     case "Profile/ResetMutations": {
