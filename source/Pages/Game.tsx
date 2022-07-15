@@ -1,4 +1,5 @@
 import * as Games from "Games/Frontend";
+import * as Store from "Store";
 import * as UI from "UI";
 import { Cmd } from "Core";
 
@@ -53,8 +54,8 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 //
 
 export const view = (
-  { currentUserId }: { currentUserId: string },
+  deps: { currentUserId: string; store: Store.Model },
   model: Model,
 ): UI.View<Msg> => {
-  return Games.view({ currentUserId }, model);
+  return Games.view(deps, model);
 };
