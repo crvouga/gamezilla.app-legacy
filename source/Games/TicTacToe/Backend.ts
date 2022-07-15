@@ -61,6 +61,59 @@ export const updateFromFrontend = (
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
+    case "Restart": {
+      const currentUserId = msg[1].userId;
+
+      const maybeCurrentRoom = toCurrentRoom(currentUserId, model);
+      if (maybeCurrentRoom.type === "None") {
+        const result = Result.Err("User is not in a room");
+        return [
+          model,
+          sendToFrontend(clientId, [
+            "Games",
+            ["TicTacToe", ["MoveResulted", result]],
+          ]),
+        ];
+      }
+
+      const room = maybeCurrentRoom.value;
+
+      if (room.hostId !== currentUserId) {
+        const result = Result.Err("User is not the host");
+        return [
+          model,
+          sendToFrontend(clientId, [
+            "Games",
+            ["TicTacToe", ["MoveResulted", result]],
+          ]),
+        ];
+      }
+
+      const roomNew = {
+        ...room,
+        board: Board.emptyBoard,
+      };
+
+      const modelNew = {
+        ...model,
+        rooms: {
+          ...model.rooms,
+          [roomNew.roomId]: roomNew,
+        },
+      };
+
+      return [
+        modelNew,
+        Cmd.batch([
+          sendToFrontend(clientId, [
+            "Games",
+            ["TicTacToe", ["RestartResulted", Result.Ok({})]],
+          ]),
+          broadcast(["Games", ["TicTacToe", ["Sync", modelNew]]]),
+        ]),
+      ];
+    }
+
     case "Move": {
       const currentUserId = msg[1].userId;
 

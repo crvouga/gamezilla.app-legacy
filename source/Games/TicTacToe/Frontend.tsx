@@ -63,6 +63,16 @@ export const update = (
         ]),
       ];
 
+    case "ClickedRestart": {
+      return [
+        model,
+        sendToBackend([
+          "Games",
+          ["TicTacToe", ["Restart", { userId: authUserId }]],
+        ]),
+      ];
+    }
+
     case "ClickedProfile":
       return [model, Route.push({ type: "Profile", userId: msg[1].userId })];
 
@@ -91,7 +101,7 @@ export const update = (
       return [model, Route.back];
 
     case "ClickedBoard":
-      const maybeRoom = pipe(
+      const roomsNew = pipe(
         toCurrentRoom(authUserId, model),
         Option.map((room) => {
           const player = toPlayer(authUserId, room);
@@ -114,16 +124,14 @@ export const update = (
             board: boardNew,
           };
         }),
+        Option.fold(
+          () => model.rooms,
+          (room) => ({
+            ...model.rooms,
+            [room.roomId]: room,
+          }),
+        ),
       );
-
-      const roomsNew =
-        maybeRoom.type === "None"
-          ? model.rooms
-          : {
-              ...model.rooms,
-
-              [maybeRoom.value.roomId]: maybeRoom.value,
-            };
 
       return [
         { ...model, rooms: roomsNew, move: RemoteData.Loading },
@@ -152,6 +160,10 @@ export const updateFromBackend = (
         Cmd.None,
         [["Store", Store.Profile.GetMany(userIds)]],
       ];
+
+    case "RestartResulted": {
+      return [model, Cmd.None, []];
+    }
 
     case "MoveResulted": {
       return [model, Cmd.None, []];
@@ -371,6 +383,18 @@ const viewInRoom =
         />
 
         <UI.Box sx={{ p: 2 }}>
+          {room.hostId === currentUserId && (
+            <UI.Button
+              sx={{ marginBottom: 2 }}
+              onClick={() => dispatch(["ClickedRestart"])}
+              loading={model.leaveRoom.type === "Loading"}
+              fullWidth
+              variant="contained"
+            >
+              Restart
+            </UI.Button>
+          )}
+
           <UI.Button
             onClick={() => dispatch(["ClickedLeaveRoom"])}
             loading={model.leaveRoom.type === "Loading"}
