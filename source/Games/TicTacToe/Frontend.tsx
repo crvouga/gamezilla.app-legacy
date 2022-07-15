@@ -164,8 +164,8 @@ export const view = (
       return viewNotInRoom({ currentUserId }, model);
 
     case "Some":
-      const currentRoom = maybeCurrentRoom.value;
-      return viewInRoom(currentRoom, model);
+      const room = maybeCurrentRoom.value;
+      return viewInRoom({ room, currentUserId }, model);
   }
 };
 
@@ -233,7 +233,10 @@ const viewNotInRoom =
   };
 
 const viewInRoom =
-  (room: Room, model: Model): UI.View<Msg> =>
+  (
+    { currentUserId, room }: { currentUserId: string; room: Room },
+    model: Model,
+  ): UI.View<Msg> =>
   (dispatch) => {
     return (
       <>
@@ -243,6 +246,29 @@ const viewInRoom =
           }
           title="Tic Tac Toe"
         />
+
+        <UI.Box
+          sx={{
+            display: "flex",
+            paddingX: 2,
+            alignItems: "center",
+          }}
+        >
+          <UI.Avatar />
+          <svg width={60} viewBox="0 0 1 1">
+            <ViewSlot slot="X" cx={0.5} cy={0.5} r={0.3} />
+          </svg>
+
+          <UI.Typography sx={{ flex: 1 }} align="center">
+            00:00
+          </UI.Typography>
+
+          <svg width={60} viewBox="0 0 1 1">
+            {/* <rect  width={1} height={1} fill={theme.background} /> */}
+            <ViewSlot slot="O" cx={0.5} cy={0.5} r={0.3} />
+          </svg>
+          <UI.Avatar />
+        </UI.Box>
 
         <ViewBoard
           board={room.board}
@@ -256,9 +282,17 @@ const viewInRoom =
             fullWidth
             variant="contained"
           >
-            Leave Room
+            {room.hostId === currentUserId ? "End Room" : "Leave Room"}
           </UI.Button>
         </UI.Box>
+
+        {Object.values(model.users)
+          .filter((user) => user.roomId === room.roomId)
+          .map((user) => (
+            <UI.Box key={user.userId} sx={{ p: 2 }}>
+              <UI.Typography>{user.userId}</UI.Typography>
+            </UI.Box>
+          ))}
       </>
     );
   };
