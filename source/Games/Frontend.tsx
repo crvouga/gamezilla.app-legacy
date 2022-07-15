@@ -319,7 +319,7 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
 //
 
 export const view = (
-  { authUser }: { authUser: { userId: string } },
+  { currentUserId }: { currentUserId: string },
   model: Model,
 ): UI.View<Msg> => {
   switch (model.type) {
@@ -327,12 +327,12 @@ export const view = (
       return viewClosed;
 
     case "Opened":
-      return viewOpened({ authUser }, model);
+      return viewOpened({ currentUserId }, model);
   }
 };
 
 const viewOpened = (
-  { authUser }: { authUser: { userId: string } },
+  { currentUserId }: { currentUserId: string },
   model: Opened,
 ): UI.View<Msg> => {
   switch (model.child.type) {
@@ -347,7 +347,7 @@ const viewOpened = (
 
     case "TicTacToe":
       return pipe(
-        TicTacToe.view({ authUser }, model.child.child),
+        TicTacToe.view({ currentUserId }, model.child.child),
         UI.map(tag("TicTacToe")),
       );
 
