@@ -31,7 +31,8 @@ export const init: [Model, Cmd.Cmd<Msg>] = [
     joinRoom: RemoteData.NotAsked,
     init: RemoteData.Loading,
     move: RemoteData.NotAsked,
-    openDrawer: "None",
+    quitPlaying: RemoteData.NotAsked,
+    openedDrawer: ["None"],
     rooms: {},
     users: {},
   },
@@ -66,13 +67,13 @@ export const update = (
       ];
 
     case "ClickedPlayer":
-      return [{ ...model, openDrawer: "User" }, Cmd.None];
+      return [{ ...model, openedDrawer: ["Player", msg[1]] }, Cmd.None];
 
     case "ClickedAvatars":
-      return [{ ...model, openDrawer: "Users" }, Cmd.None];
+      return [{ ...model, openedDrawer: ["Users"] }, Cmd.None];
 
     case "ClosedDrawer":
-      return [{ ...model, openDrawer: "None" }, Cmd.None];
+      return [{ ...model, openedDrawer: ["None"] }, Cmd.None];
 
     case "ClickedLeaveRoom":
       return [
@@ -81,6 +82,12 @@ export const update = (
           "Games",
           ["TicTacToe", ["LeaveRoom", { userId: authUserId }]],
         ]),
+      ];
+
+    case "QuitPlaying":
+      return [
+        { ...model, openedDrawer: ["None"], quitPlaying: RemoteData.Loading },
+        sendToBackend(["Games", ["TicTacToe", msg]]),
       ];
 
     case "ClickedRestart": {
@@ -179,6 +186,14 @@ export const updateFromBackend = (
         },
         Cmd.None,
         [["Store", Store.Profile.GetMany(userIds)]],
+      ];
+    }
+
+    case "QuitPlayingResulted": {
+      return [
+        { ...model, quitPlaying: RemoteData.fromResult(msg[1]) },
+        Cmd.None,
+        [],
       ];
     }
 
@@ -429,15 +444,20 @@ const viewInRoom =
         </UI.Box>
 
         <UI.Drawer
-          open={model.openDrawer === "User"}
+          open={model.openedDrawer[0] === "Player"}
           onClose={() => dispatch(["ClosedDrawer"])}
           anchor="bottom"
         >
-          hello
+          {model.openedDrawer[0] === "Player" &&
+            viewPlayerActions({
+              currentUserId,
+              player: model.openedDrawer[1],
+              room,
+            })(dispatch)}
         </UI.Drawer>
 
         <UI.Drawer
-          open={model.openDrawer === "Users"}
+          open={model.openedDrawer[0] === "Users"}
           onClose={() => dispatch(["ClosedDrawer"])}
           anchor="bottom"
         >
@@ -501,6 +521,44 @@ const viewInRoom =
     );
   };
 
+const viewPlayerActions =
+  ({
+    currentUserId,
+    player,
+    room,
+  }: {
+    currentUserId: string;
+    player: Board.Player;
+    room: Room;
+  }): UI.View<Msg> =>
+  (dispatch) => {
+    const roomPlayer = room.players[player];
+
+    switch (roomPlayer.type) {
+      case "None":
+        return <>None</>;
+
+      case "User":
+        if (roomPlayer.userId === currentUserId) {
+          return (
+            <UI.Box sx={{ p: 2 }}>
+              <UI.Button
+                onClick={() =>
+                  dispatch(["QuitPlaying", { currentUserId, player }])
+                }
+                fullWidth
+                variant="contained"
+              >
+                Quit Playing
+              </UI.Button>
+            </UI.Box>
+          );
+        }
+
+        return <>other user</>;
+    }
+  };
+
 const VersusScreen = () => {
   return (
     <svg width="100%" viewBox="0 0 1 1">
@@ -545,7 +603,6 @@ const viewPlayer =
               alignItems: "center",
               justifyContent: "center",
               padding: 2,
-              paddingTop: 0,
             }}
           >
             <UI.Button
@@ -563,13 +620,14 @@ const viewPlayer =
         const profile = store.Profile[roomPlayer.userId];
 
         return (
-          <UI.ButtonBase
+          <UI.Paper
+            variant="outlined"
             sx={{
               flex: 1,
               display: "flex",
               alignItems: "center",
-              padding: 2,
-              paddingTop: 0,
+              padding: 1,
+              margin: 1,
               justifyContent: "center",
             }}
             onClick={() => dispatch(["ClickedPlayer", player])}
@@ -579,8 +637,8 @@ const viewPlayer =
               sx={{ width: 24, height: 24, marginX: 1 }}
               src={profile?.avatarUrl}
             />
-            <UI.Typography>{profile?.username}</UI.Typography>
-          </UI.ButtonBase>
+            <UI.Typography variant="h6">{profile?.username}</UI.Typography>
+          </UI.Paper>
         );
     }
   };

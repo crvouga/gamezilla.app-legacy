@@ -59,6 +59,51 @@ export const updateFromFrontend = (
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
+    case "QuitPlaying": {
+      const player = msg[1].player;
+      const currentUserId = msg[1].currentUserId;
+
+      const maybeCurrentRoom = toCurrentRoom(currentUserId, model);
+      if (maybeCurrentRoom.type === "None") {
+        const result = Result.Err("User is not in a room");
+        return [
+          model,
+          sendToFrontend(clientId, [
+            "Games",
+            ["TicTacToe", ["MoveResulted", result]],
+          ]),
+        ];
+      }
+      const room = maybeCurrentRoom.value;
+
+      const modelNew: Model = {
+        ...model,
+        rooms: {
+          ...model.rooms,
+          [room.roomId]: {
+            ...room,
+            players: {
+              ...room.players,
+              [player]: {
+                type: "None",
+              },
+            },
+          },
+        },
+      };
+
+      return [
+        modelNew,
+        Cmd.batch([
+          sendToFrontend(clientId, [
+            "Games",
+            ["TicTacToe", ["PlayAsResulted", Result.Ok({})]],
+          ]),
+          broadcast(["Games", ["TicTacToe", ["Sync", modelNew]]]),
+        ]),
+      ];
+    }
+
     case "PlayAs": {
       const player = msg[1].player;
       const currentUserId = msg[1].userId;
@@ -124,11 +169,6 @@ export const updateFromFrontend = (
           },
         },
       };
-
-      console.log(
-        modelNew.rooms[room.roomId]?.players,
-        model.rooms[room.roomId]?.players,
-      );
 
       return [
         modelNew,
