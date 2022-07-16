@@ -620,8 +620,8 @@ const viewPlayer =
         const profile = store.Profile[roomPlayer.userId];
 
         return (
-          <UI.Paper
-            variant="outlined"
+          <UI.Card
+            // variant="outlined"
             sx={{
               flex: 1,
               display: "flex",
@@ -638,7 +638,7 @@ const viewPlayer =
               src={profile?.avatarUrl}
             />
             <UI.Typography variant="h6">{profile?.username}</UI.Typography>
-          </UI.Paper>
+          </UI.Card>
         );
     }
   };
