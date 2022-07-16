@@ -25,7 +25,7 @@ export type FrontendModel = {
   // queries
   init: RemoteData.RemoteData<string, {}>;
   // ui
-  openedDrawer: ["Users"] | ["Player", Board.Player] | ["None"];
+  opened: ["Users"] | ["Player", Board.Player] | ["None"];
   //
   rooms: Rooms;
   users: Users;
