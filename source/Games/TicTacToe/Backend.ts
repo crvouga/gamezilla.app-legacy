@@ -1,3 +1,4 @@
+import * as Store from "Store";
 import {
   broadcast,
   onConnect,
@@ -330,7 +331,8 @@ export const updateFromFrontend = (
   }
 };
 
-const syncFrontends = (model: Model): Cmd.Cmd<Msg> => {
+const syncRoom = (roomId: string, model: Model): Cmd.Cmd<Msg> => {
+  // const t = Store.Profile.loadMany()
   return broadcast(["Games", ["TicTacToe", ["Sync", model]]]);
 };
 

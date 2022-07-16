@@ -46,7 +46,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
     case "ClientConnected":
       return [
         model,
-        sendToFrontend(msg[1], ["Counter", ["CounterNew", model]]),
+        sendToFrontend([msg[1]], ["Counter", ["CounterNew", model]]),
       ];
   }
 };
