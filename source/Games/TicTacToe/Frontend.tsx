@@ -379,25 +379,9 @@ const viewInRoom =
             alignItems: "center",
           }}
         >
-          {x ? (
-            <ScoreCard
-              avatarUrl={x.avatarUrl}
-              player="X"
-              score={room.scores.X}
-            />
-          ) : (
-            <></>
-          )}
+          <Player player="X" store={store} room={room} />
 
-          {o ? (
-            <ScoreCard
-              avatarUrl={o.avatarUrl}
-              player="O"
-              score={room.scores.O}
-            />
-          ) : (
-            <></>
-          )}
+          <Player player="O" store={store} room={room} />
         </UI.Box>
 
         <ViewBoard
@@ -492,48 +476,91 @@ const viewInRoom =
     );
   };
 
-const ScoreCard = ({
-  avatarUrl,
+const Player = ({
+  room,
+  store,
   player,
 }: {
-  avatarUrl: string;
+  room: Room;
+  store: Store.Model;
   player: Board.Player;
-  score: number;
 }) => {
   const theme = UI.useTheme();
-  return (
-    <UI.Box
-      sx={{
-        flex: 1,
-        display: "flex",
-        alignItems: "center",
-        paddingX: 2,
-        justifyContent: "center",
-      }}
-    >
-      <UI.Avatar src={avatarUrl} />
-      <svg width={52} viewBox="0 0 1 1">
-        <ViewSlot
-          color={theme.palette.text.primary}
-          slot={player}
-          cx={0.5}
-          cy={0.5}
-          r={0.3}
-        />
-      </svg>
-    </UI.Box>
-  );
+
+  switch (room.players[player].type) {
+    case "None":
+      return (
+        <UI.Box
+          sx={{
+            flex: 1,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            paddingY: 1,
+          }}
+        >
+          <UI.Button
+            size="small"
+            startIcon={<PlayerIcon fontSize="large" player={player} />}
+          >
+            Join Game
+          </UI.Button>
+        </UI.Box>
+      );
+
+    case "User":
+      return (
+        <UI.Box
+          sx={{
+            flex: 1,
+            display: "flex",
+            alignItems: "center",
+            paddingX: 2,
+            justifyContent: "center",
+          }}
+        >
+          <UI.Avatar />
+          <svg width={48} viewBox="0 0 1 1">
+            <ViewSlot
+              color={theme.palette.text.primary}
+              slot={player}
+              cx={0.5}
+              cy={0.5}
+              r={0.3}
+            />
+          </svg>
+        </UI.Box>
+      );
+  }
 };
 
 //
 //
 //
-// Icon
+//
 //
 //
 //
 
-export const Icon = () => {
+export const PlayerIcon = ({
+  player,
+  ...props
+}: { player: Board.Player } & Parameters<typeof UI.SvgIcon>[0]) => {
+  const theme = UI.useTheme();
+  return (
+    <UI.SvgIcon viewBox="0 0 1 1" {...props}>
+      <ViewSlot
+        color={theme.palette.text.primary}
+        slot={player}
+        cx={0.5}
+        cy={0.5}
+        r={0.3}
+      />
+    </UI.SvgIcon>
+  );
+};
+
+export const CoverArt = () => {
   const positions: [Board.Position, Board.Slot][] = [
     [{ row: 0, column: 0 }, "X"],
     [{ row: 0, column: 1 }, "Empty"],
