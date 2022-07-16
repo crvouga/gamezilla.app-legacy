@@ -121,8 +121,8 @@ export const initRoom = (roomId: RoomId, hostId: string): Room => {
     roomId,
     board: Board.emptyBoard,
     players: {
-      X: { type: "User", userId: hostId },
-      O: { type: "User", userId: hostId },
+      X: { type: "None" },
+      O: { type: "None" },
     },
     scores: {
       X: 0,

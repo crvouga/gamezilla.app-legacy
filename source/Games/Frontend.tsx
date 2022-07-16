@@ -434,7 +434,7 @@ export const GameIcon = ({ game }: { game: GameName }) => {
       return <ConnectFour.Icon id="gameicon" />;
 
     case "TicTacToe":
-      return <TicTacToe.Icon />;
+      return <TicTacToe.CoverArt />;
 
     case "Snake":
       return <Snake.Icon />;

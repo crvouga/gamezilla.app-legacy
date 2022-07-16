@@ -63,8 +63,8 @@ const createTheme = ({ mode }: { mode: "light" | "dark" }) =>
         MuiAvatar: {
           styleOverrides: {
             root: {
-              backgroundColor: "White",
-              border: "1px solid #dedede",
+              // backgroundColor: "White",
+              // border: "1px solid #dedede",
             },
           },
         },
@@ -188,6 +188,8 @@ export const Snackbar = Mui.Snackbar;
 export const Portal = Mui.Portal;
 
 export const Grow = Mui.Grow;
+
+export const SvgIcon = Mui.SvgIcon;
 
 export const Box = Mui.Box;
 
