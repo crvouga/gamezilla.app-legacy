@@ -58,7 +58,8 @@ export type FrontendMsg =
   | ["ClickedProfile", { userId: string }]
   | ["ClickedRestart"]
   | ["ClickedAvatars"]
-  | ["ClosedUserDrawer"];
+  | ["ClosedUserDrawer"]
+  | ["ClickedPlayAs", Board.Player];
 
 export type ToBackend =
   | ["Init"]
@@ -66,7 +67,8 @@ export type ToBackend =
   | ["LeaveRoom", { userId: string }]
   | ["JoinRoom", { userId: string; roomId: RoomId }]
   | ["Move", { userId: string; position: Board.Position }]
-  | ["Restart", { userId: string }];
+  | ["Restart", { userId: string }]
+  | ["PlayAs", { player: Board.Player; userId: string }];
 
 export type BackendMsg =
   | ["ClientConnected", ClientId]
@@ -84,7 +86,8 @@ export type ToFrontend =
   | ["LeaveRoomResulted", Result.Result<string, {}>]
   | ["JoinRoomResulted", Result.Result<string, {}>]
   | ["MoveResulted", Result.Result<string, {}>]
-  | ["RestartResulted", Result.Result<string, {}>];
+  | ["RestartResulted", Result.Result<string, {}>]
+  | ["PlayAsResulted", Result.Result<string, {}>];
 
 export type RoomEvent =
   | ["Joined", { roomId: RoomId; userId: string }]
@@ -106,12 +109,10 @@ export type Room = {
   roomId: RoomId;
   board: Board.Board;
   players: {
-    X: RoomPlayer;
-    O: RoomPlayer;
+    [player in Board.Player]: RoomPlayer;
   };
   scores: {
-    X: number;
-    O: number;
+    [player in Board.Player]: number;
   };
   hostId: string;
 };
