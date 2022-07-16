@@ -330,6 +330,10 @@ export const updateFromFrontend = (
   }
 };
 
+const syncFrontends = (model: Model): Cmd.Cmd<Msg> => {
+  return broadcast(["Games", ["TicTacToe", ["Sync", model]]]);
+};
+
 //
 //
 //
