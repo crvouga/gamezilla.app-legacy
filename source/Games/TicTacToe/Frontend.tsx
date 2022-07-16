@@ -445,6 +445,26 @@ const viewInRoom =
                   primary={profile.username}
                   secondary={
                     <UI.Box>
+                      {room.players.X.type === "User" &&
+                        profile.userId === room.players.X.userId && (
+                          <UI.Chip
+                            sx={{ marginRight: 1 }}
+                            size="small"
+                            variant="outlined"
+                            label="X"
+                          />
+                        )}
+
+                      {room.players.O.type === "User" &&
+                        profile.userId === room.players.O.userId && (
+                          <UI.Chip
+                            sx={{ marginRight: 1 }}
+                            size="small"
+                            variant="outlined"
+                            label="O"
+                          />
+                        )}
+
                       {profile.userId === room.hostId && (
                         <UI.Chip
                           sx={{ marginRight: 1 }}
