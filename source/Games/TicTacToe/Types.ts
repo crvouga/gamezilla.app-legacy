@@ -23,6 +23,8 @@ export type FrontendModel = {
   move: RemoteData.RemoteData<string, {}>;
   // queries
   init: RemoteData.RemoteData<string, {}>;
+  // ui
+  userDrawer: "Opened" | "Closed";
   //
   rooms: Rooms;
   users: Users;
@@ -54,7 +56,9 @@ export type FrontendMsg =
   | ["ClickedBack"]
   | ["ClickedBoard", Board.Position]
   | ["ClickedProfile", { userId: string }]
-  | ["ClickedRestart"];
+  | ["ClickedRestart"]
+  | ["ClickedAvatars"]
+  | ["ClosedUserDrawer"];
 
 export type ToBackend =
   | ["Init"]

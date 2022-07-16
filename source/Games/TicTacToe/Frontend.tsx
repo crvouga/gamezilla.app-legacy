@@ -30,6 +30,7 @@ export const init: [Model, Cmd.Cmd<Msg>] = [
     joinRoom: RemoteData.NotAsked,
     init: RemoteData.Loading,
     move: RemoteData.NotAsked,
+    userDrawer: "Closed",
     rooms: {},
     users: {},
   },
@@ -54,6 +55,12 @@ export const update = (
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
+    case "ClickedAvatars":
+      return [{ ...model, userDrawer: "Opened" }, Cmd.None];
+
+    case "ClosedUserDrawer":
+      return [{ ...model, userDrawer: "Closed" }, Cmd.None];
+
     case "ClickedLeaveRoom":
       return [
         { ...model, leaveRoom: RemoteData.Loading },
@@ -339,20 +346,31 @@ const viewInRoom =
         : undefined;
 
     const status = Board.toStatus(room.board);
+
+    const statusMessage =
+      status.type === "Turn"
+        ? `${status.turn}'s turn`
+        : status.type === "Tie"
+        ? "Tie"
+        : `${status.winner} Won`;
+
+    const usersInRoom = Object.values(store.Profile).filter(
+      (profile) =>
+        model.users[profile.userId] &&
+        model.users[profile.userId]?.roomId === room.roomId,
+    );
+
     return (
       <>
-        <UI.Header
-          left={
-            <UI.HeaderBackButton onClick={() => dispatch(["ClickedBack"])} />
-          }
-          title={
-            status.type === "Turn"
-              ? `${status.turn}'s turn`
-              : status.type === "Tie"
-              ? "Tie"
-              : `${status.winner} Won`
-          }
-        />
+        <UI.Box sx={{ display: "flex", alignItems: "center", padding: 2 }}>
+          <UI.HeaderBackButton onClick={() => dispatch(["ClickedBack"])} />
+          <UI.Box sx={{ flex: 1 }} />
+          <UI.AvatarGroup onClick={() => dispatch(["ClickedAvatars"])}>
+            {usersInRoom.map((item) => (
+              <UI.Avatar key={item.avatarUrl} src={item.avatarUrl} />
+            ))}
+          </UI.AvatarGroup>
+        </UI.Box>
 
         <UI.Box
           sx={{
@@ -409,63 +427,47 @@ const viewInRoom =
           </UI.Button>
         </UI.Box>
 
-        {Object.values(store.Profile)
-          .filter(
-            (profile) =>
-              model.users[profile.userId] &&
-              model.users[profile.userId]?.roomId === room.roomId,
-          )
-          .map((profile) => (
-            <UI.ButtonBase
-              key={profile.userId}
-              sx={{ width: "100%", display: "flex" }}
-              onClick={() => dispatch(["ClickedProfile", profile])}
-            >
-              <UI.Box
+        <UI.Drawer
+          open={model.userDrawer === "Opened"}
+          onClose={() => dispatch(["ClosedUserDrawer"])}
+          anchor="bottom"
+        >
+          <UI.List>
+            {usersInRoom.map((profile) => (
+              <UI.ListItemButton
                 key={profile.userId}
-                sx={{
-                  p: 2,
-                  width: "100%",
-                  display: "flex",
-                  alignItems: "center",
-                }}
+                onClick={() => dispatch(["ClickedProfile", profile])}
               >
-                <UI.Avatar src={profile.avatarUrl} sx={{ marginRight: 2 }} />
-                <UI.Box sx={{ display: "flex" }}>
-                  <UI.Typography>{profile.username}</UI.Typography>
-                  {profile.userId === currentUserId && (
-                    <UI.Typography
-                      color="text.secondary"
-                      sx={{
-                        fontStyle: "italic",
-                        display: "flex",
-                        flexDirection: "row",
-                        alignItems: "center",
-                      }}
-                    >
-                      {" (You)"}
-                    </UI.Typography>
-                  )}
-                </UI.Box>
-
-                <UI.Box sx={{ flex: 1 }} />
-                {profile.userId === room.hostId && (
-                  <UI.Typography
-                    color="text.secondary"
-                    sx={{
-                      fontStyle: "italic",
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                    }}
-                  >
-                    <UI.Icons.Star sx={{ marginRight: 1 / 2 }} />
-                    Host
-                  </UI.Typography>
-                )}
-              </UI.Box>
-            </UI.ButtonBase>
-          ))}
+                <UI.ListItemAvatar>
+                  <UI.Avatar src={profile.avatarUrl} />
+                </UI.ListItemAvatar>
+                <UI.ListItemText
+                  primary={profile.username}
+                  secondary={
+                    <UI.Box>
+                      {profile.userId === room.hostId && (
+                        <UI.Chip
+                          sx={{ marginRight: 1 }}
+                          size="small"
+                          variant="outlined"
+                          label="Host"
+                        />
+                      )}
+                      {profile.userId === currentUserId && (
+                        <UI.Chip
+                          sx={{ marginRight: 1 }}
+                          size="small"
+                          variant="outlined"
+                          label="You"
+                        />
+                      )}
+                    </UI.Box>
+                  }
+                />
+              </UI.ListItemButton>
+            ))}
+          </UI.List>
+        </UI.Drawer>
       </>
     );
   };

@@ -65,11 +65,11 @@ export const fromFrontend = <Msg>(
 //
 
 export const sendToFrontend = (
-  clientId: ClientId,
+  clientIds: ClientId | ClientId[],
   msg: ToFrontend,
 ): Cmd.Cmd<never> => {
   return Rx.of(async () => {
-    io.to(clientId).emit("ToFrontend", msg);
+    io.to(clientIds).emit("ToFrontend", msg);
     return Option.None;
   });
 };

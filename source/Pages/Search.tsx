@@ -128,7 +128,7 @@ export const view =
         {query.type === "Failure" && <UI.Box sx={{ flex: 1 }}></UI.Box>}
         {query.type === "NotAsked" && <UI.Box sx={{ flex: 1 }}></UI.Box>}
 
-        <UI.Box sx={{ flex: 1 }}>
+        <UI.Box sx={{ flex: 1, overflowY: "scroll" }}>
           {results.map((result) => (
             <UI.ListItemButton
               key={result.userId}

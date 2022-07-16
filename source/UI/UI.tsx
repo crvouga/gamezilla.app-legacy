@@ -221,6 +221,8 @@ export const InputAdornment = Mui.InputAdornment;
 
 export const Typography = Mui.Typography;
 
+export const Drawer = Mui.Drawer;
+
 export const Dialog = Mui.Dialog;
 
 export const DialogTitle = Mui.DialogTitle;
@@ -236,6 +238,8 @@ export const AlertTitle = Mui.AlertTitle;
 export const CircularProgress = Mui.CircularProgress;
 
 export const Collapse = Mui.Collapse;
+
+export const Badge = Mui.Badge;
 
 export const ListItemAvatar = Mui.ListItemAvatar;
 
