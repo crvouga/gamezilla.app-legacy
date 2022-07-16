@@ -31,7 +31,7 @@ export const init: [Model, Cmd.Cmd<Msg>] = [
     joinRoom: RemoteData.NotAsked,
     init: RemoteData.Loading,
     move: RemoteData.NotAsked,
-    userDrawer: "Closed",
+    openDrawer: "None",
     rooms: {},
     users: {},
   },
@@ -65,11 +65,14 @@ export const update = (
         ]),
       ];
 
-    case "ClickedAvatars":
-      return [{ ...model, userDrawer: "Opened" }, Cmd.None];
+    case "ClickedPlayer":
+      return [{ ...model, openDrawer: "User" }, Cmd.None];
 
-    case "ClosedUserDrawer":
-      return [{ ...model, userDrawer: "Closed" }, Cmd.None];
+    case "ClickedAvatars":
+      return [{ ...model, openDrawer: "Users" }, Cmd.None];
+
+    case "ClosedDrawer":
+      return [{ ...model, openDrawer: "None" }, Cmd.None];
 
     case "ClickedLeaveRoom":
       return [
@@ -90,7 +93,7 @@ export const update = (
       ];
     }
 
-    case "ClickedProfile":
+    case "ClickedUser":
       return [model, Route.push({ type: "Profile", userId: msg[1].userId })];
 
     case "ClickedJoinRoom":
@@ -425,18 +428,24 @@ const viewInRoom =
           </UI.Button>
         </UI.Box>
 
-        {/* <VersusScreen /> */}
+        <UI.Drawer
+          open={model.openDrawer === "User"}
+          onClose={() => dispatch(["ClosedDrawer"])}
+          anchor="bottom"
+        >
+          hello
+        </UI.Drawer>
 
         <UI.Drawer
-          open={model.userDrawer === "Opened"}
-          onClose={() => dispatch(["ClosedUserDrawer"])}
+          open={model.openDrawer === "Users"}
+          onClose={() => dispatch(["ClosedDrawer"])}
           anchor="bottom"
         >
           <UI.List>
             {usersInRoom.map((profile) => (
               <UI.ListItemButton
                 key={profile.userId}
-                onClick={() => dispatch(["ClickedProfile", profile])}
+                onClick={() => dispatch(["ClickedUser", profile])}
               >
                 <UI.ListItemAvatar>
                   <UI.Avatar src={profile.avatarUrl} />
@@ -535,8 +544,8 @@ const viewPlayer =
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              p: 1,
-              paddingBottom: 2,
+              padding: 2,
+              paddingTop: 0,
             }}
           >
             <UI.Button
@@ -551,23 +560,27 @@ const viewPlayer =
         );
 
       case "User":
-        const avatarUrl = store.Profile[roomPlayer.userId]?.avatarUrl;
+        const profile = store.Profile[roomPlayer.userId];
 
-        const width = 120;
-        const height = 120;
         return (
-          <UI.Box
+          <UI.ButtonBase
             sx={{
               flex: 1,
               display: "flex",
               alignItems: "center",
-              paddingX: 2,
+              padding: 2,
+              paddingTop: 0,
               justifyContent: "center",
             }}
+            onClick={() => dispatch(["ClickedPlayer", player])}
           >
-            <UI.Avatar src={avatarUrl} />
-            <PlayerIcon width={width} height={height} player={player} />
-          </UI.Box>
+            <PlayerIcon player={player} />
+            <UI.Avatar
+              sx={{ width: 24, height: 24, marginX: 1 }}
+              src={profile?.avatarUrl}
+            />
+            <UI.Typography>{profile?.username}</UI.Typography>
+          </UI.ButtonBase>
         );
     }
   };
