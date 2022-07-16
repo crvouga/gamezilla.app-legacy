@@ -21,10 +21,11 @@ export type FrontendModel = {
   leaveRoom: RemoteData.RemoteData<string, {}>;
   joinRoom: RemoteData.RemoteData<string, {}>;
   move: RemoteData.RemoteData<string, {}>;
+  quitPlaying: RemoteData.RemoteData<string, {}>;
   // queries
   init: RemoteData.RemoteData<string, {}>;
   // ui
-  openDrawer: "Users" | "User" | "None";
+  openedDrawer: ["Users"] | ["Player", Board.Player] | ["None"];
   //
   rooms: Rooms;
   users: Users;
@@ -60,16 +61,22 @@ export type FrontendMsg =
   | ["ClickedAvatars"]
   | ["ClosedDrawer"]
   | ["ClickedPlayAs", Board.Player]
-  | ["ClickedPlayer", Board.Player];
+  | ["ClickedPlayer", Board.Player]
+  | QuitPlaying;
 
 export type ToBackend =
   | ["Init"]
   | ["CreateRoom", { userId: string }]
   | ["LeaveRoom", { userId: string }]
   | ["JoinRoom", { userId: string; roomId: RoomId }]
+  | ["JoinRoom", { userId: string; roomId: RoomId }]
   | ["Move", { userId: string; position: Board.Position }]
   | ["Restart", { userId: string }]
-  | ["PlayAs", { player: Board.Player; userId: string }];
+  | ["PlayAs", { player: Board.Player; userId: string }]
+  | QuitPlaying;
+
+type QuitPlaying =
+  | ["QuitPlaying", { currentUserId: string; player: Board.Player }];
 
 export type BackendMsg =
   | ["ClientConnected", ClientId]
@@ -88,7 +95,8 @@ export type ToFrontend =
   | ["JoinRoomResulted", Result.Result<string, {}>]
   | ["MoveResulted", Result.Result<string, {}>]
   | ["RestartResulted", Result.Result<string, {}>]
-  | ["PlayAsResulted", Result.Result<string, {}>];
+  | ["PlayAsResulted", Result.Result<string, {}>]
+  | ["QuitPlayingResulted", Result.Result<string, {}>];
 
 export type RoomEvent =
   | ["Joined", { roomId: RoomId; userId: string }]
