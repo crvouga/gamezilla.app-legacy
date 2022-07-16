@@ -3,6 +3,7 @@ import * as Store from "Store";
 import * as UI from "UI";
 import { sendToBackend } from "Bridge/Frontend";
 import { Cmd, Option, RemoteData, Result, pipe } from "Core";
+import { useRef } from "react";
 import * as Board from "./Board";
 import {
   FrontendModel,
@@ -32,7 +33,7 @@ export const init: [Model, Cmd.Cmd<Msg>] = [
     init: RemoteData.Loading,
     move: RemoteData.NotAsked,
     quitPlaying: RemoteData.NotAsked,
-    openedDrawer: ["None"],
+    opened: ["None"],
     rooms: {},
     users: {},
   },
@@ -67,13 +68,13 @@ export const update = (
       ];
 
     case "ClickedPlayer":
-      return [{ ...model, openedDrawer: ["Player", msg[1]] }, Cmd.None];
+      return [{ ...model, opened: ["Player", msg[1]] }, Cmd.None];
 
     case "ClickedAvatars":
-      return [{ ...model, openedDrawer: ["Users"] }, Cmd.None];
+      return [{ ...model, opened: ["Users"] }, Cmd.None];
 
     case "ClosedDrawer":
-      return [{ ...model, openedDrawer: ["None"] }, Cmd.None];
+      return [{ ...model, opened: ["None"] }, Cmd.None];
 
     case "ClickedLeaveRoom":
       return [
@@ -86,7 +87,7 @@ export const update = (
 
     case "QuitPlaying":
       return [
-        { ...model, openedDrawer: ["None"], quitPlaying: RemoteData.Loading },
+        { ...model, opened: ["None"], quitPlaying: RemoteData.Loading },
         sendToBackend(["Games", ["TicTacToe", msg]]),
       ];
 
@@ -411,9 +412,23 @@ const viewInRoom =
             alignItems: "center",
           }}
         >
-          {viewPlayer({ player: "X", store, room })(dispatch)}
+          <ViewPlayer
+            currentUserId={currentUserId}
+            model={model}
+            player="X"
+            store={store}
+            room={room}
+            dispatch={dispatch}
+          />
 
-          {viewPlayer({ player: "O", store, room })(dispatch)}
+          <ViewPlayer
+            model={model}
+            currentUserId={currentUserId}
+            player="O"
+            store={store}
+            room={room}
+            dispatch={dispatch}
+          />
         </UI.Box>
 
         <UI.Typography align="center">{statusMessage}</UI.Typography>
@@ -446,21 +461,7 @@ const viewInRoom =
         </UI.Box>
 
         <UI.Drawer
-          open={model.openedDrawer[0] === "Player"}
-          onClose={() => dispatch(["ClosedDrawer"])}
-          anchor="bottom"
-        >
-          {model.openedDrawer[0] === "Player" &&
-            viewPlayerActions({
-              store,
-              currentUserId,
-              player: model.openedDrawer[1],
-              room,
-            })(dispatch)}
-        </UI.Drawer>
-
-        <UI.Drawer
-          open={model.openedDrawer[0] === "Users"}
+          open={model.opened[0] === "Users"}
           onClose={() => dispatch(["ClosedDrawer"])}
           anchor="bottom"
         >
@@ -477,26 +478,6 @@ const viewInRoom =
                   primary={profile.username}
                   secondary={
                     <UI.Box>
-                      {room.players.X.type === "User" &&
-                        profile.userId === room.players.X.userId && (
-                          <UI.Chip
-                            sx={{ marginRight: 1 }}
-                            size="small"
-                            variant="outlined"
-                            label="X"
-                          />
-                        )}
-
-                      {room.players.O.type === "User" &&
-                        profile.userId === room.players.O.userId && (
-                          <UI.Chip
-                            sx={{ marginRight: 1 }}
-                            size="small"
-                            variant="outlined"
-                            label="O"
-                          />
-                        )}
-
                       {profile.userId === room.hostId && (
                         <UI.Chip
                           sx={{ marginRight: 1 }}
@@ -548,78 +529,84 @@ const viewPlayerActions =
 
         if (roomPlayer.userId === currentUserId) {
           return (
-            <UI.Box sx={{ p: 2 }}>
-              <PlayerIcon player={player} />
-              <UI.Avatar src={profile?.avatarUrl} />
-              <UI.Typography variant="h6">{profile?.username}</UI.Typography>
-
+            <UI.Box>
               <UI.Button
                 onClick={() =>
                   dispatch(["QuitPlaying", { currentUserId, player }])
                 }
                 fullWidth
-                variant="contained"
               >
                 Quit Playing
               </UI.Button>
+              {/* <UI.Button
+                onClick={() =>
+                  dispatch(["ClickedUser", { userId: roomPlayer.userId }])
+                }
+                fullWidth
+              >
+                Go To Profile
+              </UI.Button> */}
             </UI.Box>
           );
         }
 
         return (
           <UI.Box sx={{ p: 2 }}>
-            <PlayerUserCard
-              profile={profile}
-              onClick={() =>
-                dispatch(["ClickedUser", { userId: roomPlayer.userId }])
-              }
-              player={player}
-            />
+            <UI.Typography color="text.secondary">
+              No action available
+            </UI.Typography>
           </UI.Box>
         );
     }
   };
 
-const viewPlayer =
-  ({
-    room,
-    store,
-    player,
-  }: {
-    room: Room;
-    store: Store.Model;
-    player: Board.Player;
-  }): UI.View<Msg> =>
-  (dispatch) => {
-    const roomPlayer = room.players[player];
-    switch (roomPlayer.type) {
-      case "None":
-        return (
-          <UI.Box
-            sx={{
-              flex: 1,
-              p: 1,
-            }}
+const ViewPlayer = ({
+  room,
+  store,
+  player,
+  dispatch,
+  model,
+  currentUserId,
+}: {
+  currentUserId: string;
+  room: Room;
+  store: Store.Model;
+  player: Board.Player;
+  model: Model;
+  dispatch: (msg: Msg) => void;
+}) => {
+  const roomPlayer = room.players[player];
+  const ref = useRef<HTMLElement | null>(null);
+  switch (roomPlayer.type) {
+    case "None":
+      return (
+        <UI.Box
+          sx={{
+            flex: 1,
+            p: 1,
+          }}
+        >
+          <UI.Button
+            variant="contained"
+            fullWidth
+            onClick={() => dispatch(["ClickedPlayAs", player])}
           >
-            <UI.Button
-              variant="contained"
-              fullWidth
-              onClick={() => dispatch(["ClickedPlayAs", player])}
-            >
-              {`Play As ${player}`}
-            </UI.Button>
-          </UI.Box>
-        );
+            {`Play As ${player}`}
+          </UI.Button>
+        </UI.Box>
+      );
 
-      case "User":
-        const profile = store.Profile[roomPlayer.userId];
+    case "User":
+      const profile = store.Profile[roomPlayer.userId];
 
-        return (
+      return (
+        <>
           <UI.Box
             sx={{
               flex: 1,
               p: 1,
             }}
+            ref={ref}
           >
             <PlayerUserCard
               profile={profile}
@@ -627,9 +614,19 @@ const viewPlayer =
               player={player}
             />
           </UI.Box>
-        );
-    }
-  };
+          <UI.Menu
+            open={model.opened[0] === "Player" && model.opened[1] === player}
+            anchorEl={ref.current}
+            onClose={() => dispatch(["ClosedDrawer"])}
+          >
+            {viewPlayerActions({ currentUserId, player, room, store })(
+              dispatch,
+            )}
+          </UI.Menu>
+        </>
+      );
+  }
+};
 
 const PlayerUserCard = ({
   profile,
