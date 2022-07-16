@@ -225,6 +225,10 @@ export const Typography = Mui.Typography;
 
 export const Drawer = Mui.Drawer;
 
+export const Card = Mui.Card;
+
+export const CardActionArea = Mui.CardActionArea;
+
 export const Dialog = Mui.Dialog;
 
 export const DialogTitle = Mui.DialogTitle;
