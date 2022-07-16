@@ -86,6 +86,12 @@ export type ToFrontend =
   | ["MoveResulted", Result.Result<string, {}>]
   | ["RestartResulted", Result.Result<string, {}>];
 
+export type RoomEvent =
+  | ["Joined", { roomId: RoomId; userId: string }]
+  | ["Left", { roomId: RoomId; userId: string }]
+  | ["Created", { roomId: RoomId; userId: string }]
+  | ["Moved", { roomId: RoomId; position: Board.Position; userId: string }];
+
 //
 //
 //
@@ -165,4 +171,11 @@ export const toCurrentRoom = (
   return Option.fromNullable(subset[0]);
 };
 
-export type RoomStatus = ["MissingPlayers", Board.Player] | ["Ready"];
+export type RoomStatus =
+  | {
+      type: "PreGame";
+      child: {};
+    }
+  | {
+      type: "InGame";
+    };
