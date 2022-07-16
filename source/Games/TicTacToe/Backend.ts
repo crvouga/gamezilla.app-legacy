@@ -134,24 +134,24 @@ export const updateFromFrontend = (
         ];
       }
 
-      const isX =
-        room.players.X.type === "User" &&
-        room.players.X.userId === currentUserId;
+      // const isX =
+      //   room.players.X.type === "User" &&
+      //   room.players.X.userId === currentUserId;
 
-      const isO =
-        room.players.O.type === "User" &&
-        room.players.O.userId === currentUserId;
+      // const isO =
+      //   room.players.O.type === "User" &&
+      //   room.players.O.userId === currentUserId;
 
-      if (isX || isO) {
-        const result = Result.Err(`User is already player ${player}`);
-        return [
-          model,
-          sendToFrontend(clientId, [
-            "Games",
-            ["TicTacToe", ["PlayAsResulted", result]],
-          ]),
-        ];
-      }
+      // if (isX || isO) {
+      //   const result = Result.Err(`User is already player ${player}`);
+      //   return [
+      //     model,
+      //     sendToFrontend(clientId, [
+      //       "Games",
+      //       ["TicTacToe", ["PlayAsResulted", result]],
+      //     ]),
+      //   ];
+      // }
 
       const modelNew: Model = {
         ...model,
@@ -161,6 +161,7 @@ export const updateFromFrontend = (
             ...room,
             players: {
               ...room.players,
+
               [msg[1].player]: {
                 type: "User",
                 userId: currentUserId,
