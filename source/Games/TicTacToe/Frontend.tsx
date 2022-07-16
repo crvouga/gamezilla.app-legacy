@@ -382,7 +382,7 @@ const viewInRoom =
 
     const statusMessage =
       status.type === "Turn"
-        ? `${status.turn}'s turn`
+        ? `${status.turn} Turn`
         : status.type === "Tie"
         ? "Tie"
         : `${status.winner} Won`;
@@ -415,6 +415,8 @@ const viewInRoom =
 
           {viewPlayer({ player: "O", store, room })(dispatch)}
         </UI.Box>
+
+        <UI.Typography align="center">{statusMessage}</UI.Typography>
 
         <ViewBoard
           board={room.board}
@@ -450,6 +452,7 @@ const viewInRoom =
         >
           {model.openedDrawer[0] === "Player" &&
             viewPlayerActions({
+              store,
               currentUserId,
               player: model.openedDrawer[1],
               room,
@@ -526,10 +529,12 @@ const viewPlayerActions =
     currentUserId,
     player,
     room,
+    store,
   }: {
     currentUserId: string;
     player: Board.Player;
     room: Room;
+    store: Store.Model;
   }): UI.View<Msg> =>
   (dispatch) => {
     const roomPlayer = room.players[player];
@@ -539,9 +544,15 @@ const viewPlayerActions =
         return <>None</>;
 
       case "User":
+        const profile = store.Profile[roomPlayer.userId];
+
         if (roomPlayer.userId === currentUserId) {
           return (
             <UI.Box sx={{ p: 2 }}>
+              <PlayerIcon player={player} />
+              <UI.Avatar src={profile?.avatarUrl} />
+              <UI.Typography variant="h6">{profile?.username}</UI.Typography>
+
               <UI.Button
                 onClick={() =>
                   dispatch(["QuitPlaying", { currentUserId, player }])
@@ -555,31 +566,19 @@ const viewPlayerActions =
           );
         }
 
-        return <>other user</>;
+        return (
+          <UI.Box sx={{ p: 2 }}>
+            <PlayerUserCard
+              profile={profile}
+              onClick={() =>
+                dispatch(["ClickedUser", { userId: roomPlayer.userId }])
+              }
+              player={player}
+            />
+          </UI.Box>
+        );
     }
   };
-
-const VersusScreen = () => {
-  return (
-    <svg width="100%" viewBox="0 0 1 1">
-      <rect width="100%" height="100%" fill={theme.background} />
-
-      <Cross strokeWidth={0.05} cx={0.25} cy={0.25} r={0.1} />
-      <line
-        x1={0}
-        y1={1}
-        x2={1}
-        y2={0}
-        stroke={theme.line}
-        strokeWidth={0.05}
-      />
-      <text x={0.5} y={0.5} style={{ font: "italic 12px serif", fill: "red" }}>
-        vs
-      </text>
-      <Naught strokeWidth={0.05} cx={0.75} cy={0.75} r={0.1} />
-    </svg>
-  );
-};
 
 const viewPlayer =
   ({
@@ -599,15 +598,11 @@ const viewPlayer =
           <UI.Box
             sx={{
               flex: 1,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              padding: 2,
+              p: 1,
             }}
           >
             <UI.Button
               variant="contained"
-              size="small"
               fullWidth
               onClick={() => dispatch(["ClickedPlayAs", player])}
             >
@@ -620,28 +615,50 @@ const viewPlayer =
         const profile = store.Profile[roomPlayer.userId];
 
         return (
-          <UI.Card
-            // variant="outlined"
+          <UI.Box
             sx={{
               flex: 1,
-              display: "flex",
-              alignItems: "center",
-              padding: 1,
-              margin: 1,
-              justifyContent: "center",
+              p: 1,
             }}
-            onClick={() => dispatch(["ClickedPlayer", player])}
           >
-            <PlayerIcon player={player} />
-            <UI.Avatar
-              sx={{ width: 24, height: 24, marginX: 1 }}
-              src={profile?.avatarUrl}
+            <PlayerUserCard
+              profile={profile}
+              onClick={() => dispatch(["ClickedPlayer", player])}
+              player={player}
             />
-            <UI.Typography variant="h6">{profile?.username}</UI.Typography>
-          </UI.Card>
+          </UI.Box>
         );
     }
   };
+
+const PlayerUserCard = ({
+  profile,
+  onClick,
+  player,
+}: {
+  player: Board.Player;
+  profile?: Store.Profile.Profile;
+  onClick: () => void;
+}) => {
+  return (
+    <UI.Card
+      sx={{
+        flex: 1,
+        display: "flex",
+        alignItems: "center",
+        padding: 1,
+      }}
+      onClick={onClick}
+    >
+      <PlayerIcon player={player} />
+      <UI.Avatar
+        sx={{ width: 24, height: 24, marginX: 1 }}
+        src={profile?.avatarUrl}
+      />
+      <UI.Typography variant="h6">{profile?.username}</UI.Typography>
+    </UI.Card>
+  );
+};
 
 //
 //
@@ -849,5 +866,27 @@ const Naught = ({
       strokeWidth={strokeWidth}
       fill="transparent"
     />
+  );
+};
+
+const VersusScreen = () => {
+  return (
+    <svg width="100%" viewBox="0 0 1 1">
+      <rect width="100%" height="100%" fill={theme.background} />
+
+      <Cross strokeWidth={0.05} cx={0.25} cy={0.25} r={0.1} />
+      <line
+        x1={0}
+        y1={1}
+        x2={1}
+        y2={0}
+        stroke={theme.line}
+        strokeWidth={0.05}
+      />
+      <text x={0.5} y={0.5} style={{ font: "italic 12px serif", fill: "red" }}>
+        vs
+      </text>
+      <Naught strokeWidth={0.05} cx={0.75} cy={0.75} r={0.1} />
+    </svg>
   );
 };
