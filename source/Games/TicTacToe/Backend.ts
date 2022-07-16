@@ -49,10 +49,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
       return [model, Cmd.None];
 
     case "ClientConnected":
-      return [
-        model,
-        sendToFrontend(msg[1], ["Games", ["TicTacToe", ["Sync", model]]]),
-      ];
+      return [model, broadcast(["Games", ["TicTacToe", ["Sync", model]]])];
   }
 };
 
@@ -62,6 +59,89 @@ export const updateFromFrontend = (
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
+    case "PlayAs": {
+      const player = msg[1].player;
+      const currentUserId = msg[1].userId;
+
+      const maybeCurrentRoom = toCurrentRoom(currentUserId, model);
+      if (maybeCurrentRoom.type === "None") {
+        const result = Result.Err("User is not in a room");
+        return [
+          model,
+          sendToFrontend(clientId, [
+            "Games",
+            ["TicTacToe", ["MoveResulted", result]],
+          ]),
+        ];
+      }
+      const room = maybeCurrentRoom.value;
+
+      const isTaken = room.players[player].type === "User";
+
+      if (isTaken) {
+        const result = Result.Err(`Player is taken`);
+        return [
+          model,
+          sendToFrontend(clientId, [
+            "Games",
+            ["TicTacToe", ["PlayAsResulted", result]],
+          ]),
+        ];
+      }
+
+      const isX =
+        room.players.X.type === "User" &&
+        room.players.X.userId === currentUserId;
+
+      const isO =
+        room.players.O.type === "User" &&
+        room.players.O.userId === currentUserId;
+
+      if (isX || isO) {
+        const result = Result.Err(`User is already player ${player}`);
+        return [
+          model,
+          sendToFrontend(clientId, [
+            "Games",
+            ["TicTacToe", ["PlayAsResulted", result]],
+          ]),
+        ];
+      }
+
+      const modelNew: Model = {
+        ...model,
+        rooms: {
+          ...model.rooms,
+          [room.roomId]: {
+            ...room,
+            players: {
+              ...room.players,
+              [msg[1].player]: {
+                type: "User",
+                userId: currentUserId,
+              },
+            },
+          },
+        },
+      };
+
+      console.log(
+        modelNew.rooms[room.roomId]?.players,
+        model.rooms[room.roomId]?.players,
+      );
+
+      return [
+        modelNew,
+        Cmd.batch([
+          sendToFrontend(clientId, [
+            "Games",
+            ["TicTacToe", ["PlayAsResulted", Result.Ok({})]],
+          ]),
+          broadcast(["Games", ["TicTacToe", ["Sync", modelNew]]]),
+        ]),
+      ];
+    }
+
     case "Restart": {
       const currentUserId = msg[1].userId;
 

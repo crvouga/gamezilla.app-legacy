@@ -8,6 +8,7 @@ import {
   FrontendModel,
   FrontendMsg,
   Room,
+  RoomPlayer,
   ToFrontend,
   toCurrentRoom,
   toPlayer,
@@ -55,6 +56,15 @@ export const update = (
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
+    case "ClickedPlayAs":
+      return [
+        model,
+        sendToBackend([
+          "Games",
+          ["TicTacToe", ["PlayAs", { player: msg[1], userId: authUserId }]],
+        ]),
+      ];
+
     case "ClickedAvatars":
       return [{ ...model, userDrawer: "Opened" }, Cmd.None];
 
@@ -155,7 +165,7 @@ export const updateFromBackend = (
   model: Model,
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
-    case "Sync":
+    case "Sync": {
       const userIds = Object.keys(msg[1].users);
       return [
         {
@@ -167,6 +177,11 @@ export const updateFromBackend = (
         Cmd.None,
         [["Store", Store.Profile.GetMany(userIds)]],
       ];
+    }
+
+    case "PlayAsResulted": {
+      return [model, Cmd.None, []];
+    }
 
     case "RestartResulted": {
       return [model, Cmd.None, []];
@@ -375,13 +390,12 @@ const viewInRoom =
         <UI.Box
           sx={{
             display: "flex",
-
             alignItems: "center",
           }}
         >
-          <Player player="X" store={store} room={room} />
+          {viewPlayer({ player: "X", store, room })(dispatch)}
 
-          <Player player="O" store={store} room={room} />
+          {viewPlayer({ player: "O", store, room })(dispatch)}
         </UI.Box>
 
         <ViewBoard
@@ -410,6 +424,8 @@ const viewInRoom =
             {room.hostId === currentUserId ? "End Room" : "Leave Room"}
           </UI.Button>
         </UI.Box>
+
+        {/* <VersusScreen /> */}
 
         <UI.Drawer
           open={model.userDrawer === "Opened"}
@@ -476,63 +492,85 @@ const viewInRoom =
     );
   };
 
-const Player = ({
-  room,
-  store,
-  player,
-}: {
-  room: Room;
-  store: Store.Model;
-  player: Board.Player;
-}) => {
-  const theme = UI.useTheme();
+const VersusScreen = () => {
+  return (
+    <svg width="100%" viewBox="0 0 1 1">
+      <rect width="100%" height="100%" fill={theme.background} />
 
-  switch (room.players[player].type) {
-    case "None":
-      return (
-        <UI.Box
-          sx={{
-            flex: 1,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            paddingY: 1,
-          }}
-        >
-          <UI.Button
-            size="small"
-            startIcon={<PlayerIcon fontSize="large" player={player} />}
-          >
-            Join Game
-          </UI.Button>
-        </UI.Box>
-      );
-
-    case "User":
-      return (
-        <UI.Box
-          sx={{
-            flex: 1,
-            display: "flex",
-            alignItems: "center",
-            paddingX: 2,
-            justifyContent: "center",
-          }}
-        >
-          <UI.Avatar />
-          <svg width={48} viewBox="0 0 1 1">
-            <ViewSlot
-              color={theme.palette.text.primary}
-              slot={player}
-              cx={0.5}
-              cy={0.5}
-              r={0.3}
-            />
-          </svg>
-        </UI.Box>
-      );
-  }
+      <Cross strokeWidth={0.05} cx={0.25} cy={0.25} r={0.1} />
+      <line
+        x1={0}
+        y1={1}
+        x2={1}
+        y2={0}
+        stroke={theme.line}
+        strokeWidth={0.05}
+      />
+      <text x={0.5} y={0.5} style={{ font: "italic 12px serif", fill: "red" }}>
+        vs
+      </text>
+      <Naught strokeWidth={0.05} cx={0.75} cy={0.75} r={0.1} />
+    </svg>
+  );
 };
+
+const viewPlayer =
+  ({
+    room,
+    store,
+    player,
+  }: {
+    room: Room;
+    store: Store.Model;
+    player: Board.Player;
+  }): UI.View<Msg> =>
+  (dispatch) => {
+    const roomPlayer = room.players[player];
+    switch (roomPlayer.type) {
+      case "None":
+        return (
+          <UI.Box
+            sx={{
+              flex: 1,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              p: 1,
+              paddingBottom: 2,
+            }}
+          >
+            <UI.Button
+              variant="contained"
+              size="small"
+              fullWidth
+              onClick={() => dispatch(["ClickedPlayAs", player])}
+            >
+              {`Play As ${player}`}
+            </UI.Button>
+          </UI.Box>
+        );
+
+      case "User":
+        const avatarUrl = store.Profile[roomPlayer.userId]?.avatarUrl;
+
+        const width = 120;
+        const height = 120;
+        return (
+          <UI.Box
+            sx={{
+              flex: 1,
+              display: "flex",
+              alignItems: "center",
+              paddingX: 2,
+              justifyContent: "center",
+            }}
+          >
+            <UI.Avatar src={avatarUrl} />
+            <PlayerIcon width={width} height={height} player={player} />
+          </UI.Box>
+        );
+    }
+  };
 
 //
 //
@@ -700,14 +738,16 @@ const Cross = ({
   cy,
   r,
   color = theme.cross,
+  strokeWidth = 0.1,
 }: {
   color?: string;
   r: number;
   cx: number;
   cy: number;
+  strokeWidth?: number;
 }) => {
   return (
-    <g strokeWidth={0.1} stroke={color}>
+    <g strokeWidth={strokeWidth} stroke={color}>
       {/* direction: \ */}
       <line x1={cx - r} y1={cy - r} x2={cx + r} y2={cy + r} />
       {/* direction: / */}
@@ -721,8 +761,10 @@ const Naught = ({
   cy,
   r,
   color = theme.naught,
+  strokeWidth = 0.1,
 }: {
   color?: string;
+  strokeWidth?: number;
   r: number;
   cx: number;
   cy: number;
@@ -733,7 +775,7 @@ const Naught = ({
       cx={cx}
       cy={cy}
       stroke={color}
-      strokeWidth={0.1}
+      strokeWidth={strokeWidth}
       fill="transparent"
     />
   );
