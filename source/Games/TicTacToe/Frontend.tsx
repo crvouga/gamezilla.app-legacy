@@ -219,7 +219,7 @@ export const view = (
 
   switch (maybeCurrentRoom.type) {
     case "None":
-      return viewNotInRoom({ currentUserId, store }, model);
+      return viewNotInRoom({ store }, model);
 
     case "Some":
       const room = maybeCurrentRoom.value;
@@ -228,10 +228,7 @@ export const view = (
 };
 
 const viewNotInRoom =
-  (
-    { currentUserId, store }: { currentUserId: string; store: Store.Model },
-    model: Model,
-  ): UI.View<Msg> =>
+  ({ store }: { store: Store.Model }, model: Model): UI.View<Msg> =>
   (dispatch) => {
     return (
       <UI.Page>
@@ -476,12 +473,12 @@ const viewInRoom =
 const ScoreCard = ({
   avatarUrl,
   player,
-  score,
 }: {
   avatarUrl: string;
   player: Board.Player;
   score: number;
 }) => {
+  const theme = UI.useTheme();
   return (
     <UI.Box
       sx={{
@@ -489,14 +486,19 @@ const ScoreCard = ({
         display: "flex",
         alignItems: "center",
         paddingX: 2,
+        justifyContent: "center",
       }}
     >
       <UI.Avatar src={avatarUrl} />
-      <svg width={60} viewBox="0 0 1 1">
-        <ViewSlot slot={player} cx={0.5} cy={0.5} r={0.3} />
+      <svg width={52} viewBox="0 0 1 1">
+        <ViewSlot
+          color={theme.palette.text.primary}
+          slot={player}
+          cx={0.5}
+          cy={0.5}
+          r={0.3}
+        />
       </svg>
-      <UI.Box sx={{ flex: 1 }} />
-      <UI.Typography variant="h2">{score}</UI.Typography>
     </UI.Box>
   );
 };
@@ -546,7 +548,7 @@ export const Icon = () => {
 //
 //
 //
-// View
+// View Board
 //
 //
 //
@@ -624,7 +626,9 @@ export const ViewSlot = ({
   cx,
   cy,
   r,
+  color,
 }: {
+  color?: string;
   slot: Board.Slot;
   r: number;
   cx: number;
@@ -635,16 +639,26 @@ export const ViewSlot = ({
       return <g></g>;
 
     case "O":
-      return <Naught r={r} cx={cx} cy={cy} />;
+      return <Naught color={color} r={r} cx={cx} cy={cy} />;
 
     case "X":
-      return <Cross r={r} cx={cx} cy={cy} />;
+      return <Cross color={color} r={r} cx={cx} cy={cy} />;
   }
 };
 
-const Cross = ({ cx, cy, r }: { r: number; cx: number; cy: number }) => {
+const Cross = ({
+  cx,
+  cy,
+  r,
+  color = theme.cross,
+}: {
+  color?: string;
+  r: number;
+  cx: number;
+  cy: number;
+}) => {
   return (
-    <g strokeWidth={0.1} stroke={theme.cross}>
+    <g strokeWidth={0.1} stroke={color}>
       {/* direction: \ */}
       <line x1={cx - r} y1={cy - r} x2={cx + r} y2={cy + r} />
       {/* direction: / */}
@@ -653,13 +667,23 @@ const Cross = ({ cx, cy, r }: { r: number; cx: number; cy: number }) => {
   );
 };
 
-const Naught = ({ cx, cy, r }: { r: number; cx: number; cy: number }) => {
+const Naught = ({
+  cx,
+  cy,
+  r,
+  color = theme.naught,
+}: {
+  color?: string;
+  r: number;
+  cx: number;
+  cy: number;
+}) => {
   return (
     <circle
       r={r}
       cx={cx}
       cy={cy}
-      stroke={theme.naught}
+      stroke={color}
       strokeWidth={0.1}
       fill="transparent"
     />
