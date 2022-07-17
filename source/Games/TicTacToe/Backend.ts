@@ -6,7 +6,7 @@ import {
   sendToFrontend,
 } from "Bridge/Backend";
 import { ClientId } from "Bridge/Bridge";
-import { Cmd, Result, Sub, Uuid } from "Core";
+import { Cmd, Result, Sub, Uuid, pipe } from "Core";
 import { get, remove } from "Core/Record";
 import * as Board from "./Board";
 import {
@@ -14,6 +14,7 @@ import {
   BackendMsg,
   ToBackend,
   initRoom,
+  mapRoomPlayers,
   toCurrentRoom,
   toPlayer,
   toRoomStatus,
@@ -197,6 +198,7 @@ export const updateFromFrontend = (
           ...model.rooms,
           [room.roomId]: {
             ...room,
+            board: Board.emptyBoard,
             players: {
               ...room.players,
               [player]: {
@@ -249,48 +251,22 @@ export const updateFromFrontend = (
         ];
       }
 
-      // const isX =
-      //   room.players.X.type === "User" &&
-      //   room.players.X.userId === currentUserId;
-
-      // const isO =
-      //   room.players.O.type === "User" &&
-      //   room.players.O.userId === currentUserId;
-
-      // if (isX || isO) {
-      //   const result = Result.Err(`User is already player ${player}`);
-      //   return [
-      //     model,
-      //     sendToFrontend(clientId, [
-      //       "Games",
-      //       ["TicTacToe", ["PlayAsResulted", result]],
-      //     ]),
-      //   ];
-      // }
+      const removedCurrentUserPlayer = mapRoomPlayers(
+        (roomPlayer) =>
+          roomPlayer.type === "User" && roomPlayer.userId === currentUserId
+            ? { type: "None" }
+            : roomPlayer,
+        room,
+      );
 
       const modelNew: Model = {
         ...model,
         rooms: {
           ...model.rooms,
           [room.roomId]: {
-            ...room,
+            ...removedCurrentUserPlayer,
             players: {
-              X:
-                room.players.X.type === "User" &&
-                room.players.X.userId === currentUserId
-                  ? {
-                      type: "None",
-                    }
-                  : room.players.X,
-
-              O:
-                room.players.O.type === "User" &&
-                room.players.O.userId === currentUserId
-                  ? {
-                      type: "None",
-                    }
-                  : room.players.O,
-
+              ...removedCurrentUserPlayer.players,
               [msg[1].player]: {
                 type: "User",
                 userId: currentUserId,
@@ -382,15 +358,26 @@ export const updateFromFrontend = (
 
       const room = maybeCurrentRoom.value;
 
-      const player = toPlayer(currentUserId, room);
+      const roomStatus = toRoomStatus(room);
 
-      if (player === "None") {
-        const result = Result.Err("User is not a player");
+      if (roomStatus.type === "NotReady") {
         return [
           model,
           sendToFrontend(clientId, [
             "Games",
-            ["TicTacToe", ["MoveResulted", result]],
+            ["TicTacToe", ["MoveResulted", Result.Err("Missing player(s)")]],
+          ]),
+        ];
+      }
+
+      const player = toPlayer(currentUserId, room);
+
+      if (player === "None") {
+        return [
+          model,
+          sendToFrontend(clientId, [
+            "Games",
+            ["TicTacToe", ["MoveResulted", Result.Err("User is not a player")]],
           ]),
         ];
       }
@@ -505,12 +492,12 @@ export const updateFromFrontend = (
         ];
       }
 
-      const currentRoom = maybeCurrentRoom.value;
+      const room = maybeCurrentRoom.value;
 
-      if (currentRoom.hostId === currentUserId) {
+      if (room.hostId === currentUserId) {
         const modelNew: Model = {
           ...model,
-          rooms: remove(currentRoom.roomId, model.rooms),
+          rooms: remove(room.roomId, model.rooms),
           users: remove(currentUserId, model.users),
         };
 
@@ -529,6 +516,25 @@ export const updateFromFrontend = (
       const modelNew: Model = {
         ...model,
         users: remove(currentUserId, model.users),
+        rooms: {
+          ...model.rooms,
+          [room.roomId]: pipe(
+            room,
+            (room) =>
+              mapRoomPlayers(
+                (roomPlayer) =>
+                  roomPlayer.type === "User" &&
+                  roomPlayer.userId === currentUserId
+                    ? { type: "None" }
+                    : roomPlayer,
+                room,
+              ),
+            (room) => ({
+              ...room,
+              board: Board.emptyBoard,
+            }),
+          ),
+        },
       };
 
       return [
@@ -551,7 +557,7 @@ export const updateFromFrontend = (
 
     case "CreateRoom":
       const roomId = Uuid.generateSync();
-      const roomNew = initRoom(roomId, msg[1].userId);
+      const roomNew = initRoom(roomId, msg[1].currentUserId);
       const modelNew: Model = {
         ...model,
         rooms: {
@@ -560,8 +566,8 @@ export const updateFromFrontend = (
         },
         users: {
           ...model.users,
-          [msg[1].userId]: {
-            userId: msg[1].userId,
+          [msg[1].currentUserId]: {
+            userId: msg[1].currentUserId,
             roomId: roomNew.roomId,
           },
         },
