@@ -188,6 +188,8 @@ export const Snackbar = Mui.Snackbar;
 export const Portal = Mui.Portal;
 
 export const Grow = Mui.Grow;
+export const Zoom = Mui.Zoom;
+export const Fade = Mui.Fade;
 
 export const SvgIcon = Mui.SvgIcon;
 

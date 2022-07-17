@@ -1,5 +1,5 @@
 import { ClientId } from "Bridge/Bridge";
-import { Option, RemoteData, Result, pipe } from "Core";
+import { Option, RemoteData, Result } from "Core";
 import * as Board from "./Board";
 
 //
@@ -23,6 +23,7 @@ export type FrontendModel = {
   move: RemoteData.Model<string, {}>;
   quitPlaying: RemoteData.Model<string, {}>;
   removePlayer: RemoteData.Model<string, {}>;
+  playAgain: RemoteData.Model<string, {}>;
   // queries
   init: RemoteData.Model<string, {}>;
   // ui
@@ -64,7 +65,8 @@ export type FrontendMsg =
   | ["ClickedPlayAs", Board.Player]
   | ["ClickedPlayer", Board.Player]
   | QuitPlaying
-  | RemovePlayer;
+  | RemovePlayer
+  | PlayAgain;
 
 export type ToBackend =
   | ["Init"]
@@ -76,7 +78,12 @@ export type ToBackend =
   | ["Restart", { userId: string }]
   | ["PlayAs", { player: Board.Player; userId: string }]
   | QuitPlaying
-  | RemovePlayer;
+  | RemovePlayer
+  | PlayAgain;
+
+type PlayAgain = ["PlayAgain", { currentUserId: string }];
+
+type PlayAgainResulted = ["PlayAgainResulted", Result.Result<string, {}>];
 
 type RemovePlayer = [
   "RemovePlayer",
@@ -93,10 +100,6 @@ type QuitPlaying =
 
 type QuitPlayingResulted = ["QuitPlayingResulted", Result.Result<string, {}>];
 
-export type BackendMsg =
-  | ["ClientConnected", ClientId]
-  | ["ClientDisconnected", ClientId];
-
 export type ToFrontend =
   | [
       "Sync",
@@ -112,7 +115,12 @@ export type ToFrontend =
   | ["RestartResulted", Result.Result<string, {}>]
   | ["PlayAsResulted", Result.Result<string, {}>]
   | QuitPlayingResulted
-  | RemovePlayerResulted;
+  | RemovePlayerResulted
+  | PlayAgainResulted;
+
+export type BackendMsg =
+  | ["ClientConnected", ClientId]
+  | ["ClientDisconnected", ClientId];
 
 export type RoomEvent =
   | ["Joined", { roomId: RoomId; userId: string }]
@@ -197,4 +205,14 @@ export const toCurrentRoom = (
   return Option.fromNullable(subset[0]);
 };
 
-export type RoomStatus = ["NotReady"] | ["Playing"] | ["Gameover"];
+export type RoomStatus =
+  | { type: "NotReady" }
+  | { type: "Ready"; status: Board.Status };
+
+export const toRoomStatus = (room: Room): RoomStatus => {
+  if (room.players.X.type === "None" || room.players.O.type === "None") {
+    return { type: "NotReady" };
+  }
+
+  return { type: "Ready", status: Board.toStatus(room.board) };
+};
