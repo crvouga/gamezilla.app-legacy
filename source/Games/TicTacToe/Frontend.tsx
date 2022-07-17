@@ -3,7 +3,7 @@ import * as Store from "Store";
 import * as UI from "UI";
 import { sendToBackend } from "Bridge/Frontend";
 import { Cmd, Option, RemoteData, Result, pipe } from "Core";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import * as Board from "./Board";
 import {
   FrontendModel,
@@ -33,6 +33,7 @@ export const init: [Model, Cmd.Cmd<Msg>] = [
     init: RemoteData.Loading,
     move: RemoteData.NotAsked,
     quitPlaying: RemoteData.NotAsked,
+    removePlayer: RemoteData.NotAsked,
     opened: ["None"],
     rooms: {},
     users: {},
@@ -66,6 +67,9 @@ export const update = (
           ["TicTacToe", ["PlayAs", { player: msg[1], userId: authUserId }]],
         ]),
       ];
+
+    case "RemovePlayer":
+      return [model, sendToBackend(["Games", ["TicTacToe", msg]])];
 
     case "ClickedPlayer":
       return [{ ...model, opened: ["Player", msg[1]] }, Cmd.None];
@@ -190,6 +194,10 @@ export const updateFromBackend = (
       ];
     }
 
+    case "RemovePlayerResulted": {
+      return [model, Cmd.None, []];
+    }
+
     case "QuitPlayingResulted": {
       return [
         { ...model, quitPlaying: RemoteData.fromResult(msg[1]) },
@@ -264,7 +272,15 @@ export const view = (
 
     case "Some":
       const room = maybeCurrentRoom.value;
-      return viewInRoom({ room, currentUserId, store }, model);
+      return (dispatch) => (
+        <ViewInRoom
+          dispatch={dispatch}
+          room={room}
+          currentUserId={currentUserId}
+          store={store}
+          model={model}
+        />
+      );
   }
 };
 
@@ -355,157 +371,180 @@ const viewNotInRoom =
     );
   };
 
-const viewInRoom =
-  (
-    {
-      currentUserId,
-      room,
-      store,
-    }: {
-      currentUserId: string;
-      room: Room;
-      store: Store.Model;
-    },
-    model: Model,
-  ): UI.View<Msg> =>
-  (dispatch) => {
-    const x =
-      room.players.X.type === "User"
-        ? store.Profile[room.players.X.userId]
-        : undefined;
+const ViewInRoom = ({
+  currentUserId,
+  room,
+  store,
+  model,
+  dispatch,
+}: {
+  currentUserId: string;
+  room: Room;
+  store: Store.Model;
+  model: Model;
+  dispatch: (msg: Msg) => void;
+}) => {
+  const x =
+    room.players.X.type === "User"
+      ? store.Profile[room.players.X.userId]
+      : undefined;
 
-    const o =
-      room.players.O.type === "User"
-        ? store.Profile[room.players.O.userId]
-        : undefined;
+  const o =
+    room.players.O.type === "User"
+      ? store.Profile[room.players.O.userId]
+      : undefined;
 
-    const status = Board.toStatus(room.board);
+  const status = Board.toStatus(room.board);
 
-    const statusMessage =
-      status.type === "Turn"
-        ? `${status.turn} Turn`
-        : status.type === "Tie"
-        ? "Tie"
-        : `${status.winner} Won`;
+  const statusMessage =
+    status.type === "Turn"
+      ? `${status.turn} Turn`
+      : status.type === "Tie"
+      ? "Tie"
+      : `${status.winner} Won`;
 
-    const usersInRoom = Object.values(store.Profile).filter(
-      (profile) =>
-        model.users[profile.userId] &&
-        model.users[profile.userId]?.roomId === room.roomId,
-    );
+  const usersInRoom = Object.values(store.Profile).filter(
+    (profile) =>
+      model.users[profile.userId] &&
+      model.users[profile.userId]?.roomId === room.roomId,
+  );
 
-    return (
-      <>
-        <UI.Box sx={{ display: "flex", alignItems: "center", padding: 2 }}>
-          <UI.IconButton sx={{ marginLeft: -1 }}>
-            <UI.Icons.Menu />
-          </UI.IconButton>
-          <UI.Box sx={{ flex: 1 }} />
-          <UI.AvatarGroup onClick={() => dispatch(["ClickedAvatars"])}>
-            {usersInRoom.map((item) => (
-              <UI.Avatar key={item.avatarUrl} src={item.avatarUrl} />
-            ))}
-          </UI.AvatarGroup>
-        </UI.Box>
+  const [container, setContainer] = useState<HTMLElement | null>(null);
 
-        <UI.Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-          }}
+  return (
+    <>
+      <UI.Box sx={{ display: "flex", alignItems: "center", padding: 2 }}>
+        <UI.Button sx={{ marginLeft: -1 }}>Leave</UI.Button>
+        <UI.Box sx={{ flex: 1 }} />
+        <UI.AvatarGroup
+          onClick={() => dispatch(["ClickedAvatars"])}
+          sx={{ marginRight: 1 }}
         >
-          <ViewPlayer
-            currentUserId={currentUserId}
-            model={model}
-            player="X"
-            store={store}
-            room={room}
-            dispatch={dispatch}
-          />
+          {usersInRoom.map((item) => (
+            <UI.Avatar key={item.avatarUrl} src={item.avatarUrl} />
+          ))}
+        </UI.AvatarGroup>
+      </UI.Box>
 
-          <ViewPlayer
-            model={model}
-            currentUserId={currentUserId}
-            player="O"
-            store={store}
-            room={room}
-            dispatch={dispatch}
-          />
-        </UI.Box>
+      <UI.Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+        }}
+      >
+        <ViewPlayer
+          currentUserId={currentUserId}
+          model={model}
+          player="X"
+          store={store}
+          room={room}
+          dispatch={dispatch}
+        />
 
-        <UI.Typography align="center">{statusMessage}</UI.Typography>
+        <ViewPlayer
+          model={model}
+          currentUserId={currentUserId}
+          player="O"
+          store={store}
+          room={room}
+          dispatch={dispatch}
+        />
+      </UI.Box>
 
+      <UI.Typography align="center">{statusMessage}</UI.Typography>
+
+      <UI.Box sx={{ position: "relative" }}>
         <ViewBoard
           board={room.board}
           onClick={(position) => dispatch(["ClickedBoard", position])}
         />
+        <UI.Grow in={false}>
+          <UI.Box
+            sx={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              backgroundColor: "rgba(0, 0, 0, 0.25)",
+            }}
+          >
+            <UI.Paper sx={{ p: 2 }}>
+              <UI.Typography align="center">Hello</UI.Typography>
+            </UI.Paper>
+          </UI.Box>
+        </UI.Grow>
+      </UI.Box>
 
-        <UI.Box sx={{ p: 2 }}>
-          {room.hostId === currentUserId && (
-            <UI.Button
-              sx={{ marginBottom: 2 }}
-              onClick={() => dispatch(["ClickedRestart"])}
-              fullWidth
-              variant="contained"
-            >
-              Restart
-            </UI.Button>
-          )}
-
+      <UI.Box sx={{ p: 2 }}>
+        {room.hostId === currentUserId && (
           <UI.Button
-            onClick={() => dispatch(["ClickedLeaveRoom"])}
-            loading={model.leaveRoom.type === "Loading"}
+            sx={{ marginBottom: 2 }}
+            onClick={() => dispatch(["ClickedRestart"])}
             fullWidth
             variant="contained"
           >
-            {room.hostId === currentUserId ? "End Room" : "Leave Room"}
+            Restart
           </UI.Button>
-        </UI.Box>
+        )}
 
-        <UI.Drawer
-          open={model.opened[0] === "Users"}
-          onClose={() => dispatch(["ClosedDrawer"])}
-          anchor="bottom"
+        <UI.Button
+          onClick={() => dispatch(["ClickedLeaveRoom"])}
+          loading={model.leaveRoom.type === "Loading"}
+          fullWidth
+          variant="contained"
         >
-          <UI.List>
-            {usersInRoom.map((profile) => (
-              <UI.ListItemButton
-                key={profile.userId}
-                onClick={() => dispatch(["ClickedUser", profile])}
-              >
-                <UI.ListItemAvatar>
-                  <UI.Avatar src={profile.avatarUrl} />
-                </UI.ListItemAvatar>
-                <UI.ListItemText
-                  primary={profile.username}
-                  secondary={
-                    <UI.Box>
-                      {profile.userId === room.hostId && (
-                        <UI.Chip
-                          sx={{ marginRight: 1 }}
-                          size="small"
-                          variant="outlined"
-                          label="Host"
-                        />
-                      )}
-                      {profile.userId === currentUserId && (
-                        <UI.Chip
-                          sx={{ marginRight: 1 }}
-                          size="small"
-                          variant="outlined"
-                          label="You"
-                        />
-                      )}
-                    </UI.Box>
-                  }
-                />
-              </UI.ListItemButton>
-            ))}
-          </UI.List>
-        </UI.Drawer>
-      </>
-    );
-  };
+          {room.hostId === currentUserId ? "End Room" : "Leave Room"}
+        </UI.Button>
+      </UI.Box>
+
+      <UI.Drawer
+        open={model.opened[0] === "Users"}
+        onClose={() => dispatch(["ClosedDrawer"])}
+        anchor="bottom"
+      >
+        <UI.List>
+          {usersInRoom.map((profile) => (
+            <UI.ListItemButton
+              key={profile.userId}
+              onClick={() => dispatch(["ClickedUser", profile])}
+            >
+              <UI.ListItemAvatar>
+                <UI.Avatar src={profile.avatarUrl} />
+              </UI.ListItemAvatar>
+              <UI.ListItemText
+                primary={profile.username}
+                secondary={
+                  <UI.Box>
+                    {profile.userId === room.hostId && (
+                      <UI.Chip
+                        sx={{ marginRight: 1 }}
+                        size="small"
+                        variant="outlined"
+                        label="Host"
+                      />
+                    )}
+                    {profile.userId === currentUserId && (
+                      <UI.Chip
+                        sx={{ marginRight: 1 }}
+                        size="small"
+                        variant="outlined"
+                        label="You"
+                      />
+                    )}
+                  </UI.Box>
+                }
+              />
+            </UI.ListItemButton>
+          ))}
+        </UI.List>
+      </UI.Drawer>
+    </>
+  );
+};
 
 const viewPlayerActions =
   ({
@@ -531,7 +570,7 @@ const viewPlayerActions =
 
         if (roomPlayer.userId === currentUserId) {
           return (
-            <UI.Box>
+            <UI.Box sx={{ p: 1 }}>
               <UI.Button
                 onClick={() =>
                   dispatch(["QuitPlaying", { currentUserId, player }])
@@ -540,17 +579,26 @@ const viewPlayerActions =
               >
                 Quit Playing
               </UI.Button>
-              {/* <UI.Button
-                onClick={() =>
-                  dispatch(["ClickedUser", { userId: roomPlayer.userId }])
-                }
-                fullWidth
-              >
-                Go To Profile
-              </UI.Button> */}
             </UI.Box>
           );
         }
+
+        if (currentUserId === room.hostId) {
+          return (
+            <UI.Box sx={{ p: 1 }}>
+              <UI.Button
+                onClick={() =>
+                  dispatch(["QuitPlaying", { currentUserId, player }])
+                }
+                fullWidth
+              >
+                Remove Player
+              </UI.Button>
+            </UI.Box>
+          );
+        }
+
+        console.log({ currentUserId, room, roomPlayer });
 
         return (
           <UI.Box sx={{ p: 2 }}>
@@ -602,20 +650,26 @@ const ViewPlayer = ({
       const profile = store.Profile[roomPlayer.userId];
 
       return (
-        <>
-          <UI.Box
-            sx={{
-              flex: 1,
-              p: 1,
-            }}
-            ref={ref}
-          >
-            <PlayerUserCard
-              profile={profile}
+        <UI.Box ref={ref} sx={{ flex: 1, p: 1 }}>
+          <UI.CardActionArea>
+            <UI.Card
+              sx={{
+                flex: 1,
+                display: "flex",
+                alignItems: "center",
+                padding: 1,
+              }}
               onClick={() => dispatch(["ClickedPlayer", player])}
-              player={player}
-            />
-          </UI.Box>
+            >
+              <PlayerIcon player={player} />
+              <UI.Avatar
+                sx={{ width: 24, height: 24, marginX: 1 }}
+                src={profile?.avatarUrl}
+              />
+              <UI.Typography variant="h6">{profile?.username}</UI.Typography>
+            </UI.Card>
+          </UI.CardActionArea>
+
           <UI.Menu
             open={model.opened[0] === "Player" && model.opened[1] === player}
             anchorEl={ref.current}
@@ -625,38 +679,9 @@ const ViewPlayer = ({
               dispatch,
             )}
           </UI.Menu>
-        </>
+        </UI.Box>
       );
   }
-};
-
-const PlayerUserCard = ({
-  profile,
-  onClick,
-  player,
-}: {
-  player: Board.Player;
-  profile?: Store.Profile.Profile;
-  onClick: () => void;
-}) => {
-  return (
-    <UI.Card
-      sx={{
-        flex: 1,
-        display: "flex",
-        alignItems: "center",
-        padding: 1,
-      }}
-      onClick={onClick}
-    >
-      <PlayerIcon player={player} />
-      <UI.Avatar
-        sx={{ width: 24, height: 24, marginX: 1 }}
-        src={profile?.avatarUrl}
-      />
-      <UI.Typography variant="h6">{profile?.username}</UI.Typography>
-    </UI.Card>
-  );
 };
 
 //

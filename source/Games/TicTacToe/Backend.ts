@@ -46,7 +46,7 @@ export type Msg = BackendMsg;
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
     case "ClientDisconnected":
-      return [model, Cmd.None];
+      return [model, broadcast(["Games", ["TicTacToe", ["Sync", model]]])];
 
     case "ClientConnected":
       return [model, broadcast(["Games", ["TicTacToe", ["Sync", model]]])];
@@ -59,6 +59,41 @@ export const updateFromFrontend = (
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
+    case "RemovePlayer": {
+      const { player, currentUserId } = msg[1];
+
+      const maybeCurrentRoom = toCurrentRoom(currentUserId, model);
+      if (maybeCurrentRoom.type === "None") {
+        return [
+          model,
+          sendToFrontend(clientId, [
+            "Games",
+            [
+              "TicTacToe",
+              ["MoveResulted", Result.Err("User is not in a room")],
+            ],
+          ]),
+        ];
+      }
+      const room = maybeCurrentRoom.value;
+
+      if (room.hostId !== currentUserId) {
+        return [
+          model,
+          sendToFrontend(clientId, [
+            "Games",
+            ["TicTacToe", ["MoveResulted", Result.Err("")]],
+          ]),
+        ];
+      }
+
+      const modelNew: Model = {
+        ...model,
+      };
+
+      return [modelNew, Cmd.None];
+    }
+
     case "QuitPlaying": {
       const player = msg[1].player;
       const currentUserId = msg[1].currentUserId;
@@ -134,24 +169,24 @@ export const updateFromFrontend = (
         ];
       }
 
-      // const isX =
-      //   room.players.X.type === "User" &&
-      //   room.players.X.userId === currentUserId;
+      const isX =
+        room.players.X.type === "User" &&
+        room.players.X.userId === currentUserId;
 
-      // const isO =
-      //   room.players.O.type === "User" &&
-      //   room.players.O.userId === currentUserId;
+      const isO =
+        room.players.O.type === "User" &&
+        room.players.O.userId === currentUserId;
 
-      // if (isX || isO) {
-      //   const result = Result.Err(`User is already player ${player}`);
-      //   return [
-      //     model,
-      //     sendToFrontend(clientId, [
-      //       "Games",
-      //       ["TicTacToe", ["PlayAsResulted", result]],
-      //     ]),
-      //   ];
-      // }
+      if (isX || isO) {
+        const result = Result.Err(`User is already player ${player}`);
+        return [
+          model,
+          sendToFrontend(clientId, [
+            "Games",
+            ["TicTacToe", ["PlayAsResulted", result]],
+          ]),
+        ];
+      }
 
       const modelNew: Model = {
         ...model,
@@ -281,16 +316,14 @@ export const updateFromFrontend = (
         ];
       }
 
-      const roomNew = {
-        ...room,
-        board: moveResult.value,
-      };
-
       const modelNew = {
         ...model,
         rooms: {
           ...model.rooms,
-          [roomNew.roomId]: roomNew,
+          [room.roomId]: {
+            ...room,
+            board: moveResult.value,
+          },
         },
       };
 
