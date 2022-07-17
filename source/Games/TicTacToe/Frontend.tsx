@@ -432,12 +432,7 @@ const ViewInRoom = ({
           </UI.Box>
         </UI.Toolbar>
 
-        <UI.Typography
-          gutterBottom
-          color="text.secondary"
-          variant="subtitle2"
-          align="center"
-        >
+        <UI.Typography gutterBottom color="text.secondary" align="center">
           {statusMessage}
         </UI.Typography>
 
