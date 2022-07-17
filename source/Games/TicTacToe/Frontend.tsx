@@ -424,12 +424,18 @@ const ViewInRoom = ({
 
   const statusMessage =
     roomStatus.type === "NotReady"
-      ? "Missing Player(s)"
+      ? roomStatus.status === "MissingBoth"
+        ? "Missing Players"
+        : roomStatus.status === "MissingO"
+        ? "Missing O Player"
+        : roomStatus.status === "MissingX"
+        ? "Missing X Player"
+        : ""
       : roomStatus.status.type === "Turn"
       ? `${roomStatus.status.turn} Turn`
       : roomStatus.status.type === "Tie"
-      ? "Tie"
-      : `${roomStatus.status.winner} Won`;
+      ? "Gameover"
+      : `Gameover`;
 
   const usersInRoom = Object.values(store.Profile).filter(
     (profile) =>
@@ -450,7 +456,7 @@ const ViewInRoom = ({
         <UI.Box sx={{ flex: 1 }} />
         <UI.AvatarGroup
           onClick={() => dispatch(["ClickedAvatars"])}
-          sx={{ marginRight: 1 }}
+          sx={{ marginRight: -1 }}
         >
           {usersInRoom.map((item) => (
             <UI.Avatar key={item.avatarUrl} src={item.avatarUrl} />
@@ -458,24 +464,27 @@ const ViewInRoom = ({
         </UI.AvatarGroup>
       </UI.Toolbar>
 
-      <UI.Toolbar variant="dense">
-        <ViewPlayer
-          currentUserId={currentUserId}
-          model={model}
-          player="X"
-          store={store}
-          room={room}
-          dispatch={dispatch}
-        />
-
-        <ViewPlayer
-          model={model}
-          currentUserId={currentUserId}
-          player="O"
-          store={store}
-          room={room}
-          dispatch={dispatch}
-        />
+      <UI.Toolbar>
+        <UI.Box sx={{ flex: 1, paddingRight: 1 / 2 }}>
+          <ViewPlayer
+            currentUserId={currentUserId}
+            model={model}
+            player="X"
+            store={store}
+            room={room}
+            dispatch={dispatch}
+          />
+        </UI.Box>
+        <UI.Box sx={{ paddingLeft: 1 / 2, flex: 1 }}>
+          <ViewPlayer
+            model={model}
+            currentUserId={currentUserId}
+            player="O"
+            store={store}
+            room={room}
+            dispatch={dispatch}
+          />
+        </UI.Box>
       </UI.Toolbar>
 
       <UI.Typography
@@ -596,7 +605,7 @@ const viewPlayerActions =
 
         if (roomPlayer.userId === currentUserId) {
           return (
-            <UI.Box sx={{ p: 1 }}>
+            <UI.Box sx={{ paddingX: 1 }}>
               <UI.Button
                 onClick={() =>
                   dispatch(["QuitPlaying", { currentUserId, player }])
@@ -611,7 +620,7 @@ const viewPlayerActions =
 
         if (currentUserId === room.hostId) {
           return (
-            <UI.Box sx={{ p: 1 }}>
+            <UI.Box sx={{ paddingX: 1 }}>
               <UI.Button
                 onClick={() =>
                   dispatch(["QuitPlaying", { currentUserId, player }])
@@ -651,10 +660,11 @@ const ViewPlayer = ({
 }) => {
   const roomPlayer = room.players[player];
   const ref = useRef<HTMLElement | null>(null);
+  const theme = UI.useTheme();
   switch (roomPlayer.type) {
     case "None":
       return (
-        <UI.Box ref={ref} sx={{ flex: 1, p: 1 }}>
+        <UI.Box ref={ref}>
           <UI.Button
             onClick={() => dispatch(["ClickedPlayAs", player])}
             sx={{
@@ -666,6 +676,7 @@ const ViewPlayer = ({
             }}
             // startIcon={<PlayerIcon sx={{ fill: "#fff" }} player={player} />}
             fullWidth
+            variant="contained"
             color="primary"
           >
             Play As {player}
@@ -680,13 +691,18 @@ const ViewPlayer = ({
         <>
           <UI.Box
             ref={ref}
-            sx={{ flex: 1, p: 1, display: "flex", alignItems: "center" }}
+            sx={{ p: 1, display: "flex", alignItems: "center" }}
             onClick={() => dispatch(["ClickedPlayer", player])}
           >
-            <svg width={24} viewBox="0 0 1 1">
-              <rect x={0} y={0} width={1} height={1} fill={theme.background} />
-              <ViewSlot slot={player} cx={1 / 2} cy={1 / 2} r={1 / 3} />
-            </svg>
+            <UI.SvgIcon width={24} viewBox="0 0 1 1">
+              <ViewSlot
+                color={theme.palette.text.primary}
+                slot={player}
+                cx={1 / 2}
+                cy={1 / 2}
+                r={1 / 3}
+              />
+            </UI.SvgIcon>
             {/* <PlayerIcon player={player} /> */}
             <UI.Box sx={{ flex: 1, display: "flex", alignItems: "center" }}>
               <UI.Avatar
