@@ -60,25 +60,9 @@ export const view =
   (model: Model): UI.View<Msg> =>
   (_dispatch) => {
     return (
-      <UI.Collapse in={model === "Reconnecting" || model === "Disconnected"}>
-        <UI.Alert
-          variant="filled"
-          severity={
-            model === "Disconnected"
-              ? "error"
-              : model === "Connected"
-              ? "info"
-              : "info"
-          }
-          sx={{ display: "flex", alignItems: "center" }}
-          icon={<UI.CircularProgress color="inherit" disableShrink size={18} />}
-        >
-          {model === "Reconnecting"
-            ? `Reconnecting to backend...`
-            : model === "Disconnected"
-            ? "Failed to connect to backend."
-            : "Connected."}
-        </UI.Alert>
-      </UI.Collapse>
+      <UI.LoadingDialog
+        open={model === "Connecting" || model === "Reconnecting"}
+        title={"Connecting..."}
+      />
     );
   };

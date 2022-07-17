@@ -530,10 +530,6 @@ export const view =
             transform: "translate(-50%, -50%)",
           }}
         >
-          {pipe(
-            ConnectionStatus.view(model.connectionStatus),
-            UI.map(tag("ConnectionStatus")),
-          )(dispatch)}
           {/* {pipe(Counter.view(model.counter), UI.map(tag("Counter")))(dispatch)} */}
           <UI.Box
             sx={{
@@ -551,6 +547,11 @@ export const view =
           )(dispatch)}
 
           {viewGameBanner(model)(dispatch)}
+
+          {pipe(
+            ConnectionStatus.view(model.connectionStatus),
+            UI.map(tag("ConnectionStatus")),
+          )(dispatch)}
         </UI.Box>
       </UI.ThemeProvider>
     );
