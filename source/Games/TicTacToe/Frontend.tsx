@@ -397,7 +397,9 @@ const viewInRoom =
     return (
       <>
         <UI.Box sx={{ display: "flex", alignItems: "center", padding: 2 }}>
-          <UI.HeaderBackButton onClick={() => dispatch(["ClickedBack"])} />
+          <UI.IconButton>
+            <UI.Icons.Menu />
+          </UI.IconButton>
           <UI.Box sx={{ flex: 1 }} />
           <UI.AvatarGroup onClick={() => dispatch(["ClickedAvatars"])}>
             {usersInRoom.map((item) => (

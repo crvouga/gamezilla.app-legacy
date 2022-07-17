@@ -159,7 +159,17 @@ export const toStatus = (board: Board): Status => {
     return { type: "Win", winner: "O" };
   }
 
+  if (isTie(board)) {
+    return { type: "Tie" };
+  }
+
   return { type: "Turn", turn: toTurn(board) };
+};
+
+const isTie = (board: Board): boolean => {
+  return allPositions
+    .map((position) => toSlot(board, position))
+    .every((slot) => slot !== "Empty");
 };
 
 type SlotFrequency = { X: number; O: number; Empty: number };
