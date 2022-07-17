@@ -53,16 +53,16 @@ export type Users = {
 //
 
 export type FrontendMsg =
-  | ["ClickedLeaveRoom"]
-  | ["ClickedJoinRoom", { roomId: RoomId }]
   | ["ClickedBack"]
-  | ["ClickedBoard", Board.Position]
   | ["ClickedUser", { userId: string }]
-  | ["ClickedRestart"]
   | ["ClickedAvatars"]
   | ["ClosedDrawer"]
-  | ["ClickedPlayAs", Board.Player]
   | ["ClickedPlayer", Board.Player]
+  | LeaveRoom
+  | JoinRoom
+  | Move
+  | PlayAs
+  | Restart
   | CreateRoom
   | QuitPlaying
   | RemovePlayer
@@ -70,37 +70,15 @@ export type FrontendMsg =
 
 export type ToBackend =
   | ["Init"]
-  | ["LeaveRoom", { userId: string }]
-  | ["JoinRoom", { userId: string; roomId: RoomId }]
-  | ["JoinRoom", { userId: string; roomId: RoomId }]
-  | ["Move", { userId: string; position: Board.Position }]
-  | ["Restart", { userId: string }]
-  | ["PlayAs", { player: Board.Player; userId: string }]
+  | LeaveRoom
+  | JoinRoom
+  | Restart
+  | PlayAs
+  | Move
   | CreateRoom
   | QuitPlaying
   | RemovePlayer
   | PlayAgain;
-
-type CreateRoom = ["CreateRoom", { currentUserId: string }];
-
-type PlayAgain = ["PlayAgain", { currentUserId: string }];
-
-type PlayAgainResulted = ["PlayAgainResulted", Result.Result<string, {}>];
-
-type RemovePlayer = [
-  "RemovePlayer",
-  { currentUserId: string; player: Board.Player },
-];
-
-type RemovePlayerResulted = [
-  "RemovePlayerResulted",
-  { currentUserId: string; player: Board.Player },
-];
-
-type QuitPlaying =
-  | ["QuitPlaying", { currentUserId: string; player: Board.Player }];
-
-type QuitPlayingResulted = ["QuitPlayingResulted", Result.Result<string, {}>];
 
 export type ToFrontend =
   | [
@@ -110,25 +88,65 @@ export type ToFrontend =
         users: Users;
       },
     ]
-  | ["CreateRoomResulted", Result.Result<string, {}>]
-  | ["LeaveRoomResulted", Result.Result<string, {}>]
-  | ["JoinRoomResulted", Result.Result<string, {}>]
-  | ["MoveResulted", Result.Result<string, {}>]
-  | ["RestartResulted", Result.Result<string, {}>]
-  | ["PlayAsResulted", Result.Result<string, {}>]
+  | LeaveRoomResulted
+  | JoinRoomResulted
+  | RestartResulted
+  | PlayAsResulted
+  | MoveResulted
   | QuitPlayingResulted
   | RemovePlayerResulted
-  | PlayAgainResulted;
+  | PlayAgainResulted
+  | CreateRoomResulted;
 
 export type BackendMsg =
   | ["ClientConnected", ClientId]
   | ["ClientDisconnected", ClientId];
 
-export type RoomEvent =
-  | ["Joined", { roomId: RoomId; userId: string }]
-  | ["Left", { roomId: RoomId; userId: string }]
-  | ["Created", { roomId: RoomId; userId: string }]
-  | ["Moved", { roomId: RoomId; position: Board.Position; userId: string }];
+//
+//
+//
+//
+//
+//
+//
+
+type LeaveRoom = ["LeaveRoom", { currentUserId: string }];
+type LeaveRoomResulted = ["LeaveRoomResulted", Result.Result<string, {}>];
+
+type JoinRoom = ["JoinRoom", { currentUserId: string; roomId: RoomId }];
+type JoinRoomResulted = ["JoinRoomResulted", Result.Result<string, {}>];
+
+type Restart = ["Restart", { currentUserId: string }];
+type RestartResulted = ["RestartResulted", Result.Result<string, {}>];
+
+type PlayAs = ["PlayAs", { player: Board.Player; currentUserId: string }];
+type PlayAsResulted = ["PlayAsResulted", Result.Result<string, {}>];
+
+type Move = ["Move", { currentUserId: string; position: Board.Position }];
+type MoveResulted = [
+  "MoveResulted",
+  {
+    userId: string;
+    position: Board.Position;
+    result: Result.Result<string, {}>;
+  },
+];
+
+type CreateRoom = ["CreateRoom", { currentUserId: string }];
+type CreateRoomResulted = ["CreateRoomResulted", Result.Result<string, {}>];
+
+type PlayAgain = ["PlayAgain", { currentUserId: string }];
+type PlayAgainResulted = ["PlayAgainResulted", Result.Result<string, {}>];
+
+type RemovePlayer = [
+  "RemovePlayer",
+  { currentUserId: string; player: Board.Player },
+];
+type RemovePlayerResulted = ["RemovePlayerResulted", Result.Result<string, {}>];
+
+type QuitPlaying =
+  | ["QuitPlaying", { currentUserId: string; player: Board.Player }];
+type QuitPlayingResulted = ["QuitPlayingResulted", Result.Result<string, {}>];
 
 //
 //
@@ -147,7 +165,19 @@ export type Room = {
     [player in Board.Player]: RoomPlayer;
   };
   hostId: string;
+  eventLog: RoomEvent[];
 };
+
+export type RoomEvent =
+  | LeaveRoomResulted
+  | JoinRoomResulted
+  | RestartResulted
+  | PlayAsResulted
+  | MoveResulted
+  | QuitPlayingResulted
+  | RemovePlayerResulted
+  | PlayAgainResulted
+  | CreateRoomResulted;
 
 export const mapRoomPlayers = (
   mapper: (roomPlayer: RoomPlayer) => RoomPlayer,
@@ -171,6 +201,7 @@ export const initRoom = (roomId: RoomId, hostId: string): Room => {
       O: { type: "None" },
     },
     hostId,
+    eventLog: [],
   };
 };
 
