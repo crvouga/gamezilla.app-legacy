@@ -130,13 +130,17 @@ export const updateFromFrontend = (
         },
       };
 
+      const roomEvent: RoomEvent = [
+        "PlayAgainResulted",
+        Result.Ok({
+          userId: currentUserId,
+        }),
+      ];
+
       return [
         modelNew,
         Cmd.batch([
-          sendToFrontend(clientId, [
-            "Games",
-            ["TicTacToe", ["PlayAgainResulted", Result.Ok({})]],
-          ]),
+          sendToFrontend(clientId, ["Games", ["TicTacToe", roomEvent]]),
           broadcast(["Games", ["TicTacToe", ["Sync", modelNew]]]),
         ]),
       ];
@@ -170,7 +174,13 @@ export const updateFromFrontend = (
         ];
       }
 
-      const roomEvent: RoomEvent = ["RemovePlayerResulted", Result.Ok({})];
+      const roomEvent: RoomEvent = [
+        "RemovePlayerResulted",
+        Result.Ok({
+          hostId: room.hostId,
+          player,
+        }),
+      ];
 
       const modelNew: Model = pipe(
         {
@@ -215,7 +225,12 @@ export const updateFromFrontend = (
       }
       const room = maybeCurrentRoom.value;
 
-      const roomEvent: RoomEvent = ["QuitPlayingResulted", Result.Ok({})];
+      const roomEvent: RoomEvent = [
+        "QuitPlayingResulted",
+        Result.Ok({
+          userId: currentUserId,
+        }),
+      ];
 
       const modelNew: Model = pipe(
         {
@@ -285,7 +300,14 @@ export const updateFromFrontend = (
         room,
       );
 
-      const roomEvent: RoomEvent = ["PlayAsResulted", Result.Ok({})];
+      const roomEvent: RoomEvent = [
+        "PlayAsResulted",
+        Result.Ok({
+          player,
+          userId: currentUserId,
+        }),
+      ];
+
       const modelNew: Model = pipe(
         {
           ...model,
@@ -356,13 +378,17 @@ export const updateFromFrontend = (
         },
       };
 
+      const roomEvent: RoomEvent = [
+        "RestartResulted",
+        Result.Ok({
+          userId: currentUserId,
+        }),
+      ];
+
       return [
         modelNew,
         Cmd.batch([
-          sendToFrontend(clientId, [
-            "Games",
-            ["TicTacToe", ["RestartResulted", Result.Ok({})]],
-          ]),
+          sendToFrontend(clientId, ["Games", ["TicTacToe", roomEvent]]),
           broadcast(["Games", ["TicTacToe", ["Sync", modelNew]]]),
         ]),
       ];
@@ -375,11 +401,7 @@ export const updateFromFrontend = (
       if (maybeCurrentRoom.type === "None") {
         const event: RoomEvent = [
           "MoveResulted",
-          {
-            result: Result.Err("User is not in a room"),
-            userId: currentUserId,
-            position,
-          },
+          Result.Err("User is not in a room"),
         ];
         return [
           model,
@@ -394,11 +416,7 @@ export const updateFromFrontend = (
       if (roomStatus.type === "NotReady") {
         const event: RoomEvent = [
           "MoveResulted",
-          {
-            result: Result.Err("Room is not ready"),
-            userId: currentUserId,
-            position,
-          },
+          Result.Err("Room is not ready"),
         ];
 
         return [
@@ -412,11 +430,7 @@ export const updateFromFrontend = (
       if (player === "None") {
         const event: RoomEvent = [
           "MoveResulted",
-          {
-            userId: currentUserId,
-            position: position,
-            result: Result.Err("User is not a player"),
-          },
+          Result.Err("User is not a player"),
         ];
 
         return [
@@ -431,14 +445,7 @@ export const updateFromFrontend = (
           : Board.move(room.board, player, msg[1].position);
 
       if (moveResult.type === "Err") {
-        const event: RoomEvent = [
-          "MoveResulted",
-          {
-            userId: currentUserId,
-            position: position,
-            result: moveResult,
-          },
-        ];
+        const event: RoomEvent = ["MoveResulted", moveResult];
 
         return [
           model,
@@ -448,11 +455,10 @@ export const updateFromFrontend = (
 
       const event: RoomEvent = [
         "MoveResulted",
-        {
+        Result.Ok({
           userId: currentUserId,
           position: position,
-          result: Result.Ok({}),
-        },
+        }),
       ];
 
       const modelNew: Model = pipe(
@@ -510,7 +516,12 @@ export const updateFromFrontend = (
         ];
       }
 
-      const roomEvent: RoomEvent = ["JoinRoomResulted", Result.Ok({})];
+      const roomEvent: RoomEvent = [
+        "JoinRoomResulted",
+        Result.Ok({
+          userId: currentUserId,
+        }),
+      ];
 
       const modelNew = pipe(
         {
@@ -562,19 +573,26 @@ export const updateFromFrontend = (
           users: remove(currentUserId, model.users),
         };
 
+        const roomEvent: RoomEvent = [
+          "LeaveRoomResulted",
+          Result.Ok({ userId: currentUserId }),
+        ];
+
         return [
           modelNew,
           Cmd.batch([
             broadcast(["Games", ["TicTacToe", ["Sync", modelNew]]]),
-            sendToFrontend(clientId, [
-              "Games",
-              ["TicTacToe", ["LeaveRoomResulted", Result.Ok({})]],
-            ]),
+            sendToFrontend(clientId, ["Games", ["TicTacToe", roomEvent]]),
           ]),
         ];
       }
 
-      const roomEvent: RoomEvent = ["LeaveRoomResulted", Result.Ok({})];
+      const roomEvent: RoomEvent = [
+        "LeaveRoomResulted",
+        Result.Ok({
+          userId: currentUserId,
+        }),
+      ];
 
       const modelNew: Model = pipe(
         {
@@ -619,10 +637,16 @@ export const updateFromFrontend = (
       ];
 
     case "CreateRoom":
+      const { currentUserId } = msg[1];
       const roomId = Uuid.generateSync();
-      const roomEvent: RoomEvent = ["CreateRoomResulted", Result.Ok({})];
+      const roomEvent: RoomEvent = [
+        "CreateRoomResulted",
+        Result.Ok({
+          userId: currentUserId,
+        }),
+      ];
 
-      const roomNew = initRoom(roomId, msg[1].currentUserId);
+      const roomNew = initRoom(roomId, currentUserId);
       const modelNew: Model = pipe(
         {
           ...model,
@@ -632,8 +656,8 @@ export const updateFromFrontend = (
           },
           users: {
             ...model.users,
-            [msg[1].currentUserId]: {
-              userId: msg[1].currentUserId,
+            [currentUserId]: {
+              userId: currentUserId,
               roomId: roomNew.roomId,
             },
           },
