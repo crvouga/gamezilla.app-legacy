@@ -397,7 +397,7 @@ const viewInRoom =
     return (
       <>
         <UI.Box sx={{ display: "flex", alignItems: "center", padding: 2 }}>
-          <UI.IconButton>
+          <UI.IconButton sx={{ marginLeft: -1 }}>
             <UI.Icons.Menu />
           </UI.IconButton>
           <UI.Box sx={{ flex: 1 }} />
