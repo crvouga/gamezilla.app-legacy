@@ -143,7 +143,7 @@ const toWins = (board: Board): Wins => {
   );
 };
 
-type Status =
+export type Status =
   | { type: "Turn"; turn: Player }
   | { type: "Win"; winner: Player }
   | { type: "Tie" };

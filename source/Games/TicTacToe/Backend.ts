@@ -16,6 +16,7 @@ import {
   initRoom,
   toCurrentRoom,
   toPlayer,
+  toRoomStatus,
 } from "./Types";
 
 //
@@ -59,8 +60,87 @@ export const updateFromFrontend = (
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
+    case "PlayAgain": {
+      const { currentUserId } = msg[1];
+
+      const maybeCurrentRoom = toCurrentRoom(currentUserId, model);
+      if (maybeCurrentRoom.type === "None") {
+        return [
+          model,
+          sendToFrontend(clientId, [
+            "Games",
+            [
+              "TicTacToe",
+              ["PlayAgainResulted", Result.Err("User is not in a room")],
+            ],
+          ]),
+        ];
+      }
+      const room = maybeCurrentRoom.value;
+
+      const status = toRoomStatus(room);
+
+      if (status.type === "NotReady") {
+        return [
+          model,
+          sendToFrontend(clientId, [
+            "Games",
+            [
+              "TicTacToe",
+              [
+                "PlayAgainResulted",
+                Result.Err(
+                  "To play again room must to be in a game over state",
+                ),
+              ],
+            ],
+          ]),
+        ];
+      }
+
+      if (status.status.type === "Turn") {
+        return [
+          model,
+          sendToFrontend(clientId, [
+            "Games",
+            [
+              "TicTacToe",
+              [
+                "PlayAgainResulted",
+                Result.Err(
+                  "To play again room must to be in a game over state",
+                ),
+              ],
+            ],
+          ]),
+        ];
+      }
+
+      const modelNew: Model = {
+        ...model,
+        rooms: {
+          ...model.rooms,
+          [room.roomId]: {
+            ...room,
+            board: Board.emptyBoard,
+          },
+        },
+      };
+
+      return [
+        modelNew,
+        Cmd.batch([
+          sendToFrontend(clientId, [
+            "Games",
+            ["TicTacToe", ["PlayAgainResulted", Result.Ok({})]],
+          ]),
+          broadcast(["Games", ["TicTacToe", ["Sync", modelNew]]]),
+        ]),
+      ];
+    }
+
     case "RemovePlayer": {
-      const { player, currentUserId } = msg[1];
+      const { currentUserId } = msg[1];
 
       const maybeCurrentRoom = toCurrentRoom(currentUserId, model);
       if (maybeCurrentRoom.type === "None") {
@@ -105,7 +185,7 @@ export const updateFromFrontend = (
           model,
           sendToFrontend(clientId, [
             "Games",
-            ["TicTacToe", ["MoveResulted", result]],
+            ["TicTacToe", ["QuitPlayingResulted", result]],
           ]),
         ];
       }
@@ -132,7 +212,7 @@ export const updateFromFrontend = (
         Cmd.batch([
           sendToFrontend(clientId, [
             "Games",
-            ["TicTacToe", ["PlayAsResulted", Result.Ok({})]],
+            ["TicTacToe", ["QuitPlayingResulted", Result.Ok({})]],
           ]),
           broadcast(["Games", ["TicTacToe", ["Sync", modelNew]]]),
         ]),
@@ -169,24 +249,24 @@ export const updateFromFrontend = (
         ];
       }
 
-      const isX =
-        room.players.X.type === "User" &&
-        room.players.X.userId === currentUserId;
+      // const isX =
+      //   room.players.X.type === "User" &&
+      //   room.players.X.userId === currentUserId;
 
-      const isO =
-        room.players.O.type === "User" &&
-        room.players.O.userId === currentUserId;
+      // const isO =
+      //   room.players.O.type === "User" &&
+      //   room.players.O.userId === currentUserId;
 
-      if (isX || isO) {
-        const result = Result.Err(`User is already player ${player}`);
-        return [
-          model,
-          sendToFrontend(clientId, [
-            "Games",
-            ["TicTacToe", ["PlayAsResulted", result]],
-          ]),
-        ];
-      }
+      // if (isX || isO) {
+      //   const result = Result.Err(`User is already player ${player}`);
+      //   return [
+      //     model,
+      //     sendToFrontend(clientId, [
+      //       "Games",
+      //       ["TicTacToe", ["PlayAsResulted", result]],
+      //     ]),
+      //   ];
+      // }
 
       const modelNew: Model = {
         ...model,
@@ -195,7 +275,21 @@ export const updateFromFrontend = (
           [room.roomId]: {
             ...room,
             players: {
-              ...room.players,
+              X:
+                room.players.X.type === "User" &&
+                room.players.X.userId === currentUserId
+                  ? {
+                      type: "None",
+                    }
+                  : room.players.X,
+
+              O:
+                room.players.O.type === "User" &&
+                room.players.O.userId === currentUserId
+                  ? {
+                      type: "None",
+                    }
+                  : room.players.O,
 
               [msg[1].player]: {
                 type: "User",

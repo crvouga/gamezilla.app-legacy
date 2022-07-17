@@ -13,6 +13,7 @@ import {
   ToFrontend,
   toCurrentRoom,
   toPlayer,
+  toRoomStatus,
 } from "./Types";
 
 //
@@ -34,6 +35,7 @@ export const init: [Model, Cmd.Cmd<Msg>] = [
     move: RemoteData.NotAsked,
     quitPlaying: RemoteData.NotAsked,
     removePlayer: RemoteData.NotAsked,
+    playAgain: RemoteData.NotAsked,
     opened: ["None"],
     rooms: {},
     users: {},
@@ -66,6 +68,12 @@ export const update = (
           "Games",
           ["TicTacToe", ["PlayAs", { player: msg[1], userId: authUserId }]],
         ]),
+      ];
+
+    case "PlayAgain":
+      return [
+        { ...model, playAgain: RemoteData.Loading },
+        sendToBackend(["Games", ["TicTacToe", msg]]),
       ];
 
     case "RemovePlayer":
@@ -191,6 +199,14 @@ export const updateFromBackend = (
         },
         Cmd.None,
         [["Store", Store.Profile.GetMany(userIds)]],
+      ];
+    }
+
+    case "PlayAgainResulted": {
+      return [
+        { ...model, playAgain: RemoteData.fromResult(msg[1]) },
+        Cmd.None,
+        [],
       ];
     }
 
@@ -409,7 +425,7 @@ const ViewInRoom = ({
       model.users[profile.userId]?.roomId === room.roomId,
   );
 
-  const [container, setContainer] = useState<HTMLElement | null>(null);
+  const roomStatus = toRoomStatus(room);
 
   return (
     <>
@@ -458,25 +474,52 @@ const ViewInRoom = ({
           board={room.board}
           onClick={(position) => dispatch(["ClickedBoard", position])}
         />
-        <UI.Grow in={false}>
-          <UI.Box
-            sx={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              width: "100%",
-              height: "100%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              backgroundColor: "rgba(0, 0, 0, 0.25)",
-            }}
-          >
-            <UI.Paper sx={{ p: 2 }}>
-              <UI.Typography align="center">Hello</UI.Typography>
+        {roomStatus.type === "NotReady" && (
+          <Backdrop open>
+            <UI.Paper sx={{ paddingX: 2, paddingTop: 2 }}>
+              {room.players.X.type === "None" && (
+                <UI.Button
+                  sx={{ marginBottom: 2 }}
+                  variant="contained"
+                  fullWidth
+                  onClick={() => dispatch(["ClickedPlayAs", "X"])}
+                >
+                  Play X
+                </UI.Button>
+              )}
+
+              {room.players.O.type === "None" && (
+                <UI.Button
+                  sx={{ marginBottom: 2 }}
+                  variant="contained"
+                  fullWidth
+                  onClick={() => dispatch(["ClickedPlayAs", "O"])}
+                >
+                  Play O
+                </UI.Button>
+              )}
             </UI.Paper>
-          </UI.Box>
-        </UI.Grow>
+          </Backdrop>
+        )}
+        {roomStatus.type === "Ready" && roomStatus.status.type === "Win" && (
+          <Backdrop open>
+            <UI.Paper sx={{ paddingX: 2, paddingTop: 2 }}>
+              <UI.Typography align="center" variant="h4" gutterBottom>
+                {roomStatus.status.winner} Won
+              </UI.Typography>
+
+              <UI.Button
+                sx={{ marginBottom: 2 }}
+                variant="contained"
+                fullWidth
+                loading={model.playAgain.type === "Loading"}
+                onClick={() => dispatch(["PlayAgain", { currentUserId }])}
+              >
+                Play Again
+              </UI.Button>
+            </UI.Paper>
+          </Backdrop>
+        )}
       </UI.Box>
 
       <UI.Box sx={{ p: 2 }}>
@@ -543,6 +586,28 @@ const ViewInRoom = ({
         </UI.List>
       </UI.Drawer>
     </>
+  );
+};
+
+const Backdrop = ({ open, children }: { open?: boolean; children: UI.Dom }) => {
+  return (
+    <UI.Fade in={open}>
+      <UI.Box
+        sx={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: "rgba(0, 0, 0, 0.25)",
+        }}
+      >
+        {children}
+      </UI.Box>
+    </UI.Fade>
   );
 };
 
@@ -630,19 +695,31 @@ const ViewPlayer = ({
   switch (roomPlayer.type) {
     case "None":
       return (
-        <UI.Box
-          sx={{
-            flex: 1,
-            p: 1,
-          }}
-        >
-          <UI.Button
-            variant="contained"
-            fullWidth
-            onClick={() => dispatch(["ClickedPlayAs", player])}
+        <UI.Box ref={ref} sx={{ flex: 1, p: 1 }}>
+          <UI.CardActionArea>
+            <UI.Card
+              sx={{
+                flex: 1,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                padding: 1,
+              }}
+              onClick={() => dispatch(["ClickedPlayer", player])}
+            >
+              <PlayerIcon player={player} />
+            </UI.Card>
+          </UI.CardActionArea>
+
+          <UI.Menu
+            open={model.opened[0] === "Player" && model.opened[1] === player}
+            anchorEl={ref.current}
+            onClose={() => dispatch(["ClosedDrawer"])}
           >
-            {`Play As ${player}`}
-          </UI.Button>
+            {viewPlayerActions({ currentUserId, player, room, store })(
+              dispatch,
+            )}
+          </UI.Menu>
         </UI.Box>
       );
 
