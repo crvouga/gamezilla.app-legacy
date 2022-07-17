@@ -128,12 +128,12 @@ export const update = (
         ]),
       ];
 
-    case "ClickedCreateRoom":
+    case "CreateRoom":
       return [
         { ...model, createRoom: RemoteData.Loading },
         sendToBackend([
           "Games",
-          ["TicTacToe", ["CreateRoom", { userId: authUserId }]],
+          ["TicTacToe", ["CreateRoom", { currentUserId: authUserId }]],
         ]),
       ];
 
@@ -144,6 +144,12 @@ export const update = (
       const roomsNew = pipe(
         toCurrentRoom(authUserId, model),
         Option.map((room) => {
+          const status = toRoomStatus(room);
+
+          if (status.type === "NotReady") {
+            return room;
+          }
+
           const player = toPlayer(authUserId, room);
 
           if (player === "None") {
@@ -284,7 +290,7 @@ export const view = (
 
   switch (maybeCurrentRoom.type) {
     case "None":
-      return viewNotInRoom({ store }, model);
+      return viewNotInRoom({ currentUserId, store }, model);
 
     case "Some":
       const room = maybeCurrentRoom.value;
@@ -301,7 +307,10 @@ export const view = (
 };
 
 const viewNotInRoom =
-  ({ store }: { store: Store.Model }, model: Model): UI.View<Msg> =>
+  (
+    { currentUserId, store }: { currentUserId: string; store: Store.Model },
+    model: Model,
+  ): UI.View<Msg> =>
   (dispatch) => {
     return (
       <UI.Page>
@@ -317,7 +326,7 @@ const viewNotInRoom =
             size="large"
             fullWidth
             loading={model.createRoom.type === "Loading"}
-            onClick={() => dispatch(["ClickedCreateRoom"])}
+            onClick={() => dispatch(["CreateRoom", { currentUserId }])}
             variant="contained"
           >
             New Room
@@ -400,24 +409,16 @@ const ViewInRoom = ({
   model: Model;
   dispatch: (msg: Msg) => void;
 }) => {
-  const x =
-    room.players.X.type === "User"
-      ? store.Profile[room.players.X.userId]
-      : undefined;
-
-  const o =
-    room.players.O.type === "User"
-      ? store.Profile[room.players.O.userId]
-      : undefined;
-
-  const status = Board.toStatus(room.board);
+  const roomStatus = toRoomStatus(room);
 
   const statusMessage =
-    status.type === "Turn"
-      ? `${status.turn} Turn`
-      : status.type === "Tie"
+    roomStatus.type === "NotReady"
+      ? "Missing Player(s)"
+      : roomStatus.status.type === "Turn"
+      ? `${roomStatus.status.turn} Turn`
+      : roomStatus.status.type === "Tie"
       ? "Tie"
-      : `${status.winner} Won`;
+      : `${roomStatus.status.winner} Won`;
 
   const usersInRoom = Object.values(store.Profile).filter(
     (profile) =>
@@ -425,12 +426,16 @@ const ViewInRoom = ({
       model.users[profile.userId]?.roomId === room.roomId,
   );
 
-  const roomStatus = toRoomStatus(room);
-
   return (
     <>
       <UI.Box sx={{ display: "flex", alignItems: "center", padding: 2 }}>
-        <UI.Button sx={{ marginLeft: -1 }}>Leave</UI.Button>
+        <UI.Button
+          loading={model.leaveRoom.type === "Loading"}
+          onClick={() => dispatch(["ClickedLeaveRoom"])}
+          sx={{ marginLeft: -1 }}
+        >
+          Leave
+        </UI.Button>
         <UI.Box sx={{ flex: 1 }} />
         <UI.AvatarGroup
           onClick={() => dispatch(["ClickedAvatars"])}
@@ -467,60 +472,14 @@ const ViewInRoom = ({
         />
       </UI.Box>
 
-      <UI.Typography align="center">{statusMessage}</UI.Typography>
+      <UI.Typography color="text.secondary" align="center" gutterBottom>
+        {statusMessage}
+      </UI.Typography>
 
-      <UI.Box sx={{ position: "relative" }}>
-        <ViewBoard
-          board={room.board}
-          onClick={(position) => dispatch(["ClickedBoard", position])}
-        />
-        {roomStatus.type === "NotReady" && (
-          <Backdrop open>
-            <UI.Paper sx={{ paddingX: 2, paddingTop: 2 }}>
-              {room.players.X.type === "None" && (
-                <UI.Button
-                  sx={{ marginBottom: 2 }}
-                  variant="contained"
-                  fullWidth
-                  onClick={() => dispatch(["ClickedPlayAs", "X"])}
-                >
-                  Play X
-                </UI.Button>
-              )}
-
-              {room.players.O.type === "None" && (
-                <UI.Button
-                  sx={{ marginBottom: 2 }}
-                  variant="contained"
-                  fullWidth
-                  onClick={() => dispatch(["ClickedPlayAs", "O"])}
-                >
-                  Play O
-                </UI.Button>
-              )}
-            </UI.Paper>
-          </Backdrop>
-        )}
-        {roomStatus.type === "Ready" && roomStatus.status.type === "Win" && (
-          <Backdrop open>
-            <UI.Paper sx={{ paddingX: 2, paddingTop: 2 }}>
-              <UI.Typography align="center" variant="h4" gutterBottom>
-                {roomStatus.status.winner} Won
-              </UI.Typography>
-
-              <UI.Button
-                sx={{ marginBottom: 2 }}
-                variant="contained"
-                fullWidth
-                loading={model.playAgain.type === "Loading"}
-                onClick={() => dispatch(["PlayAgain", { currentUserId }])}
-              >
-                Play Again
-              </UI.Button>
-            </UI.Paper>
-          </Backdrop>
-        )}
-      </UI.Box>
+      <ViewBoard
+        board={room.board}
+        onClick={(position) => dispatch(["ClickedBoard", position])}
+      />
 
       <UI.Box sx={{ p: 2 }}>
         {room.hostId === currentUserId && (
@@ -533,15 +492,6 @@ const ViewInRoom = ({
             Restart
           </UI.Button>
         )}
-
-        <UI.Button
-          onClick={() => dispatch(["ClickedLeaveRoom"])}
-          loading={model.leaveRoom.type === "Loading"}
-          fullWidth
-          variant="contained"
-        >
-          {room.hostId === currentUserId ? "End Room" : "Leave Room"}
-        </UI.Button>
       </UI.Box>
 
       <UI.Drawer
@@ -696,30 +646,22 @@ const ViewPlayer = ({
     case "None":
       return (
         <UI.Box ref={ref} sx={{ flex: 1, p: 1 }}>
-          <UI.CardActionArea>
-            <UI.Card
-              sx={{
-                flex: 1,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                padding: 1,
-              }}
-              onClick={() => dispatch(["ClickedPlayer", player])}
-            >
-              <PlayerIcon player={player} />
-            </UI.Card>
-          </UI.CardActionArea>
-
-          <UI.Menu
-            open={model.opened[0] === "Player" && model.opened[1] === player}
-            anchorEl={ref.current}
-            onClose={() => dispatch(["ClosedDrawer"])}
+          <UI.Button
+            onClick={() => dispatch(["ClickedPlayAs", player])}
+            sx={{
+              flex: 1,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: 1,
+            }}
+            // startIcon={<PlayerIcon sx={{ fill: "#fff" }} player={player} />}
+            fullWidth
+            variant="contained"
+            color="primary"
           >
-            {viewPlayerActions({ currentUserId, player, room, store })(
-              dispatch,
-            )}
-          </UI.Menu>
+            Play As {player}
+          </UI.Button>
         </UI.Box>
       );
 

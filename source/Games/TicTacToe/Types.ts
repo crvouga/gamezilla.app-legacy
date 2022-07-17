@@ -53,7 +53,6 @@ export type Users = {
 //
 
 export type FrontendMsg =
-  | ["ClickedCreateRoom"]
   | ["ClickedLeaveRoom"]
   | ["ClickedJoinRoom", { roomId: RoomId }]
   | ["ClickedBack"]
@@ -64,22 +63,25 @@ export type FrontendMsg =
   | ["ClosedDrawer"]
   | ["ClickedPlayAs", Board.Player]
   | ["ClickedPlayer", Board.Player]
+  | CreateRoom
   | QuitPlaying
   | RemovePlayer
   | PlayAgain;
 
 export type ToBackend =
   | ["Init"]
-  | ["CreateRoom", { userId: string }]
   | ["LeaveRoom", { userId: string }]
   | ["JoinRoom", { userId: string; roomId: RoomId }]
   | ["JoinRoom", { userId: string; roomId: RoomId }]
   | ["Move", { userId: string; position: Board.Position }]
   | ["Restart", { userId: string }]
   | ["PlayAs", { player: Board.Player; userId: string }]
+  | CreateRoom
   | QuitPlaying
   | RemovePlayer
   | PlayAgain;
+
+type CreateRoom = ["CreateRoom", { currentUserId: string }];
 
 type PlayAgain = ["PlayAgain", { currentUserId: string }];
 
@@ -150,12 +152,25 @@ export type Room = {
   hostId: string;
 };
 
+export const mapRoomPlayers = (
+  mapper: (roomPlayer: RoomPlayer) => RoomPlayer,
+  room: Room,
+): Room => {
+  return {
+    ...room,
+    players: {
+      X: mapper(room.players.X),
+      O: mapper(room.players.O),
+    },
+  };
+};
+
 export const initRoom = (roomId: RoomId, hostId: string): Room => {
   return {
     roomId,
     board: Board.emptyBoard,
     players: {
-      X: { type: "None" },
+      X: { type: "User", userId: hostId },
       O: { type: "None" },
     },
     scores: {
