@@ -200,6 +200,37 @@ export const mapRoomPlayers = (
   };
 };
 
+export const roomReducer = (room: Room, event: RoomEvent): Room => {
+  switch (event[0]) {
+    case "CreateRoomResulted":
+      return room;
+
+    case "JoinRoomResulted":
+      return room;
+
+    case "LeaveRoomResulted":
+      return room;
+
+    case "MoveResulted":
+      return room;
+
+    case "PlayAgainResulted":
+      return room;
+
+    case "PlayAsResulted":
+      return room;
+
+    case "QuitPlayingResulted":
+      return room;
+
+    case "RemovePlayerResulted":
+      return room;
+
+    case "RestartResulted":
+      return room;
+  }
+};
+
 export const initRoom = (roomId: RoomId, hostId: string): Room => {
   return {
     roomId,
