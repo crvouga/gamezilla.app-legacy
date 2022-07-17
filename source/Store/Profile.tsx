@@ -531,7 +531,7 @@ export const runAction = (msg: Action, model: Model): [Model, Cmd.Cmd<Msg>] => {
 export const toGetQuery = (
   userId: string,
   model: Model,
-): RemoteData.RemoteData<Problem, Profile> => {
+): RemoteData.Model<Problem, Profile> => {
   const query = model.queries.Profile.Get[userId] ?? RemoteData.NotAsked;
 
   switch (query.type) {

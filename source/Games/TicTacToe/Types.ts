@@ -17,13 +17,14 @@ export type BackendModel = {
 
 export type FrontendModel = {
   // mutations
-  createRoom: RemoteData.RemoteData<string, {}>;
-  leaveRoom: RemoteData.RemoteData<string, {}>;
-  joinRoom: RemoteData.RemoteData<string, {}>;
-  move: RemoteData.RemoteData<string, {}>;
-  quitPlaying: RemoteData.RemoteData<string, {}>;
+  createRoom: RemoteData.Model<string, {}>;
+  leaveRoom: RemoteData.Model<string, {}>;
+  joinRoom: RemoteData.Model<string, {}>;
+  move: RemoteData.Model<string, {}>;
+  quitPlaying: RemoteData.Model<string, {}>;
+  removePlayer: RemoteData.Model<string, {}>;
   // queries
-  init: RemoteData.RemoteData<string, {}>;
+  init: RemoteData.Model<string, {}>;
   // ui
   opened: ["Users"] | ["Player", Board.Player] | ["None"];
   //
@@ -62,7 +63,8 @@ export type FrontendMsg =
   | ["ClosedDrawer"]
   | ["ClickedPlayAs", Board.Player]
   | ["ClickedPlayer", Board.Player]
-  | QuitPlaying;
+  | QuitPlaying
+  | RemovePlayer;
 
 export type ToBackend =
   | ["Init"]
@@ -73,10 +75,23 @@ export type ToBackend =
   | ["Move", { userId: string; position: Board.Position }]
   | ["Restart", { userId: string }]
   | ["PlayAs", { player: Board.Player; userId: string }]
-  | QuitPlaying;
+  | QuitPlaying
+  | RemovePlayer;
+
+type RemovePlayer = [
+  "RemovePlayer",
+  { currentUserId: string; player: Board.Player },
+];
+
+type RemovePlayerResulted = [
+  "RemovePlayerResulted",
+  { currentUserId: string; player: Board.Player },
+];
 
 type QuitPlaying =
   | ["QuitPlaying", { currentUserId: string; player: Board.Player }];
+
+type QuitPlayingResulted = ["QuitPlayingResulted", Result.Result<string, {}>];
 
 export type BackendMsg =
   | ["ClientConnected", ClientId]
@@ -96,7 +111,8 @@ export type ToFrontend =
   | ["MoveResulted", Result.Result<string, {}>]
   | ["RestartResulted", Result.Result<string, {}>]
   | ["PlayAsResulted", Result.Result<string, {}>]
-  | ["QuitPlayingResulted", Result.Result<string, {}>];
+  | QuitPlayingResulted
+  | RemovePlayerResulted;
 
 export type RoomEvent =
   | ["Joined", { roomId: RoomId; userId: string }]
@@ -181,11 +197,4 @@ export const toCurrentRoom = (
   return Option.fromNullable(subset[0]);
 };
 
-export type RoomStatus =
-  | {
-      type: "PreGame";
-      child: {};
-    }
-  | {
-      type: "InGame";
-    };
+export type RoomStatus = ["NotReady"] | ["Playing"] | ["Gameover"];

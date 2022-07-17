@@ -77,17 +77,17 @@ export type Message = {
 export type Queries = {
   Profile: {
     Get: {
-      [userId: string]: RemoteData.RemoteData<Problem, string>;
+      [userId: string]: RemoteData.Model<Problem, string>;
     };
-    GetMany: RemoteData.RemoteData<Problem, string[]>;
+    GetMany: RemoteData.Model<Problem, string[]>;
     Search: {
-      [searchText: string]: RemoteData.RemoteData<Problem, string[]>;
+      [searchText: string]: RemoteData.Model<Problem, string[]>;
     };
   };
 
   Conversation: {
     FindOne: {
-      [id: string]: RemoteData.RemoteData<
+      [id: string]: RemoteData.Model<
         Problem,
         {
           conversation: string;
@@ -97,7 +97,7 @@ export type Queries = {
       >;
     };
     FindManyByUserId: {
-      [userId: string]: RemoteData.RemoteData<
+      [userId: string]: RemoteData.Model<
         Problem,
         {
           profile: string[];
@@ -120,24 +120,24 @@ export type Queries = {
 export type Mutations = {
   Profile: {
     Edit: {
-      [userId: string]: RemoteData.RemoteData<Problem, string>;
+      [userId: string]: RemoteData.Model<Problem, string>;
     };
     DeleteForever: {
-      [userId: string]: RemoteData.RemoteData<Problem, string>;
+      [userId: string]: RemoteData.Model<Problem, string>;
     };
     Create: {
-      [userId: string]: RemoteData.RemoteData<Problem, string>;
+      [userId: string]: RemoteData.Model<Problem, string>;
     };
   };
   Conversation: {
-    FindElseInsert: RemoteData.RemoteData<Problem, string>;
+    FindElseInsert: RemoteData.Model<Problem, string>;
   };
   Message: {
     Insert: {
-      [conversationId: string]: RemoteData.RemoteData<Problem, string>;
+      [conversationId: string]: RemoteData.Model<Problem, string>;
     };
     DeleteForever: {
-      [messageId: string]: RemoteData.RemoteData<Problem, string>;
+      [messageId: string]: RemoteData.Model<Problem, string>;
     };
   };
 };
