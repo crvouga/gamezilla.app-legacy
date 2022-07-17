@@ -530,14 +530,7 @@ export const view =
             transform: "translate(-50%, -50%)",
           }}
         >
-          {/* {pipe(Counter.view(model.counter), UI.map(tag("Counter")))(dispatch)} */}
-          <UI.Box
-            sx={{
-              width: "100%",
-              overflow: "hidden",
-              flex: 1,
-            }}
-          >
+          <UI.Box sx={{ width: "100%", overflow: "hidden", flex: 1 }}>
             {viewMain(model)(dispatch)}
           </UI.Box>
 
