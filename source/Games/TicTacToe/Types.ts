@@ -170,7 +170,6 @@ export const initRoom = (roomId: RoomId, hostId: string): Room => {
       X: { type: "User", userId: hostId },
       O: { type: "None" },
     },
-
     hostId,
   };
 };
@@ -215,12 +214,20 @@ export const toCurrentRoom = (
 };
 
 export type RoomStatus =
-  | { type: "NotReady" }
+  | { type: "NotReady"; status: "MissingBoth" | "MissingX" | "MissingO" }
   | { type: "Ready"; status: Board.Status };
 
 export const toRoomStatus = (room: Room): RoomStatus => {
-  if (room.players.X.type === "None" || room.players.O.type === "None") {
-    return { type: "NotReady" };
+  if (room.players.X.type === "None" && room.players.O.type === "None") {
+    return { type: "NotReady", status: "MissingBoth" };
+  }
+
+  if (room.players.X.type === "None") {
+    return { type: "NotReady", status: "MissingX" };
+  }
+
+  if (room.players.O.type === "None") {
+    return { type: "NotReady", status: "MissingO" };
   }
 
   return { type: "Ready", status: Board.toStatus(room.board) };
