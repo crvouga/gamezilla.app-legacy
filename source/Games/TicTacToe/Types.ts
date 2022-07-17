@@ -16,19 +16,7 @@ export type BackendModel = {
 };
 
 export type FrontendModel = {
-  // mutations
-  createRoom: RemoteData.Model<string, {}>;
-  leaveRoom: RemoteData.Model<string, {}>;
-  joinRoom: RemoteData.Model<string, {}>;
-  move: RemoteData.Model<string, {}>;
-  quitPlaying: RemoteData.Model<string, {}>;
-  removePlayer: RemoteData.Model<string, {}>;
-  playAgain: RemoteData.Model<string, {}>;
-  // queries
-  init: RemoteData.Model<string, {}>;
-  // ui
   opened: ["Users"] | ["Player", Board.Player] | ["None"];
-  //
   rooms: Rooms;
   users: Users;
 };
@@ -111,42 +99,62 @@ export type BackendMsg =
 //
 
 type LeaveRoom = ["LeaveRoom", { currentUserId: string }];
-type LeaveRoomResulted = ["LeaveRoomResulted", Result.Result<string, {}>];
+type LeaveRoomResulted = [
+  "LeaveRoomResulted",
+  Result.Result<string, { userId: string }>,
+];
 
 type JoinRoom = ["JoinRoom", { currentUserId: string; roomId: RoomId }];
-type JoinRoomResulted = ["JoinRoomResulted", Result.Result<string, {}>];
+type JoinRoomResulted = [
+  "JoinRoomResulted",
+  Result.Result<string, { userId: string }>,
+];
 
 type Restart = ["Restart", { currentUserId: string }];
-type RestartResulted = ["RestartResulted", Result.Result<string, {}>];
+type RestartResulted = [
+  "RestartResulted",
+  Result.Result<string, { userId: string }>,
+];
 
 type PlayAs = ["PlayAs", { player: Board.Player; currentUserId: string }];
-type PlayAsResulted = ["PlayAsResulted", Result.Result<string, {}>];
+type PlayAsResulted = [
+  "PlayAsResulted",
+  Result.Result<string, { userId: string; player: Board.Player }>,
+];
 
 type Move = ["Move", { currentUserId: string; position: Board.Position }];
 type MoveResulted = [
   "MoveResulted",
-  {
-    userId: string;
-    position: Board.Position;
-    result: Result.Result<string, {}>;
-  },
+  Result.Result<string, { userId: string; position: Board.Position }>,
 ];
 
 type CreateRoom = ["CreateRoom", { currentUserId: string }];
-type CreateRoomResulted = ["CreateRoomResulted", Result.Result<string, {}>];
+type CreateRoomResulted = [
+  "CreateRoomResulted",
+  Result.Result<string, { userId: string }>,
+];
 
 type PlayAgain = ["PlayAgain", { currentUserId: string }];
-type PlayAgainResulted = ["PlayAgainResulted", Result.Result<string, {}>];
+type PlayAgainResulted = [
+  "PlayAgainResulted",
+  Result.Result<string, { userId: string }>,
+];
 
 type RemovePlayer = [
   "RemovePlayer",
   { currentUserId: string; player: Board.Player },
 ];
-type RemovePlayerResulted = ["RemovePlayerResulted", Result.Result<string, {}>];
+type RemovePlayerResulted = [
+  "RemovePlayerResulted",
+  Result.Result<string, { player: Board.Player; hostId: string }>,
+];
 
 type QuitPlaying =
   | ["QuitPlaying", { currentUserId: string; player: Board.Player }];
-type QuitPlayingResulted = ["QuitPlayingResulted", Result.Result<string, {}>];
+type QuitPlayingResulted = [
+  "QuitPlayingResulted",
+  Result.Result<string, { userId: string }>,
+];
 
 //
 //

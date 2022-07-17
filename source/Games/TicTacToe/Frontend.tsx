@@ -4,7 +4,7 @@ import * as UI from "UI";
 import { sendToBackend } from "Bridge/Frontend";
 import { Cmd, Option, RemoteData, Result, pipe } from "Core";
 import { exhaustive } from "Utility";
-import { useRef } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
 import * as Board from "./Board";
 import {
   FrontendModel,
@@ -29,14 +29,6 @@ export type Model = FrontendModel;
 
 export const init: [Model, Cmd.Cmd<Msg>] = [
   {
-    createRoom: RemoteData.NotAsked,
-    leaveRoom: RemoteData.NotAsked,
-    joinRoom: RemoteData.NotAsked,
-    init: RemoteData.Loading,
-    move: RemoteData.NotAsked,
-    quitPlaying: RemoteData.NotAsked,
-    removePlayer: RemoteData.NotAsked,
-    playAgain: RemoteData.NotAsked,
     opened: ["None"],
     rooms: {},
     users: {},
@@ -66,16 +58,10 @@ export const update = (
       return [model, sendToBackend(["Games", ["TicTacToe", msg]])];
 
     case "PlayAgain":
-      return [
-        { ...model, playAgain: RemoteData.Loading },
-        sendToBackend(["Games", ["TicTacToe", msg]]),
-      ];
+      return [model, sendToBackend(["Games", ["TicTacToe", msg]])];
 
     case "RemovePlayer":
-      return [
-        { ...model, removePlayer: RemoteData.Loading },
-        sendToBackend(["Games", ["TicTacToe", msg]]),
-      ];
+      return [model, sendToBackend(["Games", ["TicTacToe", msg]])];
 
     case "ClickedPlayer":
       return [{ ...model, opened: ["Player", msg[1]] }, Cmd.None];
@@ -87,14 +73,11 @@ export const update = (
       return [{ ...model, opened: ["None"] }, Cmd.None];
 
     case "LeaveRoom":
-      return [
-        { ...model, leaveRoom: RemoteData.Loading },
-        sendToBackend(["Games", ["TicTacToe", msg]]),
-      ];
+      return [model, sendToBackend(["Games", ["TicTacToe", msg]])];
 
     case "QuitPlaying":
       return [
-        { ...model, opened: ["None"], quitPlaying: RemoteData.Loading },
+        { ...model, opened: ["None"] },
         sendToBackend(["Games", ["TicTacToe", msg]]),
       ];
 
@@ -106,16 +89,10 @@ export const update = (
       return [model, Route.push({ type: "Profile", userId: msg[1].userId })];
 
     case "JoinRoom":
-      return [
-        { ...model, joinRoom: RemoteData.Loading },
-        sendToBackend(["Games", ["TicTacToe", msg]]),
-      ];
+      return [model, sendToBackend(["Games", ["TicTacToe", msg]])];
 
     case "CreateRoom":
-      return [
-        { ...model, createRoom: RemoteData.Loading },
-        sendToBackend(["Games", ["TicTacToe", msg]]),
-      ];
+      return [model, sendToBackend(["Games", ["TicTacToe", msg]])];
 
     case "ClickedBack":
       return [model, Route.back];
@@ -160,7 +137,11 @@ export const update = (
       );
 
       return [
-        { ...model, rooms: roomsNew, move: RemoteData.Loading },
+        {
+          ...model,
+          rooms: roomsNew,
+          //  move: RemoteData.Loading
+        },
         sendToBackend(["Games", ["TicTacToe", msg]]),
       ];
   }
@@ -176,7 +157,7 @@ export const updateFromBackend = (
       return [
         {
           ...model,
-          init: RemoteData.Success({}),
+          // init: RemoteData.Success({}),
           rooms: msg[1].rooms,
           users: msg[1].users,
         },
@@ -187,7 +168,10 @@ export const updateFromBackend = (
 
     case "PlayAgainResulted": {
       return [
-        { ...model, playAgain: RemoteData.fromResult(msg[1]) },
+        {
+          ...model,
+          //  playAgain: RemoteData.fromResult(msg[1])
+        },
         Cmd.None,
         [],
       ];
@@ -199,7 +183,10 @@ export const updateFromBackend = (
 
     case "QuitPlayingResulted": {
       return [
-        { ...model, quitPlaying: RemoteData.fromResult(msg[1]) },
+        {
+          ...model,
+          //  quitPlaying: RemoteData.fromResult(msg[1])
+        },
         Cmd.None,
         [],
       ];
@@ -221,7 +208,7 @@ export const updateFromBackend = (
       return [
         {
           ...model,
-          joinRoom: RemoteData.fromResult(msg[1]),
+          // joinRoom: RemoteData.fromResult(msg[1]),
         },
         Cmd.None,
         [],
@@ -232,7 +219,7 @@ export const updateFromBackend = (
       return [
         {
           ...model,
-          leaveRoom: RemoteData.fromResult(msg[1]),
+          // leaveRoom: RemoteData.fromResult(msg[1]),
         },
         Cmd.None,
         [],
@@ -243,7 +230,7 @@ export const updateFromBackend = (
       return [
         {
           ...model,
-          createRoom: RemoteData.fromResult(msg[1]),
+          // createRoom: RemoteData.fromResult(msg[1]),
         },
         Cmd.None,
         [],
@@ -314,7 +301,7 @@ const ViewNotInRoom = ({
         <UI.Button
           size="large"
           fullWidth
-          loading={model.createRoom.type === "Loading"}
+          // loading={model.createRoom.type === "Loading"}
           onClick={() => dispatch(["CreateRoom", { currentUserId }])}
           variant="contained"
         >
@@ -325,12 +312,9 @@ const ViewNotInRoom = ({
       <UI.Box sx={{ paddingX: 2 }}>
         <UI.Typography variant="h5">Rooms</UI.Typography>
 
-        {Object.values(model.rooms).length === 0 &&
-          model.init.type !== "Loading" && (
-            <UI.Typography sx={{ marginTop: 1 }} color="text.secondary">
-              No rooms found.
-            </UI.Typography>
-          )}
+        <UI.Typography sx={{ marginTop: 1 }} color="text.secondary">
+          No rooms found.
+        </UI.Typography>
       </UI.Box>
 
       <UI.List sx={{ overflowY: "scroll" }}>
@@ -362,23 +346,6 @@ const ViewNotInRoom = ({
               />
             </UI.ListItemButton>
           ))}
-
-        <UI.Backdrop open={model.joinRoom.type === "Loading"}>
-          <UI.CircularProgress />
-        </UI.Backdrop>
-
-        {model.init.type === "Loading" && (
-          <UI.Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              py: 2,
-            }}
-          >
-            <UI.CircularProgress />
-          </UI.Box>
-        )}
       </UI.List>
     </UI.Page>
   );
@@ -425,7 +392,7 @@ const ViewInRoom = ({
       <UI.Page>
         <UI.Toolbar>
           <UI.Button
-            loading={model.leaveRoom.type === "Loading"}
+            // loading={model.leaveRoom.type === "Loading"}
             onClick={() => dispatch(["LeaveRoom", { currentUserId }])}
             sx={{ marginLeft: -1 }}
           >
@@ -481,11 +448,7 @@ const ViewInRoom = ({
           }
         />
 
-        <UI.List sx={{ flex: 1, overflowY: "scroll" }}>
-          {room.eventLog.map((roomEvent, index) => (
-            <ViewRoomEvent key={index} roomEvent={roomEvent} />
-          ))}
-        </UI.List>
+        <EventLogList room={room} store={store} />
       </UI.Page>
 
       <UI.Drawer
@@ -533,31 +496,175 @@ const ViewInRoom = ({
   );
 };
 
-const ViewRoomEvent = ({ roomEvent }: { roomEvent: RoomEvent }) => {
+const EventLogList = ({ store, room }: { room: Room; store: Store.Model }) => {
+  const ref = useRef<HTMLDivElement | null>(null);
+
+  useLayoutEffect(() => {
+    if (ref.current) {
+      ref.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [room.eventLog.length]);
+
+  return (
+    <UI.List sx={{ flex: 1, overflowY: "scroll" }}>
+      {room.eventLog.map((roomEvent, index) => (
+        <ViewRoomEvent key={index} store={store} roomEvent={roomEvent} />
+      ))}
+
+      <div ref={ref} />
+    </UI.List>
+  );
+};
+
+const RoomEventLog = ({
+  avatarUrl,
+  text,
+}: {
+  avatarUrl?: string;
+  text: string;
+}) => {
+  return (
+    <UI.Box
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        paddingX: 1,
+        marginBottom: 1,
+      }}
+    >
+      {avatarUrl && (
+        <UI.Avatar
+          sx={{ width: 24, height: 24, marginRight: 1 }}
+          src={avatarUrl}
+        />
+      )}
+      <UI.Typography>{text}</UI.Typography>
+    </UI.Box>
+  );
+};
+
+const ViewRoomEvent = ({
+  roomEvent,
+  store,
+}: {
+  store: Store.Model;
+  roomEvent: RoomEvent;
+}) => {
   switch (roomEvent[0]) {
-    case "CreateRoomResulted":
-      return <UI.Typography>created room</UI.Typography>;
+    case "CreateRoomResulted": {
+      return pipe(
+        roomEvent[1],
+        Result.fold(
+          () => <></>,
+          ({ userId }) => (
+            <RoomEventLog
+              avatarUrl={store.Profile[userId]?.avatarUrl}
+              text={`${store.Profile[userId]?.username} created room`}
+            />
+          ),
+        ),
+      );
+    }
 
     case "JoinRoomResulted":
-      return <UI.Typography>user joined room</UI.Typography>;
+      return pipe(
+        roomEvent[1],
+        Result.fold(
+          () => <></>,
+          ({ userId }) => (
+            <RoomEventLog
+              avatarUrl={store.Profile[userId]?.avatarUrl}
+              text={`${store.Profile[userId]?.username} joined room`}
+            />
+          ),
+        ),
+      );
 
     case "LeaveRoomResulted":
-      return <UI.Typography>user lefted room</UI.Typography>;
+      return pipe(
+        roomEvent[1],
+        Result.fold(
+          () => <></>,
+          ({ userId }) => (
+            <RoomEventLog
+              avatarUrl={store.Profile[userId]?.avatarUrl}
+              text={`${store.Profile[userId]?.username} lefted room`}
+            />
+          ),
+        ),
+      );
 
     case "MoveResulted":
-      return <UI.Typography>user moved</UI.Typography>;
+      return pipe(
+        roomEvent[1],
+        Result.fold(
+          () => <></>,
+          ({ userId }) => (
+            <RoomEventLog
+              avatarUrl={store.Profile[userId]?.avatarUrl}
+              text={`${store.Profile[userId]?.username} moved`}
+            />
+          ),
+        ),
+      );
 
     case "RemovePlayerResulted":
-      return <UI.Typography>host removed player</UI.Typography>;
+      return pipe(
+        roomEvent[1],
+        Result.fold(
+          () => <></>,
+          ({ hostId, player }) => (
+            <RoomEventLog
+              avatarUrl={store.Profile[hostId]?.avatarUrl}
+              text={`${store.Profile[hostId]?.username} removed ${player} player`}
+            />
+          ),
+        ),
+      );
 
     case "PlayAsResulted":
-      return <UI.Typography>User started playing</UI.Typography>;
+      return pipe(
+        roomEvent[1],
+        Result.fold(
+          () => <></>,
+          (ok) => (
+            <RoomEventLog
+              avatarUrl={store.Profile[ok.userId]?.avatarUrl}
+              text={`${store.Profile[ok.userId]?.username} started playing as ${
+                ok.player
+              }`}
+            />
+          ),
+        ),
+      );
 
     case "QuitPlayingResulted":
-      return <UI.Typography>User quit playing</UI.Typography>;
+      return pipe(
+        roomEvent[1],
+        Result.fold(
+          () => <></>,
+          (ok) => (
+            <RoomEventLog
+              avatarUrl={store.Profile[ok.userId]?.avatarUrl}
+              text={`${store.Profile[ok.userId]?.username} quit playing`}
+            />
+          ),
+        ),
+      );
 
     case "RestartResulted":
-      return <UI.Typography>Host restarted game</UI.Typography>;
+      return pipe(
+        roomEvent[1],
+        Result.fold(
+          () => <></>,
+          (ok) => (
+            <RoomEventLog
+              avatarUrl={store.Profile[ok.userId]?.avatarUrl}
+              text={`${store.Profile[ok.userId]?.username} restarted game`}
+            />
+          ),
+        ),
+      );
 
     case "PlayAgainResulted":
       return <UI.Typography>User wants to play again</UI.Typography>;
@@ -565,28 +672,6 @@ const ViewRoomEvent = ({ roomEvent }: { roomEvent: RoomEvent }) => {
     default:
       return exhaustive(roomEvent);
   }
-};
-
-const Backdrop = ({ open, children }: { open?: boolean; children: UI.Dom }) => {
-  return (
-    <UI.Fade in={open}>
-      <UI.Box
-        sx={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          backgroundColor: "rgba(0, 0, 0, 0.25)",
-        }}
-      >
-        {children}
-      </UI.Box>
-    </UI.Fade>
-  );
 };
 
 const viewPlayerActions =
