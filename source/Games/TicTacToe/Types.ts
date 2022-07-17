@@ -146,9 +146,6 @@ export type Room = {
   players: {
     [player in Board.Player]: RoomPlayer;
   };
-  scores: {
-    [player in Board.Player]: number;
-  };
   hostId: string;
 };
 
@@ -173,10 +170,7 @@ export const initRoom = (roomId: RoomId, hostId: string): Room => {
       X: { type: "User", userId: hostId },
       O: { type: "None" },
     },
-    scores: {
-      X: 0,
-      O: 0,
-    },
+
     hostId,
   };
 };

@@ -282,119 +282,130 @@ export const updateFromBackend = (
 //
 //
 
-export const view = (
-  { currentUserId, store }: { currentUserId: string; store: Store.Model },
-  model: Model,
-): UI.View<Msg> => {
-  const maybeCurrentRoom = toCurrentRoom(currentUserId, model);
-
-  switch (maybeCurrentRoom.type) {
-    case "None":
-      return viewNotInRoom({ currentUserId, store }, model);
-
-    case "Some":
-      const room = maybeCurrentRoom.value;
-      return (dispatch) => (
-        <ViewInRoom
-          dispatch={dispatch}
-          room={room}
-          currentUserId={currentUserId}
-          store={store}
-          model={model}
-        />
-      );
-  }
-};
-
-const viewNotInRoom =
+export const view =
   (
     { currentUserId, store }: { currentUserId: string; store: Store.Model },
     model: Model,
   ): UI.View<Msg> =>
   (dispatch) => {
-    return (
-      <UI.Page>
-        <UI.Header
-          left={
-            <UI.HeaderBackButton onClick={() => dispatch(["ClickedBack"])} />
-          }
-          title="Tic Tac Toe"
-        />
+    const maybeCurrentRoom = toCurrentRoom(currentUserId, model);
 
-        <UI.Box sx={{ p: 2 }}>
-          <UI.Button
-            size="large"
-            fullWidth
-            loading={model.createRoom.type === "Loading"}
-            onClick={() => dispatch(["CreateRoom", { currentUserId }])}
-            variant="contained"
-          >
-            New Room
-          </UI.Button>
-        </UI.Box>
+    switch (maybeCurrentRoom.type) {
+      case "None":
+        return (
+          <ViewNotInRoom
+            currentUserId={currentUserId}
+            store={store}
+            model={model}
+            dispatch={dispatch}
+          />
+        );
 
-        <UI.Box sx={{ paddingX: 2 }}>
-          <UI.Typography variant="h5">Rooms</UI.Typography>
-
-          {Object.values(model.rooms).length === 0 &&
-            model.init.type !== "Loading" && (
-              <UI.Typography sx={{ marginTop: 1 }} color="text.secondary">
-                No rooms found.
-              </UI.Typography>
-            )}
-        </UI.Box>
-
-        <UI.List sx={{ overflowY: "scroll" }}>
-          {Object.values(model.rooms)
-            .map((room) => ({
-              room,
-              profiles: Object.values(store.Profile).filter(
-                (profile) =>
-                  model.users[profile.userId]?.roomId === room.roomId,
-              ),
-            }))
-            .map(({ room, profiles }) => (
-              <UI.ListItemButton
-                key={room.roomId}
-                onClick={() =>
-                  dispatch(["ClickedJoinRoom", { roomId: room.roomId }])
-                }
-              >
-                <UI.AvatarGroup>
-                  {profiles.map((item) => (
-                    <UI.Avatar key={item.userId} src={item.avatarUrl} />
-                  ))}
-                </UI.AvatarGroup>
-                <UI.ListItemText
-                  primaryTypographyProps={{
-                    noWrap: true,
-                    sx: { wordWrap: "break-word" },
-                  }}
-                  primary={profiles.map((item) => item.username).join(",")}
-                />
-              </UI.ListItemButton>
-            ))}
-
-          <UI.Backdrop open={model.joinRoom.type === "Loading"}>
-            <UI.CircularProgress />
-          </UI.Backdrop>
-
-          {model.init.type === "Loading" && (
-            <UI.Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                py: 2,
-              }}
-            >
-              <UI.CircularProgress />
-            </UI.Box>
-          )}
-        </UI.List>
-      </UI.Page>
-    );
+      case "Some":
+        const room = maybeCurrentRoom.value;
+        return (
+          <ViewInRoom
+            dispatch={dispatch}
+            room={room}
+            currentUserId={currentUserId}
+            store={store}
+            model={model}
+          />
+        );
+    }
   };
+
+const ViewNotInRoom = ({
+  currentUserId,
+  store,
+  model,
+  dispatch,
+}: {
+  currentUserId: string;
+  store: Store.Model;
+  model: Model;
+  dispatch: (msg: Msg) => void;
+}) => {
+  return (
+    <UI.Page>
+      <UI.Header
+        left={<UI.HeaderBackButton onClick={() => dispatch(["ClickedBack"])} />}
+        title="Tic Tac Toe"
+      />
+
+      <UI.Box sx={{ p: 2 }}>
+        <UI.Button
+          size="large"
+          fullWidth
+          loading={model.createRoom.type === "Loading"}
+          onClick={() => dispatch(["CreateRoom", { currentUserId }])}
+          variant="contained"
+        >
+          New Room
+        </UI.Button>
+      </UI.Box>
+
+      <UI.Box sx={{ paddingX: 2 }}>
+        <UI.Typography variant="h5">Rooms</UI.Typography>
+
+        {Object.values(model.rooms).length === 0 &&
+          model.init.type !== "Loading" && (
+            <UI.Typography sx={{ marginTop: 1 }} color="text.secondary">
+              No rooms found.
+            </UI.Typography>
+          )}
+      </UI.Box>
+
+      <UI.List sx={{ overflowY: "scroll" }}>
+        {Object.values(model.rooms)
+          .map((room) => ({
+            room,
+            profiles: Object.values(store.Profile).filter(
+              (profile) => model.users[profile.userId]?.roomId === room.roomId,
+            ),
+          }))
+          .map(({ room, profiles }) => (
+            <UI.ListItemButton
+              key={room.roomId}
+              onClick={() =>
+                dispatch(["ClickedJoinRoom", { roomId: room.roomId }])
+              }
+            >
+              <UI.AvatarGroup>
+                {profiles.map((item) => (
+                  <UI.Avatar key={item.userId} src={item.avatarUrl} />
+                ))}
+              </UI.AvatarGroup>
+              <UI.ListItemText
+                primaryTypographyProps={{
+                  noWrap: true,
+                  sx: { wordWrap: "break-word" },
+                }}
+                primary={profiles.map((item) => item.username).join(",")}
+              />
+            </UI.ListItemButton>
+          ))}
+
+        <UI.Backdrop open={model.joinRoom.type === "Loading"}>
+          <UI.CircularProgress />
+        </UI.Backdrop>
+
+        {model.init.type === "Loading" && (
+          <UI.Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              py: 2,
+            }}
+          >
+            <UI.CircularProgress />
+          </UI.Box>
+        )}
+      </UI.List>
+    </UI.Page>
+  );
+};
 
 const ViewInRoom = ({
   currentUserId,
@@ -428,7 +439,7 @@ const ViewInRoom = ({
 
   return (
     <>
-      <UI.Box sx={{ display: "flex", alignItems: "center", padding: 2 }}>
+      <UI.Toolbar>
         <UI.Button
           loading={model.leaveRoom.type === "Loading"}
           onClick={() => dispatch(["ClickedLeaveRoom"])}
@@ -445,14 +456,9 @@ const ViewInRoom = ({
             <UI.Avatar key={item.avatarUrl} src={item.avatarUrl} />
           ))}
         </UI.AvatarGroup>
-      </UI.Box>
+      </UI.Toolbar>
 
-      <UI.Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-        }}
-      >
+      <UI.Toolbar variant="dense">
         <ViewPlayer
           currentUserId={currentUserId}
           model={model}
@@ -470,9 +476,14 @@ const ViewInRoom = ({
           room={room}
           dispatch={dispatch}
         />
-      </UI.Box>
+      </UI.Toolbar>
 
-      <UI.Typography color="text.secondary" align="center" gutterBottom>
+      <UI.Typography
+        gutterBottom
+        color="text.secondary"
+        variant="subtitle2"
+        align="center"
+      >
         {statusMessage}
       </UI.Typography>
 
@@ -613,8 +624,6 @@ const viewPlayerActions =
           );
         }
 
-        console.log({ currentUserId, room, roomPlayer });
-
         return (
           <UI.Box sx={{ p: 2 }}>
             <UI.Typography color="text.secondary">
@@ -657,7 +666,6 @@ const ViewPlayer = ({
             }}
             // startIcon={<PlayerIcon sx={{ fill: "#fff" }} player={player} />}
             fullWidth
-            variant="contained"
             color="primary"
           >
             Play As {player}
@@ -669,25 +677,25 @@ const ViewPlayer = ({
       const profile = store.Profile[roomPlayer.userId];
 
       return (
-        <UI.Box ref={ref} sx={{ flex: 1, p: 1 }}>
-          <UI.CardActionArea>
-            <UI.Card
-              sx={{
-                flex: 1,
-                display: "flex",
-                alignItems: "center",
-                padding: 1,
-              }}
-              onClick={() => dispatch(["ClickedPlayer", player])}
-            >
-              <PlayerIcon player={player} />
+        <>
+          <UI.Box
+            ref={ref}
+            sx={{ flex: 1, p: 1, display: "flex", alignItems: "center" }}
+            onClick={() => dispatch(["ClickedPlayer", player])}
+          >
+            <svg width={24} viewBox="0 0 1 1">
+              <rect x={0} y={0} width={1} height={1} fill={theme.background} />
+              <ViewSlot slot={player} cx={1 / 2} cy={1 / 2} r={1 / 3} />
+            </svg>
+            {/* <PlayerIcon player={player} /> */}
+            <UI.Box sx={{ flex: 1, display: "flex", alignItems: "center" }}>
               <UI.Avatar
                 sx={{ width: 24, height: 24, marginX: 1 }}
                 src={profile?.avatarUrl}
               />
               <UI.Typography variant="h6">{profile?.username}</UI.Typography>
-            </UI.Card>
-          </UI.CardActionArea>
+            </UI.Box>
+          </UI.Box>
 
           <UI.Menu
             open={model.opened[0] === "Player" && model.opened[1] === player}
@@ -698,7 +706,7 @@ const ViewPlayer = ({
               dispatch,
             )}
           </UI.Menu>
-        </UI.Box>
+        </>
       );
   }
 };
