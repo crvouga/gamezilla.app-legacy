@@ -3,13 +3,14 @@ import * as Store from "Store";
 import * as UI from "UI";
 import { sendToBackend } from "Bridge/Frontend";
 import { Cmd, Option, RemoteData, Result, pipe } from "Core";
-import { useRef, useState } from "react";
+import { exhaustive } from "Utility";
+import { useRef } from "react";
 import * as Board from "./Board";
 import {
   FrontendModel,
   FrontendMsg,
   Room,
-  RoomPlayer,
+  RoomEvent,
   ToFrontend,
   toCurrentRoom,
   toPlayer,
@@ -61,14 +62,8 @@ export const update = (
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
-    case "ClickedPlayAs":
-      return [
-        model,
-        sendToBackend([
-          "Games",
-          ["TicTacToe", ["PlayAs", { player: msg[1], userId: authUserId }]],
-        ]),
-      ];
+    case "PlayAs":
+      return [model, sendToBackend(["Games", ["TicTacToe", msg]])];
 
     case "PlayAgain":
       return [
@@ -77,7 +72,10 @@ export const update = (
       ];
 
     case "RemovePlayer":
-      return [model, sendToBackend(["Games", ["TicTacToe", msg]])];
+      return [
+        { ...model, removePlayer: RemoteData.Loading },
+        sendToBackend(["Games", ["TicTacToe", msg]]),
+      ];
 
     case "ClickedPlayer":
       return [{ ...model, opened: ["Player", msg[1]] }, Cmd.None];
@@ -88,13 +86,10 @@ export const update = (
     case "ClosedDrawer":
       return [{ ...model, opened: ["None"] }, Cmd.None];
 
-    case "ClickedLeaveRoom":
+    case "LeaveRoom":
       return [
         { ...model, leaveRoom: RemoteData.Loading },
-        sendToBackend([
-          "Games",
-          ["TicTacToe", ["LeaveRoom", { userId: authUserId }]],
-        ]),
+        sendToBackend(["Games", ["TicTacToe", msg]]),
       ];
 
     case "QuitPlaying":
@@ -103,44 +98,29 @@ export const update = (
         sendToBackend(["Games", ["TicTacToe", msg]]),
       ];
 
-    case "ClickedRestart": {
-      return [
-        model,
-        sendToBackend([
-          "Games",
-          ["TicTacToe", ["Restart", { userId: authUserId }]],
-        ]),
-      ];
+    case "Restart": {
+      return [model, sendToBackend(["Games", ["TicTacToe", msg]])];
     }
 
     case "ClickedUser":
       return [model, Route.push({ type: "Profile", userId: msg[1].userId })];
 
-    case "ClickedJoinRoom":
+    case "JoinRoom":
       return [
         { ...model, joinRoom: RemoteData.Loading },
-        sendToBackend([
-          "Games",
-          [
-            "TicTacToe",
-            ["JoinRoom", { userId: authUserId, roomId: msg[1].roomId }],
-          ],
-        ]),
+        sendToBackend(["Games", ["TicTacToe", msg]]),
       ];
 
     case "CreateRoom":
       return [
         { ...model, createRoom: RemoteData.Loading },
-        sendToBackend([
-          "Games",
-          ["TicTacToe", ["CreateRoom", { currentUserId: authUserId }]],
-        ]),
+        sendToBackend(["Games", ["TicTacToe", msg]]),
       ];
 
     case "ClickedBack":
       return [model, Route.back];
 
-    case "ClickedBoard":
+    case "Move":
       const roomsNew = pipe(
         toCurrentRoom(authUserId, model),
         Option.map((room) => {
@@ -160,7 +140,7 @@ export const update = (
             Board.move(
               room.board,
               player === "Both" ? Board.toTurn(room.board) : player,
-              msg[1],
+              msg[1].position,
             ),
             Result.withDefault(room.board),
           );
@@ -181,10 +161,7 @@ export const update = (
 
       return [
         { ...model, rooms: roomsNew, move: RemoteData.Loading },
-        sendToBackend([
-          "Games",
-          ["TicTacToe", ["Move", { position: msg[1], userId: authUserId }]],
-        ]),
+        sendToBackend(["Games", ["TicTacToe", msg]]),
       ];
   }
 };
@@ -368,7 +345,7 @@ const ViewNotInRoom = ({
             <UI.ListItemButton
               key={room.roomId}
               onClick={() =>
-                dispatch(["ClickedJoinRoom", { roomId: room.roomId }])
+                dispatch(["JoinRoom", { currentUserId, roomId: room.roomId }])
               }
             >
               <UI.AvatarGroup>
@@ -445,74 +422,71 @@ const ViewInRoom = ({
 
   return (
     <>
-      <UI.Toolbar>
-        <UI.Button
-          loading={model.leaveRoom.type === "Loading"}
-          onClick={() => dispatch(["ClickedLeaveRoom"])}
-          sx={{ marginLeft: -1 }}
-        >
-          Leave
-        </UI.Button>
-        <UI.Box sx={{ flex: 1 }} />
-        <UI.AvatarGroup
-          onClick={() => dispatch(["ClickedAvatars"])}
-          sx={{ marginRight: -1 }}
-        >
-          {usersInRoom.map((item) => (
-            <UI.Avatar key={item.avatarUrl} src={item.avatarUrl} />
-          ))}
-        </UI.AvatarGroup>
-      </UI.Toolbar>
-
-      <UI.Toolbar>
-        <UI.Box sx={{ flex: 1, paddingRight: 1 / 2 }}>
-          <ViewPlayer
-            currentUserId={currentUserId}
-            model={model}
-            player="X"
-            store={store}
-            room={room}
-            dispatch={dispatch}
-          />
-        </UI.Box>
-        <UI.Box sx={{ paddingLeft: 1 / 2, flex: 1 }}>
-          <ViewPlayer
-            model={model}
-            currentUserId={currentUserId}
-            player="O"
-            store={store}
-            room={room}
-            dispatch={dispatch}
-          />
-        </UI.Box>
-      </UI.Toolbar>
-
-      <UI.Typography
-        gutterBottom
-        color="text.secondary"
-        variant="subtitle2"
-        align="center"
-      >
-        {statusMessage}
-      </UI.Typography>
-
-      <ViewBoard
-        board={room.board}
-        onClick={(position) => dispatch(["ClickedBoard", position])}
-      />
-
-      <UI.Box sx={{ p: 2 }}>
-        {room.hostId === currentUserId && (
+      <UI.Page>
+        <UI.Toolbar>
           <UI.Button
-            sx={{ marginBottom: 2 }}
-            onClick={() => dispatch(["ClickedRestart"])}
-            fullWidth
-            variant="contained"
+            loading={model.leaveRoom.type === "Loading"}
+            onClick={() => dispatch(["LeaveRoom", { currentUserId }])}
+            sx={{ marginLeft: -1 }}
           >
-            Restart
+            Leave
           </UI.Button>
-        )}
-      </UI.Box>
+          <UI.Box sx={{ flex: 1 }} />
+          <UI.AvatarGroup
+            onClick={() => dispatch(["ClickedAvatars"])}
+            sx={{ marginRight: -1 }}
+          >
+            {usersInRoom.map((item) => (
+              <UI.Avatar key={item.avatarUrl} src={item.avatarUrl} />
+            ))}
+          </UI.AvatarGroup>
+        </UI.Toolbar>
+
+        <UI.Toolbar>
+          <UI.Box sx={{ flex: 1, paddingRight: 1 / 2 }}>
+            <ViewPlayer
+              currentUserId={currentUserId}
+              model={model}
+              player="X"
+              store={store}
+              room={room}
+              dispatch={dispatch}
+            />
+          </UI.Box>
+          <UI.Box sx={{ paddingLeft: 1 / 2, flex: 1 }}>
+            <ViewPlayer
+              model={model}
+              currentUserId={currentUserId}
+              player="O"
+              store={store}
+              room={room}
+              dispatch={dispatch}
+            />
+          </UI.Box>
+        </UI.Toolbar>
+
+        <UI.Typography
+          gutterBottom
+          color="text.secondary"
+          variant="subtitle2"
+          align="center"
+        >
+          {statusMessage}
+        </UI.Typography>
+
+        <ViewBoard
+          board={room.board}
+          onClick={(position) =>
+            dispatch(["Move", { currentUserId, position }])
+          }
+        />
+
+        <UI.List sx={{ flex: 1, overflowY: "scroll" }}>
+          {room.eventLog.map((roomEvent, index) => (
+            <ViewRoomEvent key={index} roomEvent={roomEvent} />
+          ))}
+        </UI.List>
+      </UI.Page>
 
       <UI.Drawer
         open={model.opened[0] === "Users"}
@@ -557,6 +531,40 @@ const ViewInRoom = ({
       </UI.Drawer>
     </>
   );
+};
+
+const ViewRoomEvent = ({ roomEvent }: { roomEvent: RoomEvent }) => {
+  switch (roomEvent[0]) {
+    case "CreateRoomResulted":
+      return <UI.Typography>created room</UI.Typography>;
+
+    case "JoinRoomResulted":
+      return <UI.Typography>user joined room</UI.Typography>;
+
+    case "LeaveRoomResulted":
+      return <UI.Typography>user lefted room</UI.Typography>;
+
+    case "MoveResulted":
+      return <UI.Typography>user moved</UI.Typography>;
+
+    case "RemovePlayerResulted":
+      return <UI.Typography>host removed player</UI.Typography>;
+
+    case "PlayAsResulted":
+      return <UI.Typography>User started playing</UI.Typography>;
+
+    case "QuitPlayingResulted":
+      return <UI.Typography>User quit playing</UI.Typography>;
+
+    case "RestartResulted":
+      return <UI.Typography>Host restarted game</UI.Typography>;
+
+    case "PlayAgainResulted":
+      return <UI.Typography>User wants to play again</UI.Typography>;
+
+    default:
+      return exhaustive(roomEvent);
+  }
 };
 
 const Backdrop = ({ open, children }: { open?: boolean; children: UI.Dom }) => {
@@ -623,7 +631,7 @@ const viewPlayerActions =
             <UI.Box sx={{ paddingX: 1 }}>
               <UI.Button
                 onClick={() =>
-                  dispatch(["QuitPlaying", { currentUserId, player }])
+                  dispatch(["RemovePlayer", { currentUserId, player }])
                 }
                 fullWidth
               >
@@ -666,7 +674,7 @@ const ViewPlayer = ({
       return (
         <UI.Box ref={ref}>
           <UI.Button
-            onClick={() => dispatch(["ClickedPlayAs", player])}
+            onClick={() => dispatch(["PlayAs", { player, currentUserId }])}
             sx={{
               flex: 1,
               display: "flex",
