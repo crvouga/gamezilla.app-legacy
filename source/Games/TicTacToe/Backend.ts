@@ -1,14 +1,14 @@
-import * as Store from "Store";
+import * as Store from "../../Store";
+import * as Board from "./Board";
 import {
   broadcast,
   onConnect,
   onDisconnect,
   sendToFrontend,
-} from "Bridge/Backend";
-import { ClientId } from "Bridge/Bridge";
-import { Cmd, Result, Sub, Uuid, pipe } from "Core";
-import { get, remove } from "Core/Record";
-import * as Board from "./Board";
+} from "../../Bridge/Backend";
+import { ClientId } from "../../Bridge/Bridge";
+import { Cmd, Result, Sub, Uuid, pipe } from "../../Core";
+import { get, remove } from "../../Core/Record";
 import {
   BackendModel,
   BackendMsg,

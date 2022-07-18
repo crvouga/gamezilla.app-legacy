@@ -1,4 +1,4 @@
-import { Browser, Option } from "Core";
+import { Browser, Option } from "./Core";
 
 //
 //

@@ -1,11 +1,11 @@
-import * as Route from "Route";
-import * as Store from "Store";
-import * as UI from "UI";
-import { sendToBackend } from "Bridge/Frontend";
-import { Cmd, Option, Result, pipe } from "Core";
-import { exhaustive } from "Utility";
 import { useLayoutEffect, useRef } from "react";
+import * as Route from "../../Route";
+import * as Store from "../../Store";
+import * as UI from "../../UI";
 import * as Board from "./Board";
+import { sendToBackend } from "../../Bridge/Frontend";
+import { Cmd, Option, Result, pipe } from "../../Core";
+import { exhaustive } from "../../Utility";
 import {
   FrontendModel,
   FrontendMsg,

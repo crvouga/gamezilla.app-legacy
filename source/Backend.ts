@@ -1,12 +1,12 @@
-import * as Clients from "Clients";
-import * as Counter from "Counter/Backend";
-import * as Games from "Games/Backend";
-import { fromFrontend } from "Bridge/Backend";
-import { ClientId } from "Bridge/Bridge";
-import { Cmd, Platform, Sub, pipe } from "Core";
-import { formatMsg } from "Core/Debug";
-import { BackendModel, BackendMsg, ToBackend } from "Types";
-import { tag } from "Utility";
+import * as Clients from "./Clients";
+import * as Counter from "./Counter/Backend";
+import * as Games from "./Games/Backend";
+import { broadcast, fromFrontend, sendToFrontend } from "./Bridge/Backend";
+import { ClientId } from "./Bridge/Bridge";
+import { Cmd, Platform, Sub, pipe } from "./Core";
+import { formatMsg } from "./Core/Debug";
+import { BackendModel, BackendMsg, ToBackend } from "./Types";
+import { andThen, tag } from "./Utility";
 
 //
 //
@@ -40,6 +40,17 @@ export const update = (
   msg: BackendMsg,
   model: Model,
 ): [Model, Cmd.Cmd<BackendMsg>] => {
+  return pipe(
+    [model, Cmd.None],
+    andThen(updateMain, msg),
+    andThen(updateAdmin, msg),
+  );
+};
+
+export const updateMain = (
+  msg: BackendMsg,
+  model: Model,
+): [Model, Cmd.Cmd<BackendMsg>] => {
   switch (msg[0]) {
     case "ToBackend":
       return updateFromFrontend(msg[1], msg[2], model);
@@ -65,6 +76,13 @@ export const update = (
         pipe(gamesCmd, Cmd.map(tag("Games"))),
       ];
   }
+};
+
+const updateAdmin = (
+  msg: BackendMsg,
+  model: Model,
+): [Model, Cmd.Cmd<BackendMsg>] => {
+  return [model, broadcast(["Admin", ["BackendModel", model]])];
 };
 
 export const updateFromFrontend = (

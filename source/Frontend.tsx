@@ -1,18 +1,19 @@
-import * as ConnectionStatus from "ConnectionStatus";
-import * as Counter from "Counter/Frontend";
-import * as Games from "Games/Frontend";
-import * as Pages from "Pages";
-import * as Route from "Route";
-import * as Session from "Session";
-import * as Snackbar from "Snackbar";
-import * as Store from "Store";
-import * as Profile from "Store/Profile";
-import * as UI from "UI";
 import * as ReactDomClient from "react-dom/client";
-import { fromBackend } from "Bridge/Frontend";
-import { Browser, Cmd, Debug, Option, Sub, pipe } from "Core";
-import { andThen, andThenMany, exhaustive, tag } from "Utility";
+import * as Admin from "./Admin/Frontend";
+import * as ConnectionStatus from "./ConnectionStatus";
+import * as Counter from "./Counter/Frontend";
+import * as Games from "./Games/Frontend";
+import * as Pages from "./Pages";
+import * as Route from "./Route";
+import * as Session from "./Session";
+import * as Snackbar from "./Snackbar";
+import * as Store from "./Store";
+import * as Profile from "./Store/Profile";
+import * as UI from "./UI";
+import { fromBackend } from "./Bridge/Frontend";
+import { Browser, Cmd, Debug, Option, Sub, pipe } from "./Core";
 import { FrontendModel, FrontendMsg, ToFrontend } from "./Types";
+import { andThen, andThenMany, exhaustive, tag } from "./Utility";
 
 //
 //
@@ -111,8 +112,10 @@ export const init = (location: Browser.Location): [Model, Cmd.Cmd<Msg>] => {
   const [page, pageCmd] = Pages.initLoading();
   const [counter, counterCmd] = Counter.init;
   const connectionStatus = ConnectionStatus.init;
+  const admin = Admin.init;
   return [
     {
+      admin,
       route,
       snackbar,
       store,
@@ -167,6 +170,11 @@ export const updateFromBackend = (
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
+    case "Admin": {
+      const [adminNew, adminCmd] = Admin.updateFromBackend(msg[1], model.admin);
+      return [{ ...model, admin: adminNew }, adminCmd];
+    }
+
     case "Counter": {
       const [counterNew, counterCmd] = Counter.updateFromBackend(
         msg[1],

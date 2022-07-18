@@ -1,4 +1,4 @@
-import { Cmd } from "Core";
+import { Cmd } from "./Core";
 
 //
 //

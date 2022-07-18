@@ -1,6 +1,6 @@
-import * as UI from "UI";
-import { onConnectionStatus } from "Bridge/Frontend";
-import { Cmd, Sub } from "Core";
+import * as UI from "./UI";
+import { onConnectionStatus } from "./Bridge/Frontend";
+import { Cmd, Sub } from "./Core";
 
 //
 //

@@ -1,9 +1,9 @@
-import * as ProfileAvatar from "ProfileAvatar";
-import * as Route from "Route";
-import * as Snackbar from "Snackbar";
-import * as Store from "Store";
-import * as UI from "UI";
-import { Cmd, pipe } from "Core";
+import * as ProfileAvatar from "../ProfileAvatar";
+import * as Route from "../Route";
+import * as Snackbar from "../Snackbar";
+import * as Store from "../Store";
+import * as UI from "../UI";
+import { Cmd, pipe } from "../Core";
 
 //
 //

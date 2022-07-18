@@ -1,4 +1,4 @@
-import { Cmd, pipe } from "Core";
+import { Cmd, pipe } from "./Core";
 
 export const exhaustive = (
   discriminatedUnionType: "Missing Case Error",

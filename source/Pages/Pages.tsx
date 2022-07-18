@@ -1,11 +1,9 @@
-import * as Games from "Games/Frontend";
-import * as Route from "Route";
-import * as Session from "Session";
-import * as Snackbar from "Snackbar";
-import * as Store from "Store";
-import * as UI from "UI";
-import { Cmd, Sub, pipe } from "Core";
-import { exhaustive, tag } from "Utility";
+import * as Games from "../Games/Frontend";
+import * as Route from "../Route";
+import * as Session from "../Session";
+import * as Snackbar from "../Snackbar";
+import * as Store from "../Store";
+import * as UI from "../UI";
 import * as Account from "./Account";
 import * as AccountCreate from "./AccountCreate";
 import * as Chat from "./Chat";
@@ -26,6 +24,8 @@ import * as ProfileUpdateName from "./ProfileUpdateName";
 import * as ProfileUpdateTheme from "./ProfileUpdateTheme";
 import * as ProfileUpdateUsername from "./ProfileUpdateUsername";
 import * as Search from "./Search";
+import { Cmd, Sub, pipe } from "../Core";
+import { exhaustive, tag } from "../Utility";
 
 //
 //

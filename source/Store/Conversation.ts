@@ -1,9 +1,9 @@
-import * as Route from "Route";
-import * as Supabase from "Supabase";
-import { Cmd, Option, RemoteData, Result, Task, pipe } from "Core";
 import produce from "immer";
-import { definitions } from "supabase-types";
+import * as Route from "../Route";
+import * as Supabase from "../Supabase";
 import * as Types from "./Types";
+import { Cmd, Option, RemoteData, Result, Task, pipe } from "../Core";
+import { definitions } from "../supabase-types";
 import { rowToProfile } from "./Profile";
 import {
   Message,

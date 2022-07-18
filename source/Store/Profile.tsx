@@ -1,11 +1,10 @@
 import * as Rx from "rxjs";
-import { Cmd, RemoteData, Result, Task, pipe } from "Core";
-import { exhaustive } from "Utility";
 import produce from "immer";
 import { matchSorter } from "match-sorter";
 import * as Supabase from "../Supabase";
 import * as Types from "./Types";
-import { Sub } from "../Core";
+import { Cmd, RemoteData, Result, Sub, Task, pipe } from "../Core";
+import { exhaustive } from "../Utility";
 import { definitions } from "../supabase-types";
 import { Problem, Store } from "./Types";
 

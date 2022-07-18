@@ -1,7 +1,7 @@
 import * as Rx from "rxjs";
-import { Cmd, Option, Sub, pipe } from "Core";
-import { ToBackend, ToFrontend } from "Types";
 import { Server } from "socket.io";
+import { Cmd, Option, Sub, pipe } from "../Core";
+import { ToBackend, ToFrontend } from "../Types";
 import {
   ClientId,
   ClientToServerEvents,
@@ -52,7 +52,7 @@ export const fromFrontend = <Msg>(
 ): Sub.Sub<Msg> => {
   return pipe(
     toBackend$,
-    Rx.map(([clientId, msg]) => mapper(clientId, msg)),
+    Sub.map(([clientId, msg]) => mapper(clientId, msg)),
   );
 };
 

@@ -1,9 +1,9 @@
-import * as EmailAddress from "EmailAddress";
-import * as Password from "Password";
-import * as Route from "Route";
-import * as Store from "Store";
-import * as UI from "UI";
-import { Browser, Cmd, pipe } from "Core";
+import * as EmailAddress from "../EmailAddress";
+import * as Password from "../Password";
+import * as Route from "../Route";
+import * as Store from "../Store";
+import * as UI from "../UI";
+import { Browser, Cmd, pipe } from "../Core";
 
 //
 //

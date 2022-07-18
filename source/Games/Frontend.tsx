@@ -1,14 +1,14 @@
-import * as Route from "Route";
-import * as Snackbar from "Snackbar";
-import * as Store from "Store";
-import * as UI from "UI";
 import { keyframes } from "@mui/system";
-import { Cmd, Sub, pipe } from "Core";
-import { exhaustive, tag } from "Utility";
+import * as Route from "../Route";
+import * as Snackbar from "../Snackbar";
+import * as Store from "../Store";
+import * as UI from "../UI";
 import * as Chess from "./Chess";
 import * as ConnectFour from "./ConnectFour";
 import * as Snake from "./Snake";
 import * as TicTacToe from "./TicTacToe/Frontend";
+import { Cmd, Sub, pipe } from "../Core";
+import { exhaustive, tag } from "../Utility";
 import {
   Closed,
   FrontendModel,

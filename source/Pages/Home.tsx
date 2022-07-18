@@ -1,8 +1,8 @@
-import * as Games from "Games/Frontend";
-import * as Route from "Route";
-import * as UI from "UI";
-import { Cmd } from "Core";
-import { GameName } from "Games";
+import * as Games from "../Games/Frontend";
+import * as Route from "../Route";
+import * as UI from "../UI";
+import { Cmd } from "../Core";
+import { GameName } from "../Games";
 
 //
 //

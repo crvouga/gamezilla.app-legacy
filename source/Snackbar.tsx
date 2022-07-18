@@ -1,6 +1,6 @@
-import * as UI from "UI";
 import { SxProps } from "@mui/material";
-import { Cmd, Task, Uuid, pipe } from "Core";
+import * as UI from "./UI";
+import { Cmd, Task, Uuid, pipe } from "./Core";
 
 //
 //

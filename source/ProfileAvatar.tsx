@@ -1,4 +1,4 @@
-import { Task } from "Core";
+import { Task } from "./Core";
 
 export type Style =
   | "adventurer"

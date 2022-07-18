@@ -1,4 +1,4 @@
-import { RemoteData } from "Core";
+import { RemoteData } from "../Core";
 
 //
 //
