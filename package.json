@@ -17,6 +17,7 @@
     "utils:sort": "npx sort-package-json"
   },
   "dependencies": {
+    "@alenaksu/json-viewer": "^1.0.1",
     "@emotion/react": "^11.9.0",
     "@emotion/styled": "^11.8.1",
     "@mui/icons-material": "^5.6.2",
@@ -27,6 +28,7 @@
     "match-sorter": "^6.3.1",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
+    "react-json-tree": "^0.17.0",
     "rxjs": "^7.5.5",
     "socket.io": "^4.5.1",
     "socket.io-client": "^4.5.1",

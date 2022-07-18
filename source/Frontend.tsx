@@ -172,7 +172,10 @@ export const updateFromBackend = (
   switch (msg[0]) {
     case "Admin": {
       const [adminNew, adminCmd] = Admin.updateFromBackend(msg[1], model.admin);
-      return [{ ...model, admin: adminNew }, adminCmd];
+      return [
+        { ...model, admin: adminNew },
+        pipe(adminCmd, Cmd.map(tag("Admin"))),
+      ];
     }
 
     case "Counter": {
@@ -220,7 +223,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
       ];
     }
 
-    case "Snackbar":
+    case "Snackbar": {
       const [snackbarNew, snackbarCmd] = Snackbar.update(
         msg[1],
         model.snackbar,
@@ -230,6 +233,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
         { ...model, snackbar: snackbarNew },
         pipe(snackbarCmd, Cmd.map(tag("Snackbar"))),
       ];
+    }
 
     case "Game": {
       const status = toStatus(model);
@@ -350,14 +354,15 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
       }
     }
 
-    case "Counter":
+    case "Counter": {
       const [counterNew, counterCmd] = Counter.update(msg[1], model.counter);
       return [
         { ...model, counter: counterNew },
         pipe(counterCmd, Cmd.map(tag("Counter"))),
       ];
+    }
 
-    case "ConnectionStatus":
+    case "ConnectionStatus": {
       const [connectionNew, connectionCmd] = ConnectionStatus.update(
         msg[1],
         model.connectionStatus,
@@ -366,6 +371,15 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
         { ...model, connectionStatus: connectionNew },
         pipe(connectionCmd, Cmd.map(tag("ConnectionStatus"))),
       ];
+    }
+
+    case "Admin": {
+      const [adminNew, adminCmd] = Admin.update(msg[1], model.admin);
+      return [
+        { ...model, admin: adminNew },
+        pipe(adminCmd, Cmd.map(tag("Admin"))),
+      ];
+    }
 
     case "ToFrontend":
       return updateFromBackend(msg[1], model);
@@ -586,6 +600,10 @@ const viewMain = (model: Model): UI.View<Msg> => {
           ),
           UI.map(tag("Game")),
         );
+      }
+
+      if (model.route.type === "Admin") {
+        return pipe(Admin.view(model.admin), UI.map(tag("Admin")));
       }
 
       return pipe(

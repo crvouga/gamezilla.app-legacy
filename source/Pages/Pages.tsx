@@ -57,6 +57,7 @@ export type Model =
   | ["Search", Search.Model]
   | ["ChatConversation", ChatConversation.Model]
   | ["Game"]
+  | ["Admin"]
   | ["Loading"];
 
 //
@@ -207,6 +208,9 @@ export const initReady = (
       ];
     }
 
+    case "Admin":
+      return [["Admin"], Cmd.None, []];
+
     case "ProfileCreate":
     case "Login":
     case "LoginEmail":
@@ -244,6 +248,7 @@ export const initSessionMissing = (
     case "ChatConversation":
     case "ChatNew":
     case "Game":
+    case "Admin":
     case "Home":
     case "Logout":
     case "Profile":
@@ -278,6 +283,7 @@ export const initProfileMissing = (
     case "ChatConversation":
     case "ChatNew":
     case "Game":
+    case "Admin":
     case "Search":
     case "Home":
     case "Profile":
@@ -454,6 +460,9 @@ export const updateReady = (
 
       return [model, Cmd.None, []];
 
+    case "Admin":
+      return [model, Cmd.None, []];
+
     case "Login":
     case "Loading":
     case "ProfileCreate":
@@ -510,6 +519,7 @@ export const updateProfileMissing = (
     case "AccountCreate":
     case "PasswordReset":
     case "Search":
+    case "Admin":
       return [model, Route.push({ type: "ProfileCreate" }), []];
 
     default:
@@ -570,6 +580,7 @@ export const updateSessionMissing = (
     case "Loading":
     case "Logout":
     case "Profile":
+    case "Admin":
     case "Search":
       return [model, Route.push({ type: "Login" }), []];
 
@@ -611,6 +622,7 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
     case "PasswordReset":
     case "Profile":
     case "Search":
+    case "Admin":
       return Sub.None;
 
     default:
@@ -719,8 +731,10 @@ export const viewReady = (
       );
 
     case "Game":
-      return () => <></>;
-    // return tagView("Game", Game.view(game));
+      return viewLoading;
+
+    case "Admin":
+      return viewLoading;
 
     case "Profile":
       return tagView("Profile", Profile.view({ store }, model[1]));
@@ -768,6 +782,7 @@ export const viewProfileMissing = (
     case "AccountCreate":
     case "PasswordReset":
     case "Profile":
+    case "Admin":
       return viewLoading;
 
     default:
@@ -805,6 +820,7 @@ export const viewSessionMissing = (model: Model): UI.View<Msg> => {
     case "ProfileUpdateUsername":
     case "Profile":
     case "Search":
+    case "Admin":
     case "Loading":
       return viewLoading;
 

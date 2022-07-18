@@ -5,4 +5,6 @@ export type FrontendModel = {
   backendModel: RemoteData.Model<string, BackendModel>;
 };
 
+export type FrontendMsg = ["ClickedBack"];
+
 export type ToFrontend = ["BackendModel", BackendModel];
