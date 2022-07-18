@@ -1,5 +1,5 @@
 import { ClientId } from "Bridge/Bridge";
-import { Option, RemoteData, Result } from "Core";
+import { Option, RemoteData, Result, Uuid } from "Core";
 import * as Board from "./Board";
 
 //
@@ -203,10 +203,37 @@ export const mapRoomPlayers = (
 export const roomReducer = (room: Room, event: RoomEvent): Room => {
   switch (event[0]) {
     case "CreateRoomResulted":
-      return room;
+      switch (event[1].type) {
+        case "Err":
+          return room;
+
+        case "Ok":
+          const { userId } = event[1].value;
+          return {
+            hostId: userId,
+            board: Board.emptyBoard,
+            eventLog: [event],
+            players: {
+              X: {
+                type: "User",
+                userId: userId,
+              },
+              O: {
+                type: "None",
+              },
+            },
+            roomId: Uuid.generateSync(),
+          };
+      }
 
     case "JoinRoomResulted":
-      return room;
+      switch (event[1].type) {
+        case "Err":
+          return room;
+
+        case "Ok":
+          return room;
+      }
 
     case "LeaveRoomResulted":
       return room;
