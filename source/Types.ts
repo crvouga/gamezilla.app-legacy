@@ -55,6 +55,7 @@ export type FrontendMsg =
   | ["Page", Pages.Msg]
   | ["ConnectionStatus", ConnectionStatus.Msg]
   | ["Counter", Counter.FrontendMsg]
+  | ["Admin", Admin.FrontendMsg]
   | ["ToFrontend", ToFrontend];
 
 export type ToBackend =

@@ -28,7 +28,8 @@ export type Route =
   | { type: "Chat" }
   | { type: "ChatNew" }
   | { type: "ChatConversation"; conversationId: string }
-  | { type: "Search" };
+  | { type: "Search" }
+  | { type: "Admin" };
 
 //
 //
@@ -39,6 +40,7 @@ export type Route =
 //
 
 export const routesTypes: { [routeType in Route["type"]]: string } = {
+  Admin: "Admin",
   Account: "Account",
   Home: "Home",
   Login: "Login",
