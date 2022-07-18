@@ -34,7 +34,7 @@ export type Location = {
   query: { [key: string]: string };
 };
 
-export const location$ = new Rx.Observable<Location>((subscriber) => {
+export const onLocation = new Rx.Observable<Location>((subscriber) => {
   const handler = () => {
     subscriber.next(getLocation());
   };
@@ -158,7 +158,7 @@ export const application = <Model, Msg, Dom>({
   view: (model: Model) => View.View<Dom, Msg>;
   subscriptions: (model: Model) => Sub.Sub<Msg>;
 }): Program<Model, Msg, Dom> => {
-  const onChangeLocation$ = location$.pipe(
+  const onChangeLocation$ = onLocation.pipe(
     Rx.map((location) => onLocationChange(location)),
   );
 
