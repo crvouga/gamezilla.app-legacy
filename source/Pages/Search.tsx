@@ -1,8 +1,8 @@
-import * as Route from "Route";
-import * as Store from "Store";
-import * as UI from "UI";
-import { Browser, Cmd, RemoteData, Sub, pipe } from "Core";
 import { matchSorter } from "match-sorter";
+import * as Route from "../Route";
+import * as Store from "../Store";
+import * as UI from "../UI";
+import { Browser, Cmd, RemoteData, Sub, pipe } from "../Core";
 
 //
 //

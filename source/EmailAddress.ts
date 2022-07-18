@@ -1,4 +1,4 @@
-import { Result } from "Core";
+import { Result } from "./Core";
 
 type Problem = { message: string };
 

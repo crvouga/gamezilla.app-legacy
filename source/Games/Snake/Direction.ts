@@ -1,5 +1,5 @@
-import { Keyboard } from "Core";
 import * as Position from "./Position";
+import { Keyboard } from "../../Core";
 
 export type Direction = "left" | "up" | "right" | "down";
 

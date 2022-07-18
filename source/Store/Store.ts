@@ -1,8 +1,8 @@
-import * as Snackbar from "Snackbar";
-import { Cmd, RemoteData } from "Core";
+import * as Snackbar from "../Snackbar";
 import * as Conversation from "./Conversation";
 import * as Message from "./Message";
 import * as Profile from "./Profile";
+import { Cmd, RemoteData } from "../Core";
 import { Store } from "./Types";
 
 //

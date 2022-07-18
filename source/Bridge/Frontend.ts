@@ -1,7 +1,7 @@
 import * as Rx from "rxjs";
-import { Cmd, Option, Sub, pipe } from "Core";
-import { ToBackend, ToFrontend } from "Types";
 import { Socket, io } from "socket.io-client";
+import { Cmd, Option, Sub, pipe } from "../Core";
+import { ToBackend, ToFrontend } from "../Types";
 import {
   ClientToServerEvents,
   ServerToClientEvents,
@@ -20,7 +20,7 @@ const productionBackendUrl = "https://gamezilla.herokuapp.com/";
 
 const developmentBackendUrl = `http://localhost:${backendServerPort}/`;
 
-const backendUrl =
+export const backendUrl =
   process.env.NODE_ENV === "production"
     ? productionBackendUrl
     : developmentBackendUrl;

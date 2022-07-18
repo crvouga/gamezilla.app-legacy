@@ -1,7 +1,7 @@
-import * as Games from "Games/Frontend";
-import * as Store from "Store";
-import * as UI from "UI";
-import { Cmd } from "Core";
+import * as Games from "../Games/Frontend";
+import * as Store from "../Store";
+import * as UI from "../UI";
+import { Cmd } from "../Core";
 
 //
 //

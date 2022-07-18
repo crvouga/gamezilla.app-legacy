@@ -1,6 +1,6 @@
-import { ClientId } from "Bridge/Bridge";
-import { Option, RemoteData, Result, Uuid, pipe } from "Core";
 import * as Board from "./Board";
+import { ClientId } from "../../Bridge/Bridge";
+import { Option, RemoteData, Result, Uuid, pipe } from "../../Core";
 
 //
 //

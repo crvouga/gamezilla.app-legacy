@@ -1,8 +1,8 @@
-import * as Route from "Route";
-import * as Session from "Session";
-import * as Snackbar from "Snackbar";
-import * as UI from "UI";
-import { Cmd } from "Core";
+import * as Route from "../Route";
+import * as Session from "../Session";
+import * as Snackbar from "../Snackbar";
+import * as UI from "../UI";
+import { Cmd } from "../Core";
 
 //
 //

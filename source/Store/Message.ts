@@ -1,9 +1,8 @@
-import * as Snackbar from "Snackbar";
-import * as Supabase from "Supabase";
-import { Cmd, RemoteData, Result, Task, Uuid, pipe } from "Core";
 import produce from "immer";
-import { definitions } from "supabase-types";
+import * as Supabase from "../Supabase";
 import * as Types from "./Types";
+import { Cmd, RemoteData, Result, Task, pipe } from "../Core";
+import { definitions } from "../supabase-types";
 import { Problem, Store } from "./Types";
 
 //

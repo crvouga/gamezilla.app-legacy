@@ -1,7 +1,7 @@
-import * as Route from "Route";
-import * as Session from "Session";
-import * as UI from "UI";
-import { Browser, Cmd, pipe } from "Core";
+import * as Route from "../Route";
+import * as Session from "../Session";
+import * as UI from "../UI";
+import { Browser, Cmd, pipe } from "../Core";
 
 //
 //

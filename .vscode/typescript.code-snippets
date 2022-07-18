@@ -28,7 +28,7 @@
       "",
       "export type Model = {};",
       "",
-      "export const init: Model = {};",
+      "export const init: [Model, Cmd.Cmd<Msg>] = [{}, Cmd.None];",
       "",
       "//",
       "//",

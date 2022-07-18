@@ -1,5 +1,5 @@
-import { broadcast, onConnect, sendToFrontend } from "Bridge/Backend";
-import { Cmd, Sub, Time } from "Core";
+import { broadcast, onConnect, sendToFrontend } from "../Bridge/Backend";
+import { Cmd, Sub, Time } from "../Core";
 import { BackendModel, BackendMsg, CounterModel, ToBackend } from "./Types";
 
 //

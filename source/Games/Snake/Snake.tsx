@@ -1,9 +1,9 @@
-import * as Route from "Route";
-import * as UI from "UI";
-import { Audio, Cmd, Keyboard, Result, Sub, Time, pipe } from "Core";
-import { useEffect, useLayoutEffect, useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
+import * as Route from "../../Route";
+import * as UI from "../../UI";
 import * as Direction from "./Direction";
 import * as Position from "./Position";
+import { Audio, Cmd, Keyboard, Result, Sub, Time, pipe } from "../../Core";
 
 //
 //

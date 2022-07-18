@@ -1,8 +1,8 @@
-import * as Route from "Route";
-import * as Store from "Store";
-import * as UI from "UI";
-import { Cmd, Keyboard, RemoteData, Sub, pipe } from "Core";
 import { useEffect, useRef } from "react";
+import * as Route from "../Route";
+import * as Store from "../Store";
+import * as UI from "../UI";
+import { Cmd, Keyboard, RemoteData, Sub, pipe } from "../Core";
 
 //
 //

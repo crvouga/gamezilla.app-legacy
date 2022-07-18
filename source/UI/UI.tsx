@@ -1,9 +1,9 @@
 import * as MuiLab from "@mui/lab";
 import * as Mui from "@mui/material";
 import { blue } from "@mui/material/colors";
-import { Platform, View } from "Core";
 import { useMemo } from "react";
 import * as Icons from "./Icons";
+import { Platform, View } from "../Core";
 
 //
 //

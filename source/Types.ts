@@ -1,12 +1,24 @@
-import * as Clients from "Clients";
-import * as ConnectionStatus from "ConnectionStatus";
-import * as Counter from "Counter";
-import * as Games from "Games";
-import * as Pages from "Pages";
-import * as Route from "Route";
-import * as Session from "Session";
-import * as Snackbar from "Snackbar";
-import * as Store from "Store";
+import * as Admin from "./Admin";
+import * as Clients from "./Clients";
+import * as ConnectionStatus from "./ConnectionStatus";
+import * as Counter from "./Counter";
+import * as Games from "./Games";
+import * as Pages from "./Pages";
+import * as Route from "./Route";
+import * as Session from "./Session";
+import * as Snackbar from "./Snackbar";
+import * as Store from "./Store";
+import { RemoteData } from "./Core";
+
+//
+//
+//
+//
+// Model
+//
+//
+//
+//
 
 export type FrontendModel = {
   snackbar: Snackbar.Model;
@@ -17,6 +29,7 @@ export type FrontendModel = {
   connectionStatus: ConnectionStatus.Model;
   game: Games.FrontendModel;
   counter: Counter.FrontendModel;
+  admin: Admin.FrontendModel;
 };
 
 export type BackendModel = {
@@ -24,6 +37,14 @@ export type BackendModel = {
   counter: Counter.BackendModel;
   games: Games.BackendModel;
 };
+
+//
+//
+//
+// Msg
+//
+//
+//
 
 export type FrontendMsg =
   | ["Route", Route.Msg]
@@ -48,4 +69,5 @@ export type BackendMsg =
 
 export type ToFrontend =
   | ["Counter", Counter.ToFrontend]
-  | ["Games", Games.ToFrontend];
+  | ["Games", Games.ToFrontend]
+  | ["Admin", Admin.ToFrontend];

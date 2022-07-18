@@ -1,7 +1,7 @@
-import * as Route from "Route";
-import * as Profile from "Store/Profile";
-import * as UI from "UI";
-import { Cmd } from "Core";
+import * as Route from "../Route";
+import * as Profile from "../Store/Profile";
+import * as UI from "../UI";
+import { Cmd } from "../Core";
 
 //
 //

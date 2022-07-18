@@ -1,4 +1,4 @@
-import { Option } from "Core";
+import { Option } from "../Core";
 
 export type CounterModel = {
   status: "Incrementing" | "Idle";

@@ -1,3 +1,5 @@
+import { Result } from "../../Core";
+
 //
 //
 //
@@ -5,7 +7,6 @@
 //
 //
 //
-import { Result } from "Core";
 
 export type Player = "X" | "O";
 
