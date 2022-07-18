@@ -222,7 +222,7 @@ export const view =
             <ChatMessage
               key={message.messageId}
               message={message}
-              authUserId={authUser.userId}
+              currentUserId={authUser.userId}
               dispatch={dispatch}
               model={model}
               store={store}
@@ -404,13 +404,13 @@ const viewHeader =
 
 const ChatMessage = ({
   message,
-  authUserId,
+  currentUserId,
   model,
   store,
   dispatch,
 }: {
   message: Store.Message.Message;
-  authUserId: string;
+  currentUserId: string;
   model: Model;
   dispatch: (msg: Msg) => void;
   store: Store.Model;
@@ -421,7 +421,7 @@ const ChatMessage = ({
     dispatch(["ClickedMessage", message]);
   };
 
-  const variant = authUserId === message.userId ? "sented" : "recieved";
+  const variant = currentUserId === message.userId ? "sented" : "recieved";
 
   const theme = UI.useTheme();
   const backgroundColor =

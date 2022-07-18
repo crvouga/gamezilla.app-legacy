@@ -17,8 +17,8 @@ import {
   ToBackend,
   initRoom,
   mapRoomPlayers,
-  toCurrentRoom,
   toPlayer,
+  toRoom,
   toRoomStatus,
 } from "./Types";
 
@@ -66,7 +66,7 @@ export const updateFromFrontend = (
     case "PlayAgain": {
       const { currentUserId } = msg[1];
 
-      const maybeCurrentRoom = toCurrentRoom(currentUserId, model);
+      const maybeCurrentRoom = toRoom(currentUserId, model);
       if (maybeCurrentRoom.type === "None") {
         return [
           model,
@@ -149,7 +149,7 @@ export const updateFromFrontend = (
     case "RemovePlayer": {
       const { currentUserId, player } = msg[1];
 
-      const maybeCurrentRoom = toCurrentRoom(currentUserId, model);
+      const maybeCurrentRoom = toRoom(currentUserId, model);
       if (maybeCurrentRoom.type === "None") {
         const event: RoomEvent = [
           "RemovePlayerResulted",
@@ -212,7 +212,7 @@ export const updateFromFrontend = (
       const player = msg[1].player;
       const currentUserId = msg[1].currentUserId;
 
-      const maybeCurrentRoom = toCurrentRoom(currentUserId, model);
+      const maybeCurrentRoom = toRoom(currentUserId, model);
       if (maybeCurrentRoom.type === "None") {
         const result = Result.Err("User is not in a room");
         return [
@@ -264,7 +264,7 @@ export const updateFromFrontend = (
     case "PlayAs": {
       const { currentUserId, player } = msg[1];
 
-      const maybeCurrentRoom = toCurrentRoom(currentUserId, model);
+      const maybeCurrentRoom = toRoom(currentUserId, model);
       if (maybeCurrentRoom.type === "None") {
         return [
           model,
@@ -340,7 +340,7 @@ export const updateFromFrontend = (
     case "Restart": {
       const { currentUserId } = msg[1];
 
-      const maybeCurrentRoom = toCurrentRoom(currentUserId, model);
+      const maybeCurrentRoom = toRoom(currentUserId, model);
       if (maybeCurrentRoom.type === "None") {
         const result = Result.Err("User is not in a room");
         return [
@@ -397,7 +397,7 @@ export const updateFromFrontend = (
     case "Move": {
       const { currentUserId, position } = msg[1];
 
-      const maybeCurrentRoom = toCurrentRoom(currentUserId, model);
+      const maybeCurrentRoom = toRoom(currentUserId, model);
       if (maybeCurrentRoom.type === "None") {
         const event: RoomEvent = [
           "MoveResulted",
@@ -487,7 +487,7 @@ export const updateFromFrontend = (
     case "JoinRoom": {
       const { currentUserId, roomId } = msg[1];
 
-      const maybeCurrentRoom = toCurrentRoom(currentUserId, model);
+      const maybeCurrentRoom = toRoom(currentUserId, model);
 
       if (maybeCurrentRoom.type === "Some") {
         const result = Result.Err(
@@ -549,7 +549,7 @@ export const updateFromFrontend = (
     case "LeaveRoom": {
       const { currentUserId } = msg[1];
 
-      const maybeCurrentRoom = toCurrentRoom(currentUserId, model);
+      const maybeCurrentRoom = toRoom(currentUserId, model);
 
       if (maybeCurrentRoom.type === "None") {
         return [

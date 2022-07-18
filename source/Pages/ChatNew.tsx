@@ -58,7 +58,7 @@ export type Msg =
 export type Action = ["Store", Store.Action];
 
 export const update = (
-  { authUserId, store }: { authUserId: string; store: Store.Model },
+  { currentUserId, store }: { currentUserId: string; store: Store.Model },
   msg: Msg,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>, Action[]] => {
@@ -68,7 +68,12 @@ export const update = (
       return [
         model,
         Cmd.None,
-        [["Store", Store.Conversation.FindOneElseInsert(authUserId, userIds)]],
+        [
+          [
+            "Store",
+            Store.Conversation.FindOneElseInsert(currentUserId, userIds),
+          ],
+        ],
       ];
 
     case "ClickedCancel":

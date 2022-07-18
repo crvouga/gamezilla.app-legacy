@@ -123,7 +123,7 @@ export const runAction = (
 };
 
 export const update = (
-  { authUserId }: { authUserId: string },
+  { currentUserId }: { currentUserId: string },
   msg: Msg,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
@@ -132,7 +132,7 @@ export const update = (
       return updateClosed(msg, model);
 
     case "Opened":
-      return updateOpened({ authUserId }, msg, model);
+      return updateOpened({ currentUserId }, msg, model);
   }
 };
 
@@ -189,7 +189,7 @@ const updateGameFromBackend = (
 };
 
 const updateOpened = (
-  { authUserId }: { authUserId: string },
+  { currentUserId }: { currentUserId: string },
   msg: Msg,
   model: Opened,
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
@@ -210,13 +210,13 @@ const updateOpened = (
     case "ConnectFour":
     case "Snake":
     case "TicTacToe":
-      const [child, childCmd] = updateGame({ authUserId }, msg, model.child);
+      const [child, childCmd] = updateGame({ currentUserId }, msg, model.child);
       return [{ ...model, child }, childCmd, []];
   }
 };
 
 const updateGame = (
-  { authUserId }: { authUserId: string },
+  { currentUserId }: { currentUserId: string },
   msg: Msg,
   model: Opened["child"],
 ): [Opened["child"], Cmd.Cmd<Msg>] => {
@@ -245,7 +245,7 @@ const updateGame = (
     case "TicTacToe":
       if (msg[0] === "TicTacToe") {
         const [modelChild, cmdChild] = TicTacToe.update(
-          { authUserId },
+          { currentUserId },
           msg[1],
           model.child,
         );

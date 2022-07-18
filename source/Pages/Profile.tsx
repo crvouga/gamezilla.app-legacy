@@ -38,7 +38,7 @@ export type Msg = ["ClickedBack"] | ["ClickedSendMessage"];
 type OutAction = ["Store", Store.Action];
 
 export const update = (
-  { authUserId }: { authUserId: string },
+  { currentUserId }: { currentUserId: string },
   msg: Msg,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
@@ -53,7 +53,7 @@ export const update = (
         [
           [
             "Store",
-            Store.Conversation.FindOneElseInsert(authUserId, [model.userId]),
+            Store.Conversation.FindOneElseInsert(currentUserId, [model.userId]),
           ],
         ],
       ];
