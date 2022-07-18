@@ -396,7 +396,7 @@ export const updateReady = (
         return tagUpdate(
           "ChatNew",
           ChatNew.update(
-            { store, authUserId: profile.userId },
+            { store, currentUserId: profile.userId },
             msg[1],
             model[1],
           ),
@@ -434,7 +434,7 @@ export const updateReady = (
     case "Profile":
       if (msg[0] === "Profile") {
         const [modelPage, cmdPage, actions] = Profile.update(
-          { authUserId: profile.userId },
+          { currentUserId: profile.userId },
           msg[1],
           model[1],
         );

@@ -234,7 +234,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
         case "Ready": {
           const { profile } = status;
           const [gameNew, gameCmd, actions] = Games.update(
-            { authUserId: profile.userId },
+            { currentUserId: profile.userId },
             msg[1],
             model.game,
           );

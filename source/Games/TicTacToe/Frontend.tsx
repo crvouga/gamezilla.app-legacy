@@ -12,8 +12,8 @@ import {
   Room,
   RoomEvent,
   ToFrontend,
-  toCurrentRoom,
   toPlayer,
+  toRoom,
   toRoomStatus,
 } from "./Types";
 
@@ -49,7 +49,7 @@ export type Msg = FrontendMsg;
 export type OutAction = ["Store", Store.Action];
 
 export const update = (
-  { authUserId }: { authUserId: string },
+  { currentUserId }: { currentUserId: string },
   msg: Msg,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
@@ -99,7 +99,7 @@ export const update = (
 
     case "Move":
       const roomsNew = pipe(
-        toCurrentRoom(authUserId, model),
+        toRoom(currentUserId, model),
         Option.map((room) => {
           const status = toRoomStatus(room);
 
@@ -107,7 +107,7 @@ export const update = (
             return room;
           }
 
-          const player = toPlayer(authUserId, room);
+          const player = toPlayer(currentUserId, room);
 
           if (player === "None") {
             return room;
@@ -252,7 +252,7 @@ export const view =
     model: Model,
   ): UI.View<Msg> =>
   (dispatch) => {
-    const maybeCurrentRoom = toCurrentRoom(currentUserId, model);
+    const maybeCurrentRoom = toRoom(currentUserId, model);
 
     switch (maybeCurrentRoom.type) {
       case "None":
@@ -312,9 +312,11 @@ const ViewNotInRoom = ({
       <UI.Box sx={{ paddingX: 2 }}>
         <UI.Typography variant="h5">Rooms</UI.Typography>
 
-        <UI.Typography sx={{ marginTop: 1 }} color="text.secondary">
-          No rooms found.
-        </UI.Typography>
+        {Object.values(model.rooms).length === 0 && (
+          <UI.Typography sx={{ marginTop: 1 }} color="text.secondary">
+            No rooms found.
+          </UI.Typography>
+        )}
       </UI.Box>
 
       <UI.List sx={{ overflowY: "scroll" }}>
@@ -332,11 +334,13 @@ const ViewNotInRoom = ({
                 dispatch(["JoinRoom", { currentUserId, roomId: room.roomId }])
               }
             >
-              <UI.AvatarGroup>
-                {profiles.map((item) => (
-                  <UI.Avatar key={item.userId} src={item.avatarUrl} />
-                ))}
-              </UI.AvatarGroup>
+              <UI.ListItemAvatar>
+                <UI.AvatarGroup>
+                  {profiles.map((item) => (
+                    <UI.Avatar key={item.userId} src={item.avatarUrl} />
+                  ))}
+                </UI.AvatarGroup>
+              </UI.ListItemAvatar>
               <UI.ListItemText
                 primaryTypographyProps={{
                   noWrap: true,

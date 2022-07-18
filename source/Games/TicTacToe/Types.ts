@@ -1,5 +1,5 @@
 import { ClientId } from "Bridge/Bridge";
-import { Option, RemoteData, Result, Uuid } from "Core";
+import { Option, RemoteData, Result, Uuid, pipe } from "Core";
 import * as Board from "./Board";
 
 //
@@ -11,26 +11,17 @@ import * as Board from "./Board";
 //
 
 export type BackendModel = {
-  rooms: Rooms;
-  users: Users;
+  rooms: { [id: RoomId]: Room };
+  users: { [id: string]: User };
 };
 
 export type FrontendModel = {
   opened: ["Users"] | ["Player", Board.Player] | ["None"];
-  rooms: Rooms;
-  users: Users;
+  rooms: { [id: RoomId]: Room };
+  users: { [id: string]: User };
 };
 
-export type Rooms = {
-  [roomId: RoomId]: Room;
-};
-
-export type Users = {
-  [userId: string]: {
-    userId: string;
-    roomId: RoomId;
-  };
-};
+type User = { roomId: RoomId; userId: string };
 
 //
 //
@@ -72,8 +63,8 @@ export type ToFrontend =
   | [
       "Sync",
       {
-        rooms: Rooms;
-        users: Users;
+        rooms: { [id: RoomId]: Room };
+        users: { [id: string]: User };
       },
     ]
   | LeaveRoomResulted
@@ -298,16 +289,29 @@ export const toPlayer = (
   return "None";
 };
 
-export const toCurrentRoom = (
+export const toRoom = (
   userId: string,
-  { rooms, users }: { rooms: Rooms; users: Users },
+  {
+    rooms,
+    users,
+  }: {
+    rooms: { [id: RoomId]: Room };
+    users: { [id: string]: User };
+  },
 ): Option.Option<Room> => {
-  const subset = Object.values(users)
-    .filter((user) => user.userId === userId)
-    .map((user) => rooms[user.roomId])
-    .flatMap((maybeRoom) => (maybeRoom ? [maybeRoom] : []));
+  const user = users[userId];
 
-  return Option.fromNullable(subset[0]);
+  if (!user) {
+    return Option.None;
+  }
+
+  const room = rooms[user.roomId];
+
+  if (!room) {
+    return Option.None;
+  }
+
+  return Option.Some(room);
 };
 
 export type RoomStatus =
