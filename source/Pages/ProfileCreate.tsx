@@ -1,8 +1,8 @@
-import * as ProfileAvatar from "../ProfileAvatar";
+import { Cmd } from "../Core";
+import { ProfileAvatar } from "../Data";
 import * as Route from "../Route";
 import * as Store from "../Store";
 import * as UI from "../UI";
-import { Cmd } from "../Core";
 
 //
 //
@@ -105,7 +105,7 @@ export const update = (
 
 export const view =
   (model: Model): UI.View<Msg> =>
-  (dispatch) =>
+    (dispatch) =>
     (
       <UI.Page>
         <UI.Header
