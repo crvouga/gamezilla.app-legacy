@@ -59,7 +59,7 @@ export type Msg =
   | ["ClickedSubmit"]
   | ["ClickedLogout"];
 
-export type OutAction = ["Store", Store.Action];
+export type OutAction = Store.Action;
 
 export const update = (
   { userId }: { userId: string },
@@ -82,11 +82,19 @@ export const update = (
       ];
 
     case "ClickedSubmit":
+      const avatarUrl = ProfileAvatar.toUrl({ seed: ProfileAvatar.toSeed(model.form.username), style: "avataaars" })
+      const profile: Store.Profile.Profile = {
+        ...model.form,
+        userId,
+        avatarUrl,
+        themeMode: "System",
+      }
+
       return [
         model,
         Cmd.None,
-        [["Store", Store.Profile.Create(userId, model.form)]],
-      ];
+        [["Store", ["Profile", ["Create", { userId, profile }]]]]
+      ]
 
     case "ClickedLogout":
       return [model, Route.push({ type: "Logout" }), []];

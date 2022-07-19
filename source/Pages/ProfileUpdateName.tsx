@@ -32,7 +32,7 @@ export type Msg =
   | ["ClickedCancel"]
   | ["ClickedSubmit"];
 
-export type OutAction = ["Store", Store.Action];
+export type OutAction = Store.Action;
 
 export const update = (
   { userId }: { userId: string },
@@ -47,7 +47,7 @@ export const update = (
       return [
         model,
         Route.back,
-        [["Store", Store.Profile.Edit(userId, { name: model.name })]],
+        [["Store", ['Profile', ['Edit', { userId, edits: { name: model.name } }]]]],
       ];
 
     case "ClickedCancel":
@@ -65,7 +65,7 @@ export const update = (
 
 export const view =
   (model: Model): UI.View<Msg> =>
-  (dispatch) =>
+    (dispatch) =>
     (
       <UI.Page>
         <UI.Header

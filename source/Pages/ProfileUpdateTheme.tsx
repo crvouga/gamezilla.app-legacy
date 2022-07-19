@@ -30,7 +30,7 @@ export type Msg =
   | ["ClickedBack"]
   | ["ClickedThemeMode", Profile.Profile["themeMode"]];
 
-type OutMsg = ["Store", Store.Action];
+type OutMsg = Store.Action
 
 export const update = (
   { userId }: { userId: string },
@@ -42,11 +42,12 @@ export const update = (
       return [model, Route.back, []];
 
     case "ClickedThemeMode":
+      const themeMode = msg[1]
       return [
         model,
         Cmd.None,
-        [["Store", Store.Profile.Edit(userId, { themeMode: msg[1] })]],
-      ];
+        [['Store', ['Profile', ['Edit', { userId, edits: { themeMode, } }]]]]
+      ]
   }
 };
 
@@ -60,7 +61,7 @@ export const update = (
 
 export const view =
   (profile: Profile.Profile, model: Model): UI.View<Msg> =>
-  (dispatch) =>
+    (dispatch) =>
     (
       <UI.Page>
         <UI.Header

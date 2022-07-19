@@ -33,7 +33,7 @@ export type Conversation = Types.Conversation;
 
 export type Msg =
   | FindOneElseInsertResulted
-  | FindManyResulted
+  | FindManyByUserIdResulted
   | FindOneResulted;
 
 export type Action = FindOneElseInsert | FindManyByUserId | FindOne;
@@ -48,87 +48,33 @@ type FindOneResult = Result.Result<
   }
 >;
 
-export const FindOneElseInsert = (creatorId: string, userIds: string[]) => {
-  return {
-    type: "Conversation/FindOneElseInsert",
-    group: "Store",
-    entity: "Conversation",
-    userIds,
-    creatorId,
-  } as const;
-};
-export type FindOneElseInsert = ReturnType<typeof FindOneElseInsert>;
+export type FindOneElseInsert = ["FindOneElseInsert", { userIds: string[] }];
+export type FindOneElseInsertResulted = [
+  "FindOneElseInsertResulted",
+  { userIds: string[]; result: FindOneResult },
+];
 
-export const FindOneElseInsertResulted = (
-  userIds: string[],
-  result: FindOneResult,
-) => {
-  return {
-    type: "Conversation/FindOneElseInsertResulted",
-    group: "Store",
-    entity: "Conversation",
-    userIds,
-    result,
-  } as const;
-};
-export type FindOneElseInsertResulted = ReturnType<
-  typeof FindOneElseInsertResulted
->;
+export type FindManyByUserId = ["FindManyByUserId", { userId: string }];
+export type FindManyByUserIdResulted = [
+  "FindManyByUserIdResulted",
+  {
+    userId: string;
+    result: Result.Result<
+      Problem,
+      {
+        conversations: Conversation[];
+        profiles: Profile[];
+        profilesConversations: ProfilesConversations[];
+      }
+    >;
+  },
+];
 
-export const FindManyByUserId = (userId: string) => {
-  return {
-    type: "Conversation/FindManyByUserId",
-    group: "Store",
-    entity: "Conversation",
-    userId,
-  } as const;
-};
-export type FindManyByUserId = ReturnType<typeof FindManyByUserId>;
-
-export const FindManyByUserIdResulted = (
-  userId: string,
-  result: Result.Result<
-    Problem,
-    {
-      conversations: Conversation[];
-      profiles: Profile[];
-      profilesConversations: ProfilesConversations[];
-    }
-  >,
-) => {
-  return {
-    type: "Conversation/FindManyByUserIdResulted",
-    group: "Store",
-    entity: "Conversation",
-    result,
-    userId,
-  } as const;
-};
-export type FindManyResulted = ReturnType<typeof FindManyByUserIdResulted>;
-
-export const FindOne = (conversationId: string) => {
-  return {
-    type: "Conversation/FindOne",
-    group: "Store",
-    entity: "Conversation",
-    conversationId,
-  } as const;
-};
-export type FindOne = ReturnType<typeof FindOne>;
-
-export const FindOneResulted = (
-  conversationId: string,
-  result: FindOneResult,
-) => {
-  return {
-    type: "Conversation/FindOneResulted",
-    group: "Store",
-    entity: "Conversation",
-    conversationId,
-    result,
-  } as const;
-};
-export type FindOneResulted = ReturnType<typeof FindOneResulted>;
+export type FindOne = ["FindOne", { conversationId: string }];
+export type FindOneResulted = [
+  "FindOneResulted",
+  { conversationId: string; result: FindOneResult },
+];
 
 //
 //
@@ -139,45 +85,55 @@ export type FindOneResulted = ReturnType<typeof FindOneResulted>;
 //
 
 export const update = (msg: Msg, model: Store): [Store, Cmd.Cmd<Msg>] => {
-  switch (msg.type) {
-    case "Conversation/FindOneResulted": {
+  switch (msg[0]) {
+    case "FindOneResulted": {
+      const { conversationId, result } = msg[1];
       const modelNew = produce(model, (model) => {
-        model.queries.Conversation.FindOne[msg.conversationId] = pipe(
-          msg.result,
+        model.queries.Conversation.FindOne[conversationId] = pipe(
+          result,
           RemoteData.fromResult,
-          RemoteData.mapSuccess((data) => ({
-            conversation: data.conversation.conversationId,
-            profile: data.profiles.map((item) => item.userId),
-            message: data.messages.map((item) => item.messageId),
+          RemoteData.mapSuccess((item) => ({
+            conversation: item.conversation.conversationId,
+            profile: item.profiles.map((item) => item.userId),
+            message: item.messages.map((item) => item.messageId),
           })),
         );
-        if (msg.result.type === "Ok") {
-          const data = msg.result.value;
-          model.Conversation[data.conversation.conversationId] =
-            data.conversation;
-          data.messages.forEach((item) => {
-            model.Message[item.messageId] = item;
-          });
-          data.profiles.forEach((item) => {
-            model.Profile[item.userId] = item;
-            const profileConversation = {
-              userId: item.userId,
-              conversationId: data.conversation.conversationId,
-            };
-            model.ProfilesConversations[
-              Types.toProfilesConversationsId(profileConversation)
-            ] = profileConversation;
-          });
+
+        switch (result.type) {
+          case "Err":
+            break;
+
+          case "Ok": {
+            const data = result.value;
+            model.Conversation[data.conversation.conversationId] =
+              data.conversation;
+
+            for (const message of data.messages) {
+              model.Message[message.messageId] = message;
+            }
+
+            for (const profile of data.profiles) {
+              model.Profile[profile.userId] = profile;
+
+              const profileConversation = {
+                userId: profile.userId,
+                conversationId: data.conversation.conversationId,
+              };
+              const id = Types.toProfilesConversationsId(profileConversation);
+              model.ProfilesConversations[id] = profileConversation;
+            }
+          }
         }
       });
 
       return [modelNew, Cmd.None];
     }
 
-    case "Conversation/FindManyByUserIdResulted": {
+    case "FindManyByUserIdResulted": {
+      const { userId, result } = msg[1];
       const modelNew = produce(model, (model) => {
-        model.queries.Conversation.FindManyByUserId[msg.userId] = pipe(
-          msg.result,
+        model.queries.Conversation.FindManyByUserId[userId] = pipe(
+          result,
           RemoteData.fromResult,
           RemoteData.mapSuccess((data) => ({
             conversation: data.conversations.map((item) => item.conversationId),
@@ -188,54 +144,65 @@ export const update = (msg: Msg, model: Store): [Store, Cmd.Cmd<Msg>] => {
           })),
         );
 
-        if (msg.result.type === "Ok") {
-          const data = msg.result.value;
-          data.conversations.forEach((item) => {
-            model.Conversation[item.conversationId] = item;
-          });
+        switch (result.type) {
+          case "Err":
+            break;
 
-          data.profiles.forEach((item) => {
-            model.Profile[item.userId] = item;
-          });
+          case "Ok": {
+            const data = result.value;
+            for (const item of data.conversations) {
+              model.Conversation[item.conversationId] = item;
+            }
 
-          data.profilesConversations.forEach((item) => [
-            (model.ProfilesConversations[
-              Types.toProfilesConversationsId(item)
-            ] = item),
-          ]);
+            for (const item of data.profiles) {
+              model.Profile[item.userId] = item;
+            }
+
+            for (const item of data.profilesConversations) {
+              const id = Types.toProfilesConversationsId(item);
+              model.ProfilesConversations[id] = item;
+            }
+          }
         }
       });
 
       return [modelNew, Cmd.None];
     }
 
-    case "Conversation/FindOneElseInsertResulted":
+    case "FindOneElseInsertResulted":
+      const { result } = msg[1];
+
       const modelNew = produce(model, (model) => {
         model.mutations.Conversation.FindElseInsert = pipe(
-          msg.result,
+          result,
           RemoteData.fromResult,
-          RemoteData.mapSuccess((value) => value.conversation.conversationId),
+          RemoteData.mapSuccess((item) => item.conversation.conversationId),
         );
 
-        if (msg.result.type === "Ok") {
-          const data = msg.result.value;
+        switch (result.type) {
+          case "Err":
+            break;
 
-          model.Conversation[data.conversation.conversationId] =
-            data.conversation;
+          case "Ok": {
+            const data = result.value;
 
-          data.profilesConversations.forEach((item) => {
-            model.ProfilesConversations[Types.toProfilesConversationsId(item)] =
-              item;
-          });
+            model.Conversation[data.conversation.conversationId] =
+              data.conversation;
+
+            for (const item of data.profilesConversations) {
+              const id = Types.toProfilesConversationsId(item);
+              model.ProfilesConversations[id] = item;
+            }
+          }
         }
       });
 
       // todo put this logic elsewhere
       const cmdNew: Cmd.Cmd<Msg> =
-        msg.result.type === "Ok"
+        result.type === "Ok"
           ? Route.push({
               type: "ChatConversation",
-              conversationId: msg.result.value.conversation.conversationId,
+              conversationId: result.value.conversation.conversationId,
             })
           : Cmd.None;
 
@@ -247,26 +214,29 @@ export const runAction = (
   action: Action,
   model: Store,
 ): [Store, Cmd.Cmd<Msg>] => {
-  switch (action.type) {
-    case "Conversation/FindOne": {
+  switch (action[0]) {
+    case "FindOne": {
+      const { conversationId } = action[1];
       const modelNew = produce(model, (model) => {
-        model.queries.Conversation.FindOne[action.conversationId] =
-          RemoteData.Loading;
+        model.queries.Conversation.FindOne[conversationId] = RemoteData.Loading;
       });
+
       return [
         modelNew,
         pipe(
-          findOneById({ conversationId: action.conversationId }),
-          Cmd.fromTask((result) =>
-            FindOneResulted(action.conversationId, result),
+          findOneById({ conversationId }),
+          Cmd.fromTask(
+            (result): Msg => ["FindOneResulted", { conversationId, result }],
           ),
         ),
       ];
     }
 
-    case "Conversation/FindManyByUserId": {
+    case "FindManyByUserId": {
+      const { userId } = action[1];
+
       const query =
-        model.queries.Conversation.FindManyByUserId[action.userId] ??
+        model.queries.Conversation.FindManyByUserId[userId] ??
         RemoteData.NotAsked;
 
       if (query.type === "Success") {
@@ -274,34 +244,34 @@ export const runAction = (
       }
 
       const modelNew = produce(model, (model) => {
-        model.queries.Conversation.FindManyByUserId[action.userId] =
+        model.queries.Conversation.FindManyByUserId[userId] =
           RemoteData.Loading;
       });
 
       return [
         modelNew,
         pipe(
-          findManyByUserId({ userId: action.userId }),
-          Cmd.fromTask((result) =>
-            FindManyByUserIdResulted(action.userId, result),
+          findManyByUserId({ userId }),
+          Cmd.fromTask(
+            (result): Msg => ["FindManyByUserIdResulted", { userId, result }],
           ),
         ),
       ];
     }
 
-    case "Conversation/FindOneElseInsert": {
+    case "FindOneElseInsert": {
+      const { userIds } = action[1];
+
       const modelNew = produce(model, (model) => {
         model.mutations.Conversation.FindElseInsert = RemoteData.Loading;
       });
-
-      const userIds = [action.creatorId, ...action.userIds];
 
       return [
         modelNew,
         pipe(
           findOneElseInsert({ userIds }),
-          Cmd.fromTask((result) =>
-            FindOneElseInsertResulted(action.userIds, result),
+          Cmd.fromTask(
+            (result): Msg => ["FindOneElseInsertResulted", { userIds, result }],
           ),
         ),
       ];

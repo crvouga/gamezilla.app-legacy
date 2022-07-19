@@ -1,9 +1,9 @@
-import * as Snackbar from "../Snackbar";
+import { Cmd, pipe } from "../Core";
+import { tag } from "../Utility";
 import * as Conversation from "./Conversation";
 import * as Message from "./Message";
 import * as Profile from "./Profile";
-import { Cmd, RemoteData } from "../Core";
-import { Store } from "./Types";
+import { initialStore, Store } from "./Types";
 
 //
 //
@@ -14,45 +14,8 @@ import { Store } from "./Types";
 //
 
 export type Model = Store;
-//
-//
-//
-// Init
-//
-//
-//
 
-export const init: Model = {
-  Profile: {},
-  Conversation: {},
-  ProfilesConversations: {},
-  Message: {},
-  queries: {
-    Conversation: {
-      FindOne: {},
-      FindManyByUserId: {},
-    },
-    Profile: {
-      Get: {},
-      GetMany: RemoteData.NotAsked,
-      Search: {},
-    },
-  },
-  mutations: {
-    Conversation: {
-      FindElseInsert: RemoteData.NotAsked,
-    },
-    Profile: {
-      Create: {},
-      Edit: {},
-      DeleteForever: {},
-    },
-    Message: {
-      Insert: {},
-      DeleteForever: {},
-    },
-  },
-};
+export const init = initialStore;
 
 //
 //
@@ -62,9 +25,15 @@ export const init: Model = {
 //
 //
 
-export type Msg = Profile.Msg | Conversation.Msg | Message.Msg;
+export type Msg =
+  | ["Profile", Profile.Msg]
+  | ["Conversation", Conversation.Msg]
+  | ["Message", Message.Msg];
 
-export type Action = Profile.Action | Conversation.Action | Message.Action;
+export type Action =
+  | ["Store", ["Profile", Profile.Action]]
+  | ["Store", ["Conversation", Conversation.Action]]
+  | ["Store", ["Message", Message.Action]];
 
 //
 //
@@ -75,17 +44,20 @@ export type Action = Profile.Action | Conversation.Action | Message.Action;
 //
 
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
-  switch (msg.entity) {
+  switch (msg[0]) {
     case "Conversation": {
-      return Conversation.update(msg, model);
+      const [modelNew, cmd] = Conversation.update(msg[1], model);
+      return [modelNew, pipe(cmd, Cmd.map(tag("Conversation")))];
     }
 
     case "Profile": {
-      return Profile.update(msg, model);
+      const [modelNew, cmd] = Profile.update(msg[1], model);
+      return [modelNew, pipe(cmd, Cmd.map(tag("Profile")))];
     }
 
     case "Message": {
-      return Message.update(msg, model);
+      const [modelNew, cmd] = Message.update(msg[1], model);
+      return [modelNew, pipe(cmd, Cmd.map(tag("Message")))];
     }
   }
 };
@@ -94,17 +66,20 @@ export const runAction = (
   action: Action,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
-  switch (action.entity) {
+  switch (action[1][0]) {
     case "Conversation": {
-      return Conversation.runAction(action, model);
+      const [modelNew, cmd] = Conversation.runAction(action[1][1], model);
+      return [modelNew, pipe(cmd, Cmd.map(tag("Conversation")))];
     }
 
     case "Message": {
-      return Message.runAction(action, model);
+      const [modelNew, cmd] = Message.runAction(action[1][1], model);
+      return [modelNew, pipe(cmd, Cmd.map(tag("Message")))];
     }
 
     case "Profile": {
-      return Profile.runAction(action, model);
+      const [modelNew, cmd] = Profile.runAction(action[1][1], model);
+      return [modelNew, pipe(cmd, Cmd.map(tag("Profile")))];
     }
   }
 };

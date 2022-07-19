@@ -81,17 +81,11 @@ const initGame = ({
 
 export type Msg = FrontendMsg;
 
-type OutAction = ["Snackbar", Snackbar.Action] | ["Store", Store.Action];
+type OutAction = Snackbar.Action | Store.Action
 
-export type Action = Open | Close;
+export type Action = ['Games', ["Open", GameName]] | ['Games', ["Close", GameName]];
 
-export const Open = (game: GameName) =>
-  ({ group: "Game", type: "Open", game } as const);
-export type Open = ReturnType<typeof Open>;
 
-export const Close = (game: GameName) =>
-  ({ group: "Game", type: "Close", game } as const);
-export type Close = ReturnType<typeof Close>;
 
 //
 //
@@ -105,13 +99,15 @@ export const runAction = (
   action: Action,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
-  switch (action.type) {
+  switch (action[1][0]) {
     case "Open":
+      const gameName = action[1][1]
+
       if (model.type === "Closed") {
-        return initOpened(action);
+        return initOpened({ game: gameName });
       }
 
-      if (action.game === model.child.type) {
+      if (gameName === model.child.type) {
         return [model, Route.push({ type: "Game" })];
       }
 
@@ -365,7 +361,7 @@ const spin = keyframes`
 
 export const viewBanner =
   (model: Opened): UI.View<Msg> =>
-  (dispatch) =>
+    (dispatch) =>
     (
       <>
         <UI.Paper

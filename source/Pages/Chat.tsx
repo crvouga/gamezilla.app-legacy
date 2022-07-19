@@ -21,7 +21,7 @@ export const init = ({
   return [
     {},
     Cmd.None,
-    [["Store", Store.Conversation.FindManyByUserId(userId)]],
+    [["Store", ["Conversation", ["FindManyByUserId", { userId }]]]]
   ];
 };
 
@@ -38,7 +38,7 @@ export type Msg =
   | ["ClickedSendMessage"]
   | ["ClickedConversationItem", string];
 
-type OutAction = ["Store", Store.Action];
+type OutAction = Store.Action;
 
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
@@ -72,64 +72,64 @@ export const view =
     { store, profile }: { store: Store.Model; profile: { userId: string } },
     model: Model,
   ): UI.View<Msg> =>
-  (dispatch) => {
-    const query =
-      store.queries.Conversation.FindManyByUserId[profile.userId] ??
-      RemoteData.NotAsked;
+    (dispatch) => {
+      const query =
+        store.queries.Conversation.FindManyByUserId[profile.userId] ??
+        RemoteData.NotAsked;
 
-    const conversations = Object.values(store.ProfilesConversations)
-      .filter((item) => item.userId === profile.userId)
-      .map((item) =>
-        Store.Conversation.toConversation(item.conversationId, store),
-      )
-      .map((item) => ({
-        ...item,
-        profiles: item.profiles.filter(
-          (item) => item.userId !== profile.userId,
-        ),
-      }))
-      .filter((item) => item.profiles.length > 0);
+      const conversations = Object.values(store.ProfilesConversations)
+        .filter((item) => item.userId === profile.userId)
+        .map((item) =>
+          Store.Conversation.toConversation(item.conversationId, store),
+        )
+        .map((item) => ({
+          ...item,
+          profiles: item.profiles.filter(
+            (item) => item.userId !== profile.userId,
+          ),
+        }))
+        .filter((item) => item.profiles.length > 0);
 
-    return (
-      <UI.Page>
-        <UI.Header title="Chat" />
-        <UI.Box sx={{ p: 2 }}>
-          <UI.Button
-            fullWidth
-            variant="contained"
-            onClick={() => dispatch(["ClickedSendMessage"])}
-          >
-            Send Message
-          </UI.Button>
-        </UI.Box>
-
-        <UI.List sx={{ overflowY: "scroll" }}>
-          {conversations.map((item) => (
-            <UI.ListItemButton
-              key={item.conversationId}
-              onClick={() =>
-                dispatch(["ClickedConversationItem", item.conversationId])
-              }
+      return (
+        <UI.Page>
+          <UI.Header title="Chat" />
+          <UI.Box sx={{ p: 2 }}>
+            <UI.Button
+              fullWidth
+              variant="contained"
+              onClick={() => dispatch(["ClickedSendMessage"])}
             >
-              <UI.ListItemAvatar>
-                <UI.AvatarGroup max={2}>
-                  {item.profiles.map((profile) => (
-                    <UI.Avatar key={profile.userId} src={profile.avatarUrl} />
-                  ))}
-                </UI.AvatarGroup>
-              </UI.ListItemAvatar>
-              <UI.ListItemText
-                primary={item.profiles.map((item) => item.username).join(", ")}
-              />
-            </UI.ListItemButton>
-          ))}
-        </UI.List>
-
-        {query.type === "Loading" && (
-          <UI.Box sx={{ p: 4, display: "flex", justifyContent: "center" }}>
-            <UI.CircularProgress />
+              Send Message
+            </UI.Button>
           </UI.Box>
-        )}
-      </UI.Page>
-    );
-  };
+
+          <UI.List sx={{ overflowY: "scroll" }}>
+            {conversations.map((item) => (
+              <UI.ListItemButton
+                key={item.conversationId}
+                onClick={() =>
+                  dispatch(["ClickedConversationItem", item.conversationId])
+                }
+              >
+                <UI.ListItemAvatar>
+                  <UI.AvatarGroup max={2}>
+                    {item.profiles.map((profile) => (
+                      <UI.Avatar key={profile.userId} src={profile.avatarUrl} />
+                    ))}
+                  </UI.AvatarGroup>
+                </UI.ListItemAvatar>
+                <UI.ListItemText
+                  primary={item.profiles.map((item) => item.username).join(", ")}
+                />
+              </UI.ListItemButton>
+            ))}
+          </UI.List>
+
+          {query.type === "Loading" && (
+            <UI.Box sx={{ p: 4, display: "flex", justifyContent: "center" }}>
+              <UI.CircularProgress />
+            </UI.Box>
+          )}
+        </UI.Page>
+      );
+    };

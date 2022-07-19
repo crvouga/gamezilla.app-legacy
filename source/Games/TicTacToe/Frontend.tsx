@@ -46,7 +46,7 @@ export const init: [Model, Cmd.Cmd<Msg>] = [
 
 export type Msg = FrontendMsg;
 
-export type OutAction = ["Store", Store.Action];
+export type OutAction = Store.Action;
 
 export const update = (
   { currentUserId }: { currentUserId: string },
@@ -162,7 +162,7 @@ export const updateFromBackend = (
           users: msg[1].users,
         },
         Cmd.None,
-        [["Store", Store.Profile.GetMany(userIds)]],
+        [["Store", ['Profile', ['FindMany', { userIds }]]]],
       ];
     }
 
@@ -251,33 +251,33 @@ export const view =
     { currentUserId, store }: { currentUserId: string; store: Store.Model },
     model: Model,
   ): UI.View<Msg> =>
-  (dispatch) => {
-    const maybeCurrentRoom = toRoom(currentUserId, model);
+    (dispatch) => {
+      const maybeCurrentRoom = toRoom(currentUserId, model);
 
-    switch (maybeCurrentRoom.type) {
-      case "None":
-        return (
-          <ViewNotInRoom
-            currentUserId={currentUserId}
-            store={store}
-            model={model}
-            dispatch={dispatch}
-          />
-        );
+      switch (maybeCurrentRoom.type) {
+        case "None":
+          return (
+            <ViewNotInRoom
+              currentUserId={currentUserId}
+              store={store}
+              model={model}
+              dispatch={dispatch}
+            />
+          );
 
-      case "Some":
-        const room = maybeCurrentRoom.value;
-        return (
-          <ViewInRoom
-            dispatch={dispatch}
-            room={room}
-            currentUserId={currentUserId}
-            store={store}
-            model={model}
-          />
-        );
-    }
-  };
+        case "Some":
+          const room = maybeCurrentRoom.value;
+          return (
+            <ViewInRoom
+              dispatch={dispatch}
+              room={room}
+              currentUserId={currentUserId}
+              store={store}
+              model={model}
+            />
+          );
+      }
+    };
 
 const ViewNotInRoom = ({
   currentUserId,
@@ -375,15 +375,15 @@ const ViewInRoom = ({
       ? roomStatus.status === "MissingBoth"
         ? "Missing Players"
         : roomStatus.status === "MissingO"
-        ? "Missing O Player"
-        : roomStatus.status === "MissingX"
-        ? "Missing X Player"
-        : ""
+          ? "Missing O Player"
+          : roomStatus.status === "MissingX"
+            ? "Missing X Player"
+            : ""
       : roomStatus.status.type === "Turn"
-      ? `${roomStatus.status.turn} Turn`
-      : roomStatus.status.type === "Tie"
-      ? "Gameover"
-      : `Gameover`;
+        ? `${roomStatus.status.turn} Turn`
+        : roomStatus.status.type === "Tie"
+          ? "Gameover"
+          : `Gameover`;
 
   const usersInRoom = Object.values(store.Profile).filter(
     (profile) =>
@@ -629,9 +629,8 @@ const ViewRoomEvent = ({
           (ok) => (
             <RoomEventLog
               avatarUrl={store.Profile[ok.userId]?.avatarUrl}
-              text={`${store.Profile[ok.userId]?.username} started playing as ${
-                ok.player
-              }`}
+              text={`${store.Profile[ok.userId]?.username} started playing as ${ok.player
+                }`}
             />
           ),
         ),
@@ -685,55 +684,55 @@ const viewPlayerActions =
     room: Room;
     store: Store.Model;
   }): UI.View<Msg> =>
-  (dispatch) => {
-    const roomPlayer = room.players[player];
+    (dispatch) => {
+      const roomPlayer = room.players[player];
 
-    switch (roomPlayer.type) {
-      case "None":
-        return <>None</>;
+      switch (roomPlayer.type) {
+        case "None":
+          return <>None</>;
 
-      case "User":
-        const profile = store.Profile[roomPlayer.userId];
+        case "User":
+          const profile = store.Profile[roomPlayer.userId];
 
-        if (roomPlayer.userId === currentUserId) {
+          if (roomPlayer.userId === currentUserId) {
+            return (
+              <UI.Box sx={{ paddingX: 1 }}>
+                <UI.Button
+                  onClick={() =>
+                    dispatch(["QuitPlaying", { currentUserId, player }])
+                  }
+                  fullWidth
+                >
+                  Quit Playing
+                </UI.Button>
+              </UI.Box>
+            );
+          }
+
+          if (currentUserId === room.hostId) {
+            return (
+              <UI.Box sx={{ paddingX: 1 }}>
+                <UI.Button
+                  onClick={() =>
+                    dispatch(["RemovePlayer", { currentUserId, player }])
+                  }
+                  fullWidth
+                >
+                  Remove Player
+                </UI.Button>
+              </UI.Box>
+            );
+          }
+
           return (
-            <UI.Box sx={{ paddingX: 1 }}>
-              <UI.Button
-                onClick={() =>
-                  dispatch(["QuitPlaying", { currentUserId, player }])
-                }
-                fullWidth
-              >
-                Quit Playing
-              </UI.Button>
+            <UI.Box sx={{ p: 2 }}>
+              <UI.Typography color="text.secondary">
+                No action available
+              </UI.Typography>
             </UI.Box>
           );
-        }
-
-        if (currentUserId === room.hostId) {
-          return (
-            <UI.Box sx={{ paddingX: 1 }}>
-              <UI.Button
-                onClick={() =>
-                  dispatch(["RemovePlayer", { currentUserId, player }])
-                }
-                fullWidth
-              >
-                Remove Player
-              </UI.Button>
-            </UI.Box>
-          );
-        }
-
-        return (
-          <UI.Box sx={{ p: 2 }}>
-            <UI.Typography color="text.secondary">
-              No action available
-            </UI.Typography>
-          </UI.Box>
-        );
-    }
-  };
+      }
+    };
 
 const ViewPlayer = ({
   room,

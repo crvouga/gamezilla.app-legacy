@@ -32,13 +32,13 @@ export type Msg =
   | ["ClickedSubmit"]
   | ["InputtedUsername", string];
 
-export type OutMsg = ["Store", Store.Action];
+type OutAction = Store.Action;
 
 export const update = (
   { userId }: { userId: string },
   msg: Msg,
   model: Model,
-): [Model, Cmd.Cmd<Msg>, OutMsg[]] => {
+): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
     case "InputtedUsername":
       return [{ ...model, username: msg[1] }, Cmd.None, []];
@@ -50,7 +50,7 @@ export const update = (
       return [
         model,
         Route.back,
-        [["Store", Store.Profile.Edit(userId, { username: model.username })]],
+        [["Store", ['Profile', ['Edit', { userId, edits: { username: model.username } }]]]],
       ];
   }
 };
@@ -65,7 +65,7 @@ export const update = (
 
 export const view =
   (model: Model): UI.View<Msg> =>
-  (dispatch) =>
+    (dispatch) =>
     (
       <UI.Page>
         <UI.Header

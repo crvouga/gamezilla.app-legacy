@@ -35,7 +35,7 @@ export const init = (): [Model, Cmd.Cmd<Msg>, Action[]] => {
       highlightedIndex: "None",
     },
     Cmd.None,
-    [["Store", Store.Profile.Search(searchText)]],
+    [["Store", ['Profile', ["Search", { searchText }]]]]
   ];
 };
 
@@ -55,7 +55,7 @@ export type Msg =
   | ["ClickedSelectedDelete", { userId: string }]
   | ["PressedKeyDown", Keyboard.ArrowKey | Keyboard.EnterKey];
 
-export type Action = ["Store", Store.Action];
+export type Action = Store.Action;
 
 export const update = (
   { currentUserId, store }: { currentUserId: string; store: Store.Model },
@@ -65,14 +65,12 @@ export const update = (
   switch (msg[0]) {
     case "ClickedChat":
       const userIds = Object.values(model.selected);
+      const action: Action = ["Store", ['Conversation', ["FindOneElseInsert", { userIds: [...userIds, currentUserId] }]]]
       return [
         model,
         Cmd.None,
         [
-          [
-            "Store",
-            Store.Conversation.FindOneElseInsert(currentUserId, userIds),
-          ],
+          action
         ],
       ];
 
@@ -80,14 +78,15 @@ export const update = (
       return [model, Route.back, []];
 
     case "InputtedSearch":
+      const searchText = msg[1]
       return [
         {
           ...model,
-          searchText: msg[1],
+          searchText,
           highlightedIndex: "None",
         },
         Cmd.None,
-        [["Store", Store.Profile.Search(msg[1])]],
+        [["Store", ["Profile", ["Search", { searchText }]]]],
       ];
 
     case "ClickedSelectedDelete":
@@ -213,131 +212,131 @@ export const view =
     },
     model: Model,
   ): UI.View<Msg> =>
-  (dispatch) => {
-    const mutation = store.mutations.Conversation.FindElseInsert;
+    (dispatch) => {
+      const mutation = store.mutations.Conversation.FindElseInsert;
 
-    const searchQuery =
-      store.queries.Profile.Search[model.searchText] ?? RemoteData.NotAsked;
+      const searchQuery =
+        store.queries.Profile.Search[model.searchText] ?? RemoteData.NotAsked;
 
-    const profiles = Store.Profile.toSearch(model.searchText, store).filter(
-      (profile) => profile.userId !== currentUserProfile.userId,
-    );
+      const profiles = Store.Profile.toSearch(model.searchText, store).filter(
+        (profile) => profile.userId !== currentUserProfile.userId,
+      );
 
-    const selected = Object.keys(model.selected).flatMap((userId) => {
-      const profile = store.Profile[userId];
-      if (profile) {
-        return [profile];
-      }
-      return [];
-    });
-    return (
-      <UI.Page>
-        <UI.Header
-          left={
-            <UI.HeaderBackButton onClick={() => dispatch(["ClickedCancel"])} />
-          }
-          title="New message"
-          right={
-            <UI.Button
-              size="large"
-              disabled={Object.values(model.selected).length === 0}
-              sx={{ marginRight: -1 }}
-              onClick={() => dispatch(["ClickedChat"])}
-              loading={mutation.type === "Loading"}
-            >
-              Chat
-            </UI.Button>
-          }
-        />
-
-        <UI.Typography variant="h6" sx={{ fontWeight: "bold", paddingX: 2 }}>
-          To
-        </UI.Typography>
-
-        <UI.Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            paddingBottom: 2,
-            paddingTop: 1,
-            overflowX: "scroll",
-          }}
-        >
-          {selected.map((profile) => (
-            <UI.Chip
-              sx={{ marginLeft: 1 }}
-              key={profile.userId}
-              label={profile.username}
-              onDelete={() => {
-                dispatch([
-                  "ClickedSelectedDelete",
-                  {
-                    userId: profile.userId,
-                  },
-                ]);
-              }}
-            />
-          ))}
-          <UI.InputBase
-            sx={{ paddingX: 2, flex: 1 }}
-            autoFocus
-            placeholder={selected.length === 0 ? "Search" : ""}
-            value={model.searchText}
-            onKeyDown={(event) => {
-              //
-            }}
-            onChange={(event) => {
-              const searchText = event.currentTarget.value;
-              dispatch(["InputtedSearch", searchText]);
-            }}
+      const selected = Object.keys(model.selected).flatMap((userId) => {
+        const profile = store.Profile[userId];
+        if (profile) {
+          return [profile];
+        }
+        return [];
+      });
+      return (
+        <UI.Page>
+          <UI.Header
+            left={
+              <UI.HeaderBackButton onClick={() => dispatch(["ClickedCancel"])} />
+            }
+            title="New message"
+            right={
+              <UI.Button
+                size="large"
+                disabled={Object.values(model.selected).length === 0}
+                sx={{ marginRight: -1 }}
+                onClick={() => dispatch(["ClickedChat"])}
+                loading={mutation.type === "Loading"}
+              >
+                Chat
+              </UI.Button>
+            }
           />
-        </UI.Box>
 
-        <UI.Divider />
+          <UI.Typography variant="h6" sx={{ fontWeight: "bold", paddingX: 2 }}>
+            To
+          </UI.Typography>
 
-        <UI.List sx={{ overflowY: "scroll", flex: 1 }}>
-          {searchQuery.type === "Success" && profiles.length === 0 && (
-            <UI.Typography sx={{ p: 2 }} color="text.secondary">
-              No account found.
-            </UI.Typography>
-          )}
-
-          {profiles.map((profile, index) => (
-            <SearchResultListItem
-              key={profile.userId}
-              profile={profile}
-              onClick={() => {
-                dispatch([
-                  "ClickedResult",
-                  {
-                    userId: profile.userId,
-                  },
-                ]);
+          <UI.Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              paddingBottom: 2,
+              paddingTop: 1,
+              overflowX: "scroll",
+            }}
+          >
+            {selected.map((profile) => (
+              <UI.Chip
+                sx={{ marginLeft: 1 }}
+                key={profile.userId}
+                label={profile.username}
+                onDelete={() => {
+                  dispatch([
+                    "ClickedSelectedDelete",
+                    {
+                      userId: profile.userId,
+                    },
+                  ]);
+                }}
+              />
+            ))}
+            <UI.InputBase
+              sx={{ paddingX: 2, flex: 1 }}
+              autoFocus
+              placeholder={selected.length === 0 ? "Search" : ""}
+              value={model.searchText}
+              onKeyDown={(event) => {
+                //
               }}
-              selected={profile.userId in model.selected}
-              highlighted={
-                model.highlightedIndex !== "None" &&
-                circularIndex(model.highlightedIndex, profiles.length) === index
-              }
+              onChange={(event) => {
+                const searchText = event.currentTarget.value;
+                dispatch(["InputtedSearch", searchText]);
+              }}
             />
-          ))}
+          </UI.Box>
 
-          {searchQuery.type === "Loading" && (
-            <UI.Box
-              sx={{
-                width: "100%",
-                p: 2,
-                display: "flex",
-                justifyContent: "center",
-              }}
-            >
-              <UI.CircularProgress />
-            </UI.Box>
-          )}
-        </UI.List>
-      </UI.Page>
-    );
-  };
+          <UI.Divider />
+
+          <UI.List sx={{ overflowY: "scroll", flex: 1 }}>
+            {searchQuery.type === "Success" && profiles.length === 0 && (
+              <UI.Typography sx={{ p: 2 }} color="text.secondary">
+                No account found.
+              </UI.Typography>
+            )}
+
+            {profiles.map((profile, index) => (
+              <SearchResultListItem
+                key={profile.userId}
+                profile={profile}
+                onClick={() => {
+                  dispatch([
+                    "ClickedResult",
+                    {
+                      userId: profile.userId,
+                    },
+                  ]);
+                }}
+                selected={profile.userId in model.selected}
+                highlighted={
+                  model.highlightedIndex !== "None" &&
+                  circularIndex(model.highlightedIndex, profiles.length) === index
+                }
+              />
+            ))}
+
+            {searchQuery.type === "Loading" && (
+              <UI.Box
+                sx={{
+                  width: "100%",
+                  p: 2,
+                  display: "flex",
+                  justifyContent: "center",
+                }}
+              >
+                <UI.CircularProgress />
+              </UI.Box>
+            )}
+          </UI.List>
+        </UI.Page>
+      );
+    };
 
 const SearchResultListItem = ({
   profile: searchResult,
