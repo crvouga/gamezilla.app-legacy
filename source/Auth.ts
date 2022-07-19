@@ -45,7 +45,7 @@ export type Msg =
   | ["LoginResulted", Result.Result<{}, {}>]
   | ["LogoutResulted", Result.Result<{}, {}>];
 
-export type Action = ["Logout"];
+export type Action = ["Auth", ["Logout"]];
 
 //
 //
@@ -85,14 +85,18 @@ export const runAction = (
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (action[0]) {
-    case "Logout":
-      return [
-        model,
-        pipe(
-          logout,
-          Cmd.fromTask((result): Msg => ["LogoutResulted", result]),
-        ),
-      ];
+    case "Auth": {
+      switch (action[1][0]) {
+        case "Logout":
+          return [
+            model,
+            pipe(
+              logout,
+              Cmd.fromTask((result): Msg => ["LogoutResulted", result]),
+            ),
+          ];
+      }
+    }
   }
 };
 
@@ -198,12 +202,12 @@ export const subscriptions: Sub.Sub<Msg> = subject;
 //
 //
 
-export const fromSupabaseSession = (session: Supabase.Session | null): Msg => {
-  const userId = session?.user?.id;
+export const fromSupabaseSession = (auth: Supabase.Session | null): Msg => {
+  const userId = auth?.user?.id;
 
   const defaultName =
-    session?.user?.user_metadata?.name ??
-    session?.user?.user_metadata?.full_name ??
+    auth?.user?.user_metadata?.name ??
+    auth?.user?.user_metadata?.full_name ??
     "";
 
   if (userId) {

@@ -1,5 +1,5 @@
 import * as Route from "../Route";
-import * as Session from "../Session";
+import * as Auth from "../Auth";
 import * as Snackbar from "../Snackbar";
 import * as UI from "../UI";
 import { Cmd } from "../Core";
@@ -26,7 +26,7 @@ export const init: Model = { type: "Idle" };
 
 export type Msg = ["ClickedCancel"] | ["ClickedBackdrop"] | ["ClickedLogout"];
 
-type OutAction = ["Session", Session.Action];
+type OutAction = Auth.Action;
 
 export const update = (
   { name }: { name: string },
@@ -41,7 +41,7 @@ export const update = (
       return [model, Route.back, []];
 
     case "ClickedLogout":
-      return [{ type: "LoggingOut" }, Cmd.None, [["Session", ["Logout"]]]];
+      return [{ type: "LoggingOut" }, Cmd.None, [["Auth", ["Logout"]]]];
   }
 };
 

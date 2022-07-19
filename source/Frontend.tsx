@@ -5,7 +5,7 @@ import * as Counter from "./Counter/Frontend";
 import * as Games from "./Games/Frontend";
 import * as Pages from "./Pages";
 import * as Route from "./Route";
-import * as Session from "./Session";
+import * as Auth from "./Auth";
 import * as Snackbar from "./Snackbar";
 import * as Store from "./Store";
 import * as Profile from "./Store/Profile";
@@ -34,28 +34,28 @@ type Model = FrontendModel;
 //
 
 type Status =
-  | { type: "SessionLoading" }
-  | { type: "SessionMissing" }
-  | { type: "ProfileLoading"; session: Session.LoggedIn }
-  | { type: "ProfileMissing"; session: Session.LoggedIn }
-  | { type: "Ready"; profile: Profile.Profile; session: Session.LoggedIn };
+  | { type: "AuthLoading" }
+  | { type: "LoggedOut" }
+  | { type: "ProfileLoading"; auth: Auth.LoggedIn }
+  | { type: "ProfileMissing"; auth: Auth.LoggedIn }
+  | { type: "Ready"; profile: Profile.Profile; auth: Auth.LoggedIn };
 
 export const toStatus = ({
   store,
-  session,
+  auth
 }: {
   store: Store.Model;
-  session: Session.Model;
+  auth: Auth.Model;
 }): Status => {
-  switch (session.type) {
+  switch (auth.type) {
     case "Loading":
-      return { type: "SessionLoading" };
+      return { type: "AuthLoading" };
 
     case "LoggedOut":
-      return { type: "SessionMissing" };
+      return { type: "LoggedOut" };
 
     case "LoggedIn":
-      const { userId } = session;
+      const { userId } = auth;
 
       const result = Option.fromNullable(store.Profile[userId]);
 
@@ -63,7 +63,7 @@ export const toStatus = ({
         case "Some":
           return {
             type: "Ready",
-            session,
+            auth,
             profile: result.value,
           };
 
@@ -72,18 +72,18 @@ export const toStatus = ({
 
           switch (profileQuery.type) {
             case "NotAsked":
-              return { type: "ProfileLoading", session };
+              return { type: "ProfileLoading", auth };
 
             case "Loading":
-              return { type: "ProfileLoading", session };
+              return { type: "ProfileLoading", auth };
 
             case "Failure":
-              return { type: "ProfileMissing", session };
+              return { type: "ProfileMissing", auth };
 
             case "Success":
               return {
                 type: "Ready",
-                session,
+                auth,
                 profile: profileQuery.value,
               };
           }
@@ -105,7 +105,7 @@ export const init = (location: Browser.Location): [Model, Cmd.Cmd<Msg>] => {
     Route.decode,
     Option.withDefault<Route.Route>({ type: "Home" }),
   );
-  const [session, sessionCmd] = Session.init();
+  const [auth, authCmd] = Auth.init();
   const snackbar = Snackbar.init;
   const store = Store.init;
   const game = Games.init;
@@ -120,13 +120,13 @@ export const init = (location: Browser.Location): [Model, Cmd.Cmd<Msg>] => {
       snackbar,
       store,
       game,
-      session,
+      auth: auth,
       page,
       connectionStatus,
       counter,
     },
     Cmd.batch<Msg>([
-      pipe(sessionCmd, Cmd.map(tag("Session"))),
+      pipe(authCmd, Cmd.map(tag("Auth"))),
       pipe(pageCmd, Cmd.map(tag("Page"))),
       pipe(counterCmd, Cmd.map(tag("Counter"))),
     ]),
@@ -147,7 +147,7 @@ type Action =
   | ["Snackbar", Snackbar.Action]
   | ["Store", Store.Action]
   | ["Games", Games.Action]
-  | ["Session", Session.Action];
+  | Auth.Action
 
 //
 //
@@ -214,12 +214,12 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
       ];
     }
 
-    case "Session": {
-      const [sessionNew, sessionCmd] = Session.update(msg[1], model.session);
+    case "Auth": {
+      const [authNew, authCmd] = Auth.update(msg[1], model.auth);
 
       return [
-        { ...model, session: sessionNew },
-        pipe(sessionCmd, Cmd.map(tag("Session"))),
+        { ...model, auth: authNew },
+        pipe(authCmd, Cmd.map(tag("Auth"))),
       ];
     }
 
@@ -240,8 +240,8 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
       switch (status.type) {
         case "ProfileLoading":
         case "ProfileMissing":
-        case "SessionLoading":
-        case "SessionMissing":
+        case "AuthLoading":
+        case "LoggedOut":
           return [model, Cmd.None];
         case "Ready": {
           const { profile } = status;
@@ -263,14 +263,14 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
       const status = toStatus(model);
 
       switch (status.type) {
-        case "SessionLoading":
+        case "AuthLoading":
           return [model, Cmd.None];
 
         case "ProfileLoading":
           return [model, Cmd.None];
 
-        case "SessionMissing": {
-          const [pageNew, pageCmd, actions] = Pages.updateSessionMissing(
+        case "LoggedOut": {
+          const [pageNew, pageCmd, actions] = Pages.updateLoggedOut(
             msg[1],
             model.page,
           );
@@ -283,7 +283,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
         case "ProfileMissing": {
           const [pageNew, pageCmd, actions] = Pages.updateProfileMissing(
-            status.session,
+            status.auth,
             msg[1],
             model.page,
           );
@@ -326,7 +326,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
         case "ProfileMissing": {
           const [page, pageCmd] = Pages.initProfileMissing(
             route,
-            status.session,
+            status.auth,
           );
 
           return [{ ...modelNew, page }, pipe(pageCmd, Cmd.map(tag("Page")))];
@@ -343,11 +343,11 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
           );
         }
 
-        case "SessionLoading":
+        case "AuthLoading":
           return [modelNew, Cmd.None];
 
-        case "SessionMissing": {
-          const [page, pageCmd] = Pages.initSessionMissing(route);
+        case "LoggedOut": {
+          const [page, pageCmd] = Pages.initLoggedOut(route);
 
           return [{ ...modelNew, page }, pipe(pageCmd, Cmd.map(tag("Page")))];
         }
@@ -404,24 +404,24 @@ const updateStatusChanged =
           return pipe(
             [model, Cmd.None],
             andThenMany(runAction, [
-              ["Store", Store.Profile.Get(statusNew.session.userId)],
+              ["Store", Store.Profile.Get(statusNew.auth.userId)],
             ]),
           );
 
         case "ProfileMissing": {
           const [page, pageCmd] = Pages.initProfileMissing(
             model.route,
-            statusNew.session,
+            statusNew.auth,
           );
 
           return [{ ...model, page }, pipe(pageCmd, Cmd.map(tag("Page")))];
         }
 
-        case "SessionLoading":
+        case "AuthLoading":
           return [model, Cmd.None];
 
-        case "SessionMissing": {
-          const [page, pageCmd] = Pages.initSessionMissing(model.route);
+        case "LoggedOut": {
+          const [page, pageCmd] = Pages.initLoggedOut(model.route);
           return [{ ...model, page }, pipe(pageCmd, Cmd.map(tag("Page")))];
         }
 
@@ -474,14 +474,14 @@ const runAction = (action: Action, model: Model): [Model, Cmd.Cmd<Msg>] => {
       ];
     }
 
-    case "Session": {
-      const [sessionNew, sessionCmd] = Session.runAction(
-        action[1],
-        model.session,
+    case "Auth": {
+      const [authNew, authCmd] = Auth.runAction(
+        action,
+        model.auth,
       );
       return [
-        { ...model, session: sessionNew },
-        pipe(sessionCmd, Cmd.map(tag("Session"))),
+        { ...model, auth: authNew },
+        pipe(authCmd, Cmd.map(tag("Auth"))),
       ];
     }
 
@@ -502,7 +502,7 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
   return Sub.batch<Msg>([
     pipe(Games.subscriptions(model.game), Sub.map(tag("Game"))),
     pipe(Pages.subscriptions(model.page), Sub.map(tag("Page"))),
-    pipe(Session.subscriptions, Sub.map(tag("Session"))),
+    pipe(Auth.subscriptions, Sub.map(tag("Auth"))),
     pipe(ConnectionStatus.subscriptions, Sub.map(tag("ConnectionStatus"))),
     fromBackend((toFrontend) => ["ToFrontend", toFrontend]),
   ]);
@@ -520,8 +520,8 @@ const toThemeMode = (model: Model): UI.ThemeMode => {
   const status = toStatus(model);
 
   switch (status.type) {
-    case "SessionLoading":
-    case "SessionMissing":
+    case "AuthLoading":
+    case "LoggedOut":
     case "ProfileLoading":
     case "ProfileMissing":
       return "System";
@@ -578,16 +578,16 @@ const viewMain = (model: Model): UI.View<Msg> => {
 
     case 'Connected': {
       switch (status.type) {
-        case "SessionLoading":
+        case "AuthLoading":
         case "ProfileLoading":
           return viewLoading;
 
-        case "SessionMissing":
-          return pipe(Pages.viewSessionMissing(model.page), UI.map(tag("Page")));
+        case "LoggedOut":
+          return pipe(Pages.viewLoggedOut(model.page), UI.map(tag("Page")));
 
         case "ProfileMissing":
           return pipe(
-            Pages.viewProfileMissing(status.session, model.page),
+            Pages.viewProfileMissing(status.auth, model.page),
             UI.map(tag("Page")),
           );
 

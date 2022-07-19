@@ -1,5 +1,5 @@
 import * as Route from "../Route";
-import * as Session from "../Session";
+import * as Auth from "../Auth";
 import * as UI from "../UI";
 import { Cmd, Option, pipe } from "../Core";
 
@@ -11,7 +11,7 @@ import { Cmd, Option, pipe } from "../Core";
 //
 //
 
-export type Model = ["Idle"] | ["LoggingInWithProvider", Session.Provider];
+export type Model = ["Idle"] | ["LoggingInWithProvider", Auth.Provider];
 
 export const init: Model = ["Idle"];
 
@@ -26,7 +26,7 @@ export const init: Model = ["Idle"];
 export type Msg =
   | ["ClickedGoogleLogin"]
   | ["ClickedEmailLogin"]
-  | ["LoginWithProviderResulted", Session.LoginResult];
+  | ["LoginWithProviderResulted", Auth.LoginResult];
 
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
@@ -37,7 +37,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
       return [
         ["LoggingInWithProvider", "Google"],
         pipe(
-          Session.loginWithProvider({ provider: "Google" }),
+          Auth.loginWithProvider({ provider: "Google" }),
           Cmd.fromTask((result) => ["LoginWithProviderResulted", result]),
         ),
       ];
@@ -63,7 +63,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
 export const view =
   (model: Model): UI.View<Msg> =>
-  (dispatch) =>
+    (dispatch) =>
     (
       <UI.Page
         sx={{

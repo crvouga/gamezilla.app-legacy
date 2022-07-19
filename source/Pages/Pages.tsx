@@ -1,6 +1,6 @@
 import * as Games from "../Games/Frontend";
 import * as Route from "../Route";
-import * as Session from "../Session";
+import * as Auth from "../Auth";
 import * as Snackbar from "../Snackbar";
 import * as Store from "../Store";
 import * as UI from "../UI";
@@ -94,7 +94,7 @@ export type OutAction =
   | ["Store", Store.Action]
   | ["Snackbar", Snackbar.Action]
   | ["Games", Games.Action]
-  | ["Session", Session.Action];
+  | Auth.Action
 
 //
 //
@@ -223,7 +223,7 @@ export const initReady = (
   }
 };
 
-export const initSessionMissing = (
+export const initLoggedOut = (
   route: Route.Route,
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (route.type) {
@@ -269,11 +269,11 @@ export const initSessionMissing = (
 
 export const initProfileMissing = (
   route: Route.Route,
-  session: Session.Session,
+  auth: Auth.Session,
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (route.type) {
     case "ProfileCreate":
-      return [["ProfileCreate", ProfileCreate.init(session)], Cmd.None];
+      return [["ProfileCreate", ProfileCreate.init(auth)], Cmd.None];
 
     case "Logout":
       return [["Logout", Logout.init], Cmd.None];
@@ -298,7 +298,7 @@ export const initProfileMissing = (
     case "AccountCreate":
     case "PasswordReset":
       return [
-        ["ProfileCreate", ProfileCreate.init(session)],
+        ["ProfileCreate", ProfileCreate.init(auth)],
         Route.push({ type: "ProfileCreate" }),
       ];
     default:
@@ -477,7 +477,7 @@ export const updateReady = (
 };
 
 export const updateProfileMissing = (
-  session: Session.Session,
+  auth: Auth.Session,
   msg: Msg,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
@@ -486,7 +486,7 @@ export const updateProfileMissing = (
       if (msg[0] === "Logout") {
         return tagUpdate(
           "Logout",
-          Logout.update({ name: session.defaultName }, msg[1], model[1]),
+          Logout.update({ name: auth.defaultName }, msg[1], model[1]),
         );
       }
       return [model, Cmd.None, []];
@@ -495,7 +495,7 @@ export const updateProfileMissing = (
       if (msg[0] === "ProfileCreate") {
         return tagUpdate(
           "ProfileCreate",
-          ProfileCreate.update(session, msg[1], model[1]),
+          ProfileCreate.update(auth, msg[1], model[1]),
         );
       }
       return [model, Cmd.None, []];
@@ -527,7 +527,7 @@ export const updateProfileMissing = (
   }
 };
 
-export const updateSessionMissing = (
+export const updateLoggedOut = (
   msg: Msg,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
@@ -753,7 +753,7 @@ export const viewReady = (
 };
 
 export const viewProfileMissing = (
-  _session: Session.Session,
+  _auth: Auth.Session,
   model: Model,
 ): UI.View<Msg> => {
   switch (model[0]) {
@@ -790,7 +790,7 @@ export const viewProfileMissing = (
   }
 };
 
-export const viewSessionMissing = (model: Model): UI.View<Msg> => {
+export const viewLoggedOut = (model: Model): UI.View<Msg> => {
   switch (model[0]) {
     case "Login":
       return tagView("Login", Login.view(model[1]));
@@ -845,40 +845,40 @@ const viewBottomNavigation =
     page: "Home" | "Search" | "Chat" | "Account",
     route: Route.Route,
   ): UI.View<Msg> =>
-  (dispatch) => {
-    return (
-      <UI.BottomNavigation
-        showLabels
-        value={route.type}
-        onChange={(_event, routeType) => {
-          if (routeType in Route.routesTypes) {
-            dispatch(["ClickedBottomNavigationLink", { type: routeType }]);
-          }
-        }}
-      >
-        <UI.BottomNavigationAction
-          icon={<UI.Icons.Home />}
-          label="Home"
-          value={Route.routesTypes.Home}
-        />
-        <UI.BottomNavigationAction
-          icon={<UI.Icons.Search />}
-          label="Search"
-          value={Route.routesTypes.Search}
-        />
-        <UI.BottomNavigationAction
-          icon={<UI.Icons.Chat />}
-          label="Chat"
-          value={Route.routesTypes.Chat}
-        />
-        <UI.BottomNavigationAction
-          icon={<UI.Icons.Person />}
-          label="Profile"
-          value={Route.routesTypes.Account}
-        />
-      </UI.BottomNavigation>
-    );
-  };
+    (dispatch) => {
+      return (
+        <UI.BottomNavigation
+          showLabels
+          value={route.type}
+          onChange={(_event, routeType) => {
+            if (routeType in Route.routesTypes) {
+              dispatch(["ClickedBottomNavigationLink", { type: routeType }]);
+            }
+          }}
+        >
+          <UI.BottomNavigationAction
+            icon={<UI.Icons.Home />}
+            label="Home"
+            value={Route.routesTypes.Home}
+          />
+          <UI.BottomNavigationAction
+            icon={<UI.Icons.Search />}
+            label="Search"
+            value={Route.routesTypes.Search}
+          />
+          <UI.BottomNavigationAction
+            icon={<UI.Icons.Chat />}
+            label="Chat"
+            value={Route.routesTypes.Chat}
+          />
+          <UI.BottomNavigationAction
+            icon={<UI.Icons.Person />}
+            label="Profile"
+            value={Route.routesTypes.Account}
+          />
+        </UI.BottomNavigation>
+      );
+    };
 
 //
 //
