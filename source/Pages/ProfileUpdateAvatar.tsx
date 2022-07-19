@@ -107,7 +107,7 @@ export const update = (
 
 export const view = (model: Model): UI.View<Msg> => {
   return (dispatch) => (
-    <UI.Page>
+    <UI.FillBox>
       <UI.Header
         left={
           <UI.Button
@@ -222,6 +222,6 @@ export const view = (model: Model): UI.View<Msg> => {
           Random Seed
         </UI.Button>
       </UI.Box>
-    </UI.Page>
+    </UI.FillBox>
   );
 };

@@ -315,38 +315,38 @@ const theme = {
 
 export const view =
   (model: Model): UI.View<Msg> =>
-  (dispatch) => {
-    return (
-      <UI.Page>
-        <UI.Header
-          left={
-            <UI.HeaderBackButton onClick={() => dispatch(["ClickedBack"])} />
-          }
-          title={
-            model.status.type === "Playing"
-              ? `${model.foodEatenCount} apples`
-              : "Snake"
-          }
-          right={
-            <>
-              <UI.IconButton onClick={() => dispatch(["ClickedToggle"])}>
-                {model.status.type === "Paused" ? (
-                  <UI.Icons.PlayArrow />
-                ) : (
-                  <UI.Icons.Pause />
-                )}
-              </UI.IconButton>
-              <UI.IconButton onClick={() => dispatch(["ClickedRestart"])}>
-                <UI.Icons.RestartAlt />
-              </UI.IconButton>
-            </>
-          }
-        />
+    (dispatch) => {
+      return (
+        <UI.FillBox>
+          <UI.Header
+            left={
+              <UI.HeaderBackButton onClick={() => dispatch(["ClickedBack"])} />
+            }
+            title={
+              model.status.type === "Playing"
+                ? `${model.foodEatenCount} apples`
+                : "Snake"
+            }
+            right={
+              <>
+                <UI.IconButton onClick={() => dispatch(["ClickedToggle"])}>
+                  {model.status.type === "Paused" ? (
+                    <UI.Icons.PlayArrow />
+                  ) : (
+                    <UI.Icons.Pause />
+                  )}
+                </UI.IconButton>
+                <UI.IconButton onClick={() => dispatch(["ClickedRestart"])}>
+                  <UI.Icons.RestartAlt />
+                </UI.IconButton>
+              </>
+            }
+          />
 
-        <Canvas model={model} dispatch={dispatch} />
-      </UI.Page>
-    );
-  };
+          <Canvas model={model} dispatch={dispatch} />
+        </UI.FillBox>
+      );
+    };
 
 const Canvas = ({
   model,
@@ -397,7 +397,7 @@ const Canvas = ({
             dispatch(["MouseMovedBoard", { x, y }]);
           }
         }}
-        onClick={() => {}}
+        onClick={() => { }}
         onTouchMove={(event) => {
           const touch = event.touches[0];
           if (touch) {

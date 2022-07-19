@@ -656,36 +656,38 @@ export const viewReady = (
   switch (model[0]) {
     case "Account":
       return (dispatch) => (
-        <UI.Page>
+        <UI.FillBox>
           {tagView("Account", Account.view(profile, model[1]))(dispatch)}
-        </UI.Page>
+        </UI.FillBox>
       );
 
     case "Chat":
       return (dispatch) => (
-        <UI.Page>
+        <UI.FillBox>
           {tagView("Chat", Chat.view({ profile, store }, model[1]))(dispatch)}
           {viewBottomNavigation({ page: "Chat", currentUserId, route })(dispatch)}
-        </UI.Page>
+        </UI.FillBox>
       );
 
     case "Home":
       return (dispatch) => (
-        <UI.Page>
+        <UI.FillBox>
           {tagView(
             "Home",
             Home.view({ route, profile, game }, model[1]),
           )(dispatch)}
           {viewBottomNavigation({ page: "Home", currentUserId, route })(dispatch)}
-        </UI.Page>
+        </UI.FillBox>
       );
 
     case "Search":
       return (dispatch) => (
-        <UI.Page>
-          {tagView("Search", Search.view({ store }, model[1]))(dispatch)}
+        <UI.FillBox>
+          <UI.FillBox>
+            {tagView("Search", Search.view({ store }, model[1]))(dispatch)}
+          </UI.FillBox>
           {viewBottomNavigation({ page: "Search", currentUserId, route })(dispatch)}
-        </UI.Page>
+        </UI.FillBox>
       );
 
     case "ChatNew":
@@ -737,10 +739,10 @@ export const viewReady = (
       return viewLoading;
 
     case "Profile":
-      return dispatch => <UI.Page>
+      return dispatch => <UI.FillBox>
         {tagView("Profile", Profile.view({ store, currentUserId: profile.userId }, model[1]))(dispatch)}
         {viewBottomNavigation({ page: "Profile", currentUserId, route })(dispatch)}
-      </UI.Page>
+      </UI.FillBox>
 
     case "Login":
     case "ProfileCreate":

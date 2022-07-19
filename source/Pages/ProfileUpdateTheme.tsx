@@ -63,7 +63,7 @@ export const view =
   (profile: Profile.Profile, model: Model): UI.View<Msg> =>
     (dispatch) =>
     (
-      <UI.Page>
+      <UI.FillBox>
         <UI.Header
           left={
             <UI.HeaderBackButton onClick={() => dispatch(["ClickedBack"])} />
@@ -82,5 +82,5 @@ export const view =
             onChange={(themeMode) => dispatch(["ClickedThemeMode", themeMode])}
           />
         </UI.Box>
-      </UI.Page>
+      </UI.FillBox>
     );

@@ -64,7 +64,7 @@ export const view =
   ({ username }: { username: string }, model: Model): UI.View<Msg> =>
     (dispatch) =>
     (
-      <UI.Page>
+      <UI.FillBox>
         <UI.Header title={username} />
 
         <UI.List>
@@ -99,5 +99,5 @@ export const view =
             <UI.ListItemText primary="Admin" />
           </UI.ListItemButton>
         </UI.List>
-      </UI.Page>
+      </UI.FillBox>
     );

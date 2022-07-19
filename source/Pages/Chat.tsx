@@ -91,7 +91,7 @@ export const view =
         .filter((item) => item.profiles.length > 0);
 
       return (
-        <UI.Page>
+        <UI.FillBox>
           <UI.Header title="Chat" />
           <UI.Box sx={{ p: 2 }}>
             <UI.Button
@@ -130,6 +130,6 @@ export const view =
               <UI.CircularProgress />
             </UI.Box>
           )}
-        </UI.Page>
+        </UI.FillBox>
       );
     };

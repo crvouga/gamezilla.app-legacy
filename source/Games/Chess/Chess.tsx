@@ -40,16 +40,16 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
 export const view =
   (_model: Model): UI.View<Msg> =>
-  (dispatch) =>
+    (dispatch) =>
     (
-      <UI.Page>
+      <UI.FillBox>
         <UI.Header
           left={
             <UI.HeaderBackButton onClick={() => dispatch(["ClickedBack"])} />
           }
           title="Chess"
         />
-      </UI.Page>
+      </UI.FillBox>
     );
 
 export const theme = {
