@@ -652,12 +652,12 @@ export const viewReady = (
   },
   model: Model,
 ): UI.View<Msg> => {
+  const currentUserId = profile.userId
   switch (model[0]) {
     case "Account":
       return (dispatch) => (
         <UI.Page>
           {tagView("Account", Account.view(profile, model[1]))(dispatch)}
-          {viewBottomNavigation("Account", route)(dispatch)}
         </UI.Page>
       );
 
@@ -665,7 +665,7 @@ export const viewReady = (
       return (dispatch) => (
         <UI.Page>
           {tagView("Chat", Chat.view({ profile, store }, model[1]))(dispatch)}
-          {viewBottomNavigation("Chat", route)(dispatch)}
+          {viewBottomNavigation({ page: "Chat", currentUserId, route })(dispatch)}
         </UI.Page>
       );
 
@@ -676,7 +676,7 @@ export const viewReady = (
             "Home",
             Home.view({ route, profile, game }, model[1]),
           )(dispatch)}
-          {viewBottomNavigation("Home", route)(dispatch)}
+          {viewBottomNavigation({ page: "Home", currentUserId, route })(dispatch)}
         </UI.Page>
       );
 
@@ -684,7 +684,7 @@ export const viewReady = (
       return (dispatch) => (
         <UI.Page>
           {tagView("Search", Search.view({ store }, model[1]))(dispatch)}
-          {viewBottomNavigation("Search", route)(dispatch)}
+          {viewBottomNavigation({ page: "Search", currentUserId, route })(dispatch)}
         </UI.Page>
       );
 
@@ -737,7 +737,10 @@ export const viewReady = (
       return viewLoading;
 
     case "Profile":
-      return tagView("Profile", Profile.view({ store }, model[1]));
+      return dispatch => <UI.Page>
+        {tagView("Profile", Profile.view({ store, currentUserId: profile.userId }, model[1]))(dispatch)}
+        {viewBottomNavigation({ page: "Profile", currentUserId, route })(dispatch)}
+      </UI.Page>
 
     case "Login":
     case "ProfileCreate":
@@ -842,8 +845,7 @@ const viewLoading: UI.View<Msg> = () => <UI.LoadingPage />;
 
 const viewBottomNavigation =
   (
-    page: "Home" | "Search" | "Chat" | "Account",
-    route: Route.Route,
+    { currentUserId, page, route }: { currentUserId: string, page: "Home" | "Search" | "Chat" | "Profile", route: Route.Route, }
   ): UI.View<Msg> =>
     (dispatch) => {
       return (
@@ -851,9 +853,24 @@ const viewBottomNavigation =
           showLabels
           value={route.type}
           onChange={(_event, routeType) => {
-            if (routeType in Route.routesTypes) {
-              dispatch(["ClickedBottomNavigationLink", { type: routeType }]);
+            if (!Route.isRouteType(routeType)) {
+              return
             }
+            switch (routeType) {
+              case 'Home':
+              case 'Search':
+              case 'Chat': {
+
+                dispatch(["ClickedBottomNavigationLink", { type: routeType }]);
+                break
+              }
+              case "Profile": {
+
+                dispatch(["ClickedBottomNavigationLink", { type: routeType, userId: currentUserId }]);
+                break
+              }
+            }
+
           }}
         >
           <UI.BottomNavigationAction
@@ -874,7 +891,7 @@ const viewBottomNavigation =
           <UI.BottomNavigationAction
             icon={<UI.Icons.Person />}
             label="Profile"
-            value={Route.routesTypes.Account}
+            value={Route.routesTypes.Profile}
           />
         </UI.BottomNavigation>
       );
