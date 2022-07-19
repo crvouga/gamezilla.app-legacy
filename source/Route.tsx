@@ -63,7 +63,7 @@ export const routesTypes: { [routeType in Route["type"]]: string } = {
   Search: "Search",
 };
 
-const isRouteType = (routeType: unknown): routeType is Route["type"] => {
+export const isRouteType = (routeType: unknown): routeType is Route["type"] => {
   return typeof routeType === "string" && routeType in routesTypes;
 };
 
