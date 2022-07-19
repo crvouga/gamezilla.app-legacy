@@ -47,7 +47,7 @@ export type Msg =
   | ["InputtedSeed", ProfileAvatar.Seed]
   | ["RandomSeedGenerated", ProfileAvatar.Seed];
 
-type OutAction = ["Snackbar", Snackbar.Action] | ["Store", Store.Action];
+type OutAction = Snackbar.Action | Store.Action
 
 export const update = (
   { userId }: { userId: string },
@@ -85,14 +85,12 @@ export const update = (
 
     case "ClickedDone":
       return [
-        { ...model },
+        model,
         Route.back,
         [
           [
-            "Store",
-            Store.Profile.Edit(userId, {
-              avatarUrl: ProfileAvatar.toUrl(model),
-            }),
+            "Store", ['Profile', ['Edit', { userId, edits: { avatarUrl: ProfileAvatar.toUrl(model) } }]]
+
           ],
         ],
       ];

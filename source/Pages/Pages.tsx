@@ -91,9 +91,9 @@ export type Msg =
   | ["ClickedBottomNavigationLink", Route.Route];
 
 export type OutAction =
-  | ["Store", Store.Action]
-  | ["Snackbar", Snackbar.Action]
-  | ["Games", Games.Action]
+  | Store.Action
+  | Snackbar.Action
+  | Games.Action
   | Auth.Action
 
 //

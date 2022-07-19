@@ -76,10 +76,9 @@ export type Message = {
 
 export type Queries = {
   Profile: {
-    Get: {
+    FindOne: {
       [userId: string]: RemoteData.Model<Problem, string>;
     };
-    GetMany: RemoteData.Model<Problem, string[]>;
     Search: {
       [searchText: string]: RemoteData.Model<Problem, string[]>;
     };
@@ -123,7 +122,7 @@ export type Mutations = {
       [userId: string]: RemoteData.Model<Problem, string>;
     };
     DeleteForever: {
-      [userId: string]: RemoteData.Model<Problem, string>;
+      [userId: string]: RemoteData.Model<Problem, {}>;
     };
     Create: {
       [userId: string]: RemoteData.Model<Problem, string>;
@@ -133,10 +132,10 @@ export type Mutations = {
     FindElseInsert: RemoteData.Model<Problem, string>;
   };
   Message: {
-    Insert: {
+    Send: {
       [conversationId: string]: RemoteData.Model<Problem, string>;
     };
-    DeleteForever: {
+    Unsend: {
       [messageId: string]: RemoteData.Model<Problem, string>;
     };
   };
@@ -151,3 +150,42 @@ export type Mutations = {
 //
 
 export type Problem = { message: string };
+
+//
+//
+//
+// Init
+//
+//
+//
+
+export const initialStore: Store = {
+  Profile: {},
+  Conversation: {},
+  ProfilesConversations: {},
+  Message: {},
+  queries: {
+    Conversation: {
+      FindOne: {},
+      FindManyByUserId: {},
+    },
+    Profile: {
+      FindOne: {},
+      Search: {},
+    },
+  },
+  mutations: {
+    Conversation: {
+      FindElseInsert: RemoteData.NotAsked,
+    },
+    Profile: {
+      Create: {},
+      Edit: {},
+      DeleteForever: {},
+    },
+    Message: {
+      Send: {},
+      Unsend: {},
+    },
+  },
+};

@@ -68,7 +68,7 @@ export const toStatus = ({
           };
 
         case "None":
-          const profileQuery = Store.Profile.toGetQuery(userId, store);
+          const profileQuery = Store.Profile.toProfile(userId, store);
 
           switch (profileQuery.type) {
             case "NotAsked":
@@ -143,10 +143,10 @@ export const init = (location: Browser.Location): [Model, Cmd.Cmd<Msg>] => {
 
 type Msg = FrontendMsg;
 
-type Action =
-  | ["Snackbar", Snackbar.Action]
-  | ["Store", Store.Action]
-  | ["Games", Games.Action]
+type OutAction =
+  | Snackbar.Action
+  | Games.Action
+  | Store.Action
   | Auth.Action
 
 //
@@ -401,12 +401,12 @@ const updateStatusChanged =
 
       switch (statusNew.type) {
         case "ProfileLoading":
+          const action: OutAction = ["Store", ['Profile', ['FindMany', { userIds: [statusNew.auth.userId] }]]]
+
           return pipe(
             [model, Cmd.None],
-            andThenMany(runAction, [
-              ["Store", Store.Profile.Get(statusNew.auth.userId)],
-            ]),
-          );
+            andThenMany(runAction, [action])
+          )
 
         case "ProfileMissing": {
           const [page, pageCmd] = Pages.initProfileMissing(
@@ -445,10 +445,10 @@ const updateStatusChanged =
       }
     };
 
-const runAction = (action: Action, model: Model): [Model, Cmd.Cmd<Msg>] => {
+const runAction = (action: OutAction, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (action[0]) {
     case "Store": {
-      const [storeNew, storeCmd] = Store.runAction(action[1], model.store);
+      const [storeNew, storeCmd] = Store.runAction(action, model.store);
       return [
         { ...model, store: storeNew },
         pipe(storeCmd, Cmd.map(tag("Store"))),
@@ -457,7 +457,7 @@ const runAction = (action: Action, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
     case "Snackbar": {
       const [snackbarNew, snackbarCmd] = Snackbar.runAction(
-        action[1],
+        action,
         model.snackbar,
       );
       return [
@@ -467,7 +467,7 @@ const runAction = (action: Action, model: Model): [Model, Cmd.Cmd<Msg>] => {
     }
 
     case "Games": {
-      const [gamesNew, gamesCmd] = Games.runAction(action[1], model.game);
+      const [gamesNew, gamesCmd] = Games.runAction(action, model.game);
       return [
         { ...model, game: gamesNew },
         pipe(gamesCmd, Cmd.map(tag("Game"))),

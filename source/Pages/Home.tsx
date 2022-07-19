@@ -26,7 +26,7 @@ export const init: Model = {};
 
 export type Msg = ["ClickedGame", GameName];
 
-export type OutAction = ["Games", Games.Action];
+export type OutAction = Games.Action
 
 export const update = (
   msg: Msg,
@@ -34,7 +34,8 @@ export const update = (
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
     case "ClickedGame":
-      return [model, Cmd.None, [["Games", Games.Open(msg[1])]]];
+      const gameName = msg[1]
+      return [model, Cmd.None, [["Games", ['Open', gameName]]]];
   }
 };
 
@@ -67,7 +68,7 @@ export const view =
     },
     _model: Model,
   ): UI.View<Msg> =>
-  (dispatch) =>
+    (dispatch) =>
     (
       <UI.Page>
         <UI.Header title="Home" />
