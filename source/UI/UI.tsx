@@ -368,10 +368,13 @@ export const Page = ({ children, sx }: Mui.BoxProps) => {
   );
 };
 
-export const LoadingPage = () => {
+export const LoadingPage = ({ title }: { title?: string }) => {
   return (
     <Page sx={{ justifyContent: "center", alignItems: "center" }}>
-      <CircularProgress />
+      <CircularProgress sx={{ marginBottom: 2 }} />
+      <Typography align="center" variant="caption" color="text.secondary">
+        {title}
+      </Typography>
     </Page>
   );
 };

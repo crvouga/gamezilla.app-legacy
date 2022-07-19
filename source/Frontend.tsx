@@ -562,11 +562,6 @@ export const view =
             )(dispatch)}
 
             {viewGameBanner(model)(dispatch)}
-
-            {pipe(
-              ConnectionStatus.view(model.connectionStatus),
-              UI.map(tag("ConnectionStatus")),
-            )(dispatch)}
           </UI.Box>
         </UI.ThemeProvider>
       );
@@ -575,50 +570,59 @@ export const view =
 const viewMain = (model: Model): UI.View<Msg> => {
   const status = toStatus(model);
 
-  switch (status.type) {
-    case "SessionLoading":
-      return viewLoading;
+  switch (model.connectionStatus) {
+    case 'Connecting':
+    case 'Disconnected':
+    case 'Reconnecting':
+      return viewLoading
 
-    case "ProfileLoading":
-      return viewLoading;
+    case 'Connected': {
+      switch (status.type) {
+        case "SessionLoading":
+        case "ProfileLoading":
+          return viewLoading;
 
-    case "SessionMissing":
-      return pipe(Pages.viewSessionMissing(model.page), UI.map(tag("Page")));
+        case "SessionMissing":
+          return pipe(Pages.viewSessionMissing(model.page), UI.map(tag("Page")));
 
-    case "ProfileMissing":
-      return pipe(
-        Pages.viewProfileMissing(status.session, model.page),
-        UI.map(tag("Page")),
-      );
+        case "ProfileMissing":
+          return pipe(
+            Pages.viewProfileMissing(status.session, model.page),
+            UI.map(tag("Page")),
+          );
 
-    case "Ready":
-      if (model.route.type === "Game") {
-        return pipe(
-          Games.view(
-            { store: model.store, currentUserId: status.profile.userId },
-            model.game,
-          ),
-          UI.map(tag("Game")),
-        );
+        case "Ready":
+          if (model.route.type === "Game") {
+            return pipe(
+              Games.view(
+                { store: model.store, currentUserId: status.profile.userId },
+                model.game,
+              ),
+              UI.map(tag("Game")),
+            );
+          }
+
+          if (model.route.type === "Admin") {
+            return pipe(Admin.view(model.admin), UI.map(tag("Admin")));
+          }
+
+          return pipe(
+            Pages.viewReady(
+              {
+                route: model.route,
+                profile: status.profile,
+                game: model.game,
+                store: model.store,
+              },
+              model.page,
+            ),
+            UI.map(tag("Page")),
+          );
       }
-
-      if (model.route.type === "Admin") {
-        return pipe(Admin.view(model.admin), UI.map(tag("Admin")));
-      }
-
-      return pipe(
-        Pages.viewReady(
-          {
-            route: model.route,
-            profile: status.profile,
-            game: model.game,
-            store: model.store,
-          },
-          model.page,
-        ),
-        UI.map(tag("Page")),
-      );
+    }
   }
+
+
 };
 
 const viewLoading: UI.View<Msg> = () => <UI.LoadingPage />;
