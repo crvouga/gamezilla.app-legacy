@@ -110,11 +110,8 @@ export const run = <Model, Msg>(program: Program<Model, Msg>): (() => void) => {
 
   const cmdSub = cmd$.subscribe((task) => task().then(Option.map(dispatch)));
 
-  console.log("[program] started");
-
   return () => {
     cmdSub.unsubscribe();
     subSub.unsubscribe();
-    console.log("[program] stopped");
   };
 };

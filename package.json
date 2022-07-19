@@ -5,7 +5,7 @@
     "backend:start": "npx ts-node -r tsconfig-paths/register ./source/Backend.ts",
     "format": "npx prettier --write .",
     "frontend:build": "vite build --emptyOutDir",
-    "frontend:dev": "vite",
+    "frontend:dev": "vite --open",
     "frontend:dev:many": "npx concurrently \"npm run frontend:dev\" \"npm run frontend:dev\" \"npm run frontend:dev\"",
     "heroku:local": "PORT=9001 npx heroku local",
     "heroku:logs": "heroku logs --tail --app gamezilla",

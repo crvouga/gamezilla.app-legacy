@@ -1,10 +1,9 @@
 import * as Clients from "./Clients";
 import * as Counter from "./Counter/Backend";
 import * as Games from "./Games/Backend";
-import { broadcast, fromFrontend, sendToFrontend } from "./Bridge/Backend";
+import { broadcast, fromFrontend } from "./Bridge/Backend";
 import { ClientId } from "./Bridge/Bridge";
 import { Cmd, Platform, Sub, pipe } from "./Core";
-import { formatMsg } from "./Core/Debug";
 import { BackendModel, BackendMsg, ToBackend } from "./Types";
 import { andThen, tag } from "./Utility";
 
@@ -144,18 +143,12 @@ export const subscriptions = (model: Model): Sub.Sub<BackendMsg> => {
 //
 
 const program = Platform.worker({
-  init: init,
-  subscriptions: subscriptions,
-  update: update,
+  init,
+  subscriptions,
+  update,
 });
 
 Platform.run(program);
 
-program.state$.subscribe((state) => {
-  const msg = state.msg;
-  if (msg) {
-    console.log(`[backend] ${formatMsg(msg)} `);
-    return;
-  }
-  console.log(`[backend] init ${JSON.stringify(state.model, null, 4)}`);
-});
+console.clear();
+console.log("[backend] [program] running");

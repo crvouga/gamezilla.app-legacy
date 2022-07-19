@@ -29,7 +29,7 @@ export type Route =
   | { type: "ChatNew" }
   | { type: "ChatConversation"; conversationId: string }
   | { type: "Search" }
-  | { type: "Admin" };
+  | { type: "Admin", tab: "Model" | "Msg" };
 
 //
 //
@@ -96,6 +96,16 @@ export const decode = (location: Browser.Location): Option.Option<Route> => {
       return Option.None;
     }
 
+    case 'Admin': {
+      if (typeof second === "string" && (second === "Model" || second === "Msg")) {
+        return Option.Some({
+          type: "Admin",
+          tab: second,
+        });
+      }
+      return Option.None;
+    }
+
     default: {
       return Option.Some({ type: first });
     }
@@ -109,6 +119,9 @@ export const encode = (route: Route): string => {
 
     case "Profile":
       return `/${route.type}/${route.userId}`;
+
+    case 'Admin':
+      return `/${route.type}/${route.tab}`;
 
     default:
       return `/${route.type}`;
