@@ -225,6 +225,10 @@ export const InputAdornment = Mui.InputAdornment;
 
 export const Typography = Mui.Typography;
 
+export const Tabs = Mui.Tabs;
+
+export const Tab = Mui.Tab;
+
 export const Drawer = Mui.Drawer;
 
 export const Card = Mui.Card;
@@ -443,33 +447,33 @@ export const conformationDialog =
     confirmTitle: string;
     cancelTitle?: string;
   }): View<TMsg> =>
-  (dispatch) => {
-    return (
-      <Dialog open={open} onClose={() => dispatch(onClose)}>
-        <DialogTitle>{title}</DialogTitle>
-        <DialogActions>
-          <Button onClick={() => dispatch(onCancel)}>{cancelTitle}</Button>
-          <Button onClick={() => dispatch(onConfirm)}>{confirmTitle}</Button>
-        </DialogActions>
-      </Dialog>
-    );
-  };
+    (dispatch) => {
+      return (
+        <Dialog open={open} onClose={() => dispatch(onClose)}>
+          <DialogTitle>{title}</DialogTitle>
+          <DialogActions>
+            <Button onClick={() => dispatch(onCancel)}>{cancelTitle}</Button>
+            <Button onClick={() => dispatch(onConfirm)}>{confirmTitle}</Button>
+          </DialogActions>
+        </Dialog>
+      );
+    };
 
 export const loadingDialog =
   <TMsg,>({ open, title }: { open: boolean; title: string }): View<TMsg> =>
-  (dispatch) => {
-    return (
-      <Dialog open={open}>
-        <Box sx={{ display: "flex", alignItems: "center", p: 2 }}>
-          <CircularProgress sx={{ marginRight: 2 }} />
-          <Typography variant="h6">{title}</Typography>
-        </Box>
-      </Dialog>
-    );
-  };
+    (dispatch) => {
+      return (
+        <Dialog open={open}>
+          <Box sx={{ display: "flex", alignItems: "center", p: 2 }}>
+            <CircularProgress sx={{ marginRight: 2 }} />
+            <Typography variant="h6">{title}</Typography>
+          </Box>
+        </Dialog>
+      );
+    };
 
 export const fragement =
   <TMsg,>(...children: View<TMsg>[]): View<TMsg> =>
-  (dispatch) => {
-    return <>{children.map((child) => child(dispatch))}</>;
-  };
+    (dispatch) => {
+      return <>{children.map((child) => child(dispatch))}</>;
+    };

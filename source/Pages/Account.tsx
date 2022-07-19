@@ -36,7 +36,7 @@ export const update = (
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
     case "ClickedAdmin":
-      return [model, Route.push({ type: "Admin" })];
+      return [model, Route.push({ type: "Admin", tab: "Model" })];
 
     case "ClickedBack":
       return [model, Route.back];
@@ -62,7 +62,7 @@ export const update = (
 
 export const view =
   ({ username }: { username: string }, model: Model): UI.View<Msg> =>
-  (dispatch) =>
+    (dispatch) =>
     (
       <UI.Page>
         <UI.Header title={username} />

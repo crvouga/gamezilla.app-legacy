@@ -112,7 +112,7 @@ export const init = (location: Browser.Location): [Model, Cmd.Cmd<Msg>] => {
   const [page, pageCmd] = Pages.initLoading();
   const [counter, counterCmd] = Counter.init;
   const connectionStatus = ConnectionStatus.init;
-  const admin = Admin.init;
+  const admin = Admin.init("Model");
   return [
     {
       admin,
@@ -391,59 +391,59 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
 const updateStatusChanged =
   (modelPrev: Model) =>
-  (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
-    const statusPrev = toStatus(modelPrev);
-    const statusNew = toStatus(model);
+    (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
+      const statusPrev = toStatus(modelPrev);
+      const statusNew = toStatus(model);
 
-    if (statusNew.type === statusPrev.type) {
-      return [model, Cmd.None];
-    }
-
-    switch (statusNew.type) {
-      case "ProfileLoading":
-        return pipe(
-          [model, Cmd.None],
-          andThenMany(runAction, [
-            ["Store", Store.Profile.Get(statusNew.session.userId)],
-          ]),
-        );
-
-      case "ProfileMissing": {
-        const [page, pageCmd] = Pages.initProfileMissing(
-          model.route,
-          statusNew.session,
-        );
-
-        return [{ ...model, page }, pipe(pageCmd, Cmd.map(tag("Page")))];
-      }
-
-      case "SessionLoading":
+      if (statusNew.type === statusPrev.type) {
         return [model, Cmd.None];
-
-      case "SessionMissing": {
-        const [page, pageCmd] = Pages.initSessionMissing(model.route);
-        return [{ ...model, page }, pipe(pageCmd, Cmd.map(tag("Page")))];
       }
 
-      case "Ready": {
-        if (model.route.type === "Game" && model.game.type === "Closed") {
-          return [model, Route.replace({ type: "Home" })];
+      switch (statusNew.type) {
+        case "ProfileLoading":
+          return pipe(
+            [model, Cmd.None],
+            andThenMany(runAction, [
+              ["Store", Store.Profile.Get(statusNew.session.userId)],
+            ]),
+          );
+
+        case "ProfileMissing": {
+          const [page, pageCmd] = Pages.initProfileMissing(
+            model.route,
+            statusNew.session,
+          );
+
+          return [{ ...model, page }, pipe(pageCmd, Cmd.map(tag("Page")))];
         }
 
-        const [page, pageCmd, actions] = Pages.initReady(
-          model.route,
-          statusNew.profile,
-        );
-        return pipe(
-          [{ ...model, page }, pipe(pageCmd, Cmd.map(tag("Page")))],
-          andThenMany(runAction, actions),
-        );
-      }
+        case "SessionLoading":
+          return [model, Cmd.None];
 
-      default:
-        return exhaustive(statusNew);
-    }
-  };
+        case "SessionMissing": {
+          const [page, pageCmd] = Pages.initSessionMissing(model.route);
+          return [{ ...model, page }, pipe(pageCmd, Cmd.map(tag("Page")))];
+        }
+
+        case "Ready": {
+          if (model.route.type === "Game" && model.game.type === "Closed") {
+            return [model, Route.replace({ type: "Home" })];
+          }
+
+          const [page, pageCmd, actions] = Pages.initReady(
+            model.route,
+            statusNew.profile,
+          );
+          return pipe(
+            [{ ...model, page }, pipe(pageCmd, Cmd.map(tag("Page")))],
+            andThenMany(runAction, actions),
+          );
+        }
+
+        default:
+          return exhaustive(statusNew);
+      }
+    };
 
 const runAction = (action: Action, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (action[0]) {
@@ -532,45 +532,45 @@ const toThemeMode = (model: Model): UI.ThemeMode => {
 
 export const view =
   (model: Model): UI.View<Msg> =>
-  (dispatch) => {
-    return (
-      <UI.ThemeProvider themeMode={toThemeMode(model)}>
-        <UI.Box
-          sx={{
-            userSelect: "none",
-            maxWidth: "sm",
-            marginX: "auto",
-            position: "fixed",
-            width: "100%",
-            height: "100%",
-            overflow: "hidden",
-            maxHeight: "100%",
-            display: "flex",
-            flexDirection: "column",
-            left: "50%",
-            top: "50%",
-            transform: "translate(-50%, -50%)",
-          }}
-        >
-          <UI.Box sx={{ width: "100%", overflow: "hidden", flex: 1 }}>
-            {viewMain(model)(dispatch)}
+    (dispatch) => {
+      return (
+        <UI.ThemeProvider themeMode={toThemeMode(model)}>
+          <UI.Box
+            sx={{
+              userSelect: "none",
+              maxWidth: "sm",
+              marginX: "auto",
+              position: "fixed",
+              width: "100%",
+              height: "100%",
+              overflow: "hidden",
+              maxHeight: "100%",
+              display: "flex",
+              flexDirection: "column",
+              left: "50%",
+              top: "50%",
+              transform: "translate(-50%, -50%)",
+            }}
+          >
+            <UI.Box sx={{ width: "100%", overflow: "hidden", flex: 1 }}>
+              {viewMain(model)(dispatch)}
+            </UI.Box>
+
+            {pipe(
+              Snackbar.view({}, model.snackbar),
+              UI.map(tag("Snackbar")),
+            )(dispatch)}
+
+            {viewGameBanner(model)(dispatch)}
+
+            {pipe(
+              ConnectionStatus.view(model.connectionStatus),
+              UI.map(tag("ConnectionStatus")),
+            )(dispatch)}
           </UI.Box>
-
-          {pipe(
-            Snackbar.view({}, model.snackbar),
-            UI.map(tag("Snackbar")),
-          )(dispatch)}
-
-          {viewGameBanner(model)(dispatch)}
-
-          {pipe(
-            ConnectionStatus.view(model.connectionStatus),
-            UI.map(tag("ConnectionStatus")),
-          )(dispatch)}
-        </UI.Box>
-      </UI.ThemeProvider>
-    );
-  };
+        </UI.ThemeProvider>
+      );
+    };
 
 const viewMain = (model: Model): UI.View<Msg> => {
   const status = toStatus(model);
@@ -625,23 +625,23 @@ const viewLoading: UI.View<Msg> = () => <UI.LoadingPage />;
 
 const viewGameBanner =
   (model: Model): UI.View<Msg> =>
-  (dispatch) => {
-    switch (model.game.type) {
-      case "Closed":
-        return <></>;
-
-      case "Opened":
-        if (model.page[0] === "Game") {
+    (dispatch) => {
+      switch (model.game.type) {
+        case "Closed":
           return <></>;
-        }
 
-        return (
-          <>
-            {pipe(Games.viewBanner(model.game), UI.map(tag("Game")))(dispatch)}
-          </>
-        );
-    }
-  };
+        case "Opened":
+          if (model.page[0] === "Game") {
+            return <></>;
+          }
+
+          return (
+            <>
+              {pipe(Games.viewBanner(model.game), UI.map(tag("Game")))(dispatch)}
+            </>
+          );
+      }
+    };
 
 //
 //

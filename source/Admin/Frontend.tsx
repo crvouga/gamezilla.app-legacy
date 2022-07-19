@@ -16,8 +16,11 @@ import { FrontendModel, ToFrontend } from "./Types";
 
 export type Model = FrontendModel;
 
-export const init: Model = {
-  backendModel: RemoteData.Loading,
+export const init = (tab: "Model" | "Msg"): Model => {
+  return {
+    backendModel: RemoteData.Loading,
+    tab: "Model"
+  }
 };
 
 //
@@ -71,21 +74,51 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
 
 export const view =
   (model: Model): UI.View<Msg> =>
-  (dispatch) => {
-    return (
-      <UI.Page>
-        <UI.Toolbar>
-          <UI.Box sx={{ flex: 1 }}>
-            <UI.HeaderBackButton onClick={() => dispatch(["ClickedBack"])} />
-          </UI.Box>
-          <UI.Typography variant="h6" align="center" sx={{ flex: 1 }}>
-            Admin
-          </UI.Typography>
-          <UI.Box sx={{ flex: 1 }}></UI.Box>
-        </UI.Toolbar>
-        <UI.Typography variant="h6" gutterBottom sx={{ paddingX: 2 }}>
-          Backend State
-        </UI.Typography>
-      </UI.Page>
-    );
-  };
+    (dispatch) => {
+      return (
+        <UI.Page>
+          <UI.Toolbar>
+            <UI.Box sx={{ flex: 1 }}>
+              <UI.HeaderBackButton onClick={() => dispatch(["ClickedBack"])} />
+            </UI.Box>
+            <UI.Typography variant="h6" align="center" sx={{ flex: 1 }}>
+              Backend
+            </UI.Typography>
+            <UI.Box sx={{ flex: 1 }}></UI.Box>
+          </UI.Toolbar>
+          <UI.Tabs variant="fullWidth" centered>
+            <UI.Tab label="Model" />
+            <UI.Tab label="Msg" />
+          </UI.Tabs>
+          <ViewBackendModel model={model} />
+        </UI.Page>
+      );
+    };
+
+
+
+
+
+const ViewBackendModel = ({ model }: { model: Model }) => {
+  switch (model.backendModel.type) {
+    case 'Loading':
+    case 'NotAsked':
+    case 'Failure':
+      return <ViewLoading />
+
+    case 'Success':
+      return (
+        <pre style={{ overflow: "scroll", padding: 0, margin: 0 }}>
+          {JSON.stringify(model.backendModel.value, null, 2)}
+        </pre>
+      )
+  }
+}
+
+const ViewLoading = () => {
+  return (
+    <UI.Box sx={{ width: "100%", flex: 1, display: "flex", alignItems: "center", justifyContent: 'center' }}>
+      <UI.CircularProgress />
+    </UI.Box>
+  )
+}
