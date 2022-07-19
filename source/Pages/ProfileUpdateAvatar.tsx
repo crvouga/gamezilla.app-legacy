@@ -1,4 +1,4 @@
-import * as ProfileAvatar from "../ProfileAvatar";
+import { ProfileAvatar } from "../Data";
 import * as Route from "../Route";
 import * as Snackbar from "../Snackbar";
 import * as Store from "../Store";

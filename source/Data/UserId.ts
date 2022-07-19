@@ -1,4 +1,4 @@
-import { Result } from "./Core";
+import { Result } from "../Core";
 
 export type UserId = string & { _opaque: typeof UserId };
 

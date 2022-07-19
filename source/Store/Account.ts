@@ -1,5 +1,4 @@
-import * as EmailAddress from "../EmailAddress";
-import * as Password from "../Password";
+import { EmailAddress, Password } from "../Data";
 import * as Supabase from "../Supabase";
 import { Option, Result, Task, pipe } from "../Core";
 import { definitions } from "../supabase-types";
