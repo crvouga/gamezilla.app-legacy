@@ -63,15 +63,15 @@ const isFull = (columns: Columns) => {
 
 type IStatus =
   | {
-      type: "Playing";
-    }
+    type: "Playing";
+  }
   | {
-      type: "Winner";
-      winner: IPlayer;
-    }
+    type: "Winner";
+    winner: IPlayer;
+  }
   | {
-      type: "Tie";
-    };
+    type: "Tie";
+  };
 
 export const toStatus = (columns: Columns): IStatus => {
   const winningLines = Array.from(
@@ -371,9 +371,9 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
 export const view =
   (model: Model): UI.View<Msg> =>
-  (dispatch) =>
+    (dispatch) =>
     (
-      <UI.Page>
+      <UI.FillBox>
         <UI.Header
           left={
             <UI.HeaderBackButton onClick={() => dispatch(["ClickecBack"])} />
@@ -398,7 +398,7 @@ export const view =
         >
           Restart
         </UI.Button>
-      </UI.Page>
+      </UI.FillBox>
     );
 
 const Board = ({

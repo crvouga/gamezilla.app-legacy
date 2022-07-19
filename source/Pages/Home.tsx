@@ -70,7 +70,7 @@ export const view =
   ): UI.View<Msg> =>
     (dispatch) =>
     (
-      <UI.Page>
+      <UI.FillBox>
         <UI.Header title="Home" />
         <UI.Box
           sx={{
@@ -106,7 +106,7 @@ export const view =
             onClick={() => dispatch(["ClickedGame", "Snake"])}
           />
         </UI.Box>
-      </UI.Page>
+      </UI.FillBox>
     );
 
 const GameCard = ({

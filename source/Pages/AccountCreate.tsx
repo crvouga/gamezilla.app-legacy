@@ -202,7 +202,7 @@ export const view =
   (model: Model): UI.View<Msg> =>
     (dispatch) => {
       return (
-        <UI.Page>
+        <UI.FillBox>
           <UI.Header
             left={
               <UI.HeaderBackButton onClick={() => dispatch(["ClickedBack"])} />
@@ -292,6 +292,6 @@ export const view =
               Login
             </UI.Button>
           </UI.Box>
-        </UI.Page>
+        </UI.FillBox>
       );
     };

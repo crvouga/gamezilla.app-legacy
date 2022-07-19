@@ -115,7 +115,7 @@ export const view =
   (model: Model): UI.View<Msg> =>
     (dispatch) =>
     (
-      <UI.Page>
+      <UI.FillBox>
         <UI.Header
           left={
             <UI.Button
@@ -178,5 +178,5 @@ export const view =
             Create Profile
           </UI.Button>
         </UI.Box>
-      </UI.Page>
+      </UI.FillBox>
     );

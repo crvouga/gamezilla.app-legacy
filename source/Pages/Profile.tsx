@@ -90,7 +90,7 @@ export const view =
 
       if (!profile) {
         return (
-          <UI.Page>
+          <UI.FillBox>
             <UI.Header
               left={
                 <UI.HeaderBackButton
@@ -109,13 +109,13 @@ export const view =
             >
               <UI.CircularProgress />
             </UI.Box>
-          </UI.Page>
+          </UI.FillBox>
         )
       }
 
       if (profile.userId === currentUserId) {
         return (
-          <UI.Page>
+          <UI.FillBox>
             <UI.Header
               left={
                 <UI.HeaderBackButton
@@ -150,12 +150,12 @@ export const view =
                 Edit Profile
               </UI.Button>
             </UI.Box>
-          </UI.Page>
+          </UI.FillBox>
         )
       }
 
       return (
-        <UI.Page>
+        <UI.FillBox>
           <UI.Header
             left={
               <UI.HeaderBackButton
@@ -201,7 +201,7 @@ export const view =
               Send Message
             </UI.Button>
           </UI.Box>
-        </UI.Page>)
+        </UI.FillBox>)
 
     }
 

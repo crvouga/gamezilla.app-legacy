@@ -65,7 +65,7 @@ export const view =
   (model: Model): UI.View<Msg> =>
     (dispatch) =>
     (
-      <UI.Page
+      <UI.FillBox
         sx={{
           alignItems: "center",
           justifyContent: "center",
@@ -100,7 +100,7 @@ export const view =
         >
           Continue With Email
         </UI.Button>
-      </UI.Page>
+      </UI.FillBox>
     );
 
 const ContinueWithGoogleButton = ({

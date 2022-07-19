@@ -291,7 +291,7 @@ const ViewNotInRoom = ({
   dispatch: (msg: Msg) => void;
 }) => {
   return (
-    <UI.Page>
+    <UI.FillBox>
       <UI.Header
         left={<UI.HeaderBackButton onClick={() => dispatch(["ClickedBack"])} />}
         title="Tic Tac Toe"
@@ -351,7 +351,7 @@ const ViewNotInRoom = ({
             </UI.ListItemButton>
           ))}
       </UI.List>
-    </UI.Page>
+    </UI.FillBox>
   );
 };
 
@@ -393,7 +393,7 @@ const ViewInRoom = ({
 
   return (
     <>
-      <UI.Page>
+      <UI.FillBox>
         <UI.Toolbar>
           <UI.Button
             // loading={model.leaveRoom.type === "Loading"}
@@ -448,7 +448,7 @@ const ViewInRoom = ({
         />
 
         <EventLogList room={room} store={store} />
-      </UI.Page>
+      </UI.FillBox>
 
       <UI.Drawer
         open={model.opened[0] === "Users"}

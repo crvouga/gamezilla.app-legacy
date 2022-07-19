@@ -177,7 +177,7 @@ export const view =
         RemoteData.NotAsked;
 
       return (
-        <UI.Page>
+        <UI.FillBox>
           <UI.Toolbar>
             <UI.Box sx={{ flex: 1 }}>
               <UI.HeaderBackButton onClick={() => dispatch(["ClickedBack"])} />
@@ -231,7 +231,7 @@ export const view =
             onSend={() => dispatch(["ClickedSend"])}
             isSending={messageInsertMutation.type === "Loading"}
           />
-        </UI.Page>
+        </UI.FillBox>
       );
     };
 

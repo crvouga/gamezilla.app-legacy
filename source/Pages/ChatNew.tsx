@@ -230,7 +230,7 @@ export const view =
         return [];
       });
       return (
-        <UI.Page>
+        <UI.FillBox>
           <UI.Header
             left={
               <UI.HeaderBackButton onClick={() => dispatch(["ClickedCancel"])} />
@@ -334,7 +334,7 @@ export const view =
               </UI.Box>
             )}
           </UI.List>
-        </UI.Page>
+        </UI.FillBox>
       );
     };
 

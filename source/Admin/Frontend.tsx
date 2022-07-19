@@ -76,7 +76,7 @@ export const view =
   (model: Model): UI.View<Msg> =>
     (dispatch) => {
       return (
-        <UI.Page>
+        <UI.FillBox>
           <UI.Toolbar>
             <UI.Box sx={{ flex: 1 }}>
               <UI.HeaderBackButton onClick={() => dispatch(["ClickedBack"])} />
@@ -91,7 +91,7 @@ export const view =
             <UI.Tab label="Msg" />
           </UI.Tabs>
           <ViewBackendModel model={model} />
-        </UI.Page>
+        </UI.FillBox>
       );
     };
 
