@@ -131,8 +131,8 @@ const toWins = (board: Board): Wins => {
       const winner: Winner = slots.every((slot) => slot === "X")
         ? "X"
         : slots.every((slot) => slot === "O")
-        ? "O"
-        : "None";
+          ? "O"
+          : "None";
 
       return { ...wins, [winner]: [...wins[winner], winningGroup] };
     },
@@ -187,7 +187,7 @@ export const toTurn = (board: Board): Player => {
   return frequency["X"] <= frequency["O"] ? "X" : "O";
 };
 
-export type MoveProblem = "NotTurn" | "PositionTaken" | "Gameover";
+export type MoveProblem = "not_players_turn" | "position_is_taken" | "gameover";
 
 export const move = (
   board: Board,
@@ -197,17 +197,17 @@ export const move = (
   const status = toStatus(board);
 
   if (status.type === "Tie" || status.type === "Win") {
-    return Result.Err("Gameover");
+    return Result.Err("gameover");
   }
 
   if (status.turn !== player) {
-    return Result.Err("NotTurn");
+    return Result.Err("not_players_turn");
   }
 
   const slot = toSlot(board, position);
 
   if (slot !== "Empty") {
-    return Result.Err("PositionTaken");
+    return Result.Err("not_players_turn");
   }
 
   return Result.Ok(setSlot(board, position, player));

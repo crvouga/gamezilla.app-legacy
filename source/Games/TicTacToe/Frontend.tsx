@@ -555,12 +555,13 @@ const ViewRoomEvent = ({
         roomEvent[1],
         Result.fold(
           () => <></>,
-          ({ userId }) => (
-            <RoomEventLog
-              avatarUrl={store.Profile[userId]?.avatarUrl}
-              text={`${store.Profile[userId]?.username} created room`}
-            />
-          ),
+          () => <></>,
+          // ({ userId }) => (
+          //   <RoomEventLog
+          //     avatarUrl={store.Profile[userId]?.avatarUrl}
+          //     text={`${store.Profile[userId]?.username} created room`}
+          //   />
+          // ),
         ),
       );
     }
@@ -570,12 +571,13 @@ const ViewRoomEvent = ({
         roomEvent[1],
         Result.fold(
           () => <></>,
-          ({ userId }) => (
-            <RoomEventLog
-              avatarUrl={store.Profile[userId]?.avatarUrl}
-              text={`${store.Profile[userId]?.username} joined room`}
-            />
-          ),
+          () => <></>,
+          // ({ userId }) => (
+          //   <RoomEventLog
+          //     avatarUrl={store.Profile[userId]?.avatarUrl}
+          //     text={`${store.Profile[userId]?.username} joined room`}
+          //   />
+          // ),
         ),
       );
 
@@ -584,12 +586,13 @@ const ViewRoomEvent = ({
         roomEvent[1],
         Result.fold(
           () => <></>,
-          ({ userId }) => (
-            <RoomEventLog
-              avatarUrl={store.Profile[userId]?.avatarUrl}
-              text={`${store.Profile[userId]?.username} lefted room`}
-            />
-          ),
+          () => <></>,
+          // ({ userId }) => (
+          //   <RoomEventLog
+          //     avatarUrl={store.Profile[userId]?.avatarUrl}
+          //     text={`${store.Profile[userId]?.username} lefted room`}
+          //   />
+          // ),
         ),
       );
 
@@ -598,12 +601,13 @@ const ViewRoomEvent = ({
         roomEvent[1],
         Result.fold(
           () => <></>,
-          ({ userId }) => (
-            <RoomEventLog
-              avatarUrl={store.Profile[userId]?.avatarUrl}
-              text={`${store.Profile[userId]?.username} moved`}
-            />
-          ),
+          () => <></>,
+          // ({ userId }) => (
+          //   <RoomEventLog
+          //     avatarUrl={store.Profile[userId]?.avatarUrl}
+          //     text={`${store.Profile[userId]?.username} moved`}
+          //   />
+          // ),
         ),
       );
 
