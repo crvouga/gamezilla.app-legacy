@@ -12,7 +12,7 @@
     "heroku:start": "npm run backend:start",
     "supabase:types": "npx openapi-typescript https://ldxpcprlgecjvqwzuxgv.supabase.co/rest/v1/?apikey=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTYzNzA0MDQ5NywiZXhwIjoxOTUyNjE2NDk3fQ.ReI8CpIFbLB9Q53Az7CDBIyrn_o1JeGhPoZXdqx8Ac4 --output source/supabase-types.ts",
     "typecheck": "tsc -w",
-    "utils:find-circular-deps": "npx madge --ts-config tsconfig.json --circular source/Main.Frontend.tsx",
+    "utils:find-circular-deps": "npx madge --ts-config tsconfig.json --circular source/Frontend.tsx",
     "utils:sort": "npx sort-package-json"
   },
   "dependencies": {
