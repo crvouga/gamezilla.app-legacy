@@ -465,20 +465,20 @@ const EventLogList = ({ store, room }: { room: Room.Room; store: Store.Model }) 
     if (ref.current) {
       ref.current.scrollIntoView({ behavior: "smooth" });
     }
-  }, []);
+  }, [room.log.length]);
 
   return (
-    <UI.List sx={{ flex: 1, overflowY: "scroll" }}>
-      {/* {room.eventLog.map((roomEvent, index) => (
+    <UI.List sx={{ flex: 1, overflowY: "scroll", overflowX: "hidden" }}>
+      {room.log.map((roomEvent, index) => (
         <ViewRoomEvent key={index} store={store} roomEvent={roomEvent} />
-      ))} */}
+      ))}
 
       <div ref={ref} />
     </UI.List>
   );
 };
 
-const RoomEventLog = ({
+const ViewUserEvent = ({
   avatarUrl,
   text,
 }: {
@@ -510,8 +510,46 @@ const ViewRoomEvent = ({
   store,
 }: {
   store: Store.Model;
-  roomEvent: any;
+  roomEvent: Room.Event;
 }) => {
+
+  switch (roomEvent[0]) {
+    case 'CreatedRoom': {
+      const profile = store.Profile[roomEvent[1].userId]
+      return profile ? <ViewUserEvent avatarUrl={profile.avatarUrl} text={`${profile.username} created room`} /> : <></>
+    }
+
+    case 'JoinedRoom': {
+      const profile = store.Profile[roomEvent[1].userId]
+      return profile ? <ViewUserEvent avatarUrl={profile.avatarUrl} text={`${profile.username} joined room`} /> : <></>
+    }
+
+    case 'LeftedRoom': {
+      const profile = store.Profile[roomEvent[1].userId]
+      return profile ? <ViewUserEvent avatarUrl={profile.avatarUrl} text={`${profile.username} lefted room`} /> : <></>
+    }
+
+    case 'Moved': {
+      const profile = store.Profile[roomEvent[1].userId]
+      return profile ? <ViewUserEvent avatarUrl={profile.avatarUrl} text={`${profile.username} moved`} /> : <></>
+    }
+
+    case "RemovedPlayer": {
+      const profile = store.Profile[roomEvent[1].userId]
+      return profile ? <ViewUserEvent avatarUrl={profile.avatarUrl} text={`${profile.username} removed player`} /> : <></>
+    }
+
+    case 'StartedPlaying': {
+      const profile = store.Profile[roomEvent[1].userId]
+      return profile ? <ViewUserEvent avatarUrl={profile.avatarUrl} text={`${profile.username} started playing as ${roomEvent[1].player}`} /> : <></>
+    }
+
+    case 'StoppedPlaying': {
+      const profile = store.Profile[roomEvent[1].userId]
+      return profile ? <ViewUserEvent avatarUrl={profile.avatarUrl} text={`${profile.username} stopped playing`} /> : <></>
+    }
+  }
+
   return <></>
   // switch (roomEvent[0]) {
   //   case "CreateRoomResulted": {

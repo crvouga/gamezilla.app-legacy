@@ -31,7 +31,17 @@ export type Room = {
     [player in Board.Player]: RoomPlayer;
   };
   hostId: string;
+  log: Event[];
 };
+
+export type Event =
+  | ["CreatedRoom", { userId: string }]
+  | ["JoinedRoom", { userId: string }]
+  | ["LeftedRoom", { userId: string }]
+  | ["Moved", { userId: string }]
+  | ["RemovedPlayer", { userId: string; player: Board.Player }]
+  | ["StartedPlaying", { userId: string; player: Board.Player }]
+  | ["StoppedPlaying", { userId: string; player: Board.Player }];
 
 //
 //
@@ -70,6 +80,7 @@ export const createRoom = (
         type: "None",
       },
     },
+    log: [["CreatedRoom", { userId }]],
   };
 
   const modelNew: Model = {
@@ -116,7 +127,8 @@ export const startPlaying = (
 
   const roomNew: Room = pipe(
     room,
-    (room) => resetGame(removeUserFromPlaying(userId, room)),
+    (room) => removeUserFromPlaying(userId, room),
+    resetGame,
     (room) => ({
       ...room,
       players: {
@@ -127,6 +139,7 @@ export const startPlaying = (
         },
       },
     }),
+    (room) => log(["StartedPlaying", { player, userId }], room),
   );
 
   const modelNew: Model = {
@@ -178,17 +191,23 @@ export const stopPlaying = (
     return Result.Err("user_is_not_player");
   }
 
+  const roomNew = pipe(
+    room,
+    (room) => ({
+      ...room,
+      players: {
+        ...room.players,
+        [player]: { type: "None" },
+      },
+    }),
+    (room) => log(["StoppedPlaying", { userId, player }], room),
+  );
+
   const modelNew: Model = {
     ...model,
     rooms: {
       ...model.rooms,
-      [room.roomId]: {
-        ...room,
-        players: {
-          ...room.players,
-          [player]: { type: "None" },
-        },
-      },
+      [room.roomId]: roomNew,
     },
   };
 
@@ -226,7 +245,10 @@ export const joinRoom = (
   }
 
   const modelNew: Model = {
-    ...model,
+    rooms: {
+      ...model.rooms,
+      [room.roomId]: log(["JoinedRoom", { userId }], room),
+    },
     users: {
       ...model.users,
       [userId]: {
@@ -275,17 +297,23 @@ export const removePlayer = (
     return Result.Err("user_is_not_the_host");
   }
 
+  const roomNew = pipe(
+    room,
+    (room) => ({
+      ...room,
+      players: {
+        ...room.players,
+        [player]: { type: "None" },
+      },
+    }),
+    (room) => log(["RemovedPlayer", { userId, player }], room),
+  );
+
   const modelNew: Model = {
     ...model,
     rooms: {
       ...model.rooms,
-      [room.roomId]: {
-        ...room,
-        players: {
-          ...room.players,
-          [player]: { type: "None" },
-        },
-      },
+      [room.roomId]: roomNew,
     },
   };
 
@@ -372,7 +400,12 @@ export const leaveRoom = (
 
   const usersNew = remove(userId, model.users);
 
-  const roomNew = resetGame(removeUserFromPlaying(userId, room));
+  const roomNew = pipe(
+    room,
+    (room) => removeUserFromPlaying(userId, room),
+    resetGame,
+    (room) => log(["LeftedRoom", { userId }], room),
+  );
 
   if (user.userId === room.hostId) {
     const hostSuccessor = pipe(
@@ -467,15 +500,16 @@ export const move = (
     return Result.Err(moveResult.error);
   }
 
-  const boardNew = moveResult.value;
+  const roomNew = pipe(
+    room,
+    (room) => ({ ...room, board: moveResult.value }),
+    (room) => log(["Moved", { userId }], room),
+  );
 
   const modelNew: Model = {
     ...model,
     rooms: {
-      [room.roomId]: {
-        ...room,
-        board: boardNew,
-      },
+      [room.roomId]: roomNew,
     },
   };
 
@@ -605,5 +639,12 @@ const resetGame = (room: Room): Room => {
   return {
     ...room,
     board: Board.emptyBoard,
+  };
+};
+
+export const log = (event: Event, room: Room): Room => {
+  return {
+    ...room,
+    log: [...room.log, event],
   };
 };
