@@ -90,10 +90,7 @@ type RestartResulted = [
 ];
 
 type PlayAs = ["PlayAs", { player: Board.Player; currentUserId: string }];
-type PlayAsResulted = [
-  "PlayAsResulted",
-  Result.Result<string, { userId: string; player: Board.Player }>,
-];
+type PlayAsResulted = ["PlayAsResulted", Room.PlayAsResult];
 
 type Move = ["Move", { currentUserId: string; position: Board.Position }];
 type MoveResulted = ["MoveResulted", Room.MoveResult];
