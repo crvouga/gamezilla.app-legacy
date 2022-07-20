@@ -2,7 +2,6 @@ import * as Admin from "./Admin";
 import * as Auth from "./Auth";
 import * as Clients from "./Clients";
 import * as ConnectionStatus from "./ConnectionStatus";
-import * as Counter from "./Counter";
 import * as Games from "./Games";
 import * as Pages from "./Pages";
 import * as Route from "./Route";
@@ -27,13 +26,11 @@ export type FrontendModel = {
   route: Route.Route;
   connectionStatus: ConnectionStatus.Model;
   game: Games.FrontendModel;
-  counter: Counter.FrontendModel;
   admin: Admin.FrontendModel;
 };
 
 export type BackendModel = {
   clients: Clients.Model;
-  counter: Counter.BackendModel;
   games: Games.BackendModel;
 };
 
@@ -53,21 +50,24 @@ export type FrontendMsg =
   | ["Auth", Auth.Msg]
   | ["Page", Pages.Msg]
   | ["ConnectionStatus", ConnectionStatus.Msg]
-  | ["Counter", Counter.FrontendMsg]
   | ["Admin", Admin.FrontendMsg]
   | ["ToFrontend", ToFrontend];
 
-export type ToBackend =
-  | ["Counter", Counter.ToBackend]
-  | ["Games", Games.ToBackend];
+export type ToBackend = ["Games", Games.ToBackend];
 
 export type BackendMsg =
   | ["Clients", Clients.Msg]
-  | ["Counter", Counter.BackendMsg]
   | ["ToBackend", string, ToBackend]
   | ["Games", Games.BackendMsg];
 
 export type ToFrontend =
-  | ["Counter", Counter.ToFrontend]
   | ["Games", Games.ToFrontend]
   | ["Admin", Admin.ToFrontend];
+
+//
+//
+//
+// Admin
+//
+//
+//
