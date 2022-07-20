@@ -242,6 +242,59 @@ export const joinRoom = (
 //
 //
 //
+//
+// Remove Player
+//
+//
+//
+//
+
+export type RemovePlayerProblem =
+  | "user_is_not_in_a_room"
+  | "user_is_not_the_host";
+
+export type RemovePlayerResult = Result.Result<RemovePlayerProblem, Model>;
+
+export const removePlayer = (
+  { userId, player }: { userId: string; player: Board.Player },
+  model: Model,
+): RemovePlayerResult => {
+  const user = model.users[userId];
+
+  if (!user) {
+    return Result.Err("user_is_not_in_a_room");
+  }
+
+  const room = model.rooms[user.roomId];
+
+  if (!room) {
+    return Result.Err("user_is_not_in_a_room");
+  }
+
+  if (room.hostId !== userId) {
+    return Result.Err("user_is_not_the_host");
+  }
+
+  const modelNew: Model = {
+    ...model,
+    rooms: {
+      ...model.rooms,
+      [room.roomId]: {
+        ...room,
+        players: {
+          ...room.players,
+          [player]: { type: "None" },
+        },
+      },
+    },
+  };
+
+  return Result.Ok(modelNew);
+};
+
+//
+//
+//
 // Leave Room
 //
 //

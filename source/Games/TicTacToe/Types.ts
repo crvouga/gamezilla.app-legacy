@@ -111,10 +111,7 @@ type RemovePlayer = [
   "RemovePlayer",
   { currentUserId: string; player: Board.Player },
 ];
-type RemovePlayerResulted = [
-  "RemovePlayerResulted",
-  Result.Result<string, { player: Board.Player; hostId: string }>,
-];
+type RemovePlayerResulted = ["RemovePlayerResulted", Room.RemovePlayerResult];
 
 type StopPlaying =
   | ["StopPlaying", { currentUserId: string; player: Board.Player }];
