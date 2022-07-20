@@ -1,10 +1,8 @@
 import { fromFrontend } from "./Bridge/Backend";
 import { ClientId } from "./Bridge/Bridge";
-import * as Clients from "./Clients";
-import { Cmd, pipe, Platform, Sub } from "./Core";
+import { Cmd, pipe, Platform, Sub, tag } from "./Core";
 import * as Games from "./Games/Backend";
 import { BackendModel, BackendMsg, ToBackend } from "./Types";
-import { andThen, tag } from "./Utility";
 
 //
 //
@@ -18,7 +16,6 @@ type Model = BackendModel;
 
 export const init: [Model, Cmd.Cmd<BackendMsg>] = [
   {
-    clients: Clients.init,
     games: Games.init,
   },
 
@@ -40,13 +37,6 @@ export const update = (
   switch (msg[0]) {
     case "ToBackend":
       return updateFromFrontend(msg[1], msg[2], model);
-
-    case "Clients":
-      const [clientsNew, clientsCmd] = Clients.update(msg[1], model.clients);
-      return [
-        { ...model, clients: clientsNew },
-        pipe(clientsCmd, Cmd.map(tag("Clients"))),
-      ];
 
     case "Games":
       const [gamesNew, gamesCmd] = Games.update(msg[1], model.games);

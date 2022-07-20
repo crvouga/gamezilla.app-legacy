@@ -1,18 +1,16 @@
 import * as ReactDomClient from "react-dom/client";
-import * as Admin from "./Admin/Frontend";
+import * as Auth from "./Auth";
+import { fromBackend } from "./Bridge/Frontend";
 import * as Connection from "./Connection";
+import { andThen, andThenMany, Browser, Cmd, Debug, exhaustive, Option, pipe, Sub, tag } from "./Core";
 import * as Games from "./Games/Frontend";
 import * as Pages from "./Pages";
 import * as Route from "./Route";
-import * as Auth from "./Auth";
 import * as Snackbar from "./Snackbar";
 import * as Store from "./Store";
 import * as Profile from "./Store/Profile";
-import * as UI from "./UI";
-import { fromBackend } from "./Bridge/Frontend";
-import { Browser, Cmd, Debug, Option, Sub, pipe } from "./Core";
 import { FrontendModel, FrontendMsg, ToFrontend } from "./Types";
-import { andThen, andThenMany, exhaustive, tag } from "./Utility";
+import * as UI from "./UI";
 
 //
 //
@@ -109,18 +107,17 @@ export const init = (location: Browser.Location): [Model, Cmd.Cmd<Msg>] => {
   const store = Store.init;
   const game = Games.init;
   const [page, pageCmd] = Pages.initLoading();
-  const connectionStatus = Connection.init;
-  const admin = Admin.init("Model");
+  const connection = Connection.init;
+
   return [
     {
-      admin,
       route,
       snackbar,
       store,
       game,
-      auth: auth,
+      auth,
       page,
-      connection: connectionStatus,
+      connection,
     },
     Cmd.batch<Msg>([
       pipe(authCmd, Cmd.map(tag("Auth"))),
@@ -167,15 +164,6 @@ export const updateFromBackend = (
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
-    case "Admin": {
-      const [adminNew, adminCmd] = Admin.updateFromBackend(msg[1], model.admin);
-      return [
-        { ...model, admin: adminNew },
-        pipe(adminCmd, Cmd.map(tag("Admin"))),
-      ];
-    }
-
-
     case "Games": {
       const [gameNew, gameCmd, actions] = Games.updateFromBackend(
         msg[1],
@@ -349,14 +337,6 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
       return [
         { ...model, connection: connectionNew },
         pipe(connectionCmd, Cmd.map(tag("Connection"))),
-      ];
-    }
-
-    case "Admin": {
-      const [adminNew, adminCmd] = Admin.update(msg[1], model.admin);
-      return [
-        { ...model, admin: adminNew },
-        pipe(adminCmd, Cmd.map(tag("Admin"))),
       ];
     }
 
@@ -579,10 +559,6 @@ const viewMain = (model: Model): UI.View<Msg> => {
               ),
               UI.map(tag("Game")),
             );
-          }
-
-          if (model.route.type === "Admin") {
-            return pipe(Admin.view(model.admin), UI.map(tag("Admin")));
           }
 
           return pipe(

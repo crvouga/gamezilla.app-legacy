@@ -1,5 +1,5 @@
 import { Cmd, pipe } from "../Core";
-import { tag } from "../Utility";
+import { tag } from "../Core";
 import * as Conversation from "./Conversation";
 import * as Message from "./Message";
 import * as Profile from "./Profile";

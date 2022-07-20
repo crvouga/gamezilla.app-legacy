@@ -8,7 +8,7 @@ import * as ConnectFour from "./ConnectFour";
 import * as Snake from "./Snake";
 import * as TicTacToe from "./TicTacToe/Frontend";
 import { Cmd, Sub, pipe } from "../Core";
-import { exhaustive, tag } from "../Utility";
+import { exhaustive, tag } from "../Core";
 import {
   Closed,
   FrontendModel,
