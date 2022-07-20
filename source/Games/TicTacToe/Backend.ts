@@ -169,42 +169,25 @@ export const updateFromFrontend = (
     }
 
     case "StopPlaying": {
-      const player = msg[1].player;
-      const currentUserId = msg[1].currentUserId;
+      const { player, currentUserId } = msg[1];
 
-      const maybeCurrentRoom = Room.toRoom(currentUserId, model);
-      if (maybeCurrentRoom.type === "None") {
-        const result = Result.Err("User is not in a room");
+      const result = Room.stopPlaying({ userId: currentUserId, player }, model);
+
+      const toFrontend: ToFrontend = ["StopPlayingResulted", result];
+
+      if (result.type === "Err") {
         return [
           model,
-          sendToFrontend(clientId, [
-            "Games",
-            ["TicTacToe", ["StopPlayingResulted", result]],
-          ]),
+          sendToFrontend(clientId, ["Games", ["TicTacToe", toFrontend]]),
         ];
       }
-      const room = maybeCurrentRoom.value;
-
-      const modelNew: Model = pipe({
-        ...model,
-        rooms: {
-          ...model.rooms,
-          [room.roomId]: {
-            ...room,
-            board: Board.emptyBoard,
-            players: {
-              ...room.players,
-              [player]: {
-                type: "None",
-              },
-            },
-          },
-        },
-      });
 
       return [
-        modelNew,
-        Cmd.batch([broadcast(["Games", ["TicTacToe", ["Sync", modelNew]]])]),
+        result.value,
+        Cmd.batch([
+          broadcast(["Games", ["TicTacToe", ["Sync", result.value]]]),
+          sendToFrontend(clientId, ["Games", ["TicTacToe", toFrontend]]),
+        ]),
       ];
     }
 

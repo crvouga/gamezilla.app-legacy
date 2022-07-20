@@ -116,7 +116,7 @@ export const startPlaying = (
 
   const roomNew: Room = pipe(
     room,
-    (room) => resetGame(removeUserAsPlayer(userId, room)),
+    (room) => resetGame(removeUserFromPlaying(userId, room)),
     (room) => ({
       ...room,
       players: {
@@ -133,6 +133,62 @@ export const startPlaying = (
     ...model,
     rooms: {
       [room.roomId]: roomNew,
+    },
+  };
+
+  return Result.Ok(modelNew);
+};
+
+//
+//
+//
+//
+// Stop Playing
+//
+//
+//
+//
+
+export type StopPlayingProblem = "user_is_not_in_a_room" | "user_is_not_player";
+
+export type StopPlayingResult = Result.Result<StopPlayingProblem, Model>;
+
+export const stopPlaying = (
+  { userId, player }: { userId: string; player: Board.Player },
+  model: Model,
+): StopPlayingResult => {
+  const user = model.users[userId];
+
+  if (!user) {
+    return Result.Err("user_is_not_in_a_room");
+  }
+
+  const room = model.rooms[user.roomId];
+
+  if (!room) {
+    return Result.Err("user_is_not_in_a_room");
+  }
+
+  const roomPlayer = room.players[player];
+
+  if (
+    roomPlayer.type === "None" ||
+    (roomPlayer.type === "User" && roomPlayer.userId !== userId)
+  ) {
+    return Result.Err("user_is_not_player");
+  }
+
+  const modelNew: Model = {
+    ...model,
+    rooms: {
+      ...model.rooms,
+      [room.roomId]: {
+        ...room,
+        players: {
+          ...room.players,
+          [player]: { type: "None" },
+        },
+      },
     },
   };
 
@@ -213,7 +269,7 @@ export const leaveRoom = (
 
   const usersNew = remove(userId, model.users);
 
-  const roomNew = resetGame(removeUserAsPlayer(userId, room));
+  const roomNew = resetGame(removeUserFromPlaying(userId, room));
 
   if (user.userId === room.hostId) {
     const hostSuccessor = pipe(
@@ -402,7 +458,7 @@ export const mapRoomPlayers = (
   };
 };
 
-const removeUserAsPlayer = (userId: string, room: Room): Room => {
+const removeUserFromPlaying = (userId: string, room: Room): Room => {
   const { X, O } = room.players;
 
   const isX = X.type === "User" && X.userId === userId;
