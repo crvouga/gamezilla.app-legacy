@@ -5,7 +5,7 @@ import * as UI from "../../UI";
 import * as Board from "./Board";
 import { sendToBackend } from "../../Bridge/Frontend";
 import { Cmd, Option, Result, pipe } from "../../Core";
-import { exhaustive } from "../../Utility";
+import { exhaustive } from "../../Core";
 import {
   FrontendModel,
   FrontendMsg,

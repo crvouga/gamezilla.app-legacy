@@ -1,7 +1,7 @@
 import * as TicTacToe from "./TicTacToe/Backend";
 import { ClientId } from "../Bridge/Bridge";
 import { Cmd, Sub, pipe } from "../Core";
-import { tag } from "../Utility";
+import { tag } from "../Core";
 import { BackendModel, BackendMsg, ToBackend } from "./Types";
 
 //

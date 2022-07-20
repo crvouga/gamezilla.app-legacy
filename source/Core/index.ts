@@ -11,5 +11,6 @@ export * as Result from "./Result";
 export * as Sub from "./Sub";
 export * as Task from "./Task";
 export * as Time from "./Time";
+export * from "./Utility";
 export * as Uuid from "./Uuid";
 export * as View from "./View";
