@@ -211,64 +211,22 @@ export const updateFromFrontend = (
     case "PlayAs": {
       const { currentUserId, player } = msg[1];
 
-      const maybeCurrentRoom = Room.toRoom(currentUserId, model);
-      if (maybeCurrentRoom.type === "None") {
+      const result = Room.playAs({ userId: currentUserId, player }, model);
+
+      const toFrontend: ToFrontend = ["PlayAsResulted", result];
+
+      if (result.type === "Err") {
         return [
           model,
-          sendToFrontend(clientId, [
-            "Games",
-            [
-              "TicTacToe",
-              ["PlayAsResulted", Result.Err("User is not in a room")],
-            ],
-          ]),
+          sendToFrontend(clientId, ["Games", ["TicTacToe", toFrontend]]),
         ];
       }
-      const room = maybeCurrentRoom.value;
-
-      const isTaken = room.players[player].type === "User";
-
-      if (isTaken) {
-        const result = Result.Err(`Player is taken`);
-        return [
-          model,
-          sendToFrontend(clientId, [
-            "Games",
-            ["TicTacToe", ["PlayAsResulted", result]],
-          ]),
-        ];
-      }
-
-      const removedCurrentUserPlayer = Room.mapRoomPlayers(
-        (roomPlayer) =>
-          roomPlayer.type === "User" && roomPlayer.userId === currentUserId
-            ? { type: "None" }
-            : roomPlayer,
-        room,
-      );
-
-      const modelNew: Model = pipe({
-        ...model,
-        rooms: {
-          ...model.rooms,
-          [room.roomId]: {
-            ...removedCurrentUserPlayer,
-            players: {
-              ...removedCurrentUserPlayer.players,
-              [msg[1].player]: {
-                type: "User",
-                userId: currentUserId,
-              },
-            },
-          },
-        },
-      });
 
       return [
-        modelNew,
+        result.value,
         Cmd.batch([
-          // sendToFrontend(clientId, ["Games", ["TicTacToe", roomEvent]]),
-          broadcast(["Games", ["TicTacToe", ["Sync", modelNew]]]),
+          broadcast(["Games", ["TicTacToe", ["Sync", result.value]]]),
+          sendToFrontend(clientId, ["Games", ["TicTacToe", toFrontend]]),
         ]),
       ];
     }

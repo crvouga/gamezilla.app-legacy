@@ -83,6 +83,65 @@ export const createRoom = (
 //
 //
 //
+// Play As
+//
+//
+//
+
+export type PlayAsProblem = "user_is_not_in_a_room" | "player_is_taken";
+
+export type PlayAsResult = Result.Result<PlayAsProblem, Model>;
+
+export const playAs = (
+  { userId, player }: { userId: string; player: Board.Player },
+  model: Model,
+): PlayAsResult => {
+  const user = model.users[userId];
+
+  if (!user) {
+    return Result.Err("user_is_not_in_a_room");
+  }
+
+  const room = model.rooms[user.roomId];
+
+  if (!room) {
+    return Result.Err("user_is_not_in_a_room");
+  }
+
+  const roomPlayer = room.players[player];
+
+  if (roomPlayer.type === "User") {
+    return Result.Err("player_is_taken");
+  }
+
+  const roomNew: Room = pipe(
+    room,
+    (room) => resetGame(removeUserAsPlayer(userId, room)),
+    (room) => ({
+      ...room,
+      players: {
+        ...room.players,
+        [player]: {
+          type: "User",
+          userId,
+        },
+      },
+    }),
+  );
+
+  const modelNew: Model = {
+    ...model,
+    rooms: {
+      [room.roomId]: roomNew,
+    },
+  };
+
+  return Result.Ok(modelNew);
+};
+
+//
+//
+//
 // Join Room
 //
 //
@@ -152,9 +211,9 @@ export const leaveRoom = (
     return Result.Err("user_is_not_a_room");
   }
 
-  const usersNew: Model["users"] = remove(userId, model.users);
+  const usersNew = remove(userId, model.users);
 
-  const roomNew: Room = removeUserPlayer(userId, room);
+  const roomNew = resetGame(removeUserAsPlayer(userId, room));
 
   if (user.userId === room.hostId) {
     const hostSuccessor = pipe(
@@ -195,49 +254,6 @@ export const leaveRoom = (
       [room.roomId]: roomNew,
     },
   });
-};
-
-const removeUserPlayer = (userId: string, room: Room): Room => {
-  const { X, O } = room.players;
-
-  const isX = X.type === "User" && X.userId === userId;
-
-  const isO = O.type === "User" && O.userId === userId;
-
-  if (isX && isO) {
-    return {
-      ...room,
-      board: Board.emptyBoard,
-      players: {
-        X: { type: "None" },
-        O: { type: "None" },
-      },
-    };
-  }
-
-  if (isX) {
-    return {
-      ...room,
-      board: Board.emptyBoard,
-      players: {
-        ...room.players,
-        X: { type: "None" },
-      },
-    };
-  }
-
-  if (isO) {
-    return {
-      ...room,
-      board: Board.emptyBoard,
-      players: {
-        ...room.players,
-        O: { type: "None" },
-      },
-    };
-  }
-
-  return room;
 };
 
 //
@@ -383,5 +399,52 @@ export const mapRoomPlayers = (
       X: mapper(room.players.X),
       O: mapper(room.players.O),
     },
+  };
+};
+
+const removeUserAsPlayer = (userId: string, room: Room): Room => {
+  const { X, O } = room.players;
+
+  const isX = X.type === "User" && X.userId === userId;
+
+  const isO = O.type === "User" && O.userId === userId;
+
+  if (isX && isO) {
+    return {
+      ...room,
+      players: {
+        X: { type: "None" },
+        O: { type: "None" },
+      },
+    };
+  }
+
+  if (isX) {
+    return {
+      ...room,
+      players: {
+        ...room.players,
+        X: { type: "None" },
+      },
+    };
+  }
+
+  if (isO) {
+    return {
+      ...room,
+      players: {
+        ...room.players,
+        O: { type: "None" },
+      },
+    };
+  }
+
+  return room;
+};
+
+const resetGame = (room: Room): Room => {
+  return {
+    ...room,
+    board: Board.emptyBoard,
   };
 };
