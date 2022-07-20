@@ -37,7 +37,7 @@ export type FrontendMsg =
   | StartPlaying
   | Restart
   | CreateRoom
-  | QuitPlaying
+  | StopPlaying
   | RemovePlayer
   | PlayAgain;
 
@@ -49,7 +49,7 @@ export type ToBackend =
   | StartPlaying
   | Move
   | CreateRoom
-  | QuitPlaying
+  | StopPlaying
   | RemovePlayer
   | PlayAgain;
 
@@ -60,7 +60,7 @@ export type ToFrontend =
   | RestartResulted
   | StartPlayingResulted
   | MoveResulted
-  | QuitPlayingResulted
+  | StopPlayingResulted
   | RemovePlayerResulted
   | PlayAgainResulted
   | CreateRoomResulted;
@@ -116,9 +116,9 @@ type RemovePlayerResulted = [
   Result.Result<string, { player: Board.Player; hostId: string }>,
 ];
 
-type QuitPlaying =
-  | ["QuitPlaying", { currentUserId: string; player: Board.Player }];
-type QuitPlayingResulted = [
-  "QuitPlayingResulted",
+type StopPlaying =
+  | ["StopPlaying", { currentUserId: string; player: Board.Player }];
+type StopPlayingResulted = [
+  "StopPlayingResulted",
   Result.Result<string, { userId: string }>,
 ];

@@ -71,7 +71,7 @@ export const update = (
     case "LeaveRoom":
       return [model, sendToBackend(["Games", ["TicTacToe", msg]])];
 
-    case "QuitPlaying":
+    case "StopPlaying":
       return [
         { ...model, opened: ["None"] },
         sendToBackend(["Games", ["TicTacToe", msg]]),
@@ -144,7 +144,7 @@ export const updateFromBackend = (
       return [model, Cmd.None, []];
     }
 
-    case "QuitPlayingResulted": {
+    case "StopPlayingResulted": {
       return [
         {
           ...model,
@@ -669,11 +669,11 @@ const viewPlayerActions =
               <UI.Box sx={{ paddingX: 1 }}>
                 <UI.Button
                   onClick={() =>
-                    dispatch(["QuitPlaying", { currentUserId, player }])
+                    dispatch(["StopPlaying", { currentUserId, player }])
                   }
                   fullWidth
                 >
-                  Quit Playing
+                  Stop Playing
                 </UI.Button>
               </UI.Box>
             );

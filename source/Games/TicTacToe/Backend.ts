@@ -168,7 +168,7 @@ export const updateFromFrontend = (
       ];
     }
 
-    case "QuitPlaying": {
+    case "StopPlaying": {
       const player = msg[1].player;
       const currentUserId = msg[1].currentUserId;
 
@@ -179,7 +179,7 @@ export const updateFromFrontend = (
           model,
           sendToFrontend(clientId, [
             "Games",
-            ["TicTacToe", ["QuitPlayingResulted", result]],
+            ["TicTacToe", ["StopPlayingResulted", result]],
           ]),
         ];
       }
