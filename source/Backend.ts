@@ -81,7 +81,11 @@ const updateAdmin = (
   msg: BackendMsg,
   model: Model,
 ): [Model, Cmd.Cmd<BackendMsg>] => {
-  return [model, broadcast(["Admin", ["BackendModel", model]])];
+  return [
+    model,
+    // broadcast(["Admin", ["BackendModel", model]])
+    Cmd.None,
+  ];
 };
 
 export const updateFromFrontend = (
