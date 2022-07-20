@@ -74,9 +74,8 @@ const FILE_TYPE = "png";
 export const toUrl = ({ seed, style }: { style: Style; seed: Seed }) => {
   const url = new URL(`${BASE_URL}/${style}/${seed}.${FILE_TYPE}`);
 
-  if (style === "croodles" || style === "croodles-neutral") {
-    url.searchParams.append("backgroundColor", "white");
-  }
+
+  url.searchParams.append("backgroundColor", "white");
 
   return url.toString();
 };
