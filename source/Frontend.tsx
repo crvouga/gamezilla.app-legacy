@@ -1,7 +1,6 @@
 import * as ReactDomClient from "react-dom/client";
 import * as Admin from "./Admin/Frontend";
 import * as ConnectionStatus from "./ConnectionStatus";
-import * as Counter from "./Counter/Frontend";
 import * as Games from "./Games/Frontend";
 import * as Pages from "./Pages";
 import * as Route from "./Route";
@@ -110,7 +109,6 @@ export const init = (location: Browser.Location): [Model, Cmd.Cmd<Msg>] => {
   const store = Store.init;
   const game = Games.init;
   const [page, pageCmd] = Pages.initLoading();
-  const [counter, counterCmd] = Counter.init;
   const connectionStatus = ConnectionStatus.init;
   const admin = Admin.init("Model");
   return [
@@ -123,12 +121,11 @@ export const init = (location: Browser.Location): [Model, Cmd.Cmd<Msg>] => {
       auth: auth,
       page,
       connectionStatus,
-      counter,
     },
     Cmd.batch<Msg>([
       pipe(authCmd, Cmd.map(tag("Auth"))),
       pipe(pageCmd, Cmd.map(tag("Page"))),
-      pipe(counterCmd, Cmd.map(tag("Counter"))),
+
     ]),
   ];
 };
@@ -178,16 +175,6 @@ export const updateFromBackend = (
       ];
     }
 
-    case "Counter": {
-      const [counterNew, counterCmd] = Counter.updateFromBackend(
-        msg[1],
-        model.counter,
-      );
-      return [
-        { ...model, counter: counterNew },
-        pipe(counterCmd, Cmd.map(tag("Counter"))),
-      ];
-    }
 
     case "Games": {
       const [gameNew, gameCmd, actions] = Games.updateFromBackend(
@@ -352,14 +339,6 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
           return [{ ...modelNew, page }, pipe(pageCmd, Cmd.map(tag("Page")))];
         }
       }
-    }
-
-    case "Counter": {
-      const [counterNew, counterCmd] = Counter.update(msg[1], model.counter);
-      return [
-        { ...model, counter: counterNew },
-        pipe(counterCmd, Cmd.map(tag("Counter"))),
-      ];
     }
 
     case "ConnectionStatus": {
