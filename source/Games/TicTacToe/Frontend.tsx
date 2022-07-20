@@ -376,8 +376,8 @@ const ViewInRoom = ({
           </UI.AvatarGroup>
         </UI.Toolbar>
 
-        <UI.Toolbar>
-          <UI.Box sx={{ flex: 1, paddingRight: 1 / 2 }}>
+        <UI.Box sx={{ display: "flex", alignItems: 'center', justifyContent: "center", paddingX: 2 }}>
+          <UI.Box sx={{ paddingRight: 1, width: "50%", }}>
             <ViewPlayer
               currentUserId={currentUserId}
               model={model}
@@ -387,7 +387,7 @@ const ViewInRoom = ({
               dispatch={dispatch}
             />
           </UI.Box>
-          <UI.Box sx={{ paddingLeft: 1 / 2, flex: 1 }}>
+          <UI.Box sx={{ paddingLeft: 1, width: "50%", }}>
             <ViewPlayer
               model={model}
               currentUserId={currentUserId}
@@ -397,7 +397,7 @@ const ViewInRoom = ({
               dispatch={dispatch}
             />
           </UI.Box>
-        </UI.Toolbar>
+        </UI.Box>
 
         <UI.Typography gutterBottom color="text.secondary" align="center">
           {statusMessage}
@@ -549,135 +549,6 @@ const ViewRoomEvent = ({
       return profile ? <ViewUserEvent avatarUrl={profile.avatarUrl} text={`${profile.username} stopped playing`} /> : <></>
     }
   }
-
-  return <></>
-  // switch (roomEvent[0]) {
-  //   case "CreateRoomResulted": {
-  //     return pipe(
-  //       roomEvent[1],
-  //       Result.fold(
-  //         () => <></>,
-  //         () => <></>,
-  //         // ({ userId }) => (
-  //         //   <RoomEventLog
-  //         //     avatarUrl={store.Profile[userId]?.avatarUrl}
-  //         //     text={`${store.Profile[userId]?.username} created room`}
-  //         //   />
-  //         // ),
-  //       ),
-  //     );
-  //   }
-
-  //   case "JoinRoomResulted":
-  //     return pipe(
-  //       roomEvent[1],
-  //       Result.fold(
-  //         () => <></>,
-  //         () => <></>,
-  //         // ({ userId }) => (
-  //         //   <RoomEventLog
-  //         //     avatarUrl={store.Profile[userId]?.avatarUrl}
-  //         //     text={`${store.Profile[userId]?.username} joined room`}
-  //         //   />
-  //         // ),
-  //       ),
-  //     );
-
-  //   case "LeaveRoomResulted":
-  //     return pipe(
-  //       roomEvent[1],
-  //       Result.fold(
-  //         () => <></>,
-  //         () => <></>,
-  //         // ({ userId }) => (
-  //         //   <RoomEventLog
-  //         //     avatarUrl={store.Profile[userId]?.avatarUrl}
-  //         //     text={`${store.Profile[userId]?.username} lefted room`}
-  //         //   />
-  //         // ),
-  //       ),
-  //     );
-
-  //   case "MoveResulted":
-  //     return pipe(
-  //       roomEvent[1],
-  //       Result.fold(
-  //         () => <></>,
-  //         () => <></>,
-  //         // ({ userId }) => (
-  //         //   <RoomEventLog
-  //         //     avatarUrl={store.Profile[userId]?.avatarUrl}
-  //         //     text={`${store.Profile[userId]?.username} moved`}
-  //         //   />
-  //         // ),
-  //       ),
-  //     );
-
-  //   case "RemovePlayerResulted":
-  //     return pipe(
-  //       roomEvent[1],
-  //       Result.fold(
-  //         () => <></>,
-  //         () => <></>,
-  //         // ({ hostId, player }) => (
-  //         //   <RoomEventLog
-  //         //     avatarUrl={store.Profile[hostId]?.avatarUrl}
-  //         //     text={`${store.Profile[hostId]?.username} removed ${player} player`}
-  //         //   />
-  //         // ),
-  //       ),
-  //     );
-
-  //   case "PlayAsResulted":
-  //     return pipe(
-  //       // roomEvent[1],
-  //       Result.fold(
-  //         () => <></>,
-  //         () => <></>,
-  //         // (ok) => (
-  //         //   <RoomEventLog
-  //         //     avatarUrl={store.Profile[ok.userId]?.avatarUrl}
-  //         //     text={`${store.Profile[ok.userId]?.username} started playing as ${ok.player
-  //         //       }`}
-  //         //   />
-  //         // ),
-  //       ),
-  //     );
-
-  //   case "QuitPlayingResulted":
-  //     return pipe(
-  //       roomEvent[1],
-  //       Result.fold(
-  //         () => <></>,
-  //         (ok) => (
-  //           <RoomEventLog
-  //             avatarUrl={store.Profile[ok.userId]?.avatarUrl}
-  //             text={`${store.Profile[ok.userId]?.username} quit playing`}
-  //           />
-  //         ),
-  //       ),
-  //     );
-
-  //   case "RestartResulted":
-  //     return pipe(
-  //       roomEvent[1],
-  //       Result.fold(
-  //         () => <></>,
-  //         (ok) => (
-  //           <RoomEventLog
-  //             avatarUrl={store.Profile[ok.userId]?.avatarUrl}
-  //             text={`${store.Profile[ok.userId]?.username} restarted game`}
-  //           />
-  //         ),
-  //       ),
-  //     );
-
-  //   case "PlayAgainResulted":
-  //     return <UI.Typography>User wants to play again</UI.Typography>;
-
-  //   default:
-  //     return exhaustive(roomEvent);
-  // }
 };
 
 const viewPlayerActions =
@@ -758,29 +629,39 @@ const ViewPlayer = ({
   dispatch: (msg: Msg) => void;
 }) => {
   const roomPlayer = room.players[player];
-  const ref = useRef<HTMLElement | null>(null);
+  const ref = useRef<HTMLButtonElement | null>(null);
   const theme = UI.useTheme();
+
   switch (roomPlayer.type) {
     case "None":
       return (
-        <UI.Box ref={ref}>
-          <UI.Button
-            onClick={() => dispatch(["StartPlaying", { player, currentUserId }])}
-            sx={{
-              flex: 1,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              padding: 1,
-            }}
-            // startIcon={<PlayerIcon sx={{ fill: "#fff" }} player={player} />}
-            fullWidth
-            variant="contained"
-            color="primary"
-          >
-            Play As {player}
-          </UI.Button>
-        </UI.Box>
+        <UI.ButtonBase
+          ref={ref}
+          sx={{
+            p: 1,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            overflow: "hidden",
+            borderRadius: 1,
+            width: "100%",
+            border: `1px solid ${theme.palette.divider}`,
+            backgroundColor: theme.palette.primary.main,
+            color: "#fff"
+          }}
+          onClick={() => dispatch(["StartPlaying", { currentUserId, player }])}
+        >
+          <UI.SvgIcon width={24} viewBox="0 0 1 1" sx={{ marginRight: 1 }}>
+            <ViewSlot
+              color={"#fff"}
+              slot={player}
+              cx={1 / 2}
+              cy={1 / 2}
+              r={1 / 3}
+            />
+          </UI.SvgIcon>
+          <UI.Typography color="inherit" noWrap>Play</UI.Typography>
+        </UI.ButtonBase>
       );
 
     case "User":
@@ -788,9 +669,18 @@ const ViewPlayer = ({
 
       return (
         <>
-          <UI.Box
+          <UI.ButtonBase
             ref={ref}
-            sx={{ p: 1, display: "flex", alignItems: "center" }}
+            sx={{
+              p: 1,
+              display: "flex",
+              alignItems: "center",
+              overflow: "hidden",
+              borderRadius: 1,
+              width: "100%",
+              border: `1px solid ${theme.palette.divider}`,
+              backgroundColor: theme.palette.background.paper
+            }}
             onClick={() => dispatch(["ClickedPlayer", player])}
           >
             <UI.SvgIcon width={24} viewBox="0 0 1 1">
@@ -802,15 +692,14 @@ const ViewPlayer = ({
                 r={1 / 3}
               />
             </UI.SvgIcon>
-            {/* <PlayerIcon player={player} /> */}
-            <UI.Box sx={{ flex: 1, display: "flex", alignItems: "center" }}>
-              <UI.Avatar
-                sx={{ width: 24, height: 24, marginX: 1 }}
-                src={profile?.avatarUrl}
-              />
-              <UI.Typography variant="h6">{profile?.username}</UI.Typography>
-            </UI.Box>
-          </UI.Box>
+
+            <UI.Avatar
+              sx={{ width: 24, height: 24, marginX: 1 }}
+              src={profile?.avatarUrl}
+            />
+
+            <UI.Typography noWrap>{profile?.username}</UI.Typography>
+          </UI.ButtonBase>
 
           <UI.Menu
             open={model.opened[0] === "Player" && model.opened[1] === player}
