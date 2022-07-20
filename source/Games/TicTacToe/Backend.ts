@@ -208,12 +208,15 @@ export const updateFromFrontend = (
       ];
     }
 
-    case "PlayAs": {
+    case "StartPlaying": {
       const { currentUserId, player } = msg[1];
 
-      const result = Room.playAs({ userId: currentUserId, player }, model);
+      const result = Room.startPlaying(
+        { userId: currentUserId, player },
+        model,
+      );
 
-      const toFrontend: ToFrontend = ["PlayAsResulted", result];
+      const toFrontend: ToFrontend = ["StartPlayingResulted", result];
 
       if (result.type === "Err") {
         return [
