@@ -503,7 +503,18 @@ export const withDebugger = <Model, Msg, Dom>(
       return "";
     };
 
-    const action = { type: toTypeString(state.msg), payload: state.msg };
+    const toPayload = (action: unknown): unknown => {
+      if (Array.isArray(action) && typeof action[0] === "string") {
+        return toPayload(action[1]);
+      }
+
+      return action;
+    };
+
+    const action = {
+      type: toTypeString(state.msg),
+      payload: toPayload(state.msg),
+    };
 
     // @ts-ignore
     connection.send(action, state.model);
