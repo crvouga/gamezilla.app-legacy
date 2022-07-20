@@ -399,7 +399,7 @@ const ViewInRoom = ({
           </UI.Box>
         </UI.Box>
 
-        <UI.Typography gutterBottom color="text.secondary" align="center">
+        <UI.Typography sx={{ paddingY: 1 }} color="text.secondary" align="center">
           {statusMessage}
         </UI.Typography>
 
