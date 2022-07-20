@@ -50,7 +50,7 @@ export const update = (
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
-    case "PlayAs":
+    case "StartPlaying":
       return [model, sendToBackend(["Games", ["TicTacToe", msg]])];
 
     case "PlayAgain":
@@ -155,7 +155,7 @@ export const updateFromBackend = (
       ];
     }
 
-    case "PlayAsResulted": {
+    case "StartPlayingResulted": {
       return [model, Cmd.None, []];
     }
 
@@ -727,7 +727,7 @@ const ViewPlayer = ({
       return (
         <UI.Box ref={ref}>
           <UI.Button
-            onClick={() => dispatch(["PlayAs", { player, currentUserId }])}
+            onClick={() => dispatch(["StartPlaying", { player, currentUserId }])}
             sx={{
               flex: 1,
               display: "flex",

@@ -83,19 +83,19 @@ export const createRoom = (
 //
 //
 //
-// Play As
+// Start Playing
 //
 //
 //
 
-export type PlayAsProblem = "user_is_not_in_a_room" | "player_is_taken";
+export type StartPlayingProblem = "user_is_not_in_a_room" | "player_is_taken";
 
-export type PlayAsResult = Result.Result<PlayAsProblem, Model>;
+export type StartPlayingResult = Result.Result<StartPlayingProblem, Model>;
 
-export const playAs = (
+export const startPlaying = (
   { userId, player }: { userId: string; player: Board.Player },
   model: Model,
-): PlayAsResult => {
+): StartPlayingResult => {
   const user = model.users[userId];
 
   if (!user) {

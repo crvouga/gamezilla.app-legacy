@@ -34,7 +34,7 @@ export type FrontendMsg =
   | LeaveRoom
   | JoinRoom
   | Move
-  | PlayAs
+  | StartPlaying
   | Restart
   | CreateRoom
   | QuitPlaying
@@ -46,7 +46,7 @@ export type ToBackend =
   | LeaveRoom
   | JoinRoom
   | Restart
-  | PlayAs
+  | StartPlaying
   | Move
   | CreateRoom
   | QuitPlaying
@@ -58,7 +58,7 @@ export type ToFrontend =
   | LeaveRoomResulted
   | JoinRoomResulted
   | RestartResulted
-  | PlayAsResulted
+  | StartPlayingResulted
   | MoveResulted
   | QuitPlayingResulted
   | RemovePlayerResulted
@@ -89,8 +89,11 @@ type RestartResulted = [
   Result.Result<string, { userId: string }>,
 ];
 
-type PlayAs = ["PlayAs", { player: Board.Player; currentUserId: string }];
-type PlayAsResulted = ["PlayAsResulted", Room.PlayAsResult];
+type StartPlaying = [
+  "StartPlaying",
+  { player: Board.Player; currentUserId: string },
+];
+type StartPlayingResulted = ["StartPlayingResulted", Room.StartPlayingResult];
 
 type Move = ["Move", { currentUserId: string; position: Board.Position }];
 type MoveResulted = ["MoveResulted", Room.MoveResult];
