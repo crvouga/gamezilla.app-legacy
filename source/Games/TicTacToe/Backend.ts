@@ -7,21 +7,8 @@ import {
 import { ClientId } from "../../Bridge/Bridge";
 import { Cmd, pipe, Result, Sub } from "../../Core";
 import * as Board from "./Board";
-import {
-  BackendModel,
-  BackendMsg,
-  createRoom,
-  joinRoom,
-  leaveRoom,
-  mapRoomPlayers,
-  move,
-  RoomEvent,
-  RoomId,
-  ToBackend,
-  ToFrontend,
-  toRoom,
-  toRoomStatus,
-} from "./Types";
+import { BackendModel, BackendMsg, ToBackend, ToFrontend } from "./Types";
+import * as Room from "./Room";
 
 //
 //
@@ -67,7 +54,7 @@ export const updateFromFrontend = (
     case "PlayAgain": {
       const { currentUserId } = msg[1];
 
-      const maybeCurrentRoom = toRoom(currentUserId, model);
+      const maybeCurrentRoom = Room.toRoom(currentUserId, model);
       if (maybeCurrentRoom.type === "None") {
         return [
           model,
@@ -82,7 +69,7 @@ export const updateFromFrontend = (
       }
       const room = maybeCurrentRoom.value;
 
-      const status = toRoomStatus(room);
+      const status = Room.toStatus(room);
 
       if (status.type === "NotReady") {
         return [
@@ -131,80 +118,52 @@ export const updateFromFrontend = (
         },
       };
 
-      const roomEvent: RoomEvent = [
-        "PlayAgainResulted",
-        Result.Ok({
-          userId: currentUserId,
-        }),
-      ];
-
       return [
         modelNew,
-        Cmd.batch([
-          sendToFrontend(clientId, ["Games", ["TicTacToe", roomEvent]]),
-          broadcast(["Games", ["TicTacToe", ["Sync", modelNew]]]),
-        ]),
+        Cmd.batch([broadcast(["Games", ["TicTacToe", ["Sync", modelNew]]])]),
       ];
     }
 
     case "RemovePlayer": {
       const { currentUserId, player } = msg[1];
 
-      const maybeCurrentRoom = toRoom(currentUserId, model);
+      const maybeCurrentRoom = Room.toRoom(currentUserId, model);
       if (maybeCurrentRoom.type === "None") {
-        const event: RoomEvent = [
-          "RemovePlayerResulted",
-          Result.Err("User is not in a room"),
-        ];
-
         return [
           model,
-          sendToFrontend(clientId, ["Games", ["TicTacToe", event]]),
+          Cmd.None,
+          // sendToFrontend(clientId, ["Games", ["TicTacToe", event]]),
         ];
       }
       const room = maybeCurrentRoom.value;
 
       if (room.hostId !== currentUserId) {
-        const event: RoomEvent = [
-          "RemovePlayerResulted",
-          Result.Err("User is not in a room"),
-        ];
         return [
           model,
-          sendToFrontend(clientId, ["Games", ["TicTacToe", event]]),
+          Cmd.None,
+          // sendToFrontend(clientId, ["Games", ["TicTacToe", event]]),
         ];
       }
 
-      const roomEvent: RoomEvent = [
-        "RemovePlayerResulted",
-        Result.Ok({
-          hostId: room.hostId,
-          player,
-        }),
-      ];
-
-      const modelNew: Model = pipe(
-        {
-          ...model,
-          rooms: {
-            ...model.rooms,
-            [room.roomId]: {
-              ...room,
-              players: {
-                ...room.players,
-                [player]: { type: "None" },
-              },
+      const modelNew: Model = pipe({
+        ...model,
+        rooms: {
+          ...model.rooms,
+          [room.roomId]: {
+            ...room,
+            players: {
+              ...room.players,
+              [player]: { type: "None" },
             },
           },
         },
-        appendRoomEvent(room.roomId, roomEvent),
-      );
+      });
 
       return [
         modelNew,
         Cmd.batch([
           broadcast(["Games", ["TicTacToe", ["Sync", modelNew]]]),
-          sendToFrontend(clientId, ["Games", ["TicTacToe", roomEvent]]),
+          // sendToFrontend(clientId, ["Games", ["TicTacToe", roomEvent]]),
         ]),
       ];
     }
@@ -213,7 +172,7 @@ export const updateFromFrontend = (
       const player = msg[1].player;
       const currentUserId = msg[1].currentUserId;
 
-      const maybeCurrentRoom = toRoom(currentUserId, model);
+      const maybeCurrentRoom = Room.toRoom(currentUserId, model);
       if (maybeCurrentRoom.type === "None") {
         const result = Result.Err("User is not in a room");
         return [
@@ -226,46 +185,33 @@ export const updateFromFrontend = (
       }
       const room = maybeCurrentRoom.value;
 
-      const roomEvent: RoomEvent = [
-        "QuitPlayingResulted",
-        Result.Ok({
-          userId: currentUserId,
-        }),
-      ];
-
-      const modelNew: Model = pipe(
-        {
-          ...model,
-          rooms: {
-            ...model.rooms,
-            [room.roomId]: {
-              ...room,
-              board: Board.emptyBoard,
-              players: {
-                ...room.players,
-                [player]: {
-                  type: "None",
-                },
+      const modelNew: Model = pipe({
+        ...model,
+        rooms: {
+          ...model.rooms,
+          [room.roomId]: {
+            ...room,
+            board: Board.emptyBoard,
+            players: {
+              ...room.players,
+              [player]: {
+                type: "None",
               },
             },
           },
         },
-        appendRoomEvent(room.roomId, roomEvent),
-      );
+      });
 
       return [
         modelNew,
-        Cmd.batch([
-          sendToFrontend(clientId, ["Games", ["TicTacToe", roomEvent]]),
-          broadcast(["Games", ["TicTacToe", ["Sync", modelNew]]]),
-        ]),
+        Cmd.batch([broadcast(["Games", ["TicTacToe", ["Sync", modelNew]]])]),
       ];
     }
 
     case "PlayAs": {
       const { currentUserId, player } = msg[1];
 
-      const maybeCurrentRoom = toRoom(currentUserId, model);
+      const maybeCurrentRoom = Room.toRoom(currentUserId, model);
       if (maybeCurrentRoom.type === "None") {
         return [
           model,
@@ -293,7 +239,7 @@ export const updateFromFrontend = (
         ];
       }
 
-      const removedCurrentUserPlayer = mapRoomPlayers(
+      const removedCurrentUserPlayer = Room.mapRoomPlayers(
         (roomPlayer) =>
           roomPlayer.type === "User" && roomPlayer.userId === currentUserId
             ? { type: "None" }
@@ -301,38 +247,27 @@ export const updateFromFrontend = (
         room,
       );
 
-      const roomEvent: RoomEvent = [
-        "PlayAsResulted",
-        Result.Ok({
-          player,
-          userId: currentUserId,
-        }),
-      ];
-
-      const modelNew: Model = pipe(
-        {
-          ...model,
-          rooms: {
-            ...model.rooms,
-            [room.roomId]: {
-              ...removedCurrentUserPlayer,
-              players: {
-                ...removedCurrentUserPlayer.players,
-                [msg[1].player]: {
-                  type: "User",
-                  userId: currentUserId,
-                },
+      const modelNew: Model = pipe({
+        ...model,
+        rooms: {
+          ...model.rooms,
+          [room.roomId]: {
+            ...removedCurrentUserPlayer,
+            players: {
+              ...removedCurrentUserPlayer.players,
+              [msg[1].player]: {
+                type: "User",
+                userId: currentUserId,
               },
             },
           },
         },
-        appendRoomEvent(room.roomId, roomEvent),
-      );
+      });
 
       return [
         modelNew,
         Cmd.batch([
-          sendToFrontend(clientId, ["Games", ["TicTacToe", roomEvent]]),
+          // sendToFrontend(clientId, ["Games", ["TicTacToe", roomEvent]]),
           broadcast(["Games", ["TicTacToe", ["Sync", modelNew]]]),
         ]),
       ];
@@ -341,7 +276,7 @@ export const updateFromFrontend = (
     case "Restart": {
       const { currentUserId } = msg[1];
 
-      const maybeCurrentRoom = toRoom(currentUserId, model);
+      const maybeCurrentRoom = Room.toRoom(currentUserId, model);
       if (maybeCurrentRoom.type === "None") {
         const result = Result.Err("User is not in a room");
         return [
@@ -379,17 +314,10 @@ export const updateFromFrontend = (
         },
       };
 
-      const roomEvent: RoomEvent = [
-        "RestartResulted",
-        Result.Ok({
-          userId: currentUserId,
-        }),
-      ];
-
       return [
         modelNew,
         Cmd.batch([
-          sendToFrontend(clientId, ["Games", ["TicTacToe", roomEvent]]),
+          // sendToFrontend(clientId, ["Games", ["TicTacToe", roomEvent]]),
           broadcast(["Games", ["TicTacToe", ["Sync", modelNew]]]),
         ]),
       ];
@@ -398,7 +326,7 @@ export const updateFromFrontend = (
     case "Move": {
       const { currentUserId, position } = msg[1];
 
-      const result = move({ userId: currentUserId, position }, model);
+      const result = Room.move({ userId: currentUserId, position }, model);
 
       const toFrontend: ToFrontend = ["MoveResulted", result];
 
@@ -421,7 +349,7 @@ export const updateFromFrontend = (
     case "JoinRoom": {
       const { currentUserId, roomId } = msg[1];
 
-      const result = joinRoom({ userId: currentUserId, roomId }, model);
+      const result = Room.joinRoom({ userId: currentUserId, roomId }, model);
 
       const toFrontend: ToFrontend = ["JoinRoomResulted", result];
 
@@ -444,7 +372,7 @@ export const updateFromFrontend = (
     case "LeaveRoom": {
       const { currentUserId } = msg[1];
 
-      const result = leaveRoom({ userId: currentUserId }, model);
+      const result = Room.leaveRoom({ userId: currentUserId }, model);
 
       const toFrontend: ToFrontend = ["LeaveRoomResulted", result];
 
@@ -473,7 +401,7 @@ export const updateFromFrontend = (
     case "CreateRoom":
       const { currentUserId } = msg[1];
 
-      const result = createRoom({ userId: currentUserId }, model);
+      const result = Room.createRoom({ userId: currentUserId }, model);
 
       const toFrontend: ToFrontend = ["CreateRoomResulted", result];
 
@@ -493,27 +421,6 @@ export const updateFromFrontend = (
       ];
   }
 };
-
-const appendRoomEvent =
-  (roomId: RoomId, roomEvent: RoomEvent) =>
-  (model: Model): Model => {
-    const room = model.rooms[roomId];
-
-    if (!room) {
-      return model;
-    }
-
-    return {
-      ...model,
-      rooms: {
-        ...model.rooms,
-        [roomId]: {
-          ...room,
-          eventLog: [...room.eventLog, roomEvent],
-        },
-      },
-    };
-  };
 
 //
 //

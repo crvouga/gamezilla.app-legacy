@@ -9,13 +9,9 @@ import { exhaustive } from "../../Core";
 import {
   FrontendModel,
   FrontendMsg,
-  Room,
-  RoomEvent,
   ToFrontend,
-  toPlayer,
-  toRoom,
-  toRoomStatus,
 } from "./Types";
+import * as Room from "./Room"
 
 //
 //
@@ -98,49 +94,16 @@ export const update = (
       return [model, Route.back];
 
     case "Move":
-      const roomsNew = pipe(
-        toRoom(currentUserId, model),
-        Option.map((room) => {
-          const status = toRoomStatus(room);
+      const { position } = msg[1]
 
-          if (status.type === "NotReady") {
-            return room;
-          }
+      const result = Room.move({ userId: currentUserId, position }, model)
 
-          const player = toPlayer(currentUserId, room);
-
-          if (player === "None") {
-            return room;
-          }
-
-          const boardNew = pipe(
-            Board.move(
-              room.board,
-              player === "Both" ? Board.toTurn(room.board) : player,
-              msg[1].position,
-            ),
-            Result.withDefault(room.board),
-          );
-
-          return {
-            ...room,
-            board: boardNew,
-          };
-        }),
-        Option.fold(
-          () => model.rooms,
-          (room) => ({
-            ...model.rooms,
-            [room.roomId]: room,
-          }),
-        ),
-      );
+      const stateNew = result.type === 'Err' ? {} : result.value
 
       return [
         {
           ...model,
-          rooms: roomsNew,
-          //  move: RemoteData.Loading
+          ...stateNew
         },
         sendToBackend(["Games", ["TicTacToe", msg]]),
       ];
@@ -252,7 +215,7 @@ export const view =
     model: Model,
   ): UI.View<Msg> =>
     (dispatch) => {
-      const maybeCurrentRoom = toRoom(currentUserId, model);
+      const maybeCurrentRoom = Room.toRoom(currentUserId, model);
 
       switch (maybeCurrentRoom.type) {
         case "None":
@@ -363,12 +326,12 @@ const ViewInRoom = ({
   dispatch,
 }: {
   currentUserId: string;
-  room: Room;
+  room: Room.Room;
   store: Store.Model;
   model: Model;
   dispatch: (msg: Msg) => void;
 }) => {
-  const roomStatus = toRoomStatus(room);
+  const roomStatus = Room.toStatus(room);
 
   const statusMessage =
     roomStatus.type === "NotReady"
@@ -495,20 +458,20 @@ const ViewInRoom = ({
   );
 };
 
-const EventLogList = ({ store, room }: { room: Room; store: Store.Model }) => {
+const EventLogList = ({ store, room }: { room: Room.Room; store: Store.Model }) => {
   const ref = useRef<HTMLDivElement | null>(null);
 
   useLayoutEffect(() => {
     if (ref.current) {
       ref.current.scrollIntoView({ behavior: "smooth" });
     }
-  }, [room.eventLog.length]);
+  }, []);
 
   return (
     <UI.List sx={{ flex: 1, overflowY: "scroll" }}>
-      {room.eventLog.map((roomEvent, index) => (
+      {/* {room.eventLog.map((roomEvent, index) => (
         <ViewRoomEvent key={index} store={store} roomEvent={roomEvent} />
-      ))}
+      ))} */}
 
       <div ref={ref} />
     </UI.List>
@@ -547,133 +510,136 @@ const ViewRoomEvent = ({
   store,
 }: {
   store: Store.Model;
-  roomEvent: RoomEvent;
+  roomEvent: any;
 }) => {
-  switch (roomEvent[0]) {
-    case "CreateRoomResulted": {
-      return pipe(
-        roomEvent[1],
-        Result.fold(
-          () => <></>,
-          () => <></>,
-          // ({ userId }) => (
-          //   <RoomEventLog
-          //     avatarUrl={store.Profile[userId]?.avatarUrl}
-          //     text={`${store.Profile[userId]?.username} created room`}
-          //   />
-          // ),
-        ),
-      );
-    }
+  return <></>
+  // switch (roomEvent[0]) {
+  //   case "CreateRoomResulted": {
+  //     return pipe(
+  //       roomEvent[1],
+  //       Result.fold(
+  //         () => <></>,
+  //         () => <></>,
+  //         // ({ userId }) => (
+  //         //   <RoomEventLog
+  //         //     avatarUrl={store.Profile[userId]?.avatarUrl}
+  //         //     text={`${store.Profile[userId]?.username} created room`}
+  //         //   />
+  //         // ),
+  //       ),
+  //     );
+  //   }
 
-    case "JoinRoomResulted":
-      return pipe(
-        roomEvent[1],
-        Result.fold(
-          () => <></>,
-          () => <></>,
-          // ({ userId }) => (
-          //   <RoomEventLog
-          //     avatarUrl={store.Profile[userId]?.avatarUrl}
-          //     text={`${store.Profile[userId]?.username} joined room`}
-          //   />
-          // ),
-        ),
-      );
+  //   case "JoinRoomResulted":
+  //     return pipe(
+  //       roomEvent[1],
+  //       Result.fold(
+  //         () => <></>,
+  //         () => <></>,
+  //         // ({ userId }) => (
+  //         //   <RoomEventLog
+  //         //     avatarUrl={store.Profile[userId]?.avatarUrl}
+  //         //     text={`${store.Profile[userId]?.username} joined room`}
+  //         //   />
+  //         // ),
+  //       ),
+  //     );
 
-    case "LeaveRoomResulted":
-      return pipe(
-        roomEvent[1],
-        Result.fold(
-          () => <></>,
-          () => <></>,
-          // ({ userId }) => (
-          //   <RoomEventLog
-          //     avatarUrl={store.Profile[userId]?.avatarUrl}
-          //     text={`${store.Profile[userId]?.username} lefted room`}
-          //   />
-          // ),
-        ),
-      );
+  //   case "LeaveRoomResulted":
+  //     return pipe(
+  //       roomEvent[1],
+  //       Result.fold(
+  //         () => <></>,
+  //         () => <></>,
+  //         // ({ userId }) => (
+  //         //   <RoomEventLog
+  //         //     avatarUrl={store.Profile[userId]?.avatarUrl}
+  //         //     text={`${store.Profile[userId]?.username} lefted room`}
+  //         //   />
+  //         // ),
+  //       ),
+  //     );
 
-    case "MoveResulted":
-      return pipe(
-        roomEvent[1],
-        Result.fold(
-          () => <></>,
-          () => <></>,
-          // ({ userId }) => (
-          //   <RoomEventLog
-          //     avatarUrl={store.Profile[userId]?.avatarUrl}
-          //     text={`${store.Profile[userId]?.username} moved`}
-          //   />
-          // ),
-        ),
-      );
+  //   case "MoveResulted":
+  //     return pipe(
+  //       roomEvent[1],
+  //       Result.fold(
+  //         () => <></>,
+  //         () => <></>,
+  //         // ({ userId }) => (
+  //         //   <RoomEventLog
+  //         //     avatarUrl={store.Profile[userId]?.avatarUrl}
+  //         //     text={`${store.Profile[userId]?.username} moved`}
+  //         //   />
+  //         // ),
+  //       ),
+  //     );
 
-    case "RemovePlayerResulted":
-      return pipe(
-        roomEvent[1],
-        Result.fold(
-          () => <></>,
-          ({ hostId, player }) => (
-            <RoomEventLog
-              avatarUrl={store.Profile[hostId]?.avatarUrl}
-              text={`${store.Profile[hostId]?.username} removed ${player} player`}
-            />
-          ),
-        ),
-      );
+  //   case "RemovePlayerResulted":
+  //     return pipe(
+  //       roomEvent[1],
+  //       Result.fold(
+  //         () => <></>,
+  //         () => <></>,
+  //         // ({ hostId, player }) => (
+  //         //   <RoomEventLog
+  //         //     avatarUrl={store.Profile[hostId]?.avatarUrl}
+  //         //     text={`${store.Profile[hostId]?.username} removed ${player} player`}
+  //         //   />
+  //         // ),
+  //       ),
+  //     );
 
-    case "PlayAsResulted":
-      return pipe(
-        roomEvent[1],
-        Result.fold(
-          () => <></>,
-          (ok) => (
-            <RoomEventLog
-              avatarUrl={store.Profile[ok.userId]?.avatarUrl}
-              text={`${store.Profile[ok.userId]?.username} started playing as ${ok.player
-                }`}
-            />
-          ),
-        ),
-      );
+  //   case "PlayAsResulted":
+  //     return pipe(
+  //       // roomEvent[1],
+  //       Result.fold(
+  //         () => <></>,
+  //         () => <></>,
+  //         // (ok) => (
+  //         //   <RoomEventLog
+  //         //     avatarUrl={store.Profile[ok.userId]?.avatarUrl}
+  //         //     text={`${store.Profile[ok.userId]?.username} started playing as ${ok.player
+  //         //       }`}
+  //         //   />
+  //         // ),
+  //       ),
+  //     );
 
-    case "QuitPlayingResulted":
-      return pipe(
-        roomEvent[1],
-        Result.fold(
-          () => <></>,
-          (ok) => (
-            <RoomEventLog
-              avatarUrl={store.Profile[ok.userId]?.avatarUrl}
-              text={`${store.Profile[ok.userId]?.username} quit playing`}
-            />
-          ),
-        ),
-      );
+  //   case "QuitPlayingResulted":
+  //     return pipe(
+  //       roomEvent[1],
+  //       Result.fold(
+  //         () => <></>,
+  //         (ok) => (
+  //           <RoomEventLog
+  //             avatarUrl={store.Profile[ok.userId]?.avatarUrl}
+  //             text={`${store.Profile[ok.userId]?.username} quit playing`}
+  //           />
+  //         ),
+  //       ),
+  //     );
 
-    case "RestartResulted":
-      return pipe(
-        roomEvent[1],
-        Result.fold(
-          () => <></>,
-          (ok) => (
-            <RoomEventLog
-              avatarUrl={store.Profile[ok.userId]?.avatarUrl}
-              text={`${store.Profile[ok.userId]?.username} restarted game`}
-            />
-          ),
-        ),
-      );
+  //   case "RestartResulted":
+  //     return pipe(
+  //       roomEvent[1],
+  //       Result.fold(
+  //         () => <></>,
+  //         (ok) => (
+  //           <RoomEventLog
+  //             avatarUrl={store.Profile[ok.userId]?.avatarUrl}
+  //             text={`${store.Profile[ok.userId]?.username} restarted game`}
+  //           />
+  //         ),
+  //       ),
+  //     );
 
-    case "PlayAgainResulted":
-      return <UI.Typography>User wants to play again</UI.Typography>;
+  //   case "PlayAgainResulted":
+  //     return <UI.Typography>User wants to play again</UI.Typography>;
 
-    default:
-      return exhaustive(roomEvent);
-  }
+  //   default:
+  //     return exhaustive(roomEvent);
+  // }
 };
 
 const viewPlayerActions =
@@ -685,7 +651,7 @@ const viewPlayerActions =
   }: {
     currentUserId: string;
     player: Board.Player;
-    room: Room;
+    room: Room.Room;
     store: Store.Model;
   }): UI.View<Msg> =>
     (dispatch) => {
@@ -747,7 +713,7 @@ const ViewPlayer = ({
   currentUserId,
 }: {
   currentUserId: string;
-  room: Room;
+  room: Room.Room;
   store: Store.Model;
   player: Board.Player;
   model: Model;
