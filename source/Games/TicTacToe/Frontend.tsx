@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import * as Route from "../../Route";
 import * as Store from "../../Store";
 import * as UI from "../../UI";
@@ -331,20 +331,20 @@ const ViewInRoom = ({
   model: Model;
   dispatch: (msg: Msg) => void;
 }) => {
-  const roomStatus = Room.toStatus(room);
+  const status = Room.toStatus(room);
 
   const statusMessage =
-    roomStatus.type === "NotReady"
-      ? roomStatus.status === "MissingBoth"
+    status.type === "NotReady"
+      ? status.status === "MissingBoth"
         ? "Missing Players"
-        : roomStatus.status === "MissingO"
+        : status.status === "MissingO"
           ? "Missing O Player"
-          : roomStatus.status === "MissingX"
+          : status.status === "MissingX"
             ? "Missing X Player"
             : ""
-      : roomStatus.status.type === "Turn"
-        ? `${roomStatus.status.turn} Turn`
-        : roomStatus.status.type === "Tie"
+      : status.status.type === "Turn"
+        ? `${status.status.turn} Turn`
+        : status.status.type === "Tie"
           ? "Gameover"
           : `Gameover`;
 
@@ -353,6 +353,26 @@ const ViewInRoom = ({
       model.users[profile.userId] &&
       model.users[profile.userId]?.roomId === room.roomId,
   );
+
+
+  const [screen, setScreen] = useState<"versus" | "board">(status.type === 'NotReady' ? "versus" : "board")
+  const timeoutRef = useRef<any>(undefined)
+
+  useEffect(() => {
+    clearTimeout(timeoutRef.current)
+
+    if (status.type === 'Ready') {
+      timeoutRef.current = setTimeout(() => {
+        setScreen("board")
+      }, 2000)
+    }
+
+    if (status.type === 'NotReady') {
+      setScreen("versus")
+    }
+
+
+  }, [status.type])
 
   return (
     <>
@@ -403,12 +423,18 @@ const ViewInRoom = ({
           {statusMessage}
         </UI.Typography>
 
-        <ViewBoard
-          board={room.board}
-          onClick={(position) =>
-            dispatch(["Move", { currentUserId, position }])
-          }
-        />
+        {screen === "versus" && <VersusScreen store={store} room={room} />}
+
+        {screen === "board" &&
+          <ViewBoard
+            board={room.board}
+            onClick={(position) =>
+              dispatch(["Move", { currentUserId, position }])
+            }
+          />}
+
+
+
 
         <EventLogList room={room} store={store} />
       </UI.FillBox>
@@ -924,24 +950,64 @@ const Naught = ({
   );
 };
 
-const VersusScreen = () => {
+const VersusScreen = ({ room, store }: { room: Room.Room, store: Store.Model }) => {
+  const profileX = room.players.X.type === 'User' ? store.Profile[room.players.X.userId] : undefined
+
+  const profileO = room.players.O.type === 'User' ? store.Profile[room.players.O.userId] : undefined
+
   return (
     <svg width="100%" viewBox="0 0 1 1">
       <rect width="100%" height="100%" fill={theme.background} />
 
-      <Cross strokeWidth={0.05} cx={0.25} cy={0.25} r={0.1} />
+      <mask id="avatar">
+        <rect x={0} y={0} width={1} height={1} fill="black" />
+        <circle cx={0.5} cy={0.5} r={0.5} fill="white" />
+      </mask>
+
+
+      {profileX && (
+        <>
+          <Cross cx={0.15} cy={0.25} r={0.075} strokeWidth={0.05} />
+          <SvgAvatar id="x-avatar" cx={0.4} cy={0.25} r={0.1} src={profileX.avatarUrl} />
+        </>
+      )}
+
+
+      {profileO && (
+        <>
+          <Naught cx={0.55} cy={0.75} r={0.075} strokeWidth={0.05} />
+          <SvgAvatar id="o-avatar" cx={0.8} cy={0.75} r={0.1} src={profileO.avatarUrl} />
+        </>
+      )}
+
+
       <line
         x1={0}
         y1={1}
         x2={1}
         y2={0}
         stroke={theme.line}
-        strokeWidth={0.05}
+        strokeWidth={0.0333}
       />
-      <text x={0.5} y={0.5} style={{ font: "italic 12px serif", fill: "red" }}>
+      <circle cx={0.5} cy={0.5} r={0.1} fill={theme.line} />
+      <text dominantBaseline={"middle"} textAnchor={"middle"} x={0.5} y={0.5} fontSize={0.15} fill={"#fff"}>
         vs
       </text>
-      <Naught strokeWidth={0.05} cx={0.75} cy={0.75} r={0.1} />
+
     </svg>
   );
 };
+
+
+const SvgAvatar = ({ id, src, cx, cy, r }: { id: string, src: string; cx: number, cy: number, r: number }) => {
+
+
+  return <>
+    <defs>
+      <clipPath id={id}>
+        <circle cx={cx} cy={cy} r={r} fill="#FFFFFF" />
+      </clipPath>
+    </defs>
+    <image x={cx - r} y={cy - r} width={r * 2} height={r * 2} xlinkHref={src} href={src} clipPath={`url(#${id})`} />
+  </>
+}
