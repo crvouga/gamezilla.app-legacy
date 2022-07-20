@@ -168,9 +168,7 @@ export const toStatus = (board: Board): Status => {
 };
 
 const isTie = (board: Board): boolean => {
-  return allPositions
-    .map((position) => toSlot(board, position))
-    .every((slot) => slot !== "Empty");
+  return toSlotFrequency(board).Empty === 0 && toWins(board).None.length === 0
 };
 
 type SlotFrequency = { X: number; O: number; Empty: number };
