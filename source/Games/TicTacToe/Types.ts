@@ -35,7 +35,7 @@ export type FrontendMsg =
   | JoinRoom
   | Move
   | StartPlaying
-  | Restart
+  | RestartGame
   | CreateRoom
   | StopPlaying
   | RemovePlayer
@@ -45,7 +45,7 @@ export type ToBackend =
   | ["Init"]
   | LeaveRoom
   | JoinRoom
-  | Restart
+  | RestartGame
   | StartPlaying
   | Move
   | CreateRoom
@@ -57,7 +57,7 @@ export type ToFrontend =
   | ["Sync", Room.Model]
   | LeaveRoomResulted
   | JoinRoomResulted
-  | RestartResulted
+  | RestartGameResulted
   | StartPlayingResulted
   | MoveResulted
   | StopPlayingResulted
@@ -83,11 +83,8 @@ type LeaveRoomResulted = ["LeaveRoomResulted", Room.LeaveRoomResult];
 type JoinRoom = ["JoinRoom", { currentUserId: string; roomId: Room.RoomId }];
 type JoinRoomResulted = ["JoinRoomResulted", Room.JoinRoomResult];
 
-type Restart = ["Restart", { currentUserId: string }];
-type RestartResulted = [
-  "RestartResulted",
-  Result.Result<string, { userId: string }>,
-];
+type RestartGame = ["RestartGame", { currentUserId: string }];
+type RestartGameResulted = ["RestartGameResulted", Room.RestartGameResult];
 
 type StartPlaying = [
   "StartPlaying",
