@@ -1,6 +1,6 @@
 import * as ReactDomClient from "react-dom/client";
 import * as Admin from "./Admin/Frontend";
-import * as ConnectionStatus from "./ConnectionStatus";
+import * as Connection from "./Connection";
 import * as Games from "./Games/Frontend";
 import * as Pages from "./Pages";
 import * as Route from "./Route";
@@ -109,7 +109,7 @@ export const init = (location: Browser.Location): [Model, Cmd.Cmd<Msg>] => {
   const store = Store.init;
   const game = Games.init;
   const [page, pageCmd] = Pages.initLoading();
-  const connectionStatus = ConnectionStatus.init;
+  const connectionStatus = Connection.init;
   const admin = Admin.init("Model");
   return [
     {
@@ -120,7 +120,7 @@ export const init = (location: Browser.Location): [Model, Cmd.Cmd<Msg>] => {
       game,
       auth: auth,
       page,
-      connectionStatus,
+      connection: connectionStatus,
     },
     Cmd.batch<Msg>([
       pipe(authCmd, Cmd.map(tag("Auth"))),
@@ -341,14 +341,14 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
       }
     }
 
-    case "ConnectionStatus": {
-      const [connectionNew, connectionCmd] = ConnectionStatus.update(
+    case "Connection": {
+      const [connectionNew, connectionCmd] = Connection.update(
         msg[1],
-        model.connectionStatus,
+        model.connection,
       );
       return [
-        { ...model, connectionStatus: connectionNew },
-        pipe(connectionCmd, Cmd.map(tag("ConnectionStatus"))),
+        { ...model, connection: connectionNew },
+        pipe(connectionCmd, Cmd.map(tag("Connection"))),
       ];
     }
 
@@ -482,7 +482,7 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
     pipe(Games.subscriptions(model.game), Sub.map(tag("Game"))),
     pipe(Pages.subscriptions(model.page), Sub.map(tag("Page"))),
     pipe(Auth.subscriptions, Sub.map(tag("Auth"))),
-    pipe(ConnectionStatus.subscriptions, Sub.map(tag("ConnectionStatus"))),
+    pipe(Connection.subscriptions, Sub.map(tag("Connection"))),
     fromBackend((toFrontend) => ["ToFrontend", toFrontend]),
   ]);
 };
@@ -549,7 +549,7 @@ export const view =
 const viewMain = (model: Model): UI.View<Msg> => {
   const status = toStatus(model);
 
-  switch (model.connectionStatus) {
+  switch (model.connection) {
     case 'Connecting':
     case 'Disconnected':
     case 'Reconnecting':

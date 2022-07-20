@@ -63,7 +63,7 @@ socket.on("ToFrontend", (msg) => {
 //
 //
 
-export const onConnectionStatus = <Msg>(
+export const onConnectionChanged = <Msg>(
   mapper: (connectionStatus: ConnectionStatus) => Msg,
 ): Sub.Sub<Msg> => {
   return pipe(connectionStatus$, Sub.map(mapper));

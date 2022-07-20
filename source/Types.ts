@@ -1,7 +1,7 @@
 import * as Admin from "./Admin";
 import * as Auth from "./Auth";
 import * as Clients from "./Clients";
-import * as ConnectionStatus from "./ConnectionStatus";
+import * as Connection from "./Connection";
 import * as Games from "./Games";
 import * as Pages from "./Pages";
 import * as Route from "./Route";
@@ -24,7 +24,7 @@ export type FrontendModel = {
   auth: Auth.Model;
   page: Pages.Model;
   route: Route.Route;
-  connectionStatus: ConnectionStatus.Model;
+  connection: Connection.Model;
   game: Games.FrontendModel;
   admin: Admin.FrontendModel;
 };
@@ -49,7 +49,7 @@ export type FrontendMsg =
   | ["Store", Store.Msg]
   | ["Auth", Auth.Msg]
   | ["Page", Pages.Msg]
-  | ["ConnectionStatus", ConnectionStatus.Msg]
+  | ["Connection", Connection.Msg]
   | ["Admin", Admin.FrontendMsg]
   | ["ToFrontend", ToFrontend];
 
