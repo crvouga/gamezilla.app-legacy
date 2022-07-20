@@ -53,6 +53,12 @@ export const update = (
     case "StartPlaying":
       return [model, sendToBackend(["Games", ["TicTacToe", msg]])];
 
+    case "StopPlaying":
+      return [
+        { ...model, opened: ["None"] },
+        sendToBackend(["Games", ["TicTacToe", msg]]),
+      ];
+
     case "PlayAgain":
       return [model, sendToBackend(["Games", ["TicTacToe", msg]])];
 
@@ -71,11 +77,7 @@ export const update = (
     case "LeaveRoom":
       return [model, sendToBackend(["Games", ["TicTacToe", msg]])];
 
-    case "StopPlaying":
-      return [
-        { ...model, opened: ["None"] },
-        sendToBackend(["Games", ["TicTacToe", msg]]),
-      ];
+
 
     case "Restart": {
       return [model, sendToBackend(["Games", ["TicTacToe", msg]])];
