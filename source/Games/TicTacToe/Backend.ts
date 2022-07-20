@@ -182,36 +182,24 @@ export const updateFromFrontend = (
       ];
     }
 
-    case "Restart": {
+    case "RestartGame": {
       const { currentUserId } = msg[1];
 
-      const maybeCurrentRoom = Room.toRoom(currentUserId, model);
-      if (maybeCurrentRoom.type === "None") {
-        const result = Result.Err("User is not in a room");
-        return [model, sendToFrontend(clientId, ["RestartResulted", result])];
+      const result = Room.restartGame({ userId: currentUserId }, model);
+
+      const toFrontend = sendToFrontend(clientId, [
+        "RestartGameResulted",
+        result,
+      ]);
+
+      if (result.type === "Err") {
+        return [model, toFrontend];
       }
 
-      const room = maybeCurrentRoom.value;
-
-      if (room.hostId !== currentUserId) {
-        const result = Result.Err("User is not the host");
-        return [model, sendToFrontend(clientId, ["RestartResulted", result])];
-      }
-
-      const roomNew = {
-        ...room,
-        board: Board.emptyBoard,
-      };
-
-      const modelNew = {
-        ...model,
-        rooms: {
-          ...model.rooms,
-          [roomNew.roomId]: roomNew,
-        },
-      };
-
-      return [modelNew, Cmd.batch([broadcast(["Sync", modelNew])])];
+      return [
+        result.value,
+        Cmd.batch([toFrontend, broadcast(["Sync", result.value])]),
+      ];
     }
 
     case "Move": {

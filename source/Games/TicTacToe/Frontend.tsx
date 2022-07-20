@@ -77,9 +77,7 @@ export const update = (
     case "LeaveRoom":
       return [model, sendToBackend(["Games", ["TicTacToe", msg]])];
 
-
-
-    case "Restart": {
+    case "RestartGame": {
       return [model, sendToBackend(["Games", ["TicTacToe", msg]])];
     }
 
@@ -161,7 +159,7 @@ export const updateFromBackend = (
       return [model, Cmd.None, []];
     }
 
-    case "RestartResulted": {
+    case "RestartGameResulted": {
       return [model, Cmd.None, []];
     }
 
