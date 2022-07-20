@@ -1,5 +1,3 @@
-import * as Store from "../../Store";
-import * as Board from "./Board";
 import {
   broadcast,
   onConnect,
@@ -7,17 +5,20 @@ import {
   sendToFrontend,
 } from "../../Bridge/Backend";
 import { ClientId } from "../../Bridge/Bridge";
-import { Cmd, Result, Sub, Uuid, pipe } from "../../Core";
-import { get, remove } from "../../Core/Record";
+import { Cmd, pipe, Result, Sub } from "../../Core";
+import * as Board from "./Board";
 import {
   BackendModel,
   BackendMsg,
+  createRoom,
+  joinRoom,
+  leaveRoom,
+  mapRoomPlayers,
+  move,
   RoomEvent,
   RoomId,
   ToBackend,
-  initRoom,
-  mapRoomPlayers,
-  toPlayer,
+  ToFrontend,
   toRoom,
   toRoomStatus,
 } from "./Types";
@@ -397,89 +398,22 @@ export const updateFromFrontend = (
     case "Move": {
       const { currentUserId, position } = msg[1];
 
-      const maybeCurrentRoom = toRoom(currentUserId, model);
-      if (maybeCurrentRoom.type === "None") {
-        const event: RoomEvent = [
-          "MoveResulted",
-          Result.Err("User is not in a room"),
-        ];
+      const result = move({ userId: currentUserId, position }, model);
+
+      const toFrontend: ToFrontend = ["MoveResulted", result];
+
+      if (result.type === "Err") {
         return [
           model,
-          sendToFrontend(clientId, ["Games", ["TicTacToe", event]]),
+          sendToFrontend(clientId, ["Games", ["TicTacToe", toFrontend]]),
         ];
       }
-
-      const room = maybeCurrentRoom.value;
-
-      const roomStatus = toRoomStatus(room);
-
-      if (roomStatus.type === "NotReady") {
-        const event: RoomEvent = [
-          "MoveResulted",
-          Result.Err("Room is not ready"),
-        ];
-
-        return [
-          model,
-          sendToFrontend(clientId, ["Games", ["TicTacToe", event]]),
-        ];
-      }
-
-      const player = toPlayer(currentUserId, room);
-
-      if (player === "None") {
-        const event: RoomEvent = [
-          "MoveResulted",
-          Result.Err("User is not a player"),
-        ];
-
-        return [
-          model,
-          sendToFrontend(clientId, ["Games", ["TicTacToe", event]]),
-        ];
-      }
-
-      const moveResult =
-        player === "Both"
-          ? Board.move(room.board, Board.toTurn(room.board), msg[1].position)
-          : Board.move(room.board, player, msg[1].position);
-
-      if (moveResult.type === "Err") {
-        const event: RoomEvent = ["MoveResulted", moveResult];
-
-        return [
-          model,
-          sendToFrontend(clientId, ["Games", ["TicTacToe", event]]),
-        ];
-      }
-
-      const event: RoomEvent = [
-        "MoveResulted",
-        Result.Ok({
-          userId: currentUserId,
-          position: position,
-        }),
-      ];
-
-      const modelNew: Model = pipe(
-        {
-          ...model,
-          rooms: {
-            ...model.rooms,
-            [room.roomId]: {
-              ...room,
-              board: moveResult.value,
-            },
-          },
-        },
-        appendRoomEvent(room.roomId, event),
-      );
 
       return [
-        modelNew,
+        result.value,
         Cmd.batch([
-          sendToFrontend(clientId, ["Games", ["TicTacToe", event]]),
-          broadcast(["Games", ["TicTacToe", ["Sync", modelNew]]]),
+          sendToFrontend(clientId, ["Games", ["TicTacToe", toFrontend]]),
+          broadcast(["Games", ["TicTacToe", ["Sync", result.value]]]),
         ]),
       ];
     }
@@ -487,61 +421,22 @@ export const updateFromFrontend = (
     case "JoinRoom": {
       const { currentUserId, roomId } = msg[1];
 
-      const maybeCurrentRoom = toRoom(currentUserId, model);
+      const result = joinRoom({ userId: currentUserId, roomId }, model);
 
-      if (maybeCurrentRoom.type === "Some") {
-        const result = Result.Err(
-          "User can not join a room when already in a room.",
-        );
+      const toFrontend: ToFrontend = ["JoinRoomResulted", result];
+
+      if (result.type === "Err") {
         return [
           model,
-          sendToFrontend(clientId, [
-            "Games",
-            ["TicTacToe", ["JoinRoomResulted", result]],
-          ]),
+          sendToFrontend(clientId, ["Games", ["TicTacToe", toFrontend]]),
         ];
       }
-
-      const maybeRoom = get(roomId, model.rooms);
-
-      if (maybeRoom.type === "None") {
-        const result = Result.Err("Room does not exist");
-
-        return [
-          model,
-          sendToFrontend(clientId, [
-            "Games",
-            ["TicTacToe", ["JoinRoomResulted", result]],
-          ]),
-        ];
-      }
-
-      const roomEvent: RoomEvent = [
-        "JoinRoomResulted",
-        Result.Ok({
-          userId: currentUserId,
-        }),
-      ];
-
-      const modelNew = pipe(
-        {
-          ...model,
-          users: {
-            ...model.users,
-            [currentUserId]: {
-              userId: currentUserId,
-              roomId,
-            },
-          },
-        },
-        appendRoomEvent(roomId, roomEvent),
-      );
 
       return [
-        modelNew,
+        result.value,
         Cmd.batch([
-          sendToFrontend(clientId, ["Games", ["TicTacToe", roomEvent]]),
-          broadcast(["Games", ["TicTacToe", ["Sync", modelNew]]]),
+          sendToFrontend(clientId, ["Games", ["TicTacToe", toFrontend]]),
+          broadcast(["Games", ["TicTacToe", ["Sync", result.value]]]),
         ]),
       ];
     }
@@ -549,83 +444,22 @@ export const updateFromFrontend = (
     case "LeaveRoom": {
       const { currentUserId } = msg[1];
 
-      const maybeCurrentRoom = toRoom(currentUserId, model);
+      const result = leaveRoom({ userId: currentUserId }, model);
 
-      if (maybeCurrentRoom.type === "None") {
+      const toFrontend: ToFrontend = ["LeaveRoomResulted", result];
+
+      if (result.type === "Err") {
         return [
           model,
-          sendToFrontend(clientId, [
-            "Games",
-            [
-              "TicTacToe",
-              ["LeaveRoomResulted", Result.Err("User is not in a room")],
-            ],
-          ]),
+          sendToFrontend(clientId, ["Games", ["TicTacToe", toFrontend]]),
         ];
       }
-
-      const room = maybeCurrentRoom.value;
-
-      if (room.hostId === currentUserId) {
-        const modelNew: Model = {
-          ...model,
-          rooms: remove(room.roomId, model.rooms),
-          users: remove(currentUserId, model.users),
-        };
-
-        const roomEvent: RoomEvent = [
-          "LeaveRoomResulted",
-          Result.Ok({ userId: currentUserId }),
-        ];
-
-        return [
-          modelNew,
-          Cmd.batch([
-            broadcast(["Games", ["TicTacToe", ["Sync", modelNew]]]),
-            sendToFrontend(clientId, ["Games", ["TicTacToe", roomEvent]]),
-          ]),
-        ];
-      }
-
-      const roomEvent: RoomEvent = [
-        "LeaveRoomResulted",
-        Result.Ok({
-          userId: currentUserId,
-        }),
-      ];
-
-      const modelNew: Model = pipe(
-        {
-          ...model,
-          users: remove(currentUserId, model.users),
-          rooms: {
-            ...model.rooms,
-            [room.roomId]: pipe(
-              room,
-              (room) =>
-                mapRoomPlayers(
-                  (roomPlayer) =>
-                    roomPlayer.type === "User" &&
-                    roomPlayer.userId === currentUserId
-                      ? { type: "None" }
-                      : roomPlayer,
-                  room,
-                ),
-              (room) => ({
-                ...room,
-                board: Board.emptyBoard,
-              }),
-            ),
-          },
-        },
-        appendRoomEvent(room.roomId, roomEvent),
-      );
 
       return [
-        modelNew,
+        result.value,
         Cmd.batch([
-          broadcast(["Games", ["TicTacToe", ["Sync", modelNew]]]),
-          sendToFrontend(clientId, ["Games", ["TicTacToe", roomEvent]]),
+          broadcast(["Games", ["TicTacToe", ["Sync", result.value]]]),
+          sendToFrontend(clientId, ["Games", ["TicTacToe", toFrontend]]),
         ]),
       ];
     }
@@ -638,38 +472,23 @@ export const updateFromFrontend = (
 
     case "CreateRoom":
       const { currentUserId } = msg[1];
-      const roomId = Uuid.generateSync();
-      const roomEvent: RoomEvent = [
-        "CreateRoomResulted",
-        Result.Ok({
-          userId: currentUserId,
-        }),
-      ];
 
-      const roomNew = initRoom(roomId, currentUserId);
-      const modelNew: Model = pipe(
-        {
-          ...model,
-          rooms: {
-            ...model.rooms,
-            [roomNew.roomId]: roomNew,
-          },
-          users: {
-            ...model.users,
-            [currentUserId]: {
-              userId: currentUserId,
-              roomId: roomNew.roomId,
-            },
-          },
-        },
-        appendRoomEvent(roomId, roomEvent),
-      );
+      const result = createRoom({ userId: currentUserId }, model);
+
+      const toFrontend: ToFrontend = ["CreateRoomResulted", result];
+
+      if (result.type === "Err") {
+        return [
+          model,
+          sendToFrontend(clientId, ["Games", ["TicTacToe", toFrontend]]),
+        ];
+      }
 
       return [
-        modelNew,
+        result.value,
         Cmd.batch([
-          broadcast(["Games", ["TicTacToe", ["Sync", modelNew]]]),
-          sendToFrontend(clientId, ["Games", ["TicTacToe", roomEvent]]),
+          broadcast(["Games", ["TicTacToe", ["Sync", result.value]]]),
+          sendToFrontend(clientId, ["Games", ["TicTacToe", toFrontend]]),
         ]),
       ];
   }
@@ -695,11 +514,6 @@ const appendRoomEvent =
       },
     };
   };
-
-const syncRoom = (roomId: string, model: Model): Cmd.Cmd<Msg> => {
-  // const t = Store.Profile.loadMany()
-  return broadcast(["Games", ["TicTacToe", ["Sync", model]]]);
-};
 
 //
 //
