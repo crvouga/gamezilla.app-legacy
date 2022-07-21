@@ -367,7 +367,7 @@ export const viewBanner =
             onClick={() => dispatch(["ClickedBanner"])}
           >
             <UI.Box sx={{ width: 64, marginRight: 2 }}>
-              <GameIcon game={model.child.type} />
+              <CoverArt game={model.child.type} />
             </UI.Box>
             <UI.Typography align="left" variant="h5" sx={{ flex: 1 }}>
               {gameToName(model.child.type)}
@@ -409,18 +409,18 @@ export const gameToName = (game: GameName): string => {
   }
 }
 
-export const GameIcon = ({ game }: { game: GameName }) => {
+export const CoverArt = ({ game }: { game: GameName }) => {
   switch (game) {
     case "Chess":
-      return <Chess.Icon />
+      return <Chess.CoverArt />
 
     case "ConnectFour":
-      return <ConnectFour.Icon id="gameicon" />
+      return <ConnectFour.CoverArt id="connect-four-cover-art" />
 
     case "TicTacToe":
       return <TicTacToe.CoverArt />
 
     case "Snake":
-      return <Snake.Icon />
+      return <Snake.CoverArt />
   }
 }

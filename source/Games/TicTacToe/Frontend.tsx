@@ -1056,6 +1056,7 @@ const VersusScreen = ({
         y={0.5}
         fontSize={0.15}
         fill={"#fff"}
+        r={0.15}
       >
         vs
       </text>

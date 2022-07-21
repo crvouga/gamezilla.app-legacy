@@ -485,10 +485,10 @@ const toTileVariant = (position: Position.Position): TileVariant => {
   return "dark"
 }
 
-const toViewbox = ({ lower, upper }: Model["bounds"]) =>
+const toViewBox = ({ lower, upper }: Model["bounds"]) =>
   [lower.x, lower.y, upper.x, upper.y].join(", ")
 
-export const Icon = () => {
+export const CoverArt = () => {
   const bounds: Model["bounds"] = {
     lower: {
       x: 0,
@@ -508,7 +508,7 @@ export const Icon = () => {
   const food: Model["food"] = { x: 2, y: 2 }
 
   return (
-    <svg width="100%" viewBox={toViewbox(bounds)}>
+    <svg width="100%" viewBox={toViewBox(bounds)}>
       {Position.range(bounds).map(({ x, y }, index) => (
         <rect
           key={`${x} ${y} ${index}`}
