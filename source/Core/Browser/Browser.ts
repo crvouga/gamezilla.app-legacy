@@ -61,12 +61,6 @@ export const getLocation = (): Location => {
 //
 //
 
-export const reload: Cmd.Cmd<never> = Rx.of(async () => {
-  window.location.reload();
-  window.dispatchEvent(new Event("popstate"));
-  return Option.None;
-});
-
 export const push = (url: string): Cmd.Cmd<never> => {
   return Rx.of(async () => {
     window.history.pushState(null, "", url);
@@ -116,21 +110,6 @@ export const focus =
 
     if (element) {
       element.focus();
-      return Result.Ok({});
-    }
-
-    return Result.Err({ type: "ElementNotFound" });
-  };
-
-export type BlurResult = Result.Result<Problem, {}>;
-
-export const blur =
-  (htmlId: string): Task.Task<BlurResult> =>
-  async () => {
-    const element = document.getElementById(htmlId);
-
-    if (element) {
-      element.blur();
       return Result.Ok({});
     }
 
@@ -197,19 +176,6 @@ export const element = <Model, Msg, Dom>({
     view$: view$,
   };
 };
-
-export const withStop =
-  (signal: Rx.Subject<unknown>) =>
-  <Model, Msg, Dom>(
-    program: Program<Model, Msg, Dom>,
-  ): Program<Model, Msg, Dom> => {
-    const { view$, ...rest } = program;
-
-    return {
-      ...Platform.withStop(signal)(rest),
-      view$: view$.pipe(Rx.takeUntil(signal)),
-    };
-  };
 
 export const run = <Model, Msg, Dom>(
   program: Program<Model, Msg, Dom>,

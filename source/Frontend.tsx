@@ -2,7 +2,18 @@ import * as ReactDomClient from "react-dom/client";
 import * as Auth from "./Auth";
 import { fromBackend } from "./Bridge/Frontend";
 import * as Connection from "./Connection";
-import { andThen, andThenMany, Browser, Cmd, Debug, exhaustive, Option, pipe, Sub, tag } from "./Core";
+import {
+  andThen,
+  andThenMany,
+  Browser,
+  Cmd,
+  Debug,
+  exhaustive,
+  Option,
+  pipe,
+  Sub,
+  tag,
+} from "./Core";
 import * as Games from "./Games/Frontend";
 import * as Pages from "./Pages";
 import * as Route from "./Route";
@@ -39,7 +50,7 @@ type Status =
 
 export const toStatus = ({
   store,
-  auth
+  auth,
 }: {
   store: Store.Model;
   auth: Auth.Model;
@@ -122,7 +133,6 @@ export const init = (location: Browser.Location): [Model, Cmd.Cmd<Msg>] => {
     Cmd.batch<Msg>([
       pipe(authCmd, Cmd.map(tag("Auth"))),
       pipe(pageCmd, Cmd.map(tag("Page"))),
-
     ]),
   ];
 };
@@ -137,11 +147,7 @@ export const init = (location: Browser.Location): [Model, Cmd.Cmd<Msg>] => {
 
 type Msg = FrontendMsg;
 
-type OutAction =
-  | Snackbar.Action
-  | Games.Action
-  | Store.Action
-  | Auth.Action
+type OutAction = Snackbar.Action | Games.Action | Store.Action | Auth.Action;
 
 //
 //
@@ -192,10 +198,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
     case "Auth": {
       const [authNew, authCmd] = Auth.update(msg[1], model.auth);
 
-      return [
-        { ...model, auth: authNew },
-        pipe(authCmd, Cmd.map(tag("Auth"))),
-      ];
+      return [{ ...model, auth: authNew }, pipe(authCmd, Cmd.map(tag("Auth")))];
     }
 
     case "Snackbar": {
@@ -218,6 +221,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
         case "AuthLoading":
         case "LoggedOut":
           return [model, Cmd.None];
+
         case "Ready": {
           const { profile } = status;
           const [gameNew, gameCmd, actions] = Games.update(
@@ -239,8 +243,6 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
       switch (status.type) {
         case "AuthLoading":
-          return [model, Cmd.None];
-
         case "ProfileLoading":
           return [model, Cmd.None];
 
@@ -262,6 +264,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
             msg[1],
             model.page,
           );
+
           return pipe(
             [{ ...model, page: pageNew }, pipe(pageCmd, Cmd.map(tag("Page")))],
             andThenMany(runAction, actions),
@@ -284,6 +287,9 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
             andThenMany(runAction, actions),
           );
         }
+
+        default:
+          return exhaustive(status);
       }
     }
 
@@ -299,10 +305,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
           return [modelNew, Cmd.None];
 
         case "ProfileMissing": {
-          const [page, pageCmd] = Pages.initProfileMissing(
-            route,
-            status.auth,
-          );
+          const [page, pageCmd] = Pages.initProfileMissing(route, status.auth);
 
           return [{ ...modelNew, page }, pipe(pageCmd, Cmd.map(tag("Page")))];
         }
@@ -326,6 +329,9 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
           return [{ ...modelNew, page }, pipe(pageCmd, Cmd.map(tag("Page")))];
         }
+
+        default:
+          return exhaustive(status);
       }
     }
 
@@ -350,59 +356,59 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
 const updateStatusChanged =
   (modelPrev: Model) =>
-    (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
-      const statusPrev = toStatus(modelPrev);
-      const statusNew = toStatus(model);
+  (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
+    const statusPrev = toStatus(modelPrev);
+    const statusNew = toStatus(model);
 
-      if (statusNew.type === statusPrev.type) {
+    if (statusNew.type === statusPrev.type) {
+      return [model, Cmd.None];
+    }
+
+    switch (statusNew.type) {
+      case "ProfileLoading":
+        const action: OutAction = [
+          "Store",
+          ["Profile", ["FindMany", { userIds: [statusNew.auth.userId] }]],
+        ];
+
+        return pipe([model, Cmd.None], andThenMany(runAction, [action]));
+
+      case "ProfileMissing": {
+        const [page, pageCmd] = Pages.initProfileMissing(
+          model.route,
+          statusNew.auth,
+        );
+
+        return [{ ...model, page }, pipe(pageCmd, Cmd.map(tag("Page")))];
+      }
+
+      case "AuthLoading":
         return [model, Cmd.None];
+
+      case "LoggedOut": {
+        const [page, pageCmd] = Pages.initLoggedOut(model.route);
+        return [{ ...model, page }, pipe(pageCmd, Cmd.map(tag("Page")))];
       }
 
-      switch (statusNew.type) {
-        case "ProfileLoading":
-          const action: OutAction = ["Store", ['Profile', ['FindMany', { userIds: [statusNew.auth.userId] }]]]
-
-          return pipe(
-            [model, Cmd.None],
-            andThenMany(runAction, [action])
-          )
-
-        case "ProfileMissing": {
-          const [page, pageCmd] = Pages.initProfileMissing(
-            model.route,
-            statusNew.auth,
-          );
-
-          return [{ ...model, page }, pipe(pageCmd, Cmd.map(tag("Page")))];
+      case "Ready": {
+        if (model.route.type === "Game" && model.game.type === "Closed") {
+          return [model, Route.replace({ type: "Home" })];
         }
 
-        case "AuthLoading":
-          return [model, Cmd.None];
-
-        case "LoggedOut": {
-          const [page, pageCmd] = Pages.initLoggedOut(model.route);
-          return [{ ...model, page }, pipe(pageCmd, Cmd.map(tag("Page")))];
-        }
-
-        case "Ready": {
-          if (model.route.type === "Game" && model.game.type === "Closed") {
-            return [model, Route.replace({ type: "Home" })];
-          }
-
-          const [page, pageCmd, actions] = Pages.initReady(
-            model.route,
-            statusNew.profile,
-          );
-          return pipe(
-            [{ ...model, page }, pipe(pageCmd, Cmd.map(tag("Page")))],
-            andThenMany(runAction, actions),
-          );
-        }
-
-        default:
-          return exhaustive(statusNew);
+        const [page, pageCmd, actions] = Pages.initReady(
+          model.route,
+          statusNew.profile,
+        );
+        return pipe(
+          [{ ...model, page }, pipe(pageCmd, Cmd.map(tag("Page")))],
+          andThenMany(runAction, actions),
+        );
       }
-    };
+
+      default:
+        return exhaustive(statusNew);
+    }
+  };
 
 const runAction = (action: OutAction, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (action[0]) {
@@ -434,14 +440,8 @@ const runAction = (action: OutAction, model: Model): [Model, Cmd.Cmd<Msg>] => {
     }
 
     case "Auth": {
-      const [authNew, authCmd] = Auth.runAction(
-        action,
-        model.auth,
-      );
-      return [
-        { ...model, auth: authNew },
-        pipe(authCmd, Cmd.map(tag("Auth"))),
-      ];
+      const [authNew, authCmd] = Auth.runAction(action, model.auth);
+      return [{ ...model, auth: authNew }, pipe(authCmd, Cmd.map(tag("Auth")))];
     }
 
     default:
@@ -491,51 +491,51 @@ const toThemeMode = (model: Model): UI.ThemeMode => {
 
 export const view =
   (model: Model): UI.View<Msg> =>
-    (dispatch) => {
-      return (
-        <UI.ThemeProvider themeMode={toThemeMode(model)}>
-          <UI.Box
-            sx={{
-              userSelect: "none",
-              maxWidth: "sm",
-              marginX: "auto",
-              position: "fixed",
-              width: "100%",
-              height: "100%",
-              overflow: "hidden",
-              maxHeight: "100%",
-              display: "flex",
-              flexDirection: "column",
-              left: "50%",
-              top: "50%",
-              transform: "translate(-50%, -50%)",
-            }}
-          >
-            <UI.Box sx={{ width: "100%", overflow: "hidden", flex: 1 }}>
-              {viewMain(model)(dispatch)}
-            </UI.Box>
-
-            {pipe(
-              Snackbar.view({}, model.snackbar),
-              UI.map(tag("Snackbar")),
-            )(dispatch)}
-
-            {viewGameBanner(model)(dispatch)}
+  (dispatch) => {
+    return (
+      <UI.ThemeProvider themeMode={toThemeMode(model)}>
+        <UI.Box
+          sx={{
+            userSelect: "none",
+            maxWidth: "sm",
+            marginX: "auto",
+            position: "fixed",
+            width: "100%",
+            height: "100%",
+            overflow: "hidden",
+            maxHeight: "100%",
+            display: "flex",
+            flexDirection: "column",
+            left: "50%",
+            top: "50%",
+            transform: "translate(-50%, -50%)",
+          }}
+        >
+          <UI.Box sx={{ width: "100%", overflow: "hidden", flex: 1 }}>
+            {viewMain(model)(dispatch)}
           </UI.Box>
-        </UI.ThemeProvider>
-      );
-    };
+
+          {pipe(
+            Snackbar.view({}, model.snackbar),
+            UI.map(tag("Snackbar")),
+          )(dispatch)}
+
+          {viewGameBanner(model)(dispatch)}
+        </UI.Box>
+      </UI.ThemeProvider>
+    );
+  };
 
 const viewMain = (model: Model): UI.View<Msg> => {
   const status = toStatus(model);
 
   switch (model.connection) {
-    case 'Connecting':
-    case 'Disconnected':
-    case 'Reconnecting':
-      return viewLoading
+    case "Connecting":
+    case "Disconnected":
+    case "Reconnecting":
+      return viewLoading;
 
-    case 'Connected': {
+    case "Connected": {
       switch (status.type) {
         case "AuthLoading":
         case "ProfileLoading":
@@ -576,31 +576,29 @@ const viewMain = (model: Model): UI.View<Msg> => {
       }
     }
   }
-
-
 };
 
 const viewLoading: UI.View<Msg> = () => <UI.LoadingPage />;
 
 const viewGameBanner =
   (model: Model): UI.View<Msg> =>
-    (dispatch) => {
-      switch (model.game.type) {
-        case "Closed":
+  (dispatch) => {
+    switch (model.game.type) {
+      case "Closed":
+        return <></>;
+
+      case "Opened":
+        if (model.page[0] === "Game") {
           return <></>;
+        }
 
-        case "Opened":
-          if (model.page[0] === "Game") {
-            return <></>;
-          }
-
-          return (
-            <>
-              {pipe(Games.viewBanner(model.game), UI.map(tag("Game")))(dispatch)}
-            </>
-          );
-      }
-    };
+        return (
+          <>
+            {pipe(Games.viewBanner(model.game), UI.map(tag("Game")))(dispatch)}
+          </>
+        );
+    }
+  };
 
 //
 //

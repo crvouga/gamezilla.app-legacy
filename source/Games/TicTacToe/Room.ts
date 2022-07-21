@@ -37,7 +37,7 @@ export type Room = {
 export type Event =
   | ["CreatedRoom", { userId: string }]
   | ["JoinedRoom", { userId: string }]
-  | ["LeftedRoom", { userId: string }]
+  | ["LeftRoom", { userId: string }]
   | ["Moved", { userId: string }]
   | ["RemovedPlayer", { userId: string; player: Board.Player }]
   | ["StartedPlaying", { userId: string; player: Board.Player }]
@@ -404,7 +404,7 @@ export const leaveRoom = (
     room,
     (room) => removeUserFromPlaying(userId, room),
     resetGame,
-    (room) => log(["LeftedRoom", { userId }], room),
+    (room) => log(["LeftRoom", { userId }], room),
   );
 
   if (user.userId === room.hostId) {
