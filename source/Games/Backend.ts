@@ -1,8 +1,7 @@
-import * as TicTacToe from "./TicTacToe/Backend";
-import { ClientId } from "../Bridge/Bridge";
-import { Cmd, Sub, pipe } from "../Core";
-import { tag } from "../Core";
-import { BackendModel, BackendMsg, ToBackend } from "./Types";
+import * as TicTacToe from "./TicTacToe/Backend"
+import { ClientId } from "../Bridge/Bridge"
+import { Cmd, pipe, Sub, tag } from "../Core"
+import { BackendModel, BackendMsg, ToBackend } from "./Types"
 
 //
 //
@@ -12,11 +11,11 @@ import { BackendModel, BackendMsg, ToBackend } from "./Types";
 //
 //
 
-type Model = BackendModel;
+type Model = BackendModel
 
 export const init: Model = {
   ticTacToe: TicTacToe.init,
-};
+}
 
 //
 //
@@ -32,14 +31,14 @@ export const update = (
 ): [Model, Cmd.Cmd<BackendMsg>] => {
   switch (msg[0]) {
     case "TicTacToe": {
-      const [childNew, childCmd] = TicTacToe.update(msg[1], model.ticTacToe);
+      const [childNew, childCmd] = TicTacToe.update(msg[1], model.ticTacToe)
       return [
         { ...model, ticTacToe: childNew },
         pipe(childCmd, Cmd.map(tag("TicTacToe"))),
-      ];
+      ]
     }
   }
-};
+}
 
 export const updateFromFrontend = (
   clientId: ClientId,
@@ -52,14 +51,14 @@ export const updateFromFrontend = (
         clientId,
         msg[1],
         model.ticTacToe,
-      );
+      )
       return [
         { ...model, ticTacToe: childNew },
         pipe(childCmd, Cmd.map(tag("TicTacToe"))),
-      ];
+      ]
     }
   }
-};
+}
 
 //
 //
@@ -69,8 +68,6 @@ export const updateFromFrontend = (
 //
 //
 
-export const subscriptions = (model: Model): Sub.Sub<BackendMsg> => {
-  return Sub.batch([
-    pipe(TicTacToe.subscriptions(model.ticTacToe), Sub.map(tag("TicTacToe"))),
-  ]);
-};
+export const subscriptions = (): Sub.Sub<BackendMsg> => {
+  return Sub.batch([pipe(TicTacToe.subscriptions(), Sub.map(tag("TicTacToe")))])
+}

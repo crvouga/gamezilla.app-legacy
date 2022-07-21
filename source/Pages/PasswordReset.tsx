@@ -1,7 +1,7 @@
-import * as Route from "../Route";
-import * as Store from "../Store";
-import * as UI from "../UI";
-import { Cmd, pipe } from "../Core";
+import * as Route from "../Route"
+import * as Store from "../Store"
+import * as UI from "../UI"
+import { Cmd, pipe } from "../Core"
 
 //
 //
@@ -12,13 +12,13 @@ import { Cmd, pipe } from "../Core";
 //
 
 export type Model = {
-  emailAddress: string;
+  emailAddress: string
   submission:
-  | { type: "Idle" }
-  | { type: "Loading" }
-  | { type: "Problem"; message: string }
-  | { type: "Succeeded"; sentTo: string };
-};
+    | { type: "Idle" }
+    | { type: "Loading" }
+    | { type: "Problem"; message: string }
+    | { type: "Succeeded"; sentTo: string }
+}
 
 //
 //
@@ -31,7 +31,7 @@ export type Model = {
 export const init: Model = {
   submission: { type: "Idle" },
   emailAddress: "",
-};
+}
 
 //
 //
@@ -46,20 +46,20 @@ export type Msg =
   | ["ClickedSend"]
   | ["InputtedEmailAddress", string]
   | [
-    "SendResulted",
-    {
-      sentTo: string;
-      result: Store.Account.SendResetPasswordLinkResult;
-    },
-  ];
+      "SendResulted",
+      {
+        sentTo: string
+        result: Store.Account.SendResetPasswordLinkResult
+      },
+    ]
 
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
     case "ClickedBack":
-      return [model, Route.back];
+      return [model, Route.back]
 
     case "InputtedEmailAddress":
-      return [{ ...model, emailAddress: msg[1] }, Cmd.None];
+      return [{ ...model, emailAddress: msg[1] }, Cmd.None]
 
     case "ClickedSend":
       return [
@@ -76,10 +76,10 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
             },
           ]),
         ),
-      ];
+      ]
 
     case "SendResulted":
-      const result = msg[1].result;
+      const result = msg[1].result
       switch (result.type) {
         case "Err":
           return [
@@ -91,7 +91,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
               },
             },
             Cmd.None,
-          ];
+          ]
 
         case "Ok":
           return [
@@ -100,10 +100,10 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
               submission: { type: "Succeeded", sentTo: msg[1].sentTo },
             },
             Cmd.None,
-          ];
+          ]
       }
   }
-};
+}
 
 //
 //
@@ -115,60 +115,60 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
 export const view =
   (model: Model): UI.View<Msg> =>
-    (dispatch) => {
-      return (
-        <UI.FillBox>
-          <UI.Header
-            left={
-              <UI.HeaderBackButton onClick={() => dispatch(["ClickedBack"])} />
-            }
-            title="Reset Password"
+  (dispatch) => {
+    return (
+      <UI.FillBox>
+        <UI.Header
+          left={
+            <UI.HeaderBackButton onClick={() => dispatch(["ClickedBack"])} />
+          }
+          title="Reset Password"
+        />
+
+        <UI.Box
+          sx={{
+            padding: 2,
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            flex: 1,
+          }}
+        >
+          <UI.TextField
+            autoFocus
+            sx={{ marginBottom: 2 }}
+            type="email"
+            fullWidth
+            inputMode="email"
+            label="Email Address"
+            value={model.emailAddress}
+            onChange={(event) => {
+              dispatch(["InputtedEmailAddress", event.target.value])
+            }}
           />
 
-          <UI.Box
-            sx={{
-              padding: 2,
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              flex: 1,
-            }}
+          <UI.Button
+            variant="contained"
+            size="large"
+            fullWidth
+            loading={model.submission.type === "Loading"}
+            onClick={() => dispatch(["ClickedSend"])}
           >
-            <UI.TextField
-              autoFocus
-              sx={{ marginBottom: 2 }}
-              type="email"
-              fullWidth
-              inputMode="email"
-              label="Email Address"
-              value={model.emailAddress}
-              onChange={(event) => {
-                dispatch(["InputtedEmailAddress", event.target.value]);
-              }}
-            />
+            Send Password Reset Link
+          </UI.Button>
 
-            <UI.Button
-              variant="contained"
-              size="large"
-              fullWidth
-              loading={model.submission.type === "Loading"}
-              onClick={() => dispatch(["ClickedSend"])}
-            >
-              Send Password Reset Link
-            </UI.Button>
-
-            {model.submission.type === "Problem" && (
-              <UI.Alert severity="error" sx={{ marginTop: 2 }}>
-                {model.submission.message}
-              </UI.Alert>
-            )}
-            {model.submission.type === "Succeeded" && (
-              <UI.Alert severity="success" sx={{ marginTop: 2 }}>
-                Password reset link was sent to {model.submission.sentTo}
-              </UI.Alert>
-            )}
-            <UI.Box sx={{ flex: 1 }} />
-          </UI.Box>
-        </UI.FillBox>
-      );
-    };
+          {model.submission.type === "Problem" && (
+            <UI.Alert severity="error" sx={{ marginTop: 2 }}>
+              {model.submission.message}
+            </UI.Alert>
+          )}
+          {model.submission.type === "Succeeded" && (
+            <UI.Alert severity="success" sx={{ marginTop: 2 }}>
+              Password reset link was sent to {model.submission.sentTo}
+            </UI.Alert>
+          )}
+          <UI.Box sx={{ flex: 1 }} />
+        </UI.Box>
+      </UI.FillBox>
+    )
+  }

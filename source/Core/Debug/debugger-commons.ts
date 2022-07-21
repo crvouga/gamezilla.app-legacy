@@ -1,7 +1,7 @@
-import * as Rx from "rxjs";
-import * as Cmd from "../Cmd";
-import * as Platform from "../Platform";
-import * as Sub from "../Sub";
+import * as Rx from "rxjs"
+import * as Cmd from "../Cmd"
+import * as Platform from "../Platform"
+import * as Sub from "../Sub"
 
 //
 //
@@ -11,49 +11,49 @@ import * as Sub from "../Sub";
 //
 //
 
-export type Global = typeof window;
+export type Global = typeof window
 
-export type DebugData<Model, Msg> = [DebugAction<Msg>, Model];
+export type DebugData<Model, Msg> = [DebugAction<Msg>, Model]
 
-export type DebugAction<Msg> = DebugInit | DebugMsg<Msg>;
+export type DebugAction<Msg> = DebugInit | DebugMsg<Msg>
 
 export interface DebugInit {
-  type: "INIT";
+  type: "INIT"
 }
 
-export const debugInit = (): DebugInit => ({ type: "INIT" });
+export const debugInit = (): DebugInit => ({ type: "INIT" })
 
 export interface DebugMsg<Msg> {
-  type: "MESSAGE";
-  payload: Msg;
+  type: "MESSAGE"
+  payload: Msg
 }
 
 export const debugMsg = <Msg>(payload: Msg): DebugMsg<Msg> => ({
   type: "MESSAGE",
   payload,
-});
+})
 
 export type MsgWithDebug<Model, Msg> =
   | Msg
   | { type: "__DebugUpdateModel__"; payload: Model }
   | { type: "__DebugApplyMsg__"; payload: Msg }
-  | { type: "__DebugStarted__" };
+  | { type: "__DebugStarted__" }
 
 export interface Debug<Model, Msg> {
-  (data: DebugData<Model, Msg>): void;
+  (data: DebugData<Model, Msg>): void
 }
 
 export interface Debugger<Model, Msg> {
   (d: DebuggerDeps<Model, Msg>): {
-    debug: Debug<Model, Msg>;
-    stop: () => void;
-  };
+    debug: Debug<Model, Msg>
+    stop: () => void
+  }
 }
 
 export interface DebuggerDeps<Model, Msg> {
-  init: Model;
-  debug$: Rx.BehaviorSubject<DebugData<Model, Msg>>;
-  dispatch: Platform.Dispatch<MsgWithDebug<Model, Msg>>;
+  init: Model
+  debug$: Rx.BehaviorSubject<DebugData<Model, Msg>>
+  dispatch: Platform.Dispatch<MsgWithDebug<Model, Msg>>
 }
 
 /**
@@ -81,17 +81,17 @@ export interface DebuggerDeps<Model, Msg> {
  * @since 0.5.3
  */
 
-export const DEBUG_ID_KEY = "debugId";
+export const DEBUG_ID_KEY = "debugId"
 
 const makeDebugIdGen = function* () {
-  let id = 0;
+  let id = 0
   while (true) {
-    yield `debugId-${id}`;
-    id = id + 1;
+    yield `debugId-${id}`
+    id = id + 1
   }
-};
+}
 
-const debugIdGen = makeDebugIdGen();
+const debugIdGen = makeDebugIdGen()
 
 export const updateWithDebug =
   <Model, Msg>({
@@ -99,37 +99,37 @@ export const updateWithDebug =
     debugId$,
     update,
   }: {
-    debug$: Rx.BehaviorSubject<DebugData<Model, Msg>>;
-    debugId$: Rx.BehaviorSubject<string | undefined>;
-    update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>];
+    debug$: Rx.BehaviorSubject<DebugData<Model, Msg>>
+    debugId$: Rx.BehaviorSubject<string | undefined>
+    update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>]
   }) =>
   (msg: MsgWithDebug<Model, Msg>, model: Model): [Model, Cmd.Cmd<Msg>] => {
     if ("type" in msg) {
       switch (msg.type) {
         case "__DebugUpdateModel__":
-          return [msg.payload, Cmd.None];
+          return [msg.payload, Cmd.None]
 
         case "__DebugApplyMsg__":
-          return [update(msg.payload, model)[0], Cmd.None];
+          return [update(msg.payload, model)[0], Cmd.None]
 
         case "__DebugStarted__":
-          return [model, Cmd.None];
+          return [model, Cmd.None]
       }
     }
 
-    const [modelNew, cmdNew] = update(msg, model);
+    const [modelNew, cmdNew] = update(msg, model)
 
-    const debugId = debugIdGen.next().value;
+    const debugId = debugIdGen.next().value
 
     // @ts-ignore
-    modelNew[DEBUG_ID_KEY] = debugId;
+    modelNew[DEBUG_ID_KEY] = debugId
 
-    debugId$.next(debugId);
+    debugId$.next(debugId)
 
-    debug$.next([debugMsg(msg), modelNew]);
+    debug$.next([debugMsg(msg), modelNew])
 
-    return [modelNew, cmdNew];
-  };
+    return [modelNew, cmdNew]
+  }
 
 /**
  *
@@ -142,22 +142,22 @@ export const subscriptionsWithDebug =
     subscriptions,
     debugId$,
   }: {
-    subscriptions: (model: Model) => Sub.Sub<Msg>;
-    debugId$: Rx.BehaviorSubject<string | undefined>;
+    subscriptions: (model: Model) => Sub.Sub<Msg>
+    debugId$: Rx.BehaviorSubject<string | undefined>
   }) =>
   (model: Model) => {
     // @ts-ignore
-    const debugId: string = model[DEBUG_ID_KEY];
+    const debugId: string = model[DEBUG_ID_KEY]
 
-    const latestDebugId = debugId$.getValue();
+    const latestDebugId = debugId$.getValue()
 
     if (latestDebugId === debugId) {
-      return subscriptions(model);
+      return subscriptions(model)
     }
 
     console.info(
       `[debugger] Detected time traveling so subscriptions are being ignored. latestDebugId: ${latestDebugId} debugId: ${debugId}`,
-    );
+    )
 
-    return Sub.None;
-  };
+    return Sub.None
+  }

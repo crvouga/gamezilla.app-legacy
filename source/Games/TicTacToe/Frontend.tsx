@@ -1,11 +1,11 @@
-import {useEffect, useLayoutEffect, useRef, useState} from "react";
-import * as Route from "../../Route";
-import * as Store from "../../Store";
-import * as UI from "../../UI";
-import * as Board from "./Board";
-import {sendToBackend} from "../../Bridge/Frontend";
-import {Cmd} from "../../Core";
-import {FrontendModel, FrontendMsg, ToFrontend,} from "./Types";
+import { useEffect, useLayoutEffect, useRef, useState } from "react"
+import * as Route from "../../Route"
+import * as Store from "../../Store"
+import * as UI from "../../UI"
+import * as Board from "./Board"
+import { sendToBackend } from "../../Bridge/Frontend"
+import { Cmd } from "../../Core"
+import { FrontendModel, FrontendMsg, ToFrontend } from "./Types"
 import * as Room from "./Room"
 
 //
@@ -16,7 +16,7 @@ import * as Room from "./Room"
 //
 //
 
-export type Model = FrontendModel;
+export type Model = FrontendModel
 
 export const init: [Model, Cmd.Cmd<Msg>] = [
   {
@@ -25,7 +25,7 @@ export const init: [Model, Cmd.Cmd<Msg>] = [
     users: {},
   },
   sendToBackend(["Games", ["TicTacToe", ["Init"]]]),
-];
+]
 
 //
 //
@@ -35,9 +35,9 @@ export const init: [Model, Cmd.Cmd<Msg>] = [
 //
 //
 
-export type Msg = FrontendMsg;
+export type Msg = FrontendMsg
 
-export type OutAction = Store.Action;
+export type OutAction = Store.Action
 
 export const update = (
   { currentUserId }: { currentUserId: string },
@@ -46,64 +46,64 @@ export const update = (
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
     case "StartPlaying":
-      return [model, sendToBackend(["Games", ["TicTacToe", msg]])];
+      return [model, sendToBackend(["Games", ["TicTacToe", msg]])]
 
     case "StopPlaying":
       return [
         { ...model, opened: ["None"] },
         sendToBackend(["Games", ["TicTacToe", msg]]),
-      ];
+      ]
 
     case "PlayAgain":
-      return [model, sendToBackend(["Games", ["TicTacToe", msg]])];
+      return [model, sendToBackend(["Games", ["TicTacToe", msg]])]
 
     case "RemovePlayer":
-      return [model, sendToBackend(["Games", ["TicTacToe", msg]])];
+      return [model, sendToBackend(["Games", ["TicTacToe", msg]])]
 
     case "ClickedPlayer":
-      return [{ ...model, opened: ["Player", msg[1]] }, Cmd.None];
+      return [{ ...model, opened: ["Player", msg[1]] }, Cmd.None]
 
     case "ClickedAvatars":
-      return [{ ...model, opened: ["Users"] }, Cmd.None];
+      return [{ ...model, opened: ["Users"] }, Cmd.None]
 
     case "ClosedDrawer":
-      return [{ ...model, opened: ["None"] }, Cmd.None];
+      return [{ ...model, opened: ["None"] }, Cmd.None]
 
     case "LeaveRoom":
-      return [model, sendToBackend(["Games", ["TicTacToe", msg]])];
+      return [model, sendToBackend(["Games", ["TicTacToe", msg]])]
 
     case "RestartGame": {
-      return [model, sendToBackend(["Games", ["TicTacToe", msg]])];
+      return [model, sendToBackend(["Games", ["TicTacToe", msg]])]
     }
 
     case "ClickedUser":
-      return [model, Route.push({ type: "Profile", userId: msg[1].userId })];
+      return [model, Route.push({ type: "Profile", userId: msg[1].userId })]
 
     case "JoinRoom":
-      return [model, sendToBackend(["Games", ["TicTacToe", msg]])];
+      return [model, sendToBackend(["Games", ["TicTacToe", msg]])]
 
     case "CreateRoom":
-      return [model, sendToBackend(["Games", ["TicTacToe", msg]])];
+      return [model, sendToBackend(["Games", ["TicTacToe", msg]])]
 
     case "ClickedBack":
-      return [model, Route.back];
+      return [model, Route.back]
 
     case "Move":
       const { position } = msg[1]
 
       const result = Room.move({ userId: currentUserId, position }, model)
 
-      const stateNew = result.type === 'Err' ? {} : result.value
+      const stateNew = result.type === "Err" ? {} : result.value
 
       return [
         {
           ...model,
-          ...stateNew
+          ...stateNew,
         },
         sendToBackend(["Games", ["TicTacToe", msg]]),
-      ];
+      ]
   }
-};
+}
 
 export const updateFromBackend = (
   msg: ToFrontend,
@@ -111,7 +111,7 @@ export const updateFromBackend = (
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
     case "Sync": {
-      const userIds = Object.keys(msg[1].users);
+      const userIds = Object.keys(msg[1].users)
       return [
         {
           ...model,
@@ -120,8 +120,8 @@ export const updateFromBackend = (
           users: msg[1].users,
         },
         Cmd.None,
-        [["Store", ['Profile', ['FindMany', { userIds }]]]],
-      ];
+        [["Store", ["Profile", ["FindMany", { userIds }]]]],
+      ]
     }
 
     case "PlayAgainResulted": {
@@ -132,11 +132,11 @@ export const updateFromBackend = (
         },
         Cmd.None,
         [],
-      ];
+      ]
     }
 
     case "RemovePlayerResulted": {
-      return [model, Cmd.None, []];
+      return [model, Cmd.None, []]
     }
 
     case "StopPlayingResulted": {
@@ -147,19 +147,19 @@ export const updateFromBackend = (
         },
         Cmd.None,
         [],
-      ];
+      ]
     }
 
     case "StartPlayingResulted": {
-      return [model, Cmd.None, []];
+      return [model, Cmd.None, []]
     }
 
     case "RestartGameResulted": {
-      return [model, Cmd.None, []];
+      return [model, Cmd.None, []]
     }
 
     case "MoveResulted": {
-      return [model, Cmd.None, []];
+      return [model, Cmd.None, []]
     }
 
     case "JoinRoomResulted": {
@@ -170,7 +170,7 @@ export const updateFromBackend = (
         },
         Cmd.None,
         [],
-      ];
+      ]
     }
 
     case "LeaveRoomResulted": {
@@ -181,7 +181,7 @@ export const updateFromBackend = (
         },
         Cmd.None,
         [],
-      ];
+      ]
     }
 
     case "CreateRoomResulted":
@@ -192,9 +192,9 @@ export const updateFromBackend = (
         },
         Cmd.None,
         [],
-      ];
+      ]
   }
-};
+}
 
 //
 //
@@ -209,33 +209,33 @@ export const view =
     { currentUserId, store }: { currentUserId: string; store: Store.Model },
     model: Model,
   ): UI.View<Msg> =>
-    (dispatch) => {
-      const maybeCurrentRoom = Room.toRoom(currentUserId, model);
+  (dispatch) => {
+    const maybeCurrentRoom = Room.toRoom(currentUserId, model)
 
-      switch (maybeCurrentRoom.type) {
-        case "None":
-          return (
-            <ViewNotInRoom
-              currentUserId={currentUserId}
-              store={store}
-              model={model}
-              dispatch={dispatch}
-            />
-          );
+    switch (maybeCurrentRoom.type) {
+      case "None":
+        return (
+          <ViewNotInRoom
+            currentUserId={currentUserId}
+            store={store}
+            model={model}
+            dispatch={dispatch}
+          />
+        )
 
-        case "Some":
-          const room = maybeCurrentRoom.value;
-          return (
-            <ViewInRoom
-              dispatch={dispatch}
-              room={room}
-              currentUserId={currentUserId}
-              store={store}
-              model={model}
-            />
-          );
-      }
-    };
+      case "Some":
+        const room = maybeCurrentRoom.value
+        return (
+          <ViewInRoom
+            dispatch={dispatch}
+            room={room}
+            currentUserId={currentUserId}
+            store={store}
+            model={model}
+          />
+        )
+    }
+  }
 
 const ViewNotInRoom = ({
   currentUserId,
@@ -243,10 +243,10 @@ const ViewNotInRoom = ({
   model,
   dispatch,
 }: {
-  currentUserId: string;
-  store: Store.Model;
-  model: Model;
-  dispatch: (msg: Msg) => void;
+  currentUserId: string
+  store: Store.Model
+  model: Model
+  dispatch: (msg: Msg) => void
 }) => {
   return (
     <UI.FillBox>
@@ -310,8 +310,8 @@ const ViewNotInRoom = ({
           ))}
       </UI.List>
     </UI.FillBox>
-  );
-};
+  )
+}
 
 const ViewInRoom = ({
   currentUserId,
@@ -320,53 +320,52 @@ const ViewInRoom = ({
   model,
   dispatch,
 }: {
-  currentUserId: string;
-  room: Room.Room;
-  store: Store.Model;
-  model: Model;
-  dispatch: (msg: Msg) => void;
+  currentUserId: string
+  room: Room.Room
+  store: Store.Model
+  model: Model
+  dispatch: (msg: Msg) => void
 }) => {
-  const status = Room.toStatus(room);
+  const status = Room.toStatus(room)
 
   const statusMessage =
     status.type === "NotReady"
       ? status.status === "MissingBoth"
         ? "Missing Players"
         : status.status === "MissingO"
-          ? "Missing O Player"
-          : status.status === "MissingX"
-            ? "Missing X Player"
-            : ""
+        ? "Missing O Player"
+        : status.status === "MissingX"
+        ? "Missing X Player"
+        : ""
       : status.status.type === "Turn"
-        ? `${status.status.turn} Turn`
-        : status.status.type === "Tie"
-          ? "GameOver"
-          : `GameOver`;
+      ? `${status.status.turn} Turn`
+      : status.status.type === "Tie"
+      ? "GameOver"
+      : `GameOver`
 
   const usersInRoom = Object.values(store.Profile).filter(
     (profile) =>
       model.users[profile.userId] &&
       model.users[profile.userId]?.roomId === room.roomId,
-  );
+  )
 
-
-  const [screen, setScreen] = useState<"versus" | "board">(status.type === 'NotReady' ? "versus" : "board")
+  const [screen, setScreen] = useState<"versus" | "board">(
+    status.type === "NotReady" ? "versus" : "board",
+  )
   const timeoutRef = useRef<any>(undefined)
 
   useEffect(() => {
     clearTimeout(timeoutRef.current)
 
-    if (status.type === 'Ready') {
+    if (status.type === "Ready") {
       timeoutRef.current = setTimeout(() => {
         setScreen("board")
       }, 2000)
     }
 
-    if (status.type === 'NotReady') {
+    if (status.type === "NotReady") {
       setScreen("versus")
     }
-
-
   }, [status.type])
 
   return (
@@ -391,8 +390,15 @@ const ViewInRoom = ({
           </UI.AvatarGroup>
         </UI.Toolbar>
 
-        <UI.Box sx={{ display: "flex", alignItems: 'center', justifyContent: "center", paddingX: 2 }}>
-          <UI.Box sx={{ paddingRight: 1, width: "50%", }}>
+        <UI.Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            paddingX: 2,
+          }}
+        >
+          <UI.Box sx={{ paddingRight: 1, width: "50%" }}>
             <ViewPlayer
               currentUserId={currentUserId}
               model={model}
@@ -402,7 +408,7 @@ const ViewInRoom = ({
               dispatch={dispatch}
             />
           </UI.Box>
-          <UI.Box sx={{ paddingLeft: 1, width: "50%", }}>
+          <UI.Box sx={{ paddingLeft: 1, width: "50%" }}>
             <ViewPlayer
               model={model}
               currentUserId={currentUserId}
@@ -414,22 +420,24 @@ const ViewInRoom = ({
           </UI.Box>
         </UI.Box>
 
-        <UI.Typography sx={{ paddingY: 1 }} color="text.secondary" align="center">
+        <UI.Typography
+          sx={{ paddingY: 1 }}
+          color="text.secondary"
+          align="center"
+        >
           {statusMessage}
         </UI.Typography>
 
         {screen === "versus" && <VersusScreen store={store} room={room} />}
 
-        {screen === "board" &&
+        {screen === "board" && (
           <ViewBoard
             board={room.board}
             onClick={(position) =>
               dispatch(["Move", { currentUserId, position }])
             }
-          />}
-
-
-
+          />
+        )}
 
         <EventLogList room={room} store={store} />
       </UI.FillBox>
@@ -476,17 +484,23 @@ const ViewInRoom = ({
         </UI.List>
       </UI.Drawer>
     </>
-  );
-};
+  )
+}
 
-const EventLogList = ({ store, room }: { room: Room.Room; store: Store.Model }) => {
-  const ref = useRef<HTMLDivElement | null>(null);
+const EventLogList = ({
+  store,
+  room,
+}: {
+  room: Room.Room
+  store: Store.Model
+}) => {
+  const ref = useRef<HTMLDivElement | null>(null)
 
   useLayoutEffect(() => {
     if (ref.current) {
-      ref.current.scrollIntoView({ behavior: "smooth" });
+      ref.current.scrollIntoView({ behavior: "smooth" })
     }
-  }, [room.log.length]);
+  }, [room.log.length])
 
   return (
     <UI.List sx={{ flex: 1, overflowY: "scroll", overflowX: "hidden" }}>
@@ -496,15 +510,15 @@ const EventLogList = ({ store, room }: { room: Room.Room; store: Store.Model }) 
 
       <div ref={ref} />
     </UI.List>
-  );
-};
+  )
+}
 
 const ViewUserEvent = ({
   avatarUrl,
   text,
 }: {
-  avatarUrl?: string;
-  text: string;
+  avatarUrl?: string
+  text: string
 }) => {
   return (
     <UI.Box
@@ -523,54 +537,102 @@ const ViewUserEvent = ({
       )}
       <UI.Typography>{text}</UI.Typography>
     </UI.Box>
-  );
-};
+  )
+}
 
 const ViewRoomEvent = ({
   roomEvent,
   store,
 }: {
-  store: Store.Model;
-  roomEvent: Room.Event;
+  store: Store.Model
+  roomEvent: Room.Event
 }) => {
-
   switch (roomEvent[0]) {
-    case 'CreatedRoom': {
+    case "CreatedRoom": {
       const profile = store.Profile[roomEvent[1].userId]
-      return profile ? <ViewUserEvent avatarUrl={profile.avatarUrl} text={`${profile.username} created room`} /> : <></>
+      return profile ? (
+        <ViewUserEvent
+          avatarUrl={profile.avatarUrl}
+          text={`${profile.username} created room`}
+        />
+      ) : (
+        <></>
+      )
     }
 
-    case 'JoinedRoom': {
+    case "JoinedRoom": {
       const profile = store.Profile[roomEvent[1].userId]
-      return profile ? <ViewUserEvent avatarUrl={profile.avatarUrl} text={`${profile.username} joined room`} /> : <></>
+      return profile ? (
+        <ViewUserEvent
+          avatarUrl={profile.avatarUrl}
+          text={`${profile.username} joined room`}
+        />
+      ) : (
+        <></>
+      )
     }
 
-    case 'LeftRoom': {
+    case "LeftRoom": {
       const profile = store.Profile[roomEvent[1].userId]
-      return profile ? <ViewUserEvent avatarUrl={profile.avatarUrl} text={`${profile.username} left room`} /> : <></>
+      return profile ? (
+        <ViewUserEvent
+          avatarUrl={profile.avatarUrl}
+          text={`${profile.username} left room`}
+        />
+      ) : (
+        <></>
+      )
     }
 
-    case 'Moved': {
+    case "Moved": {
       const profile = store.Profile[roomEvent[1].userId]
-      return profile ? <ViewUserEvent avatarUrl={profile.avatarUrl} text={`${profile.username} moved`} /> : <></>
+      return profile ? (
+        <ViewUserEvent
+          avatarUrl={profile.avatarUrl}
+          text={`${profile.username} moved`}
+        />
+      ) : (
+        <></>
+      )
     }
 
     case "RemovedPlayer": {
       const profile = store.Profile[roomEvent[1].userId]
-      return profile ? <ViewUserEvent avatarUrl={profile.avatarUrl} text={`${profile.username} removed player`} /> : <></>
+      return profile ? (
+        <ViewUserEvent
+          avatarUrl={profile.avatarUrl}
+          text={`${profile.username} removed player`}
+        />
+      ) : (
+        <></>
+      )
     }
 
-    case 'StartedPlaying': {
+    case "StartedPlaying": {
       const profile = store.Profile[roomEvent[1].userId]
-      return profile ? <ViewUserEvent avatarUrl={profile.avatarUrl} text={`${profile.username} started playing as ${roomEvent[1].player}`} /> : <></>
+      return profile ? (
+        <ViewUserEvent
+          avatarUrl={profile.avatarUrl}
+          text={`${profile.username} started playing as ${roomEvent[1].player}`}
+        />
+      ) : (
+        <></>
+      )
     }
 
-    case 'StoppedPlaying': {
+    case "StoppedPlaying": {
       const profile = store.Profile[roomEvent[1].userId]
-      return profile ? <ViewUserEvent avatarUrl={profile.avatarUrl} text={`${profile.username} stopped playing`} /> : <></>
+      return profile ? (
+        <ViewUserEvent
+          avatarUrl={profile.avatarUrl}
+          text={`${profile.username} stopped playing`}
+        />
+      ) : (
+        <></>
+      )
     }
   }
-};
+}
 
 const viewPlayerActions =
   ({
@@ -578,58 +640,58 @@ const viewPlayerActions =
     player,
     room,
   }: {
-    currentUserId: string;
-    player: Board.Player;
-    room: Room.Room;
-    store: Store.Model;
+    currentUserId: string
+    player: Board.Player
+    room: Room.Room
+    store: Store.Model
   }): UI.View<Msg> =>
-    (dispatch) => {
-      const roomPlayer = room.players[player];
+  (dispatch) => {
+    const roomPlayer = room.players[player]
 
-      switch (roomPlayer.type) {
-        case "None":
-          return <>None</>;
+    switch (roomPlayer.type) {
+      case "None":
+        return <>None</>
 
-        case "User":
-          if (roomPlayer.userId === currentUserId) {
-            return (
-              <UI.Box sx={{ paddingX: 1 }}>
-                <UI.Button
-                  onClick={() =>
-                    dispatch(["StopPlaying", { currentUserId, player }])
-                  }
-                  fullWidth
-                >
-                  Stop Playing
-                </UI.Button>
-              </UI.Box>
-            );
-          }
-
-          if (currentUserId === room.hostId) {
-            return (
-              <UI.Box sx={{ paddingX: 1 }}>
-                <UI.Button
-                  onClick={() =>
-                    dispatch(["RemovePlayer", { currentUserId, player }])
-                  }
-                  fullWidth
-                >
-                  Remove Player
-                </UI.Button>
-              </UI.Box>
-            );
-          }
-
+      case "User":
+        if (roomPlayer.userId === currentUserId) {
           return (
-            <UI.Box sx={{ p: 2 }}>
-              <UI.Typography color="text.secondary">
-                No action available
-              </UI.Typography>
+            <UI.Box sx={{ paddingX: 1 }}>
+              <UI.Button
+                onClick={() =>
+                  dispatch(["StopPlaying", { currentUserId, player }])
+                }
+                fullWidth
+              >
+                Stop Playing
+              </UI.Button>
             </UI.Box>
-          );
-      }
-    };
+          )
+        }
+
+        if (currentUserId === room.hostId) {
+          return (
+            <UI.Box sx={{ paddingX: 1 }}>
+              <UI.Button
+                onClick={() =>
+                  dispatch(["RemovePlayer", { currentUserId, player }])
+                }
+                fullWidth
+              >
+                Remove Player
+              </UI.Button>
+            </UI.Box>
+          )
+        }
+
+        return (
+          <UI.Box sx={{ p: 2 }}>
+            <UI.Typography color="text.secondary">
+              No action available
+            </UI.Typography>
+          </UI.Box>
+        )
+    }
+  }
 
 const ViewPlayer = ({
   room,
@@ -639,16 +701,16 @@ const ViewPlayer = ({
   model,
   currentUserId,
 }: {
-  currentUserId: string;
-  room: Room.Room;
-  store: Store.Model;
-  player: Board.Player;
-  model: Model;
-  dispatch: (msg: Msg) => void;
+  currentUserId: string
+  room: Room.Room
+  store: Store.Model
+  player: Board.Player
+  model: Model
+  dispatch: (msg: Msg) => void
 }) => {
-  const roomPlayer = room.players[player];
-  const ref = useRef<HTMLButtonElement | null>(null);
-  const theme = UI.useTheme();
+  const roomPlayer = room.players[player]
+  const ref = useRef<HTMLButtonElement | null>(null)
+  const theme = UI.useTheme()
 
   switch (roomPlayer.type) {
     case "None":
@@ -665,7 +727,7 @@ const ViewPlayer = ({
             width: "100%",
             border: `1px solid ${theme.palette.divider}`,
             backgroundColor: theme.palette.primary.main,
-            color: "#fff"
+            color: "#fff",
           }}
           onClick={() => dispatch(["StartPlaying", { currentUserId, player }])}
         >
@@ -678,12 +740,14 @@ const ViewPlayer = ({
               r={1 / 3}
             />
           </UI.SvgIcon>
-          <UI.Typography color="inherit" noWrap>Play</UI.Typography>
+          <UI.Typography color="inherit" noWrap>
+            Play
+          </UI.Typography>
         </UI.ButtonBase>
-      );
+      )
 
     case "User":
-      const profile = store.Profile[roomPlayer.userId];
+      const profile = store.Profile[roomPlayer.userId]
 
       return (
         <>
@@ -697,7 +761,7 @@ const ViewPlayer = ({
               borderRadius: 1,
               width: "100%",
               border: `1px solid ${theme.palette.divider}`,
-              backgroundColor: theme.palette.background.paper
+              backgroundColor: theme.palette.background.paper,
             }}
             onClick={() => dispatch(["ClickedPlayer", player])}
           >
@@ -729,9 +793,9 @@ const ViewPlayer = ({
             )}
           </UI.Menu>
         </>
-      );
+      )
   }
-};
+}
 
 //
 //
@@ -747,12 +811,12 @@ export const CoverArt = () => {
     [{ row: 0, column: 1 }, "Empty"],
     [{ row: 1, column: 0 }, "Empty"],
     [{ row: 1, column: 1 }, "O"],
-  ];
+  ]
 
   const LINES = [
     { x1: 1, y1: 0, x2: 1, y2: 3 },
     { x1: 0, y1: 1, x2: 3, y2: 1 },
-  ] as const;
+  ] as const
 
   return (
     <svg width="100%" height="100%" viewBox="0 0 2 2">
@@ -772,8 +836,8 @@ export const CoverArt = () => {
         />
       ))}
     </svg>
-  );
-};
+  )
+}
 
 //
 //
@@ -788,14 +852,14 @@ export const theme = {
   line: "#0DA192",
   cross: "#545454",
   naught: "#F2EBD3",
-};
+}
 
 export const ViewBoard = ({
   board,
   onClick,
 }: {
-  board: Board.Board;
-  onClick: (position: Board.Position) => void;
+  board: Board.Board
+  onClick: (position: Board.Position) => void
 }) => {
   return (
     <svg width={"100%"} viewBox="0 0 3 3">
@@ -841,15 +905,15 @@ export const ViewBoard = ({
         />
       ))}
     </svg>
-  );
-};
+  )
+}
 
 const lines = [
   { x1: 1, y1: 0, x2: 1, y2: 3 },
   { x1: 2, y1: 0, x2: 2, y2: 3 },
   { x1: 0, y1: 1, x2: 3, y2: 1 },
   { x1: 0, y1: 2, x2: 3, y2: 2 },
-];
+]
 
 export const ViewSlot = ({
   slot,
@@ -858,23 +922,23 @@ export const ViewSlot = ({
   r,
   color,
 }: {
-  color?: string;
-  slot: Board.Slot;
-  r: number;
-  cx: number;
-  cy: number;
+  color?: string
+  slot: Board.Slot
+  r: number
+  cx: number
+  cy: number
 }) => {
   switch (slot) {
     case "Empty":
-      return <g></g>;
+      return <g></g>
 
     case "O":
-      return <Naught color={color} r={r} cx={cx} cy={cy} />;
+      return <Naught color={color} r={r} cx={cx} cy={cy} />
 
     case "X":
-      return <Cross color={color} r={r} cx={cx} cy={cy} />;
+      return <Cross color={color} r={r} cx={cx} cy={cy} />
   }
-};
+}
 
 const Cross = ({
   cx,
@@ -883,11 +947,11 @@ const Cross = ({
   color = theme.cross,
   strokeWidth = 0.1,
 }: {
-  color?: string;
-  r: number;
-  cx: number;
-  cy: number;
-  strokeWidth?: number;
+  color?: string
+  r: number
+  cx: number
+  cy: number
+  strokeWidth?: number
 }) => {
   return (
     <g strokeWidth={strokeWidth} stroke={color}>
@@ -896,8 +960,8 @@ const Cross = ({
       {/* direction: / */}
       <line x1={cx + r} y1={cy - r} x2={cx - r} y2={cy + r} />
     </g>
-  );
-};
+  )
+}
 
 const Naught = ({
   cx,
@@ -906,11 +970,11 @@ const Naught = ({
   color = theme.naught,
   strokeWidth = 0.1,
 }: {
-  color?: string;
-  strokeWidth?: number;
-  r: number;
-  cx: number;
-  cy: number;
+  color?: string
+  strokeWidth?: number
+  r: number
+  cx: number
+  cy: number
 }) => {
   return (
     <circle
@@ -921,13 +985,25 @@ const Naught = ({
       strokeWidth={strokeWidth}
       fill="transparent"
     />
-  );
-};
+  )
+}
 
-const VersusScreen = ({ room, store }: { room: Room.Room, store: Store.Model }) => {
-  const profileX = room.players.X.type === 'User' ? store.Profile[room.players.X.userId] : undefined
+const VersusScreen = ({
+  room,
+  store,
+}: {
+  room: Room.Room
+  store: Store.Model
+}) => {
+  const profileX =
+    room.players.X.type === "User"
+      ? store.Profile[room.players.X.userId]
+      : undefined
 
-  const profileO = room.players.O.type === 'User' ? store.Profile[room.players.O.userId] : undefined
+  const profileO =
+    room.players.O.type === "User"
+      ? store.Profile[room.players.O.userId]
+      : undefined
 
   return (
     <svg width="100%" viewBox="0 0 1 1">
@@ -938,22 +1014,31 @@ const VersusScreen = ({ room, store }: { room: Room.Room, store: Store.Model }) 
         <circle cx={0.5} cy={0.5} r={0.5} fill="white" />
       </mask>
 
-
       {profileX && (
         <>
           <Cross cx={0.15} cy={0.25} r={0.075} strokeWidth={0.05} />
-          <SvgAvatar id="x-avatar" cx={0.4} cy={0.25} r={0.1} src={profileX.avatarUrl} />
+          <SvgAvatar
+            id="x-avatar"
+            cx={0.4}
+            cy={0.25}
+            r={0.1}
+            src={profileX.avatarUrl}
+          />
         </>
       )}
-
 
       {profileO && (
         <>
           <Naught cx={0.55} cy={0.75} r={0.075} strokeWidth={0.05} />
-          <SvgAvatar id="o-avatar" cx={0.8} cy={0.75} r={0.1} src={profileO.avatarUrl} />
+          <SvgAvatar
+            id="o-avatar"
+            cx={0.8}
+            cy={0.75}
+            r={0.1}
+            src={profileO.avatarUrl}
+          />
         </>
       )}
-
 
       <line
         x1={0}
@@ -964,24 +1049,49 @@ const VersusScreen = ({ room, store }: { room: Room.Room, store: Store.Model }) 
         strokeWidth={0.0333}
       />
       <circle cx={0.5} cy={0.5} r={0.1} fill={theme.line} />
-      <text dominantBaseline={"middle"} textAnchor={"middle"} x={0.5} y={0.5} fontSize={0.15} fill={"#fff"}>
+      <text
+        dominantBaseline={"middle"}
+        textAnchor={"middle"}
+        x={0.5}
+        y={0.5}
+        fontSize={0.15}
+        fill={"#fff"}
+      >
         vs
       </text>
-
     </svg>
-  );
-};
+  )
+}
 
-
-const SvgAvatar = ({ id, src, cx, cy, r }: { id: string, src: string; cx: number, cy: number, r: number }) => {
-
-
-  return <>
-    <defs>
-      <clipPath id={id}>
-        <circle cx={cx} cy={cy} r={r} fill="#FFFFFF" />
-      </clipPath>
-    </defs>
-    <image x={cx - r} y={cy - r} width={r * 2} height={r * 2} xlinkHref={src} href={src} clipPath={`url(#${id})`} />
-  </>
+const SvgAvatar = ({
+  id,
+  src,
+  cx,
+  cy,
+  r,
+}: {
+  id: string
+  src: string
+  cx: number
+  cy: number
+  r: number
+}) => {
+  return (
+    <>
+      <defs>
+        <clipPath id={id}>
+          <circle cx={cx} cy={cy} r={r} fill="#FFFFFF" />
+        </clipPath>
+      </defs>
+      <image
+        x={cx - r}
+        y={cy - r}
+        width={r * 2}
+        height={r * 2}
+        xlinkHref={src}
+        href={src}
+        clipPath={`url(#${id})`}
+      />
+    </>
+  )
 }

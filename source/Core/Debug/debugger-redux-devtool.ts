@@ -5,21 +5,21 @@
  *
  * @since 0.5.0
  */
-import * as Json from "../Json";
-import * as Option from "../Option";
-import * as Result from "../Result";
-import * as Task from "../Task";
-import { Dispatch } from "../Platform";
-import { pipe } from "../pipe";
+import * as Json from "../Json"
+import * as Option from "../Option"
+import * as Result from "../Result"
+import * as Task from "../Task"
+import { Dispatch } from "../Platform"
+import { pipe } from "../pipe"
 import {
   Debug,
   Debugger,
   DebuggerDeps,
   Global,
   MsgWithDebug,
-} from "./debugger-commons";
+} from "./debugger-commons"
 
-type Unsubscription = () => void;
+type Unsubscription = () => void
 
 /**
  * Defines a _Redux DevTool Extension_ object.
@@ -27,7 +27,7 @@ type Unsubscription = () => void;
  * @since 0.5.0
  */
 export interface Extension {
-  connect: <Model, Msg>() => Connection<Model, Msg>;
+  connect: <Model, Msg>() => Connection<Model, Msg>
 }
 
 /**
@@ -36,27 +36,27 @@ export interface Extension {
  * @since 0.5.0
  */
 export interface Connection<Model, Msg> {
-  subscribe: (listener?: Dispatch<DevToolMsg>) => Unsubscription;
-  send(action: null, state: LiftedState<Model>): void;
-  send(action: Msg, state: Model): void;
-  init: (state: Model) => void;
-  error: (message: unknown) => void;
-  unsubscribe: () => void;
+  subscribe: (listener?: Dispatch<DevToolMsg>) => Unsubscription
+  send(action: null, state: LiftedState<Model>): void
+  send(action: Msg, state: Model): void
+  init: (state: Model) => void
+  error: (message: unknown) => void
+  unsubscribe: () => void
 }
 
-type DevToolMsg = Start | Action | Monitor;
+type DevToolMsg = Start | Action | Monitor
 
 interface Start {
-  type: "START";
+  type: "START"
 }
 
 interface Action {
-  type: "ACTION";
-  payload: unknown;
+  type: "ACTION"
+  payload: unknown
 }
 
 interface Monitor {
-  type: "DISPATCH";
+  type: "DISPATCH"
   payload: {
     type:
       | "JUMP_TO_STATE"
@@ -65,24 +65,24 @@ interface Monitor {
       | "ROLLBACK"
       | "COMMIT"
       | "IMPORT_STATE"
-      | "TOGGLE_ACTION";
-    [k: string]: unknown;
-  };
-  [k: string]: unknown;
+      | "TOGGLE_ACTION"
+    [k: string]: unknown
+  }
+  [k: string]: unknown
 }
 
 interface LiftedState<Model> {
-  actionsById: Record<string, unknown>;
-  computedStates: Array<{ state: Model }>;
-  currentStateIndex: number;
-  nextActionId: number;
-  skippedActionIds: number[];
-  stagedActionIds: number[];
-  isPaused: boolean;
+  actionsById: Record<string, unknown>
+  computedStates: Array<{ state: Model }>
+  currentStateIndex: number
+  nextActionId: number
+  skippedActionIds: number[]
+  stagedActionIds: number[]
+  isPaused: boolean
 }
 
 interface DevToolHandlerR<Model, Msg> extends DebuggerDeps<Model, Msg> {
-  connection: Connection<Model, Msg>;
+  connection: Connection<Model, Msg>
 }
 
 /**
@@ -97,8 +97,8 @@ export const getConnection =
   async () => {
     return hasExtension(global)
       ? Option.Some(global.__REDUX_DEVTOOLS_EXTENSION__.connect())
-      : Option.None;
-  };
+      : Option.None
+  }
 
 /**
  * **[UNSAFE]** Type guard to check if _Redux DevTool Extension_ is available.
@@ -109,8 +109,8 @@ export const getConnection =
 const hasExtension = (
   global: Global,
 ): global is Global & { __REDUX_DEVTOOLS_EXTENSION__: Extension } => {
-  return "__REDUX_DEVTOOLS_EXTENSION__" in global;
-};
+  return "__REDUX_DEVTOOLS_EXTENSION__" in global
+}
 
 /**
  * **[UNSAFE]** Debug through _Redux DevTool Extension_
@@ -121,17 +121,17 @@ export const makeDebugger = <Model, Msg>(
   connection: Connection<Model, Msg>,
 ): Debugger<Model, Msg> => {
   return (d) => {
-    const deps = { ...d, connection };
+    const deps = { ...d, connection }
 
     // --- Subscribe to extension in order to receive messages from monitor
-    connection.subscribe(handleSubscription(deps));
+    connection.subscribe(handleSubscription(deps))
 
     return {
       debug: handleActions(deps),
       stop: connection.unsubscribe,
-    };
-  };
-};
+    }
+  }
+}
 
 /**
  * **[UNSAFE]** Handles the execution of an effect related to an incoming messages sent from extension monitor.
@@ -140,7 +140,7 @@ export const makeDebugger = <Model, Msg>(
 const handleSubscription = <Model, Msg>(
   deps: DevToolHandlerR<Model, Msg>,
 ): ((msg: DevToolMsg) => void) => {
-  const handler = handleIncomingMsg(deps);
+  const handler = handleIncomingMsg(deps)
 
   return (msg) =>
     pipe(
@@ -149,8 +149,8 @@ const handleSubscription = <Model, Msg>(
         (err) => console.warn("[REDUX DEV TOOL]", err),
         (eff) => eff(),
       ),
-    );
-};
+    )
+}
 
 /**
  * **[UNSAFE]** Handles incoming messages sent from extension monitor.
@@ -171,54 +171,56 @@ const handleIncomingMsg = <Model, Msg>({
   const dispatchToApp =
     (m: unknown): Task.Task<void> =>
     async () =>
-      dispatch(m as Msg);
+      dispatch(m as Msg)
 
-  const reinit: Task.Task<void> = async () => connection.init(init);
+  const reInit: Task.Task<void> = async () => connection.init(init)
 
   const update = (payload: Model): Task.Task<void> =>
-    dispatchToApp({ type: "__DebugUpdateModel__", payload });
+    dispatchToApp({ type: "__DebugUpdateModel__", payload })
 
   const restart =
     (model: Model): Task.Task<void> =>
     async () =>
-      connection.init(model);
+      connection.init(model)
 
   const liftState =
     (state: LiftedState<Model>): Task.Task<void> =>
     async () =>
-      connection.send(null, state);
+      connection.send(null, state)
 
-  const toggle = toggleAction(dispatch);
+  const toggle = toggleAction(dispatch)
 
   return (msg) => {
     switch (msg.type) {
       case "START":
-        return Result.Ok(reinit);
+        return Result.Ok(reInit)
 
       case "ACTION": {
-        const result = Json.parse(String(msg.payload));
+        const result = Json.parse(String(msg.payload))
         switch (result.type) {
           case "Err":
-            return Result.Err(result.error.message);
+            return Result.Err(result.error.message)
 
           case "Ok":
-            return Result.Ok(dispatchToApp(result.value));
+            return Result.Ok(dispatchToApp(result.value))
         }
       }
 
       case "DISPATCH":
         switch (msg.payload.type) {
           case "JUMP_TO_STATE":
+            return pipe(parseJump<Model>(msg), Result.map(update))
+
           case "JUMP_TO_ACTION":
-            return pipe(parseJump<Model>(msg), Result.map(update));
+            return pipe(parseJump<Model>(msg), Result.map(update))
 
           case "RESET":
             return Result.Ok(
               pipe(
                 update(init),
-                Task.chain(() => reinit),
+                Task.chain(() => reInit),
               ),
-            );
+            )
 
           case "ROLLBACK":
             return pipe(
@@ -229,10 +231,10 @@ const handleIncomingMsg = <Model, Msg>({
                   Task.chain(() => restart(m)),
                 ),
               ),
-            );
+            )
 
           case "COMMIT":
-            return Result.Ok(restart(debug$.getValue()[1]));
+            return Result.Ok(restart(debug$.getValue()[1]))
 
           case "IMPORT_STATE":
             return pipe(
@@ -248,7 +250,7 @@ const handleIncomingMsg = <Model, Msg>({
                   Task.chain(() => liftState(liftedState)),
                 ),
               ),
-            );
+            )
 
           case "TOGGLE_ACTION":
             return pipe(
@@ -256,14 +258,17 @@ const handleIncomingMsg = <Model, Msg>({
               Result.map(([id, liftedState]) =>
                 pipe(toggle(id, liftedState), Task.chain(liftState)),
               ),
-            );
+            )
 
           default:
-            return Result.Err(msg.payload.type);
+            return Result.Err(msg.payload.type)
         }
+
+      default:
+        return Result.Err("unhandled case")
     }
-  };
-};
+  }
+}
 
 /**
  * Handles debugging actions.
@@ -277,8 +282,8 @@ const handleActions = <Model, Msg>({
   return ([action, model]) =>
     action.type === "MESSAGE"
       ? connection.send(action.payload, model)
-      : undefined;
-};
+      : undefined
+}
 
 /**
  * Parses a `JUMP` message.
@@ -294,8 +299,8 @@ const parseJump = <Model>(msg: Monitor): Result.Result<string, Model> => {
         // @ts-ignore
         value as Model,
     ),
-  );
-};
+  )
+}
 
 /**
  * Parses a `ROLLBACK` message.
@@ -311,8 +316,8 @@ const parseRollback = <Model>(msg: Monitor): Result.Result<string, Model> => {
         // @ts-ignore
         u as Model,
     ),
-  );
-};
+  )
+}
 
 /**
  * Parses an `IMPORT_STATE` message.
@@ -325,8 +330,8 @@ const parseImportState = <Model>(
   return typeof msg.payload.nextLiftedState === "object" &&
     msg.payload.nextLiftedState !== null
     ? Result.Ok(msg.payload.nextLiftedState as LiftedState<Model>)
-    : Result.Err("IMPORT_STATE message has some bad payload...");
-};
+    : Result.Err("IMPORT_STATE message has some bad payload...")
+}
 
 /**
  * Parses a `TOGGLE_ACTION` message.
@@ -340,10 +345,10 @@ const parseToggleAction = <Model>(
     msg.payload.id,
     Result.fromNullable("TOGGLE_ACTION message has some bad payload..."),
     Result.map((x) => x as number),
-  );
+  )
 
   if (getId.type === "Err") {
-    return getId;
+    return getId
   }
 
   const parseState = pipe(
@@ -353,14 +358,14 @@ const parseToggleAction = <Model>(
       (u) => u as LiftedState<Model>,
     ),
     Result.mapError((problem) => problem.message),
-  );
+  )
 
   if (parseState.type === "Err") {
-    return parseState;
+    return parseState
   }
 
-  return Result.Ok([getId.value, parseState.value]);
-};
+  return Result.Ok([getId.value, parseState.value])
+}
 
 /**
  * Handles toggling a specific action (identified by `id` parameter).
@@ -379,37 +384,37 @@ const toggleAction =
     liftedState: LiftedState<Model>,
   ): Task.Task<LiftedState<Model>> =>
   async () => {
-    const state = unsafeCopy(liftedState);
+    const state = unsafeCopy(liftedState)
 
     const { skippedActionIds, stagedActionIds, computedStates, actionsById } =
-      state;
+      state
 
-    const skippedIndex = skippedActionIds.indexOf(id);
-    const skipped = skippedIndex !== -1;
-    const actionIndex = stagedActionIds.indexOf(id);
+    const skippedIndex = skippedActionIds.indexOf(id)
+    const skipped = skippedIndex !== -1
+    const actionIndex = stagedActionIds.indexOf(id)
 
     if (actionIndex === -1) {
-      return state;
+      return state
     }
 
     dispatch({
       type: "__DebugUpdateModel__",
       // @ts-ignore
       payload: computedStates[actionIndex - 1].state,
-    });
+    })
 
-    const start = skipped ? actionIndex : actionIndex + 1;
-    const end = stagedActionIds.length;
+    const start = skipped ? actionIndex : actionIndex + 1
+    const end = stagedActionIds.length
 
     for (let i = start; i < end; i++) {
-      const currentActionId = stagedActionIds[i];
+      const currentActionId = stagedActionIds[i]
 
       if (
         i !== actionIndex &&
         currentActionId &&
         skippedActionIds.indexOf(currentActionId) !== -1
       ) {
-        continue; // it's already skipped
+        continue // it's already skipped
       }
 
       if (currentActionId) {
@@ -417,21 +422,20 @@ const toggleAction =
           type: "__DebugApplyMsg__",
           // @ts-ignore
           payload: actionsById[currentActionId].action,
-        });
+        })
       }
     }
 
     if (skipped) {
-      skippedActionIds.splice(skippedIndex, 1);
+      skippedActionIds.splice(skippedIndex, 1)
     } else {
-      skippedActionIds.push(id);
+      skippedActionIds.push(id)
     }
 
-    return state;
-  };
+    return state
+  }
 
 // poor man deep clone...
 const unsafeCopy = <A>(a: A): A => {
-  const copied: A = JSON.parse(JSON.stringify(a));
-  return copied;
-};
+  return JSON.parse(JSON.stringify(a))
+}

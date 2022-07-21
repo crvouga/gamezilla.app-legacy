@@ -1,4 +1,4 @@
-import { Browser, Option } from "./Core";
+import { Browser, Option } from "./Core"
 
 //
 //
@@ -29,7 +29,7 @@ export type Route =
   | { type: "ChatNew" }
   | { type: "ChatConversation"; conversationId: string }
   | { type: "Search" }
-  | { type: "Admin", tab: "Model" | "Msg" };
+  | { type: "Admin"; tab: "Model" | "Msg" }
 
 //
 //
@@ -61,17 +61,17 @@ export const routesTypes: { [routeType in Route["type"]]: string } = {
   ChatNew: "ChatNew",
   ChatConversation: "ChatConversation",
   Search: "Search",
-};
+}
 
 export const isRouteType = (routeType: unknown): routeType is Route["type"] => {
-  return typeof routeType === "string" && routeType in routesTypes;
-};
+  return typeof routeType === "string" && routeType in routesTypes
+}
 
 export const decode = (location: Browser.Location): Option.Option<Route> => {
-  const [first, second] = location.pathname.substring(1).split("/");
+  const [first, second] = location.pathname.substring(1).split("/")
 
   if (!isRouteType(first)) {
-    return Option.None;
+    return Option.None
   }
 
   switch (first) {
@@ -80,10 +80,10 @@ export const decode = (location: Browser.Location): Option.Option<Route> => {
         return Option.Some({
           type: "ChatConversation",
           conversationId: second,
-        });
+        })
       }
 
-      return Option.None;
+      return Option.None
     }
 
     case "Profile": {
@@ -91,42 +91,45 @@ export const decode = (location: Browser.Location): Option.Option<Route> => {
         return Option.Some({
           type: "Profile",
           userId: second,
-        });
+        })
       }
-      return Option.None;
+      return Option.None
     }
 
-    case 'Admin': {
-      if (typeof second === "string" && (second === "Model" || second === "Msg")) {
+    case "Admin": {
+      if (
+        typeof second === "string" &&
+        (second === "Model" || second === "Msg")
+      ) {
         return Option.Some({
           type: "Admin",
           tab: second,
-        });
+        })
       }
-      return Option.None;
+      return Option.None
     }
 
     default: {
-      return Option.Some({ type: first });
+      return Option.Some({ type: first })
     }
   }
-};
+}
 
 export const encode = (route: Route): string => {
   switch (route.type) {
     case "ChatConversation":
-      return `/${route.type}/${route.conversationId}`;
+      return `/${route.type}/${route.conversationId}`
 
     case "Profile":
-      return `/${route.type}/${route.userId}`;
+      return `/${route.type}/${route.userId}`
 
-    case 'Admin':
-      return `/${route.type}/${route.tab}`;
+    case "Admin":
+      return `/${route.type}/${route.tab}`
 
     default:
-      return `/${route.type}`;
+      return `/${route.type}`
   }
-};
+}
 
 //
 //
@@ -137,14 +140,14 @@ export const encode = (route: Route): string => {
 //
 
 export const push = (route: Route) => {
-  return Browser.push(encode(route));
-};
+  return Browser.push(encode(route))
+}
 
-export const back = Browser.back;
+export const back = Browser.back
 
 export const replace = (route: Route) => {
-  return Browser.replace(encode(route));
-};
+  return Browser.replace(encode(route))
+}
 
 //
 //
@@ -154,6 +157,6 @@ export const replace = (route: Route) => {
 //
 //
 
-export type GotRoute = ["GotRoute", Route];
+export type GotRoute = ["GotRoute", Route]
 
-export type Msg = GotRoute;
+export type Msg = GotRoute

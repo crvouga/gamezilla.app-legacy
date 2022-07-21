@@ -1,7 +1,7 @@
-import * as Route from "../Route";
-import * as Auth from "../Auth";
-import * as UI from "../UI";
-import { Cmd, Option, pipe } from "../Core";
+import * as Route from "../Route"
+import * as Auth from "../Auth"
+import * as UI from "../UI"
+import { Cmd, pipe } from "../Core"
 
 //
 //
@@ -11,9 +11,9 @@ import { Cmd, Option, pipe } from "../Core";
 //
 //
 
-export type Model = ["Idle"] | ["LoggingInWithProvider", Auth.Provider];
+export type Model = ["Idle"] | ["LoggingInWithProvider", Auth.Provider]
 
-export const init: Model = ["Idle"];
+export const init: Model = ["Idle"]
 
 //
 //
@@ -26,12 +26,12 @@ export const init: Model = ["Idle"];
 export type Msg =
   | ["ClickedGoogleLogin"]
   | ["ClickedEmailLogin"]
-  | ["LoginWithProviderResulted", Auth.LoginResult];
+  | ["LoginWithProviderResulted", Auth.LoginResult]
 
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
     case "ClickedEmailLogin":
-      return [model, Route.push({ type: "LoginEmail" })];
+      return [model, Route.push({ type: "LoginEmail" })]
 
     case "ClickedGoogleLogin":
       return [
@@ -40,18 +40,18 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
           Auth.loginWithProvider({ provider: "Google" }),
           Cmd.fromTask((result) => ["LoginWithProviderResulted", result]),
         ),
-      ];
+      ]
 
     case "LoginWithProviderResulted":
       switch (msg[1].type) {
         case "Err":
-          return [["Idle"], Cmd.None];
+          return [["Idle"], Cmd.None]
 
         case "Ok":
-          return [model, Cmd.None];
+          return [model, Cmd.None]
       }
   }
-};
+}
 
 //
 //
@@ -63,7 +63,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
 export const view =
   (model: Model): UI.View<Msg> =>
-    (dispatch) =>
+  (dispatch) =>
     (
       <UI.FillBox
         sx={{
@@ -101,14 +101,14 @@ export const view =
           Continue With Email
         </UI.Button>
       </UI.FillBox>
-    );
+    )
 
 const ContinueWithGoogleButton = ({
   onClick,
   isLoading,
 }: {
-  onClick: () => void;
-  isLoading: boolean;
+  onClick: () => void
+  isLoading: boolean
 }) => {
   return (
     <UI.Button
@@ -134,5 +134,5 @@ const ContinueWithGoogleButton = ({
     >
       Continue With Google
     </UI.Button>
-  );
-};
+  )
+}

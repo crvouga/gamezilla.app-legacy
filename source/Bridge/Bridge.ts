@@ -1,4 +1,4 @@
-import { ToBackend, ToFrontend } from "../Types";
+import { ToBackend, ToFrontend } from "../Types"
 
 //
 //
@@ -8,7 +8,7 @@ import { ToBackend, ToFrontend } from "../Types";
 //
 //
 
-export type ClientId = string;
+export type ClientId = string
 
 //
 //
@@ -19,12 +19,12 @@ export type ClientId = string;
 //
 
 export type ServerToClientEvents = {
-  ToFrontend: (msg: ToFrontend) => void;
-};
+  ToFrontend: (msg: ToFrontend) => void
+}
 
 export type ClientToServerEvents = {
-  ToBackend: (msg: ToBackend) => void;
-};
+  ToBackend: (msg: ToBackend) => void
+}
 
 //
 //
@@ -34,4 +34,4 @@ export type ClientToServerEvents = {
 //
 //
 
-export const backendServerPort = 5000;
+export const backendServerPort = 5000

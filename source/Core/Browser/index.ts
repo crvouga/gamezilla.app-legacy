@@ -1,2 +1,2 @@
-export * from "./Browser";
-export * as Clipboard from "./Clipboard";
+export * from "./Browser"
+export * as Clipboard from "./Clipboard"

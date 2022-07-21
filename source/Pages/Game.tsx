@@ -1,7 +1,7 @@
-import * as Games from "../Games/Frontend";
-import * as Store from "../Store";
-import * as UI from "../UI";
-import { Cmd } from "../Core";
+import * as Games from "../Games/Frontend"
+import * as Store from "../Store"
+import * as UI from "../UI"
+import { Cmd } from "../Core"
 
 //
 //
@@ -11,7 +11,7 @@ import { Cmd } from "../Core";
 //
 //
 
-export type Model = Games.Model;
+export type Model = Games.Model
 
 //
 //
@@ -21,7 +21,7 @@ export type Model = Games.Model;
 //
 //
 
-export const init = Games.init;
+export const init = Games.init
 
 //
 //
@@ -31,7 +31,7 @@ export const init = Games.init;
 //
 //
 
-export type Msg = Games.Msg;
+export type Msg = Games.Msg
 
 //
 //
@@ -42,8 +42,8 @@ export type Msg = Games.Msg;
 //
 
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
-  return [model, Cmd.None];
-};
+  return [model, Cmd.None]
+}
 
 //
 //
@@ -57,5 +57,5 @@ export const view = (
   deps: { currentUserId: string; store: Store.Model },
   model: Model,
 ): UI.View<Msg> => {
-  return Games.view(deps, model);
-};
+  return Games.view(deps, model)
+}

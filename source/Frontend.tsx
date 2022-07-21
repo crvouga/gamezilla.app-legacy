@@ -1,7 +1,7 @@
-import * as ReactDomClient from "react-dom/client";
-import * as Auth from "./Auth";
-import { fromBackend } from "./Bridge/Frontend";
-import * as Connection from "./Connection";
+import * as ReactDomClient from "react-dom/client"
+import * as Auth from "./Auth"
+import { fromBackend } from "./Bridge/Frontend"
+import * as Connection from "./Connection"
 import {
   andThen,
   andThenMany,
@@ -13,15 +13,15 @@ import {
   pipe,
   Sub,
   tag,
-} from "./Core";
-import * as Games from "./Games/Frontend";
-import * as Pages from "./Pages";
-import * as Route from "./Route";
-import * as Snackbar from "./Snackbar";
-import * as Store from "./Store";
-import * as Profile from "./Store/Profile";
-import { FrontendModel, FrontendMsg, ToFrontend } from "./Types";
-import * as UI from "./UI";
+} from "./Core"
+import * as Games from "./Games/Frontend"
+import * as Pages from "./Pages"
+import * as Route from "./Route"
+import * as Snackbar from "./Snackbar"
+import * as Store from "./Store"
+import * as Profile from "./Store/Profile"
+import { FrontendModel, FrontendMsg, ToFrontend } from "./Types"
+import * as UI from "./UI"
 
 //
 //
@@ -31,7 +31,7 @@ import * as UI from "./UI";
 //
 //
 
-type Model = FrontendModel;
+type Model = FrontendModel
 
 //
 //
@@ -46,26 +46,26 @@ type Status =
   | { type: "LoggedOut" }
   | { type: "ProfileLoading"; auth: Auth.LoggedIn }
   | { type: "ProfileMissing"; auth: Auth.LoggedIn }
-  | { type: "Ready"; profile: Profile.Profile; auth: Auth.LoggedIn };
+  | { type: "Ready"; profile: Profile.Profile; auth: Auth.LoggedIn }
 
 export const toStatus = ({
   store,
   auth,
 }: {
-  store: Store.Model;
-  auth: Auth.Model;
+  store: Store.Model
+  auth: Auth.Model
 }): Status => {
   switch (auth.type) {
     case "Loading":
-      return { type: "AuthLoading" };
+      return { type: "AuthLoading" }
 
     case "LoggedOut":
-      return { type: "LoggedOut" };
+      return { type: "LoggedOut" }
 
     case "LoggedIn":
-      const { userId } = auth;
+      const { userId } = auth
 
-      const result = Option.fromNullable(store.Profile[userId]);
+      const result = Option.fromNullable(store.Profile[userId])
 
       switch (result.type) {
         case "Some":
@@ -73,31 +73,31 @@ export const toStatus = ({
             type: "Ready",
             auth,
             profile: result.value,
-          };
+          }
 
         case "None":
-          const profileQuery = Store.Profile.toProfile(userId, store);
+          const profileQuery = Store.Profile.toProfile(userId, store)
 
           switch (profileQuery.type) {
             case "NotAsked":
-              return { type: "ProfileLoading", auth };
+              return { type: "ProfileLoading", auth }
 
             case "Loading":
-              return { type: "ProfileLoading", auth };
+              return { type: "ProfileLoading", auth }
 
             case "Failure":
-              return { type: "ProfileMissing", auth };
+              return { type: "ProfileMissing", auth }
 
             case "Success":
               return {
                 type: "Ready",
                 auth,
                 profile: profileQuery.value,
-              };
+              }
           }
       }
   }
-};
+}
 
 //
 //
@@ -112,13 +112,13 @@ export const init = (location: Browser.Location): [Model, Cmd.Cmd<Msg>] => {
     location,
     Route.decode,
     Option.withDefault<Route.Route>({ type: "Home" }),
-  );
-  const [auth, authCmd] = Auth.init();
-  const snackbar = Snackbar.init;
-  const store = Store.init;
-  const game = Games.init;
-  const [page, pageCmd] = Pages.initLoading();
-  const connection = Connection.init;
+  )
+  const [auth, authCmd] = Auth.init()
+  const snackbar = Snackbar.init
+  const store = Store.init
+  const game = Games.init
+  const [page, pageCmd] = Pages.initLoading()
+  const connection = Connection.init
 
   return [
     {
@@ -134,8 +134,8 @@ export const init = (location: Browser.Location): [Model, Cmd.Cmd<Msg>] => {
       pipe(authCmd, Cmd.map(tag("Auth"))),
       pipe(pageCmd, Cmd.map(tag("Page"))),
     ]),
-  ];
-};
+  ]
+}
 
 //
 //
@@ -145,9 +145,9 @@ export const init = (location: Browser.Location): [Model, Cmd.Cmd<Msg>] => {
 //
 //
 
-type Msg = FrontendMsg;
+type Msg = FrontendMsg
 
-type OutAction = Snackbar.Action | Games.Action | Store.Action | Auth.Action;
+type OutAction = Snackbar.Action | Games.Action | Store.Action | Auth.Action
 
 //
 //
@@ -162,8 +162,8 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
     [model, Cmd.None],
     andThen(updateMain, msg),
     andThen(updateStatusChanged(model), msg),
-  );
-};
+  )
+}
 
 export const updateFromBackend = (
   msg: ToFrontend,
@@ -174,88 +174,87 @@ export const updateFromBackend = (
       const [gameNew, gameCmd, actions] = Games.updateFromBackend(
         msg[1],
         model.game,
-      );
+      )
 
       return pipe(
         [{ ...model, game: gameNew }, pipe(gameCmd, Cmd.map(tag("Game")))],
         andThenMany(runAction, actions),
-      );
+      )
     }
   }
-};
+}
 
 const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
     case "Store": {
-      const [storeNew, storeCmd] = Store.update(msg[1], model.store);
+      const [storeNew, storeCmd] = Store.update(msg[1], model.store)
 
       return [
         { ...model, store: storeNew },
         pipe(storeCmd, Cmd.map(tag("Store"))),
-      ];
+      ]
     }
 
     case "Auth": {
-      const [authNew, authCmd] = Auth.update(msg[1], model.auth);
+      const [authNew, authCmd] = Auth.update(msg[1], model.auth)
 
-      return [{ ...model, auth: authNew }, pipe(authCmd, Cmd.map(tag("Auth")))];
+      return [{ ...model, auth: authNew }, pipe(authCmd, Cmd.map(tag("Auth")))]
     }
 
     case "Snackbar": {
-      const [snackbarNew, snackbarCmd] = Snackbar.update(
-        msg[1],
-        model.snackbar,
-      );
+      const [snackbarNew, snackbarCmd] = Snackbar.update(msg[1], model.snackbar)
 
       return [
         { ...model, snackbar: snackbarNew },
         pipe(snackbarCmd, Cmd.map(tag("Snackbar"))),
-      ];
+      ]
     }
 
     case "Game": {
-      const status = toStatus(model);
+      const status = toStatus(model)
       switch (status.type) {
         case "ProfileLoading":
         case "ProfileMissing":
         case "AuthLoading":
         case "LoggedOut":
-          return [model, Cmd.None];
+          return [model, Cmd.None]
 
         case "Ready": {
-          const { profile } = status;
+          const { profile } = status
           const [gameNew, gameCmd, actions] = Games.update(
             { currentUserId: profile.userId },
             msg[1],
             model.game,
-          );
+          )
 
           return pipe(
             [{ ...model, game: gameNew }, pipe(gameCmd, Cmd.map(tag("Game")))],
             andThenMany(runAction, actions),
-          );
+          )
         }
       }
     }
 
     case "Page": {
-      const status = toStatus(model);
+      const status = toStatus(model)
 
       switch (status.type) {
         case "AuthLoading":
+          return [model, Cmd.None]
+
         case "ProfileLoading":
-          return [model, Cmd.None];
+          return [model, Cmd.None]
 
         case "LoggedOut": {
           const [pageNew, pageCmd, actions] = Pages.updateLoggedOut(
             msg[1],
             model.page,
-          );
+          )
 
           return pipe(
             [{ ...model, page: pageNew }, pipe(pageCmd, Cmd.map(tag("Page")))],
             andThenMany(runAction, actions),
-          );
+          )
         }
 
         case "ProfileMissing": {
@@ -263,75 +262,75 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
             status.auth,
             msg[1],
             model.page,
-          );
+          )
 
           return pipe(
             [{ ...model, page: pageNew }, pipe(pageCmd, Cmd.map(tag("Page")))],
             andThenMany(runAction, actions),
-          );
+          )
         }
 
         case "Ready": {
           if (model.page[0] === "Game" && model.game.type === "Closed") {
-            return [model, Route.replace({ type: "Home" })];
+            return [model, Route.replace({ type: "Home" })]
           }
 
           const [pageNew, pageCmd, actions] = Pages.updateReady(
             { profile: status.profile, store: model.store },
             msg[1],
             model.page,
-          );
+          )
 
           return pipe(
             [{ ...model, page: pageNew }, pipe(pageCmd, Cmd.map(tag("Page")))],
             andThenMany(runAction, actions),
-          );
+          )
         }
 
         default:
-          return exhaustive(status);
+          return exhaustive(status)
       }
     }
 
     case "Route": {
-      const route = msg[1][1];
+      const route = msg[1][1]
 
-      const modelNew = { ...model, route };
+      const modelNew = { ...model, route }
 
-      const status = toStatus(modelNew);
+      const status = toStatus(modelNew)
 
       switch (status.type) {
         case "ProfileLoading":
-          return [modelNew, Cmd.None];
+          return [modelNew, Cmd.None]
 
         case "ProfileMissing": {
-          const [page, pageCmd] = Pages.initProfileMissing(route, status.auth);
+          const [page, pageCmd] = Pages.initProfileMissing(route, status.auth)
 
-          return [{ ...modelNew, page }, pipe(pageCmd, Cmd.map(tag("Page")))];
+          return [{ ...modelNew, page }, pipe(pageCmd, Cmd.map(tag("Page")))]
         }
 
         case "Ready": {
           const [page, pageCmd, actions] = Pages.initReady(
             route,
             status.profile,
-          );
+          )
           return pipe(
             [{ ...modelNew, page }, pipe(pageCmd, Cmd.map(tag("Page")))],
             andThenMany(runAction, actions),
-          );
+          )
         }
 
         case "AuthLoading":
-          return [modelNew, Cmd.None];
+          return [modelNew, Cmd.None]
 
         case "LoggedOut": {
-          const [page, pageCmd] = Pages.initLoggedOut(route);
+          const [page, pageCmd] = Pages.initLoggedOut(route)
 
-          return [{ ...modelNew, page }, pipe(pageCmd, Cmd.map(tag("Page")))];
+          return [{ ...modelNew, page }, pipe(pageCmd, Cmd.map(tag("Page")))]
         }
 
         default:
-          return exhaustive(status);
+          return exhaustive(status)
       }
     }
 
@@ -339,29 +338,29 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
       const [connectionNew, connectionCmd] = Connection.update(
         msg[1],
         model.connection,
-      );
+      )
       return [
         { ...model, connection: connectionNew },
         pipe(connectionCmd, Cmd.map(tag("Connection"))),
-      ];
+      ]
     }
 
     case "ToFrontend":
-      return updateFromBackend(msg[1], model);
+      return updateFromBackend(msg[1], model)
 
     default:
-      return exhaustive(msg);
+      return exhaustive(msg)
   }
-};
+}
 
 const updateStatusChanged =
   (modelPrev: Model) =>
   (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
-    const statusPrev = toStatus(modelPrev);
-    const statusNew = toStatus(model);
+    const statusPrev = toStatus(modelPrev)
+    const statusNew = toStatus(model)
 
     if (statusNew.type === statusPrev.type) {
-      return [model, Cmd.None];
+      return [model, Cmd.None]
     }
 
     switch (statusNew.type) {
@@ -369,85 +368,85 @@ const updateStatusChanged =
         const action: OutAction = [
           "Store",
           ["Profile", ["FindMany", { userIds: [statusNew.auth.userId] }]],
-        ];
+        ]
 
-        return pipe([model, Cmd.None], andThenMany(runAction, [action]));
+        return pipe([model, Cmd.None], andThenMany(runAction, [action]))
 
       case "ProfileMissing": {
         const [page, pageCmd] = Pages.initProfileMissing(
           model.route,
           statusNew.auth,
-        );
+        )
 
-        return [{ ...model, page }, pipe(pageCmd, Cmd.map(tag("Page")))];
+        return [{ ...model, page }, pipe(pageCmd, Cmd.map(tag("Page")))]
       }
 
       case "AuthLoading":
-        return [model, Cmd.None];
+        return [model, Cmd.None]
 
       case "LoggedOut": {
-        const [page, pageCmd] = Pages.initLoggedOut(model.route);
-        return [{ ...model, page }, pipe(pageCmd, Cmd.map(tag("Page")))];
+        const [page, pageCmd] = Pages.initLoggedOut(model.route)
+        return [{ ...model, page }, pipe(pageCmd, Cmd.map(tag("Page")))]
       }
 
       case "Ready": {
         if (model.route.type === "Game" && model.game.type === "Closed") {
-          return [model, Route.replace({ type: "Home" })];
+          return [model, Route.replace({ type: "Home" })]
         }
 
         const [page, pageCmd, actions] = Pages.initReady(
           model.route,
           statusNew.profile,
-        );
+        )
         return pipe(
           [{ ...model, page }, pipe(pageCmd, Cmd.map(tag("Page")))],
           andThenMany(runAction, actions),
-        );
+        )
       }
 
       default:
-        return exhaustive(statusNew);
+        return exhaustive(statusNew)
     }
-  };
+  }
 
 const runAction = (action: OutAction, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (action[0]) {
     case "Store": {
-      const [storeNew, storeCmd] = Store.runAction(action, model.store);
+      const [storeNew, storeCmd] = Store.runAction(action, model.store)
       return [
         { ...model, store: storeNew },
         pipe(storeCmd, Cmd.map(tag("Store"))),
-      ];
+      ]
     }
 
     case "Snackbar": {
       const [snackbarNew, snackbarCmd] = Snackbar.runAction(
         action,
         model.snackbar,
-      );
+      )
       return [
         { ...model, snackbar: snackbarNew },
         pipe(snackbarCmd, Cmd.map(tag("Snackbar"))),
-      ];
+      ]
     }
 
     case "Games": {
-      const [gamesNew, gamesCmd] = Games.runAction(action, model.game);
+      const [gamesNew, gamesCmd] = Games.runAction(action, model.game)
       return [
         { ...model, game: gamesNew },
         pipe(gamesCmd, Cmd.map(tag("Game"))),
-      ];
+      ]
     }
 
     case "Auth": {
-      const [authNew, authCmd] = Auth.runAction(action, model.auth);
-      return [{ ...model, auth: authNew }, pipe(authCmd, Cmd.map(tag("Auth")))];
+      const [authNew, authCmd] = Auth.runAction(action, model.auth)
+      return [{ ...model, auth: authNew }, pipe(authCmd, Cmd.map(tag("Auth")))]
     }
 
     default:
-      return exhaustive(action[0]);
+      return exhaustive(action[0])
   }
-};
+}
 
 //
 //
@@ -464,8 +463,8 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
     pipe(Auth.subscriptions, Sub.map(tag("Auth"))),
     pipe(Connection.subscriptions, Sub.map(tag("Connection"))),
     fromBackend((toFrontend) => ["ToFrontend", toFrontend]),
-  ]);
-};
+  ])
+}
 
 //
 //
@@ -476,18 +475,18 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
 //
 
 const toThemeMode = (model: Model): UI.ThemeMode => {
-  const status = toStatus(model);
+  const status = toStatus(model)
 
   switch (status.type) {
     case "AuthLoading":
     case "LoggedOut":
     case "ProfileLoading":
     case "ProfileMissing":
-      return "System";
+      return "System"
     case "Ready":
-      return status.profile.themeMode;
+      return status.profile.themeMode
   }
-};
+}
 
 export const view =
   (model: Model): UI.View<Msg> =>
@@ -523,32 +522,32 @@ export const view =
           {viewGameBanner(model)(dispatch)}
         </UI.Box>
       </UI.ThemeProvider>
-    );
-  };
+    )
+  }
 
 const viewMain = (model: Model): UI.View<Msg> => {
-  const status = toStatus(model);
+  const status = toStatus(model)
 
   switch (model.connection) {
     case "Connecting":
     case "Disconnected":
     case "Reconnecting":
-      return viewLoading;
+      return viewLoading
 
     case "Connected": {
       switch (status.type) {
         case "AuthLoading":
         case "ProfileLoading":
-          return viewLoading;
+          return viewLoading
 
         case "LoggedOut":
-          return pipe(Pages.viewLoggedOut(model.page), UI.map(tag("Page")));
+          return pipe(Pages.viewLoggedOut(model.page), UI.map(tag("Page")))
 
         case "ProfileMissing":
           return pipe(
             Pages.viewProfileMissing(status.auth, model.page),
             UI.map(tag("Page")),
-          );
+          )
 
         case "Ready":
           if (model.route.type === "Game") {
@@ -558,7 +557,7 @@ const viewMain = (model: Model): UI.View<Msg> => {
                 model.game,
               ),
               UI.map(tag("Game")),
-            );
+            )
           }
 
           return pipe(
@@ -572,33 +571,33 @@ const viewMain = (model: Model): UI.View<Msg> => {
               model.page,
             ),
             UI.map(tag("Page")),
-          );
+          )
       }
     }
   }
-};
+}
 
-const viewLoading: UI.View<Msg> = () => <UI.LoadingPage />;
+const viewLoading: UI.View<Msg> = () => <UI.LoadingPage />
 
 const viewGameBanner =
   (model: Model): UI.View<Msg> =>
   (dispatch) => {
     switch (model.game.type) {
       case "Closed":
-        return <></>;
+        return <></>
 
       case "Opened":
         if (model.page[0] === "Game") {
-          return <></>;
+          return <></>
         }
 
         return (
           <>
             {pipe(Games.viewBanner(model.game), UI.map(tag("Game")))(dispatch)}
           </>
-        );
+        )
     }
-  };
+  }
 
 //
 //
@@ -614,8 +613,8 @@ export const onLocationChange = (location: Browser.Location): Msg => {
     Route.decode,
     Option.withDefault<Route.Route>({ type: "Home" }),
     (route) => ["Route", ["GotRoute", route]],
-  );
-};
+  )
+}
 
 //
 //
@@ -634,13 +633,13 @@ const program = pipe(
     view,
   }),
   Debug.ReduxDevTools.withDebugger,
-);
+)
 
-const root = ReactDomClient.createRoot(document.getElementById("root")!);
+const root = ReactDomClient.createRoot(document.getElementById("root")!)
 
 Browser.run(program, (dom) => {
-  root.render(dom);
-});
+  root.render(dom)
+})
 
 //
 //

@@ -1,16 +1,16 @@
-import { SupabaseClient, createClient } from "@supabase/supabase-js";
-import dotenv from "dotenv";
+import { SupabaseClient, createClient } from "@supabase/supabase-js"
+import dotenv from "dotenv"
 
-dotenv.config();
+dotenv.config()
 
-export let supabaseClient: SupabaseClient;
+export let supabaseClient: SupabaseClient
 
-const SUPABASE_URL = "https://ldxpcprlgecjvqwzuxgv.supabase.co";
+const SUPABASE_URL = "https://ldxpcprlgecjvqwzuxgv.supabase.co"
 
-const SUPABASE_SERVICE_ROLE_KEY = process.env["SUPABASE_SERVICE_ROLE_KEY"];
+const SUPABASE_SERVICE_ROLE_KEY = process.env["SUPABASE_SERVICE_ROLE_KEY"]
 
 if (SUPABASE_SERVICE_ROLE_KEY) {
-  supabaseClient = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {});
+  supabaseClient = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {})
 } else {
-  throw new Error(`process.env["SUPABASE_SERVICE_ROLE_KEY"] is undefined`);
+  throw new Error(`process.env["SUPABASE_SERVICE_ROLE_KEY"] is undefined`)
 }

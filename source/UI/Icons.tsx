@@ -1,6 +1,6 @@
-import { SvgIcon, SvgIconProps } from "@mui/material";
+import { SvgIcon, SvgIconProps } from "@mui/material"
 
-export * from "@mui/icons-material";
+export * from "@mui/icons-material"
 
 // source: https://github.com/MichalSzorad/react-social-login-buttons/blob/develop/src/buttons/GoogleLoginButton.js
 export const GoogleAlt = (props: SvgIconProps) => {
@@ -82,5 +82,5 @@ export const GoogleAlt = (props: SvgIconProps) => {
         c0.29-0.66-0.2-1.41-0.92-1.41H37c-2.21,0-4-1.79-4-4v-2c0-2.21,1.79-4,4-4h17C56.75,27,59,29.22,59,31.97z"
       />
     </SvgIcon>
-  );
-};
+  )
+}

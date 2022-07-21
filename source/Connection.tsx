@@ -1,5 +1,5 @@
-import { onConnectionChanged, ConnectionStatus } from "./Bridge/Frontend";
-import { Cmd, Sub } from "./Core";
+import { ConnectionStatus, onConnectionChanged } from "./Bridge/Frontend"
+import { Cmd, Sub } from "./Core"
 
 //
 //
@@ -12,7 +12,7 @@ import { Cmd, Sub } from "./Core";
 
 export type Model = ConnectionStatus
 
-export const init: Model = "Connecting";
+export const init: Model = "Connecting"
 
 //
 //
@@ -22,14 +22,14 @@ export const init: Model = "Connecting";
 //
 //
 
-export type Msg = ["Changed", Model];
+export type Msg = ["Changed", Model]
 
-export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
+export const update = (msg: Msg, _: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
     case "Changed":
-      return [msg[1], Cmd.None];
+      return [msg[1], Cmd.None]
   }
-};
+}
 
 //
 //
@@ -41,4 +41,4 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
 export const subscriptions: Sub.Sub<Msg> = onConnectionChanged(
   (connectionStatus): Msg => ["Changed", connectionStatus],
-);
+)

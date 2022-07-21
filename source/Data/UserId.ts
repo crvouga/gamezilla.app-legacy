@@ -1,18 +1,18 @@
-import { Result } from "../Core";
+import { Result } from "../Core"
 
-export type UserId = string & { _opaque: typeof UserId };
+export type UserId = string & { _opaque: typeof UserId }
 
-declare const UserId: unique symbol;
+declare const UserId: unique symbol
 
 export const is = (userId: unknown): userId is UserId => {
-  return typeof userId === "string";
-};
+  return typeof userId === "string"
+}
 
-type Problem = "InvalidUserId";
+type Problem = "InvalidUserId"
 
 export const decode = (userId: string): Result.Result<Problem, UserId> => {
   if (is(userId)) {
-    return Result.Ok(userId);
+    return Result.Ok(userId)
   }
-  return Result.Err("InvalidUserId");
-};
+  return Result.Err("InvalidUserId")
+}

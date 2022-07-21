@@ -1,7 +1,7 @@
-import * as Auth from "../Auth";
-import { Cmd } from "../Core";
-import * as Route from "../Route";
-import * as UI from "../UI";
+import * as Auth from "../Auth"
+import { Cmd } from "../Core"
+import * as Route from "../Route"
+import * as UI from "../UI"
 
 //
 //
@@ -11,9 +11,9 @@ import * as UI from "../UI";
 //
 //
 
-export type Model = { type: "Idle" } | { type: "LoggingOut" };
+export type Model = { type: "Idle" } | { type: "LoggingOut" }
 
-export const init: Model = { type: "Idle" };
+export const init: Model = { type: "Idle" }
 
 //
 //
@@ -23,9 +23,9 @@ export const init: Model = { type: "Idle" };
 //
 //
 
-export type Msg = ["ClickedCancel"] | ["ClickedBackdrop"] | ["ClickedLogout"];
+export type Msg = ["ClickedCancel"] | ["ClickedBackdrop"] | ["ClickedLogout"]
 
-type OutAction = Auth.Action;
+type OutAction = Auth.Action
 
 export const update = (
   { name }: { name: string },
@@ -34,15 +34,15 @@ export const update = (
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
     case "ClickedCancel":
-      return [model, Route.back, []];
+      return [model, Route.back, []]
 
     case "ClickedBackdrop":
-      return [model, Route.back, []];
+      return [model, Route.back, []]
 
     case "ClickedLogout":
-      return [{ type: "LoggingOut" }, Cmd.None, [["Auth", ["Logout"]]]];
+      return [{ type: "LoggingOut" }, Cmd.None, [["Auth", ["Logout"]]]]
   }
-};
+}
 
 //
 //
@@ -62,12 +62,12 @@ export const view = (model: Model): UI.View<Msg> => {
         confirmTitle: "Logout",
         onClose: ["ClickedBackdrop"],
         onCancel: ["ClickedCancel"],
-      });
+      })
 
     case "LoggingOut":
       return UI.loadingDialog({
         open: model.type === "LoggingOut",
         title: "Logging out...",
-      });
+      })
   }
-};
+}

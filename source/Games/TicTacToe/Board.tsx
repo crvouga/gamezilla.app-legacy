@@ -1,4 +1,4 @@
-import { Result } from "../../Core";
+import { Result } from "../../Core"
 
 //
 //
@@ -8,19 +8,19 @@ import { Result } from "../../Core";
 //
 //
 
-export type Player = "X" | "O";
+export type Player = "X" | "O"
 
-export type Slot = Player | "Empty";
+export type Slot = Player | "Empty"
 
-export type Row = 0 | 1 | 2;
+export type Row = 0 | 1 | 2
 
-export type Column = 0 | 1 | 2;
+export type Column = 0 | 1 | 2
 
 export type Board = {
   [key in Column]: {
-    [key in Row]: Slot;
-  };
-};
+    [key in Row]: Slot
+  }
+}
 
 export const emptyBoard: Board = {
   "0": {
@@ -38,12 +38,12 @@ export const emptyBoard: Board = {
     "1": "Empty",
     "2": "Empty",
   },
-};
+}
 
-export type Position = { row: Row; column: Column };
+export type Position = { row: Row; column: Column }
 
 export const toSlot = (board: Board, position: Position): Slot =>
-  board[position.column][position.row];
+  board[position.column][position.row]
 
 export const setSlot = (
   board: Board,
@@ -55,7 +55,7 @@ export const setSlot = (
     ...board[column],
     [row]: slot,
   },
-});
+})
 
 export const allPositions: Position[] = [
   { row: 0, column: 0 },
@@ -67,11 +67,11 @@ export const allPositions: Position[] = [
   { row: 2, column: 0 },
   { row: 2, column: 1 },
   { row: 2, column: 2 },
-];
+]
 
 export const toSlots = (board: Board): Slot[] => {
-  return Object.values(board).flatMap((column) => Object.values(column));
-};
+  return Object.values(board).flatMap((column) => Object.values(column))
+}
 
 export const allWinningGroups: Position[][] = [
   // vertical
@@ -117,96 +117,96 @@ export const allWinningGroups: Position[][] = [
     { row: 1, column: 1 },
     { row: 2, column: 0 },
   ],
-];
+]
 
-type Winner = Player | "None";
+type Winner = Player | "None"
 
-type Wins = { X: Position[][]; O: Position[][]; None: Position[][] };
+type Wins = { X: Position[][]; O: Position[][]; None: Position[][] }
 
 const toWins = (board: Board): Wins => {
   return allWinningGroups.reduce(
     (wins, winningGroup) => {
-      const slots = winningGroup.map((position) => toSlot(board, position));
+      const slots = winningGroup.map((position) => toSlot(board, position))
 
       const winner: Winner = slots.every((slot) => slot === "X")
         ? "X"
         : slots.every((slot) => slot === "O")
-          ? "O"
-          : "None";
+        ? "O"
+        : "None"
 
-      return { ...wins, [winner]: [...wins[winner], winningGroup] };
+      return { ...wins, [winner]: [...wins[winner], winningGroup] }
     },
     {
       X: [],
       O: [],
       None: [],
     },
-  );
-};
+  )
+}
 
 export type Status =
   | { type: "Turn"; turn: Player }
   | { type: "Win"; winner: Player }
-  | { type: "Tie" };
+  | { type: "Tie" }
 
 export const toStatus = (board: Board): Status => {
-  const wins = toWins(board);
+  const wins = toWins(board)
 
   if (wins.X.length > 0) {
-    return { type: "Win", winner: "X" };
+    return { type: "Win", winner: "X" }
   }
 
   if (wins.O.length > 0) {
-    return { type: "Win", winner: "O" };
+    return { type: "Win", winner: "O" }
   }
 
   if (isTie(board)) {
-    return { type: "Tie" };
+    return { type: "Tie" }
   }
 
-  return { type: "Turn", turn: toTurn(board) };
-};
+  return { type: "Turn", turn: toTurn(board) }
+}
 
 const isTie = (board: Board): boolean => {
   return toSlotFrequency(board).Empty === 0 && toWins(board).None.length === 0
-};
+}
 
-type SlotFrequency = { X: number; O: number; Empty: number };
+type SlotFrequency = { X: number; O: number; Empty: number }
 
 const toSlotFrequency = (board: Board): SlotFrequency => {
   return toSlots(board).reduce(
     (frequency, slot) => ({ ...frequency, [slot]: frequency[slot] + 1 }),
     { X: 0, O: 0, Empty: 0 },
-  );
-};
+  )
+}
 
 export const toTurn = (board: Board): Player => {
-  const frequency = toSlotFrequency(board);
-  return frequency["X"] <= frequency["O"] ? "X" : "O";
-};
+  const frequency = toSlotFrequency(board)
+  return frequency["X"] <= frequency["O"] ? "X" : "O"
+}
 
-export type MoveProblem = "not_players_turn" | "position_is_taken" | "gameover";
+export type MoveProblem = "not_players_turn" | "position_is_taken" | "game_over"
 
 export const move = (
   board: Board,
   player: Player,
   position: Position,
 ): Result.Result<MoveProblem, Board> => {
-  const status = toStatus(board);
+  const status = toStatus(board)
 
   if (status.type === "Tie" || status.type === "Win") {
-    return Result.Err("gameover");
+    return Result.Err("game_over")
   }
 
   if (status.turn !== player) {
-    return Result.Err("not_players_turn");
+    return Result.Err("not_players_turn")
   }
 
-  const slot = toSlot(board, position);
+  const slot = toSlot(board, position)
 
   if (slot !== "Empty") {
-    return Result.Err("not_players_turn");
+    return Result.Err("not_players_turn")
   }
 
-  return Result.Ok(setSlot(board, position, player));
-};
+  return Result.Ok(setSlot(board, position, player))
+}

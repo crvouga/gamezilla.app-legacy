@@ -1,31 +1,30 @@
-import * as Games from "../Games/Frontend";
-import * as Route from "../Route";
-import * as Auth from "../Auth";
-import * as Snackbar from "../Snackbar";
-import * as Store from "../Store";
-import * as UI from "../UI";
-import * as Account from "./Account";
-import * as AccountCreate from "./AccountCreate";
-import * as Chat from "./Chat";
-import * as ChatConversation from "./ChatConversation";
-import * as ChatNew from "./ChatNew";
-import * as Game from "./Game";
-import * as Home from "./Home";
-import * as Login from "./Login";
-import * as LoginEmail from "./LoginEmail";
-import * as Logout from "./Logout";
-import * as PasswordReset from "./PasswordReset";
-import * as Profile from "./Profile";
-import * as ProfileCreate from "./ProfileCreate";
-import * as ProfileDelete from "./ProfileDelete";
-import * as ProfileUpdate from "./ProfileUpdate";
-import * as ProfileUpdateAvatar from "./ProfileUpdateAvatar";
-import * as ProfileUpdateName from "./ProfileUpdateName";
-import * as ProfileUpdateTheme from "./ProfileUpdateTheme";
-import * as ProfileUpdateUsername from "./ProfileUpdateUsername";
-import * as Search from "./Search";
-import { Cmd, Sub, pipe } from "../Core";
-import { exhaustive, tag } from "../Core";
+import * as Games from "../Games/Frontend"
+import * as Route from "../Route"
+import * as Auth from "../Auth"
+import * as Snackbar from "../Snackbar"
+import * as Store from "../Store"
+import * as UI from "../UI"
+import * as Account from "./Account"
+import * as AccountCreate from "./AccountCreate"
+import * as Chat from "./Chat"
+import * as ChatConversation from "./ChatConversation"
+import * as ChatNew from "./ChatNew"
+import * as Game from "./Game"
+import * as Home from "./Home"
+import * as Login from "./Login"
+import * as LoginEmail from "./LoginEmail"
+import * as Logout from "./Logout"
+import * as PasswordReset from "./PasswordReset"
+import * as Profile from "./Profile"
+import * as ProfileCreate from "./ProfileCreate"
+import * as ProfileDelete from "./ProfileDelete"
+import * as ProfileUpdate from "./ProfileUpdate"
+import * as ProfileUpdateAvatar from "./ProfileUpdateAvatar"
+import * as ProfileUpdateName from "./ProfileUpdateName"
+import * as ProfileUpdateTheme from "./ProfileUpdateTheme"
+import * as ProfileUpdateUsername from "./ProfileUpdateUsername"
+import * as Search from "./Search"
+import { Cmd, exhaustive, pipe, Sub, tag } from "../Core"
 
 //
 //
@@ -41,7 +40,6 @@ export type Model =
   | ["Logout", Logout.Model]
   | ["Home", Home.Model]
   | ["Account", Account.Model]
-  | ["Logout", Logout.Model]
   | ["Profile", Profile.Model]
   | ["ProfileDelete", ProfileDelete.Model]
   | ["ProfileUpdate", ProfileUpdate.Model]
@@ -58,7 +56,7 @@ export type Model =
   | ["ChatConversation", ChatConversation.Model]
   | ["Game"]
   | ["Admin"]
-  | ["Loading"];
+  | ["Loading"]
 
 //
 //
@@ -88,7 +86,7 @@ export type Msg =
   | ["ChatNew", ChatNew.Msg]
   | ["ChatConversation", ChatConversation.Msg]
   | ["Search", Search.Msg]
-  | ["ClickedBottomNavigationLink", Route.Route];
+  | ["ClickedBottomNavigationLink", Route.Route]
 
 export type OutAction =
   | Store.Action
@@ -105,8 +103,8 @@ export type OutAction =
 //
 
 export const initLoading = (): [Model, Cmd.Cmd<Msg>] => {
-  return [["Loading"], Cmd.None];
-};
+  return [["Loading"], Cmd.None]
+}
 
 export const initReady = (
   route: Route.Route,
@@ -114,134 +112,132 @@ export const initReady = (
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (route.type) {
     case "Account":
-      return [["Account", Account.init], Cmd.None, []];
+      return [["Account", Account.init], Cmd.None, []]
 
     case "Chat": {
-      const [model, cmd, actions] = Chat.init(profile);
-      return [["Chat", model], pipe(cmd, Cmd.map(tag("Chat"))), actions];
+      const [model, cmd, actions] = Chat.init(profile)
+      return [["Chat", model], pipe(cmd, Cmd.map(tag("Chat"))), actions]
     }
 
     case "ChatNew": {
-      const [chatNew, chatNewCmd, actions] = ChatNew.init();
+      const [chatNew, chatNewCmd, actions] = ChatNew.init()
 
       return [
         ["ChatNew", chatNew],
         pipe(chatNewCmd, Cmd.map(tag("ChatNew"))),
         actions,
-      ];
+      ]
     }
 
     case "ChatConversation": {
       const [model, cmd, actions] = ChatConversation.init({
         conversationId: route.conversationId,
-      });
+      })
       return [
         ["ChatConversation", model],
 
         pipe(cmd, Cmd.map(tag("ChatConversation"))),
         actions,
-      ];
+      ]
     }
 
     case "Game":
-      return [["Game"], Cmd.None, []];
+      return [["Game"], Cmd.None, []]
 
     case "Home":
-      return [["Home", Home.init], Cmd.None, []];
+      return [["Home", Home.init], Cmd.None, []]
 
     case "Logout":
-      return [["Logout", Logout.init], Cmd.None, []];
+      return [["Logout", Logout.init], Cmd.None, []]
 
     case "ProfileDelete": {
-      const [modelNew, cmdNew, actions] = ProfileDelete.init;
+      const [modelNew, cmdNew, actions] = ProfileDelete.init
       return [
         ["ProfileDelete", modelNew],
         pipe(cmdNew, Cmd.map(tag("ProfileDelete"))),
         actions,
-      ];
+      ]
     }
 
     case "ProfileUpdate":
-      return [["ProfileUpdate", ProfileUpdate.init], Cmd.None, []];
+      return [["ProfileUpdate", ProfileUpdate.init], Cmd.None, []]
 
     case "ProfileUpdateAvatar":
       return [
         ["ProfileUpdateAvatar", ProfileUpdateAvatar.init(profile)],
         Cmd.None,
         [],
-      ];
+      ]
 
     case "ProfileUpdateName":
       return [
         ["ProfileUpdateName", ProfileUpdateName.init(profile)],
         Cmd.None,
         [],
-      ];
+      ]
 
     case "ProfileUpdateUsername":
       return [
         ["ProfileUpdateUsername", ProfileUpdateUsername.init(profile)],
         Cmd.None,
         [],
-      ];
+      ]
 
     case "ProfileUpdateTheme":
-      return [["ProfileUpdateTheme", ProfileUpdateTheme.init], Cmd.None, []];
+      return [["ProfileUpdateTheme", ProfileUpdateTheme.init], Cmd.None, []]
 
     case "Profile": {
       const [modelInit, cmdInit, actions] = Profile.init({
         userId: route.userId,
-      });
+      })
       return [
         ["Profile", modelInit],
         pipe(cmdInit, Cmd.map(tag("Profile"))),
         actions,
-      ];
+      ]
     }
 
     case "Search": {
-      const [modelInit, cmdInit, actionsInit] = Search.init;
+      const [modelInit, cmdInit, actionsInit] = Search.init
       return [
         ["Search", modelInit],
         pipe(cmdInit, Cmd.map(tag("Search"))),
         actionsInit,
-      ];
+      ]
     }
 
     case "Admin":
-      return [["Admin"], Cmd.None, []];
+      return [["Admin"], Cmd.None, []]
 
     case "ProfileCreate":
     case "Login":
     case "LoginEmail":
     case "AccountCreate":
     case "PasswordReset":
-      return [["Home", Home.init], Route.push({ type: "Home" }), []];
+      return [["Home", Home.init], Route.push({ type: "Home" }), []]
 
     default:
-      return exhaustive(route);
+      return exhaustive(route)
   }
-};
+}
 
-export const initLoggedOut = (
-  route: Route.Route,
-): [Model, Cmd.Cmd<Msg>] => {
+export const initLoggedOut = (route: Route.Route): [Model, Cmd.Cmd<Msg>] => {
   switch (route.type) {
     case "Login":
-      return [["Login", Login.init], Cmd.None];
+      return [["Login", Login.init], Cmd.None]
 
     case "LoginEmail":
-      return [["LoginEmail", LoginEmail.init], Cmd.None];
+      return [["LoginEmail", LoginEmail.init], Cmd.None]
 
     case "AccountCreate":
-      const [modelNew, cmd] = AccountCreate.init();
+      const [modelNew, cmd] = AccountCreate.init()
       return [
         ["AccountCreate", modelNew],
         pipe(cmd, Cmd.map(tag("AccountCreate"))),
-      ];
+      ]
 
     case "PasswordReset":
-      return [["PasswordReset", PasswordReset.init], Cmd.None];
+      return [["PasswordReset", PasswordReset.init], Cmd.None]
 
     case "Account":
     case "Chat":
@@ -260,12 +256,12 @@ export const initLoggedOut = (
     case "ProfileUpdateTheme":
     case "ProfileUpdateName":
     case "ProfileUpdateUsername":
-      return [["Login", Login.init], Route.push({ type: "Login" })];
+      return [["Login", Login.init], Route.push({ type: "Login" })]
 
     default:
-      return exhaustive(route);
+      return exhaustive(route)
   }
-};
+}
 
 export const initProfileMissing = (
   route: Route.Route,
@@ -273,10 +269,10 @@ export const initProfileMissing = (
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (route.type) {
     case "ProfileCreate":
-      return [["ProfileCreate", ProfileCreate.init(auth)], Cmd.None];
+      return [["ProfileCreate", ProfileCreate.init(auth)], Cmd.None]
 
     case "Logout":
-      return [["Logout", Logout.init], Cmd.None];
+      return [["Logout", Logout.init], Cmd.None]
 
     case "Account":
     case "Chat":
@@ -300,11 +296,11 @@ export const initProfileMissing = (
       return [
         ["ProfileCreate", ProfileCreate.init(auth)],
         Route.push({ type: "ProfileCreate" }),
-      ];
+      ]
     default:
-      return exhaustive(route);
+      return exhaustive(route)
   }
-};
+}
 
 //
 //
@@ -320,82 +316,78 @@ export const updateReady = (
   model: Model,
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   if (msg[0] === "ClickedBottomNavigationLink") {
-    return [model, Route.push(msg[1]), []];
+    return [model, Route.push(msg[1]), []]
   }
 
   switch (model[0]) {
     case "Account":
       if (msg[0] === "Account") {
-        return tagUpdate("Account", Account.update(profile, msg[1], model[1]));
+        return tagUpdate("Account", Account.update(profile, msg[1], model[1]))
       }
-      return [model, Cmd.None, []];
+      return [model, Cmd.None, []]
 
     case "Home":
       if (msg[0] === "Home") {
-        return tagUpdate("Home", Home.update(msg[1], model[1]));
+        return tagUpdate("Home", Home.update(msg[1], model[1]))
       }
-      return [model, Cmd.None, []];
+      return [model, Cmd.None, []]
 
     case "Logout":
       if (msg[0] === "Logout") {
-        const ret = tagUpdate(
-          "Logout",
-          Logout.update(profile, msg[1], model[1]),
-        );
-        return ret;
+        return tagUpdate("Logout", Logout.update(profile, msg[1], model[1]))
       }
-      return [model, Cmd.None, []];
+      return [model, Cmd.None, []]
 
     case "ProfileDelete":
       if (msg[0] === "ProfileDelete") {
         return tagUpdate(
           "ProfileDelete",
           ProfileDelete.update(profile, msg[1], model[1]),
-        );
+        )
       }
-      return [model, Cmd.None, []];
+      return [model, Cmd.None, []]
 
     case "ProfileUpdate":
       if (msg[0] === "ProfileUpdate") {
         return tagUpdate(
           "ProfileUpdate",
           ProfileUpdate.update(profile, msg[1], model[1]),
-        );
+        )
       }
-      return [model, Cmd.None, []];
+      return [model, Cmd.None, []]
 
     case "ProfileUpdateAvatar":
       if (msg[0] === "ProfileUpdateAvatar") {
         return tagUpdate(
           "ProfileUpdateAvatar",
           ProfileUpdateAvatar.update(profile, msg[1], model[1]),
-        );
+        )
       }
-      return [model, Cmd.None, []];
+      return [model, Cmd.None, []]
 
     case "ProfileUpdateName":
       if (msg[0] === "ProfileUpdateName") {
         return tagUpdate(
           "ProfileUpdateName",
           ProfileUpdateName.update(profile, msg[1], model[1]),
-        );
+        )
       }
-      return [model, Cmd.None, []];
+      return [model, Cmd.None, []]
 
     case "ProfileUpdateUsername":
       if (msg[0] === "ProfileUpdateUsername") {
         return tagUpdate(
           "ProfileUpdateUsername",
           ProfileUpdateUsername.update(profile, msg[1], model[1]),
-        );
+        )
       }
-      return [model, Cmd.None, []];
+      return [model, Cmd.None, []]
 
     case "Chat":
       if (msg[0] === "Chat") {
-        return tagUpdate("Chat", Chat.update(msg[1], model[1]));
+        return tagUpdate("Chat", Chat.update(msg[1], model[1]))
       }
-      return [model, Cmd.None, []];
+      return [model, Cmd.None, []]
 
     case "ChatNew":
       if (msg[0] === "ChatNew") {
@@ -406,9 +398,9 @@ export const updateReady = (
             msg[1],
             model[1],
           ),
-        );
+        )
       }
-      return [model, Cmd.None, []];
+      return [model, Cmd.None, []]
 
     case "ChatConversation":
       if (msg[0] === "ChatConversation") {
@@ -416,26 +408,26 @@ export const updateReady = (
           { userId: profile.userId },
           msg[1],
           model[1],
-        );
+        )
         return [
           ["ChatConversation", modelPage],
           pipe(cmdPage, Cmd.map(tag("ChatConversation"))),
           actions,
-        ];
+        ]
       }
-      return [model, Cmd.None, []];
+      return [model, Cmd.None, []]
 
     case "ProfileUpdateTheme":
       if (msg[0] === "ProfileUpdateTheme") {
         return tagUpdate(
           "ProfileUpdateTheme",
           ProfileUpdateTheme.update(profile, msg[1], model[1]),
-        );
+        )
       }
-      return [model, Cmd.None, []];
+      return [model, Cmd.None, []]
 
     case "Game":
-      return [model, Cmd.None, []];
+      return [model, Cmd.None, []]
 
     case "Profile":
       if (msg[0] === "Profile") {
@@ -443,25 +435,25 @@ export const updateReady = (
           { currentUserId: profile.userId },
           msg[1],
           model[1],
-        );
+        )
         return [
           ["Profile", modelPage],
           pipe(cmdPage, Cmd.map(tag("Profile"))),
           actions,
-        ];
+        ]
       }
 
-      return [model, Cmd.None, []];
+      return [model, Cmd.None, []]
 
     case "Search":
       if (msg[0] === "Search") {
-        return tagUpdate("Search", Search.update(msg[1], model[1]));
+        return tagUpdate("Search", Search.update(msg[1], model[1]))
       }
 
-      return [model, Cmd.None, []];
+      return [model, Cmd.None, []]
 
     case "Admin":
-      return [model, Cmd.None, []];
+      return [model, Cmd.None, []]
 
     case "Login":
     case "Loading":
@@ -469,12 +461,12 @@ export const updateReady = (
     case "LoginEmail":
     case "AccountCreate":
     case "PasswordReset":
-      return [model, Route.push({ type: "Home" }), []];
+      return [model, Route.push({ type: "Home" }), []]
 
     default:
-      return exhaustive(model);
+      return exhaustive(model)
   }
-};
+}
 
 export const updateProfileMissing = (
   auth: Auth.Session,
@@ -487,18 +479,18 @@ export const updateProfileMissing = (
         return tagUpdate(
           "Logout",
           Logout.update({ name: auth.defaultName }, msg[1], model[1]),
-        );
+        )
       }
-      return [model, Cmd.None, []];
+      return [model, Cmd.None, []]
 
     case "ProfileCreate":
       if (msg[0] === "ProfileCreate") {
         return tagUpdate(
           "ProfileCreate",
           ProfileCreate.update(auth, msg[1], model[1]),
-        );
+        )
       }
-      return [model, Cmd.None, []];
+      return [model, Cmd.None, []]
 
     case "Home":
     case "Account":
@@ -520,12 +512,12 @@ export const updateProfileMissing = (
     case "PasswordReset":
     case "Search":
     case "Admin":
-      return [model, Route.push({ type: "ProfileCreate" }), []];
+      return [model, Route.push({ type: "ProfileCreate" }), []]
 
     default:
-      return exhaustive(model);
+      return exhaustive(model)
   }
-};
+}
 
 export const updateLoggedOut = (
   msg: Msg,
@@ -534,24 +526,24 @@ export const updateLoggedOut = (
   switch (model[0]) {
     case "Login":
       if (msg[0] === "Login") {
-        return tagUpdate("Login", Login.update(msg[1], model[1]));
+        return tagUpdate("Login", Login.update(msg[1], model[1]))
       }
-      return [model, Cmd.None, []];
+      return [model, Cmd.None, []]
 
     case "LoginEmail":
       if (msg[0] === "LoginEmail") {
-        return tagUpdate("LoginEmail", LoginEmail.update(msg[1], model[1]));
+        return tagUpdate("LoginEmail", LoginEmail.update(msg[1], model[1]))
       }
-      return [model, Cmd.None, []];
+      return [model, Cmd.None, []]
 
     case "AccountCreate": {
       if (msg[0] === "AccountCreate") {
         return tagUpdate(
           "AccountCreate",
           AccountCreate.update(msg[1], model[1]),
-        );
+        )
       }
-      return [model, Cmd.None, []];
+      return [model, Cmd.None, []]
     }
 
     case "PasswordReset": {
@@ -559,9 +551,9 @@ export const updateLoggedOut = (
         return tagUpdate(
           "PasswordReset",
           PasswordReset.update(msg[1], model[1]),
-        );
+        )
       }
-      return [model, Cmd.None, []];
+      return [model, Cmd.None, []]
     }
 
     case "ProfileCreate":
@@ -582,12 +574,12 @@ export const updateLoggedOut = (
     case "Profile":
     case "Admin":
     case "Search":
-      return [model, Route.push({ type: "Login" }), []];
+      return [model, Route.push({ type: "Login" }), []]
 
     default:
-      return exhaustive(model);
+      return exhaustive(model)
   }
-};
+}
 
 //
 //
@@ -600,7 +592,7 @@ export const updateLoggedOut = (
 export const subscriptions = (model: Model): Sub.Sub<Msg> => {
   switch (model[0]) {
     case "ChatNew":
-      return pipe(ChatNew.subscriptions(model[1]), Sub.map(tag("ChatNew")));
+      return pipe(ChatNew.subscriptions(model[1]), Sub.map(tag("ChatNew")))
 
     case "Account":
     case "Chat":
@@ -623,12 +615,12 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
     case "Profile":
     case "Search":
     case "Admin":
-      return Sub.None;
+      return Sub.None
 
     default:
-      return exhaustive(model);
+      return exhaustive(model)
   }
-};
+}
 
 //
 //
@@ -645,10 +637,10 @@ export const viewReady = (
     store,
     route,
   }: {
-    route: Route.Route;
-    game: Game.Model;
-    profile: Store.Profile.Profile;
-    store: Store.Model;
+    route: Route.Route
+    game: Game.Model
+    profile: Store.Profile.Profile
+    store: Store.Model
   },
   model: Model,
 ): UI.View<Msg> => {
@@ -659,15 +651,17 @@ export const viewReady = (
         <UI.FillBox>
           {tagView("Account", Account.view(profile, model[1]))(dispatch)}
         </UI.FillBox>
-      );
+      )
 
     case "Chat":
       return (dispatch) => (
         <UI.FillBox>
           {tagView("Chat", Chat.view({ profile, store }, model[1]))(dispatch)}
-          {viewBottomNavigation({ page: "Chat", currentUserId, route })(dispatch)}
+          {viewBottomNavigation({ page: "Chat", currentUserId, route })(
+            dispatch,
+          )}
         </UI.FillBox>
-      );
+      )
 
     case "Home":
       return (dispatch) => (
@@ -676,9 +670,11 @@ export const viewReady = (
             "Home",
             Home.view({ route, profile, game }, model[1]),
           )(dispatch)}
-          {viewBottomNavigation({ page: "Home", currentUserId, route })(dispatch)}
+          {viewBottomNavigation({ page: "Home", currentUserId, route })(
+            dispatch,
+          )}
         </UI.FillBox>
-      );
+      )
 
     case "Search":
       return (dispatch) => (
@@ -686,63 +682,72 @@ export const viewReady = (
           <UI.FillBox>
             {tagView("Search", Search.view({ store }, model[1]))(dispatch)}
           </UI.FillBox>
-          {viewBottomNavigation({ page: "Search", currentUserId, route })(dispatch)}
+          {viewBottomNavigation({ page: "Search", currentUserId, route })(
+            dispatch,
+          )}
         </UI.FillBox>
-      );
+      )
 
     case "ChatNew":
       return tagView(
         "ChatNew",
         ChatNew.view({ store, currentUserProfile: profile }, model[1]),
-      );
+      )
 
     case "ChatConversation":
       return tagView(
         "ChatConversation",
         ChatConversation.view({ store, authUser: profile }, model[1]),
-      );
+      )
 
     case "Logout":
-      return tagView("Logout", Logout.view(model[1]));
+      return tagView("Logout", Logout.view(model[1]))
 
     case "ProfileDelete":
       return tagView(
         "ProfileDelete",
         ProfileDelete.view({ store, profileId: profile.userId }, model[1]),
-      );
+      )
 
     case "ProfileUpdate":
-      return tagView("ProfileUpdate", ProfileUpdate.view(profile, model));
+      return tagView("ProfileUpdate", ProfileUpdate.view(profile, model))
 
     case "ProfileUpdateAvatar":
-      return tagView("ProfileUpdateAvatar", ProfileUpdateAvatar.view(model[1]));
+      return tagView("ProfileUpdateAvatar", ProfileUpdateAvatar.view(model[1]))
 
     case "ProfileUpdateName":
-      return tagView("ProfileUpdateName", ProfileUpdateName.view(model[1]));
+      return tagView("ProfileUpdateName", ProfileUpdateName.view(model[1]))
 
     case "ProfileUpdateTheme":
       return tagView(
         "ProfileUpdateTheme",
         ProfileUpdateTheme.view(profile, model[1]),
-      );
+      )
 
     case "ProfileUpdateUsername":
       return tagView(
         "ProfileUpdateUsername",
         ProfileUpdateUsername.view(model[1]),
-      );
+      )
 
     case "Game":
-      return viewLoading;
+      return viewLoading
 
     case "Admin":
-      return viewLoading;
+      return viewLoading
 
     case "Profile":
-      return dispatch => <UI.FillBox>
-        {tagView("Profile", Profile.view({ store, currentUserId: profile.userId }, model[1]))(dispatch)}
-        {viewBottomNavigation({ page: "Profile", currentUserId, route })(dispatch)}
-      </UI.FillBox>
+      return (dispatch) => (
+        <UI.FillBox>
+          {tagView(
+            "Profile",
+            Profile.view({ store, currentUserId: profile.userId }, model[1]),
+          )(dispatch)}
+          {viewBottomNavigation({ page: "Profile", currentUserId, route })(
+            dispatch,
+          )}
+        </UI.FillBox>
+      )
 
     case "Login":
     case "ProfileCreate":
@@ -750,12 +755,12 @@ export const viewReady = (
     case "LoginEmail":
     case "PasswordReset":
     case "AccountCreate":
-      return viewLoading;
+      return viewLoading
 
     default:
-      return exhaustive(model);
+      return exhaustive(model)
   }
-};
+}
 
 export const viewProfileMissing = (
   _auth: Auth.Session,
@@ -763,10 +768,10 @@ export const viewProfileMissing = (
 ): UI.View<Msg> => {
   switch (model[0]) {
     case "Logout":
-      return tagView("Logout", Logout.view(model[1]));
+      return tagView("Logout", Logout.view(model[1]))
 
     case "ProfileCreate":
-      return tagView("ProfileCreate", ProfileCreate.view(model[1]));
+      return tagView("ProfileCreate", ProfileCreate.view(model[1]))
 
     case "Account":
     case "Chat":
@@ -788,26 +793,26 @@ export const viewProfileMissing = (
     case "PasswordReset":
     case "Profile":
     case "Admin":
-      return viewLoading;
+      return viewLoading
 
     default:
-      return exhaustive(model);
+      return exhaustive(model)
   }
-};
+}
 
 export const viewLoggedOut = (model: Model): UI.View<Msg> => {
   switch (model[0]) {
     case "Login":
-      return tagView("Login", Login.view(model[1]));
+      return tagView("Login", Login.view(model[1]))
 
     case "LoginEmail":
-      return tagView("LoginEmail", LoginEmail.view(model[1]));
+      return tagView("LoginEmail", LoginEmail.view(model[1]))
 
     case "AccountCreate":
-      return tagView("AccountCreate", AccountCreate.view(model[1]));
+      return tagView("AccountCreate", AccountCreate.view(model[1]))
 
     case "PasswordReset":
-      return tagView("PasswordReset", PasswordReset.view(model[1]));
+      return tagView("PasswordReset", PasswordReset.view(model[1]))
 
     case "Account":
     case "Chat":
@@ -827,14 +832,14 @@ export const viewLoggedOut = (model: Model): UI.View<Msg> => {
     case "Search":
     case "Admin":
     case "Loading":
-      return viewLoading;
+      return viewLoading
 
     default:
-      return exhaustive(model);
+      return exhaustive(model)
   }
-};
+}
 
-const viewLoading: UI.View<Msg> = () => <UI.LoadingPage />;
+const viewLoading: UI.View<Msg> = () => <UI.LoadingPage />
 
 //
 //
@@ -846,58 +851,63 @@ const viewLoading: UI.View<Msg> = () => <UI.LoadingPage />;
 //
 
 const viewBottomNavigation =
-  (
-    { currentUserId, page, route }: { currentUserId: string, page: "Home" | "Search" | "Chat" | "Profile", route: Route.Route, }
-  ): UI.View<Msg> =>
-    (dispatch) => {
-      return (
-        <UI.BottomNavigation
-          showLabels
-          value={route.type}
-          onChange={(_event, routeType) => {
-            if (!Route.isRouteType(routeType)) {
-              return
+  ({
+    currentUserId,
+    route,
+  }: {
+    currentUserId: string
+    page: "Home" | "Search" | "Chat" | "Profile"
+    route: Route.Route
+  }): UI.View<Msg> =>
+  (dispatch) => {
+    return (
+      <UI.BottomNavigation
+        showLabels
+        value={route.type}
+        onChange={(_event, routeType) => {
+          if (!Route.isRouteType(routeType)) {
+            return
+          }
+          switch (routeType) {
+            case "Home":
+            case "Search":
+            case "Chat": {
+              dispatch(["ClickedBottomNavigationLink", { type: routeType }])
+              break
             }
-            switch (routeType) {
-              case 'Home':
-              case 'Search':
-              case 'Chat': {
-
-                dispatch(["ClickedBottomNavigationLink", { type: routeType }]);
-                break
-              }
-              case "Profile": {
-
-                dispatch(["ClickedBottomNavigationLink", { type: routeType, userId: currentUserId }]);
-                break
-              }
+            case "Profile": {
+              dispatch([
+                "ClickedBottomNavigationLink",
+                { type: routeType, userId: currentUserId },
+              ])
+              break
             }
-
-          }}
-        >
-          <UI.BottomNavigationAction
-            icon={<UI.Icons.Home />}
-            label="Home"
-            value={Route.routesTypes.Home}
-          />
-          <UI.BottomNavigationAction
-            icon={<UI.Icons.Search />}
-            label="Search"
-            value={Route.routesTypes.Search}
-          />
-          <UI.BottomNavigationAction
-            icon={<UI.Icons.Chat />}
-            label="Chat"
-            value={Route.routesTypes.Chat}
-          />
-          <UI.BottomNavigationAction
-            icon={<UI.Icons.Person />}
-            label="Profile"
-            value={Route.routesTypes.Profile}
-          />
-        </UI.BottomNavigation>
-      );
-    };
+          }
+        }}
+      >
+        <UI.BottomNavigationAction
+          icon={<UI.Icons.Home />}
+          label="Home"
+          value={Route.routesTypes.Home}
+        />
+        <UI.BottomNavigationAction
+          icon={<UI.Icons.Search />}
+          label="Search"
+          value={Route.routesTypes.Search}
+        />
+        <UI.BottomNavigationAction
+          icon={<UI.Icons.Chat />}
+          label="Chat"
+          value={Route.routesTypes.Chat}
+        />
+        <UI.BottomNavigationAction
+          icon={<UI.Icons.Person />}
+          label="Profile"
+          value={Route.routesTypes.Profile}
+        />
+      </UI.BottomNavigation>
+    )
+  }
 
 //
 //
@@ -911,8 +921,8 @@ const tagView = <TMsg, TPage extends Msg[0]>(
   page: TPage,
   dom: UI.View<TMsg>,
 ): UI.View<[TPage, TMsg]> => {
-  return pipe(dom, UI.map(tag(page)));
-};
+  return pipe(dom, UI.map(tag(page)))
+}
 
 const tagUpdate = <TModel, TMsg, TAction, TPage extends Msg[0]>(
   page: TPage,
@@ -920,5 +930,5 @@ const tagUpdate = <TModel, TMsg, TAction, TPage extends Msg[0]>(
     | [TModel, Cmd.Cmd<TMsg>, TAction[]]
     | [TModel, Cmd.Cmd<TMsg>],
 ): [[TPage, TModel], Cmd.Cmd<[TPage, TMsg]>, TAction[]] => {
-  return [[page, modelPrev], pipe(cmdPrev, Cmd.map(tag(page))), actionsPrev];
-};
+  return [[page, modelPrev], pipe(cmdPrev, Cmd.map(tag(page))), actionsPrev]
+}

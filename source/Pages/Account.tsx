@@ -1,6 +1,6 @@
-import * as Route from "../Route";
-import * as UI from "../UI";
-import { Cmd } from "../Core";
+import * as Route from "../Route"
+import * as UI from "../UI"
+import { Cmd } from "../Core"
 
 //
 //
@@ -10,9 +10,9 @@ import { Cmd } from "../Core";
 //
 //
 
-export type Model = {};
+export type Model = {}
 
-export const init: Model = {};
+export const init: Model = {}
 
 //
 //
@@ -27,7 +27,7 @@ export type Msg =
   | ["ClickedLogout"]
   | ["ClickedDeleteProfile"]
   | ["ClickedUpdateProfile"]
-  | ["ClickedAdmin"];
+  | ["ClickedAdmin"]
 
 export const update = (
   { userId }: { userId: string },
@@ -36,21 +36,21 @@ export const update = (
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
     case "ClickedAdmin":
-      return [model, Route.push({ type: "Admin", tab: "Model" })];
+      return [model, Route.push({ type: "Admin", tab: "Model" })]
 
     case "ClickedBack":
-      return [model, Route.back];
+      return [model, Route.back]
 
     case "ClickedLogout":
-      return [model, Route.push({ type: "Logout" })];
+      return [model, Route.push({ type: "Logout" })]
 
     case "ClickedUpdateProfile":
-      return [model, Route.push({ type: "ProfileUpdate" })];
+      return [model, Route.push({ type: "ProfileUpdate" })]
 
     case "ClickedDeleteProfile":
-      return [model, Route.push({ type: "ProfileDelete" })];
+      return [model, Route.push({ type: "ProfileDelete" })]
   }
-};
+}
 
 //
 //
@@ -61,8 +61,8 @@ export const update = (
 //
 
 export const view =
-  ({ username }: { username: string }, model: Model): UI.View<Msg> =>
-    (dispatch) =>
+  ({ username }: { username: string }, _: Model): UI.View<Msg> =>
+  (dispatch) =>
     (
       <UI.FillBox>
         <UI.Header title={username} />
@@ -100,4 +100,4 @@ export const view =
           </UI.ListItemButton>
         </UI.List>
       </UI.FillBox>
-    );
+    )

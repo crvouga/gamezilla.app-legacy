@@ -1,9 +1,9 @@
-import * as MuiLab from "@mui/lab";
-import * as Mui from "@mui/material";
-import { blue } from "@mui/material/colors";
-import { useMemo } from "react";
-import * as Icons from "./Icons";
-import { Platform, View } from "../Core";
+import * as MuiLab from "@mui/lab"
+import * as Mui from "@mui/material"
+import { blue } from "@mui/material/colors"
+import { useMemo } from "react"
+import * as Icons from "./Icons"
+import { Platform, View } from "../Core"
 
 //
 //
@@ -13,15 +13,15 @@ import { Platform, View } from "../Core";
 //
 //
 
-export type Dom = React.ReactElement<unknown>;
+export type Dom = React.ReactElement<unknown>
 
-export type View<Msg> = (dispatch: Platform.Dispatch<Msg>) => Dom;
+export type View<Msg> = (dispatch: Platform.Dispatch<Msg>) => Dom
 
 export const map = <A, Msg>(
   f: (a: A) => Msg,
 ): ((ha: View.View<Dom, A>) => View.View<Dom, Msg>) => {
-  return View.map(f);
-};
+  return View.map(f)
+}
 
 //
 //
@@ -70,76 +70,76 @@ const createTheme = ({ mode }: { mode: "light" | "dark" }) =>
         },
       },
     }),
-  );
+  )
 
-const darkTheme = createTheme({ mode: "dark" });
-const lightTheme = createTheme({ mode: "light" });
+const darkTheme = createTheme({ mode: "dark" })
+const lightTheme = createTheme({ mode: "light" })
 
 export const ThemeProvider = ({
   children,
   themeMode,
 }: {
-  children: React.ReactNode;
-  themeMode: ThemeMode;
+  children: React.ReactNode
+  themeMode: ThemeMode
 }) => {
-  const prefersDarkMode = Mui.useMediaQuery("(prefers-color-scheme: dark)");
+  const prefersDarkMode = Mui.useMediaQuery("(prefers-color-scheme: dark)")
 
   const theme = useMemo(() => {
     switch (themeMode) {
       case "Dark":
-        return darkTheme;
+        return darkTheme
 
       case "Light":
-        return lightTheme;
+        return lightTheme
       case "System":
         if (prefersDarkMode) {
-          return darkTheme;
+          return darkTheme
         }
-        return lightTheme;
+        return lightTheme
     }
-  }, [themeMode, prefersDarkMode]);
+  }, [themeMode, prefersDarkMode])
 
   return (
     <Mui.ThemeProvider theme={theme}>
       <Mui.CssBaseline />
       {children}
     </Mui.ThemeProvider>
-  );
-};
+  )
+}
 
-export const useTheme = Mui.useTheme;
+export const useTheme = Mui.useTheme
 
-export type ThemeMode = "Light" | "Dark" | "System";
+export type ThemeMode = "Light" | "Dark" | "System"
 
 export const ThemeModeIcon = ({ themeMode }: { themeMode: ThemeMode }) => {
   switch (themeMode) {
     case "Dark":
-      return <Icons.DarkMode />;
+      return <Icons.DarkMode />
 
     case "Light":
-      return <Icons.LightMode />;
+      return <Icons.LightMode />
 
     case "System":
-      return <Icons.SettingsBrightness />;
+      return <Icons.SettingsBrightness />
   }
-};
+}
 
 const themeModes: { [key in ThemeMode]: ThemeMode } = {
   Light: "Light",
   Dark: "Dark",
   System: "System",
-};
+}
 
 const isThemeMode = (themeMode: unknown): themeMode is ThemeMode => {
-  return typeof themeMode === "string" && themeMode in themeModes;
-};
+  return typeof themeMode === "string" && themeMode in themeModes
+}
 
 export const ThemeModeToggleButtons = ({
   themeMode,
   onChange,
 }: {
-  themeMode: ThemeMode;
-  onChange: (themeMode: ThemeMode) => void;
+  themeMode: ThemeMode
+  onChange: (themeMode: ThemeMode) => void
 }) => {
   return (
     <Mui.ToggleButtonGroup
@@ -149,7 +149,7 @@ export const ThemeModeToggleButtons = ({
       orientation="vertical"
       onChange={(event, value) => {
         if (isThemeMode(value)) {
-          onChange(value);
+          onChange(value)
         }
       }}
     >
@@ -168,8 +168,8 @@ export const ThemeModeToggleButtons = ({
         </Mui.ToggleButton>
       ))}
     </Mui.ToggleButtonGroup>
-  );
-};
+  )
+}
 
 //
 //
@@ -179,110 +179,110 @@ export const ThemeModeToggleButtons = ({
 //
 //
 
-export const TextField = Mui.TextField;
+export const TextField = Mui.TextField
 
-export const InputBase = Mui.InputBase;
+export const InputBase = Mui.InputBase
 
-export const Snackbar = Mui.Snackbar;
+export const Snackbar = Mui.Snackbar
 
-export const Portal = Mui.Portal;
+export const Portal = Mui.Portal
 
-export const Grow = Mui.Grow;
-export const Zoom = Mui.Zoom;
-export const Fade = Mui.Fade;
+export const Grow = Mui.Grow
+export const Zoom = Mui.Zoom
+export const Fade = Mui.Fade
 
-export const SvgIcon = Mui.SvgIcon;
+export const SvgIcon = Mui.SvgIcon
 
-export const Box = Mui.Box;
+export const Box = Mui.Box
 
-export const Divider = Mui.Divider;
+export const Divider = Mui.Divider
 
-export const ListItemButton = Mui.ListItemButton;
+export const ListItemButton = Mui.ListItemButton
 
-export const LinearProgress = Mui.LinearProgress;
+export const LinearProgress = Mui.LinearProgress
 
-export const BottomNavigation = Mui.BottomNavigation;
+export const BottomNavigation = Mui.BottomNavigation
 
-export const BottomNavigationAction = Mui.BottomNavigationAction;
+export const BottomNavigationAction = Mui.BottomNavigationAction
 
-export const Chip = Mui.Chip;
+export const Chip = Mui.Chip
 
-export const ListItemText = Mui.ListItemText;
+export const ListItemText = Mui.ListItemText
 
-export const ListItemIcon = Mui.ListItemIcon;
+export const ListItemIcon = Mui.ListItemIcon
 
-export const Backdrop = Mui.Backdrop;
+export const Backdrop = Mui.Backdrop
 
-export const Checkbox = Mui.Checkbox;
+export const Checkbox = Mui.Checkbox
 
-export const ListItemSecondaryAction = Mui.ListItemSecondaryAction;
+export const ListItemSecondaryAction = Mui.ListItemSecondaryAction
 
-export const Paper = Mui.Paper;
+export const Paper = Mui.Paper
 
-export const Button = MuiLab.LoadingButton;
+export const Button = MuiLab.LoadingButton
 
-export const InputAdornment = Mui.InputAdornment;
+export const InputAdornment = Mui.InputAdornment
 
-export const Typography = Mui.Typography;
+export const Typography = Mui.Typography
 
-export const Tabs = Mui.Tabs;
+export const Tabs = Mui.Tabs
 
-export const Tab = Mui.Tab;
+export const Tab = Mui.Tab
 
-export const Drawer = Mui.Drawer;
+export const Drawer = Mui.Drawer
 
-export const Card = Mui.Card;
+export const Card = Mui.Card
 
-export const CardActionArea = Mui.CardActionArea;
+export const CardActionArea = Mui.CardActionArea
 
-export const Dialog = Mui.Dialog;
+export const Dialog = Mui.Dialog
 
-export const DialogTitle = Mui.DialogTitle;
+export const DialogTitle = Mui.DialogTitle
 
-export const DialogActions = Mui.DialogActions;
+export const DialogActions = Mui.DialogActions
 
-export const DialogContent = Mui.DialogContent;
+export const DialogContent = Mui.DialogContent
 
-export const Alert = Mui.Alert;
+export const Alert = Mui.Alert
 
-export const AlertTitle = Mui.AlertTitle;
+export const AlertTitle = Mui.AlertTitle
 
-export const CircularProgress = Mui.CircularProgress;
+export const CircularProgress = Mui.CircularProgress
 
-export const Collapse = Mui.Collapse;
+export const Collapse = Mui.Collapse
 
-export const Badge = Mui.Badge;
+export const Badge = Mui.Badge
 
-export const ListItemAvatar = Mui.ListItemAvatar;
+export const ListItemAvatar = Mui.ListItemAvatar
 
-export const Avatar = Mui.Avatar;
+export const Avatar = Mui.Avatar
 
-export const AvatarGroup = Mui.AvatarGroup;
+export const AvatarGroup = Mui.AvatarGroup
 
-export const Menu = Mui.Menu;
+export const Menu = Mui.Menu
 
-export const MenuItem = Mui.MenuItem;
+export const MenuItem = Mui.MenuItem
 
-export const Autocomplete = Mui.Autocomplete;
+export const Autocomplete = Mui.Autocomplete
 
-export const Select = Mui.Select;
+export const Select = Mui.Select
 
-export const List = Mui.List;
+export const List = Mui.List
 
-export const ButtonBase = Mui.ButtonBase;
+export const ButtonBase = Mui.ButtonBase
 
-export const Toolbar = Mui.Toolbar;
+export const Toolbar = Mui.Toolbar
 
-export const IconButton = Mui.IconButton;
+export const IconButton = Mui.IconButton
 
 export const Field = ({
   label,
   value,
   onClick,
 }: {
-  label: string;
-  value: string;
-  onClick?: () => void;
+  label: string
+  value: string
+  onClick?: () => void
 }) => (
   <ListItemButton onClick={onClick}>
     <ListItemText
@@ -298,16 +298,16 @@ export const Field = ({
       <Icons.ChevronRight />
     </ListItemSecondaryAction>
   </ListItemButton>
-);
+)
 
 export const Header = ({
   left,
   title,
   right,
 }: {
-  left?: React.ReactNode;
-  title: React.ReactNode;
-  right?: React.ReactNode;
+  left?: React.ReactNode
+  title: React.ReactNode
+  right?: React.ReactNode
 }) => {
   return (
     <Mui.Toolbar sx={{ position: "sticky", top: 0, width: "100%" }}>
@@ -337,16 +337,16 @@ export const Header = ({
         {right}
       </Box>
     </Mui.Toolbar>
-  );
-};
+  )
+}
 
 export const HeaderBackButton = ({ onClick }: { onClick: () => void }) => {
   return (
     <Mui.IconButton edge="start" onClick={onClick}>
       <Icons.ChevronLeft />
     </Mui.IconButton>
-  );
-};
+  )
+}
 
 export const FillBox = ({ children, sx }: Mui.BoxProps) => {
   return (
@@ -365,8 +365,8 @@ export const FillBox = ({ children, sx }: Mui.BoxProps) => {
     >
       {children}
     </Box>
-  );
-};
+  )
+}
 
 export const LoadingPage = ({ title }: { title?: string }) => {
   return (
@@ -376,23 +376,23 @@ export const LoadingPage = ({ title }: { title?: string }) => {
         {title}
       </Typography>
     </FillBox>
-  );
-};
+  )
+}
 
 export const LoadingBackdrop = ({ open }: { open?: boolean }) => {
   return (
     <Mui.Backdrop sx={{ zIndex: 10 }} open={Boolean(open)}>
       <CircularProgress />
     </Mui.Backdrop>
-  );
-};
+  )
+}
 
 export const LoadingDialog = ({
   open,
   title,
 }: {
-  open: boolean;
-  title: string;
+  open: boolean
+  title: string
 }) => {
   return (
     <Dialog open={open}>
@@ -401,8 +401,8 @@ export const LoadingDialog = ({
         <Typography variant="h6">{title}</Typography>
       </Box>
     </Dialog>
-  );
-};
+  )
+}
 
 // export const ConformationDialog = ({
 //   open,
@@ -442,41 +442,35 @@ export const conformationDialog =
     confirmTitle,
     cancelTitle = "Cancel",
   }: {
-    open: boolean;
-    onCancel: TMsg;
-    onClose: TMsg;
-    onConfirm: TMsg;
-    title: string;
-    confirmTitle: string;
-    cancelTitle?: string;
+    open: boolean
+    onCancel: TMsg
+    onClose: TMsg
+    onConfirm: TMsg
+    title: string
+    confirmTitle: string
+    cancelTitle?: string
   }): View<TMsg> =>
-    (dispatch) => {
-      return (
-        <Dialog open={open} onClose={() => dispatch(onClose)}>
-          <DialogTitle>{title}</DialogTitle>
-          <DialogActions>
-            <Button onClick={() => dispatch(onCancel)}>{cancelTitle}</Button>
-            <Button onClick={() => dispatch(onConfirm)}>{confirmTitle}</Button>
-          </DialogActions>
-        </Dialog>
-      );
-    };
+  (dispatch) => {
+    return (
+      <Dialog open={open} onClose={() => dispatch(onClose)}>
+        <DialogTitle>{title}</DialogTitle>
+        <DialogActions>
+          <Button onClick={() => dispatch(onCancel)}>{cancelTitle}</Button>
+          <Button onClick={() => dispatch(onConfirm)}>{confirmTitle}</Button>
+        </DialogActions>
+      </Dialog>
+    )
+  }
 
 export const loadingDialog =
   <TMsg,>({ open, title }: { open: boolean; title: string }): View<TMsg> =>
-    (dispatch) => {
-      return (
-        <Dialog open={open}>
-          <Box sx={{ display: "flex", alignItems: "center", p: 2 }}>
-            <CircularProgress sx={{ marginRight: 2 }} />
-            <Typography variant="h6">{title}</Typography>
-          </Box>
-        </Dialog>
-      );
-    };
-
-export const fragement =
-  <TMsg,>(...children: View<TMsg>[]): View<TMsg> =>
-    (dispatch) => {
-      return <>{children.map((child) => child(dispatch))}</>;
-    };
+  () => {
+    return (
+      <Dialog open={open}>
+        <Box sx={{ display: "flex", alignItems: "center", p: 2 }}>
+          <CircularProgress sx={{ marginRight: 2 }} />
+          <Typography variant="h6">{title}</Typography>
+        </Box>
+      </Dialog>
+    )
+  }

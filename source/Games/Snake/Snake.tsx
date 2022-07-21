@@ -1,9 +1,18 @@
-import { useLayoutEffect, useRef } from "react";
-import * as Route from "../../Route";
-import * as UI from "../../UI";
-import * as Direction from "./Direction";
-import * as Position from "./Position";
-import { Audio, Cmd, Keyboard, Result, Sub, Time, pipe } from "../../Core";
+import { useLayoutEffect, useRef } from "react"
+import * as Route from "../../Route"
+import * as UI from "../../UI"
+import * as Direction from "./Direction"
+import * as Position from "./Position"
+import {
+  Audio,
+  Cmd,
+  exhaustive,
+  Keyboard,
+  pipe,
+  Result,
+  Sub,
+  Time,
+} from "../../Core"
 
 //
 //
@@ -14,26 +23,26 @@ import { Audio, Cmd, Keyboard, Result, Sub, Time, pipe } from "../../Core";
 //
 
 export type Model = {
-  mouseStatus: MouseStatus;
-  status: Status;
-  head: Position.Position;
-  tail: Position.Position[];
-  food: Position.Position;
-  tailLength: number;
-  foodEatenCount: number;
-  tickRate: number;
-  direction: Direction.Direction;
-  directionQueue: Direction.Direction[];
+  mouseStatus: MouseStatus
+  status: Status
+  head: Position.Position
+  tail: Position.Position[]
+  food: Position.Position
+  tailLength: number
+  foodEatenCount: number
+  tickRate: number
+  direction: Direction.Direction
+  directionQueue: Direction.Direction[]
   bounds: {
-    lower: Position.Position;
-    upper: Position.Position;
-  };
-  touched?: Position.Position;
-};
+    lower: Position.Position
+    upper: Position.Position
+  }
+  touched?: Position.Position
+}
 
-type Status = { type: "Paused" } | { type: "Playing" };
+type Status = { type: "Paused" } | { type: "Playing" }
 
-type MouseStatus = "active" | "inactive";
+type MouseStatus = "active" | "inactive"
 
 //
 //
@@ -67,7 +76,7 @@ export const init: Model = {
       y: 21,
     },
   },
-};
+}
 
 //
 //
@@ -88,7 +97,7 @@ export type Msg =
   | ["MouseUpBoard"]
   | ["PressedKeyDown", Keyboard.Key]
   | ["MouseMovedBoard", Position.Position]
-  | ["TouchMoveBoard", Position.Position];
+  | ["TouchMoveBoard", Position.Position]
 
 //
 //
@@ -99,8 +108,8 @@ export type Msg =
 //
 
 const circularIndex = (index: number, length: number): number => {
-  return ((index % length) + length) % length;
-};
+  return ((index % length) + length) % length
+}
 
 const circular = (
   model: Model,
@@ -109,33 +118,33 @@ const circular = (
   return {
     x: circularIndex(position.x, model.bounds.upper.x),
     y: circularIndex(position.y, model.bounds.upper.y),
-  };
-};
+  }
+}
 
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
     case "ClickedRestart":
-      return [init, Cmd.None];
+      return [init, Cmd.None]
 
     case "Elapsed":
       switch (model.status.type) {
         case "Paused":
           // return [model, Cmd.None]
-          return [updatePlaying(model), Cmd.None];
+          return [updatePlaying(model), Cmd.None]
 
         case "Playing":
           // return [model, Cmd.None]
-          return [updatePlaying(model), Cmd.None];
+          return [updatePlaying(model), Cmd.None]
       }
 
     case "ClickedBack":
-      return [model, Route.back];
+      return [model, Route.back]
 
     case "MouseUpBoard":
-      return [{ ...model, mouseStatus: "inactive" }, Cmd.None];
+      return [{ ...model, mouseStatus: "inactive" }, Cmd.None]
 
     case "MouseDownBoard":
-      return [{ ...model, mouseStatus: "active" }, Cmd.None];
+      return [{ ...model, mouseStatus: "active" }, Cmd.None]
 
     case "PressedKeyDown":
       const statusNew: Status =
@@ -143,9 +152,9 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
           ? model.status.type === "Paused"
             ? { type: "Playing" }
             : { type: "Paused" }
-          : model.status;
+          : model.status
 
-      const directionFromKey = Direction.fromKey(msg[1], model.direction);
+      const directionFromKey = Direction.fromKey(msg[1], model.direction)
 
       return [
         enqueueDirection(directionFromKey, {
@@ -153,47 +162,47 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
           status: statusNew,
         }),
         Cmd.None,
-      ];
+      ]
 
     case "ClickedToggle":
       switch (model.status.type) {
         case "Paused":
-          return [{ ...model, status: { type: "Playing" } }, Cmd.None];
+          return [{ ...model, status: { type: "Playing" } }, Cmd.None]
 
         case "Playing":
-          return [{ ...model, status: { type: "Paused" } }, Cmd.None];
+          return [{ ...model, status: { type: "Paused" } }, Cmd.None]
       }
 
     case "AudioFailed":
-      return [model, Cmd.None];
+      return [model, Cmd.None]
 
     case "AudioSucceeded":
-      return [model, Cmd.None];
+      return [model, Cmd.None]
 
     case "MouseMovedBoard":
     case "TouchMoveBoard":
-      const previous = model.touched;
+      const previous = model.touched
 
       if (!previous) {
-        return [{ ...model, touched: msg[1] }, Cmd.None];
+        return [{ ...model, touched: msg[1] }, Cmd.None]
       }
 
-      const touchedNew = msg[1];
+      const touchedNew = msg[1]
 
-      const delta = Position.subtract(previous, touchedNew);
+      const delta = Position.subtract(previous, touchedNew)
 
-      const maxDeltaMagnitude = Math.max(Math.abs(delta.x), Math.abs(delta.y));
+      const maxDeltaMagnitude = Math.max(Math.abs(delta.x), Math.abs(delta.y))
 
       if (maxDeltaMagnitude < 4) {
-        return [{ ...model, touched: touchedNew }, Cmd.None];
+        return [{ ...model, touched: touchedNew }, Cmd.None]
       }
 
-      const xDirection = delta.x > 0 ? "left" : "right";
+      const xDirection = delta.x > 0 ? "left" : "right"
 
-      const yDirection = delta.y > 0 ? "up" : "down";
+      const yDirection = delta.y > 0 ? "up" : "down"
 
       const directionFromSwipe =
-        Math.abs(delta.x) > Math.abs(delta.y) ? xDirection : yDirection;
+        Math.abs(delta.x) > Math.abs(delta.y) ? xDirection : yDirection
 
       return [
         enqueueDirection(directionFromSwipe, {
@@ -201,9 +210,12 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
           touched: touchedNew,
         }),
         Cmd.None,
-      ];
+      ]
+
+    default:
+      return exhaustive(msg[0])
   }
-};
+}
 
 const enqueueDirection = (
   direction: Direction.Direction,
@@ -211,57 +223,57 @@ const enqueueDirection = (
 ): Model => {
   const directionQueueNew = unqiue(
     [...model.directionQueue, direction].slice(0, 2),
-  );
+  )
 
   return {
     ...model,
     directionQueue: directionQueueNew,
-  };
-};
+  }
+}
 
 const toEmptyPositions = (model: Model) => {
-  const snake = [model.head, ...model.tail];
+  const snake = [model.head, ...model.tail]
   return Position.range(model.bounds).filter((position) =>
     snake.every((snakePosition) => !Position.equals(position, snakePosition)),
-  );
-};
+  )
+}
 
 const updatePlaying = (model: Model): Model => {
   const tailNew = [model.head]
     .concat(model.tail)
     .slice(0, model.tailLength)
-    .map((position) => circular(model, position));
+    .map((position) => circular(model, position))
 
-  const queuedDirection = model.directionQueue[0] ?? model.direction;
+  const queuedDirection = model.directionQueue[0] ?? model.direction
 
-  const [_, ...directionQueueNew] = model.directionQueue;
+  const [_, ...directionQueueNew] = model.directionQueue
 
   const directionNew = Direction.isOpposite(queuedDirection, model.direction)
     ? model.direction
-    : queuedDirection;
+    : queuedDirection
 
   const headNew = circular(
     model,
     Position.add(model.head, Direction.toVector(directionNew)),
-  );
+  )
 
   const isSnakeEatingFood = [headNew, ...tailNew].some((position) =>
     Position.equals(position, model.food),
-  );
+  )
 
   const foodNew = isSnakeEatingFood
     ? shuffle(toEmptyPositions(model))[0] ?? model.food
-    : model.food;
+    : model.food
 
   const tailLengthNew = isSnakeEatingFood
     ? model.tailLength + 1
-    : model.tailLength;
+    : model.tailLength
 
   const foodEatenCountNew = isSnakeEatingFood
     ? model.foodEatenCount + 1
-    : model.foodEatenCount;
+    : model.foodEatenCount
 
-  const modelNew = {
+  return {
     ...model,
     head: headNew,
     tail: tailNew,
@@ -270,10 +282,8 @@ const updatePlaying = (model: Model): Model => {
     foodEatenCount: foodEatenCountNew,
     directionQueue: directionQueueNew,
     direction: directionNew,
-  };
-
-  return modelNew;
-};
+  }
+}
 
 //
 //
@@ -286,17 +296,17 @@ const updatePlaying = (model: Model): Model => {
 export const subscriptions = (model: Model): Sub.Sub<Msg> => {
   switch (model.status.type) {
     case "Paused":
-      return Sub.batch([keyDowns]);
+      return Sub.batch([keyDowns])
 
     case "Playing":
       return Sub.batch([
         keyDowns,
         Time.every<Msg>(model.tickRate, () => ["Elapsed"]),
-      ]);
+      ])
   }
-};
+}
 
-const keyDowns = Keyboard.keyDowns<Msg>((key) => ["PressedKeyDown", key]);
+const keyDowns = Keyboard.keyDowns<Msg>((key) => ["PressedKeyDown", key])
 
 //
 //
@@ -311,66 +321,66 @@ const theme = {
   dark: "#A2D149",
   snake: "#4573E8",
   apple: "#E7471D",
-};
+}
 
 export const view =
   (model: Model): UI.View<Msg> =>
-    (dispatch) => {
-      return (
-        <UI.FillBox>
-          <UI.Header
-            left={
-              <UI.HeaderBackButton onClick={() => dispatch(["ClickedBack"])} />
-            }
-            title={
-              model.status.type === "Playing"
-                ? `${model.foodEatenCount} apples`
-                : "Snake"
-            }
-            right={
-              <>
-                <UI.IconButton onClick={() => dispatch(["ClickedToggle"])}>
-                  {model.status.type === "Paused" ? (
-                    <UI.Icons.PlayArrow />
-                  ) : (
-                    <UI.Icons.Pause />
-                  )}
-                </UI.IconButton>
-                <UI.IconButton onClick={() => dispatch(["ClickedRestart"])}>
-                  <UI.Icons.RestartAlt />
-                </UI.IconButton>
-              </>
-            }
-          />
+  (dispatch) => {
+    return (
+      <UI.FillBox>
+        <UI.Header
+          left={
+            <UI.HeaderBackButton onClick={() => dispatch(["ClickedBack"])} />
+          }
+          title={
+            model.status.type === "Playing"
+              ? `${model.foodEatenCount} apples`
+              : "Snake"
+          }
+          right={
+            <>
+              <UI.IconButton onClick={() => dispatch(["ClickedToggle"])}>
+                {model.status.type === "Paused" ? (
+                  <UI.Icons.PlayArrow />
+                ) : (
+                  <UI.Icons.Pause />
+                )}
+              </UI.IconButton>
+              <UI.IconButton onClick={() => dispatch(["ClickedRestart"])}>
+                <UI.Icons.RestartAlt />
+              </UI.IconButton>
+            </>
+          }
+        />
 
-          <Canvas model={model} dispatch={dispatch} />
-        </UI.FillBox>
-      );
-    };
+        <Canvas model={model} dispatch={dispatch} />
+      </UI.FillBox>
+    )
+  }
 
 const Canvas = ({
   model,
   dispatch,
 }: {
-  model: Model;
-  dispatch: (msg: Msg) => void;
+  model: Model
+  dispatch: (msg: Msg) => void
 }) => {
-  const ref = useRef<HTMLCanvasElement | null>(null);
+  const ref = useRef<HTMLCanvasElement | null>(null)
 
   useLayoutEffect(() => {
-    const canvas = ref.current;
-    const ctx = canvas?.getContext("2d");
+    const canvas = ref.current
+    const ctx = canvas?.getContext("2d")
 
     if (canvas && ctx) {
-      const dpi = 1000;
-      ctx.scale(dpi, dpi);
+      const dpi = 1000
+      ctx.scale(dpi, dpi)
 
-      const width = canvas.width;
-      const height = canvas.height;
+      const width = canvas.width
+      const height = canvas.height
 
-      draw({ width, height }, model, ctx);
+      draw({ width, height }, model, ctx)
     }
-  }, [model]);
+  }, [model])
 
   return (
     <UI.Box sx={{ flex: 1, width: "100%", userSelect: "none" }}>
@@ -385,100 +395,98 @@ const Canvas = ({
         }}
         ref={ref}
         onMouseDown={() => {
-          dispatch(["MouseDownBoard"]);
+          dispatch(["MouseDownBoard"])
         }}
         onMouseUp={() => {
-          dispatch(["MouseUpBoard"]);
+          dispatch(["MouseUpBoard"])
         }}
         onMouseMove={(event) => {
           if (model.mouseStatus === "active") {
-            const x = event.clientX;
-            const y = event.clientY;
-            dispatch(["MouseMovedBoard", { x, y }]);
+            const x = event.clientX
+            const y = event.clientY
+            dispatch(["MouseMovedBoard", { x, y }])
           }
         }}
-        onClick={() => { }}
+        onClick={() => {}}
         onTouchMove={(event) => {
-          const touch = event.touches[0];
+          const touch = event.touches[0]
           if (touch) {
-            const x = touch.clientX;
-            const y = touch.clientY;
-            dispatch(["TouchMoveBoard", { x, y }]);
+            const x = touch.clientX
+            const y = touch.clientY
+            dispatch(["TouchMoveBoard", { x, y }])
           }
         }}
       />
     </UI.Box>
-  );
-};
+  )
+}
 
 const draw = (
   { width, height }: { width: number; height: number },
   model: Model,
   ctx: CanvasRenderingContext2D,
 ): void => {
-  const scale = 100;
+  const tileWidth = width / (model.bounds.upper.x - model.bounds.lower.x)
+  const tileHeight = height / (model.bounds.upper.y - model.bounds.lower.y)
 
-  const tileWidth = width / (model.bounds.upper.x - model.bounds.lower.x);
-  const tileHeight = height / (model.bounds.upper.y - model.bounds.lower.y);
+  ctx.canvas.width = width
+  ctx.canvas.height = height
 
-  ctx.canvas.width = width;
-  ctx.canvas.height = height;
-
-  ctx.fillStyle = theme.light;
-  ctx.fillRect(0, 0, width, height);
+  ctx.fillStyle = theme.light
+  ctx.fillRect(0, 0, width, height)
 
   for (const position of Position.range(model.bounds)) {
-    ctx.fillStyle = theme[toTileVariant(position)];
+    ctx.fillStyle = theme[toTileVariant(position)]
     ctx.fillRect(
       position.x * tileWidth,
       position.y * tileHeight,
       tileWidth,
       tileHeight,
-    );
+    )
   }
 
   for (const position of [model.food]) {
-    ctx.fillStyle = theme.apple;
+    ctx.fillStyle = theme.apple
     ctx.fillRect(
       position.x * tileWidth,
       position.y * tileHeight,
       tileWidth,
       tileHeight,
-    );
+    )
   }
 
   for (const position of [model.head, ...model.tail]) {
-    ctx.fillStyle = theme.snake;
-    ctx.strokeStyle = theme.snake;
+    ctx.fillStyle = theme.snake
+    ctx.strokeStyle = theme.snake
     ctx.strokeRect(
       position.x * tileWidth,
       position.y * tileHeight,
       tileWidth,
       tileHeight,
-    );
+    )
     ctx.fillRect(
       position.x * tileWidth,
       position.y * tileHeight,
       tileWidth,
       tileHeight,
-    );
+    )
   }
-};
+}
 
-type TileVariant = "light" | "dark";
+type TileVariant = "light" | "dark"
 
 const toTileVariant = (position: Position.Position): TileVariant => {
   if (
     (isEven(position.x) && isOdd(position.y)) ||
     (isOdd(position.x) && isEven(position.y))
   ) {
-    return "light";
+    return "light"
   }
-  return "dark";
-};
+  return "dark"
+}
 
 const toViewbox = ({ lower, upper }: Model["bounds"]) =>
-  [lower.x, lower.y, upper.x, upper.y].join(", ");
+  [lower.x, lower.y, upper.x, upper.y].join(", ")
 
 export const Icon = () => {
   const bounds: Model["bounds"] = {
@@ -490,14 +498,14 @@ export const Icon = () => {
       x: 4,
       y: 4,
     },
-  };
+  }
 
   const tail: Model["tail"] = [
     { x: 0, y: 1 },
     { x: 1, y: 1 },
-  ];
+  ]
 
-  const food: Model["food"] = { x: 2, y: 2 };
+  const food: Model["food"] = { x: 2, y: 2 }
 
   return (
     <svg width="100%" viewBox={toViewbox(bounds)}>
@@ -537,8 +545,8 @@ export const Icon = () => {
         />
       ))}
     </svg>
-  );
-};
+  )
+}
 
 //
 //
@@ -557,25 +565,8 @@ export const playSound = (src: string) => {
         () => ["AudioSucceeded"],
       ),
     ),
-  );
-};
-
-const soundAssets = {
-  changedDirectionUp:
-    "https://carolinegabriel.com/demo/js-keyboard/sounds/040.wav",
-
-  changedDirectionDown:
-    "https://carolinegabriel.com/demo/js-keyboard/sounds/040.wav",
-
-  changedDirectionRight:
-    "https://carolinegabriel.com/demo/js-keyboard/sounds/040.wav",
-
-  changedDirectionLeft:
-    "https://carolinegabriel.com/demo/js-keyboard/sounds/040.wav",
-
-  roar: "https://interactive-examples.mdn.mozilla.net/media/cc0-audio/t-rex-roar.mp3",
-};
-
+  )
+}
 //
 //
 //
@@ -585,25 +576,16 @@ const soundAssets = {
 //
 
 const shuffle = <T,>(xs: T[]): T[] => {
-  const ys = [...xs];
+  const ys = [...xs]
 
-  ys.sort(() => (Math.random() > 0.5 ? 1 : -1));
+  ys.sort(() => (Math.random() > 0.5 ? 1 : -1))
 
-  return ys;
-};
+  return ys
+}
+const isEven = (x: number) => x % 2 === 0
 
-const minBy = <T,>(keyFn: (a: T) => number, a: T, b: T) => {
-  if (keyFn(a) < keyFn(b)) {
-    return a;
-  }
-
-  return b;
-};
-
-const isEven = (x: number) => x % 2 === 0;
-
-const isOdd = (x: number) => !isEven(x);
+const isOdd = (x: number) => !isEven(x)
 
 const unqiue = <T,>(as: T[]): T[] => {
-  return Array.from(new Set(as));
-};
+  return Array.from(new Set(as))
+}

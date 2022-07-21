@@ -1,7 +1,7 @@
-import * as Route from "../Route";
-import * as Profile from "../Store/Profile";
-import * as UI from "../UI";
-import { Cmd } from "../Core";
+import * as Route from "../Route"
+import * as Profile from "../Store/Profile"
+import * as UI from "../UI"
+import { Cmd } from "../Core"
 
 //
 //
@@ -11,9 +11,9 @@ import { Cmd } from "../Core";
 //
 //
 
-export type Model = {};
+export type Model = {}
 
-export const init: Model = {};
+export const init: Model = {}
 
 //
 //
@@ -29,7 +29,7 @@ export type Msg =
   | ["ClickedUsername"]
   | ["ClickedAvatar"]
   | ["ClickedChangedAvatar"]
-  | ["ClickedTheme"];
+  | ["ClickedTheme"]
 
 export const update = (
   { userId }: { userId: string },
@@ -43,7 +43,7 @@ export const update = (
         Route.push({
           type: "ProfileUpdateAvatar",
         }),
-      ];
+      ]
 
     case "ClickedChangedAvatar":
       return [
@@ -51,21 +51,21 @@ export const update = (
         Route.push({
           type: "ProfileUpdateAvatar",
         }),
-      ];
+      ]
 
     case "ClickedBack":
-      return [model, Route.back];
+      return [model, Route.back]
 
     case "ClickedName":
-      return [model, Route.push({ type: "ProfileUpdateName" })];
+      return [model, Route.push({ type: "ProfileUpdateName" })]
 
     case "ClickedUsername":
-      return [model, Route.push({ type: "ProfileUpdateUsername" })];
+      return [model, Route.push({ type: "ProfileUpdateUsername" })]
 
     case "ClickedTheme":
-      return [model, Route.push({ type: "ProfileUpdateTheme" })];
+      return [model, Route.push({ type: "ProfileUpdateTheme" })]
   }
-};
+}
 
 //
 //
@@ -77,7 +77,7 @@ export const update = (
 
 export const view =
   (profile: Profile.Profile, _model: Model): UI.View<Msg> =>
-    (dispatch) =>
+  (dispatch) =>
     (
       <UI.FillBox>
         <UI.Header
@@ -125,4 +125,4 @@ export const view =
           />
         </UI.List>
       </UI.FillBox>
-    );
+    )

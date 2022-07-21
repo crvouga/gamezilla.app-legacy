@@ -1,8 +1,8 @@
-import { Cmd } from "../Core";
-import { ProfileAvatar } from "../Data";
-import * as Route from "../Route";
-import * as Store from "../Store";
-import * as UI from "../UI";
+import { Cmd } from "../Core"
+import { ProfileAvatar } from "../Data"
+import * as Route from "../Route"
+import * as Store from "../Store"
+import * as UI from "../UI"
 
 //
 //
@@ -15,23 +15,23 @@ import * as UI from "../UI";
 //
 
 export type Model = {
-  form: Form;
-};
+  form: Form
+}
 
 export const init = ({ defaultName }: { defaultName: string }): Model => {
   return {
     form: initForm({ defaultName }),
-  };
-};
+  }
+}
 
 type Form = {
-  username: string;
-  name: string;
-  avatarUrl: string;
-};
+  username: string
+  name: string
+  avatarUrl: string
+}
 
 const initForm = ({ defaultName }: { defaultName: string }): Form => {
-  const username = defaultName.replace(" ", "").toLowerCase();
+  const username = defaultName.replace(" ", "").toLowerCase()
 
   return {
     username,
@@ -40,8 +40,8 @@ const initForm = ({ defaultName }: { defaultName: string }): Form => {
       seed: ProfileAvatar.toSeed(username),
       style: "adventurer-neutral",
     }),
-  };
-};
+  }
+}
 
 //
 //
@@ -57,9 +57,9 @@ export type Msg =
   | ["EnteredUsername", string]
   | ["EnteredName", string]
   | ["ClickedSubmit"]
-  | ["ClickedLogout"];
+  | ["ClickedLogout"]
 
-export type OutAction = Store.Action;
+export type OutAction = Store.Action
 
 export const update = (
   { userId }: { userId: string },
@@ -68,21 +68,20 @@ export const update = (
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
     case "EnteredName":
-      return [
-        { ...model, form: { ...model.form, name: msg[1] } },
-        Cmd.None,
-        [],
-      ];
+      return [{ ...model, form: { ...model.form, name: msg[1] } }, Cmd.None, []]
 
     case "EnteredUsername":
       return [
         { ...model, form: { ...model.form, username: msg[1] } },
         Cmd.None,
         [],
-      ];
+      ]
 
     case "ClickedSubmit":
-      const avatarUrl = ProfileAvatar.toUrl({ seed: ProfileAvatar.toSeed(model.form.username), style: "avataaars" })
+      const avatarUrl = ProfileAvatar.toUrl({
+        seed: ProfileAvatar.toSeed(model.form.username),
+        style: "avataaars",
+      })
       const profile: Store.Profile.Profile = {
         ...model.form,
         userId,
@@ -93,13 +92,13 @@ export const update = (
       return [
         model,
         Cmd.None,
-        [["Store", ["Profile", ["Create", { userId, profile }]]]]
+        [["Store", ["Profile", ["Create", { userId, profile }]]]],
       ]
 
     case "ClickedLogout":
-      return [model, Route.push({ type: "Logout" }), []];
+      return [model, Route.push({ type: "Logout" }), []]
   }
-};
+}
 
 //
 //
@@ -113,7 +112,7 @@ export const update = (
 
 export const view =
   (model: Model): UI.View<Msg> =>
-    (dispatch) =>
+  (dispatch) =>
     (
       <UI.FillBox>
         <UI.Header
@@ -179,4 +178,4 @@ export const view =
           </UI.Button>
         </UI.Box>
       </UI.FillBox>
-    );
+    )

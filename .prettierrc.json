@@ -1,8 +1,4 @@
 {
-  "semi": true,
-  "trailingComma": "all",
-  "importOrder": ["^[./]"],
-  "importOrderSeparation": false,
-  "importOrderSortSpecifiers": true,
-  "importOrderGroupNamespaceSpecifiers": true
+  "semi": false,
+  "trailingComma": "all"
 }

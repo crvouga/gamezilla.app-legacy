@@ -1,6 +1,6 @@
-import { Option, pipe, Result, Uuid } from "../../Core";
-import { remove } from "../../Core/Record";
-import * as Board from "./Board";
+import { Option, pipe, Result, Uuid } from "../../Core"
+import { remove } from "../../Core/Record"
+import * as Board from "./Board"
 
 //
 //
@@ -12,27 +12,27 @@ import * as Board from "./Board";
 
 export type Model = {
   rooms: {
-    [id: RoomId]: Room;
-  };
+    [id: RoomId]: Room
+  }
   users: {
     [id: string]: {
-      userId: string;
-      roomId: RoomId;
-    };
-  };
-};
+      userId: string
+      roomId: RoomId
+    }
+  }
+}
 
-export type RoomId = string;
+export type RoomId = string
 
 export type Room = {
-  roomId: RoomId;
-  board: Board.Board;
+  roomId: RoomId
+  board: Board.Board
   players: {
-    [player in Board.Player]: RoomPlayer;
-  };
-  hostId: string;
-  log: Event[];
-};
+    [player in Board.Player]: RoomPlayer
+  }
+  hostId: string
+  log: Event[]
+}
 
 export type Event =
   | ["CreatedRoom", { userId: string }]
@@ -41,7 +41,7 @@ export type Event =
   | ["Moved", { userId: string }]
   | ["RemovedPlayer", { userId: string; player: Board.Player }]
   | ["StartedPlaying", { userId: string; player: Board.Player }]
-  | ["StoppedPlaying", { userId: string; player: Board.Player }];
+  | ["StoppedPlaying", { userId: string; player: Board.Player }]
 
 //
 //
@@ -51,21 +51,21 @@ export type Event =
 //
 //
 
-export type CreateRoomProblem = "user_is_already_in_a_room";
+export type CreateRoomProblem = "user_is_already_in_a_room"
 
-export type CreateRoomResult = Result.Result<CreateRoomProblem, Model>;
+export type CreateRoomResult = Result.Result<CreateRoomProblem, Model>
 
 export const createRoom = (
   { userId }: { userId: string },
   model: Model,
 ): CreateRoomResult => {
-  const user = model.users[userId];
+  const user = model.users[userId]
 
   if (user && model.rooms[user.roomId]) {
-    return Result.Err("user_is_already_in_a_room");
+    return Result.Err("user_is_already_in_a_room")
   }
 
-  const roomId = Uuid.generateSync();
+  const roomId = Uuid.generateSync()
 
   const roomNew: Room = {
     roomId,
@@ -81,15 +81,15 @@ export const createRoom = (
       },
     },
     log: [["CreatedRoom", { userId }]],
-  };
+  }
 
   const modelNew: Model = {
     rooms: { ...model.rooms, [roomId]: roomNew },
     users: { ...model.users, [userId]: { userId, roomId } },
-  };
+  }
 
-  return Result.Ok(modelNew);
-};
+  return Result.Ok(modelNew)
+}
 
 //
 //
@@ -99,30 +99,30 @@ export const createRoom = (
 //
 //
 
-export type StartPlayingProblem = "user_is_not_in_a_room" | "player_is_taken";
+export type StartPlayingProblem = "user_is_not_in_a_room" | "player_is_taken"
 
-export type StartPlayingResult = Result.Result<StartPlayingProblem, Model>;
+export type StartPlayingResult = Result.Result<StartPlayingProblem, Model>
 
 export const startPlaying = (
   { userId, player }: { userId: string; player: Board.Player },
   model: Model,
 ): StartPlayingResult => {
-  const user = model.users[userId];
+  const user = model.users[userId]
 
   if (!user) {
-    return Result.Err("user_is_not_in_a_room");
+    return Result.Err("user_is_not_in_a_room")
   }
 
-  const room = model.rooms[user.roomId];
+  const room = model.rooms[user.roomId]
 
   if (!room) {
-    return Result.Err("user_is_not_in_a_room");
+    return Result.Err("user_is_not_in_a_room")
   }
 
-  const roomPlayer = room.players[player];
+  const roomPlayer = room.players[player]
 
   if (roomPlayer.type === "User") {
-    return Result.Err("player_is_taken");
+    return Result.Err("player_is_taken")
   }
 
   const roomNew: Room = pipe(
@@ -140,17 +140,17 @@ export const startPlaying = (
       },
     }),
     (room) => log(["StartedPlaying", { player, userId }], room),
-  );
+  )
 
   const modelNew: Model = {
     ...model,
     rooms: {
       [room.roomId]: roomNew,
     },
-  };
+  }
 
-  return Result.Ok(modelNew);
-};
+  return Result.Ok(modelNew)
+}
 
 //
 //
@@ -162,33 +162,33 @@ export const startPlaying = (
 //
 //
 
-export type StopPlayingProblem = "user_is_not_in_a_room" | "user_is_not_player";
+export type StopPlayingProblem = "user_is_not_in_a_room" | "user_is_not_player"
 
-export type StopPlayingResult = Result.Result<StopPlayingProblem, Model>;
+export type StopPlayingResult = Result.Result<StopPlayingProblem, Model>
 
 export const stopPlaying = (
   { userId, player }: { userId: string; player: Board.Player },
   model: Model,
 ): StopPlayingResult => {
-  const user = model.users[userId];
+  const user = model.users[userId]
 
   if (!user) {
-    return Result.Err("user_is_not_in_a_room");
+    return Result.Err("user_is_not_in_a_room")
   }
 
-  const room = model.rooms[user.roomId];
+  const room = model.rooms[user.roomId]
 
   if (!room) {
-    return Result.Err("user_is_not_in_a_room");
+    return Result.Err("user_is_not_in_a_room")
   }
 
-  const roomPlayer = room.players[player];
+  const roomPlayer = room.players[player]
 
   if (
     roomPlayer.type === "None" ||
     (roomPlayer.type === "User" && roomPlayer.userId !== userId)
   ) {
-    return Result.Err("user_is_not_player");
+    return Result.Err("user_is_not_player")
   }
 
   const roomNew = pipe(
@@ -201,7 +201,7 @@ export const stopPlaying = (
       },
     }),
     (room) => log(["StoppedPlaying", { userId, player }], room),
-  );
+  )
 
   const modelNew: Model = {
     ...model,
@@ -209,10 +209,10 @@ export const stopPlaying = (
       ...model.rooms,
       [room.roomId]: roomNew,
     },
-  };
+  }
 
-  return Result.Ok(modelNew);
-};
+  return Result.Ok(modelNew)
+}
 
 //
 //
@@ -224,24 +224,24 @@ export const stopPlaying = (
 
 export type JoinRoomProblem =
   | "user_is_already_in_a_room"
-  | "room_does_not_exists";
+  | "room_does_not_exists"
 
-export type JoinRoomResult = Result.Result<JoinRoomProblem, Model>;
+export type JoinRoomResult = Result.Result<JoinRoomProblem, Model>
 
 export const joinRoom = (
   { userId, roomId }: { userId: string; roomId: string },
   model: Model,
 ): JoinRoomResult => {
-  const user = model.users[userId];
+  const user = model.users[userId]
 
   if (user && model.rooms[user.roomId]) {
-    return Result.Err("user_is_already_in_a_room");
+    return Result.Err("user_is_already_in_a_room")
   }
 
-  const room = model.rooms[roomId];
+  const room = model.rooms[roomId]
 
   if (!room) {
-    return Result.Err("room_does_not_exists");
+    return Result.Err("room_does_not_exists")
   }
 
   const modelNew: Model = {
@@ -256,10 +256,10 @@ export const joinRoom = (
         roomId,
       },
     },
-  };
+  }
 
-  return Result.Ok(modelNew);
-};
+  return Result.Ok(modelNew)
+}
 
 //
 //
@@ -273,28 +273,28 @@ export const joinRoom = (
 
 export type RemovePlayerProblem =
   | "user_is_not_in_a_room"
-  | "user_is_not_the_host";
+  | "user_is_not_the_host"
 
-export type RemovePlayerResult = Result.Result<RemovePlayerProblem, Model>;
+export type RemovePlayerResult = Result.Result<RemovePlayerProblem, Model>
 
 export const removePlayer = (
   { userId, player }: { userId: string; player: Board.Player },
   model: Model,
 ): RemovePlayerResult => {
-  const user = model.users[userId];
+  const user = model.users[userId]
 
   if (!user) {
-    return Result.Err("user_is_not_in_a_room");
+    return Result.Err("user_is_not_in_a_room")
   }
 
-  const room = model.rooms[user.roomId];
+  const room = model.rooms[user.roomId]
 
   if (!room) {
-    return Result.Err("user_is_not_in_a_room");
+    return Result.Err("user_is_not_in_a_room")
   }
 
   if (room.hostId !== userId) {
-    return Result.Err("user_is_not_the_host");
+    return Result.Err("user_is_not_the_host")
   }
 
   const roomNew = pipe(
@@ -307,7 +307,7 @@ export const removePlayer = (
       },
     }),
     (room) => log(["RemovedPlayer", { userId, player }], room),
-  );
+  )
 
   const modelNew: Model = {
     ...model,
@@ -315,10 +315,10 @@ export const removePlayer = (
       ...model.rooms,
       [room.roomId]: roomNew,
     },
-  };
+  }
 
-  return Result.Ok(modelNew);
-};
+  return Result.Ok(modelNew)
+}
 
 //
 //
@@ -332,28 +332,28 @@ export const removePlayer = (
 
 export type RestartGameProblem =
   | "user_is_not_in_a_room"
-  | "user_is_not_the_host";
+  | "user_is_not_the_host"
 
-export type RestartGameResult = Result.Result<RestartGameProblem, Model>;
+export type RestartGameResult = Result.Result<RestartGameProblem, Model>
 
 export const restartGame = (
   { userId }: { userId: string },
   model: Model,
 ): RemovePlayerResult => {
-  const user = model.users[userId];
+  const user = model.users[userId]
 
   if (!user) {
-    return Result.Err("user_is_not_in_a_room");
+    return Result.Err("user_is_not_in_a_room")
   }
 
-  const room = model.rooms[user.roomId];
+  const room = model.rooms[user.roomId]
 
   if (!room) {
-    return Result.Err("user_is_not_in_a_room");
+    return Result.Err("user_is_not_in_a_room")
   }
 
   if (room.hostId !== userId) {
-    return Result.Err("user_is_not_the_host");
+    return Result.Err("user_is_not_the_host")
   }
 
   const modelNew: Model = {
@@ -365,10 +365,10 @@ export const restartGame = (
         board: Board.emptyBoard,
       },
     },
-  };
+  }
 
-  return Result.Ok(modelNew);
-};
+  return Result.Ok(modelNew)
+}
 
 //
 //
@@ -378,34 +378,34 @@ export const restartGame = (
 //
 //
 
-export type LeaveRoomProblem = "user_is_not_a_room";
+export type LeaveRoomProblem = "user_is_not_a_room"
 
-export type LeaveRoomResult = Result.Result<LeaveRoomProblem, Model>;
+export type LeaveRoomResult = Result.Result<LeaveRoomProblem, Model>
 
 export const leaveRoom = (
   { userId }: { userId: string },
   model: Model,
 ): LeaveRoomResult => {
-  const user = model.users[userId];
+  const user = model.users[userId]
 
   if (!user) {
-    return Result.Err("user_is_not_a_room");
+    return Result.Err("user_is_not_a_room")
   }
 
-  const room = model.rooms[user.roomId];
+  const room = model.rooms[user.roomId]
 
   if (!room) {
-    return Result.Err("user_is_not_a_room");
+    return Result.Err("user_is_not_a_room")
   }
 
-  const usersNew = remove(userId, model.users);
+  const usersNew = remove(userId, model.users)
 
   const roomNew = pipe(
     room,
     (room) => removeUserFromPlaying(userId, room),
     resetGame,
     (room) => log(["LeftRoom", { userId }], room),
-  );
+  )
 
   if (user.userId === room.hostId) {
     const hostSuccessor = pipe(
@@ -415,13 +415,13 @@ export const leaveRoom = (
           (user) => user.roomId === room.roomId && user.userId !== room.hostId,
         ),
       (users) => users[0],
-    );
+    )
 
     if (!hostSuccessor) {
       return Result.Ok({
         users: usersNew,
         rooms: remove(room.roomId, model.rooms),
-      });
+      })
     }
 
     const roomsNew: Model["rooms"] = {
@@ -430,12 +430,12 @@ export const leaveRoom = (
         ...roomNew,
         hostId: hostSuccessor.userId,
       },
-    };
+    }
 
     return Result.Ok({
       users: usersNew,
       rooms: roomsNew,
-    });
+    })
   }
 
   return Result.Ok({
@@ -445,8 +445,8 @@ export const leaveRoom = (
       ...model.rooms,
       [room.roomId]: roomNew,
     },
-  });
-};
+  })
+}
 
 //
 //
@@ -460,127 +460,127 @@ export type MoveProblem =
   | "user_is_not_in_a_room"
   | "user_is_not_a_player"
   | "game_is_not_ready"
-  | Board.MoveProblem;
+  | Board.MoveProblem
 
-export type MoveResult = Result.Result<MoveProblem, Model>;
+export type MoveResult = Result.Result<MoveProblem, Model>
 
 export const move = (
   { userId, position }: { userId: string; position: Board.Position },
   model: Model,
 ): MoveResult => {
-  const user = model.users[userId];
+  const user = model.users[userId]
 
   if (!user) {
-    return Result.Err("user_is_not_in_a_room");
+    return Result.Err("user_is_not_in_a_room")
   }
 
-  const room = model.rooms[user.roomId];
+  const room = model.rooms[user.roomId]
 
   if (!room) {
-    return Result.Err("user_is_not_in_a_room");
+    return Result.Err("user_is_not_in_a_room")
   }
 
-  const status = toStatus(room);
+  const status = toStatus(room)
 
   if (status.type === "NotReady") {
-    return Result.Err("game_is_not_ready");
+    return Result.Err("game_is_not_ready")
   }
 
-  const userPlayer = toPlayer(userId, room);
+  const userPlayer = toPlayer(userId, room)
 
   if (userPlayer === "None") {
-    return Result.Err("user_is_not_a_player");
+    return Result.Err("user_is_not_a_player")
   }
 
-  const player = userPlayer === "Both" ? Board.toTurn(room.board) : userPlayer;
+  const player = userPlayer === "Both" ? Board.toTurn(room.board) : userPlayer
 
-  const moveResult = Board.move(room.board, player, position);
+  const moveResult = Board.move(room.board, player, position)
 
   if (moveResult.type === "Err") {
-    return Result.Err(moveResult.error);
+    return Result.Err(moveResult.error)
   }
 
   const roomNew = pipe(
     room,
     (room) => ({ ...room, board: moveResult.value }),
     (room) => log(["Moved", { userId }], room),
-  );
+  )
 
   const modelNew: Model = {
     ...model,
     rooms: {
       [room.roomId]: roomNew,
     },
-  };
+  }
 
-  return Result.Ok(modelNew);
-};
+  return Result.Ok(modelNew)
+}
 
-export type RoomPlayer = { type: "User"; userId: string } | { type: "None" };
+export type RoomPlayer = { type: "User"; userId: string } | { type: "None" }
 
 export const toPlayer = (
   userId: string,
   room: Room,
 ): Board.Player | "None" | "Both" => {
-  const { X, O } = room.players;
+  const { X, O } = room.players
 
-  const isX = X.type === "User" && X.userId === userId;
+  const isX = X.type === "User" && X.userId === userId
 
-  const isO = O.type === "User" && O.userId === userId;
+  const isO = O.type === "User" && O.userId === userId
 
   if (isX && isO) {
-    return "Both";
+    return "Both"
   }
 
   if (isO) {
-    return "O";
+    return "O"
   }
 
   if (isX) {
-    return "X";
+    return "X"
   }
 
-  return "None";
-};
+  return "None"
+}
 
 export const toRoom = (
   userId: string,
   { rooms, users }: Model,
 ): Option.Option<Room> => {
-  const user = users[userId];
+  const user = users[userId]
 
   if (!user) {
-    return Option.None;
+    return Option.None
   }
 
-  const room = rooms[user.roomId];
+  const room = rooms[user.roomId]
 
   if (!room) {
-    return Option.None;
+    return Option.None
   }
 
-  return Option.Some(room);
-};
+  return Option.Some(room)
+}
 
 export type RoomStatus =
   | { type: "NotReady"; status: "MissingBoth" | "MissingX" | "MissingO" }
-  | { type: "Ready"; status: Board.Status };
+  | { type: "Ready"; status: Board.Status }
 
 export const toStatus = (room: Room): RoomStatus => {
   if (room.players.X.type === "None" && room.players.O.type === "None") {
-    return { type: "NotReady", status: "MissingBoth" };
+    return { type: "NotReady", status: "MissingBoth" }
   }
 
   if (room.players.X.type === "None") {
-    return { type: "NotReady", status: "MissingX" };
+    return { type: "NotReady", status: "MissingX" }
   }
 
   if (room.players.O.type === "None") {
-    return { type: "NotReady", status: "MissingO" };
+    return { type: "NotReady", status: "MissingO" }
   }
 
-  return { type: "Ready", status: Board.toStatus(room.board) };
-};
+  return { type: "Ready", status: Board.toStatus(room.board) }
+}
 
 export const mapRoomPlayers = (
   mapper: (roomPlayer: RoomPlayer) => RoomPlayer,
@@ -592,15 +592,15 @@ export const mapRoomPlayers = (
       X: mapper(room.players.X),
       O: mapper(room.players.O),
     },
-  };
-};
+  }
+}
 
 const removeUserFromPlaying = (userId: string, room: Room): Room => {
-  const { X, O } = room.players;
+  const { X, O } = room.players
 
-  const isX = X.type === "User" && X.userId === userId;
+  const isX = X.type === "User" && X.userId === userId
 
-  const isO = O.type === "User" && O.userId === userId;
+  const isO = O.type === "User" && O.userId === userId
 
   if (isX && isO) {
     return {
@@ -609,7 +609,7 @@ const removeUserFromPlaying = (userId: string, room: Room): Room => {
         X: { type: "None" },
         O: { type: "None" },
       },
-    };
+    }
   }
 
   if (isX) {
@@ -619,7 +619,7 @@ const removeUserFromPlaying = (userId: string, room: Room): Room => {
         ...room.players,
         X: { type: "None" },
       },
-    };
+    }
   }
 
   if (isO) {
@@ -629,22 +629,22 @@ const removeUserFromPlaying = (userId: string, room: Room): Room => {
         ...room.players,
         O: { type: "None" },
       },
-    };
+    }
   }
 
-  return room;
-};
+  return room
+}
 
 const resetGame = (room: Room): Room => {
   return {
     ...room,
     board: Board.emptyBoard,
-  };
-};
+  }
+}
 
 export const log = (event: Event, room: Room): Room => {
   return {
     ...room,
     log: [...room.log, event],
-  };
-};
+  }
+}

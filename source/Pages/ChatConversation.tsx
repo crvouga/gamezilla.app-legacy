@@ -1,8 +1,8 @@
-import { ReactNode, useLayoutEffect, useRef, useState } from "react";
-import * as Route from "../Route";
-import * as Store from "../Store";
-import * as UI from "../UI";
-import { Browser, Cmd, RemoteData, pipe } from "../Core";
+import { ReactNode, useLayoutEffect, useRef, useState } from "react"
+import * as Route from "../Route"
+import * as Store from "../Store"
+import * as UI from "../UI"
+import { Browser, Cmd, pipe, RemoteData } from "../Core"
 
 //
 //
@@ -14,34 +14,34 @@ import { Browser, Cmd, RemoteData, pipe } from "../Core";
 
 type focusedModel =
   | {
-    type: "Blurred";
-  }
+      type: "Blurred"
+    }
   | {
-    type: "Focused";
-    messageId: string;
-    copyStatus: "Failed" | "NotAsked" | "Succeeded" | "Loading";
-  };
+      type: "Focused"
+      messageId: string
+      copyStatus: "Failed" | "NotAsked" | "Succeeded" | "Loading"
+    }
 
 export type Model = {
-  conversationId: string;
-  text: string;
-  focused: focusedModel;
-};
+  conversationId: string
+  text: string
+  focused: focusedModel
+}
 
 export const init = ({
   conversationId,
 }: {
-  conversationId: string;
+  conversationId: string
 }): [Model, Cmd.Cmd<Msg>, OutAction[]] => [
-    {
-      conversationId,
-      text: "",
-      focused: { type: "Blurred" },
-    },
-    Cmd.None,
+  {
+    conversationId,
+    text: "",
+    focused: { type: "Blurred" },
+  },
+  Cmd.None,
 
-    [["Store", ['Conversation', ["FindOne", { conversationId }]]]]
-  ]
+  [["Store", ["Conversation", ["FindOne", { conversationId }]]]],
+]
 
 //
 //
@@ -59,9 +59,9 @@ export type Msg =
   | ["ClickedDeleteMessage", { messageId: string }]
   | ["ClickedCopyMessageText", string]
   | ["InputtedText", string]
-  | ["ClipboardCopyResulted", Browser.Clipboard.CopyResult];
+  | ["ClipboardCopyResulted", Browser.Clipboard.CopyResult]
 
-export type OutAction = Store.Action;
+export type OutAction = Store.Action
 
 export const update = (
   { userId }: { userId: string },
@@ -70,7 +70,7 @@ export const update = (
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
     case "ClipboardCopyResulted":
-      return [{ ...model, focused: { type: "Blurred" } }, Cmd.None, []];
+      return [{ ...model, focused: { type: "Blurred" } }, Cmd.None, []]
 
     case "ClickedCopyMessageText":
       return [
@@ -80,10 +80,10 @@ export const update = (
           Cmd.fromTask((result) => ["ClipboardCopyResulted", result]),
         ),
         [],
-      ];
+      ]
 
     case "ClickedBack":
-      return [model, Route.back, []];
+      return [model, Route.back, []]
 
     case "ClickedSend":
       const payload = {
@@ -92,14 +92,10 @@ export const update = (
         messageText: model.text,
       }
 
-      return [
-        model,
-        Cmd.None,
-        [["Store", ['Message', ['Send', payload]]]]
-      ];
+      return [model, Cmd.None, [["Store", ["Message", ["Send", payload]]]]]
 
     case "InputtedText":
-      return [{ ...model, text: msg[1] }, Cmd.None, []];
+      return [{ ...model, text: msg[1] }, Cmd.None, []]
 
     case "ClickedMessage":
       return [
@@ -113,7 +109,7 @@ export const update = (
         },
         Cmd.None,
         [],
-      ];
+      ]
 
     case "ClosedMessageMenu":
       return [
@@ -125,7 +121,7 @@ export const update = (
         },
         Cmd.None,
         [],
-      ];
+      ]
 
     case "ClickedDeleteMessage":
       const { messageId } = msg[1]
@@ -133,10 +129,10 @@ export const update = (
       return [
         model,
         Cmd.None,
-        [["Store", ['Message', ['Unsend', { messageId }]]]],
-      ];
+        [["Store", ["Message", ["Unsend", { messageId }]]]],
+      ]
   }
-};
+}
 
 //
 //
@@ -152,88 +148,87 @@ export const view =
       store,
       authUser,
     }: {
-      store: Store.Model;
-      authUser: { userId: string };
+      store: Store.Model
+      authUser: { userId: string }
     },
     model: Model,
   ): UI.View<Msg> =>
-    (dispatch) => {
-      const query =
-        store.queries.Conversation.FindOne[model.conversationId] ??
-        RemoteData.NotAsked;
+  (dispatch) => {
+    const query =
+      store.queries.Conversation.FindOne[model.conversationId] ??
+      RemoteData.NotAsked
 
-      const conversation = pipe(
-        Store.Conversation.toConversation(model.conversationId, store),
-        (conversation) => ({
-          ...conversation,
-          profiles: conversation.profiles.filter(
-            (item) => item.userId !== authUser.userId,
-          ),
-        }),
-      );
+    const conversation = pipe(
+      Store.Conversation.toConversation(model.conversationId, store),
+      (conversation) => ({
+        ...conversation,
+        profiles: conversation.profiles.filter(
+          (item) => item.userId !== authUser.userId,
+        ),
+      }),
+    )
 
-      const messageInsertMutation =
-        store.mutations.Message.Send[model.conversationId] ??
-        RemoteData.NotAsked;
+    const messageInsertMutation =
+      store.mutations.Message.Send[model.conversationId] ?? RemoteData.NotAsked
 
-      return (
-        <UI.FillBox>
-          <UI.Toolbar>
-            <UI.Box sx={{ flex: 1 }}>
-              <UI.HeaderBackButton onClick={() => dispatch(["ClickedBack"])} />
-            </UI.Box>
+    return (
+      <UI.FillBox>
+        <UI.Toolbar>
+          <UI.Box sx={{ flex: 1 }}>
+            <UI.HeaderBackButton onClick={() => dispatch(["ClickedBack"])} />
+          </UI.Box>
 
-            <UI.Box
-              sx={{
-                flex: 3,
-                paddingY: 2,
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <UI.AvatarGroup>
-                {conversation.profiles.map((item) => (
-                  <UI.Avatar key={item.userId} src={item.avatarUrl} />
-                ))}
-              </UI.AvatarGroup>
-              <UI.Typography align="center" noWrap>
-                {conversation.profiles
-                  .map((profile) => profile.username)
-                  .join(", ")}
-              </UI.Typography>
-            </UI.Box>
-            <UI.Box sx={{ flex: 1 }}></UI.Box>
-          </UI.Toolbar>
-
-          <MessageContainer
-            isLoading={query.type === "Loading"}
-            scrollKey={String(conversation.messages.length)}
+          <UI.Box
+            sx={{
+              flex: 3,
+              paddingY: 2,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
           >
-            <UI.Box sx={{ flex: 1 }}></UI.Box>
+            <UI.AvatarGroup>
+              {conversation.profiles.map((item) => (
+                <UI.Avatar key={item.userId} src={item.avatarUrl} />
+              ))}
+            </UI.AvatarGroup>
+            <UI.Typography align="center" noWrap>
+              {conversation.profiles
+                .map((profile) => profile.username)
+                .join(", ")}
+            </UI.Typography>
+          </UI.Box>
+          <UI.Box sx={{ flex: 1 }}></UI.Box>
+        </UI.Toolbar>
 
-            {conversation.messages.map((message) => (
-              <ChatMessage
-                key={message.messageId}
-                message={message}
-                currentUserId={authUser.userId}
-                dispatch={dispatch}
-                model={model}
-                store={store}
-              />
-            ))}
-          </MessageContainer>
+        <MessageContainer
+          isLoading={query.type === "Loading"}
+          scrollKey={String(conversation.messages.length)}
+        >
+          <UI.Box sx={{ flex: 1 }}></UI.Box>
 
-          <ChatInput
-            value={model.text}
-            onChange={(text) => dispatch(["InputtedText", text])}
-            onSend={() => dispatch(["ClickedSend"])}
-            isSending={messageInsertMutation.type === "Loading"}
-          />
-        </UI.FillBox>
-      );
-    };
+          {conversation.messages.map((message) => (
+            <ChatMessage
+              key={message.messageId}
+              message={message}
+              currentUserId={authUser.userId}
+              dispatch={dispatch}
+              model={model}
+              store={store}
+            />
+          ))}
+        </MessageContainer>
+
+        <ChatInput
+          value={model.text}
+          onChange={(text) => dispatch(["InputtedText", text])}
+          onSend={() => dispatch(["ClickedSend"])}
+          isSending={messageInsertMutation.type === "Loading"}
+        />
+      </UI.FillBox>
+    )
+  }
 
 const ChatInput = ({
   value,
@@ -241,18 +236,18 @@ const ChatInput = ({
   onSend,
   isSending,
 }: {
-  value: string;
-  onChange: (valueNew: string) => void;
-  onSend: () => void;
-  isSending: boolean;
+  value: string
+  onChange: (valueNew: string) => void
+  onSend: () => void
+  isSending: boolean
 }) => {
-  const inputRef = useRef<HTMLInputElement | null>(null);
-  const theme = UI.useTheme();
+  const inputRef = useRef<HTMLInputElement | null>(null)
+  const theme = UI.useTheme()
   const backgroundColor =
     theme.palette.mode === "light"
       ? theme.palette.grey["100"]
-      : theme.palette.grey["900"];
-  const textColor = theme.palette.getContrastText(backgroundColor);
+      : theme.palette.grey["900"]
+  const textColor = theme.palette.getContrastText(backgroundColor)
   return (
     <UI.Paper
       variant="outlined"
@@ -269,7 +264,7 @@ const ChatInput = ({
         ref={inputRef}
         value={value}
         onChange={(event) => {
-          onChange(event.currentTarget.value);
+          onChange(event.currentTarget.value)
         }}
         sx={{ color: textColor, paddingLeft: 1, flex: 1 }}
         placeholder="Message..."
@@ -281,10 +276,10 @@ const ChatInput = ({
           size="large"
           disabled={value.length === 0}
           onClick={() => {
-            onSend();
+            onSend()
 
             if (inputRef.current) {
-              inputRef.current.focus();
+              inputRef.current.focus()
             }
           }}
           loading={isSending}
@@ -293,32 +288,32 @@ const ChatInput = ({
         </UI.Button>
       </UI.Grow>
     </UI.Paper>
-  );
-};
+  )
+}
 
 const MessageContainer = ({
   scrollKey,
   children,
   isLoading,
 }: {
-  isLoading: boolean;
-  scrollKey: string;
-  children: ReactNode;
+  isLoading: boolean
+  scrollKey: string
+  children: ReactNode
 }) => {
-  const containerRef = useRef<HTMLDivElement | null>(null);
-  const ref = useRef<HTMLDivElement | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null)
+  const ref = useRef<HTMLDivElement | null>(null)
 
   useLayoutEffect(() => {
     if (ref.current) {
-      ref.current.scrollIntoView({ behavior: "smooth" });
+      ref.current.scrollIntoView({ behavior: "smooth" })
     }
-  }, [scrollKey]);
+  }, [scrollKey])
 
   useLayoutEffect(() => {
     if (ref.current) {
-      ref.current.scrollTop = ref.current.scrollHeight;
+      ref.current.scrollTop = ref.current.scrollHeight
     }
-  }, []);
+  }, [])
 
   return (
     <UI.Box
@@ -353,50 +348,8 @@ const MessageContainer = ({
         </UI.Box>
       )}
     </UI.Box>
-  );
-};
-
-const viewHeader =
-  (conversation: { profiles: Store.Profile.Profile[] }): UI.View<Msg> =>
-    () =>
-    (
-      <UI.Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          p: 2,
-          marginX: 4,
-          textOverflow: "ellipsis",
-        }}
-      >
-        <UI.AvatarGroup
-          sx={{ marginBottom: 2 }}
-          max={4}
-          componentsProps={{
-            additionalAvatar: { sx: { width: 64, height: 64 } },
-          }}
-        >
-          {conversation.profiles.map((profile) => (
-            <UI.Avatar
-              key={profile.userId}
-              src={profile.avatarUrl}
-              sx={{ width: 64, height: 64 }}
-            />
-          ))}
-        </UI.AvatarGroup>
-
-        <UI.Typography
-          variant="h5"
-          align="center"
-          noWrap
-          sx={{ width: "100%" }}
-        >
-          {conversation.profiles.map((profile) => profile.username).join(", ")}
-        </UI.Typography>
-      </UI.Box>
-    );
-
+  )
+}
 const ChatMessage = ({
   message,
   currentUserId,
@@ -404,28 +357,28 @@ const ChatMessage = ({
   store,
   dispatch,
 }: {
-  message: Store.Message.Message;
-  currentUserId: string;
-  model: Model;
-  dispatch: (msg: Msg) => void;
-  store: Store.Model;
+  message: Store.Message.Message
+  currentUserId: string
+  model: Model
+  dispatch: (msg: Msg) => void
+  store: Store.Model
 }) => {
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-    event.stopPropagation();
-    dispatch(["ClickedMessage", message]);
-  };
+    event.preventDefault()
+    event.stopPropagation()
+    dispatch(["ClickedMessage", message])
+  }
 
-  const variant = currentUserId === message.userId ? "sented" : "recieved";
+  const variant = currentUserId === message.userId ? "sented" : "recieved"
 
-  const theme = UI.useTheme();
+  const theme = UI.useTheme()
   const backgroundColor =
     variant === "sented"
       ? theme.palette.primary.main
-      : theme.palette.grey["200"];
-  const textColor = theme.palette.getContrastText(backgroundColor);
+      : theme.palette.grey["200"]
+  const textColor = theme.palette.getContrastText(backgroundColor)
 
-  const [anchorRef, setAnchorRef] = useState<null | HTMLElement>(null);
+  const [anchorRef, setAnchorRef] = useState<null | HTMLElement>(null)
 
   return (
     <UI.Box
@@ -486,15 +439,15 @@ const ChatMessage = ({
             }
           >
             {model.focused.type === "Focused" &&
-              model.focused.copyStatus === "Succeeded"
+            model.focused.copyStatus === "Succeeded"
               ? "Copied"
               : "Copy Text"}
           </UI.Button>
           {variant === "sented" && (
             <UI.Button
               loading={
-                store.mutations.Message.Unsend[message.messageId]
-                  ?.type === "Loading"
+                store.mutations.Message.Unsend[message.messageId]?.type ===
+                "Loading"
               }
               onClick={() => dispatch(["ClickedDeleteMessage", message])}
             >
@@ -504,5 +457,5 @@ const ChatMessage = ({
         </UI.Box>
       </UI.Menu>
     </UI.Box>
-  );
-};
+  )
+}
