@@ -1,16 +1,11 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import {useEffect, useLayoutEffect, useRef, useState} from "react";
 import * as Route from "../../Route";
 import * as Store from "../../Store";
 import * as UI from "../../UI";
 import * as Board from "./Board";
-import { sendToBackend } from "../../Bridge/Frontend";
-import { Cmd, Option, Result, pipe } from "../../Core";
-import { exhaustive } from "../../Core";
-import {
-  FrontendModel,
-  FrontendMsg,
-  ToFrontend,
-} from "./Types";
+import {sendToBackend} from "../../Bridge/Frontend";
+import {Cmd} from "../../Core";
+import {FrontendModel, FrontendMsg, ToFrontend,} from "./Types";
 import * as Room from "./Room"
 
 //
@@ -345,8 +340,8 @@ const ViewInRoom = ({
       : status.status.type === "Turn"
         ? `${status.status.turn} Turn`
         : status.status.type === "Tie"
-          ? "Gameover"
-          : `Gameover`;
+          ? "GameOver"
+          : `GameOver`;
 
   const usersInRoom = Object.values(store.Profile).filter(
     (profile) =>
@@ -550,9 +545,9 @@ const ViewRoomEvent = ({
       return profile ? <ViewUserEvent avatarUrl={profile.avatarUrl} text={`${profile.username} joined room`} /> : <></>
     }
 
-    case 'LeftedRoom': {
+    case 'LeftRoom': {
       const profile = store.Profile[roomEvent[1].userId]
-      return profile ? <ViewUserEvent avatarUrl={profile.avatarUrl} text={`${profile.username} lefted room`} /> : <></>
+      return profile ? <ViewUserEvent avatarUrl={profile.avatarUrl} text={`${profile.username} left room`} /> : <></>
     }
 
     case 'Moved': {
@@ -582,7 +577,6 @@ const viewPlayerActions =
     currentUserId,
     player,
     room,
-    store,
   }: {
     currentUserId: string;
     player: Board.Player;
@@ -597,8 +591,6 @@ const viewPlayerActions =
           return <>None</>;
 
         case "User":
-          const profile = store.Profile[roomPlayer.userId];
-
           if (roomPlayer.userId === currentUserId) {
             return (
               <UI.Box sx={{ paddingX: 1 }}>
@@ -748,24 +740,6 @@ const ViewPlayer = ({
 //
 //
 //
-
-export const PlayerIcon = ({
-  player,
-  ...props
-}: { player: Board.Player } & Parameters<typeof UI.SvgIcon>[0]) => {
-  const theme = UI.useTheme();
-  return (
-    <UI.SvgIcon viewBox="0 0 1 1" {...props}>
-      <ViewSlot
-        color={theme.palette.text.primary}
-        slot={player}
-        cx={0.5}
-        cy={0.5}
-        r={0.3}
-      />
-    </UI.SvgIcon>
-  );
-};
 
 export const CoverArt = () => {
   const positions: [Board.Position, Board.Slot][] = [
