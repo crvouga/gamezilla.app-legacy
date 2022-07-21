@@ -240,8 +240,6 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
       switch (status.type) {
         case "AuthLoading":
-          return [model, Cmd.None]
-
         case "ProfileLoading":
           return [model, Cmd.None]
 

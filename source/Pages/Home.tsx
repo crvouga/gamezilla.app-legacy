@@ -79,28 +79,28 @@ export const view =
           }}
         >
           <GameCard
-            icon={<Games.GameIcon game="TicTacToe" />}
+            icon={<Games.CoverArt game="TicTacToe" />}
             label="Tic Tac Toe"
             disabled={!canOpen(game, "TicTacToe")}
             onClick={() => dispatch(["ClickedGame", "TicTacToe"])}
           />
 
           <GameCard
-            icon={<Games.GameIcon game="ConnectFour" />}
+            icon={<Games.CoverArt game="ConnectFour" />}
             label="Connect Four"
             disabled={!canOpen(game, "ConnectFour")}
             onClick={() => dispatch(["ClickedGame", "ConnectFour"])}
           />
 
           <GameCard
-            icon={<Games.GameIcon game="Chess" />}
+            icon={<Games.CoverArt game="Chess" />}
             label="Chess"
             disabled={!canOpen(game, "Chess")}
             onClick={() => dispatch(["ClickedGame", "Chess"])}
           />
 
           <GameCard
-            icon={<Games.GameIcon game="Snake" />}
+            icon={<Games.CoverArt game="Snake" />}
             label="Snake"
             disabled={!canOpen(game, "Snake")}
             onClick={() => dispatch(["ClickedGame", "Snake"])}

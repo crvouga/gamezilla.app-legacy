@@ -225,7 +225,7 @@ function* filter<T>(predicate: (item: T) => boolean, generator: Generator<T>) {
 //
 //
 
-export const Icon = ({ id }: { id: string }) => {
+export const CoverArt = ({ id }: { id: string }) => {
   const ids = {
     playerOneGradient: `${id}-playerOneGradient`,
     playerTwoGradient: `${id}-playerTwoGradient`,

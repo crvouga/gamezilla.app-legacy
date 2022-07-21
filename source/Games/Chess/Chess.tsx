@@ -57,7 +57,7 @@ export const theme = {
   darkSquare: "#779455",
 }
 
-export const Icon = () => {
+export const CoverArt = () => {
   return (
     <svg width="100%" height="100%" viewBox="0 0 2 2">
       <rect x={0} y={0} width={1} height={1} fill={theme.lightSquare} />
