@@ -1,10 +1,10 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react"
+import { useLayoutEffect, useRef } from "react"
 import * as Route from "../../Route"
 import * as Store from "../../Store"
 import * as UI from "../../UI"
 import * as Board from "./Board"
 import { sendToBackend } from "../../Bridge/Frontend"
-import { Cmd } from "../../Core"
+import { Cmd, Result } from "../../Core"
 import { FrontendModel, FrontendMsg, ToFrontend } from "./Types"
 import * as Room from "./Room"
 
@@ -26,6 +26,127 @@ export const init: [Model, Cmd.Cmd<Msg>] = [
   },
   sendToBackend(["Games", ["TicTacToe", ["Init"]]]),
 ]
+
+//
+//
+//
+// Room View
+//
+//
+//
+
+type RoomView = {
+  roomId: Room.RoomId
+  board: Board.Board
+  players: {
+    X: RoomViewPlayer
+    O: RoomViewPlayer
+  }
+  host: RoomViewUser
+  users: RoomViewUser[]
+}
+
+type RoomViewPlayer = { type: "None" } | ({ type: "User" } & RoomViewUser)
+
+type RoomViewUser = {
+  username: string
+  avatarUrl: string
+  userId: string
+}
+
+type RoomViewProblem =
+  | "missing_profiles"
+  | "missing_room"
+  | "missing_host"
+  | "missing_player"
+
+const toRoomView = ({
+  roomId,
+  model,
+  store,
+}: {
+  roomId: Room.RoomId
+  model: Model
+  store: Store.Model
+}): Result.Result<RoomViewProblem, RoomView> => {
+  const usersInRoom = Object.values(model.users).filter(
+    (user) => user.roomId === roomId,
+  )
+
+  const profiles = usersInRoom
+    .map((user) => store.Profile[user.userId])
+    .flatMap((profile) => (profile ? [profile] : []))
+
+  if (profiles.length < usersInRoom.length) {
+    return Result.Err("missing_profiles")
+  }
+
+  const room = model.rooms[roomId]
+
+  if (!room) {
+    return Result.Err("missing_room")
+  }
+
+  const host = profiles.find((profile) => profile.userId === room.hostId)
+
+  if (!host) {
+    return Result.Err("missing_host")
+  }
+
+  const xResult = toRoomPlayerView({ store, room, player: "X" })
+
+  if (xResult.type === "Err") {
+    return xResult
+  }
+
+  const oResult = toRoomPlayerView({ store, room, player: "O" })
+
+  if (oResult.type == "Err") {
+    return oResult
+  }
+
+  const roomView: RoomView = {
+    roomId,
+    board: room.board,
+    players: {
+      X: xResult.value,
+      O: oResult.value,
+    },
+    host,
+    users: profiles,
+  }
+
+  return Result.Ok(roomView)
+}
+
+const toRoomPlayerView = ({
+  room,
+  store,
+  player,
+}: {
+  room: Room.Room
+  store: Store.Model
+  player: Board.Player
+}): Result.Result<RoomViewProblem, RoomViewPlayer> => {
+  const roomPlayer = room.players[player]
+
+  if (roomPlayer.type === "None") {
+    return Result.Ok(roomPlayer)
+  }
+
+  const profile = store.Profile[roomPlayer.userId]
+
+  if (!profile) {
+    return Result.Err("missing_player")
+  }
+
+  const roomViewPlayer: RoomViewPlayer = {
+    type: "User",
+    ...profile,
+  }
+
+  return Result.Ok(roomViewPlayer)
+}
 
 //
 //
@@ -349,25 +470,6 @@ const ViewInRoom = ({
       model.users[profile.userId]?.roomId === room.roomId,
   )
 
-  const [screen, setScreen] = useState<"versus" | "board">(
-    status.type === "NotReady" ? "versus" : "board",
-  )
-  const timeoutRef = useRef<any>(undefined)
-
-  useEffect(() => {
-    clearTimeout(timeoutRef.current)
-
-    if (status.type === "Ready") {
-      timeoutRef.current = setTimeout(() => {
-        setScreen("board")
-      }, 2000)
-    }
-
-    if (status.type === "NotReady") {
-      setScreen("versus")
-    }
-  }, [status.type])
-
   return (
     <>
       <UI.FillBox>
@@ -428,9 +530,11 @@ const ViewInRoom = ({
           {statusMessage}
         </UI.Typography>
 
-        {screen === "versus" && <VersusScreen store={store} room={room} />}
+        {status.type === "NotReady" && (
+          <VersusScreen store={store} room={room} />
+        )}
 
-        {screen === "board" && (
+        {status.type === "Ready" && (
           <ViewBoard
             board={room.board}
             onClick={(position) =>
@@ -795,6 +899,29 @@ const ViewPlayer = ({
         </>
       )
   }
+}
+
+const ViewRoomNotReady = ({
+  room,
+  currentUserId,
+  dispatch,
+}: {
+  room: Room.Room
+  currentUserId: string
+  dispatch: (msg: Msg) => void
+}) => {
+  return (
+    <UI.FillBox>
+      <UI.Toolbar>
+        <UI.Button
+          onClick={() => dispatch(["LeaveRoom", { currentUserId }])}
+          sx={{ marginLeft: -1 }}
+        >
+          Leave
+        </UI.Button>
+      </UI.Toolbar>
+    </UI.FillBox>
+  )
 }
 
 //
