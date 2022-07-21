@@ -3,9 +3,9 @@ import * as Route from "../../Route"
 import * as Store from "../../Store"
 import * as UI from "../../UI"
 import * as Board from "./Board"
-import { sendToBackend } from "../../Bridge/Frontend"
+import * as Bridge from "../../Bridge/Frontend"
 import { Cmd, Result } from "../../Core"
-import { FrontendModel, FrontendMsg, ToFrontend } from "./Types"
+import { FrontendModel, FrontendMsg, ToBackend, ToFrontend } from "./Types"
 import * as Room from "./Room"
 
 //
@@ -18,13 +18,33 @@ import * as Room from "./Room"
 
 export type Model = FrontendModel
 
+//
+//
+//
+// Bridge
+//
+//
+//
+
+const sendToBackend = (msg: ToBackend): Cmd.Cmd<never> => {
+  return Bridge.sendToBackend(["Games", ["TicTacToe", msg]])
+}
+
+//
+//
+//
+// Init
+//
+//
+//
+
 export const init: [Model, Cmd.Cmd<Msg>] = [
   {
     opened: ["None"],
     rooms: {},
     users: {},
   },
-  sendToBackend(["Games", ["TicTacToe", ["Init"]]]),
+  sendToBackend(["Init"]),
 ]
 
 //
@@ -167,19 +187,16 @@ export const update = (
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
     case "StartPlaying":
-      return [model, sendToBackend(["Games", ["TicTacToe", msg]])]
+      return [model, sendToBackend(msg)]
 
     case "StopPlaying":
-      return [
-        { ...model, opened: ["None"] },
-        sendToBackend(["Games", ["TicTacToe", msg]]),
-      ]
+      return [{ ...model, opened: ["None"] }, sendToBackend(msg)]
 
     case "PlayAgain":
-      return [model, sendToBackend(["Games", ["TicTacToe", msg]])]
+      return [model, sendToBackend(msg)]
 
     case "RemovePlayer":
-      return [model, sendToBackend(["Games", ["TicTacToe", msg]])]
+      return [model, sendToBackend(msg)]
 
     case "ClickedPlayer":
       return [{ ...model, opened: ["Player", msg[1]] }, Cmd.None]
@@ -191,20 +208,19 @@ export const update = (
       return [{ ...model, opened: ["None"] }, Cmd.None]
 
     case "LeaveRoom":
-      return [model, sendToBackend(["Games", ["TicTacToe", msg]])]
+      return [model, sendToBackend(msg)]
 
-    case "RestartGame": {
-      return [model, sendToBackend(["Games", ["TicTacToe", msg]])]
-    }
+    case "RestartGame":
+      return [model, sendToBackend(msg)]
 
     case "ClickedUser":
       return [model, Route.push({ type: "Profile", userId: msg[1].userId })]
 
     case "JoinRoom":
-      return [model, sendToBackend(["Games", ["TicTacToe", msg]])]
+      return [model, sendToBackend(msg)]
 
     case "CreateRoom":
-      return [model, sendToBackend(["Games", ["TicTacToe", msg]])]
+      return [model, sendToBackend(msg)]
 
     case "ClickedBack":
       return [model, Route.back]
@@ -221,7 +237,7 @@ export const update = (
           ...model,
           ...stateNew,
         },
-        sendToBackend(["Games", ["TicTacToe", msg]]),
+        sendToBackend(msg),
       ]
   }
 }
