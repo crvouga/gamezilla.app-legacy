@@ -1,4 +1,4 @@
-export * as EmailAddress from "./EmailAddress";
-export * as Password from "./Password";
-export * as ProfileAvatar from "./ProfileAvatar";
-export * as UserId from "./UserId";
+export * as EmailAddress from "./EmailAddress"
+export * as Password from "./Password"
+export * as ProfileAvatar from "./ProfileAvatar"
+export * as UserId from "./UserId"

@@ -1,8 +1,8 @@
-import * as Games from "../Games/Frontend";
-import * as Route from "../Route";
-import * as UI from "../UI";
-import { Cmd } from "../Core";
-import { GameName } from "../Games";
+import * as Games from "../Games/Frontend"
+import * as Route from "../Route"
+import * as UI from "../UI"
+import { Cmd } from "../Core"
+import { GameName } from "../Games"
 
 //
 //
@@ -12,9 +12,9 @@ import { GameName } from "../Games";
 //
 //
 
-export type Model = {};
+export type Model = {}
 
-export const init: Model = {};
+export const init: Model = {}
 
 //
 //
@@ -24,7 +24,7 @@ export const init: Model = {};
 //
 //
 
-export type Msg = ["ClickedGame", GameName];
+export type Msg = ["ClickedGame", GameName]
 
 export type OutAction = Games.Action
 
@@ -35,9 +35,9 @@ export const update = (
   switch (msg[0]) {
     case "ClickedGame":
       const gameName = msg[1]
-      return [model, Cmd.None, [["Games", ['Open', gameName]]]];
+      return [model, Cmd.None, [["Games", ["Open", gameName]]]]
   }
-};
+}
 
 //
 //
@@ -48,12 +48,12 @@ export const update = (
 //
 
 const isOpen = (game: Games.Model, gameName: GameName) => {
-  return game.type === "Opened" && game.child.type === gameName;
-};
+  return game.type === "Opened" && game.child.type === gameName
+}
 
 const canOpen = (game: Games.Model, gameName: GameName) => {
-  return game.type === "Closed" || isOpen(game, gameName);
-};
+  return game.type === "Closed" || isOpen(game, gameName)
+}
 
 export const view =
   (
@@ -62,13 +62,13 @@ export const view =
       game,
       route,
     }: {
-      profile: { avatarUrl: string };
-      game: Games.Model;
-      route: Route.Route;
+      profile: { avatarUrl: string }
+      game: Games.Model
+      route: Route.Route
     },
     _model: Model,
   ): UI.View<Msg> =>
-    (dispatch) =>
+  (dispatch) =>
     (
       <UI.FillBox>
         <UI.Header title="Home" />
@@ -107,7 +107,7 @@ export const view =
           />
         </UI.Box>
       </UI.FillBox>
-    );
+    )
 
 const GameCard = ({
   icon,
@@ -115,10 +115,10 @@ const GameCard = ({
   onClick,
   disabled = false,
 }: {
-  icon: React.ReactNode;
-  label: string;
-  onClick: () => void;
-  disabled?: boolean;
+  icon: React.ReactNode
+  label: string
+  onClick: () => void
+  disabled?: boolean
 }) => {
   return (
     <UI.ButtonBase
@@ -158,5 +158,5 @@ const GameCard = ({
         </UI.Box>
       </UI.Box>
     </UI.ButtonBase>
-  );
-};
+  )
+}

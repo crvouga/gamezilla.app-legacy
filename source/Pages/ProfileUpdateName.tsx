@@ -1,7 +1,7 @@
-import * as Route from "../Route";
-import * as Store from "../Store";
-import * as UI from "../UI";
-import { Cmd } from "../Core";
+import * as Route from "../Route"
+import * as Store from "../Store"
+import * as UI from "../UI"
+import { Cmd } from "../Core"
 
 //
 //
@@ -11,13 +11,13 @@ import { Cmd } from "../Core";
 //
 //
 
-export type Model = { name: string };
+export type Model = { name: string }
 
 export const init = ({ name }: { name: string }): Model => {
   return {
     name,
-  };
-};
+  }
+}
 
 //
 //
@@ -30,9 +30,9 @@ export const init = ({ name }: { name: string }): Model => {
 export type Msg =
   | ["EnteredName", string]
   | ["ClickedCancel"]
-  | ["ClickedSubmit"];
+  | ["ClickedSubmit"]
 
-export type OutAction = Store.Action;
+export type OutAction = Store.Action
 
 export const update = (
   { userId }: { userId: string },
@@ -41,19 +41,24 @@ export const update = (
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
     case "EnteredName":
-      return [{ ...model, name: msg[1] }, Cmd.None, []];
+      return [{ ...model, name: msg[1] }, Cmd.None, []]
 
     case "ClickedSubmit":
       return [
         model,
         Route.back,
-        [["Store", ['Profile', ['Edit', { userId, edits: { name: model.name } }]]]],
-      ];
+        [
+          [
+            "Store",
+            ["Profile", ["Edit", { userId, edits: { name: model.name } }]],
+          ],
+        ],
+      ]
 
     case "ClickedCancel":
-      return [model, Route.back, []];
+      return [model, Route.back, []]
   }
-};
+}
 
 //
 //
@@ -65,7 +70,7 @@ export const update = (
 
 export const view =
   (model: Model): UI.View<Msg> =>
-    (dispatch) =>
+  (dispatch) =>
     (
       <UI.FillBox>
         <UI.Header
@@ -100,4 +105,4 @@ export const view =
           />
         </UI.Box>
       </UI.FillBox>
-    );
+    )

@@ -1,10 +1,10 @@
-import * as Auth from "./Auth";
-import * as Connection from "./Connection";
-import * as Games from "./Games";
-import * as Pages from "./Pages";
-import * as Route from "./Route";
-import * as Snackbar from "./Snackbar";
-import * as Store from "./Store";
+import * as Auth from "./Auth"
+import * as Connection from "./Connection"
+import * as Games from "./Games"
+import * as Pages from "./Pages"
+import * as Route from "./Route"
+import * as Snackbar from "./Snackbar"
+import * as Store from "./Store"
 
 //
 //
@@ -17,18 +17,18 @@ import * as Store from "./Store";
 //
 
 export type FrontendModel = {
-  snackbar: Snackbar.Model;
-  store: Store.Model;
-  auth: Auth.Model;
-  page: Pages.Model;
-  route: Route.Route;
-  connection: Connection.Model;
-  game: Games.FrontendModel;
-};
+  snackbar: Snackbar.Model
+  store: Store.Model
+  auth: Auth.Model
+  page: Pages.Model
+  route: Route.Route
+  connection: Connection.Model
+  game: Games.FrontendModel
+}
 
 export type BackendModel = {
-  games: Games.BackendModel;
-};
+  games: Games.BackendModel
+}
 
 //
 //
@@ -46,12 +46,12 @@ export type FrontendMsg =
   | ["Store", Store.Msg]
   | ["Auth", Auth.Msg]
   | ["Page", Pages.Msg]
-  | ["Connection", Connection.Msg];
+  | ["Connection", Connection.Msg]
 
-export type ToBackend = ["Games", Games.ToBackend];
+export type ToBackend = ["Games", Games.ToBackend]
 
 export type BackendMsg =
   | ["ToBackend", string, ToBackend]
-  | ["Games", Games.BackendMsg];
+  | ["Games", Games.BackendMsg]
 
-export type ToFrontend = ["Games", Games.ToFrontend];
+export type ToFrontend = ["Games", Games.ToFrontend]

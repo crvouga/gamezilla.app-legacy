@@ -1,12 +1,12 @@
-import * as Rx from "rxjs";
-import { Socket, io } from "socket.io-client";
-import { Cmd, Option, Sub, pipe } from "../Core";
-import { ToBackend, ToFrontend } from "../Types";
+import * as Rx from "rxjs"
+import { io, Socket } from "socket.io-client"
+import { Cmd, Option, pipe, Sub } from "../Core"
+import { ToBackend, ToFrontend } from "../Types"
 import {
+  backendServerPort,
   ClientToServerEvents,
   ServerToClientEvents,
-  backendServerPort,
-} from "./Bridge";
+} from "./Bridge"
 
 //
 //
@@ -16,44 +16,44 @@ import {
 //
 //
 
-const productionBackendUrl = "https://gamezilla.herokuapp.com/";
+const productionBackendUrl = "https://gamezilla.herokuapp.com/"
 
-const developmentBackendUrl = `http://localhost:${backendServerPort}/`;
+const developmentBackendUrl = `http://localhost:${backendServerPort}/`
 
 export const backendUrl =
   process.env.NODE_ENV === "production"
     ? productionBackendUrl
-    : developmentBackendUrl;
+    : developmentBackendUrl
 
 const socket: Socket<ServerToClientEvents, ClientToServerEvents> =
-  io(backendUrl);
+  io(backendUrl)
 
 export type ConnectionStatus =
   | "Connecting"
   | "Reconnecting"
   | "Disconnected"
-  | "Connected";
+  | "Connected"
 
-const connectionStatus$ = new Rx.Subject<ConnectionStatus>();
-const toFrontend$ = new Rx.Subject<ToFrontend>();
+const connectionStatus$ = new Rx.Subject<ConnectionStatus>()
+const toFrontend$ = new Rx.Subject<ToFrontend>()
 
-connectionStatus$.next("Connecting");
+connectionStatus$.next("Connecting")
 
 socket.on("connect", () => {
-  connectionStatus$.next("Connected");
-});
+  connectionStatus$.next("Connected")
+})
 
 socket.on("connect_error", () => {
-  connectionStatus$.next("Reconnecting");
-});
+  connectionStatus$.next("Reconnecting")
+})
 
 socket.on("disconnect", () => {
-  connectionStatus$.next("Disconnected");
-});
+  connectionStatus$.next("Disconnected")
+})
 
 socket.on("ToFrontend", (msg) => {
-  toFrontend$.next(msg);
-});
+  toFrontend$.next(msg)
+})
 
 //
 //
@@ -66,14 +66,14 @@ socket.on("ToFrontend", (msg) => {
 export const onConnectionChanged = <Msg>(
   mapper: (connectionStatus: ConnectionStatus) => Msg,
 ): Sub.Sub<Msg> => {
-  return pipe(connectionStatus$, Sub.map(mapper));
-};
+  return pipe(connectionStatus$, Sub.map(mapper))
+}
 
 export const fromBackend = <Msg>(
   mapper: (msg: ToFrontend) => Msg,
 ): Sub.Sub<Msg> => {
-  return pipe(toFrontend$, Sub.map(mapper));
-};
+  return pipe(toFrontend$, Sub.map(mapper))
+}
 
 //
 //
@@ -86,8 +86,8 @@ export const fromBackend = <Msg>(
 export const sendToBackend = (msg: ToBackend): Cmd.Cmd<never> => {
   return Rx.of(async () => {
     // setTimeout(() => {
-    socket.emit("ToBackend", msg);
+    socket.emit("ToBackend", msg)
     // }, 500);
-    return Option.None;
-  });
-};
+    return Option.None
+  })
+}

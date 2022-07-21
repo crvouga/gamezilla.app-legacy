@@ -1,7 +1,7 @@
-import * as Route from "../Route";
-import * as Store from "../Store";
-import * as UI from "../UI";
-import { Cmd, Option, Sub } from "../Core";
+import * as Route from "../Route"
+import * as Store from "../Store"
+import * as UI from "../UI"
+import { Cmd, Sub } from "../Core"
 
 //
 //
@@ -12,18 +12,18 @@ import { Cmd, Option, Sub } from "../Core";
 //
 
 export type Model = {
-  userId: string;
-};
+  userId: string
+}
 
 export const init = ({
   userId,
 }: {
-  userId: string;
+  userId: string
 }): [Model, Cmd.Cmd<Msg>, OutAction[]] => [
-    { userId },
-    Cmd.None,
-    [["Store", ['Profile', ['FindMany', { userIds: [userId] }]]]],
-  ];
+  { userId },
+  Cmd.None,
+  [["Store", ["Profile", ["FindMany", { userIds: [userId] }]]]],
+]
 
 //
 //
@@ -33,9 +33,12 @@ export const init = ({
 //
 //
 
-export type Msg = ["ClickedBack"] | ["ClickedSendMessage"] | ['ClickedEditProfile'];
+export type Msg =
+  | ["ClickedBack"]
+  | ["ClickedSendMessage"]
+  | ["ClickedEditProfile"]
 
-type OutAction = Store.Action;
+type OutAction = Store.Action
 
 export const update = (
   { currentUserId }: { currentUserId: string },
@@ -44,10 +47,10 @@ export const update = (
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
     case "ClickedBack":
-      return [model, Route.back, []];
+      return [model, Route.back, []]
 
-    case 'ClickedEditProfile':
-      return [model, Route.push({ type: "ProfileUpdate" }), []];
+    case "ClickedEditProfile":
+      return [model, Route.push({ type: "ProfileUpdate" }), []]
 
     case "ClickedSendMessage":
       return [
@@ -56,12 +59,15 @@ export const update = (
         [
           [
             "Store",
-            ["Conversation", ["FindOneElseInsert", { userIds: [model.userId, currentUserId], }]]
+            [
+              "Conversation",
+              ["FindOneElseInsert", { userIds: [model.userId, currentUserId] }],
+            ],
           ],
         ],
-      ];
+      ]
   }
-};
+}
 
 //
 //
@@ -71,9 +77,9 @@ export const update = (
 //
 //
 
-export const subscriptions = (model: Model): Sub.Sub<Msg> => {
-  return Sub.None;
-};
+export const subscriptions = (_: Model): Sub.Sub<Msg> => {
+  return Sub.None
+}
 
 //
 //
@@ -84,83 +90,42 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
 //
 
 export const view =
-  ({ store, currentUserId }: { store: Store.Model, currentUserId: string }, model: Model): UI.View<Msg> =>
-    (dispatch) => {
-      const profile = store.Profile[model.userId];
+  (
+    { store, currentUserId }: { store: Store.Model; currentUserId: string },
+    model: Model,
+  ): UI.View<Msg> =>
+  (dispatch) => {
+    const profile = store.Profile[model.userId]
 
-      if (!profile) {
-        return (
-          <UI.FillBox>
-            <UI.Header
-              left={
-                <UI.HeaderBackButton
-                  onClick={() => dispatch(["ClickedBack"])}
-                />
-              }
-              title={"..."}
-            />
-            <UI.Box
-              sx={{
-                flex: 1,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <UI.CircularProgress />
-            </UI.Box>
-          </UI.FillBox>
-        )
-      }
-
-      if (profile.userId === currentUserId) {
-        return (
-          <UI.FillBox>
-            <UI.Header
-              left={
-                <UI.HeaderBackButton
-                  onClick={() => dispatch(["ClickedBack"])}
-                />
-              }
-              title={profile.username}
-            />
-
-            <UI.Box
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                p: 2,
-              }}
-            >
-              <UI.Avatar
-                sx={{ width: 120, height: 120, marginBottom: 1 }}
-                src={profile.avatarUrl}
-              />
-              <UI.Typography variant="h3">{profile.username}</UI.Typography>
-              <UI.Typography
-                variant="h6"
-                color="text.secondary"
-                sx={{ marginBottom: 2 }}
-              >
-                {profile.name}
-              </UI.Typography>
-              <UI.Button fullWidth variant="contained" sx={{ marginBottom: 2 }} onClick={() => dispatch(['ClickedEditProfile'])}>
-                Edit Profile
-              </UI.Button>
-            </UI.Box>
-          </UI.FillBox>
-        )
-      }
-
+    if (!profile) {
       return (
         <UI.FillBox>
           <UI.Header
             left={
-              <UI.HeaderBackButton
-                onClick={() => dispatch(["ClickedBack"])}
-              />
+              <UI.HeaderBackButton onClick={() => dispatch(["ClickedBack"])} />
+            }
+            title={"..."}
+          />
+          <UI.Box
+            sx={{
+              flex: 1,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <UI.CircularProgress />
+          </UI.Box>
+        </UI.FillBox>
+      )
+    }
+
+    if (profile.userId === currentUserId) {
+      return (
+        <UI.FillBox>
+          <UI.Header
+            left={
+              <UI.HeaderBackButton onClick={() => dispatch(["ClickedBack"])} />
             }
             title={profile.username}
           />
@@ -186,23 +151,64 @@ export const view =
             >
               {profile.name}
             </UI.Typography>
-
-            <UI.Button fullWidth variant="contained" sx={{ marginBottom: 2 }}>
-              Send Friend Request
-            </UI.Button>
             <UI.Button
               fullWidth
-              loading={
-                store.mutations.Conversation.FindElseInsert.type === "Loading"
-              }
               variant="contained"
-              onClick={() => dispatch(["ClickedSendMessage"])}
+              sx={{ marginBottom: 2 }}
+              onClick={() => dispatch(["ClickedEditProfile"])}
             >
-              Send Message
+              Edit Profile
             </UI.Button>
           </UI.Box>
-        </UI.FillBox>)
-
+        </UI.FillBox>
+      )
     }
 
+    return (
+      <UI.FillBox>
+        <UI.Header
+          left={
+            <UI.HeaderBackButton onClick={() => dispatch(["ClickedBack"])} />
+          }
+          title={profile.username}
+        />
 
+        <UI.Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            p: 2,
+          }}
+        >
+          <UI.Avatar
+            sx={{ width: 120, height: 120, marginBottom: 1 }}
+            src={profile.avatarUrl}
+          />
+          <UI.Typography variant="h3">{profile.username}</UI.Typography>
+          <UI.Typography
+            variant="h6"
+            color="text.secondary"
+            sx={{ marginBottom: 2 }}
+          >
+            {profile.name}
+          </UI.Typography>
+
+          <UI.Button fullWidth variant="contained" sx={{ marginBottom: 2 }}>
+            Send Friend Request
+          </UI.Button>
+          <UI.Button
+            fullWidth
+            loading={
+              store.mutations.Conversation.FindElseInsert.type === "Loading"
+            }
+            variant="contained"
+            onClick={() => dispatch(["ClickedSendMessage"])}
+          >
+            Send Message
+          </UI.Button>
+        </UI.Box>
+      </UI.FillBox>
+    )
+  }

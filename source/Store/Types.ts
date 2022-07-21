@@ -1,4 +1,4 @@
-import { RemoteData } from "../Core";
+import { RemoteData } from "../Core"
 
 //
 //
@@ -10,20 +10,20 @@ import { RemoteData } from "../Core";
 
 export type Store = {
   Profile: {
-    [id: string]: Profile;
-  };
+    [id: string]: Profile
+  }
   Conversation: {
-    [id: string]: Conversation;
-  };
+    [id: string]: Conversation
+  }
   Message: {
-    [id: string]: Message;
-  };
+    [id: string]: Message
+  }
   ProfilesConversations: {
-    [id: string]: ProfilesConversations;
-  };
-  queries: Queries;
-  mutations: Mutations;
-};
+    [id: string]: ProfilesConversations
+  }
+  queries: Queries
+  mutations: Mutations
+}
 
 //
 //
@@ -34,37 +34,37 @@ export type Store = {
 //
 
 export type Profile = {
-  userId: string;
-  username: string;
-  name: string;
-  avatarUrl: string;
-  themeMode: "Light" | "Dark" | "System";
-};
+  userId: string
+  username: string
+  name: string
+  avatarUrl: string
+  themeMode: "Light" | "Dark" | "System"
+}
 
 export type ProfilesConversations = {
-  userId: string;
-  conversationId: string;
-};
+  userId: string
+  conversationId: string
+}
 export const toProfilesConversationsId = ({
   userId,
   conversationId,
 }: {
-  userId: string;
-  conversationId: string;
+  userId: string
+  conversationId: string
 }): string => {
-  return [userId, conversationId].join(",");
-};
+  return [userId, conversationId].join(",")
+}
 
 export type Conversation = {
-  conversationId: string;
-};
+  conversationId: string
+}
 
 export type Message = {
-  messageId: string;
-  conversationId: string;
-  userId: string;
-  message: string;
-};
+  messageId: string
+  conversationId: string
+  userId: string
+  message: string
+}
 
 //
 //
@@ -77,36 +77,36 @@ export type Message = {
 export type Queries = {
   Profile: {
     FindOne: {
-      [userId: string]: RemoteData.Model<Problem, string>;
-    };
+      [userId: string]: RemoteData.Model<Problem, string>
+    }
     Search: {
-      [searchText: string]: RemoteData.Model<Problem, string[]>;
-    };
-  };
+      [searchText: string]: RemoteData.Model<Problem, string[]>
+    }
+  }
 
   Conversation: {
     FindOne: {
       [id: string]: RemoteData.Model<
         Problem,
         {
-          conversation: string;
-          message: string[];
-          profile: string[];
+          conversation: string
+          message: string[]
+          profile: string[]
         }
-      >;
-    };
+      >
+    }
     FindManyByUserId: {
       [userId: string]: RemoteData.Model<
         Problem,
         {
-          profile: string[];
-          conversation: string[];
-          profilesConversations: string[];
+          profile: string[]
+          conversation: string[]
+          profilesConversations: string[]
         }
-      >;
-    };
-  };
-};
+      >
+    }
+  }
+}
 
 //
 //
@@ -119,27 +119,27 @@ export type Queries = {
 export type Mutations = {
   Profile: {
     Edit: {
-      [userId: string]: RemoteData.Model<Problem, string>;
-    };
+      [userId: string]: RemoteData.Model<Problem, string>
+    }
     DeleteForever: {
-      [userId: string]: RemoteData.Model<Problem, {}>;
-    };
+      [userId: string]: RemoteData.Model<Problem, {}>
+    }
     Create: {
-      [userId: string]: RemoteData.Model<Problem, string>;
-    };
-  };
+      [userId: string]: RemoteData.Model<Problem, string>
+    }
+  }
   Conversation: {
-    FindElseInsert: RemoteData.Model<Problem, string>;
-  };
+    FindElseInsert: RemoteData.Model<Problem, string>
+  }
   Message: {
     Send: {
-      [conversationId: string]: RemoteData.Model<Problem, string>;
-    };
+      [conversationId: string]: RemoteData.Model<Problem, string>
+    }
     Unsend: {
-      [messageId: string]: RemoteData.Model<Problem, string>;
-    };
-  };
-};
+      [messageId: string]: RemoteData.Model<Problem, string>
+    }
+  }
+}
 
 //
 //
@@ -149,7 +149,7 @@ export type Mutations = {
 //
 //
 
-export type Problem = { message: string };
+export type Problem = { message: string }
 
 //
 //
@@ -188,4 +188,4 @@ export const initialStore: Store = {
       Unsend: {},
     },
   },
-};
+}

@@ -1,4 +1,4 @@
-export * as ReduxDevTools from "./ReduxDevTools";
+export * as ReduxDevTools from "./ReduxDevTools"
 
 export const formatMsg = (msg: unknown) =>
   JSON.stringify(msg)
@@ -6,4 +6,4 @@ export const formatMsg = (msg: unknown) =>
     .replaceAll("[", "")
     .replaceAll("]", "")
     .split(",")
-    .join(", ");
+    .join(", ")

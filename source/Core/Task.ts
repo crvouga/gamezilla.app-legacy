@@ -1,34 +1,32 @@
-export type Task<T> = () => Promise<T>;
+export type Task<T> = () => Promise<T>
 
 export const of =
   <T>(value: T) =>
   async () => {
-    return value;
-  };
+    return value
+  }
 
 export const map =
   <A, B>(mapper: (value: A) => B) =>
   (task: Task<A>): Task<B> =>
   async () => {
-    return mapper(await task());
-  };
+    return mapper(await task())
+  }
 
 export const chain =
   <A, B>(mapper: (a: A) => Task<B>) =>
   (taskA: Task<A>): Task<B> =>
   async () => {
-    const a = await taskA();
+    const a = await taskA()
 
-    const taskB = mapper(a);
+    const taskB = mapper(a)
 
-    const b = await taskB();
-
-    return b;
-  };
+    return await taskB()
+  }
 
 export const timeout =
   <T>(milliseconds: number, value: T): Task<T> =>
   async () => {
-    await new Promise((resolve) => setTimeout(resolve, milliseconds));
-    return value;
-  };
+    await new Promise((resolve) => setTimeout(resolve, milliseconds))
+    return value
+  }

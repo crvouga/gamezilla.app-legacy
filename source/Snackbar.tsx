@@ -1,6 +1,6 @@
-import { SxProps } from "@mui/material";
-import * as UI from "./UI";
-import { Cmd, Task, Uuid, pipe } from "./Core";
+import { SxProps } from "@mui/material"
+import * as UI from "./UI"
+import { Cmd, pipe, Task, Uuid } from "./Core"
 
 //
 //
@@ -11,18 +11,18 @@ import { Cmd, Task, Uuid, pipe } from "./Core";
 //
 
 export type Model = {
-  queue: Snack[];
-};
+  queue: Snack[]
+}
 
 export type Snack = {
-  variant: "Info" | "Error";
-  snackId: string;
-  message: string;
-};
+  variant: "Info" | "Error"
+  snackId: string
+  message: string
+}
 
 export const init: Model = {
   queue: [],
-};
+}
 
 //
 //
@@ -32,23 +32,24 @@ export const init: Model = {
 //
 //
 
-export type Msg =
-  | ["DurationElapsed", string]
-  | ["UserClosedSnackbar", string];
+export type Msg = ["DurationElapsed", string] | ["UserClosedSnackbar", string]
 
-export type Enqueue = ["Enqueue", { variant: "Info" | "Error", message: string }]
+export type Enqueue = [
+  "Enqueue",
+  { variant: "Info" | "Error"; message: string },
+]
 
-export type Action = ['Snackbar', Enqueue];
+export type Action = ["Snackbar", Enqueue]
 
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
     case "DurationElapsed":
-      return removeById(msg[1], model);
+      return removeById(msg[1], model)
 
     case "UserClosedSnackbar":
-      return [model, Cmd.None];
+      return [model, Cmd.None]
   }
-};
+}
 
 export const runAction = (
   action: Action,
@@ -56,7 +57,6 @@ export const runAction = (
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (action[1][0]) {
     case "Enqueue": {
-
       const { message, variant } = action[1][1]
 
       const snack: Snack = {
@@ -68,16 +68,16 @@ export const runAction = (
       return [
         {
           ...model,
-          queue: [snack, ...model.queue]
+          queue: [snack, ...model.queue],
         },
         pipe(
           Task.timeout(4000, {}),
           Cmd.fromTask((): Msg => ["DurationElapsed", snack.snackId]),
         ),
-      ];
+      ]
     }
   }
-};
+}
 
 const removeById = (snackId: string, model: Model): [Model, Cmd.Cmd<Msg>] => [
   {
@@ -85,7 +85,7 @@ const removeById = (snackId: string, model: Model): [Model, Cmd.Cmd<Msg>] => [
     queue: model.queue.filter((snack) => snack.snackId !== snackId),
   },
   Cmd.None,
-];
+]
 
 //
 //
@@ -97,30 +97,30 @@ const removeById = (snackId: string, model: Model): [Model, Cmd.Cmd<Msg>] => [
 
 export const view =
   ({ sx }: { sx?: SxProps }, model: Model): UI.View<Msg> =>
-    (dispatch) => {
-      const snack = model.queue[0];
+  (dispatch) => {
+    const snack = model.queue[0]
 
-      if (!snack) {
-        return <></>;
-      }
+    if (!snack) {
+      return <></>
+    }
 
-      return (
-        <UI.Portal>
-          <UI.Snackbar
-            sx={sx}
-            open
-            message={snack.message}
+    return (
+      <UI.Portal>
+        <UI.Snackbar
+          sx={sx}
+          open
+          message={snack.message}
+          onClose={() => dispatch(["UserClosedSnackbar", snack.snackId])}
+        >
+          <UI.Alert
+            variant="filled"
             onClose={() => dispatch(["UserClosedSnackbar", snack.snackId])}
+            severity={snack.variant === "Error" ? "error" : "info"}
+            sx={{ width: "100%" }}
           >
-            <UI.Alert
-              variant="filled"
-              onClose={() => dispatch(["UserClosedSnackbar", snack.snackId])}
-              severity={snack.variant === "Error" ? "error" : "info"}
-              sx={{ width: "100%" }}
-            >
-              {snack.message}
-            </UI.Alert>
-          </UI.Snackbar>
-        </UI.Portal>
-      );
-    };
+            {snack.message}
+          </UI.Alert>
+        </UI.Snackbar>
+      </UI.Portal>
+    )
+  }

@@ -1,11 +1,10 @@
-import produce from "immer";
-import { matchSorter } from "match-sorter";
-import { Cmd, pipe, RemoteData, Result, Task } from "../Core";
-import { exhaustive } from "../Core";
-import * as Supabase from "../Supabase";
-import { definitions } from "../supabase-types";
-import * as Types from "./Types";
-import { Problem, Store } from "./Types";
+import produce from "immer"
+import { matchSorter } from "match-sorter"
+import { Cmd, exhaustive, pipe, RemoteData, Result, Task } from "../Core"
+import * as Supabase from "../Supabase"
+import { definitions } from "../supabase-types"
+import * as Types from "./Types"
+import { Problem, Store } from "./Types"
 
 //
 //
@@ -15,9 +14,9 @@ import { Problem, Store } from "./Types";
 //
 //
 
-type Model = Store;
+type Model = Store
 
-export type Profile = Types.Profile;
+export type Profile = Types.Profile
 
 //
 //
@@ -28,22 +27,40 @@ export type Profile = Types.Profile;
 //
 
 export type FindMany = ["FindMany", { userIds: string[] }]
-export type FindManyResulted = ["FindManyResulted", { userIds: string[], result: Result.Result<Problem, Profile[]> }]
+export type FindManyResulted = [
+  "FindManyResulted",
+  { userIds: string[]; result: Result.Result<Problem, Profile[]> },
+]
 
-export type Edit = ["Edit", { userId: string, edits: Partial<Profile> }]
-export type EditResulted = ["EditResulted", { userId: string, previous: Profile, result: Result.Result<Problem, Profile> }]
+export type Edit = ["Edit", { userId: string; edits: Partial<Profile> }]
+export type EditResulted = [
+  "EditResulted",
+  {
+    userId: string
+    previous: Profile
+    result: Result.Result<Problem, Profile>
+  },
+]
 
 export type DeleteForever = ["DeleteForever", { userId: string }]
-export type DeleteForeverResulted = ["DeleteForeverResulted", { userId: string, result: Result.Result<Problem, {}> }]
+export type DeleteForeverResulted = [
+  "DeleteForeverResulted",
+  { userId: string; result: Result.Result<Problem, {}> },
+]
 
-export type Create = ["Create", { profile: Profile, userId: string }]
-export type CreateResulted = ["CreateResulted", { userId: string, result: Result.Result<Problem, Profile> }]
+export type Create = ["Create", { profile: Profile; userId: string }]
+export type CreateResulted = [
+  "CreateResulted",
+  { userId: string; result: Result.Result<Problem, Profile> },
+]
 
 export type Search = ["Search", { searchText: string }]
-export type SearchResulted = ["SearchResulted", { searchText: string, result: Result.Result<Problem, Profile[]> }]
+export type SearchResulted = [
+  "SearchResulted",
+  { searchText: string; result: Result.Result<Problem, Profile[]> },
+]
 
 export type ResetMutations = ["ResetMutations"]
-
 
 export type Msg =
   | EditResulted
@@ -58,7 +75,7 @@ export type Action =
   | DeleteForever
   | Edit
   | Create
-  | ResetMutations;
+  | ResetMutations
 
 //
 //
@@ -71,95 +88,96 @@ export type Action =
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
     case "EditResulted": {
-      const { userId, result } = msg[1];
+      const { userId, result } = msg[1]
 
       const modeNew = produce(model, (model) => {
         model.mutations.Profile.Edit[userId] = pipe(
           msg[1].result,
           RemoteData.fromResult,
           RemoteData.mapSuccess((profile) => profile.userId),
-        );
+        )
 
         switch (result.type) {
           case "Err":
-            delete model.Profile[userId];
-            break;
+            delete model.Profile[userId]
+            break
 
           case "Ok":
-            model.Profile[result.value.userId] = result.value;
-            break;
+            model.Profile[result.value.userId] = result.value
+            break
         }
-      });
+      })
 
-      return [modeNew, Cmd.None];
+      return [modeNew, Cmd.None]
     }
 
     case "FindManyResulted": {
-      const { userIds, result } = msg[1];
+      const { userIds, result } = msg[1]
 
       const modelNew = produce(model, (model) => {
         switch (result.type) {
           case "Err":
             for (const userId of userIds) {
-              model.queries.Profile.FindOne[userId] = RemoteData.fromResult(result)
+              model.queries.Profile.FindOne[userId] =
+                RemoteData.fromResult(result)
             }
-            break;
+            break
 
           case "Ok":
             for (const profile of result.value) {
-              model.queries.Profile.FindOne[profile.userId] = RemoteData.Success(profile.userId)
-              model.Profile[profile.userId] = profile;
+              model.queries.Profile.FindOne[profile.userId] =
+                RemoteData.Success(profile.userId)
+              model.Profile[profile.userId] = profile
             }
-            break;
+            break
         }
-      });
-      return [modelNew, Cmd.None];
+      })
+      return [modelNew, Cmd.None]
     }
-
 
     case "DeleteForeverResulted": {
       const { result, userId } = msg[1]
       const modelNew = produce(model, (model) => {
         model.mutations.Profile.DeleteForever[userId] =
-          RemoteData.fromResult(result);
+          RemoteData.fromResult(result)
 
         switch (result.type) {
-          case 'Err':
+          case "Err":
             break
 
-          case 'Ok':
-            delete model.Profile[userId];
+          case "Ok":
+            delete model.Profile[userId]
         }
-      });
-      return [modelNew, Cmd.None];
+      })
+      return [modelNew, Cmd.None]
     }
 
     case "CreateResulted": {
-      const { userId, result } = msg[1];
+      const { userId, result } = msg[1]
 
       const modelNew = produce(model, (model) => {
         model.mutations.Profile.Create[userId] = pipe(
           result,
           RemoteData.fromResult,
           RemoteData.mapSuccess((profile) => profile.userId),
-        );
+        )
 
         switch (result.type) {
           case "Err":
-            delete model.Profile[userId];
-            break;
+            delete model.Profile[userId]
+            break
 
           case "Ok":
-            model.Profile[userId] = result.value;
-            break;
+            model.Profile[userId] = result.value
+            break
         }
-      });
+      })
 
-      return [modelNew, Cmd.None];
+      return [modelNew, Cmd.None]
     }
 
     case "SearchResulted": {
-      const { result, searchText } = msg[1];
+      const { result, searchText } = msg[1]
 
       const modelNew = produce(model, (model) => {
         model.queries.Profile.Search[searchText] = pipe(
@@ -168,136 +186,143 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
           RemoteData.mapSuccess((profiles) =>
             profiles.map((profile) => profile.userId),
           ),
-        );
+        )
 
         switch (result.type) {
           case "Err":
-            break;
+            break
 
           case "Ok":
             for (const profile of result.value) {
-              model.Profile[profile.userId] = profile;
+              model.Profile[profile.userId] = profile
             }
-            break;
+            break
         }
-      });
+      })
 
-      return [modelNew, Cmd.None];
+      return [modelNew, Cmd.None]
     }
 
     default:
-      return exhaustive(msg);
+      return exhaustive(msg)
   }
-};
+}
 
 export const runAction = (msg: Action, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
     case "Edit": {
-      const { userId, edits } = msg[1];
+      const { userId, edits } = msg[1]
 
       const profile = model.Profile[userId]
 
       if (!profile) {
-
         return [model, Cmd.None]
       }
 
-
       const modelNew = produce(model, (model) => {
-        model.mutations.Profile.Edit[userId] = RemoteData.Loading;
+        model.mutations.Profile.Edit[userId] = RemoteData.Loading
 
-        model.Profile[userId] = { ...profile, ...edits };
-      });
+        model.Profile[userId] = { ...profile, ...edits }
+      })
 
       return [
         modelNew,
         pipe(
           edit(userId, edits),
-          Cmd.fromTask((result): Msg => ["EditResulted", { previous: profile, userId, result }]),
+          Cmd.fromTask(
+            (result): Msg => [
+              "EditResulted",
+              { previous: profile, userId, result },
+            ],
+          ),
         ),
-      ];
-
-
+      ]
     }
 
     case "FindMany": {
-      const { userIds } = msg[1];
+      const { userIds } = msg[1]
 
       const modelNew = produce(model, (model) => {
         for (const userId of userIds) {
-          model.queries.Profile.FindOne[userId] = RemoteData.Loading;
+          model.queries.Profile.FindOne[userId] = RemoteData.Loading
         }
-      });
+      })
 
       return [
         modelNew,
         pipe(
           findMany({ userIds }),
-          Cmd.fromTask((result): Msg => ['FindManyResulted', { userIds, result }]),
+          Cmd.fromTask(
+            (result): Msg => ["FindManyResulted", { userIds, result }],
+          ),
         ),
-      ];
+      ]
     }
 
     case "DeleteForever": {
       const { userId } = msg[1]
 
       const modelNew = produce(model, (model) => {
-        model.mutations.Profile.DeleteForever[userId] = RemoteData.Loading;
-      });
+        model.mutations.Profile.DeleteForever[userId] = RemoteData.Loading
+      })
 
       return [
         modelNew,
         pipe(
           deleteForever(userId),
-          Cmd.fromTask((result): Msg => ['DeleteForeverResulted', { userId, result }]),
+          Cmd.fromTask(
+            (result): Msg => ["DeleteForeverResulted", { userId, result }],
+          ),
         ),
-      ];
+      ]
     }
 
     case "Create": {
-      const { profile, userId } = msg[1];
+      const { profile, userId } = msg[1]
       const modelNew = produce(model, (model) => {
-        model.mutations.Profile.Create[userId] = RemoteData.Loading;
-        model.Profile[userId] = profile;
-      });
+        model.mutations.Profile.Create[userId] = RemoteData.Loading
+        model.Profile[userId] = profile
+      })
 
       return [
         modelNew,
         pipe(
           create(profile),
-          Cmd.fromTask((result): Msg => ['CreateResulted', { userId, result }]),
+          Cmd.fromTask((result): Msg => ["CreateResulted", { userId, result }]),
         ),
-      ];
+      ]
     }
 
     case "Search": {
-      const { searchText } = msg[1];
+      const { searchText } = msg[1]
 
       const modelNew = produce(model, (model) => {
-        model.queries.Profile.Search[searchText] = RemoteData.Loading;
-      });
+        model.queries.Profile.Search[searchText] = RemoteData.Loading
+      })
 
       return [
         modelNew,
         pipe(
           search({ nameOrUsername: searchText }),
-          Cmd.fromTask((result): Msg => ['SearchResulted', { result, searchText }]),
+          Cmd.fromTask(
+            (result): Msg => ["SearchResulted", { result, searchText }],
+          ),
         ),
-      ];
+      ]
     }
 
     case "ResetMutations": {
       const modelNew = produce(model, (model) => {
         model.mutations.Profile = Types.initialStore.mutations.Profile
-      });
+      })
 
-      return [modelNew, Cmd.None];
+      return [modelNew, Cmd.None]
     }
 
     default:
-      return exhaustive(msg);
+      return exhaustive(msg)
   }
-};
+}
 
 //
 //
@@ -311,32 +336,32 @@ export const toProfile = (
   userId: string,
   model: Model,
 ): RemoteData.Model<Problem, Profile> => {
-  const query = model.queries.Profile.FindOne[userId] ?? RemoteData.NotAsked;
+  const query = model.queries.Profile.FindOne[userId] ?? RemoteData.NotAsked
 
   switch (query.type) {
     case "Failure":
     case "Loading":
     case "NotAsked":
-      return query;
+      return query
 
     case "Success":
-      const userId = query.value;
+      const userId = query.value
 
-      const profile = model.Profile[userId];
+      const profile = model.Profile[userId]
 
       if (!profile) {
-        return RemoteData.Failure({ message: "Invalid state" });
+        return RemoteData.Failure({ message: "Invalid state" })
       }
 
-      return RemoteData.Success(profile);
+      return RemoteData.Success(profile)
   }
-};
+}
 
 export const toSearch = (nameOrUsername: string, store: Model) => {
   return matchSorter(Object.values(store.Profile), nameOrUsername, {
     keys: ["name", "username"],
-  });
-};
+  })
+}
 
 //
 //
@@ -351,30 +376,30 @@ export const rowThemeModeToThemeMode = (
 ): Profile["themeMode"] => {
   switch (themeMode) {
     case "DARK":
-      return "Dark";
+      return "Dark"
 
     case "LIGHT":
-      return "Light";
+      return "Light"
 
     case "SYSTEM":
-      return "System";
+      return "System"
   }
-};
+}
 
 const fromThemeMode = (
   themeMode: Profile["themeMode"],
 ): definitions["user_profile"]["theme_mode"] => {
   switch (themeMode) {
     case "Dark":
-      return "DARK";
+      return "DARK"
 
     case "Light":
-      return "LIGHT";
+      return "LIGHT"
 
     case "System":
-      return "SYSTEM";
+      return "SYSTEM"
   }
-};
+}
 
 export const rowToProfile = (row: definitions["user_profile"]): Profile => {
   return {
@@ -383,47 +408,47 @@ export const rowToProfile = (row: definitions["user_profile"]): Profile => {
     name: row.name,
     username: row.username,
     themeMode: rowThemeModeToThemeMode(row.theme_mode),
-  };
-};
+  }
+}
 
 export const load =
   ({
     userId,
   }: {
-    userId: string;
+    userId: string
   }): Task.Task<Result.Result<Problem, Profile>> =>
-    async () => {
-      const response = await Supabase.client
-        .from<definitions["user_profile"]>("user_profile")
-        .select("*")
-        .eq("id", userId)
-        .single();
+  async () => {
+    const response = await Supabase.client
+      .from<definitions["user_profile"]>("user_profile")
+      .select("*")
+      .eq("id", userId)
+      .single()
 
-      if (response.error) {
-        return Result.Err({ message: response.error.message });
-      }
+    if (response.error) {
+      return Result.Err({ message: response.error.message })
+    }
 
-      return Result.Ok(rowToProfile(response.data));
-    };
+    return Result.Ok(rowToProfile(response.data))
+  }
 
 export const findMany =
   ({
     userIds,
   }: {
-    userIds: string[];
+    userIds: string[]
   }): Task.Task<Result.Result<Problem, Profile[]>> =>
-    async () => {
-      const response = await Supabase.client
-        .from<definitions["user_profile"]>("user_profile")
-        .select("*")
-        .in("id", userIds);
+  async () => {
+    const response = await Supabase.client
+      .from<definitions["user_profile"]>("user_profile")
+      .select("*")
+      .in("id", userIds)
 
-      if (response.error) {
-        return Result.Err({ message: response.error.message });
-      }
+    if (response.error) {
+      return Result.Err({ message: response.error.message })
+    }
 
-      return Result.Ok(response.data.map(rowToProfile));
-    };
+    return Result.Ok(response.data.map(rowToProfile))
+  }
 
 export const create =
   ({
@@ -432,99 +457,99 @@ export const create =
     username,
     avatarUrl,
   }: {
-    userId: string;
-    name: string;
-    username: string;
-    avatarUrl: string;
+    userId: string
+    name: string
+    username: string
+    avatarUrl: string
   }): Task.Task<Result.Result<Problem, Profile>> =>
-    async () => {
-      const response = await Supabase.client
-        .from<definitions["user_profile"]>("user_profile")
-        .insert({
-          id: userId,
-          name,
-          username,
-          avatar_url: avatarUrl,
-          theme_mode: "SYSTEM",
-        })
-        .single();
+  async () => {
+    const response = await Supabase.client
+      .from<definitions["user_profile"]>("user_profile")
+      .insert({
+        id: userId,
+        name,
+        username,
+        avatar_url: avatarUrl,
+        theme_mode: "SYSTEM",
+      })
+      .single()
 
-      if (response.data) {
-        return Result.Ok(rowToProfile(response.data));
-      }
+    if (response.data) {
+      return Result.Ok(rowToProfile(response.data))
+    }
 
-      return Result.Err({ message: response.error.message });
-    };
+    return Result.Err({ message: response.error.message })
+  }
 
 export const deleteForever =
   (userId: string): Task.Task<Result.Result<Problem, string>> =>
-    async () => {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+  async () => {
+    await new Promise((resolve) => setTimeout(resolve, 1000))
 
-      const response = await Supabase.client
-        .from<definitions["user_profile"]>("user_profile")
-        .delete()
-        .match({ id: userId });
+    const response = await Supabase.client
+      .from<definitions["user_profile"]>("user_profile")
+      .delete()
+      .match({ id: userId })
 
-      if (response.error) {
-        return Result.Err({ message: response.error.message });
-      }
+    if (response.error) {
+      return Result.Err({ message: response.error.message })
+    }
 
-      return Result.Ok(userId);
-    };
+    return Result.Ok(userId)
+  }
 
 export const search =
   ({
     nameOrUsername,
   }: {
-    nameOrUsername: string;
+    nameOrUsername: string
   }): Task.Task<Result.Result<Problem, Profile[]>> =>
-    async () => {
-      const response = await Supabase.client
-        .from<definitions["user_profile"]>("user_profile")
-        .select("*")
-        .ilike(
-          "name",
-          `%${nameOrUsername
-            .split(" ")
-            .map((_) => _.replace(" ", ""))
-            .join("%")}%`,
-        );
+  async () => {
+    const response = await Supabase.client
+      .from<definitions["user_profile"]>("user_profile")
+      .select("*")
+      .ilike(
+        "name",
+        `%${nameOrUsername
+          .split(" ")
+          .map((_) => _.replace(" ", ""))
+          .join("%")}%`,
+      )
 
-      if (response.error) {
-        return Result.Err({ message: response.error.message });
-      }
+    if (response.error) {
+      return Result.Err({ message: response.error.message })
+    }
 
-      const profiles = response.data.map(rowToProfile);
+    const profiles = response.data.map(rowToProfile)
 
-      return Result.Ok(profiles);
-    };
+    return Result.Ok(profiles)
+  }
 
 export const edit =
   (
     userId: string,
     edits: Partial<Profile>,
   ): Task.Task<Result.Result<Problem, Profile>> =>
-    async () => {
-      const response = await Supabase.client
-        .from<definitions["user_profile"]>("user_profile")
-        .update({
-          username: edits.username,
-          name: edits.name,
-          avatar_url: edits.avatarUrl,
-          theme_mode: edits.themeMode
-            ? fromThemeMode(edits.themeMode)
-            : undefined,
-        })
-        .match({ id: userId })
-        .single();
+  async () => {
+    const response = await Supabase.client
+      .from<definitions["user_profile"]>("user_profile")
+      .update({
+        username: edits.username,
+        name: edits.name,
+        avatar_url: edits.avatarUrl,
+        theme_mode: edits.themeMode
+          ? fromThemeMode(edits.themeMode)
+          : undefined,
+      })
+      .match({ id: userId })
+      .single()
 
-      if (response.error) {
-        return Result.Err({ message: response.error.message });
-      }
+    if (response.error) {
+      return Result.Err({ message: response.error.message })
+    }
 
-      return Result.Ok(rowToProfile(response.data));
-    };
+    return Result.Ok(rowToProfile(response.data))
+  }
 
 // export const subscriptions = ({ userId }: { userId: string }): Sub.Sub<Msg> => {
 //   return new Rx.Observable<Msg>((subscriber) => {

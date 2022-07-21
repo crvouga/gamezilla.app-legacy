@@ -1,7 +1,7 @@
-import * as Route from "../Route";
-import * as Store from "../Store";
-import * as UI from "../UI";
-import { Cmd } from "../Core";
+import * as Route from "../Route"
+import * as Store from "../Store"
+import * as UI from "../UI"
+import { Cmd } from "../Core"
 
 //
 //
@@ -11,13 +11,13 @@ import { Cmd } from "../Core";
 //
 //
 
-export type Model = { username: string };
+export type Model = { username: string }
 
 export const init = ({ username }: { username: string }): Model => {
   return {
     username,
-  };
-};
+  }
+}
 
 //
 //
@@ -30,9 +30,9 @@ export const init = ({ username }: { username: string }): Model => {
 export type Msg =
   | ["ClickedCancel"]
   | ["ClickedSubmit"]
-  | ["InputtedUsername", string];
+  | ["InputtedUsername", string]
 
-type OutAction = Store.Action;
+type OutAction = Store.Action
 
 export const update = (
   { userId }: { userId: string },
@@ -41,19 +41,27 @@ export const update = (
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
     case "InputtedUsername":
-      return [{ ...model, username: msg[1] }, Cmd.None, []];
+      return [{ ...model, username: msg[1] }, Cmd.None, []]
 
     case "ClickedCancel":
-      return [model, Route.back, []];
+      return [model, Route.back, []]
 
     case "ClickedSubmit":
       return [
         model,
         Route.back,
-        [["Store", ['Profile', ['Edit', { userId, edits: { username: model.username } }]]]],
-      ];
+        [
+          [
+            "Store",
+            [
+              "Profile",
+              ["Edit", { userId, edits: { username: model.username } }],
+            ],
+          ],
+        ],
+      ]
   }
-};
+}
 
 //
 //
@@ -65,7 +73,7 @@ export const update = (
 
 export const view =
   (model: Model): UI.View<Msg> =>
-    (dispatch) =>
+  (dispatch) =>
     (
       <UI.FillBox>
         <UI.Header
@@ -100,4 +108,4 @@ export const view =
           />
         </UI.Box>
       </UI.FillBox>
-    );
+    )

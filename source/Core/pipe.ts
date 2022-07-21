@@ -1,21 +1,21 @@
 // Source: https://github.com/gcanti/fp-ts/blob/master/src/function.ts
 
-export function pipe<A>(a: A): A;
-export function pipe<A, B>(a: A, ab: (a: A) => B): B;
-export function pipe<A, B, C>(a: A, ab: (a: A) => B, bc: (b: B) => C): C;
+export function pipe<A>(a: A): A
+export function pipe<A, B>(a: A, ab: (a: A) => B): B
+export function pipe<A, B, C>(a: A, ab: (a: A) => B, bc: (b: B) => C): C
 export function pipe<A, B, C, D>(
   a: A,
   ab: (a: A) => B,
   bc: (b: B) => C,
   cd: (c: C) => D,
-): D;
+): D
 export function pipe<A, B, C, D, E>(
   a: A,
   ab: (a: A) => B,
   bc: (b: B) => C,
   cd: (c: C) => D,
   de: (d: D) => E,
-): E;
+): E
 export function pipe<A, B, C, D, E, F>(
   a: A,
   ab: (a: A) => B,
@@ -23,7 +23,7 @@ export function pipe<A, B, C, D, E, F>(
   cd: (c: C) => D,
   de: (d: D) => E,
   ef: (e: E) => F,
-): F;
+): F
 export function pipe<A, B, C, D, E, F, G>(
   a: A,
   ab: (a: A) => B,
@@ -32,7 +32,7 @@ export function pipe<A, B, C, D, E, F, G>(
   de: (d: D) => E,
   ef: (e: E) => F,
   fg: (f: F) => G,
-): G;
+): G
 export function pipe<A, B, C, D, E, F, G, H>(
   a: A,
   ab: (a: A) => B,
@@ -42,7 +42,7 @@ export function pipe<A, B, C, D, E, F, G, H>(
   ef: (e: E) => F,
   fg: (f: F) => G,
   gh: (g: G) => H,
-): H;
+): H
 export function pipe<A, B, C, D, E, F, G, H, I>(
   a: A,
   ab: (a: A) => B,
@@ -53,7 +53,7 @@ export function pipe<A, B, C, D, E, F, G, H, I>(
   fg: (f: F) => G,
   gh: (g: G) => H,
   hi: (h: H) => I,
-): I;
+): I
 export function pipe<A, B, C, D, E, F, G, H, I, J>(
   a: A,
   ab: (a: A) => B,
@@ -65,7 +65,7 @@ export function pipe<A, B, C, D, E, F, G, H, I, J>(
   gh: (g: G) => H,
   hi: (h: H) => I,
   ij: (i: I) => J,
-): J;
+): J
 export function pipe<A, B, C, D, E, F, G, H, I, J, K>(
   a: A,
   ab: (a: A) => B,
@@ -78,7 +78,7 @@ export function pipe<A, B, C, D, E, F, G, H, I, J, K>(
   hi: (h: H) => I,
   ij: (i: I) => J,
   jk: (j: J) => K,
-): K;
+): K
 export function pipe<A, B, C, D, E, F, G, H, I, J, K, L>(
   a: A,
   ab: (a: A) => B,
@@ -92,7 +92,7 @@ export function pipe<A, B, C, D, E, F, G, H, I, J, K, L>(
   ij: (i: I) => J,
   jk: (j: J) => K,
   kl: (k: K) => L,
-): L;
+): L
 export function pipe<A, B, C, D, E, F, G, H, I, J, K, L, M>(
   a: A,
   ab: (a: A) => B,
@@ -107,7 +107,7 @@ export function pipe<A, B, C, D, E, F, G, H, I, J, K, L, M>(
   jk: (j: J) => K,
   kl: (k: K) => L,
   lm: (l: L) => M,
-): M;
+): M
 export function pipe<A, B, C, D, E, F, G, H, I, J, K, L, M, N>(
   a: A,
   ab: (a: A) => B,
@@ -123,7 +123,7 @@ export function pipe<A, B, C, D, E, F, G, H, I, J, K, L, M, N>(
   kl: (k: K) => L,
   lm: (l: L) => M,
   mn: (m: M) => N,
-): N;
+): N
 export function pipe<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O>(
   a: A,
   ab: (a: A) => B,
@@ -140,7 +140,7 @@ export function pipe<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O>(
   lm: (l: L) => M,
   mn: (m: M) => N,
   no: (n: N) => O,
-): O;
+): O
 
 export function pipe<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P>(
   a: A,
@@ -159,7 +159,7 @@ export function pipe<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P>(
   mn: (m: M) => N,
   no: (n: N) => O,
   op: (o: O) => P,
-): P;
+): P
 
 export function pipe<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q>(
   a: A,
@@ -179,7 +179,7 @@ export function pipe<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q>(
   no: (n: N) => O,
   op: (o: O) => P,
   pq: (p: P) => Q,
-): Q;
+): Q
 
 export function pipe<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R>(
   a: A,
@@ -200,7 +200,7 @@ export function pipe<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R>(
   op: (o: O) => P,
   pq: (p: P) => Q,
   qr: (q: Q) => R,
-): R;
+): R
 
 export function pipe<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S>(
   a: A,
@@ -222,7 +222,7 @@ export function pipe<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S>(
   pq: (p: P) => Q,
   qr: (q: Q) => R,
   rs: (r: R) => S,
-): S;
+): S
 
 export function pipe<
   A,
@@ -266,7 +266,7 @@ export function pipe<
   qr: (q: Q) => R,
   rs: (r: R) => S,
   st: (s: S) => T,
-): T;
+): T
 export function pipe(
   a: unknown,
   ab?: Function,
@@ -280,28 +280,28 @@ export function pipe(
 ): unknown {
   switch (arguments.length) {
     case 1:
-      return a;
+      return a
     case 2:
-      return ab!(a);
+      return ab!(a)
     case 3:
-      return bc!(ab!(a));
+      return bc!(ab!(a))
     case 4:
-      return cd!(bc!(ab!(a)));
+      return cd!(bc!(ab!(a)))
     case 5:
-      return de!(cd!(bc!(ab!(a))));
+      return de!(cd!(bc!(ab!(a))))
     case 6:
-      return ef!(de!(cd!(bc!(ab!(a)))));
+      return ef!(de!(cd!(bc!(ab!(a)))))
     case 7:
-      return fg!(ef!(de!(cd!(bc!(ab!(a))))));
+      return fg!(ef!(de!(cd!(bc!(ab!(a))))))
     case 8:
-      return gh!(fg!(ef!(de!(cd!(bc!(ab!(a)))))));
+      return gh!(fg!(ef!(de!(cd!(bc!(ab!(a)))))))
     case 9:
-      return hi!(gh!(fg!(ef!(de!(cd!(bc!(ab!(a))))))));
+      return hi!(gh!(fg!(ef!(de!(cd!(bc!(ab!(a))))))))
     default:
-      let ret = arguments[0];
+      let ret = arguments[0]
       for (let i = 1; i < arguments.length; i++) {
-        ret = arguments[i](ret);
+        ret = arguments[i](ret)
       }
-      return ret;
+      return ret
   }
 }

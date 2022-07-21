@@ -1,1 +1,1 @@
-export * from "./ConnectFour";
+export * from "./ConnectFour"

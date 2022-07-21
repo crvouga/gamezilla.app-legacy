@@ -1,9 +1,9 @@
-import { ProfileAvatar } from "../Data";
-import * as Route from "../Route";
-import * as Snackbar from "../Snackbar";
-import * as Store from "../Store";
-import * as UI from "../UI";
-import { Cmd, pipe } from "../Core";
+import { ProfileAvatar } from "../Data"
+import * as Route from "../Route"
+import * as Snackbar from "../Snackbar"
+import * as Store from "../Store"
+import * as UI from "../UI"
+import { Cmd, pipe } from "../Core"
 
 //
 //
@@ -14,20 +14,20 @@ import { Cmd, pipe } from "../Core";
 //
 
 export type Model = {
-  status: "Idle" | "GeneratingSeed" | "StyleSelectOpened" | "UpdatingAvatar";
-  seed: ProfileAvatar.Seed;
-  style: ProfileAvatar.Style;
-};
+  status: "Idle" | "GeneratingSeed" | "StyleSelectOpened" | "UpdatingAvatar"
+  seed: ProfileAvatar.Seed
+  style: ProfileAvatar.Style
+}
 
 export const init = ({ avatarUrl }: { avatarUrl: string }): Model => {
-  const { seed, style } = ProfileAvatar.parseUrl(avatarUrl);
+  const { seed, style } = ProfileAvatar.parseUrl(avatarUrl)
 
   return {
     status: "Idle",
     seed,
     style,
-  };
-};
+  }
+}
 
 //
 //
@@ -45,7 +45,7 @@ export type Msg =
   | ["ClickedRandomSeed"]
   | ["ClickedStyle", ProfileAvatar.Style]
   | ["InputtedSeed", ProfileAvatar.Seed]
-  | ["RandomSeedGenerated", ProfileAvatar.Seed];
+  | ["RandomSeedGenerated", ProfileAvatar.Seed]
 
 type OutAction = Snackbar.Action | Store.Action
 
@@ -56,16 +56,16 @@ export const update = (
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
     case "ClickedCancel":
-      return [model, Route.back, []];
+      return [model, Route.back, []]
 
     case "StyleSelectClosed":
-      return [{ ...model, status: "Idle" }, Cmd.None, []];
+      return [{ ...model, status: "Idle" }, Cmd.None, []]
 
     case "StyleSelectOpened":
-      return [{ ...model, status: "StyleSelectOpened" }, Cmd.None, []];
+      return [{ ...model, status: "StyleSelectOpened" }, Cmd.None, []]
 
     case "InputtedSeed":
-      return [{ ...model, seed: msg[1] }, Cmd.None, []];
+      return [{ ...model, seed: msg[1] }, Cmd.None, []]
 
     case "ClickedRandomSeed":
       return [
@@ -75,13 +75,13 @@ export const update = (
           Cmd.fromTask((seed) => ["RandomSeedGenerated", seed]),
         ),
         [],
-      ];
+      ]
 
     case "RandomSeedGenerated":
-      return [{ ...model, status: "Idle", seed: msg[1] }, Cmd.None, []];
+      return [{ ...model, status: "Idle", seed: msg[1] }, Cmd.None, []]
 
     case "ClickedStyle":
-      return [{ ...model, style: msg[1] }, Cmd.None, []];
+      return [{ ...model, style: msg[1] }, Cmd.None, []]
 
     case "ClickedDone":
       return [
@@ -89,13 +89,19 @@ export const update = (
         Route.back,
         [
           [
-            "Store", ['Profile', ['Edit', { userId, edits: { avatarUrl: ProfileAvatar.toUrl(model) } }]]
-
+            "Store",
+            [
+              "Profile",
+              [
+                "Edit",
+                { userId, edits: { avatarUrl: ProfileAvatar.toUrl(model) } },
+              ],
+            ],
           ],
         ],
-      ];
+      ]
   }
-};
+}
 
 //
 //
@@ -223,5 +229,5 @@ export const view = (model: Model): UI.View<Msg> => {
         </UI.Button>
       </UI.Box>
     </UI.FillBox>
-  );
-};
+  )
+}
