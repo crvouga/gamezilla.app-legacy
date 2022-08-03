@@ -17,8 +17,10 @@ type Model = BackendModel
 export const init: [Model, Cmd.Cmd<BackendMsg>] = [
   {
     games: Games.init,
+    rooms: {},
+    clients: {},
+    users: {},
   },
-
   Cmd.None,
 ]
 

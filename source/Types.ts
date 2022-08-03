@@ -28,6 +28,21 @@ export type FrontendModel = {
 
 export type BackendModel = {
   games: Games.BackendModel
+  clients: {
+    [clientId: string]: {
+      clientId:string,
+      userId: string
+    }
+  }
+  users: {
+    [userId: string]: {
+      userId: string
+      roomId: string
+    }
+  }
+  rooms: {
+    [roomId: string]: {}
+  }
 }
 
 //
