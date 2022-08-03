@@ -1,4 +1,3 @@
-import { Option } from "../Core"
 import * as Chess from "./Chess"
 import * as ConnectFour from "./ConnectFour"
 import * as Snake from "./Snake"
@@ -6,12 +5,6 @@ import * as TicTacToe from "./TicTacToe"
 
 export type BackendModel = {
   ticTacToe: TicTacToe.BackendModel
-  users: {
-    [userId: string]: {
-      userId: string
-      game: ["None"] | ["TicTacToe", TicTacToe.User]
-    }
-  }
 }
 
 export type FrontendModel = Closed | Opened

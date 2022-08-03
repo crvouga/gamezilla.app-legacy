@@ -15,7 +15,6 @@ type Model = BackendModel
 
 export const init: Model = {
   ticTacToe: TicTacToe.init,
-  users: {},
 }
 
 //
@@ -25,7 +24,6 @@ export const init: Model = {
 //
 //
 //
-
 
 export const update = (
   msg: BackendMsg,
