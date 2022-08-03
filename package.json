@@ -1,6 +1,7 @@
 {
   "private": true,
   "scripts": {
+    "dev": "npx concurrently \"npm run backend:dev\" \"npm run frontend:dev\"",
     "backend:dev": "npx nodemon -e ts,js --exec ts-node ./source/Backend.ts",
     "backend:start": "npx ts-node ./source/Backend.ts",
     "format": "npx prettier --write .",
