@@ -9,7 +9,7 @@ export type BackendModel = {
   users: {
     [userId: string]: {
       userId: string
-      game: Game | { type: "None" }
+      game: ["None"] | ["TicTacToe", TicTacToe.User]
     }
   }
 }
@@ -21,7 +21,11 @@ export type Closed = { type: "Closed" }
 export type Opened = {
   type: "Opened"
   status: "Idle" | "ConfirmingClose"
-  child: Game
+  game:
+    | ["TicTacToe", TicTacToe.FrontendModel]
+    | ["ConnectFour", ConnectFour.Model]
+    | ["Chess", Chess.Model]
+    | ["Snake", Snake.Model]
 }
 
 export type ToFrontend = ["TicTacToe", TicTacToe.ToFrontend]
@@ -40,18 +44,4 @@ export type FrontendMsg =
   | ["Snake", Snake.Msg]
   | ["TicTacToe", TicTacToe.FrontendMsg]
 
-//
-//
-//
-//
-//
-//
-//
-
-export type Game =
-  | ["TicTacToe", TicTacToe.FrontendModel]
-  | ["ConnectFour", ConnectFour.Model]
-  | ["Chess", Chess.Model]
-  | ["Snake", Snake.Model]
-
-export type GameName = Game[0]
+export type GameName = "TicTacToe" | "ConnectFour" | "Chess" | "Snake"

@@ -36,20 +36,20 @@ export type Model = FrontendModel
 
 export const init: Model = { type: "Closed" }
 
-const initOpened = ({ game }: { game: GameName }): [Opened, Cmd.Cmd<Msg>] => {
-  const [child, childCmd] = initGame({ game })
+const initOpened = ({ gameName }: { gameName: GameName }): [Opened, Cmd.Cmd<Msg>] => {
+  const [game, gameCmd] = initGame({ gameName })
   return [
-    { type: "Opened", status: "Idle", child },
-    Cmd.batch([Route.push({ type: "Game" }), childCmd]),
+    { type: "Opened", status: "Idle", game },
+    Cmd.batch([Route.push({ type: "Game" }), gameCmd]),
   ]
 }
 
 const initGame = ({
-  game,
+  gameName,
 }: {
-  game: GameName
-}): [Opened["child"], Cmd.Cmd<Msg>] => {
-  switch (game) {
+  gameName: GameName
+}): [Opened["game"], Cmd.Cmd<Msg>] => {
+  switch (gameName) {
     case "Chess":
       return [["Chess", Chess.init], Cmd.None]
 
@@ -102,10 +102,10 @@ export const runAction = (
       const gameName = action[1][1]
 
       if (model.type === "Closed") {
-        return initOpened({ game: gameName })
+        return initOpened({ gameName })
       }
 
-      if (gameName === model.child[0]) {
+      if (gameName === model.game[0]) {
         return [model, Route.push({ type: "Game" })]
       }
 
@@ -139,18 +139,18 @@ export const updateFromBackend = (
       return [model, Cmd.None, []]
 
     case "Opened":
-      const [childNew, childCmd, actions] = updateGameFromBackend(
+      const [gameNew, gameCmd, actions] = updateGameFromBackend(
         msg,
-        model.child,
+        model.game,
       )
-      return [{ ...model, child: childNew }, childCmd, actions]
+      return [{ ...model, game: gameNew }, gameCmd, actions]
   }
 }
 
 const updateGameFromBackend = (
   msg: ToFrontend,
-  model: Opened["child"],
-): [Opened["child"], Cmd.Cmd<Msg>, OutAction[]] => {
+  model: Opened["game"],
+): [Opened["game"], Cmd.Cmd<Msg>, OutAction[]] => {
   switch (model[0]) {
     case "Chess":
       return [model, Cmd.None, []]
@@ -204,16 +204,16 @@ const updateOpened = (
     case "ConnectFour":
     case "Snake":
     case "TicTacToe":
-      const [child, childCmd] = updateGame({ currentUserId }, msg, model.child)
-      return [{ ...model, child }, childCmd, []]
+      const [game, gameCmd] = updateGame({ currentUserId }, msg, model.game)
+      return [{ ...model, game }, gameCmd, []]
   }
 }
 
 const updateGame = (
   { currentUserId }: { currentUserId: string },
   msg: Msg,
-  model: Opened["child"],
-): [Opened["child"], Cmd.Cmd<Msg>] => {
+  model: Opened["game"],
+): [Opened["game"], Cmd.Cmd<Msg>] => {
   switch (model[0]) {
     case "Chess":
       if (msg[0] === "Chess") {
@@ -290,7 +290,7 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
       return Sub.None
 
     case "Opened":
-      switch (model.child[0]) {
+      switch (model.game[0]) {
         case "Chess":
           return Sub.None
 
@@ -299,7 +299,7 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
 
         case "Snake":
           return pipe(
-            Snake.subscriptions(model.child[1]),
+            Snake.subscriptions(model.game[1]),
             Sub.map(tag("Snake")),
           )
 
@@ -326,24 +326,24 @@ export const view = (
       return () => <>game is closed</>
 
     case "Opened":
-      switch (model.child[0]) {
+      switch (model.game[0]) {
         case "Chess":
-          return pipe(Chess.view(model.child[1]), UI.map(tag("Chess")))
+          return pipe(Chess.view(model.game[1]), UI.map(tag("Chess")))
 
         case "ConnectFour":
           return pipe(
-            ConnectFour.view(model.child[1]),
+            ConnectFour.view(model.game[1]),
             UI.map(tag("ConnectFour")),
           )
 
         case "TicTacToe":
           return pipe(
-            TicTacToe.view({ currentUserId, store }, model.child[1]),
+            TicTacToe.view({ currentUserId, store }, model.game[1]),
             UI.map(tag("TicTacToe")),
           )
 
         case "Snake":
-          return pipe(Snake.view(model.child[1]), UI.map(tag("Snake")))
+          return pipe(Snake.view(model.game[1]), UI.map(tag("Snake")))
       }
   }
 }
@@ -367,10 +367,10 @@ export const viewBanner =
             onClick={() => dispatch(["ClickedBanner"])}
           >
             <UI.Box sx={{ width: 64, marginRight: 2 }}>
-              <CoverArt game={model.child[0]} />
+              <CoverArt game={model.game[0]} />
             </UI.Box>
             <UI.Typography align="left" variant="h5" sx={{ flex: 1 }}>
-              {gameToName(model.child[0])}
+              {gameToName(model.game[0])}
             </UI.Typography>
           </UI.ButtonBase>
 
@@ -384,8 +384,8 @@ export const viewBanner =
 
         {UI.conformationDialog<Msg>({
           open: model.status === "ConfirmingClose",
-          title: `Close ${gameToName(model.child[0])}?`,
-          confirmTitle: `Close ${gameToName(model.child[0])}`,
+          title: `Close ${gameToName(model.game[0])}?`,
+          confirmTitle: `Close ${gameToName(model.game[0])}`,
           onClose: ["CancelledClose"],
           onCancel: ["CancelledClose"],
           onConfirm: ["ConfirmedClose"],

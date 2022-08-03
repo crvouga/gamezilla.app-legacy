@@ -48,7 +48,7 @@ export const update = (
 //
 
 const isOpen = (game: Games.Model, gameName: GameName) => {
-  return game.type === "Opened" && game.child[0] === gameName
+  return game.type === "Opened" && game.game[0] === gameName
 }
 
 const canOpen = (game: Games.Model, gameName: GameName) => {
@@ -68,7 +68,7 @@ export const view =
     },
     _model: Model,
   ): UI.View<Msg> =>
-  (dispatch) =>
+    (dispatch) =>
     (
       <UI.FillBox>
         <UI.Header title="Home" />

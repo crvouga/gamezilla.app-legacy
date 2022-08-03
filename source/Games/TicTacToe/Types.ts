@@ -23,6 +23,8 @@ export type BackendModel = {
   }
 }
 
+export type User = { userId: string; roomId: Room.RoomId }
+
 export type FrontendModel = {
   rooms: {
     [id: Room.RoomId]: Room.Room
