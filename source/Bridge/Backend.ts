@@ -1,6 +1,7 @@
 import * as Rx from "rxjs"
+import * as Http from "http"
 import { Server } from "socket.io"
-import { Cmd, Option, pipe, Sub } from "../Core"
+import { Cmd, Option, pipe, Platform, Sub } from "../Core"
 import { ToBackend, ToFrontend } from "../Types"
 import {
   backendServerPort,
@@ -16,12 +17,6 @@ import {
 //
 //
 //
-
-const io = new Server<ClientToServerEvents, ServerToClientEvents>({
-  cors: {
-    origin: "*",
-  },
-})
 
 const toBackend$ = new Rx.Subject<[ClientId, ToBackend]>()
 const onConnect$ = new Rx.Subject<ClientId>()
@@ -69,14 +64,14 @@ export const sendToFrontend = (
   msg: ToFrontend,
 ): Cmd.Cmd<never> => {
   return Rx.of(async () => {
-    io.to(clientIds).emit("ToFrontend", msg)
+    socketServer.to(clientIds).emit("ToFrontend", msg)
     return Option.None
   })
 }
 
 export const broadcast = (msg: ToFrontend): Cmd.Cmd<never> => {
   return Rx.of(async () => {
-    io.emit("ToFrontend", msg)
+    socketServer.emit("ToFrontend", msg)
     return Option.None
   })
 }
@@ -89,14 +84,22 @@ export const broadcast = (msg: ToFrontend): Cmd.Cmd<never> => {
 //
 //
 
-const port = Number(process.env.PORT) || backendServerPort
-io.listen(port)
+const requestListener: Http.RequestListener = (_request, response) => {
+  response.end(JSON.stringify({ message: "Hello from backend" }))
+}
 
-console.clear()
-console.log(`[backend] server running at:`)
-console.log(`[backend] http://localhost:${backendServerPort}/`)
+const httpServer = Http.createServer(requestListener)
 
-io.on("connection", (socket) => {
+const socketServer = new Server<ClientToServerEvents, ServerToClientEvents>(
+  httpServer,
+  {
+    cors: {
+      origin: "*",
+    },
+  },
+)
+
+socketServer.on("connection", (socket) => {
   onConnect$.next(socket.id)
 
   socket.on("disconnect", () => {
@@ -106,4 +109,12 @@ io.on("connection", (socket) => {
   socket.on("ToBackend", (msg) => {
     toBackend$.next([socket.id, msg])
   })
+})
+
+const port = Number(process.env.PORT) || backendServerPort
+
+httpServer.listen(port, () => {
+  console.clear()
+  console.log(`[backend] http server running at:`)
+  console.log(`[backend] http://localhost:${port}/`)
 })
