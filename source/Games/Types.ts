@@ -1,3 +1,4 @@
+import { Option } from "../Core"
 import * as Chess from "./Chess"
 import * as ConnectFour from "./ConnectFour"
 import * as Snake from "./Snake"
@@ -5,9 +6,23 @@ import * as TicTacToe from "./TicTacToe"
 
 export type BackendModel = {
   ticTacToe: TicTacToe.BackendModel
+  users: {
+    [userId: string]: {
+      userId: string
+      game: Game | { type: "None" }
+    }
+  }
 }
 
 export type FrontendModel = Closed | Opened
+
+export type Closed = { type: "Closed" }
+
+export type Opened = {
+  type: "Opened"
+  status: "Idle" | "ConfirmingClose"
+  child: Game
+}
 
 export type ToFrontend = ["TicTacToe", TicTacToe.ToFrontend]
 
@@ -30,17 +45,13 @@ export type FrontendMsg =
 //
 //
 //
+//
+//
 
-export type Closed = { type: "Closed" }
+export type Game =
+  | ["TicTacToe", TicTacToe.FrontendModel]
+  | ["ConnectFour", ConnectFour.Model]
+  | ["Chess", Chess.Model]
+  | ["Snake", Snake.Model]
 
-export type Opened = {
-  type: "Opened"
-  status: "Idle" | "ConfirmingClose"
-  child:
-    | { type: "TicTacToe"; child: TicTacToe.FrontendModel }
-    | { type: "ConnectFour"; child: ConnectFour.Model }
-    | { type: "Chess"; child: Chess.Model }
-    | { type: "Snake"; child: Snake.Model }
-}
-
-export type GameName = Opened["child"]["type"]
+export type GameName = Game[0]

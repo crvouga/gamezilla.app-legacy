@@ -48,7 +48,7 @@ export const update = (
 //
 
 const isOpen = (game: Games.Model, gameName: GameName) => {
-  return game.type === "Opened" && game.child.type === gameName
+  return game.type === "Opened" && game.child[0] === gameName
 }
 
 const canOpen = (game: Games.Model, gameName: GameName) => {
