@@ -11,10 +11,29 @@ import * as Room from "./Room"
 //
 //
 
-export type BackendModel = Room.Model
+export type BackendModel = {
+  rooms: {
+    [id: Room.RoomId]: Room.Room
+  }
+  users: {
+    [id: string]: {
+      userId: string
+      roomId: Room.RoomId
+    }
+  }
+}
 
-export type FrontendModel = Room.Model & {
-  opened: ["Users"] | ["Player", Board.Player] | ["None"]
+export type FrontendModel = {
+  rooms: {
+    [id: Room.RoomId]: Room.Room
+  }
+  users: {
+    [id: string]: {
+      userId: string
+      roomId: Room.RoomId
+    }
+  }
+  opened: ["None"] | ["Users"] | ["Player", Board.Player]
 }
 
 //
