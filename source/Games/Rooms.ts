@@ -1,5 +1,6 @@
 import { Option, pipe, Result } from "../Core"
 import { remove } from "../Core/Record"
+import { GameName } from "./Types"
 
 //
 //
@@ -14,19 +15,16 @@ export type Model = {
     [roomId: RoomId]: Room
   }
   users: {
-    [userId: string]: {
-      userId: string
-      roomId: string
-    }
+    [userId: string]: User
   }
 }
 
-export const init: Model = {
-  rooms: {},
-  users: {},
-}
-
 export type RoomId = string
+
+export type User = {
+  userId: string
+  roomId: string
+}
 
 export type Room = {
   roomId: RoomId
@@ -42,15 +40,15 @@ export type Event =
 //
 //
 //
-// Update
+// Init
 //
 //
 //
 
-type Msg =
-  | ["Create", { userId: string }]
-  | ["Join", { userId: string; roomId: string }]
-  | ["Leave", { userId: string; roomId: string }]
+export const init: Model = {
+  rooms: {},
+  users: {},
+}
 
 //
 //
@@ -74,6 +72,25 @@ export const toRoom = (userId: string, model: Model): Option.Option<Room> => {
   }
 
   return Option.Some(room)
+}
+
+//
+//
+//
+// Start Game
+//
+//
+//
+
+export type StartGameProblem = "user_must_be_in_room" | "user_must_be_host"
+
+export type StartGameResult = Result.Result<StartGameProblem, Model>
+
+export const startGame = (
+  { userId, gameName }: { userId: string; gameName: GameName },
+  model: Model,
+): StartGameResult => {
+  return Result.Err("user_must_be_host")
 }
 
 //

@@ -17,13 +17,15 @@ export type ToFrontend =
   | ["CreateRoomResulted", Rooms.CreateRoomResult]
   | ["LeaveRoomResulted", Rooms.LeaveRoomResult]
   | ["JoinRoomResulted", Rooms.JoinRoomResult]
+  // | ["StartGameResulted", Rooms]
   | ["Sync", Rooms.Model]
 
 export type ToBackend =
   | ["Init"]
   | ["CreateRoom", { roomId: string; userId: string }]
-  | ["LeaveRoom", { roomId: string; userId: string }]
+  | ["LeaveRoom", { userId: string }]
   | ["JoinRoom", { roomId: string; userId: string }]
+  | ["StartGame", { gameName: GameName; userId: string }]
 
 export type BackendMsg = ["Noop"]
 

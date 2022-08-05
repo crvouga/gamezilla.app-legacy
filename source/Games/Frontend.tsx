@@ -60,7 +60,8 @@ type OutAction = Snackbar.Action | Store.Action
 export type Action =
   | ["Games", ["CreateRoom", { userId: string, roomId: string }]]
   | ["Games", ["JoinRoom", { userId: string, roomId: string }]]
-  | ["Games", ["LeaveRoom", { userId: string, roomId: string }]]
+  | ["Games", ["LeaveRoom", { userId: string, }]]
+  | ["Games", ["StartGame", { gameName: GameName, userId: string }]]
 
 
 //
@@ -87,8 +88,13 @@ export const runAction = (
     }
 
     case 'LeaveRoom': {
-      const { roomId, userId } = action[1][1]
-      return [{ ...model, leaveRoom: RemoteData.Loading }, sendToBackend(['Games', ['LeaveRoom', { roomId, userId }]])]
+      const { userId } = action[1][1]
+      return [{ ...model, leaveRoom: RemoteData.Loading }, sendToBackend(['Games', ['LeaveRoom', { userId }]])]
+    }
+
+    case 'StartGame': {
+      const { userId, gameName } = action[1][1]
+      return [{ ...model, leaveRoom: RemoteData.Loading }, sendToBackend(['Games', ['StartGame', { userId, gameName }]])]
     }
   }
 }
