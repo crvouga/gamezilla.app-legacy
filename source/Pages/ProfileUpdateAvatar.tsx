@@ -1,4 +1,4 @@
-import { ProfileAvatar } from "../Data"
+import { ProfileAvatar, UserId } from "../Data"
 import * as Route from "../Route"
 import * as Snackbar from "../Snackbar"
 import * as Store from "../Store"
@@ -50,7 +50,7 @@ export type Msg =
 type OutAction = Snackbar.Action | Store.Action
 
 export const update = (
-  { userId }: { userId: string },
+  { userId }: { userId: UserId.UserId },
   msg: Msg,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {

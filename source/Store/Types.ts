@@ -1,4 +1,5 @@
-import { RemoteData } from "../Core"
+import { RemoteData, Unit } from "../Core"
+import { UserId } from "../Data"
 
 //
 //
@@ -10,7 +11,7 @@ import { RemoteData } from "../Core"
 
 export type Store = {
   Profile: {
-    [id: string]: Profile
+    [id: UserId.UserId]: Profile
   }
   Conversation: {
     [id: string]: Conversation
@@ -34,7 +35,7 @@ export type Store = {
 //
 
 export type Profile = {
-  userId: string
+  userId: UserId.UserId
   username: string
   name: string
   avatarUrl: string
@@ -42,14 +43,14 @@ export type Profile = {
 }
 
 export type ProfilesConversations = {
-  userId: string
+  userId: UserId.UserId
   conversationId: string
 }
 export const toProfilesConversationsId = ({
   userId,
   conversationId,
 }: {
-  userId: string
+  userId: UserId.UserId
   conversationId: string
 }): string => {
   return [userId, conversationId].join(",")
@@ -62,7 +63,7 @@ export type Conversation = {
 export type Message = {
   messageId: string
   conversationId: string
-  userId: string
+  userId: UserId.UserId
   message: string
 }
 
@@ -77,10 +78,10 @@ export type Message = {
 export type Queries = {
   Profile: {
     FindOne: {
-      [userId: string]: RemoteData.Model<Problem, string>
+      [userId: UserId.UserId]: RemoteData.Model<Problem, UserId.UserId>
     }
     Search: {
-      [searchText: string]: RemoteData.Model<Problem, string[]>
+      [searchText: string]: RemoteData.Model<Problem, UserId.UserId[]>
     }
   }
 
@@ -96,7 +97,7 @@ export type Queries = {
       >
     }
     FindManyByUserId: {
-      [userId: string]: RemoteData.Model<
+      [userId: UserId.UserId]: RemoteData.Model<
         Problem,
         {
           profile: string[]
@@ -119,13 +120,13 @@ export type Queries = {
 export type Mutations = {
   Profile: {
     Edit: {
-      [userId: string]: RemoteData.Model<Problem, string>
+      [userId: UserId.UserId]: RemoteData.Model<Problem, UserId.UserId>
     }
     DeleteForever: {
-      [userId: string]: RemoteData.Model<Problem, {}>
+      [userId: UserId.UserId]: RemoteData.Model<Problem, Unit>
     }
     Create: {
-      [userId: string]: RemoteData.Model<Problem, string>
+      [userId: UserId.UserId]: RemoteData.Model<Problem, UserId.UserId>
     }
   }
   Conversation: {
@@ -149,7 +150,7 @@ export type Mutations = {
 //
 //
 
-export type Problem = { message: string }
+export type Problem = string
 
 //
 //

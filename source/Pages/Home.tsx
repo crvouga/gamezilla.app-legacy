@@ -3,6 +3,8 @@ import * as Route from "../Route"
 import * as Store from "../Store"
 import * as UI from "../UI"
 import { Cmd, Uuid } from "../Core"
+import { UserId } from "../Data"
+import * as RoomId from "../Games/RoomId"
 
 //
 //
@@ -26,18 +28,17 @@ export const init: Model = {}
 
 export type Msg =
   | ["ClickedPlay"]
-  | ['ClickedRoom', { roomId: string }]
+  | ['ClickedRoom', { roomId: RoomId.RoomId }]
 
 export type OutAction = Games.Action
 
 export const update = (
-  { currentUserId }: { currentUserId: string },
+  { currentUserId }: { currentUserId: UserId.UserId },
   msg: Msg,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
     case 'ClickedPlay': {
-      const roomId = Uuid.generateSync()
       return [model, Route.push({ type: "GameRoom" }), []]
     }
 
@@ -62,7 +63,7 @@ export const view =
       games,
       store,
     }: {
-      currentUserId: string
+      currentUserId: UserId.UserId
       games: Games.Model
       store: Store.Model
     },

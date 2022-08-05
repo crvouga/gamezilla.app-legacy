@@ -1,6 +1,9 @@
 import { Option, pipe, Result } from "../Core"
 import { remove } from "../Core/Record"
 import { GameName } from "./Types"
+import * as TicTacToe from "./TicTacToe"
+import { UserId } from "../Data"
+import * as RoomId from "./RoomId"
 
 //
 //
@@ -12,30 +15,31 @@ import { GameName } from "./Types"
 
 export type Model = {
   rooms: {
-    [roomId: RoomId]: Room
+    [roomId: RoomId.RoomId]: Room
   }
   users: {
-    [userId: string]: User
+    [userId: UserId.UserId]: User
   }
 }
 
-export type RoomId = string
-
 export type User = {
-  userId: string
-  roomId: string
+  userId: UserId.UserId
+  roomId: RoomId.RoomId
 }
 
 export type Room = {
-  roomId: RoomId
-  hostId: string
+  roomId: RoomId.RoomId
+  hostId: UserId.UserId
   events: Event[]
+  game: Option.Option<Game>
 }
 
+export type Game = ["TicTacToe", TicTacToe.GameModel]
+
 export type Event =
-  | ["Created", { userId: string; roomId: string }]
-  | ["Joined", { userId: string }]
-  | ["Left", { userId: string }]
+  | ["Created", { userId: UserId.UserId; roomId: RoomId.RoomId }]
+  | ["Joined", { userId: UserId.UserId }]
+  | ["Left", { userId: UserId.UserId }]
 
 //
 //
@@ -58,7 +62,10 @@ export const init: Model = {
 //
 //
 
-export const toRoom = (userId: string, model: Model): Option.Option<Room> => {
+export const toRoom = (
+  userId: UserId.UserId,
+  model: Model,
+): Option.Option<Room> => {
   const user = model.users[userId]
 
   if (!user) {
@@ -87,10 +94,26 @@ export type StartGameProblem = "user_must_be_in_room" | "user_must_be_host"
 export type StartGameResult = Result.Result<StartGameProblem, Model>
 
 export const startGame = (
-  { userId, gameName }: { userId: string; gameName: GameName },
+  { userId, gameName }: { userId: UserId.UserId; gameName: GameName },
   model: Model,
 ): StartGameResult => {
-  return Result.Err("user_must_be_host")
+  const user = model.users[userId]
+
+  if (!user) {
+    return Result.Err("user_must_be_in_room")
+  }
+
+  const room = model.rooms[user.roomId]
+
+  if (!room) {
+    return Result.Err("user_must_be_in_room")
+  }
+
+  if (room.hostId !== user.userId) {
+    return Result.Err("user_must_be_host")
+  }
+
+  return Result.Ok(model)
 }
 
 //
@@ -105,11 +128,11 @@ export type CreateRoomProblem = "user_is_already_in_a_room"
 
 export type CreateRoomResult = Result.Result<
   CreateRoomProblem,
-  { model: Model; roomId: string }
+  { model: Model; roomId: RoomId.RoomId }
 >
 
 export const createRoom = (
-  { userId, roomId }: { userId: string; roomId: RoomId },
+  { userId, roomId }: { userId: UserId.UserId; roomId: RoomId.RoomId },
   model: Model,
 ): CreateRoomResult => {
   const user = model.users[userId]
@@ -133,6 +156,7 @@ export const createRoom = (
         roomId,
         hostId: userId,
         events: [["Created", { userId, roomId }]],
+        game: Option.None,
       },
     },
   }
@@ -155,7 +179,7 @@ export type JoinRoomProblem =
 export type JoinRoomResult = Result.Result<JoinRoomProblem, Model>
 
 export const joinRoom = (
-  { userId, roomId }: { userId: string; roomId: string },
+  { userId, roomId }: { userId: UserId.UserId; roomId: RoomId.RoomId },
   model: Model,
 ): JoinRoomResult => {
   const user = model.users[userId]
@@ -203,7 +227,7 @@ export type LeaveRoomProblem = "user_is_not_a_room"
 export type LeaveRoomResult = Result.Result<LeaveRoomProblem, Model>
 
 export const leaveRoom = (
-  { userId }: { userId: string },
+  { userId }: { userId: UserId.UserId },
   model: Model,
 ): LeaveRoomResult => {
   const user = model.users[userId]

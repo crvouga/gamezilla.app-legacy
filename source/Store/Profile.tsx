@@ -1,6 +1,7 @@
 import produce from "immer"
 import { matchSorter } from "match-sorter"
-import { Cmd, exhaustive, pipe, RemoteData, Result, Task } from "../Core"
+import { Cmd, exhaustive, pipe, RemoteData, Result, Task, Unit } from "../Core"
+import { UserId } from "../Data"
 import * as Supabase from "../Supabase"
 import { definitions } from "../supabase-types"
 import * as Types from "./Types"
@@ -26,32 +27,32 @@ export type Profile = Types.Profile
 //
 //
 
-export type FindMany = ["FindMany", { userIds: string[] }]
+export type FindMany = ["FindMany", { userIds: UserId.UserId[] }]
 export type FindManyResulted = [
   "FindManyResulted",
-  { userIds: string[]; result: Result.Result<Problem, Profile[]> },
+  { userIds: UserId.UserId[]; result: Result.Result<Problem, Profile[]> },
 ]
 
-export type Edit = ["Edit", { userId: string; edits: Partial<Profile> }]
+export type Edit = ["Edit", { userId: UserId.UserId; edits: Partial<Profile> }]
 export type EditResulted = [
   "EditResulted",
   {
-    userId: string
+    userId: UserId.UserId
     previous: Profile
     result: Result.Result<Problem, Profile>
   },
 ]
 
-export type DeleteForever = ["DeleteForever", { userId: string }]
+export type DeleteForever = ["DeleteForever", { userId: UserId.UserId }]
 export type DeleteForeverResulted = [
   "DeleteForeverResulted",
-  { userId: string; result: Result.Result<Problem, {}> },
+  { userId: UserId.UserId; result: Result.Result<Problem, Unit> },
 ]
 
-export type Create = ["Create", { profile: Profile; userId: string }]
+export type Create = ["Create", { profile: Profile; userId: UserId.UserId }]
 export type CreateResulted = [
   "CreateResulted",
-  { userId: string; result: Result.Result<Problem, Profile> },
+  { userId: UserId.UserId; result: Result.Result<Problem, Profile> },
 ]
 
 export type Search = ["Search", { searchText: string }]
@@ -333,7 +334,7 @@ export const runAction = (msg: Action, model: Model): [Model, Cmd.Cmd<Msg>] => {
 //
 
 export const toProfile = (
-  userId: string,
+  userId: UserId.UserId,
   model: Model,
 ): RemoteData.Model<Problem, Profile> => {
   const query = model.queries.Profile.FindOne[userId] ?? RemoteData.NotAsked
@@ -350,7 +351,7 @@ export const toProfile = (
       const profile = model.Profile[userId]
 
       if (!profile) {
-        return RemoteData.Failure({ message: "Invalid state" })
+        return RemoteData.Failure("Invalid state")
       }
 
       return RemoteData.Success(profile)
@@ -401,54 +402,67 @@ const fromThemeMode = (
   }
 }
 
-export const rowToProfile = (row: definitions["user_profile"]): Profile => {
-  return {
-    userId: row.id,
-    avatarUrl: row.avatar_url,
-    name: row.name,
-    username: row.username,
-    themeMode: rowThemeModeToThemeMode(row.theme_mode),
+type DecodeProblem = "invalid_user_id"
+
+export const decodeRow = (row: definitions["user_profile"]): Result.Result<DecodeProblem, Profile> => {
+
+  const userId = UserId.decode(row.id)
+
+  if (userId.type === 'Ok') {
+    return Result.Ok({
+      userId: userId.value,
+      avatarUrl: row.avatar_url,
+      name: row.name,
+      username: row.username,
+      themeMode: rowThemeModeToThemeMode(row.theme_mode),
+    })
+
   }
+
+  return Result.Err('invalid_user_id')
+
 }
 
-export const load =
+export const findOne =
   ({
     userId,
   }: {
-    userId: string
-  }): Task.Task<Result.Result<Problem, Profile>> =>
-  async () => {
-    const response = await Supabase.client
-      .from<definitions["user_profile"]>("user_profile")
-      .select("*")
-      .eq("id", userId)
-      .single()
+    userId: UserId.UserId
+  }): Task.Task<Result.Result<string, Profile>> =>
+    async () => {
+      const response = await Supabase.client
+        .from<definitions["user_profile"]>("user_profile")
+        .select("*")
+        .eq("id", userId)
+        .single()
 
-    if (response.error) {
-      return Result.Err({ message: response.error.message })
+      if (response.error) {
+        return Result.Err(response.error.message)
+      }
+
+      return decodeRow(response.data)
     }
-
-    return Result.Ok(rowToProfile(response.data))
-  }
 
 export const findMany =
   ({
     userIds,
   }: {
     userIds: string[]
-  }): Task.Task<Result.Result<Problem, Profile[]>> =>
-  async () => {
-    const response = await Supabase.client
-      .from<definitions["user_profile"]>("user_profile")
-      .select("*")
-      .in("id", userIds)
+  }): Task.Task<Result.Result<string, Profile[]>> =>
+    async () => {
+      const response = await Supabase.client
+        .from<definitions["user_profile"]>("user_profile")
+        .select("*")
+        .in("id", userIds)
 
-    if (response.error) {
-      return Result.Err({ message: response.error.message })
+      if (response.error) {
+        return Result.Err(response.error.message)
+      }
+
+      const result = Result.combine(response.data.map(decodeRow))
+
+      return result
     }
-
-    return Result.Ok(response.data.map(rowToProfile))
-  }
 
 export const create =
   ({
@@ -457,120 +471,96 @@ export const create =
     username,
     avatarUrl,
   }: {
-    userId: string
+    userId: UserId.UserId
     name: string
     username: string
     avatarUrl: string
-  }): Task.Task<Result.Result<Problem, Profile>> =>
-  async () => {
-    const response = await Supabase.client
-      .from<definitions["user_profile"]>("user_profile")
-      .insert({
-        id: userId,
-        name,
-        username,
-        avatar_url: avatarUrl,
-        theme_mode: "SYSTEM",
-      })
-      .single()
+  }): Task.Task<Result.Result<string, Profile>> =>
+    async () => {
+      const response = await Supabase.client
+        .from<definitions["user_profile"]>("user_profile")
+        .insert({
+          id: userId,
+          name,
+          username,
+          avatar_url: avatarUrl,
+          theme_mode: "SYSTEM",
+        })
+        .single()
 
-    if (response.data) {
-      return Result.Ok(rowToProfile(response.data))
+      if (response.data) {
+        return decodeRow(response.data)
+      }
+
+      return Result.Err(response.error.message)
     }
-
-    return Result.Err({ message: response.error.message })
-  }
 
 export const deleteForever =
-  (userId: string): Task.Task<Result.Result<Problem, string>> =>
-  async () => {
-    await new Promise((resolve) => setTimeout(resolve, 1000))
+  (userId: UserId.UserId): Task.Task<Result.Result<Problem, Unit>> =>
+    async () => {
+      await new Promise((resolve) => setTimeout(resolve, 1000))
 
-    const response = await Supabase.client
-      .from<definitions["user_profile"]>("user_profile")
-      .delete()
-      .match({ id: userId })
+      const response = await Supabase.client
+        .from<definitions["user_profile"]>("user_profile")
+        .delete()
+        .match({ id: userId })
 
-    if (response.error) {
-      return Result.Err({ message: response.error.message })
+      if (response.error) {
+        return Result.Err(response.error.message)
+      }
+
+      return Result.Ok(Unit)
     }
-
-    return Result.Ok(userId)
-  }
 
 export const search =
   ({
     nameOrUsername,
   }: {
     nameOrUsername: string
-  }): Task.Task<Result.Result<Problem, Profile[]>> =>
-  async () => {
-    const response = await Supabase.client
-      .from<definitions["user_profile"]>("user_profile")
-      .select("*")
-      .ilike(
-        "name",
-        `%${nameOrUsername
-          .split(" ")
-          .map((_) => _.replace(" ", ""))
-          .join("%")}%`,
-      )
+  }): Task.Task<Result.Result<string, Profile[]>> =>
+    async () => {
+      const response = await Supabase.client
+        .from<definitions["user_profile"]>("user_profile")
+        .select("*")
+        .ilike(
+          "name",
+          `%${nameOrUsername
+            .split(" ")
+            .map((_) => _.replace(" ", ""))
+            .join("%")}%`,
+        )
 
-    if (response.error) {
-      return Result.Err({ message: response.error.message })
+      if (response.error) {
+        return Result.Err(response.error.message)
+      }
+
+      return Result.combine(response.data.map(decodeRow))
+
     }
-
-    const profiles = response.data.map(rowToProfile)
-
-    return Result.Ok(profiles)
-  }
 
 export const edit =
   (
-    userId: string,
+    userId: UserId.UserId,
     edits: Partial<Profile>,
-  ): Task.Task<Result.Result<Problem, Profile>> =>
-  async () => {
-    const response = await Supabase.client
-      .from<definitions["user_profile"]>("user_profile")
-      .update({
-        username: edits.username,
-        name: edits.name,
-        avatar_url: edits.avatarUrl,
-        theme_mode: edits.themeMode
-          ? fromThemeMode(edits.themeMode)
-          : undefined,
-      })
-      .match({ id: userId })
-      .single()
+  ): Task.Task<Result.Result<string, Profile>> =>
+    async () => {
+      const response = await Supabase.client
+        .from<definitions["user_profile"]>("user_profile")
+        .update({
+          username: edits.username,
+          name: edits.name,
+          avatar_url: edits.avatarUrl,
+          theme_mode: edits.themeMode
+            ? fromThemeMode(edits.themeMode)
+            : undefined,
+        })
+        .match({ id: userId })
+        .single()
 
-    if (response.error) {
-      return Result.Err({ message: response.error.message })
+      if (response.error) {
+        return Result.Err(response.error.message)
+      }
+
+      return decodeRow(response.data)
     }
 
-    return Result.Ok(rowToProfile(response.data))
-  }
-
-// export const subscriptions = ({ userId }: { userId: string }): Sub.Sub<Msg> => {
-//   return new Rx.Observable<Msg>((subscriber) => {
-//     const subscription = Supabase.client
-//       .from<definitions["user_profile"]>(`profile:id=eq.${userId}`)
-//       .on("INSERT", (payload) => {
-//         const profile = rowToProfile(payload.new);
-//         subscriber.next(Received(profile));
-//       })
-//       .on("UPDATE", (payload) => {
-//         const profile = rowToProfile(payload.new);
-//         subscriber.next(Received(profile));
-//       })
-//       .on("DELETE", () => {
-//         // todo
-//       })
-//       .subscribe();
-
-//     return () => {
-//       Supabase.client.removeSubscription(subscription);
-//       subscription.unsubscribe();
-//     };
-//   });
-// };

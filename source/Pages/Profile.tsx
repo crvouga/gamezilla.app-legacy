@@ -2,6 +2,7 @@ import * as Route from "../Route"
 import * as Store from "../Store"
 import * as UI from "../UI"
 import { Cmd, Sub } from "../Core"
+import { UserId } from "../Data"
 
 //
 //
@@ -12,18 +13,18 @@ import { Cmd, Sub } from "../Core"
 //
 
 export type Model = {
-  userId: string
+  userId: UserId.UserId
 }
 
 export const init = ({
   userId,
 }: {
-  userId: string
+  userId: UserId.UserId
 }): [Model, Cmd.Cmd<Msg>, OutAction[]] => [
-  { userId },
-  Cmd.None,
-  [["Store", ["Profile", ["FindMany", { userIds: [userId] }]]]],
-]
+    { userId },
+    Cmd.None,
+    [["Store", ["Profile", ["FindMany", { userIds: [userId] }]]]],
+  ]
 
 //
 //
@@ -41,7 +42,7 @@ export type Msg =
 type OutAction = Store.Action
 
 export const update = (
-  { currentUserId }: { currentUserId: string },
+  { currentUserId }: { currentUserId: UserId.UserId },
   msg: Msg,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
@@ -53,19 +54,13 @@ export const update = (
       return [model, Route.push({ type: "ProfileUpdate" }), []]
 
     case "ClickedSendMessage":
-      return [
-        model,
-        Cmd.None,
-        [
-          [
-            "Store",
-            [
-              "Conversation",
-              ["FindOneElseInsert", { userIds: [model.userId, currentUserId] }],
-            ],
-          ],
-        ],
-      ]
+
+      const userIds = [model.userId, currentUserId]
+
+      const action: OutAction =
+        ["Store", ["Conversation", ["FindOneElseInsert", { userIds }],],]
+
+      return [model, Cmd.None, [action]]
   }
 }
 
@@ -91,36 +86,79 @@ export const subscriptions = (_: Model): Sub.Sub<Msg> => {
 
 export const view =
   (
-    { store, currentUserId }: { store: Store.Model; currentUserId: string },
+    { store, currentUserId }: { store: Store.Model; currentUserId: UserId.UserId },
     model: Model,
   ): UI.View<Msg> =>
-  (dispatch) => {
-    const profile = store.Profile[model.userId]
+    (dispatch) => {
+      const profile = store.Profile[model.userId]
 
-    if (!profile) {
-      return (
-        <UI.FillBox>
-          <UI.Header
-            left={
-              <UI.HeaderBackButton onClick={() => dispatch(["ClickedBack"])} />
-            }
-            title={"..."}
-          />
-          <UI.Box
-            sx={{
-              flex: 1,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <UI.CircularProgress />
-          </UI.Box>
-        </UI.FillBox>
-      )
-    }
+      if (!profile) {
+        return (
+          <UI.FillBox>
+            <UI.Header
+              left={
+                <UI.HeaderBackButton onClick={() => dispatch(["ClickedBack"])} />
+              }
+              title={"..."}
+            />
+            <UI.Box
+              sx={{
+                flex: 1,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <UI.CircularProgress />
+            </UI.Box>
+          </UI.FillBox>
+        )
+      }
 
-    if (profile.userId === currentUserId) {
+      if (profile.userId === currentUserId) {
+        return (
+          <UI.FillBox>
+            <UI.Header
+              left={
+                <UI.HeaderBackButton onClick={() => dispatch(["ClickedBack"])} />
+              }
+              title={profile.username}
+            />
+
+            <UI.Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                p: 2,
+              }}
+            >
+              <UI.Avatar
+                sx={{ width: 120, height: 120, marginBottom: 1 }}
+                src={profile.avatarUrl}
+              />
+              <UI.Typography variant="h3">{profile.username}</UI.Typography>
+              <UI.Typography
+                variant="h6"
+                color="text.secondary"
+                sx={{ marginBottom: 2 }}
+              >
+                {profile.name}
+              </UI.Typography>
+              <UI.Button
+                fullWidth
+                variant="contained"
+                sx={{ marginBottom: 2 }}
+                onClick={() => dispatch(["ClickedEditProfile"])}
+              >
+                Edit Profile
+              </UI.Button>
+            </UI.Box>
+          </UI.FillBox>
+        )
+      }
+
       return (
         <UI.FillBox>
           <UI.Header
@@ -151,64 +189,21 @@ export const view =
             >
               {profile.name}
             </UI.Typography>
+
+            <UI.Button fullWidth variant="contained" sx={{ marginBottom: 2 }}>
+              Send Friend Request
+            </UI.Button>
             <UI.Button
               fullWidth
+              loading={
+                store.mutations.Conversation.FindElseInsert.type === "Loading"
+              }
               variant="contained"
-              sx={{ marginBottom: 2 }}
-              onClick={() => dispatch(["ClickedEditProfile"])}
+              onClick={() => dispatch(["ClickedSendMessage"])}
             >
-              Edit Profile
+              Send Message
             </UI.Button>
           </UI.Box>
         </UI.FillBox>
       )
     }
-
-    return (
-      <UI.FillBox>
-        <UI.Header
-          left={
-            <UI.HeaderBackButton onClick={() => dispatch(["ClickedBack"])} />
-          }
-          title={profile.username}
-        />
-
-        <UI.Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            p: 2,
-          }}
-        >
-          <UI.Avatar
-            sx={{ width: 120, height: 120, marginBottom: 1 }}
-            src={profile.avatarUrl}
-          />
-          <UI.Typography variant="h3">{profile.username}</UI.Typography>
-          <UI.Typography
-            variant="h6"
-            color="text.secondary"
-            sx={{ marginBottom: 2 }}
-          >
-            {profile.name}
-          </UI.Typography>
-
-          <UI.Button fullWidth variant="contained" sx={{ marginBottom: 2 }}>
-            Send Friend Request
-          </UI.Button>
-          <UI.Button
-            fullWidth
-            loading={
-              store.mutations.Conversation.FindElseInsert.type === "Loading"
-            }
-            variant="contained"
-            onClick={() => dispatch(["ClickedSendMessage"])}
-          >
-            Send Message
-          </UI.Button>
-        </UI.Box>
-      </UI.FillBox>
-    )
-  }

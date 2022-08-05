@@ -1,6 +1,7 @@
 import * as Rx from "rxjs"
 import * as Supabase from "./Supabase"
 import { Cmd, exhaustive, Option, pipe, Result, Sub, Task } from "./Core"
+import { UserId } from "./Data"
 
 //
 //
@@ -10,7 +11,7 @@ import { Cmd, exhaustive, Option, pipe, Result, Sub, Task } from "./Core"
 //
 //
 
-export type Session = { defaultName: string; userId: string }
+export type Session = { defaultName: string; userId: UserId.UserId }
 
 export type Model = Loading | LoggedOut | LoggedIn
 
@@ -21,7 +22,7 @@ export type LoggedOut = { type: "LoggedOut" }
 export type LoggedIn = {
   type: "LoggedIn"
   defaultName: string
-  userId: string
+  userId: UserId.UserId
 }
 
 export const init = (): [Model, Cmd.Cmd<Msg>] => [
@@ -210,15 +211,15 @@ export const subscriptions: Sub.Sub<Msg> = subject
 //
 
 export const fromSupabaseSession = (auth: Supabase.Session | null): Msg => {
-  const userId = auth?.user?.id
+  const userId = UserId.decode(auth?.user?.id)
 
   const defaultName =
     auth?.user?.user_metadata?.name ??
     auth?.user?.user_metadata?.full_name ??
     ""
 
-  if (userId) {
-    return ["GotSession", Option.Some({ userId, defaultName })]
+  if (userId.type === "Ok") {
+    return ["GotSession", Option.Some({ userId: userId.value, defaultName })]
   }
 
   return ["GotSession", Option.None]

@@ -1,5 +1,6 @@
 import { Option, pipe, Result, Uuid } from "../../Core"
 import { remove } from "../../Core/Record"
+import { UserId } from "../../Data"
 import * as Board from "./Board"
 
 //
@@ -16,7 +17,7 @@ export type Model = {
   }
   users: {
     [id: string]: {
-      userId: string
+      userId: UserId.UserId
       roomId: RoomId
     }
   }
@@ -35,13 +36,13 @@ export type Room = {
 }
 
 export type Event =
-  | ["CreatedRoom", { userId: string }]
-  | ["JoinedRoom", { userId: string }]
-  | ["LeftRoom", { userId: string }]
-  | ["Moved", { userId: string }]
-  | ["RemovedPlayer", { userId: string; player: Board.Player }]
-  | ["StartedPlaying", { userId: string; player: Board.Player }]
-  | ["StoppedPlaying", { userId: string; player: Board.Player }]
+  | ["CreatedRoom", { userId: UserId.UserId }]
+  | ["JoinedRoom", { userId: UserId.UserId }]
+  | ["LeftRoom", { userId: UserId.UserId }]
+  | ["Moved", { userId: UserId.UserId }]
+  | ["RemovedPlayer", { userId: UserId.UserId; player: Board.Player }]
+  | ["StartedPlaying", { userId: UserId.UserId; player: Board.Player }]
+  | ["StoppedPlaying", { userId: UserId.UserId; player: Board.Player }]
 
 //
 //
@@ -56,7 +57,7 @@ export type CreateRoomProblem = "user_is_already_in_a_room"
 export type CreateRoomResult = Result.Result<CreateRoomProblem, Model>
 
 export const createRoom = (
-  { userId }: { userId: string },
+  { userId }: { userId: UserId.UserId },
   model: Model,
 ): CreateRoomResult => {
   const user = model.users[userId]
@@ -104,7 +105,7 @@ export type StartPlayingProblem = "user_is_not_in_a_room" | "player_is_taken"
 export type StartPlayingResult = Result.Result<StartPlayingProblem, Model>
 
 export const startPlaying = (
-  { userId, player }: { userId: string; player: Board.Player },
+  { userId, player }: { userId: UserId.UserId; player: Board.Player },
   model: Model,
 ): StartPlayingResult => {
   const user = model.users[userId]
@@ -167,7 +168,7 @@ export type StopPlayingProblem = "user_is_not_in_a_room" | "user_is_not_player"
 export type StopPlayingResult = Result.Result<StopPlayingProblem, Model>
 
 export const stopPlaying = (
-  { userId, player }: { userId: string; player: Board.Player },
+  { userId, player }: { userId: UserId.UserId; player: Board.Player },
   model: Model,
 ): StopPlayingResult => {
   const user = model.users[userId]
@@ -229,7 +230,7 @@ export type JoinRoomProblem =
 export type JoinRoomResult = Result.Result<JoinRoomProblem, Model>
 
 export const joinRoom = (
-  { userId, roomId }: { userId: string; roomId: string },
+  { userId, roomId }: { userId: UserId.UserId; roomId: string },
   model: Model,
 ): JoinRoomResult => {
   const user = model.users[userId]
@@ -278,7 +279,7 @@ export type RemovePlayerProblem =
 export type RemovePlayerResult = Result.Result<RemovePlayerProblem, Model>
 
 export const removePlayer = (
-  { userId, player }: { userId: string; player: Board.Player },
+  { userId, player }: { userId: UserId.UserId; player: Board.Player },
   model: Model,
 ): RemovePlayerResult => {
   const user = model.users[userId]
@@ -337,7 +338,7 @@ export type RestartGameProblem =
 export type RestartGameResult = Result.Result<RestartGameProblem, Model>
 
 export const restartGame = (
-  { userId }: { userId: string },
+  { userId }: { userId: UserId.UserId },
   model: Model,
 ): RemovePlayerResult => {
   const user = model.users[userId]
@@ -383,7 +384,7 @@ export type LeaveRoomProblem = "user_is_not_a_room"
 export type LeaveRoomResult = Result.Result<LeaveRoomProblem, Model>
 
 export const leaveRoom = (
-  { userId }: { userId: string },
+  { userId }: { userId: UserId.UserId },
   model: Model,
 ): LeaveRoomResult => {
   const user = model.users[userId]
@@ -465,7 +466,7 @@ export type MoveProblem =
 export type MoveResult = Result.Result<MoveProblem, Model>
 
 export const move = (
-  { userId, position }: { userId: string; position: Board.Position },
+  { userId, position }: { userId: UserId.UserId; position: Board.Position },
   model: Model,
 ): MoveResult => {
   const user = model.users[userId]
@@ -516,10 +517,12 @@ export const move = (
   return Result.Ok(modelNew)
 }
 
-export type RoomPlayer = { type: "User"; userId: string } | { type: "None" }
+export type RoomPlayer =
+  | { type: "User"; userId: UserId.UserId }
+  | { type: "None" }
 
 export const toPlayer = (
-  userId: string,
+  userId: UserId.UserId,
   room: Room,
 ): Board.Player | "None" | "Both" => {
   const { X, O } = room.players
@@ -544,7 +547,7 @@ export const toPlayer = (
 }
 
 export const toRoom = (
-  userId: string,
+  userId: UserId.UserId,
   { rooms, users }: Model,
 ): Option.Option<Room> => {
   const user = users[userId]
@@ -595,7 +598,7 @@ export const mapRoomPlayers = (
   }
 }
 
-const removeUserFromPlaying = (userId: string, room: Room): Room => {
+const removeUserFromPlaying = (userId: UserId.UserId, room: Room): Room => {
   const { X, O } = room.players
 
   const isX = X.type === "User" && X.userId === userId

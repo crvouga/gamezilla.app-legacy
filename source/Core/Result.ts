@@ -74,3 +74,16 @@ export const withDefault =
         return result.value
     }
   }
+
+export const combine = <E, A>(results: Result<E, A>[]): Result<E, A[]> => {
+  return results.reduce<Result<E, A[]>>((combined, result) => {
+    if (combined.type === "Err") {
+      return combined
+    }
+
+    if (result.type === "Err") {
+      return result
+    }
+    return Ok([...combined.value, result.value])
+  }, Ok([]))
+}

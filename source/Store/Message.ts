@@ -1,5 +1,6 @@
 import produce from "immer"
 import { Cmd, pipe, RemoteData, Result, Task } from "../Core"
+import { UserId } from "../Data"
 import * as Supabase from "../Supabase"
 import { definitions } from "../supabase-types"
 import * as Types from "./Types"
@@ -29,7 +30,7 @@ export type Action = Send | Unsend
 
 export type Send = [
   "Send",
-  { userId: string; conversationId: string; messageText: string },
+  { userId: UserId.UserId; conversationId: string; messageText: string },
 ]
 
 export type SendResulted = [
@@ -159,16 +160,20 @@ const insert =
   }: {
     conversationId: string
     message: string
-    userId: string
+    userId: UserId.UserId
   }): Task.Task<Result.Result<Problem, Message>> =>
   async () => {
     const messageResponse = await Supabase.client
       .from<definitions["message"]>("message")
-      .insert({ message, user_id: userId, conversation_id: conversationId })
+      .insert({
+        message,
+        user_id: userId,
+        conversation_id: conversationId,
+      })
       .single()
 
     if (messageResponse.error) {
-      return Result.Err({ message: messageResponse.error.message })
+      return Result.Err(messageResponse.error.message)
     }
 
     const data = messageResponse.data
@@ -176,7 +181,7 @@ const insert =
     return Result.Ok({
       messageId: data.id,
       conversationId: data.conversation_id,
-      userId: data.user_id,
+      userId,
       message: data.message,
     })
   }
@@ -194,7 +199,7 @@ const deleteForever =
       .eq("id", messageId)
 
     if (response.error) {
-      return Result.Err({ message: response.error.message })
+      return Result.Err(response.error.message)
     }
 
     return Result.Ok(messageId)

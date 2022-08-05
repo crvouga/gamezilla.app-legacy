@@ -7,6 +7,7 @@ import * as Bridge from "../../Bridge/Frontend"
 import { Cmd, Result } from "../../Core"
 import { FrontendModel, FrontendMsg, ToBackend, ToFrontend } from "./Types"
 import * as Room from "./Room"
+import { UserId } from "../../Data"
 
 //
 //
@@ -41,135 +42,17 @@ const sendToBackend = (_msg: ToBackend): Cmd.Cmd<never> => {
 
 export const init: [Model, Cmd.Cmd<Msg>] = [
   {
-    opened: ["None"],
-    rooms: {},
-    users: {},
+    game: {
+      board: Board.emptyBoard,
+      players: {
+        O: { type: "None" },
+        X: { type: "None" },
+      },
+    },
   },
   sendToBackend(["Init"]),
 ]
 
-//
-//
-//
-// Room View
-//
-//
-//
-
-type RoomView = {
-  roomId: Room.RoomId
-  board: Board.Board
-  players: {
-    X: RoomViewPlayer
-    O: RoomViewPlayer
-  }
-  host: RoomViewUser
-  users: RoomViewUser[]
-}
-
-type RoomViewPlayer = { type: "None" } | ({ type: "User" } & RoomViewUser)
-
-type RoomViewUser = {
-  username: string
-  avatarUrl: string
-  userId: string
-}
-
-type RoomViewProblem =
-  | "missing_profiles"
-  | "missing_room"
-  | "missing_host"
-  | "missing_player"
-
-const toRoomView = ({
-  roomId,
-  model,
-  store,
-}: {
-  roomId: Room.RoomId
-  model: Model
-  store: Store.Model
-}): Result.Result<RoomViewProblem, RoomView> => {
-  const usersInRoom = Object.values(model.users).filter(
-    (user) => user.roomId === roomId,
-  )
-
-  const profiles = usersInRoom
-    .map((user) => store.Profile[user.userId])
-    .flatMap((profile) => (profile ? [profile] : []))
-
-  if (profiles.length < usersInRoom.length) {
-    return Result.Err("missing_profiles")
-  }
-
-  const room = model.rooms[roomId]
-
-  if (!room) {
-    return Result.Err("missing_room")
-  }
-
-  const host = profiles.find((profile) => profile.userId === room.hostId)
-
-  if (!host) {
-    return Result.Err("missing_host")
-  }
-
-  const xResult = toRoomPlayerView({ store, room, player: "X" })
-
-  if (xResult.type === "Err") {
-    return xResult
-  }
-
-  const oResult = toRoomPlayerView({ store, room, player: "O" })
-
-  if (oResult.type == "Err") {
-    return oResult
-  }
-
-  const roomView: RoomView = {
-    roomId,
-    board: room.board,
-    players: {
-      X: xResult.value,
-      O: oResult.value,
-    },
-    host,
-    users: profiles,
-  }
-
-  return Result.Ok(roomView)
-}
-
-const toRoomPlayerView = ({
-  room,
-  store,
-  player,
-}: {
-  room: Room.Room
-  store: Store.Model
-  player: Board.Player
-}): Result.Result<RoomViewProblem, RoomViewPlayer> => {
-  const roomPlayer = room.players[player]
-
-  if (roomPlayer.type === "None") {
-    return Result.Ok(roomPlayer)
-  }
-
-  const profile = store.Profile[roomPlayer.userId]
-
-  if (!profile) {
-    return Result.Err("missing_player")
-  }
-
-  const roomViewPlayer: RoomViewPlayer = {
-    type: "User",
-    ...profile,
-  }
-
-  return Result.Ok(roomViewPlayer)
-}
-
-//
 //
 //
 // Update
@@ -182,156 +65,19 @@ export type Msg = FrontendMsg
 export type OutAction = Store.Action
 
 export const update = (
-  { currentUserId }: { currentUserId: string },
+  { currentUserId }: { currentUserId: UserId.UserId },
   msg: Msg,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
-  switch (msg[0]) {
-    case "StartPlaying":
-      return [model, sendToBackend(msg)]
-
-    case "StopPlaying":
-      return [{ ...model, opened: ["None"] }, sendToBackend(msg)]
-
-    case "PlayAgain":
-      return [model, sendToBackend(msg)]
-
-    case "RemovePlayer":
-      return [model, sendToBackend(msg)]
-
-    case "ClickedPlayer":
-      return [{ ...model, opened: ["Player", msg[1]] }, Cmd.None]
-
-    case "ClickedAvatars":
-      return [{ ...model, opened: ["Users"] }, Cmd.None]
-
-    case "ClosedDrawer":
-      return [{ ...model, opened: ["None"] }, Cmd.None]
-
-    case "LeaveRoom":
-      return [model, sendToBackend(msg)]
-
-    case "RestartGame":
-      return [model, sendToBackend(msg)]
-
-    case "ClickedUser":
-      return [model, Route.push({ type: "Profile", userId: msg[1].userId })]
-
-    case "JoinRoom":
-      return [model, sendToBackend(msg)]
-
-    case "CreateRoom":
-      return [model, sendToBackend(msg)]
-
-    case "ClickedBack":
-      return [model, Route.back]
-
-    case "Move":
-      const { position } = msg[1]
-
-      const result = Room.move({ userId: currentUserId, position }, model)
-
-      const stateNew = result.type === "Err" ? {} : result.value
-
-      return [
-        {
-          ...model,
-          ...stateNew,
-        },
-        sendToBackend(msg),
-      ]
-  }
+  return [model, Cmd.None]
 }
 
 export const updateFromBackend = (
   msg: ToFrontend,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
-  switch (msg[0]) {
-    case "Sync": {
-      const userIds = Object.keys(msg[1].users)
-      return [
-        {
-          ...model,
-          // init: RemoteData.Success({}),
-          rooms: msg[1].rooms,
-          users: msg[1].users,
-        },
-        Cmd.None,
-        [["Store", ["Profile", ["FindMany", { userIds }]]]],
-      ]
-    }
+  return [model, Cmd.None, []]
 
-    case "PlayAgainResulted": {
-      return [
-        {
-          ...model,
-          //  playAgain: RemoteData.fromResult(msg[1])
-        },
-        Cmd.None,
-        [],
-      ]
-    }
-
-    case "RemovePlayerResulted": {
-      return [model, Cmd.None, []]
-    }
-
-    case "StopPlayingResulted": {
-      return [
-        {
-          ...model,
-          //  quitPlaying: RemoteData.fromResult(msg[1])
-        },
-        Cmd.None,
-        [],
-      ]
-    }
-
-    case "StartPlayingResulted": {
-      return [model, Cmd.None, []]
-    }
-
-    case "RestartGameResulted": {
-      return [model, Cmd.None, []]
-    }
-
-    case "MoveResulted": {
-      return [model, Cmd.None, []]
-    }
-
-    case "JoinRoomResulted": {
-      return [
-        {
-          ...model,
-          // joinRoom: RemoteData.fromResult(msg[1]),
-        },
-        Cmd.None,
-        [],
-      ]
-    }
-
-    case "LeaveRoomResulted": {
-      return [
-        {
-          ...model,
-          // leaveRoom: RemoteData.fromResult(msg[1]),
-        },
-        Cmd.None,
-        [],
-      ]
-    }
-
-    case "CreateRoomResulted":
-      return [
-        {
-          ...model,
-          // createRoom: RemoteData.fromResult(msg[1]),
-        },
-        Cmd.None,
-        [],
-      ]
-  }
 }
 
 //
@@ -344,35 +90,11 @@ export const updateFromBackend = (
 
 export const view =
   (
-    { currentUserId, store }: { currentUserId: string; store: Store.Model },
+    { currentUserId, store }: { currentUserId: UserId.UserId; store: Store.Model },
     model: Model,
   ): UI.View<Msg> =>
     (dispatch) => {
-      const maybeCurrentRoom = Room.toRoom(currentUserId, model)
-
-      switch (maybeCurrentRoom.type) {
-        case "None":
-          return (
-            <ViewNotInRoom
-              currentUserId={currentUserId}
-              store={store}
-              model={model}
-              dispatch={dispatch}
-            />
-          )
-
-        case "Some":
-          const room = maybeCurrentRoom.value
-          return (
-            <ViewInRoom
-              dispatch={dispatch}
-              room={room}
-              currentUserId={currentUserId}
-              store={store}
-              model={model}
-            />
-          )
-      }
+      return <>tic tac toe view</>
     }
 
 const ViewNotInRoom = ({
@@ -381,9 +103,9 @@ const ViewNotInRoom = ({
   model,
   dispatch,
 }: {
-  currentUserId: string
+  currentUserId: UserId.UserId
   store: Store.Model
-  model: Model
+  model: any
   dispatch: (msg: Msg) => void
 }) => {
   return (
@@ -408,7 +130,7 @@ const ViewNotInRoom = ({
       <UI.Box sx={{ paddingX: 2 }}>
         <UI.Typography variant="h5">Rooms</UI.Typography>
 
-        {Object.values(model.rooms).length === 0 && (
+        {Object.values(model.game).length === 0 && (
           <UI.Typography sx={{ marginTop: 1 }} color="text.secondary">
             No rooms found.
           </UI.Typography>
@@ -417,7 +139,7 @@ const ViewNotInRoom = ({
 
       <UI.List sx={{ overflowY: "scroll" }}>
         {Object.values(model.rooms)
-          .map((room) => ({
+          .map((room: any) => ({
             room,
             profiles: Object.values(store.Profile).filter(
               (profile) => model.users[profile.userId]?.roomId === room.roomId,
@@ -458,10 +180,10 @@ const ViewInRoom = ({
   model,
   dispatch,
 }: {
-  currentUserId: string
+  currentUserId: UserId.UserId
   room: Room.Room
   store: Store.Model
-  model: Model
+  model: any
   dispatch: (msg: Msg) => void
 }) => {
   const status = Room.toStatus(room)
@@ -482,7 +204,7 @@ const ViewInRoom = ({
           : `GameOver`
 
   const usersInRoom = Object.values(store.Profile).filter(
-    (profile) =>
+    (profile: any) =>
       model.users[profile.userId] &&
       model.users[profile.userId]?.roomId === room.roomId,
   )
@@ -761,7 +483,7 @@ const viewPlayerActions =
     player,
     room,
   }: {
-    currentUserId: string
+    currentUserId: UserId.UserId
     player: Board.Player
     room: Room.Room
     store: Store.Model
@@ -822,11 +544,11 @@ const ViewPlayer = ({
   model,
   currentUserId,
 }: {
-  currentUserId: string
+  currentUserId: UserId.UserId
   room: Room.Room
   store: Store.Model
   player: Board.Player
-  model: Model
+  model: any
   dispatch: (msg: Msg) => void
 }) => {
   const roomPlayer = room.players[player]
@@ -924,7 +646,7 @@ const ViewRoomNotReady = ({
   dispatch,
 }: {
   room: Room.Room
-  currentUserId: string
+  currentUserId: UserId.UserId
   dispatch: (msg: Msg) => void
 }) => {
   return (

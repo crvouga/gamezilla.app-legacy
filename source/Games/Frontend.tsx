@@ -10,11 +10,16 @@ import * as Snake from "./Snake"
 import * as TicTacToe from "./TicTacToe/Frontend"
 import * as Rooms from "./Rooms"
 import {
+  CreateRoom,
   FrontendModel,
   FrontendMsg,
   GameName,
+  JoinRoom,
+  LeaveRoom,
+  StartGame,
   ToFrontend
 } from "./Types"
+import { UserId } from "../Data"
 
 //
 //
@@ -39,7 +44,8 @@ export const init: [Model, Cmd.Cmd<Msg>] = [
     rooms: Rooms.init,
     createRoom: RemoteData.NotAsked,
     joinRoom: RemoteData.NotAsked,
-    leaveRoom: RemoteData.NotAsked
+    leaveRoom: RemoteData.NotAsked,
+    startGame: RemoteData.NotAsked
   },
   sendToBackend(['Games', ['Init']])
 ]
@@ -58,10 +64,10 @@ export type Msg = FrontendMsg
 type OutAction = Snackbar.Action | Store.Action
 
 export type Action =
-  | ["Games", ["CreateRoom", { userId: string, roomId: string }]]
-  | ["Games", ["JoinRoom", { userId: string, roomId: string }]]
-  | ["Games", ["LeaveRoom", { userId: string, }]]
-  | ["Games", ["StartGame", { gameName: GameName, userId: string }]]
+  | ["Games", CreateRoom]
+  | ["Games", JoinRoom]
+  | ["Games", LeaveRoom]
+  | ["Games", StartGame]
 
 
 //
@@ -100,7 +106,7 @@ export const runAction = (
 }
 
 export const update = (
-  { currentUserId }: { currentUserId: string },
+  { currentUserId }: { currentUserId: UserId.UserId },
   msg: Msg,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
@@ -117,7 +123,7 @@ export const updateFromBackend = (
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
     case 'Sync': {
-      const userIds = Object.keys(msg[1].users)
+      const userIds = Object.values(msg[1].users).map(user => user.userId)
 
       const action: OutAction = ['Store', ['Profile', ['FindMany', { userIds }]]]
 
@@ -160,6 +166,19 @@ export const updateFromBackend = (
 
       return [{ ...model, joinRoom }, Cmd.None, actions]
     }
+
+    case 'StartGameResulted': {
+      const startGame = pipe(msg[1], RemoteData.fromResult, RemoteData.mapSuccess(() => Unit))
+
+
+      const actions: OutAction[] =
+        startGame.type === 'Failure'
+          ? [['Snackbar', ['Enqueue', { variant: "Error", message: startGame.problem }]]]
+          : []
+
+      return [{ ...model, startGame }, Cmd.None, actions]
+
+    }
   }
 
 }
@@ -187,7 +206,7 @@ export const subscriptions = (_model: Model): Sub.Sub<Msg> => {
 //
 
 export const view = (
-  { currentUserId, store }: { currentUserId: string; store: Store.Model },
+  { currentUserId, store }: { currentUserId: UserId.UserId; store: Store.Model },
   model: Model,
 ): UI.View<Msg> => {
   return () => <>game view</>

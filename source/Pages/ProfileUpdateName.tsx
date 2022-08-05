@@ -2,6 +2,7 @@ import * as Route from "../Route"
 import * as Store from "../Store"
 import * as UI from "../UI"
 import { Cmd } from "../Core"
+import { UserId } from "../Data"
 
 //
 //
@@ -35,7 +36,7 @@ export type Msg =
 export type OutAction = Store.Action
 
 export const update = (
-  { userId }: { userId: string },
+  { userId }: { userId: UserId.UserId },
   msg: Msg,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
@@ -70,7 +71,7 @@ export const update = (
 
 export const view =
   (model: Model): UI.View<Msg> =>
-  (dispatch) =>
+    (dispatch) =>
     (
       <UI.FillBox>
         <UI.Header

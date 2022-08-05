@@ -1,6 +1,7 @@
 import * as Route from "../Route"
 import * as UI from "../UI"
 import { Cmd } from "../Core"
+import { UserId } from "../Data"
 
 //
 //
@@ -30,7 +31,7 @@ export type Msg =
   | ["ClickedAdmin"]
 
 export const update = (
-  { userId }: { userId: string },
+  { userId }: { userId: UserId.UserId },
   msg: Msg,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
@@ -62,7 +63,7 @@ export const update = (
 
 export const view =
   ({ username }: { username: string }, _: Model): UI.View<Msg> =>
-  (dispatch) =>
+    (dispatch) =>
     (
       <UI.FillBox>
         <UI.Header title={username} />

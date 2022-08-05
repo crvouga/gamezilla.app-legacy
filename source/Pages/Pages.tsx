@@ -26,6 +26,7 @@ import * as ProfileUpdateTheme from "./ProfileUpdateTheme"
 import * as ProfileUpdateUsername from "./ProfileUpdateUsername"
 import * as Search from "./Search"
 import { Cmd, exhaustive, pipe, Sub, tag } from "../Core"
+import { UserId } from "../Data"
 
 //
 //
@@ -896,7 +897,7 @@ const viewBottomNavigation =
     currentUserId,
     route,
   }: {
-    currentUserId: string
+    currentUserId: UserId.UserId
     page: "Home" | "Search" | "Chat" | "Profile"
     route: Route.Route
   }): UI.View<Msg> =>
@@ -919,7 +920,8 @@ const viewBottomNavigation =
               case "Profile": {
                 dispatch([
                   "ClickedBottomNavigationLink",
-                  { type: routeType, userId: currentUserId },
+                  { 
+                    type: routeType, userId: currentUserId },
                 ])
                 break
               }
