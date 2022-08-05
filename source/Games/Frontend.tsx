@@ -8,6 +8,7 @@ import * as Chess from "./Chess"
 import * as ConnectFour from "./ConnectFour"
 import * as Snake from "./Snake"
 import * as TicTacToe from "./TicTacToe/Frontend"
+import * as Rooms from "./Rooms"
 import {
   FrontendModel,
   FrontendMsg,
@@ -35,9 +36,10 @@ export type Model = FrontendModel
 
 export const init: [Model, Cmd.Cmd<Msg>] = [
   {
-    rooms: {},
-    users: {},
-    createRoom: RemoteData.NotAsked
+    rooms: Rooms.init,
+    createRoom: RemoteData.NotAsked,
+    joinRoom: RemoteData.NotAsked,
+    leaveRoom: RemoteData.NotAsked
   },
   sendToBackend(['Games', ['Init']])
 ]
@@ -57,6 +59,8 @@ type OutAction = Snackbar.Action | Store.Action
 
 export type Action =
   | ["Games", ["CreateRoom", { userId: string, roomId: string }]]
+  | ["Games", ["JoinRoom", { userId: string, roomId: string }]]
+  | ["Games", ["LeaveRoom", { userId: string, roomId: string }]]
 
 
 //
@@ -75,6 +79,16 @@ export const runAction = (
     case 'CreateRoom': {
       const { roomId, userId } = action[1][1]
       return [{ ...model, createRoom: RemoteData.Loading }, sendToBackend(['Games', ['CreateRoom', { roomId, userId }]])]
+    }
+
+    case 'JoinRoom': {
+      const { roomId, userId } = action[1][1]
+      return [{ ...model, joinRoom: RemoteData.Loading }, sendToBackend(['Games', ['JoinRoom', { roomId, userId }]])]
+    }
+
+    case 'LeaveRoom': {
+      const { roomId, userId } = action[1][1]
+      return [{ ...model, leaveRoom: RemoteData.Loading }, sendToBackend(['Games', ['LeaveRoom', { roomId, userId }]])]
     }
   }
 }
@@ -96,30 +110,49 @@ export const updateFromBackend = (
   model: Model,
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
-    case 'CreateRoomResulted': {
-      const createRoom = pipe(msg[1], RemoteData.fromResult, RemoteData.mapSuccess((success) => ({ roomId: success.roomId })))
-
-      const actions: OutAction[] =
-        createRoom.type === 'Failure'
-          ? [['Snackbar', ['Enqueue', { variant: "Error", message: createRoom.problem.replaceAll("_", " ") }]]]
-          : []
-
-
-      const cmd: Cmd.Cmd<Msg> = createRoom.type === 'Success' ? Route.push({ type: "GameRoom", }) : Cmd.None
-
-      return [{ ...model, createRoom }, cmd, actions]
-    }
-
     case 'Sync': {
       const userIds = Object.keys(msg[1].users)
 
       const action: OutAction = ['Store', ['Profile', ['FindMany', { userIds }]]]
 
-      return [{ ...model, ...msg[1] }, Cmd.None, [action]]
+      return [{ ...model, rooms: msg[1] }, Cmd.None, [action]]
     }
 
-    case 'TicTacToe': {
-      return [model, Cmd.None, []]
+    case 'CreateRoomResulted': {
+      const createRoom = pipe(msg[1], RemoteData.fromResult, RemoteData.mapSuccess(() => Unit))
+
+      const actions: OutAction[] =
+        createRoom.type === 'Failure'
+          ? [['Snackbar', ['Enqueue', { variant: "Error", message: createRoom.problem }]]]
+          : []
+
+
+      const cmd: Cmd.Cmd<Msg> = createRoom.type === 'Success' ? Route.replace({ type: "GameRoom", }) : Cmd.None
+
+      return [{ ...model, createRoom }, cmd, actions]
+    }
+
+    case 'LeaveRoomResulted': {
+      const leaveRoom = pipe(msg[1], RemoteData.fromResult, RemoteData.mapSuccess(() => Unit))
+
+      const actions: OutAction[] =
+        leaveRoom.type === 'Failure'
+          ? [['Snackbar', ['Enqueue', { variant: "Error", message: leaveRoom.problem }]]]
+          : []
+
+      return [{ ...model, leaveRoom }, Cmd.None, actions]
+    }
+
+    case 'JoinRoomResulted': {
+      const joinRoom = pipe(msg[1], RemoteData.fromResult, RemoteData.mapSuccess(() => Unit))
+
+      const actions: OutAction[] =
+        joinRoom.type === 'Failure'
+          ? [['Snackbar', ['Enqueue', { variant: "Error", message: joinRoom.problem }]]]
+          : []
+
+
+      return [{ ...model, joinRoom }, Cmd.None, actions]
     }
   }
 

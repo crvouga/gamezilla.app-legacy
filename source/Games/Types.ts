@@ -1,41 +1,31 @@
-import * as Chess from "./Chess"
-import * as ConnectFour from "./ConnectFour"
-import * as Snake from "./Snake"
-import * as TicTacToe from "./TicTacToe"
-import * as Room from "./Room"
 import { RemoteData, Unit } from "../Core"
+import * as Rooms from "./Rooms"
+import * as TicTacToe from "./TicTacToe"
 
-export type BackendModel = Room.Model & {
-  ticTacToe: TicTacToe.BackendModel
+export type BackendModel = {
+  rooms: Rooms.Model
 }
 
-export type FrontendModel = Room.Model & {
-  createRoom: RemoteData.Model<Room.CreateRoomProblem, { roomId: string }>
-}
-
-export type Closed = { type: "Closed" }
-
-export type Opened = {
-  type: "Opened"
-  status: "Idle" | "ConfirmingClose"
-  game:
-    | ["TicTacToe", TicTacToe.FrontendModel]
-    | ["ConnectFour", ConnectFour.Model]
-    | ["Chess", Chess.Model]
-    | ["Snake", Snake.Model]
+export type FrontendModel = {
+  rooms: Rooms.Model
+  createRoom: RemoteData.Model<Rooms.CreateRoomProblem, Unit>
+  leaveRoom: RemoteData.Model<Rooms.LeaveRoomProblem, Unit>
+  joinRoom: RemoteData.Model<Rooms.JoinRoomProblem, Unit>
 }
 
 export type ToFrontend =
-  | ["TicTacToe", TicTacToe.ToFrontend]
-  | ["CreateRoomResulted", Room.CreateRoomResult]
-  | ["Sync", BackendModel]
+  | ["CreateRoomResulted", Rooms.CreateRoomResult]
+  | ["LeaveRoomResulted", Rooms.LeaveRoomResult]
+  | ["JoinRoomResulted", Rooms.JoinRoomResult]
+  | ["Sync", Rooms.Model]
 
 export type ToBackend =
-  | ["TicTacToe", TicTacToe.ToBackend]
   | ["Init"]
   | ["CreateRoom", { roomId: string; userId: string }]
+  | ["LeaveRoom", { roomId: string; userId: string }]
+  | ["JoinRoom", { roomId: string; userId: string }]
 
-export type BackendMsg = ["TicTacToe", TicTacToe.BackendMsg]
+export type BackendMsg = ["Noop"]
 
 export type FrontendMsg = ["Noop"]
 

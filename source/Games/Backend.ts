@@ -3,7 +3,7 @@ import * as TicTacToe from "./TicTacToe/Backend"
 import { ClientId } from "../Bridge/Bridge"
 import { Cmd, exhaustive, pipe, Sub, tag } from "../Core"
 import { BackendModel, BackendMsg, ToBackend, ToFrontend } from "./Types"
-import * as Room from "./Room"
+import * as Rooms from "./Rooms"
 
 //
 //
@@ -16,9 +16,7 @@ import * as Room from "./Room"
 type Model = BackendModel
 
 export const init: Model = {
-  ticTacToe: TicTacToe.init,
-  rooms: {},
-  users: {},
+  rooms: Rooms.init,
 }
 
 //
@@ -53,12 +51,8 @@ export const update = (
   model: Model,
 ): [Model, Cmd.Cmd<BackendMsg>] => {
   switch (msg[0]) {
-    case "TicTacToe": {
-      const [childNew, childCmd] = TicTacToe.update(msg[1], model.ticTacToe)
-      return [
-        { ...model, ticTacToe: childNew },
-        pipe(childCmd, Cmd.map(tag("TicTacToe"))),
-      ]
+    case "Noop": {
+      return [model, Cmd.None]
     }
   }
 }
@@ -69,20 +63,8 @@ export const updateFromFrontend = (
   model: Model,
 ): [Model, Cmd.Cmd<BackendMsg>] => {
   switch (msg[0]) {
-    case "TicTacToe": {
-      const [childNew, childCmd] = TicTacToe.updateFromFrontend(
-        clientId,
-        msg[1],
-        model.ticTacToe,
-      )
-      return [
-        { ...model, ticTacToe: childNew },
-        pipe(childCmd, Cmd.map(tag("TicTacToe"))),
-      ]
-    }
-
     case "CreateRoom": {
-      const result = Room.createRoom(msg[1], model)
+      const result = Rooms.createRoom(msg[1], model.rooms)
 
       const toFrontend = sendToFrontend(clientId, [
         "CreateRoomResulted",
@@ -95,14 +77,60 @@ export const updateFromFrontend = (
 
       const modelNew: Model = {
         ...model,
-        ...result.value.model,
+        rooms: result.value.model,
       }
 
-      return [modelNew, Cmd.batch([broadcast(["Sync", modelNew]), toFrontend])]
+      return [
+        modelNew,
+        Cmd.batch([broadcast(["Sync", modelNew.rooms]), toFrontend]),
+      ]
     }
 
     case "Init": {
-      return [model, Cmd.batch([sendToFrontend(clientId, ["Sync", model])])]
+      return [
+        model,
+        Cmd.batch([sendToFrontend(clientId, ["Sync", model.rooms])]),
+      ]
+    }
+
+    case "LeaveRoom": {
+      const result = Rooms.leaveRoom(msg[1], model.rooms)
+
+      const toFrontend = sendToFrontend(clientId, ["LeaveRoomResulted", result])
+
+      if (result.type === "Err") {
+        return [model, toFrontend]
+      }
+
+      const modelNew: Model = {
+        ...model,
+        rooms: result.value,
+      }
+
+      return [
+        modelNew,
+        Cmd.batch([broadcast(["Sync", modelNew.rooms]), toFrontend]),
+      ]
+    }
+
+    case "JoinRoom": {
+      const result = Rooms.joinRoom(msg[1], model.rooms)
+
+      const toFrontend = sendToFrontend(clientId, ["JoinRoomResulted", result])
+
+      if (result.type === "Err") {
+        return [model, toFrontend]
+      }
+
+      const modelNew: Model = {
+        ...model,
+        rooms: result.value,
+      }
+
+      return [
+        modelNew,
+        Cmd.batch([broadcast(["Sync", modelNew.rooms]), toFrontend]),
+      ]
     }
 
     default:
@@ -119,5 +147,5 @@ export const updateFromFrontend = (
 //
 
 export const subscriptions = (): Sub.Sub<BackendMsg> => {
-  return Sub.batch([pipe(TicTacToe.subscriptions(), Sub.map(tag("TicTacToe")))])
+  return Sub.None
 }

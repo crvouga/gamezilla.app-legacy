@@ -26,8 +26,9 @@ export type Model = FrontendModel
 //
 //
 
-const sendToBackend = (msg: ToBackend): Cmd.Cmd<never> => {
-  return Bridge.sendToBackend(["Games", ["TicTacToe", msg]])
+const sendToBackend = (_msg: ToBackend): Cmd.Cmd<never> => {
+  // return Bridge.sendToBackend(["Games", ["TicTacToe", msg]])
+  return Cmd.None
 }
 
 //

@@ -29,14 +29,16 @@ export const init: Model = {
 //
 
 const broadcast = (toFrontend: ToFrontend): Cmd.Cmd<never> => {
-  return Bridge.broadcast(["Games", ["TicTacToe", toFrontend]])
+  // return Bridge.broadcast(["Games", ["", ]])
+  return Cmd.None
 }
 
 const sendToFrontend = (
   clientId: string,
   toFrontend: ToFrontend,
 ): Cmd.Cmd<never> => {
-  return Bridge.sendToFrontend(clientId, ["Games", ["TicTacToe", toFrontend]])
+  // return Bridge.sendToFrontend(clientId, ["Games", ["TicTacToe", toFrontend]])
+  return Cmd.None
 }
 
 //

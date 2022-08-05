@@ -21,6 +21,11 @@ export type Model = {
   }
 }
 
+export const init: Model = {
+  rooms: {},
+  users: {},
+}
+
 export type RoomId = string
 
 export type Room = {
@@ -33,6 +38,19 @@ export type Event =
   | ["Created", { userId: string; roomId: string }]
   | ["Joined", { userId: string }]
   | ["Left", { userId: string }]
+
+//
+//
+//
+// Update
+//
+//
+//
+
+type Msg =
+  | ["Create", { userId: string }]
+  | ["Join", { userId: string; roomId: string }]
+  | ["Leave", { userId: string; roomId: string }]
 
 //
 //
