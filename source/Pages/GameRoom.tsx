@@ -1,9 +1,10 @@
-import * as UI from "../UI";
 import { Cmd, Sub, Uuid } from "../Core";
-import * as Games from "../Games/Frontend"
-import * as Store from "../Store"
-import * as GameRooms from "../Games/Rooms"
-import * as Route from "../Route"
+import { GameName } from "../Games";
+import * as Games from "../Games/Frontend";
+import * as GameRooms from "../Games/Rooms";
+import * as Route from "../Route";
+import * as Store from "../Store";
+import * as UI from "../UI";
 
 //
 //
@@ -28,20 +29,21 @@ export const init: [Model, Cmd.Cmd<Msg>] = [{ drawer: "Closed" }, Cmd.None];
 //
 
 export type Msg =
-    | ["ClickedLeave", { roomId: string }]
+    | ["ClickedLeave"]
     | ["ClickedBack"]
     | ["ClickedCreate",]
     | ["ClickedJoin", { roomId: string }]
     | ["ClickedAvatars"]
     | ["ClosedDrawer"]
     | ["ClickedUser", { userId: string }]
+    | ["ClickedGame", GameName]
 
 type OutAction = Games.Action
 
 export const update = ({ currentUserId }: { currentUserId: string }, msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
     switch (msg[0]) {
         case 'ClickedLeave': {
-            return [model, Cmd.None, [['Games', ['LeaveRoom', { userId: currentUserId, roomId: msg[1].roomId }]]]];
+            return [model, Cmd.None, [['Games', ['LeaveRoom', { userId: currentUserId, }]]]];
         }
 
         case 'ClickedBack': {
@@ -68,6 +70,10 @@ export const update = ({ currentUserId }: { currentUserId: string }, msg: Msg, m
 
         case 'ClickedUser': {
             return [{ ...model, drawer: "Closed" }, Route.push({ type: "Profile", userId: msg[1].userId }), []]
+        }
+
+        case 'ClickedGame': {
+            return [model, Cmd.None, []]
         }
     }
 };
@@ -172,7 +178,7 @@ export const viewInRoom =
                     <UI.Toolbar>
                         <UI.Button
                             sx={{ marginLeft: -1 }}
-                            onClick={() => dispatch(['ClickedLeave', { roomId: room.roomId }])}>
+                            onClick={() => dispatch(['ClickedLeave',])}>
                             Leave
                         </UI.Button>
                         <UI.Box sx={{ flex: 1 }}>
@@ -202,6 +208,97 @@ export const viewInRoom =
                     </UI.Toolbar>
 
 
+                    <GameGrid onClick={gameName => dispatch(['ClickedGame', gameName])} />
+
                 </UI.FillBox >
             )
         };
+
+
+
+const GameGrid = ({ onClick }: { onClick: (gameName: GameName) => void }) => {
+    return (
+        <UI.Box
+            sx={{
+                display: "grid",
+                gridTemplateColumns: "repeat(3, 1fr)",
+            }}
+        >
+            <GameCard
+                icon={<Games.CoverArt game="TicTacToe" />}
+                label="Tic Tac Toe"
+                onClick={() => onClick("TicTacToe")}
+            />
+
+            <GameCard
+                icon={<Games.CoverArt game="ConnectFour" />}
+                label="Connect Four"
+                onClick={() => onClick("ConnectFour")}
+            />
+
+            <GameCard
+                icon={<Games.CoverArt game="Chess" />}
+                label="Chess"
+                onClick={() => onClick("Chess")}
+            />
+
+            <GameCard
+                icon={<Games.CoverArt game="Snake" />}
+                label="Snake"
+                onClick={() => onClick("Snake")}
+            />
+        </UI.Box>
+    )
+}
+
+const GameCard = ({
+    icon,
+    label,
+    onClick,
+    disabled = false,
+}: {
+    icon: React.ReactNode
+    label: string
+    onClick: () => void
+    disabled?: boolean
+}) => {
+    return (
+        <UI.ButtonBase
+            disabled={disabled}
+            sx={{
+                position: "relative",
+                overflow: "hidden",
+                opacity: disabled ? 0.3 : 1,
+            }}
+            onClick={onClick}
+        >
+            {icon}
+
+            <UI.Box
+                sx={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "flex-end",
+                }}
+            >
+                <UI.Box
+                    sx={{
+                        width: "100%",
+                        padding: 1,
+                        paddingTop: 2,
+                        background: `linear-gradient(transparent, rgba(0, 0, 0, 0.6))`,
+                    }}
+                >
+                    <UI.Typography color="white" align="left" fontWeight={800}>
+                        {label}
+                    </UI.Typography>
+                </UI.Box>
+            </UI.Box>
+        </UI.ButtonBase>
+    )
+}

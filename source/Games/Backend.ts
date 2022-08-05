@@ -133,6 +133,10 @@ export const updateFromFrontend = (
       ]
     }
 
+    case "StartGame": {
+      return [model, Cmd.None]
+    }
+
     default:
       return exhaustive(msg[0])
   }
