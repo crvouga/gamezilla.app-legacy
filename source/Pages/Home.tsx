@@ -1,8 +1,8 @@
 import * as Games from "../Games/Frontend"
 import * as Route from "../Route"
+import * as Store from "../Store"
 import * as UI from "../UI"
-import { Cmd } from "../Core"
-import { GameName } from "../Games"
+import { Cmd, Uuid } from "../Core"
 
 //
 //
@@ -24,18 +24,24 @@ export const init: Model = {}
 //
 //
 
-export type Msg = ["ClickedGame", GameName]
+export type Msg = ["ClickedPlay"] | ["ClickedGoToRoom", { roomId: string }]
 
 export type OutAction = Games.Action
 
 export const update = (
+  { currentUserId }: { currentUserId: string },
   msg: Msg,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
-    case "ClickedGame":
-      const gameName = msg[1]
-      return [model, Cmd.None, [["Games", ["Open", gameName]]]]
+    case 'ClickedGoToRoom': {
+      return [model, Route.push({ type: "GameRoom", }), []]
+    }
+
+    case 'ClickedPlay': {
+      const roomId = Uuid.generateSync()
+      return [model, Cmd.None, [["Games", ["CreateRoom", { userId: currentUserId, roomId }]]]]
+    }
   }
 }
 
@@ -47,67 +53,101 @@ export const update = (
 //
 //
 
-const isOpen = (game: Games.Model, gameName: GameName) => {
-  return game.type === "Opened" && game.game[0] === gameName
-}
-
-const canOpen = (game: Games.Model, gameName: GameName) => {
-  return game.type === "Closed" || isOpen(game, gameName)
-}
-
 export const view =
   (
     {
-      profile,
-      game,
-      route,
+      currentUserId,
+      games,
+      store,
     }: {
-      profile: { avatarUrl: string }
-      game: Games.Model
-      route: Route.Route
+      currentUserId: string
+      games: Games.Model
+      store: Store.Model
     },
     _model: Model,
-  ): UI.View<Msg> =>
-    (dispatch) =>
-    (
-      <UI.FillBox>
-        <UI.Header title="Home" />
-        <UI.Box
-          sx={{
-            display: "grid",
-            gridTemplateColumns: "repeat(3, 1fr)",
-          }}
-        >
-          <GameCard
-            icon={<Games.CoverArt game="TicTacToe" />}
-            label="Tic Tac Toe"
-            disabled={!canOpen(game, "TicTacToe")}
-            onClick={() => dispatch(["ClickedGame", "TicTacToe"])}
-          />
+  ): UI.View<Msg> => {
 
-          <GameCard
-            icon={<Games.CoverArt game="ConnectFour" />}
-            label="Connect Four"
-            disabled={!canOpen(game, "ConnectFour")}
-            onClick={() => dispatch(["ClickedGame", "ConnectFour"])}
-          />
+    const user = games.users[currentUserId]
 
-          <GameCard
-            icon={<Games.CoverArt game="Chess" />}
-            label="Chess"
-            disabled={!canOpen(game, "Chess")}
-            onClick={() => dispatch(["ClickedGame", "Chess"])}
-          />
+    if (!user) {
+      return viewNotInRoom({ games, store })
+    }
 
-          <GameCard
-            icon={<Games.CoverArt game="Snake" />}
-            label="Snake"
-            disabled={!canOpen(game, "Snake")}
-            onClick={() => dispatch(["ClickedGame", "Snake"])}
-          />
-        </UI.Box>
-      </UI.FillBox>
-    )
+    const room = games.rooms[user.roomId]
+
+    if (!room) {
+      return viewNotInRoom({ games, store })
+    }
+
+    return (dispatch) => {
+      return (
+        <UI.FillBox>
+          <UI.Header title="Home" />
+          <UI.Box sx={{ paddingX: 2 }}>
+            <UI.Typography sx={{ marginBottom: 1 }} variant="h4">
+              You are in a room
+            </UI.Typography>
+            <UI.Button fullWidth size="large" variant="contained" onClick={() => dispatch(['ClickedGoToRoom', { roomId: room.roomId }])}>
+              Go to room
+            </UI.Button>
+          </UI.Box>
+        </UI.FillBox>
+      )
+    }
+  }
+
+
+const viewNotInRoom = ({
+  games,
+  store,
+}: {
+  games: Games.Model
+  store: Store.Model
+}): UI.View<Msg> => (dispatch) => {
+  return (
+    <UI.FillBox>
+      <UI.Header title="Home" />
+      <UI.Box sx={{ paddingX: 2 }}>
+        <UI.Button loading={games.createRoom.type === 'Loading'} fullWidth size="large" variant="contained" onClick={() => dispatch(['ClickedPlay'])}>
+          Play
+        </UI.Button>
+      </UI.Box>
+
+      <UI.List sx={{ overflowY: "scroll" }}>
+        {Object.values(games.rooms)
+          .map((room) => ({
+            room,
+            profiles: Object.values(store.Profile).filter(
+              (profile) => games.users[profile.userId]?.roomId === room.roomId,
+            ),
+          }))
+          .map(({ room, profiles }) => (
+            <UI.ListItemButton
+              key={room.roomId}
+              onClick={() => { }
+                // dispatch(["JoinRoom", { currentUserId, roomId: room.roomId }])
+              }
+            >
+              <UI.ListItemAvatar>
+                <UI.AvatarGroup>
+                  {profiles.map((item) => (
+                    <UI.Avatar key={item.userId} src={item.avatarUrl} />
+                  ))}
+                </UI.AvatarGroup>
+              </UI.ListItemAvatar>
+              <UI.ListItemText
+                primaryTypographyProps={{
+                  noWrap: true,
+                  sx: { wordWrap: "break-word" },
+                }}
+                primary={profiles.map((item) => item.username).join(",")}
+              />
+            </UI.ListItemButton>
+          ))}
+      </UI.List>
+    </UI.FillBox>
+  )
+}
 
 const GameCard = ({
   icon,

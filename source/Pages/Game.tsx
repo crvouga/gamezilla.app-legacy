@@ -11,7 +11,7 @@ import { Cmd } from "../Core"
 //
 //
 
-export type Model = Games.Model
+export type Model = {}
 
 //
 //
@@ -21,7 +21,7 @@ export type Model = Games.Model
 //
 //
 
-export const init = Games.init
+export const init: Model = {}
 
 //
 //
@@ -31,7 +31,7 @@ export const init = Games.init
 //
 //
 
-export type Msg = Games.Msg
+export type Msg = []
 
 //
 //
@@ -54,8 +54,8 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 //
 
 export const view = (
-  deps: { currentUserId: string; store: Store.Model },
-  model: Model,
-): UI.View<Msg> => {
-  return Games.view(deps, model)
+  { games, currentUserId, store }: { games: Games.Model, currentUserId: string; store: Store.Model },
+  _model: Model,
+): UI.View<Games.Msg> => {
+  return Games.view({ currentUserId, store }, games)
 }

@@ -25,6 +25,7 @@ export type Route =
   | { type: "ProfileUpdateUsername" }
   | { type: "ProfileUpdateTheme" }
   | { type: "Game" }
+  | { type: "GameRoom", }
   | { type: "Chat" }
   | { type: "ChatNew" }
   | { type: "ChatConversation"; conversationId: string }
@@ -57,6 +58,7 @@ export const routesTypes: { [routeType in Route["type"]]: string } = {
   ProfileUpdateTheme: "ProfileUpdateTheme",
   PasswordReset: "PasswordReset",
   Game: "Game",
+  GameRoom: "GameRoom",
   Chat: "Chat",
   ChatNew: "ChatNew",
   ChatConversation: "ChatConversation",
@@ -109,6 +111,16 @@ export const decode = (location: Browser.Location): Option.Option<Route> => {
       return Option.None
     }
 
+    // case 'GameRoom': {
+    //   if (typeof second === "string") {
+    //     return Option.Some({
+    //       type: "GameRoom",
+    //       roomId: second,
+    //     })
+    //   }
+    //   return Option.None
+    // }
+
     default: {
       return Option.Some({ type: first })
     }
@@ -125,6 +137,9 @@ export const encode = (route: Route): string => {
 
     case "Admin":
       return `/${route.type}/${route.tab}`
+
+    // case 'GameRoom':
+    //   return `/${route.type}/${route.roomId}`
 
     default:
       return `/${route.type}`
