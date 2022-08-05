@@ -346,33 +346,33 @@ export const view =
     { currentUserId, store }: { currentUserId: string; store: Store.Model },
     model: Model,
   ): UI.View<Msg> =>
-  (dispatch) => {
-    const maybeCurrentRoom = Room.toRoom(currentUserId, model)
+    (dispatch) => {
+      const maybeCurrentRoom = Room.toRoom(currentUserId, model)
 
-    switch (maybeCurrentRoom.type) {
-      case "None":
-        return (
-          <ViewNotInRoom
-            currentUserId={currentUserId}
-            store={store}
-            model={model}
-            dispatch={dispatch}
-          />
-        )
+      switch (maybeCurrentRoom.type) {
+        case "None":
+          return (
+            <ViewNotInRoom
+              currentUserId={currentUserId}
+              store={store}
+              model={model}
+              dispatch={dispatch}
+            />
+          )
 
-      case "Some":
-        const room = maybeCurrentRoom.value
-        return (
-          <ViewInRoom
-            dispatch={dispatch}
-            room={room}
-            currentUserId={currentUserId}
-            store={store}
-            model={model}
-          />
-        )
+        case "Some":
+          const room = maybeCurrentRoom.value
+          return (
+            <ViewInRoom
+              dispatch={dispatch}
+              room={room}
+              currentUserId={currentUserId}
+              store={store}
+              model={model}
+            />
+          )
+      }
     }
-  }
 
 const ViewNotInRoom = ({
   currentUserId,
@@ -470,15 +470,15 @@ const ViewInRoom = ({
       ? status.status === "MissingBoth"
         ? "Missing Players"
         : status.status === "MissingO"
-        ? "Missing O Player"
-        : status.status === "MissingX"
-        ? "Missing X Player"
-        : ""
+          ? "Missing O Player"
+          : status.status === "MissingX"
+            ? "Missing X Player"
+            : ""
       : status.status.type === "Turn"
-      ? `${status.status.turn} Turn`
-      : status.status.type === "Tie"
-      ? "GameOver"
-      : `GameOver`
+        ? `${status.status.turn} Turn`
+        : status.status.type === "Tie"
+          ? "GameOver"
+          : `GameOver`
 
   const usersInRoom = Object.values(store.Profile).filter(
     (profile) =>
@@ -765,53 +765,53 @@ const viewPlayerActions =
     room: Room.Room
     store: Store.Model
   }): UI.View<Msg> =>
-  (dispatch) => {
-    const roomPlayer = room.players[player]
+    (dispatch) => {
+      const roomPlayer = room.players[player]
 
-    switch (roomPlayer.type) {
-      case "None":
-        return <>None</>
+      switch (roomPlayer.type) {
+        case "None":
+          return <>None</>
 
-      case "User":
-        if (roomPlayer.userId === currentUserId) {
+        case "User":
+          if (roomPlayer.userId === currentUserId) {
+            return (
+              <UI.Box sx={{ paddingX: 1 }}>
+                <UI.Button
+                  onClick={() =>
+                    dispatch(["StopPlaying", { currentUserId, player }])
+                  }
+                  fullWidth
+                >
+                  Stop Playing
+                </UI.Button>
+              </UI.Box>
+            )
+          }
+
+          if (currentUserId === room.hostId) {
+            return (
+              <UI.Box sx={{ paddingX: 1 }}>
+                <UI.Button
+                  onClick={() =>
+                    dispatch(["RemovePlayer", { currentUserId, player }])
+                  }
+                  fullWidth
+                >
+                  Remove Player
+                </UI.Button>
+              </UI.Box>
+            )
+          }
+
           return (
-            <UI.Box sx={{ paddingX: 1 }}>
-              <UI.Button
-                onClick={() =>
-                  dispatch(["StopPlaying", { currentUserId, player }])
-                }
-                fullWidth
-              >
-                Stop Playing
-              </UI.Button>
+            <UI.Box sx={{ p: 2 }}>
+              <UI.Typography color="text.secondary">
+                No action available
+              </UI.Typography>
             </UI.Box>
           )
-        }
-
-        if (currentUserId === room.hostId) {
-          return (
-            <UI.Box sx={{ paddingX: 1 }}>
-              <UI.Button
-                onClick={() =>
-                  dispatch(["RemovePlayer", { currentUserId, player }])
-                }
-                fullWidth
-              >
-                Remove Player
-              </UI.Button>
-            </UI.Box>
-          )
-        }
-
-        return (
-          <UI.Box sx={{ p: 2 }}>
-            <UI.Typography color="text.secondary">
-              No action available
-            </UI.Typography>
-          </UI.Box>
-        )
+      }
     }
-  }
 
 const ViewPlayer = ({
   room,

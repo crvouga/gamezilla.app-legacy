@@ -1,6 +1,6 @@
-import { fromFrontend } from "./Bridge/Backend"
+import * as Bridge from "./Bridge/Backend"
 import { ClientId } from "./Bridge/Bridge"
-import { Cmd, pipe, Platform, Sub, tag } from "./Core"
+import { Cmd, Debug, pipe, Platform, Sub, tag } from "./Core"
 import * as Games from "./Games/Backend"
 import { BackendModel, BackendMsg, ToBackend } from "./Types"
 
@@ -17,9 +17,6 @@ type Model = BackendModel
 export const init: [Model, Cmd.Cmd<BackendMsg>] = [
   {
     games: Games.init,
-    rooms: {},
-    clients: {},
-    users: {},
   },
   Cmd.None,
 ]
@@ -39,6 +36,14 @@ export const update = (
   switch (msg[0]) {
     case "ToBackend":
       return updateFromFrontend(msg[1], msg[2], model)
+
+    case "ClientConnected": {
+      return [model, Cmd.None]
+    }
+
+    case "ClientDisconnected": {
+      return [model, Cmd.None]
+    }
 
     case "Games":
       const [gamesNew, gamesCmd] = Games.update(msg[1], model.games)
@@ -79,7 +84,9 @@ export const updateFromFrontend = (
 export const subscriptions = (): Sub.Sub<BackendMsg> => {
   return Sub.batch([
     pipe(Games.subscriptions(), Sub.map(tag("Games"))),
-    fromFrontend<BackendMsg>((clientId, toBackend) => [
+    Bridge.onConnect((clientId) => ["ClientConnected", clientId]),
+    Bridge.onDisconnect((clientId) => ["ClientDisconnected", clientId]),
+    Bridge.fromFrontend<BackendMsg>((clientId, toBackend) => [
       "ToBackend",
       clientId,
       toBackend,
@@ -105,3 +112,16 @@ Platform.run(program)
 
 console.clear()
 console.log("[backend] [program] running")
+
+program.state$.subscribe((state) => {
+  console.log(
+    JSON.stringify(
+      {
+        model: state.model,
+        msg: Debug.formatMsg(state.msg),
+      },
+      null,
+      4,
+    ),
+  )
+})

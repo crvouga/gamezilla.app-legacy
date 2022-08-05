@@ -116,7 +116,7 @@ export const init = (location: Browser.Location): [Model, Cmd.Cmd<Msg>] => {
   const [auth, authCmd] = Auth.init()
   const snackbar = Snackbar.init
   const store = Store.init
-  const game = Games.init
+  const [games, gamesCmd] = Games.init
   const [page, pageCmd] = Pages.initLoading()
   const connection = Connection.init
 
@@ -125,7 +125,7 @@ export const init = (location: Browser.Location): [Model, Cmd.Cmd<Msg>] => {
       route,
       snackbar,
       store,
-      game,
+      games,
       auth,
       page,
       connection,
@@ -133,6 +133,7 @@ export const init = (location: Browser.Location): [Model, Cmd.Cmd<Msg>] => {
     Cmd.batch<Msg>([
       pipe(authCmd, Cmd.map(tag("Auth"))),
       pipe(pageCmd, Cmd.map(tag("Page"))),
+      pipe(gamesCmd, Cmd.map(tag("Games")))
     ]),
   ]
 }
@@ -173,11 +174,11 @@ export const updateFromBackend = (
     case "Games": {
       const [gameNew, gameCmd, actions] = Games.updateFromBackend(
         msg[1],
-        model.game,
+        model.games,
       )
 
       return pipe(
-        [{ ...model, game: gameNew }, pipe(gameCmd, Cmd.map(tag("Game")))],
+        [{ ...model, games: gameNew }, pipe(gameCmd, Cmd.map(tag("Games")))],
         andThenMany(runAction, actions),
       )
     }
@@ -210,7 +211,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
       ]
     }
 
-    case "Game": {
+    case "Games": {
       const status = toStatus(model)
       switch (status.type) {
         case "ProfileLoading":
@@ -224,11 +225,11 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
           const [gameNew, gameCmd, actions] = Games.update(
             { currentUserId: profile.userId },
             msg[1],
-            model.game,
+            model.games,
           )
 
           return pipe(
-            [{ ...model, game: gameNew }, pipe(gameCmd, Cmd.map(tag("Game")))],
+            [{ ...model, games: gameNew }, pipe(gameCmd, Cmd.map(tag("Games")))],
             andThenMany(runAction, actions),
           )
         }
@@ -269,10 +270,6 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
         }
 
         case "Ready": {
-          if (model.page[0] === "Game" && model.game.type === "Closed") {
-            return [model, Route.replace({ type: "Home" })]
-          }
-
           const [pageNew, pageCmd, actions] = Pages.updateReady(
             { profile: status.profile, store: model.store },
             msg[1],
@@ -388,10 +385,6 @@ const updateStatusChanged =
         }
 
         case "Ready": {
-          if (model.route.type === "Game" && model.game.type === "Closed") {
-            return [model, Route.replace({ type: "Home" })]
-          }
-
           const [page, pageCmd, actions] = Pages.initReady(
             model.route,
             statusNew.profile,
@@ -429,10 +422,10 @@ const runAction = (action: OutAction, model: Model): [Model, Cmd.Cmd<Msg>] => {
     }
 
     case "Games": {
-      const [gamesNew, gamesCmd] = Games.runAction(action, model.game)
+      const [gamesNew, gamesCmd] = Games.runAction(action, model.games)
       return [
-        { ...model, game: gamesNew },
-        pipe(gamesCmd, Cmd.map(tag("Game"))),
+        { ...model, games: gamesNew },
+        pipe(gamesCmd, Cmd.map(tag("Games"))),
       ]
     }
 
@@ -456,7 +449,7 @@ const runAction = (action: OutAction, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
 export const subscriptions = (model: Model): Sub.Sub<Msg> => {
   return Sub.batch<Msg>([
-    pipe(Games.subscriptions(model.game), Sub.map(tag("Game"))),
+    // pipe(Games.subscriptions(model.game), Sub.map(tag("Game"))),
     pipe(Pages.subscriptions(model.page), Sub.map(tag("Page"))),
     pipe(Auth.subscriptions, Sub.map(tag("Auth"))),
     pipe(Connection.subscriptions, Sub.map(tag("Connection"))),
@@ -548,22 +541,12 @@ const viewMain = (model: Model): UI.View<Msg> => {
           )
 
         case "Ready":
-          if (model.route.type === "Game") {
-            return pipe(
-              Games.view(
-                { store: model.store, currentUserId: status.profile.userId },
-                model.game,
-              ),
-              UI.map(tag("Game")),
-            )
-          }
-
           return pipe(
             Pages.viewReady(
               {
                 route: model.route,
                 profile: status.profile,
-                game: model.game,
+                games: model.games,
                 store: model.store,
               },
               model.page,
@@ -580,21 +563,22 @@ const viewLoading: UI.View<Msg> = () => <UI.LoadingPage />
 const viewGameBanner =
   (model: Model): UI.View<Msg> =>
     (dispatch) => {
-      switch (model.game.type) {
-        case "Closed":
-          return <></>
+      return <></>
+      // switch (model.game.type) {
+      //   case "Closed":
+      //     return <></>
 
-        case "Opened":
-          if (model.page[0] === "Game") {
-            return <></>
-          }
+      //   case "Opened":
+      //     if (model.page[0] === "Game") {
+      //       return <></>
+      //     }
 
-          return (
-            <>
-              {pipe(Games.viewBanner(model.game), UI.map(tag("Game")))(dispatch)}
-            </>
-          )
-      }
+      //     return (
+      //       <>
+      //         {pipe(Games.viewBanner(model.game), UI.map(tag("Game")))(dispatch)}
+      //       </>
+      //     )
+      // }
     }
 
 //

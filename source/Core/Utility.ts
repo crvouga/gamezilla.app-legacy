@@ -42,3 +42,7 @@ export const tag =
   <Tag extends string>(tag: Tag) =>
   <Value>(value: Value): [Tag, Value] =>
     [tag, value]
+
+export type Unit = { type: "Unit" }
+
+export const Unit: Unit = { type: "Unit" }
