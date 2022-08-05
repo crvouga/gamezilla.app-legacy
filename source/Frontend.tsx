@@ -271,7 +271,11 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
         case "Ready": {
           const [pageNew, pageCmd, actions] = Pages.updateReady(
-            { profile: status.profile, store: model.store },
+            {
+              profile: status.profile,
+              store: model.store,
+              games: model.games
+            },
             msg[1],
             model.page,
           )

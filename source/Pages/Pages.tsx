@@ -322,7 +322,7 @@ export const initProfileMissing = (
 //
 
 export const updateReady = (
-  { profile, store }: { profile: Store.Profile.Profile; store: Store.Model },
+  { profile, store, games }: { profile: Store.Profile.Profile; store: Store.Model, games: Games.Model },
   msg: Msg,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
@@ -467,8 +467,17 @@ export const updateReady = (
       return [model, Cmd.None, []]
 
     case 'GameRoom': {
-      if (msg[0] === 'GameRoom') {
-        return tagUpdate("GameRoom", GameRoom.update(msg[1], model[1]))
+      if (msg[0] === "GameRoom") {
+        const [modelPage, cmdPage, actions] = GameRoom.update(
+          { currentUserId: profile.userId },
+          msg[1],
+          model[1],
+        )
+        return [
+          ["GameRoom", modelPage],
+          pipe(cmdPage, Cmd.map(tag("GameRoom"))),
+          actions,
+        ]
       }
 
       return [model, Cmd.None, []]
@@ -773,7 +782,7 @@ export const viewReady = (
 
 
     case "GameRoom": {
-      return tagView("GameRoom", GameRoom.view({ games }, model[1]))
+      return tagView("GameRoom", GameRoom.view({ store, currentUserId, games }, model[1]))
     }
 
     case "Login":
