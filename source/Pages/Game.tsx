@@ -2,6 +2,7 @@ import * as Games from "../Games/Frontend"
 import * as Store from "../Store"
 import * as UI from "../UI"
 import { Cmd } from "../Core"
+import { UserId } from "../Data"
 
 //
 //
@@ -54,7 +55,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 //
 
 export const view = (
-  { games, currentUserId, store }: { games: Games.Model, currentUserId: string; store: Store.Model },
+  { games, currentUserId, store }: { games: Games.Model, currentUserId: UserId.UserId; store: Store.Model },
   _model: Model,
 ): UI.View<Games.Msg> => {
   return Games.view({ currentUserId, store }, games)

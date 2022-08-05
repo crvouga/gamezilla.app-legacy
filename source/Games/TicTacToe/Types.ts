@@ -1,5 +1,6 @@
 import { ClientId } from "../../Bridge/Bridge"
 import { Result } from "../../Core"
+import { UserId } from "../../Data"
 import * as Board from "./Board"
 import * as Room from "./Room"
 
@@ -11,31 +12,23 @@ import * as Room from "./Room"
 //
 //
 
-export type BackendModel = {
-  rooms: {
-    [id: Room.RoomId]: Room.Room
-  }
-  users: {
-    [id: string]: {
-      userId: string
-      roomId: Room.RoomId
-    }
+export type GameModel = {
+  board: Board.Board
+  players: {
+    [player in Board.Player]:
+      | { type: "None" }
+      | { type: "User"; userId: UserId.UserId }
   }
 }
 
-export type User = { userId: string; roomId: Room.RoomId }
+export type BackendModel = {
+  game: GameModel
+}
+
+export type User = { userId: UserId.UserId; roomId: Room.RoomId }
 
 export type FrontendModel = {
-  rooms: {
-    [id: Room.RoomId]: Room.Room
-  }
-  users: {
-    [id: string]: {
-      userId: string
-      roomId: Room.RoomId
-    }
-  }
-  opened: ["None"] | ["Users"] | ["Player", Board.Player]
+  game: GameModel
 }
 
 //
@@ -48,7 +41,7 @@ export type FrontendModel = {
 
 export type FrontendMsg =
   | ["ClickedBack"]
-  | ["ClickedUser", { userId: string }]
+  | ["ClickedUser", { userId: UserId.UserId }]
   | ["ClickedAvatars"]
   | ["ClosedDrawer"]
   | ["ClickedPlayer", Board.Player]
@@ -98,39 +91,42 @@ export type BackendMsg =
 //
 //
 
-type LeaveRoom = ["LeaveRoom", { currentUserId: string }]
+type LeaveRoom = ["LeaveRoom", { currentUserId: UserId.UserId }]
 type LeaveRoomResulted = ["LeaveRoomResulted", Room.LeaveRoomResult]
 
-type JoinRoom = ["JoinRoom", { currentUserId: string; roomId: Room.RoomId }]
+type JoinRoom = [
+  "JoinRoom",
+  { currentUserId: UserId.UserId; roomId: Room.RoomId },
+]
 type JoinRoomResulted = ["JoinRoomResulted", Room.JoinRoomResult]
 
-type RestartGame = ["RestartGame", { currentUserId: string }]
+type RestartGame = ["RestartGame", { currentUserId: UserId.UserId }]
 type RestartGameResulted = ["RestartGameResulted", Room.RestartGameResult]
 
 type StartPlaying = [
   "StartPlaying",
-  { player: Board.Player; currentUserId: string },
+  { player: Board.Player; currentUserId: UserId.UserId },
 ]
 type StartPlayingResulted = ["StartPlayingResulted", Room.StartPlayingResult]
 
-type Move = ["Move", { currentUserId: string; position: Board.Position }]
+type Move = ["Move", { currentUserId: UserId.UserId; position: Board.Position }]
 type MoveResulted = ["MoveResulted", Room.MoveResult]
 
-type CreateRoom = ["CreateRoom", { currentUserId: string }]
+type CreateRoom = ["CreateRoom", { currentUserId: UserId.UserId }]
 type CreateRoomResulted = ["CreateRoomResulted", Room.CreateRoomResult]
 
-type PlayAgain = ["PlayAgain", { currentUserId: string }]
+type PlayAgain = ["PlayAgain", { currentUserId: UserId.UserId }]
 type PlayAgainResulted = [
   "PlayAgainResulted",
-  Result.Result<string, { userId: string }>,
+  Result.Result<string, { userId: UserId.UserId }>,
 ]
 
 type RemovePlayer = [
   "RemovePlayer",
-  { currentUserId: string; player: Board.Player },
+  { currentUserId: UserId.UserId; player: Board.Player },
 ]
 type RemovePlayerResulted = ["RemovePlayerResulted", Room.RemovePlayerResult]
 
 type StopPlaying =
-  | ["StopPlaying", { currentUserId: string; player: Board.Player }]
+  | ["StopPlaying", { currentUserId: UserId.UserId; player: Board.Player }]
 type StopPlayingResulted = ["StopPlayingResulted", Room.StopPlayingResult]

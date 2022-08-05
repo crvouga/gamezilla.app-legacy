@@ -11,7 +11,8 @@ import {
 } from "./Types"
 import { Cmd, Option, pipe, RemoteData, Result, Task } from "../Core"
 import { definitions } from "../supabase-types"
-import { rowToProfile } from "./Profile"
+import { decodeRow } from "./Profile"
+import { UserId } from "../Data"
 
 //
 //
@@ -48,17 +49,20 @@ type FindOneResult = Result.Result<
   }
 >
 
-export type FindOneElseInsert = ["FindOneElseInsert", { userIds: string[] }]
+export type FindOneElseInsert = [
+  "FindOneElseInsert",
+  { userIds: UserId.UserId[] },
+]
 export type FindOneElseInsertResulted = [
   "FindOneElseInsertResulted",
-  { userIds: string[]; result: FindOneResult },
+  { userIds: UserId.UserId[]; result: FindOneResult },
 ]
 
-export type FindManyByUserId = ["FindManyByUserId", { userId: string }]
+export type FindManyByUserId = ["FindManyByUserId", { userId: UserId.UserId }]
 export type FindManyByUserIdResulted = [
   "FindManyByUserIdResulted",
   {
-    userId: string
+    userId: UserId.UserId
     result: Result.Result<
       Problem,
       {
@@ -333,7 +337,7 @@ const findOneById =
       .eq("conversation_id", conversationId)
 
     if (matchConversationIdResponse.error) {
-      return Result.Err({ message: matchConversationIdResponse.error.message })
+      return Result.Err(matchConversationIdResponse.error.message)
     }
 
     const userIds = Array.from(
@@ -346,7 +350,7 @@ const findOneById =
       .in("id", userIds)
 
     if (profilesResponse.error) {
-      return Result.Err({ message: profilesResponse.error.message })
+      return Result.Err(profilesResponse.error.message)
     }
 
     const messagesResponse = await Supabase.client
@@ -355,24 +359,40 @@ const findOneById =
       .eq("conversation_id", conversationId)
 
     if (messagesResponse.error) {
-      return Result.Err({ message: messagesResponse.error.message })
+      return Result.Err(messagesResponse.error.message)
     }
 
     return Result.Ok({
       conversation: {
         conversationId,
       },
-      profilesConversations: profilesResponse.data.map((item) => ({
-        conversationId,
-        userId: item.id,
-      })),
-      profiles: profilesResponse.data.map(rowToProfile),
-      messages: messagesResponse.data.map((item) => ({
-        messageId: item.id,
-        message: item.message,
-        userId: item.user_id,
-        conversationId: item.conversation_id,
-      })),
+      profilesConversations: profilesResponse.data
+        .map((item) => ({
+          conversationId,
+          userId: UserId.decode(item.id),
+        }))
+        .flatMap((item) =>
+          item.userId.type === "Ok"
+            ? [{ ...item, userId: item.userId.value }]
+            : [],
+        ),
+      profiles: pipe(
+        profilesResponse.data.map(decodeRow),
+        Result.combine,
+        Result.withDefault<Profile[]>([]),
+      ),
+      messages: messagesResponse.data
+        .map((item) => ({
+          messageId: item.id,
+          message: item.message,
+          userId: UserId.decode(item.user_id),
+          conversationId: item.conversation_id,
+        }))
+        .flatMap((item) =>
+          item.userId.type === "Ok"
+            ? [{ ...item, userId: item.userId.value }]
+            : [],
+        ),
     })
   }
 
@@ -380,7 +400,7 @@ const findManyByUserId =
   ({
     userId,
   }: {
-    userId: string
+    userId: UserId.UserId
   }): Task.Task<
     Result.Result<
       Problem,
@@ -398,9 +418,7 @@ const findManyByUserId =
       .match({ user_id: userId })
 
     if (matchUserIdResponse.error) {
-      return Result.Err({
-        message: matchUserIdResponse.error.message,
-      })
+      return Result.Err(matchUserIdResponse.error.message)
     }
 
     const conversationResponse = await Supabase.client
@@ -412,7 +430,7 @@ const findManyByUserId =
       )
 
     if (conversationResponse.error) {
-      return Result.Err({ message: conversationResponse.error.message })
+      return Result.Err(conversationResponse.error.message)
     }
 
     const matchConversationIdResponse = await Supabase.client
@@ -424,7 +442,7 @@ const findManyByUserId =
       )
 
     if (matchConversationIdResponse.error) {
-      return Result.Err({ message: matchConversationIdResponse.error.message })
+      return Result.Err(matchConversationIdResponse.error.message)
     }
 
     const profileResponse = await Supabase.client
@@ -437,22 +455,31 @@ const findManyByUserId =
       ])
 
     if (profileResponse.error) {
-      console.log("ERROR", profileResponse.error)
-      return Result.Err({ message: profileResponse.error.message })
+      return Result.Err(profileResponse.error.message)
     }
 
     return Result.Ok({
       profilesConversations: [
         ...matchUserIdResponse.data,
         ...matchConversationIdResponse.data,
-      ].map((item) => ({
-        userId: item.user_id,
-        conversationId: item.conversation_id,
-      })),
+      ]
+        .map((item) => ({
+          userId: UserId.decode(item.user_id),
+          conversationId: item.conversation_id,
+        }))
+        .flatMap((item) =>
+          item.userId.type === "Ok"
+            ? [{ ...item, userId: item.userId.value }]
+            : [],
+        ),
       conversations: conversationResponse.data.map((item) => ({
         conversationId: item.id,
       })),
-      profiles: profileResponse.data.map(rowToProfile),
+      profiles: pipe(
+        profileResponse.data.map(decodeRow),
+        Result.combine,
+        Result.withDefault<Profile[]>([]),
+      ),
     })
   }
 
@@ -469,14 +496,12 @@ const findUniqueByUserIds =
       .in("user_id", userIds)
 
     if (usersConversationsResponse.error) {
-      return Result.Err({
-        message: usersConversationsResponse.error.message,
-      })
+      return Result.Err(usersConversationsResponse.error.message)
     }
 
     // todo. this should be in the database query
     const userIdsByConversationId = usersConversationsResponse.data.reduce<{
-      [conversationId: string]: { [userId: string]: string }
+      [conversationId: string]: { [userId: UserId.UserId]: string }
     }>(
       (byId, item) => ({
         ...byId,
@@ -488,7 +513,6 @@ const findUniqueByUserIds =
       {},
     )
 
-    console.log({ userIdsByConversationId, userIds })
     const conversationId = Object.entries(userIdsByConversationId)
       .filter(
         (entry) =>
@@ -547,7 +571,7 @@ const insert =
 
     console.log({ conversationResponse })
     if (conversationResponse.error) {
-      return Result.Err({ message: conversationResponse.error.message })
+      return Result.Err(conversationResponse.error.message)
     }
 
     const conversation = fromRow(conversationResponse.data)
@@ -561,8 +585,6 @@ const insert =
         })),
       )
 
-    console.log({ usersConversationsResponse })
-
     if (usersConversationsResponse.error) {
       const rollbackResponse = await Supabase.client
         .from<definitions["conversation"]>("conversation")
@@ -570,20 +592,24 @@ const insert =
         .eq("id", conversation.conversationId)
 
       if (rollbackResponse.error) {
-        return Result.Err({
-          message: `${usersConversationsResponse.error.message}. ${rollbackResponse.error}`,
-        })
+        return Result.Err(
+          `${usersConversationsResponse.error.message}. ${rollbackResponse.error}`,
+        )
       }
 
-      return Result.Err({ message: usersConversationsResponse.error.message })
+      return Result.Err(usersConversationsResponse.error.message)
     }
 
-    const profilesConversations = usersConversationsResponse.data.map(
-      ({ user_id, conversation_id }) => ({
-        userId: user_id,
+    const profilesConversations = usersConversationsResponse.data
+      .map(({ user_id, conversation_id }) => ({
+        userId: UserId.decode(user_id),
         conversationId: conversation_id,
-      }),
-    )
+      }))
+      .flatMap((item) =>
+        item.userId.type === "Ok"
+          ? [{ ...item, userId: item.userId.value }]
+          : [],
+      )
 
     return Result.Ok({ conversation, profilesConversations })
   }

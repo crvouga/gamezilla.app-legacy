@@ -8,11 +8,11 @@ export const is = (userId: unknown): userId is UserId => {
   return typeof userId === "string"
 }
 
-type Problem = "InvalidUserId"
+type Problem = "invalid_user_id"
 
-export const decode = (userId: string): Result.Result<Problem, UserId> => {
-  if (is(userId)) {
-    return Result.Ok(userId)
+export const decode = (id: unknown): Result.Result<Problem, UserId> => {
+  if (is(id)) {
+    return Result.Ok(id)
   }
-  return Result.Err("InvalidUserId")
+  return Result.Err("invalid_user_id")
 }

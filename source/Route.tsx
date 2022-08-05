@@ -1,4 +1,5 @@
 import { Browser, Option } from "./Core"
+import { UserId } from "./Data";
 
 //
 //
@@ -16,7 +17,7 @@ export type Route =
   | { type: "AccountCreate" }
   | { type: "PasswordReset" }
   | { type: "Logout" }
-  | { type: "Profile"; userId: string }
+  | { type: "Profile"; userId: UserId.UserId }
   | { type: "ProfileCreate" }
   | { type: "ProfileDelete" }
   | { type: "ProfileUpdate" }
@@ -89,10 +90,11 @@ export const decode = (location: Browser.Location): Option.Option<Route> => {
     }
 
     case "Profile": {
-      if (typeof second === "string") {
+      const userId = UserId.decode(second)
+      if (userId.type === 'Ok') {
         return Option.Some({
           type: "Profile",
-          userId: second,
+          userId: userId.value,
         })
       }
       return Option.None

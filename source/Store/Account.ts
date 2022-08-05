@@ -1,6 +1,6 @@
-import { EmailAddress, Password } from "../Data"
+import { EmailAddress, Password, UserId } from "../Data"
 import * as Supabase from "../Supabase"
-import { Option, pipe, Result, Task } from "../Core"
+import { Option, pipe, Result, Task, Unit } from "../Core"
 import { definitions } from "../supabase-types"
 
 //
@@ -12,7 +12,7 @@ import { definitions } from "../supabase-types"
 //
 
 export type Account = {
-  userId: string
+  userId: UserId.UserId
   emailAddress?: EmailAddress.EmailAddress
 }
 
@@ -27,20 +27,28 @@ export type Account = {
 const decodeRow = (
   row: definitions["user_account"],
 ): Result.Result<Problem, Account> => {
+  const decodedUserId = UserId.decode(row.id)
+
+  if (decodedUserId.type === "Err") {
+    return decodedUserId
+  }
+
+  const userId = decodedUserId.value
+
   if (!row.email_address) {
-    return Result.Ok({ userId: row.id })
+    return Result.Ok({ userId })
   }
 
   const emailAddress = EmailAddress.decode(row.email_address)
 
   if (emailAddress.type === "Err") {
-    return Result.Err({
-      message: `Failed to decode user from supabase. ${emailAddress.error.message}`,
-    })
+    return Result.Err(
+      `Failed to decode user from supabase. ${emailAddress.error.message}`,
+    )
   }
 
   return Result.Ok({
-    userId: row.id,
+    userId,
     emailAddress: emailAddress.value,
   })
 }
@@ -60,7 +68,7 @@ export const findByEmailAddress =
       .eq("email_address", emailAddress)
 
     if (response.error) {
-      return Result.Err({ message: response.error.message })
+      return Result.Err(response.error.message)
     }
 
     const row = response.data[0]
@@ -76,7 +84,7 @@ export const findByEmailAddress =
 
 export type CreateResult = Result.Result<
   Problem,
-  Option.Option<{ userId: string }>
+  Option.Option<{ userId: UserId.UserId }>
 >
 
 export const createWithEmailAndPassword =
@@ -94,7 +102,7 @@ export const createWithEmailAndPassword =
     })
 
     if (response.error) {
-      return Result.Err({ message: response.error.message })
+      return Result.Err(response.error.message)
     }
 
     //
@@ -106,15 +114,22 @@ export const createWithEmailAndPassword =
     //
     //
 
-    return Result.Ok(
-      pipe(
-        Option.fromNullable(response.user),
-        Option.map((user) => ({ userId: user.id })),
-      ),
-    )
+    const user = response.user
+
+    if (!user) {
+      return Result.Err("failed to create user")
+    }
+
+    const userIdResult = UserId.decode(user.id)
+
+    if (userIdResult.type === "Err") {
+      return userIdResult
+    }
+
+    return Result.Ok(Option.Some({ userId: userIdResult.value }))
   }
 
-export type SendResetPasswordLinkResult = Result.Result<Problem, {}>
+export type SendResetPasswordLinkResult = Result.Result<Problem, Unit>
 
 export const sendResetPasswordLink =
   ({
@@ -128,10 +143,10 @@ export const sendResetPasswordLink =
     )
 
     if (response.error) {
-      return Result.Err({ message: response.error.message })
+      return Result.Err(response.error.message)
     }
 
-    return Result.Ok({})
+    return Result.Ok(Unit)
   }
 
 //
@@ -142,4 +157,4 @@ export const sendResetPasswordLink =
 //
 //
 
-type Problem = { message: string }
+type Problem = string

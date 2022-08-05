@@ -1,10 +1,12 @@
 import { Cmd, Sub, Uuid } from "../Core";
+import { UserId } from "../Data";
 import { GameName } from "../Games";
 import * as Games from "../Games/Frontend";
 import * as GameRooms from "../Games/Rooms";
 import * as Route from "../Route";
 import * as Store from "../Store";
 import * as UI from "../UI";
+import * as RoomId from "../Games/RoomId"
 
 //
 //
@@ -32,15 +34,15 @@ export type Msg =
     | ["ClickedLeave"]
     | ["ClickedBack"]
     | ["ClickedCreate",]
-    | ["ClickedJoin", { roomId: string }]
+    | ["ClickedJoin", { roomId: RoomId.RoomId }]
     | ["ClickedAvatars"]
     | ["ClosedDrawer"]
-    | ["ClickedUser", { userId: string }]
+    | ["ClickedUser", { userId: UserId.UserId }]
     | ["ClickedGame", GameName]
 
 type OutAction = Games.Action
 
-export const update = ({ currentUserId }: { currentUserId: string }, msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
+export const update = ({ currentUserId }: { currentUserId: UserId.UserId }, msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
     switch (msg[0]) {
         case 'ClickedLeave': {
             return [model, Cmd.None, [['Games', ['LeaveRoom', { userId: currentUserId, }]]]];
@@ -51,7 +53,7 @@ export const update = ({ currentUserId }: { currentUserId: string }, msg: Msg, m
         }
 
         case 'ClickedCreate': {
-            const roomId = Uuid.generateSync()
+            const roomId = RoomId.generate()
             return [model, Cmd.None, [["Games", ["CreateRoom", { userId: currentUserId, roomId }]]]]
         }
 
@@ -100,7 +102,7 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
 //
 
 export const view =
-    ({ currentUserId, games, store }: { games: Games.Model; currentUserId: string, store: Store.Model }, model: Model): UI.View<Msg> => {
+    ({ currentUserId, games, store }: { games: Games.Model; currentUserId: UserId.UserId, store: Store.Model }, model: Model): UI.View<Msg> => {
         const user = games.rooms.users[currentUserId]
 
         if (!user) {
@@ -119,7 +121,7 @@ export const view =
 
 
 export const viewNotInRoom =
-    ({ currentUserId, games, store }: { games: Games.Model; store: Store.Model, currentUserId: string }, model: Model): UI.View<Msg> =>
+    ({ currentUserId, games, store }: { games: Games.Model; store: Store.Model, currentUserId: UserId.UserId }, model: Model): UI.View<Msg> =>
         (dispatch) => {
             return (
                 <UI.FillBox>
@@ -165,7 +167,7 @@ export const viewNotInRoom =
         };
 
 export const viewInRoom =
-    ({ currentUserId, store, games, room }: { store: Store.Model, room: GameRooms.Room; games: Games.Model; currentUserId: string }, model: Model): UI.View<Msg> =>
+    ({ currentUserId, store, games, room }: { store: Store.Model, room: GameRooms.Room; games: Games.Model; currentUserId: UserId.UserId }, model: Model): UI.View<Msg> =>
         (dispatch) => {
             const usersInRoom = Object.values(store.Profile).filter(
                 (profile) =>
