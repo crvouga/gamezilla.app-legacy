@@ -1,1 +1,1 @@
-export * from "./ConnectFour"
+export * as Game from "./Game"

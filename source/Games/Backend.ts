@@ -132,8 +132,27 @@ export const updateFromFrontend = (
       ]
     }
 
-    case "StartGame": {
-      return [model, Cmd.None]
+    case "ChangeGame": {
+      const result = Rooms.changeGame(msg[1], model.rooms)
+
+      const toFrontend = sendToFrontend(clientId, [
+        "ChangeGameResulted",
+        result,
+      ])
+
+      if (result.type === "Err") {
+        return [model, toFrontend]
+      }
+
+      const modelNew: Model = {
+        ...model,
+        rooms: result.value,
+      }
+
+      return [
+        modelNew,
+        Cmd.batch([toFrontend, broadcast(["Sync", modelNew.rooms])]),
+      ]
     }
 
     default:

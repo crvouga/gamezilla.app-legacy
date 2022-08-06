@@ -1,23 +1,21 @@
+import * as ConnectFour from "./ConnectFour/Frontend"
+import * as Snake from "./Snake/Frontend"
+import * as TicTacToe from "./TicTacToe/Frontend"
 import { sendToBackend } from "../Bridge/Frontend"
-import { Cmd, pipe, RemoteData, Sub, Unit } from "../Core"
+import { Cmd, pipe, RemoteData, Unit } from "../Core"
 import { UserId } from "../Data"
 import * as Route from "../Route"
 import * as Snackbar from "../Snackbar"
 import * as Store from "../Store"
-import * as UI from "../UI"
-import * as Chess from "./Chess"
-import * as ConnectFour from "./ConnectFour"
+import * as Game from "./Game"
 import * as Rooms from "./Rooms"
-import * as Snake from "./Snake"
-import * as TicTacToe from "./TicTacToe/Frontend"
 import {
+  ChangeGame,
   CreateRoom,
   FrontendModel,
   FrontendMsg,
-  GameName,
   JoinRoom,
   LeaveRoom,
-  StartGame,
   ToFrontend,
 } from "./Types"
 
@@ -45,7 +43,7 @@ export const init: [Model, Cmd.Cmd<Msg>] = [
     createRoom: RemoteData.NotAsked,
     joinRoom: RemoteData.NotAsked,
     leaveRoom: RemoteData.NotAsked,
-    startGame: RemoteData.NotAsked,
+    changeGame: RemoteData.NotAsked,
   },
   sendToBackend(["Games", ["Init"]]),
 ]
@@ -66,7 +64,7 @@ export type Action =
   | ["Games", CreateRoom]
   | ["Games", JoinRoom]
   | ["Games", LeaveRoom]
-  | ["Games", StartGame]
+  | ["Games", ChangeGame]
 
 //
 //
@@ -105,11 +103,11 @@ export const runAction = (
       ]
     }
 
-    case "StartGame": {
+    case "ChangeGame": {
       const { userId, gameName } = action[1][1]
       return [
         { ...model, leaveRoom: RemoteData.Loading },
-        sendToBackend(["Games", ["StartGame", { userId, gameName }]]),
+        sendToBackend(["Games", ["ChangeGame", { userId, gameName }]]),
       ]
     }
   }
@@ -226,15 +224,15 @@ export const updateFromBackend = (
       return [{ ...model, joinRoom }, Cmd.None, actions]
     }
 
-    case "StartGameResulted": {
-      const startGame = pipe(
+    case "ChangeGameResulted": {
+      const changeGame = pipe(
         msg[1],
         RemoteData.fromResult,
         RemoteData.mapSuccess(() => Unit),
       )
 
       const actions: OutAction[] =
-        startGame.type === "Failure"
+        changeGame.type === "Failure"
           ? [
               [
                 "Snackbar",
@@ -242,14 +240,14 @@ export const updateFromBackend = (
                   "Enqueue",
                   {
                     variant: "Error",
-                    message: startGame.problem,
+                    message: changeGame.problem,
                   },
                 ],
               ],
             ]
           : []
 
-      return [{ ...model, startGame }, Cmd.None, actions]
+      return [{ ...model, changeGame }, Cmd.None, actions]
     }
   }
 }
@@ -257,45 +255,17 @@ export const updateFromBackend = (
 //
 //
 //
-// Subscriptions
-//
-//
-//
-
-export const subscriptions = (_model: Model): Sub.Sub<Msg> => {
-  return Sub.None
-}
-
-//
-//
 //
 // View
 //
 //
 //
-
-export const view = (
-  {
-    currentUserId,
-    store,
-  }: { currentUserId: UserId.UserId; store: Store.Model },
-  model: Model,
-): UI.View<Msg> => {
-  return () => <>game view</>
-}
-
-//
-//
-//
-// View Helpers
-//
-//
 //
 
-export const gameToName = (game: GameName): string => {
+export const gameNameToString = (game: Game.GameName): string => {
   switch (game) {
-    case "Chess":
-      return "Chess"
+    // case "Chess":
+    //   return "Chess"
 
     case "ConnectFour":
       return "Connect Four"
@@ -308,10 +278,10 @@ export const gameToName = (game: GameName): string => {
   }
 }
 
-export const CoverArt = ({ game }: { game: GameName }) => {
-  switch (game) {
-    case "Chess":
-      return <Chess.CoverArt />
+export const CoverArt = ({ gameName }: { gameName: Game.GameName }) => {
+  switch (gameName) {
+    // case "Chess":
+    //   return <Chess.CoverArt />
 
     case "ConnectFour":
       return <ConnectFour.CoverArt id="connect-four-cover-art" />

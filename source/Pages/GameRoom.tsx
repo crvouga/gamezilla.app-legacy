@@ -1,12 +1,10 @@
-import { Cmd, Sub, Uuid } from "../Core"
+import { Cmd } from "../Core"
 import { UserId } from "../Data"
-import { GameName } from "../Games"
+import { Game, RoomId, Rooms } from "../Games"
 import * as Games from "../Games/Frontend"
-import * as GameRooms from "../Games/Rooms"
 import * as Route from "../Route"
 import * as Store from "../Store"
 import * as UI from "../UI"
-import * as RoomId from "../Games/RoomId"
 
 //
 //
@@ -38,7 +36,7 @@ export type Msg =
   | ["ClickedAvatars"]
   | ["ClosedDrawer"]
   | ["ClickedUser", { userId: UserId.UserId }]
-  | ["ClickedGame", GameName]
+  | ["ClickedGame", { gameName: Game.GameName }]
 
 type OutAction = Games.Action
 
@@ -95,7 +93,13 @@ export const update = (
     }
 
     case "ClickedGame": {
-      return [model, Cmd.None, []]
+      const { gameName } = msg[1]
+
+      return [
+        model,
+        Cmd.None,
+        [["Games", ["ChangeGame", { gameName, userId: currentUserId }]]],
+      ]
     }
   }
 }
@@ -201,16 +205,58 @@ export const viewNotInRoom =
     )
   }
 
-export const viewInRoom =
+export const viewInRoom = (
+  {
+    currentUserId,
+    store,
+    games,
+    room,
+  }: {
+    store: Store.Model
+    room: Rooms.Room
+    games: Games.Model
+    currentUserId: UserId.UserId
+  },
+  model: Model,
+): UI.View<Msg> => {
+  if (room.game.type === "None") {
+    return viewNotInGame(
+      {
+        currentUserId,
+        store,
+        games,
+        room,
+      },
+      model,
+    )
+  }
+
+  const game = room.game.value
+
+  return viewInGame(
+    {
+      currentUserId,
+      store,
+      games,
+      game,
+      room,
+    },
+    model,
+  )
+}
+
+const viewInGame =
   (
     {
       currentUserId,
       store,
       games,
+      game,
       room,
     }: {
       store: Store.Model
-      room: GameRooms.Room
+      room: Rooms.Room
+      game: Game.Model
       games: Games.Model
       currentUserId: UserId.UserId
     },
@@ -234,7 +280,47 @@ export const viewInRoom =
           )(dispatch)}
         </UI.Toolbar>
 
-        <GameGrid onClick={(gameName) => dispatch(["ClickedGame", gameName])} />
+        {JSON.stringify(game, null, 4)}
+      </UI.FillBox>
+    )
+  }
+
+const viewNotInGame =
+  (
+    {
+      currentUserId,
+      store,
+      games,
+      room,
+    }: {
+      store: Store.Model
+      room: Rooms.Room
+      games: Games.Model
+      currentUserId: UserId.UserId
+    },
+    model: Model,
+  ): UI.View<Msg> =>
+  (dispatch) => {
+    return (
+      <UI.FillBox>
+        <UI.Toolbar>
+          <UI.Button
+            sx={{ marginLeft: -1 }}
+            onClick={() => dispatch(["ClickedLeave"])}
+          >
+            Leave
+          </UI.Button>
+          <UI.Box sx={{ flex: 1 }} />
+
+          {viewUsersInRoomAvatarGroup(
+            { currentUserId, store, games, room },
+            model,
+          )(dispatch)}
+        </UI.Toolbar>
+
+        <GameGrid
+          onClick={(gameName) => dispatch(["ClickedGame", { gameName }])}
+        />
       </UI.FillBox>
     )
   }
@@ -248,7 +334,7 @@ const viewUsersInRoomAvatarGroup =
       room,
     }: {
       store: Store.Model
-      room: GameRooms.Room
+      room: Rooms.Room
       games: Games.Model
       currentUserId: UserId.UserId
     },
@@ -301,7 +387,11 @@ const viewUsersInRoomAvatarGroup =
     )
   }
 
-const GameGrid = ({ onClick }: { onClick: (gameName: GameName) => void }) => {
+const GameGrid = ({
+  onClick,
+}: {
+  onClick: (gameName: Game.GameName) => void
+}) => {
   return (
     <UI.Box
       sx={{
@@ -311,25 +401,25 @@ const GameGrid = ({ onClick }: { onClick: (gameName: GameName) => void }) => {
       }}
     >
       <GameCard
-        icon={<Games.CoverArt game="TicTacToe" />}
+        icon={<Games.CoverArt gameName="TicTacToe" />}
         label="Tic Tac Toe"
         onClick={() => onClick("TicTacToe")}
       />
 
       <GameCard
-        icon={<Games.CoverArt game="ConnectFour" />}
+        icon={<Games.CoverArt gameName="ConnectFour" />}
         label="Connect Four"
         onClick={() => onClick("ConnectFour")}
       />
-
+      {/* 
       <GameCard
-        icon={<Games.CoverArt game="Chess" />}
+        icon={<Games.CoverArt gameName="Chess" />}
         label="Chess"
         onClick={() => onClick("Chess")}
-      />
+      /> */}
 
       <GameCard
-        icon={<Games.CoverArt game="Snake" />}
+        icon={<Games.CoverArt gameName="Snake" />}
         label="Snake"
         onClick={() => onClick("Snake")}
       />
