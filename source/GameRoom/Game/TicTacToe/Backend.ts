@@ -1,12 +1,6 @@
-import { ClientId } from "../../Bridge/Bridge"
-import { Cmd, Sub } from "../../Core"
-import {
-  BackendModel,
-  BackendMsg,
-  init as initModel,
-  ToBackend,
-  ToFrontend,
-} from "./Types"
+import { ClientId } from "../../../Bridge/Bridge"
+import { Cmd, Sub } from "../../../Core"
+import { BackendModel, BackendMsg, initGame, ToBackend } from "./Types"
 
 //
 //
@@ -18,7 +12,7 @@ import {
 
 export type Model = BackendModel
 
-export const init: Model = initModel
+export const init: Model = initGame
 
 //
 //

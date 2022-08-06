@@ -1,47 +1,241 @@
-import { Cmd } from "../../Core"
-import * as Route from "../../Route"
-import * as UI from "../../UI"
-import * as Columns from "./Columns"
-
 //
 //
 //
-// Model
+//  Model
 //
 //
 //
 
-export type Model = {
-  columns: Columns.Columns
+import { Result } from "../../Core"
+
+export type IPlayer = "PlayerOne" | "PlayerTwo"
+
+export type IColumn = readonly IPlayer[]
+
+export type Columns = readonly IColumn[]
+
+export const MAX_COLUMN_HEIGHT = 6
+
+export const COLUMN_COUNT = 7
+
+export const emptyColumns: Columns = [...Array(COLUMN_COUNT)].map(() => [])
+
+export type ColumnIndex = 0 | 1 | 2 | 3 | 4 | 5 | 6
+
+const isColumnIndex = (index: unknown): index is ColumnIndex => {
+  return (
+    typeof index === "number" &&
+    (index === 0 ||
+      index === 1 ||
+      index === 2 ||
+      index === 3 ||
+      index === 4 ||
+      index === 5 ||
+      index == 6)
+  )
 }
 
-export const init: Model = {
-  columns: Columns.emptyColumns,
+export type RowIndex = 0 | 1 | 2 | 3 | 4 | 5
+
+export type MoveProblem =
+  | "not_players_turn"
+  | "column_is_full"
+  | "invalid_column_index"
+
+export type MoveResult = Result.Result<MoveProblem, Columns>
+
+export const move = (
+  columns: Columns,
+  columnIndex: ColumnIndex,
+  player: IPlayer,
+): MoveResult => {
+  if (toTurn(columns) !== player) {
+    return Result.Err("not_players_turn")
+  }
+
+  const column = columns[columnIndex]
+
+  if (!column) {
+    return Result.Err("invalid_column_index")
+  }
+
+  if (column.length === MAX_COLUMN_HEIGHT) {
+    return Result.Err("column_is_full")
+  }
+
+  const columnsNew: Columns = columns.map((column, index) => {
+    if (index === columnIndex && toTurn(columns) === player) {
+      return column.concat([player]).slice(0, MAX_COLUMN_HEIGHT)
+    }
+
+    return column
+  })
+
+  return Result.Ok(columnsNew)
+}
+
+export const toSlot = (
+  columns: Columns,
+  { x, y }: { x: number; y: number },
+): IPlayer | "Empty" => {
+  const slot = columns?.[x]?.[y]
+
+  if (slot) {
+    return slot
+  }
+
+  return "Empty"
+}
+
+const isEven = (x: number) => x % 2 === 0
+
+export const toTurn = (columns: Columns): IPlayer => {
+  return isEven(columns.flat().length) ? "PlayerTwo" : "PlayerOne"
+}
+
+const isFull = (columns: Columns) => {
+  return columns.flat().length >= MAX_COLUMN_HEIGHT * COLUMN_COUNT
+}
+
+type IStatus =
+  | {
+      type: "Playing"
+    }
+  | {
+      type: "Winner"
+      winner: IPlayer
+    }
+  | {
+      type: "Tie"
+    }
+
+export const toStatus = (columns: Columns): IStatus => {
+  const winningLines = Array.from(
+    filter((line) => line.length >= 5, yieldLines(columns)),
+  )
+
+  const [winningLine] = winningLines
+
+  if (winningLine) {
+    const [position] = winningLine
+
+    if (!position) {
+      return {
+        type: "Playing",
+      }
+    }
+
+    const winner = toSlot(columns, position)
+
+    if (winner === "Empty") {
+      return {
+        type: "Playing",
+      }
+    }
+
+    return {
+      type: "Winner",
+      winner,
+    }
+  }
+
+  if (isFull(columns)) {
+    return {
+      type: "Tie",
+    }
+  }
+
+  return {
+    type: "Playing",
+  }
 }
 
 //
 //
 //
-// Update
+// Wins
 //
 //
 //
 
-export type Msg =
-  | ["ClickedBack"]
-  | ["ClickedBoard", { columnIndex: number }]
-  | ["ClickedRestart"]
+function* yieldPositionsAndDirections(columns: Columns) {
+  for (let x = 0; x <= columns.length; x++) {
+    const column = columns[x]
+    const columnLength = column?.length ?? 0
+    for (let y = 0; y <= columnLength; y++) {
+      for (let dx = -1; dx <= 1; dx++) {
+        for (let dy = -1; dy <= dy; dx++) {
+          yield {
+            x,
+            y,
+            dx,
+            dy,
+          }
+        }
+      }
+    }
+  }
+}
 
-export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
-  switch (msg[0]) {
-    case "ClickedBack":
-      return [model, Route.back]
+function* yieldLine({
+  columns,
+  x,
+  y,
+  dx,
+  dy,
+}: {
+  columns: Columns
+  x: number
+  y: number
+  dx: number
+  dy: number
+}) {
+  yield {
+    x,
+    y,
+  }
 
-    case "ClickedBoard":
-      return [model, Cmd.None]
+  while (true) {
+    const adjacentPosition = {
+      x: x + dx,
+      y: y + dy,
+    }
 
-    case "ClickedRestart":
-      return [model, Cmd.None]
+    const adjancentSlot = toSlot(columns, adjacentPosition)
+
+    const slot = toSlot(columns, { x, y })
+
+    if (adjancentSlot === slot) {
+      yield adjacentPosition
+    } else {
+      break
+    }
+  }
+}
+
+function* yieldLines(columns: Columns) {
+  const visited = new Set()
+
+  for (const { x, y, dx, dy } of yieldPositionsAndDirections(columns)) {
+    const key = `${x}${y}${dx}${dy}`
+
+    if (visited.has(key)) {
+      continue
+    }
+
+    visited.add(key)
+
+    const line = Array.from(yieldLine({ columns, x, y, dx, dy }))
+
+    yield line
+  }
+}
+
+function* filter<T>(predicate: (item: T) => boolean, generator: Generator<T>) {
+  for (const item of generator) {
+    if (predicate(item)) {
+      yield item
+    }
   }
 }
 
@@ -54,7 +248,6 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 //
 //
 //
-
 export const theme = {
   primary: {
     light: "#1976D2",
@@ -71,44 +264,12 @@ export const theme = {
   },
 }
 
-export const view =
-  (model: Model): UI.View<Msg> =>
-  (dispatch) =>
-    (
-      <UI.FillBox>
-        <UI.Header
-          left={
-            <UI.HeaderBackButton onClick={() => dispatch(["ClickedBack"])} />
-          }
-          title={`${Columns.toTurn(model.columns)}'s turn`}
-        />
-        <Board
-          columns={model.columns}
-          onClick={(columnIndex) =>
-            dispatch([
-              "ClickedBoard",
-              {
-                columnIndex,
-              },
-            ])
-          }
-        />
-        <UI.Button
-          fullWidth
-          size="large"
-          onClick={() => dispatch(["ClickedRestart"])}
-        >
-          Restart
-        </UI.Button>
-      </UI.FillBox>
-    )
-
-export const Board = ({
+export const ViewColumns = ({
   columns,
   onClick,
 }: {
-  columns: Columns.Columns
-  onClick: (columnIndex: number) => void
+  columns: Columns
+  onClick: (columnIndex: ColumnIndex) => void
 }) => {
   const ids = {
     playerOneGradient: "playerOneGradient",
@@ -145,15 +306,15 @@ export const Board = ({
           <rect
             x={0}
             y={0}
-            width={Columns.COLUMN_COUNT}
-            height={Columns.MAX_COLUMN_HEIGHT}
+            width={COLUMN_COUNT}
+            height={MAX_COLUMN_HEIGHT}
             fill="white"
           ></rect>
           <rect
             x={0}
             y={0}
-            width={Columns.COLUMN_COUNT}
-            height={Columns.MAX_COLUMN_HEIGHT}
+            width={COLUMN_COUNT}
+            height={MAX_COLUMN_HEIGHT}
             fill={`url(#${ids.holePattern})`}
           ></rect>
         </mask>
@@ -214,7 +375,7 @@ export const Board = ({
           <circle
             key={[columnIndex, rowIndex].join(", ")}
             cx={columnIndex + 0.5}
-            cy={Columns.MAX_COLUMN_HEIGHT - (rowIndex + 0.5)}
+            cy={MAX_COLUMN_HEIGHT - (rowIndex + 0.5)}
             r={0.5}
             fill={player === "PlayerOne" ? playerOneFill : playerTwoFill}
           />
@@ -224,26 +385,30 @@ export const Board = ({
       <rect
         x={0}
         y={0}
-        width={Columns.COLUMN_COUNT}
-        height={Columns.MAX_COLUMN_HEIGHT}
+        width={COLUMN_COUNT}
+        height={MAX_COLUMN_HEIGHT}
         fill={`url(#${ids.columnGradient})`}
         mask={`url(#${ids.holeMask})`}
       />
 
-      {[...new Array(Columns.COLUMN_COUNT)].map((_, columnIndex) => (
+      {[...new Array(COLUMN_COUNT)].map((_, columnIndex) => (
         <rect
           style={{
             cursor:
-              (columns[columnIndex]?.length ?? 0) >= Columns.MAX_COLUMN_HEIGHT
+              (columns[columnIndex]?.length ?? 0) >= MAX_COLUMN_HEIGHT
                 ? "not-allowed"
                 : "pointer",
           }}
-          onClick={() => onClick(columnIndex)}
+          onClick={() => {
+            if (isColumnIndex(columnIndex)) {
+              onClick(columnIndex)
+            }
+          }}
           key={columnIndex}
           x={columnIndex}
           y={0}
           width={1}
-          height={Columns.MAX_COLUMN_HEIGHT}
+          height={MAX_COLUMN_HEIGHT}
           fill="transparent"
         />
       ))}
@@ -297,15 +462,15 @@ export const CoverArt = ({ id }: { id: string }) => {
           <rect
             x={0}
             y={0}
-            width={Columns.COLUMN_COUNT}
-            height={Columns.MAX_COLUMN_HEIGHT}
+            width={COLUMN_COUNT}
+            height={MAX_COLUMN_HEIGHT}
             fill="white"
           ></rect>
           <rect
             x={0}
             y={0}
-            width={Columns.COLUMN_COUNT}
-            height={Columns.MAX_COLUMN_HEIGHT}
+            width={COLUMN_COUNT}
+            height={MAX_COLUMN_HEIGHT}
             fill={`url(#${ids.holePattern})`}
           ></rect>
         </mask>
@@ -392,8 +557,8 @@ export const CoverArt = ({ id }: { id: string }) => {
       <rect
         x={0}
         y={0}
-        width={Columns.COLUMN_COUNT}
-        height={Columns.MAX_COLUMN_HEIGHT}
+        width={COLUMN_COUNT}
+        height={MAX_COLUMN_HEIGHT}
         fill={`url(#${ids.columnGradient})`}
         mask={`url(#${ids.holeMask})`}
       />

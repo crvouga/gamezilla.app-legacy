@@ -1,14 +1,5 @@
-import { Cmd } from "../../Core"
-import { UserId } from "../../Data"
+import { Result } from "../../Core"
 import * as Store from "../../Store"
-import * as UI from "../../UI"
-import * as Board from "./Board"
-import {
-  FrontendModel,
-  FrontendMsg,
-  init as initModel,
-  ToFrontend,
-} from "./Types"
 
 //
 //
@@ -18,36 +9,210 @@ import {
 //
 //
 
-export type Model = FrontendModel
+export type Player = "X" | "O"
 
-export const init: [Model, Cmd.Cmd<Msg>] = [initModel, Cmd.None]
+export type Slot = Player | "Empty"
 
-//
-//
-// Update
-//
-//
-//
+export type Row = 0 | 1 | 2
 
-export type Msg = FrontendMsg
+export type Column = 0 | 1 | 2
 
-export type OutAction = Store.Action
-
-export const update = (
-  { currentUserId }: { currentUserId: UserId.UserId },
-  msg: Msg,
-  model: Model,
-): [Model, Cmd.Cmd<Msg>] => {
-  return [model, Cmd.None]
+export type Board = {
+  [key in Column]: {
+    [key in Row]: Slot
+  }
 }
 
-export const updateFromBackend = (
-  msg: ToFrontend,
-  model: Model,
-): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
-  return [model, Cmd.None, []]
+export const emptyBoard: Board = {
+  "0": {
+    "0": "Empty",
+    "1": "Empty",
+    "2": "Empty",
+  },
+  "1": {
+    "0": "Empty",
+    "1": "Empty",
+    "2": "Empty",
+  },
+  "2": {
+    "0": "Empty",
+    "1": "Empty",
+    "2": "Empty",
+  },
 }
 
+export type Position = { row: Row; column: Column }
+
+export const toSlot = (board: Board, position: Position): Slot =>
+  board[position.column][position.row]
+
+export const setSlot = (
+  board: Board,
+  { column, row }: Position,
+  slot: Slot,
+): Board => ({
+  ...board,
+  [column]: {
+    ...board[column],
+    [row]: slot,
+  },
+})
+
+export const allPositions: Position[] = [
+  { row: 0, column: 0 },
+  { row: 0, column: 1 },
+  { row: 0, column: 2 },
+  { row: 1, column: 0 },
+  { row: 1, column: 1 },
+  { row: 1, column: 2 },
+  { row: 2, column: 0 },
+  { row: 2, column: 1 },
+  { row: 2, column: 2 },
+]
+
+export const toSlots = (board: Board): Slot[] => {
+  return Object.values(board).flatMap((column) => Object.values(column))
+}
+
+export const allWinningGroups: Position[][] = [
+  // vertical
+  [
+    { row: 0, column: 0 },
+    { row: 1, column: 0 },
+    { row: 2, column: 0 },
+  ],
+  [
+    { row: 0, column: 1 },
+    { row: 1, column: 1 },
+    { row: 2, column: 1 },
+  ],
+  [
+    { row: 0, column: 2 },
+    { row: 1, column: 2 },
+    { row: 2, column: 2 },
+  ],
+  // horizontal
+  [
+    { row: 0, column: 0 },
+    { row: 0, column: 1 },
+    { row: 0, column: 2 },
+  ],
+  [
+    { row: 1, column: 0 },
+    { row: 1, column: 1 },
+    { row: 1, column: 2 },
+  ],
+  [
+    { row: 2, column: 0 },
+    { row: 2, column: 1 },
+    { row: 2, column: 2 },
+  ],
+  // diagonal
+  [
+    { row: 0, column: 0 },
+    { row: 1, column: 1 },
+    { row: 2, column: 2 },
+  ],
+  [
+    { row: 0, column: 2 },
+    { row: 1, column: 1 },
+    { row: 2, column: 0 },
+  ],
+]
+
+type Winner = Player | "None"
+
+type Wins = { X: Position[][]; O: Position[][]; None: Position[][] }
+
+const toWins = (board: Board): Wins => {
+  return allWinningGroups.reduce(
+    (wins, winningGroup) => {
+      const slots = winningGroup.map((position) => toSlot(board, position))
+
+      const winner: Winner = slots.every((slot) => slot === "X")
+        ? "X"
+        : slots.every((slot) => slot === "O")
+        ? "O"
+        : "None"
+
+      return { ...wins, [winner]: [...wins[winner], winningGroup] }
+    },
+    {
+      X: [],
+      O: [],
+      None: [],
+    },
+  )
+}
+
+export type Status =
+  | { type: "Turn"; turn: Player }
+  | { type: "Win"; winner: Player }
+  | { type: "Tie" }
+
+export const toStatus = (board: Board): Status => {
+  const wins = toWins(board)
+
+  if (wins.X.length > 0) {
+    return { type: "Win", winner: "X" }
+  }
+
+  if (wins.O.length > 0) {
+    return { type: "Win", winner: "O" }
+  }
+
+  if (isTie(board)) {
+    return { type: "Tie" }
+  }
+
+  return { type: "Turn", turn: toTurn(board) }
+}
+
+const isTie = (board: Board): boolean => {
+  return toSlotFrequency(board).Empty === 0 && toWins(board).None.length === 0
+}
+
+type SlotFrequency = { X: number; O: number; Empty: number }
+
+const toSlotFrequency = (board: Board): SlotFrequency => {
+  return toSlots(board).reduce(
+    (frequency, slot) => ({ ...frequency, [slot]: frequency[slot] + 1 }),
+    { X: 0, O: 0, Empty: 0 },
+  )
+}
+
+export const toTurn = (board: Board): Player => {
+  const frequency = toSlotFrequency(board)
+  return frequency["X"] <= frequency["O"] ? "X" : "O"
+}
+
+export type MoveProblem = "not_players_turn" | "position_is_taken" | "game_over"
+
+export const move = (
+  board: Board,
+  player: Player,
+  position: Position,
+): Result.Result<MoveProblem, Board> => {
+  const status = toStatus(board)
+
+  if (status.type === "Tie" || status.type === "Win") {
+    return Result.Err("game_over")
+  }
+
+  if (status.turn !== player) {
+    return Result.Err("not_players_turn")
+  }
+
+  const slot = toSlot(board, position)
+
+  if (slot !== "Empty") {
+    return Result.Err("not_players_turn")
+  }
+
+  return Result.Ok(setSlot(board, position, player))
+}
+
+//
 //
 //
 //
@@ -55,18 +220,7 @@ export const updateFromBackend = (
 //
 //
 //
-
-export const view =
-  (
-    {
-      currentUserId,
-      store,
-    }: { currentUserId: UserId.UserId; store: Store.Model },
-    model: Model,
-  ): UI.View<Msg> =>
-  (dispatch) => {
-    return <>tic tac toe view</>
-  }
+//
 
 //
 //
@@ -77,7 +231,7 @@ export const view =
 //
 
 export const CoverArt = () => {
-  const positions: [Board.Position, Board.Slot][] = [
+  const positions: [Position, Slot][] = [
     [{ row: 0, column: 0 }, "X"],
     [{ row: 0, column: 1 }, "Empty"],
     [{ row: 1, column: 0 }, "Empty"],
@@ -144,8 +298,8 @@ export const ViewBoard = ({
   board,
   onClick,
 }: {
-  board: Board.Board
-  onClick: (position: Board.Position) => void
+  board: Board
+  onClick: (position: Position) => void
 }) => {
   return (
     <svg
@@ -168,27 +322,23 @@ export const ViewBoard = ({
           strokeWidth={0.1}
         />
       ))}
-      {Board.allPositions.map((position) => (
+      {allPositions.map((position) => (
         <ViewSlot
-          key={[
-            position.column,
-            position.row,
-            Board.toSlot(board, position),
-          ].join(" ")}
-          slot={Board.toSlot(board, position)}
+          key={[position.column, position.row, toSlot(board, position)].join(
+            " ",
+          )}
+          slot={toSlot(board, position)}
           cx={Number(position.column) + 0.5}
           cy={Number(position.row) + 0.5}
           r={0.3}
         />
       ))}
 
-      {Board.allPositions.map((position) => (
+      {allPositions.map((position) => (
         <rect
-          key={[
-            position.column,
-            position.row,
-            Board.toSlot(board, position),
-          ].join(" ")}
+          key={[position.column, position.row, toSlot(board, position)].join(
+            " ",
+          )}
           x={Number(position.column)}
           y={Number(position.row)}
           width={1}
@@ -216,7 +366,7 @@ export const ViewSlot = ({
   color,
 }: {
   color?: string
-  slot: Board.Slot
+  slot: Slot
   r: number
   cx: number
   cy: number

@@ -8,11 +8,13 @@ import {
   Result,
   Sub,
   Time,
-} from "../../Core"
-import * as Route from "../../Route"
-import * as UI from "../../UI"
-import * as Direction from "./Direction"
-import * as Position from "./Position"
+} from "../../../Core"
+import * as Direction from "../../../Games/Snake/Direction"
+import * as Position from "../../../Games/Snake/Position"
+import * as Route from "../../../Route"
+import * as UI from "../../../UI"
+
+import { init, FrontendModel, FrontendMsg, Status } from "./Types"
 
 //
 //
@@ -22,82 +24,7 @@ import * as Position from "./Position"
 //
 //
 
-export type Model = {
-  mouseStatus: MouseStatus
-  status: Status
-  head: Position.Position
-  tail: Position.Position[]
-  food: Position.Position
-  tailLength: number
-  foodEatenCount: number
-  tickRate: number
-  direction: Direction.Direction
-  directionQueue: Direction.Direction[]
-  bounds: {
-    lower: Position.Position
-    upper: Position.Position
-  }
-  touched?: Position.Position
-}
-
-type Status = { type: "Paused" } | { type: "Playing" }
-
-type MouseStatus = "active" | "inactive"
-
-//
-//
-//
-// Init
-//
-//
-//
-
-export const init: Model = {
-  status: { type: "Paused" },
-  mouseStatus: "inactive",
-  tickRate: 1000 / 7,
-  head: { x: 4, y: 6 },
-  tail: [
-    { x: 3, y: 6 },
-    { x: 2, y: 6 },
-  ],
-  food: { x: 7, y: 6 },
-  tailLength: 4,
-  foodEatenCount: 0,
-  direction: "right",
-  directionQueue: [],
-  bounds: {
-    lower: {
-      x: 0,
-      y: 0,
-    },
-    upper: {
-      x: 12,
-      y: 21,
-    },
-  },
-}
-
-//
-//
-//
-// Msg
-//
-//
-//
-
-export type Msg =
-  | ["Elapsed"]
-  | ["ClickedBack"]
-  | ["ClickedRestart"]
-  | ["ClickedToggle"]
-  | ["AudioFailed"]
-  | ["AudioSucceeded"]
-  | ["MouseDownBoard"]
-  | ["MouseUpBoard"]
-  | ["PressedKeyDown", Keyboard.Key]
-  | ["MouseMovedBoard", Position.Position]
-  | ["TouchMoveBoard", Position.Position]
+export type Model = FrontendModel
 
 //
 //
@@ -106,6 +33,8 @@ export type Msg =
 //
 //
 //
+
+export type Msg = FrontendMsg
 
 const circularIndex = (index: number, length: number): number => {
   return ((index % length) + length) % length
