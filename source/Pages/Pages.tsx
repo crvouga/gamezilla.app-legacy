@@ -1,7 +1,7 @@
 import * as Auth from "../Auth"
 import { Cmd, exhaustive, pipe, Sub, tag } from "../Core"
 import { UserId } from "../Data"
-import * as Games from "../Games/Frontend"
+import * as GameRoom from "../GameRoom"
 import * as Route from "../Route"
 import * as Snackbar from "../Snackbar"
 import * as Store from "../Store"
@@ -11,7 +11,7 @@ import * as AccountCreate from "./AccountCreate"
 import * as Chat from "./Chat"
 import * as ChatConversation from "./ChatConversation"
 import * as ChatNew from "./ChatNew"
-import * as GameRoom from "./GameRoom"
+import * as GameRoomPage from "./GameRoom"
 import * as Home from "./Home"
 import * as Login from "./Login"
 import * as LoginEmail from "./LoginEmail"
@@ -55,7 +55,7 @@ export type Model =
   | ["AccountCreate", AccountCreate.Model]
   | ["Search", Search.Model]
   | ["ChatConversation", ChatConversation.Model]
-  | ["GameRoom", GameRoom.Model]
+  | ["GameRoom", GameRoomPage.Model]
   | ["Admin"]
   | ["Loading"]
 
@@ -83,7 +83,7 @@ export type Msg =
   | ["ProfileUpdateUsername", ProfileUpdateUsername.Msg]
   | ["ProfileUpdateTheme", ProfileUpdateTheme.Msg]
   | ["Chat", Chat.Msg]
-  | ["GameRoom", GameRoom.Msg]
+  | ["GameRoom", GameRoomPage.Msg]
   | ["PasswordReset", PasswordReset.Msg]
   | ["ChatNew", ChatNew.Msg]
   | ["ChatConversation", ChatConversation.Msg]
@@ -93,7 +93,7 @@ export type Msg =
 export type OutAction =
   | Store.Action
   | Snackbar.Action
-  | Games.Action
+  | GameRoom.Frontend.Action
   | Auth.Action
 
 //
@@ -209,7 +209,7 @@ export const initReady = (
       return [["Admin"], Cmd.None, []]
 
     case "GameRoom": {
-      const [modelInit, cmdInit] = GameRoom.init
+      const [modelInit, cmdInit] = GameRoomPage.init
       return [
         ["GameRoom", modelInit],
         pipe(cmdInit, Cmd.map(tag("GameRoom"))),
@@ -322,11 +322,11 @@ export const updateReady = (
   {
     profile,
     store,
-    games,
+    gameRoom,
   }: {
     profile: Store.Profile.Profile
     store: Store.Model
-    games: Games.Model
+    gameRoom: GameRoom.FrontendModel
   },
   msg: Msg,
   model: Model,
@@ -473,7 +473,7 @@ export const updateReady = (
 
     case "GameRoom": {
       if (msg[0] === "GameRoom") {
-        const [modelPage, cmdPage, actions] = GameRoom.update(
+        const [modelPage, cmdPage, actions] = GameRoomPage.update(
           { currentUserId: profile.userId },
           msg[1],
           model[1],
@@ -666,12 +666,12 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
 export const viewReady = (
   {
     profile,
-    games,
+    gameRoom,
     store,
     route,
   }: {
     route: Route.Route
-    games: Games.Model
+    gameRoom: GameRoom.FrontendModel
     profile: Store.Profile.Profile
     store: Store.Model
   },
@@ -703,7 +703,7 @@ export const viewReady = (
         <UI.FillBox>
           {tagView(
             "Home",
-            Home.view({ store, currentUserId, games }, model[1]),
+            Home.view({ store, currentUserId }, model[1]),
           )(dispatch)}
           {viewBottomNavigation({
             page: "Home",
@@ -790,7 +790,7 @@ export const viewReady = (
     case "GameRoom": {
       return tagView(
         "GameRoom",
-        GameRoom.view({ store, currentUserId, games }, model[1]),
+        GameRoomPage.view({ store, currentUserId, gameRoom }, model[1]),
       )
     }
 

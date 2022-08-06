@@ -1,8 +1,12 @@
-import * as Bridge from "../../Bridge/Backend"
 import { ClientId } from "../../Bridge/Bridge"
 import { Cmd, Sub } from "../../Core"
-import * as Board from "./Board"
-import { BackendModel, BackendMsg, ToBackend, ToFrontend } from "./Types"
+import {
+  BackendModel,
+  BackendMsg,
+  init as initModel,
+  ToBackend,
+  ToFrontend,
+} from "./Types"
 
 //
 //
@@ -14,36 +18,7 @@ import { BackendModel, BackendMsg, ToBackend, ToFrontend } from "./Types"
 
 export type Model = BackendModel
 
-export const init: Model = {
-  game: {
-    board: Board.emptyBoard,
-    players: {
-      O: { type: "None" },
-      X: { type: "None" },
-    },
-  },
-}
-
-//
-//
-//
-// Bridge
-//
-//
-//
-
-const broadcast = (toFrontend: ToFrontend): Cmd.Cmd<never> => {
-  // return Bridge.broadcast(["Games", ["", ]])
-  return Cmd.None
-}
-
-const sendToFrontend = (
-  clientId: string,
-  toFrontend: ToFrontend,
-): Cmd.Cmd<never> => {
-  // return Bridge.sendToFrontend(clientId, ["Games", ["TicTacToe", toFrontend]])
-  return Cmd.None
-}
+export const init: Model = initModel
 
 //
 //
@@ -76,8 +51,5 @@ export const updateFromFrontend = (
 //
 
 export const subscriptions = (): Sub.Sub<Msg> => {
-  return Sub.batch<Msg>([
-    Bridge.onConnect((clientId) => ["ClientConnected", clientId]),
-    Bridge.onDisconnect((clientId) => ["ClientDisconnected", clientId]),
-  ])
+  return Sub.batch<Msg>([])
 }

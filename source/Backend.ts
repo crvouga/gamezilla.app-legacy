@@ -1,7 +1,7 @@
 import * as Bridge from "./Bridge/Backend"
 import { ClientId } from "./Bridge/Bridge"
 import { Cmd, Debug, pipe, Platform, Sub, tag } from "./Core"
-import * as Games from "./Games/Backend"
+import * as GameRoom from "./GameRoom/Backend"
 import { BackendModel, BackendMsg, ToBackend } from "./Types"
 
 //
@@ -16,7 +16,7 @@ type Model = BackendModel
 
 export const init: [Model, Cmd.Cmd<BackendMsg>] = [
   {
-    games: Games.init,
+    gameRoom: GameRoom.init,
   },
   Cmd.None,
 ]
@@ -34,7 +34,7 @@ export const update = (
   model: Model,
 ): [Model, Cmd.Cmd<BackendMsg>] => {
   switch (msg[0]) {
-    case "ToBackend":
+    case "FrontendToBackend":
       return updateFromFrontend(msg[1], msg[2], model)
 
     case "ClientConnected": {
@@ -45,11 +45,11 @@ export const update = (
       return [model, Cmd.None]
     }
 
-    case "Games":
-      const [gamesNew, gamesCmd] = Games.update(msg[1], model.games)
+    case "GameRoom":
+      const [child, childCmd] = GameRoom.update(msg[1], model.gameRoom)
       return [
-        { ...model, games: gamesNew },
-        pipe(gamesCmd, Cmd.map(tag("Games"))),
+        { ...model, gameRoom: child },
+        pipe(childCmd, Cmd.map(tag("GameRoom"))),
       ]
   }
 }
@@ -60,15 +60,15 @@ export const updateFromFrontend = (
   model: Model,
 ): [Model, Cmd.Cmd<BackendMsg>] => {
   switch (msg[0]) {
-    case "Games":
-      const [gamesNew, gamesCmd] = Games.updateFromFrontend(
+    case "GameRoom":
+      const [child, childCmd] = GameRoom.updateFromFrontend(
         clientId,
         msg[1],
-        model.games,
+        model.gameRoom,
       )
       return [
-        { ...model, games: gamesNew },
-        pipe(gamesCmd, Cmd.map(tag("Games"))),
+        { ...model, gameRoom: child },
+        pipe(childCmd, Cmd.map(tag("GameRoom"))),
       ]
   }
 }
@@ -83,11 +83,11 @@ export const updateFromFrontend = (
 
 export const subscriptions = (): Sub.Sub<BackendMsg> => {
   return Sub.batch([
-    pipe(Games.subscriptions(), Sub.map(tag("Games"))),
+    pipe(GameRoom.subscriptions(), Sub.map(tag("GameRoom"))),
     Bridge.onConnect((clientId) => ["ClientConnected", clientId]),
     Bridge.onDisconnect((clientId) => ["ClientDisconnected", clientId]),
     Bridge.fromFrontend<BackendMsg>((clientId, toBackend) => [
-      "ToBackend",
+      "FrontendToBackend",
       clientId,
       toBackend,
     ]),

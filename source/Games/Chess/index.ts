@@ -1,1 +1,1 @@
-export * from "./Chess"
+export * from "./Types"

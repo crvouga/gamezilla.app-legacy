@@ -1,2 +1,2 @@
 export * from "./Types"
-export * as Game from "./Game"
+export * as Frontend from "./Frontend"
