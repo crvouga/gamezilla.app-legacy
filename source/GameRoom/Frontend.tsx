@@ -1,4 +1,4 @@
-import { RoomId } from "."
+import * as RoomId from "./RoomId"
 import { sendToBackend } from "../Bridge/Frontend"
 import { Cmd, pipe, RemoteData, Unit } from "../Core"
 import { UserId } from "../Data"
@@ -12,6 +12,7 @@ import {
   FrontendModel,
   FrontendMsg,
   GameModel,
+  initRooms,
   RoomModel,
   ToFrontend,
 } from "./Types"
@@ -28,7 +29,7 @@ export type Model = FrontendModel
 
 export const init: [Model, Cmd.Cmd<Msg>] = [
   {
-    rooms: GameRooms.init,
+    rooms: initRooms,
     createRoom: RemoteData.NotAsked,
     joinRoom: RemoteData.NotAsked,
     leaveRoom: RemoteData.NotAsked,
@@ -329,7 +330,28 @@ export const view = (
     return viewNotInRoom({ currentUserId, store }, model)
   }
 
-  return viewInRoom({ currentUserId, room, store }, model)
+  if (room.game.type === "None") {
+    return viewNotInGame(
+      {
+        currentUserId,
+        store,
+        room,
+      },
+      model,
+    )
+  }
+
+  const game = room.game.value
+
+  return viewInGame(
+    {
+      currentUserId,
+      store,
+      game,
+      room,
+    },
+    model,
+  )
 }
 
 export const viewNotInRoom =
@@ -407,42 +429,6 @@ export const viewNotInRoom =
       </UI.FillBox>
     )
   }
-
-export const viewInRoom = (
-  {
-    currentUserId,
-    store,
-    room,
-  }: {
-    store: Store.Model
-    room: RoomModel
-    currentUserId: UserId.UserId
-  },
-  model: Model,
-): UI.View<Msg> => {
-  if (room.game.type === "None") {
-    return viewNotInGame(
-      {
-        currentUserId,
-        store,
-        room,
-      },
-      model,
-    )
-  }
-
-  const game = room.game.value
-
-  return viewInGame(
-    {
-      currentUserId,
-      store,
-      game,
-      room,
-    },
-    model,
-  )
-}
 
 const viewNotInGame =
   (

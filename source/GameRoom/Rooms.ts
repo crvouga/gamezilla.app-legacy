@@ -1,10 +1,9 @@
 import { Option, pipe, Result } from "../Core"
 import { remove } from "../Core/Record"
 import { UserId } from "../Data"
-import { RoomModel, RoomsModel } from "./Types"
-import * as RoomId from "./RoomId"
 import * as Games from "../Games"
-import * as Game from "./Game"
+import * as RoomId from "./RoomId"
+import { CreateRoomResult, initGame, JoinRoomResult, LeaveRoomResult, RoomModel, RoomsModel, StartGameResult, StopGameResult } from "./Types"
 
 //
 //
@@ -16,25 +15,13 @@ import * as Game from "./Game"
 
 type Model = RoomsModel
 
-export const init: Model = {
-  rooms: {},
-  users: {},
-}
-
 //
 //
 //
-// Create Room
 //
 //
 //
-
-export type CreateRoomProblem = "user_is_already_in_a_room"
-
-export type CreateRoomResult = Result.Result<
-  CreateRoomProblem,
-  { model: Model; roomId: RoomId.RoomId }
->
+//
 
 export const createRoom = (
   { userId, roomId }: { userId: UserId.UserId; roomId: RoomId.RoomId },
@@ -66,22 +53,16 @@ export const createRoom = (
     },
   }
 
-  return Result.Ok({ model: modelNew, roomId })
+  return Result.Ok(modelNew)
 }
 
 //
 //
 //
-// Join Room
+// 
 //
 //
 //
-
-export type JoinRoomProblem =
-  | "user_is_already_in_a_room"
-  | "room_does_not_exists"
-
-export type JoinRoomResult = Result.Result<JoinRoomProblem, Model>
 
 export const joinRoom = (
   { userId, roomId }: { userId: UserId.UserId; roomId: RoomId.RoomId },
@@ -122,14 +103,10 @@ export const joinRoom = (
 //
 //
 //
-// Leave Room
 //
 //
 //
-
-export type LeaveRoomProblem = "user_is_not_a_room"
-
-export type LeaveRoomResult = Result.Result<LeaveRoomProblem, Model>
+//
 
 export const leaveRoom = (
   { userId }: { userId: UserId.UserId },
@@ -198,17 +175,10 @@ export const leaveRoom = (
 //
 //
 //
-// Start Game
 //
 //
 //
-
-export type StartGameProblem =
-  | "user_is_not_in_a_room"
-  | "user_is_not_the_host"
-  | "game_already_started"
-
-export type StartGameResult = Result.Result<StartGameProblem, Model>
+//
 
 export const startGame = (
   { userId, gameName }: { userId: UserId.UserId; gameName: Games.Name },
@@ -240,7 +210,7 @@ export const startGame = (
       ...model.rooms,
       [room.roomId]: {
         ...room,
-        game: Option.Some(Game.init(gameName)),
+        game: Option.Some(initGame(gameName)),
       },
     },
   }
@@ -251,17 +221,10 @@ export const startGame = (
 //
 //
 //
-// Stop Game
+// 
 //
 //
 //
-
-export type StopGameProblem =
-  | "user_is_not_in_a_room"
-  | "user_is_not_the_host"
-  | "game_already_stopped"
-
-export type StopGameResult = Result.Result<StopGameProblem, Model>
 
 export const stopGame = (
   { userId }: { userId: UserId.UserId },

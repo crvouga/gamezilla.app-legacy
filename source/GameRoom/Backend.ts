@@ -2,7 +2,7 @@ import * as Bridge from "../Bridge/Backend"
 import { ClientId } from "../Bridge/Bridge"
 import { Cmd, exhaustive, Sub } from "../Core"
 import * as Rooms from "./Rooms"
-import { BackendModel, BackendMsg, ToBackend, ToFrontend } from "./Types"
+import { BackendModel, BackendMsg, initRooms, ToBackend, ToFrontend } from "./Types"
 
 //
 //
@@ -15,7 +15,7 @@ import { BackendModel, BackendMsg, ToBackend, ToFrontend } from "./Types"
 type Model = BackendModel
 
 export const init: Model = {
-  rooms: Rooms.init,
+  rooms: initRooms,
 }
 
 //
@@ -76,7 +76,7 @@ export const updateFromFrontend = (
 
       const modelNew: Model = {
         ...model,
-        rooms: result.value.model,
+        rooms: result.value,
       }
 
       return [
