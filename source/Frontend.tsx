@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState, useSyncExternalStore } from "react"
 import * as ReactDomClient from "react-dom/client"
 import * as Auth from "./Auth"
 import { fromBackend } from "./Bridge/Frontend"
@@ -11,8 +12,9 @@ import {
   exhaustive,
   Option,
   pipe,
+  Platform,
   Sub,
-  tag
+  tag,
 } from "./Core"
 import * as Games from "./Games/Frontend"
 import * as Pages from "./Pages"
@@ -133,7 +135,7 @@ export const init = (location: Browser.Location): [Model, Cmd.Cmd<Msg>] => {
     Cmd.batch<Msg>([
       pipe(authCmd, Cmd.map(tag("Auth"))),
       pipe(pageCmd, Cmd.map(tag("Page"))),
-      pipe(gamesCmd, Cmd.map(tag("Games")))
+      pipe(gamesCmd, Cmd.map(tag("Games"))),
     ]),
   ]
 }
@@ -229,7 +231,10 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
           )
 
           return pipe(
-            [{ ...model, games: gameNew }, pipe(gameCmd, Cmd.map(tag("Games")))],
+            [
+              { ...model, games: gameNew },
+              pipe(gameCmd, Cmd.map(tag("Games"))),
+            ],
             andThenMany(runAction, actions),
           )
         }
@@ -274,7 +279,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
             {
               profile: status.profile,
               store: model.store,
-              games: model.games
+              games: model.games,
             },
             msg[1],
             model.page,
@@ -354,55 +359,55 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
 const updateStatusChanged =
   (modelPrev: Model) =>
-    (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
-      const statusPrev = toStatus(modelPrev)
-      const statusNew = toStatus(model)
+  (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
+    const statusPrev = toStatus(modelPrev)
+    const statusNew = toStatus(model)
 
-      if (statusNew.type === statusPrev.type) {
-        return [model, Cmd.None]
-      }
-
-      switch (statusNew.type) {
-        case "ProfileLoading":
-          const action: OutAction = [
-            "Store",
-            ["Profile", ["FindMany", { userIds: [statusNew.auth.userId] }]],
-          ]
-
-          return pipe([model, Cmd.None], andThenMany(runAction, [action]))
-
-        case "ProfileMissing": {
-          const [page, pageCmd] = Pages.initProfileMissing(
-            model.route,
-            statusNew.auth,
-          )
-
-          return [{ ...model, page }, pipe(pageCmd, Cmd.map(tag("Page")))]
-        }
-
-        case "AuthLoading":
-          return [model, Cmd.None]
-
-        case "LoggedOut": {
-          const [page, pageCmd] = Pages.initLoggedOut(model.route)
-          return [{ ...model, page }, pipe(pageCmd, Cmd.map(tag("Page")))]
-        }
-
-        case "Ready": {
-          const [page, pageCmd, actions] = Pages.initReady(
-            model.route,
-            statusNew.profile,
-          )
-          return pipe(
-            [{ ...model, page }, pipe(pageCmd, Cmd.map(tag("Page")))],
-            andThenMany(runAction, actions),
-          )
-        }
-
-        default:
-          return exhaustive(statusNew)
-      }
+    if (statusNew.type === statusPrev.type) {
+      return [model, Cmd.None]
     }
+
+    switch (statusNew.type) {
+      case "ProfileLoading":
+        const action: OutAction = [
+          "Store",
+          ["Profile", ["FindMany", { userIds: [statusNew.auth.userId] }]],
+        ]
+
+        return pipe([model, Cmd.None], andThenMany(runAction, [action]))
+
+      case "ProfileMissing": {
+        const [page, pageCmd] = Pages.initProfileMissing(
+          model.route,
+          statusNew.auth,
+        )
+
+        return [{ ...model, page }, pipe(pageCmd, Cmd.map(tag("Page")))]
+      }
+
+      case "AuthLoading":
+        return [model, Cmd.None]
+
+      case "LoggedOut": {
+        const [page, pageCmd] = Pages.initLoggedOut(model.route)
+        return [{ ...model, page }, pipe(pageCmd, Cmd.map(tag("Page")))]
+      }
+
+      case "Ready": {
+        const [page, pageCmd, actions] = Pages.initReady(
+          model.route,
+          statusNew.profile,
+        )
+        return pipe(
+          [{ ...model, page }, pipe(pageCmd, Cmd.map(tag("Page")))],
+          andThenMany(runAction, actions),
+        )
+      }
+
+      default:
+        return exhaustive(statusNew)
+    }
+  }
 
 const runAction = (action: OutAction, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (action[0]) {
@@ -485,40 +490,40 @@ const toThemeMode = (model: Model): UI.ThemeMode => {
 
 export const view =
   (model: Model): UI.View<Msg> =>
-    (dispatch) => {
-      return (
-        <UI.ThemeProvider themeMode={toThemeMode(model)}>
-          <UI.Box
-            sx={{
-              userSelect: "none",
-              maxWidth: "sm",
-              marginX: "auto",
-              position: "fixed",
-              width: "100%",
-              height: "100%",
-              overflow: "hidden",
-              maxHeight: "100%",
-              display: "flex",
-              flexDirection: "column",
-              left: "50%",
-              top: "50%",
-              transform: "translate(-50%, -50%)",
-            }}
-          >
-            <UI.Box sx={{ width: "100%", overflow: "hidden", flex: 1 }}>
-              {viewMain(model)(dispatch)}
-            </UI.Box>
-
-            {pipe(
-              Snackbar.view({}, model.snackbar),
-              UI.map(tag("Snackbar")),
-            )(dispatch)}
-
-            {viewGameBanner(model)(dispatch)}
+  (dispatch) => {
+    return (
+      <UI.ThemeProvider themeMode={toThemeMode(model)}>
+        <UI.Box
+          sx={{
+            userSelect: "none",
+            maxWidth: "sm",
+            marginX: "auto",
+            position: "fixed",
+            width: "100%",
+            height: "100%",
+            overflow: "hidden",
+            maxHeight: "100%",
+            display: "flex",
+            flexDirection: "column",
+            left: "50%",
+            top: "50%",
+            transform: "translate(-50%, -50%)",
+          }}
+        >
+          <UI.Box sx={{ width: "100%", overflow: "hidden", flex: 1 }}>
+            {viewMain(model)(dispatch)}
           </UI.Box>
-        </UI.ThemeProvider>
-      )
-    }
+
+          {pipe(
+            Snackbar.view({}, model.snackbar),
+            UI.map(tag("Snackbar")),
+          )(dispatch)}
+
+          {viewGameBanner(model)(dispatch)}
+        </UI.Box>
+      </UI.ThemeProvider>
+    )
+  }
 
 const viewMain = (model: Model): UI.View<Msg> => {
   const status = toStatus(model)
@@ -566,24 +571,24 @@ const viewLoading: UI.View<Msg> = () => <UI.LoadingPage />
 
 const viewGameBanner =
   (model: Model): UI.View<Msg> =>
-    (dispatch) => {
-      return <></>
-      // switch (model.game.type) {
-      //   case "Closed":
-      //     return <></>
+  (dispatch) => {
+    return <></>
+    // switch (model.game.type) {
+    //   case "Closed":
+    //     return <></>
 
-      //   case "Opened":
-      //     if (model.page[0] === "Game") {
-      //       return <></>
-      //     }
+    //   case "Opened":
+    //     if (model.page[0] === "Game") {
+    //       return <></>
+    //     }
 
-      //     return (
-      //       <>
-      //         {pipe(Games.viewBanner(model.game), UI.map(tag("Game")))(dispatch)}
-      //       </>
-      //     )
-      // }
-    }
+    //     return (
+    //       <>
+    //         {pipe(Games.viewBanner(model.game), UI.map(tag("Game")))(dispatch)}
+    //       </>
+    //     )
+    // }
+  }
 
 //
 //
@@ -623,7 +628,7 @@ const program = pipe(
 
 const root = ReactDomClient.createRoot(document.getElementById("root")!)
 
-Browser.run(program, (dom) => {
+const stop = Browser.run(program, (dom) => {
   root.render(dom)
 })
 
@@ -635,14 +640,14 @@ Browser.run(program, (dom) => {
 //
 //
 
-// const dispose = () => {
-//   stop();
-// };
+const dispose = () => {
+  stop()
+}
 
-// // @ts-ignore
-// if (import.meta.hot) {
-//   // @ts-ignore
-//   import.meta.hot.accept();
-//   // @ts-ignore
-//   import.meta.hot.dispose(dispose);
-// }
+// @ts-ignore
+if (import.meta.hot) {
+  // @ts-ignore
+  import.meta.hot.accept()
+  // @ts-ignore
+  import.meta.hot.dispose(dispose)
+}

@@ -7,10 +7,10 @@
  */
 import * as Json from "../Json"
 import * as Option from "../Option"
+import { pipe } from "../pipe"
+import { Dispatch } from "../Platform"
 import * as Result from "../Result"
 import * as Task from "../Task"
-import { Dispatch } from "../Platform"
-import { pipe } from "../pipe"
 import {
   Debug,
   Debugger,

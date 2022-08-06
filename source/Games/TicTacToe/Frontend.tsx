@@ -1,13 +1,11 @@
 import { useLayoutEffect, useRef } from "react"
-import * as Route from "../../Route"
+import { Cmd } from "../../Core"
+import { UserId } from "../../Data"
 import * as Store from "../../Store"
 import * as UI from "../../UI"
 import * as Board from "./Board"
-import * as Bridge from "../../Bridge/Frontend"
-import { Cmd, Result } from "../../Core"
-import { FrontendModel, FrontendMsg, ToBackend, ToFrontend } from "./Types"
 import * as Room from "./Room"
-import { UserId } from "../../Data"
+import { FrontendModel, FrontendMsg, ToBackend, ToFrontend } from "./Types"
 
 //
 //
@@ -77,7 +75,6 @@ export const updateFromBackend = (
   model: Model,
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   return [model, Cmd.None, []]
-
 }
 
 //
@@ -90,12 +87,15 @@ export const updateFromBackend = (
 
 export const view =
   (
-    { currentUserId, store }: { currentUserId: UserId.UserId; store: Store.Model },
+    {
+      currentUserId,
+      store,
+    }: { currentUserId: UserId.UserId; store: Store.Model },
     model: Model,
   ): UI.View<Msg> =>
-    (dispatch) => {
-      return <>tic tac toe view</>
-    }
+  (dispatch) => {
+    return <>tic tac toe view</>
+  }
 
 const ViewNotInRoom = ({
   currentUserId,
@@ -131,7 +131,10 @@ const ViewNotInRoom = ({
         <UI.Typography variant="h5">Rooms</UI.Typography>
 
         {Object.values(model.game).length === 0 && (
-          <UI.Typography sx={{ marginTop: 1 }} color="text.secondary">
+          <UI.Typography
+            sx={{ marginTop: 1 }}
+            color="text.secondary"
+          >
             No rooms found.
           </UI.Typography>
         )}
@@ -155,7 +158,10 @@ const ViewNotInRoom = ({
               <UI.ListItemAvatar>
                 <UI.AvatarGroup>
                   {profiles.map((item) => (
-                    <UI.Avatar key={item.userId} src={item.avatarUrl} />
+                    <UI.Avatar
+                      key={item.userId}
+                      src={item.avatarUrl}
+                    />
                   ))}
                 </UI.AvatarGroup>
               </UI.ListItemAvatar>
@@ -193,15 +199,15 @@ const ViewInRoom = ({
       ? status.status === "MissingBoth"
         ? "Missing Players"
         : status.status === "MissingO"
-          ? "Missing O Player"
-          : status.status === "MissingX"
-            ? "Missing X Player"
-            : ""
+        ? "Missing O Player"
+        : status.status === "MissingX"
+        ? "Missing X Player"
+        : ""
       : status.status.type === "Turn"
-        ? `${status.status.turn} Turn`
-        : status.status.type === "Tie"
-          ? "GameOver"
-          : `GameOver`
+      ? `${status.status.turn} Turn`
+      : status.status.type === "Tie"
+      ? "GameOver"
+      : `GameOver`
 
   const usersInRoom = Object.values(store.Profile).filter(
     (profile: any) =>
@@ -226,7 +232,10 @@ const ViewInRoom = ({
             sx={{ marginRight: -1 }}
           >
             {usersInRoom.map((item) => (
-              <UI.Avatar key={item.avatarUrl} src={item.avatarUrl} />
+              <UI.Avatar
+                key={item.avatarUrl}
+                src={item.avatarUrl}
+              />
             ))}
           </UI.AvatarGroup>
         </UI.Toolbar>
@@ -270,7 +279,10 @@ const ViewInRoom = ({
         </UI.Typography>
 
         {status.type === "NotReady" && (
-          <VersusScreen store={store} room={room} />
+          <VersusScreen
+            store={store}
+            room={room}
+          />
         )}
 
         {status.type === "Ready" && (
@@ -282,7 +294,10 @@ const ViewInRoom = ({
           />
         )}
 
-        <EventLogList room={room} store={store} />
+        <EventLogList
+          room={room}
+          store={store}
+        />
       </UI.FillBox>
 
       <UI.Drawer
@@ -348,7 +363,11 @@ const EventLogList = ({
   return (
     <UI.List sx={{ flex: 1, overflowY: "scroll", overflowX: "hidden" }}>
       {room.log.map((roomEvent, index) => (
-        <ViewRoomEvent key={index} store={store} roomEvent={roomEvent} />
+        <ViewRoomEvent
+          key={index}
+          store={store}
+          roomEvent={roomEvent}
+        />
       ))}
 
       <div ref={ref} />
@@ -488,53 +507,53 @@ const viewPlayerActions =
     room: Room.Room
     store: Store.Model
   }): UI.View<Msg> =>
-    (dispatch) => {
-      const roomPlayer = room.players[player]
+  (dispatch) => {
+    const roomPlayer = room.players[player]
 
-      switch (roomPlayer.type) {
-        case "None":
-          return <>None</>
+    switch (roomPlayer.type) {
+      case "None":
+        return <>None</>
 
-        case "User":
-          if (roomPlayer.userId === currentUserId) {
-            return (
-              <UI.Box sx={{ paddingX: 1 }}>
-                <UI.Button
-                  onClick={() =>
-                    dispatch(["StopPlaying", { currentUserId, player }])
-                  }
-                  fullWidth
-                >
-                  Stop Playing
-                </UI.Button>
-              </UI.Box>
-            )
-          }
-
-          if (currentUserId === room.hostId) {
-            return (
-              <UI.Box sx={{ paddingX: 1 }}>
-                <UI.Button
-                  onClick={() =>
-                    dispatch(["RemovePlayer", { currentUserId, player }])
-                  }
-                  fullWidth
-                >
-                  Remove Player
-                </UI.Button>
-              </UI.Box>
-            )
-          }
-
+      case "User":
+        if (roomPlayer.userId === currentUserId) {
           return (
-            <UI.Box sx={{ p: 2 }}>
-              <UI.Typography color="text.secondary">
-                No action available
-              </UI.Typography>
+            <UI.Box sx={{ paddingX: 1 }}>
+              <UI.Button
+                onClick={() =>
+                  dispatch(["StopPlaying", { currentUserId, player }])
+                }
+                fullWidth
+              >
+                Stop Playing
+              </UI.Button>
             </UI.Box>
           )
-      }
+        }
+
+        if (currentUserId === room.hostId) {
+          return (
+            <UI.Box sx={{ paddingX: 1 }}>
+              <UI.Button
+                onClick={() =>
+                  dispatch(["RemovePlayer", { currentUserId, player }])
+                }
+                fullWidth
+              >
+                Remove Player
+              </UI.Button>
+            </UI.Box>
+          )
+        }
+
+        return (
+          <UI.Box sx={{ p: 2 }}>
+            <UI.Typography color="text.secondary">
+              No action available
+            </UI.Typography>
+          </UI.Box>
+        )
     }
+  }
 
 const ViewPlayer = ({
   room,
@@ -574,7 +593,11 @@ const ViewPlayer = ({
           }}
           onClick={() => dispatch(["StartPlaying", { currentUserId, player }])}
         >
-          <UI.SvgIcon width={24} viewBox="0 0 1 1" sx={{ marginRight: 1 }}>
+          <UI.SvgIcon
+            width={24}
+            viewBox="0 0 1 1"
+            sx={{ marginRight: 1 }}
+          >
             <ViewSlot
               color={"#fff"}
               slot={player}
@@ -583,7 +606,10 @@ const ViewPlayer = ({
               r={1 / 3}
             />
           </UI.SvgIcon>
-          <UI.Typography color="inherit" noWrap>
+          <UI.Typography
+            color="inherit"
+            noWrap
+          >
             Play
           </UI.Typography>
         </UI.ButtonBase>
@@ -608,7 +634,10 @@ const ViewPlayer = ({
             }}
             onClick={() => dispatch(["ClickedPlayer", player])}
           >
-            <UI.SvgIcon width={24} viewBox="0 0 1 1">
+            <UI.SvgIcon
+              width={24}
+              viewBox="0 0 1 1"
+            >
               <ViewSlot
                 color={theme.palette.text.primary}
                 slot={player}
@@ -631,9 +660,12 @@ const ViewPlayer = ({
             anchorEl={ref.current}
             onClose={() => dispatch(["ClosedDrawer"])}
           >
-            {viewPlayerActions({ currentUserId, player, room, store })(
-              dispatch,
-            )}
+            {viewPlayerActions({
+              currentUserId,
+              player,
+              room,
+              store,
+            })(dispatch)}
           </UI.Menu>
         </>
       )
@@ -685,11 +717,26 @@ export const CoverArt = () => {
   ] as const
 
   return (
-    <svg width="100%" height="100%" viewBox="0 0 2 2">
-      <rect x={0} y={0} width={2} height={2} fill={theme.background} />
+    <svg
+      width="100%"
+      height="100%"
+      viewBox="0 0 2 2"
+    >
+      <rect
+        x={0}
+        y={0}
+        width={2}
+        height={2}
+        fill={theme.background}
+      />
 
       {LINES.map((line, index) => (
-        <line key={index} {...line} stroke={theme.line} strokeWidth={0.1} />
+        <line
+          key={index}
+          {...line}
+          stroke={theme.line}
+          strokeWidth={0.1}
+        />
       ))}
 
       {positions.map(([{ column, row }, slot], index) => (
@@ -728,8 +775,15 @@ export const ViewBoard = ({
   onClick: (position: Board.Position) => void
 }) => {
   return (
-    <svg width={"100%"} viewBox="0 0 3 3">
-      <rect width="100%" height="100%" fill={theme.background} />
+    <svg
+      width={"100%"}
+      viewBox="0 0 3 3"
+    >
+      <rect
+        width="100%"
+        height="100%"
+        fill={theme.background}
+      />
       {lines.map((line, index) => (
         <line
           key={index}
@@ -799,10 +853,24 @@ export const ViewSlot = ({
       return <g></g>
 
     case "O":
-      return <Naught color={color} r={r} cx={cx} cy={cy} />
+      return (
+        <Naught
+          color={color}
+          r={r}
+          cx={cx}
+          cy={cy}
+        />
+      )
 
     case "X":
-      return <Cross color={color} r={r} cx={cx} cy={cy} />
+      return (
+        <Cross
+          color={color}
+          r={r}
+          cx={cx}
+          cy={cy}
+        />
+      )
   }
 }
 
@@ -820,11 +888,24 @@ const Cross = ({
   strokeWidth?: number
 }) => {
   return (
-    <g strokeWidth={strokeWidth} stroke={color}>
+    <g
+      strokeWidth={strokeWidth}
+      stroke={color}
+    >
       {/* direction: \ */}
-      <line x1={cx - r} y1={cy - r} x2={cx + r} y2={cy + r} />
+      <line
+        x1={cx - r}
+        y1={cy - r}
+        x2={cx + r}
+        y2={cy + r}
+      />
       {/* direction: / */}
-      <line x1={cx + r} y1={cy - r} x2={cx - r} y2={cy + r} />
+      <line
+        x1={cx + r}
+        y1={cy - r}
+        x2={cx - r}
+        y2={cy + r}
+      />
     </g>
   )
 }
@@ -872,17 +953,40 @@ const VersusScreen = ({
       : undefined
 
   return (
-    <svg width="100%" viewBox="0 0 1 1">
-      <rect width="100%" height="100%" fill={theme.background} />
+    <svg
+      width="100%"
+      viewBox="0 0 1 1"
+    >
+      <rect
+        width="100%"
+        height="100%"
+        fill={theme.background}
+      />
 
       <mask id="avatar">
-        <rect x={0} y={0} width={1} height={1} fill="black" />
-        <circle cx={0.5} cy={0.5} r={0.5} fill="white" />
+        <rect
+          x={0}
+          y={0}
+          width={1}
+          height={1}
+          fill="black"
+        />
+        <circle
+          cx={0.5}
+          cy={0.5}
+          r={0.5}
+          fill="white"
+        />
       </mask>
 
       {profileX && (
         <>
-          <Cross cx={0.15} cy={0.25} r={0.075} strokeWidth={0.05} />
+          <Cross
+            cx={0.15}
+            cy={0.25}
+            r={0.075}
+            strokeWidth={0.05}
+          />
           <SvgAvatar
             id="x-avatar"
             cx={0.4}
@@ -895,7 +999,12 @@ const VersusScreen = ({
 
       {profileO && (
         <>
-          <Naught cx={0.55} cy={0.75} r={0.075} strokeWidth={0.05} />
+          <Naught
+            cx={0.55}
+            cy={0.75}
+            r={0.075}
+            strokeWidth={0.05}
+          />
           <SvgAvatar
             id="o-avatar"
             cx={0.8}
@@ -914,7 +1023,12 @@ const VersusScreen = ({
         stroke={theme.line}
         strokeWidth={0.0333}
       />
-      <circle cx={0.5} cy={0.5} r={0.1} fill={theme.line} />
+      <circle
+        cx={0.5}
+        cy={0.5}
+        r={0.1}
+        fill={theme.line}
+      />
       <text
         dominantBaseline={"middle"}
         textAnchor={"middle"}
@@ -947,7 +1061,12 @@ const SvgAvatar = ({
     <>
       <defs>
         <clipPath id={id}>
-          <circle cx={cx} cy={cy} r={r} fill="#FFFFFF" />
+          <circle
+            cx={cx}
+            cy={cy}
+            r={r}
+            fill="#FFFFFF"
+          />
         </clipPath>
       </defs>
       <image

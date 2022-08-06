@@ -112,7 +112,7 @@ export const update = (
 
 export const view =
   (model: Model): UI.View<Msg> =>
-    (dispatch) =>
+  (dispatch) =>
     (
       <UI.FillBox>
         <UI.Header

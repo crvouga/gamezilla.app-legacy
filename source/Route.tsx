@@ -1,5 +1,5 @@
 import { Browser, Option } from "./Core"
-import { UserId } from "./Data";
+import { UserId } from "./Data"
 
 //
 //
@@ -26,7 +26,7 @@ export type Route =
   | { type: "ProfileUpdateUsername" }
   | { type: "ProfileUpdateTheme" }
   | { type: "Game" }
-  | { type: "GameRoom", }
+  | { type: "GameRoom" }
   | { type: "Chat" }
   | { type: "ChatNew" }
   | { type: "ChatConversation"; conversationId: string }
@@ -91,7 +91,7 @@ export const decode = (location: Browser.Location): Option.Option<Route> => {
 
     case "Profile": {
       const userId = UserId.decode(second)
-      if (userId.type === 'Ok') {
+      if (userId.type === "Ok") {
         return Option.Some({
           type: "Profile",
           userId: userId.value,

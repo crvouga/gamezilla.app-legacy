@@ -1,7 +1,7 @@
-import * as Route from "../Route"
-import * as UI from "../UI"
 import { Cmd } from "../Core"
 import { UserId } from "../Data"
+import * as Route from "../Route"
+import * as UI from "../UI"
 
 //
 //
@@ -63,7 +63,7 @@ export const update = (
 
 export const view =
   ({ username }: { username: string }, _: Model): UI.View<Msg> =>
-    (dispatch) =>
+  (dispatch) =>
     (
       <UI.FillBox>
         <UI.Header title={username} />

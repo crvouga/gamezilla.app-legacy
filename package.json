@@ -4,7 +4,7 @@
     "dev": "npx concurrently \"npm run backend:dev\" \"npm run frontend:dev\"",
     "backend:dev": "npx nodemon -e ts,js --exec ts-node ./source/Backend.ts",
     "backend:start": "npx ts-node ./source/Backend.ts",
-    "format": "npx prettier --write .",
+    "formatter": "npx prettier --write . && npx onchange \"**/*\" -- prettier --write --ignore-unknown {{changed}}",
     "frontend:build": "vite build --emptyOutDir",
     "frontend:dev": "vite --open",
     "frontend:dev:many": "npx concurrently \"npm run frontend:dev\" \"npm run frontend:dev\" \"npm run frontend:dev\"",

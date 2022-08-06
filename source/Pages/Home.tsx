@@ -26,9 +26,7 @@ export const init: Model = {}
 //
 //
 
-export type Msg =
-  | ["ClickedPlay"]
-  | ['ClickedRoom', { roomId: RoomId.RoomId }]
+export type Msg = ["ClickedPlay"] | ["ClickedRoom", { roomId: RoomId.RoomId }]
 
 export type OutAction = Games.Action
 
@@ -38,12 +36,21 @@ export const update = (
   model: Model,
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
-    case 'ClickedPlay': {
+    case "ClickedPlay": {
       return [model, Route.push({ type: "GameRoom" }), []]
     }
 
-    case 'ClickedRoom': {
-      return [model, Cmd.None, [["Games", ["JoinRoom", { userId: currentUserId, roomId: msg[1].roomId }]]]]
+    case "ClickedRoom": {
+      return [
+        model,
+        Cmd.None,
+        [
+          [
+            "Games",
+            ["JoinRoom", { userId: currentUserId, roomId: msg[1].roomId }],
+          ],
+        ],
+      ]
     }
   }
 }
@@ -56,69 +63,74 @@ export const update = (
 //
 //
 
-export const view =
-  (
-    {
-      currentUserId,
-      games,
-      store,
-    }: {
-      currentUserId: UserId.UserId
-      games: Games.Model
-      store: Store.Model
-    },
-    _model: Model,
-  ): UI.View<Msg> => {
+export const view = (
+  {
+    currentUserId,
+    games,
+    store,
+  }: {
+    currentUserId: UserId.UserId
+    games: Games.Model
+    store: Store.Model
+  },
+  _model: Model,
+): UI.View<Msg> => {
+  return (dispatch) => {
+    return (
+      <UI.FillBox>
+        <UI.Header title="Home" />
+        <UI.Box sx={{ paddingX: 2 }}>
+          <UI.Button
+            loading={games.createRoom.type === "Loading"}
+            fullWidth
+            size="large"
+            variant="contained"
+            onClick={() => dispatch(["ClickedPlay"])}
+          >
+            Play
+          </UI.Button>
+        </UI.Box>
 
-
-    return (dispatch) => {
-      return (
-        <UI.FillBox>
-          <UI.Header title="Home" />
-          <UI.Box sx={{ paddingX: 2 }}>
-            <UI.Button loading={games.createRoom.type === 'Loading'} fullWidth size="large" variant="contained" onClick={() => dispatch(['ClickedPlay'])}>
-              Play
-            </UI.Button>
-          </UI.Box>
-
-          <UI.List sx={{ overflowY: "scroll" }}>
-            {Object.values(games.rooms.rooms)
-              .map((room) => ({
-                room,
-                profiles: Object.values(store.Profile).filter(
-                  (profile) => games.rooms.users[profile.userId]?.roomId === room.roomId,
-                ),
-              }))
-              .map(({ room, profiles }) => (
-                <UI.ListItemButton
-                  key={room.roomId}
-                  onClick={() => {
-                    dispatch(["ClickedRoom", { roomId: room.roomId }])
+        <UI.List sx={{ overflowY: "scroll" }}>
+          {Object.values(games.rooms.rooms)
+            .map((room) => ({
+              room,
+              profiles: Object.values(store.Profile).filter(
+                (profile) =>
+                  games.rooms.users[profile.userId]?.roomId === room.roomId,
+              ),
+            }))
+            .map(({ room, profiles }) => (
+              <UI.ListItemButton
+                key={room.roomId}
+                onClick={() => {
+                  dispatch(["ClickedRoom", { roomId: room.roomId }])
+                }}
+              >
+                <UI.ListItemAvatar>
+                  <UI.AvatarGroup>
+                    {profiles.map((item) => (
+                      <UI.Avatar
+                        key={item.userId}
+                        src={item.avatarUrl}
+                      />
+                    ))}
+                  </UI.AvatarGroup>
+                </UI.ListItemAvatar>
+                <UI.ListItemText
+                  primaryTypographyProps={{
+                    noWrap: true,
+                    sx: { wordWrap: "break-word" },
                   }}
-                >
-                  <UI.ListItemAvatar>
-                    <UI.AvatarGroup>
-                      {profiles.map((item) => (
-                        <UI.Avatar key={item.userId} src={item.avatarUrl} />
-                      ))}
-                    </UI.AvatarGroup>
-                  </UI.ListItemAvatar>
-                  <UI.ListItemText
-                    primaryTypographyProps={{
-                      noWrap: true,
-                      sx: { wordWrap: "break-word" },
-                    }}
-                    primary={profiles.map((item) => item.username).join(",")}
-                  />
-                </UI.ListItemButton>
-              ))}
-          </UI.List>
-        </UI.FillBox >
-      )
-    }
+                  primary={profiles.map((item) => item.username).join(",")}
+                />
+              </UI.ListItemButton>
+            ))}
+        </UI.List>
+      </UI.FillBox>
+    )
   }
-
-
+}
 
 const GameCard = ({
   icon,
@@ -163,7 +175,11 @@ const GameCard = ({
             background: `linear-gradient(transparent, rgba(0, 0, 0, 0.6))`,
           }}
         >
-          <UI.Typography color="white" align="left" fontWeight={800}>
+          <UI.Typography
+            color="white"
+            align="left"
+            fontWeight={800}
+          >
             {label}
           </UI.Typography>
         </UI.Box>

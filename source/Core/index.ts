@@ -14,4 +14,3 @@ export * as Time from "./Time"
 export * from "./Utility"
 export * as Uuid from "./Uuid"
 export * as View from "./View"
-

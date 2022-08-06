@@ -78,7 +78,7 @@ export const update = (
 
 export const view =
   (profile: Profile.Profile, _model: Model): UI.View<Msg> =>
-    (dispatch) =>
+  (dispatch) =>
     (
       <UI.FillBox>
         <UI.Header

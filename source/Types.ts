@@ -1,6 +1,5 @@
 import * as Auth from "./Auth"
 import * as Connection from "./Connection"
-import { Option } from "./Core"
 import * as Games from "./Games"
 import * as Pages from "./Pages"
 import * as Route from "./Route"

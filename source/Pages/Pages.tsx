@@ -213,10 +213,13 @@ export const initReady = (
     case "Admin":
       return [["Admin"], Cmd.None, []]
 
-
-    case 'GameRoom': {
+    case "GameRoom": {
       const [modelInit, cmdInit] = GameRoom.init
-      return [["GameRoom", modelInit], pipe(cmdInit, Cmd.map(tag("GameRoom"))), []]
+      return [
+        ["GameRoom", modelInit],
+        pipe(cmdInit, Cmd.map(tag("GameRoom"))),
+        [],
+      ]
     }
 
     case "ProfileCreate":
@@ -323,7 +326,15 @@ export const initProfileMissing = (
 //
 
 export const updateReady = (
-  { profile, store, games }: { profile: Store.Profile.Profile; store: Store.Model, games: Games.Model },
+  {
+    profile,
+    store,
+    games,
+  }: {
+    profile: Store.Profile.Profile
+    store: Store.Model
+    games: Games.Model
+  },
   msg: Msg,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
@@ -340,7 +351,10 @@ export const updateReady = (
 
     case "Home":
       if (msg[0] === "Home") {
-        return tagUpdate("Home", Home.update({ currentUserId: profile.userId }, msg[1], model[1]))
+        return tagUpdate(
+          "Home",
+          Home.update({ currentUserId: profile.userId }, msg[1], model[1]),
+        )
       }
       return [model, Cmd.None, []]
 
@@ -467,7 +481,7 @@ export const updateReady = (
     case "Admin":
       return [model, Cmd.None, []]
 
-    case 'GameRoom': {
+    case "GameRoom": {
       if (msg[0] === "GameRoom") {
         const [modelPage, cmdPage, actions] = GameRoom.update(
           { currentUserId: profile.userId },
@@ -689,9 +703,11 @@ export const viewReady = (
       return (dispatch) => (
         <UI.FillBox>
           {tagView("Chat", Chat.view({ profile, store }, model[1]))(dispatch)}
-          {viewBottomNavigation({ page: "Chat", currentUserId, route })(
-            dispatch,
-          )}
+          {viewBottomNavigation({
+            page: "Chat",
+            currentUserId,
+            route,
+          })(dispatch)}
         </UI.FillBox>
       )
 
@@ -702,9 +718,11 @@ export const viewReady = (
             "Home",
             Home.view({ store, currentUserId, games }, model[1]),
           )(dispatch)}
-          {viewBottomNavigation({ page: "Home", currentUserId, route })(
-            dispatch,
-          )}
+          {viewBottomNavigation({
+            page: "Home",
+            currentUserId,
+            route,
+          })(dispatch)}
         </UI.FillBox>
       )
 
@@ -714,9 +732,11 @@ export const viewReady = (
           <UI.FillBox>
             {tagView("Search", Search.view({ store }, model[1]))(dispatch)}
           </UI.FillBox>
-          {viewBottomNavigation({ page: "Search", currentUserId, route })(
-            dispatch,
-          )}
+          {viewBottomNavigation({
+            page: "Search",
+            currentUserId,
+            route,
+          })(dispatch)}
         </UI.FillBox>
       )
 
@@ -775,15 +795,19 @@ export const viewReady = (
             "Profile",
             Profile.view({ store, currentUserId: profile.userId }, model[1]),
           )(dispatch)}
-          {viewBottomNavigation({ page: "Profile", currentUserId, route })(
-            dispatch,
-          )}
+          {viewBottomNavigation({
+            page: "Profile",
+            currentUserId,
+            route,
+          })(dispatch)}
         </UI.FillBox>
       )
 
-
     case "GameRoom": {
-      return tagView("GameRoom", GameRoom.view({ store, currentUserId, games }, model[1]))
+      return tagView(
+        "GameRoom",
+        GameRoom.view({ store, currentUserId, games }, model[1]),
+      )
     }
 
     case "Login":
@@ -829,7 +853,7 @@ export const viewProfileMissing = (
     case "AccountCreate":
     case "PasswordReset":
     case "Profile":
-    case 'GameRoom':
+    case "GameRoom":
     case "Admin":
       return viewLoading
 
@@ -889,9 +913,6 @@ const viewLoading: UI.View<Msg> = () => <UI.LoadingPage />
 //
 //
 
-
-
-
 const viewBottomNavigation =
   ({
     currentUserId,
@@ -901,56 +922,58 @@ const viewBottomNavigation =
     page: "Home" | "Search" | "Chat" | "Profile"
     route: Route.Route
   }): UI.View<Msg> =>
-    (dispatch) => {
-      return (
-        <UI.BottomNavigation
-          showLabels
-          value={route.type}
-          onChange={(_event, routeType) => {
-            if (!Route.isRouteType(routeType)) {
-              return
+  (dispatch) => {
+    return (
+      <UI.BottomNavigation
+        showLabels
+        value={route.type}
+        onChange={(_event, routeType) => {
+          if (!Route.isRouteType(routeType)) {
+            return
+          }
+          switch (routeType) {
+            case "Home":
+            case "Search":
+            case "Chat": {
+              dispatch(["ClickedBottomNavigationLink", { type: routeType }])
+              break
             }
-            switch (routeType) {
-              case "Home":
-              case "Search":
-              case "Chat": {
-                dispatch(["ClickedBottomNavigationLink", { type: routeType }])
-                break
-              }
-              case "Profile": {
-                dispatch([
-                  "ClickedBottomNavigationLink",
-                  { 
-                    type: routeType, userId: currentUserId },
-                ])
-                break
-              }
+            case "Profile": {
+              dispatch([
+                "ClickedBottomNavigationLink",
+                {
+                  type: routeType,
+                  userId: currentUserId,
+                },
+              ])
+              break
             }
-          }}
-        >
-          <UI.BottomNavigationAction
-            icon={<UI.Icons.Home />}
-            label="Home"
-            value={Route.routesTypes.Home}
-          />
-          <UI.BottomNavigationAction
-            icon={<UI.Icons.Search />}
-            label="Search"
-            value={Route.routesTypes.Search}
-          />
-          <UI.BottomNavigationAction
-            icon={<UI.Icons.Chat />}
-            label="Chat"
-            value={Route.routesTypes.Chat}
-          />
-          <UI.BottomNavigationAction
-            icon={<UI.Icons.Person />}
-            label="Profile"
-            value={Route.routesTypes.Profile}
-          />
-        </UI.BottomNavigation>
-      )
-    }
+          }
+        }}
+      >
+        <UI.BottomNavigationAction
+          icon={<UI.Icons.Home />}
+          label="Home"
+          value={Route.routesTypes.Home}
+        />
+        <UI.BottomNavigationAction
+          icon={<UI.Icons.Search />}
+          label="Search"
+          value={Route.routesTypes.Search}
+        />
+        <UI.BottomNavigationAction
+          icon={<UI.Icons.Chat />}
+          label="Chat"
+          value={Route.routesTypes.Chat}
+        />
+        <UI.BottomNavigationAction
+          icon={<UI.Icons.Person />}
+          label="Profile"
+          value={Route.routesTypes.Profile}
+        />
+      </UI.BottomNavigation>
+    )
+  }
 
 //
 //

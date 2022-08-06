@@ -1,14 +1,15 @@
 import { sendToBackend } from "../Bridge/Frontend"
 import { Cmd, pipe, RemoteData, Sub, Unit } from "../Core"
+import { UserId } from "../Data"
+import * as Route from "../Route"
 import * as Snackbar from "../Snackbar"
 import * as Store from "../Store"
-import * as Route from "../Route"
 import * as UI from "../UI"
 import * as Chess from "./Chess"
 import * as ConnectFour from "./ConnectFour"
+import * as Rooms from "./Rooms"
 import * as Snake from "./Snake"
 import * as TicTacToe from "./TicTacToe/Frontend"
-import * as Rooms from "./Rooms"
 import {
   CreateRoom,
   FrontendModel,
@@ -17,9 +18,8 @@ import {
   JoinRoom,
   LeaveRoom,
   StartGame,
-  ToFrontend
+  ToFrontend,
 } from "./Types"
-import { UserId } from "../Data"
 
 //
 //
@@ -45,11 +45,10 @@ export const init: [Model, Cmd.Cmd<Msg>] = [
     createRoom: RemoteData.NotAsked,
     joinRoom: RemoteData.NotAsked,
     leaveRoom: RemoteData.NotAsked,
-    startGame: RemoteData.NotAsked
+    startGame: RemoteData.NotAsked,
   },
-  sendToBackend(['Games', ['Init']])
+  sendToBackend(["Games", ["Init"]]),
 ]
-
 
 //
 //
@@ -69,7 +68,6 @@ export type Action =
   | ["Games", LeaveRoom]
   | ["Games", StartGame]
 
-
 //
 //
 //
@@ -83,24 +81,36 @@ export const runAction = (
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (action[1][0]) {
-    case 'CreateRoom': {
+    case "CreateRoom": {
       const { roomId, userId } = action[1][1]
-      return [{ ...model, createRoom: RemoteData.Loading }, sendToBackend(['Games', ['CreateRoom', { roomId, userId }]])]
+      return [
+        { ...model, createRoom: RemoteData.Loading },
+        sendToBackend(["Games", ["CreateRoom", { roomId, userId }]]),
+      ]
     }
 
-    case 'JoinRoom': {
+    case "JoinRoom": {
       const { roomId, userId } = action[1][1]
-      return [{ ...model, joinRoom: RemoteData.Loading }, sendToBackend(['Games', ['JoinRoom', { roomId, userId }]])]
+      return [
+        { ...model, joinRoom: RemoteData.Loading },
+        sendToBackend(["Games", ["JoinRoom", { roomId, userId }]]),
+      ]
     }
 
-    case 'LeaveRoom': {
+    case "LeaveRoom": {
       const { userId } = action[1][1]
-      return [{ ...model, leaveRoom: RemoteData.Loading }, sendToBackend(['Games', ['LeaveRoom', { userId }]])]
+      return [
+        { ...model, leaveRoom: RemoteData.Loading },
+        sendToBackend(["Games", ["LeaveRoom", { userId }]]),
+      ]
     }
 
-    case 'StartGame': {
+    case "StartGame": {
       const { userId, gameName } = action[1][1]
-      return [{ ...model, leaveRoom: RemoteData.Loading }, sendToBackend(['Games', ['StartGame', { userId, gameName }]])]
+      return [
+        { ...model, leaveRoom: RemoteData.Loading },
+        sendToBackend(["Games", ["StartGame", { userId, gameName }]]),
+      ]
     }
   }
 }
@@ -111,7 +121,7 @@ export const update = (
   model: Model,
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
-    case 'Noop': {
+    case "Noop": {
       return [model, Cmd.None, []]
     }
   }
@@ -122,68 +132,127 @@ export const updateFromBackend = (
   model: Model,
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
-    case 'Sync': {
-      const userIds = Object.values(msg[1].users).map(user => user.userId)
+    case "Sync": {
+      const userIds = Object.values(msg[1].users).map((user) => user.userId)
 
-      const action: OutAction = ['Store', ['Profile', ['FindMany', { userIds }]]]
+      const action: OutAction = [
+        "Store",
+        ["Profile", ["FindMany", { userIds }]],
+      ]
 
       return [{ ...model, rooms: msg[1] }, Cmd.None, [action]]
     }
 
-    case 'CreateRoomResulted': {
-      const createRoom = pipe(msg[1], RemoteData.fromResult, RemoteData.mapSuccess(() => Unit))
+    case "CreateRoomResulted": {
+      const createRoom = pipe(
+        msg[1],
+        RemoteData.fromResult,
+        RemoteData.mapSuccess(() => Unit),
+      )
 
       const actions: OutAction[] =
-        createRoom.type === 'Failure'
-          ? [['Snackbar', ['Enqueue', { variant: "Error", message: createRoom.problem }]]]
+        createRoom.type === "Failure"
+          ? [
+              [
+                "Snackbar",
+                [
+                  "Enqueue",
+                  {
+                    variant: "Error",
+                    message: createRoom.problem,
+                  },
+                ],
+              ],
+            ]
           : []
 
-
-      const cmd: Cmd.Cmd<Msg> = createRoom.type === 'Success' ? Route.replace({ type: "GameRoom", }) : Cmd.None
+      const cmd: Cmd.Cmd<Msg> =
+        createRoom.type === "Success"
+          ? Route.replace({ type: "GameRoom" })
+          : Cmd.None
 
       return [{ ...model, createRoom }, cmd, actions]
     }
 
-    case 'LeaveRoomResulted': {
-      const leaveRoom = pipe(msg[1], RemoteData.fromResult, RemoteData.mapSuccess(() => Unit))
+    case "LeaveRoomResulted": {
+      const leaveRoom = pipe(
+        msg[1],
+        RemoteData.fromResult,
+        RemoteData.mapSuccess(() => Unit),
+      )
 
       const actions: OutAction[] =
-        leaveRoom.type === 'Failure'
-          ? [['Snackbar', ['Enqueue', { variant: "Error", message: leaveRoom.problem }]]]
+        leaveRoom.type === "Failure"
+          ? [
+              [
+                "Snackbar",
+                [
+                  "Enqueue",
+                  {
+                    variant: "Error",
+                    message: leaveRoom.problem,
+                  },
+                ],
+              ],
+            ]
           : []
 
       return [{ ...model, leaveRoom }, Cmd.None, actions]
     }
 
-    case 'JoinRoomResulted': {
-      const joinRoom = pipe(msg[1], RemoteData.fromResult, RemoteData.mapSuccess(() => Unit))
+    case "JoinRoomResulted": {
+      const joinRoom = pipe(
+        msg[1],
+        RemoteData.fromResult,
+        RemoteData.mapSuccess(() => Unit),
+      )
 
       const actions: OutAction[] =
-        joinRoom.type === 'Failure'
-          ? [['Snackbar', ['Enqueue', { variant: "Error", message: joinRoom.problem }]]]
+        joinRoom.type === "Failure"
+          ? [
+              [
+                "Snackbar",
+                [
+                  "Enqueue",
+                  {
+                    variant: "Error",
+                    message: joinRoom.problem,
+                  },
+                ],
+              ],
+            ]
           : []
-
 
       return [{ ...model, joinRoom }, Cmd.None, actions]
     }
 
-    case 'StartGameResulted': {
-      const startGame = pipe(msg[1], RemoteData.fromResult, RemoteData.mapSuccess(() => Unit))
-
+    case "StartGameResulted": {
+      const startGame = pipe(
+        msg[1],
+        RemoteData.fromResult,
+        RemoteData.mapSuccess(() => Unit),
+      )
 
       const actions: OutAction[] =
-        startGame.type === 'Failure'
-          ? [['Snackbar', ['Enqueue', { variant: "Error", message: startGame.problem }]]]
+        startGame.type === "Failure"
+          ? [
+              [
+                "Snackbar",
+                [
+                  "Enqueue",
+                  {
+                    variant: "Error",
+                    message: startGame.problem,
+                  },
+                ],
+              ],
+            ]
           : []
 
       return [{ ...model, startGame }, Cmd.None, actions]
-
     }
   }
-
 }
-
-
 
 //
 //
@@ -206,20 +275,22 @@ export const subscriptions = (_model: Model): Sub.Sub<Msg> => {
 //
 
 export const view = (
-  { currentUserId, store }: { currentUserId: UserId.UserId; store: Store.Model },
+  {
+    currentUserId,
+    store,
+  }: { currentUserId: UserId.UserId; store: Store.Model },
   model: Model,
 ): UI.View<Msg> => {
   return () => <>game view</>
 }
 
-
-// 
-// 
-// 
+//
+//
+//
 // View Helpers
-// 
-// 
-// 
+//
+//
+//
 
 export const gameToName = (game: GameName): string => {
   switch (game) {

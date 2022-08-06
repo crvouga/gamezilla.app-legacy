@@ -94,7 +94,12 @@ export const update = (
               "Profile",
               [
                 "Edit",
-                { userId, edits: { avatarUrl: ProfileAvatar.toUrl(model) } },
+                {
+                  userId,
+                  edits: {
+                    avatarUrl: ProfileAvatar.toUrl(model),
+                  },
+                },
               ],
             ],
           ],
@@ -150,7 +155,10 @@ export const view = (model: Model): UI.View<Msg> => {
       />
 
       <UI.Box sx={{ padding: 2 }}>
-        <UI.Typography variant="subtitle1" sx={{ marginBottom: 1 }}>
+        <UI.Typography
+          variant="subtitle1"
+          sx={{ marginBottom: 1 }}
+        >
           Style
         </UI.Typography>
         <UI.Select
@@ -202,7 +210,10 @@ export const view = (model: Model): UI.View<Msg> => {
           ))}
         </UI.Select>
 
-        <UI.Typography variant="subtitle1" sx={{ marginBottom: 1 }}>
+        <UI.Typography
+          variant="subtitle1"
+          sx={{ marginBottom: 1 }}
+        >
           Seed
         </UI.Typography>
 

@@ -1,7 +1,7 @@
 import { RemoteData, Unit } from "../Core"
 import { UserId } from "../Data"
-import * as Rooms from "./Rooms"
 import * as RoomId from "./RoomId"
+import * as Rooms from "./Rooms"
 
 export type BackendModel = {
   rooms: Rooms.Model
