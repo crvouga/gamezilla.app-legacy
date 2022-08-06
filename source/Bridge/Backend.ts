@@ -1,7 +1,7 @@
-import * as Rx from "rxjs"
 import * as Http from "http"
+import * as Rx from "rxjs"
 import { Server } from "socket.io"
-import { Cmd, Option, pipe, Platform, Sub } from "../Core"
+import { Cmd, Option, pipe, Sub } from "../Core"
 import { ToBackend, ToFrontend } from "../Types"
 import {
   backendServerPort,

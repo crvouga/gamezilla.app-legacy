@@ -1,9 +1,9 @@
 import { Option, pipe, Result } from "../Core"
 import { remove } from "../Core/Record"
-import { GameName } from "./Types"
-import * as TicTacToe from "./TicTacToe"
 import { UserId } from "../Data"
 import * as RoomId from "./RoomId"
+import * as TicTacToe from "./TicTacToe"
+import { GameName } from "./Types"
 
 //
 //

@@ -14,6 +14,7 @@ export const decode = (id: string): Result.Result<Problem, RoomId> => {
   if (is(id)) {
     return Result.Ok(id)
   }
+
   return Result.Err("invalid_id")
 }
 

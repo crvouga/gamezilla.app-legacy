@@ -3,11 +3,11 @@ import * as Browser from "../Browser"
 import * as Cmd from "../Cmd"
 import * as Json from "../Json"
 import * as Option from "../Option"
+import { pipe } from "../pipe"
 import * as Platform from "../Platform"
 import { Dispatch } from "../Platform"
 import * as Result from "../Result"
 import * as Task from "../Task"
-import { pipe } from "../pipe"
 import { Debug, Debugger, Global, MsgWithDebug } from "./debugger-commons"
 
 type Unsubscription = () => void

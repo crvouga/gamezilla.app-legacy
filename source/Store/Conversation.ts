@@ -1,6 +1,10 @@
 import produce from "immer"
+import { Cmd, Option, pipe, RemoteData, Result, Task } from "../Core"
+import { UserId } from "../Data"
 import * as Route from "../Route"
 import * as Supabase from "../Supabase"
+import { definitions } from "../supabase-types"
+import { decodeRow } from "./Profile"
 import * as Types from "./Types"
 import {
   Message,
@@ -9,10 +13,6 @@ import {
   ProfilesConversations,
   Store,
 } from "./Types"
-import { Cmd, Option, pipe, RemoteData, Result, Task } from "../Core"
-import { definitions } from "../supabase-types"
-import { decodeRow } from "./Profile"
-import { UserId } from "../Data"
 
 //
 //

@@ -1,9 +1,8 @@
 import * as Bridge from "../../Bridge/Backend"
 import { ClientId } from "../../Bridge/Bridge"
-import { Cmd, Result, Sub } from "../../Core"
+import { Cmd, Sub } from "../../Core"
 import * as Board from "./Board"
 import { BackendModel, BackendMsg, ToBackend, ToFrontend } from "./Types"
-import * as Room from "./Room"
 
 //
 //

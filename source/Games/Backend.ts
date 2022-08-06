@@ -1,9 +1,8 @@
 import * as Bridge from "../Bridge/Backend"
-import * as TicTacToe from "./TicTacToe/Backend"
 import { ClientId } from "../Bridge/Bridge"
-import { Cmd, exhaustive, pipe, Sub, tag } from "../Core"
-import { BackendModel, BackendMsg, ToBackend, ToFrontend } from "./Types"
+import { Cmd, exhaustive, Sub } from "../Core"
 import * as Rooms from "./Rooms"
+import { BackendModel, BackendMsg, ToBackend, ToFrontend } from "./Types"
 
 //
 //

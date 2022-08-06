@@ -72,7 +72,10 @@ export const view =
           p: 2,
         }}
       >
-        <UI.Typography variant="h1" sx={{ marginBottom: 2 }}>
+        <UI.Typography
+          variant="h1"
+          sx={{ marginBottom: 2 }}
+        >
           Gamezilla
         </UI.Typography>
 

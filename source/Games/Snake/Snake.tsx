@@ -1,8 +1,4 @@
 import { useLayoutEffect, useRef } from "react"
-import * as Route from "../../Route"
-import * as UI from "../../UI"
-import * as Direction from "./Direction"
-import * as Position from "./Position"
 import {
   Audio,
   Cmd,
@@ -13,6 +9,10 @@ import {
   Sub,
   Time,
 } from "../../Core"
+import * as Route from "../../Route"
+import * as UI from "../../UI"
+import * as Direction from "./Direction"
+import * as Position from "./Position"
 
 //
 //
@@ -353,7 +353,10 @@ export const view =
           }
         />
 
-        <Canvas model={model} dispatch={dispatch} />
+        <Canvas
+          model={model}
+          dispatch={dispatch}
+        />
       </UI.FillBox>
     )
   }
@@ -508,7 +511,10 @@ export const CoverArt = () => {
   const food: Model["food"] = { x: 2, y: 2 }
 
   return (
-    <svg width="100%" viewBox={toViewBox(bounds)}>
+    <svg
+      width="100%"
+      viewBox={toViewBox(bounds)}
+    >
       {Position.range(bounds).map(({ x, y }, index) => (
         <rect
           key={`${x} ${y} ${index}`}

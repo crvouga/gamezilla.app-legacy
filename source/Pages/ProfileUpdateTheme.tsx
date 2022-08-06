@@ -1,9 +1,9 @@
+import { Cmd } from "../Core"
+import { UserId } from "../Data"
 import * as Route from "../Route"
 import * as Store from "../Store"
 import * as Profile from "../Store/Profile"
 import * as UI from "../UI"
-import { Cmd } from "../Core"
-import { UserId } from "../Data"
 
 //
 //
@@ -62,7 +62,7 @@ export const update = (
 
 export const view =
   (profile: Profile.Profile, model: Model): UI.View<Msg> =>
-    (dispatch) =>
+  (dispatch) =>
     (
       <UI.FillBox>
         <UI.Header

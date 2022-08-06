@@ -218,14 +218,20 @@ export const view =
           </UI.Button>
 
           {model.submission.type === "Problem" && (
-            <UI.Alert severity="error" sx={{ marginTop: 2 }}>
+            <UI.Alert
+              severity="error"
+              sx={{ marginTop: 2 }}
+            >
               {model.submission.message}
             </UI.Alert>
           )}
 
           <UI.Box sx={{ flex: 1 }} />
 
-          <UI.Typography align="center" color="text.secondary">
+          <UI.Typography
+            align="center"
+            color="text.secondary"
+          >
             Don't have an account?
           </UI.Typography>
 
@@ -235,7 +241,10 @@ export const view =
           >
             Create Account
           </UI.Button>
-          <UI.Typography align="center" color="text.secondary">
+          <UI.Typography
+            align="center"
+            color="text.secondary"
+          >
             Forgot password?
           </UI.Typography>
 

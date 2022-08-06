@@ -1,7 +1,7 @@
 import * as Rx from "rxjs"
 import * as Option from "./Option"
-import * as Task from "./Task"
 import { pipe } from "./pipe"
+import * as Task from "./Task"
 
 export type Cmd<Msg> = Rx.Observable<Task.Task<Option.Option<Msg>>>
 

@@ -1,7 +1,7 @@
 import * as Rx from "rxjs"
-import * as Supabase from "./Supabase"
 import { Cmd, exhaustive, Option, pipe, Result, Sub, Task } from "./Core"
 import { UserId } from "./Data"
+import * as Supabase from "./Supabase"
 
 //
 //
