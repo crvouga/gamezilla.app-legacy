@@ -1,4 +1,5 @@
 import { Cmd, exhaustive, Keyboard, Sub, Time } from "../../Core"
+import { UserId } from "../../Data"
 import * as Route from "../../Route"
 import * as Direction from "./Direction"
 import * as Position from "./Position"
@@ -11,7 +12,12 @@ import * as Position from "./Position"
 //
 //
 
-export type Model = {
+export type FrontendModel = GameModel
+
+export type BackendModel = GameModel
+
+export type GameModel = {
+  player: Player
   mouseStatus: MouseStatus
   status: Status
   head: Position.Position
@@ -29,9 +35,11 @@ export type Model = {
   touched?: Position.Position
 }
 
-type Status = { type: "Paused" } | { type: "Playing" }
+export type Player = { type: "User"; userId: UserId.UserId } | { type: "None" }
 
-type MouseStatus = "active" | "inactive"
+export type Status = { type: "Paused" } | { type: "Playing" }
+
+export type MouseStatus = "active" | "inactive"
 
 //
 //
@@ -41,7 +49,8 @@ type MouseStatus = "active" | "inactive"
 //
 //
 
-export const init: Model = {
+export const init: GameModel = {
+  player: { type: "None" },
   status: { type: "Paused" },
   mouseStatus: "inactive",
   tickRate: 1000 / 7,
@@ -75,7 +84,15 @@ export const init: Model = {
 //
 //
 
-export type Msg =
+export type FrontendMsg = GameMsg
+
+export type BackendMsg = ["Elapsed"]
+
+export type ToBackend = GameMsg
+
+export type ToFrontend = ["Sync", GameModel]
+
+export type GameMsg =
   | ["Elapsed"]
   | ["ClickedBack"]
   | ["ClickedRestart"]
@@ -101,7 +118,7 @@ const circularIndex = (index: number, length: number): number => {
 }
 
 const circular = (
-  model: Model,
+  model: GameModel,
   position: Position.Position,
 ): Position.Position => {
   return {
@@ -110,7 +127,10 @@ const circular = (
   }
 }
 
-export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
+export const update = (
+  msg: GameMsg,
+  model: GameModel,
+): [GameModel, Cmd.Cmd<GameMsg>] => {
   switch (msg[0]) {
     case "ClickedRestart":
       return [init, Cmd.None]
@@ -206,8 +226,8 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
 const enqueueDirection = (
   direction: Direction.Direction,
-  model: Model,
-): Model => {
+  model: GameModel,
+): GameModel => {
   const directionQueueNew = unqiue(
     [...model.directionQueue, direction].slice(0, 2),
   )
@@ -218,14 +238,14 @@ const enqueueDirection = (
   }
 }
 
-const toEmptyPositions = (model: Model) => {
+const toEmptyPositions = (model: GameModel) => {
   const snake = [model.head, ...model.tail]
   return Position.range(model.bounds).filter((position) =>
     snake.every((snakePosition) => !Position.equals(position, snakePosition)),
   )
 }
 
-const updatePlaying = (model: Model): Model => {
+const updatePlaying = (model: GameModel): GameModel => {
   const tailNew = [model.head]
     .concat(model.tail)
     .slice(0, model.tailLength)
@@ -280,13 +300,13 @@ const updatePlaying = (model: Model): Model => {
 //
 //
 
-export const subscriptions = (model: Model): Sub.Sub<Msg> => {
+export const subscriptions = (model: GameModel): Sub.Sub<GameMsg> => {
   switch (model.status.type) {
     case "Paused":
       return Sub.None
 
     case "Playing":
-      return Sub.batch([Time.every<Msg>(model.tickRate, () => ["Elapsed"])])
+      return Sub.batch([Time.every<GameMsg>(model.tickRate, () => ["Elapsed"])])
   }
 }
 

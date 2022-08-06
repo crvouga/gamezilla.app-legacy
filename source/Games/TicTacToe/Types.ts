@@ -9,7 +9,7 @@ import * as Board from "./Board"
 //
 //
 
-export type Model = {
+export type GameModel = {
   board: Board.Board
   players: {
     [player in Board.Player]:
@@ -18,7 +18,7 @@ export type Model = {
   }
 }
 
-export const init: Model = {
+export const init: GameModel = {
   board: Board.emptyBoard,
   players: {
     O: { type: "None" },
@@ -26,9 +26,9 @@ export const init: Model = {
   },
 }
 
-export type FrontendModel = Model
+export type FrontendModel = GameModel
 
-export type BackendModel = Model
+export type BackendModel = GameModel
 
 //
 //
@@ -45,3 +45,5 @@ export type ToBackend = ["Noop"]
 export type ToFrontend = ["Noop"]
 
 export type BackendMsg = ["Noop"]
+
+export type GameMsg = ["ClickedBoard", Board.Position]
