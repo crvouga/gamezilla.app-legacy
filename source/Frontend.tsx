@@ -1,4 +1,3 @@
-import { useEffect, useRef, useState, useSyncExternalStore } from "react"
 import * as ReactDomClient from "react-dom/client"
 import * as Auth from "./Auth"
 import { fromBackend } from "./Bridge/Frontend"
@@ -12,11 +11,10 @@ import {
   exhaustive,
   Option,
   pipe,
-  Platform,
   Sub,
   tag,
 } from "./Core"
-import * as Games from "./Games/Frontend"
+import * as GameRoom from "./GameRoom"
 import * as Pages from "./Pages"
 import * as Route from "./Route"
 import * as Snackbar from "./Snackbar"
@@ -118,7 +116,7 @@ export const init = (location: Browser.Location): [Model, Cmd.Cmd<Msg>] => {
   const [auth, authCmd] = Auth.init()
   const snackbar = Snackbar.init
   const store = Store.init
-  const [games, gamesCmd] = Games.init
+  const [gameRoom, gameRoomCmd] = GameRoom.Frontend.init
   const [page, pageCmd] = Pages.initLoading()
   const connection = Connection.init
 
@@ -127,7 +125,7 @@ export const init = (location: Browser.Location): [Model, Cmd.Cmd<Msg>] => {
       route,
       snackbar,
       store,
-      games,
+      gameRoom,
       auth,
       page,
       connection,
@@ -135,7 +133,7 @@ export const init = (location: Browser.Location): [Model, Cmd.Cmd<Msg>] => {
     Cmd.batch<Msg>([
       pipe(authCmd, Cmd.map(tag("Auth"))),
       pipe(pageCmd, Cmd.map(tag("Page"))),
-      pipe(gamesCmd, Cmd.map(tag("Games"))),
+      pipe(gameRoomCmd, Cmd.map(tag("GameRoom"))),
     ]),
   ]
 }
@@ -150,7 +148,11 @@ export const init = (location: Browser.Location): [Model, Cmd.Cmd<Msg>] => {
 
 type Msg = FrontendMsg
 
-type OutAction = Snackbar.Action | Games.Action | Store.Action | Auth.Action
+type OutAction =
+  | Snackbar.Action
+  | GameRoom.Frontend.Action
+  | Store.Action
+  | Auth.Action
 
 //
 //
@@ -173,14 +175,17 @@ export const updateFromBackend = (
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
-    case "Games": {
-      const [gameNew, gameCmd, actions] = Games.updateFromBackend(
+    case "GameRoom": {
+      const [child, childCmd, actions] = GameRoom.Frontend.updateFromBackend(
         msg[1],
-        model.games,
+        model.gameRoom,
       )
 
       return pipe(
-        [{ ...model, games: gameNew }, pipe(gameCmd, Cmd.map(tag("Games")))],
+        [
+          { ...model, gameRoom: child },
+          pipe(childCmd, Cmd.map(tag("GameRoom"))),
+        ],
         andThenMany(runAction, actions),
       )
     }
@@ -213,7 +218,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
       ]
     }
 
-    case "Games": {
+    case "GameRoom": {
       const status = toStatus(model)
       switch (status.type) {
         case "ProfileLoading":
@@ -224,16 +229,16 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
         case "Ready": {
           const { profile } = status
-          const [gameNew, gameCmd, actions] = Games.update(
+          const [child, childCmd, actions] = GameRoom.Frontend.update(
             { currentUserId: profile.userId },
             msg[1],
-            model.games,
+            model.gameRoom,
           )
 
           return pipe(
             [
-              { ...model, games: gameNew },
-              pipe(gameCmd, Cmd.map(tag("Games"))),
+              { ...model, gameRoom: child },
+              pipe(childCmd, Cmd.map(tag("GameRoom"))),
             ],
             andThenMany(runAction, actions),
           )
@@ -279,7 +284,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
             {
               profile: status.profile,
               store: model.store,
-              games: model.games,
+              gameRoom: model.gameRoom,
             },
             msg[1],
             model.page,
@@ -349,7 +354,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
       ]
     }
 
-    case "ToFrontend":
+    case "BackendToFrontend":
       return updateFromBackend(msg[1], model)
 
     default:
@@ -430,11 +435,14 @@ const runAction = (action: OutAction, model: Model): [Model, Cmd.Cmd<Msg>] => {
       ]
     }
 
-    case "Games": {
-      const [gamesNew, gamesCmd] = Games.runAction(action, model.games)
+    case "GameRoom": {
+      const [child, childCmd] = GameRoom.Frontend.runAction(
+        action,
+        model.gameRoom,
+      )
       return [
-        { ...model, games: gamesNew },
-        pipe(gamesCmd, Cmd.map(tag("Games"))),
+        { ...model, gameRoom: child },
+        pipe(childCmd, Cmd.map(tag("GameRoom"))),
       ]
     }
 
@@ -462,7 +470,7 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
     pipe(Pages.subscriptions(model.page), Sub.map(tag("Page"))),
     pipe(Auth.subscriptions, Sub.map(tag("Auth"))),
     pipe(Connection.subscriptions, Sub.map(tag("Connection"))),
-    fromBackend((toFrontend) => ["ToFrontend", toFrontend]),
+    fromBackend((toFrontend) => ["BackendToFrontend", toFrontend]),
   ])
 }
 
@@ -555,7 +563,7 @@ const viewMain = (model: Model): UI.View<Msg> => {
               {
                 route: model.route,
                 profile: status.profile,
-                games: model.games,
+                gameRoom: model.gameRoom,
                 store: model.store,
               },
               model.page,

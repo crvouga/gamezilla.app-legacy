@@ -1,4 +1,5 @@
-export * as RoomId from "./RoomId"
-export * as Rooms from "./Rooms"
+export * as Chess from "./Chess"
+export * as ConnectFour from "./ConnectFour"
+export * as Snake from "./Snake"
+export * as TicTacToe from "./TicTacToe"
 export * from "./Types"
-export * as Frontend from "./Frontend"

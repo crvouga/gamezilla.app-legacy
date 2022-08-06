@@ -1,8 +1,10 @@
 import { Option, pipe, Result } from "../Core"
 import { remove } from "../Core/Record"
 import { UserId } from "../Data"
+import { RoomModel, RoomsModel } from "./Types"
 import * as RoomId from "./RoomId"
-import { GameName, initGame, Room, RoomsModel } from "./Types"
+import * as Games from "../Games"
+import * as Game from "./Game"
 
 //
 //
@@ -147,7 +149,7 @@ export const leaveRoom = (
 
   const usersNew = remove(userId, model.users)
 
-  const roomNew: Room = {
+  const roomNew: RoomModel = {
     ...room,
     events: [...room.events, ["Left", { userId }]],
   }
@@ -208,7 +210,7 @@ export type ChangeGameProblem = "user_is_not_in_a_room" | "user_is_not_the_host"
 export type ChangeGameResult = Result.Result<ChangeGameProblem, Model>
 
 export const changeGame = (
-  { userId, gameName }: { userId: UserId.UserId; gameName: GameName },
+  { userId, gameName }: { userId: UserId.UserId; gameName: Games.Name },
   model: Model,
 ): ChangeGameResult => {
   const user = model.users[userId]
@@ -236,7 +238,7 @@ export const changeGame = (
       ...model.rooms,
       [room.roomId]: {
         ...room,
-        game: Option.Some(initGame(gameName)),
+        game: Option.Some(Game.init(gameName)),
       },
     },
   }

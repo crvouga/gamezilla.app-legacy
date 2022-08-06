@@ -1,5 +1,6 @@
 import { Cmd } from "../Core"
 import { UserId } from "../Data"
+import * as GameRoom from "../GameRoom"
 import * as Games from "../Games"
 import * as Route from "../Route"
 import * as Store from "../Store"
@@ -31,13 +32,13 @@ export type Msg =
   | ["ClickedLeave"]
   | ["ClickedBack"]
   | ["ClickedCreate"]
-  | ["ClickedJoin", { roomId: Games.RoomId.RoomId }]
+  | ["ClickedJoin", { roomId: GameRoom.RoomId.RoomId }]
   | ["ClickedAvatars"]
   | ["ClosedDrawer"]
   | ["ClickedUser", { userId: UserId.UserId }]
-  | ["ClickedGame", { gameName: Games.GameName }]
+  | ["ClickedGame", { gameName: Games.Name }]
 
-type OutAction = Games.Frontend.Action
+type OutAction = GameRoom.Frontend.Action
 
 export const update = (
   { currentUserId }: { currentUserId: UserId.UserId },
@@ -49,7 +50,7 @@ export const update = (
       return [
         model,
         Cmd.None,
-        [["Games", ["LeaveRoom", { userId: currentUserId }]]],
+        [["GameRoom", ["LeaveRoom", { userId: currentUserId }]]],
       ]
     }
 
@@ -58,11 +59,11 @@ export const update = (
     }
 
     case "ClickedCreate": {
-      const roomId = Games.RoomId.generate()
+      const roomId = GameRoom.RoomId.generate()
       return [
         model,
         Cmd.None,
-        [["Games", ["CreateRoom", { userId: currentUserId, roomId }]]],
+        [["GameRoom", ["CreateRoom", { userId: currentUserId, roomId }]]],
       ]
     }
 
@@ -71,7 +72,7 @@ export const update = (
       return [
         model,
         Cmd.None,
-        [["Games", ["JoinRoom", { userId: currentUserId, roomId }]]],
+        [["GameRoom", ["JoinRoom", { userId: currentUserId, roomId }]]],
       ]
     }
 
@@ -97,7 +98,7 @@ export const update = (
       return [
         model,
         Cmd.None,
-        [["Games", ["ChangeGame", { gameName, userId: currentUserId }]]],
+        [["GameRoom", ["ChangeGame", { gameName, userId: currentUserId }]]],
       ]
     }
   }
@@ -114,38 +115,38 @@ export const update = (
 export const view = (
   {
     currentUserId,
-    games,
+    gameRoom,
     store,
   }: {
-    games: Games.FrontendModel
+    gameRoom: GameRoom.FrontendModel
     currentUserId: UserId.UserId
     store: Store.Model
   },
   model: Model,
 ): UI.View<Msg> => {
-  const user = games.rooms.users[currentUserId]
+  const user = gameRoom.rooms.users[currentUserId]
 
   if (!user) {
-    return viewNotInRoom({ currentUserId, games, store }, model)
+    return viewNotInRoom({ currentUserId, gameRoom, store }, model)
   }
 
-  const room = games.rooms.rooms[user.roomId]
+  const room = gameRoom.rooms.rooms[user.roomId]
 
   if (!room) {
-    return viewNotInRoom({ currentUserId, games, store }, model)
+    return viewNotInRoom({ currentUserId, gameRoom, store }, model)
   }
 
-  return viewInRoom({ currentUserId, games, room, store }, model)
+  return viewInRoom({ currentUserId, gameRoom, room, store }, model)
 }
 
 export const viewNotInRoom =
   (
     {
       currentUserId,
-      games,
+      gameRoom,
       store,
     }: {
-      games: Games.FrontendModel
+      gameRoom: GameRoom.FrontendModel
       store: Store.Model
       currentUserId: UserId.UserId
     },
@@ -171,10 +172,10 @@ export const viewNotInRoom =
           </UI.Button>
         </UI.Box>
         <UI.List sx={{ overflowY: "scroll" }}>
-          {Object.values(games.rooms.rooms).map((room) => {
+          {Object.values(gameRoom.rooms.rooms).map((room) => {
             const profiles = Object.values(store.Profile).filter(
               (profile) =>
-                games.rooms.users[profile.userId]?.roomId === room.roomId,
+                gameRoom.rooms.users[profile.userId]?.roomId === room.roomId,
             )
             return (
               <UI.ListItemButton
@@ -212,12 +213,12 @@ export const viewInRoom = (
   {
     currentUserId,
     store,
-    games,
+    gameRoom,
     room,
   }: {
     store: Store.Model
-    room: Games.Room
-    games: Games.FrontendModel
+    room: GameRoom.RoomModel
+    gameRoom: GameRoom.FrontendModel
     currentUserId: UserId.UserId
   },
   model: Model,
@@ -227,7 +228,7 @@ export const viewInRoom = (
       {
         currentUserId,
         store,
-        games,
+        gameRoom,
         room,
       },
       model,
@@ -240,7 +241,7 @@ export const viewInRoom = (
     {
       currentUserId,
       store,
-      games,
+      gameRoom,
       game,
       room,
     },
@@ -253,14 +254,14 @@ const viewInGame =
     {
       currentUserId,
       store,
-      games,
+      gameRoom,
       game,
       room,
     }: {
       store: Store.Model
-      room: Games.Room
-      game: Games.GameModel
-      games: Games.FrontendModel
+      room: GameRoom.RoomModel
+      game: GameRoom.GameModel
+      gameRoom: GameRoom.FrontendModel
       currentUserId: UserId.UserId
     },
     model: Model,
@@ -278,7 +279,7 @@ const viewInGame =
           <UI.Box sx={{ flex: 1 }} />
 
           {viewUsersInRoomAvatarGroup(
-            { currentUserId, store, games, room },
+            { currentUserId, store, gameRoom, room },
             model,
           )(dispatch)}
         </UI.Toolbar>
@@ -293,12 +294,12 @@ const viewNotInGame =
     {
       currentUserId,
       store,
-      games,
+      gameRoom,
       room,
     }: {
       store: Store.Model
-      room: Games.Room
-      games: Games.FrontendModel
+      room: GameRoom.RoomModel
+      gameRoom: GameRoom.FrontendModel
       currentUserId: UserId.UserId
     },
     model: Model,
@@ -316,7 +317,7 @@ const viewNotInGame =
           <UI.Box sx={{ flex: 1 }} />
 
           {viewUsersInRoomAvatarGroup(
-            { currentUserId, store, games, room },
+            { currentUserId, store, gameRoom, room },
             model,
           )(dispatch)}
         </UI.Toolbar>
@@ -333,12 +334,12 @@ const viewUsersInRoomAvatarGroup =
     {
       currentUserId,
       store,
-      games,
+      gameRoom,
       room,
     }: {
       store: Store.Model
-      room: Games.Room
-      games: Games.FrontendModel
+      room: GameRoom.RoomModel
+      gameRoom: GameRoom.FrontendModel
       currentUserId: UserId.UserId
     },
     model: Model,
@@ -346,8 +347,8 @@ const viewUsersInRoomAvatarGroup =
   (dispatch) => {
     const usersInRoom = Object.values(store.Profile).filter(
       (profile) =>
-        games.rooms.users[profile.userId] &&
-        games.rooms.users[profile.userId]?.roomId === room.roomId,
+        gameRoom.rooms.users[profile.userId] &&
+        gameRoom.rooms.users[profile.userId]?.roomId === room.roomId,
     )
 
     return (
@@ -390,11 +391,7 @@ const viewUsersInRoomAvatarGroup =
     )
   }
 
-const GameGrid = ({
-  onClick,
-}: {
-  onClick: (gameName: Games.GameName) => void
-}) => {
+const GameGrid = ({ onClick }: { onClick: (gameName: Games.Name) => void }) => {
   return (
     <UI.Box
       sx={{
@@ -404,19 +401,19 @@ const GameGrid = ({
       }}
     >
       <GameCard
-        icon={<Games.Frontend.CoverArt gameName="TicTacToe" />}
+        icon={<Games.TicTacToe.Frontend.CoverArt />}
         label="Tic Tac Toe"
         onClick={() => onClick("TicTacToe")}
       />
 
       <GameCard
-        icon={<Games.Frontend.CoverArt gameName="ConnectFour" />}
+        icon={<Games.ConnectFour.Frontend.CoverArt id="" />}
         label="Connect Four"
         onClick={() => onClick("ConnectFour")}
       />
 
       <GameCard
-        icon={<Games.Frontend.CoverArt gameName="Snake" />}
+        icon={<Games.Snake.Frontend.CoverArt />}
         label="Snake"
         onClick={() => onClick("Snake")}
       />

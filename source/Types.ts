@@ -1,6 +1,7 @@
 import * as Auth from "./Auth"
 import * as Connection from "./Connection"
 import * as Games from "./Games"
+import * as GameRoom from "./GameRoom"
 import * as Pages from "./Pages"
 import * as Route from "./Route"
 import * as Snackbar from "./Snackbar"
@@ -23,11 +24,11 @@ export type FrontendModel = {
   page: Pages.Model
   route: Route.Route
   connection: Connection.Model
-  games: Games.FrontendModel
+  gameRoom: GameRoom.FrontendModel
 }
 
 export type BackendModel = {
-  games: Games.BackendModel
+  gameRoom: GameRoom.BackendModel
 }
 
 //
@@ -41,21 +42,21 @@ export type BackendModel = {
 //
 
 export type FrontendMsg =
-  | ["ToFrontend", ToFrontend]
+  | ["BackendToFrontend", ToFrontend]
   | ["Route", Route.Msg]
   | ["Snackbar", Snackbar.Msg]
-  | ["Games", Games.FrontendMsg]
+  | ["GameRoom", GameRoom.FrontendMsg]
   | ["Store", Store.Msg]
   | ["Auth", Auth.Msg]
   | ["Page", Pages.Msg]
   | ["Connection", Connection.Msg]
 
-export type ToBackend = ["Games", Games.ToBackend]
+export type ToBackend = ["GameRoom", GameRoom.ToBackend]
 
 export type BackendMsg =
-  | ["ToBackend", string, ToBackend]
-  | ["Games", Games.BackendMsg]
+  | ["FrontendToBackend", string, ToBackend]
+  | ["GameRoom", GameRoom.BackendMsg]
   | ["ClientConnected", string]
   | ["ClientDisconnected", string]
 
-export type ToFrontend = ["Games", Games.ToFrontend]
+export type ToFrontend = ["GameRoom", GameRoom.ToFrontend]
