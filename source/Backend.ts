@@ -110,19 +110,13 @@ const program = Platform.worker({
 
 Platform.run(program)
 
+// 
+// logging
+// 
+
 console.clear()
 console.log("[backend] [program] running")
 
-setInterval(() => {
-  for (const [key,value] of Object.entries(process.memoryUsage())){
-    console.log(`[backend] memory usage by ${key}: ${value/1000000}MB`)
-}
-
-if(global.gc) {
-  console.log(`[backend] running garbage collector`)
-  global.gc()
-}
-}, 1000 * 10)
 
 program.state$.subscribe((state) => {
   console.log(
@@ -136,3 +130,19 @@ program.state$.subscribe((state) => {
     ),
   )
 })
+
+
+// 
+// memory leak duck tape 
+// 
+
+setInterval(() => {
+  for (const [key,value] of Object.entries(process.memoryUsage())){
+    console.log(`[backend] memory usage by ${key}: ${value/1000000}MB`)
+}
+
+if(global.gc) {
+  console.log(`[backend] running garbage collector`)
+  global.gc()
+}
+}, 1000 * 10)
