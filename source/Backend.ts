@@ -122,7 +122,7 @@ if(global.gc) {
   console.log(`[backend] running garbage collector`)
   global.gc()
 }
-}, 1000)
+}, 1000 * 10)
 
 program.state$.subscribe((state) => {
   console.log(
