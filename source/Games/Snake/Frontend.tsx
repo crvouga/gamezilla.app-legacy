@@ -353,7 +353,7 @@ export const view =
           }
         />
 
-        <Canvas
+        <Board
           model={model}
           dispatch={dispatch}
         />
@@ -361,7 +361,7 @@ export const view =
     )
   }
 
-const Canvas = ({
+export const Board = ({
   model,
   dispatch,
 }: {
