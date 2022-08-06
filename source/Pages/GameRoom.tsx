@@ -1,4 +1,4 @@
-import { Cmd } from "../Core"
+import { Cmd, pipe, tag } from "../Core"
 import { UserId } from "../Data"
 import * as GameRoom from "../GameRoom"
 import * as Games from "../Games"
@@ -37,6 +37,7 @@ export type Msg =
   | ["ClosedDrawer"]
   | ["ClickedUser", { userId: UserId.UserId }]
   | ["ClickedGame", { gameName: Games.Name }]
+  | ["GameRoom", GameRoom.FrontendMsg]
 
 type OutAction = GameRoom.Frontend.Action
 
@@ -100,6 +101,10 @@ export const update = (
         Cmd.None,
         [["GameRoom", ["ChangeGame", { gameName, userId: currentUserId }]]],
       ]
+    }
+
+    case "GameRoom": {
+      return [model, Cmd.None, [["GameRoom", ["Msg", msg[1]]]]]
     }
   }
 }
@@ -284,7 +289,10 @@ const viewInGame =
           )(dispatch)}
         </UI.Toolbar>
 
-        {JSON.stringify(game, null, 4)}
+        {pipe(
+          GameRoom.Frontend.view({ store, currentUserId, room, game }),
+          UI.map(tag("GameRoom")),
+        )(dispatch)}
       </UI.FillBox>
     )
   }

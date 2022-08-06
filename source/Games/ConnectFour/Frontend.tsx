@@ -103,7 +103,7 @@ export const view =
       </UI.FillBox>
     )
 
-const Board = ({
+export const Board = ({
   columns,
   onClick,
 }: {
