@@ -3,7 +3,16 @@ import { remove } from "../Core/Record"
 import { UserId } from "../Data"
 import * as Games from "../Games"
 import * as RoomId from "./RoomId"
-import { CreateRoomResult, initGame, JoinRoomResult, LeaveRoomResult, RoomModel, RoomsModel, StartGameResult, StopGameResult } from "./Types"
+import {
+  CreateRoomResult,
+  initGame,
+  JoinRoomResult,
+  LeaveRoomResult,
+  RoomModel,
+  RoomsModel,
+  StartGameResult,
+  StopGameResult,
+} from "./Types"
 
 //
 //
@@ -59,7 +68,7 @@ export const createRoom = (
 //
 //
 //
-// 
+//
 //
 //
 //
@@ -221,7 +230,7 @@ export const startGame = (
 //
 //
 //
-// 
+//
 //
 //
 //

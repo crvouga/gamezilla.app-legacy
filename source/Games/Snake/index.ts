@@ -1,2 +1,3 @@
-export * from "./Types"
-export * as Frontend from "./Frontend"
+export * as Direction from "./Direction"
+export * as Position from "./Position"
+export * from "./Snake"

@@ -1,13 +1,12 @@
-import * as RoomId from "./RoomId"
 import { sendToBackend } from "../Bridge/Frontend"
-import { Cmd, pipe, RemoteData, Unit } from "../Core"
+import { Cmd, exhaustive, pipe, RemoteData, tag, Unit } from "../Core"
 import { UserId } from "../Data"
 import * as Games from "../Games"
 import * as Route from "../Route"
 import * as Snackbar from "../Snackbar"
 import * as Store from "../Store"
 import * as UI from "../UI"
-import * as GameRooms from "./Rooms"
+import * as RoomId from "./RoomId"
 import {
   FrontendModel,
   FrontendMsg,
@@ -16,6 +15,7 @@ import {
   RoomModel,
   ToFrontend,
 } from "./Types"
+import * as Game from "./Game"
 
 //
 //
@@ -142,6 +142,13 @@ export const update = (
         sendToBackend(["GameRoom", msg]),
       ]
     }
+
+    case "Game": {
+      return [model, Cmd.None]
+    }
+
+    default:
+      return exhaustive(msg[0])
   }
 }
 
@@ -486,24 +493,21 @@ export const viewInGame =
   (dispatch) => {
     switch (game[0]) {
       case "ConnectFour": {
-        return (
-          <UI.FillBox>
-            {viewHeader({ currentUserId, room, store }, model)(dispatch)}
-
-            <Games.ConnectFour.Frontend.Board
-              onClick={() => {}}
-              columns={game[1].columns}
-            />
-          </UI.FillBox>
-        )
+        return pipe(
+          Game.ConnectFour.Frontend.view(game[1]),
+          UI.map(tag("ConnectFour")),
+          UI.map(tag("Game")),
+        )(dispatch)
       }
 
       case "Snake": {
         return (
           <UI.FillBox>
             {viewHeader({ currentUserId, room, store }, model)(dispatch)}
-
-            {Games.Snake.Frontend.view(game[1])(() => {})}
+            <Games.Snake.ViewBoard
+              model={game[1]}
+              dispatch={() => {}}
+            />
           </UI.FillBox>
         )
       }
@@ -513,7 +517,7 @@ export const viewInGame =
           <UI.FillBox>
             {viewHeader({ currentUserId, room, store }, model)(dispatch)}
 
-            <Games.TicTacToe.Frontend.ViewBoard
+            <Games.TicTacToe.ViewBoard
               board={game[1].board}
               onClick={() => {}}
             />
@@ -699,19 +703,19 @@ const GameGrid = ({ onClick }: { onClick: (gameName: Games.Name) => void }) => {
       }}
     >
       <GameCard
-        icon={<Games.TicTacToe.Frontend.CoverArt />}
+        icon={<Games.TicTacToe.CoverArt />}
         label="Tic Tac Toe"
         onClick={() => onClick("TicTacToe")}
       />
 
       <GameCard
-        icon={<Games.ConnectFour.Frontend.CoverArt id="" />}
+        icon={<Games.ConnectFour.CoverArt id="" />}
         label="Connect Four"
         onClick={() => onClick("ConnectFour")}
       />
 
       <GameCard
-        icon={<Games.Snake.Frontend.CoverArt />}
+        icon={<Games.Snake.CoverArt />}
         label="Snake"
         onClick={() => onClick("Snake")}
       />

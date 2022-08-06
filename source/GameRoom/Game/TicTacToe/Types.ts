@@ -1,5 +1,5 @@
-import { UserId } from "../../Data"
-import * as Board from "./Board"
+import { UserId } from "../../../Data"
+import * as Board from "../../../Games/TicTacToe/TicTacToe"
 
 //
 //
@@ -18,7 +18,7 @@ export type GameModel = {
   }
 }
 
-export const init: GameModel = {
+export const initGame: GameModel = {
   board: Board.emptyBoard,
   players: {
     O: { type: "None" },

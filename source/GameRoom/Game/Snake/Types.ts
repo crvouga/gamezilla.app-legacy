@@ -1,8 +1,8 @@
-import { Cmd, exhaustive, Keyboard, Sub, Time } from "../../Core"
-import { UserId } from "../../Data"
-import * as Route from "../../Route"
-import * as Direction from "./Direction"
-import * as Position from "./Position"
+import { Cmd, exhaustive, Keyboard, Sub, Time } from "../../../Core"
+import { UserId } from "../../../Data"
+import * as Route from "../../../Route"
+
+import { Position, Direction } from "../../../Games/Snake"
 
 //
 //
