@@ -198,21 +198,22 @@ export const leaveRoom = (
 //
 //
 //
-//
-// Change Game
-//
+// Start Game
 //
 //
 //
 
-export type ChangeGameProblem = "user_is_not_in_a_room" | "user_is_not_the_host"
+export type StartGameProblem =
+  | "user_is_not_in_a_room"
+  | "user_is_not_the_host"
+  | "game_already_started"
 
-export type ChangeGameResult = Result.Result<ChangeGameProblem, Model>
+export type StartGameResult = Result.Result<StartGameProblem, Model>
 
-export const changeGame = (
+export const startGame = (
   { userId, gameName }: { userId: UserId.UserId; gameName: Games.Name },
   model: Model,
-): ChangeGameResult => {
+): StartGameResult => {
   const user = model.users[userId]
 
   if (!user) {
@@ -230,6 +231,7 @@ export const changeGame = (
   }
 
   if (room.game.type === "Some") {
+    return Result.Err("game_already_started")
   }
 
   const modelNew: Model = {
@@ -239,6 +241,59 @@ export const changeGame = (
       [room.roomId]: {
         ...room,
         game: Option.Some(Game.init(gameName)),
+      },
+    },
+  }
+
+  return Result.Ok(modelNew)
+}
+
+//
+//
+//
+// Stop Game
+//
+//
+//
+
+export type StopGameProblem =
+  | "user_is_not_in_a_room"
+  | "user_is_not_the_host"
+  | "game_already_stopped"
+
+export type StopGameResult = Result.Result<StopGameProblem, Model>
+
+export const stopGame = (
+  { userId }: { userId: UserId.UserId },
+  model: Model,
+): StopGameResult => {
+  const user = model.users[userId]
+
+  if (!user) {
+    return Result.Err("user_is_not_in_a_room")
+  }
+
+  const room = model.rooms[user.roomId]
+
+  if (!room) {
+    return Result.Err("user_is_not_in_a_room")
+  }
+
+  if (room.hostId !== user.userId) {
+    return Result.Err("user_is_not_the_host")
+  }
+
+  if (room.game.type === "None") {
+    return Result.Err("game_already_stopped")
+  }
+
+  const modelNew: Model = {
+    ...model,
+    rooms: {
+      ...model.rooms,
+      [room.roomId]: {
+        ...room,
+        game: Option.None,
       },
     },
   }

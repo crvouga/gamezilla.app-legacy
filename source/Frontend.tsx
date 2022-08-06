@@ -229,19 +229,16 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
         case "Ready": {
           const { profile } = status
-          const [child, childCmd, actions] = GameRoom.Frontend.update(
+          const [child, childCmd] = GameRoom.Frontend.update(
             { currentUserId: profile.userId },
             msg[1],
             model.gameRoom,
           )
 
-          return pipe(
-            [
-              { ...model, gameRoom: child },
-              pipe(childCmd, Cmd.map(tag("GameRoom"))),
-            ],
-            andThenMany(runAction, actions),
-          )
+          return pipe([
+            { ...model, gameRoom: child },
+            pipe(childCmd, Cmd.map(tag("GameRoom"))),
+          ])
         }
       }
     }
@@ -436,7 +433,14 @@ const runAction = (action: OutAction, model: Model): [Model, Cmd.Cmd<Msg>] => {
     }
 
     case "GameRoom": {
+      if (model.auth.type !== "LoggedIn") {
+        return [model, Cmd.None]
+      }
+
+      const currentUserId = model.auth.userId
+
       const [child, childCmd] = GameRoom.Frontend.runAction(
+        { currentUserId },
         action,
         model.gameRoom,
       )
