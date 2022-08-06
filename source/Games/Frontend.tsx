@@ -1,22 +1,24 @@
-import * as ConnectFour from "./ConnectFour/Frontend"
-import * as Snake from "./Snake/Frontend"
-import * as TicTacToe from "./TicTacToe/Frontend"
 import { sendToBackend } from "../Bridge/Frontend"
 import { Cmd, pipe, RemoteData, Unit } from "../Core"
 import { UserId } from "../Data"
-import * as UI from "../UI"
 import * as Route from "../Route"
 import * as Snackbar from "../Snackbar"
 import * as Store from "../Store"
-import * as Game from "./Game"
+import * as UI from "../UI"
+import * as ConnectFour from "./ConnectFour/Frontend"
 import * as Rooms from "./Rooms"
+import * as Snake from "./Snake/Frontend"
+import * as TicTacToe from "./TicTacToe/Frontend"
 import {
   ChangeGame,
   CreateRoom,
   FrontendModel,
   FrontendMsg,
+  GameModel,
+  GameName,
   JoinRoom,
   LeaveRoom,
+  Room,
   ToFrontend,
 } from "./Types"
 
@@ -263,11 +265,8 @@ export const updateFromBackend = (
 //
 //
 
-export const gameNameToString = (game: Game.GameName): string => {
+export const gameNameToString = (game: GameName): string => {
   switch (game) {
-    // case "Chess":
-    //   return "Chess"
-
     case "ConnectFour":
       return "Connect Four"
 
@@ -279,11 +278,8 @@ export const gameNameToString = (game: Game.GameName): string => {
   }
 }
 
-export const CoverArt = ({ gameName }: { gameName: Game.GameName }) => {
+export const CoverArt = ({ gameName }: { gameName: GameName }) => {
   switch (gameName) {
-    // case "Chess":
-    //   return <Chess.CoverArt />
-
     case "ConnectFour":
       return <ConnectFour.CoverArt id="connect-four-cover-art" />
 
@@ -299,8 +295,8 @@ export const viewGameRoom = ({
   room,
   game,
 }: {
-  room: Rooms.Room
-  game: Game.Model
+  room: Room
+  game: GameModel
 }): UI.View<Msg> => {
   switch (game[0]) {
     case "ConnectFour": {

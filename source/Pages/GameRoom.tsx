@@ -1,7 +1,6 @@
 import { Cmd } from "../Core"
 import { UserId } from "../Data"
-import { Game, RoomId, Rooms } from "../Games"
-import * as Games from "../Games/Frontend"
+import * as Games from "../Games"
 import * as Route from "../Route"
 import * as Store from "../Store"
 import * as UI from "../UI"
@@ -32,13 +31,13 @@ export type Msg =
   | ["ClickedLeave"]
   | ["ClickedBack"]
   | ["ClickedCreate"]
-  | ["ClickedJoin", { roomId: RoomId.RoomId }]
+  | ["ClickedJoin", { roomId: Games.RoomId.RoomId }]
   | ["ClickedAvatars"]
   | ["ClosedDrawer"]
   | ["ClickedUser", { userId: UserId.UserId }]
-  | ["ClickedGame", { gameName: Game.GameName }]
+  | ["ClickedGame", { gameName: Games.GameName }]
 
-type OutAction = Games.Action
+type OutAction = Games.Frontend.Action
 
 export const update = (
   { currentUserId }: { currentUserId: UserId.UserId },
@@ -59,7 +58,7 @@ export const update = (
     }
 
     case "ClickedCreate": {
-      const roomId = RoomId.generate()
+      const roomId = Games.RoomId.generate()
       return [
         model,
         Cmd.None,
@@ -117,7 +116,11 @@ export const view = (
     currentUserId,
     games,
     store,
-  }: { games: Games.Model; currentUserId: UserId.UserId; store: Store.Model },
+  }: {
+    games: Games.FrontendModel
+    currentUserId: UserId.UserId
+    store: Store.Model
+  },
   model: Model,
 ): UI.View<Msg> => {
   const user = games.rooms.users[currentUserId]
@@ -142,7 +145,7 @@ export const viewNotInRoom =
       games,
       store,
     }: {
-      games: Games.Model
+      games: Games.FrontendModel
       store: Store.Model
       currentUserId: UserId.UserId
     },
@@ -213,8 +216,8 @@ export const viewInRoom = (
     room,
   }: {
     store: Store.Model
-    room: Rooms.Room
-    games: Games.Model
+    room: Games.Room
+    games: Games.FrontendModel
     currentUserId: UserId.UserId
   },
   model: Model,
@@ -255,9 +258,9 @@ const viewInGame =
       room,
     }: {
       store: Store.Model
-      room: Rooms.Room
-      game: Game.Model
-      games: Games.Model
+      room: Games.Room
+      game: Games.GameModel
+      games: Games.FrontendModel
       currentUserId: UserId.UserId
     },
     model: Model,
@@ -294,8 +297,8 @@ const viewNotInGame =
       room,
     }: {
       store: Store.Model
-      room: Rooms.Room
-      games: Games.Model
+      room: Games.Room
+      games: Games.FrontendModel
       currentUserId: UserId.UserId
     },
     model: Model,
@@ -334,8 +337,8 @@ const viewUsersInRoomAvatarGroup =
       room,
     }: {
       store: Store.Model
-      room: Rooms.Room
-      games: Games.Model
+      room: Games.Room
+      games: Games.FrontendModel
       currentUserId: UserId.UserId
     },
     model: Model,
@@ -390,7 +393,7 @@ const viewUsersInRoomAvatarGroup =
 const GameGrid = ({
   onClick,
 }: {
-  onClick: (gameName: Game.GameName) => void
+  onClick: (gameName: Games.GameName) => void
 }) => {
   return (
     <UI.Box
@@ -401,25 +404,19 @@ const GameGrid = ({
       }}
     >
       <GameCard
-        icon={<Games.CoverArt gameName="TicTacToe" />}
+        icon={<Games.Frontend.CoverArt gameName="TicTacToe" />}
         label="Tic Tac Toe"
         onClick={() => onClick("TicTacToe")}
       />
 
       <GameCard
-        icon={<Games.CoverArt gameName="ConnectFour" />}
+        icon={<Games.Frontend.CoverArt gameName="ConnectFour" />}
         label="Connect Four"
         onClick={() => onClick("ConnectFour")}
       />
-      {/* 
-      <GameCard
-        icon={<Games.CoverArt gameName="Chess" />}
-        label="Chess"
-        onClick={() => onClick("Chess")}
-      /> */}
 
       <GameCard
-        icon={<Games.CoverArt gameName="Snake" />}
+        icon={<Games.Frontend.CoverArt gameName="Snake" />}
         label="Snake"
         onClick={() => onClick("Snake")}
       />

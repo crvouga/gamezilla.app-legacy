@@ -1,23 +1,41 @@
-import { RemoteData, Unit } from "../Core"
+import { Option, RemoteData, Unit } from "../Core"
 import { UserId } from "../Data"
 import * as RoomId from "./RoomId"
 import * as Rooms from "./Rooms"
-import * as Game from "./Game"
+import * as ConnectFour from "./ConnectFour"
+import * as Snake from "./Snake"
+import * as TicTacToe from "./TicTacToe"
+
+//
+//
+//
+// Model
+//
+//
+//
 
 export type BackendModel = {
-  rooms: Rooms.Model
+  rooms: RoomsModel
 }
 
 export type FrontendModel = {
-  rooms: Rooms.Model
+  rooms: RoomsModel
   createRoom: RemoteData.Model<Rooms.CreateRoomProblem, Unit>
   leaveRoom: RemoteData.Model<Rooms.LeaveRoomProblem, Unit>
   joinRoom: RemoteData.Model<Rooms.JoinRoomProblem, Unit>
   changeGame: RemoteData.Model<Rooms.ChangeGameProblem, Unit>
 }
 
+//
+//
+//
+// Msg
+//
+//
+//
+
 export type ToFrontend =
-  | ["Sync", Rooms.Model]
+  | ["Sync", RoomsModel]
   | CreateRoomResulted
   | LeaveRoomResulted
   | JoinRoomResulted
@@ -33,14 +51,6 @@ export type ToBackend =
 export type BackendMsg = ["Noop"]
 
 export type FrontendMsg = ["Noop"]
-
-//
-//
-//
-// Events
-//
-//
-//
 
 export type LeaveRoom = ["LeaveRoom", { userId: UserId.UserId }]
 export type LeaveRoomResulted = ["LeaveRoomResulted", Rooms.LeaveRoomResult]
@@ -60,5 +70,73 @@ export type JoinRoomResulted = ["JoinRoomResulted", Rooms.JoinRoomResult]
 export type ChangeGameResulted = ["ChangeGameResulted", Rooms.ChangeGameResult]
 export type ChangeGame = [
   "ChangeGame",
-  { gameName: Game.GameName; userId: UserId.UserId },
+  { gameName: GameName; userId: UserId.UserId },
 ]
+
+//
+//
+//
+// Rooms
+//
+//
+//
+
+export type RoomsModel = {
+  rooms: {
+    [roomId: RoomId.RoomId]: Room
+  }
+  users: {
+    [userId: UserId.UserId]: User
+  }
+}
+
+export type User = {
+  userId: UserId.UserId
+  roomId: RoomId.RoomId
+}
+
+export type Room = {
+  roomId: RoomId.RoomId
+  hostId: UserId.UserId
+  events: RoomEvent[]
+  game: Option.Option<GameModel>
+}
+
+export type RoomEvent =
+  | ["Created", { userId: UserId.UserId; roomId: RoomId.RoomId }]
+  | ["Joined", { userId: UserId.UserId }]
+  | ["Left", { userId: UserId.UserId }]
+
+export const initRooms: RoomsModel = {
+  rooms: {},
+  users: {},
+}
+
+//
+//
+//
+//
+// Game
+//
+//
+//
+
+export type GameModel =
+  | ["TicTacToe", TicTacToe.Game.Model]
+  | ["ConnectFour", ConnectFour.Game.Model]
+  | ["Snake", Snake.Game.Model]
+
+export type GameName = GameModel[0]
+
+export const initGame = (gameName: GameName): GameModel => {
+  switch (gameName) {
+    case "ConnectFour":
+      return ["ConnectFour", ConnectFour.Game.init]
+
+    case "Snake":
+      return ["Snake", Snake.Game.init]
+
+    case "TicTacToe":
+      return ["TicTacToe", TicTacToe.Game.init]
+  }
+}
