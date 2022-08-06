@@ -4,6 +4,7 @@ import { UserId } from "../Data"
 import * as Route from "../Route"
 import * as Snackbar from "../Snackbar"
 import * as Store from "../Store"
+import * as Games from "../Games"
 import * as UI from "../UI"
 import * as GameRooms from "./Rooms"
 import {
@@ -56,6 +57,7 @@ export type Action =
   | ["GameRoom", JoinRoom]
   | ["GameRoom", LeaveRoom]
   | ["GameRoom", ChangeGame]
+  | ["GameRoom", ["Msg", Msg]]
 
 //
 //
@@ -100,6 +102,10 @@ export const runAction = (
         { ...model, leaveRoom: RemoteData.Loading },
         sendToBackend(["GameRoom", ["ChangeGame", { userId, gameName }]]),
       ]
+    }
+
+    case "Msg": {
+      return [model, Cmd.None]
     }
   }
 }
@@ -253,24 +259,48 @@ export const updateFromBackend = (
 //
 //
 
-export const viewGameRoom = ({
-  room,
-  game,
-}: {
-  room: RoomModel
-  game: GameModel
-}): UI.View<Msg> => {
-  switch (game[0]) {
-    case "ConnectFour": {
-      return () => <>view connect four</>
-    }
+export const view =
+  ({
+    currentUserId,
+    store,
+    room,
+    game,
+  }: {
+    currentUserId: UserId.UserId
+    store: Store.Model
+    room: RoomModel
+    game: GameModel
+  }): UI.View<Msg> =>
+  () => {
+    switch (game[0]) {
+      case "ConnectFour": {
+        return (
+          <UI.FillBox>
+            <Games.ConnectFour.Frontend.Board
+              onClick={() => {}}
+              columns={game[1].columns}
+            />
+          </UI.FillBox>
+        )
+      }
 
-    case "Snake": {
-      return () => <>view snake</>
-    }
+      case "Snake": {
+        return (
+          <UI.FillBox>
+            {Games.Snake.Frontend.view(game[1])(() => {})}
+          </UI.FillBox>
+        )
+      }
 
-    case "TicTacToe": {
-      return () => <>view tic tac toe</>
+      case "TicTacToe": {
+        return (
+          <UI.FillBox>
+            <Games.TicTacToe.Frontend.ViewBoard
+              board={game[1].board}
+              onClick={() => {}}
+            />
+          </UI.FillBox>
+        )
+      }
     }
   }
-}
