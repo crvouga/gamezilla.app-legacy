@@ -4,6 +4,7 @@ import * as TicTacToe from "./TicTacToe/Frontend"
 import { sendToBackend } from "../Bridge/Frontend"
 import { Cmd, pipe, RemoteData, Unit } from "../Core"
 import { UserId } from "../Data"
+import * as UI from "../UI"
 import * as Route from "../Route"
 import * as Snackbar from "../Snackbar"
 import * as Store from "../Store"
@@ -291,5 +292,27 @@ export const CoverArt = ({ gameName }: { gameName: Game.GameName }) => {
 
     case "Snake":
       return <Snake.CoverArt />
+  }
+}
+
+export const viewGameRoom = ({
+  room,
+  game,
+}: {
+  room: Rooms.Room
+  game: Game.Model
+}): UI.View<Msg> => {
+  switch (game[0]) {
+    case "ConnectFour": {
+      return () => <>view connect four</>
+    }
+
+    case "Snake": {
+      return () => <>view snake</>
+    }
+
+    case "TicTacToe": {
+      return () => <>view tic tac toe</>
+    }
   }
 }

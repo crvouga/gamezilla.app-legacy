@@ -1,7 +1,6 @@
 export * as Account from "./Account"
 export * as Chat from "./Chat"
 export * as ChatNew from "./ChatNew"
-export * as Game from "./Game"
 export * as Home from "./Home"
 export * as Login from "./Login"
 export * as Logout from "./Logout"

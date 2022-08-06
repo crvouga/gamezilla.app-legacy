@@ -1,6 +1,8 @@
+import * as Auth from "../Auth"
+import { Cmd, exhaustive, pipe, Sub, tag } from "../Core"
+import { UserId } from "../Data"
 import * as Games from "../Games/Frontend"
 import * as Route from "../Route"
-import * as Auth from "../Auth"
 import * as Snackbar from "../Snackbar"
 import * as Store from "../Store"
 import * as UI from "../UI"
@@ -9,7 +11,6 @@ import * as AccountCreate from "./AccountCreate"
 import * as Chat from "./Chat"
 import * as ChatConversation from "./ChatConversation"
 import * as ChatNew from "./ChatNew"
-import * as Game from "./Game"
 import * as GameRoom from "./GameRoom"
 import * as Home from "./Home"
 import * as Login from "./Login"
@@ -25,8 +26,6 @@ import * as ProfileUpdateName from "./ProfileUpdateName"
 import * as ProfileUpdateTheme from "./ProfileUpdateTheme"
 import * as ProfileUpdateUsername from "./ProfileUpdateUsername"
 import * as Search from "./Search"
-import { Cmd, exhaustive, pipe, Sub, tag } from "../Core"
-import { UserId } from "../Data"
 
 //
 //
@@ -56,7 +55,6 @@ export type Model =
   | ["AccountCreate", AccountCreate.Model]
   | ["Search", Search.Model]
   | ["ChatConversation", ChatConversation.Model]
-  | ["Game"]
   | ["GameRoom", GameRoom.Model]
   | ["Admin"]
   | ["Loading"]
@@ -144,9 +142,6 @@ export const initReady = (
         actions,
       ]
     }
-
-    case "Game":
-      return [["Game"], Cmd.None, []]
 
     case "Home":
       return [["Home", Home.init], Cmd.None, []]
@@ -256,7 +251,6 @@ export const initLoggedOut = (route: Route.Route): [Model, Cmd.Cmd<Msg>] => {
     case "Chat":
     case "ChatConversation":
     case "ChatNew":
-    case "Game":
     case "Admin":
     case "Home":
     case "Logout":
@@ -292,7 +286,6 @@ export const initProfileMissing = (
     case "Chat":
     case "ChatConversation":
     case "ChatNew":
-    case "Game":
     case "Admin":
     case "Search":
     case "Home":
@@ -452,9 +445,6 @@ export const updateReady = (
       }
       return [model, Cmd.None, []]
 
-    case "Game":
-      return [model, Cmd.None, []]
-
     case "Profile":
       if (msg[0] === "Profile") {
         const [modelPage, cmdPage, actions] = Profile.update(
@@ -548,7 +538,6 @@ export const updateProfileMissing = (
     case "ChatNew":
     case "ChatConversation":
     case "ProfileUpdateTheme":
-    case "Game":
     case "GameRoom":
     case "Loading":
     case "LoginEmail":
@@ -612,7 +601,6 @@ export const updateLoggedOut = (
     case "ChatNew":
     case "ChatConversation":
     case "ProfileUpdateTheme":
-    case "Game":
     case "GameRoom":
     case "Loading":
     case "Logout":
@@ -642,7 +630,6 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
     case "Account":
     case "Chat":
     case "ChatConversation":
-    case "Game":
     case "Home":
     case "Login":
     case "Logout":
@@ -782,9 +769,6 @@ export const viewReady = (
         ProfileUpdateUsername.view(model[1]),
       )
 
-    case "Game":
-      return viewLoading
-
     case "Admin":
       return viewLoading
 
@@ -838,7 +822,6 @@ export const viewProfileMissing = (
     case "Chat":
     case "ChatConversation":
     case "ChatNew":
-    case "Game":
     case "Home":
     case "ProfileDelete":
     case "ProfileUpdate":
@@ -880,7 +863,6 @@ export const viewLoggedOut = (model: Model): UI.View<Msg> => {
     case "Chat":
     case "ChatConversation":
     case "ChatNew":
-    case "Game":
     case "GameRoom":
     case "Home":
     case "Logout":

@@ -25,7 +25,6 @@ export type Route =
   | { type: "ProfileUpdateName" }
   | { type: "ProfileUpdateUsername" }
   | { type: "ProfileUpdateTheme" }
-  | { type: "Game" }
   | { type: "GameRoom" }
   | { type: "Chat" }
   | { type: "ChatNew" }
