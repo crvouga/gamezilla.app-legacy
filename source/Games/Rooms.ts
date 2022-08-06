@@ -2,7 +2,7 @@ import { Option, pipe, Result } from "../Core"
 import { remove } from "../Core/Record"
 import { UserId } from "../Data"
 import * as RoomId from "./RoomId"
-import * as Game from "./Game"
+import { GameName, initGame, Room, RoomsModel } from "./Types"
 
 //
 //
@@ -12,70 +12,11 @@ import * as Game from "./Game"
 //
 //
 
-export type Model = {
-  rooms: {
-    [roomId: RoomId.RoomId]: Room
-  }
-  users: {
-    [userId: UserId.UserId]: User
-  }
-}
-
-export type User = {
-  userId: UserId.UserId
-  roomId: RoomId.RoomId
-}
-
-export type Room = {
-  roomId: RoomId.RoomId
-  hostId: UserId.UserId
-  events: RoomEvent[]
-  game: Option.Option<Game.Model>
-}
-
-export type RoomEvent =
-  | ["Created", { userId: UserId.UserId; roomId: RoomId.RoomId }]
-  | ["Joined", { userId: UserId.UserId }]
-  | ["Left", { userId: UserId.UserId }]
-
-//
-//
-//
-// Init
-//
-//
-//
+type Model = RoomsModel
 
 export const init: Model = {
   rooms: {},
   users: {},
-}
-
-//
-//
-//
-// Helpers
-//
-//
-//
-
-export const toRoom = (
-  userId: UserId.UserId,
-  model: Model,
-): Option.Option<Room> => {
-  const user = model.users[userId]
-
-  if (!user) {
-    return Option.None
-  }
-
-  const room = model.rooms[user.roomId]
-
-  if (!room) {
-    return Option.None
-  }
-
-  return Option.Some(room)
 }
 
 //
@@ -267,7 +208,7 @@ export type ChangeGameProblem = "user_is_not_in_a_room" | "user_is_not_the_host"
 export type ChangeGameResult = Result.Result<ChangeGameProblem, Model>
 
 export const changeGame = (
-  { userId, gameName }: { userId: UserId.UserId; gameName: Game.GameName },
+  { userId, gameName }: { userId: UserId.UserId; gameName: GameName },
   model: Model,
 ): ChangeGameResult => {
   const user = model.users[userId]
@@ -295,7 +236,7 @@ export const changeGame = (
       ...model.rooms,
       [room.roomId]: {
         ...room,
-        game: Option.Some(Game.init(gameName)),
+        game: Option.Some(initGame(gameName)),
       },
     },
   }

@@ -57,7 +57,6 @@ export const routesTypes: { [routeType in Route["type"]]: string } = {
   ProfileUpdateUsername: "ProfileUpdateUsername",
   ProfileUpdateTheme: "ProfileUpdateTheme",
   PasswordReset: "PasswordReset",
-  Game: "Game",
   GameRoom: "GameRoom",
   Chat: "Chat",
   ChatNew: "ChatNew",
