@@ -3,10 +3,11 @@
   "scripts": {
     "dev": "npx concurrently \"npm run backend:dev\" \"npm run frontend:dev\"",
     "backend:dev": "npx nodemon -e ts,js --exec ts-node ./source/Backend.ts  --expose-gc",
-    "backend:start": "npx tsc && node --max-old-space-size=300 ./dist/source/Backend.js",
+    "backend:start": "node --max-old-space-size=300 ./dist/source/Backend.js",
     "formatter": "npx prettier --write . && npx onchange \"**/*\" -- prettier --write --ignore-unknown {{changed}}",
     "frontend:build": "vite build --emptyOutDir",
     "frontend:dev": "vite --open",
+    "postinstall": "tsc",
     "frontend:dev:many": "npx concurrently \"npm run frontend:dev\" \"npm run frontend:dev\" \"npm run frontend:dev\"",
     "heroku:local": "PORT=9001 npx heroku local",
     "heroku:logs": "heroku logs --tail --app gamezilla",
