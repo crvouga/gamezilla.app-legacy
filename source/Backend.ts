@@ -121,23 +121,11 @@ program.state$.subscribe((state) => {
   console.log(
     JSON.stringify(
       {
-        model: state.model,
         msg: Debug.formatMsg(state.msg),
+        model: state.model,
       },
       null,
       4,
     ),
   )
 })
-
-//
-// memory leak duck tape
-//
-
-setInterval(() => {
-  console.log("\n")
-  for (const [key, value] of Object.entries(process.memoryUsage())) {
-    console.log(`[backend] memory usage by ${key}: ${value / 1000000}MB`)
-  }
-  console.log("\n")
-}, 1000 * 3)
