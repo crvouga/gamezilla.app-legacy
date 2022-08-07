@@ -135,12 +135,9 @@ program.state$.subscribe((state) => {
 //
 
 setInterval(() => {
+  console.log("\n")
   for (const [key, value] of Object.entries(process.memoryUsage())) {
     console.log(`[backend] memory usage by ${key}: ${value / 1000000}MB`)
   }
-
-  if (global.gc) {
-    console.log(`[backend] running garbage collector`)
-    global.gc()
-  }
-}, 1000 * 10)
+  console.log("\n")
+}, 1000 * 3)
