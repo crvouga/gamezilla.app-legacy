@@ -1,4 +1,3 @@
 export * from "./Types"
-export * as RoomId from "./RoomId"
-export * as Rooms from "./Rooms"
+export * as RoomId from "../Data/RoomId"
 export * as Frontend from "./Frontend"

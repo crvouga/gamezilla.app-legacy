@@ -83,7 +83,7 @@ export const updateFromFrontend = (
 
 export const subscriptions = (): Sub.Sub<BackendMsg> => {
   return Sub.batch([
-    pipe(GameRoom.subscriptions(), Sub.map(tag("GameRoom"))),
+    // pipe(GameRoom.subscriptions(), Sub.map(tag("GameRoom"))),
     Bridge.onConnect((clientId) => ["ClientConnected", clientId]),
     Bridge.onDisconnect((clientId) => ["ClientDisconnected", clientId]),
     Bridge.fromFrontend<BackendMsg>((clientId, toBackend) => [
