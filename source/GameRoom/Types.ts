@@ -1,7 +1,6 @@
 import { Option, RemoteData, Result, Unit } from "../Core"
-import { UserId } from "../Data"
-import * as Game from "./Game"
-import * as RoomId from "./RoomId"
+import { RoomId, UserId } from "../Data"
+import * as InGame from "./Game"
 
 //
 //
@@ -63,7 +62,7 @@ export type FrontendMsg =
   | LeaveRoom
   | StartGame
   | StopGame
-  | ["Game", GameFrontendMsg]
+  | ["Game", InGameFrontendMsg]
 
 //
 //
@@ -198,20 +197,20 @@ export const initRooms: RoomsModel = {
 //
 
 export type GameModel =
-  | ["TicTacToe", Game.TicTacToe.GameModel]
-  | ["ConnectFour", Game.ConnectFour.GameModel]
-  | ["Snake", Game.Snake.GameModel]
+  | ["TicTacToe", InGame.TicTacToe.GameModel]
+  | ["ConnectFour", InGame.ConnectFour.GameModel]
+  | ["Snake", InGame.Snake.GameModel]
 
-export type GameMsg = ["TicTacToe", Game.TicTacToe.GameMsg]
+export type GameMsg = ["TicTacToe", InGame.TicTacToe.GameMsg]
 
 export type GameName = GameModel[0]
 
 export type GameFrontendModel = GameModel
 
-export type GameFrontendMsg =
-  | ["TicTacToe", Game.TicTacToe.FrontendMsg]
-  | ["ConnectFour", Game.ConnectFour.FrontendMsg]
-  | ["Snake", Game.Snake.FrontendMsg]
+export type InGameFrontendMsg =
+  | ["TicTacToe", InGame.TicTacToe.FrontendMsg]
+  | ["ConnectFour", InGame.ConnectFour.FrontendMsg]
+  | ["Snake", InGame.Snake.FrontendMsg]
 
 export const gameNameToString = (game: GameName): string => {
   switch (game) {
@@ -229,12 +228,12 @@ export const gameNameToString = (game: GameName): string => {
 export const initGame = (gameName: GameName): GameModel => {
   switch (gameName) {
     case "ConnectFour":
-      return ["ConnectFour", Game.ConnectFour.init]
+      return ["ConnectFour", InGame.ConnectFour.init]
 
     case "Snake":
-      return ["Snake", Game.Snake.init]
+      return ["Snake", InGame.Snake.init]
 
     case "TicTacToe":
-      return ["TicTacToe", Game.TicTacToe.initGame]
+      return ["TicTacToe", InGame.TicTacToe.initGame]
   }
 }

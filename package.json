@@ -2,7 +2,7 @@
   "private": true,
   "scripts": {
     "dev": "npx concurrently \"npm run backend:dev\" \"npm run frontend:dev\"",
-    "backend:dev": "npx nodemon -e ts,js --exec ts-node ./source/Backend.ts  --expose-gc",
+    "backend:dev": "npx nodemon -e ts,js --exec ts-node ./source/Backend.ts",
     "backend:start": "node --max-old-space-size=300 ./dist/source/Backend.js",
     "formatter": "npx prettier --write . && npx onchange \"**/*\" -- prettier --write --ignore-unknown {{changed}}",
     "frontend:build": "vite build --emptyOutDir",

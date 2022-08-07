@@ -1,13 +1,9 @@
 import { Cmd } from "../../../Core"
 import { UserId } from "../../../Data"
+import { TicTacToe } from "../../../Games"
 import * as Store from "../../../Store"
 import * as UI from "../../../UI"
-import {
-  FrontendModel,
-  FrontendMsg,
-  initGame as initModel,
-  ToFrontend,
-} from "./Types"
+import { FrontendModel, FrontendMsg, ToFrontend } from "./Types"
 
 //
 //
@@ -58,9 +54,19 @@ export const view =
     {
       currentUserId,
       store,
-    }: { currentUserId: UserId.UserId; store: Store.Model },
+    }: {
+      currentUserId: UserId.UserId
+      store: Store.Model
+    },
     model: Model,
   ): UI.View<Msg> =>
   (dispatch) => {
-    return <>tic tac toe view</>
+    return (
+      <UI.FillBox>
+        <TicTacToe.ViewBoard
+          board={model.board}
+          onClick={() => {}}
+        />
+      </UI.FillBox>
+    )
   }

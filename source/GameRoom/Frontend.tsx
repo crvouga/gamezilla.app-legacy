@@ -1,21 +1,31 @@
 import { sendToBackend } from "../Bridge/Frontend"
-import { Cmd, exhaustive, pipe, RemoteData, tag, Unit } from "../Core"
-import { UserId } from "../Data"
+import {
+  Cmd,
+  exhaustive,
+  pipe,
+  RemoteData,
+  Result,
+  Sub,
+  tag,
+  Unit,
+} from "../Core"
+import { RoomId, UserId } from "../Data"
 import * as Games from "../Games"
 import * as Route from "../Route"
 import * as Snackbar from "../Snackbar"
 import * as Store from "../Store"
 import * as UI from "../UI"
-import * as RoomId from "./RoomId"
 import {
   FrontendModel,
   FrontendMsg,
   GameModel,
   initRooms,
   RoomModel,
+  RoomsModel,
   ToFrontend,
 } from "./Types"
 import * as Game from "./Game"
+import { ReactNode } from "react"
 
 //
 //
@@ -144,7 +154,46 @@ export const update = (
     }
 
     case "Game": {
-      return [model, Cmd.None]
+      const user = model.rooms.users[currentUserId]
+
+      if (!user) {
+        return [model, Cmd.None]
+      }
+
+      const room = model.rooms.rooms[user.roomId]
+
+      if (!room) {
+        return [model, Cmd.None]
+      }
+
+      if (room.game.type === "None") {
+        return [model, Cmd.None]
+      }
+
+      const game = room.game.value
+
+      const [gameNew, gameCmd] = Game.Frontend.update(
+        { currentUserId },
+        msg[1],
+        game,
+      )
+
+      return [
+        {
+          ...model,
+          rooms: {
+            ...model.rooms,
+            rooms: {
+              ...model.rooms.rooms,
+              [room.roomId]: {
+                ...room,
+                game: gameNew,
+              },
+            },
+          },
+        },
+        pipe(gameCmd, Cmd.map(tag("Game"))),
+      ]
     }
 
     default:
@@ -305,6 +354,73 @@ export const updateFromBackend = (
   }
 }
 
+const updateRoom = <
+  TResult extends Result.Result<TProblem, RoomsModel>,
+  TProblem extends string,
+>(
+  model: Model,
+  result: TResult,
+): [Model, Cmd.Cmd<FrontendMsg>, OutAction[]] => {
+  const remoteData = pipe(
+    result,
+    RemoteData.fromResult,
+    RemoteData.mapSuccess(() => Unit),
+  )
+
+  const actions: OutAction[] =
+    remoteData.type === "Failure"
+      ? [
+          [
+            "Snackbar",
+            [
+              "Enqueue",
+              {
+                variant: "Error",
+                message: remoteData.problem,
+              },
+            ],
+          ],
+        ]
+      : []
+
+  return [{ ...model }, Cmd.None, actions]
+}
+
+//
+//
+//
+//
+// Subscriptions
+//
+//
+//
+//
+
+export const subscriptions = (
+  { currentUserId }: { currentUserId: UserId.UserId },
+  model: Model,
+): Sub.Sub<Msg> => {
+  const user = model.rooms.users[currentUserId]
+
+  if (!user) {
+    return Sub.None
+  }
+
+  const room = model.rooms.rooms[user.roomId]
+
+  if (!room) {
+    return Sub.None
+  }
+
+  if (room.game.type === "None") {
+    return Sub.None
+  }
+
+  const game = room.game.value
+
+  return pipe(Game.Frontend.subscriptions(game), Sub.map(tag("Game")))
+}
+
 //
 //
 //
@@ -350,15 +466,17 @@ export const view = (
 
   const game = room.game.value
 
-  return viewInGame(
-    {
-      currentUserId,
-      store,
-      game,
-      room,
-    },
-    model,
-  )
+  return (dispatch) => {
+    return (
+      <>
+        {viewHeader({ store, room, currentUserId }, model)(dispatch)}
+        {pipe(
+          Game.Frontend.view({ currentUserId, store }, game),
+          UI.map(tag("Game")),
+        )(dispatch)}
+      </>
+    )
+  }
 }
 
 export const viewNotInRoom =
@@ -475,58 +593,6 @@ const viewNotInGame =
     )
   }
 
-export const viewInGame =
-  (
-    {
-      currentUserId,
-      store,
-      room,
-      game,
-    }: {
-      currentUserId: UserId.UserId
-      store: Store.Model
-      room: RoomModel
-      game: GameModel
-    },
-    model: Model,
-  ): UI.View<Msg> =>
-  (dispatch) => {
-    switch (game[0]) {
-      case "ConnectFour": {
-        return pipe(
-          Game.ConnectFour.Frontend.view(game[1]),
-          UI.map(tag("ConnectFour")),
-          UI.map(tag("Game")),
-        )(dispatch)
-      }
-
-      case "Snake": {
-        return (
-          <UI.FillBox>
-            {viewHeader({ currentUserId, room, store }, model)(dispatch)}
-            <Games.Snake.ViewBoard
-              model={game[1]}
-              dispatch={() => {}}
-            />
-          </UI.FillBox>
-        )
-      }
-
-      case "TicTacToe": {
-        return (
-          <UI.FillBox>
-            {viewHeader({ currentUserId, room, store }, model)(dispatch)}
-
-            <Games.TicTacToe.ViewBoard
-              board={game[1].board}
-              onClick={() => {}}
-            />
-          </UI.FillBox>
-        )
-      }
-    }
-  }
-
 const viewHeader =
   (
     {
@@ -546,13 +612,20 @@ const viewHeader =
         {viewButtonMenu({
           buttons: [
             {
-              text: "Leave",
+              text: "Back",
+              onClick: ["ClickedBack"],
+              icon: <UI.Icons.ChevronLeft />,
+            },
+            {
+              text: "Leave Room",
               onClick: ["LeaveRoom", { userId: currentUserId }],
+              icon: <UI.Icons.ExitToApp sx={{ transform: "rotate(180deg)" }} />,
             },
             {
               hidden: currentUserId !== room.hostId,
               text: "Stop Game",
               onClick: ["StopGame", { userId: currentUserId }],
+              icon: <UI.Icons.Close />,
             },
           ],
           isOpen: model.modal === "MenuOpened",
@@ -576,33 +649,17 @@ const viewButtonMenu =
     isOpen,
     onOpen,
   }: {
-    buttons: { hidden?: boolean; text: string; onClick: Msg }[]
+    buttons: {
+      hidden?: boolean
+      text: string
+      onClick: Msg
+      icon?: ReactNode
+    }[]
     onClose: Msg
     onOpen: Msg
     isOpen: boolean
   }): UI.View<Msg> =>
   (dispatch) => {
-    const [first, second] = buttons.filter((button) => !button.hidden)
-
-    if (!first) {
-      return <></>
-    }
-
-    if (!second) {
-      return (
-        <UI.Button
-          sx={{ marginLeft: -1 }}
-          size="large"
-          key={first.text}
-          onClick={() => {
-            dispatch(first.onClick)
-          }}
-        >
-          {first.text}
-        </UI.Button>
-      )
-    }
-
     return (
       <>
         <UI.IconButton
@@ -618,18 +675,21 @@ const viewButtonMenu =
           open={isOpen}
           onClose={() => dispatch(onClose)}
         >
-          {buttons.map((button) => (
-            <UI.Button
-              size="large"
-              key={button.text}
-              fullWidth
-              onClick={() => {
-                dispatch(button.onClick)
-              }}
-            >
-              {button.text}
-            </UI.Button>
-          ))}
+          {buttons
+            .filter((button) => !Boolean(button.hidden))
+            .map((button) => (
+              <UI.MenuItem
+                key={button.text}
+                onClick={() => {
+                  dispatch(button.onClick)
+                }}
+              >
+                {button.icon && (
+                  <UI.ListItemIcon>{button.icon}</UI.ListItemIcon>
+                )}
+                <UI.ListItemText>{button.text}</UI.ListItemText>
+              </UI.MenuItem>
+            ))}
         </UI.Menu>
       </>
     )
@@ -663,6 +723,7 @@ const viewUsersInRoomAvatarGroup =
             />
           ))}
         </UI.AvatarGroup>
+
         <UI.Drawer
           anchor="bottom"
           open={model.modal === "DrawerOpened"}

@@ -470,7 +470,15 @@ const runAction = (action: OutAction, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
 export const subscriptions = (model: Model): Sub.Sub<Msg> => {
   return Sub.batch<Msg>([
-    // pipe(Games.subscriptions(model.game), Sub.map(tag("Game"))),
+    model.auth.type === "LoggedIn"
+      ? pipe(
+          GameRoom.Frontend.subscriptions(
+            { currentUserId: model.auth.userId },
+            model.gameRoom,
+          ),
+          Sub.map(tag("GameRoom")),
+        )
+      : Sub.None,
     pipe(Pages.subscriptions(model.page), Sub.map(tag("Page"))),
     pipe(Auth.subscriptions, Sub.map(tag("Auth"))),
     pipe(Connection.subscriptions, Sub.map(tag("Connection"))),

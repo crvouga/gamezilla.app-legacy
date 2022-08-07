@@ -239,7 +239,7 @@ const keyDowns = Keyboard.keyDowns<Msg>((key) => ["PressedKeyDown", key])
 
 //
 //
-//a
+//
 // View
 //
 //
@@ -257,31 +257,6 @@ export const view =
   (dispatch) => {
     return (
       <UI.FillBox>
-        <UI.Header
-          left={
-            <UI.HeaderBackButton onClick={() => dispatch(["ClickedBack"])} />
-          }
-          title={
-            model.status.type === "Playing"
-              ? `${model.foodEatenCount} apples`
-              : "Snake"
-          }
-          right={
-            <>
-              <UI.IconButton onClick={() => dispatch(["ClickedToggle"])}>
-                {model.status.type === "Paused" ? (
-                  <UI.Icons.PlayArrow />
-                ) : (
-                  <UI.Icons.Pause />
-                )}
-              </UI.IconButton>
-              <UI.IconButton onClick={() => dispatch(["ClickedRestart"])}>
-                <UI.Icons.RestartAlt />
-              </UI.IconButton>
-            </>
-          }
-        />
-
         <Board
           model={model}
           dispatch={dispatch}
