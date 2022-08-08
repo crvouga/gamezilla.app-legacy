@@ -57,6 +57,7 @@ export type FrontendMsg =
   | ["ClickedUser", { userId: UserId.UserId }]
   | ["OpenedMenu"]
   | ["ClosedMenu"]
+  | ["ClickedBanner"]
   | CreateRoom
   | JoinRoom
   | LeaveRoom

@@ -15,6 +15,7 @@ import {
   Sub,
   tag,
 } from "./Core"
+import { UserId } from "./Data"
 import * as GameRoom from "./GameRoom"
 import * as Pages from "./Pages"
 import * as Route from "./Route"
@@ -555,7 +556,15 @@ export const view =
             transform: "translate(-50%, -50%)",
           }}
         >
-          <UI.Box sx={{ width: "100%", overflow: "hidden", flex: 1 }}>
+          <UI.Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              width: "100%",
+              overflow: "hidden",
+              flex: 1,
+            }}
+          >
             {viewMain(model)(dispatch)}
           </UI.Box>
 
@@ -563,8 +572,6 @@ export const view =
             Snackbar.view({}, model.snackbar),
             UI.map(tag("Snackbar")),
           )(dispatch)}
-
-          {viewGameBanner(model)(dispatch)}
         </UI.Box>
       </UI.ThemeProvider>
     )
@@ -601,17 +608,28 @@ const viewMain = (model: Model): UI.View<Msg> => {
           )
 
         case "Ready":
-          return pipe(
-            Pages.viewReady(
-              {
-                route: model.route,
-                profile: status.profile,
-                gameRoom: model.gameRoom,
-                store: model.store,
-              },
-              model.page,
-            ),
-            UI.map(tag("Page")),
+          return (dispatch) => (
+            <>
+              <UI.Box sx={{ width: "100%", overflow: "hidden", flex: 1 }}>
+                {pipe(
+                  Pages.viewReady(
+                    {
+                      route: model.route,
+                      profile: status.profile,
+                      gameRoom: model.gameRoom,
+                      store: model.store,
+                    },
+                    model.page,
+                  ),
+                  UI.map(tag("Page")),
+                )(dispatch)}
+              </UI.Box>
+
+              {viewGameRoomBanner(
+                { currentUserId: status.profile.userId },
+                model,
+              )(dispatch)}
+            </>
           )
       }
     }
@@ -635,25 +653,34 @@ const viewLoading =
       </UI.FillBox>
     )
 
-const viewGameBanner =
-  (model: Model): UI.View<Msg> =>
+const viewGameRoomBanner =
+  (
+    { currentUserId }: { currentUserId: UserId.UserId },
+    model: Model,
+  ): UI.View<Msg> =>
   (dispatch) => {
-    return <></>
-    // switch (model.game.type) {
-    //   case "Closed":
-    //     return <></>
+    const user = model.gameRoom.rooms.users[currentUserId]
 
-    //   case "Opened":
-    //     if (model.page[0] === "Game") {
-    //       return <></>
-    //     }
+    if (!user) {
+      return <></>
+    }
 
-    //     return (
-    //       <>
-    //         {pipe(Games.viewBanner(model.game), UI.map(tag("Game")))(dispatch)}
-    //       </>
-    //     )
-    // }
+    const room = model.gameRoom.rooms.rooms[user.roomId]
+
+    if (!room) {
+      return <></>
+    }
+
+    if (model.page[0] === "GameRoom") {
+      return <></>
+    }
+
+    return (
+      <GameRoom.Frontend.ViewBanner
+        room={room}
+        onClick={() => dispatch(["GameRoom", ["ClickedBanner"]])}
+      />
+    )
   }
 
 //
