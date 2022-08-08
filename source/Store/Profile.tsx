@@ -125,9 +125,15 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
             break
 
           case "Ok":
+            for (const userId of userIds) {
+              model.queries.Profile.FindOne[userId] =
+                RemoteData.Failure("not_found")
+            }
+
             for (const profile of result.value) {
               model.queries.Profile.FindOne[profile.userId] =
                 RemoteData.Success(profile.userId)
+
               model.Profile[profile.userId] = profile
             }
             break

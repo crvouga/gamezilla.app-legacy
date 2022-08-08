@@ -11,6 +11,7 @@ import {
   exhaustive,
   Option,
   pipe,
+  RemoteData,
   Sub,
   tag,
 } from "./Core"
@@ -62,40 +63,49 @@ export const toStatus = ({
     case "LoggedOut":
       return { type: "LoggedOut" }
 
-    case "LoggedIn":
+    case "LoggedIn": {
       const { userId } = auth
 
-      const result = Option.fromNullable(store.Profile[userId])
+      const profile = store.Profile[userId]
 
-      switch (result.type) {
-        case "Some":
+      if (profile) {
+        return {
+          type: "Ready",
+          auth,
+          profile,
+        }
+      }
+
+      const query =
+        store.queries.Profile.FindOne[auth.userId] ?? RemoteData.NotAsked
+
+      switch (query.type) {
+        case "NotAsked":
+          return { type: "ProfileLoading", auth }
+
+        case "Loading":
+          return { type: "ProfileLoading", auth }
+
+        case "Failure":
+          return { type: "ProfileMissing", auth }
+
+        case "Success": {
+          const userId = query.value
+
+          const profile = store.Profile[userId]
+
+          if (!profile) {
+            return { type: "ProfileMissing", auth }
+          }
+
           return {
             type: "Ready",
             auth,
-            profile: result.value,
+            profile,
           }
-
-        case "None":
-          const profileQuery = Store.Profile.toProfile(userId, store)
-
-          switch (profileQuery.type) {
-            case "NotAsked":
-              return { type: "ProfileLoading", auth }
-
-            case "Loading":
-              return { type: "ProfileLoading", auth }
-
-            case "Failure":
-              return { type: "ProfileMissing", auth }
-
-            case "Success":
-              return {
-                type: "Ready",
-                auth,
-                profile: profileQuery.value,
-              }
-          }
+        }
       }
+    }
   }
 }
 
@@ -220,15 +230,27 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
     case "GameRoom": {
       const status = toStatus(model)
+
       switch (status.type) {
-        case "ProfileLoading":
-        case "ProfileMissing":
-        case "AuthLoading":
-        case "LoggedOut":
+        case "ProfileLoading": {
           return [model, Cmd.None]
+        }
+
+        case "ProfileMissing": {
+          return [model, Cmd.None]
+        }
+
+        case "AuthLoading": {
+          return [model, Cmd.None]
+        }
+
+        case "LoggedOut": {
+          return [model, Cmd.None]
+        }
 
         case "Ready": {
           const { profile } = status
+
           const [child, childCmd] = GameRoom.Frontend.update(
             { currentUserId: profile.userId },
             msg[1],
@@ -248,6 +270,8 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
       switch (status.type) {
         case "AuthLoading":
+          return [model, Cmd.None]
+
         case "ProfileLoading":
           return [model, Cmd.None]
 
@@ -361,7 +385,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
 const updateStatusChanged =
   (modelPrev: Model) =>
-  (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
+  (_msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
     const statusPrev = toStatus(modelPrev)
     const statusNew = toStatus(model)
 
@@ -370,13 +394,14 @@ const updateStatusChanged =
     }
 
     switch (statusNew.type) {
-      case "ProfileLoading":
+      case "ProfileLoading": {
         const action: OutAction = [
           "Store",
           ["Profile", ["FindMany", { userIds: [statusNew.auth.userId] }]],
         ]
 
         return pipe([model, Cmd.None], andThenMany(runAction, [action]))
+      }
 
       case "ProfileMissing": {
         const [page, pageCmd] = Pages.initProfileMissing(
@@ -550,15 +575,21 @@ const viewMain = (model: Model): UI.View<Msg> => {
 
   switch (model.connection) {
     case "Connecting":
+      return viewLoading({ reason: "Connecting..." })
+
     case "Disconnected":
+      return viewLoading({ reason: "Disconnected." })
+
     case "Reconnecting":
-      return viewLoading
+      return viewLoading({ reason: "Reconnecting..." })
 
     case "Connected": {
       switch (status.type) {
         case "AuthLoading":
+          return viewLoading({ reason: "Authenitcation loading..." })
+
         case "ProfileLoading":
-          return viewLoading
+          return viewLoading({ reason: "Profile loading..." })
 
         case "LoggedOut":
           return pipe(Pages.viewLoggedOut(model.page), UI.map(tag("Page")))
@@ -587,7 +618,22 @@ const viewMain = (model: Model): UI.View<Msg> => {
   }
 }
 
-const viewLoading: UI.View<Msg> = () => <UI.LoadingPage />
+const viewLoading =
+  ({ reason }: { reason: string }): UI.View<Msg> =>
+  () =>
+    (
+      <UI.FillBox sx={{ justifyContent: "center", alignItems: "center" }}>
+        <UI.CircularProgress sx={{ marginBottom: 2 }} />
+
+        <UI.Typography
+          align="center"
+          variant="caption"
+          color="text.secondary"
+        >
+          {reason}
+        </UI.Typography>
+      </UI.FillBox>
+    )
 
 const viewGameBanner =
   (model: Model): UI.View<Msg> =>
@@ -648,7 +694,7 @@ const program = pipe(
 
 const root = ReactDomClient.createRoot(document.getElementById("root")!)
 
-const stop = Browser.run(program, (dom) => {
+Browser.run(program, (dom) => {
   root.render(dom)
 })
 
@@ -660,14 +706,14 @@ const stop = Browser.run(program, (dom) => {
 //
 //
 
-const dispose = () => {
-  stop()
-}
+// const dispose = () => {
+//   stop()
+// }
 
-// @ts-ignore
-if (import.meta.hot) {
-  // @ts-ignore
-  import.meta.hot.accept()
-  // @ts-ignore
-  import.meta.hot.dispose(dispose)
-}
+// // @ts-ignore
+// if (import.meta.hot) {
+//   // @ts-ignore
+//   import.meta.hot.accept()
+//   // @ts-ignore
+//   import.meta.hot.dispose(dispose)
+// }

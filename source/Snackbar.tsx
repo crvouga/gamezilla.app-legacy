@@ -1,6 +1,6 @@
 import { SxProps } from "@mui/material"
 import * as UI from "./UI"
-import { Cmd, pipe, Task, Uuid } from "./Core"
+import { Cmd, pipe, Task, Time, Uuid } from "./Core"
 
 //
 //
@@ -14,9 +14,11 @@ export type Model = {
   queue: Snack[]
 }
 
+type SnackId = string
+
 export type Snack = {
   variant: "Info" | "Error"
-  snackId: string
+  snackId: SnackId
   message: string
 }
 
@@ -32,7 +34,10 @@ export const init: Model = {
 //
 //
 
-export type Msg = ["DurationElapsed", string] | ["UserClosedSnackbar", string]
+export type Msg =
+  | ["DurationElapsed", SnackId]
+  | ["ClickedClose", SnackId]
+  | ["ClickedAwayClose", SnackId]
 
 export type Enqueue = [
   "Enqueue",
@@ -46,10 +51,15 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
     case "DurationElapsed":
       return removeById(msg[1], model)
 
-    case "UserClosedSnackbar":
+    case "ClickedClose":
+      return removeById(msg[1], model)
+
+    case "ClickedAwayClose":
       return [model, Cmd.None]
   }
 }
+
+const snackTimeout = 4000
 
 export const runAction = (
   action: Action,
@@ -70,10 +80,10 @@ export const runAction = (
           ...model,
           queue: [snack, ...model.queue],
         },
-        pipe(
-          Task.timeout(4000, {}),
-          Cmd.fromTask((): Msg => ["DurationElapsed", snack.snackId]),
-        ),
+        Time.startTimeout(snack.snackId, snackTimeout, [
+          "DurationElapsed",
+          snack.snackId,
+        ]),
       ]
     }
   }
@@ -84,7 +94,7 @@ const removeById = (snackId: string, model: Model): [Model, Cmd.Cmd<Msg>] => [
     ...model,
     queue: model.queue.filter((snack) => snack.snackId !== snackId),
   },
-  Cmd.None,
+  Time.cancelTimeout(snackId),
 ]
 
 //
@@ -110,11 +120,11 @@ export const view =
           sx={sx}
           open
           message={snack.message}
-          onClose={() => dispatch(["UserClosedSnackbar", snack.snackId])}
+          onClose={() => dispatch(["ClickedAwayClose", snack.snackId])}
         >
           <UI.Alert
             variant="filled"
-            onClose={() => dispatch(["UserClosedSnackbar", snack.snackId])}
+            onClose={() => dispatch(["ClickedClose", snack.snackId])}
             severity={snack.variant === "Error" ? "error" : "info"}
             sx={{ width: "100%" }}
           >
