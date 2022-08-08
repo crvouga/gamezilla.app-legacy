@@ -1,6 +1,9 @@
 import * as Rx from "rxjs"
 import * as Sub from "./Sub"
+import * as Option from "./Option"
+import * as Cmd from "./Cmd"
 import * as Task from "./Task"
+import { pipe } from "./pipe"
 
 export const now = (): Task.Task<number> => {
   return async () => new Date().getTime()
@@ -12,6 +15,46 @@ export const delay =
     await new Promise((resolve) => setTimeout(resolve, timeout))
     return msg
   }
+
+//
+//
+//
+// Timeout
+//
+//
+//
+
+const __timeouts: { [timeoutId: string]: string } = {}
+
+export const startTimeout = <Msg>(
+  timeoutId: string,
+  duration: number,
+  msg: Msg,
+): Cmd.Cmd<Msg> => {
+  console.log({ __timeouts })
+  return Rx.of(async () => {
+    await new Promise((resolve) => {
+      __timeouts[timeoutId] = timeoutId
+      setTimeout(resolve, duration)
+    })
+
+    if (__timeouts[timeoutId]) {
+      return Option.Some(msg)
+    }
+
+    // memory clean up
+    delete __timeouts[timeoutId]
+
+    return Option.None
+  })
+}
+
+export const cancelTimeout = (timeoutId: string): Cmd.Cmd<never> => {
+  return Rx.of(async () => {
+    delete __timeouts[timeoutId]
+    return Option.None
+  })
+}
 
 //
 //

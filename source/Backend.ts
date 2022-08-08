@@ -38,19 +38,21 @@ export const update = (
       return updateFromFrontend(msg[1], msg[2], model)
 
     case "ClientConnected": {
-      return [model, Cmd.None]
+      const clientId = msg[1]
+      return [model, Bridge.sendToFrontend(clientId, ['GameRoom', ['Sync', model.gameRoom.rooms]])]
     }
 
     case "ClientDisconnected": {
       return [model, Cmd.None]
     }
 
-    case "GameRoom":
+    case "GameRoom":{
       const [child, childCmd] = GameRoom.update(msg[1], model.gameRoom)
       return [
         { ...model, gameRoom: child },
         pipe(childCmd, Cmd.map(tag("GameRoom"))),
       ]
+    }
   }
 }
 
@@ -60,7 +62,7 @@ export const updateFromFrontend = (
   model: Model,
 ): [Model, Cmd.Cmd<BackendMsg>] => {
   switch (msg[0]) {
-    case "GameRoom":
+    case "GameRoom": {
       const [child, childCmd] = GameRoom.updateFromFrontend(
         clientId,
         msg[1],
@@ -70,6 +72,7 @@ export const updateFromFrontend = (
         { ...model, gameRoom: child },
         pipe(childCmd, Cmd.map(tag("GameRoom"))),
       ]
+    }
   }
 }
 
