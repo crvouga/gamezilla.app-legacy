@@ -196,6 +196,10 @@ export const update = (
       ]
     }
 
+    case "ClickedBanner": {
+      return [model, Route.push({ type: "GameRoom" })]
+    }
+
     default:
       return exhaustive(msg[0])
   }
@@ -491,6 +495,7 @@ export const viewNotInRoom =
     model: Model,
   ): UI.View<Msg> =>
   (dispatch) => {
+    const rooms = Object.values(model.rooms.rooms)
     return (
       <UI.FillBox>
         <UI.Header
@@ -513,9 +518,18 @@ export const viewNotInRoom =
           >
             New Room
           </UI.Button>
+          {rooms.length === 0 && (
+            <UI.Typography
+              sx={{ marginTop: 2 }}
+              color="text.secondary"
+            >
+              No rooms found
+            </UI.Typography>
+          )}
         </UI.Box>
+
         <UI.List sx={{ overflowY: "scroll" }}>
-          {Object.values(model.rooms.rooms).map((room) => {
+          {rooms.map((room) => {
             const profiles = Object.values(store.Profile).filter(
               (profile) =>
                 model.rooms.users[profile.userId]?.roomId === room.roomId,
@@ -838,5 +852,46 @@ const GameCard = ({
         </UI.Box>
       </UI.Box>
     </UI.ButtonBase>
+  )
+}
+
+export const ViewBanner = ({
+  room,
+  onClick,
+}: {
+  room: RoomModel
+  onClick: () => void
+}) => {
+  if (room.game.type === "Some") {
+    const game = room.game.value
+    return (
+      <UI.Paper
+        onClick={onClick}
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          padding: 0,
+          height: "64px",
+          overflow: "hidden",
+        }}
+      >
+        <UI.Box sx={{ height: "20%" }}>
+          <Games.CoverArt gameName={game[0]} />
+        </UI.Box>
+        <UI.Box sx={{ flex: 1 }}>
+          <UI.Typography>Back to room</UI.Typography>
+        </UI.Box>
+      </UI.Paper>
+    )
+  }
+  return (
+    <UI.Paper
+      onClick={onClick}
+      sx={{ display: "flex", alignItems: "center", padding: 0 }}
+    >
+      <UI.Box sx={{ p: 2, flex: 1 }}>
+        <UI.Typography>Back to room</UI.Typography>
+      </UI.Box>
+    </UI.Paper>
   )
 }
