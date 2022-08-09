@@ -14,7 +14,7 @@ import * as Position from "../../../Games/Snake/Position"
 import * as Route from "../../../Route"
 import * as UI from "../../../UI"
 
-import { init, FrontendModel, FrontendMsg, Status } from "./Types"
+import { initGame, FrontendModel, FrontendMsg, Status } from "./Types"
 
 //
 //
@@ -53,7 +53,7 @@ const circular = (
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
     case "ClickedRestart":
-      return [init, Cmd.None]
+      return [initGame, Cmd.None]
 
     case "Elapsed":
       switch (model.status.type) {

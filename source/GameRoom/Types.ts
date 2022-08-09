@@ -1,6 +1,7 @@
 import { Option, RemoteData, Result, Unit } from "../Core"
 import { RoomId, UserId } from "../Data"
-import * as InGame from "./Game"
+
+import * as Game from "./Game"
 
 //
 //
@@ -63,7 +64,7 @@ export type FrontendMsg =
   | LeaveRoom
   | StartGame
   | StopGame
-  | ["Game", InGameFrontendMsg]
+  | ["Game", Game.FrontendMsg]
 
 //
 //
@@ -122,7 +123,7 @@ export type JoinRoomResult = Result.Result<JoinRoomProblem, RoomsModel>
 
 export type StartGame = [
   "StartGame",
-  { gameName: GameName; userId: UserId.UserId },
+  { gameName: Game.GameName; userId: UserId.UserId },
 ]
 export type StartGameResulted = ["StartGameResulted", StartGameResult]
 
@@ -176,7 +177,7 @@ export type RoomModel = {
   roomId: RoomId.RoomId
   hostId: UserId.UserId
   events: RoomEvent[]
-  game: Option.Option<GameModel>
+  game: Option.Option<Game.GameModel>
 }
 
 export type RoomEvent =
@@ -187,54 +188,4 @@ export type RoomEvent =
 export const initRooms: RoomsModel = {
   rooms: {},
   users: {},
-}
-
-//
-//
-//
-// Game
-//
-//
-//
-
-export type GameModel =
-  | ["TicTacToe", InGame.TicTacToe.GameModel]
-  | ["ConnectFour", InGame.ConnectFour.GameModel]
-  | ["Snake", InGame.Snake.GameModel]
-
-export type GameMsg = ["TicTacToe", InGame.TicTacToe.GameMsg]
-
-export type GameName = GameModel[0]
-
-export type GameFrontendModel = GameModel
-
-export type InGameFrontendMsg =
-  | ["TicTacToe", InGame.TicTacToe.FrontendMsg]
-  | ["ConnectFour", InGame.ConnectFour.FrontendMsg]
-  | ["Snake", InGame.Snake.FrontendMsg]
-
-export const gameNameToString = (game: GameName): string => {
-  switch (game) {
-    case "ConnectFour":
-      return "Connect Four"
-
-    case "TicTacToe":
-      return "Tic Tac Toe"
-
-    case "Snake":
-      return "Snake"
-  }
-}
-
-export const initGame = (gameName: GameName): GameModel => {
-  switch (gameName) {
-    case "ConnectFour":
-      return ["ConnectFour", InGame.ConnectFour.init]
-
-    case "Snake":
-      return ["Snake", InGame.Snake.init]
-
-    case "TicTacToe":
-      return ["TicTacToe", InGame.TicTacToe.initGame]
-  }
 }

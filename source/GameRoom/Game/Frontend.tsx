@@ -1,11 +1,11 @@
 import { Cmd, pipe, Sub, tag } from "../../Core"
 import { UserId } from "../../Data"
-import * as UI from "../../UI"
 import * as Store from "../../Store"
-import { GameName, GameFrontendModel, InGameFrontendMsg } from "../Types"
+import * as UI from "../../UI"
 import * as ConnectFour from "./ConnectFour"
 import * as Snake from "./Snake"
 import * as TicTacToe from "./TicTacToe"
+import { FrontendModel, FrontendMsg } from "./Types"
 
 //
 //
@@ -15,7 +15,7 @@ import * as TicTacToe from "./TicTacToe"
 //
 //
 
-export type Model = GameFrontendModel
+export type Model = FrontendModel
 
 //
 //
@@ -25,7 +25,7 @@ export type Model = GameFrontendModel
 //
 //
 
-export type Msg = InGameFrontendMsg
+export type Msg = FrontendMsg
 
 export const update = (
   { currentUserId }: { currentUserId: UserId.UserId },
@@ -116,6 +116,7 @@ export const view = (
         UI.map(tag("ConnectFour")),
       )
     }
+
     case "Snake": {
       return pipe(Snake.Frontend.view(model[1]), UI.map(tag("Snake")))
     }

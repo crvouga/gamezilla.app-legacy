@@ -13,7 +13,7 @@ export type GameModel = {
   columns: ConnectFour.Columns
 }
 
-export const init: GameModel = {
+export const initGame: GameModel = {
   columns: ConnectFour.emptyColumns,
 }
 
@@ -30,6 +30,10 @@ export type BackendModel = GameModel
 //
 
 export type FrontendMsg = Move
+
+export type BackendMsg = ["None"]
+
+export type ToFrontend = ["None"]
 
 export type ToBackend = Move
 

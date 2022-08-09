@@ -4,11 +4,11 @@ import { Cmd, exhaustive, Option, pipe, Result, tag } from "../Core"
 import { remove } from "../Core/Record"
 import { RoomId, UserId } from "../Data"
 import * as Games from "../Games"
+import { initGame } from "./Game/Types"
 import {
   BackendModel,
   BackendMsg,
   CreateRoomResult,
-  initGame,
   initRooms,
   JoinRoomResult,
   LeaveRoomResult,

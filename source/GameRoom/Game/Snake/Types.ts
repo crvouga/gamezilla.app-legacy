@@ -49,7 +49,7 @@ export type MouseStatus = "active" | "inactive"
 //
 //
 
-export const init: GameModel = {
+export const initGame: GameModel = {
   player: { type: "None" },
   status: { type: "Paused" },
   mouseStatus: "inactive",
@@ -133,7 +133,7 @@ export const update = (
 ): [GameModel, Cmd.Cmd<GameMsg>] => {
   switch (msg[0]) {
     case "ClickedRestart":
-      return [init, Cmd.None]
+      return [initGame, Cmd.None]
 
     case "Elapsed":
       switch (model.status.type) {
