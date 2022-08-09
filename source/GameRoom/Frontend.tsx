@@ -87,8 +87,10 @@ export const runAction = (
 export const update = (
   { currentUserId }: { currentUserId: UserId.UserId },
   msg: Msg,
-  model: Model,
+  modelPrev: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
+  const model: Model = { ...modelPrev, modal: "Closed" }
+
   switch (msg[0]) {
     case "ClickedBack": {
       return [model, Route.back]
@@ -99,14 +101,11 @@ export const update = (
     }
 
     case "ClosedDrawer": {
-      return [{ ...model, modal: "Closed" }, Cmd.None]
+      return [model, Cmd.None]
     }
 
     case "ClickedUser": {
-      return [
-        { ...model, modal: "Closed" },
-        Route.push({ type: "Profile", userId: msg[1].userId }),
-      ]
+      return [model, Route.push({ type: "Profile", userId: msg[1].userId })]
     }
 
     case "OpenedMenu": {
@@ -119,35 +118,35 @@ export const update = (
 
     case "CreateRoom": {
       return [
-        { ...model, modal: "Closed", createRoom: RemoteData.Loading },
+        { ...model, createRoom: RemoteData.Loading },
         sendToBackend(["GameRoom", msg]),
       ]
     }
 
     case "JoinRoom": {
       return [
-        { ...model, modal: "Closed", joinRoom: RemoteData.Loading },
+        { ...model, joinRoom: RemoteData.Loading },
         sendToBackend(["GameRoom", msg]),
       ]
     }
 
     case "LeaveRoom": {
       return [
-        { ...model, modal: "Closed", leaveRoom: RemoteData.Loading },
+        { ...model, leaveRoom: RemoteData.Loading },
         sendToBackend(["GameRoom", msg]),
       ]
     }
 
     case "StartGame": {
       return [
-        { ...model, modal: "Closed", startGame: RemoteData.Loading },
+        { ...model, startGame: RemoteData.Loading },
         sendToBackend(["GameRoom", msg]),
       ]
     }
 
     case "StopGame": {
       return [
-        { ...model, modal: "Closed", stopGame: RemoteData.Loading },
+        { ...model, stopGame: RemoteData.Loading },
         sendToBackend(["GameRoom", msg]),
       ]
     }
