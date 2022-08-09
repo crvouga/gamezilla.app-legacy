@@ -526,3 +526,30 @@ export const loadingDialog =
       </Dialog>
     )
   }
+
+import { keyframes } from "@mui/system"
+
+export const pulse = keyframes`
+  0% {
+    opacity: 100%;
+  }
+  50% {
+    opacity: 50%;
+  }
+  100% {
+    opacity: 100%;
+  }
+`
+
+export const spin = keyframes`
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+`
+
+export const pulseAnimation = `${pulse} 0.5s infinite ease`
+
+export type Node = ReactNode

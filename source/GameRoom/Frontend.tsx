@@ -15,18 +15,16 @@ import * as Route from "../Route"
 import * as Snackbar from "../Snackbar"
 import * as Store from "../Store"
 import * as UI from "../UI"
+import * as Game from "./Game"
 import {
   FrontendModel,
   FrontendMsg,
-  GameModel,
   gameNameToString,
   initRooms,
   RoomModel,
   RoomsModel,
   ToFrontend,
 } from "./Types"
-import * as Game from "./Game"
-import { ReactNode } from "react"
 
 //
 //
@@ -668,7 +666,7 @@ const viewButtonMenu =
       hidden?: boolean
       text: string
       onClick: Msg
-      icon?: ReactNode
+      icon?: UI.Node
     }[]
     onClose: Msg
     onOpen: Msg
@@ -856,52 +854,118 @@ const GameCard = ({
   )
 }
 
-export const ViewBanner = ({
-  room,
-  onClick,
-}: {
-  room: RoomModel
-  onClick: () => void
-}) => {
-  if (room.game.type === "Some") {
-    const game = room.game.value
+//
+//
+//
+//
+// Banner
+//
+//
+//
+//
+
+const bannerHeight = 56
+
+export const viewBanner =
+  (
+    {
+      currentUserId,
+      route,
+    }: {
+      currentUserId: UserId.UserId
+      route: Route.Route
+    },
+    model: Model,
+  ): UI.View<Msg> =>
+  (dispatch) => {
+    if (route.type === "GameRoom") {
+      return <></>
+    }
+
+    const user = model.rooms.users[currentUserId]
+
+    if (!user) {
+      return <></>
+    }
+
+    const room = model.rooms.rooms[user.roomId]
+
+    if (!room) {
+      return <></>
+    }
+
     return (
       <UI.Paper
+        variant="outlined"
         sx={{
           width: "100%",
           display: "flex",
+          justifyContent: "flex-start",
           alignItems: "center",
+          height: bannerHeight,
+          padding: 0,
+          margin: 0,
+          // animation: UI.pulseAnimation,
         }}
       >
-        <UI.Box sx={{ width: 48 }}>
-          <UI.AspectRatio aspectRatio={[1, 1]}>
-            <Games.CoverArt gameName={game[0]} />
-          </UI.AspectRatio>
-        </UI.Box>
-        <UI.Typography
-          align="left"
-          variant="h6"
-          sx={{ marginLeft: 2, flex: 1 }}
+        <UI.ButtonBase
+          sx={{
+            flex: 1,
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "flex-start",
+            textAlign: "left",
+            height: bannerHeight,
+          }}
+          onClick={() => dispatch(["ClickedBanner"])}
         >
-          {room.game.type === "Some"
-            ? gameNameToString(room.game.value[0])
-            : "Back to room"}
-        </UI.Typography>
+          {room.game.type === "Some" ? (
+            <UI.Box sx={{ width: bannerHeight }}>
+              <UI.AspectRatio aspectRatio={[1, 1]}>
+                <Games.CoverArt gameName={room.game.value[0]} />
+              </UI.AspectRatio>
+            </UI.Box>
+          ) : (
+            <UI.Avatar
+              variant="square"
+              sx={{ width: bannerHeight, height: bannerHeight }}
+            >
+              <UI.Icons.Games />
+            </UI.Avatar>
+          )}
 
-        <UI.IconButton sx={{ marginRight: 1 }}>
-          <UI.Icons.Close />
-        </UI.IconButton>
+          <UI.Box sx={{ marginLeft: 2 }}>
+            {room.game.type === "Some" ? (
+              <>
+                <UI.Typography
+                  align="left"
+                  variant="h6"
+                  sx={{ marginBottom: -1 / 2 }}
+                >
+                  {gameNameToString(room.game.value[0])}
+                </UI.Typography>
+
+                <UI.Typography
+                  component="div"
+                  align="left"
+                  color="text.secondary"
+                  variant="caption"
+                >
+                  Go to room
+                </UI.Typography>
+              </>
+            ) : (
+              <UI.Typography align="left">Go to room</UI.Typography>
+            )}
+          </UI.Box>
+
+          <UI.Box sx={{ flex: 1 }} />
+
+          <UI.Box sx={{ p: 2 }}>
+            <UI.Icons.ChevronRight />
+          </UI.Box>
+        </UI.ButtonBase>
       </UI.Paper>
     )
   }
-  return (
-    <UI.Paper
-      onClick={onClick}
-      sx={{ display: "flex", alignItems: "center", padding: 0 }}
-    >
-      <UI.Box sx={{ p: 2, flex: 1 }}>
-        <UI.Typography>Back to room</UI.Typography>
-      </UI.Box>
-    </UI.Paper>
-  )
-}

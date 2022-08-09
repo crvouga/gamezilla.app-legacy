@@ -15,7 +15,6 @@ import {
   Sub,
   tag,
 } from "./Core"
-import { UserId } from "./Data"
 import * as GameRoom from "./GameRoom"
 import * as Pages from "./Pages"
 import * as Route from "./Route"
@@ -48,6 +47,7 @@ type Status =
   | { type: "LoggedOut" }
   | { type: "ProfileLoading"; auth: Auth.LoggedIn }
   | { type: "ProfileMissing"; auth: Auth.LoggedIn }
+  | { type: "ProfileError"; auth: Auth.LoggedIn }
   | { type: "Ready"; profile: Profile.Profile; auth: Auth.LoggedIn }
 
 export const toStatus = ({
@@ -88,7 +88,7 @@ export const toStatus = ({
           return { type: "ProfileLoading", auth }
 
         case "Failure":
-          return { type: "ProfileMissing", auth }
+          return { type: "ProfileError", auth }
 
         case "Success": {
           const userId = query.value
@@ -249,6 +249,10 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
           return [model, Cmd.None]
         }
 
+        case "ProfileError": {
+          return [model, Cmd.None]
+        }
+
         case "Ready": {
           const { profile } = status
 
@@ -301,6 +305,9 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
           )
         }
 
+        case "ProfileError":
+          return [model, Cmd.None]
+
         case "Ready": {
           const [pageNew, pageCmd, actions] = Pages.updateReady(
             {
@@ -352,6 +359,9 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
         }
 
         case "AuthLoading":
+          return [modelNew, Cmd.None]
+
+        case "ProfileError":
           return [modelNew, Cmd.None]
 
         case "LoggedOut": {
@@ -412,6 +422,9 @@ const updateStatusChanged =
 
         return [{ ...model, page }, pipe(pageCmd, Cmd.map(tag("Page")))]
       }
+
+      case "ProfileError":
+        return [model, Cmd.None]
 
       case "AuthLoading":
         return [model, Cmd.None]
@@ -528,6 +541,7 @@ const toThemeMode = (model: Model): UI.ThemeMode => {
     case "LoggedOut":
     case "ProfileLoading":
     case "ProfileMissing":
+    case "ProfileError":
       return "System"
     case "Ready":
       return status.profile.themeMode
@@ -598,6 +612,9 @@ const viewMain = (model: Model): UI.View<Msg> => {
         case "ProfileLoading":
           return viewLoading({ reason: "Profile loading..." })
 
+        case "ProfileError":
+          return viewError({ reason: "Failed to load profile." })
+
         case "LoggedOut":
           return pipe(Pages.viewLoggedOut(model.page), UI.map(tag("Page")))
 
@@ -610,25 +627,22 @@ const viewMain = (model: Model): UI.View<Msg> => {
         case "Ready":
           return (dispatch) => (
             <>
-              <UI.Box sx={{ width: "100%", overflow: "hidden", flex: 1 }}>
+              {pipe(
+                GameRoom.Frontend.viewBanner(
+                  { currentUserId: status.profile.userId, route: model.route },
+                  model.gameRoom,
+                ),
+                UI.map(tag("GameRoom")),
+              )(dispatch)}
+              <UI.FillBox>
                 {pipe(
                   Pages.viewReady(
-                    {
-                      route: model.route,
-                      profile: status.profile,
-                      gameRoom: model.gameRoom,
-                      store: model.store,
-                    },
+                    { ...model, profile: status.profile },
                     model.page,
                   ),
                   UI.map(tag("Page")),
                 )(dispatch)}
-              </UI.Box>
-
-              {viewGameRoomBanner(
-                { currentUserId: status.profile.userId },
-                model,
-              )(dispatch)}
+              </UI.FillBox>
             </>
           )
       }
@@ -653,35 +667,14 @@ const viewLoading =
       </UI.FillBox>
     )
 
-const viewGameRoomBanner =
-  (
-    { currentUserId }: { currentUserId: UserId.UserId },
-    model: Model,
-  ): UI.View<Msg> =>
-  (dispatch) => {
-    const user = model.gameRoom.rooms.users[currentUserId]
-
-    if (!user) {
-      return <></>
-    }
-
-    const room = model.gameRoom.rooms.rooms[user.roomId]
-
-    if (!room) {
-      return <></>
-    }
-
-    if (model.page[0] === "GameRoom") {
-      return <></>
-    }
-
-    return (
-      <GameRoom.Frontend.ViewBanner
-        room={room}
-        onClick={() => dispatch(["GameRoom", ["ClickedBanner"]])}
-      />
+const viewError =
+  ({ reason }: { reason: string }): UI.View<Msg> =>
+  () =>
+    (
+      <UI.FillBox sx={{ justifyContent: "center", alignItems: "center", p: 2 }}>
+        <UI.Alert severity="error">{reason}</UI.Alert>
+      </UI.FillBox>
     )
-  }
 
 //
 //
