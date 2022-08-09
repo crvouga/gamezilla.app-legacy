@@ -31,7 +31,6 @@ export const startTimeout = <Msg>(
   duration: number,
   msg: Msg,
 ): Cmd.Cmd<Msg> => {
-  console.log({ __timeouts })
   return Rx.of(async () => {
     await new Promise((resolve) => {
       __timeouts[timeoutId] = timeoutId
