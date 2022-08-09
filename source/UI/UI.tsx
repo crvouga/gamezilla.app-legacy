@@ -1,7 +1,8 @@
 import * as MuiLab from "@mui/lab"
 import * as Mui from "@mui/material"
+import { SxProps } from "@mui/material"
 import { blue } from "@mui/material/colors"
-import { useMemo } from "react"
+import { ReactNode, useMemo } from "react"
 import { Platform, View } from "../Core"
 import * as Icons from "./Icons"
 
@@ -390,6 +391,37 @@ export const LoadingPage = ({ title }: { title?: string }) => {
         {title}
       </Typography>
     </FillBox>
+  )
+}
+
+export const AspectRatio = ({
+  aspectRatio,
+  children,
+}: {
+  aspectRatio: [number, number]
+  children: ReactNode
+}) => {
+  return (
+    <Box
+      sx={{
+        paddingTop: `${(aspectRatio[0] / aspectRatio[1]) * 100}%`,
+        position: "relative",
+        height: 0,
+        overflow: "hidden",
+      }}
+    >
+      <Box
+        sx={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+        }}
+      >
+        {children}
+      </Box>
+    </Box>
   )
 }
 

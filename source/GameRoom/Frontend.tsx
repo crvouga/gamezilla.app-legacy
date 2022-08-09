@@ -19,6 +19,7 @@ import {
   FrontendModel,
   FrontendMsg,
   GameModel,
+  gameNameToString,
   initRooms,
   RoomModel,
   RoomsModel,
@@ -866,21 +867,30 @@ export const ViewBanner = ({
     const game = room.game.value
     return (
       <UI.Paper
-        onClick={onClick}
         sx={{
+          width: "100%",
           display: "flex",
           alignItems: "center",
-          padding: 0,
-          height: "64px",
-          overflow: "hidden",
         }}
       >
-        <UI.Box sx={{ height: "20%" }}>
-          <Games.CoverArt gameName={game[0]} />
+        <UI.Box sx={{ width: 48 }}>
+          <UI.AspectRatio aspectRatio={[1, 1]}>
+            <Games.CoverArt gameName={game[0]} />
+          </UI.AspectRatio>
         </UI.Box>
-        <UI.Box sx={{ flex: 1 }}>
-          <UI.Typography>Back to room</UI.Typography>
-        </UI.Box>
+        <UI.Typography
+          align="left"
+          variant="h6"
+          sx={{ marginLeft: 2, flex: 1 }}
+        >
+          {room.game.type === "Some"
+            ? gameNameToString(room.game.value[0])
+            : "Back to room"}
+        </UI.Typography>
+
+        <UI.IconButton sx={{ marginRight: 1 }}>
+          <UI.Icons.Close />
+        </UI.IconButton>
       </UI.Paper>
     )
   }
