@@ -19,7 +19,6 @@ import * as Game from "./Game"
 import {
   FrontendModel,
   FrontendMsg,
-  gameNameToString,
   initRooms,
   RoomModel,
   RoomsModel,
@@ -942,7 +941,7 @@ export const viewBanner =
                   variant="h6"
                   sx={{ marginBottom: -1 / 2 }}
                 >
-                  {gameNameToString(room.game.value[0])}
+                  {Game.gameNameToString(room.game.value[0])}
                 </UI.Typography>
 
                 <UI.Typography
