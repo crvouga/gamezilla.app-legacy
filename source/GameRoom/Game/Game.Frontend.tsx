@@ -17,6 +17,22 @@ import { FrontendModel, FrontendMsg, ToFrontend } from "./Game.Types"
 
 export type Model = FrontendModel
 
+export const init = (gameName: Model[0]): Model => {
+  switch(gameName) {
+    case 'TicTacToe': {
+      return ['TicTacToe',TicTacToe.Frontend.init]
+    }
+
+    case 'Snake': {
+      return ['Snake', Snake.Frontend.init]
+    }
+
+    case 'ConnectFour': {
+      return ['ConnectFour',ConnectFour.Frontend.init]
+    }
+  }
+}
+
 //
 //
 //

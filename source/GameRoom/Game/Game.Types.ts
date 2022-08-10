@@ -77,19 +77,3 @@ export const gameNameToString = (game: GameName): string => {
       return "Snake"
   }
 }
-
-export const initGame = (gameName: GameName): GameModel => {
-  switch (gameName) {
-    case "ConnectFour": {
-      return ["ConnectFour", ConnectFour.initGame]
-    }
-
-    case "Snake": {
-      return ["Snake", Snake.initGame]
-    }
-
-    case "TicTacToe": {
-      return ["TicTacToe", TicTacToe.initGame]
-    }
-  }
-}

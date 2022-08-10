@@ -3,7 +3,7 @@ import { UserId } from "../../../Data"
 import { TicTacToe } from "../../../Games"
 import * as Store from "../../../Store"
 import * as UI from "../../../UI"
-import { FrontendModel, FrontendMsg, ToFrontend } from "./TicTacToe.Types"
+import { FrontendModel, FrontendMsg, initSharedModel, ToFrontend } from "./TicTacToe.Types"
 
 //
 //
@@ -14,6 +14,8 @@ import { FrontendModel, FrontendMsg, ToFrontend } from "./TicTacToe.Types"
 //
 
 export type Model = FrontendModel
+
+export const init = initSharedModel
 
 //
 //

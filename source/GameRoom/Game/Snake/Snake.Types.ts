@@ -10,9 +10,13 @@ import { Direction, Position } from "../../../Games/Snake"
 //
 //
 
-export type FrontendModel = SharedModel
-
 export type BackendModel = SharedModel
+
+export type FrontendModel = SharedModel & {
+  mouseStatus: MouseStatus
+  touched: Option.Option<Position.Position>
+}
+
 
 export type SharedModel = {
   player: Player
@@ -28,13 +32,6 @@ export type SharedModel = {
   bounds: {
     lower: Position.Position
     upper: Position.Position
-  }
-  users: {
-    [userId: UserId.UserId]: {
-      userId: UserId.UserId
-      mouseStatus: MouseStatus
-      touched: Option.Option<Position.Position>
-    }
   }
 }
 
@@ -52,7 +49,7 @@ export type MouseStatus = "active" | "inactive"
 //
 //
 
-export const initGame: SharedModel = {
+export const initSharedModel: SharedModel = {
   player: { type: "None" },
   status: { type: "Paused" },
   tickRate: 1000 / 7,
@@ -76,7 +73,6 @@ export const initGame: SharedModel = {
       y: 21,
     },
   },
-  users: {}
 }
 
 //
@@ -87,16 +83,17 @@ export const initGame: SharedModel = {
 //
 //
 
-export type FrontendMsg = | ["ClickedBack"]
-| ["ClickedRestart"]
-| ["ClickedToggle"]
-| ["AudioFailed"]
-| ["AudioSucceeded"]
-| ["MouseDownBoard"]
-| ["MouseUpBoard"]
-| ["PressedKeyDown", Keyboard.Key]
-| ["MouseMovedBoard", Position.Position]
-| ["TouchMoveBoard", Position.Position]
+export type FrontendMsg = 
+  | ["ClickedBack"]
+  | ["ClickedRestart"]
+  | ["ClickedToggle"]
+  | ["AudioFailed"]
+  | ["AudioSucceeded"]
+  | ["MouseDownBoard"]
+  | ["MouseUpBoard"]
+  | ["PressedKeyDown", Keyboard.Key]
+  | ["MouseMovedBoard", Position.Position]
+  | ["TouchMoveBoard", Position.Position]
 
 export type BackendMsg = ["Tick"]
 

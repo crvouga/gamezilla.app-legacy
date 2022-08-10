@@ -10,10 +10,16 @@ import * as Game from "./Game"
 //
 //
 
-export type BackendModel = RoomsModel<Game.BackendModel>
+export type BackendModel = SharedModel & {
+  games: {
+    [roomId: RoomId.RoomId]: Game.FrontendModel
+  }
+}
 
-export type FrontendModel = {
-  rooms: RoomsModel<Game.FrontendModel>
+export type FrontendModel = SharedModel & {
+  games: {
+    [roomId: RoomId.RoomId]: Game.FrontendModel
+  }
   createRoom: RemoteData.Model<CreateRoomProblem, Unit>
   leaveRoom: RemoteData.Model<LeaveRoomProblem, Unit>
   joinRoom: RemoteData.Model<JoinRoomProblem, Unit>
@@ -22,25 +28,22 @@ export type FrontendModel = {
   modal: "DrawerOpened" | "Closed" | "MenuOpened"
 }
 
-export type RoomsModel<GameModel> ={
+export type SharedModel = {
   rooms: {
-    [roomId: RoomId.RoomId]: RoomModel<GameModel>
-  },
-  users: Users
+    [roomId: RoomId.RoomId]: RoomModel
+  }
+  users: {
+    [userId: UserId.UserId]: {
+      userId: UserId.UserId
+      roomId: RoomId.RoomId
+    }
+  }
 }
 
-export type RoomModel<GameModel> = {
+export type RoomModel = {
   roomId: RoomId.RoomId
   hostId: UserId.UserId
   events: RoomEvent[]
-  game: Option.Option<GameModel>
-}
-
-export type Users = {
-  [userId: UserId.UserId]: {
-    userId: UserId.UserId
-    roomId: RoomId.RoomId
-  }
 }
 
 
@@ -53,7 +56,7 @@ export type Users = {
 //
 
 export type ToFrontend =
-  | ["Sync", BackendModel]
+  | ["Sync", SharedModel]
   | CreateRoomResulted
   | LeaveRoomResulted
   | JoinRoomResulted
