@@ -215,143 +215,28 @@ export const updateFromBackend = (
     }
 
     case "CreateRoomResulted": {
-      const createRoom = pipe(
-        msg[1],
-        RemoteData.fromResult,
-        RemoteData.mapSuccess(() => Unit),
-      )
-
-      const actions: OutAction[] =
-        createRoom.type === "Failure"
-          ? [
-              [
-                "Snackbar",
-                [
-                  "Enqueue",
-                  {
-                    variant: "Error",
-                    message: createRoom.problem,
-                  },
-                ],
-              ],
-            ]
-          : []
-
-      const cmd: Cmd.Cmd<Msg> =
-        createRoom.type === "Success"
-          ? Route.replace({ type: "GameRoom" })
-          : Cmd.None
-
-      return [{ ...model, createRoom }, cmd, actions]
+      return updateSharedModel(model, msg[1])
     }
 
     case "LeaveRoomResulted": {
-      const leaveRoom = pipe(
-        msg[1],
-        RemoteData.fromResult,
-        RemoteData.mapSuccess(() => Unit),
-      )
-
-      const actions: OutAction[] =
-        leaveRoom.type === "Failure"
-          ? [
-              [
-                "Snackbar",
-                [
-                  "Enqueue",
-                  {
-                    variant: "Error",
-                    message: leaveRoom.problem,
-                  },
-                ],
-              ],
-            ]
-          : []
-
-      return [{ ...model, leaveRoom }, Cmd.None, actions]
+      return updateSharedModel(model, msg[1])
     }
 
     case "JoinRoomResulted": {
-      const joinRoom = pipe(
-        msg[1],
-        RemoteData.fromResult,
-        RemoteData.mapSuccess(() => Unit),
-      )
-
-      const actions: OutAction[] =
-        joinRoom.type === "Failure"
-          ? [
-              [
-                "Snackbar",
-                [
-                  "Enqueue",
-                  {
-                    variant: "Error",
-                    message: joinRoom.problem,
-                  },
-                ],
-              ],
-            ]
-          : []
-
-      return [{ ...model, joinRoom }, Cmd.None, actions]
+      return updateSharedModel(model, msg[1])
     }
 
     case "StartGameResulted": {
-      const startGame = pipe(
-        msg[1],
-        RemoteData.fromResult,
-        RemoteData.mapSuccess(() => Unit),
-      )
-
-      const actions: OutAction[] =
-        startGame.type === "Failure"
-          ? [
-              [
-                "Snackbar",
-                [
-                  "Enqueue",
-                  {
-                    variant: "Error",
-                    message: startGame.problem,
-                  },
-                ],
-              ],
-            ]
-          : []
-
-      return [{ ...model, startGame: startGame }, Cmd.None, actions]
+      return updateSharedModel(model, msg[1])
     }
 
     case "StopGameResulted": {
-      const stopGame = pipe(
-        msg[1],
-        RemoteData.fromResult,
-        RemoteData.mapSuccess(() => Unit),
-      )
-
-      const actions: OutAction[] =
-        stopGame.type === "Failure"
-          ? [
-              [
-                "Snackbar",
-                [
-                  "Enqueue",
-                  {
-                    variant: "Error",
-                    message: stopGame.problem,
-                  },
-                ],
-              ],
-            ]
-          : []
-
-      return [{ ...model, stopGame }, Cmd.None, actions]
+      return updateSharedModel(model, msg[1])
     }
   }
 }
 
-const updateRoom = <
+const updateSharedModel = <
   TResult extends Result.Result<TProblem, SharedModel>,
   TProblem extends string,
 >(
@@ -380,7 +265,9 @@ const updateRoom = <
         ]
       : []
 
-  return [{ ...model }, Cmd.None, actions]
+  const modelNew:Model = result.type === 'Ok' ? {...model, ...result.value} : model
+
+  return [modelNew, Cmd.None, actions]
 }
 
 //
