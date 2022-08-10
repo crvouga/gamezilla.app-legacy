@@ -1,23 +1,21 @@
 import * as Bridge from "../Bridge/Backend"
-import { ClientId } from "../Bridge/Bridge"
-import { Cmd, exhaustive, Option, pipe, Result, tag } from "../Core"
+import { Cmd, exhaustive, Option, pipe, Result, tagUpdate } from "../Core"
 import { remove } from "../Core/Record"
-import { RoomId, UserId } from "../Data"
-import * as Games from "../Games"
+import { ClientId, RoomId, UserId } from "../Data"
+import { Name } from "../Games"
+import * as Game from "./Game"
 import { initGame } from "./Game/Game.Types"
 import {
   BackendModel,
   BackendMsg,
   CreateRoomResult,
-  initRooms,
   JoinRoomResult,
   LeaveRoomResult,
   RoomModel,
-  RoomsModel,
   StartGameResult,
   StopGameResult,
   ToBackend,
-  ToFrontend,
+  ToFrontend
 } from "./Types"
 
 //
@@ -30,27 +28,9 @@ import {
 
 type Model = BackendModel
 
-export const init: Model = {
-  rooms: initRooms,
-}
-
-//
-//
-//
-// Bridge
-//
-//
-//
-
-const broadcast = (toFrontend: ToFrontend) => {
-  return Bridge.broadcast(["GameRoom", toFrontend])
-}
-
-const sendToFrontend = (
-  clientIds: string | string[],
-  toFrontend: ToFrontend,
-) => {
-  return Bridge.sendToFrontend(clientIds, ["GameRoom", toFrontend])
+export const init: Model =  {
+  rooms: {},
+  users: {}
 }
 
 //
@@ -61,19 +41,50 @@ const sendToFrontend = (
 //
 //
 
+type Msg = BackendMsg
+
 export const update = (
-  msg: BackendMsg,
+  msg: Msg,
   model: Model,
-): [Model, Cmd.Cmd<BackendMsg>] => {
+): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
-    case "Noop": {
-      return [model, Cmd.None]
+    case "Game": {
+
+      const roomId = msg[1].roomId
+      const gameMsg = msg[1].msg
+
+      const room = model.rooms[roomId]
+
+      if(!room) {
+        return [model, Cmd.None]
+      }
+
+      if(room.game.type === 'None') {
+        return [model, Cmd.None]
+      }
+
+      const game = room.game.value
+
+      const [gameNew, gameCmd] = Game.Backend.update(gameMsg, game)
+      
+      const modelNew: Model = {
+        ...model,
+        rooms: {
+          ...model.rooms,
+          [room.roomId]: {
+            ...room,
+            game: Option.Some(gameNew)
+          }
+        }
+      }
+
+      return [modelNew, pipe(gameCmd, Cmd.map((msg) => ['Game', {msg, roomId}]))]
     }
   }
 }
 
 export const updateFromFrontend = (
-  clientId: ClientId,
+  clientId: ClientId.ClientId,
   msg: ToBackend,
   model: Model,
 ): [Model, Cmd.Cmd<BackendMsg>] => {
@@ -81,32 +92,32 @@ export const updateFromFrontend = (
     case "Init": {
       return [
         model,
-        Cmd.batch([sendToFrontend(clientId, ["Sync", model.rooms])]),
+        Cmd.batch([sendToFrontend(clientId, ["Sync", model])]),
       ]
     }
 
     case "CreateRoom": {
-      const result = createRoom(msg[1], model.rooms)
+      const result = createRoom(msg[1], model)
       return updateRoom(clientId, model, result, ["CreateRoomResulted", result])
     }
 
     case "LeaveRoom": {
-      const result = leaveRoom(msg[1], model.rooms)
+      const result = leaveRoom(msg[1], model)
       return updateRoom(clientId, model, result, ["LeaveRoomResulted", result])
     }
 
     case "JoinRoom": {
-      const result = joinRoom(msg[1], model.rooms)
+      const result = joinRoom(msg[1], model)
       return updateRoom(clientId, model, result, ["JoinRoomResulted", result])
     }
 
     case "StartGame": {
-      const result = startGame(msg[1], model.rooms)
+      const result = startGame(msg[1], model)
       return updateRoom(clientId, model, result, ["StartGameResulted", result])
     }
 
     case "StopGame": {
-      const result = stopGame(msg[1], model.rooms)
+      const result = stopGame(msg[1], model)
       return updateRoom(clientId, model, result, ["StopGameResulted", result])
     }
 
@@ -116,10 +127,10 @@ export const updateFromFrontend = (
 }
 
 const updateRoom = <
-  TResult extends Result.Result<TProblem, RoomsModel>,
+  TResult extends Result.Result<TProblem, Model>,
   TProblem,
 >(
-  clientId: string,
+  clientId: ClientId.ClientId,
   model: Model,
   result: TResult,
   toFrontend: ToFrontend,
@@ -130,13 +141,13 @@ const updateRoom = <
 
   const modelNew: Model = {
     ...model,
-    rooms: result.value,
+    ...result.value,
   }
 
   return [
     modelNew,
     Cmd.batch([
-      broadcast(["Sync", modelNew.rooms]),
+      broadcast(["Sync", modelNew]),
       sendToFrontend(clientId, toFrontend),
     ]),
   ]
@@ -152,7 +163,7 @@ const updateRoom = <
 
 export const createRoom = (
   { userId, roomId }: { userId: UserId.UserId; roomId: RoomId.RoomId },
-  model: RoomsModel,
+  model: Model,
 ): CreateRoomResult => {
   const user = model.users[userId]
 
@@ -160,7 +171,7 @@ export const createRoom = (
     return Result.Err("user_is_already_in_a_room")
   }
 
-  const modelNew: RoomsModel = {
+  const modelNew: Model = {
     ...model,
     users: {
       ...model.users,
@@ -193,7 +204,7 @@ export const createRoom = (
 
 export const joinRoom = (
   { userId, roomId }: { userId: UserId.UserId; roomId: RoomId.RoomId },
-  model: RoomsModel,
+  model: Model,
 ): JoinRoomResult => {
   const user = model.users[userId]
 
@@ -207,7 +218,7 @@ export const joinRoom = (
     return Result.Err("room_does_not_exists")
   }
 
-  const modelNew: RoomsModel = {
+  const modelNew: Model = {
     rooms: {
       ...model.rooms,
       [room.roomId]: {
@@ -237,7 +248,7 @@ export const joinRoom = (
 
 export const leaveRoom = (
   { userId }: { userId: UserId.UserId },
-  model: RoomsModel,
+  model: Model,
 ): LeaveRoomResult => {
   const user = model.users[userId]
 
@@ -253,7 +264,7 @@ export const leaveRoom = (
 
   const usersNew = remove(userId, model.users)
 
-  const roomNew: RoomModel = {
+  const roomNew: RoomModel<Game.BackendModel> = {
     ...room,
     events: [...room.events, ["Left", { userId }]],
   }
@@ -285,7 +296,7 @@ export const leaveRoom = (
     })
   }
 
-  const roomsNew: RoomsModel["rooms"] = {
+  const roomsNew: Model["rooms"] = {
     ...model.rooms,
     [room.roomId]: {
       ...roomNew,
@@ -308,8 +319,8 @@ export const leaveRoom = (
 //
 
 export const startGame = (
-  { userId, gameName }: { userId: UserId.UserId; gameName: Games.Name },
-  model: RoomsModel,
+  { userId, gameName }: { userId: UserId.UserId; gameName: Name },
+  model: Model,
 ): StartGameResult => {
   const user = model.users[userId]
 
@@ -331,7 +342,7 @@ export const startGame = (
     return Result.Err("game_already_started")
   }
 
-  const modelNew: RoomsModel = {
+  const modelNew: Model = {
     ...model,
     rooms: {
       ...model.rooms,
@@ -355,7 +366,7 @@ export const startGame = (
 
 export const stopGame = (
   { userId }: { userId: UserId.UserId },
-  model: RoomsModel,
+  model: Model,
 ): StopGameResult => {
   const user = model.users[userId]
 
@@ -377,7 +388,7 @@ export const stopGame = (
     return Result.Err("game_already_stopped")
   }
 
-  const modelNew: RoomsModel = {
+  const modelNew: Model = {
     ...model,
     rooms: {
       ...model.rooms,
@@ -389,4 +400,25 @@ export const stopGame = (
   }
 
   return Result.Ok(modelNew)
+}
+
+
+
+//
+//
+//
+// Bridge
+//
+//
+//
+
+const broadcast = (toFrontend: ToFrontend) => {
+  return Bridge.broadcast(["GameRoom", toFrontend])
+}
+
+const sendToFrontend = (
+  clientIds: ClientId.ClientId | ClientId.ClientId[],
+  toFrontend: ToFrontend,
+) => {
+  return Bridge.sendToFrontend(clientIds, ["GameRoom", toFrontend])
 }

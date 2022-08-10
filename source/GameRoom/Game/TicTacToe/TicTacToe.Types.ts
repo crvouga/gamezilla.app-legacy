@@ -9,7 +9,7 @@ import * as Board from "../../../Games/TicTacToe/TicTacToe"
 //
 //
 
-export type GameModel = {
+export type SharedModel = {
   board: Board.Board
   players: {
     [player in Board.Player]:
@@ -18,7 +18,7 @@ export type GameModel = {
   }
 }
 
-export const initGame: GameModel = {
+export const initGame: SharedModel = {
   board: Board.emptyBoard,
   players: {
     O: { type: "None" },
@@ -26,9 +26,9 @@ export const initGame: GameModel = {
   },
 }
 
-export type FrontendModel = GameModel
+export type FrontendModel = SharedModel
 
-export type BackendModel = GameModel
+export type BackendModel = SharedModel
 
 //
 //

@@ -3,9 +3,9 @@ import * as Rx from "rxjs"
 import { Server } from "socket.io"
 import { Cmd, Option, pipe, Sub } from "../Core"
 import { ToBackend, ToFrontend } from "../Types"
+import {ClientId}from "../Data"
 import {
   backendServerPort,
-  ClientId,
   ClientToServerEvents,
   ServerToClientEvents,
 } from "./Bridge"
@@ -18,9 +18,9 @@ import {
 //
 //
 
-const toBackend$ = new Rx.Subject<[ClientId, ToBackend]>()
-const onConnect$ = new Rx.Subject<ClientId>()
-const onDisconnect$ = new Rx.Subject<ClientId>()
+const toBackend$ = new Rx.Subject<[ClientId.ClientId, ToBackend]>()
+const onConnect$ = new Rx.Subject<ClientId.ClientId>()
+const onDisconnect$ = new Rx.Subject<ClientId.ClientId>()
 
 //
 //
@@ -31,19 +31,19 @@ const onDisconnect$ = new Rx.Subject<ClientId>()
 //
 
 export const onConnect = <Msg>(
-  mapper: (clientId: ClientId) => Msg,
+  mapper: (clientId: ClientId.ClientId) => Msg,
 ): Sub.Sub<Msg> => {
   return pipe(onConnect$, Sub.map(mapper))
 }
 
 export const onDisconnect = <Msg>(
-  mapper: (clientId: ClientId) => Msg,
+  mapper: (clientId: ClientId.ClientId) => Msg,
 ): Sub.Sub<Msg> => {
   return pipe(onDisconnect$, Sub.map(mapper))
 }
 
 export const fromFrontend = <Msg>(
-  mapper: (clientId: ClientId, msg: ToBackend) => Msg,
+  mapper: (clientId: ClientId.ClientId, msg: ToBackend) => Msg,
 ): Sub.Sub<Msg> => {
   return pipe(
     toBackend$,
@@ -60,7 +60,7 @@ export const fromFrontend = <Msg>(
 //
 
 export const sendToFrontend = (
-  clientIds: ClientId | ClientId[],
+  clientIds: ClientId.ClientId | ClientId.ClientId[],
   msg: ToFrontend,
 ): Cmd.Cmd<never> => {
   return Rx.of(async () => {
@@ -99,15 +99,22 @@ const socketServer = new Server<ClientToServerEvents, ServerToClientEvents>(
   },
 )
 
-socketServer.on("connection", (socket) => {
-  onConnect$.next(socket.id)
+
+socketServer.on("connection", (socket) => {  
+  if(ClientId.is(socket.id)) {
+    onConnect$.next(socket.id)
+  }
 
   socket.on("disconnect", () => {
-    onDisconnect$.next(socket.id)
+    if(ClientId.is(socket.id)) {
+      onDisconnect$.next(socket.id)
+    }
   })
 
   socket.on("ToBackend", (msg) => {
-    toBackend$.next([socket.id, msg])
+    if(ClientId.is(socket.id)) {
+      toBackend$.next([socket.id, msg])
+    }
   })
 })
 

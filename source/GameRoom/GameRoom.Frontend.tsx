@@ -7,7 +7,7 @@ import {
   Result,
   Sub,
   tag,
-  Unit,
+  Unit
 } from "../Core"
 import { RoomId, UserId } from "../Data"
 import * as Games from "../Games"
@@ -19,10 +19,9 @@ import * as Game from "./Game"
 import {
   FrontendModel,
   FrontendMsg,
-  initRooms,
   RoomModel,
   RoomsModel,
-  ToFrontend,
+  ToFrontend
 } from "./Types"
 
 //
@@ -37,7 +36,10 @@ export type Model = FrontendModel
 
 export const init: [Model, Cmd.Cmd<Msg>] = [
   {
-    rooms: initRooms,
+    rooms: {
+      rooms: {},
+      users: {}
+    },
     createRoom: RemoteData.NotAsked,
     joinRoom: RemoteData.NotAsked,
     leaveRoom: RemoteData.NotAsked,
@@ -214,8 +216,8 @@ export const updateFromBackend = (
         "Store",
         ["Profile", ["FindMany", { userIds }]],
       ]
-
-      return [{ ...model, rooms: msg[1] }, Cmd.None, [action]]
+  
+      return [{ ...model, rooms:  msg[1] }, Cmd.None, [action]]
     }
 
     case "CreateRoomResulted": {
@@ -356,7 +358,7 @@ export const updateFromBackend = (
 }
 
 const updateRoom = <
-  TResult extends Result.Result<TProblem, RoomsModel>,
+  TResult extends Result.Result<TProblem, RoomsModel<Game.FrontendModel>>,
   TProblem extends string,
 >(
   model: Model,
@@ -574,7 +576,7 @@ const viewNotInGame =
       room,
     }: {
       store: Store.Model
-      room: RoomModel
+      room: RoomModel<Game.FrontendModel>
       currentUserId: UserId.UserId
     },
     model: Model,
@@ -612,7 +614,7 @@ const viewHeader =
       currentUserId,
     }: {
       store: Store.Model
-      room: RoomModel
+      room: RoomModel<Game.FrontendModel>
       currentUserId: UserId.UserId
     },
     model: Model,
@@ -713,7 +715,7 @@ const viewUsersInRoomAvatarGroup =
       room,
     }: {
       store: Store.Model
-      room: RoomModel
+      room: RoomModel<Game.FrontendModel>
     },
     model: Model,
   ): UI.View<Msg> =>

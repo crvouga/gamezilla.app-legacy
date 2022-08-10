@@ -1,5 +1,6 @@
 import * as Auth from "./Auth"
 import * as Connection from "./Connection"
+import { ClientId } from "./Data"
 import * as GameRoom from "./GameRoom"
 import * as Pages from "./Pages"
 import * as Route from "./Route"
@@ -53,9 +54,9 @@ export type FrontendMsg =
 export type ToBackend = ["GameRoom", GameRoom.ToBackend]
 
 export type BackendMsg =
-  | ["FrontendToBackend", string, ToBackend]
+  | ["FrontendToBackend", ClientId.ClientId, ToBackend]
   | ["GameRoom", GameRoom.BackendMsg]
-  | ["ClientConnected", string]
-  | ["ClientDisconnected", string]
+  | ["ClientConnected", ClientId.ClientId]
+  | ["ClientDisconnected", ClientId.ClientId]
 
 export type ToFrontend = ["GameRoom", GameRoom.ToFrontend]

@@ -1,11 +1,11 @@
-import { Cmd, pipe, Sub, tag } from "../../Core"
+import { Cmd, pipe, Sub, tag, tagUpdate } from "../../Core"
 import { UserId } from "../../Data"
 import * as Store from "../../Store"
 import * as UI from "../../UI"
 import * as ConnectFour from "./ConnectFour"
 import * as Snake from "./Snake"
 import * as TicTacToe from "./TicTacToe"
-import { FrontendModel, FrontendMsg } from "./Game.Types"
+import { FrontendModel, FrontendMsg, ToFrontend } from "./Game.Types"
 
 //
 //
@@ -35,11 +35,7 @@ export const update = (
   switch (model[0]) {
     case "ConnectFour": {
       if (msg[0] === "ConnectFour") {
-        const [child, childCmd] = ConnectFour.Frontend.update(msg[1], model[1])
-        return [
-          ["ConnectFour", child],
-          pipe(childCmd, Cmd.map(tag("ConnectFour"))),
-        ]
+        return tagUpdate("ConnectFour", ConnectFour.Frontend.update(msg[1], model[1]))
       }
 
       return [model, Cmd.None]
@@ -47,27 +43,51 @@ export const update = (
 
     case "Snake": {
       if (msg[0] === "Snake") {
-        const [child, childCmd] = Snake.Frontend.update(msg[1], model[1])
-        return [["Snake", child], pipe(childCmd, Cmd.map(tag("Snake")))]
+        return tagUpdate("Snake", Snake.Frontend.update(msg[1], model[1]))
       }
-
       return [model, Cmd.None]
     }
 
     case "TicTacToe": {
       if (msg[0] === "TicTacToe") {
-        const [child, childCmd] = TicTacToe.Frontend.update(
+        return tagUpdate("TicTacToe", TicTacToe.Frontend.update(
           { currentUserId },
           msg[1],
           model[1],
-        )
-
-        return [["TicTacToe", child], pipe(childCmd, Cmd.map(tag("TicTacToe")))]
+        ))
       }
       return [model, Cmd.None]
     }
   }
 }
+
+
+export const updateFromBackend = (msg: ToFrontend, model: Model): [Model, Cmd.Cmd<Msg>] => {
+  switch(msg[0]) {
+    case 'ConnectFour': {
+      if(model[0] === 'ConnectFour') {
+        return tagUpdate("ConnectFour", ConnectFour.Frontend.updateFromBackend(msg[1], model[1]))
+      }
+      return [model, Cmd.None]
+    }
+
+    case 'Snake': {
+      if(model[0] === 'Snake') {
+        return tagUpdate("Snake", Snake.Frontend.updateFromBackend(msg[1], model[1]))
+      }
+      return [model, Cmd.None]
+    }
+
+    case 'TicTacToe': {
+      if(model[0] === 'TicTacToe') {
+        return tagUpdate("TicTacToe", TicTacToe.Frontend.updateFromBackend(msg[1], model[1]))
+      }
+      return [model, Cmd.None]
+    }
+  }
+}
+
+
 
 //
 //

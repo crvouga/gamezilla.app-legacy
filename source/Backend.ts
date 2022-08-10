@@ -1,5 +1,5 @@
+import { ClientId } from "./Data"
 import * as Bridge from "./Bridge/Backend"
-import { ClientId } from "./Bridge/Bridge"
 import { Cmd, Debug, pipe, Platform, Sub, tag } from "./Core"
 import * as GameRoom from "./GameRoom/GameRoom.Backend"
 import { BackendModel, BackendMsg, ToBackend } from "./Types"
@@ -43,7 +43,7 @@ export const update = (
         model,
         Bridge.sendToFrontend(clientId, [
           "GameRoom",
-          ["Sync", model.gameRoom.rooms],
+          ["Sync", model.gameRoom],
         ]),
       ]
     }
@@ -63,7 +63,7 @@ export const update = (
 }
 
 export const updateFromFrontend = (
-  clientId: ClientId,
+  clientId: ClientId.ClientId,
   msg: ToBackend,
   model: Model,
 ): [Model, Cmd.Cmd<BackendMsg>] => {

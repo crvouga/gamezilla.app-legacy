@@ -1,7 +1,7 @@
 import { Cmd } from "../../../Core"
 import { ConnectFour } from "../../../Games"
 import * as UI from "../../../UI"
-import { FrontendModel, FrontendMsg } from "./ConnectFour.Types"
+import { FrontendModel, FrontendMsg, ToBackend, ToFrontend } from "./ConnectFour.Types"
 
 //
 //
@@ -28,6 +28,10 @@ export const init: Model = {
 export type Msg = FrontendMsg
 
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
+  return [model, Cmd.None]
+}
+
+export const updateFromBackend = (msg: ToFrontend, model: Model): [Model, Cmd.Cmd<Msg>] => {
   return [model, Cmd.None]
 }
 
