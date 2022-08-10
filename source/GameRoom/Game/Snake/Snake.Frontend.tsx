@@ -55,15 +55,6 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
       
 
     case "PressedKeyDown":
-      const statusNew: Model['status'] =
-        msg[1] === "Space"
-          ? model.status.type === "Paused"
-            ? { type: "Playing" }
-            : { type: "Paused" }
-          : model.status
-
-      const directionFromKey = Snake.Direction.fromKey(msg[1], model.direction)
-
       return [
         model,
         Cmd.None,
