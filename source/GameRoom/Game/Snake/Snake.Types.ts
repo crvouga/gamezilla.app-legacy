@@ -1,6 +1,6 @@
-import { Keyboard, Option } from "../../../Core"
+import { Keyboard, Option, Result } from "../../../Core"
 import { UserId } from "../../../Data"
-import { Direction, Position } from "../../../Games/Snake"
+import * as Snake from "../../../Games/Snake"
 
 //
 //
@@ -14,30 +14,15 @@ export type BackendModel = SharedModel
 
 export type FrontendModel = SharedModel & {
   mouseStatus: MouseStatus
-  touched: Option.Option<Position.Position>
+  touched: Option.Option<Snake.Position.Position>
 }
 
 
-export type SharedModel = {
+export type SharedModel = Snake.Model & {
   player: Player
-  status: Status
-  head: Position.Position
-  tail: Position.Position[]
-  food: Position.Position
-  tailLength: number
-  foodEatenCount: number
-  tickRate: number
-  direction: Direction.Direction
-  directionQueue: Direction.Direction[]
-  bounds: {
-    lower: Position.Position
-    upper: Position.Position
-  }
 }
 
 export type Player = { type: "User"; userId: UserId.UserId } | { type: "None" }
-
-export type Status = { type: "Paused" } | { type: "Playing" }
 
 export type MouseStatus = "active" | "inactive"
 
@@ -51,28 +36,7 @@ export type MouseStatus = "active" | "inactive"
 
 export const initSharedModel: SharedModel = {
   player: { type: "None" },
-  status: { type: "Paused" },
-  tickRate: 1000 / 7,
-  head: { x: 4, y: 6 },
-  tail: [
-    { x: 3, y: 6 },
-    { x: 2, y: 6 },
-  ],
-  food: { x: 7, y: 6 },
-  tailLength: 4,
-  foodEatenCount: 0,
-  direction: "right",
-  directionQueue: [],
-  bounds: {
-    lower: {
-      x: 0,
-      y: 0,
-    },
-    upper: {
-      x: 12,
-      y: 21,
-    },
-  },
+ ...Snake.init
 }
 
 //
@@ -92,11 +56,82 @@ export type FrontendMsg =
   | ["MouseDownBoard"]
   | ["MouseUpBoard"]
   | ["PressedKeyDown", Keyboard.Key]
-  | ["MouseMovedBoard", Position.Position]
-  | ["TouchMoveBoard", Position.Position]
+  | ["MouseMovedBoard", Snake.Position.Position]
+  | ["TouchMoveBoard", Snake.Position.Position]
 
 export type BackendMsg = ["Tick"]
 
-export type ToBackend = ["ChangeDirection", Direction.Direction]
+export type ToBackend = ChangeDirection
 
-export type ToFrontend = ["Sync", SharedModel]
+export type ToFrontend = ["Sync", SharedModel] | ChangeDirectionResulted
+
+// 
+// 
+// 
+
+export type ChangeDirection = [
+  "ChangeDirection",
+  {direction: Snake.Direction.Direction, userId: UserId.UserId}
+]
+
+export type ChangeDirectionResulted = ["ChangeDirectionResulted", ChangeDirectionResult]
+
+export type ChangeDirectionProblem = "user_must_be_the_current_player"
+
+export type ChangeDirectionResult = Result.Result<ChangeDirectionProblem, SharedModel>
+
+
+export const changeDirection = ({direction, userId}: ChangeDirection[1], model: SharedModel): ChangeDirectionResult => {
+  if(model.player.type === 'None') {
+    return Result.Err("user_must_be_the_current_player")
+  }
+
+  if(model.player.userId !== userId ) {
+    return Result.Err("user_must_be_the_current_player")
+  }
+
+
+  const modelNew: SharedModel = {
+    ...model,
+    ...Snake.enqueueDirection(direction, model)
+  }
+
+  return Result.Ok(modelNew)  
+}
+
+
+// 
+// 
+// 
+// 
+// 
+// 
+
+
+export type ChangeStatus = [
+  "ChangeDirection",
+  {status: Snake.Status, userId: UserId.UserId}
+]
+
+export type ChangeStatusResulted = ["ChangeStatusResulted", ChangeStatusResult]
+
+export type ChangeStatusResult = Result.Result<ChangeStatusProblem, SharedModel>
+
+export type ChangeStatusProblem = "user_must_be_the_current_player"
+
+export const changeStatus = ({status, userId}: ChangeStatus[1], model: SharedModel): ChangeStatusResult => {
+  if(model.player.type === 'None') {
+    return Result.Err("user_must_be_the_current_player")
+  }
+
+  if(model.player.userId !== userId) {
+    return Result.Err("user_must_be_the_current_player")
+  }
+
+  const modelNew: SharedModel = {
+    ...model,
+    status: status
+  }
+
+  return Result.Ok(modelNew)
+}

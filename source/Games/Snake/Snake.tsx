@@ -23,7 +23,6 @@ import * as Position from "./Position"
 //
 
 export type Model = {
-  mouseStatus: MouseStatus
   status: Status
   head: Position.Position
   tail: Position.Position[]
@@ -37,7 +36,6 @@ export type Model = {
     lower: Position.Position
     upper: Position.Position
   }
-  touched?: Position.Position
 }
 
 export type Status = { type: "Paused" } | { type: "Playing" }
@@ -54,7 +52,6 @@ export type MouseStatus = "active" | "inactive"
 
 export const init: Model = {
   status: { type: "Paused" },
-  mouseStatus: "inactive",
   tickRate: 1000 / 7,
   head: { x: 4, y: 6 },
   tail: [
@@ -78,26 +75,6 @@ export const init: Model = {
   },
 }
 
-//
-//
-//
-// Msg
-//
-//
-//
-
-export type Msg =
-  | ["Elapsed"]
-  | ["ClickedBack"]
-  | ["ClickedRestart"]
-  | ["ClickedToggle"]
-  | ["AudioFailed"]
-  | ["AudioSucceeded"]
-  | ["MouseDownBoard"]
-  | ["MouseUpBoard"]
-  | ["PressedKeyDown", Keyboard.Key]
-  | ["MouseMovedBoard", Position.Position]
-  | ["TouchMoveBoard", Position.Position]
 
 //
 //
@@ -121,103 +98,7 @@ const circular = (
   }
 }
 
-export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
-  switch (msg[0]) {
-    case "ClickedRestart":
-      return [init, Cmd.None]
-
-    case "Elapsed":
-      switch (model.status.type) {
-        case "Paused":
-          // return [model, Cmd.None]
-          return [updatePlaying(model), Cmd.None]
-
-        case "Playing":
-          // return [model, Cmd.None]
-          return [updatePlaying(model), Cmd.None]
-      }
-
-    case "ClickedBack":
-      return [model, Route.back]
-
-    case "MouseUpBoard":
-      return [{ ...model, mouseStatus: "inactive" }, Cmd.None]
-
-    case "MouseDownBoard":
-      return [{ ...model, mouseStatus: "active" }, Cmd.None]
-
-    case "PressedKeyDown":
-      const statusNew: Status =
-        msg[1] === "Space"
-          ? model.status.type === "Paused"
-            ? { type: "Playing" }
-            : { type: "Paused" }
-          : model.status
-
-      const directionFromKey = Direction.fromKey(msg[1], model.direction)
-
-      return [
-        enqueueDirection(directionFromKey, {
-          ...model,
-          status: statusNew,
-        }),
-        Cmd.None,
-      ]
-
-    case "ClickedToggle":
-      switch (model.status.type) {
-        case "Paused":
-          return [{ ...model, status: { type: "Playing" } }, Cmd.None]
-
-        case "Playing":
-          return [{ ...model, status: { type: "Paused" } }, Cmd.None]
-      }
-
-    case "AudioFailed":
-      return [model, Cmd.None]
-
-    case "AudioSucceeded":
-      return [model, Cmd.None]
-
-    case "MouseMovedBoard":
-    case "TouchMoveBoard":
-      const previous = model.touched
-
-      if (!previous) {
-        return [{ ...model, touched: msg[1] }, Cmd.None]
-      }
-
-      const touchedNew = msg[1]
-
-      const delta = Position.subtract(previous, touchedNew)
-
-      const maxDeltaMagnitude = Math.max(Math.abs(delta.x), Math.abs(delta.y))
-
-      if (maxDeltaMagnitude < 4) {
-        return [{ ...model, touched: touchedNew }, Cmd.None]
-      }
-
-      const xDirection = delta.x > 0 ? "left" : "right"
-
-      const yDirection = delta.y > 0 ? "up" : "down"
-
-      const directionFromSwipe =
-        Math.abs(delta.x) > Math.abs(delta.y) ? xDirection : yDirection
-
-      return [
-        enqueueDirection(directionFromSwipe, {
-          ...model,
-          touched: touchedNew,
-        }),
-        Cmd.None,
-      ]
-
-    default:
-      return exhaustive(msg[0])
-  }
-}
-
-const enqueueDirection = (
+export const enqueueDirection = (
   direction: Direction.Direction,
   model: Model,
 ): Model => {
@@ -231,14 +112,14 @@ const enqueueDirection = (
   }
 }
 
-const toEmptyPositions = (model: Model) => {
+export const toEmptyPositions = (model: Model) => {
   const snake = [model.head, ...model.tail]
   return Position.range(model.bounds).filter((position) =>
     snake.every((snakePosition) => !Position.equals(position, snakePosition)),
   )
 }
 
-const updatePlaying = (model: Model): Model => {
+export const step = (model: Model): Model => {
   const tailNew = [model.head]
     .concat(model.tail)
     .slice(0, model.tailLength)
@@ -285,146 +166,36 @@ const updatePlaying = (model: Model): Model => {
   }
 }
 
-//
-//
-//
-// Subscriptions
-//
-//
-//
+const shuffle = <T,>(xs: T[]): T[] => {
+  const ys = [...xs]
 
-export const subscriptions = (model: Model): Sub.Sub<Msg> => {
-  switch (model.status.type) {
-    case "Paused":
-      return Sub.batch([keyDowns])
+  ys.sort(() => (Math.random() > 0.5 ? 1 : -1))
 
-    case "Playing":
-      return Sub.batch([
-        keyDowns,
-        Time.every<Msg>(model.tickRate, () => ["Elapsed"]),
-      ])
-  }
+  return ys
 }
 
-const keyDowns = Keyboard.keyDowns<Msg>((key) => ["PressedKeyDown", key])
+const unqiue = <T,>(as: T[]): T[] => {
+  return Array.from(new Set(as))
+}
+
+
 
 //
 //
-//a
+//
 // View
 //
 //
 //
 
-const theme = {
+export const theme = {
   light: "#AAD751",
   dark: "#A2D149",
   snake: "#4573E8",
   apple: "#E7471D",
 }
 
-export const view =
-  (model: Model): UI.View<Msg> =>
-  (dispatch) => {
-    return (
-      <UI.FillBox>
-        <UI.Header
-          left={
-            <UI.HeaderBackButton onClick={() => dispatch(["ClickedBack"])} />
-          }
-          title={
-            model.status.type === "Playing"
-              ? `${model.foodEatenCount} apples`
-              : "Snake"
-          }
-          right={
-            <>
-              <UI.IconButton onClick={() => dispatch(["ClickedToggle"])}>
-                {model.status.type === "Paused" ? (
-                  <UI.Icons.PlayArrow />
-                ) : (
-                  <UI.Icons.Pause />
-                )}
-              </UI.IconButton>
-              <UI.IconButton onClick={() => dispatch(["ClickedRestart"])}>
-                <UI.Icons.RestartAlt />
-              </UI.IconButton>
-            </>
-          }
-        />
-
-        <ViewBoard
-          model={model}
-          dispatch={dispatch}
-        />
-      </UI.FillBox>
-    )
-  }
-
-export const ViewBoard = ({
-  model,
-  dispatch,
-}: {
-  model: Model
-  dispatch: (msg: Msg) => void
-}) => {
-  const ref = useRef<HTMLCanvasElement | null>(null)
-
-  useLayoutEffect(() => {
-    const canvas = ref.current
-    const ctx = canvas?.getContext("2d")
-
-    if (canvas && ctx) {
-      const dpi = 1000
-      ctx.scale(dpi, dpi)
-
-      const width = canvas.width
-      const height = canvas.height
-
-      draw({ width, height }, model, ctx)
-    }
-  }, [model])
-
-  return (
-    <UI.Box sx={{ flex: 1, width: "100%", userSelect: "none" }}>
-      <canvas
-        style={{
-          cursor: model.mouseStatus === "active" ? "grabbing" : "grab",
-          userSelect: "none",
-          width: "100%",
-          height: "100%",
-          maxHeight: "100%",
-          minHeight: "100%",
-        }}
-        ref={ref}
-        onMouseDown={() => {
-          dispatch(["MouseDownBoard"])
-        }}
-        onMouseUp={() => {
-          dispatch(["MouseUpBoard"])
-        }}
-        onMouseMove={(event) => {
-          if (model.mouseStatus === "active") {
-            const x = event.clientX
-            const y = event.clientY
-            dispatch(["MouseMovedBoard", { x, y }])
-          }
-        }}
-        onClick={() => {}}
-        onTouchMove={(event) => {
-          const touch = event.touches[0]
-          if (touch) {
-            const x = touch.clientX
-            const y = touch.clientY
-            dispatch(["TouchMoveBoard", { x, y }])
-          }
-        }}
-      />
-    </UI.Box>
-  )
-}
-
-const draw = (
+export const draw = (
   { width, height }: { width: number; height: number },
   model: Model,
   ctx: CanvasRenderingContext2D,
@@ -554,44 +325,7 @@ export const CoverArt = () => {
   )
 }
 
-//
-//
-//
-// Sounds
-//
-//
-//
 
-export const playSound = (src: string) => {
-  return pipe(
-    Audio.play(src),
-    Cmd.fromTask(
-      Result.fold<{}, {}, Msg>(
-        () => ["AudioFailed"],
-        () => ["AudioSucceeded"],
-      ),
-    ),
-  )
-}
-//
-//
-//
-// Helpers
-//
-//
-//
-
-const shuffle = <T,>(xs: T[]): T[] => {
-  const ys = [...xs]
-
-  ys.sort(() => (Math.random() > 0.5 ? 1 : -1))
-
-  return ys
-}
 const isEven = (x: number) => x % 2 === 0
 
 const isOdd = (x: number) => !isEven(x)
-
-const unqiue = <T,>(as: T[]): T[] => {
-  return Array.from(new Set(as))
-}
