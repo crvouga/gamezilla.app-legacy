@@ -1,6 +1,5 @@
 import * as MuiLab from "@mui/lab"
 import * as Mui from "@mui/material"
-import { SxProps } from "@mui/material"
 import { blue } from "@mui/material/colors"
 import { ReactNode, useMemo } from "react"
 import { Platform, View } from "../Core"
@@ -552,4 +551,4 @@ export const spin = keyframes`
 
 export const pulseAnimation = `${pulse} 0.5s infinite ease`
 
-export type Node = ReactNode
+export type ViewNode = ReactNode

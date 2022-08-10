@@ -1,7 +1,7 @@
 import { Cmd } from "../../../Core"
 import { ConnectFour } from "../../../Games"
 import * as UI from "../../../UI"
-import { FrontendModel, FrontendMsg } from "./Types"
+import { FrontendModel, FrontendMsg } from "./ConnectFour.Types"
 
 //
 //

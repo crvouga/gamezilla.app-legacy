@@ -1,6 +1,6 @@
 import { ClientId } from "../../../Bridge/Bridge"
 import { Cmd, Sub } from "../../../Core"
-import { BackendModel, BackendMsg, initGame, ToBackend } from "./Types"
+import { BackendModel, BackendMsg, initGame, ToBackend } from "./TicTacToe.Types"
 
 //
 //

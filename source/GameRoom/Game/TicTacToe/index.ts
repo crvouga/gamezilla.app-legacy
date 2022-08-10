@@ -1,3 +1,3 @@
-export * as Backend from "./Backend"
-export * as Frontend from "./Frontend"
-export * from "./Types"
+export * as Backend from "./TicTacToe.Backend"
+export * as Frontend from "./TicTacToe.Frontend"
+export * from "./TicTacToe.Types"

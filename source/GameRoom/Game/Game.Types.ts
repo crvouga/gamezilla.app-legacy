@@ -29,7 +29,6 @@ export type BackendModel = GameModel
 
 export type BackendMsg =
   | ["TicTacToe", TicTacToe.BackendMsg]
-  | ["ConnectFour", ConnectFour.BackendMsg]
 
 export type FrontendMsg =
   | ["TicTacToe", TicTacToe.FrontendMsg]

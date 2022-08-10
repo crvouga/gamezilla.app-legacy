@@ -5,7 +5,7 @@ import * as UI from "../../UI"
 import * as ConnectFour from "./ConnectFour"
 import * as Snake from "./Snake"
 import * as TicTacToe from "./TicTacToe"
-import { FrontendModel, FrontendMsg } from "./Types"
+import { FrontendModel, FrontendMsg } from "./Game.Types"
 
 //
 //
