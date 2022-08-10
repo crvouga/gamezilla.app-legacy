@@ -1,6 +1,5 @@
 import { Keyboard, Option } from "../../../Core"
 import { UserId } from "../../../Data"
-
 import { Direction, Position } from "../../../Games/Snake"
 
 //
