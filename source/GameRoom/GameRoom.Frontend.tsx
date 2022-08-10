@@ -215,42 +215,38 @@ export const updateFromBackend = (
     }
 
     case "CreateRoomResulted": {
-      return updateSharedModel(model, msg[1])
+      return handleResult("createRoom", msg[1], model)
     }
 
     case "LeaveRoomResulted": {
-      return updateSharedModel(model, msg[1])
+      return  handleResult("leaveRoom", msg[1], model)
     }
 
     case "JoinRoomResulted": {
-      return updateSharedModel(model, msg[1])
+      return handleResult("joinRoom", msg[1], model)
     }
 
     case "StartGameResulted": {
-      return updateSharedModel(model, msg[1])
+      return handleResult("startGame", msg[1], model)
     }
 
     case "StopGameResulted": {
-      return updateSharedModel(model, msg[1])
+      return handleResult("stopGame", msg[1], model)
     }
   }
 }
 
-const updateSharedModel = <
+const handleResult = <
   TResult extends Result.Result<TProblem, SharedModel>,
   TProblem extends string,
 >(
-  model: Model,
+  remoteDataKey: keyof Model,
   result: TResult,
+  model: Model,
 ): [Model, Cmd.Cmd<FrontendMsg>, OutAction[]] => {
-  const remoteData = pipe(
-    result,
-    RemoteData.fromResult,
-    RemoteData.mapSuccess(() => Unit),
-  )
 
   const actions: OutAction[] =
-    remoteData.type === "Failure"
+    result.type === "Err"
       ? [
           [
             "Snackbar",
@@ -258,7 +254,7 @@ const updateSharedModel = <
               "Enqueue",
               {
                 variant: "Error",
-                message: remoteData.problem,
+                message: result.error,
               },
             ],
           ],
@@ -267,7 +263,14 @@ const updateSharedModel = <
 
   const modelNew:Model = result.type === 'Ok' ? {...model, ...result.value} : model
 
-  return [modelNew, Cmd.None, actions]
+  const remoteData = pipe(
+    result,
+    RemoteData.fromResult,
+    RemoteData.mapSuccess(() => Unit),
+  )
+
+
+  return [{...modelNew, [remoteDataKey]: remoteData}, Cmd.None, actions]
 }
 
 //
@@ -389,6 +392,7 @@ export const viewNotInRoom =
             fullWidth
             size="large"
             variant="contained"
+            loading={model.createRoom.type === 'Loading'}
             onClick={() =>
               dispatch([
                 "CreateRoom",
@@ -407,6 +411,8 @@ export const viewNotInRoom =
             </UI.Typography>
           )}
         </UI.Box>
+
+        <UI.LoadingBackdrop open={model.joinRoom.type === 'Loading'} />
 
         <UI.List sx={{ overflowY: "scroll" }}>
           {rooms.map((room) => {
