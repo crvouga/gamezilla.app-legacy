@@ -37,8 +37,8 @@ export const update = (
 export const updateFromBackend = (
   msg: ToFrontend,
   model: Model,
-): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
-  return [model, Cmd.None, []]
+): [Model, Cmd.Cmd<Msg>, ] => {
+  return [model, Cmd.None]
 }
 
 //

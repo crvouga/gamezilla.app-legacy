@@ -6,15 +6,14 @@ import {
   Keyboard,
   pipe,
   Result,
-  Sub,
-  Time,
+  Sub
 } from "../../../Core"
 import * as Direction from "../../../Games/Snake/Direction"
 import * as Position from "../../../Games/Snake/Position"
 import * as Route from "../../../Route"
 import * as UI from "../../../UI"
 
-import { initGame, FrontendModel, FrontendMsg, Status } from "./Snake.Types"
+import { FrontendModel, FrontendMsg, initGame, Status, ToFrontend } from "./Snake.Types"
 
 //
 //
@@ -25,6 +24,8 @@ import { initGame, FrontendModel, FrontendMsg, Status } from "./Snake.Types"
 //
 
 export type Model = FrontendModel
+
+export const init: Model = initGame
 
 //
 //
@@ -53,27 +54,18 @@ const circular = (
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
     case "ClickedRestart":
-      return [initGame, Cmd.None]
-
-    case "Elapsed":
-      switch (model.status.type) {
-        case "Paused":
-          // return [model, Cmd.None]
-          return [updatePlaying(model), Cmd.None]
-
-        case "Playing":
-          // return [model, Cmd.None]
-          return [updatePlaying(model), Cmd.None]
-      }
+      return [init, Cmd.None]
 
     case "ClickedBack":
       return [model, Route.back]
 
     case "MouseUpBoard":
-      return [{ ...model, mouseStatus: "inactive" }, Cmd.None]
+      return [model, Cmd.None]
+      
 
     case "MouseDownBoard":
-      return [{ ...model, mouseStatus: "active" }, Cmd.None]
+      return [model, Cmd.None]
+      
 
     case "PressedKeyDown":
       const statusNew: Status =
@@ -110,36 +102,37 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
     case "MouseMovedBoard":
     case "TouchMoveBoard":
-      const previous = model.touched
+      return [model, Cmd.None]
+      // const previous = model.touched
 
-      if (!previous) {
-        return [{ ...model, touched: msg[1] }, Cmd.None]
-      }
+      // if (!previous) {
+      //   return [{ ...model, touched: msg[1] }, Cmd.None]
+      // }
 
-      const touchedNew = msg[1]
+      // const touchedNew = msg[1]
 
-      const delta = Position.subtract(previous, touchedNew)
+      // const delta = Position.subtract(previous, touchedNew)
 
-      const maxDeltaMagnitude = Math.max(Math.abs(delta.x), Math.abs(delta.y))
+      // const maxDeltaMagnitude = Math.max(Math.abs(delta.x), Math.abs(delta.y))
 
-      if (maxDeltaMagnitude < 4) {
-        return [{ ...model, touched: touchedNew }, Cmd.None]
-      }
+      // if (maxDeltaMagnitude < 4) {
+      //   return [{ ...model, touched: touchedNew }, Cmd.None]
+      // }
 
-      const xDirection = delta.x > 0 ? "left" : "right"
+      // const xDirection = delta.x > 0 ? "left" : "right"
 
-      const yDirection = delta.y > 0 ? "up" : "down"
+      // const yDirection = delta.y > 0 ? "up" : "down"
 
-      const directionFromSwipe =
-        Math.abs(delta.x) > Math.abs(delta.y) ? xDirection : yDirection
+      // const directionFromSwipe =
+      //   Math.abs(delta.x) > Math.abs(delta.y) ? xDirection : yDirection
 
-      return [
-        enqueueDirection(directionFromSwipe, {
-          ...model,
-          touched: touchedNew,
-        }),
-        Cmd.None,
-      ]
+      // return [
+      //   enqueueDirection(directionFromSwipe, {
+      //     ...model,
+      //     touched: touchedNew,
+      //   }),
+      //   Cmd.None,
+      // ]
 
     default:
       return exhaustive(msg[0])
@@ -214,6 +207,11 @@ const updatePlaying = (model: Model): Model => {
   }
 }
 
+
+export const updateFromBackend = (msg: ToFrontend, model: Model): [Model, Cmd.Cmd<Msg>] => {
+  return [model, Cmd.None]
+}
+
 //
 //
 //
@@ -223,19 +221,10 @@ const updatePlaying = (model: Model): Model => {
 //
 
 export const subscriptions = (model: Model): Sub.Sub<Msg> => {
-  switch (model.status.type) {
-    case "Paused":
-      return Sub.batch([keyDowns])
-
-    case "Playing":
-      return Sub.batch([
-        keyDowns,
-        Time.every<Msg>(model.tickRate, () => ["Elapsed"]),
-      ])
-  }
+  return Keyboard.keyDowns<Msg>((key) => ["PressedKeyDown", key])
 }
 
-const keyDowns = Keyboard.keyDowns<Msg>((key) => ["PressedKeyDown", key])
+
 
 //
 //
@@ -293,7 +282,7 @@ export const Board = ({
     <UI.Box sx={{ flex: 1, width: "100%", userSelect: "none" }}>
       <canvas
         style={{
-          cursor: model.mouseStatus === "active" ? "grabbing" : "grab",
+          // cursor: model.mouseStatus === "active" ? "grabbing" : "grab",
           userSelect: "none",
           width: "100%",
           height: "100%",
@@ -308,11 +297,11 @@ export const Board = ({
           dispatch(["MouseUpBoard"])
         }}
         onMouseMove={(event) => {
-          if (model.mouseStatus === "active") {
-            const x = event.clientX
-            const y = event.clientY
-            dispatch(["MouseMovedBoard", { x, y }])
-          }
+          // if (model.mouseStatus === "active") {
+          //   const x = event.clientX
+          //   const y = event.clientY
+          //   dispatch(["MouseMovedBoard", { x, y }])
+          // }
         }}
         onClick={() => {}}
         onTouchMove={(event) => {

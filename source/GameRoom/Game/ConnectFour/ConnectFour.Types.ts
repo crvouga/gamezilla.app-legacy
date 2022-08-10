@@ -9,17 +9,17 @@ import { ConnectFour } from "../../../Games"
 //
 //
 
-export type GameModel = {
+export type SharedModel = {
   columns: ConnectFour.Columns
 }
 
-export const initGame: GameModel = {
+export const initGame: SharedModel = {
   columns: ConnectFour.emptyColumns,
 }
 
-export type FrontendModel = GameModel
+export type FrontendModel = SharedModel
 
-export type BackendModel = GameModel
+export type BackendModel = SharedModel
 
 //
 //
