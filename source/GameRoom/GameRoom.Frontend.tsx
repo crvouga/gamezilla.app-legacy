@@ -664,7 +664,7 @@ const viewButtonMenu =
       hidden?: boolean
       text: string
       onClick: Msg
-      icon?: UI.Node
+      icon?: UI.ViewNode
     }[]
     onClose: Msg
     onOpen: Msg

@@ -14,7 +14,7 @@ import * as Position from "../../../Games/Snake/Position"
 import * as Route from "../../../Route"
 import * as UI from "../../../UI"
 
-import { initGame, FrontendModel, FrontendMsg, Status } from "./Types"
+import { initGame, FrontendModel, FrontendMsg, Status } from "./Snake.Types"
 
 //
 //

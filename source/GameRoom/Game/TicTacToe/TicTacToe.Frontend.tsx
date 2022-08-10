@@ -3,7 +3,7 @@ import { UserId } from "../../../Data"
 import { TicTacToe } from "../../../Games"
 import * as Store from "../../../Store"
 import * as UI from "../../../UI"
-import { FrontendModel, FrontendMsg, ToFrontend } from "./Types"
+import { FrontendModel, FrontendMsg, ToFrontend } from "./TicTacToe.Types"
 
 //
 //

@@ -1,2 +1,2 @@
-export * as Frontend from "./Frontend"
-export * from "./Types"
+export * as Frontend from "./ConnectFour.Frontend"
+export * from "./ConnectFour.Types"

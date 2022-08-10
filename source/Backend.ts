@@ -1,7 +1,7 @@
 import * as Bridge from "./Bridge/Backend"
 import { ClientId } from "./Bridge/Bridge"
 import { Cmd, Debug, pipe, Platform, Sub, tag } from "./Core"
-import * as GameRoom from "./GameRoom/Backend"
+import * as GameRoom from "./GameRoom/GameRoom.Backend"
 import { BackendModel, BackendMsg, ToBackend } from "./Types"
 
 //
@@ -39,14 +39,20 @@ export const update = (
 
     case "ClientConnected": {
       const clientId = msg[1]
-      return [model, Bridge.sendToFrontend(clientId, ['GameRoom', ['Sync', model.gameRoom.rooms]])]
+      return [
+        model,
+        Bridge.sendToFrontend(clientId, [
+          "GameRoom",
+          ["Sync", model.gameRoom.rooms],
+        ]),
+      ]
     }
 
     case "ClientDisconnected": {
       return [model, Cmd.None]
     }
 
-    case "GameRoom":{
+    case "GameRoom": {
       const [child, childCmd] = GameRoom.update(msg[1], model.gameRoom)
       return [
         { ...model, gameRoom: child },
