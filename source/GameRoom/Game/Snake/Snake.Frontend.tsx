@@ -1,5 +1,6 @@
 import { useLayoutEffect, useRef } from "react"
 import {
+  Option,
   Audio,
   Cmd,
   exhaustive,
@@ -13,7 +14,7 @@ import * as Position from "../../../Games/Snake/Position"
 import * as Route from "../../../Route"
 import * as UI from "../../../UI"
 
-import { FrontendModel, FrontendMsg, initGame, Status, ToFrontend } from "./Snake.Types"
+import { FrontendModel, FrontendMsg, initSharedModel, Status, ToFrontend } from "./Snake.Types"
 
 //
 //
@@ -25,7 +26,11 @@ import { FrontendModel, FrontendMsg, initGame, Status, ToFrontend } from "./Snak
 
 export type Model = FrontendModel
 
-export const init: Model = initGame
+export const init: Model = {
+  ...initSharedModel,
+  mouseStatus: 'inactive', 
+  touched: Option.None
+}
 
 //
 //
@@ -37,19 +42,7 @@ export const init: Model = initGame
 
 export type Msg = FrontendMsg
 
-const circularIndex = (index: number, length: number): number => {
-  return ((index % length) + length) % length
-}
 
-const circular = (
-  model: Model,
-  position: Position.Position,
-): Position.Position => {
-  return {
-    x: circularIndex(position.x, model.bounds.upper.x),
-    y: circularIndex(position.y, model.bounds.upper.y),
-  }
-}
 
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
@@ -160,6 +153,20 @@ const toEmptyPositions = (model: Model) => {
   )
 }
 
+const circularIndex = (index: number, length: number): number => {
+  return ((index % length) + length) % length
+}
+
+const circular = (
+  model: Model,
+  position: Position.Position,
+): Position.Position => {
+  return {
+    x: circularIndex(position.x, model.bounds.upper.x),
+    y: circularIndex(position.y, model.bounds.upper.y),
+  }
+}
+
 const updatePlaying = (model: Model): Model => {
   const tailNew = [model.head]
     .concat(model.tail)
@@ -209,7 +216,13 @@ const updatePlaying = (model: Model): Model => {
 
 
 export const updateFromBackend = (msg: ToFrontend, model: Model): [Model, Cmd.Cmd<Msg>] => {
-  return [model, Cmd.None]
+  switch(msg[0]) {
+    case 'Sync': {
+      const x = msg[1]
+      return [model, Cmd.None]
+      
+    }
+  }
 }
 
 //

@@ -13,7 +13,7 @@ export type SharedModel = {
   columns: ConnectFour.Columns
 }
 
-export const initGame: SharedModel = {
+export const initSharedModel: SharedModel = {
   columns: ConnectFour.emptyColumns,
 }
 

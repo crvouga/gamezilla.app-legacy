@@ -1,10 +1,9 @@
 import * as Bridge from "../Bridge/Backend"
-import { Cmd, exhaustive, Option, pipe, Result, tagUpdate } from "../Core"
+import { Cmd, exhaustive, Option, pipe, Result } from "../Core"
 import { remove } from "../Core/Record"
 import { ClientId, RoomId, UserId } from "../Data"
 import { Name } from "../Games"
 import * as Game from "./Game"
-import { initGame } from "./Game/Game.Types"
 import {
   BackendModel,
   BackendMsg,
@@ -29,6 +28,7 @@ import {
 type Model = BackendModel
 
 export const init: Model =  {
+  games: {},
   rooms: {},
   users: {}
 }
@@ -59,22 +59,19 @@ export const update = (
         return [model, Cmd.None]
       }
 
-      if(room.game.type === 'None') {
+      const game = model.games[roomId]
+
+      if(!game) {
         return [model, Cmd.None]
       }
-
-      const game = room.game.value
 
       const [gameNew, gameCmd] = Game.Backend.update(gameMsg, game)
       
       const modelNew: Model = {
         ...model,
-        rooms: {
-          ...model.rooms,
-          [room.roomId]: {
-            ...room,
-            game: Option.Some(gameNew)
-          }
+        games: {
+          ...model.games,
+          [roomId]: gameNew
         }
       }
 
@@ -219,6 +216,7 @@ export const joinRoom = (
   }
 
   const modelNew: Model = {
+    ...model,
     rooms: {
       ...model.rooms,
       [room.roomId]: {
@@ -264,7 +262,7 @@ export const leaveRoom = (
 
   const usersNew = remove(userId, model.users)
 
-  const roomNew: RoomModel<Game.BackendModel> = {
+  const roomNew: RoomModel = {
     ...room,
     events: [...room.events, ["Left", { userId }]],
   }
@@ -291,6 +289,7 @@ export const leaveRoom = (
 
   if (!nextHost) {
     return Result.Ok({
+      ...model,
       users: usersNew,
       rooms: remove(room.roomId, model.rooms),
     })
@@ -305,6 +304,7 @@ export const leaveRoom = (
   }
 
   return Result.Ok({
+    ...model,
     users: usersNew,
     rooms: roomsNew,
   })
@@ -338,19 +338,18 @@ export const startGame = (
     return Result.Err("user_is_not_the_host")
   }
 
-  if (room.game.type === "Some") {
+  const game = model.games[room.roomId]
+
+  if (game) {
     return Result.Err("game_already_started")
   }
 
   const modelNew: Model = {
     ...model,
-    rooms: {
-      ...model.rooms,
-      [room.roomId]: {
-        ...room,
-        game: Option.Some(initGame(gameName)),
-      },
-    },
+    games: {
+      ...model.games,
+      [room.roomId]: Game.Backend.init(gameName)
+    }
   }
 
   return Result.Ok(modelNew)
@@ -384,19 +383,15 @@ export const stopGame = (
     return Result.Err("user_is_not_the_host")
   }
 
-  if (room.game.type === "None") {
+  const game = model.games[room.roomId]
+
+  if (!game) {
     return Result.Err("game_already_stopped")
   }
 
   const modelNew: Model = {
     ...model,
-    rooms: {
-      ...model.rooms,
-      [room.roomId]: {
-        ...room,
-        game: Option.None,
-      },
-    },
+    games: remove(room.roomId, model.games)
   }
 
   return Result.Ok(modelNew)

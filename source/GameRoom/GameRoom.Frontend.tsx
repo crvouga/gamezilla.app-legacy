@@ -20,7 +20,7 @@ import {
   FrontendModel,
   FrontendMsg,
   RoomModel,
-  RoomsModel,
+  SharedModel,
   ToFrontend
 } from "./Types"
 
@@ -36,10 +36,9 @@ export type Model = FrontendModel
 
 export const init: [Model, Cmd.Cmd<Msg>] = [
   {
-    rooms: {
-      rooms: {},
-      users: {}
-    },
+    rooms: {},
+    users: {},
+    games: {},
     createRoom: RemoteData.NotAsked,
     joinRoom: RemoteData.NotAsked,
     leaveRoom: RemoteData.NotAsked,
@@ -153,23 +152,23 @@ export const update = (
     }
 
     case "Game": {
-      const user = model.rooms.users[currentUserId]
+      const user = model.users[currentUserId]
 
       if (!user) {
         return [model, Cmd.None]
       }
 
-      const room = model.rooms.rooms[user.roomId]
+      const room = model.rooms[user.roomId]
 
       if (!room) {
         return [model, Cmd.None]
       }
 
-      if (room.game.type === "None") {
+      const game = model.games[room.roomId]
+
+      if (!game) {
         return [model, Cmd.None]
       }
-
-      const game = room.game.value
 
       const [gameNew, gameCmd] = Game.Frontend.update(
         { currentUserId },
@@ -180,16 +179,9 @@ export const update = (
       return [
         {
           ...model,
-          rooms: {
-            ...model.rooms,
-            rooms: {
-              ...model.rooms.rooms,
-              [room.roomId]: {
-                ...room,
-                game: gameNew,
-              },
-            },
-          },
+          games: {
+            [room.roomId]: gameNew
+          }
         },
         pipe(gameCmd, Cmd.map(tag("Game"))),
       ]
@@ -217,7 +209,9 @@ export const updateFromBackend = (
         ["Profile", ["FindMany", { userIds }]],
       ]
   
-      return [{ ...model, rooms:  msg[1] }, Cmd.None, [action]]
+      const sharedModel = msg[1]
+
+      return [{ ...model, ...sharedModel }, Cmd.None, [action]]
     }
 
     case "CreateRoomResulted": {
@@ -358,7 +352,7 @@ export const updateFromBackend = (
 }
 
 const updateRoom = <
-  TResult extends Result.Result<TProblem, RoomsModel<Game.FrontendModel>>,
+  TResult extends Result.Result<TProblem, SharedModel>,
   TProblem extends string,
 >(
   model: Model,
@@ -403,23 +397,23 @@ export const subscriptions = (
   { currentUserId }: { currentUserId: UserId.UserId },
   model: Model,
 ): Sub.Sub<Msg> => {
-  const user = model.rooms.users[currentUserId]
+  const user = model.users[currentUserId]
 
   if (!user) {
     return Sub.None
   }
 
-  const room = model.rooms.rooms[user.roomId]
+  const room = model.rooms[user.roomId]
 
   if (!room) {
     return Sub.None
   }
 
-  if (room.game.type === "None") {
+  const game = model.games[room.roomId]
+
+  if (!game) {
     return Sub.None
   }
-
-  const game = room.game.value
 
   return pipe(Game.Frontend.subscriptions(game), Sub.map(tag("Game")))
 }
@@ -444,19 +438,21 @@ export const view = (
   },
   model: Model,
 ): UI.View<Msg> => {
-  const user = model.rooms.users[currentUserId]
+  const user = model.users[currentUserId]
 
   if (!user) {
     return viewNotInRoom({ currentUserId, store }, model)
   }
 
-  const room = model.rooms.rooms[user.roomId]
+  const room = model.rooms[user.roomId]
 
   if (!room) {
     return viewNotInRoom({ currentUserId, store }, model)
   }
 
-  if (room.game.type === "None") {
+  const game = model.games[room.roomId]
+
+  if (!game) {
     return viewNotInGame(
       {
         currentUserId,
@@ -466,8 +462,6 @@ export const view = (
       model,
     )
   }
-
-  const game = room.game.value
 
   return (dispatch) => {
     return (
@@ -494,7 +488,7 @@ export const viewNotInRoom =
     model: Model,
   ): UI.View<Msg> =>
   (dispatch) => {
-    const rooms = Object.values(model.rooms.rooms)
+    const rooms = Object.values(model.rooms)
     return (
       <UI.FillBox>
         <UI.Header
@@ -531,7 +525,7 @@ export const viewNotInRoom =
           {rooms.map((room) => {
             const profiles = Object.values(store.Profile).filter(
               (profile) =>
-                model.rooms.users[profile.userId]?.roomId === room.roomId,
+                model.users[profile.userId]?.roomId === room.roomId,
             )
             return (
               <UI.ListItemButton
@@ -539,7 +533,8 @@ export const viewNotInRoom =
                 onClick={() => {
                   dispatch([
                     "JoinRoom",
-                    { userId: currentUserId, roomId: room.roomId },
+                    {
+                       userId: currentUserId, roomId: room.roomId },
                   ])
                 }}
               >
@@ -576,7 +571,7 @@ const viewNotInGame =
       room,
     }: {
       store: Store.Model
-      room: RoomModel<Game.FrontendModel>
+      room: RoomModel
       currentUserId: UserId.UserId
     },
     model: Model,
@@ -614,7 +609,7 @@ const viewHeader =
       currentUserId,
     }: {
       store: Store.Model
-      room: RoomModel<Game.FrontendModel>
+      room: RoomModel
       currentUserId: UserId.UserId
     },
     model: Model,
@@ -715,15 +710,15 @@ const viewUsersInRoomAvatarGroup =
       room,
     }: {
       store: Store.Model
-      room: RoomModel<Game.FrontendModel>
+      room: RoomModel
     },
     model: Model,
   ): UI.View<Msg> =>
   (dispatch) => {
     const usersInRoom = Object.values(store.Profile).filter(
       (profile) =>
-        model.rooms.users[profile.userId] &&
-        model.rooms.users[profile.userId]?.roomId === room.roomId,
+        model.users[profile.userId] &&
+        model.users[profile.userId]?.roomId === room.roomId,
     )
 
     return (
@@ -882,17 +877,19 @@ export const viewBanner =
       return <></>
     }
 
-    const user = model.rooms.users[currentUserId]
+    const user = model.users[currentUserId]
 
     if (!user) {
       return <></>
     }
 
-    const room = model.rooms.rooms[user.roomId]
+    const room = model.rooms[user.roomId]
 
     if (!room) {
       return <></>
     }
+
+    const game = model.games[room.roomId]
 
     return (
       <UI.Paper
@@ -920,10 +917,10 @@ export const viewBanner =
           }}
           onClick={() => dispatch(["ClickedBanner"])}
         >
-          {room.game.type === "Some" ? (
+          {game ? (
             <UI.Box sx={{ width: bannerHeight }}>
               <UI.AspectRatio aspectRatio={[1, 1]}>
-                <Games.CoverArt gameName={room.game.value[0]} />
+                <Games.CoverArt gameName={game[0]} />
               </UI.AspectRatio>
             </UI.Box>
           ) : (
@@ -931,19 +928,19 @@ export const viewBanner =
               variant="square"
               sx={{ width: bannerHeight, height: bannerHeight }}
             >
-              <UI.Icons.Games />
+              <UI.Icons.Gamepad />
             </UI.Avatar>
           )}
 
           <UI.Box sx={{ marginLeft: 2 }}>
-            {room.game.type === "Some" ? (
+            {game ? (
               <>
                 <UI.Typography
                   align="left"
                   variant="h6"
                   sx={{ marginBottom: -1 / 2 }}
                 >
-                  {Game.gameNameToString(room.game.value[0])}
+                  {Game.gameNameToString(game[0])}
                 </UI.Typography>
 
                 <UI.Typography

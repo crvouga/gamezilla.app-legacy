@@ -1,6 +1,6 @@
 import { ClientId } from "../../../Bridge/Bridge"
 import { Cmd, Sub } from "../../../Core"
-import { BackendModel, BackendMsg, initGame, ToBackend } from "./TicTacToe.Types"
+import { BackendModel, BackendMsg, initSharedModel, ToBackend } from "./TicTacToe.Types"
 
 //
 //
@@ -12,7 +12,7 @@ import { BackendModel, BackendMsg, initGame, ToBackend } from "./TicTacToe.Types
 
 export type Model = BackendModel
 
-export const init: Model = initGame
+export const init: Model = initSharedModel
 
 //
 //

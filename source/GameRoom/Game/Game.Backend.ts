@@ -15,6 +15,23 @@ import { ClientId } from "../../Data";
 
 export type Model = BackendModel;
 
+export const init = (gameName: Model[0]): Model => {
+  switch(gameName) {
+    case 'ConnectFour': {
+      return ['ConnectFour',ConnectFour.Backend.init ]
+    }
+
+    case 'Snake': {
+      return ['Snake',Snake.Backend.init]
+    }
+
+    case 'TicTacToe': {
+      return ['TicTacToe',TicTacToe.Backend.init]
+    }
+  }
+
+}
+
 //
 //
 //

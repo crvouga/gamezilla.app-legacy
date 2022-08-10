@@ -1,7 +1,7 @@
 import { Cmd } from "../../../Core"
 import { ConnectFour } from "../../../Games"
 import * as UI from "../../../UI"
-import { FrontendModel, FrontendMsg, ToBackend, ToFrontend } from "./ConnectFour.Types"
+import { FrontendModel, FrontendMsg, initSharedModel, ToBackend, ToFrontend } from "./ConnectFour.Types"
 
 //
 //
@@ -13,9 +13,7 @@ import { FrontendModel, FrontendMsg, ToBackend, ToFrontend } from "./ConnectFour
 
 export type Model = FrontendModel
 
-export const init: Model = {
-  columns: ConnectFour.emptyColumns,
-}
+export const init: Model = initSharedModel
 
 //
 //

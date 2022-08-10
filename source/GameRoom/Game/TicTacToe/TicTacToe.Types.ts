@@ -18,7 +18,7 @@ export type SharedModel = {
   }
 }
 
-export const initGame: SharedModel = {
+export const initSharedModel: SharedModel = {
   board: Board.emptyBoard,
   players: {
     O: { type: "None" },

@@ -1,6 +1,6 @@
 import { ClientId } from "../../../Bridge/Bridge"
 import { Cmd, Sub } from "../../../Core"
-import { BackendModel, BackendMsg, initGame, ToBackend } from "./ConnectFour.Types"
+import { BackendModel, BackendMsg, initSharedModel, ToBackend } from "./ConnectFour.Types"
 
 //
 //
@@ -12,7 +12,7 @@ import { BackendModel, BackendMsg, initGame, ToBackend } from "./ConnectFour.Typ
 
 export type Model = BackendModel
 
-export const init: Model = initGame
+export const init: Model = initSharedModel
 
 //
 //
