@@ -3,7 +3,7 @@ import { BackendModel, BackendMsg, ToBackend } from "./Game.Types";
 import * as ConnectFour from "./ConnectFour"
 import * as Snake from "./Snake"
 import * as TicTacToe from "./TicTacToe"
-import { ClientId } from "../../Data";
+import {RoomId, ClientId } from "../../Data";
 
 //
 //
@@ -67,7 +67,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   }
 };
 
-export const updateFromFrontend = (clientId: ClientId.ClientId, msg: ToBackend, model: Model): [Model, Cmd.Cmd<Msg>] => {
+export const updateFromFrontend = ({clientId, roomId}: {roomId: RoomId.RoomId, clientId: ClientId.ClientId}, msg: ToBackend, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch(msg[0]) {
     case 'ConnectFour': {
       if(model[0] === 'ConnectFour') {
@@ -85,7 +85,7 @@ export const updateFromFrontend = (clientId: ClientId.ClientId, msg: ToBackend, 
 
     case 'Snake': {
       if(model[0] === 'Snake') {
-        return tagUpdate("Snake", Snake.Backend.updateFromFrontend(clientId,msg[1], model[1]))
+        return tagUpdate("Snake", Snake.Backend.updateFromFrontend({clientId, roomId},msg[1], model[1]))
       }
       return [model, Cmd.None]
     } 

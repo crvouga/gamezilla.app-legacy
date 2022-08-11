@@ -1,6 +1,8 @@
+
 import * as ReactDomClient from "react-dom/client"
+import { io, Socket } from "socket.io-client"
 import * as Auth from "./Auth"
-import { fromBackend } from "./Bridge/Frontend"
+import * as Bridge from "./Bridge"
 import * as Connection from "./Connection"
 import {
   andThen,
@@ -13,7 +15,7 @@ import {
   pipe,
   RemoteData,
   Sub,
-  tag,
+  tag
 } from "./Core"
 import * as GameRoom from "./GameRoom"
 import * as Pages from "./Pages"
@@ -386,7 +388,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
       ]
     }
 
-    case "BackendToFrontend":
+    case "[Backend]":
       return updateFromBackend(msg[1], model)
 
     default:
@@ -521,7 +523,7 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
     pipe(Pages.subscriptions(model.page), Sub.map(tag("Page"))),
     pipe(Auth.subscriptions, Sub.map(tag("Auth"))),
     pipe(Connection.subscriptions, Sub.map(tag("Connection"))),
-    fromBackend((toFrontend) => ["BackendToFrontend", toFrontend]),
+    Bridge.fromBackend((toFrontend) => ["[Backend]", toFrontend]),
   ])
 }
 
@@ -599,18 +601,18 @@ const viewMain = (model: Model): UI.View<Msg> => {
       return viewLoading({ reason: "Connecting..." })
 
     case "Disconnected":
-      return viewLoading({ reason: "Disconnected." })
+      return viewLoading({ reason: "Connecting..." })
 
     case "Reconnecting":
-      return viewLoading({ reason: "Reconnecting..." })
+      return viewLoading({ reason: "Connecting..." })
 
     case "Connected": {
       switch (status.type) {
         case "AuthLoading":
-          return viewLoading({ reason: "Authenitcation loading..." })
+          return viewLoading({ reason: "Authenticating..." })
 
         case "ProfileLoading":
-          return viewLoading({ reason: "Profile loading..." })
+          return viewLoading({ reason: "Loading profile..." })
 
         case "ProfileError":
           return viewError({ reason: "Failed to load profile." })
@@ -717,6 +719,51 @@ const root = ReactDomClient.createRoot(document.getElementById("root")!)
 Browser.run(program, (dom) => {
   root.render(dom)
 })
+
+
+
+// 
+// 
+// 
+// 
+// 
+// 
+// 
+
+const productionBackendUrl = "https://gamezilla.herokuapp.com/"
+
+const developmentBackendUrl = `http://localhost:${Bridge.backendServerPort}/`
+
+export const backendUrl =
+  process.env.NODE_ENV === "production"
+    ? productionBackendUrl
+    : developmentBackendUrl
+
+const socket: Socket<Bridge.ServerToClientEvents, Bridge.ClientToServerEvents> =
+  io(backendUrl)
+
+Bridge.connectionStatus$.next("Connecting")
+
+socket.on("connect", () => {
+  Bridge.connectionStatus$.next("Connected")
+})
+
+socket.on("connect_error", () => {
+  Bridge.connectionStatus$.next("Reconnecting")
+})
+
+socket.on("disconnect", () => {
+  Bridge.connectionStatus$.next("Disconnected")
+})
+
+socket.on("ToFrontend", (msg) => {
+  Bridge.toFrontend$.next(msg)
+})
+
+Bridge.sendToBackend$.subscribe(msg => {
+  socket.emit("ToBackend", msg)
+})
+
 
 //
 //

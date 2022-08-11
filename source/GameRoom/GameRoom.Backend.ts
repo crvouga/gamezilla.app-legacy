@@ -1,4 +1,4 @@
-import * as Bridge from "../Bridge/Backend"
+import * as Bridge from "../Bridge"
 import { Cmd, exhaustive, Option, pipe, Result } from "../Core"
 import { remove } from "../Core/Record"
 import { ClientId, RoomId, UserId } from "../Data"
@@ -15,7 +15,7 @@ import {
   StopGameResult,
   ToBackend,
   ToFrontend
-} from "./Types"
+} from "./GameRoom.Types"
 
 //
 //
@@ -50,20 +50,15 @@ export const update = (
   switch (msg[0]) {
     case "Game": {
 
-      const roomId = msg[1].roomId
-      const gameMsg = msg[1].msg
-
-      const room = model.rooms[roomId]
-
-      if(!room) {
-        return [model, Cmd.None]
-      }
-
+      const roomId = msg[1][0]
+            
       const game = model.games[roomId]
-
+      
       if(!game) {
         return [model, Cmd.None]
       }
+      
+      const gameMsg = msg[1][1]
 
       const [gameNew, gameCmd] = Game.Backend.update(gameMsg, game)
       
@@ -75,7 +70,7 @@ export const update = (
         }
       }
 
-      return [modelNew, pipe(gameCmd, Cmd.map((msg) => ['Game', {msg, roomId}]))]
+      return [modelNew, pipe(gameCmd, Cmd.map((msg) => ['Game' as 'Game', [roomId,msg]]))]
     }
   }
 }
@@ -89,7 +84,35 @@ export const updateFromFrontend = (
     case "Init": {
       return [
         model,
-        Cmd.batch([sendToFrontend(clientId, ["Sync", model])]),
+        Cmd.batch([sendToFrontend([clientId], ["Sync", model])]),
+      ]
+    }
+
+    case 'Game': {
+
+      const roomId = msg[1][0]
+      const gameMsg =  msg[1][1]
+      
+
+      const game = model.games[roomId]
+
+      if(!game) {
+        return [model, Cmd.None]
+      }
+
+      const [gameNew, gameCmd] = Game.Backend.updateFromFrontend({clientId, roomId}, gameMsg, game )
+
+      const modelNew: Model = {
+        ...model,
+        games: {
+          ...model.games,
+          [roomId]: gameNew
+        }
+      }
+
+      return [
+        modelNew,
+        pipe(gameCmd, Cmd.map((msg):Msg => ['Game', [roomId, msg]]))
       ]
     }
 
@@ -133,7 +156,7 @@ const updateRoom = <
   toFrontend: ToFrontend,
 ): [Model, Cmd.Cmd<BackendMsg>] => {
   if (result.type === "Err") {
-    return [model, sendToFrontend(clientId, toFrontend)]
+    return [model, sendToFrontend([clientId], toFrontend)]
   }
 
   const modelNew: Model = {
@@ -145,7 +168,7 @@ const updateRoom = <
     modelNew,
     Cmd.batch([
       broadcast(["Sync", modelNew]),
-      sendToFrontend(clientId, toFrontend),
+      sendToFrontend([clientId], toFrontend),
     ]),
   ]
 }
@@ -412,7 +435,7 @@ const broadcast = (toFrontend: ToFrontend) => {
 }
 
 const sendToFrontend = (
-  clientIds: ClientId.ClientId | ClientId.ClientId[],
+  clientIds: ClientId.ClientId[],
   toFrontend: ToFrontend,
 ) => {
   return Bridge.sendToFrontend(clientIds, ["GameRoom", toFrontend])

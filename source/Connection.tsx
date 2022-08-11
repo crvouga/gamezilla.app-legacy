@@ -1,4 +1,4 @@
-import { ConnectionStatus, onConnectionChanged } from "./Bridge/Frontend"
+import * as Bridge from "./Bridge"
 import { Cmd, Sub } from "./Core"
 
 //
@@ -10,7 +10,7 @@ import { Cmd, Sub } from "./Core"
 //
 //
 
-export type Model = ConnectionStatus
+export type Model = Bridge.ConnectionStatus
 
 export const init: Model = "Connecting"
 
@@ -39,6 +39,6 @@ export const update = (msg: Msg, _: Model): [Model, Cmd.Cmd<Msg>] => {
 //
 //
 
-export const subscriptions: Sub.Sub<Msg> = onConnectionChanged(
+export const subscriptions: Sub.Sub<Msg> = Bridge.onConnectionChanged(
   (connectionStatus): Msg => ["Changed", connectionStatus],
 )

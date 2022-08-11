@@ -38,7 +38,7 @@ export type Model = {
   }
 }
 
-export type Status = { type: "Paused" } | { type: "Playing" }
+export type Status =  "Paused"  |  "Playing" 
 
 export type MouseStatus = "active" | "inactive"
 
@@ -51,7 +51,7 @@ export type MouseStatus = "active" | "inactive"
 //
 
 export const init: Model = {
-  status: { type: "Paused" },
+  status:  "Paused",
   tickRate: 1000 / 7,
   head: { x: 4, y: 6 },
   tail: [

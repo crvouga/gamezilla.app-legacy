@@ -1,4 +1,4 @@
-import { Option, RemoteData, Result, Unit } from "../Core"
+import { RemoteData, Result, Unit } from "../Core"
 import { RoomId, UserId } from "../Data"
 import * as Game from "./Game"
 
@@ -62,6 +62,7 @@ export type ToFrontend =
   | JoinRoomResulted
   | StartGameResulted
   | StopGameResulted
+  | ["Game", [RoomId.RoomId, Game.ToFrontend]]
   
 
 export type ToBackend =
@@ -71,8 +72,9 @@ export type ToBackend =
   | JoinRoom
   | StartGame
   | StopGame
+  | ["Game", [RoomId.RoomId, Game.ToBackend]]
 
-export type BackendMsg = ["Game",  {roomId: RoomId.RoomId, msg: Game.BackendMsg}]
+export type BackendMsg = ["Game", [RoomId.RoomId, Game.BackendMsg]]
 
 export type FrontendMsg =
   | ["ClickedBack"]
@@ -87,7 +89,7 @@ export type FrontendMsg =
   | LeaveRoom
   | StartGame
   | StopGame
-  | ["Game", Game.FrontendMsg]
+  | ["Game", [RoomId.RoomId, Game.FrontendMsg]]
 
 //
 //

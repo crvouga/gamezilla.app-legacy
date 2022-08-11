@@ -1,11 +1,12 @@
-import { ClientId } from "../../../Bridge/Bridge"
-import { Cmd, Sub } from "../../../Core"
-import { BackendModel, BackendMsg, initSharedModel, ToBackend } from "./Snake.Types"
+import * as Bridge from "../../../Bridge"
+import { Cmd, Sub, Time } from "../../../Core"
+import { ClientId, RoomId } from "../../../Data"
+import { BackendModel, BackendMsg, changeDirection, initSharedModel, ToBackend, ToFrontend, toggleStatus } from "./Snake.Types"
 
 //
 //
 //
-// ModelØ
+// Model
 //
 //
 //
@@ -13,6 +14,22 @@ import { BackendModel, BackendMsg, initSharedModel, ToBackend } from "./Snake.Ty
 export type Model = BackendModel
 
 export const init: Model = initSharedModel
+
+// 
+// 
+// 
+// Bridge
+// 
+// 
+// 
+
+export const sendToFrontend = ({clientId, roomId}:{clientId: ClientId.ClientId, roomId: RoomId.RoomId}, msg: ToFrontend) => {
+  return Bridge.sendToFrontend([clientId], ['GameRoom', ['Game', [ roomId, ['Snake', msg] ]]])
+}
+
+export const broadcast = ({ roomId}:{ roomId: RoomId.RoomId}, msg: ToFrontend) => {
+  return Bridge.broadcast(['GameRoom', ['Game', [ roomId, ['Snake', msg] ]]])
+}
 
 //
 //
@@ -26,23 +43,49 @@ export type Msg = BackendMsg
 
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch(msg[0]) {
-    case 'Tick': {
+    case 'Tick': {      
       return [model, Cmd.None]    
     }
   }
 }
 
 export const updateFromFrontend = (
-  clientId: ClientId,
+  {clientId, roomId}:{clientId: ClientId.ClientId, roomId: RoomId.RoomId},
   msg: ToBackend,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
   switch(msg[0]) {
+    case 'ToggleStatus': {
+      const result = toggleStatus(msg[1], model)
+
+      const toFrontend = sendToFrontend({clientId, roomId}, ['ToggleStatusResulted', result])
+
+      if(result.type === 'Err') {
+        return [model, toFrontend]  
+      }
+
+      const modelNew = result.value
+
+      return [modelNew, Cmd.batch([toFrontend, broadcast({roomId}, ['Sync', modelNew])])]
+    }
+
     case 'ChangeDirection': {
-      return [model, Cmd.None]
+      const result = changeDirection(msg[1], model)
+
+      const toFrontend = sendToFrontend({clientId, roomId}, ['ToggleStatusResulted', result])
+
+      if(result.type === 'Err') {
+        return [model, toFrontend]  
+      }
+
+      const modelNew = result.value
+
+      return [modelNew, Cmd.batch([toFrontend, broadcast({roomId}, ['Sync', modelNew])])]
     }
   }
 }
+
+
 
 //
 //
@@ -52,6 +95,14 @@ export const updateFromFrontend = (
 //
 //
 
-export const subscriptions = (): Sub.Sub<Msg> => {
-  return Sub.batch<Msg>([])
+export const subscriptions = (model: Model): Sub.Sub<Msg> => {
+  switch(model.status) {
+    case 'Paused': {
+      return Sub.None
+    }
+
+    case 'Playing': {
+      return Time.every<Msg>(model.tickRate, () => ['Tick'])
+    }
+  }
 }

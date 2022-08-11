@@ -1,16 +1,17 @@
 import { useLayoutEffect, useRef } from "react"
+import * as Bridge from "../../../Bridge"
 import {
   Cmd,
   exhaustive,
   Keyboard,
-   Option,
-    Sub
+  Option,
+  Sub
 } from "../../../Core"
+import { RoomId, UserId } from "../../../Data"
 import { Snake } from "../../../Games"
 import * as Route from "../../../Route"
 import * as UI from "../../../UI"
-
-import { FrontendModel, FrontendMsg, initSharedModel, ToFrontend } from "./Snake.Types"
+import { FrontendModel, FrontendMsg, initSharedModel, ToBackend, ToFrontend } from "./Snake.Types"
 
 //
 //
@@ -24,8 +25,20 @@ export type Model = FrontendModel
 
 export const init: Model = {
   ...initSharedModel,
-  mouseStatus: 'inactive', 
+  mouseStatus: "Inactive",
   touched: Option.None
+}
+
+// 
+// 
+// 
+// Bridge
+// 
+// 
+// 
+
+export const sendToBackend = (roomId: RoomId.RoomId, toBackend: ToBackend) => {
+  return Bridge.sendToBackend(['GameRoom', ['Game', [roomId, ['Snake', toBackend]]]])
 }
 
 //
@@ -38,7 +51,7 @@ export const init: Model = {
 
 export type Msg = FrontendMsg
 
-export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
+export const update = ({currentRoomId}: {currentRoomId: RoomId.RoomId}, msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
     case "ClickedRestart":
       return [init, Cmd.None]
@@ -49,19 +62,18 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
     case "MouseUpBoard":
       return [model, Cmd.None]
       
-
     case "MouseDownBoard":
       return [model, Cmd.None]
       
-
     case "PressedKeyDown":
       return [
         model,
         Cmd.None,
       ]
 
-    case "ClickedToggle":
-      return [model, Cmd.None]
+    case "ToggleStatus":{
+      return [model, sendToBackend(currentRoomId, msg)]
+    }
 
     case "AudioFailed":
       return [model, Cmd.None]
@@ -123,6 +135,15 @@ export const updateFromBackend = (msg: ToFrontend, model: Model): [Model, Cmd.Cm
       const sharedModel = result.value
       return [{...model, ...sharedModel}, Cmd.None]
     }
+
+    case 'ToggleStatusResulted': {
+      const result = msg[1]
+      if(result.type === 'Err') {
+        return [model, Cmd.None]
+      }
+      const sharedModel = result.value
+      return [{...model, ...sharedModel}, Cmd.None]
+    }
   }
 }
 
@@ -149,7 +170,7 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
 //
 
 export const view =
-  (model: Model): UI.View<Msg> =>
+  ({currentUserId}: {currentUserId: UserId.UserId},model: Model): UI.View<Msg> =>
   (dispatch) => {
     return (
       <UI.FillBox>
@@ -157,6 +178,11 @@ export const view =
           model={model}
           dispatch={dispatch}
         />
+        <UI.Toolbar>
+          <UI.Button onClick={() => dispatch(['ToggleStatus', {userId: currentUserId}])}>
+            {model.status ===  "Paused" ? "Play" : "Pause"}
+          </UI.Button>
+        </UI.Toolbar>
       </UI.FillBox>
     )
   }
