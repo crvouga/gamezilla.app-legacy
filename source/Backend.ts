@@ -1,6 +1,8 @@
-import { ClientId } from "./Data"
-import * as Bridge from "./Bridge/Backend"
+import * as Http from "http"
+import * as Socket from "socket.io"
+import * as Bridge from "./Bridge"
 import { Cmd, Debug, pipe, Platform, Sub, tag } from "./Core"
+import { ClientId } from "./Data"
 import * as GameRoom from "./GameRoom/GameRoom.Backend"
 import { BackendModel, BackendMsg, ToBackend } from "./Types"
 
@@ -41,7 +43,7 @@ export const update = (
       const clientId = msg[1]
       return [
         model,
-        Bridge.sendToFrontend(clientId, [
+        Bridge.sendToFrontend([clientId], [
           "GameRoom",
           ["Sync", model.gameRoom],
         ]),
@@ -126,15 +128,60 @@ Platform.run(program)
 console.clear()
 console.log("[backend] [program] running")
 
-program.state$.subscribe((state) => {
-  console.log(
-    JSON.stringify(
-      {
-        msg: Debug.formatMsg(state.msg),
-        model: state.model,
-      },
-      null,
-      4,
-    ),
-  )
+//
+//
+//
+// Server
+//
+//
+//
+
+const requestListener: Http.RequestListener = (_request, response) => {
+  const state = program.state$.getValue()
+  response.end(JSON.stringify({ model: state.model, msg: state.msg }))
+}
+
+const httpServer = Http.createServer(requestListener)
+
+const socketServer = new Socket.Server<Bridge.ClientToServerEvents, Bridge.ServerToClientEvents>(
+  httpServer,
+  {
+    cors: {
+      origin: "*",
+    },
+  },
+)
+
+socketServer.on("connection", (socket) => {  
+  if(ClientId.is(socket.id)) {
+    Bridge.onConnect$.next(socket.id)
+  }
+
+  socket.on("disconnect", () => {
+    if(ClientId.is(socket.id)) {
+      Bridge.onDisconnect$.next(socket.id)
+    }
+  })
+
+  socket.on("ToBackend", (msg) => {
+    if(ClientId.is(socket.id)) {
+      Bridge.toBackend$.next([socket.id, msg])
+    }
+  })
+})
+
+Bridge.sendToFrontend$.subscribe(([clientIds, msg]) => {
+  socketServer.to(clientIds).emit("ToFrontend", msg)
+})
+
+Bridge.broadcast$.subscribe((msg) => {
+  socketServer.emit("ToFrontend", msg)
+})
+
+const port = Number(process.env.PORT) || Bridge.backendServerPort
+
+httpServer.listen(port, () => {
+  console.clear()
+  console.log(`[backend] http server running at:`)
+  console.log(`[backend] http://localhost:${port}/`)
 })

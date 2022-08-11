@@ -42,7 +42,7 @@ export type BackendModel = {
 //
 
 export type FrontendMsg =
-  | ["BackendToFrontend", ToFrontend]
+  | ["[Backend]", ToFrontend]
   | ["Route", Route.Msg]
   | ["Snackbar", Snackbar.Msg]
   | ["GameRoom", GameRoom.FrontendMsg]

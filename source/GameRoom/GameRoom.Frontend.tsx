@@ -1,13 +1,11 @@
-import { sendToBackend } from "../Bridge/Frontend"
+import * as Bridge from "../Bridge"
 import {
   Cmd,
   exhaustive,
   pipe,
   RemoteData,
   Result,
-  Sub,
-  tag,
-  Unit
+  Sub, Unit
 } from "../Core"
 import { RoomId, UserId } from "../Data"
 import * as Games from "../Games"
@@ -22,7 +20,7 @@ import {
   RoomModel,
   SharedModel,
   ToFrontend
-} from "./Types"
+} from "./GameRoom.Types"
 
 //
 //
@@ -46,7 +44,7 @@ export const init: [Model, Cmd.Cmd<Msg>] = [
     stopGame: RemoteData.NotAsked,
     modal: "Closed",
   },
-  sendToBackend(["GameRoom", ["Init"]]),
+  Bridge.sendToBackend(["GameRoom", ["Init"]]),
 ]
 
 //
@@ -119,35 +117,35 @@ export const update = (
     case "CreateRoom": {
       return [
         { ...model, createRoom: RemoteData.Loading },
-        sendToBackend(["GameRoom", msg]),
+        Bridge.sendToBackend(["GameRoom", msg]),
       ]
     }
 
     case "JoinRoom": {
       return [
         { ...model, joinRoom: RemoteData.Loading },
-        sendToBackend(["GameRoom", msg]),
+        Bridge.sendToBackend(["GameRoom", msg]),
       ]
     }
 
     case "LeaveRoom": {
       return [
         { ...model, leaveRoom: RemoteData.Loading },
-        sendToBackend(["GameRoom", msg]),
+        Bridge.sendToBackend(["GameRoom", msg]),
       ]
     }
 
     case "StartGame": {
       return [
         { ...model, startGame: RemoteData.Loading },
-        sendToBackend(["GameRoom", msg]),
+        Bridge.sendToBackend(["GameRoom", msg]),
       ]
     }
 
     case "StopGame": {
       return [
         { ...model, stopGame: RemoteData.Loading },
-        sendToBackend(["GameRoom", msg]),
+        Bridge.sendToBackend(["GameRoom", msg]),
       ]
     }
 
@@ -158,32 +156,34 @@ export const update = (
         return [model, Cmd.None]
       }
 
-      const room = model.rooms[user.roomId]
+      const roomId = msg[1][0]
 
-      if (!room) {
+      if(user.roomId !== roomId) {
         return [model, Cmd.None]
       }
 
-      const game = model.games[room.roomId]
+      const game = model.games[roomId]
 
       if (!game) {
         return [model, Cmd.None]
       }
 
+      const gameMsg = msg[1][1]
+
       const [gameNew, gameCmd] = Game.Frontend.update(
-        { currentUserId },
-        msg[1],
-        game,
+        { currentUserId, currentRoomId: roomId, }, 
+        gameMsg, 
+        game
       )
 
       return [
         {
           ...model,
           games: {
-            [room.roomId]: gameNew
+            [roomId]: gameNew
           }
         },
-        pipe(gameCmd, Cmd.map(tag("Game"))),
+        pipe(gameCmd, Cmd.map(msg => ["Game" as const, [roomId, msg]])),
       ]
     }
 
@@ -212,6 +212,30 @@ export const updateFromBackend = (
       const sharedModel = msg[1]
 
       return [{ ...model, ...sharedModel }, Cmd.None, [action]]
+    }
+
+    case 'Game': {
+      const roomId = msg[1][0]
+      
+      const game = model.games[roomId]
+
+      if(!game) {
+        return [model, Cmd.None, []]
+      }
+
+      const gameMsg = msg[1][1]
+
+      const [gameNew, gameCmd] = Game.Frontend.updateFromBackend(gameMsg, game)
+
+      const modelNew: Model = {
+        ...model,
+        games: {
+          ...model.games,
+          [roomId]: gameNew
+        }
+      }
+
+      return [modelNew, pipe(gameCmd, Cmd.map(msg => ['Game' as 'Game', [roomId, msg]])), []]
     }
 
     case "CreateRoomResulted": {
@@ -305,7 +329,7 @@ export const subscriptions = (
     return Sub.None
   }
 
-  return pipe(Game.Frontend.subscriptions(game), Sub.map(tag("Game")))
+  return pipe(Game.Frontend.subscriptions(game), Sub.map((msg): Msg => ["Game", [room.roomId, msg]]))
 }
 
 //
@@ -359,7 +383,7 @@ export const view = (
         {viewHeader({ store, room, currentUserId }, model)(dispatch)}
         {pipe(
           Game.Frontend.view({ currentUserId, store }, game),
-          UI.map(tag("Game")),
+          UI.map((msg):Msg => ["Game", [room.roomId, msg]]), 
         )(dispatch)}
       </>
     )

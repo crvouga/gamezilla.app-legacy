@@ -506,7 +506,7 @@ export const withDebugger = <Model, Msg, Dom>(
 
     const toPayload = (action: unknown): unknown => {
       if (Array.isArray(action) && typeof action[0] === "string") {
-        return toPayload(action[1])
+        return toPayload(action[action.length - 1])
       }
 
       return action

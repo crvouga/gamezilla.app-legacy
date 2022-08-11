@@ -1,5 +1,5 @@
 import { Cmd, pipe, Sub, tag, tagUpdate } from "../../Core"
-import { UserId } from "../../Data"
+import { RoomId, UserId } from "../../Data"
 import * as Store from "../../Store"
 import * as UI from "../../UI"
 import * as ConnectFour from "./ConnectFour"
@@ -44,7 +44,7 @@ export const init = (gameName: Model[0]): Model => {
 export type Msg = FrontendMsg
 
 export const update = (
-  { currentUserId }: { currentUserId: UserId.UserId },
+  { currentUserId, currentRoomId }: { currentUserId: UserId.UserId, currentRoomId: RoomId.RoomId },
   msg: Msg,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
@@ -59,7 +59,7 @@ export const update = (
 
     case "Snake": {
       if (msg[0] === "Snake") {
-        return tagUpdate("Snake", Snake.Frontend.update(msg[1], model[1]))
+        return tagUpdate("Snake", Snake.Frontend.update({ currentRoomId }, msg[1], model[1]))
       }
       return [model, Cmd.None]
     }
@@ -154,7 +154,7 @@ export const view = (
     }
 
     case "Snake": {
-      return pipe(Snake.Frontend.view(model[1]), UI.map(tag("Snake")))
+      return pipe(Snake.Frontend.view({currentUserId}, model[1]), UI.map(tag("Snake")))
     }
 
     case "TicTacToe": {

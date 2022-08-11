@@ -22,9 +22,9 @@ export type SharedModel = Snake.Model & {
   player: Player
 }
 
-export type Player = { type: "User"; userId: UserId.UserId } | { type: "None" }
+export type Player = ["User", {userId: UserId.UserId}] | [ "None" ]
 
-export type MouseStatus = "active" | "inactive"
+export type MouseStatus = "Active" | "Inactive"
 
 //
 //
@@ -35,7 +35,7 @@ export type MouseStatus = "active" | "inactive"
 //
 
 export const initSharedModel: SharedModel = {
-  player: { type: "None" },
+  player: ["None"],
  ...Snake.init
 }
 
@@ -50,7 +50,7 @@ export const initSharedModel: SharedModel = {
 export type FrontendMsg = 
   | ["ClickedBack"]
   | ["ClickedRestart"]
-  | ["ClickedToggle"]
+  | ToggleStatus
   | ["AudioFailed"]
   | ["AudioSucceeded"]
   | ["MouseDownBoard"]
@@ -61,9 +61,14 @@ export type FrontendMsg =
 
 export type BackendMsg = ["Tick"]
 
-export type ToBackend = ChangeDirection
+export type ToBackend = 
+  | ChangeDirection 
+  | ToggleStatus
 
-export type ToFrontend = ["Sync", SharedModel] | ChangeDirectionResulted
+export type ToFrontend =  
+  | ["Sync", SharedModel] 
+  | ChangeDirectionResulted 
+  | ToggleStatusResulted
 
 // 
 // 
@@ -82,14 +87,13 @@ export type ChangeDirectionResult = Result.Result<ChangeDirectionProblem, Shared
 
 
 export const changeDirection = ({direction, userId}: ChangeDirection[1], model: SharedModel): ChangeDirectionResult => {
-  if(model.player.type === 'None') {
+  if(model.player[0] === 'None') {
     return Result.Err("user_must_be_the_current_player")
   }
 
-  if(model.player.userId !== userId ) {
+  if(model.player[1].userId !== userId ) {
     return Result.Err("user_must_be_the_current_player")
   }
-
 
   const modelNew: SharedModel = {
     ...model,
@@ -99,39 +103,42 @@ export const changeDirection = ({direction, userId}: ChangeDirection[1], model: 
   return Result.Ok(modelNew)  
 }
 
-
-// 
-// 
 // 
 // 
 // 
 // 
 
-
-export type ChangeStatus = [
-  "ChangeDirection",
-  {status: Snake.Status, userId: UserId.UserId}
+export type ToggleStatus = [
+  "ToggleStatus",
+  {userId: UserId.UserId}
 ]
 
-export type ChangeStatusResulted = ["ChangeStatusResulted", ChangeStatusResult]
+export type ToggleStatusResulted = ["ToggleStatusResulted", ToggleStatusResult]
 
-export type ChangeStatusResult = Result.Result<ChangeStatusProblem, SharedModel>
+export type ToggleStatusResult = Result.Result<"user_must_be_the_current_player", SharedModel>
 
-export type ChangeStatusProblem = "user_must_be_the_current_player"
-
-export const changeStatus = ({status, userId}: ChangeStatus[1], model: SharedModel): ChangeStatusResult => {
-  if(model.player.type === 'None') {
+export const toggleStatus = ({ userId }: ToggleStatus[1], model: SharedModel): ToggleStatusResult => {
+  if(model.player[0] === 'None') {
     return Result.Err("user_must_be_the_current_player")
   }
 
-  if(model.player.userId !== userId) {
+  if(model.player[1].userId !== userId) {
     return Result.Err("user_must_be_the_current_player")
   }
+
 
   const modelNew: SharedModel = {
     ...model,
-    status: status
+    status: model.status === 'Paused' ?  "Paused" :  "Playing"
   }
 
   return Result.Ok(modelNew)
 }
+
+
+// 
+// 
+// 
+// 
+
+// export const step = (model: SharedModel): StepResult => 
