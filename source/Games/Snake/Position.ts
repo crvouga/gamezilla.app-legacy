@@ -1,4 +1,9 @@
-export type Position = { x: number; y: number }
+import { NonNegativeInteger } from "../../Data";
+
+export type Position = { 
+  x: number;
+  y: number;
+}
 
 export const range = ({
   lower,

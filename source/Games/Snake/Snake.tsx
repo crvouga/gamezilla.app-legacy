@@ -50,29 +50,37 @@ export type MouseStatus = "active" | "inactive"
 //
 //
 
+const bounds: Model['bounds'] = {
+  lower: {
+    x: 0,
+    y: 0,
+  },
+  upper: {
+    x: 12,
+    y: 21,
+  },
+}
+
+const head: Model['head'] ={
+  x: Math.floor((bounds.upper.x - bounds.lower.x) / 2) - 3,
+  y: Math.floor((bounds.upper.y - bounds.lower.y) / 2),
+}
+
+const tail: Model['tail'] = [Position.subtract(head, {x: 1, y: 0}),Position.subtract(head, {x: 2, y: 0})]
+
+const food: Model['food'] = Position.add(head, {x: 3, y: 0})
+
 export const init: Model = {
   status:  "Paused",
   tickRate: 1000 / 7,
-  head: { x: 4, y: 6 },
-  tail: [
-    { x: 3, y: 6 },
-    { x: 2, y: 6 },
-  ],
-  food: { x: 7, y: 6 },
+  head,
+  tail,
+  food,
   tailLength: 4,
   foodEatenCount: 0,
   direction: "right",
   directionQueue: [],
-  bounds: {
-    lower: {
-      x: 0,
-      y: 0,
-    },
-    upper: {
-      x: 12,
-      y: 21,
-    },
-  },
+  bounds
 }
 
 

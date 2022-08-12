@@ -1,4 +1,5 @@
 export * as EmailAddress from "./EmailAddress"
+export * as NonNegativeInteger from "./NonNegativeInteger"
 export * as Password from "./Password"
 export * as ProfileAvatar from "./ProfileAvatar"
 export * as UserId from "./UserId"

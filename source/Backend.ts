@@ -1,9 +1,9 @@
 import * as Http from "http"
 import * as Socket from "socket.io"
 import * as Bridge from "./Bridge"
-import { Cmd, Platform, Sub, tagCmd } from "./Core"
+import { Cmd, pipe, Platform, Sub, tag, tagCmd } from "./Core"
 import { ClientId } from "./Data"
-import * as GameRoomBackend from "./GameRoom/GameRoom.Backend"
+import * as GameRoom from "./GameRoom/GameRoom.Backend"
 import { ToBackend } from "./Types"
 
 //
@@ -15,12 +15,12 @@ import { ToBackend } from "./Types"
 //
 
 export type Model = {
-  gameRoom: GameRoomBackend.Model
+  gameRoom: GameRoom.Model
 }
 
 export const init: [Model, Cmd.Cmd<Msg>] = [
   {
-    gameRoom: GameRoomBackend.init,
+    gameRoom: GameRoom.init,
   },
   Cmd.None,
 ]
@@ -35,7 +35,7 @@ export const init: [Model, Cmd.Cmd<Msg>] = [
 
 export type Msg =
 | ["[Frontend]", ClientId.ClientId, ToBackend]
-| ["GameRoom", GameRoomBackend.Msg]
+| ["GameRoom", GameRoom.Msg]
 | ["ClientConnected", ClientId.ClientId]
 | ["ClientDisconnected", ClientId.ClientId]
 
@@ -63,7 +63,7 @@ export const update = (
     }
 
     case "GameRoom": {
-      const [child, childCmd] = GameRoomBackend.update(msg[1], model.gameRoom)
+      const [child, childCmd] = GameRoom.update(msg[1], model.gameRoom)
       return [
         { ...model, gameRoom: child }, tagCmd("GameRoom", childCmd),
       ]
@@ -78,7 +78,7 @@ export const updateFromFrontend = (
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
     case "GameRoom": {
-      const [child, childCmd] = GameRoomBackend.updateFromFrontend(
+      const [child, childCmd] = GameRoom.updateFromFrontend(
         clientId,
         msg[1],
         model.gameRoom,
@@ -98,9 +98,9 @@ export const updateFromFrontend = (
 //
 //
 
-export const subscriptions = (): Sub.Sub<Msg> => {
+export const subscriptions = (model: Model): Sub.Sub<Msg> => {
   return Sub.batch([
-    // pipe(GameRoom.subscriptions(), Sub.map(tag("GameRoom"))),
+    pipe(GameRoom.subscriptions(model.gameRoom), Sub.map(tag("GameRoom"))),
     Bridge.onConnect((clientId) => ["ClientConnected", clientId]),
     Bridge.onDisconnect((clientId) => ["ClientDisconnected", clientId]),
     Bridge.fromFrontend<Msg>((clientId, toBackend) => [
