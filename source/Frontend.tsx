@@ -15,15 +15,15 @@ import {
   pipe,
   RemoteData,
   Sub,
-  tag
+  tag,
+  tagCmd
 } from "./Core"
 import * as GameRoom from "./GameRoom"
 import * as Pages from "./Pages"
 import * as Route from "./Route"
 import * as Snackbar from "./Snackbar"
 import * as Store from "./Store"
-import * as Profile from "./Store/Profile"
-import { FrontendModel, FrontendMsg, ToFrontend } from "./Types"
+import { ToFrontend } from "./Types"
 import * as UI from "./UI"
 
 //
@@ -34,83 +34,16 @@ import * as UI from "./UI"
 //
 //
 
-type Model = FrontendModel
-
-//
-//
-//
-// Status
-//
-//
-//
-
-type Status =
-  | { type: "AuthLoading" }
-  | { type: "LoggedOut" }
-  | { type: "ProfileLoading"; auth: Auth.LoggedIn }
-  | { type: "ProfileMissing"; auth: Auth.LoggedIn }
-  | { type: "ProfileError"; auth: Auth.LoggedIn }
-  | { type: "Ready"; profile: Profile.Profile; auth: Auth.LoggedIn }
-
-export const toStatus = ({
-  store,
-  auth,
-}: {
+export type Model = {
+  snackbar: Snackbar.Model
   store: Store.Model
   auth: Auth.Model
-}): Status => {
-  switch (auth.type) {
-    case "Loading":
-      return { type: "AuthLoading" }
-
-    case "LoggedOut":
-      return { type: "LoggedOut" }
-
-    case "LoggedIn": {
-      const { userId } = auth
-
-      const profile = store.Profile[userId]
-
-      if (profile) {
-        return {
-          type: "Ready",
-          auth,
-          profile,
-        }
-      }
-
-      const query =
-        store.queries.Profile.FindOne[auth.userId] ?? RemoteData.NotAsked
-
-      switch (query.type) {
-        case "NotAsked":
-          return { type: "ProfileLoading", auth }
-
-        case "Loading":
-          return { type: "ProfileLoading", auth }
-
-        case "Failure":
-          return { type: "ProfileError", auth }
-
-        case "Success": {
-          const userId = query.value
-
-          const profile = store.Profile[userId]
-
-          if (!profile) {
-            return { type: "ProfileMissing", auth }
-          }
-
-          return {
-            type: "Ready",
-            auth,
-            profile,
-          }
-        }
-      }
-    }
-  }
+  page: Pages.Model
+  route: Route.Route
+  connection: Connection.Model
+  gameRoom: GameRoom.FrontendModel
 }
+
 
 //
 //
@@ -144,9 +77,9 @@ export const init = (location: Browser.Location): [Model, Cmd.Cmd<Msg>] => {
       connection,
     },
     Cmd.batch<Msg>([
-      pipe(authCmd, Cmd.map(tag("Auth"))),
-      pipe(pageCmd, Cmd.map(tag("Page"))),
-      pipe(gameRoomCmd, Cmd.map(tag("GameRoom"))),
+      tagCmd("Auth", authCmd),
+      tagCmd("Page", pageCmd),
+      tagCmd("GameRoom", gameRoomCmd),
     ]),
   ]
 }
@@ -159,7 +92,15 @@ export const init = (location: Browser.Location): [Model, Cmd.Cmd<Msg>] => {
 //
 //
 
-type Msg = FrontendMsg
+export type Msg = 
+| ["[Backend]", ToFrontend]
+| ["Route", Route.Msg]
+| ["Snackbar", Snackbar.Msg]
+| ["GameRoom", GameRoom.FrontendMsg]
+| ["Store", Store.Msg]
+| ["Auth", Auth.Msg]
+| ["Page", Pages.Msg]
+| ["Connection", Connection.Msg]
 
 type OutAction =
   | Snackbar.Action
@@ -181,28 +122,6 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
     andThen(updateMain, msg),
     andThen(updateStatusChanged(model), msg),
   )
-}
-
-export const updateFromBackend = (
-  msg: ToFrontend,
-  model: Model,
-): [Model, Cmd.Cmd<Msg>] => {
-  switch (msg[0]) {
-    case "GameRoom": {
-      const [child, childCmd, actions] = GameRoom.Frontend.updateFromBackend(
-        msg[1],
-        model.gameRoom,
-      )
-
-      return pipe(
-        [
-          { ...model, gameRoom: child },
-          pipe(childCmd, Cmd.map(tag("GameRoom"))),
-        ],
-        andThenMany(runAction, actions),
-      )
-    }
-  }
 }
 
 const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
@@ -234,7 +153,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
     case "GameRoom": {
       const status = toStatus(model)
 
-      switch (status.type) {
+      switch (status[0]) {
         case "ProfileLoading": {
           return [model, Cmd.None]
         }
@@ -256,7 +175,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
         }
 
         case "Ready": {
-          const { profile } = status
+          const { profile } = status[1]
 
           const [child, childCmd] = GameRoom.Frontend.update(
             { currentUserId: profile.userId },
@@ -266,7 +185,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
           return pipe([
             { ...model, gameRoom: child },
-            pipe(childCmd, Cmd.map(tag("GameRoom"))),
+            tagCmd("GameRoom", childCmd),
           ])
         }
       }
@@ -275,7 +194,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
     case "Page": {
       const status = toStatus(model)
 
-      switch (status.type) {
+      switch (status[0]) {
         case "AuthLoading":
           return [model, Cmd.None]
 
@@ -296,7 +215,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
         case "ProfileMissing": {
           const [pageNew, pageCmd, actions] = Pages.updateProfileMissing(
-            status.auth,
+            status[1].auth,
             msg[1],
             model.page,
           )
@@ -313,7 +232,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
         case "Ready": {
           const [pageNew, pageCmd, actions] = Pages.updateReady(
             {
-              profile: status.profile,
+              profile: status[1].profile,
               store: model.store,
               gameRoom: model.gameRoom,
             },
@@ -328,7 +247,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
         }
 
         default:
-          return exhaustive(status)
+          return exhaustive(status[0])
       }
     }
 
@@ -339,12 +258,12 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
       const status = toStatus(modelNew)
 
-      switch (status.type) {
+      switch (status[0]) {
         case "ProfileLoading":
           return [modelNew, Cmd.None]
 
         case "ProfileMissing": {
-          const [page, pageCmd] = Pages.initProfileMissing(route, status.auth)
+          const [page, pageCmd] = Pages.initProfileMissing(route, status[1].auth)
 
           return [{ ...modelNew, page }, pipe(pageCmd, Cmd.map(tag("Page")))]
         }
@@ -352,7 +271,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
         case "Ready": {
           const [page, pageCmd, actions] = Pages.initReady(
             route,
-            status.profile,
+            status[1].profile,
           )
           return pipe(
             [{ ...modelNew, page }, pipe(pageCmd, Cmd.map(tag("Page")))],
@@ -396,21 +315,44 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   }
 }
 
+export const updateFromBackend = (
+  msg: ToFrontend,
+  model: Model,
+): [Model, Cmd.Cmd<Msg>] => {
+  switch (msg[0]) {
+    case "GameRoom": {
+      const [child, childCmd, actions] = GameRoom.Frontend.updateFromBackend(
+        msg[1],
+        model.gameRoom,
+      )
+
+      return pipe(
+        [
+          { ...model, gameRoom: child },
+          pipe(childCmd, Cmd.map(tag("GameRoom"))),
+        ],
+        andThenMany(runAction, actions),
+      )
+    }
+  }
+}
+
+
 const updateStatusChanged =
   (modelPrev: Model) =>
   (_msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
     const statusPrev = toStatus(modelPrev)
     const statusNew = toStatus(model)
 
-    if (statusNew.type === statusPrev.type) {
+    if (statusNew[0] === statusPrev[0]) {
       return [model, Cmd.None]
     }
 
-    switch (statusNew.type) {
+    switch (statusNew[0]) {
       case "ProfileLoading": {
         const action: OutAction = [
           "Store",
-          ["Profile", ["FindMany", { userIds: [statusNew.auth.userId] }]],
+          ["Profile", ["FindMany", { userIds: [statusNew[1].auth.userId] }]],
         ]
 
         return pipe([model, Cmd.None], andThenMany(runAction, [action]))
@@ -419,7 +361,7 @@ const updateStatusChanged =
       case "ProfileMissing": {
         const [page, pageCmd] = Pages.initProfileMissing(
           model.route,
-          statusNew.auth,
+          statusNew[1].auth,
         )
 
         return [{ ...model, page }, pipe(pageCmd, Cmd.map(tag("Page")))]
@@ -439,7 +381,7 @@ const updateStatusChanged =
       case "Ready": {
         const [page, pageCmd, actions] = Pages.initReady(
           model.route,
-          statusNew.profile,
+          statusNew[1].profile,
         )
         return pipe(
           [{ ...model, page }, pipe(pageCmd, Cmd.map(tag("Page")))],
@@ -538,7 +480,7 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
 const toThemeMode = (model: Model): UI.ThemeMode => {
   const status = toStatus(model)
 
-  switch (status.type) {
+  switch (status[0]) {
     case "AuthLoading":
     case "LoggedOut":
     case "ProfileLoading":
@@ -546,7 +488,7 @@ const toThemeMode = (model: Model): UI.ThemeMode => {
     case "ProfileError":
       return "System"
     case "Ready":
-      return status.profile.themeMode
+      return status[1].profile.themeMode
   }
 }
 
@@ -607,7 +549,7 @@ const viewMain = (model: Model): UI.View<Msg> => {
       return viewLoading({ reason: "Connecting..." })
 
     case "Connected": {
-      switch (status.type) {
+      switch (status[0]) {
         case "AuthLoading":
           return viewLoading({ reason: "Authenticating..." })
 
@@ -622,7 +564,7 @@ const viewMain = (model: Model): UI.View<Msg> => {
 
         case "ProfileMissing":
           return pipe(
-            Pages.viewProfileMissing(status.auth, model.page),
+            Pages.viewProfileMissing(status[1].auth, model.page),
             UI.map(tag("Page")),
           )
 
@@ -631,7 +573,7 @@ const viewMain = (model: Model): UI.View<Msg> => {
             <>
               {pipe(
                 GameRoom.Frontend.viewBanner(
-                  { currentUserId: status.profile.userId, route: model.route },
+                  { currentUserId: status[1].profile.userId, route: model.route },
                   model.gameRoom,
                 ),
                 UI.map(tag("GameRoom")),
@@ -639,7 +581,7 @@ const viewMain = (model: Model): UI.View<Msg> => {
               <UI.FillBox>
                 {pipe(
                   Pages.viewReady(
-                    { ...model, profile: status.profile },
+                    { ...model, profile: status[1].profile },
                     model.page,
                   ),
                   UI.map(tag("Page")),
@@ -694,6 +636,81 @@ export const onLocationChange = (location: Browser.Location): Msg => {
     (route) => ["Route", ["GotRoute", route]],
   )
 }
+
+//
+//
+//
+// Status
+//
+//
+//
+
+type Status =
+  | ["AuthLoading" ] 
+  | ["LoggedOut" ] 
+  | ["ProfileLoading",  {auth: Auth.LoggedIn }]
+  | ["ProfileMissing",  {auth: Auth.LoggedIn }]
+  | ["ProfileError",  {auth: Auth.LoggedIn }]
+  | ["Ready",  {profile: Store.Profile.Profile; auth: Auth.LoggedIn }]
+
+export const toStatus = ({
+  store,
+  auth,
+}: {
+  store: Store.Model
+  auth: Auth.Model
+}): Status => {
+  switch (auth.type) {
+    case "Loading":
+      return ["AuthLoading" ]
+
+    case "LoggedOut":
+      return ["LoggedOut" ]
+
+    case "LoggedIn": {
+      const { userId } = auth
+
+      const profile = store.Profile[userId]
+
+      if (profile) {
+        return ["Ready", {
+          auth,
+          profile,
+        }]
+      }
+
+      const query =
+        store.queries.Profile.FindOne[auth.userId] ?? RemoteData.NotAsked
+
+      switch (query.type) {
+        case "NotAsked":
+          return ["ProfileLoading", {auth} ]
+
+        case "Loading":
+          return ["ProfileLoading", {auth }]
+
+        case "Failure":
+          return ["ProfileError", {auth }]
+
+        case "Success": {
+          const userId = query.value
+
+          const profile = store.Profile[userId]
+
+          if (!profile) {
+            return  ["ProfileMissing", {auth} ]
+          }
+
+          return ["Ready", {
+            auth,
+            profile,
+          }]
+        }
+      }
+    }
+  }
+}
+
 
 //
 //
