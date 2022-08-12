@@ -1,6 +1,6 @@
-import * as TicTacToe from "./TicTacToe"
-import * as ConnectFour from "./ConnectFour"
-import * as Snake from "./Snake"
+import * as TicTacToe from "./TicTacToe/TicTacToe.Types"
+import * as ConnectFour from "./ConnectFour/ConnectFour.Types"
+import * as Snake from "./Snake/Snake.Types"
 
 //
 //
@@ -64,16 +64,3 @@ export type GameModel =
   | ["Snake", Snake.SharedModel]
 
 export type GameName = GameModel[0]
-
-export const gameNameToString = (game: GameName): string => {
-  switch (game) {
-    case "ConnectFour":
-      return "Connect Four"
-
-    case "TicTacToe":
-      return "Tic Tac Toe"
-
-    case "Snake":
-      return "Snake"
-  }
-}

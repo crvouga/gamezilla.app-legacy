@@ -3,7 +3,7 @@ import { Cmd, exhaustive, Option, pipe, Result } from "../Core"
 import { remove } from "../Core/Record"
 import { ClientId, RoomId, UserId } from "../Data"
 import { Name } from "../Games"
-import * as Game from "./Game"
+import * as GameBackend from "./Game/Game.Backend"
 import {
   BackendModel,
   BackendMsg,
@@ -25,7 +25,7 @@ import {
 //
 //
 
-type Model = BackendModel
+export type Model = BackendModel
 
 export const init: Model =  {
   games: {},
@@ -41,7 +41,7 @@ export const init: Model =  {
 //
 //
 
-type Msg = BackendMsg
+export type Msg = BackendMsg
 
 export const update = (
   msg: Msg,
@@ -60,7 +60,7 @@ export const update = (
       
       const gameMsg = msg[1][1]
 
-      const [gameNew, gameCmd] = Game.Backend.update(gameMsg, game)
+      const [gameNew, gameCmd] = GameBackend.update(gameMsg, game)
       
       const modelNew: Model = {
         ...model,
@@ -100,7 +100,7 @@ export const updateFromFrontend = (
         return [model, Cmd.None]
       }
 
-      const [gameNew, gameCmd] = Game.Backend.updateFromFrontend({clientId, roomId}, gameMsg, game )
+      const [gameNew, gameCmd] = GameBackend.updateFromFrontend({clientId, roomId}, gameMsg, game )
 
       const modelNew: Model = {
         ...model,
@@ -371,7 +371,7 @@ export const startGame = (
     ...model,
     games: {
       ...model.games,
-      [room.roomId]: Game.Backend.init(gameName)
+      [room.roomId]: GameBackend.init(gameName)
     }
   }
 

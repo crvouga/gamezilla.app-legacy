@@ -13,7 +13,7 @@ import * as Route from "../Route"
 import * as Snackbar from "../Snackbar"
 import * as Store from "../Store"
 import * as UI from "../UI"
-import * as Game from "./Game"
+import * as GameFrontend from "./Game/Game.Frontend"
 import {
   FrontendModel,
   FrontendMsg,
@@ -170,7 +170,7 @@ export const update = (
 
       const gameMsg = msg[1][1]
 
-      const [gameNew, gameCmd] = Game.Frontend.update(
+      const [gameNew, gameCmd] = GameFrontend.update(
         { currentUserId, currentRoomId: roomId, }, 
         gameMsg, 
         game
@@ -225,7 +225,7 @@ export const updateFromBackend = (
 
       const gameMsg = msg[1][1]
 
-      const [gameNew, gameCmd] = Game.Frontend.updateFromBackend(gameMsg, game)
+      const [gameNew, gameCmd] = GameFrontend.updateFromBackend(gameMsg, game)
 
       const modelNew: Model = {
         ...model,
@@ -329,7 +329,7 @@ export const subscriptions = (
     return Sub.None
   }
 
-  return pipe(Game.Frontend.subscriptions(game), Sub.map((msg): Msg => ["Game", [room.roomId, msg]]))
+  return pipe(GameFrontend.subscriptions(game), Sub.map((msg): Msg => ["Game", [room.roomId, msg]]))
 }
 
 //
@@ -382,7 +382,7 @@ export const view = (
       <>
         {viewHeader({ store, room, currentUserId }, model)(dispatch)}
         {pipe(
-          Game.Frontend.view({ currentUserId, store }, game),
+          GameFrontend.view({ currentUserId, store }, game),
           UI.map((msg):Msg => ["Game", [room.roomId, msg]]), 
         )(dispatch)}
       </>
@@ -857,7 +857,7 @@ export const viewBanner =
                   variant="h6"
                   sx={{ marginBottom: -1 / 2 }}
                 >
-                  {Game.gameNameToString(game[0])}
+                  {GameFrontend.gameNameToString(game[0])}
                 </UI.Typography>
 
                 <UI.Typography
@@ -883,3 +883,6 @@ export const viewBanner =
       </UI.Paper>
     )
   }
+
+
+  
