@@ -1,6 +1,6 @@
 import { RemoteData, Result, Unit } from "../Core"
 import { RoomId, UserId } from "../Data"
-import * as Game from "./Game"
+import * as GameTypes from "./Game/Game.Types"
 
 //
 //
@@ -12,13 +12,13 @@ import * as Game from "./Game"
 
 export type BackendModel = SharedModel & {
   games: {
-    [roomId: RoomId.RoomId]: Game.FrontendModel
+    [roomId: RoomId.RoomId]: GameTypes.FrontendModel
   }
 }
 
 export type FrontendModel = SharedModel & {
   games: {
-    [roomId: RoomId.RoomId]: Game.FrontendModel
+    [roomId: RoomId.RoomId]: GameTypes.FrontendModel
   }
   createRoom: RemoteData.Model<CreateRoomProblem, Unit>
   leaveRoom: RemoteData.Model<LeaveRoomProblem, Unit>
@@ -62,7 +62,7 @@ export type ToFrontend =
   | JoinRoomResulted
   | StartGameResulted
   | StopGameResulted
-  | ["Game", [RoomId.RoomId, Game.ToFrontend]]
+  | ["Game", [RoomId.RoomId, GameTypes.ToFrontend]]
   
 
 export type ToBackend =
@@ -72,9 +72,9 @@ export type ToBackend =
   | JoinRoom
   | StartGame
   | StopGame
-  | ["Game", [RoomId.RoomId, Game.ToBackend]]
+  | ["Game", [RoomId.RoomId, GameTypes.ToBackend]]
 
-export type BackendMsg = ["Game", [RoomId.RoomId, Game.BackendMsg]]
+export type BackendMsg = ["Game", [RoomId.RoomId, GameTypes.BackendMsg]]
 
 export type FrontendMsg =
   | ["ClickedBack"]
@@ -89,7 +89,7 @@ export type FrontendMsg =
   | LeaveRoom
   | StartGame
   | StopGame
-  | ["Game", [RoomId.RoomId, Game.FrontendMsg]]
+  | ["Game", [RoomId.RoomId, GameTypes.FrontendMsg]]
 
 //
 //
@@ -148,7 +148,7 @@ export type JoinRoomResult = Result.Result<JoinRoomProblem, BackendModel>
 
 export type StartGame = [
   "StartGame",
-  { gameName: Game.GameName; userId: UserId.UserId },
+  { gameName: GameTypes.GameName; userId: UserId.UserId },
 ]
 export type StartGameResulted = ["StartGameResulted", StartGameResult]
 

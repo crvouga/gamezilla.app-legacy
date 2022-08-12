@@ -1,6 +1,6 @@
 import { Cmd } from "../Core"
 import { UserId } from "../Data"
-import * as GameRoom from "../GameRoom"
+import * as GameRoom from "../GameRoom/GameRoom.Frontend"
 import * as Route from "../Route"
 import * as Store from "../Store"
 import * as UI from "../UI"
@@ -27,7 +27,7 @@ export const init: Model = {}
 
 export type Msg = ["ClickedPlay"]
 
-export type OutAction = GameRoom.Frontend.Action
+export type OutAction = GameRoom.Action
 
 export const update = (
   { currentUserId }: { currentUserId: UserId.UserId },

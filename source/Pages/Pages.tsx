@@ -1,7 +1,7 @@
 import * as Auth from "../Auth"
 import { Cmd, exhaustive, pipe, Sub, tag } from "../Core"
 import { UserId } from "../Data"
-import * as GameRoom from "../GameRoom"
+import * as GameRoom from "../GameRoom/GameRoom.Frontend"
 import * as Route from "../Route"
 import * as Snackbar from "../Snackbar"
 import * as Store from "../Store"
@@ -93,7 +93,7 @@ export type Msg =
 export type OutAction =
   | Store.Action
   | Snackbar.Action
-  | GameRoom.Frontend.Action
+  | GameRoom.Action
   | Auth.Action
 
 //
@@ -326,7 +326,7 @@ export const updateReady = (
   }: {
     profile: Store.Profile.Profile
     store: Store.Model
-    gameRoom: GameRoom.FrontendModel
+    gameRoom: GameRoom.Model
   },
   msg: Msg,
   model: Model,
@@ -671,7 +671,7 @@ export const viewReady = (
     route,
   }: {
     route: Route.Route
-    gameRoom: GameRoom.FrontendModel
+    gameRoom: GameRoom.Model
     profile: Store.Profile.Profile
     store: Store.Model
   },

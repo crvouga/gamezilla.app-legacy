@@ -1,6 +1,6 @@
 import { Cmd, pipe, tag } from "../Core"
 import { UserId } from "../Data"
-import * as GameRoom from "../GameRoom"
+import * as GameRoomFrontend from "../GameRoom/GameRoom.Frontend"
 import * as Store from "../Store"
 import * as UI from "../UI"
 
@@ -26,9 +26,9 @@ export const init: [Model, Cmd.Cmd<Msg>] = [{ drawer: "Closed" }, Cmd.None]
 //
 //
 
-export type Msg = ["GameRoom", GameRoom.FrontendMsg]
+export type Msg = ["GameRoom", GameRoomFrontend.Msg]
 
-type OutAction = GameRoom.Frontend.Action
+type OutAction = GameRoomFrontend.Action
 
 export const update = (
   { currentUserId }: { currentUserId: UserId.UserId },
@@ -56,14 +56,14 @@ export const view = (
     gameRoom,
     store,
   }: {
-    gameRoom: GameRoom.FrontendModel
+    gameRoom: GameRoomFrontend.Model
     currentUserId: UserId.UserId
     store: Store.Model
   },
   model: Model,
 ): UI.View<Msg> => {
   return pipe(
-    GameRoom.Frontend.view({ currentUserId, store }, gameRoom),
+    GameRoomFrontend.view({ currentUserId, store }, gameRoom),
     UI.map(tag("GameRoom")),
   )
 }

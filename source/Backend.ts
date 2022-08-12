@@ -3,7 +3,7 @@ import * as Socket from "socket.io"
 import * as Bridge from "./Bridge"
 import { Cmd, Platform, Sub, tagCmd } from "./Core"
 import { ClientId } from "./Data"
-import * as GameRoom from "./GameRoom"
+import * as GameRoomBackend from "./GameRoom/GameRoom.Backend"
 import { ToBackend } from "./Types"
 
 //
@@ -15,12 +15,12 @@ import { ToBackend } from "./Types"
 //
 
 export type Model = {
-  gameRoom: GameRoom.BackendModel
+  gameRoom: GameRoomBackend.Model
 }
 
 export const init: [Model, Cmd.Cmd<Msg>] = [
   {
-    gameRoom: GameRoom.Backend.init,
+    gameRoom: GameRoomBackend.init,
   },
   Cmd.None,
 ]
@@ -35,7 +35,7 @@ export const init: [Model, Cmd.Cmd<Msg>] = [
 
 export type Msg =
 | ["[Frontend]", ClientId.ClientId, ToBackend]
-| ["GameRoom", GameRoom.BackendMsg]
+| ["GameRoom", GameRoomBackend.Msg]
 | ["ClientConnected", ClientId.ClientId]
 | ["ClientDisconnected", ClientId.ClientId]
 
@@ -63,7 +63,7 @@ export const update = (
     }
 
     case "GameRoom": {
-      const [child, childCmd] = GameRoom.Backend.update(msg[1], model.gameRoom)
+      const [child, childCmd] = GameRoomBackend.update(msg[1], model.gameRoom)
       return [
         { ...model, gameRoom: child }, tagCmd("GameRoom", childCmd),
       ]
@@ -78,7 +78,7 @@ export const updateFromFrontend = (
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
     case "GameRoom": {
-      const [child, childCmd] = GameRoom.Backend.updateFromFrontend(
+      const [child, childCmd] = GameRoomBackend.updateFromFrontend(
         clientId,
         msg[1],
         model.gameRoom,

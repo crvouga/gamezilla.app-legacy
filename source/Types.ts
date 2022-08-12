@@ -1,4 +1,4 @@
-import * as GameRoom from "./GameRoom"
+import * as GameRoom from "./GameRoom/GameRoom.Types"
 
 //
 //

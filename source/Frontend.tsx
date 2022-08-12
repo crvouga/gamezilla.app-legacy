@@ -18,12 +18,12 @@ import {
   tag,
   tagCmd
 } from "./Core"
-import * as GameRoom from "./GameRoom"
+import * as GameRoom from "./GameRoom/GameRoom.Frontend"
+import { ToFrontend } from "./Types"
 import * as Pages from "./Pages"
 import * as Route from "./Route"
 import * as Snackbar from "./Snackbar"
 import * as Store from "./Store"
-import { ToFrontend } from "./Types"
 import * as UI from "./UI"
 
 //
@@ -41,7 +41,7 @@ export type Model = {
   page: Pages.Model
   route: Route.Route
   connection: Connection.Model
-  gameRoom: GameRoom.FrontendModel
+  gameRoom: GameRoom.Model
 }
 
 
@@ -62,7 +62,7 @@ export const init = (location: Browser.Location): [Model, Cmd.Cmd<Msg>] => {
   const [auth, authCmd] = Auth.init()
   const snackbar = Snackbar.init
   const store = Store.init
-  const [gameRoom, gameRoomCmd] = GameRoom.Frontend.init
+  const [gameRoom, gameRoomCmd] = GameRoom.init
   const [page, pageCmd] = Pages.initLoading()
   const connection = Connection.init
 
@@ -96,7 +96,7 @@ export type Msg =
 | ["[Backend]", ToFrontend]
 | ["Route", Route.Msg]
 | ["Snackbar", Snackbar.Msg]
-| ["GameRoom", GameRoom.FrontendMsg]
+| ["GameRoom", GameRoom.Msg]
 | ["Store", Store.Msg]
 | ["Auth", Auth.Msg]
 | ["Page", Pages.Msg]
@@ -104,7 +104,7 @@ export type Msg =
 
 type OutAction =
   | Snackbar.Action
-  | GameRoom.Frontend.Action
+  | GameRoom.Action
   | Store.Action
   | Auth.Action
 
@@ -165,7 +165,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
         case "Ready": {
           const { profile } = status[1]
 
-          const [child, childCmd] = GameRoom.Frontend.update(
+          const [child, childCmd] = GameRoom.update(
             { currentUserId: profile.userId },
             msg[1],
             model.gameRoom,
@@ -306,7 +306,7 @@ export const updateFromBackend = (
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
     case "GameRoom": {
-      const [gameRoom, gameRoomCmd, actions] = GameRoom.Frontend.updateFromBackend(
+      const [gameRoom, gameRoomCmd, actions] = GameRoom.updateFromBackend(
         msg[1],
         model.gameRoom,
       )
@@ -406,7 +406,7 @@ const runAction = (action: OutAction, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
       const currentUserId = model.auth.userId
 
-      const [gameRoom, gameRoomCmd] = GameRoom.Frontend.runAction(
+      const [gameRoom, gameRoomCmd] = GameRoom.runAction(
         { currentUserId },
         action,
         model.gameRoom,
@@ -439,7 +439,7 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
   return Sub.batch<Msg>([
     model.auth.type === "LoggedIn"
       ? pipe(
-          GameRoom.Frontend.subscriptions(
+          GameRoom.subscriptions(
             { currentUserId: model.auth.userId },
             model.gameRoom,
           ),
@@ -556,7 +556,7 @@ const viewMain = (model: Model): UI.View<Msg> => {
           return (dispatch) => (
             <>
               {pipe(
-                GameRoom.Frontend.viewBanner(
+                GameRoom.viewBanner(
                   { currentUserId: status[1].profile.userId, route: model.route },
                   model.gameRoom,
                 ),
