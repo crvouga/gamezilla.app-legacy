@@ -1,5 +1,5 @@
 import * as Bridge from "../Bridge"
-import { Cmd, exhaustive, Option, pipe, Result } from "../Core"
+import { Cmd, exhaustive, Option, pipe, Result, Sub, tag } from "../Core"
 import { remove } from "../Core/Record"
 import { ClientId, RoomId, UserId } from "../Data"
 import { Name } from "../Games"
@@ -60,7 +60,7 @@ export const update = (
       
       const gameMsg = msg[1][1]
 
-      const [gameNew, gameCmd] = GameBackend.update(gameMsg, game)
+      const [gameNew, gameCmd] = GameBackend.update({roomId},gameMsg, game)
       
       const modelNew: Model = {
         ...model,
@@ -371,7 +371,7 @@ export const startGame = (
     ...model,
     games: {
       ...model.games,
-      [room.roomId]: GameBackend.init(gameName)
+      [room.roomId]: GameBackend.init({gameName, })
     }
   }
 
@@ -439,4 +439,28 @@ const sendToFrontend = (
   toFrontend: ToFrontend,
 ) => {
   return Bridge.sendToFrontend(clientIds, ["GameRoom", toFrontend])
+}
+
+
+// 
+// 
+// 
+// Subscriptions
+// 
+// 
+// 
+
+export const subscriptions = (model: Model): Sub.Sub<Msg> => {
+  return  pipe(
+    Object.entries(model.games),
+    (entries) => entries.flatMap(([roomId, game]) => RoomId.is(roomId) ? [{roomId, game}]: []),
+    (entries) => entries.map(({roomId, game})=> 
+      pipe(
+        GameBackend.subscriptions(game), 
+        Sub.map((msg): Msg => ['Game', [roomId, msg]])
+      )
+    ),
+    Sub.batch
+  )
+  
 }

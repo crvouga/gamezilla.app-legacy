@@ -44,6 +44,6 @@ export const updateFromFrontend = (
 //
 //
 
-export const subscriptions = (): Sub.Sub<Msg> => {
+export const subscriptions = (_model: Model): Sub.Sub<Msg> => {
   return Sub.batch<Msg>([])
 }

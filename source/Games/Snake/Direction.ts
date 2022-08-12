@@ -1,4 +1,4 @@
-import { Keyboard } from "../../Core"
+import { Keyboard, Option } from "../../Core"
 import * as Position from "./Position"
 
 export type Direction = "left" | "up" | "right" | "down"
@@ -26,26 +26,26 @@ export const directions: { [direction in Direction]: Direction } = {
   down: "down",
 }
 
-export const fromKey = (key: Keyboard.Key, fallback: Direction): Direction => {
+export const fromKey = (key: Keyboard.Key): Option.Option<Direction> => {
   switch (key) {
     case "w":
     case "W":
-      return "up"
+      return Option.Some("up")
 
     case "s":
     case "S":
-      return "down"
+      return Option.Some("down")
 
     case "a":
     case "A":
-      return "left"
+      return Option.Some("left")
 
     case "d":
     case "D":
-      return "right"
+      return Option.Some("right")
 
     default:
-      return fallback
+      return Option.None
   }
 }
 

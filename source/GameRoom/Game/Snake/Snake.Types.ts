@@ -22,7 +22,7 @@ export type SharedModel = Snake.Model & {
   player: Player
 }
 
-export type Player = ["User", {userId: UserId.UserId}] | [ "None" ]
+export type Player = ["User", UserId.UserId] | [ "None" ]
 
 export type MouseStatus = "Active" | "Inactive"
 
@@ -50,7 +50,6 @@ export const initSharedModel: SharedModel = {
 export type FrontendMsg = 
   | ["ClickedBack"]
   | ["ClickedRestart"]
-  | ToggleStatus
   | ["AudioFailed"]
   | ["AudioSucceeded"]
   | ["MouseDownBoard"]
@@ -58,17 +57,21 @@ export type FrontendMsg =
   | ["PressedKeyDown", Keyboard.Key]
   | ["MouseMovedBoard", Snake.Position.Position]
   | ["TouchMoveBoard", Snake.Position.Position]
+  | ToggleStatus
+  | ChangePlayer
 
 export type BackendMsg = ["Tick"]
 
 export type ToBackend = 
   | ChangeDirection 
   | ToggleStatus
+  | ChangePlayer
 
 export type ToFrontend =  
   | ["Sync", SharedModel] 
   | ChangeDirectionResulted 
   | ToggleStatusResulted
+  | ChangePlayerResulted
 
 // 
 // 
@@ -85,25 +88,6 @@ export type ChangeDirectionProblem = "user_must_be_the_current_player"
 
 export type ChangeDirectionResult = Result.Result<ChangeDirectionProblem, SharedModel>
 
-
-export const changeDirection = ({direction, userId}: ChangeDirection[1], model: SharedModel): ChangeDirectionResult => {
-  if(model.player[0] === 'None') {
-    return Result.Err("user_must_be_the_current_player")
-  }
-
-  if(model.player[1].userId !== userId ) {
-    return Result.Err("user_must_be_the_current_player")
-  }
-
-  const modelNew: SharedModel = {
-    ...model,
-    ...Snake.enqueueDirection(direction, model)
-  }
-
-  return Result.Ok(modelNew)  
-}
-
-// 
 // 
 // 
 // 
@@ -117,28 +101,17 @@ export type ToggleStatusResulted = ["ToggleStatusResulted", ToggleStatusResult]
 
 export type ToggleStatusResult = Result.Result<"user_must_be_the_current_player", SharedModel>
 
-export const toggleStatus = ({ userId }: ToggleStatus[1], model: SharedModel): ToggleStatusResult => {
-  if(model.player[0] === 'None') {
-    return Result.Err("user_must_be_the_current_player")
-  }
-
-  if(model.player[1].userId !== userId) {
-    return Result.Err("user_must_be_the_current_player")
-  }
-
-
-  const modelNew: SharedModel = {
-    ...model,
-    status: model.status === 'Paused' ?  "Paused" :  "Playing"
-  }
-
-  return Result.Ok(modelNew)
-}
-
-
 // 
 // 
 // 
 // 
 
-// export const step = (model: SharedModel): StepResult => 
+export type ChangePlayer = [
+  "ChangePlayer",
+  {player: Player}
+]
+
+export type ChangePlayerResulted = ["ChangePlayerResulted", ChangePlayerResult]
+
+export type ChangePlayerResult = Result.Result<"user_must_be_the_host", SharedModel>
+

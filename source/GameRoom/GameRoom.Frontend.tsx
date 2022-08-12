@@ -13,7 +13,7 @@ import * as Route from "../Route"
 import * as Snackbar from "../Snackbar"
 import * as Store from "../Store"
 import * as UI from "../UI"
-import * as GameFrontend from "./Game/Game.Frontend"
+import * as Game from "./Game/Game.Frontend"
 import {
   FrontendModel,
   FrontendMsg,
@@ -170,7 +170,7 @@ export const update = (
 
       const gameMsg = msg[1][1]
 
-      const [gameNew, gameCmd] = GameFrontend.update(
+      const [gameNew, gameCmd] = Game.update(
         { currentUserId, currentRoomId: roomId, }, 
         gameMsg, 
         game
@@ -225,7 +225,7 @@ export const updateFromBackend = (
 
       const gameMsg = msg[1][1]
 
-      const [gameNew, gameCmd] = GameFrontend.updateFromBackend(gameMsg, game)
+      const [gameNew, gameCmd, actions] = Game.updateFromBackend(gameMsg, game)
 
       const modelNew: Model = {
         ...model,
@@ -235,7 +235,7 @@ export const updateFromBackend = (
         }
       }
 
-      return [modelNew, pipe(gameCmd, Cmd.map(msg => ['Game' as 'Game', [roomId, msg]])), []]
+      return [modelNew, pipe(gameCmd, Cmd.map(msg => ['Game' as 'Game', [roomId, msg]])), actions]
     }
 
     case "CreateRoomResulted": {
@@ -271,18 +271,7 @@ const handleResult = <
 
   const actions: OutAction[] =
     result.type === "Err"
-      ? [
-          [
-            "Snackbar",
-            [
-              "Enqueue",
-              {
-                variant: "Error",
-                message: result.error,
-              },
-            ],
-          ],
-        ]
+      ? [["Snackbar", ["Error", {message: result.error}]]]
       : []
 
   const modelNew:Model = result.type === 'Ok' ? {...model, ...result.value} : model
@@ -329,7 +318,7 @@ export const subscriptions = (
     return Sub.None
   }
 
-  return pipe(GameFrontend.subscriptions(game), Sub.map((msg): Msg => ["Game", [room.roomId, msg]]))
+  return pipe(Game.subscriptions(game), Sub.map((msg): Msg => ["Game", [room.roomId, msg]]))
 }
 
 //
@@ -382,7 +371,7 @@ export const view = (
       <>
         {viewHeader({ store, room, currentUserId }, model)(dispatch)}
         {pipe(
-          GameFrontend.view({ currentUserId, store }, game),
+          Game.view({ currentUserId, store }, game),
           UI.map((msg):Msg => ["Game", [room.roomId, msg]]), 
         )(dispatch)}
       </>
@@ -857,7 +846,7 @@ export const viewBanner =
                   variant="h6"
                   sx={{ marginBottom: -1 / 2 }}
                 >
-                  {GameFrontend.gameNameToString(game[0])}
+                  {Game.gameNameToString(game[0])}
                 </UI.Typography>
 
                 <UI.Typography

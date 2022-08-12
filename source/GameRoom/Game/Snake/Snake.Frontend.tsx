@@ -5,13 +5,15 @@ import {
   exhaustive,
   Keyboard,
   Option,
+  Result,
   Sub
 } from "../../../Core"
 import { RoomId, UserId } from "../../../Data"
+import * as Snackbar from "../../../Snackbar"
 import { Snake } from "../../../Games"
 import * as Route from "../../../Route"
 import * as UI from "../../../UI"
-import { FrontendModel, FrontendMsg, initSharedModel, ToBackend, ToFrontend } from "./Snake.Types"
+import { FrontendModel, FrontendMsg, initSharedModel, SharedModel, ToBackend, ToFrontend } from "./Snake.Types"
 
 //
 //
@@ -51,7 +53,9 @@ export const sendToBackend = (roomId: RoomId.RoomId, toBackend: ToBackend) => {
 
 export type Msg = FrontendMsg
 
-export const update = ({currentRoomId}: {currentRoomId: RoomId.RoomId}, msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
+export type OutAction = Snackbar.Action
+
+export const update = ({currentRoomId, currentUserId}: {currentRoomId: RoomId.RoomId, currentUserId: UserId.UserId}, msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
     case "ClickedRestart":
       return [init, Cmd.None]
@@ -65,13 +69,27 @@ export const update = ({currentRoomId}: {currentRoomId: RoomId.RoomId}, msg: Msg
     case "MouseDownBoard":
       return [model, Cmd.None]
       
-    case "PressedKeyDown":
-      return [
-        model,
-        Cmd.None,
-      ]
+    case "PressedKeyDown": {
+      const direction = Snake.Direction.fromKey(msg[1])
+      
+      const changeDirectionCmd = direction.type === 'Some'
+        ?  sendToBackend(currentRoomId, ['ChangeDirection', {userId: currentUserId, direction: direction.value}]) 
+        : Cmd.None 
+
+      const toggleStatusCmd = msg[1] === 'Space' 
+        ? sendToBackend(currentRoomId, ['ToggleStatus', {userId: currentUserId}]) 
+        : Cmd.None
+
+      return [model, Cmd.batch([changeDirectionCmd, toggleStatusCmd])]
+    }
+
 
     case "ToggleStatus":{
+      return [model, sendToBackend(currentRoomId, msg)]
+    }
+
+
+    case 'ChangePlayer': {
       return [model, sendToBackend(currentRoomId, msg)]
     }
 
@@ -120,31 +138,34 @@ export const update = ({currentRoomId}: {currentRoomId: RoomId.RoomId}, msg: Msg
   }
 }
 
-export const updateFromBackend = (msg: ToFrontend, model: Model): [Model, Cmd.Cmd<Msg>] => {
+export const updateFromBackend = (msg: ToFrontend, model: Model): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   switch(msg[0]) {
     case 'Sync': {
       const sharedModel = msg[1]
-      return [{...model, ...sharedModel}, Cmd.None]
+      return [{...model, ...sharedModel}, Cmd.None, []]
     }
 
     case 'ChangeDirectionResulted': {
-      const result = msg[1]
-      if(result.type === 'Err') {
-        return [model, Cmd.None]
-      }
-      const sharedModel = result.value
-      return [{...model, ...sharedModel}, Cmd.None]
+      return handleResult(msg[1], model)
     }
 
     case 'ToggleStatusResulted': {
-      const result = msg[1]
-      if(result.type === 'Err') {
-        return [model, Cmd.None]
-      }
-      const sharedModel = result.value
-      return [{...model, ...sharedModel}, Cmd.None]
+      return handleResult(msg[1], model)
+    }
+
+    case "ChangePlayerResulted": {
+      return handleResult(msg[1], model)
     }
   }
+}
+
+const handleResult = <TProblem extends string,TResult extends Result.Result<TProblem, SharedModel>>(result: TResult, model: Model): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
+  if(result.type === 'Err') {        
+    const message = result.error.split("_").join(" ")
+    return [model, Cmd.None ,[['Snackbar',["Error", {message, }]]]]
+  }
+  const sharedModel = result.value
+  return [{...model, ...sharedModel}, Cmd.None, []]
 }
 
 //
@@ -172,6 +193,18 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
 export const view =
   ({currentUserId}: {currentUserId: UserId.UserId},model: Model): UI.View<Msg> =>
   (dispatch) => {
+
+    if(model.player[0] === 'None') {
+      return <UI.FillBox sx={{paddingX:2}}>
+        <UI.Typography variant="h6">
+          Player
+        </UI.Typography>
+        <UI.Button fullWidth variant="contained" onClick={() => dispatch(['ChangePlayer', {player: ['User', currentUserId]}])}>
+          Start Playing
+        </UI.Button>
+      </UI.FillBox>
+    }
+
     return (
       <UI.FillBox>
         <ViewBoard
@@ -179,7 +212,7 @@ export const view =
           dispatch={dispatch}
         />
         <UI.Toolbar>
-          <UI.Button onClick={() => dispatch(['ToggleStatus', {userId: currentUserId}])}>
+          <UI.Button variant="outlined" sx={{marginLeft: -1}} startIcon={model.status === 'Paused' ? <UI.Icons.PlayArrow /> : <UI.Icons.Pause /> } onClick={() => dispatch(['ToggleStatus', {userId: currentUserId}])}>
             {model.status ===  "Paused" ? "Play" : "Pause"}
           </UI.Button>
         </UI.Toolbar>
