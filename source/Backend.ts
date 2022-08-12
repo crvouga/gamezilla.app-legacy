@@ -1,10 +1,10 @@
 import * as Http from "http"
 import * as Socket from "socket.io"
 import * as Bridge from "./Bridge"
-import { Cmd, Debug, pipe, Platform, Sub, tag } from "./Core"
+import { Cmd, Platform, Sub, tagCmd } from "./Core"
 import { ClientId } from "./Data"
-import * as GameRoom from "./GameRoom/GameRoom.Backend"
-import { BackendModel, BackendMsg, ToBackend } from "./Types"
+import * as GameRoom from "./GameRoom"
+import { ToBackend } from "./Types"
 
 //
 //
@@ -14,11 +14,13 @@ import { BackendModel, BackendMsg, ToBackend } from "./Types"
 //
 //
 
-type Model = BackendModel
+export type Model = {
+  gameRoom: GameRoom.BackendModel
+}
 
-export const init: [Model, Cmd.Cmd<BackendMsg>] = [
+export const init: [Model, Cmd.Cmd<Msg>] = [
   {
-    gameRoom: GameRoom.init,
+    gameRoom: GameRoom.Backend.init,
   },
   Cmd.None,
 ]
@@ -31,12 +33,18 @@ export const init: [Model, Cmd.Cmd<BackendMsg>] = [
 //
 //
 
+export type Msg =
+| ["[Frontend]", ClientId.ClientId, ToBackend]
+| ["GameRoom", GameRoom.BackendMsg]
+| ["ClientConnected", ClientId.ClientId]
+| ["ClientDisconnected", ClientId.ClientId]
+
 export const update = (
-  msg: BackendMsg,
+  msg: Msg,
   model: Model,
-): [Model, Cmd.Cmd<BackendMsg>] => {
+): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
-    case "FrontendToBackend":
+    case "[Frontend]":
       return updateFromFrontend(msg[1], msg[2], model)
 
     case "ClientConnected": {
@@ -55,10 +63,9 @@ export const update = (
     }
 
     case "GameRoom": {
-      const [child, childCmd] = GameRoom.update(msg[1], model.gameRoom)
+      const [child, childCmd] = GameRoom.Backend.update(msg[1], model.gameRoom)
       return [
-        { ...model, gameRoom: child },
-        pipe(childCmd, Cmd.map(tag("GameRoom"))),
+        { ...model, gameRoom: child }, tagCmd("GameRoom", childCmd),
       ]
     }
   }
@@ -68,17 +75,16 @@ export const updateFromFrontend = (
   clientId: ClientId.ClientId,
   msg: ToBackend,
   model: Model,
-): [Model, Cmd.Cmd<BackendMsg>] => {
+): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
     case "GameRoom": {
-      const [child, childCmd] = GameRoom.updateFromFrontend(
+      const [child, childCmd] = GameRoom.Backend.updateFromFrontend(
         clientId,
         msg[1],
         model.gameRoom,
       )
       return [
-        { ...model, gameRoom: child },
-        pipe(childCmd, Cmd.map(tag("GameRoom"))),
+        { ...model, gameRoom: child }, tagCmd("GameRoom", childCmd)
       ]
     }
   }
@@ -92,13 +98,13 @@ export const updateFromFrontend = (
 //
 //
 
-export const subscriptions = (): Sub.Sub<BackendMsg> => {
+export const subscriptions = (): Sub.Sub<Msg> => {
   return Sub.batch([
     // pipe(GameRoom.subscriptions(), Sub.map(tag("GameRoom"))),
     Bridge.onConnect((clientId) => ["ClientConnected", clientId]),
     Bridge.onDisconnect((clientId) => ["ClientDisconnected", clientId]),
-    Bridge.fromFrontend<BackendMsg>((clientId, toBackend) => [
-      "FrontendToBackend",
+    Bridge.fromFrontend<Msg>((clientId, toBackend) => [
+      "[Frontend]",
       clientId,
       toBackend,
     ]),
@@ -120,13 +126,6 @@ const program = Platform.worker({
 })
 
 Platform.run(program)
-
-//
-// logging
-//
-
-console.clear()
-console.log("[backend] [program] running")
 
 //
 //
