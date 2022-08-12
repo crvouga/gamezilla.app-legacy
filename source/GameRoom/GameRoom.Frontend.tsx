@@ -44,7 +44,8 @@ export const init: [Model, Cmd.Cmd<Msg>] = [
     stopGame: RemoteData.NotAsked,
     modal: "Closed",
   },
-  Bridge.sendToBackend(["GameRoom", ["Init"]]),
+  Cmd.None
+  // Bridge.sendToBackend(["GameRoom", []]),
 ]
 
 //
@@ -164,7 +165,7 @@ export const update = (
 
       const game = model.games[roomId]
 
-      if (!game) {
+      if(!game) {
         return [model, Cmd.None]
       }
 
@@ -209,11 +210,25 @@ export const updateFromBackend = (
         ["Profile", ["FindMany", { userIds }]],
       ]
   
-      const sharedModel = msg[1]
+      const backendModel = msg[1]
 
-      return [{ ...model, ...sharedModel }, Cmd.None, [action]]
+      const modelNew: Model =  { 
+        ...model,
+        // @ts-ignore
+        games: {
+          ...model.games,
+
+          // @ts-ignore
+          ...backendModel.games
+        },
+        rooms: backendModel.rooms,
+        users: backendModel.users 
+      }
+        
+      return [modelNew, Cmd.None, [action]]
     }
 
+    
     case 'Game': {
       const roomId = msg[1][0]
       
@@ -231,7 +246,11 @@ export const updateFromBackend = (
         ...model,
         games: {
           ...model.games,
-          [roomId]: gameNew
+          [roomId]: {
+            // todo make it not compile if this isn't done
+            // ...Game.init(gameNew[0]),
+            ...gameNew
+          }
         }
       }
 

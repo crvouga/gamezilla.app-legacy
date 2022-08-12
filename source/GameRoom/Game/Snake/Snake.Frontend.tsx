@@ -140,7 +140,7 @@ export const updateFromBackend = (msg: ToFrontend, model: Model): [Model, Cmd.Cm
   switch(msg[0]) {
     case 'Sync': {
       const sharedModel = msg[1]
-      return [{...model, ...sharedModel}, Cmd.None, []]
+      return [{ ...model, ...sharedModel}, Cmd.None, []]
     }
 
     case 'ChangeDirectionResulted': {
@@ -198,22 +198,31 @@ export const view =
           dispatch={dispatch}
         />
         <UI.Toolbar>
+          <UI.Box sx={{marginLeft: -1}}>
           {model.player[0] === 'None' && (
-            <UI.Button variant="contained" sx={{marginLeft: -1}} onClick={() => dispatch(['ChangePlayer', {player: ['User',  currentUserId]}])}>
+            <UI.Button variant="contained"  onClick={() => dispatch(['ChangePlayer', {player: ['User',  currentUserId]}])}>
               Play
           </UI.Button>
           )}
 
           {model.player[0] === 'User' && (
-            <UI.Button disabled={model.player[1] !== currentUserId} variant="contained" sx={{marginLeft: -1}} onClick={() => dispatch(['ChangePlayer', {player: ['None']}])}>
+            <UI.Button disabled={model.player[1] !== currentUserId} variant="contained"  onClick={() => dispatch(['ChangePlayer', {player: ['None']}])}>
               Stop
             </UI.Button>
           )}
+          </UI.Box>
+          
+          <UI.Box sx={{flex:1}}>
+
+          </UI.Box>
+
+          <UI.Box sx={{marginRight: -1}}>
 
           {model.player[0] === 'User' && model.player[1] === currentUserId && 
-          <UI.Button variant="outlined" sx={{marginLeft: -1}} startIcon={model.status === 'Paused' ? <UI.Icons.PlayArrow /> : <UI.Icons.Pause /> } onClick={() => dispatch(['ToggleStatus', {userId: currentUserId}])}>
-            {model.status ===  "Paused" ? "Play" : "Pause"}
-          </UI.Button>}
+            <UI.Button variant="outlined" sx={{marginLeft: -1}} startIcon={model.status === 'Paused' ? <UI.Icons.PlayArrow /> : <UI.Icons.Pause /> } onClick={() => dispatch(['ToggleStatus', {userId: currentUserId}])}>
+              {model.status ===  "Paused" ? "Play" : "Pause"}
+            </UI.Button>}
+            </UI.Box>
         </UI.Toolbar>
       </UI.FillBox>
     )
