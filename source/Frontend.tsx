@@ -131,14 +131,14 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
       return [
         { ...model, store: storeNew },
-        pipe(storeCmd, Cmd.map(tag("Store"))),
+        tagCmd("Store", storeCmd),
       ]
     }
 
     case "Auth": {
       const [authNew, authCmd] = Auth.update(msg[1], model.auth)
 
-      return [{ ...model, auth: authNew }, pipe(authCmd, Cmd.map(tag("Auth")))]
+      return [{ ...model, auth: authNew }, tagCmd("Auth", authCmd)]
     }
 
     case "Snackbar": {
@@ -146,7 +146,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
       return [
         { ...model, snackbar: snackbarNew },
-        pipe(snackbarCmd, Cmd.map(tag("Snackbar"))),
+        tagCmd("Snackbar", snackbarCmd),
       ]
     }
 
@@ -154,22 +154,10 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
       const status = toStatus(model)
 
       switch (status[0]) {
-        case "ProfileLoading": {
-          return [model, Cmd.None]
-        }
-
-        case "ProfileMissing": {
-          return [model, Cmd.None]
-        }
-
-        case "AuthLoading": {
-          return [model, Cmd.None]
-        }
-
-        case "LoggedOut": {
-          return [model, Cmd.None]
-        }
-
+        case "ProfileLoading": 
+        case "ProfileMissing": 
+        case "AuthLoading": 
+        case "LoggedOut": 
         case "ProfileError": {
           return [model, Cmd.None]
         }
@@ -208,7 +196,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
           )
 
           return pipe(
-            [{ ...model, page: pageNew }, pipe(pageCmd, Cmd.map(tag("Page")))],
+            [{ ...model, page: pageNew }, tagCmd("Page", pageCmd)],
             andThenMany(runAction, actions),
           )
         }
@@ -221,7 +209,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
           )
 
           return pipe(
-            [{ ...model, page: pageNew }, pipe(pageCmd, Cmd.map(tag("Page")))],
+            [{ ...model, page: pageNew }, tagCmd("Page", pageCmd)],
             andThenMany(runAction, actions),
           )
         }
@@ -232,16 +220,15 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
         case "Ready": {
           const [pageNew, pageCmd, actions] = Pages.updateReady(
             {
+              ...model,
               profile: status[1].profile,
-              store: model.store,
-              gameRoom: model.gameRoom,
             },
             msg[1],
             model.page,
           )
 
           return pipe(
-            [{ ...model, page: pageNew }, pipe(pageCmd, Cmd.map(tag("Page")))],
+            [{ ...model, page: pageNew }, tagCmd("Page", pageCmd)],
             andThenMany(runAction, actions),
           )
         }
@@ -260,12 +247,15 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
       switch (status[0]) {
         case "ProfileLoading":
+        case "AuthLoading":
+        case "ProfileError": {
           return [modelNew, Cmd.None]
+        }
 
         case "ProfileMissing": {
           const [page, pageCmd] = Pages.initProfileMissing(route, status[1].auth)
 
-          return [{ ...modelNew, page }, pipe(pageCmd, Cmd.map(tag("Page")))]
+          return [{ ...modelNew, page }, tagCmd("Page", pageCmd)]
         }
 
         case "Ready": {
@@ -274,21 +264,16 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
             status[1].profile,
           )
           return pipe(
-            [{ ...modelNew, page }, pipe(pageCmd, Cmd.map(tag("Page")))],
+            [{ ...modelNew, page }, tagCmd("Page", pageCmd)],
             andThenMany(runAction, actions),
           )
         }
 
-        case "AuthLoading":
-          return [modelNew, Cmd.None]
-
-        case "ProfileError":
-          return [modelNew, Cmd.None]
 
         case "LoggedOut": {
           const [page, pageCmd] = Pages.initLoggedOut(route)
 
-          return [{ ...modelNew, page }, pipe(pageCmd, Cmd.map(tag("Page")))]
+          return [{ ...modelNew, page }, tagCmd("Page", pageCmd)]
         }
 
         default:
@@ -321,15 +306,15 @@ export const updateFromBackend = (
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
     case "GameRoom": {
-      const [child, childCmd, actions] = GameRoom.Frontend.updateFromBackend(
+      const [gameRoom, gameRoomCmd, actions] = GameRoom.Frontend.updateFromBackend(
         msg[1],
         model.gameRoom,
       )
 
       return pipe(
         [
-          { ...model, gameRoom: child },
-          pipe(childCmd, Cmd.map(tag("GameRoom"))),
+          { ...model, gameRoom },
+          tagCmd("GameRoom", gameRoomCmd),
         ],
         andThenMany(runAction, actions),
       )
@@ -349,6 +334,11 @@ const updateStatusChanged =
     }
 
     switch (statusNew[0]) {
+      case "ProfileError":
+      case "AuthLoading": {
+        return [model, Cmd.None]
+      }
+
       case "ProfileLoading": {
         const action: OutAction = [
           "Store",
@@ -364,18 +354,12 @@ const updateStatusChanged =
           statusNew[1].auth,
         )
 
-        return [{ ...model, page }, pipe(pageCmd, Cmd.map(tag("Page")))]
+        return [{ ...model, page }, tagCmd("Page", pageCmd)]
       }
-
-      case "ProfileError":
-        return [model, Cmd.None]
-
-      case "AuthLoading":
-        return [model, Cmd.None]
 
       case "LoggedOut": {
         const [page, pageCmd] = Pages.initLoggedOut(model.route)
-        return [{ ...model, page }, pipe(pageCmd, Cmd.map(tag("Page")))]
+        return [{ ...model, page }, tagCmd("Page", pageCmd)]
       }
 
       case "Ready": {
@@ -384,7 +368,7 @@ const updateStatusChanged =
           statusNew[1].profile,
         )
         return pipe(
-          [{ ...model, page }, pipe(pageCmd, Cmd.map(tag("Page")))],
+          [{ ...model, page }, tagCmd("Page", pageCmd)],
           andThenMany(runAction, actions),
         )
       }
@@ -400,7 +384,7 @@ const runAction = (action: OutAction, model: Model): [Model, Cmd.Cmd<Msg>] => {
       const [storeNew, storeCmd] = Store.runAction(action, model.store)
       return [
         { ...model, store: storeNew },
-        pipe(storeCmd, Cmd.map(tag("Store"))),
+        tagCmd("Store", storeCmd),
       ]
     }
 
@@ -411,7 +395,7 @@ const runAction = (action: OutAction, model: Model): [Model, Cmd.Cmd<Msg>] => {
       )
       return [
         { ...model, snackbar: snackbarNew },
-        pipe(snackbarCmd, Cmd.map(tag("Snackbar"))),
+        tagCmd("Snackbar", snackbarCmd),
       ]
     }
 
@@ -422,20 +406,20 @@ const runAction = (action: OutAction, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
       const currentUserId = model.auth.userId
 
-      const [child, childCmd] = GameRoom.Frontend.runAction(
+      const [gameRoom, gameRoomCmd] = GameRoom.Frontend.runAction(
         { currentUserId },
         action,
         model.gameRoom,
       )
       return [
-        { ...model, gameRoom: child },
-        pipe(childCmd, Cmd.map(tag("GameRoom"))),
+        { ...model, gameRoom },
+        tagCmd("GameRoom", gameRoomCmd),
       ]
     }
 
     case "Auth": {
       const [authNew, authCmd] = Auth.runAction(action, model.auth)
-      return [{ ...model, auth: authNew }, pipe(authCmd, Cmd.map(tag("Auth")))]
+      return [{ ...model, auth: authNew }, tagCmd("Auth", authCmd)]
     }
 
     default:
