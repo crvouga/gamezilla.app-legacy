@@ -281,8 +281,7 @@ const handleResult = <
     RemoteData.fromResult,
     RemoteData.mapSuccess(() => Unit),
   )
-
-
+  
   return [{...modelNew, [remoteDataKey]: remoteData}, Cmd.None, actions]
 }
 

@@ -64,10 +64,10 @@ export const update = ({currentRoomId, currentUserId}: {currentRoomId: RoomId.Ro
       return [model, Route.back]
 
     case "MouseUpBoard":
-      return [model, Cmd.None]
+      return [{...model, mouseStatus: "Inactive"}, Cmd.None]
       
     case "MouseDownBoard":
-      return [model, Cmd.None]
+      return [{...model, mouseStatus: "Active"}, Cmd.None]
       
     case "PressedKeyDown": {
       const direction = Snake.Direction.fromKey(msg[1])
@@ -88,7 +88,6 @@ export const update = ({currentRoomId, currentUserId}: {currentRoomId: RoomId.Ro
       return [model, sendToBackend(currentRoomId, msg)]
     }
 
-
     case 'ChangePlayer': {
       return [model, sendToBackend(currentRoomId, msg)]
     }
@@ -101,37 +100,36 @@ export const update = ({currentRoomId, currentUserId}: {currentRoomId: RoomId.Ro
 
     case "MouseMovedBoard":
     case "TouchMoveBoard":
-      return [model, Cmd.None]
-      // const previous = model.touched
+      const previous = model.touched
 
-      // if (!previous) {
-      //   return [{ ...model, touched: msg[1] }, Cmd.None]
-      // }
+      if (previous.type === 'None') {
+        return [{ ...model, touched: Option.Some(msg[1]) }, Cmd.None]
+      }
 
-      // const touchedNew = msg[1]
+      const touchedNew = msg[1]
 
-      // const delta = Position.subtract(previous, touchedNew)
+      const delta = Snake.Position.subtract(previous.value, touchedNew)
 
-      // const maxDeltaMagnitude = Math.max(Math.abs(delta.x), Math.abs(delta.y))
+      const maxDeltaMagnitude = Math.max(Math.abs(delta.x), Math.abs(delta.y))
 
-      // if (maxDeltaMagnitude < 4) {
-      //   return [{ ...model, touched: touchedNew }, Cmd.None]
-      // }
+      if (maxDeltaMagnitude < 4) {
+        return [{ ...model, touched: Option.Some(touchedNew) }, Cmd.None]
+      }
 
-      // const xDirection = delta.x > 0 ? "left" : "right"
+      const xDirection = delta.x > 0 ? "left" : "right"
 
-      // const yDirection = delta.y > 0 ? "up" : "down"
+      const yDirection = delta.y > 0 ? "up" : "down"
 
-      // const directionFromSwipe =
-      //   Math.abs(delta.x) > Math.abs(delta.y) ? xDirection : yDirection
+      const directionFromSwipe =
+        Math.abs(delta.x) > Math.abs(delta.y) ? xDirection : yDirection
 
-      // return [
-      //   enqueueDirection(directionFromSwipe, {
-      //     ...model,
-      //     touched: touchedNew,
-      //   }),
-      //   Cmd.None,
-      // ]
+      return [
+        {
+          ...model,
+          touched: Option.Some(touchedNew),
+        },
+        sendToBackend(currentRoomId, ['ChangeDirection', {userId: currentUserId, direction: directionFromSwipe }]),
+      ]
 
     default:
       return exhaustive(msg[0])
@@ -193,18 +191,6 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
 export const view =
   ({currentUserId}: {currentUserId: UserId.UserId},model: Model): UI.View<Msg> =>
   (dispatch) => {
-
-    if(model.player[0] === 'None') {
-      return <UI.FillBox sx={{paddingX:2}}>
-        <UI.Typography variant="h6">
-          Player
-        </UI.Typography>
-        <UI.Button fullWidth variant="contained" onClick={() => dispatch(['ChangePlayer', {player: ['User', currentUserId]}])}>
-          Start Playing
-        </UI.Button>
-      </UI.FillBox>
-    }
-
     return (
       <UI.FillBox>
         <ViewBoard
@@ -212,9 +198,22 @@ export const view =
           dispatch={dispatch}
         />
         <UI.Toolbar>
+          {model.player[0] === 'None' && (
+            <UI.Button variant="contained" sx={{marginLeft: -1}} onClick={() => dispatch(['ChangePlayer', {player: ['User',  currentUserId]}])}>
+              Play
+          </UI.Button>
+          )}
+
+          {model.player[0] === 'User' && (
+            <UI.Button disabled={model.player[1] !== currentUserId} variant="contained" sx={{marginLeft: -1}} onClick={() => dispatch(['ChangePlayer', {player: ['None']}])}>
+              Stop
+            </UI.Button>
+          )}
+
+          {model.player[0] === 'User' && model.player[1] === currentUserId && 
           <UI.Button variant="outlined" sx={{marginLeft: -1}} startIcon={model.status === 'Paused' ? <UI.Icons.PlayArrow /> : <UI.Icons.Pause /> } onClick={() => dispatch(['ToggleStatus', {userId: currentUserId}])}>
             {model.status ===  "Paused" ? "Play" : "Pause"}
-          </UI.Button>
+          </UI.Button>}
         </UI.Toolbar>
       </UI.FillBox>
     )
@@ -248,7 +247,7 @@ export const ViewBoard = ({
     <UI.Box sx={{ flex: 1, width: "100%", userSelect: "none" }}>
       <canvas
         style={{
-          // cursor: model.mouseStatus === "active" ? "grabbing" : "grab",
+          cursor: model.mouseStatus === "Active" ? "grabbing" : "grab",
           userSelect: "none",
           width: "100%",
           height: "100%",
@@ -263,11 +262,11 @@ export const ViewBoard = ({
           dispatch(["MouseUpBoard"])
         }}
         onMouseMove={(event) => {
-          // if (model.mouseStatus === "active") {
-          //   const x = event.clientX
-          //   const y = event.clientY
-          //   dispatch(["MouseMovedBoard", { x, y }])
-          // }
+          if (model.mouseStatus === "Active") {
+            const x = event.clientX
+            const y = event.clientY
+            dispatch(["MouseMovedBoard", { x, y }])
+          }
         }}
         onClick={() => {}}
         onTouchMove={(event) => {
