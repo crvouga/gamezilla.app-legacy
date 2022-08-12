@@ -81,12 +81,12 @@ export const updateFromFrontend = (
   model: Model,
 ): [Model, Cmd.Cmd<BackendMsg>] => {
   switch (msg[0]) {
-    case "Init": {
-      return [
-        model,
-        Cmd.batch([sendToFrontend([clientId], ["Sync", model])]),
-      ]
-    }
+    // case "Init": {
+    //   return [
+    //     model,
+    //     Cmd.batch([sendToFrontend([clientId], ["Sync", model])]),
+    //   ]
+    // }
 
     case 'Game': {
 
