@@ -1,5 +1,5 @@
 import * as GameRoom from "./GameRoom/GameRoom.Types"
-import * as Page from "./Page"
+import * as Page from "./Pages"
 import * as Route from "./Route"
 import * as Auth from "./Auth"
 import * as Snackbar from "./Snackbar"
