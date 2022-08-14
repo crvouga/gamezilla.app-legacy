@@ -897,6 +897,12 @@ const viewLoading: UI.View<Msg> = () => <UI.LoadingPage />
 //
 //
 
+type BottomNavigationItem = {
+  route: Route.Route,
+  filled: UI.ViewNode
+  outlined: UI.ViewNode
+}
+
 const viewBottomNavigation =
   ({
     currentUserId,
@@ -907,38 +913,41 @@ const viewBottomNavigation =
     route: Route.Route
   }): UI.View<Msg> =>
   (dispatch) => {
-    const onClick = (route: Route.Route) => () => {
-      dispatch(['ClickedBottomNavigationLink', route])
-    }
-
-    const isSelected = (someRoute: Route.Route)  => Route.equals(someRoute, route)
+    const items: BottomNavigationItem[] = [
+      {
+        route: ['Home'],
+        filled: <UI.Icons.Home />,
+        outlined: <UI.Icons.HomeOutlined />
+      },
+      {
+        route: ['Search'],
+        filled: <UI.Icons.Search />,
+        outlined: <UI.Icons.SearchOutlined />
+      },
+      {
+        route: ['Chat'],
+        filled: <UI.Icons.Chat />,
+        outlined: <UI.Icons.ChatOutlined />
+      },
+      {
+        route: ['Profile', currentUserId],
+        filled: <UI.Icons.AccountCircle />,
+        outlined: <UI.Icons.AccountCircleOutlined />
+      },
+    ]
 
     return (
       <UI.BottomNavigation showLabels value={Route.encode(route)}>
-        <UI.BottomNavigationAction
-          icon={isSelected(['Home']) ? <UI.Icons.Home /> : <UI.Icons.HomeOutlined />}
-          label="Home"
-          value={Route.encode(['Home'])}
-          onClick={onClick(['Home'])}
-        />
-        <UI.BottomNavigationAction
-          icon={isSelected(['Search']) ? <UI.Icons.Search /> : <UI.Icons.SearchOutlined />}
-          label="Search"
-          value={Route.encode(['Search'])}
-          onClick={onClick(['Search'])}
-        />
-        <UI.BottomNavigationAction
-          icon={isSelected(['Chat']) ? <UI.Icons.Chat /> : <UI.Icons.ChatOutlined />}
-          label="Chat"
-          value={Route.encode(['Chat'])}
-          onClick={onClick(['Chat'])}
-        />
-        <UI.BottomNavigationAction
-          icon={isSelected(['Profile', currentUserId]) ? <UI.Icons.AccountCircle /> : <UI.Icons.AccountCircleOutlined />}
-          label="Profile"
-          value={Route.encode(['Profile', currentUserId])}
-          onClick={onClick(['Profile', currentUserId])}
-        />
+        {items.map(item => (
+          <UI.BottomNavigationAction
+            key={Route.encode(item.route)}
+            icon={Route.equals(route, item.route) ? item.filled : item.outlined}
+            label={item.route[0]}
+            value={Route.encode(item.route)}
+            onClick={() => dispatch(['ClickedBottomNavigationLink', item.route])}
+          />
+        ))}
+        
       </UI.BottomNavigation>
     )
   }
