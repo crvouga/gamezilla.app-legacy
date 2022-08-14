@@ -592,7 +592,7 @@ const viewError =
 
 export const onLocationChange = (location: Browser.Location): Msg => {
   return pipe(
-    location,
+    {pathname: location.pathname},
     Route.decode,
     Option.withDefault<Route.Route>(["Home"]),
     (route) => ["Route", ["GotRoute", route]],

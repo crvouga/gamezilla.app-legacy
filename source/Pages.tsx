@@ -907,50 +907,37 @@ const viewBottomNavigation =
     route: Route.Route
   }): UI.View<Msg> =>
   (dispatch) => {
+    const onClick = (route: Route.Route) => () => {
+      dispatch(['ClickedBottomNavigationLink', route])
+    }
+
+    const isSelected = (someRoute: Route.Route)  => Route.equals(someRoute, route)
+
     return (
-      <UI.BottomNavigation
-        showLabels
-        value={route[0]}
-        onChange={(_event, routeType) => {
-          if (!Route.isRouteType(routeType)) {
-            return
-          }
-          switch (routeType) {
-            case "Home":
-            case "Search":
-            case "Chat": {
-              dispatch(["ClickedBottomNavigationLink", [routeType]])
-              break
-            }
-            case "Profile": {
-              dispatch([
-                "ClickedBottomNavigationLink",
-                ['Profile', currentUserId],
-              ])
-              break
-            }
-          }
-        }}
-      >
+      <UI.BottomNavigation showLabels value={Route.encode(route)}>
         <UI.BottomNavigationAction
-          icon={<UI.Icons.Home />}
+          icon={isSelected(['Home']) ? <UI.Icons.Home /> : <UI.Icons.HomeOutlined />}
           label="Home"
-          value={Route.routesTypes.Home}
+          value={Route.encode(['Home'])}
+          onClick={onClick(['Home'])}
         />
         <UI.BottomNavigationAction
-          icon={<UI.Icons.Search />}
+          icon={isSelected(['Search']) ? <UI.Icons.Search /> : <UI.Icons.SearchOutlined />}
           label="Search"
-          value={Route.routesTypes.Search}
+          value={Route.encode(['Search'])}
+          onClick={onClick(['Search'])}
         />
         <UI.BottomNavigationAction
-          icon={<UI.Icons.Chat />}
+          icon={isSelected(['Chat']) ? <UI.Icons.Chat /> : <UI.Icons.ChatOutlined />}
           label="Chat"
-          value={Route.routesTypes.Chat}
+          value={Route.encode(['Chat'])}
+          onClick={onClick(['Chat'])}
         />
         <UI.BottomNavigationAction
-          icon={<UI.Icons.Person />}
+          icon={isSelected(['Profile', currentUserId]) ? <UI.Icons.AccountCircle /> : <UI.Icons.AccountCircleOutlined />}
           label="Profile"
-          value={Route.routesTypes.Profile}
+          value={Route.encode(['Profile', currentUserId])}
+          onClick={onClick(['Profile', currentUserId])}
         />
       </UI.BottomNavigation>
     )
