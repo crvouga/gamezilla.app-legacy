@@ -137,10 +137,10 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
       const status = toStatus(model)
 
       switch (status[0]) {
-        case "ProfileLoading": 
-        case "ProfileMissing": 
-        case "AuthLoading": 
-        case "LoggedOut": 
+        case "ProfileLoading":
+        case "ProfileMissing":
+        case "AuthLoading":
+        case "LoggedOut":
         case "ProfileError": {
           return [model, Cmd.None]
         }
@@ -305,58 +305,58 @@ export const updateFromBackend = (
 
 const updateStatusChanged =
   (modelPrev: Model) =>
-  (_msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
-    const statusPrev = toStatus(modelPrev)
-    const statusNew = toStatus(model)
+    (_msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
+      const statusPrev = toStatus(modelPrev)
+      const statusNew = toStatus(model)
 
-    if (statusNew[0] === statusPrev[0]) {
-      return [model, Cmd.None]
-    }
-
-    switch (statusNew[0]) {
-      case "ProfileError":
-      case "AuthLoading": {
+      if (statusNew[0] === statusPrev[0]) {
         return [model, Cmd.None]
       }
 
-      case "ProfileLoading": {
-        const action: OutAction = [
-          "Store",
-          ["Profile", ["FindMany", { userIds: [statusNew[1].authSession.userId] }]],
-        ]
+      switch (statusNew[0]) {
+        case "ProfileError":
+        case "AuthLoading": {
+          return [model, Cmd.None]
+        }
 
-        return pipe([model, Cmd.None], andThenMany(updateFromAction, [action]))
+        case "ProfileLoading": {
+          const action: OutAction = [
+            "Store",
+            ["Profile", ["FindMany", { userIds: [statusNew[1].authSession.userId] }]],
+          ]
+
+          return pipe([model, Cmd.None], andThenMany(updateFromAction, [action]))
+        }
+
+        case "ProfileMissing": {
+          const [page, pageCmd] = Pages.initProfileMissing(
+            model.route,
+            statusNew[1].authSession,
+          )
+
+          return [{ ...model, page }, tagCmd("Page", pageCmd)]
+        }
+
+        case "LoggedOut": {
+          const [page, pageCmd] = Pages.initLoggedOut(model.route)
+          return [{ ...model, page }, tagCmd("Page", pageCmd)]
+        }
+
+        case "Ready": {
+          const [page, pageCmd, actions] = Pages.initReady(
+            model.route,
+            statusNew[1].profile,
+          )
+          return pipe(
+            [{ ...model, page }, tagCmd("Page", pageCmd)],
+            andThenMany(updateFromAction, actions),
+          )
+        }
+
+        default:
+          return exhaustive(statusNew)
       }
-
-      case "ProfileMissing": {
-        const [page, pageCmd] = Pages.initProfileMissing(
-          model.route,
-          statusNew[1].authSession,
-        )
-
-        return [{ ...model, page }, tagCmd("Page", pageCmd)]
-      }
-
-      case "LoggedOut": {
-        const [page, pageCmd] = Pages.initLoggedOut(model.route)
-        return [{ ...model, page }, tagCmd("Page", pageCmd)]
-      }
-
-      case "Ready": {
-        const [page, pageCmd, actions] = Pages.initReady(
-          model.route,
-          statusNew[1].profile,
-        )
-        return pipe(
-          [{ ...model, page }, tagCmd("Page", pageCmd)],
-          andThenMany(updateFromAction, actions),
-        )
-      }
-
-      default:
-        return exhaustive(statusNew)
     }
-  }
 
 const updateFromAction = (action: OutAction, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (action[0]) {
@@ -422,7 +422,7 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
     tagSub("Page", Pages.subscriptions(model.page)),
     tagSub("Auth", Auth.subscriptions),
     model.auth[0] === "LoggedIn"
-      ?  tagSub("GameRoom", GameRoom.subscriptions(
+      ? tagSub("GameRoom", GameRoom.subscriptions(
         { currentUserId: model.auth[1].userId },
         model.gameRoom,
       ))
@@ -456,46 +456,46 @@ const toThemeMode = (model: Model): UI.ThemeMode => {
 
 export const view =
   (model: Model): UI.View<Msg> =>
-  (dispatch) => {
-    return (
-      <UI.ThemeProvider themeMode={toThemeMode(model)}>
-        <UI.Box
-          sx={{
-            userSelect: "none",
-            maxWidth: "sm",
-            marginX: "auto",
-            position: "fixed",
-            width: "100%",
-            height: "100%",
-            overflow: "hidden",
-            maxHeight: "100%",
-            display: "flex",
-            flexDirection: "column",
-            left: "50%",
-            top: "50%",
-            transform: "translate(-50%, -50%)",
-          }}
-        >
+    (dispatch) => {
+      return (
+        <UI.ThemeProvider themeMode={toThemeMode(model)}>
           <UI.Box
             sx={{
+              userSelect: "none",
+              maxWidth: "sm",
+              marginX: "auto",
+              position: "fixed",
+              width: "100%",
+              height: "100%",
+              overflow: "hidden",
+              maxHeight: "100%",
               display: "flex",
               flexDirection: "column",
-              width: "100%",
-              overflow: "hidden",
-              flex: 1,
+              left: "50%",
+              top: "50%",
+              transform: "translate(-50%, -50%)",
             }}
           >
-            {viewMain(model)(dispatch)}
-          </UI.Box>
+            <UI.Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                width: "100%",
+                overflow: "hidden",
+                flex: 1,
+              }}
+            >
+              {viewMain(model)(dispatch)}
+            </UI.Box>
 
-          {pipe(
-            Snackbar.view({}, model.snackbar),
-            UI.map(tag("Snackbar")),
-          )(dispatch)}
-        </UI.Box>
-      </UI.ThemeProvider>
-    )
-  }
+            {pipe(
+              Snackbar.view({}, model.snackbar),
+              UI.map(tag("Snackbar")),
+            )(dispatch)}
+          </UI.Box>
+        </UI.ThemeProvider>
+      )
+    }
 
 const viewMain = (model: Model): UI.View<Msg> => {
   const status = toStatus(model)
@@ -558,7 +558,7 @@ const viewMain = (model: Model): UI.View<Msg> => {
 
 const viewLoading =
   ({ reason }: { reason: string }): UI.View<Msg> =>
-  () =>
+    () =>
     (
       <UI.FillBox sx={{ justifyContent: "center", alignItems: "center" }}>
         <UI.CircularProgress sx={{ marginBottom: 2 }} />
@@ -575,7 +575,7 @@ const viewLoading =
 
 const viewError =
   ({ reason }: { reason: string }): UI.View<Msg> =>
-  () =>
+    () =>
     (
       <UI.FillBox sx={{ justifyContent: "center", alignItems: "center", p: 2 }}>
         <UI.Alert severity="error">{reason}</UI.Alert>
@@ -592,7 +592,7 @@ const viewError =
 
 export const onLocationChange = (location: Browser.Location): Msg => {
   return pipe(
-    {pathname: location.pathname},
+    { pathname: location.pathname },
     Route.decode,
     Option.withDefault<Route.Model>(["Home"]),
     (route) => ["Route", ["GotRoute", route]],
@@ -608,12 +608,12 @@ export const onLocationChange = (location: Browser.Location): Msg => {
 //
 
 type Status =
-  | ["AuthLoading" ] 
-  | ["LoggedOut" ] 
-  | ["ProfileLoading",  {authSession: Auth.Session }]
-  | ["ProfileMissing",  {authSession: Auth.Session }]
-  | ["ProfileError",  {authSession: Auth.Session }]
-  | ["Ready",  {profile: Store.Profile.Profile; authSession: Auth.Session }]
+  | ["AuthLoading"]
+  | ["LoggedOut"]
+  | ["ProfileLoading", { authSession: Auth.Session }]
+  | ["ProfileMissing", { authSession: Auth.Session }]
+  | ["ProfileError", { authSession: Auth.Session }]
+  | ["Ready", { profile: Store.Profile.Profile; authSession: Auth.Session }]
 
 export const toStatus = ({
   store,
@@ -624,10 +624,10 @@ export const toStatus = ({
 }): Status => {
   switch (auth[0]) {
     case "Loading":
-      return ["AuthLoading" ]
+      return ["AuthLoading"]
 
     case "LoggedOut":
-      return ["LoggedOut" ]
+      return ["LoggedOut"]
 
     case "LoggedIn": {
       const authSession = auth[1]
@@ -648,13 +648,13 @@ export const toStatus = ({
 
       switch (query.type) {
         case "NotAsked":
-          return ["ProfileLoading", {authSession} ]
+          return ["ProfileLoading", { authSession }]
 
         case "Loading":
-          return ["ProfileLoading", {authSession }]
+          return ["ProfileLoading", { authSession }]
 
         case "Failure":
-          return ["ProfileError", {authSession }]
+          return ["ProfileError", { authSession }]
 
         case "Success": {
           const userIds = query.value
@@ -666,7 +666,7 @@ export const toStatus = ({
           const profile = profiles[0]
 
           if (!profile) {
-            return  ["ProfileMissing", {authSession} ]
+            return ["ProfileMissing", { authSession }]
           }
 
           return ["Ready", {
@@ -703,6 +703,12 @@ const root = ReactDomClient.createRoot(document.getElementById("root")!)
 
 Browser.run(program, (dom) => {
   root.render(dom)
+})
+
+program.state$.subscribe(state => {
+  console.log("--")
+  console.log(state.msg?.flat(Infinity))
+  console.log(state.model)
 })
 
 

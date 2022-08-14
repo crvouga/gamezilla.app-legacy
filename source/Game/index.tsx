@@ -1,9 +1,9 @@
-import * as Chess from "./Chess"
+import * as Chess from "./Chess/Chess"
 import * as ConnectFour from "./ConnectFour"
 import * as Snake from "./Snake"
 import * as TicTacToe from "./TicTacToe"
 
-export type Name = "TicTacToe" | "Snake" | "ConnectFour"
+export type Name = "TicTacToe" | "Snake" | "ConnectFour" | "Chess"
 
 export const CoverArt = ({ gameName }: { gameName: Name }) => {
   switch (gameName) {
@@ -17,6 +17,10 @@ export const CoverArt = ({ gameName }: { gameName: Name }) => {
 
     case "TicTacToe": {
       return <TicTacToe.CoverArt />
+    }
+
+    case 'Chess': {
+      return <Chess.CoverArt />
     }
   }
 }

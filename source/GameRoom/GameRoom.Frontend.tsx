@@ -8,7 +8,7 @@ import {
   Sub, Unit
 } from "../Core"
 import { RoomId, UserId } from "../Data"
-import * as Games from "../Game"
+import { CoverArt, Name } from "../Game"
 import * as Route from "../Route"
 import * as Snackbar from "../Snackbar"
 import * as Store from "../Store"
@@ -683,7 +683,7 @@ const viewUsersInRoomAvatarGroup =
       )
     }
 
-const GameGrid = ({ onClick }: { onClick: (gameName: Games.Name) => void }) => {
+const GameGrid = ({ onClick }: { onClick: (gameName: Name) => void }) => {
   return (
     <UI.Box
       sx={{
@@ -693,21 +693,27 @@ const GameGrid = ({ onClick }: { onClick: (gameName: Games.Name) => void }) => {
       }}
     >
       <GameCard
-        icon={<Games.TicTacToe.CoverArt />}
+        icon={<CoverArt gameName="TicTacToe" />}
         label="Tic Tac Toe"
         onClick={() => onClick("TicTacToe")}
       />
 
       <GameCard
-        icon={<Games.ConnectFour.CoverArt id="" />}
+        icon={<CoverArt gameName="ConnectFour" />}
         label="Connect Four"
         onClick={() => onClick("ConnectFour")}
       />
 
       <GameCard
-        icon={<Games.Snake.CoverArt />}
+        icon={<CoverArt gameName="Snake" />}
         label="Snake"
         onClick={() => onClick("Snake")}
+      />
+
+      <GameCard
+        icon={<CoverArt gameName="Chess" />}
+        label="Chess"
+        onClick={() => onClick("Chess")}
       />
     </UI.Box>
   )
@@ -841,7 +847,7 @@ export const viewBanner =
             {game ? (
               <UI.Box sx={{ width: bannerHeight }}>
                 <UI.AspectRatio aspectRatio={1}>
-                  <Games.CoverArt gameName={game[0]} />
+                  <CoverArt gameName={game[0]} />
                 </UI.AspectRatio>
               </UI.Box>
             ) : (
