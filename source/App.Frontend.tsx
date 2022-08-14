@@ -184,7 +184,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
         case "ProfileMissing": {
           const [pageNew, pageCmd, actions] = Pages.updateProfileMissing(
-            status[1].auth,
+            status[1].authSession,
             msg[1],
             model.page,
           )
@@ -234,7 +234,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
         }
 
         case "ProfileMissing": {
-          const [page, pageCmd] = Pages.initProfileMissing(route, status[1].auth)
+          const [page, pageCmd] = Pages.initProfileMissing(route, status[1].authSession)
 
           return [{ ...modelNew, page }, tagCmd("Page", pageCmd)]
         }
@@ -320,7 +320,7 @@ const updateStatusChanged =
       case "ProfileLoading": {
         const action: OutAction = [
           "Store",
-          ["Profile", ["FindMany", { userIds: [statusNew[1].auth.userId] }]],
+          ["Profile", ["FindMany", { userIds: [statusNew[1].authSession.userId] }]],
         ]
 
         return pipe([model, Cmd.None], andThenMany(updateFromAction, [action]))
@@ -329,7 +329,7 @@ const updateStatusChanged =
       case "ProfileMissing": {
         const [page, pageCmd] = Pages.initProfileMissing(
           model.route,
-          statusNew[1].auth,
+          statusNew[1].authSession,
         )
 
         return [{ ...model, page }, tagCmd("Page", pageCmd)]
@@ -378,11 +378,11 @@ const updateFromAction = (action: OutAction, model: Model): [Model, Cmd.Cmd<Msg>
     }
 
     case "GameRoom": {
-      if (model.auth.type !== "LoggedIn") {
+      if (model.auth[0] !== "LoggedIn") {
         return [model, Cmd.None]
       }
 
-      const currentUserId = model.auth.userId
+      const currentUserId = model.auth[1].userId
 
       const [gameRoom, gameRoomCmd] = GameRoom.updateFromAction(
         { currentUserId },
@@ -419,10 +419,10 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
     Bridge.fromBackend((toFrontend) => ["[Backend]", toFrontend]),
     pipe(Pages.subscriptions(model.page), Sub.map(tag("Page"))),
     pipe(Auth.subscriptions, Sub.map(tag("Auth"))),
-    model.auth.type === "LoggedIn"
+    model.auth[0] === "LoggedIn"
       ? pipe(
           GameRoom.subscriptions(
-            { currentUserId: model.auth.userId },
+            { currentUserId: model.auth[1].userId },
             model.gameRoom,
           ),
           Sub.map(tag("GameRoom")),
@@ -527,7 +527,7 @@ const viewMain = (model: Model): UI.View<Msg> => {
 
         case "ProfileMissing":
           return pipe(
-            Pages.viewProfileMissing(status[1].auth, model.page),
+            Pages.viewProfileMissing(status[1].authSession, model.page),
             UI.map(tag("Page")),
           )
 
@@ -611,10 +611,10 @@ export const onLocationChange = (location: Browser.Location): Msg => {
 type Status =
   | ["AuthLoading" ] 
   | ["LoggedOut" ] 
-  | ["ProfileLoading",  {auth: Auth.LoggedIn }]
-  | ["ProfileMissing",  {auth: Auth.LoggedIn }]
-  | ["ProfileError",  {auth: Auth.LoggedIn }]
-  | ["Ready",  {profile: Store.Profile.Profile; auth: Auth.LoggedIn }]
+  | ["ProfileLoading",  {authSession: Auth.Session }]
+  | ["ProfileMissing",  {authSession: Auth.Session }]
+  | ["ProfileError",  {authSession: Auth.Session }]
+  | ["Ready",  {profile: Store.Profile.Profile; authSession: Auth.Session }]
 
 export const toStatus = ({
   store,
@@ -623,7 +623,7 @@ export const toStatus = ({
   store: Store.Model
   auth: Auth.Model
 }): Status => {
-  switch (auth.type) {
+  switch (auth[0]) {
     case "Loading":
       return ["AuthLoading" ]
 
@@ -631,29 +631,29 @@ export const toStatus = ({
       return ["LoggedOut" ]
 
     case "LoggedIn": {
-      const { userId } = auth
+      const authSession = auth[1]
 
-      const profile = store.Profile[userId]
+      const profile = store.Profile[authSession.userId]
 
       if (profile) {
         return ["Ready", {
-          auth,
+          authSession,
           profile,
         }]
       }
 
       const query =
-        store.queries.Profile.FindOne[auth.userId] ?? RemoteData.NotAsked
+        store.queries.Profile.FindOne[authSession.userId] ?? RemoteData.NotAsked
 
       switch (query.type) {
         case "NotAsked":
-          return ["ProfileLoading", {auth} ]
+          return ["ProfileLoading", {authSession} ]
 
         case "Loading":
-          return ["ProfileLoading", {auth }]
+          return ["ProfileLoading", {authSession }]
 
         case "Failure":
-          return ["ProfileError", {auth }]
+          return ["ProfileError", {authSession }]
 
         case "Success": {
           const userId = query.value
@@ -661,11 +661,11 @@ export const toStatus = ({
           const profile = store.Profile[userId]
 
           if (!profile) {
-            return  ["ProfileMissing", {auth} ]
+            return  ["ProfileMissing", {authSession} ]
           }
 
           return ["Ready", {
-            auth,
+            authSession,
             profile,
           }]
         }
