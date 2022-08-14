@@ -90,24 +90,21 @@ export const view =
 
     return (
       <UI.FillBox>
-        <UI.TextField
-          id={SearchInputId}
+        <UI.InputBase 
+          sx={{ width: "100%", padding:2, paddingBottom: 1, }} 
           placeholder="Search"
-          fullWidth
-          value={model.searchText}
-          onChange={(event) =>
-            dispatch(["InputtedSearchText", event.target.value])
-          }
-          InputProps={{
-            endAdornment: (
-              <UI.InputAdornment position="end">
-                <UI.IconButton onClick={() => dispatch(["ClickedClear"])}>
+          value={model.searchText} 
+          onChange={event => dispatch(["InputtedSearchText", event.target.value])} 
+          endAdornment={
+            <UI.InputAdornment position="end">
+                <UI.IconButton edge="end" onClick={() => dispatch(["ClickedClear"])}>
                   <UI.Icons.Close />
                 </UI.IconButton>
               </UI.InputAdornment>
-            ),
-          }}
-        />
+          }
+          />
+        
+        <UI.Divider sx={{marginBottom:1}} />
 
         {query.type === "Failure" && <UI.Box sx={{ flex: 1 }}></UI.Box>}
         {query.type === "NotAsked" && <UI.Box sx={{ flex: 1 }}></UI.Box>}
