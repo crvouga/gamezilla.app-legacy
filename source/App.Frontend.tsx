@@ -20,7 +20,7 @@ import {
   tagSub
 } from "./Core"
 import * as GameRoom from "./GameRoom/GameRoom.Frontend"
-import * as Pages from "./Pages"
+import * as Page from "./Page"
 import * as Route from "./Route"
 import * as Snackbar from "./Snackbar"
 import * as Store from "./Store"
@@ -54,7 +54,7 @@ export const init = (location: Browser.Location): [Model, Cmd.Cmd<Msg>] => {
   const snackbar = Snackbar.init
   const store = Store.init
   const [gameRoom, gameRoomCmd] = GameRoom.init
-  const [page, pageCmd] = Pages.initLoading()
+  const [page, pageCmd] = Page.initLoading()
 
   return [
     {
@@ -172,7 +172,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
           return [model, Cmd.None]
 
         case "LoggedOut": {
-          const [pageNew, pageCmd, actions] = Pages.updateLoggedOut(
+          const [pageNew, pageCmd, actions] = Page.updateLoggedOut(
             msg[1],
             model.page,
           )
@@ -184,7 +184,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
         }
 
         case "ProfileMissing": {
-          const [pageNew, pageCmd, actions] = Pages.updateProfileMissing(
+          const [pageNew, pageCmd, actions] = Page.updateProfileMissing(
             status[1].authSession,
             msg[1],
             model.page,
@@ -200,7 +200,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
           return [model, Cmd.None]
 
         case "Ready": {
-          const [pageNew, pageCmd, actions] = Pages.updateReady(
+          const [pageNew, pageCmd, actions] = Page.updateReady(
             {
               ...model,
               profile: status[1].profile,
@@ -235,13 +235,13 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
         }
 
         case "ProfileMissing": {
-          const [page, pageCmd] = Pages.initProfileMissing(route, status[1].authSession)
+          const [page, pageCmd] = Page.initProfileMissing(route, status[1].authSession)
 
           return [{ ...modelNew, page }, tagCmd("Page", pageCmd)]
         }
 
         case "Ready": {
-          const [page, pageCmd, actions] = Pages.initReady(
+          const [page, pageCmd, actions] = Page.initReady(
             route,
             status[1].profile,
           )
@@ -253,7 +253,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
 
         case "LoggedOut": {
-          const [page, pageCmd] = Pages.initLoggedOut(route)
+          const [page, pageCmd] = Page.initLoggedOut(route)
 
           return [{ ...modelNew, page }, tagCmd("Page", pageCmd)]
         }
@@ -328,7 +328,7 @@ const updateStatusChanged =
       }
 
       case "ProfileMissing": {
-        const [page, pageCmd] = Pages.initProfileMissing(
+        const [page, pageCmd] = Page.initProfileMissing(
           model.route,
           statusNew[1].authSession,
         )
@@ -337,12 +337,12 @@ const updateStatusChanged =
       }
 
       case "LoggedOut": {
-        const [page, pageCmd] = Pages.initLoggedOut(model.route)
+        const [page, pageCmd] = Page.initLoggedOut(model.route)
         return [{ ...model, page }, tagCmd("Page", pageCmd)]
       }
 
       case "Ready": {
-        const [page, pageCmd, actions] = Pages.initReady(
+        const [page, pageCmd, actions] = Page.initReady(
           model.route,
           statusNew[1].profile,
         )
@@ -418,7 +418,7 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
   return Sub.batch<Msg>([
     Bridge.onConnectionStatus(tag("BackendConnection.Changed")),
     Bridge.fromBackend(tag("[Backend]")),
-    tagSub("Page", Pages.subscriptions(model.page)),
+    tagSub("Page", Page.subscriptions(model.page)),
     tagSub("Auth", Auth.subscriptions),
     model.auth[0] === "LoggedIn"
       ?  tagSub("GameRoom", GameRoom.subscriptions(
@@ -521,11 +521,11 @@ const viewMain = (model: Model): UI.View<Msg> => {
           return viewError({ reason: "Failed to load profile." })
 
         case "LoggedOut":
-          return pipe(Pages.viewLoggedOut(model.page), UI.map(tag("Page")))
+          return pipe(Page.viewLoggedOut(model.page), UI.map(tag("Page")))
 
         case "ProfileMissing":
           return pipe(
-            Pages.viewProfileMissing(status[1].authSession, model.page),
+            Page.viewProfileMissing(status[1].authSession, model.page),
             UI.map(tag("Page")),
           )
 
@@ -541,7 +541,7 @@ const viewMain = (model: Model): UI.View<Msg> => {
               )(dispatch)}
               <UI.FillBox>
                 {pipe(
-                  Pages.viewReady(
+                  Page.viewReady(
                     { ...model, profile: status[1].profile },
                     model.page,
                   ),

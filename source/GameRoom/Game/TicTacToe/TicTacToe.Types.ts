@@ -1,5 +1,5 @@
 import { UserId } from "../../../Data"
-import * as Board from "../../../Games/TicTacToe/TicTacToe"
+import { TicTacToe } from "../../../Game"
 
 //
 //
@@ -10,16 +10,16 @@ import * as Board from "../../../Games/TicTacToe/TicTacToe"
 //
 
 export type SharedModel = {
-  board: Board.Board
+  board: TicTacToe.Board
   players: {
-    [player in Board.Player]:
+    [player in TicTacToe.Player]:
       | { type: "None" }
       | { type: "User"; userId: UserId.UserId }
   }
 }
 
 export const initSharedModel: SharedModel = {
-  board: Board.emptyBoard,
+  board: TicTacToe.emptyBoard,
   players: {
     O: { type: "None" },
     X: { type: "None" },
@@ -46,4 +46,4 @@ export type ToFrontend = ["Noop"]
 
 export type BackendMsg = ["Noop"]
 
-export type GameMsg = ["ClickedBoard", Board.Position]
+export type GameMsg = ["ClickedBoard", TicTacToe.Position]

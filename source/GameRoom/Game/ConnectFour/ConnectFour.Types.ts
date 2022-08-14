@@ -1,5 +1,5 @@
 import { UserId } from "../../../Data"
-import { ConnectFour } from "../../../Games"
+import { ConnectFour } from "../../../Game"
 
 //
 //

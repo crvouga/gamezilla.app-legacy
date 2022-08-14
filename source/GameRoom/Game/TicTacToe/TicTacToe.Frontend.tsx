@@ -1,6 +1,6 @@
 import { Cmd } from "../../../Core"
 import { UserId } from "../../../Data"
-import { TicTacToe } from "../../../Games"
+import { TicTacToe } from "../../../Game"
 import * as Store from "../../../Store"
 import * as UI from "../../../UI"
 import { FrontendModel, FrontendMsg, initSharedModel, ToFrontend } from "./TicTacToe.Types"

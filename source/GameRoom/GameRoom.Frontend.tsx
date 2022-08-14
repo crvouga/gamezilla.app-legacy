@@ -8,7 +8,7 @@ import {
   Sub, Unit
 } from "../Core"
 import { RoomId, UserId } from "../Data"
-import * as Games from "../Games"
+import * as Games from "../Game"
 import * as Route from "../Route"
 import * as Snackbar from "../Snackbar"
 import * as Store from "../Store"

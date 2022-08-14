@@ -1,5 +1,5 @@
 import { Cmd } from "../../../Core"
-import { ConnectFour } from "../../../Games"
+import { ConnectFour } from "../../../Game"
 import * as UI from "../../../UI"
 import { FrontendModel, FrontendMsg, initSharedModel, ToBackend, ToFrontend } from "./ConnectFour.Types"
 
