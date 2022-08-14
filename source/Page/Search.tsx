@@ -90,26 +90,24 @@ export const view =
 
     return (
       <UI.FillBox>
-        <UI.InputBase 
-          sx={{ width: "100%", padding:2, paddingBottom: 1, }} 
-          placeholder="Search"
-          value={model.searchText} 
-          onChange={event => dispatch(["InputtedSearchText", event.target.value])} 
-          endAdornment={
-            <UI.InputAdornment position="end">
-                <UI.IconButton edge="end" onClick={() => dispatch(["ClickedClear"])}>
-                  <UI.Icons.Close />
-                </UI.IconButton>
-              </UI.InputAdornment>
-          }
+        <UI.Toolbar>
+          <UI.InputBase 
+            sx={{ height: "100%", flex:1 }} 
+            placeholder="Search"
+            value={model.searchText} 
+            onChange={event => dispatch(["InputtedSearchText", event.target.value])} 
           />
+          <UI.IconButton edge="end" onClick={() => dispatch(["ClickedClear"])}>
+            <UI.Icons.Close />
+          </UI.IconButton>
+        </UI.Toolbar>
         
-        <UI.Divider sx={{marginBottom:1}} />
+        <UI.Divider />
 
         {query.type === "Failure" && <UI.Box sx={{ flex: 1 }}></UI.Box>}
         {query.type === "NotAsked" && <UI.Box sx={{ flex: 1 }}></UI.Box>}
 
-        <UI.Box sx={{ flex: 1, overflowY: "scroll" }}>
+        <UI.Box sx={{ paddingTop: 1, flex: 1, overflowY: "scroll" }}>
           {results.map((result) => (
             <UI.ListItemButton
               key={result.userId}
