@@ -117,10 +117,10 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
       }
 
     case "ClickedCreateAccount":
-      return [model, Route.push({ type: "AccountCreate" })]
+      return [model, Route.push(["AccountCreate" ])]
 
     case "ClickedResetPassword":
-      return [model, Route.push({ type: "PasswordReset" })]
+      return [model, Route.push(["PasswordReset" ])]
 
     case "ClickedBack":
       return [model, Route.back]

@@ -41,30 +41,26 @@ export const update = (
     case "ClickedAvatar":
       return [
         model,
-        Route.push({
-          type: "ProfileUpdateAvatar",
-        }),
+        Route.push(["ProfileUpdateAvatar"]),
       ]
 
     case "ClickedChangedAvatar":
       return [
         model,
-        Route.push({
-          type: "ProfileUpdateAvatar",
-        }),
+        Route.push(["ProfileUpdateAvatar"]),
       ]
 
     case "ClickedBack":
       return [model, Route.back]
 
     case "ClickedName":
-      return [model, Route.push({ type: "ProfileUpdateName" })]
+      return [model, Route.push(["ProfileUpdateName" ])]
 
     case "ClickedUsername":
-      return [model, Route.push({ type: "ProfileUpdateUsername" })]
+      return [model, Route.push(["ProfileUpdateUsername" ])]
 
     case "ClickedTheme":
-      return [model, Route.push({ type: "ProfileUpdateTheme" })]
+      return [model, Route.push(["ProfileUpdateTheme" ])]
   }
 }
 

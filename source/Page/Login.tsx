@@ -31,7 +31,7 @@ export type Msg =
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
     case "ClickedEmailLogin":
-      return [model, Route.push({ type: "LoginEmail" })]
+      return [model, Route.push(["LoginEmail"])]
 
     case "ClickedGoogleLogin":
       return [

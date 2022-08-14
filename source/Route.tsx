@@ -10,27 +10,27 @@ import { UserId } from "./Data"
 //
 
 export type Route =
-  | { type: "Account" }
-  | { type: "Home" }
-  | { type: "Login" }
-  | { type: "LoginEmail" }
-  | { type: "AccountCreate" }
-  | { type: "PasswordReset" }
-  | { type: "Logout" }
-  | { type: "Profile"; userId: UserId.UserId }
-  | { type: "ProfileCreate" }
-  | { type: "ProfileDelete" }
-  | { type: "ProfileUpdate" }
-  | { type: "ProfileUpdateAvatar" }
-  | { type: "ProfileUpdateName" }
-  | { type: "ProfileUpdateUsername" }
-  | { type: "ProfileUpdateTheme" }
-  | { type: "GameRoom" }
-  | { type: "Chat" }
-  | { type: "ChatNew" }
-  | { type: "ChatConversation"; conversationId: string }
-  | { type: "Search" }
-  | { type: "Admin"; tab: "Model" | "Msg" }
+  | ["Account" ]
+  | ["Home" ]
+  | ["Login" ]
+  | ["LoginEmail" ]
+  | ["AccountCreate" ]
+  | ["PasswordReset" ]
+  | ["Logout" ]
+  | ["Profile", UserId.UserId ]
+  | ["ProfileCreate" ]
+  | ["ProfileDelete" ]
+  | ["ProfileUpdate" ]
+  | ["ProfileUpdateAvatar" ]
+  | ["ProfileUpdateName" ]
+  | ["ProfileUpdateUsername" ]
+  | ["ProfileUpdateTheme" ]
+  | ["GameRoom" ]
+  | ["Chat" ]
+  | ["ChatNew" ]
+  | ["ChatConversation", string ]
+  | ["Search" ]
+  | ["Admin", "Model" | "Msg" ]
 
 //
 //
@@ -40,7 +40,7 @@ export type Route =
 //
 //
 
-export const routesTypes: { [routeType in Route["type"]]: string } = {
+export const routesTypes: { [routeType in Route[0]]: string } = {
   Admin: "Admin",
   Account: "Account",
   Home: "Home",
@@ -64,7 +64,7 @@ export const routesTypes: { [routeType in Route["type"]]: string } = {
   Search: "Search",
 }
 
-export const isRouteType = (routeType: unknown): routeType is Route["type"] => {
+export const isRouteType = (routeType: unknown): routeType is Route[0] => {
   return typeof routeType === "string" && routeType in routesTypes
 }
 
@@ -78,10 +78,7 @@ export const decode = (location: Browser.Location): Option.Option<Route> => {
   switch (first) {
     case "ChatConversation": {
       if (typeof second === "string") {
-        return Option.Some({
-          type: "ChatConversation",
-          conversationId: second,
-        })
+        return Option.Some(["ChatConversation", second])
       }
 
       return Option.None
@@ -90,10 +87,7 @@ export const decode = (location: Browser.Location): Option.Option<Route> => {
     case "Profile": {
       const userId = UserId.decode(second)
       if (userId.type === "Ok") {
-        return Option.Some({
-          type: "Profile",
-          userId: userId.value,
-        })
+        return Option.Some(["Profile", userId.value])
       }
       return Option.None
     }
@@ -103,46 +97,30 @@ export const decode = (location: Browser.Location): Option.Option<Route> => {
         typeof second === "string" &&
         (second === "Model" || second === "Msg")
       ) {
-        return Option.Some({
-          type: "Admin",
-          tab: second,
-        })
+        return Option.Some(["Admin", second])
       }
       return Option.None
     }
 
-    // case 'GameRoom': {
-    //   if (typeof second === "string") {
-    //     return Option.Some({
-    //       type: "GameRoom",
-    //       roomId: second,
-    //     })
-    //   }
-    //   return Option.None
-    // }
-
     default: {
-      return Option.Some({ type: first })
+      return Option.Some([first])
     }
   }
 }
 
 export const encode = (route: Route): string => {
-  switch (route.type) {
+  switch (route[0]) {
     case "ChatConversation":
-      return `/${route.type}/${route.conversationId}`
+      return `/${route[0]}/${route[1]}`
 
     case "Profile":
-      return `/${route.type}/${route.userId}`
+      return `/${route[0]}/${route[1]}`
 
     case "Admin":
-      return `/${route.type}/${route.tab}`
-
-    // case 'GameRoom':
-    //   return `/${route.type}/${route.roomId}`
+      return `/${route[0]}/${route[1]}`
 
     default:
-      return `/${route.type}`
+      return `/${route[0]}`
   }
 }
 

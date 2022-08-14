@@ -47,15 +47,12 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
       return [model, Route.back]
 
     case "ClickedSendMessage":
-      return [model, Route.push({ type: "ChatNew" })]
+      return [model, Route.push(["ChatNew"])]
 
     case "ClickedConversationItem":
       return [
         model,
-        Route.push({
-          type: "ChatConversation",
-          conversationId: msg[1],
-        }),
+        Route.push(["ChatConversation",  msg[1],]),
       ]
   }
 }

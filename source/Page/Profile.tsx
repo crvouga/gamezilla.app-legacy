@@ -51,7 +51,7 @@ export const update = (
       return [model, Route.back, []]
 
     case "ClickedEditProfile":
-      return [model, Route.push({ type: "ProfileUpdate" }), []]
+      return [model, Route.push(["ProfileUpdate"]), []]
 
     case "ClickedSendMessage":
       const userIds = [model.userId, currentUserId]

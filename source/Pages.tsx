@@ -114,7 +114,7 @@ export const initReady = (
   route: Route.Route,
   profile: Store.Profile.Profile,
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
-  switch (route.type) {
+  switch (route[0]) {
     case "Account":
       return [["Account", Account.init], Cmd.None, []]
 
@@ -135,7 +135,7 @@ export const initReady = (
 
     case "ChatConversation": {
       const [model, cmd, actions] = ChatConversation.init({
-        conversationId: route.conversationId,
+        conversationId: route[1],
       })
       return [
         ["ChatConversation", model],
@@ -189,7 +189,7 @@ export const initReady = (
 
     case "Profile": {
       const [modelInit, cmdInit, actions] = Profile.init({
-        userId: route.userId,
+        userId: route[1],
       })
       return [
         ["Profile", modelInit],
@@ -224,7 +224,7 @@ export const initReady = (
     case "LoginEmail":
     case "AccountCreate":
     case "PasswordReset":
-      return [["Home", Home.init], Route.push({ type: "Home" }), []]
+      return [["Home", Home.init], Route.push(["Home"]), []]
 
     default:
       return exhaustive(route)
@@ -232,7 +232,7 @@ export const initReady = (
 }
 
 export const initLoggedOut = (route: Route.Route): [Model, Cmd.Cmd<Msg>] => {
-  switch (route.type) {
+  switch (route[0]) {
     case "Login":
       return [["Login", Login.init], Cmd.None]
 
@@ -266,7 +266,7 @@ export const initLoggedOut = (route: Route.Route): [Model, Cmd.Cmd<Msg>] => {
     case "GameRoom":
     case "ProfileUpdateName":
     case "ProfileUpdateUsername":
-      return [["Login", Login.init], Route.push({ type: "Login" })]
+      return [["Login", Login.init], Route.push(["Login"])]
 
     default:
       return exhaustive(route)
@@ -277,7 +277,7 @@ export const initProfileMissing = (
   route: Route.Route,
   auth: Auth.Session,
 ): [Model, Cmd.Cmd<Msg>] => {
-  switch (route.type) {
+  switch (route[0]) {
     case "ProfileCreate":
       return [["ProfileCreate", ProfileCreate.init(auth)], Cmd.None]
 
@@ -305,7 +305,7 @@ export const initProfileMissing = (
     case "PasswordReset":
       return [
         ["ProfileCreate", ProfileCreate.init(auth)],
-        Route.push({ type: "ProfileCreate" }),
+        Route.push(["ProfileCreate"]),
       ]
     default:
       return exhaustive(route)
@@ -496,7 +496,7 @@ export const updateReady = (
     case "LoginEmail":
     case "AccountCreate":
     case "PasswordReset":
-      return [model, Route.push({ type: "Home" }), []]
+      return [model, Route.push(["Home"]), []]
 
     default:
       return exhaustive(model)
@@ -547,7 +547,7 @@ export const updateProfileMissing = (
     case "PasswordReset":
     case "Search":
     case "Admin":
-      return [model, Route.push({ type: "ProfileCreate" }), []]
+      return [model, Route.push(["ProfileCreate"]), []]
 
     default:
       return exhaustive(model)
@@ -609,7 +609,7 @@ export const updateLoggedOut = (
     case "Profile":
     case "Admin":
     case "Search":
-      return [model, Route.push({ type: "Login" }), []]
+      return [model, Route.push(["Login"]), []]
 
     default:
       return exhaustive(model)
@@ -910,7 +910,7 @@ const viewBottomNavigation =
     return (
       <UI.BottomNavigation
         showLabels
-        value={route.type}
+        value={route[0]}
         onChange={(_event, routeType) => {
           if (!Route.isRouteType(routeType)) {
             return
@@ -919,16 +919,13 @@ const viewBottomNavigation =
             case "Home":
             case "Search":
             case "Chat": {
-              dispatch(["ClickedBottomNavigationLink", { type: routeType }])
+              dispatch(["ClickedBottomNavigationLink", [routeType]])
               break
             }
             case "Profile": {
               dispatch([
                 "ClickedBottomNavigationLink",
-                {
-                  type: routeType,
-                  userId: currentUserId,
-                },
+                ['Profile', currentUserId],
               ])
               break
             }
