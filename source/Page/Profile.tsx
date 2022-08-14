@@ -38,6 +38,7 @@ export type Msg =
   | ["ClickedBack"]
   | ["ClickedSendMessage"]
   | ["ClickedEditProfile"]
+  | ["ClickedAccountMenu"]
 
 type OutAction = Store.Action
 
@@ -47,13 +48,19 @@ export const update = (
   model: Model,
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
-    case "ClickedBack":
+    case "ClickedBack": {
       return [model, Route.back, []]
+    }
 
-    case "ClickedEditProfile":
+    case "ClickedEditProfile": {
       return [model, Route.push(["ProfileUpdate"]), []]
+    }
 
-    case "ClickedSendMessage":
+    case 'ClickedAccountMenu': {
+      return [model, Route.push(["Account"]), []]
+    }
+
+    case "ClickedSendMessage": {
       const userIds = [model.userId, currentUserId]
 
       const action: OutAction = [
@@ -62,6 +69,7 @@ export const update = (
       ]
 
       return [model, Cmd.None, [action]]
+    }
   }
 }
 
@@ -127,6 +135,11 @@ export const view =
               <UI.HeaderBackButton onClick={() => dispatch(["ClickedBack"])} />
             }
             title={profile.username}
+            right={
+              <UI.IconButton edge="end" onClick={() => dispatch(['ClickedAccountMenu'])} >
+                <UI.Icons.Menu />
+              </UI.IconButton>
+            }
           />
 
           <UI.Box
