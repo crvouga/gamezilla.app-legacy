@@ -1,5 +1,5 @@
 import { RemoteData, Unit } from "../Core"
-import { UserId } from "../Data"
+import { UserId, Username } from "../Data"
 
 //
 //
@@ -36,7 +36,7 @@ export type Store = {
 
 export type Profile = {
   userId: UserId.UserId
-  username: string
+  username: Username.Username
   name: string
   avatarUrl: string
   themeMode: "Light" | "Dark" | "System"

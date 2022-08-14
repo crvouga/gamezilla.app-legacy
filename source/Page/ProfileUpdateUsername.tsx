@@ -1,5 +1,5 @@
 import { Cmd } from "../Core"
-import { UserId } from "../Data"
+import { UserId, Username } from "../Data"
 import * as Route from "../Route"
 import * as Store from "../Store"
 import * as UI from "../UI"
@@ -47,7 +47,15 @@ export const update = (
     case "ClickedCancel":
       return [model, Route.back, []]
 
-    case "ClickedSubmit":
+    case "ClickedSubmit": {
+      const username  = Username.decode(model.username)
+
+      if(username.type === 'Err') {
+        // todo handle validation error
+        return [model, Cmd.None, []]
+      }
+
+
       return [
         model,
         Route.back,
@@ -56,11 +64,11 @@ export const update = (
             "Store",
             [
               "Profile",
-              ["Edit", { userId, edits: { username: model.username } }],
+              ["Edit", { userId, edits: { username: username.value } }],
             ],
           ],
         ],
-      ]
+      ]}
   }
 }
 
