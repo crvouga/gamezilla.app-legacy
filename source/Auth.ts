@@ -13,25 +13,17 @@ import * as Supabase from "./Supabase"
 
 export type Session = { defaultName: string; userId: UserId.UserId }
 
-export type Model = Loading | LoggedOut | LoggedIn
+export type Model = ["Loading"] | ["LoggedOut"] | ["LoggedIn", Session]
 
-export type Loading = { type: "Loading" }
-
-export type LoggedOut = { type: "LoggedOut" }
-
-export type LoggedIn = {
-  type: "LoggedIn"
-  defaultName: string
-  userId: UserId.UserId
+export const init = (): [Model, Cmd.Cmd<Msg>] => {
+  return [
+    ["Loading"],
+    pipe(
+      getSession,
+      Cmd.fromTask((msg) => msg),
+    ),
+  ]
 }
-
-export const init = (): [Model, Cmd.Cmd<Msg>] => [
-  { type: "Loading" },
-  pipe(
-    getSession,
-    Cmd.fromTask((msg) => msg),
-  ),
-]
 
 //
 //
@@ -61,10 +53,10 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
     case "GotSession":
       switch (msg[1].type) {
         case "None":
-          return [{ type: "LoggedOut" }, Cmd.None]
+          return [["LoggedOut"], Cmd.None]
 
         case "Some":
-          return [{ type: "LoggedIn", ...msg[1].value }, Cmd.None]
+          return [["LoggedIn", msg[1].value], Cmd.None]
       }
 
     case "LoginResulted":
@@ -76,7 +68,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
           return [model, Cmd.None]
 
         case "Ok":
-          return [{ type: "LoggedOut" }, Cmd.None]
+          return [["LoggedOut"], Cmd.None]
 
         default:
           return exhaustive(msg[1])
