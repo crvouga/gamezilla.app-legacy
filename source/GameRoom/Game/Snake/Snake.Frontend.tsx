@@ -3,15 +3,13 @@ import * as Bridge from "../../../Bridge"
 import {
   Cmd,
   exhaustive,
-  Keyboard,
-  Option,
-  Result,
+  Keyboard, Result,
   Sub
 } from "../../../Core"
 import { RoomId, UserId } from "../../../Data"
-import * as Snackbar from "../../../Snackbar"
 import { Snake } from "../../../Game"
 import * as Route from "../../../Route"
+import * as Snackbar from "../../../Snackbar"
 import * as UI from "../../../UI"
 import { FrontendModel, FrontendMsg, initSharedModel, SharedModel, ToBackend, ToFrontend } from "./Snake.Types"
 
@@ -25,11 +23,7 @@ import { FrontendModel, FrontendMsg, initSharedModel, SharedModel, ToBackend, To
 
 export type Model = FrontendModel
 
-export const init: Model = {
-  ...initSharedModel,
-  mouseStatus: "Inactive",
-  touched: Option.None
-}
+export const init: Model = initSharedModel
 
 // 
 // 
@@ -55,20 +49,21 @@ export type Msg = FrontendMsg
 
 export type OutAction = Snackbar.Action
 
-export const update = ({currentRoomId, currentUserId}: {currentRoomId: RoomId.RoomId, currentUserId: UserId.UserId}, msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
+export const update = (
+  {currentRoomId, currentUserId}: {currentRoomId: RoomId.RoomId, currentUserId: UserId.UserId}, 
+  msg: Msg, 
+  model: Model
+): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
-    case "ClickedRestart":
-      return [init, Cmd.None]
+    case 'ClickedDirection': {
+      return [
+        model,
+         sendToBackend(currentRoomId, ['ChangeDirection', {userId: currentUserId, direction: msg[1] }])]
+    }
 
     case "ClickedBack":
       return [model, Route.back]
 
-    case "MouseUpBoard":
-      return [{...model, mouseStatus: "Inactive"}, Cmd.None]
-      
-    case "MouseDownBoard":
-      return [{...model, mouseStatus: "Active"}, Cmd.None]
-      
     case "PressedKeyDown": {
       const direction = Snake.Direction.fromKey(msg[1])
       
@@ -92,45 +87,6 @@ export const update = ({currentRoomId, currentUserId}: {currentRoomId: RoomId.Ro
       return [model, sendToBackend(currentRoomId, msg)]
     }
 
-    case "AudioFailed":
-      return [model, Cmd.None]
-
-    case "AudioSucceeded":
-      return [model, Cmd.None]
-
-    case "MouseMovedBoard":
-    case "TouchMoveBoard":
-      const previous = model.touched
-
-      if (previous.type === 'None') {
-        return [{ ...model, touched: Option.Some(msg[1]) }, Cmd.None]
-      }
-
-      const touchedNew = msg[1]
-
-      const delta = Snake.Position.subtract(previous.value, touchedNew)
-
-      const maxDeltaMagnitude = Math.max(Math.abs(delta.x), Math.abs(delta.y))
-
-      if (maxDeltaMagnitude < 4) {
-        return [{ ...model, touched: Option.Some(touchedNew) }, Cmd.None]
-      }
-
-      const xDirection = delta.x > 0 ? "left" : "right"
-
-      const yDirection = delta.y > 0 ? "up" : "down"
-
-      const directionFromSwipe =
-        Math.abs(delta.x) > Math.abs(delta.y) ? xDirection : yDirection
-
-      return [
-        {
-          ...model,
-          touched: Option.Some(touchedNew),
-        },
-        sendToBackend(currentRoomId, ['ChangeDirection', {userId: currentUserId, direction: directionFromSwipe }]),
-      ]
-
     default:
       return exhaustive(msg[0])
   }
@@ -140,7 +96,7 @@ export const updateFromBackend = (msg: ToFrontend, model: Model): [Model, Cmd.Cm
   switch(msg[0]) {
     case 'Sync': {
       const sharedModel = msg[1]
-      return [{ ...model, ...sharedModel}, Cmd.None, []]
+      return [sharedModel, Cmd.None, []]
     }
 
     case 'ChangeDirectionResulted': {
@@ -188,42 +144,64 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
 //
 //
 
+const iconSx: UI.Sx = {
+  width: 40,
+  height: 40,
+  color: "text.secondary"
+}
+
 export const view =
   ({currentUserId}: {currentUserId: UserId.UserId},model: Model): UI.View<Msg> =>
   (dispatch) => {
+
+    if(model.player[0] === 'None') {
+      return <UI.FillBox>
+        <UI.Box sx={{paddingX:2}}>
+          <UI.Typography variant='h4' sx={{marginBottom:1}}>
+            Snake
+          </UI.Typography>
+          <UI.Button variant="contained" fullWidth onClick={() => dispatch(['ChangePlayer', {player: ['User', currentUserId]}])}>
+            Start Game
+          </UI.Button>
+        </UI.Box>
+      </UI.FillBox>
+    }
+
     return (
       <UI.FillBox>
         <ViewBoard
           model={model}
           dispatch={dispatch}
         />
-        <UI.Toolbar>
-          <UI.Box sx={{marginLeft: -1}}>
-          {model.player[0] === 'None' && (
-            <UI.Button variant="contained"  onClick={() => dispatch(['ChangePlayer', {player: ['User',  currentUserId]}])}>
-              Play
-          </UI.Button>
-          )}
-
-          {model.player[0] === 'User' && (
-            <UI.Button disabled={model.player[1] !== currentUserId} variant="contained"  onClick={() => dispatch(['ChangePlayer', {player: ['None']}])}>
-              Stop
-            </UI.Button>
-          )}
-          </UI.Box>
+        {model.player[1] === currentUserId && <UI.Box sx={{display: "flex", alignItems: "center", width: '100%', height: 64}}>
+          <UI.ButtonBase 
+          sx={{flex:1, }}
+           onClick={() => dispatch(['ClickedDirection', 'left'])}>
+            <UI.Icons.ArrowBack sx={iconSx} />
+          </UI.ButtonBase>
           
-          <UI.Box sx={{flex:1}}>
-
-          </UI.Box>
-
-          <UI.Box sx={{marginRight: -1}}>
-
-          {model.player[0] === 'User' && model.player[1] === currentUserId && 
-            <UI.Button variant="outlined" sx={{marginLeft: -1}} startIcon={model.status === 'Paused' ? <UI.Icons.PlayArrow /> : <UI.Icons.Pause /> } onClick={() => dispatch(['ToggleStatus', {userId: currentUserId}])}>
-              {model.status ===  "Paused" ? "Play" : "Pause"}
-            </UI.Button>}
-            </UI.Box>
-        </UI.Toolbar>
+          <UI.Divider orientation="vertical" />
+          
+          <UI.ButtonBase sx={{flex:1,}}
+           onClick={() => dispatch(['ClickedDirection', 'up'])}>
+            <UI.Icons.ArrowUpward sx={iconSx} />
+          </UI.ButtonBase>
+          
+          <UI.Divider orientation="vertical" />
+          
+          <UI.ButtonBase sx={{flex:1,}}
+          onClick={() => dispatch(['ClickedDirection', 'down'])}>
+            <UI.Icons.ArrowDownward sx={iconSx} />
+          </UI.ButtonBase>
+          
+          <UI.Divider orientation="vertical" />
+          
+          <UI.ButtonBase sx={{flex:1,}}
+          onClick={() => dispatch(['ClickedDirection', 'right'])}>
+            <UI.Icons.ArrowForward sx={iconSx} />
+          </UI.ButtonBase>
+        </UI.Box>}
+    
       </UI.FillBox>
     )
   }
@@ -256,7 +234,6 @@ export const ViewBoard = ({
     <UI.Box sx={{ flex: 1, width: "100%", userSelect: "none" }}>
       <canvas
         style={{
-          cursor: model.mouseStatus === "Active" ? "grabbing" : "grab",
           userSelect: "none",
           width: "100%",
           height: "100%",
@@ -264,28 +241,6 @@ export const ViewBoard = ({
           minHeight: "100%",
         }}
         ref={ref}
-        onMouseDown={() => {
-          dispatch(["MouseDownBoard"])
-        }}
-        onMouseUp={() => {
-          dispatch(["MouseUpBoard"])
-        }}
-        onMouseMove={(event) => {
-          if (model.mouseStatus === "Active") {
-            const x = event.clientX
-            const y = event.clientY
-            dispatch(["MouseMovedBoard", { x, y }])
-          }
-        }}
-        onClick={() => {}}
-        onTouchMove={(event) => {
-          const touch = event.touches[0]
-          if (touch) {
-            const x = touch.clientX
-            const y = touch.clientY
-            dispatch(["TouchMoveBoard", { x, y }])
-          }
-        }}
       />
     </UI.Box>
   )
