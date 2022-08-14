@@ -23,7 +23,7 @@ export type FrontendModel = {
     store: Store.Model
     auth: Auth.Model
     page: Page.Model
-    route: Route.Route
+    route: Route.Model
     gameRoom: GameRoom.FrontendModel
     backendConnection: ConnectionStatus
 }

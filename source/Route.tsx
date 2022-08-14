@@ -1,4 +1,4 @@
-import { Browser, Option } from "./Core"
+import { Browser, Cmd, Option } from "./Core"
 import { UserId } from "./Data"
 
 //
@@ -9,7 +9,7 @@ import { UserId } from "./Data"
 //
 //
 
-export type Route =
+export type Model =
   | ["Account" ]
   | ["Home" ]
   | ["Login" ]
@@ -40,7 +40,7 @@ export type Route =
 //
 //
 
-export const routesTypes: { [routeType in Route[0]]: string } = {
+export const routesTypes: { [routeType in Model[0]]: string } = {
   Admin: "Admin",
   Account: "Account",
   Home: "Home",
@@ -64,11 +64,11 @@ export const routesTypes: { [routeType in Route[0]]: string } = {
   Search: "Search",
 }
 
-export const isRouteType = (routeType: unknown): routeType is Route[0] => {
+export const isRouteType = (routeType: unknown): routeType is Model[0] => {
   return typeof routeType === "string" && routeType in routesTypes
 }
 
-export const decode = ({pathname}: {pathname: string}): Option.Option<Route> => {
+export const decode = ({pathname}: {pathname: string}): Option.Option<Model> => {
   const [first, second] = pathname.substring(1).split("/")
 
   if (!isRouteType(first)) {
@@ -108,7 +108,7 @@ export const decode = ({pathname}: {pathname: string}): Option.Option<Route> => 
   }
 }
 
-export const encode = (route: Route): string => {
+export const encode = (route: Model): string => {
   switch (route[0]) {
     case "ChatConversation":
       return `/${route[0]}/${route[1]}`
@@ -132,29 +132,61 @@ export const encode = (route: Route): string => {
 //
 //
 
-export const push = (route: Route) => {
+export const push = (route: Model) => {
   return Browser.push(encode(route))
 }
 
 export const back = Browser.back
 
-export const replace = (route: Route) => {
+export const replace = (route: Model) => {
   return Browser.replace(encode(route))
 }
 
 //
 //
 //
-// Msg
+// Update
 //
 //
 //
 
-export type GotRoute = ["GotRoute", Route]
 
-export type Msg = GotRoute
+export type Msg = ["GotRoute", Model]
 
+export type Action = ["Push", Model] | ["Replace", Model] | ["Back"]
 
-export const equals = (a: Route, b: Route): boolean => {
+export const update = (msg:Msg): Model => {
+  switch(msg[0]) {
+    case 'GotRoute': {
+      return msg[1]
+    }
+  }
+}
+
+export const updateFromAction = (model: Model, action: Action): [Model, Cmd.Cmd<Msg>] => {
+  switch(action[0]) {
+    case 'Back': {
+      return [model, Browser.back]
+    }
+
+    case 'Push': {
+      return [model, Browser.push(encode(action[1]))]
+    }
+
+    case 'Replace': {
+      return [model, Browser.replace(encode(action[1]))]
+    }
+  }
+}
+
+// 
+// 
+// 
+// Helpers
+// 
+// 
+// 
+
+export const equals = (a: Model, b: Model): boolean => {
   return encode(a) === encode(b)
 }

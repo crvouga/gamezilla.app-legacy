@@ -1,5 +1,5 @@
 import * as Auth from "./Auth"
-import { Cmd, exhaustive, pipe, Sub, tag } from "./Core"
+import { Cmd, exhaustive, pipe, Sub, tag, tagSub } from "./Core"
 import { UserId } from "./Data"
 import * as GameRoom from "./GameRoom/GameRoom.Frontend"
 import {
@@ -90,7 +90,7 @@ export type Msg =
   | ["ChatNew", ChatNew.Msg]
   | ["ChatConversation", ChatConversation.Msg]
   | ["Search", Search.Msg]
-  | ["ClickedBottomNavigationLink", Route.Route]
+  | ["ClickedBottomNavigationLink", Route.Model]
 
 export type OutAction =
   | Store.Action
@@ -111,7 +111,7 @@ export const initLoading = (): [Model, Cmd.Cmd<Msg>] => {
 }
 
 export const initReady = (
-  route: Route.Route,
+  route: Route.Model,
   profile: Store.Profile.Profile,
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (route[0]) {
@@ -231,7 +231,7 @@ export const initReady = (
   }
 }
 
-export const initLoggedOut = (route: Route.Route): [Model, Cmd.Cmd<Msg>] => {
+export const initLoggedOut = (route: Route.Model): [Model, Cmd.Cmd<Msg>] => {
   switch (route[0]) {
     case "Login":
       return [["Login", Login.init], Cmd.None]
@@ -274,7 +274,7 @@ export const initLoggedOut = (route: Route.Route): [Model, Cmd.Cmd<Msg>] => {
 }
 
 export const initProfileMissing = (
-  route: Route.Route,
+  route: Route.Model,
   auth: Auth.Session,
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (route[0]) {
@@ -627,7 +627,7 @@ export const updateLoggedOut = (
 export const subscriptions = (model: Model): Sub.Sub<Msg> => {
   switch (model[0]) {
     case "ChatNew":
-      return pipe(ChatNew.subscriptions(model[1]), Sub.map(tag("ChatNew")))
+      return tagSub("ChatNew", ChatNew.subscriptions(model[1]))
 
     case "Account":
     case "Chat":
@@ -672,7 +672,7 @@ export const viewReady = (
     store,
     route,
   }: {
-    route: Route.Route
+    route: Route.Model
     gameRoom: GameRoom.Model
     profile: Store.Profile.Profile
     store: Store.Model
@@ -692,6 +692,7 @@ export const viewReady = (
       return (dispatch) => (
         <UI.FillBox>
           {tagView("Chat", Chat.view({ profile, store }, model[1]))(dispatch)}
+
           {viewBottomNavigation({
             page: "Chat",
             currentUserId,
@@ -707,6 +708,7 @@ export const viewReady = (
             "Home",
             Home.view({ store, currentUserId }, model[1]),
           )(dispatch)}
+
           {viewBottomNavigation({
             page: "Home",
             currentUserId,
@@ -718,9 +720,8 @@ export const viewReady = (
     case "Search":
       return (dispatch) => (
         <UI.FillBox>
-          <UI.FillBox>
-            {tagView("Search", Search.view({ store }, model[1]))(dispatch)}
-          </UI.FillBox>
+          {tagView("Search", Search.view({ store }, model[1]))(dispatch)}
+          
           {viewBottomNavigation({
             page: "Search",
             currentUserId,
@@ -898,7 +899,7 @@ const viewLoading: UI.View<Msg> = () => <UI.LoadingPage />
 //
 
 type BottomNavigationItem = {
-  route: Route.Route,
+  route: Route.Model,
   filled: UI.ViewNode
   outlined: UI.ViewNode
 }
@@ -910,7 +911,7 @@ const viewBottomNavigation =
   }: {
     currentUserId: UserId.UserId
     page: "Home" | "Search" | "Chat" | "Profile"
-    route: Route.Route
+    route: Route.Model
   }): UI.View<Msg> =>
   (dispatch) => {
     const items: BottomNavigationItem[] = [

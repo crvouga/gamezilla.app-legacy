@@ -788,7 +788,7 @@ export const viewBanner =
       route,
     }: {
       currentUserId: UserId.UserId
-      route: Route.Route
+      route: Route.Model
     },
     model: Model,
   ): UI.View<Msg> =>
