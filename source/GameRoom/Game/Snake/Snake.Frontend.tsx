@@ -183,18 +183,19 @@ export const view =
           <UI.Divider orientation="vertical" />
           
           <UI.ButtonBase sx={{flex:1,}}
+          onClick={() => dispatch(['ClickedDirection', 'down'])}>
+            <UI.Icons.ArrowDownward sx={iconSx} />
+          </UI.ButtonBase>
+          
+          <UI.Divider orientation="vertical" />
+          
+          <UI.ButtonBase sx={{flex:1,}}
            onClick={() => dispatch(['ClickedDirection', 'up'])}>
             <UI.Icons.ArrowUpward sx={iconSx} />
           </UI.ButtonBase>
           
           <UI.Divider orientation="vertical" />
           
-          <UI.ButtonBase sx={{flex:1,}}
-          onClick={() => dispatch(['ClickedDirection', 'down'])}>
-            <UI.Icons.ArrowDownward sx={iconSx} />
-          </UI.ButtonBase>
-          
-          <UI.Divider orientation="vertical" />
           
           <UI.ButtonBase sx={{flex:1,}}
           onClick={() => dispatch(['ClickedDirection', 'right'])}>

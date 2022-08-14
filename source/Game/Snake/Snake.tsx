@@ -72,7 +72,7 @@ const food: Model['food'] = Position.add(head, {x: 3, y: 0})
 
 export const init: Model = {
   status:  "Paused",
-  tickRate: 1000 / 7,
+  tickRate: 1000 / 6,
   head,
   tail,
   food,
