@@ -3,7 +3,6 @@ import * as ReactDomClient from "react-dom/client"
 import { io, Socket } from "socket.io-client"
 import * as Auth from "./Auth"
 import * as Bridge from "./Bridge"
-import * as Connection from "./Connection"
 import {
   andThen,
   andThenMany,
@@ -19,7 +18,7 @@ import {
   tagCmd
 } from "./Core"
 import * as GameRoom from "./GameRoom/GameRoom.Frontend"
-import { ToFrontend } from "./Types"
+import { ConnectionStatus, FrontendModel, FrontendMsg, ToFrontend } from "./App.Types"
 import * as Pages from "./Pages"
 import * as Route from "./Route"
 import * as Snackbar from "./Snackbar"
@@ -34,16 +33,7 @@ import * as UI from "./UI"
 //
 //
 
-export type Model = {
-  snackbar: Snackbar.Model
-  store: Store.Model
-  auth: Auth.Model
-  page: Pages.Model
-  route: Route.Route
-  connection: Connection.Model
-  gameRoom: GameRoom.Model
-}
-
+export type Model = FrontendModel
 
 //
 //
@@ -64,7 +54,6 @@ export const init = (location: Browser.Location): [Model, Cmd.Cmd<Msg>] => {
   const store = Store.init
   const [gameRoom, gameRoomCmd] = GameRoom.init
   const [page, pageCmd] = Pages.initLoading()
-  const connection = Connection.init
 
   return [
     {
@@ -74,7 +63,7 @@ export const init = (location: Browser.Location): [Model, Cmd.Cmd<Msg>] => {
       gameRoom,
       auth,
       page,
-      connection,
+      backendConnection: "Connecting"
     },
     Cmd.batch<Msg>([
       tagCmd("Auth", authCmd),
@@ -92,15 +81,7 @@ export const init = (location: Browser.Location): [Model, Cmd.Cmd<Msg>] => {
 //
 //
 
-export type Msg = 
-| ["[Backend]", ToFrontend]
-| ["Route", Route.Msg]
-| ["Snackbar", Snackbar.Msg]
-| ["GameRoom", GameRoom.Msg]
-| ["Store", Store.Msg]
-| ["Auth", Auth.Msg]
-| ["Page", Pages.Msg]
-| ["Connection", Connection.Msg]
+export type Msg = FrontendMsg
 
 type OutAction =
   | Snackbar.Action
@@ -197,7 +178,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
           return pipe(
             [{ ...model, page: pageNew }, tagCmd("Page", pageCmd)],
-            andThenMany(runAction, actions),
+            andThenMany(updateFromAction, actions),
           )
         }
 
@@ -210,7 +191,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
           return pipe(
             [{ ...model, page: pageNew }, tagCmd("Page", pageCmd)],
-            andThenMany(runAction, actions),
+            andThenMany(updateFromAction, actions),
           )
         }
 
@@ -229,7 +210,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
           return pipe(
             [{ ...model, page: pageNew }, tagCmd("Page", pageCmd)],
-            andThenMany(runAction, actions),
+            andThenMany(updateFromAction, actions),
           )
         }
 
@@ -265,7 +246,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
           )
           return pipe(
             [{ ...modelNew, page }, tagCmd("Page", pageCmd)],
-            andThenMany(runAction, actions),
+            andThenMany(updateFromAction, actions),
           )
         }
 
@@ -281,14 +262,11 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
       }
     }
 
-    case "Connection": {
-      const [connectionNew, connectionCmd] = Connection.update(
-        msg[1],
-        model.connection,
-      )
+    case "BackendConnection.Changed": {
+      const backendConnection = msg[1]
       return [
-        { ...model, connection: connectionNew },
-        pipe(connectionCmd, Cmd.map(tag("Connection"))),
+        { ...model, backendConnection },
+        Cmd.None
       ]
     }
 
@@ -316,7 +294,7 @@ export const updateFromBackend = (
           { ...model, gameRoom },
           tagCmd("GameRoom", gameRoomCmd),
         ],
-        andThenMany(runAction, actions),
+        andThenMany(updateFromAction, actions),
       )
     }
   }
@@ -345,7 +323,7 @@ const updateStatusChanged =
           ["Profile", ["FindMany", { userIds: [statusNew[1].auth.userId] }]],
         ]
 
-        return pipe([model, Cmd.None], andThenMany(runAction, [action]))
+        return pipe([model, Cmd.None], andThenMany(updateFromAction, [action]))
       }
 
       case "ProfileMissing": {
@@ -369,7 +347,7 @@ const updateStatusChanged =
         )
         return pipe(
           [{ ...model, page }, tagCmd("Page", pageCmd)],
-          andThenMany(runAction, actions),
+          andThenMany(updateFromAction, actions),
         )
       }
 
@@ -378,10 +356,10 @@ const updateStatusChanged =
     }
   }
 
-const runAction = (action: OutAction, model: Model): [Model, Cmd.Cmd<Msg>] => {
+const updateFromAction = (action: OutAction, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (action[0]) {
     case "Store": {
-      const [storeNew, storeCmd] = Store.runAction(action, model.store)
+      const [storeNew, storeCmd] = Store.updateFromAction(action, model.store)
       return [
         { ...model, store: storeNew },
         tagCmd("Store", storeCmd),
@@ -389,7 +367,7 @@ const runAction = (action: OutAction, model: Model): [Model, Cmd.Cmd<Msg>] => {
     }
 
     case "Snackbar": {
-      const [snackbarNew, snackbarCmd] = Snackbar.runAction(
+      const [snackbarNew, snackbarCmd] = Snackbar.updateFromAction(
         action,
         model.snackbar,
       )
@@ -406,7 +384,7 @@ const runAction = (action: OutAction, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
       const currentUserId = model.auth.userId
 
-      const [gameRoom, gameRoomCmd] = GameRoom.runAction(
+      const [gameRoom, gameRoomCmd] = GameRoom.updateFromAction(
         { currentUserId },
         action,
         model.gameRoom,
@@ -418,7 +396,7 @@ const runAction = (action: OutAction, model: Model): [Model, Cmd.Cmd<Msg>] => {
     }
 
     case "Auth": {
-      const [authNew, authCmd] = Auth.runAction(action, model.auth)
+      const [authNew, authCmd] = Auth.updateFromAction(action, model.auth)
       return [{ ...model, auth: authNew }, tagCmd("Auth", authCmd)]
     }
 
@@ -437,6 +415,10 @@ const runAction = (action: OutAction, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
 export const subscriptions = (model: Model): Sub.Sub<Msg> => {
   return Sub.batch<Msg>([
+    Bridge.onConnectionStatus(tag("BackendConnection.Changed")),
+    Bridge.fromBackend((toFrontend) => ["[Backend]", toFrontend]),
+    pipe(Pages.subscriptions(model.page), Sub.map(tag("Page"))),
+    pipe(Auth.subscriptions, Sub.map(tag("Auth"))),
     model.auth.type === "LoggedIn"
       ? pipe(
           GameRoom.subscriptions(
@@ -446,12 +428,9 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
           Sub.map(tag("GameRoom")),
         )
       : Sub.None,
-    pipe(Pages.subscriptions(model.page), Sub.map(tag("Page"))),
-    pipe(Auth.subscriptions, Sub.map(tag("Auth"))),
-    pipe(Connection.subscriptions, Sub.map(tag("Connection"))),
-    Bridge.fromBackend((toFrontend) => ["[Backend]", toFrontend]),
   ])
 }
+
 
 //
 //
@@ -522,14 +501,14 @@ export const view =
 const viewMain = (model: Model): UI.View<Msg> => {
   const status = toStatus(model)
 
-  switch (model.connection) {
+  switch (model.backendConnection) {
     case "Connecting":
       return viewLoading({ reason: "Connecting..." })
 
     case "Disconnected":
       return viewLoading({ reason: "Connecting..." })
 
-    case "Reconnecting":
+    case "ConnectError":
       return viewLoading({ reason: "Connecting..." })
 
     case "Connected": {
@@ -726,7 +705,7 @@ Browser.run(program, (dom) => {
 // 
 // 
 // 
-// 
+// Socket
 // 
 // 
 // 
@@ -743,25 +722,24 @@ export const backendUrl =
 const socket: Socket<Bridge.ServerToClientEvents, Bridge.ClientToServerEvents> =
   io(backendUrl)
 
-Bridge.connectionStatus$.next("Connecting")
 
 socket.on("connect", () => {
-  Bridge.connectionStatus$.next("Connected")
+  Bridge._internal_connectionStatus.next("Connected")
 })
 
 socket.on("connect_error", () => {
-  Bridge.connectionStatus$.next("Reconnecting")
+  Bridge._internal_connectionStatus.next("ConnectError")
 })
 
 socket.on("disconnect", () => {
-  Bridge.connectionStatus$.next("Disconnected")
+  Bridge._internal_connectionStatus.next("Disconnected")
 })
 
 socket.on("ToFrontend", (msg) => {
-  Bridge.toFrontend$.next(msg)
+  Bridge._internal_toFrontend.next(msg)
 })
 
-Bridge.sendToBackend$.subscribe(msg => {
+Bridge._internal_sendToBackend.subscribe(msg => {
   socket.emit("ToBackend", msg)
 })
 

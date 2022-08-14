@@ -4,7 +4,7 @@ import * as Bridge from "./Bridge"
 import { Cmd, pipe, Platform, Sub, tag, tagCmd } from "./Core"
 import { ClientId } from "./Data"
 import * as GameRoom from "./GameRoom/GameRoom.Backend"
-import { ToBackend } from "./Types"
+import { BackendMsg, ToBackend } from "./App.Types"
 
 //
 //
@@ -33,11 +33,7 @@ export const init: [Model, Cmd.Cmd<Msg>] = [
 //
 //
 
-export type Msg =
-| ["[Frontend]", ClientId.ClientId, ToBackend]
-| ["GameRoom", GameRoom.Msg]
-| ["ClientConnected", ClientId.ClientId]
-| ["ClientDisconnected", ClientId.ClientId]
+export type Msg = BackendMsg
 
 export const update = (
   msg: Msg,
@@ -45,7 +41,7 @@ export const update = (
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
     case "[Frontend]":
-      return updateFromFrontend(msg[1], msg[2], model)
+      return updateFromFrontend(msg[1].clientId, msg[1].toBackend, model)
 
     case "ClientConnected": {
       const clientId = msg[1]
@@ -105,8 +101,8 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
     Bridge.onDisconnect((clientId) => ["ClientDisconnected", clientId]),
     Bridge.fromFrontend<Msg>((clientId, toBackend) => [
       "[Frontend]",
-      clientId,
-      toBackend,
+      {clientId,
+      toBackend,}
     ]),
   ])
 }
@@ -153,27 +149,27 @@ const socketServer = new Socket.Server<Bridge.ClientToServerEvents, Bridge.Serve
 
 socketServer.on("connection", (socket) => {  
   if(ClientId.is(socket.id)) {
-    Bridge.onConnect$.next(socket.id)
+    Bridge._internal_onConnect.next(socket.id)
   }
 
   socket.on("disconnect", () => {
     if(ClientId.is(socket.id)) {
-      Bridge.onDisconnect$.next(socket.id)
+      Bridge._internal_onDisconnect.next(socket.id)
     }
   })
 
   socket.on("ToBackend", (msg) => {
     if(ClientId.is(socket.id)) {
-      Bridge.toBackend$.next([socket.id, msg])
+      Bridge._internal_toBackend.next([socket.id, msg])
     }
   })
 })
 
-Bridge.sendToFrontend$.subscribe(([clientIds, msg]) => {
+Bridge._internal_sendToFrontend.subscribe(([clientIds, msg]) => {
   socketServer.to(clientIds).emit("ToFrontend", msg)
 })
 
-Bridge.broadcast$.subscribe((msg) => {
+Bridge._internal_broadcast.subscribe((msg) => {
   socketServer.emit("ToFrontend", msg)
 })
 

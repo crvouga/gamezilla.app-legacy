@@ -3,7 +3,7 @@ import { Cmd, exhaustive, Option, pipe, Result, Sub, tag } from "../Core"
 import { remove } from "../Core/Record"
 import { ClientId, RoomId, UserId } from "../Data"
 import { Name } from "../Games"
-import * as GameBackend from "./Game/Game.Backend"
+import * as Game from "./Game/Game.Backend"
 import {
   BackendModel,
   BackendMsg,
@@ -49,18 +49,18 @@ export const update = (
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
     case "Game": {
+      const roomId = msg[1].roomId
 
-      const roomId = msg[1][0]
-            
       const game = model.games[roomId]
       
       if(!game) {
         return [model, Cmd.None]
       }
       
-      const gameMsg = msg[1][1]
+      const gameMsg = msg[1].backendMsg
 
-      const [gameNew, gameCmd] = GameBackend.update({roomId},gameMsg, game)
+
+      const [gameNew, gameCmd] = Game.update({roomId},gameMsg, game)
       
       const modelNew: Model = {
         ...model,
@@ -70,7 +70,7 @@ export const update = (
         }
       }
 
-      return [modelNew, pipe(gameCmd, Cmd.map((msg) => ['Game' as 'Game', [roomId,msg]]))]
+      return [modelNew, pipe(gameCmd, Cmd.map((msg):Msg => ['Game', { roomId, backendMsg: msg }]))]
     }
   }
 }
@@ -90,17 +90,17 @@ export const updateFromFrontend = (
 
     case 'Game': {
 
-      const roomId = msg[1][0]
-      const gameMsg =  msg[1][1]
+      const roomId = msg[1].roomId
       
-
       const game = model.games[roomId]
-
+      
       if(!game) {
         return [model, Cmd.None]
       }
+      
+      const gameMsg =  msg[1].toBackend
 
-      const [gameNew, gameCmd] = GameBackend.updateFromFrontend({clientId, roomId}, gameMsg, game )
+      const [gameNew, gameCmd] = Game.updateFromFrontend({clientId, roomId}, gameMsg, game )
 
       const modelNew: Model = {
         ...model,
@@ -112,7 +112,7 @@ export const updateFromFrontend = (
 
       return [
         modelNew,
-        pipe(gameCmd, Cmd.map((msg):Msg => ['Game', [roomId, msg]]))
+        pipe(gameCmd, Cmd.map((msg):Msg => ['Game', {roomId, backendMsg:msg}]))
       ]
     }
 
@@ -371,7 +371,7 @@ export const startGame = (
     ...model,
     games: {
       ...model.games,
-      [room.roomId]: GameBackend.init({gameName, })
+      [room.roomId]: Game.init({gameName, })
     }
   }
 
@@ -451,16 +451,27 @@ const sendToFrontend = (
 // 
 
 export const subscriptions = (model: Model): Sub.Sub<Msg> => {
-  return  pipe(
-    Object.entries(model.games),
-    (entries) => entries.flatMap(([roomId, game]) => RoomId.is(roomId) ? [{roomId, game}]: []),
-    (entries) => entries.map(({roomId, game})=> 
-      pipe(
-        GameBackend.subscriptions(game), 
-        Sub.map((msg): Msg => ['Game', [roomId, msg]])
-      )
-    ),
-    Sub.batch
-  )
-  
+
+  const subs: Sub.Sub<Msg>[] = []
+
+  for(const roomId in model.games) {
+    if(!RoomId.is(roomId)) { 
+      continue
+    }
+
+    const game = model.games[roomId]
+
+    if(!game) {
+      continue
+    }
+
+    const sub =  pipe(
+      Game.subscriptions(game), 
+      Sub.map((msg): Msg => ['Game', {roomId, backendMsg: msg}])
+    )
+
+    subs.push(sub)
+  }
+
+  return Sub.batch(subs) 
 }

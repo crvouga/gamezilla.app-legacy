@@ -3,7 +3,7 @@ import { matchSorter } from "match-sorter"
 import { Cmd, exhaustive, pipe, RemoteData, Result, Task, Unit } from "../Core"
 import { UserId } from "../Data"
 import * as Supabase from "../Supabase"
-import { definitions } from "../supabase-types"
+import { definitions } from "../Supabase.Types"
 import * as Types from "./Types"
 import { Problem, Store } from "./Types"
 
@@ -215,7 +215,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   }
 }
 
-export const runAction = (msg: Action, model: Model): [Model, Cmd.Cmd<Msg>] => {
+export const updateFromAction = (msg: Action, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
     case "Edit": {
       const { userId, edits } = msg[1]
