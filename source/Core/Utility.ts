@@ -1,4 +1,5 @@
 import * as Cmd from "./Cmd"
+import * as Sub from "./Sub"
 import { pipe } from "./pipe"
 
 export const exhaustive = (
@@ -43,7 +44,6 @@ export const tag =
   <Value>(value: Value): [Tag, Value] =>
     [tag, value]
 
-
 export  const tagUpdate = 
 <TagName extends string, Model, Msg>(
     tagName: TagName, 
@@ -58,6 +58,13 @@ export const tagCmd = <TagName extends string, Msg>(
   cmd: Cmd.Cmd<Msg>
 ): Cmd.Cmd<[TagName, Msg]> => {
   return pipe(cmd, Cmd.map(msg => [tagName, msg]))
+}
+
+export const tagSub = <TagName extends string, Msg>(
+  tagName: TagName, 
+  sub: Sub.Sub<Msg>
+): Sub.Sub<[TagName, Msg]> => {
+  return pipe(sub, Sub.map(msg => [tagName, msg]))
 }
 
 

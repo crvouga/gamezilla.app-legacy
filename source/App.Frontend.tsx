@@ -1,6 +1,7 @@
 
 import * as ReactDomClient from "react-dom/client"
 import { io, Socket } from "socket.io-client"
+import { FrontendModel, FrontendMsg, ToFrontend } from "./App.Types"
 import * as Auth from "./Auth"
 import * as Bridge from "./Bridge"
 import {
@@ -15,10 +16,10 @@ import {
   RemoteData,
   Sub,
   tag,
-  tagCmd
+  tagCmd,
+  tagSub
 } from "./Core"
 import * as GameRoom from "./GameRoom/GameRoom.Frontend"
-import { ConnectionStatus, FrontendModel, FrontendMsg, ToFrontend } from "./App.Types"
 import * as Pages from "./Pages"
 import * as Route from "./Route"
 import * as Snackbar from "./Snackbar"
@@ -416,17 +417,14 @@ const updateFromAction = (action: OutAction, model: Model): [Model, Cmd.Cmd<Msg>
 export const subscriptions = (model: Model): Sub.Sub<Msg> => {
   return Sub.batch<Msg>([
     Bridge.onConnectionStatus(tag("BackendConnection.Changed")),
-    Bridge.fromBackend((toFrontend) => ["[Backend]", toFrontend]),
-    pipe(Pages.subscriptions(model.page), Sub.map(tag("Page"))),
-    pipe(Auth.subscriptions, Sub.map(tag("Auth"))),
+    Bridge.fromBackend(tag("[Backend]")),
+    tagSub("Page", Pages.subscriptions(model.page)),
+    tagSub("Auth", Auth.subscriptions),
     model.auth[0] === "LoggedIn"
-      ? pipe(
-          GameRoom.subscriptions(
-            { currentUserId: model.auth[1].userId },
-            model.gameRoom,
-          ),
-          Sub.map(tag("GameRoom")),
-        )
+      ?  tagSub("GameRoom", GameRoom.subscriptions(
+        { currentUserId: model.auth[1].userId },
+        model.gameRoom,
+      ))
       : Sub.None,
   ])
 }
