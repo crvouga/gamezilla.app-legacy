@@ -89,7 +89,7 @@ export const view =
       store.queries.Profile.Search[model.searchText] ?? RemoteData.NotAsked
 
     return (
-      <UI.Box sx={{ height: "100%", width: "100%" }}>
+      <UI.FillBox>
         <UI.TextField
           id={SearchInputId}
           placeholder="Search"
@@ -144,6 +144,6 @@ export const view =
             <UI.CircularProgress />
           </UI.Box>
         )}
-      </UI.Box>
+      </UI.FillBox>
     )
   }
