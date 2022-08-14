@@ -88,6 +88,7 @@ export const update = (
     case "Chess": {
       if (msg[0] === "Chess") {
         return tagUpdate("Chess", Chess.update(
+          { currentRoomId },
           msg[1],
           model[1],
         ))
@@ -197,7 +198,7 @@ export const view = (
 
     case "Chess": {
       return pipe(
-        Chess.view(model[1]),
+        Chess.view({ currentUserId }, model[1]),
         UI.map(tag("Chess")),
       )
     }

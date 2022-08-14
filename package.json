@@ -1,8 +1,9 @@
 {
+  "type": "commonjs",
   "private": true,
   "scripts": {
     "dev": "concurrently \"npm run backend:dev\" \"npm run frontend:dev:many\"",
-    "backend:dev": "nodemon -e ts,js --exec ts-node ./source/App.Backend.ts",
+    "backend:dev": "npx ts-node-dev ./source/App.Backend.ts",
     "backend:start": "node --max-old-space-size=300 ./dist/source/App.Backend.js",
     "format": "prettier --write",
     "frontend:build": "vite build",
@@ -25,7 +26,7 @@
     "@mui/lab": "^5.0.0-alpha.79",
     "@mui/material": "^5.6.3",
     "@supabase/supabase-js": "^1.30.0",
-    "chess.js": "^0.13.4",
+    "chess.ts": "^0.16.2",
     "immer": "^9.0.15",
     "match-sorter": "^6.3.1",
     "path-browserify": "^1.0.1",
@@ -38,6 +39,7 @@
   },
   "devDependencies": {
     "@faker-js/faker": "^7.3.0",
+    "@types/chess.js": "^0.13.2",
     "@types/jest": "^27.4.1",
     "@types/react": "^18.0.8",
     "@types/react-dom": "^18.0.3",

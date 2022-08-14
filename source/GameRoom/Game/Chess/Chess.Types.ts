@@ -1,6 +1,42 @@
-import{ Browser} from "../../../Core"
+import * as ChessTs from "chess.ts"
+import { Browser, Result } from "../../../Core"
 import { UserId } from "../../../Data"
-import { ConnectFour } from "../../../Game"
+
+// 
+// 
+// 
+// Chess
+// 
+// 
+// 
+
+export const getInitialFen = () => {
+  return  new ChessTs.Chess().fen()
+}
+
+
+export const fenToBoard = (fen:string) => {
+  return  new ChessTs.Chess(fen).board()
+}
+
+export const move =(moveData: ChessTs.PartialMove, model: SharedModel): MoveResult => {
+
+  const chess= new ChessTs.Chess(model.fen)
+
+  const moved = chess.move(moveData)
+
+  if(!moved) {
+    return Result.Err("invalid_move")
+  }
+
+  const modelNew: SharedModel = {
+    ...model,
+    fen: chess.fen()
+  }
+
+  return Result.Ok(modelNew)
+}
+
 
 //
 //
@@ -11,11 +47,11 @@ import { ConnectFour } from "../../../Game"
 //
 
 export type SharedModel = {
-  columns: ConnectFour.Columns
+  fen: string
 }
 
 export const initSharedModel: SharedModel = {
-  columns: ConnectFour.emptyColumns,
+  fen: getInitialFen()
 }
 
 export type FrontendModel = SharedModel & {
@@ -39,13 +75,14 @@ export type FrontendMsg =
 
 export type BackendMsg = ["None"]
 
-export type ToFrontend = ["None"]
+export type ToFrontend = ["Sync", SharedModel] | MoveResulted
 
 export type ToBackend = Move
 
 export type Move = [
   "Move",
-  { userId: UserId.UserId; columnIndex: ConnectFour.ColumnIndex },
+  { userId: UserId.UserId; } & ChessTs.PartialMove,
 ]
 export type MoveResulted = ["MovedResulted", MoveResult]
-export type MoveResult = ConnectFour.MoveResult
+export type MoveResult = Result.Result<"invalid_move", SharedModel>
+

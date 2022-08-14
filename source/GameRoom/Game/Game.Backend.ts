@@ -104,7 +104,7 @@ export const updateFromFrontend = ({clientId, roomId}: {roomId: RoomId.RoomId, c
 
     case 'Chess': {
       if(model[0] === 'Chess') {
-        return tagUpdate("Chess", Chess.updateFromFrontend(clientId,msg[1], model[1]) )
+        return tagUpdate("Chess", Chess.updateFromFrontend({clientId, roomId},msg[1], model[1]) )
       }
       return [model, Cmd.None]
     } 
