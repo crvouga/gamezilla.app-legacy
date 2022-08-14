@@ -28,7 +28,7 @@
     "noUncheckedIndexedAccess": true
   },
   "exclude": ["node_modules"],
-  "include": ["source"],
+  "include": ["source", "env.d.ts"],
   "references": [
     {
       "path": "./tsconfig.vite.json"
