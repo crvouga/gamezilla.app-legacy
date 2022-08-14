@@ -24,6 +24,7 @@ import * as Pages from "./Pages"
 import * as Route from "./Route"
 import * as Snackbar from "./Snackbar"
 import * as Store from "./Store"
+import { toFindManyKey } from "./Store/Types"
 import * as UI from "./UI"
 
 //
@@ -640,8 +641,10 @@ export const toStatus = ({
         }]
       }
 
+      const key = toFindManyKey([authSession.userId])
+
       const query =
-        store.queries.Profile.FindOne[authSession.userId] ?? RemoteData.NotAsked
+        store.queries.Profile.FindMany[key] ?? RemoteData.NotAsked
 
       switch (query.type) {
         case "NotAsked":
@@ -654,9 +657,13 @@ export const toStatus = ({
           return ["ProfileError", {authSession }]
 
         case "Success": {
-          const userId = query.value
+          const userIds = query.value
 
-          const profile = store.Profile[userId]
+          const profiles = userIds
+            .map(userId => store.Profile[userId])
+            .flatMap(item => item ? [item] : [])
+
+          const profile = profiles[0]
 
           if (!profile) {
             return  ["ProfileMissing", {authSession} ]

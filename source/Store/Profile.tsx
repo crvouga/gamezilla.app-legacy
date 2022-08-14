@@ -115,28 +115,20 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
     case "FindManyResulted": {
       const { userIds, result } = msg[1]
 
+      const key = Types.toFindManyKey(userIds)
+            
       const modelNew = produce(model, (model) => {
-        switch (result.type) {
-          case "Err":
-            for (const userId of userIds) {
-              model.queries.Profile.FindOne[userId] =
-                RemoteData.fromResult(result)
-            }
-            break
+        model.queries.Profile.FindMany[key] =
+          pipe(
+            result,
+            RemoteData.fromResult,
+            RemoteData.mapSuccess(profiles => profiles.map(profile => profile.userId))
+          )
 
-          case "Ok":
-            for (const userId of userIds) {
-              model.queries.Profile.FindOne[userId] =
-                RemoteData.Failure("not_found")
-            }
-
-            for (const profile of result.value) {
-              model.queries.Profile.FindOne[profile.userId] =
-                RemoteData.Success(profile.userId)
-
-              model.Profile[profile.userId] = profile
-            }
-            break
+        if(result.type === 'Ok') {
+          for (const profile of result.value) {
+            model.Profile[profile.userId] = profile
+          }
         }
       })
       return [modelNew, Cmd.None]
@@ -250,9 +242,8 @@ export const updateFromAction = (msg: Action, model: Model): [Model, Cmd.Cmd<Msg
       const { userIds } = msg[1]
 
       const modelNew = produce(model, (model) => {
-        for (const userId of userIds) {
-          model.queries.Profile.FindOne[userId] = RemoteData.Loading
-        }
+        const key = Types.toFindManyKey(userIds)
+        model.queries.Profile.FindMany[key] = RemoteData.Loading
       })
 
       return [
@@ -339,30 +330,33 @@ export const updateFromAction = (msg: Action, model: Model): [Model, Cmd.Cmd<Msg
 //
 //
 
-export const toProfile = (
-  userId: UserId.UserId,
-  model: Model,
-): RemoteData.Model<Problem, Profile> => {
-  const query = model.queries.Profile.FindOne[userId] ?? RemoteData.NotAsked
+// export const toProfile = (
+//   userId: UserId.UserId,
+//   model: Model,
+// ): RemoteData.Model<Problem, Profile> => {
 
-  switch (query.type) {
-    case "Failure":
-    case "Loading":
-    case "NotAsked":
-      return query
+//   const key = Types.toFindManyKey([userId])
 
-    case "Success":
-      const userId = query.value
+//   const query = model.queries.Profile.FindMany[key] ?? RemoteData.NotAsked
 
-      const profile = model.Profile[userId]
+//   switch (query.type) {
+//     case "Failure":
+//     case "Loading":
+//     case "NotAsked":
+//       return query
 
-      if (!profile) {
-        return RemoteData.Failure("Invalid state")
-      }
+//     case "Success":
+//       const userId = query.value
 
-      return RemoteData.Success(profile)
-  }
-}
+//       const profile = model.Profile[userId]
+
+//       if (!profile) {
+//         return RemoteData.Failure("Invalid state")
+//       }
+
+//       return RemoteData.Success(profile)
+//   }
+// }
 
 export const toSearch = (nameOrUsername: string, store: Model) => {
   return matchSorter(Object.values(store.Profile), nameOrUsername, {
