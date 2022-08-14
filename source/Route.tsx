@@ -68,8 +68,8 @@ export const isRouteType = (routeType: unknown): routeType is Route[0] => {
   return typeof routeType === "string" && routeType in routesTypes
 }
 
-export const decode = (location: Browser.Location): Option.Option<Route> => {
-  const [first, second] = location.pathname.substring(1).split("/")
+export const decode = ({pathname}: {pathname: string}): Option.Option<Route> => {
+  const [first, second] = pathname.substring(1).split("/")
 
   if (!isRouteType(first)) {
     return Option.None
@@ -153,3 +153,8 @@ export const replace = (route: Route) => {
 export type GotRoute = ["GotRoute", Route]
 
 export type Msg = GotRoute
+
+
+export const equals = (a: Route, b: Route): boolean => {
+  return encode(a) === encode(b)
+}
