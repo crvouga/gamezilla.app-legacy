@@ -1,7 +1,7 @@
 import produce from "immer"
 import { matchSorter } from "match-sorter"
 import { Cmd, exhaustive, pipe, RemoteData, Result, Task, Unit } from "../Core"
-import { UserId } from "../Data"
+import { UserId, Username } from "../Data"
 import * as Supabase from "../Supabase"
 import { definitions } from "../Supabase.Types"
 import * as Types from "./Types"
@@ -408,24 +408,27 @@ const fromThemeMode = (
   }
 }
 
-type DecodeProblem = "invalid_user_id"
+
 
 export const decodeRow = (
   row: definitions["user_profile"],
-): Result.Result<DecodeProblem, Profile> => {
+): Result.Result<string, Profile> => {
   const userId = UserId.decode(row.id)
+  const username = Username.decode(row.username)
 
-  if (userId.type === "Ok") {
+
+  if (userId.type === "Ok" && username.type === 'Ok') {
     return Result.Ok({
       userId: userId.value,
       avatarUrl: row.avatar_url,
       name: row.name,
-      username: row.username,
+      username: username.value,
       themeMode: rowThemeModeToThemeMode(row.theme_mode),
     })
   }
-
-  return Result.Err("invalid_user_id")
+  
+  // todo better error
+  return Result.Err("failed_to_decode_supabase_row")
 }
 
 export const findOne =

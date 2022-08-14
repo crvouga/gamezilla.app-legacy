@@ -1,5 +1,5 @@
 import { Cmd } from "../Core"
-import { ProfileAvatar, UserId } from "../Data"
+import { ProfileAvatar, UserId, Username } from "../Data"
 import * as Route from "../Route"
 import * as Store from "../Store"
 import * as UI from "../UI"
@@ -82,8 +82,18 @@ export const update = (
         seed: ProfileAvatar.toSeed(model.form.username),
         style: "avataaars",
       })
+
+
+      const username = Username.decode(model.form.username)
+
+      if(username.type === 'Err') {
+        // todo handle validation error
+        return [model, Cmd.None, []]
+      }
+
       const profile: Store.Profile.Profile = {
-        ...model.form,
+        name: model.form.name,
+        username: username.value,
         userId,
         avatarUrl,
         themeMode: "System",
