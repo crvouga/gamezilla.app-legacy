@@ -1,7 +1,6 @@
 import * as Rx from "rxjs"
 import * as Cmd from "../Cmd"
 import * as Option from "../Option"
-import { pipe } from "../pipe"
 import * as Platform from "../Platform"
 import * as Result from "../Result"
 import * as Sub from "../Sub"
@@ -138,17 +137,19 @@ export type Resize = {
   height: number,
 }
 
-const resize = new Rx.Subject<Resize>()
-
-window.addEventListener("resize", event => {
-  resize.next({
-    height: window.innerHeight,
-    width: window.innerWidth
-  })
-})
-
 export const onResize = <Msg>(mapper: (resize: Resize) => Msg): Sub.Sub<Msg> => {
-  return pipe(resize, Sub.map(mapper))
+  return new Rx.Observable(subscriber => {
+    const handle = () => {
+      subscriber.next(mapper({
+        height: window.innerHeight,
+        width: window.innerWidth
+      }))
+    }
+    window.addEventListener("resize", handle)
+    return () => {
+      window.removeEventListener("resize", handle)
+    }
+  })
 }
 
 //

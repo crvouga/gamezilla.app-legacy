@@ -1,6 +1,8 @@
 import { Cmd, Sub } from "../../../Core"
-import { ClientId } from "../../../Data"
-import { BackendModel, BackendMsg, initSharedModel, ToBackend } from "./Chess.Types"
+import { ClientId, RoomId } from "../../../Data"
+import { BackendModel, BackendMsg, initSharedModel, move, ToBackend, ToFrontend } from "./Chess.Types"
+import * as Bridge from "../../../Bridge"
+import * as ChessTs from "chess.ts"
 
 //
 //
@@ -26,7 +28,6 @@ export type Msg = BackendMsg
 
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch(msg[0]) {
-
     case 'None': {
       return [model, Cmd.None]
     }
@@ -34,18 +35,42 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 }
 
 export const updateFromFrontend = (
-  clientId: ClientId.ClientId,
+  {clientId, roomId}:{roomId: RoomId.RoomId, clientId: ClientId.ClientId},
   msg: ToBackend,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
   switch(msg[0]) {
     case 'Move': {
-      return [model, Cmd.None]
-    }
+      const result = move(msg[1], model)
 
-    
+      if (result.type === 'Err') {
+        return [model, sendToFrontend([clientId], roomId, ['Sync', model])]
+      }
+
+      const modelNew: Model = { ...model, ...result.value }
+
+      return [modelNew, broadcast(roomId, ['Sync', modelNew])]
+    }
   }
 }
+
+// 
+// 
+// 
+// Bridge
+// 
+// 
+// 
+
+export const sendToFrontend = (clientIds: ClientId.ClientId[], roomId: RoomId.RoomId, msg: ToFrontend) => {
+  return Bridge.sendToFrontend(clientIds, ['GameRoom', ['Game', { roomId, toFrontend: ['Chess', msg] }]])
+}
+
+export const broadcast = (roomId: RoomId.RoomId, msg: ToFrontend) => {
+  return Bridge.broadcast(['GameRoom', ['Game', { roomId, toFrontend: ['Chess', msg] }]])
+}
+
+
 
 //
 //

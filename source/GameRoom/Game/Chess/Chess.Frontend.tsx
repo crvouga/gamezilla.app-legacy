@@ -1,8 +1,11 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
 import { Chessboard } from 'react-chessboard';
-import { Sub, Cmd, Browser, pipe, Result, tag } from "../../../Core";
+import { Browser, Cmd, pipe, Sub } from "../../../Core";
+import { RoomId, UserId } from '../../../Data';
 import * as UI from "../../../UI";
-import { FrontendModel, FrontendMsg, initSharedModel, ToFrontend } from "./Chess.Types";
+import * as Bridge from "../../../Bridge";
+import { FrontendModel, FrontendMsg, initSharedModel, move, Move, ToBackend, ToFrontend } from "./Chess.Types";
+import * as ChessTs from "chess.ts"
 
 //
 //
@@ -28,7 +31,7 @@ export const init = (): [FrontendModel, Cmd.Cmd<Msg>] => {
 
 export type Msg = FrontendMsg
 
-export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
+export const update = ({ currentRoomId }: { currentRoomId: RoomId.RoomId }, msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
     case 'GetElementResulted': {
       const result = msg[1]
@@ -48,13 +51,30 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
     }
 
     case 'Move': {
-      return [model, Cmd.None]
+      const result = move(msg[1], model)
+
+      if (result.type === 'Err') {
+        return [model, Cmd.None]
+      }
+
+      const sharedModelNew = result.value
+
+      return [{ ...model, ...sharedModelNew }, sendToBackend(currentRoomId, msg)]
     }
   }
 }
 
 export const updateFromBackend = (msg: ToFrontend, model: Model): [Model, Cmd.Cmd<Msg>] => {
-  return [model, Cmd.None]
+  switch (msg[0]) {
+    case 'MovedResulted': {
+      return [{ ...model, }, Cmd.None]
+    }
+
+    case 'Sync': {
+      const sharedModel = msg[1]
+      return [{ ...model, ...sharedModel }, Cmd.None]
+    }
+  }
 }
 
 // 
@@ -69,6 +89,18 @@ export const subscriptions = (_model: Model): Sub.Sub<Msg> => {
   return Browser.onResize((resize) => ['BrowserResized', resize])
 }
 
+// 
+// 
+// 
+// Bridge
+// 
+// 
+// 
+
+export const sendToBackend = (roomId: RoomId.RoomId, toBackend: ToBackend) => {
+  return Bridge.sendToBackend(['GameRoom', ['Game', { roomId, toBackend: ['Chess', toBackend] }]])
+}
+
 //
 //
 //
@@ -80,12 +112,12 @@ export const subscriptions = (_model: Model): Sub.Sub<Msg> => {
 const containerHtmlId = "chess"
 
 export const view =
-  (model: Model): UI.View<Msg> =>
+  ({ currentUserId }: { currentUserId: UserId.UserId }, model: Model): UI.View<Msg> =>
     (dispatch) =>
-      <View model={model} dispatch={dispatch} />
+      <View currentUserId={currentUserId} model={model} dispatch={dispatch} />
 
 
-export const View = ({ model, dispatch }: { model: Model, dispatch: (msg: Msg) => void }) => {
+export const View = ({ currentUserId, model, dispatch }: { currentUserId: UserId.UserId; model: Model, dispatch: (msg: Msg) => void }) => {
   const [boardWidth, setBoardWidth] = useState(0)
   const ref = useRef<HTMLDivElement | null>(null)
 
@@ -106,7 +138,24 @@ export const View = ({ model, dispatch }: { model: Model, dispatch: (msg: Msg) =
 
   return <div ref={ref}>
     <UI.FillBox id={containerHtmlId}>
-      <Chessboard boardWidth={boardWidth} />
+      <Chessboard
+        position={model.fen}
+        boardWidth={boardWidth}
+        onPieceDrop={(sourceSquare, targetSquare, _piece) => {
+
+          const msg: Move = ['Move', {
+            userId: currentUserId,
+            from: sourceSquare,
+            to: targetSquare,
+            // promotion: 'q',
+            promotion: 'q'
+
+          }]
+
+          dispatch(msg)
+
+          return true
+        }} />
     </UI.FillBox>
   </div>
 }
