@@ -8,8 +8,24 @@ export const map =
     return sub.pipe(Rx.map(f))
   }
 
-export const batch = <Msg>(arr: Array<Sub<Msg>>): Sub<Msg> => {
+export const batch = <Msg>(arr: Sub<Msg>[]): Sub<Msg> => {
   return Rx.merge(...arr)
 }
 
 export const None: Sub<never> = Rx.EMPTY
+
+
+type Unsubscribe = () => void
+
+export const create = <Msg>(subscribe: (emit: (msg:Msg) => void) => Unsubscribe): Sub<Msg> => {
+  return new Rx.Observable<Msg>(subscriber => {
+    
+    const unsubscribe = subscribe((msg) => {
+      subscriber.next(msg)      
+    })
+
+    return () => {
+      unsubscribe()
+    }
+  })
+}

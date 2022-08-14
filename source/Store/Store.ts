@@ -61,23 +61,23 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   }
 }
 
-export const runAction = (
+export const updateFromAction = (
   action: Action,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (action[1][0]) {
     case "Conversation": {
-      const [modelNew, cmd] = Conversation.runAction(action[1][1], model)
+      const [modelNew, cmd] = Conversation.updateFromAction(action[1][1], model)
       return [modelNew, pipe(cmd, Cmd.map(tag("Conversation")))]
     }
 
     case "Message": {
-      const [modelNew, cmd] = Message.runAction(action[1][1], model)
+      const [modelNew, cmd] = Message.updateFromAction(action[1][1], model)
       return [modelNew, pipe(cmd, Cmd.map(tag("Message")))]
     }
 
     case "Profile": {
-      const [modelNew, cmd] = Profile.runAction(action[1][1], model)
+      const [modelNew, cmd] = Profile.updateFromAction(action[1][1], model)
       return [modelNew, pipe(cmd, Cmd.map(tag("Profile")))]
     }
   }

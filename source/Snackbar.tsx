@@ -17,7 +17,7 @@ export type Model = {
 type SnackId = string
 
 export type Snack = {
-  variant: "Info" | "Error"
+  variant: Variant
   snackId: SnackId
   message: string
   title?:string
@@ -26,6 +26,8 @@ export type Snack = {
 export const init: Model = {
   queue: [],
 }
+
+type Variant = "Info" | "Error"
 
 //
 //
@@ -40,9 +42,8 @@ export type Msg =
   | ["ClickedClose", SnackId]
   | ["ClickedAwayClose", SnackId]
 
-export type Enqueue = ["Info" | "Error", {message: string, title?:string}]
 
-export type Action = ["Snackbar", Enqueue]
+export type Action = ["Snackbar", {variant: Variant, message: string, title?:string}]
 
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
@@ -59,34 +60,30 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
 const snackTimeout = 4000
 
-export const runAction = (
+export const updateFromAction = (
   action: Action,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
-  switch (action[1][0]) {
-    case "Info":
-    case "Error": {
-      const [variant, {message, title}] = action[1]
+  const  {message, title, variant} = action[1]
 
-      const snack: Snack = {
-        snackId: Uuid.generateSync(),
-        message,
-        variant,
-        title
-      }
-
-      return [
-        {
-          ...model,
-          queue: [snack, ...model.queue],
-        },
-        Time.startTimeout(snack.snackId, snackTimeout, [
-          "DurationElapsed",
-          snack.snackId,
-        ]),
-      ]
-    }
+  const snack: Snack = {
+    snackId: Uuid.generateSync(),
+    message,
+    variant,
+    title
   }
+
+  return [
+    {
+      ...model,
+      queue: [snack, ...model.queue],
+    },
+    Time.startTimeout(snack.snackId, snackTimeout, [
+      "DurationElapsed",
+      snack.snackId,
+    ]),
+  ]
+  
 }
 
 const removeById = (snackId: string, model: Model): [Model, Cmd.Cmd<Msg>] => [

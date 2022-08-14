@@ -25,11 +25,11 @@ export const init = initSharedModel
 // 
 
 export const sendToFrontend = (clientIds: ClientId.ClientId[], roomId: RoomId.RoomId, msg: ToFrontend) => {
-  return Bridge.sendToFrontend(clientIds, ['GameRoom', ['Game', [ roomId, ['Snake', msg] ]]])
+  return Bridge.sendToFrontend(clientIds, ['GameRoom', ['Game', { roomId, toFrontend: ['Snake', msg] }]])
 }
 
 export const broadcast = (roomId: RoomId.RoomId, msg: ToFrontend) => {
-  return Bridge.broadcast(['GameRoom', ['Game', [ roomId, ['Snake', msg] ]]])
+  return Bridge.broadcast(['GameRoom', ['Game', { roomId, toFrontend: ['Snake', msg] }]])
 }
 
 //

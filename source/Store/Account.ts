@@ -1,7 +1,7 @@
 import { Option, pipe, Result, Task, Unit } from "../Core"
 import { EmailAddress, Password, UserId } from "../Data"
 import * as Supabase from "../Supabase"
-import { definitions } from "../supabase-types"
+import { definitions } from "../Supabase.Types"
 
 //
 //

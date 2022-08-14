@@ -70,18 +70,6 @@ type OutAction = Snackbar.Action | Store.Action
 //
 //
 
-export const runAction = (
-  { currentUserId }: { currentUserId: UserId.UserId },
-  action: Action,
-  model: Model,
-): [Model, Cmd.Cmd<Msg>] => {
-  switch (action[1][0]) {
-    case "Msg": {
-      const msg = action[1][1]
-      return update({ currentUserId }, msg, model)
-    }
-  }
-}
 
 export const update = (
   { currentUserId }: { currentUserId: UserId.UserId },
@@ -157,7 +145,7 @@ export const update = (
         return [model, Cmd.None]
       }
 
-      const roomId = msg[1][0]
+      const roomId = msg[1].roomId
 
       if(user.roomId !== roomId) {
         return [model, Cmd.None]
@@ -169,7 +157,7 @@ export const update = (
         return [model, Cmd.None]
       }
 
-      const gameMsg = msg[1][1]
+      const gameMsg = msg[1].frontendMsg
 
       const [gameNew, gameCmd] = Game.update(
         { currentUserId, currentRoomId: roomId, }, 
@@ -184,7 +172,7 @@ export const update = (
             [roomId]: gameNew
           }
         },
-        pipe(gameCmd, Cmd.map(msg => ["Game" as const, [roomId, msg]])),
+        pipe(gameCmd, Cmd.map((msg):Msg => ["Game" , {roomId, frontendMsg: msg}])),
       ]
     }
 
@@ -217,8 +205,6 @@ export const updateFromBackend = (
         // @ts-ignore
         games: {
           ...model.games,
-
-          // @ts-ignore
           ...backendModel.games
         },
         rooms: backendModel.rooms,
@@ -230,7 +216,7 @@ export const updateFromBackend = (
 
     
     case 'Game': {
-      const roomId = msg[1][0]
+      const roomId = msg[1].roomId
       
       const game = model.games[roomId]
 
@@ -238,7 +224,7 @@ export const updateFromBackend = (
         return [model, Cmd.None, []]
       }
 
-      const gameMsg = msg[1][1]
+      const gameMsg = msg[1].toFrontend
 
       const [gameNew, gameCmd, actions] = Game.updateFromBackend(gameMsg, game)
 
@@ -246,40 +232,36 @@ export const updateFromBackend = (
         ...model,
         games: {
           ...model.games,
-          [roomId]: {
-            // todo make it not compile if this isn't done
-            // ...Game.init(gameNew[0]),
-            ...gameNew
-          }
+          [roomId]: gameNew
         }
       }
 
-      return [modelNew, pipe(gameCmd, Cmd.map(msg => ['Game' as 'Game', [roomId, msg]])), actions]
+      return [modelNew, pipe(gameCmd, Cmd.map((msg): Msg => ['Game', {roomId, frontendMsg: msg}])), actions]
     }
 
     case "CreateRoomResulted": {
-      return handleResult("createRoom", msg[1], model)
+      return updateFromBackendResult("createRoom", msg[1], model)
     }
 
     case "LeaveRoomResulted": {
-      return  handleResult("leaveRoom", msg[1], model)
+      return  updateFromBackendResult("leaveRoom", msg[1], model)
     }
 
     case "JoinRoomResulted": {
-      return handleResult("joinRoom", msg[1], model)
+      return updateFromBackendResult("joinRoom", msg[1], model)
     }
 
     case "StartGameResulted": {
-      return handleResult("startGame", msg[1], model)
+      return updateFromBackendResult("startGame", msg[1], model)
     }
 
     case "StopGameResulted": {
-      return handleResult("stopGame", msg[1], model)
+      return updateFromBackendResult("stopGame", msg[1], model)
     }
   }
 }
 
-const handleResult = <
+const updateFromBackendResult = <
   TResult extends Result.Result<TProblem, SharedModel>,
   TProblem extends string,
 >(
@@ -290,7 +272,7 @@ const handleResult = <
 
   const actions: OutAction[] =
     result.type === "Err"
-      ? [["Snackbar", ["Error", {message: result.error}]]]
+      ? [["Snackbar", {message: result.error, variant: "Error"}]]
       : []
 
   const modelNew:Model = result.type === 'Ok' ? {...model, ...result.value} : model
@@ -303,6 +285,20 @@ const handleResult = <
   
   return [{...modelNew, [remoteDataKey]: remoteData}, Cmd.None, actions]
 }
+
+export const updateFromAction = (
+  { currentUserId }: { currentUserId: UserId.UserId },
+  action: Action,
+  model: Model,
+): [Model, Cmd.Cmd<Msg>] => {
+  switch (action[1][0]) {
+    case "Msg": {
+      const msg = action[1][1]
+      return update({ currentUserId }, msg, model)
+    }
+  }
+}
+
 
 //
 //
@@ -336,7 +332,7 @@ export const subscriptions = (
     return Sub.None
   }
 
-  return pipe(Game.subscriptions(game), Sub.map((msg): Msg => ["Game", [room.roomId, msg]]))
+  return pipe(Game.subscriptions(game), Sub.map((msg): Msg => ["Game", {roomId: room.roomId, frontendMsg: msg}]))
 }
 
 //
@@ -390,7 +386,7 @@ export const view = (
         {viewHeader({ store, room, currentUserId }, model)(dispatch)}
         {pipe(
           Game.view({ currentUserId, store }, game),
-          UI.map((msg):Msg => ["Game", [room.roomId, msg]]), 
+          UI.map((msg):Msg => ["Game", {roomId: room.roomId,frontendMsg: msg}]), 
         )(dispatch)}
       </>
     )

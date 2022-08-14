@@ -40,7 +40,7 @@ export const init: Model = {
 // 
 
 export const sendToBackend = (roomId: RoomId.RoomId, toBackend: ToBackend) => {
-  return Bridge.sendToBackend(['GameRoom', ['Game', [roomId, ['Snake', toBackend]]]])
+  return Bridge.sendToBackend(['GameRoom', ['Game', { roomId, toBackend: ['Snake', toBackend] }]])
 }
 
 //
@@ -160,7 +160,7 @@ export const updateFromBackend = (msg: ToFrontend, model: Model): [Model, Cmd.Cm
 const handleResult = <TProblem extends string,TResult extends Result.Result<TProblem, SharedModel>>(result: TResult, model: Model): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   if(result.type === 'Err') {        
     const message = result.error.split("_").join(" ")
-    return [model, Cmd.None ,[['Snackbar',["Error", {message, }]]]]
+    return [model, Cmd.None ,[['Snackbar',{message, variant: "Error" }]]]
   }
   const sharedModel = result.value
   return [{...model, ...sharedModel}, Cmd.None, []]

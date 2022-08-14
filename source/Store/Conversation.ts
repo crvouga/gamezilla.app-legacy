@@ -3,7 +3,7 @@ import { Cmd, Option, pipe, RemoteData, Result, Task } from "../Core"
 import { UserId } from "../Data"
 import * as Route from "../Route"
 import * as Supabase from "../Supabase"
-import { definitions } from "../supabase-types"
+import { definitions } from "../Supabase.Types"
 import { decodeRow } from "./Profile"
 import * as Types from "./Types"
 import {
@@ -214,7 +214,7 @@ export const update = (msg: Msg, model: Store): [Store, Cmd.Cmd<Msg>] => {
   }
 }
 
-export const runAction = (
+export const updateFromAction = (
   action: Action,
   model: Store,
 ): [Store, Cmd.Cmd<Msg>] => {

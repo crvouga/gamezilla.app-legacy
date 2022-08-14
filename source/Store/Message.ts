@@ -2,7 +2,7 @@ import produce from "immer"
 import { Cmd, pipe, RemoteData, Result, Task } from "../Core"
 import { UserId } from "../Data"
 import * as Supabase from "../Supabase"
-import { definitions } from "../supabase-types"
+import { definitions } from "../Supabase.Types"
 import * as Types from "./Types"
 import { Problem, Store } from "./Types"
 
@@ -99,7 +99,7 @@ export const update = (msg: Msg, model: Store): [Store, Cmd.Cmd<Msg>] => {
   }
 }
 
-export const runAction = (
+export const updateFromAction = (
   action: Action,
   model: Store,
 ): [Store, Cmd.Cmd<Msg>] => {

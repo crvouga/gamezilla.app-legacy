@@ -1,7 +1,7 @@
 import * as Rx from "rxjs"
 import { Cmd, Option, pipe, Sub } from "./Core"
 import { ClientId } from "./Data"
-import { ToBackend, ToFrontend } from "./Types"
+import { ToBackend, ToFrontend, ConnectionStatus } from "./App.Types"
 
 // 
 // 
@@ -11,33 +11,25 @@ import { ToBackend, ToFrontend } from "./Types"
 // 
 // 
 
-export type ConnectionStatus =
-  | "Connecting"
-  | "Reconnecting"
-  | "Disconnected"
-  | "Connected"
-
-export const connectionStatus$ = new Rx.Subject<ConnectionStatus>()
-export const toFrontend$ = new Rx.Subject<ToFrontend>()
-export const sendToBackend$ = new Rx.Subject<ToBackend>()
-
-export const onConnectionChanged = <Msg>(
-  mapper: (connectionStatus: ConnectionStatus) => Msg,
-): Sub.Sub<Msg> => {
-  return pipe(connectionStatus$, Sub.map(mapper))
-}
+ export const _internal_toFrontend = new Rx.Subject<ToFrontend>()
+ export const _internal_sendToBackend = new Rx.Subject<ToBackend>()
+ export const _internal_connectionStatus = new Rx.Subject<ConnectionStatus>()
 
 export const fromBackend = <Msg>(
   mapper: (msg: ToFrontend) => Msg,
 ): Sub.Sub<Msg> => {
-  return pipe(toFrontend$, Sub.map(mapper))
+  return pipe(_internal_toFrontend, Sub.map(mapper))
 }
 
 export const sendToBackend = (msg: ToBackend): Cmd.Cmd<never> => {
   return Rx.of(async () => {
-    sendToBackend$.next(msg)
+    _internal_sendToBackend.next(msg)
     return Option.None
   })
+}
+
+export const onConnectionStatus = <Msg>(mapper: (connectionStatus: ConnectionStatus) => Msg): Sub.Sub<Msg> => {
+  return pipe(_internal_connectionStatus, Sub.map(mapper))
 }
 
 //
@@ -48,29 +40,29 @@ export const sendToBackend = (msg: ToBackend): Cmd.Cmd<never> => {
 //
 //
 
-export const toBackend$ = new Rx.Subject<[ClientId.ClientId, ToBackend]>()
-export const onConnect$ = new Rx.Subject<ClientId.ClientId>()
-export const onDisconnect$ = new Rx.Subject<ClientId.ClientId>()
-export const sendToFrontend$ = new Rx.Subject<[ClientId.ClientId[], ToFrontend]>()
-export const broadcast$ = new Rx.Subject<ToFrontend>()
+export const _internal_toBackend = new Rx.Subject<[ClientId.ClientId, ToBackend]>()
+export const _internal_onConnect = new Rx.Subject<ClientId.ClientId>()
+export const _internal_onDisconnect = new Rx.Subject<ClientId.ClientId>()
+export const _internal_sendToFrontend = new Rx.Subject<[ClientId.ClientId[], ToFrontend]>()
+export const _internal_broadcast = new Rx.Subject<ToFrontend>()
 
 export const onConnect = <Msg>(
   mapper: (clientId: ClientId.ClientId) => Msg,
 ): Sub.Sub<Msg> => {
-  return pipe(onConnect$, Sub.map(mapper))
+  return pipe(_internal_onConnect, Sub.map(mapper))
 }
 
 export const onDisconnect = <Msg>(
   mapper: (clientId: ClientId.ClientId) => Msg,
 ): Sub.Sub<Msg> => {
-  return pipe(onDisconnect$, Sub.map(mapper))
+  return pipe(_internal_onDisconnect, Sub.map(mapper))
 }
 
 export const fromFrontend = <Msg>(
   mapper: (clientId: ClientId.ClientId, msg: ToBackend) => Msg,
 ): Sub.Sub<Msg> => {
   return pipe(
-    toBackend$,
+    _internal_toBackend,
     Sub.map(([clientId, msg]) => mapper(clientId, msg)),
   )
 }
@@ -80,14 +72,14 @@ export const sendToFrontend = (
   msg: ToFrontend,
 ): Cmd.Cmd<never> => {
   return Rx.of(async () => {
-    sendToFrontend$.next([clientIds, msg])
+    _internal_sendToFrontend.next([clientIds, msg])
     return Option.None
   })
 }
 
 export const broadcast = (msg: ToFrontend): Cmd.Cmd<never> => {
   return Rx.of(async () => {
-    broadcast$.next(msg)
+    _internal_broadcast.next(msg)
     return Option.None
   })
 }
