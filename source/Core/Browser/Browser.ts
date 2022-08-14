@@ -1,6 +1,7 @@
 import * as Rx from "rxjs"
 import * as Cmd from "../Cmd"
 import * as Option from "../Option"
+import { pipe } from "../pipe"
 import * as Platform from "../Platform"
 import * as Result from "../Result"
 import * as Sub from "../Sub"
@@ -83,13 +84,6 @@ export const back: Cmd.Cmd<never> = Rx.of(async () => {
   return Option.None
 })
 
-//
-//
-//
-// Clipboard
-//
-//
-//
 
 //
 //
@@ -115,6 +109,47 @@ export const focus =
 
     return Result.Err({ type: "ElementNotFound" })
   }
+
+
+  
+export type GetElementByIdResult = Result.Result<Problem, DomElement>
+  
+export type DomElement = {
+  offsetHeight: number
+  offsetWidth: number
+}
+
+export const getElementById = (htmlId: string): Task.Task<GetElementByIdResult> =>
+async () => {
+  const element = document.getElementById(htmlId)
+
+  if (element) {
+    return Result.Ok({
+      offsetHeight: element.offsetHeight,
+      offsetWidth: element.offsetWidth,
+    })
+  }
+
+  return Result.Err({ type: "ElementNotFound" })
+}
+
+export type Resize = {
+  width: number,
+  height: number,
+}
+
+const resize = new Rx.Subject<Resize>()
+
+window.addEventListener("resize", event => {
+  resize.next({
+    height: window.innerHeight,
+    width: window.innerWidth
+  })
+})
+
+export const onResize = <Msg>(mapper: (resize: Resize) => Msg): Sub.Sub<Msg> => {
+  return pipe(resize, Sub.map(mapper))
+}
 
 //
 //

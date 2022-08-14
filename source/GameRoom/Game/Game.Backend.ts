@@ -1,7 +1,8 @@
-import { Cmd, pipe, Sub, tag, tagUpdate } from "../../Core";
+import { Cmd, pipe, Sub, tag, tagSub, tagUpdate } from "../../Core";
 import { BackendModel, BackendMsg, ToBackend } from "./Game.Types";
 import * as ConnectFour from "./ConnectFour/ConnectFour.Backend"
 import * as Snake from "./Snake/Snake.Backend"
+import * as Chess from "./Chess/Chess.Backend"
 import * as TicTacToe from "./TicTacToe/TicTacToe.Backend"
 import {RoomId, ClientId, UserId } from "../../Data";
 
@@ -27,6 +28,10 @@ export const init = ({gameName}:{gameName: Model[0],}): Model => {
 
     case 'TicTacToe': {
       return ['TicTacToe',TicTacToe.init]
+    }
+
+    case 'Chess': {
+      return ['Chess', Chess.init]
     }
   }
 
@@ -63,7 +68,14 @@ export const update = ({roomId}: {roomId:RoomId.RoomId}, msg: Msg, model: Model)
         return tagUpdate("Snake", Snake.update({roomId},msg[1], model[1]))
       }
       return [model, Cmd.None]
-    } 
+    }
+
+    case 'Chess': {
+      if(model[0] === 'Chess') {
+        return tagUpdate("Chess", Chess.update(msg[1], model[1]) )
+      }
+      return [model, Cmd.None]
+    }
   }
 };
 
@@ -89,6 +101,14 @@ export const updateFromFrontend = ({clientId, roomId}: {roomId: RoomId.RoomId, c
       }
       return [model, Cmd.None]
     } 
+
+    case 'Chess': {
+      if(model[0] === 'Chess') {
+        return tagUpdate("Chess", Chess.updateFromFrontend(clientId,msg[1], model[1]) )
+      }
+      return [model, Cmd.None]
+    } 
+
   }
 };
 
@@ -103,13 +123,16 @@ export const updateFromFrontend = ({clientId, roomId}: {roomId: RoomId.RoomId, c
 export const subscriptions = (model: Model): Sub.Sub<Msg> => {
   switch(model[0]) {
     case 'ConnectFour': {
-      return pipe(ConnectFour.subscriptions(model[1]), Sub.map(tag("ConnectFour")))
+      return tagSub("ConnectFour", ConnectFour.subscriptions(model[1]))
     }
     case 'TicTacToe': {
-      return pipe(TicTacToe.subscriptions(model[1]), Sub.map(tag("TicTacToe")))
+      return tagSub("TicTacToe", TicTacToe.subscriptions(model[1]))
     }
     case 'Snake': {
-      return pipe(Snake.subscriptions(model[1]), Sub.map(tag("Snake")))
+      return tagSub("Snake", Snake.subscriptions(model[1]))
+    }
+    case 'Chess': {
+      return tagSub("Chess", Chess.subscriptions(model[1]))
     }
   }
 };

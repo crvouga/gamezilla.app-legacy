@@ -1,4 +1,4 @@
-import { Cmd, pipe, Sub, tag, tagCmd, tagUpdate } from "../../Core"
+import { Cmd, pipe, Sub, tag, tagCmd, tagSub, tagUpdate } from "../../Core"
 import { RoomId, UserId } from "../../Data"
 import * as Store from "../../Store"
 import * as Snackbar from "../../Snackbar"
@@ -6,7 +6,9 @@ import * as UI from "../../UI"
 import * as ConnectFour from "./ConnectFour/ConnectFour.Frontend"
 import * as Snake from "./Snake/Snake.Frontend"
 import * as TicTacToe from "./TicTacToe/TicTacToe.Frontend"
-import { FrontendModel, FrontendMsg, GameName, ToFrontend } from "./Game.Types"
+import * as Chess from "./Chess/Chess.Frontend"
+import { Name } from "../../Game"
+import { FrontendModel, FrontendMsg, ToFrontend } from "./Game.Types"
 
 //
 //
@@ -18,18 +20,23 @@ import { FrontendModel, FrontendMsg, GameName, ToFrontend } from "./Game.Types"
 
 export type Model = FrontendModel
 
-export const init = (gameName: Model[0]): Model => {
-  switch(gameName) {
+export const init = (gameName: Model[0]): [Model, Cmd.Cmd<Msg>] => {
+  switch (gameName) {
     case 'TicTacToe': {
-      return ['TicTacToe',TicTacToe.init]
+      return [['TicTacToe', TicTacToe.init], Cmd.None]
     }
 
     case 'Snake': {
-      return ['Snake', Snake.init]
+      return [['Snake', Snake.init], Cmd.None]
     }
 
     case 'ConnectFour': {
-      return ['ConnectFour',ConnectFour.init]
+      return [['ConnectFour', ConnectFour.init], Cmd.None]
+    }
+
+    case 'Chess': {
+      const [child, cmd] = Chess.init()
+      return [['Chess', child], tagCmd("Chess", cmd)]
     }
   }
 }
@@ -77,21 +84,31 @@ export const update = (
       }
       return [model, Cmd.None]
     }
+
+    case "Chess": {
+      if (msg[0] === "Chess") {
+        return tagUpdate("Chess", Chess.update(
+          msg[1],
+          model[1],
+        ))
+      }
+      return [model, Cmd.None]
+    }
   }
 }
 
 
-export const updateFromBackend = (msg: ToFrontend, model: Model): [Model, Cmd.Cmd<Msg> , OutAction[]] => {
-  switch(msg[0]) {
+export const updateFromBackend = (msg: ToFrontend, model: Model): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
+  switch (msg[0]) {
     case 'ConnectFour': {
-      if(model[0] === 'ConnectFour') {
+      if (model[0] === 'ConnectFour') {
         return [...tagUpdate("ConnectFour", ConnectFour.updateFromBackend(msg[1], model[1])), []]
       }
       return [model, Cmd.None, []]
     }
 
     case 'Snake': {
-      if(model[0] === 'Snake') {
+      if (model[0] === 'Snake') {
         const [child, cmd, actions] = Snake.updateFromBackend(msg[1], model[1])
         return [['Snake', child], tagCmd("Snake", cmd), actions]
       }
@@ -99,8 +116,15 @@ export const updateFromBackend = (msg: ToFrontend, model: Model): [Model, Cmd.Cm
     }
 
     case 'TicTacToe': {
-      if(model[0] === 'TicTacToe') {
+      if (model[0] === 'TicTacToe') {
         return [...tagUpdate("TicTacToe", TicTacToe.updateFromBackend(msg[1], model[1])), []]
+      }
+      return [model, Cmd.None, []]
+    }
+
+    case 'Chess': {
+      if (model[0] === 'Chess') {
+        return [...tagUpdate("Chess", Chess.updateFromBackend(msg[1], model[1])), []]
       }
       return [model, Cmd.None, []]
     }
@@ -123,10 +147,13 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
       return Sub.None
     }
     case "Snake": {
-      return pipe(Snake.subscriptions(model[1]), Sub.map(tag("Snake")))
+      return tagSub("Snake", Snake.subscriptions(model[1]))
     }
     case "TicTacToe": {
       return Sub.None
+    }
+    case 'Chess': {
+      return tagSub("Chess", Chess.subscriptions(model[1]))
     }
   }
 }
@@ -158,7 +185,7 @@ export const view = (
     }
 
     case "Snake": {
-      return pipe(Snake.view({currentUserId}, model[1]), UI.map(tag("Snake")))
+      return pipe(Snake.view({ currentUserId }, model[1]), UI.map(tag("Snake")))
     }
 
     case "TicTacToe": {
@@ -167,11 +194,18 @@ export const view = (
         UI.map(tag("TicTacToe")),
       )
     }
+
+    case "Chess": {
+      return pipe(
+        Chess.view(model[1]),
+        UI.map(tag("Chess")),
+      )
+    }
   }
 }
 
 
-export const gameNameToString = (game: GameName): string => {
+export const gameNameToString = (game: Name): string => {
   switch (game) {
     case "ConnectFour":
       return "Connect Four"
@@ -181,5 +215,8 @@ export const gameNameToString = (game: GameName): string => {
 
     case "Snake":
       return "Snake"
+
+    case "Chess":
+      return "Chess"
   }
 }
