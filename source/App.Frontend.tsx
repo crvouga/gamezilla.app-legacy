@@ -48,7 +48,7 @@ export const init = (location: Browser.Location): [Model, Cmd.Cmd<Msg>] => {
   const route = pipe(
     location,
     Route.decode,
-    Option.withDefault<Route.Route>({ type: "Home" }),
+    Option.withDefault<Route.Route>(["Home"]),
   )
   const [auth, authCmd] = Auth.init()
   const snackbar = Snackbar.init
@@ -593,7 +593,7 @@ export const onLocationChange = (location: Browser.Location): Msg => {
   return pipe(
     location,
     Route.decode,
-    Option.withDefault<Route.Route>({ type: "Home" }),
+    Option.withDefault<Route.Route>(["Home"]),
     (route) => ["Route", ["GotRoute", route]],
   )
 }

@@ -106,7 +106,7 @@ export const update = (
       ]
 
     case "ClickedLogout":
-      return [model, Route.push({ type: "Logout" }), []]
+      return [model, Route.push(["Logout"]), []]
   }
 }
 

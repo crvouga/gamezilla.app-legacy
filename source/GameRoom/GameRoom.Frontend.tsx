@@ -92,7 +92,7 @@ export const update = (
     }
 
     case "ClickedUser": {
-      return [model, Route.push({ type: "Profile", userId: msg[1].userId })]
+      return [model, Route.push(["Profile", msg[1].userId])]
     }
 
     case "OpenedMenu": {
@@ -177,7 +177,7 @@ export const update = (
     }
 
     case "ClickedBanner": {
-      return [model, Route.push({ type: "GameRoom" })]
+      return [model, Route.push(["GameRoom"])]
     }
 
     default:
@@ -793,7 +793,7 @@ export const viewBanner =
     model: Model,
   ): UI.View<Msg> =>
   (dispatch) => {
-    if (route.type === "GameRoom") {
+    if (route[0] === "GameRoom") {
       return <></>
     }
 

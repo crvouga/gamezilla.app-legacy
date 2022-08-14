@@ -36,7 +36,7 @@ export const update = (
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
     case "ClickedPlay": {
-      return [model, Route.push({ type: "GameRoom" }), []]
+      return [model, Route.push(["GameRoom"]), []]
     }
   }
 }

@@ -180,7 +180,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
     }
 
     case "ClickedLogin": {
-      return [model, Route.push({ type: "Login" })]
+      return [model, Route.push(["Login"])]
     }
 
     default:
