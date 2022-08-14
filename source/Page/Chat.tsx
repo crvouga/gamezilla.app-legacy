@@ -94,7 +94,7 @@ export const view =
     return (
       <UI.FillBox>
         <UI.Header title="Chat" />
-        <UI.Box sx={{ p: 2 }}>
+        <UI.Box sx={{ paddingX: 2 }}>
           <UI.Button
             fullWidth
             variant="contained"
