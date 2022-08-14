@@ -1,7 +1,7 @@
 import * as Bridge from "../../../Bridge"
 import { Cmd, Result, Sub, Time } from "../../../Core"
 import { ClientId, RoomId } from "../../../Data"
-import * as Snake from "../../../Games/Snake"
+import { Snake } from "../../../Game"
 import { BackendModel, BackendMsg, ChangeDirection, ChangeDirectionResult, ChangePlayer, ChangePlayerResult, initSharedModel, SharedModel, ToBackend, ToFrontend, ToggleStatus, ToggleStatusResult } from "./Snake.Types"
 
 //

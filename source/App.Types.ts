@@ -1,5 +1,5 @@
 import * as GameRoom from "./GameRoom/GameRoom.Types"
-import * as Pages from "./Pages"
+import * as Page from "./Page"
 import * as Route from "./Route"
 import * as Auth from "./Auth"
 import * as Snackbar from "./Snackbar"
@@ -22,7 +22,7 @@ export type FrontendModel = {
     snackbar: Snackbar.Model
     store: Store.Model
     auth: Auth.Model
-    page: Pages.Model
+    page: Page.Model
     route: Route.Route
     gameRoom: GameRoom.FrontendModel
     backendConnection: ConnectionStatus
@@ -54,7 +54,7 @@ export type FrontendMsg =
     | ["GameRoom", GameRoom.FrontendMsg]
     | ["Store", Store.Msg]
     | ["Auth", Auth.Msg]
-    | ["Page", Pages.Msg]
+    | ["Page", Page.Msg]
 
 export type BackendMsg =
     | ["[Frontend]", {clientId: ClientId.ClientId, toBackend: ToBackend}]

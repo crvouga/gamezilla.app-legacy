@@ -2,7 +2,7 @@ import * as Bridge from "../Bridge"
 import { Cmd, exhaustive, Option, pipe, Result, Sub, tag } from "../Core"
 import { remove } from "../Core/Record"
 import { ClientId, RoomId, UserId } from "../Data"
-import { Name } from "../Games"
+import { Name } from "../Game"
 import * as Game from "./Game/Game.Backend"
 import {
   BackendModel,

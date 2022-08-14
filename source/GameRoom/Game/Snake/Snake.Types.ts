@@ -1,6 +1,6 @@
 import { Keyboard, Option, Result } from "../../../Core"
 import { UserId } from "../../../Data"
-import * as Snake from "../../../Games/Snake"
+import { Snake } from "../../../Game"
 
 //
 //

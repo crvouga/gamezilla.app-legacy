@@ -10,7 +10,7 @@ import {
 } from "../../../Core"
 import { RoomId, UserId } from "../../../Data"
 import * as Snackbar from "../../../Snackbar"
-import { Snake } from "../../../Games"
+import { Snake } from "../../../Game"
 import * as Route from "../../../Route"
 import * as UI from "../../../UI"
 import { FrontendModel, FrontendMsg, initSharedModel, SharedModel, ToBackend, ToFrontend } from "./Snake.Types"
