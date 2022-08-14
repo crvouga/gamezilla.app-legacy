@@ -155,7 +155,8 @@ export const changeDirection = ({direction, userId}: ChangeDirection[1], model: 
 
   const modelNew: SharedModel = {
     ...model,
-    ...Snake.enqueueDirection(direction, model)
+    ...Snake.enqueueDirection(direction, model),
+    status: "Playing"
   }
 
   return Result.Ok(modelNew)  

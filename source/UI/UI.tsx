@@ -552,3 +552,5 @@ export const spin = keyframes`
 export const pulseAnimation = `${pulse} 0.5s infinite ease`
 
 export type ViewNode = ReactNode
+
+export type Sx = Mui.SxProps

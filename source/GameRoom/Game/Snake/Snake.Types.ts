@@ -12,11 +12,7 @@ import { Snake } from "../../../Game"
 
 export type BackendModel = SharedModel
 
-export type FrontendModel = SharedModel & {
-  mouseStatus: MouseStatus
-  touched: Option.Option<Snake.Position.Position>
-}
-
+export type FrontendModel = SharedModel
 
 export type SharedModel = Snake.Model & {
   player: Player
@@ -49,14 +45,8 @@ export const initSharedModel: SharedModel = {
 
 export type FrontendMsg = 
   | ["ClickedBack"]
-  | ["ClickedRestart"]
-  | ["AudioFailed"]
-  | ["AudioSucceeded"]
-  | ["MouseDownBoard"]
-  | ["MouseUpBoard"]
   | ["PressedKeyDown", Keyboard.Key]
-  | ["MouseMovedBoard", Snake.Position.Position]
-  | ["TouchMoveBoard", Snake.Position.Position]
+  | ["ClickedDirection", Snake.Direction.Direction]
   | ToggleStatus
   | ChangePlayer
 
