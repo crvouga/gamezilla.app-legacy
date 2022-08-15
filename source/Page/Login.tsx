@@ -38,7 +38,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
         ["LoggingInWithProvider", "Google"],
         pipe(
           Auth.loginWithProvider({ provider: "Google" }),
-          Cmd.fromTask((result) => ["LoginWithProviderResulted", result]),
+          Cmd.perform((result) => ["LoginWithProviderResulted", result]),
         ),
       ]
 
@@ -63,7 +63,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
 export const view =
   (model: Model): UI.View<Msg> =>
-  (dispatch) =>
+    (dispatch) =>
     (
       <UI.FillBox
         sx={{

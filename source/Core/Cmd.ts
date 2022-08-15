@@ -21,7 +21,7 @@ export const batch = <Msg>(cmdList: Cmd<Msg>[]): Cmd<Msg> => {
 
 export const None: Cmd<never> = Rx.EMPTY
 
-export const fromTask =
+export const perform =
   <A, Msg>(f: (a: A) => Msg) =>
   (task: Task.Task<A>): Cmd<Msg> => {
     return pipe(task, Task.map(f), Task.map(Option.Some), Rx.of)

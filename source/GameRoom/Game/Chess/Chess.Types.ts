@@ -19,9 +19,8 @@ export const fenToBoard = (fen:string) => {
   return  new ChessTs.Chess(fen).board()
 }
 
-export const move =(moveData: ChessTs.PartialMove, model: SharedModel): MoveResult => {
-
-  const chess= new ChessTs.Chess(model.fen)
+export const move = (moveData: ChessTs.PartialMove, model: SharedModel): MoveResult => {
+  const chess = new ChessTs.Chess(model.fen)
 
   const moved = chess.move(moveData)
 
@@ -37,6 +36,21 @@ export const move =(moveData: ChessTs.PartialMove, model: SharedModel): MoveResu
   return Result.Ok(modelNew)
 }
 
+export const inCheck = (model: SharedModel): boolean => {
+  return new ChessTs.Chess(model.fen).inCheck()
+}
+
+export const inDraw = (model: SharedModel): boolean => {
+  return new ChessTs.Chess(model.fen).inDraw()
+}
+
+export const inCheckmate = (model: SharedModel): boolean => {
+  return new ChessTs.Chess(model.fen).inCheckmate()
+}
+
+export const inStalemate = (model: SharedModel): boolean => {
+  return new ChessTs.Chess(model.fen).inStalemate()
+}
 
 //
 //
@@ -48,10 +62,21 @@ export const move =(moveData: ChessTs.PartialMove, model: SharedModel): MoveResu
 
 export type SharedModel = {
   fen: string
+  players: {
+    one: Player,
+    two: Player
+  }
+  
 }
 
+export type Player = ["User", {userId: UserId.UserId }] | ["None"]
+
 export const initSharedModel: SharedModel = {
-  fen: getInitialFen()
+  fen: getInitialFen(),
+  players: {
+    one: ["None"],
+    two: ["None"],
+  }
 }
 
 export type FrontendModel = SharedModel & {

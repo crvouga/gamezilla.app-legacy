@@ -20,7 +20,7 @@ export const init = (): [Model, Cmd.Cmd<Msg>] => {
     ["Loading"],
     pipe(
       getSession,
-      Cmd.fromTask((msg) => msg),
+      Cmd.perform((msg) => msg),
     ),
   ]
 }
@@ -91,7 +91,7 @@ export const updateFromAction = (
             model,
             pipe(
               logout,
-              Cmd.fromTask((result): Msg => ["LogoutResulted", result]),
+              Cmd.perform((result): Msg => ["LogoutResulted", result]),
             ),
           ]
       }

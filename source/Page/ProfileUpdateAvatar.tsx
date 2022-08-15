@@ -72,7 +72,7 @@ export const update = (
         { ...model, status: "GeneratingSeed" },
         pipe(
           ProfileAvatar.generateRandomSeed,
-          Cmd.fromTask((seed) => ["RandomSeedGenerated", seed]),
+          Cmd.perform((seed) => ["RandomSeedGenerated", seed]),
         ),
         [],
       ]
