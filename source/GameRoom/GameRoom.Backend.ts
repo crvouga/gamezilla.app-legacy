@@ -1,5 +1,5 @@
 import * as Bridge from "../Bridge"
-import { Cmd, exhaustive, Option, pipe, Result, Sub, tag } from "../Core"
+import { Cmd, exhaustive, pipe, Result, Sub } from "../Core"
 import { remove } from "../Core/Record"
 import { ClientId, RoomId, UserId } from "../Data"
 import * as Game from "./Game/Game.Backend"
@@ -191,6 +191,12 @@ export const createRoom = (
     return Result.Err("user_is_already_in_a_room")
   }
 
+  const room: RoomModel = {
+    roomId,
+    hostId: userId,
+    events: [["Created", { userId, roomId }]],
+  }
+
   const modelNew: Model = {
     ...model,
     users: {
@@ -202,12 +208,7 @@ export const createRoom = (
     },
     rooms: {
       ...model.rooms,
-      [roomId]: {
-        roomId,
-        hostId: userId,
-        events: [["Created", { userId, roomId }]],
-        game: Option.None,
-      },
+      [roomId]: room
     },
   }
 
