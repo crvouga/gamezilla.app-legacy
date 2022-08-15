@@ -1,5 +1,6 @@
 import { useLayoutEffect, useRef } from "react"
 import * as Bridge from "../../../Bridge"
+
 import {
   Cmd,
   exhaustive,
@@ -7,7 +8,9 @@ import {
   Sub
 } from "../../../Core"
 import { RoomId, UserId } from "../../../Data"
-import { Snake } from "../../../Game"
+import * as Snake from "./Snake"
+import * as Position from "./Position"
+import * as Direction from "./Direction"
 import * as Route from "../../../Route"
 import * as Snackbar from "../../../Snackbar"
 import * as UI from "../../../UI"
@@ -65,7 +68,7 @@ export const update = (
       return [model, Route.back]
 
     case "PressedKeyDown": {
-      const direction = Snake.Direction.fromKey(msg[1])
+      const direction = Direction.fromKey(msg[1])
 
       const changeDirectionCmd = direction.type === 'Some'
         ? sendToBackend(currentRoomId, ['ChangeDirection', { userId: currentUserId, direction: direction.value }])
@@ -273,3 +276,68 @@ export const ViewBoard = ({
 }
 
 
+const toViewBox = ({ lower, upper }: Snake.Model["bounds"]) =>
+  [lower.x, lower.y, upper.x, upper.y].join(", ")
+
+export const CoverArt = () => {
+  const bounds: Snake.Model["bounds"] = {
+    lower: {
+      x: 0,
+      y: 0,
+    },
+    upper: {
+      x: 4,
+      y: 4,
+    },
+  }
+
+  const tail: Snake.Model["tail"] = [
+    { x: 0, y: 1 },
+    { x: 1, y: 1 },
+  ]
+
+  const food: Snake.Model["food"] = { x: 2, y: 2 }
+
+  return (
+    <svg
+      width="100%"
+      viewBox={toViewBox(bounds)}
+    >
+      {Position.range(bounds).map(({ x, y }, index) => (
+        <rect
+          key={`${x} ${y} ${index}`}
+          x={x}
+          y={y}
+          width={1}
+          height={1}
+          fill={Snake.theme[Snake.toTileVariant({ x, y })]}
+          stroke="none"
+        />
+      ))}
+
+      {tail.map(({ x, y }, index) => (
+        <rect
+          key={`${x} ${y} ${index}`}
+          x={x}
+          y={y}
+          width={1}
+          height={1}
+          fill={Snake.theme.snake}
+          stroke="none"
+        />
+      ))}
+
+      {[food].map(({ x, y }, index) => (
+        <rect
+          key={`${x} ${y} ${index}`}
+          x={x}
+          y={y}
+          width={1}
+          height={1}
+          fill={Snake.theme.apple}
+          stroke="none"
+        />
+      ))}
+    </svg>
+  )
+}

@@ -1,5 +1,3 @@
-import { NonNegativeInteger } from "../../Data";
-
 export type Position = { 
   x: number;
   y: number;

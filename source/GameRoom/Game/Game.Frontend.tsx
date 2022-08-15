@@ -7,8 +7,7 @@ import * as ConnectFour from "./ConnectFour/ConnectFour.Frontend"
 import * as Snake from "./Snake/Snake.Frontend"
 import * as TicTacToe from "./TicTacToe/TicTacToe.Frontend"
 import * as Chess from "./Chess/Chess.Frontend"
-import { Name } from "../../Game"
-import { FrontendModel, FrontendMsg, ToFrontend } from "./Game.Types"
+import { FrontendModel, FrontendMsg, GameName, ToFrontend } from "./Game.Types"
 
 //
 //
@@ -206,7 +205,7 @@ export const view = (
 }
 
 
-export const gameNameToString = (game: Name): string => {
+export const gameNameToString = (game: GameName): string => {
   switch (game) {
     case "ConnectFour":
       return "Connect Four"
@@ -219,5 +218,23 @@ export const gameNameToString = (game: Name): string => {
 
     case "Chess":
       return "Chess"
+  }
+}
+
+
+export const CoverArt = ({ gameName }: { gameName: GameName }) => {
+  switch (gameName) {
+    case 'Chess': {
+      return <Chess.CoverArt />
+    }
+    case 'ConnectFour': {
+      return <ConnectFour.CoverArt id="" />
+    }
+    case 'Snake': {
+      return <Snake.CoverArt />
+    }
+    case 'TicTacToe': {
+      return <TicTacToe.CoverArt />
+    }
   }
 }

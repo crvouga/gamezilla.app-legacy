@@ -25,7 +25,7 @@ export type Model = {
   }
 }
 
-export type Status =  "Paused"  |  "Playing" 
+export type Status = "Paused" | "Playing"
 
 export type MouseStatus = "active" | "inactive"
 
@@ -48,17 +48,17 @@ const bounds: Model['bounds'] = {
   },
 }
 
-const head: Model['head'] ={
+const head: Model['head'] = {
   x: Math.floor((bounds.upper.x - bounds.lower.x) / 2) - 3,
   y: Math.floor((bounds.upper.y - bounds.lower.y) / 2),
 }
 
-const tail: Model['tail'] = [Position.subtract(head, {x: 1, y: 0}),Position.subtract(head, {x: 2, y: 0})]
+const tail: Model['tail'] = [Position.subtract(head, { x: 1, y: 0 }), Position.subtract(head, { x: 2, y: 0 })]
 
-const food: Model['food'] = Position.add(head, {x: 3, y: 0})
+const food: Model['food'] = Position.add(head, { x: 3, y: 0 })
 
 export const init: Model = {
-  status:  "Paused",
+  status: "Paused",
   tickRate: 1000 / 6,
   head,
   tail,
@@ -242,9 +242,9 @@ export const draw = (
   }
 }
 
-type TileVariant = "light" | "dark"
+export type TileVariant = "light" | "dark"
 
-const toTileVariant = (position: Position.Position): TileVariant => {
+export const toTileVariant = (position: Position.Position): TileVariant => {
   if (
     (isEven(position.x) && isOdd(position.y)) ||
     (isOdd(position.x) && isEven(position.y))
@@ -253,73 +253,6 @@ const toTileVariant = (position: Position.Position): TileVariant => {
   }
   return "dark"
 }
-
-const toViewBox = ({ lower, upper }: Model["bounds"]) =>
-  [lower.x, lower.y, upper.x, upper.y].join(", ")
-
-export const CoverArt = () => {
-  const bounds: Model["bounds"] = {
-    lower: {
-      x: 0,
-      y: 0,
-    },
-    upper: {
-      x: 4,
-      y: 4,
-    },
-  }
-
-  const tail: Model["tail"] = [
-    { x: 0, y: 1 },
-    { x: 1, y: 1 },
-  ]
-
-  const food: Model["food"] = { x: 2, y: 2 }
-
-  return (
-    <svg
-      width="100%"
-      viewBox={toViewBox(bounds)}
-    >
-      {Position.range(bounds).map(({ x, y }, index) => (
-        <rect
-          key={`${x} ${y} ${index}`}
-          x={x}
-          y={y}
-          width={1}
-          height={1}
-          fill={theme[toTileVariant({ x, y })]}
-          stroke="none"
-        />
-      ))}
-
-      {tail.map(({ x, y }, index) => (
-        <rect
-          key={`${x} ${y} ${index}`}
-          x={x}
-          y={y}
-          width={1}
-          height={1}
-          fill={theme.snake}
-          stroke="none"
-        />
-      ))}
-
-      {[food].map(({ x, y }, index) => (
-        <rect
-          key={`${x} ${y} ${index}`}
-          x={x}
-          y={y}
-          width={1}
-          height={1}
-          fill={theme.apple}
-          stroke="none"
-        />
-      ))}
-    </svg>
-  )
-}
-
 
 const isEven = (x: number) => x % 2 === 0
 

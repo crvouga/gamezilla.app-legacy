@@ -1,6 +1,5 @@
 import { RemoteData, Result, Unit } from "../Core"
 import { RoomId, UserId } from "../Data"
-import { Name } from "../Game"
 import * as Game from "./Game/Game.Types"
 
 //
@@ -148,7 +147,7 @@ export type JoinRoomResult = Result.Result<JoinRoomProblem, BackendModel>
 
 export type StartGame = [
   "StartGame",
-  { gameName: Name; userId: UserId.UserId },
+  { gameName: Game.GameName; userId: UserId.UserId },
 ]
 export type StartGameResulted = ["StartGameResulted", StartGameResult]
 

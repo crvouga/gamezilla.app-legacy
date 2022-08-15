@@ -1,6 +1,7 @@
-import { Keyboard, Option, Result } from "../../../Core"
+import { Keyboard, Result } from "../../../Core"
 import { UserId } from "../../../Data"
-import { Snake } from "../../../Game"
+import * as Snake from "./Snake"
+import * as Direction from "./Direction"
 
 //
 //
@@ -46,7 +47,7 @@ export const initSharedModel: SharedModel = {
 export type FrontendMsg = 
   | ["ClickedBack"]
   | ["PressedKeyDown", Keyboard.Key]
-  | ["ClickedDirection", Snake.Direction.Direction]
+  | ["ClickedDirection", Direction.Direction]
   | ToggleStatus
   | ChangePlayer
 
@@ -69,7 +70,7 @@ export type ToFrontend =
 
 export type ChangeDirection = [
   "ChangeDirection",
-  {direction: Snake.Direction.Direction, userId: UserId.UserId}
+  {direction: Direction.Direction, userId: UserId.UserId}
 ]
 
 export type ChangeDirectionResulted = ["ChangeDirectionResulted", ChangeDirectionResult]
