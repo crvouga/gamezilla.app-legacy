@@ -1,5 +1,5 @@
 import * as ChessTs from "chess.ts"
-import { Audio, Browser, Result } from "../../../Core"
+import { Audio, Browser, RemoteData, Result } from "../../../Core"
 import { UserId } from "../../../Data"
 
 // 
@@ -11,7 +11,7 @@ import { UserId } from "../../../Data"
 // 
 
 export const getInitialFen = () => {
-  return  new ChessTs.Chess().fen()
+  return new ChessTs.Chess().fen()
 }
 
 
@@ -52,6 +52,20 @@ export const inStalemate = (model: SharedModel): boolean => {
   return new ChessTs.Chess(model.fen).inStalemate()
 }
 
+export type Status = 
+  | ["NotReady"] 
+  | ["Ready" , {White: UserId.UserId, Black: UserId.UserId}]
+
+export const toStatus = (model: SharedModel):Status => {
+  if(model.White[0] === 'None' || model.Black[0] === 'None') {
+    return ["NotReady"]
+  }
+
+  return ['Ready', {White: model.White[1].userId, Black: model.Black[1].userId}]
+}
+
+export type PlayerType = "White" | "Black"
+ 
 //
 //
 //
@@ -60,27 +74,24 @@ export const inStalemate = (model: SharedModel): boolean => {
 //
 //
 
-export type SharedModel = {
-  fen: string
-  players: {
-    one: Player,
-    two: Player
-  }
-  
+export type SharedModel = Players & {
+  fen: string;
+} 
+
+type Players = {
+  [player in PlayerType]: Player
 }
 
 export type Player = ["User", {userId: UserId.UserId }] | ["None"]
 
 export const initSharedModel: SharedModel = {
   fen: getInitialFen(),
-  players: {
-    one: ["None"],
-    two: ["None"],
-  }
+  White: ["None"],
+  Black: ["None"],
 }
 
 export type FrontendModel = SharedModel & {
-  boardWidth: number
+  boardWidth: number,
 }
 
 export type BackendModel = SharedModel
@@ -94,21 +105,50 @@ export type BackendModel = SharedModel
 //
 
 export type FrontendMsg = 
-| Move 
 | ["GetElementResulted", Browser.GetElementByIdResult] 
 | ["BrowserResized", Browser.Resize]
 | ["AudioResulted", Audio.PlayResult]
+| Move 
+| PlayAs
 
 export type BackendMsg = ["None"]
 
-export type ToFrontend = ["Sync", SharedModel] | MoveResulted
+export type ToFrontend = ["Sync", SharedModel] | MoveResulted | PlayAsResulted
 
-export type ToBackend = Move
+export type ToBackend = Move | PlayAs
+
+// 
+// 
+// 
 
 export type Move = [
   "Move",
-  { userId: UserId.UserId; } & ChessTs.PartialMove,
+  ChessTs.PartialMove & { userId: UserId.UserId; },
 ]
 export type MoveResulted = ["MovedResulted", MoveResult]
 export type MoveResult = Result.Result<"invalid_move", SharedModel>
 
+// 
+// 
+// 
+
+export type PlayAs = [
+  "PlayAs",
+  { userId: UserId.UserId; playerType: PlayerType },
+]
+export type PlayAsResulted = ["PlayAsResulted", PlayAsResult]
+export type PlayAsResult = Result.Result<`player_type_taken`, SharedModel>
+
+export const playAs = ({userId, playerType}:PlayAs[1], model: SharedModel): PlayAsResult  => {
+
+  if(model[playerType][0] !== 'None') {
+    return Result.Err(`player_type_taken`)
+  }
+
+  const modelNew: SharedModel = {
+    ...model,
+    [playerType]: ['User', userId]
+  }
+
+  return Result.Ok(modelNew)
+}

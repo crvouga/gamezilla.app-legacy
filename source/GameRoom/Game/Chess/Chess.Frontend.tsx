@@ -5,7 +5,7 @@ import { RoomId, UserId } from '../../../Data';
 import * as UI from "../../../UI";
 import * as Store from "../../../Store";
 import * as Bridge from "../../../Bridge";
-import { inCheckmate, inDraw, inStalemate, FrontendModel, FrontendMsg, inCheck, initSharedModel, move, Move, ToBackend, ToFrontend } from "./Chess.Types";
+import { inCheckmate, inDraw, inStalemate, FrontendModel, FrontendMsg, inCheck, initSharedModel, move, Move, ToBackend, ToFrontend, toStatus } from "./Chess.Types";
 import { Sounds } from './Sounds';
 
 
@@ -58,6 +58,10 @@ export const update = ({ currentRoomId }: { currentRoomId: RoomId.RoomId }, msg:
       ]
     }
 
+    case 'PlayAs': {
+      return [model, sendToBackend(currentRoomId, msg)]
+    }
+
     case 'AudioResulted': {
       return [model, Cmd.None]
     }
@@ -93,6 +97,10 @@ export const update = ({ currentRoomId }: { currentRoomId: RoomId.RoomId }, msg:
 export const updateFromBackend = (msg: ToFrontend, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
     case 'MovedResulted': {
+      return [{ ...model, }, Cmd.None]
+    }
+
+    case 'PlayAsResulted': {
       return [{ ...model, }, Cmd.None]
     }
 
@@ -145,26 +153,69 @@ export const view =
     store: Store.Model;
     currentUserId: UserId.UserId
   }, model: Model): UI.View<Msg> =>
-    (dispatch) =>
-      <View
+    (dispatch) => {
+
+      const status = toStatus(model)
+
+      if (status[0] === 'NotReady') {
+
+
+        return <UI.FillBox>
+          <UI.Box sx={{ paddingX: 2, }}>
+            <UI.Typography >
+              White
+            </UI.Typography>
+            <UI.Button onClick={() => dispatch(['PlayAs', { userId: currentUserId, playerType: "White" }])} fullWidth variant="outlined" sx={{ marginBottom: 2 }}>
+              play as white
+            </UI.Button>
+
+            <UI.Typography>
+              Black
+            </UI.Typography>
+            <UI.Button onClick={() => dispatch(['PlayAs', { userId: currentUserId, playerType: "Black" }])} fullWidth variant="outlined" sx={{ marginBottom: 2 }}>
+              play as black
+            </UI.Button>
+          </UI.Box>
+          <UI.Divider sx={{ marginY: 2 }} />
+          <UI.Box sx={{ paddingX: 2, }}>
+            <UI.Button disabled fullWidth variant="contained" sx={{ marginBottom: 2 }}>
+              Start
+            </UI.Button>
+          </UI.Box>
+
+        </UI.FillBox>
+      }
+
+      console.log({ status })
+
+      return <View
         store={store}
         currentUserId={currentUserId}
         model={model}
         dispatch={dispatch}
+        White={status[1].White}
+        Black={status[1].Black}
       />
+    }
+
 
 
 export const View = ({
   currentUserId,
   store,
   model,
-  dispatch
+  dispatch,
+  White,
+  Black
 }: {
   store: Store.Model,
   currentUserId: UserId.UserId;
+  White: UserId.UserId,
+  Black: UserId.UserId,
   model: Model,
   dispatch: (msg: Msg) => void
 }) => {
+  console.log(store, { currentUserId, White, Black })
   const [boardWidth, setBoardWidth] = useState(0)
   const ref = useRef<HTMLDivElement | null>(null)
 
@@ -197,11 +248,11 @@ export const View = ({
 
   return <UI.FillBox id={containerHtmlId}>
     <UI.Box sx={playerBoxSx}>
-      <UI.Avatar sx={playerAvatarSx} />
+      <UI.Avatar src={store.Profile[White]?.avatarUrl} sx={playerAvatarSx} />
 
       <UI.Box sx={{ flex: 1 }}>
         <UI.Typography>
-          Player One
+          {store.Profile[White]?.username ?? "..."}
         </UI.Typography>
       </UI.Box>
 
@@ -215,6 +266,9 @@ export const View = ({
 
     <div ref={ref}>
       <Chessboard
+        showBoardNotation
+        snapToCursor
+        boardOrientation="white"
         position={model.fen}
         boardWidth={boardWidth}
         onPieceDrop={(sourceSquare, targetSquare, _piece) => {
@@ -235,11 +289,11 @@ export const View = ({
     </div>
 
     <UI.Box sx={playerBoxSx}>
-      <UI.Avatar sx={playerAvatarSx} />
+      <UI.Avatar src={store.Profile[Black]?.avatarUrl} sx={playerAvatarSx} />
 
       <UI.Box sx={{ flex: 1 }}>
         <UI.Typography>
-          Player Two
+          {store.Profile[Black]?.username ?? "..."}
         </UI.Typography>
       </UI.Box>
 
@@ -248,6 +302,14 @@ export const View = ({
           0:00
         </UI.Typography>
       </UI.Paper>
+    </UI.Box>
+
+    <UI.Box sx={{ flex: 1 }} />
+
+    <UI.Box sx={{ display: "flex" }}>
+      <UI.ButtonBase sx={{ padding: 2 }}>
+        <UI.Icons.Menu />
+      </UI.ButtonBase>
     </UI.Box>
   </UI.FillBox>
 }
