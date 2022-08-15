@@ -24,6 +24,7 @@ export type BackendModel =
   | ["Snake", Snake.BackendModel] 
   | ["Chess", Chess.BackendModel]
 
+export type GameName = "TicTacToe" | "ConnectFour" | "Snake" | "Chess"
 
 //
 //
@@ -56,5 +57,3 @@ export type ToBackend =
   | ["ConnectFour", ConnectFour.ToBackend] 
   | ["Snake", Snake.ToBackend]
   | ["Chess", Chess.ToBackend]
-
-

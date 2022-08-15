@@ -1,5 +1,5 @@
 import { UserId } from "../../../Data"
-import { ConnectFour } from "../../../Game"
+import {MoveResult, Columns, emptyColumns, ColumnIndex } from "./ConnectFour"
 
 //
 //
@@ -10,11 +10,11 @@ import { ConnectFour } from "../../../Game"
 //
 
 export type SharedModel = {
-  columns: ConnectFour.Columns
+  columns: Columns
 }
 
 export const initSharedModel: SharedModel = {
-  columns: ConnectFour.emptyColumns,
+  columns: emptyColumns,
 }
 
 export type FrontendModel = SharedModel
@@ -39,7 +39,6 @@ export type ToBackend = Move
 
 export type Move = [
   "Move",
-  { userId: UserId.UserId; columnIndex: ConnectFour.ColumnIndex },
+  { userId: UserId.UserId; columnIndex: ColumnIndex },
 ]
 export type MoveResulted = ["MovedResulted", MoveResult]
-export type MoveResult = ConnectFour.MoveResult

@@ -2,8 +2,8 @@ import * as Bridge from "../Bridge"
 import { Cmd, exhaustive, Option, pipe, Result, Sub, tag } from "../Core"
 import { remove } from "../Core/Record"
 import { ClientId, RoomId, UserId } from "../Data"
-import { Name } from "../Game"
 import * as Game from "./Game/Game.Backend"
+import { GameName } from "./Game/Game.Types"
 import {
   BackendModel,
   BackendMsg,
@@ -342,7 +342,7 @@ export const leaveRoom = (
 //
 
 export const startGame = (
-  { userId, gameName }: { userId: UserId.UserId; gameName: Name },
+  { userId, gameName }: { userId: UserId.UserId; gameName: GameName },
   model: Model,
 ): StartGameResult => {
   const user = model.users[userId]
