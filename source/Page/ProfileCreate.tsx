@@ -83,10 +83,9 @@ export const update = (
         style: "avataaars",
       })
 
-
       const username = Username.decode(model.form.username)
 
-      if(username.type === 'Err') {
+      if (username.type === "Err") {
         // todo handle validation error
         return [model, Cmd.None, []]
       }

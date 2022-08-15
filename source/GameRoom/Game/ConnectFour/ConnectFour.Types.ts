@@ -1,5 +1,5 @@
 import { UserId } from "../../../Data"
-import {MoveResult, Columns, emptyColumns, ColumnIndex } from "./ConnectFour"
+import { MoveResult, Columns, emptyColumns, ColumnIndex } from "./ConnectFour"
 
 //
 //
@@ -37,8 +37,5 @@ export type ToFrontend = ["None"]
 
 export type ToBackend = Move
 
-export type Move = [
-  "Move",
-  { userId: UserId.UserId; columnIndex: ColumnIndex },
-]
+export type Move = ["Move", { userId: UserId.UserId; columnIndex: ColumnIndex }]
 export type MoveResulted = ["MovedResulted", MoveResult]

@@ -5,7 +5,7 @@
     "dev": "concurrently \"npm run backend:dev\" \"npm run frontend:dev:many\"",
     "backend:dev": "npx ts-node-dev ./source/App.Backend.ts",
     "backend:start": "node --max-old-space-size=300 ./dist/source/App.Backend.js",
-    "format": "prettier --write",
+    "format": "prettier --write source",
     "frontend:build": "vite build",
     "frontend:dev": "vite --open",
     "postinstall": "tsc",

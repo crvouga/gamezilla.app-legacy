@@ -80,24 +80,27 @@ type FindManyKey = string & { _opaque: "FindManyKey" }
 const seperator = ","
 
 const isFindManyKey = (key: unknown): key is FindManyKey => {
-  return typeof key === 'string' && key.split(seperator).every(item => UserId.is(item))
+  return (
+    typeof key === "string" &&
+    key.split(seperator).every((item) => UserId.is(item))
+  )
 }
 
 export const toFindManyKey = (userIds: UserId.UserId[]): FindManyKey => {
   const key = userIds.sort().join(seperator)
 
-  if(isFindManyKey(key)) {
+  if (isFindManyKey(key)) {
     return key
   }
 
   throw new Error("Failed to create find many key")
-} 
+}
 
 export type Queries = {
   Profile: {
     FindMany: {
       [key: FindManyKey]: RemoteData.Model<Problem, UserId.UserId[]>
-    },
+    }
     Search: {
       [searchText: string]: RemoteData.Model<Problem, UserId.UserId[]>
     }

@@ -3,7 +3,12 @@ import { UserId } from "../../../Data"
 import * as Store from "../../../Store"
 import * as UI from "../../../UI"
 import { Position, Slot, theme, ViewBoard, ViewSlot } from "./TicTacToe"
-import { FrontendModel, FrontendMsg, initSharedModel, ToFrontend } from "./TicTacToe.Types"
+import {
+  FrontendModel,
+  FrontendMsg,
+  initSharedModel,
+  ToFrontend,
+} from "./TicTacToe.Types"
 
 //
 //
@@ -39,7 +44,7 @@ export const update = (
 export const updateFromBackend = (
   msg: ToFrontend,
   model: Model,
-): [Model, Cmd.Cmd<Msg>,] => {
+): [Model, Cmd.Cmd<Msg>] => {
   return [model, Cmd.None]
 }
 
@@ -62,18 +67,16 @@ export const view =
     },
     model: Model,
   ): UI.View<Msg> =>
-    (dispatch) => {
-      return (
-        <UI.FillBox>
-          <ViewBoard
-            board={model.board}
-            onClick={() => { }}
-          />
-        </UI.FillBox>
-      )
-    }
-
-
+  (dispatch) => {
+    return (
+      <UI.FillBox>
+        <ViewBoard
+          board={model.board}
+          onClick={() => {}}
+        />
+      </UI.FillBox>
+    )
+  }
 
 export const CoverArt = () => {
   const positions: [Position, Slot][] = [

@@ -46,7 +46,6 @@ export type RoomModel = {
   events: RoomEvent[]
 }
 
-
 //
 //
 //
@@ -62,8 +61,7 @@ export type ToFrontend =
   | JoinRoomResulted
   | StartGameResulted
   | StopGameResulted
-  | ["Game", {roomId: RoomId.RoomId, toFrontend: Game.ToFrontend}]
-  
+  | ["Game", { roomId: RoomId.RoomId; toFrontend: Game.ToFrontend }]
 
 export type ToBackend =
   | CreateRoom
@@ -71,9 +69,12 @@ export type ToBackend =
   | JoinRoom
   | StartGame
   | StopGame
-  | ["Game", {roomId: RoomId.RoomId, toBackend: Game.ToBackend}]
+  | ["Game", { roomId: RoomId.RoomId; toBackend: Game.ToBackend }]
 
-export type BackendMsg =  ["Game", {roomId: RoomId.RoomId, backendMsg: Game.BackendMsg}]
+export type BackendMsg = [
+  "Game",
+  { roomId: RoomId.RoomId; backendMsg: Game.BackendMsg },
+]
 
 export type FrontendMsg =
   | ["ClickedBack"]
@@ -88,7 +89,7 @@ export type FrontendMsg =
   | LeaveRoom
   | StartGame
   | StopGame
-  | ["Game", {roomId: RoomId.RoomId, frontendMsg: Game.FrontendMsg}]
+  | ["Game", { roomId: RoomId.RoomId; frontendMsg: Game.FrontendMsg }]
 
 //
 //
@@ -187,4 +188,3 @@ export type RoomEvent =
   | ["Created", { userId: UserId.UserId; roomId: RoomId.RoomId }]
   | ["Joined", { userId: UserId.UserId }]
   | ["Left", { userId: UserId.UserId }]
-

@@ -1,4 +1,3 @@
-
 import * as ReactDomClient from "react-dom/client"
 import { io, Socket } from "socket.io-client"
 import { FrontendModel, FrontendMsg, ToFrontend } from "./App.Types"
@@ -17,7 +16,7 @@ import {
   Sub,
   tag,
   tagCmd,
-  tagSub
+  tagSub,
 } from "./Core"
 import * as GameRoom from "./GameRoom/GameRoom.Frontend"
 import * as Pages from "./Pages"
@@ -65,7 +64,7 @@ export const init = (location: Browser.Location): [Model, Cmd.Cmd<Msg>] => {
       gameRoom,
       auth,
       page,
-      backendConnection: "Connecting"
+      backendConnection: "Connecting",
     },
     Cmd.batch<Msg>([
       tagCmd("Auth", authCmd),
@@ -85,11 +84,7 @@ export const init = (location: Browser.Location): [Model, Cmd.Cmd<Msg>] => {
 
 export type Msg = FrontendMsg
 
-type OutAction =
-  | Snackbar.Action
-  | GameRoom.Action
-  | Store.Action
-  | Auth.Action
+type OutAction = Snackbar.Action | GameRoom.Action | Store.Action | Auth.Action
 
 //
 //
@@ -112,10 +107,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
     case "Store": {
       const [storeNew, storeCmd] = Store.update(msg[1], model.store)
 
-      return [
-        { ...model, store: storeNew },
-        tagCmd("Store", storeCmd),
-      ]
+      return [{ ...model, store: storeNew }, tagCmd("Store", storeCmd)]
     }
 
     case "Auth": {
@@ -236,7 +228,10 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
         }
 
         case "ProfileMissing": {
-          const [page, pageCmd] = Pages.initProfileMissing(route, status[1].authSession)
+          const [page, pageCmd] = Pages.initProfileMissing(
+            route,
+            status[1].authSession,
+          )
 
           return [{ ...modelNew, page }, tagCmd("Page", pageCmd)]
         }
@@ -252,7 +247,6 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
           )
         }
 
-
         case "LoggedOut": {
           const [page, pageCmd] = Pages.initLoggedOut(route)
 
@@ -266,10 +260,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
     case "BackendConnection.Changed": {
       const backendConnection = msg[1]
-      return [
-        { ...model, backendConnection },
-        Cmd.None
-      ]
+      return [{ ...model, backendConnection }, Cmd.None]
     }
 
     case "[Backend]":
@@ -292,80 +283,79 @@ export const updateFromBackend = (
       )
 
       return pipe(
-        [
-          { ...model, gameRoom },
-          tagCmd("GameRoom", gameRoomCmd),
-        ],
+        [{ ...model, gameRoom }, tagCmd("GameRoom", gameRoomCmd)],
         andThenMany(updateFromAction, actions),
       )
     }
   }
 }
 
-
 const updateStatusChanged =
   (modelPrev: Model) =>
-    (_msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
-      const statusPrev = toStatus(modelPrev)
-      const statusNew = toStatus(model)
+  (_msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
+    const statusPrev = toStatus(modelPrev)
+    const statusNew = toStatus(model)
 
-      if (statusNew[0] === statusPrev[0]) {
+    if (statusNew[0] === statusPrev[0]) {
+      return [model, Cmd.None]
+    }
+
+    switch (statusNew[0]) {
+      case "ProfileError":
+      case "AuthLoading": {
         return [model, Cmd.None]
       }
 
-      switch (statusNew[0]) {
-        case "ProfileError":
-        case "AuthLoading": {
-          return [model, Cmd.None]
-        }
+      case "ProfileLoading": {
+        const action: OutAction = [
+          "Store",
+          [
+            "Profile",
+            ["FindMany", { userIds: [statusNew[1].authSession.userId] }],
+          ],
+        ]
 
-        case "ProfileLoading": {
-          const action: OutAction = [
-            "Store",
-            ["Profile", ["FindMany", { userIds: [statusNew[1].authSession.userId] }]],
-          ]
-
-          return pipe([model, Cmd.None], andThenMany(updateFromAction, [action]))
-        }
-
-        case "ProfileMissing": {
-          const [page, pageCmd] = Pages.initProfileMissing(
-            model.route,
-            statusNew[1].authSession,
-          )
-
-          return [{ ...model, page }, tagCmd("Page", pageCmd)]
-        }
-
-        case "LoggedOut": {
-          const [page, pageCmd] = Pages.initLoggedOut(model.route)
-          return [{ ...model, page }, tagCmd("Page", pageCmd)]
-        }
-
-        case "Ready": {
-          const [page, pageCmd, actions] = Pages.initReady(
-            model.route,
-            statusNew[1].profile,
-          )
-          return pipe(
-            [{ ...model, page }, tagCmd("Page", pageCmd)],
-            andThenMany(updateFromAction, actions),
-          )
-        }
-
-        default:
-          return exhaustive(statusNew)
+        return pipe([model, Cmd.None], andThenMany(updateFromAction, [action]))
       }
-    }
 
-const updateFromAction = (action: OutAction, model: Model): [Model, Cmd.Cmd<Msg>] => {
+      case "ProfileMissing": {
+        const [page, pageCmd] = Pages.initProfileMissing(
+          model.route,
+          statusNew[1].authSession,
+        )
+
+        return [{ ...model, page }, tagCmd("Page", pageCmd)]
+      }
+
+      case "LoggedOut": {
+        const [page, pageCmd] = Pages.initLoggedOut(model.route)
+        return [{ ...model, page }, tagCmd("Page", pageCmd)]
+      }
+
+      case "Ready": {
+        const [page, pageCmd, actions] = Pages.initReady(
+          model.route,
+          statusNew[1].profile,
+        )
+        return pipe(
+          [{ ...model, page }, tagCmd("Page", pageCmd)],
+          andThenMany(updateFromAction, actions),
+        )
+      }
+
+      default:
+        return exhaustive(statusNew)
+    }
+  }
+
+const updateFromAction = (
+  action: OutAction,
+  model: Model,
+): [Model, Cmd.Cmd<Msg>] => {
   switch (action[0]) {
     case "Store": {
       const [storeNew, storeCmd] = Store.updateFromAction(action, model.store)
-      return [
-        { ...model, store: storeNew },
-        tagCmd("Store", storeCmd),
-      ]
+      return [{ ...model, store: storeNew }, tagCmd("Store", storeCmd)]
     }
 
     case "Snackbar": {
@@ -391,10 +381,7 @@ const updateFromAction = (action: OutAction, model: Model): [Model, Cmd.Cmd<Msg>
         action,
         model.gameRoom,
       )
-      return [
-        { ...model, gameRoom },
-        tagCmd("GameRoom", gameRoomCmd),
-      ]
+      return [{ ...model, gameRoom }, tagCmd("GameRoom", gameRoomCmd)]
     }
 
     case "Auth": {
@@ -422,14 +409,16 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
     tagSub("Page", Pages.subscriptions(model.page)),
     tagSub("Auth", Auth.subscriptions),
     model.auth[0] === "LoggedIn"
-      ? tagSub("GameRoom", GameRoom.subscriptions(
-        { currentUserId: model.auth[1].userId },
-        model.gameRoom,
-      ))
+      ? tagSub(
+          "GameRoom",
+          GameRoom.subscriptions(
+            { currentUserId: model.auth[1].userId },
+            model.gameRoom,
+          ),
+        )
       : Sub.None,
   ])
 }
-
 
 //
 //
@@ -456,46 +445,46 @@ const toThemeMode = (model: Model): UI.ThemeMode => {
 
 export const view =
   (model: Model): UI.View<Msg> =>
-    (dispatch) => {
-      return (
-        <UI.ThemeProvider themeMode={toThemeMode(model)}>
+  (dispatch) => {
+    return (
+      <UI.ThemeProvider themeMode={toThemeMode(model)}>
+        <UI.Box
+          sx={{
+            userSelect: "none",
+            maxWidth: "sm",
+            marginX: "auto",
+            position: "fixed",
+            width: "100%",
+            height: "100%",
+            overflow: "hidden",
+            maxHeight: "100%",
+            display: "flex",
+            flexDirection: "column",
+            left: "50%",
+            top: "50%",
+            transform: "translate(-50%, -50%)",
+          }}
+        >
           <UI.Box
             sx={{
-              userSelect: "none",
-              maxWidth: "sm",
-              marginX: "auto",
-              position: "fixed",
-              width: "100%",
-              height: "100%",
-              overflow: "hidden",
-              maxHeight: "100%",
               display: "flex",
               flexDirection: "column",
-              left: "50%",
-              top: "50%",
-              transform: "translate(-50%, -50%)",
+              width: "100%",
+              overflow: "hidden",
+              flex: 1,
             }}
           >
-            <UI.Box
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                width: "100%",
-                overflow: "hidden",
-                flex: 1,
-              }}
-            >
-              {viewMain(model)(dispatch)}
-            </UI.Box>
-
-            {pipe(
-              Snackbar.view({}, model.snackbar),
-              UI.map(tag("Snackbar")),
-            )(dispatch)}
+            {viewMain(model)(dispatch)}
           </UI.Box>
-        </UI.ThemeProvider>
-      )
-    }
+
+          {pipe(
+            Snackbar.view({}, model.snackbar),
+            UI.map(tag("Snackbar")),
+          )(dispatch)}
+        </UI.Box>
+      </UI.ThemeProvider>
+    )
+  }
 
 const viewMain = (model: Model): UI.View<Msg> => {
   const status = toStatus(model)
@@ -535,7 +524,10 @@ const viewMain = (model: Model): UI.View<Msg> => {
             <>
               {pipe(
                 GameRoom.viewBanner(
-                  { currentUserId: status[1].profile.userId, route: model.route },
+                  {
+                    currentUserId: status[1].profile.userId,
+                    route: model.route,
+                  },
                   model.gameRoom,
                 ),
                 UI.map(tag("GameRoom")),
@@ -558,7 +550,7 @@ const viewMain = (model: Model): UI.View<Msg> => {
 
 const viewLoading =
   ({ reason }: { reason: string }): UI.View<Msg> =>
-    () =>
+  () =>
     (
       <UI.FillBox sx={{ justifyContent: "center", alignItems: "center" }}>
         <UI.CircularProgress sx={{ marginBottom: 2 }} />
@@ -575,7 +567,7 @@ const viewLoading =
 
 const viewError =
   ({ reason }: { reason: string }): UI.View<Msg> =>
-    () =>
+  () =>
     (
       <UI.FillBox sx={{ justifyContent: "center", alignItems: "center", p: 2 }}>
         <UI.Alert severity="error">{reason}</UI.Alert>
@@ -635,16 +627,18 @@ export const toStatus = ({
       const profile = store.Profile[authSession.userId]
 
       if (profile) {
-        return ["Ready", {
-          authSession,
-          profile,
-        }]
+        return [
+          "Ready",
+          {
+            authSession,
+            profile,
+          },
+        ]
       }
 
       const key = toFindManyKey([authSession.userId])
 
-      const query =
-        store.queries.Profile.FindMany[key] ?? RemoteData.NotAsked
+      const query = store.queries.Profile.FindMany[key] ?? RemoteData.NotAsked
 
       switch (query.type) {
         case "NotAsked":
@@ -660,8 +654,8 @@ export const toStatus = ({
           const userIds = query.value
 
           const profiles = userIds
-            .map(userId => store.Profile[userId])
-            .flatMap(item => item ? [item] : [])
+            .map((userId) => store.Profile[userId])
+            .flatMap((item) => (item ? [item] : []))
 
           const profile = profiles[0]
 
@@ -669,16 +663,18 @@ export const toStatus = ({
             return ["ProfileMissing", { authSession }]
           }
 
-          return ["Ready", {
-            authSession,
-            profile,
-          }]
+          return [
+            "Ready",
+            {
+              authSession,
+              profile,
+            },
+          ]
         }
       }
     }
   }
 }
-
 
 //
 //
@@ -705,21 +701,19 @@ Browser.run(program, (dom) => {
   root.render(dom)
 })
 
-program.state$.subscribe(state => {
+program.state$.subscribe((state) => {
   console.log("--")
   console.log(state.msg?.flat(Infinity))
   console.log(state.model)
 })
 
-
-
-// 
-// 
-// 
+//
+//
+//
 // Socket
-// 
-// 
-// 
+//
+//
+//
 
 const productionBackendUrl = "https://gamezilla.herokuapp.com/"
 
@@ -732,7 +726,6 @@ export const backendUrl =
 
 const socket: Socket<Bridge.ServerToClientEvents, Bridge.ClientToServerEvents> =
   io(backendUrl)
-
 
 socket.on("connect", () => {
   Bridge._internal_connectionStatus.next("Connected")
@@ -750,10 +743,9 @@ socket.on("ToFrontend", (msg) => {
   Bridge._internal_toFrontend.next(msg)
 })
 
-Bridge._internal_sendToBackend.subscribe(msg => {
+Bridge._internal_sendToBackend.subscribe((msg) => {
   socket.emit("ToBackend", msg)
 })
-
 
 //
 //

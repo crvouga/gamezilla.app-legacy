@@ -1,5 +1,5 @@
 import { UserId } from "../../../Data"
-import * as TicTacToe  from "./TicTacToe"
+import * as TicTacToe from "./TicTacToe"
 
 //
 //

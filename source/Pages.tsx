@@ -22,7 +22,7 @@ import {
   ProfileUpdateName,
   ProfileUpdateTheme,
   ProfileUpdateUsername,
-  Search
+  Search,
 } from "./Page"
 import * as Route from "./Route"
 import * as Snackbar from "./Snackbar"
@@ -721,7 +721,7 @@ export const viewReady = (
       return (dispatch) => (
         <UI.FillBox>
           {tagView("Search", Search.view({ store }, model[1]))(dispatch)}
-          
+
           {viewBottomNavigation({
             page: "Search",
             currentUserId,
@@ -899,7 +899,7 @@ const viewLoading: UI.View<Msg> = () => <UI.LoadingPage />
 //
 
 type BottomNavigationItem = {
-  route: Route.Model,
+  route: Route.Model
   filled: UI.ViewNode
   outlined: UI.ViewNode
 }
@@ -916,39 +916,43 @@ const viewBottomNavigation =
   (dispatch) => {
     const items: BottomNavigationItem[] = [
       {
-        route: ['Home'],
+        route: ["Home"],
         filled: <UI.Icons.Home />,
-        outlined: <UI.Icons.HomeOutlined />
+        outlined: <UI.Icons.HomeOutlined />,
       },
       {
-        route: ['Search'],
+        route: ["Search"],
         filled: <UI.Icons.Search />,
-        outlined: <UI.Icons.SearchOutlined />
+        outlined: <UI.Icons.SearchOutlined />,
       },
       {
-        route: ['Chat'],
+        route: ["Chat"],
         filled: <UI.Icons.Chat />,
-        outlined: <UI.Icons.ChatOutlined />
+        outlined: <UI.Icons.ChatOutlined />,
       },
       {
-        route: ['Profile', currentUserId],
+        route: ["Profile", currentUserId],
         filled: <UI.Icons.AccountCircle />,
-        outlined: <UI.Icons.AccountCircleOutlined />
+        outlined: <UI.Icons.AccountCircleOutlined />,
       },
     ]
 
     return (
-      <UI.BottomNavigation showLabels value={Route.encode(route)}>
-        {items.map(item => (
+      <UI.BottomNavigation
+        showLabels
+        value={Route.encode(route)}
+      >
+        {items.map((item) => (
           <UI.BottomNavigationAction
             key={Route.encode(item.route)}
             icon={Route.equals(route, item.route) ? item.filled : item.outlined}
             label={item.route[0]}
             value={Route.encode(item.route)}
-            onClick={() => dispatch(['ClickedBottomNavigationLink', item.route])}
+            onClick={() =>
+              dispatch(["ClickedBottomNavigationLink", item.route])
+            }
           />
         ))}
-        
       </UI.BottomNavigation>
     )
   }

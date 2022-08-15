@@ -35,10 +35,7 @@ export const init: [Model, Cmd.Cmd<Msg>] = [
 
 export type Msg = BackendMsg
 
-export const update = (
-  msg: Msg,
-  model: Model,
-): [Model, Cmd.Cmd<Msg>] => {
+export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
     case "[Frontend]":
       return updateFromFrontend(msg[1].clientId, msg[1].toBackend, model)
@@ -47,10 +44,10 @@ export const update = (
       const clientId = msg[1]
       return [
         model,
-        Bridge.sendToFrontend([clientId], [
-          "GameRoom",
-          ["Sync", model.gameRoom],
-        ]),
+        Bridge.sendToFrontend(
+          [clientId],
+          ["GameRoom", ["Sync", model.gameRoom]],
+        ),
       ]
     }
 
@@ -60,9 +57,7 @@ export const update = (
 
     case "GameRoom": {
       const [child, childCmd] = GameRoom.update(msg[1], model.gameRoom)
-      return [
-        { ...model, gameRoom: child }, tagCmd("GameRoom", childCmd),
-      ]
+      return [{ ...model, gameRoom: child }, tagCmd("GameRoom", childCmd)]
     }
   }
 }
@@ -79,9 +74,7 @@ export const updateFromFrontend = (
         msg[1],
         model.gameRoom,
       )
-      return [
-        { ...model, gameRoom: child }, tagCmd("GameRoom", childCmd)
-      ]
+      return [{ ...model, gameRoom: child }, tagCmd("GameRoom", childCmd)]
     }
   }
 }
@@ -101,8 +94,7 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
     Bridge.onDisconnect((clientId) => ["ClientDisconnected", clientId]),
     Bridge.fromFrontend<Msg>((clientId, toBackend) => [
       "[Frontend]",
-      {clientId,
-      toBackend,}
+      { clientId, toBackend },
     ]),
   ])
 }
@@ -123,7 +115,7 @@ const program = Platform.worker({
 
 Platform.run(program)
 
-program.state$.subscribe(state => {
+program.state$.subscribe((state) => {
   console.log("\n")
   console.log(JSON.stringify(state.msg))
   console.log(state.model)
@@ -144,28 +136,28 @@ const requestListener: Http.RequestListener = (_request, response) => {
 
 const httpServer = Http.createServer(requestListener)
 
-const socketServer = new Socket.Server<Bridge.ClientToServerEvents, Bridge.ServerToClientEvents>(
-  httpServer,
-  {
-    cors: {
-      origin: "*",
-    },
+const socketServer = new Socket.Server<
+  Bridge.ClientToServerEvents,
+  Bridge.ServerToClientEvents
+>(httpServer, {
+  cors: {
+    origin: "*",
   },
-)
+})
 
-socketServer.on("connection", (socket) => {  
-  if(ClientId.is(socket.id)) {
+socketServer.on("connection", (socket) => {
+  if (ClientId.is(socket.id)) {
     Bridge._internal_onConnect.next(socket.id)
   }
 
   socket.on("disconnect", () => {
-    if(ClientId.is(socket.id)) {
+    if (ClientId.is(socket.id)) {
       Bridge._internal_onDisconnect.next(socket.id)
     }
   })
 
   socket.on("ToBackend", (msg) => {
-    if(ClientId.is(socket.id)) {
+    if (ClientId.is(socket.id)) {
       Bridge._internal_toBackend.next([socket.id, msg])
     }
   })

@@ -83,7 +83,6 @@ export const back: Cmd.Cmd<never> = Rx.of(async () => {
   return Option.None
 })
 
-
 //
 //
 //
@@ -109,41 +108,44 @@ export const focus =
     return Result.Err({ type: "ElementNotFound" })
   }
 
-
-  
 export type GetElementByIdResult = Result.Result<Problem, DomElement>
-  
+
 export type DomElement = {
   offsetHeight: number
   offsetWidth: number
 }
 
-export const getElementById = (htmlId: string): Task.Task<GetElementByIdResult> =>
-async () => {
-  const element = document.getElementById(htmlId)
+export const getElementById =
+  (htmlId: string): Task.Task<GetElementByIdResult> =>
+  async () => {
+    const element = document.getElementById(htmlId)
 
-  if (element) {
-    return Result.Ok({
-      offsetHeight: element.offsetHeight,
-      offsetWidth: element.offsetWidth,
-    })
+    if (element) {
+      return Result.Ok({
+        offsetHeight: element.offsetHeight,
+        offsetWidth: element.offsetWidth,
+      })
+    }
+
+    return Result.Err({ type: "ElementNotFound" })
   }
 
-  return Result.Err({ type: "ElementNotFound" })
-}
-
 export type Resize = {
-  width: number,
-  height: number,
+  width: number
+  height: number
 }
 
-export const onResize = <Msg>(mapper: (resize: Resize) => Msg): Sub.Sub<Msg> => {
-  return new Rx.Observable(subscriber => {
+export const onResize = <Msg>(
+  mapper: (resize: Resize) => Msg,
+): Sub.Sub<Msg> => {
+  return new Rx.Observable((subscriber) => {
     const handle = () => {
-      subscriber.next(mapper({
-        height: window.innerHeight,
-        width: window.innerWidth
-      }))
+      subscriber.next(
+        mapper({
+          height: window.innerHeight,
+          width: window.innerWidth,
+        }),
+      )
     }
     window.addEventListener("resize", handle)
     return () => {

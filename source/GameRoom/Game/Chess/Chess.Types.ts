@@ -2,35 +2,37 @@ import * as ChessTs from "chess.ts"
 import { Audio, Browser, RemoteData, Result } from "../../../Core"
 import { UserId } from "../../../Data"
 
-// 
-// 
-// 
+//
+//
+//
 // Chess
-// 
-// 
-// 
+//
+//
+//
 
 export const getInitialFen = () => {
   return new ChessTs.Chess().fen()
 }
 
-
-export const fenToBoard = (fen:string) => {
-  return  new ChessTs.Chess(fen).board()
+export const fenToBoard = (fen: string) => {
+  return new ChessTs.Chess(fen).board()
 }
 
-export const move = (moveData: ChessTs.PartialMove, model: SharedModel): MoveResult => {
+export const move = (
+  moveData: ChessTs.PartialMove,
+  model: SharedModel,
+): MoveResult => {
   const chess = new ChessTs.Chess(model.fen)
 
   const moved = chess.move(moveData)
 
-  if(!moved) {
+  if (!moved) {
     return Result.Err("invalid_move")
   }
 
   const modelNew: SharedModel = {
     ...model,
-    fen: chess.fen()
+    fen: chess.fen(),
   }
 
   return Result.Ok(modelNew)
@@ -52,20 +54,24 @@ export const inStalemate = (model: SharedModel): boolean => {
   return new ChessTs.Chess(model.fen).inStalemate()
 }
 
-export type Status = 
-  | ["NotReady"] 
-  | ["Ready" , {White: UserId.UserId, Black: UserId.UserId}]
+export type Status =
+  | ["NotReady"]
+  | ["Ready", { White: UserId.UserId; Black: UserId.UserId }]
 
-export const toStatus = (model: SharedModel):Status => {
-  if(model.White[0] === 'None' || model.Black[0] === 'None') {
+export const toStatus = (model: SharedModel): Status => {
+  const { players } = model
+  if (players.White[0] === "None" || players.Black[0] === "None") {
     return ["NotReady"]
   }
 
-  return ['Ready', {White: model.White[1].userId, Black: model.Black[1].userId}]
+  return [
+    "Ready",
+    { White: players.White[1].userId, Black: players.Black[1].userId },
+  ]
 }
 
 export type PlayerType = "White" | "Black"
- 
+
 //
 //
 //
@@ -74,24 +80,27 @@ export type PlayerType = "White" | "Black"
 //
 //
 
-export type SharedModel = Players & {
-  fen: string;
-} 
-
-type Players = {
-  [player in PlayerType]: Player
+export type SharedModel = {
+  fen: string
+  players: {
+    [player in PlayerType]: Player
+  }
+  status: "GameLobby" | "GameStarted" | "GameOver"
 }
 
-export type Player = ["User", {userId: UserId.UserId }] | ["None"]
+export type Player = ["User", { userId: UserId.UserId }] | ["None"]
 
 export const initSharedModel: SharedModel = {
   fen: getInitialFen(),
-  White: ["None"],
-  Black: ["None"],
+  players: {
+    White: ["None"],
+    Black: ["None"],
+  },
+  status: "GameLobby",
 }
 
 export type FrontendModel = SharedModel & {
-  boardWidth: number,
+  boardWidth: number
 }
 
 export type BackendModel = SharedModel
@@ -104,12 +113,12 @@ export type BackendModel = SharedModel
 //
 //
 
-export type FrontendMsg = 
-| ["GetElementResulted", Browser.GetElementByIdResult] 
-| ["BrowserResized", Browser.Resize]
-| ["AudioResulted", Audio.PlayResult]
-| Move 
-| PlayAs
+export type FrontendMsg =
+  | ["GetElementResulted", Browser.GetElementByIdResult]
+  | ["BrowserResized", Browser.Resize]
+  | ["AudioResulted", Audio.PlayResult]
+  | Move
+  | PlayAs
 
 export type BackendMsg = ["None"]
 
@@ -117,20 +126,17 @@ export type ToFrontend = ["Sync", SharedModel] | MoveResulted | PlayAsResulted
 
 export type ToBackend = Move | PlayAs
 
-// 
-// 
-// 
+//
+//
+//
 
-export type Move = [
-  "Move",
-  ChessTs.PartialMove & { userId: UserId.UserId; },
-]
+export type Move = ["Move", ChessTs.PartialMove & { userId: UserId.UserId }]
 export type MoveResulted = ["MovedResulted", MoveResult]
 export type MoveResult = Result.Result<"invalid_move", SharedModel>
 
-// 
-// 
-// 
+//
+//
+//
 
 export type PlayAs = [
   "PlayAs",
@@ -139,15 +145,17 @@ export type PlayAs = [
 export type PlayAsResulted = ["PlayAsResulted", PlayAsResult]
 export type PlayAsResult = Result.Result<`player_type_taken`, SharedModel>
 
-export const playAs = ({userId, playerType}:PlayAs[1], model: SharedModel): PlayAsResult  => {
-
-  if(model[playerType][0] !== 'None') {
+export const playAs = (
+  { userId, playerType }: PlayAs[1],
+  model: SharedModel,
+): PlayAsResult => {
+  if (model.players[playerType][0] !== "None") {
     return Result.Err(`player_type_taken`)
   }
 
   const modelNew: SharedModel = {
     ...model,
-    [playerType]: ['User', userId]
+    [playerType]: ["User", userId],
   }
 
   return Result.Ok(modelNew)

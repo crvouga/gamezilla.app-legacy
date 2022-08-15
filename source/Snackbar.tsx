@@ -20,7 +20,7 @@ export type Snack = {
   variant: Variant
   snackId: SnackId
   message: string
-  title?:string
+  title?: string
 }
 
 export const init: Model = {
@@ -42,8 +42,10 @@ export type Msg =
   | ["ClickedClose", SnackId]
   | ["ClickedAwayClose", SnackId]
 
-
-export type Action = ["Snackbar", {variant: Variant, message: string, title?:string}]
+export type Action = [
+  "Snackbar",
+  { variant: Variant; message: string; title?: string },
+]
 
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
@@ -64,13 +66,13 @@ export const updateFromAction = (
   action: Action,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
-  const  {message, title, variant} = action[1]
+  const { message, title, variant } = action[1]
 
   const snack: Snack = {
     snackId: Uuid.generateSync(),
     message,
     variant,
-    title
+    title,
   }
 
   return [
@@ -83,7 +85,6 @@ export const updateFromAction = (
       snack.snackId,
     ]),
   ]
-  
 }
 
 const removeById = (snackId: string, model: Model): [Model, Cmd.Cmd<Msg>] => [
@@ -125,9 +126,7 @@ export const view =
             severity={snack.variant === "Error" ? "error" : "info"}
             sx={{ width: "100%" }}
           >
-            {snack.title && <UI.AlertTitle>
-              {snack.title}
-            </UI.AlertTitle>}
+            {snack.title && <UI.AlertTitle>{snack.title}</UI.AlertTitle>}
             {snack.message}
           </UI.Alert>
         </UI.Snackbar>
