@@ -258,6 +258,8 @@ export const Badge = Mui.Badge
 
 export const ListItemAvatar = Mui.ListItemAvatar
 
+export const ListItem = Mui.ListItem
+
 export const Avatar = Mui.Avatar
 
 export const AvatarGroup = Mui.AvatarGroup
@@ -498,33 +500,33 @@ export const conformationDialog =
     confirmTitle: string
     cancelTitle?: string
   }): View<TMsg> =>
-  (dispatch) => {
-    return (
-      <Dialog
-        open={open}
-        onClose={() => dispatch(onClose)}
-      >
-        <DialogTitle>{title}</DialogTitle>
-        <DialogActions>
-          <Button onClick={() => dispatch(onCancel)}>{cancelTitle}</Button>
-          <Button onClick={() => dispatch(onConfirm)}>{confirmTitle}</Button>
-        </DialogActions>
-      </Dialog>
-    )
-  }
+    (dispatch) => {
+      return (
+        <Dialog
+          open={open}
+          onClose={() => dispatch(onClose)}
+        >
+          <DialogTitle>{title}</DialogTitle>
+          <DialogActions>
+            <Button onClick={() => dispatch(onCancel)}>{cancelTitle}</Button>
+            <Button onClick={() => dispatch(onConfirm)}>{confirmTitle}</Button>
+          </DialogActions>
+        </Dialog>
+      )
+    }
 
 export const loadingDialog =
   <TMsg,>({ open, title }: { open: boolean; title: string }): View<TMsg> =>
-  () => {
-    return (
-      <Dialog open={open}>
-        <Box sx={{ display: "flex", alignItems: "center", p: 2 }}>
-          <CircularProgress sx={{ marginRight: 2 }} />
-          <Typography variant="h6">{title}</Typography>
-        </Box>
-      </Dialog>
-    )
-  }
+    () => {
+      return (
+        <Dialog open={open}>
+          <Box sx={{ display: "flex", alignItems: "center", p: 2 }}>
+            <CircularProgress sx={{ marginRight: 2 }} />
+            <Typography variant="h6">{title}</Typography>
+          </Box>
+        </Dialog>
+      )
+    }
 
 import { keyframes } from "@mui/system"
 

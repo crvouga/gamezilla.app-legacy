@@ -6,6 +6,7 @@ import {
   initSharedModel,
   move,
   playAs,
+  startGame,
   ToBackend,
   ToFrontend,
 } from "./Chess.Types"
@@ -53,6 +54,26 @@ export const updateFromFrontend = (
 
       const toFrontend = sendToFrontend([clientId], roomId, [
         "PlayAsResulted",
+        result,
+      ])
+
+      if (result.type === "Err") {
+        return [model, toFrontend]
+      }
+
+      const modelNew: Model = { ...model, ...result.value }
+
+      return [
+        modelNew,
+        Cmd.batch([toFrontend, broadcast(roomId, ["Sync", modelNew])]),
+      ]
+    }
+
+    case "StartGame": {
+      const result = startGame(model)
+
+      const toFrontend = sendToFrontend([clientId], roomId, [
+        "StartGameResulted",
         result,
       ])
 

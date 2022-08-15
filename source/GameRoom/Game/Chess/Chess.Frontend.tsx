@@ -1,23 +1,21 @@
 import { useLayoutEffect, useRef, useState } from "react"
 import { Chessboard } from "react-chessboard"
+import * as Bridge from "../../../Bridge"
 import { Audio, Browser, Cmd, pipe, Sub, tag } from "../../../Core"
 import { RoomId, UserId } from "../../../Data"
-import * as UI from "../../../UI"
 import * as Store from "../../../Store"
-import * as Bridge from "../../../Bridge"
+import * as UI from "../../../UI"
 import {
-  inCheckmate,
-  inDraw,
-  inStalemate,
+  canStartGame,
   FrontendModel,
   FrontendMsg,
   inCheck,
   initSharedModel,
   move,
   Move,
+  PlayerType,
   ToBackend,
-  ToFrontend,
-  toStatus,
+  ToFrontend
 } from "./Chess.Types"
 import { Sounds } from "./Sounds"
 
@@ -83,6 +81,10 @@ export const update = (
       return [model, sendToBackend(currentRoomId, msg)]
     }
 
+    case "StartGame": {
+      return [model, sendToBackend(currentRoomId, msg)]
+    }
+
     case "AudioResulted": {
       return [model, Cmd.None]
     }
@@ -122,6 +124,10 @@ export const updateFromBackend = (
     }
 
     case "PlayAsResulted": {
+      return [{ ...model }, Cmd.None]
+    }
+
+    case "StartGameResulted": {
       return [{ ...model }, Cmd.None]
     }
 
@@ -181,49 +187,39 @@ export const view =
     model: Model,
   ): UI.View<Msg> =>
     (dispatch) => {
-      const status = toStatus(model)
 
-      if (status[0] === "NotReady") {
+
+      const { status } = model
+
+      if (status[0] === 'GameNotReady') {
+        const { White, Black } = status[1]
         return (
           <UI.FillBox>
             <UI.Box sx={{ paddingX: 2 }}>
-              <UI.Typography>White</UI.Typography>
-              <UI.Button
-                onClick={() =>
-                  dispatch([
-                    "PlayAs",
-                    { userId: currentUserId, playerType: "White" },
-                  ])
-                }
-                fullWidth
-                variant="outlined"
-                sx={{ marginBottom: 2 }}
-              >
-                play as white
-              </UI.Button>
+              <ViewLobbyPlayerSlot
+                dispatch={dispatch}
+                store={store}
+                currentUserId={currentUserId}
+                playerType="White"
+                userId={White}
+              />
 
-              <UI.Typography>Black</UI.Typography>
-              <UI.Button
-                onClick={() =>
-                  dispatch([
-                    "PlayAs",
-                    { userId: currentUserId, playerType: "Black" },
-                  ])
-                }
-                fullWidth
-                variant="outlined"
-                sx={{ marginBottom: 2 }}
-              >
-                play as black
-              </UI.Button>
+              <ViewLobbyPlayerSlot
+                dispatch={dispatch}
+                store={store}
+                currentUserId={currentUserId}
+                playerType="Black"
+                userId={Black}
+              />
             </UI.Box>
             <UI.Divider sx={{ marginY: 2 }} />
             <UI.Box sx={{ paddingX: 2 }}>
               <UI.Button
-                disabled
+                disabled={!canStartGame(model)}
                 fullWidth
                 variant="contained"
                 sx={{ marginBottom: 2 }}
+                onClick={() => dispatch(['StartGame'])}
               >
                 Start
               </UI.Button>
@@ -232,7 +228,8 @@ export const view =
         )
       }
 
-      console.log({ status })
+
+      const { White, Black } = status[1]
 
       return (
         <View
@@ -240,11 +237,42 @@ export const view =
           currentUserId={currentUserId}
           model={model}
           dispatch={dispatch}
-          White={status[1].White}
-          Black={status[1].Black}
+          White={White}
+          Black={Black}
         />
       )
     }
+
+const ViewLobbyPlayerSlot = ({ userId, playerType, dispatch, store, currentUserId }: { playerType: PlayerType, userId?: UserId.UserId; currentUserId: UserId.UserId, store: Store.Model; dispatch: (msg: Msg) => void }) => {
+  return (
+    <>
+      <UI.Typography>{playerType}</UI.Typography>
+
+      {userId ? (
+        <UI.ListItem>
+          <UI.ListItemAvatar>
+            <UI.Avatar src={store.Profile[userId]?.avatarUrl} />
+          </UI.ListItemAvatar>
+          <UI.ListItemText primary={store.Profile[userId]?.username ?? "..."} />
+        </UI.ListItem>
+      ) : (
+        <UI.Button
+          onClick={() =>
+            dispatch([
+              "PlayAs",
+              { userId: currentUserId, playerType, },
+            ])
+          }
+          fullWidth
+          variant="outlined"
+          sx={{ marginBottom: 2 }}
+        >
+          Play As {playerType}
+        </UI.Button>
+      )}
+    </>
+  )
+}
 
 export const View = ({
   currentUserId,
@@ -261,7 +289,6 @@ export const View = ({
   model: Model
   dispatch: (msg: Msg) => void
 }) => {
-  console.log(store, { currentUserId, White, Black })
   const [boardWidth, setBoardWidth] = useState(0)
   const ref = useRef<HTMLDivElement | null>(null)
 

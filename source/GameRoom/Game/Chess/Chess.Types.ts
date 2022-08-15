@@ -55,20 +55,9 @@ export const inStalemate = (model: SharedModel): boolean => {
 }
 
 export type Status =
-  | ["NotReady"]
-  | ["Ready", { White: UserId.UserId; Black: UserId.UserId }]
-
-export const toStatus = (model: SharedModel): Status => {
-  const { players } = model
-  if (players.White[0] === "None" || players.Black[0] === "None") {
-    return ["NotReady"]
-  }
-
-  return [
-    "Ready",
-    { White: players.White[1].userId, Black: players.Black[1].userId },
-  ]
-}
+  | ["GameNotReady", { White?: UserId.UserId; Black?: UserId.UserId }]
+  | ["GameStarted", { White: UserId.UserId; Black: UserId.UserId }]
+  | ["GameOver", { White: UserId.UserId; Black: UserId.UserId }]
 
 export type PlayerType = "White" | "Black"
 
@@ -82,21 +71,14 @@ export type PlayerType = "White" | "Black"
 
 export type SharedModel = {
   fen: string
-  players: {
-    [player in PlayerType]: Player
-  }
-  status: "GameLobby" | "GameStarted" | "GameOver"
+  status: Status
 }
 
 export type Player = ["User", { userId: UserId.UserId }] | ["None"]
 
 export const initSharedModel: SharedModel = {
   fen: getInitialFen(),
-  players: {
-    White: ["None"],
-    Black: ["None"],
-  },
-  status: "GameLobby",
+  status: ["GameNotReady", {}],
 }
 
 export type FrontendModel = SharedModel & {
@@ -119,12 +101,17 @@ export type FrontendMsg =
   | ["AudioResulted", Audio.PlayResult]
   | Move
   | PlayAs
+  | StartGame
 
 export type BackendMsg = ["None"]
 
-export type ToFrontend = ["Sync", SharedModel] | MoveResulted | PlayAsResulted
+export type ToFrontend =
+  | ["Sync", SharedModel]
+  | MoveResulted
+  | PlayAsResulted
+  | StartGameResulted
 
-export type ToBackend = Move | PlayAs
+export type ToBackend = Move | PlayAs | StartGame
 
 //
 //
@@ -143,20 +130,61 @@ export type PlayAs = [
   { userId: UserId.UserId; playerType: PlayerType },
 ]
 export type PlayAsResulted = ["PlayAsResulted", PlayAsResult]
-export type PlayAsResult = Result.Result<`player_type_taken`, SharedModel>
-
+export type PlayAsResult = Result.Result<
+  "player_type_taken" | "game_started",
+  SharedModel
+>
 export const playAs = (
   { userId, playerType }: PlayAs[1],
   model: SharedModel,
 ): PlayAsResult => {
-  if (model.players[playerType][0] !== "None") {
+  if (model.status[0] !== "GameNotReady") {
+    return Result.Err("game_started")
+  }
+
+  const partialPlayers = model.status[1]
+
+  if (partialPlayers[playerType]) {
     return Result.Err(`player_type_taken`)
   }
 
   const modelNew: SharedModel = {
     ...model,
-    [playerType]: ["User", userId],
+    status: ["GameNotReady", { ...model.status[1], [playerType]: userId }],
   }
 
   return Result.Ok(modelNew)
+}
+
+//
+//
+//
+//
+
+export type StartGame = ["StartGame"]
+export type StartGameResulted = ["StartGameResulted", StartGameResult]
+export type StartGameResult = Result.Result<"can_not_start_game", SharedModel>
+
+export const canStartGame = (model: SharedModel): boolean => {
+  return (
+    model.status[0] === "GameNotReady" &&
+    model.status[1].White !== undefined &&
+    model.status[1].Black !== undefined
+  )
+}
+
+export const startGame = (model: SharedModel): StartGameResult => {
+  const { status } = model
+  const { White, Black } = status[1]
+
+  if (status[0] === "GameNotReady" && White && Black) {
+    const modelNew: SharedModel = {
+      ...model,
+      status: ["GameStarted", { White, Black }],
+    }
+
+    return Result.Ok(modelNew)
+  }
+
+  return Result.Err("can_not_start_game")
 }
