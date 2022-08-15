@@ -114,7 +114,7 @@ export const updateFromAction = (
         modelNew,
         pipe(
           deleteForever({ messageId }),
-          Cmd.fromTask(
+          Cmd.perform(
             (result): Msg => ["UnsendResulted", { messageId, result }],
           ),
         ),
@@ -135,7 +135,7 @@ export const updateFromAction = (
             conversationId,
             message: messageText,
           }),
-          Cmd.fromTask(
+          Cmd.perform(
             (result): Msg => ["SendResulted", { conversationId, result }],
           ),
         ),

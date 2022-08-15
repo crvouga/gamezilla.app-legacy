@@ -3,8 +3,9 @@ import { Chessboard } from 'react-chessboard';
 import { Audio, Browser, Cmd, pipe, Sub, tag } from "../../../Core";
 import { RoomId, UserId } from '../../../Data';
 import * as UI from "../../../UI";
+import * as Store from "../../../Store";
 import * as Bridge from "../../../Bridge";
-import { FrontendModel, FrontendMsg, initSharedModel, move, Move, ToBackend, ToFrontend } from "./Chess.Types";
+import { inCheckmate, inDraw, inStalemate, FrontendModel, FrontendMsg, inCheck, initSharedModel, move, Move, ToBackend, ToFrontend } from "./Chess.Types";
 import { Sounds } from './Sounds';
 
 
@@ -19,7 +20,7 @@ import { Sounds } from './Sounds';
 export type Model = FrontendModel
 
 export const init = (): [FrontendModel, Cmd.Cmd<Msg>] => {
-  return [{ ...initSharedModel, boardWidth: 0 }, pipe(Browser.getElementById(containerHtmlId), Cmd.fromTask(result => ['GetElementResulted', result]))]
+  return [{ ...initSharedModel, boardWidth: 0 }, pipe(Browser.getElementById(containerHtmlId), Cmd.perform(result => ['GetElementResulted', result]))]
 }
 
 //
@@ -48,7 +49,13 @@ export const update = ({ currentRoomId }: { currentRoomId: RoomId.RoomId }, msg:
     }
 
     case 'BrowserResized': {
-      return [model, pipe(Browser.getElementById(containerHtmlId), Cmd.fromTask((element): Msg => ["GetElementResulted", element]))]
+      return [
+        model,
+        pipe(
+          Browser.getElementById(containerHtmlId),
+          Cmd.perform((element): Msg => ["GetElementResulted", element])
+        )
+      ]
     }
 
     case 'AudioResulted': {
@@ -62,15 +69,20 @@ export const update = ({ currentRoomId }: { currentRoomId: RoomId.RoomId }, msg:
         return [model, Cmd.None]
       }
 
-      const sharedModelNew = result.value
+      const sharedModel = result.value
+
+      const sound = inCheck(sharedModel) ? Sounds.check : Sounds.move
 
       return [
-        { ...model, ...sharedModelNew },
+        {
+          ...model,
+          ...sharedModel
+        },
         Cmd.batch([
           sendToBackend(currentRoomId, msg),
           pipe(
-            Audio.play(Sounds.move),
-            Cmd.fromTask(tag("AudioResulted")))
+            Audio.play(sound),
+            Cmd.perform(tag("AudioResulted")))
         ])
       ]
 
@@ -126,12 +138,33 @@ export const sendToBackend = (roomId: RoomId.RoomId, toBackend: ToBackend) => {
 const containerHtmlId = "chess"
 
 export const view =
-  ({ currentUserId }: { currentUserId: UserId.UserId }, model: Model): UI.View<Msg> =>
+  ({
+    currentUserId,
+    store
+  }: {
+    store: Store.Model;
+    currentUserId: UserId.UserId
+  }, model: Model): UI.View<Msg> =>
     (dispatch) =>
-      <View currentUserId={currentUserId} model={model} dispatch={dispatch} />
+      <View
+        store={store}
+        currentUserId={currentUserId}
+        model={model}
+        dispatch={dispatch}
+      />
 
 
-export const View = ({ currentUserId, model, dispatch }: { currentUserId: UserId.UserId; model: Model, dispatch: (msg: Msg) => void }) => {
+export const View = ({
+  currentUserId,
+  store,
+  model,
+  dispatch
+}: {
+  store: Store.Model,
+  currentUserId: UserId.UserId;
+  model: Model,
+  dispatch: (msg: Msg) => void
+}) => {
   const [boardWidth, setBoardWidth] = useState(0)
   const ref = useRef<HTMLDivElement | null>(null)
 
@@ -150,8 +183,37 @@ export const View = ({ currentUserId, model, dispatch }: { currentUserId: UserId
     }
   }, [])
 
-  return <div ref={ref}>
-    <UI.FillBox id={containerHtmlId}>
+
+  const playerBoxSx: UI.Sx = {
+    paddingX: 2,
+    paddingY: 1,
+    display: "flex",
+    alignItems: "center"
+  }
+
+  const playerAvatarSx: UI.Sx = {
+    marginRight: 1
+  }
+
+  return <UI.FillBox id={containerHtmlId}>
+    <UI.Box sx={playerBoxSx}>
+      <UI.Avatar sx={playerAvatarSx} />
+
+      <UI.Box sx={{ flex: 1 }}>
+        <UI.Typography>
+          Player One
+        </UI.Typography>
+      </UI.Box>
+
+
+      <UI.Paper variant='outlined' sx={{ paddingX: 1, paddingY: 1 / 2 }}>
+        <UI.Typography>
+          0:00
+        </UI.Typography>
+      </UI.Paper>
+    </UI.Box>
+
+    <div ref={ref}>
       <Chessboard
         position={model.fen}
         boardWidth={boardWidth}
@@ -170,8 +232,24 @@ export const View = ({ currentUserId, model, dispatch }: { currentUserId: UserId
 
           return true
         }} />
-    </UI.FillBox>
-  </div>
+    </div>
+
+    <UI.Box sx={playerBoxSx}>
+      <UI.Avatar sx={playerAvatarSx} />
+
+      <UI.Box sx={{ flex: 1 }}>
+        <UI.Typography>
+          Player Two
+        </UI.Typography>
+      </UI.Box>
+
+      <UI.Paper variant='outlined' sx={{ paddingX: 1, paddingY: 1 / 2 }}>
+        <UI.Typography>
+          0:00
+        </UI.Typography>
+      </UI.Paper>
+    </UI.Box>
+  </UI.FillBox>
 }
 
 

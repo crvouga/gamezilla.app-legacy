@@ -228,7 +228,7 @@ export const updateFromAction = (
         modelNew,
         pipe(
           findOneById({ conversationId }),
-          Cmd.fromTask(
+          Cmd.perform(
             (result): Msg => ["FindOneResulted", { conversationId, result }],
           ),
         ),
@@ -254,7 +254,7 @@ export const updateFromAction = (
         modelNew,
         pipe(
           findManyByUserId({ userId }),
-          Cmd.fromTask(
+          Cmd.perform(
             (result): Msg => ["FindManyByUserIdResulted", { userId, result }],
           ),
         ),
@@ -272,7 +272,7 @@ export const updateFromAction = (
         modelNew,
         pipe(
           findOneElseInsert({ userIds }),
-          Cmd.fromTask(
+          Cmd.perform(
             (result): Msg => ["FindOneElseInsertResulted", { userIds, result }],
           ),
         ),

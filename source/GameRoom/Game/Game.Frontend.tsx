@@ -197,7 +197,7 @@ export const view = (
 
     case "Chess": {
       return pipe(
-        Chess.view({ currentUserId }, model[1]),
+        Chess.view({ currentUserId, store }, model[1]),
         UI.map(tag("Chess")),
       )
     }
