@@ -66,7 +66,7 @@ export const cancelTimeout = (timeoutId: string): Cmd.Cmd<never> => {
 // NOTE: needs to be cleaned up when using HMR
 let __intervals: { [intervalId: string]: Rx.Subject<number> } = {}
 
-const onTimeout = (intervalId:string, time: number) => {
+const onTimeout = (intervalId: string, time: number) => {
   const subj = __intervals[intervalId]
 
   if (subj && subj.observed) {
@@ -81,7 +81,7 @@ const onTimeout = (intervalId:string, time: number) => {
 }
 
 export const every = <Msg>(
-  intervalId:string,
+  intervalId: string,
   time: number,
   f: (time: number) => Msg,
 ): Sub.Sub<Msg> => {

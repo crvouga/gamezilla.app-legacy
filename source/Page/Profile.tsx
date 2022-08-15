@@ -56,7 +56,7 @@ export const update = (
       return [model, Route.push(["ProfileUpdate"]), []]
     }
 
-    case 'ClickedAccountMenu': {
+    case "ClickedAccountMenu": {
       return [model, Route.push(["Account"]), []]
     }
 
@@ -136,7 +136,10 @@ export const view =
             }
             title={profile.username}
             right={
-              <UI.IconButton edge="end" onClick={() => dispatch(['ClickedAccountMenu'])} >
+              <UI.IconButton
+                edge="end"
+                onClick={() => dispatch(["ClickedAccountMenu"])}
+              >
                 <UI.Icons.Menu />
               </UI.IconButton>
             }

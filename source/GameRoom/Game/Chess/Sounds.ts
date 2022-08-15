@@ -8,12 +8,12 @@ import gameStart from "./sounds/game-start.wav"
 import move from "./sounds/move-1.wav"
 
 export const Sounds = {
-    capture,
-    castling,
-    check,
-    gameOverCheckmate,
-    gameOverStalemate,
-    gameOver,
-    gameStart,
-    move,
+  capture,
+  castling,
+  check,
+  gameOverCheckmate,
+  gameOverStalemate,
+  gameOver,
+  gameStart,
+  move,
 }

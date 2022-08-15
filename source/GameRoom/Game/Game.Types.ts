@@ -11,17 +11,16 @@ import * as Chess from "./Chess/Chess.Types"
 //
 //
 
-
 export type FrontendModel =
   | ["TicTacToe", TicTacToe.FrontendModel]
-  | ['ConnectFour', ConnectFour.FrontendModel] 
-  | ["Snake", Snake.FrontendModel] 
+  | ["ConnectFour", ConnectFour.FrontendModel]
+  | ["Snake", Snake.FrontendModel]
   | ["Chess", Chess.FrontendModel]
 
 export type BackendModel =
   | ["TicTacToe", TicTacToe.BackendModel]
-  | ['ConnectFour', ConnectFour.BackendModel] 
-  | ["Snake", Snake.BackendModel] 
+  | ["ConnectFour", ConnectFour.BackendModel]
+  | ["Snake", Snake.BackendModel]
   | ["Chess", Chess.BackendModel]
 
 export type GameName = "TicTacToe" | "ConnectFour" | "Snake" | "Chess"
@@ -46,14 +45,14 @@ export type FrontendMsg =
   | ["Snake", Snake.FrontendMsg]
   | ["Chess", Chess.FrontendMsg]
 
-export type ToFrontend = 
-  | ['TicTacToe', TicTacToe.ToFrontend] 
-  | ["ConnectFour", ConnectFour.ToFrontend] 
+export type ToFrontend =
+  | ["TicTacToe", TicTacToe.ToFrontend]
+  | ["ConnectFour", ConnectFour.ToFrontend]
   | ["Snake", Snake.ToFrontend]
   | ["Chess", Chess.ToFrontend]
 
-export type ToBackend = 
-  | ['TicTacToe', TicTacToe.ToBackend]
-  | ["ConnectFour", ConnectFour.ToBackend] 
+export type ToBackend =
+  | ["TicTacToe", TicTacToe.ToBackend]
+  | ["ConnectFour", ConnectFour.ToBackend]
   | ["Snake", Snake.ToBackend]
   | ["Chess", Chess.ToBackend]

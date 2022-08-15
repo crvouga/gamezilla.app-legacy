@@ -48,13 +48,12 @@ export const update = (
       return [model, Route.back, []]
 
     case "ClickedSubmit": {
-      const username  = Username.decode(model.username)
+      const username = Username.decode(model.username)
 
-      if(username.type === 'Err') {
+      if (username.type === "Err") {
         // todo handle validation error
         return [model, Cmd.None, []]
       }
-
 
       return [
         model,
@@ -68,7 +67,8 @@ export const update = (
             ],
           ],
         ],
-      ]}
+      ]
+    }
   }
 }
 

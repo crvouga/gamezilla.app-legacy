@@ -1,6 +1,11 @@
 import { Cmd, Sub } from "../../../Core"
 import { ClientId } from "../../../Data"
-import { BackendModel, BackendMsg, initSharedModel, ToBackend } from "./ConnectFour.Types"
+import {
+  BackendModel,
+  BackendMsg,
+  initSharedModel,
+  ToBackend,
+} from "./ConnectFour.Types"
 
 //
 //
@@ -25,9 +30,8 @@ export const init: Model = initSharedModel
 export type Msg = BackendMsg
 
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
-  switch(msg[0]) {
-
-    case 'None': {
+  switch (msg[0]) {
+    case "None": {
       return [model, Cmd.None]
     }
   }
@@ -38,12 +42,10 @@ export const updateFromFrontend = (
   msg: ToBackend,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
-  switch(msg[0]) {
-    case 'Move': {
+  switch (msg[0]) {
+    case "Move": {
       return [model, Cmd.None]
     }
-
-    
   }
 }
 

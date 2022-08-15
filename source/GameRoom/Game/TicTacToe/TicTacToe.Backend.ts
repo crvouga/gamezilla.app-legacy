@@ -1,6 +1,11 @@
 import { Cmd, Sub } from "../../../Core"
 import { ClientId } from "../../../Data"
-import { BackendModel, BackendMsg, initSharedModel, ToBackend } from "./TicTacToe.Types"
+import {
+  BackendModel,
+  BackendMsg,
+  initSharedModel,
+  ToBackend,
+} from "./TicTacToe.Types"
 
 //
 //

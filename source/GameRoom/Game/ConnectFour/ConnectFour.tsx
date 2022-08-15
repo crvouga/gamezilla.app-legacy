@@ -99,15 +99,15 @@ const isFull = (columns: Columns) => {
 
 type IStatus =
   | {
-    type: "Playing"
-  }
+      type: "Playing"
+    }
   | {
-    type: "Winner"
-    winner: IPlayer
-  }
+      type: "Winner"
+      winner: IPlayer
+    }
   | {
-    type: "Tie"
-  }
+      type: "Tie"
+    }
 
 export const toStatus = (columns: Columns): IStatus => {
   const winningLines = Array.from(

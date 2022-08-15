@@ -50,10 +50,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
       return [model, Route.push(["ChatNew"])]
 
     case "ClickedConversationItem":
-      return [
-        model,
-        Route.push(["ChatConversation",  msg[1],]),
-      ]
+      return [model, Route.push(["ChatConversation", msg[1]])]
   }
 }
 

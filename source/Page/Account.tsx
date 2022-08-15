@@ -37,7 +37,7 @@ export const update = (
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
     case "ClickedAdmin":
-      return [model, Route.push(["Admin", "Model" ])]
+      return [model, Route.push(["Admin", "Model"])]
 
     case "ClickedBack":
       return [model, Route.back]
@@ -46,10 +46,10 @@ export const update = (
       return [model, Route.push(["Logout"])]
 
     case "ClickedUpdateProfile":
-      return [model, Route.push(["ProfileUpdate" ])]
+      return [model, Route.push(["ProfileUpdate"])]
 
     case "ClickedDeleteProfile":
-      return [model, Route.push(["ProfileDelete" ])]
+      return [model, Route.push(["ProfileDelete"])]
   }
 }
 

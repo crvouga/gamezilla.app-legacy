@@ -37,7 +37,7 @@ export type MouseStatus = "active" | "inactive"
 //
 //
 
-const bounds: Model['bounds'] = {
+const bounds: Model["bounds"] = {
   lower: {
     x: 0,
     y: 0,
@@ -48,14 +48,17 @@ const bounds: Model['bounds'] = {
   },
 }
 
-const head: Model['head'] = {
+const head: Model["head"] = {
   x: Math.floor((bounds.upper.x - bounds.lower.x) / 2) - 3,
   y: Math.floor((bounds.upper.y - bounds.lower.y) / 2),
 }
 
-const tail: Model['tail'] = [Position.subtract(head, { x: 1, y: 0 }), Position.subtract(head, { x: 2, y: 0 })]
+const tail: Model["tail"] = [
+  Position.subtract(head, { x: 1, y: 0 }),
+  Position.subtract(head, { x: 2, y: 0 }),
+]
 
-const food: Model['food'] = Position.add(head, { x: 3, y: 0 })
+const food: Model["food"] = Position.add(head, { x: 3, y: 0 })
 
 export const init: Model = {
   status: "Paused",
@@ -67,9 +70,8 @@ export const init: Model = {
   foodEatenCount: 0,
   direction: "right",
   directionQueue: [],
-  bounds
+  bounds,
 }
-
 
 //
 //
@@ -172,8 +174,6 @@ const shuffle = <T,>(xs: T[]): T[] => {
 const unqiue = <T,>(as: T[]): T[] => {
   return Array.from(new Set(as))
 }
-
-
 
 //
 //

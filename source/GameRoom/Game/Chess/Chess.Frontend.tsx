@@ -1,13 +1,25 @@
-import { useLayoutEffect, useRef, useState } from 'react';
-import { Chessboard } from 'react-chessboard';
-import { Audio, Browser, Cmd, pipe, Sub, tag } from "../../../Core";
-import { RoomId, UserId } from '../../../Data';
-import * as UI from "../../../UI";
-import * as Store from "../../../Store";
-import * as Bridge from "../../../Bridge";
-import { inCheckmate, inDraw, inStalemate, FrontendModel, FrontendMsg, inCheck, initSharedModel, move, Move, ToBackend, ToFrontend, toStatus } from "./Chess.Types";
-import { Sounds } from './Sounds';
-
+import { useLayoutEffect, useRef, useState } from "react"
+import { Chessboard } from "react-chessboard"
+import { Audio, Browser, Cmd, pipe, Sub, tag } from "../../../Core"
+import { RoomId, UserId } from "../../../Data"
+import * as UI from "../../../UI"
+import * as Store from "../../../Store"
+import * as Bridge from "../../../Bridge"
+import {
+  inCheckmate,
+  inDraw,
+  inStalemate,
+  FrontendModel,
+  FrontendMsg,
+  inCheck,
+  initSharedModel,
+  move,
+  Move,
+  ToBackend,
+  ToFrontend,
+  toStatus,
+} from "./Chess.Types"
+import { Sounds } from "./Sounds"
 
 //
 //
@@ -20,7 +32,13 @@ import { Sounds } from './Sounds';
 export type Model = FrontendModel
 
 export const init = (): [FrontendModel, Cmd.Cmd<Msg>] => {
-  return [{ ...initSharedModel, boardWidth: 0 }, pipe(Browser.getElementById(containerHtmlId), Cmd.perform(result => ['GetElementResulted', result]))]
+  return [
+    { ...initSharedModel, boardWidth: 0 },
+    pipe(
+      Browser.getElementById(containerHtmlId),
+      Cmd.perform((result) => ["GetElementResulted", result]),
+    ),
+  ]
 }
 
 //
@@ -33,14 +51,17 @@ export const init = (): [FrontendModel, Cmd.Cmd<Msg>] => {
 
 export type Msg = FrontendMsg
 
-export const update = ({ currentRoomId }: { currentRoomId: RoomId.RoomId }, msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
+export const update = (
+  { currentRoomId }: { currentRoomId: RoomId.RoomId },
+  msg: Msg,
+  model: Model,
+): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
-    case 'GetElementResulted': {
+    case "GetElementResulted": {
       const result = msg[1]
 
       if (result.type === "Err") {
         return [model, Cmd.None]
-
       }
 
       const element = result.value
@@ -48,28 +69,28 @@ export const update = ({ currentRoomId }: { currentRoomId: RoomId.RoomId }, msg:
       return [{ ...model, boardWidth: element.offsetWidth }, Cmd.None]
     }
 
-    case 'BrowserResized': {
+    case "BrowserResized": {
       return [
         model,
         pipe(
           Browser.getElementById(containerHtmlId),
-          Cmd.perform((element): Msg => ["GetElementResulted", element])
-        )
+          Cmd.perform((element): Msg => ["GetElementResulted", element]),
+        ),
       ]
     }
 
-    case 'PlayAs': {
+    case "PlayAs": {
       return [model, sendToBackend(currentRoomId, msg)]
     }
 
-    case 'AudioResulted': {
+    case "AudioResulted": {
       return [model, Cmd.None]
     }
 
-    case 'Move': {
+    case "Move": {
       const result = move(msg[1], model)
 
-      if (result.type === 'Err') {
+      if (result.type === "Err") {
         return [model, Cmd.None]
       }
 
@@ -80,59 +101,62 @@ export const update = ({ currentRoomId }: { currentRoomId: RoomId.RoomId }, msg:
       return [
         {
           ...model,
-          ...sharedModel
+          ...sharedModel,
         },
         Cmd.batch([
           sendToBackend(currentRoomId, msg),
-          pipe(
-            Audio.play(sound),
-            Cmd.perform(tag("AudioResulted")))
-        ])
+          pipe(Audio.play(sound), Cmd.perform(tag("AudioResulted"))),
+        ]),
       ]
-
     }
   }
 }
 
-export const updateFromBackend = (msg: ToFrontend, model: Model): [Model, Cmd.Cmd<Msg>] => {
+export const updateFromBackend = (
+  msg: ToFrontend,
+  model: Model,
+): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
-    case 'MovedResulted': {
-      return [{ ...model, }, Cmd.None]
+    case "MovedResulted": {
+      return [{ ...model }, Cmd.None]
     }
 
-    case 'PlayAsResulted': {
-      return [{ ...model, }, Cmd.None]
+    case "PlayAsResulted": {
+      return [{ ...model }, Cmd.None]
     }
 
-    case 'Sync': {
+    case "Sync": {
       const sharedModel = msg[1]
       return [{ ...model, ...sharedModel }, Cmd.None]
     }
   }
 }
 
-// 
-// 
-// 
+//
+//
+//
 // Subscriptions
-// 
-// 
-// 
+//
+//
+//
 
 export const subscriptions = (_model: Model): Sub.Sub<Msg> => {
-  return Browser.onResize((resize) => ['BrowserResized', resize])
+  return Browser.onResize((resize) => ["BrowserResized", resize])
 }
 
-// 
-// 
-// 
+//
+//
+//
 // Bridge
-// 
-// 
-// 
+//
+//
+//
 
 export const sendToBackend = (roomId: RoomId.RoomId, toBackend: ToBackend) => {
-  return Bridge.sendToBackend(['GameRoom', ['Game', { roomId, toBackend: ['Chess', toBackend] }]])
+  return Bridge.sendToBackend([
+    "GameRoom",
+    ["Game", { roomId, toBackend: ["Chess", toBackend] }],
+  ])
 }
 
 //
@@ -146,59 +170,81 @@ export const sendToBackend = (roomId: RoomId.RoomId, toBackend: ToBackend) => {
 const containerHtmlId = "chess"
 
 export const view =
-  ({
-    currentUserId,
-    store
-  }: {
-    store: Store.Model;
-    currentUserId: UserId.UserId
-  }, model: Model): UI.View<Msg> =>
+  (
+    {
+      currentUserId,
+      store,
+    }: {
+      store: Store.Model
+      currentUserId: UserId.UserId
+    },
+    model: Model,
+  ): UI.View<Msg> =>
     (dispatch) => {
-
       const status = toStatus(model)
 
-      if (status[0] === 'NotReady') {
+      if (status[0] === "NotReady") {
+        return (
+          <UI.FillBox>
+            <UI.Box sx={{ paddingX: 2 }}>
+              <UI.Typography>White</UI.Typography>
+              <UI.Button
+                onClick={() =>
+                  dispatch([
+                    "PlayAs",
+                    { userId: currentUserId, playerType: "White" },
+                  ])
+                }
+                fullWidth
+                variant="outlined"
+                sx={{ marginBottom: 2 }}
+              >
+                play as white
+              </UI.Button>
 
-
-        return <UI.FillBox>
-          <UI.Box sx={{ paddingX: 2, }}>
-            <UI.Typography >
-              White
-            </UI.Typography>
-            <UI.Button onClick={() => dispatch(['PlayAs', { userId: currentUserId, playerType: "White" }])} fullWidth variant="outlined" sx={{ marginBottom: 2 }}>
-              play as white
-            </UI.Button>
-
-            <UI.Typography>
-              Black
-            </UI.Typography>
-            <UI.Button onClick={() => dispatch(['PlayAs', { userId: currentUserId, playerType: "Black" }])} fullWidth variant="outlined" sx={{ marginBottom: 2 }}>
-              play as black
-            </UI.Button>
-          </UI.Box>
-          <UI.Divider sx={{ marginY: 2 }} />
-          <UI.Box sx={{ paddingX: 2, }}>
-            <UI.Button disabled fullWidth variant="contained" sx={{ marginBottom: 2 }}>
-              Start
-            </UI.Button>
-          </UI.Box>
-
-        </UI.FillBox>
+              <UI.Typography>Black</UI.Typography>
+              <UI.Button
+                onClick={() =>
+                  dispatch([
+                    "PlayAs",
+                    { userId: currentUserId, playerType: "Black" },
+                  ])
+                }
+                fullWidth
+                variant="outlined"
+                sx={{ marginBottom: 2 }}
+              >
+                play as black
+              </UI.Button>
+            </UI.Box>
+            <UI.Divider sx={{ marginY: 2 }} />
+            <UI.Box sx={{ paddingX: 2 }}>
+              <UI.Button
+                disabled
+                fullWidth
+                variant="contained"
+                sx={{ marginBottom: 2 }}
+              >
+                Start
+              </UI.Button>
+            </UI.Box>
+          </UI.FillBox>
+        )
       }
 
       console.log({ status })
 
-      return <View
-        store={store}
-        currentUserId={currentUserId}
-        model={model}
-        dispatch={dispatch}
-        White={status[1].White}
-        Black={status[1].Black}
-      />
+      return (
+        <View
+          store={store}
+          currentUserId={currentUserId}
+          model={model}
+          dispatch={dispatch}
+          White={status[1].White}
+          Black={status[1].Black}
+        />
+      )
     }
-
-
 
 export const View = ({
   currentUserId,
@@ -206,13 +252,13 @@ export const View = ({
   model,
   dispatch,
   White,
-  Black
+  Black,
 }: {
-  store: Store.Model,
-  currentUserId: UserId.UserId;
-  White: UserId.UserId,
-  Black: UserId.UserId,
-  model: Model,
+  store: Store.Model
+  currentUserId: UserId.UserId
+  White: UserId.UserId
+  Black: UserId.UserId
+  model: Model
   dispatch: (msg: Msg) => void
 }) => {
   console.log(store, { currentUserId, White, Black })
@@ -234,93 +280,99 @@ export const View = ({
     }
   }, [])
 
-
   const playerBoxSx: UI.Sx = {
     paddingX: 2,
     paddingY: 1,
     display: "flex",
-    alignItems: "center"
+    alignItems: "center",
   }
 
   const playerAvatarSx: UI.Sx = {
-    marginRight: 1
+    marginRight: 1,
   }
 
-  return <UI.FillBox id={containerHtmlId}>
-    <UI.Box sx={playerBoxSx}>
-      <UI.Avatar src={store.Profile[White]?.avatarUrl} sx={playerAvatarSx} />
+  return (
+    <UI.FillBox id={containerHtmlId}>
+      <UI.Box sx={playerBoxSx}>
+        <UI.Avatar
+          src={store.Profile[White]?.avatarUrl}
+          sx={playerAvatarSx}
+        />
 
-      <UI.Box sx={{ flex: 1 }}>
-        <UI.Typography>
-          {store.Profile[White]?.username ?? "..."}
-        </UI.Typography>
+        <UI.Box sx={{ flex: 1 }}>
+          <UI.Typography>
+            {store.Profile[White]?.username ?? "..."}
+          </UI.Typography>
+        </UI.Box>
+
+        <UI.Paper
+          variant="outlined"
+          sx={{ paddingX: 1, paddingY: 1 / 2 }}
+        >
+          <UI.Typography>0:00</UI.Typography>
+        </UI.Paper>
       </UI.Box>
 
+      <div ref={ref}>
+        <Chessboard
+          showBoardNotation
+          snapToCursor
+          boardOrientation="white"
+          position={model.fen}
+          boardWidth={boardWidth}
+          onPieceDrop={(sourceSquare, targetSquare, _piece) => {
+            const msg: Move = [
+              "Move",
+              {
+                userId: currentUserId,
+                from: sourceSquare,
+                to: targetSquare,
+                promotion: "q",
+              },
+            ]
 
-      <UI.Paper variant='outlined' sx={{ paddingX: 1, paddingY: 1 / 2 }}>
-        <UI.Typography>
-          0:00
-        </UI.Typography>
-      </UI.Paper>
-    </UI.Box>
+            dispatch(msg)
 
-    <div ref={ref}>
-      <Chessboard
-        showBoardNotation
-        snapToCursor
-        boardOrientation="white"
-        position={model.fen}
-        boardWidth={boardWidth}
-        onPieceDrop={(sourceSquare, targetSquare, _piece) => {
+            return true
+          }}
+        />
+      </div>
 
-          const msg: Move = ['Move', {
-            userId: currentUserId,
-            from: sourceSquare,
-            to: targetSquare,
-            // promotion: 'q',
-            promotion: 'q'
+      <UI.Box sx={playerBoxSx}>
+        <UI.Avatar
+          src={store.Profile[Black]?.avatarUrl}
+          sx={playerAvatarSx}
+        />
 
-          }]
+        <UI.Box sx={{ flex: 1 }}>
+          <UI.Typography>
+            {store.Profile[Black]?.username ?? "..."}
+          </UI.Typography>
+        </UI.Box>
 
-          dispatch(msg)
-
-          return true
-        }} />
-    </div>
-
-    <UI.Box sx={playerBoxSx}>
-      <UI.Avatar src={store.Profile[Black]?.avatarUrl} sx={playerAvatarSx} />
-
-      <UI.Box sx={{ flex: 1 }}>
-        <UI.Typography>
-          {store.Profile[Black]?.username ?? "..."}
-        </UI.Typography>
+        <UI.Paper
+          variant="outlined"
+          sx={{ paddingX: 1, paddingY: 1 / 2 }}
+        >
+          <UI.Typography>0:00</UI.Typography>
+        </UI.Paper>
       </UI.Box>
 
-      <UI.Paper variant='outlined' sx={{ paddingX: 1, paddingY: 1 / 2 }}>
-        <UI.Typography>
-          0:00
-        </UI.Typography>
-      </UI.Paper>
-    </UI.Box>
+      <UI.Box sx={{ flex: 1 }} />
 
-    <UI.Box sx={{ flex: 1 }} />
-
-    <UI.Box sx={{ display: "flex" }}>
-      <UI.ButtonBase sx={{ padding: 2 }}>
-        <UI.Icons.Menu />
-      </UI.ButtonBase>
-    </UI.Box>
-  </UI.FillBox>
+      <UI.Box sx={{ display: "flex" }}>
+        <UI.ButtonBase sx={{ padding: 2 }}>
+          <UI.Icons.Menu />
+        </UI.ButtonBase>
+      </UI.Box>
+    </UI.FillBox>
+  )
 }
-
-
 
 export const theme = {
   lightSquare: "#EBEBD0",
   darkSquare: "#779455",
 }
-
 
 export const CoverArt = () => {
   return (

@@ -1,7 +1,17 @@
 import { Cmd } from "../../../Core"
 import * as UI from "../../../UI"
-import { COLUMN_COUNT, MAX_COLUMN_HEIGHT, theme, ViewColumns } from "./ConnectFour"
-import { FrontendModel, FrontendMsg, initSharedModel, ToFrontend } from "./ConnectFour.Types"
+import {
+  COLUMN_COUNT,
+  MAX_COLUMN_HEIGHT,
+  theme,
+  ViewColumns,
+} from "./ConnectFour"
+import {
+  FrontendModel,
+  FrontendMsg,
+  initSharedModel,
+  ToFrontend,
+} from "./ConnectFour.Types"
 
 //
 //
@@ -29,7 +39,10 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   return [model, Cmd.None]
 }
 
-export const updateFromBackend = (msg: ToFrontend, model: Model): [Model, Cmd.Cmd<Msg>] => {
+export const updateFromBackend = (
+  msg: ToFrontend,
+  model: Model,
+): [Model, Cmd.Cmd<Msg>] => {
   return [model, Cmd.None]
 }
 
@@ -43,17 +56,15 @@ export const updateFromBackend = (msg: ToFrontend, model: Model): [Model, Cmd.Cm
 
 export const view =
   (model: Model): UI.View<Msg> =>
-    (dispatch) =>
+  (dispatch) =>
     (
       <UI.FillBox>
         <ViewColumns
           columns={model.columns}
-          onClick={(columnIndex) => { }}
+          onClick={(columnIndex) => {}}
         />
       </UI.FillBox>
     )
-
-
 
 //
 //

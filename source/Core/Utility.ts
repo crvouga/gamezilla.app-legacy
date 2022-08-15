@@ -44,29 +44,38 @@ export const tag =
   <Value>(value: Value): [Tag, Value] =>
     [tag, value]
 
-export  const tagUpdate = 
-<TagName extends string, Model, Msg>(
-    tagName: TagName, 
-    [model, cmd]: [Model, Cmd.Cmd<Msg>]
+export const tagUpdate = <TagName extends string, Model, Msg>(
+  tagName: TagName,
+  [model, cmd]: [Model, Cmd.Cmd<Msg>],
 ): [[TagName, Model], Cmd.Cmd<[TagName, Msg]>] => {
-
-  return [[tagName, model], pipe(cmd, Cmd.map(msg => [tagName, msg])) ]
+  return [
+    [tagName, model],
+    pipe(
+      cmd,
+      Cmd.map((msg) => [tagName, msg]),
+    ),
+  ]
 }
 
 export const tagCmd = <TagName extends string, Msg>(
-  tagName: TagName, 
-  cmd: Cmd.Cmd<Msg>
+  tagName: TagName,
+  cmd: Cmd.Cmd<Msg>,
 ): Cmd.Cmd<[TagName, Msg]> => {
-  return pipe(cmd, Cmd.map(msg => [tagName, msg]))
+  return pipe(
+    cmd,
+    Cmd.map((msg) => [tagName, msg]),
+  )
 }
 
 export const tagSub = <TagName extends string, Msg>(
-  tagName: TagName, 
-  sub: Sub.Sub<Msg>
+  tagName: TagName,
+  sub: Sub.Sub<Msg>,
 ): Sub.Sub<[TagName, Msg]> => {
-  return pipe(sub, Sub.map(msg => [tagName, msg]))
+  return pipe(
+    sub,
+    Sub.map((msg) => [tagName, msg]),
+  )
 }
-
 
 export type Unit = { type: "Unit" }
 
