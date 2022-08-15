@@ -465,8 +465,8 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
       continue
     }
 
-    const sub =  pipe(
-      Game.subscriptions(game), 
+    const sub =  pipe( 
+      Game.subscriptions(roomId, game), 
       Sub.map((msg): Msg => ['Game', {roomId, backendMsg: msg}])
     )
 

@@ -123,6 +123,12 @@ const program = Platform.worker({
 
 Platform.run(program)
 
+program.state$.subscribe(state => {
+  console.log("\n")
+  console.log(JSON.stringify(state.msg))
+  console.log(state.model)
+})
+
 //
 //
 //
