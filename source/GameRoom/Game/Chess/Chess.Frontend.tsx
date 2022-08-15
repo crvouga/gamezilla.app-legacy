@@ -1,10 +1,12 @@
 import { useLayoutEffect, useRef, useState } from 'react';
 import { Chessboard } from 'react-chessboard';
-import { Browser, Cmd, pipe, Sub } from "../../../Core";
+import { Audio, Browser, Cmd, pipe, Sub, tag } from "../../../Core";
 import { RoomId, UserId } from '../../../Data';
 import * as UI from "../../../UI";
 import * as Bridge from "../../../Bridge";
 import { FrontendModel, FrontendMsg, initSharedModel, move, Move, ToBackend, ToFrontend } from "./Chess.Types";
+import { Sounds } from './Sounds';
+
 
 //
 //
@@ -49,6 +51,10 @@ export const update = ({ currentRoomId }: { currentRoomId: RoomId.RoomId }, msg:
       return [model, pipe(Browser.getElementById(containerHtmlId), Cmd.fromTask((element): Msg => ["GetElementResulted", element]))]
     }
 
+    case 'AudioResulted': {
+      return [model, Cmd.None]
+    }
+
     case 'Move': {
       const result = move(msg[1], model)
 
@@ -58,7 +64,16 @@ export const update = ({ currentRoomId }: { currentRoomId: RoomId.RoomId }, msg:
 
       const sharedModelNew = result.value
 
-      return [{ ...model, ...sharedModelNew }, sendToBackend(currentRoomId, msg)]
+      return [
+        { ...model, ...sharedModelNew },
+        Cmd.batch([
+          sendToBackend(currentRoomId, msg),
+          pipe(
+            Audio.play(Sounds.move),
+            Cmd.fromTask(tag("AudioResulted")))
+        ])
+      ]
+
     }
   }
 }

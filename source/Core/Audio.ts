@@ -1,17 +1,20 @@
 import * as Result from "./Result"
 import * as Task from "./Task"
+import { Unit } from "./Utility"
 
-type Problem = "Unknown"
+export type Problem = "Unknown"
+
+export type PlayResult = Result.Result<Problem, Unit>
 
 export const play =
-  (file: string): Task.Task<Result.Result<Problem, {}>> =>
+  (file: string): Task.Task<PlayResult> =>
   async () => {
     try {
       const audio = new Audio(file)
 
       await audio.play()
 
-      return Result.Ok({})
+      return Result.Ok(Unit)
     } catch (error) {
       return Result.Err("Unknown")
     }

@@ -1,5 +1,5 @@
 import * as ChessTs from "chess.ts"
-import { Browser, Result } from "../../../Core"
+import { Audio, Browser, Result } from "../../../Core"
 import { UserId } from "../../../Data"
 
 // 
@@ -72,6 +72,7 @@ export type FrontendMsg =
 | Move 
 | ["GetElementResulted", Browser.GetElementByIdResult] 
 | ["BrowserResized", Browser.Resize]
+| ["AudioResulted", Audio.PlayResult]
 
 export type BackendMsg = ["None"]
 
