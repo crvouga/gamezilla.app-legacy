@@ -120,7 +120,7 @@ export const updateFromFrontend = ({clientId, roomId}: {roomId: RoomId.RoomId, c
 //
 //
 
-export const subscriptions = (model: Model): Sub.Sub<Msg> => {
+export const subscriptions = (roomId: RoomId.RoomId, model: Model): Sub.Sub<Msg> => {
   switch(model[0]) {
     case 'ConnectFour': {
       return tagSub("ConnectFour", ConnectFour.subscriptions(model[1]))
@@ -129,7 +129,7 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
       return tagSub("TicTacToe", TicTacToe.subscriptions(model[1]))
     }
     case 'Snake': {
-      return tagSub("Snake", Snake.subscriptions(model[1]))
+      return tagSub("Snake", Snake.subscriptions(roomId, model[1]))
     }
     case 'Chess': {
       return tagSub("Chess", Chess.subscriptions(model[1]))

@@ -64,34 +64,33 @@ export const cancelTimeout = (timeoutId: string): Cmd.Cmd<never> => {
 //
 
 // NOTE: needs to be cleaned up when using HMR
-let __intervals: { [interval: number]: Rx.Subject<number> } = {}
+let __intervals: { [intervalId: string]: Rx.Subject<number> } = {}
 
-export type Time = number
-
-const onTimeout = (time: number) => {
-  const subj = __intervals[time]
+const onTimeout = (intervalId:string, time: number) => {
+  const subj = __intervals[intervalId]
 
   if (subj && subj.observed) {
     subj.next(new Date().getTime())
 
-    setTimeout(() => onTimeout(time), time)
+    setTimeout(() => onTimeout(intervalId, time), time)
 
     return
   }
 
-  delete __intervals[time]
+  delete __intervals[intervalId]
 }
 
 export const every = <Msg>(
+  intervalId:string,
   time: number,
-  f: (time: Time) => Msg,
+  f: (time: number) => Msg,
 ): Sub.Sub<Msg> => {
-  let subj = __intervals[time]
+  let subj = __intervals[intervalId]
 
   if (subj === undefined) {
-    __intervals[time] = subj = new Rx.Subject<number>()
+    __intervals[intervalId] = subj = new Rx.Subject<number>()
 
-    setTimeout(() => onTimeout(time), time)
+    setTimeout(() => onTimeout(intervalId, time), time)
   }
 
   return subj.pipe(Rx.map(() => f(new Date().getTime())))
