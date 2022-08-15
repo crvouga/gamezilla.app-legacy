@@ -202,6 +202,7 @@ export const updateFromBackend = (
 
       const modelNew: Model = {
         ...model,
+        // todo remove this 
         // @ts-ignore
         games: {
           ...model.games,
