@@ -81,7 +81,7 @@ export const update = (msg: Msg, model: Store): [Store, Cmd.Cmd<Msg>] => {
         model.mutations.Message.Send[conversationId] = pipe(
           result,
           RemoteData.fromResult,
-          RemoteData.mapSuccess((item) => item.messageId),
+          RemoteData.map((item) => item.messageId),
         )
         switch (result.type) {
           case "Err":

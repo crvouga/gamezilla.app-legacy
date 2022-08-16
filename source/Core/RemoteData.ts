@@ -1,6 +1,6 @@
 import * as Result from "./Result"
 
-export type Model<TError, TValue> =
+export type RemoteData<TError, TValue> =
   | NotAsked
   | Loading
   | Failure<TError>
@@ -24,13 +24,23 @@ export const Success = <T>(value: T): Success<T> => ({
   value,
 })
 
-export const fromResult = <E, A>(result: Result.Result<E, A>): Model<E, A> => {
-  return Result.fold<E, A, Model<E, A>>(Failure, Success)(result)
+export const fromResult = <E, A>(
+  result: Result.Result<E, A>,
+): RemoteData<E, A> => {
+  switch (result.type) {
+    case "Err": {
+      return Failure(result.error)
+    }
+
+    case "Ok": {
+      return Success(result.value)
+    }
+  }
 }
 
-export const mapSuccess =
+export const map =
   <E, A, B>(mapper: (a: A) => B) =>
-  (remoteData: Model<E, A>): Model<E, B> => {
+  (remoteData: RemoteData<E, A>): RemoteData<E, B> => {
     switch (remoteData.type) {
       case "NotAsked":
       case "Loading":

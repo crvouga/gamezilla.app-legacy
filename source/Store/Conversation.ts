@@ -96,7 +96,7 @@ export const update = (msg: Msg, model: Store): [Store, Cmd.Cmd<Msg>] => {
         model.queries.Conversation.FindOne[conversationId] = pipe(
           result,
           RemoteData.fromResult,
-          RemoteData.mapSuccess((item) => ({
+          RemoteData.map((item) => ({
             conversation: item.conversation.conversationId,
             profile: item.profiles.map((item) => item.userId),
             message: item.messages.map((item) => item.messageId),
@@ -139,7 +139,7 @@ export const update = (msg: Msg, model: Store): [Store, Cmd.Cmd<Msg>] => {
         model.queries.Conversation.FindManyByUserId[userId] = pipe(
           result,
           RemoteData.fromResult,
-          RemoteData.mapSuccess((data) => ({
+          RemoteData.map((data) => ({
             conversation: data.conversations.map((item) => item.conversationId),
             profile: data.profiles.map((item) => item.userId),
             profilesConversations: data.profilesConversations.map(
@@ -180,7 +180,7 @@ export const update = (msg: Msg, model: Store): [Store, Cmd.Cmd<Msg>] => {
         model.mutations.Conversation.FindElseInsert = pipe(
           result,
           RemoteData.fromResult,
-          RemoteData.mapSuccess((item) => item.conversation.conversationId),
+          RemoteData.map((item) => item.conversation.conversationId),
         )
 
         switch (result.type) {

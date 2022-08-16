@@ -20,11 +20,11 @@ export type FrontendModel = SharedModel & {
   games: {
     [roomId: RoomId.RoomId]: Game.FrontendModel
   }
-  createRoom: RemoteData.Model<CreateRoomProblem, Unit>
-  leaveRoom: RemoteData.Model<LeaveRoomProblem, Unit>
-  joinRoom: RemoteData.Model<JoinRoomProblem, Unit>
-  startGame: RemoteData.Model<StartGameProblem, Unit>
-  stopGame: RemoteData.Model<StopGameProblem, Unit>
+  createRoom: RemoteData.RemoteData<CreateRoomProblem, Unit>
+  leaveRoom: RemoteData.RemoteData<LeaveRoomProblem, Unit>
+  joinRoom: RemoteData.RemoteData<JoinRoomProblem, Unit>
+  startGame: RemoteData.RemoteData<StartGameProblem, Unit>
+  stopGame: RemoteData.RemoteData<StopGameProblem, Unit>
   modal: "DrawerOpened" | "Closed" | "MenuOpened"
 }
 
