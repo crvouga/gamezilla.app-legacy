@@ -1,19 +1,21 @@
 import * as Bridge from "../Bridge"
 import { Cmd, exhaustive, pipe, RemoteData, Result, Sub, Unit } from "../Core"
 import { RoomId, UserId } from "../Data"
+import * as Game from "../Game/Game.Frontend"
+import * as GameTypes from "../Game/Game.Types"
+import { GameName } from "../Game/Game.Types"
 import * as Route from "../Route"
 import * as Snackbar from "../Snackbar"
 import * as Store from "../Store"
 import * as UI from "../UI"
-import * as Game from "../Game/Game.Frontend"
-import { GameName } from "../Game/Game.Types"
 import {
   FrontendModel,
   FrontendMsg,
   RoomModel,
   SharedModel,
-  ToFrontend,
+  ToFrontend
 } from "./GameRoom.Types"
+
 
 //
 //
@@ -195,19 +197,18 @@ export const updateFromBackend = (
 
       const backendModel = msg[1]
 
+      const [gamesNew, gamesCmd] = Object
+        .entries(backendModel.games)
+        .reduce(syncGamesReducer, [model.games, Cmd.None])
+
       const modelNew: Model = {
         ...model,
-        // todo remove this
-        // @ts-ignore
-        games: {
-          ...model.games,
-          ...backendModel.games,
-        },
+        games: gamesNew,
         rooms: backendModel.rooms,
         users: backendModel.users,
       }
 
-      return [modelNew, Cmd.None, [action]]
+      return [modelNew, gamesCmd, [action]]
     }
 
     case "Game": {
@@ -261,6 +262,44 @@ export const updateFromBackend = (
       return updateFromBackendResult("stopGame", msg[1], model)
     }
   }
+}
+
+const syncGamesReducer = (
+  [games, cmd]: [Model['games'], Cmd.Cmd<Msg>],
+  [roomId, backendGame]: [string, GameTypes.BackendModel]
+): [Model['games'], Cmd.Cmd<Msg>] => {
+
+  if (!RoomId.is(roomId)) {
+    return [games, cmd]
+  }
+
+  const game = games[roomId]
+
+  if (!game) {
+    const [gameInit, gameCmd] = Game.init(backendGame[0])
+
+    return [
+      {
+        ...games,
+        [roomId]: [gameInit[0], { ...gameInit[1], ...backendGame[1] }]
+      },
+      Cmd.batch([
+        cmd,
+        pipe(gameCmd, Cmd.map((msg): Msg => ['Game', roomId, msg]))
+      ])
+    ]
+  }
+
+  return [
+    {
+      ...games,
+      [roomId]: {
+        ...game,
+        ...backendGame,
+      }
+    },
+    cmd
+  ]
 }
 
 const updateFromBackendResult = <
@@ -506,7 +545,7 @@ const viewNotInGame =
         <UI.FillBox>
           <UI.Toolbar>
             <UI.Button
-              sx={{ marginLeft: -1 }}
+              sx={{ marginLeft: -2 }}
               onClick={() => dispatch(["LeaveRoom", { userId: currentUserId }])}
             >
               Leave
@@ -573,7 +612,6 @@ const viewHeader =
       )
     }
 
-const menuButtonId = "menuButtonId"
 
 const viewButtonMenu =
   ({
@@ -593,15 +631,17 @@ const viewButtonMenu =
     isOpen: boolean
   }): UI.View<Msg> =>
     (dispatch) => {
+      const menuButtonId = "menuButtonId"
       return (
         <>
-          <UI.IconButton
-            edge="start"
+          <UI.Button
+            startIcon={<UI.Icons.MoreVert />}
+            sx={{ marginLeft: -2 }}
             id={menuButtonId}
             onClick={() => dispatch(onOpen)}
           >
-            <UI.Icons.Menu />
-          </UI.IconButton>
+            Menu
+          </UI.Button>
 
           <UI.Menu
             anchorEl={document.getElementById(menuButtonId)}
@@ -646,9 +686,12 @@ const viewUsersInRoomAvatarGroup =
           model.users[profile.userId]?.roomId === room.roomId,
       )
 
+      const guests = usersInRoom.filter(item => item.userId !== room.hostId)
+      const hosts = usersInRoom.filter(item => item.userId === room.hostId)
+
       return (
         <>
-          <UI.AvatarGroup onClick={() => dispatch(["ClickedAvatars"])}>
+          <UI.AvatarGroup max={4} sx={{ marginRight: -1 }} onClick={() => dispatch(["ClickedAvatars"])}>
             {usersInRoom.map((profile) => (
               <UI.Avatar
                 key={profile.userId}
@@ -662,26 +705,59 @@ const viewUsersInRoomAvatarGroup =
             open={model.modal === "DrawerOpened"}
             onClose={() => dispatch(["ClosedDrawer"])}
           >
-            {usersInRoom.map((item) => (
-              <UI.ListItemButton
-                onClick={() => dispatch(["ClickedUser", item])}
-                key={item.userId}
-              >
-                <UI.ListItemAvatar>
-                  <UI.Avatar
-                    key={item.userId}
-                    src={item.avatarUrl}
+            <UI.List>
+              <UI.ListSubheader>
+                Host
+              </UI.ListSubheader>
+              {hosts.map((item) => (
+                <UI.ListItemButton
+                  onClick={() => dispatch(["ClickedUser", item])}
+                  key={item.userId}
+                >
+                  <UI.ListItemAvatar>
+                    <UI.Avatar
+                      key={item.userId}
+                      src={item.avatarUrl}
+                    />
+                  </UI.ListItemAvatar>
+                  <UI.ListItemText
+                    primaryTypographyProps={{
+                      noWrap: true,
+                      sx: { wordWrap: "break-word" },
+                    }}
+                    primary={item.username}
                   />
-                </UI.ListItemAvatar>
-                <UI.ListItemText
-                  primaryTypographyProps={{
-                    noWrap: true,
-                    sx: { wordWrap: "break-word" },
-                  }}
-                  primary={item.username}
-                />
-              </UI.ListItemButton>
-            ))}
+                </UI.ListItemButton>
+              ))}
+
+              {guests.length > 0 && (
+                <>
+                  <UI.ListSubheader>
+                    Guests
+                  </UI.ListSubheader>
+                  {guests.map((item) => (
+                    <UI.ListItemButton
+                      onClick={() => dispatch(["ClickedUser", item])}
+                      key={item.userId}
+                    >
+                      <UI.ListItemAvatar>
+                        <UI.Avatar
+                          key={item.userId}
+                          src={item.avatarUrl}
+                        />
+                      </UI.ListItemAvatar>
+                      <UI.ListItemText
+                        primaryTypographyProps={{
+                          noWrap: true,
+                          sx: { wordWrap: "break-word" },
+                        }}
+                        primary={item.username}
+                      />
+                    </UI.ListItemButton>
+                  ))}
+                </>
+              )}
+            </UI.List>
           </UI.Drawer>
         </>
       )

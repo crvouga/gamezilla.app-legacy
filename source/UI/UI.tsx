@@ -40,10 +40,10 @@ const createTheme = ({ mode }: { mode: "light" | "dark" }) =>
         // primary: purple,
       },
       typography: {
-        fontFamily: ["Nunito"].join(","),
-        fontWeightRegular: "bold",
-        fontWeightMedium: "bold",
-        fontWeightLight: "bold",
+        fontFamily: ["Roboto"].join(","),
+        // fontWeightRegular: "bold",
+        // fontWeightMedium: "bold",
+        // fontWeightLight: "bold",
       },
       components: {
         MuiButton: {
@@ -259,6 +259,8 @@ export const Badge = Mui.Badge
 export const ListItemAvatar = Mui.ListItemAvatar
 
 export const ListItem = Mui.ListItem
+
+export const ListSubheader = Mui.ListSubheader
 
 export const Avatar = Mui.Avatar
 

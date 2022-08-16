@@ -76,18 +76,27 @@ export type SharedModel = {
 
 export type Player = ["User", { userId: UserId.UserId }] | ["None"]
 
-export const initSharedModel: SharedModel = {
-  fen: getInitialFen(),
-  status: ["GameNotReady", {}],
-}
-
 export type FrontendModel = SharedModel & {
   boardWidth: number
   startGame: RemoteData.RemoteData<StartGameProblem, Unit>
   playAs: RemoteData.RemoteData<PlayAsProblem, Unit>
+  menu: ["Closed"] | ["Opened", { menuId: string }]
 }
 
 export type BackendModel = SharedModel
+
+//
+//
+//
+// Init
+//
+//
+//
+
+export const initSharedModel: SharedModel = {
+  fen: getInitialFen(),
+  status: ["GameNotReady", {}],
+}
 
 //
 //
@@ -101,6 +110,8 @@ export type FrontendMsg =
   | ["GetElementResulted", Browser.GetElementByIdResult]
   | ["BrowserResized", Browser.Resize]
   | ["AudioResulted", Audio.PlayResult]
+  | ["PressedPlayerSlot", PlayerType]
+  | ["ClosedMenu"]
   | Move
   | PlayAs
   | StartGame
