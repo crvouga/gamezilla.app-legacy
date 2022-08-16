@@ -60,6 +60,7 @@ export const update = (
   msg: Msg,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
+
   switch (model[0]) {
     case "ConnectFour": {
       if (msg[0] === "ConnectFour") {

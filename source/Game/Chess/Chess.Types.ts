@@ -171,6 +171,37 @@ export const playAs = (
 //
 //
 //
+
+export type StopPlayAs = ["StopPlayAs", { userId: UserId.UserId }]
+export type StopPlayAsResulted = ["StopPlayAsResulted", StopPlayAsResult]
+export type StopPlayAsProblem = "not_playing_as"
+export type StopPlayAsResult = Result.Result<StopPlayAsProblem, SharedModel>
+
+export const stopPlayAs = (
+  { userId, playerType }: PlayAs[1],
+  model: SharedModel,
+): PlayAsResult => {
+  if (model.status[0] !== "GameNotReady") {
+    return Result.Err("game_started")
+  }
+
+  const partialPlayers = model.status[1]
+
+  if (partialPlayers[playerType]) {
+    return Result.Err(`player_type_taken`)
+  }
+
+  const modelNew: SharedModel = {
+    ...model,
+    status: ["GameNotReady", { ...model.status[1], [playerType]: userId }],
+  }
+
+  return Result.Ok(modelNew)
+}
+
+//
+//
+//
 //
 
 export type StartGame = ["StartGame"]
