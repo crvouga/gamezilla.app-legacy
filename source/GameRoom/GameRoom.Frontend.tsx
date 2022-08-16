@@ -9,6 +9,7 @@ import * as Snackbar from "../Snackbar"
 import * as Store from "../Store"
 import * as UI from "../UI"
 import {
+  BackendModel,
   FrontendModel,
   FrontendMsg,
   RoomModel,
@@ -199,7 +200,7 @@ export const updateFromBackend = (
 
       const [gamesNew, gamesCmd] = Object
         .entries(backendModel.games)
-        .reduce(syncGamesReducer, [model.games, Cmd.None])
+        .reduce(syncGamesReducer(model), [{}, Cmd.None])
 
       const modelNew: Model = {
         ...model,
@@ -264,7 +265,65 @@ export const updateFromBackend = (
   }
 }
 
-const syncGamesReducer = (
+
+const updateFromBackendResult = <
+  TResult extends Result.Result<TProblem, BackendModel>,
+  TProblem extends string,
+  >(
+    remoteDataKey: keyof Model,
+    result: TResult,
+    model: Model,
+): [Model, Cmd.Cmd<FrontendMsg>, OutAction[]] => {
+  const actions: OutAction[] =
+    result.type === "Err"
+      ? [["Snackbar", { message: result.error, variant: "Error" }]]
+      : []
+
+  const remoteData = pipe(
+    result,
+    RemoteData.fromResult,
+    RemoteData.map(() => Unit),
+  )
+
+  if (result.type === 'Err') {
+    return [
+      { ...model, [remoteDataKey]: remoteData },
+      Cmd.None,
+      [["Snackbar", { message: result.error, variant: "Error" }]]
+    ]
+  }
+
+  const backendModel = result.value
+
+  const [gamesNew, gamesCmd] = Object
+    .entries(backendModel.games)
+    .reduce(syncGamesReducer(model), [{}, Cmd.None])
+
+  const modelNew: Model = {
+    ...model,
+    rooms: result.value.rooms,
+    users: result.value.users,
+    games: gamesNew,
+    [remoteDataKey]: remoteData
+  }
+
+  return [modelNew, gamesCmd, actions]
+}
+
+export const updateFromAction = (
+  { currentUserId }: { currentUserId: UserId.UserId },
+  action: Action,
+  model: Model,
+): [Model, Cmd.Cmd<Msg>] => {
+  switch (action[1][0]) {
+    case "Msg": {
+      const msg = action[1][1]
+      return update({ currentUserId }, msg, model)
+    }
+  }
+}
+
+const syncGamesReducer = (frontendModel: Model) => (
   [games, cmd]: [Model['games'], Cmd.Cmd<Msg>],
   [roomId, backendGame]: [string, GameTypes.BackendModel]
 ): [Model['games'], Cmd.Cmd<Msg>] => {
@@ -273,7 +332,7 @@ const syncGamesReducer = (
     return [games, cmd]
   }
 
-  const game = games[roomId]
+  const game = frontendModel.games[roomId]
 
   if (!game) {
     const [gameInit, gameCmd] = Game.init(backendGame[0])
@@ -293,52 +352,12 @@ const syncGamesReducer = (
   return [
     {
       ...games,
-      [roomId]: {
-        ...game,
-        ...backendGame,
-      }
+      [roomId]: [game[0], { ...game[1], ...backendGame[1] }]
     },
     cmd
   ]
 }
 
-const updateFromBackendResult = <
-  TResult extends Result.Result<TProblem, SharedModel>,
-  TProblem extends string,
-  >(
-    remoteDataKey: keyof Model,
-    result: TResult,
-    model: Model,
-): [Model, Cmd.Cmd<FrontendMsg>, OutAction[]] => {
-  const actions: OutAction[] =
-    result.type === "Err"
-      ? [["Snackbar", { message: result.error, variant: "Error" }]]
-      : []
-
-  const modelNew: Model =
-    result.type === "Ok" ? { ...model, ...result.value } : model
-
-  const remoteData = pipe(
-    result,
-    RemoteData.fromResult,
-    RemoteData.map(() => Unit),
-  )
-
-  return [{ ...modelNew, [remoteDataKey]: remoteData }, Cmd.None, actions]
-}
-
-export const updateFromAction = (
-  { currentUserId }: { currentUserId: UserId.UserId },
-  action: Action,
-  model: Model,
-): [Model, Cmd.Cmd<Msg>] => {
-  switch (action[1][0]) {
-    case "Msg": {
-      const msg = action[1][1]
-      return update({ currentUserId }, msg, model)
-    }
-  }
-}
 
 //
 //

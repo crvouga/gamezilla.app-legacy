@@ -286,7 +286,9 @@ const ViewPlayerSlot = ({
   dispatch: (msg: Msg) => void,
   model: Model
 }) => {
-  const menuButtonId = `${playerType}MenuItem`
+  const ref = useRef<HTMLDivElement | null>(null)
+
+  const menuAnchorId = playerType
 
   return (
     <>
@@ -296,7 +298,7 @@ const ViewPlayerSlot = ({
 
       {userId ? (
         <>
-          <UI.ListItemButton onClick={() => dispatch(['PressedPlayerSlot', playerType])} id={menuButtonId}>
+          <UI.ListItemButton id={menuAnchorId} onClick={() => dispatch(['PressedPlayerSlot', menuAnchorId])}>
             <UI.ListItemAvatar>
               <UI.Avatar src={store.Profile[userId]?.avatarUrl} />
             </UI.ListItemAvatar>
@@ -306,14 +308,15 @@ const ViewPlayerSlot = ({
             </UI.ListItemSecondaryAction>
           </UI.ListItemButton>
           <UI.Menu
-            anchorEl={document.getElementById(menuButtonId)}
-            open={model.menu[0] === 'Opened'}
+            anchorEl={document.getElementById(menuAnchorId)}
+            open={model.menu[0] === 'Opened' && model.menu[1].menuId === menuAnchorId}
             onClose={() => dispatch(['ClosedMenu'])}
           >
-            <UI.MenuItem
-            >
-              <UI.ListItemText primary="No Action" />
-            </UI.MenuItem>
+            {userId === currentUserId && (
+              <UI.MenuItem>
+                <UI.ListItemText primary="Stop Playing" />
+              </UI.MenuItem>
+            )}
           </UI.Menu>
         </>
       ) : (
