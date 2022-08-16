@@ -1,5 +1,5 @@
 import * as ChessTs from "chess.ts"
-import { Audio, Browser, RemoteData, Result } from "../../../Core"
+import { Audio, Browser, RemoteData, Result, Unit } from "../../../Core"
 import { UserId } from "../../../Data"
 
 //
@@ -83,6 +83,8 @@ export const initSharedModel: SharedModel = {
 
 export type FrontendModel = SharedModel & {
   boardWidth: number
+  startGame: RemoteData.RemoteData<StartGameProblem, Unit>
+  playAs: RemoteData.RemoteData<PlayAsProblem, Unit>
 }
 
 export type BackendModel = SharedModel
@@ -130,10 +132,9 @@ export type PlayAs = [
   { userId: UserId.UserId; playerType: PlayerType },
 ]
 export type PlayAsResulted = ["PlayAsResulted", PlayAsResult]
-export type PlayAsResult = Result.Result<
-  "player_type_taken" | "game_started",
-  SharedModel
->
+export type PlayAsProblem = "player_type_taken" | "game_started"
+export type PlayAsResult = Result.Result<PlayAsProblem, SharedModel>
+
 export const playAs = (
   { userId, playerType }: PlayAs[1],
   model: SharedModel,
@@ -163,7 +164,8 @@ export const playAs = (
 
 export type StartGame = ["StartGame"]
 export type StartGameResulted = ["StartGameResulted", StartGameResult]
-export type StartGameResult = Result.Result<"can_not_start_game", SharedModel>
+export type StartGameProblem = "can_not_start_game"
+export type StartGameResult = Result.Result<StartGameProblem, SharedModel>
 
 export const canStartGame = (model: SharedModel): boolean => {
   return (

@@ -99,16 +99,16 @@ export const toFindManyKey = (userIds: UserId.UserId[]): FindManyKey => {
 export type Queries = {
   Profile: {
     FindMany: {
-      [key: FindManyKey]: RemoteData.Model<Problem, UserId.UserId[]>
+      [key: FindManyKey]: RemoteData.RemoteData<Problem, UserId.UserId[]>
     }
     Search: {
-      [searchText: string]: RemoteData.Model<Problem, UserId.UserId[]>
+      [searchText: string]: RemoteData.RemoteData<Problem, UserId.UserId[]>
     }
   }
 
   Conversation: {
     FindOne: {
-      [id: string]: RemoteData.Model<
+      [id: string]: RemoteData.RemoteData<
         Problem,
         {
           conversation: string
@@ -118,7 +118,7 @@ export type Queries = {
       >
     }
     FindManyByUserId: {
-      [userId: UserId.UserId]: RemoteData.Model<
+      [userId: UserId.UserId]: RemoteData.RemoteData<
         Problem,
         {
           profile: string[]
@@ -141,24 +141,24 @@ export type Queries = {
 export type Mutations = {
   Profile: {
     Edit: {
-      [userId: UserId.UserId]: RemoteData.Model<Problem, UserId.UserId>
+      [userId: UserId.UserId]: RemoteData.RemoteData<Problem, UserId.UserId>
     }
     DeleteForever: {
-      [userId: UserId.UserId]: RemoteData.Model<Problem, Unit>
+      [userId: UserId.UserId]: RemoteData.RemoteData<Problem, Unit>
     }
     Create: {
-      [userId: UserId.UserId]: RemoteData.Model<Problem, UserId.UserId>
+      [userId: UserId.UserId]: RemoteData.RemoteData<Problem, UserId.UserId>
     }
   }
   Conversation: {
-    FindElseInsert: RemoteData.Model<Problem, string>
+    FindElseInsert: RemoteData.RemoteData<Problem, string>
   }
   Message: {
     Send: {
-      [conversationId: string]: RemoteData.Model<Problem, string>
+      [conversationId: string]: RemoteData.RemoteData<Problem, string>
     }
     Unsend: {
-      [messageId: string]: RemoteData.Model<Problem, string>
+      [messageId: string]: RemoteData.RemoteData<Problem, string>
     }
   }
 }

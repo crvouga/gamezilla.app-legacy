@@ -1,7 +1,7 @@
 import { useLayoutEffect, useRef, useState } from "react"
 import { Chessboard } from "react-chessboard"
 import * as Bridge from "../../../Bridge"
-import { Audio, Browser, Cmd, pipe, Sub, tag } from "../../../Core"
+import { Audio, Browser, Cmd, pipe, RemoteData, Sub, tag, Unit } from "../../../Core"
 import { RoomId, UserId } from "../../../Data"
 import * as Store from "../../../Store"
 import * as UI from "../../../UI"
@@ -31,7 +31,12 @@ export type Model = FrontendModel
 
 export const init = (): [FrontendModel, Cmd.Cmd<Msg>] => {
   return [
-    { ...initSharedModel, boardWidth: 0 },
+    {
+      ...initSharedModel,
+      boardWidth: 0,
+      startGame: RemoteData.NotAsked,
+      playAs: RemoteData.NotAsked
+    },
     pipe(
       Browser.getElementById(containerHtmlId),
       Cmd.perform((result) => ["GetElementResulted", result]),
@@ -124,11 +129,21 @@ export const updateFromBackend = (
     }
 
     case "PlayAsResulted": {
-      return [{ ...model }, Cmd.None]
+      const playAs = pipe(
+        msg[1],
+        RemoteData.fromResult,
+        RemoteData.map(() => Unit)
+      )
+      return [{ ...model, playAs }, Cmd.None]
     }
 
     case "StartGameResulted": {
-      return [{ ...model }, Cmd.None]
+      const startGame = pipe(
+        msg[1],
+        RemoteData.fromResult,
+        RemoteData.map(() => Unit)
+      )
+      return [{ ...model, startGame }, Cmd.None]
     }
 
     case "Sync": {
