@@ -1,10 +1,10 @@
 import { useLayoutEffect, useRef, useState } from "react"
 import { Chessboard } from "react-chessboard"
-import * as Bridge from "../../../Bridge"
-import { Audio, Browser, Cmd, pipe, RemoteData, Sub, tag, Unit } from "../../../Core"
-import { RoomId, UserId } from "../../../Data"
-import * as Store from "../../../Store"
-import * as UI from "../../../UI"
+import * as Bridge from "../../Bridge"
+import { Audio, Browser, Cmd, pipe, RemoteData, Sub, tag, Unit } from "../../Core"
+import { RoomId, UserId } from "../../Data"
+import * as Store from "../../Store"
+import * as UI from "../../UI"
 import {
   canStartGame,
   FrontendModel,

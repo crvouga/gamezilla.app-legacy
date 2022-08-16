@@ -1,6 +1,6 @@
 import * as ChessTs from "chess.ts"
-import { Audio, Browser, RemoteData, Result, Unit } from "../../../Core"
-import { UserId } from "../../../Data"
+import { Audio, Browser, RemoteData, Result, Unit } from "../../Core"
+import { UserId } from "../../Data"
 
 //
 //

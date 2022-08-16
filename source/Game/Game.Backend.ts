@@ -1,10 +1,10 @@
-import { Cmd, pipe, Sub, tag, tagSub, tagUpdate } from "../../Core"
+import { Cmd, pipe, Sub, tag, tagSub, tagUpdate } from "../Core"
 import { BackendModel, BackendMsg, ToBackend } from "./Game.Types"
 import * as ConnectFour from "./ConnectFour/ConnectFour.Backend"
 import * as Snake from "./Snake/Snake.Backend"
 import * as Chess from "./Chess/Chess.Backend"
 import * as TicTacToe from "./TicTacToe/TicTacToe.Backend"
-import { RoomId, ClientId, UserId } from "../../Data"
+import { RoomId, ClientId, UserId } from "../Data"
 
 //
 //

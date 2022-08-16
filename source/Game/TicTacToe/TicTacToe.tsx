@@ -1,5 +1,5 @@
-import { Result } from "../../../Core"
-import * as Store from "../../../Store"
+import { Result } from "../../Core"
+import * as Store from "../../Store"
 
 //
 //
@@ -132,8 +132,8 @@ const toWins = (board: Board): Wins => {
       const winner: Winner = slots.every((slot) => slot === "X")
         ? "X"
         : slots.every((slot) => slot === "O")
-        ? "O"
-        : "None"
+          ? "O"
+          : "None"
 
       return { ...wins, [winner]: [...wins[winner], winningGroup] }
     },

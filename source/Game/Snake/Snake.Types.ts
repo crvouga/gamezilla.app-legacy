@@ -1,5 +1,5 @@
-import { Keyboard, Result } from "../../../Core"
-import { UserId } from "../../../Data"
+import { Keyboard, Result } from "../../Core"
+import { UserId } from "../../Data"
 import * as Snake from "./Snake"
 import * as Direction from "./Direction"
 
