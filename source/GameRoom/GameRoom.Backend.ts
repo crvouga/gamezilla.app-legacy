@@ -46,7 +46,7 @@ export type Msg = BackendMsg
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
     case "Game": {
-      const roomId = msg[1].roomId
+      const roomId = msg[1]
 
       const game = model.games[roomId]
 
@@ -54,7 +54,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
         return [model, Cmd.None]
       }
 
-      const gameMsg = msg[1].backendMsg
+      const gameMsg = msg[2]
 
       const [gameNew, gameCmd] = Game.update({ roomId }, gameMsg, game)
 
@@ -70,7 +70,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
         modelNew,
         pipe(
           gameCmd,
-          Cmd.map((msg): Msg => ["Game", { roomId, backendMsg: msg }]),
+          Cmd.map((msg): Msg => ["Game", roomId, msg]),
         ),
       ]
     }
@@ -83,15 +83,8 @@ export const updateFromFrontend = (
   model: Model,
 ): [Model, Cmd.Cmd<BackendMsg>] => {
   switch (msg[0]) {
-    // case "Init": {
-    //   return [
-    //     model,
-    //     Cmd.batch([sendToFrontend([clientId], ["Sync", model])]),
-    //   ]
-    // }
-
     case "Game": {
-      const roomId = msg[1].roomId
+      const roomId = msg[1]
 
       const game = model.games[roomId]
 
@@ -99,7 +92,7 @@ export const updateFromFrontend = (
         return [model, Cmd.None]
       }
 
-      const gameMsg = msg[1].toBackend
+      const gameMsg = msg[2]
 
       const [gameNew, gameCmd] = Game.updateFromFrontend(
         { clientId, roomId },
@@ -119,7 +112,7 @@ export const updateFromFrontend = (
         modelNew,
         pipe(
           gameCmd,
-          Cmd.map((msg): Msg => ["Game", { roomId, backendMsg: msg }]),
+          Cmd.map((msg): Msg => ["Game", roomId, msg]),
         ),
       ]
     }
@@ -469,7 +462,7 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
 
     const sub = pipe(
       Game.subscriptions(roomId, game),
-      Sub.map((msg): Msg => ["Game", { roomId, backendMsg: msg }]),
+      Sub.map((msg): Msg => ["Game", roomId, msg]),
     )
 
     subs.push(sub)

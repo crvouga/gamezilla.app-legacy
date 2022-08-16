@@ -9,19 +9,19 @@ import * as Sub from "./Sub"
 //
 //
 
-export type UpdateInput<Msg, Model> = {
+export type Input<Msg, Model> = {
   msg: Msg
   model: Model
 }
 
-export type UpdateOutput<Msg, Model> = {
+export type Output<Msg, Model> = {
   model: Model
-  cmd: Cmd.Cmd<Msg>
+  cmd?: Cmd.Cmd<Msg>
 }
 
-export type Update = <Msg, Model>(
-  input: UpdateInput<Msg, Model>,
-) => UpdateOutput<Msg, Model>
+export interface Update<Msg, Model> {
+  (input: Input<Msg, Model>): Output<Msg, Model>
+}
 
 //
 //
@@ -32,3 +32,23 @@ export type Update = <Msg, Model>(
 //
 
 export type Subscriptions = <Msg, Model>(model: Model) => Sub.Sub<Msg>
+
+type Model = number
+
+type Msg = "Increment" | "Decrement"
+
+export const update: Update<Msg, Model> = ({ msg, model }) => {
+  switch (msg) {
+    case "Decrement": {
+      return {
+        model: model - 1,
+      }
+    }
+
+    case "Increment": {
+      return {
+        model: model + 1,
+      }
+    }
+  }
+}

@@ -137,7 +137,7 @@ export const update = (
         return [model, Cmd.None]
       }
 
-      const roomId = msg[1].roomId
+      const roomId = msg[1]
 
       if (user.roomId !== roomId) {
         return [model, Cmd.None]
@@ -149,7 +149,7 @@ export const update = (
         return [model, Cmd.None]
       }
 
-      const gameMsg = msg[1].frontendMsg
+      const gameMsg = msg[2]
 
       const [gameNew, gameCmd] = Game.update(
         { currentUserId, currentRoomId: roomId },
@@ -166,7 +166,7 @@ export const update = (
         },
         pipe(
           gameCmd,
-          Cmd.map((msg): Msg => ["Game", { roomId, frontendMsg: msg }]),
+          Cmd.map((msg): Msg => ["Game", roomId, msg]),
         ),
       ]
     }
@@ -211,7 +211,7 @@ export const updateFromBackend = (
     }
 
     case "Game": {
-      const roomId = msg[1].roomId
+      const roomId = msg[1]
 
       const game = model.games[roomId]
 
@@ -219,7 +219,7 @@ export const updateFromBackend = (
         return [model, Cmd.None, []]
       }
 
-      const gameMsg = msg[1].toFrontend
+      const gameMsg = msg[2]
 
       const [gameNew, gameCmd, actions] = Game.updateFromBackend(gameMsg, game)
 
@@ -235,7 +235,7 @@ export const updateFromBackend = (
         modelNew,
         pipe(
           gameCmd,
-          Cmd.map((msg): Msg => ["Game", { roomId, frontendMsg: msg }]),
+          Cmd.map((msg): Msg => ["Game", roomId, msg]),
         ),
         actions,
       ]
@@ -335,7 +335,7 @@ export const subscriptions = (
 
   return pipe(
     Game.subscriptions(game),
-    Sub.map((msg): Msg => ["Game", { roomId: room.roomId, frontendMsg: msg }]),
+    Sub.map((msg): Msg => ["Game", room.roomId, msg]),
   )
 }
 
@@ -390,9 +390,7 @@ export const view = (
         {viewHeader({ store, room, currentUserId }, model)(dispatch)}
         {pipe(
           Game.view({ currentUserId, store }, game),
-          UI.map(
-            (msg): Msg => ["Game", { roomId: room.roomId, frontendMsg: msg }],
-          ),
+          UI.map((msg): Msg => ["Game", room.roomId, msg]),
         )(dispatch)}
       </>
     )

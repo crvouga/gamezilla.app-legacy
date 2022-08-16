@@ -4,8 +4,12 @@ export type Uuid = string & { _opaque: typeof Uuid }
 
 declare const Uuid: unique symbol
 
+const v4 = new RegExp(
+  /^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i,
+)
+
 export const is = (id: unknown): id is Uuid => {
-  return typeof id === "string"
+  return typeof id === "string" && v4.test(id)
 }
 
 export const generate: Task.Task<Uuid> = async () => {

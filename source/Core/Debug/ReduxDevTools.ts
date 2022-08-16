@@ -1,4 +1,5 @@
 import * as Rx from "rxjs"
+import * as Uuid from "../Uuid"
 import * as Browser from "../Browser"
 import * as Cmd from "../Cmd"
 import * as Json from "../Json"
@@ -493,29 +494,29 @@ export const withDebugger = <Model, Msg, Dom>(
       return
     }
 
-    const toTypeString = (action: unknown): string => {
-      if (Array.isArray(action) && typeof action[0] === "string") {
-        const next = toTypeString(action[1])
-        if (next === "") {
-          return action[0]
+    const toAction = (action: unknown): { type: string; payload?: unknown } => {
+      if (!Array.isArray(action)) {
+        return {
+          type: "UnknownAction",
         }
-        return `${action[0]}.${next}`
-      }
-      return ""
-    }
-
-    const toPayload = (action: unknown): unknown => {
-      if (Array.isArray(action) && typeof action[0] === "string") {
-        return toPayload(action[action.length - 1])
       }
 
-      return action
+      const flatten = action.flat(Infinity)
+
+      const actionType = flatten
+        .flatMap((item) => (typeof item === "string" ? [item] : []))
+        // .map((item) => (Uuid.is(item) ? "[id]" : item))
+        .join(".")
+
+      const payload = flatten[flatten.length - 1]
+
+      return {
+        type: actionType,
+        payload: typeof payload === "string" ? undefined : payload,
+      }
     }
 
-    const action = {
-      type: toTypeString(state.msg),
-      payload: toPayload(state.msg),
-    }
+    const action = toAction(state.msg)
 
     // @ts-ignore
     connection.send(action, state.model)

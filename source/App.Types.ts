@@ -25,7 +25,7 @@ export type FrontendModel = {
   page: Page.Model
   route: Route.Model
   gameRoom: GameRoom.FrontendModel
-  backendConnection: ConnectionStatus
+  bridge: ConnectionStatus
 }
 
 export type ConnectionStatus =
@@ -48,7 +48,7 @@ export type ToFrontend = ["GameRoom", GameRoom.ToFrontend]
 
 export type FrontendMsg =
   | ["[Backend]", ToFrontend]
-  | ["BackendConnection.Changed", ConnectionStatus]
+  | ["Bridge", ConnectionStatus]
   | ["Route", Route.Msg]
   | ["Snackbar", Snackbar.Msg]
   | ["GameRoom", GameRoom.FrontendMsg]

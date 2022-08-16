@@ -118,15 +118,12 @@ export const sendToFrontend = (
 ) => {
   return Bridge.sendToFrontend(clientIds, [
     "GameRoom",
-    ["Game", { roomId, toFrontend: ["Chess", msg] }],
+    ["Game", roomId, ["Chess", msg]],
   ])
 }
 
 export const broadcast = (roomId: RoomId.RoomId, msg: ToFrontend) => {
-  return Bridge.broadcast([
-    "GameRoom",
-    ["Game", { roomId, toFrontend: ["Chess", msg] }],
-  ])
+  return Bridge.broadcast(["GameRoom", ["Game", roomId, ["Chess", msg]]])
 }
 
 //

@@ -913,49 +913,49 @@ const viewBottomNavigation =
     page: "Home" | "Search" | "Chat" | "Profile"
     route: Route.Model
   }): UI.View<Msg> =>
-  (dispatch) => {
-    const items: BottomNavigationItem[] = [
-      {
-        route: ["Home"],
-        filled: <UI.Icons.Home />,
-        outlined: <UI.Icons.HomeOutlined />,
-      },
-      {
-        route: ["Search"],
-        filled: <UI.Icons.Search />,
-        outlined: <UI.Icons.SearchOutlined />,
-      },
-      {
-        route: ["Chat"],
-        filled: <UI.Icons.Chat />,
-        outlined: <UI.Icons.ChatOutlined />,
-      },
-      {
-        route: ["Profile", currentUserId],
-        filled: <UI.Icons.AccountCircle />,
-        outlined: <UI.Icons.AccountCircleOutlined />,
-      },
-    ]
+    (dispatch) => {
+      const items: BottomNavigationItem[] = [
+        {
+          route: ["Home"],
+          filled: <UI.Icons.Home />,
+          outlined: <UI.Icons.HomeOutlined />,
+        },
+        {
+          route: ["Search"],
+          filled: <UI.Icons.Search />,
+          outlined: <UI.Icons.SearchOutlined />,
+        },
+        {
+          route: ["Chat"],
+          filled: <UI.Icons.Chat />,
+          outlined: <UI.Icons.ChatOutlined />,
+        },
+        {
+          route: ["Profile", currentUserId],
+          filled: <UI.Icons.AccountCircle />,
+          outlined: <UI.Icons.AccountCircleOutlined />,
+        },
+      ]
 
-    return (
-      <UI.BottomNavigation
-        showLabels
-        value={Route.encode(route)}
-      >
-        {items.map((item) => (
-          <UI.BottomNavigationAction
-            key={Route.encode(item.route)}
-            icon={Route.equals(route, item.route) ? item.filled : item.outlined}
-            label={item.route[0]}
-            value={Route.encode(item.route)}
-            onClick={() =>
-              dispatch(["ClickedBottomNavigationLink", item.route])
-            }
-          />
-        ))}
-      </UI.BottomNavigation>
-    )
-  }
+      return (
+        <UI.BottomNavigation
+          showLabels
+          value={Route.encode(route)}
+        >
+          {items.map((item) => (
+            <UI.BottomNavigationAction
+              key={Route.encode(item.route)}
+              icon={Route.equals(route, item.route) ? item.filled : item.outlined}
+              label={item.route[0]}
+              value={Route.encode(item.route)}
+              onClick={() =>
+                dispatch(["ClickedBottomNavigationLink", item.route])
+              }
+            />
+          ))}
+        </UI.BottomNavigation>
+      )
+    }
 
 //
 //

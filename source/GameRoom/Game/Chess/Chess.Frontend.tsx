@@ -39,7 +39,7 @@ export const init = (): [FrontendModel, Cmd.Cmd<Msg>] => {
     },
     pipe(
       Browser.getElementById(containerHtmlId),
-      Cmd.perform((result) => ["GetElementResulted", result]),
+      Cmd.perform(tag("GetElementResulted")),
     ),
   ]
 }
@@ -174,10 +174,7 @@ export const subscriptions = (_model: Model): Sub.Sub<Msg> => {
 //
 
 export const sendToBackend = (roomId: RoomId.RoomId, toBackend: ToBackend) => {
-  return Bridge.sendToBackend([
-    "GameRoom",
-    ["Game", { roomId, toBackend: ["Chess", toBackend] }],
-  ])
+  return Bridge.sendToBackend(["GameRoom", ["Game", roomId, ["Chess", toBackend]]])
 }
 
 //
