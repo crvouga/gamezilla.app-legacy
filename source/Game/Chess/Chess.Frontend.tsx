@@ -35,7 +35,8 @@ export const init = (): [FrontendModel, Cmd.Cmd<Msg>] => {
       ...initSharedModel,
       boardWidth: 0,
       startGame: RemoteData.NotAsked,
-      playAs: RemoteData.NotAsked
+      playAs: RemoteData.NotAsked,
+      menu: ["Closed"]
     },
     pipe(
       Browser.getElementById(containerHtmlId),
@@ -92,6 +93,14 @@ export const update = (
 
     case "AudioResulted": {
       return [model, Cmd.None]
+    }
+
+    case 'ClosedMenu': {
+      return [{ ...model, menu: ['Closed'] }, Cmd.None]
+    }
+
+    case 'PressedPlayerSlot': {
+      return [{ ...model, menu: ['Opened', { menuId: msg[1] }] }, Cmd.None]
     }
 
     case "Move": {
@@ -207,8 +216,11 @@ export const view =
         const { White, Black } = status[1]
         return (
           <UI.FillBox>
-            <UI.Box sx={{ paddingX: 2 }}>
-              <ViewLobbyPlayerSlot
+
+
+            <UI.List disablePadding>
+              <ViewPlayerSlot
+                model={model}
                 dispatch={dispatch}
                 store={store}
                 currentUserId={currentUserId}
@@ -216,15 +228,18 @@ export const view =
                 userId={White}
               />
 
-              <ViewLobbyPlayerSlot
+              <ViewPlayerSlot
+                model={model}
                 dispatch={dispatch}
                 store={store}
                 currentUserId={currentUserId}
                 playerType="Black"
                 userId={Black}
               />
-            </UI.Box>
-            <UI.Divider sx={{ marginY: 2 }} />
+            </UI.List>
+
+            <UI.Box sx={{ flex: 1 }}></UI.Box>
+
             <UI.Box sx={{ paddingX: 2 }}>
               <UI.Button
                 disabled={!canStartGame(model)}
@@ -236,6 +251,7 @@ export const view =
                 Start
               </UI.Button>
             </UI.Box>
+
           </UI.FillBox>
         )
       }
@@ -255,32 +271,62 @@ export const view =
       )
     }
 
-const ViewLobbyPlayerSlot = ({ userId, playerType, dispatch, store, currentUserId }: { playerType: PlayerType, userId?: UserId.UserId; currentUserId: UserId.UserId, store: Store.Model; dispatch: (msg: Msg) => void }) => {
+const ViewPlayerSlot = ({
+  userId,
+  playerType,
+  dispatch,
+  store,
+  currentUserId,
+  model
+}: {
+  playerType: PlayerType,
+  userId?: UserId.UserId;
+  currentUserId: UserId.UserId,
+  store: Store.Model;
+  dispatch: (msg: Msg) => void,
+  model: Model
+}) => {
+  const menuButtonId = `${playerType}MenuItem`
+
   return (
     <>
-      <UI.Typography>{playerType}</UI.Typography>
+      <UI.ListSubheader>
+        {playerType}
+      </UI.ListSubheader>
 
       {userId ? (
-        <UI.ListItem>
-          <UI.ListItemAvatar>
-            <UI.Avatar src={store.Profile[userId]?.avatarUrl} />
-          </UI.ListItemAvatar>
-          <UI.ListItemText primary={store.Profile[userId]?.username ?? "..."} />
-        </UI.ListItem>
+        <>
+          <UI.ListItemButton onClick={() => dispatch(['PressedPlayerSlot', playerType])} id={menuButtonId}>
+            <UI.ListItemAvatar>
+              <UI.Avatar src={store.Profile[userId]?.avatarUrl} />
+            </UI.ListItemAvatar>
+            <UI.ListItemText primary={store.Profile[userId]?.username ?? "..."} />
+            <UI.ListItemSecondaryAction>
+              <UI.Icons.MoreVert />
+            </UI.ListItemSecondaryAction>
+          </UI.ListItemButton>
+          <UI.Menu
+            anchorEl={document.getElementById(menuButtonId)}
+            open={model.menu[0] === 'Opened'}
+            onClose={() => dispatch(['ClosedMenu'])}
+          >
+            <UI.MenuItem
+            >
+              <UI.ListItemText primary="No Action" />
+            </UI.MenuItem>
+          </UI.Menu>
+        </>
       ) : (
-        <UI.Button
-          onClick={() =>
+        <UI.Box sx={{ paddingX: 2 }}>
+          <UI.Button fullWidth variant="outlined" onClick={() =>
             dispatch([
               "PlayAs",
               { userId: currentUserId, playerType, },
             ])
-          }
-          fullWidth
-          variant="outlined"
-          sx={{ marginBottom: 2 }}
-        >
-          Play As {playerType}
-        </UI.Button>
+          }>
+            Play As {playerType}
+          </UI.Button>
+        </UI.Box>
       )}
     </>
   )
