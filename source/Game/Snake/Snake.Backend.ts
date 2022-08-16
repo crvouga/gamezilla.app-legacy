@@ -1,6 +1,6 @@
-import * as Bridge from "../../../Bridge"
-import { Cmd, Result, Sub, Time } from "../../../Core"
-import { ClientId, RoomId } from "../../../Data"
+import * as Bridge from "../../Bridge"
+import { Cmd, Result, Sub, Time } from "../../Core"
+import { ClientId, RoomId } from "../../Data"
 import {
   BackendModel,
   BackendMsg,

@@ -1,11 +1,11 @@
-import { Cmd, Sub } from "../../../Core"
-import { ClientId } from "../../../Data"
+import { Cmd, Sub } from "../../Core"
+import { ClientId } from "../../Data"
 import {
   BackendModel,
   BackendMsg,
   initSharedModel,
   ToBackend,
-} from "./TicTacToe.Types"
+} from "./ConnectFour.Types"
 
 //
 //
@@ -30,7 +30,11 @@ export const init: Model = initSharedModel
 export type Msg = BackendMsg
 
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
-  return [model, Cmd.None]
+  switch (msg[0]) {
+    case "None": {
+      return [model, Cmd.None]
+    }
+  }
 }
 
 export const updateFromFrontend = (
@@ -38,7 +42,11 @@ export const updateFromFrontend = (
   msg: ToBackend,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
-  return [model, Cmd.None]
+  switch (msg[0]) {
+    case "Move": {
+      return [model, Cmd.None]
+    }
+  }
 }
 
 //
@@ -49,6 +57,6 @@ export const updateFromFrontend = (
 //
 //
 
-export const subscriptions = (_model: Model): Sub.Sub<Msg> => {
+export const subscriptions = (model: Model): Sub.Sub<Msg> => {
   return Sub.batch<Msg>([])
 }

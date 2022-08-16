@@ -1,4 +1,4 @@
-import { UserId } from "../../../Data"
+import { UserId } from "../../Data"
 import { MoveResult, Columns, emptyColumns, ColumnIndex } from "./ConnectFour"
 
 //

@@ -1,14 +1,14 @@
 import { useLayoutEffect, useRef } from "react"
-import * as Bridge from "../../../Bridge"
+import * as Bridge from "../../Bridge"
 
-import { Cmd, exhaustive, Keyboard, Result, Sub } from "../../../Core"
-import { RoomId, UserId } from "../../../Data"
+import { Cmd, exhaustive, Keyboard, Result, Sub } from "../../Core"
+import { RoomId, UserId } from "../../Data"
 import * as Snake from "./Snake"
 import * as Position from "./Position"
 import * as Direction from "./Direction"
-import * as Route from "../../../Route"
-import * as Snackbar from "../../../Snackbar"
-import * as UI from "../../../UI"
+import * as Route from "../../Route"
+import * as Snackbar from "../../Snackbar"
+import * as UI from "../../UI"
 import {
   FrontendModel,
   FrontendMsg,

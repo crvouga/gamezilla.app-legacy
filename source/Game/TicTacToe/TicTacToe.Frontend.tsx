@@ -1,7 +1,7 @@
-import { Cmd } from "../../../Core"
-import { UserId } from "../../../Data"
-import * as Store from "../../../Store"
-import * as UI from "../../../UI"
+import { Cmd } from "../../Core"
+import { UserId } from "../../Data"
+import * as Store from "../../Store"
+import * as UI from "../../UI"
 import { Position, Slot, theme, ViewBoard, ViewSlot } from "./TicTacToe"
 import {
   FrontendModel,
@@ -67,16 +67,16 @@ export const view =
     },
     model: Model,
   ): UI.View<Msg> =>
-  (dispatch) => {
-    return (
-      <UI.FillBox>
-        <ViewBoard
-          board={model.board}
-          onClick={() => {}}
-        />
-      </UI.FillBox>
-    )
-  }
+    (dispatch) => {
+      return (
+        <UI.FillBox>
+          <ViewBoard
+            board={model.board}
+            onClick={() => { }}
+          />
+        </UI.FillBox>
+      )
+    }
 
 export const CoverArt = () => {
   const positions: [Position, Slot][] = [

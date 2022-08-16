@@ -5,8 +5,8 @@ import * as Route from "../Route"
 import * as Snackbar from "../Snackbar"
 import * as Store from "../Store"
 import * as UI from "../UI"
-import * as Game from "./Game/Game.Frontend"
-import { GameName } from "./Game/Game.Types"
+import * as Game from "../Game/Game.Frontend"
+import { GameName } from "../Game/Game.Types"
 import {
   FrontendModel,
   FrontendMsg,

@@ -1,5 +1,5 @@
-import { Cmd } from "../../../Core"
-import * as UI from "../../../UI"
+import { Cmd } from "../../Core"
+import * as UI from "../../UI"
 import {
   COLUMN_COUNT,
   MAX_COLUMN_HEIGHT,
@@ -56,12 +56,12 @@ export const updateFromBackend = (
 
 export const view =
   (model: Model): UI.View<Msg> =>
-  (dispatch) =>
+    (dispatch) =>
     (
       <UI.FillBox>
         <ViewColumns
           columns={model.columns}
-          onClick={(columnIndex) => {}}
+          onClick={(columnIndex) => { }}
         />
       </UI.FillBox>
     )

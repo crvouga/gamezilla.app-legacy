@@ -1,4 +1,4 @@
-import { UserId } from "../../../Data"
+import { UserId } from "../../Data"
 import * as TicTacToe from "./TicTacToe"
 
 //

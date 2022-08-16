@@ -1,5 +1,5 @@
-import { Cmd, Sub } from "../../../Core"
-import { ClientId, RoomId } from "../../../Data"
+import { Cmd, Sub } from "../../Core"
+import { ClientId, RoomId } from "../../Data"
 import {
   BackendModel,
   BackendMsg,
@@ -10,7 +10,7 @@ import {
   ToBackend,
   ToFrontend,
 } from "./Chess.Types"
-import * as Bridge from "../../../Bridge"
+import * as Bridge from "../../Bridge"
 import * as ChessTs from "chess.ts"
 
 //
