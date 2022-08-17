@@ -183,7 +183,7 @@ export const subscriptions = (_model: Model): Sub.Sub<Msg> => {
 //
 
 export const sendToBackend = (roomId: RoomId.RoomId, toBackend: ToBackend) => {
-  return Bridge.sendToBackend(["GameRoom", ["Game", roomId, ["Chess", toBackend]]])
+  return Bridge.sendToBackend(["GameRoom", ["Games", roomId, ["Chess", toBackend]]])
 }
 
 //

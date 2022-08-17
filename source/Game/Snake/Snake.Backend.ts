@@ -44,12 +44,12 @@ export const sendToFrontend = (
 ) => {
   return Bridge.sendToFrontend(clientIds, [
     "GameRoom",
-    ["Game", roomId, ["Snake", msg]],
+    ["Games", roomId, ["Snake", msg]],
   ])
 }
 
 export const broadcast = (roomId: RoomId.RoomId, msg: ToFrontend) => {
-  return Bridge.broadcast(["GameRoom", ["Game", roomId, ["Snake", msg]]])
+  return Bridge.broadcast(["GameRoom", ["Games", roomId, ["Snake", msg]]])
 }
 
 //

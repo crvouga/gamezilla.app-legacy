@@ -45,7 +45,7 @@ export type Msg = BackendMsg
 
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
-    case "Game": {
+    case "Games": {
       const roomId = msg[1]
 
       const game = model.games[roomId]
@@ -70,7 +70,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
         modelNew,
         pipe(
           gameCmd,
-          Cmd.map((msg): Msg => ["Game", roomId, msg]),
+          Cmd.map((msg): Msg => ["Games", roomId, msg]),
         ),
       ]
     }
@@ -83,7 +83,7 @@ export const updateFromFrontend = (
   model: Model,
 ): [Model, Cmd.Cmd<BackendMsg>] => {
   switch (msg[0]) {
-    case "Game": {
+    case "Games": {
       const roomId = msg[1]
 
       const game = model.games[roomId]
@@ -112,7 +112,7 @@ export const updateFromFrontend = (
         modelNew,
         pipe(
           gameCmd,
-          Cmd.map((msg): Msg => ["Game", roomId, msg]),
+          Cmd.map((msg): Msg => ["Games", roomId, msg]),
         ),
       ]
     }
@@ -462,7 +462,7 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
 
     const sub = pipe(
       Game.subscriptions(roomId, game),
-      Sub.map((msg): Msg => ["Game", roomId, msg]),
+      Sub.map((msg): Msg => ["Games", roomId, msg]),
     )
 
     subs.push(sub)

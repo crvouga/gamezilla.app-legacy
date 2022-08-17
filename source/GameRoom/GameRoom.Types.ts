@@ -61,7 +61,7 @@ export type ToFrontend =
   | JoinRoomResulted
   | StartGameResulted
   | StopGameResulted
-  | ["Game", RoomId.RoomId, Game.ToFrontend]
+  | ["Games", RoomId.RoomId, Game.ToFrontend]
 
 export type ToBackend =
   | CreateRoom
@@ -69,9 +69,9 @@ export type ToBackend =
   | JoinRoom
   | StartGame
   | StopGame
-  | ["Game", RoomId.RoomId, Game.ToBackend]
+  | ["Games", RoomId.RoomId, Game.ToBackend]
 
-export type BackendMsg = ["Game", RoomId.RoomId, Game.BackendMsg]
+export type BackendMsg = ["Games", RoomId.RoomId, Game.BackendMsg]
 
 export type FrontendMsg =
   | ["ClickedBack"]
@@ -86,7 +86,7 @@ export type FrontendMsg =
   | LeaveRoom
   | StartGame
   | StopGame
-  | ["Game", RoomId.RoomId, Game.FrontendMsg]
+  | ["Games", RoomId.RoomId, Game.FrontendMsg]
 
 //
 //

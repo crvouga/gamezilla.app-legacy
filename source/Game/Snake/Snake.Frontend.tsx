@@ -39,7 +39,7 @@ export const init: Model = initSharedModel
 //
 
 export const sendToBackend = (roomId: RoomId.RoomId, toBackend: ToBackend) => {
-  return Bridge.sendToBackend(["GameRoom", ["Game", roomId, ['Snake', toBackend]]])
+  return Bridge.sendToBackend(["GameRoom", ["Games", roomId, ['Snake', toBackend]]])
 }
 
 //
