@@ -2,7 +2,6 @@ import * as Bridge from "../Bridge"
 import { Cmd, exhaustive, pipe, RemoteData, Result, Sub, Unit } from "../Core"
 import { RoomId, UserId } from "../Data"
 import * as Game from "../Game/Game.Frontend"
-import * as GameTypes from "../Game/Game.Types"
 import { GameName } from "../Game/Game.Types"
 import * as Route from "../Route"
 import * as Snackbar from "../Snackbar"
@@ -12,9 +11,7 @@ import {
   BackendModel,
   FrontendModel,
   FrontendMsg,
-  RoomModel,
-  SharedModel,
-  ToFrontend
+  RoomModel, ToFrontend
 } from "./GameRoom.Types"
 
 
@@ -133,7 +130,7 @@ export const update = (
       ]
     }
 
-    case "Game": {
+    case "Games": {
       const user = model.users[currentUserId]
 
       if (!user) {
@@ -169,7 +166,7 @@ export const update = (
         },
         pipe(
           gameCmd,
-          Cmd.map((msg): Msg => ["Game", roomId, msg]),
+          Cmd.map((msg): Msg => ["Games", roomId, msg]),
         ),
       ]
     }
@@ -191,28 +188,16 @@ export const updateFromBackend = (
     case "Sync": {
       const userIds = Object.values(msg[1].users).map((user) => user.userId)
 
-      const action: OutAction = [
-        "Store",
-        ["Profile", ["FindMany", { userIds }]],
+      const actions: OutAction[] = [
+        ["Store", ["Profile", ["FindMany", { userIds }]]],
       ]
 
-      const backendModel = msg[1]
+      const [synced, syncedCmd] = sync(model, msg[1])
 
-      const [gamesNew, gamesCmd] = Object
-        .entries(backendModel.games)
-        .reduce(syncGamesReducer(model), [{}, Cmd.None])
-
-      const modelNew: Model = {
-        ...model,
-        games: gamesNew,
-        rooms: backendModel.rooms,
-        users: backendModel.users,
-      }
-
-      return [modelNew, gamesCmd, [action]]
+      return [synced, syncedCmd, actions]
     }
 
-    case "Game": {
+    case "Games": {
       const roomId = msg[1]
 
       const game = model.games[roomId]
@@ -237,7 +222,7 @@ export const updateFromBackend = (
         modelNew,
         pipe(
           gameCmd,
-          Cmd.map((msg): Msg => ["Game", roomId, msg]),
+          Cmd.map((msg): Msg => ["Games", roomId, msg]),
         ),
         actions,
       ]
@@ -293,21 +278,14 @@ const updateFromBackendResult = <
     ]
   }
 
-  const backendModel = result.value
-
-  const [gamesNew, gamesCmd] = Object
-    .entries(backendModel.games)
-    .reduce(syncGamesReducer(model), [{}, Cmd.None])
+  const [synced, syncedCmd] = sync(model, result.value)
 
   const modelNew: Model = {
-    ...model,
-    rooms: result.value.rooms,
-    users: result.value.users,
-    games: gamesNew,
+    ...synced,
     [remoteDataKey]: remoteData
   }
 
-  return [modelNew, gamesCmd, actions]
+  return [modelNew, syncedCmd, actions]
 }
 
 export const updateFromAction = (
@@ -323,40 +301,58 @@ export const updateFromAction = (
   }
 }
 
-const syncGamesReducer = (frontendModel: Model) => (
-  [games, cmd]: [Model['games'], Cmd.Cmd<Msg>],
-  [roomId, backendGame]: [string, GameTypes.BackendModel]
-): [Model['games'], Cmd.Cmd<Msg>] => {
 
-  if (!RoomId.is(roomId)) {
-    return [games, cmd]
-  }
+const sync = (frontendModel: FrontendModel, backendModel: BackendModel): [FrontendModel, Cmd.Cmd<FrontendMsg>] => {
+  const [gamesNew, gamesCmd] = Object
+    .entries(backendModel.games)
+    .reduce<[FrontendModel['games'], Cmd.Cmd<FrontendMsg>]>(
+      ([games, cmd], [roomId, backendGame]) => {
+        if (!RoomId.is(roomId)) {
+          return [games, cmd]
+        }
 
-  const game = frontendModel.games[roomId]
+        const game = frontendModel.games[roomId]
 
-  if (!game) {
-    const [gameInit, gameCmd] = Game.init(backendGame[0])
+        const gameName = backendGame[0]
 
-    return [
-      {
-        ...games,
-        [roomId]: [gameInit[0], { ...gameInit[1], ...backendGame[1] }]
+        if (game) {
+          return [
+            {
+              ...games,
+              [roomId]: [gameName, { ...game[1], ...backendGame[1] }]
+            },
+            cmd
+          ]
+        }
+
+        const [gameInit, gameCmd] = Game.init(gameName)
+
+        return [
+          {
+            ...games,
+            [roomId]: [gameName, { ...gameInit[1], ...backendGame[1] }]
+          },
+          Cmd.batch([
+            cmd,
+            pipe(gameCmd, Cmd.map((msg): Msg => ["Games", roomId, msg]))
+          ])
+        ]
+
       },
-      Cmd.batch([
-        cmd,
-        pipe(gameCmd, Cmd.map((msg): Msg => ['Game', roomId, msg]))
-      ])
-    ]
-  }
+      [{}, Cmd.None]
+    )
 
   return [
     {
-      ...games,
-      [roomId]: [game[0], { ...game[1], ...backendGame[1] }]
+      ...frontendModel,
+      rooms: backendModel.rooms,
+      users: backendModel.users,
+      games: gamesNew
     },
-    cmd
+    gamesCmd
   ]
 }
+
 
 
 //
@@ -393,7 +389,7 @@ export const subscriptions = (
 
   return pipe(
     Game.subscriptions(game),
-    Sub.map((msg): Msg => ["Game", room.roomId, msg]),
+    Sub.map((msg): Msg => ["Games", room.roomId, msg]),
   )
 }
 
@@ -448,7 +444,7 @@ export const view = (
         {viewHeader({ store, room, currentUserId }, model)(dispatch)}
         {pipe(
           Game.view({ currentUserId, store }, game),
-          UI.map((msg): Msg => ["Game", room.roomId, msg]),
+          UI.map((msg): Msg => ["Games", room.roomId, msg]),
         )(dispatch)}
       </>
     )
