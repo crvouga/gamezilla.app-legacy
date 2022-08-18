@@ -1,7 +1,7 @@
 import { useLayoutEffect, useRef, useState } from "react"
 import { Chessboard } from "react-chessboard"
 import * as Bridge from "../../Bridge"
-import { Audio, Browser, Cmd, pipe, RemoteData, Sub, tag, Unit } from "../../Core"
+import { Option, Audio, Browser, Cmd, pipe, RemoteData, Sub, tag, Unit } from "../../Core"
 import { RoomId, UserId } from "../../Data"
 import * as Store from "../../Store"
 import * as UI from "../../UI"
@@ -60,6 +60,8 @@ export const update = (
   msg: Msg,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
+
+
   switch (msg[0]) {
     case "GetElementResulted": {
       const result = msg[1]
@@ -130,8 +132,11 @@ export const update = (
 
 export const updateFromBackend = (
   msg: ToFrontend,
-  model: Model,
+  _model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
+
+  const model: Model = { ..._model, menu: ["Closed"] }
+
   switch (msg[0]) {
     case "MovedResulted": {
       return [{ ...model }, Cmd.None]
@@ -313,7 +318,7 @@ const ViewPlayerSlot = ({
             onClose={() => dispatch(['ClosedMenu'])}
           >
             {userId === currentUserId && (
-              <UI.MenuItem>
+              <UI.MenuItem onClick={() => dispatch(['PlayAs', { userId: currentUserId, playerType: Option.None }])}>
                 <UI.ListItemText primary="Stop Playing" />
               </UI.MenuItem>
             )}
@@ -324,7 +329,7 @@ const ViewPlayerSlot = ({
           <UI.Button fullWidth variant="outlined" onClick={() =>
             dispatch([
               "PlayAs",
-              { userId: currentUserId, playerType, },
+              { userId: currentUserId, playerType: Option.Some(playerType), },
             ])
           }>
             Play As {playerType}

@@ -1,5 +1,6 @@
 import * as ChessTs from "chess.ts"
-import { Audio, Browser, RemoteData, Result, Unit } from "../../Core"
+import { Audio, Browser, Option, RemoteData, Result, Unit } from "../../Core"
+import { remove } from "../../Core/Record"
 import { UserId } from "../../Data"
 
 //
@@ -140,54 +141,43 @@ export type MoveResult = Result.Result<"invalid_move", SharedModel>
 
 export type PlayAs = [
   "PlayAs",
-  { userId: UserId.UserId; playerType: PlayerType },
+  { userId: UserId.UserId; playerType: Option.Option<PlayerType> },
 ]
 export type PlayAsResulted = ["PlayAsResulted", PlayAsResult]
 export type PlayAsProblem = "player_type_taken" | "game_started"
 export type PlayAsResult = Result.Result<PlayAsProblem, SharedModel>
 
 export const playAs = (
-  { userId, playerType }: PlayAs[1],
+  { userId, playerType: targetPlayerType }: PlayAs[1],
   model: SharedModel,
 ): PlayAsResult => {
   if (model.status[0] !== "GameNotReady") {
     return Result.Err("game_started")
   }
 
-  const partialPlayers = model.status[1]
+  if (targetPlayerType.type === "None") {
+    const key =
+      model.status[1].Black === userId
+        ? "Black"
+        : model.status[1].White === userId
+        ? "White"
+        : null
 
-  if (partialPlayers[playerType]) {
-    return Result.Err(`player_type_taken`)
+    if (!key) {
+      return Result.Ok(model)
+    }
+
+    const modelNew: SharedModel = {
+      ...model,
+      status: ["GameNotReady", remove(key, model.status[1])],
+    }
+
+    return Result.Ok(modelNew)
   }
 
-  const modelNew: SharedModel = {
-    ...model,
-    status: ["GameNotReady", { ...model.status[1], [playerType]: userId }],
-  }
+  const playerType = targetPlayerType.value
 
-  return Result.Ok(modelNew)
-}
-
-//
-//
-//
-
-export type StopPlayAs = ["StopPlayAs", { userId: UserId.UserId }]
-export type StopPlayAsResulted = ["StopPlayAsResulted", StopPlayAsResult]
-export type StopPlayAsProblem = "not_playing_as"
-export type StopPlayAsResult = Result.Result<StopPlayAsProblem, SharedModel>
-
-export const stopPlayAs = (
-  { userId, playerType }: PlayAs[1],
-  model: SharedModel,
-): PlayAsResult => {
-  if (model.status[0] !== "GameNotReady") {
-    return Result.Err("game_started")
-  }
-
-  const partialPlayers = model.status[1]
-
-  if (partialPlayers[playerType]) {
+  if (model.status[1][playerType]) {
     return Result.Err(`player_type_taken`)
   }
 
