@@ -11,7 +11,10 @@ import {
   BackendModel,
   FrontendModel,
   FrontendMsg,
-  RoomModel, ToFrontend
+  Request,
+  Response,
+  RoomModel,
+  ToFrontend
 } from "./GameRoom.Types"
 
 
@@ -25,21 +28,26 @@ import {
 
 export type Model = FrontendModel
 
+
+
 export const init: [Model, Cmd.Cmd<Msg>] = [
   {
     rooms: {},
     users: {},
     games: {},
-    createRoom: RemoteData.NotAsked,
-    joinRoom: RemoteData.NotAsked,
-    leaveRoom: RemoteData.NotAsked,
-    startGame: RemoteData.NotAsked,
-    stopGame: RemoteData.NotAsked,
     modal: "Closed",
+    requests: {
+      createRoom: RemoteData.NotAsked,
+      joinRoom: RemoteData.NotAsked,
+      leaveRoom: RemoteData.NotAsked,
+      startGame: RemoteData.NotAsked,
+      stopGame: RemoteData.NotAsked,
+    }
   },
   Cmd.None,
-  // Bridge.sendToBackend(["GameRoom", []]),
 ]
+
+
 
 //
 //
@@ -95,39 +103,28 @@ export const update = (
       return [{ ...model, modal: "Closed" }, Cmd.None]
     }
 
+    case "ClickedBanner": {
+      return [model, Route.push(["GameRoom"])]
+    }
+
     case "CreateRoom": {
-      return [
-        { ...model, createRoom: RemoteData.Loading },
-        Bridge.sendToBackend(["GameRoom", msg]),
-      ]
+      return updateRequest('createRoom', model, msg)
     }
 
     case "JoinRoom": {
-      return [
-        { ...model, joinRoom: RemoteData.Loading },
-        Bridge.sendToBackend(["GameRoom", msg]),
-      ]
+      return updateRequest('joinRoom', model, msg)
     }
 
     case "LeaveRoom": {
-      return [
-        { ...model, leaveRoom: RemoteData.Loading },
-        Bridge.sendToBackend(["GameRoom", msg]),
-      ]
+      return updateRequest('leaveRoom', model, msg)
     }
 
     case "StartGame": {
-      return [
-        { ...model, startGame: RemoteData.Loading },
-        Bridge.sendToBackend(["GameRoom", msg]),
-      ]
+      return updateRequest('startGame', model, msg)
     }
 
     case "StopGame": {
-      return [
-        { ...model, stopGame: RemoteData.Loading },
-        Bridge.sendToBackend(["GameRoom", msg]),
-      ]
+      return updateRequest('stopGame', model, msg)
     }
 
     case "Games": {
@@ -171,13 +168,24 @@ export const update = (
       ]
     }
 
-    case "ClickedBanner": {
-      return [model, Route.push(["GameRoom"])]
-    }
+
 
     default:
       return exhaustive(msg[0])
   }
+}
+
+const updateRequest = (requestKey: keyof Model['requests'], model: Model, request: Request): [Model, Cmd.Cmd<Msg>] => {
+  return [
+    {
+      ...model,
+      requests: {
+        ...model.requests,
+        [requestKey]: RemoteData.Loading
+      }
+    },
+    Bridge.sendToBackend(['GameRoom', request])
+  ]
 }
 
 export const updateFromBackend = (
@@ -229,36 +237,36 @@ export const updateFromBackend = (
     }
 
     case "CreateRoomResulted": {
-      return updateFromBackendResult("createRoom", msg[1], model)
+      return updateResponse("createRoom", model, msg)
     }
 
     case "LeaveRoomResulted": {
-      return updateFromBackendResult("leaveRoom", msg[1], model)
+      return updateResponse("leaveRoom", model, msg)
     }
 
     case "JoinRoomResulted": {
-      return updateFromBackendResult("joinRoom", msg[1], model)
+      return updateResponse("joinRoom", model, msg)
     }
 
     case "StartGameResulted": {
-      return updateFromBackendResult("startGame", msg[1], model)
+      return updateResponse("startGame", model, msg)
     }
 
     case "StopGameResulted": {
-      return updateFromBackendResult("stopGame", msg[1], model)
+      return updateResponse("stopGame", model, msg)
     }
   }
 }
 
 
-const updateFromBackendResult = <
-  TResult extends Result.Result<TProblem, BackendModel>,
-  TProblem extends string,
-  >(
-    remoteDataKey: keyof Model,
-    result: TResult,
-    model: Model,
+const updateResponse = (
+  requestKey: keyof Model['requests'],
+  model: Model,
+  response: Response,
 ): [Model, Cmd.Cmd<FrontendMsg>, OutAction[]] => {
+
+  const result = response[1]
+
   const actions: OutAction[] =
     result.type === "Err"
       ? [["Snackbar", { message: result.error, variant: "Error" }]]
@@ -272,7 +280,13 @@ const updateFromBackendResult = <
 
   if (result.type === 'Err') {
     return [
-      { ...model, [remoteDataKey]: remoteData },
+      {
+        ...model,
+        requests: {
+          ...model.requests,
+          [requestKey]: remoteData
+        },
+      },
       Cmd.None,
       [["Snackbar", { message: result.error, variant: "Error" }]]
     ]
@@ -282,25 +296,14 @@ const updateFromBackendResult = <
 
   const modelNew: Model = {
     ...synced,
-    [remoteDataKey]: remoteData
+    requests: {
+      ...synced.requests,
+      [requestKey]: remoteData
+    },
   }
 
   return [modelNew, syncedCmd, actions]
 }
-
-export const updateFromAction = (
-  { currentUserId }: { currentUserId: UserId.UserId },
-  action: Action,
-  model: Model,
-): [Model, Cmd.Cmd<Msg>] => {
-  switch (action[1][0]) {
-    case "Msg": {
-      const msg = action[1][1]
-      return update({ currentUserId }, msg, model)
-    }
-  }
-}
-
 
 const sync = (frontendModel: FrontendModel, backendModel: BackendModel): [FrontendModel, Cmd.Cmd<FrontendMsg>] => {
   const [gamesNew, gamesCmd] = Object
@@ -351,6 +354,19 @@ const sync = (frontendModel: FrontendModel, backendModel: BackendModel): [Fronte
     },
     gamesCmd
   ]
+}
+
+export const updateFromAction = (
+  { currentUserId }: { currentUserId: UserId.UserId },
+  action: Action,
+  model: Model,
+): [Model, Cmd.Cmd<Msg>] => {
+  switch (action[1][0]) {
+    case "Msg": {
+      const msg = action[1][1]
+      return update({ currentUserId }, msg, model)
+    }
+  }
 }
 
 
@@ -477,7 +493,7 @@ export const viewNotInRoom =
               fullWidth
               size="large"
               variant="contained"
-              loading={model.createRoom.type === "Loading"}
+              loading={model.requests.createRoom.type === "Loading"}
               onClick={() =>
                 dispatch([
                   "CreateRoom",
@@ -497,7 +513,7 @@ export const viewNotInRoom =
             )}
           </UI.Box>
 
-          <UI.LoadingBackdrop open={model.joinRoom.type === "Loading"} />
+          <UI.LoadingBackdrop open={model.requests.joinRoom.type === "Loading"} />
 
           <UI.List sx={{ overflowY: "scroll" }}>
             {rooms.map((room) => {

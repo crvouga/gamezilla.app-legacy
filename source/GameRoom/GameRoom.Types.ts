@@ -10,24 +10,6 @@ import * as Game from "../Game/Game.Types"
 //
 //
 
-export type BackendModel = SharedModel & {
-  games: {
-    [roomId: RoomId.RoomId]: Game.BackendModel
-  }
-}
-
-export type FrontendModel = SharedModel & {
-  games: {
-    [roomId: RoomId.RoomId]: Game.FrontendModel
-  }
-  createRoom: RemoteData.RemoteData<CreateRoomProblem, Unit>
-  leaveRoom: RemoteData.RemoteData<LeaveRoomProblem, Unit>
-  joinRoom: RemoteData.RemoteData<JoinRoomProblem, Unit>
-  startGame: RemoteData.RemoteData<StartGameProblem, Unit>
-  stopGame: RemoteData.RemoteData<StopGameProblem, Unit>
-  modal: "DrawerOpened" | "Closed" | "MenuOpened"
-}
-
 export type SharedModel = {
   rooms: {
     [roomId: RoomId.RoomId]: RoomModel
@@ -46,6 +28,26 @@ export type RoomModel = {
   events: RoomEvent[]
 }
 
+export type BackendModel = SharedModel & {
+  games: {
+    [roomId: RoomId.RoomId]: Game.BackendModel
+  }
+}
+
+export type FrontendModel = SharedModel & {
+  games: {
+    [roomId: RoomId.RoomId]: Game.FrontendModel
+  }
+  modal: "DrawerOpened" | "Closed" | "MenuOpened"
+  requests: {
+    createRoom: RemoteData.RemoteData<CreateRoomProblem, Unit>
+    leaveRoom: RemoteData.RemoteData<LeaveRoomProblem, Unit>
+    joinRoom: RemoteData.RemoteData<JoinRoomProblem, Unit>
+    startGame: RemoteData.RemoteData<StartGameProblem, Unit>
+    stopGame: RemoteData.RemoteData<StopGameProblem, Unit>
+  }
+}
+
 //
 //
 //
@@ -56,20 +58,10 @@ export type RoomModel = {
 
 export type ToFrontend =
   | ["Sync", BackendModel]
-  | CreateRoomResulted
-  | LeaveRoomResulted
-  | JoinRoomResulted
-  | StartGameResulted
-  | StopGameResulted
   | ["Games", RoomId.RoomId, Game.ToFrontend]
+  | Response
 
-export type ToBackend =
-  | CreateRoom
-  | LeaveRoom
-  | JoinRoom
-  | StartGame
-  | StopGame
-  | ["Games", RoomId.RoomId, Game.ToBackend]
+export type ToBackend = Request | ["Games", RoomId.RoomId, Game.ToBackend]
 
 export type BackendMsg = ["Games", RoomId.RoomId, Game.BackendMsg]
 
@@ -81,12 +73,17 @@ export type FrontendMsg =
   | ["OpenedMenu"]
   | ["ClosedMenu"]
   | ["ClickedBanner"]
-  | CreateRoom
-  | JoinRoom
-  | LeaveRoom
-  | StartGame
-  | StopGame
   | ["Games", RoomId.RoomId, Game.FrontendMsg]
+  | Request
+
+export type Request = CreateRoom | LeaveRoom | JoinRoom | StartGame | StopGame
+
+export type Response =
+  | CreateRoomResulted
+  | LeaveRoomResulted
+  | JoinRoomResulted
+  | StartGameResulted
+  | StopGameResulted
 
 //
 //
