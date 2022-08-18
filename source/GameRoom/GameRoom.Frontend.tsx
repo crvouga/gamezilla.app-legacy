@@ -37,11 +37,11 @@ export const init: [Model, Cmd.Cmd<Msg>] = [
     games: {},
     modal: "Closed",
     requests: {
-      createRoom: RemoteData.NotAsked,
-      joinRoom: RemoteData.NotAsked,
-      leaveRoom: RemoteData.NotAsked,
-      startGame: RemoteData.NotAsked,
-      stopGame: RemoteData.NotAsked,
+      CreateRoom: RemoteData.NotAsked,
+      JoinRoom: RemoteData.NotAsked,
+      LeaveRoom: RemoteData.NotAsked,
+      OpenGame: RemoteData.NotAsked,
+      CloseGame: RemoteData.NotAsked,
     }
   },
   Cmd.None,
@@ -107,24 +107,12 @@ export const update = (
       return [model, Route.push(["GameRoom"])]
     }
 
-    case "CreateRoom": {
-      return updateRequest('createRoom', model, msg)
-    }
-
-    case "JoinRoom": {
-      return updateRequest('joinRoom', model, msg)
-    }
-
-    case "LeaveRoom": {
-      return updateRequest('leaveRoom', model, msg)
-    }
-
-    case "StartGame": {
-      return updateRequest('startGame', model, msg)
-    }
-
-    case "StopGame": {
-      return updateRequest('stopGame', model, msg)
+    case 'JoinRoom':
+    case "LeaveRoom":
+    case "CreateRoom":
+    case "OpenGame":
+    case "CloseGame": {
+      return updateRequest(model, msg)
     }
 
     case "Games": {
@@ -175,13 +163,13 @@ export const update = (
   }
 }
 
-const updateRequest = (requestKey: keyof Model['requests'], model: Model, request: Request): [Model, Cmd.Cmd<Msg>] => {
+const updateRequest = (model: Model, request: Request): [Model, Cmd.Cmd<Msg>] => {
   return [
     {
       ...model,
       requests: {
         ...model.requests,
-        [requestKey]: RemoteData.Loading
+        [request[0]]: RemoteData.Loading
       }
     },
     Bridge.sendToBackend(['GameRoom', request])
@@ -237,23 +225,23 @@ export const updateFromBackend = (
     }
 
     case "CreateRoomResulted": {
-      return updateResponse("createRoom", model, msg)
+      return updateResponse("CreateRoom", model, msg)
     }
 
     case "LeaveRoomResulted": {
-      return updateResponse("leaveRoom", model, msg)
+      return updateResponse("LeaveRoom", model, msg)
     }
 
     case "JoinRoomResulted": {
-      return updateResponse("joinRoom", model, msg)
+      return updateResponse("JoinRoom", model, msg)
     }
 
-    case "StartGameResulted": {
-      return updateResponse("startGame", model, msg)
+    case "OpenGameResulted": {
+      return updateResponse("OpenGame", model, msg)
     }
 
-    case "StopGameResulted": {
-      return updateResponse("stopGame", model, msg)
+    case "CloseGameResulted": {
+      return updateResponse("CloseGame", model, msg)
     }
   }
 }
@@ -493,7 +481,7 @@ export const viewNotInRoom =
               fullWidth
               size="large"
               variant="contained"
-              loading={model.requests.createRoom.type === "Loading"}
+              loading={model.requests.CreateRoom.type === "Loading"}
               onClick={() =>
                 dispatch([
                   "CreateRoom",
@@ -513,7 +501,7 @@ export const viewNotInRoom =
             )}
           </UI.Box>
 
-          <UI.LoadingBackdrop open={model.requests.joinRoom.type === "Loading"} />
+          <UI.LoadingBackdrop open={model.requests.JoinRoom.type === "Loading"} />
 
           <UI.List sx={{ overflowY: "scroll" }}>
             {rooms.map((room) => {
@@ -574,13 +562,24 @@ const viewNotInGame =
     (dispatch) => {
       return (
         <UI.FillBox>
-          <UI.Toolbar>
-            <UI.Button
-              sx={{ marginLeft: -2 }}
-              onClick={() => dispatch(["LeaveRoom", { userId: currentUserId }])}
-            >
-              Leave
-            </UI.Button>
+          <UI.Toolbar variant="dense">
+            {viewButtonMenu({
+              buttons: [
+                {
+                  text: "Leave Room",
+                  onClick: ["LeaveRoom", { userId: currentUserId }],
+                  icon: <UI.Icons.ExitToApp sx={{ transform: "rotate(180deg)" }} />,
+                },
+                {
+                  text: "Back",
+                  onClick: ["ClickedBack"],
+                  icon: <UI.Icons.ChevronLeft />,
+                },
+              ],
+              isOpen: model.modal === "MenuOpened",
+              onOpen: ["OpenedMenu"],
+              onClose: ["ClosedMenu"],
+            })(dispatch)}
 
             <UI.Box sx={{ flex: 1 }} />
 
@@ -589,7 +588,7 @@ const viewNotInGame =
 
           <GameGrid
             onClick={(gameName) =>
-              dispatch(["StartGame", { gameName, userId: currentUserId }])
+              dispatch(["OpenGame", { gameName, userId: currentUserId }])
             }
           />
         </UI.FillBox>
@@ -611,14 +610,9 @@ const viewHeader =
   ): UI.View<Msg> =>
     (dispatch) => {
       return (
-        <UI.Toolbar>
+        <UI.Toolbar variant="dense">
           {viewButtonMenu({
             buttons: [
-              {
-                text: "Back",
-                onClick: ["ClickedBack"],
-                icon: <UI.Icons.ChevronLeft />,
-              },
               {
                 text: "Leave Room",
                 onClick: ["LeaveRoom", { userId: currentUserId }],
@@ -626,9 +620,14 @@ const viewHeader =
               },
               {
                 hidden: currentUserId !== room.hostId,
-                text: "Stop Game",
-                onClick: ["StopGame", { userId: currentUserId }],
+                text: "Close Game",
+                onClick: ["CloseGame", { userId: currentUserId }],
                 icon: <UI.Icons.Close />,
+              },
+              {
+                text: "Back",
+                onClick: ["ClickedBack"],
+                icon: <UI.Icons.ChevronLeft />,
               },
             ],
             isOpen: model.modal === "MenuOpened",

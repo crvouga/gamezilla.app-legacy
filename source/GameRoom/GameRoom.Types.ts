@@ -40,11 +40,11 @@ export type FrontendModel = SharedModel & {
   }
   modal: "DrawerOpened" | "Closed" | "MenuOpened"
   requests: {
-    createRoom: RemoteData.RemoteData<CreateRoomProblem, Unit>
-    leaveRoom: RemoteData.RemoteData<LeaveRoomProblem, Unit>
-    joinRoom: RemoteData.RemoteData<JoinRoomProblem, Unit>
-    startGame: RemoteData.RemoteData<StartGameProblem, Unit>
-    stopGame: RemoteData.RemoteData<StopGameProblem, Unit>
+    CreateRoom: RemoteData.RemoteData<CreateRoomProblem, Unit>
+    LeaveRoom: RemoteData.RemoteData<LeaveRoomProblem, Unit>
+    JoinRoom: RemoteData.RemoteData<JoinRoomProblem, Unit>
+    OpenGame: RemoteData.RemoteData<OpenGameProblem, Unit>
+    CloseGame: RemoteData.RemoteData<CloseGameProblem, Unit>
   }
 }
 
@@ -76,14 +76,14 @@ export type FrontendMsg =
   | ["Games", RoomId.RoomId, Game.FrontendMsg]
   | Request
 
-export type Request = CreateRoom | LeaveRoom | JoinRoom | StartGame | StopGame
+export type Request = CreateRoom | LeaveRoom | JoinRoom | OpenGame | CloseGame
 
 export type Response =
   | CreateRoomResulted
   | LeaveRoomResulted
   | JoinRoomResulted
-  | StartGameResulted
-  | StopGameResulted
+  | OpenGameResulted
+  | CloseGameResulted
 
 //
 //
@@ -140,18 +140,18 @@ export type JoinRoomResult = Result.Result<JoinRoomProblem, BackendModel>
 //
 //
 
-export type StartGame = [
-  "StartGame",
+export type OpenGame = [
+  "OpenGame",
   { gameName: Game.GameName; userId: UserId.UserId },
 ]
-export type StartGameResulted = ["StartGameResulted", StartGameResult]
+export type OpenGameResulted = ["OpenGameResulted", OpenGameResult]
 
-export type StartGameProblem =
+export type OpenGameProblem =
   | "user_is_not_in_a_room"
   | "user_is_not_the_host"
   | "game_already_started"
 
-export type StartGameResult = Result.Result<StartGameProblem, BackendModel>
+export type OpenGameResult = Result.Result<OpenGameProblem, BackendModel>
 
 //
 //
@@ -159,16 +159,16 @@ export type StartGameResult = Result.Result<StartGameProblem, BackendModel>
 //
 //
 
-export type StopGame = ["StopGame", { userId: UserId.UserId }]
+export type CloseGame = ["CloseGame", { userId: UserId.UserId }]
 
-export type StopGameResulted = ["StopGameResulted", StopGameResult]
+export type CloseGameResulted = ["CloseGameResulted", CloseGameResult]
 
-export type StopGameProblem =
+export type CloseGameProblem =
   | "user_is_not_in_a_room"
   | "user_is_not_the_host"
   | "game_already_stopped"
 
-export type StopGameResult = Result.Result<StopGameProblem, BackendModel>
+export type CloseGameResult = Result.Result<CloseGameProblem, BackendModel>
 
 //
 //
