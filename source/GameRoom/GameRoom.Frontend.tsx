@@ -570,11 +570,6 @@ const viewNotInGame =
                   onClick: ["LeaveRoom", { userId: currentUserId }],
                   icon: <UI.Icons.ExitToApp sx={{ transform: "rotate(180deg)" }} />,
                 },
-                {
-                  text: "Back",
-                  onClick: ["ClickedBack"],
-                  icon: <UI.Icons.ChevronLeft />,
-                },
               ],
               isOpen: model.modal === "MenuOpened",
               onOpen: ["OpenedMenu"],
@@ -623,11 +618,6 @@ const viewHeader =
                 text: "Close Game",
                 onClick: ["CloseGame", { userId: currentUserId }],
                 icon: <UI.Icons.Close />,
-              },
-              {
-                text: "Back",
-                onClick: ["ClickedBack"],
-                icon: <UI.Icons.ChevronLeft />,
               },
             ],
             isOpen: model.modal === "MenuOpened",
