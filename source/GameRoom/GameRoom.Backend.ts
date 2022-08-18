@@ -10,10 +10,10 @@ import {
   CreateRoomResult,
   JoinRoomResult,
   LeaveRoomResult,
+  OpenGameResulted,
   Response,
   RoomModel,
-  StartGameResult,
-  StopGameResult,
+  CloseGameResult,
   ToBackend,
   ToFrontend,
 } from "./GameRoom.Types"
@@ -139,17 +139,17 @@ export const updateFromFrontend = (
       ])
     }
 
-    case "StartGame": {
+    case "OpenGame": {
       return updateResponse(clientId, model, [
-        "StartGameResulted",
-        startGame(msg[1], model),
+        "OpenGameResulted",
+        openGame(msg[1], model),
       ])
     }
 
-    case "StopGame": {
+    case "CloseGame": {
       return updateResponse(clientId, model, [
-        "StopGameResulted",
-        stopGame(msg[1], model),
+        "CloseGameResulted",
+        closeGame(msg[1], model),
       ])
     }
 
@@ -350,10 +350,10 @@ export const leaveRoom = (
 //
 //
 
-export const startGame = (
+export const openGame = (
   { userId, gameName }: { userId: UserId.UserId; gameName: GameName },
   model: Model,
-): StartGameResult => {
+): OpenGameResulted[1] => {
   const user = model.users[userId]
 
   if (!user) {
@@ -395,10 +395,10 @@ export const startGame = (
 //
 //
 
-export const stopGame = (
+export const closeGame = (
   { userId }: { userId: UserId.UserId },
   model: Model,
-): StopGameResult => {
+): CloseGameResult => {
   const user = model.users[userId]
 
   if (!user) {
