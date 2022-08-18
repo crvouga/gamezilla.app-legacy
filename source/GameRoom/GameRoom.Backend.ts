@@ -10,6 +10,7 @@ import {
   CreateRoomResult,
   JoinRoomResult,
   LeaveRoomResult,
+  Response,
   RoomModel,
   StartGameResult,
   StopGameResult,
@@ -118,28 +119,38 @@ export const updateFromFrontend = (
     }
 
     case "CreateRoom": {
-      const result = createRoom(msg[1], model)
-      return updateRoom(clientId, model, result, ["CreateRoomResulted", result])
+      return updateResponse(clientId, model, [
+        "CreateRoomResulted",
+        createRoom(msg[1], model),
+      ])
     }
 
     case "LeaveRoom": {
-      const result = leaveRoom(msg[1], model)
-      return updateRoom(clientId, model, result, ["LeaveRoomResulted", result])
+      return updateResponse(clientId, model, [
+        "LeaveRoomResulted",
+        leaveRoom(msg[1], model),
+      ])
     }
 
     case "JoinRoom": {
-      const result = joinRoom(msg[1], model)
-      return updateRoom(clientId, model, result, ["JoinRoomResulted", result])
+      return updateResponse(clientId, model, [
+        "JoinRoomResulted",
+        joinRoom(msg[1], model),
+      ])
     }
 
     case "StartGame": {
-      const result = startGame(msg[1], model)
-      return updateRoom(clientId, model, result, ["StartGameResulted", result])
+      return updateResponse(clientId, model, [
+        "StartGameResulted",
+        startGame(msg[1], model),
+      ])
     }
 
     case "StopGame": {
-      const result = stopGame(msg[1], model)
-      return updateRoom(clientId, model, result, ["StopGameResulted", result])
+      return updateResponse(clientId, model, [
+        "StopGameResulted",
+        stopGame(msg[1], model),
+      ])
     }
 
     default:
@@ -147,26 +158,25 @@ export const updateFromFrontend = (
   }
 }
 
-const updateRoom = <TResult extends Result.Result<TProblem, Model>, TProblem>(
+const updateResponse = (
   clientId: ClientId.ClientId,
   model: Model,
-  result: TResult,
-  toFrontend: ToFrontend,
+  response: Response,
 ): [Model, Cmd.Cmd<BackendMsg>] => {
-  if (result.type === "Err") {
-    return [model, sendToFrontend([clientId], toFrontend)]
+  if (response[1].type === "Err") {
+    return [model, sendToFrontend([clientId], response)]
   }
 
   const modelNew: Model = {
     ...model,
-    ...result.value,
+    ...response[1].value,
   }
 
   return [
     modelNew,
     Cmd.batch([
       broadcast(["Sync", modelNew]),
-      sendToFrontend([clientId], toFrontend),
+      sendToFrontend([clientId], response),
     ]),
   ]
 }
