@@ -215,14 +215,12 @@ export const view =
     (dispatch) => {
 
 
-      const { status } = model
+      const { mode: status } = model
 
-      if (status[0] === 'GameNotReady') {
+      if (status[0] === 'GameSetup') {
         const { White, Black } = status[1]
         return (
           <UI.FillBox>
-
-
             <UI.List disablePadding>
               <ViewPlayerSlot
                 model={model}
