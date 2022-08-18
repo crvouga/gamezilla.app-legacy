@@ -55,10 +55,9 @@ export const inStalemate = (model: SharedModel): boolean => {
   return new ChessTs.Chess(model.fen).inStalemate()
 }
 
-export type Status =
-  | ["GameNotReady", { White?: UserId.UserId; Black?: UserId.UserId }]
+export type Mode =
+  | ["GameSetup", { White?: UserId.UserId; Black?: UserId.UserId }]
   | ["GameStarted", { White: UserId.UserId; Black: UserId.UserId }]
-  | ["GameOver", { White: UserId.UserId; Black: UserId.UserId }]
 
 export type PlayerType = "White" | "Black"
 
@@ -72,7 +71,7 @@ export type PlayerType = "White" | "Black"
 
 export type SharedModel = {
   fen: string
-  status: Status
+  mode: Mode
 }
 
 export type Player = ["User", { userId: UserId.UserId }] | ["None"]
@@ -96,7 +95,7 @@ export type BackendModel = SharedModel
 
 export const initSharedModel: SharedModel = {
   fen: getInitialFen(),
-  status: ["GameNotReady", {}],
+  mode: ["GameSetup", {}],
 }
 
 //
@@ -144,22 +143,22 @@ export type PlayAs = [
   { userId: UserId.UserId; playerType: Option.Option<PlayerType> },
 ]
 export type PlayAsResulted = ["PlayAsResulted", PlayAsResult]
-export type PlayAsProblem = "player_type_taken" | "game_started"
+export type PlayAsProblem = "player_type_taken" | "game_must_be_in_setup_mode"
 export type PlayAsResult = Result.Result<PlayAsProblem, SharedModel>
 
 export const playAs = (
   { userId, playerType: targetPlayerType }: PlayAs[1],
   model: SharedModel,
 ): PlayAsResult => {
-  if (model.status[0] !== "GameNotReady") {
-    return Result.Err("game_started")
+  if (model.mode[0] !== "GameSetup") {
+    return Result.Err("game_must_be_in_setup_mode")
   }
 
   if (targetPlayerType.type === "None") {
     const key =
-      model.status[1].Black === userId
+      model.mode[1].Black === userId
         ? "Black"
-        : model.status[1].White === userId
+        : model.mode[1].White === userId
         ? "White"
         : null
 
@@ -169,7 +168,7 @@ export const playAs = (
 
     const modelNew: SharedModel = {
       ...model,
-      status: ["GameNotReady", remove(key, model.status[1])],
+      mode: ["GameSetup", remove(key, model.mode[1])],
     }
 
     return Result.Ok(modelNew)
@@ -177,13 +176,13 @@ export const playAs = (
 
   const playerType = targetPlayerType.value
 
-  if (model.status[1][playerType]) {
+  if (model.mode[1][playerType]) {
     return Result.Err(`player_type_taken`)
   }
 
   const modelNew: SharedModel = {
     ...model,
-    status: ["GameNotReady", { ...model.status[1], [playerType]: userId }],
+    mode: ["GameSetup", { ...model.mode[1], [playerType]: userId }],
   }
 
   return Result.Ok(modelNew)
@@ -201,20 +200,20 @@ export type StartGameResult = Result.Result<StartGameProblem, SharedModel>
 
 export const canStartGame = (model: SharedModel): boolean => {
   return (
-    model.status[0] === "GameNotReady" &&
-    model.status[1].White !== undefined &&
-    model.status[1].Black !== undefined
+    model.mode[0] === "GameSetup" &&
+    model.mode[1].White !== undefined &&
+    model.mode[1].Black !== undefined
   )
 }
 
 export const startGame = (model: SharedModel): StartGameResult => {
-  const { status } = model
-  const { White, Black } = status[1]
+  const { mode } = model
+  const { White, Black } = mode[1]
 
-  if (status[0] === "GameNotReady" && White && Black) {
+  if (mode[0] === "GameSetup" && White && Black) {
     const modelNew: SharedModel = {
       ...model,
-      status: ["GameStarted", { White, Black }],
+      mode: ["GameStarted", { White, Black }],
     }
 
     return Result.Ok(modelNew)
