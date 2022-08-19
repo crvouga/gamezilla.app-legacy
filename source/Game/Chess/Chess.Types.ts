@@ -112,19 +112,28 @@ export type FrontendMsg =
   | ["AudioResulted", Audio.PlayResult]
   | ["PressedPlayerSlot", PlayerType]
   | ["ClosedMenu"]
-  | Move
-  | PlayAs
-  | StartGame
+  | Request
 
 export type BackendMsg = ["None"]
 
-export type ToFrontend =
-  | ["Sync", SharedModel]
+export type ToFrontend = ["Sync", SharedModel] | Response
+
+export type ToBackend = Request
+
+//
+//
+//
+//
+//
+//
+
+export type Request = Move | PlayAs | StopPlaying | StartGame
+
+export type Response =
   | MoveResulted
   | PlayAsResulted
+  | StopPlayingResulted
   | StartGameResulted
-
-export type ToBackend = Move | PlayAs | StartGame
 
 //
 //
@@ -140,49 +149,72 @@ export type MoveResult = Result.Result<"invalid_move", SharedModel>
 
 export type PlayAs = [
   "PlayAs",
-  { userId: UserId.UserId; playerType: Option.Option<PlayerType> },
+  { userId: UserId.UserId; playerType: PlayerType },
 ]
 export type PlayAsResulted = ["PlayAsResulted", PlayAsResult]
-export type PlayAsProblem = "player_type_taken" | "game_must_be_in_setup_mode"
+export type PlayAsProblem = "game_must_be_in_setup_mode" | "player_is_taken"
 export type PlayAsResult = Result.Result<PlayAsProblem, SharedModel>
 
 export const playAs = (
-  { userId, playerType: targetPlayerType }: PlayAs[1],
+  { userId, playerType }: PlayAs[1],
   model: SharedModel,
 ): PlayAsResult => {
   if (model.mode[0] !== "GameSetup") {
     return Result.Err("game_must_be_in_setup_mode")
   }
 
-  if (targetPlayerType.type === "None") {
-    const key =
-      model.mode[1].Black === userId
-        ? "Black"
-        : model.mode[1].White === userId
-        ? "White"
-        : null
+  const playerId = model.mode[1][playerType]
 
-    if (!key) {
-      return Result.Ok(model)
-    }
-
-    const modelNew: SharedModel = {
-      ...model,
-      mode: ["GameSetup", remove(key, model.mode[1])],
-    }
-
-    return Result.Ok(modelNew)
-  }
-
-  const playerType = targetPlayerType.value
-
-  if (model.mode[1][playerType]) {
-    return Result.Err(`player_type_taken`)
+  if (playerId) {
+    return Result.Err("player_is_taken")
   }
 
   const modelNew: SharedModel = {
     ...model,
     mode: ["GameSetup", { ...model.mode[1], [playerType]: userId }],
+  }
+
+  return Result.Ok(modelNew)
+}
+
+//
+//
+//
+//
+//
+
+export type StopPlaying = [
+  "StopPlaying",
+  { userId: UserId.UserId; playerType: PlayerType },
+]
+export type StopPlayingResulted = ["StopPlayingResulted", StopPlayingResult]
+export type StopPlayingResult = Result.Result<StopPlayingProblem, SharedModel>
+export type StopPlayingProblem =
+  | "game_must_be_in_setup_mode"
+  | "player_is_not_playing"
+  | "user_is_not_the_player"
+
+export const stopPlaying = (
+  { userId, playerType }: StopPlaying[1],
+  model: SharedModel,
+): StopPlayingResult => {
+  if (model.mode[0] !== "GameSetup") {
+    return Result.Err("game_must_be_in_setup_mode")
+  }
+
+  const playerId = model.mode[1][playerType]
+
+  if (!playerId) {
+    return Result.Err("player_is_not_playing")
+  }
+
+  if (playerId !== userId) {
+    return Result.Err("user_is_not_the_player")
+  }
+
+  const modelNew: SharedModel = {
+    ...model,
+    mode: ["GameSetup", remove(playerType, model.mode[1])],
   }
 
   return Result.Ok(modelNew)

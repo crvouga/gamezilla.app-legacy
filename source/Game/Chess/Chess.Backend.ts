@@ -7,6 +7,7 @@ import {
   move,
   playAs,
   startGame,
+  stopPlaying,
   ToBackend,
   ToFrontend,
 } from "./Chess.Types"
@@ -54,6 +55,26 @@ export const updateFromFrontend = (
 
       const toFrontend = sendToFrontend([clientId], roomId, [
         "PlayAsResulted",
+        result,
+      ])
+
+      if (result.type === "Err") {
+        return [model, toFrontend]
+      }
+
+      const modelNew: Model = { ...model, ...result.value }
+
+      return [
+        modelNew,
+        Cmd.batch([toFrontend, broadcast(roomId, ["Sync", modelNew])]),
+      ]
+    }
+
+    case "StopPlaying": {
+      const result = stopPlaying(msg[1], model)
+
+      const toFrontend = sendToFrontend([clientId], roomId, [
+        "StopPlayingResulted",
         result,
       ])
 
