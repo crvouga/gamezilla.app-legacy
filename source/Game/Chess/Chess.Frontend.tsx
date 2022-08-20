@@ -36,6 +36,7 @@ export const init = (): [FrontendModel, Cmd.Cmd<Msg>] => {
       boardWidth: 0,
       startGame: RemoteData.NotAsked,
       playAs: RemoteData.NotAsked,
+      stopPlaying: RemoteData.NotAsked,
       menu: ["Closed"]
     },
     pipe(
@@ -60,8 +61,6 @@ export const update = (
   msg: Msg,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
-
-
   switch (msg[0]) {
     case "GetElementResulted": {
       const result = msg[1]
@@ -184,7 +183,7 @@ export const updateFromBackend = (
 //
 
 export const subscriptions = (_model: Model): Sub.Sub<Msg> => {
-  return Browser.onResize((resize) => ["BrowserResized", resize])
+  return Browser.onResize(tag("BrowserResized"))
 }
 
 //

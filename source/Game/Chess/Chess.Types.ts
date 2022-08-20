@@ -80,6 +80,7 @@ export type FrontendModel = SharedModel & {
   boardWidth: number
   startGame: RemoteData.RemoteData<StartGameProblem, Unit>
   playAs: RemoteData.RemoteData<PlayAsProblem, Unit>
+  stopPlaying: RemoteData.RemoteData<StopPlayingProblem, Unit>
   menu: ["Closed"] | ["Opened", { menuId: string }]
 }
 
