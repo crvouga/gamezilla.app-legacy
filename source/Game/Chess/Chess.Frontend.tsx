@@ -367,12 +367,16 @@ const ViewPlayerSlot = ({
           </>
         ) : (
           <UI.Box sx={{ paddingX: 2, paddingY: 1 }}>
-            <UI.Button fullWidth size="large" variant="outlined" onClick={() =>
-              dispatch([
-                "PlayAs",
-                { userId: currentUserId, playerType },
-              ])
-            }>
+            <UI.Button
+              fullWidth
+              size="large"
+              variant="contained"
+              onClick={() =>
+                dispatch([
+                  "PlayAs",
+                  { userId: currentUserId, playerType },
+                ])
+              }>
               Play As {playerType}
             </UI.Button>
           </UI.Box>
