@@ -1,9 +1,11 @@
+import * as Bridge from "../../Bridge"
 import { Cmd, Sub } from "../../Core"
 import { ClientId, RoomId } from "../../Data"
 import {
   BackendModel,
   BackendMsg,
   initSharedModel,
+  inputClock,
   move,
   playAs,
   Response,
@@ -12,8 +14,6 @@ import {
   ToBackend,
   ToFrontend,
 } from "./Chess.Types"
-import * as Bridge from "../../Bridge"
-import * as ChessTs from "chess.ts"
 
 //
 //
@@ -51,6 +51,14 @@ export const updateFromFrontend = (
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
+    case "InputClock": {
+      return handleResponse(
+        { clientId, roomId },
+        ["InputtedClock", inputClock(msg[1], model)],
+        model,
+      )
+    }
+
     case "PlayAs": {
       return handleResponse(
         { clientId, roomId },
