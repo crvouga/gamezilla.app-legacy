@@ -95,3 +95,16 @@ export const every = <Msg>(
 
   return subj.pipe(Rx.map(() => f(new Date().getTime())))
 }
+
+//
+//
+//
+//
+//
+//
+
+export type Seconds = number & { _type: "Seconds" }
+
+export const isSeconds = (seconds: unknown): seconds is Seconds => {
+  return typeof seconds === "number"
+}

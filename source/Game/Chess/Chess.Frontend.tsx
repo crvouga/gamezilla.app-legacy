@@ -7,6 +7,8 @@ import * as Store from "../../Store"
 import * as UI from "../../UI"
 import {
   canStartGame,
+  clockPresets,
+  clockPresetToString,
   FrontendModel,
   FrontendMsg,
   inCheck,
@@ -96,6 +98,10 @@ export const update = (
       return [model, sendToBackend(currentRoomId, msg)]
     }
 
+    case 'InputClock': {
+      return [model, sendToBackend(currentRoomId, msg)]
+    }
+
     case "AudioResulted": {
       return [model, Cmd.None]
     }
@@ -141,6 +147,11 @@ export const updateFromBackend = (
   const model: Model = { ..._model, menu: ["Closed"] }
 
   switch (msg[0]) {
+
+    case 'InputtedClock': {
+      return [{ ...model }, Cmd.None]
+    }
+
     case "MovedResulted": {
       return [{ ...model }, Cmd.None]
     }
@@ -222,10 +233,10 @@ export const view =
     (dispatch) => {
 
 
-      const { mode: status } = model
 
-      if (status[0] === 'GameSetup') {
-        const { White, Black } = status[1]
+
+      if (model.mode[0] === 'GameSetup') {
+
         return (
           <UI.FillBox>
             <UI.List disablePadding>
@@ -235,7 +246,7 @@ export const view =
                 store={store}
                 currentUserId={currentUserId}
                 playerType="White"
-                userId={White}
+                userId={model.mode[1].White}
               />
 
               <ViewPlayerSlot
@@ -244,31 +255,30 @@ export const view =
                 store={store}
                 currentUserId={currentUserId}
                 playerType="Black"
-                userId={Black}
+                userId={model.mode[1].Black}
               />
 
 
 
             </UI.List>
 
-            <UI.Divider />
 
-            <UI.Box sx={{ padding: 2 }}>
-              <UI.Typography color={'text.secondary'}>
+
+            <UI.Box sx={{ paddingX: 2 }}>
+              <UI.Typography gutterBottom color={'text.secondary'}>
                 Time
               </UI.Typography>
-              <UI.Select fullWidth>
-                <UI.MenuItem>
-                  1 Min [Bullet]
-                </UI.MenuItem>
-
-                <UI.MenuItem>
-                  5 Min [Biltz]
-                </UI.MenuItem>
-
-                <UI.MenuItem>
-                  10 Min [Fast]
-                </UI.MenuItem>
+              <UI.Select fullWidth value={model.mode[1].clockPreset}>
+                {Object.values(clockPresets)
+                  .map((clockPreset) => (
+                    <UI.MenuItem
+                      key={clockPreset}
+                      value={clockPreset}
+                      onClick={() => dispatch(['InputClock', clockPreset])}
+                    >
+                      {clockPresetToString(clockPreset)}
+                    </UI.MenuItem>)
+                  )}
               </UI.Select>
             </UI.Box>
 
@@ -280,7 +290,9 @@ export const view =
                 fullWidth
                 variant="contained"
                 sx={{ marginBottom: 2 }}
-                onClick={() => dispatch(['StartGame'])}
+                onClick={() => {
+                  dispatch(['StartGame'])
+                }}
               >
                 Start
               </UI.Button>
@@ -291,7 +303,8 @@ export const view =
       }
 
 
-      const { White, Black } = status[1]
+
+
 
       return (
         <View
@@ -299,8 +312,8 @@ export const view =
           currentUserId={currentUserId}
           model={model}
           dispatch={dispatch}
-          White={White}
-          Black={Black}
+          White={model.mode[1].White}
+          Black={model.mode[1].Black}
         />
       )
     }
@@ -314,7 +327,7 @@ const ViewPlayerSlot = ({
   model
 }: {
   playerType: PlayerType,
-  userId?: UserId.UserId;
+  userId: Option.Option<UserId.UserId>;
   currentUserId: UserId.UserId,
   store: Store.Model;
   dispatch: (msg: Msg) => void,
@@ -328,41 +341,43 @@ const ViewPlayerSlot = ({
         {playerType}
       </UI.Typography>
 
-      {userId ? (
-        <>
-          <UI.ListItemButton onClick={() => dispatch(['PressedPlayerSlot', menuAnchorId])}>
-            <UI.ListItemAvatar>
-              <UI.Avatar src={store.Profile[userId]?.avatarUrl} />
-            </UI.ListItemAvatar>
-            <UI.ListItemText primary={store.Profile[userId]?.username ?? "..."} />
-            <UI.ListItemSecondaryAction>
-              <UI.Icons.MoreVert id={menuAnchorId} />
-            </UI.ListItemSecondaryAction>
-          </UI.ListItemButton>
-          <UI.Menu
-            anchorEl={document.getElementById(menuAnchorId)}
-            open={model.menu[0] === 'Opened' && model.menu[1].menuId === menuAnchorId}
-            onClose={() => dispatch(['ClosedMenu'])}
-          >
-            {userId === currentUserId && (
-              <UI.MenuItem onClick={() => dispatch(['StopPlaying', { userId: currentUserId, playerType }])}>
-                <UI.ListItemText primary="Stop Playing" />
-              </UI.MenuItem>
-            )}
-          </UI.Menu>
-        </>
-      ) : (
-        <UI.Box sx={{ paddingX: 2, paddingY: 1 }}>
-          <UI.Button fullWidth size="large" variant="outlined" onClick={() =>
-            dispatch([
-              "PlayAs",
-              { userId: currentUserId, playerType },
-            ])
-          }>
-            Play As {playerType}
-          </UI.Button>
-        </UI.Box>
-      )}
+      <UI.Box sx={{ height: "72px" }}>
+        {userId.type === 'Some' ? (
+          <>
+            <UI.ListItemButton id={menuAnchorId} onClick={() => dispatch(['PressedPlayerSlot', menuAnchorId])}>
+              <UI.ListItemAvatar>
+                <UI.Avatar src={store.Profile[userId.value]?.avatarUrl} />
+              </UI.ListItemAvatar>
+              <UI.ListItemText primary={store.Profile[userId.value]?.username ?? "..."} />
+              <UI.ListItemSecondaryAction>
+                <UI.Icons.MoreVert />
+              </UI.ListItemSecondaryAction>
+            </UI.ListItemButton>
+            <UI.Menu
+              anchorEl={document.getElementById(menuAnchorId)}
+              open={model.menu[0] === 'Opened' && model.menu[1].menuId === menuAnchorId}
+              onClose={() => dispatch(['ClosedMenu'])}
+            >
+              {userId.value === currentUserId && (
+                <UI.MenuItem onClick={() => dispatch(['StopPlaying', { userId: currentUserId, playerType }])}>
+                  <UI.ListItemText primary="Stop Playing" />
+                </UI.MenuItem>
+              )}
+            </UI.Menu>
+          </>
+        ) : (
+          <UI.Box sx={{ paddingX: 2, paddingY: 1 }}>
+            <UI.Button fullWidth size="large" variant="outlined" onClick={() =>
+              dispatch([
+                "PlayAs",
+                { userId: currentUserId, playerType },
+              ])
+            }>
+              Play As {playerType}
+            </UI.Button>
+          </UI.Box>
+        )}
+      </UI.Box>
     </>
   )
 }

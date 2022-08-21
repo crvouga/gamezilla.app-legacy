@@ -1,6 +1,5 @@
 import * as ChessTs from "chess.ts"
 import { Audio, Browser, Option, RemoteData, Result, Unit } from "../../Core"
-import { remove } from "../../Core/Record"
 import { UserId } from "../../Data"
 
 //
@@ -55,10 +54,6 @@ export const inStalemate = (model: SharedModel): boolean => {
   return new ChessTs.Chess(model.fen).inStalemate()
 }
 
-export type Mode =
-  | ["GameSetup", { White?: UserId.UserId; Black?: UserId.UserId }]
-  | ["GameStarted", { White: UserId.UserId; Black: UserId.UserId }]
-
 export type PlayerType = "White" | "Black"
 
 //
@@ -72,6 +67,63 @@ export type PlayerType = "White" | "Black"
 export type SharedModel = {
   fen: string
   mode: Mode
+}
+
+export type Mode =
+  | [
+      "GameSetup",
+      {
+        White: Option.Option<UserId.UserId>
+        Black: Option.Option<UserId.UserId>
+        clockPreset: ClockPreset
+      },
+    ]
+  | [
+      "GameStarted",
+      {
+        White: UserId.UserId
+        Black: UserId.UserId
+        clock: Clock
+      },
+    ]
+
+export type Clock = {
+  White: Seconds
+  Black: Seconds
+}
+
+export type Seconds = number & { _type: "Seconds" }
+
+export const toSeconds = (seconds: number): Seconds => {
+  return seconds as Seconds
+}
+
+type ClockPreset = "Bullet" | "Blitz" | "Fast"
+
+export const clockPresets: { [key in ClockPreset]: ClockPreset } = {
+  Bullet: "Bullet",
+  Blitz: "Blitz",
+  Fast: "Fast",
+}
+
+export const presetToSeconds: { [key in ClockPreset]: Seconds } = {
+  Bullet: toSeconds(60 * 1),
+  Blitz: toSeconds(60 * 3),
+  Fast: toSeconds(60 * 10),
+}
+
+export const toClock = (preset: ClockPreset): Clock => {
+  const seconds = presetToSeconds[preset]
+  return {
+    White: seconds,
+    Black: seconds,
+  }
+}
+
+export const clockPresetToString = (preset: ClockPreset): string => {
+  const minutes = presetToSeconds[preset] / 60
+
+  return `${minutes} min`
 }
 
 export type Player = ["User", { userId: UserId.UserId }] | ["None"]
@@ -96,7 +148,14 @@ export type BackendModel = SharedModel
 
 export const initSharedModel: SharedModel = {
   fen: getInitialFen(),
-  mode: ["GameSetup", {}],
+  mode: [
+    "GameSetup",
+    {
+      Black: Option.None,
+      White: Option.None,
+      clockPreset: "Fast",
+    },
+  ],
 }
 
 //
@@ -128,13 +187,14 @@ export type ToBackend = Request
 //
 //
 
-export type Request = Move | PlayAs | StopPlaying | StartGame
+export type Request = Move | PlayAs | StopPlaying | StartGame | InputClock
 
 export type Response =
   | MoveResulted
   | PlayAsResulted
   | StopPlayingResulted
   | StartGameResulted
+  | InputtedClock
 
 //
 //
@@ -166,16 +226,23 @@ export const playAs = (
 
   const playerId = model.mode[1][playerType]
 
-  if (playerId) {
+  if (playerId.type === "Some") {
     return Result.Err("player_is_taken")
   }
 
-  const modelNew: SharedModel = {
-    ...model,
-    mode: ["GameSetup", { ...model.mode[1], [playerType]: userId }],
-  }
+  switch (playerType) {
+    case "Black":
+      return Result.Ok({
+        ...model,
+        mode: ["GameSetup", { ...model.mode[1], Black: Option.Some(userId) }],
+      })
 
-  return Result.Ok(modelNew)
+    case "White":
+      return Result.Ok({
+        ...model,
+        mode: ["GameSetup", { ...model.mode[1], White: Option.Some(userId) }],
+      })
+  }
 }
 
 //
@@ -205,20 +272,64 @@ export const stopPlaying = (
 
   const playerId = model.mode[1][playerType]
 
-  if (!playerId) {
+  if (playerId.type === "None") {
     return Result.Err("player_is_not_playing")
   }
 
-  if (playerId !== userId) {
+  if (playerId.value !== userId) {
     return Result.Err("user_is_not_the_player")
   }
 
-  const modelNew: SharedModel = {
-    ...model,
-    mode: ["GameSetup", remove(playerType, model.mode[1])],
+  switch (playerType) {
+    case "Black": {
+      const modelNew: SharedModel = {
+        ...model,
+        mode: ["GameSetup", { ...model.mode[1], Black: Option.None }],
+      }
+
+      return Result.Ok(modelNew)
+    }
+
+    case "White": {
+      const modelNew: SharedModel = {
+        ...model,
+        mode: ["GameSetup", { ...model.mode[1], White: Option.None }],
+      }
+
+      return Result.Ok(modelNew)
+    }
+  }
+}
+
+//
+//
+//
+//
+//
+//
+
+export type InputClock = ["InputClock", ClockPreset]
+
+export type InputtedClock = [
+  "InputtedClock",
+  Result.Result<InputtedClockProblem, SharedModel>,
+]
+
+export type InputtedClockProblem = "failed_to_input_clock"
+
+export const inputClock = (
+  clockPreset: InputClock[1],
+  model: SharedModel,
+): InputtedClock[1] => {
+  if (model.mode[0] === "GameSetup") {
+    const modelNew: SharedModel = {
+      ...model,
+      mode: ["GameSetup", { ...model.mode[1], clockPreset }],
+    }
+    return Result.Ok(modelNew)
   }
 
-  return Result.Ok(modelNew)
+  return Result.Err("failed_to_input_clock")
 }
 
 //
@@ -234,19 +345,27 @@ export type StartGameResult = Result.Result<StartGameProblem, SharedModel>
 export const canStartGame = (model: SharedModel): boolean => {
   return (
     model.mode[0] === "GameSetup" &&
-    model.mode[1].White !== undefined &&
-    model.mode[1].Black !== undefined
+    model.mode[1].White.type === "Some" &&
+    model.mode[1].Black.type === "Some"
   )
 }
 
 export const startGame = (model: SharedModel): StartGameResult => {
-  const { mode } = model
-  const { White, Black } = mode[1]
-
-  if (mode[0] === "GameSetup" && White && Black) {
+  if (
+    model.mode[0] === "GameSetup" &&
+    model.mode[1].White.type === "Some" &&
+    model.mode[1].Black.type === "Some"
+  ) {
     const modelNew: SharedModel = {
       ...model,
-      mode: ["GameStarted", { White, Black }],
+      mode: [
+        "GameStarted",
+        {
+          White: model.mode[1].White.value,
+          Black: model.mode[1].Black.value,
+          clock: toClock(model.mode[1].clockPreset),
+        },
+      ],
     }
 
     return Result.Ok(modelNew)
