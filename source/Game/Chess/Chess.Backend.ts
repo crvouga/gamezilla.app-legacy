@@ -1,5 +1,5 @@
 import * as Bridge from "../../Bridge"
-import { Cmd, Sub } from "../../Core"
+import { Cmd, Sub, Time } from "../../Core"
 import { ClientId, RoomId } from "../../Data"
 import {
   BackendModel,
@@ -39,7 +39,11 @@ export type Msg = BackendMsg
 
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
-    case "None": {
+    case "OneSecondPassed": {
+      if (model.type !== "GameStarted") {
+        return [model, Cmd.None]
+      }
+
       return [model, Cmd.None]
     }
   }
@@ -51,6 +55,10 @@ export const updateFromFrontend = (
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
+    case "Init": {
+      return [model, sendToFrontend([clientId], roomId, ["Sync", model])]
+    }
+
     case "InputClock": {
       return handleResponse(
         { clientId, roomId },
@@ -143,6 +151,11 @@ export const broadcast = (roomId: RoomId.RoomId, msg: ToFrontend) => {
 //
 //
 
-export const subscriptions = (model: Model): Sub.Sub<Msg> => {
-  return Sub.batch<Msg>([])
+export const subscriptions = (
+  intervalId: string,
+  model: Model,
+): Sub.Sub<Msg> => {
+  return Sub.batch<Msg>([
+    Time.every(intervalId, 1000, () => ["OneSecondPassed"]),
+  ])
 }

@@ -1,25 +1,25 @@
 import { useLayoutEffect, useRef, useState } from "react"
 import { Chessboard } from "react-chessboard"
 import * as Bridge from "../../Bridge"
-import { Option, Audio, Browser, Cmd, pipe, RemoteData, Sub, tag, Unit } from "../../Core"
+import { Audio, Browser, Cmd, Option, pipe, RemoteData, Sub, tag, Unit } from "../../Core"
 import { RoomId, UserId } from "../../Data"
 import * as Store from "../../Store"
 import * as UI from "../../UI"
+import * as Board from "./Board"
 import {
   canStartGame,
   clockPresets,
   clockPresetToString,
   FrontendModel,
   FrontendMsg,
-  inCheck,
   initSharedModel,
   move,
   Move,
-  PlayerType,
   ToBackend,
   ToFrontend
 } from "./Chess.Types"
 import { Sounds } from "./Sounds"
+
 
 //
 //
@@ -31,20 +31,23 @@ import { Sounds } from "./Sounds"
 
 export type Model = FrontendModel
 
-export const init = (): [FrontendModel, Cmd.Cmd<Msg>] => {
+export const init = ({ roomId }: { roomId: RoomId.RoomId }): [FrontendModel, Cmd.Cmd<Msg>] => {
   return [
     {
-      ...initSharedModel,
+      sharedModel: initSharedModel,
       boardWidth: 0,
       startGame: RemoteData.NotAsked,
       playAs: RemoteData.NotAsked,
       stopPlaying: RemoteData.NotAsked,
       menu: ["Closed"]
     },
-    pipe(
-      Browser.getElementById(containerHtmlId),
-      Cmd.perform(tag("GetElementResulted")),
-    ),
+    Cmd.batch([
+      sendToBackend(roomId, ['Init']),
+      pipe(
+        Browser.getElementById(containerHtmlId),
+        Cmd.perform(tag("GetElementResulted")),
+      ),
+    ])
   ]
 }
 
@@ -115,20 +118,24 @@ export const update = (
     }
 
     case "Move": {
-      const result = move(msg[1], model)
+      const result = move(msg[1], model.sharedModel)
 
       if (result.type === "Err") {
         return [model, Cmd.None]
       }
 
-      const sharedModel = result.value
+      const sharedModelNew = result.value
 
-      const sound = inCheck(sharedModel) ? Sounds.check : Sounds.move
+      if (sharedModelNew.type !== "GameStarted") {
+        return [model, Cmd.None]
+      }
+
+      const sound = Board.inCheck(sharedModelNew.board) ? Sounds.check : Sounds.move
 
       return [
         {
           ...model,
-          ...sharedModel,
+          sharedModel: sharedModelNew,
         },
         Cmd.batch([
           sendToBackend(currentRoomId, msg),
@@ -179,8 +186,7 @@ export const updateFromBackend = (
     }
 
     case "Sync": {
-      const sharedModel = msg[1]
-      return [{ ...model, ...sharedModel }, Cmd.None]
+      return [{ ...model, sharedModel: msg[1] }, Cmd.None]
     }
   }
 }
@@ -235,7 +241,7 @@ export const view =
 
 
 
-      if (model.mode[0] === 'GameSetup') {
+      if (model.sharedModel.type === 'GameSetup') {
 
         return (
           <UI.FillBox>
@@ -246,7 +252,7 @@ export const view =
                 store={store}
                 currentUserId={currentUserId}
                 playerType="White"
-                userId={model.mode[1].White}
+                userId={model.sharedModel.White}
               />
 
               <ViewPlayerSlot
@@ -255,20 +261,17 @@ export const view =
                 store={store}
                 currentUserId={currentUserId}
                 playerType="Black"
-                userId={model.mode[1].Black}
+                userId={model.sharedModel.Black}
               />
-
-
-
             </UI.List>
 
 
 
             <UI.Box sx={{ paddingX: 2 }}>
               <UI.Typography gutterBottom color={'text.secondary'}>
-                Time
+                Clock
               </UI.Typography>
-              <UI.Select fullWidth value={model.mode[1].clockPreset}>
+              <UI.Select fullWidth value={model.sharedModel.clockPreset}>
                 {Object.values(clockPresets)
                   .map((clockPreset) => (
                     <UI.MenuItem
@@ -286,7 +289,7 @@ export const view =
 
             <UI.Box sx={{ paddingX: 2 }}>
               <UI.Button
-                disabled={!canStartGame(model)}
+                disabled={!canStartGame(model.sharedModel)}
                 fullWidth
                 variant="contained"
                 sx={{ marginBottom: 2 }}
@@ -294,7 +297,7 @@ export const view =
                   dispatch(['StartGame'])
                 }}
               >
-                Start
+                Start Game
               </UI.Button>
             </UI.Box>
 
@@ -312,8 +315,9 @@ export const view =
           currentUserId={currentUserId}
           model={model}
           dispatch={dispatch}
-          White={model.mode[1].White}
-          Black={model.mode[1].Black}
+          White={model.sharedModel.White}
+          Black={model.sharedModel.Black}
+          board={model.sharedModel.board}
         />
       )
     }
@@ -326,7 +330,7 @@ const ViewPlayerSlot = ({
   currentUserId,
   model
 }: {
-  playerType: PlayerType,
+  playerType: Board.PlayerType,
   userId: Option.Option<UserId.UserId>;
   currentUserId: UserId.UserId,
   store: Store.Model;
@@ -358,11 +362,16 @@ const ViewPlayerSlot = ({
               open={model.menu[0] === 'Opened' && model.menu[1].menuId === menuAnchorId}
               onClose={() => dispatch(['ClosedMenu'])}
             >
-              {userId.value === currentUserId && (
+              {userId.value === currentUserId ? (
                 <UI.MenuItem onClick={() => dispatch(['StopPlaying', { userId: currentUserId, playerType }])}>
                   <UI.ListItemText primary="Stop Playing" />
                 </UI.MenuItem>
+              ) : (
+                <UI.MenuItem >
+                  <UI.ListItemText primaryTypographyProps={{ color: "text.secondary" }} primary="Not action available" />
+                </UI.MenuItem>
               )}
+
             </UI.Menu>
           </>
         ) : (
@@ -393,11 +402,13 @@ export const View = ({
   dispatch,
   White,
   Black,
+  board,
 }: {
   store: Store.Model
   currentUserId: UserId.UserId
   White: UserId.UserId
   Black: UserId.UserId
+  board: Board.Model
   model: Model
   dispatch: (msg: Msg) => void
 }) => {
@@ -430,6 +441,8 @@ export const View = ({
     marginRight: 1,
   }
 
+  const boardOrentation: Board.PlayerType = currentUserId === Black ? 'Black' : 'White'
+
   return (
     <UI.FillBox id={containerHtmlId}>
       <UI.Box sx={playerBoxSx}>
@@ -456,8 +469,8 @@ export const View = ({
         <Chessboard
           showBoardNotation
           snapToCursor
-          boardOrientation="white"
-          position={model.fen}
+          boardOrientation={boardOrentation === "White" ? "white" : "black"}
+          position={board.fen}
           boardWidth={boardWidth}
           onPieceDrop={(sourceSquare, targetSquare, _piece) => {
             const msg: Move = [

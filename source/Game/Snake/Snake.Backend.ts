@@ -153,7 +153,7 @@ export const updateFromFrontend = (
 //
 
 export const subscriptions = (
-  roomId: RoomId.RoomId,
+  intervalId: string,
   model: Model,
 ): Sub.Sub<Msg> => {
   switch (model.status) {
@@ -162,7 +162,7 @@ export const subscriptions = (
     }
 
     case "Playing": {
-      return Time.every<Msg>(roomId, model.tickRate, () => ["Tick"])
+      return Time.every<Msg>(intervalId, model.tickRate, () => ["Tick"])
     }
   }
 }
