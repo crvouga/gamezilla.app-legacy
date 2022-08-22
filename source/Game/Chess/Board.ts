@@ -41,6 +41,20 @@ export const inStalemate = (model: Model): boolean => {
   return new ChessTs.Chess(model.fen).inStalemate()
 }
 
+export const toTurn = (model: Model): PlayerType => {
+  const chess = new ChessTs.Chess(model.fen)
+
+  const color = chess.turn()
+
+  switch (color) {
+    case "b":
+      return "Black"
+
+    case "w":
+      return "White"
+  }
+}
+
 //
 //
 // Move

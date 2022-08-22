@@ -315,6 +315,10 @@ export const toSeconds = (seconds: number): Seconds => {
   return seconds as Seconds
 }
 
+export const subtract = (a: Seconds, b: Seconds): Seconds => {
+  return toSeconds(a - b)
+}
+
 type ClockPreset = "Bullet" | "Blitz" | "Fast"
 
 export const clockPresets: { [key in ClockPreset]: ClockPreset } = {

@@ -8,6 +8,7 @@ import * as UI from "../../UI"
 import * as Board from "./Board"
 import {
   canStartGame,
+  Clock,
   clockPresets,
   clockPresetToString,
   FrontendModel,
@@ -310,11 +311,12 @@ export const view =
 
 
       return (
-        <View
+        <ViewGameStarted
           store={store}
           currentUserId={currentUserId}
           model={model}
           dispatch={dispatch}
+          clock={model.sharedModel.clock}
           White={model.sharedModel.White}
           Black={model.sharedModel.Black}
           board={model.sharedModel.board}
@@ -395,7 +397,20 @@ const ViewPlayerSlot = ({
   )
 }
 
-export const View = ({
+export const formatSeconds = (seconds: number): string => {
+  const minutes = Math.floor(seconds / 60)
+  const remainingSeconds = seconds % 60
+  return `${minutes}:${formatTwoDigits(remainingSeconds)}`
+}
+
+const formatTwoDigits = (number: number): string => {
+  if (number < 10) {
+    return `0${number}`
+  }
+  return `${number}`
+}
+
+export const ViewGameStarted = ({
   currentUserId,
   store,
   model,
@@ -403,12 +418,14 @@ export const View = ({
   White,
   Black,
   board,
+  clock,
 }: {
   store: Store.Model
   currentUserId: UserId.UserId
   White: UserId.UserId
   Black: UserId.UserId
-  board: Board.Model
+  board: Board.Model,
+  clock: Clock
   model: Model
   dispatch: (msg: Msg) => void
 }) => {
@@ -461,7 +478,7 @@ export const View = ({
           variant="outlined"
           sx={{ paddingX: 1, paddingY: 1 / 2 }}
         >
-          <UI.Typography>0:00</UI.Typography>
+          <UI.Typography>{formatSeconds(clock.White)}</UI.Typography>
         </UI.Paper>
       </UI.Box>
 
@@ -506,7 +523,7 @@ export const View = ({
           variant="outlined"
           sx={{ paddingX: 1, paddingY: 1 / 2 }}
         >
-          <UI.Typography>0:00</UI.Typography>
+          <UI.Typography>{formatSeconds(clock.Black)}</UI.Typography>
         </UI.Paper>
       </UI.Box>
 
