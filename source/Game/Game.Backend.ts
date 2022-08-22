@@ -153,7 +153,7 @@ export const subscriptions = (
       return tagSub("Snake", Snake.subscriptions(roomId, model[1]))
     }
     case "Chess": {
-      return tagSub("Chess", Chess.subscriptions(model[1]))
+      return tagSub("Chess", Chess.subscriptions(roomId, model[1]))
     }
   }
 }

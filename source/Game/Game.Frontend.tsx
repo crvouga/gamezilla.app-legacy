@@ -19,7 +19,7 @@ import { FrontendModel, FrontendMsg, GameName, ToFrontend } from "./Game.Types"
 
 export type Model = FrontendModel
 
-export const init = (gameName: Model[0]): [Model, Cmd.Cmd<Msg>] => {
+export const init = ({ gameName, roomId }: { roomId: RoomId.RoomId, gameName: Model[0] }): [Model, Cmd.Cmd<Msg>] => {
   switch (gameName) {
     case "TicTacToe": {
       return [["TicTacToe", TicTacToe.init], Cmd.None]
@@ -34,7 +34,7 @@ export const init = (gameName: Model[0]): [Model, Cmd.Cmd<Msg>] => {
     }
 
     case "Chess": {
-      const [child, cmd] = Chess.init()
+      const [child, cmd] = Chess.init({ roomId })
       return [["Chess", child], tagCmd("Chess", cmd)]
     }
   }

@@ -294,29 +294,32 @@ const updateResponse = (
 }
 
 const sync = (frontendModel: FrontendModel, backendModel: BackendModel): [FrontendModel, Cmd.Cmd<FrontendMsg>] => {
+
+  const init: [FrontendModel['games'], Cmd.Cmd<FrontendMsg>] = [{}, Cmd.None]
+
   const [gamesNew, gamesCmd] = Object
     .entries(backendModel.games)
-    .reduce<[FrontendModel['games'], Cmd.Cmd<FrontendMsg>]>(
+    .reduce(
       ([games, cmd], [roomId, backendGame]) => {
         if (!RoomId.is(roomId)) {
           return [games, cmd]
         }
 
-        const game = frontendModel.games[roomId]
+        const frontendGame = frontendModel.games[roomId]
 
         const gameName = backendGame[0]
 
-        if (game) {
+        if (frontendGame) {
           return [
             {
               ...games,
-              [roomId]: [gameName, { ...game[1], ...backendGame[1] }]
+              [roomId]: [gameName, { ...frontendGame[1], ...backendGame[1] }]
             },
             cmd
           ]
         }
 
-        const [gameInit, gameCmd] = Game.init(gameName)
+        const [gameInit, gameCmd] = Game.init({ gameName, roomId })
 
         return [
           {
@@ -330,7 +333,7 @@ const sync = (frontendModel: FrontendModel, backendModel: BackendModel): [Fronte
         ]
 
       },
-      [{}, Cmd.None]
+      init
     )
 
   return [
