@@ -1,9 +1,11 @@
 import * as Bridge from "../../Bridge"
 import { Cmd, Sub, Time } from "../../Core"
 import { ClientId, RoomId } from "../../Data"
+import * as Board from "./Board"
 import {
   BackendModel,
   BackendMsg,
+  Clock,
   initSharedModel,
   inputClock,
   move,
@@ -13,6 +15,7 @@ import {
   stopPlaying,
   ToBackend,
   ToFrontend,
+  toSeconds,
 } from "./Chess.Types"
 
 //
@@ -44,8 +47,22 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
         return [model, Cmd.None]
       }
 
-      return [model, Cmd.None]
+      const turn = Board.toTurn(model.board)
+
+      const modelNew: Model = {
+        ...model,
+        clock: decrementClock(turn, model.clock),
+      }
+
+      return [modelNew, Cmd.None]
     }
+  }
+}
+
+const decrementClock = (key: keyof Clock, clock: Clock): Clock => {
+  return {
+    ...clock,
+    [key]: toSeconds(clock[key] - 1),
   }
 }
 

@@ -25,25 +25,6 @@ export type BackendModel =
 
 export type GameName = "TicTacToe" | "ConnectFour" | "Snake" | "Chess"
 
-export const mergeFrontend = (
-  frontend: FrontendModel,
-  backend: BackendModel,
-): FrontendModel => {
-  switch (frontend[0]) {
-    case "Chess":
-      return frontend
-
-    case "ConnectFour":
-      return frontend
-
-    case "Snake":
-      return frontend
-
-    case "TicTacToe":
-      return frontend
-  }
-}
-
 //
 //
 //
