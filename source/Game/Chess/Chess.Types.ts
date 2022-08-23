@@ -69,7 +69,7 @@ export type FrontendMsg =
   | ["ClosedMenu"]
   | Request
 
-export type BackendMsg = ["OneSecondPassed"]
+export type BackendMsg = ["Tick"]
 
 export type ToFrontend = ["Sync", SharedModel] | Response
 
@@ -307,6 +307,13 @@ export const startGame = (model: SharedModel): StartGameResult => {
 export type Clock = {
   White: Seconds
   Black: Seconds
+}
+
+export const decrementClock = (key: keyof Clock, clock: Clock): Clock => {
+  return {
+    ...clock,
+    [key]: toSeconds(Math.max(0, clock[key] - 1)),
+  }
 }
 
 export type Seconds = number & { _type: "Seconds" }

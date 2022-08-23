@@ -1,5 +1,5 @@
 import * as Bridge from "../Bridge"
-import { Cmd, exhaustive, pipe, Result, Sub } from "../Core"
+import { Cmd, exhaustive, pipe, Result, Sub, tagCmd } from "../Core"
 import { remove } from "../Core/Record"
 import { ClientId, RoomId, UserId } from "../Data"
 import * as Game from "../Game/Game.Backend"
@@ -57,7 +57,14 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
       const gameMsg = msg[2]
 
-      const [gameNew, gameCmd] = Game.update({ roomId }, gameMsg, game)
+      const [gameNew, gameCmd] = Game.update(
+        {
+          broadcast: (msg) => broadcast(["Games", roomId, msg]),
+          roomId,
+        },
+        gameMsg,
+        game,
+      )
 
       const modelNew: Model = {
         ...model,
