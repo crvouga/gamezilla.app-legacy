@@ -5,7 +5,7 @@ import * as Board from "./Board"
 import {
   BackendModel,
   BackendMsg,
-  Clock,
+  decrementClock,
   initSharedModel,
   inputClock,
   move,
@@ -15,13 +15,12 @@ import {
   stopPlaying,
   ToBackend,
   ToFrontend,
-  toSeconds,
 } from "./Chess.Types"
 
 //
 //
 //
-// ModelØ
+// Model
 //
 //
 //
@@ -40,9 +39,13 @@ export const init: Model = initSharedModel
 
 export type Msg = BackendMsg
 
-export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
+export const update = (
+  { broadcast }: { broadcast: Broadcast },
+  msg: Msg,
+  model: Model,
+): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
-    case "OneSecondPassed": {
+    case "Tick": {
       if (model.type !== "GameStarted") {
         return [model, Cmd.None]
       }
@@ -54,15 +57,8 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
         clock: decrementClock(turn, model.clock),
       }
 
-      return [modelNew, Cmd.None]
+      return [modelNew, broadcast(["Sync", model])]
     }
-  }
-}
-
-const decrementClock = (key: keyof Clock, clock: Clock): Clock => {
-  return {
-    ...clock,
-    [key]: toSeconds(clock[key] - 1),
   }
 }
 
@@ -156,6 +152,8 @@ export const sendToFrontend = (
   ])
 }
 
+type Broadcast = (toFrontend: ToFrontend) => Cmd.Cmd<never>
+
 export const broadcast = (roomId: RoomId.RoomId, msg: ToFrontend) => {
   return Bridge.broadcast(["GameRoom", ["Games", roomId, ["Chess", msg]]])
 }
@@ -172,7 +170,5 @@ export const subscriptions = (
   intervalId: string,
   model: Model,
 ): Sub.Sub<Msg> => {
-  return Sub.batch<Msg>([
-    Time.every(intervalId, 1000, () => ["OneSecondPassed"]),
-  ])
+  return Sub.batch<Msg>([Time.every(intervalId, 1000, () => ["Tick"])])
 }

@@ -1,10 +1,10 @@
-import { Cmd, pipe, Sub, tag, tagSub, tagUpdate } from "../Core"
-import { BackendModel, BackendMsg, ToBackend } from "./Game.Types"
-import * as ConnectFour from "./ConnectFour/ConnectFour.Backend"
-import * as Snake from "./Snake/Snake.Backend"
+import { Cmd, Sub, tagCmd, tagSub, tagUpdate } from "../Core"
+import { ClientId, RoomId } from "../Data"
 import * as Chess from "./Chess/Chess.Backend"
+import * as ConnectFour from "./ConnectFour/ConnectFour.Backend"
+import { BackendModel, BackendMsg, ToBackend, ToFrontend } from "./Game.Types"
+import * as Snake from "./Snake/Snake.Backend"
 import * as TicTacToe from "./TicTacToe/TicTacToe.Backend"
-import { RoomId, ClientId, UserId } from "../Data"
 
 //
 //
@@ -47,7 +47,13 @@ export const init = ({ gameName }: { gameName: Model[0] }): Model => {
 export type Msg = BackendMsg
 
 export const update = (
-  { roomId }: { roomId: RoomId.RoomId },
+  {
+    broadcast,
+    roomId,
+  }: {
+    broadcast: (toFrontend: ToFrontend) => Cmd.Cmd<never>
+    roomId: RoomId.RoomId
+  },
   msg: Msg,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
@@ -75,7 +81,14 @@ export const update = (
 
     case "Chess": {
       if (model[0] === "Chess") {
-        return tagUpdate("Chess", Chess.update(msg[1], model[1]))
+        return tagUpdate(
+          "Chess",
+          Chess.update(
+            { broadcast: (msg) => broadcast(["Chess", msg]) },
+            msg[1],
+            model[1],
+          ),
+        )
       }
       return [model, Cmd.None]
     }
