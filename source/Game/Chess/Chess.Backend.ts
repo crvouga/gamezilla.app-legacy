@@ -170,5 +170,18 @@ export const subscriptions = (
   intervalId: string,
   model: Model,
 ): Sub.Sub<Msg> => {
-  return Sub.batch<Msg>([Time.every(intervalId, 1000, () => ["Tick"])])
+  if (model.type !== "GameStarted") {
+    return Sub.None
+  }
+
+  const turn = Board.toTurn(model.board)
+
+  switch (turn) {
+    case "Black": {
+      return Time.every(`Black-${intervalId}`, 1000, () => ["Tick"])
+    }
+    case "White": {
+      return Time.every(`White-${intervalId}`, 1000, () => ["Tick"])
+    }
+  }
 }
