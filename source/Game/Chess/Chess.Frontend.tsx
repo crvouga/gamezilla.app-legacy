@@ -1,10 +1,11 @@
-import { useLayoutEffect, useRef, useState } from "react"
+import { useEffect, useLayoutEffect, useRef, useState } from "react"
 import { Chessboard } from "react-chessboard"
 import * as Bridge from "../../Bridge"
 import { Audio, Browser, Cmd, Option, pipe, RemoteData, Sub, tag, Unit } from "../../Core"
 import { RoomId, UserId } from "../../Data"
 import * as Store from "../../Store"
 import * as UI from "../../UI"
+import { useTheme } from "../../UI"
 import * as Board from "./Board"
 import {
   canStartGame,
@@ -16,6 +17,7 @@ import {
   initSharedModel,
   move,
   Move,
+  Seconds,
   ToBackend,
   ToFrontend
 } from "./Chess.Types"
@@ -238,12 +240,7 @@ export const view =
     model: Model,
   ): UI.View<Msg> =>
     (dispatch) => {
-
-
-
-
       if (model.sharedModel.type === 'GameSetup') {
-
         return (
           <UI.FillBox>
             <UI.List disablePadding>
@@ -312,6 +309,7 @@ export const view =
 
       return (
         <ViewGameStarted
+
           store={store}
           currentUserId={currentUserId}
           model={model}
@@ -418,13 +416,14 @@ export const ViewGameStarted = ({
   White,
   Black,
   board,
+
   clock,
 }: {
   store: Store.Model
   currentUserId: UserId.UserId
   White: UserId.UserId
   Black: UserId.UserId
-  board: Board.Model,
+  board: Board.Model
   clock: Clock
   model: Model
   dispatch: (msg: Msg) => void
@@ -432,7 +431,7 @@ export const ViewGameStarted = ({
   const [boardWidth, setBoardWidth] = useState(0)
   const ref = useRef<HTMLDivElement | null>(null)
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const handler = () => {
       if (ref.current) {
         setBoardWidth(ref.current?.offsetWidth)
@@ -458,28 +457,49 @@ export const ViewGameStarted = ({
     marginRight: 1,
   }
 
+  const turn = Board.toTurn(board)
+
   const boardOrentation: Board.PlayerType = currentUserId === Black ? 'Black' : 'White'
+
+  const white = {
+    src: store.Profile[White]?.avatarUrl,
+    username: store.Profile[White]?.username ?? "...",
+    isActive: turn === 'White',
+    seconds: clock.White
+  }
+
+  const black = {
+    src: store.Profile[Black]?.avatarUrl,
+    username: store.Profile[Black]?.username ?? "...",
+    isActive: turn === 'Black',
+    seconds: clock.Black
+  }
+
+
+
+  const playerSlots = boardOrentation === 'White' ? {
+    top: black,
+    bottom: white
+  } : {
+    top: white,
+    bottom: black
+  }
 
   return (
     <UI.FillBox id={containerHtmlId}>
       <UI.Box sx={playerBoxSx}>
         <UI.Avatar
-          src={store.Profile[White]?.avatarUrl}
+          src={playerSlots.top.src}
           sx={playerAvatarSx}
         />
 
         <UI.Box sx={{ flex: 1 }}>
           <UI.Typography>
-            {store.Profile[White]?.username ?? "..."}
+            {playerSlots.top.username}
           </UI.Typography>
         </UI.Box>
 
-        <UI.Paper
-          variant="outlined"
-          sx={{ paddingX: 1, paddingY: 1 / 2 }}
-        >
-          <UI.Typography>{formatSeconds(clock.White)}</UI.Typography>
-        </UI.Paper>
+        <ViewClock isActive={playerSlots.top.isActive} seconds={playerSlots.top.seconds} />
       </UI.Box>
 
       <div ref={ref}>
@@ -509,22 +529,17 @@ export const ViewGameStarted = ({
 
       <UI.Box sx={playerBoxSx}>
         <UI.Avatar
-          src={store.Profile[Black]?.avatarUrl}
+          src={playerSlots.bottom.src}
           sx={playerAvatarSx}
         />
 
         <UI.Box sx={{ flex: 1 }}>
           <UI.Typography>
-            {store.Profile[Black]?.username ?? "..."}
+            {playerSlots.bottom.username}
           </UI.Typography>
         </UI.Box>
 
-        <UI.Paper
-          variant="outlined"
-          sx={{ paddingX: 1, paddingY: 1 / 2 }}
-        >
-          <UI.Typography>{formatSeconds(clock.Black)}</UI.Typography>
-        </UI.Paper>
+        <ViewClock isActive={playerSlots.bottom.isActive} seconds={playerSlots.bottom.seconds} />
       </UI.Box>
 
       <UI.Box sx={{ flex: 1 }} />
@@ -535,6 +550,18 @@ export const ViewGameStarted = ({
         </UI.ButtonBase>
       </UI.Box>
     </UI.FillBox>
+  )
+}
+
+const ViewClock = ({ isActive, seconds }: { isActive: boolean, seconds: Seconds }) => {
+  const theme = UI.useTheme()
+  return (
+    <UI.Paper
+      variant="outlined"
+      sx={{ padding: 2, paddingY: 1 }}
+    >
+      <UI.Typography color={isActive ? theme.palette.text.primary : theme.palette.text.disabled} variant="h6">{formatSeconds(seconds)}</UI.Typography>
+    </UI.Paper>
   )
 }
 
