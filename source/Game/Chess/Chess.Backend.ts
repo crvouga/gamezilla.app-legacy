@@ -1,5 +1,5 @@
 import * as Bridge from "../../Bridge"
-import { Cmd, Sub, Time } from "../../Core"
+import { Cmd, exhaustive, Sub, Time } from "../../Core"
 import { ClientId, RoomId } from "../../Data"
 import * as Board from "./Board"
 import {
@@ -12,6 +12,7 @@ import {
   inputPlayer,
   move,
   resign,
+  respondToDraw,
   Response,
   startGame,
   ToBackend,
@@ -119,6 +120,18 @@ export const updateFromFrontend = (
         ["MovedResulted", move(msg[1], model)],
         model,
       )
+    }
+
+    case "RespondToDraw": {
+      return sendResponse(
+        { clientId, roomId },
+        ["RespondToDrawResulted", respondToDraw(msg[1], model)],
+        model,
+      )
+    }
+
+    default: {
+      return exhaustive(msg[0])
     }
   }
 }

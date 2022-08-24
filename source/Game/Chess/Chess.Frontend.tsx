@@ -82,6 +82,10 @@ export const update = (
       return [{ ...model, openedModal: Option.None }, sendToBackend(currentRoomId, msg)]
     }
 
+    case 'RespondToDraw': {
+      return [model, sendToBackend(currentRoomId, msg)]
+    }
+
     case "AudioResulted": {
       return [model, Cmd.None]
     }
@@ -94,7 +98,6 @@ export const update = (
       return [{ ...model, openedMenuId: Option.None }, Cmd.None]
     }
 
-
     case 'ClickedFlip': {
       return [{ ...model, isFlipped: !model.isFlipped }, Cmd.None]
     }
@@ -106,6 +109,7 @@ export const update = (
     case 'ClosedModal': {
       return [{ ...model, openedModal: Option.None }, Cmd.None]
     }
+
 
     case "Move": {
       const result = move(msg[1], model.sharedModel)
@@ -185,6 +189,10 @@ export const updateFromBackend = (
     }
 
     case 'ResignResulted': {
+      return [{ ...model, }, Cmd.None]
+    }
+
+    case 'RespondToDrawResulted': {
       return [{ ...model, }, Cmd.None]
     }
 
@@ -532,9 +540,9 @@ export const ViewGameStarted = ({
           <UI.ConformationDialog
             open={drawByAgreement.type === 'Asked' && Board.toOppositeColor(currentUserColor) === drawByAgreement.asker}
             headerIcon={<UI.Icons.HandshakeTwoTone style={{ width: 48, height: 48 }} />}
-            onCancel={() => dispatch(['ClosedModal'])}
-            onClose={() => dispatch(['ClosedModal'])}
-            onConfirm={() => { }}
+            onClose={() => dispatch(['RespondToDraw', 'Declined'])}
+            onCancel={() => dispatch(['RespondToDraw', 'Declined'])}
+            onConfirm={() => dispatch(['RespondToDraw', 'Accepted'])}
             title="Agree to a draw?"
             confirmTitle="Accept"
             cancelTitle="Decline"

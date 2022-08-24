@@ -103,16 +103,18 @@ export type Request =
   | InputPlayer
   | StartGame
   | InputClock
-  | AskToDraw
   | Resign
+  | AskToDraw
+  | RespondToDraw
 
 export type Response =
   | MoveResulted
   | InputPlayerResulted
   | StartGameResulted
   | InputClockResulted
-  | AskToDrawResulted
   | ResignResulted
+  | AskToDrawResulted
+  | RespondToDrawResulted
 
 //
 //
@@ -307,11 +309,29 @@ export const askToDraw = (
 }
 
 export type RespondToDraw = ["RespondToDraw", "Accepted" | "Declined"]
+export type RespondToDrawResulted = [
+  "RespondToDrawResulted",
+  Result.Result<"failed_to_respond_to_draw", SharedModel>,
+]
+
 export const respondToDraw = (
-  response: RespondToDraw[1],
+  drawResponse: RespondToDraw[1],
   model: SharedModel,
-): SharedModel => {
-  return model
+): RespondToDrawResulted[1] => {
+  if (model.type !== "GameStarted") {
+    return Result.Err("failed_to_respond_to_draw")
+  }
+
+  if (model.drawByAgreement.type !== "Asked") {
+    return Result.Err("failed_to_respond_to_draw")
+  }
+
+  return Result.Ok({
+    ...model,
+    drawByAgreement: {
+      type: "Agreed",
+    },
+  })
 }
 
 //
