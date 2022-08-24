@@ -1,4 +1,4 @@
-import { Audio, Browser, Option, Result } from "../../Core"
+import { Audio, Option, Result } from "../../Core"
 import { UserId } from "../../Data"
 import * as Board from "./Board"
 
@@ -23,7 +23,22 @@ export type SharedModel =
       board: Board.Model
       w: UserId.UserId
       b: UserId.UserId
+      resignation: Option.Option<Board.Color>
+      drawByAgreement: DrawByAgreement
     }
+
+type EndGame =
+  | {
+      type: "Win"
+    }
+  | {
+      type: "Draw"
+    }
+
+type DrawByAgreement =
+  | { type: "NotAsked" }
+  | { type: "Asked"; asker: Board.Color }
+  | { type: "Agreed" }
 
 export type FrontendModel = {
   sharedModel: SharedModel
@@ -83,21 +98,31 @@ export type ToBackend = ["Init"] | Request
 //
 //
 
-export type Request = Move | InputPlayer | StartGame | InputClock
+export type Request =
+  | Move
+  | InputPlayer
+  | StartGame
+  | InputClock
+  | AskToDraw
+  | Resign
 
 export type Response =
   | MoveResulted
   | InputPlayerResulted
   | StartGameResulted
   | InputClockResulted
+  | AskToDrawResulted
+  | ResignResulted
 
 //
 //
 //
 
 export type Move = ["Move", Board.MoveInput & { userId: UserId.UserId }]
-export type MoveResulted = ["MovedResulted", MoveResult]
-export type MoveResult = Result.Result<MoveProblem, SharedModel>
+export type MoveResulted = [
+  "MovedResulted",
+  Result.Result<MoveProblem, SharedModel>,
+]
 export type MoveProblem =
   | Board.MoveProblem
   | "game_must_be_started"
@@ -106,7 +131,7 @@ export type MoveProblem =
 export const move = (
   { userId, ...moveInput }: Move[1],
   model: SharedModel,
-): MoveResult => {
+): MoveResulted[1] => {
   if (model.type !== "GameStarted") {
     return Result.Err("game_must_be_started")
   }
@@ -242,6 +267,8 @@ export const startGame = (model: SharedModel): StartGameResulted[1] => {
       b: model.b.value,
       clock: toClock(model.clockPreset),
       board: Board.init(),
+      drawByAgreement: { type: "NotAsked" },
+      resignation: Option.None,
     })
   }
 
@@ -251,7 +278,76 @@ export const startGame = (model: SharedModel): StartGameResulted[1] => {
 //
 //
 //
+// Draw by agreement
+//
+//
+//
+
+export type AskToDraw = ["AskToDraw", Board.Color]
+export type AskToDrawResulted = [
+  "AskToDrawResulted",
+  Result.Result<"game_must_be_started", SharedModel>,
+]
+
+export const askToDraw = (
+  color: Board.Color,
+  model: SharedModel,
+): AskToDrawResulted[1] => {
+  if (model.type !== "GameStarted") {
+    return Result.Err("game_must_be_started")
+  }
+
+  return Result.Ok({
+    ...model,
+    drawByAgreement: {
+      type: "Asked",
+      asker: color,
+    },
+  })
+}
+
+export type RespondToDraw = ["RespondToDraw", "Accepted" | "Declined"]
+export const respondToDraw = (
+  response: RespondToDraw[1],
+  model: SharedModel,
+): SharedModel => {
+  return model
+}
+
+//
+//
+//
+// Resign
+//
+//
+//
+
+export type Resign = ["Resign", Board.Color]
+export type ResignResulted = [
+  "ResignResulted",
+  Result.Result<"can_not_resign", SharedModel>,
+]
+
+export const resign = (
+  color: Resign[1],
+  model: SharedModel,
+): ResignResulted[1] => {
+  if (model.type !== "GameStarted") {
+    return Result.Err("can_not_resign")
+  }
+
+  return Result.Ok({
+    ...model,
+    resignation: Option.Some(color),
+  })
+}
+
+//
+//
+//
+//
 // Clock
+//
 //
 //
 //

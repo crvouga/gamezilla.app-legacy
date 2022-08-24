@@ -3,6 +3,7 @@ import { Cmd, Sub, Time } from "../../Core"
 import { ClientId, RoomId } from "../../Data"
 import * as Board from "./Board"
 import {
+  askToDraw,
   BackendModel,
   BackendMsg,
   decrementClock,
@@ -10,6 +11,7 @@ import {
   inputClock,
   inputPlayer,
   move,
+  resign,
   Response,
   startGame,
   ToBackend,
@@ -69,6 +71,22 @@ export const updateFromFrontend = (
   switch (msg[0]) {
     case "Init": {
       return [model, sendToFrontend([clientId], roomId, ["Sync", model])]
+    }
+
+    case "AskToDraw": {
+      return sendResponse(
+        { clientId, roomId },
+        ["AskToDrawResulted", askToDraw(msg[1], model)],
+        model,
+      )
+    }
+
+    case "Resign": {
+      return sendResponse(
+        { clientId, roomId },
+        ["ResignResulted", resign(msg[1], model)],
+        model,
+      )
     }
 
     case "InputClock": {

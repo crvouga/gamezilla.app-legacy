@@ -1,7 +1,7 @@
 import { useLayoutEffect, useRef, useState } from "react"
 import { Chessboard } from "react-chessboard"
 import * as Bridge from "../../Bridge"
-import { Audio, Cmd, Option, pipe, Sub, tag, View } from "../../Core"
+import { Audio, Cmd, exhaustive, Option, pipe, Sub, tag, View } from "../../Core"
 import { RoomId, UserId } from "../../Data"
 import * as Store from "../../Store"
 import * as UI from "../../UI"
@@ -73,6 +73,14 @@ export const update = (
       return [model, sendToBackend(currentRoomId, msg)]
     }
 
+    case 'AskToDraw': {
+      return [model, sendToBackend(currentRoomId, msg)]
+    }
+
+    case 'Resign': {
+      return [model, sendToBackend(currentRoomId, msg)]
+    }
+
     case "AudioResulted": {
       return [model, Cmd.None]
     }
@@ -124,6 +132,9 @@ export const update = (
         ]),
       ]
     }
+
+    default:
+      return exhaustive(msg[0])
   }
 }
 
@@ -137,6 +148,11 @@ export const updateFromBackend = (
   const model: Model = { ..._model, openedMenuId: Option.None }
 
   switch (msg[0]) {
+    case "Sync": {
+      const modelNew = msg[1]
+
+      return [{ ...model, sharedModel: modelNew }, Cmd.None]
+    }
 
     case 'InputClockResulted': {
       return [{ ...model }, Cmd.None]
@@ -154,10 +170,16 @@ export const updateFromBackend = (
       return [{ ...model, }, Cmd.None]
     }
 
-    case "Sync": {
-      const modelNew = msg[1]
+    case 'AskToDrawResulted': {
+      return [{ ...model, }, Cmd.None]
+    }
 
-      return [{ ...model, sharedModel: modelNew }, Cmd.None]
+    case 'ResignResulted': {
+      return [{ ...model, }, Cmd.None]
+    }
+
+    default: {
+      return exhaustive(msg[0])
     }
   }
 }
@@ -482,6 +504,7 @@ export const ViewGameStarted = ({
         />
 
         <UI.ConformationDialog
+          headerIcon={<UI.Icons.HandshakeTwoTone style={{ width: 48, height: 48 }} />}
           onCancel={() => dispatch(['ClosedConformation'])}
           onClose={() => dispatch(['ClosedConformation'])}
           onConfirm={() => dispatch(['ClosedConformation'])}
@@ -499,6 +522,7 @@ export const ViewGameStarted = ({
         />
 
         <UI.ConformationDialog
+          headerIcon={<UI.Icons.FlagOutlined style={{ width: 48, height: 48 }} />}
           onCancel={() => dispatch(['ClosedConformation'])}
           onClose={() => dispatch(['ClosedConformation'])}
           onConfirm={() => dispatch(['ClosedConformation'])}
@@ -530,8 +554,8 @@ const ViewActionButton = ({ title, icon, onClick }: { title: string, icon: UI.Do
     <UI.ButtonBase
       onClick={onClick}
       sx={{
-        width: 84,
-        height: 62,
+        width: 88,
+        height: 60,
         display: 'flex',
         flexDirection: "column",
         color: "text.secondary",
