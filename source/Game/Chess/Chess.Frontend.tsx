@@ -305,13 +305,8 @@ export const view =
         )
       }
 
-
-
-
-
       return (
         <ViewGameStarted
-
           store={store}
           currentUserId={currentUserId}
           model={model}
@@ -458,11 +453,16 @@ export const ViewGameStarted = ({
     marginRight: 1,
   }
 
-  const currentUserPlayerType: Board.PlayerType = currentUserId === White ? 'White' : 'Black'
+  const currentUserPlayerType: Board.PlayerType | 'None' =
+    currentUserId === White
+      ? 'White'
+      : currentUserId === Black
+        ? 'Black'
+        : "None"
 
   const turn = Board.toTurn(board)
 
-  const boardOrentation: Board.PlayerType = currentUserPlayerType === 'Black' ? 'Black' : 'White'
+  const boardOrentation: Board.PlayerType = currentUserPlayerType === 'None' ? 'White' : currentUserPlayerType
 
   const white = {
     src: store.Profile[White]?.avatarUrl,
@@ -478,8 +478,6 @@ export const ViewGameStarted = ({
     seconds: clock.Black
   }
 
-
-
   const playerSlots = boardOrentation === 'White' ? {
     top: black,
     bottom: white
@@ -487,10 +485,6 @@ export const ViewGameStarted = ({
     top: white,
     bottom: black
   }
-
-
-  const isTurn = currentUserPlayerType === turn
-
 
   return (
     <UI.FillBox id={containerHtmlId}>
@@ -516,9 +510,8 @@ export const ViewGameStarted = ({
           boardOrientation={boardOrentation === "White" ? "white" : "black"}
           position={board.fen}
           boardWidth={boardWidth}
-          isDraggablePiece={({ piece, sourceSquare }) => {
-            console.log(piece, sourceSquare)
-            return false
+          isDraggablePiece={({ piece, }) => {
+            return Board.pieceToPlayerType(piece) === currentUserPlayerType
           }}
           onPieceDrop={(sourceSquare, targetSquare, _piece) => {
             const msg: Move = [
