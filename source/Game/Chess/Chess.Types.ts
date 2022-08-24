@@ -1,6 +1,7 @@
 import { Audio, Option, Result } from "../../Core"
 import { UserId } from "../../Data"
 import * as Board from "./Board"
+import * as Clock from "./Clock"
 
 //
 //
@@ -13,21 +14,20 @@ import * as Board from "./Board"
 export type SharedModel =
   | {
       type: "GameSetup"
-      clockPreset: ClockPreset
+      clockPreset: Clock.Preset
       w: Option.Option<UserId.UserId>
       b: Option.Option<UserId.UserId>
     }
   | {
       type: "GameStarted"
-      clock: Clock
+      clock: Clock.Clock
       board: Board.Model
       w: UserId.UserId
       b: UserId.UserId
-      resignation: Option.Option<Board.Color>
-      drawByAgreement: DrawByAgreement
+      endGame: EndGame
     }
 
-type EndGame =
+export type EndGame =
   | {
       type: "None"
     }
@@ -37,13 +37,8 @@ type EndGame =
     }
   | {
       type: "DrawByAgreement"
-      child: DrawByAgreement
+      child: { type: "Asked"; asker: Board.Color } | { type: "Agreed" }
     }
-
-export type DrawByAgreement =
-  | { type: "NotAsked" }
-  | { type: "Asked"; asker: Board.Color }
-  | { type: "Agreed" }
 
 export type FrontendModel = {
   sharedModel: SharedModel
@@ -219,7 +214,7 @@ export const inputPlayer = (
 //
 //
 
-export type InputClock = ["InputClock", ClockPreset]
+export type InputClock = ["InputClock", Clock.Preset]
 
 export type InputClockResulted = [
   "InputClockResulted",
@@ -272,10 +267,9 @@ export const startGame = (model: SharedModel): StartGameResulted[1] => {
       type: "GameStarted",
       w: model.w.value,
       b: model.b.value,
-      clock: toClock(model.clockPreset),
+      clock: Clock.presetToClock(model.clockPreset),
       board: Board.init(),
-      drawByAgreement: { type: "NotAsked" },
-      resignation: Option.None,
+      endGame: { type: "None" },
     })
   }
 
@@ -327,16 +321,37 @@ export const respondToDraw = (
     return Result.Err("failed_to_respond_to_draw")
   }
 
-  if (model.drawByAgreement.type !== "Asked") {
+  if (
+    !(
+      model.endGame.type === "DrawByAgreement" &&
+      model.endGame.child.type === "Asked"
+    )
+  ) {
     return Result.Err("failed_to_respond_to_draw")
   }
 
-  return Result.Ok({
-    ...model,
-    drawByAgreement: {
-      type: "Agreed",
-    },
-  })
+  switch (drawResponse) {
+    case "Accepted": {
+      return Result.Ok({
+        ...model,
+        endGame: {
+          type: "DrawByAgreement",
+          child: {
+            type: "Agreed",
+          },
+        },
+      })
+    }
+
+    case "Declined": {
+      return Result.Ok({
+        ...model,
+        endGame: {
+          type: "None",
+        },
+      })
+    }
+  }
 }
 
 //
@@ -365,63 +380,4 @@ export const resign = (
     ...model,
     resignation: Option.Some(color),
   })
-}
-
-//
-//
-//
-//
-// Clock
-//
-//
-//
-//
-
-export type Clock = {
-  [color in Board.Color]: Seconds
-}
-
-export const decrementClock = (color: Board.Color, clock: Clock): Clock => {
-  return {
-    ...clock,
-    [color]: toSeconds(Math.max(0, clock[color] - 1)),
-  }
-}
-
-export type Seconds = number & { _type: "Seconds" }
-
-export const toSeconds = (seconds: number): Seconds => {
-  return seconds as Seconds
-}
-
-export const subtract = (a: Seconds, b: Seconds): Seconds => {
-  return toSeconds(a - b)
-}
-
-type ClockPreset = "Bullet" | "Blitz" | "Fast"
-
-export const clockPresets: { [key in ClockPreset]: ClockPreset } = {
-  Bullet: "Bullet",
-  Blitz: "Blitz",
-  Fast: "Fast",
-}
-
-export const presetToSeconds: { [key in ClockPreset]: Seconds } = {
-  Bullet: toSeconds(60 * 1),
-  Blitz: toSeconds(60 * 3),
-  Fast: toSeconds(60 * 10),
-}
-
-export const toClock = (preset: ClockPreset): Clock => {
-  const seconds = presetToSeconds[preset]
-  return {
-    w: seconds,
-    b: seconds,
-  }
-}
-
-export const clockPresetToString = (preset: ClockPreset): string => {
-  const minutes = presetToSeconds[preset] / 60
-
-  return `${minutes} min`
 }

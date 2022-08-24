@@ -1,17 +1,15 @@
 import { useLayoutEffect, useRef, useState } from "react"
 import { Chessboard } from "react-chessboard"
 import * as Bridge from "../../Bridge"
-import { Audio, Cmd, exhaustive, Option, pipe, Sub, tag, View } from "../../Core"
+import { Audio, Cmd, exhaustive, Option, pipe, Sub, tag } from "../../Core"
 import { RoomId, UserId } from "../../Data"
 import * as Store from "../../Store"
 import * as UI from "../../UI"
 import * as Board from "./Board"
+import * as Clock from "./Clock"
 import {
   canStartGame,
-  Clock,
-  clockPresets,
-  clockPresetToString,
-  DrawByAgreement,
+  EndGame,
   FrontendModel,
   FrontendMsg,
   initSharedModel,
@@ -20,8 +18,7 @@ import {
   ToBackend,
   ToFrontend
 } from "./Chess.Types"
-import { Sounds } from "./Sounds"
-
+import * as Sounds from "./Sounds"
 
 //
 //
@@ -278,14 +275,14 @@ export const view =
                 Clock
               </UI.Typography>
               <UI.Select fullWidth value={model.sharedModel.clockPreset}>
-                {Object.values(clockPresets)
-                  .map((clockPreset) => (
+                {Object.values(Clock.presets)
+                  .map((preset) => (
                     <UI.MenuItem
-                      key={clockPreset}
-                      value={clockPreset}
-                      onClick={() => dispatch(['InputClock', clockPreset])}
+                      key={preset}
+                      value={preset}
+                      onClick={() => dispatch(['InputClock', preset])}
                     >
-                      {clockPresetToString(clockPreset)}
+                      {Clock.presetToString(preset)}
                     </UI.MenuItem>)
                   )}
               </UI.Select>
@@ -317,7 +314,7 @@ export const view =
           currentUserId={currentUserId}
           model={model}
           dispatch={dispatch}
-          drawByAgreement={model.sharedModel.drawByAgreement}
+          endGame={model.sharedModel.endGame}
           clock={model.sharedModel.clock}
           w={model.sharedModel.w}
           b={model.sharedModel.b}
@@ -400,18 +397,6 @@ const ViewGameSetupPlayerSlot = ({
   )
 }
 
-export const formatSeconds = (seconds: number): string => {
-  const minutes = Math.floor(seconds / 60)
-  const remainingSeconds = seconds % 60
-  return `${minutes}:${formatTwoDigits(remainingSeconds)}`
-}
-
-const formatTwoDigits = (number: number): string => {
-  if (number < 10) {
-    return `0${number}`
-  }
-  return `${number}`
-}
 
 export const ViewGameStarted = ({
   currentUserId,
@@ -421,7 +406,7 @@ export const ViewGameStarted = ({
   b,
   board,
   clock,
-  drawByAgreement,
+  endGame,
   dispatch,
 }: {
   store: Store.Model
@@ -429,9 +414,9 @@ export const ViewGameStarted = ({
   w: UserId.UserId
   b: UserId.UserId
   board: Board.Model
-  clock: Clock
+  clock: Clock.Clock
   model: Model
-  drawByAgreement: DrawByAgreement
+  endGame: EndGame
   dispatch: (msg: Msg) => void
 }) => {
   const { boardWidth, ref } = useBoardWidth()
@@ -535,10 +520,13 @@ export const ViewGameStarted = ({
             confirmTitle="Ask"
           />
 
-          <UI.LoadingDialog open={drawByAgreement.type === 'Asked' && currentUserColor === drawByAgreement.asker} title="Waiting on other player..." />
+          <UI.LoadingDialog
+            open={endGame.type === 'DrawByAgreement' && endGame.child.type === 'Asked' && endGame.child.asker === currentUserColor}
+            title="Waiting on other player..."
+          />
 
           <UI.ConformationDialog
-            open={drawByAgreement.type === 'Asked' && Board.toOppositeColor(currentUserColor) === drawByAgreement.asker}
+            open={endGame.type === 'DrawByAgreement' && endGame.child.type === 'Asked' && endGame.child.asker === Board.toOppositeColor(currentUserColor)}
             headerIcon={<UI.Icons.HandshakeTwoTone style={{ width: 48, height: 48 }} />}
             onClose={() => dispatch(['RespondToDraw', 'Declined'])}
             onCancel={() => dispatch(['RespondToDraw', 'Declined'])}
@@ -638,7 +626,7 @@ type GameStartedPlayerSlot = {
   src?: string
   username: string
   isActive: boolean
-  seconds: number
+  seconds: Clock.Seconds
 }
 
 const ViewGameStartedPlayerSlot = ({ slot }: { slot: GameStartedPlayerSlot }) => {
@@ -670,7 +658,7 @@ const ViewGameStartedPlayerSlot = ({ slot }: { slot: GameStartedPlayerSlot }) =>
         color={isActive ? theme.palette.text.primary : theme.palette.text.disabled}
         variant="h4"
       >
-        {formatSeconds(seconds)}
+        {Clock.formatSeconds(seconds)}
       </UI.Typography>
 
     </UI.Box>
