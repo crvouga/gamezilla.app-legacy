@@ -1,7 +1,7 @@
 import { useLayoutEffect, useRef, useState } from "react"
 import { Chessboard } from "react-chessboard"
 import * as Bridge from "../../Bridge"
-import { Audio, Cmd, Option, pipe, Sub, tag } from "../../Core"
+import { Audio, Cmd, Option, pipe, Sub, tag, View } from "../../Core"
 import { RoomId, UserId } from "../../Data"
 import * as Store from "../../Store"
 import * as UI from "../../UI"
@@ -36,7 +36,8 @@ export const init = ({ roomId }: { roomId: RoomId.RoomId }): [FrontendModel, Cmd
   return [
     {
       sharedModel: initSharedModel,
-      openedMenuId: Option.None
+      openedMenuId: Option.None,
+      openedConformation: Option.None
     },
     sendToBackend(roomId, ['Init']),
 
@@ -83,6 +84,14 @@ export const update = (
       return [{ ...model, openedMenuId: Option.None }, Cmd.None]
     }
 
+
+    case 'OpenedConformation': {
+      return [{ ...model, openedConformation: Option.Some(msg[1]) }, Cmd.None]
+    }
+
+    case 'ClosedConformation': {
+      return [{ ...model, openedConformation: Option.None }, Cmd.None]
+    }
 
     case "Move": {
       const result = move(msg[1], model.sharedModel)
@@ -456,7 +465,76 @@ export const ViewGameStarted = ({
 
       <UI.Box sx={{ flex: 1 }} />
 
+      <UI.Divider />
+
+      <UI.Box sx={{ width: "100%", display: "flex" }}>
+        <ViewActionButton
+          icon={<UI.Icons.HandshakeTwoTone />}
+          title="Draw"
+          onClick={() => dispatch(['OpenedConformation', 'AskToDraw'])}
+        />
+
+        <UI.ConformationDialog
+          onCancel={() => dispatch(['ClosedConformation'])}
+          onClose={() => dispatch(['ClosedConformation'])}
+          onConfirm={() => dispatch(['ClosedConformation'])}
+          open={model.openedConformation.type === 'Some' && model.openedConformation.value === 'AskToDraw'}
+          title="Ask to draw?"
+          confirmTitle="Ask"
+        />
+
+        <UI.Divider orientation="vertical" />
+
+        <ViewActionButton
+          icon={<UI.Icons.Flag />}
+          title="Resign"
+          onClick={() => dispatch(['OpenedConformation', 'Resign'])}
+        />
+
+        <UI.ConformationDialog
+          onCancel={() => dispatch(['ClosedConformation'])}
+          onClose={() => dispatch(['ClosedConformation'])}
+          onConfirm={() => dispatch(['ClosedConformation'])}
+          open={model.openedConformation.type === 'Some' && model.openedConformation.value === 'Resign'}
+          title="Resign from game?"
+          confirmTitle="Resign"
+        />
+
+        <UI.Divider orientation="vertical" />
+
+        <ViewActionButton
+          icon={<UI.Icons.Flip />}
+          title="Flip"
+          onClick={() => { }}
+        />
+
+        <UI.Divider orientation="vertical" />
+      </UI.Box>
+
+
     </UI.FillBox>
+  )
+}
+
+const ViewActionButton = ({ title, icon, onClick }: { title: string, icon: UI.Dom; onClick: () => void }) => {
+  return (
+    <UI.ButtonBase
+      onClick={onClick}
+      sx={{
+        width: 84,
+        height: 62,
+        display: 'flex',
+        flexDirection: "column",
+        color: "text.secondary",
+        justifyContent: "center",
+        alignItems: "center"
+      }}
+    >
+      {icon}
+      <UI.Typography>
+        {title}
+      </UI.Typography>
+    </UI.ButtonBase>
   )
 }
 
