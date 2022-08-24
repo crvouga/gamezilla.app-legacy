@@ -35,7 +35,7 @@ type EndGame =
       type: "Draw"
     }
 
-type DrawByAgreement =
+export type DrawByAgreement =
   | { type: "NotAsked" }
   | { type: "Asked"; asker: Board.Color }
   | { type: "Agreed" }
@@ -43,11 +43,11 @@ type DrawByAgreement =
 export type FrontendModel = {
   sharedModel: SharedModel
   openedMenuId: Option.Option<string>
-  openedConformation: Option.Option<ConformationType>
+  openedModal: Option.Option<ModalType>
   isFlipped: boolean
 }
 
-export type ConformationType = "AskToDraw" | "Resign"
+export type ModalType = "AskToDraw" | "AskedToDraw" | "Resign"
 
 export type BackendModel = SharedModel
 
@@ -80,8 +80,8 @@ export type FrontendMsg =
   | ["AudioResulted", Audio.PlayResult]
   | ["OpenedMenu", string]
   | ["ClosedMenu"]
-  | ["OpenedConformation", ConformationType]
-  | ["ClosedConformation"]
+  | ["OpenedModal", ModalType]
+  | ["ClosedModal"]
   | ["ClickedFlip"]
   | Request
 

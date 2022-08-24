@@ -11,6 +11,7 @@ import {
   Clock,
   clockPresets,
   clockPresetToString,
+  DrawByAgreement,
   FrontendModel,
   FrontendMsg,
   initSharedModel,
@@ -37,7 +38,7 @@ export const init = ({ roomId }: { roomId: RoomId.RoomId }): [FrontendModel, Cmd
     {
       sharedModel: initSharedModel,
       openedMenuId: Option.None,
-      openedConformation: Option.None,
+      openedModal: Option.None,
       isFlipped: false
     },
     sendToBackend(roomId, ['Init']),
@@ -78,7 +79,7 @@ export const update = (
     }
 
     case 'Resign': {
-      return [model, sendToBackend(currentRoomId, msg)]
+      return [{ ...model, openedModal: Option.None }, sendToBackend(currentRoomId, msg)]
     }
 
     case "AudioResulted": {
@@ -98,12 +99,12 @@ export const update = (
       return [{ ...model, isFlipped: !model.isFlipped }, Cmd.None]
     }
 
-    case 'OpenedConformation': {
-      return [{ ...model, openedConformation: Option.Some(msg[1]) }, Cmd.None]
+    case 'OpenedModal': {
+      return [{ ...model, openedModal: Option.Some(msg[1]) }, Cmd.None]
     }
 
-    case 'ClosedConformation': {
-      return [{ ...model, openedConformation: Option.None }, Cmd.None]
+    case 'ClosedModal': {
+      return [{ ...model, openedModal: Option.None }, Cmd.None]
     }
 
     case "Move": {
@@ -171,7 +172,16 @@ export const updateFromBackend = (
     }
 
     case 'AskToDrawResulted': {
-      return [{ ...model, }, Cmd.None]
+      switch (msg[1].type) {
+        case 'Err': {
+
+          return [{ ...model, }, Cmd.None]
+        }
+
+        case 'Ok': {
+          return [{ ...model, openedModal: Option.Some("AskedToDraw") }, Cmd.None]
+        }
+      }
     }
 
     case 'ResignResulted': {
@@ -299,6 +309,7 @@ export const view =
           currentUserId={currentUserId}
           model={model}
           dispatch={dispatch}
+          drawByAgreement={model.sharedModel.drawByAgreement}
           clock={model.sharedModel.clock}
           w={model.sharedModel.w}
           b={model.sharedModel.b}
@@ -398,19 +409,21 @@ export const ViewGameStarted = ({
   currentUserId,
   store,
   model,
-  dispatch,
   w,
   b,
   board,
   clock,
+  drawByAgreement,
+  dispatch,
 }: {
   store: Store.Model
-  currentUserId: UserId.UserId
+  currentUserId: UserId.UserId,
   w: UserId.UserId
   b: UserId.UserId
   board: Board.Model
   clock: Clock
   model: Model
+  drawByAgreement: DrawByAgreement
   dispatch: (msg: Msg) => void
 }) => {
   const { boardWidth, ref } = useBoardWidth()
@@ -455,9 +468,9 @@ export const ViewGameStarted = ({
   const bottomSlot = boardOrentation === 'w' ? whiteSlot : blackSlot
 
 
+
   return (
     <UI.FillBox>
-
       <ViewGameStartedPlayerSlot slot={topSlot} />
 
       <div id={chessBoardContainerId} ref={ref}>
@@ -497,41 +510,57 @@ export const ViewGameStarted = ({
       <UI.Divider />
 
       <UI.Box sx={{ width: "100%", display: "flex" }}>
-        <ViewActionButton
-          icon={<UI.Icons.HandshakeTwoTone />}
-          title="Draw"
-          onClick={() => dispatch(['OpenedConformation', 'AskToDraw'])}
-        />
+        {(currentUserColor === 'w' || currentUserColor === 'b') && <>
+          <ViewActionButton
+            icon={<UI.Icons.HandshakeTwoTone />}
+            title="Draw"
+            onClick={() => dispatch(['OpenedModal', 'AskToDraw'])}
+          />
 
-        <UI.ConformationDialog
-          headerIcon={<UI.Icons.HandshakeTwoTone style={{ width: 48, height: 48 }} />}
-          onCancel={() => dispatch(['ClosedConformation'])}
-          onClose={() => dispatch(['ClosedConformation'])}
-          onConfirm={() => dispatch(['ClosedConformation'])}
-          open={model.openedConformation.type === 'Some' && model.openedConformation.value === 'AskToDraw'}
-          title="Ask to draw?"
-          confirmTitle="Ask"
-        />
+          <UI.ConformationDialog
+            headerIcon={<UI.Icons.HandshakeTwoTone style={{ width: 48, height: 48 }} />}
+            onCancel={() => dispatch(['ClosedModal'])}
+            onClose={() => dispatch(['ClosedModal'])}
+            onConfirm={() => dispatch(['AskToDraw', currentUserColor])}
+            open={model.openedModal.type === 'Some' && model.openedModal.value === 'AskToDraw'}
+            title="Ask to draw?"
+            confirmTitle="Ask"
+          />
 
-        <UI.Divider orientation="vertical" />
+          <UI.LoadingDialog open={drawByAgreement.type === 'Asked' && currentUserColor === drawByAgreement.asker} title="Waiting on other player..." />
 
-        <ViewActionButton
-          icon={<UI.Icons.FlagOutlined />}
-          title="Resign"
-          onClick={() => dispatch(['OpenedConformation', 'Resign'])}
-        />
+          <UI.ConformationDialog
+            open={drawByAgreement.type === 'Asked' && Board.toOppositeColor(currentUserColor) === drawByAgreement.asker}
+            headerIcon={<UI.Icons.HandshakeTwoTone style={{ width: 48, height: 48 }} />}
+            onCancel={() => dispatch(['ClosedModal'])}
+            onClose={() => dispatch(['ClosedModal'])}
+            onConfirm={() => { }}
+            title="Agree to a draw?"
+            confirmTitle="Accept"
+            cancelTitle="Decline"
+          />
 
-        <UI.ConformationDialog
-          headerIcon={<UI.Icons.FlagOutlined style={{ width: 48, height: 48 }} />}
-          onCancel={() => dispatch(['ClosedConformation'])}
-          onClose={() => dispatch(['ClosedConformation'])}
-          onConfirm={() => dispatch(['ClosedConformation'])}
-          open={model.openedConformation.type === 'Some' && model.openedConformation.value === 'Resign'}
-          title="Resign from game?"
-          confirmTitle="Resign"
-        />
 
-        <UI.Divider orientation="vertical" />
+          <UI.Divider orientation="vertical" />
+
+          <ViewActionButton
+            icon={<UI.Icons.FlagOutlined />}
+            title="Resign"
+            onClick={() => dispatch(['OpenedModal', 'Resign'])}
+          />
+
+          <UI.ConformationDialog
+            headerIcon={<UI.Icons.FlagOutlined style={{ width: 48, height: 48 }} />}
+            onCancel={() => dispatch(['ClosedModal'])}
+            onClose={() => dispatch(['ClosedModal'])}
+            onConfirm={() => dispatch(['Resign', currentUserColor])}
+            open={model.openedModal.type === 'Some' && model.openedModal.value === 'Resign'}
+            title="Resign from game?"
+            confirmTitle="Resign"
+          />
+
+          <UI.Divider orientation="vertical" />
+        </>}
 
         <ViewActionButton
           icon={<UI.Icons.Flip sx={{ 'transform': model.isFlipped ? 'rotate(90deg)' : 'rotate(270deg)' }} />}
@@ -545,7 +574,7 @@ export const ViewGameStarted = ({
       </UI.Box>
 
 
-    </UI.FillBox>
+    </UI.FillBox >
   )
 }
 
