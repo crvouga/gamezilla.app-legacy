@@ -42,7 +42,7 @@ export const init = ({ roomId }: { roomId: RoomId.RoomId }): [FrontendModel, Cmd
       startGame: RemoteData.NotAsked,
       playAs: RemoteData.NotAsked,
       stopPlaying: RemoteData.NotAsked,
-      menu: ["Closed"]
+      openedMenuId: Option.None
     },
     Cmd.batch([
       sendToBackend(roomId, ['Init']),
@@ -113,11 +113,11 @@ export const update = (
     }
 
     case 'ClosedMenu': {
-      return [{ ...model, menu: ['Closed'] }, Cmd.None]
+      return [{ ...model, openedMenuId: Option.None }, Cmd.None]
     }
 
     case 'PressedPlayerSlot': {
-      return [{ ...model, menu: ['Opened', { menuId: msg[1] }] }, Cmd.None]
+      return [{ ...model, openedMenuId: Option.Some(msg[1]) }, Cmd.None]
     }
 
     case "Move": {
@@ -156,7 +156,7 @@ export const updateFromBackend = (
   _model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
 
-  const model: Model = { ..._model, menu: ["Closed"] }
+  const model: Model = { ..._model, openedMenuId: Option.None }
 
   switch (msg[0]) {
 
@@ -361,7 +361,7 @@ const ViewPlayerSlot = ({
             </UI.ListItemButton>
             <UI.Menu
               anchorEl={document.getElementById(menuAnchorId)}
-              open={model.menu[0] === 'Opened' && model.menu[1].menuId === menuAnchorId}
+              open={model.openedMenuId.type === 'Some' && model.openedMenuId.value === menuAnchorId}
               onClose={() => dispatch(['ClosedMenu'])}
             >
               {userId.value === currentUserId ? (

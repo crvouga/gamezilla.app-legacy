@@ -31,7 +31,7 @@ export type FrontendModel = {
   startGame: RemoteData.RemoteData<StartGameProblem, Unit>
   playAs: RemoteData.RemoteData<PlayAsProblem, Unit>
   stopPlaying: RemoteData.RemoteData<StopPlayingProblem, Unit>
-  menu: ["Closed"] | ["Opened", { menuId: string }]
+  openedMenuId: Option.Option<string>
 }
 
 export type BackendModel = SharedModel

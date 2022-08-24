@@ -1,4 +1,4 @@
-import { Keyboard, Result } from "../../Core"
+import { Keyboard, Option, Result } from "../../Core"
 import { UserId } from "../../Data"
 import * as Snake from "./Snake"
 import * as Direction from "./Direction"
@@ -13,27 +13,38 @@ import * as Direction from "./Direction"
 
 export type BackendModel = SharedModel
 
-export type FrontendModel = SharedModel
-
-export type SharedModel = Snake.Model & {
-  player: Player
+export type FrontendModel = SharedModel & {
+  openedMenuId: Option.Option<string>
 }
 
-export type Player = ["User", UserId.UserId] | ["None"]
+export type SharedModel = Snake.Model & {
+  gameStatus:
+    | {
+        type: "GameSetup"
+        player: Option.Option<Player>
+      }
+    | {
+        type: "GameStarted"
+        player: Player
+      }
+}
+
+export type Player = ["User", UserId.UserId]
 
 export type MouseStatus = "Active" | "Inactive"
 
 //
 //
-//
 // Init
-//
 //
 //
 
 export const initSharedModel: SharedModel = {
-  player: ["None"],
   ...Snake.init,
+  gameStatus: {
+    type: "GameSetup",
+    player: Option.None,
+  },
 }
 
 //
@@ -47,40 +58,41 @@ export const initSharedModel: SharedModel = {
 export type FrontendMsg =
   | ["ClickedBack"]
   | ["PressedKeyDown", Keyboard.Key]
-  | ["ClickedDirection", Direction.Direction]
-  | ToggleStatus
-  | ChangePlayer
+  | ["OpenedMenu", string]
+  | ["ClosedMenu"]
+  | Request
 
 export type BackendMsg = ["Tick"]
 
-export type ToBackend = ChangeDirection | ToggleStatus | ChangePlayer
+export type ToBackend = Request
 
-export type ToFrontend =
-  | ["Sync", SharedModel]
-  | ChangeDirectionResulted
+export type ToFrontend = ["Sync", SharedModel] | Response
+
+export type Request = ToggleStatus | InputPlayer | InputDirection | StartGame
+
+export type Response =
+  | InputDirectionResulted
   | ToggleStatusResulted
-  | ChangePlayerResulted
+  | InputPlayerResulted
+  | StartGameResulted
 
 //
 //
 //
 
-export type ChangeDirection = [
-  "ChangeDirection",
+export type InputDirection = [
+  "InputDirection",
   { direction: Direction.Direction; userId: UserId.UserId },
 ]
 
-export type ChangeDirectionResulted = [
-  "ChangeDirectionResulted",
-  ChangeDirectionResult,
+export type InputDirectionResulted = [
+  "InputDirectionResulted",
+  Result.Result<InputDirectionProblem, SharedModel>,
 ]
 
-export type ChangeDirectionProblem = "user_must_be_the_current_player"
-
-export type ChangeDirectionResult = Result.Result<
-  ChangeDirectionProblem,
-  SharedModel
->
+export type InputDirectionProblem =
+  | "user_must_be_the_current_player"
+  | "must_be_in_game_started"
 
 //
 //
@@ -91,7 +103,7 @@ export type ToggleStatus = ["ToggleStatus", { userId: UserId.UserId }]
 export type ToggleStatusResulted = ["ToggleStatusResulted", ToggleStatusResult]
 
 export type ToggleStatusResult = Result.Result<
-  "user_must_be_the_current_player",
+  "user_must_be_the_current_player" | "must_be_in_game_started",
   SharedModel
 >
 
@@ -100,11 +112,44 @@ export type ToggleStatusResult = Result.Result<
 //
 //
 
-export type ChangePlayer = ["ChangePlayer", { player: Player }]
+export type InputPlayer = ["InputPlayer", Option.Option<Player>]
 
-export type ChangePlayerResulted = ["ChangePlayerResulted", ChangePlayerResult]
+export type InputPlayerResulted = [
+  "InputPlayerResulted",
+  Result.Result<"must_be_in_game_setup", SharedModel>,
+]
 
-export type ChangePlayerResult = Result.Result<
-  "user_must_be_the_host",
-  SharedModel
->
+export type StartGame = ["StartGame"]
+export type StartGameResulted = [
+  "StartGameResulted",
+  Result.Result<"must_be_in_game_setup" | "missing_player", SharedModel>,
+]
+
+export const canStartGame = (model: SharedModel): boolean => {
+  return (
+    model.gameStatus.type === "GameSetup" &&
+    model.gameStatus.player.type === "Some"
+  )
+}
+
+export const startGame = (model: SharedModel): StartGameResulted[1] => {
+  if (model.gameStatus.type !== "GameSetup") {
+    return Result.Err("must_be_in_game_setup")
+  }
+
+  if (model.gameStatus.player.type === "None") {
+    return Result.Err("missing_player")
+  }
+
+  const playerUserId = model.gameStatus.player.value[1]
+
+  const modelNew: SharedModel = {
+    ...model,
+    gameStatus: {
+      type: "GameStarted",
+      player: ["User", playerUserId],
+    },
+  }
+
+  return Result.Ok(modelNew)
+}
