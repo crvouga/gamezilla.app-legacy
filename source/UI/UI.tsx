@@ -464,6 +464,7 @@ export const ConformationDialog = ({
   title,
   confirmTitle,
   cancelTitle = "Cancel",
+  headerIcon
 }: {
   open: boolean;
   onCancel: () => void;
@@ -472,14 +473,20 @@ export const ConformationDialog = ({
   title: string;
   confirmTitle: string;
   cancelTitle?: string;
+  headerIcon?: Dom
 }) => {
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle align="center">{title}</DialogTitle>
-      <Box sx={{ padding: 2, paddingTop: 0, display: "flex", flexDirection: "row" }}>
-        <Button fullWidth onClick={onCancel} sx={{ marginRight: 1 }} variant="outlined">{cancelTitle}</Button>
-        <Button fullWidth onClick={onConfirm} variant="contained">{confirmTitle}</Button>
-      </Box>
+      {headerIcon && (
+        <Box sx={{ margin: "auto", paddingTop: 2, marginBottom: -1 }}>
+          {headerIcon}
+        </Box>
+      )}
+      <DialogTitle>{title}</DialogTitle>
+      <DialogActions>
+        <Button onClick={onCancel}>{cancelTitle}</Button>
+        <Button onClick={onConfirm}>{confirmTitle}</Button>
+      </DialogActions>
     </Dialog>
   );
 };
@@ -504,7 +511,6 @@ export const conformationDialog =
   }): View<TMsg> =>
     (dispatch) => {
       return (
-
         <Dialog
           open={open}
           onClose={() => dispatch(onClose)}
