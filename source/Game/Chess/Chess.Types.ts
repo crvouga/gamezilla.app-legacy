@@ -149,21 +149,28 @@ export const inputPlayer = (
     return Result.Err("game_must_be_in_setup_mode")
   }
 
-  const player = playerType === "White" ? model.White : model.Black
+  const targetPlayer = userId
+  const targetPlayerType = playerType
 
-  if (player.type !== "None" && userId.type === "Some") {
+  if (model[targetPlayerType].type === "Some" && targetPlayer.type === "Some") {
     return Result.Err("player_is_taken")
   }
 
-  switch (playerType) {
-    case "Black": {
-      return Result.Ok({ ...model, Black: userId })
-    }
+  const otherPlayerType = Board.toOppositePlayerType(playerType)
+  const otherPlayer = model[otherPlayerType]
 
-    case "White": {
-      return Result.Ok({ ...model, White: userId })
-    }
-  }
+  const otherPlayerNew =
+    otherPlayer.type === "Some" &&
+    targetPlayer.type === "Some" &&
+    otherPlayer.value === targetPlayer.value
+      ? Option.None
+      : otherPlayer
+
+  return Result.Ok({
+    ...model,
+    [targetPlayerType]: targetPlayer,
+    [otherPlayerType]: otherPlayerNew,
+  })
 }
 
 //
