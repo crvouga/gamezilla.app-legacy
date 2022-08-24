@@ -2,11 +2,11 @@ import * as Bridge from "../../Bridge"
 import { Cmd, exhaustive, Sub, Time } from "../../Core"
 import { ClientId, RoomId } from "../../Data"
 import * as Board from "./Board"
+import * as Clock from "./Clock"
 import {
   askToDraw,
   BackendModel,
   BackendMsg,
-  decrementClock,
   initSharedModel,
   inputClock,
   inputPlayer,
@@ -56,7 +56,7 @@ export const update = (
 
       const modelNew: Model = {
         ...model,
-        clock: decrementClock(turn, model.clock),
+        clock: Clock.decrement(turn, model.clock),
       }
 
       return [modelNew, broadcast(["Sync", model])]
