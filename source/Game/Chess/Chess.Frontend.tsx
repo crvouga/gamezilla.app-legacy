@@ -37,7 +37,8 @@ export const init = ({ roomId }: { roomId: RoomId.RoomId }): [FrontendModel, Cmd
     {
       sharedModel: initSharedModel,
       openedMenuId: Option.None,
-      openedConformation: Option.None
+      openedConformation: Option.None,
+      isFlipped: false
     },
     sendToBackend(roomId, ['Init']),
 
@@ -84,6 +85,10 @@ export const update = (
       return [{ ...model, openedMenuId: Option.None }, Cmd.None]
     }
 
+
+    case 'ClickedFlip': {
+      return [{ ...model, isFlipped: !model.isFlipped }, Cmd.None]
+    }
 
     case 'OpenedConformation': {
       return [{ ...model, openedConformation: Option.Some(msg[1]) }, Cmd.None]
@@ -401,10 +406,12 @@ export const ViewGameStarted = ({
 
   const fallbackBoardOrentation: Board.Color = 'w'
 
-  const boardOrentation: Board.Color =
+  const boardOrentation: Board.Color = pipe(
     currentUserColor === 'None' || currentUserColor === 'Both'
       ? fallbackBoardOrentation
-      : currentUserColor
+      : currentUserColor,
+    color => model.isFlipped ? Board.toOppositeColor(color) : color
+  )
 
 
   const whiteSlot: GameStartedPlayerSlot = {
@@ -486,7 +493,7 @@ export const ViewGameStarted = ({
         <UI.Divider orientation="vertical" />
 
         <ViewActionButton
-          icon={<UI.Icons.Flag />}
+          icon={<UI.Icons.FlagOutlined />}
           title="Resign"
           onClick={() => dispatch(['OpenedConformation', 'Resign'])}
         />
@@ -503,9 +510,11 @@ export const ViewGameStarted = ({
         <UI.Divider orientation="vertical" />
 
         <ViewActionButton
-          icon={<UI.Icons.Flip />}
-          title="Flip"
-          onClick={() => { }}
+          icon={<UI.Icons.Flip sx={{ 'transform': model.isFlipped ? 'rotate(90deg)' : 'rotate(270deg)' }} />}
+          title={model.isFlipped ? "Unflip" : "Flip"}
+          onClick={() => {
+            dispatch(['ClickedFlip'])
+          }}
         />
 
         <UI.Divider orientation="vertical" />

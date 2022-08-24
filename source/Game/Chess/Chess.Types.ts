@@ -29,6 +29,7 @@ export type FrontendModel = {
   sharedModel: SharedModel
   openedMenuId: Option.Option<string>
   openedConformation: Option.Option<ConformationType>
+  isFlipped: boolean
 }
 
 export type ConformationType = "AskToDraw" | "Resign"
@@ -66,6 +67,7 @@ export type FrontendMsg =
   | ["ClosedMenu"]
   | ["OpenedConformation", ConformationType]
   | ["ClosedConformation"]
+  | ["ClickedFlip"]
   | Request
 
 export type BackendMsg = ["Tick"]
@@ -214,9 +216,11 @@ export const inputClock = (
 //
 
 export type StartGame = ["StartGame"]
-export type StartGameResulted = ["StartGameResulted", StartGameResult]
+export type StartGameResulted = [
+  "StartGameResulted",
+  Result.Result<StartGameProblem, SharedModel>,
+]
 export type StartGameProblem = "can_not_start_game"
-export type StartGameResult = Result.Result<StartGameProblem, SharedModel>
 
 export const canStartGame = (model: SharedModel): boolean => {
   return (
@@ -226,7 +230,7 @@ export const canStartGame = (model: SharedModel): boolean => {
   )
 }
 
-export const startGame = (model: SharedModel): StartGameResult => {
+export const startGame = (model: SharedModel): StartGameResulted[1] => {
   if (
     model.type === "GameSetup" &&
     model.w.type === "Some" &&
