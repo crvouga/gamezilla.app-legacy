@@ -1,10 +1,11 @@
 import * as Http from "http"
 import * as Socket from "socket.io"
+import { BackendModel, BackendMsg, ToBackend } from "./App.Types"
 import * as Bridge from "./Bridge"
 import { Cmd, pipe, Platform, Sub, tag, tagCmd } from "./Core"
+import { remove } from "./Core/Record"
 import { ClientId } from "./Data"
 import * as GameRoom from "./GameRoom/GameRoom.Backend"
-import { BackendMsg, ToBackend } from "./App.Types"
 
 //
 //
@@ -14,13 +15,12 @@ import { BackendMsg, ToBackend } from "./App.Types"
 //
 //
 
-export type Model = {
-  gameRoom: GameRoom.Model
-}
+export type Model = BackendModel
 
 export const init: [Model, Cmd.Cmd<Msg>] = [
   {
     gameRoom: GameRoom.init,
+    clients: {},
   },
   Cmd.None,
 ]
@@ -38,12 +38,20 @@ export type Msg = BackendMsg
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
     case "[Frontend]":
-      return updateFromFrontend(msg[1].clientId, msg[1].toBackend, model)
+      return updateFromFrontend(msg[1], msg[2], model)
 
     case "ClientConnected": {
       const clientId = msg[1]
       return [
-        model,
+        {
+          ...model,
+          clients: {
+            ...model.clients,
+            [clientId]: {
+              clientId,
+            },
+          },
+        },
         Bridge.sendToFrontend(
           [clientId],
           ["GameRoom", ["Sync", model.gameRoom]],
@@ -52,7 +60,14 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
     }
 
     case "ClientDisconnected": {
-      return [model, Cmd.None]
+      const clientId = msg[1]
+      return [
+        {
+          ...model,
+          clients: remove(clientId, model.clients),
+        },
+        Cmd.None,
+      ]
     }
 
     case "GameRoom": {
@@ -94,7 +109,8 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
     Bridge.onDisconnect((clientId) => ["ClientDisconnected", clientId]),
     Bridge.fromFrontend<Msg>((clientId, toBackend) => [
       "[Frontend]",
-      { clientId, toBackend },
+      clientId,
+      toBackend,
     ]),
   ])
 }
@@ -116,9 +132,17 @@ const program = Platform.worker({
 Platform.run(program)
 
 program.state$.subscribe((state) => {
-  console.log("\n")
-  console.log(JSON.stringify(state.msg))
-  console.log(state.model)
+  const msg = state.msg?.flat(Infinity)
+  const msgType = msg?.reduce<string | null>(
+    (msgType, subMsgType) =>
+      typeof subMsgType === "string"
+        ? msgType
+          ? `${msgType}.${subMsgType}`
+          : subMsgType
+        : msgType,
+    null,
+  )
+  console.log(msgType)
 })
 
 //
@@ -131,7 +155,18 @@ program.state$.subscribe((state) => {
 
 const requestListener: Http.RequestListener = (_request, response) => {
   const state = program.state$.getValue()
-  response.end(JSON.stringify({ model: state.model, msg: state.msg }))
+  const msgType = state.msg
+    ?.flat(Infinity)
+    .reduce<string | null>(
+      (msgType, subMsgType) =>
+        typeof subMsgType === "string"
+          ? msgType
+            ? `${msgType}.${subMsgType}`
+            : subMsgType
+          : msgType,
+      null,
+    )
+  response.end(JSON.stringify({ msgType: msgType, model: state.model }))
 }
 
 const httpServer = Http.createServer(requestListener)
@@ -175,6 +210,6 @@ const port = Number(process.env.PORT) || Bridge.backendServerPort
 
 httpServer.listen(port, () => {
   console.clear()
-  console.log(`[backend] http server running at:`)
-  console.log(`[backend] http://localhost:${port}/`)
+  console.log(`\n[backend] http server running at:`)
+  console.log(`[backend] http://localhost:${port}/\n`)
 })

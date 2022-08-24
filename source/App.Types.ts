@@ -15,6 +15,11 @@ import { ClientId } from "./Data"
 //
 
 export type BackendModel = {
+  clients: {
+    [clientId: ClientId.ClientId]: {
+      clientId: ClientId.ClientId
+    }
+  }
   gameRoom: GameRoom.BackendModel
 }
 
@@ -57,7 +62,7 @@ export type FrontendMsg =
   | ["Page", Page.Msg]
 
 export type BackendMsg =
-  | ["[Frontend]", { clientId: ClientId.ClientId; toBackend: ToBackend }]
+  | ["[Frontend]", ClientId.ClientId, ToBackend]
   | ["ClientConnected", ClientId.ClientId]
   | ["ClientDisconnected", ClientId.ClientId]
   | ["GameRoom", GameRoom.BackendMsg]
