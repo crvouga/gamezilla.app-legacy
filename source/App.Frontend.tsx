@@ -700,11 +700,11 @@ Browser.run(program, (dom) => {
   root.render(dom)
 })
 
-program.state$.subscribe((state) => {
-  console.log("--")
-  console.log(state.msg?.flat(Infinity))
-  console.log(state.model)
-})
+// program.state$.subscribe((state) => {
+//   console.log("--")
+//   console.log(state.msg?.flat(Infinity))
+//   console.log(state.model)
+// })
 
 //
 //

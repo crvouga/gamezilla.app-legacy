@@ -149,6 +149,8 @@ export const update = (
   }
 }
 
+
+
 export const updateFromBackend = (
   msg: ToFrontend,
   _model: Model,
@@ -416,7 +418,6 @@ export const ViewGameStarted = ({
   White,
   Black,
   board,
-
   clock,
 }: {
   store: Store.Model
@@ -457,9 +458,11 @@ export const ViewGameStarted = ({
     marginRight: 1,
   }
 
+  const currentUserPlayerType: Board.PlayerType = currentUserId === White ? 'White' : 'Black'
+
   const turn = Board.toTurn(board)
 
-  const boardOrentation: Board.PlayerType = currentUserId === Black ? 'Black' : 'White'
+  const boardOrentation: Board.PlayerType = currentUserPlayerType === 'Black' ? 'Black' : 'White'
 
   const white = {
     src: store.Profile[White]?.avatarUrl,
@@ -485,6 +488,10 @@ export const ViewGameStarted = ({
     bottom: black
   }
 
+
+  const isTurn = currentUserPlayerType === turn
+
+
   return (
     <UI.FillBox id={containerHtmlId}>
       <UI.Box sx={playerBoxSx}>
@@ -509,6 +516,10 @@ export const ViewGameStarted = ({
           boardOrientation={boardOrentation === "White" ? "white" : "black"}
           position={board.fen}
           boardWidth={boardWidth}
+          isDraggablePiece={({ piece, sourceSquare }) => {
+            console.log(piece, sourceSquare)
+            return false
+          }}
           onPieceDrop={(sourceSquare, targetSquare, _piece) => {
             const msg: Move = [
               "Move",
@@ -522,7 +533,9 @@ export const ViewGameStarted = ({
 
             dispatch(msg)
 
-            return true
+            const isSuccessfulMove = move(msg[1], model.sharedModel).type === 'Ok'
+
+            return isSuccessfulMove
           }}
         />
       </div>
@@ -552,6 +565,9 @@ export const ViewGameStarted = ({
     </UI.FillBox>
   )
 }
+
+
+
 
 const ViewClock = ({ isActive, seconds }: { isActive: boolean, seconds: Seconds }) => {
   const theme = UI.useTheme()
