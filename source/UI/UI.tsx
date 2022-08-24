@@ -11,7 +11,7 @@ import * as Icons from "./Icons"
 // View
 //
 //
-//
+//  <UI.Divider orientation="vertical" />
 
 export type Dom = React.ReactElement<unknown>
 
@@ -456,33 +456,33 @@ export const LoadingDialog = ({
   )
 }
 
-// export const ConformationDialog = ({
-//   open,
-//   onCancel,
-//   onClose,
-//   onConfirm,
-//   title,
-//   confirmTitle,
-//   cancelTitle = "Cancel",
-// }: {
-//   open: boolean;
-//   onCancel: () => void;
-//   onClose: () => void;
-//   onConfirm: () => void;
-//   title: string;
-//   confirmTitle: string;
-//   cancelTitle?: string;
-// }) => {
-//   return (
-//     <Dialog open={open} onClose={onClose}>
-//       <DialogTitle>{title}</DialogTitle>
-//       <DialogActions>
-//         <Button onClick={onCancel}>{cancelTitle}</Button>
-//         <Button onClick={onConfirm}>{confirmTitle}</Button>
-//       </DialogActions>
-//     </Dialog>
-//   );
-// };
+export const ConformationDialog = ({
+  open,
+  onCancel,
+  onClose,
+  onConfirm,
+  title,
+  confirmTitle,
+  cancelTitle = "Cancel",
+}: {
+  open: boolean;
+  onCancel: () => void;
+  onClose: () => void;
+  onConfirm: () => void;
+  title: string;
+  confirmTitle: string;
+  cancelTitle?: string;
+}) => {
+  return (
+    <Dialog open={open} onClose={onClose}>
+      <DialogTitle align="center">{title}</DialogTitle>
+      <Box sx={{ padding: 2, paddingTop: 0, display: "flex", flexDirection: "row" }}>
+        <Button fullWidth onClick={onCancel} sx={{ marginRight: 1 }} variant="outlined">{cancelTitle}</Button>
+        <Button fullWidth onClick={onConfirm} variant="contained">{confirmTitle}</Button>
+      </Box>
+    </Dialog>
+  );
+};
 
 export const conformationDialog =
   <TMsg,>({
@@ -504,6 +504,7 @@ export const conformationDialog =
   }): View<TMsg> =>
     (dispatch) => {
       return (
+
         <Dialog
           open={open}
           onClose={() => dispatch(onClose)}

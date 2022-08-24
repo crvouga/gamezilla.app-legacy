@@ -28,7 +28,10 @@ export type SharedModel =
 export type FrontendModel = {
   sharedModel: SharedModel
   openedMenuId: Option.Option<string>
+  openedConformation: Option.Option<ConformationType>
 }
+
+export type ConformationType = "AskToDraw" | "Resign"
 
 export type BackendModel = SharedModel
 
@@ -61,6 +64,8 @@ export type FrontendMsg =
   | ["AudioResulted", Audio.PlayResult]
   | ["OpenedMenu", string]
   | ["ClosedMenu"]
+  | ["OpenedConformation", ConformationType]
+  | ["ClosedConformation"]
   | Request
 
 export type BackendMsg = ["Tick"]
