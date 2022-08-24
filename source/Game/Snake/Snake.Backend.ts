@@ -4,16 +4,19 @@ import { ClientId, RoomId } from "../../Data"
 import {
   BackendModel,
   BackendMsg,
-  ChangeDirection,
-  ChangeDirectionResult,
-  ChangePlayer,
-  ChangePlayerResult,
+  InputDirection,
+  InputDirectionResulted,
+  InputPlayer,
+  InputPlayerResulted,
   initSharedModel,
   SharedModel,
   ToBackend,
   ToFrontend,
   ToggleStatus,
   ToggleStatusResult,
+  Request,
+  Response,
+  startGame,
 } from "./Snake.Types"
 import * as Snake from "./Snake"
 
@@ -69,7 +72,10 @@ export const update = (
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
     case "Tick": {
-      const modelNew: Model = { ...Snake.step(model), player: model.player }
+      const modelNew: Model = {
+        ...Snake.step(model),
+        gameStatus: model.gameStatus,
+      }
 
       return [modelNew, broadcast(roomId, ["Sync", modelNew])]
     }
@@ -82,66 +88,57 @@ export const updateFromFrontend = (
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
+    case "StartGame": {
+      return updateRequest(
+        { clientId, roomId },
+        ["StartGameResulted", startGame(model)],
+        model,
+      )
+    }
+
     case "ToggleStatus": {
-      const result = toggleStatus(msg[1], model)
-
-      const toFrontend = sendToFrontend([clientId], roomId, [
-        "ToggleStatusResulted",
-        result,
-      ])
-
-      if (result.type === "Err") {
-        return [model, toFrontend]
-      }
-
-      const modelNew = result.value
-
-      return [
-        modelNew,
-        Cmd.batch([toFrontend, broadcast(roomId, ["Sync", modelNew])]),
-      ]
+      return updateRequest(
+        { clientId, roomId },
+        ["ToggleStatusResulted", toggleStatus(msg[1], model)],
+        model,
+      )
     }
 
-    case "ChangeDirection": {
-      const result = changeDirection(msg[1], model)
-
-      const toFrontend = sendToFrontend([clientId], roomId, [
-        "ChangeDirectionResulted",
-        result,
-      ])
-
-      if (result.type === "Err") {
-        return [model, toFrontend]
-      }
-
-      const modelNew = result.value
-
-      return [
-        modelNew,
-        Cmd.batch([toFrontend, broadcast(roomId, ["Sync", modelNew])]),
-      ]
+    case "InputDirection": {
+      return updateRequest(
+        { clientId, roomId },
+        ["InputDirectionResulted", inputDirection(msg[1], model)],
+        model,
+      )
     }
 
-    case "ChangePlayer": {
-      const result = changePlayer(msg[1], model)
-
-      const toFrontend = sendToFrontend([clientId], roomId, [
-        "ChangePlayerResulted",
-        result,
-      ])
-
-      if (result.type === "Err") {
-        return [model, toFrontend]
-      }
-
-      const modelNew = result.value
-
-      return [
-        modelNew,
-        Cmd.batch([toFrontend, broadcast(roomId, ["Sync", modelNew])]),
-      ]
+    case "InputPlayer": {
+      return updateRequest(
+        { clientId, roomId },
+        ["InputPlayerResulted", inputPlayer(msg[1], model)],
+        model,
+      )
     }
   }
+}
+
+const updateRequest = (
+  { clientId, roomId }: { clientId: ClientId.ClientId; roomId: RoomId.RoomId },
+  response: Response,
+  model: Model,
+): [Model, Cmd.Cmd<Msg>] => {
+  const toFrontend = sendToFrontend([clientId], roomId, response)
+
+  if (response[1].type === "Err") {
+    return [model, toFrontend]
+  }
+
+  const modelNew = response[1].value
+
+  return [
+    modelNew,
+    Cmd.batch([toFrontend, broadcast(roomId, ["Sync", modelNew])]),
+  ]
 }
 
 //
@@ -175,27 +172,34 @@ export const subscriptions = (
 //
 //
 
-export const changePlayer = (
-  { player }: ChangePlayer[1],
+export const inputPlayer = (
+  player: InputPlayer[1],
   model: SharedModel,
-): ChangePlayerResult => {
+): InputPlayerResulted[1] => {
+  if (model.gameStatus.type !== "GameSetup") {
+    return Result.Err("must_be_in_game_setup")
+  }
+
   const modelNew: SharedModel = {
     ...model,
-    player: player,
+    gameStatus: {
+      type: "GameSetup",
+      player: player,
+    },
   }
 
   return Result.Ok(modelNew)
 }
 
-export const changeDirection = (
-  { direction, userId }: ChangeDirection[1],
+export const inputDirection = (
+  { direction, userId }: InputDirection[1],
   model: SharedModel,
-): ChangeDirectionResult => {
-  if (model.player[0] === "None") {
-    return Result.Err("user_must_be_the_current_player")
+): InputDirectionResulted[1] => {
+  if (model.gameStatus.type !== "GameStarted") {
+    return Result.Err("must_be_in_game_started")
   }
 
-  const playerUserId = model.player[1]
+  const playerUserId = model.gameStatus.player[1]
 
   if (playerUserId !== userId) {
     return Result.Err("user_must_be_the_current_player")
@@ -214,11 +218,11 @@ export const toggleStatus = (
   { userId }: ToggleStatus[1],
   model: SharedModel,
 ): ToggleStatusResult => {
-  if (model.player[0] === "None") {
-    return Result.Err("user_must_be_the_current_player")
+  if (model.gameStatus.type !== "GameStarted") {
+    return Result.Err("must_be_in_game_started")
   }
 
-  if (model.player[1] !== userId) {
+  if (model.gameStatus.player[1] !== userId) {
     return Result.Err("user_must_be_the_current_player")
   }
 

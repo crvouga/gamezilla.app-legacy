@@ -202,7 +202,7 @@ export const view = (
     }
 
     case "Snake": {
-      return pipe(Snake.view({ currentUserId }, model[1]), UI.map(tag("Snake")))
+      return pipe(Snake.view({ currentUserId, store }, model[1]), UI.map(tag("Snake")))
     }
 
     case "TicTacToe": {

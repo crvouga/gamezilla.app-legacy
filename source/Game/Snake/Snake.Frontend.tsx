@@ -1,7 +1,7 @@
 import { useLayoutEffect, useRef } from "react"
 import * as Bridge from "../../Bridge"
-
-import { Cmd, exhaustive, Keyboard, Result, Sub } from "../../Core"
+import * as Store from "../../Store"
+import { Cmd, exhaustive, Keyboard, Option, Result, Sub } from "../../Core"
 import { RoomId, UserId } from "../../Data"
 import * as Snake from "./Snake"
 import * as Position from "./Position"
@@ -28,7 +28,10 @@ import {
 
 export type Model = FrontendModel
 
-export const init: Model = initSharedModel
+export const init: Model = {
+  ...initSharedModel,
+  openedMenuId: Option.None
+}
 
 //
 //
@@ -60,19 +63,12 @@ export const update = (
     currentUserId,
   }: { currentRoomId: RoomId.RoomId; currentUserId: UserId.UserId },
   msg: Msg,
-  model: Model,
+  _model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
-  switch (msg[0]) {
-    case "ClickedDirection": {
-      return [
-        model,
-        sendToBackend(currentRoomId, [
-          "ChangeDirection",
-          { userId: currentUserId, direction: msg[1] },
-        ]),
-      ]
-    }
 
+  const model: Model = { ..._model, openedMenuId: Option.None }
+
+  switch (msg[0]) {
     case "ClickedBack":
       return [model, Route.back]
 
@@ -82,7 +78,7 @@ export const update = (
       const changeDirectionCmd =
         direction.type === "Some"
           ? sendToBackend(currentRoomId, [
-            "ChangeDirection",
+            "InputDirection",
             { userId: currentUserId, direction: direction.value },
           ])
           : Cmd.None
@@ -102,9 +98,26 @@ export const update = (
       return [model, sendToBackend(currentRoomId, msg)]
     }
 
-    case "ChangePlayer": {
+    case "InputPlayer": {
       return [model, sendToBackend(currentRoomId, msg)]
     }
+
+    case 'InputDirection': {
+      return [model, sendToBackend(currentRoomId, msg)]
+    }
+
+    case 'StartGame': {
+      return [model, sendToBackend(currentRoomId, msg)]
+    }
+
+    case 'OpenedMenu': {
+      return [{ ...model, openedMenuId: Option.Some(msg[1]) }, Cmd.None]
+    }
+
+    case 'ClosedMenu': {
+      return [{ ...model, openedMenuId: Option.None }, Cmd.None]
+    }
+
 
     default:
       return exhaustive(msg[0])
@@ -118,24 +131,35 @@ export const updateFromBackend = (
   switch (msg[0]) {
     case "Sync": {
       const sharedModel = msg[1]
-      return [sharedModel, Cmd.None, []]
+      return [
+        {
+          ...sharedModel,
+          openedMenuId: model.openedMenuId
+        },
+        Cmd.None,
+        []
+      ]
     }
 
-    case "ChangeDirectionResulted": {
-      return handleResult(msg[1], model)
+    case "InputDirectionResulted": {
+      return updateResponse(msg[1], model)
     }
 
     case "ToggleStatusResulted": {
-      return handleResult(msg[1], model)
+      return updateResponse(msg[1], model)
     }
 
-    case "ChangePlayerResulted": {
-      return handleResult(msg[1], model)
+    case "InputPlayerResulted": {
+      return updateResponse(msg[1], model)
+    }
+
+    case 'StartGameResulted': {
+      return updateResponse(msg[1], model)
     }
   }
 }
 
-const handleResult = <
+const updateResponse = <
   TProblem extends string,
   TResult extends Result.Result<TProblem, SharedModel>,
   >(
@@ -196,30 +220,80 @@ const leftRight: UI.Sx = {
 
 export const view =
   (
-    { currentUserId }: { currentUserId: UserId.UserId },
+    {
+      currentUserId,
+      store,
+    }: {
+      currentUserId: UserId.UserId,
+      store: Store.Model
+    },
     model: Model,
   ): UI.View<Msg> =>
     (dispatch) => {
-      if (model.player[0] === "None") {
+      if (model.gameStatus.type === 'GameSetup') {
+        const menuAnchorId = "playerSlotMenuId"
         return (
-          <UI.FillBox>
-            <UI.Box sx={{ paddingX: 2 }}>
-              <UI.Typography
-                variant="h4"
-                sx={{ marginBottom: 1 }}
-              >
-                Snake
-              </UI.Typography>
+          <UI.FillBox >
+            <UI.Typography
+
+              sx={{ paddingX: 2 }}
+              color="text.secondary"
+            >
+              Snake
+            </UI.Typography>
+
+
+            <UI.Box sx={{ height: "48px", display: "flex", alignItems: "center", width: "100%" }}>
+              {model.gameStatus.player.type === 'None' ? (
+                <UI.Box sx={{ padding: 2, width: "100%" }}>
+                  <UI.Button
+                    variant="contained"
+                    fullWidth
+                    onClick={() =>
+                      dispatch(["InputPlayer", Option.Some(["User", currentUserId])])
+                    }
+                  >
+                    Play as Snake
+                  </UI.Button>
+                </UI.Box>
+              ) : (
+                <>
+                  <UI.ListItemButton id={menuAnchorId} onClick={() => dispatch(['OpenedMenu', menuAnchorId])}>
+                    <UI.ListItemAvatar>
+                      <UI.Avatar src={store.Profile[model.gameStatus.player.value[1]]?.avatarUrl} />
+                    </UI.ListItemAvatar>
+                    <UI.ListItemText primary={store.Profile[model.gameStatus.player.value[1]]?.username} />
+                    <UI.ListItemSecondaryAction>
+                      <UI.Icons.MoreVert />
+                    </UI.ListItemSecondaryAction>
+                  </UI.ListItemButton>
+                  <UI.Menu
+                    open={model.openedMenuId.type === 'Some' && model.openedMenuId.value === menuAnchorId}
+                    onClose={() => dispatch(['ClosedMenu',])}
+                    anchorEl={document.getElementById(menuAnchorId)}
+                  >
+                    <UI.ListItemButton onClick={() => dispatch(['InputPlayer', Option.None])}>
+                      <UI.ListItemText primary="Stop playing" />
+                    </UI.ListItemButton>
+                  </UI.Menu>
+                </>
+              )}
+            </UI.Box>
+
+            <UI.Box sx={{ flex: 1 }} />
+
+            <UI.Box sx={{ padding: 2 }}>
               <UI.Button
                 variant="contained"
                 fullWidth
-                onClick={() =>
-                  dispatch(["ChangePlayer", { player: ["User", currentUserId] }])
-                }
+                onClick={() => {
+                  dispatch(['StartGame'])
+                }}
               >
                 Start Game
               </UI.Button>
             </UI.Box>
+
           </UI.FillBox>
         )
       }
@@ -231,7 +305,7 @@ export const view =
             dispatch={dispatch}
           />
 
-          {model.player[1] === currentUserId && (
+          {model.gameStatus.player[1] === currentUserId && (
             <UI.Box sx={{ display: "flex", alignItems: "center", width: "100%" }}>
               <UI.Box
                 sx={{
@@ -243,7 +317,7 @@ export const view =
               >
                 <UI.ButtonBase
                   sx={leftRight}
-                  onClick={() => dispatch(["ClickedDirection", "left"])}
+                  onClick={() => dispatch(["InputDirection", { direction: "left", userId: currentUserId }])}
                 >
                   <UI.Icons.KeyboardArrowLeft sx={iconSx} />
                 </UI.ButtonBase>
@@ -251,14 +325,14 @@ export const view =
                 <UI.Box sx={{ display: "flex", flexDirection: "column" }}>
                   <UI.ButtonBase
                     sx={upDown}
-                    onClick={() => dispatch(["ClickedDirection", "up"])}
+                    onClick={() => dispatch(["InputDirection", { direction: "up", userId: currentUserId }])}
                   >
                     <UI.Icons.KeyboardArrowUp sx={iconSx} />
                   </UI.ButtonBase>
 
                   <UI.ButtonBase
                     sx={upDown}
-                    onClick={() => dispatch(["ClickedDirection", "down"])}
+                    onClick={() => dispatch(["InputDirection", { direction: "down", userId: currentUserId }])}
                   >
                     <UI.Icons.KeyboardArrowDown sx={iconSx} />
                   </UI.ButtonBase>
@@ -266,7 +340,7 @@ export const view =
 
                 <UI.ButtonBase
                   sx={leftRight}
-                  onClick={() => dispatch(["ClickedDirection", "right"])}
+                  onClick={() => dispatch(["InputDirection", { direction: "right", userId: currentUserId }])}
                 >
                   <UI.Icons.KeyboardArrowRight sx={iconSx} />
                 </UI.ButtonBase>
@@ -276,6 +350,7 @@ export const view =
         </UI.FillBox>
       )
     }
+
 
 export const ViewBoard = ({
   model,
