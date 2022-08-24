@@ -168,11 +168,11 @@ export const subscriptions = (
   const turn = Board.toTurn(model.board)
 
   switch (turn) {
-    case "Black": {
-      return Time.every(`Black-${intervalId}`, 1000, () => ["Tick"])
+    case "b": {
+      return Time.every(`b-${intervalId}`, 1000, () => ["Tick"])
     }
-    case "White": {
-      return Time.every(`White-${intervalId}`, 1000, () => ["Tick"])
+    case "w": {
+      return Time.every(`w-${intervalId}`, 1000, () => ["Tick"])
     }
   }
 }

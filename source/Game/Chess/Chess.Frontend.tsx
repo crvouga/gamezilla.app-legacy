@@ -203,8 +203,8 @@ export const view =
                 dispatch={dispatch}
                 store={store}
                 currentUserId={currentUserId}
-                playerType="White"
-                userId={model.sharedModel.White}
+                color="w"
+                userId={model.sharedModel.w}
               />
 
               <ViewGameSetupPlayerSlot
@@ -212,8 +212,8 @@ export const view =
                 dispatch={dispatch}
                 store={store}
                 currentUserId={currentUserId}
-                playerType="Black"
-                userId={model.sharedModel.Black}
+                color="b"
+                userId={model.sharedModel.b}
               />
             </UI.List>
 
@@ -264,8 +264,8 @@ export const view =
           model={model}
           dispatch={dispatch}
           clock={model.sharedModel.clock}
-          White={model.sharedModel.White}
-          Black={model.sharedModel.Black}
+          w={model.sharedModel.w}
+          b={model.sharedModel.b}
           board={model.sharedModel.board}
         />
       )
@@ -273,25 +273,26 @@ export const view =
 
 const ViewGameSetupPlayerSlot = ({
   userId,
-  playerType,
+  color,
   dispatch,
   store,
   currentUserId,
   model
 }: {
-  playerType: Board.PlayerType,
+  color: Board.Color,
   userId: Option.Option<UserId.UserId>;
   currentUserId: UserId.UserId,
   store: Store.Model;
   dispatch: (msg: Msg) => void,
   model: Model
 }) => {
-  const menuAnchorId = playerType
+  const menuAnchorId = color
+  const colorString = Board.colorToString(color)
 
   return (
     <>
       <UI.Typography sx={{ paddingX: 2, }} color="text.secondary">
-        {playerType}
+        {colorString}
       </UI.Typography>
 
       <UI.Box sx={{ height: "72px" }}>
@@ -312,7 +313,7 @@ const ViewGameSetupPlayerSlot = ({
               onClose={() => dispatch(['ClosedMenu'])}
             >
               {userId.value === currentUserId ? (
-                <UI.Button size="large" onClick={() => dispatch(['InputPlayer', { userId: Option.None, playerType }])}>
+                <UI.Button size="large" onClick={() => dispatch(['InputPlayer', { userId: Option.None, color }])}>
                   Stop Playing
                 </UI.Button>
               ) : (
@@ -332,10 +333,10 @@ const ViewGameSetupPlayerSlot = ({
               onClick={() => {
                 dispatch([
                   "InputPlayer",
-                  { userId: Option.Some(currentUserId), playerType },
+                  { userId: Option.Some(currentUserId), color },
                 ])
               }}>
-              Play As {playerType}
+              Play As {colorString}
             </UI.Button>
           </UI.Box>
         )}
@@ -362,15 +363,15 @@ export const ViewGameStarted = ({
   store,
   model,
   dispatch,
-  White,
-  Black,
+  w,
+  b,
   board,
   clock,
 }: {
   store: Store.Model
   currentUserId: UserId.UserId
-  White: UserId.UserId
-  Black: UserId.UserId
+  w: UserId.UserId
+  b: UserId.UserId
   board: Board.Model
   clock: Clock
   model: Model
@@ -378,42 +379,42 @@ export const ViewGameStarted = ({
 }) => {
   const { boardWidth, ref } = useBoardWidth()
 
-  const currentUserPlayerType: Board.PlayerType | "None" | "Both" =
-    currentUserId === White && currentUserId === Black
+  const currentUserColor: Board.Color | "None" | "Both" =
+    currentUserId === w && currentUserId === b
       ? "Both"
-      : currentUserId === White
-        ? 'White'
-        : currentUserId === Black
-          ? 'Black'
+      : currentUserId === w
+        ? 'w'
+        : currentUserId === b
+          ? 'b'
           : "None"
 
   const turn = Board.toTurn(board)
 
-  const fallbackBoardOrentation: Board.PlayerType = 'White'
+  const fallbackBoardOrentation: Board.Color = 'w'
 
-  const boardOrentation: Board.PlayerType =
-    currentUserPlayerType === 'None' || currentUserPlayerType === 'Both'
+  const boardOrentation: Board.Color =
+    currentUserColor === 'None' || currentUserColor === 'Both'
       ? fallbackBoardOrentation
-      : currentUserPlayerType
+      : currentUserColor
 
 
   const whiteSlot: GameStartedPlayerSlot = {
-    src: store.Profile[White]?.avatarUrl,
-    username: store.Profile[White]?.username ?? "...",
-    isActive: turn === 'White',
-    seconds: clock.White
+    src: store.Profile[w]?.avatarUrl,
+    username: store.Profile[w]?.username ?? "...",
+    isActive: turn === 'w',
+    seconds: clock.w
   }
 
   const blackSlot: GameStartedPlayerSlot = {
-    src: store.Profile[Black]?.avatarUrl,
-    username: store.Profile[Black]?.username ?? "...",
-    isActive: turn === 'Black',
-    seconds: clock.Black
+    src: store.Profile[b]?.avatarUrl,
+    username: store.Profile[b]?.username ?? "...",
+    isActive: turn === 'b',
+    seconds: clock.b
   }
 
-  const topSlot = boardOrentation === 'White' ? blackSlot : whiteSlot
+  const topSlot = boardOrentation === 'w' ? blackSlot : whiteSlot
 
-  const bottomSlot = boardOrentation === 'White' ? whiteSlot : blackSlot
+  const bottomSlot = boardOrentation === 'w' ? whiteSlot : blackSlot
 
 
   return (
@@ -425,11 +426,11 @@ export const ViewGameStarted = ({
         <Chessboard
           showBoardNotation
           snapToCursor
-          boardOrientation={boardOrentation === "White" ? "white" : "black"}
+          boardOrientation={boardOrentation === "w" ? "white" : "black"}
           position={board.fen}
           boardWidth={boardWidth}
           isDraggablePiece={({ piece, }) => {
-            return Board.pieceToPlayerType(piece) === currentUserPlayerType || currentUserPlayerType === 'Both'
+            return Board.toColor(piece) === currentUserColor || currentUserColor === 'Both'
           }}
           onPieceDrop={(sourceSquare, targetSquare, _piece) => {
             const msg: Move = [
@@ -516,20 +517,14 @@ const ViewGameStartedPlayerSlot = ({ slot }: { slot: GameStartedPlayerSlot }) =>
         </UI.Typography>
       </UI.Box>
 
-      <UI.Paper
-        variant="outlined"
-        sx={{
-          padding: 2,
-          paddingY: 1
-        }}
+
+      <UI.Typography
+        color={isActive ? theme.palette.text.primary : theme.palette.text.disabled}
+        variant="h4"
       >
-        <UI.Typography
-          color={isActive ? theme.palette.text.primary : theme.palette.text.disabled}
-          variant="h6"
-        >
-          {formatSeconds(seconds)}
-        </UI.Typography>
-      </UI.Paper>
+        {formatSeconds(seconds)}
+      </UI.Typography>
+
     </UI.Box>
   )
 }
