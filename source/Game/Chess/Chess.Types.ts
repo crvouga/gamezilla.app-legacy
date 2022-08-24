@@ -29,10 +29,15 @@ export type SharedModel =
 
 type EndGame =
   | {
-      type: "Win"
+      type: "None"
     }
   | {
-      type: "Draw"
+      type: "Resignation"
+      resigner: Board.Color
+    }
+  | {
+      type: "DrawByAgreement"
+      child: DrawByAgreement
     }
 
 export type DrawByAgreement =
