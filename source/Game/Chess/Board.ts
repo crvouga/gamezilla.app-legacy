@@ -104,6 +104,16 @@ export const toTurn = (model: Model): PlayerType => {
   }
 }
 
+export const toOppositePlayerType = (playerType: PlayerType): PlayerType => {
+  switch (playerType) {
+    case "Black":
+      return "White"
+
+    case "White":
+      return "Black"
+  }
+}
+
 //
 //
 // Move
