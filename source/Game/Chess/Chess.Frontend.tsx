@@ -1,11 +1,10 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react"
+import { useLayoutEffect, useRef, useState } from "react"
 import { Chessboard } from "react-chessboard"
 import * as Bridge from "../../Bridge"
-import { Audio, Browser, Cmd, Option, pipe, RemoteData, Sub, tag, Unit } from "../../Core"
+import { Audio, Cmd, Option, pipe, Sub, tag } from "../../Core"
 import { RoomId, UserId } from "../../Data"
 import * as Store from "../../Store"
 import * as UI from "../../UI"
-import { useTheme } from "../../UI"
 import * as Board from "./Board"
 import {
   canStartGame,
@@ -17,7 +16,6 @@ import {
   initSharedModel,
   move,
   Move,
-  Seconds,
   ToBackend,
   ToFrontend
 } from "./Chess.Types"
@@ -38,19 +36,10 @@ export const init = ({ roomId }: { roomId: RoomId.RoomId }): [FrontendModel, Cmd
   return [
     {
       sharedModel: initSharedModel,
-      boardWidth: 0,
-      startGame: RemoteData.NotAsked,
-      playAs: RemoteData.NotAsked,
-      stopPlaying: RemoteData.NotAsked,
       openedMenuId: Option.None
     },
-    Cmd.batch([
-      sendToBackend(roomId, ['Init']),
-      pipe(
-        Browser.getElementById(containerHtmlId),
-        Cmd.perform(tag("GetElementResulted")),
-      ),
-    ])
+    sendToBackend(roomId, ['Init']),
+
   ]
 }
 
@@ -70,37 +59,11 @@ export const update = (
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
-    case "GetElementResulted": {
-      const result = msg[1]
-
-      if (result.type === "Err") {
-        return [model, Cmd.None]
-      }
-
-      const element = result.value
-
-      return [{ ...model, boardWidth: element.offsetWidth }, Cmd.None]
-    }
-
-    case "BrowserResized": {
-      return [
-        model,
-        pipe(
-          Browser.getElementById(containerHtmlId),
-          Cmd.perform((element): Msg => ["GetElementResulted", element]),
-        ),
-      ]
-    }
-
-    case "PlayAs": {
+    case "InputPlayer": {
       return [model, sendToBackend(currentRoomId, msg)]
     }
 
     case "StartGame": {
-      return [model, sendToBackend(currentRoomId, msg)]
-    }
-
-    case "StopPlaying": {
       return [model, sendToBackend(currentRoomId, msg)]
     }
 
@@ -112,13 +75,14 @@ export const update = (
       return [model, Cmd.None]
     }
 
+    case 'OpenedMenu': {
+      return [{ ...model, openedMenuId: Option.Some(msg[1]) }, Cmd.None]
+    }
+
     case 'ClosedMenu': {
       return [{ ...model, openedMenuId: Option.None }, Cmd.None]
     }
 
-    case 'PressedPlayerSlot': {
-      return [{ ...model, openedMenuId: Option.Some(msg[1]) }, Cmd.None]
-    }
 
     case "Move": {
       const result = move(msg[1], model.sharedModel)
@@ -160,7 +124,7 @@ export const updateFromBackend = (
 
   switch (msg[0]) {
 
-    case 'InputtedClock': {
+    case 'InputClockResulted': {
       return [{ ...model }, Cmd.None]
     }
 
@@ -168,30 +132,18 @@ export const updateFromBackend = (
       return [{ ...model }, Cmd.None]
     }
 
-    case "PlayAsResulted": {
-      const playAs = pipe(
-        msg[1],
-        RemoteData.fromResult,
-        RemoteData.map(() => Unit)
-      )
-      return [{ ...model, playAs }, Cmd.None]
+    case "InputPlayerResulted": {
+      return [{ ...model, }, Cmd.None]
     }
 
     case "StartGameResulted": {
-      const startGame = pipe(
-        msg[1],
-        RemoteData.fromResult,
-        RemoteData.map(() => Unit)
-      )
-      return [{ ...model, startGame }, Cmd.None]
-    }
-
-    case "StopPlayingResulted": {
       return [{ ...model, }, Cmd.None]
     }
 
     case "Sync": {
-      return [{ ...model, sharedModel: msg[1] }, Cmd.None]
+      const modelNew = msg[1]
+
+      return [{ ...model, sharedModel: modelNew }, Cmd.None]
     }
   }
 }
@@ -205,7 +157,7 @@ export const updateFromBackend = (
 //
 
 export const subscriptions = (_model: Model): Sub.Sub<Msg> => {
-  return Browser.onResize(tag("BrowserResized"))
+  return Sub.None
 }
 
 //
@@ -228,7 +180,7 @@ export const sendToBackend = (roomId: RoomId.RoomId, toBackend: ToBackend) => {
 //
 //
 
-const containerHtmlId = "chess"
+const chessBoardContainerId = "chessboard"
 
 export const view =
   (
@@ -246,7 +198,7 @@ export const view =
         return (
           <UI.FillBox>
             <UI.List disablePadding>
-              <ViewPlayerSlot
+              <ViewGameSetupPlayerSlot
                 model={model}
                 dispatch={dispatch}
                 store={store}
@@ -255,7 +207,7 @@ export const view =
                 userId={model.sharedModel.White}
               />
 
-              <ViewPlayerSlot
+              <ViewGameSetupPlayerSlot
                 model={model}
                 dispatch={dispatch}
                 store={store}
@@ -319,7 +271,7 @@ export const view =
       )
     }
 
-const ViewPlayerSlot = ({
+const ViewGameSetupPlayerSlot = ({
   userId,
   playerType,
   dispatch,
@@ -345,7 +297,7 @@ const ViewPlayerSlot = ({
       <UI.Box sx={{ height: "72px" }}>
         {userId.type === 'Some' ? (
           <>
-            <UI.ListItemButton id={menuAnchorId} onClick={() => dispatch(['PressedPlayerSlot', menuAnchorId])}>
+            <UI.ListItemButton id={menuAnchorId} onClick={() => dispatch(['OpenedMenu', menuAnchorId])}>
               <UI.ListItemAvatar>
                 <UI.Avatar src={store.Profile[userId.value]?.avatarUrl} />
               </UI.ListItemAvatar>
@@ -360,9 +312,9 @@ const ViewPlayerSlot = ({
               onClose={() => dispatch(['ClosedMenu'])}
             >
               {userId.value === currentUserId ? (
-                <UI.MenuItem onClick={() => dispatch(['StopPlaying', { userId: currentUserId, playerType }])}>
-                  <UI.ListItemText primary="Stop Playing" />
-                </UI.MenuItem>
+                <UI.Button size="large" onClick={() => dispatch(['InputPlayer', { userId: Option.None, playerType }])}>
+                  Stop Playing
+                </UI.Button>
               ) : (
                 <UI.MenuItem >
                   <UI.ListItemText primaryTypographyProps={{ color: "text.secondary" }} primary="Not action available" />
@@ -377,12 +329,12 @@ const ViewPlayerSlot = ({
               fullWidth
               size="large"
               variant="contained"
-              onClick={() =>
+              onClick={() => {
                 dispatch([
-                  "PlayAs",
-                  { userId: currentUserId, playerType },
+                  "InputPlayer",
+                  { userId: Option.Some(currentUserId), playerType },
                 ])
-              }>
+              }}>
               Play As {playerType}
             </UI.Button>
           </UI.Box>
@@ -424,86 +376,52 @@ export const ViewGameStarted = ({
   model: Model
   dispatch: (msg: Msg) => void
 }) => {
-  const [boardWidth, setBoardWidth] = useState(0)
-  const ref = useRef<HTMLDivElement | null>(null)
+  const { boardWidth, ref } = useBoardWidth()
 
-  useEffect(() => {
-    const handler = () => {
-      if (ref.current) {
-        setBoardWidth(ref.current?.offsetWidth)
-      }
-    }
-
-    handler()
-
-    window.addEventListener("resize", handler)
-    return () => {
-      window.removeEventListener("resize", handler)
-    }
-  }, [])
-
-  const playerBoxSx: UI.Sx = {
-    paddingX: 2,
-    paddingY: 1,
-    display: "flex",
-    alignItems: "center",
-  }
-
-  const playerAvatarSx: UI.Sx = {
-    marginRight: 1,
-  }
-
-  const currentUserPlayerType: Board.PlayerType | 'None' =
-    currentUserId === White
-      ? 'White'
-      : currentUserId === Black
-        ? 'Black'
-        : "None"
+  const currentUserPlayerType: Board.PlayerType | "None" | "Both" =
+    currentUserId === White && currentUserId === Black
+      ? "Both"
+      : currentUserId === White
+        ? 'White'
+        : currentUserId === Black
+          ? 'Black'
+          : "None"
 
   const turn = Board.toTurn(board)
 
-  const boardOrentation: Board.PlayerType = currentUserPlayerType === 'None' ? 'White' : currentUserPlayerType
+  const fallbackBoardOrentation: Board.PlayerType = 'White'
 
-  const white = {
+  const boardOrentation: Board.PlayerType =
+    currentUserPlayerType === 'None' || currentUserPlayerType === 'Both'
+      ? fallbackBoardOrentation
+      : currentUserPlayerType
+
+
+  const whiteSlot: GameStartedPlayerSlot = {
     src: store.Profile[White]?.avatarUrl,
     username: store.Profile[White]?.username ?? "...",
     isActive: turn === 'White',
     seconds: clock.White
   }
 
-  const black = {
+  const blackSlot: GameStartedPlayerSlot = {
     src: store.Profile[Black]?.avatarUrl,
     username: store.Profile[Black]?.username ?? "...",
     isActive: turn === 'Black',
     seconds: clock.Black
   }
 
-  const playerSlots = boardOrentation === 'White' ? {
-    top: black,
-    bottom: white
-  } : {
-    top: white,
-    bottom: black
-  }
+  const topSlot = boardOrentation === 'White' ? blackSlot : whiteSlot
+
+  const bottomSlot = boardOrentation === 'White' ? whiteSlot : blackSlot
+
 
   return (
-    <UI.FillBox id={containerHtmlId}>
-      <UI.Box sx={playerBoxSx}>
-        <UI.Avatar
-          src={playerSlots.top.src}
-          sx={playerAvatarSx}
-        />
+    <UI.FillBox>
 
-        <UI.Box sx={{ flex: 1 }}>
-          <UI.Typography>
-            {playerSlots.top.username}
-          </UI.Typography>
-        </UI.Box>
+      <ViewGameStartedPlayerSlot slot={topSlot} />
 
-        <ViewClock isActive={playerSlots.top.isActive} seconds={playerSlots.top.seconds} />
-      </UI.Box>
-
-      <div ref={ref}>
+      <div id={chessBoardContainerId} ref={ref}>
         <Chessboard
           showBoardNotation
           snapToCursor
@@ -511,7 +429,7 @@ export const ViewGameStarted = ({
           position={board.fen}
           boardWidth={boardWidth}
           isDraggablePiece={({ piece, }) => {
-            return Board.pieceToPlayerType(piece) === currentUserPlayerType
+            return Board.pieceToPlayerType(piece) === currentUserPlayerType || currentUserPlayerType === 'Both'
           }}
           onPieceDrop={(sourceSquare, targetSquare, _piece) => {
             const msg: Move = [
@@ -533,44 +451,86 @@ export const ViewGameStarted = ({
         />
       </div>
 
-      <UI.Box sx={playerBoxSx}>
-        <UI.Avatar
-          src={playerSlots.bottom.src}
-          sx={playerAvatarSx}
-        />
-
-        <UI.Box sx={{ flex: 1 }}>
-          <UI.Typography>
-            {playerSlots.bottom.username}
-          </UI.Typography>
-        </UI.Box>
-
-        <ViewClock isActive={playerSlots.bottom.isActive} seconds={playerSlots.bottom.seconds} />
-      </UI.Box>
+      <ViewGameStartedPlayerSlot slot={bottomSlot} />
 
       <UI.Box sx={{ flex: 1 }} />
 
-      <UI.Box sx={{ display: "flex" }}>
-        <UI.ButtonBase sx={{ padding: 2 }}>
-          <UI.Icons.Menu />
-        </UI.ButtonBase>
-      </UI.Box>
     </UI.FillBox>
   )
 }
 
+const useBoardWidth = () => {
+  const [boardWidth, setBoardWidth] = useState(0)
+  const ref = useRef<HTMLDivElement | null>(null)
+
+  useLayoutEffect(() => {
+    const handler = () => {
+      if (ref.current) {
+        setBoardWidth(ref.current?.offsetWidth)
+      }
+    }
+
+    handler()
+
+    window.addEventListener("resize", handler)
+    return () => {
+      window.removeEventListener("resize", handler)
+    }
+  }, [])
+
+  return {
+    ref,
+    boardWidth
+  }
+}
 
 
+type GameStartedPlayerSlot = {
+  src?: string
+  username: string
+  isActive: boolean
+  seconds: number
+}
 
-const ViewClock = ({ isActive, seconds }: { isActive: boolean, seconds: Seconds }) => {
+const ViewGameStartedPlayerSlot = ({ slot }: { slot: GameStartedPlayerSlot }) => {
+  const { src, username, isActive, seconds } = slot
   const theme = UI.useTheme()
+
   return (
-    <UI.Paper
-      variant="outlined"
-      sx={{ padding: 2, paddingY: 1 }}
-    >
-      <UI.Typography color={isActive ? theme.palette.text.primary : theme.palette.text.disabled} variant="h6">{formatSeconds(seconds)}</UI.Typography>
-    </UI.Paper>
+    <UI.Box sx={{
+      paddingX: 2,
+      paddingY: 1,
+      display: "flex",
+      alignItems: "center",
+    }}>
+      <UI.Avatar
+        src={src}
+        sx={{
+          marginRight: 1,
+        }}
+      />
+
+      <UI.Box sx={{ flex: 1 }}>
+        <UI.Typography>
+          {username}
+        </UI.Typography>
+      </UI.Box>
+
+      <UI.Paper
+        variant="outlined"
+        sx={{
+          padding: 2,
+          paddingY: 1
+        }}
+      >
+        <UI.Typography
+          color={isActive ? theme.palette.text.primary : theme.palette.text.disabled}
+          variant="h6"
+        >
+          {formatSeconds(seconds)}
+        </UI.Typography>
+      </UI.Paper>
+    </UI.Box>
   )
 }
 
@@ -578,6 +538,14 @@ export const theme = {
   lightSquare: "#EBEBD0",
   darkSquare: "#779455",
 }
+
+// 
+// 
+// 
+// View Cover Art
+// 
+// 
+// 
 
 export const CoverArt = () => {
   return (

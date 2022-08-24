@@ -8,11 +8,10 @@ import {
   decrementClock,
   initSharedModel,
   inputClock,
+  inputPlayer,
   move,
-  playAs,
   Response,
   startGame,
-  stopPlaying,
   ToBackend,
   ToFrontend,
 } from "./Chess.Types"
@@ -73,31 +72,23 @@ export const updateFromFrontend = (
     }
 
     case "InputClock": {
-      return handleResponse(
+      return sendResponse(
         { clientId, roomId },
-        ["InputtedClock", inputClock(msg[1], model)],
+        ["InputClockResulted", inputClock(msg[1], model)],
         model,
       )
     }
 
-    case "PlayAs": {
-      return handleResponse(
+    case "InputPlayer": {
+      return sendResponse(
         { clientId, roomId },
-        ["PlayAsResulted", playAs(msg[1], model)],
-        model,
-      )
-    }
-
-    case "StopPlaying": {
-      return handleResponse(
-        { clientId, roomId },
-        ["StopPlayingResulted", stopPlaying(msg[1], model)],
+        ["InputPlayerResulted", inputPlayer(msg[1], model)],
         model,
       )
     }
 
     case "StartGame": {
-      return handleResponse(
+      return sendResponse(
         { clientId, roomId },
         ["StartGameResulted", startGame(model)],
         model,
@@ -105,7 +96,7 @@ export const updateFromFrontend = (
     }
 
     case "Move": {
-      return handleResponse(
+      return sendResponse(
         { clientId, roomId },
         ["MovedResulted", move(msg[1], model)],
         model,
@@ -114,7 +105,7 @@ export const updateFromFrontend = (
   }
 }
 
-const handleResponse = (
+const sendResponse = (
   { clientId, roomId }: { clientId: ClientId.ClientId; roomId: RoomId.RoomId },
   response: Response,
   model: Model,

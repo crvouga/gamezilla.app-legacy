@@ -1,6 +1,6 @@
-import * as Board from "./Board"
-import { Audio, Browser, Option, RemoteData, Result, Unit } from "../../Core"
+import { Audio, Browser, Option, Result } from "../../Core"
 import { UserId } from "../../Data"
+import * as Board from "./Board"
 
 //
 //
@@ -27,10 +27,6 @@ export type SharedModel =
 
 export type FrontendModel = {
   sharedModel: SharedModel
-  boardWidth: number
-  startGame: RemoteData.RemoteData<StartGameProblem, Unit>
-  playAs: RemoteData.RemoteData<PlayAsProblem, Unit>
-  stopPlaying: RemoteData.RemoteData<StopPlayingProblem, Unit>
   openedMenuId: Option.Option<string>
 }
 
@@ -62,10 +58,8 @@ export const initSharedModel: SharedModel = {
 //
 
 export type FrontendMsg =
-  | ["GetElementResulted", Browser.GetElementByIdResult]
-  | ["BrowserResized", Browser.Resize]
   | ["AudioResulted", Audio.PlayResult]
-  | ["PressedPlayerSlot", Board.PlayerType]
+  | ["OpenedMenu", string]
   | ["ClosedMenu"]
   | Request
 
@@ -82,14 +76,13 @@ export type ToBackend = ["Init"] | Request
 //
 //
 
-export type Request = Move | PlayAs | StopPlaying | StartGame | InputClock
+export type Request = Move | InputPlayer | StartGame | InputClock
 
 export type Response =
   | MoveResulted
-  | PlayAsResulted
-  | StopPlayingResulted
+  | InputPlayerResulted
   | StartGameResulted
-  | InputtedClock
+  | InputClockResulted
 
 //
 //
@@ -133,99 +126,42 @@ export const move = (
 //
 //
 
-export type PlayAs = [
-  "PlayAs",
+export type InputPlayer = [
+  "InputPlayer",
   {
-    userId: UserId.UserId
     playerType: Board.PlayerType
+    userId: Option.Option<UserId.UserId>
   },
 ]
-export type PlayAsResulted = ["PlayAsResulted", PlayAsResult]
-export type PlayAsProblem = "game_must_be_in_setup_mode" | "player_is_taken"
-export type PlayAsResult = Result.Result<PlayAsProblem, SharedModel>
+export type InputPlayerResulted = [
+  "InputPlayerResulted",
+  Result.Result<InputPlayerProblem, SharedModel>,
+]
+export type InputPlayerProblem =
+  | "game_must_be_in_setup_mode"
+  | "player_is_taken"
 
-export const playAs = (
-  { userId, playerType }: PlayAs[1],
+export const inputPlayer = (
+  { userId, playerType }: InputPlayer[1],
   model: SharedModel,
-): PlayAsResult => {
+): InputPlayerResulted[1] => {
   if (model.type !== "GameSetup") {
     return Result.Err("game_must_be_in_setup_mode")
   }
 
-  const playerId = playerType === "White" ? model.White : model.Black
+  const player = playerType === "White" ? model.White : model.Black
 
-  if (playerId.type !== "None") {
+  if (player.type !== "None" && userId.type === "Some") {
     return Result.Err("player_is_taken")
   }
 
   switch (playerType) {
     case "Black": {
-      return Result.Ok({
-        ...model,
-        Black: Option.Some(userId),
-      })
+      return Result.Ok({ ...model, Black: userId })
     }
 
     case "White": {
-      return Result.Ok({
-        ...model,
-        White: Option.Some(userId),
-      })
-    }
-  }
-}
-
-//
-//
-//
-//
-//
-
-export type StopPlaying = [
-  "StopPlaying",
-  {
-    userId: UserId.UserId
-    playerType: Board.PlayerType
-  },
-]
-export type StopPlayingResulted = ["StopPlayingResulted", StopPlayingResult]
-export type StopPlayingResult = Result.Result<StopPlayingProblem, SharedModel>
-export type StopPlayingProblem =
-  | "game_must_be_in_setup_mode"
-  | "player_is_not_playing"
-  | "user_is_not_the_player"
-
-export const stopPlaying = (
-  { userId, playerType }: StopPlaying[1],
-  model: SharedModel,
-): StopPlayingResult => {
-  if (model.type !== "GameSetup") {
-    return Result.Err("game_must_be_in_setup_mode")
-  }
-
-  const playerId = model[playerType]
-
-  if (playerId.type === "None") {
-    return Result.Err("player_is_not_playing")
-  }
-
-  if (playerId.value !== userId) {
-    return Result.Err("user_is_not_the_player")
-  }
-
-  switch (playerType) {
-    case "Black": {
-      return Result.Ok({
-        ...model,
-        Black: Option.None,
-      })
-    }
-
-    case "White": {
-      return Result.Ok({
-        ...model,
-        White: Option.None,
-      })
+      return Result.Ok({ ...model, White: userId })
     }
   }
 }
@@ -239,8 +175,8 @@ export const stopPlaying = (
 
 export type InputClock = ["InputClock", ClockPreset]
 
-export type InputtedClock = [
-  "InputtedClock",
+export type InputClockResulted = [
+  "InputClockResulted",
   Result.Result<InputtedClockProblem, SharedModel>,
 ]
 
@@ -249,7 +185,7 @@ export type InputtedClockProblem = "failed_to_input_clock"
 export const inputClock = (
   clockPreset: InputClock[1],
   model: SharedModel,
-): InputtedClock[1] => {
+): InputClockResulted[1] => {
   if (model.type === "GameSetup") {
     return Result.Ok({
       ...model,
