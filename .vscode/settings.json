@@ -1,7 +1,7 @@
 {
-  "editor.defaultFormatter": "rvest.vs-code-prettier-eslint",
-  "editor.formatOnPaste": false, // required
-  "editor.formatOnType": false, // required
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnPaste": true, // required
+  "editor.formatOnType": true, // required
   "editor.formatOnSave": true, // optional
   "editor.formatOnSaveMode": "file", // required to format on save
   "files.autoSave": "onFocusChange",
@@ -12,5 +12,5 @@
     "editor.defaultFormatter": "vscode.typescript-language-features"
   },
   "editor.experimental.stickyScroll.enabled": true,
-  "editor.stickyTabStops": true // optional but recommended
+  "editor.stickyTabStops": false // optional but recommended
 }
