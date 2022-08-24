@@ -63,7 +63,7 @@ const createTheme = ({ mode }: { mode: "light" | "dark" }) =>
         MuiAvatar: {
           styleOverrides: {
             root: {
-              // backgroundColor: "White",
+              // backgroundColor: "w",
               // border: "1px solid #dedede",
             },
           },

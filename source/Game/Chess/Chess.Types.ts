@@ -13,16 +13,16 @@ import * as Board from "./Board"
 export type SharedModel =
   | {
       type: "GameSetup"
-      White: Option.Option<UserId.UserId>
-      Black: Option.Option<UserId.UserId>
       clockPreset: ClockPreset
+      w: Option.Option<UserId.UserId>
+      b: Option.Option<UserId.UserId>
     }
   | {
       type: "GameStarted"
-      White: UserId.UserId
-      Black: UserId.UserId
       clock: Clock
       board: Board.Model
+      w: UserId.UserId
+      b: UserId.UserId
     }
 
 export type FrontendModel = {
@@ -44,8 +44,8 @@ export type Player = ["User", { userId: UserId.UserId }] | ["None"]
 
 export const initSharedModel: SharedModel = {
   type: "GameSetup",
-  Black: Option.None,
-  White: Option.None,
+  b: Option.None,
+  w: Option.None,
   clockPreset: "Fast",
 }
 
@@ -104,7 +104,7 @@ export const move = (
     return Result.Err("game_must_be_started")
   }
 
-  if (model.White !== userId && model.Black !== userId) {
+  if (model.w !== userId && model.b !== userId) {
     return Result.Err("user_must_be_a_player")
   }
 
@@ -129,7 +129,7 @@ export const move = (
 export type InputPlayer = [
   "InputPlayer",
   {
-    playerType: Board.PlayerType
+    color: Board.Color
     userId: Option.Option<UserId.UserId>
   },
 ]
@@ -142,7 +142,7 @@ export type InputPlayerProblem =
   | "player_is_taken"
 
 export const inputPlayer = (
-  { userId, playerType }: InputPlayer[1],
+  { userId, color }: InputPlayer[1],
   model: SharedModel,
 ): InputPlayerResulted[1] => {
   if (model.type !== "GameSetup") {
@@ -150,14 +150,14 @@ export const inputPlayer = (
   }
 
   const targetPlayer = userId
-  const targetPlayerType = playerType
+  const targetColor = color
 
-  if (model[targetPlayerType].type === "Some" && targetPlayer.type === "Some") {
+  if (model[targetColor].type === "Some" && targetPlayer.type === "Some") {
     return Result.Err("player_is_taken")
   }
 
-  const otherPlayerType = Board.toOppositePlayerType(playerType)
-  const otherPlayer = model[otherPlayerType]
+  const otherColor = Board.toOppositeColor(color)
+  const otherPlayer = model[otherColor]
 
   const otherPlayerNew =
     otherPlayer.type === "Some" &&
@@ -168,8 +168,8 @@ export const inputPlayer = (
 
   return Result.Ok({
     ...model,
-    [targetPlayerType]: targetPlayer,
-    [otherPlayerType]: otherPlayerNew,
+    [targetColor]: targetPlayer,
+    [otherColor]: otherPlayerNew,
   })
 }
 
@@ -216,21 +216,21 @@ export type StartGameResult = Result.Result<StartGameProblem, SharedModel>
 export const canStartGame = (model: SharedModel): boolean => {
   return (
     model.type === "GameSetup" &&
-    model.White.type === "Some" &&
-    model.Black.type === "Some"
+    model.w.type === "Some" &&
+    model.b.type === "Some"
   )
 }
 
 export const startGame = (model: SharedModel): StartGameResult => {
   if (
     model.type === "GameSetup" &&
-    model.White.type === "Some" &&
-    model.Black.type === "Some"
+    model.w.type === "Some" &&
+    model.b.type === "Some"
   ) {
     return Result.Ok({
       type: "GameStarted",
-      White: model.White.value,
-      Black: model.Black.value,
+      w: model.w.value,
+      b: model.b.value,
       clock: toClock(model.clockPreset),
       board: Board.init(),
     })
@@ -248,14 +248,13 @@ export const startGame = (model: SharedModel): StartGameResult => {
 //
 
 export type Clock = {
-  White: Seconds
-  Black: Seconds
+  [color in Board.Color]: Seconds
 }
 
-export const decrementClock = (key: keyof Clock, clock: Clock): Clock => {
+export const decrementClock = (color: Board.Color, clock: Clock): Clock => {
   return {
     ...clock,
-    [key]: toSeconds(Math.max(0, clock[key] - 1)),
+    [color]: toSeconds(Math.max(0, clock[color] - 1)),
   }
 }
 
@@ -286,8 +285,8 @@ export const presetToSeconds: { [key in ClockPreset]: Seconds } = {
 export const toClock = (preset: ClockPreset): Clock => {
   const seconds = presetToSeconds[preset]
   return {
-    White: seconds,
-    Black: seconds,
+    w: seconds,
+    b: seconds,
   }
 }
 

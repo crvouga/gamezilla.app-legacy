@@ -7,31 +7,28 @@ import { exhaustive, Result } from "../../Core"
 //
 //
 
+const createInstance = (model: Model) => {
+  const instance = new ChessTs.Chess(model.fen)
+
+  return instance
+}
+
 export type Model = {
   fen: string
+  captures: Piece[]
 }
 
 export type EndGame =
   | ["Win", "Resignation" | "Checkmate" | "Win On Time"]
   | ["Draw", "Stalemate" | "Draw by agreement" | "Threefold repetition"]
 
-export type PlayerType = "White" | "Black"
+export type PieceType = "P" | "B" | "N" | "R" | "Q" | "K"
 
-export type Piece =
-  | "wP"
-  | "wB"
-  | "wN"
-  | "wR"
-  | "wQ"
-  | "wK"
-  | "bP"
-  | "bB"
-  | "bN"
-  | "bR"
-  | "bQ"
-  | "bK"
+export type Color = "w" | "b"
 
-export const pieceToPlayerType = (piece: Piece): PlayerType => {
+export type Piece = `${Color}${PieceType}`
+
+export const toColor = (piece: Piece): Color => {
   switch (piece) {
     case "bB":
     case "bK":
@@ -39,7 +36,7 @@ export const pieceToPlayerType = (piece: Piece): PlayerType => {
     case "bP":
     case "bQ":
     case "bR":
-      return "Black"
+      return "b"
 
     case "wB":
     case "wK":
@@ -47,7 +44,7 @@ export const pieceToPlayerType = (piece: Piece): PlayerType => {
     case "wP":
     case "wQ":
     case "wR":
-      return "White"
+      return "w"
 
     default:
       return exhaustive(piece)
@@ -55,8 +52,24 @@ export const pieceToPlayerType = (piece: Piece): PlayerType => {
 }
 
 export const init = (): Model => {
+  const chessInstance = new ChessTs.Chess()
+
   return {
-    fen: new ChessTs.Chess().fen(),
+    fen: chessInstance.fen(),
+    captures: [],
+    // pgn: chessInstance.pgn(),
+  }
+}
+
+export const colorToString = (color: Color): string => {
+  switch (color) {
+    case "b": {
+      return "Black"
+    }
+
+    case "w": {
+      return "White"
+    }
   }
 }
 
@@ -90,27 +103,24 @@ export const inThreefoldRepetition = (model: Model): boolean => {
   return new ChessTs.Chess(model.fen).inThreefoldRepetition()
 }
 
-export const toTurn = (model: Model): PlayerType => {
-  const chess = new ChessTs.Chess(model.fen)
-
-  const color = chess.turn()
-
-  switch (color) {
-    case "b":
-      return "Black"
-
-    case "w":
-      return "White"
-  }
+export const toMissingPieces = (model: Model) => {
+  const instance = createInstance(model)
+  return instance.history()
 }
 
-export const toOppositePlayerType = (playerType: PlayerType): PlayerType => {
-  switch (playerType) {
-    case "Black":
-      return "White"
+export const toTurn = (model: Model): Color => {
+  const chess = new ChessTs.Chess(model.fen)
 
-    case "White":
-      return "Black"
+  return chess.turn()
+}
+
+export const toOppositeColor = (color: Color): Color => {
+  switch (color) {
+    case "b":
+      return "w"
+
+    case "w":
+      return "b"
   }
 }
 
@@ -127,15 +137,20 @@ export const move = (
   moveInput: MoveInput,
   model: Model,
 ): Result.Result<MoveProblem, Model> => {
-  const chess = new ChessTs.Chess(model.fen)
+  const chessInstance = createInstance(model)
 
-  const moved = chess.move(moveInput)
+  const moved = chessInstance.move(moveInput)
 
   if (!moved) {
     return Result.Err("invalid_move")
   }
 
+  const capturedPieceSymbol = moved.captured
+  const capturedColor = toOppositeColor(moved.color)
+  const capturesNew = capturedPieceSymbol ? [...model.captures] : model.captures
+
   return Result.Ok({
-    fen: chess.fen(),
+    fen: chessInstance.fen(),
+    captures: capturesNew,
   })
 }
