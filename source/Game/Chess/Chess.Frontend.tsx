@@ -19,7 +19,7 @@ import {
   ToBackend,
   ToFrontend,
 } from "./Chess.Types"
-import * as Sounds from "./Sounds"
+import * as Sounds from "./Sounds/Sounds"
 
 //
 //
