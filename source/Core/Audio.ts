@@ -11,7 +11,8 @@ export const play =
   async () => {
     try {
       const audio = new Audio(file)
-
+      audio.autoplay = true
+      audio.src = file
       await audio.play()
 
       return Result.Ok(Unit)

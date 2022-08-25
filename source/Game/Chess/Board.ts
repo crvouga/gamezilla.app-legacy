@@ -146,7 +146,6 @@ export const move = (
   }
 
   const capturedPieceSymbol = moved.captured
-  const capturedColor = toOppositeColor(moved.color)
   const capturesNew = capturedPieceSymbol ? [...model.captures] : model.captures
 
   return Result.Ok({

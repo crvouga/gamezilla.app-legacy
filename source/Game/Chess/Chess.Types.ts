@@ -11,43 +11,114 @@ import * as Clock from "./Clock"
 //
 //
 
-export type SharedModel =
+type GameSetup = {
+  type: "GameSetup"
+  clockPreset: Clock.Preset
+  w: Option.Option<UserId.UserId>
+  b: Option.Option<UserId.UserId>
+}
+
+type GameStarted = {
+  type: "GameStarted"
+  clock: Clock.Clock
+  board: Board.Model
+  drawAgreement: DrawAgreement
+  w: UserId.UserId
+  b: UserId.UserId
+}
+
+type GameEnded = {
+  type: "GameEnded"
+  clock: Clock.Clock
+  board: Board.Model
+  gameOver: GameOver
+  w: UserId.UserId
+  b: UserId.UserId
+}
+
+export type SharedModel = GameSetup | GameStarted | GameEnded
+
+export type DrawAgreement =
   | {
-      type: "GameSetup"
-      clockPreset: Clock.Preset
-      w: Option.Option<UserId.UserId>
-      b: Option.Option<UserId.UserId>
+      type: "NotAsking"
     }
   | {
-      type: "GameStarted"
-      clock: Clock.Clock
-      board: Board.Model
-      w: UserId.UserId
-      b: UserId.UserId
-      endGame: EndGame
+      type: "Asking"
+      asker: Board.Color
     }
 
-export type EndGame =
+export type GameOver =
   | {
-      type: "None"
-    }
-  | {
-      type: "Resignation"
+      tag: "Resignation"
       resigner: Board.Color
     }
   | {
-      type: "DrawByAgreement"
-      child: { type: "Asked"; asker: Board.Color } | { type: "Agreed" }
+      tag: "DrawByAgreement"
     }
+  | {
+      tag: "Checkmate"
+      winner: Board.Color
+    }
+  | {
+      tag: "Stalemate"
+    }
+  | {
+      tag: "WinOnTime"
+      winner: Board.Color
+    }
+
+export const clockTicked = (model: SharedModel): SharedModel => {
+  switch (model.type) {
+    case "GameEnded": {
+      return model
+    }
+
+    case "GameSetup": {
+      return model
+    }
+
+    case "GameStarted": {
+      const turn = Board.toTurn(model.board)
+
+      if (
+        model.drawAgreement.type === "Asking" &&
+        model.drawAgreement.asker !== turn
+      ) {
+        return model
+      }
+
+      const clockNew = Clock.decrement(turn, model.clock)
+
+      if (clockNew[turn] === 0) {
+        return {
+          type: "GameEnded",
+          b: model.b,
+          w: model.w,
+          board: model.board,
+          clock: clockNew,
+          gameOver: {
+            tag: "WinOnTime",
+            winner: Board.toOppositeColor(turn),
+          },
+        }
+      }
+
+      return {
+        ...model,
+        clock: clockNew,
+      }
+    }
+  }
+}
 
 export type FrontendModel = {
   sharedModel: SharedModel
   openedMenuId: Option.Option<string>
-  openedModal: Option.Option<ModalType>
+  openedModal: ModalType | "None"
   isFlipped: boolean
 }
 
-export type ModalType = "AskToDraw" | "AskedToDraw" | "Resign"
+export type ModalType = "AskToDraw" | "AskedToDraw" | "Resign" | "GameOver"
 
 export type BackendModel = SharedModel
 
@@ -148,11 +219,41 @@ export const move = (
     return result
   }
 
-  const modelNew: SharedModel = {
-    ...model,
-    board: result.value,
+  const boardNew = result.value
+
+  if (Board.inCheckmate(boardNew)) {
+    const modelNew: SharedModel = {
+      type: "GameEnded",
+      b: model.b,
+      w: model.w,
+      clock: model.clock,
+      board: boardNew,
+      gameOver: {
+        tag: "Checkmate",
+        winner: Board.toTurn(model.board),
+      },
+    }
+    return Result.Ok(modelNew)
   }
 
+  if (Board.inStalemate(boardNew)) {
+    const modelNew: SharedModel = {
+      type: "GameEnded",
+      b: model.b,
+      w: model.w,
+      clock: model.clock,
+      board: boardNew,
+      gameOver: {
+        tag: "Stalemate",
+      },
+    }
+    return Result.Ok(modelNew)
+  }
+
+  const modelNew: SharedModel = {
+    ...model,
+    board: boardNew,
+  }
   return Result.Ok(modelNew)
 }
 
@@ -269,7 +370,7 @@ export const startGame = (model: SharedModel): StartGameResulted[1] => {
       b: model.b.value,
       clock: Clock.presetToClock(model.clockPreset),
       board: Board.init(),
-      endGame: { type: "None" },
+      drawAgreement: { type: "NotAsking" },
     })
   }
 
@@ -298,13 +399,15 @@ export const askToDraw = (
     return Result.Err("game_must_be_started")
   }
 
-  return Result.Ok({
+  const modelNew: SharedModel = {
     ...model,
-    drawByAgreement: {
-      type: "Asked",
+    drawAgreement: {
+      type: "Asking",
       asker: color,
     },
-  })
+  }
+
+  return Result.Ok(modelNew)
 }
 
 export type RespondToDraw = ["RespondToDraw", "Accepted" | "Declined"]
@@ -321,37 +424,30 @@ export const respondToDraw = (
     return Result.Err("failed_to_respond_to_draw")
   }
 
-  if (
-    !(
-      model.endGame.type === "DrawByAgreement" &&
-      model.endGame.child.type === "Asked"
-    )
-  ) {
+  if (!(model.drawAgreement.type === "Asking")) {
     return Result.Err("failed_to_respond_to_draw")
   }
 
-  switch (drawResponse) {
-    case "Accepted": {
-      return Result.Ok({
-        ...model,
-        endGame: {
-          type: "DrawByAgreement",
-          child: {
-            type: "Agreed",
-          },
-        },
-      })
+  if (drawResponse === "Declined") {
+    const modelNew: SharedModel = {
+      ...model,
+      drawAgreement: { type: "NotAsking" },
     }
-
-    case "Declined": {
-      return Result.Ok({
-        ...model,
-        endGame: {
-          type: "None",
-        },
-      })
-    }
+    return Result.Ok(modelNew)
   }
+
+  const modelNew: SharedModel = {
+    type: "GameEnded",
+    board: model.board,
+    clock: model.clock,
+    gameOver: {
+      tag: "DrawByAgreement",
+    },
+    w: model.w,
+    b: model.b,
+  }
+
+  return Result.Ok(modelNew)
 }
 
 //
@@ -376,8 +472,17 @@ export const resign = (
     return Result.Err("can_not_resign")
   }
 
-  return Result.Ok({
-    ...model,
-    resignation: Option.Some(color),
-  })
+  const modelNew: SharedModel = {
+    type: "GameEnded",
+    w: model.w,
+    b: model.b,
+    board: model.board,
+    clock: model.clock,
+    gameOver: {
+      tag: "Resignation",
+      resigner: color,
+    },
+  }
+
+  return Result.Ok(modelNew)
 }
