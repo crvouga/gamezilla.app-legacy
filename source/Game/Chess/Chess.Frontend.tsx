@@ -136,12 +136,15 @@ export const updateMain = (
 
         const sound = Board.inCheck(sharedModelNew.board) ? Sounds.check : Sounds.move
 
+        const changed = updateChanged(model, {
+          ...model,
+          sharedModel: sharedModelNew,
+        })
+
         return [
-          {
-            ...model,
-            sharedModel: sharedModelNew,
-          },
+          changed[0],
           Cmd.batch([
+            changed[1],
             sendToBackend(currentRoomId, msg),
             pipe(Audio.play(sound), Cmd.perform(tag("AudioResulted"))),
           ]),
