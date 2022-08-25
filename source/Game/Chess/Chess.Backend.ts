@@ -2,11 +2,11 @@ import * as Bridge from "../../Bridge"
 import { Cmd, exhaustive, Sub, Time } from "../../Core"
 import { ClientId, RoomId } from "../../Data"
 import * as Board from "./Board"
-import * as Clock from "./Clock"
 import {
   askToDraw,
   BackendModel,
   BackendMsg,
+  clockTicked,
   initSharedModel,
   inputClock,
   inputPlayer,
@@ -48,18 +48,9 @@ export const update = (
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
     case "Tick": {
-      if (model.type !== "GameStarted") {
-        return [model, Cmd.None]
-      }
+      const modelNew = clockTicked(model)
 
-      const turn = Board.toTurn(model.board)
-
-      const modelNew: Model = {
-        ...model,
-        clock: Clock.decrement(turn, model.clock),
-      }
-
-      return [modelNew, broadcast(["Sync", model])]
+      return [modelNew, broadcast(["Sync", modelNew])]
     }
   }
 }

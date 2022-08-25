@@ -1,7 +1,7 @@
-import { useLayoutEffect, useRef, useState } from "react"
+import { DependencyList, useLayoutEffect, useRef, useState } from "react"
 import { Chessboard } from "react-chessboard"
 import * as Bridge from "../../Bridge"
-import { Audio, Cmd, exhaustive, Option, pipe, Sub, tag } from "../../Core"
+import { andThen, Audio, Cmd, exhaustive, Option, pipe, Sub, tag } from "../../Core"
 import { RoomId, UserId } from "../../Data"
 import * as Store from "../../Store"
 import * as UI from "../../UI"
@@ -9,14 +9,15 @@ import * as Board from "./Board"
 import * as Clock from "./Clock"
 import {
   canStartGame,
-  EndGame,
   FrontendModel,
   FrontendMsg,
+  GameOver,
   initSharedModel,
   move,
   Move,
+  SharedModel,
   ToBackend,
-  ToFrontend
+  ToFrontend,
 } from "./Chess.Types"
 import * as Sounds from "./Sounds"
 
@@ -35,7 +36,7 @@ export const init = ({ roomId }: { roomId: RoomId.RoomId }): [FrontendModel, Cmd
     {
       sharedModel: initSharedModel,
       openedMenuId: Option.None,
-      openedModal: Option.None,
+      openedModal: "None",
       isFlipped: false
     },
     sendToBackend(roomId, ['Init']),
@@ -58,87 +59,99 @@ export const update = (
   msg: Msg,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
-  switch (msg[0]) {
-    case "InputPlayer": {
-      return [model, sendToBackend(currentRoomId, msg)]
-    }
-
-    case "StartGame": {
-      return [model, sendToBackend(currentRoomId, msg)]
-    }
-
-    case 'InputClock': {
-      return [model, sendToBackend(currentRoomId, msg)]
-    }
-
-    case 'AskToDraw': {
-      return [model, sendToBackend(currentRoomId, msg)]
-    }
-
-    case 'Resign': {
-      return [{ ...model, openedModal: Option.None }, sendToBackend(currentRoomId, msg)]
-    }
-
-    case 'RespondToDraw': {
-      return [model, sendToBackend(currentRoomId, msg)]
-    }
-
-    case "AudioResulted": {
-      return [model, Cmd.None]
-    }
-
-    case 'OpenedMenu': {
-      return [{ ...model, openedMenuId: Option.Some(msg[1]) }, Cmd.None]
-    }
-
-    case 'ClosedMenu': {
-      return [{ ...model, openedMenuId: Option.None }, Cmd.None]
-    }
-
-    case 'ClickedFlip': {
-      return [{ ...model, isFlipped: !model.isFlipped }, Cmd.None]
-    }
-
-    case 'OpenedModal': {
-      return [{ ...model, openedModal: Option.Some(msg[1]) }, Cmd.None]
-    }
-
-    case 'ClosedModal': {
-      return [{ ...model, openedModal: Option.None }, Cmd.None]
-    }
-
-
-    case "Move": {
-      const result = move(msg[1], model.sharedModel)
-
-      if (result.type === "Err") {
-        return [model, Cmd.None]
-      }
-
-      const sharedModelNew = result.value
-
-      if (sharedModelNew.type !== "GameStarted") {
-        return [model, Cmd.None]
-      }
-
-      const sound = Board.inCheck(sharedModelNew.board) ? Sounds.check : Sounds.move
-
-      return [
-        {
-          ...model,
-          sharedModel: sharedModelNew,
-        },
-        Cmd.batch([
-          sendToBackend(currentRoomId, msg),
-          pipe(Audio.play(sound), Cmd.perform(tag("AudioResulted"))),
-        ]),
-      ]
-    }
-
-    default:
-      return exhaustive(msg[0])
-  }
+  return pipe(
+    [model, Cmd.None],
+    andThen(updateMain({ currentRoomId }), msg)
+  )
 }
+
+export const updateMain = (
+  { currentRoomId }: { currentRoomId: RoomId.RoomId }
+) => (
+  msg: Msg,
+  model: Model,
+  ): [Model, Cmd.Cmd<Msg>] => {
+    switch (msg[0]) {
+      case "InputPlayer": {
+        return [model, sendToBackend(currentRoomId, msg)]
+      }
+
+      case "StartGame": {
+        return [model, sendToBackend(currentRoomId, msg)]
+      }
+
+      case 'InputClock': {
+        return [model, sendToBackend(currentRoomId, msg)]
+      }
+
+      case 'AskToDraw': {
+        return [model, sendToBackend(currentRoomId, msg)]
+      }
+
+      case 'Resign': {
+        return [{ ...model, openedModal: "None" }, sendToBackend(currentRoomId, msg)]
+      }
+
+      case 'RespondToDraw': {
+        return [model, sendToBackend(currentRoomId, msg)]
+      }
+
+      case "AudioResulted": {
+        return [model, Cmd.None]
+      }
+
+      case 'OpenedMenu': {
+        return [{ ...model, openedMenuId: Option.Some(msg[1]) }, Cmd.None]
+      }
+
+      case 'ClosedMenu': {
+        return [{ ...model, openedMenuId: Option.None }, Cmd.None]
+      }
+
+      case 'ClickedFlip': {
+        return [{ ...model, isFlipped: !model.isFlipped }, Cmd.None]
+      }
+
+      case 'OpenedModal': {
+        return [{ ...model, openedModal: (msg[1]) }, Cmd.None]
+      }
+
+      case 'ClosedModal': {
+        return [{ ...model, openedModal: "None" }, Cmd.None]
+      }
+
+
+      case "Move": {
+        const result = move(msg[1], model.sharedModel)
+
+        if (result.type === "Err") {
+          return [model, Cmd.None]
+        }
+
+        const sharedModelNew = result.value
+
+        if (sharedModelNew.type === 'GameSetup') {
+          return [model, Cmd.None]
+        }
+
+        const sound = Board.inCheck(sharedModelNew.board) ? Sounds.check : Sounds.move
+
+        return [
+          {
+            ...model,
+            sharedModel: sharedModelNew,
+          },
+          Cmd.batch([
+            sendToBackend(currentRoomId, msg),
+            pipe(Audio.play(sound), Cmd.perform(tag("AudioResulted"))),
+          ]),
+        ]
+      }
+
+      default:
+        return exhaustive(msg[0])
+    }
+  }
 
 
 
@@ -151,9 +164,10 @@ export const updateFromBackend = (
 
   switch (msg[0]) {
     case "Sync": {
-      const modelNew = msg[1]
-
-      return [{ ...model, sharedModel: modelNew }, Cmd.None]
+      return updateChanged(model, {
+        ...model,
+        sharedModel: msg[1]
+      })
     }
 
     case 'InputClockResulted': {
@@ -175,12 +189,11 @@ export const updateFromBackend = (
     case 'AskToDrawResulted': {
       switch (msg[1].type) {
         case 'Err': {
-
           return [{ ...model, }, Cmd.None]
         }
 
         case 'Ok': {
-          return [{ ...model, openedModal: Option.Some("AskedToDraw") }, Cmd.None]
+          return [{ ...model, openedModal: ("AskedToDraw") }, Cmd.None]
         }
       }
     }
@@ -195,6 +208,38 @@ export const updateFromBackend = (
 
     default: {
       return exhaustive(msg[0])
+    }
+  }
+}
+
+const updateChanged = (prev: Model, next: Model): [Model, Cmd.Cmd<Msg>] => {
+  if (prev.sharedModel.type === next.sharedModel.type) {
+    return [next, Cmd.None]
+  }
+
+  switch (next.sharedModel.type) {
+    case 'GameEnded': {
+      return [
+        { ...next, openedModal: 'GameOver' },
+        pipe(
+          Audio.play(Sounds.gameOver),
+          Cmd.perform(tag('AudioResulted'))
+        ),
+      ]
+    }
+
+    case 'GameSetup': {
+      return [next, Cmd.None]
+    }
+
+    case 'GameStarted': {
+      return [
+        next,
+        pipe(
+          Audio.play(Sounds.gameStart),
+          Cmd.perform(tag('AudioResulted'))
+        ),
+      ]
     }
   }
 }
@@ -231,7 +276,7 @@ export const sendToBackend = (roomId: RoomId.RoomId, toBackend: ToBackend) => {
 //
 //
 
-const chessBoardContainerId = "chessboard"
+
 
 export const view =
   (
@@ -245,83 +290,313 @@ export const view =
     model: Model,
   ): UI.View<Msg> =>
     (dispatch) => {
-      if (model.sharedModel.type === 'GameSetup') {
-        return (
-          <UI.FillBox>
-            <UI.List disablePadding>
-              <ViewGameSetupPlayerSlot
-                model={model}
-                dispatch={dispatch}
-                store={store}
-                currentUserId={currentUserId}
-                color="w"
-                userId={model.sharedModel.w}
-              />
+      return <View store={store} currentUserId={currentUserId} model={model} dispatch={dispatch} />
+    }
 
-              <ViewGameSetupPlayerSlot
-                model={model}
-                dispatch={dispatch}
-                store={store}
-                currentUserId={currentUserId}
-                color="b"
-                userId={model.sharedModel.b}
-              />
-            </UI.List>
+const View =
+  (
+    {
+      currentUserId,
+      store,
+      model,
+      dispatch,
+    }: {
+      store: Store.Model
+      currentUserId: UserId.UserId
+      model: Model,
+      dispatch: (msg: Msg) => void
+    },
+  ) => {
+    const { boardWidth, ref } = useBoardWidth([model.sharedModel.type])
 
-
-
-            <UI.Box sx={{ paddingX: 2 }}>
-              <UI.Typography gutterBottom color={'text.secondary'}>
-                Clock
-              </UI.Typography>
-              <UI.Select fullWidth value={model.sharedModel.clockPreset}>
-                {Object.values(Clock.presets)
-                  .map((preset) => (
-                    <UI.MenuItem
-                      key={preset}
-                      value={preset}
-                      onClick={() => dispatch(['InputClock', preset])}
-                    >
-                      {Clock.presetToString(preset)}
-                    </UI.MenuItem>)
-                  )}
-              </UI.Select>
-            </UI.Box>
-
-            <UI.Box sx={{ flex: 1 }}></UI.Box>
-
-            <UI.Box sx={{ paddingX: 2 }}>
-              <UI.Button
-                disabled={!canStartGame(model.sharedModel)}
-                fullWidth
-                variant="contained"
-                sx={{ marginBottom: 2 }}
-                onClick={() => {
-                  dispatch(['StartGame'])
-                }}
-              >
-                Start Game
-              </UI.Button>
-            </UI.Box>
-
-          </UI.FillBox >
-        )
-      }
-
+    if (model.sharedModel.type === 'GameSetup') {
       return (
-        <ViewGameStarted
-          store={store}
-          currentUserId={currentUserId}
-          model={model}
-          dispatch={dispatch}
-          endGame={model.sharedModel.endGame}
-          clock={model.sharedModel.clock}
-          w={model.sharedModel.w}
-          b={model.sharedModel.b}
-          board={model.sharedModel.board}
-        />
+        <UI.FillBox >
+          <UI.List disablePadding>
+            <ViewGameSetupPlayerSlot
+              model={model}
+              dispatch={dispatch}
+              store={store}
+              currentUserId={currentUserId}
+              color="w"
+              userId={model.sharedModel.w}
+            />
+
+            <ViewGameSetupPlayerSlot
+              model={model}
+              dispatch={dispatch}
+              store={store}
+              currentUserId={currentUserId}
+              color="b"
+              userId={model.sharedModel.b}
+            />
+          </UI.List>
+
+
+
+          <UI.Box sx={{ paddingX: 2 }}>
+            <UI.Typography gutterBottom color={'text.secondary'}>
+              Clock
+            </UI.Typography>
+            <UI.Select fullWidth value={model.sharedModel.clockPreset}>
+              {Object.values(Clock.presets)
+                .map((preset) => (
+                  <UI.MenuItem
+                    key={preset}
+                    value={preset}
+                    onClick={() => dispatch(['InputClock', preset])}
+                  >
+                    {Clock.presetToString(preset)}
+                  </UI.MenuItem>)
+                )}
+            </UI.Select>
+          </UI.Box>
+
+          <UI.Box sx={{ flex: 1 }}></UI.Box>
+
+          <UI.Box sx={{ paddingX: 2 }}>
+            <UI.Button
+              disabled={!canStartGame(model.sharedModel)}
+              fullWidth
+              variant="contained"
+              sx={{ marginBottom: 2 }}
+              onClick={() => {
+                dispatch(['StartGame'])
+              }}
+            >
+              Start Game
+            </UI.Button>
+          </UI.Box>
+
+        </UI.FillBox >
       )
     }
+
+    const { w, b, board, clock, } = model.sharedModel
+
+    const currentUserColor: Board.Color | "None" | "Both" =
+      currentUserId === w && currentUserId === b
+        ? "Both"
+        : currentUserId === w
+          ? 'w'
+          : currentUserId === b
+            ? 'b'
+            : "None"
+
+
+
+    const boardOrentation: Board.Color = pipe(
+      currentUserColor === 'None' || currentUserColor === 'Both'
+        ? 'w'
+        : currentUserColor,
+      color => model.isFlipped ? Board.toOppositeColor(color) : color
+    )
+
+    const turn = Board.toTurn(board)
+
+    const whiteSlot: GameStartedPlayerSlot = {
+      src: store.Profile[w]?.avatarUrl,
+      username: store.Profile[w]?.username ?? "...",
+      isActive: turn === 'w' && model.sharedModel.type === 'GameStarted',
+      seconds: clock.w
+    }
+
+    const blackSlot: GameStartedPlayerSlot = {
+      src: store.Profile[b]?.avatarUrl,
+      username: store.Profile[b]?.username ?? "...",
+      isActive: turn === 'b' && model.sharedModel.type === 'GameStarted',
+      seconds: clock.b
+    }
+
+    const topSlot = boardOrentation === 'w' ? blackSlot : whiteSlot
+
+    const bottomSlot = boardOrentation === 'w' ? whiteSlot : blackSlot
+
+
+    return (
+      <UI.FillBox>
+        <UI.Typography color="text.secondary" align="center">
+          {toGameText(model.sharedModel)}
+        </UI.Typography>
+        <ViewGameStartedPlayerSlot slot={topSlot} />
+
+        <div ref={ref}>
+          <Chessboard
+            showBoardNotation
+            snapToCursor
+            boardOrientation={boardOrentation === "w" ? "white" : "black"}
+            position={board.fen}
+            boardWidth={boardWidth}
+            isDraggablePiece={({ piece, }) => {
+              return Board.toColor(piece) === currentUserColor || currentUserColor === 'Both'
+            }}
+            onPieceDrop={(sourceSquare, targetSquare, _piece) => {
+              const msg: Move = [
+                "Move",
+                {
+                  userId: currentUserId,
+                  from: sourceSquare,
+                  to: targetSquare,
+                  promotion: "q",
+                },
+              ]
+
+              dispatch(msg)
+
+              const isSuccessfulMove = move(msg[1], model.sharedModel).type === 'Ok'
+
+              return isSuccessfulMove
+            }}
+          />
+        </div>
+
+        <ViewGameStartedPlayerSlot slot={bottomSlot} />
+
+        <UI.Box sx={{ flex: 1 }} />
+
+        <ViewGameOverDialog model={model} dispatch={dispatch} />
+
+        <UI.Divider />
+
+        <UI.Box sx={{ width: "100%", display: "flex" }}>
+          {model.sharedModel.type === 'GameStarted'
+            && (currentUserColor === 'w' || currentUserColor === 'b')
+            && (
+              <>
+                <ViewActionButton
+                  icon={<UI.Icons.HandshakeTwoTone />}
+                  title="Draw"
+                  onClick={() => dispatch(['OpenedModal', 'AskToDraw'])}
+                />
+
+                <UI.ConformationDialog
+                  headerIcon={<UI.Icons.HandshakeTwoTone style={{ width: 48, height: 48 }} />}
+                  onCancel={() => dispatch(['ClosedModal'])}
+                  onClose={() => dispatch(['ClosedModal'])}
+                  onConfirm={() => dispatch(['AskToDraw', currentUserColor])}
+                  open={model.openedModal === 'AskToDraw'}
+                  title="Ask to draw?"
+                  confirmTitle="Ask"
+                />
+
+                <UI.LoadingDialog
+                  open={model.sharedModel.type === 'GameStarted' && model.sharedModel.drawAgreement.type === 'Asking' && model.sharedModel.drawAgreement.asker === currentUserColor}
+                  title="Waiting on other player..."
+                />
+
+                <UI.ConformationDialog
+                  open={(model.sharedModel.type === 'GameStarted') && (model.sharedModel.drawAgreement.type === 'Asking') && (model.sharedModel.drawAgreement.asker === Board.toOppositeColor(currentUserColor))}
+                  headerIcon={<UI.Icons.HandshakeTwoTone style={{ width: 48, height: 48 }} />}
+                  onClose={() => dispatch(['RespondToDraw', 'Declined'])}
+                  onCancel={() => dispatch(['RespondToDraw', 'Declined'])}
+                  onConfirm={() => dispatch(['RespondToDraw', 'Accepted'])}
+                  title="Agree to a draw?"
+                  confirmTitle="Accept"
+                  cancelTitle="Decline"
+                />
+
+
+                <UI.Divider orientation="vertical" />
+
+                <ViewActionButton
+                  icon={<UI.Icons.FlagOutlined />}
+                  title="Resign"
+                  onClick={() => dispatch(['OpenedModal', 'Resign'])}
+                />
+
+                <UI.ConformationDialog
+                  headerIcon={<UI.Icons.FlagOutlined style={{ width: 48, height: 48 }} />}
+                  onCancel={() => dispatch(['ClosedModal'])}
+                  onClose={() => dispatch(['ClosedModal'])}
+                  onConfirm={() => dispatch(['Resign', currentUserColor])}
+                  open={model.openedModal === 'Resign'}
+                  title="Resign from game?"
+                  confirmTitle="Resign"
+                />
+
+                <UI.Divider orientation="vertical" />
+              </>
+            )}
+
+          <ViewActionButton
+            icon={<UI.Icons.Flip sx={{ 'transform': model.isFlipped ? 'rotate(90deg)' : 'rotate(270deg)' }} />}
+            title={model.isFlipped ? "Unflip" : "Flip"}
+            onClick={() => {
+              dispatch(['ClickedFlip'])
+            }}
+          />
+
+          <UI.Divider orientation="vertical" />
+        </UI.Box>
+
+
+      </UI.FillBox >
+    )
+  }
+
+const ViewGameOverDialog = ({ model, dispatch }: { model: Model, dispatch: (msg: Msg) => void }) => {
+  if (model.sharedModel.type === 'GameSetup') {
+    return <></>
+  }
+
+  if (model.sharedModel.type === 'GameStarted') {
+    return <></>
+  }
+
+  const gameOver = model.sharedModel.gameOver
+
+  return <UI.Dialog open={model.openedModal === 'GameOver'} onClose={() => dispatch(['ClosedModal'])}>
+    <ViewGameOverDialogContent gameOver={gameOver} />
+    <UI.DialogActions>
+      <UI.Button onClick={() => dispatch(['ClosedModal'])}>
+        Close
+      </UI.Button>
+    </UI.DialogActions>
+  </UI.Dialog>
+
+}
+
+const ViewGameOverDialogContent = ({ gameOver }: { gameOver: GameOver }) => {
+
+  switch (gameOver.tag) {
+    case 'Checkmate': {
+      return <>
+        <UI.DialogTitle>
+          {Board.colorToString(gameOver.winner)} checkmated {Board.colorToString(Board.toOppositeColor(gameOver.winner))}
+        </UI.DialogTitle>
+      </>
+    }
+
+    case 'DrawByAgreement': {
+      return <>
+        <UI.DialogTitle>
+          Drawed by agreement
+        </UI.DialogTitle>
+      </>
+    }
+
+    case 'Resignation': {
+      return <>
+        <UI.DialogTitle>
+          {Board.colorToString(gameOver.resigner)} resigned
+        </UI.DialogTitle>
+      </>
+    }
+
+    case 'Stalemate': {
+      return <></>
+    }
+
+    case 'WinOnTime': {
+      return <>
+        <UI.DialogTitle>
+          {Board.colorToString(gameOver.winner)} won on time
+        </UI.DialogTitle>
+      </>
+    }
+  }
+}
+
 
 const ViewGameSetupPlayerSlot = ({
   userId,
@@ -398,181 +673,49 @@ const ViewGameSetupPlayerSlot = ({
 }
 
 
-export const ViewGameStarted = ({
-  currentUserId,
-  store,
-  model,
-  w,
-  b,
-  board,
-  clock,
-  endGame,
-  dispatch,
-}: {
-  store: Store.Model
-  currentUserId: UserId.UserId,
-  w: UserId.UserId
-  b: UserId.UserId
-  board: Board.Model
-  clock: Clock.Clock
-  model: Model
-  endGame: EndGame
-  dispatch: (msg: Msg) => void
-}) => {
-  const { boardWidth, ref } = useBoardWidth()
 
-  const currentUserColor: Board.Color | "None" | "Both" =
-    currentUserId === w && currentUserId === b
-      ? "Both"
-      : currentUserId === w
-        ? 'w'
-        : currentUserId === b
-          ? 'b'
-          : "None"
+const toGameText = (model: SharedModel): string => {
 
-  const turn = Board.toTurn(board)
+  switch (model.type) {
+    case 'GameEnded': {
+      switch (model.gameOver.tag) {
+        case 'Checkmate': {
+          return "Checkmate"
+        }
 
-  const fallbackBoardOrentation: Board.Color = 'w'
-
-  const boardOrentation: Board.Color = pipe(
-    currentUserColor === 'None' || currentUserColor === 'Both'
-      ? fallbackBoardOrentation
-      : currentUserColor,
-    color => model.isFlipped ? Board.toOppositeColor(color) : color
-  )
+        case 'DrawByAgreement': {
+          return "Draw by agreement"
+        }
 
 
-  const whiteSlot: GameStartedPlayerSlot = {
-    src: store.Profile[w]?.avatarUrl,
-    username: store.Profile[w]?.username ?? "...",
-    isActive: turn === 'w',
-    seconds: clock.w
+        case 'Resignation': {
+          return `${Board.colorToString(model.gameOver.resigner)} resigned`
+        }
+
+        case 'Stalemate': {
+          return 'Stalemate'
+        }
+
+        case 'WinOnTime': {
+          return `${Board.colorToString(model.gameOver.winner)} won on time`
+        }
+      }
+    }
+    case 'GameSetup': {
+      return "Waiting for game to start..."
+    }
+
+    case 'GameStarted': {
+
+      if (Board.inCheck(model.board)) {
+        return `${Board.colorToString(Board.toTurn(model.board))} is in check`
+      }
+
+      return `${Board.colorToString(Board.toTurn(model.board))} turn`
+    }
   }
-
-  const blackSlot: GameStartedPlayerSlot = {
-    src: store.Profile[b]?.avatarUrl,
-    username: store.Profile[b]?.username ?? "...",
-    isActive: turn === 'b',
-    seconds: clock.b
-  }
-
-  const topSlot = boardOrentation === 'w' ? blackSlot : whiteSlot
-
-  const bottomSlot = boardOrentation === 'w' ? whiteSlot : blackSlot
-
-
-
-  return (
-    <UI.FillBox>
-      <ViewGameStartedPlayerSlot slot={topSlot} />
-
-      <div id={chessBoardContainerId} ref={ref}>
-        <Chessboard
-          showBoardNotation
-          snapToCursor
-          boardOrientation={boardOrentation === "w" ? "white" : "black"}
-          position={board.fen}
-          boardWidth={boardWidth}
-          isDraggablePiece={({ piece, }) => {
-            return Board.toColor(piece) === currentUserColor || currentUserColor === 'Both'
-          }}
-          onPieceDrop={(sourceSquare, targetSquare, _piece) => {
-            const msg: Move = [
-              "Move",
-              {
-                userId: currentUserId,
-                from: sourceSquare,
-                to: targetSquare,
-                promotion: "q",
-              },
-            ]
-
-            dispatch(msg)
-
-            const isSuccessfulMove = move(msg[1], model.sharedModel).type === 'Ok'
-
-            return isSuccessfulMove
-          }}
-        />
-      </div>
-
-      <ViewGameStartedPlayerSlot slot={bottomSlot} />
-
-      <UI.Box sx={{ flex: 1 }} />
-
-      <UI.Divider />
-
-      <UI.Box sx={{ width: "100%", display: "flex" }}>
-        {(currentUserColor === 'w' || currentUserColor === 'b') && <>
-          <ViewActionButton
-            icon={<UI.Icons.HandshakeTwoTone />}
-            title="Draw"
-            onClick={() => dispatch(['OpenedModal', 'AskToDraw'])}
-          />
-
-          <UI.ConformationDialog
-            headerIcon={<UI.Icons.HandshakeTwoTone style={{ width: 48, height: 48 }} />}
-            onCancel={() => dispatch(['ClosedModal'])}
-            onClose={() => dispatch(['ClosedModal'])}
-            onConfirm={() => dispatch(['AskToDraw', currentUserColor])}
-            open={model.openedModal.type === 'Some' && model.openedModal.value === 'AskToDraw'}
-            title="Ask to draw?"
-            confirmTitle="Ask"
-          />
-
-          <UI.LoadingDialog
-            open={endGame.type === 'DrawByAgreement' && endGame.child.type === 'Asked' && endGame.child.asker === currentUserColor}
-            title="Waiting on other player..."
-          />
-
-          <UI.ConformationDialog
-            open={endGame.type === 'DrawByAgreement' && endGame.child.type === 'Asked' && endGame.child.asker === Board.toOppositeColor(currentUserColor)}
-            headerIcon={<UI.Icons.HandshakeTwoTone style={{ width: 48, height: 48 }} />}
-            onClose={() => dispatch(['RespondToDraw', 'Declined'])}
-            onCancel={() => dispatch(['RespondToDraw', 'Declined'])}
-            onConfirm={() => dispatch(['RespondToDraw', 'Accepted'])}
-            title="Agree to a draw?"
-            confirmTitle="Accept"
-            cancelTitle="Decline"
-          />
-
-
-          <UI.Divider orientation="vertical" />
-
-          <ViewActionButton
-            icon={<UI.Icons.FlagOutlined />}
-            title="Resign"
-            onClick={() => dispatch(['OpenedModal', 'Resign'])}
-          />
-
-          <UI.ConformationDialog
-            headerIcon={<UI.Icons.FlagOutlined style={{ width: 48, height: 48 }} />}
-            onCancel={() => dispatch(['ClosedModal'])}
-            onClose={() => dispatch(['ClosedModal'])}
-            onConfirm={() => dispatch(['Resign', currentUserColor])}
-            open={model.openedModal.type === 'Some' && model.openedModal.value === 'Resign'}
-            title="Resign from game?"
-            confirmTitle="Resign"
-          />
-
-          <UI.Divider orientation="vertical" />
-        </>}
-
-        <ViewActionButton
-          icon={<UI.Icons.Flip sx={{ 'transform': model.isFlipped ? 'rotate(90deg)' : 'rotate(270deg)' }} />}
-          title={model.isFlipped ? "Unflip" : "Flip"}
-          onClick={() => {
-            dispatch(['ClickedFlip'])
-          }}
-        />
-
-        <UI.Divider orientation="vertical" />
-      </UI.Box>
-
-
-    </UI.FillBox >
-  )
 }
+
 
 const ViewActionButton = ({ title, icon, onClick }: { title: string, icon: UI.Dom; onClick: () => void }) => {
   return (
@@ -596,7 +739,7 @@ const ViewActionButton = ({ title, icon, onClick }: { title: string, icon: UI.Do
   )
 }
 
-const useBoardWidth = () => {
+const useBoardWidth = (depList: DependencyList) => {
   const [boardWidth, setBoardWidth] = useState(0)
   const ref = useRef<HTMLDivElement | null>(null)
 
@@ -613,7 +756,7 @@ const useBoardWidth = () => {
     return () => {
       window.removeEventListener("resize", handler)
     }
-  }, [])
+  }, depList)
 
   return {
     ref,
@@ -655,7 +798,7 @@ const ViewGameStartedPlayerSlot = ({ slot }: { slot: GameStartedPlayerSlot }) =>
 
 
       <UI.Typography
-        color={isActive ? theme.palette.text.primary : theme.palette.text.disabled}
+        color={isActive ? theme.palette.text.primary : theme.palette.action.disabled}
         variant="h4"
       >
         {Clock.formatSeconds(seconds)}

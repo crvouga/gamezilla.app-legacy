@@ -464,13 +464,16 @@ export const ConformationDialog = ({
   title,
   confirmTitle,
   cancelTitle = "Cancel",
-  headerIcon
+  headerIcon,
+  subtitle
+
 }: {
   open: boolean;
   onCancel: () => void;
   onClose: () => void;
   onConfirm: () => void;
   title: string;
+  subtitle?: string
   confirmTitle: string;
   cancelTitle?: string;
   headerIcon?: Dom
@@ -483,6 +486,7 @@ export const ConformationDialog = ({
         </Box>
       )}
       <DialogTitle>{title}</DialogTitle>
+      {subtitle && <DialogTitle variant="subtitle2" color="text.secondary">{subtitle}</DialogTitle>}
       <DialogActions>
         <Button onClick={onCancel}>{cancelTitle}</Button>
         <Button onClick={onConfirm}>{confirmTitle}</Button>
