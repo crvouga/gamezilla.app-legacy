@@ -170,22 +170,24 @@ export type ToBackend = ["Init"] | Request
 //
 
 export type Request =
-  | Move
   | InputPlayer
-  | StartGame
   | InputClock
+  | StartGame
+  | Move
   | Resign
   | RequestToDraw
   | RespondToDraw
+  | PlayAgain
 
 export type Response =
-  | MoveResulted
   | InputPlayerResulted
-  | StartGameResulted
   | InputClockResulted
+  | StartGameResulted
+  | MoveResulted
   | ResignResulted
   | RequestToDrawResulted
   | RespondToDrawResulted
+  | PlayAgainResulted
 
 //
 //
@@ -482,6 +484,31 @@ export const resign = (
       tag: "Resignation",
       resigner: color,
     },
+  }
+
+  return Result.Ok(modelNew)
+}
+
+//
+//
+//
+//
+
+export type PlayAgain = ["PlayAgain"]
+export type PlayAgainResulted = [
+  "PlayAgainResulted",
+  Result.Result<"game_must_be_over_to_play_again", SharedModel>,
+]
+export const playAgain = (model: SharedModel): PlayAgainResulted[1] => {
+  if (model.type !== "GameEnded") {
+    return Result.Err("game_must_be_over_to_play_again")
+  }
+
+  const modelNew: SharedModel = {
+    type: "GameSetup",
+    b: Option.Some(model.b),
+    w: Option.Some(model.w),
+    clockPreset: "Fast",
   }
 
   return Result.Ok(modelNew)

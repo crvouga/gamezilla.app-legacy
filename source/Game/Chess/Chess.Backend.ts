@@ -17,6 +17,7 @@ import {
   startGame,
   ToBackend,
   ToFrontend,
+  playAgain,
 } from "./Chess.Types"
 
 //
@@ -117,6 +118,14 @@ export const updateFromFrontend = (
       return sendResponse(
         { clientId, roomId },
         ["RespondToDrawResulted", respondToDraw(msg[1], model)],
+        model,
+      )
+    }
+
+    case "PlayAgain": {
+      return sendResponse(
+        { clientId, roomId },
+        ["PlayAgainResulted", playAgain(model)],
         model,
       )
     }
