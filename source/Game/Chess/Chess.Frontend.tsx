@@ -72,29 +72,12 @@ export const updateMain = (
   model: Model,
   ): [Model, Cmd.Cmd<Msg>] => {
     switch (msg[0]) {
-      case "InputPlayer": {
-        return [model, sendToBackend(currentRoomId, msg)]
-      }
 
-      case "StartGame": {
-        return [model, sendToBackend(currentRoomId, msg)]
-      }
-
-      case 'InputClock': {
-        return [model, sendToBackend(currentRoomId, msg)]
-      }
-
-      case 'RequestToDraw': {
-        return [model, sendToBackend(currentRoomId, msg)]
-      }
-
-      case 'Resign': {
-        return [{ ...model, openedModal: "None" }, sendToBackend(currentRoomId, msg)]
-      }
-
-      case 'RespondToDraw': {
-        return [model, sendToBackend(currentRoomId, msg)]
-      }
+      // 
+      //
+      // Frontend Only
+      //
+      // 
 
       case "AudioResulted": {
         return [model, Cmd.None]
@@ -120,6 +103,40 @@ export const updateMain = (
         return [{ ...model, openedModal: "None" }, Cmd.None]
       }
 
+
+      // 
+      //
+      //
+      //
+      // 
+
+      case "InputPlayer": {
+        return [model, sendToBackend(currentRoomId, msg)]
+      }
+
+      case "StartGame": {
+        return [model, sendToBackend(currentRoomId, msg)]
+      }
+
+      case 'InputClock': {
+        return [model, sendToBackend(currentRoomId, msg)]
+      }
+
+      case 'RequestToDraw': {
+        return [model, sendToBackend(currentRoomId, msg)]
+      }
+
+      case 'Resign': {
+        return [{ ...model, openedModal: "None" }, sendToBackend(currentRoomId, msg)]
+      }
+
+      case 'RespondToDraw': {
+        return [model, sendToBackend(currentRoomId, msg)]
+      }
+
+      case 'PlayAgain': {
+        return [model, sendToBackend(currentRoomId, msg)]
+      }
 
       case "Move": {
         const result = move(msg[1], model.sharedModel)
@@ -174,25 +191,25 @@ export const updateFromBackend = (
     }
 
     case 'InputClockResulted': {
-      return [{ ...model }, Cmd.None]
+      return [model, Cmd.None]
     }
 
     case "MovedResulted": {
-      return [{ ...model }, Cmd.None]
+      return [model, Cmd.None]
     }
 
     case "InputPlayerResulted": {
-      return [{ ...model, }, Cmd.None]
+      return [model, Cmd.None]
     }
 
     case "StartGameResulted": {
-      return [{ ...model, }, Cmd.None]
+      return [model, Cmd.None]
     }
 
     case 'RequestToDrawResulted': {
       switch (msg[1].type) {
         case 'Err': {
-          return [{ ...model, }, Cmd.None]
+          return [model, Cmd.None]
         }
 
         case 'Ok': {
@@ -202,11 +219,15 @@ export const updateFromBackend = (
     }
 
     case 'ResignResulted': {
-      return [{ ...model, }, Cmd.None]
+      return [model, Cmd.None]
     }
 
     case 'RespondToDrawResulted': {
-      return [{ ...model, }, Cmd.None]
+      return [model, Cmd.None]
+    }
+
+    case 'PlayAgainResulted': {
+      return [model, Cmd.None]
     }
 
     default: {
@@ -434,7 +455,7 @@ const View =
 
     return (
       <UI.FillBox>
-        <UI.Typography color="text.secondary" align="center">
+        <UI.Typography color="text.secondary" variant="subtitle2" align="center">
           {toGameText(model.sharedModel)}
         </UI.Typography>
 
@@ -472,19 +493,19 @@ const View =
 
         <ViewUserPlayerSlot {...bottomSlot} />
 
+        {model.sharedModel.type === 'GameEnded' && (
+          <UI.Box sx={{ paddingX: 2, width: "100%", }}>
+            <UI.Button fullWidth variant="contained" size="large" onClick={() => dispatch(['PlayAgain'])}>
+              Play Again
+            </UI.Button>
+          </UI.Box>
+        )}
+
         <UI.Box sx={{ flex: 1 }} />
 
         <ViewGameOverDialog model={model} dispatch={dispatch} />
 
         <UI.Divider />
-
-        {model.sharedModel.type === 'GameEnded' && (
-          <UI.Box sx={{ paddingX: 2, width: "100%", }}>
-            <UI.Button fullWidth variant="contained" size="large">
-              Play Again
-            </UI.Button>
-          </UI.Box>
-        )}
 
         <UI.Box sx={{ width: "100%", display: "flex" }}>
           {model.sharedModel.type === 'GameStarted'
@@ -741,21 +762,22 @@ const toGameText = (model: SharedModel): string => {
 
 
 const ViewActionButton = ({ title, icon, onClick }: { title: string, icon: UI.Dom; onClick: () => void }) => {
+  const theme = UI.useTheme()
   return (
     <UI.ButtonBase
       onClick={onClick}
       sx={{
-        width: 88,
-        height: 60,
+        width: 72,
+        height: 54,
         display: 'flex',
         flexDirection: "column",
-        color: "text.secondary",
+        color: theme.palette.action.active,
         justifyContent: "center",
         alignItems: "center"
       }}
     >
       {icon}
-      <UI.Typography>
+      <UI.Typography variant="body2">
         {title}
       </UI.Typography>
     </UI.ButtonBase>
