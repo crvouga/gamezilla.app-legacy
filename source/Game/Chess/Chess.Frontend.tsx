@@ -84,7 +84,7 @@ export const updateMain = (
         return [model, sendToBackend(currentRoomId, msg)]
       }
 
-      case 'AskToDraw': {
+      case 'RequestToDraw': {
         return [model, sendToBackend(currentRoomId, msg)]
       }
 
@@ -189,7 +189,7 @@ export const updateFromBackend = (
       return [{ ...model, }, Cmd.None]
     }
 
-    case 'AskToDrawResulted': {
+    case 'RequestToDrawResulted': {
       switch (msg[1].type) {
         case 'Err': {
           return [{ ...model, }, Cmd.None]
@@ -322,7 +322,7 @@ const View =
             {model.sharedModel.w.type === 'None' ? (
               <ViewInputPlayerButton currentUserId={currentUserId} dispatch={dispatch} color="w" />
             ) : (
-              <ViewUserPlayerSlot
+              <ViewInputUserPlayerSlot
                 color="w"
                 userId={model.sharedModel.w.value}
                 currentUserId={currentUserId}
@@ -341,7 +341,7 @@ const View =
             {model.sharedModel.b.type === 'None' ? (
               <ViewInputPlayerButton currentUserId={currentUserId} dispatch={dispatch} color="b" />
             ) : (
-              <ViewUserPlayerSlot
+              <ViewInputUserPlayerSlot
                 color="b"
                 userId={model.sharedModel.b.value}
                 currentUserId={currentUserId}
@@ -413,14 +413,14 @@ const View =
 
     const turn = Board.toTurn(board)
 
-    const whiteSlot: GameStartedPlayerSlot = {
+    const whiteSlot: ViewUserPlayerSlotProps = {
       src: store.Profile[w]?.avatarUrl,
       username: store.Profile[w]?.username ?? "...",
       isActive: turn === 'w' && model.sharedModel.type === 'GameStarted',
       seconds: clock.w
     }
 
-    const blackSlot: GameStartedPlayerSlot = {
+    const blackSlot: ViewUserPlayerSlotProps = {
       src: store.Profile[b]?.avatarUrl,
       username: store.Profile[b]?.username ?? "...",
       isActive: turn === 'b' && model.sharedModel.type === 'GameStarted',
@@ -437,7 +437,8 @@ const View =
         <UI.Typography color="text.secondary" align="center">
           {toGameText(model.sharedModel)}
         </UI.Typography>
-        <ViewGameStartedPlayerSlot slot={topSlot} />
+
+        <ViewUserPlayerSlot {...topSlot} />
 
         <div ref={ref}>
           <Chessboard
@@ -469,13 +470,21 @@ const View =
           />
         </div>
 
-        <ViewGameStartedPlayerSlot slot={bottomSlot} />
+        <ViewUserPlayerSlot {...bottomSlot} />
 
         <UI.Box sx={{ flex: 1 }} />
 
         <ViewGameOverDialog model={model} dispatch={dispatch} />
 
         <UI.Divider />
+
+        {model.sharedModel.type === 'GameEnded' && (
+          <UI.Box sx={{ paddingX: 2, width: "100%", }}>
+            <UI.Button fullWidth variant="contained" size="large">
+              Play Again
+            </UI.Button>
+          </UI.Box>
+        )}
 
         <UI.Box sx={{ width: "100%", display: "flex" }}>
           {model.sharedModel.type === 'GameStarted'
@@ -485,15 +494,15 @@ const View =
                 <ViewActionButton
                   icon={<UI.Icons.HandshakeTwoTone />}
                   title="Draw"
-                  onClick={() => dispatch(['OpenedModal', 'AskToDraw'])}
+                  onClick={() => dispatch(['OpenedModal', 'RequestToDraw'])}
                 />
 
                 <UI.ConformationDialog
                   headerIcon={<UI.Icons.HandshakeTwoTone style={{ width: 48, height: 48 }} />}
                   onCancel={() => dispatch(['ClosedModal'])}
                   onClose={() => dispatch(['ClosedModal'])}
-                  onConfirm={() => dispatch(['AskToDraw', currentUserColor])}
-                  open={model.openedModal === 'AskToDraw'}
+                  onConfirm={() => dispatch(['RequestToDraw', currentUserColor])}
+                  open={model.openedModal === 'RequestToDraw'}
                   title="Ask to draw?"
                   confirmTitle="Ask"
                 />
@@ -514,9 +523,6 @@ const View =
                   cancelTitle="Decline"
                 />
 
-
-                <UI.Divider orientation="vertical" />
-
                 <ViewActionButton
                   icon={<UI.Icons.FlagOutlined />}
                   title="Resign"
@@ -533,7 +539,7 @@ const View =
                   confirmTitle="Resign"
                 />
 
-                <UI.Divider orientation="vertical" />
+
               </>
             )}
 
@@ -545,7 +551,7 @@ const View =
             }}
           />
 
-          <UI.Divider orientation="vertical" />
+
         </UI.Box>
 
 
@@ -616,7 +622,7 @@ const ViewGameOverDialogContent = ({ gameOver }: { gameOver: GameOver }) => {
   }
 }
 
-const ViewUserPlayerSlot = ({
+const ViewInputUserPlayerSlot = ({
   dispatch,
   store,
   userId,
@@ -782,17 +788,15 @@ const useBoardWidth = (depList: DependencyList) => {
 }
 
 
-type GameStartedPlayerSlot = {
+type ViewUserPlayerSlotProps = {
   src?: string
   username: string
   isActive: boolean
   seconds: Clock.Seconds
 }
 
-const ViewGameStartedPlayerSlot = ({ slot }: { slot: GameStartedPlayerSlot }) => {
-  const { src, username, isActive, seconds } = slot
+const ViewUserPlayerSlot = ({ src, username, isActive, seconds }: ViewUserPlayerSlotProps) => {
   const theme = UI.useTheme()
-
   return (
     <UI.Box sx={{
       paddingX: 2,

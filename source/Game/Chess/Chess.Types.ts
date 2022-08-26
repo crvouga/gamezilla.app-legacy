@@ -118,7 +118,7 @@ export type FrontendModel = {
   isFlipped: boolean
 }
 
-export type ModalType = "AskToDraw" | "AskedToDraw" | "Resign" | "GameOver"
+export type ModalType = "RequestToDraw" | "AskedToDraw" | "Resign" | "GameOver"
 
 export type BackendModel = SharedModel
 
@@ -175,7 +175,7 @@ export type Request =
   | StartGame
   | InputClock
   | Resign
-  | AskToDraw
+  | RequestToDraw
   | RespondToDraw
 
 export type Response =
@@ -184,7 +184,7 @@ export type Response =
   | StartGameResulted
   | InputClockResulted
   | ResignResulted
-  | AskToDrawResulted
+  | RequestToDrawResulted
   | RespondToDrawResulted
 
 //
@@ -385,16 +385,16 @@ export const startGame = (model: SharedModel): StartGameResulted[1] => {
 //
 //
 
-export type AskToDraw = ["AskToDraw", Board.Color]
-export type AskToDrawResulted = [
-  "AskToDrawResulted",
+export type RequestToDraw = ["RequestToDraw", Board.Color]
+export type RequestToDrawResulted = [
+  "RequestToDrawResulted",
   Result.Result<"game_must_be_started", SharedModel>,
 ]
 
-export const askToDraw = (
+export const requestToDraw = (
   color: Board.Color,
   model: SharedModel,
-): AskToDrawResulted[1] => {
+): RequestToDrawResulted[1] => {
   if (model.type !== "GameStarted") {
     return Result.Err("game_must_be_started")
   }
