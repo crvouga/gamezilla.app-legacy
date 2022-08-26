@@ -3,7 +3,7 @@ import { Cmd, exhaustive, Sub, Time } from "../../Core"
 import { ClientId, RoomId } from "../../Data"
 import * as Board from "./Board"
 import {
-  askToDraw,
+  requestToDraw,
   BackendModel,
   BackendMsg,
   clockTicked,
@@ -65,10 +65,10 @@ export const updateFromFrontend = (
       return [model, sendToFrontend([clientId], roomId, ["Sync", model])]
     }
 
-    case "AskToDraw": {
+    case "RequestToDraw": {
       return sendResponse(
         { clientId, roomId },
-        ["AskToDrawResulted", askToDraw(msg[1], model)],
+        ["RequestToDrawResulted", requestToDraw(msg[1], model)],
         model,
       )
     }
