@@ -6,7 +6,6 @@ import { RoomId, UserId } from "../../Data"
 import * as Store from "../../Store"
 import * as UI from "../../UI"
 import * as Board from "./Board"
-import * as Clock from "./Clock"
 import {
   canStartGame,
   FrontendModel,
@@ -17,9 +16,10 @@ import {
   Move,
   SharedModel,
   ToBackend,
-  ToFrontend,
+  ToFrontend
 } from "./Chess.Types"
-import * as Sounds from "./Sounds/Sounds"
+import * as Clock from "./Clock"
+import * as Sounds from "./Sounds"
 
 //
 //
@@ -279,8 +279,6 @@ export const sendToBackend = (roomId: RoomId.RoomId, toBackend: ToBackend) => {
 //
 //
 
-
-
 export const view =
   (
     {
@@ -315,32 +313,50 @@ const View =
     if (model.sharedModel.type === 'GameSetup') {
       return (
         <UI.FillBox >
-          <UI.List disablePadding>
-            <ViewGameSetupPlayerSlot
-              model={model}
-              dispatch={dispatch}
-              store={store}
-              currentUserId={currentUserId}
-              color="w"
-              userId={model.sharedModel.w}
-            />
 
-            <ViewGameSetupPlayerSlot
-              model={model}
-              dispatch={dispatch}
-              store={store}
-              currentUserId={currentUserId}
-              color="b"
-              userId={model.sharedModel.b}
-            />
-          </UI.List>
+          <UI.Typography sx={{ paddingX: 2, }} color="text.secondary">
+            {Board.colorToString('w')}
+          </UI.Typography>
 
+          <UI.Box sx={{ height: "72px" }}>
+            {model.sharedModel.w.type === 'None' ? (
+              <ViewInputPlayerButton currentUserId={currentUserId} dispatch={dispatch} color="w" />
+            ) : (
+              <ViewUserPlayerSlot
+                color="w"
+                userId={model.sharedModel.w.value}
+                currentUserId={currentUserId}
+                dispatch={dispatch}
+                model={model}
+                store={store}
+              />
+            )}
+          </UI.Box>
 
+          <UI.Typography sx={{ paddingX: 2, }} color="text.secondary">
+            {Board.colorToString('b')}
+          </UI.Typography>
+
+          <UI.Box sx={{ height: "72px" }}>
+            {model.sharedModel.b.type === 'None' ? (
+              <ViewInputPlayerButton currentUserId={currentUserId} dispatch={dispatch} color="b" />
+            ) : (
+              <ViewUserPlayerSlot
+                color="b"
+                userId={model.sharedModel.b.value}
+                currentUserId={currentUserId}
+                dispatch={dispatch}
+                model={model}
+                store={store}
+              />
+            )}
+          </UI.Box>
+
+          <UI.Typography sx={{ paddingX: 2 }} gutterBottom color={'text.secondary'}>
+            Clock
+          </UI.Typography>
 
           <UI.Box sx={{ paddingX: 2 }}>
-            <UI.Typography gutterBottom color={'text.secondary'}>
-              Clock
-            </UI.Typography>
             <UI.Select fullWidth value={model.sharedModel.clockPreset}>
               {Object.values(Clock.presets)
                 .map((preset) => (
@@ -600,85 +616,83 @@ const ViewGameOverDialogContent = ({ gameOver }: { gameOver: GameOver }) => {
   }
 }
 
-
-const ViewGameSetupPlayerSlot = ({
-  userId,
-  color,
+const ViewUserPlayerSlot = ({
   dispatch,
   store,
+  userId,
+  model,
   currentUserId,
-  model
+  color
 }: {
-  color: Board.Color,
-  userId: Option.Option<UserId.UserId>;
-  currentUserId: UserId.UserId,
-  store: Store.Model;
-  dispatch: (msg: Msg) => void,
-  model: Model
-}) => {
-  const menuAnchorId = color
-  const colorString = Board.colorToString(color)
 
+  dispatch: (msg: Msg) => void,
+  store: Store.Model,
+  userId: UserId.UserId,
+  model: Model,
+  currentUserId: UserId.UserId
+  color: Board.Color
+}) => {
+  const anchorId = `${color}-${userId}`
   return (
     <>
-      <UI.Typography sx={{ paddingX: 2, }} color="text.secondary">
-        {colorString}
-      </UI.Typography>
+      <UI.ListItemButton id={anchorId} onClick={() => dispatch(['OpenedMenu', anchorId])}>
+        <UI.ListItemAvatar>
+          <UI.Avatar src={store.Profile[userId]?.avatarUrl} />
+        </UI.ListItemAvatar>
+        <UI.ListItemText primary={store.Profile[userId]?.username ?? "..."} />
+        <UI.ListItemSecondaryAction>
+          <UI.Icons.MoreVert />
+        </UI.ListItemSecondaryAction>
+      </UI.ListItemButton>
 
-      <UI.Box sx={{ height: "72px" }}>
-        {userId.type === 'Some' ? (
-          <>
-            <UI.ListItemButton id={menuAnchorId} onClick={() => dispatch(['OpenedMenu', menuAnchorId])}>
-              <UI.ListItemAvatar>
-                <UI.Avatar src={store.Profile[userId.value]?.avatarUrl} />
-              </UI.ListItemAvatar>
-              <UI.ListItemText primary={store.Profile[userId.value]?.username ?? "..."} />
-              <UI.ListItemSecondaryAction>
-                <UI.Icons.MoreVert />
-              </UI.ListItemSecondaryAction>
-            </UI.ListItemButton>
-            <UI.Menu
-              anchorEl={document.getElementById(menuAnchorId)}
-              open={model.openedMenuId.type === 'Some' && model.openedMenuId.value === menuAnchorId}
-              onClose={() => dispatch(['ClosedMenu'])}
-            >
-              {userId.value === currentUserId ? (
-                <UI.Button size="large" onClick={() => dispatch(['InputPlayer', { userId: Option.None, color }])}>
-                  Stop Playing
-                </UI.Button>
-              ) : (
-                <UI.MenuItem >
-                  <UI.ListItemText primaryTypographyProps={{ color: "text.secondary" }} primary="Not action available" />
-                </UI.MenuItem>
-              )}
-
-            </UI.Menu>
-          </>
+      <UI.Menu
+        anchorEl={document.getElementById(anchorId)}
+        open={model.openedMenuId.type === 'Some' && model.openedMenuId.value === anchorId}
+        onClose={() => dispatch(['ClosedMenu'])}
+      >
+        {userId === currentUserId ? (
+          <UI.Button
+            size="large"
+            onClick={() => dispatch(['InputPlayer', { userId: Option.None, color }])}
+          >
+            Stop Playing
+          </UI.Button>
         ) : (
-          <UI.Box sx={{ paddingX: 2, paddingY: 1 }}>
-            <UI.Button
-              fullWidth
-              size="large"
-              variant="contained"
-              onClick={() => {
-                dispatch([
-                  "InputPlayer",
-                  { userId: Option.Some(currentUserId), color },
-                ])
-              }}>
-              Play As {colorString}
-            </UI.Button>
-          </UI.Box>
+          <UI.MenuItem >
+            <UI.ListItemText
+              primaryTypographyProps={{
+                color: "text.secondary"
+              }}
+              primary="Not action available"
+            />
+          </UI.MenuItem>
         )}
-      </UI.Box>
+
+      </UI.Menu>
     </>
   )
 }
 
-
+const ViewInputPlayerButton = ({ dispatch, currentUserId, color }: { color: Board.Color, dispatch: (msg: Msg) => void, currentUserId: UserId.UserId }) => {
+  return (
+    <UI.Box sx={{ paddingX: 2, paddingY: 1 }}>
+      <UI.Button
+        fullWidth
+        size="large"
+        variant="contained"
+        onClick={() => {
+          dispatch([
+            "InputPlayer",
+            { userId: Option.Some(currentUserId), color },
+          ])
+        }}>
+        Play As {Board.colorToString(color)}
+      </UI.Button>
+    </UI.Box>
+  )
+}
 
 const toGameText = (model: SharedModel): string => {
-
   switch (model.type) {
     case 'GameEnded': {
       switch (model.gameOver.tag) {
