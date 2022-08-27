@@ -810,7 +810,7 @@ const GameGrid = ({ onClick }: { onClick: (gameName: GameName) => void }) => {
         onClick={() => onClick("Snake")}
       />
 
-      <GameCard
+      {/* <GameCard
         icon={<Game.CoverArt gameName="TicTacToe" />}
         label="Tic Tac Toe"
         onClick={() => onClick("TicTacToe")}
@@ -820,7 +820,7 @@ const GameGrid = ({ onClick }: { onClick: (gameName: GameName) => void }) => {
         icon={<Game.CoverArt gameName="ConnectFour" />}
         label="Connect Four"
         onClick={() => onClick("ConnectFour")}
-      />
+      /> */}
 
 
     </UI.Box>

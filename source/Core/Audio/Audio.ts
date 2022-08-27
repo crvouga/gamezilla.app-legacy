@@ -20,6 +20,7 @@ const playTask =
   async () => {
     const sound = new Howler.Howl({
       src: [src],
+      html5: true,
       onplayerror: () => {
         sound.once("unlock", () => {
           sound.play()
