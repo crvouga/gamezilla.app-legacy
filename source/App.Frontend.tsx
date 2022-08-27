@@ -730,22 +730,22 @@ const socket: Socket<Bridge.ServerToClientEvents, Bridge.ClientToServerEvents> =
   io(backendUrl)
 
 socket.on("connect", () => {
-  Bridge._internal_connectionStatus.next("Connected")
+  Bridge._connectionStatus.next("Connected")
 })
 
 socket.on("connect_error", () => {
-  Bridge._internal_connectionStatus.next("ConnectError")
+  Bridge._connectionStatus.next("ConnectError")
 })
 
 socket.on("disconnect", () => {
-  Bridge._internal_connectionStatus.next("Disconnected")
+  Bridge._connectionStatus.next("Disconnected")
 })
 
 socket.on("ToFrontend", (msg) => {
-  Bridge._internal_toFrontend.next(msg)
+  Bridge._toFrontend.next(msg)
 })
 
-Bridge._internal_sendToBackend.subscribe((msg) => {
+Bridge._sendToBackend.subscribe((msg) => {
   socket.emit("ToBackend", msg)
 })
 

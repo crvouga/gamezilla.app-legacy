@@ -182,27 +182,27 @@ const socketServer = new Socket.Server<
 
 socketServer.on("connection", (socket) => {
   if (ClientId.is(socket.id)) {
-    Bridge._internal_onConnect.next(socket.id)
+    Bridge._onConnect.next(socket.id)
   }
 
   socket.on("disconnect", () => {
     if (ClientId.is(socket.id)) {
-      Bridge._internal_onDisconnect.next(socket.id)
+      Bridge._onDisconnect.next(socket.id)
     }
   })
 
   socket.on("ToBackend", (msg) => {
     if (ClientId.is(socket.id)) {
-      Bridge._internal_toBackend.next([socket.id, msg])
+      Bridge._toBackend.next([socket.id, msg])
     }
   })
 })
 
-Bridge._internal_sendToFrontend.subscribe(([clientIds, msg]) => {
+Bridge._sendToFrontend.subscribe(([clientIds, msg]) => {
   socketServer.to(clientIds).emit("ToFrontend", msg)
 })
 
-Bridge._internal_broadcast.subscribe((msg) => {
+Bridge._broadcast.subscribe((msg) => {
   socketServer.emit("ToFrontend", msg)
 })
 
