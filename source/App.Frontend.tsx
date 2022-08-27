@@ -6,6 +6,7 @@ import * as Bridge from "./Bridge"
 import {
   andThen,
   andThenMany,
+  Audio,
   Browser,
   Cmd,
   Debug,
@@ -695,6 +696,8 @@ const program = pipe(
 )
 
 const root = ReactDomClient.createRoot(document.getElementById("root")!)
+
+Audio.unmuteIosAudio()
 
 Browser.run(program, (dom) => {
   root.render(dom)
