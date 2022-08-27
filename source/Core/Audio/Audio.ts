@@ -1,8 +1,8 @@
-import { pipe } from "./pipe"
-import * as Result from "./Result"
-import * as Task from "./Task"
-import * as Cmd from "./Cmd"
-import { Unit } from "./Utility"
+import { pipe } from "../pipe"
+import * as Result from "../Result"
+import * as Task from "../Task"
+import * as Cmd from "../Cmd"
+import { Unit } from "../Utility"
 
 export type Problem = "Unknown"
 
