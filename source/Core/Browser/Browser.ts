@@ -147,7 +147,9 @@ export const onResize = <Msg>(
         }),
       )
     }
+
     window.addEventListener("resize", handle)
+
     return () => {
       window.removeEventListener("resize", handle)
     }

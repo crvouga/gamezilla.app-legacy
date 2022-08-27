@@ -796,6 +796,18 @@ const GameGrid = ({ onClick }: { onClick: (gameName: GameName) => void }) => {
       }}
     >
       <GameCard
+        icon={<Game.CoverArt gameName="Chess" />}
+        label="Chess"
+        onClick={() => onClick("Chess")}
+      />
+
+      <GameCard
+        icon={<Game.CoverArt gameName="Snake" />}
+        label="Snake"
+        onClick={() => onClick("Snake")}
+      />
+
+      <GameCard
         icon={<Game.CoverArt gameName="TicTacToe" />}
         label="Tic Tac Toe"
         onClick={() => onClick("TicTacToe")}
@@ -807,17 +819,7 @@ const GameGrid = ({ onClick }: { onClick: (gameName: GameName) => void }) => {
         onClick={() => onClick("ConnectFour")}
       />
 
-      <GameCard
-        icon={<Game.CoverArt gameName="Snake" />}
-        label="Snake"
-        onClick={() => onClick("Snake")}
-      />
 
-      <GameCard
-        icon={<Game.CoverArt gameName="Chess" />}
-        label="Chess"
-        onClick={() => onClick("Chess")}
-      />
     </UI.Box>
   )
 }
@@ -868,8 +870,7 @@ const GameCard = ({
           <UI.Typography
             color="white"
             align="left"
-            fontWeight={800}
-            variant="h6"
+            variant="h5"
           >
             {label}
           </UI.Typography>

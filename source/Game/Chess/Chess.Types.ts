@@ -1,4 +1,4 @@
-import { Audio, Option, Result } from "../../Core"
+import { Audio, Browser, Option, Result } from "../../Core"
 import { UserId } from "../../Data"
 import * as Board from "./Board"
 import * as Clock from "./Clock"
@@ -116,6 +116,7 @@ export type FrontendModel = {
   openedMenuId: Option.Option<string>
   openedModal: ModalType | "None"
   isFlipped: boolean
+  boardWidth: Option.Option<number>
 }
 
 export type ModalType = "RequestToDraw" | "AskedToDraw" | "Resign" | "GameOver"
