@@ -178,7 +178,7 @@ export type Request =
   | Resign
   | RequestToDraw
   | RespondToDraw
-  | PlayAgain
+  | NewGame
 
 export type Response =
   | InputPlayerResulted
@@ -188,7 +188,7 @@ export type Response =
   | ResignResulted
   | RequestToDrawResulted
   | RespondToDrawResulted
-  | PlayAgainResulted
+  | NewGameResulted
 
 //
 //
@@ -495,14 +495,14 @@ export const resign = (
 //
 //
 
-export type PlayAgain = ["PlayAgain"]
-export type PlayAgainResulted = [
-  "PlayAgainResulted",
-  Result.Result<"game_must_be_over_to_play_again", SharedModel>,
+export type NewGame = ["NewGame"]
+export type NewGameResulted = [
+  "NewGameResulted",
+  Result.Result<"game_must_be_ended_to_start_a_new_game", SharedModel>,
 ]
-export const playAgain = (model: SharedModel): PlayAgainResulted[1] => {
+export const newGame = (model: SharedModel): NewGameResulted[1] => {
   if (model.type !== "GameEnded") {
-    return Result.Err("game_must_be_over_to_play_again")
+    return Result.Err("game_must_be_ended_to_start_a_new_game")
   }
 
   const modelNew: SharedModel = {
