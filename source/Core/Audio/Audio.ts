@@ -15,6 +15,14 @@ export const play = <msg>(src: string, mapper: (result: PlayResult) => msg) =>
     Cmd.perform((result) => mapper(result)),
   )
 
+let visibility: "focused" | "blurred" = "blurred"
+
+if (typeof document !== "undefined") {
+  document.addEventListener("visibilitychange", () => {
+    visibility = document.visibilityState === "visible" ? "focused" : "blurred"
+  })
+}
+
 const playTask =
   (src: string): Task.Task<PlayResult> =>
   async () => {
@@ -23,12 +31,16 @@ const playTask =
       html5: true,
       onplayerror: () => {
         sound.once("unlock", () => {
-          sound.play()
+          if (visibility === "focused") {
+            sound.play()
+          }
         })
       },
     })
 
-    sound.play()
+    if (visibility === "focused") {
+      sound.play()
+    }
 
     return Result.Ok(Unit)
   }
