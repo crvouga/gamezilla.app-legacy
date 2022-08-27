@@ -3,17 +3,11 @@ import { exhaustive, Result } from "../../Core"
 
 //
 //
+//
 // Model
 //
 //
-
-const createInstance = (model: Model) => {
-  const instance = new ChessTs.Chess()
-
-  instance.loadPgn(model.pgn)
-
-  return instance
-}
+//
 
 export type Model = {
   pgn: string
@@ -82,8 +76,24 @@ export const init = (): Model => {
   }
 }
 
+//
+//
+//
+//
+//
+//
+//
+
+const _createInstance = (model: Model) => {
+  const instance = new ChessTs.Chess()
+
+  instance.loadPgn(model.pgn)
+
+  return instance
+}
+
 export const toFen = (model: Model): string => {
-  const instance = createInstance(model)
+  const instance = _createInstance(model)
 
   return instance.fen()
 }
@@ -100,47 +110,6 @@ export const colorToString = (color: Color): string => {
   }
 }
 
-//
-//
-// Selectors
-//
-//
-
-export const inCheck = (model: Model): boolean => {
-  return createInstance(model).inCheck()
-}
-
-export const inDraw = (model: Model): boolean => {
-  return createInstance(model).inDraw()
-}
-
-export const inCheckmate = (model: Model): boolean => {
-  return createInstance(model).inCheckmate()
-}
-
-export const inStalemate = (model: Model): boolean => {
-  return createInstance(model).inStalemate()
-}
-
-export const insufficientMaterial = (model: Model): boolean => {
-  return createInstance(model).insufficientMaterial()
-}
-
-export const inThreefoldRepetition = (model: Model): boolean => {
-  return createInstance(model).inThreefoldRepetition()
-}
-
-export const toMissingPieces = (model: Model) => {
-  const instance = createInstance(model)
-  return instance.history()
-}
-
-export const toTurn = (model: Model): Color => {
-  const instance = createInstance(model)
-
-  return instance.turn()
-}
-
 export const toOppositeColor = (color: Color): Color => {
   switch (color) {
     case "b":
@@ -151,20 +120,58 @@ export const toOppositeColor = (color: Color): Color => {
   }
 }
 
+export const inCheck = (model: Model): boolean => {
+  return _createInstance(model).inCheck()
+}
+
+export const inDraw = (model: Model): boolean => {
+  return _createInstance(model).inDraw()
+}
+
+export const inCheckmate = (model: Model): boolean => {
+  return _createInstance(model).inCheckmate()
+}
+
+export const inStalemate = (model: Model): boolean => {
+  return _createInstance(model).inStalemate()
+}
+
+export const insufficientMaterial = (model: Model): boolean => {
+  return _createInstance(model).insufficientMaterial()
+}
+
+export const inThreefoldRepetition = (model: Model): boolean => {
+  return _createInstance(model).inThreefoldRepetition()
+}
+
+export const toMissingPieces = (model: Model) => {
+  const instance = _createInstance(model)
+  return instance.history()
+}
+
+export const toTurn = (model: Model): Color => {
+  const instance = _createInstance(model)
+
+  return instance.turn()
+}
+
+//
 //
 //
 // Move
 //
 //
+//
 
 export type MoveInput = ChessTs.PartialMove
+
 export type MoveProblem = "invalid_move"
 
 export const move = (
   moveInput: MoveInput,
   model: Model,
 ): Result.Result<MoveProblem, Model & { didCapture: boolean }> => {
-  const instance = createInstance(model)
+  const instance = _createInstance(model)
 
   const moved = instance.move(moveInput)
 
