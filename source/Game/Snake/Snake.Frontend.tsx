@@ -1,7 +1,7 @@
 import { useLayoutEffect, useRef } from "react"
 import * as Bridge from "../../Bridge"
 import * as Store from "../../Store"
-import { Cmd, exhaustive, Keyboard, Option, Result, Sub } from "../../Core"
+import { Time, Cmd, exhaustive, Keyboard, Option, Result, Sub } from "../../Core"
 import { RoomId, UserId } from "../../Data"
 import * as Snake from "./Snake"
 import * as Position from "./Position"
@@ -10,6 +10,7 @@ import * as Route from "../../Route"
 import * as Snackbar from "../../Snackbar"
 import * as UI from "../../UI"
 import {
+  canStartGame,
   FrontendModel,
   FrontendMsg,
   initSharedModel,
@@ -73,6 +74,14 @@ export const update = (
       return [model, Route.back]
 
     case "PressedKeyDown": {
+      if (model.gameStatus.type !== 'GameStarted') {
+        return [model, Cmd.None]
+      }
+
+      if (model.gameStatus.player[1] !== currentUserId) {
+        return [model, Cmd.None]
+      }
+
       const direction = Direction.fromKey(msg[1])
 
       const changeDirectionCmd =
@@ -117,7 +126,6 @@ export const update = (
     case 'ClosedMenu': {
       return [{ ...model, openedMenuId: Option.None }, Cmd.None]
     }
-
 
     default:
       return exhaustive(msg[0])
@@ -182,9 +190,12 @@ const updateResponse = <
 //
 //
 
-export const subscriptions = (model: Model): Sub.Sub<Msg> => {
+
+export const subscriptions = (intervalId: string, model: Model): Sub.Sub<Msg> => {
   return Keyboard.keyDowns<Msg>((key) => ["PressedKeyDown", key])
 }
+
+
 
 //
 //
@@ -272,9 +283,9 @@ export const view =
                     onClose={() => dispatch(['ClosedMenu',])}
                     anchorEl={document.getElementById(menuAnchorId)}
                   >
-                    <UI.ListItemButton onClick={() => dispatch(['InputPlayer', Option.None])}>
-                      <UI.ListItemText primary="Stop playing" />
-                    </UI.ListItemButton>
+                    <UI.Button size="large" fullWidth onClick={() => dispatch(['InputPlayer', Option.None])}>
+                      Stop Playing
+                    </UI.Button>
                   </UI.Menu>
                 </>
               )}
@@ -286,6 +297,7 @@ export const view =
               <UI.Button
                 variant="contained"
                 fullWidth
+                disabled={!canStartGame(model)}
                 onClick={() => {
                   dispatch(['StartGame'])
                 }}
