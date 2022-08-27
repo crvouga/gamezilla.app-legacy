@@ -5,9 +5,7 @@ import * as Auth from "./Auth"
 import * as Bridge from "./Bridge"
 import {
   andThen,
-  andThenMany,
-  Audio,
-  Browser,
+  andThenMany, Browser,
   Cmd,
   Debug,
   exhaustive,
@@ -17,7 +15,7 @@ import {
   Sub,
   tag,
   tagCmd,
-  tagSub,
+  tagSub
 } from "./Core"
 import * as GameRoom from "./GameRoom/GameRoom.Frontend"
 import * as Pages from "./Pages"
@@ -696,8 +694,6 @@ const program = pipe(
 )
 
 const root = ReactDomClient.createRoot(document.getElementById("root")!)
-
-Audio.unmuteIosAudio()
 
 Browser.run(program, (dom) => {
   root.render(dom)
