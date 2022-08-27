@@ -394,8 +394,11 @@ export const subscriptions = (
     return Sub.None
   }
 
+
+  const intervalId = room.roomId
+
   return pipe(
-    Game.subscriptions(game),
+    Game.subscriptions(`room-${intervalId}`, game),
     Sub.map((msg): Msg => ["Games", room.roomId, msg]),
   )
 }

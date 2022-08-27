@@ -161,13 +161,13 @@ export const updateFromBackend = (
 //
 //
 
-export const subscriptions = (model: Model): Sub.Sub<Msg> => {
+export const subscriptions = (intervalId: string, model: Model): Sub.Sub<Msg> => {
   switch (model[0]) {
     case "ConnectFour": {
       return Sub.None
     }
     case "Snake": {
-      return tagSub("Snake", Snake.subscriptions(model[1]))
+      return tagSub("Snake", Snake.subscriptions(`snake-${intervalId}`, model[1]))
     }
     case "TicTacToe": {
       return Sub.None

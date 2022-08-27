@@ -1,24 +1,23 @@
 import * as Bridge from "../../Bridge"
 import { Cmd, Result, Sub, Time } from "../../Core"
 import { ClientId, RoomId } from "../../Data"
+import * as Snake from "./Snake"
 import {
   BackendModel,
   BackendMsg,
+  initSharedModel,
   InputDirection,
   InputDirectionResulted,
   InputPlayer,
   InputPlayerResulted,
-  initSharedModel,
+  Response,
   SharedModel,
+  startGame,
   ToBackend,
   ToFrontend,
   ToggleStatus,
   ToggleStatusResult,
-  Request,
-  Response,
-  startGame,
 } from "./Snake.Types"
-import * as Snake from "./Snake"
 
 //
 //
