@@ -1,6 +1,21 @@
 //
 //
 //
+// source: https://stackoverflow.com/questions/48757933/audiocontext-issue-on-safari
+//
+//
+//
+
+declare global {
+  interface Window {
+    AudioContext: typeof AudioContext
+    webkitAudioContext: typeof AudioContext
+  }
+}
+
+//
+//
+//
 // source: https://github.com/feross/unmute-ios-audio
 //
 //
@@ -21,23 +36,23 @@ const USER_ACTIVATION_EVENTS = [
 ] as const
 
 export function unmuteIosAudio() {
-  const AudioContext: any =
-    // @ts-ignore
-    "webkitAudioContext" in window && window["webkitAudioContext"]
+  const AudioContext = window.AudioContext || window.webkitAudioContext
 
   // To detect iOS, check for touch device and confirm Safari-only
   // webkitAudioContext is present.
   const isIos = navigator.maxTouchPoints > 0 && AudioContext != null
 
-  if (!isIos) return
+  if (!isIos) {
+    return
+  }
 
   // state can be 'blocked', 'pending', 'allowed'
   let htmlAudioState = "blocked"
   let webAudioState = "blocked"
 
-  let audio: any
-  let context: any
-  let source: any
+  let audio: HTMLAudioElement | null = null
+  let context: AudioContext | null = null
+  let source: AudioBufferSourceNode | null = null
 
   const sampleRate = new AudioContext().sampleRate
   const silentAudioFile = createSilentAudioFile(sampleRate)
@@ -93,10 +108,12 @@ export function unmuteIosAudio() {
       () => {
         htmlAudioState = "blocked"
 
-        audio.pause()
-        audio.removeAttribute("src")
-        audio.load()
-        audio = null
+        if (audio) {
+          audio.pause()
+          audio.removeAttribute("src")
+          audio.load()
+          audio = null
+        }
       },
     )
   }
