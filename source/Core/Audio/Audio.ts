@@ -10,10 +10,7 @@ export type Problem = "Unknown"
 export type PlayResult = Result.Result<Problem, Unit>
 
 export const play = <msg>(src: string, mapper: (result: PlayResult) => msg) =>
-  pipe(
-    playTask(src),
-    Cmd.perform((result) => mapper(result)),
-  )
+  pipe(playTask(src), Cmd.perform(mapper))
 
 let visibility: "focused" | "blurred" = "blurred"
 
