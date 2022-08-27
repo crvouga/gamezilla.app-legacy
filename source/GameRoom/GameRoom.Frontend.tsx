@@ -658,7 +658,7 @@ const viewButtonMenu =
       return (
         <>
           <UI.Button
-            startIcon={<UI.Icons.MoreVert />}
+            // startIcon={<UI.Icons.MoreVert />}
             sx={{ marginLeft: -2 }}
             id={menuButtonId}
             onClick={() => dispatch(onOpen)}
