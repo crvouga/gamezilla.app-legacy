@@ -1,7 +1,7 @@
 import { DependencyList, useLayoutEffect, useRef, useState } from "react"
-import { Chessboard, } from "react-chessboard"
+import { Chessboard } from "react-chessboard"
 import * as Bridge from "../../Bridge"
-import { Browser, andThen, Audio, Cmd, exhaustive, Option, pipe, Sub, tag } from "../../Core"
+import { andThen, Audio, Cmd, exhaustive, Option, pipe, Sub, tag } from "../../Core"
 import { RoomId, UserId } from "../../Data"
 import * as Store from "../../Store"
 import * as UI from "../../UI"
@@ -9,9 +9,7 @@ import * as Board from "./Board"
 import {
   canStartGame,
   FrontendModel,
-  FrontendMsg,
-  GameOver,
-  initSharedModel,
+  FrontendMsg, initSharedModel,
   move,
   Move,
   SharedModel,
@@ -142,31 +140,11 @@ export const updateMain = (
       case "Move": {
         const result = move(msg[1], model.sharedModel)
 
-        if (result.type === "Err") {
+        if (result.type === 'Err') {
           return [model, Cmd.None]
         }
 
-        const sharedModelNew = result.value
-
-        if (sharedModelNew.type === 'GameSetup') {
-          return [model, Cmd.None]
-        }
-
-        const sound = Board.inCheck(sharedModelNew.board) ? Sounds.check : Sounds.move
-
-        const changed = updateChanged(model, {
-          ...model,
-          sharedModel: sharedModelNew,
-        })
-
-        return [
-          changed[0],
-          Cmd.batch([
-            changed[1],
-            sendToBackend(currentRoomId, msg),
-            Audio.play(sound, tag("AudioResulted")),
-          ]),
-        ]
+        return [{ ...model, sharedModel: result.value }, sendToBackend(currentRoomId, msg)]
       }
 
       default:
@@ -196,7 +174,24 @@ export const updateFromBackend = (
     }
 
     case "MovedResulted": {
-      return [model, Cmd.None]
+      if (msg[1].type === 'Err') {
+        return [model, Cmd.None]
+      }
+
+      const sharedModelNew = msg[1].value
+
+      if (sharedModelNew.type !== 'GameStarted') {
+        return [model, Cmd.None]
+      }
+
+      const soundCmd =
+        Board.inCheck(sharedModelNew.board)
+          ? playAudio(Sounds.check)
+          : sharedModelNew.didCapture
+            ? playAudio(Sounds.capture)
+            : playAudio(Sounds.move)
+
+      return [model, soundCmd]
     }
 
     case "InputPlayerResulted": {
@@ -208,7 +203,7 @@ export const updateFromBackend = (
         return [model, Cmd.None]
       }
 
-      return [model, Audio.play(Sounds.gameStart, tag('AudioResulted'))]
+      return [model, playAudio(Sounds.gameStart)]
     }
 
     case 'RequestToDrawResulted': {
@@ -250,7 +245,7 @@ const updateChanged = (prev: Model, next: Model): [Model, Cmd.Cmd<Msg>] => {
     case 'GameEnded': {
       return [
         { ...next, isFlipped: false, openedModal: 'GameOver' },
-        Audio.play(Sounds.gameOver, tag('AudioResulted')),
+        playAudio(Sounds.gameOver),
       ]
     }
 
@@ -266,6 +261,10 @@ const updateChanged = (prev: Model, next: Model): [Model, Cmd.Cmd<Msg>] => {
 
 export const sendToBackend = (roomId: RoomId.RoomId, toBackend: ToBackend) => {
   return Bridge.sendToBackend(["GameRoom", ["Games", roomId, ["Chess", toBackend]]])
+}
+
+const playAudio = (src: string): Cmd.Cmd<Msg> => {
+  return Audio.play(src, tag("AudioResulted"))
 }
 
 //

@@ -142,10 +142,19 @@ const sendResponse = (
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
   if (response[1].type === "Err") {
-    return [model, sendToFrontend([clientId], roomId, response)]
+    return [
+      model,
+      Cmd.batch([
+        sendToFrontend([clientId], roomId, response),
+        sendToFrontend([clientId], roomId, ["Sync", model]),
+      ]),
+    ]
   }
 
-  const modelNew: Model = { ...model, ...response[1].value }
+  const modelNew: Model = {
+    ...model,
+    ...response[1].value,
+  }
 
   return [
     modelNew,

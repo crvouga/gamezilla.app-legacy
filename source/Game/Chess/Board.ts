@@ -48,6 +48,32 @@ export const toColor = (piece: Piece): Color => {
   }
 }
 
+export const toPieceType = (piece: Piece): PieceType => {
+  switch (piece) {
+    case "bB":
+    case "wB":
+      return "B"
+    case "bK":
+    case "wK":
+      return "K"
+    case "bN":
+    case "wN":
+      return "N"
+    case "bP":
+    case "wP":
+      return "P"
+    case "bQ":
+    case "wQ":
+      return "Q"
+    case "bR":
+    case "wR":
+      return "R"
+
+    default:
+      return exhaustive(piece)
+  }
+}
+
 export const init = (): Model => {
   const chessInstance = new ChessTs.Chess()
 
@@ -137,7 +163,7 @@ export type MoveProblem = "invalid_move"
 export const move = (
   moveInput: MoveInput,
   model: Model,
-): Result.Result<MoveProblem, Model> => {
+): Result.Result<MoveProblem, Model & { didCapture: boolean }> => {
   const instance = createInstance(model)
 
   const moved = instance.move(moveInput)
@@ -150,5 +176,6 @@ export const move = (
 
   return Result.Ok({
     pgn: instance.pgn(),
+    didCapture: Boolean(moved.captured),
   })
 }
