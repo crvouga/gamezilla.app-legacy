@@ -161,7 +161,7 @@ export type FrontendMsg =
 
 export type BackendMsg = ["Tick"]
 
-export type ToFrontend = ["Sync", SharedModel] | Response
+export type ToFrontend = ["Sync", SharedModel] | ["GameOver"] | Response
 
 export type ToBackend = ["Init"] | Request
 
