@@ -1,7 +1,7 @@
 import { DependencyList, useLayoutEffect, useRef, useState } from "react"
-import { Chessboard } from "react-chessboard"
+import { Chessboard, } from "react-chessboard"
 import * as Bridge from "../../Bridge"
-import { andThen, Audio, Cmd, exhaustive, Option, pipe, Sub, tag } from "../../Core"
+import { Browser, andThen, Audio, Cmd, exhaustive, Option, pipe, Sub, tag } from "../../Core"
 import { RoomId, UserId } from "../../Data"
 import * as Store from "../../Store"
 import * as UI from "../../UI"
@@ -37,10 +37,10 @@ export const init = ({ roomId }: { roomId: RoomId.RoomId }): [FrontendModel, Cmd
       sharedModel: initSharedModel,
       openedMenuId: Option.None,
       openedModal: "None",
-      isFlipped: false
+      isFlipped: false,
+      boardWidth: Option.None,
     },
-    sendToBackend(roomId, ['Init']),
-
+    sendToBackend(roomId, ['Init'])
   ]
 }
 
@@ -104,6 +104,7 @@ export const updateMain = (
       }
 
 
+
       // 
       //
       //
@@ -163,7 +164,7 @@ export const updateMain = (
           Cmd.batch([
             changed[1],
             sendToBackend(currentRoomId, msg),
-            pipe(Audio.play(sound), Cmd.perform(tag("AudioResulted"))),
+            Audio.play(sound, tag("AudioResulted")),
           ]),
         ]
       }
@@ -245,10 +246,7 @@ const updateChanged = (prev: Model, next: Model): [Model, Cmd.Cmd<Msg>] => {
     case 'GameEnded': {
       return [
         { ...next, openedModal: 'GameOver' },
-        pipe(
-          Audio.play(Sounds.gameOver),
-          Cmd.perform(tag('AudioResulted'))
-        ),
+        Audio.play(Sounds.gameOver, tag('AudioResulted')),
       ]
     }
 
@@ -259,13 +257,16 @@ const updateChanged = (prev: Model, next: Model): [Model, Cmd.Cmd<Msg>] => {
     case 'GameStarted': {
       return [
         next,
-        pipe(
-          Audio.play(Sounds.gameStart),
-          Cmd.perform(tag('AudioResulted'))
-        ),
+        Audio.play(Sounds.gameStart, tag('AudioResulted')),
+
+
       ]
     }
   }
+}
+
+export const sendToBackend = (roomId: RoomId.RoomId, toBackend: ToBackend) => {
+  return Bridge.sendToBackend(["GameRoom", ["Games", roomId, ["Chess", toBackend]]])
 }
 
 //
@@ -280,17 +281,6 @@ export const subscriptions = (_model: Model): Sub.Sub<Msg> => {
   return Sub.None
 }
 
-//
-//
-//
-// Bridge
-//
-//
-//
-
-export const sendToBackend = (roomId: RoomId.RoomId, toBackend: ToBackend) => {
-  return Bridge.sendToBackend(["GameRoom", ["Games", roomId, ["Chess", toBackend]]])
-}
 
 //
 //
@@ -299,6 +289,8 @@ export const sendToBackend = (roomId: RoomId.RoomId, toBackend: ToBackend) => {
 //
 //
 //
+
+
 
 export const view =
   (
@@ -312,8 +304,13 @@ export const view =
     model: Model,
   ): UI.View<Msg> =>
     (dispatch) => {
-      return <View store={store} currentUserId={currentUserId} model={model} dispatch={dispatch} />
+      return (
+        <>
+          <View store={store} currentUserId={currentUserId} model={model} dispatch={dispatch} />
+        </>
+      )
     }
+
 
 const View =
   (
@@ -333,7 +330,7 @@ const View =
 
     if (model.sharedModel.type === 'GameSetup') {
       return (
-        <UI.FillBox >
+        <UI.FillBox>
 
           <UI.Typography sx={{ paddingX: 2, }} color="text.secondary">
             {Board.colorToString('w')}
@@ -422,8 +419,6 @@ const View =
           : currentUserId === b
             ? 'b'
             : "None"
-
-
 
     const boardOrentation: Board.Color = pipe(
       currentUserColor === 'None' || currentUserColor === 'Both'
@@ -852,8 +847,11 @@ const ViewUserPlayerSlot = ({ src, username, isActive, seconds }: ViewUserPlayer
 }
 
 export const theme = {
-  lightSquare: "#EBEBD0",
-  darkSquare: "#779455",
+  // lightSquare: "#EBEBD0",
+  // darkSquare: "#779455",
+  lightSquare: "#7C6141",
+  darkSquare: "#533F30",
+  pawn: "#93BA46",
 }
 
 // 
@@ -902,6 +900,20 @@ export const CoverArt = () => {
         height={1}
         fill={theme.darkSquare}
       />
+
+
+      <svg xmlns="http://www.w3.org/2000/svg" width="2" height="2" viewBox="0 0 45 45">
+        <g transform="translate(0 -2) scale(0.8)" style={{ transformOrigin: "center" }}>
+          <path
+            fill={theme.pawn}
+            stroke={theme.pawn}
+            strokeLinecap="round"
+            strokeWidth="1.5"
+            d="M22.5 9c-2.21 0-4 1.79-4 4 0 .89.29 1.71.78 2.38C17.33 16.5 16 18.59 16 21c0 2.03.94 3.84 2.41 5.03-3 1.06-7.41 5.55-7.41 13.47h23c0-7.92-4.41-12.41-7.41-13.47 1.47-1.19 2.41-3 2.41-5.03 0-2.41-1.33-4.5-3.28-5.62.49-.67.78-1.49.78-2.38 0-2.21-1.79-4-4-4z"
+          ></path>
+        </g>
+      </svg>
+
     </svg>
   )
 }

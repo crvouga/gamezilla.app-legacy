@@ -362,7 +362,7 @@ export const HeaderBackButton = ({ onClick }: { onClick: () => void }) => {
   )
 }
 
-export const FillBox = ({ children, sx }: Mui.BoxProps) => {
+export const FillBox = ({ sx, ...props }: Mui.BoxProps) => {
   return (
     <Box
       sx={{
@@ -376,9 +376,8 @@ export const FillBox = ({ children, sx }: Mui.BoxProps) => {
         overflow: "hidden",
         ...sx,
       }}
-    >
-      {children}
-    </Box>
+      {...props}
+    />
   )
 }
 
