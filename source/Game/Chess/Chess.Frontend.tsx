@@ -163,10 +163,13 @@ export const updateFromBackend = (
 
   switch (msg[0]) {
     case "Sync": {
-      return updateChanged(model, {
-        ...model,
-        sharedModel: msg[1]
-      })
+      return [
+        {
+          ...model,
+          sharedModel: msg[1]
+        },
+        Cmd.None
+      ]
     }
 
     case 'InputClockResulted': {
@@ -180,8 +183,12 @@ export const updateFromBackend = (
 
       const sharedModelNew = msg[1].value
 
-      if (sharedModelNew.type !== 'GameStarted') {
+      if (sharedModelNew.type == 'GameSetup') {
         return [model, Cmd.None]
+      }
+
+      if (sharedModelNew.type === 'GameEnded') {
+        return updateGameOver(sharedModelNew, model)
       }
 
       const soundCmd =
@@ -191,11 +198,17 @@ export const updateFromBackend = (
             ? playAudio(Sounds.capture)
             : playAudio(Sounds.move)
 
-      return [model, soundCmd]
+      return [{ ...model, sharedModel: sharedModelNew }, soundCmd]
     }
 
     case "InputPlayerResulted": {
-      return [model, Cmd.None]
+      if (msg[1].type === 'Err') {
+        return [model, Cmd.None]
+      }
+
+      const sharedModel = msg[1].value
+
+      return [{ ...model, sharedModel }, playAudio(Sounds.navigationForwardSelection)]
     }
 
     case "StartGameResulted": {
@@ -219,14 +232,57 @@ export const updateFromBackend = (
     }
 
     case 'ResignResulted': {
-      return [model, Cmd.None]
+      if (msg[1].type === 'Err') {
+        return [model, Cmd.None]
+      }
+
+      const sharedModelNew = msg[1].value
+
+      if (sharedModelNew.type === 'GameSetup') {
+        return [model, Cmd.None]
+      }
+
+      if (sharedModelNew.type === 'GameEnded') {
+        return updateGameOver(sharedModelNew, model)
+      }
+
+      return [{ ...model, sharedModel: sharedModelNew }, Cmd.None]
     }
 
     case 'RespondToDrawResulted': {
-      return [model, Cmd.None]
+      if (msg[1].type === 'Err') {
+        return [model, Cmd.None]
+      }
+
+      const sharedModelNew = msg[1].value
+
+      if (sharedModelNew.type === 'GameSetup') {
+        return [model, Cmd.None]
+      }
+
+      if (sharedModelNew.type === 'GameEnded') {
+        return updateGameOver(sharedModelNew, model)
+      }
+
+      return [{ ...model, sharedModel: sharedModelNew }, Cmd.None]
     }
 
     case 'NewGameResulted': {
+      if (msg[1].type === 'Err') {
+        return [model, Cmd.None]
+      }
+
+      const sharedModelNew = msg[1].value
+
+      if (sharedModelNew.type === 'GameSetup') {
+        return [model, playAudio(Sounds.navigationCancel)]
+      }
+
+      return [{ ...model, sharedModel: sharedModelNew }, Cmd.None]
+
+    }
+
+    case 'GameOver': {
       return [model, Cmd.None]
     }
 
@@ -236,28 +292,10 @@ export const updateFromBackend = (
   }
 }
 
-const updateChanged = (prev: Model, next: Model): [Model, Cmd.Cmd<Msg>] => {
-  if (prev.sharedModel.type === next.sharedModel.type) {
-    return [next, Cmd.None]
-  }
-
-  switch (next.sharedModel.type) {
-    case 'GameEnded': {
-      return [
-        { ...next, isFlipped: false, openedModal: 'GameOver' },
-        playAudio(Sounds.gameOver),
-      ]
-    }
-
-    case 'GameSetup': {
-      return [next, Cmd.None]
-    }
-
-    case 'GameStarted': {
-      return [next, Cmd.None]
-    }
-  }
+const updateGameOver = (sharedModelNew: SharedModel, model: Model): [Model, Cmd.Cmd<Msg>] => {
+  return [{ ...model, sharedModel: sharedModelNew, isFlipped: false, openedModal: 'GameOver' }, playAudio(Sounds.gameOver)]
 }
+
 
 export const sendToBackend = (roomId: RoomId.RoomId, toBackend: ToBackend) => {
   return Bridge.sendToBackend(["GameRoom", ["Games", roomId, ["Chess", toBackend]]])
