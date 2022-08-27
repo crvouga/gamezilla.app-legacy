@@ -17,7 +17,7 @@ import {
   startGame,
   ToBackend,
   ToFrontend,
-  playAgain,
+  newGame,
 } from "./Chess.Types"
 
 //
@@ -122,10 +122,10 @@ export const updateFromFrontend = (
       )
     }
 
-    case "PlayAgain": {
+    case "NewGame": {
       return sendResponse(
         { clientId, roomId },
-        ["PlayAgainResulted", playAgain(model)],
+        ["NewGameResulted", newGame(model)],
         model,
       )
     }
@@ -141,17 +141,18 @@ const sendResponse = (
   response: Response,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
-  const toFrontend = sendToFrontend([clientId], roomId, response)
-
   if (response[1].type === "Err") {
-    return [model, toFrontend]
+    return [model, sendToFrontend([clientId], roomId, response)]
   }
 
   const modelNew: Model = { ...model, ...response[1].value }
 
   return [
     modelNew,
-    Cmd.batch([toFrontend, broadcast(roomId, ["Sync", modelNew])]),
+    Cmd.batch([
+      broadcast(roomId, response),
+      broadcast(roomId, ["Sync", modelNew]),
+    ]),
   ]
 }
 
