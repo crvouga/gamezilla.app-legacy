@@ -460,7 +460,7 @@ const View =
             showBoardNotation
             snapToCursor
             boardOrientation={boardOrentation === "w" ? "white" : "black"}
-            position={board.fen}
+            position={Board.toFen(board)}
             boardWidth={boardWidth}
             isDraggablePiece={({ piece, }) => {
               return Board.toColor(piece) === currentUserColor || currentUserColor === 'Both'

@@ -8,19 +8,16 @@ import { exhaustive, Result } from "../../Core"
 //
 
 const createInstance = (model: Model) => {
-  const instance = new ChessTs.Chess(model.fen)
+  const instance = new ChessTs.Chess()
+
+  instance.loadPgn(model.pgn)
 
   return instance
 }
 
 export type Model = {
-  fen: string
-  captures: Piece[]
+  pgn: string
 }
-
-export type EndGame =
-  | ["Win", "Resignation" | "Checkmate" | "Win On Time"]
-  | ["Draw", "Stalemate" | "Draw by agreement" | "Threefold repetition"]
 
 export type PieceType = "P" | "B" | "N" | "R" | "Q" | "K"
 
@@ -55,10 +52,14 @@ export const init = (): Model => {
   const chessInstance = new ChessTs.Chess()
 
   return {
-    fen: chessInstance.fen(),
-    captures: [],
-    // pgn: chessInstance.pgn(),
+    pgn: chessInstance.pgn(),
   }
+}
+
+export const toFen = (model: Model): string => {
+  const instance = createInstance(model)
+
+  return instance.fen()
 }
 
 export const colorToString = (color: Color): string => {
@@ -80,27 +81,27 @@ export const colorToString = (color: Color): string => {
 //
 
 export const inCheck = (model: Model): boolean => {
-  return new ChessTs.Chess(model.fen).inCheck()
+  return createInstance(model).inCheck()
 }
 
 export const inDraw = (model: Model): boolean => {
-  return new ChessTs.Chess(model.fen).inDraw()
+  return createInstance(model).inDraw()
 }
 
 export const inCheckmate = (model: Model): boolean => {
-  return new ChessTs.Chess(model.fen).inCheckmate()
+  return createInstance(model).inCheckmate()
 }
 
 export const inStalemate = (model: Model): boolean => {
-  return new ChessTs.Chess(model.fen).inStalemate()
+  return createInstance(model).inStalemate()
 }
 
 export const insufficientMaterial = (model: Model): boolean => {
-  return new ChessTs.Chess(model.fen).insufficientMaterial()
+  return createInstance(model).insufficientMaterial()
 }
 
 export const inThreefoldRepetition = (model: Model): boolean => {
-  return new ChessTs.Chess(model.fen).inThreefoldRepetition()
+  return createInstance(model).inThreefoldRepetition()
 }
 
 export const toMissingPieces = (model: Model) => {
@@ -109,9 +110,9 @@ export const toMissingPieces = (model: Model) => {
 }
 
 export const toTurn = (model: Model): Color => {
-  const chess = new ChessTs.Chess(model.fen)
+  const instance = createInstance(model)
 
-  return chess.turn()
+  return instance.turn()
 }
 
 export const toOppositeColor = (color: Color): Color => {
@@ -137,19 +138,17 @@ export const move = (
   moveInput: MoveInput,
   model: Model,
 ): Result.Result<MoveProblem, Model> => {
-  const chessInstance = createInstance(model)
+  const instance = createInstance(model)
 
-  const moved = chessInstance.move(moveInput)
+  const moved = instance.move(moveInput)
 
   if (!moved) {
     return Result.Err("invalid_move")
   }
 
-  const capturedPieceSymbol = moved.captured
-  const capturesNew = capturedPieceSymbol ? [...model.captures] : model.captures
+  // const capturesNew = capturedPieceSymbol ? [...model.captures] : model.captures
 
   return Result.Ok({
-    fen: chessInstance.fen(),
-    captures: capturesNew,
+    pgn: instance.pgn(),
   })
 }
