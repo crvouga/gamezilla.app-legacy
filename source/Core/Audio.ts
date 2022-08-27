@@ -14,15 +14,20 @@ export const play = <msg>(src: string, mapper: (result: PlayResult) => msg) =>
     Cmd.perform((result) => mapper(result)),
   )
 
+// using hacks for ios:  https://web.archive.org/web/20170215083556/http://www.ibm.com/developerworks/library/wa-ioshtml5/
+
+let _audio: HTMLAudioElement
+
 const playTask =
   (src: string): Task.Task<PlayResult> =>
   async () => {
     try {
-      const audio = new Audio(src)
-      audio.autoplay = true
-      audio.src = src
-      await audio.play()
-
+      if (!_audio) {
+        _audio = new Audio()
+      }
+      _audio.src = src
+      _audio.autoplay = true
+      await _audio.play()
       return Result.Ok(Unit)
     } catch (error) {
       return Result.Err("Unknown")
