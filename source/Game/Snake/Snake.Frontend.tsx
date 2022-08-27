@@ -329,7 +329,7 @@ export const view =
               >
                 <UI.ButtonBase
                   sx={leftRight}
-                  onClick={() => dispatch(["InputDirection", { direction: "left", userId: currentUserId }])}
+                  onMouseDown={() => dispatch(["InputDirection", { direction: "left", userId: currentUserId }])}
                 >
                   <UI.Icons.KeyboardArrowLeft sx={iconSx} />
                 </UI.ButtonBase>
@@ -337,14 +337,14 @@ export const view =
                 <UI.Box sx={{ display: "flex", flexDirection: "column" }}>
                   <UI.ButtonBase
                     sx={upDown}
-                    onClick={() => dispatch(["InputDirection", { direction: "up", userId: currentUserId }])}
+                    onMouseDown={() => dispatch(["InputDirection", { direction: "up", userId: currentUserId }])}
                   >
                     <UI.Icons.KeyboardArrowUp sx={iconSx} />
                   </UI.ButtonBase>
 
                   <UI.ButtonBase
                     sx={upDown}
-                    onClick={() => dispatch(["InputDirection", { direction: "down", userId: currentUserId }])}
+                    onMouseDown={() => dispatch(["InputDirection", { direction: "down", userId: currentUserId }])}
                   >
                     <UI.Icons.KeyboardArrowDown sx={iconSx} />
                   </UI.ButtonBase>
@@ -352,7 +352,7 @@ export const view =
 
                 <UI.ButtonBase
                   sx={leftRight}
-                  onClick={() => dispatch(["InputDirection", { direction: "right", userId: currentUserId }])}
+                  onMouseDown={() => dispatch(["InputDirection", { direction: "right", userId: currentUserId }])}
                 >
                   <UI.Icons.KeyboardArrowRight sx={iconSx} />
                 </UI.ButtonBase>
