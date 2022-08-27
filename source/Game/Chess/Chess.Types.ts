@@ -67,6 +67,8 @@ export type GameOver =
       winner: Board.Color
     }
 
+export type ClockTicked = ["ClockTicked", SharedModel]
+
 export const clockTicked = (model: SharedModel): SharedModel => {
   switch (model.type) {
     case "GameEnded": {
@@ -197,7 +199,7 @@ export type Response =
 export type Move = ["Move", Board.MoveInput & { userId: UserId.UserId }]
 export type MoveResulted = [
   "MovedResulted",
-  Result.Result<MoveProblem, SharedModel>,
+  Result.Result<MoveProblem, SharedModel & { didCapture: boolean }>,
 ]
 export type MoveProblem =
   | Board.MoveProblem
@@ -236,7 +238,7 @@ export const move = (
         winner: Board.toTurn(model.board),
       },
     }
-    return Result.Ok(modelNew)
+    return Result.Ok({ ...modelNew, didCapture: boardNew.didCapture })
   }
 
   if (Board.inStalemate(boardNew)) {
@@ -250,14 +252,15 @@ export const move = (
         tag: "Stalemate",
       },
     }
-    return Result.Ok(modelNew)
+    return Result.Ok({ ...modelNew, didCapture: boardNew.didCapture })
   }
 
   const modelNew: SharedModel = {
     ...model,
     board: boardNew,
   }
-  return Result.Ok(modelNew)
+
+  return Result.Ok({ ...modelNew, didCapture: boardNew.didCapture })
 }
 
 //
