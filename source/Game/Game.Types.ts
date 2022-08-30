@@ -1,7 +1,7 @@
-import * as TicTacToe from "./TicTacToe/TicTacToe.Types"
+import * as Chess from "./Chess/Chess.Types"
 import * as ConnectFour from "./ConnectFour/ConnectFour.Types"
 import * as Snake from "./Snake/Snake.Types"
-import * as Chess from "./Chess/Chess.Types"
+import * as TicTacToe from "./TicTacToe/TicTacToe.Types"
 
 //
 //

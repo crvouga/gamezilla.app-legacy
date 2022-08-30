@@ -1,5 +1,5 @@
 import { UserId } from "../../Data"
-import { MoveResult, Columns, emptyColumns, ColumnIndex } from "./ConnectFour"
+import { ColumnIndex, Columns, emptyColumns, MoveResult } from "./ConnectFour"
 
 //
 //

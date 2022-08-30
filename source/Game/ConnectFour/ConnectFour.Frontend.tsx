@@ -4,13 +4,13 @@ import {
   COLUMN_COUNT,
   MAX_COLUMN_HEIGHT,
   theme,
-  ViewColumns,
+  ViewColumns
 } from "./ConnectFour"
 import {
   FrontendModel,
   FrontendMsg,
   initSharedModel,
-  ToFrontend,
+  ToFrontend
 } from "./ConnectFour.Types"
 
 //

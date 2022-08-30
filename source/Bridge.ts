@@ -1,7 +1,7 @@
 import * as Rx from "rxjs"
+import { ConnectionStatus, ToBackend, ToFrontend } from "./App.Types"
 import { Cmd, Option, pipe, Sub } from "./Core"
 import { ClientId } from "./Data"
-import { ToBackend, ToFrontend, ConnectionStatus } from "./App.Types"
 
 //
 //

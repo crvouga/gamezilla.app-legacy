@@ -7,7 +7,7 @@ import {
   FrontendModel,
   FrontendMsg,
   initSharedModel,
-  ToFrontend,
+  ToFrontend
 } from "./TicTacToe.Types"
 
 //
