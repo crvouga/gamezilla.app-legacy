@@ -358,7 +358,7 @@ const sync = ({
   ]
 }
 
-export const updateFromAction = (
+export const runAction = (
   { currentUserId, sendToBackend }: { currentUserId: UserId.UserId, sendToBackend: (msg: ToBackend) => Cmd.Cmd<never> },
   action: Action,
   model: Model,

@@ -99,7 +99,7 @@ export const update = (msg: Msg, model: Store): [Store, Cmd.Cmd<Msg>] => {
   }
 }
 
-export const updateFromAction = (
+export const runAction = (
   action: Action,
   model: Store,
 ): [Store, Cmd.Cmd<Msg>] => {
