@@ -1,4 +1,3 @@
-import * as Bridge from "../../../Bridge"
 import { Cmd, exhaustive, Sub, Time } from "../../../Core"
 import { ClientId, RoomId } from "../../../Data"
 import * as Board from "../Board"
@@ -45,7 +44,7 @@ export const init: Model = {
 export type Msg = BackendMsg
 
 export const update = (
-  { broadcast }: { broadcast: Broadcast },
+  { sendToRoom }: { sendToRoom: (msg: ToFrontend) => Cmd.Cmd<never> },
   msg: Msg,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
@@ -55,28 +54,31 @@ export const update = (
 
       return [
         { ...model, sharedModel: modelNew },
-        broadcast(["Sync", modelNew]),
+        sendToRoom(["Sync", modelNew]),
       ]
     }
   }
 }
 
 export const updateFromFrontend = (
-  { clientId, roomId }: { roomId: RoomId.RoomId; clientId: ClientId.ClientId },
+  {
+    sendToClient,
+    sendToRoom,
+  }: {
+    sendToClient: (msg: ToFrontend) => Cmd.Cmd<never>
+    sendToRoom: (msg: ToFrontend) => Cmd.Cmd<never>
+  },
   msg: ToBackend,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
     case "Init": {
-      return [
-        model,
-        sendToFrontend([clientId], roomId, ["Sync", model.sharedModel]),
-      ]
+      return [model, sendToClient(["Sync", model.sharedModel])]
     }
 
     case "RequestToDraw": {
       return sendResponse(
-        { clientId, roomId },
+        { sendToClient, sendToRoom },
         ["RequestToDrawResulted", requestToDraw(msg[1], model.sharedModel)],
         model,
       )
@@ -84,7 +86,7 @@ export const updateFromFrontend = (
 
     case "Resign": {
       return sendResponse(
-        { clientId, roomId },
+        { sendToClient, sendToRoom },
         ["ResignResulted", resign(msg[1], model.sharedModel)],
         model,
       )
@@ -92,7 +94,7 @@ export const updateFromFrontend = (
 
     case "InputClock": {
       return sendResponse(
-        { clientId, roomId },
+        { sendToClient, sendToRoom },
         ["InputClockResulted", inputClock(msg[1], model.sharedModel)],
         model,
       )
@@ -100,7 +102,7 @@ export const updateFromFrontend = (
 
     case "InputPlayer": {
       return sendResponse(
-        { clientId, roomId },
+        { sendToClient, sendToRoom },
         ["InputPlayerResulted", inputPlayer(msg[1], model.sharedModel)],
         model,
       )
@@ -108,7 +110,7 @@ export const updateFromFrontend = (
 
     case "StartGame": {
       return sendResponse(
-        { clientId, roomId },
+        { sendToClient, sendToRoom },
         ["StartGameResulted", startGame(model.sharedModel)],
         model,
       )
@@ -116,7 +118,7 @@ export const updateFromFrontend = (
 
     case "Move": {
       return sendResponse(
-        { clientId, roomId },
+        { sendToClient, sendToRoom },
         ["MovedResulted", move(msg[1], model.sharedModel)],
         model,
       )
@@ -124,7 +126,7 @@ export const updateFromFrontend = (
 
     case "RespondToDraw": {
       return sendResponse(
-        { clientId, roomId },
+        { sendToClient, sendToRoom },
         ["RespondToDrawResulted", respondToDraw(msg[1], model.sharedModel)],
         model,
       )
@@ -132,7 +134,7 @@ export const updateFromFrontend = (
 
     case "NewGame": {
       return sendResponse(
-        { clientId, roomId },
+        { sendToClient, sendToRoom },
         ["NewGameResulted", newGame(model.sharedModel)],
         model,
       )
@@ -145,7 +147,13 @@ export const updateFromFrontend = (
 }
 
 const sendResponse = (
-  { clientId, roomId }: { clientId: ClientId.ClientId; roomId: RoomId.RoomId },
+  {
+    sendToClient,
+    sendToRoom,
+  }: {
+    sendToClient: (msg: ToFrontend) => Cmd.Cmd<never>
+    sendToRoom: (msg: ToFrontend) => Cmd.Cmd<never>
+  },
   response: Response,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
@@ -153,8 +161,8 @@ const sendResponse = (
     return [
       model,
       Cmd.batch([
-        sendToFrontend([clientId], roomId, response),
-        sendToFrontend([clientId], roomId, ["Sync", model.sharedModel]),
+        sendToClient(response),
+        sendToClient(["Sync", model.sharedModel]),
       ]),
     ]
   }
@@ -166,38 +174,10 @@ const sendResponse = (
   return [
     modelNew,
     Cmd.batch([
-      broadcast(roomId, response),
-      broadcast(roomId, ["Sync", modelNew.sharedModel]),
+      sendToRoom(response),
+      sendToRoom(["Sync", modelNew.sharedModel]),
     ]),
   ]
-}
-
-//
-//
-//
-// Bridge
-//
-//
-//
-
-export const sendToFrontend = (
-  clientIds: ClientId.ClientId[],
-  roomId: RoomId.RoomId,
-  msg: ToFrontend,
-) => {
-  return Bridge.sendToFrontend(clientIds, [
-    "GameRoom",
-    ["Games", roomId, ["Chess", ["UserVsUser", msg]]],
-  ])
-}
-
-type Broadcast = (toFrontend: ToFrontend) => Cmd.Cmd<never>
-
-export const broadcast = (roomId: RoomId.RoomId, msg: ToFrontend) => {
-  return Bridge.broadcast([
-    "GameRoom",
-    ["Games", roomId, ["Chess", ["UserVsUser", msg]]],
-  ])
 }
 
 //
@@ -216,6 +196,11 @@ export const subscriptions = (
     case "Setup": {
       return Sub.None
     }
+
+    case "GameOver": {
+      return Sub.None
+    }
+
     case "Game": {
       const turn = Board.toTurn(model.sharedModel.board)
 

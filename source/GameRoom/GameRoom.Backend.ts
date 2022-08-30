@@ -1,5 +1,5 @@
-import * as Bridge from "../Bridge"
-import { Cmd, exhaustive, pipe, Result, Sub, tagCmd } from "../Core"
+import { AssignmentReturnedOutlined } from "@mui/icons-material"
+import { Cmd, exhaustive, pipe, Result, Sub } from "../Core"
 import { remove } from "../Core/Record"
 import { ClientId, RoomId, UserId } from "../Data"
 import * as Game from "../Game/Game.Backend"
@@ -7,13 +7,13 @@ import { GameName } from "../Game/Game.Types"
 import {
   BackendModel,
   BackendMsg,
+  CloseGameResult,
   CreateRoomResult,
   JoinRoomResult,
   LeaveRoomResult,
   OpenGameResulted,
   Response,
   RoomModel,
-  CloseGameResult,
   ToBackend,
   ToFrontend,
 } from "./GameRoom.Types"
@@ -44,7 +44,26 @@ export const init: Model = {
 
 export type Msg = BackendMsg
 
-export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
+export const update = (
+  {
+    sendToUser,
+  }: {
+    sendToUser: (userIds: UserId.UserId[], msg: ToFrontend) => Cmd.Cmd<never>
+  },
+  msg: Msg,
+  model: Model,
+): [Model, Cmd.Cmd<Msg>] => {
+  const sendToRoom = (
+    roomId: RoomId.RoomId,
+    msg: ToFrontend,
+  ): Cmd.Cmd<never> => {
+    const userIds = Object.values(model.users)
+      .filter((user) => user.roomId === roomId)
+      .map((user) => user.userId)
+
+    return sendToUser(userIds, msg)
+  }
+
   switch (msg[0]) {
     case "Games": {
       const roomId = msg[1]
@@ -59,7 +78,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
       const [gameNew, gameCmd] = Game.update(
         {
-          broadcast: (msg) => broadcast(["Games", roomId, msg]),
+          sendToRoom: (msg) => sendToRoom(roomId, ["Games", roomId, msg]),
           roomId,
         },
         gameMsg,
@@ -86,10 +105,23 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 }
 
 export const updateFromFrontend = (
-  clientId: ClientId.ClientId,
+  {
+    sendToClient,
+    sendToUser,
+  }: {
+    sendToClient: (msg: ToFrontend) => Cmd.Cmd<never>
+    sendToUser: (userId: UserId.UserId[], msg: ToFrontend) => Cmd.Cmd<never>
+  },
   msg: ToBackend,
   model: Model,
 ): [Model, Cmd.Cmd<BackendMsg>] => {
+  const sendToRoom = (roomId: RoomId.RoomId, msg: ToFrontend) => {
+    const userIds = Object.values(model.users)
+      .filter((user) => user.roomId === roomId)
+      .map((user) => user.userId)
+    return sendToUser(userIds, msg)
+  }
+
   switch (msg[0]) {
     case "Games": {
       const roomId = msg[1]
@@ -103,7 +135,10 @@ export const updateFromFrontend = (
       const gameMsg = msg[2]
 
       const [gameNew, gameCmd] = Game.updateFromFrontend(
-        { clientId, roomId },
+        {
+          sendToClient: (msg) => sendToClient(["Games", roomId, msg]),
+          sendToRoom: (msg) => sendToRoom(roomId, ["Games", roomId, msg]),
+        },
         gameMsg,
         game,
       )
@@ -126,35 +161,35 @@ export const updateFromFrontend = (
     }
 
     case "CreateRoom": {
-      return updateResponse(clientId, model, [
+      return updateResponse({ sendToClient, sendToUser }, model, [
         "CreateRoomResulted",
         createRoom(msg[1], model),
       ])
     }
 
     case "LeaveRoom": {
-      return updateResponse(clientId, model, [
+      return updateResponse({ sendToClient, sendToUser }, model, [
         "LeaveRoomResulted",
         leaveRoom(msg[1], model),
       ])
     }
 
     case "JoinRoom": {
-      return updateResponse(clientId, model, [
+      return updateResponse({ sendToClient, sendToUser }, model, [
         "JoinRoomResulted",
         joinRoom(msg[1], model),
       ])
     }
 
     case "OpenGame": {
-      return updateResponse(clientId, model, [
+      return updateResponse({ sendToClient, sendToUser }, model, [
         "OpenGameResulted",
         openGame(msg[1], model),
       ])
     }
 
     case "CloseGame": {
-      return updateResponse(clientId, model, [
+      return updateResponse({ sendToClient, sendToUser }, model, [
         "CloseGameResulted",
         closeGame(msg[1], model),
       ])
@@ -166,24 +201,32 @@ export const updateFromFrontend = (
 }
 
 const updateResponse = (
-  clientId: ClientId.ClientId,
+  {
+    sendToClient,
+    sendToUser,
+  }: {
+    sendToClient: (msg: ToFrontend) => Cmd.Cmd<never>
+    sendToUser: (userId: UserId.UserId[], msg: ToFrontend) => Cmd.Cmd<never>
+  },
   model: Model,
   response: Response,
 ): [Model, Cmd.Cmd<BackendMsg>] => {
   if (response[1].type === "Err") {
-    return [model, sendToFrontend([clientId], response)]
+    return [
+      model,
+      Cmd.batch([sendToClient(response), sendToClient(["Sync", model])]),
+    ]
   }
 
-  const modelNew: Model = {
-    ...model,
-    ...response[1].value,
-  }
+  const modelNew = response[1].value
+
+  const allUserIds = Object.values(modelNew.users).map((user) => user.userId)
 
   return [
     modelNew,
     Cmd.batch([
-      broadcast(["Sync", modelNew]),
-      sendToFrontend([clientId], response),
+      sendToUser(allUserIds, ["Sync", modelNew]),
+      sendToClient(response),
     ]),
   ]
 }
@@ -434,25 +477,6 @@ export const closeGame = (
   }
 
   return Result.Ok(modelNew)
-}
-
-//
-//
-//
-// Bridge
-//
-//
-//
-
-const broadcast = (toFrontend: ToFrontend) => {
-  return Bridge.broadcast(["GameRoom", toFrontend])
-}
-
-const sendToFrontend = (
-  clientIds: ClientId.ClientId[],
-  toFrontend: ToFrontend,
-) => {
-  return Bridge.sendToFrontend(clientIds, ["GameRoom", toFrontend])
 }
 
 //

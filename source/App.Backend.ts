@@ -1,10 +1,10 @@
 import * as Http from "http"
 import * as Socket from "socket.io"
-import { BackendModel, BackendMsg, ToBackend } from "./App.Types"
+import { BackendModel, BackendMsg, ToBackend, ToFrontend } from "./App.Types"
 import * as Bridge from "./Bridge"
 import { Cmd, pipe, Platform, Sub, tag, tagCmd } from "./Core"
 import { remove } from "./Core/Record"
-import { ClientId } from "./Data"
+import { ClientId, UserId } from "./Data"
 import * as GameRoom from "./GameRoom/GameRoom.Backend"
 
 //
@@ -36,6 +36,10 @@ export const init: [Model, Cmd.Cmd<Msg>] = [
 export type Msg = BackendMsg
 
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
+  const sendToUser = (userIds: UserId.UserId[], msg: ToFrontend) => {
+    return Bridge.broadcast(msg)
+  }
+
   switch (msg[0]) {
     case "[Frontend]":
       return updateFromFrontend(msg[1], msg[2], model)
@@ -71,7 +75,16 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
     }
 
     case "GameRoom": {
-      const [child, childCmd] = GameRoom.update(msg[1], model.gameRoom)
+      const [child, childCmd] = GameRoom.update(
+        {
+          sendToUser: (userIds, msg) => {
+            return Bridge.broadcast(["GameRoom", msg])
+          },
+        },
+        msg[1],
+        model.gameRoom,
+      )
+
       return [{ ...model, gameRoom: child }, tagCmd("GameRoom", childCmd)]
     }
   }
@@ -85,10 +98,15 @@ export const updateFromFrontend = (
   switch (msg[0]) {
     case "GameRoom": {
       const [child, childCmd] = GameRoom.updateFromFrontend(
-        clientId,
+        {
+          sendToClient: (msg) =>
+            Bridge.sendToFrontend([clientId], ["GameRoom", msg]),
+          sendToUser: (userIds, msg) => Bridge.broadcast(["GameRoom", msg]),
+        },
         msg[1],
         model.gameRoom,
       )
+
       return [{ ...model, gameRoom: child }, tagCmd("GameRoom", childCmd)]
     }
   }

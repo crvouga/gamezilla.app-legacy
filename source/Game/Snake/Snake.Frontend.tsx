@@ -1,14 +1,13 @@
 import { useLayoutEffect, useRef } from "react"
-import * as Bridge from "../../Bridge"
-import * as Store from "../../Store"
-import { Time, Cmd, exhaustive, Keyboard, Option, Result, Sub } from "../../Core"
+import { Cmd, exhaustive, Keyboard, Option, Result, Sub } from "../../Core"
 import { RoomId, UserId } from "../../Data"
-import * as Snake from "./Snake"
-import * as Position from "./Position"
-import * as Direction from "./Direction"
 import * as Route from "../../Route"
 import * as Snackbar from "../../Snackbar"
+import * as Store from "../../Store"
 import * as UI from "../../UI"
+import * as Direction from "./Direction"
+import * as Position from "./Position"
+import * as Snake from "./Snake"
 import {
   canStartGame,
   FrontendModel,
@@ -16,7 +15,7 @@ import {
   initSharedModel,
   SharedModel,
   ToBackend,
-  ToFrontend,
+  ToFrontend
 } from "./Snake.Types"
 
 //
@@ -34,17 +33,6 @@ export const init: Model = {
   openedMenuId: Option.None
 }
 
-//
-//
-//
-// Bridge
-//
-//
-//
-
-export const sendToBackend = (roomId: RoomId.RoomId, toBackend: ToBackend) => {
-  return Bridge.sendToBackend(["GameRoom", ["Games", roomId, ['Snake', toBackend]]])
-}
 
 //
 //
@@ -60,9 +48,12 @@ export type OutAction = Snackbar.Action
 
 export const update = (
   {
-    currentRoomId,
+    sendToBackend,
     currentUserId,
-  }: { currentRoomId: RoomId.RoomId; currentUserId: UserId.UserId },
+  }: {
+    sendToBackend: (msg: ToBackend) => Cmd.Cmd<never>
+    currentUserId: UserId.UserId
+  },
   msg: Msg,
   _model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
@@ -86,7 +77,7 @@ export const update = (
 
       const changeDirectionCmd =
         direction.type === "Some"
-          ? sendToBackend(currentRoomId, [
+          ? sendToBackend([
             "InputDirection",
             { userId: currentUserId, direction: direction.value },
           ])
@@ -94,7 +85,7 @@ export const update = (
 
       const toggleStatusCmd =
         msg[1] === "Space"
-          ? sendToBackend(currentRoomId, [
+          ? sendToBackend([
             "ToggleStatus",
             { userId: currentUserId },
           ])
@@ -104,19 +95,19 @@ export const update = (
     }
 
     case "ToggleStatus": {
-      return [model, sendToBackend(currentRoomId, msg)]
+      return [model, sendToBackend(msg)]
     }
 
     case "InputPlayer": {
-      return [model, sendToBackend(currentRoomId, msg)]
+      return [model, sendToBackend(msg)]
     }
 
     case 'InputDirection': {
-      return [model, sendToBackend(currentRoomId, msg)]
+      return [model, sendToBackend(msg)]
     }
 
     case 'StartGame': {
-      return [model, sendToBackend(currentRoomId, msg)]
+      return [model, sendToBackend(msg)]
     }
 
     case 'OpenedMenu': {

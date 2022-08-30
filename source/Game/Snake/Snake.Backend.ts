@@ -1,4 +1,3 @@
-import * as Bridge from "../../Bridge"
 import { Cmd, Result, Sub, Time } from "../../Core"
 import { ClientId, RoomId } from "../../Data"
 import * as Snake from "./Snake"
@@ -34,29 +33,6 @@ export const init = initSharedModel
 //
 //
 //
-// Bridge
-//
-//
-//
-
-export const sendToFrontend = (
-  clientIds: ClientId.ClientId[],
-  roomId: RoomId.RoomId,
-  msg: ToFrontend,
-) => {
-  return Bridge.sendToFrontend(clientIds, [
-    "GameRoom",
-    ["Games", roomId, ["Snake", msg]],
-  ])
-}
-
-export const broadcast = (roomId: RoomId.RoomId, msg: ToFrontend) => {
-  return Bridge.broadcast(["GameRoom", ["Games", roomId, ["Snake", msg]]])
-}
-
-//
-//
-//
 // Update
 //
 //
@@ -65,7 +41,7 @@ export const broadcast = (roomId: RoomId.RoomId, msg: ToFrontend) => {
 export type Msg = BackendMsg
 
 export const update = (
-  { roomId }: { roomId: RoomId.RoomId },
+  { sendToRoom }: { sendToRoom: (msg: ToFrontend) => Cmd.Cmd<never> },
   msg: Msg,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
@@ -76,20 +52,26 @@ export const update = (
         gameStatus: model.gameStatus,
       }
 
-      return [modelNew, broadcast(roomId, ["Sync", modelNew])]
+      return [modelNew, sendToRoom(["Sync", modelNew])]
     }
   }
 }
 
 export const updateFromFrontend = (
-  { clientId, roomId }: { clientId: ClientId.ClientId; roomId: RoomId.RoomId },
+  {
+    sendToClient,
+    sendToRoom,
+  }: {
+    sendToClient: (msg: ToFrontend) => Cmd.Cmd<never>
+    sendToRoom: (msg: ToFrontend) => Cmd.Cmd<never>
+  },
   msg: ToBackend,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
     case "StartGame": {
       return updateRequest(
-        { clientId, roomId },
+        { sendToClient, sendToRoom },
         ["StartGameResulted", startGame(model)],
         model,
       )
@@ -97,7 +79,7 @@ export const updateFromFrontend = (
 
     case "ToggleStatus": {
       return updateRequest(
-        { clientId, roomId },
+        { sendToClient, sendToRoom },
         ["ToggleStatusResulted", toggleStatus(msg[1], model)],
         model,
       )
@@ -105,7 +87,7 @@ export const updateFromFrontend = (
 
     case "InputDirection": {
       return updateRequest(
-        { clientId, roomId },
+        { sendToClient, sendToRoom },
         ["InputDirectionResulted", inputDirection(msg[1], model)],
         model,
       )
@@ -113,7 +95,7 @@ export const updateFromFrontend = (
 
     case "InputPlayer": {
       return updateRequest(
-        { clientId, roomId },
+        { sendToClient, sendToRoom },
         ["InputPlayerResulted", inputPlayer(msg[1], model)],
         model,
       )
@@ -122,21 +104,25 @@ export const updateFromFrontend = (
 }
 
 const updateRequest = (
-  { clientId, roomId }: { clientId: ClientId.ClientId; roomId: RoomId.RoomId },
+  {
+    sendToClient,
+    sendToRoom,
+  }: {
+    sendToClient: (msg: ToFrontend) => Cmd.Cmd<never>
+    sendToRoom: (msg: ToFrontend) => Cmd.Cmd<never>
+  },
   response: Response,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
-  const toFrontend = sendToFrontend([clientId], roomId, response)
-
   if (response[1].type === "Err") {
-    return [model, toFrontend]
+    return [model, sendToClient(response)]
   }
 
   const modelNew = response[1].value
 
   return [
     modelNew,
-    Cmd.batch([toFrontend, broadcast(roomId, ["Sync", modelNew])]),
+    Cmd.batch([sendToRoom(response), sendToRoom(["Sync", modelNew])]),
   ]
 }
 

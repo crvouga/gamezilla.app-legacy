@@ -1,10 +1,10 @@
 import { Cmd, Sub } from "../../Core"
-import { ClientId } from "../../Data"
 import {
   BackendModel,
   BackendMsg,
   initSharedModel,
   ToBackend,
+  ToFrontend,
 } from "./ConnectFour.Types"
 
 //
@@ -38,7 +38,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 }
 
 export const updateFromFrontend = (
-  clientId: ClientId.ClientId,
+  { sendToClient }: { sendToClient: (msg: ToFrontend) => Cmd.Cmd<never> },
   msg: ToBackend,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
