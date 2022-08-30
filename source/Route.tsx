@@ -166,7 +166,7 @@ export const update = (msg: Msg): Model => {
   }
 }
 
-export const updateFromAction = (
+export const runAction = (
   model: Model,
   action: Action,
 ): [Model, Cmd.Cmd<Msg>] => {

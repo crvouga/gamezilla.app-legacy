@@ -62,7 +62,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
 const snackTimeout = 4000
 
-export const updateFromAction = (
+export const runAction = (
   action: Action,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
@@ -105,31 +105,31 @@ const removeById = (snackId: string, model: Model): [Model, Cmd.Cmd<Msg>] => [
 
 export const view =
   ({ sx }: { sx?: SxProps }, model: Model): UI.View<Msg> =>
-  (dispatch) => {
-    const snack = model.queue[0]
+    (dispatch) => {
+      const snack = model.queue[0]
 
-    if (!snack) {
-      return <></>
-    }
+      if (!snack) {
+        return <></>
+      }
 
-    return (
-      <UI.Portal>
-        <UI.Snackbar
-          sx={sx}
-          open
-          message={snack.message}
-          onClose={() => dispatch(["ClickedAwayClose", snack.snackId])}
-        >
-          <UI.Alert
-            variant="filled"
-            onClose={() => dispatch(["ClickedClose", snack.snackId])}
-            severity={snack.variant === "Error" ? "error" : "info"}
-            sx={{ width: "100%" }}
+      return (
+        <UI.Portal>
+          <UI.Snackbar
+            sx={sx}
+            open
+            message={snack.message}
+            onClose={() => dispatch(["ClickedAwayClose", snack.snackId])}
           >
-            {snack.title && <UI.AlertTitle>{snack.title}</UI.AlertTitle>}
-            {snack.message}
-          </UI.Alert>
-        </UI.Snackbar>
-      </UI.Portal>
-    )
-  }
+            <UI.Alert
+              variant="filled"
+              onClose={() => dispatch(["ClickedClose", snack.snackId])}
+              severity={snack.variant === "Error" ? "error" : "info"}
+              sx={{ width: "100%" }}
+            >
+              {snack.title && <UI.AlertTitle>{snack.title}</UI.AlertTitle>}
+              {snack.message}
+            </UI.Alert>
+          </UI.Snackbar>
+        </UI.Portal>
+      )
+    }

@@ -173,7 +173,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
           return pipe(
             [{ ...model, page: pageNew }, tagCmd("Page", pageCmd)],
-            andThenMany(updateFromAction, actions),
+            andThenMany(runAction, actions),
           )
         }
 
@@ -186,7 +186,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
           return pipe(
             [{ ...model, page: pageNew }, tagCmd("Page", pageCmd)],
-            andThenMany(updateFromAction, actions),
+            andThenMany(runAction, actions),
           )
         }
 
@@ -205,7 +205,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
           return pipe(
             [{ ...model, page: pageNew }, tagCmd("Page", pageCmd)],
-            andThenMany(updateFromAction, actions),
+            andThenMany(runAction, actions),
           )
         }
 
@@ -244,7 +244,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
           )
           return pipe(
             [{ ...modelNew, page }, tagCmd("Page", pageCmd)],
-            andThenMany(updateFromAction, actions),
+            andThenMany(runAction, actions),
           )
         }
 
@@ -298,7 +298,7 @@ export const updateFromBackend = (
 
       return pipe(
         [{ ...model, gameRoom }, tagCmd("GameRoom", gameRoomCmd)],
-        andThenMany(updateFromAction, actions),
+        andThenMany(runAction, actions),
       )
     }
   }
@@ -329,7 +329,7 @@ const updateStatusChanged =
             ],
           ]
 
-          return pipe([model, Cmd.None], andThenMany(updateFromAction, [action]))
+          return pipe([model, Cmd.None], andThenMany(runAction, [action]))
         }
 
         case "ProfileMissing": {
@@ -353,7 +353,7 @@ const updateStatusChanged =
           )
           return pipe(
             [{ ...model, page }, tagCmd("Page", pageCmd)],
-            andThenMany(updateFromAction, actions),
+            andThenMany(runAction, actions),
           )
         }
 
@@ -362,18 +362,18 @@ const updateStatusChanged =
       }
     }
 
-const updateFromAction = (
+const runAction = (
   action: OutAction,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (action[0]) {
     case "Store": {
-      const [storeNew, storeCmd] = Store.updateFromAction(action, model.store)
+      const [storeNew, storeCmd] = Store.runAction(action, model.store)
       return [{ ...model, store: storeNew }, tagCmd("Store", storeCmd)]
     }
 
     case "Snackbar": {
-      const [snackbarNew, snackbarCmd] = Snackbar.updateFromAction(
+      const [snackbarNew, snackbarCmd] = Snackbar.runAction(
         action,
         model.snackbar,
       )
@@ -390,7 +390,7 @@ const updateFromAction = (
 
       const currentUserId = model.auth[1].userId
 
-      const [gameRoom, gameRoomCmd] = GameRoom.updateFromAction(
+      const [gameRoom, gameRoomCmd] = GameRoom.runAction(
         { currentUserId, sendToBackend: msg => Bridge.sendToBackend(['GameRoom', msg]) },
         action,
         model.gameRoom,
@@ -399,7 +399,7 @@ const updateFromAction = (
     }
 
     case "Auth": {
-      const [authNew, authCmd] = Auth.updateFromAction(action, model.auth)
+      const [authNew, authCmd] = Auth.runAction(action, model.auth)
       return [{ ...model, auth: authNew }, tagCmd("Auth", authCmd)]
     }
 
