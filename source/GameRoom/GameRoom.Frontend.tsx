@@ -321,10 +321,7 @@ const sync = ({
           return [
             {
               ...games,
-              [roomId]: [gameName, {
-                ...frontendGame[1],
-                ...backendGame[1]
-              }]
+              [roomId]: Game.mergeBackendModel(frontendGame, backendGame),
             },
             cmd
           ]

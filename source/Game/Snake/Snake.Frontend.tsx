@@ -12,6 +12,7 @@ import {
   canStartGame,
   FrontendModel,
   FrontendMsg,
+  BackendModel,
   initSharedModel,
   SharedModel,
   ToBackend,
@@ -459,4 +460,12 @@ export const CoverArt = () => {
       ))}
     </svg>
   )
+}
+
+
+export const mergeBackendModel = (frontendModel: FrontendModel, backendModel: BackendModel): FrontendModel => {
+  return {
+    ...backendModel,
+    openedMenuId: frontendModel.openedMenuId,
+  }
 }

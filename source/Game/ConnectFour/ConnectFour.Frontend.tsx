@@ -7,6 +7,7 @@ import {
   ViewColumns
 } from "./ConnectFour"
 import {
+  BackendModel,
   FrontendModel,
   FrontendMsg,
   initSharedModel,
@@ -212,4 +213,11 @@ export const CoverArt = ({ id }: { id: string }) => {
       />
     </svg>
   )
+}
+
+
+export const mergeBackendModel = (_frontendModel: FrontendModel, backendModel: BackendModel): FrontendModel => {
+  return {
+    columns: backendModel.columns
+  }
 }

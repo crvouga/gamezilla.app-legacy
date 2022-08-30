@@ -4,6 +4,7 @@ import * as Store from "../../Store"
 import * as UI from "../../UI"
 import { Position, Slot, theme, ViewBoard, ViewSlot } from "./TicTacToe"
 import {
+  BackendModel,
   FrontendModel,
   FrontendMsg,
   initSharedModel,
@@ -124,4 +125,12 @@ export const CoverArt = () => {
       ))}
     </svg>
   )
+}
+
+
+export const mergeBackendModel = (_frontendModel: FrontendModel, backendModel: BackendModel): FrontendModel => {
+  return {
+    board: backendModel.board,
+    players: backendModel.players,
+  }
 }

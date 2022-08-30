@@ -3,6 +3,7 @@ import { UserId } from "../../Data"
 import * as Store from "../../Store"
 import * as UI from "../../UI"
 import {
+  BackendModel,
   FrontendModel,
   FrontendMsg,
   ToBackend,
@@ -194,4 +195,25 @@ export const CoverArt = () => {
 
     </svg>
   )
+}
+
+
+export const mergeBackendModel = (frontendModel: FrontendModel, backendModel: BackendModel): FrontendModel => {
+  switch (frontendModel.type) {
+    case 'UserVsUser': {
+      if (backendModel.type === 'UserVsUser') {
+        return {
+          type: "UserVsUser",
+          child: {
+            boardWidth: frontendModel.child.boardWidth,
+            isFlipped: frontendModel.child.isFlipped,
+            openedMenuId: frontendModel.child.openedMenuId,
+            openedModal: frontendModel.child.openedModal,
+            sharedModel: backendModel.child.sharedModel
+          }
+        }
+      }
+      return frontendModel
+    }
+  }
 }
