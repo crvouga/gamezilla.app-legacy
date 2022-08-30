@@ -3,8 +3,8 @@ import * as Socket from "socket.io"
 import { BackendModel, BackendMsg, ToBackend, ToFrontend } from "./App.Types"
 import * as Bridge from "./Bridge"
 import { Cmd, pipe, Platform, Sub, tag, tagCmd } from "./Core"
-import { remove } from "./Core/Record"
-import { ClientId, UserId } from "./Data"
+import { removeKey } from "./Core/Record"
+import { ClientId, SessionId, UserId } from "./Data"
 import * as GameRoom from "./GameRoom/GameRoom.Backend"
 
 //
@@ -20,7 +20,7 @@ export type Model = BackendModel
 export const init: [Model, Cmd.Cmd<Msg>] = [
   {
     gameRoom: GameRoom.init,
-    clients: {},
+    sessions: {},
   },
   Cmd.None,
 ]
@@ -42,16 +42,18 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
   switch (msg[0]) {
     case "[Frontend]":
-      return updateFromFrontend(msg[1], msg[2], model)
+      return updateFromFrontend(msg[1], msg[2], msg[3], model)
 
     case "ClientConnected": {
-      const clientId = msg[1]
+      const sessionId = msg[1]
+      const clientId = msg[2]
       return [
         {
           ...model,
-          clients: {
-            ...model.clients,
-            [clientId]: {
+          sessions: {
+            ...model.sessions,
+            [sessionId]: {
+              sessionId,
               clientId,
             },
           },
@@ -64,11 +66,11 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
     }
 
     case "ClientDisconnected": {
-      const clientId = msg[1]
+      const sessionId = msg[1]
       return [
         {
           ...model,
-          clients: remove(clientId, model.clients),
+          sessions: removeKey(sessionId, model.sessions),
         },
         Cmd.None,
       ]
@@ -77,9 +79,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
     case "GameRoom": {
       const [child, childCmd] = GameRoom.update(
         {
-          sendToUser: (userIds, msg) => {
-            return Bridge.broadcast(["GameRoom", msg])
-          },
+          sendToUser: (userIds, msg) => sendToUser(userIds, ["GameRoom", msg]),
         },
         msg[1],
         model.gameRoom,
@@ -91,17 +91,25 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 }
 
 export const updateFromFrontend = (
+  sessionId: SessionId.SessionId,
   clientId: ClientId.ClientId,
   msg: ToBackend,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
+  const sendToUser = (userIds: UserId.UserId[], msg: ToFrontend) => {
+    return Bridge.broadcast(msg)
+  }
+
+  const sendToClient = (msg: ToFrontend) => {
+    return Bridge.sendToFrontend([clientId], msg)
+  }
+
   switch (msg[0]) {
     case "GameRoom": {
       const [child, childCmd] = GameRoom.updateFromFrontend(
         {
-          sendToClient: (msg) =>
-            Bridge.sendToFrontend([clientId], ["GameRoom", msg]),
-          sendToUser: (userIds, msg) => Bridge.broadcast(["GameRoom", msg]),
+          sendToClient: (msg) => sendToClient(["GameRoom", msg]),
+          sendToUser: (userIds, msg) => sendToUser(userIds, ["GameRoom", msg]),
         },
         msg[1],
         model.gameRoom,
@@ -123,10 +131,19 @@ export const updateFromFrontend = (
 export const subscriptions = (model: Model): Sub.Sub<Msg> => {
   return Sub.batch([
     pipe(GameRoom.subscriptions(model.gameRoom), Sub.map(tag("GameRoom"))),
-    Bridge.onConnect((clientId) => ["ClientConnected", clientId]),
-    Bridge.onDisconnect((clientId) => ["ClientDisconnected", clientId]),
-    Bridge.fromFrontend<Msg>((clientId, toBackend) => [
+    Bridge.onConnect((sessionId, clientId) => [
+      "ClientConnected",
+      sessionId,
+      clientId,
+    ]),
+    Bridge.onDisconnect((sessionId, clientId) => [
+      "ClientDisconnected",
+      sessionId,
+      clientId,
+    ]),
+    Bridge.fromFrontend<Msg>((sessionId, clientId, toBackend) => [
       "[Frontend]",
+      sessionId,
       clientId,
       toBackend,
     ]),
@@ -191,27 +208,45 @@ const httpServer = Http.createServer(requestListener)
 
 const socketServer = new Socket.Server<
   Bridge.ClientToServerEvents,
-  Bridge.ServerToClientEvents
+  Bridge.ServerToClientEvents,
+  Bridge.InterServerEvents,
+  Bridge.SocketData
 >(httpServer, {
   cors: {
     origin: "*",
+    credentials: true,
   },
+  cookie: true,
 })
 
 socketServer.on("connection", (socket) => {
+  const maybeSessionId: unknown = socket.handshake.auth[Bridge.sessionIdKey]
+
+  console.log(maybeSessionId)
+
+  // todo remove this hack
+  const cleaned =
+    typeof maybeSessionId === "string"
+      ? maybeSessionId.replaceAll('"', "").replaceAll("\\", "")
+      : maybeSessionId
+
+  const sessionId = SessionId.is(cleaned) ? cleaned : SessionId.generate()
+
+  socket.emit("ToFrontend", ["Session", sessionId])
+
   if (ClientId.is(socket.id)) {
-    Bridge._onConnect.next(socket.id)
+    Bridge._onConnect.next([sessionId, socket.id])
   }
 
   socket.on("disconnect", () => {
     if (ClientId.is(socket.id)) {
-      Bridge._onDisconnect.next(socket.id)
+      Bridge._onDisconnect.next([sessionId, socket.id])
     }
   })
 
   socket.on("ToBackend", (msg) => {
     if (ClientId.is(socket.id)) {
-      Bridge._toBackend.next([socket.id, msg])
+      Bridge._toBackend.next([sessionId, socket.id, msg])
     }
   })
 })

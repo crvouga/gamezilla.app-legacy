@@ -1,4 +1,5 @@
 export * as Audio from "./Audio"
+export * as LocalStorage from "./LocalStorage"
 export * as Browser from "./Browser"
 export * as Cmd from "./Cmd"
 export * as Debug from "./Debug"

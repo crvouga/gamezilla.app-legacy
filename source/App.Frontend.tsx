@@ -5,7 +5,9 @@ import * as Auth from "./Auth"
 import * as Bridge from "./Bridge"
 import {
   andThen,
-  andThenMany, Browser,
+  andThenMany,
+  Browser,
+  LocalStorage,
   Cmd,
   Debug,
   exhaustive,
@@ -261,8 +263,14 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
       return [{ ...model, bridge: msg[1] }, Cmd.None]
     }
 
-    case "[Backend]":
+    case "[Backend]": {
       return updateFromBackend(msg[1], model)
+    }
+
+
+    case 'LocalStoragePutResulted': {
+      return [model, Cmd.None]
+    }
 
     default:
       return exhaustive(msg)
@@ -274,6 +282,13 @@ export const updateFromBackend = (
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
+
+    case 'Session': {
+      const sessionId = msg[1]
+
+      return [model, LocalStorage.put(Bridge.sessionIdKey, sessionId, tag("LocalStoragePutResulted"))]
+    }
+
     case "GameRoom": {
       const [gameRoom, gameRoomCmd, actions] = GameRoom.updateFromBackend(
         { sendToBackend: msg => Bridge.sendToBackend(['GameRoom', msg]) },
@@ -723,27 +738,31 @@ export const backendUrl =
     ? productionBackendUrl
     : developmentBackendUrl
 
-const socket: Socket<Bridge.ServerToClientEvents, Bridge.ClientToServerEvents> =
-  io(backendUrl)
+const socketClient: Socket<Bridge.ServerToClientEvents, Bridge.ClientToServerEvents> =
+  io(backendUrl, {
+    auth: {
+      [Bridge.sessionIdKey]: localStorage.getItem(Bridge.sessionIdKey) ?? undefined
+    }
+  })
 
-socket.on("connect", () => {
+socketClient.on("connect", () => {
   Bridge._connectionStatus.next("Connected")
 })
 
-socket.on("connect_error", () => {
+socketClient.on("connect_error", () => {
   Bridge._connectionStatus.next("ConnectError")
 })
 
-socket.on("disconnect", () => {
+socketClient.on("disconnect", () => {
   Bridge._connectionStatus.next("Disconnected")
 })
 
-socket.on("ToFrontend", (msg) => {
+socketClient.on("ToFrontend", (msg) => {
   Bridge._toFrontend.next(msg)
 })
 
 Bridge._sendToBackend.subscribe((msg) => {
-  socket.emit("ToBackend", msg)
+  socketClient.emit("ToBackend", msg)
 })
 
 //
