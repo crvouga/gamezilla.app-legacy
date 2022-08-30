@@ -1,4 +1,4 @@
-import { Cmd, exhaustive, pipe, RemoteData, Result, Sub, Unit } from "../Core"
+import { Cmd, exhaustive, pipe, RemoteData, Sub, Unit } from "../Core"
 import { RoomId, UserId } from "../Data"
 import * as Game from "../Game/Game.Frontend"
 import { GameName } from "../Game/Game.Types"
@@ -9,9 +9,7 @@ import * as UI from "../UI"
 import {
   BackendModel,
   FrontendModel,
-  FrontendMsg,
-  Request,
-  Response,
+  FrontendMsg, Response,
   RoomModel,
   ToBackend,
   ToFrontend

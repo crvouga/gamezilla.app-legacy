@@ -1,6 +1,6 @@
 import * as Cmd from "./Cmd"
-import * as Sub from "./Sub"
 import { pipe } from "./pipe"
+import * as Sub from "./Sub"
 
 export const exhaustive = (
   discriminatedUnionType: "Missing Case Error",

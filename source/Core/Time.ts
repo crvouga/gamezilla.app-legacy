@@ -1,9 +1,8 @@
 import * as Rx from "rxjs"
-import * as Sub from "./Sub"
-import * as Option from "./Option"
 import * as Cmd from "./Cmd"
+import * as Option from "./Option"
+import * as Sub from "./Sub"
 import * as Task from "./Task"
-import { pipe } from "./pipe"
 
 export const now = (): Task.Task<number> => {
   return async () => new Date().getTime()

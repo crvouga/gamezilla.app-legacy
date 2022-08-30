@@ -1,6 +1,6 @@
 import { useLayoutEffect, useRef } from "react"
 import { Cmd, exhaustive, Keyboard, Option, Result, Sub } from "../../Core"
-import { RoomId, UserId } from "../../Data"
+import { UserId } from "../../Data"
 import * as Route from "../../Route"
 import * as Snackbar from "../../Snackbar"
 import * as Store from "../../Store"

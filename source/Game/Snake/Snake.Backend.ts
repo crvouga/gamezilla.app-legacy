@@ -1,5 +1,4 @@
 import { Cmd, Result, Sub, Time } from "../../Core"
-import { ClientId, RoomId } from "../../Data"
 import * as Snake from "./Snake"
 import {
   BackendModel,

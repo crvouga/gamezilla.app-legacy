@@ -1,13 +1,13 @@
 import { Cmd, pipe, Sub, tag, tagCmd, tagSub, tagUpdate } from "../Core"
 import { RoomId, UserId } from "../Data"
-import * as Store from "../Store"
 import * as Snackbar from "../Snackbar"
+import * as Store from "../Store"
 import * as UI from "../UI"
+import * as Chess from "./Chess/Chess.Frontend"
 import * as ConnectFour from "./ConnectFour/ConnectFour.Frontend"
+import { FrontendModel, FrontendMsg, GameName, ToBackend, ToFrontend } from "./Game.Types"
 import * as Snake from "./Snake/Snake.Frontend"
 import * as TicTacToe from "./TicTacToe/TicTacToe.Frontend"
-import * as Chess from "./Chess/Chess.Frontend"
-import { FrontendModel, FrontendMsg, GameName, ToBackend, ToFrontend } from "./Game.Types"
 
 //
 //

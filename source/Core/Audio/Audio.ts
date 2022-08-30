@@ -1,9 +1,9 @@
+import Howler from "howler"
+import * as Cmd from "../Cmd"
 import { pipe } from "../pipe"
 import * as Result from "../Result"
 import * as Task from "../Task"
-import * as Cmd from "../Cmd"
 import { Unit } from "../Utility"
-import Howler from "howler"
 
 export type Problem = "Unknown"
 
