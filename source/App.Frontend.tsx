@@ -105,6 +105,10 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
 const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
+    case "[Backend]": {
+      return updateFromBackend(msg[1], model)
+    }
+
     case "Store": {
       const [storeNew, storeCmd] = Store.update(msg[1], model.store)
 
@@ -126,154 +130,94 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
       ]
     }
 
-    case "GameRoom": {
-      const status = toStatus(model)
-
-      switch (status[0]) {
-        case "ProfileLoading":
-        case "ProfileMissing":
-        case "AuthLoading":
-        case "LoggedOut":
-        case "ProfileError": {
-          return [model, Cmd.None]
-        }
-
-        case "Ready": {
-          const { profile } = status[1]
-
-          const [child, childCmd] = GameRoom.update(
-            { currentUserId: profile.userId, sendToBackend: msg => Bridge.sendToBackend(['GameRoom', msg]) },
-            msg[1],
-            model.gameRoom,
-          )
-
-          return pipe([
-            { ...model, gameRoom: child },
-            tagCmd("GameRoom", childCmd),
-          ])
-        }
-      }
-    }
-
-    case "Page": {
-      const status = toStatus(model)
-
-      switch (status[0]) {
-        case "AuthLoading":
-          return [model, Cmd.None]
-
-        case "ProfileLoading":
-          return [model, Cmd.None]
-
-        case "LoggedOut": {
-          const [pageNew, pageCmd, actions] = Pages.updateLoggedOut(
-            msg[1],
-            model.page,
-          )
-
-          return pipe(
-            [{ ...model, page: pageNew }, tagCmd("Page", pageCmd)],
-            andThenMany(runAction, actions),
-          )
-        }
-
-        case "ProfileMissing": {
-          const [pageNew, pageCmd, actions] = Pages.updateProfileMissing(
-            status[1].authSession,
-            msg[1],
-            model.page,
-          )
-
-          return pipe(
-            [{ ...model, page: pageNew }, tagCmd("Page", pageCmd)],
-            andThenMany(runAction, actions),
-          )
-        }
-
-        case "ProfileError":
-          return [model, Cmd.None]
-
-        case "Ready": {
-          const [pageNew, pageCmd, actions] = Pages.updateReady(
-            {
-              ...model,
-              profile: status[1].profile,
-            },
-            msg[1],
-            model.page,
-          )
-
-          return pipe(
-            [{ ...model, page: pageNew }, tagCmd("Page", pageCmd)],
-            andThenMany(runAction, actions),
-          )
-        }
-
-        default:
-          return exhaustive(status[0])
-      }
-    }
-
     case "Route": {
-      const route = msg[1][1]
-
-      const modelNew = { ...model, route }
-
-      const status = toStatus(modelNew)
-
-      switch (status[0]) {
-        case "ProfileLoading":
-        case "AuthLoading":
-        case "ProfileError": {
-          return [modelNew, Cmd.None]
-        }
-
-        case "ProfileMissing": {
-          const [page, pageCmd] = Pages.initProfileMissing(
-            route,
-            status[1].authSession,
-          )
-
-          return [{ ...modelNew, page }, tagCmd("Page", pageCmd)]
-        }
-
-        case "Ready": {
-          const [page, pageCmd, actions] = Pages.initReady(
-            route,
-            status[1].profile,
-          )
-          return pipe(
-            [{ ...modelNew, page }, tagCmd("Page", pageCmd)],
-            andThenMany(runAction, actions),
-          )
-        }
-
-        case "LoggedOut": {
-          const [page, pageCmd] = Pages.initLoggedOut(route)
-
-          return [{ ...modelNew, page }, tagCmd("Page", pageCmd)]
-        }
-
-        default:
-          return exhaustive(status)
-      }
+      return [{ ...model, route: msg[1][1] }, Cmd.None]
     }
 
     case "Bridge": {
       return [{ ...model, bridge: msg[1] }, Cmd.None]
     }
 
-    case "[Backend]": {
-      return updateFromBackend(msg[1], model)
-    }
-
-
     case 'LocalStoragePutResulted': {
       return [model, Cmd.None]
     }
 
+    case "GameRoom": {
+      const status = toStatus(model)
+
+      if (status[0] !== 'Ready') {
+        return [model, Cmd.None]
+      }
+
+      const { profile } = status[1]
+
+      const [child, childCmd] = GameRoom.update(
+        {
+          currentUserId: profile.userId,
+          sendToBackend: msg => Bridge.sendToBackend(['GameRoom', msg])
+        },
+        msg[1],
+        model.gameRoom,
+      )
+
+      return pipe([
+        { ...model, gameRoom: child },
+        tagCmd("GameRoom", childCmd),
+      ])
+    }
+
+    case "Page": {
+      const [modelNew, cmd, actions] = updatePage(msg[1], model)
+      return pipe([modelNew, cmd], andThenMany(runAction, actions))
+    }
+
     default:
       return exhaustive(msg)
+  }
+}
+
+const updatePage = (msg: Pages.Msg, model: Model): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
+  const status = toStatus(model)
+
+  switch (status[0]) {
+    case "AuthLoading":
+    case "ProfileError":
+    case "ProfileLoading":
+      return [model, Cmd.None, []]
+
+    case "LoggedOut": {
+      const [pageNew, pageCmd, actions] = Pages.updateLoggedOut(
+        msg,
+        model.page,
+      )
+
+      return [{ ...model, page: pageNew }, tagCmd("Page", pageCmd), actions]
+    }
+
+    case "ProfileMissing": {
+      const [pageNew, pageCmd, actions] = Pages.updateProfileMissing(
+        status[1].authSession,
+        msg,
+        model.page,
+      )
+
+      return [{ ...model, page: pageNew }, tagCmd("Page", pageCmd), actions]
+    }
+
+    case "Ready": {
+      const [pageNew, pageCmd, actions] = Pages.updateReady(
+        {
+          ...model,
+          profile: status[1].profile,
+        },
+        msg,
+        model.page,
+      )
+      return [{ ...model, page: pageNew }, tagCmd("Page", pageCmd), actions]
+    }
+
+    default:
+      return exhaustive(status[0])
   }
 }
 
