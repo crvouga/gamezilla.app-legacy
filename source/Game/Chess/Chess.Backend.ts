@@ -1,4 +1,4 @@
-import { Cmd, exhaustive, Sub, tagCmd, tagSub } from "../../Core"
+import { Cmd, exhaustive, pipe, Sub, tag, tagCmd, tagSub } from "../../Core"
 import { ClientId, RoomId } from "../../Data"
 import { BackendModel, BackendMsg, ToBackend, ToFrontend } from "./Chess.Types"
 import * as UserVsUser from "./UserVsUser/UserVsUser.Backend"
@@ -29,7 +29,7 @@ export const init: Model = {
 export type Msg = BackendMsg
 
 export const update = (
-  { broadcast }: { broadcast: (msg: ToFrontend) => Cmd.Cmd<never> },
+  { sendToRoom }: { sendToRoom: (msg: ToFrontend) => Cmd.Cmd<never> },
   msg: Msg,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
@@ -37,7 +37,7 @@ export const update = (
     case "UserVsUser": {
       if (model.type === "UserVsUser") {
         const [child, childCmd] = UserVsUser.update(
-          { broadcast: (msg) => broadcast(["UserVsUser", msg]) },
+          { sendToRoom: (msg) => sendToRoom(["UserVsUser", msg]) },
           msg[1],
           model.child,
         )
@@ -49,7 +49,13 @@ export const update = (
 }
 
 export const updateFromFrontend = (
-  { clientId, roomId }: { roomId: RoomId.RoomId; clientId: ClientId.ClientId },
+  {
+    sendToClient,
+    sendToRoom,
+  }: {
+    sendToClient: (msg: ToFrontend) => Cmd.Cmd<never>
+    sendToRoom: (msg: ToFrontend) => Cmd.Cmd<never>
+  },
   msg: ToBackend,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
@@ -57,7 +63,10 @@ export const updateFromFrontend = (
     case "UserVsUser": {
       if (model.type === "UserVsUser") {
         const [child, childCmd] = UserVsUser.updateFromFrontend(
-          { clientId, roomId },
+          {
+            sendToClient: (msg) => sendToClient(["UserVsUser", msg]),
+            sendToRoom: (msg) => sendToRoom(["UserVsUser", msg]),
+          },
           msg[1],
           model.child,
         )

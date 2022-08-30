@@ -1,8 +1,7 @@
 import { DependencyList, useLayoutEffect, useRef, useState } from "react"
 import { Chessboard } from "react-chessboard"
-import * as Bridge from "../../../Bridge"
-import { andThen, Audio, Cmd, exhaustive, Option, pipe, Sub, tag } from "../../../Core"
-import { RoomId, UserId } from "../../../Data"
+import { Audio, Cmd, exhaustive, Option, pipe, Sub, tag } from "../../../Core"
+import { UserId } from "../../../Data"
 import * as Store from "../../../Store"
 import * as UI from "../../../UI"
 import * as Board from "../Board"
@@ -30,7 +29,7 @@ import {
 
 export type Model = FrontendModel
 
-export const init = ({ roomId }: { roomId: RoomId.RoomId }): [FrontendModel, Cmd.Cmd<Msg>] => {
+export const init = ({ sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd.Cmd<never> }): [FrontendModel, Cmd.Cmd<Msg>] => {
   return [
     {
       sharedModel: initShared,
@@ -39,7 +38,7 @@ export const init = ({ roomId }: { roomId: RoomId.RoomId }): [FrontendModel, Cmd
       isFlipped: false,
       boardWidth: Option.None,
     },
-    sendToBackend(roomId, ['Init'])
+    sendToBackend(['Init'])
   ]
 }
 
@@ -54,104 +53,91 @@ export const init = ({ roomId }: { roomId: RoomId.RoomId }): [FrontendModel, Cmd
 export type Msg = FrontendMsg
 
 export const update = (
-  { currentRoomId }: { currentRoomId: RoomId.RoomId },
+  { sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd.Cmd<never> },
   msg: Msg,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
-  return pipe(
-    [model, Cmd.None],
-    andThen(updateMain({ currentRoomId }), msg)
-  )
-}
+  switch (msg[0]) {
 
-export const updateMain = (
-  { currentRoomId }: { currentRoomId: RoomId.RoomId }
-) => (
-  msg: Msg,
-  model: Model,
-  ): [Model, Cmd.Cmd<Msg>] => {
-    switch (msg[0]) {
+    // 
+    //
+    // Frontend Only
+    //
+    // 
 
-      // 
-      //
-      // Frontend Only
-      //
-      // 
+    case "AudioResulted": {
+      return [model, Cmd.None]
+    }
 
-      case "AudioResulted": {
+    case 'OpenedMenu': {
+      return [{ ...model, openedMenuId: Option.Some(msg[1]) }, Cmd.None]
+    }
+
+    case 'ClosedMenu': {
+      return [{ ...model, openedMenuId: Option.None }, Cmd.None]
+    }
+
+    case 'ClickedFlip': {
+      return [{ ...model, isFlipped: !model.isFlipped }, Cmd.None]
+    }
+
+    case 'OpenedModal': {
+      return [{ ...model, openedModal: (msg[1]) }, Cmd.None]
+    }
+
+    case 'ClosedModal': {
+      return [{ ...model, openedModal: "None" }, Cmd.None]
+    }
+
+    // 
+    // 
+    //
+    //
+    //
+    // 
+
+    case "InputPlayer": {
+      return [model, sendToBackend(msg)]
+    }
+
+    case "StartGame": {
+      return [model, sendToBackend(msg)]
+    }
+
+    case 'InputClock': {
+      return [model, sendToBackend(msg)]
+    }
+
+    case 'RequestToDraw': {
+      return [model, sendToBackend(msg)]
+    }
+
+    case 'Resign': {
+      return [{ ...model, openedModal: "None" }, sendToBackend(msg)]
+    }
+
+    case 'RespondToDraw': {
+      return [model, sendToBackend(msg)]
+    }
+
+    case 'NewGame': {
+      return [model, sendToBackend(msg)]
+    }
+
+    case "Move": {
+      const result = move(msg[1], model.sharedModel)
+
+      if (result.type === 'Err') {
         return [model, Cmd.None]
       }
 
-      case 'OpenedMenu': {
-        return [{ ...model, openedMenuId: Option.Some(msg[1]) }, Cmd.None]
-      }
-
-      case 'ClosedMenu': {
-        return [{ ...model, openedMenuId: Option.None }, Cmd.None]
-      }
-
-      case 'ClickedFlip': {
-        return [{ ...model, isFlipped: !model.isFlipped }, Cmd.None]
-      }
-
-      case 'OpenedModal': {
-        return [{ ...model, openedModal: (msg[1]) }, Cmd.None]
-      }
-
-      case 'ClosedModal': {
-        return [{ ...model, openedModal: "None" }, Cmd.None]
-      }
-
-
-
-      // 
-      //
-      //
-      //
-      // 
-
-      case "InputPlayer": {
-        return [model, sendToBackend(currentRoomId, msg)]
-      }
-
-      case "StartGame": {
-        return [model, sendToBackend(currentRoomId, msg)]
-      }
-
-      case 'InputClock': {
-        return [model, sendToBackend(currentRoomId, msg)]
-      }
-
-      case 'RequestToDraw': {
-        return [model, sendToBackend(currentRoomId, msg)]
-      }
-
-      case 'Resign': {
-        return [{ ...model, openedModal: "None" }, sendToBackend(currentRoomId, msg)]
-      }
-
-      case 'RespondToDraw': {
-        return [model, sendToBackend(currentRoomId, msg)]
-      }
-
-      case 'NewGame': {
-        return [model, sendToBackend(currentRoomId, msg)]
-      }
-
-      case "Move": {
-        const result = move(msg[1], model.sharedModel)
-
-        if (result.type === 'Err') {
-          return [model, Cmd.None]
-        }
-
-        return [{ ...model, sharedModel: result.value }, sendToBackend(currentRoomId, msg)]
-      }
-
-      default:
-        return exhaustive(msg[0])
+      return [{ ...model, sharedModel: result.value }, sendToBackend(msg)]
     }
+
+    default:
+      return exhaustive(msg[0])
   }
+}
 
 
 
@@ -293,14 +279,6 @@ export const updateFromBackend = (
   }
 }
 
-const updateGameOver = (sharedModelNew: SharedModel, model: Model): [Model, Cmd.Cmd<Msg>] => {
-  return [{ ...model, sharedModel: sharedModelNew, isFlipped: false, openedModal: 'GameOver' }, playAudio(Sounds.gameOver)]
-}
-
-
-export const sendToBackend = (roomId: RoomId.RoomId, toBackend: ToBackend) => {
-  return Bridge.sendToBackend(["GameRoom", ["Games", roomId, ["Chess", ['UserVsUser', toBackend]]]])
-}
 
 const playAudio = (src: string): Cmd.Cmd<Msg> => {
   return Audio.play(src, tag("AudioResulted"))
@@ -364,6 +342,8 @@ const View =
     },
   ) => {
     const { boardWidth, ref } = useBoardWidth([model.sharedModel.type])
+
+    console.log(model)
 
     if (model.sharedModel.type === 'Setup') {
       return (
@@ -728,30 +708,34 @@ const ViewInputPlayerButton = ({ dispatch, currentUserId, color }: { color: Boar
 
 const toGameText = (model: SharedModel): string => {
   switch (model.type) {
-    // case 'GameEnded': {
-    //   switch (model.gameOver.tag) {
-    //     case 'Checkmate': {
-    //       return `${Board.colorToString(model.gameOver.winner)} won by checkmate`
-    //     }
+    case 'GameOver': {
+      switch (model.gameOver.type) {
+        case 'Checkmate': {
+          return `${Board.colorToString(model.gameOver.winner)} won by checkmate`
+        }
 
-    //     case 'DrawByAgreement': {
-    //       return "Drawed by agreement"
-    //     }
+        case 'DrawByAgreement': {
+          return "Drawed by agreement"
+        }
 
 
-    //     case 'Resignation': {
-    //       return `${Board.colorToString(model.gameOver.resigner)} resigned`
-    //     }
+        case 'Resignation': {
+          return `${Board.colorToString(model.gameOver.resigner)} resigned`
+        }
 
-    //     case 'Stalemate': {
-    //       return 'Stalemate'
-    //     }
+        case 'Stalemate': {
+          return 'Stalemate'
+        }
 
-    //     case 'WinOnTime': {
-    //       return `${Board.colorToString(model.gameOver.winner)} won on time`
-    //     }
-    //   }
-    // }
+        case 'WinOnTime': {
+          return `${Board.colorToString(model.gameOver.winner)} won on time`
+        }
+
+        default:
+          return exhaustive(model.gameOver)
+      }
+    }
+
     case 'Setup': {
       return "Setting up game"
     }
@@ -763,6 +747,9 @@ const toGameText = (model: SharedModel): string => {
 
       return `${Board.colorToString(Board.toTurn(model.board))}'s turn`
     }
+
+    default:
+      return exhaustive(model)
   }
 }
 

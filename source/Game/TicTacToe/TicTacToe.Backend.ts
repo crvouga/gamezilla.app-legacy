@@ -34,7 +34,6 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 }
 
 export const updateFromFrontend = (
-  clientId: ClientId.ClientId,
   msg: ToBackend,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {

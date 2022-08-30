@@ -25,7 +25,7 @@ export type BackendModel = {
   sharedModel: SharedModel
 }
 
-export type SharedModel = SetupModel | GameModel
+export type SharedModel = SetupModel | GameModel | GameOverModel
 
 export type SetupModel = {
   type: "Setup"
@@ -37,6 +37,15 @@ export type SetupModel = {
 export type GameModel = {
   type: "Game"
   drawAgreement: DrawAgreement
+  w: UserId.UserId
+  b: UserId.UserId
+  clock: Clock.Clock
+  board: Board.Model
+}
+
+export type GameOverModel = {
+  type: "GameOver"
+  gameOver: GameOver
   w: UserId.UserId
   b: UserId.UserId
   clock: Clock.Clock
@@ -372,7 +381,19 @@ export const resign = (
     return Result.Err("can_not_resign")
   }
 
-  return Result.Ok(model)
+  const modelNew: SharedModel = {
+    type: "GameOver",
+    b: model.b,
+    w: model.w,
+    board: model.board,
+    clock: model.clock,
+    gameOver: {
+      type: "Resignation",
+      resigner: color,
+    },
+  }
+
+  return Result.Ok(modelNew)
 }
 
 //
@@ -383,11 +404,11 @@ export const resign = (
 export type NewGame = ["NewGame"]
 export type NewGameResulted = [
   "NewGameResulted",
-  Result.Result<"game_must_be_ended_to_start_a_new_game", SharedModel>,
+  Result.Result<"game_must_be_over", SharedModel>,
 ]
 export const newGame = (model: SharedModel): NewGameResulted[1] => {
   if (model.type !== "Game") {
-    return Result.Err("game_must_be_ended_to_start_a_new_game")
+    return Result.Err("game_must_be_over")
   }
 
   const modelNew: SharedModel = {
@@ -409,6 +430,10 @@ export const newGame = (model: SharedModel): NewGameResulted[1] => {
 export const clockTicked = (model: SharedModel): SharedModel => {
   switch (model.type) {
     case "Setup": {
+      return model
+    }
+
+    case "GameOver": {
       return model
     }
 

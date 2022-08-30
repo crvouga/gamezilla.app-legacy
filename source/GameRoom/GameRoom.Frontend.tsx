@@ -1,4 +1,3 @@
-import * as Bridge from "../Bridge"
 import { Cmd, exhaustive, pipe, RemoteData, Result, Sub, Unit } from "../Core"
 import { RoomId, UserId } from "../Data"
 import * as Game from "../Game/Game.Frontend"
@@ -14,6 +13,7 @@ import {
   Request,
   Response,
   RoomModel,
+  ToBackend,
   ToFrontend
 } from "./GameRoom.Types"
 
@@ -72,7 +72,7 @@ type OutAction = Snackbar.Action | Store.Action
 //
 
 export const update = (
-  { currentUserId }: { currentUserId: UserId.UserId },
+  { currentUserId, sendToBackend }: { currentUserId: UserId.UserId, sendToBackend: (msg: ToBackend) => Cmd.Cmd<never> },
   msg: Msg,
   modelPrev: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
@@ -112,7 +112,16 @@ export const update = (
     case "CreateRoom":
     case "OpenGame":
     case "CloseGame": {
-      return updateRequest(model, msg)
+      return [
+        {
+          ...model,
+          requests: {
+            ...model.requests,
+            [msg[0]]: RemoteData.Loading
+          }
+        },
+        sendToBackend(msg)
+      ]
     }
 
     case "Games": {
@@ -137,7 +146,7 @@ export const update = (
       const gameMsg = msg[2]
 
       const [gameNew, gameCmd] = Game.update(
-        { currentUserId, currentRoomId: roomId },
+        { currentUserId, currentRoomId: roomId, sendToBackend: msg => sendToBackend(['Games', roomId, msg]), },
         gameMsg,
         game,
       )
@@ -156,27 +165,13 @@ export const update = (
       ]
     }
 
-
-
     default:
       return exhaustive(msg[0])
   }
 }
 
-const updateRequest = (model: Model, request: Request): [Model, Cmd.Cmd<Msg>] => {
-  return [
-    {
-      ...model,
-      requests: {
-        ...model.requests,
-        [request[0]]: RemoteData.Loading
-      }
-    },
-    Bridge.sendToBackend(['GameRoom', request])
-  ]
-}
-
 export const updateFromBackend = (
+  { sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd.Cmd<never> },
   msg: ToFrontend,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
@@ -188,7 +183,11 @@ export const updateFromBackend = (
         ["Store", ["Profile", ["FindMany", { userIds }]]],
       ]
 
-      const [synced, syncedCmd] = sync(model, msg[1])
+      const [synced, syncedCmd] = sync({
+        backendModel: msg[1],
+        frontendModel: model,
+        sendToBackend
+      })
 
       return [synced, syncedCmd, actions]
     }
@@ -225,35 +224,34 @@ export const updateFromBackend = (
     }
 
     case "CreateRoomResulted": {
-      return updateResponse("CreateRoom", model, msg)
+      return updateResponse({ sendToBackend, msg, model }, "CreateRoom")
     }
 
     case "LeaveRoomResulted": {
-      return updateResponse("LeaveRoom", model, msg)
+      return updateResponse({ sendToBackend, msg, model }, "LeaveRoom")
     }
 
     case "JoinRoomResulted": {
-      return updateResponse("JoinRoom", model, msg)
+      return updateResponse({ sendToBackend, msg, model }, "JoinRoom")
     }
 
     case "OpenGameResulted": {
-      return updateResponse("OpenGame", model, msg)
+      return updateResponse({ sendToBackend, msg, model }, "OpenGame")
     }
 
     case "CloseGameResulted": {
-      return updateResponse("CloseGame", model, msg)
+      return updateResponse({ sendToBackend, model, msg }, "CloseGame")
     }
   }
 }
 
 
 const updateResponse = (
+  { sendToBackend, msg, model }: { msg: Response, model: Model, sendToBackend: (msg: ToBackend) => Cmd.Cmd<never> },
   requestKey: keyof Model['requests'],
-  model: Model,
-  response: Response,
 ): [Model, Cmd.Cmd<FrontendMsg>, OutAction[]] => {
 
-  const result = response[1]
+  const result = msg[1]
 
   const actions: OutAction[] =
     result.type === "Err"
@@ -280,7 +278,11 @@ const updateResponse = (
     ]
   }
 
-  const [synced, syncedCmd] = sync(model, result.value)
+  const [synced, syncedCmd] = sync({
+    frontendModel: model,
+    backendModel: result.value,
+    sendToBackend
+  })
 
   const modelNew: Model = {
     ...synced,
@@ -293,7 +295,15 @@ const updateResponse = (
   return [modelNew, syncedCmd, actions]
 }
 
-const sync = (frontendModel: FrontendModel, backendModel: BackendModel): [FrontendModel, Cmd.Cmd<FrontendMsg>] => {
+const sync = ({
+  frontendModel,
+  backendModel,
+  sendToBackend
+}: {
+  sendToBackend: (msg: ToBackend) => Cmd.Cmd<never>,
+  frontendModel: FrontendModel,
+  backendModel: BackendModel
+}): [FrontendModel, Cmd.Cmd<FrontendMsg>] => {
 
   const init: [FrontendModel['games'], Cmd.Cmd<FrontendMsg>] = [{}, Cmd.None]
 
@@ -313,13 +323,19 @@ const sync = (frontendModel: FrontendModel, backendModel: BackendModel): [Fronte
           return [
             {
               ...games,
-              [roomId]: [gameName, { ...frontendGame[1], ...backendGame[1] }]
+              [roomId]: [gameName, {
+                ...frontendGame[1],
+                ...backendGame[1]
+              }]
             },
             cmd
           ]
         }
 
-        const [gameInit, gameCmd] = Game.init({ gameName, roomId })
+        const [gameInit, gameCmd] = Game.init({
+          gameName,
+          sendToBackend: (msg) => sendToBackend(['Games', roomId, msg])
+        })
 
         return [
           {
@@ -348,14 +364,14 @@ const sync = (frontendModel: FrontendModel, backendModel: BackendModel): [Fronte
 }
 
 export const updateFromAction = (
-  { currentUserId }: { currentUserId: UserId.UserId },
+  { currentUserId, sendToBackend }: { currentUserId: UserId.UserId, sendToBackend: (msg: ToBackend) => Cmd.Cmd<never> },
   action: Action,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (action[1][0]) {
     case "Msg": {
       const msg = action[1][1]
-      return update({ currentUserId }, msg, model)
+      return update({ sendToBackend, currentUserId }, msg, model)
     }
   }
 }

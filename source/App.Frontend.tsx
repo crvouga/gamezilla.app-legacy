@@ -140,7 +140,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
           const { profile } = status[1]
 
           const [child, childCmd] = GameRoom.update(
-            { currentUserId: profile.userId },
+            { currentUserId: profile.userId, sendToBackend: msg => Bridge.sendToBackend(['GameRoom', msg]) },
             msg[1],
             model.gameRoom,
           )
@@ -276,6 +276,7 @@ export const updateFromBackend = (
   switch (msg[0]) {
     case "GameRoom": {
       const [gameRoom, gameRoomCmd, actions] = GameRoom.updateFromBackend(
+        { sendToBackend: msg => Bridge.sendToBackend(['GameRoom', msg]) },
         msg[1],
         model.gameRoom,
       )
@@ -375,7 +376,7 @@ const updateFromAction = (
       const currentUserId = model.auth[1].userId
 
       const [gameRoom, gameRoomCmd] = GameRoom.updateFromAction(
-        { currentUserId },
+        { currentUserId, sendToBackend: msg => Bridge.sendToBackend(['GameRoom', msg]) },
         action,
         model.gameRoom,
       )

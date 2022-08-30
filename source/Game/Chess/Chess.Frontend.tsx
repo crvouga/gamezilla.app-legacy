@@ -1,6 +1,5 @@
-import * as Bridge from "../../Bridge"
 import { Cmd, exhaustive, pipe, Sub, tag, tagCmd } from "../../Core"
-import { RoomId, UserId } from "../../Data"
+import { UserId } from "../../Data"
 import * as Store from "../../Store"
 import * as UI from "../../UI"
 import {
@@ -21,8 +20,8 @@ import * as UserVsUser from "./UserVsUser/UserVsUser.Frontend"
 
 export type Model = FrontendModel
 
-export const init = ({ roomId }: { roomId: RoomId.RoomId }): [FrontendModel, Cmd.Cmd<Msg>] => {
-  const [child, childCmd] = UserVsUser.init({ roomId })
+export const init = ({ sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd.Cmd<never> }): [FrontendModel, Cmd.Cmd<Msg>] => {
+  const [child, childCmd] = UserVsUser.init({ sendToBackend: msg => sendToBackend(['UserVsUser', msg]) })
   return [
     {
       type: "UserVsUser",
@@ -43,14 +42,14 @@ export const init = ({ roomId }: { roomId: RoomId.RoomId }): [FrontendModel, Cmd
 export type Msg = FrontendMsg
 
 export const update = (
-  { currentRoomId }: { currentRoomId: RoomId.RoomId },
+  { sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd.Cmd<never> },
   msg: Msg,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
     case 'UserVsUser': {
       if (model.type === 'UserVsUser') {
-        const [child, childCmd] = UserVsUser.update({ currentRoomId }, msg[1], model.child)
+        const [child, childCmd] = UserVsUser.update({ sendToBackend: (msg) => sendToBackend(['UserVsUser', msg]) }, msg[1], model.child)
         return [{ type: "UserVsUser", child }, tagCmd("UserVsUser", childCmd)]
       }
       return [model, Cmd.None]
@@ -80,11 +79,6 @@ export const updateFromBackend = (
       return exhaustive(msg[0])
     }
   }
-}
-
-
-export const sendToBackend = (roomId: RoomId.RoomId, toBackend: ToBackend) => {
-  return Bridge.sendToBackend(["GameRoom", ["Games", roomId, ["Chess", toBackend]]])
 }
 
 //

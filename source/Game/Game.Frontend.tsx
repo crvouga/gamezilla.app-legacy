@@ -7,7 +7,7 @@ import * as ConnectFour from "./ConnectFour/ConnectFour.Frontend"
 import * as Snake from "./Snake/Snake.Frontend"
 import * as TicTacToe from "./TicTacToe/TicTacToe.Frontend"
 import * as Chess from "./Chess/Chess.Frontend"
-import { FrontendModel, FrontendMsg, GameName, ToFrontend } from "./Game.Types"
+import { FrontendModel, FrontendMsg, GameName, ToBackend, ToFrontend } from "./Game.Types"
 
 //
 //
@@ -19,7 +19,7 @@ import { FrontendModel, FrontendMsg, GameName, ToFrontend } from "./Game.Types"
 
 export type Model = FrontendModel
 
-export const init = ({ gameName, roomId }: { roomId: RoomId.RoomId, gameName: Model[0] }): [Model, Cmd.Cmd<Msg>] => {
+export const init = ({ gameName, sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd.Cmd<never>, gameName: Model[0] }): [Model, Cmd.Cmd<Msg>] => {
   switch (gameName) {
     case "TicTacToe": {
       return [["TicTacToe", TicTacToe.init], Cmd.None]
@@ -34,7 +34,7 @@ export const init = ({ gameName, roomId }: { roomId: RoomId.RoomId, gameName: Mo
     }
 
     case "Chess": {
-      const [child, cmd] = Chess.init({ roomId })
+      const [child, cmd] = Chess.init({ sendToBackend: msg => sendToBackend(['Chess', msg]) })
       return [["Chess", child], tagCmd("Chess", cmd)]
     }
   }
@@ -56,7 +56,12 @@ export const update = (
   {
     currentUserId,
     currentRoomId,
-  }: { currentUserId: UserId.UserId; currentRoomId: RoomId.RoomId },
+    sendToBackend,
+  }: {
+    currentUserId: UserId.UserId;
+    currentRoomId: RoomId.RoomId
+    sendToBackend: (msg: ToBackend) => Cmd.Cmd<never>
+  },
   msg: Msg,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
@@ -74,7 +79,7 @@ export const update = (
       if (msg[0] === "Snake") {
         return tagUpdate(
           "Snake",
-          Snake.update({ currentUserId, currentRoomId }, msg[1], model[1]),
+          Snake.update({ currentUserId, sendToBackend: msg => sendToBackend(['Snake', msg]), }, msg[1], model[1]),
         )
       }
       return [model, Cmd.None]
@@ -94,7 +99,7 @@ export const update = (
       if (msg[0] === "Chess") {
         return tagUpdate(
           "Chess",
-          Chess.update({ currentRoomId }, msg[1], model[1]),
+          Chess.update({ sendToBackend: msg => sendToBackend(['Chess', msg]) }, msg[1], model[1]),
         )
       }
       return [model, Cmd.None]
