@@ -1,5 +1,6 @@
 import * as Auth from "./Auth"
-import { ClientId } from "./Data"
+import { LocalStorage } from "./Core"
+import { ClientId, SessionId } from "./Data"
 import * as GameRoom from "./GameRoom/GameRoom.Types"
 import * as Page from "./Pages"
 import * as Route from "./Route"
@@ -15,8 +16,9 @@ import * as Store from "./Store"
 //
 
 export type BackendModel = {
-  clients: {
-    [clientId: ClientId.ClientId]: {
+  sessions: {
+    [sessionId: SessionId.SessionId]: {
+      sessionId: SessionId.SessionId
       clientId: ClientId.ClientId
     }
   }
@@ -49,7 +51,9 @@ export type ConnectionStatus =
 
 export type ToBackend = ["GameRoom", GameRoom.ToBackend]
 
-export type ToFrontend = ["GameRoom", GameRoom.ToFrontend]
+export type ToFrontend =
+  | ["GameRoom", GameRoom.ToFrontend]
+  | ["Session", SessionId.SessionId]
 
 export type FrontendMsg =
   | ["[Backend]", ToFrontend]
@@ -60,9 +64,10 @@ export type FrontendMsg =
   | ["Store", Store.Msg]
   | ["Auth", Auth.Msg]
   | ["Page", Page.Msg]
+  | ["LocalStoragePutResulted", LocalStorage.PutResult]
 
 export type BackendMsg =
-  | ["[Frontend]", ClientId.ClientId, ToBackend]
-  | ["ClientConnected", ClientId.ClientId]
-  | ["ClientDisconnected", ClientId.ClientId]
+  | ["[Frontend]", SessionId.SessionId, ClientId.ClientId, ToBackend]
+  | ["ClientConnected", SessionId.SessionId, ClientId.ClientId]
+  | ["ClientDisconnected", SessionId.SessionId, ClientId.ClientId]
   | ["GameRoom", GameRoom.BackendMsg]

@@ -1,6 +1,6 @@
 import * as Option from "./Option"
 
-export const remove = <Key extends keyof Record, Record>(
+export const removeKey = <Key extends keyof Record, Record>(
   key: Key,
   record: Record,
 ): Omit<Record, Key> => {

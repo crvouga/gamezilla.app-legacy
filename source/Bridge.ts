@@ -1,7 +1,7 @@
 import * as Rx from "rxjs"
 import { ConnectionStatus, ToBackend, ToFrontend } from "./App.Types"
 import { Cmd, Option, pipe, Sub } from "./Core"
-import { ClientId } from "./Data"
+import { SessionId, ClientId } from "./Data"
 
 //
 //
@@ -42,32 +42,48 @@ export const onConnectionStatus = <Msg>(
 //
 //
 
-export const _toBackend = new Rx.Subject<[ClientId.ClientId, ToBackend]>()
-export const _onConnect = new Rx.Subject<ClientId.ClientId>()
-export const _onDisconnect = new Rx.Subject<ClientId.ClientId>()
+export const _toBackend = new Rx.Subject<
+  [SessionId.SessionId, ClientId.ClientId, ToBackend]
+>()
+export const _onConnect = new Rx.Subject<
+  [SessionId.SessionId, ClientId.ClientId]
+>()
+export const _onDisconnect = new Rx.Subject<
+  [SessionId.SessionId, ClientId.ClientId]
+>()
 export const _sendToFrontend = new Rx.Subject<
   [ClientId.ClientId[], ToFrontend]
 >()
 export const _broadcast = new Rx.Subject<ToFrontend>()
 
 export const onConnect = <Msg>(
-  mapper: (clientId: ClientId.ClientId) => Msg,
+  mapper: (sessionId: SessionId.SessionId, clientId: ClientId.ClientId) => Msg,
 ): Sub.Sub<Msg> => {
-  return pipe(_onConnect, Sub.map(mapper))
+  return pipe(
+    _onConnect,
+    Sub.map(([sessionId, clientId]) => mapper(sessionId, clientId)),
+  )
 }
 
 export const onDisconnect = <Msg>(
-  mapper: (clientId: ClientId.ClientId) => Msg,
+  mapper: (sessionId: SessionId.SessionId, clientId: ClientId.ClientId) => Msg,
 ): Sub.Sub<Msg> => {
-  return pipe(_onDisconnect, Sub.map(mapper))
+  return pipe(
+    _onDisconnect,
+    Sub.map(([sessionId, clientId]) => mapper(sessionId, clientId)),
+  )
 }
 
 export const fromFrontend = <Msg>(
-  mapper: (clientId: ClientId.ClientId, msg: ToBackend) => Msg,
+  mapper: (
+    sessionId: SessionId.SessionId,
+    clientId: ClientId.ClientId,
+    msg: ToBackend,
+  ) => Msg,
 ): Sub.Sub<Msg> => {
   return pipe(
     _toBackend,
-    Sub.map(([clientId, msg]) => mapper(clientId, msg)),
+    Sub.map(([sessionId, clientId, msg]) => mapper(sessionId, clientId, msg)),
   )
 }
 
@@ -104,4 +120,10 @@ export type ClientToServerEvents = {
   ToBackend: (msg: ToBackend) => void
 }
 
+export type InterServerEvents = {}
+
+export type SocketData = {}
+
 export const backendServerPort = 5000
+
+export const sessionIdKey = "gamezilla_session_id"

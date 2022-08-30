@@ -1,5 +1,5 @@
 import { Cmd, exhaustive, pipe, Result, Sub } from "../Core"
-import { remove } from "../Core/Record"
+import { removeKey } from "../Core/Record"
 import { RoomId, UserId } from "../Data"
 import * as Game from "../Game/Game.Backend"
 import { GameName } from "../Game/Game.Types"
@@ -341,7 +341,7 @@ export const leaveRoom = (
     return Result.Err("user_is_not_a_room")
   }
 
-  const usersNew = remove(userId, model.users)
+  const usersNew = removeKey(userId, model.users)
 
   const roomNew: RoomModel = {
     ...room,
@@ -372,7 +372,7 @@ export const leaveRoom = (
     return Result.Ok({
       ...model,
       users: usersNew,
-      rooms: remove(room.roomId, model.rooms),
+      rooms: removeKey(room.roomId, model.rooms),
     })
   }
 
@@ -472,7 +472,7 @@ export const closeGame = (
 
   const modelNew: Model = {
     ...model,
-    games: remove(room.roomId, model.games),
+    games: removeKey(room.roomId, model.games),
   }
 
   return Result.Ok(modelNew)
