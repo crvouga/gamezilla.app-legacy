@@ -569,7 +569,6 @@ const insert =
       .insert({})
       .single()
 
-    console.log({ conversationResponse })
     if (conversationResponse.error) {
       return Result.Err(conversationResponse.error.message)
     }

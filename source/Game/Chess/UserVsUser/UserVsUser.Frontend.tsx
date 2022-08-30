@@ -343,7 +343,7 @@ const View =
   ) => {
     const { boardWidth, ref } = useBoardWidth([model.sharedModel.type])
 
-    console.log(model)
+
 
     if (model.sharedModel.type === 'Setup') {
       return (

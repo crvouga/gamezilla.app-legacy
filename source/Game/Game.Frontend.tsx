@@ -5,7 +5,7 @@ import * as Store from "../Store"
 import * as UI from "../UI"
 import * as Chess from "./Chess/Chess.Frontend"
 import * as ConnectFour from "./ConnectFour/ConnectFour.Frontend"
-import { FrontendModel, FrontendMsg, GameName, ToBackend, ToFrontend } from "./Game.Types"
+import { BackendModel, FrontendModel, FrontendMsg, GameName, ToBackend, ToFrontend } from "./Game.Types"
 import * as Snake from "./Snake/Snake.Frontend"
 import * as TicTacToe from "./TicTacToe/TicTacToe.Frontend"
 
@@ -255,6 +255,39 @@ export const CoverArt = ({ gameName }: { gameName: GameName }) => {
     }
     case "TicTacToe": {
       return <TicTacToe.CoverArt />
+    }
+  }
+}
+
+
+export const mergeBackendModel = (frontendModel: FrontendModel, backendModel: BackendModel): FrontendModel => {
+  switch (frontendModel[0]) {
+    case 'Chess': {
+      if (backendModel[0] === 'Chess') {
+        return ['Chess', Chess.mergeBackendModel(frontendModel[1], backendModel[1])]
+      }
+      return frontendModel
+    }
+
+    case 'ConnectFour': {
+      if (backendModel[0] === 'ConnectFour') {
+        return ['ConnectFour', ConnectFour.mergeBackendModel(frontendModel[1], backendModel[1])]
+      }
+      return frontendModel
+    }
+
+    case 'Snake': {
+      if (backendModel[0] === 'Snake') {
+        return ['Snake', Snake.mergeBackendModel(frontendModel[1], backendModel[1])]
+      }
+      return frontendModel
+    }
+
+    case 'TicTacToe': {
+      if (backendModel[0] === 'TicTacToe') {
+        return ['TicTacToe', TicTacToe.mergeBackendModel(frontendModel[1], backendModel[1])]
+      }
+      return frontendModel
     }
   }
 }
