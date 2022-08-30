@@ -48,10 +48,10 @@ export type Msg = BackendMsg
 
 export const update = (
   {
-    broadcast,
+    sendToRoom,
     roomId,
   }: {
-    broadcast: (toFrontend: ToFrontend) => Cmd.Cmd<never>
+    sendToRoom: (toFrontend: ToFrontend) => Cmd.Cmd<never>
     roomId: RoomId.RoomId
   },
   msg: Msg,
@@ -74,7 +74,14 @@ export const update = (
 
     case "Snake": {
       if (model[0] === "Snake") {
-        return tagUpdate("Snake", Snake.update({ roomId }, msg[1], model[1]))
+        return tagUpdate(
+          "Snake",
+          Snake.update(
+            { sendToRoom: (msg) => sendToRoom(["Snake", msg]) },
+            msg[1],
+            model[1],
+          ),
+        )
       }
       return [model, Cmd.None]
     }
@@ -84,7 +91,7 @@ export const update = (
         return tagUpdate(
           "Chess",
           Chess.update(
-            { broadcast: (msg) => broadcast(["Chess", msg]) },
+            { sendToRoom: (msg) => sendToRoom(["Chess", msg]) },
             msg[1],
             model[1],
           ),
@@ -96,7 +103,13 @@ export const update = (
 }
 
 export const updateFromFrontend = (
-  { clientId, roomId }: { roomId: RoomId.RoomId; clientId: ClientId.ClientId },
+  {
+    sendToClient,
+    sendToRoom,
+  }: {
+    sendToClient: (msg: ToFrontend) => Cmd.Cmd<never>
+    sendToRoom: (msg: ToFrontend) => Cmd.Cmd<never>
+  },
   msg: ToBackend,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
@@ -105,7 +118,13 @@ export const updateFromFrontend = (
       if (model[0] === "ConnectFour") {
         return tagUpdate(
           "ConnectFour",
-          ConnectFour.updateFromFrontend(clientId, msg[1], model[1]),
+          ConnectFour.updateFromFrontend(
+            {
+              sendToClient: (msg) => sendToClient(["ConnectFour", msg]),
+            },
+            msg[1],
+            model[1],
+          ),
         )
       }
       return [model, Cmd.None]
@@ -115,7 +134,7 @@ export const updateFromFrontend = (
       if (model[0] === "TicTacToe") {
         return tagUpdate(
           "TicTacToe",
-          TicTacToe.updateFromFrontend(clientId, msg[1], model[1]),
+          TicTacToe.updateFromFrontend(msg[1], model[1]),
         )
       }
       return [model, Cmd.None]
@@ -125,7 +144,14 @@ export const updateFromFrontend = (
       if (model[0] === "Snake") {
         return tagUpdate(
           "Snake",
-          Snake.updateFromFrontend({ clientId, roomId }, msg[1], model[1]),
+          Snake.updateFromFrontend(
+            {
+              sendToClient: (msg) => sendToClient(["Snake", msg]),
+              sendToRoom: (msg) => sendToClient(["Snake", msg]),
+            },
+            msg[1],
+            model[1],
+          ),
         )
       }
       return [model, Cmd.None]
@@ -135,7 +161,14 @@ export const updateFromFrontend = (
       if (model[0] === "Chess") {
         return tagUpdate(
           "Chess",
-          Chess.updateFromFrontend({ clientId, roomId }, msg[1], model[1]),
+          Chess.updateFromFrontend(
+            {
+              sendToClient: (msg) => sendToClient(["Chess", msg]),
+              sendToRoom: (msg) => sendToRoom(["Chess", msg]),
+            },
+            msg[1],
+            model[1],
+          ),
         )
       }
       return [model, Cmd.None]
