@@ -49,10 +49,11 @@ const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
     case "ClientConnected": {
       const sessionId = msg[1]
       const clientId = msg[2]
+      const sessionPrev = model.sessions[sessionId]
       const session: Session = {
         sessionId,
         clientId,
-        userId: Option.None,
+        userId: sessionPrev ? sessionPrev.userId : Option.None,
       }
       return [
         {
@@ -107,16 +108,18 @@ const updateFromFrontend = (
 
   switch (msg[0]) {
     case "UserLoggedIn": {
+      const session: Session = {
+        sessionId,
+        clientId,
+        userId:Option.Some(msg[1]),
+      }
+      
       return [
         {
           ...model,
           sessions: {
             ...model.sessions,
-            [sessionId]: {
-              sessionId,
-              clientId,
-              userId: msg[1],
-            },
+            [sessionId]: session
           },
         },
         Cmd.None,

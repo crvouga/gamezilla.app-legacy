@@ -59,7 +59,6 @@ export const update = (
     const userIds = Object.values(model.users)
       .filter((user) => user.roomId === roomId)
       .map((user) => user.userId)
-
     return sendToUser(userIds, msg)
   }
 
