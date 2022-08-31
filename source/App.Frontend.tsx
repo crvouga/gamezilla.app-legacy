@@ -35,7 +35,7 @@ import * as UI from "./UI"
 //
 //
 
-export type Model = FrontendModel
+type Model = FrontendModel
 
 //
 //
@@ -45,7 +45,7 @@ export type Model = FrontendModel
 //
 //
 
-export const init = (location: Browser.Location): [Model, Cmd.Cmd<Msg>] => {
+const init = (location: Browser.Location): [Model, Cmd.Cmd<Msg>] => {
   const route = pipe(
     location,
     Route.decode,
@@ -83,7 +83,7 @@ export const init = (location: Browser.Location): [Model, Cmd.Cmd<Msg>] => {
 //
 //
 
-export type Msg = FrontendMsg
+type Msg = FrontendMsg
 
 type OutAction = Snackbar.Action | GameRoom.Action | Store.Action | Auth.Action
 
@@ -95,7 +95,7 @@ type OutAction = Snackbar.Action | GameRoom.Action | Store.Action | Auth.Action
 //
 //
 
-export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
+const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   return pipe(
     [model, Cmd.None],
     andThen(updateMain, msg),
@@ -131,7 +131,20 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
     }
 
     case "Route": {
-      return [{ ...model, route: msg[1][1] }, Cmd.None]
+      switch (msg[1][0]) {
+        case 'GotRoute': {
+          const modelNew: Model = {
+            ...model,
+            route: msg[1][1]
+          }
+
+          return initPage(modelNew)
+        }
+
+        default: {
+          return exhaustive(msg[1][0])
+        }
+      }
     }
 
     case "Bridge": {
@@ -221,7 +234,7 @@ const updatePage = (msg: Pages.Msg, model: Model): [Model, Cmd.Cmd<Msg>, OutActi
   }
 }
 
-export const updateFromBackend = (
+const updateFromBackend = (
   msg: ToFrontend,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
@@ -248,6 +261,61 @@ export const updateFromBackend = (
   }
 }
 
+const initPage = (model: Model): [Model, Cmd.Cmd<Msg>] => {
+  const status = toStatus(model)
+
+  switch (status[0]) {
+    case "ProfileError": {
+      return [model, Cmd.None]
+    }
+
+    case "AuthLoading": {
+      return [model, Cmd.None]
+    }
+
+    case "ProfileLoading": {
+      const action: OutAction = [
+        "Store",
+        [
+          "Profile",
+          ["FindMany", { userIds: [status[1].authSession.userId] }],
+        ],
+      ]
+
+      return pipe([model, Cmd.None], andThenMany(runAction, [action]))
+    }
+
+    case "ProfileMissing": {
+      const [page, pageCmd] = Pages.initProfileMissing(
+        model.route,
+        status[1].authSession,
+      )
+
+      return [{ ...model, page }, tagCmd("Page", pageCmd)]
+    }
+
+    case "LoggedOut": {
+      const [page, pageCmd] = Pages.initLoggedOut(model.route)
+      return [{ ...model, page }, tagCmd("Page", pageCmd)]
+    }
+
+    case "Ready": {
+      const [page, pageCmd, actions] = Pages.initReady(
+        model.route,
+        status[1].profile,
+      )
+      return pipe(
+        [{ ...model, page }, tagCmd("Page", pageCmd)],
+        andThenMany(runAction, actions),
+      )
+    }
+
+    default: {
+      return exhaustive(status)
+    }
+  }
+}
+
 const updateStatusChanged =
   (modelPrev: Model) =>
     (_msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
@@ -258,52 +326,7 @@ const updateStatusChanged =
         return [model, Cmd.None]
       }
 
-      switch (statusNew[0]) {
-        case "ProfileError":
-        case "AuthLoading": {
-          return [model, Cmd.None]
-        }
-
-        case "ProfileLoading": {
-          const action: OutAction = [
-            "Store",
-            [
-              "Profile",
-              ["FindMany", { userIds: [statusNew[1].authSession.userId] }],
-            ],
-          ]
-
-          return pipe([model, Cmd.None], andThenMany(runAction, [action]))
-        }
-
-        case "ProfileMissing": {
-          const [page, pageCmd] = Pages.initProfileMissing(
-            model.route,
-            statusNew[1].authSession,
-          )
-
-          return [{ ...model, page }, tagCmd("Page", pageCmd)]
-        }
-
-        case "LoggedOut": {
-          const [page, pageCmd] = Pages.initLoggedOut(model.route)
-          return [{ ...model, page }, tagCmd("Page", pageCmd)]
-        }
-
-        case "Ready": {
-          const [page, pageCmd, actions] = Pages.initReady(
-            model.route,
-            statusNew[1].profile,
-          )
-          return pipe(
-            [{ ...model, page }, tagCmd("Page", pageCmd)],
-            andThenMany(runAction, actions),
-          )
-        }
-
-        default:
-          return exhaustive(statusNew)
-      }
+      return initPage(model)
     }
 
 const runAction = (
@@ -360,7 +383,7 @@ const runAction = (
 //
 //
 
-export const subscriptions = (model: Model): Sub.Sub<Msg> => {
+const subscriptions = (model: Model): Sub.Sub<Msg> => {
   return Sub.batch<Msg>([
     Bridge.onConnectionStatus(tag("Bridge")),
     Bridge.fromBackend(tag("[Backend]")),
@@ -401,7 +424,7 @@ const toThemeMode = (model: Model): UI.ThemeMode => {
   }
 }
 
-export const view =
+const view =
   (model: Model): UI.View<Msg> =>
     (dispatch) => {
       return (
@@ -540,7 +563,7 @@ const viewError =
 //
 //
 
-export const onLocationChange = (location: Browser.Location): Msg => {
+const onLocationChange = (location: Browser.Location): Msg => {
   return pipe(
     { pathname: location.pathname },
     Route.decode,
@@ -565,7 +588,7 @@ type Status =
   | ["ProfileError", { authSession: Auth.Session }]
   | ["Ready", { profile: Store.Profile.Profile; authSession: Auth.Session }]
 
-export const toStatus = ({
+const toStatus = ({
   store,
   auth,
 }: {
@@ -677,7 +700,7 @@ const productionBackendUrl = "https://gamezilla.herokuapp.com/"
 
 const developmentBackendUrl = `http://localhost:${Bridge.backendServerPort}/`
 
-export const backendUrl =
+const backendUrl =
   process.env.NODE_ENV === "production"
     ? productionBackendUrl
     : developmentBackendUrl

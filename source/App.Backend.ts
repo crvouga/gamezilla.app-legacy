@@ -15,9 +15,9 @@ import * as GameRoom from "./GameRoom/GameRoom.Backend"
 //
 //
 
-export type Model = BackendModel
+type Model = BackendModel
 
-export const init: [Model, Cmd.Cmd<Msg>] = [
+const init: [Model, Cmd.Cmd<Msg>] = [
   {
     gameRoom: GameRoom.init,
     sessions: {},
@@ -33,9 +33,9 @@ export const init: [Model, Cmd.Cmd<Msg>] = [
 //
 //
 
-export type Msg = BackendMsg
+type Msg = BackendMsg
 
-export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
+const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   const sendToUser = (userIds: UserId.UserId[], msg: ToFrontend) => {
     return Bridge.broadcast(msg)
   }
@@ -90,7 +90,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   }
 }
 
-export const updateFromFrontend = (
+const updateFromFrontend = (
   sessionId: SessionId.SessionId,
   clientId: ClientId.ClientId,
   msg: ToBackend,
@@ -128,7 +128,7 @@ export const updateFromFrontend = (
 //
 //
 
-export const subscriptions = (model: Model): Sub.Sub<Msg> => {
+const subscriptions = (model: Model): Sub.Sub<Msg> => {
   return Sub.batch([
     pipe(GameRoom.subscriptions(model.gameRoom), Sub.map(tag("GameRoom"))),
     Bridge.onConnect((sessionId, clientId) => [
