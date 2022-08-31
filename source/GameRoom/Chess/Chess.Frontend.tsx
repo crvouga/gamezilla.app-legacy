@@ -50,8 +50,18 @@ export const update = (
   switch (msg[0]) {
     case 'UserVsUser': {
       if (model.type === 'UserVsUser') {
-        const [child, childCmd] = UserVsUser.update({ sendToBackend: (msg) => sendToBackend(['UserVsUser', msg]) }, msg[1], model.child)
-        return [{ type: "UserVsUser", child }, tagCmd("UserVsUser", childCmd)]
+        const [child, childCmd] = UserVsUser.update(
+          {
+            sendToBackend: (msg) => sendToBackend(['UserVsUser', msg])
+          },
+          msg[1],
+          model.child
+        )
+
+        return [
+          { type: "UserVsUser", child },
+          tagCmd("UserVsUser", childCmd)
+        ]
       }
       return [model, Cmd.None]
     }
@@ -102,8 +112,6 @@ export const subscriptions = (_model: Model): Sub.Sub<Msg> => {
 //
 //
 //
-
-
 
 export const view =
   (

@@ -2,6 +2,7 @@ import * as Rx from "rxjs"
 import { Cmd, exhaustive, Option, pipe, Result, Sub, Task } from "./Core"
 import { UserId } from "./Data"
 import * as Supabase from "./Supabase"
+import * as Bridge from "./Bridge"
 
 //
 //
@@ -56,7 +57,10 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
           return [["LoggedOut"], Cmd.None]
 
         case "Some":
-          return [["LoggedIn", msg[1].value], Cmd.None]
+          return [
+            ["LoggedIn", msg[1].value],
+            Bridge.sendToBackend(["UserLoggedIn", msg[1].value.userId]),
+          ]
       }
 
     case "LoginResulted":

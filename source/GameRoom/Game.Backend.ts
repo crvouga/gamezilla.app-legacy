@@ -147,7 +147,7 @@ export const updateFromFrontend = (
           Snake.updateFromFrontend(
             {
               sendToClient: (msg) => sendToClient(["Snake", msg]),
-              sendToRoom: (msg) => sendToClient(["Snake", msg]),
+              sendToRoom: (msg) => sendToRoom(["Snake", msg]),
             },
             msg[1],
             model[1],

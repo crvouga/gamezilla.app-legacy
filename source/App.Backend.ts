@@ -1,8 +1,14 @@
 import * as Http from "http"
 import * as Socket from "socket.io"
-import { BackendModel, BackendMsg, ToBackend, ToFrontend } from "./App.Types"
+import {
+  BackendModel,
+  BackendMsg,
+  Session,
+  ToBackend,
+  ToFrontend,
+} from "./App.Types"
 import * as Bridge from "./Bridge"
-import { Cmd, pipe, Platform, Sub, tag, tagCmd } from "./Core"
+import { Cmd, Option, pipe, Platform, Sub, tag, tagCmd } from "./Core"
 import { removeKey } from "./Core/Record"
 import { ClientId, SessionId, UserId } from "./Data"
 import * as GameRoom from "./GameRoom/GameRoom.Backend"
@@ -36,10 +42,6 @@ const init: [Model, Cmd.Cmd<Msg>] = [
 type Msg = BackendMsg
 
 const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
-  const sendToUser = (userIds: UserId.UserId[], msg: ToFrontend) => {
-    return Bridge.broadcast(msg)
-  }
-
   switch (msg[0]) {
     case "[Frontend]":
       return updateFromFrontend(msg[1], msg[2], msg[3], model)
@@ -47,15 +49,17 @@ const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
     case "ClientConnected": {
       const sessionId = msg[1]
       const clientId = msg[2]
+      const session: Session = {
+        sessionId,
+        clientId,
+        userId: Option.None,
+      }
       return [
         {
           ...model,
           sessions: {
             ...model.sessions,
-            [sessionId]: {
-              sessionId,
-              clientId,
-            },
+            [sessionId]: session,
           },
         },
         Bridge.sendToFrontend(
@@ -79,7 +83,8 @@ const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
     case "GameRoom": {
       const [child, childCmd] = GameRoom.update(
         {
-          sendToUser: (userIds, msg) => sendToUser(userIds, ["GameRoom", msg]),
+          sendToUser: (userIds, msg) =>
+            sendToUser(model, userIds, ["GameRoom", msg]),
         },
         msg[1],
         model.gameRoom,
@@ -96,20 +101,34 @@ const updateFromFrontend = (
   msg: ToBackend,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
-  const sendToUser = (userIds: UserId.UserId[], msg: ToFrontend) => {
-    return Bridge.broadcast(msg)
-  }
-
   const sendToClient = (msg: ToFrontend) => {
     return Bridge.sendToFrontend([clientId], msg)
   }
 
   switch (msg[0]) {
+    case "UserLoggedIn": {
+      return [
+        {
+          ...model,
+          sessions: {
+            ...model.sessions,
+            [sessionId]: {
+              sessionId,
+              clientId,
+              userId: msg[1],
+            },
+          },
+        },
+        Cmd.None,
+      ]
+    }
+
     case "GameRoom": {
       const [child, childCmd] = GameRoom.updateFromFrontend(
         {
           sendToClient: (msg) => sendToClient(["GameRoom", msg]),
-          sendToUser: (userIds, msg) => sendToUser(userIds, ["GameRoom", msg]),
+          sendToUser: (userIds, msg) =>
+            sendToUser(model, userIds, ["GameRoom", msg]),
         },
         msg[1],
         model.gameRoom,
@@ -118,6 +137,22 @@ const updateFromFrontend = (
       return [{ ...model, gameRoom: child }, tagCmd("GameRoom", childCmd)]
     }
   }
+}
+
+const sendToUser = (
+  model: Model,
+  userIds: UserId.UserId[],
+  msg: ToFrontend,
+) => {
+  const clientIds = Object.values(model.sessions)
+    .filter(
+      (session) =>
+        session.userId.type === "Some" &&
+        userIds.includes(session.userId.value),
+    )
+    .map((session) => session.clientId)
+
+  return Bridge.sendToFrontend(clientIds, msg)
 }
 
 //

@@ -1,6 +1,6 @@
 import * as Auth from "./Auth"
-import { LocalStorage } from "./Core"
-import { ClientId, SessionId } from "./Data"
+import { LocalStorage, Option } from "./Core"
+import { UserId, ClientId, SessionId } from "./Data"
 import * as GameRoom from "./GameRoom/GameRoom.Types"
 import * as Page from "./Pages"
 import * as Route from "./Route"
@@ -17,12 +17,15 @@ import * as Store from "./Store"
 
 export type BackendModel = {
   sessions: {
-    [sessionId: SessionId.SessionId]: {
-      sessionId: SessionId.SessionId
-      clientId: ClientId.ClientId
-    }
+    [sessionId: SessionId.SessionId]: Session
   }
   gameRoom: GameRoom.BackendModel
+}
+
+export type Session = {
+  sessionId: SessionId.SessionId
+  clientId: ClientId.ClientId
+  userId: Option.Option<UserId.UserId>
 }
 
 export type FrontendModel = {
@@ -49,7 +52,9 @@ export type ConnectionStatus =
 //
 //
 
-export type ToBackend = ["GameRoom", GameRoom.ToBackend]
+export type ToBackend =
+  | ["GameRoom", GameRoom.ToBackend]
+  | ["UserLoggedIn", UserId.UserId]
 
 export type ToFrontend =
   | ["GameRoom", GameRoom.ToFrontend]
