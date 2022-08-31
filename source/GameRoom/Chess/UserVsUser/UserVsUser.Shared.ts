@@ -170,12 +170,34 @@ export const move = (
 
   const boardNew = result.value
 
+  if (Board.inCheckmate(boardNew)) {
+    const modelNew: SharedModel = {
+      type: "GameOver",
+      b: model.b,
+      w: model.w,
+      board: boardNew,
+      clock: model.clock,
+      gameOver: {
+        type: "Checkmate",
+        winner: Board.toTurn(model.board),
+      },
+    }
+
+    return Result.Ok({
+      ...modelNew,
+      didCapture: boardNew.didCapture,
+    })
+  }
+
   const modelNew: SharedModel = {
     ...model,
     board: boardNew,
   }
 
-  return Result.Ok({ ...modelNew, didCapture: boardNew.didCapture })
+  return Result.Ok({
+    ...modelNew,
+    didCapture: boardNew.didCapture,
+  })
 }
 
 //
