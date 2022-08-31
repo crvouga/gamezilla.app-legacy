@@ -378,7 +378,18 @@ export const respondToDraw = (
     return Result.Ok(modelNew)
   }
 
-  return Result.Ok(model)
+  const modelNew: SharedModel = {
+    type: "GameOver",
+    b: model.b,
+    w: model.w,
+    board: model.board,
+    clock: model.clock,
+    gameOver: {
+      type: "DrawByAgreement",
+    },
+  }
+
+  return Result.Ok(modelNew)
 }
 
 //
@@ -429,7 +440,7 @@ export type NewGameResulted = [
   Result.Result<"game_must_be_over", SharedModel>,
 ]
 export const newGame = (model: SharedModel): NewGameResulted[1] => {
-  if (model.type !== "Game") {
+  if (model.type !== "GameOver") {
     return Result.Err("game_must_be_over")
   }
 
