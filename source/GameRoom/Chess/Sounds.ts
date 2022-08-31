@@ -6,7 +6,7 @@ import gameStart from "./assets/game-start.wav"
 import move from "./assets/move-1.wav"
 import navigationCancel from "./assets/navigation-cancel.wav"
 import navigationForwardSelection from "./assets/navigation_forward-selection-minimal.wav"
-import ui_unlock from "./assets/ui_unlock.wav"
+import uiUnlock from "./assets/ui_unlock.wav"
 
 export {
   capture,
