@@ -1,6 +1,6 @@
 import { RemoteData, Result, Unit } from "../Core"
 import { RoomId, UserId } from "../Data"
-import * as Game from "../Game/Game.Types"
+import * as Game from "./Game.Types"
 
 //
 //

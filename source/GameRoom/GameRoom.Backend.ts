@@ -1,8 +1,8 @@
 import { Cmd, exhaustive, pipe, Result, Sub } from "../Core"
 import { removeKey } from "../Core/Record"
 import { RoomId, UserId } from "../Data"
-import * as Game from "../Game/Game.Backend"
-import { GameName } from "../Game/Game.Types"
+import * as Game from "./Game.Backend"
+import { GameName } from "./Game.Types"
 import {
   BackendModel,
   BackendMsg,

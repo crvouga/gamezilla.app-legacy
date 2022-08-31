@@ -1,11 +1,11 @@
 import { Cmd, exhaustive, pipe, RemoteData, Sub, Unit } from "../Core"
 import { RoomId, UserId } from "../Data"
-import * as Game from "../Game/Game.Frontend"
-import { GameName } from "../Game/Game.Types"
 import * as Route from "../Route"
 import * as Snackbar from "../Snackbar"
 import * as Store from "../Store"
 import * as UI from "../UI"
+import * as Game from "./Game.Frontend"
+import { GameName } from "./Game.Types"
 import {
   BackendModel,
   FrontendModel,
