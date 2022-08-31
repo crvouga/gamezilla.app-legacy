@@ -174,9 +174,9 @@ export const updateFromBackend = (
         return [model, Cmd.None]
       }
 
-      // if (sharedModelNew.type === 'GameEnded') {
-      //   return updateGameOver(sharedModelNew, model)
-      // }
+      if (sharedModelNew.type === 'GameOver') {
+        return updateGameOver(sharedModelNew, model)
+      }
 
       const soundCmd =
         Board.inCheck(sharedModelNew.board)
@@ -229,9 +229,9 @@ export const updateFromBackend = (
         return [model, Cmd.None]
       }
 
-      // if (sharedModelNew.type === 'GameEnded') {
-      //   return updateGameOver(sharedModelNew, model)
-      // }
+      if (sharedModelNew.type === 'GameOver') {
+        return updateGameOver(sharedModelNew, model)
+      }
 
       return [{ ...model, sharedModel: sharedModelNew }, Cmd.None]
     }
@@ -247,9 +247,9 @@ export const updateFromBackend = (
         return [model, Cmd.None]
       }
 
-      // if (sharedModelNew.type === 'GameEnded') {
-      //   return updateGameOver(sharedModelNew, model)
-      // }
+      if (sharedModelNew.type === 'GameOver') {
+        return updateGameOver(sharedModelNew, model)
+      }
 
       return [{ ...model, sharedModel: sharedModelNew }, Cmd.None]
     }
@@ -261,9 +261,9 @@ export const updateFromBackend = (
 
       const sharedModelNew = msg[1].value
 
-      // if (sharedModelNew.type === 'Setup') {
-      //   return [model, playAudio(Sounds.navigationCancel)]
-      // }
+      if (sharedModelNew.type === 'Setup') {
+        return [model, playAudio(Sounds.navigationCancel)]
+      }
 
       return [{ ...model, sharedModel: sharedModelNew }, Cmd.None]
 
@@ -282,6 +282,18 @@ export const updateFromBackend = (
 
 const playAudio = (src: string): Cmd.Cmd<Msg> => {
   return Audio.play(src, tag("AudioResulted"))
+}
+
+const updateGameOver = (sharedModel: SharedModel, model: Model): [Model, Cmd.Cmd<Msg>] => {
+  return [
+    {
+      ...model,
+      sharedModel,
+      openedModal: "GameOver"
+    },
+    playAudio(Sounds.gameOver)
+  ]
+
 }
 
 //
@@ -513,26 +525,19 @@ const View =
 
         <UI.Box sx={{ width: "100%", display: "flex" }}>
 
-          {/* {model.sharedModel.type === 'GameEnded' && (
-            <>
-              <UI.Box sx={{ paddingX: 2, paddingBottom: 2, width: "100%", }}>
-                {!(currentUserColor === 'w' || currentUserColor === 'b') && (
-                  <UI.Typography variant="caption" color="text.secondary">
-                    Must be a player start a new game.
-                  </UI.Typography>
-                )}
-                <UI.Button
-                  fullWidth
-                  variant="contained"
-                  size="large"
-                  onClick={() => dispatch(['NewGame'])}
-                  disabled={!(currentUserColor === 'w' || currentUserColor === 'b')}
-                >
-                  New Game
-                </UI.Button>
-              </UI.Box>
-            </>
-          )} */}
+          {model.sharedModel.type === 'GameOver' && (currentUserColor !== 'None') && (
+            <UI.Box sx={{ paddingX: 2, paddingBottom: 2, width: "100%", }}>
+              <UI.Button
+                fullWidth
+                variant="contained"
+                size="large"
+                onClick={() => dispatch(['NewGame'])}
+                disabled={!(currentUserColor === 'w' || currentUserColor === 'b')}
+              >
+                New Game
+              </UI.Button>
+            </UI.Box>
+          )}
 
 
           {model.sharedModel.type === 'Game' && (
