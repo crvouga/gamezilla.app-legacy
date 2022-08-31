@@ -213,7 +213,7 @@ export const updateFromBackend = (
         }
 
         case 'Ok': {
-          return [{ ...model, openedModal: "AskedToDraw" }, Cmd.None]
+          return [{ ...model, openedModal: "AskedToDraw" }, playAudio(Sounds.uiUnlock)]
         }
       }
     }
