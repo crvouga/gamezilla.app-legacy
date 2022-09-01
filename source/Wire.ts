@@ -1,5 +1,5 @@
 import * as Rx from "rxjs"
-import { ConnectionStatus, ToBackend, ToFrontend } from "./App.Types"
+import { WireStatus, ToBackend, ToFrontend } from "./App.Types"
 import { Cmd, Option, pipe, Sub } from "./Core"
 import { SessionId, ClientId } from "./Data"
 
@@ -13,7 +13,7 @@ import { SessionId, ClientId } from "./Data"
 
 export const _toFrontend = new Rx.Subject<ToFrontend>()
 export const _sendToBackend = new Rx.Subject<ToBackend>()
-export const _connectionStatus = new Rx.Subject<ConnectionStatus>()
+export const _connectionStatus = new Rx.Subject<WireStatus>()
 
 export const fromBackend = <Msg>(
   mapper: (msg: ToFrontend) => Msg,
@@ -29,7 +29,7 @@ export const sendToBackend = (msg: ToBackend): Cmd.Cmd<never> => {
 }
 
 export const onConnectionStatus = <Msg>(
-  mapper: (connectionStatus: ConnectionStatus) => Msg,
+  mapper: (connectionStatus: WireStatus) => Msg,
 ): Sub.Sub<Msg> => {
   return pipe(_connectionStatus, Sub.map(mapper))
 }

@@ -37,11 +37,11 @@ export type FrontendModel = {
   page: Page.Model
   route: Route.Model
   gameRoom: GameRoom.FrontendModel
-  bridge: ConnectionStatus
   party: Party.FrontendModel
+  wire: WireStatus
 }
 
-export type ConnectionStatus =
+export type WireStatus =
   | "Connecting"
   | "ConnectError"
   | "Disconnected"
@@ -67,7 +67,7 @@ export type ToFrontend =
 
 export type FrontendMsg =
   | ["[Backend]", ToFrontend]
-  | ["Bridge", ConnectionStatus]
+  | ["Wire", WireStatus]
   | ["Route", Route.Msg]
   | ["Snackbar", Snackbar.Msg]
   | ["GameRoom", GameRoom.FrontendMsg]

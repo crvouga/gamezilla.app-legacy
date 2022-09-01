@@ -2,7 +2,7 @@ import * as ReactDomClient from "react-dom/client"
 import { io, Socket } from "socket.io-client"
 import { FrontendModel, FrontendMsg, ToFrontend } from "./App.Types"
 import * as Auth from "./Auth"
-import * as Bridge from "./Bridge"
+import * as Wire from "./Wire"
 import {
   andThen,
   andThenMany,
@@ -25,7 +25,6 @@ import * as Route from "./Route"
 import * as Snackbar from "./Snackbar"
 import * as Party from "./Party/Party.Frontend"
 import * as Store from "./Store"
-import { toFindManyKey } from "./Store/Types"
 import * as UI from "./UI"
 
 //
@@ -68,7 +67,7 @@ const init = (location: Browser.Location): [Model, Cmd.Cmd<Msg>] => {
       auth,
       page,
       party,
-      bridge: "Connecting",
+      wire: "Connecting",
     },
     Cmd.batch<Msg>([
       tagCmd("Party", partyCmd),
@@ -141,7 +140,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
 
     case 'Party': {
-      const [child, childCmd] = Party.update({ sendToBackend: (msg) => Bridge.sendToBackend(['Party', msg]) }, msg[1], model.party)
+      const [child, childCmd] = Party.update({ sendToBackend: (msg) => Wire.sendToBackend(['Party', msg]) }, msg[1], model.party)
       return [{ ...model, party: child }, tagCmd("Party", childCmd)]
     }
 
@@ -162,8 +161,8 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
       }
     }
 
-    case "Bridge": {
-      return [{ ...model, bridge: msg[1] }, Cmd.None]
+    case "Wire": {
+      return [{ ...model, wire: msg[1] }, Cmd.None]
     }
 
     case 'LocalStoragePutResulted': {
@@ -182,7 +181,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
       const [child, childCmd] = GameRoom.update(
         {
           currentUserId: profile.userId,
-          sendToBackend: msg => Bridge.sendToBackend(['GameRoom', msg])
+          sendToBackend: msg => Wire.sendToBackend(['GameRoom', msg])
         },
         msg[1],
         model.gameRoom,
@@ -258,7 +257,7 @@ const updateFromBackend = (
     case 'Session': {
       const sessionId = msg[1]
 
-      return [model, LocalStorage.put(Bridge.sessionIdKey, sessionId, tag("LocalStoragePutResulted"))]
+      return [model, LocalStorage.put(Wire.sessionIdKey, sessionId, tag("LocalStoragePutResulted"))]
     }
 
     case 'Party': {
@@ -268,7 +267,7 @@ const updateFromBackend = (
 
     case "GameRoom": {
       const [gameRoom, gameRoomCmd, actions] = GameRoom.updateFromBackend(
-        { sendToBackend: msg => Bridge.sendToBackend(['GameRoom', msg]) },
+        { sendToBackend: msg => Wire.sendToBackend(['GameRoom', msg]) },
         msg[1],
         model.gameRoom,
       )
@@ -378,7 +377,7 @@ const runAction = (
       const currentUserId = model.auth[1].userId
 
       const [gameRoom, gameRoomCmd] = GameRoom.runAction(
-        { currentUserId, sendToBackend: msg => Bridge.sendToBackend(['GameRoom', msg]) },
+        { currentUserId, sendToBackend: msg => Wire.sendToBackend(['GameRoom', msg]) },
         action,
         model.gameRoom,
       )
@@ -391,7 +390,7 @@ const runAction = (
     }
 
     case 'Party': {
-      const [party, partyCmd] = Party.runAction({ sendToBackend: (msg) => Bridge.sendToBackend(['Party', msg]) }, action, model.party)
+      const [party, partyCmd] = Party.runAction({ sendToBackend: (msg) => Wire.sendToBackend(['Party', msg]) }, action, model.party)
       return [{ ...model, party }, tagCmd("Party", partyCmd)]
     }
 
@@ -410,8 +409,8 @@ const runAction = (
 
 const subscriptions = (model: Model): Sub.Sub<Msg> => {
   return Sub.batch<Msg>([
-    Bridge.onConnectionStatus(tag("Bridge")),
-    Bridge.fromBackend(tag("[Backend]")),
+    Wire.onConnectionStatus(tag("Wire")),
+    Wire.fromBackend(tag("[Backend]")),
     tagSub("Page", Pages.subscriptions(model.page)),
     tagSub("Auth", Auth.subscriptions),
     model.auth[0] === "LoggedIn"
@@ -495,7 +494,7 @@ const view =
 const viewMain = (model: Model): UI.View<Msg> => {
   const status = toStatus(model)
 
-  switch (model.bridge) {
+  switch (model.wire) {
     case "Connecting":
       return viewLoading({ reason: "Connecting..." })
 
@@ -642,7 +641,7 @@ const toStatus = ({
         ]
       }
 
-      const key = toFindManyKey([authSession.userId])
+      const key = Store.Types.toFindManyKey([authSession.userId])
 
       const query = store.queries.Profile.FindMany[key] ?? RemoteData.NotAsked
 
@@ -723,37 +722,37 @@ Browser.run(program, (dom) => {
 
 const productionBackendUrl = "https://gamezilla.herokuapp.com/"
 
-const developmentBackendUrl = `http://localhost:${Bridge.backendServerPort}/`
+const developmentBackendUrl = `http://localhost:${Wire.backendServerPort}/`
 
 const backendUrl =
   process.env.NODE_ENV === "production"
     ? productionBackendUrl
     : developmentBackendUrl
 
-const socketClient: Socket<Bridge.ServerToClientEvents, Bridge.ClientToServerEvents> =
+const socketClient: Socket<Wire.ServerToClientEvents, Wire.ClientToServerEvents> =
   io(backendUrl, {
     auth: {
-      [Bridge.sessionIdKey]: localStorage.getItem(Bridge.sessionIdKey) ?? undefined
+      [Wire.sessionIdKey]: localStorage.getItem(Wire.sessionIdKey) ?? undefined
     }
   })
 
 socketClient.on("connect", () => {
-  Bridge._connectionStatus.next("Connected")
+  Wire._connectionStatus.next("Connected")
 })
 
 socketClient.on("connect_error", () => {
-  Bridge._connectionStatus.next("ConnectError")
+  Wire._connectionStatus.next("ConnectError")
 })
 
 socketClient.on("disconnect", () => {
-  Bridge._connectionStatus.next("Disconnected")
+  Wire._connectionStatus.next("Disconnected")
 })
 
 socketClient.on("ToFrontend", (msg) => {
-  Bridge._toFrontend.next(msg)
+  Wire._toFrontend.next(msg)
 })
 
-Bridge._sendToBackend.subscribe((msg) => {
+Wire._sendToBackend.subscribe((msg) => {
   socketClient.emit("ToBackend", msg)
 })
 
