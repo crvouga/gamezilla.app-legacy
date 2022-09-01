@@ -7,7 +7,7 @@ import {
   ToBackend,
   ToFrontend,
 } from "./App.Types"
-import * as Bridge from "./Bridge"
+import * as Wire from "./Wire"
 import { Cmd, Option, pipe, Platform, Sub, tag, tagCmd } from "./Core"
 import { removeKey } from "./Core/Record"
 import { ClientId, SessionId, UserId } from "./Data"
@@ -69,7 +69,7 @@ const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
             [sessionId]: session,
           },
         },
-        Bridge.sendToFrontend(
+        Wire.sendToFrontend(
           [clientId],
           ["GameRoom", ["Sync", model.gameRoom]],
         ),
@@ -113,7 +113,7 @@ const updateFromFrontend = (
   msg: ToBackend,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
-  const sendToClient = (msg: ToFrontend) => Bridge.sendToFrontend([clientId], msg)
+  const sendToClient = (msg: ToFrontend) => Wire.sendToFrontend([clientId], msg)
 
   switch (msg[0]) {
     case "UserLoggedIn": {
@@ -174,7 +174,7 @@ const sendToUser = (
     )
     .map((session) => session.clientId)
 
-  return Bridge.sendToFrontend(clientIds, msg)
+  return Wire.sendToFrontend(clientIds, msg)
 }
 
 //
@@ -188,17 +188,17 @@ const sendToUser = (
 const subscriptions = (model: Model): Sub.Sub<Msg> => {
   return Sub.batch([
     pipe(GameRoom.subscriptions(model.gameRoom), Sub.map(tag("GameRoom"))),
-    Bridge.onConnect((sessionId, clientId) => [
+    Wire.onConnect((sessionId, clientId) => [
       "ClientConnected",
       sessionId,
       clientId,
     ]),
-    Bridge.onDisconnect((sessionId, clientId) => [
+    Wire.onDisconnect((sessionId, clientId) => [
       "ClientDisconnected",
       sessionId,
       clientId,
     ]),
-    Bridge.fromFrontend<Msg>((sessionId, clientId, toBackend) => [
+    Wire.fromFrontend<Msg>((sessionId, clientId, toBackend) => [
       "[Frontend]",
       sessionId,
       clientId,
@@ -264,10 +264,10 @@ const requestListener: Http.RequestListener = (_request, response) => {
 const httpServer = Http.createServer(requestListener)
 
 const socketServer = new Socket.Server<
-  Bridge.ClientToServerEvents,
-  Bridge.ServerToClientEvents,
-  Bridge.InterServerEvents,
-  Bridge.SocketData
+  Wire.ClientToServerEvents,
+  Wire.ServerToClientEvents,
+  Wire.InterServerEvents,
+  Wire.SocketData
 >(httpServer, {
   cors: {
     origin: "*",
@@ -277,7 +277,7 @@ const socketServer = new Socket.Server<
 })
 
 socketServer.on("connection", (socket) => {
-  const maybeSessionId: unknown = socket.handshake.auth[Bridge.sessionIdKey]
+  const maybeSessionId: unknown = socket.handshake.auth[Wire.sessionIdKey]
 
   console.log(maybeSessionId)
 
@@ -292,31 +292,31 @@ socketServer.on("connection", (socket) => {
   socket.emit("ToFrontend", ["Session", sessionId])
 
   if (ClientId.is(socket.id)) {
-    Bridge._onConnect.next([sessionId, socket.id])
+    Wire._onConnect.next([sessionId, socket.id])
   }
 
   socket.on("disconnect", () => {
     if (ClientId.is(socket.id)) {
-      Bridge._onDisconnect.next([sessionId, socket.id])
+      Wire._onDisconnect.next([sessionId, socket.id])
     }
   })
 
   socket.on("ToBackend", (msg) => {
     if (ClientId.is(socket.id)) {
-      Bridge._toBackend.next([sessionId, socket.id, msg])
+      Wire._toBackend.next([sessionId, socket.id, msg])
     }
   })
 })
 
-Bridge._sendToFrontend.subscribe(([clientIds, msg]) => {
+Wire._sendToFrontend.subscribe(([clientIds, msg]) => {
   socketServer.to(clientIds).emit("ToFrontend", msg)
 })
 
-Bridge._broadcast.subscribe((msg) => {
+Wire._broadcast.subscribe((msg) => {
   socketServer.emit("ToFrontend", msg)
 })
 
-const port = Number(process.env.PORT) || Bridge.backendServerPort
+const port = Number(process.env.PORT) || Wire.backendServerPort
 
 httpServer.listen(port, () => {
   console.clear()
