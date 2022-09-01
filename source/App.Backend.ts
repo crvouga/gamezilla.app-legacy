@@ -12,6 +12,7 @@ import { Cmd, Option, pipe, Platform, Sub, tag, tagCmd } from "./Core"
 import { removeKey } from "./Core/Record"
 import { ClientId, SessionId, UserId } from "./Data"
 import * as GameRoom from "./GameRoom/GameRoom.Backend"
+import * as Party from "./Party/Party.Backend"
 
 //
 //
@@ -23,13 +24,18 @@ import * as GameRoom from "./GameRoom/GameRoom.Backend"
 
 type Model = BackendModel
 
-const init: [Model, Cmd.Cmd<Msg>] = [
-  {
-    gameRoom: GameRoom.init,
-    sessions: {},
-  },
-  Cmd.None,
-]
+const init = (): [Model, Cmd.Cmd<Msg>] => {
+  const [party, partyCmd] = Party.init()
+  return [
+    {
+      gameRoom: GameRoom.init,
+      sessions: {},
+      party
+
+    },
+    tagCmd("Party", partyCmd),
+  ]
+}
 
 //
 //
@@ -81,6 +87,11 @@ const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
       ]
     }
 
+    case 'Party': {
+      const [child, childCmd] = Party.update(msg[1], model.party)
+      return [{ ...model, party: child }, tagCmd("Party", childCmd)]
+    }
+
     case "GameRoom": {
       const [child, childCmd] = GameRoom.update(
         {
@@ -111,9 +122,9 @@ const updateFromFrontend = (
       const session: Session = {
         sessionId,
         clientId,
-        userId:Option.Some(msg[1]),
+        userId: Option.Some(msg[1]),
       }
-      
+
       return [
         {
           ...model,
@@ -197,7 +208,7 @@ const subscriptions = (model: Model): Sub.Sub<Msg> => {
 //
 
 const program = Platform.worker({
-  init,
+  init: init(),
   subscriptions,
   update,
 })
