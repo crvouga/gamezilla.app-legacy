@@ -2,7 +2,7 @@ import * as mediasoup from "mediasoup"
 import * as Rx from "rxjs"
 import { Cmd, pipe, Task, Unit } from "../Core"
 import { Config } from "./Config"
-import { BackendMsg, BackendModel } from "./Party.Types"
+import { BackendMsg, BackendModel, ToBackend, ToFrontend } from "./Party.Types"
 
 
 // 
@@ -16,7 +16,11 @@ import { BackendMsg, BackendModel } from "./Party.Types"
 export type Model = BackendModel
 
 export const init = (): [Model, Cmd.Cmd<Msg>] => [
-    { type: "WorkerLoading" },
+    {
+        worker: { type: "Loading" },
+        parties: {},
+        users: {}
+    },
     pipe(
         createWorker,
         Cmd.perform(() => ['WorkerReady'])
@@ -37,11 +41,19 @@ export type Msg = BackendMsg
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
     switch (msg[0]) {
         case 'WorkerReady': {
-            return [{ type: "WorkerReady", }, Cmd.None]
+            return [{ ...model, worker: { type: "Ready", } }, Cmd.None]
         }
 
         case 'WorkerDied': {
-            return [{ type: "WorkerDied", }, Cmd.None]
+            return [{ ...model, worker: { type: "Died", } }, Cmd.None]
+        }
+    }
+}
+
+export const updateFromFrontend = ({ sendToClient }: { sendToClient: (msg: ToFrontend) => Cmd.Cmd<never> }, msg: ToBackend, model: Model): [Model, Cmd.Cmd<Msg>] => {
+    switch (msg[0]) {
+        case 'CreateParty': {
+            return [model, sendToClient(['CreatePartyResulted',])]
         }
     }
 }
@@ -58,6 +70,14 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 export const subscriptions = (model: Model) => {
     return workerMsgs
 }
+
+
+// 
+// 
+// 
+// 
+// 
+// 
 
 // 
 // 
@@ -77,6 +97,5 @@ const createWorker: Task.Task<Unit> = async () => {
     worker.on("died", () => {
         workerMsgs.next(['WorkerDied'])
     })
-
     return Unit
 }

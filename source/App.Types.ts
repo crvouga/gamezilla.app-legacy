@@ -38,6 +38,7 @@ export type FrontendModel = {
   route: Route.Model
   gameRoom: GameRoom.FrontendModel
   bridge: ConnectionStatus
+  party: Party.FrontendModel
 }
 
 export type ConnectionStatus =
@@ -56,10 +57,12 @@ export type ConnectionStatus =
 
 export type ToBackend =
   | ["GameRoom", GameRoom.ToBackend]
+  | ["Party", Party.ToBackend]
   | ["UserLoggedIn", UserId.UserId]
 
 export type ToFrontend =
   | ["GameRoom", GameRoom.ToFrontend]
+  | ["Party", Party.ToFrontend]
   | ["Session", SessionId.SessionId]
 
 export type FrontendMsg =
@@ -72,6 +75,7 @@ export type FrontendMsg =
   | ["Auth", Auth.Msg]
   | ["Page", Page.Msg]
   | ["LocalStoragePutResulted", LocalStorage.PutResult]
+  | ["Party", Party.FrontendMsg]
 
 export type BackendMsg =
   | ["[Frontend]", SessionId.SessionId, ClientId.ClientId, ToBackend]

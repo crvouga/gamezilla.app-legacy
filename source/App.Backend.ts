@@ -113,9 +113,7 @@ const updateFromFrontend = (
   msg: ToBackend,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
-  const sendToClient = (msg: ToFrontend) => {
-    return Bridge.sendToFrontend([clientId], msg)
-  }
+  const sendToClient = (msg: ToFrontend) => Bridge.sendToFrontend([clientId], msg)
 
   switch (msg[0]) {
     case "UserLoggedIn": {
@@ -135,6 +133,16 @@ const updateFromFrontend = (
         },
         Cmd.None,
       ]
+    }
+
+    case 'Party': {
+      const [child, childCmd] = Party.updateFromFrontend(
+        { sendToClient: (msg) => sendToClient(['Party', msg]) },
+        msg[1],
+        model.party,
+      )
+
+      return [{ ...model, party: child }, tagCmd("Party", childCmd)]
     }
 
     case "GameRoom": {
