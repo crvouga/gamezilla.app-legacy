@@ -22,8 +22,9 @@ import {
   ProfileUpdateName,
   ProfileUpdateTheme,
   ProfileUpdateUsername,
-  Search,
+  Search
 } from "./Page"
+import * as Party from "./Party/Party.Frontend"
 import * as Route from "./Route"
 import * as Snackbar from "./Snackbar"
 import * as Store from "./Store"
@@ -97,6 +98,7 @@ export type OutAction =
   | Snackbar.Action
   | GameRoom.Action
   | Auth.Action
+  | Party.Action
 
 //
 //

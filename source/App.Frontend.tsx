@@ -23,6 +23,7 @@ import * as GameRoom from "./GameRoom/GameRoom.Frontend"
 import * as Pages from "./Pages"
 import * as Route from "./Route"
 import * as Snackbar from "./Snackbar"
+import * as Party from "./Party/Party.Frontend"
 import * as Store from "./Store"
 import { toFindManyKey } from "./Store/Types"
 import * as UI from "./UI"
@@ -56,6 +57,7 @@ const init = (location: Browser.Location): [Model, Cmd.Cmd<Msg>] => {
   const store = Store.init
   const [gameRoom, gameRoomCmd] = GameRoom.init
   const [page, pageCmd] = Pages.initLoading()
+  const [party, partyCmd] = Party.init
 
   return [
     {
@@ -65,9 +67,11 @@ const init = (location: Browser.Location): [Model, Cmd.Cmd<Msg>] => {
       gameRoom,
       auth,
       page,
+      party,
       bridge: "Connecting",
     },
     Cmd.batch<Msg>([
+      tagCmd("Party", partyCmd),
       tagCmd("Auth", authCmd),
       tagCmd("Page", pageCmd),
       tagCmd("GameRoom", gameRoomCmd),
@@ -85,7 +89,12 @@ const init = (location: Browser.Location): [Model, Cmd.Cmd<Msg>] => {
 
 type Msg = FrontendMsg
 
-type OutAction = Snackbar.Action | GameRoom.Action | Store.Action | Auth.Action
+type OutAction =
+  | Snackbar.Action
+  | GameRoom.Action
+  | Store.Action
+  | Auth.Action
+  | Party.Action
 
 //
 //
@@ -128,6 +137,12 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
         { ...model, snackbar: snackbarNew },
         tagCmd("Snackbar", snackbarCmd),
       ]
+    }
+
+
+    case 'Party': {
+      const [child, childCmd] = Party.update({ sendToBackend: (msg) => Bridge.sendToBackend(['Party', msg]) }, msg[1], model.party)
+      return [{ ...model, party: child }, tagCmd("Party", childCmd)]
     }
 
     case "Route": {
@@ -244,6 +259,11 @@ const updateFromBackend = (
       const sessionId = msg[1]
 
       return [model, LocalStorage.put(Bridge.sessionIdKey, sessionId, tag("LocalStoragePutResulted"))]
+    }
+
+    case 'Party': {
+      const [party, partyCmd,] = Party.updateFromBackend(msg[1], model.party)
+      return [{ ...model, party }, tagCmd("Party", partyCmd)]
     }
 
     case "GameRoom": {
@@ -368,6 +388,11 @@ const runAction = (
     case "Auth": {
       const [authNew, authCmd] = Auth.runAction(action, model.auth)
       return [{ ...model, auth: authNew }, tagCmd("Auth", authCmd)]
+    }
+
+    case 'Party': {
+      const [party, partyCmd] = Party.runAction({ sendToBackend: (msg) => Bridge.sendToBackend(['Party', msg]) }, action, model.party)
+      return [{ ...model, party }, tagCmd("Party", partyCmd)]
     }
 
     default:
