@@ -2,6 +2,7 @@ import * as Auth from "./Auth"
 import { LocalStorage, Option } from "./Core"
 import { UserId, ClientId, SessionId } from "./Data"
 import * as GameRoom from "./GameRoom/GameRoom.Types"
+import * as Party from "./Party/Party.Types"
 import * as Page from "./Pages"
 import * as Route from "./Route"
 import * as Snackbar from "./Snackbar"
@@ -20,6 +21,7 @@ export type BackendModel = {
     [sessionId: SessionId.SessionId]: Session
   }
   gameRoom: GameRoom.BackendModel
+  party: Party.BackendModel
 }
 
 export type Session = {
@@ -76,3 +78,4 @@ export type BackendMsg =
   | ["ClientConnected", SessionId.SessionId, ClientId.ClientId]
   | ["ClientDisconnected", SessionId.SessionId, ClientId.ClientId]
   | ["GameRoom", GameRoom.BackendMsg]
+  | ["Party", Party.BackendMsg]

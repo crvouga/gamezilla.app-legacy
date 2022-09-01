@@ -1,13 +1,31 @@
-import { UserId, PartyId } from "../Data"
+import mediasoup from "mediasoup"
+import { PartyId, UserId } from "../Data"
 
-export type BackendModel = {
-  parties: {
-    [partyId: PartyId.PartyId]: Party
-  }
-  users: {}
-}
+
+// 
+// 
+// 
+// Model
+// 
+// 
+// 
+
+export type BackendModel =
+  | { type: "WorkerLoading" }
+  | { type: "WorkerDied", }
+  | { type: "WorkerReady", }
 
 export type Party = {
   partyId: PartyId.PartyId
   hostId: UserId.UserId
 }
+
+// 
+// 
+// 
+// Msg
+// 
+// 
+// 
+
+export type BackendMsg = ["WorkerReady"] | ["WorkerDied"]
