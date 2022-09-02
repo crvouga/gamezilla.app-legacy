@@ -148,6 +148,7 @@ const updateFromFrontend = (
     case "GameRoom": {
       const [child, childCmd] = GameRoom.updateFromFrontend(
         {
+          broadcast: (msg) => Wire.broadcast(['GameRoom', msg]),
           sendToClient: (msg) => sendToClient(["GameRoom", msg]),
           sendToUser: (userIds, msg) =>
             sendToUser(model, userIds, ["GameRoom", msg]),
