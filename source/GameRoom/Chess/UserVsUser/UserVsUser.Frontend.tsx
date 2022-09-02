@@ -174,9 +174,7 @@ export const updateFromBackend = (
         return [model, Cmd.None]
       }
 
-      if (sharedModelNew.type === 'GameOver') {
-        return updateGameOver(sharedModelNew, model)
-      }
+
 
       const soundCmd =
         Board.inCheck(sharedModelNew.board)
@@ -229,10 +227,6 @@ export const updateFromBackend = (
         return [model, Cmd.None]
       }
 
-      if (sharedModelNew.type === 'GameOver') {
-        return updateGameOver(sharedModelNew, model)
-      }
-
       return [{ ...model, sharedModel: sharedModelNew }, Cmd.None]
     }
 
@@ -247,9 +241,6 @@ export const updateFromBackend = (
         return [model, Cmd.None]
       }
 
-      if (sharedModelNew.type === 'GameOver') {
-        return updateGameOver(sharedModelNew, model)
-      }
 
       return [{ ...model, sharedModel: sharedModelNew }, Cmd.None]
     }
@@ -270,7 +261,13 @@ export const updateFromBackend = (
     }
 
     case 'GameOver': {
-      return [model, Cmd.None]
+      return [
+        {
+          ...model,
+          openedModal: "GameOver"
+        },
+        playAudio(Sounds.gameOver)
+      ]
     }
 
     default: {
@@ -282,18 +279,6 @@ export const updateFromBackend = (
 
 const playAudio = (src: string): Cmd.Cmd<Msg> => {
   return Audio.play(src, tag("AudioResulted"))
-}
-
-const updateGameOver = (sharedModel: SharedModel, model: Model): [Model, Cmd.Cmd<Msg>] => {
-  return [
-    {
-      ...model,
-      sharedModel,
-      openedModal: "GameOver"
-    },
-    playAudio(Sounds.gameOver)
-  ]
-
 }
 
 //
