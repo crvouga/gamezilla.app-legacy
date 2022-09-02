@@ -106,9 +106,11 @@ export const updateFromFrontend = (
   {
     sendToClient,
     sendToUser,
+    broadcast,
   }: {
     sendToClient: (msg: ToFrontend) => Cmd.Cmd<never>
     sendToUser: (userId: UserId.UserId[], msg: ToFrontend) => Cmd.Cmd<never>
+    broadcast: (msg: ToFrontend) => Cmd.Cmd<never>
   },
   msg: ToBackend,
   model: Model,
@@ -159,35 +161,35 @@ export const updateFromFrontend = (
     }
 
     case "CreateRoom": {
-      return updateResponse({ sendToClient, sendToUser }, model, [
+      return updateResponse({ sendToClient, broadcast }, model, [
         "CreateRoomResulted",
         createRoom(msg[1], model),
       ])
     }
 
     case "LeaveRoom": {
-      return updateResponse({ sendToClient, sendToUser }, model, [
+      return updateResponse({ sendToClient, broadcast }, model, [
         "LeaveRoomResulted",
         leaveRoom(msg[1], model),
       ])
     }
 
     case "JoinRoom": {
-      return updateResponse({ sendToClient, sendToUser }, model, [
+      return updateResponse({ sendToClient, broadcast }, model, [
         "JoinRoomResulted",
         joinRoom(msg[1], model),
       ])
     }
 
     case "OpenGame": {
-      return updateResponse({ sendToClient, sendToUser }, model, [
+      return updateResponse({ sendToClient, broadcast }, model, [
         "OpenGameResulted",
         openGame(msg[1], model),
       ])
     }
 
     case "CloseGame": {
-      return updateResponse({ sendToClient, sendToUser }, model, [
+      return updateResponse({ sendToClient, broadcast }, model, [
         "CloseGameResulted",
         closeGame(msg[1], model),
       ])
@@ -201,10 +203,10 @@ export const updateFromFrontend = (
 const updateResponse = (
   {
     sendToClient,
-    sendToUser,
+    broadcast,
   }: {
     sendToClient: (msg: ToFrontend) => Cmd.Cmd<never>
-    sendToUser: (userId: UserId.UserId[], msg: ToFrontend) => Cmd.Cmd<never>
+    broadcast: (msg: ToFrontend) => Cmd.Cmd<never>
   },
   model: Model,
   response: Response,
@@ -223,7 +225,7 @@ const updateResponse = (
   return [
     modelNew,
     Cmd.batch([
-      sendToUser(allUserIds, ["Sync", modelNew]),
+      broadcast(['Sync', modelNew]),
       sendToClient(response),
     ]),
   ]
