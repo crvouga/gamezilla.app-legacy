@@ -261,8 +261,12 @@ const updateFromBackend = (
     }
 
     case 'Party': {
-      const [party, partyCmd,] = Party.updateFromBackend(msg[1], model.party)
-      return [{ ...model, party }, tagCmd("Party", partyCmd)]
+      const [party, partyCmd, actions] = Party.updateFromBackend(msg[1], model.party)
+
+      return pipe(
+        [{ ...model, party }, tagCmd("Party", partyCmd)],
+        andThenMany(runAction, actions)
+      )
     }
 
     case "GameRoom": {
@@ -532,6 +536,7 @@ const viewMain = (model: Model): UI.View<Msg> => {
               {pipe(
                 Party.viewBanner(
                   {
+                    store: model.store,
                     route: model.route,
                     currentUserId,
                     model: model.party,

@@ -113,7 +113,15 @@ const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
     }
 
     case 'Party': {
-      const [child, childCmd] = Party.update({ sendToUser: (userId, msg) => sendToUser(model, userId, ['Party', msg]), }, msg[1], model.party)
+      const [child, childCmd] = Party.update(
+        {
+          broadcast: (msg) => Wire.broadcast(['Party', msg]),
+          sendToUser: (userId, msg) => sendToUser(model, userId, ['Party', msg]),
+        },
+        msg[1],
+        model.party
+      )
+
       return [{ ...model, party: child }, tagCmd("Party", childCmd)]
     }
 
@@ -162,7 +170,10 @@ const updateFromFrontend = (
 
     case 'Party': {
       const [child, childCmd] = Party.updateFromFrontend(
-        { sendToUser: (userIds, msg) => sendToUser(model, userIds, ['Party', msg]) },
+        {
+          broadcast: msg => Wire.broadcast(['Party', msg]),
+          sendToUser: (userIds, msg) => sendToUser(model, userIds, ['Party', msg])
+        },
         msg[1],
         model.party,
       )

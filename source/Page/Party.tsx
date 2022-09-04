@@ -63,7 +63,7 @@ export const view = (
     model: Model,
 ): UI.View<Msg> => {
     return pipe(
-        Party.view({ currentUserId }, party),
+        Party.view({ currentUserId, store }, party),
         UI.map(tag("Party")),
     )
 }

@@ -4,7 +4,7 @@ import { Cmd, Option, pipe, Result, Task, Unit } from "../Core"
 import { removeKey } from "../Core/Record"
 import { PartyId, UserId } from "../Data"
 import { Config } from "./Config"
-import { BackendMsg, BackendModel, ToBackend, ToFrontend, RouterRtpCapabilities, CreateRouterResult, FrontendModel, PartyModel, leaveParty } from "./Party.Types"
+import { BackendMsg, BackendModel, ToBackend, ToFrontend, RouterRtpCapabilities, CreateRouterResult, FrontendModel, PartyModel, leaveParty, joinParty } from "./Party.Types"
 
 
 // 
@@ -40,7 +40,18 @@ export const init = (): [Model, Cmd.Cmd<Msg>] => [
 
 export type Msg = BackendMsg
 
-export const update = ({ sendToUser }: { sendToUser: (userIds: UserId.UserId[], msg: ToFrontend) => Cmd.Cmd<never> }, msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
+export const update = (
+    {
+        sendToUser,
+        broadcast,
+    }: {
+        sendToUser: (userIds: UserId.UserId[], msg: ToFrontend) => Cmd.Cmd<never>,
+        broadcast: (msg: ToFrontend) => Cmd.Cmd<never>
+    },
+    msg: Msg,
+    model: Model
+): [Model, Cmd.Cmd<Msg>] => {
+
     switch (msg[0]) {
         case 'WorkerCreated': {
             return [{ ...model, worker: { type: "Ready", } }, Cmd.None]
@@ -50,9 +61,7 @@ export const update = ({ sendToUser }: { sendToUser: (userIds: UserId.UserId[], 
             return [{ ...model, worker: { type: "Died", } }, Cmd.None]
         }
 
-
         case 'StartParty.CreateRouterResulted': {
-
             const { partyId, hostId, result } = msg[1]
 
             if (result.type === 'Err') {
@@ -89,6 +98,7 @@ export const update = ({ sendToUser }: { sendToUser: (userIds: UserId.UserId[], 
             return [
                 modelNew,
                 Cmd.batch([
+                    broadcast(['Sync', modelNew]),
                     sendToUser([hostId], ['StartPartyResulted', Result.Ok(modelNew)])
                 ])
             ]
@@ -96,7 +106,7 @@ export const update = ({ sendToUser }: { sendToUser: (userIds: UserId.UserId[], 
     }
 }
 
-export const updateFromFrontend = ({ sendToUser }: { sendToUser: (userId: UserId.UserId[], msg: ToFrontend) => Cmd.Cmd<never> }, msg: ToBackend, model: Model): [Model, Cmd.Cmd<Msg>] => {
+export const updateFromFrontend = ({ broadcast, sendToUser }: { broadcast: (msg: ToFrontend) => Cmd.Cmd<Msg>, sendToUser: (userId: UserId.UserId[], msg: ToFrontend) => Cmd.Cmd<never> }, msg: ToBackend, model: Model): [Model, Cmd.Cmd<Msg>] => {
     const sendToParty = (partyId: PartyId.PartyId, msg: ToFrontend): Cmd.Cmd<never> => {
         const userIds = Object.values(model.users).flatMap(user => user.partyId === partyId ? [user.userId] : [])
         return sendToUser(userIds, msg)
@@ -136,14 +146,49 @@ export const updateFromFrontend = ({ sendToUser }: { sendToUser: (userId: UserId
             const user = model.users[result.userId]
 
             const cmd = user ? Cmd.batch([
-                sendToParty(user.partyId, ['Sync', sharedModelNew]),
-                sendToParty(user.partyId, ['LeavePartyResulted', { userId, result: Result.Ok(sharedModelNew) }])
-            ]) : Cmd.None
+                broadcast(['Sync', sharedModelNew]),
+                sendToParty(user.partyId, ['LeavePartyResulted', { userId, result: Result.Ok(sharedModelNew) }]),
+            ]) : broadcast(['Sync', sharedModelNew])
 
             return [
                 { ...model, parties: sharedModelNew.parties, users: sharedModelNew.users },
                 cmd
             ]
+        }
+
+
+        case 'JoinParty': {
+            const { userId, partyId, } = msg[1]
+
+            const result = joinParty(msg[1], model)
+
+            if (result.type === 'Err') {
+                return [
+                    model,
+                    Cmd.batch([
+                        sendToUser([userId], ['Sync', model]),
+                        sendToUser([userId], ['JoinPartyResulted', result])
+                    ])
+                ]
+            }
+
+            const sharedModelNew = result.value
+
+            const modelNew: Model = {
+                ...model,
+                parties: sharedModelNew.parties,
+                users: sharedModelNew.users,
+            }
+
+            return [
+                modelNew,
+                Cmd.batch([
+                    broadcast(['Sync', modelNew]),
+                    sendToParty(partyId, ['JoinPartyResulted', result])
+                ])
+            ]
+
+
         }
     }
 }

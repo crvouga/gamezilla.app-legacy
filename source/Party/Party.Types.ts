@@ -73,9 +73,9 @@ export type ToFrontend = Response | ["Sync", FrontendModel]
 // 
 // 
 
-export type Request = StartParty | LeaveParty
+export type Request = StartParty | LeaveParty | JoinParty
 
-export type Response = StartPartyResulted | LeavePartyResulted
+export type Response = StartPartyResulted | LeavePartyResulted | JoinPartyResulted
 
 // 
 // 
@@ -161,4 +161,41 @@ export const leaveParty = (
       parties: partiesNew,
     })
   }
+}
+
+// 
+// 
+// 
+// 
+
+export type JoinParty = ['JoinParty', { userId: UserId.UserId, partyId: PartyId.PartyId }]
+
+export type JoinPartyResulted = ['JoinPartyResulted', Result.Result<"user_already_in_a_party" | "party_does_not_exists", SharedModel>]
+
+export const joinParty = ({ userId, partyId }: JoinParty[1], model: SharedModel): JoinPartyResulted[1] => {
+
+  const user = model.users[userId]
+
+  if (user) {
+    return Result.Err("user_already_in_a_party")
+  }
+
+  const party = model.parties[partyId]
+
+  if (!party) {
+    return Result.Err("party_does_not_exists")
+  }
+
+  const modelNew: SharedModel = {
+    ...model,
+    users: {
+      ...model.users,
+      [userId]: {
+        userId,
+        partyId
+      }
+    }
+  }
+
+  return Result.Ok(modelNew)
 }
