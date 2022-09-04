@@ -421,6 +421,7 @@ const subscriptions = (model: Model): Sub.Sub<Msg> => {
   return Sub.batch<Msg>([
     Wire.onConnectionStatus(tag("Wire")),
     Wire.fromBackend(tag("[Backend]")),
+    tagSub("Party", Party.subscriptions(model.party)),
     tagSub("Page", Pages.subscriptions(model.page)),
     tagSub("Auth", Auth.subscriptions),
     model.auth[0] === "LoggedIn"
