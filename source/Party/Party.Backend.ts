@@ -1,6 +1,7 @@
 import * as mediasoup from "mediasoup"
 import * as Rx from "rxjs"
-import { Cmd, pipe, Task, Unit } from "../Core"
+import { Cmd, pipe, Result, Task, Unit } from "../Core"
+import { PartyId } from "../Data"
 import { Config } from "./Config"
 import { BackendMsg, BackendModel, ToBackend, ToFrontend } from "./Party.Types"
 
@@ -89,7 +90,8 @@ export const subscriptions = (model: Model) => {
 
 const workerMsgs = new Rx.Subject<Msg>()
 
-let worker: mediasoup.types.Worker
+let worker: mediasoup.types.Worker | undefined
+let routers: { [partyId: PartyId.PartyId]: mediasoup.types.Router } = {}
 
 const createWorker: Task.Task<Unit> = async () => {
     worker = await mediasoup.createWorker(Config.mediasoup.worker)
@@ -98,4 +100,16 @@ const createWorker: Task.Task<Unit> = async () => {
         workerMsgs.next(['WorkerDied'])
     })
     return Unit
+}
+
+const createRouter = (partyId: PartyId.PartyId): Task.Task<Result.Result<"worker_does_not_exists", Unit>> => async () => {
+    if (!worker) {
+        return Result.Err("worker_does_not_exists")
+    }
+
+    const router = await worker.createRouter()
+
+    routers[partyId] = router
+
+    return Result.Ok(Unit)
 }
