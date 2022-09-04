@@ -46,6 +46,11 @@ const createTheme = ({ mode }: { mode: "light" | "dark" }) =>
         // fontWeightLight: "bold",
       },
       components: {
+        MuiCircularProgress: {
+          defaultProps: {
+            disableShrink: true
+          }
+        },
         MuiButton: {
           defaultProps: {
             disableElevation: true,

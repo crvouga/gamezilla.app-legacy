@@ -276,10 +276,23 @@ export const createRoom = (
 //
 //
 //
+// 
+//
+//
+// 
+
+export const onClientConnected = ({ sendToClient }: { sendToClient: (msg: ToFrontend) => Cmd.Cmd<Msg> }, model: Model): Cmd.Cmd<Msg> => {
+  return sendToClient(['Sync', model])
+}
+
+
 //
 //
 //
 //
+//
+//
+// 
 
 export const joinRoom = (
   { userId, roomId }: { userId: UserId.UserId; roomId: RoomId.RoomId },

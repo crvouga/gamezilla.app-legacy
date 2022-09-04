@@ -525,18 +525,31 @@ const viewMain = (model: Model): UI.View<Msg> => {
           )
 
         case "Ready":
+          const currentUserId = status[1].profile.userId
           return (dispatch) => (
             <>
+
+              {pipe(
+                Party.viewBanner(
+                  {
+                    currentUserId,
+                    model: model.party,
+                  }
+                ),
+                UI.map(tag("Party")),
+              )(dispatch)}
+
               {pipe(
                 GameRoom.viewBanner(
                   {
-                    currentUserId: status[1].profile.userId,
+                    currentUserId,
                     route: model.route,
                   },
                   model.gameRoom,
                 ),
                 UI.map(tag("GameRoom")),
               )(dispatch)}
+
               <UI.FillBox>
                 {pipe(
                   Pages.viewReady(

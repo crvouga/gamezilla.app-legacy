@@ -5,14 +5,13 @@ import {
   BackendMsg,
   Session,
   ToBackend,
-  ToFrontend,
+  ToFrontend
 } from "./App.Types"
-import * as Wire from "./Wire"
 import { Cmd, Option, pipe, Platform, Sub, tag, tagCmd } from "./Core"
-import { removeKey } from "./Core/Record"
 import { ClientId, SessionId, UserId } from "./Data"
 import * as GameRoom from "./GameRoom/GameRoom.Backend"
 import * as Party from "./Party/Party.Backend"
+import * as Wire from "./Wire"
 
 //
 //
@@ -56,23 +55,37 @@ const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
       const sessionId = msg[1]
       const clientId = msg[2]
       const sessionPrev = model.sessions[sessionId]
+      const maybeUserId = sessionPrev ? sessionPrev.userId : Option.None
       const session: Session = {
         sessionId,
-        clientId,
-        userId: sessionPrev ? sessionPrev.userId : Option.None,
+        connection: { type: "Connected", clientId },
+        userId: maybeUserId,
       }
-      return [
-        {
-          ...model,
-          sessions: {
-            ...model.sessions,
-            [sessionId]: session,
-          },
+
+      const modelNew: Model = {
+        ...model,
+        sessions: {
+          ...model.sessions,
+          [sessionId]: session,
         },
-        Wire.sendToFrontend(
-          [clientId],
-          ["GameRoom", ["Sync", model.gameRoom]],
-        ),
+      }
+
+      const partyCmd = Party.onClientConnected(
+        {
+          sendToUser: (userIds, msg) => sendToUser(modelNew, userIds, ['Party', msg])
+        },
+        maybeUserId,
+        model.party
+      )
+
+      const gameRoomCmd = GameRoom.onClientConnected({ sendToClient: (msg) => Wire.sendToFrontend([clientId], ['GameRoom', msg]) }, model.gameRoom)
+
+      return [
+        modelNew,
+        Cmd.batch<Msg>([
+          tagCmd("GameRoom", gameRoomCmd),
+          tagCmd("Party", partyCmd)
+        ])
       ]
     }
 
@@ -81,14 +94,14 @@ const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
       return [
         {
           ...model,
-          sessions: removeKey(sessionId, model.sessions),
+          // sessions: removeKey(sessionId, model.sessions),
         },
         Cmd.None,
       ]
     }
 
     case 'Party': {
-      const [child, childCmd] = Party.update(msg[1], model.party)
+      const [child, childCmd] = Party.update({ sendToUser: (userId, msg) => sendToUser(model, userId, ['Party', msg]), }, msg[1], model.party)
       return [{ ...model, party: child }, tagCmd("Party", childCmd)]
     }
 
@@ -119,7 +132,7 @@ const updateFromFrontend = (
     case "UserLoggedIn": {
       const session: Session = {
         sessionId,
-        clientId,
+        connection: { type: "Connected", clientId },
         userId: Option.Some(msg[1]),
       }
 
@@ -168,12 +181,9 @@ const sendToUser = (
   msg: ToFrontend,
 ) => {
   const clientIds = Object.values(model.sessions)
-    .filter(
-      (session) =>
-        session.userId.type === "Some" &&
-        userIds.includes(session.userId.value),
-    )
-    .map((session) => session.clientId)
+    .flatMap((session) => session.userId.type === "Some" && userIds.includes(session.userId.value) && session.connection.type === 'Connected' ? [session.connection.clientId] : [])
+
+  console.log("SEND_TO_USER", { userIds, clientIds, msg })
 
   return Wire.sendToFrontend(clientIds, msg)
 }
@@ -279,8 +289,6 @@ const socketServer = new Socket.Server<
 
 socketServer.on("connection", (socket) => {
   const maybeSessionId: unknown = socket.handshake.auth[Wire.sessionIdKey]
-
-  console.log(maybeSessionId)
 
   // todo remove this hack
   const cleaned =

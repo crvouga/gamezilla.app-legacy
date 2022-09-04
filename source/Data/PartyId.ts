@@ -1,4 +1,4 @@
-import { Result } from "../Core"
+import { Result, Uuid } from "../Core"
 
 export type PartyId = string & { _opaque: typeof PartyId }
 
@@ -16,4 +16,14 @@ export const decode = (id: string): Result.Result<Problem, PartyId> => {
   }
 
   return Result.Err("invalid_party_id")
+}
+
+
+export const generateSync = (): PartyId => {
+  const id = Uuid.generateSync()
+  if (is(id)) {
+    return id
+  }
+
+  throw new Error("generated invalid id")
 }

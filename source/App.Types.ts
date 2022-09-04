@@ -26,8 +26,8 @@ export type BackendModel = {
 
 export type Session = {
   sessionId: SessionId.SessionId
-  clientId: ClientId.ClientId
   userId: Option.Option<UserId.UserId>
+  connection: { type: "Connected", clientId: ClientId.ClientId } | { type: "Disconnected" }
 }
 
 export type FrontendModel = {
