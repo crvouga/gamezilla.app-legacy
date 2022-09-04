@@ -1,7 +1,10 @@
 import { Option, pipe, Result, Unit } from "../Core"
 import { PartyId, UserId } from "../Data"
-import type { RtpCapabilities } from "mediasoup-client/lib/types"
+import type { DtlsParameters, RtpCapabilities, RtpParameters } from "mediasoup-client/lib/types"
 import { removeKey } from "../Core/Record"
+import * as mediasoup from "mediasoup"
+import { MediaKind } from "mediasoup/node/lib/RtpParameters"
+
 
 // 
 // 
@@ -57,13 +60,31 @@ export type UserModel = {
 // 
 // 
 
-export type BackendMsg = ["WorkerCreated"] | ["WorkerDied"] | ['StartParty.CreateRouterResulted', { result: CreateRouterResult, hostId: UserId.UserId, partyId: PartyId.PartyId }]
+export type BackendMsg =
+  | ["WorkerCreated"]
+  | ["WorkerDied"]
+  | ['StartParty.CreateRouterResulted', { result: CreateRouterResult, hostId: UserId.UserId, partyId: PartyId.PartyId }]
+  | CreateTransportResulted
+  | ProducerTransportConnectDone
+  | ProducerTransportProduceDone
 
-export type FrontendMsg = Request | ["ClickedBanner"] | LoadDeviceResulted | UnloadDeviceResulted
+export type FrontendMsg =
+  | Request
+  | ["ClickedBanner"]
+  | LoadDeviceResulted
+  | UnloadDeviceResulted
+  | ProducerTransportConnect
+  | ProducerTransportProduce
+  | ["ProducerTrackEnded"]
+  | ["ProducerTransportClosed"]
 
-export type ToBackend = Request
+export type ToBackend =
+  | Request
+  | CreateTransport
+  | ProducerTransportConnect
+  | ProducerTransportProduce
 
-export type ToFrontend = Response | ["Sync", SharedModel]
+export type ToFrontend = Response | ["Sync", SharedModel] | CreateTransportResulted
 
 //
 // Mediasoup Server
@@ -82,14 +103,33 @@ export type LoadDeviceResulted = ['LoadDeviceResulted', Result.Result<"device_is
 export type UnloadDeviceResulted = ['UnloadDeviceResulted', Result.Result<"device_is_already_unloaded" | "failed_to_unload_device", Unit>]
 
 // 
-// Mediasoup Client to Server
+// Mediasoup Client/Server
 // 
 
-export type CreateTransport = ["CreateTransport", TransportVariant]
+export type ProducerTransportConnect = ['ProducerTransportConnect', { userId: UserId.UserId, dtlsParameters: DtlsParameters }]
 
-export type CreateTransportResulted = ["CreateTransportResulted",]
+export type ProducerTransportConnectDone = ['ProducerTransportConnectDone',]
+
+export type ProducerTransportProduce = ['ProducerTransportProduce', { userId: UserId.UserId, rtpParameters: RtpParameters, mediaKind: MediaKind, appData: AppData }]
+
+export type ProducerTransportProduceDone = ['ProducerTransportProduceDone',]
+
+type AppData = Record<string, unknown>
+
+export type CreateTransport = ["CreateTransport", { transportVariant: TransportVariant, userId: UserId.UserId; partyId: PartyId.PartyId }]
+
+export type CreateTransportResulted = ["CreateTransportResulted", { transportVariant: TransportVariant, userId: UserId.UserId, partyId: PartyId.PartyId, result: CreateTransportResult }]
 
 export type TransportVariant = "Sender" | "Reciever"
+
+export type TransportOptions = {
+  id: string,
+  iceParameters: mediasoup.types.IceParameters,
+  iceCandidates: mediasoup.types.IceCandidate[],
+  dtlsParameters: mediasoup.types.DtlsParameters,
+}
+
+export type CreateTransportResult = Result.Result<"router_does_not_exists", { transportOptions: TransportOptions }>
 
 // 
 // 
