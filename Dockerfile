@@ -8,11 +8,11 @@ RUN \
     && apt-get update \
     && apt-get install -y net-tools build-essential python3 python3-pip valgrind
 
-ADD package*.json /app
+ADD package*.json /app/
 
 RUN npm install
 
-COPY . /app
+COPY ./ /app/
 
 RUN npm run backend:build
 
