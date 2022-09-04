@@ -44,7 +44,7 @@ export const update = ({ sendToBackend }: { sendToBackend: (msg: ToBackend) => C
         //
         // 
 
-        case "CreateParty": {
+        case "StartParty": {
             return [model, sendToBackend(msg)]
         }
     }
@@ -56,7 +56,7 @@ export const updateFromBackend = (msg: ToFrontend, model: Model): [Model, Cmd.Cm
             return [msg[1], Cmd.None]
         }
 
-        case 'CreatePartyResulted': {
+        case 'StartPartyResulted': {
             if (msg[1].type === 'Err') {
                 return [model, Cmd.None]
             }
@@ -107,7 +107,7 @@ export const view = ({ currentUserId }: { currentUserId: UserId.UserId }, model:
 
             </UI.Box>
             <UI.Box sx={{ padding: 2 }}>
-                <UI.Button fullWidth variant="contained" size="large" onClick={() => dispatch(['CreateParty', { hostId: currentUserId, partyId: PartyId.generateSync() }])}>
+                <UI.Button fullWidth variant="contained" size="large" onClick={() => dispatch(['StartParty', { hostId: currentUserId, partyId: PartyId.generateSync() }])}>
                     Start Party
                 </UI.Button>
             </UI.Box>

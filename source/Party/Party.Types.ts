@@ -54,7 +54,7 @@ export type UserModel = {
 // 
 // 
 
-export type BackendMsg = ["WorkerCreated"] | ["WorkerDied"] | ['CreateParty.CreateRouterResulted', { result: CreateRouterResult, hostId: UserId.UserId, partyId: PartyId.PartyId }]
+export type BackendMsg = ["WorkerCreated"] | ["WorkerDied"] | ['StartParty.CreateRouterResulted', { result: CreateRouterResult, hostId: UserId.UserId, partyId: PartyId.PartyId }]
 
 type CreateRouterProblem = 'worker_does_not_exists'
 
@@ -74,15 +74,15 @@ export type ToFrontend = Response | ["Sync", FrontendModel]
 // 
 // 
 
-export type Request = CreateParty
+export type Request = StartParty
 
-export type Response = CreatePartyResulted
+export type Response = StartPartyResulted
 
 // 
 // 
 // 
 
-export type CreateParty = ['CreateParty', { hostId: UserId.UserId, partyId: PartyId.PartyId }]
+export type StartParty = ['StartParty', { hostId: UserId.UserId, partyId: PartyId.PartyId }]
 
-export type CreatePartyResulted = ['CreatePartyResulted', Result.Result<CreateRouterProblem, PartyModel>]
+export type StartPartyResulted = ['StartPartyResulted', Result.Result<CreateRouterProblem | "already_started_a_party", PartyModel>]
 
