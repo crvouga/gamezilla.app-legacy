@@ -1,2 +1,12 @@
-node_modules
-npm-debug.log
+# source: https://medium.com/@nodepractices/docker-best-practices-with-node-js-e044b78d8f67npm
+**/node_modules/
+**/.git
+**/README.md
+**/LICENSE
+**/.vscode
+**/npm-debug.log
+**/coverage
+**/.env
+**/.editorconfig
+**/.aws
+**/dist

@@ -1,19 +1,19 @@
-FROM gitpod/workspace-full
+FROM node:16
 
-# Create app directory
-WORKDIR /usr/src/app
+WORKDIR /app
 
-# Install app dependencies
-# A wildcard is used to ensure both package.json AND package-lock.json are copied
-# where available (npm@5+)
-COPY package*.json ./
+# Install DEB dependencies and others.
+RUN \
+    set -x \
+    && apt-get update \
+    && apt-get install -y net-tools build-essential python3 python3-pip valgrind
+
+ADD package*.json /app
 
 RUN npm install
-# If you are building your code for production
-# RUN npm ci --only=production
 
-# Bundle app source
-COPY . .
+COPY . /app
 
-EXPOSE 8080
-CMD [ "node", "dist/source/App.Backend.js" ]
+RUN npm run backend:build
+
+CMD [ "npm", "run", "backend:start" ]

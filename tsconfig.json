@@ -3,7 +3,7 @@
     "types": ["vite/client"],
     "target": "ES2015",
     "useDefineForClassFields": true,
-    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "lib": ["DOM", "DOM.Iterable", "ESNext", "ES2021"],
     "outDir": "dist",
     "allowJs": false,
     "alwaysStrict": true,

@@ -11,6 +11,5 @@
   "[typescriptreact]": {
     "editor.defaultFormatter": "vscode.typescript-language-features"
   },
-  "editor.experimental.stickyScroll.enabled": true,
   "editor.stickyTabStops": false // optional but recommended
 }
