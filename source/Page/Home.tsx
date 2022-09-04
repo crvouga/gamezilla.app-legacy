@@ -1,5 +1,5 @@
 import { Cmd } from "../Core"
-import { UserId } from "../Data"
+import { PartyId, UserId } from "../Data"
 import * as GameRoom from "../GameRoom/GameRoom.Frontend"
 import * as Party from "../Party/Party.Frontend"
 import * as Route from "../Route"
@@ -26,7 +26,7 @@ export const init: Model = {}
 //
 //
 
-export type Msg = ["ClickedPlay"] | ['ClickedCreateParty']
+export type Msg = ["ClickedPlay"] | ['ClickedCreateParty', { partyId: PartyId.PartyId, hostId: UserId.UserId }]
 
 export type OutAction = GameRoom.Action | Party.Action
 
@@ -41,7 +41,7 @@ export const update = (
     }
 
     case 'ClickedCreateParty': {
-      const action: OutAction = ['Party', ['Msg', ['CreateParty', { hostId: currentUserId }]]]
+      const action: OutAction = ['Party', ['Msg', ['CreateParty', msg[1]]]]
 
       return [model, Cmd.None, [action]]
     }
@@ -85,7 +85,7 @@ export const view = (
             fullWidth
             size="large"
             variant="contained"
-            onClick={() => dispatch(['ClickedCreateParty'])}
+            onClick={() => dispatch(['ClickedCreateParty', { hostId: currentUserId, partyId: PartyId.generateSync() }])}
           >
             Create Party
           </UI.Button>
