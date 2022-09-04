@@ -532,6 +532,7 @@ const viewMain = (model: Model): UI.View<Msg> => {
               {pipe(
                 Party.viewBanner(
                   {
+                    route: model.route,
                     currentUserId,
                     model: model.party,
                   }

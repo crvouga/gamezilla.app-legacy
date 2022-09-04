@@ -26,7 +26,7 @@ export const init: Model = {}
 //
 //
 
-export type Msg = ["ClickedPlay"] | ['ClickedCreateParty', { partyId: PartyId.PartyId, hostId: UserId.UserId }]
+export type Msg = ["ClickedPlay"]
 
 export type OutAction = GameRoom.Action | Party.Action
 
@@ -38,12 +38,6 @@ export const update = (
   switch (msg[0]) {
     case "ClickedPlay": {
       return [model, Route.push(["GameRoom"]), []]
-    }
-
-    case 'ClickedCreateParty': {
-      const action: OutAction = ['Party', ['Msg', ['CreateParty', msg[1]]]]
-
-      return [model, Cmd.None, [action]]
     }
   }
 }
@@ -81,14 +75,6 @@ export const view = (
             Play
           </UI.Button>
 
-          <UI.Button
-            fullWidth
-            size="large"
-            variant="contained"
-            onClick={() => dispatch(['ClickedCreateParty', { hostId: currentUserId, partyId: PartyId.generateSync() }])}
-          >
-            Create Party
-          </UI.Button>
         </UI.Box>
       </UI.FillBox>
     )

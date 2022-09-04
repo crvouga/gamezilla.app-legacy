@@ -1,7 +1,8 @@
 import { Cmd, Sub } from "../Core";
 import { FrontendModel, FrontendMsg, ToBackend, ToFrontend } from "./Party.Types";
 import * as UI from "../UI"
-import { UserId } from "../Data";
+import { PartyId, UserId } from "../Data";
+import * as Route from "../Route"
 
 //
 //
@@ -27,6 +28,22 @@ export type Msg = FrontendMsg
 
 export const update = ({ sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd.Cmd<never> }, msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
     switch (msg[0]) {
+        // 
+        //
+        //
+        //
+        // 
+
+        case 'ClickedBanner': {
+            return [model, Route.push(['Party'])]
+        }
+
+        // 
+        //
+        //
+        //
+        // 
+
         case "CreateParty": {
             return [model, sendToBackend(msg)]
         }
@@ -83,18 +100,40 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
 // 
 // 
 
-export const view = (model: Model): UI.View<Msg> => (dispatch) => {
-    return <>
-        party
-        <pre>
-            {JSON.stringify(model, null, 4)}
-        </pre>
-    </>
+export const view = ({ currentUserId }: { currentUserId: UserId.UserId }, model: Model): UI.View<Msg> => (dispatch) => {
+    if (model.type === 'NotInParty') {
+        return <UI.FillBox>
+            <UI.Box sx={{ flex: 1 }}>
+
+            </UI.Box>
+            <UI.Box sx={{ padding: 2 }}>
+                <UI.Button fullWidth variant="contained" size="large" onClick={() => dispatch(['CreateParty', { hostId: currentUserId, partyId: PartyId.generateSync() }])}>
+                    Start Party
+                </UI.Button>
+            </UI.Box>
+        </UI.FillBox>
+    }
+
+    return <UI.FillBox>
+        <UI.Box sx={{ flex: 1 }}>
+
+
+        </UI.Box>
+        <UI.Box sx={{ padding: 2 }}>
+            <UI.Button fullWidth variant="contained" size="large">
+                Leave Party
+            </UI.Button>
+        </UI.Box>
+    </UI.FillBox>
 }
 
-export const viewBanner = ({ currentUserId, model }: { currentUserId: UserId.UserId, model: Model }): UI.View<Msg> => (dispatch) => {
+export const viewBanner = ({ route, currentUserId, model }: { route: Route.Model, currentUserId: UserId.UserId, model: Model }): UI.View<Msg> => (dispatch) => {
 
     if (model.type === 'NotInParty') {
+        return <></>
+    }
+
+    if (route[0] === 'Party') {
         return <></>
     }
 
@@ -110,7 +149,7 @@ export const viewBanner = ({ currentUserId, model }: { currentUserId: UserId.Use
             margin: 0,
         }}
     >
-        <UI.ButtonBase sx={{ width: "100%", height: "100%", padding: 2 }}>
+        <UI.ButtonBase onClick={() => dispatch(['ClickedBanner'])} sx={{ width: "100%", height: "100%", padding: 2 }}>
             <UI.Typography variant="h6">
                 Go to party
             </UI.Typography>
