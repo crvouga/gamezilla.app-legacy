@@ -1,9 +1,10 @@
 import * as mediasoup from "mediasoup"
 import * as Rx from "rxjs"
 import { Cmd, Option, pipe, Result, Task, Unit } from "../Core"
+import { removeKey } from "../Core/Record"
 import { PartyId, UserId } from "../Data"
 import { Config } from "./Config"
-import { BackendMsg, BackendModel, ToBackend, ToFrontend, RouterRtpCapabilities, CreateRouterResult, FrontendModel } from "./Party.Types"
+import { BackendMsg, BackendModel, ToBackend, ToFrontend, RouterRtpCapabilities, CreateRouterResult, FrontendModel, PartyModel, leaveParty } from "./Party.Types"
 
 
 // 
@@ -60,32 +61,47 @@ export const update = ({ sendToUser }: { sendToUser: (userIds: UserId.UserId[], 
 
             const { routerRtpCapabilities } = result.value
 
-            return [
-                {
-                    ...model,
-                    parties: {
-                        ...model.parties,
-                        [partyId]: {
-                            partyId,
-                            routerRtpCapabilities,
-                            hostId
-                        }
-                    },
-                    users: {
-                        ...model.users,
-                        [hostId]: {
-                            partyId,
-                            userId: hostId
-                        }
+            const user = model.users[hostId]
+
+            if (user) {
+                return [model, sendToUser([hostId], ["StartPartyResulted", Result.Err("already_in_a_party")])]
+            }
+
+            const modelNew = {
+                ...model,
+                parties: {
+                    ...model.parties,
+                    [partyId]: {
+                        partyId,
+                        routerRtpCapabilities,
+                        hostId
                     }
                 },
-                sendToUser([hostId], ['StartPartyResulted', Result.Ok({ hostId, partyId, routerRtpCapabilities })])
+                users: {
+                    ...model.users,
+                    [hostId]: {
+                        partyId,
+                        userId: hostId
+                    }
+                }
+            }
+
+            return [
+                modelNew,
+                Cmd.batch([
+                    sendToUser([hostId], ['StartPartyResulted', Result.Ok(modelNew)])
+                ])
             ]
         }
     }
 }
 
-export const updateFromFrontend = ({ sendToClient }: { sendToClient: (msg: ToFrontend) => Cmd.Cmd<never> }, msg: ToBackend, model: Model): [Model, Cmd.Cmd<Msg>] => {
+export const updateFromFrontend = ({ sendToUser }: { sendToUser: (userId: UserId.UserId[], msg: ToFrontend) => Cmd.Cmd<never> }, msg: ToBackend, model: Model): [Model, Cmd.Cmd<Msg>] => {
+    const sendToParty = (partyId: PartyId.PartyId, msg: ToFrontend): Cmd.Cmd<never> => {
+        const userIds = Object.values(model.users).flatMap(user => user.partyId === partyId ? [user.userId] : [])
+        return sendToUser(userIds, msg)
+    }
+
     switch (msg[0]) {
         case 'StartParty': {
             const partyId = msg[1].partyId
@@ -98,8 +114,40 @@ export const updateFromFrontend = ({ sendToClient }: { sendToClient: (msg: ToFro
                 )
             ]
         }
+
+        case 'LeaveParty': {
+            const { userId } = msg[1]
+
+            const result = leaveParty(msg[1], model)
+
+            if (result.result.type === 'Err') {
+                return [
+                    model,
+                    Cmd.batch([
+                        sendToUser([userId], ['Sync', model]),
+                        sendToUser([userId], ['LeavePartyResulted', result])
+                    ])
+                ]
+            }
+
+
+            const sharedModelNew = result.result.value
+
+            const user = model.users[result.userId]
+
+            const cmd = user ? Cmd.batch([
+                sendToParty(user.partyId, ['Sync', sharedModelNew]),
+                sendToParty(user.partyId, ['LeavePartyResulted', { userId, result: Result.Ok(sharedModelNew) }])
+            ]) : Cmd.None
+
+            return [
+                { ...model, parties: sharedModelNew.parties, users: sharedModelNew.users },
+                cmd
+            ]
+        }
     }
 }
+
 
 // 
 // 
@@ -124,43 +172,13 @@ export const subscriptions = (model: Model) => {
 
 export const onClientConnected = ({ sendToUser }: { sendToUser: (userIds: UserId.UserId[], msg: ToFrontend) => Cmd.Cmd<Msg> }, maybeUserId: Option.Option<UserId.UserId>, model: Model): Cmd.Cmd<Msg> => {
 
-
     if (maybeUserId.type === 'None') {
         return Cmd.None
     }
 
-
-
     const userId = maybeUserId.value
 
-    const user = model.users[userId]
-
-    if (!user) {
-        const frontendModel: FrontendModel = {
-            type: "NotInParty",
-        }
-
-        return sendToUser([userId], ['Sync', frontendModel])
-    }
-
-    const party = model.parties[user.partyId]
-
-    if (!party) {
-        const frontendModel: FrontendModel = {
-            type: "NotInParty",
-        }
-
-        return sendToUser([userId], ['Sync', frontendModel])
-    }
-
-    const frontendModel: FrontendModel = {
-        hostId: party.hostId,
-        partyId: party.partyId,
-        routerRtpCapabilities: party.routerRtpCapabilities,
-        type: "InParty",
-    }
-
-    return sendToUser([userId], ['Sync', frontendModel])
+    return sendToUser([userId], ['Sync', model])
 }
 
 // 

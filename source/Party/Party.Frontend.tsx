@@ -14,7 +14,7 @@ import * as Route from "../Route"
 
 export type Model = FrontendModel
 
-export const init: [Model, Cmd.Cmd<Msg>] = [{ type: "NotInParty" }, Cmd.None];
+export const init: [Model, Cmd.Cmd<Msg>] = [{ parties: {}, users: {} }, Cmd.None];
 
 //
 //
@@ -47,13 +47,18 @@ export const update = ({ sendToBackend }: { sendToBackend: (msg: ToBackend) => C
         case "StartParty": {
             return [model, sendToBackend(msg)]
         }
+
+        case 'LeaveParty': {
+            return [model, sendToBackend(msg)]
+        }
     }
 };
 
 export const updateFromBackend = (msg: ToFrontend, model: Model): [Model, Cmd.Cmd<Msg>] => {
     switch (msg[0]) {
         case 'Sync': {
-            return [msg[1], Cmd.None]
+            const sharedModel = msg[1]
+            return [{ ...model, parties: sharedModel.parties, users: sharedModel.users }, Cmd.None]
         }
 
         case 'StartPartyResulted': {
@@ -61,9 +66,13 @@ export const updateFromBackend = (msg: ToFrontend, model: Model): [Model, Cmd.Cm
                 return [model, Cmd.None]
             }
 
-            const { hostId, partyId, routerRtpCapabilities } = msg[1].value
+            const sharedModel = msg[1].value
 
-            return [{ type: "InParty", hostId, partyId, routerRtpCapabilities }, Cmd.None]
+            return [{ ...model, parties: sharedModel.parties, users: sharedModel.users }, Cmd.None]
+        }
+
+        case 'LeavePartyResulted': {
+            return [model, Cmd.None]
         }
     }
 }
@@ -101,8 +110,43 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
 // 
 
 export const view = ({ currentUserId }: { currentUserId: UserId.UserId }, model: Model): UI.View<Msg> => (dispatch) => {
-    if (model.type === 'NotInParty') {
-        return <UI.FillBox>
+
+    const user = model.users[currentUserId]
+
+    if (!user) {
+        return <ViewNotInParty currentUserId={currentUserId} dispatch={dispatch} />
+    }
+
+    const party = model.parties[user.partyId]
+
+    if (!party) {
+        return <ViewNotInParty currentUserId={currentUserId} dispatch={dispatch} />
+    }
+
+    return <UI.FillBox>
+        <UI.Box sx={{ padding: 2 }}>
+            <UI.Typography>
+                partyId:
+                {party.partyId}
+            </UI.Typography>
+            <UI.Typography>
+                hostId:
+                {party.hostId}
+            </UI.Typography>
+        </UI.Box>
+        <UI.Box sx={{ flex: 1 }}>
+        </UI.Box>
+        <UI.Box sx={{ padding: 2 }}>
+            <UI.Button fullWidth variant="contained" size="large" onClick={() => dispatch(['LeaveParty', { userId: currentUserId }])}>
+                Leave Party
+            </UI.Button>
+        </UI.Box>
+    </UI.FillBox>
+}
+
+const ViewNotInParty = ({ currentUserId, dispatch }: { currentUserId: UserId.UserId, dispatch: (msg: Msg) => void }) => {
+    return (
+        <UI.FillBox>
             <UI.Box sx={{ flex: 1 }}>
 
             </UI.Box>
@@ -112,28 +156,23 @@ export const view = ({ currentUserId }: { currentUserId: UserId.UserId }, model:
                 </UI.Button>
             </UI.Box>
         </UI.FillBox>
-    }
-
-    return <UI.FillBox>
-        <UI.Box sx={{ flex: 1 }}>
-
-
-        </UI.Box>
-        <UI.Box sx={{ padding: 2 }}>
-            <UI.Button fullWidth variant="contained" size="large">
-                Leave Party
-            </UI.Button>
-        </UI.Box>
-    </UI.FillBox>
+    )
 }
 
 export const viewBanner = ({ route, currentUserId, model }: { route: Route.Model, currentUserId: UserId.UserId, model: Model }): UI.View<Msg> => (dispatch) => {
-
-    if (model.type === 'NotInParty') {
+    if (route[0] === 'Party') {
         return <></>
     }
 
-    if (route[0] === 'Party') {
+    const user = model.users[currentUserId]
+
+    if (!user) {
+        return <></>
+    }
+
+    const party = model.parties[user.partyId]
+
+    if (!party) {
         return <></>
     }
 
