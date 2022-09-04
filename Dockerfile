@@ -10,10 +10,10 @@ RUN \
 
 ADD package*.json /app/
 
-RUN npm install
+RUN [ "npm", "install" ]
 
 COPY ./ /app/
 
-RUN npm run backend:build
+RUN [ "npm", "run", "backend:build" ]
 
 CMD [ "npm", "run", "backend:start" ]
