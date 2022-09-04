@@ -1,6 +1,7 @@
-import { Option, Result } from "../Core"
+import { Option, pipe, Result, Unit } from "../Core"
 import { PartyId, UserId } from "../Data"
 import type { RtpCapabilities } from "mediasoup-client/lib/types"
+import { removeKey } from "../Core/Record"
 
 // 
 // 
@@ -10,8 +11,7 @@ import type { RtpCapabilities } from "mediasoup-client/lib/types"
 // 
 // 
 
-export type BackendModel = {
-  worker: WorkerModel
+export type SharedModel = {
   parties: {
     [partyId: PartyId.PartyId]: PartyModel
   }
@@ -20,15 +20,14 @@ export type BackendModel = {
   }
 }
 
+export type BackendModel = {
+  worker: WorkerModel
+} & SharedModel
+
 export type RouterRtpCapabilities = RtpCapabilities
 
 export type FrontendModel =
-  | {
-    type: "NotInParty"
-  }
-  | ({
-    type: "InParty",
-  } & PartyModel)
+  SharedModel
 
 type WorkerModel =
   | { type: "Loading" }
@@ -74,9 +73,9 @@ export type ToFrontend = Response | ["Sync", FrontendModel]
 // 
 // 
 
-export type Request = StartParty
+export type Request = StartParty | LeaveParty
 
-export type Response = StartPartyResulted
+export type Response = StartPartyResulted | LeavePartyResulted
 
 // 
 // 
@@ -84,5 +83,82 @@ export type Response = StartPartyResulted
 
 export type StartParty = ['StartParty', { hostId: UserId.UserId, partyId: PartyId.PartyId }]
 
-export type StartPartyResulted = ['StartPartyResulted', Result.Result<CreateRouterProblem | "already_started_a_party", PartyModel>]
+export type StartPartyResulted = ['StartPartyResulted', Result.Result<CreateRouterProblem | "already_in_a_party", SharedModel>]
 
+// 
+// 
+// 
+
+export type LeaveParty = ['LeaveParty', { userId: UserId.UserId, }]
+
+export type LeavePartyResulted = ['LeavePartyResulted', { userId: UserId.UserId, result: Result.Result<"not_in_a_party", SharedModel> }]
+
+export const leaveParty = (
+  { userId }: LeaveParty[1],
+  model: SharedModel,
+): LeavePartyResulted[1] => {
+  const user = model.users[userId]
+
+  if (!user) {
+    return { userId, result: Result.Err("not_in_a_party") }
+  }
+
+  const party = model.parties[user.partyId]
+
+  if (!party) {
+    return { userId, result: Result.Err("not_in_a_party") }
+  }
+
+  const usersNew = removeKey(userId, model.users)
+
+  if (user.userId !== party.hostId) {
+    return {
+      userId,
+      result: Result.Ok({
+        ...model,
+        users: usersNew,
+        parties: {
+          ...model.parties,
+          [party.partyId]: party,
+        },
+      })
+    }
+  }
+
+  const nextHost = pipe(
+    Object.values(model.users),
+    (users) =>
+      users.filter(
+        (user) => user.partyId === party.partyId && user.userId !== party.hostId,
+      ),
+    (users) => users[0],
+  )
+
+  if (!nextHost) {
+    return {
+      userId,
+      result: Result.Ok({
+        ...model,
+        users: usersNew,
+        parties: removeKey(party.partyId, model.parties),
+      })
+    }
+  }
+
+  const partiesNew: SharedModel["parties"] = {
+    ...model.parties,
+    [party.partyId]: {
+      ...party,
+      hostId: nextHost.userId,
+    },
+  }
+
+  return {
+    userId,
+    result: Result.Ok({
+      ...model,
+      users: usersNew,
+      parties: partiesNew,
+    })
+  }
+}

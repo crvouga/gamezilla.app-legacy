@@ -162,7 +162,7 @@ const updateFromFrontend = (
 
     case 'Party': {
       const [child, childCmd] = Party.updateFromFrontend(
-        { sendToClient: (msg) => sendToClient(['Party', msg]) },
+        { sendToUser: (userIds, msg) => sendToUser(model, userIds, ['Party', msg]) },
         msg[1],
         model.party,
       )
@@ -194,8 +194,6 @@ const sendToUser = (
 ) => {
   const clientIds = Object.values(model.sessions)
     .flatMap((session) => session.userId.type === "Some" && userIds.includes(session.userId.value) && session.connection.type === 'Connected' ? [session.connection.clientId] : [])
-
-  console.log("SEND_TO_USER", { userIds, clientIds, msg })
 
   return Wire.sendToFrontend(clientIds, msg)
 }
