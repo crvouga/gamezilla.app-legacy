@@ -3,6 +3,7 @@ import { Cmd, exhaustive, pipe, Sub, tag, tagSub } from "./Core"
 import { UserId } from "./Data"
 import * as GameRoom from "./GameRoom/GameRoom.Frontend"
 import {
+  PartyPage,
   Account,
   AccountCreate,
   Chat,
@@ -59,6 +60,7 @@ export type Model =
   | ["Search", Search.Model]
   | ["ChatConversation", ChatConversation.Model]
   | ["GameRoom", GameRoomPage.Model]
+  | ["Party", PartyPage.Model]
   | ["Admin"]
   | ["Loading"]
 
@@ -87,6 +89,7 @@ export type Msg =
   | ["ProfileUpdateTheme", ProfileUpdateTheme.Msg]
   | ["Chat", Chat.Msg]
   | ["GameRoom", GameRoomPage.Msg]
+  | ["Party", PartyPage.Msg]
   | ["PasswordReset", PasswordReset.Msg]
   | ["ChatNew", ChatNew.Msg]
   | ["ChatConversation", ChatConversation.Msg]
@@ -221,6 +224,15 @@ export const initReady = (
       ]
     }
 
+    case 'Party': {
+      const [modelInit, cmdInit] = PartyPage.init
+      return [
+        ['Party', modelInit],
+        pipe(cmdInit, Cmd.map(tag("Party"))),
+        []
+      ]
+    }
+
     case "ProfileCreate":
     case "Login":
     case "LoginEmail":
@@ -268,6 +280,7 @@ export const initLoggedOut = (route: Route.Model): [Model, Cmd.Cmd<Msg>] => {
     case "GameRoom":
     case "ProfileUpdateName":
     case "ProfileUpdateUsername":
+    case 'Party':
       return [["Login", Login.init], Route.push(["Login"])]
 
     default:
@@ -305,6 +318,7 @@ export const initProfileMissing = (
     case "GameRoom":
     case "AccountCreate":
     case "PasswordReset":
+    case 'Party':
       return [
         ["ProfileCreate", ProfileCreate.init(auth)],
         Route.push(["ProfileCreate"]),
@@ -492,12 +506,26 @@ export const updateReady = (
       return [model, Cmd.None, []]
     }
 
+    case 'Party': {
+      if (msg[0] === 'Party') {
+        const [modelPage, cmdPage, actions] = PartyPage.update({ currentUserId: profile.userId }, msg[1], model[1])
+        return [
+          ['Party', modelPage],
+          pipe(cmdPage, Cmd.map(tag("Party"))),
+          actions
+        ]
+      }
+
+      return [model, Cmd.None, []]
+    }
+
     case "Login":
     case "Loading":
     case "ProfileCreate":
     case "LoginEmail":
     case "AccountCreate":
     case "PasswordReset":
+
       return [model, Route.push(["Home"]), []]
 
     default:
@@ -549,6 +577,7 @@ export const updateProfileMissing = (
     case "PasswordReset":
     case "Search":
     case "Admin":
+    case 'Party':
       return [model, Route.push(["ProfileCreate"]), []]
 
     default:
@@ -611,6 +640,7 @@ export const updateLoggedOut = (
     case "Profile":
     case "Admin":
     case "Search":
+    case 'Party':
       return [model, Route.push(["Login"]), []]
 
     default:
@@ -652,6 +682,7 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
     case "Search":
     case "Admin":
     case "GameRoom":
+    case 'Party':
       return Sub.None
 
     default:
@@ -673,11 +704,13 @@ export const viewReady = (
     gameRoom,
     store,
     route,
+    party,
   }: {
     route: Route.Model
     gameRoom: GameRoom.Model
     profile: Store.Profile.Profile
     store: Store.Model
+    party: Party.Model,
   },
   model: Model,
 ): UI.View<Msg> => {
@@ -799,6 +832,21 @@ export const viewReady = (
       )
     }
 
+
+    case 'Party': {
+      return dispatch => (
+        <UI.FillBox>
+          {tagView("Party", PartyPage.view({ currentUserId, party, store }, model[1]))(dispatch)}
+
+          {viewBottomNavigation({
+            page: "Party",
+            currentUserId,
+            route,
+          })(dispatch)}
+        </UI.FillBox>
+      )
+    }
+
     case "Login":
     case "ProfileCreate":
     case "Loading":
@@ -843,6 +891,7 @@ export const viewProfileMissing = (
     case "Profile":
     case "GameRoom":
     case "Admin":
+    case 'Party':
       return viewLoading
 
     default:
@@ -882,6 +931,7 @@ export const viewLoggedOut = (model: Model): UI.View<Msg> => {
     case "Search":
     case "Admin":
     case "Loading":
+    case 'Party':
       return viewLoading
 
     default:
@@ -912,7 +962,7 @@ const viewBottomNavigation =
     route,
   }: {
     currentUserId: UserId.UserId
-    page: "Home" | "Search" | "Chat" | "Profile"
+    page: "Home" | "Party" | "Search" | "Chat" | "Profile"
     route: Route.Model
   }): UI.View<Msg> =>
     (dispatch) => {
@@ -923,15 +973,20 @@ const viewBottomNavigation =
           outlined: <UI.Icons.HomeOutlined />,
         },
         {
+          route: ["Party"],
+          filled: <UI.Icons.Group />,
+          outlined: <UI.Icons.GroupOutlined />,
+        },
+        {
           route: ["Search"],
           filled: <UI.Icons.Search />,
           outlined: <UI.Icons.SearchOutlined />,
         },
-        {
-          route: ["Chat"],
-          filled: <UI.Icons.Chat />,
-          outlined: <UI.Icons.ChatOutlined />,
-        },
+        // {
+        //   route: ["Chat"],
+        //   filled: <UI.Icons.Chat />,
+        //   outlined: <UI.Icons.ChatOutlined />,
+        // },
         {
           route: ["Profile", currentUserId],
           filled: <UI.Icons.AccountCircle />,

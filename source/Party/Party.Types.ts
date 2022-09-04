@@ -60,7 +60,7 @@ type CreateRouterProblem = 'worker_does_not_exists'
 
 export type CreateRouterResult = Result.Result<CreateRouterProblem, { routerRtpCapabilities: RouterRtpCapabilities }>
 
-export type FrontendMsg = Request
+export type FrontendMsg = Request | ["ClickedBanner"]
 
 export type ToBackend = Request
 
