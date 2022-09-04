@@ -20,19 +20,23 @@ export type SharedModel = {
   }
 }
 
-export type BackendModel = {
+export type BackendModel = SharedModel & {
   worker: WorkerModel
-} & SharedModel
+}
 
 export type RouterRtpCapabilities = RtpCapabilities
 
-export type FrontendModel =
-  SharedModel
+export type FrontendModel = SharedModel & {
+  device: DeviceModel
+}
 
 type WorkerModel =
   | { type: "Loading" }
   | { type: "Died", }
   | { type: "Ready", }
+
+type DeviceModel = { type: "Unloaded" } | { type: "Loaded" }
+
 
 export type PartyModel = {
   partyId: PartyId.PartyId
@@ -55,15 +59,37 @@ export type UserModel = {
 
 export type BackendMsg = ["WorkerCreated"] | ["WorkerDied"] | ['StartParty.CreateRouterResulted', { result: CreateRouterResult, hostId: UserId.UserId, partyId: PartyId.PartyId }]
 
+export type FrontendMsg = Request | ["ClickedBanner"] | LoadDeviceResulted | UnloadDeviceResulted
+
+export type ToBackend = Request
+
+export type ToFrontend = Response | ["Sync", SharedModel]
+
+//
+// Mediasoup Server
+//
+
 type CreateRouterProblem = 'worker_does_not_exists'
 
 export type CreateRouterResult = Result.Result<CreateRouterProblem, { routerRtpCapabilities: RouterRtpCapabilities }>
 
-export type FrontendMsg = Request | ["ClickedBanner"]
+//
+// Mediasoup Client
+//
 
-export type ToBackend = Request
+export type LoadDeviceResulted = ['LoadDeviceResulted', Result.Result<"device_is_already_loaded" | "failed_to_load_device", Unit>]
 
-export type ToFrontend = Response | ["Sync", FrontendModel]
+export type UnloadDeviceResulted = ['UnloadDeviceResulted', Result.Result<"device_is_already_unloaded" | "failed_to_unload_device", Unit>]
+
+// 
+// Mediasoup Client to Server
+// 
+
+export type CreateTransport = ["CreateTransport", TransportVariant]
+
+export type CreateTransportResulted = ["CreateTransportResulted",]
+
+export type TransportVariant = "Sender" | "Reciever"
 
 // 
 // 

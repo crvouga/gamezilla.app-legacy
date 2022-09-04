@@ -56,7 +56,7 @@ const init = (location: Browser.Location): [Model, Cmd.Cmd<Msg>] => {
   const store = Store.init
   const [gameRoom, gameRoomCmd] = GameRoom.init
   const [page, pageCmd] = Pages.initLoading()
-  const [party, partyCmd] = Party.init
+  const [party, partyCmd] = Party.init()
 
   return [
     {
@@ -70,10 +70,10 @@ const init = (location: Browser.Location): [Model, Cmd.Cmd<Msg>] => {
       wire: "Connecting",
     },
     Cmd.batch<Msg>([
-      tagCmd("Party", partyCmd),
       tagCmd("Auth", authCmd),
       tagCmd("Page", pageCmd),
       tagCmd("GameRoom", gameRoomCmd),
+      tagCmd("Party", partyCmd),
     ]),
   ]
 }
@@ -261,7 +261,13 @@ const updateFromBackend = (
     }
 
     case 'Party': {
-      const [party, partyCmd, actions] = Party.updateFromBackend(msg[1], model.party)
+      if (model.auth[0] !== 'LoggedIn') {
+        return [model, Cmd.None]
+      }
+
+      const currentUserId = model.auth[1].userId
+
+      const [party, partyCmd, actions] = Party.updateFromBackend({ currentUserId }, msg[1], model.party)
 
       return pipe(
         [{ ...model, party }, tagCmd("Party", partyCmd)],
