@@ -6,14 +6,13 @@ import * as Snackbar from "../../Snackbar"
 import * as Store from "../../Store"
 import * as UI from "../../UI"
 import * as Direction from "./Direction"
+import * as Joystick from "./Joystick"
 import * as Position from "./Position"
 import * as Snake from "./Snake"
 import {
-  canStartGame,
+  BackendModel, canStartGame,
   FrontendModel,
-  FrontendMsg,
-  BackendModel,
-  initSharedModel,
+  FrontendMsg, initSharedModel,
   SharedModel,
   ToBackend,
   ToFrontend
@@ -162,9 +161,9 @@ export const updateFromBackend = (
 const updateResponse = <
   TProblem extends string,
   TResult extends Result.Result<TProblem, SharedModel>,
-  >(
-    result: TResult,
-    model: Model,
+>(
+  result: TResult,
+  model: Model,
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   if (result.type === "Err") {
     const message = result.error.split("_").join(" ")
@@ -308,8 +307,14 @@ export const view =
             model={model}
             dispatch={dispatch}
           />
-
           {model.gameStatus.player[1] === currentUserId && (
+            <UI.Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", width: "100%", paddingBottom: 2 }}>
+              <Joystick.ViewJoystick onMove={(moveEvent) => {
+                dispatch(['InputDirection', { userId: currentUserId, direction: joystickDirectionToDirection(moveEvent.direction) }])
+              }} />
+            </UI.Box>
+          )}
+          {/* {model.gameStatus.player[1] === currentUserId && (
             <UI.Box sx={{ display: "flex", alignItems: "center", width: "100%" }}>
               <UI.Box
                 sx={{
@@ -350,10 +355,30 @@ export const view =
                 </UI.ButtonBase>
               </UI.Box>
             </UI.Box>
-          )}
+          )} */}
         </UI.FillBox>
       )
     }
+
+export const joystickDirectionToDirection = (direction: Joystick.Direction): Direction.Direction => {
+  switch (direction) {
+    case 'Down': {
+      return 'down'
+    }
+
+    case 'Left': {
+      return 'left'
+    }
+
+    case 'Right': {
+      return 'right'
+    }
+
+    case 'Up': {
+      return 'up'
+    }
+  }
+}
 
 
 export const ViewBoard = ({
