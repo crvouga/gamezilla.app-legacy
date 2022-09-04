@@ -720,7 +720,7 @@ Browser.run(program, (dom) => {
 //
 //
 
-const productionBackendUrl = "https://gamezilla.herokuapp.com/"
+const productionBackendUrl = "https://backend.gamezilla.app/"
 
 const developmentBackendUrl = `http://localhost:${Wire.backendServerPort}/`
 
