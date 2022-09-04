@@ -1,5 +1,5 @@
 import { Cmd } from "../Core"
-import { PartyId, UserId } from "../Data"
+import { UserId } from "../Data"
 import * as GameRoom from "../GameRoom/GameRoom.Frontend"
 import * as Party from "../Party/Party.Frontend"
 import * as Route from "../Route"
@@ -74,7 +74,6 @@ export const view = (
           >
             Play
           </UI.Button>
-
         </UI.Box>
       </UI.FillBox>
     )
