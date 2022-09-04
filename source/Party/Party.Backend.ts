@@ -50,12 +50,12 @@ export const update = ({ sendToUser }: { sendToUser: (userIds: UserId.UserId[], 
         }
 
 
-        case 'CreateParty.CreateRouterResulted': {
+        case 'StartParty.CreateRouterResulted': {
 
             const { partyId, hostId, result } = msg[1]
 
             if (result.type === 'Err') {
-                return [model, sendToUser([hostId], ['CreatePartyResulted', result])]
+                return [model, sendToUser([hostId], ['StartPartyResulted', result])]
             }
 
             const { routerRtpCapabilities } = result.value
@@ -79,7 +79,7 @@ export const update = ({ sendToUser }: { sendToUser: (userIds: UserId.UserId[], 
                         }
                     }
                 },
-                sendToUser([hostId], ['CreatePartyResulted', Result.Ok({ hostId, partyId, routerRtpCapabilities })])
+                sendToUser([hostId], ['StartPartyResulted', Result.Ok({ hostId, partyId, routerRtpCapabilities })])
             ]
         }
     }
@@ -87,14 +87,14 @@ export const update = ({ sendToUser }: { sendToUser: (userIds: UserId.UserId[], 
 
 export const updateFromFrontend = ({ sendToClient }: { sendToClient: (msg: ToFrontend) => Cmd.Cmd<never> }, msg: ToBackend, model: Model): [Model, Cmd.Cmd<Msg>] => {
     switch (msg[0]) {
-        case 'CreateParty': {
+        case 'StartParty': {
             const partyId = msg[1].partyId
             const hostId = msg[1].hostId
             return [
                 model,
                 pipe(
                     createRouter(partyId),
-                    Cmd.perform((result): Msg => ['CreateParty.CreateRouterResulted', { result, hostId, partyId }])
+                    Cmd.perform((result): Msg => ['StartParty.CreateRouterResulted', { result, hostId, partyId }])
                 )
             ]
         }
