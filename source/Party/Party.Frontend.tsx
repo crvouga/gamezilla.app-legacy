@@ -1,9 +1,10 @@
-import { Cmd, Sub } from "../Core";
-import { FrontendModel, FrontendMsg, ToBackend, ToFrontend } from "./Party.Types";
-import * as UI from "../UI"
+import * as mediasoupClient from "mediasoup-client";
+import { Cmd, pipe, Result, Sub, Task, Unit } from "../Core";
 import { PartyId, UserId } from "../Data";
-import * as Route from "../Route"
-import * as Store from "../Store"
+import * as Route from "../Route";
+import * as Store from "../Store";
+import * as UI from "../UI";
+import { FrontendModel, FrontendMsg, LoadDeviceResulted, RouterRtpCapabilities, ToBackend, ToFrontend, UnloadDeviceResulted } from "./Party.Types";
 
 //
 //
@@ -15,7 +16,17 @@ import * as Store from "../Store"
 
 export type Model = FrontendModel
 
-export const init: [Model, Cmd.Cmd<Msg>] = [{ parties: {}, users: {} }, Cmd.None];
+export const init = (): [Model, Cmd.Cmd<Msg>] => {
+
+    return [
+        {
+            parties: {},
+            users: {},
+            device: { type: "Unloaded" }
+        },
+        Cmd.None
+    ];
+}
 
 //
 //
@@ -41,6 +52,22 @@ export const update = ({ sendToBackend }: { sendToBackend: (msg: ToBackend) => C
             return [model, Route.push(['Party'])]
         }
 
+        case 'LoadDeviceResulted': {
+            if (msg[1].type === 'Err') {
+                return [model, Cmd.None]
+            }
+            return [{ ...model, device: { type: "Loaded" } }, Cmd.None]
+        }
+
+
+        case 'UnloadDeviceResulted': {
+            if (msg[1].type === 'Err') {
+                return [model, Cmd.None]
+            }
+
+            return [{ ...model, device: { type: "Unloaded" } }, Cmd.None]
+        }
+
         // 
         //
         //
@@ -61,12 +88,48 @@ export const update = ({ sendToBackend }: { sendToBackend: (msg: ToBackend) => C
     }
 };
 
-export const updateFromBackend = (msg: ToFrontend, model: Model): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
+const toDeviceCmd = ({ currentUserId, modelNew, modelPrev, }: { currentUserId: UserId.UserId, modelPrev: Model, modelNew: Model }): Cmd.Cmd<Msg> => {
+    const userPrev = modelPrev.users[currentUserId]
+    const userNew = modelNew.users[currentUserId]
+
+    if (userPrev && !userNew) {
+        return pipe(unloadDevice, Cmd.perform(result => ['UnloadDeviceResulted', result]))
+    }
+
+    if (!userPrev && userNew) {
+
+        const party = modelNew.parties[userNew.partyId]
+
+        if (!party) {
+            return Cmd.None
+        }
+
+        const { routerRtpCapabilities } = party
+
+        return pipe(loadDevice({ routerRtpCapabilities }), Cmd.perform(result => ['LoadDeviceResulted', result]))
+    }
+
+    return Cmd.None
+}
+
+export const updateFromBackend = ({ currentUserId }: { currentUserId: UserId.UserId }, msg: ToFrontend, model: Model): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
     switch (msg[0]) {
         case 'Sync': {
             const sharedModel = msg[1]
+
+            const modelNew: Model = {
+                ...model,
+                parties: sharedModel.parties,
+                users: sharedModel.users
+            }
+
             const userIds = Object.values(sharedModel.users).map(user => user.userId)
-            return [{ ...model, parties: sharedModel.parties, users: sharedModel.users }, Cmd.None, [['Store', ['Profile', ['FindMany', { userIds }]]]]]
+
+            return [
+                modelNew,
+                toDeviceCmd({ currentUserId, modelNew: modelNew, modelPrev: model }),
+                [['Store', ['Profile', ['FindMany', { userIds }]]]]
+            ]
         }
 
         case 'StartPartyResulted': {
@@ -235,4 +298,57 @@ export const viewBanner = ({ route, currentUserId, model, store, }: { store: Sto
 
     </UI.Paper>
 
-} 
+}
+
+
+// 
+// 
+// 
+// 
+// Mediasoup
+// 
+// 
+// 
+// 
+
+
+let device: mediasoupClient.types.Device | undefined
+
+const loadDevice = ({ routerRtpCapabilities }: { routerRtpCapabilities: RouterRtpCapabilities }): Task.Task<LoadDeviceResulted[1]> => async () => {
+    try {
+
+        if (device) {
+            return Result.Err("device_is_already_loaded")
+        }
+
+        const deviceNew = new mediasoupClient.Device()
+
+        await deviceNew.load({ routerRtpCapabilities })
+
+        device = deviceNew
+
+        return Result.Ok(Unit)
+
+    } catch (_error) {
+        console.error(_error)
+        return Result.Err("failed_to_load_device")
+    }
+
+}
+
+const unloadDevice: Task.Task<UnloadDeviceResulted[1]> = async () => {
+    try {
+
+        if (!device) {
+            return Result.Err("device_is_already_unloaded")
+        }
+
+        device = undefined
+
+        return Result.Ok(Unit)
+
+    } catch (_error) {
+        return Result.Err("failed_to_unload_device")
+    }
+
+}
