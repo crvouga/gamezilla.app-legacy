@@ -4,13 +4,15 @@
   "scripts": {
     "backend:dev": "npx ts-node-dev ./source/App.Backend.ts",
     "backend:start": "node --max-old-space-size=300 ./dist/source/App.Backend.js",
+    "backend:build": "npx tsc --project tsconfig.json",
     "format": "prettier --write source",
     "frontend:build": "vite build",
     "frontend:dev": "vite",
-    "postinstall": "tsc",
     "heroku:local": "PORT=9001 npx heroku local",
     "heroku:logs": "heroku logs --tail --app gamezilla",
     "heroku:start": "npm run backend:start",
+    "docker:build": "docker build . --tag gamezilla-backend",
+    "docker:test-run": "docker run -p 8000:5000 gamezilla-backend",
     "supabase:types": "npx openapi-typescript https://ldxpcprlgecjvqwzuxgv.supabase.co/rest/v1/?apikey=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTYzNzA0MDQ5NywiZXhwIjoxOTUyNjE2NDk3fQ.ReI8CpIFbLB9Q53Az7CDBIyrn_o1JeGhPoZXdqx8Ac4 --output source/Supabase.Types.ts",
     "typecheck": "tsc -w",
     "utils:find-circular-deps": "npx madge --ts-config tsconfig.json --circular source/Frontend.tsx",
@@ -54,7 +56,7 @@
     "prettier": "^2.7.1",
     "process": "^0.11.10",
     "ts-node": "^10.9.1",
-    "typescript": "^4.6.2",
+    "typescript": "^4.8.2",
     "vite": "^3.0.4"
   },
   "engines": {
