@@ -91,10 +91,22 @@ const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
     case "ClientDisconnected": {
       const sessionId = msg[1]
+      const sessionPrev = model.sessions[sessionId]
+      const maybeUserId = sessionPrev ? sessionPrev.userId : Option.None
+      const sessionNew: Session = {
+        connection: {
+          type: "Disconnected"
+        },
+        sessionId,
+        userId: maybeUserId
+      }
       return [
         {
           ...model,
-          // sessions: removeKey(sessionId, model.sessions),
+          sessions: {
+            ...model.sessions,
+            [sessionId]: sessionNew
+          }
         },
         Cmd.None,
       ]
