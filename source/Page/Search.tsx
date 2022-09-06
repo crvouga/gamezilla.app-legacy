@@ -99,6 +99,11 @@ export const view =
                 dispatch(["InputtedSearchText", event.target.value])
               }
             />
+
+            {query.type === "Loading" && (
+              <UI.CircularProgress />
+            )}
+
             <UI.IconButton
               edge="end"
               onClick={() => dispatch(["ClickedClear"])}
@@ -113,6 +118,12 @@ export const view =
           {query.type === "NotAsked" && <UI.Box sx={{ flex: 1 }}></UI.Box>}
 
           <UI.Box sx={{ paddingTop: 1, flex: 1, overflowY: "scroll" }}>
+            {results.length === 0 && (
+              <UI.Typography sx={{ paddingX: 2 }} color="text.secondary">
+                {query.type === 'Loading' ? "Searching..." : "No results found"}
+              </UI.Typography>
+            )}
+
             {results.map((result) => (
               <UI.ListItemButton
                 key={result.userId}
@@ -132,18 +143,7 @@ export const view =
             ))}
           </UI.Box>
 
-          {query.type === "Loading" && (
-            <UI.Box
-              sx={{
-                flex: 1,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <UI.CircularProgress />
-            </UI.Box>
-          )}
+
         </UI.FillBox>
       )
     }
