@@ -58,7 +58,7 @@ const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
       const maybeUserId = sessionPrev ? sessionPrev.userId : Option.None
       const session: Session = {
         sessionId,
-        connection: { type: "Connected", clientId },
+        clientId: Option.Some(clientId),
         userId: maybeUserId,
       }
 
@@ -94,9 +94,7 @@ const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
       const sessionPrev = model.sessions[sessionId]
       const maybeUserId = sessionPrev ? sessionPrev.userId : Option.None
       const sessionNew: Session = {
-        connection: {
-          type: "Disconnected"
-        },
+        clientId: Option.None,
         sessionId,
         userId: maybeUserId
       }
@@ -152,7 +150,7 @@ const updateFromFrontend = (
     case "UserLoggedIn": {
       const session: Session = {
         sessionId,
-        connection: { type: "Connected", clientId },
+        clientId: Option.Some(clientId),
         userId: Option.Some(msg[1]),
       }
 
@@ -203,8 +201,10 @@ const sendToUser = (
   userIds: UserId.UserId[],
   msg: ToFrontend,
 ) => {
+
+
   const clientIds = Object.values(model.sessions)
-    .flatMap((session) => session.userId.type === "Some" && userIds.includes(session.userId.value) && session.connection.type === 'Connected' ? [session.connection.clientId] : [])
+    .flatMap((session) => session.userId.type === "Some" && userIds.includes(session.userId.value) && session.clientId.type === 'Some' ? [session.clientId.value] : [])
 
   return Wire.sendToFrontend(clientIds, msg)
 }

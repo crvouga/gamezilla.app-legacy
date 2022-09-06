@@ -18,8 +18,26 @@ export const decode = (id: string): Result.Result<Problem, SessionId> => {
   return Result.Err("invalid_session_id")
 }
 
+const characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
+
+const randomCharacter = (word: string): string => {
+  return word[Math.floor(Math.random() * word.length)] ?? "a"
+}
+
+const generateId = (length: number): string => {
+  let runningId = ""
+
+  for (let i = 0; i < length; i++) {
+    runningId = `${runningId}${randomCharacter(characters)}`
+  }
+
+  return runningId
+}
+
+
 export const generate = (): SessionId => {
-  const sessionId = Uuid.generateSync()
+
+  const sessionId = generateId(10)
 
   if (is(sessionId)) {
     return sessionId
