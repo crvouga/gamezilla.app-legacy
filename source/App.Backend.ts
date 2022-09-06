@@ -48,7 +48,7 @@ type Msg = BackendMsg
 
 const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
-    case "[Frontend]":
+    case "⮕":
       return updateFromFrontend(msg[1], msg[2], msg[3], model)
 
     case "ClientConnected": {
@@ -231,7 +231,7 @@ const subscriptions = (model: Model): Sub.Sub<Msg> => {
       clientId,
     ]),
     Wire.fromFrontend<Msg>((sessionId, clientId, toBackend) => [
-      "[Frontend]",
+      "⮕",
       sessionId,
       clientId,
       toBackend,

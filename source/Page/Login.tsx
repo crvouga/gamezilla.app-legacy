@@ -26,7 +26,7 @@ export const init: Model = ["Idle"]
 export type Msg =
   | ["ClickedGoogleLogin"]
   | ["ClickedEmailLogin"]
-  | ["LoginWithProviderResulted", Auth.LoginResult]
+  | ["LoginWithProvider_Done", Auth.LoginResult]
 
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
@@ -38,11 +38,11 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
         ["LoggingInWithProvider", "Google"],
         pipe(
           Auth.loginWithProvider({ provider: "Google" }),
-          Cmd.perform((result) => ["LoginWithProviderResulted", result]),
+          Cmd.perform((result) => ["LoginWithProvider_Done", result]),
         ),
       ]
 
-    case "LoginWithProviderResulted":
+    case "LoginWithProvider_Done":
       switch (msg[1].type) {
         case "Err":
           return [["Idle"], Cmd.None]
@@ -63,7 +63,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
 export const view =
   (model: Model): UI.View<Msg> =>
-  (dispatch) =>
+    (dispatch) =>
     (
       <UI.FillBox
         sx={{

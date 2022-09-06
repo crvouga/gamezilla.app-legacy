@@ -81,7 +81,7 @@ export const update = (
             const result = msg[2]
 
             if (result.type === 'Err') {
-                return [model, sendToUser([hostId], ['StartPartyResulted', result])]
+                return [model, sendToUser([hostId], ['StartParty_Done', result])]
             }
 
             const { routerRtpCapabilities } = result.value
@@ -89,7 +89,7 @@ export const update = (
             const user = model.users[hostId]
 
             if (user) {
-                return [model, sendToUser([hostId], ["StartPartyResulted", Result.Err("already_in_a_party")])]
+                return [model, sendToUser([hostId], ["StartParty_Done", Result.Err("already_in_a_party")])]
             }
 
             const modelNew = {
@@ -115,7 +115,7 @@ export const update = (
                 modelNew,
                 Cmd.batch([
                     broadcast(['Sync', modelNew]),
-                    sendToUser([hostId], ['StartPartyResulted', Result.Ok(modelNew)])
+                    sendToUser([hostId], ['StartParty_Done', Result.Ok(modelNew)])
                 ])
             ]
         }
@@ -183,7 +183,7 @@ export const updateFromFrontend = ({ broadcast, sendToUser }: { broadcast: (msg:
                     model,
                     Cmd.batch([
                         sendToUser([userId], ['Sync', model]),
-                        sendToUser([userId], ['LeavePartyResulted', result])
+                        sendToUser([userId], ['LeaveParty_Done', result])
                     ])
                 ]
             }
@@ -195,7 +195,7 @@ export const updateFromFrontend = ({ broadcast, sendToUser }: { broadcast: (msg:
 
             const cmd = user ? Cmd.batch([
                 broadcast(['Sync', sharedModelNew]),
-                sendToParty(user.partyId, ['LeavePartyResulted', { userId, result: Result.Ok(sharedModelNew) }]),
+                sendToParty(user.partyId, ['LeaveParty_Done', { userId, result: Result.Ok(sharedModelNew) }]),
             ]) : broadcast(['Sync', sharedModelNew])
 
             return [
@@ -215,7 +215,7 @@ export const updateFromFrontend = ({ broadcast, sendToUser }: { broadcast: (msg:
                     model,
                     Cmd.batch([
                         sendToUser([userId], ['Sync', model]),
-                        sendToUser([userId], ['JoinPartyResulted', result])
+                        sendToUser([userId], ['JoinParty_Done', result])
                     ])
                 ]
             }
@@ -232,7 +232,7 @@ export const updateFromFrontend = ({ broadcast, sendToUser }: { broadcast: (msg:
                 modelNew,
                 Cmd.batch([
                     broadcast(['Sync', modelNew]),
-                    sendToParty(partyId, ['JoinPartyResulted', result])
+                    sendToParty(partyId, ['JoinParty_Done', result])
                 ])
             ]
 

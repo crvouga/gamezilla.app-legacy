@@ -16,9 +16,9 @@ export type Model = {
   password: string
   passwordVisibility: Visibility
   submission:
-    | { type: "Idle" }
-    | { type: "Loading" }
-    | { type: "Problem"; message: string }
+  | { type: "Idle" }
+  | { type: "Loading" }
+  | { type: "Problem"; message: string }
 }
 
 type Visibility = "Showing" | "Hiding"
@@ -54,8 +54,8 @@ export type Msg =
   | ["ClickedResetPassword"]
   | ["InputtedEmailAddress", string]
   | ["InputtedPassword", string]
-  | ["FocusResulted", Browser.FocusResult]
-  | ["LoginResulted", Auth.LoginResult]
+  | ["Focus_Done", Browser.FocusResult]
+  | ["Login_Done", Auth.LoginResult]
 
 const passwordFieldId = "password"
 
@@ -76,11 +76,11 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
         },
         pipe(
           Browser.focus(passwordFieldId),
-          Cmd.perform((result) => ["FocusResulted", result]),
+          Cmd.perform((result) => ["Focus_Done", result]),
         ),
       ]
 
-    case "FocusResulted":
+    case "Focus_Done":
       return [model, Cmd.None]
 
     case "ClickedLogin":
@@ -94,11 +94,11 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
             emailAddress: model.emailAddress,
             password: model.password,
           }),
-          Cmd.perform((result) => ["LoginResulted", result]),
+          Cmd.perform((result) => ["Login_Done", result]),
         ),
       ]
 
-    case "LoginResulted":
+    case "Login_Done":
       switch (msg[1].type) {
         case "Err":
           return [
@@ -150,108 +150,108 @@ const toggleVisibility = (visibility: Visibility): Visibility => {
 
 export const view =
   (model: Model): UI.View<Msg> =>
-  (dispatch) => {
-    return (
-      <UI.FillBox>
-        <UI.Header
-          left={
-            <UI.HeaderBackButton onClick={() => dispatch(["ClickedBack"])} />
-          }
-          title="Continue With Email"
-        />
-
-        <UI.Box
-          sx={{
-            padding: 2,
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            flex: 1,
-          }}
-        >
-          <UI.TextField
-            autoFocus
-            sx={{ marginBottom: 2 }}
-            type="email"
-            fullWidth
-            inputMode="email"
-            label="Email Address"
-            value={model.emailAddress}
-            onChange={(event) => {
-              dispatch(["InputtedEmailAddress", event.target.value])
-            }}
+    (dispatch) => {
+      return (
+        <UI.FillBox>
+          <UI.Header
+            left={
+              <UI.HeaderBackButton onClick={() => dispatch(["ClickedBack"])} />
+            }
+            title="Continue With Email"
           />
 
-          <UI.TextField
-            sx={{ marginBottom: 2 }}
-            id={passwordFieldId}
-            type={model.passwordVisibility === "Hiding" ? "password" : "text"}
-            fullWidth
-            label="Password"
-            value={model.password}
-            onChange={(event) => {
-              dispatch(["InputtedPassword", event.target.value])
+          <UI.Box
+            sx={{
+              padding: 2,
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              flex: 1,
             }}
-            InputProps={{
-              endAdornment: (
-                <UI.InputAdornment position="end">
-                  <UI.Button
-                    onClick={() =>
-                      dispatch(["ClickedTogglePasswordVisibility"])
-                    }
-                  >
-                    {model.passwordVisibility === "Hiding" ? "Show" : "Hide"}
-                  </UI.Button>
-                </UI.InputAdornment>
-              ),
-            }}
-          />
-
-          <UI.Button
-            variant="contained"
-            size="large"
-            fullWidth
-            loading={model.submission.type === "Loading"}
-            onClick={() => dispatch(["ClickedLogin"])}
           >
-            Login
-          </UI.Button>
+            <UI.TextField
+              autoFocus
+              sx={{ marginBottom: 2 }}
+              type="email"
+              fullWidth
+              inputMode="email"
+              label="Email Address"
+              value={model.emailAddress}
+              onChange={(event) => {
+                dispatch(["InputtedEmailAddress", event.target.value])
+              }}
+            />
 
-          {model.submission.type === "Problem" && (
-            <UI.Alert
-              severity="error"
-              sx={{ marginTop: 2 }}
+            <UI.TextField
+              sx={{ marginBottom: 2 }}
+              id={passwordFieldId}
+              type={model.passwordVisibility === "Hiding" ? "password" : "text"}
+              fullWidth
+              label="Password"
+              value={model.password}
+              onChange={(event) => {
+                dispatch(["InputtedPassword", event.target.value])
+              }}
+              InputProps={{
+                endAdornment: (
+                  <UI.InputAdornment position="end">
+                    <UI.Button
+                      onClick={() =>
+                        dispatch(["ClickedTogglePasswordVisibility"])
+                      }
+                    >
+                      {model.passwordVisibility === "Hiding" ? "Show" : "Hide"}
+                    </UI.Button>
+                  </UI.InputAdornment>
+                ),
+              }}
+            />
+
+            <UI.Button
+              variant="contained"
+              size="large"
+              fullWidth
+              loading={model.submission.type === "Loading"}
+              onClick={() => dispatch(["ClickedLogin"])}
             >
-              {model.submission.message}
-            </UI.Alert>
-          )}
+              Login
+            </UI.Button>
 
-          <UI.Box sx={{ flex: 1 }} />
+            {model.submission.type === "Problem" && (
+              <UI.Alert
+                severity="error"
+                sx={{ marginTop: 2 }}
+              >
+                {model.submission.message}
+              </UI.Alert>
+            )}
 
-          <UI.Typography
-            align="center"
-            color="text.secondary"
-          >
-            Don't have an account?
-          </UI.Typography>
+            <UI.Box sx={{ flex: 1 }} />
 
-          <UI.Button
-            sx={{ marginBottom: 2 }}
-            onClick={() => dispatch(["ClickedCreateAccount"])}
-          >
-            Create Account
-          </UI.Button>
-          <UI.Typography
-            align="center"
-            color="text.secondary"
-          >
-            Forgot password?
-          </UI.Typography>
+            <UI.Typography
+              align="center"
+              color="text.secondary"
+            >
+              Don't have an account?
+            </UI.Typography>
 
-          <UI.Button onClick={() => dispatch(["ClickedResetPassword"])}>
-            Reset Password
-          </UI.Button>
-        </UI.Box>
-      </UI.FillBox>
-    )
-  }
+            <UI.Button
+              sx={{ marginBottom: 2 }}
+              onClick={() => dispatch(["ClickedCreateAccount"])}
+            >
+              Create Account
+            </UI.Button>
+            <UI.Typography
+              align="center"
+              color="text.secondary"
+            >
+              Forgot password?
+            </UI.Typography>
+
+            <UI.Button onClick={() => dispatch(["ClickedResetPassword"])}>
+              Reset Password
+            </UI.Button>
+          </UI.Box>
+        </UI.FillBox>
+      )
+    }

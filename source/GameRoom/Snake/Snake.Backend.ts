@@ -5,9 +5,9 @@ import {
   BackendMsg,
   initSharedModel,
   InputDirection,
-  InputDirectionResulted,
+  InputDirection_Done,
   InputPlayer,
-  InputPlayerResulted,
+  InputPlayer_Done,
   Response,
   SharedModel,
   startGame,
@@ -71,7 +71,7 @@ export const updateFromFrontend = (
     case "StartGame": {
       return updateRequest(
         { sendToClient, sendToRoom },
-        ["StartGameResulted", startGame(model)],
+        ["StartGame_Done", startGame(model)],
         model,
       )
     }
@@ -79,7 +79,7 @@ export const updateFromFrontend = (
     case "ToggleStatus": {
       return updateRequest(
         { sendToClient, sendToRoom },
-        ["ToggleStatusResulted", toggleStatus(msg[1], model)],
+        ["ToggleStatus_Done", toggleStatus(msg[1], model)],
         model,
       )
     }
@@ -87,7 +87,7 @@ export const updateFromFrontend = (
     case "InputDirection": {
       return updateRequest(
         { sendToClient, sendToRoom },
-        ["InputDirectionResulted", inputDirection(msg[1], model)],
+        ["InputDirection_Done", inputDirection(msg[1], model)],
         model,
       )
     }
@@ -95,7 +95,7 @@ export const updateFromFrontend = (
     case "InputPlayer": {
       return updateRequest(
         { sendToClient, sendToRoom },
-        ["InputPlayerResulted", inputPlayer(msg[1], model)],
+        ["InputPlayer_Done", inputPlayer(msg[1], model)],
         model,
       )
     }
@@ -159,7 +159,7 @@ export const subscriptions = (
 export const inputPlayer = (
   player: InputPlayer[1],
   model: SharedModel,
-): InputPlayerResulted[1] => {
+): InputPlayer_Done[1] => {
   if (model.gameStatus.type !== "GameSetup") {
     return Result.Err("must_be_in_game_setup")
   }
@@ -178,7 +178,7 @@ export const inputPlayer = (
 export const inputDirection = (
   { direction, userId }: InputDirection[1],
   model: SharedModel,
-): InputDirectionResulted[1] => {
+): InputDirection_Done[1] => {
   if (model.gameStatus.type !== "GameStarted") {
     return Result.Err("must_be_in_game_started")
   }

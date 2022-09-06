@@ -167,7 +167,7 @@ type AppData = Record<string, unknown>
 
 export type Request = StartParty | LeaveParty | JoinParty
 
-export type Response = StartPartyResulted | LeavePartyResulted | JoinPartyResulted
+export type Response = StartParty_Done | LeaveParty_Done | JoinParty_Done
 
 // 
 // 
@@ -175,7 +175,7 @@ export type Response = StartPartyResulted | LeavePartyResulted | JoinPartyResult
 
 export type StartParty = ['StartParty', { hostId: UserId.UserId, partyId: PartyId.PartyId }]
 
-export type StartPartyResulted = ['StartPartyResulted', Result.Result<"worker_does_not_exists" | "already_in_a_party", SharedModel>]
+export type StartParty_Done = ['StartParty_Done', Result.Result<"worker_does_not_exists" | "already_in_a_party", SharedModel>]
 
 // 
 // 
@@ -183,12 +183,12 @@ export type StartPartyResulted = ['StartPartyResulted', Result.Result<"worker_do
 
 export type LeaveParty = ['LeaveParty', { userId: UserId.UserId, }]
 
-export type LeavePartyResulted = ['LeavePartyResulted', { userId: UserId.UserId, result: Result.Result<"not_in_a_party", SharedModel> }]
+export type LeaveParty_Done = ['LeaveParty_Done', { userId: UserId.UserId, result: Result.Result<"not_in_a_party", SharedModel> }]
 
 export const leaveParty = (
   { userId }: LeaveParty[1],
   model: SharedModel,
-): LeavePartyResulted[1] => {
+): LeaveParty_Done[1] => {
   const user = model.users[userId]
 
   if (!user) {
@@ -262,9 +262,9 @@ export const leaveParty = (
 
 export type JoinParty = ['JoinParty', { userId: UserId.UserId, partyId: PartyId.PartyId }]
 
-export type JoinPartyResulted = ['JoinPartyResulted', Result.Result<"user_already_in_a_party" | "party_does_not_exists", SharedModel>]
+export type JoinParty_Done = ['JoinParty_Done', Result.Result<"user_already_in_a_party" | "party_does_not_exists", SharedModel>]
 
-export const joinParty = ({ userId, partyId }: JoinParty[1], model: SharedModel): JoinPartyResulted[1] => {
+export const joinParty = ({ userId, partyId }: JoinParty[1], model: SharedModel): JoinParty_Done[1] => {
 
   const user = model.users[userId]
 

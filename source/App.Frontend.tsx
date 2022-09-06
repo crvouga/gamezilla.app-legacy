@@ -113,7 +113,7 @@ const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
 const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
-    case "[Backend]": {
+    case "⮕": {
       return updateFromBackend(msg[1], model)
     }
 
@@ -165,7 +165,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
       return [{ ...model, wire: msg[1] }, Cmd.None]
     }
 
-    case 'LocalStoragePutResulted': {
+    case 'LocalStoragePut_Done': {
       return [model, Cmd.None]
     }
 
@@ -257,7 +257,7 @@ const updateFromBackend = (
     case 'Session': {
       const sessionId = msg[1]
 
-      return [model, LocalStorage.put(Wire.sessionIdKey, sessionId, tag("LocalStoragePutResulted"))]
+      return [model, LocalStorage.put(Wire.sessionIdKey, sessionId, tag("LocalStoragePut_Done"))]
     }
 
     case 'Party': {
@@ -420,7 +420,7 @@ const runAction = (
 const subscriptions = (model: Model): Sub.Sub<Msg> => {
   return Sub.batch<Msg>([
     Wire.onConnectionStatus(tag("Wire")),
-    Wire.fromBackend(tag("[Backend]")),
+    Wire.fromBackend(tag("⮕")),
     tagSub("Party", Party.subscriptions(model.party)),
     tagSub("Page", Pages.subscriptions(model.page)),
     tagSub("Auth", Auth.subscriptions),
