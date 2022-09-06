@@ -330,8 +330,20 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
 // 
 // 
 
-export const view = ({ currentUserId, store }: { currentUserId: UserId.UserId, store: Store.Model }, model: Model): UI.View<Msg> => (dispatch) => {
 
+export const View = ({
+    currentUserId,
+    store,
+    model,
+    dispatch
+}: {
+    currentUserId: UserId.UserId,
+    store: Store.Model,
+    model: Model,
+    dispatch: (msg: Msg) => void
+}) => {
+
+    const theme = UI.useTheme()
     const user = model.users[currentUserId]
 
     if (!user) {
@@ -360,8 +372,9 @@ export const view = ({ currentUserId, store }: { currentUserId: UserId.UserId, s
                 .map(user => (
                     <UI.ListItemButton key={user.userId} >
                         <UI.ListItemAvatar>
-                            <UI.Avatar src={store.Profile[user.userId]?.avatarUrl} />
+                            <UI.Avatar src={store.Profile[user.userId]?.avatarUrl} sx={{ border: model.volume > 0 ? `solid 3px ${theme.palette.primary.main}` : undefined }} />
                         </UI.ListItemAvatar>
+
 
                         <UI.ListItemText
                             primary={`${store.Profile[user.userId]?.username ?? "..."}`}
@@ -653,31 +666,32 @@ export const producerOptions: mediasoupClient.types.ProducerOptions = {
 // 
 // 
 
-const _mediaStreamVolume$ = _mediaStream$.pipe(
-    Rx.switchMap(mediaStream => {
-        if (!mediaStream) {
-            return Rx.NEVER
-        }
-
-        return new Rx.Observable<number>(subscriber => {
-            const unsubscribe = subscribeMediaStreamVolume(mediaStream, volume => {
-                subscriber.next(volume)
-            })
-
-            return () => {
-                unsubscribe()
-            }
+const _mediaStreamVolume$ =
+    new Rx.Observable<number>(subscriber => {
+        const unsubscribe = subscribeMediaStreamVolume(volume => {
+            subscriber.next(volume)
         })
-    }),
-    Rx.distinctUntilChanged((previous, current) => Math.abs(previous - current) <= 0.05)
-)
+
+        return () => {
+            unsubscribe()
+        }
+    })
+        .pipe(
+            Rx.distinctUntilChanged((previous, current) => previous === current)
+        )
 
 
-const subscribeMediaStreamVolume = (stream: MediaStream, callback: (volume: number) => void) => {
+const subscribeMediaStreamVolume = (callback: (volume: number) => void) => {
+    const mediaStream = _mediaStream$.getValue()
+
+    if (!mediaStream) {
+        return () => { }
+    }
+
     // source: https://stackoverflow.com/questions/33322681/checking-microphone-volume-in-javascript
     const audioContext = new AudioContext();
     const analyser = audioContext.createAnalyser();
-    const microphone = audioContext.createMediaStreamSource(stream);
+    const microphone = audioContext.createMediaStreamSource(mediaStream);
     const scriptProcessor = audioContext.createScriptProcessor(2048, 1, 1);
 
     analyser.smoothingTimeConstant = 0.8;

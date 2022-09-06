@@ -513,7 +513,7 @@ export const viewNotInRoom =
                 sx={{ marginTop: 2 }}
                 color="text.secondary"
               >
-                No rooms found
+                No active rooms
               </UI.Typography>
             )}
           </UI.Box>
