@@ -1,12 +1,11 @@
 import * as mediasoupClient from "mediasoup-client";
+import * as Rx from "rxjs";
 import { Cmd, pipe, Result, Sub, Task, Unit } from "../Core";
 import { PartyId, UserId } from "../Data";
 import * as Route from "../Route";
-import * as Rx from "rxjs"
 import * as Store from "../Store";
 import * as UI from "../UI";
-import { FrontendModel, FrontendMsg, LoadDeviceResulted, RouterRtpCapabilities, ToBackend, ToFrontend, TransportOptions, UnloadDeviceResulted } from "./Party.Types";
-import { Config } from "./Config";
+import { Client_InitProducerTransport_Done, ConnectProducerTransport_Done, FrontendModel, FrontendMsg, UnloadMediaStream_Done, LoadDevice_Done, RouterRtpCapabilities, ToBackend, ToFrontend, TransportOptions, UnloadDevice_Done, LoadMediaStream_Done } from "./Party.Types";
 
 //
 //
@@ -24,7 +23,8 @@ export const init = (): [Model, Cmd.Cmd<Msg>] => {
         {
             parties: {},
             users: {},
-            device: { type: "Unloaded" }
+            device: { type: "Unloaded" },
+            mediaStream: { type: "Unloaded" }
         },
         Cmd.None
     ];
@@ -44,25 +44,57 @@ export type OutAction = Store.Action
 
 export const update = ({ sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd.Cmd<never> }, msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
     switch (msg[0]) {
-        // 
-        //
-        //
-        //
-        // 
-
         case 'ClickedBanner': {
             return [model, Route.push(['Party'])]
         }
 
-        case 'LoadDeviceResulted': {
+        case 'LoadMediaStream_Done': {
             if (msg[1].type === 'Err') {
                 return [model, Cmd.None]
             }
-            return [{ ...model, device: { type: "Loaded" } }, Cmd.None]
+
+            return [{ ...model, mediaStream: { type: "Loaded" } }, Cmd.None]
         }
 
+        case 'UnloadMediaStream_Done': {
+            if (msg[1].type === 'Err') {
+                return [model, Cmd.None]
+            }
 
-        case 'UnloadDeviceResulted': {
+            return [{ ...model, mediaStream: { type: "Unloaded" } }, Cmd.None]
+        }
+
+        case 'LoadDevice_Done': {
+            const { result, userId, partyId } = msg[1]
+
+            if (result.type === 'Err') {
+                return [model, Cmd.None]
+            }
+
+            return [
+                {
+                    ...model,
+                    device: { type: "Loaded" }
+                },
+                sendToBackend(['Server_InitProducerTransport', { userId, partyId, }])
+            ]
+        }
+
+        case 'Client_InitProducerTransport_Done': {
+            return [
+                model,
+                pipe(
+                    connectProducerTransport(),
+                    Cmd.perform((result): Msg => ['ConnectProducerTransport_Done', result])
+                )
+            ]
+        }
+
+        case 'ConnectProducerTransport_Done': {
+            return [model, Cmd.None]
+        }
+
+        case 'UnloadDevice_Done': {
             if (msg[1].type === 'Err') {
                 return [model, Cmd.None]
             }
@@ -70,29 +102,11 @@ export const update = ({ sendToBackend }: { sendToBackend: (msg: ToBackend) => C
             return [{ ...model, device: { type: "Unloaded" } }, Cmd.None]
         }
 
-
-        case 'ProducerTrackEnded': {
-            return [model, Cmd.None]
-        }
-
-        case 'ProducerTransportClosed': {
-            return [model, Cmd.None]
-        }
-
-
-        // 
-        //
-        //
-        //
-        //
-
-
-
-        case 'ProducerTransportConnect': {
+        case 'ProducerTransport_OnConnect': {
             return [model, sendToBackend(msg)]
         }
 
-        case 'ProducerTransportProduce': {
+        case 'ProducerTransport_OnProduce': {
             return [model, sendToBackend(msg)]
         }
 
@@ -110,29 +124,6 @@ export const update = ({ sendToBackend }: { sendToBackend: (msg: ToBackend) => C
     }
 };
 
-const toDeviceCmd = ({ currentUserId, modelNew, modelPrev, }: { currentUserId: UserId.UserId, modelPrev: Model, modelNew: Model }): Cmd.Cmd<Msg> => {
-    const userPrev = modelPrev.users[currentUserId]
-    const userNew = modelNew.users[currentUserId]
-
-    if (userPrev && !userNew) {
-        return pipe(unloadDevice, Cmd.perform(result => ['UnloadDeviceResulted', result]))
-    }
-
-    if (!userPrev && userNew) {
-
-        const party = modelNew.parties[userNew.partyId]
-
-        if (!party) {
-            return Cmd.None
-        }
-
-        const { routerRtpCapabilities } = party
-
-        return pipe(loadDevice({ routerRtpCapabilities }), Cmd.perform(result => ['LoadDeviceResulted', result]))
-    }
-
-    return Cmd.None
-}
 
 export const updateFromBackend = ({ currentUserId }: { currentUserId: UserId.UserId }, msg: ToFrontend, model: Model): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
     switch (msg[0]) {
@@ -149,13 +140,26 @@ export const updateFromBackend = ({ currentUserId }: { currentUserId: UserId.Use
 
             return [
                 modelNew,
-                toDeviceCmd({ currentUserId, modelNew: modelNew, modelPrev: model }),
+                toLifecycleCmd({ currentUserId, modelNext: modelNew, modelPrev: model }),
                 [['Store', ['Profile', ['FindMany', { userIds }]]]]
             ]
         }
 
-        case 'CreateTransportResulted': {
-            return [model, Cmd.None, []]
+        case 'Server_InitProducerTransport_Done': {
+            const result = msg[2]
+
+            if (result.type === 'Err') {
+                return [model, Cmd.None, []]
+            }
+
+            const { userId } = msg[1]
+            const options = result.value.transportOptions
+            const cmd = pipe(
+                initProducerTransport({ userId, options }),
+                Cmd.perform((result): Msg => ['Client_InitProducerTransport_Done', result])
+            )
+
+            return [model, cmd, []]
         }
 
         case 'StartPartyResulted': {
@@ -178,6 +182,69 @@ export const updateFromBackend = ({ currentUserId }: { currentUserId: UserId.Use
     }
 }
 
+const toLifecycleCmd = ({ currentUserId, modelNext, modelPrev, }: { currentUserId: UserId.UserId, modelPrev: Model, modelNext: Model }): Cmd.Cmd<Msg> => {
+    const userPrev = modelPrev.users[currentUserId]
+    const userNext = modelNext.users[currentUserId]
+
+    // 
+    //
+    // did user just leave party?
+    //
+    // 
+
+    if (userPrev && !userNext) {
+        const deviceCmd = pipe(
+            unloadDevice,
+            Cmd.perform((result): Msg => ['UnloadDevice_Done', result])
+        )
+
+        const mediaStreamCmd = pipe(
+            unloadMediaStream,
+            Cmd.perform((result): Msg => ['UnloadMediaStream_Done', result])
+        )
+
+        return Cmd.batch([
+            deviceCmd,
+            mediaStreamCmd
+        ])
+    }
+
+    // 
+    //
+    // did user just join party?
+    //
+    // 
+
+    if (!userPrev && userNext) {
+
+        const party = modelNext.parties[userNext.partyId]
+
+        if (!party) {
+            return Cmd.None
+        }
+
+        const { routerRtpCapabilities } = party
+
+        const deviceCmd = pipe(
+            loadDevice({ routerRtpCapabilities }),
+            Cmd.perform((result): Msg => ['LoadDevice_Done', { userId: currentUserId, partyId: party.partyId, result }])
+        )
+
+        const mediaStreamCmd = pipe(
+            loadMediaStream(),
+            Cmd.perform((result): Msg => ['LoadMediaStream_Done', result])
+        )
+
+        return Cmd.batch([
+            deviceCmd,
+            mediaStreamCmd,
+        ])
+    }
+
+    return Cmd.None
+}
+
+
 
 export type Action = ['Party', ['Msg', Msg]]
 
@@ -199,7 +266,7 @@ export const runAction = ({ sendToBackend }: { sendToBackend: (msg: ToBackend) =
 //
 
 export const subscriptions = (model: Model): Sub.Sub<Msg> => {
-    return mediasoupMsgs;
+    return _msg$;
 };
 
 // 
@@ -338,11 +405,109 @@ export const viewBanner = ({ route, currentUserId, model, store, }: { store: Sto
 // 
 
 
-const mediasoupMsgs = new Rx.Subject<Msg>()
+const _msg$ = new Rx.Subject<Msg>()
 
-let device: mediasoupClient.types.Device | null = null
-let producerTransport: mediasoupClient.types.Transport | null = null
-let producer: mediasoupClient.types.Producer | null = null
+let _device: mediasoupClient.types.Device | null = null
+let _mediaStream: MediaStream | null = null
+let _producerTransport: mediasoupClient.types.Transport | null = null
+
+
+const loadMediaStream = (): Task.Task<LoadMediaStream_Done[1]> => async () => {
+    try {
+        _mediaStream = await navigator.mediaDevices.getUserMedia({
+            audio: true,
+        })
+        return Result.Ok(Unit)
+    } catch (error) {
+        console.log(error)
+        return Result.Err("failed_to_load")
+    }
+}
+
+const unloadMediaStream: Task.Task<UnloadMediaStream_Done[1]> = async () => {
+    if (!_mediaStream) {
+        return Result.Ok(Unit)
+    }
+
+    for (const track of _mediaStream.getTracks()) {
+        if (track.readyState === 'live') {
+            track.stop()
+        }
+    }
+
+    _mediaStream = null
+
+    return Result.Ok(Unit)
+}
+
+const loadDevice = ({ routerRtpCapabilities }: { routerRtpCapabilities: RouterRtpCapabilities }): Task.Task<LoadDevice_Done[1]['result']> => async () => {
+    try {
+
+        if (_device) {
+            return Result.Err("device_is_already_loaded")
+        }
+
+        const deviceNew = new mediasoupClient.Device()
+
+        await deviceNew.load({ routerRtpCapabilities })
+
+        _device = deviceNew
+
+        return Result.Ok(Unit)
+
+    } catch (_error) {
+        return Result.Err("failed_to_load_device")
+    }
+
+}
+
+const unloadDevice: Task.Task<UnloadDevice_Done[1]> = async () => {
+    _device = null
+    return Result.Ok(Unit)
+}
+
+const initProducerTransport = ({ userId, options }: { userId: UserId.UserId, options: TransportOptions }): Task.Task<Client_InitProducerTransport_Done[1]> => async () => {
+    if (!_device) {
+        return Result.Err("device_does_not_exists")
+    }
+
+    _producerTransport = _device.createSendTransport({ ...options, iceCandidates: options.iceCandidates.map(item => ({ ...item, tcpType: item.tcpType ?? "passive" })) })
+
+    _producerTransport.on("connect", ({ dtlsParameters }, callback, _errback) => {
+        _msg$.next(['ProducerTransport_OnConnect', { userId, dtlsParameters }])
+        callback()
+    })
+
+    _producerTransport.on("produce", ({ appData, kind, rtpParameters }, callback) => {
+        _msg$.next(['ProducerTransport_OnProduce', { userId, appData, kind, rtpParameters }])
+        callback({ id: options.id })
+    })
+
+    return Result.Ok(Unit)
+}
+
+
+const connectProducerTransport = (): Task.Task<ConnectProducerTransport_Done[1]> => async () => {
+    if (!_producerTransport) {
+        return Result.Err("producer_transport_does_not_exists")
+    }
+
+    if (!_mediaStream) {
+        return Result.Err("media_stream_track_does_not_exists")
+    }
+
+    const track = _mediaStream.getTracks()[0]
+
+    const producer = await _producerTransport.produce({
+        track: track,
+        encodings: producerOptions.encodings,
+        codecOptions: producerOptions.codecOptions
+    })
+
+    return Result.Ok(Unit)
+}
+
+
 
 // https://mediasoup.org/documentation/v3/mediasoup-client/api/#ProducerOptions
 // https://mediasoup.org/documentation/v3/mediasoup-client/api/#transport-produce
@@ -369,94 +534,4 @@ export const producerOptions: mediasoupClient.types.ProducerOptions = {
     codecOptions: {
         videoGoogleStartBitrate: 1000
     }
-}
-
-const loadDevice = ({ routerRtpCapabilities }: { routerRtpCapabilities: RouterRtpCapabilities }): Task.Task<LoadDeviceResulted[1]> => async () => {
-    try {
-
-        if (device) {
-            return Result.Err("device_is_already_loaded")
-        }
-
-        const deviceNew = new mediasoupClient.Device()
-
-        await deviceNew.load({ routerRtpCapabilities })
-
-        device = deviceNew
-
-        return Result.Ok(Unit)
-
-    } catch (_error) {
-        console.error(_error)
-        return Result.Err("failed_to_load_device")
-    }
-
-}
-
-const unloadDevice: Task.Task<UnloadDeviceResulted[1]> = async () => {
-    try {
-
-        if (!device) {
-            return Result.Err("device_is_already_unloaded")
-        }
-
-        device = null
-
-        return Result.Ok(Unit)
-
-    } catch (_error) {
-        return Result.Err("failed_to_unload_device")
-    }
-
-}
-
-
-const createProducerTransport = ({ transportOptions, userId }: { transportOptions: TransportOptions, userId: UserId.UserId }): Task.Task<Result.Result<"device_does_not_exists", Unit>> => async () => {
-
-    if (!device) {
-        return Result.Err("device_does_not_exists")
-    }
-
-    const producerTransportNew = device.createSendTransport({
-        ...transportOptions,
-        iceCandidates: transportOptions.iceCandidates.map(item => ({
-            ...item,
-            tcpType: item.tcpType ?? "passive"
-        }))
-    })
-
-    producerTransportNew.on("connect", ({ dtlsParameters, }) => {
-        mediasoupMsgs.next(['ProducerTransportConnect', { dtlsParameters, userId }])
-    })
-
-    producerTransportNew.on("produce", (params) => {
-        mediasoupMsgs.next(['ProducerTransportProduce', {
-            appData: params.appData,
-            rtpParameters: params.rtpParameters,
-            mediaKind: params.kind,
-            userId
-        }])
-    })
-
-    producerTransport = producerTransportNew
-
-    return Result.Ok(Unit)
-}
-
-const connectProducerTransport = (): Task.Task<Result.Result<"producer_transport_does_not_exists", Unit>> => async () => {
-    if (!producerTransport) {
-        return Result.Err("producer_transport_does_not_exists")
-    }
-
-    const producerNew = await producerTransport.produce(producerOptions)
-
-    producerNew.on("trackended", () => {
-        mediasoupMsgs.next(['ProducerTrackEnded'])
-    })
-
-    producerNew.on("transportclose", () => {
-        mediasoupMsgs.next(['ProducerTransportClosed'])
-    })
-
-    return Result.Ok(Unit)
 }
