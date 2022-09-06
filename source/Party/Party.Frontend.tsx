@@ -24,7 +24,8 @@ export const init = (): [Model, Cmd.Cmd<Msg>] => {
             parties: {},
             users: {},
             device: { type: "Unloaded" },
-            mediaStream: { type: "Unloaded" }
+            mediaStream: { type: "Unloaded" },
+            volume: 0
         },
         Cmd.None
     ];
@@ -140,6 +141,10 @@ export const update = ({ sendToBackend }: { sendToBackend: (msg: ToBackend) => C
 
         case 'EmittedProducerId': {
             return [model, Cmd.None]
+        }
+
+        case 'GotVolume': {
+            return [{ ...model, volume: msg[1].volume }, Cmd.None]
         }
 
         default: {
@@ -311,7 +316,10 @@ export const runAction = ({ sendToBackend }: { sendToBackend: (msg: ToBackend) =
 //
 
 export const subscriptions = (model: Model): Sub.Sub<Msg> => {
-    return _msg$;
+    return Sub.batch([
+        _msg$,
+        pipe(_mediaStreamVolume$, Sub.map((volume): Msg => ['GotVolume', { volume }]))
+    ]);
 };
 
 // 
@@ -463,16 +471,18 @@ export const viewBanner = ({ route, currentUserId, model, store, }: { store: Sto
 const _msg$ = new Rx.Subject<Msg>()
 
 let _device: mediasoupClient.types.Device | null = null
-let _mediaStream: MediaStream | null = null
+const _mediaStream$ = new Rx.BehaviorSubject<MediaStream | null>(null)
 let _producerTransport: mediasoupClient.types.Transport | null = null
 let _producer: mediasoupClient.types.Producer | null = null
 
 
+
 const loadMediaStream = (): Task.Task<LoadMediaStream_Done[2]> => async () => {
     try {
-        _mediaStream = await navigator.mediaDevices.getUserMedia({
+        const mediaStream = await navigator.mediaDevices.getUserMedia({
             audio: true,
         })
+        _mediaStream$.next(mediaStream)
         return Result.Ok(Unit)
     } catch (error) {
         console.error(error)
@@ -481,17 +491,19 @@ const loadMediaStream = (): Task.Task<LoadMediaStream_Done[2]> => async () => {
 }
 
 const unloadMediaStream: Task.Task<UnloadMediaStream_Done[1]> = async () => {
-    if (!_mediaStream) {
+    const mediaStream = _mediaStream$.getValue()
+
+    if (!mediaStream) {
         return Result.Ok(Unit)
     }
 
-    for (const track of _mediaStream.getTracks()) {
+    for (const track of mediaStream.getTracks()) {
         if (track.readyState === 'live') {
             track.stop()
         }
     }
 
-    _mediaStream = null
+    _mediaStream$.next(null)
 
     return Result.Ok(Unit)
 }
@@ -506,6 +518,7 @@ const loadDevice = ({ routerRtpCapabilities }: { routerRtpCapabilities: RouterRt
         const deviceNew = new mediasoupClient.Device()
 
         await deviceNew.load({ routerRtpCapabilities })
+
 
         _device = deviceNew
 
@@ -573,11 +586,13 @@ const startProducerTransport = (): Task.Task<StartProducerTransport_Done[1]> => 
         return Result.Err("producer_transport_does_not_exists")
     }
 
-    if (!_mediaStream) {
+    const mediaStream = _mediaStream$.getValue()
+
+    if (!mediaStream) {
         return Result.Err("media_stream_track_does_not_exists")
     }
 
-    const track = _mediaStream.getTracks()[0]
+    const track = mediaStream.getTracks()[0]
 
     try {
         _producer = await _producerTransport.produce({
@@ -598,8 +613,6 @@ const startProducerTransport = (): Task.Task<StartProducerTransport_Done[1]> => 
         return Result.Err("failed")
     }
 }
-
-
 
 // https://mediasoup.org/documentation/v3/mediasoup-client/api/#ProducerOptions
 // https://mediasoup.org/documentation/v3/mediasoup-client/api/#transport-produce
@@ -627,3 +640,71 @@ export const producerOptions: mediasoupClient.types.ProducerOptions = {
         videoGoogleStartBitrate: 1000
     }
 }
+
+
+
+// 
+// 
+// 
+// 
+// Volume
+// 
+// 
+// 
+// 
+
+const _mediaStreamVolume$ = _mediaStream$.pipe(
+    Rx.switchMap(mediaStream => {
+        if (!mediaStream) {
+            return Rx.NEVER
+        }
+
+        return new Rx.Observable<number>(subscriber => {
+            const unsubscribe = subscribeMediaStreamVolume(mediaStream, volume => {
+                subscriber.next(volume)
+            })
+
+            return () => {
+                unsubscribe()
+            }
+        })
+    }),
+    Rx.distinctUntilChanged((previous, current) => Math.abs(previous - current) <= 0.05)
+)
+
+
+const subscribeMediaStreamVolume = (stream: MediaStream, callback: (volume: number) => void) => {
+    // source: https://stackoverflow.com/questions/33322681/checking-microphone-volume-in-javascript
+    const audioContext = new AudioContext();
+    const analyser = audioContext.createAnalyser();
+    const microphone = audioContext.createMediaStreamSource(stream);
+    const scriptProcessor = audioContext.createScriptProcessor(2048, 1, 1);
+
+    analyser.smoothingTimeConstant = 0.8;
+    analyser.fftSize = 1024;
+
+    microphone.connect(analyser);
+    analyser.connect(scriptProcessor);
+    scriptProcessor.connect(audioContext.destination);
+    const handler = () => {
+        const array = new Uint8Array(analyser.frequencyBinCount);
+        analyser.getByteFrequencyData(array);
+        const arraySum = array.reduce((a, value) => a + value, 0);
+        const average = arraySum / array.length;
+        const betweenOand1 = Math.round(average) / 100
+        callback(betweenOand1);
+    }
+    scriptProcessor.addEventListener("audioprocess", handler)
+
+    return () => {
+        scriptProcessor.disconnect()
+        scriptProcessor.removeEventListener("audioprocess", handler)
+        microphone.disconnect()
+        analyser.disconnect()
+        audioContext.close()
+    }
+}
+
+_mediaStreamVolume$.subscribe(volume => {
+    console.log("_mediaStreamVolume$", volume)
+})
