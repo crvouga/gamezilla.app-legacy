@@ -292,11 +292,13 @@ export const view = ({ currentUserId, store }: { currentUserId: UserId.UserId, s
     }
 
     return <UI.FillBox>
-        <UI.Box sx={{ paddingX: 2 }}>
-            <UI.ListItemText
-                primary={`${store.Profile[party.hostId]?.username ?? "..."}'s party`}
-                secondary={`${countUsersInParty(party.partyId, model)} in party`}
-            />
+        <UI.Box sx={{ paddingX: 2, paddingY: 1 }}>
+            <UI.Typography align="left">
+                {`${store.Profile[party.hostId]?.username ?? "..."}'s party`}
+            </UI.Typography>
+            <UI.Typography variant="subtitle2" align="left" color="text.secondary">
+                {`${countUsersInParty(party.partyId, model)} in party`}
+            </UI.Typography>
         </UI.Box>
 
         <UI.Box sx={{ flex: 1 }}>
@@ -370,26 +372,34 @@ export const viewBanner = ({ route, currentUserId, model, store, }: { store: Sto
         return <></>
     }
 
-    return <UI.Paper
-        variant="outlined"
-        sx={{
-            width: "100%",
-            display: "flex",
-            justifyContent: "flex-start",
-            alignItems: "center",
-            height: 54,
-            padding: 0,
-            margin: 0,
-        }}
-    >
-        <UI.ListItemButton onClick={() => dispatch(['ClickedBanner'])}>
-            <UI.ListItemText
-                primary={`${store.Profile[party.hostId]?.username ?? "..."}'s party`}
-                secondary={`${countUsersInParty(party.partyId, model)} in party`}
-            />
-        </UI.ListItemButton>
+    return <>
+        <UI.ButtonBase
+            onClick={() => dispatch(['ClickedBanner'])}
+            sx={{
+                width: "100%",
+                height: 58,
+                display: "flex",
+                alignItems: "center",
+                flexDirection: "row",
+                paddingX: 2,
+                paddingY: 1,
+            }}
+        >
+            <UI.Box sx={{ flex: 1 }}>
+                <UI.Typography align="left">
+                    {`${store.Profile[party.hostId]?.username ?? "..."}'s party`}
+                </UI.Typography>
+                <UI.Typography variant="subtitle2" align="left" color="text.secondary">
+                    {`${countUsersInParty(party.partyId, model)} in party`}
+                </UI.Typography>
+            </UI.Box>
+            <UI.Icons.ChevronRight />
+        </UI.ButtonBase>
 
-    </UI.Paper>
+        <UI.Divider />
+    </>
+
+
 
 }
 
