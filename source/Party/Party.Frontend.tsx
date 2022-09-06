@@ -5,7 +5,7 @@ import { PartyId, UserId } from "../Data";
 import * as Route from "../Route";
 import * as Store from "../Store";
 import * as UI from "../UI";
-import { Client_InitProducerTransport_Done, StartProducerTransport_Done, FrontendModel, FrontendMsg, UnloadMediaStream_Done, LoadDevice_Done, RouterRtpCapabilities, ToBackend, ToFrontend, TransportOptions, UnloadDevice_Done, LoadMediaStream_Done } from "./Party.Types";
+import { Client_InitProducerTransport_Done, StartProducerTransport_Done, FrontendModel, FrontendMsg, UnloadMediaStream_Done, LoadDevice_Done, RouterRtpCapabilities, ToBackend, ToFrontend, TransportOptions, UnloadDevice_Done, LoadMediaStream_Done, MicrophonePermissionStatus } from "./Party.Types";
 
 //
 //
@@ -25,7 +25,8 @@ export const init = (): [Model, Cmd.Cmd<Msg>] => {
             users: {},
             device: { type: "Unloaded" },
             mediaStream: { type: "Unloaded" },
-            volume: 0
+            volume: 0,
+            microphonePermissionStatus: "None"
         },
         Cmd.None
     ];
@@ -147,6 +148,11 @@ export const update = ({ sendToBackend }: { sendToBackend: (msg: ToBackend) => C
             return [{ ...model, volume: msg[1].volume }, Cmd.None]
         }
 
+
+        case 'GotMicrophonePermissionStatus': {
+            return [{ ...model, microphonePermissionStatus: msg[1] }, Cmd.None]
+        }
+
         default: {
             return exhaustive(msg[0])
         }
@@ -203,7 +209,9 @@ export const updateFromBackend = ({ currentUserId }: { currentUserId: UserId.Use
             }
 
             const { userId } = msg[1]
+
             const options = result.value.transportOptions
+
             const cmd = pipe(
                 initProducerTransport({ userId, options }),
                 Cmd.perform((result): Msg => ['Client_InitProducerTransport_Done', result])

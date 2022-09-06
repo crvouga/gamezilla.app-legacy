@@ -56,8 +56,11 @@ type WorkerModel =
 export type FrontendModel = SharedModel & {
   device: DeviceModel
   mediaStream: MediaStreamModel,
-  volume: number
+  volume: number,
+  microphonePermissionStatus: MicrophonePermissionStatus
 }
+
+export type MicrophonePermissionStatus = "Granted" | "Denied" | "Prompt" | "None"
 
 type DeviceModel = { type: "Unloaded" } | { type: "Loaded" }
 
@@ -96,6 +99,7 @@ export type FrontendMsg =
   | Request
   | ["GotVolume", { volume: number }]
   | ["ClickedBanner"]
+  | ["GotMicrophonePermissionStatus", MicrophonePermissionStatus]
   | LoadMediaStream_Done
   | UnloadMediaStream_Done
   | LoadDevice_Done
@@ -141,18 +145,21 @@ export type UnloadMediaStream_Done = ['UnloadMediaStream_Done', Result.Result<"f
 export type LoadDevice_Done = ['LoadDevice_Done', { userId: UserId.UserId, partyId: PartyId.PartyId, }, Result.Result<"device_is_already_loaded" | "failed_to_load_device", Unit>]
 export type UnloadDevice_Done = ['UnloadDevice_Done', Result.Result<"device_is_already_unloaded" | "failed_to_unload_device", Unit>]
 
-// step 1
+// step 1 - create producer transport on client and server
 export type Server_InitProducerTransport = ["Server_InitProducerTransport", { userId: UserId.UserId, partyId: PartyId.PartyId }]
 export type Server_InitProducerTransport_Done = ["Server_InitProducerTransport_Done", { userId: UserId.UserId, partyId: PartyId.PartyId }, Result.Result<"router_does_not_exists", { transportOptions: TransportOptions }>]
 export type Client_InitProducerTransport_Done = ["Client_InitProducerTransport_Done", Result.Result<"device_does_not_exists", Unit>]
 
-// step 2
+// step 2 - connecting producer transports
 export type ProducerTransport_OnConnect = ["ProducerTransport_OnConnect", { userId: UserId.UserId, dtlsParameters: DtlsParameters }]
 export type ProducerTransport_OnProduce = ["ProducerTransport_OnProduce", { userId: UserId.UserId, rtpParameters: RtpParameters, kind: MediaKind, appData: AppData }]
 export type ProducerTransport_OnConnect_Done = ["ProducerTransport_OnConnect_Done", { userId: UserId.UserId }, Result.Result<"peer_does_not_exists" | "peer_missing_send_transport", Unit>]
 export type ProducerTransport_OnProduce_Done = ["ProducerTransport_OnProduce_Done", { userId: UserId.UserId }, Result.Result<"peer_does_not_exists" | "peer_missing_send_transport", { producerId: string }>]
 
 export type StartProducerTransport_Done = ['StartProducerTransport_Done', Result.Result<"producer_transport_does_not_exists" | "media_stream_track_does_not_exists" | "failed", Unit>]
+
+// step 3 -
+//...
 
 // 
 // Payloads
