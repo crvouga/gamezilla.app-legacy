@@ -221,10 +221,12 @@ export const View = (
     }
 
     case "Chess": {
-      return pipe(
-        Chess.view({ currentUserId, store }, model[1]),
-        UI.map(tag("Chess")),
-      )(dispatch)
+      return <Chess.View
+        currentUserId={currentUserId}
+        store={store}
+        model={model[1]}
+        dispatch={msg => dispatch(['Chess', msg])}
+      />
     }
   }
 }
