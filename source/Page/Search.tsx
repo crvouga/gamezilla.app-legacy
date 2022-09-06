@@ -101,7 +101,7 @@ export const view =
             />
 
             {query.type === "Loading" && (
-              <UI.CircularProgress />
+              <UI.CircularProgress size={24} />
             )}
 
             <UI.IconButton

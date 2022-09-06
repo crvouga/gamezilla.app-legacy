@@ -61,9 +61,11 @@ export const view = (
         store: Store.Model
     },
     model: Model,
-): UI.View<Msg> => {
-    return pipe(
-        Party.view({ currentUserId, store }, party),
-        UI.map(tag("Party")),
-    )
+): UI.View<Msg> => dispatch => {
+    return <Party.View
+        currentUserId={currentUserId}
+        store={store}
+        model={party}
+        dispatch={msg => dispatch(['Party', msg])}
+    />
 }
