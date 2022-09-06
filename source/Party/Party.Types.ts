@@ -55,7 +55,8 @@ type WorkerModel =
 
 export type FrontendModel = SharedModel & {
   device: DeviceModel
-  mediaStream: MediaStreamModel
+  mediaStream: MediaStreamModel,
+  volume: number
 }
 
 type DeviceModel = { type: "Unloaded" } | { type: "Loaded" }
@@ -93,6 +94,7 @@ export type BackendMsg =
 
 export type FrontendMsg =
   | Request
+  | ["GotVolume", { volume: number }]
   | ["ClickedBanner"]
   | LoadMediaStream_Done
   | UnloadMediaStream_Done
