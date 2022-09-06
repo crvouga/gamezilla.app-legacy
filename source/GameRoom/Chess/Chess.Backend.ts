@@ -1,6 +1,22 @@
-import { Cmd, exhaustive, Sub, tagCmd, tagSub } from "../../Core"
-import { BackendModel, BackendMsg, ToBackend, ToFrontend } from "./Chess.Types"
-import * as UserVsUser from "./UserVsUser/UserVsUser.Backend"
+import { Cmd, exhaustive, Sub, Time } from "../../Core"
+import * as Board from "./Board"
+import {
+  BackendModel,
+  BackendMsg,
+  clockTicked,
+  initShared,
+  inputClock,
+  inputPlayer,
+  move,
+  newGame,
+  requestToDraw,
+  resign,
+  respondToDraw,
+  Response,
+  startGame,
+  ToBackend,
+  ToFrontend,
+} from "./Chess.Types"
 
 //
 //
@@ -13,8 +29,7 @@ import * as UserVsUser from "./UserVsUser/UserVsUser.Backend"
 export type Model = BackendModel
 
 export const init: Model = {
-  type: "UserVsUser",
-  child: UserVsUser.init,
+  sharedModel: initShared,
 }
 
 //
@@ -33,16 +48,18 @@ export const update = (
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
-    case "UserVsUser": {
-      if (model.type === "UserVsUser") {
-        const [child, childCmd] = UserVsUser.update(
-          { sendToRoom: (msg) => sendToRoom(["UserVsUser", msg]) },
-          msg[1],
-          model.child,
-        )
-        return [{ type: "UserVsUser", child }, tagCmd("UserVsUser", childCmd)]
-      }
-      return [model, Cmd.None]
+    case "Tick": {
+      const modelNew: Model = { ...model, sharedModel: clockTicked(model.sharedModel) }
+
+      const didChangeToGameOver = model.sharedModel.type !== 'GameOver' && modelNew.sharedModel.type === 'GameOver'
+
+      return [
+        modelNew,
+        Cmd.batch([
+          sendToRoom(["Sync", modelNew.sharedModel]),
+          didChangeToGameOver ? sendToRoom(['GameOver']) : Cmd.None
+        ])
+      ]
     }
   }
 }
@@ -59,26 +76,115 @@ export const updateFromFrontend = (
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
-    case "UserVsUser": {
-      if (model.type === "UserVsUser") {
-        const [child, childCmd] = UserVsUser.updateFromFrontend(
-          {
-            sendToClient: (msg) => sendToClient(["UserVsUser", msg]),
-            sendToRoom: (msg) => sendToRoom(["UserVsUser", msg]),
-          },
-          msg[1],
-          model.child,
-        )
-        return [{ type: "UserVsUser", child }, tagCmd("UserVsUser", childCmd)]
-      }
+    case "Init": {
+      return [model, sendToClient(["Sync", model.sharedModel])]
+    }
 
-      return [model, Cmd.None]
+    case "RequestToDraw": {
+      return sendResponse(
+        { sendToClient, sendToRoom },
+        ["RequestToDraw_Done", requestToDraw(msg[1], model.sharedModel)],
+        model,
+      )
+    }
+
+    case "Resign": {
+      return sendResponse(
+        { sendToClient, sendToRoom },
+        ["Resign_Done", resign(msg[1], model.sharedModel)],
+        model,
+      )
+    }
+
+    case "InputClock": {
+      return sendResponse(
+        { sendToClient, sendToRoom },
+        ["InputClock_Done", inputClock(msg[1], model.sharedModel)],
+        model,
+      )
+    }
+
+    case "InputPlayer": {
+      return sendResponse(
+        { sendToClient, sendToRoom },
+        ["InputPlayer_Done", inputPlayer(msg[1], model.sharedModel)],
+        model,
+      )
+    }
+
+    case "StartGame": {
+      return sendResponse(
+        { sendToClient, sendToRoom },
+        ["StartGame_Done", startGame(model.sharedModel)],
+        model,
+      )
+    }
+
+    case "Move": {
+      return sendResponse(
+        { sendToClient, sendToRoom },
+        ["Moved_Done", move(msg[1], model.sharedModel)],
+        model,
+      )
+    }
+
+    case "RespondToDraw": {
+      return sendResponse(
+        { sendToClient, sendToRoom },
+        ["RespondToDraw_Done", respondToDraw(msg[1], model.sharedModel)],
+        model,
+      )
+    }
+
+    case "NewGame": {
+      return sendResponse(
+        { sendToClient, sendToRoom },
+        ["NewGame_Done", newGame(model.sharedModel)],
+        model,
+      )
     }
 
     default: {
       return exhaustive(msg[0])
     }
   }
+}
+
+const sendResponse = (
+  {
+    sendToClient,
+    sendToRoom,
+  }: {
+    sendToClient: (msg: ToFrontend) => Cmd.Cmd<never>
+    sendToRoom: (msg: ToFrontend) => Cmd.Cmd<never>
+  },
+  response: Response,
+  model: Model,
+): [Model, Cmd.Cmd<Msg>] => {
+  if (response[1].type === "Err") {
+    return [
+      model,
+      Cmd.batch([
+        sendToClient(response),
+        sendToClient(["Sync", model.sharedModel]),
+      ]),
+    ]
+  }
+
+  const modelNew: Model = {
+    sharedModel: response[1].value,
+  }
+
+  const didChangeToGameOver = model.sharedModel.type !== 'GameOver' && modelNew.sharedModel.type === 'GameOver'
+
+  return [
+    modelNew,
+    Cmd.batch([
+      didChangeToGameOver ? sendToRoom(['GameOver']) : Cmd.None,
+      sendToRoom(response),
+      sendToRoom(["Sync", modelNew.sharedModel]),
+    ]),
+  ]
 }
 
 //
@@ -93,12 +199,26 @@ export const subscriptions = (
   intervalId: string,
   model: Model,
 ): Sub.Sub<Msg> => {
-  switch (model.type) {
-    case "UserVsUser": {
-      return tagSub(
-        "UserVsUser",
-        UserVsUser.subscriptions(intervalId, model.child),
-      )
+  switch (model.sharedModel.type) {
+    case "Setup": {
+      return Sub.None
+    }
+
+    case "GameOver": {
+      return Sub.None
+    }
+
+    case "Game": {
+      const turn = Board.toTurn(model.sharedModel.board)
+
+      switch (turn) {
+        case "b": {
+          return Time.every(`b-${intervalId}`, 1000, () => ["Tick"])
+        }
+        case "w": {
+          return Time.every(`w-${intervalId}`, 1000, () => ["Tick"])
+        }
+      }
     }
   }
 }
