@@ -66,7 +66,7 @@ export type ToFrontend =
   | ["Session", SessionId.SessionId]
 
 export type FrontendMsg =
-  | ["⮕", ToFrontend]
+  | ["▶", ToFrontend]
   | ["Wire", WireStatus]
   | ["Route", Route.Msg]
   | ["Snackbar", Snackbar.Msg]
@@ -78,7 +78,7 @@ export type FrontendMsg =
   | ["Party", Party.FrontendMsg]
 
 export type BackendMsg =
-  | ["⮕", SessionId.SessionId, ClientId.ClientId, ToBackend]
+  | ["▶", SessionId.SessionId, ClientId.ClientId, ToBackend]
   | ["ClientConnected", SessionId.SessionId, ClientId.ClientId]
   | ["ClientDisconnected", SessionId.SessionId, ClientId.ClientId]
   | ["GameRoom", GameRoom.BackendMsg]

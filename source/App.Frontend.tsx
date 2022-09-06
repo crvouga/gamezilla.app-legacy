@@ -113,7 +113,7 @@ const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
 const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
-    case "⮕": {
+    case "▶": {
       return updateFromBackend(msg[1], model)
     }
 
@@ -420,7 +420,7 @@ const runAction = (
 const subscriptions = (model: Model): Sub.Sub<Msg> => {
   return Sub.batch<Msg>([
     Wire.onConnectionStatus(tag("Wire")),
-    Wire.fromBackend(tag("⮕")),
+    Wire.fromBackend(tag("▶")),
     tagSub("Party", Party.subscriptions(model.party)),
     tagSub("Page", Pages.subscriptions(model.page)),
     tagSub("Auth", Auth.subscriptions),
