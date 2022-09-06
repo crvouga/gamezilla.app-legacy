@@ -46,11 +46,12 @@ export const Config = {
         // run anywhere but on localhost
         webRtcTransport: {
             listenIps: [
-                {
-                    ip: process.env.WEBRTC_LISTEN_IP || "192.168.1.165",
-                    announcedIp: process.env.A_IP || undefined,
-                },
-                // { ip: "192.168.42.68", announcedIp: null },
+                // {
+                //     ip: process.env.WEBRTC_LISTEN_IP || "192.168.1.165",
+                //     announcedIp: process.env.A_IP || undefined,
+                // },
+                { ip: "127.0.0.1", announcedIp: undefined }
+                // { ip: "192.168.42.68", announcedIp: undefined },
                 // { ip: '10.10.23.101', announcedIp: null },
             ] as TransportListenIp[],
             initialAvailableOutgoingBitrate: 800000,

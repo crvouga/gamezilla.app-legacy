@@ -17,11 +17,11 @@ import * as Store from "./Store"
 //
 
 export type BackendModel = {
+  party: Party.BackendModel
+  gameRoom: GameRoom.BackendModel
   sessions: {
     [sessionId: SessionId.SessionId]: Session
   }
-  gameRoom: GameRoom.BackendModel
-  party: Party.BackendModel
 }
 
 export type Session = {

@@ -5,6 +5,27 @@ import { removeKey } from "../Core/Record"
 import * as mediasoup from "mediasoup"
 import { MediaKind } from "mediasoup/node/lib/RtpParameters"
 
+/* 
+
+
+Mediasoup Group Chat Room Flow
+
+Initial setup
+
+1.) Server create a new router per room
+2.) Client creates a new device per room
+3.) Client loads routerRtpCapabilities from router into device
+
+Setting up sending data
+
+1.) Server creates one transport then sends
+
+
+*/
+
+
+
+
 
 // 
 // 
@@ -27,25 +48,27 @@ export type BackendModel = SharedModel & {
   worker: WorkerModel
 }
 
-export type RouterRtpCapabilities = RtpCapabilities
-
-export type FrontendModel = SharedModel & {
-  device: DeviceModel
-}
-
 type WorkerModel =
   | { type: "Loading" }
   | { type: "Died", }
   | { type: "Ready", }
 
+export type FrontendModel = SharedModel & {
+  device: DeviceModel
+  mediaStream: MediaStreamModel
+}
+
 type DeviceModel = { type: "Unloaded" } | { type: "Loaded" }
 
+type MediaStreamModel = { type: "Unloaded" } | { type: "Loaded" }
 
 export type PartyModel = {
   partyId: PartyId.PartyId
   hostId: UserId.UserId
   routerRtpCapabilities: RouterRtpCapabilities
 }
+
+export type RouterRtpCapabilities = RtpCapabilities
 
 export type UserModel = {
   userId: UserId.UserId,
@@ -61,66 +84,69 @@ export type UserModel = {
 // 
 
 export type BackendMsg =
-  | ["WorkerCreated"]
-  | ["WorkerDied"]
-  | ['StartParty.CreateRouterResulted', { result: CreateRouterResult, hostId: UserId.UserId, partyId: PartyId.PartyId }]
-  | CreateTransportResulted
-  | ProducerTransportConnectDone
-  | ProducerTransportProduceDone
+  | WorkerDied
+  | CreateWorker_Done
+  | CreateRouter_Done
+  | Server_InitProducerTransport_Done
+  | ProducerTransport_OnConnect_Handled
+  | ProducerTransport_OnProduce_Handled
 
 export type FrontendMsg =
   | Request
   | ["ClickedBanner"]
-  | LoadDeviceResulted
-  | UnloadDeviceResulted
-  | ProducerTransportConnect
-  | ProducerTransportProduce
-  | ["ProducerTrackEnded"]
-  | ["ProducerTransportClosed"]
+  | LoadMediaStream_Done
+  | UnloadMediaStream_Done
+  | LoadDevice_Done
+  | UnloadDevice_Done
+  | ProducerTransport_OnConnect
+  | ProducerTransport_OnProduce
+  | Client_InitProducerTransport_Done
+  | ConnectProducerTransport_Done
 
 export type ToBackend =
   | Request
-  | CreateTransport
-  | ProducerTransportConnect
-  | ProducerTransportProduce
+  | Server_InitProducerTransport
+  | ProducerTransport_OnConnect
+  | ProducerTransport_OnProduce
 
-export type ToFrontend = Response | ["Sync", SharedModel] | CreateTransportResulted
+export type ToFrontend = Response | ["Sync", SharedModel] | Server_InitProducerTransport_Done
 
-//
-// Mediasoup Server
-//
-
-type CreateRouterProblem = 'worker_does_not_exists'
-
-export type CreateRouterResult = Result.Result<CreateRouterProblem, { routerRtpCapabilities: RouterRtpCapabilities }>
 
 //
-// Mediasoup Client
+//
+//
+// Mediasoup Msgs
+//
+//
 //
 
-export type LoadDeviceResulted = ['LoadDeviceResulted', Result.Result<"device_is_already_loaded" | "failed_to_load_device", Unit>]
+// server setup
+export type CreateWorker_Done = ['CreateWorker_Done']
+export type WorkerDied = ['WorkerDied']
+export type CreateRouter_Done = ['CreateRouter_Done', { hostId: UserId.UserId, partyId: PartyId.PartyId }, Result.Result<'worker_does_not_exists', { routerRtpCapabilities: RouterRtpCapabilities }>]
 
-export type UnloadDeviceResulted = ['UnloadDeviceResulted', Result.Result<"device_is_already_unloaded" | "failed_to_unload_device", Unit>]
+// client setup
+export type LoadMediaStream_Done = ['LoadMediaStream_Done', Result.Result<"failed_to_load", Unit>]
+export type UnloadMediaStream_Done = ['UnloadMediaStream_Done', Result.Result<"failed_to_unload", Unit>]
+export type LoadDevice_Done = ['LoadDevice_Done', { userId: UserId.UserId, partyId: PartyId.PartyId, result: Result.Result<"device_is_already_loaded" | "failed_to_load_device", Unit> }]
+export type UnloadDevice_Done = ['UnloadDevice_Done', Result.Result<"device_is_already_unloaded" | "failed_to_unload_device", Unit>]
+
+// step 1
+export type Server_InitProducerTransport = ["Server_InitProducerTransport", { userId: UserId.UserId, partyId: PartyId.PartyId }]
+export type Server_InitProducerTransport_Done = ["Server_InitProducerTransport_Done", { userId: UserId.UserId, partyId: PartyId.PartyId }, Result.Result<"router_does_not_exists", { transportOptions: TransportOptions }>]
+export type Client_InitProducerTransport_Done = ["Client_InitProducerTransport_Done", Result.Result<"device_does_not_exists", Unit>]
+
+// step 2
+export type ProducerTransport_OnConnect = ["ProducerTransport_OnConnect", { userId: UserId.UserId, dtlsParameters: DtlsParameters }]
+export type ProducerTransport_OnProduce = ["ProducerTransport_OnProduce", { userId: UserId.UserId, rtpParameters: RtpParameters, kind: MediaKind, appData: AppData }]
+export type ProducerTransport_OnConnect_Handled = ["ProducerTransport_OnConnect_Handled", Result.Result<"peer_does_not_exists" | "peer_missing_send_transport", Unit>]
+export type ProducerTransport_OnProduce_Handled = ["ProducerTransport_OnProduce_Handled", Result.Result<"peer_does_not_exists" | "peer_missing_send_transport", Unit>]
+
+export type ConnectProducerTransport_Done = ['ConnectProducerTransport_Done', Result.Result<"producer_transport_does_not_exists" | "media_stream_track_does_not_exists", Unit>]
 
 // 
-// Mediasoup Client/Server
+// Payloads
 // 
-
-export type ProducerTransportConnect = ['ProducerTransportConnect', { userId: UserId.UserId, dtlsParameters: DtlsParameters }]
-
-export type ProducerTransportConnectDone = ['ProducerTransportConnectDone',]
-
-export type ProducerTransportProduce = ['ProducerTransportProduce', { userId: UserId.UserId, rtpParameters: RtpParameters, mediaKind: MediaKind, appData: AppData }]
-
-export type ProducerTransportProduceDone = ['ProducerTransportProduceDone',]
-
-type AppData = Record<string, unknown>
-
-export type CreateTransport = ["CreateTransport", { transportVariant: TransportVariant, userId: UserId.UserId; partyId: PartyId.PartyId }]
-
-export type CreateTransportResulted = ["CreateTransportResulted", { transportVariant: TransportVariant, userId: UserId.UserId, partyId: PartyId.PartyId, result: CreateTransportResult }]
-
-export type TransportVariant = "Sender" | "Reciever"
 
 export type TransportOptions = {
   id: string,
@@ -129,7 +155,7 @@ export type TransportOptions = {
   dtlsParameters: mediasoup.types.DtlsParameters,
 }
 
-export type CreateTransportResult = Result.Result<"router_does_not_exists", { transportOptions: TransportOptions }>
+type AppData = Record<string, unknown>
 
 // 
 // 
@@ -149,7 +175,7 @@ export type Response = StartPartyResulted | LeavePartyResulted | JoinPartyResult
 
 export type StartParty = ['StartParty', { hostId: UserId.UserId, partyId: PartyId.PartyId }]
 
-export type StartPartyResulted = ['StartPartyResulted', Result.Result<CreateRouterProblem | "already_in_a_party", SharedModel>]
+export type StartPartyResulted = ['StartPartyResulted', Result.Result<"worker_does_not_exists" | "already_in_a_party", SharedModel>]
 
 // 
 // 
