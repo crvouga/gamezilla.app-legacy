@@ -904,7 +904,7 @@ const GameCard = ({
 //
 //
 
-const bannerHeight = 56
+const bannerHeight = 58
 
 export const viewBanner =
   (
@@ -937,19 +937,7 @@ export const viewBanner =
       const game = model.games[room.roomId]
 
       return (
-        <UI.Paper
-          variant="outlined"
-          sx={{
-            width: "100%",
-            display: "flex",
-            justifyContent: "flex-start",
-            alignItems: "center",
-            height: bannerHeight,
-            padding: 0,
-            margin: 0,
-            // animation: UI.pulseAnimation,
-          }}
-        >
+        <>
           <UI.ButtonBase
             sx={{
               flex: 1,
@@ -959,11 +947,13 @@ export const viewBanner =
               justifyContent: "flex-start",
               textAlign: "left",
               height: bannerHeight,
+              maxHeight: bannerHeight,
+              overflow: "hidden",
             }}
             onClick={() => dispatch(["ClickedBanner"])}
           >
             {game ? (
-              <UI.Box sx={{ width: bannerHeight }}>
+              <UI.Box sx={{ maxWidth: bannerHeight }}>
                 <UI.AspectRatio aspectRatio={1}>
                   <Game.CoverArt gameName={game[0]} />
                 </UI.AspectRatio>
@@ -1008,6 +998,8 @@ export const viewBanner =
               <UI.Icons.ChevronRight />
             </UI.Box>
           </UI.ButtonBase>
-        </UI.Paper>
+
+          <UI.Divider />
+        </>
       )
     }
