@@ -391,6 +391,7 @@ export const View = ({
 }
 
 const ViewNotInParty = ({ currentUserId, model, store, dispatch }: { store: Store.Model, model: Model, currentUserId: UserId.UserId, dispatch: (msg: Msg) => void }) => {
+    const parties = Object.values(model.parties)
     return (
         <UI.FillBox>
             <UI.Header title="Party" />
@@ -400,7 +401,12 @@ const ViewNotInParty = ({ currentUserId, model, store, dispatch }: { store: Stor
                 </UI.Button>
             </UI.Box>
             <UI.Box sx={{ flex: 1 }}>
-                {Object.values(model.parties).map(party => (
+                {parties.length === 0 && (
+                    <UI.Typography sx={{ padding: 2 }} color="text.secondary">
+                        No active parties
+                    </UI.Typography>
+                )}
+                {parties.map(party => (
                     <UI.ListItemButton key={party.partyId} onClick={() => dispatch(['JoinParty', { userId: currentUserId, partyId: party.partyId }])}>
                         <UI.ListItemAvatar>
                             <UI.Avatar src={store.Profile[party.hostId]?.avatarUrl} />
