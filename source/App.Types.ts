@@ -1,9 +1,9 @@
 import * as Auth from "./Auth"
 import { LocalStorage, Option } from "./Core"
-import { UserId, ClientId, SessionId } from "./Data"
+import { ClientId, SessionId, UserId } from "./Data"
 import * as GameRoom from "./GameRoom/GameRoom.Types"
-import * as Party from "./Party/Party.Types"
 import * as Page from "./Pages"
+import * as Party from "./Party/Party.Types"
 import * as Route from "./Route"
 import * as Snackbar from "./Snackbar"
 import * as Store from "./Store"
@@ -27,7 +27,7 @@ export type BackendModel = {
 export type Session = {
   sessionId: SessionId.SessionId
   userId: Option.Option<UserId.UserId>
-  connection: { type: "Connected", clientId: ClientId.ClientId } | { type: "Disconnected" }
+  clientId: Option.Option<ClientId.ClientId>
 }
 
 export type FrontendModel = {
