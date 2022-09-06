@@ -1,11 +1,11 @@
 import * as mediasoupClient from "mediasoup-client";
 import * as Rx from "rxjs";
-import { Cmd, pipe, Result, Sub, Task, Unit } from "../Core";
+import { Cmd, exhaustive, pipe, Result, Sub, Task, Unit } from "../Core";
 import { PartyId, UserId } from "../Data";
 import * as Route from "../Route";
 import * as Store from "../Store";
 import * as UI from "../UI";
-import { Client_InitProducerTransport_Done, ConnectProducerTransport_Done, FrontendModel, FrontendMsg, UnloadMediaStream_Done, LoadDevice_Done, RouterRtpCapabilities, ToBackend, ToFrontend, TransportOptions, UnloadDevice_Done, LoadMediaStream_Done } from "./Party.Types";
+import { Client_InitProducerTransport_Done, StartProducerTransport_Done, FrontendModel, FrontendMsg, UnloadMediaStream_Done, LoadDevice_Done, RouterRtpCapabilities, ToBackend, ToFrontend, TransportOptions, UnloadDevice_Done, LoadMediaStream_Done } from "./Party.Types";
 
 //
 //
@@ -49,11 +49,26 @@ export const update = ({ sendToBackend }: { sendToBackend: (msg: ToBackend) => C
         }
 
         case 'LoadMediaStream_Done': {
-            if (msg[1].type === 'Err') {
+            const { userId, partyId } = msg[1]
+            const result = msg[2]
+
+            if (result.type === 'Err') {
                 return [model, Cmd.None]
             }
 
-            return [{ ...model, mediaStream: { type: "Loaded" } }, Cmd.None]
+            return [
+                { ...model, mediaStream: { type: "Loaded" } },
+                sendToBackend(['Server_InitProducerTransport', { userId, partyId, }])
+            ]
+        }
+
+
+        case 'Producer_TrackEnded': {
+            return [model, Cmd.None]
+        }
+
+        case 'Producer_TransportClosed': {
+            return [model, Cmd.None]
         }
 
         case 'UnloadMediaStream_Done': {
@@ -65,7 +80,8 @@ export const update = ({ sendToBackend }: { sendToBackend: (msg: ToBackend) => C
         }
 
         case 'LoadDevice_Done': {
-            const { result, userId, partyId } = msg[1]
+            // const { userId, partyId } = msg[1]
+            const result = msg[2]
 
             if (result.type === 'Err') {
                 return [model, Cmd.None]
@@ -76,7 +92,7 @@ export const update = ({ sendToBackend }: { sendToBackend: (msg: ToBackend) => C
                     ...model,
                     device: { type: "Loaded" }
                 },
-                sendToBackend(['Server_InitProducerTransport', { userId, partyId, }])
+                Cmd.None
             ]
         }
 
@@ -84,13 +100,13 @@ export const update = ({ sendToBackend }: { sendToBackend: (msg: ToBackend) => C
             return [
                 model,
                 pipe(
-                    connectProducerTransport(),
-                    Cmd.perform((result): Msg => ['ConnectProducerTransport_Done', result])
+                    startProducerTransport(),
+                    Cmd.perform((result): Msg => ['StartProducerTransport_Done', result])
                 )
             ]
         }
 
-        case 'ConnectProducerTransport_Done': {
+        case 'StartProducerTransport_Done': {
             return [model, Cmd.None]
         }
 
@@ -121,6 +137,14 @@ export const update = ({ sendToBackend }: { sendToBackend: (msg: ToBackend) => C
         case 'JoinParty': {
             return [model, sendToBackend(msg)]
         }
+
+        case 'EmittedProducerId': {
+            return [model, Cmd.None]
+        }
+
+        default: {
+            return exhaustive(msg[0])
+        }
     }
 };
 
@@ -143,6 +167,27 @@ export const updateFromBackend = ({ currentUserId }: { currentUserId: UserId.Use
                 toLifecycleCmd({ currentUserId, modelNext: modelNew, modelPrev: model }),
                 [['Store', ['Profile', ['FindMany', { userIds }]]]]
             ]
+        }
+
+        case 'ProducerTransport_OnConnect_Done': {
+            return [model, Cmd.None, []]
+        }
+
+        case 'ProducerTransport_OnProduce_Done': {
+            const result = msg[2]
+
+            if (result.type === 'Err') {
+                return [model, Cmd.None, []]
+            }
+
+            const producerId = result.value.producerId
+
+            const cmd = pipe(
+                emitServerProducerId({ producerId }),
+                Cmd.perform((): Msg => ['EmittedProducerId', { producerId }])
+            )
+
+            return [model, cmd, []]
         }
 
         case 'Server_InitProducerTransport_Done': {
@@ -227,12 +272,12 @@ const toLifecycleCmd = ({ currentUserId, modelNext, modelPrev, }: { currentUserI
 
         const deviceCmd = pipe(
             loadDevice({ routerRtpCapabilities }),
-            Cmd.perform((result): Msg => ['LoadDevice_Done', { userId: currentUserId, partyId: party.partyId, result }])
+            Cmd.perform((result): Msg => ['LoadDevice_Done', userNext, result])
         )
 
         const mediaStreamCmd = pipe(
             loadMediaStream(),
-            Cmd.perform((result): Msg => ['LoadMediaStream_Done', result])
+            Cmd.perform((result): Msg => ['LoadMediaStream_Done', userNext, result])
         )
 
         return Cmd.batch([
@@ -420,16 +465,17 @@ const _msg$ = new Rx.Subject<Msg>()
 let _device: mediasoupClient.types.Device | null = null
 let _mediaStream: MediaStream | null = null
 let _producerTransport: mediasoupClient.types.Transport | null = null
+let _producer: mediasoupClient.types.Producer | null = null
 
 
-const loadMediaStream = (): Task.Task<LoadMediaStream_Done[1]> => async () => {
+const loadMediaStream = (): Task.Task<LoadMediaStream_Done[2]> => async () => {
     try {
         _mediaStream = await navigator.mediaDevices.getUserMedia({
             audio: true,
         })
         return Result.Ok(Unit)
     } catch (error) {
-        console.log(error)
+        console.error(error)
         return Result.Err("failed_to_load")
     }
 }
@@ -450,7 +496,7 @@ const unloadMediaStream: Task.Task<UnloadMediaStream_Done[1]> = async () => {
     return Result.Ok(Unit)
 }
 
-const loadDevice = ({ routerRtpCapabilities }: { routerRtpCapabilities: RouterRtpCapabilities }): Task.Task<LoadDevice_Done[1]['result']> => async () => {
+const loadDevice = ({ routerRtpCapabilities }: { routerRtpCapabilities: RouterRtpCapabilities }): Task.Task<LoadDevice_Done[2]> => async () => {
     try {
 
         if (_device) {
@@ -466,6 +512,7 @@ const loadDevice = ({ routerRtpCapabilities }: { routerRtpCapabilities: RouterRt
         return Result.Ok(Unit)
 
     } catch (_error) {
+        console.error(_error)
         return Result.Err("failed_to_load_device")
     }
 
@@ -476,12 +523,31 @@ const unloadDevice: Task.Task<UnloadDevice_Done[1]> = async () => {
     return Result.Ok(Unit)
 }
 
+const serverProducerId$ = new Rx.Subject<{ producerId: string }>()
+
+const emitServerProducerId = ({ producerId }: { producerId: string }): Task.Task<Unit> => async () => {
+    serverProducerId$.next({ producerId })
+    return Unit
+}
+
 const initProducerTransport = ({ userId, options }: { userId: UserId.UserId, options: TransportOptions }): Task.Task<Client_InitProducerTransport_Done[1]> => async () => {
     if (!_device) {
         return Result.Err("device_does_not_exists")
     }
 
-    _producerTransport = _device.createSendTransport({ ...options, iceCandidates: options.iceCandidates.map(item => ({ ...item, tcpType: item.tcpType ?? "passive" })) })
+
+    _producerTransport = _device.createSendTransport({
+        ...options,
+        id: options.transportId,
+
+        // @ts-ignore
+        iceCandidates: options.iceCandidates
+
+        // this fixes compiler error but cause runtime error
+        // iceCandidates: options.iceCandidates.map(item => ({
+        //     ...item, tcpType: item.tcpType ?? "passive"
+        // }))
+    })
 
     _producerTransport.on("connect", ({ dtlsParameters }, callback, _errback) => {
         _msg$.next(['ProducerTransport_OnConnect', { userId, dtlsParameters }])
@@ -489,15 +555,20 @@ const initProducerTransport = ({ userId, options }: { userId: UserId.UserId, opt
     })
 
     _producerTransport.on("produce", ({ appData, kind, rtpParameters }, callback) => {
+
         _msg$.next(['ProducerTransport_OnProduce', { userId, appData, kind, rtpParameters }])
-        callback({ id: options.id })
+        serverProducerId$.subscribe(({ producerId }) => {
+            callback({
+                id: producerId
+            })
+        })
     })
 
     return Result.Ok(Unit)
 }
 
 
-const connectProducerTransport = (): Task.Task<ConnectProducerTransport_Done[1]> => async () => {
+const startProducerTransport = (): Task.Task<StartProducerTransport_Done[1]> => async () => {
     if (!_producerTransport) {
         return Result.Err("producer_transport_does_not_exists")
     }
@@ -508,13 +579,24 @@ const connectProducerTransport = (): Task.Task<ConnectProducerTransport_Done[1]>
 
     const track = _mediaStream.getTracks()[0]
 
-    const producer = await _producerTransport.produce({
-        track: track,
-        encodings: producerOptions.encodings,
-        codecOptions: producerOptions.codecOptions
-    })
+    try {
+        _producer = await _producerTransport.produce({
+            track: track,
+        })
 
-    return Result.Ok(Unit)
+        _producer.on("trackended", () => {
+            _msg$.next(['Producer_TrackEnded'])
+        })
+
+        _producer.on("transportclose", () => {
+            _msg$.next(['Producer_TransportClosed'])
+        })
+
+        return Result.Ok(Unit)
+    } catch (error) {
+        console.error(error)
+        return Result.Err("failed")
+    }
 }
 
 

@@ -4,7 +4,7 @@ import { Cmd, Option, pipe, Result, Task, Unit } from "../Core"
 import { PartyId, UserId } from "../Data"
 import { Config } from "./Config"
 import {
-    BackendModel, BackendMsg, CreateRouter_Done, joinParty, leaveParty, ProducerTransport_OnConnect, ProducerTransport_OnConnect_Handled, ProducerTransport_OnProduce, ProducerTransport_OnProduce_Handled, Server_InitProducerTransport, Server_InitProducerTransport_Done, ToBackend, ToFrontend, TransportOptions
+    BackendModel, BackendMsg, CreateRouter_Done, joinParty, leaveParty, ProducerTransport_OnConnect, ProducerTransport_OnConnect_Done, ProducerTransport_OnProduce, ProducerTransport_OnProduce_Done, Server_InitProducerTransport, Server_InitProducerTransport_Done, ToBackend, ToFrontend, TransportOptions
 } from "./Party.Types"
 
 
@@ -68,12 +68,16 @@ export const update = (
             return [model, sendToUser([userId], msg)]
         }
 
-        case 'ProducerTransport_OnConnect_Handled': {
-            return [model, Cmd.None]
+        case 'ProducerTransport_OnConnect_Done': {
+            const { userId } = msg[1]
+
+            return [model, sendToUser([userId], msg)]
         }
 
-        case 'ProducerTransport_OnProduce_Handled': {
-            return [model, Cmd.None]
+        case 'ProducerTransport_OnProduce_Done': {
+            const { userId } = msg[1]
+
+            return [model, sendToUser([userId], msg)]
         }
 
         case 'CreateRouter_Done': {
@@ -144,7 +148,7 @@ export const updateFromFrontend = ({ broadcast, sendToUser }: { broadcast: (msg:
                 model,
                 pipe(
                     handleProducerTransport_OnConnect(msg[1]),
-                    Cmd.perform((result): Msg => ['ProducerTransport_OnConnect_Handled', result])
+                    Cmd.perform((result): Msg => ['ProducerTransport_OnConnect_Done', { userId: msg[1].userId }, result])
                 )
             ]
         }
@@ -155,7 +159,7 @@ export const updateFromFrontend = ({ broadcast, sendToUser }: { broadcast: (msg:
                 model,
                 pipe(
                     handleProducerTransport_OnProduce(msg[1]),
-                    Cmd.perform((result): Msg => ['ProducerTransport_OnProduce_Handled', result])
+                    Cmd.perform((result): Msg => ['ProducerTransport_OnProduce_Done', { userId: msg[1].userId }, result])
                 )
             ]
         }
@@ -327,7 +331,7 @@ const createRouter = (partyId: PartyId.PartyId): Task.Task<CreateRouter_Done[2]>
         return Result.Err("worker_does_not_exists")
     }
 
-    const router = await worker.createRouter()
+    const router = await worker.createRouter(Config.mediasoup.router)
 
     routers[partyId] = router
 
@@ -355,7 +359,7 @@ export const initProducerTransport = ({ partyId, userId }: Server_InitProducerTr
     peers[userId] = peer
 
     const transportOptions: TransportOptions = {
-        id: producerTransport.id,
+        transportId: producerTransport.id,
         iceParameters: producerTransport.iceParameters,
         iceCandidates: producerTransport.iceCandidates,
         dtlsParameters: producerTransport.dtlsParameters,
@@ -365,7 +369,7 @@ export const initProducerTransport = ({ partyId, userId }: Server_InitProducerTr
 }
 
 
-const handleProducerTransport_OnConnect = ({ dtlsParameters, userId }: ProducerTransport_OnConnect[1]): Task.Task<ProducerTransport_OnConnect_Handled[1]> => async () => {
+const handleProducerTransport_OnConnect = ({ dtlsParameters, userId }: ProducerTransport_OnConnect[1]): Task.Task<ProducerTransport_OnConnect_Done[2]> => async () => {
     const peer = peers[userId]
 
     if (!peer) {
@@ -381,7 +385,7 @@ const handleProducerTransport_OnConnect = ({ dtlsParameters, userId }: ProducerT
     return Result.Ok(Unit)
 }
 
-const handleProducerTransport_OnProduce = ({ appData, kind, rtpParameters, userId }: ProducerTransport_OnProduce[1]): Task.Task<ProducerTransport_OnProduce_Handled[1]> => async () => {
+const handleProducerTransport_OnProduce = ({ appData, kind, rtpParameters, userId }: ProducerTransport_OnProduce[1]): Task.Task<ProducerTransport_OnProduce_Done[2]> => async () => {
     let peer = peers[userId]
 
     if (!peer) {
@@ -400,5 +404,5 @@ const handleProducerTransport_OnProduce = ({ appData, kind, rtpParameters, userI
 
     peer.producer = producer
 
-    return Result.Ok(Unit)
+    return Result.Ok({ producerId: producer.id })
 }
