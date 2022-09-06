@@ -162,7 +162,7 @@ export const updateFromBackend = ({ currentUserId }: { currentUserId: UserId.Use
             return [model, cmd, []]
         }
 
-        case 'StartPartyResulted': {
+        case 'StartParty_Done': {
             if (msg[1].type === 'Err') {
                 return [model, Cmd.None, []]
             }
@@ -172,11 +172,11 @@ export const updateFromBackend = ({ currentUserId }: { currentUserId: UserId.Use
             return [{ ...model, parties: sharedModel.parties, users: sharedModel.users }, Cmd.None, []]
         }
 
-        case 'LeavePartyResulted': {
+        case 'LeaveParty_Done': {
             return [model, Cmd.None, []]
         }
 
-        case 'JoinPartyResulted': {
+        case 'JoinParty_Done': {
             return [model, Cmd.None, []]
         }
     }

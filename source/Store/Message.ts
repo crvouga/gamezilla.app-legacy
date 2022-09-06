@@ -24,7 +24,7 @@ export type Message = Types.Message
 //
 //
 
-export type Msg = SendResulted | UnsendResulted
+export type Msg = Send_Done | Unsend_Done
 
 export type Action = Send | Unsend
 
@@ -33,15 +33,15 @@ export type Send = [
   { userId: UserId.UserId; conversationId: string; messageText: string },
 ]
 
-export type SendResulted = [
-  "SendResulted",
+export type Send_Done = [
+  "Send_Done",
   { conversationId: string; result: Result.Result<Problem, Message> },
 ]
 
 export type Unsend = ["Unsend", { messageId: string }]
 
-export type UnsendResulted = [
-  "UnsendResulted",
+export type Unsend_Done = [
+  "Unsend_Done",
   { messageId: string; result: Result.Result<Problem, string> },
 ]
 
@@ -55,7 +55,7 @@ export type UnsendResulted = [
 
 export const update = (msg: Msg, model: Store): [Store, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
-    case "UnsendResulted": {
+    case "Unsend_Done": {
       const { messageId, result } = msg[1]
       const modelNew = produce(model, (model) => {
         model.mutations.Message.Unsend[messageId] = pipe(
@@ -75,7 +75,7 @@ export const update = (msg: Msg, model: Store): [Store, Cmd.Cmd<Msg>] => {
       return [modelNew, Cmd.None]
     }
 
-    case "SendResulted": {
+    case "Send_Done": {
       const { conversationId, result } = msg[1]
       const modelNew = produce(model, (model) => {
         model.mutations.Message.Send[conversationId] = pipe(
@@ -115,7 +115,7 @@ export const runAction = (
         pipe(
           deleteForever({ messageId }),
           Cmd.perform(
-            (result): Msg => ["UnsendResulted", { messageId, result }],
+            (result): Msg => ["Unsend_Done", { messageId, result }],
           ),
         ),
       ]
@@ -136,7 +136,7 @@ export const runAction = (
             message: messageText,
           }),
           Cmd.perform(
-            (result): Msg => ["SendResulted", { conversationId, result }],
+            (result): Msg => ["Send_Done", { conversationId, result }],
           ),
         ),
       ]
@@ -162,29 +162,29 @@ const insert =
     message: string
     userId: UserId.UserId
   }): Task.Task<Result.Result<Problem, Message>> =>
-  async () => {
-    const messageResponse = await Supabase.client
-      .from<definitions["message"]>("message")
-      .insert({
-        message,
-        user_id: userId,
-        conversation_id: conversationId,
+    async () => {
+      const messageResponse = await Supabase.client
+        .from<definitions["message"]>("message")
+        .insert({
+          message,
+          user_id: userId,
+          conversation_id: conversationId,
+        })
+        .single()
+
+      if (messageResponse.error) {
+        return Result.Err(messageResponse.error.message)
+      }
+
+      const data = messageResponse.data
+
+      return Result.Ok({
+        messageId: data.id,
+        conversationId: data.conversation_id,
+        userId,
+        message: data.message,
       })
-      .single()
-
-    if (messageResponse.error) {
-      return Result.Err(messageResponse.error.message)
     }
-
-    const data = messageResponse.data
-
-    return Result.Ok({
-      messageId: data.id,
-      conversationId: data.conversation_id,
-      userId,
-      message: data.message,
-    })
-  }
 
 const deleteForever =
   ({
@@ -192,15 +192,15 @@ const deleteForever =
   }: {
     messageId: string
   }): Task.Task<Result.Result<Problem, string>> =>
-  async () => {
-    const response = await Supabase.client
-      .from<definitions["message"]>("message")
-      .delete()
-      .eq("id", messageId)
+    async () => {
+      const response = await Supabase.client
+        .from<definitions["message"]>("message")
+        .delete()
+        .eq("id", messageId)
 
-    if (response.error) {
-      return Result.Err(response.error.message)
+      if (response.error) {
+        return Result.Err(response.error.message)
+      }
+
+      return Result.Ok(messageId)
     }
-
-    return Result.Ok(messageId)
-  }

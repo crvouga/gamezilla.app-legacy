@@ -28,14 +28,14 @@ export type Profile = Types.Profile
 //
 
 export type FindMany = ["FindMany", { userIds: UserId.UserId[] }]
-export type FindManyResulted = [
-  "FindManyResulted",
+export type FindMany_Done = [
+  "FindMany_Done",
   { userIds: UserId.UserId[]; result: Result.Result<Problem, Profile[]> },
 ]
 
 export type Edit = ["Edit", { userId: UserId.UserId; edits: Partial<Profile> }]
-export type EditResulted = [
-  "EditResulted",
+export type Edit_Done = [
+  "Edit_Done",
   {
     userId: UserId.UserId
     previous: Profile
@@ -44,31 +44,31 @@ export type EditResulted = [
 ]
 
 export type DeleteForever = ["DeleteForever", { userId: UserId.UserId }]
-export type DeleteForeverResulted = [
-  "DeleteForeverResulted",
+export type DeleteForever_Done = [
+  "DeleteForever_Done",
   { userId: UserId.UserId; result: Result.Result<Problem, Unit> },
 ]
 
 export type Create = ["Create", { profile: Profile; userId: UserId.UserId }]
-export type CreateResulted = [
-  "CreateResulted",
+export type Create_Done = [
+  "Create_Done",
   { userId: UserId.UserId; result: Result.Result<Problem, Profile> },
 ]
 
 export type Search = ["Search", { searchText: string }]
-export type SearchResulted = [
-  "SearchResulted",
+export type Search_Done = [
+  "Search_Done",
   { searchText: string; result: Result.Result<Problem, Profile[]> },
 ]
 
 export type ResetMutations = ["ResetMutations"]
 
 export type Msg =
-  | EditResulted
-  | FindManyResulted
-  | DeleteForeverResulted
-  | CreateResulted
-  | SearchResulted
+  | Edit_Done
+  | FindMany_Done
+  | DeleteForever_Done
+  | Create_Done
+  | Search_Done
 
 export type Action =
   | Search
@@ -88,7 +88,7 @@ export type Action =
 
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
-    case "EditResulted": {
+    case "Edit_Done": {
       const { userId, result } = msg[1]
 
       const modeNew = produce(model, (model) => {
@@ -112,7 +112,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
       return [modeNew, Cmd.None]
     }
 
-    case "FindManyResulted": {
+    case "FindMany_Done": {
       const { userIds, result } = msg[1]
 
       const key = Types.toFindManyKey(userIds)
@@ -135,7 +135,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
       return [modelNew, Cmd.None]
     }
 
-    case "DeleteForeverResulted": {
+    case "DeleteForever_Done": {
       const { result, userId } = msg[1]
       const modelNew = produce(model, (model) => {
         model.mutations.Profile.DeleteForever[userId] =
@@ -152,7 +152,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
       return [modelNew, Cmd.None]
     }
 
-    case "CreateResulted": {
+    case "Create_Done": {
       const { userId, result } = msg[1]
 
       const modelNew = produce(model, (model) => {
@@ -176,7 +176,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
       return [modelNew, Cmd.None]
     }
 
-    case "SearchResulted": {
+    case "Search_Done": {
       const { result, searchText } = msg[1]
 
       const modelNew = produce(model, (model) => {
@@ -234,7 +234,7 @@ export const runAction = (
           edit(userId, edits),
           Cmd.perform(
             (result): Msg => [
-              "EditResulted",
+              "Edit_Done",
               { previous: profile, userId, result },
             ],
           ),
@@ -255,7 +255,7 @@ export const runAction = (
         pipe(
           findMany({ userIds }),
           Cmd.perform(
-            (result): Msg => ["FindManyResulted", { userIds, result }],
+            (result): Msg => ["FindMany_Done", { userIds, result }],
           ),
         ),
       ]
@@ -273,7 +273,7 @@ export const runAction = (
         pipe(
           deleteForever(userId),
           Cmd.perform(
-            (result): Msg => ["DeleteForeverResulted", { userId, result }],
+            (result): Msg => ["DeleteForever_Done", { userId, result }],
           ),
         ),
       ]
@@ -290,7 +290,7 @@ export const runAction = (
         modelNew,
         pipe(
           create(profile),
-          Cmd.perform((result): Msg => ["CreateResulted", { userId, result }]),
+          Cmd.perform((result): Msg => ["Create_Done", { userId, result }]),
         ),
       ]
     }
@@ -307,7 +307,7 @@ export const runAction = (
         pipe(
           search({ nameOrUsername: searchText }),
           Cmd.perform(
-            (result): Msg => ["SearchResulted", { result, searchText }],
+            (result): Msg => ["Search_Done", { result, searchText }],
           ),
         ),
       ]

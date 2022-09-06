@@ -36,8 +36,8 @@ export const init = (): [Model, Cmd.Cmd<Msg>] => {
 
 export type Msg =
   | ["GotSession", Option.Option<Session>]
-  | ["LoginResulted", Result.Result<{}, {}>]
-  | ["LogoutResulted", Result.Result<{}, {}>]
+  | ["Login_Done", Result.Result<{}, {}>]
+  | ["Logout_Done", Result.Result<{}, {}>]
 
 export type Action = ["Auth", ["Logout"]]
 
@@ -63,10 +63,10 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
           ]
       }
 
-    case "LoginResulted":
+    case "Login_Done":
       return [model, Cmd.None]
 
-    case "LogoutResulted":
+    case "Logout_Done":
       switch (msg[1].type) {
         case "Err":
           return [model, Cmd.None]
@@ -95,7 +95,7 @@ export const runAction = (
             model,
             pipe(
               logout,
-              Cmd.perform((result): Msg => ["LogoutResulted", result]),
+              Cmd.perform((result): Msg => ["Logout_Done", result]),
             ),
           ]
       }

@@ -19,14 +19,14 @@ export type FrontendModel = SharedModel & {
 
 export type SharedModel = Snake.Model & {
   gameStatus:
-    | {
-        type: "GameSetup"
-        player: Option.Option<Player>
-      }
-    | {
-        type: "GameStarted"
-        player: Player
-      }
+  | {
+    type: "GameSetup"
+    player: Option.Option<Player>
+  }
+  | {
+    type: "GameStarted"
+    player: Player
+  }
 }
 
 export type Player = ["User", UserId.UserId]
@@ -71,10 +71,10 @@ export type ToFrontend = ["Sync", SharedModel] | Response
 export type Request = ToggleStatus | InputPlayer | InputDirection | StartGame
 
 export type Response =
-  | InputDirectionResulted
-  | ToggleStatusResulted
-  | InputPlayerResulted
-  | StartGameResulted
+  | InputDirection_Done
+  | ToggleStatus_Done
+  | InputPlayer_Done
+  | StartGame_Done
 
 //
 //
@@ -85,8 +85,8 @@ export type InputDirection = [
   { direction: Direction.Direction; userId: UserId.UserId },
 ]
 
-export type InputDirectionResulted = [
-  "InputDirectionResulted",
+export type InputDirection_Done = [
+  "InputDirection_Done",
   Result.Result<InputDirectionProblem, SharedModel>,
 ]
 
@@ -100,7 +100,7 @@ export type InputDirectionProblem =
 
 export type ToggleStatus = ["ToggleStatus", { userId: UserId.UserId }]
 
-export type ToggleStatusResulted = ["ToggleStatusResulted", ToggleStatusResult]
+export type ToggleStatus_Done = ["ToggleStatus_Done", ToggleStatusResult]
 
 export type ToggleStatusResult = Result.Result<
   "user_must_be_the_current_player" | "must_be_in_game_started",
@@ -114,14 +114,14 @@ export type ToggleStatusResult = Result.Result<
 
 export type InputPlayer = ["InputPlayer", Option.Option<Player>]
 
-export type InputPlayerResulted = [
-  "InputPlayerResulted",
+export type InputPlayer_Done = [
+  "InputPlayer_Done",
   Result.Result<"must_be_in_game_setup", SharedModel>,
 ]
 
 export type StartGame = ["StartGame"]
-export type StartGameResulted = [
-  "StartGameResulted",
+export type StartGame_Done = [
+  "StartGame_Done",
   Result.Result<"must_be_in_game_setup" | "missing_player", SharedModel>,
 ]
 
@@ -132,7 +132,7 @@ export const canStartGame = (model: SharedModel): boolean => {
   )
 }
 
-export const startGame = (model: SharedModel): StartGameResulted[1] => {
+export const startGame = (model: SharedModel): StartGame_Done[1] => {
   if (model.gameStatus.type !== "GameSetup") {
     return Result.Err("must_be_in_game_setup")
   }

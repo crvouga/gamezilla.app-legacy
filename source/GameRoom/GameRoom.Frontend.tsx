@@ -221,23 +221,23 @@ export const updateFromBackend = (
       ]
     }
 
-    case "CreateRoomResulted": {
+    case "CreateRoom_Done": {
       return updateResponse({ sendToBackend, msg, model }, "CreateRoom")
     }
 
-    case "LeaveRoomResulted": {
+    case "LeaveRoom_Done": {
       return updateResponse({ sendToBackend, msg, model }, "LeaveRoom")
     }
 
-    case "JoinRoomResulted": {
+    case "JoinRoom_Done": {
       return updateResponse({ sendToBackend, msg, model }, "JoinRoom")
     }
 
-    case "OpenGameResulted": {
+    case "OpenGame_Done": {
       return updateResponse({ sendToBackend, msg, model }, "OpenGame")
     }
 
-    case "CloseGameResulted": {
+    case "CloseGame_Done": {
       return updateResponse({ sendToBackend, model, msg }, "CloseGame")
     }
   }

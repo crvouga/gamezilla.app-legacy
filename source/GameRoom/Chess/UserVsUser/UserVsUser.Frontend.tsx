@@ -65,7 +65,7 @@ export const update = (
     //
     // 
 
-    case "AudioResulted": {
+    case "Audio_Done": {
       return [model, Cmd.None]
     }
 
@@ -159,11 +159,11 @@ export const updateFromBackend = (
       ]
     }
 
-    case 'InputClockResulted': {
+    case 'InputClock_Done': {
       return [model, Cmd.None]
     }
 
-    case "MovedResulted": {
+    case "Moved_Done": {
       if (msg[1].type === 'Err') {
         return [model, Cmd.None]
       }
@@ -186,7 +186,7 @@ export const updateFromBackend = (
       return [{ ...model, sharedModel: sharedModelNew }, soundCmd]
     }
 
-    case "InputPlayerResulted": {
+    case "InputPlayer_Done": {
       if (msg[1].type === 'Err') {
         return [model, Cmd.None]
       }
@@ -196,7 +196,7 @@ export const updateFromBackend = (
       return [{ ...model, sharedModel }, playAudio(Sounds.navigationForwardSelection)]
     }
 
-    case "StartGameResulted": {
+    case "StartGame_Done": {
       if (msg[1].type === 'Err') {
         return [model, Cmd.None]
       }
@@ -204,7 +204,7 @@ export const updateFromBackend = (
       return [model, playAudio(Sounds.gameStart)]
     }
 
-    case 'RequestToDrawResulted': {
+    case 'RequestToDraw_Done': {
       switch (msg[1].type) {
         case 'Err': {
           return [model, Cmd.None]
@@ -216,7 +216,7 @@ export const updateFromBackend = (
       }
     }
 
-    case 'ResignResulted': {
+    case 'Resign_Done': {
       if (msg[1].type === 'Err') {
         return [model, Cmd.None]
       }
@@ -230,7 +230,7 @@ export const updateFromBackend = (
       return [{ ...model, sharedModel: sharedModelNew }, Cmd.None]
     }
 
-    case 'RespondToDrawResulted': {
+    case 'RespondToDraw_Done': {
       if (msg[1].type === 'Err') {
         return [model, Cmd.None]
       }
@@ -245,7 +245,7 @@ export const updateFromBackend = (
       return [{ ...model, sharedModel: sharedModelNew }, Cmd.None]
     }
 
-    case 'NewGameResulted': {
+    case 'NewGame_Done': {
       if (msg[1].type === 'Err') {
         return [model, Cmd.None]
       }
@@ -278,7 +278,7 @@ export const updateFromBackend = (
 
 
 const playAudio = (src: string): Cmd.Cmd<Msg> => {
-  return Audio.play(src, tag("AudioResulted"))
+  return Audio.play(src, tag("Audio_Done"))
 }
 
 //

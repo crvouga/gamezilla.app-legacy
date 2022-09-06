@@ -38,4 +38,4 @@ export type ToFrontend = ["None"]
 export type ToBackend = Move
 
 export type Move = ["Move", { userId: UserId.UserId; columnIndex: ColumnIndex }]
-export type MoveResulted = ["MovedResulted", MoveResult]
+export type Move_Done = ["Moved_Done", MoveResult]

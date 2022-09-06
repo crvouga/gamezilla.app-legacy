@@ -10,7 +10,7 @@ import {
   CreateRoomResult,
   JoinRoomResult,
   LeaveRoomResult,
-  OpenGameResulted,
+  OpenGame_Done,
   Response,
   RoomModel,
   ToBackend,
@@ -162,35 +162,35 @@ export const updateFromFrontend = (
 
     case "CreateRoom": {
       return updateResponse({ sendToClient, broadcast }, model, [
-        "CreateRoomResulted",
+        "CreateRoom_Done",
         createRoom(msg[1], model),
       ])
     }
 
     case "LeaveRoom": {
       return updateResponse({ sendToClient, broadcast }, model, [
-        "LeaveRoomResulted",
+        "LeaveRoom_Done",
         leaveRoom(msg[1], model),
       ])
     }
 
     case "JoinRoom": {
       return updateResponse({ sendToClient, broadcast }, model, [
-        "JoinRoomResulted",
+        "JoinRoom_Done",
         joinRoom(msg[1], model),
       ])
     }
 
     case "OpenGame": {
       return updateResponse({ sendToClient, broadcast }, model, [
-        "OpenGameResulted",
+        "OpenGame_Done",
         openGame(msg[1], model),
       ])
     }
 
     case "CloseGame": {
       return updateResponse({ sendToClient, broadcast }, model, [
-        "CloseGameResulted",
+        "CloseGame_Done",
         closeGame(msg[1], model),
       ])
     }
@@ -416,7 +416,7 @@ export const leaveRoom = (
 export const openGame = (
   { userId, gameName }: { userId: UserId.UserId; gameName: GameName },
   model: Model,
-): OpenGameResulted[1] => {
+): OpenGame_Done[1] => {
   const user = model.users[userId]
 
   if (!user) {

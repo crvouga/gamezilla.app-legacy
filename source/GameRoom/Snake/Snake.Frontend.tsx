@@ -140,19 +140,19 @@ export const updateFromBackend = (
       ]
     }
 
-    case "InputDirectionResulted": {
+    case "InputDirection_Done": {
       return updateResponse(msg[1], model)
     }
 
-    case "ToggleStatusResulted": {
+    case "ToggleStatus_Done": {
       return updateResponse(msg[1], model)
     }
 
-    case "InputPlayerResulted": {
+    case "InputPlayer_Done": {
       return updateResponse(msg[1], model)
     }
 
-    case 'StartGameResulted': {
+    case 'StartGame_Done': {
       return updateResponse(msg[1], model)
     }
   }
