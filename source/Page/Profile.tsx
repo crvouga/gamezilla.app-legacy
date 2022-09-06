@@ -21,10 +21,10 @@ export const init = ({
 }: {
   userId: UserId.UserId
 }): [Model, Cmd.Cmd<Msg>, OutAction[]] => [
-  { userId },
-  Cmd.None,
-  [["Store", ["Profile", ["FindMany", { userIds: [userId] }]]]],
-]
+    { userId },
+    Cmd.None,
+    [["Store", ["Profile", ["FindMany", { userIds: [userId] }]]]],
+  ]
 
 //
 //
@@ -93,24 +93,26 @@ export const subscriptions = (_: Model): Sub.Sub<Msg> => {
 //
 //
 
-export const view =
+export const View =
   (
     {
       store,
       currentUserId,
-    }: { store: Store.Model; currentUserId: UserId.UserId },
-    model: Model,
-  ): UI.View<Msg> =>
-  (dispatch) => {
+      model,
+      dispatch
+    }: {
+      store: Store.Model;
+      currentUserId: UserId.UserId;
+      model: Model;
+      dispatch: (msg: Msg) => void
+    },
+  ) => {
     const profile = store.Profile[model.userId]
 
     if (!profile) {
       return (
         <UI.FillBox>
           <UI.Header
-            left={
-              <UI.HeaderBackButton onClick={() => dispatch(["ClickedBack"])} />
-            }
             title={"..."}
           />
           <UI.Box
@@ -131,9 +133,6 @@ export const view =
       return (
         <UI.FillBox>
           <UI.Header
-            left={
-              <UI.HeaderBackButton onClick={() => dispatch(["ClickedBack"])} />
-            }
             title={profile.username}
             right={
               <UI.IconButton

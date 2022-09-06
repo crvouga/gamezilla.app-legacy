@@ -358,10 +358,10 @@ export const View = ({
 
     return <UI.FillBox>
         <UI.Box sx={{ paddingX: 2, paddingY: 1 }}>
-            <UI.Typography align="left">
+            <UI.Typography align="center">
                 {`${store.Profile[party.hostId]?.username ?? "..."}'s party`}
             </UI.Typography>
-            <UI.Typography variant="subtitle2" align="left" color="text.secondary">
+            <UI.Typography variant="subtitle2" align="center" color="text.secondary">
                 {`${countUsersInParty(party.partyId, model)} in party`}
             </UI.Typography>
         </UI.Box>

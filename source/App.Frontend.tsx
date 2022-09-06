@@ -49,7 +49,7 @@ const init = (location: Browser.Location): [Model, Cmd.Cmd<Msg>] => {
   const route = pipe(
     location,
     Route.decode,
-    Option.withDefault<Route.Model>(["Home"]),
+    Option.withDefault<Route.Model>(["GameRoom"]),
   )
   const [auth, authCmd] = Auth.init()
   const snackbar = Snackbar.init
@@ -539,31 +539,26 @@ const viewMain = (model: Model): UI.View<Msg> => {
           const currentUserId = status[1].profile.userId
           return (dispatch) => (
             <>
-
-              {pipe(
-                Party.viewBanner(
-                  {
-                    store: model.store,
-                    route: model.route,
-                    currentUserId,
-                    model: model.party,
-                  }
-                ),
-                UI.map(tag("Party")),
-              )(dispatch)}
-
-              {pipe(
-                GameRoom.viewBanner(
-                  {
-                    currentUserId,
-                    route: model.route,
-                  },
-                  model.gameRoom,
-                ),
-                UI.map(tag("GameRoom")),
-              )(dispatch)}
-
               <UI.FillBox>
+                {/* {pipe(
+                  Party.viewBanner(
+                    {
+                      store: model.store,
+                      route: model.route,
+                      currentUserId,
+                      model: model.party,
+                    }
+                  ),
+                  UI.map(tag("Party")),
+                )(dispatch)}
+
+                <GameRoom.ViewBanner
+                  currentUserId={currentUserId}
+                  route={model.route}
+                  dispatch={msg => dispatch(['GameRoom', msg])}
+                  model={model.gameRoom}
+                /> */}
+
                 {pipe(
                   Pages.viewReady(
                     { ...model, profile: status[1].profile },
@@ -617,7 +612,7 @@ const onLocationChange = (location: Browser.Location): Msg => {
   return pipe(
     { pathname: location.pathname },
     Route.decode,
-    Option.withDefault<Route.Model>(["Home"]),
+    Option.withDefault<Route.Model>(["GameRoom"]),
     (route) => ["Route", ["GotRoute", route]],
   )
 }

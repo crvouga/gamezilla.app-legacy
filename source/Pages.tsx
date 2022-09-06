@@ -10,7 +10,6 @@ import {
   ChatConversation,
   ChatNew,
   GameRoomPage,
-  Home,
   Login,
   LoginEmail,
   Logout,
@@ -43,7 +42,6 @@ export type Model =
   | ["Login", Login.Model]
   | ["ProfileCreate", ProfileCreate.Model]
   | ["Logout", Logout.Model]
-  | ["Home", Home.Model]
   | ["Account", Account.Model]
   | ["Profile", Profile.Model]
   | ["ProfileDelete", ProfileDelete.Model]
@@ -74,7 +72,6 @@ export type Model =
 
 export type Msg =
   | ["Account", Account.Msg]
-  | ["Home", Home.Msg]
   | ["Login", Login.Msg]
   | ["LoginEmail", LoginEmail.Msg]
   | ["AccountCreate", AccountCreate.Msg]
@@ -149,9 +146,6 @@ export const initReady = (
         actions,
       ]
     }
-
-    case "Home":
-      return [["Home", Home.init], Cmd.None, []]
 
     case "Logout":
       return [["Logout", Logout.init], Cmd.None, []]
@@ -238,7 +232,15 @@ export const initReady = (
     case "LoginEmail":
     case "AccountCreate":
     case "PasswordReset":
-      return [["Home", Home.init], Route.push(["Home"]), []]
+      const [modelInit, cmdInit] = GameRoomPage.init
+      return [
+        ["GameRoom", modelInit],
+        Cmd.batch([
+          Route.push(["GameRoom"]),
+          pipe(cmdInit, Cmd.map(tag("GameRoom"))),
+        ]),
+        []
+      ]
 
     default:
       return exhaustive(route)
@@ -268,7 +270,6 @@ export const initLoggedOut = (route: Route.Model): [Model, Cmd.Cmd<Msg>] => {
     case "ChatConversation":
     case "ChatNew":
     case "Admin":
-    case "Home":
     case "Logout":
     case "Profile":
     case "ProfileCreate":
@@ -305,7 +306,6 @@ export const initProfileMissing = (
     case "ChatNew":
     case "Admin":
     case "Search":
-    case "Home":
     case "Profile":
     case "ProfileDelete":
     case "ProfileUpdate":
@@ -357,15 +357,6 @@ export const updateReady = (
     case "Account":
       if (msg[0] === "Account") {
         return tagUpdate("Account", Account.update(profile, msg[1], model[1]))
-      }
-      return [model, Cmd.None, []]
-
-    case "Home":
-      if (msg[0] === "Home") {
-        return tagUpdate(
-          "Home",
-          Home.update({ currentUserId: profile.userId }, msg[1], model[1]),
-        )
       }
       return [model, Cmd.None, []]
 
@@ -525,8 +516,7 @@ export const updateReady = (
     case "LoginEmail":
     case "AccountCreate":
     case "PasswordReset":
-
-      return [model, Route.push(["Home"]), []]
+      return [model, Route.push(["GameRoom"]), []]
 
     default:
       return exhaustive(model)
@@ -557,7 +547,6 @@ export const updateProfileMissing = (
       }
       return [model, Cmd.None, []]
 
-    case "Home":
     case "Account":
     case "Login":
     case "Profile":
@@ -623,7 +612,6 @@ export const updateLoggedOut = (
     }
 
     case "ProfileCreate":
-    case "Home":
     case "Account":
     case "ProfileDelete":
     case "ProfileUpdate":
@@ -664,7 +652,6 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
     case "Account":
     case "Chat":
     case "ChatConversation":
-    case "Home":
     case "Login":
     case "Logout":
     case "ProfileCreate":
@@ -728,27 +715,12 @@ export const viewReady = (
         <UI.FillBox>
           {tagView("Chat", Chat.view({ profile, store }, model[1]))(dispatch)}
 
-          {viewBottomNavigation({
-            page: "Chat",
-            currentUserId,
-            route,
-          })(dispatch)}
-        </UI.FillBox>
-      )
-
-    case "Home":
-      return (dispatch) => (
-        <UI.FillBox>
-          {tagView(
-            "Home",
-            Home.view({ store, currentUserId }, model[1]),
-          )(dispatch)}
-
-          {viewBottomNavigation({
-            page: "Home",
-            currentUserId,
-            route,
-          })(dispatch)}
+          <ViewBottomNavigation
+            page={"Search"}
+            currentUserId={currentUserId}
+            route={route}
+            dispatch={dispatch}
+          />
         </UI.FillBox>
       )
 
@@ -757,11 +729,12 @@ export const viewReady = (
         <UI.FillBox>
           {tagView("Search", Search.view({ store }, model[1]))(dispatch)}
 
-          {viewBottomNavigation({
-            page: "Search",
-            currentUserId,
-            route,
-          })(dispatch)}
+          <ViewBottomNavigation
+            page={"Search"}
+            currentUserId={currentUserId}
+            route={route}
+            dispatch={dispatch}
+          />
         </UI.FillBox>
       )
 
@@ -813,23 +786,38 @@ export const viewReady = (
     case "Profile":
       return (dispatch) => (
         <UI.FillBox>
-          {tagView(
-            "Profile",
-            Profile.view({ store, currentUserId: profile.userId }, model[1]),
-          )(dispatch)}
-          {viewBottomNavigation({
-            page: "Profile",
-            currentUserId,
-            route,
-          })(dispatch)}
+          <Profile.View
+            store={store}
+            currentUserId={profile.userId}
+            model={model[1]}
+            dispatch={msg => dispatch(['Profile', msg])}
+          />
+          <ViewBottomNavigation
+            page={"Profile"}
+            currentUserId={currentUserId}
+            route={route}
+            dispatch={dispatch}
+          />
         </UI.FillBox>
       )
 
     case "GameRoom": {
-      return tagView(
-        "GameRoom",
-        GameRoomPage.view({ store, currentUserId, gameRoom }, model[1]),
+      return dispatch => (
+        <UI.FillBox>
+          {tagView(
+            "GameRoom",
+            GameRoomPage.view({ store, currentUserId, gameRoom }, model[1]),
+          )(dispatch)}
+
+          <ViewBottomNavigation
+            page={"Profile"}
+            currentUserId={currentUserId}
+            route={route}
+            dispatch={dispatch}
+          />
+        </UI.FillBox>
       )
+
     }
 
 
@@ -838,11 +826,12 @@ export const viewReady = (
         <UI.FillBox>
           {tagView("Party", PartyPage.view({ currentUserId, party, store }, model[1]))(dispatch)}
 
-          {viewBottomNavigation({
-            page: "Party",
-            currentUserId,
-            route,
-          })(dispatch)}
+          <ViewBottomNavigation
+            page={"Party"}
+            currentUserId={currentUserId}
+            route={route}
+            dispatch={dispatch}
+          />
         </UI.FillBox>
       )
     }
@@ -875,7 +864,6 @@ export const viewProfileMissing = (
     case "Chat":
     case "ChatConversation":
     case "ChatNew":
-    case "Home":
     case "ProfileDelete":
     case "ProfileUpdate":
     case "ProfileUpdateAvatar":
@@ -918,7 +906,6 @@ export const viewLoggedOut = (model: Model): UI.View<Msg> => {
     case "ChatConversation":
     case "ChatNew":
     case "GameRoom":
-    case "Home":
     case "Logout":
     case "ProfileCreate":
     case "ProfileDelete":
@@ -956,63 +943,64 @@ type BottomNavigationItem = {
   outlined: UI.ViewNode
 }
 
-const viewBottomNavigation =
+const ViewBottomNavigation =
   ({
     currentUserId,
     route,
+    dispatch
   }: {
     currentUserId: UserId.UserId
     page: "Home" | "Party" | "Search" | "Chat" | "Profile"
-    route: Route.Model
-  }): UI.View<Msg> =>
-    (dispatch) => {
-      const items: BottomNavigationItem[] = [
-        {
-          route: ["Home"],
-          filled: <UI.Icons.Home />,
-          outlined: <UI.Icons.HomeOutlined />,
-        },
-        {
-          route: ["Party"],
-          filled: <UI.Icons.Group />,
-          outlined: <UI.Icons.GroupOutlined />,
-        },
-        {
-          route: ["Search"],
-          filled: <UI.Icons.Search />,
-          outlined: <UI.Icons.SearchOutlined />,
-        },
-        // {
-        //   route: ["Chat"],
-        //   filled: <UI.Icons.Chat />,
-        //   outlined: <UI.Icons.ChatOutlined />,
-        // },
-        {
-          route: ["Profile", currentUserId],
-          filled: <UI.Icons.AccountCircle />,
-          outlined: <UI.Icons.AccountCircleOutlined />,
-        },
-      ]
+    route: Route.Model,
+    dispatch: (msg: Msg) => void
+  }) => {
+    const items: BottomNavigationItem[] = [
+      {
+        route: ["GameRoom"],
+        filled: <UI.Icons.Gamepad />,
+        outlined: <UI.Icons.GamepadOutlined />,
+      },
+      {
+        route: ["Party"],
+        filled: <UI.Icons.Group />,
+        outlined: <UI.Icons.GroupOutlined />,
+      },
+      {
+        route: ["Search"],
+        filled: <UI.Icons.Search />,
+        outlined: <UI.Icons.SearchOutlined />,
+      },
+      {
+        route: ["Chat"],
+        filled: <UI.Icons.Chat />,
+        outlined: <UI.Icons.ChatOutlined />,
+      },
+      {
+        route: ["Profile", currentUserId],
+        filled: <UI.Icons.AccountCircle />,
+        outlined: <UI.Icons.AccountCircleOutlined />,
+      },
+    ]
 
-      return (
-        <UI.BottomNavigation
-          showLabels
-          value={Route.encode(route)}
-        >
-          {items.map((item) => (
-            <UI.BottomNavigationAction
-              key={Route.encode(item.route)}
-              icon={Route.equals(route, item.route) ? item.filled : item.outlined}
-              label={item.route[0]}
-              value={Route.encode(item.route)}
-              onClick={() =>
-                dispatch(["ClickedBottomNavigationLink", item.route])
-              }
-            />
-          ))}
-        </UI.BottomNavigation>
-      )
-    }
+    return (
+      <UI.BottomNavigation
+        showLabels
+        value={Route.encode(route)}
+      >
+        {items.map((item) => (
+          <UI.BottomNavigationAction
+            key={Route.encode(item.route)}
+            icon={Route.equals(route, item.route) ? item.filled : item.outlined}
+            // label={item.route[0] === 'GameRoom' ? 'Game' : item.route[0]}
+            value={Route.encode(item.route)}
+            onClick={() =>
+              dispatch(["ClickedBottomNavigationLink", item.route])
+            }
+          />
+        ))}
+      </UI.BottomNavigation>
+    )
+  }
 
 //
 //

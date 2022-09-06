@@ -191,37 +191,40 @@ export const subscriptions = (intervalId: string, model: Model): Sub.Sub<Msg> =>
 //
 //
 
-export const view = (
+export const View = (
   {
     currentUserId,
     store,
+    model,
+    dispatch
   }: {
     currentUserId: UserId.UserId
-    store: Store.Model
+    store: Store.Model,
+    model: Model,
+    dispatch: (msg: Msg) => void,
   },
-  model: Model,
-): UI.View<Msg> => {
+) => {
   switch (model[0]) {
     case "ConnectFour": {
-      return pipe(ConnectFour.view(model[1]), UI.map(tag("ConnectFour")))
+      return pipe(ConnectFour.view(model[1]), UI.map(tag("ConnectFour")))(dispatch)
     }
 
     case "Snake": {
-      return pipe(Snake.view({ currentUserId, store }, model[1]), UI.map(tag("Snake")))
+      return pipe(Snake.view({ currentUserId, store }, model[1]), UI.map(tag("Snake")))(dispatch)
     }
 
     case "TicTacToe": {
       return pipe(
         TicTacToe.view({ currentUserId, store }, model[1]),
         UI.map(tag("TicTacToe")),
-      )
+      )(dispatch)
     }
 
     case "Chess": {
       return pipe(
         Chess.view({ currentUserId, store }, model[1]),
         UI.map(tag("Chess")),
-      )
+      )(dispatch)
     }
   }
 }

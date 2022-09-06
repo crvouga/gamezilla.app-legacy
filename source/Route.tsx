@@ -11,7 +11,6 @@ import { UserId } from "./Data"
 
 export type Model =
   | ["Account"]
-  | ["Home"]
   | ["Login"]
   | ["LoginEmail"]
   | ["AccountCreate"]
@@ -44,7 +43,6 @@ export type Model =
 export const routesTypes: { [routeType in Model[0]]: string } = {
   Admin: "Admin",
   Account: "Account",
-  Home: "Home",
   Login: "Login",
   LoginEmail: "LoginEmail",
   AccountCreate: "AccountCreate",
