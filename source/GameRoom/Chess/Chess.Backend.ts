@@ -1,6 +1,7 @@
 import { Cmd, exhaustive, Result, Sub, tagCmd, tagSub } from "../../Core";
 import { BackendModel, BackendMsg, ToBackend, ToFrontend } from "./Chess.Types";
 import * as UserVsUser from "./UserVsUser/UserVsUser.Backend"
+import * as UserVsBot from "./UserVsBot/UserVsBot.Backend"
 
 //
 //
@@ -45,6 +46,18 @@ export const update = ({ sendToRoom }: { sendToRoom: (msg: ToFrontend) => Cmd.Cm
       return [model, Cmd.None]
     }
 
+
+    case 'UserVsBot': {
+      if (msg[0] === 'UserVsBot') {
+
+        const [child, cmd] = UserVsBot.update({ sendToRoom: msg => sendToRoom(['UserVsBot', msg]) }, msg[1], model[1])
+
+        return [['UserVsBot', child], tagCmd("UserVsBot", cmd)]
+      }
+
+      return [model, Cmd.None]
+    }
+
     default: {
       return exhaustive(model[0])
     }
@@ -67,16 +80,36 @@ export const updateFromFrontend = (
     case 'InputMode': {
       const { mode } = msg[1]
 
-      if (mode === 'UserVsUser') {
-        const modelNew: Model = ['UserVsUser', UserVsUser.init]
+      switch (mode) {
+        case 'None': {
+          const modelNew: Model = ["None"]
 
-        return [modelNew, sendToRoom(['InputMode_Done', msg[1], Result.Ok(modelNew)])]
+          return [modelNew, sendToRoom(['InputMode_Done', msg[1], Result.Ok(modelNew)])]
+
+        }
+
+        case 'UserVsBot': {
+          const modelNew: Model = ['UserVsBot', UserVsBot.init]
+
+          return [modelNew, sendToRoom(['InputMode_Done', msg[1], Result.Ok(modelNew)])]
+        }
+
+        case 'UserVsUser': {
+          const modelNew: Model = ['UserVsUser', UserVsUser.init]
+
+          return [modelNew, sendToRoom(['InputMode_Done', msg[1], Result.Ok(modelNew)])]
+        }
+      }
+    }
+
+    case 'UserVsBot': {
+      if (model[0] === 'UserVsBot') {
+        const [child, cmd] = UserVsBot.updateFromFrontend({ sendToClient: msg => sendToClient(['UserVsBot', msg]), sendToRoom: (msg) => sendToRoom(['UserVsBot', msg]) }, msg[1], model[1])
+
+        return [['UserVsBot', child], tagCmd("UserVsBot", cmd)]
       }
 
-      const modelNew: Model = ["None"]
-
-      return [modelNew, sendToRoom(['InputMode_Done', msg[1], Result.Ok(modelNew)])]
-
+      return [model, Cmd.None]
     }
 
     case 'UserVsUser': {
@@ -107,6 +140,10 @@ export const subscriptions = (intervalId: string, model: Model): Sub.Sub<Msg> =>
 
     case 'UserVsUser': {
       return tagSub("UserVsUser", UserVsUser.subscriptions(intervalId, model[1]))
+    }
+
+    case 'UserVsBot': {
+      return tagSub("UserVsBot", UserVsBot.subscriptions(intervalId, model[1]))
     }
   }
 };
