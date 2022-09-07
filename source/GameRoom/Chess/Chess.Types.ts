@@ -1,3 +1,5 @@
+import { Result } from "../../Core"
+import { UserId } from "../../Data"
 import * as UserVsUser from "./UserVsUser/UserVsUser.Types"
 // import * as UserVsBot from "./UserVsBot"
 
@@ -10,11 +12,14 @@ import * as UserVsUser from "./UserVsUser/UserVsUser.Types"
 //
 
 export type FrontendModel =
-  ["UserVsUser", UserVsUser.FrontendModel]
+  | ["None"]
+  | ["UserVsUser", UserVsUser.FrontendModel]
 
 export type BackendModel =
-  ["UserVsUser", UserVsUser.BackendModel]
+  | ["None"]
+  | ["UserVsUser", UserVsUser.BackendModel]
 
+type Mode = "UserVsUser" | "UserVsBot" | "None"
 
 //
 //
@@ -26,13 +31,26 @@ export type BackendModel =
 
 export type FrontendMsg =
   | ["UserVsUser", UserVsUser.FrontendMsg]
+  | InputMode
 
 export type BackendMsg =
   | ["UserVsUser", UserVsUser.BackendMsg]
 
 export type ToFrontend =
   | ["UserVsUser", UserVsUser.ToFrontend]
+  | InputMode_Done
 
 export type ToBackend =
   | ["UserVsUser", UserVsUser.ToBackend]
+  | InputMode
 
+
+// 
+// 
+// 
+// 
+// 
+// 
+
+export type InputMode = ['InputMode', { mode: Mode, userId: UserId.UserId }]
+export type InputMode_Done = ['InputMode_Done', { mode: Mode, userId: UserId.UserId }, Result.Result<"failed", BackendModel>]

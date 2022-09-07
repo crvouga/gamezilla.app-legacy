@@ -108,6 +108,7 @@ export const update = (
 }
 
 export const updateFromBackend = (
+  { sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd.Cmd<never> },
   msg: ToFrontend,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
@@ -149,7 +150,7 @@ export const updateFromBackend = (
     case "Chess": {
       if (model[0] === "Chess") {
         return [
-          ...tagUpdate("Chess", Chess.updateFromBackend(msg[1], model[1])),
+          ...tagUpdate("Chess", Chess.updateFromBackend({ sendToBackend: msg => sendToBackend(['Chess', msg]) }, msg[1], model[1])),
           [],
         ]
       }
