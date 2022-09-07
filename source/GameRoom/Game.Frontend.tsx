@@ -197,8 +197,10 @@ export const View = (
     currentUserId,
     store,
     model,
-    dispatch
+    dispatch,
+    onBack
   }: {
+    onBack: () => void
     currentUserId: UserId.UserId
     store: Store.Model,
     model: Model,
@@ -223,6 +225,7 @@ export const View = (
 
     case "Chess": {
       return <Chess.View
+        onBack={onBack}
         currentUserId={currentUserId}
         store={store}
         model={model[1]}

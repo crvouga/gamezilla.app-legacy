@@ -135,7 +135,7 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
 
 const iconSize = 58
 
-export const View = ({ currentUserId, store, model, dispatch }: { currentUserId: UserId.UserId, store: Store.Model, model: Model, dispatch: (msg: Msg) => void }) => {
+export const View = ({ currentUserId, store, model, dispatch, onBack }: { onBack: () => void, currentUserId: UserId.UserId, store: Store.Model, model: Model, dispatch: (msg: Msg) => void }) => {
   switch (model[0]) {
 
 
@@ -143,6 +143,12 @@ export const View = ({ currentUserId, store, model, dispatch }: { currentUserId:
     case 'None': {
       return (
         <UI.FillBox>
+          <UI.Box sx={{ paddingX: 2, marginBottom: 2 }}>
+            <UI.Button onClick={onBack} variant="contained" startIcon={<UI.Icons.ChevronLeft />} >
+              Back
+            </UI.Button>
+          </UI.Box>
+
           <UI.Typography sx={{ paddingX: 2, }} variant="h4">
             Select mode
           </UI.Typography>

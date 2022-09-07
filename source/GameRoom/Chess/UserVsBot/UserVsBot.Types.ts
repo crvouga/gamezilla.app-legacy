@@ -23,13 +23,13 @@ export type SharedModel = SetupModel | GameModel | GameOverModel
 
 export type SetupModel = {
   type: "Setup"
-  botColor: Board.Color,
+  userColor: Board.Color,
   userId: Option.Option<UserId.UserId>
 }
 
 export type GameModel = {
   type: "Game"
-  botColor: Board.Color,
+  userColor: Board.Color,
   userId: Option.Option<UserId.UserId>
   board: Board.Model
 }
@@ -37,7 +37,7 @@ export type GameModel = {
 export type GameOverModel = {
   type: "GameOver"
   gameOver: GameOver
-  botColor: Board.Color,
+  userColor: Board.Color,
   userId: Option.Option<UserId.UserId>
   board: Board.Model
 }
@@ -57,7 +57,7 @@ export type GameOver =
 
 export const initShared: SharedModel = {
   type: "Setup",
-  botColor: "b",
+  userColor: "b",
   userId: Option.None
 }
 

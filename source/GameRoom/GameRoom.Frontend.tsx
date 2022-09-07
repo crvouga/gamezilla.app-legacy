@@ -554,6 +554,7 @@ export const View = (
       />
 
       <Game.View
+        onBack={() => dispatch(['CloseGame', { userId: currentUserId }])}
         currentUserId={currentUserId}
         store={store}
         dispatch={(msg) => dispatch(["Games", room.roomId, msg])}
@@ -726,9 +727,10 @@ const viewButtonMenu =
         <>
           <UI.Button
             // startIcon={<UI.Icons.MoreVert />}
-            sx={{ marginLeft: -2 }}
+            sx={{ marginLeft: -1 }}
             id={menuButtonId}
             onClick={() => dispatch(onOpen)}
+            size="large"
           >
             Menu
           </UI.Button>
