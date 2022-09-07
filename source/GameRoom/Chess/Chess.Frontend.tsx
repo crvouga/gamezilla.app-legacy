@@ -162,10 +162,11 @@ export const View = ({ currentUserId, store, model, dispatch }: { currentUserId:
 
 
 const ModeSelectCard = ({ leftIcon, rightIcon, title, onClick }: { leftIcon: ReactNode, rightIcon: ReactNode, title: string, onClick: () => void }) => {
+  const theme = UI.useTheme()
   return (
     <UI.CardActionArea onClick={onClick}>
       <UI.AspectRatio aspectRatio={1}>
-        <UI.Card sx={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column" }}>
+        <UI.Card sx={{ border: `1px solid ${theme.palette.divider}`, width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column" }}>
           <UI.Box sx={{ display: "flex", alignItems: 'center', gap: 1, marginBottom: 1 }}>
             {leftIcon}
             {rightIcon}

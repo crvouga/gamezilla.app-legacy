@@ -1,4 +1,4 @@
-import { Cmd, exhaustive, pipe, Result, Sub } from "../Core"
+import { Cmd, exhaustive, Option, pipe, Result, Sub } from "../Core"
 import { removeKey } from "../Core/Record"
 import { RoomId, UserId } from "../Data"
 import * as Game from "./Game.Backend"
@@ -12,7 +12,6 @@ import {
   LeaveRoomResult,
   OpenGame_Done,
   Response,
-  RoomModel,
   ToBackend,
   ToFrontend,
 } from "./GameRoom.Types"
@@ -28,7 +27,6 @@ import {
 export type Model = BackendModel
 
 export const init: Model = {
-  games: {},
   rooms: {},
   users: {},
 }
@@ -66,11 +64,17 @@ export const update = (
     case "Games": {
       const roomId = msg[1]
 
-      const game = model.games[roomId]
+      const room = model.rooms[roomId]
 
-      if (!game) {
+      if (!room) {
         return [model, Cmd.None]
       }
+
+      if (room.game.type === 'None') {
+        return [model, Cmd.None]
+      }
+
+      const game = room.game.value
 
       const gameMsg = msg[2]
 
@@ -85,10 +89,13 @@ export const update = (
 
       const modelNew: Model = {
         ...model,
-        games: {
-          ...model.games,
-          [roomId]: gameNew,
-        },
+        rooms: {
+          ...model.rooms,
+          [roomId]: {
+            ...room,
+            game: Option.Some(gameNew)
+          }
+        }
       }
 
       return [
@@ -126,11 +133,17 @@ export const updateFromFrontend = (
     case "Games": {
       const roomId = msg[1]
 
-      const game = model.games[roomId]
+      const room = model.rooms[roomId]
 
-      if (!game) {
+      if (!room) {
         return [model, Cmd.None]
       }
+
+      if (room.game.type === 'None') {
+        return [model, Cmd.None]
+      }
+
+      const game = room.game.value
 
       const gameMsg = msg[2]
 
@@ -145,10 +158,13 @@ export const updateFromFrontend = (
 
       const modelNew: Model = {
         ...model,
-        games: {
-          ...model.games,
-          [roomId]: gameNew,
-        },
+        rooms: {
+          ...model.rooms,
+          [roomId]: {
+            ...room,
+            game: Option.Some(gameNew)
+          }
+        }
       }
 
       return [
@@ -249,12 +265,6 @@ export const createRoom = (
     return Result.Err("user_is_already_in_a_room")
   }
 
-  const room: RoomModel = {
-    roomId,
-    hostId: userId,
-    events: [["Created", { userId, roomId }]],
-  }
-
   const modelNew: Model = {
     ...model,
     users: {
@@ -266,7 +276,12 @@ export const createRoom = (
     },
     rooms: {
       ...model.rooms,
-      [roomId]: room,
+      [roomId]: {
+        roomId,
+        hostId: userId,
+        events: [["Created", { userId, roomId }]],
+        game: Option.None
+      },
     },
   }
 
@@ -357,7 +372,7 @@ export const leaveRoom = (
 
   const usersNew = removeKey(userId, model.users)
 
-  const roomNew: RoomModel = {
+  const roomNew = {
     ...room,
     events: [...room.events, ["Left", { userId }]],
   }
@@ -433,17 +448,18 @@ export const openGame = (
     return Result.Err("user_is_not_the_host")
   }
 
-  const game = model.games[room.roomId]
-
-  if (game) {
+  if (room.game.type !== 'None') {
     return Result.Err("game_already_started")
   }
 
   const modelNew: Model = {
     ...model,
-    games: {
-      ...model.games,
-      [room.roomId]: Game.init({ gameName }),
+    rooms: {
+      ...model.rooms,
+      [room.roomId]: {
+        ...room,
+        game: Option.Some(Game.init({ gameName }))
+      },
     },
   }
 
@@ -478,15 +494,19 @@ export const closeGame = (
     return Result.Err("user_is_not_the_host")
   }
 
-  const game = model.games[room.roomId]
-
-  if (!game) {
+  if (room.game.type === 'None') {
     return Result.Err("game_already_stopped")
   }
 
   const modelNew: Model = {
     ...model,
-    games: removeKey(room.roomId, model.games),
+    rooms: {
+      ...model.rooms,
+      [room.roomId]: {
+        ...room,
+        game: Option.None
+      }
+    }
   }
 
   return Result.Ok(modelNew)
@@ -503,16 +523,24 @@ export const closeGame = (
 export const subscriptions = (model: Model): Sub.Sub<Msg> => {
   const subs: Sub.Sub<Msg>[] = []
 
-  for (const roomId in model.games) {
+
+
+  for (const roomId in model.rooms) {
     if (!RoomId.is(roomId)) {
       continue
     }
 
-    const game = model.games[roomId]
+    const room = model.rooms[roomId]
 
-    if (!game) {
+    if (!room) {
       continue
     }
+
+    if (room.game.type === 'None') {
+      continue
+    }
+
+    const game = room.game.value
 
     const sub = pipe(
       Game.subscriptions(roomId, game),

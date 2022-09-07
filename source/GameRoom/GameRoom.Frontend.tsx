@@ -1,4 +1,4 @@
-import { Cmd, exhaustive, pipe, RemoteData, Sub, tagCmd, Unit } from "../Core"
+import { Cmd, exhaustive, Option, pipe, RemoteData, Sub, tagCmd, Unit } from "../Core"
 import { RoomId, UserId } from "../Data"
 import * as Route from "../Route"
 import * as Snackbar from "../Snackbar"
@@ -10,7 +10,6 @@ import {
   BackendModel,
   FrontendModel,
   FrontendMsg, Response,
-  RoomModel,
   ToBackend,
   ToFrontend
 } from "./GameRoom.Types"
@@ -32,7 +31,6 @@ export const init: [Model, Cmd.Cmd<Msg>] = [
   {
     rooms: {},
     users: {},
-    games: {},
     modal: "Closed",
     requests: {
       CreateRoom: RemoteData.NotAsked,
@@ -135,9 +133,13 @@ export const update = (
         return [model, Cmd.None]
       }
 
-      const game = model.games[roomId]
+      const room = model.rooms[roomId]
 
-      if (!game) {
+      if (!room) {
+        return [model, Cmd.None]
+      }
+
+      if (room.game.type === 'None') {
         return [model, Cmd.None]
       }
 
@@ -146,16 +148,22 @@ export const update = (
       const [gameNew, gameCmd] = Game.update(
         { currentUserId, currentRoomId: roomId, sendToBackend: msg => sendToBackend(['Games', roomId, msg]), },
         gameMsg,
-        game,
+        room.game.value,
       )
 
+      const modelNew: Model = {
+        ...model,
+        rooms: {
+          ...model.rooms,
+          [roomId]: {
+            ...room,
+            game: Option.Some(gameNew)
+          }
+        }
+      }
+
       return [
-        {
-          ...model,
-          games: {
-            [roomId]: gameNew,
-          },
-        },
+        modelNew,
         pipe(
           gameCmd,
           Cmd.map((msg): Msg => ["Games", roomId, msg]),
@@ -181,7 +189,7 @@ export const updateFromBackend = (
         ["Store", ["Profile", ["FindMany", { userIds }]]],
       ]
 
-      const [synced, syncedCmd] = sync({
+      const [synced, syncedCmd] = mergeWithBackendModel({
         backendModel: msg[1],
         frontendModel: model,
         sendToBackend
@@ -193,22 +201,29 @@ export const updateFromBackend = (
     case "Games": {
       const roomId = msg[1]
 
-      const game = model.games[roomId]
+      const room = model.rooms[roomId]
 
-      if (!game) {
+      if (!room) {
+        return [model, Cmd.None, []]
+      }
+
+      if (room.game.type === 'None') {
         return [model, Cmd.None, []]
       }
 
       const gameMsg = msg[2]
 
-      const [gameNew, gameCmd, actions] = Game.updateFromBackend({ sendToBackend: msg => sendToBackend(['Games', roomId, msg]) }, gameMsg, game)
+      const [gameNew, gameCmd, actions] = Game.updateFromBackend({ sendToBackend: msg => sendToBackend(['Games', roomId, msg]) }, gameMsg, room.game.value)
 
       const modelNew: Model = {
         ...model,
-        games: {
-          ...model.games,
-          [roomId]: gameNew,
-        },
+        rooms: {
+          ...model.rooms,
+          [roomId]: {
+            ...room,
+            game: Option.Some(gameNew)
+          }
+        }
       }
 
       return [
@@ -276,24 +291,24 @@ const updateResponse = (
     ]
   }
 
-  const [synced, syncedCmd] = sync({
+  const [merged, mergedCmd] = mergeWithBackendModel({
     frontendModel: model,
     backendModel: result.value,
     sendToBackend
   })
 
   const modelNew: Model = {
-    ...synced,
+    ...merged,
     requests: {
-      ...synced.requests,
+      ...merged.requests,
       [requestKey]: remoteData
     },
   }
 
-  return [modelNew, syncedCmd, actions]
+  return [modelNew, mergedCmd, actions]
 }
 
-const sync = ({
+const mergeWithBackendModel = ({
   frontendModel,
   backendModel,
   sendToBackend
@@ -303,70 +318,111 @@ const sync = ({
   backendModel: BackendModel
 }): [FrontendModel, Cmd.Cmd<FrontendMsg>] => {
 
-  const init: [FrontendModel['games'], Cmd.Cmd<FrontendMsg>] = [{}, Cmd.None]
-
-  const [gamesNew, gamesCmd] = Object
-    .entries(backendModel.games)
-    .reduce(
-      ([games, cmd], [roomId, backendGame]) => {
+  const [roomsNew, roomsCmd] = Object
+    .entries(backendModel.rooms)
+    .reduce<[FrontendModel['rooms'], Cmd.Cmd<FrontendMsg>]>(
+      ([rooms, cmd], [roomId, backendRoom]) => {
         if (!RoomId.is(roomId)) {
-          return [games, cmd]
+          return [rooms, cmd]
         }
 
-        const frontendGame = frontendModel.games[roomId]
-
-        if (frontendGame) {
-          const merged = Game.mergeWithBackend({ sendToBackend: msg => sendToBackend(['Games', roomId, msg]), frontendModel: frontendGame, backendModel: backendGame })
-
+        if (backendRoom.game.type === 'None') {
           return [
             {
-              ...games,
-              [roomId]: merged[0]
+              ...rooms,
+              [roomId]: {
+                events: backendRoom.events,
+                hostId: backendRoom.hostId,
+                roomId: backendRoom.roomId,
+                game: Option.None,
+              }
+            },
+            cmd
+          ]
+        }
+
+        const backendGame = backendRoom.game.value
+
+        const frontendRoom = frontendModel.rooms[roomId]
+
+        if (!frontendRoom) {
+          const initial = Game.init({ gameName: backendGame[0], sendToBackend: msg => sendToBackend(['Games', roomId, msg]) })
+          const merged = Game.mergeWithBackend({ backendModel: backendGame, frontendModel: initial[0], sendToBackend: msg => sendToBackend(['Games', roomId, msg]) })
+          return [
+            {
+              ...rooms,
+              [roomId]: {
+                events: backendRoom.events,
+                hostId: backendRoom.hostId,
+                roomId: backendRoom.roomId,
+                game: Option.Some(merged[0]),
+              }
             },
             Cmd.batch([
               cmd,
+              pipe(initial[1], Cmd.map((msg): Msg => ['Games', roomId, msg])),
               pipe(merged[1], Cmd.map((msg): Msg => ['Games', roomId, msg]))
             ])
           ]
         }
 
-        const [gameInit, gameCmd] = Game.init({
-          gameName: backendGame[0],
-          sendToBackend: (msg) => sendToBackend(['Games', roomId, msg])
-        })
+        if (frontendRoom.game.type === 'None') {
+          const initial = Game.init({ gameName: backendGame[0], sendToBackend: msg => sendToBackend(['Games', roomId, msg]) })
+          const merged = Game.mergeWithBackend({ backendModel: backendGame, frontendModel: initial[0], sendToBackend: msg => sendToBackend(['Games', roomId, msg]) })
+          return [
+            {
+              ...rooms,
+              [roomId]: {
+                events: backendRoom.events,
+                hostId: backendRoom.hostId,
+                roomId: backendRoom.roomId,
+                game: Option.Some(merged[0]),
+              }
+            },
+            Cmd.batch([
+              cmd,
+              pipe(initial[1], Cmd.map((msg): Msg => ['Games', roomId, msg])),
+              pipe(merged[1], Cmd.map((msg): Msg => ['Games', roomId, msg]))
+            ])
+          ]
+        }
 
-        const merged = Game.mergeWithBackend({
-          sendToBackend: msg => sendToBackend(['Games', roomId, msg]),
-          frontendModel: gameInit,
-          backendModel: backendGame,
-        })
+        const frontendGame = frontendRoom.game.value
+
+
+        const merged = Game.mergeWithBackend({ backendModel: backendGame, frontendModel: frontendGame, sendToBackend: msg => sendToBackend(['Games', roomId, msg]) })
 
         return [
           {
-            ...games,
-            [roomId]: merged[0]
+            ...rooms,
+            [roomId]: {
+              events: backendRoom.events,
+              hostId: backendRoom.hostId,
+              roomId: backendRoom.roomId,
+              game: Option.Some(merged[0]),
+            }
           },
           Cmd.batch([
             cmd,
-            pipe(merged[1], Cmd.map((msg): Msg => ["Games", roomId, msg])),
-            pipe(gameCmd, Cmd.map((msg): Msg => ["Games", roomId, msg]))
+            pipe(merged[1], Cmd.map((msg): Msg => ['Games', roomId, msg]))
           ])
         ]
-
       },
-      init
+      [{}, Cmd.None]
     )
 
   return [
     {
-      ...frontendModel,
-      rooms: backendModel.rooms,
+      modal: frontendModel.modal,
+      requests: frontendModel.requests,
+      rooms: roomsNew,
       users: backendModel.users,
-      games: gamesNew
     },
-    gamesCmd
+    roomsCmd
   ]
 }
+
+
 
 export const runAction = (
   { currentUserId, sendToBackend }: { currentUserId: UserId.UserId, sendToBackend: (msg: ToBackend) => Cmd.Cmd<never> },
@@ -409,9 +465,7 @@ export const subscriptions = (
     return Sub.None
   }
 
-  const game = model.games[room.roomId]
-
-  if (!game) {
+  if (room.game.type === 'None') {
     return Sub.None
   }
 
@@ -419,7 +473,7 @@ export const subscriptions = (
   const intervalId = room.roomId
 
   return pipe(
-    Game.subscriptions(`room-${intervalId}`, game),
+    Game.subscriptions(`room-${intervalId}`, room.game.value),
     Sub.map((msg): Msg => ["Games", room.roomId, msg]),
   )
 }
@@ -459,9 +513,9 @@ export const View = (
     return <ViewNotInRoom currentUserId={currentUserId} store={store} model={model} dispatch={dispatch} />
   }
 
-  const game = model.games[room.roomId]
+  const game = room.game
 
-  if (!game) {
+  if (game.type === 'None') {
     return <ViewNotInGame
       currentUserId={currentUserId}
       store={store}
@@ -494,7 +548,7 @@ export const View = (
           onClose: ["ClosedMenu"],
         })(dispatch)}
 
-        title={game[0]}
+        title={game.value[0]}
 
         right={viewUsersInRoomAvatarGroup({ store, room }, model)(dispatch)}
       />
@@ -503,7 +557,7 @@ export const View = (
         currentUserId={currentUserId}
         store={store}
         dispatch={(msg) => dispatch(["Games", room.roomId, msg])}
-        model={game}
+        model={game.value}
       />
     </UI.FillBox>
   )
@@ -609,7 +663,10 @@ const ViewNotInGame =
       dispatch,
     }: {
       store: Store.Model
-      room: RoomModel
+      room: {
+        roomId: RoomId.RoomId,
+        hostId: UserId.UserId
+      }
       currentUserId: UserId.UserId
       model: Model,
       dispatch: (msg: Msg) => void
@@ -708,7 +765,10 @@ const viewUsersInRoomAvatarGroup =
       room,
     }: {
       store: Store.Model
-      room: RoomModel
+      room: {
+        roomId: RoomId.RoomId,
+        hostId: UserId.UserId
+      }
     },
     model: Model,
   ): UI.View<Msg> =>
@@ -803,6 +863,8 @@ const GameGrid = ({ onClick }: { onClick: (gameName: GameName) => void }) => {
         display: "grid",
         gridTemplateColumns: "repeat(2, 1fr)",
         overflowY: "scroll",
+        gap: 2,
+        paddingX: 2
       }}
     >
       <GameCard
@@ -852,6 +914,8 @@ const GameCard = ({
         position: "relative",
         overflow: "hidden",
         opacity: disabled ? 0.3 : 1,
+        borderRadius: 2,
+
       }}
       onClick={onClick}
     >
@@ -880,7 +944,7 @@ const GameCard = ({
           <UI.Typography
             color="white"
             align="left"
-            variant="h5"
+            variant="h4"
           >
             {label}
           </UI.Typography>
@@ -933,9 +997,11 @@ export const ViewBanner =
       return <></>
     }
 
+    if (room.game.type === 'None') {
+      return <></>
+    }
 
-
-    const game = model.games[room.roomId]
+    const game = room.game.value
 
     return (
       <>
