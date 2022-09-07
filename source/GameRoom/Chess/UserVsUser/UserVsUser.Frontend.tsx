@@ -387,12 +387,11 @@ export const View =
 
           <UI.Box sx={{ flex: 1 }}></UI.Box>
 
-          <UI.Box sx={{ paddingX: 2 }}>
+          <UI.Box sx={{ paddingX: 2, paddingBottom: 1 }}>
             <UI.Button
               disabled={!canStartGame(model.sharedModel)}
               fullWidth
               variant="contained"
-              sx={{ marginBottom: 2 }}
               onClick={() => {
                 dispatch(['StartGame'])
               }}
@@ -401,7 +400,7 @@ export const View =
             </UI.Button>
           </UI.Box>
 
-        </UI.FillBox >
+        </UI.FillBox>
       )
     }
 

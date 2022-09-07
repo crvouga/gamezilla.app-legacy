@@ -5,6 +5,12 @@ import {
 
     initShared,
 
+    inputBot,
+
+    inputColor,
+
+    inputUser,
+
     ToBackend,
     ToFrontend
 } from "./UserVsBot.Types"
@@ -55,14 +61,36 @@ export const updateFromFrontend = (
     msg: ToBackend,
     model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
-    return [model, Cmd.None]
-    // switch (msg[0]) {
+    switch (msg[0]) {
+        case 'Init': {
+            return [model, sendToClient(['Sync', model])]
+        }
+
+        case 'InputUser': {
+            const result = inputUser(msg[1], model)
+
+            const modelNew = result.type === 'Err' ? model : result.value
+
+            return [modelNew, sendToRoom(['InputUser_Done', msg[1], result])]
+        }
+
+        case 'InputColor': {
+            const result = inputColor(msg[1], model)
+
+            const modelNew = result.type === 'Err' ? model : result.value
+
+            return [modelNew, sendToRoom(['InputColor_Done', result])]
+        }
 
 
-    //     default: {
-    //         return exhaustive(msg[0])
-    //     }
-    // }
+        case 'InputBot': {
+            const result = inputBot(msg[1], model)
+
+            const modelNew = result.type === 'Err' ? model : result.value
+
+            return [modelNew, sendToRoom(['InputBot_Done', result])]
+        }
+    }
 }
 
 //
