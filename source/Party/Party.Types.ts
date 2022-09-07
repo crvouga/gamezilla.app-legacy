@@ -5,27 +5,6 @@ import { removeKey } from "../Core/Record"
 import * as mediasoup from "mediasoup"
 import { MediaKind } from "mediasoup/node/lib/RtpParameters"
 
-/* 
-
-
-Mediasoup Group Chat Room Flow
-
-Initial setup
-
-1.) Server create a new router per room
-2.) Client creates a new device per room
-3.) Client loads routerRtpCapabilities from router into device
-
-Setting up sending data
-
-1.) Server creates one transport then sends
-
-
-*/
-
-
-
-
 
 // 
 // 
@@ -92,9 +71,11 @@ export type BackendMsg =
   | WorkerDied
   | CreateWorker_Done
   | CreateRouter_Done
-  | InitProducerTransport_Backend_Done
-  | ProducerTransport_OnConnect_Done
-  | ProducerTransport_OnProduce_Done
+  | SendTransport_InitBackend_Done
+  | SendTransport_OnConnect_Done
+  | SendTransport_OnProduce_Done
+  | RecvTransport_InitBackend_Done
+  | RecvTransport_OnConnect_Done
 
 export type FrontendMsg =
   | Request
@@ -105,26 +86,32 @@ export type FrontendMsg =
   | UnloadMediaStream_Done
   | LoadDevice_Done
   | UnloadDevice_Done
-  | ProducerTransport_OnConnect
-  | ProducerTransport_OnProduce
-  | InitProducerTransport_Frontend_Done
-  | StartProducerTransport_Done
-  | ["EmittedProducerId", { producerId: string }]
+  | SendTransport_OnConnect
+  | SendTransport_OnProduce
+  | SendTransport_InitFrontend_Done
+  | StartProducing_Done
+  | ["EmittedBackendProducerId", { producerId: string }]
   | ["Producer_TrackEnded"]
   | ["Producer_TransportClosed"]
+  | RecvTransport_InitFrontend_Done
+  | RecvTransport_OnConnect
 
 export type ToBackend =
   | Request
-  | InitProducerTransport_Backend
-  | ProducerTransport_OnConnect
-  | ProducerTransport_OnProduce
+  | SendTransport_InitBackend
+  | SendTransport_OnConnect
+  | SendTransport_OnProduce
+  | RecvTransport_InitBackend
+  | RecvTransport_OnConnect
 
 export type ToFrontend =
   | Response
   | ["Sync", SharedModel]
-  | InitProducerTransport_Backend_Done
-  | ProducerTransport_OnConnect_Done
-  | ProducerTransport_OnProduce_Done
+  | SendTransport_InitBackend_Done
+  | SendTransport_OnConnect_Done
+  | SendTransport_OnProduce_Done
+  | RecvTransport_InitBackend_Done
+  | RecvTransport_OnConnect_Done
 
 
 //
@@ -135,35 +122,53 @@ export type ToFrontend =
 //
 //
 
-// server setup
+// see /mediasoup-flow-setup-a.png for step in diagram
+
+// Step 0
+
 export type CreateWorker_Done = ['CreateWorker_Done']
 export type WorkerDied = ['WorkerDied']
 export type CreateRouter_Done = ['CreateRouter_Done', { hostId: UserId.UserId, partyId: PartyId.PartyId }, Result.Result<'worker_does_not_exists', { routerRtpCapabilities: RouterRtpCapabilities }>]
 
-// client setup
+// Step 1
+
 export type LoadMediaStream_Done = ['LoadMediaStream_Done', { userId: UserId.UserId, partyId: PartyId.PartyId, }, Result.Result<"failed_to_load", Unit>]
 export type UnloadMediaStream_Done = ['UnloadMediaStream_Done', Result.Result<"failed_to_unload", Unit>]
 export type LoadDevice_Done = ['LoadDevice_Done', { userId: UserId.UserId, partyId: PartyId.PartyId, }, Result.Result<"device_is_already_loaded" | "failed_to_load_device", Unit>]
 export type UnloadDevice_Done = ['UnloadDevice_Done', Result.Result<"device_is_already_unloaded" | "failed_to_unload_device", Unit>]
 
-// create a producer transport on the client and the server
-export type InitProducerTransport_Backend = ["InitProducerTransport_Backend", { userId: UserId.UserId, partyId: PartyId.PartyId }]
-export type InitProducerTransport_Backend_Done = ["InitProducerTransport_Backend_Done", { userId: UserId.UserId, partyId: PartyId.PartyId }, Result.Result<"router_does_not_exists", { transportOptions: TransportOptions }>]
-export type InitProducerTransport_Frontend_Done = ["InitProducerTransport_Frontend_Done", Result.Result<"device_does_not_exists" | "producer_transport_is_already_initialized", Unit>]
+// Step 2
 
-// connect the client producer transport with the acompanying server transport
-export type ProducerTransport_OnConnect = ["ProducerTransport_OnConnect", { userId: UserId.UserId, dtlsParameters: DtlsParameters }]
-export type ProducerTransport_OnProduce = ["ProducerTransport_OnProduce", { userId: UserId.UserId, rtpParameters: RtpParameters, kind: MediaKind, appData: AppData }]
-export type ProducerTransport_OnConnect_Done = ["ProducerTransport_OnConnect_Done", { userId: UserId.UserId }, Result.Result<"peer_does_not_exists" | "peer_missing_send_transport" | "producer_transport_connect_errored", Unit>]
-export type ProducerTransport_OnProduce_Done = ["ProducerTransport_OnProduce_Done", { userId: UserId.UserId }, Result.Result<"peer_does_not_exists" | "peer_missing_send_transport", { producerId: string }>]
-// 
-export type StartProducerTransport_Done = ['StartProducerTransport_Done', Result.Result<"producer_transport_does_not_exists" | "media_stream_track_does_not_exists" | "failed", Unit>]
+export type SendTransport_InitBackend = ["SendTransport_InitBackend", { userId: UserId.UserId, partyId: PartyId.PartyId }]
+export type RecvTransport_InitBackend = ['RecvTransport_InitBackend', { userId: UserId.UserId, partyId: PartyId.PartyId }]
 
-// 
-// 
-export type InitConsumerTransport_Backend = ['InitConsumerTransport_Backend', { userId: UserId.UserId, partyId: PartyId.PartyId }]
-export type InitConsumerTransport_Backend_Done = ['InitConsumerTransport_Backend_Done', { userId: UserId.UserId, partyId: PartyId.PartyId }, Result.Result<"unknown", {}>]
-export type InitConsumerTransport_Frontend_Done = ['InitConsumerTransport_Frontend_Done', Result.Result<"unknown", {}>]
+// Step 3
+
+export type SendTransport_InitBackend_Done = ["SendTransport_InitBackend_Done", { userId: UserId.UserId, partyId: PartyId.PartyId }, Result.Result<"router_does_not_exists", { transportOptions: TransportOptions }>]
+export type SendTransport_InitFrontend_Done = ["SendTransport_InitFrontend_Done", Result.Result<"device_does_not_exists" | "producer_transport_is_already_initialized", Unit>]
+export type RecvTransport_InitBackend_Done = ['RecvTransport_InitBackend_Done', { userId: UserId.UserId, partyId: PartyId.PartyId }, Result.Result<"router_does_not_exists" | "recv_transport_is_already_initialized", { transportOptions: TransportOptions }>]
+export type RecvTransport_InitFrontend_Done = ['RecvTransport_InitFrontend_Done', Result.Result<"device_does_not_exists" | "recv_transport_is_already_initialized", Unit>]
+
+// Step 4
+
+export type StartProducing_Done = ['StartProducing_Done', Result.Result<"send_transport_does_not_exists" | "media_stream_track_does_not_exists" | "failed", Unit>]
+
+// Step 5
+
+export type SendTransport_OnConnect = ["SendTransport_OnConnect", { userId: UserId.UserId, dtlsParameters: DtlsParameters }]
+export type SendTransport_OnProduce = ["SendTransport_OnProduce", { userId: UserId.UserId, rtpParameters: RtpParameters, kind: MediaKind, appData: AppData }]
+export type SendTransport_OnConnect_Done = ["SendTransport_OnConnect_Done", { userId: UserId.UserId }, Result.Result<"peer_does_not_exists" | "peer_missing_producer_transport" | "producer_transport_connect_errored", Unit>]
+export type SendTransport_OnProduce_Done = ["SendTransport_OnProduce_Done", { userId: UserId.UserId }, Result.Result<"peer_does_not_exists" | "peer_missing_producer_transport" | "produce_threw_an_error", { producerId: string }>]
+
+// Step 6
+
+export type RecvTransport_StartConsuming = ['RecvTransport_StartConsuming']
+export type RecvTransport_StartConsuming_Done = ['RecvTransport_StartConsuming_Done']
+
+// Step 7
+export type StartConsuming_Done = ['StartConsuming_Backend_Done']
+export type RecvTransport_OnConnect = ['RecvTransport_OnConnect', { userId: UserId.UserId, dtlsParameters: DtlsParameters }]
+export type RecvTransport_OnConnect_Done = ['RecvTransport_OnConnect_Done', { userId: UserId.UserId, }, Result.Result<"peer_does_not_exists", Unit>]
 
 
 // 
@@ -176,6 +181,7 @@ export type TransportOptions = {
   iceCandidates: mediasoup.types.IceCandidate[],
   dtlsParameters: mediasoup.types.DtlsParameters,
 }
+
 
 type AppData = Record<string, unknown>
 

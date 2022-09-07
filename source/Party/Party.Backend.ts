@@ -1,10 +1,27 @@
 import * as mediasoup from "mediasoup"
 import * as Rx from "rxjs"
-import { Cmd, Option, pipe, Result, Task, Unit } from "../Core"
+import { Cmd, exhaustive, Option, pipe, Result, Task, Unit } from "../Core"
 import { PartyId, UserId } from "../Data"
 import { Config } from "./Config"
 import {
-    BackendModel, BackendMsg, CreateRouter_Done, joinParty, leaveParty, PartyModel, ProducerTransport_OnConnect, ProducerTransport_OnConnect_Done, ProducerTransport_OnProduce, ProducerTransport_OnProduce_Done, InitProducerTransport_Backend, InitProducerTransport_Backend_Done, ToBackend, ToFrontend, TransportOptions, UserModel
+    BackendModel,
+    BackendMsg,
+    CreateRouter_Done,
+    joinParty,
+    leaveParty,
+    PartyModel,
+    RecvTransport_InitBackend,
+    RecvTransport_InitBackend_Done,
+    SendTransport_InitBackend,
+    SendTransport_InitBackend_Done,
+    SendTransport_OnConnect,
+    SendTransport_OnConnect_Done,
+    SendTransport_OnProduce,
+    SendTransport_OnProduce_Done,
+    ToBackend,
+    ToFrontend,
+    TransportOptions,
+    UserModel
 } from "./Party.Types"
 
 
@@ -25,7 +42,7 @@ export const init = (): [Model, Cmd.Cmd<Msg>] => [
         users: {}
     },
     pipe(
-        createWorker,
+        initWorker,
         Cmd.perform(() => ['CreateWorker_Done'])
     )
 
@@ -67,19 +84,25 @@ export const update = (
             return [{ ...model, worker: { type: "Died", } }, Cmd.None]
         }
 
-        case 'InitProducerTransport_Backend_Done': {
-            const { userId, } = msg[1]
-
-            return [model, sendToUser([userId], msg)]
-        }
-
-        case 'ProducerTransport_OnConnect_Done': {
+        case 'RecvTransport_InitBackend_Done': {
             const { userId } = msg[1]
 
             return [model, sendToUser([userId], msg)]
         }
 
-        case 'ProducerTransport_OnProduce_Done': {
+        case 'SendTransport_InitBackend_Done': {
+            const { userId, } = msg[1]
+
+            return [model, sendToUser([userId], msg)]
+        }
+
+        case 'SendTransport_OnConnect_Done': {
+            const { userId } = msg[1]
+
+            return [model, sendToUser([userId], msg)]
+        }
+
+        case 'SendTransport_OnProduce_Done': {
             const { userId } = msg[1]
 
             const result = msg[2]
@@ -109,10 +132,17 @@ export const update = (
                 }
             }
 
-            return [modelNew, Cmd.batch([
+            const cmd = Cmd.batch([
                 sendToParty(userNew.partyId, ['Sync', modelNew]),
                 sendToUser([userId], msg)
-            ])]
+            ])
+
+            return [modelNew, cmd]
+        }
+
+
+        case 'RecvTransport_OnConnect_Done': {
+            return [model, Cmd.None]
         }
 
         case 'CreateRouter_Done': {
@@ -163,6 +193,10 @@ export const update = (
                 ])
             ]
         }
+
+        default: {
+            return exhaustive(msg[0])
+        }
     }
 }
 
@@ -173,33 +207,44 @@ export const updateFromFrontend = ({ broadcast, sendToUser }: { broadcast: (msg:
     }
 
     switch (msg[0]) {
-        case 'InitProducerTransport_Backend': {
+
+        case 'RecvTransport_InitBackend': {
             return [
                 model,
                 pipe(
-                    initProducerTransport(msg[1]),
-                    Cmd.perform((result): Msg => ['InitProducerTransport_Backend_Done', msg[1], result])
+                    initRecvTransport(msg[1]),
+                    Cmd.perform((result): Msg => ['RecvTransport_InitBackend_Done', msg[1], result])
                 )
             ]
         }
 
-        case 'ProducerTransport_OnConnect': {
+        case 'SendTransport_InitBackend': {
             return [
                 model,
                 pipe(
-                    handleProducerTransport_OnConnect(msg[1]),
-                    Cmd.perform((result): Msg => ['ProducerTransport_OnConnect_Done', { userId: msg[1].userId }, result])
+                    initSendTransport(msg[1]),
+                    Cmd.perform((result): Msg => ['SendTransport_InitBackend_Done', msg[1], result])
+                )
+            ]
+        }
+
+        case 'SendTransport_OnConnect': {
+            return [
+                model,
+                pipe(
+                    handleSendTransport_OnConnect(msg[1]),
+                    Cmd.perform((result): Msg => ['SendTransport_OnConnect_Done', { userId: msg[1].userId }, result])
                 )
             ]
         }
 
 
-        case 'ProducerTransport_OnProduce': {
+        case 'SendTransport_OnProduce': {
             return [
                 model,
                 pipe(
-                    handleProducerTransport_OnProduce(msg[1]),
-                    Cmd.perform((result): Msg => ['ProducerTransport_OnProduce_Done', { userId: msg[1].userId }, result])
+                    handleSendTransport_OnProduce(msg[1]),
+                    Cmd.perform((result): Msg => ['SendTransport_OnProduce_Done', { userId: msg[1].userId }, result])
                 )
             ]
         }
@@ -210,7 +255,7 @@ export const updateFromFrontend = ({ broadcast, sendToUser }: { broadcast: (msg:
             return [
                 model,
                 pipe(
-                    createRouter(partyId),
+                    initRouter(partyId),
                     Cmd.perform((result): Msg => ['CreateRouter_Done', { hostId, partyId }, result])
                 )
             ]
@@ -282,6 +327,14 @@ export const updateFromFrontend = ({ broadcast, sendToUser }: { broadcast: (msg:
 
 
         }
+
+        case 'RecvTransport_OnConnect': {
+            return [model, Cmd.None]
+        }
+
+        default: {
+            return exhaustive(msg[0])
+        }
     }
 }
 
@@ -296,7 +349,7 @@ export const updateFromFrontend = ({ broadcast, sendToUser }: { broadcast: (msg:
 
 
 export const subscriptions = (model: Model) => {
-    return workerMsgs
+    return mediasoupMsgs
 }
 
 
@@ -330,24 +383,35 @@ export const onClientConnected = ({ sendToUser }: { sendToUser: (userIds: UserId
 
 
 let worker: mediasoup.types.Worker | null = null
-let routers: { [partyId: PartyId.PartyId]: mediasoup.types.Router } = {}
-let peers: { [userId: UserId.UserId]: Peer } = {}
+
+const routers = new Map<PartyId.PartyId, mediasoup.types.Router>()
+
+const peers = new Map<UserId.UserId, Peer>()
+
+const mediasoupMsgs = new Rx.Subject<Msg>()
+
+// 
+// 
+// Peer
+// 
+// 
 
 type Peer = {
-    producerTransport: mediasoup.types.Transport | null;
-    consumerTransport: mediasoup.types.Transport | null;
+    sendTransport: mediasoup.types.Transport | null;
     producer: mediasoup.types.Producer | null
-    consumers: mediasoup.types.Consumer[]
+    recvTransport: mediasoup.types.Transport | null
+    consumers: {
+        [userId: UserId.UserId]: mediasoup.types.Consumer,
+    }
 }
 
 const initialPeer: Peer = {
-    producerTransport: null,
-    consumerTransport: null,
+    sendTransport: null,
     producer: null,
-    consumers: []
+    recvTransport: null,
+    consumers: {}
 }
 
-const workerMsgs = new Rx.Subject<Msg>()
 
 
 const logInstances = () => {
@@ -364,25 +428,25 @@ const logInstances = () => {
 // 
 // 
 
-const createWorker: Task.Task<Unit> = async () => {
+const initWorker: Task.Task<Unit> = async () => {
     worker = await mediasoup.createWorker(Config.mediasoup.worker)
 
     worker.on("died", () => {
-        workerMsgs.next(['WorkerDied'])
+        mediasoupMsgs.next(['WorkerDied'])
     })
 
     return Unit
 }
 
 
-const createRouter = (partyId: PartyId.PartyId): Task.Task<CreateRouter_Done[2]> => async () => {
+const initRouter = (partyId: PartyId.PartyId): Task.Task<CreateRouter_Done[2]> => async () => {
     if (!worker) {
         return Result.Err("worker_does_not_exists")
     }
 
     const router = await worker.createRouter(Config.mediasoup.router)
 
-    routers[partyId] = router
+    routers.set(partyId, router)
 
     return Result.Ok({
         routerRtpCapabilities: router.rtpCapabilities
@@ -390,48 +454,48 @@ const createRouter = (partyId: PartyId.PartyId): Task.Task<CreateRouter_Done[2]>
 }
 
 
-export const initProducerTransport = ({ partyId, userId }: InitProducerTransport_Backend[1]): Task.Task<InitProducerTransport_Backend_Done[2]> => async () => {
-    const router = routers[partyId]
+export const initSendTransport = ({ partyId, userId }: SendTransport_InitBackend[1]): Task.Task<SendTransport_InitBackend_Done[2]> => async () => {
+    const router = routers.get(partyId)
 
     if (!router) {
         return Result.Err("router_does_not_exists")
     }
 
-    const producerTransport = await router.createWebRtcTransport(Config.mediasoup.webRtcTransport)
+    const sendTransport = await router.createWebRtcTransport(Config.mediasoup.webRtcTransport)
 
-    let peer: Peer = {
+    const peer: Peer = {
         ...initialPeer,
-        ...peers[userId],
-        producerTransport
+        ...peers.get(userId),
+        sendTransport: sendTransport
     }
 
-    peers[userId] = peer
+    peers.set(userId, peer)
 
     const transportOptions: TransportOptions = {
-        transportId: producerTransport.id,
-        iceParameters: producerTransport.iceParameters,
-        iceCandidates: producerTransport.iceCandidates,
-        dtlsParameters: producerTransport.dtlsParameters,
+        transportId: sendTransport.id,
+        iceParameters: sendTransport.iceParameters,
+        iceCandidates: sendTransport.iceCandidates,
+        dtlsParameters: sendTransport.dtlsParameters,
     }
 
     return Result.Ok({ transportOptions })
 }
 
 
-const handleProducerTransport_OnConnect = ({ dtlsParameters, userId }: ProducerTransport_OnConnect[1]): Task.Task<ProducerTransport_OnConnect_Done[2]> => async () => {
-    const peer = peers[userId]
+const handleSendTransport_OnConnect = ({ dtlsParameters, userId }: SendTransport_OnConnect[1]): Task.Task<SendTransport_OnConnect_Done[2]> => async () => {
+    const peer = peers.get(userId)
 
     if (!peer) {
         return Result.Err("peer_does_not_exists")
     }
 
-    if (!peer.producerTransport) {
-        return Result.Err("peer_missing_send_transport")
+    if (!peer.sendTransport) {
+        return Result.Err("peer_missing_producer_transport")
     }
 
     try {
 
-        await peer.producerTransport.connect({ dtlsParameters })
+        await peer.sendTransport.connect({ dtlsParameters })
         return Result.Ok(Unit)
     } catch (_error) {
         return Result.Err("producer_transport_connect_errored")
@@ -439,24 +503,88 @@ const handleProducerTransport_OnConnect = ({ dtlsParameters, userId }: ProducerT
 
 }
 
-const handleProducerTransport_OnProduce = ({ appData, kind, rtpParameters, userId }: ProducerTransport_OnProduce[1]): Task.Task<ProducerTransport_OnProduce_Done[2]> => async () => {
-    let peer = peers[userId]
+const handleSendTransport_OnProduce = ({ appData, kind, rtpParameters, userId }: SendTransport_OnProduce[1]): Task.Task<SendTransport_OnProduce_Done[2]> => async () => {
+    const peer = peers.get(userId)
 
     if (!peer) {
         return Result.Err("peer_does_not_exists")
     }
 
-    if (!peer.producerTransport) {
-        return Result.Err("peer_missing_send_transport")
+    if (!peer.sendTransport) {
+        return Result.Err("peer_missing_producer_transport")
     }
 
-    const producer = await peer.producerTransport.produce({
-        kind: kind,
-        rtpParameters: rtpParameters,
-        appData: appData,
-    })
+    try {
 
-    peer.producer = producer
+        const producer = await peer.sendTransport.produce({
+            kind: kind,
+            rtpParameters: rtpParameters,
+            appData: appData,
+        })
 
-    return Result.Ok({ producerId: producer.id })
+        const peerNew: Peer = {
+            ...peer,
+            producer,
+        }
+
+        peers.set(userId, peerNew)
+
+        return Result.Ok({ producerId: producer.id })
+    } catch (_error) {
+        console.error(_error)
+        return Result.Err("produce_threw_an_error")
+    }
+
+}
+
+
+const initRecvTransport = ({ partyId, userId }: RecvTransport_InitBackend[1]): Task.Task<RecvTransport_InitBackend_Done[2]> => async () => {
+    const router = routers.get(partyId)
+
+    if (!router) {
+        return Result.Err("router_does_not_exists")
+    }
+
+    const peerPrev = peers.get(userId) ?? initialPeer
+
+    const recvTransport = await router.createWebRtcTransport(Config.mediasoup.webRtcTransport)
+
+    const peerNew: Peer = {
+        ...peerPrev,
+        recvTransport: recvTransport
+    }
+
+    peers.set(userId, peerNew)
+
+    const transportOptions: TransportOptions = {
+        transportId: recvTransport.id,
+        iceParameters: recvTransport.iceParameters,
+        iceCandidates: recvTransport.iceCandidates,
+        dtlsParameters: recvTransport.dtlsParameters,
+    }
+
+    return Result.Ok({ transportOptions })
+}
+
+const startConsuming = ({ producerId, userId }: { producerId: string, userId: UserId.UserId }): Task.Task<Unit> => async () => {
+
+    const peer = peers.get(userId)
+
+    if (!peer) {
+        return Unit
+    }
+
+    for (const userId in peers) {
+
+        if (!UserId.is(userId)) {
+            continue
+        }
+
+        const otherPeer = peers.get(userId)
+
+
+
+    }
+
+    return Unit
 }
