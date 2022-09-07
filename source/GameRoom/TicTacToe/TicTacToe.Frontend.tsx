@@ -128,7 +128,7 @@ export const CoverArt = () => {
 }
 
 
-export const mergeBackendModel = (_frontendModel: FrontendModel, backendModel: BackendModel): FrontendModel => {
+export const mergeWithBackend = (_frontendModel: FrontendModel, backendModel: BackendModel): FrontendModel => {
   return {
     board: backendModel.board,
     players: backendModel.players,

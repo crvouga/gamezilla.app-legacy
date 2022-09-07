@@ -216,7 +216,7 @@ export const CoverArt = ({ id }: { id: string }) => {
 }
 
 
-export const mergeBackendModel = (_frontendModel: FrontendModel, backendModel: BackendModel): FrontendModel => {
+export const mergeWithBackend = (_frontendModel: FrontendModel, backendModel: BackendModel): FrontendModel => {
   return {
     columns: backendModel.columns
   }
