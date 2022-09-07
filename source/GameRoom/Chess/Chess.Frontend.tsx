@@ -1,8 +1,10 @@
-import { Cmd, Sub, tagCmd } from "../../Core";
+import { Cmd, Result, Sub, tagCmd } from "../../Core";
 import { BackendModel, FrontendModel, FrontendMsg, ToBackend, ToFrontend } from "./Chess.Types";
 import * as UserVsUser from "./UserVsUser/UserVsUser.Frontend"
 import * as Store from "../../Store"
+import * as UI from "../../UI"
 import { UserId } from "../../Data";
+import { ReactNode } from "react";
 
 //
 //
@@ -15,11 +17,13 @@ import { UserId } from "../../Data";
 export type Model = FrontendModel;
 
 export const init = ({ sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd.Cmd<never> }): [FrontendModel, Cmd.Cmd<Msg>] => {
-  const [model, cmd] = UserVsUser.init({ sendToBackend: msg => sendToBackend(['UserVsUser', msg]) })
-  return [
-    ['UserVsUser', model],
-    tagCmd("UserVsUser", cmd)
-  ]
+  // const [model, cmd] = UserVsUser.init({ sendToBackend: msg => sendToBackend(['UserVsUser', msg]) })
+  // return [
+  //   ['UserVsUser', model],
+  //   tagCmd("UserVsUser", cmd)
+  // ]
+
+  return [['None'], Cmd.None]
 }
 
 //
@@ -34,6 +38,10 @@ export type Msg = FrontendMsg
 
 export const update = ({ sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd.Cmd<never> }, msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
+    case 'InputMode': {
+      return [model, sendToBackend(msg)]
+    }
+
     case 'UserVsUser': {
       if (model[0] === 'UserVsUser') {
         const [child, cmd] = UserVsUser.update({ sendToBackend: msg => sendToBackend(['UserVsUser', msg]) }, msg[1], model[1])
@@ -44,13 +52,33 @@ export const update = ({ sendToBackend }: { sendToBackend: (msg: ToBackend) => C
       return [model, Cmd.None]
     }
   }
+
+
 };
 
 export const updateFromBackend = (
+  { sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd.Cmd<never> },
   msg: ToFrontend,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
+
+    case 'InputMode_Done': {
+      const result = msg[2]
+
+      if (result.type === 'Err') {
+        return [model, Cmd.None]
+      }
+
+      const merged = mergeWithBackend({
+        frontendModel: model,
+        backendModel: result.value,
+        sendToBackend
+      })
+
+      return merged
+    }
+
     case 'UserVsUser': {
       if (model[0] === 'UserVsUser') {
         const [child, cmd] = UserVsUser.updateFromBackend(msg[1], model[1])
@@ -84,10 +112,45 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
 // 
 
 
+const iconSize = 58
+
 export const View = ({ currentUserId, store, model, dispatch }: { currentUserId: UserId.UserId, store: Store.Model, model: Model, dispatch: (msg: Msg) => void }) => {
   switch (model[0]) {
+
+    case 'None': {
+      return (
+        <UI.FillBox>
+          <UI.Typography sx={{ paddingX: 2, }} variant="h4">
+            Select mode
+          </UI.Typography>
+
+          <UI.Box sx={{ display: "flex", gap: 2, paddingTop: 1, paddingX: 2, }}>
+
+            <UI.Box sx={{ width: "50%" }}>
+              <ModeSelectCard
+                leftIcon={<UI.Icons.Person sx={{ width: iconSize, height: iconSize }} />}
+                rightIcon={<UI.Icons.Person sx={{ width: iconSize, height: iconSize }} />}
+                title="Vs User"
+                onClick={() => dispatch(['InputMode', { mode: "UserVsUser", userId: currentUserId }])}
+              />
+            </UI.Box>
+
+            <UI.Box sx={{ width: "50%" }}>
+              <ModeSelectCard
+                leftIcon={<UI.Icons.Person sx={{ width: iconSize, height: iconSize }} />}
+                rightIcon={<UI.Icons.SmartToy sx={{ width: iconSize, height: iconSize }} />}
+                title="Vs Bot"
+                onClick={() => dispatch(['InputMode', { mode: "UserVsBot", userId: currentUserId }])}
+              />
+            </UI.Box>
+          </UI.Box>
+        </UI.FillBox >
+      )
+    }
+
     case 'UserVsUser': {
       return <UserVsUser.View
+        onBack={() => dispatch(['InputMode', { mode: "None", userId: currentUserId }])}
         currentUserId={currentUserId}
         store={store}
         model={model[1]}
@@ -97,6 +160,24 @@ export const View = ({ currentUserId, store, model, dispatch }: { currentUserId:
   }
 }
 
+
+const ModeSelectCard = ({ leftIcon, rightIcon, title, onClick }: { leftIcon: ReactNode, rightIcon: ReactNode, title: string, onClick: () => void }) => {
+  return (
+    <UI.CardActionArea onClick={onClick}>
+      <UI.AspectRatio aspectRatio={1}>
+        <UI.Card sx={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column" }}>
+          <UI.Box sx={{ display: "flex", alignItems: 'center', gap: 1, marginBottom: 1 }}>
+            {leftIcon}
+            {rightIcon}
+          </UI.Box>
+          <UI.Typography variant="h5" >
+            {title}
+          </UI.Typography>
+        </UI.Card>
+      </UI.AspectRatio>
+    </UI.CardActionArea>
+  )
+}
 
 // 
 // 
@@ -180,6 +261,10 @@ export const CoverArt = () => {
 
 export const mergeWithBackend = ({ frontendModel, backendModel, sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd.Cmd<never>, frontendModel: FrontendModel, backendModel: BackendModel }): [FrontendModel, Cmd.Cmd<Msg>] => {
   switch (backendModel[0]) {
+    case 'None': {
+      return [['None'], Cmd.None]
+    }
+
     case 'UserVsUser': {
       if (frontendModel[0] === 'UserVsUser') {
         return [['UserVsUser', UserVsUser.mergeWithBackend(frontendModel[1], backendModel[1])], Cmd.None]

@@ -201,7 +201,7 @@ export const updateFromBackend = (
 
       const gameMsg = msg[2]
 
-      const [gameNew, gameCmd, actions] = Game.updateFromBackend(gameMsg, game)
+      const [gameNew, gameCmd, actions] = Game.updateFromBackend({ sendToBackend: msg => sendToBackend(['Games', roomId, msg]) }, gameMsg, game)
 
       const modelNew: Model = {
         ...model,
@@ -315,8 +315,6 @@ const sync = ({
 
         const frontendGame = frontendModel.games[roomId]
 
-        const gameName = backendGame[0]
-
         if (frontendGame) {
           const merged = Game.mergeWithBackend({ sendToBackend: msg => sendToBackend(['Games', roomId, msg]), frontendModel: frontendGame, backendModel: backendGame })
 
@@ -333,17 +331,24 @@ const sync = ({
         }
 
         const [gameInit, gameCmd] = Game.init({
-          gameName,
+          gameName: backendGame[0],
           sendToBackend: (msg) => sendToBackend(['Games', roomId, msg])
+        })
+
+        const merged = Game.mergeWithBackend({
+          sendToBackend: msg => sendToBackend(['Games', roomId, msg]),
+          frontendModel: gameInit,
+          backendModel: backendGame,
         })
 
         return [
           {
             ...games,
-            [roomId]: [gameName, { ...gameInit[1], ...backendGame[1] }]
+            [roomId]: merged[0]
           },
           Cmd.batch([
             cmd,
+            pipe(merged[1], Cmd.map((msg): Msg => ["Games", roomId, msg])),
             pipe(gameCmd, Cmd.map((msg): Msg => ["Games", roomId, msg]))
           ])
         ]
@@ -612,7 +617,7 @@ const ViewNotInGame =
   ) => {
     return (
       <UI.FillBox>
-        <UI.Toolbar variant="dense">
+        <UI.Toolbar>
           {viewButtonMenu({
             buttons: [
               {

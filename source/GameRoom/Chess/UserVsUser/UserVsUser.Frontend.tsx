@@ -307,19 +307,27 @@ export const View =
       store,
       model,
       dispatch,
+      onBack,
     }: {
       store: Store.Model
       currentUserId: UserId.UserId
       model: Model,
       dispatch: (msg: Msg) => void
+      onBack: () => void
     },
+
   ) => {
     const { boardWidth, ref } = useBoardWidth([model.sharedModel.type])
-
 
     if (model.sharedModel.type === 'Setup') {
       return (
         <UI.FillBox>
+          <UI.Box sx={{ paddingX: 2, marginBottom: 2 }}>
+            <UI.Button onClick={onBack} variant="contained" startIcon={<UI.Icons.ChevronLeft />} >
+              Back
+            </UI.Button>
+          </UI.Box>
+
           <UI.Typography sx={{ paddingX: 2, }} color="text.secondary">
             {Board.colorToString('w')}
           </UI.Typography>
