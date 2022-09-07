@@ -287,6 +287,10 @@ export const Toolbar = Mui.Toolbar
 
 export const IconButton = Mui.IconButton
 
+export const ToggleButtonGroup = Mui.ToggleButtonGroup
+
+export const ToggleButton = Mui.ToggleButton
+
 export const Field = ({
   label,
   value,
