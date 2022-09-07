@@ -1,4 +1,4 @@
-import { Cmd, exhaustive, pipe, RemoteData, Sub, Unit } from "../Core"
+import { Cmd, exhaustive, pipe, RemoteData, Sub, tagCmd, Unit } from "../Core"
 import { RoomId, UserId } from "../Data"
 import * as Route from "../Route"
 import * as Snackbar from "../Snackbar"
@@ -318,12 +318,17 @@ const sync = ({
         const gameName = backendGame[0]
 
         if (frontendGame) {
+          const merged = Game.mergeWithBackend({ sendToBackend: msg => sendToBackend(['Games', roomId, msg]), frontendModel: frontendGame, backendModel: backendGame })
+
           return [
             {
               ...games,
-              [roomId]: Game.mergeBackendModel(frontendGame, backendGame),
+              [roomId]: merged[0]
             },
-            cmd
+            Cmd.batch([
+              cmd,
+              pipe(merged[1], Cmd.map((msg): Msg => ['Games', roomId, msg]))
+            ])
           ]
         }
 

@@ -488,7 +488,7 @@ export const CoverArt = () => {
 }
 
 
-export const mergeBackendModel = (frontendModel: FrontendModel, backendModel: BackendModel): FrontendModel => {
+export const mergeWithBackend = (frontendModel: FrontendModel, backendModel: BackendModel): FrontendModel => {
   return {
     ...backendModel,
     openedMenuId: frontendModel.openedMenuId,

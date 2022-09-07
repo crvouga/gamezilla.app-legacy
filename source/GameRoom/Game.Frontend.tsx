@@ -265,34 +265,52 @@ export const CoverArt = ({ gameName }: { gameName: GameName }) => {
 }
 
 
-export const mergeBackendModel = (frontendModel: FrontendModel, backendModel: BackendModel): FrontendModel => {
-  switch (frontendModel[0]) {
+export const mergeWithBackend = ({ sendToBackend, frontendModel, backendModel }: { sendToBackend: (msg: ToBackend) => Cmd.Cmd<never>, frontendModel: FrontendModel, backendModel: BackendModel }): [FrontendModel, Cmd.Cmd<Msg>] => {
+  switch (backendModel[0]) {
     case 'Chess': {
-      if (backendModel[0] === 'Chess') {
-        return ['Chess', Chess.mergeBackendModel(frontendModel[1], backendModel[1])]
+
+      if (frontendModel[0] === 'Chess') {
+        const merged = Chess.mergeWithBackend({ sendToBackend: msg => sendToBackend(['Chess', msg]), frontendModel: frontendModel[1], backendModel: backendModel[1] })
+
+        return [['Chess', merged[0]], tagCmd("Chess", merged[1])]
       }
-      return frontendModel
+
+      const initial = Chess.init({ sendToBackend: msg => sendToBackend(['Chess', msg]) })
+
+      const merged = Chess.mergeWithBackend({ sendToBackend: msg => sendToBackend(['Chess', msg]), frontendModel: initial[0], backendModel: backendModel[1] })
+
+      return [['Chess', merged[0]], Cmd.batch([tagCmd("Chess", initial[1]), tagCmd("Chess", merged[1])])]
     }
 
     case 'ConnectFour': {
-      if (backendModel[0] === 'ConnectFour') {
-        return ['ConnectFour', ConnectFour.mergeBackendModel(frontendModel[1], backendModel[1])]
+      if (frontendModel[0] === 'ConnectFour') {
+        return [['ConnectFour', ConnectFour.mergeWithBackend(frontendModel[1], backendModel[1])], Cmd.None]
       }
-      return frontendModel
+
+      const initial = ConnectFour.init
+
+      return [['ConnectFour', ConnectFour.mergeWithBackend(initial, backendModel[1])], Cmd.None]
     }
 
     case 'Snake': {
-      if (backendModel[0] === 'Snake') {
-        return ['Snake', Snake.mergeBackendModel(frontendModel[1], backendModel[1])]
+      if (frontendModel[0] === 'Snake') {
+        return [['Snake', Snake.mergeWithBackend(frontendModel[1], backendModel[1])], Cmd.None]
       }
-      return frontendModel
+
+      const initial = Snake.init
+
+      return [['Snake', Snake.mergeWithBackend(initial, backendModel[1])], Cmd.None]
     }
 
     case 'TicTacToe': {
-      if (backendModel[0] === 'TicTacToe') {
-        return ['TicTacToe', TicTacToe.mergeBackendModel(frontendModel[1], backendModel[1])]
+      if (frontendModel[0] === 'TicTacToe') {
+        return [['TicTacToe', TicTacToe.mergeWithBackend(frontendModel[1], backendModel[1])], Cmd.None]
       }
-      return frontendModel
+
+      const initial = TicTacToe.init
+
+      return [['TicTacToe', TicTacToe.mergeWithBackend(initial, backendModel[1])], Cmd.None]
     }
   }
 }
+
