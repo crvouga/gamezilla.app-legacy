@@ -1,4 +1,4 @@
-import { RemoteData, Result, Unit } from "../Core"
+import { Option, RemoteData, Result, Unit } from "../Core"
 import { RoomId, UserId } from "../Data"
 import * as Game from "./Game.Types"
 
@@ -10,9 +10,14 @@ import * as Game from "./Game.Types"
 //
 //
 
-export type SharedModel = {
+export type BackendModel = {
   rooms: {
-    [roomId: RoomId.RoomId]: RoomModel
+    [roomId: RoomId.RoomId]: {
+      roomId: RoomId.RoomId
+      hostId: UserId.UserId
+      events: RoomEvent[]
+      game: Option.Option<Game.BackendModel>
+    }
   }
   users: {
     [userId: UserId.UserId]: {
@@ -22,21 +27,20 @@ export type SharedModel = {
   }
 }
 
-export type RoomModel = {
-  roomId: RoomId.RoomId
-  hostId: UserId.UserId
-  events: RoomEvent[]
-}
-
-export type BackendModel = SharedModel & {
-  games: {
-    [roomId: RoomId.RoomId]: Game.BackendModel
+export type FrontendModel = {
+  rooms: {
+    [roomId: RoomId.RoomId]: {
+      roomId: RoomId.RoomId
+      hostId: UserId.UserId
+      events: RoomEvent[]
+      game: Option.Option<Game.FrontendModel>
+    }
   }
-}
-
-export type FrontendModel = SharedModel & {
-  games: {
-    [roomId: RoomId.RoomId]: Game.FrontendModel
+  users: {
+    [userId: UserId.UserId]: {
+      userId: UserId.UserId
+      roomId: RoomId.RoomId
+    }
   }
   modal: "DrawerOpened" | "Closed" | "MenuOpened"
   requests: {
