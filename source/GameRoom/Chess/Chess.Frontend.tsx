@@ -1,6 +1,7 @@
 import { Cmd, Result, Sub, tagCmd } from "../../Core";
 import { BackendModel, FrontendModel, FrontendMsg, ToBackend, ToFrontend } from "./Chess.Types";
 import * as UserVsUser from "./UserVsUser/UserVsUser.Frontend"
+import * as UserVsBot from "./UserVsBot/UserVsBot.Frontend"
 import * as Store from "../../Store"
 import * as UI from "../../UI"
 import { UserId } from "../../Data";
@@ -51,6 +52,16 @@ export const update = ({ sendToBackend }: { sendToBackend: (msg: ToBackend) => C
 
       return [model, Cmd.None]
     }
+
+    case 'UserVsBot': {
+      if (model[0] === 'UserVsBot') {
+        const [child, cmd] = UserVsBot.update({ sendToBackend: msg => sendToBackend(['UserVsBot', msg]) }, msg[1], model[1])
+
+        return [['UserVsBot', child], tagCmd("UserVsBot", cmd)]
+      }
+
+      return [model, Cmd.None]
+    }
   }
 
 
@@ -88,6 +99,16 @@ export const updateFromBackend = (
 
       return [model, Cmd.None]
     }
+
+    case 'UserVsBot': {
+      if (model[0] === 'UserVsBot') {
+        const [child, cmd] = UserVsBot.updateFromBackend(msg[1], model[1])
+
+        return [['UserVsBot', child], tagCmd("UserVsBot", cmd)]
+      }
+
+      return [model, Cmd.None]
+    }
   }
 }
 //
@@ -116,6 +137,8 @@ const iconSize = 58
 
 export const View = ({ currentUserId, store, model, dispatch }: { currentUserId: UserId.UserId, store: Store.Model, model: Model, dispatch: (msg: Msg) => void }) => {
   switch (model[0]) {
+
+
 
     case 'None': {
       return (
@@ -146,6 +169,16 @@ export const View = ({ currentUserId, store, model, dispatch }: { currentUserId:
           </UI.Box>
         </UI.FillBox >
       )
+    }
+
+    case 'UserVsBot': {
+      return <UserVsBot.View
+        currentUserId={currentUserId}
+        dispatch={msg => dispatch(['UserVsBot', msg])}
+        model={model[1]}
+        onBack={() => dispatch(['InputMode', { mode: "None", userId: currentUserId }])}
+        store={store}
+      />
     }
 
     case 'UserVsUser': {
@@ -276,6 +309,20 @@ export const mergeWithBackend = ({ frontendModel, backendModel, sendToBackend }:
       return [
         ['UserVsUser', UserVsUser.mergeWithBackend(child, backendModel[1])],
         tagCmd("UserVsUser", childCmd)
+      ]
+    }
+
+
+    case 'UserVsBot': {
+      if (frontendModel[0] === 'UserVsBot') {
+        return [['UserVsBot', UserVsBot.mergeWithBackend(frontendModel[1], backendModel[1])], Cmd.None]
+      }
+
+      const [child, childCmd] = UserVsBot.init({ sendToBackend: msg => sendToBackend(['UserVsBot', msg]) })
+
+      return [
+        ['UserVsBot', UserVsBot.mergeWithBackend(child, backendModel[1])],
+        tagCmd("UserVsBot", childCmd)
       ]
     }
   }

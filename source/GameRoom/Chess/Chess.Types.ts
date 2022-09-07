@@ -1,7 +1,7 @@
 import { Result } from "../../Core"
 import { UserId } from "../../Data"
 import * as UserVsUser from "./UserVsUser/UserVsUser.Types"
-// import * as UserVsBot from "./UserVsBot"
+import * as UserVsBot from "./UserVsBot/UserVsBot.Types"
 
 //
 //
@@ -14,12 +14,14 @@ import * as UserVsUser from "./UserVsUser/UserVsUser.Types"
 export type FrontendModel =
   | ["None"]
   | ["UserVsUser", UserVsUser.FrontendModel]
+  | ["UserVsBot", UserVsBot.FrontendModel]
 
 export type BackendModel =
   | ["None"]
   | ["UserVsUser", UserVsUser.BackendModel]
+  | ["UserVsBot", UserVsBot.BackendModel]
 
-type Mode = "UserVsUser" | "UserVsBot" | "None"
+type Mode = BackendModel[0]
 
 //
 //
@@ -31,17 +33,21 @@ type Mode = "UserVsUser" | "UserVsBot" | "None"
 
 export type FrontendMsg =
   | ["UserVsUser", UserVsUser.FrontendMsg]
+  | ["UserVsBot", UserVsBot.FrontendMsg]
   | InputMode
 
 export type BackendMsg =
   | ["UserVsUser", UserVsUser.BackendMsg]
+  | ["UserVsBot", UserVsBot.BackendMsg]
 
 export type ToFrontend =
   | ["UserVsUser", UserVsUser.ToFrontend]
+  | ["UserVsBot", UserVsBot.ToFrontend]
   | InputMode_Done
 
 export type ToBackend =
   | ["UserVsUser", UserVsUser.ToBackend]
+  | ["UserVsBot", UserVsBot.ToBackend]
   | InputMode
 
 
