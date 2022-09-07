@@ -1,11 +1,33 @@
 import * as mediasoupClient from "mediasoup-client";
 import * as Rx from "rxjs";
-import { Cmd, exhaustive, pipe, Result, Sub, Task, Unit } from "../Core";
+import {
+    Cmd,
+    exhaustive,
+    pipe,
+    Result,
+    Sub,
+    Task,
+    Unit
+} from "../Core";
 import { PartyId, UserId } from "../Data";
 import * as Route from "../Route";
 import * as Store from "../Store";
 import * as UI from "../UI";
-import { InitProducerTransport_Frontend_Done, StartProducerTransport_Done, FrontendModel, FrontendMsg, UnloadMediaStream_Done, LoadDevice_Done, RouterRtpCapabilities, ToBackend, ToFrontend, TransportOptions, UnloadDevice_Done, LoadMediaStream_Done, MicrophonePermissionStatus } from "./Party.Types";
+import {
+    FrontendModel,
+    FrontendMsg,
+    LoadDevice_Done,
+    LoadMediaStream_Done,
+    RecvTransport_InitFrontend_Done,
+    RouterRtpCapabilities,
+    SendTransport_InitFrontend_Done,
+    StartProducing_Done,
+    ToBackend,
+    ToFrontend,
+    TransportOptions,
+    UnloadDevice_Done,
+    UnloadMediaStream_Done
+} from "./Party.Types";
 
 //
 //
@@ -58,12 +80,16 @@ export const update = ({ sendToBackend }: { sendToBackend: (msg: ToBackend) => C
                 return [model, Cmd.None]
             }
 
+            const cmd = Cmd.batch([
+                sendToBackend(['SendTransport_InitBackend', { userId, partyId, }]),
+                sendToBackend(['RecvTransport_InitBackend', { userId, partyId }])
+            ])
+
             return [
                 { ...model, mediaStream: { type: "Loaded" } },
-                sendToBackend(['InitProducerTransport_Backend', { userId, partyId, }])
+                cmd,
             ]
         }
-
 
         case 'Producer_TrackEnded': {
             return [model, Cmd.None]
@@ -82,7 +108,6 @@ export const update = ({ sendToBackend }: { sendToBackend: (msg: ToBackend) => C
         }
 
         case 'LoadDevice_Done': {
-            // const { userId, partyId } = msg[1]
             const result = msg[2]
 
             if (result.type === 'Err') {
@@ -98,17 +123,22 @@ export const update = ({ sendToBackend }: { sendToBackend: (msg: ToBackend) => C
             ]
         }
 
-        case 'InitProducerTransport_Frontend_Done': {
+        case 'SendTransport_InitFrontend_Done': {
             return [
                 model,
                 pipe(
-                    startProducerTransport(),
-                    Cmd.perform((result): Msg => ['StartProducerTransport_Done', result])
+                    startProducing(),
+                    Cmd.perform((result): Msg => ['StartProducing_Done', result])
                 )
             ]
         }
 
-        case 'StartProducerTransport_Done': {
+
+        case 'StartProducing_Done': {
+            return [model, Cmd.None]
+        }
+
+        case 'RecvTransport_InitFrontend_Done': {
             return [model, Cmd.None]
         }
 
@@ -120,11 +150,11 @@ export const update = ({ sendToBackend }: { sendToBackend: (msg: ToBackend) => C
             return [{ ...model, device: { type: "Unloaded" } }, Cmd.None]
         }
 
-        case 'ProducerTransport_OnConnect': {
+        case 'SendTransport_OnConnect': {
             return [model, sendToBackend(msg)]
         }
 
-        case 'ProducerTransport_OnProduce': {
+        case 'SendTransport_OnProduce': {
             return [model, sendToBackend(msg)]
         }
 
@@ -140,7 +170,7 @@ export const update = ({ sendToBackend }: { sendToBackend: (msg: ToBackend) => C
             return [model, sendToBackend(msg)]
         }
 
-        case 'EmittedProducerId': {
+        case 'EmittedBackendProducerId': {
             return [model, Cmd.None]
         }
 
@@ -151,6 +181,10 @@ export const update = ({ sendToBackend }: { sendToBackend: (msg: ToBackend) => C
 
         case 'GotMicrophonePermissionStatus': {
             return [{ ...model, microphonePermissionStatus: msg[1] }, Cmd.None]
+        }
+
+        case 'RecvTransport_OnConnect': {
+            return [model, sendToBackend(msg)]
         }
 
         default: {
@@ -180,11 +214,30 @@ export const updateFromBackend = ({ currentUserId }: { currentUserId: UserId.Use
             ]
         }
 
-        case 'ProducerTransport_OnConnect_Done': {
+        case 'RecvTransport_InitBackend_Done': {
+            const { userId } = msg[1]
+
+            const result = msg[2]
+
+            if (result.type === 'Err') {
+                return [model, Cmd.None, []]
+            }
+
+            const { transportOptions } = result.value
+
+            const cmd = pipe(
+                initRecvTransport({ userId, transportOptions }),
+                Cmd.perform((result): Msg => ['RecvTransport_InitFrontend_Done', result])
+            )
+
+            return [model, cmd, []]
+        }
+
+        case 'SendTransport_OnConnect_Done': {
             return [model, Cmd.None, []]
         }
 
-        case 'ProducerTransport_OnProduce_Done': {
+        case 'SendTransport_OnProduce_Done': {
             const result = msg[2]
 
             if (result.type === 'Err') {
@@ -194,14 +247,14 @@ export const updateFromBackend = ({ currentUserId }: { currentUserId: UserId.Use
             const producerId = result.value.producerId
 
             const cmd = pipe(
-                emitServerProducerId({ producerId }),
-                Cmd.perform((): Msg => ['EmittedProducerId', { producerId }])
+                emitBackendProducerId({ producerId }),
+                Cmd.perform((): Msg => ['EmittedBackendProducerId', { producerId }])
             )
 
             return [model, cmd, []]
         }
 
-        case 'InitProducerTransport_Backend_Done': {
+        case 'SendTransport_InitBackend_Done': {
             const result = msg[2]
 
             if (result.type === 'Err') {
@@ -213,8 +266,8 @@ export const updateFromBackend = ({ currentUserId }: { currentUserId: UserId.Use
             const options = result.value.transportOptions
 
             const cmd = pipe(
-                initProducerTransport({ userId, options }),
-                Cmd.perform((result): Msg => ['InitProducerTransport_Frontend_Done', result])
+                initSendTransport({ userId, transportOptions: options }),
+                Cmd.perform((result): Msg => ['SendTransport_InitFrontend_Done', result])
             )
 
             return [model, cmd, []]
@@ -236,6 +289,14 @@ export const updateFromBackend = ({ currentUserId }: { currentUserId: UserId.Use
 
         case 'JoinParty_Done': {
             return [model, Cmd.None, []]
+        }
+
+        case 'RecvTransport_OnConnect_Done': {
+            return [model, Cmd.None, []]
+        }
+
+        default: {
+            return exhaustive(msg[1])
         }
     }
 }
@@ -325,7 +386,7 @@ export const runAction = ({ sendToBackend }: { sendToBackend: (msg: ToBackend) =
 
 export const subscriptions = (model: Model): Sub.Sub<Msg> => {
     return Sub.batch([
-        msg$,
+        mediasoupClientMsgs,
         // pipe(_mediaStreamVolume$, Sub.map((volume): Msg => ['GotVolume', { volume }]))
     ]);
 };
@@ -494,21 +555,26 @@ export const viewBanner = ({ route, currentUserId, model, store, }: { store: Sto
 // 
 // 
 
-
-const msg$ = new Rx.Subject<Msg>()
-
 let device: mediasoupClient.types.Device | null = null
+
 const mediaStream$ = new Rx.BehaviorSubject<MediaStream | null>(null)
-let producerTransport: mediasoupClient.types.Transport | null = null
+
+let sendTransport: mediasoupClient.types.Transport | null = null
+
+let recvTransport: mediasoupClient.types.Transport | null = null
+
 let producer: mediasoupClient.types.Producer | null = null
-let consumers: {
-    [producerId: string]: {
-        consumerTransport: mediasoupClient.types.Transport
-        consumer: mediasoupClient.types.Consumer
-    }
-} = {}
 
+const consumers = new Map<UserId.UserId, mediasoupClient.types.Consumer>()
 
+const mediasoupClientMsgs = new Rx.Subject<Msg>()
+
+// 
+// 
+// 
+// 
+// 
+// 
 
 const loadMediaStream = (): Task.Task<LoadMediaStream_Done[2]> => async () => {
     try {
@@ -569,45 +635,43 @@ const unloadDevice: Task.Task<UnloadDevice_Done[1]> = async () => {
     return Result.Ok(Unit)
 }
 
-const serverProducerId$ = new Rx.Subject<{ producerId: string }>()
-
-const emitServerProducerId = ({ producerId }: { producerId: string }): Task.Task<Unit> => async () => {
-    serverProducerId$.next({ producerId })
+const backendProducerId$ = new Rx.Subject<{ producerId: string }>()
+const emitBackendProducerId = ({ producerId }: { producerId: string }): Task.Task<Unit> => async () => {
+    backendProducerId$.next({ producerId })
     return Unit
 }
 
-const initProducerTransport = ({ userId, options }: { userId: UserId.UserId, options: TransportOptions }): Task.Task<InitProducerTransport_Frontend_Done[1]> => async () => {
+const initSendTransport = ({ userId, transportOptions }: { userId: UserId.UserId, transportOptions: TransportOptions }): Task.Task<SendTransport_InitFrontend_Done[1]> => async () => {
     if (!device) {
         return Result.Err("device_does_not_exists")
     }
 
 
-    if (producerTransport) {
+    if (sendTransport) {
         return Result.Err("producer_transport_is_already_initialized")
     }
 
-    producerTransport = device.createSendTransport({
-        ...options,
-        id: options.transportId,
+    sendTransport = device.createSendTransport({
+        ...transportOptions,
+        id: transportOptions.transportId,
 
         // @ts-ignore
-        iceCandidates: options.iceCandidates
+        iceCandidates: transportOptions.iceCandidates
 
-        // this fixes compiler error but cause runtime error
+        // this fixes compiler error but cause runtime error 😑
         // iceCandidates: options.iceCandidates.map(item => ({
         //     ...item, tcpType: item.tcpType ?? "passive"
         // }))
     })
 
-    producerTransport.on("connect", ({ dtlsParameters }, callback, _errback) => {
-        msg$.next(['ProducerTransport_OnConnect', { userId, dtlsParameters }])
+    sendTransport.on("connect", ({ dtlsParameters }, callback, _errback) => {
+        mediasoupClientMsgs.next(['SendTransport_OnConnect', { userId, dtlsParameters }])
         callback()
     })
 
-    producerTransport.on("produce", ({ appData, kind, rtpParameters }, callback) => {
-
-        msg$.next(['ProducerTransport_OnProduce', { userId, appData, kind, rtpParameters }])
-        serverProducerId$.subscribe(({ producerId }) => {
+    sendTransport.on("produce", ({ appData, kind, rtpParameters }, callback) => {
+        mediasoupClientMsgs.next(['SendTransport_OnProduce', { userId, appData, kind, rtpParameters }])
+        backendProducerId$.subscribe(({ producerId }) => {
             callback({
                 id: producerId
             })
@@ -618,9 +682,9 @@ const initProducerTransport = ({ userId, options }: { userId: UserId.UserId, opt
 }
 
 
-const startProducerTransport = (): Task.Task<StartProducerTransport_Done[1]> => async () => {
-    if (!producerTransport) {
-        return Result.Err("producer_transport_does_not_exists")
+const startProducing = (): Task.Task<StartProducing_Done[1]> => async () => {
+    if (!sendTransport) {
+        return Result.Err("send_transport_does_not_exists")
     }
 
     const mediaStream = mediaStream$.getValue()
@@ -632,28 +696,50 @@ const startProducerTransport = (): Task.Task<StartProducerTransport_Done[1]> => 
     const track = mediaStream.getTracks()[0]
 
     try {
-        producer = await producerTransport.produce({
+        producer = await sendTransport.produce({
             track: track,
         })
 
         producer.on("trackended", () => {
-            msg$.next(['Producer_TrackEnded'])
+            mediasoupClientMsgs.next(['Producer_TrackEnded'])
         })
 
         producer.on("transportclose", () => {
-            msg$.next(['Producer_TransportClosed'])
+            mediasoupClientMsgs.next(['Producer_TransportClosed'])
         })
 
         return Result.Ok(Unit)
-    } catch (error) {
-        console.error(error)
+    } catch (_error) {
+        console.error(_error)
         return Result.Err("failed")
     }
 }
 
+const initRecvTransport = ({ userId, transportOptions }: { userId: UserId.UserId, transportOptions: TransportOptions }): Task.Task<RecvTransport_InitFrontend_Done[1]> => async () => {
+    if (!device) {
+        return Result.Err("device_does_not_exists")
+    }
 
-const initCosumerTransports = (): Task.Task<Unit> => async () => {
-    return Unit
+
+    recvTransport = device.createRecvTransport({
+        ...transportOptions,
+        id: transportOptions.transportId,
+
+        // @ts-ignore
+        iceCandidates: transportOptions.iceCandidates
+
+        // this fixes compiler error but cause runtime error 😑
+        // iceCandidates: transportOptions.iceCandidates.map(item => ({
+        //     ...item, tcpType: item.tcpType ?? "passive"
+        // }))
+    })
+
+    recvTransport.on("connect", ({ dtlsParameters }, callback) => {
+        mediasoupClientMsgs.next(['RecvTransport_OnConnect', { userId, dtlsParameters }])
+        callback()
+    })
+
+    return Result.Ok(Unit)
 }
 
 
