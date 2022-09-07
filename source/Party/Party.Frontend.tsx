@@ -5,7 +5,7 @@ import { PartyId, UserId } from "../Data";
 import * as Route from "../Route";
 import * as Store from "../Store";
 import * as UI from "../UI";
-import { Client_InitProducerTransport_Done, StartProducerTransport_Done, FrontendModel, FrontendMsg, UnloadMediaStream_Done, LoadDevice_Done, RouterRtpCapabilities, ToBackend, ToFrontend, TransportOptions, UnloadDevice_Done, LoadMediaStream_Done, MicrophonePermissionStatus } from "./Party.Types";
+import { InitProducerTransport_Frontend_Done, StartProducerTransport_Done, FrontendModel, FrontendMsg, UnloadMediaStream_Done, LoadDevice_Done, RouterRtpCapabilities, ToBackend, ToFrontend, TransportOptions, UnloadDevice_Done, LoadMediaStream_Done, MicrophonePermissionStatus } from "./Party.Types";
 
 //
 //
@@ -60,7 +60,7 @@ export const update = ({ sendToBackend }: { sendToBackend: (msg: ToBackend) => C
 
             return [
                 { ...model, mediaStream: { type: "Loaded" } },
-                sendToBackend(['Server_InitProducerTransport', { userId, partyId, }])
+                sendToBackend(['InitProducerTransport_Backend', { userId, partyId, }])
             ]
         }
 
@@ -98,7 +98,7 @@ export const update = ({ sendToBackend }: { sendToBackend: (msg: ToBackend) => C
             ]
         }
 
-        case 'Client_InitProducerTransport_Done': {
+        case 'InitProducerTransport_Frontend_Done': {
             return [
                 model,
                 pipe(
@@ -201,7 +201,7 @@ export const updateFromBackend = ({ currentUserId }: { currentUserId: UserId.Use
             return [model, cmd, []]
         }
 
-        case 'Server_InitProducerTransport_Done': {
+        case 'InitProducerTransport_Backend_Done': {
             const result = msg[2]
 
             if (result.type === 'Err') {
@@ -214,7 +214,7 @@ export const updateFromBackend = ({ currentUserId }: { currentUserId: UserId.Use
 
             const cmd = pipe(
                 initProducerTransport({ userId, options }),
-                Cmd.perform((result): Msg => ['Client_InitProducerTransport_Done', result])
+                Cmd.perform((result): Msg => ['InitProducerTransport_Frontend_Done', result])
             )
 
             return [model, cmd, []]
@@ -325,8 +325,8 @@ export const runAction = ({ sendToBackend }: { sendToBackend: (msg: ToBackend) =
 
 export const subscriptions = (model: Model): Sub.Sub<Msg> => {
     return Sub.batch([
-        _msg$,
-        pipe(_mediaStreamVolume$, Sub.map((volume): Msg => ['GotVolume', { volume }]))
+        msg$,
+        // pipe(_mediaStreamVolume$, Sub.map((volume): Msg => ['GotVolume', { volume }]))
     ]);
 };
 
@@ -495,12 +495,18 @@ export const viewBanner = ({ route, currentUserId, model, store, }: { store: Sto
 // 
 
 
-const _msg$ = new Rx.Subject<Msg>()
+const msg$ = new Rx.Subject<Msg>()
 
-let _device: mediasoupClient.types.Device | null = null
-const _mediaStream$ = new Rx.BehaviorSubject<MediaStream | null>(null)
-let _producerTransport: mediasoupClient.types.Transport | null = null
-let _producer: mediasoupClient.types.Producer | null = null
+let device: mediasoupClient.types.Device | null = null
+const mediaStream$ = new Rx.BehaviorSubject<MediaStream | null>(null)
+let producerTransport: mediasoupClient.types.Transport | null = null
+let producer: mediasoupClient.types.Producer | null = null
+let consumers: {
+    [producerId: string]: {
+        consumerTransport: mediasoupClient.types.Transport
+        consumer: mediasoupClient.types.Consumer
+    }
+} = {}
 
 
 
@@ -509,7 +515,7 @@ const loadMediaStream = (): Task.Task<LoadMediaStream_Done[2]> => async () => {
         const mediaStream = await navigator.mediaDevices.getUserMedia({
             audio: true,
         })
-        _mediaStream$.next(mediaStream)
+        mediaStream$.next(mediaStream)
         return Result.Ok(Unit)
     } catch (error) {
         console.error(error)
@@ -518,7 +524,7 @@ const loadMediaStream = (): Task.Task<LoadMediaStream_Done[2]> => async () => {
 }
 
 const unloadMediaStream: Task.Task<UnloadMediaStream_Done[1]> = async () => {
-    const mediaStream = _mediaStream$.getValue()
+    const mediaStream = mediaStream$.getValue()
 
     if (!mediaStream) {
         return Result.Ok(Unit)
@@ -530,7 +536,7 @@ const unloadMediaStream: Task.Task<UnloadMediaStream_Done[1]> = async () => {
         }
     }
 
-    _mediaStream$.next(null)
+    mediaStream$.next(null)
 
     return Result.Ok(Unit)
 }
@@ -538,7 +544,7 @@ const unloadMediaStream: Task.Task<UnloadMediaStream_Done[1]> = async () => {
 const loadDevice = ({ routerRtpCapabilities }: { routerRtpCapabilities: RouterRtpCapabilities }): Task.Task<LoadDevice_Done[2]> => async () => {
     try {
 
-        if (_device) {
+        if (device) {
             return Result.Err("device_is_already_loaded")
         }
 
@@ -547,7 +553,7 @@ const loadDevice = ({ routerRtpCapabilities }: { routerRtpCapabilities: RouterRt
         await deviceNew.load({ routerRtpCapabilities })
 
 
-        _device = deviceNew
+        device = deviceNew
 
         return Result.Ok(Unit)
 
@@ -559,7 +565,7 @@ const loadDevice = ({ routerRtpCapabilities }: { routerRtpCapabilities: RouterRt
 }
 
 const unloadDevice: Task.Task<UnloadDevice_Done[1]> = async () => {
-    _device = null
+    device = null
     return Result.Ok(Unit)
 }
 
@@ -570,13 +576,17 @@ const emitServerProducerId = ({ producerId }: { producerId: string }): Task.Task
     return Unit
 }
 
-const initProducerTransport = ({ userId, options }: { userId: UserId.UserId, options: TransportOptions }): Task.Task<Client_InitProducerTransport_Done[1]> => async () => {
-    if (!_device) {
+const initProducerTransport = ({ userId, options }: { userId: UserId.UserId, options: TransportOptions }): Task.Task<InitProducerTransport_Frontend_Done[1]> => async () => {
+    if (!device) {
         return Result.Err("device_does_not_exists")
     }
 
 
-    _producerTransport = _device.createSendTransport({
+    if (producerTransport) {
+        return Result.Err("producer_transport_is_already_initialized")
+    }
+
+    producerTransport = device.createSendTransport({
         ...options,
         id: options.transportId,
 
@@ -589,14 +599,14 @@ const initProducerTransport = ({ userId, options }: { userId: UserId.UserId, opt
         // }))
     })
 
-    _producerTransport.on("connect", ({ dtlsParameters }, callback, _errback) => {
-        _msg$.next(['ProducerTransport_OnConnect', { userId, dtlsParameters }])
+    producerTransport.on("connect", ({ dtlsParameters }, callback, _errback) => {
+        msg$.next(['ProducerTransport_OnConnect', { userId, dtlsParameters }])
         callback()
     })
 
-    _producerTransport.on("produce", ({ appData, kind, rtpParameters }, callback) => {
+    producerTransport.on("produce", ({ appData, kind, rtpParameters }, callback) => {
 
-        _msg$.next(['ProducerTransport_OnProduce', { userId, appData, kind, rtpParameters }])
+        msg$.next(['ProducerTransport_OnProduce', { userId, appData, kind, rtpParameters }])
         serverProducerId$.subscribe(({ producerId }) => {
             callback({
                 id: producerId
@@ -609,11 +619,11 @@ const initProducerTransport = ({ userId, options }: { userId: UserId.UserId, opt
 
 
 const startProducerTransport = (): Task.Task<StartProducerTransport_Done[1]> => async () => {
-    if (!_producerTransport) {
+    if (!producerTransport) {
         return Result.Err("producer_transport_does_not_exists")
     }
 
-    const mediaStream = _mediaStream$.getValue()
+    const mediaStream = mediaStream$.getValue()
 
     if (!mediaStream) {
         return Result.Err("media_stream_track_does_not_exists")
@@ -622,16 +632,16 @@ const startProducerTransport = (): Task.Task<StartProducerTransport_Done[1]> => 
     const track = mediaStream.getTracks()[0]
 
     try {
-        _producer = await _producerTransport.produce({
+        producer = await producerTransport.produce({
             track: track,
         })
 
-        _producer.on("trackended", () => {
-            _msg$.next(['Producer_TrackEnded'])
+        producer.on("trackended", () => {
+            msg$.next(['Producer_TrackEnded'])
         })
 
-        _producer.on("transportclose", () => {
-            _msg$.next(['Producer_TransportClosed'])
+        producer.on("transportclose", () => {
+            msg$.next(['Producer_TransportClosed'])
         })
 
         return Result.Ok(Unit)
@@ -640,6 +650,12 @@ const startProducerTransport = (): Task.Task<StartProducerTransport_Done[1]> => 
         return Result.Err("failed")
     }
 }
+
+
+const initCosumerTransports = (): Task.Task<Unit> => async () => {
+    return Unit
+}
+
 
 // https://mediasoup.org/documentation/v3/mediasoup-client/api/#ProducerOptions
 // https://mediasoup.org/documentation/v3/mediasoup-client/api/#transport-produce
@@ -696,7 +712,7 @@ const _mediaStreamVolume$ =
 
 
 const subscribeMediaStreamVolume = (callback: (volume: number) => void) => {
-    const mediaStream = _mediaStream$.getValue()
+    const mediaStream = mediaStream$.getValue()
 
     if (!mediaStream) {
         return () => { }

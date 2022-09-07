@@ -69,7 +69,7 @@ type MediaStreamModel = { type: "Unloaded" } | { type: "Loaded" }
 export type PartyModel = {
   partyId: PartyId.PartyId
   hostId: UserId.UserId
-  routerRtpCapabilities: RouterRtpCapabilities
+  routerRtpCapabilities: RouterRtpCapabilities,
 }
 
 export type RouterRtpCapabilities = RtpCapabilities
@@ -77,6 +77,7 @@ export type RouterRtpCapabilities = RtpCapabilities
 export type UserModel = {
   userId: UserId.UserId,
   partyId: PartyId.PartyId
+  producerId: Option.Option<string>
 }
 
 // 
@@ -91,7 +92,7 @@ export type BackendMsg =
   | WorkerDied
   | CreateWorker_Done
   | CreateRouter_Done
-  | Server_InitProducerTransport_Done
+  | InitProducerTransport_Backend_Done
   | ProducerTransport_OnConnect_Done
   | ProducerTransport_OnProduce_Done
 
@@ -106,7 +107,7 @@ export type FrontendMsg =
   | UnloadDevice_Done
   | ProducerTransport_OnConnect
   | ProducerTransport_OnProduce
-  | Client_InitProducerTransport_Done
+  | InitProducerTransport_Frontend_Done
   | StartProducerTransport_Done
   | ["EmittedProducerId", { producerId: string }]
   | ["Producer_TrackEnded"]
@@ -114,14 +115,14 @@ export type FrontendMsg =
 
 export type ToBackend =
   | Request
-  | Server_InitProducerTransport
+  | InitProducerTransport_Backend
   | ProducerTransport_OnConnect
   | ProducerTransport_OnProduce
 
 export type ToFrontend =
   | Response
   | ["Sync", SharedModel]
-  | Server_InitProducerTransport_Done
+  | InitProducerTransport_Backend_Done
   | ProducerTransport_OnConnect_Done
   | ProducerTransport_OnProduce_Done
 
@@ -145,21 +146,25 @@ export type UnloadMediaStream_Done = ['UnloadMediaStream_Done', Result.Result<"f
 export type LoadDevice_Done = ['LoadDevice_Done', { userId: UserId.UserId, partyId: PartyId.PartyId, }, Result.Result<"device_is_already_loaded" | "failed_to_load_device", Unit>]
 export type UnloadDevice_Done = ['UnloadDevice_Done', Result.Result<"device_is_already_unloaded" | "failed_to_unload_device", Unit>]
 
-// step 1 - create producer transport on client and server
-export type Server_InitProducerTransport = ["Server_InitProducerTransport", { userId: UserId.UserId, partyId: PartyId.PartyId }]
-export type Server_InitProducerTransport_Done = ["Server_InitProducerTransport_Done", { userId: UserId.UserId, partyId: PartyId.PartyId }, Result.Result<"router_does_not_exists", { transportOptions: TransportOptions }>]
-export type Client_InitProducerTransport_Done = ["Client_InitProducerTransport_Done", Result.Result<"device_does_not_exists", Unit>]
+// create a producer transport on the client and the server
+export type InitProducerTransport_Backend = ["InitProducerTransport_Backend", { userId: UserId.UserId, partyId: PartyId.PartyId }]
+export type InitProducerTransport_Backend_Done = ["InitProducerTransport_Backend_Done", { userId: UserId.UserId, partyId: PartyId.PartyId }, Result.Result<"router_does_not_exists", { transportOptions: TransportOptions }>]
+export type InitProducerTransport_Frontend_Done = ["InitProducerTransport_Frontend_Done", Result.Result<"device_does_not_exists" | "producer_transport_is_already_initialized", Unit>]
 
-// step 2 - connecting producer transports
+// connect the client producer transport with the acompanying server transport
 export type ProducerTransport_OnConnect = ["ProducerTransport_OnConnect", { userId: UserId.UserId, dtlsParameters: DtlsParameters }]
 export type ProducerTransport_OnProduce = ["ProducerTransport_OnProduce", { userId: UserId.UserId, rtpParameters: RtpParameters, kind: MediaKind, appData: AppData }]
-export type ProducerTransport_OnConnect_Done = ["ProducerTransport_OnConnect_Done", { userId: UserId.UserId }, Result.Result<"peer_does_not_exists" | "peer_missing_send_transport", Unit>]
+export type ProducerTransport_OnConnect_Done = ["ProducerTransport_OnConnect_Done", { userId: UserId.UserId }, Result.Result<"peer_does_not_exists" | "peer_missing_send_transport" | "producer_transport_connect_errored", Unit>]
 export type ProducerTransport_OnProduce_Done = ["ProducerTransport_OnProduce_Done", { userId: UserId.UserId }, Result.Result<"peer_does_not_exists" | "peer_missing_send_transport", { producerId: string }>]
-
+// 
 export type StartProducerTransport_Done = ['StartProducerTransport_Done', Result.Result<"producer_transport_does_not_exists" | "media_stream_track_does_not_exists" | "failed", Unit>]
 
-// step 3 -
-//...
+// 
+// 
+export type InitConsumerTransport_Backend = ['InitConsumerTransport_Backend', { userId: UserId.UserId, partyId: PartyId.PartyId }]
+export type InitConsumerTransport_Backend_Done = ['InitConsumerTransport_Backend_Done', { userId: UserId.UserId, partyId: PartyId.PartyId }, Result.Result<"unknown", {}>]
+export type InitConsumerTransport_Frontend_Done = ['InitConsumerTransport_Frontend_Done', Result.Result<"unknown", {}>]
+
 
 // 
 // Payloads

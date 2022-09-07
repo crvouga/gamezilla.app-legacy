@@ -4,7 +4,7 @@ import { Cmd, Option, pipe, Result, Task, Unit } from "../Core"
 import { PartyId, UserId } from "../Data"
 import { Config } from "./Config"
 import {
-    BackendModel, BackendMsg, CreateRouter_Done, joinParty, leaveParty, ProducerTransport_OnConnect, ProducerTransport_OnConnect_Done, ProducerTransport_OnProduce, ProducerTransport_OnProduce_Done, Server_InitProducerTransport, Server_InitProducerTransport_Done, ToBackend, ToFrontend, TransportOptions
+    BackendModel, BackendMsg, CreateRouter_Done, joinParty, leaveParty, PartyModel, ProducerTransport_OnConnect, ProducerTransport_OnConnect_Done, ProducerTransport_OnProduce, ProducerTransport_OnProduce_Done, InitProducerTransport_Backend, InitProducerTransport_Backend_Done, ToBackend, ToFrontend, TransportOptions, UserModel
 } from "./Party.Types"
 
 
@@ -53,6 +53,11 @@ export const update = (
     model: Model
 ): [Model, Cmd.Cmd<Msg>] => {
 
+    const sendToParty = (partyId: PartyId.PartyId, msg: ToFrontend): Cmd.Cmd<never> => {
+        const userIds = Object.values(model.users).flatMap(user => user.partyId === partyId ? [user.userId] : [])
+        return sendToUser(userIds, msg)
+    }
+
     switch (msg[0]) {
         case 'CreateWorker_Done': {
             return [{ ...model, worker: { type: "Ready", } }, Cmd.None]
@@ -62,7 +67,7 @@ export const update = (
             return [{ ...model, worker: { type: "Died", } }, Cmd.None]
         }
 
-        case 'Server_InitProducerTransport_Done': {
+        case 'InitProducerTransport_Backend_Done': {
             const { userId, } = msg[1]
 
             return [model, sendToUser([userId], msg)]
@@ -77,7 +82,37 @@ export const update = (
         case 'ProducerTransport_OnProduce_Done': {
             const { userId } = msg[1]
 
-            return [model, sendToUser([userId], msg)]
+            const result = msg[2]
+
+            if (result.type === 'Err') {
+                return [model, sendToUser([userId], msg)]
+            }
+
+            const user = model.users[userId]
+
+            if (!user) {
+                return [model, sendToUser([userId], msg)]
+            }
+
+            const { producerId } = result.value
+
+            const userNew: UserModel = {
+                ...user,
+                producerId: Option.Some(producerId)
+            }
+
+            const modelNew: Model = {
+                ...model,
+                users: {
+                    ...model.users,
+                    [userNew.userId]: userNew
+                }
+            }
+
+            return [modelNew, Cmd.batch([
+                sendToParty(userNew.partyId, ['Sync', modelNew]),
+                sendToUser([userId], msg)
+            ])]
         }
 
         case 'CreateRouter_Done': {
@@ -96,22 +131,27 @@ export const update = (
                 return [model, sendToUser([hostId], ["StartParty_Done", Result.Err("already_in_a_party")])]
             }
 
-            const modelNew = {
+            const partyNew: PartyModel = {
+                partyId,
+                routerRtpCapabilities,
+                hostId,
+            }
+
+            const userNew: UserModel = {
+                partyId,
+                userId: hostId,
+                producerId: Option.None
+            }
+
+            const modelNew: Model = {
                 ...model,
                 parties: {
                     ...model.parties,
-                    [partyId]: {
-                        partyId,
-                        routerRtpCapabilities,
-                        hostId
-                    }
+                    [partyNew.partyId]: partyNew
                 },
                 users: {
                     ...model.users,
-                    [hostId]: {
-                        partyId,
-                        userId: hostId
-                    }
+                    [userNew.userId]: userNew
                 }
             }
 
@@ -133,12 +173,12 @@ export const updateFromFrontend = ({ broadcast, sendToUser }: { broadcast: (msg:
     }
 
     switch (msg[0]) {
-        case 'Server_InitProducerTransport': {
+        case 'InitProducerTransport_Backend': {
             return [
                 model,
                 pipe(
                     initProducerTransport(msg[1]),
-                    Cmd.perform((result): Msg => ['Server_InitProducerTransport_Done', msg[1], result])
+                    Cmd.perform((result): Msg => ['InitProducerTransport_Backend_Done', msg[1], result])
                 )
             ]
         }
@@ -309,6 +349,15 @@ const initialPeer: Peer = {
 
 const workerMsgs = new Rx.Subject<Msg>()
 
+
+const logInstances = () => {
+    console.log({
+        worker,
+        routers,
+        peers,
+    })
+}
+
 // 
 // 
 // 
@@ -341,7 +390,7 @@ const createRouter = (partyId: PartyId.PartyId): Task.Task<CreateRouter_Done[2]>
 }
 
 
-export const initProducerTransport = ({ partyId, userId }: Server_InitProducerTransport[1]): Task.Task<Server_InitProducerTransport_Done[2]> => async () => {
+export const initProducerTransport = ({ partyId, userId }: InitProducerTransport_Backend[1]): Task.Task<InitProducerTransport_Backend_Done[2]> => async () => {
     const router = routers[partyId]
 
     if (!router) {
@@ -380,9 +429,14 @@ const handleProducerTransport_OnConnect = ({ dtlsParameters, userId }: ProducerT
         return Result.Err("peer_missing_send_transport")
     }
 
-    await peer.producerTransport.connect({ dtlsParameters })
+    try {
 
-    return Result.Ok(Unit)
+        await peer.producerTransport.connect({ dtlsParameters })
+        return Result.Ok(Unit)
+    } catch (_error) {
+        return Result.Err("producer_transport_connect_errored")
+    }
+
 }
 
 const handleProducerTransport_OnProduce = ({ appData, kind, rtpParameters, userId }: ProducerTransport_OnProduce[1]): Task.Task<ProducerTransport_OnProduce_Done[2]> => async () => {
