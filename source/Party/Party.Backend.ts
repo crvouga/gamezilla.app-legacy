@@ -103,7 +103,7 @@ export const update = (
         }
 
         case 'SendTransport_OnProduce_Done': {
-            const { userId } = msg[1]
+            const { userId, } = msg[1]
 
             const result = msg[2]
 
@@ -111,29 +111,30 @@ export const update = (
                 return [model, sendToUser([userId], msg)]
             }
 
-            const user = model.users[userId]
+            const producingUser = model.users[userId]
 
-            if (!user) {
+            if (!producingUser) {
                 return [model, sendToUser([userId], msg)]
             }
 
             const { producerId } = result.value
 
-            const userNew: UserModel = {
-                ...user,
-                producerId: Option.Some(producerId)
-            }
-
             const modelNew: Model = {
                 ...model,
                 users: {
                     ...model.users,
-                    [userNew.userId]: userNew
+                    [userId]: {
+                        ...producingUser,
+                        producerId: Option.Some(producerId)
+                    }
                 }
             }
 
+            const otherUsers = Object.values(model.users).map(user => user.partyId === producingUser.partyId && user.userId !== producingUser.userId)
+            // 
+
             const cmd = Cmd.batch([
-                sendToParty(userNew.partyId, ['Sync', modelNew]),
+                sendToParty(producingUser.partyId, ['Sync', modelNew]),
                 sendToUser([userId], msg)
             ])
 
@@ -170,7 +171,8 @@ export const update = (
             const userNew: UserModel = {
                 partyId,
                 userId: hostId,
-                producerId: Option.None
+                producerId: Option.None,
+                deviceRtpCapabilities: Option.None
             }
 
             const modelNew: Model = {
@@ -243,7 +245,7 @@ export const updateFromFrontend = ({ broadcast, sendToUser }: { broadcast: (msg:
             return [
                 model,
                 pipe(
-                    handleSendTransport_OnProduce(msg[1]),
+                    handleSendTransport_OnProduce(model, msg[1]),
                     Cmd.perform((result): Msg => ['SendTransport_OnProduce_Done', { userId: msg[1].userId }, result])
                 )
             ]
@@ -317,6 +319,8 @@ export const updateFromFrontend = ({ broadcast, sendToUser }: { broadcast: (msg:
                 users: sharedModelNew.users,
             }
 
+
+
             return [
                 modelNew,
                 Cmd.batch([
@@ -330,6 +334,38 @@ export const updateFromFrontend = ({ broadcast, sendToUser }: { broadcast: (msg:
 
         case 'RecvTransport_OnConnect': {
             return [model, Cmd.None]
+        }
+
+        case 'LoadDevice_Done': {
+            const { userId } = msg[1]
+
+            const result = msg[2]
+
+            if (result.type === 'Err') {
+                return [model, Cmd.None]
+            }
+
+            const user = model.users[userId]
+
+            if (!user) {
+                return [model, Cmd.None]
+            }
+
+            const { deviceRtpCapabilities } = result.value
+
+            const modelNew: Model = {
+                ...model,
+                users: {
+                    ...model.users,
+                    [userId]: {
+                        ...user,
+                        deviceRtpCapabilities: Option.Some(deviceRtpCapabilities)
+                    }
+                }
+            }
+
+            return [modelNew, sendToParty(user.partyId, ['Sync', modelNew])]
+
         }
 
         default: {
@@ -401,7 +437,7 @@ type Peer = {
     producer: mediasoup.types.Producer | null
     recvTransport: mediasoup.types.Transport | null
     consumers: {
-        [userId: UserId.UserId]: mediasoup.types.Consumer,
+        [producingUserId: UserId.UserId]: mediasoup.types.Consumer,
     }
 }
 
@@ -503,7 +539,7 @@ const handleSendTransport_OnConnect = ({ dtlsParameters, userId }: SendTransport
 
 }
 
-const handleSendTransport_OnProduce = ({ appData, kind, rtpParameters, userId }: SendTransport_OnProduce[1]): Task.Task<SendTransport_OnProduce_Done[2]> => async () => {
+const handleSendTransport_OnProduce = (model: Model, { appData, kind, rtpParameters, userId }: SendTransport_OnProduce[1]): Task.Task<SendTransport_OnProduce_Done[2]> => async () => {
     const peer = peers.get(userId)
 
     if (!peer) {
@@ -522,12 +558,66 @@ const handleSendTransport_OnProduce = ({ appData, kind, rtpParameters, userId }:
             appData: appData,
         })
 
-        const peerNew: Peer = {
+        const producingPeer: Peer = {
             ...peer,
             producer,
         }
 
-        peers.set(userId, peerNew)
+        peers.set(userId, producingPeer)
+
+
+        const producingUser = model.users[userId]
+
+        if (!producingUser) {
+            return Result.Err("user_does_not_exists")
+        }
+
+        const otherUsers = Object.values(model.users).filter(user => user.userId !== producingUser.userId && user.partyId === producingUser.partyId)
+
+
+
+        for (const consumingUser of otherUsers) {
+            const consumingPeer = peers.get(consumingUser.userId)
+
+            if (!consumingPeer) {
+                continue
+            }
+
+            if (!consumingPeer.recvTransport) {
+                continue
+            }
+
+            const router = routers.get(consumingUser.partyId)
+
+            if (!router) {
+                continue
+            }
+
+            if (consumingUser.deviceRtpCapabilities.type === 'None') {
+                continue
+            }
+
+            const params = {
+                producerId: producer.id,
+                rtpCapabilities: consumingUser.deviceRtpCapabilities.value
+            }
+
+            if (!router.canConsume(params)) {
+                continue
+            }
+
+            const consumer = await consumingPeer.recvTransport.consume(params)
+
+            peers.set(consumingUser.userId, {
+                ...consumingPeer,
+                consumers: {
+                    ...consumingPeer.consumers,
+                    [producingUser.userId]: consumer
+                }
+            })
+
+
+        }
 
         return Result.Ok({ producerId: producer.id })
     } catch (_error) {
@@ -537,6 +627,10 @@ const handleSendTransport_OnProduce = ({ appData, kind, rtpParameters, userId }:
 
 }
 
+
+const toOtherUsersInParty = (someUser: { userId: UserId.UserId, partyId: PartyId.PartyId }, model: Model): UserId.UserId[] => {
+    return Object.values(model.users).filter(user => user.userId !== someUser.userId && user.partyId === someUser.partyId).map(user => user.userId)
+}
 
 const initRecvTransport = ({ partyId, userId }: RecvTransport_InitBackend[1]): Task.Task<RecvTransport_InitBackend_Done[2]> => async () => {
     const router = routers.get(partyId)
@@ -566,25 +660,30 @@ const initRecvTransport = ({ partyId, userId }: RecvTransport_InitBackend[1]): T
     return Result.Ok({ transportOptions })
 }
 
-const startConsuming = ({ producerId, userId }: { producerId: string, userId: UserId.UserId }): Task.Task<Unit> => async () => {
+const startConsuming = ({ producerId, partyId, userIds, }: { producerId: string, partyId: PartyId.PartyId, userIds: UserId.UserId[] }): Task.Task<Unit> => async () => {
+    const router = routers.get(partyId)
 
-    const peer = peers.get(userId)
-
-    if (!peer) {
+    if (!router) {
         return Unit
     }
 
-    for (const userId in peers) {
 
+
+
+
+    for (const userId in userIds) {
         if (!UserId.is(userId)) {
             continue
         }
 
-        const otherPeer = peers.get(userId)
+        const peer = peers.get(userId)
 
-
-
+        if (!peer) {
+            continue
+        }
     }
 
     return Unit
 }
+
+

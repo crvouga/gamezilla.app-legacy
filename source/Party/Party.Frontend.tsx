@@ -19,7 +19,7 @@ import {
     LoadDevice_Done,
     LoadMediaStream_Done,
     RecvTransport_InitFrontend_Done,
-    RouterRtpCapabilities,
+    RtpCapabilities,
     SendTransport_InitFrontend_Done,
     StartProducing_Done,
     ToBackend,
@@ -119,7 +119,7 @@ export const update = ({ sendToBackend }: { sendToBackend: (msg: ToBackend) => C
                     ...model,
                     device: { type: "Loaded" }
                 },
-                Cmd.None
+                sendToBackend(msg)
             ]
         }
 
@@ -607,7 +607,7 @@ const unloadMediaStream: Task.Task<UnloadMediaStream_Done[1]> = async () => {
     return Result.Ok(Unit)
 }
 
-const loadDevice = ({ routerRtpCapabilities }: { routerRtpCapabilities: RouterRtpCapabilities }): Task.Task<LoadDevice_Done[2]> => async () => {
+const loadDevice = ({ routerRtpCapabilities }: { routerRtpCapabilities: RtpCapabilities }): Task.Task<LoadDevice_Done[2]> => async () => {
     try {
 
         if (device) {
@@ -621,7 +621,9 @@ const loadDevice = ({ routerRtpCapabilities }: { routerRtpCapabilities: RouterRt
 
         device = deviceNew
 
-        return Result.Ok(Unit)
+        return Result.Ok({
+            deviceRtpCapabilities: deviceNew.rtpCapabilities
+        })
 
     } catch (_error) {
         console.error(_error)
