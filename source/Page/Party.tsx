@@ -1,8 +1,7 @@
-import { Cmd, pipe, tag } from "../Core"
+import { Cmd } from "../Core"
 import { UserId } from "../Data"
 import * as Party from "../Party/Party.Frontend"
 import * as Store from "../Store"
-import * as UI from "../UI"
 
 //
 //
@@ -50,18 +49,20 @@ export const update = (
 //
 //
 
-export const view = (
+export const View = (
     {
         currentUserId,
         party,
         store,
+        dispatch,
     }: {
         party: Party.Model
         currentUserId: UserId.UserId
         store: Store.Model
+        model: Model,
+        dispatch: (msg: Msg) => void
     },
-    model: Model,
-): UI.View<Msg> => dispatch => {
+) => {
     return <Party.View
         currentUserId={currentUserId}
         store={store}

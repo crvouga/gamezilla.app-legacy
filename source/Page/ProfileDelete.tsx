@@ -64,12 +64,8 @@ export const update = (
 //
 //
 
-export const view =
-  (
-    { store, profileId }: { store: Store.Model; profileId: UserId.UserId },
-    _: Model,
-  ): UI.View<Msg> =>
-  (dispatch) => {
+export const View =
+  ({ store, profileId, model, dispatch }: { store: Store.Model; profileId: UserId.UserId, model: Model, dispatch: (msg: Msg) => void }) => {
     const mutation =
       store.mutations.Profile.DeleteForever[profileId] ?? RemoteData.NotAsked
 
@@ -115,13 +111,14 @@ export const view =
 
       case "NotAsked":
       case "Success":
-        return UI.conformationDialog<Msg>({
-          open: true,
-          title: "Delete profile forever?",
-          confirmTitle: "Delete",
-          onCancel: ["ClickedCancel"],
-          onClose: ["ClickedBackdrop"],
-          onConfirm: ["ClickedDelete"],
-        })(dispatch)
+        return <UI.ConformationDialog
+          open
+          title="Delete profile forever?"
+          confirmTitle="Delete"
+          onCancel={() => dispatch(["ClickedCancel"])}
+          onClose={() => dispatch(["ClickedBackdrop"])}
+          onConfirm={() => dispatch(["ClickedDelete"])}
+        />
+
     }
   }

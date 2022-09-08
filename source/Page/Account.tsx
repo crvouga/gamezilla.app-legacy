@@ -61,44 +61,43 @@ export const update = (
 //
 //
 
-export const view =
-  ({ username }: { username: string }, _: Model): UI.View<Msg> =>
-  (dispatch) =>
-    (
-      <UI.FillBox>
-        <UI.Header title={username} />
+export const View =
+  ({ username, dispatch }: { username: string, dispatch: (msg: Msg) => void, model: Model }) =>
+  (
+    <UI.FillBox>
+      <UI.Header title={username} />
 
-        <UI.List>
-          <UI.ListItemButton onClick={() => dispatch(["ClickedUpdateProfile"])}>
-            <UI.ListItemIcon>
-              <UI.Icons.Edit />
-            </UI.ListItemIcon>
-            <UI.ListItemText primary="Update Profile" />
-            <UI.ListItemSecondaryAction>
-              <UI.Icons.ChevronRight />
-            </UI.ListItemSecondaryAction>
-          </UI.ListItemButton>
+      <UI.List>
+        <UI.ListItemButton onClick={() => dispatch(["ClickedUpdateProfile"])}>
+          <UI.ListItemIcon>
+            <UI.Icons.Edit />
+          </UI.ListItemIcon>
+          <UI.ListItemText primary="Update Profile" />
+          <UI.ListItemSecondaryAction>
+            <UI.Icons.ChevronRight />
+          </UI.ListItemSecondaryAction>
+        </UI.ListItemButton>
 
-          <UI.ListItemButton onClick={() => dispatch(["ClickedDeleteProfile"])}>
-            <UI.ListItemIcon>
-              <UI.Icons.Delete />
-            </UI.ListItemIcon>
-            <UI.ListItemText primary="Delete Profile" />
-          </UI.ListItemButton>
+        <UI.ListItemButton onClick={() => dispatch(["ClickedDeleteProfile"])}>
+          <UI.ListItemIcon>
+            <UI.Icons.Delete />
+          </UI.ListItemIcon>
+          <UI.ListItemText primary="Delete Profile" />
+        </UI.ListItemButton>
 
-          <UI.ListItemButton onClick={() => dispatch(["ClickedLogout"])}>
-            <UI.ListItemIcon>
-              <UI.Icons.Logout />
-            </UI.ListItemIcon>
-            <UI.ListItemText primary="Logout" />
-          </UI.ListItemButton>
+        <UI.ListItemButton onClick={() => dispatch(["ClickedLogout"])}>
+          <UI.ListItemIcon>
+            <UI.Icons.Logout />
+          </UI.ListItemIcon>
+          <UI.ListItemText primary="Logout" />
+        </UI.ListItemButton>
 
-          <UI.ListItemButton onClick={() => dispatch(["ClickedAdmin"])}>
-            <UI.ListItemIcon>
-              <UI.Icons.AdminPanelSettings />
-            </UI.ListItemIcon>
-            <UI.ListItemText primary="Admin" />
-          </UI.ListItemButton>
-        </UI.List>
-      </UI.FillBox>
-    )
+        <UI.ListItemButton onClick={() => dispatch(["ClickedAdmin"])}>
+          <UI.ListItemIcon>
+            <UI.Icons.AdminPanelSettings />
+          </UI.ListItemIcon>
+          <UI.ListItemText primary="Admin" />
+        </UI.ListItemButton>
+      </UI.List>
+    </UI.FillBox>
+  )

@@ -62,15 +62,20 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 //
 //
 
-export const view =
+export const View =
   (
     {
       store,
       profile,
-    }: { store: Store.Model; profile: { userId: UserId.UserId } },
-    _: Model,
-  ): UI.View<Msg> =>
-  (dispatch) => {
+      dispatch
+    }: {
+      store: Store.Model;
+      profile: { userId: UserId.UserId }
+      model: Model,
+      dispatch: (msg: Msg) => void
+    },
+
+  ) => {
     const query =
       store.queries.Conversation.FindManyByUserId[profile.userId] ??
       RemoteData.NotAsked

@@ -52,22 +52,22 @@ export const update = (
 //
 //
 
-export const view = (model: Model): UI.View<Msg> => {
+export const View = ({ model, dispatch }: { model: Model, dispatch: (msg: Msg) => void }) => {
   switch (model.type) {
-    case "Idle":
-      return UI.conformationDialog<Msg>({
-        open: model.type === "Idle",
-        title: "Logout of Gamezilla?",
-        onConfirm: ["ClickedLogout"],
-        confirmTitle: "Logout",
-        onClose: ["ClickedBackdrop"],
-        onCancel: ["ClickedCancel"],
-      })
+    case "Idle": {
+      return <UI.ConformationDialog
+        open={model.type === "Idle"}
+        title="Logout of Gamezilla?"
+        confirmTitle="Logout"
+        onConfirm={() => dispatch(["ClickedLogout"])}
+        onClose={() => dispatch(["ClickedBackdrop"])}
+        onCancel={() => dispatch(["ClickedCancel"])}
+      />
+    }
 
-    case "LoggingOut":
-      return UI.loadingDialog({
-        open: model.type === "LoggingOut",
-        title: "Logging out...",
-      })
+    case "LoggingOut": {
+      return <UI.LoadingDialog open={model.type === "LoggingOut"} title={"Logging out..."} />
+    }
+
   }
 }

@@ -57,27 +57,29 @@ export const updateFromBackend = (
 //
 //
 
-export const view =
+export const View =
   (
     {
       currentUserId,
       store,
+      model,
+      dispatch
     }: {
       currentUserId: UserId.UserId
       store: Store.Model
+      model: Model,
+      dispatch: (msg: Msg) => void
     },
-    model: Model,
-  ): UI.View<Msg> =>
-    (dispatch) => {
-      return (
-        <UI.FillBox>
-          <ViewBoard
-            board={model.board}
-            onClick={() => { }}
-          />
-        </UI.FillBox>
-      )
-    }
+  ) => {
+    return (
+      <UI.FillBox>
+        <ViewBoard
+          board={model.board}
+          onClick={() => { }}
+        />
+      </UI.FillBox>
+    )
+  }
 
 export const CoverArt = () => {
   const positions: [Position, Slot][] = [

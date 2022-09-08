@@ -1,27 +1,9 @@
 import * as MuiLab from "@mui/lab"
 import * as Mui from "@mui/material"
 import { blue } from "@mui/material/colors"
+import { keyframes } from "@mui/system"
 import { ReactNode, useMemo } from "react"
-import { Platform, View } from "../Core"
 import * as Icons from "./Icons"
-
-//
-//
-//
-// View
-//
-//
-//  <UI.Divider orientation="vertical" />
-
-export type Dom = React.ReactElement<unknown>
-
-export type View<Msg> = (dispatch: Platform.Dispatch<Msg>) => Dom
-
-export const map = <A, Msg>(
-  f: (a: A) => Msg,
-): ((ha: View.View<Dom, A>) => View.View<Dom, Msg>) => {
-  return View.map(f)
-}
 
 //
 //
@@ -484,7 +466,7 @@ export const ConformationDialog = ({
   subtitle?: string
   confirmTitle: string;
   cancelTitle?: string;
-  headerIcon?: Dom
+  headerIcon?: ViewNode
 }) => {
   return (
     <Dialog open={open} onClose={onClose}>
@@ -503,53 +485,8 @@ export const ConformationDialog = ({
   );
 };
 
-export const conformationDialog =
-  <TMsg,>({
-    open,
-    onCancel,
-    onClose,
-    onConfirm,
-    title,
-    confirmTitle,
-    cancelTitle = "Cancel",
-  }: {
-    open: boolean
-    onCancel: TMsg
-    onClose: TMsg
-    onConfirm: TMsg
-    title: string
-    confirmTitle: string
-    cancelTitle?: string
-  }): View<TMsg> =>
-    (dispatch) => {
-      return (
-        <Dialog
-          open={open}
-          onClose={() => dispatch(onClose)}
-        >
-          <DialogTitle>{title}</DialogTitle>
-          <DialogActions>
-            <Button onClick={() => dispatch(onCancel)}>{cancelTitle}</Button>
-            <Button onClick={() => dispatch(onConfirm)}>{confirmTitle}</Button>
-          </DialogActions>
-        </Dialog>
-      )
-    }
 
-export const loadingDialog =
-  <TMsg,>({ open, title }: { open: boolean; title: string }): View<TMsg> =>
-    () => {
-      return (
-        <Dialog open={open}>
-          <Box sx={{ display: "flex", alignItems: "center", p: 2 }}>
-            <CircularProgress sx={{ marginRight: 2 }} />
-            <Typography variant="h6">{title}</Typography>
-          </Box>
-        </Dialog>
-      )
-    }
 
-import { keyframes } from "@mui/system"
 
 export const pulse = keyframes`
   0% {

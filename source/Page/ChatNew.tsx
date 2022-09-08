@@ -207,18 +207,20 @@ export const subscriptions = (_model: Model): Sub.Sub<Msg> => {
 //
 //
 
-export const view =
+export const View =
   (
     {
       store,
       currentUserProfile,
+      dispatch,
+      model
     }: {
       store: Store.Model
       currentUserProfile: Store.Profile.Profile
+      model: Model,
+      dispatch: (msg: Msg) => void
     },
-    model: Model,
-  ): UI.View<Msg> =>
-  (dispatch) => {
+  ) => {
     const mutation = store.mutations.Conversation.FindElseInsert
 
     const searchQuery =

@@ -220,101 +220,103 @@ const leftRight: UI.Sx = {
   color: "text.secondary",
 }
 
-export const view =
+export const View =
   (
     {
       currentUserId,
       store,
+      model,
+      dispatch
     }: {
       currentUserId: UserId.UserId,
       store: Store.Model
+      model: Model,
+      dispatch: (msg: Msg) => void
     },
-    model: Model,
-  ): UI.View<Msg> =>
-    (dispatch) => {
-      if (model.gameStatus.type === 'GameSetup') {
-        const menuAnchorId = "playerSlotMenuId"
-        return (
-          <UI.FillBox >
-            <UI.Typography
-
-              sx={{ paddingX: 2 }}
-              color="text.secondary"
-            >
-              Snake
-            </UI.Typography>
-
-
-            <UI.Box sx={{ height: "48px", display: "flex", alignItems: "center", width: "100%" }}>
-              {model.gameStatus.player.type === 'None' ? (
-                <UI.Box sx={{ padding: 2, width: "100%" }}>
-                  <UI.Button
-                    variant="contained"
-                    fullWidth
-                    onClick={() =>
-                      dispatch(["InputPlayer", Option.Some(["User", currentUserId])])
-                    }
-                  >
-                    Play as Snake
-                  </UI.Button>
-                </UI.Box>
-              ) : (
-                <>
-                  <UI.ListItemButton id={menuAnchorId} onClick={() => dispatch(['OpenedMenu', menuAnchorId])}>
-                    <UI.ListItemAvatar>
-                      <UI.Avatar src={store.Profile[model.gameStatus.player.value[1]]?.avatarUrl} />
-                    </UI.ListItemAvatar>
-                    <UI.ListItemText primary={store.Profile[model.gameStatus.player.value[1]]?.username} />
-                    <UI.ListItemSecondaryAction>
-                      <UI.Icons.MoreVert />
-                    </UI.ListItemSecondaryAction>
-                  </UI.ListItemButton>
-                  <UI.Menu
-                    open={model.openedMenuId.type === 'Some' && model.openedMenuId.value === menuAnchorId}
-                    onClose={() => dispatch(['ClosedMenu',])}
-                    anchorEl={document.getElementById(menuAnchorId)}
-                  >
-                    <UI.Button size="large" fullWidth onClick={() => dispatch(['InputPlayer', Option.None])}>
-                      Stop Playing
-                    </UI.Button>
-                  </UI.Menu>
-                </>
-              )}
-            </UI.Box>
-
-            <UI.Box sx={{ flex: 1 }} />
-
-            <UI.Box sx={{ padding: 2 }}>
-              <UI.Button
-                variant="contained"
-                fullWidth
-                disabled={!canStartGame(model)}
-                onClick={() => {
-                  dispatch(['StartGame'])
-                }}
-              >
-                Start Game
-              </UI.Button>
-            </UI.Box>
-
-          </UI.FillBox>
-        )
-      }
-
+  ) => {
+    if (model.gameStatus.type === 'GameSetup') {
+      const menuAnchorId = "playerSlotMenuId"
       return (
-        <UI.FillBox>
-          <ViewBoard
-            model={model}
-            dispatch={dispatch}
-          />
-          {model.gameStatus.player[1] === currentUserId && (
-            <UI.Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", width: "100%", paddingBottom: 2 }}>
-              <Joystick.ViewJoystick onMove={(moveEvent) => {
-                dispatch(['InputDirection', { userId: currentUserId, direction: joystickDirectionToDirection(moveEvent.direction) }])
-              }} />
-            </UI.Box>
-          )}
-          {/* {model.gameStatus.player[1] === currentUserId && (
+        <UI.FillBox >
+          <UI.Typography
+
+            sx={{ paddingX: 2 }}
+            color="text.secondary"
+          >
+            Snake
+          </UI.Typography>
+
+
+          <UI.Box sx={{ height: "48px", display: "flex", alignItems: "center", width: "100%" }}>
+            {model.gameStatus.player.type === 'None' ? (
+              <UI.Box sx={{ padding: 2, width: "100%" }}>
+                <UI.Button
+                  variant="contained"
+                  fullWidth
+                  onClick={() =>
+                    dispatch(["InputPlayer", Option.Some(["User", currentUserId])])
+                  }
+                >
+                  Play as Snake
+                </UI.Button>
+              </UI.Box>
+            ) : (
+              <>
+                <UI.ListItemButton id={menuAnchorId} onClick={() => dispatch(['OpenedMenu', menuAnchorId])}>
+                  <UI.ListItemAvatar>
+                    <UI.Avatar src={store.Profile[model.gameStatus.player.value[1]]?.avatarUrl} />
+                  </UI.ListItemAvatar>
+                  <UI.ListItemText primary={store.Profile[model.gameStatus.player.value[1]]?.username} />
+                  <UI.ListItemSecondaryAction>
+                    <UI.Icons.MoreVert />
+                  </UI.ListItemSecondaryAction>
+                </UI.ListItemButton>
+                <UI.Menu
+                  open={model.openedMenuId.type === 'Some' && model.openedMenuId.value === menuAnchorId}
+                  onClose={() => dispatch(['ClosedMenu',])}
+                  anchorEl={document.getElementById(menuAnchorId)}
+                >
+                  <UI.Button size="large" fullWidth onClick={() => dispatch(['InputPlayer', Option.None])}>
+                    Stop Playing
+                  </UI.Button>
+                </UI.Menu>
+              </>
+            )}
+          </UI.Box>
+
+          <UI.Box sx={{ flex: 1 }} />
+
+          <UI.Box sx={{ padding: 2 }}>
+            <UI.Button
+              variant="contained"
+              fullWidth
+              disabled={!canStartGame(model)}
+              onClick={() => {
+                dispatch(['StartGame'])
+              }}
+            >
+              Start Game
+            </UI.Button>
+          </UI.Box>
+
+        </UI.FillBox>
+      )
+    }
+
+    return (
+      <UI.FillBox>
+        <ViewBoard
+          model={model}
+          dispatch={dispatch}
+        />
+        {model.gameStatus.player[1] === currentUserId && (
+          <UI.Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", width: "100%", paddingBottom: 2 }}>
+            <Joystick.ViewJoystick onMove={(moveEvent) => {
+              dispatch(['InputDirection', { userId: currentUserId, direction: joystickDirectionToDirection(moveEvent.direction) }])
+            }} />
+          </UI.Box>
+        )}
+        {/* {model.gameStatus.player[1] === currentUserId && (
             <UI.Box sx={{ display: "flex", alignItems: "center", width: "100%" }}>
               <UI.Box
                 sx={{
@@ -356,9 +358,9 @@ export const view =
               </UI.Box>
             </UI.Box>
           )} */}
-        </UI.FillBox>
-      )
-    }
+      </UI.FillBox>
+    )
+  }
 
 export const joystickDirectionToDirection = (direction: Joystick.Direction): Direction.Direction => {
   switch (direction) {

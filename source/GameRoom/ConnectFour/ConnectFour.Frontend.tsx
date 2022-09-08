@@ -55,17 +55,15 @@ export const updateFromBackend = (
 //
 //
 
-export const view =
-  (model: Model): UI.View<Msg> =>
-    (dispatch) =>
-    (
-      <UI.FillBox>
-        <ViewColumns
-          columns={model.columns}
-          onClick={(columnIndex) => { }}
-        />
-      </UI.FillBox>
-    )
+export const View =
+  ({ model, dispatch }: { model: Model, dispatch: (msg: Msg) => void }) => (
+    <UI.FillBox>
+      <ViewColumns
+        columns={model.columns}
+        onClick={(columnIndex) => { }}
+      />
+    </UI.FillBox>
+  )
 
 //
 //

@@ -211,18 +211,29 @@ export const View = (
 ) => {
   switch (model[0]) {
     case "ConnectFour": {
-      return pipe(ConnectFour.view(model[1]), UI.map(tag("ConnectFour")))(dispatch)
+      return <ConnectFour.View
+        model={model[1]}
+        dispatch={msg => dispatch(['ConnectFour', msg])}
+      />
+
     }
 
     case "Snake": {
-      return pipe(Snake.view({ currentUserId, store }, model[1]), UI.map(tag("Snake")))(dispatch)
+      return <Snake.View
+        currentUserId={currentUserId}
+        store={store}
+        model={model[1]}
+        dispatch={msg => dispatch(['Snake', msg])}
+      />
     }
 
     case "TicTacToe": {
-      return pipe(
-        TicTacToe.view({ currentUserId, store }, model[1]),
-        UI.map(tag("TicTacToe")),
-      )(dispatch)
+      return <TicTacToe.View
+        currentUserId={currentUserId}
+        store={store}
+        model={model[1]}
+        dispatch={msg => dispatch(['TicTacToe', msg])}
+      />
     }
 
     case "Chess": {
