@@ -371,18 +371,15 @@ export const View =
           </UI.Typography>
 
           <UI.Box sx={{ paddingX: 2 }}>
-            <UI.Select fullWidth value={model.sharedModel.clockPreset}>
+
+            <UI.ToggleButtonGroup fullWidth value={model.sharedModel.clockPreset}>
               {Object.values(Clock.presets)
                 .map((preset) => (
-                  <UI.MenuItem
-                    key={preset}
-                    value={preset}
-                    onClick={() => dispatch(['InputClock', preset])}
-                  >
+                  <UI.ToggleButton key={preset} value={preset} onClick={() => dispatch(['InputClock', preset])}>
                     {Clock.presetToString(preset)}
-                  </UI.MenuItem>)
-                )}
-            </UI.Select>
+                  </UI.ToggleButton>
+                ))}
+            </UI.ToggleButtonGroup>
           </UI.Box>
 
           <UI.Box sx={{ flex: 1 }}></UI.Box>
