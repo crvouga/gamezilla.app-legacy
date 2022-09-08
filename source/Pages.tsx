@@ -30,6 +30,7 @@ import * as Snackbar from "./Snackbar"
 import * as Store from "./Store"
 import * as UI from "./UI"
 
+
 //
 //
 //
@@ -685,106 +686,99 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
 //
 //
 
-export const viewReady = (
+export const ViewReady = (
   {
     profile,
     gameRoom,
     store,
     route,
     party,
+    model,
+    dispatch,
   }: {
     route: Route.Model
     gameRoom: GameRoom.Model
     profile: Store.Profile.Profile
     store: Store.Model
     party: Party.Model,
+    model: Model,
+    dispatch: (msg: Msg) => void
   },
-  model: Model,
-): UI.View<Msg> => {
+) => {
   const currentUserId = profile.userId
   switch (model[0]) {
     case "Account":
-      return (dispatch) => (
-        <UI.FillBox>
-          {tagView("Account", Account.view(profile, model[1]))(dispatch)}
-        </UI.FillBox>
-      )
+      return <UI.FillBox>
+        <Account.View
+          username={profile.username}
+          model={model[1]}
+          dispatch={msg => dispatch(['Account', msg])}
+        />
+      </UI.FillBox>
 
     case "Chat":
-      return (dispatch) => (
-        <UI.FillBox>
-          {tagView("Chat", Chat.view({ profile, store }, model[1]))(dispatch)}
+      return <UI.FillBox>
+        <Chat.View
+          profile={profile}
+          model={model[1]}
+          dispatch={msg => dispatch(['Chat', msg])}
+          store={store}
+        />
+        <ViewBottomNavigation
+          page={"Search"}
+          currentUserId={currentUserId}
+          route={route}
+          dispatch={dispatch}
+        />
+      </UI.FillBox>
 
-          <ViewBottomNavigation
-            page={"Search"}
-            currentUserId={currentUserId}
-            route={route}
-            dispatch={dispatch}
-          />
-        </UI.FillBox>
-      )
 
     case "Search":
-      return (dispatch) => (
-        <UI.FillBox>
-          {tagView("Search", Search.view({ store }, model[1]))(dispatch)}
+      return <UI.FillBox>
+        <Search.View dispatch={msg => dispatch(['Search', msg])} model={model[1]} store={store} />
 
-          <ViewBottomNavigation
-            page={"Search"}
-            currentUserId={currentUserId}
-            route={route}
-            dispatch={dispatch}
-          />
-        </UI.FillBox>
-      )
+        <ViewBottomNavigation
+          page={"Search"}
+          currentUserId={currentUserId}
+          route={route}
+          dispatch={dispatch}
+        />
+      </UI.FillBox>
+
 
     case "ChatNew":
-      return tagView(
-        "ChatNew",
-        ChatNew.view({ store, currentUserProfile: profile }, model[1]),
-      )
+      return <ChatNew.View store={store} currentUserProfile={profile} model={model[1]} dispatch={msg => dispatch(['ChatNew', msg])} />
 
     case "ChatConversation":
-      return tagView(
-        "ChatConversation",
-        ChatConversation.view({ store, authUser: profile }, model[1]),
-      )
+      return <ChatConversation.View store={store} authUser={profile} model={model[1]} dispatch={msg => dispatch(['ChatConversation', msg])} />
 
     case "Logout":
-      return tagView("Logout", Logout.view(model[1]))
+      return <Logout.View model={model[1]} dispatch={msg => dispatch(['Logout', msg])} />
 
     case "ProfileDelete":
-      return tagView(
-        "ProfileDelete",
-        ProfileDelete.view({ store, profileId: profile.userId }, model[1]),
-      )
+      return <ProfileDelete.View store={store} profileId={profile.userId} model={model[1]} dispatch={msg => dispatch(['ProfileDelete', msg])} />
 
     case "ProfileUpdate":
-      return tagView("ProfileUpdate", ProfileUpdate.view(profile, model))
+      return <ProfileUpdate.View profile={profile} model={model[1]} dispatch={msg => dispatch(['ProfileUpdate', msg])} />
 
     case "ProfileUpdateAvatar":
-      return tagView("ProfileUpdateAvatar", ProfileUpdateAvatar.view(model[1]))
+      return <ProfileUpdateAvatar.View model={model[1]} dispatch={msg => dispatch(['ProfileUpdateAvatar', msg])} />
 
     case "ProfileUpdateName":
-      return tagView("ProfileUpdateName", ProfileUpdateName.view(model[1]))
+      return <ProfileUpdateName.View model={model[1]} dispatch={msg => dispatch(['ProfileUpdateName', msg])} />
 
     case "ProfileUpdateTheme":
-      return tagView(
-        "ProfileUpdateTheme",
-        ProfileUpdateTheme.view(profile, model[1]),
-      )
+      return <ProfileUpdateTheme.View profile={profile} model={model[1]} dispatch={msg => dispatch(['ProfileUpdateTheme', msg])} />
 
     case "ProfileUpdateUsername":
-      return tagView(
-        "ProfileUpdateUsername",
-        ProfileUpdateUsername.view(model[1]),
-      )
+      return <ProfileUpdateUsername.View model={model[1]} dispatch={msg => dispatch(['ProfileUpdateUsername', msg])} />
+
 
     case "Admin":
-      return viewLoading
+      return <UI.LoadingPage />
 
     case "Profile":
-      return (dispatch) => (
+      return (
         <UI.FillBox>
           <Profile.View
             store={store}
@@ -802,12 +796,15 @@ export const viewReady = (
       )
 
     case "GameRoom": {
-      return dispatch => (
+      return (
         <UI.FillBox>
-          {tagView(
-            "GameRoom",
-            GameRoomPage.view({ store, currentUserId, gameRoom }, model[1]),
-          )(dispatch)}
+          <GameRoomPage.View
+            store={store}
+            currentUserId={currentUserId}
+            gameRoom={gameRoom}
+            model={model[1]}
+            dispatch={msg => dispatch(['GameRoom', msg])}
+          />
 
           <ViewBottomNavigation
             page={"Profile"}
@@ -822,18 +819,23 @@ export const viewReady = (
 
 
     case 'Party': {
-      return dispatch => (
-        <UI.FillBox>
-          {tagView("Party", PartyPage.view({ currentUserId, party, store }, model[1]))(dispatch)}
+      return <UI.FillBox>
+        <PartyPage.View
+          currentUserId={currentUserId}
+          party={party}
+          store={store}
+          model={model[1]}
+          dispatch={(msg) => dispatch(['Party', msg])}
+        />
 
-          <ViewBottomNavigation
-            page={"Party"}
-            currentUserId={currentUserId}
-            route={route}
-            dispatch={dispatch}
-          />
-        </UI.FillBox>
-      )
+        <ViewBottomNavigation
+          page={"Party"}
+          currentUserId={currentUserId}
+          route={route}
+          dispatch={dispatch}
+        />
+      </UI.FillBox>
+
     }
 
     case "Login":
@@ -842,23 +844,29 @@ export const viewReady = (
     case "LoginEmail":
     case "PasswordReset":
     case "AccountCreate":
-      return viewLoading
+      return <UI.LoadingPage />
 
     default:
       return exhaustive(model)
   }
 }
 
-export const viewProfileMissing = (
-  _auth: Auth.Session,
-  model: Model,
-): UI.View<Msg> => {
+export const ViewProfileMissing = (
+  {
+    model,
+    dispatch
+  }: {
+    authSession: Auth.Session,
+    model: Model,
+    dispatch: (msg: Msg) => void
+  }
+) => {
   switch (model[0]) {
     case "Logout":
-      return tagView("Logout", Logout.view(model[1]))
+      return <Logout.View model={model[1]} dispatch={msg => dispatch(['Logout', msg])} />
 
     case "ProfileCreate":
-      return tagView("ProfileCreate", ProfileCreate.view(model[1]))
+      return <ProfileCreate.View model={model[1]} dispatch={msg => dispatch(['ProfileCreate', msg])} />
 
     case "Account":
     case "Chat":
@@ -880,26 +888,26 @@ export const viewProfileMissing = (
     case "GameRoom":
     case "Admin":
     case 'Party':
-      return viewLoading
+      return <UI.LoadingPage />
 
     default:
       return exhaustive(model)
   }
 }
 
-export const viewLoggedOut = (model: Model): UI.View<Msg> => {
+export const ViewLoggedOut = ({ model, dispatch }: { model: Model, dispatch: (msg: Msg) => void }) => {
   switch (model[0]) {
     case "Login":
-      return tagView("Login", Login.view(model[1]))
+      return <Login.View model={model[1]} dispatch={msg => dispatch(["Login", msg])} />
 
     case "LoginEmail":
-      return tagView("LoginEmail", LoginEmail.view(model[1]))
+      return <LoginEmail.View model={model[1]} dispatch={msg => dispatch(["LoginEmail", msg])} />
 
     case "AccountCreate":
-      return tagView("AccountCreate", AccountCreate.view(model[1]))
+      return <AccountCreate.View model={model[1]} dispatch={msg => dispatch(["AccountCreate", msg])} />
 
     case "PasswordReset":
-      return tagView("PasswordReset", PasswordReset.view(model[1]))
+      return <PasswordReset.View model={model[1]} dispatch={msg => dispatch(["PasswordReset", msg])} />
 
     case "Account":
     case "Chat":
@@ -919,14 +927,14 @@ export const viewLoggedOut = (model: Model): UI.View<Msg> => {
     case "Admin":
     case "Loading":
     case 'Party':
-      return viewLoading
+      return <UI.LoadingPage />
 
     default:
       return exhaustive(model)
   }
 }
 
-const viewLoading: UI.View<Msg> = () => <UI.LoadingPage />
+
 
 //
 //
@@ -1009,13 +1017,6 @@ const ViewBottomNavigation =
 //
 //
 //
-
-const tagView = <TMsg, TPage extends Msg[0]>(
-  page: TPage,
-  dom: UI.View<TMsg>,
-): UI.View<[TPage, TMsg]> => {
-  return pipe(dom, UI.map(tag(page)))
-}
 
 const tagUpdate = <TModel, TMsg, TAction, TPage extends Msg[0]>(
   page: TPage,

@@ -496,7 +496,7 @@ const countUsersInParty = (partyId: PartyId.PartyId, model: Model): number => {
     return Object.values(model.users).filter(user => user.partyId === partyId).length
 }
 
-export const viewBanner = ({ route, currentUserId, model, store, }: { store: Store.Model, route: Route.Model, currentUserId: UserId.UserId, model: Model }): UI.View<Msg> => (dispatch) => {
+export const viewBanner = ({ dispatch, route, currentUserId, model, store, }: { store: Store.Model, route: Route.Model, currentUserId: UserId.UserId, model: Model, dispatch: (msg: Msg) => void }) => {
     if (route[0] === 'Party') {
         return <></>
     }

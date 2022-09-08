@@ -50,23 +50,25 @@ export const update = (
 //
 //
 
-export const view = (
+export const View = (
   {
     currentUserId,
     gameRoom,
     store,
+    dispatch,
+    model,
   }: {
     gameRoom: GameRoomFrontend.Model
     currentUserId: UserId.UserId
     store: Store.Model
+    model: Model,
+    dispatch: (msg: Msg) => void
   },
-  model: Model,
-): UI.View<Msg> =>
-  (dispatch) => {
-    return <GameRoomFrontend.View
-      currentUserId={currentUserId}
-      store={store}
-      model={gameRoom}
-      dispatch={msg => dispatch(['GameRoom', msg])}
-    />
-  }
+) => {
+  return <GameRoomFrontend.View
+    currentUserId={currentUserId}
+    store={store}
+    model={gameRoom}
+    dispatch={msg => dispatch(['GameRoom', msg])}
+  />
+}

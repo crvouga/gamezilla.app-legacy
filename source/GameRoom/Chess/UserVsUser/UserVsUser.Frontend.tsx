@@ -745,7 +745,7 @@ const toGameText = (model: SharedModel): string => {
 }
 
 
-const ViewActionButton = ({ title, icon, onClick }: { title: string, icon: UI.Dom; onClick: () => void }) => {
+const ViewActionButton = ({ title, icon, onClick }: { title: string, icon: UI.ViewNode; onClick: () => void }) => {
   const theme = UI.useTheme()
   return (
     <UI.ButtonBase

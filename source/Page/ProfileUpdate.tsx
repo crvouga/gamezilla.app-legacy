@@ -66,54 +66,53 @@ export const update = (
 //
 //
 
-export const view =
-  (profile: Profile.Profile, _model: Model): UI.View<Msg> =>
-  (dispatch) =>
-    (
-      <UI.FillBox>
-        <UI.Header
-          left={
-            <UI.HeaderBackButton onClick={() => dispatch(["ClickedBack"])} />
-          }
-          title="Update Profile"
+export const View =
+  ({ profile, dispatch }: { profile: Profile.Profile, model: Model, dispatch: (msg: Msg) => void }) =>
+  (
+    <UI.FillBox>
+      <UI.Header
+        left={
+          <UI.HeaderBackButton onClick={() => dispatch(["ClickedBack"])} />
+        }
+        title="Update Profile"
+      />
+
+      <UI.Avatar
+        src={profile.avatarUrl}
+        sx={{
+          marginX: "auto",
+          width: "150px",
+          height: "150px",
+          marginBottom: 1,
+        }}
+        onClick={() => dispatch(["ClickedAvatar"])}
+      />
+
+      <UI.Button
+        sx={{ display: "block", marginX: "auto", marginBottom: 2 }}
+        onClick={() => dispatch(["ClickedChangedAvatar"])}
+      >
+        Change Avatar
+      </UI.Button>
+
+      <UI.List>
+        <UI.Field
+          label="Username"
+          value={profile.username}
+          onClick={() => dispatch(["ClickedUsername"])}
         />
 
-        <UI.Avatar
-          src={profile.avatarUrl}
-          sx={{
-            marginX: "auto",
-            width: "150px",
-            height: "150px",
-            marginBottom: 1,
-          }}
-          onClick={() => dispatch(["ClickedAvatar"])}
+        <UI.Field
+          label="Name"
+          value={profile.name}
+          onClick={() => dispatch(["ClickedName"])}
         />
 
-        <UI.Button
-          sx={{ display: "block", marginX: "auto", marginBottom: 2 }}
-          onClick={() => dispatch(["ClickedChangedAvatar"])}
-        >
-          Change Avatar
-        </UI.Button>
-
-        <UI.List>
-          <UI.Field
-            label="Username"
-            value={profile.username}
-            onClick={() => dispatch(["ClickedUsername"])}
-          />
-
-          <UI.Field
-            label="Name"
-            value={profile.name}
-            onClick={() => dispatch(["ClickedName"])}
-          />
-
-          <UI.Field
-            label="Theme"
-            value={profile.themeMode}
-            onClick={() => dispatch(["ClickedTheme"])}
-          />
-        </UI.List>
-      </UI.FillBox>
-    )
+        <UI.Field
+          label="Theme"
+          value={profile.themeMode}
+          onClick={() => dispatch(["ClickedTheme"])}
+        />
+      </UI.List>
+    </UI.FillBox>
+  )

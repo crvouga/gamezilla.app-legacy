@@ -13,7 +13,7 @@ import * as UI from "../UI"
 //
 //
 
-type focusedModel =
+type FocusedModel =
   | {
     type: "Blurred"
   }
@@ -26,7 +26,7 @@ type focusedModel =
 export type Model = {
   conversationId: string
   text: string
-  focused: focusedModel
+  focused: FocusedModel
 }
 
 export const init = ({
@@ -143,99 +143,101 @@ export const update = (
 //
 //
 
-export const view =
+export const View =
   (
     {
       store,
       authUser,
+      model,
+      dispatch
     }: {
       store: Store.Model
       authUser: { userId: UserId.UserId }
+      model: Model,
+      dispatch: (msg: Msg) => void
     },
-    model: Model,
-  ): UI.View<Msg> =>
-    (dispatch) => {
-      const query =
-        store.queries.Conversation.FindOne[model.conversationId] ??
-        RemoteData.NotAsked
+  ) => {
+    const query =
+      store.queries.Conversation.FindOne[model.conversationId] ??
+      RemoteData.NotAsked
 
-      const conversation = pipe(
-        Store.Conversation.toConversation(model.conversationId, store),
-        (conversation) => ({
-          ...conversation,
-          profiles: conversation.profiles.filter(
-            (item) => item.userId !== authUser.userId,
-          ),
-        }),
-      )
+    const conversation = pipe(
+      Store.Conversation.toConversation(model.conversationId, store),
+      (conversation) => ({
+        ...conversation,
+        profiles: conversation.profiles.filter(
+          (item) => item.userId !== authUser.userId,
+        ),
+      }),
+    )
 
-      const messageInsertMutation =
-        store.mutations.Message.Send[model.conversationId] ?? RemoteData.NotAsked
+    const messageInsertMutation =
+      store.mutations.Message.Send[model.conversationId] ?? RemoteData.NotAsked
 
-      return (
-        <UI.FillBox>
-          <UI.Toolbar>
-            <UI.Box sx={{ flex: 1 }}>
-              <UI.HeaderBackButton onClick={() => dispatch(["ClickedBack"])} />
-            </UI.Box>
+    return (
+      <UI.FillBox>
+        <UI.Toolbar>
+          <UI.Box sx={{ flex: 1 }}>
+            <UI.HeaderBackButton onClick={() => dispatch(["ClickedBack"])} />
+          </UI.Box>
 
-            <UI.Box
-              sx={{
-                flex: 3,
-                paddingY: 2,
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <UI.AvatarGroup>
-                {conversation.profiles.map((item) => (
-                  <UI.Avatar
-                    key={item.userId}
-                    src={item.avatarUrl}
-                  />
-                ))}
-              </UI.AvatarGroup>
-              <UI.Typography
-                align="center"
-                noWrap
-              >
-                {conversation.profiles
-                  .map((profile) => profile.username)
-                  .join(", ")}
-              </UI.Typography>
-            </UI.Box>
-            <UI.Box sx={{ flex: 1 }}></UI.Box>
-          </UI.Toolbar>
-
-          <MessageContainer
-            isLoading={query.type === "Loading"}
-            scrollKey={String(conversation.messages.length)}
+          <UI.Box
+            sx={{
+              flex: 3,
+              paddingY: 2,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
           >
-            <UI.Box sx={{ flex: 1 }}></UI.Box>
+            <UI.AvatarGroup>
+              {conversation.profiles.map((item) => (
+                <UI.Avatar
+                  key={item.userId}
+                  src={item.avatarUrl}
+                />
+              ))}
+            </UI.AvatarGroup>
+            <UI.Typography
+              align="center"
+              noWrap
+            >
+              {conversation.profiles
+                .map((profile) => profile.username)
+                .join(", ")}
+            </UI.Typography>
+          </UI.Box>
+          <UI.Box sx={{ flex: 1 }}></UI.Box>
+        </UI.Toolbar>
 
-            {conversation.messages.map((message) => (
-              <ChatMessage
-                key={message.messageId}
-                message={message}
-                currentUserId={authUser.userId}
-                dispatch={dispatch}
-                model={model}
-                store={store}
-              />
-            ))}
-          </MessageContainer>
+        <MessageContainer
+          isLoading={query.type === "Loading"}
+          scrollKey={String(conversation.messages.length)}
+        >
+          <UI.Box sx={{ flex: 1 }}></UI.Box>
 
-          <ChatInput
-            value={model.text}
-            onChange={(text) => dispatch(["InputtedText", text])}
-            onSend={() => dispatch(["ClickedSend"])}
-            isSending={messageInsertMutation.type === "Loading"}
-          />
-        </UI.FillBox>
-      )
-    }
+          {conversation.messages.map((message) => (
+            <ChatMessage
+              key={message.messageId}
+              message={message}
+              currentUserId={authUser.userId}
+              dispatch={dispatch}
+              model={model}
+              store={store}
+            />
+          ))}
+        </MessageContainer>
+
+        <ChatInput
+          value={model.text}
+          onChange={(text) => dispatch(["InputtedText", text])}
+          onSend={() => dispatch(["ClickedSend"])}
+          isSending={messageInsertMutation.type === "Loading"}
+        />
+      </UI.FillBox>
+    )
+  }
 
 const ChatInput = ({
   value,

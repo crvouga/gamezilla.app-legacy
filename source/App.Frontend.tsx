@@ -459,146 +459,120 @@ const toThemeMode = (model: Model): UI.ThemeMode => {
   }
 }
 
-const view =
-  (model: Model): UI.View<Msg> =>
-    (dispatch) => {
-      return (
-        <UI.ThemeProvider themeMode={toThemeMode(model)}>
+const View =
+  ({ model, dispatch }: { model: Model, dispatch: (msg: Msg) => void }) => {
+    return (
+      <UI.ThemeProvider themeMode={toThemeMode(model)}>
+        <UI.Box
+          sx={{
+            userSelect: "none",
+            maxWidth: "sm",
+            marginX: "auto",
+            position: "fixed",
+            width: "100%",
+            height: "100%",
+            overflow: "hidden",
+            maxHeight: "100%",
+            display: "flex",
+            flexDirection: "column",
+            left: "50%",
+            top: "50%",
+            transform: "translate(-50%, -50%)",
+          }}
+        >
           <UI.Box
             sx={{
-              userSelect: "none",
-              maxWidth: "sm",
-              marginX: "auto",
-              position: "fixed",
-              width: "100%",
-              height: "100%",
-              overflow: "hidden",
-              maxHeight: "100%",
               display: "flex",
               flexDirection: "column",
-              left: "50%",
-              top: "50%",
-              transform: "translate(-50%, -50%)",
+              width: "100%",
+              overflow: "hidden",
+              flex: 1,
             }}
           >
-            <UI.Box
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                width: "100%",
-                overflow: "hidden",
-                flex: 1,
-              }}
-            >
-              {viewMain(model)(dispatch)}
-            </UI.Box>
-
-            {pipe(
-              Snackbar.view({}, model.snackbar),
-              UI.map(tag("Snackbar")),
-            )(dispatch)}
+            <ViewMain model={model} dispatch={dispatch} />
           </UI.Box>
-        </UI.ThemeProvider>
-      )
-    }
 
-const viewMain = (model: Model): UI.View<Msg> => {
+          <Snackbar.View
+            model={model.snackbar}
+            dispatch={msg => dispatch(['Snackbar', msg])}
+          />
+        </UI.Box>
+      </UI.ThemeProvider>
+    )
+  }
+
+const ViewMain = ({ model, dispatch }: { model: Model, dispatch: (msg: Msg) => void }) => {
   const status = toStatus(model)
 
   switch (model.wire) {
     case "Connecting":
-      return viewLoading({ reason: "Connecting..." })
+      return <ViewLoading reason="Connecting..." />
 
     case "Disconnected":
-      return viewLoading({ reason: "Connecting..." })
+      return <ViewLoading reason="Connecting..." />
 
     case "ConnectError":
-      return viewLoading({ reason: "Connecting..." })
+      return <ViewLoading reason="Connecting..." />
 
     case "Connected": {
       switch (status[0]) {
         case "AuthLoading":
-          return viewLoading({ reason: "Authenticating..." })
+          return <ViewLoading reason="Authenticating..." />
 
         case "ProfileLoading":
-          return viewLoading({ reason: "Loading profile..." })
+          return <ViewLoading reason="Loading profile..." />
 
         case "ProfileError":
-          return viewError({ reason: "Failed to load profile." })
+          return <ViewError reason="Failed to load profile." />
 
         case "LoggedOut":
-          return pipe(Pages.viewLoggedOut(model.page), UI.map(tag("Page")))
+          return <Pages.ViewLoggedOut
+            model={model.page}
+            dispatch={msg => dispatch(['Page', msg])}
+          />
 
         case "ProfileMissing":
-          return pipe(
-            Pages.viewProfileMissing(status[1].authSession, model.page),
-            UI.map(tag("Page")),
-          )
+          return <Pages.ViewProfileMissing
+            authSession={status[1].authSession}
+            model={model.page}
+            dispatch={msg => dispatch(['Page', msg])}
+          />
 
         case "Ready":
-          const currentUserId = status[1].profile.userId
-          return (dispatch) => (
-            <>
-              <UI.FillBox>
-                {/* {pipe(
-                  Party.viewBanner(
-                    {
-                      store: model.store,
-                      route: model.route,
-                      currentUserId,
-                      model: model.party,
-                    }
-                  ),
-                  UI.map(tag("Party")),
-                )(dispatch)}
+          return <Pages.ViewReady
+            {...model}
+            profile={status[1].profile}
+            dispatch={msg => dispatch(['Page', msg])}
+            model={model.page}
+          />
 
-                <GameRoom.ViewBanner
-                  currentUserId={currentUserId}
-                  route={model.route}
-                  dispatch={msg => dispatch(['GameRoom', msg])}
-                  model={model.gameRoom}
-                /> */}
 
-                {pipe(
-                  Pages.viewReady(
-                    { ...model, profile: status[1].profile },
-                    model.page,
-                  ),
-                  UI.map(tag("Page")),
-                )(dispatch)}
-              </UI.FillBox>
-            </>
-          )
       }
     }
   }
 }
 
-const viewLoading =
-  ({ reason }: { reason: string }): UI.View<Msg> =>
-    () =>
-    (
-      <UI.FillBox sx={{ justifyContent: "center", alignItems: "center" }}>
-        <UI.CircularProgress sx={{ marginBottom: 2 }} />
+const ViewLoading =
+  ({ reason }: { reason: string }) =>
+  (
+    <UI.FillBox sx={{ justifyContent: "center", alignItems: "center" }}>
+      <UI.CircularProgress sx={{ marginBottom: 2 }} />
 
-        <UI.Typography
-          align="center"
-          variant="caption"
-          color="text.secondary"
-        >
-          {reason}
-        </UI.Typography>
-      </UI.FillBox>
-    )
+      <UI.Typography
+        align="center"
+        variant="caption"
+        color="text.secondary"
+      >
+        {reason}
+      </UI.Typography>
+    </UI.FillBox>
+  )
 
-const viewError =
-  ({ reason }: { reason: string }): UI.View<Msg> =>
-    () =>
-    (
-      <UI.FillBox sx={{ justifyContent: "center", alignItems: "center", p: 2 }}>
-        <UI.Alert severity="error">{reason}</UI.Alert>
-      </UI.FillBox>
-    )
+const ViewError = ({ reason }: { reason: string }) => (
+  <UI.FillBox sx={{ justifyContent: "center", alignItems: "center", p: 2 }}>
+    <UI.Alert severity="error">{reason}</UI.Alert>
+  </UI.FillBox>
+)
 
 //
 //
@@ -716,7 +690,7 @@ const program = pipe(
     onLocationChange,
     subscriptions,
     update,
-    view,
+    view: (model) => (dispatch) => <View model={model} dispatch={dispatch} />,
   }),
   Debug.ReduxDevTools.withDebugger,
 )
