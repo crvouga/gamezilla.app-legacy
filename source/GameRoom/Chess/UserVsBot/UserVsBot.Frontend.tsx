@@ -216,19 +216,21 @@ export const View =
         if (model.sharedModel.type === 'Setup') {
             return (
                 <UI.FillBox>
-                    <UI.Toolbar >
-                        <UI.Box sx={{ flex: 1 }}>
-                            <UI.Button onClick={onBack} sx={{ marginLeft: -1 }} startIcon={<UI.Icons.ChevronLeft />} >
+                    <UI.Header
+
+                        left={
+                            <UI.Button onClick={onBack} sx={{ marginLeft: -1 }} >
                                 Back
                             </UI.Button>
-                        </UI.Box>
-                        <UI.Typography align="center" sx={{ flex: 1 }} variant="h6">
-                            User Vs Bot
-                        </UI.Typography>
-                        <UI.Box sx={{ flex: 1 }}>
-                            {roomAvatarGroup}
-                        </UI.Box>
-                    </UI.Toolbar>
+                        }
+
+                        title="User Vs Bot"
+
+                        right={
+                            roomAvatarGroup
+                        }
+
+                    />
 
                     <UI.Typography sx={{ paddingX: 2, }} color="text.secondary">
                         Player

@@ -684,7 +684,7 @@ const toStatus = ({
 //
 //
 
-const program = pipe(
+const program = Debug.ReduxDevTools.withDebugger(
   Browser.application({
     init,
     onLocationChange,
@@ -692,7 +692,6 @@ const program = pipe(
     update,
     view: (model) => (dispatch) => <View model={model} dispatch={dispatch} />,
   }),
-  Debug.ReduxDevTools.withDebugger,
 )
 
 const root = ReactDomClient.createRoot(document.getElementById("root")!)
@@ -700,12 +699,6 @@ const root = ReactDomClient.createRoot(document.getElementById("root")!)
 Browser.run(program, (dom) => {
   root.render(dom)
 })
-
-// program.state$.subscribe((state) => {
-//   console.log("--")
-//   console.log(state.msg?.flat(Infinity))
-//   console.log(state.model)
-// })
 
 //
 //
@@ -715,14 +708,10 @@ Browser.run(program, (dom) => {
 //
 //
 
-const productionBackendUrl = "https://backend.gamezilla.app/"
-
-const developmentBackendUrl = `http://localhost:${Wire.backendServerPort}/`
-
 const backendUrl =
   process.env.NODE_ENV === "production"
-    ? productionBackendUrl
-    : developmentBackendUrl
+    ? `https://backend.gamezilla.app/`
+    : `http://localhost:${Wire.backendServerPort}/`
 
 const socketClient: Socket<Wire.ServerToClientEvents, Wire.ClientToServerEvents> =
   io(backendUrl, {
@@ -751,22 +740,3 @@ Wire._sendToBackend.subscribe((msg) => {
   socketClient.emit("ToBackend", msg)
 })
 
-//
-//
-//
-// Hot Reload
-//
-//
-//
-
-// const dispose = () => {
-//   stop()
-// }
-
-// // @ts-ignore
-// if (import.meta.hot) {
-//   // @ts-ignore
-//   import.meta.hot.accept()
-//   // @ts-ignore
-//   import.meta.hot.dispose(dispose)
-// }

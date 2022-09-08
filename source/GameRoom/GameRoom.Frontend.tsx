@@ -552,12 +552,14 @@ export const ViewNotInRoom =
       currentUserId,
       store,
       model,
-      dispatch
+      dispatch,
+
     }: {
       store: Store.Model
       currentUserId: UserId.UserId
       model: Model,
       dispatch: (msg: Msg) => void
+
     },
   ) => {
     const rooms = Object.values(model.rooms)
@@ -659,21 +661,26 @@ const ViewNotInGame =
     }
     return (
       <UI.FillBox>
-        <UI.Toolbar>
-          <UI.Button sx={{ marginLeft: -1 }} startIcon={<UI.Icons.ExitToApp sx={{ transform: "rotate(180deg)" }} />} onClick={() => dispatch(['LeaveRoom', { userId: currentUserId }])}>
-            Leave Room
-          </UI.Button>
-
-          <UI.Box sx={{ flex: 1 }} />
-
-          <ViewGameRoomAvatarGroup
-            currentUserId={currentUserId}
-            store={store}
-            room={room}
-            model={model}
-            dispatch={dispatch}
-          />
-        </UI.Toolbar>
+        <UI.Header
+          left={
+            <UI.Button
+              sx={{ marginLeft: -1 }}
+              onClick={() => dispatch(['LeaveRoom', { userId: currentUserId }])}
+            >
+              Leave
+            </UI.Button>
+          }
+          title="Choose Game"
+          right={
+            <ViewGameRoomAvatarGroup
+              currentUserId={currentUserId}
+              store={store}
+              room={room}
+              model={model}
+              dispatch={dispatch}
+            />
+          }
+        />
 
         <UI.Box
           sx={{
@@ -734,22 +741,22 @@ const ViewGameRoomAvatarGroup =
       currentUserId: UserId.UserId
     },
   ) => {
-    const usersInRoom = Object.values(store.Profile).filter(
-      (profile) =>
-        model.users[profile.userId] &&
-        model.users[profile.userId]?.roomId === room.roomId,
-    )
-
-    const guests = usersInRoom.filter(item => item.userId !== room.hostId)
-    const hosts = usersInRoom.filter(item => item.userId === room.hostId)
+    const usersInRoom = Object.values(model.users).filter(user => user.roomId === room.roomId)
 
     return (
       <>
-        <UI.AvatarGroup max={4} sx={{ marginRight: -1 }} onClick={() => dispatch(["ClickedAvatars"])}>
-          {usersInRoom.map((profile) => (
+
+        <UI.AvatarGroup
+          sx={{ marginRight: -1, }}
+          onClick={() => dispatch(["ClickedAvatars"])}
+          componentsProps={{
+            additionalAvatar: { sx: { width: 28, height: 28 } }
+          }}>
+          {usersInRoom.map((user) => (
             <UI.Avatar
-              key={profile.userId}
-              src={profile.avatarUrl}
+              key={user.userId}
+              src={store.Profile[user.userId]?.avatarUrl}
+              sx={{ width: 28, height: 28 }}
             />
           ))}
         </UI.AvatarGroup>
@@ -759,31 +766,36 @@ const ViewGameRoomAvatarGroup =
           open={model.modal === "DrawerOpened"}
           onClose={() => dispatch(["ClosedDrawer"])}
         >
-          <UI.Box sx={{ display: 'flex', gap: 2 }}>
-            {hosts.map((item) => (
-              <RoomUserItem
-                key={item.userId}
-                onClick={() => dispatch(["ClickedUser", item])}
-                src={item.avatarUrl}
-                name={item.username}
-                subtitle="Host"
-              />
-            ))}
-            {guests.map((item) => (
-              <RoomUserItem
-                key={item.userId}
-                onClick={() => dispatch(["ClickedUser", item])}
-                src={item.avatarUrl}
-                name={item.username}
-                subtitle="Guest"
-              />
+          <UI.Typography variant="h4" sx={{ paddingX: 2, paddingTop: 1 }}>
+            {store.Profile[room.hostId]?.username ?? "..."}'s room
+          </UI.Typography>
+
+          <UI.Box sx={{ display: 'grid', gridTemplateColumns: "1fr 1fr 1fr", paddingY: 1, }}>
+            {usersInRoom.map((user) => (
+              <UI.Box
+                key={user.userId}
+                onClick={() => dispatch(['ClickedUser', user])}
+                sx={{
+                  display: 'flex',
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: 1,
+                }}>
+                <UI.Avatar src={store.Profile[user.userId]?.avatarUrl} />
+                <UI.Typography align="center" sx={{ marginBottom: -1 / 2 }}>
+                  {store.Profile[user.userId]?.username ?? "..."}
+                </UI.Typography>
+                <UI.Typography variant="subtitle2" color="text.secondary">
+                  {user.userId === room.hostId ? "Host" : "Guest"}
+                </UI.Typography>
+              </UI.Box>
             ))}
           </UI.Box>
           <UI.Box sx={{ paddingX: 2, paddingBottom: 2 }}>
             <UI.Button
               fullWidth
               variant="contained"
-              startIcon={<UI.Icons.ExitToApp sx={{ transform: "rotate(180deg)" }} />}
               onClick={() => dispatch(['LeaveRoom', { userId: currentUserId }])}
             >
               Leave Room
@@ -794,20 +806,6 @@ const ViewGameRoomAvatarGroup =
       </>
     )
   }
-
-const RoomUserItem = ({ onClick, src, name, subtitle, }: { onClick: () => void, src: string, name: string, subtitle: string }) => {
-  return (
-    <UI.Box onClick={onClick} sx={{ display: 'flex', flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 2 }}>
-      <UI.Avatar src={src} />
-      <UI.Typography align="center">
-        {name}
-      </UI.Typography>
-      <UI.Typography variant="subtitle2" color="text.secondary">
-        {subtitle}
-      </UI.Typography>
-    </UI.Box>
-  )
-}
 
 const GameCard = ({
   icon,

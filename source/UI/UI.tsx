@@ -48,11 +48,15 @@ const createTheme = ({ mode }: { mode: "light" | "dark" }) =>
           },
         },
         MuiAvatar: {
-          styleOverrides: {
-            root: {
-              // backgroundColor: "w",
-              // border: "1px solid #dedede",
-            },
+          defaultProps: {
+            variant: "rounded",
+          },
+        },
+        MuiAvatarGroup: {
+          defaultProps: {
+            max: 3,
+            spacing: "medium",
+            variant: "rounded",
           },
         },
       },
@@ -361,10 +365,9 @@ export const FillBox = ({ sx, ...props }: Mui.BoxProps) => {
         flexDirection: "column",
         width: "100%",
         height: "100%",
-        maxHeight: "100%",
-        maxWidth: "100%",
-        userSelect: "none",
         overflow: "hidden",
+        padding: 0,
+        margin: 0,
         ...sx,
       }}
       {...props}
