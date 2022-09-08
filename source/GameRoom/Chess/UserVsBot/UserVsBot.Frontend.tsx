@@ -76,6 +76,14 @@ export const update = (
             return [model, sendToBackend(msg)]
         }
 
+        case 'StartGame': {
+            return [model, sendToBackend(msg)]
+        }
+
+        case 'StopGame': {
+            return [model, sendToBackend(msg)]
+        }
+
         default: {
             return exhaustive(msg[0])
         }
@@ -129,6 +137,35 @@ export const updateFromBackend = (
         }
 
         case 'InputBot_Done': {
+            const result = msg[1]
+
+            if (result.type === 'Err') {
+                return [model, Cmd.None]
+            }
+
+            const sharedModelNew = result.value
+
+            const modelNew = mergeWithBackend(model, sharedModelNew)
+
+            return [modelNew, Cmd.None]
+        }
+
+        case 'StartGame_Done': {
+            const result = msg[1]
+
+            if (result.type === 'Err') {
+                return [model, Cmd.None]
+            }
+
+            const sharedModelNew = result.value
+
+            const modelNew = mergeWithBackend(model, sharedModelNew)
+
+            return [modelNew, Cmd.None]
+        }
+
+
+        case 'StopGame_Done': {
             const result = msg[1]
 
             if (result.type === 'Err') {
@@ -299,7 +336,13 @@ export const View =
                     <UI.Box sx={{ flex: 1 }} />
 
                     <UI.Box sx={{ paddingX: 2, paddingBottom: 1 }}>
-                        <UI.Button fullWidth size="large" variant="contained" disabled={!canStartGame(model.sharedModel)}>
+                        <UI.Button
+                            fullWidth
+                            size="large"
+                            variant="contained"
+                            disabled={!canStartGame(model.sharedModel)}
+                            onClick={() => dispatch(['StartGame', { userId: currentUserId }])}
+                        >
                             Start Game
                         </UI.Button>
                     </UI.Box>
@@ -308,7 +351,21 @@ export const View =
         }
 
         return <UI.FillBox>
-            game time
+            <UI.Header
+
+                left={
+                    <UI.Button onClick={() => dispatch(['StopGame', { userId: currentUserId }])} sx={{ marginLeft: -1 }} >
+                        Back
+                    </UI.Button>
+                }
+
+                title=""
+
+                right={
+                    roomAvatarGroup
+                }
+
+            />
         </UI.FillBox>
 
     }
