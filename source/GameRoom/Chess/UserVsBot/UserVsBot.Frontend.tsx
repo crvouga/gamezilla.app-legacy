@@ -366,6 +366,8 @@ export const View =
                 }
 
             />
+
+            <Board.View />
         </UI.FillBox>
 
     }

@@ -1,3 +1,5 @@
+import { DependencyList, useLayoutEffect, useRef, useState } from "react"
+import { Chessboard } from "react-chessboard"
 import * as ChessTs from "chess.ts"
 import { exhaustive, Result } from "../../Core"
 
@@ -185,4 +187,79 @@ export const move = (
     pgn: instance.pgn(),
     didCapture: Boolean(moved.captured),
   })
+}
+
+
+// 
+// 
+// 
+// 
+// View
+// 
+// 
+// 
+
+
+export const View = ({
+  boardOrentation,
+  model,
+  onPieceDrop,
+  isDraggablePiece
+}: {
+  boardOrentation: Color,
+  model: Model,
+  onPieceDrop: (move: MoveInput) => boolean
+  isDraggablePiece: ({ piece }: { piece: Piece }) => boolean
+}) => {
+  const { boardWidth, ref } = useBoardWidth([])
+  return (
+    <div ref={ref}>
+      <Chessboard
+        showBoardNotation
+        snapToCursor
+        boardOrientation={boardOrentation === "w" ? "white" : "black"
+        }
+        position={toFen(model)}
+        boardWidth={boardWidth}
+        isDraggablePiece={({ piece, }) => {
+          return isDraggablePiece({ piece })
+        }}
+        onPieceDrop={(sourceSquare, targetSquare, _piece) => {
+          const moveInput: MoveInput = {
+            from: sourceSquare,
+            to: targetSquare,
+            promotion: "q",
+          }
+
+          return onPieceDrop(moveInput)
+        }}
+      />
+    </div>
+  )
+}
+
+
+const useBoardWidth = (depList: DependencyList) => {
+  const [boardWidth, setBoardWidth] = useState(0)
+  const ref = useRef<HTMLDivElement | null>(null)
+
+  useLayoutEffect(() => {
+    const handler = () => {
+      if (ref.current) {
+        setBoardWidth(ref.current?.offsetWidth)
+      }
+    }
+
+    handler()
+
+    window.addEventListener("resize", handler)
+    return () => {
+      window.removeEventListener("resize", handler)
+    }
+  }, depList)
+
+  return {
+    ref,
+    boardWidth
+  }
 }
