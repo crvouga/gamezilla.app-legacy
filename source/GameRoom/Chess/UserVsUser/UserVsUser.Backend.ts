@@ -65,10 +65,7 @@ export const update = (
 }
 
 export const updateFromFrontend = (
-  {
-    sendToClient,
-    sendToRoom,
-  }: {
+  wire: {
     sendToClient: (msg: ToFrontend) => Cmd.Cmd<never>
     sendToRoom: (msg: ToFrontend) => Cmd.Cmd<never>
   },
@@ -77,12 +74,12 @@ export const updateFromFrontend = (
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
     case "Init": {
-      return [model, sendToClient(["Sync", model.sharedModel])]
+      return [model, wire.sendToClient(["Sync", model.sharedModel])]
     }
 
     case "RequestToDraw": {
       return sendResponse(
-        { sendToClient, sendToRoom },
+        wire,
         ["RequestToDraw_Done", requestToDraw(msg[1], model.sharedModel)],
         model,
       )
@@ -90,7 +87,7 @@ export const updateFromFrontend = (
 
     case "Resign": {
       return sendResponse(
-        { sendToClient, sendToRoom },
+        wire,
         ["Resign_Done", resign(msg[1], model.sharedModel)],
         model,
       )
@@ -98,7 +95,7 @@ export const updateFromFrontend = (
 
     case "InputClock": {
       return sendResponse(
-        { sendToClient, sendToRoom },
+        wire,
         ["InputClock_Done", inputClock(msg[1], model.sharedModel)],
         model,
       )
@@ -106,7 +103,7 @@ export const updateFromFrontend = (
 
     case "InputPlayer": {
       return sendResponse(
-        { sendToClient, sendToRoom },
+        wire,
         ["InputPlayer_Done", inputPlayer(msg[1], model.sharedModel)],
         model,
       )
@@ -114,7 +111,7 @@ export const updateFromFrontend = (
 
     case "StartGame": {
       return sendResponse(
-        { sendToClient, sendToRoom },
+        wire,
         ["StartGame_Done", startGame(model.sharedModel)],
         model,
       )
@@ -122,7 +119,7 @@ export const updateFromFrontend = (
 
     case "Move": {
       return sendResponse(
-        { sendToClient, sendToRoom },
+        wire,
         ["Moved_Done", move(msg[1], model.sharedModel)],
         model,
       )
@@ -130,7 +127,7 @@ export const updateFromFrontend = (
 
     case "RespondToDraw": {
       return sendResponse(
-        { sendToClient, sendToRoom },
+        wire,
         ["RespondToDraw_Done", respondToDraw(msg[1], model.sharedModel)],
         model,
       )
@@ -138,7 +135,7 @@ export const updateFromFrontend = (
 
     case "NewGame": {
       return sendResponse(
-        { sendToClient, sendToRoom },
+        wire,
         ["NewGame_Done", newGame(model.sharedModel)],
         model,
       )
