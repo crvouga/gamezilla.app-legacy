@@ -459,20 +459,26 @@ const toThemeMode = (model: Model): UI.ThemeMode => {
   }
 }
 
+
+const maxWidth = 390
+const maxHeight = 844
+
 const View =
   ({ model, dispatch }: { model: Model, dispatch: (msg: Msg) => void }) => {
     return (
       <UI.ThemeProvider themeMode={toThemeMode(model)}>
         <UI.Box
           sx={{
+            maxWidth: maxWidth,
+            maxHeight: maxHeight,
+
             userSelect: "none",
-            maxWidth: "sm",
             marginX: "auto",
             position: "fixed",
             width: "100%",
             height: "100%",
             overflow: "hidden",
-            maxHeight: "100%",
+            // 
             display: "flex",
             flexDirection: "column",
             left: "50%",
