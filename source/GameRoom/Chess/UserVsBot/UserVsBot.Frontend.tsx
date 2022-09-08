@@ -367,7 +367,7 @@ export const View =
 
             />
 
-            <Board.View />
+            {/* <Board.View /> */}
         </UI.FillBox>
 
     }
