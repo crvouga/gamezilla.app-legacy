@@ -63,16 +63,26 @@ export const View =
       currentUserId,
       store,
       model,
-      dispatch
+      dispatch,
+      onCloseGame
     }: {
       currentUserId: UserId.UserId
       store: Store.Model
       model: Model,
       dispatch: (msg: Msg) => void
+      onCloseGame: () => void
     },
   ) => {
     return (
       <UI.FillBox>
+        <UI.Header
+          left={
+            <UI.Button sx={{ marginLeft: -1 }} onClick={onCloseGame}>
+              Close
+            </UI.Button>
+          }
+          title="Tic Tac Toe"
+        />
         <ViewBoard
           board={model.board}
           onClick={() => { }}

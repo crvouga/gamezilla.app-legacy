@@ -56,14 +56,24 @@ export const updateFromBackend = (
 //
 
 export const View =
-  ({ model, dispatch }: { model: Model, dispatch: (msg: Msg) => void }) => (
-    <UI.FillBox>
-      <ViewColumns
-        columns={model.columns}
-        onClick={(columnIndex) => { }}
-      />
-    </UI.FillBox>
-  )
+  ({ model, dispatch, onCloseGame }: { model: Model, dispatch: (msg: Msg) => void, onCloseGame: () => void }) => {
+    return (
+      <UI.FillBox>
+        <UI.Header
+          left={
+            <UI.Button sx={{ marginLeft: -1 }} onClick={onCloseGame}>
+              Close
+            </UI.Button>
+          }
+          title="Connect Four"
+        />
+        <ViewColumns
+          columns={model.columns}
+          onClick={(columnIndex) => { }}
+        />
+      </UI.FillBox>
+    )
+  }
 
 //
 //

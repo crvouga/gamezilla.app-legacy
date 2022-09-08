@@ -214,6 +214,7 @@ export const View = (
       return <ConnectFour.View
         model={model[1]}
         dispatch={msg => dispatch(['ConnectFour', msg])}
+        onCloseGame={onCloseGame}
       />
 
     }
@@ -233,6 +234,7 @@ export const View = (
         store={store}
         model={model[1]}
         dispatch={msg => dispatch(['TicTacToe', msg])}
+        onCloseGame={onCloseGame}
       />
     }
 
