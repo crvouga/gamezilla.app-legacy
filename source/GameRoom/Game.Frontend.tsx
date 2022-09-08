@@ -198,13 +198,15 @@ export const View = (
     store,
     model,
     dispatch,
-    onBack
+    onCloseGame,
+    roomAvatarGroup
   }: {
-    onBack: () => void
+    onCloseGame: () => void
     currentUserId: UserId.UserId
     store: Store.Model,
     model: Model,
     dispatch: (msg: Msg) => void,
+    roomAvatarGroup: UI.ViewNode
   },
 ) => {
   switch (model[0]) {
@@ -225,11 +227,12 @@ export const View = (
 
     case "Chess": {
       return <Chess.View
-        onBack={onBack}
+        onCloseGame={onCloseGame}
         currentUserId={currentUserId}
         store={store}
         model={model[1]}
         dispatch={msg => dispatch(['Chess', msg])}
+        roomAvatarGroup={roomAvatarGroup}
       />
     }
   }

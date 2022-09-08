@@ -135,26 +135,27 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
 
 const iconSize = 58
 
-export const View = ({ currentUserId, store, model, dispatch, onBack }: { onBack: () => void, currentUserId: UserId.UserId, store: Store.Model, model: Model, dispatch: (msg: Msg) => void }) => {
+export const View = ({ roomAvatarGroup, currentUserId, store, model, dispatch, onCloseGame }: { onCloseGame: () => void, currentUserId: UserId.UserId, store: Store.Model, model: Model, dispatch: (msg: Msg) => void, roomAvatarGroup: UI.ViewNode }) => {
   switch (model[0]) {
-
-
-
     case 'None': {
       return (
         <UI.FillBox>
-          <UI.Box sx={{ paddingX: 2, marginBottom: 2 }}>
-            <UI.Button onClick={onBack} variant="contained" startIcon={<UI.Icons.ChevronLeft />} >
-              Back
-            </UI.Button>
-          </UI.Box>
+          <UI.Toolbar >
+            <UI.Box sx={{ flex: 1 }}>
+              <UI.Button onClick={onCloseGame} startIcon={<UI.Icons.ChevronLeft />} sx={{ marginLeft: -1 }}>
+                Back
+              </UI.Button>
+            </UI.Box>
+            <UI.Typography align="center" sx={{ flex: 1 }} variant="h6">
+              Chess
+            </UI.Typography>
+            <UI.Box sx={{ flex: 1, textAlign: 'right' }}>
+              {roomAvatarGroup}
+            </UI.Box>
 
-          <UI.Typography sx={{ paddingX: 2, }} variant="h4">
-            Select mode
-          </UI.Typography>
+          </UI.Toolbar>
 
-          <UI.Box sx={{ display: "flex", gap: 2, paddingTop: 1, paddingX: 2, }}>
-
+          <UI.Box sx={{ display: "flex", gap: 2, padding: 2, }}>
             <UI.Box sx={{ width: "50%" }}>
               <ModeSelectCard
                 leftIcon={<UI.Icons.Person sx={{ width: iconSize, height: iconSize }} />}
@@ -184,6 +185,7 @@ export const View = ({ currentUserId, store, model, dispatch, onBack }: { onBack
         model={model[1]}
         onBack={() => dispatch(['InputMode', { mode: "None", userId: currentUserId }])}
         store={store}
+        roomAvatarGroup={roomAvatarGroup}
       />
     }
 
@@ -194,6 +196,7 @@ export const View = ({ currentUserId, store, model, dispatch, onBack }: { onBack
         store={store}
         model={model[1]}
         dispatch={msg => dispatch(['UserVsUser', msg])}
+        roomAvatarGroup={roomAvatarGroup}
       />
     }
   }
