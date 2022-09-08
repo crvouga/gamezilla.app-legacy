@@ -308,12 +308,14 @@ export const View =
       model,
       dispatch,
       onBack,
+      roomAvatarGroup
     }: {
       store: Store.Model
       currentUserId: UserId.UserId
       model: Model,
       dispatch: (msg: Msg) => void
-      onBack: () => void
+      onBack: () => void,
+      roomAvatarGroup: UI.ViewNode
     },
 
   ) => {
@@ -322,11 +324,19 @@ export const View =
     if (model.sharedModel.type === 'Setup') {
       return (
         <UI.FillBox>
-          <UI.Box sx={{ paddingX: 2, marginBottom: 2 }}>
-            <UI.Button onClick={onBack} variant="contained" startIcon={<UI.Icons.ChevronLeft />} >
-              Back
-            </UI.Button>
-          </UI.Box>
+          <UI.Toolbar >
+            <UI.Box sx={{ flex: 1 }}>
+              <UI.Button onClick={onBack} sx={{ marginLeft: -1, }} startIcon={<UI.Icons.ChevronLeft />} >
+                Back
+              </UI.Button>
+            </UI.Box>
+            <UI.Typography variant="h6" align="center" sx={{ flex: 1 }}>
+              User Vs User
+            </UI.Typography>
+            <UI.Box sx={{ flex: 1 }}>
+              {roomAvatarGroup}
+            </UI.Box>
+          </UI.Toolbar>
 
           <UI.Typography sx={{ paddingX: 2, }} color="text.secondary">
             {Board.colorToString('w')}
@@ -384,7 +394,7 @@ export const View =
 
           <UI.Box sx={{ flex: 1 }}></UI.Box>
 
-          <UI.Box sx={{ paddingX: 2, paddingBottom: 1 }}>
+          <UI.Box sx={{ paddingX: 2, }}>
             <UI.Button
               disabled={!canStartGame(model.sharedModel)}
               fullWidth
@@ -442,6 +452,20 @@ export const View =
 
     return (
       <UI.FillBox>
+        <UI.Toolbar >
+          <UI.Box sx={{ flex: 1 }}>
+            {/* <UI.Button onClick={onBack} sx={{ marginLeft: -1, }} startIcon={<UI.Icons.ChevronLeft />} >
+              Back
+            </UI.Button> */}
+          </UI.Box>
+          <UI.Typography variant="h6" align="center" sx={{ flex: 1 }}>
+            User Vs User
+          </UI.Typography>
+          <UI.Box sx={{ flex: 1 }}>
+            {roomAvatarGroup}
+          </UI.Box>
+        </UI.Toolbar>
+
         <UI.Typography color="text.secondary" variant="subtitle2" align="center">
           {toGameText(model.sharedModel)}
         </UI.Typography>
@@ -487,9 +511,8 @@ export const View =
 
 
         <UI.Box sx={{ width: "100%", display: "flex" }}>
-
           {model.sharedModel.type === 'GameOver' && (currentUserColor !== 'None') && (
-            <UI.Box sx={{ paddingX: 2, paddingBottom: 2, width: "100%", }}>
+            <UI.Box sx={{ paddingX: 2, width: "100%", }}>
               <UI.Button
                 fullWidth
                 variant="contained"
@@ -728,7 +751,8 @@ const ViewActionButton = ({ title, icon, onClick }: { title: string, icon: UI.Do
     <UI.ButtonBase
       onClick={onClick}
       sx={{
-        width: 72,
+        // width: 72,
+        flex: 1,
         height: 54,
         display: 'flex',
         flexDirection: "column",
