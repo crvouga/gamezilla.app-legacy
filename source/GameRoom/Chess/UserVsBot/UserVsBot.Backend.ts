@@ -11,6 +11,10 @@ import {
 
     inputUser,
 
+    startGame,
+
+    stopGame,
+
     ToBackend,
     ToFrontend
 } from "./UserVsBot.Types"
@@ -64,6 +68,22 @@ export const updateFromFrontend = (
     switch (msg[0]) {
         case 'Init': {
             return [model, sendToClient(['Sync', model])]
+        }
+
+        case 'StartGame': {
+            const result = startGame(msg[1], model)
+
+            const modelNew = result.type === 'Err' ? model : result.value
+
+            return [modelNew, sendToRoom(['StartGame_Done', result])]
+        }
+
+        case 'StopGame': {
+            const result = stopGame(msg[1], model)
+
+            const modelNew = result.type === 'Err' ? model : result.value
+
+            return [modelNew, sendToRoom(['StopGame_Done', result])]
         }
 
         case 'InputUser': {

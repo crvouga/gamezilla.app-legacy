@@ -523,7 +523,7 @@ export const View =
 
         <ViewUserPlayerSlot position="bottom" {...bottomSlot} />
 
-        <UI.Box sx={{ width: "100%", flex: 1, paddingBottom: 1 }} />
+        <UI.Box sx={{ width: "100%", paddingBottom: 1 }} />
 
 
         <ViewGameOverDialog model={model} dispatch={dispatch} />
