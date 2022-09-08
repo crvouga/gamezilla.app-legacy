@@ -322,27 +322,24 @@ export const View =
     const { boardWidth, ref } = useBoardWidth([model.sharedModel.type])
 
     if (model.sharedModel.type === 'Setup') {
+      const slotHeight = "64px"
       return (
         <UI.FillBox>
-          <UI.Toolbar >
-            <UI.Box sx={{ flex: 1 }}>
-              <UI.Button onClick={onBack} sx={{ marginLeft: -1, }} startIcon={<UI.Icons.ChevronLeft />} >
-                Back
-              </UI.Button>
-            </UI.Box>
-            <UI.Typography variant="h6" align="center" sx={{ flex: 1 }}>
-              User Vs User
-            </UI.Typography>
-            <UI.Box sx={{ flex: 1 }}>
-              {roomAvatarGroup}
-            </UI.Box>
-          </UI.Toolbar>
+          <UI.Header
+            left={<UI.Button onClick={onBack} sx={{ marginLeft: -1, }}>
+              Back
+            </UI.Button>}
+
+            title="User Vs User"
+
+            right={roomAvatarGroup}
+          />
 
           <UI.Typography sx={{ paddingX: 2, }} color="text.secondary">
             {Board.colorToString('w')}
           </UI.Typography>
 
-          <UI.Box sx={{ height: "72px" }}>
+          <UI.Box sx={{ height: slotHeight }}>
             {model.sharedModel.w.type === 'None' ? (
               <ViewInputPlayerButton currentUserId={currentUserId} dispatch={dispatch} color="w" />
             ) : (
@@ -361,7 +358,7 @@ export const View =
             {Board.colorToString('b')}
           </UI.Typography>
 
-          <UI.Box sx={{ height: "72px" }}>
+          <UI.Box sx={{ height: slotHeight }}>
             {model.sharedModel.b.type === 'None' ? (
               <ViewInputPlayerButton currentUserId={currentUserId} dispatch={dispatch} color="b" />
             ) : (
@@ -394,7 +391,7 @@ export const View =
 
           <UI.Box sx={{ flex: 1 }}></UI.Box>
 
-          <UI.Box sx={{ paddingX: 2, }}>
+          <UI.Box sx={{ paddingX: 2, paddingBottom: 2 }}>
             <UI.Button
               disabled={!canStartGame(model.sharedModel)}
               fullWidth
@@ -451,24 +448,46 @@ export const View =
 
 
     return (
-      <UI.FillBox>
-        <UI.Toolbar >
-          <UI.Box sx={{ flex: 1 }}>
-            {/* <UI.Button onClick={onBack} sx={{ marginLeft: -1, }} startIcon={<UI.Icons.ChevronLeft />} >
+      <UI.FillBox sx={{ overflowY: "scroll" }}>
+        <UI.Toolbar>
+          <UI.Box
+            sx={{
+              flex: 1,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "flex-start",
+            }}
+          >
+            <UI.Button disabled={model.sharedModel.type === 'Game'} onClick={onBack} sx={{ marginLeft: -1, }} >
               Back
-            </UI.Button> */}
+            </UI.Button>
           </UI.Box>
-          <UI.Typography variant="h6" align="center" sx={{ flex: 1 }}>
-            User Vs User
+
+          <UI.Typography
+            sx={{ flex: 3 }}
+            align="center"
+            variant="subtitle2"
+            color="text.secondary"
+          >
+            {toGameText(model.sharedModel)}
           </UI.Typography>
-          <UI.Box sx={{ flex: 1 }}>
+
+          <UI.Box
+            sx={{
+              flex: 1,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "flex-end",
+            }}
+          >
             {roomAvatarGroup}
           </UI.Box>
         </UI.Toolbar>
 
-        <UI.Typography color="text.secondary" variant="subtitle2" align="center">
-          {toGameText(model.sharedModel)}
-        </UI.Typography>
+
+        {/* <UI.Typography color="text.secondary" variant="subtitle2" align="center">
+          
+        </UI.Typography> */}
 
         <ViewUserPlayerSlot position="top" {...topSlot} />
 

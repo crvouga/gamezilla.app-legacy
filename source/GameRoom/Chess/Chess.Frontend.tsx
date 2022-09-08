@@ -140,19 +140,15 @@ export const View = ({ roomAvatarGroup, currentUserId, store, model, dispatch, o
     case 'None': {
       return (
         <UI.FillBox>
-          <UI.Toolbar >
-            <UI.Box sx={{ flex: 1, }}>
-              <UI.Button onClick={onCloseGame} startIcon={<UI.Icons.Close />} sx={{ marginLeft: -1 }}>
+          <UI.Header
+            left={
+              <UI.Button onClick={onCloseGame} sx={{ marginLeft: -1 }}>
                 Close
               </UI.Button>
-            </UI.Box>
-            <UI.Typography align="center" sx={{ flex: 1 }} variant="h6">
-              Chess
-            </UI.Typography>
-            <UI.Box sx={{ flex: 1, display: 'flex', justifyContent: "flex-end" }}>
-              {roomAvatarGroup}
-            </UI.Box>
-          </UI.Toolbar>
+            }
+            title="Chess"
+            right={roomAvatarGroup}
+          />
 
           <UI.Box sx={{ display: "flex", gap: 2, padding: 2, }}>
             <UI.Box sx={{ width: "50%" }}>

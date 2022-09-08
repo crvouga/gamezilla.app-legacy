@@ -725,7 +725,6 @@ export const ViewReady = (
           store={store}
         />
         <ViewBottomNavigation
-          page={"Search"}
           currentUserId={currentUserId}
           route={route}
           dispatch={dispatch}
@@ -738,7 +737,6 @@ export const ViewReady = (
         <Search.View dispatch={msg => dispatch(['Search', msg])} model={model[1]} store={store} />
 
         <ViewBottomNavigation
-          page={"Search"}
           currentUserId={currentUserId}
           route={route}
           dispatch={dispatch}
@@ -787,7 +785,6 @@ export const ViewReady = (
             dispatch={msg => dispatch(['Profile', msg])}
           />
           <ViewBottomNavigation
-            page={"Profile"}
             currentUserId={currentUserId}
             route={route}
             dispatch={dispatch}
@@ -805,14 +802,13 @@ export const ViewReady = (
             model={model[1]}
             dispatch={msg => dispatch(['GameRoom', msg])}
           />
-
           <ViewBottomNavigation
-            page={"Profile"}
             currentUserId={currentUserId}
             route={route}
             dispatch={dispatch}
           />
         </UI.FillBox>
+
       )
 
     }
@@ -829,7 +825,6 @@ export const ViewReady = (
         />
 
         <ViewBottomNavigation
-          page={"Party"}
           currentUserId={currentUserId}
           route={route}
           dispatch={dispatch}
@@ -958,7 +953,6 @@ const ViewBottomNavigation =
     dispatch
   }: {
     currentUserId: UserId.UserId
-    page: "Home" | "Party" | "Search" | "Chat" | "Profile"
     route: Route.Model,
     dispatch: (msg: Msg) => void
   }) => {
@@ -990,23 +984,26 @@ const ViewBottomNavigation =
       },
     ]
 
+    const theme = UI.useTheme()
+
     return (
-      <UI.BottomNavigation
-        showLabels
-        value={Route.encode(route)}
-      >
+      <UI.Box sx={{ width: "100%", display: 'flex', alignItems: 'center', justifyContent: "center", height: 52 }}>
         {items.map((item) => (
-          <UI.BottomNavigationAction
+          <UI.ButtonBase
             key={Route.encode(item.route)}
-            icon={Route.equals(route, item.route) ? item.filled : item.outlined}
-            // label={item.route[0] === 'GameRoom' ? 'Game' : item.route[0]}
-            value={Route.encode(item.route)}
-            onClick={() =>
-              dispatch(["ClickedBottomNavigationLink", item.route])
+            sx={{ flex: 1, height: "100%", cursor: "pointer" }}
+            onClick={() => dispatch(["ClickedBottomNavigationLink", item.route])}
+          >
+            {Route.equals(route, item.route) ?
+              <UI.Box sx={{ color: theme.palette.primary.main }}>
+                {item.filled}
+              </UI.Box>
+              :
+              item.outlined
             }
-          />
+          </UI.ButtonBase>
         ))}
-      </UI.BottomNavigation>
+      </UI.Box>
     )
   }
 
