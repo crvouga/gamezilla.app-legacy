@@ -523,11 +523,10 @@ export const View =
 
         <ViewUserPlayerSlot position="bottom" {...bottomSlot} />
 
-        <UI.Box sx={{ flex: 1 }} />
+        <UI.Box sx={{ width: "100%", flex: 1, paddingBottom: 1 }} />
+
 
         <ViewGameOverDialog model={model} dispatch={dispatch} />
-
-
 
         <UI.Box sx={{ width: "100%", display: "flex" }}>
           {model.sharedModel.type === 'GameOver' && (currentUserColor !== 'None') && (
@@ -606,13 +605,8 @@ export const View =
               />
             </>
           )}
-
-
-
         </UI.Box>
-
-
-      </UI.FillBox >
+      </UI.FillBox>
     )
   }
 
@@ -770,9 +764,8 @@ const ViewActionButton = ({ title, icon, onClick }: { title: string, icon: UI.Vi
     <UI.ButtonBase
       onClick={onClick}
       sx={{
-        // width: 72,
         flex: 1,
-        height: 54,
+        height: 48,
         display: 'flex',
         flexDirection: "column",
         color: theme.palette.action.active,
@@ -781,7 +774,7 @@ const ViewActionButton = ({ title, icon, onClick }: { title: string, icon: UI.Vi
       }}
     >
       {icon}
-      <UI.Typography variant="body2">
+      <UI.Typography variant="caption">
         {title}
       </UI.Typography>
     </UI.ButtonBase>
@@ -835,6 +828,8 @@ const ViewUserPlayerSlot = ({ position, src, username, isActive, seconds }: View
       <UI.Avatar
         src={src}
         sx={{
+          width: 32,
+          height: 32,
           marginRight: 1,
         }}
       />
@@ -846,7 +841,7 @@ const ViewUserPlayerSlot = ({ position, src, username, isActive, seconds }: View
 
       <UI.Typography
         color={isActive ? theme.palette.text.primary : theme.palette.action.disabled}
-        variant="h4"
+        variant="h5"
         component="div"
       >
         {Clock.formatSeconds(seconds)}
