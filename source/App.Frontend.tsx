@@ -467,7 +467,7 @@ const View =
       <UI.ThemeProvider themeMode={toThemeMode(model)}>
         <UI.Box
           sx={{
-            maxWidth: "xs",
+            maxWidth: "sm",
             maxHeight: "100%",
 
             userSelect: "none",

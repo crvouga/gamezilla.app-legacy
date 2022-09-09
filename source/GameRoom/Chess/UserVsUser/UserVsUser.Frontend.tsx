@@ -1,5 +1,3 @@
-import { DependencyList, useLayoutEffect, useRef, useState } from "react"
-import { Chessboard } from "react-chessboard"
 import { Audio, Cmd, exhaustive, Option, pipe, Sub, tag } from "../../../Core"
 import { UserId } from "../../../Data"
 import * as Store from "../../../Store"
@@ -317,10 +315,7 @@ export const View =
       onBack: () => void,
       roomAvatarGroup: UI.ViewNode
     },
-
   ) => {
-    const { boardWidth, ref } = useBoardWidth([model.sharedModel.type])
-
     if (model.sharedModel.type === 'Setup') {
       const slotHeight = "64px"
       return (
@@ -484,47 +479,34 @@ export const View =
           </UI.Box>
         </UI.Toolbar>
 
-
-        {/* <UI.Typography color="text.secondary" variant="subtitle2" align="center">
-          
-        </UI.Typography> */}
-
         <ViewUserPlayerSlot position="top" {...topSlot} />
 
-        <div ref={ref}>
-          <Chessboard
-            showBoardNotation
-            snapToCursor
-            boardOrientation={boardOrentation === "w" ? "white" : "black"}
-            position={Board.toFen(board)}
-            boardWidth={boardWidth}
-            isDraggablePiece={({ piece, }) => {
-              return Board.toColor(piece) === currentUserColor || currentUserColor === 'Both'
-            }}
-            onPieceDrop={(sourceSquare, targetSquare, _piece) => {
-              const msg: Move = [
-                "Move",
-                {
-                  userId: currentUserId,
-                  from: sourceSquare,
-                  to: targetSquare,
-                  promotion: "q",
-                },
-              ]
+        <Board.View
+          model={board}
+          boardOrentation={boardOrentation}
+          isDraggablePiece={({ piece, }) => {
+            return Board.toColor(piece) === currentUserColor || currentUserColor === 'Both'
+          }}
+          onPieceDrop={(moveInput) => {
+            const msg: Move = [
+              "Move",
+              {
+                userId: currentUserId,
+                ...moveInput,
+              },
+            ]
 
-              dispatch(msg)
+            dispatch(msg)
 
-              const isSuccessfulMove = move(msg[1], model.sharedModel).type === 'Ok'
+            const isSuccessfulMove = move(msg[1], model.sharedModel).type === 'Ok'
 
-              return isSuccessfulMove
-            }}
-          />
-        </div>
+            return isSuccessfulMove
+          }}
+        />
 
         <ViewUserPlayerSlot position="bottom" {...bottomSlot} />
 
         <UI.Box sx={{ width: "100%", paddingBottom: 1 }} />
-
 
         <ViewGameOverDialog model={model} dispatch={dispatch} />
 
@@ -780,32 +762,6 @@ const ViewActionButton = ({ title, icon, onClick }: { title: string, icon: UI.Vi
     </UI.ButtonBase>
   )
 }
-
-const useBoardWidth = (depList: DependencyList) => {
-  const [boardWidth, setBoardWidth] = useState(0)
-  const ref = useRef<HTMLDivElement | null>(null)
-
-  useLayoutEffect(() => {
-    const handler = () => {
-      if (ref.current) {
-        setBoardWidth(ref.current?.offsetWidth)
-      }
-    }
-
-    handler()
-
-    window.addEventListener("resize", handler)
-    return () => {
-      window.removeEventListener("resize", handler)
-    }
-  }, depList)
-
-  return {
-    ref,
-    boardWidth
-  }
-}
-
 
 type ViewUserPlayerSlotProps = {
   src?: string
