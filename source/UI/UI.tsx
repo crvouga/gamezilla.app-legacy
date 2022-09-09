@@ -56,6 +56,18 @@ const createTheme = ({ mode }: { mode: "light" | "dark" }) =>
             variant: "rounded",
           },
         },
+
+        MuiButtonBase: {
+          styleOverrides: {
+            root: {
+              cursor: "pointer"
+            }
+
+          },
+          defaultProps: {
+            disableTouchRipple: true
+          }
+        }
       },
     }),
   )
