@@ -46,7 +46,6 @@ export type Msg =
     | ["ClickedSendLoginLink"]
     | ["InputtedEmailAddress", string]
     | ["Login_Done", Auth.AuthResult]
-    | ["DismissedSuccessModal"]
 
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
     switch (msg[0]) {
@@ -98,10 +97,6 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
                     Cmd.perform((result): Msg => ["Login_Done", result]),
                 ),
             ]
-        }
-
-        case "DismissedSuccessModal": {
-            return [{ ...model, submission: { type: "Idle" } }, Cmd.None]
         }
 
         case "ClickedBack": {
@@ -159,6 +154,7 @@ export const View = ({
                     fullWidth
                     loading={model.submission.type === "Loading"}
                     onClick={() => dispatch(["ClickedSendLoginLink"])}
+                    sx={{ marginBottom: 2 }}
                 >
                     Send Login Link
                 </UI.Button>
@@ -166,41 +162,38 @@ export const View = ({
                 {model.submission.type === "Problem" && (
                     <UI.Alert
                         severity="error"
-                        sx={{ marginTop: 2 }}
+
                     >
                         {model.submission.message}
                     </UI.Alert>
                 )}
-            </UI.Box>
 
-            <UI.Dialog
-                open={model.submission.type === "Success"}
-                onClose={() => dispatch(["DismissedSuccessModal"])}
-            >
-                <UI.DialogTitle>Check your email!</UI.DialogTitle>
-                <UI.DialogContent>
-                    <UI.Typography
-                        color="text.secondary"
-                        variant="body2"
+                {model.submission.type === "Success" && (
+                    <UI.Alert
+                        severity="success"
+
                     >
-                        An email was sent to{" "}
-                        <UI.Box
-                            component="span"
-                            sx={{ color: "text.primary" }}
+                        <UI.AlertTitle>
+                            Check your email
+                        </UI.AlertTitle>
+                        <UI.Typography
+                            color="text.secondary"
+                            variant="body2"
                         >
-                            {model.submission.type === "Success"
-                                ? model.submission.sentToEmailAddress
-                                : "the provider email address"}
-                        </UI.Box>
-                        . It has a link that will log you in.
-                    </UI.Typography>
-                </UI.DialogContent>
-                <UI.DialogActions>
-                    <UI.Button onClick={() => dispatch(["DismissedSuccessModal"])}>
-                        Ok
-                    </UI.Button>
-                </UI.DialogActions>
-            </UI.Dialog>
+                            An email was sent to{" "}
+                            <UI.Box
+                                component="span"
+                                sx={{ color: "text.primary" }}
+                            >
+                                {model.submission.type === "Success"
+                                    ? model.submission.sentToEmailAddress
+                                    : "the provider email address"}
+                            </UI.Box>
+                            . It has a link that will log you in.
+                        </UI.Typography>
+                    </UI.Alert>
+                )}
+            </UI.Box>
         </UI.FillBox>
     )
 }
