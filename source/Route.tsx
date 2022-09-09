@@ -12,9 +12,7 @@ import { UserId } from "./Data"
 export type Model =
   | ["Account"]
   | ["Login"]
-  | ["LoginEmailPassword"]
-  | ["AccountCreate"]
-  | ["PasswordReset"]
+  | ["LoginEmailLink"]
   | ["Logout"]
   | ["Profile", UserId.UserId]
   | ["ProfileCreate"]
@@ -44,8 +42,7 @@ export const routesTypes: { [routeType in Model[0]]: string } = {
   Admin: "Admin",
   Account: "Account",
   Login: "Login",
-  LoginEmailPassword: "LoginEmailPassword",
-  AccountCreate: "AccountCreate",
+  LoginEmailLink: "LoginEmailLink",
   Logout: "Logout",
   Profile: "Profile",
   ProfileCreate: "ProfileCreate",
@@ -55,7 +52,6 @@ export const routesTypes: { [routeType in Model[0]]: string } = {
   ProfileUpdateName: "ProfileUpdateName",
   ProfileUpdateUsername: "ProfileUpdateUsername",
   ProfileUpdateTheme: "ProfileUpdateTheme",
-  PasswordReset: "PasswordReset",
   GameRoom: "GameRoom",
   Party: "Party",
   Chat: "Chat",

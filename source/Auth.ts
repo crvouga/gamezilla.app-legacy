@@ -1,5 +1,5 @@
 import * as Rx from "rxjs"
-import { Cmd, exhaustive, Option, pipe, Result, Sub, Task } from "./Core"
+import { Cmd, exhaustive, Option, pipe, Result, Sub, Task, Unit } from "./Core"
 import { UserId } from "./Data"
 import * as Supabase from "./Supabase"
 import * as Wire from "./Wire"
@@ -113,7 +113,7 @@ export const runAction = (
 
 type Problem = { message: string }
 
-export type LoginResult = Result.Result<Problem, {}>
+export type LoginResult = Result.Result<Problem, Unit>
 
 export const loginWithEmailAndPassword =
   ({
@@ -133,7 +133,21 @@ export const loginWithEmailAndPassword =
       return Result.Err({ message: response.error.message })
     }
 
-    return Result.Ok({})
+    return Result.Ok(Unit)
+  }
+
+export const loginWithEmailLink =
+  ({ emailAddress }: { emailAddress: string }): Task.Task<LoginResult> =>
+  async () => {
+    const response = await Supabase.client.auth.signIn({
+      email: emailAddress,
+    })
+
+    if (response.error) {
+      return Result.Err({ message: response.error.message })
+    }
+
+    return Result.Ok(Unit)
   }
 
 export type Provider = "Google"
@@ -151,7 +165,7 @@ export const loginWithProvider =
           return Result.Err({ message: response.error.message })
         }
 
-        return Result.Ok({})
+        return Result.Ok(Unit)
       }
     }
   }

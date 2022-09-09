@@ -1,5 +1,5 @@
 import * as Auth from "./Auth"
-import { Cmd, exhaustive, pipe, Sub, tag, tagSub } from "./Core"
+import { Cmd, exhaustive, pipe, Sub, tag, tagCmd, tagSub } from "./Core"
 import { UserId } from "./Data"
 import * as GameRoom from "./GameRoom/GameRoom.Frontend"
 import {
@@ -12,6 +12,7 @@ import {
   GameRoomPage,
   Login,
   LoginEmailPassword,
+  LoginEmailLink,
   Logout,
   PasswordReset,
   Profile,
@@ -40,6 +41,7 @@ import * as UI from "./UI"
 
 export type Model =
   | ["Login", Login.Model]
+  | ["LoginEmailLink", LoginEmailLink.Model]
   | ["ProfileCreate", ProfileCreate.Model]
   | ["Logout", Logout.Model]
   | ["Account", Account.Model]
@@ -52,9 +54,6 @@ export type Model =
   | ["ProfileUpdateTheme", ProfileUpdateTheme.Model]
   | ["Chat", Chat.Model]
   | ["ChatNew", ChatNew.Model]
-  | ["PasswordReset", PasswordReset.Model]
-  | ["LoginEmailPassword", LoginEmailPassword.Model]
-  | ["AccountCreate", AccountCreate.Model]
   | ["Search", Search.Model]
   | ["ChatConversation", ChatConversation.Model]
   | ["GameRoom", GameRoomPage.Model]
@@ -73,8 +72,7 @@ export type Model =
 export type Msg =
   | ["Account", Account.Msg]
   | ["Login", Login.Msg]
-  | ["LoginEmailPassword", LoginEmailPassword.Msg]
-  | ["AccountCreate", AccountCreate.Msg]
+  | ["LoginEmailLink", LoginEmailLink.Msg]
   | ["Logout", Logout.Msg]
   | ["Profile", Profile.Msg]
   | ["ProfileCreate", ProfileCreate.Msg]
@@ -87,7 +85,6 @@ export type Msg =
   | ["Chat", Chat.Msg]
   | ["GameRoom", GameRoomPage.Msg]
   | ["Party", PartyPage.Msg]
-  | ["PasswordReset", PasswordReset.Msg]
   | ["ChatNew", ChatNew.Msg]
   | ["ChatConversation", ChatConversation.Msg]
   | ["Search", Search.Msg]
@@ -225,9 +222,7 @@ export const initReady = (
 
     case "ProfileCreate":
     case "Login":
-    case "LoginEmailPassword":
-    case "AccountCreate":
-    case "PasswordReset":
+    case "LoginEmailLink":
       const [modelInit, cmdInit] = GameRoomPage.init
       return [
         ["GameRoom", modelInit],
@@ -248,18 +243,8 @@ export const initLoggedOut = (route: Route.Model): [Model, Cmd.Cmd<Msg>] => {
     case "Login":
       return [["Login", Login.init], Cmd.None]
 
-    case "LoginEmailPassword":
-      return [["LoginEmailPassword", LoginEmailPassword.init], Cmd.None]
-
-    case "AccountCreate":
-      const [modelNew, cmd] = AccountCreate.init()
-      return [
-        ["AccountCreate", modelNew],
-        pipe(cmd, Cmd.map(tag("AccountCreate"))),
-      ]
-
-    case "PasswordReset":
-      return [["PasswordReset", PasswordReset.init], Cmd.None]
+    case "LoginEmailLink":
+      return [["LoginEmailLink", LoginEmailLink.init], Cmd.None]
 
     case "Account":
     case "Chat":
@@ -310,10 +295,8 @@ export const initProfileMissing = (
     case "ProfileUpdateName":
     case "ProfileUpdateUsername":
     case "Login":
-    case "LoginEmailPassword":
+    case "LoginEmailLink":
     case "GameRoom":
-    case "AccountCreate":
-    case "PasswordReset":
     case "Party":
       return [
         ["ProfileCreate", ProfileCreate.init(auth)],
@@ -495,16 +478,12 @@ export const updateReady = (
 
     case "Party": {
       if (msg[0] === "Party") {
-        const [modelPage, cmdPage, actions] = PartyPage.update(
+        const [child, cmd, actions] = PartyPage.update(
           { currentUserId: profile.userId },
           msg[1],
           model[1],
         )
-        return [
-          ["Party", modelPage],
-          pipe(cmdPage, Cmd.map(tag("Party"))),
-          actions,
-        ]
+        return [["Party", child], tagCmd("Party", cmd), actions]
       }
 
       return [model, Cmd.None, []]
@@ -513,9 +492,7 @@ export const updateReady = (
     case "Login":
     case "Loading":
     case "ProfileCreate":
-    case "LoginEmailPassword":
-    case "AccountCreate":
-    case "PasswordReset":
+    case "LoginEmailLink":
       return [model, Route.push(["GameRoom"]), []]
 
     default:
@@ -561,9 +538,7 @@ export const updateProfileMissing = (
     case "ProfileUpdateTheme":
     case "GameRoom":
     case "Loading":
-    case "LoginEmailPassword":
-    case "AccountCreate":
-    case "PasswordReset":
+    case "LoginEmailLink":
     case "Search":
     case "Admin":
     case "Party":
@@ -585,31 +560,10 @@ export const updateLoggedOut = (
       }
       return [model, Cmd.None, []]
 
-    case "LoginEmailPassword":
-      if (msg[0] === "LoginEmailPassword") {
-        return tagUpdate(
-          "LoginEmailPassword",
-          LoginEmailPassword.update(msg[1], model[1]),
-        )
-      }
-      return [model, Cmd.None, []]
-
-    case "AccountCreate": {
-      if (msg[0] === "AccountCreate") {
-        return tagUpdate(
-          "AccountCreate",
-          AccountCreate.update(msg[1], model[1]),
-        )
-      }
-      return [model, Cmd.None, []]
-    }
-
-    case "PasswordReset": {
-      if (msg[0] === "PasswordReset") {
-        return tagUpdate(
-          "PasswordReset",
-          PasswordReset.update(msg[1], model[1]),
-        )
+    case "LoginEmailLink": {
+      if (msg[0] === "LoginEmailLink") {
+        const [child, cmd] = LoginEmailLink.update(msg[1], model[1])
+        return [["LoginEmailLink", child], tagCmd("LoginEmailLink", cmd), []]
       }
       return [model, Cmd.None, []]
     }
@@ -656,6 +610,7 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
     case "Chat":
     case "ChatConversation":
     case "Login":
+    case "LoginEmailLink":
     case "Logout":
     case "ProfileCreate":
     case "ProfileDelete":
@@ -665,9 +620,6 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
     case "ProfileUpdateUsername":
     case "ProfileUpdateName":
     case "Loading":
-    case "LoginEmailPassword":
-    case "AccountCreate":
-    case "PasswordReset":
     case "Profile":
     case "Search":
     case "Admin":
@@ -894,9 +846,7 @@ export const ViewReady = ({
     case "Login":
     case "ProfileCreate":
     case "Loading":
-    case "LoginEmailPassword":
-    case "PasswordReset":
-    case "AccountCreate":
+    case "LoginEmailLink":
       return <UI.LoadingPage />
 
     default:
@@ -940,11 +890,9 @@ export const ViewProfileMissing = ({
     case "ProfileUpdateName":
     case "ProfileUpdateUsername":
     case "Login":
-    case "LoginEmailPassword":
+    case "LoginEmailLink":
     case "Loading":
     case "Search":
-    case "AccountCreate":
-    case "PasswordReset":
     case "Profile":
     case "GameRoom":
     case "Admin":
@@ -972,27 +920,11 @@ export const ViewLoggedOut = ({
         />
       )
 
-    case "LoginEmailPassword":
+    case "LoginEmailLink":
       return (
-        <LoginEmailPassword.View
+        <LoginEmailLink.View
           model={model[1]}
-          dispatch={(msg) => dispatch(["LoginEmailPassword", msg])}
-        />
-      )
-
-    case "AccountCreate":
-      return (
-        <AccountCreate.View
-          model={model[1]}
-          dispatch={(msg) => dispatch(["AccountCreate", msg])}
-        />
-      )
-
-    case "PasswordReset":
-      return (
-        <PasswordReset.View
-          model={model[1]}
-          dispatch={(msg) => dispatch(["PasswordReset", msg])}
+          dispatch={(msg) => dispatch(["LoginEmailLink", msg])}
         />
       )
 
