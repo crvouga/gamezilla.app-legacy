@@ -1,5 +1,5 @@
 import { Browser, Cmd, Option } from "./Core"
-import { UserId } from "./Data"
+import { PhoneNumber, UserId, ISO_3166, } from "./Data"
 
 //
 //
@@ -14,7 +14,7 @@ export type Model =
   | ["Login"]
   | ["LoginEmailLink"]
   | ["LoginPhone"]
-  | ["LoginPhoneVerify", { phoneNumber: string }]
+  | ["LoginPhoneVerify", { phoneNumber: PhoneNumber.PhoneNumber }]
   | ["Logout"]
   | ["Profile", { userId: UserId.UserId }]
   | ["ProfileCreate"]
@@ -96,14 +96,26 @@ export const decode = ({
     }
 
     case 'LoginPhoneVerify': {
-      const phoneNumber = query['phoneNumber']
+      const phoneNumberDirty = query['phoneNumber']
+      const country = query['country']
 
-
-      if (!phoneNumber) {
+      if (!phoneNumberDirty) {
         return Option.None
       }
 
-      return Option.Some(["LoginPhoneVerify", { phoneNumber }])
+      if (!ISO_3166.is(country)) {
+        return Option.None
+      }
+
+      const decoded = PhoneNumber.decode(country, phoneNumberDirty)
+
+      if (decoded.type === 'Err') {
+        return Option.None
+      }
+
+      const phoneNumber = decoded.value
+
+      return Option.Some(["LoginPhoneVerify", { phoneNumber: phoneNumber }])
 
     }
 
@@ -121,9 +133,12 @@ export const encode = (route: Model): string => {
     case "Profile":
       return `/${route[0]}/${route[1].userId}`
 
-    case 'LoginPhoneVerify':
-      const params = new URLSearchParams(route[1])
+    case 'LoginPhoneVerify': {
+      const phoneNumber = PhoneNumber.toString(route[1].phoneNumber)
+      const country = PhoneNumber.toCountry(route[1].phoneNumber)
+      const params = new URLSearchParams({ phoneNumber, country })
       return `/${route[0]}?${params.toString()}`
+    }
 
     default:
       return `/${route[0]}`

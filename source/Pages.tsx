@@ -1,6 +1,6 @@
 import * as Auth from "./Auth"
 import { Cmd, exhaustive, pipe, Sub, tag, tagCmd, tagSub } from "./Core"
-import { UserId } from "./Data"
+import { PhoneNumber, UserId } from "./Data"
 import * as GameRoom from "./GameRoom/GameRoom.Frontend"
 import {
   Account, Chat,
@@ -41,7 +41,7 @@ export type Model =
   | ["Login", Login.Model]
   | ["LoginEmailLink", LoginEmailLink.Model]
   | ["LoginPhone", LoginPhone.Model]
-  | ["LoginPhoneVerify", { phoneNumber: string }, LoginPhoneVerify.Model]
+  | ["LoginPhoneVerify", { phoneNumber: PhoneNumber.PhoneNumber }, LoginPhoneVerify.Model]
   | ["ProfileCreate", ProfileCreate.Model]
   | ["Logout", Logout.Model]
   | ["Account", Account.Model]
@@ -961,6 +961,7 @@ export const ViewLoggedOut = ({
     case 'LoginPhoneVerify':
       return (
         <LoginPhoneVerify.View
+          phoneNumber={model[1].phoneNumber}
           model={model[2]}
           dispatch={msg => dispatch(["LoginPhoneVerify", msg])}
         />
