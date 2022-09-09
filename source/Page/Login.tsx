@@ -72,8 +72,6 @@ export const View = ({
   model: Model
   dispatch: (msg: Msg) => void
 }) => {
-  const isGoogleLoading =
-    model[0] === "LoggingInWithProvider" && model[1] === "Google"
   return (
     <UI.FillBox
       sx={{
@@ -88,23 +86,9 @@ export const View = ({
       <UI.Button
         variant="contained"
         size="large"
-        loading={isGoogleLoading}
-        //todo fix this hack
-        disabled={isGoogleLoading}
+        loading={model[0] === "LoggingInWithProvider" && model[1] === "Google"}
         fullWidth
-        startIcon={
-          //todo fix this hack
-          isGoogleLoading ? undefined : <UI.Icons.GoogleAlt />
-        }
-        color={
-          //todo fix this hack
-          isGoogleLoading ? undefined : "inherit"
-        }
-        sx={{
-          //todo fix this hack
-          color: (theme) =>
-            isGoogleLoading ? undefined : theme.palette.grey[800],
-        }}
+        startIcon={<UI.Icons.Google />}
         onClick={() => dispatch(["ClickedGoogleLogin"])}
       >
         Continue With Google
