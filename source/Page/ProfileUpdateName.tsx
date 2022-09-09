@@ -29,7 +29,7 @@ export const init = ({ name }: { name: string }): Model => {
 //
 
 export type Msg =
-  | ["EnteredName", string]
+  | ["InputtedName", string]
   | ["ClickedCancel"]
   | ["ClickedSubmit"]
 
@@ -41,7 +41,7 @@ export const update = (
   model: Model,
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
-    case "EnteredName":
+    case "InputtedName":
       return [{ ...model, name: msg[1] }, Cmd.None, []]
 
     case "ClickedSubmit":
@@ -104,7 +104,7 @@ export const View = ({
         label="Name"
         fullWidth
         onChange={(event) =>
-          dispatch(["EnteredName", event.currentTarget.value])
+          dispatch(["InputtedName", event.currentTarget.value])
         }
       />
     </UI.Box>
