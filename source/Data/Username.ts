@@ -5,7 +5,7 @@ export type Username = string & { _opaque: typeof Username }
 declare const Username: unique symbol
 
 export const is = (username: unknown): username is Username => {
-  return typeof username === "string"
+  return typeof username === "string" && username.length > 0 && username.length <= 100
 }
 
 type Problem = "invalid_username"
