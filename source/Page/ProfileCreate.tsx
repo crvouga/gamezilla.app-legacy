@@ -15,33 +15,23 @@ import * as UI from "../UI"
 //
 
 export type Model = {
-  form: Form
-}
-
-export const init = ({ defaultName }: { defaultName: string }): Model => {
-  return {
-    form: initForm({ defaultName }),
-  }
-}
-
-type Form = {
   username: string
-  name: string
   avatarUrl: string
 }
 
-const initForm = ({ defaultName }: { defaultName: string }): Form => {
+export const init = ({ defaultName }: { defaultName: string }): Model => {
   const username = defaultName.replace(" ", "").toLowerCase()
-
   return {
     username,
-    name: defaultName,
     avatarUrl: ProfileAvatar.toUrl({
       seed: ProfileAvatar.toSeed(username),
-      style: "adventurer-neutral",
+      style: "big-ears-neutral",
     }),
   }
 }
+
+
+
 
 //
 //
@@ -55,7 +45,6 @@ const initForm = ({ defaultName }: { defaultName: string }): Form => {
 
 export type Msg =
   | ["InputtedUsername", string]
-  | ["InputtedName", string]
   | ["ClickedSubmit"]
   | ["ClickedLogout"]
 
@@ -67,23 +56,20 @@ export const update = (
   model: Model,
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
-    case "InputtedName":
-      return [{ ...model, form: { ...model.form, name: msg[1] } }, Cmd.None, []]
-
     case "InputtedUsername":
       return [
-        { ...model, form: { ...model.form, username: msg[1] } },
+        { ...model, username: msg[1] },
         Cmd.None,
         [],
       ]
 
     case "ClickedSubmit":
       const avatarUrl = ProfileAvatar.toUrl({
-        seed: ProfileAvatar.toSeed(model.form.username),
+        seed: ProfileAvatar.toSeed(model.username),
         style: "avataaars",
       })
 
-      const username = Username.decode(model.form.username)
+      const username = Username.decode(model.username)
 
       if (username.type === "Err") {
         // todo handle validation error
@@ -91,7 +77,7 @@ export const update = (
       }
 
       const profile: Store.Profile.Profile = {
-        name: model.form.name,
+        name: "",
         username: username.value,
         userId,
         avatarUrl,
@@ -131,6 +117,7 @@ export const View = ({
       left={
         <UI.Button
           sx={{ marginLeft: -1 }}
+          size="small"
           onClick={() => dispatch(["ClickedLogout"])}
         >
           Logout
@@ -141,11 +128,11 @@ export const View = ({
 
     <UI.Box sx={{ p: 2, width: "100%" }}>
       <UI.Avatar
-        src={model.form.avatarUrl}
+        src={model.avatarUrl}
         sx={{
           marginX: "auto",
-          width: "150px",
-          height: "150px",
+          width: "120px",
+          height: "120px",
           marginBottom: 1,
         }}
       />
@@ -161,22 +148,13 @@ export const View = ({
       </UI.Button>
 
       <UI.TextField
-        value={model.form.username}
+        autoFocus
+        value={model.username}
         sx={{ marginBottom: 2 }}
         label="Username"
         fullWidth
         onChange={(event) =>
           dispatch(["InputtedUsername", event.currentTarget.value])
-        }
-      />
-
-      <UI.TextField
-        value={model.form.name}
-        sx={{ marginBottom: 4 }}
-        label="Name"
-        fullWidth
-        onChange={({ currentTarget: { value: name } }) =>
-          dispatch(["InputtedName", name])
         }
       />
 
