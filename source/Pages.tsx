@@ -11,7 +11,7 @@ import {
   ChatNew,
   GameRoomPage,
   Login,
-  LoginEmail,
+  LoginEmailPassword,
   Logout,
   PasswordReset,
   Profile,
@@ -54,7 +54,7 @@ export type Model =
   | ["Chat", Chat.Model]
   | ["ChatNew", ChatNew.Model]
   | ["PasswordReset", PasswordReset.Model]
-  | ["LoginEmail", LoginEmail.Model]
+  | ["LoginEmailPassword", LoginEmailPassword.Model]
   | ["AccountCreate", AccountCreate.Model]
   | ["Search", Search.Model]
   | ["ChatConversation", ChatConversation.Model]
@@ -74,7 +74,7 @@ export type Model =
 export type Msg =
   | ["Account", Account.Msg]
   | ["Login", Login.Msg]
-  | ["LoginEmail", LoginEmail.Msg]
+  | ["LoginEmailPassword", LoginEmailPassword.Msg]
   | ["AccountCreate", AccountCreate.Msg]
   | ["Logout", Logout.Msg]
   | ["Profile", Profile.Msg]
@@ -230,7 +230,7 @@ export const initReady = (
 
     case "ProfileCreate":
     case "Login":
-    case "LoginEmail":
+    case "LoginEmailPassword":
     case "AccountCreate":
     case "PasswordReset":
       const [modelInit, cmdInit] = GameRoomPage.init
@@ -253,8 +253,8 @@ export const initLoggedOut = (route: Route.Model): [Model, Cmd.Cmd<Msg>] => {
     case "Login":
       return [["Login", Login.init], Cmd.None]
 
-    case "LoginEmail":
-      return [["LoginEmail", LoginEmail.init], Cmd.None]
+    case "LoginEmailPassword":
+      return [["LoginEmailPassword", LoginEmailPassword.init], Cmd.None]
 
     case "AccountCreate":
       const [modelNew, cmd] = AccountCreate.init()
@@ -315,7 +315,7 @@ export const initProfileMissing = (
     case "ProfileUpdateName":
     case "ProfileUpdateUsername":
     case "Login":
-    case "LoginEmail":
+    case "LoginEmailPassword":
     case "GameRoom":
     case "AccountCreate":
     case "PasswordReset":
@@ -514,7 +514,7 @@ export const updateReady = (
     case "Login":
     case "Loading":
     case "ProfileCreate":
-    case "LoginEmail":
+    case "LoginEmailPassword":
     case "AccountCreate":
     case "PasswordReset":
       return [model, Route.push(["GameRoom"]), []]
@@ -562,7 +562,7 @@ export const updateProfileMissing = (
     case "ProfileUpdateTheme":
     case "GameRoom":
     case "Loading":
-    case "LoginEmail":
+    case "LoginEmailPassword":
     case "AccountCreate":
     case "PasswordReset":
     case "Search":
@@ -586,9 +586,9 @@ export const updateLoggedOut = (
       }
       return [model, Cmd.None, []]
 
-    case "LoginEmail":
-      if (msg[0] === "LoginEmail") {
-        return tagUpdate("LoginEmail", LoginEmail.update(msg[1], model[1]))
+    case "LoginEmailPassword":
+      if (msg[0] === "LoginEmailPassword") {
+        return tagUpdate("LoginEmailPassword", LoginEmailPassword.update(msg[1], model[1]))
       }
       return [model, Cmd.None, []]
 
@@ -663,7 +663,7 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
     case "ProfileUpdateUsername":
     case "ProfileUpdateName":
     case "Loading":
-    case "LoginEmail":
+    case "LoginEmailPassword":
     case "AccountCreate":
     case "PasswordReset":
     case "Profile":
@@ -836,7 +836,7 @@ export const ViewReady = (
     case "Login":
     case "ProfileCreate":
     case "Loading":
-    case "LoginEmail":
+    case "LoginEmailPassword":
     case "PasswordReset":
     case "AccountCreate":
       return <UI.LoadingPage />
@@ -874,7 +874,7 @@ export const ViewProfileMissing = (
     case "ProfileUpdateName":
     case "ProfileUpdateUsername":
     case "Login":
-    case "LoginEmail":
+    case "LoginEmailPassword":
     case "Loading":
     case "Search":
     case "AccountCreate":
@@ -895,8 +895,8 @@ export const ViewLoggedOut = ({ model, dispatch }: { model: Model, dispatch: (ms
     case "Login":
       return <Login.View model={model[1]} dispatch={msg => dispatch(["Login", msg])} />
 
-    case "LoginEmail":
-      return <LoginEmail.View model={model[1]} dispatch={msg => dispatch(["LoginEmail", msg])} />
+    case "LoginEmailPassword":
+      return <LoginEmailPassword.View model={model[1]} dispatch={msg => dispatch(["LoginEmailPassword", msg])} />
 
     case "AccountCreate":
       return <AccountCreate.View model={model[1]} dispatch={msg => dispatch(["AccountCreate", msg])} />

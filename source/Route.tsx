@@ -12,7 +12,7 @@ import { UserId } from "./Data"
 export type Model =
   | ["Account"]
   | ["Login"]
-  | ["LoginEmail"]
+  | ["LoginEmailPassword"]
   | ["AccountCreate"]
   | ["PasswordReset"]
   | ["Logout"]
@@ -44,7 +44,7 @@ export const routesTypes: { [routeType in Model[0]]: string } = {
   Admin: "Admin",
   Account: "Account",
   Login: "Login",
-  LoginEmail: "LoginEmail",
+  LoginEmailPassword: "LoginEmailPassword",
   AccountCreate: "AccountCreate",
   Logout: "Logout",
   Profile: "Profile",
