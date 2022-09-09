@@ -132,9 +132,9 @@ export const View = ({
                     id={codeInputId}
                     autoFocus
                     sx={{ marginBottom: 2 }}
-                    type="number"
+                    type="tel"
                     fullWidth
-                    inputMode="numeric"
+                    inputMode="tel"
                     label="Code"
                     value={model.code}
                     onChange={(event) => {

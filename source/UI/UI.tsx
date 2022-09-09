@@ -2,7 +2,7 @@ import * as MuiLab from "@mui/lab"
 import * as Mui from "@mui/material"
 import { blue } from "@mui/material/colors"
 import { keyframes } from "@mui/system"
-import { ReactNode, useMemo } from "react"
+import { forwardRef, ReactNode, useEffect, useMemo, useRef } from "react"
 import * as Icons from "./Icons"
 
 //
@@ -186,7 +186,17 @@ export const ThemeModeToggleButtons = ({
 //
 //
 
-export const TextField = Mui.TextField
+export const TextField = (props: Mui.TextFieldProps) => {
+  const ref = useRef<HTMLDivElement | null>(null)
+
+  useEffect(() => {
+    if (props.autoFocus && ref.current) {
+      ref.current.focus()
+    }
+  }, [])
+
+  return <Mui.TextField ref={ref} {...props} />
+}
 
 export const InputBase = Mui.InputBase
 
