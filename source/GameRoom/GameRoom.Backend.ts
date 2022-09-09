@@ -70,7 +70,7 @@ export const update = (
         return [model, Cmd.None]
       }
 
-      if (room.game.type === 'None') {
+      if (room.game.type === "None") {
         return [model, Cmd.None]
       }
 
@@ -93,9 +93,9 @@ export const update = (
           ...model.rooms,
           [roomId]: {
             ...room,
-            game: Option.Some(gameNew)
-          }
-        }
+            game: Option.Some(gameNew),
+          },
+        },
       }
 
       return [
@@ -139,7 +139,7 @@ export const updateFromFrontend = (
         return [model, Cmd.None]
       }
 
-      if (room.game.type === 'None') {
+      if (room.game.type === "None") {
         return [model, Cmd.None]
       }
 
@@ -162,9 +162,9 @@ export const updateFromFrontend = (
           ...model.rooms,
           [roomId]: {
             ...room,
-            game: Option.Some(gameNew)
-          }
-        }
+            game: Option.Some(gameNew),
+          },
+        },
       }
 
       return [
@@ -240,10 +240,7 @@ const updateResponse = (
 
   return [
     modelNew,
-    Cmd.batch([
-      broadcast(['Sync', modelNew]),
-      sendToClient(response),
-    ]),
+    Cmd.batch([broadcast(["Sync", modelNew]), sendToClient(response)]),
   ]
 }
 
@@ -280,7 +277,7 @@ export const createRoom = (
         roomId,
         hostId: userId,
         events: [["Created", { userId, roomId }]],
-        game: Option.None
+        game: Option.None,
       },
     },
   }
@@ -291,23 +288,25 @@ export const createRoom = (
 //
 //
 //
-// 
 //
 //
-// 
+//
+//
 
-export const onClientConnected = ({ sendToClient }: { sendToClient: (msg: ToFrontend) => Cmd.Cmd<Msg> }, model: Model): Cmd.Cmd<Msg> => {
-  return sendToClient(['Sync', model])
+export const onClientConnected = (
+  { sendToClient }: { sendToClient: (msg: ToFrontend) => Cmd.Cmd<Msg> },
+  model: Model,
+): Cmd.Cmd<Msg> => {
+  return sendToClient(["Sync", model])
 }
 
-
 //
 //
 //
 //
 //
 //
-// 
+//
 
 export const joinRoom = (
   { userId, roomId }: { userId: UserId.UserId; roomId: RoomId.RoomId },
@@ -444,7 +443,7 @@ export const openGame = (
     return Result.Err("user_is_not_in_a_room")
   }
 
-  if (room.game.type !== 'None') {
+  if (room.game.type !== "None") {
     return Result.Err("game_already_started")
   }
 
@@ -454,7 +453,7 @@ export const openGame = (
       ...model.rooms,
       [room.roomId]: {
         ...room,
-        game: Option.Some(Game.init({ gameName }))
+        game: Option.Some(Game.init({ gameName })),
       },
     },
   }
@@ -486,7 +485,7 @@ export const closeGame = (
     return Result.Err("user_is_not_in_a_room")
   }
 
-  if (room.game.type === 'None') {
+  if (room.game.type === "None") {
     return Result.Err("game_already_stopped")
   }
 
@@ -496,9 +495,9 @@ export const closeGame = (
       ...model.rooms,
       [room.roomId]: {
         ...room,
-        game: Option.None
-      }
-    }
+        game: Option.None,
+      },
+    },
   }
 
   return Result.Ok(modelNew)
@@ -515,8 +514,6 @@ export const closeGame = (
 export const subscriptions = (model: Model): Sub.Sub<Msg> => {
   const subs: Sub.Sub<Msg>[] = []
 
-
-
   for (const roomId in model.rooms) {
     if (!RoomId.is(roomId)) {
       continue
@@ -528,7 +525,7 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
       continue
     }
 
-    if (room.game.type === 'None') {
+    if (room.game.type === "None") {
       continue
     }
 

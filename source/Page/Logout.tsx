@@ -52,22 +52,34 @@ export const update = (
 //
 //
 
-export const View = ({ model, dispatch }: { model: Model, dispatch: (msg: Msg) => void }) => {
+export const View = ({
+  model,
+  dispatch,
+}: {
+  model: Model
+  dispatch: (msg: Msg) => void
+}) => {
   switch (model.type) {
     case "Idle": {
-      return <UI.ConformationDialog
-        open={model.type === "Idle"}
-        title="Logout of Gamezilla?"
-        confirmTitle="Logout"
-        onConfirm={() => dispatch(["ClickedLogout"])}
-        onClose={() => dispatch(["ClickedBackdrop"])}
-        onCancel={() => dispatch(["ClickedCancel"])}
-      />
+      return (
+        <UI.ConformationDialog
+          open={model.type === "Idle"}
+          title="Logout of Gamezilla?"
+          confirmTitle="Logout"
+          onConfirm={() => dispatch(["ClickedLogout"])}
+          onClose={() => dispatch(["ClickedBackdrop"])}
+          onCancel={() => dispatch(["ClickedCancel"])}
+        />
+      )
     }
 
     case "LoggingOut": {
-      return <UI.LoadingDialog open={model.type === "LoggingOut"} title={"Logging out..."} />
+      return (
+        <UI.LoadingDialog
+          open={model.type === "LoggingOut"}
+          title={"Logging out..."}
+        />
+      )
     }
-
   }
 }

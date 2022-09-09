@@ -119,71 +119,75 @@ export const update = (
 //
 //
 
-export const View =
-  ({ model, dispatch }: { model: Model, dispatch: (msg: Msg) => void }) =>
-  (
-    <UI.FillBox>
-      <UI.Header
-        left={
-          <UI.Button
-            sx={{ marginLeft: -1 }}
-            onClick={() => dispatch(["ClickedLogout"])}
-          >
-            Logout
-          </UI.Button>
-        }
-        title="Create Profile"
+export const View = ({
+  model,
+  dispatch,
+}: {
+  model: Model
+  dispatch: (msg: Msg) => void
+}) => (
+  <UI.FillBox>
+    <UI.Header
+      left={
+        <UI.Button
+          sx={{ marginLeft: -1 }}
+          onClick={() => dispatch(["ClickedLogout"])}
+        >
+          Logout
+        </UI.Button>
+      }
+      title="Create Profile"
+    />
+
+    <UI.Box sx={{ p: 2, width: "100%" }}>
+      <UI.Avatar
+        src={model.form.avatarUrl}
+        sx={{
+          marginX: "auto",
+          width: "150px",
+          height: "150px",
+          marginBottom: 1,
+        }}
       />
 
-      <UI.Box sx={{ p: 2, width: "100%" }}>
-        <UI.Avatar
-          src={model.form.avatarUrl}
-          sx={{
-            marginX: "auto",
-            width: "150px",
-            height: "150px",
-            marginBottom: 1,
-          }}
-        />
+      <UI.Button
+        sx={{
+          display: "block",
+          marginX: "auto",
+          marginBottom: 2,
+        }}
+      >
+        Change Avatar
+      </UI.Button>
 
-        <UI.Button
-          sx={{
-            display: "block",
-            marginX: "auto",
-            marginBottom: 2,
-          }}
-        >
-          Change Avatar
-        </UI.Button>
+      <UI.TextField
+        value={model.form.username}
+        sx={{ marginBottom: 2 }}
+        label="Username"
+        fullWidth
+        onChange={(event) =>
+          dispatch(["EnteredUsername", event.currentTarget.value])
+        }
+      />
 
-        <UI.TextField
-          value={model.form.username}
-          sx={{ marginBottom: 2 }}
-          label="Username"
-          fullWidth
-          onChange={(event) =>
-            dispatch(["EnteredUsername", event.currentTarget.value])
-          }
-        />
+      <UI.TextField
+        value={model.form.name}
+        sx={{ marginBottom: 4 }}
+        label="Name"
+        fullWidth
+        onChange={({ currentTarget: { value: name } }) =>
+          dispatch(["EnteredName", name])
+        }
+      />
 
-        <UI.TextField
-          value={model.form.name}
-          sx={{ marginBottom: 4 }}
-          label="Name"
-          fullWidth
-          onChange={({ currentTarget: { value: name } }) =>
-            dispatch(["EnteredName", name])
-          }
-        />
-
-        <UI.Button
-          fullWidth
-          size="large"
-          variant="contained"
-          onClick={() => dispatch(["ClickedSubmit"])}
-        >
-          Create Profile
-        </UI.Button>
-      </UI.Box>
-    </UI.FillBox>
-  )
+      <UI.Button
+        fullWidth
+        size="large"
+        variant="contained"
+        onClick={() => dispatch(["ClickedSubmit"])}
+      >
+        Create Profile
+      </UI.Button>
+    </UI.Box>
+  </UI.FillBox>
+)

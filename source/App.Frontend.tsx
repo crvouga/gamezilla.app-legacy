@@ -17,7 +17,7 @@ import {
   Sub,
   tag,
   tagCmd,
-  tagSub
+  tagSub,
 } from "./Core"
 import * as GameRoom from "./GameRoom/GameRoom.Frontend"
 import * as Pages from "./Pages"
@@ -138,18 +138,21 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
       ]
     }
 
-
-    case 'Party': {
-      const [child, childCmd] = Party.update({ sendToBackend: (msg) => Wire.sendToBackend(['Party', msg]) }, msg[1], model.party)
+    case "Party": {
+      const [child, childCmd] = Party.update(
+        { sendToBackend: (msg) => Wire.sendToBackend(["Party", msg]) },
+        msg[1],
+        model.party,
+      )
       return [{ ...model, party: child }, tagCmd("Party", childCmd)]
     }
 
     case "Route": {
       switch (msg[1][0]) {
-        case 'GotRoute': {
+        case "GotRoute": {
           const modelNew: Model = {
             ...model,
-            route: msg[1][1]
+            route: msg[1][1],
           }
 
           return initPage(modelNew)
@@ -165,14 +168,14 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
       return [{ ...model, wire: msg[1] }, Cmd.None]
     }
 
-    case 'LocalStoragePut_Done': {
+    case "LocalStoragePut_Done": {
       return [model, Cmd.None]
     }
 
     case "GameRoom": {
       const status = toStatus(model)
 
-      if (status[0] !== 'Ready') {
+      if (status[0] !== "Ready") {
         return [model, Cmd.None]
       }
 
@@ -181,16 +184,13 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
       const [child, childCmd] = GameRoom.update(
         {
           currentUserId: profile.userId,
-          sendToBackend: msg => Wire.sendToBackend(['GameRoom', msg])
+          sendToBackend: (msg) => Wire.sendToBackend(["GameRoom", msg]),
         },
         msg[1],
         model.gameRoom,
       )
 
-      return pipe([
-        { ...model, gameRoom: child },
-        tagCmd("GameRoom", childCmd),
-      ])
+      return pipe([{ ...model, gameRoom: child }, tagCmd("GameRoom", childCmd)])
     }
 
     case "Page": {
@@ -203,7 +203,10 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   }
 }
 
-const updatePage = (msg: Pages.Msg, model: Model): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
+const updatePage = (
+  msg: Pages.Msg,
+  model: Model,
+): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   const status = toStatus(model)
 
   switch (status[0]) {
@@ -213,10 +216,7 @@ const updatePage = (msg: Pages.Msg, model: Model): [Model, Cmd.Cmd<Msg>, OutActi
       return [model, Cmd.None, []]
 
     case "LoggedOut": {
-      const [pageNew, pageCmd, actions] = Pages.updateLoggedOut(
-        msg,
-        model.page,
-      )
+      const [pageNew, pageCmd, actions] = Pages.updateLoggedOut(msg, model.page)
 
       return [{ ...model, page: pageNew }, tagCmd("Page", pageCmd), actions]
     }
@@ -253,31 +253,41 @@ const updateFromBackend = (
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
-
-    case 'Session': {
+    case "Session": {
       const sessionId = msg[1]
 
-      return [model, LocalStorage.put(Wire.sessionIdKey, sessionId, tag("LocalStoragePut_Done"))]
+      return [
+        model,
+        LocalStorage.put(
+          Wire.sessionIdKey,
+          sessionId,
+          tag("LocalStoragePut_Done"),
+        ),
+      ]
     }
 
-    case 'Party': {
-      if (model.auth[0] !== 'LoggedIn') {
+    case "Party": {
+      if (model.auth[0] !== "LoggedIn") {
         return [model, Cmd.None]
       }
 
       const currentUserId = model.auth[1].userId
 
-      const [party, partyCmd, actions] = Party.updateFromBackend({ currentUserId }, msg[1], model.party)
+      const [party, partyCmd, actions] = Party.updateFromBackend(
+        { currentUserId },
+        msg[1],
+        model.party,
+      )
 
       return pipe(
         [{ ...model, party }, tagCmd("Party", partyCmd)],
-        andThenMany(runAction, actions)
+        andThenMany(runAction, actions),
       )
     }
 
     case "GameRoom": {
       const [gameRoom, gameRoomCmd, actions] = GameRoom.updateFromBackend(
-        { sendToBackend: msg => Wire.sendToBackend(['GameRoom', msg]) },
+        { sendToBackend: (msg) => Wire.sendToBackend(["GameRoom", msg]) },
         msg[1],
         model.gameRoom,
       )
@@ -305,10 +315,7 @@ const initPage = (model: Model): [Model, Cmd.Cmd<Msg>] => {
     case "ProfileLoading": {
       const action: OutAction = [
         "Store",
-        [
-          "Profile",
-          ["FindMany", { userIds: [status[1].authSession.userId] }],
-        ],
+        ["Profile", ["FindMany", { userIds: [status[1].authSession.userId] }]],
       ]
 
       return pipe([model, Cmd.None], andThenMany(runAction, [action]))
@@ -347,21 +354,18 @@ const initPage = (model: Model): [Model, Cmd.Cmd<Msg>] => {
 
 const updateStatusChanged =
   (modelPrev: Model) =>
-    (_msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
-      const statusPrev = toStatus(modelPrev)
-      const statusNew = toStatus(model)
+  (_msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
+    const statusPrev = toStatus(modelPrev)
+    const statusNew = toStatus(model)
 
-      if (statusNew[0] === statusPrev[0]) {
-        return [model, Cmd.None]
-      }
-
-      return initPage(model)
+    if (statusNew[0] === statusPrev[0]) {
+      return [model, Cmd.None]
     }
 
-const runAction = (
-  action: OutAction,
-  model: Model,
-): [Model, Cmd.Cmd<Msg>] => {
+    return initPage(model)
+  }
+
+const runAction = (action: OutAction, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (action[0]) {
     case "Store": {
       const [storeNew, storeCmd] = Store.runAction(action, model.store)
@@ -387,7 +391,10 @@ const runAction = (
       const currentUserId = model.auth[1].userId
 
       const [gameRoom, gameRoomCmd] = GameRoom.runAction(
-        { currentUserId, sendToBackend: msg => Wire.sendToBackend(['GameRoom', msg]) },
+        {
+          currentUserId,
+          sendToBackend: (msg) => Wire.sendToBackend(["GameRoom", msg]),
+        },
         action,
         model.gameRoom,
       )
@@ -399,8 +406,12 @@ const runAction = (
       return [{ ...model, auth: authNew }, tagCmd("Auth", authCmd)]
     }
 
-    case 'Party': {
-      const [party, partyCmd] = Party.runAction({ sendToBackend: (msg) => Wire.sendToBackend(['Party', msg]) }, action, model.party)
+    case "Party": {
+      const [party, partyCmd] = Party.runAction(
+        { sendToBackend: (msg) => Wire.sendToBackend(["Party", msg]) },
+        action,
+        model.party,
+      )
       return [{ ...model, party }, tagCmd("Party", partyCmd)]
     }
 
@@ -426,12 +437,12 @@ const subscriptions = (model: Model): Sub.Sub<Msg> => {
     tagSub("Auth", Auth.subscriptions),
     model.auth[0] === "LoggedIn"
       ? tagSub(
-        "GameRoom",
-        GameRoom.subscriptions(
-          { currentUserId: model.auth[1].userId },
-          model.gameRoom,
-        ),
-      )
+          "GameRoom",
+          GameRoom.subscriptions(
+            { currentUserId: model.auth[1].userId },
+            model.gameRoom,
+          ),
+        )
       : Sub.None,
   ])
 }
@@ -459,53 +470,65 @@ const toThemeMode = (model: Model): UI.ThemeMode => {
   }
 }
 
+const View = ({
+  model,
+  dispatch,
+}: {
+  model: Model
+  dispatch: (msg: Msg) => void
+}) => {
+  return (
+    <UI.ThemeProvider themeMode={toThemeMode(model)}>
+      <UI.Box
+        sx={{
+          maxWidth: "sm",
+          maxHeight: "100%",
 
-
-const View =
-  ({ model, dispatch }: { model: Model, dispatch: (msg: Msg) => void }) => {
-    return (
-      <UI.ThemeProvider themeMode={toThemeMode(model)}>
+          userSelect: "none",
+          marginX: "auto",
+          position: "fixed",
+          width: "100%",
+          height: "100%",
+          overflow: "hidden",
+          //
+          display: "flex",
+          flexDirection: "column",
+          left: "50%",
+          top: "50%",
+          transform: "translate(-50%, -50%)",
+        }}
+      >
         <UI.Box
           sx={{
-            maxWidth: "sm",
-            maxHeight: "100%",
-
-            userSelect: "none",
-            marginX: "auto",
-            position: "fixed",
-            width: "100%",
-            height: "100%",
-            overflow: "hidden",
-            // 
             display: "flex",
             flexDirection: "column",
-            left: "50%",
-            top: "50%",
-            transform: "translate(-50%, -50%)",
+            width: "100%",
+            overflow: "hidden",
+            flex: 1,
           }}
         >
-          <UI.Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              width: "100%",
-              overflow: "hidden",
-              flex: 1,
-            }}
-          >
-            <ViewMain model={model} dispatch={dispatch} />
-          </UI.Box>
-
-          <Snackbar.View
-            model={model.snackbar}
-            dispatch={msg => dispatch(['Snackbar', msg])}
+          <ViewMain
+            model={model}
+            dispatch={dispatch}
           />
         </UI.Box>
-      </UI.ThemeProvider>
-    )
-  }
 
-const ViewMain = ({ model, dispatch }: { model: Model, dispatch: (msg: Msg) => void }) => {
+        <Snackbar.View
+          model={model.snackbar}
+          dispatch={(msg) => dispatch(["Snackbar", msg])}
+        />
+      </UI.Box>
+    </UI.ThemeProvider>
+  )
+}
+
+const ViewMain = ({
+  model,
+  dispatch,
+}: {
+  model: Model
+  dispatch: (msg: Msg) => void
+}) => {
   const status = toStatus(model)
 
   switch (model.wire) {
@@ -526,48 +549,50 @@ const ViewMain = ({ model, dispatch }: { model: Model, dispatch: (msg: Msg) => v
           return <ViewError reason="Failed to load profile." />
 
         case "LoggedOut":
-          return <Pages.ViewLoggedOut
-            model={model.page}
-            dispatch={msg => dispatch(['Page', msg])}
-          />
+          return (
+            <Pages.ViewLoggedOut
+              model={model.page}
+              dispatch={(msg) => dispatch(["Page", msg])}
+            />
+          )
 
         case "ProfileMissing":
-          return <Pages.ViewProfileMissing
-            authSession={status[1].authSession}
-            model={model.page}
-            dispatch={msg => dispatch(['Page', msg])}
-          />
+          return (
+            <Pages.ViewProfileMissing
+              authSession={status[1].authSession}
+              model={model.page}
+              dispatch={(msg) => dispatch(["Page", msg])}
+            />
+          )
 
         case "Ready":
-          return <Pages.ViewReady
-            {...model}
-            profile={status[1].profile}
-            dispatch={msg => dispatch(['Page', msg])}
-            model={model.page}
-          />
-
-
+          return (
+            <Pages.ViewReady
+              {...model}
+              profile={status[1].profile}
+              dispatch={(msg) => dispatch(["Page", msg])}
+              model={model.page}
+            />
+          )
       }
     }
   }
 }
 
-const ViewLoading =
-  ({ reason }: { reason: string }) =>
-  (
-    <UI.FillBox sx={{ justifyContent: "center", alignItems: "center" }}>
-      <UI.CircularProgress sx={{ marginBottom: 2 }} />
+const ViewLoading = ({ reason }: { reason: string }) => (
+  <UI.FillBox sx={{ justifyContent: "center", alignItems: "center" }}>
+    <UI.CircularProgress sx={{ marginBottom: 2 }} />
 
-      <UI.Typography
-        sx={{ position: "absolute", bottom: 0, left: 0, padding: 1 }}
-        align="center"
-        variant="caption"
-        color="text.secondary"
-      >
-        {reason}
-      </UI.Typography>
-    </UI.FillBox>
-  )
+    <UI.Typography
+      sx={{ position: "absolute", bottom: 0, left: 0, padding: 1 }}
+      align="center"
+      variant="caption"
+      color="text.secondary"
+    >
+      {reason}
+    </UI.Typography>
+  </UI.FillBox>
+)
 
 const ViewError = ({ reason }: { reason: string }) => (
   <UI.FillBox sx={{ justifyContent: "center", alignItems: "center", p: 2 }}>
@@ -691,7 +716,13 @@ const program = Debug.ReduxDevTools.withDebugger(
     onLocationChange,
     subscriptions,
     update,
-    view: (model) => (dispatch) => <View model={model} dispatch={dispatch} />,
+    view: (model) => (dispatch) =>
+      (
+        <View
+          model={model}
+          dispatch={dispatch}
+        />
+      ),
   }),
 )
 
@@ -714,13 +745,15 @@ const backendUrl =
     ? `https://backend.gamezilla.app/`
     : `http://localhost:${Wire.backendServerPort}/`
 
-const socketClient: Socket<Wire.ServerToClientEvents, Wire.ClientToServerEvents> =
-  io(backendUrl, {
-    auth: {
-      [Wire.sessionIdKey]: localStorage.getItem(Wire.sessionIdKey) ?? undefined
-    },
-    forceNew: true
-  })
+const socketClient: Socket<
+  Wire.ServerToClientEvents,
+  Wire.ClientToServerEvents
+> = io(backendUrl, {
+  auth: {
+    [Wire.sessionIdKey]: localStorage.getItem(Wire.sessionIdKey) ?? undefined,
+  },
+  forceNew: true,
+})
 
 socketClient.on("connect", () => {
   Wire._connectionStatus.next("Connected")
@@ -741,4 +774,3 @@ socketClient.on("ToFrontend", (msg) => {
 Wire._sendToBackend.subscribe((msg) => {
   socketClient.emit("ToBackend", msg)
 })
-

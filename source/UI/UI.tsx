@@ -27,13 +27,13 @@ const createTheme = ({ mode }: { mode: "light" | "dark" }) =>
       components: {
         MuiCircularProgress: {
           defaultProps: {
-            disableShrink: true
+            disableShrink: true,
           },
           styleOverrides: {
             root: {
               animationDuration: `${1 / 2}s`,
-            }
-          }
+            },
+          },
         },
         MuiButton: {
           defaultProps: {
@@ -65,14 +65,13 @@ const createTheme = ({ mode }: { mode: "light" | "dark" }) =>
         MuiButtonBase: {
           styleOverrides: {
             root: {
-              cursor: "pointer"
-            }
-
+              cursor: "pointer",
+            },
           },
           defaultProps: {
-            disableTouchRipple: true
-          }
-        }
+            disableTouchRipple: true,
+          },
+        },
       },
     }),
   )
@@ -472,38 +471,44 @@ export const ConformationDialog = ({
   confirmTitle,
   cancelTitle = "Cancel",
   headerIcon,
-  subtitle
-
+  subtitle,
 }: {
-  open: boolean;
-  onCancel: () => void;
-  onClose: () => void;
-  onConfirm: () => void;
-  title: string;
+  open: boolean
+  onCancel: () => void
+  onClose: () => void
+  onConfirm: () => void
+  title: string
   subtitle?: string
-  confirmTitle: string;
-  cancelTitle?: string;
+  confirmTitle: string
+  cancelTitle?: string
   headerIcon?: ViewNode
 }) => {
   return (
-    <Dialog open={open} onClose={onClose}>
+    <Dialog
+      open={open}
+      onClose={onClose}
+    >
       {headerIcon && (
         <Box sx={{ margin: "auto", paddingTop: 2, marginBottom: -1 }}>
           {headerIcon}
         </Box>
       )}
       <DialogTitle>{title}</DialogTitle>
-      {subtitle && <DialogTitle variant="subtitle2" color="text.secondary">{subtitle}</DialogTitle>}
+      {subtitle && (
+        <DialogTitle
+          variant="subtitle2"
+          color="text.secondary"
+        >
+          {subtitle}
+        </DialogTitle>
+      )}
       <DialogActions>
         <Button onClick={onCancel}>{cancelTitle}</Button>
         <Button onClick={onConfirm}>{confirmTitle}</Button>
       </DialogActions>
     </Dialog>
-  );
-};
-
-
-
+  )
+}
 
 export const pulse = keyframes`
   0% {

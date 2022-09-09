@@ -18,7 +18,6 @@ export const decode = (id: string): Result.Result<Problem, PartyId> => {
   return Result.Err("invalid_party_id")
 }
 
-
 export const generateSync = (): PartyId => {
   const id = Uuid.generateSync()
   if (is(id)) {

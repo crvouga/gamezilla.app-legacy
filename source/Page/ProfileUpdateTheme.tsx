@@ -60,27 +60,31 @@ export const update = (
 //
 //
 
-export const View =
-  ({ profile, model, dispatch }: { profile: Profile.Profile, model: Model, dispatch: (msg: Msg) => void }) =>
-  (
-    <UI.FillBox>
-      <UI.Header
-        left={
-          <UI.HeaderBackButton onClick={() => dispatch(["ClickedBack"])} />
-        }
-        title="Theme"
-      />
+export const View = ({
+  profile,
+  model,
+  dispatch,
+}: {
+  profile: Profile.Profile
+  model: Model
+  dispatch: (msg: Msg) => void
+}) => (
+  <UI.FillBox>
+    <UI.Header
+      left={<UI.HeaderBackButton onClick={() => dispatch(["ClickedBack"])} />}
+      title="Theme"
+    />
 
-      <UI.LoadingDialog
-        open={model.status === "Updating"}
-        title="Updating theme..."
-      />
+    <UI.LoadingDialog
+      open={model.status === "Updating"}
+      title="Updating theme..."
+    />
 
-      <UI.Box sx={{ padding: 2 }}>
-        <UI.ThemeModeToggleButtons
-          themeMode={profile.themeMode}
-          onChange={(themeMode) => dispatch(["ClickedThemeMode", themeMode])}
-        />
-      </UI.Box>
-    </UI.FillBox>
-  )
+    <UI.Box sx={{ padding: 2 }}>
+      <UI.ThemeModeToggleButtons
+        themeMode={profile.themeMode}
+        onChange={(themeMode) => dispatch(["ClickedThemeMode", themeMode])}
+      />
+    </UI.Box>
+  </UI.FillBox>
+)

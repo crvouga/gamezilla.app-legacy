@@ -18,7 +18,8 @@ export const decode = (id: string): Result.Result<Problem, SessionId> => {
   return Result.Err("invalid_session_id")
 }
 
-const characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
+const characters =
+  "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
 
 const randomCharacter = (word: string): string => {
   return word[Math.floor(Math.random() * word.length)] ?? "a"
@@ -34,9 +35,7 @@ const generateId = (length: number): string => {
   return runningId
 }
 
-
 export const generate = (): SessionId => {
-
   const sessionId = generateId(10)
 
   if (is(sessionId)) {

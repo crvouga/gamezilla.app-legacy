@@ -5,7 +5,14 @@ import * as Store from "../Store"
 import * as UI from "../UI"
 import * as Chess from "./Chess/Chess.Frontend"
 import * as ConnectFour from "./ConnectFour/ConnectFour.Frontend"
-import { BackendModel, FrontendModel, FrontendMsg, GameName, ToBackend, ToFrontend } from "./Game.Types"
+import {
+  BackendModel,
+  FrontendModel,
+  FrontendMsg,
+  GameName,
+  ToBackend,
+  ToFrontend,
+} from "./Game.Types"
 import * as Snake from "./Snake/Snake.Frontend"
 import * as TicTacToe from "./TicTacToe/TicTacToe.Frontend"
 
@@ -19,7 +26,13 @@ import * as TicTacToe from "./TicTacToe/TicTacToe.Frontend"
 
 export type Model = FrontendModel
 
-export const init = ({ gameName, sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd.Cmd<never>, gameName: Model[0] }): [Model, Cmd.Cmd<Msg>] => {
+export const init = ({
+  gameName,
+  sendToBackend,
+}: {
+  sendToBackend: (msg: ToBackend) => Cmd.Cmd<never>
+  gameName: Model[0]
+}): [Model, Cmd.Cmd<Msg>] => {
   switch (gameName) {
     case "TicTacToe": {
       return [["TicTacToe", TicTacToe.init], Cmd.None]
@@ -34,7 +47,9 @@ export const init = ({ gameName, sendToBackend }: { sendToBackend: (msg: ToBacke
     }
 
     case "Chess": {
-      const [child, cmd] = Chess.init({ sendToBackend: msg => sendToBackend(['Chess', msg]) })
+      const [child, cmd] = Chess.init({
+        sendToBackend: (msg) => sendToBackend(["Chess", msg]),
+      })
       return [["Chess", child], tagCmd("Chess", cmd)]
     }
   }
@@ -58,14 +73,13 @@ export const update = (
     currentRoomId,
     sendToBackend,
   }: {
-    currentUserId: UserId.UserId;
+    currentUserId: UserId.UserId
     currentRoomId: RoomId.RoomId
     sendToBackend: (msg: ToBackend) => Cmd.Cmd<never>
   },
   msg: Msg,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
-
   switch (model[0]) {
     case "ConnectFour": {
       if (msg[0] === "ConnectFour") {
@@ -79,7 +93,14 @@ export const update = (
       if (msg[0] === "Snake") {
         return tagUpdate(
           "Snake",
-          Snake.update({ currentUserId, sendToBackend: msg => sendToBackend(['Snake', msg]), }, msg[1], model[1]),
+          Snake.update(
+            {
+              currentUserId,
+              sendToBackend: (msg) => sendToBackend(["Snake", msg]),
+            },
+            msg[1],
+            model[1],
+          ),
         )
       }
       return [model, Cmd.None]
@@ -99,7 +120,11 @@ export const update = (
       if (msg[0] === "Chess") {
         return tagUpdate(
           "Chess",
-          Chess.update({ sendToBackend: msg => sendToBackend(['Chess', msg]) }, msg[1], model[1]),
+          Chess.update(
+            { sendToBackend: (msg) => sendToBackend(["Chess", msg]) },
+            msg[1],
+            model[1],
+          ),
         )
       }
       return [model, Cmd.None]
@@ -149,9 +174,13 @@ export const updateFromBackend = (
 
     case "Chess": {
       if (model[0] === "Chess") {
-        const [child, cmd, actions] = Chess.updateFromBackend({ sendToBackend: msg => sendToBackend(['Chess', msg]) }, msg[1], model[1])
+        const [child, cmd, actions] = Chess.updateFromBackend(
+          { sendToBackend: (msg) => sendToBackend(["Chess", msg]) },
+          msg[1],
+          model[1],
+        )
 
-        return [['Chess', child], tagCmd("Chess", cmd), actions,]
+        return [["Chess", child], tagCmd("Chess", cmd), actions]
       }
       return [model, Cmd.None, []]
     }
@@ -166,13 +195,19 @@ export const updateFromBackend = (
 //
 //
 
-export const subscriptions = (intervalId: string, model: Model): Sub.Sub<Msg> => {
+export const subscriptions = (
+  intervalId: string,
+  model: Model,
+): Sub.Sub<Msg> => {
   switch (model[0]) {
     case "ConnectFour": {
       return Sub.None
     }
     case "Snake": {
-      return tagSub("Snake", Snake.subscriptions(`snake-${intervalId}`, model[1]))
+      return tagSub(
+        "Snake",
+        Snake.subscriptions(`snake-${intervalId}`, model[1]),
+      )
     }
     case "TicTacToe": {
       return Sub.None
@@ -191,61 +226,66 @@ export const subscriptions = (intervalId: string, model: Model): Sub.Sub<Msg> =>
 //
 //
 
-export const View = (
-  {
-    currentUserId,
-    store,
-    model,
-    dispatch,
-    onCloseGame,
-    roomAvatarGroup
-  }: {
-    onCloseGame: () => void
-    currentUserId: UserId.UserId
-    store: Store.Model,
-    model: Model,
-    dispatch: (msg: Msg) => void,
-    roomAvatarGroup: UI.ViewNode
-  },
-) => {
+export const View = ({
+  currentUserId,
+  store,
+  model,
+  dispatch,
+  onCloseGame,
+  roomAvatarGroup,
+}: {
+  onCloseGame: () => void
+  currentUserId: UserId.UserId
+  store: Store.Model
+  model: Model
+  dispatch: (msg: Msg) => void
+  roomAvatarGroup: UI.ViewNode
+}) => {
   switch (model[0]) {
     case "ConnectFour": {
-      return <ConnectFour.View
-        model={model[1]}
-        dispatch={msg => dispatch(['ConnectFour', msg])}
-        onCloseGame={onCloseGame}
-      />
-
+      return (
+        <ConnectFour.View
+          model={model[1]}
+          dispatch={(msg) => dispatch(["ConnectFour", msg])}
+          onCloseGame={onCloseGame}
+        />
+      )
     }
 
     case "Snake": {
-      return <Snake.View
-        currentUserId={currentUserId}
-        store={store}
-        model={model[1]}
-        dispatch={msg => dispatch(['Snake', msg])}
-      />
+      return (
+        <Snake.View
+          currentUserId={currentUserId}
+          store={store}
+          model={model[1]}
+          dispatch={(msg) => dispatch(["Snake", msg])}
+        />
+      )
     }
 
     case "TicTacToe": {
-      return <TicTacToe.View
-        currentUserId={currentUserId}
-        store={store}
-        model={model[1]}
-        dispatch={msg => dispatch(['TicTacToe', msg])}
-        onCloseGame={onCloseGame}
-      />
+      return (
+        <TicTacToe.View
+          currentUserId={currentUserId}
+          store={store}
+          model={model[1]}
+          dispatch={(msg) => dispatch(["TicTacToe", msg])}
+          onCloseGame={onCloseGame}
+        />
+      )
     }
 
     case "Chess": {
-      return <Chess.View
-        onCloseGame={onCloseGame}
-        currentUserId={currentUserId}
-        store={store}
-        model={model[1]}
-        dispatch={msg => dispatch(['Chess', msg])}
-        roomAvatarGroup={roomAvatarGroup}
-      />
+      return (
+        <Chess.View
+          onCloseGame={onCloseGame}
+          currentUserId={currentUserId}
+          store={store}
+          model={model[1]}
+          dispatch={(msg) => dispatch(["Chess", msg])}
+          roomAvatarGroup={roomAvatarGroup}
+        />
+      )
     }
   }
 }
@@ -283,53 +323,95 @@ export const CoverArt = ({ gameName }: { gameName: GameName }) => {
   }
 }
 
-
-export const mergeWithBackend = ({ sendToBackend, frontendModel, backendModel }: { sendToBackend: (msg: ToBackend) => Cmd.Cmd<never>, frontendModel: FrontendModel, backendModel: BackendModel }): [FrontendModel, Cmd.Cmd<Msg>] => {
+export const mergeWithBackend = ({
+  sendToBackend,
+  frontendModel,
+  backendModel,
+}: {
+  sendToBackend: (msg: ToBackend) => Cmd.Cmd<never>
+  frontendModel: FrontendModel
+  backendModel: BackendModel
+}): [FrontendModel, Cmd.Cmd<Msg>] => {
   switch (backendModel[0]) {
-    case 'Chess': {
+    case "Chess": {
+      if (frontendModel[0] === "Chess") {
+        const merged = Chess.mergeWithBackend({
+          sendToBackend: (msg) => sendToBackend(["Chess", msg]),
+          frontendModel: frontendModel[1],
+          backendModel: backendModel[1],
+        })
 
-      if (frontendModel[0] === 'Chess') {
-        const merged = Chess.mergeWithBackend({ sendToBackend: msg => sendToBackend(['Chess', msg]), frontendModel: frontendModel[1], backendModel: backendModel[1] })
-
-        return [['Chess', merged[0]], tagCmd("Chess", merged[1])]
+        return [["Chess", merged[0]], tagCmd("Chess", merged[1])]
       }
 
-      const initial = Chess.init({ sendToBackend: msg => sendToBackend(['Chess', msg]) })
+      const initial = Chess.init({
+        sendToBackend: (msg) => sendToBackend(["Chess", msg]),
+      })
 
-      const merged = Chess.mergeWithBackend({ sendToBackend: msg => sendToBackend(['Chess', msg]), frontendModel: initial[0], backendModel: backendModel[1] })
+      const merged = Chess.mergeWithBackend({
+        sendToBackend: (msg) => sendToBackend(["Chess", msg]),
+        frontendModel: initial[0],
+        backendModel: backendModel[1],
+      })
 
-      return [['Chess', merged[0]], Cmd.batch([tagCmd("Chess", initial[1]), tagCmd("Chess", merged[1])])]
+      return [
+        ["Chess", merged[0]],
+        Cmd.batch([tagCmd("Chess", initial[1]), tagCmd("Chess", merged[1])]),
+      ]
     }
 
-    case 'ConnectFour': {
-      if (frontendModel[0] === 'ConnectFour') {
-        return [['ConnectFour', ConnectFour.mergeWithBackend(frontendModel[1], backendModel[1])], Cmd.None]
+    case "ConnectFour": {
+      if (frontendModel[0] === "ConnectFour") {
+        return [
+          [
+            "ConnectFour",
+            ConnectFour.mergeWithBackend(frontendModel[1], backendModel[1]),
+          ],
+          Cmd.None,
+        ]
       }
 
       const initial = ConnectFour.init
 
-      return [['ConnectFour', ConnectFour.mergeWithBackend(initial, backendModel[1])], Cmd.None]
+      return [
+        ["ConnectFour", ConnectFour.mergeWithBackend(initial, backendModel[1])],
+        Cmd.None,
+      ]
     }
 
-    case 'Snake': {
-      if (frontendModel[0] === 'Snake') {
-        return [['Snake', Snake.mergeWithBackend(frontendModel[1], backendModel[1])], Cmd.None]
+    case "Snake": {
+      if (frontendModel[0] === "Snake") {
+        return [
+          ["Snake", Snake.mergeWithBackend(frontendModel[1], backendModel[1])],
+          Cmd.None,
+        ]
       }
 
       const initial = Snake.init
 
-      return [['Snake', Snake.mergeWithBackend(initial, backendModel[1])], Cmd.None]
+      return [
+        ["Snake", Snake.mergeWithBackend(initial, backendModel[1])],
+        Cmd.None,
+      ]
     }
 
-    case 'TicTacToe': {
-      if (frontendModel[0] === 'TicTacToe') {
-        return [['TicTacToe', TicTacToe.mergeWithBackend(frontendModel[1], backendModel[1])], Cmd.None]
+    case "TicTacToe": {
+      if (frontendModel[0] === "TicTacToe") {
+        return [
+          [
+            "TicTacToe",
+            TicTacToe.mergeWithBackend(frontendModel[1], backendModel[1]),
+          ],
+          Cmd.None,
+        ]
       }
 
       const initial = TicTacToe.init
 
-      return [['TicTacToe', TicTacToe.mergeWithBackend(initial, backendModel[1])], Cmd.None]
+      return [
+        ["TicTacToe", TicTacToe.mergeWithBackend(initial, backendModel[1])],
+        Cmd.None,
+      ]
     }
   }
 }
-
