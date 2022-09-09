@@ -444,10 +444,6 @@ export const openGame = (
     return Result.Err("user_is_not_in_a_room")
   }
 
-  if (room.hostId !== user.userId) {
-    return Result.Err("user_is_not_the_host")
-  }
-
   if (room.game.type !== 'None') {
     return Result.Err("game_already_started")
   }
@@ -488,10 +484,6 @@ export const closeGame = (
 
   if (!room) {
     return Result.Err("user_is_not_in_a_room")
-  }
-
-  if (room.hostId !== user.userId) {
-    return Result.Err("user_is_not_the_host")
   }
 
   if (room.game.type === 'None') {

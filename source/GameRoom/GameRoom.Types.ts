@@ -152,7 +152,6 @@ export type OpenGame_Done = ["OpenGame_Done", OpenGameResult]
 
 export type OpenGameProblem =
   | "user_is_not_in_a_room"
-  | "user_is_not_the_host"
   | "game_already_started"
 
 export type OpenGameResult = Result.Result<OpenGameProblem, BackendModel>
@@ -169,7 +168,6 @@ export type CloseGame_Done = ["CloseGame_Done", CloseGameResult]
 
 export type CloseGameProblem =
   | "user_is_not_in_a_room"
-  | "user_is_not_the_host"
   | "game_already_stopped"
 
 export type CloseGameResult = Result.Result<CloseGameProblem, BackendModel>
