@@ -16,7 +16,7 @@ export type Model =
   | ["LoginPhone"]
   | ["LoginPhoneVerify", { phoneNumber: string }]
   | ["Logout"]
-  | ["Profile", UserId.UserId]
+  | ["Profile", { userId: UserId.UserId }]
   | ["ProfileCreate"]
   | ["ProfileDelete"]
   | ["ProfileUpdate"]
@@ -28,9 +28,8 @@ export type Model =
   | ["Party"]
   | ["Chat"]
   | ["ChatNew"]
-  | ["ChatConversation", string]
+  | ["ChatConversation", { conversationId: string }]
   | ["Search"]
-  | ["Admin", "Model" | "Msg"]
 
 //
 //
@@ -41,7 +40,6 @@ export type Model =
 //
 
 export const routesTypes: { [routeType in Model[0]]: string } = {
-  Admin: "Admin",
   Account: "Account",
   Login: "Login",
   LoginEmailLink: "LoginEmailLink",
@@ -81,7 +79,7 @@ export const decode = ({
   switch (first) {
     case "ChatConversation": {
       if (typeof second === "string") {
-        return Option.Some(["ChatConversation", second])
+        return Option.Some(["ChatConversation", { conversationId: second }])
       }
 
       return Option.None
@@ -89,19 +87,11 @@ export const decode = ({
 
     case "Profile": {
       const userId = UserId.decode(second)
-      if (userId.type === "Ok") {
-        return Option.Some(["Profile", userId.value])
-      }
-      return Option.None
-    }
 
-    case "Admin": {
-      if (
-        typeof second === "string" &&
-        (second === "Model" || second === "Msg")
-      ) {
-        return Option.Some(["Admin", second])
+      if (userId.type === "Ok") {
+        return Option.Some(["Profile", { userId: userId.value }])
       }
+
       return Option.None
     }
 
@@ -126,13 +116,10 @@ export const decode = ({
 export const encode = (route: Model): string => {
   switch (route[0]) {
     case "ChatConversation":
-      return `/${route[0]}/${route[1]}`
+      return `/${route[0]}/${route[1].conversationId}`
 
     case "Profile":
-      return `/${route[0]}/${route[1]}`
-
-    case "Admin":
-      return `/${route[0]}/${route[1]}`
+      return `/${route[0]}/${route[1].userId}`
 
     case 'LoginPhoneVerify':
       const params = new URLSearchParams(route[1])

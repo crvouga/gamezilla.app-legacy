@@ -13,36 +13,35 @@ import * as UI from "../UI"
 //
 //
 
-type FocusedModel =
-  | {
-      type: "Blurred"
-    }
-  | {
-      type: "Focused"
-      messageId: string
-      copyStatus: "Failed" | "NotAsked" | "Succeeded" | "Loading"
-    }
-
 export type Model = {
-  conversationId: string
   text: string
   focused: FocusedModel
 }
+
+type FocusedModel =
+  | {
+    type: "Blurred"
+  }
+  | {
+    type: "Focused"
+    messageId: string
+    copyStatus: "Failed" | "NotAsked" | "Succeeded" | "Loading"
+  }
+
 
 export const init = ({
   conversationId,
 }: {
   conversationId: string
 }): [Model, Cmd.Cmd<Msg>, OutAction[]] => [
-  {
-    conversationId,
-    text: "",
-    focused: { type: "Blurred" },
-  },
-  Cmd.None,
+    {
+      text: "",
+      focused: { type: "Blurred" },
+    },
+    Cmd.None,
 
-  [["Store", ["Conversation", ["FindOne", { conversationId }]]]],
-]
+    [["Store", ["Conversation", ["FindOne", { conversationId }]]]],
+  ]
 
 //
 //
@@ -65,7 +64,7 @@ export type Msg =
 export type OutAction = Store.Action
 
 export const update = (
-  { userId }: { userId: UserId.UserId },
+  { userId, conversationId }: { userId: UserId.UserId, conversationId: string },
   msg: Msg,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
@@ -89,7 +88,7 @@ export const update = (
     case "ClickedSend":
       const payload = {
         userId,
-        conversationId: model.conversationId,
+        conversationId,
         messageText: model.text,
       }
 
@@ -148,18 +147,20 @@ export const View = ({
   authUser,
   model,
   dispatch,
+  conversationId,
 }: {
   store: Store.Model
   authUser: { userId: UserId.UserId }
   model: Model
+  conversationId: string
   dispatch: (msg: Msg) => void
 }) => {
   const query =
-    store.queries.Conversation.FindOne[model.conversationId] ??
+    store.queries.Conversation.FindOne[conversationId] ??
     RemoteData.NotAsked
 
   const conversation = pipe(
-    Store.Conversation.toConversation(model.conversationId, store),
+    Store.Conversation.toConversation(conversationId, store),
     (conversation) => ({
       ...conversation,
       profiles: conversation.profiles.filter(
@@ -169,7 +170,7 @@ export const View = ({
   )
 
   const messageInsertMutation =
-    store.mutations.Message.Send[model.conversationId] ?? RemoteData.NotAsked
+    store.mutations.Message.Send[conversationId] ?? RemoteData.NotAsked
 
   return (
     <UI.FillBox>
@@ -445,7 +446,7 @@ const ChatMessage = ({
             }
           >
             {model.focused.type === "Focused" &&
-            model.focused.copyStatus === "Succeeded"
+              model.focused.copyStatus === "Succeeded"
               ? "Copied"
               : "Copy Text"}
           </UI.Button>
