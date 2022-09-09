@@ -189,25 +189,23 @@ export const move = (
   })
 }
 
-
-// 
-// 
-// 
-// 
+//
+//
+//
+//
 // View
-// 
-// 
-// 
-
+//
+//
+//
 
 export const View = ({
   boardOrentation,
   model,
   onPieceDrop,
-  isDraggablePiece
+  isDraggablePiece,
 }: {
-  boardOrentation: Color,
-  model: Model,
+  boardOrentation: Color
+  model: Model
   onPieceDrop: (move: MoveInput) => boolean
   isDraggablePiece: ({ piece }: { piece: Piece }) => boolean
 }) => {
@@ -217,11 +215,10 @@ export const View = ({
       <Chessboard
         showBoardNotation
         snapToCursor
-        boardOrientation={boardOrentation === "w" ? "white" : "black"
-        }
+        boardOrientation={boardOrentation === "w" ? "white" : "black"}
         position={toFen(model)}
         boardWidth={boardWidth}
-        isDraggablePiece={({ piece, }) => {
+        isDraggablePiece={({ piece }) => {
           return isDraggablePiece({ piece })
         }}
         onPieceDrop={(sourceSquare, targetSquare, _piece) => {
@@ -237,7 +234,6 @@ export const View = ({
     </div>
   )
 }
-
 
 const useBoardWidth = (depList: DependencyList) => {
   const [boardWidth, setBoardWidth] = useState(0)
@@ -260,6 +256,6 @@ const useBoardWidth = (depList: DependencyList) => {
 
   return {
     ref,
-    boardWidth
+    boardWidth,
   }
 }

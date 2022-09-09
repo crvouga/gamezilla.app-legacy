@@ -3,7 +3,6 @@ import { UserId } from "../../../Data"
 import * as Board from "../Board"
 import * as Clock from "../Clock"
 
-
 //
 //
 //
@@ -54,32 +53,32 @@ export type GameOverModel = {
 
 export type DrawAgreement =
   | {
-    type: "NotAsking"
-  }
+      type: "NotAsking"
+    }
   | {
-    type: "Asking"
-    asker: Board.Color
-  }
+      type: "Asking"
+      asker: Board.Color
+    }
 
 export type GameOver =
   | {
-    type: "Resignation"
-    resigner: Board.Color
-  }
+      type: "Resignation"
+      resigner: Board.Color
+    }
   | {
-    type: "DrawByAgreement"
-  }
+      type: "DrawByAgreement"
+    }
   | {
-    type: "Checkmate"
-    winner: Board.Color
-  }
+      type: "Checkmate"
+      winner: Board.Color
+    }
   | {
-    type: "Stalemate"
-  }
+      type: "Stalemate"
+    }
   | {
-    type: "WinOnTime"
-    winner: Board.Color
-  }
+      type: "WinOnTime"
+      winner: Board.Color
+    }
 
 export const initShared: SharedModel = {
   type: "Setup",
@@ -241,8 +240,8 @@ export const inputPlayer = (
 
   const otherPlayerNew =
     otherPlayer.type === "Some" &&
-      targetPlayer.type === "Some" &&
-      otherPlayer.value === targetPlayer.value
+    targetPlayer.type === "Some" &&
+    otherPlayer.value === targetPlayer.value
       ? Option.None
       : otherPlayer
 
@@ -491,8 +490,8 @@ export const clockTicked = (model: SharedModel): SharedModel => {
           clock: clockNew,
           gameOver: {
             type: "WinOnTime",
-            winner: Board.toOppositeColor(turn)
-          }
+            winner: Board.toOppositeColor(turn),
+          },
         }
       }
 

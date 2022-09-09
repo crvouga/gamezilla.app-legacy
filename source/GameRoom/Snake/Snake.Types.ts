@@ -19,14 +19,14 @@ export type FrontendModel = SharedModel & {
 
 export type SharedModel = Snake.Model & {
   gameStatus:
-  | {
-    type: "GameSetup"
-    player: Option.Option<Player>
-  }
-  | {
-    type: "GameStarted"
-    player: Player
-  }
+    | {
+        type: "GameSetup"
+        player: Option.Option<Player>
+      }
+    | {
+        type: "GameStarted"
+        player: Player
+      }
 }
 
 export type Player = ["User", UserId.UserId]

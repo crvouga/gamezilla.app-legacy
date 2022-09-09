@@ -15,7 +15,7 @@ import {
   Response,
   startGame,
   ToBackend,
-  ToFrontend
+  ToFrontend,
 } from "./UserVsUser.Types"
 
 //
@@ -49,16 +49,21 @@ export const update = (
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
     case "Tick": {
-      const modelNew: Model = { ...model, sharedModel: clockTicked(model.sharedModel) }
+      const modelNew: Model = {
+        ...model,
+        sharedModel: clockTicked(model.sharedModel),
+      }
 
-      const didChangeToGameOver = model.sharedModel.type !== 'GameOver' && modelNew.sharedModel.type === 'GameOver'
+      const didChangeToGameOver =
+        model.sharedModel.type !== "GameOver" &&
+        modelNew.sharedModel.type === "GameOver"
 
       return [
         modelNew,
         Cmd.batch([
           sendToRoom(["Sync", modelNew.sharedModel]),
-          didChangeToGameOver ? sendToRoom(['GameOver']) : Cmd.None
-        ])
+          didChangeToGameOver ? sendToRoom(["GameOver"]) : Cmd.None,
+        ]),
       ]
     }
   }
@@ -172,12 +177,14 @@ const sendResponse = (
     sharedModel: response[1].value,
   }
 
-  const didChangeToGameOver = model.sharedModel.type !== 'GameOver' && modelNew.sharedModel.type === 'GameOver'
+  const didChangeToGameOver =
+    model.sharedModel.type !== "GameOver" &&
+    modelNew.sharedModel.type === "GameOver"
 
   return [
     modelNew,
     Cmd.batch([
-      didChangeToGameOver ? sendToRoom(['GameOver']) : Cmd.None,
+      didChangeToGameOver ? sendToRoom(["GameOver"]) : Cmd.None,
       sendToRoom(response),
       sendToRoom(["Sync", modelNew.sharedModel]),
     ]),

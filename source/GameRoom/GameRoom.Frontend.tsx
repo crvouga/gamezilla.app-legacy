@@ -1,4 +1,13 @@
-import { Cmd, exhaustive, Option, pipe, RemoteData, Sub, tagCmd, Unit } from "../Core"
+import {
+  Cmd,
+  exhaustive,
+  Option,
+  pipe,
+  RemoteData,
+  Sub,
+  tagCmd,
+  Unit,
+} from "../Core"
 import { RoomId, UserId } from "../Data"
 import * as Route from "../Route"
 import * as Snackbar from "../Snackbar"
@@ -9,11 +18,11 @@ import { GameName } from "./Game.Types"
 import {
   BackendModel,
   FrontendModel,
-  FrontendMsg, Response,
+  FrontendMsg,
+  Response,
   ToBackend,
-  ToFrontend
+  ToFrontend,
 } from "./GameRoom.Types"
-
 
 //
 //
@@ -24,8 +33,6 @@ import {
 //
 
 export type Model = FrontendModel
-
-
 
 export const init: [Model, Cmd.Cmd<Msg>] = [
   {
@@ -38,12 +45,10 @@ export const init: [Model, Cmd.Cmd<Msg>] = [
       LeaveRoom: RemoteData.NotAsked,
       OpenGame: RemoteData.NotAsked,
       CloseGame: RemoteData.NotAsked,
-    }
+    },
   },
   Cmd.None,
 ]
-
-
 
 //
 //
@@ -68,7 +73,13 @@ type OutAction = Snackbar.Action | Store.Action
 //
 
 export const update = (
-  { currentUserId, sendToBackend }: { currentUserId: UserId.UserId, sendToBackend: (msg: ToBackend) => Cmd.Cmd<never> },
+  {
+    currentUserId,
+    sendToBackend,
+  }: {
+    currentUserId: UserId.UserId
+    sendToBackend: (msg: ToBackend) => Cmd.Cmd<never>
+  },
   msg: Msg,
   modelPrev: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
@@ -103,7 +114,7 @@ export const update = (
       return [model, Route.push(["GameRoom"])]
     }
 
-    case 'JoinRoom':
+    case "JoinRoom":
     case "LeaveRoom":
     case "CreateRoom":
     case "OpenGame":
@@ -113,10 +124,10 @@ export const update = (
           ...model,
           requests: {
             ...model.requests,
-            [msg[0]]: RemoteData.Loading
-          }
+            [msg[0]]: RemoteData.Loading,
+          },
         },
-        sendToBackend(msg)
+        sendToBackend(msg),
       ]
     }
 
@@ -139,14 +150,18 @@ export const update = (
         return [model, Cmd.None]
       }
 
-      if (room.game.type === 'None') {
+      if (room.game.type === "None") {
         return [model, Cmd.None]
       }
 
       const gameMsg = msg[2]
 
       const [gameNew, gameCmd] = Game.update(
-        { currentUserId, currentRoomId: roomId, sendToBackend: msg => sendToBackend(['Games', roomId, msg]), },
+        {
+          currentUserId,
+          currentRoomId: roomId,
+          sendToBackend: (msg) => sendToBackend(["Games", roomId, msg]),
+        },
         gameMsg,
         room.game.value,
       )
@@ -157,9 +172,9 @@ export const update = (
           ...model.rooms,
           [roomId]: {
             ...room,
-            game: Option.Some(gameNew)
-          }
-        }
+            game: Option.Some(gameNew),
+          },
+        },
       }
 
       return [
@@ -192,7 +207,7 @@ export const updateFromBackend = (
       const [synced, syncedCmd] = mergeWithBackendModel({
         backendModel: msg[1],
         frontendModel: model,
-        sendToBackend
+        sendToBackend,
       })
 
       return [synced, syncedCmd, actions]
@@ -207,13 +222,17 @@ export const updateFromBackend = (
         return [model, Cmd.None, []]
       }
 
-      if (room.game.type === 'None') {
+      if (room.game.type === "None") {
         return [model, Cmd.None, []]
       }
 
       const gameMsg = msg[2]
 
-      const [gameNew, gameCmd, actions] = Game.updateFromBackend({ sendToBackend: msg => sendToBackend(['Games', roomId, msg]) }, gameMsg, room.game.value)
+      const [gameNew, gameCmd, actions] = Game.updateFromBackend(
+        { sendToBackend: (msg) => sendToBackend(["Games", roomId, msg]) },
+        gameMsg,
+        room.game.value,
+      )
 
       const modelNew: Model = {
         ...model,
@@ -221,9 +240,9 @@ export const updateFromBackend = (
           ...model.rooms,
           [roomId]: {
             ...room,
-            game: Option.Some(gameNew)
-          }
-        }
+            game: Option.Some(gameNew),
+          },
+        },
       }
 
       return [
@@ -258,12 +277,18 @@ export const updateFromBackend = (
   }
 }
 
-
 const updateResponse = (
-  { sendToBackend, msg, model }: { msg: Response, model: Model, sendToBackend: (msg: ToBackend) => Cmd.Cmd<never> },
-  requestKey: keyof Model['requests'],
+  {
+    sendToBackend,
+    msg,
+    model,
+  }: {
+    msg: Response
+    model: Model
+    sendToBackend: (msg: ToBackend) => Cmd.Cmd<never>
+  },
+  requestKey: keyof Model["requests"],
 ): [Model, Cmd.Cmd<FrontendMsg>, OutAction[]] => {
-
   const result = msg[1]
 
   const actions: OutAction[] =
@@ -277,31 +302,31 @@ const updateResponse = (
     RemoteData.map(() => Unit),
   )
 
-  if (result.type === 'Err') {
+  if (result.type === "Err") {
     return [
       {
         ...model,
         requests: {
           ...model.requests,
-          [requestKey]: remoteData
+          [requestKey]: remoteData,
         },
       },
       Cmd.None,
-      [["Snackbar", { message: result.error, variant: "Error" }]]
+      [["Snackbar", { message: result.error, variant: "Error" }]],
     ]
   }
 
   const [merged, mergedCmd] = mergeWithBackendModel({
     frontendModel: model,
     backendModel: result.value,
-    sendToBackend
+    sendToBackend,
   })
 
   const modelNew: Model = {
     ...merged,
     requests: {
       ...merged.requests,
-      [requestKey]: remoteData
+      [requestKey]: remoteData,
     },
   }
 
@@ -311,87 +336,49 @@ const updateResponse = (
 const mergeWithBackendModel = ({
   frontendModel,
   backendModel,
-  sendToBackend
+  sendToBackend,
 }: {
-  sendToBackend: (msg: ToBackend) => Cmd.Cmd<never>,
-  frontendModel: FrontendModel,
+  sendToBackend: (msg: ToBackend) => Cmd.Cmd<never>
+  frontendModel: FrontendModel
   backendModel: BackendModel
 }): [FrontendModel, Cmd.Cmd<FrontendMsg>] => {
+  const [roomsNew, roomsCmd] = Object.entries(backendModel.rooms).reduce<
+    [FrontendModel["rooms"], Cmd.Cmd<FrontendMsg>]
+  >(
+    ([rooms, cmd], [roomId, backendRoom]) => {
+      if (!RoomId.is(roomId)) {
+        return [rooms, cmd]
+      }
 
-  const [roomsNew, roomsCmd] = Object
-    .entries(backendModel.rooms)
-    .reduce<[FrontendModel['rooms'], Cmd.Cmd<FrontendMsg>]>(
-      ([rooms, cmd], [roomId, backendRoom]) => {
-        if (!RoomId.is(roomId)) {
-          return [rooms, cmd]
-        }
-
-        if (backendRoom.game.type === 'None') {
-          return [
-            {
-              ...rooms,
-              [roomId]: {
-                events: backendRoom.events,
-                hostId: backendRoom.hostId,
-                roomId: backendRoom.roomId,
-                game: Option.None,
-              }
+      if (backendRoom.game.type === "None") {
+        return [
+          {
+            ...rooms,
+            [roomId]: {
+              events: backendRoom.events,
+              hostId: backendRoom.hostId,
+              roomId: backendRoom.roomId,
+              game: Option.None,
             },
-            cmd
-          ]
-        }
+          },
+          cmd,
+        ]
+      }
 
-        const backendGame = backendRoom.game.value
+      const backendGame = backendRoom.game.value
 
-        const frontendRoom = frontendModel.rooms[roomId]
+      const frontendRoom = frontendModel.rooms[roomId]
 
-        if (!frontendRoom) {
-          const initial = Game.init({ gameName: backendGame[0], sendToBackend: msg => sendToBackend(['Games', roomId, msg]) })
-          const merged = Game.mergeWithBackend({ backendModel: backendGame, frontendModel: initial[0], sendToBackend: msg => sendToBackend(['Games', roomId, msg]) })
-          return [
-            {
-              ...rooms,
-              [roomId]: {
-                events: backendRoom.events,
-                hostId: backendRoom.hostId,
-                roomId: backendRoom.roomId,
-                game: Option.Some(merged[0]),
-              }
-            },
-            Cmd.batch([
-              cmd,
-              pipe(initial[1], Cmd.map((msg): Msg => ['Games', roomId, msg])),
-              pipe(merged[1], Cmd.map((msg): Msg => ['Games', roomId, msg]))
-            ])
-          ]
-        }
-
-        if (frontendRoom.game.type === 'None') {
-          const initial = Game.init({ gameName: backendGame[0], sendToBackend: msg => sendToBackend(['Games', roomId, msg]) })
-          const merged = Game.mergeWithBackend({ backendModel: backendGame, frontendModel: initial[0], sendToBackend: msg => sendToBackend(['Games', roomId, msg]) })
-          return [
-            {
-              ...rooms,
-              [roomId]: {
-                events: backendRoom.events,
-                hostId: backendRoom.hostId,
-                roomId: backendRoom.roomId,
-                game: Option.Some(merged[0]),
-              }
-            },
-            Cmd.batch([
-              cmd,
-              pipe(initial[1], Cmd.map((msg): Msg => ['Games', roomId, msg])),
-              pipe(merged[1], Cmd.map((msg): Msg => ['Games', roomId, msg]))
-            ])
-          ]
-        }
-
-        const frontendGame = frontendRoom.game.value
-
-
-        const merged = Game.mergeWithBackend({ backendModel: backendGame, frontendModel: frontendGame, sendToBackend: msg => sendToBackend(['Games', roomId, msg]) })
-
+      if (!frontendRoom) {
+        const initial = Game.init({
+          gameName: backendGame[0],
+          sendToBackend: (msg) => sendToBackend(["Games", roomId, msg]),
+        })
+        const merged = Game.mergeWithBackend({
+          backendModel: backendGame,
+          frontendModel: initial[0],
+          sendToBackend: (msg) => sendToBackend(["Games", roomId, msg]),
+        })
         return [
           {
             ...rooms,
@@ -400,16 +387,85 @@ const mergeWithBackendModel = ({
               hostId: backendRoom.hostId,
               roomId: backendRoom.roomId,
               game: Option.Some(merged[0]),
-            }
+            },
           },
           Cmd.batch([
             cmd,
-            pipe(merged[1], Cmd.map((msg): Msg => ['Games', roomId, msg]))
-          ])
+            pipe(
+              initial[1],
+              Cmd.map((msg): Msg => ["Games", roomId, msg]),
+            ),
+            pipe(
+              merged[1],
+              Cmd.map((msg): Msg => ["Games", roomId, msg]),
+            ),
+          ]),
         ]
-      },
-      [{}, Cmd.None]
-    )
+      }
+
+      if (frontendRoom.game.type === "None") {
+        const initial = Game.init({
+          gameName: backendGame[0],
+          sendToBackend: (msg) => sendToBackend(["Games", roomId, msg]),
+        })
+        const merged = Game.mergeWithBackend({
+          backendModel: backendGame,
+          frontendModel: initial[0],
+          sendToBackend: (msg) => sendToBackend(["Games", roomId, msg]),
+        })
+        return [
+          {
+            ...rooms,
+            [roomId]: {
+              events: backendRoom.events,
+              hostId: backendRoom.hostId,
+              roomId: backendRoom.roomId,
+              game: Option.Some(merged[0]),
+            },
+          },
+          Cmd.batch([
+            cmd,
+            pipe(
+              initial[1],
+              Cmd.map((msg): Msg => ["Games", roomId, msg]),
+            ),
+            pipe(
+              merged[1],
+              Cmd.map((msg): Msg => ["Games", roomId, msg]),
+            ),
+          ]),
+        ]
+      }
+
+      const frontendGame = frontendRoom.game.value
+
+      const merged = Game.mergeWithBackend({
+        backendModel: backendGame,
+        frontendModel: frontendGame,
+        sendToBackend: (msg) => sendToBackend(["Games", roomId, msg]),
+      })
+
+      return [
+        {
+          ...rooms,
+          [roomId]: {
+            events: backendRoom.events,
+            hostId: backendRoom.hostId,
+            roomId: backendRoom.roomId,
+            game: Option.Some(merged[0]),
+          },
+        },
+        Cmd.batch([
+          cmd,
+          pipe(
+            merged[1],
+            Cmd.map((msg): Msg => ["Games", roomId, msg]),
+          ),
+        ]),
+      ]
+    },
+    [{}, Cmd.None],
+  )
 
   return [
     {
@@ -418,14 +474,18 @@ const mergeWithBackendModel = ({
       rooms: roomsNew,
       users: backendModel.users,
     },
-    roomsCmd
+    roomsCmd,
   ]
 }
 
-
-
 export const runAction = (
-  { currentUserId, sendToBackend }: { currentUserId: UserId.UserId, sendToBackend: (msg: ToBackend) => Cmd.Cmd<never> },
+  {
+    currentUserId,
+    sendToBackend,
+  }: {
+    currentUserId: UserId.UserId
+    sendToBackend: (msg: ToBackend) => Cmd.Cmd<never>
+  },
   action: Action,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
@@ -436,8 +496,6 @@ export const runAction = (
     }
   }
 }
-
-
 
 //
 //
@@ -465,10 +523,9 @@ export const subscriptions = (
     return Sub.None
   }
 
-  if (room.game.type === 'None') {
+  if (room.game.type === "None") {
     return Sub.None
   }
-
 
   const intervalId = room.roomId
 
@@ -488,51 +545,65 @@ export const subscriptions = (
 //
 //
 
-export const View = (
-  {
-    currentUserId,
-    store,
-    model,
-    dispatch
-  }: {
-    currentUserId: UserId.UserId
-    store: Store.Model
-    model: Model,
-    dispatch: (msg: Msg) => void
-  },
-) => {
+export const View = ({
+  currentUserId,
+  store,
+  model,
+  dispatch,
+}: {
+  currentUserId: UserId.UserId
+  store: Store.Model
+  model: Model
+  dispatch: (msg: Msg) => void
+}) => {
   const user = model.users[currentUserId]
 
   if (!user) {
-    return <ViewNotInRoom currentUserId={currentUserId} store={store} model={model} dispatch={dispatch} />
+    return (
+      <ViewNotInRoom
+        currentUserId={currentUserId}
+        store={store}
+        model={model}
+        dispatch={dispatch}
+      />
+    )
   }
 
   const room = model.rooms[user.roomId]
 
   if (!room) {
-    return <ViewNotInRoom currentUserId={currentUserId} store={store} model={model} dispatch={dispatch} />
+    return (
+      <ViewNotInRoom
+        currentUserId={currentUserId}
+        store={store}
+        model={model}
+        dispatch={dispatch}
+      />
+    )
   }
 
   const game = room.game
 
-  if (game.type === 'None') {
-    return <ViewNotInGame
-      currentUserId={currentUserId}
-      store={store}
-      room={room}
-      model={model}
-      dispatch={dispatch}
-    />
+  if (game.type === "None") {
+    return (
+      <ViewNotInGame
+        currentUserId={currentUserId}
+        store={store}
+        room={room}
+        model={model}
+        dispatch={dispatch}
+      />
+    )
   }
 
   return (
     <Game.View
-      onCloseGame={() => dispatch(['CloseGame', { userId: currentUserId }])}
+      onCloseGame={() => dispatch(["CloseGame", { userId: currentUserId }])}
       currentUserId={currentUserId}
       store={store}
       dispatch={(msg) => dispatch(["Games", room.roomId, msg])}
       model={game.value}
-      roomAvatarGroup={(
+      roomAvatarGroup={
         <ViewGameRoomAvatarGroup
           currentUserId={currentUserId}
           store={store}
@@ -540,272 +611,274 @@ export const View = (
           model={model}
           dispatch={dispatch}
         />
-      )}
+      }
     />
   )
-
 }
 
-export const ViewNotInRoom =
-  (
-    {
-      currentUserId,
-      store,
-      model,
-      dispatch,
+export const ViewNotInRoom = ({
+  currentUserId,
+  store,
+  model,
+  dispatch,
+}: {
+  store: Store.Model
+  currentUserId: UserId.UserId
+  model: Model
+  dispatch: (msg: Msg) => void
+}) => {
+  const rooms = Object.values(model.rooms)
+  return (
+    <UI.FillBox>
+      <UI.Header title="Rooms" />
 
-    }: {
-      store: Store.Model
-      currentUserId: UserId.UserId
-      model: Model,
-      dispatch: (msg: Msg) => void
-
-    },
-  ) => {
-    const rooms = Object.values(model.rooms)
-    return (
-      <UI.FillBox>
-        <UI.Header title="Rooms" />
-
-        <UI.Box sx={{ paddingX: 2 }}>
-          <UI.Button
-            fullWidth
-            size="large"
-            variant="contained"
-            loading={model.requests.CreateRoom.type === "Loading"}
-            onClick={() =>
-              dispatch([
-                "CreateRoom",
-                { roomId: RoomId.generate(), userId: currentUserId },
-              ])
-            }
+      <UI.Box sx={{ paddingX: 2 }}>
+        <UI.Button
+          fullWidth
+          size="large"
+          variant="contained"
+          loading={model.requests.CreateRoom.type === "Loading"}
+          onClick={() =>
+            dispatch([
+              "CreateRoom",
+              { roomId: RoomId.generate(), userId: currentUserId },
+            ])
+          }
+        >
+          Start Room
+        </UI.Button>
+        {rooms.length === 0 && (
+          <UI.Typography
+            sx={{ marginTop: 2 }}
+            color="text.secondary"
           >
-            Start Room
-          </UI.Button>
-          {rooms.length === 0 && (
-            <UI.Typography
-              sx={{ marginTop: 2 }}
-              color="text.secondary"
+            No active rooms
+          </UI.Typography>
+        )}
+      </UI.Box>
+
+      <UI.LoadingBackdrop open={model.requests.JoinRoom.type === "Loading"} />
+
+      <UI.List sx={{ overflowY: "scroll" }}>
+        {rooms.map((room) => {
+          const profiles = Object.values(store.Profile).filter(
+            (profile) => model.users[profile.userId]?.roomId === room.roomId,
+          )
+          return (
+            <UI.ListItemButton
+              key={room.roomId}
+              onClick={() => {
+                dispatch([
+                  "JoinRoom",
+                  {
+                    userId: currentUserId,
+                    roomId: room.roomId,
+                  },
+                ])
+              }}
             >
-              No active rooms
-            </UI.Typography>
-          )}
-        </UI.Box>
-
-        <UI.LoadingBackdrop open={model.requests.JoinRoom.type === "Loading"} />
-
-        <UI.List sx={{ overflowY: "scroll" }}>
-          {rooms.map((room) => {
-            const profiles = Object.values(store.Profile).filter(
-              (profile) => model.users[profile.userId]?.roomId === room.roomId,
-            )
-            return (
-              <UI.ListItemButton
-                key={room.roomId}
-                onClick={() => {
-                  dispatch([
-                    "JoinRoom",
-                    {
-                      userId: currentUserId,
-                      roomId: room.roomId,
-                    },
-                  ])
+              <UI.ListItemAvatar>
+                <UI.AvatarGroup>
+                  {profiles.map((item) => (
+                    <UI.Avatar
+                      key={item.userId}
+                      src={item.avatarUrl}
+                    />
+                  ))}
+                </UI.AvatarGroup>
+              </UI.ListItemAvatar>
+              <UI.ListItemText
+                primaryTypographyProps={{
+                  noWrap: true,
+                  sx: { wordWrap: "break-word" },
                 }}
-              >
-                <UI.ListItemAvatar>
-                  <UI.AvatarGroup>
-                    {profiles.map((item) => (
-                      <UI.Avatar
-                        key={item.userId}
-                        src={item.avatarUrl}
-                      />
-                    ))}
-                  </UI.AvatarGroup>
-                </UI.ListItemAvatar>
-                <UI.ListItemText
-                  primaryTypographyProps={{
-                    noWrap: true,
-                    sx: { wordWrap: "break-word" },
-                  }}
-                  primary={profiles.map((item) => item.username).join(",")}
-                />
-              </UI.ListItemButton>
-            )
-          })}
-        </UI.List>
-      </UI.FillBox>
-    )
-  }
+                primary={profiles.map((item) => item.username).join(",")}
+              />
+            </UI.ListItemButton>
+          )
+        })}
+      </UI.List>
+    </UI.FillBox>
+  )
+}
 
-const ViewNotInGame =
-  (
-    {
-      currentUserId,
-      store,
-      room,
-      model,
-      dispatch,
-    }: {
-      store: Store.Model
-      room: {
-        roomId: RoomId.RoomId,
-        hostId: UserId.UserId
-      }
-      currentUserId: UserId.UserId
-      model: Model,
-      dispatch: (msg: Msg) => void
-    },
-  ) => {
-    const onOpen = (gameName: GameName) => {
-      dispatch(['OpenGame', { gameName, userId: currentUserId }])
-    }
-    return (
-      <UI.FillBox>
-        <UI.Header
-          left={
-            <UI.Button
-              sx={{ marginLeft: -1 }}
-              onClick={() => dispatch(['LeaveRoom', { userId: currentUserId }])}
-            >
-              Leave
-            </UI.Button>
-          }
-          title="Choose Game"
-          right={
-            <ViewGameRoomAvatarGroup
-              currentUserId={currentUserId}
-              store={store}
-              room={room}
-              model={model}
-              dispatch={dispatch}
-            />
-          }
+const ViewNotInGame = ({
+  currentUserId,
+  store,
+  room,
+  model,
+  dispatch,
+}: {
+  store: Store.Model
+  room: {
+    roomId: RoomId.RoomId
+    hostId: UserId.UserId
+  }
+  currentUserId: UserId.UserId
+  model: Model
+  dispatch: (msg: Msg) => void
+}) => {
+  const onOpen = (gameName: GameName) => {
+    dispatch(["OpenGame", { gameName, userId: currentUserId }])
+  }
+  return (
+    <UI.FillBox>
+      <UI.Header
+        left={
+          <UI.Button
+            sx={{ marginLeft: -1 }}
+            onClick={() => dispatch(["LeaveRoom", { userId: currentUserId }])}
+          >
+            Leave
+          </UI.Button>
+        }
+        title="Choose Game"
+        right={
+          <ViewGameRoomAvatarGroup
+            currentUserId={currentUserId}
+            store={store}
+            room={room}
+            model={model}
+            dispatch={dispatch}
+          />
+        }
+      />
+
+      <UI.Box
+        sx={{
+          display: "grid",
+          gridTemplateColumns: "repeat(2, 1fr)",
+          overflowY: "scroll",
+          gap: 2,
+          padding: 2,
+        }}
+      >
+        <GameCard
+          icon={<Game.CoverArt gameName="Chess" />}
+          label="Chess"
+          onClick={() => onOpen("Chess")}
         />
 
-        <UI.Box
-          sx={{
-            display: "grid",
-            gridTemplateColumns: "repeat(2, 1fr)",
-            overflowY: "scroll",
-            gap: 2,
-            padding: 2
-          }}
-        >
-          <GameCard
-            icon={<Game.CoverArt gameName="Chess" />}
-            label="Chess"
-            onClick={() => onOpen("Chess")}
-          />
-
-          {/* <GameCard
+        {/* <GameCard
         icon={<Game.CoverArt gameName="Snake" />}
         label="Snake"
         onClick={() => onOpen("Snake")}
       /> */}
 
-          <GameCard
-            icon={<Game.CoverArt gameName="TicTacToe" />}
-            label="Tic Tac Toe"
-            onClick={() => onOpen("TicTacToe")}
-          />
+        <GameCard
+          icon={<Game.CoverArt gameName="TicTacToe" />}
+          label="Tic Tac Toe"
+          onClick={() => onOpen("TicTacToe")}
+        />
 
-          <GameCard
-            icon={<Game.CoverArt gameName="ConnectFour" />}
-            label="Connect Four"
-            onClick={() => onOpen("ConnectFour")}
-          />
+        <GameCard
+          icon={<Game.CoverArt gameName="ConnectFour" />}
+          label="Connect Four"
+          onClick={() => onOpen("ConnectFour")}
+        />
+      </UI.Box>
+    </UI.FillBox>
+  )
+}
 
-
-        </UI.Box>
-      </UI.FillBox>
-    )
+const ViewGameRoomAvatarGroup = ({
+  store,
+  room,
+  model,
+  dispatch,
+  currentUserId,
+}: {
+  store: Store.Model
+  room: {
+    roomId: RoomId.RoomId
+    hostId: UserId.UserId
   }
+  model: Model
+  dispatch: (msg: Msg) => void
+  currentUserId: UserId.UserId
+}) => {
+  const usersInRoom = Object.values(model.users).filter(
+    (user) => user.roomId === room.roomId,
+  )
 
+  return (
+    <>
+      <UI.AvatarGroup
+        sx={{ marginRight: -1 }}
+        onClick={() => dispatch(["ClickedAvatars"])}
+        componentsProps={{
+          additionalAvatar: { sx: { width: 28, height: 28 } },
+        }}
+      >
+        {usersInRoom.map((user) => (
+          <UI.Avatar
+            key={user.userId}
+            src={store.Profile[user.userId]?.avatarUrl}
+            sx={{ width: 28, height: 28 }}
+          />
+        ))}
+      </UI.AvatarGroup>
 
-const ViewGameRoomAvatarGroup =
-  (
-    {
-      store,
-      room,
-      model,
-      dispatch,
-      currentUserId,
-    }: {
-      store: Store.Model
-      room: {
-        roomId: RoomId.RoomId,
-        hostId: UserId.UserId
-      }
-      model: Model,
-      dispatch: (msg: Msg) => void
-      currentUserId: UserId.UserId
-    },
-  ) => {
-    const usersInRoom = Object.values(model.users).filter(user => user.roomId === room.roomId)
-
-    return (
-      <>
-
-        <UI.AvatarGroup
-          sx={{ marginRight: -1, }}
-          onClick={() => dispatch(["ClickedAvatars"])}
-          componentsProps={{
-            additionalAvatar: { sx: { width: 28, height: 28 } }
-          }}>
-          {usersInRoom.map((user) => (
-            <UI.Avatar
-              key={user.userId}
-              src={store.Profile[user.userId]?.avatarUrl}
-              sx={{ width: 28, height: 28 }}
-            />
-          ))}
-        </UI.AvatarGroup>
-
-        <UI.Drawer
-          anchor="bottom"
-          open={model.modal === "DrawerOpened"}
-          onClose={() => dispatch(["ClosedDrawer"])}
+      <UI.Drawer
+        anchor="bottom"
+        open={model.modal === "DrawerOpened"}
+        onClose={() => dispatch(["ClosedDrawer"])}
+      >
+        <UI.Typography
+          variant="h4"
+          sx={{ paddingX: 2, paddingTop: 1 }}
         >
-          <UI.Typography variant="h4" sx={{ paddingX: 2, paddingTop: 1 }}>
-            {store.Profile[room.hostId]?.username ?? "..."}'s room
-          </UI.Typography>
+          {store.Profile[room.hostId]?.username ?? "..."}'s room
+        </UI.Typography>
 
-          <UI.Box sx={{ display: 'grid', gridTemplateColumns: "1fr 1fr 1fr", paddingY: 1, }}>
-            {usersInRoom.map((user) => (
-              <UI.Box
-                key={user.userId}
-                onClick={() => dispatch(['ClickedUser', user])}
-                sx={{
-                  display: 'flex',
-                  flexDirection: "column",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  padding: 1,
-                }}>
-                <UI.Avatar src={store.Profile[user.userId]?.avatarUrl} />
-                <UI.Typography align="center" sx={{ marginBottom: -1 / 2 }}>
-                  {store.Profile[user.userId]?.username ?? "..."}
-                </UI.Typography>
-                <UI.Typography variant="subtitle2" color="text.secondary">
-                  {user.userId === room.hostId ? "Host" : "Guest"}
-                </UI.Typography>
-              </UI.Box>
-            ))}
-          </UI.Box>
-          <UI.Box sx={{ paddingX: 2, paddingBottom: 2 }}>
-            <UI.Button
-              fullWidth
-              variant="contained"
-              onClick={() => dispatch(['LeaveRoom', { userId: currentUserId }])}
+        <UI.Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr 1fr",
+            paddingY: 1,
+          }}
+        >
+          {usersInRoom.map((user) => (
+            <UI.Box
+              key={user.userId}
+              onClick={() => dispatch(["ClickedUser", user])}
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                padding: 1,
+              }}
             >
-              Leave Room
-            </UI.Button>
-
-          </UI.Box>
-        </UI.Drawer>
-      </>
-    )
-  }
+              <UI.Avatar src={store.Profile[user.userId]?.avatarUrl} />
+              <UI.Typography
+                align="center"
+                sx={{ marginBottom: -1 / 2 }}
+              >
+                {store.Profile[user.userId]?.username ?? "..."}
+              </UI.Typography>
+              <UI.Typography
+                variant="subtitle2"
+                color="text.secondary"
+              >
+                {user.userId === room.hostId ? "Host" : "Guest"}
+              </UI.Typography>
+            </UI.Box>
+          ))}
+        </UI.Box>
+        <UI.Box sx={{ paddingX: 2, paddingBottom: 2 }}>
+          <UI.Button
+            fullWidth
+            variant="contained"
+            onClick={() => dispatch(["LeaveRoom", { userId: currentUserId }])}
+          >
+            Leave Room
+          </UI.Button>
+        </UI.Box>
+      </UI.Drawer>
+    </>
+  )
+}
 
 const GameCard = ({
   icon,
@@ -826,7 +899,6 @@ const GameCard = ({
         overflow: "hidden",
         opacity: disabled ? 0.3 : 1,
         borderRadius: 2,
-
       }}
       onClick={onClick}
     >
@@ -877,108 +949,104 @@ const GameCard = ({
 
 const bannerHeight = 58
 
-export const ViewBanner =
-  (
-    {
-      currentUserId,
-      route,
-      model,
-      dispatch,
-    }: {
-      currentUserId: UserId.UserId
-      route: Route.Model
-      model: Model,
-      dispatch: (msg: Msg) => void
-    },
-  ) => {
-
-    if (route[0] === "GameRoom") {
-      return <></>
-    }
-
-    const user = model.users[currentUserId]
-
-    if (!user) {
-      return <></>
-    }
-
-    const room = model.rooms[user.roomId]
-
-    if (!room) {
-      return <></>
-    }
-
-    if (room.game.type === 'None') {
-      return <></>
-    }
-
-    const game = room.game.value
-
-    return (
-      <>
-        <UI.ButtonBase
-          sx={{
-            flex: 1,
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "flex-start",
-            textAlign: "left",
-            minHeight: bannerHeight,
-            height: bannerHeight,
-            maxHeight: bannerHeight,
-            overflow: "hidden",
-          }}
-          onClick={() => dispatch(["ClickedBanner"])}
-        >
-          {game ? (
-            <UI.Box sx={{ maxWidth: bannerHeight }}>
-              <UI.AspectRatio aspectRatio={1}>
-                <Game.CoverArt gameName={game[0]} />
-              </UI.AspectRatio>
-            </UI.Box>
-          ) : (
-            <UI.Avatar
-              variant="square"
-              sx={{ width: bannerHeight, height: bannerHeight }}
-            >
-              <UI.Icons.Gamepad />
-            </UI.Avatar>
-          )}
-
-          <UI.Box sx={{ marginLeft: 2 }}>
-            {game ? (
-              <>
-                <UI.Typography
-                  align="left"
-                  variant="h6"
-                  sx={{ marginBottom: -1 / 2 }}
-                >
-                  {Game.gameNameToString(game[0])}
-                </UI.Typography>
-
-                <UI.Typography
-                  component="div"
-                  align="left"
-                  color="text.secondary"
-                  variant="caption"
-                >
-                  Go to room
-                </UI.Typography>
-              </>
-            ) : (
-              <UI.Typography align="left">Go to room</UI.Typography>
-            )}
-          </UI.Box>
-
-          <UI.Box sx={{ flex: 1 }} />
-
-          <UI.Box sx={{ p: 2 }}>
-            <UI.Icons.ChevronRight />
-          </UI.Box>
-        </UI.ButtonBase>
-
-        <UI.Divider />
-      </>
-    )
+export const ViewBanner = ({
+  currentUserId,
+  route,
+  model,
+  dispatch,
+}: {
+  currentUserId: UserId.UserId
+  route: Route.Model
+  model: Model
+  dispatch: (msg: Msg) => void
+}) => {
+  if (route[0] === "GameRoom") {
+    return <></>
   }
+
+  const user = model.users[currentUserId]
+
+  if (!user) {
+    return <></>
+  }
+
+  const room = model.rooms[user.roomId]
+
+  if (!room) {
+    return <></>
+  }
+
+  if (room.game.type === "None") {
+    return <></>
+  }
+
+  const game = room.game.value
+
+  return (
+    <>
+      <UI.ButtonBase
+        sx={{
+          flex: 1,
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "flex-start",
+          textAlign: "left",
+          minHeight: bannerHeight,
+          height: bannerHeight,
+          maxHeight: bannerHeight,
+          overflow: "hidden",
+        }}
+        onClick={() => dispatch(["ClickedBanner"])}
+      >
+        {game ? (
+          <UI.Box sx={{ maxWidth: bannerHeight }}>
+            <UI.AspectRatio aspectRatio={1}>
+              <Game.CoverArt gameName={game[0]} />
+            </UI.AspectRatio>
+          </UI.Box>
+        ) : (
+          <UI.Avatar
+            variant="square"
+            sx={{ width: bannerHeight, height: bannerHeight }}
+          >
+            <UI.Icons.Gamepad />
+          </UI.Avatar>
+        )}
+
+        <UI.Box sx={{ marginLeft: 2 }}>
+          {game ? (
+            <>
+              <UI.Typography
+                align="left"
+                variant="h6"
+                sx={{ marginBottom: -1 / 2 }}
+              >
+                {Game.gameNameToString(game[0])}
+              </UI.Typography>
+
+              <UI.Typography
+                component="div"
+                align="left"
+                color="text.secondary"
+                variant="caption"
+              >
+                Go to room
+              </UI.Typography>
+            </>
+          ) : (
+            <UI.Typography align="left">Go to room</UI.Typography>
+          )}
+        </UI.Box>
+
+        <UI.Box sx={{ flex: 1 }} />
+
+        <UI.Box sx={{ p: 2 }}>
+          <UI.Icons.ChevronRight />
+        </UI.Box>
+      </UI.ButtonBase>
+
+      <UI.Divider />
+    </>
+  )
+}

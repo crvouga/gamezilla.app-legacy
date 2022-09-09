@@ -50,13 +50,16 @@ export type ToBackend =
   | ["UserVsBot", UserVsBot.ToBackend]
   | InputMode
 
+//
+//
+//
+//
+//
+//
 
-// 
-// 
-// 
-// 
-// 
-// 
-
-export type InputMode = ['InputMode', { mode: Mode, userId: UserId.UserId }]
-export type InputMode_Done = ['InputMode_Done', { mode: Mode, userId: UserId.UserId }, Result.Result<"failed", BackendModel>]
+export type InputMode = ["InputMode", { mode: Mode; userId: UserId.UserId }]
+export type InputMode_Done = [
+  "InputMode_Done",
+  { mode: Mode; userId: UserId.UserId },
+  Result.Result<"failed", BackendModel>,
+]

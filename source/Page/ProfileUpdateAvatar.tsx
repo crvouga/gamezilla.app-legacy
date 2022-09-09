@@ -116,7 +116,13 @@ export const update = (
 //
 //
 
-export const View = ({ model, dispatch }: { model: Model, dispatch: (msg: Msg) => void }) => {
+export const View = ({
+  model,
+  dispatch,
+}: {
+  model: Model
+  dispatch: (msg: Msg) => void
+}) => {
   return (
     <UI.FillBox>
       <UI.Header

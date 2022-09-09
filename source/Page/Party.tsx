@@ -11,9 +11,7 @@ import * as Store from "../Store"
 //
 //
 
-export type Model = {
-
-}
+export type Model = {}
 
 export const init: [Model, Cmd.Cmd<Msg>] = [{}, Cmd.None]
 
@@ -30,15 +28,15 @@ export type Msg = ["Party", Party.Msg]
 type OutAction = Party.Action
 
 export const update = (
-    { currentUserId }: { currentUserId: UserId.UserId },
-    msg: Msg,
-    model: Model,
+  { currentUserId }: { currentUserId: UserId.UserId },
+  msg: Msg,
+  model: Model,
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
-    switch (msg[0]) {
-        case "Party": {
-            return [model, Cmd.None, [["Party", ["Msg", msg[1]]]]]
-        }
+  switch (msg[0]) {
+    case "Party": {
+      return [model, Cmd.None, [["Party", ["Msg", msg[1]]]]]
     }
+  }
 }
 
 //
@@ -49,24 +47,24 @@ export const update = (
 //
 //
 
-export const View = (
-    {
-        currentUserId,
-        party,
-        store,
-        dispatch,
-    }: {
-        party: Party.Model
-        currentUserId: UserId.UserId
-        store: Store.Model
-        model: Model,
-        dispatch: (msg: Msg) => void
-    },
-) => {
-    return <Party.View
-        currentUserId={currentUserId}
-        store={store}
-        model={party}
-        dispatch={msg => dispatch(['Party', msg])}
+export const View = ({
+  currentUserId,
+  party,
+  store,
+  dispatch,
+}: {
+  party: Party.Model
+  currentUserId: UserId.UserId
+  store: Store.Model
+  model: Model
+  dispatch: (msg: Msg) => void
+}) => {
+  return (
+    <Party.View
+      currentUserId={currentUserId}
+      store={store}
+      model={party}
+      dispatch={(msg) => dispatch(["Party", msg])}
     />
+  )
 }

@@ -81,68 +81,74 @@ export const update = (
 //
 //
 
-export const View =
-  ({ store, model, dispatch }: { store: Store.Model, model: Model; dispatch: (msg: Msg) => void }) => {
-    const results = Store.Profile.toSearch(model.searchText, store)
-    const query =
-      store.queries.Profile.Search[model.searchText] ?? RemoteData.NotAsked
+export const View = ({
+  store,
+  model,
+  dispatch,
+}: {
+  store: Store.Model
+  model: Model
+  dispatch: (msg: Msg) => void
+}) => {
+  const results = Store.Profile.toSearch(model.searchText, store)
+  const query =
+    store.queries.Profile.Search[model.searchText] ?? RemoteData.NotAsked
 
-    return (
-      <UI.FillBox>
-        <UI.Toolbar>
-          <UI.InputBase
-            sx={{ height: "100%", flex: 1 }}
-            placeholder="Search"
-            value={model.searchText}
-            onChange={(event) =>
-              dispatch(["InputtedSearchText", event.target.value])
-            }
-          />
+  return (
+    <UI.FillBox>
+      <UI.Toolbar>
+        <UI.InputBase
+          sx={{ height: "100%", flex: 1 }}
+          placeholder="Search"
+          value={model.searchText}
+          onChange={(event) =>
+            dispatch(["InputtedSearchText", event.target.value])
+          }
+        />
 
-          {query.type === "Loading" && (
-            <UI.CircularProgress size={24} />
-          )}
+        {query.type === "Loading" && <UI.CircularProgress size={24} />}
 
-          <UI.IconButton
-            edge="end"
-            onClick={() => dispatch(["ClickedClear"])}
+        <UI.IconButton
+          edge="end"
+          onClick={() => dispatch(["ClickedClear"])}
+        >
+          <UI.Icons.Close />
+        </UI.IconButton>
+      </UI.Toolbar>
+
+      <UI.Divider />
+
+      {query.type === "Failure" && <UI.Box sx={{ flex: 1 }}></UI.Box>}
+      {query.type === "NotAsked" && <UI.Box sx={{ flex: 1 }}></UI.Box>}
+
+      <UI.Box sx={{ paddingTop: 1, flex: 1, overflowY: "scroll" }}>
+        {results.length === 0 && (
+          <UI.Typography
+            sx={{ paddingX: 2 }}
+            color="text.secondary"
           >
-            <UI.Icons.Close />
-          </UI.IconButton>
-        </UI.Toolbar>
+            {query.type === "Loading" ? "Searching..." : "No results found"}
+          </UI.Typography>
+        )}
 
-        <UI.Divider />
-
-        {query.type === "Failure" && <UI.Box sx={{ flex: 1 }}></UI.Box>}
-        {query.type === "NotAsked" && <UI.Box sx={{ flex: 1 }}></UI.Box>}
-
-        <UI.Box sx={{ paddingTop: 1, flex: 1, overflowY: "scroll" }}>
-          {results.length === 0 && (
-            <UI.Typography sx={{ paddingX: 2 }} color="text.secondary">
-              {query.type === 'Loading' ? "Searching..." : "No results found"}
-            </UI.Typography>
-          )}
-
-          {results.map((result) => (
-            <UI.ListItemButton
-              key={result.userId}
-              sx={{ flex: 1, width: "100%" }}
-              onClick={() =>
-                dispatch(["ClickedResult", { userId: result.userId }])
-              }
-            >
-              <UI.ListItemAvatar>
-                <UI.Avatar src={result.avatarUrl} />
-              </UI.ListItemAvatar>
-              <UI.ListItemText primary={result.username} />
-              <UI.ListItemSecondaryAction>
-                <UI.Icons.ChevronRight />
-              </UI.ListItemSecondaryAction>
-            </UI.ListItemButton>
-          ))}
-        </UI.Box>
-
-
-      </UI.FillBox>
-    )
-  }
+        {results.map((result) => (
+          <UI.ListItemButton
+            key={result.userId}
+            sx={{ flex: 1, width: "100%" }}
+            onClick={() =>
+              dispatch(["ClickedResult", { userId: result.userId }])
+            }
+          >
+            <UI.ListItemAvatar>
+              <UI.Avatar src={result.avatarUrl} />
+            </UI.ListItemAvatar>
+            <UI.ListItemText primary={result.username} />
+            <UI.ListItemSecondaryAction>
+              <UI.Icons.ChevronRight />
+            </UI.ListItemSecondaryAction>
+          </UI.ListItemButton>
+        ))}
+      </UI.Box>
+    </UI.FillBox>
+  )
+}

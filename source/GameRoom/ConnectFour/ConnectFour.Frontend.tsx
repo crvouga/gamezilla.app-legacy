@@ -4,14 +4,14 @@ import {
   COLUMN_COUNT,
   MAX_COLUMN_HEIGHT,
   theme,
-  ViewColumns
+  ViewColumns,
 } from "./ConnectFour"
 import {
   BackendModel,
   FrontendModel,
   FrontendMsg,
   initSharedModel,
-  ToFrontend
+  ToFrontend,
 } from "./ConnectFour.Types"
 
 //
@@ -55,25 +55,35 @@ export const updateFromBackend = (
 //
 //
 
-export const View =
-  ({ model, dispatch, onCloseGame }: { model: Model, dispatch: (msg: Msg) => void, onCloseGame: () => void }) => {
-    return (
-      <UI.FillBox>
-        <UI.Header
-          left={
-            <UI.Button sx={{ marginLeft: -1 }} onClick={onCloseGame}>
-              Close
-            </UI.Button>
-          }
-          title="Connect Four"
-        />
-        <ViewColumns
-          columns={model.columns}
-          onClick={(columnIndex) => { }}
-        />
-      </UI.FillBox>
-    )
-  }
+export const View = ({
+  model,
+  dispatch,
+  onCloseGame,
+}: {
+  model: Model
+  dispatch: (msg: Msg) => void
+  onCloseGame: () => void
+}) => {
+  return (
+    <UI.FillBox>
+      <UI.Header
+        left={
+          <UI.Button
+            sx={{ marginLeft: -1 }}
+            onClick={onCloseGame}
+          >
+            Close
+          </UI.Button>
+        }
+        title="Connect Four"
+      />
+      <ViewColumns
+        columns={model.columns}
+        onClick={(columnIndex) => {}}
+      />
+    </UI.FillBox>
+  )
+}
 
 //
 //
@@ -223,9 +233,11 @@ export const CoverArt = ({ id }: { id: string }) => {
   )
 }
 
-
-export const mergeWithBackend = (_frontendModel: FrontendModel, backendModel: BackendModel): FrontendModel => {
+export const mergeWithBackend = (
+  _frontendModel: FrontendModel,
+  backendModel: BackendModel,
+): FrontendModel => {
   return {
-    columns: backendModel.columns
+    columns: backendModel.columns,
   }
 }

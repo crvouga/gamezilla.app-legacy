@@ -14,10 +14,10 @@ import { Cmd, pipe } from "../Core"
 export type Model = {
   emailAddress: string
   submission:
-  | { type: "Idle" }
-  | { type: "Loading" }
-  | { type: "Problem"; message: string }
-  | { type: "Succeeded"; sentTo: string }
+    | { type: "Idle" }
+    | { type: "Loading" }
+    | { type: "Problem"; message: string }
+    | { type: "Succeeded"; sentTo: string }
 }
 
 //
@@ -46,12 +46,12 @@ export type Msg =
   | ["ClickedSend"]
   | ["InputtedEmailAddress", string]
   | [
-    "Send_Done",
-    {
-      sentTo: string
-      result: Store.Account.SendResetPasswordLinkResult
-    },
-  ]
+      "Send_Done",
+      {
+        sentTo: string
+        result: Store.Account.SendResetPasswordLinkResult
+      },
+    ]
 
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
@@ -116,67 +116,70 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 //
 //
 
-export const View =
-  ({ model, dispatch }: { model: Model, dispatch: (msg: Msg) => void }) => {
-    return (
-      <UI.FillBox>
-        <UI.Header
-          left={
-            <UI.HeaderBackButton onClick={() => dispatch(["ClickedBack"])} />
-          }
-          title="Reset Password"
+export const View = ({
+  model,
+  dispatch,
+}: {
+  model: Model
+  dispatch: (msg: Msg) => void
+}) => {
+  return (
+    <UI.FillBox>
+      <UI.Header
+        left={<UI.HeaderBackButton onClick={() => dispatch(["ClickedBack"])} />}
+        title="Reset Password"
+      />
+
+      <UI.Box
+        sx={{
+          padding: 2,
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          flex: 1,
+        }}
+      >
+        <UI.TextField
+          autoFocus
+          sx={{ marginBottom: 2 }}
+          type="email"
+          fullWidth
+          inputMode="email"
+          label="Email Address"
+          value={model.emailAddress}
+          onChange={(event) => {
+            dispatch(["InputtedEmailAddress", event.target.value])
+          }}
         />
 
-        <UI.Box
-          sx={{
-            padding: 2,
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            flex: 1,
-          }}
+        <UI.Button
+          variant="contained"
+          size="large"
+          fullWidth
+          loading={model.submission.type === "Loading"}
+          onClick={() => dispatch(["ClickedSend"])}
         >
-          <UI.TextField
-            autoFocus
-            sx={{ marginBottom: 2 }}
-            type="email"
-            fullWidth
-            inputMode="email"
-            label="Email Address"
-            value={model.emailAddress}
-            onChange={(event) => {
-              dispatch(["InputtedEmailAddress", event.target.value])
-            }}
-          />
+          Send Password Reset Link
+        </UI.Button>
 
-          <UI.Button
-            variant="contained"
-            size="large"
-            fullWidth
-            loading={model.submission.type === "Loading"}
-            onClick={() => dispatch(["ClickedSend"])}
+        {model.submission.type === "Problem" && (
+          <UI.Alert
+            severity="error"
+            sx={{ marginTop: 2 }}
           >
-            Send Password Reset Link
-          </UI.Button>
-
-          {model.submission.type === "Problem" && (
-            <UI.Alert
-              severity="error"
-              sx={{ marginTop: 2 }}
-            >
-              {model.submission.message}
-            </UI.Alert>
-          )}
-          {model.submission.type === "Succeeded" && (
-            <UI.Alert
-              severity="success"
-              sx={{ marginTop: 2 }}
-            >
-              Password reset link was sent to {model.submission.sentTo}
-            </UI.Alert>
-          )}
-          <UI.Box sx={{ flex: 1 }} />
-        </UI.Box>
-      </UI.FillBox>
-    )
-  }
+            {model.submission.message}
+          </UI.Alert>
+        )}
+        {model.submission.type === "Succeeded" && (
+          <UI.Alert
+            severity="success"
+            sx={{ marginTop: 2 }}
+          >
+            Password reset link was sent to {model.submission.sentTo}
+          </UI.Alert>
+        )}
+        <UI.Box sx={{ flex: 1 }} />
+      </UI.Box>
+    </UI.FillBox>
+  )
+}

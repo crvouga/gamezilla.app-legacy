@@ -80,40 +80,44 @@ export const update = (
 //
 //
 
-export const View =
-  ({ model, dispatch }: { model: Model, dispatch: (msg: Msg) => void }) =>
-  (
-    <UI.FillBox>
-      <UI.Header
-        left={
-          <UI.Button
-            sx={{ marginLeft: -1 }}
-            onClick={() => dispatch(["ClickedCancel"])}
-          >
-            Cancel
-          </UI.Button>
-        }
-        title="Username"
-        right={
-          <UI.Button
-            sx={{ marginRight: -1 }}
-            onClick={() => dispatch(["ClickedSubmit"])}
-          >
-            Done
-          </UI.Button>
+export const View = ({
+  model,
+  dispatch,
+}: {
+  model: Model
+  dispatch: (msg: Msg) => void
+}) => (
+  <UI.FillBox>
+    <UI.Header
+      left={
+        <UI.Button
+          sx={{ marginLeft: -1 }}
+          onClick={() => dispatch(["ClickedCancel"])}
+        >
+          Cancel
+        </UI.Button>
+      }
+      title="Username"
+      right={
+        <UI.Button
+          sx={{ marginRight: -1 }}
+          onClick={() => dispatch(["ClickedSubmit"])}
+        >
+          Done
+        </UI.Button>
+      }
+    />
+
+    <UI.Box sx={{ p: 2, width: "100%" }}>
+      <UI.TextField
+        value={model.username}
+        sx={{ marginBottom: 4 }}
+        label="Username"
+        fullWidth
+        onChange={(event) =>
+          dispatch(["InputtedUsername", event.currentTarget.value])
         }
       />
-
-      <UI.Box sx={{ p: 2, width: "100%" }}>
-        <UI.TextField
-          value={model.username}
-          sx={{ marginBottom: 4 }}
-          label="Username"
-          fullWidth
-          onChange={(event) =>
-            dispatch(["InputtedUsername", event.currentTarget.value])
-          }
-        />
-      </UI.Box>
-    </UI.FillBox>
-  )
+    </UI.Box>
+  </UI.FillBox>
+)

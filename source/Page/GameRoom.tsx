@@ -50,25 +50,25 @@ export const update = (
 //
 //
 
-export const View = (
-  {
-    currentUserId,
-    gameRoom,
-    store,
-    dispatch,
-    model,
-  }: {
-    gameRoom: GameRoomFrontend.Model
-    currentUserId: UserId.UserId
-    store: Store.Model
-    model: Model,
-    dispatch: (msg: Msg) => void
-  },
-) => {
-  return <GameRoomFrontend.View
-    currentUserId={currentUserId}
-    store={store}
-    model={gameRoom}
-    dispatch={msg => dispatch(['GameRoom', msg])}
-  />
+export const View = ({
+  currentUserId,
+  gameRoom,
+  store,
+  dispatch,
+  model,
+}: {
+  gameRoom: GameRoomFrontend.Model
+  currentUserId: UserId.UserId
+  store: Store.Model
+  model: Model
+  dispatch: (msg: Msg) => void
+}) => {
+  return (
+    <GameRoomFrontend.View
+      currentUserId={currentUserId}
+      store={store}
+      model={gameRoom}
+      dispatch={(msg) => dispatch(["GameRoom", msg])}
+    />
+  )
 }

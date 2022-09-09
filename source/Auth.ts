@@ -123,38 +123,38 @@ export const loginWithEmailAndPassword =
     emailAddress: string
     password: string
   }): Task.Task<LoginResult> =>
-    async () => {
-      const response = await Supabase.client.auth.signIn({
-        email: emailAddress,
-        password: password,
-      })
+  async () => {
+    const response = await Supabase.client.auth.signIn({
+      email: emailAddress,
+      password: password,
+    })
 
-      if (response.error) {
-        return Result.Err({ message: response.error.message })
-      }
-
-      return Result.Ok({})
+    if (response.error) {
+      return Result.Err({ message: response.error.message })
     }
+
+    return Result.Ok({})
+  }
 
 export type Provider = "Google"
 
 export const loginWithProvider =
   ({ provider }: { provider: Provider }): Task.Task<LoginResult> =>
-    async () => {
-      switch (provider) {
-        case "Google": {
-          const response = await Supabase.client.auth.signIn({
-            provider: "google",
-          })
+  async () => {
+    switch (provider) {
+      case "Google": {
+        const response = await Supabase.client.auth.signIn({
+          provider: "google",
+        })
 
-          if (response.error) {
-            return Result.Err({ message: response.error.message })
-          }
-
-          return Result.Ok({})
+        if (response.error) {
+          return Result.Err({ message: response.error.message })
         }
+
+        return Result.Ok({})
       }
     }
+  }
 
 const logout: Task.Task<Result.Result<{}, {}>> = async () => {
   const { error } = await Supabase.client.auth.signOut()

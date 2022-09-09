@@ -114,9 +114,7 @@ export const runAction = (
         modelNew,
         pipe(
           deleteForever({ messageId }),
-          Cmd.perform(
-            (result): Msg => ["Unsend_Done", { messageId, result }],
-          ),
+          Cmd.perform((result): Msg => ["Unsend_Done", { messageId, result }]),
         ),
       ]
     }
@@ -162,29 +160,29 @@ const insert =
     message: string
     userId: UserId.UserId
   }): Task.Task<Result.Result<Problem, Message>> =>
-    async () => {
-      const messageResponse = await Supabase.client
-        .from<definitions["message"]>("message")
-        .insert({
-          message,
-          user_id: userId,
-          conversation_id: conversationId,
-        })
-        .single()
-
-      if (messageResponse.error) {
-        return Result.Err(messageResponse.error.message)
-      }
-
-      const data = messageResponse.data
-
-      return Result.Ok({
-        messageId: data.id,
-        conversationId: data.conversation_id,
-        userId,
-        message: data.message,
+  async () => {
+    const messageResponse = await Supabase.client
+      .from<definitions["message"]>("message")
+      .insert({
+        message,
+        user_id: userId,
+        conversation_id: conversationId,
       })
+      .single()
+
+    if (messageResponse.error) {
+      return Result.Err(messageResponse.error.message)
     }
+
+    const data = messageResponse.data
+
+    return Result.Ok({
+      messageId: data.id,
+      conversationId: data.conversation_id,
+      userId,
+      message: data.message,
+    })
+  }
 
 const deleteForever =
   ({
@@ -192,15 +190,15 @@ const deleteForever =
   }: {
     messageId: string
   }): Task.Task<Result.Result<Problem, string>> =>
-    async () => {
-      const response = await Supabase.client
-        .from<definitions["message"]>("message")
-        .delete()
-        .eq("id", messageId)
+  async () => {
+    const response = await Supabase.client
+      .from<definitions["message"]>("message")
+      .delete()
+      .eq("id", messageId)
 
-      if (response.error) {
-        return Result.Err(response.error.message)
-      }
-
-      return Result.Ok(messageId)
+    if (response.error) {
+      return Result.Err(response.error.message)
     }
+
+    return Result.Ok(messageId)
+  }

@@ -103,32 +103,39 @@ const removeById = (snackId: string, model: Model): [Model, Cmd.Cmd<Msg>] => [
 //
 //
 
-export const View =
-  ({ sx, dispatch, model }: { sx?: SxProps, model: Model, dispatch: (msg: Msg) => void },) => {
-    const snack = model.queue[0]
+export const View = ({
+  sx,
+  dispatch,
+  model,
+}: {
+  sx?: SxProps
+  model: Model
+  dispatch: (msg: Msg) => void
+}) => {
+  const snack = model.queue[0]
 
-    if (!snack) {
-      return <></>
-    }
-
-    return (
-      <UI.Portal>
-        <UI.Snackbar
-          sx={sx}
-          open
-          message={snack.message}
-          onClose={() => dispatch(["ClickedAwayClose", snack.snackId])}
-        >
-          <UI.Alert
-            variant="filled"
-            onClose={() => dispatch(["ClickedClose", snack.snackId])}
-            severity={snack.variant === "Error" ? "error" : "info"}
-            sx={{ width: "100%" }}
-          >
-            {snack.title && <UI.AlertTitle>{snack.title}</UI.AlertTitle>}
-            {snack.message}
-          </UI.Alert>
-        </UI.Snackbar>
-      </UI.Portal>
-    )
+  if (!snack) {
+    return <></>
   }
+
+  return (
+    <UI.Portal>
+      <UI.Snackbar
+        sx={sx}
+        open
+        message={snack.message}
+        onClose={() => dispatch(["ClickedAwayClose", snack.snackId])}
+      >
+        <UI.Alert
+          variant="filled"
+          onClose={() => dispatch(["ClickedClose", snack.snackId])}
+          severity={snack.variant === "Error" ? "error" : "info"}
+          sx={{ width: "100%" }}
+        >
+          {snack.title && <UI.AlertTitle>{snack.title}</UI.AlertTitle>}
+          {snack.message}
+        </UI.Alert>
+      </UI.Snackbar>
+    </UI.Portal>
+  )
+}

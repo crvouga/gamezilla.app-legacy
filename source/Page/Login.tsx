@@ -61,49 +61,51 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 //
 //
 
-export const View =
-  ({ model, dispatch }: { model: Model, dispatch: (msg: Msg) => void }) =>
-  (
-    <UI.FillBox
-      sx={{
-        alignItems: "center",
-        justifyContent: "center",
-        p: 2,
-      }}
+export const View = ({
+  model,
+  dispatch,
+}: {
+  model: Model
+  dispatch: (msg: Msg) => void
+}) => (
+  <UI.FillBox
+    sx={{
+      alignItems: "center",
+      justifyContent: "center",
+      p: 2,
+    }}
+  >
+    <UI.Typography
+      variant="h1"
+      sx={{ marginBottom: 2 }}
     >
-      <UI.Typography
-        variant="h1"
-        sx={{ marginBottom: 2 }}
-      >
-        Gamezilla
-      </UI.Typography>
+      Gamezilla
+    </UI.Typography>
 
-      <ContinueWithGoogleButton
-        isLoading={
-          model[0] === "LoggingInWithProvider" && model[1] === "Google"
-        }
-        onClick={() => dispatch(["ClickedGoogleLogin"])}
-      />
+    <ContinueWithGoogleButton
+      isLoading={model[0] === "LoggingInWithProvider" && model[1] === "Google"}
+      onClick={() => dispatch(["ClickedGoogleLogin"])}
+    />
 
-      <UI.Typography
-        sx={{ marginY: 1 }}
-        align="center"
-        color="text.secondary"
-      >
-        Or
-      </UI.Typography>
+    <UI.Typography
+      sx={{ marginY: 1 }}
+      align="center"
+      color="text.secondary"
+    >
+      Or
+    </UI.Typography>
 
-      <UI.Button
-        variant="contained"
-        size="large"
-        fullWidth
-        color="primary"
-        onClick={() => dispatch(["ClickedEmailLogin"])}
-      >
-        Continue With Email
-      </UI.Button>
-    </UI.FillBox>
-  )
+    <UI.Button
+      variant="contained"
+      size="large"
+      fullWidth
+      color="primary"
+      onClick={() => dispatch(["ClickedEmailLogin"])}
+    >
+      Continue With Email
+    </UI.Button>
+  </UI.FillBox>
+)
 
 const ContinueWithGoogleButton = ({
   onClick,

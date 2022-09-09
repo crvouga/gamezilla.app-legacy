@@ -5,7 +5,7 @@ import {
   BackendMsg,
   Session,
   ToBackend,
-  ToFrontend
+  ToFrontend,
 } from "./App.Types"
 import { Cmd, Option, pipe, Platform, Sub, tag, tagCmd } from "./Core"
 import { ClientId, SessionId, UserId } from "./Data"
@@ -29,8 +29,7 @@ const init = (): [Model, Cmd.Cmd<Msg>] => {
     {
       gameRoom: GameRoom.init,
       sessions: {},
-      party
-
+      party,
     },
     tagCmd("Party", partyCmd),
   ]
@@ -72,20 +71,27 @@ const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
       const partyCmd = Party.onClientConnected(
         {
-          sendToUser: (userIds, msg) => sendToUser(modelNew, userIds, ['Party', msg])
+          sendToUser: (userIds, msg) =>
+            sendToUser(modelNew, userIds, ["Party", msg]),
         },
         maybeUserId,
-        model.party
+        model.party,
       )
 
-      const gameRoomCmd = GameRoom.onClientConnected({ sendToClient: (msg) => Wire.sendToFrontend([clientId], ['GameRoom', msg]) }, model.gameRoom)
+      const gameRoomCmd = GameRoom.onClientConnected(
+        {
+          sendToClient: (msg) =>
+            Wire.sendToFrontend([clientId], ["GameRoom", msg]),
+        },
+        model.gameRoom,
+      )
 
       return [
         modelNew,
         Cmd.batch<Msg>([
           tagCmd("GameRoom", gameRoomCmd),
-          tagCmd("Party", partyCmd)
-        ])
+          tagCmd("Party", partyCmd),
+        ]),
       ]
     }
 
@@ -96,28 +102,29 @@ const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
       const sessionNew: Session = {
         clientId: Option.None,
         sessionId,
-        userId: maybeUserId
+        userId: maybeUserId,
       }
       return [
         {
           ...model,
           sessions: {
             ...model.sessions,
-            [sessionId]: sessionNew
-          }
+            [sessionId]: sessionNew,
+          },
         },
         Cmd.None,
       ]
     }
 
-    case 'Party': {
+    case "Party": {
       const [child, childCmd] = Party.update(
         {
-          broadcast: (msg) => Wire.broadcast(['Party', msg]),
-          sendToUser: (userId, msg) => sendToUser(model, userId, ['Party', msg]),
+          broadcast: (msg) => Wire.broadcast(["Party", msg]),
+          sendToUser: (userId, msg) =>
+            sendToUser(model, userId, ["Party", msg]),
         },
         msg[1],
-        model.party
+        model.party,
       )
 
       return [{ ...model, party: child }, tagCmd("Party", childCmd)]
@@ -159,18 +166,19 @@ const updateFromFrontend = (
           ...model,
           sessions: {
             ...model.sessions,
-            [sessionId]: session
+            [sessionId]: session,
           },
         },
         Cmd.None,
       ]
     }
 
-    case 'Party': {
+    case "Party": {
       const [child, childCmd] = Party.updateFromFrontend(
         {
-          broadcast: msg => Wire.broadcast(['Party', msg]),
-          sendToUser: (userIds, msg) => sendToUser(model, userIds, ['Party', msg])
+          broadcast: (msg) => Wire.broadcast(["Party", msg]),
+          sendToUser: (userIds, msg) =>
+            sendToUser(model, userIds, ["Party", msg]),
         },
         msg[1],
         model.party,
@@ -182,7 +190,7 @@ const updateFromFrontend = (
     case "GameRoom": {
       const [child, childCmd] = GameRoom.updateFromFrontend(
         {
-          broadcast: (msg) => Wire.broadcast(['GameRoom', msg]),
+          broadcast: (msg) => Wire.broadcast(["GameRoom", msg]),
           sendToClient: (msg) => sendToClient(["GameRoom", msg]),
           sendToUser: (userIds, msg) =>
             sendToUser(model, userIds, ["GameRoom", msg]),
@@ -201,10 +209,13 @@ const sendToUser = (
   userIds: UserId.UserId[],
   msg: ToFrontend,
 ) => {
-
-
-  const clientIds = Object.values(model.sessions)
-    .flatMap((session) => session.userId.type === "Some" && userIds.includes(session.userId.value) && session.clientId.type === 'Some' ? [session.clientId.value] : [])
+  const clientIds = Object.values(model.sessions).flatMap((session) =>
+    session.userId.type === "Some" &&
+    userIds.includes(session.userId.value) &&
+    session.clientId.type === "Some"
+      ? [session.clientId.value]
+      : [],
+  )
 
   return Wire.sendToFrontend(clientIds, msg)
 }
