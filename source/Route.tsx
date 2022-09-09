@@ -13,6 +13,8 @@ export type Model =
   | ["Account"]
   | ["Login"]
   | ["LoginEmailLink"]
+  | ["LoginPhone"]
+  | ["LoginPhoneVerify", { phoneNumber: string }]
   | ["Logout"]
   | ["Profile", UserId.UserId]
   | ["ProfileCreate"]
@@ -43,6 +45,8 @@ export const routesTypes: { [routeType in Model[0]]: string } = {
   Account: "Account",
   Login: "Login",
   LoginEmailLink: "LoginEmailLink",
+  LoginPhone: "LoginPhone",
+  LoginPhoneVerify: "LoginPhoneVerify",
   Logout: "Logout",
   Profile: "Profile",
   ProfileCreate: "ProfileCreate",
@@ -66,9 +70,8 @@ export const isRouteType = (routeType: unknown): routeType is Model[0] => {
 
 export const decode = ({
   pathname,
-}: {
-  pathname: string
-}): Option.Option<Model> => {
+  query
+}: Browser.Location): Option.Option<Model> => {
   const [first, second] = pathname.substring(1).split("/")
 
   if (!isRouteType(first)) {
@@ -102,6 +105,18 @@ export const decode = ({
       return Option.None
     }
 
+    case 'LoginPhoneVerify': {
+      const phoneNumber = query['phoneNumber']
+
+
+      if (!phoneNumber) {
+        return Option.None
+      }
+
+      return Option.Some(["LoginPhoneVerify", { phoneNumber }])
+
+    }
+
     default: {
       return Option.Some([first])
     }
@@ -118,6 +133,10 @@ export const encode = (route: Model): string => {
 
     case "Admin":
       return `/${route[0]}/${route[1]}`
+
+    case 'LoginPhoneVerify':
+      const params = new URLSearchParams(route[1])
+      return `/${route[0]}?${params.toString()}`
 
     default:
       return `/${route[0]}`

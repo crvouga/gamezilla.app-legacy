@@ -113,7 +113,7 @@ export const runAction = (
 
 type Problem = { message: string }
 
-export type LoginResult = Result.Result<Problem, Unit>
+export type AuthResult = Result.Result<Problem, Unit>
 
 export const loginWithEmailAndPassword =
   ({
@@ -122,53 +122,83 @@ export const loginWithEmailAndPassword =
   }: {
     emailAddress: string
     password: string
-  }): Task.Task<LoginResult> =>
-  async () => {
-    const response = await Supabase.client.auth.signIn({
-      email: emailAddress,
-      password: password,
-    })
+  }): Task.Task<AuthResult> =>
+    async () => {
+      const response = await Supabase.client.auth.signIn({
+        email: emailAddress,
+        password: password,
+      })
 
-    if (response.error) {
-      return Result.Err({ message: response.error.message })
+      if (response.error) {
+        return Result.Err({ message: response.error.message })
+      }
+
+      return Result.Ok(Unit)
     }
 
-    return Result.Ok(Unit)
-  }
+export const sendCode =
+  ({ phoneNumber }: { phoneNumber: string }): Task.Task<AuthResult> =>
+    async () => {
+      const response = await Supabase.client.auth.signIn({
+        phone: phoneNumber,
+      })
+
+      if (response.error) {
+        return Result.Err({ message: response.error.message })
+      }
+
+      return Result.Ok(Unit)
+    }
+
+export const verifyCode =
+  ({ code, phoneNumber }: { code: string, phoneNumber: string }): Task.Task<AuthResult> =>
+    async () => {
+      const response = await Supabase.client.auth.verifyOTP({
+        phone: phoneNumber,
+        token: code
+      })
+
+      if (response.error) {
+        return Result.Err({ message: response.error.message })
+      }
+
+      return Result.Ok(Unit)
+    }
+
 
 export const loginWithEmailLink =
-  ({ emailAddress }: { emailAddress: string }): Task.Task<LoginResult> =>
-  async () => {
-    const response = await Supabase.client.auth.signIn({
-      email: emailAddress,
-    })
+  ({ emailAddress }: { emailAddress: string }): Task.Task<AuthResult> =>
+    async () => {
+      const response = await Supabase.client.auth.signIn({
+        email: emailAddress,
+      })
 
-    if (response.error) {
-      return Result.Err({ message: response.error.message })
+      if (response.error) {
+        return Result.Err({ message: response.error.message })
+      }
+
+      return Result.Ok(Unit)
     }
-
-    return Result.Ok(Unit)
-  }
 
 export type Provider = "Google"
 
 export const loginWithProvider =
-  ({ provider }: { provider: Provider }): Task.Task<LoginResult> =>
-  async () => {
-    switch (provider) {
-      case "Google": {
-        const response = await Supabase.client.auth.signIn({
-          provider: "google",
-        })
+  ({ provider }: { provider: Provider }): Task.Task<AuthResult> =>
+    async () => {
+      switch (provider) {
+        case "Google": {
+          const response = await Supabase.client.auth.signIn({
+            provider: "google",
+          })
 
-        if (response.error) {
-          return Result.Err({ message: response.error.message })
+          if (response.error) {
+            return Result.Err({ message: response.error.message })
+          }
+
+          return Result.Ok(Unit)
         }
-
-        return Result.Ok(Unit)
       }
     }
-  }
 
 const logout: Task.Task<Result.Result<{}, {}>> = async () => {
   const { error } = await Supabase.client.auth.signOut()

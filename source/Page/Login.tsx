@@ -26,12 +26,16 @@ export const init: Model = ["Idle"]
 export type Msg =
   | ["ClickedGoogleLogin"]
   | ["ClickedEmailLogin"]
-  | ["LoginWithProvider_Done", Auth.LoginResult]
+  | ["ClickedPhoneLogin"]
+  | ["LoginWithProvider_Done", Auth.AuthResult]
 
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
     case "ClickedEmailLogin":
       return [model, Route.push(["LoginEmailLink"])]
+
+    case "ClickedPhoneLogin":
+      return [model, Route.push(["LoginPhone"])]
 
     case "ClickedGoogleLogin":
       return [
@@ -68,7 +72,8 @@ export const View = ({
   model: Model
   dispatch: (msg: Msg) => void
 }) => {
-  const isGoogleLoading = model[0] === "LoggingInWithProvider" && model[1] === "Google"
+  const isGoogleLoading =
+    model[0] === "LoggingInWithProvider" && model[1] === "Google"
   return (
     <UI.FillBox
       sx={{
@@ -78,9 +83,7 @@ export const View = ({
         gap: 3,
       }}
     >
-      <UI.Typography variant="h1">
-        Gamezilla
-      </UI.Typography>
+      <UI.Typography variant="h1">Gamezilla</UI.Typography>
 
       <UI.Button
         variant="contained"
@@ -99,12 +102,23 @@ export const View = ({
         }
         sx={{
           //todo fix this hack
-          color: (theme) => (isGoogleLoading ? undefined : theme.palette.grey[800]),
-
+          color: (theme) =>
+            isGoogleLoading ? undefined : theme.palette.grey[800],
         }}
-        onClick={() => dispatch(['ClickedGoogleLogin'])}
+        onClick={() => dispatch(["ClickedGoogleLogin"])}
       >
         Continue With Google
+      </UI.Button>
+
+      <UI.Button
+        variant="contained"
+        size="large"
+        fullWidth
+        color="primary"
+        onClick={() => dispatch(["ClickedPhoneLogin"])}
+        startIcon={<UI.Icons.PhoneAndroid />}
+      >
+        Continue With Phone
       </UI.Button>
 
       <UI.Button
@@ -118,17 +132,6 @@ export const View = ({
         Continue With Email
       </UI.Button>
 
-      {/* <UI.Button
-        variant="contained"
-        size="large"
-        fullWidth
-        color="primary"
-        onClick={() => dispatch(["ClickedEmailLogin"])}
-        startIcon={<UI.Icons.PhoneAndroid />}
-      >
-        Continue With Phone
-      </UI.Button> */}
     </UI.FillBox>
   )
-
 }

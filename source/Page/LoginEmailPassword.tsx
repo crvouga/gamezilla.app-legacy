@@ -16,9 +16,9 @@ export type Model = {
   password: string
   passwordVisibility: Visibility
   submission:
-    | { type: "Idle" }
-    | { type: "Loading" }
-    | { type: "Problem"; message: string }
+  | { type: "Idle" }
+  | { type: "Loading" }
+  | { type: "Problem"; message: string }
 }
 
 type Visibility = "Showing" | "Hiding"
@@ -55,7 +55,7 @@ export type Msg =
   | ["InputtedEmailAddress", string]
   | ["InputtedPassword", string]
   | ["Focus_Done", Browser.FocusResult]
-  | ["Login_Done", Auth.LoginResult]
+  | ["Login_Done", Auth.AuthResult]
 
 const passwordFieldId = "password"
 

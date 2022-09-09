@@ -45,7 +45,7 @@ export type Msg =
     | ["ClickedBack"]
     | ["ClickedSendLoginLink"]
     | ["InputtedEmailAddress", string]
-    | ["Login_Done", Auth.LoginResult]
+    | ["Login_Done", Auth.AuthResult]
     | ["DismissedSuccessModal"]
 
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
@@ -100,7 +100,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
             ]
         }
 
-        case 'DismissedSuccessModal': {
+        case "DismissedSuccessModal": {
             return [{ ...model, submission: { type: "Idle" } }, Cmd.None]
         }
 
@@ -173,7 +173,10 @@ export const View = ({
                 )}
             </UI.Box>
 
-            <UI.Dialog open={model.submission.type === "Success"} onClose={() => dispatch(['DismissedSuccessModal'])}>
+            <UI.Dialog
+                open={model.submission.type === "Success"}
+                onClose={() => dispatch(["DismissedSuccessModal"])}
+            >
                 <UI.DialogTitle>Check your email!</UI.DialogTitle>
                 <UI.DialogContent>
                     <UI.Typography
@@ -193,7 +196,9 @@ export const View = ({
                     </UI.Typography>
                 </UI.DialogContent>
                 <UI.DialogActions>
-                    <UI.Button onClick={() => dispatch(['DismissedSuccessModal'])}>Ok</UI.Button>
+                    <UI.Button onClick={() => dispatch(["DismissedSuccessModal"])}>
+                        Ok
+                    </UI.Button>
                 </UI.DialogActions>
             </UI.Dialog>
         </UI.FillBox>
