@@ -1,6 +1,7 @@
 import * as Auth from "../Auth"
 import { Cmd, exhaustive, pipe } from "../Core"
 import * as Route from "../Route"
+import { ISO_3166, PhoneNumber } from "../Data"
 import * as UI from "../UI"
 
 //
@@ -12,22 +13,20 @@ import * as UI from "../UI"
 //
 
 export type Model =
-    | {
-        type: "Idle"
-        phoneNumber: string
-    }
-    | {
-        type: "Loading"
-        phoneNumber: string
-    }
-    | {
-        type: "Problem"
-        problem: string
-        phoneNumber: string
-    }
-    | {
-        type: "Success"
-        phoneNumber: string
+    {
+        phoneNumber: string,
+        country: ISO_3166.Iso3166Alpha2Code,
+        validation: "NotChecked" | "InvalidPhoneNumber" | "EmptyPhoneNumber",
+        submission: {
+            type: "Idle"
+        } | {
+            type: "Loading"
+        } | {
+            type: "Problem",
+            message: string
+        } | {
+            type: "Success"
+        }
     }
 
 //
@@ -39,8 +38,12 @@ export type Model =
 //
 
 export const init: Model = {
-    type: "Idle",
+    country: "US",
     phoneNumber: "",
+    validation: "NotChecked",
+    submission: {
+        type: "Idle"
+    }
 }
 
 //
@@ -55,7 +58,8 @@ export type Msg =
     | ["ClickedBack"]
     | ["ClickedSendCode"]
     | ["InputtedPhoneNumber", string]
-    | ["SendCode_Done", Auth.AuthResult]
+    | ["InputtedCountry", ISO_3166.Iso3166Alpha2Code]
+    | ["SendCode_Done", PhoneNumber.PhoneNumber, Auth.AuthResult]
 
 
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
@@ -65,30 +69,46 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
         }
 
         case 'ClickedSendCode': {
+
+            if (model.phoneNumber.length === 0) {
+                return [{ ...model, validation: "EmptyPhoneNumber" }, Cmd.None]
+            }
+
+            const decoded = PhoneNumber.decode(model.country, model.phoneNumber)
+
+            if (decoded.type === 'Err') {
+                return [{ ...model, validation: "InvalidPhoneNumber" }, Cmd.None]
+            }
+
+            const phoneNumber = decoded.value
+
             return [
-                { type: "Loading", phoneNumber: model.phoneNumber },
+                { ...model, submission: { type: "Loading" } },
                 pipe(
-                    Auth.sendCode({ phoneNumber: model.phoneNumber }),
-                    Cmd.perform((result): Msg => ['SendCode_Done', result])
+                    Auth.sendCode({ phoneNumber: phoneNumber }),
+                    Cmd.perform((result): Msg => ['SendCode_Done', phoneNumber, result])
                 )
             ]
         }
 
         case 'InputtedPhoneNumber': {
-            return [{ ...model, phoneNumber: msg[1] }, Cmd.None]
+            return [{ ...model, phoneNumber: msg[1], validation: "NotChecked" }, Cmd.None]
+        }
+
+
+        case 'InputtedCountry': {
+            return [{ ...model, country: msg[1], validation: "NotChecked" }, Cmd.None]
         }
 
         case 'SendCode_Done': {
-            const result = msg[1]
-            switch (result.type) {
-                case 'Err': {
-                    return [{ type: "Problem", phoneNumber: model.phoneNumber, problem: result.error.message }, Cmd.None]
-                }
+            const phoneNumber = msg[1]
+            const result = msg[2]
 
-                case 'Ok': {
-                    return [{ type: "Success", phoneNumber: model.phoneNumber }, Route.push(['LoginPhoneVerify', { phoneNumber: model.phoneNumber }])]
-                }
+            if (result.type === 'Err') {
+                return [{ ...model, submission: { type: "Problem", message: result.error.message } }, Cmd.None]
             }
+
+            return [{ ...model, submission: { type: "Success" } }, Route.push(['LoginPhoneVerify', { phoneNumber: phoneNumber }])]
         }
 
 
@@ -124,10 +144,23 @@ export const View = ({
                     padding: 2,
                 }}
             >
+                <UI.Autocomplete
+                    id="iso_3166_phone_number"
+                    defaultValue={ISO_3166.of("US")}
+                    options={ISO_3166.all}
+                    getOptionLabel={(option) => `${ISO_3166.toEmoji(option)} ${ISO_3166.toName(option)}`}
+                    renderInput={(params) => <UI.TextField {...params} fullWidth label="Country" sx={{ marginBottom: 2 }} />}
+                    onChange={(_event, value) => {
+                        if (value) {
+                            dispatch(['InputtedCountry', value])
+                        }
+                    }}
+                />
+
                 <UI.TextField
                     autoFocus
                     sx={{ marginBottom: 2 }}
-                    type="email"
+                    type="tel"
                     fullWidth
                     inputMode="tel"
                     label="Phone Number"
@@ -135,24 +168,26 @@ export const View = ({
                     onChange={(event) => {
                         dispatch(["InputtedPhoneNumber", event.target.value])
                     }}
+                    error={model.validation === 'InvalidPhoneNumber' || model.validation === 'EmptyPhoneNumber'}
+                    helperText={model.validation === 'InvalidPhoneNumber' ? `Invalid phone number for ${ISO_3166.toName(model.country)}` : model.validation === 'EmptyPhoneNumber' ? "Phone number is required" : undefined}
                 />
 
                 <UI.Button
                     variant="contained"
                     size="large"
                     fullWidth
-                    loading={model.type === "Loading"}
+                    loading={model.submission.type === "Loading"}
                     onClick={() => dispatch(["ClickedSendCode"])}
                 >
                     Send Code
                 </UI.Button>
 
-                {model.type === "Problem" && (
+                {model.submission.type === "Problem" && (
                     <UI.Alert
                         severity="error"
                         sx={{ marginTop: 2 }}
                     >
-                        {model.problem}
+                        {model.submission.message}
                     </UI.Alert>
                 )}
             </UI.Box>

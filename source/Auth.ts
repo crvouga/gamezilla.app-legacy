@@ -1,6 +1,6 @@
 import * as Rx from "rxjs"
 import { Cmd, exhaustive, Option, pipe, Result, Sub, Task, Unit } from "./Core"
-import { UserId } from "./Data"
+import { PhoneNumber, UserId } from "./Data"
 import * as Supabase from "./Supabase"
 import * as Wire from "./Wire"
 
@@ -137,10 +137,10 @@ export const loginWithEmailAndPassword =
     }
 
 export const sendCode =
-  ({ phoneNumber }: { phoneNumber: string }): Task.Task<AuthResult> =>
+  ({ phoneNumber }: { phoneNumber: PhoneNumber.PhoneNumber }): Task.Task<AuthResult> =>
     async () => {
       const response = await Supabase.client.auth.signIn({
-        phone: phoneNumber,
+        phone: PhoneNumber.toString(phoneNumber),
       })
 
       if (response.error) {
@@ -151,10 +151,10 @@ export const sendCode =
     }
 
 export const verifyCode =
-  ({ code, phoneNumber }: { code: string, phoneNumber: string }): Task.Task<AuthResult> =>
+  ({ code, phoneNumber }: { code: string, phoneNumber: PhoneNumber.PhoneNumber }): Task.Task<AuthResult> =>
     async () => {
       const response = await Supabase.client.auth.verifyOTP({
-        phone: phoneNumber,
+        phone: PhoneNumber.toString(phoneNumber),
         token: code
       })
 

@@ -1,5 +1,6 @@
 import * as Auth from "../Auth"
-import { Cmd, exhaustive, pipe } from "../Core"
+import { Browser, Cmd, exhaustive, pipe, tag } from "../Core"
+import { PhoneNumber } from "../Data"
 import * as Route from "../Route"
 import * as UI from "../UI"
 
@@ -12,23 +13,20 @@ import * as UI from "../UI"
 //
 
 export type Model =
-    | {
-        type: "Idle"
-        code: string
+    {
+        code: string,
+        submission: {
+            type: "Idle"
+        } | {
+            type: "Loading"
+        } | {
+            type: "Problem",
+            message: string
+        } | {
+            type: "Success"
+        }
     }
-    | {
-        type: "Loading"
-        code: string
-    }
-    | {
-        type: "Problem"
-        problem: string
-        code: string
-    }
-    | {
-        type: "Success"
-        code: string
-    }
+
 
 //
 //
@@ -39,9 +37,10 @@ export type Model =
 //
 
 export const init: Model = {
-    type: "Idle",
     code: "",
+    submission: { type: "Idle" }
 }
+
 
 //
 //
@@ -56,9 +55,11 @@ export type Msg =
     | ["ClickedVerifyCode"]
     | ["InputtedCode", string]
     | ["VerifyCode_Done", Auth.AuthResult]
+    | ["Focus_Done", Browser.FocusResult]
 
+const codeInputId = "codeInputId"
 
-export const update = ({ phoneNumber }: { phoneNumber: string }, msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
+export const update = ({ phoneNumber }: { phoneNumber: PhoneNumber.PhoneNumber }, msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
     switch (msg[0]) {
         case 'ClickedBack': {
             return [model, Route.back]
@@ -66,7 +67,7 @@ export const update = ({ phoneNumber }: { phoneNumber: string }, msg: Msg, model
 
         case 'ClickedVerifyCode': {
             return [
-                { type: "Loading", code: model.code },
+                { code: model.code, submission: { type: "Loading" } },
                 pipe(
                     Auth.verifyCode({ code: model.code, phoneNumber, }),
                     Cmd.perform((result): Msg => ['VerifyCode_Done', result])
@@ -79,9 +80,19 @@ export const update = ({ phoneNumber }: { phoneNumber: string }, msg: Msg, model
         }
 
         case 'VerifyCode_Done': {
-            return [{ ...model, }, Cmd.None]
+            const result = msg[1]
+
+
+            if (result.type === 'Err') {
+                return [{ code: "", submission: { type: "Problem", message: result.error.message } }, pipe(Browser.focus(codeInputId), Cmd.perform(tag("Focus_Done")))]
+            }
+
+            return [{ ...model, submission: { type: "Success" } }, Cmd.None]
         }
 
+        case 'Focus_Done': {
+            return [model, Cmd.None]
+        }
 
     }
 }
@@ -95,9 +106,11 @@ export const update = ({ phoneNumber }: { phoneNumber: string }, msg: Msg, model
 //
 
 export const View = ({
+    phoneNumber,
     model,
     dispatch,
 }: {
+    phoneNumber: PhoneNumber.PhoneNumber,
     model: Model
     dispatch: (msg: Msg) => void
 }) => {
@@ -116,34 +129,36 @@ export const View = ({
                 }}
             >
                 <UI.TextField
+                    id={codeInputId}
                     autoFocus
                     sx={{ marginBottom: 2 }}
-                    type="email"
+                    type="number"
                     fullWidth
-                    inputMode="tel"
+                    inputMode="numeric"
                     label="Code"
                     value={model.code}
                     onChange={(event) => {
                         dispatch(["InputtedCode", event.target.value])
                     }}
+                    helperText={`The code was sent to ${PhoneNumber.toString(phoneNumber)}`}
                 />
 
                 <UI.Button
                     variant="contained"
                     size="large"
                     fullWidth
-                    loading={model.type === "Loading"}
+                    loading={model.submission.type === "Loading"}
                     onClick={() => dispatch(["ClickedVerifyCode"])}
                 >
                     Verify Code
                 </UI.Button>
 
-                {model.type === "Problem" && (
+                {model.submission.type === "Problem" && (
                     <UI.Alert
                         severity="error"
                         sx={{ marginTop: 2 }}
                     >
-                        {model.problem}
+                        {model.submission.message}
                     </UI.Alert>
                 )}
             </UI.Box>
