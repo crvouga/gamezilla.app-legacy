@@ -354,16 +354,16 @@ const initPage = (model: Model): [Model, Cmd.Cmd<Msg>] => {
 
 const updateStatusChanged =
   (modelPrev: Model) =>
-  (_msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
-    const statusPrev = toStatus(modelPrev)
-    const statusNew = toStatus(model)
+    (_msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
+      const statusPrev = toStatus(modelPrev)
+      const statusNew = toStatus(model)
 
-    if (statusNew[0] === statusPrev[0]) {
-      return [model, Cmd.None]
+      if (statusNew[0] === statusPrev[0]) {
+        return [model, Cmd.None]
+      }
+
+      return initPage(model)
     }
-
-    return initPage(model)
-  }
 
 const runAction = (action: OutAction, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (action[0]) {
@@ -437,12 +437,12 @@ const subscriptions = (model: Model): Sub.Sub<Msg> => {
     tagSub("Auth", Auth.subscriptions),
     model.auth[0] === "LoggedIn"
       ? tagSub(
-          "GameRoom",
-          GameRoom.subscriptions(
-            { currentUserId: model.auth[1].userId },
-            model.gameRoom,
-          ),
-        )
+        "GameRoom",
+        GameRoom.subscriptions(
+          { currentUserId: model.auth[1].userId },
+          model.gameRoom,
+        ),
+      )
       : Sub.None,
   ])
 }
@@ -484,7 +484,7 @@ const View = ({
           maxWidth: "sm",
           maxHeight: "100%",
 
-          userSelect: "none",
+          // userSelect: "none",
           marginX: "auto",
           position: "fixed",
           width: "100%",
@@ -610,7 +610,7 @@ const ViewError = ({ reason }: { reason: string }) => (
 
 const onLocationChange = (location: Browser.Location): Msg => {
   return pipe(
-    { pathname: location.pathname },
+    location,
     Route.decode,
     Option.withDefault<Route.Model>(["GameRoom"]),
     (route) => ["Route", ["GotRoute", route]],
@@ -717,12 +717,12 @@ const program = Debug.ReduxDevTools.withDebugger(
     subscriptions,
     update,
     view: (model) => (dispatch) =>
-      (
-        <View
-          model={model}
-          dispatch={dispatch}
-        />
-      ),
+    (
+      <View
+        model={model}
+        dispatch={dispatch}
+      />
+    ),
   }),
 )
 
