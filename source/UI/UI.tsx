@@ -28,6 +28,11 @@ const createTheme = ({ mode }: { mode: "light" | "dark" }) =>
         MuiCircularProgress: {
           defaultProps: {
             disableShrink: true
+          },
+          styleOverrides: {
+            root: {
+              animationDuration: `${1 / 2}s`,
+            }
           }
         },
         MuiButton: {
