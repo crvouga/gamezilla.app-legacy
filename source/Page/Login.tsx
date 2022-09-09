@@ -31,7 +31,7 @@ export type Msg =
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
     case "ClickedEmailLogin":
-      return [model, Route.push(["LoginEmailPassword"])]
+      return [model, Route.push(["LoginEmailLink"])]
 
     case "ClickedGoogleLogin":
       return [
@@ -67,76 +67,68 @@ export const View = ({
 }: {
   model: Model
   dispatch: (msg: Msg) => void
-}) => (
-  <UI.FillBox
-    sx={{
-      alignItems: "center",
-      justifyContent: "center",
-      p: 2,
-    }}
-  >
-    <UI.Typography
-      variant="h1"
-      sx={{ marginBottom: 2 }}
-    >
-      Gamezilla
-    </UI.Typography>
-
-    <ContinueWithGoogleButton
-      isLoading={model[0] === "LoggingInWithProvider" && model[1] === "Google"}
-      onClick={() => dispatch(["ClickedGoogleLogin"])}
-    />
-
-    <UI.Typography
-      sx={{ marginY: 1 }}
-      align="center"
-      color="text.secondary"
-    >
-      Or
-    </UI.Typography>
-
-    <UI.Button
-      variant="contained"
-      size="large"
-      fullWidth
-      color="primary"
-      onClick={() => dispatch(["ClickedEmailLogin"])}
-    >
-      Continue With Email
-    </UI.Button>
-  </UI.FillBox>
-)
-
-const ContinueWithGoogleButton = ({
-  onClick,
-  isLoading,
-}: {
-  onClick: () => void
-  isLoading: boolean
 }) => {
+  const isGoogleLoading = model[0] === "LoggingInWithProvider" && model[1] === "Google"
   return (
-    <UI.Button
-      variant="contained"
-      size="large"
-      loading={isLoading}
-      //todo fix this hack
-      disabled={isLoading}
-      fullWidth
-      startIcon={
-        //todo fix this hack
-        isLoading ? undefined : <UI.Icons.GoogleAlt />
-      }
-      color={
-        //todo fix this hack
-        isLoading ? undefined : "inherit"
-      }
+    <UI.FillBox
       sx={{
-        //todo fix this hack
-        color: (theme) => (isLoading ? undefined : theme.palette.grey[800]),
+        alignItems: "center",
+        justifyContent: "center",
+        p: 2,
+        gap: 3,
       }}
-      onClick={onClick}
     >
-      Continue With Google
-    </UI.Button>
+      <UI.Typography variant="h1">
+        Gamezilla
+      </UI.Typography>
+
+      <UI.Button
+        variant="contained"
+        size="large"
+        loading={isGoogleLoading}
+        //todo fix this hack
+        disabled={isGoogleLoading}
+        fullWidth
+        startIcon={
+          //todo fix this hack
+          isGoogleLoading ? undefined : <UI.Icons.GoogleAlt />
+        }
+        color={
+          //todo fix this hack
+          isGoogleLoading ? undefined : "inherit"
+        }
+        sx={{
+          //todo fix this hack
+          color: (theme) => (isGoogleLoading ? undefined : theme.palette.grey[800]),
+
+        }}
+        onClick={() => dispatch(['ClickedGoogleLogin'])}
+      >
+        Continue With Google
+      </UI.Button>
+
+      <UI.Button
+        variant="contained"
+        size="large"
+        fullWidth
+        color="primary"
+        onClick={() => dispatch(["ClickedEmailLogin"])}
+        startIcon={<UI.Icons.Email />}
+      >
+        Continue With Email
+      </UI.Button>
+
+      {/* <UI.Button
+        variant="contained"
+        size="large"
+        fullWidth
+        color="primary"
+        onClick={() => dispatch(["ClickedEmailLogin"])}
+        startIcon={<UI.Icons.PhoneAndroid />}
+      >
+        Continue With Phone
+      </UI.Button> */}
+    </UI.FillBox>
   )
+
 }
