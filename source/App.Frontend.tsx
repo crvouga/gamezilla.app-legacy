@@ -721,7 +721,8 @@ const socketClient: Socket<Wire.ServerToClientEvents, Wire.ClientToServerEvents>
   io(backendUrl, {
     auth: {
       [Wire.sessionIdKey]: localStorage.getItem(Wire.sessionIdKey) ?? undefined
-    }
+    },
+    forceNew: true
   })
 
 socketClient.on("connect", () => {
