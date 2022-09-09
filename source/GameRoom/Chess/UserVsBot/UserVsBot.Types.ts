@@ -79,35 +79,44 @@ export type FrontendMsg =
   | ["Audio_Done", Audio.PlayResult]
   | ["OpenedMenu", string]
   | ["ClosedMenu"]
-  | InputUser
-  | InputColor
-  | InputBot
-  | StartGame
-  | StopGame
+  | Req
 
 export type BackendMsg =
   | ["None"]
 
 export type ToBackend =
   | ["Init"]
+  | Req
+
+
+export type ToFrontend =
+  | ["Sync", SharedModel]
+  | ["GameOver"]
+  | Res
+
+
+export type Req =
   | InputUser
   | InputColor
   | InputBot
   | StartGame
   | StopGame
 
-export type ToFrontend =
-  | ["Sync", SharedModel]
-  | ["GameOver"]
+export type Res =
   | InputUser_Done
   | InputColor_Done
   | InputBot_Done
   | StartGame_Done
   | StopGame_Done
 
+// 
+// 
+// 
+// 
+
 export type InputUser = ['InputUser', { userId: Option.Option<UserId.UserId> }]
-export type InputUser_Done = ['InputUser_Done', { userId: Option.Option<UserId.UserId> }, Result.Result<"must_be_in_setup_mode", SharedModel>]
-export const inputUser = ({ userId }: InputUser[1], model: SharedModel): InputUser_Done[2] => {
+export type InputUser_Done = ['InputUser_Done', Result.Result<"must_be_in_setup_mode", SharedModel>]
+export const inputUser = ({ userId }: InputUser[1], model: SharedModel): InputUser_Done[1] => {
 
   if (model.type !== 'Setup') {
     return Result.Err("must_be_in_setup_mode")

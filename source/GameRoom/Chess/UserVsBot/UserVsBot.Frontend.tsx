@@ -1,13 +1,16 @@
 import { Audio, Cmd, exhaustive, Option, Sub, tag } from "../../../Core"
 import { UserId } from "../../../Data"
 import * as Store from "../../../Store"
+import * as Snackbar from "../../../Snackbar"
 import * as UI from "../../../UI"
+import * as Board from "../Board"
 import {
     BackendModel,
     canStartGame,
     FrontendModel,
     FrontendMsg,
     initShared,
+    Res,
     ToBackend,
     ToFrontend
 } from "./UserVsBot.Types"
@@ -43,6 +46,8 @@ export const init = ({ sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd
 //
 
 export type Msg = FrontendMsg
+
+export type OutAction = Snackbar.Action
 
 export const update = (
     { sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd.Cmd<never> },
@@ -95,88 +100,23 @@ export const update = (
 export const updateFromBackend = (
     msg: ToFrontend,
     model: Model,
-): [Model, Cmd.Cmd<Msg>] => {
+): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
 
     switch (msg[0]) {
         case 'Sync': {
-            return [model, Cmd.None]
+            return [model, Cmd.None, []]
         }
 
         case 'GameOver': {
-            return [model, Cmd.None]
+            return [model, Cmd.None, []]
         }
 
-
-        case 'InputUser_Done': {
-            const result = msg[2]
-
-            if (result.type === 'Err') {
-                return [model, Cmd.None]
-            }
-
-            const sharedModelNew = result.value
-
-            const modelNew = mergeWithBackend(model, sharedModelNew)
-
-            return [modelNew, Cmd.None]
-        }
-
-
-        case 'InputColor_Done': {
-            const result = msg[1]
-
-            if (result.type === 'Err') {
-                return [model, Cmd.None]
-            }
-
-            const sharedModelNew = result.value
-
-            const modelNew = mergeWithBackend(model, sharedModelNew)
-
-            return [modelNew, Cmd.None]
-        }
-
-        case 'InputBot_Done': {
-            const result = msg[1]
-
-            if (result.type === 'Err') {
-                return [model, Cmd.None]
-            }
-
-            const sharedModelNew = result.value
-
-            const modelNew = mergeWithBackend(model, sharedModelNew)
-
-            return [modelNew, Cmd.None]
-        }
-
-        case 'StartGame_Done': {
-            const result = msg[1]
-
-            if (result.type === 'Err') {
-                return [model, Cmd.None]
-            }
-
-            const sharedModelNew = result.value
-
-            const modelNew = mergeWithBackend(model, sharedModelNew)
-
-            return [modelNew, Cmd.None]
-        }
-
-
+        case 'InputUser_Done':
+        case 'InputColor_Done':
+        case 'InputBot_Done':
+        case 'StartGame_Done':
         case 'StopGame_Done': {
-            const result = msg[1]
-
-            if (result.type === 'Err') {
-                return [model, Cmd.None]
-            }
-
-            const sharedModelNew = result.value
-
-            const modelNew = mergeWithBackend(model, sharedModelNew)
-
-            return [modelNew, Cmd.None]
+            return handleResponse(msg, model)
         }
 
         default: {
@@ -185,6 +125,23 @@ export const updateFromBackend = (
     }
 }
 
+
+const handleResponse = (res: Res, model: Model): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
+    const result = res[1]
+
+    if (result.type === 'Err') {
+
+        const action: OutAction = ['Snackbar', { variant: "Error", message: result.error }]
+
+        return [model, Cmd.None, [action]]
+    }
+
+    const sharedModelNew = result.value
+
+    const modelNew = mergeWithBackend(model, sharedModelNew)
+
+    return [modelNew, Cmd.None, []]
+}
 
 const playAudio = (src: string): Cmd.Cmd<Msg> => {
     return Audio.play(src, tag("Audio_Done"))
@@ -367,7 +324,17 @@ export const View =
 
             />
 
-            {/* <Board.View /> */}
+            <Board.View
+                boardOrentation="w"
+                isDraggablePiece={({ piece }) => {
+                    return true
+                }}
+                model={model.sharedModel.board}
+                onPieceDrop={(move) => {
+                    console.log(move)
+                    return true
+                }}
+            />
         </UI.FillBox>
 
     }
