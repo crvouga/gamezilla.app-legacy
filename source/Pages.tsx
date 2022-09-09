@@ -45,7 +45,7 @@ export type Model =
   | ["ProfileCreate", ProfileCreate.Model]
   | ["Logout", Logout.Model]
   | ["Account", Account.Model]
-  | ["Profile", Profile.Model]
+  | ["Profile", { userId: UserId.UserId }, Profile.Model]
   | ["ProfileDelete", ProfileDelete.Model]
   | ["ProfileUpdate", ProfileUpdate.Model]
   | ["ProfileUpdateAvatar", ProfileUpdateAvatar.Model]
@@ -55,10 +55,9 @@ export type Model =
   | ["Chat", Chat.Model]
   | ["ChatNew", ChatNew.Model]
   | ["Search", Search.Model]
-  | ["ChatConversation", ChatConversation.Model]
+  | ["ChatConversation", { conversationId: string }, ChatConversation.Model]
   | ["GameRoom", GameRoomPage.Model]
   | ["Party", PartyPage.Model]
-  | ["Admin"]
   | ["Loading"]
 
 //
@@ -135,13 +134,12 @@ export const initReady = (
     }
 
     case "ChatConversation": {
-      const [model, cmd, actions] = ChatConversation.init({
-        conversationId: route[1],
+      const [child, cmd, actions] = ChatConversation.init({
+        conversationId: route[1].conversationId,
       })
       return [
-        ["ChatConversation", model],
-
-        pipe(cmd, Cmd.map(tag("ChatConversation"))),
+        ["ChatConversation", route[1], child],
+        tagCmd("ChatConversation", cmd),
         actions,
       ]
     }
@@ -187,10 +185,10 @@ export const initReady = (
 
     case "Profile": {
       const [modelInit, cmdInit, actions] = Profile.init({
-        userId: route[1],
+        userId: route[1].userId,
       })
       return [
-        ["Profile", modelInit],
+        ["Profile", { userId: route[1].userId, }, modelInit],
         pipe(cmdInit, Cmd.map(tag("Profile"))),
         actions,
       ]
@@ -204,9 +202,6 @@ export const initReady = (
         actionsInit,
       ]
     }
-
-    case "Admin":
-      return [["Admin"], Cmd.None, []]
 
     case "GameRoom": {
       const [modelInit, cmdInit] = GameRoomPage.init
@@ -260,7 +255,6 @@ export const initLoggedOut = (route: Route.Model): [Model, Cmd.Cmd<Msg>] => {
     case "Chat":
     case "ChatConversation":
     case "ChatNew":
-    case "Admin":
     case "Logout":
     case "Profile":
     case "ProfileCreate":
@@ -295,7 +289,6 @@ export const initProfileMissing = (
     case "Chat":
     case "ChatConversation":
     case "ChatNew":
-    case "Admin":
     case "Search":
     case "Profile":
     case "ProfileDelete":
@@ -423,14 +416,14 @@ export const updateReady = (
 
     case "ChatConversation":
       if (msg[0] === "ChatConversation") {
-        const [modelPage, cmdPage, actions] = ChatConversation.update(
-          { userId: profile.userId },
+        const [child, cmd, actions] = ChatConversation.update(
+          { userId: profile.userId, conversationId: model[1].conversationId },
           msg[1],
-          model[1],
+          model[2],
         )
         return [
-          ["ChatConversation", modelPage],
-          pipe(cmdPage, Cmd.map(tag("ChatConversation"))),
+          ["ChatConversation", model[1], child],
+          tagCmd("ChatConversation", cmd),
           actions,
         ]
       }
@@ -448,12 +441,12 @@ export const updateReady = (
     case "Profile":
       if (msg[0] === "Profile") {
         const [modelPage, cmdPage, actions] = Profile.update(
-          { currentUserId: profile.userId },
+          { currentUserId: profile.userId, userId: model[1].userId },
           msg[1],
-          model[1],
+          model[2],
         )
         return [
-          ["Profile", modelPage],
+          ["Profile", model[1], modelPage],
           pipe(cmdPage, Cmd.map(tag("Profile"))),
           actions,
         ]
@@ -466,9 +459,6 @@ export const updateReady = (
         return tagUpdate("Search", Search.update(msg[1], model[1]))
       }
 
-      return [model, Cmd.None, []]
-
-    case "Admin":
       return [model, Cmd.None, []]
 
     case "GameRoom": {
@@ -554,7 +544,6 @@ export const updateProfileMissing = (
     case "Loading":
     case "LoginEmailLink":
     case "Search":
-    case "Admin":
     case 'LoginPhone':
     case 'LoginPhoneVerify':
     case "Party":
@@ -613,7 +602,6 @@ export const updateLoggedOut = (
     case "Loading":
     case "Logout":
     case "Profile":
-    case "Admin":
     case "Search":
     case "Party":
       return [model, Route.push(["Login"]), []]
@@ -652,7 +640,6 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
     case "Loading":
     case "Profile":
     case "Search":
-    case "Admin":
     case "GameRoom":
     case "Party":
     case 'LoginPhone':
@@ -751,7 +738,8 @@ export const ViewReady = ({
         <ChatConversation.View
           store={store}
           authUser={profile}
-          model={model[1]}
+          model={model[2]}
+          conversationId={model[1].conversationId}
           dispatch={(msg) => dispatch(["ChatConversation", msg])}
         />
       )
@@ -816,16 +804,14 @@ export const ViewReady = ({
         />
       )
 
-    case "Admin":
-      return <UI.LoadingPage />
-
     case "Profile":
       return (
         <UI.FillBox>
           <Profile.View
+            userId={model[1].userId}
             store={store}
             currentUserId={profile.userId}
-            model={model[1]}
+            model={model[2]}
             dispatch={(msg) => dispatch(["Profile", msg])}
           />
           <ViewBottomNavigation
@@ -931,7 +917,6 @@ export const ViewProfileMissing = ({
     case "Search":
     case "Profile":
     case "GameRoom":
-    case "Admin":
     case "Party":
       return <UI.LoadingPage />
 
@@ -996,7 +981,6 @@ export const ViewLoggedOut = ({
     case "ProfileUpdateUsername":
     case "Profile":
     case "Search":
-    case "Admin":
     case "Loading":
     case "Party":
       return <UI.LoadingPage />
@@ -1052,7 +1036,7 @@ const ViewBottomNavigation = ({
       outlined: <UI.Icons.ChatOutlined />,
     },
     {
-      route: ["Profile", currentUserId],
+      route: ["Profile", { userId: currentUserId }],
       filled: <UI.Icons.AccountCircle />,
       outlined: <UI.Icons.AccountCircleOutlined />,
     },

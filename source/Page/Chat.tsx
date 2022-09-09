@@ -37,7 +37,7 @@ export const init = ({
 export type Msg =
   | ["ClickedBack"]
   | ["ClickedSendMessage"]
-  | ["ClickedConversationItem", string]
+  | ["ClickedConversationItem", { conversationId: string }]
 
 type OutAction = Store.Action
 
@@ -105,7 +105,7 @@ export const View = ({
           <UI.ListItemButton
             key={item.conversationId}
             onClick={() =>
-              dispatch(["ClickedConversationItem", item.conversationId])
+              dispatch(["ClickedConversationItem", item])
             }
           >
             <UI.ListItemAvatar>

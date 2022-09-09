@@ -12,19 +12,17 @@ import { UserId } from "../Data"
 //
 //
 
-export type Model = {
-  userId: UserId.UserId
-}
+export type Model = {}
 
 export const init = ({
   userId,
 }: {
   userId: UserId.UserId
 }): [Model, Cmd.Cmd<Msg>, OutAction[]] => [
-  { userId },
-  Cmd.None,
-  [["Store", ["Profile", ["FindMany", { userIds: [userId] }]]]],
-]
+    {},
+    Cmd.None,
+    [["Store", ["Profile", ["FindMany", { userIds: [userId] }]]]],
+  ]
 
 //
 //
@@ -43,7 +41,7 @@ export type Msg =
 type OutAction = Store.Action
 
 export const update = (
-  { currentUserId }: { currentUserId: UserId.UserId },
+  { currentUserId, userId }: { currentUserId: UserId.UserId, userId: UserId.UserId },
   msg: Msg,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
@@ -61,7 +59,7 @@ export const update = (
     }
 
     case "ClickedSendMessage": {
-      const userIds = [model.userId, currentUserId]
+      const userIds = [userId, currentUserId]
 
       const action: OutAction = [
         "Store",
@@ -96,15 +94,17 @@ export const subscriptions = (_: Model): Sub.Sub<Msg> => {
 export const View = ({
   store,
   currentUserId,
+  userId,
   model,
   dispatch,
 }: {
   store: Store.Model
   currentUserId: UserId.UserId
+  userId: UserId.UserId,
   model: Model
   dispatch: (msg: Msg) => void
 }) => {
-  const profile = store.Profile[model.userId]
+  const profile = store.Profile[userId]
 
   if (!profile) {
     return (

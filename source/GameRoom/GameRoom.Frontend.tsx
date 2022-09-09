@@ -99,7 +99,7 @@ export const update = (
     }
 
     case "ClickedUser": {
-      return [model, Route.push(["Profile", msg[1].userId])]
+      return [model, Route.push(["Profile", { userId: msg[1].userId }])]
     }
 
     case "OpenedMenu": {

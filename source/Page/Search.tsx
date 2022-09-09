@@ -61,7 +61,7 @@ export const update = (
       ]
 
     case "ClickedResult":
-      return [model, Route.push(["Profile", msg[1].userId]), []]
+      return [model, Route.push(["Profile", msg[1]]), []]
 
     case "InputtedSearchText":
       const searchTextNew = msg[1]

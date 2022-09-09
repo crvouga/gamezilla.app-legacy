@@ -28,7 +28,6 @@ export type Msg =
   | ["ClickedLogout"]
   | ["ClickedDeleteProfile"]
   | ["ClickedUpdateProfile"]
-  | ["ClickedAdmin"]
 
 export const update = (
   { userId }: { userId: UserId.UserId },
@@ -36,9 +35,6 @@ export const update = (
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
-    case "ClickedAdmin":
-      return [model, Route.push(["Admin", "Model"])]
-
     case "ClickedBack":
       return [model, Route.back]
 
@@ -97,12 +93,6 @@ export const View = ({
         <UI.ListItemText primary="Logout" />
       </UI.ListItemButton>
 
-      <UI.ListItemButton onClick={() => dispatch(["ClickedAdmin"])}>
-        <UI.ListItemIcon>
-          <UI.Icons.AdminPanelSettings />
-        </UI.ListItemIcon>
-        <UI.ListItemText primary="Admin" />
-      </UI.ListItemButton>
     </UI.List>
   </UI.FillBox>
 )
