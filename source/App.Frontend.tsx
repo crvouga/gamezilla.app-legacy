@@ -510,13 +510,9 @@ const ViewMain = ({ model, dispatch }: { model: Model, dispatch: (msg: Msg) => v
 
   switch (model.wire) {
     case "Connecting":
-      return <ViewLoading reason="Connecting..." />
-
     case "Disconnected":
-      return <ViewLoading reason="Connecting..." />
-
     case "ConnectError":
-      return <ViewLoading reason="Connecting..." />
+      return <ViewLoading reason="Connecting to backend..." />
 
     case "Connected": {
       switch (status[0]) {
@@ -524,7 +520,7 @@ const ViewMain = ({ model, dispatch }: { model: Model, dispatch: (msg: Msg) => v
           return <ViewLoading reason="Authenticating..." />
 
         case "ProfileLoading":
-          return <ViewLoading reason="Loading profile..." />
+          return <ViewLoading reason="Loading your profile..." />
 
         case "ProfileError":
           return <ViewError reason="Failed to load profile." />
@@ -563,6 +559,7 @@ const ViewLoading =
       <UI.CircularProgress sx={{ marginBottom: 2 }} />
 
       <UI.Typography
+        sx={{ position: "absolute", bottom: 0, left: 0, padding: 1 }}
         align="center"
         variant="caption"
         color="text.secondary"
