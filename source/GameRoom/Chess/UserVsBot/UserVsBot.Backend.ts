@@ -11,6 +11,8 @@ import {
 
     inputUser,
 
+    Res,
+
     startGame,
 
     stopGame,
