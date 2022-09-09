@@ -91,7 +91,7 @@ export const updateFromFrontend = (
 
             const modelNew = result.type === 'Err' ? model : result.value
 
-            return [modelNew, sendToRoom(['InputUser_Done', msg[1], result])]
+            return [modelNew, sendToRoom(['InputUser_Done', result])]
         }
 
         case 'InputColor': {

@@ -3,6 +3,7 @@ import { BackendModel, FrontendModel, FrontendMsg, ToBackend, ToFrontend } from 
 import * as UserVsUser from "./UserVsUser/UserVsUser.Frontend"
 import * as UserVsBot from "./UserVsBot/UserVsBot.Frontend"
 import * as Store from "../../Store"
+import * as Snackbar from "../../Snackbar"
 import * as UI from "../../UI"
 import { UserId } from "../../Data";
 import { ReactNode } from "react";
@@ -36,6 +37,8 @@ export const init = ({ sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd
 //
 
 export type Msg = FrontendMsg
+
+export type OutAction = Snackbar.Action
 
 export const update = ({ sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd.Cmd<never> }, msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
@@ -71,43 +74,44 @@ export const updateFromBackend = (
   { sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd.Cmd<never> },
   msg: ToFrontend,
   model: Model,
-): [Model, Cmd.Cmd<Msg>] => {
+): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
 
     case 'InputMode_Done': {
       const result = msg[2]
 
       if (result.type === 'Err') {
-        return [model, Cmd.None]
+        const action: OutAction = ['Snackbar', { variant: "Error", message: result.error }]
+        return [model, Cmd.None, [action]]
       }
 
-      const merged = mergeWithBackend({
+      const [merged, mergedCmd] = mergeWithBackend({
         frontendModel: model,
         backendModel: result.value,
         sendToBackend
       })
 
-      return merged
+      return [merged, mergedCmd, []]
     }
 
     case 'UserVsUser': {
       if (model[0] === 'UserVsUser') {
         const [child, cmd] = UserVsUser.updateFromBackend(msg[1], model[1])
 
-        return [['UserVsUser', child], tagCmd("UserVsUser", cmd)]
+        return [['UserVsUser', child], tagCmd("UserVsUser", cmd), []]
       }
 
-      return [model, Cmd.None]
+      return [model, Cmd.None, []]
     }
 
     case 'UserVsBot': {
       if (model[0] === 'UserVsBot') {
-        const [child, cmd] = UserVsBot.updateFromBackend(msg[1], model[1])
+        const [child, cmd, actions] = UserVsBot.updateFromBackend(msg[1], model[1])
 
-        return [['UserVsBot', child], tagCmd("UserVsBot", cmd)]
+        return [['UserVsBot', child], tagCmd("UserVsBot", cmd), actions]
       }
 
-      return [model, Cmd.None]
+      return [model, Cmd.None, []]
     }
   }
 }
