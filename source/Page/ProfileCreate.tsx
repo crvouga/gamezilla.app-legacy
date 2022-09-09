@@ -54,8 +54,8 @@ const initForm = ({ defaultName }: { defaultName: string }): Form => {
 //
 
 export type Msg =
-  | ["EnteredUsername", string]
-  | ["EnteredName", string]
+  | ["InputtedUsername", string]
+  | ["InputtedName", string]
   | ["ClickedSubmit"]
   | ["ClickedLogout"]
 
@@ -67,10 +67,10 @@ export const update = (
   model: Model,
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
-    case "EnteredName":
+    case "InputtedName":
       return [{ ...model, form: { ...model.form, name: msg[1] } }, Cmd.None, []]
 
-    case "EnteredUsername":
+    case "InputtedUsername":
       return [
         { ...model, form: { ...model.form, username: msg[1] } },
         Cmd.None,
@@ -166,7 +166,7 @@ export const View = ({
         label="Username"
         fullWidth
         onChange={(event) =>
-          dispatch(["EnteredUsername", event.currentTarget.value])
+          dispatch(["InputtedUsername", event.currentTarget.value])
         }
       />
 
@@ -176,7 +176,7 @@ export const View = ({
         label="Name"
         fullWidth
         onChange={({ currentTarget: { value: name } }) =>
-          dispatch(["EnteredName", name])
+          dispatch(["InputtedName", name])
         }
       />
 

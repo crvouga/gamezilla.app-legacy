@@ -43,12 +43,12 @@ export const init: Model = {
 export type Msg =
   | ["ClickedBack"]
   | ["ClickedSendLoginLink"]
-  | ["InputEmailAddress", string]
+  | ["InputtedEmailAddress", string]
   | ["Login_Done", Auth.LoginResult]
 
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
-    case "InputEmailAddress":
+    case "InputtedEmailAddress":
       return [{ ...model, emailAddress: msg[1] }, Cmd.None]
 
     case "Login_Done": {
@@ -124,7 +124,7 @@ export const View = ({
           label="Email Address"
           value={model.emailAddress}
           onChange={(event) => {
-            dispatch(["InputEmailAddress", event.target.value])
+            dispatch(["InputtedEmailAddress", event.target.value])
           }}
         />
 
