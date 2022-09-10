@@ -1,4 +1,4 @@
-import { Audio, Cmd, exhaustive, Option, Sub, tag } from "../../../Core"
+import { Audio, Cmd, exhaustive, Option, pipe, Result, Sub, tag } from "../../../Core"
 import { UserId } from "../../../Data"
 import * as Snackbar from "../../../Snackbar"
 import * as Store from "../../../Store"
@@ -13,7 +13,11 @@ import {
   Res,
   startGame,
   ToBackend,
-  ToFrontend
+  ToFrontend,
+  inputBot,
+  inputBotProblemToString,
+  inputColor,
+  inputColorProblemToString
 } from "./UserVsBot.Types"
 
 //
@@ -133,12 +137,12 @@ const handleResponse = (
   const result = res[1]
 
   if (result.type === "Err") {
-    const action: OutAction = [
-      "Snackbar",
-      { variant: "Error", message: result.error },
-    ]
+    // const action: OutAction = [
+    //   "Snackbar",
+    //   { variant: "Error", message: result.error },
+    // ]
 
-    return [model, Cmd.None, [action]]
+    return [model, Cmd.None, []]
   }
 
   const sharedModelNew = result.value
@@ -209,6 +213,9 @@ export const View = ({
 }) => {
   if (model.sharedModel.type === "Setup") {
     const startGameResult = startGame({ userId: currentUserId }, model.sharedModel)
+    const inputBotResult = inputBot({ botDifficulty: model.sharedModel.botDifficulty, userId: currentUserId }, model.sharedModel)
+    const inputColorResult = inputColor({ userColor: model.sharedModel.userColor, userId: currentUserId }, model.sharedModel)
+
     return (
       <UI.FillBox>
         <UI.Header
@@ -249,7 +256,7 @@ export const View = ({
                   ])
                 }}
               >
-                Play
+                Start Playing
               </UI.Button>
             </UI.Box>
           ) : (
@@ -283,33 +290,37 @@ export const View = ({
         </UI.Typography>
 
         <UI.Box sx={{ paddingX: 2, paddingBottom: 2 }}>
-          <UI.ToggleButtonGroup
-            fullWidth
-            value={model.sharedModel.userColor}
-          >
-            <UI.ToggleButton
-              value="w"
-              onClick={() =>
-                dispatch([
-                  "InputColor",
-                  { userColor: "w", userId: currentUserId },
-                ])
-              }
+          <UI.Tooltip title={inputColorResult.type === 'Err' ? inputColorProblemToString(inputColorResult.error) : ""}>
+
+            <UI.ToggleButtonGroup
+              disabled={inputColorResult.type === 'Err'}
+              fullWidth
+              value={model.sharedModel.userColor}
             >
-              White
-            </UI.ToggleButton>
-            <UI.ToggleButton
-              value="b"
-              onClick={() =>
-                dispatch([
-                  "InputColor",
-                  { userColor: "b", userId: currentUserId },
-                ])
-              }
-            >
-              Black
-            </UI.ToggleButton>
-          </UI.ToggleButtonGroup>
+              <UI.ToggleButton
+                value="w"
+                onClick={() =>
+                  dispatch([
+                    "InputColor",
+                    { userColor: "w", userId: currentUserId },
+                  ])
+                }
+              >
+                White
+              </UI.ToggleButton>
+              <UI.ToggleButton
+                value="b"
+                onClick={() =>
+                  dispatch([
+                    "InputColor",
+                    { userColor: "b", userId: currentUserId },
+                  ])
+                }
+              >
+                Black
+              </UI.ToggleButton>
+            </UI.ToggleButtonGroup>
+          </UI.Tooltip>
         </UI.Box>
 
         <UI.Typography
@@ -320,63 +331,65 @@ export const View = ({
         </UI.Typography>
 
         <UI.Box sx={{ paddingX: 2 }}>
-          <UI.ToggleButtonGroup
-            fullWidth
-            value={model.sharedModel.botDifficulty}
-          >
-            <UI.ToggleButton
-              value="Easy"
-              onClick={() =>
-                dispatch([
-                  "InputBot",
-                  { botDifficulty: "Easy", userId: currentUserId },
-                ])
-              }
+
+          <UI.Tooltip enterTouchDelay={0} title={inputBotResult.type === "Err" ? inputBotProblemToString(inputBotResult.error) : ""}>
+
+            <UI.ToggleButtonGroup
+              disabled={inputBotResult.type === "Err"}
+              fullWidth
+              value={model.sharedModel.botDifficulty}
             >
-              Easy
-            </UI.ToggleButton>
-            <UI.ToggleButton
-              value="Medium"
-              onClick={() =>
-                dispatch([
-                  "InputBot",
-                  { botDifficulty: "Medium", userId: currentUserId },
-                ])
-              }
-            >
-              Medium
-            </UI.ToggleButton>
-            <UI.ToggleButton
-              value="Hard"
-              onClick={() =>
-                dispatch([
-                  "InputBot",
-                  { botDifficulty: "Hard", userId: currentUserId },
-                ])
-              }
-            >
-              Hard
-            </UI.ToggleButton>
-          </UI.ToggleButtonGroup>
+              <UI.ToggleButton
+                value="Easy"
+                onClick={() =>
+                  dispatch([
+                    "InputBot",
+                    { botDifficulty: "Easy", userId: currentUserId },
+                  ])
+                }
+              >
+                Easy
+              </UI.ToggleButton>
+              <UI.ToggleButton
+                value="Medium"
+                onClick={() =>
+                  dispatch([
+                    "InputBot",
+                    { botDifficulty: "Medium", userId: currentUserId },
+                  ])
+                }
+              >
+                Medium
+              </UI.ToggleButton>
+              <UI.ToggleButton
+                value="Hard"
+                onClick={() =>
+                  dispatch([
+                    "InputBot",
+                    { botDifficulty: "Hard", userId: currentUserId },
+                  ])
+                }
+              >
+                Hard
+              </UI.ToggleButton>
+            </UI.ToggleButtonGroup>
+          </UI.Tooltip>
         </UI.Box>
 
         <UI.Box sx={{ flex: 1 }} />
 
         <UI.Box sx={{ paddingX: 2, paddingBottom: 1 }}>
-          {startGameResult.type === "Err" && (
-            <UI.Typography variant="caption" color="text.secondary">
-              {startGameProblemToString(startGameResult.error)}
-            </UI.Typography>
-          )}
-          <UI.Button
-            fullWidth
-            size="large"
-            variant="contained"
-            disabled={startGameResult.type === 'Err'}
-            onClick={() => dispatch(["StartGame", { userId: currentUserId }])}
-          >
-            Start Game
-          </UI.Button>
+          <UI.Tooltip title={startGameResult.type === 'Err' ? startGameProblemToString(startGameResult.error) : ""}>
+            <UI.Button
+              fullWidth
+              size="large"
+              variant="contained"
+              disabled={startGameResult.type === 'Err'}
+              onClick={() => dispatch(["StartGame", { userId: currentUserId }])}
+            >
+              Start Game
+            </UI.Button>
+          </UI.Tooltip>
         </UI.Box>
       </UI.FillBox>
     )
