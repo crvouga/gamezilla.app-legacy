@@ -105,7 +105,7 @@ export const updateFromFrontend = (
         }
 
         case "UserVsUser": {
-          const modelNew: Model = ["UserVsUser", UserVsUser.init]
+          const modelNew: Model = ["UserVsUser", UserVsUser.init({ userId: Option.Some(userId) })]
 
           return [
             modelNew,
