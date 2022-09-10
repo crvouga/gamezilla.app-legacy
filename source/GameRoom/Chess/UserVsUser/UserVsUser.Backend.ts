@@ -1,4 +1,5 @@
-import { Cmd, exhaustive, Sub, Time } from "../../../Core"
+import { Cmd, exhaustive, Option, Sub, Time } from "../../../Core"
+import { UserId } from "../../../Data"
 import * as Board from "../Board"
 import {
   BackendModel,
@@ -28,8 +29,10 @@ import {
 
 export type Model = BackendModel
 
-export const init: Model = {
-  sharedModel: initShared,
+export const init = ({ userId }: { userId: Option.Option<UserId.UserId> }): Model => {
+  return {
+    sharedModel: initShared({ userId }),
+  }
 }
 
 //

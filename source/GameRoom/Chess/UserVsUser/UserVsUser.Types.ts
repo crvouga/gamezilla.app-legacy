@@ -80,11 +80,13 @@ export type GameOver =
     winner: Board.Color
   }
 
-export const initShared: SharedModel = {
-  type: "Setup",
-  b: Option.None,
-  w: Option.None,
-  clockPreset: "Blitz",
+export const initShared = ({ userId }: { userId: Option.Option<UserId.UserId> }): SharedModel => {
+  return {
+    type: "Setup",
+    w: userId,
+    b: Option.None,
+    clockPreset: "Blitz",
+  }
 }
 
 //

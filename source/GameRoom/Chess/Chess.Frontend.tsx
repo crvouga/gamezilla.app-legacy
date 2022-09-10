@@ -1,4 +1,4 @@
-import { Cmd, Result, Sub, tagCmd } from "../../Core"
+import { Cmd, Option, Result, Sub, tagCmd } from "../../Core"
 import {
   BackendModel,
   FrontendModel,
@@ -424,6 +424,7 @@ export const mergeWithBackend = ({
       }
 
       const [child, childCmd] = UserVsUser.init({
+        userId: Option.None,
         sendToBackend: (msg) => sendToBackend(["UserVsUser", msg]),
       })
 

@@ -31,12 +31,14 @@ export type Model = FrontendModel
 
 export const init = ({
   sendToBackend,
+  userId,
 }: {
   sendToBackend: (msg: ToBackend) => Cmd.Cmd<never>
+  userId: Option.Option<UserId.UserId>
 }): [FrontendModel, Cmd.Cmd<Msg>] => {
   return [
     {
-      sharedModel: initShared,
+      sharedModel: initShared({ userId }),
       openedMenuId: Option.None,
       openedModal: "None",
       isFlipped: false,
