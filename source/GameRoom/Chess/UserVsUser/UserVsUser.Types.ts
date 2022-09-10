@@ -53,32 +53,32 @@ export type GameOverModel = {
 
 export type DrawAgreement =
   | {
-      type: "NotAsking"
-    }
+    type: "NotAsking"
+  }
   | {
-      type: "Asking"
-      asker: Board.Color
-    }
+    type: "Asking"
+    asker: Board.Color
+  }
 
 export type GameOver =
   | {
-      type: "Resignation"
-      resigner: Board.Color
-    }
+    type: "Resignation"
+    resigner: Board.Color
+  }
   | {
-      type: "DrawByAgreement"
-    }
+    type: "DrawByAgreement"
+  }
   | {
-      type: "Checkmate"
-      winner: Board.Color
-    }
+    type: "Checkmate"
+    winner: Board.Color
+  }
   | {
-      type: "Stalemate"
-    }
+    type: "Stalemate"
+  }
   | {
-      type: "WinOnTime"
-      winner: Board.Color
-    }
+    type: "WinOnTime"
+    winner: Board.Color
+  }
 
 export const initShared: SharedModel = {
   type: "Setup",
@@ -240,8 +240,8 @@ export const inputPlayer = (
 
   const otherPlayerNew =
     otherPlayer.type === "Some" &&
-    targetPlayer.type === "Some" &&
-    otherPlayer.value === targetPlayer.value
+      targetPlayer.type === "Some" &&
+      otherPlayer.value === targetPlayer.value
       ? Option.None
       : otherPlayer
 
@@ -292,31 +292,53 @@ export type StartGame_Done = [
   "StartGame_Done",
   Result.Result<StartGameProblem, SharedModel>,
 ]
-export type StartGameProblem = "can_not_start_game"
+export type StartGameProblem = "missing_white_player" | "missing_black_player" | "missing_both_players" | "game_not_in_setup_mode"
 
-export const canStartGame = (model: SharedModel): boolean => {
-  return (
-    model.type === "Setup" && model.w.type === "Some" && model.b.type === "Some"
-  )
+export const startGameProblemToString = (problem: StartGameProblem): string => {
+  switch (problem) {
+    case 'game_not_in_setup_mode': {
+      return "Game is not in setup mode"
+    }
+
+    case 'missing_black_player': {
+      return "Missing black player"
+    }
+
+    case 'missing_both_players': {
+      return "Missing white and black players"
+    }
+
+    case 'missing_white_player': {
+      return "Missing white player"
+    }
+  }
 }
 
 export const startGame = (model: SharedModel): StartGame_Done[1] => {
-  if (
-    model.type === "Setup" &&
-    model.w.type === "Some" &&
-    model.b.type === "Some"
-  ) {
-    return Result.Ok({
-      type: "Game",
-      w: model.w.value,
-      b: model.b.value,
-      clock: Clock.presetToClock(model.clockPreset),
-      board: Board.init(),
-      drawAgreement: { type: "NotAsking" },
-    })
+  if (model.type !== 'Setup') {
+    return Result.Err("game_not_in_setup_mode")
   }
 
-  return Result.Err("can_not_start_game")
+  if (model.w.type === 'None' && model.b.type === 'None') {
+    return Result.Err("missing_both_players")
+  }
+
+  if (model.w.type === 'None') {
+    return Result.Err("missing_white_player")
+  }
+
+  if (model.b.type === 'None') {
+    return Result.Err("missing_black_player")
+  }
+
+  return Result.Ok({
+    type: "Game",
+    w: model.w.value,
+    b: model.b.value,
+    clock: Clock.presetToClock(model.clockPreset),
+    board: Board.init(),
+    drawAgreement: { type: "NotAsking" },
+  })
 }
 
 //

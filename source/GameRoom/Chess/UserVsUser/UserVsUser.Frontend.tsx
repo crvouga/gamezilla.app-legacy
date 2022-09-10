@@ -7,7 +7,7 @@ import * as Sounds from "../Sounds"
 import * as Board from "./../Board"
 import {
   BackendModel,
-  canStartGame,
+  startGame,
   FrontendModel,
   FrontendMsg,
   initShared,
@@ -16,6 +16,7 @@ import {
   SharedModel,
   ToBackend,
   ToFrontend,
+  startGameProblemToString,
 } from "./UserVsUser.Types"
 
 //
@@ -175,8 +176,8 @@ export const updateFromBackend = (
       const soundCmd = Board.inCheck(sharedModelNew.board)
         ? playAudio(Sounds.check)
         : sharedModelNew.didCapture
-        ? playAudio(Sounds.capture)
-        : playAudio(Sounds.move)
+          ? playAudio(Sounds.capture)
+          : playAudio(Sounds.move)
 
       return [{ ...model, sharedModel: sharedModelNew }, soundCmd]
     }
@@ -312,7 +313,8 @@ export const View = ({
   roomAvatarGroup: UI.ViewNode
 }) => {
   if (model.sharedModel.type === "Setup") {
-    const slotHeight = "64px"
+    const slotHeight = "58px"
+    const startGameResult = startGame(model.sharedModel)
     return (
       <UI.FillBox>
         <UI.Header
@@ -324,9 +326,13 @@ export const View = ({
               Back
             </UI.Button>
           }
-          title="User Vs User"
+          title="Chess"
           right={roomAvatarGroup}
         />
+
+        <UI.Typography variant="h5" sx={{ paddingX: 2, marginBottom: 2 }}>
+          User Vs User
+        </UI.Typography>
 
         <UI.Typography
           sx={{ paddingX: 2 }}
@@ -348,7 +354,6 @@ export const View = ({
               userId={model.sharedModel.w.value}
               currentUserId={currentUserId}
               dispatch={dispatch}
-              model={model}
               store={store}
             />
           )}
@@ -374,7 +379,6 @@ export const View = ({
               userId={model.sharedModel.b.value}
               currentUserId={currentUserId}
               dispatch={dispatch}
-              model={model}
               store={store}
             />
           )}
@@ -408,8 +412,13 @@ export const View = ({
         <UI.Box sx={{ flex: 1 }}></UI.Box>
 
         <UI.Box sx={{ paddingX: 2, paddingBottom: 2 }}>
+          {startGameResult.type === 'Err' && (
+            <UI.Typography variant="caption" color="text.secondary">
+              {startGameProblemToString(startGameResult.error)}
+            </UI.Typography>
+          )}
           <UI.Button
-            disabled={!canStartGame(model.sharedModel)}
+            disabled={startGame(model.sharedModel).type === 'Err'}
             fullWidth
             variant="contained"
             onClick={() => {
@@ -429,10 +438,10 @@ export const View = ({
     currentUserId === w && currentUserId === b
       ? "Both"
       : currentUserId === w
-      ? "w"
-      : currentUserId === b
-      ? "b"
-      : "None"
+        ? "w"
+        : currentUserId === b
+          ? "b"
+          : "None"
 
   const boardOrentation: Board.Color = pipe(
     currentUserColor === "None" || currentUserColor === "Both"
@@ -600,7 +609,7 @@ export const View = ({
                     model.sharedModel.type === "Game" &&
                     model.sharedModel.drawAgreement.type === "Asking" &&
                     model.sharedModel.drawAgreement.asker ===
-                      Board.toOppositeColor(currentUserColor)
+                    Board.toOppositeColor(currentUserColor)
                   }
                   headerIcon={
                     <UI.Icons.HandshakeTwoTone
@@ -689,42 +698,29 @@ const ViewInputUserPlayerSlot = ({
   dispatch,
   store,
   userId,
-  model,
   currentUserId,
   color,
 }: {
   dispatch: (msg: Msg) => void
   store: Store.Model
   userId: UserId.UserId
-  model: Model
   currentUserId: UserId.UserId
   color: Board.Color
 }) => {
-  const anchorId = `${color}-${userId}`
+
   return (
     <>
-      <UI.ListItemButton
-        id={anchorId}
-        onClick={() => dispatch(["OpenedMenu", anchorId])}
+      <UI.Box
+        sx={{ display: "flex", alignItems: 'center', paddingX: 2 }}
       >
-        <UI.ListItemAvatar>
-          <UI.Avatar src={store.Profile[userId]?.avatarUrl} />
-        </UI.ListItemAvatar>
-        <UI.ListItemText primary={store.Profile[userId]?.username ?? "..."} />
-        <UI.ListItemSecondaryAction>
-          <UI.Icons.MoreVert />
-        </UI.ListItemSecondaryAction>
-      </UI.ListItemButton>
 
-      <UI.Menu
-        anchorEl={document.getElementById(anchorId)}
-        open={
-          model.openedMenuId.type === "Some" &&
-          model.openedMenuId.value === anchorId
-        }
-        onClose={() => dispatch(["ClosedMenu"])}
-      >
-        {userId === currentUserId ? (
+        <UI.Avatar sx={{ marginRight: 1 }} src={store.Profile[userId]?.avatarUrl} />
+
+        <UI.Typography sx={{ flex: 1 }} noWrap>
+          {store.Profile[userId]?.username ?? "..."}
+        </UI.Typography>
+
+        {userId === currentUserId && (
           <UI.Button
             size="large"
             onClick={() =>
@@ -733,17 +729,9 @@ const ViewInputUserPlayerSlot = ({
           >
             Stop Playing
           </UI.Button>
-        ) : (
-          <UI.MenuItem>
-            <UI.ListItemText
-              primaryTypographyProps={{
-                color: "text.secondary",
-              }}
-              primary="Not action available"
-            />
-          </UI.MenuItem>
         )}
-      </UI.Menu>
+
+      </UI.Box>
     </>
   )
 }
