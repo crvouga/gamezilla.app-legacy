@@ -35,6 +35,13 @@ const createTheme = ({ mode }: { mode: "light" | "dark" }) =>
             },
           },
         },
+        MuiToggleButton: {
+          styleOverrides: {
+            root: {
+              textTransform: "capitalize"
+            }
+          }
+        },
         MuiButton: {
           defaultProps: {
             disableElevation: true,
@@ -44,8 +51,6 @@ const createTheme = ({ mode }: { mode: "light" | "dark" }) =>
           styleOverrides: {
             root: {
               textTransform: "capitalize",
-              fontWeight: 800,
-              // borderRadius: "120px",
             },
           },
         },
