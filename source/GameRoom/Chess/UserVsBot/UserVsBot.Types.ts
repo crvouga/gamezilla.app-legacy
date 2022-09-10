@@ -47,16 +47,16 @@ export type GameOverModel = {
 
 export type GameOver =
   | {
-      type: "Resignation"
-      resigner: Board.Color
-    }
+    type: "Resignation"
+    resigner: Board.Color
+  }
   | {
-      type: "Checkmate"
-      winner: Board.Color
-    }
+    type: "Checkmate"
+    winner: Board.Color
+  }
   | {
-      type: "Stalemate"
-    }
+    type: "Stalemate"
+  }
 
 export type BotDifficulty = "Easy" | "Medium" | "Hard"
 
@@ -160,18 +160,27 @@ export const inputBot = (
   return Result.Ok(modelNew)
 }
 
-export const canStartGame = (model: SharedModel): boolean => {
-  return model.type === "Setup" && model.userId.type === "Some"
-}
 
 export type StartGame = ["StartGame", { userId: UserId.UserId }]
-export type StartGame_Done = [
-  "StartGame_Done",
-  Result.Result<
-    "must_be_in_setup_mode" | "user_is_missing" | "must_be_the_player",
-    SharedModel
-  >,
-]
+export type StartGame_Done = ["StartGame_Done", Result.Result<StartGameProblem, SharedModel>,]
+export type StartGameProblem = "must_be_in_setup_mode" | "user_is_missing" | "must_be_the_player"
+
+export const startGameProblemToString = (problem: StartGameProblem): string => {
+  switch (problem) {
+    case 'must_be_in_setup_mode': {
+      return "Game must be in setup mode"
+    }
+
+    case 'must_be_the_player': {
+      return "Must the player to start the game"
+    }
+
+    case 'user_is_missing': {
+      return "Missing a player"
+    }
+  }
+}
+
 export const startGame = (
   { userId }: StartGame[1],
   model: SharedModel,

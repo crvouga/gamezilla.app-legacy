@@ -287,15 +287,20 @@ export const inputClock = (
 //
 //
 
-export type StartGame = ["StartGame"]
+export type StartGame = ["StartGame", { userId: UserId.UserId }]
 export type StartGame_Done = [
   "StartGame_Done",
   Result.Result<StartGameProblem, SharedModel>,
 ]
-export type StartGameProblem = "missing_white_player" | "missing_black_player" | "missing_both_players" | "game_not_in_setup_mode"
+export type StartGameProblem = "missing_white_player" | "missing_black_player" | "missing_both_players" | "game_not_in_setup_mode" | "must_be_a_player"
 
 export const startGameProblemToString = (problem: StartGameProblem): string => {
   switch (problem) {
+
+    case 'must_be_a_player': {
+      return "Must be a player to start the game"
+    }
+
     case 'game_not_in_setup_mode': {
       return "Game is not in setup mode"
     }
@@ -314,7 +319,7 @@ export const startGameProblemToString = (problem: StartGameProblem): string => {
   }
 }
 
-export const startGame = (model: SharedModel): StartGame_Done[1] => {
+export const startGame = ({ userId }: StartGame[1], model: SharedModel): StartGame_Done[1] => {
   if (model.type !== 'Setup') {
     return Result.Err("game_not_in_setup_mode")
   }
@@ -329,6 +334,10 @@ export const startGame = (model: SharedModel): StartGame_Done[1] => {
 
   if (model.b.type === 'None') {
     return Result.Err("missing_black_player")
+  }
+
+  if (userId !== model.b.value && userId !== model.w.value) {
+    return Result.Err("must_be_a_player")
   }
 
   return Result.Ok({

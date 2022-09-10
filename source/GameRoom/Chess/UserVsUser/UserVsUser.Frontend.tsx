@@ -314,7 +314,7 @@ export const View = ({
 }) => {
   if (model.sharedModel.type === "Setup") {
     const slotHeight = "58px"
-    const startGameResult = startGame(model.sharedModel)
+    const startGameResult = startGame({ userId: currentUserId }, model.sharedModel)
     return (
       <UI.FillBox>
         <UI.Header
@@ -330,7 +330,7 @@ export const View = ({
           right={roomAvatarGroup}
         />
 
-        <UI.Typography variant="h5" sx={{ paddingX: 2, marginBottom: 2 }}>
+        <UI.Typography variant="h5" sx={{ paddingX: 2, paddingBottom: 1 }}>
           User Vs User
         </UI.Typography>
 
@@ -418,11 +418,11 @@ export const View = ({
             </UI.Typography>
           )}
           <UI.Button
-            disabled={startGame(model.sharedModel).type === 'Err'}
+            disabled={startGameResult.type === 'Err'}
             fullWidth
             variant="contained"
             onClick={() => {
-              dispatch(["StartGame"])
+              dispatch(["StartGame", { userId: currentUserId }])
             }}
           >
             Start Game
