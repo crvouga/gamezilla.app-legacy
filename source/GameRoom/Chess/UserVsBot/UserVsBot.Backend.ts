@@ -1,4 +1,5 @@
-import { Cmd, exhaustive, Sub } from "../../../Core"
+import { Cmd, exhaustive, Option, Sub } from "../../../Core"
+import { UserId } from "../../../Data"
 import {
   BackendModel,
   BackendMsg,
@@ -23,7 +24,14 @@ import {
 
 export type Model = BackendModel
 
-export const init: Model = initShared
+export const init = ({ userId }: { userId: Option.Option<UserId.UserId> }): Model => {
+  return {
+    type: "Setup",
+    botDifficulty: initShared.botDifficulty,
+    userColor: initShared.userColor,
+    userId,
+  }
+}
 
 //
 //
