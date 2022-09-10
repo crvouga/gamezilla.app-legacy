@@ -35,6 +35,12 @@ const createTheme = ({ mode }: { mode: "light" | "dark" }) =>
             },
           },
         },
+        MuiTooltip: {
+          defaultProps: {
+            enterTouchDelay: 0,
+            enterDelay: 0,
+          }
+        },
         MuiToggleButton: {
           styleOverrides: {
             root: {
@@ -302,6 +308,8 @@ export const Toolbar = Mui.Toolbar
 export const IconButton = Mui.IconButton
 
 export const ToggleButtonGroup = Mui.ToggleButtonGroup
+
+export const Tooltip = Mui.Tooltip
 
 export const ToggleButton = Mui.ToggleButton
 
