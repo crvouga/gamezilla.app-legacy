@@ -117,7 +117,7 @@ export const updateFromFrontend = (
     case "StartGame": {
       return sendResponse(
         wire,
-        ["StartGame_Done", startGame(model.sharedModel)],
+        ["StartGame_Done", startGame(msg[1], model.sharedModel)],
         model,
       )
     }
