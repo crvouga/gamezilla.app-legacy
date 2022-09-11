@@ -784,9 +784,11 @@ Wire._sendToBackend.subscribe((msg) => {
 // 
 // 
 
-const cleanup = () => {
+export const cleanup = () => {
   root.unmount()
   stopDebugger()
   stopProgram()
   socketClient.close()
 }
+
+export const exporting_so_HMR_is_disabled = {}
