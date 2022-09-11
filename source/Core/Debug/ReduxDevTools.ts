@@ -10,7 +10,7 @@ import * as Result from "../Result"
 import * as Task from "../Task"
 import { Debug, Debugger, Global, MsgWithDebug } from "./debugger-commons"
 
-type Unsubscription = () => void
+type Unsubscribe = () => void
 
 /**
  * Defines a _Redux DevTool Extension_ object.
@@ -27,7 +27,7 @@ export interface Extension {
  * @since 0.5.0
  */
 export interface Connection<Model, Msg> {
-  subscribe: (listener?: Dispatch<DevToolMsg>) => Unsubscription
+  subscribe: (listener?: Dispatch<DevToolMsg>) => Unsubscribe
   send(action: null, state: LiftedState<Model>): void
   send(action: Msg, state: Model): void
   init: (state: Model) => void
@@ -50,13 +50,13 @@ interface Monitor {
   type: "DISPATCH"
   payload: {
     type:
-      | "JUMP_TO_STATE"
-      | "JUMP_TO_ACTION"
-      | "RESET"
-      | "ROLLBACK"
-      | "COMMIT"
-      | "IMPORT_STATE"
-      | "TOGGLE_ACTION"
+    | "JUMP_TO_STATE"
+    | "JUMP_TO_ACTION"
+    | "RESET"
+    | "ROLLBACK"
+    | "COMMIT"
+    | "IMPORT_STATE"
+    | "TOGGLE_ACTION"
     [k: string]: unknown
   }
   [k: string]: unknown
@@ -161,8 +161,8 @@ const handleIncomingMsg = <Model, Msg>({
 ) => Result.Result<string, Task.Task<void>>) => {
   const dispatchToApp =
     (m: unknown): Task.Task<void> =>
-    async () =>
-      dispatch(m as Msg)
+      async () =>
+        dispatch(m as Msg)
 
   const reinit: Task.Task<void> = pipe(
     async () => {
@@ -176,13 +176,13 @@ const handleIncomingMsg = <Model, Msg>({
 
   const restart =
     (model: Model): Task.Task<void> =>
-    async () =>
-      connection.init(model)
+      async () =>
+        connection.init(model)
 
   const liftState =
     (state: LiftedState<Model>): Task.Task<void> =>
-    async () =>
-      connection.send(null, state)
+      async () =>
+        connection.send(null, state)
 
   const toggle = toggleAction(dispatch)
 
@@ -230,7 +230,7 @@ const handleIncomingMsg = <Model, Msg>({
             )
 
           case "COMMIT":
-            return Result.Ok(async () => {})
+            return Result.Ok(async () => { })
           // return Result.Ok(restart(debug$.getValue()[1]))
 
           case "IMPORT_STATE":
@@ -373,61 +373,61 @@ const parseToggleAction = <Model>(
 
 const toggleAction =
   <Model, Msg>(dispatch: Dispatch<MsgWithDebug<Model, Msg>>) =>
-  (
-    id: number,
-    liftedState: LiftedState<Model>,
-  ): Task.Task<LiftedState<Model>> =>
-  async () => {
-    const state = unsafeCopy(liftedState)
+    (
+      id: number,
+      liftedState: LiftedState<Model>,
+    ): Task.Task<LiftedState<Model>> =>
+      async () => {
+        const state = unsafeCopy(liftedState)
 
-    const { skippedActionIds, stagedActionIds, computedStates, actionsById } =
-      state
+        const { skippedActionIds, stagedActionIds, computedStates, actionsById } =
+          state
 
-    const skippedIndex = skippedActionIds.indexOf(id)
-    const skipped = skippedIndex !== -1
-    const actionIndex = stagedActionIds.indexOf(id)
+        const skippedIndex = skippedActionIds.indexOf(id)
+        const skipped = skippedIndex !== -1
+        const actionIndex = stagedActionIds.indexOf(id)
 
-    if (actionIndex === -1) {
-      return state
-    }
+        if (actionIndex === -1) {
+          return state
+        }
 
-    dispatch({
-      type: "__DebugUpdateModel__",
-      // @ts-ignore
-      payload: computedStates[actionIndex - 1].state,
-    })
-
-    const start = skipped ? actionIndex : actionIndex + 1
-    const end = stagedActionIds.length
-
-    for (let i = start; i < end; i++) {
-      const currentActionId = stagedActionIds[i]
-
-      if (
-        i !== actionIndex &&
-        currentActionId &&
-        skippedActionIds.indexOf(currentActionId) !== -1
-      ) {
-        continue // it's already skipped
-      }
-
-      if (currentActionId) {
         dispatch({
-          type: "__DebugApplyMsg__",
+          type: "__DebugUpdateModel__",
           // @ts-ignore
-          payload: actionsById[currentActionId].action,
+          payload: computedStates[actionIndex - 1].state,
         })
+
+        const start = skipped ? actionIndex : actionIndex + 1
+        const end = stagedActionIds.length
+
+        for (let i = start; i < end; i++) {
+          const currentActionId = stagedActionIds[i]
+
+          if (
+            i !== actionIndex &&
+            currentActionId &&
+            skippedActionIds.indexOf(currentActionId) !== -1
+          ) {
+            continue // it's already skipped
+          }
+
+          if (currentActionId) {
+            dispatch({
+              type: "__DebugApplyMsg__",
+              // @ts-ignore
+              payload: actionsById[currentActionId].action,
+            })
+          }
+        }
+
+        if (skipped) {
+          skippedActionIds.splice(skippedIndex, 1)
+        } else {
+          skippedActionIds.push(id)
+        }
+
+        return state
       }
-    }
-
-    if (skipped) {
-      skippedActionIds.splice(skippedIndex, 1)
-    } else {
-      skippedActionIds.push(id)
-    }
-
-    return state
-  }
 
 // poor man deep clone...
 const unsafeCopy = <A>(a: A): A => {
@@ -445,18 +445,18 @@ const unsafeCopy = <A>(a: A): A => {
 
 export const withDebugger = <Model, Msg, Dom>(
   program: Browser.Program<Model, Msg, Dom>,
-): Browser.Program<Model, Msg, Dom> => {
+): { program: Browser.Program<Model, Msg, Dom>, stopDebugger: () => void } => {
   const maybeConnection = getConnection<Model, Msg>(window)
 
   if (maybeConnection.type === "None") {
-    return program
+    return { program, stopDebugger: () => { } }
   }
 
   const connection = maybeConnection.value
 
   const debuggerStarted$ = new Rx.Subject<"STARTED">()
 
-  connection.subscribe(
+  const unsubscribe = connection.subscribe(
     handleSubscription({
       //   debug$,
       connection,
@@ -488,35 +488,11 @@ export const withDebugger = <Model, Msg, Dom>(
     }),
   )
 
-  program.state$.pipe(waitFor(debuggerStarted$)).subscribe((state) => {
+  const subscription = program.state$.pipe(waitFor(debuggerStarted$)).subscribe((state) => {
     if (!state.msg) {
       return
     }
-
-    const toAction = (action: unknown): { type: string; payload?: unknown } => {
-      if (!Array.isArray(action)) {
-        return {
-          type: "UnknownAction",
-        }
-      }
-
-      const flatten = action.flat(Infinity)
-
-      const actionType = flatten
-        .flatMap((item) => (typeof item === "string" ? [item] : []))
-        // .map((item) => (Uuid.is(item) ? "[id]" : item))
-        .join(".")
-
-      const payload = flatten[flatten.length - 1]
-
-      return {
-        type: actionType,
-        payload: typeof payload === "string" ? undefined : payload,
-      }
-    }
-
     const action = toAction(state.msg)
-
     // @ts-ignore
     connection.send(action, state.model)
   })
@@ -529,7 +505,14 @@ export const withDebugger = <Model, Msg, Dom>(
   //   console.log(`[app] model memory size is ${kiloBytes} kiloBytes`);
   // });
 
-  return program
+
+  const stopDebugger = () => {
+    unsubscribe()
+    subscription.unsubscribe()
+  }
+
+
+  return { program, stopDebugger }
 }
 
 //
@@ -546,4 +529,28 @@ const waitFor = <T>(signal: Rx.Observable<unknown>) => {
       Rx.first(),
       Rx.switchMap((_) => source),
     )
+}
+
+
+
+const toAction = (action: unknown): { type: string; payload?: unknown } => {
+  if (!Array.isArray(action)) {
+    return {
+      type: "UnknownAction",
+    }
+  }
+
+  const flatten = action.flat(Infinity)
+
+  const actionType = flatten
+    .flatMap((item) => (typeof item === "string" ? [item] : []))
+    // .map((item) => (Uuid.is(item) ? "[id]" : item))
+    .join(".")
+
+  const payload = flatten[flatten.length - 1]
+
+  return {
+    type: actionType,
+    payload: typeof payload === "string" ? undefined : payload,
+  }
 }

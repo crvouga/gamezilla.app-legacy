@@ -710,7 +710,7 @@ const toStatus = ({
 //
 //
 
-const program = Debug.ReduxDevTools.withDebugger(
+const { program, stopDebugger } = Debug.ReduxDevTools.withDebugger(
   Browser.application({
     init,
     onLocationChange,
@@ -728,7 +728,7 @@ const program = Debug.ReduxDevTools.withDebugger(
 
 const root = ReactDomClient.createRoot(document.getElementById("root")!)
 
-Browser.run(program, (dom) => {
+const stopProgram = Browser.run(program, (dom) => {
   root.render(dom)
 })
 
@@ -774,3 +774,19 @@ socketClient.on("ToFrontend", (msg) => {
 Wire._sendToBackend.subscribe((msg) => {
   socketClient.emit("ToBackend", msg)
 })
+
+
+// 
+// 
+// 
+// HMR
+// 
+// 
+// 
+
+const cleanup = () => {
+  root.unmount()
+  stopDebugger()
+  stopProgram()
+  socketClient.close()
+}
