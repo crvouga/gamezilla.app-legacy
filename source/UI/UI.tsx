@@ -22,7 +22,7 @@ const createTheme = ({ mode }: { mode: "light" | "dark" }) =>
         // primary: purple,
       },
       typography: {
-        fontFamily: ["Montserrat"].join(","),
+        fontFamily: ["Inter"].join(","),
       },
       components: {
         MuiCircularProgress: {
