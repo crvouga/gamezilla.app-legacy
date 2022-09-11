@@ -6,9 +6,9 @@ import { defineConfig } from "vite"
 export default defineConfig({
   plugins: [react()],
 
-  server: {
-    hmr: false
-  },
+  // server: {
+  //   hmr: false
+  // },
 
   // why?: https://github.com/vitejs/vite/issues/8644
   esbuild: {

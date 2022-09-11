@@ -1,6 +1,6 @@
 import * as MuiLab from "@mui/lab"
 import * as Mui from "@mui/material"
-import { blue } from "@mui/material/colors"
+import { blue, purple } from "@mui/material/colors"
 import { keyframes } from "@mui/system"
 import { ReactNode, useEffect, useMemo, useRef } from "react"
 import * as Icons from "./Icons"
