@@ -293,9 +293,7 @@ export const inputClock = (
 
   const someUserId = Option.Some(userId)
 
-  const isPlaying = isEqual(someUserId, model.b) || isEqual(someUserId, model.w)
-
-  if (!isPlaying) {
+  if (!isEqual(someUserId, model.b) && !isEqual(someUserId, model.w)) {
     return Result.Err("must_be_playing")
   }
 

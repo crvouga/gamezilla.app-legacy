@@ -1,6 +1,6 @@
 // todo remove this dependency
 import fastDeepEquals from "fast-deep-equal"
 
-export const isEqual = <a, b>(a: a, b: b): boolean => {
+export const isEqual = <A, B>(a: A, b: B): boolean => {
     return fastDeepEquals(a, b)
 }
