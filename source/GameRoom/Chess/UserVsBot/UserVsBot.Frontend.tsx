@@ -411,7 +411,7 @@ export const View = ({
       />
 
       <Board.View
-        boardOrentation="w"
+        boardOrientation="w"
         isDraggablePiece={({ piece }) => {
           return true
         }}

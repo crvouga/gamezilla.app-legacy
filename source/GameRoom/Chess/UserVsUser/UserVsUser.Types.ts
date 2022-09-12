@@ -24,32 +24,39 @@ export type BackendModel = {
   sharedModel: SharedModel
 }
 
-export type SharedModel = SetupModel | GameModel | GameOverModel
+export type SharedModel =
+  | {
+    type: "Setup"
+    clockPreset: Clock.Preset
+    w: Option.Option<UserId.UserId>
+    b: Option.Option<UserId.UserId>
+    gameStart: GameStart
+  }
+  | {
+    type: "Game"
+    drawAgreement: DrawAgreement
+    w: UserId.UserId
+    b: UserId.UserId
+    clock: Clock.Clock
+    board: Board.Model
+  }
+  | {
+    type: "GameOver"
+    gameOver: GameOver
+    w: UserId.UserId
+    b: UserId.UserId
+    clock: Clock.Clock
+    board: Board.Model
+  }
 
-export type SetupModel = {
-  type: "Setup"
-  clockPreset: Clock.Preset
-  w: Option.Option<UserId.UserId>
-  b: Option.Option<UserId.UserId>
-}
-
-export type GameModel = {
-  type: "Game"
-  drawAgreement: DrawAgreement
-  w: UserId.UserId
-  b: UserId.UserId
-  clock: Clock.Clock
-  board: Board.Model
-}
-
-export type GameOverModel = {
-  type: "GameOver"
-  gameOver: GameOver
-  w: UserId.UserId
-  b: UserId.UserId
-  clock: Clock.Clock
-  board: Board.Model
-}
+type GameStart =
+  | {
+    type: "NotStarting"
+  }
+  | {
+    type: "Starting",
+    countDown: 3 | 2 | 1
+  }
 
 export type DrawAgreement =
   | {
@@ -86,6 +93,9 @@ export const initShared = ({ userId }: { userId: Option.Option<UserId.UserId> })
     w: userId,
     b: Option.None,
     clockPreset: "Blitz",
+    gameStart: {
+      type: "NotStarting"
+    }
   }
 }
 
@@ -499,7 +509,10 @@ export const newGame = (model: SharedModel): NewGame_Done[1] => {
     type: "Setup",
     b: Option.Some(model.b),
     w: Option.Some(model.w),
-    clockPreset: "Fast",
+    clockPreset: model.clock.preset,
+    gameStart: {
+      type: "NotStarting"
+    }
   }
 
   return Result.Ok(modelNew)
@@ -533,7 +546,7 @@ export const clockTicked = (model: SharedModel): SharedModel => {
 
       const clockNew = Clock.decrement(turn, model.clock)
 
-      if (clockNew[turn] === 0) {
+      if (Clock.toTime(turn, clockNew) === 0) {
         return {
           type: "GameOver",
           w: model.w,

@@ -148,7 +148,7 @@ const handleSubscription = <Model, Msg>(
  *
  * This is largely inspired by https://github.com/zalmoxisus/mobx-remotedev/blob/master/src/monitorActions.js
  *
- * **Note:** the monitor can dispatch messages of any shape that will be re-dispatched into the application; these messages **are not validated** and can lead to unexpected behaviours.
+ * **Note:** the monitor can dispatch messages of any shape that will be re-dispatched into the application; these messages **are not validated** and can lead to unexpected behaviors.
  * @since 0.5.0
  */
 const handleIncomingMsg = <Model, Msg>({
@@ -164,7 +164,7 @@ const handleIncomingMsg = <Model, Msg>({
       async () =>
         dispatch(m as Msg)
 
-  const reinit: Task.Task<void> = pipe(
+  const initAgain: Task.Task<void> = pipe(
     async () => {
       connection.init(init)
     },
@@ -189,7 +189,7 @@ const handleIncomingMsg = <Model, Msg>({
   return (msg) => {
     switch (msg.type) {
       case "START":
-        return Result.Ok(reinit)
+        return Result.Ok(initAgain)
 
       case "ACTION": {
         const result = Json.parse(String(msg.payload))
@@ -214,7 +214,7 @@ const handleIncomingMsg = <Model, Msg>({
             return Result.Ok(
               pipe(
                 update(init),
-                Task.chain(() => reinit),
+                Task.chain(() => initAgain),
               ),
             )
 
