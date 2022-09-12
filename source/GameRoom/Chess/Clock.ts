@@ -9,19 +9,53 @@ export type Clock = {
 
 export type Seconds = number & { _type: "Seconds" }
 
-export const decrement = (color: Board.Color, clock: Clock): Clock => {
-  return {
-    ...clock,
-    [color]: toSeconds(Math.max(0, clock.times[color] - 1)),
+export const tick = ({ turn, clock }: { turn: Board.Color, clock: Clock }): { type: "TimeIsUp", clock: Clock, timeIsUp: Board.Color } | { type: "Ticked", clock: Clock } => {
+  if (clock.times.w === 0) {
+    return {
+      type: "TimeIsUp",
+      clock,
+      timeIsUp: "w"
+    }
   }
+
+  if (clock.times.b === 0) {
+    return {
+      type: "TimeIsUp",
+      clock,
+      timeIsUp: "b"
+    }
+  }
+
+  const clockNew: Clock = {
+    preset: clock.preset,
+    times: {
+      ...clock.times,
+      [turn]: toSeconds(clock.times[turn] - 1),
+    }
+  }
+
+  if (clockNew.times[turn] === 0) {
+    return {
+      type: "TimeIsUp",
+      clock: clockNew,
+      timeIsUp: turn,
+    }
+  }
+
+  return {
+    type: "Ticked",
+    clock: clockNew,
+  }
+}
+
+
+
+export const toSeconds = (seconds: number): Seconds => {
+  return Math.floor(Math.max(0, seconds)) as Seconds
 }
 
 export const toTime = (color: Board.Color, clock: Clock): Seconds => {
   return clock.times[color]
-}
-
-export const toSeconds = (seconds: number): Seconds => {
-  return seconds as Seconds
 }
 
 export type Preset = "Bullet" | "Blitz" | "Fast"

@@ -544,26 +544,31 @@ export const clockTicked = (model: SharedModel): SharedModel => {
         return model
       }
 
-      const clockNew = Clock.decrement(turn, model.clock)
+      const result = Clock.tick({ turn, clock: model.clock })
 
-      if (Clock.toTime(turn, clockNew) === 0) {
+      if (result.type === 'TimeIsUp') {
+        const loser = result.timeIsUp
+
         return {
           type: "GameOver",
           w: model.w,
           b: model.b,
           board: model.board,
-          clock: clockNew,
+          clock: result.clock,
           gameOver: {
             type: "WinOnTime",
-            winner: Board.toOppositeColor(turn),
+            winner: Board.toOppositeColor(loser),
           },
         }
       }
 
       return {
         ...model,
-        clock: clockNew,
+        clock: result.clock,
       }
+
+
+
     }
   }
 }
