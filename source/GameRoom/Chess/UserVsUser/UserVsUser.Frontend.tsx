@@ -7,16 +7,18 @@ import * as Sounds from "../Sounds"
 import * as Board from "./../Board"
 import {
   BackendModel,
-  startGame,
   FrontendModel,
   FrontendMsg,
   initShared,
+  inputClock,
+  inputClockProblemToString,
   move,
   Move,
   SharedModel,
-  ToBackend,
-  ToFrontend,
+  startGame,
   startGameProblemToString,
+  ToBackend,
+  ToFrontend
 } from "./UserVsUser.Types"
 
 //
@@ -317,6 +319,7 @@ export const View = ({
   if (model.sharedModel.type === "Setup") {
     const slotHeight = "58px"
     const startGameResult = startGame({ userId: currentUserId }, model.sharedModel)
+    const inputClockResult = inputClock({ userId: currentUserId, clockPreset: model.sharedModel.clockPreset }, model.sharedModel)
     return (
       <UI.FillBox>
         <UI.Header
@@ -395,20 +398,23 @@ export const View = ({
         </UI.Typography>
 
         <UI.Box sx={{ paddingX: 2 }}>
-          <UI.ToggleButtonGroup
-            fullWidth
-            value={model.sharedModel.clockPreset}
-          >
-            {Object.values(Clock.presets).map((preset) => (
-              <UI.ToggleButton
-                key={preset}
-                value={preset}
-                onClick={() => dispatch(["InputClock", preset])}
-              >
-                {Clock.presetToString(preset)}
-              </UI.ToggleButton>
-            ))}
-          </UI.ToggleButtonGroup>
+          <UI.Tooltip title={inputClockResult.type === 'Err' ? inputClockProblemToString(inputClockResult.error) : ""}>
+            <UI.ToggleButtonGroup
+              disabled={inputClockResult.type === 'Err'}
+              fullWidth
+              value={model.sharedModel.clockPreset}
+            >
+              {Object.values(Clock.presets).map((clockPreset) => (
+                <UI.ToggleButton
+                  key={clockPreset}
+                  value={clockPreset}
+                  onClick={() => dispatch(["InputClock", { clockPreset, userId: currentUserId }])}
+                >
+                  {Clock.presetToString(clockPreset)}
+                </UI.ToggleButton>
+              ))}
+            </UI.ToggleButtonGroup>
+          </UI.Tooltip>
         </UI.Box>
 
         <UI.Box sx={{ flex: 1 }}></UI.Box>
@@ -445,7 +451,7 @@ export const View = ({
           ? "b"
           : "None"
 
-  const boardOrentation: Board.Color = pipe(
+  const boardOrientation: Board.Color = pipe(
     currentUserColor === "None" || currentUserColor === "Both"
       ? "w"
       : currentUserColor,
@@ -468,9 +474,9 @@ export const View = ({
     seconds: clock.b,
   }
 
-  const topSlot = boardOrentation === "w" ? blackSlot : whiteSlot
+  const topSlot = boardOrientation === "w" ? blackSlot : whiteSlot
 
-  const bottomSlot = boardOrentation === "w" ? whiteSlot : blackSlot
+  const bottomSlot = boardOrientation === "w" ? whiteSlot : blackSlot
 
   return (
     <UI.FillBox sx={{ overflowY: "scroll" }}>
@@ -520,7 +526,7 @@ export const View = ({
 
       <Board.View
         model={board}
-        boardOrentation={boardOrentation}
+        boardOrentation={boardOrientation}
         isDraggablePiece={({ piece }) => {
           return (
             Board.toColor(piece) === currentUserColor ||
