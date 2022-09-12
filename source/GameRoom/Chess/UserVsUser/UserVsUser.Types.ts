@@ -1,4 +1,4 @@
-import { Audio, Option, Result } from "../../../Core"
+import { Audio, isEqual, Option, Result } from "../../../Core"
 import { UserId } from "../../../Data"
 import * as Board from "../Board"
 import * as Clock from "../Clock"
@@ -221,6 +221,7 @@ export type InputPlayer_Done = [
 export type InputPlayerProblem =
   | "game_must_be_in_setup_mode"
   | "player_is_taken"
+  | "must_be_playing"
 
 export const inputPlayer = (
   { userId, color }: InputPlayer[1],
