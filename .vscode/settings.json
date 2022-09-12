@@ -11,5 +11,6 @@
   "[typescriptreact]": {
     "editor.defaultFormatter": "vscode.typescript-language-features"
   },
-  "editor.stickyTabStops": false // optional but recommended
+  "editor.stickyTabStops": false,
+  "cSpell.words": ["Unflip"] // optional but recommended
 }

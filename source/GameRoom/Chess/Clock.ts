@@ -1,7 +1,10 @@
 import * as Board from "./Board"
 
 export type Clock = {
-  [color in Board.Color]: Seconds
+  preset: Preset
+  times: {
+    [color in Board.Color]: Seconds
+  }
 }
 
 export type Seconds = number & { _type: "Seconds" }
@@ -9,8 +12,12 @@ export type Seconds = number & { _type: "Seconds" }
 export const decrement = (color: Board.Color, clock: Clock): Clock => {
   return {
     ...clock,
-    [color]: toSeconds(Math.max(0, clock[color] - 1)),
+    [color]: toSeconds(Math.max(0, clock.times[color] - 1)),
   }
+}
+
+export const toTime = (color: Board.Color, clock: Clock): Seconds => {
+  return clock.times[color]
 }
 
 export const toSeconds = (seconds: number): Seconds => {
@@ -34,8 +41,11 @@ export const presetToSeconds: { [preset in Preset]: Seconds } = {
 export const presetToClock = (preset: Preset): Clock => {
   const seconds = presetToSeconds[preset]
   return {
-    w: seconds,
-    b: seconds,
+    preset,
+    times: {
+      w: seconds,
+      b: seconds,
+    }
   }
 }
 

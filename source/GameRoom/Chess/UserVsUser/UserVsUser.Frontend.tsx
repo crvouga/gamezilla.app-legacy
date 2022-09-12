@@ -464,14 +464,14 @@ export const View = ({
     src: store.Profile[w]?.avatarUrl,
     username: store.Profile[w]?.username ?? "...",
     isActive: turn === "w" && model.sharedModel.type === "Game",
-    seconds: clock.w,
+    seconds: Clock.toTime("w", clock),
   }
 
   const blackSlot: ViewUserPlayerSlotProps = {
     src: store.Profile[b]?.avatarUrl,
     username: store.Profile[b]?.username ?? "...",
     isActive: turn === "b" && model.sharedModel.type === "Game",
-    seconds: clock.b,
+    seconds: Clock.toTime("b", clock),
   }
 
   const topSlot = boardOrientation === "w" ? blackSlot : whiteSlot
@@ -526,7 +526,7 @@ export const View = ({
 
       <Board.View
         model={board}
-        boardOrentation={boardOrientation}
+        boardOrientation={boardOrientation}
         isDraggablePiece={({ piece }) => {
           return (
             Board.toColor(piece) === currentUserColor ||
@@ -783,7 +783,7 @@ const toGameText = (model: SharedModel): string => {
         }
 
         case "DrawByAgreement": {
-          return "Drawed by agreement"
+          return "Drawn by agreement"
         }
 
         case "Resignation": {

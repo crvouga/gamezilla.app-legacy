@@ -199,12 +199,12 @@ export const move = (
 //
 
 export const View = ({
-  boardOrentation,
+  boardOrientation,
   model,
   onPieceDrop,
   isDraggablePiece,
 }: {
-  boardOrentation: Color
+  boardOrientation: Color
   model: Model
   onPieceDrop: (move: MoveInput) => boolean
   isDraggablePiece: ({ piece }: { piece: Piece }) => boolean
@@ -215,7 +215,7 @@ export const View = ({
       <Chessboard
         showBoardNotation
         snapToCursor
-        boardOrientation={boardOrentation === "w" ? "white" : "black"}
+        boardOrientation={boardOrientation === "w" ? "white" : "black"}
         position={toFen(model)}
         boardWidth={boardWidth}
         isDraggablePiece={({ piece }) => {
