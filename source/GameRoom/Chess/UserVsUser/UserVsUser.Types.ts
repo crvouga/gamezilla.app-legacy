@@ -262,27 +262,47 @@ export const inputPlayer = (
 //
 //
 
-export type InputClock = ["InputClock", Clock.Preset]
+export type InputClock = ["InputClock", { clockPreset: Clock.Preset, userId: UserId.UserId }]
 
 export type InputClock_Done = [
   "InputClock_Done",
-  Result.Result<InputtedClockProblem, SharedModel>,
+  Result.Result<InputClockProblem, SharedModel>,
 ]
 
-export type InputtedClockProblem = "failed_to_input_clock"
+export type InputClockProblem = "must_be_in_setup_mode" | "must_be_playing"
+
+export const inputClockProblemToString = (problem: InputClockProblem): string => {
+  switch (problem) {
+    case 'must_be_in_setup_mode': {
+      return "Must be in setup mode"
+    }
+
+    case 'must_be_playing': {
+      return "Must be playing to change the clock"
+    }
+  }
+}
 
 export const inputClock = (
-  clockPreset: InputClock[1],
+  { clockPreset, userId }: InputClock[1],
   model: SharedModel,
 ): InputClock_Done[1] => {
-  if (model.type === "Setup") {
-    return Result.Ok({
-      ...model,
-      clockPreset,
-    })
+  if (model.type !== "Setup") {
+    return Result.Err("must_be_in_setup_mode")
   }
 
-  return Result.Err("failed_to_input_clock")
+  const someUserId = Option.Some(userId)
+
+  const isPlaying = isEqual(someUserId, model.b) || isEqual(someUserId, model.w)
+
+  if (!isPlaying) {
+    return Result.Err("must_be_playing")
+  }
+
+  return Result.Ok({
+    ...model,
+    clockPreset,
+  })
 }
 
 //
@@ -301,11 +321,11 @@ export const startGameProblemToString = (problem: StartGameProblem): string => {
   switch (problem) {
 
     case 'must_be_a_player': {
-      return "Must be a player to start the game"
+      return "Must be playing to start the game"
     }
 
     case 'game_not_in_setup_mode': {
-      return "Game is not in setup mode"
+      return "Game muse be in setup mode"
     }
 
     case 'missing_black_player': {
@@ -536,3 +556,6 @@ export const clockTicked = (model: SharedModel): SharedModel => {
     }
   }
 }
+
+
+
