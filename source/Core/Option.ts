@@ -4,7 +4,7 @@ export type Option<T> = Some<T> | None
 
 export type Some<T> = { type: "Some"; value: T }
 
-export const Some = <T>(value: T): Some<T> => ({ type: "Some", value })
+export const Some = <T>(value: T): Option<T> => ({ type: "Some", value })
 
 export type None = { type: "None" }
 
