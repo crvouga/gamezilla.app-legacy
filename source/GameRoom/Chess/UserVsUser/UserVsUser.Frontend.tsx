@@ -892,6 +892,9 @@ const ViewUserPlayerSlot = ({
         }
         variant="h5"
         component="div"
+        sx={{
+          fontFamily: "monospace"
+        }}
       >
         {Clock.formatSeconds(seconds)}
       </UI.Typography>
