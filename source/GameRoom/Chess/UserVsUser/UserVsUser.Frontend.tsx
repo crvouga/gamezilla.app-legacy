@@ -140,6 +140,10 @@ export const update = (
       return [{ ...model, sharedModel: result.value }, sendToBackend(msg)]
     }
 
+    case 'CancelStartGame': {
+      return [model, sendToBackend(msg)]
+    }
+
     default:
       return exhaustive(msg[0])
   }
@@ -279,6 +283,18 @@ export const updateFromBackend = (
 
     case 'CountDownElapsed_Done': {
       const sharedModel = msg[1]
+
+      return [{ ...model, sharedModel }, Cmd.None]
+    }
+
+    case 'CancelStartGame_Done': {
+      const result = msg[1]
+
+      if (result.type === 'Err') {
+        return [model, Cmd.None]
+      }
+
+      const sharedModel = result.value
 
       return [{ ...model, sharedModel }, Cmd.None]
     }
@@ -492,9 +508,9 @@ export const View = ({
         <UI.Typography sx={{ fontSize: "6rem" }} align="center">
           {model.sharedModel.countDown}
         </UI.Typography>
-        {/* <UI.Button size="small">
+        <UI.Button onClick={() => dispatch(['CancelStartGame', { userId: currentUserId }])}>
           Cancel
-        </UI.Button> */}
+        </UI.Button>
       </UI.Box>
 
       <UI.Box sx={{ flex: 1 }}>

@@ -18,6 +18,7 @@ import {
   startGame,
   ToBackend,
   ToFrontend,
+  cancelStartGame,
 } from "./UserVsUser.Types"
 
 //
@@ -166,6 +167,14 @@ export const updateFromFrontend = (
         wire,
         ["NewGame_Done", newGame(model.sharedModel)],
         model,
+      )
+    }
+
+    case 'CancelStartGame': {
+      return sendResponse(
+        wire,
+        ['CancelStartGame_Done', cancelStartGame(msg[1], model.sharedModel)],
+        model
       )
     }
 

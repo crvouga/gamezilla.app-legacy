@@ -130,6 +130,7 @@ export type Req =
   | RequestToDraw
   | RespondToDraw
   | NewGame
+  | CancelStartGame
 
 export type Res =
   | InputPlayer_Done
@@ -140,6 +141,7 @@ export type Res =
   | RequestToDraw_Done
   | RespondToDraw_Done
   | NewGame_Done
+  | CancelStartGame_Done
 
 //
 //
@@ -601,4 +603,45 @@ export const decrementCountDown = (countDown: 3 | 2 | 1): 2 | 1 | 0 => {
   }
 
   return 0
+}
+
+// 
+// 
+// 
+// 
+// 
+
+export type CancelStartGame = ['CancelStartGame', { userId: UserId.UserId, }]
+export type CancelStartGame_Done = ['CancelStartGame_Done', Result.Result<CancelStartGameProblem, SharedModel>]
+export type CancelStartGameProblem = "must_be_playing" | "must_be_in_starting_mode"
+
+export const cancelStartProblemToString = (problem: CancelStartGameProblem): string => {
+  switch (problem) {
+    case 'must_be_in_starting_mode': {
+      return "Must be in starting mode"
+    }
+
+    case 'must_be_playing': {
+      return "Must be playing to cancel"
+    }
+  }
+}
+
+export const cancelStartGame = ({ userId }: CancelStartGame[1], model: SharedModel): CancelStartGame_Done[1] => {
+  if (model.type !== 'Starting') {
+    return Result.Err("must_be_in_starting_mode")
+  }
+
+  if (model.w !== userId && model.b !== userId) {
+    return Result.Err("must_be_playing")
+  }
+
+  const modelNew: SharedModel = {
+    type: "Setup",
+    b: Option.Some(model.b),
+    w: Option.Some(model.w),
+    clockPreset: model.clockPreset
+  }
+
+  return Result.Ok(modelNew)
 }
