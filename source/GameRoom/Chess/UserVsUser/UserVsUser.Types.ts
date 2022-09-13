@@ -525,51 +525,41 @@ export const newGame = (model: SharedModel): NewGame_Done[1] => {
 //
 
 export const clockTicked = (model: SharedModel): SharedModel => {
-  switch (model.type) {
-    case "Setup": {
-      return model
+
+  if (model.type !== 'Game') {
+    return model
+  }
+
+  const turn = Board.toTurn(model.board)
+
+  if (
+    model.drawAgreement.type === "Asking" &&
+    model.drawAgreement.asker !== turn
+  ) {
+    return model
+  }
+
+  const result = Clock.tick({ turn, clock: model.clock })
+
+  if (result.type === 'TimeIsUp') {
+    const loser = result.timeIsUp
+
+    return {
+      type: "GameOver",
+      w: model.w,
+      b: model.b,
+      board: model.board,
+      clock: result.clock,
+      gameOver: {
+        type: "WinOnTime",
+        winner: Board.toOppositeColor(loser),
+      },
     }
+  }
 
-    case "GameOver": {
-      return model
-    }
-
-    case "Game": {
-      const turn = Board.toTurn(model.board)
-
-      if (
-        model.drawAgreement.type === "Asking" &&
-        model.drawAgreement.asker !== turn
-      ) {
-        return model
-      }
-
-      const result = Clock.tick({ turn, clock: model.clock })
-
-      if (result.type === 'TimeIsUp') {
-        const loser = result.timeIsUp
-
-        return {
-          type: "GameOver",
-          w: model.w,
-          b: model.b,
-          board: model.board,
-          clock: result.clock,
-          gameOver: {
-            type: "WinOnTime",
-            winner: Board.toOppositeColor(loser),
-          },
-        }
-      }
-
-      return {
-        ...model,
-        clock: result.clock,
-      }
-
-
-
-    }
+  return {
+    ...model,
+    clock: result.clock,
   }
 }
 
