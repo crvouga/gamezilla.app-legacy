@@ -7,6 +7,7 @@ import * as Sounds from "../Sounds"
 import * as Board from "./../Board"
 import {
   BackendModel,
+  cancelStartGame,
   FrontendModel,
   FrontendMsg,
   initShared,
@@ -470,6 +471,7 @@ export const View = ({
 
   if (model.sharedModel.type === 'Starting') {
     const { w, b } = model.sharedModel
+    const cancelStatGameResult = cancelStartGame({ userId: currentUserId }, model.sharedModel)
     return <UI.FillBox>
       <UI.Header
         left={
@@ -508,9 +510,11 @@ export const View = ({
         <UI.Typography sx={{ fontSize: "6rem" }} align="center">
           {model.sharedModel.countDown}
         </UI.Typography>
-        <UI.Button onClick={() => dispatch(['CancelStartGame', { userId: currentUserId }])}>
-          Cancel
-        </UI.Button>
+        {cancelStatGameResult.type === 'Ok' && (
+          <UI.Button onClick={() => dispatch(['CancelStartGame', { userId: currentUserId }])}>
+            Cancel
+          </UI.Button>
+        )}
       </UI.Box>
 
       <UI.Box sx={{ flex: 1 }}>
