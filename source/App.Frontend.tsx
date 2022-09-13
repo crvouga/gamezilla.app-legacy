@@ -742,7 +742,7 @@ const stopProgram = Browser.run(program, (dom) => {
 
 const backendUrl =
   process.env.NODE_ENV === "production"
-    ? `https://backend.gamezilla.app/`
+    ? `https://back.gamezilla.app/`
     : `http://localhost:${Wire.backendServerPort}/`
 
 const socketClient: Socket<
