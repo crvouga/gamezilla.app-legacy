@@ -30,9 +30,6 @@ export const init = ({ defaultName }: { defaultName: string }): Model => {
   }
 }
 
-
-
-
 //
 //
 //
@@ -57,11 +54,7 @@ export const update = (
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
     case "InputtedUsername":
-      return [
-        { ...model, username: msg[1] },
-        Cmd.None,
-        [],
-      ]
+      return [{ ...model, username: msg[1] }, Cmd.None, []]
 
     case "ClickedSubmit":
       const avatarUrl = ProfileAvatar.toUrl({

@@ -19,7 +19,7 @@ import {
   startGame,
   startGameProblemToString,
   ToBackend,
-  ToFrontend
+  ToFrontend,
 } from "./UserVsUser.Types"
 
 //
@@ -141,7 +141,7 @@ export const update = (
       return [{ ...model, sharedModel: result.value }, sendToBackend(msg)]
     }
 
-    case 'CancelStartGame': {
+    case "CancelStartGame": {
       return [model, sendToBackend(msg)]
     }
 
@@ -185,8 +185,8 @@ export const updateFromBackend = (
       const soundCmd = Board.inCheck(sharedModelNew.board)
         ? playAudio(Sounds.check)
         : sharedModelNew.didCapture
-          ? playAudio(Sounds.capture)
-          : playAudio(Sounds.move)
+        ? playAudio(Sounds.capture)
+        : playAudio(Sounds.move)
 
       return [{ ...model, sharedModel: sharedModelNew }, soundCmd]
     }
@@ -278,20 +278,20 @@ export const updateFromBackend = (
       ]
     }
 
-    case 'GameStarted': {
+    case "GameStarted": {
       return [model, playAudio(Sounds.gameStart)]
     }
 
-    case 'CountDownElapsed_Done': {
+    case "CountDownElapsed_Done": {
       const sharedModel = msg[1]
 
       return [{ ...model, sharedModel }, Cmd.None]
     }
 
-    case 'CancelStartGame_Done': {
+    case "CancelStartGame_Done": {
       const result = msg[1]
 
-      if (result.type === 'Err') {
+      if (result.type === "Err") {
         return [model, Cmd.None]
       }
 
@@ -347,8 +347,14 @@ export const View = ({
 }) => {
   if (model.sharedModel.type === "Setup") {
     const slotHeight = "58px"
-    const startGameResult = startGame({ userId: currentUserId }, model.sharedModel)
-    const inputClockResult = inputClock({ userId: currentUserId, clockPreset: model.sharedModel.clockPreset }, model.sharedModel)
+    const startGameResult = startGame(
+      { userId: currentUserId },
+      model.sharedModel,
+    )
+    const inputClockResult = inputClock(
+      { userId: currentUserId, clockPreset: model.sharedModel.clockPreset },
+      model.sharedModel,
+    )
     return (
       <UI.FillBox>
         <UI.Header
@@ -364,7 +370,10 @@ export const View = ({
           right={roomAvatarGroup}
         />
 
-        <UI.Typography variant="h5" sx={{ paddingX: 2, paddingBottom: 1 }}>
+        <UI.Typography
+          variant="h5"
+          sx={{ paddingX: 2, paddingBottom: 1 }}
+        >
           User Vs User
         </UI.Typography>
 
@@ -427,9 +436,15 @@ export const View = ({
         </UI.Typography>
 
         <UI.Box sx={{ paddingX: 2 }}>
-          <UI.Tooltip title={inputClockResult.type === 'Err' ? inputClockProblemToString(inputClockResult.error) : ""}>
+          <UI.Tooltip
+            title={
+              inputClockResult.type === "Err"
+                ? inputClockProblemToString(inputClockResult.error)
+                : ""
+            }
+          >
             <UI.ToggleButtonGroup
-              disabled={inputClockResult.type === 'Err'}
+              disabled={inputClockResult.type === "Err"}
               fullWidth
               value={model.sharedModel.clockPreset}
             >
@@ -437,7 +452,12 @@ export const View = ({
                 <UI.ToggleButton
                   key={clockPreset}
                   value={clockPreset}
-                  onClick={() => dispatch(["InputClock", { clockPreset, userId: currentUserId }])}
+                  onClick={() =>
+                    dispatch([
+                      "InputClock",
+                      { clockPreset, userId: currentUserId },
+                    ])
+                  }
                 >
                   {Clock.presetToString(clockPreset)}
                 </UI.ToggleButton>
@@ -449,13 +469,16 @@ export const View = ({
         <UI.Box sx={{ flex: 1 }}></UI.Box>
 
         <UI.Box sx={{ paddingX: 2, paddingBottom: 2 }}>
-          {startGameResult.type === 'Err' && (
-            <UI.Typography variant="caption" color="text.secondary">
+          {startGameResult.type === "Err" && (
+            <UI.Typography
+              variant="caption"
+              color="text.secondary"
+            >
               {startGameProblemToString(startGameResult.error)}
             </UI.Typography>
           )}
           <UI.Button
-            disabled={startGameResult.type === 'Err'}
+            disabled={startGameResult.type === "Err"}
             fullWidth
             variant="contained"
             onClick={() => {
@@ -469,60 +492,115 @@ export const View = ({
     )
   }
 
-  if (model.sharedModel.type === 'Starting') {
+  if (model.sharedModel.type === "Starting") {
     const { w, b } = model.sharedModel
-    const cancelStatGameResult = cancelStartGame({ userId: currentUserId }, model.sharedModel)
-    return <UI.FillBox>
-      <UI.Header
-        left={
-          <UI.Button
-            disabled
-            sx={{ marginLeft: -1 }}
+    const cancelStatGameResult = cancelStartGame(
+      { userId: currentUserId },
+      model.sharedModel,
+    )
+    return (
+      <UI.FillBox>
+        <UI.Header
+          left={
+            <UI.Button
+              disabled
+              sx={{ marginLeft: -1 }}
+            >
+              Back
+            </UI.Button>
+          }
+          title="Chess"
+          right={roomAvatarGroup}
+        />
+        <UI.Box
+          sx={{
+            flex: 1,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <UI.Box
+            sx={{
+              flex: 1,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexDirection: "column",
+            }}
           >
-            Back
-          </UI.Button>
-        }
-        title="Chess"
-        right={roomAvatarGroup}
-      />
-      <UI.Box sx={{ flex: 1, display: "flex", alignItems: 'center', justifyContent: 'center' }}>
-        <UI.Box sx={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: "column" }}>
-          <UI.Avatar src={store.Profile[w]?.avatarUrl} sx={{ marginBottom: 1 / 2 }} />
-          <UI.Typography>
-            {store.Profile[w]?.username ?? "..."}
+            <UI.Avatar
+              src={store.Profile[w]?.avatarUrl}
+              sx={{ marginBottom: 1 / 2 }}
+            />
+            <UI.Typography>{store.Profile[w]?.username ?? "..."}</UI.Typography>
+          </UI.Box>
+          <UI.Typography
+            color="text.secondary"
+            sx={{
+              fontSize: "1.5rem",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexDirection: "column",
+            }}
+          >
+            VS
           </UI.Typography>
+          <UI.Box
+            sx={{
+              flex: 1,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexDirection: "column",
+            }}
+          >
+            <UI.Avatar
+              src={store.Profile[b]?.avatarUrl}
+              sx={{ marginBottom: 1 / 2 }}
+            />
+            <UI.Typography>{store.Profile[b]?.username ?? "..."}</UI.Typography>
+          </UI.Box>
         </UI.Box>
-        <UI.Typography color="text.secondary" sx={{ fontSize: "1.5rem", display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: "column" }}>
-          VS
-        </UI.Typography>
-        <UI.Box sx={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: "column" }}>
-          <UI.Avatar src={store.Profile[b]?.avatarUrl} sx={{ marginBottom: 1 / 2 }} />
-          <UI.Typography>
-            {store.Profile[b]?.username ?? "..."}
+
+        <UI.Box
+          sx={{
+            flex: 1,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <UI.Typography
+            sx={{ marginBottom: -3 }}
+            color="text.secondary"
+            align="center"
+          >
+            Starting in
           </UI.Typography>
+          <UI.Typography
+            sx={{ fontSize: "6rem" }}
+            align="center"
+          >
+            {model.sharedModel.countDown}
+          </UI.Typography>
+          {cancelStatGameResult.type === "Ok" && (
+            <UI.Button
+              onClick={() =>
+                dispatch(["CancelStartGame", { userId: currentUserId }])
+              }
+            >
+              Cancel
+            </UI.Button>
+          )}
         </UI.Box>
-      </UI.Box>
 
-      <UI.Box sx={{ flex: 1, display: "flex", flexDirection: "column", alignItems: 'center', justifyContent: "center", }}>
-        <UI.Typography sx={{ marginBottom: -3 }} color="text.secondary" align="center">
-          Starting in
-        </UI.Typography>
-        <UI.Typography sx={{ fontSize: "6rem" }} align="center">
-          {model.sharedModel.countDown}
-        </UI.Typography>
-        {cancelStatGameResult.type === 'Ok' && (
-          <UI.Button onClick={() => dispatch(['CancelStartGame', { userId: currentUserId }])}>
-            Cancel
-          </UI.Button>
-        )}
-      </UI.Box>
-
-      <UI.Box sx={{ flex: 1 }}>
-
-      </UI.Box>
-    </UI.FillBox>
+        <UI.Box sx={{ flex: 1 }}></UI.Box>
+      </UI.FillBox>
+    )
   }
-
 
   const { w, b, board, clock } = model.sharedModel
 
@@ -530,10 +608,10 @@ export const View = ({
     currentUserId === w && currentUserId === b
       ? "Both"
       : currentUserId === w
-        ? "w"
-        : currentUserId === b
-          ? "b"
-          : "None"
+      ? "w"
+      : currentUserId === b
+      ? "b"
+      : "None"
 
   const boardOrientation: Board.Color = pipe(
     currentUserColor === "None" || currentUserColor === "Both"
@@ -701,7 +779,7 @@ export const View = ({
                     model.sharedModel.type === "Game" &&
                     model.sharedModel.drawAgreement.type === "Asking" &&
                     model.sharedModel.drawAgreement.asker ===
-                    Board.toOppositeColor(currentUserColor)
+                      Board.toOppositeColor(currentUserColor)
                   }
                   headerIcon={
                     <UI.Icons.HandshakeTwoTone
@@ -799,16 +877,18 @@ const ViewInputUserPlayerSlot = ({
   currentUserId: UserId.UserId
   color: Board.Color
 }) => {
-
   return (
     <>
-      <UI.Box
-        sx={{ display: "flex", alignItems: 'center', paddingX: 2 }}
-      >
+      <UI.Box sx={{ display: "flex", alignItems: "center", paddingX: 2 }}>
+        <UI.Avatar
+          sx={{ marginRight: 1 }}
+          src={store.Profile[userId]?.avatarUrl}
+        />
 
-        <UI.Avatar sx={{ marginRight: 1 }} src={store.Profile[userId]?.avatarUrl} />
-
-        <UI.Typography sx={{ flex: 1 }} noWrap>
+        <UI.Typography
+          sx={{ flex: 1 }}
+          noWrap
+        >
           {store.Profile[userId]?.username ?? "..."}
         </UI.Typography>
 
@@ -822,7 +902,6 @@ const ViewInputUserPlayerSlot = ({
             Stop Playing
           </UI.Button>
         )}
-
       </UI.Box>
     </>
   )
@@ -891,7 +970,7 @@ const toGameText = (model: SharedModel): string => {
       return "Setting up game"
     }
 
-    case 'Starting': {
+    case "Starting": {
       return "Game is about to start"
     }
 
@@ -981,7 +1060,7 @@ const ViewUserPlayerSlot = ({
         variant="h5"
         component="div"
         sx={{
-          fontFamily: ["Roboto Mono", "monospace"].join(", ")
+          fontFamily: ["Roboto Mono", "monospace"].join(", "),
         }}
       >
         {Clock.formatSeconds(seconds)}

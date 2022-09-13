@@ -19,10 +19,10 @@ export const init = ({
 }: {
   userId: UserId.UserId
 }): [Model, Cmd.Cmd<Msg>, OutAction[]] => [
-    {},
-    Cmd.None,
-    [["Store", ["Profile", ["FindMany", { userIds: [userId] }]]]],
-  ]
+  {},
+  Cmd.None,
+  [["Store", ["Profile", ["FindMany", { userIds: [userId] }]]]],
+]
 
 //
 //
@@ -41,7 +41,10 @@ export type Msg =
 type OutAction = Store.Action
 
 export const update = (
-  { currentUserId, userId }: { currentUserId: UserId.UserId, userId: UserId.UserId },
+  {
+    currentUserId,
+    userId,
+  }: { currentUserId: UserId.UserId; userId: UserId.UserId },
   msg: Msg,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
@@ -100,7 +103,7 @@ export const View = ({
 }: {
   store: Store.Model
   currentUserId: UserId.UserId
-  userId: UserId.UserId,
+  userId: UserId.UserId
   model: Model
   dispatch: (msg: Msg) => void
 }) => {

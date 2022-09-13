@@ -20,28 +20,27 @@ export type Model = {
 
 type FocusedModel =
   | {
-    type: "Blurred"
-  }
+      type: "Blurred"
+    }
   | {
-    type: "Focused"
-    messageId: string
-    copyStatus: "Failed" | "NotAsked" | "Succeeded" | "Loading"
-  }
-
+      type: "Focused"
+      messageId: string
+      copyStatus: "Failed" | "NotAsked" | "Succeeded" | "Loading"
+    }
 
 export const init = ({
   conversationId,
 }: {
   conversationId: string
 }): [Model, Cmd.Cmd<Msg>, OutAction[]] => [
-    {
-      text: "",
-      focused: { type: "Blurred" },
-    },
-    Cmd.None,
+  {
+    text: "",
+    focused: { type: "Blurred" },
+  },
+  Cmd.None,
 
-    [["Store", ["Conversation", ["FindOne", { conversationId }]]]],
-  ]
+  [["Store", ["Conversation", ["FindOne", { conversationId }]]]],
+]
 
 //
 //
@@ -64,7 +63,7 @@ export type Msg =
 export type OutAction = Store.Action
 
 export const update = (
-  { userId, conversationId }: { userId: UserId.UserId, conversationId: string },
+  { userId, conversationId }: { userId: UserId.UserId; conversationId: string },
   msg: Msg,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
@@ -156,8 +155,7 @@ export const View = ({
   dispatch: (msg: Msg) => void
 }) => {
   const query =
-    store.queries.Conversation.FindOne[conversationId] ??
-    RemoteData.NotAsked
+    store.queries.Conversation.FindOne[conversationId] ?? RemoteData.NotAsked
 
   const conversation = pipe(
     Store.Conversation.toConversation(conversationId, store),
@@ -446,7 +444,7 @@ const ChatMessage = ({
             }
           >
             {model.focused.type === "Focused" &&
-              model.focused.copyStatus === "Succeeded"
+            model.focused.copyStatus === "Succeeded"
               ? "Copied"
               : "Copy Text"}
           </UI.Button>

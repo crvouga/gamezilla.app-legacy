@@ -26,65 +26,69 @@ export type BackendModel = {
 
 export type SharedModel =
   | {
-    type: "Setup"
-    clockPreset: Clock.Preset
-    w: Option.Option<UserId.UserId>
-    b: Option.Option<UserId.UserId>
-  }
+      type: "Setup"
+      clockPreset: Clock.Preset
+      w: Option.Option<UserId.UserId>
+      b: Option.Option<UserId.UserId>
+    }
   | {
-    type: "Starting",
-    clockPreset: Clock.Preset,
-    w: UserId.UserId,
-    b: UserId.UserId,
-    countDown: 3 | 2 | 1
-  }
+      type: "Starting"
+      clockPreset: Clock.Preset
+      w: UserId.UserId
+      b: UserId.UserId
+      countDown: 3 | 2 | 1
+    }
   | {
-    type: "Game"
-    drawAgreement: DrawAgreement
-    w: UserId.UserId
-    b: UserId.UserId
-    clock: Clock.Clock
-    board: Board.Model
-  }
+      type: "Game"
+      drawAgreement: DrawAgreement
+      w: UserId.UserId
+      b: UserId.UserId
+      clock: Clock.Clock
+      board: Board.Model
+    }
   | {
-    type: "GameOver"
-    gameOver: GameOver
-    w: UserId.UserId
-    b: UserId.UserId
-    clock: Clock.Clock
-    board: Board.Model
-  }
+      type: "GameOver"
+      gameOver: GameOver
+      w: UserId.UserId
+      b: UserId.UserId
+      clock: Clock.Clock
+      board: Board.Model
+    }
 
 export type DrawAgreement =
   | {
-    type: "NotAsking"
-  }
+      type: "NotAsking"
+    }
   | {
-    type: "Asking"
-    asker: Board.Color
-  }
+      type: "Asking"
+      asker: Board.Color
+    }
 
 export type GameOver =
   | {
-    type: "Resignation"
-    resigner: Board.Color
-  }
+      type: "Resignation"
+      resigner: Board.Color
+    }
   | {
-    type: "DrawByAgreement"
-  }
+      type: "DrawByAgreement"
+    }
   | {
-    type: "Checkmate"
-    winner: Board.Color
-  }
+      type: "Checkmate"
+      winner: Board.Color
+    }
   | {
-    type: "Stalemate"
-  }
+      type: "Stalemate"
+    }
   | {
-    type: "WinOnTime"
-    winner: Board.Color
-  }
+      type: "WinOnTime"
+      winner: Board.Color
+    }
 
-export const initShared = ({ userId }: { userId: Option.Option<UserId.UserId> }): SharedModel => {
+export const initShared = ({
+  userId,
+}: {
+  userId: Option.Option<UserId.UserId>
+}): SharedModel => {
   return {
     type: "Setup",
     w: userId,
@@ -115,7 +119,7 @@ export type BackendMsg = ClockTicked | CountDownElapsed
 export type ToFrontend =
   | ["Sync", SharedModel]
   | ["GameOver"]
-  | ['GameStarted']
+  | ["GameStarted"]
   | CountDownElapsed_Done
   | Res
 
@@ -254,8 +258,8 @@ export const inputPlayer = (
 
   const otherPlayerNew =
     otherPlayer.type === "Some" &&
-      targetPlayer.type === "Some" &&
-      otherPlayer.value === targetPlayer.value
+    targetPlayer.type === "Some" &&
+    otherPlayer.value === targetPlayer.value
       ? Option.None
       : otherPlayer
 
@@ -273,7 +277,10 @@ export const inputPlayer = (
 //
 //
 
-export type InputClock = ["InputClock", { clockPreset: Clock.Preset, userId: UserId.UserId }]
+export type InputClock = [
+  "InputClock",
+  { clockPreset: Clock.Preset; userId: UserId.UserId },
+]
 
 export type InputClock_Done = [
   "InputClock_Done",
@@ -282,13 +289,15 @@ export type InputClock_Done = [
 
 export type InputClockProblem = "must_be_in_setup_mode" | "must_be_playing"
 
-export const inputClockProblemToString = (problem: InputClockProblem): string => {
+export const inputClockProblemToString = (
+  problem: InputClockProblem,
+): string => {
   switch (problem) {
-    case 'must_be_in_setup_mode': {
+    case "must_be_in_setup_mode": {
       return "Must be in setup mode"
     }
 
-    case 'must_be_playing': {
+    case "must_be_playing": {
       return "Must be playing to change the clock"
     }
   }
@@ -324,47 +333,54 @@ export type StartGame_Done = [
   "StartGame_Done",
   Result.Result<StartGameProblem, SharedModel>,
 ]
-export type StartGameProblem = "missing_white_player" | "missing_black_player" | "missing_both_players" | "game_not_in_setup_mode" | "must_be_a_player"
+export type StartGameProblem =
+  | "missing_white_player"
+  | "missing_black_player"
+  | "missing_both_players"
+  | "game_not_in_setup_mode"
+  | "must_be_a_player"
 
 export const startGameProblemToString = (problem: StartGameProblem): string => {
   switch (problem) {
-
-    case 'must_be_a_player': {
+    case "must_be_a_player": {
       return "Must be playing to start the game"
     }
 
-    case 'game_not_in_setup_mode': {
+    case "game_not_in_setup_mode": {
       return "Game muse be in setup mode"
     }
 
-    case 'missing_black_player': {
+    case "missing_black_player": {
       return "Missing black player"
     }
 
-    case 'missing_both_players': {
+    case "missing_both_players": {
       return "Missing white and black players"
     }
 
-    case 'missing_white_player': {
+    case "missing_white_player": {
       return "Missing white player"
     }
   }
 }
 
-export const startGame = ({ userId }: StartGame[1], model: SharedModel): StartGame_Done[1] => {
-  if (model.type !== 'Setup') {
+export const startGame = (
+  { userId }: StartGame[1],
+  model: SharedModel,
+): StartGame_Done[1] => {
+  if (model.type !== "Setup") {
     return Result.Err("game_not_in_setup_mode")
   }
 
-  if (model.w.type === 'None' && model.b.type === 'None') {
+  if (model.w.type === "None" && model.b.type === "None") {
     return Result.Err("missing_both_players")
   }
 
-  if (model.w.type === 'None') {
+  if (model.w.type === "None") {
     return Result.Err("missing_white_player")
   }
 
-  if (model.b.type === 'None') {
+  if (model.b.type === "None") {
     return Result.Err("missing_black_player")
   }
 
@@ -521,10 +537,10 @@ export const newGame = (model: SharedModel): NewGame_Done[1] => {
 //
 //
 
-export type ClockTicked = ['ClockTicked']
+export type ClockTicked = ["ClockTicked"]
 
 export const clockTicked = (model: SharedModel): SharedModel => {
-  if (model.type !== 'Game') {
+  if (model.type !== "Game") {
     return model
   }
 
@@ -539,7 +555,7 @@ export const clockTicked = (model: SharedModel): SharedModel => {
 
   const result = Clock.tick({ turn, clock: model.clock })
 
-  if (result.type === 'TimeIsUp') {
+  if (result.type === "TimeIsUp") {
     const loser = result.timeIsUp
 
     return {
@@ -561,18 +577,17 @@ export const clockTicked = (model: SharedModel): SharedModel => {
   }
 }
 
+//
+//
+//
+//
+//
 
-// 
-// 
-// 
-// 
-// 
-
-export type CountDownElapsed = ['CountDownElapsed']
-export type CountDownElapsed_Done = ['CountDownElapsed_Done', SharedModel]
+export type CountDownElapsed = ["CountDownElapsed"]
+export type CountDownElapsed_Done = ["CountDownElapsed_Done", SharedModel]
 
 export const countDownElapsed = (model: SharedModel): SharedModel => {
-  if (model.type !== 'Starting') {
+  if (model.type !== "Starting") {
     return model
   }
 
@@ -585,13 +600,13 @@ export const countDownElapsed = (model: SharedModel): SharedModel => {
       b: model.b,
       board: Board.init(),
       clock: Clock.presetToClock(model.clockPreset),
-      drawAgreement: { type: "NotAsking" }
+      drawAgreement: { type: "NotAsking" },
     }
   }
 
   return {
     ...model,
-    countDown: countDownNew
+    countDown: countDownNew,
   }
 }
 
@@ -605,30 +620,40 @@ export const decrementCountDown = (countDown: 3 | 2 | 1): 2 | 1 | 0 => {
   return 0
 }
 
-// 
-// 
-// 
-// 
-// 
+//
+//
+//
+//
+//
 
-export type CancelStartGame = ['CancelStartGame', { userId: UserId.UserId, }]
-export type CancelStartGame_Done = ['CancelStartGame_Done', Result.Result<CancelStartGameProblem, SharedModel>]
-export type CancelStartGameProblem = "must_be_playing" | "must_be_in_starting_mode"
+export type CancelStartGame = ["CancelStartGame", { userId: UserId.UserId }]
+export type CancelStartGame_Done = [
+  "CancelStartGame_Done",
+  Result.Result<CancelStartGameProblem, SharedModel>,
+]
+export type CancelStartGameProblem =
+  | "must_be_playing"
+  | "must_be_in_starting_mode"
 
-export const cancelStartProblemToString = (problem: CancelStartGameProblem): string => {
+export const cancelStartProblemToString = (
+  problem: CancelStartGameProblem,
+): string => {
   switch (problem) {
-    case 'must_be_in_starting_mode': {
+    case "must_be_in_starting_mode": {
       return "Must be in starting mode"
     }
 
-    case 'must_be_playing': {
+    case "must_be_playing": {
       return "Must be playing to cancel"
     }
   }
 }
 
-export const cancelStartGame = ({ userId }: CancelStartGame[1], model: SharedModel): CancelStartGame_Done[1] => {
-  if (model.type !== 'Starting') {
+export const cancelStartGame = (
+  { userId }: CancelStartGame[1],
+  model: SharedModel,
+): CancelStartGame_Done[1] => {
+  if (model.type !== "Starting") {
     return Result.Err("must_be_in_starting_mode")
   }
 
@@ -640,7 +665,7 @@ export const cancelStartGame = ({ userId }: CancelStartGame[1], model: SharedMod
     type: "Setup",
     b: Option.Some(model.b),
     w: Option.Some(model.w),
-    clockPreset: model.clockPreset
+    clockPreset: model.clockPreset,
   }
 
   return Result.Ok(modelNew)

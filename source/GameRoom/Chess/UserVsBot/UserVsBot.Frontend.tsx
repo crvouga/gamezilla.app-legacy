@@ -1,4 +1,13 @@
-import { Audio, Cmd, exhaustive, Option, pipe, Result, Sub, tag } from "../../../Core"
+import {
+  Audio,
+  Cmd,
+  exhaustive,
+  Option,
+  pipe,
+  Result,
+  Sub,
+  tag,
+} from "../../../Core"
 import { UserId } from "../../../Data"
 import * as Snackbar from "../../../Snackbar"
 import * as Store from "../../../Store"
@@ -17,7 +26,7 @@ import {
   inputBot,
   inputBotProblemToString,
   inputColor,
-  inputColorProblemToString
+  inputColorProblemToString,
 } from "./UserVsBot.Types"
 
 //
@@ -212,9 +221,18 @@ export const View = ({
   roomAvatarGroup: UI.ViewNode
 }) => {
   if (model.sharedModel.type === "Setup") {
-    const startGameResult = startGame({ userId: currentUserId }, model.sharedModel)
-    const inputBotResult = inputBot({ botDifficulty: model.sharedModel.botDifficulty, userId: currentUserId }, model.sharedModel)
-    const inputColorResult = inputColor({ userColor: model.sharedModel.userColor, userId: currentUserId }, model.sharedModel)
+    const startGameResult = startGame(
+      { userId: currentUserId },
+      model.sharedModel,
+    )
+    const inputBotResult = inputBot(
+      { botDifficulty: model.sharedModel.botDifficulty, userId: currentUserId },
+      model.sharedModel,
+    )
+    const inputColorResult = inputColor(
+      { userColor: model.sharedModel.userColor, userId: currentUserId },
+      model.sharedModel,
+    )
 
     return (
       <UI.FillBox>
@@ -231,7 +249,10 @@ export const View = ({
           right={roomAvatarGroup}
         />
 
-        <UI.Typography variant="h5" sx={{ paddingX: 2, paddingBottom: 1 }}>
+        <UI.Typography
+          variant="h5"
+          sx={{ paddingX: 2, paddingBottom: 1 }}
+        >
           User Vs Bot
         </UI.Typography>
 
@@ -260,24 +281,30 @@ export const View = ({
               </UI.Button>
             </UI.Box>
           ) : (
-            <UI.Box
-              sx={{ display: "flex", alignItems: 'center', paddingX: 2 }}
-            >
-              <UI.Avatar sx={{ marginRight: 1 }} src={store.Profile[model.sharedModel.userId.value]?.avatarUrl} />
+            <UI.Box sx={{ display: "flex", alignItems: "center", paddingX: 2 }}>
+              <UI.Avatar
+                sx={{ marginRight: 1 }}
+                src={store.Profile[model.sharedModel.userId.value]?.avatarUrl}
+              />
 
-              <UI.Typography sx={{ flex: 1 }} noWrap >
-                {store.Profile[model.sharedModel.userId.value]?.username ?? "..."}
+              <UI.Typography
+                sx={{ flex: 1 }}
+                noWrap
+              >
+                {store.Profile[model.sharedModel.userId.value]?.username ??
+                  "..."}
               </UI.Typography>
 
               {model.sharedModel.userId.value === currentUserId && (
                 <UI.Button
                   size="large"
-                  onClick={() => dispatch(['InputUser', { userId: Option.None }])}
+                  onClick={() =>
+                    dispatch(["InputUser", { userId: Option.None }])
+                  }
                 >
                   Stop Playing
                 </UI.Button>
               )}
-
             </UI.Box>
           )}
         </UI.Box>
@@ -290,10 +317,15 @@ export const View = ({
         </UI.Typography>
 
         <UI.Box sx={{ paddingX: 2, paddingBottom: 2 }}>
-          <UI.Tooltip title={inputColorResult.type === 'Err' ? inputColorProblemToString(inputColorResult.error) : ""}>
-
+          <UI.Tooltip
+            title={
+              inputColorResult.type === "Err"
+                ? inputColorProblemToString(inputColorResult.error)
+                : ""
+            }
+          >
             <UI.ToggleButtonGroup
-              disabled={inputColorResult.type === 'Err'}
+              disabled={inputColorResult.type === "Err"}
               fullWidth
               value={model.sharedModel.userColor}
             >
@@ -331,9 +363,14 @@ export const View = ({
         </UI.Typography>
 
         <UI.Box sx={{ paddingX: 2 }}>
-
-          <UI.Tooltip enterTouchDelay={0} title={inputBotResult.type === "Err" ? inputBotProblemToString(inputBotResult.error) : ""}>
-
+          <UI.Tooltip
+            enterTouchDelay={0}
+            title={
+              inputBotResult.type === "Err"
+                ? inputBotProblemToString(inputBotResult.error)
+                : ""
+            }
+          >
             <UI.ToggleButtonGroup
               disabled={inputBotResult.type === "Err"}
               fullWidth
@@ -379,12 +416,18 @@ export const View = ({
         <UI.Box sx={{ flex: 1 }} />
 
         <UI.Box sx={{ paddingX: 2, paddingBottom: 1 }}>
-          <UI.Tooltip title={startGameResult.type === 'Err' ? startGameProblemToString(startGameResult.error) : ""}>
+          <UI.Tooltip
+            title={
+              startGameResult.type === "Err"
+                ? startGameProblemToString(startGameResult.error)
+                : ""
+            }
+          >
             <UI.Button
               fullWidth
               size="large"
               variant="contained"
-              disabled={startGameResult.type === 'Err'}
+              disabled={startGameResult.type === "Err"}
               onClick={() => dispatch(["StartGame", { userId: currentUserId }])}
             >
               Start Game

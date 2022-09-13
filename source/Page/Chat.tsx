@@ -104,9 +104,7 @@ export const View = ({
         {conversations.map((item) => (
           <UI.ListItemButton
             key={item.conversationId}
-            onClick={() =>
-              dispatch(["ClickedConversationItem", item])
-            }
+            onClick={() => dispatch(["ClickedConversationItem", item])}
           >
             <UI.ListItemAvatar>
               <UI.AvatarGroup max={2}>

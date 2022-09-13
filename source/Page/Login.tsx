@@ -115,7 +115,6 @@ export const View = ({
       >
         Continue With Email
       </UI.Button>
-
     </UI.FillBox>
   )
 }

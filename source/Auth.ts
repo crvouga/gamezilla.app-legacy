@@ -2,7 +2,6 @@ import * as Rx from "rxjs"
 import { Cmd, exhaustive, Option, pipe, Result, Sub, Task, Unit } from "./Core"
 import { PhoneNumber, UserId } from "./Data"
 import * as Supabase from "./Supabase"
-import * as Wire from "./Wire"
 
 //
 //
@@ -41,6 +40,9 @@ export type Msg =
 
 export type Action = ["Auth", ["Logout"]]
 
+export type ToBackend =
+  | ["UserLoggedIn", UserId.UserId]
+
 //
 //
 //
@@ -49,7 +51,7 @@ export type Action = ["Auth", ["Logout"]]
 //
 //
 
-export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
+export const update = ({ sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd.Cmd<never> }, msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
     case "GotSession":
       switch (msg[1].type) {
@@ -59,7 +61,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
         case "Some":
           return [
             ["LoggedIn", msg[1].value],
-            Wire.sendToBackend(["UserLoggedIn", msg[1].value.userId]),
+            sendToBackend(["UserLoggedIn", msg[1].value.userId]),
           ]
       }
 
@@ -137,7 +139,11 @@ export const loginWithEmailAndPassword =
     }
 
 export const sendCode =
-  ({ phoneNumber }: { phoneNumber: PhoneNumber.PhoneNumber }): Task.Task<AuthResult> =>
+  ({
+    phoneNumber,
+  }: {
+    phoneNumber: PhoneNumber.PhoneNumber
+  }): Task.Task<AuthResult> =>
     async () => {
       const response = await Supabase.client.auth.signIn({
         phone: PhoneNumber.toString(phoneNumber),
@@ -151,11 +157,17 @@ export const sendCode =
     }
 
 export const verifyCode =
-  ({ code, phoneNumber }: { code: string, phoneNumber: PhoneNumber.PhoneNumber }): Task.Task<AuthResult> =>
+  ({
+    code,
+    phoneNumber,
+  }: {
+    code: string
+    phoneNumber: PhoneNumber.PhoneNumber
+  }): Task.Task<AuthResult> =>
     async () => {
       const response = await Supabase.client.auth.verifyOTP({
         phone: PhoneNumber.toString(phoneNumber),
-        token: code
+        token: code,
       })
 
       if (response.error) {
@@ -164,7 +176,6 @@ export const verifyCode =
 
       return Result.Ok(Unit)
     }
-
 
 export const loginWithEmailLink =
   ({ emailAddress }: { emailAddress: string }): Task.Task<AuthResult> =>

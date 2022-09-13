@@ -1,4 +1,3 @@
-
 interface ImportMeta {
   readonly hot?: ViteHotContext
 }
