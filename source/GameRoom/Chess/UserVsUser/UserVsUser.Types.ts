@@ -1,5 +1,5 @@
 import { Audio, isEqual, Option, Result } from "../../../Core"
-import { UserId } from "../../../Data"
+import { NonNegativeInteger, UserId } from "../../../Data"
 import * as Board from "../Board"
 import * as Clock from "../Clock"
 
@@ -30,7 +30,13 @@ export type SharedModel =
     clockPreset: Clock.Preset
     w: Option.Option<UserId.UserId>
     b: Option.Option<UserId.UserId>
-    gameStart: GameStart
+  }
+  | {
+    type: "Starting",
+    clockPreset: Clock.Preset,
+    w: UserId.UserId,
+    b: UserId.UserId,
+    countDown: 3 | 2 | 1
   }
   | {
     type: "Game"
@@ -47,15 +53,6 @@ export type SharedModel =
     b: UserId.UserId
     clock: Clock.Clock
     board: Board.Model
-  }
-
-type GameStart =
-  | {
-    type: "NotStarting"
-  }
-  | {
-    type: "Starting",
-    countDown: 3 | 2 | 1
   }
 
 export type DrawAgreement =
@@ -93,9 +90,6 @@ export const initShared = ({ userId }: { userId: Option.Option<UserId.UserId> })
     w: userId,
     b: Option.None,
     clockPreset: "Blitz",
-    gameStart: {
-      type: "NotStarting"
-    }
   }
 }
 
@@ -114,15 +108,20 @@ export type FrontendMsg =
   | ["OpenedModal", Modal]
   | ["ClosedModal"]
   | ["ClickedFlip"]
-  | Request
+  | Req
 
-export type BackendMsg = ["Tick"]
+export type BackendMsg = ClockTicked | CountDownElapsed
 
-export type ToFrontend = ["Sync", SharedModel] | ["GameOver"] | Response
+export type ToFrontend =
+  | ["Sync", SharedModel]
+  | ["GameOver"]
+  | ['GameStarted']
+  | CountDownElapsed_Done
+  | Res
 
-export type ToBackend = ["Init"] | Request
+export type ToBackend = ["Init"] | Req
 
-export type Request =
+export type Req =
   | InputPlayer
   | InputClock
   | StartGame
@@ -132,7 +131,7 @@ export type Request =
   | RespondToDraw
   | NewGame
 
-export type Response =
+export type Res =
   | InputPlayer_Done
   | InputClock_Done
   | StartGame_Done
@@ -372,12 +371,11 @@ export const startGame = ({ userId }: StartGame[1], model: SharedModel): StartGa
   }
 
   return Result.Ok({
-    type: "Game",
+    type: "Starting",
     w: model.w.value,
     b: model.b.value,
-    clock: Clock.presetToClock(model.clockPreset),
-    board: Board.init(),
-    drawAgreement: { type: "NotAsking" },
+    clockPreset: model.clockPreset,
+    countDown: 3,
   })
 }
 
@@ -510,9 +508,6 @@ export const newGame = (model: SharedModel): NewGame_Done[1] => {
     b: Option.Some(model.b),
     w: Option.Some(model.w),
     clockPreset: model.clock.preset,
-    gameStart: {
-      type: "NotStarting"
-    }
   }
 
   return Result.Ok(modelNew)
@@ -524,8 +519,9 @@ export const newGame = (model: SharedModel): NewGame_Done[1] => {
 //
 //
 
-export const clockTicked = (model: SharedModel): SharedModel => {
+export type ClockTicked = ['ClockTicked']
 
+export const clockTicked = (model: SharedModel): SharedModel => {
   if (model.type !== 'Game') {
     return model
   }
@@ -564,4 +560,45 @@ export const clockTicked = (model: SharedModel): SharedModel => {
 }
 
 
+// 
+// 
+// 
+// 
+// 
 
+export type CountDownElapsed = ['CountDownElapsed']
+export type CountDownElapsed_Done = ['CountDownElapsed_Done', SharedModel]
+
+export const countDownElapsed = (model: SharedModel): SharedModel => {
+  if (model.type !== 'Starting') {
+    return model
+  }
+
+  const countDownNew = decrementCountDown(model.countDown)
+
+  if (countDownNew === 0) {
+    return {
+      type: "Game",
+      w: model.w,
+      b: model.b,
+      board: Board.init(),
+      clock: Clock.presetToClock(model.clockPreset),
+      drawAgreement: { type: "NotAsking" }
+    }
+  }
+
+  return {
+    ...model,
+    countDown: countDownNew
+  }
+}
+
+export const decrementCountDown = (countDown: 3 | 2 | 1): 2 | 1 | 0 => {
+  const countDownNew = countDown - 1
+
+  if (countDownNew === 2 || countDownNew === 1 || countDownNew === 0) {
+    return countDownNew
+  }
+
+  return 0
+}
