@@ -5,6 +5,7 @@ import {
   BackendModel,
   BackendMsg,
   clockTicked,
+  countDownElapsed,
   initShared,
   inputClock,
   inputPlayer,
@@ -13,7 +14,7 @@ import {
   requestToDraw,
   resign,
   respondToDraw,
-  Response,
+  Res,
   startGame,
   ToBackend,
   ToFrontend,
@@ -51,7 +52,7 @@ export const update = (
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
-    case "Tick": {
+    case "ClockTicked": {
       const modelNew: Model = {
         ...model,
         sharedModel: clockTicked(model.sharedModel),
@@ -66,6 +67,25 @@ export const update = (
         Cmd.batch([
           sendToRoom(["Sync", modelNew.sharedModel]),
           didChangeToGameOver ? sendToRoom(["GameOver"]) : Cmd.None,
+        ]),
+      ]
+    }
+
+    case 'CountDownElapsed': {
+      const modelNew: Model = {
+        ...model,
+        sharedModel: countDownElapsed(model.sharedModel),
+      }
+
+      const didChangeToGameStart =
+        model.sharedModel.type !== "Game" &&
+        modelNew.sharedModel.type === "Game"
+
+      return [
+        modelNew,
+        Cmd.batch([
+          sendToRoom(['CountDownElapsed_Done', modelNew.sharedModel]),
+          didChangeToGameStart ? sendToRoom(["GameStarted"]) : Cmd.None,
         ]),
       ]
     }
@@ -163,7 +183,7 @@ const sendResponse = (
     sendToClient: (msg: ToFrontend) => Cmd.Cmd<never>
     sendToRoom: (msg: ToFrontend) => Cmd.Cmd<never>
   },
-  response: Response,
+  response: Res,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
   if (response[1].type === "Err") {
@@ -215,15 +235,19 @@ export const subscriptions = (
       return Sub.None
     }
 
+    case 'Starting': {
+      return Time.every(`${intervalId}-count-down`, 1000, () => ["CountDownElapsed"])
+    }
+
     case "Game": {
       const turn = Board.toTurn(model.sharedModel.board)
 
       switch (turn) {
         case "b": {
-          return Time.every(`b-${intervalId}`, 1000, () => ["Tick"])
+          return Time.every(`${intervalId}-b`, 1000, () => ["ClockTicked"])
         }
         case "w": {
-          return Time.every(`w-${intervalId}`, 1000, () => ["Tick"])
+          return Time.every(`${intervalId}-w`, 1000, () => ["ClockTicked"])
         }
       }
     }

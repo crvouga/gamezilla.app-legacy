@@ -173,7 +173,7 @@ export const updateFromBackend = (
 
       const sharedModelNew = msg[1].value
 
-      if (sharedModelNew.type === "Setup") {
+      if (sharedModelNew.type !== "Game") {
         return [model, Cmd.None]
       }
 
@@ -201,7 +201,9 @@ export const updateFromBackend = (
         return [model, Cmd.None]
       }
 
-      return [model, playAudio(Sounds.gameStart)]
+      const sharedModel = msg[1].value
+
+      return [{ ...model, sharedModel }, Cmd.None]
     }
 
     case "RequestToDraw_Done": {
@@ -269,6 +271,16 @@ export const updateFromBackend = (
         },
         playAudio(Sounds.gameOver),
       ]
+    }
+
+    case 'GameStarted': {
+      return [model, playAudio(Sounds.gameStart)]
+    }
+
+    case 'CountDownElapsed_Done': {
+      const sharedModel = msg[1]
+
+      return [{ ...model, sharedModel }, Cmd.None]
     }
 
     default: {
@@ -439,6 +451,58 @@ export const View = ({
       </UI.FillBox>
     )
   }
+
+  if (model.sharedModel.type === 'Starting') {
+    const { w, b } = model.sharedModel
+    return <UI.FillBox>
+      <UI.Header
+        left={
+          <UI.Button
+            disabled
+            sx={{ marginLeft: -1 }}
+          >
+            Back
+          </UI.Button>
+        }
+        title="Chess"
+        right={roomAvatarGroup}
+      />
+      <UI.Box sx={{ flex: 1, display: "flex", alignItems: 'center', justifyContent: 'center' }}>
+        <UI.Box sx={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: "column" }}>
+          <UI.Avatar src={store.Profile[w]?.avatarUrl} sx={{ marginBottom: 1 / 2 }} />
+          <UI.Typography>
+            {store.Profile[w]?.username ?? "..."}
+          </UI.Typography>
+        </UI.Box>
+        <UI.Typography color="text.secondary" sx={{ fontSize: "1.5rem", display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: "column" }}>
+          VS
+        </UI.Typography>
+        <UI.Box sx={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: "column" }}>
+          <UI.Avatar src={store.Profile[b]?.avatarUrl} sx={{ marginBottom: 1 / 2 }} />
+          <UI.Typography>
+            {store.Profile[b]?.username ?? "..."}
+          </UI.Typography>
+        </UI.Box>
+      </UI.Box>
+
+      <UI.Box sx={{ flex: 1, display: "flex", flexDirection: "column", alignItems: 'center', justifyContent: "center", }}>
+        <UI.Typography sx={{ marginBottom: -3 }} color="text.secondary" align="center">
+          Starting in
+        </UI.Typography>
+        <UI.Typography sx={{ fontSize: "6rem" }} align="center">
+          {model.sharedModel.countDown}
+        </UI.Typography>
+        {/* <UI.Button size="small">
+          Cancel
+        </UI.Button> */}
+      </UI.Box>
+
+      <UI.Box sx={{ flex: 1 }}>
+
+      </UI.Box>
+    </UI.FillBox>
+  }
+
 
   const { w, b, board, clock } = model.sharedModel
 
@@ -805,6 +869,10 @@ const toGameText = (model: SharedModel): string => {
 
     case "Setup": {
       return "Setting up game"
+    }
+
+    case 'Starting': {
+      return "Game is about to start"
     }
 
     case "Game": {
