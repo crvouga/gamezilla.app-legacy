@@ -1,11 +1,12 @@
-export type NonNegativeInteger<T extends number> =
-  number extends T
+export type NonNegativeInteger<T extends number> = number extends T
   ? never
   : `${T}` extends `-${string}` | `${string}.${string}`
   ? never
-  : T;
+  : T
 
-export const is = <T extends number>(number: unknown): number is NonNegativeInteger<T> => {
+export const is = <T extends number>(
+  number: unknown,
+): number is NonNegativeInteger<T> => {
   return (
     typeof number === "number" && number >= 0 && Math.floor(number) === number
   )

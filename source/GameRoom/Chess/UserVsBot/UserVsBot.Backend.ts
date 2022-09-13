@@ -24,7 +24,11 @@ import {
 
 export type Model = BackendModel
 
-export const init = ({ userId }: { userId: Option.Option<UserId.UserId> }): Model => {
+export const init = ({
+  userId,
+}: {
+  userId: Option.Option<UserId.UserId>
+}): Model => {
   return {
     type: "Setup",
     botDifficulty: initShared.botDifficulty,

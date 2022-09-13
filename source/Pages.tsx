@@ -3,7 +3,8 @@ import { Cmd, exhaustive, pipe, Sub, tag, tagCmd, tagSub } from "./Core"
 import { PhoneNumber, UserId } from "./Data"
 import * as GameRoom from "./GameRoom/GameRoom.Frontend"
 import {
-  Account, Chat,
+  Account,
+  Chat,
   ChatConversation,
   ChatNew,
   GameRoomPage,
@@ -21,7 +22,7 @@ import {
   ProfileUpdateName,
   ProfileUpdateTheme,
   ProfileUpdateUsername,
-  Search
+  Search,
 } from "./Page"
 import * as Party from "./Party/Party.Frontend"
 import * as Route from "./Route"
@@ -41,7 +42,11 @@ export type Model =
   | ["Login", Login.Model]
   | ["LoginEmailLink", LoginEmailLink.Model]
   | ["LoginPhone", LoginPhone.Model]
-  | ["LoginPhoneVerify", { phoneNumber: PhoneNumber.PhoneNumber }, LoginPhoneVerify.Model]
+  | [
+      "LoginPhoneVerify",
+      { phoneNumber: PhoneNumber.PhoneNumber },
+      LoginPhoneVerify.Model,
+    ]
   | ["ProfileCreate", ProfileCreate.Model]
   | ["Logout", Logout.Model]
   | ["Account", Account.Model]
@@ -188,7 +193,7 @@ export const initReady = (
         userId: route[1].userId,
       })
       return [
-        ["Profile", { userId: route[1].userId, }, modelInit],
+        ["Profile", { userId: route[1].userId }, modelInit],
         pipe(cmdInit, Cmd.map(tag("Profile"))),
         actions,
       ]
@@ -219,8 +224,8 @@ export const initReady = (
 
     case "ProfileCreate":
     case "Login":
-    case 'LoginPhone':
-    case 'LoginPhoneVerify':
+    case "LoginPhone":
+    case "LoginPhoneVerify":
     case "LoginEmailLink":
       const [modelInit, cmdInit] = GameRoomPage.init
       return [
@@ -242,11 +247,18 @@ export const initLoggedOut = (route: Route.Model): [Model, Cmd.Cmd<Msg>] => {
     case "Login":
       return [["Login", Login.init], Cmd.None]
 
-    case 'LoginPhone':
-      return [['LoginPhone', LoginPhone.init], Cmd.None]
+    case "LoginPhone":
+      return [["LoginPhone", LoginPhone.init], Cmd.None]
 
-    case 'LoginPhoneVerify':
-      return [['LoginPhoneVerify', { phoneNumber: route[1].phoneNumber }, LoginPhoneVerify.init], Cmd.None]
+    case "LoginPhoneVerify":
+      return [
+        [
+          "LoginPhoneVerify",
+          { phoneNumber: route[1].phoneNumber },
+          LoginPhoneVerify.init,
+        ],
+        Cmd.None,
+      ]
 
     case "LoginEmailLink":
       return [["LoginEmailLink", LoginEmailLink.init], Cmd.None]
@@ -299,8 +311,8 @@ export const initProfileMissing = (
     case "ProfileUpdateUsername":
     case "Login":
     case "LoginEmailLink":
-    case 'LoginPhone':
-    case 'LoginPhoneVerify':
+    case "LoginPhone":
+    case "LoginPhoneVerify":
     case "GameRoom":
     case "Party":
       return [
@@ -494,8 +506,8 @@ export const updateReady = (
     case "Login":
     case "Loading":
     case "ProfileCreate":
-    case 'LoginPhone':
-    case 'LoginPhoneVerify':
+    case "LoginPhone":
+    case "LoginPhoneVerify":
     case "LoginEmailLink":
       return [model, Route.push(["GameRoom"]), []]
 
@@ -544,8 +556,8 @@ export const updateProfileMissing = (
     case "Loading":
     case "LoginEmailLink":
     case "Search":
-    case 'LoginPhone':
-    case 'LoginPhoneVerify':
+    case "LoginPhone":
+    case "LoginPhoneVerify":
     case "Party":
       return [model, Route.push(["ProfileCreate"]), []]
 
@@ -567,7 +579,10 @@ export const updateLoggedOut = (
 
     case "LoginEmailLink": {
       if (msg[0] === "LoginEmailLink") {
-        return tagUpdate("LoginEmailLink", LoginEmailLink.update(msg[1], model[1]))
+        return tagUpdate(
+          "LoginEmailLink",
+          LoginEmailLink.update(msg[1], model[1]),
+        )
       }
       return [model, Cmd.None, []]
     }
@@ -582,7 +597,11 @@ export const updateLoggedOut = (
     case "LoginPhoneVerify": {
       if (msg[0] === "LoginPhoneVerify") {
         const [child, cmd] = LoginPhoneVerify.update(model[1], msg[1], model[2])
-        return [['LoginPhoneVerify', model[1], child], tagCmd("LoginPhoneVerify", cmd), []]
+        return [
+          ["LoginPhoneVerify", model[1], child],
+          tagCmd("LoginPhoneVerify", cmd),
+          [],
+        ]
       }
       return [model, Cmd.None, []]
     }
@@ -642,8 +661,8 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
     case "Search":
     case "GameRoom":
     case "Party":
-    case 'LoginPhone':
-    case 'LoginPhoneVerify':
+    case "LoginPhone":
+    case "LoginPhoneVerify":
       return Sub.None
 
     default:
@@ -865,8 +884,8 @@ export const ViewReady = ({
     case "ProfileCreate":
     case "Loading":
     case "LoginEmailLink":
-    case 'LoginPhone':
-    case 'LoginPhoneVerify':
+    case "LoginPhone":
+    case "LoginPhoneVerify":
       return <UI.LoadingPage />
 
     default:
@@ -910,8 +929,8 @@ export const ViewProfileMissing = ({
     case "ProfileUpdateName":
     case "ProfileUpdateUsername":
     case "Login":
-    case 'LoginPhone':
-    case 'LoginPhoneVerify':
+    case "LoginPhone":
+    case "LoginPhoneVerify":
     case "LoginEmailLink":
     case "Loading":
     case "Search":
@@ -949,7 +968,6 @@ export const ViewLoggedOut = ({
         />
       )
 
-
     case "LoginPhone":
       return (
         <LoginPhone.View
@@ -958,12 +976,12 @@ export const ViewLoggedOut = ({
         />
       )
 
-    case 'LoginPhoneVerify':
+    case "LoginPhoneVerify":
       return (
         <LoginPhoneVerify.View
           phoneNumber={model[1].phoneNumber}
           model={model[2]}
-          dispatch={msg => dispatch(["LoginPhoneVerify", msg])}
+          dispatch={(msg) => dispatch(["LoginPhoneVerify", msg])}
         />
       )
 

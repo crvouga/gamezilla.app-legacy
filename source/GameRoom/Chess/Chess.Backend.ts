@@ -1,4 +1,12 @@
-import { Cmd, exhaustive, Option, Result, Sub, tagCmd, tagSub } from "../../Core"
+import {
+  Cmd,
+  exhaustive,
+  Option,
+  Result,
+  Sub,
+  tagCmd,
+  tagSub,
+} from "../../Core"
 import { BackendModel, BackendMsg, ToBackend, ToFrontend } from "./Chess.Types"
 import * as UserVsUser from "./UserVsUser/UserVsUser.Backend"
 import * as UserVsBot from "./UserVsBot/UserVsBot.Backend"
@@ -96,7 +104,10 @@ export const updateFromFrontend = (
         }
 
         case "UserVsBot": {
-          const modelNew: Model = ["UserVsBot", UserVsBot.init({ userId: Option.Some(userId) })]
+          const modelNew: Model = [
+            "UserVsBot",
+            UserVsBot.init({ userId: Option.Some(userId) }),
+          ]
 
           return [
             modelNew,
@@ -105,7 +116,10 @@ export const updateFromFrontend = (
         }
 
         case "UserVsUser": {
-          const modelNew: Model = ["UserVsUser", UserVsUser.init({ userId: Option.Some(userId) })]
+          const modelNew: Model = [
+            "UserVsUser",
+            UserVsUser.init({ userId: Option.Some(userId) }),
+          ]
 
           return [
             modelNew,

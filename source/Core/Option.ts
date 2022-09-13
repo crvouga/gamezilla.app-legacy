@@ -12,39 +12,39 @@ export const None: None = { type: "None" }
 
 export const map =
   <A, B>(mapper: (value: A) => B) =>
-    (option: Option<A>): Option<B> => {
-      switch (option.type) {
-        case "None":
-          return None
+  (option: Option<A>): Option<B> => {
+    switch (option.type) {
+      case "None":
+        return None
 
-        case "Some":
-          return Some(mapper(option.value))
-      }
+      case "Some":
+        return Some(mapper(option.value))
     }
+  }
 
 export const fold =
   <A, B>(onNone: () => B, onSome: (value: A) => B) =>
-    (option: Option<A>): B => {
-      switch (option.type) {
-        case "None":
-          return onNone()
+  (option: Option<A>): B => {
+    switch (option.type) {
+      case "None":
+        return onNone()
 
-        case "Some":
-          return onSome(option.value)
-      }
+      case "Some":
+        return onSome(option.value)
     }
+  }
 
 export const withDefault =
   <T>(fallback: T) =>
-    (option: Option<T>): T => {
-      switch (option.type) {
-        case "None":
-          return fallback
+  (option: Option<T>): T => {
+    switch (option.type) {
+      case "None":
+        return fallback
 
-        case "Some":
-          return option.value
-      }
+      case "Some":
+        return option.value
     }
+  }
 
 export const fromNullable = <T>(value: T | null | undefined): Option<T> => {
   if (value === null) {

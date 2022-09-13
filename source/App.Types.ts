@@ -58,7 +58,7 @@ export type WireStatus =
 export type ToBackend =
   | ["GameRoom", GameRoom.ToBackend]
   | ["Party", Party.ToBackend]
-  | ["UserLoggedIn", UserId.UserId]
+  | ["Auth", Auth.ToBackend]
 
 export type ToFrontend =
   | ["GameRoom", GameRoom.ToFrontend]

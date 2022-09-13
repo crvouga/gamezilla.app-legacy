@@ -92,7 +92,6 @@ export const View = ({
         </UI.ListItemIcon>
         <UI.ListItemText primary="Logout" />
       </UI.ListItemButton>
-
     </UI.List>
   </UI.FillBox>
 )

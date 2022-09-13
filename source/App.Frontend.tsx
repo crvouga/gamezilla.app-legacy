@@ -124,7 +124,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
     }
 
     case "Auth": {
-      const [authNew, authCmd] = Auth.update(msg[1], model.auth)
+      const [authNew, authCmd] = Auth.update({ sendToBackend: msg => Wire.sendToBackend(['Auth', msg]) }, msg[1], model.auth)
 
       return [{ ...model, auth: authNew }, tagCmd("Auth", authCmd)]
     }
@@ -775,14 +775,13 @@ Wire._sendToBackend.subscribe((msg) => {
   socketClient.emit("ToBackend", msg)
 })
 
-
-// 
-// 
-// 
+//
+//
+//
 // HMR
-// 
-// 
-// 
+//
+//
+//
 
 export const cleanup = () => {
   root.unmount()

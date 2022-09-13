@@ -9,12 +9,20 @@ export type Clock = {
 
 export type Seconds = number & { _type: "Seconds" }
 
-export const tick = ({ turn, clock }: { turn: Board.Color, clock: Clock }): { type: "TimeIsUp", clock: Clock, timeIsUp: Board.Color } | { type: "Ticked", clock: Clock } => {
+export const tick = ({
+  turn,
+  clock,
+}: {
+  turn: Board.Color
+  clock: Clock
+}):
+  | { type: "TimeIsUp"; clock: Clock; timeIsUp: Board.Color }
+  | { type: "Ticked"; clock: Clock } => {
   if (clock.times.w === 0) {
     return {
       type: "TimeIsUp",
       clock,
-      timeIsUp: "w"
+      timeIsUp: "w",
     }
   }
 
@@ -22,7 +30,7 @@ export const tick = ({ turn, clock }: { turn: Board.Color, clock: Clock }): { ty
     return {
       type: "TimeIsUp",
       clock,
-      timeIsUp: "b"
+      timeIsUp: "b",
     }
   }
 
@@ -31,7 +39,7 @@ export const tick = ({ turn, clock }: { turn: Board.Color, clock: Clock }): { ty
     times: {
       ...clock.times,
       [turn]: toSeconds(clock.times[turn] - 1),
-    }
+    },
   }
 
   if (clockNew.times[turn] === 0) {
@@ -47,8 +55,6 @@ export const tick = ({ turn, clock }: { turn: Board.Color, clock: Clock }): { ty
     clock: clockNew,
   }
 }
-
-
 
 export const toSeconds = (seconds: number): Seconds => {
   return Math.floor(Math.max(0, seconds)) as Seconds
@@ -79,7 +85,7 @@ export const presetToClock = (preset: Preset): Clock => {
     times: {
       w: seconds,
       b: seconds,
-    }
+    },
   }
 }
 

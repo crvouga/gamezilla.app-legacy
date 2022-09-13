@@ -31,7 +31,11 @@ import {
 
 export type Model = BackendModel
 
-export const init = ({ userId }: { userId: Option.Option<UserId.UserId> }): Model => {
+export const init = ({
+  userId,
+}: {
+  userId: Option.Option<UserId.UserId>
+}): Model => {
   return {
     sharedModel: initShared({ userId }),
   }
@@ -72,7 +76,7 @@ export const update = (
       ]
     }
 
-    case 'CountDownElapsed': {
+    case "CountDownElapsed": {
       const modelNew: Model = {
         ...model,
         sharedModel: countDownElapsed(model.sharedModel),
@@ -85,7 +89,7 @@ export const update = (
       return [
         modelNew,
         Cmd.batch([
-          sendToRoom(['CountDownElapsed_Done', modelNew.sharedModel]),
+          sendToRoom(["CountDownElapsed_Done", modelNew.sharedModel]),
           didChangeToGameStart ? sendToRoom(["GameStarted"]) : Cmd.None,
         ]),
       ]
@@ -170,11 +174,11 @@ export const updateFromFrontend = (
       )
     }
 
-    case 'CancelStartGame': {
+    case "CancelStartGame": {
       return sendResponse(
         wire,
-        ['CancelStartGame_Done', cancelStartGame(msg[1], model.sharedModel)],
-        model
+        ["CancelStartGame_Done", cancelStartGame(msg[1], model.sharedModel)],
+        model,
       )
     }
 
@@ -244,8 +248,10 @@ export const subscriptions = (
       return Sub.None
     }
 
-    case 'Starting': {
-      return Time.every(`${intervalId}-count-down`, 1000, () => ["CountDownElapsed"])
+    case "Starting": {
+      return Time.every(`${intervalId}-count-down`, 1000, () => [
+        "CountDownElapsed",
+      ])
     }
 
     case "Game": {

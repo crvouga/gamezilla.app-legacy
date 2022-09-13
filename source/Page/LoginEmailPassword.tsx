@@ -16,9 +16,9 @@ export type Model = {
   password: string
   passwordVisibility: Visibility
   submission:
-  | { type: "Idle" }
-  | { type: "Loading" }
-  | { type: "Problem"; message: string }
+    | { type: "Idle" }
+    | { type: "Loading" }
+    | { type: "Problem"; message: string }
 }
 
 type Visibility = "Showing" | "Hiding"
