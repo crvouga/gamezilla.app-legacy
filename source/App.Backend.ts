@@ -211,8 +211,8 @@ const sendToUser = (
 ) => {
   const clientIds = Object.values(model.sessions).flatMap((session) =>
     session.userId.type === "Some" &&
-    userIds.includes(session.userId.value) &&
-    session.clientId.type === "Some"
+      userIds.includes(session.userId.value) &&
+      session.clientId.type === "Some"
       ? [session.clientId.value]
       : [],
   )
@@ -277,7 +277,9 @@ program.state$.subscribe((state) => {
         : msgType,
     null,
   )
-  console.log(msgType)
+  if (msgType) {
+    console.log(msgType)
+  }
 })
 
 //
