@@ -1,4 +1,3 @@
-import * as ReactDom from "react-dom/client"
 
 interface ImportMeta {
   readonly hot?: ViteHotContext

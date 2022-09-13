@@ -12,5 +12,5 @@
     "editor.defaultFormatter": "vscode.typescript-language-features"
   },
   "editor.stickyTabStops": false,
-  "cSpell.words": ["Gamezilla", "onplayerror", "Unflip"] // optional but recommended
+  "cSpell.words": ["Gamezilla", "onplayerror", "supabase", "twillo", "Unflip"] // optional but recommended
 }
