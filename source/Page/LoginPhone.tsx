@@ -17,19 +17,19 @@ export type Model = {
   country: ISO_3166.Iso3166Alpha2Code
   validation: "NotChecked" | "InvalidPhoneNumber" | "EmptyPhoneNumber"
   submission:
-    | {
-        type: "Idle"
-      }
-    | {
-        type: "Loading"
-      }
-    | {
-        type: "Problem"
-        message: string
-      }
-    | {
-        type: "Success"
-      }
+  | {
+    type: "Idle"
+  }
+  | {
+    type: "Loading"
+  }
+  | {
+    type: "Problem"
+    message: string
+  }
+  | {
+    type: "Success"
+  }
 }
 
 //
@@ -192,8 +192,8 @@ export const View = ({
             model.validation === "InvalidPhoneNumber"
               ? `Invalid phone number for ${ISO_3166.toName(model.country)}`
               : model.validation === "EmptyPhoneNumber"
-              ? "Phone number is required"
-              : undefined
+                ? "Phone number is required"
+                : undefined
           }
         />
 

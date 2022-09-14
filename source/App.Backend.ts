@@ -154,23 +154,30 @@ const updateFromFrontend = (
   const sendToClient = (msg: ToFrontend) => Wire.sendToFrontend([clientId], msg)
 
   switch (msg[0]) {
-    case "UserLoggedIn": {
-      const session: Session = {
-        sessionId,
-        clientId: Option.Some(clientId),
-        userId: Option.Some(msg[1]),
-      }
+    case "Auth": {
 
-      return [
-        {
-          ...model,
-          sessions: {
-            ...model.sessions,
-            [sessionId]: session,
-          },
-        },
-        Cmd.None,
-      ]
+      switch (msg[1][0]) {
+        case 'UserLoggedIn': {
+          const userId = msg[1][1]
+
+          const session: Session = {
+            sessionId,
+            clientId: Option.Some(clientId),
+            userId: Option.Some(userId),
+          }
+
+          return [
+            {
+              ...model,
+              sessions: {
+                ...model.sessions,
+                [sessionId]: session,
+              },
+            },
+            Cmd.None,
+          ]
+        }
+      }
     }
 
     case "Party": {
@@ -211,8 +218,8 @@ const sendToUser = (
 ) => {
   const clientIds = Object.values(model.sessions).flatMap((session) =>
     session.userId.type === "Some" &&
-    userIds.includes(session.userId.value) &&
-    session.clientId.type === "Some"
+      userIds.includes(session.userId.value) &&
+      session.clientId.type === "Some"
       ? [session.clientId.value]
       : [],
   )
