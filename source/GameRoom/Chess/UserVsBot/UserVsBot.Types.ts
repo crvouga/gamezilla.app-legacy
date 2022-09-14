@@ -47,16 +47,16 @@ export type GameOverModel = {
 
 export type GameOver =
   | {
-      type: "Resignation"
-      resigner: Board.Color
-    }
+    type: "Resignation"
+    resigner: Board.Color
+  }
   | {
-      type: "Checkmate"
-      winner: Board.Color
-    }
+    type: "Checkmate"
+    winner: Board.Color
+  }
   | {
-      type: "Stalemate"
-    }
+    type: "Stalemate"
+  }
 
 export type BotDifficulty = "Easy" | "Medium" | "Hard"
 
@@ -65,6 +65,10 @@ export const initShared: SharedModel = {
   userColor: "w",
   userId: Option.None,
   botDifficulty: "Medium",
+}
+
+export const isBotTurn = (model: SharedModel) => {
+  return model.type === 'Game' && Board.toTurn(model.board) !== model.userColor
 }
 
 //
@@ -81,13 +85,13 @@ export type FrontendMsg =
   | ["ClosedMenu"]
   | Req
 
-export type BackendMsg = ["None"]
+export type BackendMsg = BotMoved
 
 export type ToBackend = ["Init"] | Req
 
-export type ToFrontend = ["Sync", SharedModel] | ["GameOver"] | Res
+export type ToFrontend = ["Sync", SharedModel] | ["GameOver"] | Res | BotMoved_Done
 
-export type Req = InputUser | InputColor | InputBot | StartGame | StopGame
+export type Req = InputUser | InputColor | InputBot | StartGame | StopGame | InputMove
 
 export type Res =
   | InputUser_Done
@@ -95,6 +99,8 @@ export type Res =
   | InputBot_Done
   | StartGame_Done
   | StopGame_Done
+  | InputMove_Done
+
 
 //
 //
@@ -282,18 +288,19 @@ export const startGame = (
 export type StopGame = ["StopGame", { userId: UserId.UserId }]
 export type StopGame_Done = [
   "StopGame_Done",
-  Result.Result<"must_be_in_game_mode" | "must_be_the_player", SharedModel>,
+  Result.Result<"must_be_started" | "must_be_playing", SharedModel>,
 ]
 export const stopGame = (
   { userId }: StopGame[1],
   model: SharedModel,
 ): StopGame_Done[1] => {
+
   if (model.type !== "Game") {
-    return Result.Err("must_be_in_game_mode")
+    return Result.Err("must_be_started")
   }
 
   if (model.userId !== userId) {
-    return Result.Err("must_be_the_player")
+    return Result.Err("must_be_playing")
   }
 
   const modelNew: SharedModel = {
@@ -304,4 +311,110 @@ export const stopGame = (
   }
 
   return Result.Ok(modelNew)
+}
+
+// 
+// 
+// 
+// 
+// 
+// 
+// 
+
+export type InputMove = ["InputMove", Board.MoveInput & { userId: UserId.UserId }]
+
+export type InputMove_Done = [
+  "InputMove_Done",
+  Result.Result<InputMoveProblem, SharedModel & { didCapture: boolean }>,
+]
+
+export type InputMoveProblem =
+  | Board.MoveProblem
+  | "must_be_started"
+  | "must_be_playing"
+  | "must_be_turn"
+
+export const inputMove = (
+  { userId, ...moveInput }: InputMove[1],
+  model: SharedModel,
+): InputMove_Done[1] => {
+  if (model.type !== "Game") {
+    return Result.Err("must_be_started")
+  }
+
+  if (model.userId !== userId) {
+    return Result.Err("must_be_playing")
+  }
+
+
+  if (Board.toTurn(model.board) !== model.userColor) {
+    return Result.Err("must_be_turn")
+  }
+
+  const result = Board.move(moveInput, model.board)
+
+  if (result.type === "Err") {
+    return result
+  }
+
+  const boardNew = result.value
+
+  if (Board.inCheckmate(boardNew)) {
+    const modelNew: SharedModel = {
+      ...model,
+      type: "GameOver",
+      gameOver: {
+        type: "Checkmate",
+        winner: Board.toTurn(boardNew)
+      }
+    }
+
+    return Result.Ok({
+      ...modelNew,
+      didCapture: boardNew.didCapture,
+    })
+  }
+
+  const modelNew: SharedModel = {
+    ...model,
+    board: boardNew,
+  }
+
+  return Result.Ok({
+    ...modelNew,
+    didCapture: boardNew.didCapture,
+  })
+}
+
+// 
+// 
+// 
+// Bot Moved
+// 
+// 
+// 
+
+export type BotMoved = ['BotMoved', Board.MoveInput]
+export type BotMoved_Done = ['BotMoved_Done', Result.Result<BotMovedProblem, SharedModel>]
+export type BotMovedProblem =
+  | Board.MoveProblem
+  | "must_be_started"
+  | "must_be_turn"
+
+export const botMoved = (moveInput: BotMoved[1], model: SharedModel): BotMoved_Done[1] => {
+  if (model.type !== "Game") {
+    return Result.Err("must_be_started")
+  }
+
+  if (Board.toTurn(model.board) !== model.userColor) {
+    return Result.Err("must_be_turn")
+  }
+
+  const result = Board.move(moveInput, model.board)
+
+  if (result.type === "Err") {
+    return result
+  }
+
+  return Result.Ok(model)
 }
