@@ -286,8 +286,14 @@ const updateFromBackend = (
     }
 
     case "GameRoom": {
+      if (model.auth[0] !== "LoggedIn") {
+        return [model, Cmd.None]
+      }
+
+      const currentUserId = model.auth[1].userId
+
       const [gameRoom, gameRoomCmd, actions] = GameRoom.updateFromBackend(
-        { sendToBackend: (msg) => Wire.sendToBackend(["GameRoom", msg]) },
+        { currentUserId, sendToBackend: (msg) => Wire.sendToBackend(["GameRoom", msg]) },
         msg[1],
         model.gameRoom,
       )

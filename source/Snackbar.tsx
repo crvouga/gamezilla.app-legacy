@@ -127,6 +127,7 @@ export const View = ({
         open
         message={snack.message}
         onClose={() => dispatch(["ClickedAwayClose", snack.snackId])}
+
       />
 
       {/* <UI.Alert
