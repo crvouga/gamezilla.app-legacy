@@ -43,10 +43,10 @@ export type Model =
   | ["LoginEmailLink", LoginEmailLink.Model]
   | ["LoginPhone", LoginPhone.Model]
   | [
-      "LoginPhoneVerify",
-      { phoneNumber: PhoneNumber.PhoneNumber },
-      LoginPhoneVerify.Model,
-    ]
+    "LoginPhoneVerify",
+    { phoneNumber: PhoneNumber.PhoneNumber },
+    LoginPhoneVerify.Model,
+  ]
   | ["ProfileCreate", ProfileCreate.Model]
   | ["Logout", Logout.Model]
   | ["Account", Account.Model]
