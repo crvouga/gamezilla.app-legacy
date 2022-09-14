@@ -17,6 +17,8 @@ export type Model = {
 
 export type PieceType = "P" | "B" | "N" | "R" | "Q" | "K"
 
+export type PieceSymbol = "p" | "b" | "n" | "r" | "q" | "k"
+
 export type Color = "w" | "b"
 
 export type Piece = `${Color}${PieceType}`
@@ -165,7 +167,11 @@ export const toTurn = (model: Model): Color => {
 //
 //
 
-export type MoveInput = ChessTs.PartialMove
+export type MoveInput = {
+  from: string,
+  to: string,
+  promotion: PieceSymbol
+}
 
 export type MoveProblem = "invalid_move"
 
@@ -187,6 +193,16 @@ export const move = (
     pgn: instance.pgn(),
     didCapture: Boolean(moved.captured),
   })
+}
+
+export const toLegalMoveInputs = (model: Model): MoveInput[] => {
+  const instance = _createInstance(model)
+  const moves = instance.moves({ verbose: true })
+  return moves.map(move => ({
+    from: move.from,
+    promotion: move.promotion ?? "q",
+    to: move.to,
+  }))
 }
 
 //

@@ -1,5 +1,6 @@
-import { Cmd, exhaustive, Option, Sub } from "../../../Core"
+import { Cmd, exhaustive, Option, pipe, Sub } from "../../../Core"
 import { UserId } from "../../../Data"
+import * as Board from '../Board'
 import {
   BackendModel,
   BackendMsg,
@@ -7,11 +8,14 @@ import {
   inputBot,
   inputColor,
   inputUser,
+  isBotTurn,
+  inputMove,
   Res,
   startGame,
   stopGame,
   ToBackend,
   ToFrontend,
+  botMoved,
 } from "./UserVsBot.Types"
 
 //
@@ -53,20 +57,58 @@ export const update = (
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
-    case "None": {
-      return [model, Cmd.None]
+    case "BotMoved": {
+      const result = botMoved(msg[1], model)
+
+      const modelNew = result.type === "Err" ? model : result.value
+
+      return [modelNew, sendToRoom(["BotMoved_Done", result])]
     }
   }
 }
 
+type Wire = {
+  sendToClient: (msg: ToFrontend) => Cmd.Cmd<never>
+  sendToRoom: (msg: ToFrontend) => Cmd.Cmd<never>
+}
+
 export const updateFromFrontend = (
+  wire: Wire,
+  msg: ToBackend,
+  model: Model,
+): [Model, Cmd.Cmd<Msg>] => {
+  const [modelNew, cmd] = updateFromFrontend_(wire, msg, model)
+
+  return [modelNew, Cmd.batch([cmd, toBotMoveCmd(model, modelNew)])]
+}
+
+const toBotMoveCmd = (model: Model, modelNew: Model): Cmd.Cmd<Msg> => {
+  if (model.type !== 'Game') {
+    return Cmd.None
+  }
+
+  const didChangeToBotTurn = !isBotTurn(model) && isBotTurn(modelNew)
+
+  if (!didChangeToBotTurn) {
+    return Cmd.None
+  }
+
+  const legalMoveInputs = Board.toLegalMoveInputs(model.board)
+
+  const randomMoveInput = legalMoveInputs[Math.floor(Math.random() * legalMoveInputs.length)]
+
+  if (!randomMoveInput) {
+    return Cmd.None
+  }
+
+  return Cmd.of(['BotMoved', randomMoveInput])
+}
+
+export const updateFromFrontend_ = (
   {
     sendToClient,
     sendToRoom,
-  }: {
-    sendToClient: (msg: ToFrontend) => Cmd.Cmd<never>
-    sendToRoom: (msg: ToFrontend) => Cmd.Cmd<never>
-  },
+  }: Wire,
   msg: ToBackend,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
@@ -113,6 +155,14 @@ export const updateFromFrontend = (
       const modelNew = result.type === "Err" ? model : result.value
 
       return [modelNew, sendToRoom(["InputBot_Done", result])]
+    }
+
+    case 'InputMove': {
+      const result = inputMove(msg[1], model)
+
+      const modelNew = result.type === "Err" ? model : result.value
+
+      return [modelNew, sendToRoom(["InputMove_Done", result])]
     }
   }
 }

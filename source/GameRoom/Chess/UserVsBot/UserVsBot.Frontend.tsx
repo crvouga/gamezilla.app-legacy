@@ -27,6 +27,8 @@ import {
   inputBotProblemToString,
   inputColor,
   inputColorProblemToString,
+  isBotTurn,
+  inputMove,
 } from "./UserVsBot.Types"
 
 //
@@ -106,6 +108,15 @@ export const update = (
       return [model, sendToBackend(msg)]
     }
 
+    case "InputMove": {
+
+      // const result = inputMove(msg[1], model.sharedModel)
+
+      // const sharedModelNew = result.type === 'Err' ? model.sharedModel : result.value
+
+      return [model, sendToBackend(msg)]
+    }
+
     default: {
       return exhaustive(msg[0])
     }
@@ -125,9 +136,14 @@ export const updateFromBackend = (
       return [model, Cmd.None, []]
     }
 
+    case 'BotMoved_Done': {
+      return [model, Cmd.None, []]
+    }
+
     case "InputUser_Done":
     case "InputColor_Done":
     case "InputBot_Done":
+    case 'InputMove_Done':
     case "StartGame_Done":
     case "StopGame_Done": {
       return handleResponse(msg, model)
@@ -423,15 +439,17 @@ export const View = ({
                 : ""
             }
           >
-            <UI.Button
-              fullWidth
-              size="large"
-              variant="contained"
-              disabled={startGameResult.type === "Err"}
-              onClick={() => dispatch(["StartGame", { userId: currentUserId }])}
-            >
-              Start Game
-            </UI.Button>
+            <span>
+              <UI.Button
+                fullWidth
+                size="large"
+                variant="contained"
+                disabled={startGameResult.type === "Err"}
+                onClick={() => dispatch(["StartGame", { userId: currentUserId }])}
+              >
+                Start Game
+              </UI.Button>
+            </span>
           </UI.Tooltip>
         </UI.Box>
       </UI.FillBox>
@@ -446,23 +464,53 @@ export const View = ({
             onClick={() => dispatch(["StopGame", { userId: currentUserId }])}
             sx={{ marginLeft: -1 }}
           >
-            Back
+            Stop
           </UI.Button>
         }
         title=""
         right={roomAvatarGroup}
       />
 
+      <UI.Box sx={{ paddingX: 2, paddingY: 1, display: 'flex', alignItems: "center" }}>
+        <UI.Icons.SmartToy sx={{ width: 42, height: 42, marginRight: 2 }} />
+
+        <UI.Box sx={{ flex: 1 }}>
+          <UI.Typography variant="h5" sx={{ marginBottom: -1 }}>
+            {model.sharedModel.botDifficulty}
+          </UI.Typography>
+          <UI.Typography variant="caption" color="text.secondary">
+            Bot
+          </UI.Typography>
+        </UI.Box>
+        <UI.Grow in={isBotTurn(model.sharedModel)}>
+          <UI.CircularProgress
+            // sx={{ width: 24, height: 24 }}
+            size={24}
+          />
+        </UI.Grow>
+
+      </UI.Box>
+
       <Board.View
-        boardOrientation="w"
+        boardOrientation={model.sharedModel.userColor}
         isDraggablePiece={({ piece }) => {
           return true
         }}
         model={model.sharedModel.board}
         onPieceDrop={(move) => {
+          dispatch(["InputMove", { userId: currentUserId, from: move.from, to: move.to, promotion: move.promotion }])
           return true
         }}
+
       />
+
+      <UI.Box sx={{ paddingX: 2, paddingY: 1, display: 'flex', alignItems: "center" }}>
+        <UI.Avatar src={store.Profile[model.sharedModel.userId]?.avatarUrl} sx={{ marginRight: 2 }} />
+
+        <UI.Typography variant="h6">
+          {store.Profile[model.sharedModel.userId]?.username}
+        </UI.Typography>
+      </UI.Box>
     </UI.FillBox>
   )
 }
