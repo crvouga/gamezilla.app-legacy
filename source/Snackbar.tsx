@@ -1,6 +1,7 @@
-import { SxProps } from "@mui/material"
-import * as UI from "./UI"
-import { Cmd, pipe, Task, Time, Uuid } from "./Core"
+
+import { Cmd, Time, Uuid } from "./Core";
+import * as UI from "./UI";
+
 
 //
 //
@@ -104,11 +105,9 @@ const removeById = (snackId: string, model: Model): [Model, Cmd.Cmd<Msg>] => [
 //
 
 export const View = ({
-  sx,
   dispatch,
   model,
 }: {
-  sx?: SxProps
   model: Model
   dispatch: (msg: Msg) => void
 }) => {
@@ -121,12 +120,16 @@ export const View = ({
   return (
     <UI.Portal>
       <UI.Snackbar
-        sx={sx}
+        anchorOrigin={{
+          horizontal: "center",
+          vertical: "top"
+        }}
         open
         message={snack.message}
         onClose={() => dispatch(["ClickedAwayClose", snack.snackId])}
-      >
-        <UI.Alert
+      />
+
+      {/* <UI.Alert
           variant="filled"
           onClose={() => dispatch(["ClickedClose", snack.snackId])}
           severity={snack.variant === "Error" ? "error" : "info"}
@@ -135,7 +138,7 @@ export const View = ({
           {snack.title && <UI.AlertTitle>{snack.title}</UI.AlertTitle>}
           {snack.message}
         </UI.Alert>
-      </UI.Snackbar>
+      </UI.Snackbar> */}
     </UI.Portal>
   )
 }

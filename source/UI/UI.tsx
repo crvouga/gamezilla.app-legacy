@@ -4,6 +4,11 @@ import { blue } from "@mui/material/colors"
 import { keyframes } from "@mui/system"
 import { ReactNode, useEffect, useMemo, useRef } from "react"
 import * as Icons from "./Icons"
+import Slide, { SlideProps } from '@mui/material/Slide';
+
+const SlideTransition = (props: SlideProps) => {
+  return <Slide {...props} direction="down" />;
+}
 
 //
 //
@@ -34,6 +39,15 @@ const createTheme = ({ mode }: { mode: "light" | "dark" }) =>
               animationDuration: `${1 / 2}s`,
             },
           },
+        },
+        MuiSnackbar: {
+          defaultProps: {
+            anchorOrigin: {
+              horizontal: "center",
+              vertical: "top"
+            },
+            TransitionComponent: SlideTransition
+          }
         },
         MuiTooltip: {
           defaultProps: {

@@ -26,63 +26,63 @@ export type BackendModel = {
 
 export type SharedModel =
   | {
-      type: "Setup"
-      clockPreset: Clock.Preset
-      w: Option.Option<UserId.UserId>
-      b: Option.Option<UserId.UserId>
-    }
+    type: "Setup"
+    clockPreset: Clock.Preset
+    w: Option.Option<UserId.UserId>
+    b: Option.Option<UserId.UserId>
+  }
   | {
-      type: "Starting"
-      clockPreset: Clock.Preset
-      w: UserId.UserId
-      b: UserId.UserId
-      countDown: 3 | 2 | 1
-    }
+    type: "Starting"
+    clockPreset: Clock.Preset
+    w: UserId.UserId
+    b: UserId.UserId
+    countDown: 3 | 2 | 1
+  }
   | {
-      type: "Game"
-      drawAgreement: DrawAgreement
-      w: UserId.UserId
-      b: UserId.UserId
-      clock: Clock.Clock
-      board: Board.Model
-    }
+    type: "Game"
+    drawAgreement: DrawAgreement
+    w: UserId.UserId
+    b: UserId.UserId
+    clock: Clock.Clock
+    board: Board.Model
+  }
   | {
-      type: "GameOver"
-      gameOver: GameOver
-      w: UserId.UserId
-      b: UserId.UserId
-      clock: Clock.Clock
-      board: Board.Model
-    }
+    type: "GameOver"
+    gameOver: GameOver
+    w: UserId.UserId
+    b: UserId.UserId
+    clock: Clock.Clock
+    board: Board.Model
+  }
 
 export type DrawAgreement =
   | {
-      type: "NotAsking"
-    }
+    type: "NotAsking"
+  }
   | {
-      type: "Asking"
-      asker: Board.Color
-    }
+    type: "Asking"
+    asker: Board.Color
+  }
 
 export type GameOver =
   | {
-      type: "Resignation"
-      resigner: Board.Color
-    }
+    type: "Resignation"
+    resigner: Board.Color
+  }
   | {
-      type: "DrawByAgreement"
-    }
+    type: "DrawByAgreement"
+  }
   | {
-      type: "Checkmate"
-      winner: Board.Color
-    }
+    type: "Checkmate"
+    winner: Board.Color
+  }
   | {
-      type: "Stalemate"
-    }
+    type: "Stalemate"
+  }
   | {
-      type: "WinOnTime"
-      winner: Board.Color
-    }
+    type: "WinOnTime"
+    winner: Board.Color
+  }
 
 export const initShared = ({
   userId,
@@ -121,6 +121,7 @@ export type ToFrontend =
   | ["GameOver"]
   | ["GameStarted"]
   | CountDownElapsed_Done
+  | ClockTicked_Done
   | Res
 
 export type ToBackend = ["Init"] | Req
@@ -135,6 +136,7 @@ export type Req =
   | RespondToDraw
   | NewGame
   | CancelStartGame
+  | CancelDraw
 
 export type Res =
   | InputPlayer_Done
@@ -146,6 +148,7 @@ export type Res =
   | RespondToDraw_Done
   | NewGame_Done
   | CancelStartGame_Done
+  | CancelDraw_Done
 
 //
 //
@@ -258,8 +261,8 @@ export const inputPlayer = (
 
   const otherPlayerNew =
     otherPlayer.type === "Some" &&
-    targetPlayer.type === "Some" &&
-    otherPlayer.value === targetPlayer.value
+      targetPlayer.type === "Some" &&
+      otherPlayer.value === targetPlayer.value
       ? Option.None
       : otherPlayer
 
@@ -469,6 +472,43 @@ export const respondToDraw = (
   return Result.Ok(modelNew)
 }
 
+export type CancelDraw = ['CancelDraw', { userId: UserId.UserId }]
+export type CancelDraw_Done = ['CancelDraw_Done', Result.Result<CancelDrawProblem, SharedModel>]
+export type CancelDrawProblem = "must_be_in_game_mode" | "must_be_asking_for_a_draw" | "must_be_the_one_asking" | "must_be_playing"
+
+export const cancelDraw = ({ userId }: CancelDraw[1], model: SharedModel): CancelDraw_Done[1] => {
+
+  if (model.type !== 'Game') {
+    return Result.Err("must_be_in_game_mode")
+  }
+
+  if (model.drawAgreement.type === 'NotAsking') {
+    return Result.Err("must_be_asking_for_a_draw")
+  }
+
+
+  const color: Board.Color | "None" = model.b === userId ? 'b' : model.w === userId ? 'w' : "None"
+
+  if (color === 'None') {
+    return Result.Err("must_be_playing")
+  }
+
+  if (model.drawAgreement.asker !== color) {
+    return Result.Err("must_be_the_one_asking")
+  }
+
+  const modelNew: SharedModel = {
+    ...model,
+    drawAgreement: {
+      type: "NotAsking"
+    }
+  }
+
+  return Result.Ok(modelNew)
+}
+
+
+
 //
 //
 //
@@ -538,6 +578,7 @@ export const newGame = (model: SharedModel): NewGame_Done[1] => {
 //
 
 export type ClockTicked = ["ClockTicked"]
+export type ClockTicked_Done = ["ClockTicked", SharedModel]
 
 export const clockTicked = (model: SharedModel): SharedModel => {
   if (model.type !== "Game") {

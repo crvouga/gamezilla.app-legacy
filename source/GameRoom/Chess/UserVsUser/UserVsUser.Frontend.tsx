@@ -1,6 +1,7 @@
 import { Audio, Cmd, exhaustive, Option, pipe, Sub, tag } from "../../../Core"
 import { UserId } from "../../../Data"
 import * as Store from "../../../Store"
+import * as Snackbar from "../../../Snackbar"
 import * as UI from "../../../UI"
 import * as Clock from "../Clock"
 import * as Sounds from "../Sounds"
@@ -60,6 +61,8 @@ export const init = ({
 
 export type Msg = FrontendMsg
 
+export type OutAction = Snackbar.Action
+
 export const update = (
   { sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd.Cmd<never> },
   msg: Msg,
@@ -68,7 +71,7 @@ export const update = (
   switch (msg[0]) {
     //
     //
-    // Frontend Only
+    // FrontendMsg
     //
     //
 
@@ -99,6 +102,7 @@ export const update = (
     //
     //
     //
+    // ToBackend
     //
     //
     //
@@ -145,6 +149,10 @@ export const update = (
       return [model, sendToBackend(msg)]
     }
 
+    case 'CancelDraw': {
+      return [model, sendToBackend(msg)]
+    }
+
     default:
       return exhaustive(msg[0])
   }
@@ -153,7 +161,7 @@ export const update = (
 export const updateFromBackend = (
   msg: ToFrontend,
   _model: Model,
-): [Model, Cmd.Cmd<Msg>] => {
+): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   const model: Model = { ..._model, openedMenuId: Option.None }
 
   switch (msg[0]) {
@@ -164,108 +172,111 @@ export const updateFromBackend = (
           sharedModel: msg[1],
         },
         Cmd.None,
+        []
       ]
     }
 
     case "InputClock_Done": {
-      return [model, Cmd.None]
+      return [model, Cmd.None, []]
     }
 
     case "Moved_Done": {
       if (msg[1].type === "Err") {
-        return [model, Cmd.None]
+        return [model, Cmd.None, []]
       }
 
       const sharedModelNew = msg[1].value
 
       if (sharedModelNew.type !== "Game") {
-        return [model, Cmd.None]
+        return [model, Cmd.None, []]
       }
 
       const soundCmd = Board.inCheck(sharedModelNew.board)
         ? playAudio(Sounds.check)
         : sharedModelNew.didCapture
-        ? playAudio(Sounds.capture)
-        : playAudio(Sounds.move)
+          ? playAudio(Sounds.capture)
+          : playAudio(Sounds.move)
 
-      return [{ ...model, sharedModel: sharedModelNew }, soundCmd]
+      return [{ ...model, sharedModel: sharedModelNew }, soundCmd, []]
     }
 
     case "InputPlayer_Done": {
       if (msg[1].type === "Err") {
-        return [model, Cmd.None]
+        return [model, Cmd.None, []]
       }
 
       const sharedModel = msg[1].value
 
-      return [{ ...model, sharedModel }, Cmd.None]
+      return [{ ...model, sharedModel }, Cmd.None, []]
     }
 
     case "StartGame_Done": {
       if (msg[1].type === "Err") {
-        return [model, Cmd.None]
+        return [model, Cmd.None, []]
       }
 
       const sharedModel = msg[1].value
 
-      return [{ ...model, sharedModel }, Cmd.None]
+      return [{ ...model, sharedModel }, Cmd.None, []]
     }
 
     case "RequestToDraw_Done": {
       switch (msg[1].type) {
         case "Err": {
-          return [model, Cmd.None]
+          return [model, Cmd.None, []]
         }
 
         case "Ok": {
           return [
             { ...model, openedModal: "AskedToDraw" },
-            playAudio(Sounds.uiUnlock),
-          ]
+            playAudio(Sounds.uiUnlock)
+            , []]
         }
       }
     }
 
     case "Resign_Done": {
       if (msg[1].type === "Err") {
-        return [model, Cmd.None]
+        return [model, Cmd.None, []]
       }
 
       const sharedModelNew = msg[1].value
 
       if (sharedModelNew.type === "Setup") {
-        return [model, Cmd.None]
+        return [model, Cmd.None, []]
       }
 
-      return [{ ...model, sharedModel: sharedModelNew }, Cmd.None]
+      return [{ ...model, sharedModel: sharedModelNew }, Cmd.None, []]
     }
 
     case "RespondToDraw_Done": {
       if (msg[1].type === "Err") {
-        return [model, Cmd.None]
+        return [model, Cmd.None, []]
       }
 
       const sharedModelNew = msg[1].value
 
-      if (sharedModelNew.type === "Setup") {
-        return [model, Cmd.None]
+      if (sharedModelNew.type === "GameOver") {
+        return [model, Cmd.None, []]
       }
 
-      return [{ ...model, sharedModel: sharedModelNew }, Cmd.None]
+      const action: OutAction = ['Snackbar', { variant: "Info", message: "Draw was declined" }]
+
+      return [{ ...model, sharedModel: sharedModelNew }, Cmd.None, [action]]
     }
 
     case "NewGame_Done": {
       if (msg[1].type === "Err") {
-        return [model, Cmd.None]
+        return [model, Cmd.None, []]
       }
 
       const sharedModelNew = msg[1].value
 
       if (sharedModelNew.type === "Setup") {
-        return [model, playAudio(Sounds.navigationCancel)]
+        return [model, playAudio(Sounds.navigationCancel), []]
       }
 
-      return [{ ...model, sharedModel: sharedModelNew }, Cmd.None]
+      return [{ ...model, sharedModel: sharedModelNew }, Cmd.None, []]
     }
 
     case "GameOver": {
@@ -274,30 +285,48 @@ export const updateFromBackend = (
           ...model,
           openedModal: "GameOver",
         },
-        playAudio(Sounds.gameOver),
-      ]
+        playAudio(Sounds.gameOver)
+        , []]
     }
 
     case "GameStarted": {
-      return [model, playAudio(Sounds.gameStart)]
+      return [model, playAudio(Sounds.gameStart), []]
     }
 
     case "CountDownElapsed_Done": {
       const sharedModel = msg[1]
 
-      return [{ ...model, sharedModel }, Cmd.None]
+      return [{ ...model, sharedModel }, Cmd.None, []]
     }
 
     case "CancelStartGame_Done": {
       const result = msg[1]
 
       if (result.type === "Err") {
-        return [model, Cmd.None]
+        return [model, Cmd.None, []]
       }
 
       const sharedModel = result.value
 
-      return [{ ...model, sharedModel }, Cmd.None]
+      return [{ ...model, sharedModel }, Cmd.None, []]
+    }
+
+    case 'ClockTicked': {
+      const sharedModel = msg[1]
+
+      return [{ ...model, sharedModel }, Cmd.None, []]
+    }
+
+    case 'CancelDraw_Done': {
+      const result = msg[1]
+
+      if (result.type === 'Err') {
+        return [model, Cmd.None, []]
+      }
+
+      const action: OutAction = ['Snackbar', { variant: "Info", message: "Draw was cancelled" }]
+
+      return [{ ...model, sharedModel: result.value }, Cmd.None, [action]]
     }
 
     default: {
@@ -608,10 +637,10 @@ export const View = ({
     currentUserId === w && currentUserId === b
       ? "Both"
       : currentUserId === w
-      ? "w"
-      : currentUserId === b
-      ? "b"
-      : "None"
+        ? "w"
+        : currentUserId === b
+          ? "b"
+          : "None"
 
   const boardOrientation: Board.Color = pipe(
     currentUserColor === "None" || currentUserColor === "Both"
@@ -765,21 +794,44 @@ export const View = ({
                   confirmTitle="Ask"
                 />
 
-                <UI.LoadingDialog
+                <UI.Dialog
+                  open={
+                    model.sharedModel.type === "Game" &&
+                    model.sharedModel.drawAgreement.type === "Asking" &&
+                    model.sharedModel.drawAgreement.asker === currentUserColor
+                  }
+                >
+
+                  <UI.DialogContent>
+                    <UI.Box sx={{ display: "flex", alignItems: "center", }}>
+                      <UI.CircularProgress sx={{ marginRight: 2 }} />
+                      <UI.Typography variant="h6">
+                        Waiting on response...
+                      </UI.Typography>
+                    </UI.Box>
+                  </UI.DialogContent>
+                  <UI.DialogActions>
+                    <UI.Button onClick={() => dispatch(['CancelDraw', { userId: currentUserId }])}>
+                      Cancel
+                    </UI.Button>
+                  </UI.DialogActions>
+                </UI.Dialog>
+
+                {/* <UI.LoadingDialog
                   open={
                     model.sharedModel.type === "Game" &&
                     model.sharedModel.drawAgreement.type === "Asking" &&
                     model.sharedModel.drawAgreement.asker === currentUserColor
                   }
                   title="Waiting on response..."
-                />
+                /> */}
 
                 <UI.ConformationDialog
                   open={
                     model.sharedModel.type === "Game" &&
                     model.sharedModel.drawAgreement.type === "Asking" &&
                     model.sharedModel.drawAgreement.asker ===
-                      Board.toOppositeColor(currentUserColor)
+                    Board.toOppositeColor(currentUserColor)
                   }
                   headerIcon={
                     <UI.Icons.HandshakeTwoTone
