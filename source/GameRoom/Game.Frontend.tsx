@@ -133,7 +133,7 @@ export const update = (
 }
 
 export const updateFromBackend = (
-  { sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd.Cmd<never> },
+  { currentUserId, sendToBackend }: { currentUserId: UserId.UserId, sendToBackend: (msg: ToBackend) => Cmd.Cmd<never> },
   msg: ToFrontend,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
@@ -175,7 +175,7 @@ export const updateFromBackend = (
     case "Chess": {
       if (model[0] === "Chess") {
         const [child, cmd, actions] = Chess.updateFromBackend(
-          { sendToBackend: (msg) => sendToBackend(["Chess", msg]) },
+          { currentUserId, sendToBackend: (msg) => sendToBackend(["Chess", msg]) },
           msg[1],
           model[1],
         )

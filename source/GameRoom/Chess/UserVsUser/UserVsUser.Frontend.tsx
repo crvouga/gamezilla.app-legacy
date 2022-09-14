@@ -1,7 +1,7 @@
 import { Audio, Cmd, exhaustive, Option, pipe, Sub, tag } from "../../../Core"
 import { UserId } from "../../../Data"
-import * as Store from "../../../Store"
 import * as Snackbar from "../../../Snackbar"
+import * as Store from "../../../Store"
 import * as UI from "../../../UI"
 import * as Clock from "../Clock"
 import * as Sounds from "../Sounds"
@@ -20,7 +20,7 @@ import {
   startGame,
   startGameProblemToString,
   ToBackend,
-  ToFrontend,
+  ToFrontend
 } from "./UserVsUser.Types"
 
 //
@@ -159,6 +159,7 @@ export const update = (
 }
 
 export const updateFromBackend = (
+  { currentUserId }: { currentUserId: UserId.UserId, },
   msg: ToFrontend,
   _model: Model,
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
@@ -220,6 +221,12 @@ export const updateFromBackend = (
       return [{ ...model, sharedModel }, Cmd.None, []]
     }
 
+    // 
+    //
+    // Draw
+    //
+    // 
+
     case "RequestToDraw_Done": {
       switch (msg[1].type) {
         case "Err": {
@@ -230,10 +237,59 @@ export const updateFromBackend = (
           return [
             { ...model, openedModal: "AskedToDraw" },
             playAudio(Sounds.uiUnlock)
-            , []]
+            , []
+          ]
         }
       }
     }
+
+    case "RespondToDraw_Done": {
+      if (msg[1].type === "Err") {
+        return [model, Cmd.None, []]
+      }
+
+      const sharedModel = msg[1].value
+
+      if (sharedModel.type === "GameOver") {
+        return [{ ...model, sharedModel }, Cmd.None, []]
+      }
+
+      const isNotPlaying = sharedModel.type === 'Game' && sharedModel.w !== currentUserId && sharedModel.b !== currentUserId
+
+      if (isNotPlaying) {
+        return [{ ...model, sharedModel }, Cmd.None, []]
+      }
+
+      const action: OutAction = ['Snackbar', { variant: "Info", message: "Draw was declined" }]
+
+      return [{ ...model, sharedModel }, Cmd.None, [action]]
+    }
+
+    case 'CancelDraw_Done': {
+      const result = msg[1]
+
+      if (result.type === 'Err') {
+        return [model, Cmd.None, []]
+      }
+
+      const sharedModel = result.value
+
+      const isNotPlaying = sharedModel.type === 'Game' && sharedModel.w !== currentUserId && sharedModel.b !== currentUserId
+
+      if (isNotPlaying) {
+        return [{ ...model, sharedModel }, Cmd.None, []]
+      }
+
+      const action: OutAction = ['Snackbar', { variant: "Info", message: "Draw was cancelled" }]
+
+      return [{ ...model, sharedModel }, Cmd.None, [action]]
+    }
+
+    // 
+    // 
+    // 
+    // 
+    // 
 
     case "Resign_Done": {
       if (msg[1].type === "Err") {
@@ -249,21 +305,6 @@ export const updateFromBackend = (
       return [{ ...model, sharedModel: sharedModelNew }, Cmd.None, []]
     }
 
-    case "RespondToDraw_Done": {
-      if (msg[1].type === "Err") {
-        return [model, Cmd.None, []]
-      }
-
-      const sharedModelNew = msg[1].value
-
-      if (sharedModelNew.type === "GameOver") {
-        return [model, Cmd.None, []]
-      }
-
-      const action: OutAction = ['Snackbar', { variant: "Info", message: "Draw was declined" }]
-
-      return [{ ...model, sharedModel: sharedModelNew }, Cmd.None, [action]]
-    }
 
     case "NewGame_Done": {
       if (msg[1].type === "Err") {
@@ -308,7 +349,9 @@ export const updateFromBackend = (
 
       const sharedModel = result.value
 
-      return [{ ...model, sharedModel }, Cmd.None, []]
+      const action: OutAction = ['Snackbar', { variant: "Info", message: "Game was cancelled" }]
+
+      return [{ ...model, sharedModel }, Cmd.None, [action]]
     }
 
     case 'ClockTicked': {
@@ -317,17 +360,7 @@ export const updateFromBackend = (
       return [{ ...model, sharedModel }, Cmd.None, []]
     }
 
-    case 'CancelDraw_Done': {
-      const result = msg[1]
 
-      if (result.type === 'Err') {
-        return [model, Cmd.None, []]
-      }
-
-      const action: OutAction = ['Snackbar', { variant: "Info", message: "Draw was cancelled" }]
-
-      return [{ ...model, sharedModel: result.value }, Cmd.None, [action]]
-    }
 
     default: {
       return exhaustive(msg[0])
