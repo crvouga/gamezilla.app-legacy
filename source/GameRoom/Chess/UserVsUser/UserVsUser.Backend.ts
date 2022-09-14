@@ -19,6 +19,7 @@ import {
   ToBackend,
   ToFrontend,
   cancelStartGame,
+  cancelDraw,
 } from "./UserVsUser.Types"
 
 //
@@ -70,7 +71,7 @@ export const update = (
       return [
         modelNew,
         Cmd.batch([
-          sendToRoom(["Sync", modelNew.sharedModel]),
+          sendToRoom(["ClockTicked", modelNew.sharedModel]),
           didChangeToGameOver ? sendToRoom(["GameOver"]) : Cmd.None,
         ]),
       ]
@@ -182,6 +183,14 @@ export const updateFromFrontend = (
       )
     }
 
+    case 'CancelDraw': {
+      return sendResponse(
+        wire,
+        ["CancelDraw_Done", cancelDraw(msg[1], model.sharedModel)],
+        model,
+      )
+    }
+
     default: {
       return exhaustive(msg[0])
     }
@@ -249,7 +258,7 @@ export const subscriptions = (
     }
 
     case "Starting": {
-      return Time.every(`${intervalId}-count-down`, 1000, () => [
+      return Time.every(`${intervalId}-count-down`, (3 / 4) * 1000, () => [
         "CountDownElapsed",
       ])
     }

@@ -118,9 +118,9 @@ export const updateFromBackend = (
 
     case "UserVsUser": {
       if (model[0] === "UserVsUser") {
-        const [child, cmd] = UserVsUser.updateFromBackend(msg[1], model[1])
+        const [child, cmd, actions] = UserVsUser.updateFromBackend(msg[1], model[1])
 
-        return [["UserVsUser", child], tagCmd("UserVsUser", cmd), []]
+        return [["UserVsUser", child], tagCmd("UserVsUser", cmd), actions]
       }
 
       return [model, Cmd.None, []]
