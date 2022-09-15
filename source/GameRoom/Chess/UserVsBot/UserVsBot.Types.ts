@@ -288,17 +288,12 @@ export const startGame = (
 export type StopGame = ["StopGame", { userId: UserId.UserId }]
 export type StopGame_Done = [
   "StopGame_Done",
-  Result.Result<"must_be_started" | "must_be_playing", SharedModel>,
+  Result.Result<"must_be_playing", SharedModel>,
 ]
 export const stopGame = (
   { userId }: StopGame[1],
   model: SharedModel,
 ): StopGame_Done[1] => {
-
-  if (model.type !== "Game") {
-    return Result.Err("must_be_started")
-  }
-
   if (model.userId !== userId) {
     return Result.Err("must_be_playing")
   }
@@ -395,7 +390,7 @@ export const inputMove = (
 // 
 
 export type BotMoved = ['BotMoved', Board.MoveInput]
-export type BotMoved_Done = ['BotMoved_Done', Result.Result<BotMovedProblem, SharedModel>]
+export type BotMoved_Done = ['BotMoved_Done', Result.Result<BotMovedProblem, SharedModel & { didCapture: boolean }>]
 export type BotMovedProblem =
   | Board.MoveProblem
   | "must_be_started"
@@ -406,7 +401,9 @@ export const botMoved = (moveInput: BotMoved[1], model: SharedModel): BotMoved_D
     return Result.Err("must_be_started")
   }
 
-  if (Board.toTurn(model.board) !== model.userColor) {
+  const botColor = Board.toOppositeColor(model.userColor)
+
+  if (Board.toTurn(model.board) !== botColor) {
     return Result.Err("must_be_turn")
   }
 
@@ -416,5 +413,11 @@ export const botMoved = (moveInput: BotMoved[1], model: SharedModel): BotMoved_D
     return result
   }
 
-  return Result.Ok(model)
+  const { didCapture, ...board } = result.value
+
+  return Result.Ok({
+    ...model,
+    board,
+    didCapture
+  })
 }
