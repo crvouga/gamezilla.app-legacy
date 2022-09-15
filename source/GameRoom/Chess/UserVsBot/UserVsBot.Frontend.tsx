@@ -110,11 +110,11 @@ export const update = (
 
     case "InputMove": {
 
-      // const result = inputMove(msg[1], model.sharedModel)
+      const result = inputMove(msg[1], model.sharedModel)
 
-      // const sharedModelNew = result.type === 'Err' ? model.sharedModel : result.value
+      const sharedModel = result.type === 'Err' ? model.sharedModel : result.value
 
-      return [model, sendToBackend(msg)]
+      return [{ ...model, sharedModel: sharedModel }, sendToBackend(msg)]
     }
 
     default: {
@@ -137,7 +137,16 @@ export const updateFromBackend = (
     }
 
     case 'BotMoved_Done': {
-      return [model, Cmd.None, []]
+
+      const result = msg[1]
+
+      if (result.type === 'Err') {
+        return [model, Cmd.None, []]
+      }
+
+      const { didCapture, ...sharedModel } = result.value
+
+      return [{ ...model, sharedModel }, Cmd.None, []]
     }
 
     case "InputUser_Done":
@@ -475,11 +484,11 @@ export const View = ({
         <UI.Icons.SmartToy sx={{ width: 42, height: 42, marginRight: 2 }} />
 
         <UI.Box sx={{ flex: 1 }}>
-          <UI.Typography variant="h5" sx={{ marginBottom: -1 }}>
+          <UI.Typography
+            variant="h6"
+            sx={{ fontFamily: "Roboto Mono" }}
+          >
             {model.sharedModel.botDifficulty}
-          </UI.Typography>
-          <UI.Typography variant="caption" color="text.secondary">
-            Bot
           </UI.Typography>
         </UI.Box>
         <UI.Grow in={isBotTurn(model.sharedModel)}>
@@ -494,7 +503,7 @@ export const View = ({
       <Board.View
         boardOrientation={model.sharedModel.userColor}
         isDraggablePiece={({ piece }) => {
-          return true
+          return Board.toColor(piece) === model.sharedModel.userColor
         }}
         model={model.sharedModel.board}
         onPieceDrop={(move) => {

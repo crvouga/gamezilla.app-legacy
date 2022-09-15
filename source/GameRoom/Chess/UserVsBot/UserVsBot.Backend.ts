@@ -1,21 +1,15 @@
-import { Cmd, exhaustive, Option, pipe, Sub } from "../../../Core"
+import { Cmd, Option, pipe, Sub, Time } from "../../../Core"
 import { UserId } from "../../../Data"
 import * as Board from '../Board'
 import {
   BackendModel,
-  BackendMsg,
-  initShared,
+  BackendMsg, botMoved, initShared,
   inputBot,
-  inputColor,
-  inputUser,
-  isBotTurn,
-  inputMove,
-  Res,
-  startGame,
+  inputColor, inputMove, inputUser,
+  isBotTurn, startGame,
   stopGame,
   ToBackend,
-  ToFrontend,
-  botMoved,
+  ToFrontend
 } from "./UserVsBot.Types"
 
 //
@@ -82,18 +76,19 @@ export const updateFromFrontend = (
   return [modelNew, Cmd.batch([cmd, toBotMoveCmd(model, modelNew)])]
 }
 
-const toBotMoveCmd = (model: Model, modelNew: Model): Cmd.Cmd<Msg> => {
-  if (model.type !== 'Game') {
-    return Cmd.None
-  }
+const toBotMoveCmd = (modelPrev: Model, modelNew: Model): Cmd.Cmd<Msg> => {
 
-  const didChangeToBotTurn = !isBotTurn(model) && isBotTurn(modelNew)
+  const didChangeToBotTurn = !isBotTurn(modelPrev) && isBotTurn(modelNew)
 
   if (!didChangeToBotTurn) {
     return Cmd.None
   }
 
-  const legalMoveInputs = Board.toLegalMoveInputs(model.board)
+  if (modelNew.type !== 'Game') {
+    return Cmd.None
+  }
+
+  const legalMoveInputs = Board.toLegalMoveInputs(modelNew.board)
 
   const randomMoveInput = legalMoveInputs[Math.floor(Math.random() * legalMoveInputs.length)]
 
@@ -101,7 +96,8 @@ const toBotMoveCmd = (model: Model, modelNew: Model): Cmd.Cmd<Msg> => {
     return Cmd.None
   }
 
-  return Cmd.of(['BotMoved', randomMoveInput])
+  return pipe(Time.delay<Msg>(1000 / 5, ['BotMoved', randomMoveInput]), Cmd.perform(x => x))
+
 }
 
 export const updateFromFrontend_ = (
