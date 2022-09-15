@@ -251,7 +251,7 @@ export const View = ({
       model.sharedModel,
     )
     const inputBotResult = inputBot(
-      { botDifficulty: model.sharedModel.botDifficulty, userId: currentUserId },
+      { botLevel: model.sharedModel.botLevel, userId: currentUserId },
       model.sharedModel,
     )
     const inputColorResult = inputColor(
@@ -334,6 +334,44 @@ export const View = ({
           )}
         </UI.Box>
 
+
+        <UI.Typography
+          sx={{ paddingX: 2 }}
+          color="text.secondary"
+        >
+          Bot
+        </UI.Typography>
+
+        <UI.Box sx={{ paddingX: 2, paddingBottom: 2 }}>
+          <UI.Tooltip
+            enterTouchDelay={0}
+            title={
+              inputBotResult.type === "Err"
+                ? inputBotProblemToString(inputBotResult.error)
+                : ""
+            }
+          >
+
+            <UI.Select fullWidth value={model.sharedModel.botLevel}>
+              {Board.allBotLevel.map(botLevel => (
+                <UI.MenuItem
+                  selected={model.sharedModel.botLevel === botLevel}
+                  value={botLevel}
+                  key={botLevel}
+                  onClick={() => {
+                    dispatch([
+                      "InputBot",
+                      { botLevel, userId: currentUserId },
+                    ])
+                  }}
+                >
+                  {Board.botLevelToString(botLevel)}
+                </UI.MenuItem>
+              ))}
+            </UI.Select>
+          </UI.Tooltip>
+        </UI.Box >
+
         <UI.Typography
           sx={{ paddingX: 2 }}
           color="text.secondary"
@@ -379,65 +417,6 @@ export const View = ({
             </UI.ToggleButtonGroup>
           </UI.Tooltip>
         </UI.Box>
-
-        <UI.Typography
-          sx={{ paddingX: 2 }}
-          color="text.secondary"
-        >
-          Bot
-        </UI.Typography>
-
-        <UI.Box sx={{ paddingX: 2 }}>
-          <UI.Tooltip
-            enterTouchDelay={0}
-            title={
-              inputBotResult.type === "Err"
-                ? inputBotProblemToString(inputBotResult.error)
-                : ""
-            }
-          >
-            <UI.ToggleButtonGroup
-              disabled={inputBotResult.type === "Err"}
-              fullWidth
-              value={model.sharedModel.botDifficulty}
-            >
-              <UI.ToggleButton
-                value="Easy"
-                onClick={() =>
-                  dispatch([
-                    "InputBot",
-                    { botDifficulty: "Easy", userId: currentUserId },
-                  ])
-                }
-              >
-                Easy
-              </UI.ToggleButton>
-              <UI.ToggleButton
-                value="Medium"
-                onClick={() =>
-                  dispatch([
-                    "InputBot",
-                    { botDifficulty: "Medium", userId: currentUserId },
-                  ])
-                }
-              >
-                Medium
-              </UI.ToggleButton>
-              <UI.ToggleButton
-                value="Hard"
-                onClick={() =>
-                  dispatch([
-                    "InputBot",
-                    { botDifficulty: "Hard", userId: currentUserId },
-                  ])
-                }
-              >
-                Hard
-              </UI.ToggleButton>
-            </UI.ToggleButtonGroup>
-          </UI.Tooltip>
-        </UI.Box>
-
         <UI.Box sx={{ flex: 1 }} />
 
         <UI.Box sx={{ paddingX: 2, paddingBottom: 1 }}>
@@ -461,7 +440,7 @@ export const View = ({
             </span>
           </UI.Tooltip>
         </UI.Box>
-      </UI.FillBox>
+      </UI.FillBox >
     )
   }
 
@@ -488,7 +467,7 @@ export const View = ({
             variant="h6"
             sx={{ fontFamily: "Roboto Mono" }}
           >
-            {model.sharedModel.botDifficulty}
+            {Board.botLevelToString(model.sharedModel.botLevel)}
           </UI.Typography>
         </UI.Box>
         <UI.Grow in={isBotTurn(model.sharedModel)}>
