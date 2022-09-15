@@ -25,7 +25,7 @@ export type SetupModel = {
   type: "Setup"
   userColor: Board.Color
   userId: Option.Option<UserId.UserId>
-  botDifficulty: BotDifficulty
+  botLevel: Board.BotLevel
 }
 
 export type GameModel = {
@@ -33,7 +33,7 @@ export type GameModel = {
   userColor: Board.Color
   userId: UserId.UserId
   board: Board.Model
-  botDifficulty: BotDifficulty
+  botLevel: Board.BotLevel
 }
 
 export type GameOverModel = {
@@ -42,7 +42,7 @@ export type GameOverModel = {
   userColor: Board.Color
   userId: UserId.UserId
   board: Board.Model
-  botDifficulty: BotDifficulty
+  botLevel: Board.BotLevel
 }
 
 export type GameOver =
@@ -58,13 +58,13 @@ export type GameOver =
     type: "Stalemate"
   }
 
-export type BotDifficulty = "Easy" | "Medium" | "Hard"
+export type BotLevel = "Easy" | "Medium" | "Hard"
 
 export const initShared: SharedModel = {
   type: "Setup",
   userColor: "w",
   userId: Option.None,
-  botDifficulty: "Medium",
+  botLevel: 1,
 }
 
 export const isBotTurn = (model: SharedModel) => {
@@ -184,7 +184,7 @@ export const inputColor = (
 
 export type InputBot = [
   "InputBot",
-  { botDifficulty: BotDifficulty; userId: UserId.UserId },
+  { botLevel: Board.BotLevel; userId: UserId.UserId },
 ]
 export type InputBot_Done = [
   "InputBot_Done",
@@ -205,7 +205,7 @@ export const inputBotProblemToString = (problem: InputBotProblem): string => {
 }
 
 export const inputBot = (
-  { botDifficulty, userId }: InputBot[1],
+  { botLevel, userId }: InputBot[1],
   model: SharedModel,
 ): InputBot_Done[1] => {
   if (model.type !== "Setup") {
@@ -222,7 +222,7 @@ export const inputBot = (
 
   const modelNew: SharedModel = {
     ...model,
-    botDifficulty,
+    botLevel: botLevel,
   }
   return Result.Ok(modelNew)
 }
@@ -272,7 +272,7 @@ export const startGame = (
   const modelNew: SharedModel = {
     type: "Game",
     board: Board.init(),
-    botDifficulty: model.botDifficulty,
+    botLevel: model.botLevel,
     userColor: model.userColor,
     userId: model.userId.value,
   }
@@ -300,7 +300,7 @@ export const stopGame = (
 
   const modelNew: SharedModel = {
     type: "Setup",
-    botDifficulty: model.botDifficulty,
+    botLevel: model.botLevel,
     userColor: model.userColor,
     userId: Option.Some(model.userId),
   }
@@ -389,17 +389,24 @@ export const inputMove = (
 // 
 // 
 
-export type BotMoved = ['BotMoved', Board.MoveInput]
+export type BotMoved = ['BotMoved', Board.BotMoveResult]
 export type BotMoved_Done = ['BotMoved_Done', Result.Result<BotMovedProblem, SharedModel & { didCapture: boolean }>]
 export type BotMovedProblem =
   | Board.MoveProblem
+  | Board.BotMoveProblem
   | "must_be_started"
   | "must_be_turn"
 
-export const botMoved = (moveInput: BotMoved[1], model: SharedModel): BotMoved_Done[1] => {
+export const botMoved = (botMoveResult: BotMoved[1], model: SharedModel): BotMoved_Done[1] => {
   if (model.type !== "Game") {
     return Result.Err("must_be_started")
   }
+
+  if (botMoveResult.type === 'Err') {
+    return botMoveResult
+  }
+
+  const botMoveInput = botMoveResult.value
 
   const botColor = Board.toOppositeColor(model.userColor)
 
@@ -407,7 +414,7 @@ export const botMoved = (moveInput: BotMoved[1], model: SharedModel): BotMoved_D
     return Result.Err("must_be_turn")
   }
 
-  const result = Board.move(moveInput, model.board)
+  const result = Board.move(botMoveInput, model.board)
 
   if (result.type === "Err") {
     return result
