@@ -192,7 +192,7 @@ export const update = (
 }
 
 export const updateFromBackend = (
-  { currentUserId, sendToBackend }: { currentUserId: UserId.UserId; sendToBackend: (msg: ToBackend) => Cmd.Cmd<never> },
+  { currentUserId, sendToBackend, store }: { currentUserId: UserId.UserId; sendToBackend: (msg: ToBackend) => Cmd.Cmd<never>, store: Store.Model },
   msg: ToFrontend,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
@@ -229,7 +229,7 @@ export const updateFromBackend = (
       const gameMsg = msg[2]
 
       const [gameNew, gameCmd, actions] = Game.updateFromBackend(
-        { currentUserId, sendToBackend: (msg) => sendToBackend(["Games", roomId, msg]) },
+        { currentUserId, sendToBackend: (msg) => sendToBackend(["Games", roomId, msg]), store },
         gameMsg,
         room.game.value,
       )
