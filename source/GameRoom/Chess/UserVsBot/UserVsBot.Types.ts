@@ -54,6 +54,19 @@ export const initShared: SharedModel = {
   botLevel: 1,
 }
 
+export const initBackend = ({
+  userId,
+}: {
+  userId: Option.Option<UserId.UserId>
+}): BackendModel => {
+  return {
+    type: "Setup",
+    botLevel: initShared.botLevel,
+    userColor: initShared.userColor,
+    userId,
+  }
+}
+
 export const isBotTurn = (model: SharedModel) => {
   return model.type === 'Game' && Board.toTurn(model.board) !== model.userColor
 }

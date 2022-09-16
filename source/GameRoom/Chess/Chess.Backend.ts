@@ -7,9 +7,10 @@ import {
   tagCmd,
   tagSub,
 } from "../../Core"
-import { BackendModel, BackendMsg, ToBackend, ToFrontend } from "./Chess.Types"
+import { BackendModel, BackendMsg, InputMode, InputMode_Done, ToBackend, ToFrontend } from "./Chess.Types"
 import * as UserVsUser from "./UserVsUser/UserVsUser.Backend"
 import * as UserVsBot from "./UserVsBot/UserVsBot.Backend"
+import { UserId } from "../../Data"
 
 //
 //
@@ -80,9 +81,11 @@ export const update = (
 
 export const updateFromFrontend = (
   {
+    hostId,
     sendToClient,
     sendToRoom,
   }: {
+    hostId: UserId.UserId
     sendToClient: (msg: ToFrontend) => Cmd.Cmd<never>
     sendToRoom: (msg: ToFrontend) => Cmd.Cmd<never>
   },
@@ -91,42 +94,13 @@ export const updateFromFrontend = (
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
     case "InputMode": {
-      const { mode, userId } = msg[1]
+      const result = inputMode({ hostId }, msg[1], model)
 
-      switch (mode) {
-        case "None": {
-          const modelNew: Model = ["None"]
-
-          return [
-            modelNew,
-            sendToRoom(["InputMode_Done", msg[1], Result.Ok(modelNew)]),
-          ]
-        }
-
-        case "UserVsBot": {
-          const modelNew: Model = [
-            "UserVsBot",
-            UserVsBot.init({ userId: Option.Some(userId) }),
-          ]
-
-          return [
-            modelNew,
-            sendToRoom(["InputMode_Done", msg[1], Result.Ok(modelNew)]),
-          ]
-        }
-
-        case "UserVsUser": {
-          const modelNew: Model = [
-            "UserVsUser",
-            UserVsUser.init({ userId: Option.Some(userId) }),
-          ]
-
-          return [
-            modelNew,
-            sendToRoom(["InputMode_Done", msg[1], Result.Ok(modelNew)]),
-          ]
-        }
+      if (result.type === 'Err') {
+        return [model, sendToClient(['InputMode_Done', msg[1], result])]
       }
+
+      return [result.value, sendToRoom(['InputMode_Done', msg[1], result])]
     }
 
     case "UserVsBot": {
@@ -161,6 +135,40 @@ export const updateFromFrontend = (
       }
 
       return [model, Cmd.None]
+    }
+  }
+}
+
+
+const inputMode = ({ hostId }: { hostId: UserId.UserId }, { mode, userId }: InputMode[1], model: BackendModel): InputMode_Done[2] => {
+
+  if (hostId !== userId) {
+    return Result.Err("must_be_the_host")
+  }
+
+  switch (mode) {
+    case "None": {
+      const modelNew: BackendModel = ["None"]
+
+      return Result.Ok(modelNew)
+    }
+
+    case "UserVsBot": {
+      const modelNew: BackendModel = [
+        "UserVsBot",
+        UserVsBot.init({ userId: Option.Some(userId) }),
+      ]
+
+      return Result.Ok(modelNew)
+    }
+
+    case "UserVsUser": {
+      const modelNew: BackendModel = [
+        "UserVsUser",
+        UserVsUser.init({ userId: Option.Some(userId) }),
+      ]
+
+      return Result.Ok(modelNew)
     }
   }
 }

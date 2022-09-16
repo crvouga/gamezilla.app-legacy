@@ -14,7 +14,8 @@ import {
   startGame,
   stopGame,
   ToBackend,
-  ToFrontend
+  ToFrontend,
+  initBackend
 } from "./UserVsBot.Types"
 
 //
@@ -27,18 +28,7 @@ import {
 
 export type Model = BackendModel
 
-export const init = ({
-  userId,
-}: {
-  userId: Option.Option<UserId.UserId>
-}): Model => {
-  return {
-    type: "Setup",
-    botLevel: initShared.botLevel,
-    userColor: initShared.userColor,
-    userId,
-  }
-}
+export const init = initBackend
 
 //
 //

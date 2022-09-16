@@ -1,4 +1,4 @@
-import { Result } from "../../Core"
+import { Option, RemoteData, Result, Unit } from "../../Core"
 import { UserId } from "../../Data"
 import * as UserVsUser from "./UserVsUser/UserVsUser.Types"
 import * as UserVsBot from "./UserVsBot/UserVsBot.Types"
@@ -11,10 +11,16 @@ import * as UserVsBot from "./UserVsBot/UserVsBot.Types"
 //
 //
 
-export type FrontendModel =
-  | ["None"]
+export type FrontendModel = {
+  mode: | ["None"]
   | ["UserVsUser", UserVsUser.FrontendModel]
   | ["UserVsBot", UserVsBot.FrontendModel]
+
+  requests: {
+    InputMode: RemoteData.RemoteData<InputModeProblem, Unit>
+  }
+}
+
 
 export type BackendModel =
   | ["None"]
@@ -61,5 +67,14 @@ export type InputMode = ["InputMode", { mode: Mode; userId: UserId.UserId }]
 export type InputMode_Done = [
   "InputMode_Done",
   { mode: Mode; userId: UserId.UserId },
-  Result.Result<"failed", BackendModel>,
+  Result.Result<InputModeProblem, BackendModel>,
 ]
+export type InputModeProblem = "must_be_the_host"
+
+export const inputModeProblemToString = (problem: InputModeProblem): string => {
+  switch (problem) {
+    case 'must_be_the_host': {
+      return "Must be the host"
+    }
+  }
+}
