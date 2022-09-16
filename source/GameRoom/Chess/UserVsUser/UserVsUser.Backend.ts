@@ -9,7 +9,7 @@ import {
   initShared,
   inputClock,
   inputPlayer,
-  move,
+  inputMove,
   newGame,
   requestToDraw,
   resign,
@@ -151,10 +151,10 @@ export const updateFromFrontend = (
       )
     }
 
-    case "Move": {
+    case "InputMove": {
       return sendResponse(
         wire,
-        ["Moved_Done", move(msg[1], model.sharedModel)],
+        ["InputMove_Done", inputMove(msg[1], model.sharedModel)],
         model,
       )
     }

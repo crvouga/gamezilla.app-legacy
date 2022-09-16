@@ -380,6 +380,7 @@ export const Header = ({
       </Box>
 
       <Typography
+        noWrap
         sx={{ flex: 3 }}
         align="center"
         variant="h6"

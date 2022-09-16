@@ -1,5 +1,5 @@
 import { Audio, isEqual, Option, Result } from "../../../Core"
-import { NonNegativeInteger, UserId } from "../../../Data"
+import { UserId } from "../../../Data"
 import * as Board from "../Board"
 import * as Clock from "../Clock"
 
@@ -65,19 +65,13 @@ export type DrawAgreement =
   }
 
 export type GameOver =
+  | Board.GameOver
   | {
     type: "Resignation"
     resigner: Board.Color
   }
   | {
     type: "DrawByAgreement"
-  }
-  | {
-    type: "Checkmate"
-    winner: Board.Color
-  }
-  | {
-    type: "Stalemate"
   }
   | {
     type: "WinOnTime"
@@ -101,7 +95,7 @@ export const initShared = ({
 //
 //
 // Msg
-//
+// 
 //
 //
 
@@ -130,7 +124,7 @@ export type Req =
   | InputPlayer
   | InputClock
   | StartGame
-  | Move
+  | InputMove
   | Resign
   | RequestToDraw
   | RespondToDraw
@@ -142,7 +136,7 @@ export type Res =
   | InputPlayer_Done
   | InputClock_Done
   | StartGame_Done
-  | Move_Done
+  | InputMove_Done
   | Resign_Done
   | RequestToDraw_Done
   | RespondToDraw_Done
@@ -157,10 +151,10 @@ export type Res =
 //
 //
 
-export type Move = ["Move", Board.MoveInput & { userId: UserId.UserId }]
+export type InputMove = ["InputMove", Board.MoveInput & { userId: UserId.UserId }]
 
-export type Move_Done = [
-  "Moved_Done",
+export type InputMove_Done = [
+  "InputMove_Done",
   Result.Result<MoveProblem, SharedModel & { didCapture: boolean }>,
 ]
 
@@ -169,10 +163,10 @@ export type MoveProblem =
   | "game_must_be_started"
   | "user_must_be_a_player"
 
-export const move = (
-  { userId, ...moveInput }: Move[1],
+export const inputMove = (
+  { userId, ...moveInput }: InputMove[1],
   model: SharedModel,
-): Move_Done[1] => {
+): InputMove_Done[1] => {
   if (model.type !== "Game") {
     return Result.Err("game_must_be_started")
   }
@@ -189,17 +183,16 @@ export const move = (
 
   const boardNew = result.value
 
-  if (Board.inCheckmate(boardNew)) {
+  const gameOver = Board.toGameOver(boardNew)
+
+  if (gameOver.type !== 'None') {
     const modelNew: SharedModel = {
       type: "GameOver",
       b: model.b,
       w: model.w,
       board: boardNew,
       clock: model.clock,
-      gameOver: {
-        type: "Checkmate",
-        winner: Board.toTurn(model.board),
-      },
+      gameOver: gameOver,
     }
 
     return Result.Ok({

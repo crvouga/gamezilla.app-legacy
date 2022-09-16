@@ -19,6 +19,7 @@ import {
   inputBotProblemToString,
   inputColor,
   inputColorProblemToString, inputMove, isBotTurn, Res,
+  SharedModel,
   startGame, startGameProblemToString, stopGame, stopGameResultToString, ToBackend,
   ToFrontend
 } from "./UserVsBot.Types"
@@ -68,8 +69,19 @@ export const update = (
 ): [Model, Cmd.Cmd<Msg>] => {
   const model: Model = { ..._model, openedMenuId: Option.None }
   switch (msg[0]) {
+
+    // 
+    //
+    // Frontend Only
+    //
+    // 
+
     case "Audio_Done": {
       return [model, Cmd.None]
+    }
+
+    case 'ClosedModal': {
+      return [{ ...model, openedModal: "None" }, Cmd.None]
     }
 
     case 'ClickedFlip': {
@@ -83,6 +95,12 @@ export const update = (
     case "ClosedMenu": {
       return [{ ...model, openedMenuId: Option.None }, Cmd.None]
     }
+
+    // 
+    // 
+    // Frontend and Backend
+    // 
+    // 
 
     case "InputUser": {
       return [model, sendToBackend(msg)]
@@ -105,7 +123,6 @@ export const update = (
     }
 
     case "InputMove": {
-
       const result = inputMove(msg[1], model.sharedModel)
 
       const sharedModel = result.type === 'Err' ? model.sharedModel : result.value
@@ -120,6 +137,19 @@ export const update = (
 }
 
 export const updateFromBackend = (
+  msg: ToFrontend,
+  modelPrev: Model,
+): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
+  const [modelNext, cmd, actions] = updateFromBackend_(msg, modelPrev)
+
+  if (modelPrev.sharedModel.type !== 'GameOver' && modelNext.sharedModel.type === 'GameOver') {
+    return [{ ...modelNext, openedModal: "GameOver" }, cmd, actions]
+  }
+
+  return [modelNext, cmd, actions]
+}
+
+const updateFromBackend_ = (
   msg: ToFrontend,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
@@ -505,7 +535,7 @@ export const View = ({
           </Tooltip>
 
         }
-        title=""
+        title={toGameText(model.sharedModel)}
         right={roomAvatarGroup}
       />
 
@@ -547,9 +577,70 @@ export const View = ({
             dispatch(["ClickedFlip"])
           }}
         />
-
-
       </UI.Box>
+
+      {model.sharedModel.type === 'GameOver' && (
+
+        <UI.Dialog
+          open={model.sharedModel.type === 'GameOver' && model.openedModal === 'GameOver'}
+          onClose={() => dispatch(['ClosedModal'])}
+        >
+          {model.sharedModel.gameOver.type === 'Checkmate' && (
+            <UI.DialogTitle>
+              {Board.colorToString(model.sharedModel.gameOver.winner)} won by checkmate
+            </UI.DialogTitle>
+          )}
+
+          {model.sharedModel.gameOver.type === 'Stalemate' && (
+            <UI.DialogTitle>
+              Drawn by stalemate
+            </UI.DialogTitle>
+          )}
+
+          <UI.DialogActions>
+            <UI.Button onClick={() => dispatch(['ClosedModal'])}>
+              Close
+            </UI.Button>
+          </UI.DialogActions>
+        </UI.Dialog>
+      )}
+
     </UI.FillBox>
   )
+}
+
+
+const toGameText = (model: SharedModel): string => {
+  switch (model.type) {
+    case "GameOver": {
+      switch (model.gameOver.type) {
+        case "Checkmate": {
+          const color = Board.colorToString(model.gameOver.winner)
+          return `${color} won by checkmate`
+        }
+
+        case "Stalemate": {
+          return "Stalemate"
+        }
+
+        default:
+          return exhaustive(model.gameOver)
+      }
+    }
+
+    case "Setup": {
+      return "Setting up game"
+    }
+
+    case "Game": {
+      if (Board.inCheck(model.board)) {
+        return `${Board.colorToString(Board.toTurn(model.board))} is in check`
+      }
+
+      return `${Board.colorToString(Board.toTurn(model.board))}'s turn`
+    }
+
+    default:
+      return exhaustive(model)
+  }
 }
