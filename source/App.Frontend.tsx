@@ -293,7 +293,7 @@ const updateFromBackend = (
       const currentUserId = model.auth[1].userId
 
       const [gameRoom, gameRoomCmd, actions] = GameRoom.updateFromBackend(
-        { currentUserId, sendToBackend: (msg) => Wire.sendToBackend(["GameRoom", msg]) },
+        { currentUserId, sendToBackend: (msg) => Wire.sendToBackend(["GameRoom", msg]), store: model.store },
         msg[1],
         model.gameRoom,
       )

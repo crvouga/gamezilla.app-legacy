@@ -94,7 +94,7 @@ export const update = (
 }
 
 export const updateFromBackend = (
-  { currentUserId, sendToBackend }: { currentUserId: UserId.UserId, sendToBackend: (msg: ToBackend) => Cmd.Cmd<never> },
+  { currentUserId, sendToBackend, store }: { currentUserId: UserId.UserId, sendToBackend: (msg: ToBackend) => Cmd.Cmd<never>, store: Store.Model },
   msg: ToFrontend,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
@@ -125,7 +125,7 @@ export const updateFromBackend = (
 
     case "UserVsUser": {
       if (model.mode[0] === "UserVsUser") {
-        const [child, cmd, actions] = UserVsUser.updateFromBackend({ currentUserId }, msg[1], model.mode[1])
+        const [child, cmd, actions] = UserVsUser.updateFromBackend({ currentUserId, store }, msg[1], model.mode[1])
 
         return [{ ...model, mode: ["UserVsUser", child] }, tagCmd("UserVsUser", cmd), actions]
       }

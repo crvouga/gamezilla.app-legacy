@@ -1,7 +1,7 @@
-import { Option, RemoteData, Result, Unit } from "../../Core"
+import { RemoteData, Result, Unit } from "../../Core"
 import { UserId } from "../../Data"
-import * as UserVsUser from "./UserVsUser/UserVsUser.Types"
 import * as UserVsBot from "./UserVsBot/UserVsBot.Types"
+import * as UserVsUser from "./UserVsUser/UserVsUser.Types"
 
 //
 //
@@ -12,7 +12,8 @@ import * as UserVsBot from "./UserVsBot/UserVsBot.Types"
 //
 
 export type FrontendModel = {
-  mode: | ["None"]
+  mode:
+  | ["None"]
   | ["UserVsUser", UserVsUser.FrontendModel]
   | ["UserVsBot", UserVsBot.FrontendModel]
 

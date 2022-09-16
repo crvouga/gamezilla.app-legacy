@@ -160,7 +160,7 @@ export const update = (
 }
 
 export const updateFromBackend = (
-  { currentUserId }: { currentUserId: UserId.UserId, },
+  { currentUserId, store }: { currentUserId: UserId.UserId, store: Store.Model },
   msg: ToFrontend,
   _model: Model,
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
@@ -350,7 +350,11 @@ export const updateFromBackend = (
 
       const sharedModel = result.value
 
-      const action: OutAction = ['Snackbar', { variant: "Info", message: "Game was cancelled" }]
+      const username = store.Profile[msg[2].userId]?.username
+
+      const message = username ? `${username} cancelled the game` : "Game was cancelled"
+
+      const action: OutAction = ['Snackbar', { variant: "Info", message }]
 
       return [{ ...model, sharedModel }, Cmd.None, [action]]
     }

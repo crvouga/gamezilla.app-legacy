@@ -674,6 +674,7 @@ export type CancelStartGame = ["CancelStartGame", { userId: UserId.UserId }]
 export type CancelStartGame_Done = [
   "CancelStartGame_Done",
   Result.Result<CancelStartGameProblem, SharedModel>,
+  { userId: UserId.UserId, },
 ]
 export type CancelStartGameProblem =
   | "must_be_playing"
