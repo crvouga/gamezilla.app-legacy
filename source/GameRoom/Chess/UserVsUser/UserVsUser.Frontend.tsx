@@ -5,6 +5,7 @@ import * as Store from "../../../Store"
 import * as UI from "../../../UI"
 import * as Clock from "../Clock"
 import * as Sounds from "../Sounds"
+import { ViewActionButton } from "../Views"
 import * as Board from "./../Board"
 import {
   BackendModel,
@@ -850,15 +851,6 @@ export const View = ({
                   </UI.DialogActions>
                 </UI.Dialog>
 
-                {/* <UI.LoadingDialog
-                  open={
-                    model.sharedModel.type === "Game" &&
-                    model.sharedModel.drawAgreement.type === "Asking" &&
-                    model.sharedModel.drawAgreement.asker === currentUserColor
-                  }
-                  title="Waiting on response..."
-                /> */}
-
                 <UI.ConformationDialog
                   open={
                     model.sharedModel.type === "Game" &&
@@ -1070,35 +1062,6 @@ const toGameText = (model: SharedModel): string => {
     default:
       return exhaustive(model)
   }
-}
-
-const ViewActionButton = ({
-  title,
-  icon,
-  onClick,
-}: {
-  title: string
-  icon: UI.ViewNode
-  onClick: () => void
-}) => {
-  const theme = UI.useTheme()
-  return (
-    <UI.ButtonBase
-      onClick={onClick}
-      sx={{
-        flex: 1,
-        height: 48,
-        display: "flex",
-        flexDirection: "column",
-        color: theme.palette.action.active,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      {icon}
-      <UI.Typography variant="caption">{title}</UI.Typography>
-    </UI.ButtonBase>
-  )
 }
 
 type ViewUserPlayerSlotProps = {

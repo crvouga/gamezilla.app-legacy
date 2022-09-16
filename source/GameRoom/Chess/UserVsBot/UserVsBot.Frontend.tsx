@@ -1,34 +1,26 @@
+import { Tooltip } from "@mui/material"
 import {
   Audio,
   Cmd,
   exhaustive,
-  Option,
-  pipe,
-  Result,
-  Sub,
-  tag,
+  Option, Sub,
+  tag
 } from "../../../Core"
 import { UserId } from "../../../Data"
 import * as Snackbar from "../../../Snackbar"
 import * as Store from "../../../Store"
 import * as UI from "../../../UI"
 import * as Board from "../Board"
+import { ViewActionButton } from "../Views"
 import {
-  BackendModel,
-  startGameProblemToString,
-  FrontendModel,
+  BackendModel, FrontendModel,
   FrontendMsg,
-  initShared,
-  Res,
-  startGame,
-  ToBackend,
-  ToFrontend,
-  inputBot,
+  initShared, inputBot,
   inputBotProblemToString,
   inputColor,
-  inputColorProblemToString,
-  isBotTurn,
-  inputMove,
+  inputColorProblemToString, inputMove, isBotTurn, Res,
+  startGame, startGameProblemToString, stopGame, stopGameResultToString, ToBackend,
+  ToFrontend
 } from "./UserVsBot.Types"
 
 //
@@ -78,6 +70,10 @@ export const update = (
   switch (msg[0]) {
     case "Audio_Done": {
       return [model, Cmd.None]
+    }
+
+    case 'ClickedFlip': {
+      return [{ ...model, isFlipped: !model.isFlipped }, Cmd.None]
     }
 
     case "OpenedMenu": {
@@ -444,23 +440,17 @@ export const View = ({
     )
   }
 
-  return (
-    <UI.FillBox>
-      <UI.Header
-        left={
-          <UI.Button
-            onClick={() => dispatch(["StopGame", { userId: currentUserId }])}
-            sx={{ marginLeft: -1 }}
-          >
-            Stop
-          </UI.Button>
-        }
-        title=""
-        right={roomAvatarGroup}
-      />
+  const stopGameResult = stopGame({ userId: currentUserId }, model.sharedModel)
 
-      <UI.Box sx={{ paddingX: 2, paddingY: 1, display: 'flex', alignItems: "center" }}>
-        <UI.Icons.SmartToy sx={{ width: 42, height: 42, marginRight: 2 }} />
+  const botSlot =
+    (
+      <UI.Box sx={{ paddingX: 2, display: 'flex', alignItems: "center" }}>
+        <UI.Avatar sx={{ marginRight: 2 }}>
+
+          <UI.Icons.SmartToy
+          // sx={{ width: 40, height: 40, marginRight: 2 }}
+          />
+        </UI.Avatar>
 
         <UI.Box sx={{ flex: 1 }}>
           <UI.Typography
@@ -470,34 +460,95 @@ export const View = ({
             {Board.levelToString(model.sharedModel.botLevel)}
           </UI.Typography>
         </UI.Box>
-        <UI.Grow in={isBotTurn(model.sharedModel)}>
-          <UI.CircularProgress
-            // sx={{ width: 24, height: 24 }}
-            size={24}
-          />
-        </UI.Grow>
 
+        {isBotTurn(model.sharedModel) && <UI.CircularProgress size={24} />}
       </UI.Box>
+    )
+
+  const userSlot = (
+    <UI.Box sx={{ paddingX: 2, display: 'flex', alignItems: "center" }}>
+      <UI.Avatar src={store.Profile[model.sharedModel.userId]?.avatarUrl} sx={{ marginRight: 2 }} />
+
+      <UI.Typography variant="h6">
+        {store.Profile[model.sharedModel.userId]?.username}
+      </UI.Typography>
+    </UI.Box>
+  )
+
+  const boardOrientation = model.isFlipped ? Board.toOppositeColor(model.sharedModel.userColor) : model.sharedModel.userColor
+
+  const topSlot =
+    <UI.Box sx={{ paddingTop: 1, paddingBottom: 2 }}>
+      {boardOrientation === model.sharedModel.userColor ? botSlot : userSlot}
+    </UI.Box>
+
+  const bottomSlot =
+    <UI.Box sx={{ paddingTop: 2, paddingBottom: 1 }}>
+      {boardOrientation === model.sharedModel.userColor ? userSlot : botSlot}
+    </UI.Box>
+
+
+  return (
+    <UI.FillBox>
+      <UI.Header
+        left={
+          <Tooltip title={stopGameResultToString(stopGameResult)}>
+            <span>
+              <UI.Button
+                disabled={stopGameResult.type === 'Err'}
+                onClick={() => dispatch(["StopGame", { userId: currentUserId }])}
+                sx={{ marginLeft: -1 }}
+              >
+                Stop
+              </UI.Button>
+            </span>
+          </Tooltip>
+
+        }
+        title=""
+        right={roomAvatarGroup}
+      />
+
+      {topSlot}
 
       <Board.View
-        boardOrientation={model.sharedModel.userColor}
+        boardOrientation={boardOrientation}
         isDraggablePiece={({ piece }) => {
           return Board.toColor(piece) === model.sharedModel.userColor && model.sharedModel.userId === currentUserId
         }}
         model={model.sharedModel.board}
         onPieceDrop={(move) => {
-          dispatch(["InputMove", { userId: currentUserId, from: move.from, to: move.to, promotion: move.promotion }])
-          return true
+          const msg: Msg = ["InputMove", { userId: currentUserId, from: move.from, to: move.to, promotion: move.promotion }]
+
+          dispatch(msg)
+
+          const result = inputMove(msg[1], model.sharedModel)
+
+          return result.type === 'Ok'
         }}
 
       />
 
-      <UI.Box sx={{ paddingX: 2, paddingY: 1, display: 'flex', alignItems: "center" }}>
-        <UI.Avatar src={store.Profile[model.sharedModel.userId]?.avatarUrl} sx={{ marginRight: 2 }} />
+      {bottomSlot}
 
-        <UI.Typography variant="h6">
-          {store.Profile[model.sharedModel.userId]?.username}
-        </UI.Typography>
+      <UI.Box sx={{ width: "100%", display: "flex" }}>
+        <ViewActionButton
+          icon={
+            <UI.Icons.Flip
+              sx={{
+                transform: model.isFlipped
+                  ? "rotate(90deg)"
+                  : "rotate(270deg)",
+              }}
+            />
+          }
+          title={model.isFlipped ? "Unflip" : "Flip"}
+          onClick={() => {
+            dispatch(["ClickedFlip"])
+          }}
+        />
+
+
       </UI.Box>
     </UI.FillBox>
   )
