@@ -261,14 +261,14 @@ export const View = ({
   store,
   model,
   dispatch,
-  onBack,
+  backButton,
   roomAvatarGroup,
 }: {
   store: Store.Model
   currentUserId: UserId.UserId
   model: Model
   dispatch: (msg: Msg) => void
-  onBack: () => void
+  backButton: UI.ViewNode
   roomAvatarGroup: UI.ViewNode
 }) => {
   if (model.sharedModel.type === "Setup") {
@@ -288,14 +288,7 @@ export const View = ({
     return (
       <UI.FillBox>
         <UI.Header
-          left={
-            <UI.Button
-              onClick={onBack}
-              sx={{ marginLeft: -1 }}
-            >
-              Back
-            </UI.Button>
-          }
+          left={backButton}
           title="Chess"
           right={roomAvatarGroup}
         />

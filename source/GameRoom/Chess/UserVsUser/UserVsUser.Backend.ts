@@ -20,6 +20,7 @@ import {
   ToFrontend,
   cancelStartGame,
   cancelDraw,
+  initBackend,
 } from "./UserVsUser.Types"
 
 //
@@ -32,15 +33,7 @@ import {
 
 export type Model = BackendModel
 
-export const init = ({
-  userId,
-}: {
-  userId: Option.Option<UserId.UserId>
-}): Model => {
-  return {
-    sharedModel: initShared({ userId }),
-  }
-}
+export const init = initBackend
 
 //
 //

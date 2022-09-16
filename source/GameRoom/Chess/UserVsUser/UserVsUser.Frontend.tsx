@@ -398,14 +398,14 @@ export const View = ({
   store,
   model,
   dispatch,
-  onBack,
+  backButton,
   roomAvatarGroup,
 }: {
   store: Store.Model
   currentUserId: UserId.UserId
   model: Model
   dispatch: (msg: Msg) => void
-  onBack: () => void
+  backButton: UI.ViewNode
   roomAvatarGroup: UI.ViewNode
 }) => {
   if (model.sharedModel.type === "Setup") {
@@ -421,14 +421,7 @@ export const View = ({
     return (
       <UI.FillBox>
         <UI.Header
-          left={
-            <UI.Button
-              onClick={onBack}
-              sx={{ marginLeft: -1 }}
-            >
-              Back
-            </UI.Button>
-          }
+          left={backButton}
           title="Chess"
           right={roomAvatarGroup}
         />
@@ -705,59 +698,11 @@ export const View = ({
 
   return (
     <UI.FillBox sx={{ overflowY: "scroll" }}>
-
       <UI.Header
-        left={
-          <UI.Button
-            disabled={model.sharedModel.type === "Game"}
-            onClick={onBack}
-            sx={{ marginLeft: -1 }}
-          >
-            Back
-          </UI.Button>
-        }
+        left={backButton}
         title={toGameText(model.sharedModel)}
         right={roomAvatarGroup}
       />
-
-      {/* <UI.Toolbar>
-        <UI.Box
-          sx={{
-            flex: 1,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "flex-start",
-          }}
-        >
-          <UI.Button
-            disabled={model.sharedModel.type === "Game"}
-            onClick={onBack}
-            sx={{ marginLeft: -1 }}
-          >
-            Back
-          </UI.Button>
-        </UI.Box>
-
-        <UI.Typography
-          sx={{ flex: 3 }}
-          align="center"
-          variant="subtitle2"
-          color="text.secondary"
-        >
-          {toGameText(model.sharedModel)}
-        </UI.Typography>
-
-        <UI.Box
-          sx={{
-            flex: 1,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "flex-end",
-          }}
-        >
-          {roomAvatarGroup}
-        </UI.Box>
-      </UI.Toolbar> */}
 
       <ViewUserPlayerSlot
         position="top"

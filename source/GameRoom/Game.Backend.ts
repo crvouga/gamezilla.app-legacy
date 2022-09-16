@@ -1,5 +1,5 @@
 import { Cmd, Sub, tagSub, tagUpdate } from "../Core"
-import { RoomId } from "../Data"
+import { RoomId, UserId } from "../Data"
 import * as Chess from "./Chess/Chess.Backend"
 import * as ConnectFour from "./ConnectFour/ConnectFour.Backend"
 import { BackendModel, BackendMsg, ToBackend, ToFrontend } from "./Game.Types"
@@ -104,9 +104,11 @@ export const update = (
 
 export const updateFromFrontend = (
   {
+    hostId,
     sendToClient,
     sendToRoom,
   }: {
+    hostId: UserId.UserId
     sendToClient: (msg: ToFrontend) => Cmd.Cmd<never>
     sendToRoom: (msg: ToFrontend) => Cmd.Cmd<never>
   },
@@ -163,6 +165,7 @@ export const updateFromFrontend = (
           "Chess",
           Chess.updateFromFrontend(
             {
+              hostId: hostId,
               sendToClient: (msg) => sendToClient(["Chess", msg]),
               sendToRoom: (msg) => sendToRoom(["Chess", msg]),
             },

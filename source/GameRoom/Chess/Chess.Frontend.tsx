@@ -1,8 +1,9 @@
-import { Cmd, Option, Result, Sub, tagCmd } from "../../Core"
+import { Cmd, Option, pipe, RemoteData, Result, Sub, tagCmd, Unit } from "../../Core"
 import {
   BackendModel,
   FrontendModel,
   FrontendMsg,
+  inputModeProblemToString,
   ToBackend,
   ToFrontend,
 } from "./Chess.Types"
@@ -29,13 +30,15 @@ export const init = ({
 }: {
   sendToBackend: (msg: ToBackend) => Cmd.Cmd<never>
 }): [FrontendModel, Cmd.Cmd<Msg>] => {
-  // const [model, cmd] = UserVsUser.init({ sendToBackend: msg => sendToBackend(['UserVsUser', msg]) })
-  // return [
-  //   ['UserVsUser', model],
-  //   tagCmd("UserVsUser", cmd)
-  // ]
-
-  return [["None"], Cmd.None]
+  return [
+    {
+      mode: ["None"],
+      requests: {
+        InputMode: RemoteData.NotAsked
+      }
+    },
+    Cmd.None
+  ]
 }
 
 //
@@ -57,32 +60,32 @@ export const update = (
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
     case "InputMode": {
-      return [model, sendToBackend(msg)]
+      return [{ ...model, requests: { ...model.requests, InputMode: RemoteData.Loading } }, sendToBackend(msg)]
     }
 
     case "UserVsUser": {
-      if (model[0] === "UserVsUser") {
+      if (model.mode[0] === "UserVsUser") {
         const [child, cmd] = UserVsUser.update(
           { sendToBackend: (msg) => sendToBackend(["UserVsUser", msg]) },
           msg[1],
-          model[1],
+          model.mode[1],
         )
 
-        return [["UserVsUser", child], tagCmd("UserVsUser", cmd)]
+        return [{ ...model, mode: ["UserVsUser", child] }, tagCmd("UserVsUser", cmd)]
       }
 
       return [model, Cmd.None]
     }
 
     case "UserVsBot": {
-      if (model[0] === "UserVsBot") {
+      if (model.mode[0] === "UserVsBot") {
         const [child, cmd] = UserVsBot.update(
           { sendToBackend: (msg) => sendToBackend(["UserVsBot", msg]) },
           msg[1],
-          model[1],
+          model.mode[1],
         )
 
-        return [["UserVsBot", child], tagCmd("UserVsBot", cmd)]
+        return [{ ...model, mode: ["UserVsBot", child] }, tagCmd("UserVsBot", cmd)]
       }
 
       return [model, Cmd.None]
@@ -99,16 +102,20 @@ export const updateFromBackend = (
     case "InputMode_Done": {
       const result = msg[2]
 
+      const modelNew: Model = {
+        ...model,
+        requests: {
+          ...model.requests,
+          InputMode: pipe(result, RemoteData.fromResult, RemoteData.map(() => Unit))
+        }
+      }
+
       if (result.type === "Err") {
-        const action: OutAction = [
-          "Snackbar",
-          { variant: "Error", message: result.error },
-        ]
-        return [model, Cmd.None, [action]]
+        return [modelNew, Cmd.None, []]
       }
 
       const [merged, mergedCmd] = mergeWithBackend({
-        frontendModel: model,
+        frontendModel: modelNew,
         backendModel: result.value,
         sendToBackend,
       })
@@ -117,23 +124,23 @@ export const updateFromBackend = (
     }
 
     case "UserVsUser": {
-      if (model[0] === "UserVsUser") {
-        const [child, cmd, actions] = UserVsUser.updateFromBackend({ currentUserId }, msg[1], model[1])
+      if (model.mode[0] === "UserVsUser") {
+        const [child, cmd, actions] = UserVsUser.updateFromBackend({ currentUserId }, msg[1], model.mode[1])
 
-        return [["UserVsUser", child], tagCmd("UserVsUser", cmd), actions]
+        return [{ ...model, mode: ["UserVsUser", child] }, tagCmd("UserVsUser", cmd), actions]
       }
 
       return [model, Cmd.None, []]
     }
 
     case "UserVsBot": {
-      if (model[0] === "UserVsBot") {
+      if (model.mode[0] === "UserVsBot") {
         const [child, cmd, actions] = UserVsBot.updateFromBackend(
           msg[1],
-          model[1],
+          model.mode[1],
         )
 
-        return [["UserVsBot", child], tagCmd("UserVsBot", cmd), actions]
+        return [{ ...model, mode: ["UserVsBot", child] }, tagCmd("UserVsBot", cmd), actions]
       }
 
       return [model, Cmd.None, []]
@@ -177,7 +184,20 @@ export const View = ({
   dispatch: (msg: Msg) => void
   roomAvatarGroup: UI.ViewNode
 }) => {
-  switch (model[0]) {
+  const backButton = (
+    <UI.Tooltip title={model.requests.InputMode.type === 'Failure' ? inputModeProblemToString(model.requests.InputMode.problem) : ""}>
+      <UI.Button
+        size="large"
+        sx={{ marginLeft: -1 }}
+        loading={model.requests.InputMode.type === 'Loading'}
+        onClick={() => dispatch(["InputMode", { mode: "None", userId: currentUserId }])}
+      >
+        Back
+      </UI.Button>
+    </UI.Tooltip>
+  )
+
+  switch (model.mode[0]) {
     case "None": {
       return (
         <UI.FillBox>
@@ -242,11 +262,9 @@ export const View = ({
         <UserVsBot.View
           currentUserId={currentUserId}
           dispatch={(msg) => dispatch(["UserVsBot", msg])}
-          model={model[1]}
-          onBack={() =>
-            dispatch(["InputMode", { mode: "None", userId: currentUserId }])
-          }
+          model={model.mode[1]}
           store={store}
+          backButton={backButton}
           roomAvatarGroup={roomAvatarGroup}
         />
       )
@@ -255,14 +273,12 @@ export const View = ({
     case "UserVsUser": {
       return (
         <UserVsUser.View
-          onBack={() =>
-            dispatch(["InputMode", { mode: "None", userId: currentUserId }])
-          }
           currentUserId={currentUserId}
           store={store}
-          model={model[1]}
+          model={model.mode[1]}
           dispatch={(msg) => dispatch(["UserVsUser", msg])}
           roomAvatarGroup={roomAvatarGroup}
+          backButton={backButton}
         />
       )
     }
@@ -409,16 +425,19 @@ export const mergeWithBackend = ({
 }): [FrontendModel, Cmd.Cmd<Msg>] => {
   switch (backendModel[0]) {
     case "None": {
-      return [["None"], Cmd.None]
+      return [{ ...frontendModel, mode: ["None"] }, Cmd.None]
     }
 
     case "UserVsUser": {
-      if (frontendModel[0] === "UserVsUser") {
+      if (frontendModel.mode[0] === "UserVsUser") {
         return [
-          [
-            "UserVsUser",
-            UserVsUser.mergeWithBackend(frontendModel[1], backendModel[1]),
-          ],
+          {
+            ...frontendModel,
+            mode: [
+              "UserVsUser",
+              UserVsUser.mergeWithBackend(frontendModel.mode[1], backendModel[1]),
+            ]
+          },
           Cmd.None,
         ]
       }
@@ -429,18 +448,21 @@ export const mergeWithBackend = ({
       })
 
       return [
-        ["UserVsUser", UserVsUser.mergeWithBackend(child, backendModel[1])],
+        { ...frontendModel, mode: ["UserVsUser", UserVsUser.mergeWithBackend(child, backendModel[1])] },
         tagCmd("UserVsUser", childCmd),
       ]
     }
 
     case "UserVsBot": {
-      if (frontendModel[0] === "UserVsBot") {
+      if (frontendModel.mode[0] === "UserVsBot") {
         return [
-          [
-            "UserVsBot",
-            UserVsBot.mergeWithBackend(frontendModel[1], backendModel[1]),
-          ],
+          {
+            ...frontendModel,
+            mode: [
+              "UserVsBot",
+              UserVsBot.mergeWithBackend(frontendModel.mode[1], backendModel[1]),
+            ]
+          },
           Cmd.None,
         ]
       }
@@ -450,7 +472,7 @@ export const mergeWithBackend = ({
       })
 
       return [
-        ["UserVsBot", UserVsBot.mergeWithBackend(child, backendModel[1])],
+        { ...frontendModel, mode: ["UserVsBot", UserVsBot.mergeWithBackend(child, backendModel[1])] },
         tagCmd("UserVsBot", childCmd),
       ]
     }

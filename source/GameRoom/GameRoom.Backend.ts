@@ -149,6 +149,7 @@ export const updateFromFrontend = (
 
       const [gameNew, gameCmd] = Game.updateFromFrontend(
         {
+          hostId: room.hostId,
           sendToClient: (msg) => sendToClient(["Games", roomId, msg]),
           sendToRoom: (msg) => sendToRoom(roomId, ["Games", roomId, msg]),
         },

@@ -91,6 +91,16 @@ export const initShared = ({
   }
 }
 
+export const initBackend = ({
+  userId,
+}: {
+  userId: Option.Option<UserId.UserId>
+}): BackendModel => {
+  return {
+    sharedModel: initShared({ userId }),
+  }
+}
+
 //
 //
 //
