@@ -352,8 +352,8 @@ export const View = ({
             }
           >
 
-            <UI.Select fullWidth value={model.sharedModel.botLevel}>
-              {Board.allBotLevel.map(botLevel => (
+            <UI.Select disabled={inputBotResult.type === 'Err'} fullWidth value={model.sharedModel.botLevel}>
+              {Board.allLevels.map(botLevel => (
                 <UI.MenuItem
                   selected={model.sharedModel.botLevel === botLevel}
                   value={botLevel}
@@ -365,7 +365,7 @@ export const View = ({
                     ])
                   }}
                 >
-                  {Board.botLevelToString(botLevel)}
+                  {Board.levelToString(botLevel)}
                 </UI.MenuItem>
               ))}
             </UI.Select>
@@ -467,7 +467,7 @@ export const View = ({
             variant="h6"
             sx={{ fontFamily: "Roboto Mono" }}
           >
-            {Board.botLevelToString(model.sharedModel.botLevel)}
+            {Board.levelToString(model.sharedModel.botLevel)}
           </UI.Typography>
         </UI.Box>
         <UI.Grow in={isBotTurn(model.sharedModel)}>
@@ -482,7 +482,7 @@ export const View = ({
       <Board.View
         boardOrientation={model.sharedModel.userColor}
         isDraggablePiece={({ piece }) => {
-          return Board.toColor(piece) === model.sharedModel.userColor
+          return Board.toColor(piece) === model.sharedModel.userColor && model.sharedModel.userId === currentUserId
         }}
         model={model.sharedModel.board}
         onPieceDrop={(move) => {
