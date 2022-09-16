@@ -83,6 +83,7 @@ export type FrontendMsg =
   | ["Audio_Done", Audio.PlayResult]
   | ["OpenedMenu", string]
   | ["ClosedMenu"]
+  | ["ClickedFlip"]
   | Req
 
 export type BackendMsg = BotMoved
@@ -290,6 +291,22 @@ export type StopGame_Done = [
   "StopGame_Done",
   Result.Result<"must_be_playing", SharedModel>,
 ]
+
+
+export const stopGameResultToString = (result: StopGame_Done[1]): string => {
+  if (result.type === 'Ok') {
+    return ""
+  }
+
+  const problem = result.error
+
+  switch (problem) {
+    case 'must_be_playing': {
+      return "Must be playing to stop the game"
+    }
+  }
+}
+
 export const stopGame = (
   { userId }: StopGame[1],
   model: SharedModel,
