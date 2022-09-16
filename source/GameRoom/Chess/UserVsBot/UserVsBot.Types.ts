@@ -13,7 +13,7 @@ import * as Board from "../Board"
 export type FrontendModel = {
   sharedModel: SharedModel
   openedMenuId: Option.Option<string>
-  openedModal: "None"
+  openedModal: "None" | "GameOver"
   isFlipped: boolean
 }
 
@@ -45,20 +45,7 @@ export type GameOverModel = {
   botLevel: Board.Level
 }
 
-export type GameOver =
-  | {
-    type: "Resignation"
-    resigner: Board.Color
-  }
-  | {
-    type: "Checkmate"
-    winner: Board.Color
-  }
-  | {
-    type: "Stalemate"
-  }
-
-export type BotLevel = "Easy" | "Medium" | "Hard"
+export type GameOver = Board.GameOver
 
 export const initShared: SharedModel = {
   type: "Setup",
@@ -84,6 +71,7 @@ export type FrontendMsg =
   | ["OpenedMenu", string]
   | ["ClosedMenu"]
   | ["ClickedFlip"]
+  | ["ClosedModal"]
   | Req
 
 export type BackendMsg = BotMoved
@@ -371,14 +359,14 @@ export const inputMove = (
 
   const boardNew = result.value
 
-  if (Board.inCheckmate(boardNew)) {
+  const gameOver = Board.toGameOver(boardNew)
+
+  if (gameOver.type !== 'None') {
     const modelNew: SharedModel = {
       ...model,
       type: "GameOver",
-      gameOver: {
-        type: "Checkmate",
-        winner: Board.toTurn(boardNew)
-      }
+      board: boardNew,
+      gameOver: gameOver
     }
 
     return Result.Ok({
@@ -437,11 +425,23 @@ export const botMoved = (botMoveResult: BotMoved[1], model: SharedModel): BotMov
     return result
   }
 
-  const { didCapture, ...board } = result.value
+  const { didCapture, ...boardNew } = result.value
+
+  const gameOver = Board.toGameOver(boardNew)
+
+  if (gameOver.type !== 'None') {
+    const modelNew: SharedModel = {
+      ...model,
+      type: "GameOver",
+      gameOver: gameOver,
+      board: boardNew,
+    }
+    return Result.Ok({ ...modelNew, didCapture })
+  }
 
   return Result.Ok({
     ...model,
-    board,
+    board: boardNew,
     didCapture
   })
 }

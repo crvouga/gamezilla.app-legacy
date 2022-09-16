@@ -446,6 +446,33 @@ export const toTurn = (model: Model): Color => {
 }
 
 
+export type GameOver = {
+  type: "Checkmate",
+  winner: Color
+} | {
+  type: "Stalemate",
+}
+
+export const toGameOver = (model: Model): GameOver | { type: "None" } => {
+  if (inCheckmate(model)) {
+    return {
+      type: "Checkmate",
+      winner: toOppositeColor(toTurn(model))
+    }
+  }
+
+
+  if (inStalemate(model)) {
+    return {
+      type: "Stalemate"
+    }
+  }
+
+  return {
+    type: "None"
+  }
+}
+
 
 
 //

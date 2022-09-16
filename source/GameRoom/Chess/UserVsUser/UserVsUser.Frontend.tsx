@@ -15,8 +15,8 @@ import {
   initShared,
   inputClock,
   inputClockProblemToString,
-  move,
-  Move,
+  inputMove,
+  InputMove,
   SharedModel,
   startGame,
   startGameProblemToString,
@@ -136,8 +136,8 @@ export const update = (
       return [model, sendToBackend(msg)]
     }
 
-    case "Move": {
-      const result = move(msg[1], model.sharedModel)
+    case "InputMove": {
+      const result = inputMove(msg[1], model.sharedModel)
 
       if (result.type === "Err") {
         return [model, Cmd.None]
@@ -182,7 +182,7 @@ export const updateFromBackend = (
       return [model, Cmd.None, []]
     }
 
-    case "Moved_Done": {
+    case "InputMove_Done": {
       if (msg[1].type === "Err") {
         return [model, Cmd.None, []]
       }
@@ -705,7 +705,22 @@ export const View = ({
 
   return (
     <UI.FillBox sx={{ overflowY: "scroll" }}>
-      <UI.Toolbar>
+
+      <UI.Header
+        left={
+          <UI.Button
+            disabled={model.sharedModel.type === "Game"}
+            onClick={onBack}
+            sx={{ marginLeft: -1 }}
+          >
+            Back
+          </UI.Button>
+        }
+        title={toGameText(model.sharedModel)}
+        right={roomAvatarGroup}
+      />
+
+      {/* <UI.Toolbar>
         <UI.Box
           sx={{
             flex: 1,
@@ -742,7 +757,7 @@ export const View = ({
         >
           {roomAvatarGroup}
         </UI.Box>
-      </UI.Toolbar>
+      </UI.Toolbar> */}
 
       <ViewUserPlayerSlot
         position="top"
@@ -759,8 +774,8 @@ export const View = ({
           )
         }}
         onPieceDrop={(moveInput) => {
-          const msg: Move = [
-            "Move",
+          const msg: InputMove = [
+            "InputMove",
             {
               userId: currentUserId,
               ...moveInput,
@@ -769,7 +784,7 @@ export const View = ({
 
           dispatch(msg)
 
-          const isSuccessfulMove = move(msg[1], model.sharedModel).type === "Ok"
+          const isSuccessfulMove = inputMove(msg[1], model.sharedModel).type === "Ok"
 
           return isSuccessfulMove
         }}
