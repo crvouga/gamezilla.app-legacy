@@ -1,4 +1,4 @@
-import { Cmd, Option, pipe, Sub, Time } from "../../../Core"
+import { Cmd, Option, pipe, Sub, Task, Time } from "../../../Core"
 import { UserId } from "../../../Data"
 import * as Board from '../Board'
 import {
@@ -93,11 +93,15 @@ const toBotMoveCmd = (modelPrev: Model, modelNext: Model): Cmd.Cmd<Msg> => {
     return Cmd.None
   }
 
-  const moveInput = Board.toBotMove(modelNext.botLevel, modelNext.board)
+  const cmd = pipe(
+    Board.getBestMove(modelNext.botLevel, modelNext.board),
+    Cmd.perform((result): Msg => ['BotMoved', result])
+  )
 
-  return Cmd.of(['BotMoved', moveInput])
-
+  return cmd
 }
+
+
 
 export const updateFromFrontend_ = (
   {

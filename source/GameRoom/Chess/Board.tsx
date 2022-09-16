@@ -1,52 +1,67 @@
-import { DependencyList, useLayoutEffect, useRef, useState } from "react"
-import { Chessboard } from "react-chessboard"
 import * as ChessTs from "chess.ts"
-import { exhaustive, Result } from "../../Core"
 // @ts-ignore
 import { aiMove } from "js-chess-engine"
+import { DependencyList, useLayoutEffect, useRef, useState } from "react"
+import { Chessboard } from "react-chessboard"
+import { spawn, Thread, Worker } from "threads"
+import { exhaustive, Result, Task } from "../../Core"
+import { BoardWorker } from "./board-worker"
 
-export type BotLevel = 0 | 1 | 2 | 3 | 4
+export type Level = 0 | 1 | 2 | 3 | 4
 
-export const allBotLevel: BotLevel[] = [0, 1, 2, 3, 4]
+export const allLevels: Level[] = [0, 1, 2, 3, 4]
 
-export const botLevelToString = (level: BotLevel): string => {
+export const levelToString = (level: Level): string => {
   switch (level) {
     case 0: {
-      return "Monkey"
+      return "0 - Monkey"
     }
     case 1: {
-      return "Beginner"
+      return "1 - Beginner"
     }
     case 2: {
-      return "Intermediate"
+      return "2 - Intermediate"
     }
     case 3: {
-      return "Advanced"
+      return "3 - Advanced"
     }
     case 4: {
-      return "Experienced"
+      return "4 - Experienced"
     }
   }
 }
 
 
-export type BotMoveProblem = "no_legal_move"
+export type BestMoveInputResult = Result.Result<BestMoveInputProblem, MoveInput>
+export type BestMoveInputProblem = "failed_to_calculate_best_move"
 
-export type BotMoveResult = Result.Result<BotMoveProblem, MoveInput>
+const isRecord = (record: unknown): record is Record<string, string> => {
+  // todo: add correct validation
+  return typeof record === 'object' && record !== null
+}
 
-
-export const toBotMove = (level: BotLevel, model: Model): BotMoveResult => {
+export const toBestMoveInput = (level: Level, model: Model): BestMoveInputResult => {
   const fen = toFen(model)
 
-  // danger
-  const move: { [from: string]: string } = aiMove(fen, level)
 
-  const moveInput = Object.entries(move).flatMap<MoveInput>(([from, to]) => isSquare(from) && isSquare(to) ? [{ from, to, promotion: "q" }] : [])[0]
+  const move: unknown = aiMove(fen, level)
 
-  if (moveInput) {
-    return Result.Ok(moveInput)
+  if (!isRecord(move)) {
+    return Result.Err("failed_to_calculate_best_move")
   }
 
+  const bestMoveInput = Object.entries(move)
+    .flatMap<MoveInput>(([from, to]) => isSquare(from) && isSquare(to) ? [{ from, to, promotion: "q" }] : [])[0]
+
+  if (bestMoveInput) {
+    return Result.Ok(bestMoveInput)
+  }
+
+  return Result.Err("failed_to_calculate_best_move")
+}
+
+
+export const toRandomMoveInput = (model: Model): Result.Result<"no_legal_move", MoveInput> => {
   const legalMoveInputs = toLegalMoveInputs(model)
 
   const randomMoveInput = legalMoveInputs[Math.floor(Math.random() * legalMoveInputs.length)]
@@ -56,7 +71,19 @@ export const toBotMove = (level: BotLevel, model: Model): BotMoveResult => {
   }
 
   return Result.Ok(randomMoveInput)
+}
 
+export const getBestMove = (level: Level, model: Model): Task.Task<BestMoveInputResult> => async () => {
+  const worker = new Worker("./board-worker")
+
+  const boardWorker = await spawn<BoardWorker>(worker)
+
+  const result =
+    await boardWorker.toBestMove(level, model)
+
+  await Thread.terminate(boardWorker)
+
+  return result
 
 }
 

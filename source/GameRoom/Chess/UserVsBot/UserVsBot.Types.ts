@@ -25,7 +25,7 @@ export type SetupModel = {
   type: "Setup"
   userColor: Board.Color
   userId: Option.Option<UserId.UserId>
-  botLevel: Board.BotLevel
+  botLevel: Board.Level
 }
 
 export type GameModel = {
@@ -33,7 +33,7 @@ export type GameModel = {
   userColor: Board.Color
   userId: UserId.UserId
   board: Board.Model
-  botLevel: Board.BotLevel
+  botLevel: Board.Level
 }
 
 export type GameOverModel = {
@@ -42,7 +42,7 @@ export type GameOverModel = {
   userColor: Board.Color
   userId: UserId.UserId
   board: Board.Model
-  botLevel: Board.BotLevel
+  botLevel: Board.Level
 }
 
 export type GameOver =
@@ -184,7 +184,7 @@ export const inputColor = (
 
 export type InputBot = [
   "InputBot",
-  { botLevel: Board.BotLevel; userId: UserId.UserId },
+  { botLevel: Board.Level; userId: UserId.UserId },
 ]
 export type InputBot_Done = [
   "InputBot_Done",
@@ -389,11 +389,11 @@ export const inputMove = (
 // 
 // 
 
-export type BotMoved = ['BotMoved', Board.BotMoveResult]
+export type BotMoved = ['BotMoved', Board.BestMoveInputResult]
 export type BotMoved_Done = ['BotMoved_Done', Result.Result<BotMovedProblem, SharedModel & { didCapture: boolean }>]
 export type BotMovedProblem =
   | Board.MoveProblem
-  | Board.BotMoveProblem
+  | Board.BestMoveInputProblem
   | "must_be_started"
   | "must_be_turn"
 
