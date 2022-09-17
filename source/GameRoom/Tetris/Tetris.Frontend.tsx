@@ -1,3 +1,9 @@
 
 
 
+
+
+
+export const CoverArt = () => {
+    return <></>
+}
