@@ -224,7 +224,6 @@ const sendResponse = (
     Cmd.batch([
       didChangeToGameOver ? sendToRoom(["GameOver"]) : Cmd.None,
       sendToRoom(response),
-      sendToRoom(["Sync", modelNew.sharedModel]),
     ]),
   ]
 }

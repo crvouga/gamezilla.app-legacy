@@ -179,7 +179,10 @@ export const updateFromBackend = (
     }
 
     case "InputClock_Done": {
-      return [model, Cmd.None, []]
+      if (msg[1].type === 'Err') {
+        return [model, Cmd.None, []]
+      }
+      return [{ ...model, sharedModel: msg[1].value }, Cmd.None, []]
     }
 
     case "InputMove_Done": {
