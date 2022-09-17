@@ -199,6 +199,13 @@ export const View = ({
 
   switch (model.mode[0]) {
     case "None": {
+      const tooltipTitle =
+        model.requests.InputMode.type === 'Failure'
+          ? inputModeProblemToString(model.requests.InputMode.problem)
+          : model.requests.InputMode.type === 'Loading'
+            ? "Loading..."
+            : ""
+
       return (
         <UI.FillBox>
           <UI.Header
@@ -215,43 +222,47 @@ export const View = ({
           />
 
           <UI.Box sx={{ display: "flex", gap: 2, padding: 2 }}>
-            <UI.Box sx={{ width: "50%" }}>
-              <ModeSelectCard
-                leftIcon={
-                  <UI.Icons.Person sx={{ width: iconSize, height: iconSize }} />
-                }
-                rightIcon={
-                  <UI.Icons.Person sx={{ width: iconSize, height: iconSize }} />
-                }
-                title="Vs User"
-                onClick={() =>
-                  dispatch([
-                    "InputMode",
-                    { mode: "UserVsUser", userId: currentUserId },
-                  ])
-                }
-              />
-            </UI.Box>
+            <UI.Tooltip title={tooltipTitle}>
+              <UI.Box sx={{ width: "50%" }}>
+                <ModeSelectCard
+                  leftIcon={
+                    <UI.Icons.Person sx={{ width: iconSize, height: iconSize }} />
+                  }
+                  rightIcon={
+                    <UI.Icons.Person sx={{ width: iconSize, height: iconSize }} />
+                  }
+                  title="Vs User"
+                  onClick={() =>
+                    dispatch([
+                      "InputMode",
+                      { mode: "UserVsUser", userId: currentUserId },
+                    ])
+                  }
+                />
+              </UI.Box>
+            </UI.Tooltip>
 
-            <UI.Box sx={{ width: "50%" }}>
-              <ModeSelectCard
-                leftIcon={
-                  <UI.Icons.Person sx={{ width: iconSize, height: iconSize }} />
-                }
-                rightIcon={
-                  <UI.Icons.SmartToy
-                    sx={{ width: iconSize, height: iconSize }}
-                  />
-                }
-                title="Vs Bot"
-                onClick={() =>
-                  dispatch([
-                    "InputMode",
-                    { mode: "UserVsBot", userId: currentUserId },
-                  ])
-                }
-              />
-            </UI.Box>
+            <UI.Tooltip title={tooltipTitle}>
+              <UI.Box sx={{ width: "50%" }}>
+                <ModeSelectCard
+                  leftIcon={
+                    <UI.Icons.Person sx={{ width: iconSize, height: iconSize }} />
+                  }
+                  rightIcon={
+                    <UI.Icons.SmartToy
+                      sx={{ width: iconSize, height: iconSize }}
+                    />
+                  }
+                  title="Vs Bot"
+                  onClick={() =>
+                    dispatch([
+                      "InputMode",
+                      { mode: "UserVsBot", userId: currentUserId },
+                    ])
+                  }
+                />
+              </UI.Box>
+            </UI.Tooltip>
           </UI.Box>
         </UI.FillBox>
       )
