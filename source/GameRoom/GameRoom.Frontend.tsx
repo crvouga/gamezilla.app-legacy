@@ -630,7 +630,7 @@ export const ViewNotInRoom = ({
   const rooms = Object.values(model.rooms)
   return (
     <UI.FillBox>
-      <UI.Header title="Rooms" />
+      <UI.Header title="Game Rooms" />
 
       <UI.Box sx={{ paddingX: 2 }}>
         <UI.Button

@@ -43,6 +43,8 @@ const isRecord = (record: unknown): record is Record<string, string> => {
 export const toBestMoveInput = (level: Level, model: Model): BestMoveInputResult => {
   const fen = toFen(model)
 
+  console.log("toBestMove")
+  console.log(fen)
 
   const move: unknown = aiMove(fen, level)
 
@@ -414,10 +416,25 @@ export const init = (): Model => {
 //
 //
 
-const createInstance = (model: Model) => {
+
+// todo use LRU cache instead
+const cache = new Map<string, ChessTs.Chess>();
+
+const createInstance = (model: Model, { source }: { source: 'Cache' | "New" } = { source: 'Cache' }) => {
+  const cached = cache.get(model.pgn)
+
+  if (cached && source === 'Cache') {
+    console.log("cached.")
+    return cached
+  }
+
+
   const instance = new ChessTs.Chess()
 
   instance.loadPgn(model.pgn)
+
+  cache.set(model.pgn, instance)
+  console.log("New!")
 
   return instance
 }
@@ -482,11 +499,9 @@ export const toMissingPieces = (model: Model) => {
 }
 
 export const toTurn = (model: Model): Color => {
-  const instance = createInstance(model)
-
+  const instance = createInstance(model, { source: "New" })
   return instance.turn()
 }
-
 
 export type GameOver = {
   type: "Checkmate",
@@ -670,7 +685,7 @@ export const View = ({
   useEffect(() => {
     setHoveredSquare(null)
     setSelectedSquare(null)
-  }, [model])
+  }, [model.pgn.length])
 
 
   return (
@@ -714,9 +729,6 @@ export const View = ({
         customPieces={customPieces()}
         isDraggablePiece={({ piece, }) => {
           return isDraggablePiece({ piece })
-        }}
-        customDndBackendOptions={{
-
         }}
         onPieceDrop={(from, to, _piece) => {
           const moveInput: MoveInput = {
