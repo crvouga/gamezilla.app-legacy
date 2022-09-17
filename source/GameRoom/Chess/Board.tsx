@@ -677,7 +677,6 @@ export const View = ({
         customLightSquareStyle={{
           backgroundColor: theme.light
         }}
-
         onMouseOverSquare={(square) => {
           setSelectedSquare(fromLowercase(square))
         }}
