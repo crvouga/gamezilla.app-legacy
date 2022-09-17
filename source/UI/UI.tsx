@@ -367,7 +367,7 @@ export const Header = ({
   right?: React.ReactNode
 }) => {
   return (
-    <Mui.Toolbar sx={{ position: "sticky", top: 0, width: "100%" }}>
+    <Mui.Toolbar>
       <Box
         sx={{
           flex: 1,

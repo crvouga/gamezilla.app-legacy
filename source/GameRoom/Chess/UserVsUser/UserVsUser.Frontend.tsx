@@ -416,7 +416,6 @@ export const View = ({
   roomAvatarGroup: UI.ViewNode
 }) => {
   if (model.sharedModel.type === "Setup") {
-    const slotHeight = "58px"
     const startGameResult = startGame(
       { userId: currentUserId },
       model.sharedModel,
@@ -434,7 +433,7 @@ export const View = ({
         />
 
         <UI.Typography
-          variant="h5"
+          variant="h3"
           sx={{ paddingX: 2, paddingBottom: 1 }}
         >
           User Vs User
@@ -616,9 +615,9 @@ export const View = ({
           >
             <UI.Avatar
               src={store.Profile[w]?.avatarUrl}
-              sx={{ marginBottom: 1 / 2 }}
+              sx={{ width: 80, height: 80, marginBottom: 1 }}
             />
-            <UI.Typography>{store.Profile[w]?.username ?? "..."}</UI.Typography>
+            <UI.Typography variant="h6">{store.Profile[w]?.username ?? "..."}</UI.Typography>
           </UI.Box>
           <UI.Typography
             color="text.secondary"
@@ -643,9 +642,9 @@ export const View = ({
           >
             <UI.Avatar
               src={store.Profile[b]?.avatarUrl}
-              sx={{ marginBottom: 1 / 2 }}
+              sx={{ width: 80, height: 80, marginBottom: 1 }}
             />
-            <UI.Typography>{store.Profile[b]?.username ?? "..."}</UI.Typography>
+            <UI.Typography variant="h6">{store.Profile[b]?.username ?? "..."}</UI.Typography>
           </UI.Box>
         </UI.Box>
 
