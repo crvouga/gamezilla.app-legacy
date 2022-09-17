@@ -421,15 +421,13 @@ export const init = (): Model => {
 
 const createInstance = (model: Model) => {
   const instance = new ChessTs.Chess()
-  instance.loadPgn(model.pgn)
+  instance.load(model.fen)
   return instance
 }
 
 export const toFen = (model: Model): string => {
   return model.fen
 }
-
-
 
 export const colorToString = (color: Color): string => {
   switch (color) {
@@ -558,12 +556,6 @@ export const move = (
     previousMove: moveInput,
     didCapture: Boolean(moved.captured),
   })
-}
-
-export const toPreviousMoves = (model: Model): MoveInput[] => {
-  const instance = createInstance(model)
-  const moves = instance.history({ verbose: true })
-  return moves.flatMap(chessTsMoveToMove)
 }
 
 export const toLegalMoveInputs = (model: Model): MoveInput[] => {
