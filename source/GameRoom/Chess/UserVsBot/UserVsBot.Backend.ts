@@ -72,13 +72,11 @@ export const updateFromFrontend = (
 }
 
 const toBotMoveCmd = (modelPrev: Model, modelNext: Model): Cmd.Cmd<Msg> => {
-
   const didChangeToBotTurn = !isBotTurn(modelPrev) && isBotTurn(modelNext)
 
   if (!didChangeToBotTurn) {
     return Cmd.None
   }
-
   if (modelNext.type !== 'Game') {
     return Cmd.None
   }
