@@ -1,7 +1,7 @@
 import * as ChessTs from "chess.ts"
 // @ts-ignore
 import { aiMove } from "js-chess-engine"
-import { ReactNode, useLayoutEffect, useMemo, useRef, useState } from "react"
+import { ReactNode, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react"
 import { Chessboard, CustomSquareStyles } from "react-chessboard"
 import { spawn, Thread, Worker } from "threads"
 import { exhaustive, Result, Task } from "../../Core"
@@ -630,7 +630,7 @@ export const View = ({
     }
   }, [])
 
-  const previousMoves = toPreviousMoves(model)
+  const previousMoves = useMemo(() => toPreviousMoves(model), [model])
   const latestMove = previousMoves[previousMoves.length - 1]
 
   const lastMoveStyles: CustomSquareStyles = latestMove ?
@@ -666,6 +666,11 @@ export const View = ({
     } :
       {}
   )
+
+  useEffect(() => {
+    setHoveredSquare(null)
+    setSelectedSquare(null)
+  }, [model])
 
 
   return (
