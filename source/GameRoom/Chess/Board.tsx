@@ -612,7 +612,6 @@ export const View = ({
   onPieceDrop: (move: MoveInput) => boolean
   isDraggablePiece: ({ piece }: { piece: Piece }) => boolean
 }) => {
-
   const [boardWidth, setBoardWidth] = useState(0)
   const ref = useRef<HTMLDivElement | null>(null)
 
@@ -647,7 +646,6 @@ export const View = ({
     : {
     }
 
-
   const [selectedSquare, setSelectedSquare] = useState<Square | null>(null)
 
   const legalMoves = toLegalMoveInputs(model).filter(move => selectedSquare === move.from)
@@ -656,11 +654,7 @@ export const View = ({
     ...styles,
     [toLowercaseSquare(move.to)]: {
       background: 'radial-gradient(circle, rgba(0,0,0,.1) 25%, transparent 25%)',
-      // backgroundColor: "red",
-      // game.get(move.to) && game.get(move.to).color !== game.get(square).color
-      //   ? 'radial-gradient(circle, rgba(0,0,0,.1) 85%, transparent 85%)'
       borderRadius: '50%',
-
     }
   }), selectedSquare ? {
     [toLowercaseSquare(selectedSquare)]: {
@@ -668,7 +662,6 @@ export const View = ({
     }
   } : {})
 
-  console.log(legalMovesStyles)
 
   return (
     <div ref={ref}>
@@ -696,8 +689,7 @@ export const View = ({
           ...legalMovesStyles
         }}
         customPieces={customPieces()}
-        isDraggablePiece={({ piece, sourceSquare }) => {
-          // setSelectedSquare(fromLowercase(sourceSquare))
+        isDraggablePiece={({ piece, }) => {
           return isDraggablePiece({ piece })
         }}
         customDndBackendOptions={{
