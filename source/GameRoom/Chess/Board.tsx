@@ -668,13 +668,22 @@ export const View = ({
     : {
     }
 
+  const game = instanceRef.current
+
   const legalMovesStyles = legalMoves.reduce<CustomSquareStyles>((styles, move) => ({
     ...styles,
-    [toLowercaseSquare(move.to)]: {
-      background: 'radial-gradient(circle, rgba(0,0,0,.2) 25%, transparent 25%)',
-      borderRadius: '50%',
-      cursor: "pointer"
-    }
+    [toLowercaseSquare(move.to)]:
+      game.get(move.to) && selectedSquare && game.get(toLowercaseSquare(move.to))?.color !== game.get(toLowercaseSquare(selectedSquare))?.color
+        ? {
+          background: 'radial-gradient(circle, rgba(0,0,0,.2) 85%, transparent 85%)',
+          borderRadius: '50%',
+          cursor: "pointer"
+        }
+        : {
+          background: 'radial-gradient(circle, rgba(0,0,0,.2) 25%, transparent 25%)',
+          borderRadius: '50%',
+          cursor: "pointer"
+        }
   }),
     selectedSquare ? {
       [toLowercaseSquare(selectedSquare)]: {
