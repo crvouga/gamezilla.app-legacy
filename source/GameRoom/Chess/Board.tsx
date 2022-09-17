@@ -725,7 +725,7 @@ export const View = ({
           ...lastMoveStyles,
           ...legalMovesStyles
         }}
-        customPieces={customPieces}
+        // customPieces={customPieces}
         isDraggablePiece={({ piece, }) => {
           return isDraggablePiece({ piece })
         }}
