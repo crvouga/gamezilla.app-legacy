@@ -1,7 +1,7 @@
 import * as ChessTs from "chess.ts"
 // @ts-ignore
 import { aiMove } from "js-chess-engine"
-import { ReactNode, useLayoutEffect, useRef, useState } from "react"
+import { ReactNode, useLayoutEffect, useMemo, useRef, useState } from "react"
 import { Chessboard, CustomSquareStyles } from "react-chessboard"
 import { spawn, Thread, Worker } from "threads"
 import { exhaustive, Result, Task } from "../../Core"
@@ -646,21 +646,26 @@ export const View = ({
     : {
     }
 
+  const [hoveredSquare, setHoveredSquare] = useState<Square | null>(null)
   const [selectedSquare, setSelectedSquare] = useState<Square | null>(null)
 
-  const legalMoves = toLegalMoveInputs(model).filter(move => selectedSquare === move.from)
+  const legalMoves = useMemo(() => toLegalMoveInputs(model).filter(move => selectedSquare === move.from), [model.pgn.length, selectedSquare])
 
   const legalMovesStyles = legalMoves.reduce<CustomSquareStyles>((styles, move) => ({
     ...styles,
     [toLowercaseSquare(move.to)]: {
-      background: 'radial-gradient(circle, rgba(0,0,0,.1) 25%, transparent 25%)',
+      background: 'radial-gradient(circle, rgba(0,0,0,.2) 25%, transparent 25%)',
       borderRadius: '50%',
+      cursor: "pointer"
     }
-  }), selectedSquare ? {
-    [toLowercaseSquare(selectedSquare)]: {
-      background: 'rgba(255, 255, 0, 0.4)'
-    }
-  } : {})
+  }),
+    selectedSquare ? {
+      [toLowercaseSquare(selectedSquare)]: {
+        background: 'rgba(255, 255, 0, 0.4)'
+      }
+    } :
+      {}
+  )
 
 
   return (
@@ -677,11 +682,25 @@ export const View = ({
         customLightSquareStyle={{
           backgroundColor: theme.light
         }}
+        onSquareClick={(to) => {
+          if (selectedSquare) {
+            const moveInput: MoveInput = {
+              from: selectedSquare,
+              to: fromLowercase(to),
+              promotion: "q",
+            }
+
+            onPieceDrop(moveInput)
+          }
+        }}
         onMouseOverSquare={(square) => {
-          setSelectedSquare(fromLowercase(square))
+          setHoveredSquare(fromLowercase(square))
         }}
         onPieceDragBegin={(_piece, sourceSquare) => {
           setSelectedSquare(fromLowercase(sourceSquare))
+        }}
+        onPieceClick={(piece) => {
+          setSelectedSquare(hoveredSquare)
         }}
         customSquareStyles={{
           ...lastMoveStyles,
