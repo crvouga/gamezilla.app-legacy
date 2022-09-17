@@ -1,7 +1,7 @@
 import * as ChessTs from "chess.ts"
 // @ts-ignore
 import { aiMove } from "js-chess-engine"
-import { ReactNode, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react"
+import { ReactNode, useEffect, useLayoutEffect, useRef, useState } from "react"
 import { Chessboard, CustomSquareStyles } from "react-chessboard"
 import { spawn, Thread, Worker } from "threads"
 import { exhaustive, Result, Task } from "../../Core"
@@ -42,9 +42,6 @@ const isRecord = (record: unknown): record is Record<string, string> => {
 
 export const toBestMoveInput = (level: Level, model: Model): BestMoveInputResult => {
   const fen = toFen(model)
-
-  console.log("toBestMove")
-  console.log(fen)
 
   const move: unknown = aiMove(fen, level)
 
@@ -99,6 +96,8 @@ export const getBestMove = (level: Level, model: Model): Task.Task<BestMoveInput
 
 export type Model = {
   pgn: string
+  fen: string,
+  previousMove?: MoveInput
 }
 
 export type File = "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H"
@@ -404,6 +403,7 @@ export const init = (): Model => {
   const chessInstance = new ChessTs.Chess()
 
   return {
+    fen: chessInstance.fen(),
     pgn: chessInstance.pgn(),
   }
 }
@@ -417,46 +417,16 @@ export const init = (): Model => {
 //
 
 
-// todo use LRU cache instead
-const cache = new Map<string, ChessTs.Chess>();
-
-const createInstance = (model: Model, { source }: { source: 'Cache' | "New" } = { source: 'Cache' }) => {
-  const cached = cache.get(model.pgn)
 
 
-  if (cached && source === 'Cache') {
-    console.log("cached.")
-    return cached
-  }
-
-
+const createInstance = (model: Model) => {
   const instance = new ChessTs.Chess()
-
   instance.loadPgn(model.pgn)
-
-  cache.set(model.pgn, instance)
-  console.log("New!")
-
   return instance
 }
 
-const fenCache = new Map<string, string>()
-
 export const toFen = (model: Model): string => {
-
-  const cached = fenCache.get(model.pgn)
-
-  if (cached) {
-    return cached
-  }
-
-  const instance = createInstance(model)
-
-  const fen = instance.fen()
-
-  fenCache.set(model.pgn, fen)
-
-  return fen
+  return model.fen
 }
 
 
@@ -513,7 +483,7 @@ export const toMissingPieces = (model: Model) => {
 }
 
 export const toTurn = (model: Model): Color => {
-  const instance = createInstance(model, { source: "New" })
+  const instance = createInstance(model)
   return instance.turn()
 }
 
@@ -584,6 +554,8 @@ export const move = (
 
   return Result.Ok({
     pgn: instance.pgn(),
+    fen: instance.fen(),
+    previousMove: moveInput,
     didCapture: Boolean(moved.captured),
   })
 }
@@ -641,6 +613,7 @@ export const View = ({
   onPieceDrop: (move: MoveInput) => boolean
   isDraggablePiece: ({ piece }: { piece: Piece }) => boolean
 }) => {
+
   const [boardWidth, setBoardWidth] = useState(0)
   const ref = useRef<HTMLDivElement | null>(null)
 
@@ -659,26 +632,49 @@ export const View = ({
     }
   }, [])
 
-  const previousMoves = useMemo(() => toPreviousMoves(model), [model])
-  const latestMove = previousMoves[previousMoves.length - 1]
 
-  const lastMoveStyles: CustomSquareStyles = latestMove ?
+
+
+  const instanceRef = useRef(createInstance(model))
+  const [legalMoves, setLegalMoves] = useState<MoveInput[]>([])
+  const [hoveredSquare, setHoveredSquare] = useState<Square | null>(null)
+  const [selectedSquare, setSelectedSquare] = useState<Square | null>(null)
+
+  const refreshLegalMoves = () => {
+    const legalMovesNext: MoveInput[] = []
+
+    for (const chessTsMove of instanceRef.current.moves({ verbose: true })) {
+      const move = chessTsMoveToMove(chessTsMove)[0]
+      if (move && move.from === selectedSquare) {
+        legalMovesNext.push(move)
+      }
+    }
+
+    setLegalMoves(legalMovesNext)
+  }
+
+  useEffect(() => {
+    refreshLegalMoves()
+  }, [selectedSquare])
+
+  useEffect(() => {
+    instanceRef.current.load(model.fen)
+    refreshLegalMoves()
+  }, [model.fen])
+
+
+  const lastMoveStyles: CustomSquareStyles = model.previousMove ?
     {
-      [toLowercaseSquare(latestMove.to)]: {
+      [toLowercaseSquare(model.previousMove.to)]: {
         background: 'rgba(255, 255, 0, 0.4)'
       },
 
-      [toLowercaseSquare(latestMove.from)]: {
+      [toLowercaseSquare(model.previousMove.from)]: {
         background: 'rgba(255, 255, 0, 0.4)'
       }
     }
     : {
     }
-
-  const [hoveredSquare, setHoveredSquare] = useState<Square | null>(null)
-  const [selectedSquare, setSelectedSquare] = useState<Square | null>(null)
-
-  const legalMoves = useMemo(() => toLegalMoveInputs(model).filter(move => selectedSquare === move.from), [model.pgn.length, selectedSquare])
 
   const legalMovesStyles = legalMoves.reduce<CustomSquareStyles>((styles, move) => ({
     ...styles,
@@ -699,8 +695,7 @@ export const View = ({
   useEffect(() => {
     setHoveredSquare(null)
     setSelectedSquare(null)
-  }, [model.pgn.length])
-
+  }, [model.fen])
 
   return (
     <div ref={ref}>
@@ -708,24 +703,13 @@ export const View = ({
         showBoardNotation
         snapToCursor
         boardOrientation={boardOrientation === "w" ? "white" : "black"}
-        position={toFen(model)}
+        position={model.fen}
         boardWidth={boardWidth}
         customDarkSquareStyle={{
           backgroundColor: theme.dark,
         }}
         customLightSquareStyle={{
           backgroundColor: theme.light
-        }}
-        onSquareClick={(to) => {
-          if (selectedSquare) {
-            const moveInput: MoveInput = {
-              from: selectedSquare,
-              to: fromLowercase(to),
-              promotion: "q",
-            }
-
-            onPieceDrop(moveInput)
-          }
         }}
         onMouseOverSquare={(square) => {
           setHoveredSquare(fromLowercase(square))
