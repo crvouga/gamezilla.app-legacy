@@ -1,8 +1,8 @@
 import * as ChessTs from "chess.ts"
 // @ts-ignore
 import { aiMove } from "js-chess-engine"
-import { DependencyList, useLayoutEffect, useRef, useState } from "react"
-import { Chessboard } from "react-chessboard"
+import { ReactNode, useLayoutEffect, useRef, useState } from "react"
+import { Chessboard, CustomSquareStyles } from "react-chessboard"
 import { spawn, Thread, Worker } from "threads"
 import { exhaustive, Result, Task } from "../../Core"
 import { BoardWorker } from "./board-worker"
@@ -141,6 +141,16 @@ export const toSquare = (file: File, rank: Rank): Square => {
   return `${file}${rank}`
 }
 
+const fromSquare = (square: Square): [File, Rank] => {
+  const file = square[0]
+  const rank = square[1]
+  if (isFile(file) && isRank(rank)) {
+    return [file, rank]
+  }
+
+  throw new Error("impossible condition")
+}
+
 export type Square = `${File}${Rank}`
 
 export type LowercaseSquare = `${Lowercase<File>}${Rank}`
@@ -150,8 +160,38 @@ export const isLowercaseSquare = (square: unknown): square is LowercaseSquare =>
 }
 
 
+export const squareToChecker = (square: Square): "Light" | "Dark" => {
+  const [file, rank] = fromSquare(square)
 
-export const lowercaseSquareToSquare = (square: LowercaseSquare): Square => {
+  const isOddFile =
+    file === 'A'
+    // || file === 'B'
+    || file === 'C'
+    // || file === 'D'
+    || file === 'E'
+    // || file === 'F'
+    || file === 'G'
+  // || file === 'H'
+
+  const isOddRank =
+    rank === '1'
+    // || rank === '2'
+    || rank === '3'
+    // || rank === '4'
+    || rank === '5'
+    // || rank === '6'
+    || rank === '7'
+  // || rank === '8'
+
+  if ((isOddFile && isOddRank) || (!isOddFile && !isOddRank)) {
+    return "Dark"
+  }
+
+  return "Light"
+}
+
+
+export const fromLowercase = (square: LowercaseSquare): Square => {
   switch (square) {
     // 
     case 'a1': return 'A1'
@@ -228,7 +268,7 @@ export const lowercaseSquareToSquare = (square: LowercaseSquare): Square => {
   }
 }
 
-export const squareToLowercaseSquare = (square: Square): LowercaseSquare => {
+export const toLowercaseSquare = (square: Square): LowercaseSquare => {
   switch (square) {
     case 'A1': return 'a1'
     case 'A2': return 'a2'
@@ -374,7 +414,7 @@ export const init = (): Model => {
 //
 //
 
-const _createInstance = (model: Model) => {
+const createInstance = (model: Model) => {
   const instance = new ChessTs.Chess()
 
   instance.loadPgn(model.pgn)
@@ -383,10 +423,12 @@ const _createInstance = (model: Model) => {
 }
 
 export const toFen = (model: Model): string => {
-  const instance = _createInstance(model)
+  const instance = createInstance(model)
 
   return instance.fen()
 }
+
+
 
 export const colorToString = (color: Color): string => {
   switch (color) {
@@ -411,36 +453,36 @@ export const toOppositeColor = (color: Color): Color => {
 }
 
 export const inCheck = (model: Model): boolean => {
-  return _createInstance(model).inCheck()
+  return createInstance(model).inCheck()
 }
 
 export const inDraw = (model: Model): boolean => {
-  return _createInstance(model).inDraw()
+  return createInstance(model).inDraw()
 }
 
 export const inCheckmate = (model: Model): boolean => {
-  return _createInstance(model).inCheckmate()
+  return createInstance(model).inCheckmate()
 }
 
 export const inStalemate = (model: Model): boolean => {
-  return _createInstance(model).inStalemate()
+  return createInstance(model).inStalemate()
 }
 
 export const insufficientMaterial = (model: Model): boolean => {
-  return _createInstance(model).insufficientMaterial()
+  return createInstance(model).insufficientMaterial()
 }
 
 export const inThreefoldRepetition = (model: Model): boolean => {
-  return _createInstance(model).inThreefoldRepetition()
+  return createInstance(model).inThreefoldRepetition()
 }
 
 export const toMissingPieces = (model: Model) => {
-  const instance = _createInstance(model)
+  const instance = createInstance(model)
   return instance.history()
 }
 
 export const toTurn = (model: Model): Color => {
-  const instance = _createInstance(model)
+  const instance = createInstance(model)
 
   return instance.turn()
 }
@@ -495,11 +537,11 @@ export const move = (
   moveInput: MoveInput,
   model: Model,
 ): Result.Result<MoveProblem, Model & { didCapture: boolean }> => {
-  const instance = _createInstance(model)
+  const instance = createInstance(model)
 
   const moveInput_ = {
-    from: squareToLowercaseSquare(moveInput.from),
-    to: squareToLowercaseSquare(moveInput.to),
+    from: toLowercaseSquare(moveInput.from),
+    to: toLowercaseSquare(moveInput.to),
     promotion: moveInput.promotion
   }
 
@@ -517,20 +559,28 @@ export const move = (
   })
 }
 
+export const toPreviousMoves = (model: Model): MoveInput[] => {
+  const instance = createInstance(model)
+  const moves = instance.history({ verbose: true })
+  return moves.flatMap(chessTsMoveToMove)
+}
+
 export const toLegalMoveInputs = (model: Model): MoveInput[] => {
-  const instance = _createInstance(model)
+  const instance = createInstance(model)
   const moves = instance.moves({ verbose: true })
-  return moves.flatMap(move =>
-    isLowercaseSquare(move.from) && isLowercaseSquare(move.to) ?
-      [
-        {
-          from: lowercaseSquareToSquare(move.from),
-          to: lowercaseSquareToSquare(move.to),
-          promotion: move.promotion ?? "q",
-        }
-      ] :
-      []
-  )
+  return moves.flatMap(chessTsMoveToMove)
+}
+
+export const chessTsMoveToMove = (move: ChessTs.Move): MoveInput[] => {
+  if (isLowercaseSquare(move.from) && isLowercaseSquare(move.to)) {
+    return [{
+      from: fromLowercase(move.from),
+      to: fromLowercase(move.to),
+      promotion: move.promotion ?? "q",
+    }]
+  }
+
+  return []
 }
 
 //
@@ -541,6 +591,15 @@ export const toLegalMoveInputs = (model: Model): MoveInput[] => {
 //
 //
 //
+
+export const theme = {
+  dark: "#779455",
+  light: "#EBEBD0",
+  highlighted: {
+    dark: "#BDCB3F",
+    light: "#F6F686"
+  }
+}
 
 export const View = ({
   boardOrientation,
@@ -553,34 +612,7 @@ export const View = ({
   onPieceDrop: (move: MoveInput) => boolean
   isDraggablePiece: ({ piece }: { piece: Piece }) => boolean
 }) => {
-  const { boardWidth, ref } = useBoardWidth([])
-  return (
-    <div ref={ref}>
-      <Chessboard
-        showBoardNotation
-        snapToCursor
-        boardOrientation={boardOrientation === "w" ? "white" : "black"}
-        position={toFen(model)}
-        boardWidth={boardWidth}
-        isDraggablePiece={({ piece }) => {
-          return isDraggablePiece({ piece })
-        }}
-        onPieceDrop={(sourceSquare, targetSquare, _piece) => {
 
-          const moveInput: MoveInput = {
-            from: lowercaseSquareToSquare(sourceSquare),
-            to: lowercaseSquareToSquare(targetSquare),
-            promotion: "q",
-          }
-
-          return onPieceDrop(moveInput)
-        }}
-      />
-    </div>
-  )
-}
-
-const useBoardWidth = (depList: DependencyList) => {
   const [boardWidth, setBoardWidth] = useState(0)
   const ref = useRef<HTMLDivElement | null>(null)
 
@@ -597,12 +629,110 @@ const useBoardWidth = (depList: DependencyList) => {
     return () => {
       window.removeEventListener("resize", handler)
     }
-  }, depList)
+  }, [])
 
-  return {
-    ref,
-    boardWidth,
-  }
+  const previousMoves = toPreviousMoves(model)
+  const latestMove = previousMoves[previousMoves.length - 1]
+
+  const lastMoveStyles: CustomSquareStyles = latestMove ?
+    {
+      [toLowercaseSquare(latestMove.to)]: {
+        background: 'rgba(255, 255, 0, 0.4)'
+      },
+
+      [toLowercaseSquare(latestMove.from)]: {
+        background: 'rgba(255, 255, 0, 0.4)'
+      }
+    }
+    : {
+    }
+
+
+  const [selectedSquare, setSelectedSquare] = useState<Square | null>(null)
+
+  const legalMoves = toLegalMoveInputs(model).filter(move => selectedSquare === move.from)
+
+  const legalMovesStyles = legalMoves.reduce<CustomSquareStyles>((styles, move) => ({
+    ...styles,
+    [toLowercaseSquare(move.to)]: {
+      background: 'radial-gradient(circle, rgba(0,0,0,.1) 25%, transparent 25%)',
+      // backgroundColor: "red",
+      // game.get(move.to) && game.get(move.to).color !== game.get(square).color
+      //   ? 'radial-gradient(circle, rgba(0,0,0,.1) 85%, transparent 85%)'
+      borderRadius: '50%',
+
+    }
+  }), selectedSquare ? {
+    [toLowercaseSquare(selectedSquare)]: {
+      background: 'rgba(255, 255, 0, 0.4)'
+    }
+  } : {})
+
+  console.log(legalMovesStyles)
+
+  return (
+    <div ref={ref}>
+      <Chessboard
+        showBoardNotation
+        snapToCursor
+        boardOrientation={boardOrientation === "w" ? "white" : "black"}
+        position={toFen(model)}
+        boardWidth={boardWidth}
+        customDarkSquareStyle={{
+          backgroundColor: theme.dark,
+        }}
+        customLightSquareStyle={{
+          backgroundColor: theme.light
+        }}
+
+        onMouseOverSquare={(square) => {
+          setSelectedSquare(fromLowercase(square))
+        }}
+        onPieceDragBegin={(_piece, sourceSquare) => {
+          setSelectedSquare(fromLowercase(sourceSquare))
+        }}
+        customSquareStyles={{
+          ...lastMoveStyles,
+          ...legalMovesStyles
+        }}
+        customPieces={customPieces()}
+        isDraggablePiece={({ piece, sourceSquare }) => {
+          // setSelectedSquare(fromLowercase(sourceSquare))
+          return isDraggablePiece({ piece })
+        }}
+        customDndBackendOptions={{
+
+        }}
+        onPieceDrop={(from, to, _piece) => {
+          const moveInput: MoveInput = {
+            from: fromLowercase(from),
+            to: fromLowercase(to),
+            promotion: "q",
+          }
+
+          return onPieceDrop(moveInput)
+        }}
+      />
+    </div>
+  )
 }
 
+const pieces = ['wP', 'wN', 'wB', 'wR', 'wQ', 'wK', 'bP', 'bN', 'bB', 'bR', 'bQ', 'bK'];
+const customPieces = () => {
+  const returnPieces: { [piece: string]: ({ squareWidth }: { squareWidth: number }) => ReactNode } = {};
 
+  pieces.map((p) => {
+    returnPieces[p] = ({ squareWidth }) => (
+      <div
+        style={{
+          width: squareWidth,
+          height: squareWidth,
+          backgroundImage: `url(/media/${p}.png)`,
+          backgroundSize: '100%',
+        }}
+      />
+    );
+    return null;
+  });
+  return returnPieces;
+};
