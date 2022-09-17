@@ -20,6 +20,8 @@
     "onplayerror",
     "openapi",
     "supabase",
+    "Tetromino",
+    "tetrominos",
     "twillo",
     "typecheck",
     "Unflip"
