@@ -5,12 +5,12 @@ import {
   Result,
   Sub,
   tagCmd,
-  tagSub,
+  tagSub
 } from "../../Core"
-import { BackendModel, BackendMsg, InputMode, InputMode_Done, ToBackend, ToFrontend } from "./Chess.Types"
-import * as UserVsUser from "./UserVsUser/UserVsUser.Backend"
-import * as UserVsBot from "./UserVsBot/UserVsBot.Backend"
 import { UserId } from "../../Data"
+import { BackendModel, BackendMsg, InputMode, InputMode_Done, ToBackend, ToFrontend } from "./Chess.Types"
+import * as UserVsBot from "./UserVsBot/UserVsBot.Backend"
+import * as UserVsUser from "./UserVsUser/UserVsUser.Backend"
 
 //
 //

@@ -301,67 +301,66 @@ export const View = ({
         </UI.Typography>
 
         <UI.Typography
-          sx={{ paddingX: 2 }}
+          sx={{ paddingX: 2, marginBottom: 1 }}
           color="text.secondary"
         >
           Player
         </UI.Typography>
 
-        <UI.Box sx={{ height: "52px", marginBottom: 1 }}>
-          {model.sharedModel.userId.type === "None" ? (
-            <UI.Box sx={{ paddingX: 2, paddingY: 1 }}>
+        {model.sharedModel.userId.type === "None" ? (
+          <UI.Box sx={{ paddingX: 2, }}>
+            <UI.Button
+              fullWidth
+              size="large"
+              variant="contained"
+              onClick={() => {
+                dispatch([
+                  "InputUser",
+                  { userId: Option.Some(currentUserId) },
+                ])
+              }}
+            >
+              Start Playing
+            </UI.Button>
+          </UI.Box>
+        ) : (
+          <UI.Box sx={{ display: "flex", alignItems: "center", paddingX: 2 }}>
+            <UI.Avatar
+              sx={{ marginRight: 1 }}
+              src={store.Profile[model.sharedModel.userId.value]?.avatarUrl}
+            />
+
+            <UI.Typography
+              sx={{ flex: 1 }}
+              noWrap
+            >
+              {store.Profile[model.sharedModel.userId.value]?.username ??
+                "..."}
+            </UI.Typography>
+
+            {model.sharedModel.userId.value === currentUserId && (
               <UI.Button
-                fullWidth
                 size="large"
-                variant="contained"
-                onClick={() => {
-                  dispatch([
-                    "InputUser",
-                    { userId: Option.Some(currentUserId) },
-                  ])
-                }}
+                onClick={() =>
+                  dispatch(["InputUser", { userId: Option.None }])
+                }
               >
-                Start Playing
+                Stop Playing
               </UI.Button>
-            </UI.Box>
-          ) : (
-            <UI.Box sx={{ display: "flex", alignItems: "center", paddingX: 2 }}>
-              <UI.Avatar
-                sx={{ marginRight: 1 }}
-                src={store.Profile[model.sharedModel.userId.value]?.avatarUrl}
-              />
+            )}
+          </UI.Box>
+        )}
 
-              <UI.Typography
-                sx={{ flex: 1 }}
-                noWrap
-              >
-                {store.Profile[model.sharedModel.userId.value]?.username ??
-                  "..."}
-              </UI.Typography>
-
-              {model.sharedModel.userId.value === currentUserId && (
-                <UI.Button
-                  size="large"
-                  onClick={() =>
-                    dispatch(["InputUser", { userId: Option.None }])
-                  }
-                >
-                  Stop Playing
-                </UI.Button>
-              )}
-            </UI.Box>
-          )}
-        </UI.Box>
 
 
         <UI.Typography
-          sx={{ paddingX: 2 }}
+          sx={{ paddingX: 2, marginBottom: 1, marginTop: 2 }}
           color="text.secondary"
         >
           Bot
         </UI.Typography>
 
-        <UI.Box sx={{ paddingX: 2, paddingBottom: 2 }}>
+        <UI.Box sx={{ paddingX: 2, }}>
           <UI.Tooltip
             enterTouchDelay={0}
             title={
@@ -392,7 +391,7 @@ export const View = ({
         </UI.Box >
 
         <UI.Typography
-          sx={{ paddingX: 2 }}
+          sx={{ paddingX: 2, marginBottom: 1, marginTop: 2 }}
           color="text.secondary"
         >
           Color

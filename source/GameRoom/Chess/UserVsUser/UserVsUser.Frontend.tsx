@@ -441,58 +441,76 @@ export const View = ({
         </UI.Typography>
 
         <UI.Typography
-          sx={{ paddingX: 2 }}
+          sx={{ paddingX: 2, marginBottom: 1 }}
           color="text.secondary"
         >
           {Board.colorToString("w")}
         </UI.Typography>
 
-        <UI.Box sx={{ height: slotHeight }}>
-          {model.sharedModel.w.type === "None" ? (
-            <ViewInputPlayerButton
-              currentUserId={currentUserId}
-              dispatch={dispatch}
-              color="w"
-            />
-          ) : (
-            <ViewInputUserPlayerSlot
-              color="w"
-              userId={model.sharedModel.w.value}
-              currentUserId={currentUserId}
-              dispatch={dispatch}
-              store={store}
-            />
-          )}
-        </UI.Box>
+        {model.sharedModel.w.type === "None" ? (
+          <UI.Box sx={{ paddingX: 2 }}>
+            <UI.Button
+              fullWidth
+              size="large"
+              variant="contained"
+              onClick={() => {
+                dispatch([
+                  "InputPlayer",
+                  { userId: Option.Some(currentUserId), color: "w" },
+                ])
+              }}
+            >
+              Play As {Board.colorToString("w")}
+            </UI.Button>
+          </UI.Box>
+        ) : (
+          <ViewInputUserPlayerSlot
+            color="w"
+            userId={model.sharedModel.w.value}
+            currentUserId={currentUserId}
+            dispatch={dispatch}
+            store={store}
+          />
+        )}
+
 
         <UI.Typography
-          sx={{ paddingX: 2 }}
+          sx={{ paddingX: 2, marginTop: 2, marginBottom: 1 }}
           color="text.secondary"
         >
           {Board.colorToString("b")}
         </UI.Typography>
 
-        <UI.Box sx={{ height: slotHeight }}>
-          {model.sharedModel.b.type === "None" ? (
-            <ViewInputPlayerButton
-              currentUserId={currentUserId}
-              dispatch={dispatch}
-              color="b"
-            />
-          ) : (
-            <ViewInputUserPlayerSlot
-              color="b"
-              userId={model.sharedModel.b.value}
-              currentUserId={currentUserId}
-              dispatch={dispatch}
-              store={store}
-            />
-          )}
-        </UI.Box>
+
+        {model.sharedModel.b.type === "None" ? (
+          <UI.Box sx={{ paddingX: 2 }}>
+            <UI.Button
+              fullWidth
+              size="large"
+              variant="contained"
+              onClick={() => {
+                dispatch([
+                  "InputPlayer",
+                  { userId: Option.Some(currentUserId), color: "b" },
+                ])
+              }}
+            >
+              Play As {Board.colorToString("b")}
+            </UI.Button>
+          </UI.Box>
+        ) : (
+          <ViewInputUserPlayerSlot
+            color="b"
+            userId={model.sharedModel.b.value}
+            currentUserId={currentUserId}
+            dispatch={dispatch}
+            store={store}
+          />
+        )}
+
 
         <UI.Typography
-          sx={{ paddingX: 2 }}
-          gutterBottom
+          sx={{ paddingX: 2, marginTop: 2, marginBottom: 1 }}
           color={"text.secondary"}
         >
           Clock
@@ -540,16 +558,20 @@ export const View = ({
               {startGameProblemToString(startGameResult.error)}
             </UI.Typography>
           )}
-          <UI.Button
-            disabled={startGameResult.type === "Err"}
-            fullWidth
-            variant="contained"
-            onClick={() => {
-              dispatch(["StartGame", { userId: currentUserId }])
-            }}
-          >
-            Start Game
-          </UI.Button>
+          <UI.Tooltip title={startGameResult.type === 'Err' ? startGameProblemToString(startGameResult.error) : ""}>
+            <span>
+              <UI.Button
+                disabled={startGameResult.type === "Err"}
+                fullWidth
+                variant="contained"
+                onClick={() => {
+                  dispatch(["StartGame", { userId: currentUserId }])
+                }}
+              >
+                Start Game
+              </UI.Button>
+            </span>
+          </UI.Tooltip>
         </UI.Box>
       </UI.FillBox>
     )
@@ -1050,8 +1072,8 @@ const ViewUserPlayerSlot = ({
     <UI.Box
       sx={{
         paddingX: 2,
-        paddingTop: position === "bottom" ? 1 : 0,
-        paddingBottom: position === "top" ? 1 : 0,
+        paddingTop: position === "bottom" ? 1 : 2,
+        paddingBottom: position === "top" ? 1 : 2,
         display: "flex",
         alignItems: "center",
       }}
@@ -1059,12 +1081,12 @@ const ViewUserPlayerSlot = ({
       <UI.Avatar
         src={src}
         sx={{
-          width: 32,
-          height: 32,
+          // width: 32,
+          // height: 32,
           marginRight: 1,
         }}
       />
-      <UI.Typography variant="body2">{username}</UI.Typography>
+      <UI.Typography variant="body1">{username}</UI.Typography>
 
       <UI.Box sx={{ flex: 1 }} />
 
@@ -1072,7 +1094,7 @@ const ViewUserPlayerSlot = ({
         color={
           isActive ? theme.palette.text.primary : theme.palette.action.disabled
         }
-        variant="h5"
+        variant="h4"
         component="div"
         sx={{
           fontFamily: ["Roboto Mono", "monospace"].join(", "),
