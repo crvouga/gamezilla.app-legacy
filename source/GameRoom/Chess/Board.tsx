@@ -423,6 +423,7 @@ const cache = new Map<string, ChessTs.Chess>();
 const createInstance = (model: Model, { source }: { source: 'Cache' | "New" } = { source: 'Cache' }) => {
   const cached = cache.get(model.pgn)
 
+
   if (cached && source === 'Cache') {
     console.log("cached.")
     return cached
@@ -439,10 +440,23 @@ const createInstance = (model: Model, { source }: { source: 'Cache' | "New" } = 
   return instance
 }
 
+const fenCache = new Map<string, string>()
+
 export const toFen = (model: Model): string => {
+
+  const cached = fenCache.get(model.pgn)
+
+  if (cached) {
+    return cached
+  }
+
   const instance = createInstance(model)
 
-  return instance.fen()
+  const fen = instance.fen()
+
+  fenCache.set(model.pgn, fen)
+
+  return fen
 }
 
 
