@@ -371,19 +371,19 @@ export const View = ({
           >
 
             <UI.Select disabled={inputBotResult.type === 'Err'} fullWidth value={model.sharedModel.botLevel}>
-              {Board.allLevels.map(botLevel => (
+              {Board.allLevels.map(level => (
                 <UI.MenuItem
-                  selected={model.sharedModel.botLevel === botLevel}
-                  value={botLevel}
-                  key={botLevel}
+                  selected={model.sharedModel.botLevel === level}
+                  value={level}
+                  key={level}
                   onClick={() => {
                     dispatch([
                       "InputBot",
-                      { botLevel, userId: currentUserId },
+                      { botLevel: level, userId: currentUserId },
                     ])
                   }}
                 >
-                  {Board.levelToString(botLevel)}
+                  {level} - {Board.levelToString(level)}
                 </UI.MenuItem>
               ))}
             </UI.Select>
@@ -467,9 +467,10 @@ export const View = ({
   const botSlot =
     (
       <UI.Box sx={{ paddingX: 2, display: 'flex', alignItems: "center" }}>
-        <UI.Avatar sx={{ marginRight: 2 }}>
+        <UI.Avatar sx={{ marginRight: 2, backgroundColor: "transparent" }}>
 
           <UI.Icons.SmartToy
+            sx={{ color: "text.primary", width: "100%", height: "100%" }}
           // sx={{ width: 40, height: 40, marginRight: 2 }}
           />
         </UI.Avatar>

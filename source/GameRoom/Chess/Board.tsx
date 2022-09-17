@@ -14,19 +14,19 @@ export const allLevels: Level[] = [0, 1, 2, 3, 4]
 export const levelToString = (level: Level): string => {
   switch (level) {
     case 0: {
-      return "0 - Monkey"
+      return "Monkey"
     }
     case 1: {
-      return "1 - Beginner"
+      return "Beginner"
     }
     case 2: {
-      return "2 - Intermediate"
+      return "Intermediate"
     }
     case 3: {
-      return "3 - Advanced"
+      return "Advanced"
     }
     case 4: {
-      return "4 - Experienced"
+      return "Experienced"
     }
   }
 }
