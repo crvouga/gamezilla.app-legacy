@@ -294,7 +294,7 @@ export const View = ({
         />
 
         <UI.Typography
-          variant="h5"
+          variant="h3"
           sx={{ paddingX: 2, paddingBottom: 1 }}
         >
           User Vs Bot
