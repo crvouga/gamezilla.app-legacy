@@ -1,4 +1,8 @@
-
+import { Result } from "../../Core"
+import * as Board from "./Board"
+import * as Direction from "./Direction"
+import * as Position from "./Position"
+import * as Tetromino from "./Tetromino"
 
 // 
 // 
@@ -8,122 +12,24 @@
 // 
 // 
 
-import { Result } from "../../Core"
-
 
 export type Model = {
-    board: Board
-    origin: Position
-    piece: PieceName
-}
-
-export type Board = Cell[][]
-
-export type Cell = "Empty" | "Filled"
-
-export type Position = {
-    x: number,
-    y: number
-}
-
-export const pieces: Pieces = {
-    I: [
-        { x: -1, y: 0 },
-        { x: 0, y: 0 },
-        { x: 1, y: 0 },
-        { x: 2, y: 0 }
-    ],
-    T: [{ x: 0, y: - 1 }, { x: -1, y: 0 }, { x: 0, y: 0 }, { x: 1, y: 0 }],
-    O: [
-
-        { x: 0, y: - 1 }, { x: 1, y: - 1 },
-        { x: 0, y: 0 }, { x: 1, y: 0 }],
-    J: [
-
-        { x: -1, y: -1 }, {
-            x: -1, y: 0
-        },
-        { x: 0, y: 0 }, { x: 1, y: 0 }],
-    L: [
-
-        { x: 1, y: - 1 },
-        { x: -1, y: 0 },
-        { x: 0, y: 0 }, { x: 1, y: 0 }],
-    S: [
-
-        { x: 0, y: - 1 },
-        { x: 1, y: - 1 }, {
-            x: -1, y: 0
-        }, {
-            x: 0, y: 0
-        }],
-    Z: [
-        { x: -1, y: - 1 },
-        { x: 0, y: - 1 },
-        { x: 0, y: 0 }, { x: 1, y: 0 }],
+    board: Board.Board
+    origin: Position.Position
+    tetrominoName: Tetromino.Name
 }
 
 
-export type Piece = Position[]
+export const columnCount = 10
+export const rowCount = 20
+const initialOrigin: Position.Position = { x: Math.floor(columnCount / 2), y: 1 }
 
-export type PieceName = "I" | "T" | "O" | "J" | "L" | "S" | "Z"
-
-export type Pieces = {
-    [piece in PieceName]: Piece
+export const toTetromino = (model: Model): Tetromino.Tetromino => {
+    return Tetromino.toUnit(model.tetrominoName).map(position => Position.add(position, model.origin))
 }
 
-export const rotate = (position: Position): Position => {
-    return {
-        x: -position.y,
-        y: position.x
-    }
-}
-
-export const add = (a: Position, b: Position): Position => {
-    return {
-        x: a.x + b.x,
-        y: a.y + b.y
-    }
-}
-
-export type Direction = "Down" | "Left" | "Right"
-
-export const move = (direction: Direction, position: Position): Position => {
-    switch (direction) {
-        case 'Left': {
-            return {
-                x: position.x - 1,
-                y: position.y
-            }
-        }
-
-        case 'Right': {
-            return {
-                x: position.x + 1,
-                y: position.y
-            }
-        }
-
-        case 'Down': {
-            return {
-                x: position.x,
-                y: position.y + 1
-            }
-        }
-    }
-}
-
-
-const toPiece = (model: Model): Piece => {
-    return pieces[model.piece].map(position => add(position, model.origin))
-}
-
-const toBoardCell = (position: Position, board: Board): Cell => {
-    return board?.[position.x]?.[position.y] ?? "Filled"
-}
-
-export const isCollision = (model: Model): boolean => {
-    return toPiece(model).every(position => toBoardCell(position, model.board) === "Empty")
+export const inCollision = (model: Model): boolean => {
+    return toTetromino(model).every(position => Board.toCell(position, model.board) === "Empty")
 }
 
 // 
@@ -134,21 +40,60 @@ export const isCollision = (model: Model): boolean => {
 // 
 // 
 
-export type InputMove = ['InputMove', { direction: Direction }]
+export type InputMove = ['InputMove', { direction: Direction.Direction }]
 export type InputMove_Done = ['InputMove_Done', Result.Result<InputMoveProblem, Model>]
 export type InputMoveProblem = "collision"
 
 export const inputMove = ({ direction }: InputMove[1], model: Model): InputMove_Done[1] => {
+    const originNext = Position.add(Direction.toPosition(direction), model.origin)
 
     const modelNext: Model = {
         ...model,
-        origin: move(direction, model.origin)
+        origin: originNext,
     }
 
 
-    if (!isCollision(model)) {
+    if (!inCollision(model)) {
         return Result.Err("collision")
     }
 
     return Result.Ok(modelNext)
 }
+
+// 
+// 
+// 
+// 
+// 
+// 
+// 
+
+
+export type Ticked = ["Ticked"]
+
+export const ticked = (model: Model): Model => {
+    const originNext = Position.add(Direction.toPosition("Down"), model.origin)
+
+    const modelNext: Model = {
+        ...model,
+        origin: originNext
+    }
+
+
+    if (inCollision(model)) {
+        const tetromino = toTetromino(model)
+
+        const boardNew = tetromino.reduce((board, position) => Board.setCell(position, "Filled", board), model.board)
+
+        return {
+            ...model,
+            origin: initialOrigin,
+            tetrominoName: "Z",
+            board: boardNew
+        }
+    }
+
+    return modelNext
+}
+
+
