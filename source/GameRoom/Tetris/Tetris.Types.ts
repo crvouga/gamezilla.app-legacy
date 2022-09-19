@@ -1,4 +1,4 @@
-import { Keyboard, Result } from "../../Core"
+import { Keyboard, Option, Result } from "../../Core"
 import * as Board from "./Board"
 import * as Direction from "./Direction"
 import * as Position from "./Position"
@@ -12,7 +12,10 @@ import * as Piece from "./Piece"
 // 
 // 
 
-export type FrontendModel = SharedModel
+export type FrontendModel = {
+    touched: Option.Option<Position.Position>
+    sharedModel: SharedModel
+}
 
 export type BackendModel = SharedModel
 
@@ -29,7 +32,7 @@ export const rowCount = 20
 
 const initialOrigin: Position.Position = {
     x: Math.floor(columnCount / 2),
-    y: 1,
+    y: 0,
 }
 
 export const initShared: SharedModel = {
@@ -56,7 +59,7 @@ export const inCollision = (model: SharedModel): boolean => {
 }
 
 export const isOutOfBounds = (model: SharedModel): boolean => {
-    return toPiece(model).some(position => position.x >= columnCount || position.x < 0 || position.y >= rowCount || position.y < 0)
+    return toPiece(model).some(position => position.x >= columnCount || position.x < 0 || position.y >= rowCount)
 }
 
 export const toDrop = (model: SharedModel): SharedModel => {
@@ -84,7 +87,7 @@ export const toGhostPiece = (model: SharedModel): Piece.Piece => {
 // 
 // 
 
-export type FrontendMsg = ['PressedKey', Keyboard.Key]
+export type FrontendMsg = ['PressedKey', Keyboard.Key] | ["TouchStart", Position.Position] | ["TouchMove", Position.Position] | ['TouchEnd', Position.Position]
 
 export type BackendMsg = Tick
 
