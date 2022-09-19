@@ -76,6 +76,8 @@ export const toFilledRows = (board: Board): number[] => {
     return filledRows
 }
 
+
+
 // 
 // 
 // 
