@@ -1,21 +1,6 @@
 import * as Position from "./Position"
 
-// 
-// 
-// 
-// Model
-// 
-// 
-// 
-
 export type Direction = "Down" | "Left" | "Right"
-
-// 
-// 
-// 
-// 
-// 
-// 
 
 export const toPosition = (direction: Direction): Position.Position => {
     switch (direction) {
@@ -39,6 +24,5 @@ export const toPosition = (direction: Direction): Position.Position => {
                 y: 0
             }
         }
-
     }
 }

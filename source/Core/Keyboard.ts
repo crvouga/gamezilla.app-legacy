@@ -20,7 +20,9 @@ export const isEnterKey = (key: unknown): key is EnterKey => {
   return typeof key === "string" && key === "Enter"
 }
 
-export type Key =
+export type SpaceKey = "Space"
+
+export type WASD =
   | "w"
   | "a"
   | "s"
@@ -29,7 +31,10 @@ export type Key =
   | "A"
   | "S"
   | "D"
-  | "Space"
+
+export type Key =
+  | WASD
+  | SpaceKey
   | ArrowKey
   | EnterKey
 

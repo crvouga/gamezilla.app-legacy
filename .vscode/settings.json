@@ -20,10 +20,12 @@
     "onplayerror",
     "openapi",
     "supabase",
+    "Tetris",
     "Tetromino",
     "tetrominos",
     "twillo",
     "typecheck",
-    "Unflip"
+    "Unflip",
+    "WASD"
   ] // optional but recommended
 }

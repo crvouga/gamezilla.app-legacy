@@ -1,12 +1,12 @@
 import * as Position from "./Position"
 
-export type Tetromino = Position.Position[]
+export type Piece = Position.Position[]
 
 export type Name = "I" | "T" | "O" | "J" | "L" | "S" | "Z"
 
 export const allNames: Name[] = ['I', 'T', 'O', 'J', "L", "S", "Z"]
 
-export const tetrominos: { [name in Name]: Tetromino } = {
+export const pieces: { [name in Name]: Piece } = {
     I: [
         { x: -1, y: 0 },
         { x: 0, y: 0 },
@@ -14,7 +14,7 @@ export const tetrominos: { [name in Name]: Tetromino } = {
         { x: 2, y: 0 }
     ],
     T: [
-        { x: 0, y: - 1 },
+        { x: 0, y: -1 },
         { x: -1, y: 0 },
         { x: 0, y: 0 },
         { x: 1, y: 0 }
@@ -32,36 +32,56 @@ export const tetrominos: { [name in Name]: Tetromino } = {
         { x: 1, y: 0 }
     ],
     L: [
-        { x: 1, y: - 1 },
+        { x: 1, y: -1 },
         { x: -1, y: 0 },
         { x: 0, y: 0 },
         { x: 1, y: 0 }
     ],
     S: [
-
-        { x: 0, y: - 1 },
-        { x: 1, y: - 1 },
+        { x: 0, y: -1 },
+        { x: 1, y: -1 },
         { x: -1, y: 0 },
         { x: 0, y: 0 }
     ],
     Z: [
-        { x: -1, y: - 1 },
-        { x: 0, y: - 1 },
+        { x: -1, y: -1 },
+        { x: 0, y: -1 },
         { x: 0, y: 0 },
         { x: 1, y: 0 }
     ],
 }
 
 
-export const toUnit = (name: Name): Tetromino => {
-    return tetrominos[name]
+export const toUnit = (name: Name): Piece => {
+    return pieces[name]
+}
+
+
+export const colors: { [name in Name]: string } = {
+    I: "cyan",
+    J: "blue",
+    L: "orange",
+    O: "yellow",
+    S: "green",
+    T: "magenta",
+    Z: "red",
 }
 
 
 export const View = ({ name }: { name: Name }) => {
     switch (name) {
         case 'I': {
-            return <></>
+            return <svg>
+                {pieces.I.map(position => (
+                    <rect
+                        key={[position.x, position.y].join("-")}
+                        x={position.x}
+                        y={position.x}
+                        width={1}
+                        height={1}
+                    />
+                ))}
+            </svg>
         }
 
         case 'J': {
