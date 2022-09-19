@@ -760,10 +760,16 @@ const ViewNotInGame = ({
         />
 
         {/* <GameCard
-        icon={<Game.CoverArt gameName="Snake" />}
-        label="Snake"
-        onClick={() => onOpen("Snake")}
-      /> */}
+          icon={<Game.CoverArt gameName="Snake" />}
+          label="Snake"
+          onClick={() => onOpen("Snake")}
+        /> */}
+
+        <GameCard
+          icon={<Game.CoverArt gameName="Tetris" />}
+          label="Tetris"
+          onClick={() => onOpen("Tetris")}
+        />
 
         <GameCard
           icon={<Game.CoverArt gameName="TicTacToe" />}

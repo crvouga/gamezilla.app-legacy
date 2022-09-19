@@ -1,8 +1,8 @@
-import { Result } from "../../Core"
+import { Keyboard, Result } from "../../Core"
 import * as Board from "./Board"
 import * as Direction from "./Direction"
 import * as Position from "./Position"
-import * as Tetromino from "./Tetromino"
+import * as Piece from "./Piece"
 
 // 
 // 
@@ -12,48 +12,107 @@ import * as Tetromino from "./Tetromino"
 // 
 // 
 
+export type FrontendModel = SharedModel
 
-export type Model = {
+export type BackendModel = SharedModel
+
+export type SharedModel = {
     board: Board.Board
     origin: Position.Position
-    tetrominoName: Tetromino.Name
+    tetrominoName: Piece.Name,
+    rotations: 0 | 1 | 2 | 3
 }
-
 
 export const columnCount = 10
+
 export const rowCount = 20
-const initialOrigin: Position.Position = { x: Math.floor(columnCount / 2), y: 1 }
 
-export const toTetromino = (model: Model): Tetromino.Tetromino => {
-    return Tetromino.toUnit(model.tetrominoName).map(position => Position.add(position, model.origin))
+const initialOrigin: Position.Position = {
+    x: Math.floor(columnCount / 2),
+    y: 1,
 }
 
-export const inCollision = (model: Model): boolean => {
-    return toTetromino(model).every(position => Board.toCell(position, model.board) === "Empty")
+export const initShared: SharedModel = {
+    board: Board.init({ rowCount, columnCount }),
+    origin: initialOrigin,
+    tetrominoName: "Z",
+    rotations: 0
+}
+
+
+export const toPiece = (model: SharedModel): Piece.Piece => {
+    return Piece.toUnit(model.tetrominoName).map(position => times(model.rotations, Position.rotate, position)).map(position => Position.add(position, model.origin))
+}
+
+const times = <X>(count: number, f: (x: X) => X, x: X,): X => {
+    if (count <= 0) {
+        return x
+    }
+    return times(count - 1, f, f(x))
+}
+
+export const inCollision = (model: SharedModel): boolean => {
+    return toPiece(model).some(position => Board.toCell(position, model.board) !== "Empty") || isOutOfBounds(model)
+}
+
+export const isOutOfBounds = (model: SharedModel): boolean => {
+    return toPiece(model).some(position => position.x >= columnCount || position.x < 0 || position.y >= rowCount || position.y < 0)
+}
+
+export const toDrop = (model: SharedModel): SharedModel => {
+    const modelNext: SharedModel = {
+        ...model,
+        origin: Position.add(Direction.toPosition("Down"), model.origin)
+    }
+
+    if (inCollision(modelNext)) {
+        return model
+    }
+
+    return toDrop(modelNext)
+}
+
+export const toGhostPiece = (model: SharedModel): Piece.Piece => {
+    return toPiece(toDrop(model))
 }
 
 // 
 // 
 // 
+// Msg
+// 
+// 
+// 
+
+export type FrontendMsg = ['PressedKey', Keyboard.Key]
+
+export type BackendMsg = Tick
+
+export type ToBackend = InputTranslate | InputRotate | InputDrop
+
+export type ToFrontend = Tick_Done | InputTranslate_Done | InputRotate_Done | InputDrop_Done
+
+// 
+// 
+// 
 // 
 // 
 // 
 // 
 
-export type InputMove = ['InputMove', { direction: Direction.Direction }]
-export type InputMove_Done = ['InputMove_Done', Result.Result<InputMoveProblem, Model>]
-export type InputMoveProblem = "collision"
+export type InputTranslate = ['InputTranslate', { direction: Direction.Direction }]
+export type InputTranslate_Done = ['InputTranslate_Done', Result.Result<InputTranslateProblem, SharedModel>]
+export type InputTranslateProblem = "collision"
 
-export const inputMove = ({ direction }: InputMove[1], model: Model): InputMove_Done[1] => {
+export const inputTranslate = ({ direction }: InputTranslate[1], model: SharedModel): InputTranslate_Done[1] => {
     const originNext = Position.add(Direction.toPosition(direction), model.origin)
 
-    const modelNext: Model = {
+    const modelNext: SharedModel = {
         ...model,
         origin: originNext,
     }
 
-
-    if (!inCollision(model)) {
+    if (inCollision(modelNext)) {
         return Result.Err("collision")
     }
 
@@ -68,27 +127,89 @@ export const inputMove = ({ direction }: InputMove[1], model: Model): InputMove_
 // 
 // 
 
+export type InputRotate = ["InputRotate"]
+export type InputRotate_Done = ["InputRotate_Done", Result.Result<InputRotateProblem, SharedModel>]
+export type InputRotateProblem = "collision"
 
-export type Ticked = ["Ticked"]
 
-export const ticked = (model: Model): Model => {
+export const inputRotate = (model: SharedModel): InputRotate_Done[1] => {
+    const modelNew: SharedModel = {
+        ...model,
+        rotations: toNextRotation(model.rotations)
+    }
+
+    if (inCollision(modelNew)) {
+        return Result.Err("collision")
+    }
+
+    return Result.Ok(modelNew)
+
+}
+
+
+const toNextRotation = (rotation: 0 | 1 | 2 | 3): 0 | 1 | 2 | 3 => {
+    switch (rotation) {
+        case 0: return 1
+        case 1: return 2
+        case 2: return 3
+        case 3: return 0
+    }
+}
+
+// 
+// 
+// 
+// 
+// 
+// 
+// 
+
+
+export type InputDrop = ['InputDrop']
+export type InputDrop_Done = ['InputDrop_Done', Result.Result<InputDropProblem, SharedModel>]
+export type InputDropProblem = ""
+
+export const inputDrop = (model: SharedModel): InputDrop_Done[1] => {
+    const modelNext = tick(toDrop(model))
+
+    return Result.Ok(modelNext)
+}
+
+
+// 
+// 
+// 
+// 
+// 
+// 
+// 
+
+
+export type Tick = ["Tick"]
+export type Tick_Done = ["Tick_Done", SharedModel]
+
+export const tick = (model: SharedModel): SharedModel => {
     const originNext = Position.add(Direction.toPosition("Down"), model.origin)
 
-    const modelNext: Model = {
+    const modelNext: SharedModel = {
         ...model,
         origin: originNext
     }
 
 
-    if (inCollision(model)) {
-        const tetromino = toTetromino(model)
+    if (inCollision(modelNext)) {
+        const tetromino = toPiece(model)
 
-        const boardNew = tetromino.reduce((board, position) => Board.setCell(position, "Filled", board), model.board)
+        const boardNew = tetromino.reduce((board, position) => Board.setCell(position, model.tetrominoName, board), model.board)
+
+        const tetrominoNameNew = randomElement(Piece.allNames) ?? "O"
+
 
         return {
             ...model,
             origin: initialOrigin,
-            tetrominoName: "Z",
+            tetrominoName: tetrominoNameNew,
+            rotations: 0,
             board: boardNew
         }
     }
@@ -96,4 +217,14 @@ export const ticked = (model: Model): Model => {
     return modelNext
 }
 
+// 
+// 
+// 
+// Utils
+// 
+// 
+// 
 
+const randomElement = <T>(xs: T[]) => {
+    return xs[Math.floor(xs.length * Math.random())]
+}

@@ -5,6 +5,7 @@ import * as ConnectFour from "./ConnectFour/ConnectFour.Backend"
 import { BackendModel, BackendMsg, ToBackend, ToFrontend } from "./Game.Types"
 import * as Snake from "./Snake/Snake.Backend"
 import * as TicTacToe from "./TicTacToe/TicTacToe.Backend"
+import * as Tetris from "./Tetris/Tetris.Backend"
 
 //
 //
@@ -33,6 +34,10 @@ export const init = ({ gameName }: { gameName: Model[0] }): Model => {
     case "Chess": {
       return ["Chess", Chess.init]
     }
+
+    case 'Tetris': {
+      return ["Tetris", Tetris.init]
+    }
   }
 }
 
@@ -58,6 +63,15 @@ export const update = (
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
+
+    case 'Tetris': {
+      if (model[0] === 'Tetris') {
+        return tagUpdate("Tetris", Tetris.update({ sendToRoom: msg => sendToRoom(['Tetris', msg]) }, msg[1], model[1]))
+      }
+
+      return [model, Cmd.None]
+    }
+
     case "ConnectFour": {
       if (model[0] === "ConnectFour") {
         return tagUpdate("ConnectFour", ConnectFour.update(msg[1], model[1]))
@@ -116,6 +130,15 @@ export const updateFromFrontend = (
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
+
+    case 'Tetris': {
+      if (model[0] === 'Tetris') {
+        return tagUpdate('Tetris', Tetris.updateFromFrontend({ sendToClient: msg => sendToClient(['Tetris', msg]), sendToRoom: msg => sendToRoom(['Tetris', msg]) }, msg[1], model[1]))
+      }
+
+      return [model, Cmd.None]
+    }
+
     case "ConnectFour": {
       if (model[0] === "ConnectFour") {
         return tagUpdate(
@@ -203,6 +226,9 @@ export const subscriptions = (
     }
     case "Chess": {
       return tagSub("Chess", Chess.subscriptions(roomId, model[1]))
+    }
+    case 'Tetris': {
+      return tagSub("Tetris", Tetris.subscriptions(roomId, model[1]))
     }
   }
 }

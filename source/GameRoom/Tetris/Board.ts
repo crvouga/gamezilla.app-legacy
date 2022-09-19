@@ -1,4 +1,5 @@
 import * as Position from "./Position"
+import * as Piece from "./Piece"
 
 // 
 // 
@@ -8,20 +9,71 @@ import * as Position from "./Position"
 // 
 // 
 
-export type Board = Cell[][]
+export type Board = {
+    rowCount: number,
+    columnCount: number,
+    matrix: Cell[][]
+}
 
-export type Cell = "Empty" | "Filled"
+export type Cell = "Empty" | Piece.Name
 
 export const init = ({ columnCount, rowCount }: { columnCount: number, rowCount: number }): Board => {
-    return repeat(columnCount, repeat(rowCount, "Empty"))
+    const emptyMatrix: Cell[][] = repeat(columnCount, repeat(rowCount, "Empty"))
+    return {
+        rowCount,
+        columnCount,
+        matrix: emptyMatrix
+    }
+}
+
+export const flatMap = <T>(board: Board, f: (item: { cell: Cell, x: number, y: number }) => T): T[] => {
+    return board.matrix.flatMap((column, x) => column.map((cell, y) => f({ cell, x, y })))
 }
 
 export const toCell = (position: Position.Position, board: Board): Cell => {
-    return board?.[position.x]?.[position.y] ?? "Filled"
+    return board.matrix?.[position.x]?.[position.y] ?? "Empty"
 }
 
 export const setCell = (position: Position.Position, cellNext: Cell, board: Board): Board => {
-    return board.map((column, x) => column.map((cell, y) => position.x === x && position.y === y ? cellNext : cell))
+    const matrixNew = board.matrix.map((column, x) => column.map((cell, y) => position.x === x && position.y === y ? cellNext : cell))
+
+    return {
+        ...board,
+        matrix: matrixNew
+    }
+}
+
+export const toRowCount = (board: Board) => {
+    return board.rowCount
+}
+
+export const toColumnCount = (board: Board) => {
+    return board.columnCount
+}
+
+export const transpose = (board: Board): Board => {
+    const { columnCount, rowCount, matrix } = board
+
+    const matrixNew = matrix.reduce<Cell[][]>((prev, next) => next.map((item, i) =>
+        (prev[i] || []).concat(next[i] ?? [])
+    ), []);
+
+    return {
+        rowCount: columnCount,
+        columnCount: rowCount,
+        matrix: matrixNew
+    };
+}
+
+export const toFilledRows = (board: Board): number[] => {
+    const filledRows: number[] = []
+
+    for (let x = 0; x < board.columnCount; x++) {
+        for (let y = 0; y < board.rowCount; y++) {
+        }
+    }
+
+    return filledRows
 }
 
 // 
@@ -33,9 +85,11 @@ export const setCell = (position: Position.Position, cellNext: Cell, board: Boar
 // 
 
 const repeat = <T>(count: number, x: T): T[] => {
-    const y: T[] = []
-    for (let i = 0; i < count; i++) {
-        y.push(x)
+    if (count <= 0) {
+        return []
     }
-    return y
+
+    return [x, ...repeat(count - 1, x)]
 }
+
+

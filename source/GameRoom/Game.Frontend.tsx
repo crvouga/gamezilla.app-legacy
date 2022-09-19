@@ -1,4 +1,4 @@
-import { Cmd, pipe, Sub, tag, tagCmd, tagSub, tagUpdate } from "../Core"
+import { Cmd, Sub, tagCmd, tagSub, tagUpdate } from "../Core"
 import { RoomId, UserId } from "../Data"
 import * as Snackbar from "../Snackbar"
 import * as Store from "../Store"
@@ -11,9 +11,10 @@ import {
   FrontendMsg,
   GameName,
   ToBackend,
-  ToFrontend,
+  ToFrontend
 } from "./Game.Types"
 import * as Snake from "./Snake/Snake.Frontend"
+import * as Tetris from "./Tetris/Tetris.Frontend"
 import * as TicTacToe from "./TicTacToe/TicTacToe.Frontend"
 
 //
@@ -44,6 +45,10 @@ export const init = ({
 
     case "ConnectFour": {
       return [["ConnectFour", ConnectFour.init], Cmd.None]
+    }
+
+    case 'Tetris': {
+      return [["Tetris", Tetris.init], Cmd.None]
     }
 
     case "Chess": {
@@ -84,6 +89,14 @@ export const update = (
     case "ConnectFour": {
       if (msg[0] === "ConnectFour") {
         return tagUpdate("ConnectFour", ConnectFour.update(msg[1], model[1]))
+      }
+
+      return [model, Cmd.None]
+    }
+
+    case 'Tetris': {
+      if (msg[0] === 'Tetris') {
+        return tagUpdate("Tetris", Tetris.update({ sendToBackend: msg => sendToBackend(['Tetris', msg]) }, msg[1], model[1]))
       }
 
       return [model, Cmd.None]
@@ -138,6 +151,18 @@ export const updateFromBackend = (
   model: Model,
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
+
+    case 'Tetris': {
+      if (model[0] === 'Tetris') {
+        return [
+          ...tagUpdate("Tetris", Tetris.updateFromBackend(msg[1], model[1])),
+          []
+        ]
+      }
+
+      return [model, Cmd.None, []]
+    }
+
     case "ConnectFour": {
       if (model[0] === "ConnectFour") {
         return [
@@ -209,11 +234,17 @@ export const subscriptions = (
         Snake.subscriptions(`snake-${intervalId}`, model[1]),
       )
     }
+
     case "TicTacToe": {
       return Sub.None
     }
+
     case "Chess": {
       return tagSub("Chess", Chess.subscriptions(model[1]))
+    }
+
+    case 'Tetris': {
+      return tagSub("Tetris", Tetris.subscriptions(model[1]))
     }
   }
 }
@@ -242,6 +273,19 @@ export const View = ({
   roomAvatarGroup: UI.ViewNode
 }) => {
   switch (model[0]) {
+
+
+    case 'Tetris': {
+      return (
+        <Tetris.View
+          model={model[1]}
+          dispatch={msg => dispatch(['Tetris', msg])}
+          onCloseGame={onCloseGame}
+          roomAvatarGroup={roomAvatarGroup}
+        />
+      )
+    }
+
     case "ConnectFour": {
       return (
         <ConnectFour.View
@@ -292,17 +336,25 @@ export const View = ({
 
 export const gameNameToString = (game: GameName): string => {
   switch (game) {
-    case "ConnectFour":
+    case "ConnectFour": {
       return "Connect Four"
+    }
 
-    case "TicTacToe":
+    case "TicTacToe": {
       return "Tic Tac Toe"
+    }
 
-    case "Snake":
+    case "Snake": {
       return "Snake"
+    }
 
-    case "Chess":
+    case "Chess": {
       return "Chess"
+    }
+
+    case 'Tetris': {
+      return "Tetris"
+    }
   }
 }
 
@@ -320,6 +372,9 @@ export const CoverArt = ({ gameName }: { gameName: GameName }) => {
     case "TicTacToe": {
       return <TicTacToe.CoverArt />
     }
+    case 'Tetris': {
+      return <Tetris.CoverArt />
+    }
   }
 }
 
@@ -333,6 +388,18 @@ export const mergeWithBackend = ({
   backendModel: BackendModel
 }): [FrontendModel, Cmd.Cmd<Msg>] => {
   switch (backendModel[0]) {
+
+    case 'Tetris': {
+      if (frontendModel[0] === 'Tetris') {
+        const merged = Tetris.mergeWithBackend({ backendModel: backendModel[1], frontendModel: frontendModel[1] })
+        return [['Tetris', merged], Cmd.None]
+      }
+
+      const initial = Tetris.init
+
+      return [["Tetris", initial], Cmd.None]
+    }
+
     case "Chess": {
       if (frontendModel[0] === "Chess") {
         const merged = Chess.mergeWithBackend({
