@@ -12,3 +12,19 @@ export const formatMsg = (msg: unknown): string => {
     return ""
   }
 }
+
+
+export const format = (msg: Array<unknown>) => {
+  return msg
+    .flat(Infinity)
+    .reduce<[string | null, unknown | null]>(
+      ([msgType, payload], item) =>
+        typeof item === "string"
+          ? msgType
+            ? [`${msgType}.${item}`, payload]
+            : [item, payload]
+          : [msgType, item],
+      [null, null],
+    )
+}
+

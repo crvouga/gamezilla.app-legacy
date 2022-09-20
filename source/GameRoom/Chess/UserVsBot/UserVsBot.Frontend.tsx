@@ -11,6 +11,7 @@ import * as Snackbar from "../../../Snackbar"
 import * as Store from "../../../Store"
 import * as UI from "../../../UI"
 import * as Board from "../Board"
+import * as Sounds from "../Sounds"
 import { ViewActionButton } from "../Views"
 import {
   BackendModel, FrontendModel,
@@ -143,7 +144,11 @@ export const updateFromBackend = (
   const [modelNext, cmd, actions] = updateFromBackend_(msg, modelPrev)
 
   if (modelPrev.sharedModel.type !== 'GameOver' && modelNext.sharedModel.type === 'GameOver') {
-    return [{ ...modelNext, openedModal: "GameOver" }, cmd, actions]
+    return [{ ...modelNext, openedModal: "GameOver" }, Cmd.batch([cmd, playAudio(Sounds.gameOver)]), actions]
+  }
+
+  if (modelPrev.sharedModel.type !== 'Game' && modelNext.sharedModel.type === 'Game') {
+    return [modelNext, Cmd.batch([cmd, playAudio(Sounds.gameStart)]), actions]
   }
 
   return [modelNext, cmd, actions]
@@ -158,10 +163,6 @@ const updateFromBackend_ = (
       return [model, Cmd.None, []]
     }
 
-    case "GameOver": {
-      return [model, Cmd.None, []]
-    }
-
     case 'BotMoved_Done': {
 
       const result = msg[1]
@@ -172,17 +173,45 @@ const updateFromBackend_ = (
 
       const { didCapture, ...sharedModel } = result.value
 
-      return [{ ...model, sharedModel }, Cmd.None, []]
+      const soundCmd =
+        sharedModel.type === 'Game' && Board.inCheck(sharedModel.board)
+          ? playAudio(Sounds.check)
+          : didCapture
+            ? playAudio(Sounds.capture)
+            : playAudio(Sounds.move)
+
+      return [{ ...model, sharedModel }, soundCmd, []]
+    }
+
+    case 'InputMove_Done': {
+      const result = msg[1]
+
+      if (result.type === "Err") {
+        return [model, Cmd.None, []]
+      }
+
+      const sharedModelNew = result.value
+
+      const modelNew = mergeWithBackend(model, sharedModelNew)
+
+      const soundCmd =
+        sharedModelNew.type === 'Game' && Board.inCheck(sharedModelNew.board)
+          ? playAudio(Sounds.check)
+          : sharedModelNew.didCapture
+            ? playAudio(Sounds.capture)
+            : playAudio(Sounds.move)
+
+      return [modelNew, soundCmd, []]
     }
 
     case "InputUser_Done":
     case "InputColor_Done":
     case "InputBot_Done":
-    case 'InputMove_Done':
     case "StartGame_Done":
     case "StopGame_Done": {
       return handleResponse(msg, model)
     }
+
 
     default: {
       return exhaustive(msg[0])
@@ -197,11 +226,6 @@ const handleResponse = (
   const result = res[1]
 
   if (result.type === "Err") {
-    // const action: OutAction = [
-    //   "Snackbar",
-    //   { variant: "Error", message: result.error },
-    // ]
-
     return [model, Cmd.None, []]
   }
 
