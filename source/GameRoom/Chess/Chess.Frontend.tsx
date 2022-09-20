@@ -1,4 +1,4 @@
-import { Cmd, Option, pipe, RemoteData, Result, Sub, tagCmd, Unit } from "../../Core"
+import { Audio, Cmd, Option, pipe, RemoteData, Result, Sub, tagCmd, Unit } from "../../Core"
 import {
   BackendModel,
   FrontendModel,
@@ -14,6 +14,7 @@ import * as Snackbar from "../../Snackbar"
 import * as UI from "../../UI"
 import { UserId } from "../../Data"
 import { ReactNode } from "react"
+import * as Sounds from "./Sounds"
 
 //
 //
@@ -37,7 +38,7 @@ export const init = ({
         InputMode: RemoteData.NotAsked
       }
     },
-    Cmd.None
+    Audio.preload(Object.values(Sounds), (): Msg => ['PreloadAudio_Done'])
   ]
 }
 
@@ -59,6 +60,11 @@ export const update = (
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
+
+    case 'PreloadAudio_Done': {
+      return [model, Cmd.None]
+    }
+
     case "InputMode": {
       return [{ ...model, requests: { ...model.requests, InputMode: RemoteData.Loading } }, sendToBackend(msg)]
     }
