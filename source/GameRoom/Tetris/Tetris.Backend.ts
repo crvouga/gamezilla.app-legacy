@@ -1,5 +1,5 @@
 import { Cmd, Sub, Time } from "../../Core";
-import { BackendModel, BackendMsg, initShared, inputDrop, inputRotate, inputTranslate, tick, ToBackend, ToFrontend } from "./Tetris.Types";
+import { BackendModel, BackendMsg, initShared, inputDrop, inputRotate, inputTranslate, mouseMove, tick, ToBackend, ToFrontend } from "./Tetris.Types";
 
 //
 //
@@ -37,7 +37,17 @@ export const update = ({ sendToRoom }: { sendToRoom: (msg: ToFrontend) => Cmd.Cm
 
 export const updateFromFrontend = ({ sendToRoom, sendToClient }: { sendToRoom: (msg: ToFrontend) => Cmd.Cmd<never>, sendToClient: (msg: ToFrontend) => Cmd.Cmd<never> }, msg: ToBackend, model: Model): [Model, Cmd.Cmd<Msg>] => {
     switch (msg[0]) {
+        case 'MouseMove': {
+            const toFrontend = mouseMove(msg, model)
 
+            if (toFrontend[1].type === 'Err') {
+                return [model, sendToClient(toFrontend)]
+            }
+
+            const modelNew = toFrontend[1].value
+
+            return [modelNew, sendToRoom(toFrontend)]
+        }
 
         case 'InputDrop': {
             const result = inputDrop(model)

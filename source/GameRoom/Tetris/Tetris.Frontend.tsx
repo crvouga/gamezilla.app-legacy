@@ -1,4 +1,4 @@
-import { Cmd, Keyboard, Option, Sub } from "../../Core";
+import { Cmd, exhaustive, Keyboard, Option, Sub } from "../../Core";
 import * as UI from "../../UI";
 import { initShared, ToFrontend, FrontendModel, FrontendMsg, BackendModel, columnCount, rowCount, toPiece, ToBackend, toGhostPiece } from "./Tetris.Types";
 import * as Piece from "./Piece"
@@ -35,13 +35,18 @@ export type Msg = FrontendMsg
 export const update = ({ sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd.Cmd<never> }, msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
     switch (msg[0]) {
 
+
+
+
+        case 'MouseMove': {
+            return [model, sendToBackend(msg)]
+        }
+
         case 'TouchStart': {
-            console.log("START", msg[1])
             return [{ ...model, touched: Option.Some(msg[1]) }, Cmd.None]
         }
 
         case 'TouchMove': {
-
             if (model.touched.type === 'None') {
                 return [model, Cmd.None]
             }
@@ -50,11 +55,11 @@ export const update = ({ sendToBackend }: { sendToBackend: (msg: ToBackend) => C
 
             const to = msg[1]
 
-            console.log("MOVE", to)
+
 
             const direction = positionsToDirection({ from, to })
 
-            console.log("from", from, "to", to)
+
 
             if (direction === 'None') {
                 return [model, Cmd.None]
@@ -86,8 +91,16 @@ export const update = ({ sendToBackend }: { sendToBackend: (msg: ToBackend) => C
             }
 
             return [model, Cmd.None]
+        }
 
+        case 'ClickedBoard': {
+            // const position = msg[1]
 
+            return [model, sendToBackend(['InputDrop'])]
+        }
+
+        default: {
+            return exhaustive(msg[0])
         }
     }
 };
@@ -138,6 +151,19 @@ const keyToDirection = (key: Keyboard.Key): Direction.Direction | "None" => {
 
 export const updateFromBackend = (msg: ToFrontend, model: Model): [Model, Cmd.Cmd<Msg>] => {
     switch (msg[0]) {
+
+        case 'MouseMove_Done': {
+            const result = msg[1]
+
+            if (result.type === 'Err') {
+                return [model, Cmd.None]
+            }
+
+            const modelNew = result.value
+
+            return [{ ...model, sharedModel: modelNew }, Cmd.None]
+        }
+
         case 'InputDrop_Done': {
             const result = msg[1]
 
@@ -220,9 +246,6 @@ export const View = ({ model, dispatch, onCloseGame, roomAvatarGroup }: { model:
     const canvasRef = useRef<HTMLCanvasElement | null>(null)
     const containerRef = useRef<HTMLDivElement | null>(null)
 
-
-
-
     useLayoutEffect(() => {
         const canvas = canvasRef.current
 
@@ -273,6 +296,39 @@ export const View = ({ model, dispatch, onCloseGame, roomAvatarGroup }: { model:
         <div ref={containerRef} style={{ display: 'flex', justifyContent: "center", overflow: "hidden", flex: 1 }}>
             <canvas
                 ref={canvasRef}
+                onTouchMove={(event) => {
+                    const touch = event.touches[0]
+
+                    if (!touch) {
+                        return
+                    }
+
+                    const x = touch.clientX
+                    const y = touch.clientY
+
+                    console.log("MOVE", { x, y })
+                }}
+                onClick={event => {
+                    dispatch(['ClickedBoard', mouseEventToPosition(event)])
+                }}
+
+                onMouseMove={(event) => {
+
+                    const x = Math.floor(rescale({
+                        value: (event.pageX - event.currentTarget.offsetLeft),
+                        from: [0, event.currentTarget.width],
+                        to: [0, columnCount]
+                    }))
+
+                    const y = Math.floor(rescale({
+                        value: (event.pageY - event.currentTarget.offsetTop),
+                        from: [0, event.currentTarget.height],
+                        to: [0, rowCount]
+                    }))
+
+
+                    dispatch(['MouseMove', { x, y }])
+                }}
                 onTouchStart={(event) => {
                     const touch = event.touches[0]
 
@@ -283,7 +339,7 @@ export const View = ({ model, dispatch, onCloseGame, roomAvatarGroup }: { model:
                     const x = touch.clientX
                     const y = touch.clientY
 
-                    console.log({ x, y })
+                    console.log("Start", { x, y })
 
 
                 }}
@@ -329,6 +385,22 @@ export const View = ({ model, dispatch, onCloseGame, roomAvatarGroup }: { model:
 
 
     </UI.FillBox>
+}
+
+const mouseEventToPosition = (event: React.MouseEvent<HTMLCanvasElement, MouseEvent>): Position.Position => {
+    const x = Math.floor(rescale({
+        value: (event.pageX - event.currentTarget.offsetLeft),
+        from: [0, event.currentTarget.width],
+        to: [0, columnCount]
+    }))
+
+    const y = Math.floor(rescale({
+        value: (event.pageY - event.currentTarget.offsetTop),
+        from: [0, event.currentTarget.height],
+        to: [0, rowCount]
+    }))
+
+    return { x, y }
 }
 
 const paint = (context: CanvasRenderingContext2D, model: Model) => {
@@ -404,3 +476,11 @@ export const CoverArt = () => {
         ))}
     </svg>
 }
+
+
+type Range = [number, number]
+
+const rescale = ({ value, from, to }: { value: number, from: Range, to: Range }) => {
+    return (value - from[0]) * (to[1] - to[0]) / (from[1] - from[0]) + to[0];
+}
+
