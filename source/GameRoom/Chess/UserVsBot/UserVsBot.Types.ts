@@ -91,7 +91,7 @@ export type BackendMsg = BotMoved
 
 export type ToBackend = ["Init"] | Req
 
-export type ToFrontend = ["Sync", SharedModel] | ["GameOver"] | Res | BotMoved_Done
+export type ToFrontend = ["Sync", SharedModel] | Res | BotMoved_Done
 
 export type Req = InputUser | InputColor | InputBot | StartGame | StopGame | InputMove
 

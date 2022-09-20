@@ -21,7 +21,6 @@ const getSoundInstance = (src: string): Howler.Howl => {
 
   const instance = new Howler.Howl({
     preload: true,
-
     src: [src],
     onplayerror: () => {
       instance.once("unlock", () => {
@@ -51,7 +50,6 @@ export const play = <msg>(src: string, mapper: (result: PlayResult) => msg) =>
   pipe(
     async () => {
       const sound = getSoundInstance(src)
-      console.log(instances)
 
       if (document.hasFocus()) {
         sound.play()
