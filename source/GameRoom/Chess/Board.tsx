@@ -588,10 +588,6 @@ export const chessTsMoveToMove = (move: ChessTs.Move): MoveInput[] => {
 export const theme = {
   dark: "#779455",
   light: "#EBEBD0",
-  highlighted: {
-    dark: "#BDCB3F",
-    light: "#F6F686"
-  }
 }
 
 export const View = ({
@@ -605,25 +601,31 @@ export const View = ({
   onPieceDrop: (move: MoveInput) => boolean
   isDraggablePiece: ({ piece }: { piece: Piece }) => boolean
 }) => {
-
-  const [boardWidth, setBoardWidth] = useState(0)
+  const boardRef = useRef<HTMLDivElement | null>(null)
   const ref = useRef<HTMLDivElement | null>(null)
+  const [boardWidth, setBoardWidth] = useState(0)
+
+  const handler = () => {
+    if (ref.current) {
+      setBoardWidth(ref.current?.offsetWidth)
+    }
+  }
+
+
+  const clearPremoves = () => {
+    if (boardRef.current) {
+      // @ts-ignore
+      boardRef.current?.clearPremoves?.()
+    }
+  }
 
   useLayoutEffect(() => {
-    const handler = () => {
-      if (ref.current) {
-        setBoardWidth(ref.current?.offsetWidth)
-      }
-    }
-
     handler()
-
     window.addEventListener("resize", handler)
     return () => {
       window.removeEventListener("resize", handler)
     }
   }, [])
-
 
 
 
@@ -701,17 +703,22 @@ export const View = ({
   return (
     <div ref={ref}>
       <Chessboard
+        ref={boardRef}
         showBoardNotation
         snapToCursor
         boardOrientation={boardOrientation === "w" ? "white" : "black"}
         position={model.fen}
         boardWidth={boardWidth}
+        arePremovesAllowed={true}
         customDarkSquareStyle={{
           backgroundColor: theme.dark,
         }}
         customLightSquareStyle={{
           backgroundColor: theme.light
         }}
+        // onSquareClick={() => {
+        //   clearPremoves()
+        // }}
         onMouseOverSquare={(square) => {
           setHoveredSquare(fromLowercase(square))
         }}
