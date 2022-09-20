@@ -317,11 +317,7 @@ export const updateFromBackend = (
 
       const sharedModelNew = msg[1].value
 
-      if (sharedModelNew.type === "Setup") {
-        return [model, playAudio(Sounds.navigationCancel), []]
-      }
-
-      return [{ ...model, sharedModel: sharedModelNew }, Cmd.None, []]
+      return [{ ...model, sharedModel: sharedModelNew }, playAudio(Sounds.navigationCancel), []]
     }
 
     case "GameOver": {

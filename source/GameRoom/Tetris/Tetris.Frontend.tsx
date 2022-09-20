@@ -313,7 +313,6 @@ export const View = ({ model, dispatch, onCloseGame, roomAvatarGroup }: { model:
                 }}
 
                 onMouseMove={(event) => {
-
                     const x = Math.floor(rescale({
                         value: (event.pageX - event.currentTarget.offsetLeft),
                         from: [0, event.currentTarget.width],

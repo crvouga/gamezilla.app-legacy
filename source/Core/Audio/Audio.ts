@@ -1,35 +1,54 @@
-// import Howler from "howler"
+import Howler from "howler"
 import * as Cmd from "../Cmd"
 import { pipe } from "../pipe"
 import * as Result from "../Result"
-import * as Task from "../Task"
 import { Unit } from "../Utility"
 
 export type Problem = "Unknown"
 
 export type PlayResult = Result.Result<Problem, Unit>
 
-export const play = <msg>(src: string, mapper: (result: PlayResult) => msg) =>
-  pipe(playTask(src), Cmd.perform(mapper))
+const instances = new Map<string, Howler.Howl>()
 
-const playTask =
-  (src: string): Task.Task<PlayResult> =>
-  async () => {
-    // const sound = new Howler.Howl({
-    //   src: [src],
-    //   html5: true,
-    //   onplayerror: () => {
-    //     sound.once("unlock", () => {
-    //       if (document.hasFocus()) {
-    //         sound.play()
-    //       }
-    //     })
-    //   },
-    // })
+const getSoundInstance = (src: string): Howler.Howl => {
+  const cached = instances.get(src)
 
-    // if (document.hasFocus()) {
-    //   sound.play()
-    // }
-
-    return Result.Ok(Unit)
+  if (cached) {
+    return cached
   }
+
+  const instance = new Howler.Howl({
+    preload: true,
+    src: [src],
+    onplayerror: () => {
+      instance.once("unlock", () => {
+        if (document.hasFocus()) {
+          instance.play()
+        }
+      })
+    },
+  })
+
+  instances.set(src, instance)
+
+  return instance
+}
+
+// export const preload = (srcList: string[])
+
+export const play = <msg>(src: string, mapper: (result: PlayResult) => msg) =>
+  pipe(
+    async () => {
+      const sound = getSoundInstance(src)
+      console.log(instances)
+
+      if (document.hasFocus()) {
+        sound.play()
+      }
+
+      return Result.Ok(Unit)
+    },
+    Cmd.perform(mapper)
+  )
+
+
