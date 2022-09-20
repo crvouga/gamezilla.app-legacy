@@ -716,7 +716,7 @@ const toStatus = ({
 //
 //
 
-const program = Browser.application({
+const { program, stopDebugger } = Debug.ReduxDevTools.withDebugger(Browser.application({
   init,
   onLocationChange,
   subscriptions,
@@ -728,7 +728,7 @@ const program = Browser.application({
       dispatch={dispatch}
     />
   ),
-})
+}))
 
 const root = ReactDomClient.createRoot(document.getElementById("root")!)
 
@@ -736,14 +736,14 @@ const stopProgram = Browser.run(program, (dom) => {
   root.render(dom)
 })
 
-program.state$.subscribe(({ model, msg }) => {
-  if (msg) {
-    const [msgType, msgPayload] = Debug.format(msg)
-    console.log(msgType, msgPayload)
-  }
-  console.log(model)
-  console.log("\n")
-})
+// program.state$.subscribe(({ model, msg }) => {
+//   if (msg) {
+//     const [msgType, msgPayload] = Debug.format(msg)
+//     console.log(msgType, msgPayload)
+//   }
+//   console.log(model)
+//   console.log("\n")
+// })
 
 //
 //
@@ -798,7 +798,7 @@ Wire._sendToBackend.subscribe((msg) => {
 
 export const cleanup = () => {
   root.unmount()
-  // stopDebugger()
+  stopDebugger()
   stopProgram()
   socketClient.close()
 }
