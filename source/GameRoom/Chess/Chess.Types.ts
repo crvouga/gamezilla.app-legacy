@@ -42,6 +42,7 @@ export type FrontendMsg =
   | ["UserVsUser", UserVsUser.FrontendMsg]
   | ["UserVsBot", UserVsBot.FrontendMsg]
   | InputMode
+  | ['PreloadAudio_Done']
 
 export type BackendMsg =
   | ["UserVsUser", UserVsUser.BackendMsg]

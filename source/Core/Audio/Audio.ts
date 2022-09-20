@@ -8,6 +8,8 @@ export type Problem = "Unknown"
 
 export type PlayResult = Result.Result<Problem, Unit>
 
+export type PreloadResult = Result.Result<Problem, Unit>
+
 const instances = new Map<string, Howler.Howl>()
 
 const getSoundInstance = (src: string): Howler.Howl => {
@@ -19,6 +21,7 @@ const getSoundInstance = (src: string): Howler.Howl => {
 
   const instance = new Howler.Howl({
     preload: true,
+
     src: [src],
     onplayerror: () => {
       instance.once("unlock", () => {
@@ -34,7 +37,15 @@ const getSoundInstance = (src: string): Howler.Howl => {
   return instance
 }
 
-// export const preload = (srcList: string[])
+export const preload = <msg>(srcList: string[], mapper: (result: PreloadResult) => msg) => pipe(
+  async () => {
+    for (const src of srcList) {
+      getSoundInstance(src)
+    }
+    return Result.Ok(Unit)
+  },
+  Cmd.perform(mapper)
+)
 
 export const play = <msg>(src: string, mapper: (result: PlayResult) => msg) =>
   pipe(
