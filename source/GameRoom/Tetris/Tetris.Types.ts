@@ -1,8 +1,9 @@
 import { Keyboard, Option, Result } from "../../Core"
+import { Err, Ok } from "../../Core/Result"
 import * as Board from "./Board"
 import * as Direction from "./Direction"
-import * as Position from "./Position"
 import * as Piece from "./Piece"
+import * as Position from "./Position"
 
 // 
 // 
@@ -87,13 +88,19 @@ export const toGhostPiece = (model: SharedModel): Piece.Piece => {
 // 
 // 
 
-export type FrontendMsg = ['PressedKey', Keyboard.Key] | ["TouchStart", Position.Position] | ["TouchMove", Position.Position] | ['TouchEnd', Position.Position]
+export type FrontendMsg =
+    | ['PressedKey', Keyboard.Key]
+    | ["TouchStart", Position.Position]
+    | ["TouchMove", Position.Position]
+    | ['TouchEnd', Position.Position]
+    | ["ClickedBoard", Position.Position]
+    | MouseMove
 
 export type BackendMsg = Tick
 
-export type ToBackend = InputTranslate | InputRotate | InputDrop
+export type ToBackend = InputTranslate | InputRotate | InputDrop | MouseMove
 
-export type ToFrontend = Tick_Done | InputTranslate_Done | InputRotate_Done | InputDrop_Done
+export type ToFrontend = Tick_Done | InputTranslate_Done | InputRotate_Done | InputDrop_Done | MouseMove_Done
 
 // 
 // 
@@ -102,6 +109,27 @@ export type ToFrontend = Tick_Done | InputTranslate_Done | InputRotate_Done | In
 // 
 // 
 // 
+
+export type MouseMove = ["MouseMove", Position.Position]
+export type MouseMove_Done = ["MouseMove_Done", Result.Result<"collision", SharedModel>]
+
+export const mouseMove = (msg: MouseMove, model: SharedModel): MouseMove_Done => {
+    const modelNew: SharedModel = {
+        ...model,
+        origin: {
+            x: msg[1].x,
+            y: model.origin.y
+        }
+    }
+
+    if (inCollision(modelNew)) {
+        return ['MouseMove_Done', Err("collision")]
+    }
+
+    return ["MouseMove_Done", Ok(modelNew)]
+
+}
+
 
 export type InputTranslate = ['InputTranslate', { direction: Direction.Direction }]
 export type InputTranslate_Done = ['InputTranslate_Done', Result.Result<InputTranslateProblem, SharedModel>]
