@@ -1088,7 +1088,7 @@ export const ViewCallToAction = ({ onCreateRoom }: { onCreateRoom: () => void })
         Create a room
       </UI.Typography>
       <UI.Typography variant="subtitle2" color="text.secondary" align="center" sx={{ marginBottom: 3 }}>
-        Starting playing a games by creating a new game room.
+        Starting playing games by creating a new game room.
       </UI.Typography>
       <UI.Button onClick={onCreateRoom} variant="contained" fullWidth>
         Create Room
