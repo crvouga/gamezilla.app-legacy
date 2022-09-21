@@ -632,19 +632,38 @@ export const ViewNotInRoom = ({
   dispatch: (msg: Msg) => void
 }) => {
   const rooms = Object.values(model.rooms)
-  return (
-    <UI.FillBox>
-      <UI.Header left={<UI.HeaderBackButton onClick={() => dispatch(["ClickedHome"])} />} title="Game Rooms" />
 
-      {rooms.length === 0 && (
-        <UI.Box sx={{ padding: 2 }}>
+  const header = (
+    <UI.Header left={<UI.HeaderBackButton onClick={() => dispatch(["ClickedHome"])} />} title="Game Rooms" />
+  )
+
+  if (model.requests.CreateRoom.type === 'Loading' || model.requests.JoinRoom.type === 'Loading') {
+    return (
+      <UI.FillBox>
+        {header}
+        <UI.Box sx={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: "center" }}>
+          <UI.CircularProgress />
+        </UI.Box>
+      </UI.FillBox>
+    )
+  }
+
+  if (rooms.length === 0) {
+    return (
+      <UI.FillBox>
+        {header}
+        <UI.Box sx={{ paddingX: 2 }}>
           <ViewCallToAction onCreateRoom={() => dispatch(['CreateRoom', { roomId: RoomId.generate(), userId: currentUserId }])} />
         </UI.Box>
-      )}
+      </UI.FillBox>
+    )
 
 
-      <UI.LoadingBackdrop open={model.requests.JoinRoom.type === "Loading"} />
+  }
 
+  return (
+    <UI.FillBox>
+      {header}
       <UI.Box sx={{ padding: 2, flex: 1, display: 'flex', flexDirection: "column", gap: 2, overflowY: "scroll" }}>
         {Object.values(rooms).map(room => (
           <ViewCard
@@ -664,7 +683,6 @@ export const ViewNotInRoom = ({
           fullWidth
           size="large"
           variant="contained"
-          loading={model.requests.CreateRoom.type === "Loading"}
           onClick={() =>
             dispatch([
               "CreateRoom",
@@ -1047,11 +1065,12 @@ export const ViewCard = ({ roomId, hostId, gameName, store, gameRoom, onClick }:
             )}
           </UI.AspectRatio>
         </UI.Box>
-        <UI.Box sx={{ padding: 2, display: "flex", flexDirection: "column", justifyContent: 'center' }}>
-          <UI.Typography variant="h5">
+        <UI.Divider orientation="vertical" />
+        <UI.Box sx={{ padding: 2, display: "flex", flexDirection: "column", justifyContent: 'center', flex: 1, overflow: "hidden" }}>
+          <UI.Typography variant="h5" noWrap>
             {hostProfile ? `${hostProfile.username}'s room` : "..."}
           </UI.Typography>
-          <UI.Typography variant="subtitle1" color='text.secondary'>
+          <UI.Typography variant="subtitle1" color='text.secondary' noWrap>
             {`${gameName ? `${Game.gameNameToString(gameName)} • ` : ""}${roomCount} in room`}
           </UI.Typography>
         </UI.Box>
