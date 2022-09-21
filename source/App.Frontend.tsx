@@ -576,6 +576,7 @@ const ViewMain = ({
           return (
             <>
               <GameRoom.ViewBanner
+                store={model.store}
                 currentUserId={profile.userId}
                 model={model.gameRoom}
                 route={model.route}
