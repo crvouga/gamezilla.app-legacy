@@ -301,6 +301,8 @@ export const View = ({
     case "Snake": {
       return (
         <Snake.View
+          onClose={onCloseGame}
+          roomAvatarGroup={roomAvatarGroup}
           currentUserId={currentUserId}
           store={store}
           model={model[1]}
