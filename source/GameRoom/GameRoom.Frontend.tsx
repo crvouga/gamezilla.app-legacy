@@ -4,9 +4,7 @@ import {
   Option,
   pipe,
   RemoteData,
-  Sub,
-  tagCmd,
-  Unit,
+  Sub, Unit
 } from "../Core"
 import { RoomId, UserId } from "../Data"
 import * as Route from "../Route"
@@ -16,12 +14,13 @@ import * as UI from "../UI"
 import * as Game from "./Game.Frontend"
 import { GameName } from "./Game.Types"
 import {
+
   BackendModel,
   FrontendModel,
   FrontendMsg,
   Response,
   ToBackend,
-  ToFrontend,
+  ToFrontend
 } from "./GameRoom.Types"
 
 //
@@ -260,9 +259,7 @@ export const updateFromBackend = (
     }
 
     case "CreateRoom_Done": {
-      const [modelNew, cmd, actions] = updateResponse({ sendToBackend, msg, model }, "CreateRoom")
-
-      return [modelNew, Cmd.batch([cmd, Route.replace(['GameRoom'])]), actions]
+      return updateResponse({ sendToBackend, msg, model }, "CreateRoom")
     }
 
     case "LeaveRoom_Done": {
@@ -270,8 +267,7 @@ export const updateFromBackend = (
     }
 
     case "JoinRoom_Done": {
-      const [modelNew, cmd, actions] = updateResponse({ sendToBackend, msg, model }, "JoinRoom")
-      return [modelNew, Cmd.batch([cmd, Route.replace(['GameRoom'])]), actions]
+      return updateResponse({ sendToBackend, msg, model }, "JoinRoom")
     }
 
     case "OpenGame_Done": {
@@ -654,46 +650,20 @@ export const ViewNotInRoom = ({
 
       <UI.LoadingBackdrop open={model.requests.JoinRoom.type === "Loading"} />
 
-      <UI.List sx={{ overflowY: "scroll" }}>
-        {rooms.map((room) => {
-          const profiles = Object.values(store.Profile).filter(
-            (profile) => model.users[profile.userId]?.roomId === room.roomId,
-          )
-          return (
-            <UI.ListItemButton
-              key={room.roomId}
-              onClick={() => {
-                dispatch([
-                  "JoinRoom",
-                  {
-                    userId: currentUserId,
-                    roomId: room.roomId,
-                  },
-                ])
-              }}
-            >
-              <UI.ListItemAvatar>
-                <UI.AvatarGroup>
-                  {profiles.map((item) => (
-                    <UI.Avatar
-                      key={item.userId}
-                      src={item.avatarUrl}
-                    />
-                  ))}
-                </UI.AvatarGroup>
-              </UI.ListItemAvatar>
-              <UI.ListItemText
-                primaryTypographyProps={{
-                  noWrap: true,
-                  sx: { wordWrap: "break-word" },
-                }}
-                primary={profiles.map((item) => item.username).join(",")}
-              />
-            </UI.ListItemButton>
-          )
-        })}
-      </UI.List>
-      <UI.Box sx={{ flex: 1 }} />
+      <UI.Box sx={{ padding: 2, flex: 1, display: 'flex', flexDirection: "column", gap: 2, overflowY: "scroll" }}>
+        {Object.values(rooms).map(room => (
+          <ViewGameRoomCard
+            key={room.roomId}
+            roomId={room.roomId}
+            hostId={room.hostId}
+            gameName={room.game.type === 'Some' ? room.game.value[0] : undefined}
+            store={store}
+            gameRoom={model}
+            onClick={() => dispatch(['JoinRoom', { roomId: room.roomId, userId: currentUserId }])}
+          />
+        ))}
+      </UI.Box>
+
       <UI.Box sx={{ padding: 2 }}>
         <UI.Button
           fullWidth
@@ -910,7 +880,7 @@ const GameCard = ({
   onClick,
   disabled = false,
 }: {
-  icon: React.ReactNode
+  icon: UI.ViewNode
   label: string
   onClick: () => void
   disabled?: boolean
@@ -980,11 +950,13 @@ export const ViewBanner = ({
   route,
   model,
   dispatch,
+  store
 }: {
   currentUserId: UserId.UserId
   route: Route.Model
   model: Model
   dispatch: (msg: Msg) => void
+  store: Store.Model
 }) => {
   if (route[0] === "GameRoom") {
     return <></>
@@ -1003,6 +975,9 @@ export const ViewBanner = ({
   }
 
   const game = room.game.type === "None" ? null : room.game.value
+
+  const hostProfile = store.Profile[room.hostId]
+  const roomCount = Object.values(model.users).filter(user => user.roomId === room.roomId).length
 
   return (
     <>
@@ -1031,34 +1006,23 @@ export const ViewBanner = ({
           <UI.Avatar
             variant="square"
             sx={{ width: bannerHeight, height: bannerHeight }}
-          >
-            <UI.Icons.Gamepad />
-          </UI.Avatar>
+            src={hostProfile?.avatarUrl ?? "..."}
+          />
+
+
         )}
 
         <UI.Box sx={{ marginLeft: 2 }}>
-          {game ? (
-            <>
-              <UI.Typography
-                align="left"
-                variant="h6"
-                sx={{ marginBottom: -1 / 2 }}
-              >
-                {Game.gameNameToString(game[0])}
-              </UI.Typography>
 
-              <UI.Typography
-                component="div"
-                align="left"
-                color="text.secondary"
-                variant="caption"
-              >
-                Go to room
-              </UI.Typography>
-            </>
-          ) : (
-            <UI.Typography align="left">Go to room</UI.Typography>
-          )}
+
+          <UI.Typography >
+            {hostProfile ? `${hostProfile.username}'s room` : "..."}
+          </UI.Typography>
+
+          <UI.Typography variant="caption" color='text.secondary'>
+            {`${game && game[0] ? `${Game.gameNameToString(game[0])} • ` : ""}${roomCount} in room`}
+          </UI.Typography>
+
         </UI.Box>
 
         <UI.Box sx={{ flex: 1 }} />
@@ -1070,5 +1034,34 @@ export const ViewBanner = ({
 
       <UI.Divider />
     </>
+  )
+}
+
+
+export const ViewGameRoomCard = ({ roomId, hostId, gameName, store, gameRoom, onClick }: { roomId: RoomId.RoomId, hostId: UserId.UserId, gameName?: GameName, store: Store.Model, gameRoom: Model, onClick: () => void }) => {
+  const hostProfile = store.Profile[hostId]
+  const roomCount = Object.values(gameRoom.users).filter(user => user.roomId === roomId).length
+  return (
+    <UI.CardActionArea onClick={onClick}>
+      <UI.Paper variant="outlined" sx={{ overflow: "hidden", display: 'flex' }}>
+        <UI.Box sx={{ width: 100, }}>
+          <UI.AspectRatio aspectRatio={1}>
+            {gameName ? (
+              <Game.CoverArt gameName={gameName} />
+            ) : (
+              <UI.Avatar src={hostProfile?.avatarUrl ?? ""} sx={{ width: "100%", height: '100%' }} />
+            )}
+          </UI.AspectRatio>
+        </UI.Box>
+        <UI.Box sx={{ padding: 2, display: "flex", flexDirection: "column", justifyContent: 'center' }}>
+          <UI.Typography variant="h5">
+            {hostProfile ? `${hostProfile.username}'s room` : "..."}
+          </UI.Typography>
+          <UI.Typography variant="subtitle1" color='text.secondary'>
+            {`${gameName ? `${Game.gameNameToString(gameName)} • ` : ""}${roomCount} in room`}
+          </UI.Typography>
+        </UI.Box>
+      </UI.Paper>
+    </UI.CardActionArea>
   )
 }
