@@ -61,25 +61,33 @@ export const getLocation = (): Location => {
 //
 //
 
+// setTimeout because actions where happening in a weird order if not setTimeout
+
 export const push = (url: string): Cmd.Cmd<never> => {
   return Rx.of(async () => {
-    window.history.pushState(null, "", url)
-    window.dispatchEvent(new Event("popstate"))
+    setTimeout(() => {
+      window.history.pushState(null, "", url)
+      window.dispatchEvent(new Event("popstate"))
+    }, 0)
     return Option.None
   })
 }
 
 export const replace = (url: string): Cmd.Cmd<never> => {
   return Rx.of(async () => {
-    window.history.replaceState(null, "", url)
-    window.dispatchEvent(new Event("popstate"))
+    setTimeout(() => {
+      window.history.replaceState(null, "", url)
+      window.dispatchEvent(new Event("popstate"))
+    }, 0)
     return Option.None
   })
 }
 
 export const back: Cmd.Cmd<never> = Rx.of(async () => {
-  window.history.back()
-  window.dispatchEvent(new Event("popstate"))
+  setTimeout(() => {
+    window.history.back()
+    window.dispatchEvent(new Event("popstate"))
+  }, 0)
   return Option.None
 })
 
@@ -97,16 +105,16 @@ export type FocusResult = Result.Result<Problem, {}>
 
 export const focus =
   (htmlId: string): Task.Task<FocusResult> =>
-  async () => {
-    const element = document.getElementById(htmlId)
+    async () => {
+      const element = document.getElementById(htmlId)
 
-    if (element) {
-      element.focus()
-      return Result.Ok({})
+      if (element) {
+        element.focus()
+        return Result.Ok({})
+      }
+
+      return Result.Err({ type: "ElementNotFound" })
     }
-
-    return Result.Err({ type: "ElementNotFound" })
-  }
 
 export type GetElementByIdResult = Result.Result<Problem, DomElement>
 
@@ -117,18 +125,18 @@ export type DomElement = {
 
 export const getElementById =
   (htmlId: string): Task.Task<GetElementByIdResult> =>
-  async () => {
-    const element = document.getElementById(htmlId)
+    async () => {
+      const element = document.getElementById(htmlId)
 
-    if (element) {
-      return Result.Ok({
-        offsetHeight: element.offsetHeight,
-        offsetWidth: element.offsetWidth,
-      })
+      if (element) {
+        return Result.Ok({
+          offsetHeight: element.offsetHeight,
+          offsetWidth: element.offsetWidth,
+        })
+      }
+
+      return Result.Err({ type: "ElementNotFound" })
     }
-
-    return Result.Err({ type: "ElementNotFound" })
-  }
 
 export type Resize = {
   width: number

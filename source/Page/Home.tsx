@@ -1,7 +1,7 @@
-import { Cmd, Sub } from "../Core";
+import { Sub } from "../Core";
 import { RoomId, UserId } from "../Data";
-import * as GameRoom from "../GameRoom/GameRoom.Frontend";
 import * as Game from "../GameRoom/Game.Frontend";
+import * as GameRoom from "../GameRoom/GameRoom.Frontend";
 import * as Route from "../Route";
 import * as Store from "../Store";
 import * as UI from "../UI";
@@ -28,24 +28,23 @@ export const init: Model = {}
 
 export type Msg = ["GameRoomMsg", GameRoom.Msg] | ["ClickedCurrentRoom"]
 
-export type OutAction = GameRoom.Action
+export type OutAction = GameRoom.Action | Route.Action
 
-export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
+export const update = (msg: Msg, model: Model): [Model, OutAction[]] => {
     switch (msg[0]) {
         case "GameRoomMsg": {
+            const pushAction: OutAction = ['Route', ['Push', ['GameRoom']]]
+            const gameRoomAction: OutAction = ['GameRoom', ['Msg', msg[1]]]
 
             const msgType = msg[1][0]
+            const actions: OutAction[] = msgType === 'JoinRoom' || msgType === 'CreateRoom' ? [pushAction, gameRoomAction] : [gameRoomAction]
 
-            const cmd = msgType === 'JoinRoom' || msgType === 'CreateRoom' ? Route.push(["GameRoom"]) : Cmd.None
-
-            return [model, cmd, [['GameRoom', ['Msg', msg[1]]]]]
+            return [model, actions]
         }
 
         case 'ClickedCurrentRoom': {
-            return [model, Route.push(['GameRoom']), []]
+            return [model, [['Route', ['Push', ['GameRoom']]]]]
         }
-
-
     }
 };
 

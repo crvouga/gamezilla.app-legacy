@@ -94,6 +94,7 @@ type OutAction =
   | Store.Action
   | Auth.Action
   | Party.Action
+  | Route.Action
 
 //
 //
@@ -419,6 +420,15 @@ const runAction = (action: OutAction, model: Model): [Model, Cmd.Cmd<Msg>] => {
         model.party,
       )
       return [{ ...model, party }, tagCmd("Party", partyCmd)]
+    }
+
+    case 'Route': {
+      const [route, routeCmd] = Route.runAction(
+        action,
+        model.route,
+      )
+
+      return [{ ...model, route }, tagCmd("Route", routeCmd)]
     }
 
     default:
