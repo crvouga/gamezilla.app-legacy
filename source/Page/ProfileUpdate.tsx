@@ -105,11 +105,11 @@ export const View = ({
         onClick={() => dispatch(["ClickedUsername"])}
       />
 
-      <UI.Field
+      {/* <UI.Field
         label="Name"
         value={profile.name}
         onClick={() => dispatch(["ClickedName"])}
-      />
+      /> */}
 
       <UI.Field
         label="Theme"

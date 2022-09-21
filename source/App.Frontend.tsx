@@ -572,13 +572,23 @@ const ViewMain = ({
           )
 
         case "Ready":
+          const { profile } = status[1]
           return (
-            <Pages.ViewReady
-              {...model}
-              profile={status[1].profile}
-              dispatch={(msg) => dispatch(["Page", msg])}
-              model={model.page}
-            />
+            <>
+              <GameRoom.ViewBanner
+                currentUserId={profile.userId}
+                model={model.gameRoom}
+                route={model.route}
+                dispatch={msg => dispatch(['GameRoom', msg])}
+              />
+
+              <Pages.ViewReady
+                {...model}
+                profile={status[1].profile}
+                dispatch={(msg) => dispatch(["Page", msg])}
+                model={model.page}
+              />
+            </>
           )
       }
     }

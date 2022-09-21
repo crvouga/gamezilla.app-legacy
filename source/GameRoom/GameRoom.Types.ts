@@ -71,6 +71,7 @@ export type BackendMsg = ["Games", RoomId.RoomId, Game.BackendMsg]
 
 export type FrontendMsg =
   | ["ClickedBack"]
+  | ["ClickedHome"]
   | ["ClickedAvatars"]
   | ["ClosedDrawer"]
   | ["ClickedUser", { userId: UserId.UserId }]
