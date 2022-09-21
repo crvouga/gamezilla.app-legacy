@@ -15,7 +15,7 @@ export const ViewActionButton = ({
             onClick={onClick}
             sx={{
                 flex: 1,
-                height: 48,
+                height: 52,
                 display: "flex",
                 flexDirection: "column",
                 color: theme.palette.action.active,

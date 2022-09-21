@@ -401,15 +401,17 @@ export const View = ({
   store,
   model,
   dispatch,
-  backButton,
   roomAvatarGroup,
+  onBack,
+  onClose
 }: {
   store: Store.Model
   currentUserId: UserId.UserId
   model: Model
   dispatch: (msg: Msg) => void
-  backButton: UI.ViewNode
-  roomAvatarGroup: UI.ViewNode
+  roomAvatarGroup: UI.ViewNode,
+  onBack: () => void,
+  onClose: () => void
 }) => {
   if (model.sharedModel.type === "Setup") {
     const startGameResult = startGame(
@@ -423,14 +425,13 @@ export const View = ({
     return (
       <UI.FillBox>
         <UI.Header
-          left={backButton}
+          left={<UI.IconButton onClick={onBack} sx={{ marginLeft: -1 }}><UI.Icons.Home /></UI.IconButton>}
           title="Chess"
           right={roomAvatarGroup}
         />
-
         <UI.Typography
-          variant="h3"
           sx={{ paddingX: 2, paddingBottom: 1 }}
+          variant="h4"
         >
           User Vs User
         </UI.Typography>
@@ -542,31 +543,27 @@ export const View = ({
           </UI.Tooltip>
         </UI.Box>
 
-        <UI.Box sx={{ flex: 1 }}></UI.Box>
 
-        <UI.Box sx={{ paddingX: 2, paddingBottom: 2 }}>
-          {startGameResult.type === "Err" && (
-            <UI.Typography
-              variant="caption"
-              color="text.secondary"
-            >
-              {startGameProblemToString(startGameResult.error)}
-            </UI.Typography>
-          )}
-          <UI.Tooltip title={startGameResult.type === 'Err' ? startGameProblemToString(startGameResult.error) : ""}>
-            <span>
-              <UI.Button
-                disabled={startGameResult.type === "Err"}
-                fullWidth
-                variant="contained"
-                onClick={() => {
-                  dispatch(["StartGame", { userId: currentUserId }])
-                }}
-              >
-                Start Game
-              </UI.Button>
-            </span>
-          </UI.Tooltip>
+        <UI.Box sx={{ flex: 1 }} />
+
+        <UI.Box sx={{ padding: 2, display: 'flex', gap: 2 }}>
+          <UI.Button
+            fullWidth
+            variant="outlined"
+            onClick={onClose}>
+            Back
+          </UI.Button>
+
+          <UI.Button
+            disabled={startGameResult.type === "Err"}
+            fullWidth
+            variant="contained"
+            onClick={() => {
+              dispatch(["StartGame", { userId: currentUserId }])
+            }}
+          >
+            Start Game
+          </UI.Button>
         </UI.Box>
       </UI.FillBox>
     )
@@ -581,6 +578,7 @@ export const View = ({
     return (
       <UI.FillBox>
         <UI.Header
+          left={<UI.IconButton onClick={onBack} sx={{ marginLeft: -1 }}><UI.Icons.Home /></UI.IconButton>}
           title="Chess"
           right={roomAvatarGroup}
         />
@@ -658,18 +656,23 @@ export const View = ({
           >
             {model.sharedModel.countDown}
           </UI.Typography>
-          {cancelStatGameResult.type === "Ok" && (
+
+        </UI.Box>
+
+        <UI.Box sx={{ flex: 1 }}></UI.Box>
+        {cancelStatGameResult.type === "Ok" && (
+          <UI.Box sx={{ width: '100%', padding: 2 }}>
             <UI.Button
+              fullWidth
+              variant="outlined"
               onClick={() =>
                 dispatch(["CancelStartGame", { userId: currentUserId }])
               }
             >
               Cancel
             </UI.Button>
-          )}
-        </UI.Box>
-
-        <UI.Box sx={{ flex: 1 }}></UI.Box>
+          </UI.Box>
+        )}
       </UI.FillBox>
     )
   }
@@ -715,15 +718,7 @@ export const View = ({
   return (
     <UI.FillBox sx={{ overflowY: "scroll" }}>
       <UI.Header
-        // left={
-        //   model.sharedModel.type === 'Game' ?
-        //     <UI.Button sx={{ marginLeft: -1 }} onClick={() => dispatch(['OpenedModal', 'Resign'])}>
-        //       Resign
-        //     </UI.Button> :
-        //     <UI.Button sx={{ marginLeft: -1 }} onClick={() => dispatch(['NewGame'])}>
-        //       Back
-        //     </UI.Button>
-        // }
+        left={<UI.IconButton sx={{ marginLeft: -1 }} onClick={onBack} ><UI.Icons.Home></UI.Icons.Home></UI.IconButton>}
         title={toGameText(model.sharedModel)}
         right={roomAvatarGroup}
       />
@@ -764,7 +759,7 @@ export const View = ({
         {...bottomSlot}
       />
 
-      <UI.Box sx={{ width: "100%", paddingBottom: 1 }} />
+      <UI.Box sx={{ flex: 1 }} />
 
       <ViewGameOverDialog
         model={model}
@@ -773,7 +768,7 @@ export const View = ({
 
       <UI.Box sx={{ width: "100%", display: "flex" }}>
         {model.sharedModel.type === "GameOver" && currentUserColor !== "None" && (
-          <UI.Box sx={{ paddingX: 2, width: "100%" }}>
+          <UI.Box sx={{ padding: 2, width: "100%" }}>
             <UI.Button
               fullWidth
               variant="contained"

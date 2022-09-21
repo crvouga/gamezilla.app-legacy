@@ -556,12 +556,12 @@ export const View = ({
   currentUserId,
   store,
   model,
-  dispatch,
+  dispatch
 }: {
   currentUserId: UserId.UserId
   store: Store.Model
   model: Model
-  dispatch: (msg: Msg) => void
+  dispatch: (msg: Msg) => void,
 }) => {
   const user = model.users[currentUserId]
 
@@ -610,6 +610,7 @@ export const View = ({
       store={store}
       dispatch={(msg) => dispatch(["Games", room.roomId, msg])}
       model={game.value}
+      onBack={() => dispatch(['ClickedBack'])}
       roomAvatarGroup={
         <ViewGameRoomAvatarGroup
           currentUserId={currentUserId}
@@ -637,23 +638,10 @@ export const ViewNotInRoom = ({
   const rooms = Object.values(model.rooms)
   return (
     <UI.FillBox>
-      <UI.Header left={<UI.Button onClick={() => dispatch(["ClickedHome"])} sx={{ marginLeft: -1 }}>Home</UI.Button>} title="Game Rooms" />
+      <UI.Header left={<UI.HeaderBackButton onClick={() => dispatch(["ClickedHome"])} />} title="Game Rooms" />
 
       <UI.Box sx={{ paddingX: 2 }}>
-        <UI.Button
-          fullWidth
-          size="large"
-          variant="contained"
-          loading={model.requests.CreateRoom.type === "Loading"}
-          onClick={() =>
-            dispatch([
-              "CreateRoom",
-              { roomId: RoomId.generate(), userId: currentUserId },
-            ])
-          }
-        >
-          Start Room
-        </UI.Button>
+
         {rooms.length === 0 && (
           <UI.Typography
             sx={{ marginTop: 2 }}
@@ -705,7 +693,24 @@ export const ViewNotInRoom = ({
           )
         })}
       </UI.List>
-    </UI.FillBox>
+      <UI.Box sx={{ flex: 1 }} />
+      <UI.Box sx={{ padding: 2 }}>
+        <UI.Button
+          fullWidth
+          size="large"
+          variant="contained"
+          loading={model.requests.CreateRoom.type === "Loading"}
+          onClick={() =>
+            dispatch([
+              "CreateRoom",
+              { roomId: RoomId.generate(), userId: currentUserId },
+            ])
+          }
+        >
+          Start Room
+        </UI.Button>
+      </UI.Box>
+    </UI.FillBox >
   )
 }
 
@@ -728,18 +733,14 @@ const ViewNotInGame = ({
   const onOpen = (gameName: GameName) => {
     dispatch(["OpenGame", { gameName, userId: currentUserId }])
   }
+
+  const hostUsername = store.Profile[room.hostId]?.username
+
   return (
     <UI.FillBox>
       <UI.Header
-        left={
-          <UI.Button
-            sx={{ marginLeft: -1 }}
-            onClick={() => dispatch(["ClickedHome"])}
-          >
-            Home
-          </UI.Button>
-        }
-        title="Choose Game"
+        left={<UI.IconButton sx={{ marginLeft: -1 }} onClick={() => dispatch(["ClickedHome"])} ><UI.Icons.Home /></UI.IconButton>}
+        title={hostUsername ? `${hostUsername}'s room` : "..."}
         right={
           <ViewGameRoomAvatarGroup
             currentUserId={currentUserId}
@@ -763,16 +764,17 @@ const ViewNotInGame = ({
         }}
       >
         <GameCard
+
           icon={<Game.CoverArt gameName="Chess" />}
           label="Chess"
           onClick={() => onOpen("Chess")}
         />
 
-        {/* <GameCard
+        <GameCard
           icon={<Game.CoverArt gameName="Snake" />}
           label="Snake"
           onClick={() => onOpen("Snake")}
-        /> */}
+        />
 
         <GameCard
           icon={<Game.CoverArt gameName="Tetris" />}
@@ -795,10 +797,8 @@ const ViewNotInGame = ({
 
       <UI.Box sx={{ flex: 1 }} />
 
-      <UI.Divider />
-
-      <UI.Box sx={{ padding: 2, paddingY: 1 }}>
-        <UI.Button onClick={() => dispatch(['LeaveRoom', { userId: currentUserId }])} sx={{ marginLeft: -1 }} startIcon={<UI.Icons.ChevronLeft />}>
+      <UI.Box sx={{ padding: 2, }}>
+        <UI.Button fullWidth variant="outlined" onClick={() => dispatch(['LeaveRoom', { userId: currentUserId }])} >
           Leave
         </UI.Button>
       </UI.Box>

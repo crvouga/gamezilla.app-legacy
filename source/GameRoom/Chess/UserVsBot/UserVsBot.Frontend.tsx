@@ -285,15 +285,17 @@ export const View = ({
   store,
   model,
   dispatch,
-  backButton,
+  onBack,
   roomAvatarGroup,
+  onClose
 }: {
   store: Store.Model
   currentUserId: UserId.UserId
   model: Model
   dispatch: (msg: Msg) => void
-  backButton: UI.ViewNode
   roomAvatarGroup: UI.ViewNode
+  onBack: () => void,
+  onClose: () => void
 }) => {
   if (model.sharedModel.type === "Setup") {
     const startGameResult = startGame(
@@ -312,7 +314,7 @@ export const View = ({
     return (
       <UI.FillBox>
         <UI.Header
-          left={backButton}
+          left={<UI.IconButton sx={{ marginLeft: -1 }} onClick={onBack} ><UI.Icons.Home /></UI.IconButton>}
           title="Chess"
           right={roomAvatarGroup}
         />
@@ -461,26 +463,26 @@ export const View = ({
         </UI.Box>
         <UI.Box sx={{ flex: 1 }} />
 
-        <UI.Box sx={{ paddingX: 2, paddingBottom: 1 }}>
-          <UI.Tooltip
-            title={
-              startGameResult.type === "Err"
-                ? startGameProblemToString(startGameResult.error)
-                : ""
-            }
+        <UI.Box sx={{ padding: 2, display: "flex", gap: 2 }}>
+          <UI.Button
+            fullWidth
+            size="large"
+            variant="outlined"
+            onClick={onClose}
           >
-            <span>
-              <UI.Button
-                fullWidth
-                size="large"
-                variant="contained"
-                disabled={startGameResult.type === "Err"}
-                onClick={() => dispatch(["StartGame", { userId: currentUserId }])}
-              >
-                Start Game
-              </UI.Button>
-            </span>
-          </UI.Tooltip>
+            Back
+          </UI.Button>
+
+          <UI.Button
+            fullWidth
+            size="large"
+            variant="contained"
+            disabled={startGameResult.type === "Err"}
+            onClick={() => dispatch(["StartGame", { userId: currentUserId }])}
+          >
+            Start Game
+          </UI.Button>
+
         </UI.Box>
       </UI.FillBox >
     )
@@ -537,19 +539,12 @@ export const View = ({
 
   return (
     <UI.FillBox>
+
       <UI.Header
         left={
-          <Tooltip title={stopGameResultToString(stopGameResult)}>
-            <span>
-              <UI.Button
-                disabled={stopGameResult.type === 'Err'}
-                onClick={() => dispatch(["StopGame", { userId: currentUserId }])}
-                sx={{ marginLeft: -1 }}
-              >
-                Stop
-              </UI.Button>
-            </span>
-          </Tooltip>
+          <UI.IconButton sx={{ marginLeft: -1 }} onClick={onBack}>
+            <UI.Icons.Home />
+          </UI.IconButton>
 
         }
         title={toGameText(model.sharedModel)}
@@ -578,7 +573,18 @@ export const View = ({
 
       {bottomSlot}
 
+      <UI.Box sx={{ flex: 1 }} />
+
       <UI.Box sx={{ width: "100%", display: "flex" }}>
+        <ViewActionButton
+          icon={
+            <UI.Icons.ExitToApp sx={{ transform: "rotate(180deg)" }} />
+
+          }
+          title={"Exit"}
+          onClick={() => dispatch(['StopGame', { userId: currentUserId }])}
+        />
+
         <ViewActionButton
           icon={
             <UI.Icons.Flip
@@ -621,7 +627,6 @@ export const View = ({
           </UI.DialogActions>
         </UI.Dialog>
       )}
-
     </UI.FillBox>
   )
 }
