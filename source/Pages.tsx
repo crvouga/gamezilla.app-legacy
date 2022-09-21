@@ -105,6 +105,7 @@ export type OutAction =
   | GameRoom.Action
   | Auth.Action
   | Party.Action
+  | Route.Action
 
 //
 //
@@ -512,8 +513,8 @@ export const updateReady = (
 
     case 'Home': {
       if (msg[0] === 'Home') {
-        const [child, cmd, actions] = Home.update(msg[1], model[1])
-        return [['Home', child], tagCmd("Home", cmd), actions]
+        const [child, actions] = Home.update(msg[1], model[1])
+        return [['Home', child], Cmd.None, actions]
       }
 
       return [model, Cmd.None, []]

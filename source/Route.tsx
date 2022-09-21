@@ -174,7 +174,7 @@ export const replace = (route: Model) => {
 
 export type Msg = ["GotRoute", Model]
 
-export type Action = ["Push", Model] | ["Replace", Model] | ["Back"]
+export type Action = ['Route', ["Push", Model] | ["Replace", Model] | ["Back"]]
 
 export const update = (msg: Msg): Model => {
   switch (msg[0]) {
@@ -185,20 +185,20 @@ export const update = (msg: Msg): Model => {
 }
 
 export const runAction = (
-  model: Model,
   action: Action,
+  model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
-  switch (action[0]) {
+  switch (action[1][0]) {
     case "Back": {
       return [model, Browser.back]
     }
 
     case "Push": {
-      return [model, Browser.push(encode(action[1]))]
+      return [model, Browser.push(encode(action[1][1]))]
     }
 
     case "Replace": {
-      return [model, Browser.replace(encode(action[1]))]
+      return [model, Browser.replace(encode(action[1][1]))]
     }
   }
 }
