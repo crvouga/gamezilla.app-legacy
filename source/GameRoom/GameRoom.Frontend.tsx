@@ -1068,10 +1068,10 @@ export const ViewCallToAction = ({ onCreateRoom }: { onCreateRoom: () => void })
       <UI.Typography variant="h4" align="center">
         Create a room
       </UI.Typography>
-      <UI.Typography variant="subtitle1" color="text.secondary" align="center" sx={{ marginBottom: 4 }}>
-        Starting playing online with your friends by creating a new game room.
+      <UI.Typography variant="subtitle2" color="text.secondary" align="center" sx={{ marginBottom: 3 }}>
+        Starting playing a games by creating a new game room.
       </UI.Typography>
-      <UI.Button onClick={onCreateRoom} variant="contained">
+      <UI.Button onClick={onCreateRoom} variant="contained" fullWidth>
         Create Room
       </UI.Button>
     </UI.Card>
