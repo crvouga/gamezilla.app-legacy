@@ -144,7 +144,7 @@ const ViewNotInRoom = ({ model, dispatch, currentUserId, gameRoom, store }: { cu
                     }}>
                         <UI.AvatarGroup sx={{ marginRight: 2 }}>
                             {usersInRoom.map(user => (
-                                <UI.Avatar src={store.Profile[user.userId]?.avatarUrl} />
+                                <UI.Avatar key={user.userId} src={store.Profile[user.userId]?.avatarUrl} />
                             ))}
                         </UI.AvatarGroup>
                         <UI.Box sx={{ flex: 1 }}>

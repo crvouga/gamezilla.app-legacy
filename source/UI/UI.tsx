@@ -579,3 +579,15 @@ export const pulseAnimation = `${pulse} 0.5s infinite ease`
 export type ViewNode = ReactNode
 
 export type Sx = Mui.SxProps
+
+
+export const ActionButton = ({ label, icon }: { label: string, icon: ReactNode }) => {
+  return (
+    <ButtonBase sx={{ paddingY: 1, paddingX: 2, display: "flex", flexDirection: "column" }}>
+      {icon}
+      <Typography variant="subtitle1">
+        {label}
+      </Typography>
+    </ButtonBase>
+  )
+}
