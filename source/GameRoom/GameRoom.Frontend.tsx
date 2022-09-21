@@ -734,9 +734,9 @@ const ViewNotInGame = ({
         left={
           <UI.Button
             sx={{ marginLeft: -1 }}
-            onClick={() => dispatch(["LeaveRoom", { userId: currentUserId }])}
+            onClick={() => dispatch(["ClickedHome"])}
           >
-            Leave
+            Home
           </UI.Button>
         }
         title="Choose Game"
@@ -750,6 +750,8 @@ const ViewNotInGame = ({
           />
         }
       />
+
+
 
       <UI.Box
         sx={{
@@ -789,6 +791,16 @@ const ViewNotInGame = ({
           label="Connect Four"
           onClick={() => onOpen("ConnectFour")}
         />
+      </UI.Box>
+
+      <UI.Box sx={{ flex: 1 }} />
+
+      <UI.Divider />
+
+      <UI.Box sx={{ padding: 2, paddingY: 1 }}>
+        <UI.Button onClick={() => dispatch(['LeaveRoom', { userId: currentUserId }])} sx={{ marginLeft: -1 }} startIcon={<UI.Icons.ChevronLeft />}>
+          Leave
+        </UI.Button>
       </UI.Box>
     </UI.FillBox>
   )
