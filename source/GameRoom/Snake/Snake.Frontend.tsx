@@ -78,9 +78,9 @@ export const update = (
       const changeDirectionCmd =
         direction.type === "Some"
           ? sendToBackend([
-              "InputDirection",
-              { userId: currentUserId, direction: direction.value },
-            ])
+            "InputDirection",
+            { userId: currentUserId, direction: direction.value },
+          ])
           : Cmd.None
 
       const toggleStatusCmd =
@@ -222,16 +222,32 @@ export const View = ({
   store,
   model,
   dispatch,
+  roomAvatarGroup,
+  onClose
 }: {
   currentUserId: UserId.UserId
   store: Store.Model
   model: Model
-  dispatch: (msg: Msg) => void
+  dispatch: (msg: Msg) => void,
+  roomAvatarGroup: UI.ViewNode,
+  onClose: () => void
 }) => {
+
+  const header = (
+    <UI.Header
+      left={<UI.Button onClick={onClose}>
+        Close
+      </UI.Button>}
+      title="Snake"
+      right={roomAvatarGroup}
+    />
+  )
+
   if (model.gameStatus.type === "GameSetup") {
     const menuAnchorId = "playerSlotMenuId"
     return (
       <UI.FillBox>
+        {header}
         <UI.Typography
           sx={{ paddingX: 2 }}
           color="text.secondary"
@@ -324,6 +340,7 @@ export const View = ({
 
   return (
     <UI.FillBox>
+      {header}
       <ViewBoard
         model={model}
         dispatch={dispatch}
