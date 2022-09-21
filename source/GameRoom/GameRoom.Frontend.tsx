@@ -636,23 +636,18 @@ export const ViewNotInRoom = ({
     <UI.FillBox>
       <UI.Header left={<UI.HeaderBackButton onClick={() => dispatch(["ClickedHome"])} />} title="Game Rooms" />
 
-      <UI.Box sx={{ paddingX: 2 }}>
+      {rooms.length === 0 && (
+        <UI.Box sx={{ padding: 2 }}>
+          <ViewCallToAction onCreateRoom={() => dispatch(['CreateRoom', { roomId: RoomId.generate(), userId: currentUserId }])} />
+        </UI.Box>
+      )}
 
-        {rooms.length === 0 && (
-          <UI.Typography
-            sx={{ marginTop: 2 }}
-            color="text.secondary"
-          >
-            No active rooms
-          </UI.Typography>
-        )}
-      </UI.Box>
 
       <UI.LoadingBackdrop open={model.requests.JoinRoom.type === "Loading"} />
 
       <UI.Box sx={{ padding: 2, flex: 1, display: 'flex', flexDirection: "column", gap: 2, overflowY: "scroll" }}>
         {Object.values(rooms).map(room => (
-          <ViewGameRoomCard
+          <ViewCard
             key={room.roomId}
             roomId={room.roomId}
             hostId={room.hostId}
@@ -677,7 +672,7 @@ export const ViewNotInRoom = ({
             ])
           }
         >
-          Start Room
+          Create Room
         </UI.Button>
       </UI.Box>
     </UI.FillBox >
@@ -724,46 +719,45 @@ const ViewNotInGame = ({
 
 
 
-      <UI.Box
-        sx={{
-          display: "grid",
-          gridTemplateColumns: "repeat(2, 1fr)",
-          overflowY: "scroll",
-          gap: 2,
-          padding: 2,
-          flex: 1,
-        }}
-      >
-        <GameCard
+      <UI.Box sx={{ flex: 1, overflowY: 'scroll', padding: 2 }}>
+        <UI.Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: "repeat(2, 1fr)",
+            gap: 2.
+          }}
+        >
+          <GameCard
 
-          icon={<Game.CoverArt gameName="Chess" />}
-          label="Chess"
-          onClick={() => onOpen("Chess")}
-        />
+            icon={<Game.CoverArt gameName="Chess" />}
+            label="Chess"
+            onClick={() => onOpen("Chess")}
+          />
 
-        <GameCard
-          icon={<Game.CoverArt gameName="Snake" />}
-          label="Snake"
-          onClick={() => onOpen("Snake")}
-        />
+          <GameCard
+            icon={<Game.CoverArt gameName="Snake" />}
+            label="Snake"
+            onClick={() => onOpen("Snake")}
+          />
 
-        <GameCard
-          icon={<Game.CoverArt gameName="Tetris" />}
-          label="Tetris"
-          onClick={() => onOpen("Tetris")}
-        />
+          <GameCard
+            icon={<Game.CoverArt gameName="Tetris" />}
+            label="Tetris"
+            onClick={() => onOpen("Tetris")}
+          />
 
-        <GameCard
-          icon={<Game.CoverArt gameName="TicTacToe" />}
-          label="Tic Tac Toe"
-          onClick={() => onOpen("TicTacToe")}
-        />
+          <GameCard
+            icon={<Game.CoverArt gameName="TicTacToe" />}
+            label="Tic Tac Toe"
+            onClick={() => onOpen("TicTacToe")}
+          />
 
-        <GameCard
-          icon={<Game.CoverArt gameName="ConnectFour" />}
-          label="Connect Four"
-          onClick={() => onOpen("ConnectFour")}
-        />
+          <GameCard
+            icon={<Game.CoverArt gameName="ConnectFour" />}
+            label="Connect Four"
+            onClick={() => onOpen("ConnectFour")}
+          />
+        </UI.Box>
       </UI.Box>
 
       <UI.Box sx={{ padding: 2, }}>
@@ -1038,7 +1032,7 @@ export const ViewBanner = ({
 }
 
 
-export const ViewGameRoomCard = ({ roomId, hostId, gameName, store, gameRoom, onClick }: { roomId: RoomId.RoomId, hostId: UserId.UserId, gameName?: GameName, store: Store.Model, gameRoom: Model, onClick: () => void }) => {
+export const ViewCard = ({ roomId, hostId, gameName, store, gameRoom, onClick }: { roomId: RoomId.RoomId, hostId: UserId.UserId, gameName?: GameName, store: Store.Model, gameRoom: Model, onClick: () => void }) => {
   const hostProfile = store.Profile[hostId]
   const roomCount = Object.values(gameRoom.users).filter(user => user.roomId === roomId).length
   return (
@@ -1063,5 +1057,23 @@ export const ViewGameRoomCard = ({ roomId, hostId, gameName, store, gameRoom, on
         </UI.Box>
       </UI.Paper>
     </UI.CardActionArea>
+  )
+}
+
+
+
+export const ViewCallToAction = ({ onCreateRoom }: { onCreateRoom: () => void }) => {
+  return (
+    <UI.Card variant="outlined" sx={{ padding: 4, display: 'flex', alignItems: 'center', justifyContent: "center", flexDirection: "column" }}>
+      <UI.Typography variant="h4" align="center">
+        Create a room
+      </UI.Typography>
+      <UI.Typography variant="subtitle1" color="text.secondary" align="center" sx={{ marginBottom: 4 }}>
+        Starting playing online with your friends by creating a new game room.
+      </UI.Typography>
+      <UI.Button onClick={onCreateRoom} variant="contained">
+        Create Room
+      </UI.Button>
+    </UI.Card>
   )
 }
