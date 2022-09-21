@@ -315,7 +315,7 @@ export const joinRoom = (
 ): JoinRoomResult => {
   const user = model.users[userId]
 
-  if (user && model.rooms[user.roomId]) {
+  if (user && user.roomId !== roomId && model.rooms[user.roomId]) {
     return Result.Err("user_is_already_in_a_room")
   }
 

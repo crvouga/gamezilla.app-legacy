@@ -86,6 +86,10 @@ export const update = (
   const model: Model = { ...modelPrev, modal: "Closed" }
 
   switch (msg[0]) {
+    case "ClickedHome": {
+      return [model, Route.push(['Home'])]
+    }
+
     case "ClickedBack": {
       return [model, Route.back]
     }
@@ -256,7 +260,9 @@ export const updateFromBackend = (
     }
 
     case "CreateRoom_Done": {
-      return updateResponse({ sendToBackend, msg, model }, "CreateRoom")
+      const [modelNew, cmd, actions] = updateResponse({ sendToBackend, msg, model }, "CreateRoom")
+
+      return [modelNew, Cmd.batch([cmd, Route.replace(['GameRoom'])]), actions]
     }
 
     case "LeaveRoom_Done": {
@@ -264,7 +270,8 @@ export const updateFromBackend = (
     }
 
     case "JoinRoom_Done": {
-      return updateResponse({ sendToBackend, msg, model }, "JoinRoom")
+      const [modelNew, cmd, actions] = updateResponse({ sendToBackend, msg, model }, "JoinRoom")
+      return [modelNew, Cmd.batch([cmd, Route.replace(['GameRoom'])]), actions]
     }
 
     case "OpenGame_Done": {
@@ -630,7 +637,7 @@ export const ViewNotInRoom = ({
   const rooms = Object.values(model.rooms)
   return (
     <UI.FillBox>
-      <UI.Header title="Game Rooms" />
+      <UI.Header left={<UI.Button onClick={() => dispatch(["ClickedHome"])} sx={{ marginLeft: -1 }}>Home</UI.Button>} title="Game Rooms" />
 
       <UI.Box sx={{ paddingX: 2 }}>
         <UI.Button
@@ -982,11 +989,7 @@ export const ViewBanner = ({
     return <></>
   }
 
-  if (room.game.type === "None") {
-    return <></>
-  }
-
-  const game = room.game.value
+  const game = room.game.type === "None" ? null : room.game.value
 
   return (
     <>
@@ -1006,7 +1009,7 @@ export const ViewBanner = ({
         onClick={() => dispatch(["ClickedBanner"])}
       >
         {game ? (
-          <UI.Box sx={{ maxWidth: bannerHeight }}>
+          <UI.Box sx={{ maxWidth: bannerHeight, width: '100%' }}>
             <UI.AspectRatio aspectRatio={1}>
               <Game.CoverArt gameName={game[0]} />
             </UI.AspectRatio>

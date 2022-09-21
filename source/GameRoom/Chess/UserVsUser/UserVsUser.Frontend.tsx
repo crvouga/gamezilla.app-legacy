@@ -581,14 +581,6 @@ export const View = ({
     return (
       <UI.FillBox>
         <UI.Header
-          left={
-            <UI.Button
-              disabled
-              sx={{ marginLeft: -1 }}
-            >
-              Back
-            </UI.Button>
-          }
           title="Chess"
           right={roomAvatarGroup}
         />
@@ -723,7 +715,15 @@ export const View = ({
   return (
     <UI.FillBox sx={{ overflowY: "scroll" }}>
       <UI.Header
-        left={backButton}
+        // left={
+        //   model.sharedModel.type === 'Game' ?
+        //     <UI.Button sx={{ marginLeft: -1 }} onClick={() => dispatch(['OpenedModal', 'Resign'])}>
+        //       Resign
+        //     </UI.Button> :
+        //     <UI.Button sx={{ marginLeft: -1 }} onClick={() => dispatch(['NewGame'])}>
+        //       Back
+        //     </UI.Button>
+        // }
         title={toGameText(model.sharedModel)}
         right={roomAvatarGroup}
       />

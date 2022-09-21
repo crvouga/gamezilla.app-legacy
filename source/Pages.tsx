@@ -23,6 +23,7 @@ import {
   ProfileUpdateTheme,
   ProfileUpdateUsername,
   Search,
+  Home,
 } from "./Page"
 import * as Party from "./Party/Party.Frontend"
 import * as Route from "./Route"
@@ -47,6 +48,7 @@ export type Model =
     { phoneNumber: PhoneNumber.PhoneNumber },
     LoginPhoneVerify.Model,
   ]
+  | ["Home", Home.Model]
   | ["ProfileCreate", ProfileCreate.Model]
   | ["Logout", Logout.Model]
   | ["Account", Account.Model]
@@ -80,6 +82,7 @@ export type Msg =
   | ["LoginPhone", LoginPhone.Msg]
   | ["LoginPhoneVerify", LoginPhoneVerify.Msg]
   | ["Logout", Logout.Msg]
+  | ["Home", Home.Msg]
   | ["Profile", Profile.Msg]
   | ["ProfileCreate", ProfileCreate.Msg]
   | ["ProfileDelete", ProfileDelete.Msg]
@@ -222,20 +225,22 @@ export const initReady = (
       return [["Party", modelInit], pipe(cmdInit, Cmd.map(tag("Party"))), []]
     }
 
+    case 'Home': {
+      const modelInit = Home.init
+      return [
+        ["Home", modelInit],
+        Cmd.None,
+        [],
+      ]
+    }
+
     case "ProfileCreate":
     case "Login":
     case "LoginPhone":
     case "LoginPhoneVerify":
-    case "LoginEmailLink":
-      const [modelInit, cmdInit] = GameRoomPage.init
-      return [
-        ["GameRoom", modelInit],
-        Cmd.batch([
-          Route.push(["GameRoom"]),
-          pipe(cmdInit, Cmd.map(tag("GameRoom"))),
-        ]),
-        [],
-      ]
+    case "LoginEmailLink": {
+      return [["Loading",], Route.push(["Home"]), [],]
+    }
 
     default:
       return exhaustive(route)
@@ -279,6 +284,7 @@ export const initLoggedOut = (route: Route.Model): [Model, Cmd.Cmd<Msg>] => {
     case "ProfileUpdateName":
     case "ProfileUpdateUsername":
     case "Party":
+    case 'Home':
       return [["Login", Login.init], Route.push(["Login"])]
 
     default:
@@ -314,6 +320,7 @@ export const initProfileMissing = (
     case "LoginPhone":
     case "LoginPhoneVerify":
     case "GameRoom":
+    case 'Home':
     case "Party":
       return [
         ["ProfileCreate", ProfileCreate.init(auth)],
@@ -503,6 +510,15 @@ export const updateReady = (
       return [model, Cmd.None, []]
     }
 
+    case 'Home': {
+      if (msg[0] === 'Home') {
+        const [child, cmd, actions] = Home.update(msg[1], model[1])
+        return [['Home', child], tagCmd("Home", cmd), actions]
+      }
+
+      return [model, Cmd.None, []]
+    }
+
     case "Login":
     case "Loading":
     case "ProfileCreate":
@@ -559,6 +575,7 @@ export const updateProfileMissing = (
     case "LoginPhone":
     case "LoginPhoneVerify":
     case "Party":
+    case 'Home':
       return [model, Route.push(["ProfileCreate"]), []]
 
     default:
@@ -623,6 +640,7 @@ export const updateLoggedOut = (
     case "Profile":
     case "Search":
     case "Party":
+    case 'Home':
       return [model, Route.push(["Login"]), []]
 
     default:
@@ -663,6 +681,7 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
     case "Party":
     case "LoginPhone":
     case "LoginPhoneVerify":
+    case 'Home':
       return Sub.None
 
     default:
@@ -705,6 +724,11 @@ export const ViewReady = ({
             model={model[1]}
             dispatch={(msg) => dispatch(["Account", msg])}
           />
+          <ViewBottomNavigation
+            currentUserId={currentUserId}
+            route={route}
+            dispatch={dispatch}
+          />
         </UI.FillBox>
       )
 
@@ -744,12 +768,19 @@ export const ViewReady = ({
 
     case "ChatNew":
       return (
-        <ChatNew.View
-          store={store}
-          currentUserProfile={profile}
-          model={model[1]}
-          dispatch={(msg) => dispatch(["ChatNew", msg])}
-        />
+        <UI.FillBox>
+          <ChatNew.View
+            store={store}
+            currentUserProfile={profile}
+            model={model[1]}
+            dispatch={(msg) => dispatch(["ChatNew", msg])}
+          />
+          <ViewBottomNavigation
+            currentUserId={currentUserId}
+            route={route}
+            dispatch={dispatch}
+          />
+        </UI.FillBox>
       )
 
     case "ChatConversation":
@@ -773,54 +804,96 @@ export const ViewReady = ({
 
     case "ProfileDelete":
       return (
-        <ProfileDelete.View
-          store={store}
-          profileId={profile.userId}
-          model={model[1]}
-          dispatch={(msg) => dispatch(["ProfileDelete", msg])}
-        />
+        <UI.FillBox>
+          <ProfileDelete.View
+            store={store}
+            profileId={profile.userId}
+            model={model[1]}
+            dispatch={(msg) => dispatch(["ProfileDelete", msg])}
+          />
+          <ViewBottomNavigation
+            currentUserId={currentUserId}
+            route={route}
+            dispatch={dispatch}
+          />
+        </UI.FillBox>
       )
 
     case "ProfileUpdate":
       return (
-        <ProfileUpdate.View
-          profile={profile}
-          model={model[1]}
-          dispatch={(msg) => dispatch(["ProfileUpdate", msg])}
-        />
+        <UI.FillBox>
+          <ProfileUpdate.View
+            profile={profile}
+            model={model[1]}
+            dispatch={(msg) => dispatch(["ProfileUpdate", msg])}
+          />
+          <ViewBottomNavigation
+            currentUserId={currentUserId}
+            route={route}
+            dispatch={dispatch}
+          />
+        </UI.FillBox>
       )
 
     case "ProfileUpdateAvatar":
       return (
-        <ProfileUpdateAvatar.View
-          model={model[1]}
-          dispatch={(msg) => dispatch(["ProfileUpdateAvatar", msg])}
-        />
+        <UI.FillBox>
+          <ProfileUpdateAvatar.View
+            model={model[1]}
+            dispatch={(msg) => dispatch(["ProfileUpdateAvatar", msg])}
+          />
+          <ViewBottomNavigation
+            currentUserId={currentUserId}
+            route={route}
+            dispatch={dispatch}
+          />
+        </UI.FillBox>
       )
 
     case "ProfileUpdateName":
       return (
-        <ProfileUpdateName.View
-          model={model[1]}
-          dispatch={(msg) => dispatch(["ProfileUpdateName", msg])}
-        />
+        <UI.FillBox>
+          <ProfileUpdateName.View
+            model={model[1]}
+            dispatch={(msg) => dispatch(["ProfileUpdateName", msg])}
+          />
+          <ViewBottomNavigation
+            currentUserId={currentUserId}
+            route={route}
+            dispatch={dispatch}
+          />
+        </UI.FillBox>
       )
 
     case "ProfileUpdateTheme":
       return (
-        <ProfileUpdateTheme.View
-          profile={profile}
-          model={model[1]}
-          dispatch={(msg) => dispatch(["ProfileUpdateTheme", msg])}
-        />
+        <UI.FillBox>
+          <ProfileUpdateTheme.View
+            profile={profile}
+            model={model[1]}
+            dispatch={(msg) => dispatch(["ProfileUpdateTheme", msg])}
+          />
+          <ViewBottomNavigation
+            currentUserId={currentUserId}
+            route={route}
+            dispatch={dispatch}
+          />
+        </UI.FillBox>
       )
 
     case "ProfileUpdateUsername":
       return (
-        <ProfileUpdateUsername.View
-          model={model[1]}
-          dispatch={(msg) => dispatch(["ProfileUpdateUsername", msg])}
-        />
+        <UI.FillBox>
+          <ProfileUpdateUsername.View
+            model={model[1]}
+            dispatch={(msg) => dispatch(["ProfileUpdateUsername", msg])}
+          />
+          <ViewBottomNavigation
+            currentUserId={currentUserId}
+            route={route}
+            dispatch={dispatch}
+          />
+        </UI.FillBox>
       )
 
     case "Profile":
@@ -843,20 +916,13 @@ export const ViewReady = ({
 
     case "GameRoom": {
       return (
-        <UI.FillBox>
-          <GameRoomPage.View
-            store={store}
-            currentUserId={currentUserId}
-            gameRoom={gameRoom}
-            model={model[1]}
-            dispatch={(msg) => dispatch(["GameRoom", msg])}
-          />
-          <ViewBottomNavigation
-            currentUserId={currentUserId}
-            route={route}
-            dispatch={dispatch}
-          />
-        </UI.FillBox>
+        <GameRoomPage.View
+          store={store}
+          currentUserId={currentUserId}
+          gameRoom={gameRoom}
+          model={model[1]}
+          dispatch={(msg) => dispatch(["GameRoom", msg])}
+        />
       )
     }
 
@@ -877,6 +943,31 @@ export const ViewReady = ({
             dispatch={dispatch}
           />
         </UI.FillBox>
+      )
+    }
+
+    case 'Home': {
+      return (
+        <ViewTopLevel
+          currentUserId={currentUserId}
+          route={route}
+          dispatch={dispatch}
+          gameRoom={gameRoom}
+        >
+          <Home.View
+            store={store}
+            gameRoom={gameRoom}
+            currentUserId={currentUserId}
+            model={model[1]}
+            dispatch={msg => dispatch(['Home', msg])}
+          />
+
+          {/* <ViewBottomNavigation
+            currentUserId={currentUserId}
+            route={route}
+            dispatch={dispatch}
+          /> */}
+        </ViewTopLevel>
       )
     }
 
@@ -937,6 +1028,7 @@ export const ViewProfileMissing = ({
     case "Profile":
     case "GameRoom":
     case "Party":
+    case 'Home':
       return <UI.LoadingPage />
 
     default:
@@ -1002,6 +1094,7 @@ export const ViewLoggedOut = ({
     case "Search":
     case "Loading":
     case "Party":
+    case 'Home':
       return <UI.LoadingPage />
 
     default:
@@ -1017,6 +1110,31 @@ export const ViewLoggedOut = ({
 //
 //
 //
+
+const ViewTopLevel = ({
+  children,
+  dispatch,
+  route,
+  currentUserId,
+  gameRoom
+}: {
+  children: UI.ViewNode,
+  currentUserId: UserId.UserId
+  route: Route.Model
+  dispatch: (msg: Msg) => void
+  gameRoom: GameRoom.Model
+}) => {
+  return (
+    <UI.FillBox>
+      {children}
+      <ViewBottomNavigation
+        currentUserId={currentUserId}
+        route={route}
+        dispatch={dispatch}
+      />
+    </UI.FillBox>
+  )
+}
 
 type BottomNavigationItem = {
   route: Route.Model
@@ -1035,9 +1153,9 @@ const ViewBottomNavigation = ({
 }) => {
   const items: BottomNavigationItem[] = [
     {
-      route: ["GameRoom"],
-      filled: <UI.Icons.Gamepad />,
-      outlined: <UI.Icons.GamepadOutlined />,
+      route: ["Home"],
+      filled: <UI.Icons.Home />,
+      outlined: <UI.Icons.HomeOutlined />,
     },
     {
       route: ["Party"],

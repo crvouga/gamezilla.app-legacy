@@ -378,6 +378,7 @@ export const CoverArt = ({ gameName }: { gameName: GameName }) => {
   }
 }
 
+
 export const mergeWithBackend = ({
   sendToBackend,
   frontendModel,

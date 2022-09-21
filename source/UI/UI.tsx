@@ -82,7 +82,7 @@ const createTheme = ({ mode }: { mode: "light" | "dark" }) =>
         MuiAvatarGroup: {
           defaultProps: {
             max: 3,
-            spacing: "medium",
+            // spacing: "medium",
             variant: "rounded",
           },
         },
@@ -94,7 +94,7 @@ const createTheme = ({ mode }: { mode: "light" | "dark" }) =>
             },
           },
           defaultProps: {
-            disableTouchRipple: true,
+            // disableTouchRipple: true,
           },
         },
       },
