@@ -761,6 +761,7 @@ const ViewNotInGame = ({
           overflowY: "scroll",
           gap: 2,
           padding: 2,
+          flex: 1,
         }}
       >
         <GameCard
@@ -794,8 +795,6 @@ const ViewNotInGame = ({
           onClick={() => onOpen("ConnectFour")}
         />
       </UI.Box>
-
-      <UI.Box sx={{ flex: 1 }} />
 
       <UI.Box sx={{ padding: 2, }}>
         <UI.Button fullWidth variant="outlined" onClick={() => dispatch(['LeaveRoom', { userId: currentUserId }])} >
@@ -917,48 +916,50 @@ const GameCard = ({
   disabled?: boolean
 }) => {
   return (
-    <UI.ButtonBase
-      disabled={disabled}
-      sx={{
-        position: "relative",
-        overflow: "hidden",
-        opacity: disabled ? 0.3 : 1,
-        borderRadius: 2,
-      }}
-      onClick={onClick}
-    >
-      {icon}
-
-      <UI.Box
+    <UI.AspectRatio aspectRatio={1}>
+      <UI.ButtonBase
+        disabled={disabled}
         sx={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "flex-end",
+          position: "relative",
+          overflow: "hidden",
+          opacity: disabled ? 0.3 : 1,
+          borderRadius: 2,
         }}
+        onClick={onClick}
       >
+        {icon}
+
         <UI.Box
           sx={{
-            width: "100%",
-            padding: 1,
-            paddingTop: 2,
-            background: `linear-gradient(transparent, rgba(0, 0, 0, 0.6))`,
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "flex-end",
           }}
         >
-          <UI.Typography
-            color="white"
-            align="left"
-            variant="h4"
+          <UI.Box
+            sx={{
+              width: "100%",
+              padding: 1,
+              paddingTop: 2,
+              background: `linear-gradient(transparent, rgba(0, 0, 0, 0.6))`,
+            }}
           >
-            {label}
-          </UI.Typography>
+            <UI.Typography
+              color="white"
+              align="left"
+              variant="h4"
+            >
+              {label}
+            </UI.Typography>
+          </UI.Box>
         </UI.Box>
-      </UI.Box>
-    </UI.ButtonBase>
+      </UI.ButtonBase>
+    </UI.AspectRatio>
   )
 }
 
