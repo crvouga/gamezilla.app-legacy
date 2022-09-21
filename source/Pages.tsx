@@ -803,173 +803,166 @@ export const ViewReady = ({
       )
 
     case "ProfileDelete":
-      return (
-        <UI.FillBox>
-          <ProfileDelete.View
-            store={store}
-            profileId={profile.userId}
-            model={model[1]}
-            dispatch={(msg) => dispatch(["ProfileDelete", msg])}
-          />
-          <ViewBottomNavigation
-            currentUserId={currentUserId}
-            route={route}
-            dispatch={dispatch}
-          />
-        </UI.FillBox>
+      return <ProfileDelete.View
+        store={store}
+        profileId={profile.userId}
+        model={model[1]}
+        dispatch={(msg) => dispatch(["ProfileDelete", msg])}
+      />
+
       )
 
     case "ProfileUpdate":
-      return (
-        <UI.FillBox>
-          <ProfileUpdate.View
-            profile={profile}
-            model={model[1]}
-            dispatch={(msg) => dispatch(["ProfileUpdate", msg])}
-          />
-          <ViewBottomNavigation
-            currentUserId={currentUserId}
-            route={route}
-            dispatch={dispatch}
-          />
-        </UI.FillBox>
-      )
+return (
+  <UI.FillBox>
+    <ProfileUpdate.View
+      profile={profile}
+      model={model[1]}
+      dispatch={(msg) => dispatch(["ProfileUpdate", msg])}
+    />
+    <ViewBottomNavigation
+      currentUserId={currentUserId}
+      route={route}
+      dispatch={dispatch}
+    />
+  </UI.FillBox>
+)
 
     case "ProfileUpdateAvatar":
-      return (
-        <UI.FillBox>
-          <ProfileUpdateAvatar.View
-            model={model[1]}
-            dispatch={(msg) => dispatch(["ProfileUpdateAvatar", msg])}
-          />
-          <ViewBottomNavigation
-            currentUserId={currentUserId}
-            route={route}
-            dispatch={dispatch}
-          />
-        </UI.FillBox>
-      )
+return (
+  <UI.FillBox>
+    <ProfileUpdateAvatar.View
+      model={model[1]}
+      dispatch={(msg) => dispatch(["ProfileUpdateAvatar", msg])}
+    />
+    <ViewBottomNavigation
+      currentUserId={currentUserId}
+      route={route}
+      dispatch={dispatch}
+    />
+  </UI.FillBox>
+)
 
     case "ProfileUpdateName":
-      return (
-        <UI.FillBox>
-          <ProfileUpdateName.View
-            model={model[1]}
-            dispatch={(msg) => dispatch(["ProfileUpdateName", msg])}
-          />
-          <ViewBottomNavigation
-            currentUserId={currentUserId}
-            route={route}
-            dispatch={dispatch}
-          />
-        </UI.FillBox>
-      )
+return (
+  <UI.FillBox>
+    <ProfileUpdateName.View
+      model={model[1]}
+      dispatch={(msg) => dispatch(["ProfileUpdateName", msg])}
+    />
+    <ViewBottomNavigation
+      currentUserId={currentUserId}
+      route={route}
+      dispatch={dispatch}
+    />
+  </UI.FillBox>
+)
 
     case "ProfileUpdateTheme":
-      return (
-        <UI.FillBox>
-          <ProfileUpdateTheme.View
-            profile={profile}
-            model={model[1]}
-            dispatch={(msg) => dispatch(["ProfileUpdateTheme", msg])}
-          />
-          <ViewBottomNavigation
-            currentUserId={currentUserId}
-            route={route}
-            dispatch={dispatch}
-          />
-        </UI.FillBox>
-      )
+return (
+  <UI.FillBox>
+    <ProfileUpdateTheme.View
+      profile={profile}
+      model={model[1]}
+      dispatch={(msg) => dispatch(["ProfileUpdateTheme", msg])}
+    />
+    <ViewBottomNavigation
+      currentUserId={currentUserId}
+      route={route}
+      dispatch={dispatch}
+    />
+  </UI.FillBox>
+)
 
     case "ProfileUpdateUsername":
-      return (
-        <UI.FillBox>
-          <ProfileUpdateUsername.View
-            model={model[1]}
-            dispatch={(msg) => dispatch(["ProfileUpdateUsername", msg])}
-          />
-          <ViewBottomNavigation
-            currentUserId={currentUserId}
-            route={route}
-            dispatch={dispatch}
-          />
-        </UI.FillBox>
-      )
+return (
+  <UI.FillBox>
+    <ProfileUpdateUsername.View
+      model={model[1]}
+      dispatch={(msg) => dispatch(["ProfileUpdateUsername", msg])}
+    />
+    <ViewBottomNavigation
+      currentUserId={currentUserId}
+      route={route}
+      dispatch={dispatch}
+    />
+  </UI.FillBox>
+)
 
     case "Profile":
-      return (
-        <UI.FillBox>
-          <Profile.View
-            userId={model[1].userId}
-            store={store}
-            currentUserId={profile.userId}
-            model={model[2]}
-            dispatch={(msg) => dispatch(["Profile", msg])}
-          />
-          <ViewBottomNavigation
-            currentUserId={currentUserId}
-            route={route}
-            dispatch={dispatch}
-          />
-        </UI.FillBox>
-      )
+return (
+  <UI.FillBox>
+    <Profile.View
+      userId={model[1].userId}
+      store={store}
+      currentUserId={profile.userId}
+      model={model[2]}
+      dispatch={(msg) => dispatch(["Profile", msg])}
+    />
+    <ViewBottomNavigation
+      currentUserId={currentUserId}
+      route={route}
+      dispatch={dispatch}
+    />
+  </UI.FillBox>
+)
 
     case "GameRoom": {
-      return (
-        <GameRoomPage.View
-          store={store}
-          currentUserId={currentUserId}
-          gameRoom={gameRoom}
-          model={model[1]}
-          dispatch={(msg) => dispatch(["GameRoom", msg])}
-        />
-      )
-    }
+  return (
+    <GameRoomPage.View
+      store={store}
+      currentUserId={currentUserId}
+      gameRoom={gameRoom}
+      model={model[1]}
+      dispatch={(msg) => dispatch(["GameRoom", msg])}
+    />
+  )
+}
 
     case "Party": {
-      return (
-        <UI.FillBox>
-          <PartyPage.View
-            currentUserId={currentUserId}
-            party={party}
-            store={store}
-            model={model[1]}
-            dispatch={(msg) => dispatch(["Party", msg])}
-          />
+  return (
+    <UI.FillBox>
+      <PartyPage.View
+        currentUserId={currentUserId}
+        party={party}
+        store={store}
+        model={model[1]}
+        dispatch={(msg) => dispatch(["Party", msg])}
+      />
 
-          <ViewBottomNavigation
-            currentUserId={currentUserId}
-            route={route}
-            dispatch={dispatch}
-          />
-        </UI.FillBox>
-      )
-    }
+      <ViewBottomNavigation
+        currentUserId={currentUserId}
+        route={route}
+        dispatch={dispatch}
+      />
+    </UI.FillBox>
+  )
+}
 
     case 'Home': {
-      return (
-        <ViewTopLevel
-          currentUserId={currentUserId}
-          route={route}
-          dispatch={dispatch}
-          gameRoom={gameRoom}
-        >
-          <Home.View
-            store={store}
-            gameRoom={gameRoom}
-            currentUserId={currentUserId}
-            model={model[1]}
-            dispatch={msg => dispatch(['Home', msg])}
-          />
+  return (
+    <ViewTopLevel
+      currentUserId={currentUserId}
+      route={route}
+      dispatch={dispatch}
+      gameRoom={gameRoom}
+    >
+      <Home.View
+        store={store}
+        gameRoom={gameRoom}
+        currentUserId={currentUserId}
+        model={model[1]}
+        dispatch={msg => dispatch(['Home', msg])}
+      />
 
-          {/* <ViewBottomNavigation
+      {/* <ViewBottomNavigation
             currentUserId={currentUserId}
             route={route}
             dispatch={dispatch}
           /> */}
-        </ViewTopLevel>
-      )
-    }
+    </ViewTopLevel>
+  )
+}
 
     case "Login":
     case "ProfileCreate":
@@ -977,10 +970,10 @@ export const ViewReady = ({
     case "LoginEmailLink":
     case "LoginPhone":
     case "LoginPhoneVerify":
-      return <UI.LoadingPage />
+return <UI.LoadingPage />
 
     default:
-      return exhaustive(model)
+return exhaustive(model)
   }
 }
 
