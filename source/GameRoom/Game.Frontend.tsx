@@ -264,7 +264,9 @@ export const View = ({
   dispatch,
   onCloseGame,
   roomAvatarGroup,
+  onBack,
 }: {
+  onBack: () => void
   onCloseGame: () => void
   currentUserId: UserId.UserId
   store: Store.Model
@@ -322,6 +324,7 @@ export const View = ({
     case "Chess": {
       return (
         <Chess.View
+          onBack={onBack}
           onCloseGame={onCloseGame}
           currentUserId={currentUserId}
           store={store}

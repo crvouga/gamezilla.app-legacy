@@ -182,27 +182,16 @@ export const View = ({
   model,
   dispatch,
   onCloseGame,
+  onBack
 }: {
   onCloseGame: () => void
   currentUserId: UserId.UserId
   store: Store.Model
   model: Model
   dispatch: (msg: Msg) => void
-  roomAvatarGroup: UI.ViewNode
+  roomAvatarGroup: UI.ViewNode,
+  onBack: () => void,
 }) => {
-  const backButton = (
-    <UI.Tooltip title={model.requests.InputMode.type === 'Failure' ? inputModeProblemToString(model.requests.InputMode.problem) : ""}>
-      <UI.Button
-        size="large"
-        sx={{ marginLeft: -1 }}
-        loading={model.requests.InputMode.type === 'Loading'}
-        onClick={() => dispatch(["InputMode", { mode: "None", userId: currentUserId }])}
-      >
-        Back
-      </UI.Button>
-    </UI.Tooltip>
-  )
-
   switch (model.mode[0]) {
     case "None": {
       const tooltipTitle =
@@ -216,12 +205,12 @@ export const View = ({
         <UI.FillBox>
           <UI.Header
             left={
-              <UI.Button
-                onClick={onCloseGame}
+              <UI.IconButton
+                onClick={onBack}
                 sx={{ marginLeft: -1 }}
               >
-                Close
-              </UI.Button>
+                <UI.Icons.Home />
+              </UI.IconButton>
             }
             title="Chess"
             right={roomAvatarGroup}
@@ -270,6 +259,15 @@ export const View = ({
               </UI.Box>
             </UI.Tooltip>
           </UI.Box>
+
+          <UI.Box sx={{ flex: 1 }}>
+
+          </UI.Box>
+          <UI.Box sx={{ padding: 2 }}>
+            <UI.Button onClick={onCloseGame} fullWidth variant="outlined">
+              Close
+            </UI.Button>
+          </UI.Box>
         </UI.FillBox>
       )
     }
@@ -281,8 +279,9 @@ export const View = ({
           dispatch={(msg) => dispatch(["UserVsBot", msg])}
           model={model.mode[1]}
           store={store}
-          backButton={backButton}
+          onBack={onBack}
           roomAvatarGroup={roomAvatarGroup}
+          onClose={() => dispatch(['InputMode', { mode: "None", userId: currentUserId }])}
         />
       )
     }
@@ -295,7 +294,8 @@ export const View = ({
           model={model.mode[1]}
           dispatch={(msg) => dispatch(["UserVsUser", msg])}
           roomAvatarGroup={roomAvatarGroup}
-          backButton={backButton}
+          onClose={() => dispatch(['InputMode', { mode: "None", userId: currentUserId }])}
+          onBack={onBack}
         />
       )
     }
