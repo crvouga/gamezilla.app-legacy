@@ -13,12 +13,12 @@ export type PlayerType = "X" | "O"
 
 export const toOpposite = (playerType: PlayerType): PlayerType => {
   switch (playerType) {
-    case 'O': {
-      return 'X'
+    case "O": {
+      return "X"
     }
 
-    case 'X': {
-      return 'O'
+    case "X": {
+      return "O"
     }
   }
 }
@@ -144,8 +144,8 @@ const toWins = (board: Board): Wins => {
       const winner: Winner = slots.every((slot) => slot === "X")
         ? "X"
         : slots.every((slot) => slot === "O")
-          ? "O"
-          : "None"
+        ? "O"
+        : "None"
 
       return { ...wins, [winner]: [...wins[winner], winningGroup] }
     },
@@ -157,12 +157,11 @@ const toWins = (board: Board): Wins => {
   )
 }
 
-export type Status =
-  | { type: "Turn"; turn: PlayerType }
-  | { type: "Win"; winner: PlayerType }
-  | { type: "Tie" }
+export type Status = { type: "Turn"; turn: PlayerType } | GameOver
 
-export const toStatus = (board: Board): Status => {
+export type GameOver = { type: "Win"; winner: PlayerType } | { type: "Tie" }
+
+export const toGameOver = (board: Board): GameOver | { type: "None" } => {
   const wins = toWins(board)
 
   if (wins.X.length > 0) {
@@ -177,7 +176,17 @@ export const toStatus = (board: Board): Status => {
     return { type: "Tie" }
   }
 
-  return { type: "Turn", turn: toTurn(board) }
+  return { type: "None" }
+}
+
+export const toStatus = (board: Board): Status => {
+  const gameOver = toGameOver(board)
+
+  if (gameOver.type === "None") {
+    return { type: "Turn", turn: toTurn(board) }
+  }
+
+  return gameOver
 }
 
 const isTie = (board: Board): boolean => {

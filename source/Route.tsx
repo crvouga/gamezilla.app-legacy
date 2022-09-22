@@ -61,7 +61,7 @@ export const routesTypes: { [routeType in Model[0]]: string } = {
   ChatNew: "ChatNew",
   ChatConversation: "ChatConversation",
   Search: "Search",
-  Home: "Home"
+  Home: "Home",
 }
 
 export const isRouteType = (routeType: unknown): routeType is Model[0] => {
@@ -174,7 +174,7 @@ export const replace = (route: Model) => {
 
 export type Msg = ["GotRoute", Model]
 
-export type Action = ['Route', ["Push", Model] | ["Replace", Model] | ["Back"]]
+export type Action = ["Route", ["Push", Model] | ["Replace", Model] | ["Back"]]
 
 export const update = (msg: Msg): Model => {
   switch (msg[0]) {

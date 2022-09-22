@@ -40,8 +40,7 @@ export type Msg =
 
 export type Action = ["Auth", ["Logout"]]
 
-export type ToBackend =
-  | ["UserLoggedIn", UserId.UserId]
+export type ToBackend = ["UserLoggedIn", UserId.UserId]
 
 //
 //
@@ -51,7 +50,11 @@ export type ToBackend =
 //
 //
 
-export const update = ({ sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd.Cmd<never> }, msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
+export const update = (
+  { sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd.Cmd<never> },
+  msg: Msg,
+  model: Model,
+): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
     case "GotSession":
       switch (msg[1].type) {
@@ -125,18 +128,18 @@ export const loginWithEmailAndPassword =
     emailAddress: string
     password: string
   }): Task.Task<AuthResult> =>
-    async () => {
-      const response = await Supabase.client.auth.signIn({
-        email: emailAddress,
-        password: password,
-      })
+  async () => {
+    const response = await Supabase.client.auth.signIn({
+      email: emailAddress,
+      password: password,
+    })
 
-      if (response.error) {
-        return Result.Err({ message: response.error.message })
-      }
-
-      return Result.Ok(Unit)
+    if (response.error) {
+      return Result.Err({ message: response.error.message })
     }
+
+    return Result.Ok(Unit)
+  }
 
 export const sendCode =
   ({
@@ -144,17 +147,17 @@ export const sendCode =
   }: {
     phoneNumber: PhoneNumber.PhoneNumber
   }): Task.Task<AuthResult> =>
-    async () => {
-      const response = await Supabase.client.auth.signIn({
-        phone: PhoneNumber.toString(phoneNumber),
-      })
+  async () => {
+    const response = await Supabase.client.auth.signIn({
+      phone: PhoneNumber.toString(phoneNumber),
+    })
 
-      if (response.error) {
-        return Result.Err({ message: response.error.message })
-      }
-
-      return Result.Ok(Unit)
+    if (response.error) {
+      return Result.Err({ message: response.error.message })
     }
+
+    return Result.Ok(Unit)
+  }
 
 export const verifyCode =
   ({
@@ -164,52 +167,52 @@ export const verifyCode =
     code: string
     phoneNumber: PhoneNumber.PhoneNumber
   }): Task.Task<AuthResult> =>
-    async () => {
-      const response = await Supabase.client.auth.verifyOTP({
-        phone: PhoneNumber.toString(phoneNumber),
-        token: code,
-      })
+  async () => {
+    const response = await Supabase.client.auth.verifyOTP({
+      phone: PhoneNumber.toString(phoneNumber),
+      token: code,
+    })
 
-      if (response.error) {
-        return Result.Err({ message: response.error.message })
-      }
-
-      return Result.Ok(Unit)
+    if (response.error) {
+      return Result.Err({ message: response.error.message })
     }
+
+    return Result.Ok(Unit)
+  }
 
 export const loginWithEmailLink =
   ({ emailAddress }: { emailAddress: string }): Task.Task<AuthResult> =>
-    async () => {
-      const response = await Supabase.client.auth.signIn({
-        email: emailAddress,
-      })
+  async () => {
+    const response = await Supabase.client.auth.signIn({
+      email: emailAddress,
+    })
 
-      if (response.error) {
-        return Result.Err({ message: response.error.message })
-      }
-
-      return Result.Ok(Unit)
+    if (response.error) {
+      return Result.Err({ message: response.error.message })
     }
+
+    return Result.Ok(Unit)
+  }
 
 export type Provider = "Google"
 
 export const loginWithProvider =
   ({ provider }: { provider: Provider }): Task.Task<AuthResult> =>
-    async () => {
-      switch (provider) {
-        case "Google": {
-          const response = await Supabase.client.auth.signIn({
-            provider: "google",
-          })
+  async () => {
+    switch (provider) {
+      case "Google": {
+        const response = await Supabase.client.auth.signIn({
+          provider: "google",
+        })
 
-          if (response.error) {
-            return Result.Err({ message: response.error.message })
-          }
-
-          return Result.Ok(Unit)
+        if (response.error) {
+          return Result.Err({ message: response.error.message })
         }
+
+        return Result.Ok(Unit)
       }
     }
+  }
 
 const logout: Task.Task<Result.Result<{}, {}>> = async () => {
   const { error } = await Supabase.client.auth.signOut()

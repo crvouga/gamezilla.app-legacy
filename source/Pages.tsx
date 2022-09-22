@@ -44,10 +44,10 @@ export type Model =
   | ["LoginEmailLink", LoginEmailLink.Model]
   | ["LoginPhone", LoginPhone.Model]
   | [
-    "LoginPhoneVerify",
-    { phoneNumber: PhoneNumber.PhoneNumber },
-    LoginPhoneVerify.Model,
-  ]
+      "LoginPhoneVerify",
+      { phoneNumber: PhoneNumber.PhoneNumber },
+      LoginPhoneVerify.Model,
+    ]
   | ["Home", Home.Model]
   | ["ProfileCreate", ProfileCreate.Model]
   | ["Logout", Logout.Model]
@@ -226,13 +226,9 @@ export const initReady = (
       return [["Party", modelInit], pipe(cmdInit, Cmd.map(tag("Party"))), []]
     }
 
-    case 'Home': {
+    case "Home": {
       const modelInit = Home.init
-      return [
-        ["Home", modelInit],
-        Cmd.None,
-        [],
-      ]
+      return [["Home", modelInit], Cmd.None, []]
     }
 
     case "ProfileCreate":
@@ -240,7 +236,7 @@ export const initReady = (
     case "LoginPhone":
     case "LoginPhoneVerify":
     case "LoginEmailLink": {
-      return [["Loading",], Route.push(["Home"]), [],]
+      return [["Loading"], Route.push(["Home"]), []]
     }
 
     default:
@@ -285,7 +281,7 @@ export const initLoggedOut = (route: Route.Model): [Model, Cmd.Cmd<Msg>] => {
     case "ProfileUpdateName":
     case "ProfileUpdateUsername":
     case "Party":
-    case 'Home':
+    case "Home":
       return [["Login", Login.init], Route.push(["Login"])]
 
     default:
@@ -321,7 +317,7 @@ export const initProfileMissing = (
     case "LoginPhone":
     case "LoginPhoneVerify":
     case "GameRoom":
-    case 'Home':
+    case "Home":
     case "Party":
       return [
         ["ProfileCreate", ProfileCreate.init(auth)],
@@ -511,10 +507,10 @@ export const updateReady = (
       return [model, Cmd.None, []]
     }
 
-    case 'Home': {
-      if (msg[0] === 'Home') {
+    case "Home": {
+      if (msg[0] === "Home") {
         const [child, actions] = Home.update(msg[1], model[1])
-        return [['Home', child], Cmd.None, actions]
+        return [["Home", child], Cmd.None, actions]
       }
 
       return [model, Cmd.None, []]
@@ -576,7 +572,7 @@ export const updateProfileMissing = (
     case "LoginPhone":
     case "LoginPhoneVerify":
     case "Party":
-    case 'Home':
+    case "Home":
       return [model, Route.push(["ProfileCreate"]), []]
 
     default:
@@ -641,7 +637,7 @@ export const updateLoggedOut = (
     case "Profile":
     case "Search":
     case "Party":
-    case 'Home':
+    case "Home":
       return [model, Route.push(["Login"]), []]
 
     default:
@@ -682,7 +678,7 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
     case "Party":
     case "LoginPhone":
     case "LoginPhoneVerify":
-    case 'Home':
+    case "Home":
       return Sub.None
 
     default:
@@ -940,7 +936,7 @@ export const ViewReady = ({
       )
     }
 
-    case 'Home': {
+    case "Home": {
       return (
         <ViewTopLevel
           currentUserId={currentUserId}
@@ -953,7 +949,7 @@ export const ViewReady = ({
             gameRoom={gameRoom}
             currentUserId={currentUserId}
             model={model[1]}
-            dispatch={msg => dispatch(['Home', msg])}
+            dispatch={(msg) => dispatch(["Home", msg])}
           />
 
           {/* <ViewBottomNavigation
@@ -1022,7 +1018,7 @@ export const ViewProfileMissing = ({
     case "Profile":
     case "GameRoom":
     case "Party":
-    case 'Home':
+    case "Home":
       return <UI.LoadingPage />
 
     default:
@@ -1088,7 +1084,7 @@ export const ViewLoggedOut = ({
     case "Search":
     case "Loading":
     case "Party":
-    case 'Home':
+    case "Home":
       return <UI.LoadingPage />
 
     default:
@@ -1110,9 +1106,9 @@ const ViewTopLevel = ({
   dispatch,
   route,
   currentUserId,
-  gameRoom
+  gameRoom,
 }: {
-  children: UI.ViewNode,
+  children: UI.ViewNode
   currentUserId: UserId.UserId
   route: Route.Model
   dispatch: (msg: Msg) => void

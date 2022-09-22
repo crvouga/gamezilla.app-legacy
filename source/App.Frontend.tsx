@@ -125,7 +125,11 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
     }
 
     case "Auth": {
-      const [authNew, authCmd] = Auth.update({ sendToBackend: msg => Wire.sendToBackend(['Auth', msg]) }, msg[1], model.auth)
+      const [authNew, authCmd] = Auth.update(
+        { sendToBackend: (msg) => Wire.sendToBackend(["Auth", msg]) },
+        msg[1],
+        model.auth,
+      )
 
       return [{ ...model, auth: authNew }, tagCmd("Auth", authCmd)]
     }
@@ -294,7 +298,11 @@ const updateFromBackend = (
       const currentUserId = model.auth[1].userId
 
       const [gameRoom, gameRoomCmd, actions] = GameRoom.updateFromBackend(
-        { currentUserId, sendToBackend: (msg) => Wire.sendToBackend(["GameRoom", msg]), store: model.store },
+        {
+          currentUserId,
+          sendToBackend: (msg) => Wire.sendToBackend(["GameRoom", msg]),
+          store: model.store,
+        },
         msg[1],
         model.gameRoom,
       )
@@ -361,16 +369,16 @@ const initPage = (model: Model): [Model, Cmd.Cmd<Msg>] => {
 
 const updateStatusChanged =
   (modelPrev: Model) =>
-    (_msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
-      const statusPrev = toStatus(modelPrev)
-      const statusNew = toStatus(model)
+  (_msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
+    const statusPrev = toStatus(modelPrev)
+    const statusNew = toStatus(model)
 
-      if (statusNew[0] === statusPrev[0]) {
-        return [model, Cmd.None]
-      }
-
-      return initPage(model)
+    if (statusNew[0] === statusPrev[0]) {
+      return [model, Cmd.None]
     }
+
+    return initPage(model)
+  }
 
 const runAction = (action: OutAction, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (action[0]) {
@@ -422,11 +430,8 @@ const runAction = (action: OutAction, model: Model): [Model, Cmd.Cmd<Msg>] => {
       return [{ ...model, party }, tagCmd("Party", partyCmd)]
     }
 
-    case 'Route': {
-      const [route, routeCmd] = Route.runAction(
-        action,
-        model.route,
-      )
+    case "Route": {
+      const [route, routeCmd] = Route.runAction(action, model.route)
 
       return [{ ...model, route }, tagCmd("Route", routeCmd)]
     }
@@ -453,12 +458,12 @@ const subscriptions = (model: Model): Sub.Sub<Msg> => {
     tagSub("Auth", Auth.subscriptions),
     model.auth[0] === "LoggedIn"
       ? tagSub(
-        "GameRoom",
-        GameRoom.subscriptions(
-          { currentUserId: model.auth[1].userId },
-          model.gameRoom,
-        ),
-      )
+          "GameRoom",
+          GameRoom.subscriptions(
+            { currentUserId: model.auth[1].userId },
+            model.gameRoom,
+          ),
+        )
       : Sub.None,
   ])
 }
@@ -590,7 +595,7 @@ const ViewMain = ({
                 currentUserId={profile.userId}
                 model={model.gameRoom}
                 route={model.route}
-                dispatch={msg => dispatch(['GameRoom', msg])}
+                dispatch={(msg) => dispatch(["GameRoom", msg])}
               />
 
               <Pages.ViewReady
@@ -737,19 +742,21 @@ const toStatus = ({
 //
 //
 
-const { program, stopDebugger } = Debug.ReduxDevTools.withDebugger(Browser.application({
-  init,
-  onLocationChange,
-  subscriptions,
-  update,
-  view: (model) => (dispatch) =>
-  (
-    <View
-      model={model}
-      dispatch={dispatch}
-    />
-  ),
-}))
+const { program, stopDebugger } = Debug.ReduxDevTools.withDebugger(
+  Browser.application({
+    init,
+    onLocationChange,
+    subscriptions,
+    update,
+    view: (model) => (dispatch) =>
+      (
+        <View
+          model={model}
+          dispatch={dispatch}
+        />
+      ),
+  }),
+)
 
 const root = ReactDomClient.createRoot(document.getElementById("root")!)
 

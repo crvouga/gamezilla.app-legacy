@@ -78,9 +78,9 @@ export const update = (
       const changeDirectionCmd =
         direction.type === "Some"
           ? sendToBackend([
-            "InputDirection",
-            { userId: currentUserId, direction: direction.value },
-          ])
+              "InputDirection",
+              { userId: currentUserId, direction: direction.value },
+            ])
           : Cmd.None
 
       const toggleStatusCmd =
@@ -223,21 +223,18 @@ export const View = ({
   model,
   dispatch,
   roomAvatarGroup,
-  onClose
+  onClose,
 }: {
   currentUserId: UserId.UserId
   store: Store.Model
   model: Model
-  dispatch: (msg: Msg) => void,
-  roomAvatarGroup: UI.ViewNode,
+  dispatch: (msg: Msg) => void
+  roomAvatarGroup: UI.ViewNode
   onClose: () => void
 }) => {
-
   const header = (
     <UI.Header
-      left={<UI.Button onClick={onClose}>
-        Close
-      </UI.Button>}
+      left={<UI.Button onClick={onClose}>Close</UI.Button>}
       title="Snake"
       right={roomAvatarGroup}
     />

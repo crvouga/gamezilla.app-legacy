@@ -171,12 +171,16 @@ export const updateFromFrontend = (
     case "CancelStartGame": {
       return sendResponse(
         wire,
-        ["CancelStartGame_Done", cancelStartGame(msg[1], model.sharedModel), msg[1],],
+        [
+          "CancelStartGame_Done",
+          cancelStartGame(msg[1], model.sharedModel),
+          msg[1],
+        ],
         model,
       )
     }
 
-    case 'CancelDraw': {
+    case "CancelDraw": {
       return sendResponse(
         wire,
         ["CancelDraw_Done", cancelDraw(msg[1], model.sharedModel)],

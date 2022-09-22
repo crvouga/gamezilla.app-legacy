@@ -1,11 +1,5 @@
 import { Tooltip } from "@mui/material"
-import {
-  Audio,
-  Cmd,
-  exhaustive,
-  Option, Sub,
-  tag
-} from "../../../Core"
+import { Audio, Cmd, exhaustive, Option, Sub, tag } from "../../../Core"
 import { UserId } from "../../../Data"
 import * as Snackbar from "../../../Snackbar"
 import * as Store from "../../../Store"
@@ -14,15 +8,24 @@ import * as Board from "../Board"
 import * as Sounds from "../Sounds"
 import { ViewActionButton } from "../Views"
 import {
-  BackendModel, FrontendModel,
+  BackendModel,
+  FrontendModel,
   FrontendMsg,
-  initShared, inputBot,
+  initShared,
+  inputBot,
   inputBotProblemToString,
   inputColor,
-  inputColorProblemToString, inputMove, isBotTurn, Res,
+  inputColorProblemToString,
+  inputMove,
+  isBotTurn,
+  Res,
   SharedModel,
-  startGame, startGameProblemToString, stopGame, stopGameResultToString, ToBackend,
-  ToFrontend
+  startGame,
+  startGameProblemToString,
+  stopGame,
+  stopGameResultToString,
+  ToBackend,
+  ToFrontend,
 } from "./UserVsBot.Types"
 
 //
@@ -70,22 +73,21 @@ export const update = (
 ): [Model, Cmd.Cmd<Msg>] => {
   const model: Model = { ..._model, openedMenuId: Option.None }
   switch (msg[0]) {
-
-    // 
+    //
     //
     // Frontend Only
     //
-    // 
+    //
 
     case "Audio_Done": {
       return [model, Cmd.None]
     }
 
-    case 'ClosedModal': {
+    case "ClosedModal": {
       return [{ ...model, openedModal: "None" }, Cmd.None]
     }
 
-    case 'ClickedFlip': {
+    case "ClickedFlip": {
       return [{ ...model, isFlipped: !model.isFlipped }, Cmd.None]
     }
 
@@ -97,11 +99,11 @@ export const update = (
       return [{ ...model, openedMenuId: Option.None }, Cmd.None]
     }
 
-    // 
-    // 
+    //
+    //
     // Frontend and Backend
-    // 
-    // 
+    //
+    //
 
     case "InputUser": {
       return [model, sendToBackend(msg)]
@@ -126,7 +128,8 @@ export const update = (
     case "InputMove": {
       const result = inputMove(msg[1], model.sharedModel)
 
-      const sharedModel = result.type === 'Err' ? model.sharedModel : result.value
+      const sharedModel =
+        result.type === "Err" ? model.sharedModel : result.value
 
       return [{ ...model, sharedModel: sharedModel }, sendToBackend(msg)]
     }
@@ -143,11 +146,21 @@ export const updateFromBackend = (
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   const [modelNext, cmd, actions] = updateFromBackend_(msg, modelPrev)
 
-  if (modelPrev.sharedModel.type !== 'GameOver' && modelNext.sharedModel.type === 'GameOver') {
-    return [{ ...modelNext, openedModal: "GameOver" }, Cmd.batch([cmd, playAudio(Sounds.gameOver)]), actions]
+  if (
+    modelPrev.sharedModel.type !== "GameOver" &&
+    modelNext.sharedModel.type === "GameOver"
+  ) {
+    return [
+      { ...modelNext, openedModal: "GameOver" },
+      Cmd.batch([cmd, playAudio(Sounds.gameOver)]),
+      actions,
+    ]
   }
 
-  if (modelPrev.sharedModel.type !== 'Game' && modelNext.sharedModel.type === 'Game') {
+  if (
+    modelPrev.sharedModel.type !== "Game" &&
+    modelNext.sharedModel.type === "Game"
+  ) {
     return [modelNext, Cmd.batch([cmd, playAudio(Sounds.gameStart)]), actions]
   }
 
@@ -163,27 +176,26 @@ const updateFromBackend_ = (
       return [model, Cmd.None, []]
     }
 
-    case 'BotMoved_Done': {
-
+    case "BotMoved_Done": {
       const result = msg[1]
 
-      if (result.type === 'Err') {
+      if (result.type === "Err") {
         return [model, Cmd.None, []]
       }
 
       const { didCapture, ...sharedModel } = result.value
 
       const soundCmd =
-        sharedModel.type === 'Game' && Board.inCheck(sharedModel.board)
+        sharedModel.type === "Game" && Board.inCheck(sharedModel.board)
           ? playAudio(Sounds.check)
           : didCapture
-            ? playAudio(Sounds.capture)
-            : playAudio(Sounds.move)
+          ? playAudio(Sounds.capture)
+          : playAudio(Sounds.move)
 
       return [{ ...model, sharedModel }, soundCmd, []]
     }
 
-    case 'InputMove_Done': {
+    case "InputMove_Done": {
       const result = msg[1]
 
       if (result.type === "Err") {
@@ -195,11 +207,11 @@ const updateFromBackend_ = (
       const modelNew = mergeWithBackend(model, sharedModelNew)
 
       const soundCmd =
-        sharedModelNew.type === 'Game' && Board.inCheck(sharedModelNew.board)
+        sharedModelNew.type === "Game" && Board.inCheck(sharedModelNew.board)
           ? playAudio(Sounds.check)
           : sharedModelNew.didCapture
-            ? playAudio(Sounds.capture)
-            : playAudio(Sounds.move)
+          ? playAudio(Sounds.capture)
+          : playAudio(Sounds.move)
 
       return [modelNew, soundCmd, []]
     }
@@ -211,7 +223,6 @@ const updateFromBackend_ = (
     case "StopGame_Done": {
       return handleResponse(msg, model)
     }
-
 
     default: {
       return exhaustive(msg[0])
@@ -287,14 +298,14 @@ export const View = ({
   dispatch,
   onBack,
   roomAvatarGroup,
-  onClose
+  onClose,
 }: {
   store: Store.Model
   currentUserId: UserId.UserId
   model: Model
   dispatch: (msg: Msg) => void
   roomAvatarGroup: UI.ViewNode
-  onBack: () => void,
+  onBack: () => void
   onClose: () => void
 }) => {
   if (model.sharedModel.type === "Setup") {
@@ -314,7 +325,14 @@ export const View = ({
     return (
       <UI.FillBox>
         <UI.Header
-          left={<UI.IconButton sx={{ marginLeft: -1 }} onClick={onBack} ><UI.Icons.Home /></UI.IconButton>}
+          left={
+            <UI.IconButton
+              sx={{ marginLeft: -1 }}
+              onClick={onBack}
+            >
+              <UI.Icons.Home />
+            </UI.IconButton>
+          }
           title="Chess"
           right={roomAvatarGroup}
         />
@@ -334,16 +352,13 @@ export const View = ({
         </UI.Typography>
 
         {model.sharedModel.userId.type === "None" ? (
-          <UI.Box sx={{ paddingX: 2, }}>
+          <UI.Box sx={{ paddingX: 2 }}>
             <UI.Button
               fullWidth
               size="large"
               variant="contained"
               onClick={() => {
-                dispatch([
-                  "InputUser",
-                  { userId: Option.Some(currentUserId) },
-                ])
+                dispatch(["InputUser", { userId: Option.Some(currentUserId) }])
               }}
             >
               Start Playing
@@ -360,24 +375,19 @@ export const View = ({
               sx={{ flex: 1 }}
               noWrap
             >
-              {store.Profile[model.sharedModel.userId.value]?.username ??
-                "..."}
+              {store.Profile[model.sharedModel.userId.value]?.username ?? "..."}
             </UI.Typography>
 
             {model.sharedModel.userId.value === currentUserId && (
               <UI.Button
                 size="large"
-                onClick={() =>
-                  dispatch(["InputUser", { userId: Option.None }])
-                }
+                onClick={() => dispatch(["InputUser", { userId: Option.None }])}
               >
                 Stop Playing
               </UI.Button>
             )}
           </UI.Box>
         )}
-
-
 
         <UI.Typography
           sx={{ paddingX: 2, marginBottom: 1, marginTop: 2 }}
@@ -386,7 +396,7 @@ export const View = ({
           Bot
         </UI.Typography>
 
-        <UI.Box sx={{ paddingX: 2, }}>
+        <UI.Box sx={{ paddingX: 2 }}>
           <UI.Tooltip
             enterTouchDelay={0}
             title={
@@ -395,9 +405,12 @@ export const View = ({
                 : ""
             }
           >
-
-            <UI.Select disabled={inputBotResult.type === 'Err'} fullWidth value={model.sharedModel.botLevel}>
-              {Board.allLevels.map(level => (
+            <UI.Select
+              disabled={inputBotResult.type === "Err"}
+              fullWidth
+              value={model.sharedModel.botLevel}
+            >
+              {Board.allLevels.map((level) => (
                 <UI.MenuItem
                   selected={model.sharedModel.botLevel === level}
                   value={level}
@@ -414,7 +427,7 @@ export const View = ({
               ))}
             </UI.Select>
           </UI.Tooltip>
-        </UI.Box >
+        </UI.Box>
 
         <UI.Typography
           sx={{ paddingX: 2, marginBottom: 1, marginTop: 2 }}
@@ -482,41 +495,41 @@ export const View = ({
           >
             Start Game
           </UI.Button>
-
         </UI.Box>
-      </UI.FillBox >
+      </UI.FillBox>
     )
   }
 
   const stopGameResult = stopGame({ userId: currentUserId }, model.sharedModel)
 
-  const botSlot =
-    (
-      <UI.Box sx={{ paddingX: 2, display: 'flex', alignItems: "center" }}>
-        <UI.Avatar sx={{ marginRight: 2, backgroundColor: "transparent" }}>
-
-          <UI.Icons.SmartToy
-            sx={{ color: "text.primary", width: "100%", height: "100%" }}
+  const botSlot = (
+    <UI.Box sx={{ paddingX: 2, display: "flex", alignItems: "center" }}>
+      <UI.Avatar sx={{ marginRight: 2, backgroundColor: "transparent" }}>
+        <UI.Icons.SmartToy
+          sx={{ color: "text.primary", width: "100%", height: "100%" }}
           // sx={{ width: 40, height: 40, marginRight: 2 }}
-          />
-        </UI.Avatar>
+        />
+      </UI.Avatar>
 
-        <UI.Box sx={{ flex: 1 }}>
-          <UI.Typography
-            variant="h6"
-            sx={{ fontFamily: "Roboto Mono" }}
-          >
-            {Board.levelToString(model.sharedModel.botLevel)}
-          </UI.Typography>
-        </UI.Box>
-
-        {isBotTurn(model.sharedModel) && <UI.CircularProgress size={24} />}
+      <UI.Box sx={{ flex: 1 }}>
+        <UI.Typography
+          variant="h6"
+          sx={{ fontFamily: "Roboto Mono" }}
+        >
+          {Board.levelToString(model.sharedModel.botLevel)}
+        </UI.Typography>
       </UI.Box>
-    )
+
+      {isBotTurn(model.sharedModel) && <UI.CircularProgress size={24} />}
+    </UI.Box>
+  )
 
   const userSlot = (
-    <UI.Box sx={{ paddingX: 2, display: 'flex', alignItems: "center" }}>
-      <UI.Avatar src={store.Profile[model.sharedModel.userId]?.avatarUrl} sx={{ marginRight: 2 }} />
+    <UI.Box sx={{ paddingX: 2, display: "flex", alignItems: "center" }}>
+      <UI.Avatar
+        src={store.Profile[model.sharedModel.userId]?.avatarUrl}
+        sx={{ marginRight: 2 }}
+      />
 
       <UI.Typography variant="h6">
         {store.Profile[model.sharedModel.userId]?.username}
@@ -524,28 +537,32 @@ export const View = ({
     </UI.Box>
   )
 
-  const boardOrientation = model.isFlipped ? Board.toOppositeColor(model.sharedModel.userColor) : model.sharedModel.userColor
+  const boardOrientation = model.isFlipped
+    ? Board.toOppositeColor(model.sharedModel.userColor)
+    : model.sharedModel.userColor
 
-  const topSlot =
+  const topSlot = (
     <UI.Box sx={{ paddingTop: 1, paddingBottom: 2 }}>
       {boardOrientation === model.sharedModel.userColor ? botSlot : userSlot}
     </UI.Box>
+  )
 
-  const bottomSlot =
+  const bottomSlot = (
     <UI.Box sx={{ paddingTop: 2, paddingBottom: 1 }}>
       {boardOrientation === model.sharedModel.userColor ? userSlot : botSlot}
     </UI.Box>
-
+  )
 
   return (
     <UI.FillBox>
-
       <UI.Header
         left={
-          <UI.IconButton sx={{ marginLeft: -1 }} onClick={onBack}>
+          <UI.IconButton
+            sx={{ marginLeft: -1 }}
+            onClick={onBack}
+          >
             <UI.Icons.Home />
           </UI.IconButton>
-
         }
         title={toGameText(model.sharedModel)}
         right={roomAvatarGroup}
@@ -556,19 +573,29 @@ export const View = ({
       <Board.View
         boardOrientation={boardOrientation}
         isDraggablePiece={({ piece }) => {
-          return Board.toColor(piece) === model.sharedModel.userColor && model.sharedModel.userId === currentUserId
+          return (
+            Board.toColor(piece) === model.sharedModel.userColor &&
+            model.sharedModel.userId === currentUserId
+          )
         }}
         model={model.sharedModel.board}
         onPieceDrop={(move) => {
-          const msg: Msg = ["InputMove", { userId: currentUserId, from: move.from, to: move.to, promotion: move.promotion }]
+          const msg: Msg = [
+            "InputMove",
+            {
+              userId: currentUserId,
+              from: move.from,
+              to: move.to,
+              promotion: move.promotion,
+            },
+          ]
 
           dispatch(msg)
 
           const result = inputMove(msg[1], model.sharedModel)
 
-          return result.type === 'Ok'
+          return result.type === "Ok"
         }}
-
       />
 
       {bottomSlot}
@@ -577,21 +604,16 @@ export const View = ({
 
       <UI.Box sx={{ width: "100%", display: "flex" }}>
         <ViewActionButton
-          icon={
-            <UI.Icons.ExitToApp sx={{ transform: "rotate(180deg)" }} />
-
-          }
+          icon={<UI.Icons.ExitToApp sx={{ transform: "rotate(180deg)" }} />}
           title={"Exit"}
-          onClick={() => dispatch(['StopGame', { userId: currentUserId }])}
+          onClick={() => dispatch(["StopGame", { userId: currentUserId }])}
         />
 
         <ViewActionButton
           icon={
             <UI.Icons.Flip
               sx={{
-                transform: model.isFlipped
-                  ? "rotate(90deg)"
-                  : "rotate(270deg)",
+                transform: model.isFlipped ? "rotate(90deg)" : "rotate(270deg)",
               }}
             />
           }
@@ -602,26 +624,27 @@ export const View = ({
         />
       </UI.Box>
 
-      {model.sharedModel.type === 'GameOver' && (
-
+      {model.sharedModel.type === "GameOver" && (
         <UI.Dialog
-          open={model.sharedModel.type === 'GameOver' && model.openedModal === 'GameOver'}
-          onClose={() => dispatch(['ClosedModal'])}
+          open={
+            model.sharedModel.type === "GameOver" &&
+            model.openedModal === "GameOver"
+          }
+          onClose={() => dispatch(["ClosedModal"])}
         >
-          {model.sharedModel.gameOver.type === 'Checkmate' && (
+          {model.sharedModel.gameOver.type === "Checkmate" && (
             <UI.DialogTitle>
-              {Board.colorToString(model.sharedModel.gameOver.winner)} won by checkmate
+              {Board.colorToString(model.sharedModel.gameOver.winner)} won by
+              checkmate
             </UI.DialogTitle>
           )}
 
-          {model.sharedModel.gameOver.type === 'Stalemate' && (
-            <UI.DialogTitle>
-              Drawn by stalemate
-            </UI.DialogTitle>
+          {model.sharedModel.gameOver.type === "Stalemate" && (
+            <UI.DialogTitle>Drawn by stalemate</UI.DialogTitle>
           )}
 
           <UI.DialogActions>
-            <UI.Button onClick={() => dispatch(['ClosedModal'])}>
+            <UI.Button onClick={() => dispatch(["ClosedModal"])}>
               Close
             </UI.Button>
           </UI.DialogActions>
@@ -630,7 +653,6 @@ export const View = ({
     </UI.FillBox>
   )
 }
-
 
 const toGameText = (model: SharedModel): string => {
   switch (model.type) {

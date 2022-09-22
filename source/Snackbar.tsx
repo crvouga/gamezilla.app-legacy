@@ -1,7 +1,5 @@
-
-import { Cmd, Time, Uuid } from "./Core";
-import * as UI from "./UI";
-
+import { Cmd, Time, Uuid } from "./Core"
+import * as UI from "./UI"
 
 //
 //
@@ -122,12 +120,11 @@ export const View = ({
       <UI.Snackbar
         anchorOrigin={{
           horizontal: "center",
-          vertical: "top"
+          vertical: "top",
         }}
         open
         message={snack.message}
         onClose={() => dispatch(["ClickedAwayClose", snack.snackId])}
-
       />
 
       {/* <UI.Alert

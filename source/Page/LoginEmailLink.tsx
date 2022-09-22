@@ -14,10 +14,10 @@ import * as UI from "../UI"
 export type Model = {
   emailAddress: string
   submission:
-  | { type: "Idle" }
-  | { type: "Loading"; sentToEmailAddress: string }
-  | { type: "Problem"; message: string }
-  | { type: "Success"; sentToEmailAddress: string }
+    | { type: "Idle" }
+    | { type: "Loading"; sentToEmailAddress: string }
+    | { type: "Problem"; message: string }
+    | { type: "Success"; sentToEmailAddress: string }
 }
 
 //

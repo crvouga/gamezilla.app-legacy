@@ -15,19 +15,19 @@ import * as UI from "../UI"
 export type Model = {
   code: string
   submission:
-  | {
-    type: "Idle"
-  }
-  | {
-    type: "Loading"
-  }
-  | {
-    type: "Problem"
-    message: string
-  }
-  | {
-    type: "Success"
-  }
+    | {
+        type: "Idle"
+      }
+    | {
+        type: "Loading"
+      }
+    | {
+        type: "Problem"
+        message: string
+      }
+    | {
+        type: "Success"
+      }
 }
 
 //
