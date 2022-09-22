@@ -9,9 +9,21 @@ import * as Store from "../../Store"
 //
 //
 
-export type Player = "X" | "O"
+export type PlayerType = "X" | "O"
 
-export type Slot = Player | "Empty"
+export const toOpposite = (playerType: PlayerType): PlayerType => {
+  switch (playerType) {
+    case 'O': {
+      return 'X'
+    }
+
+    case 'X': {
+      return 'O'
+    }
+  }
+}
+
+export type Slot = PlayerType | "Empty"
 
 export type Row = 0 | 1 | 2
 
@@ -120,7 +132,7 @@ export const allWinningGroups: Position[][] = [
   ],
 ]
 
-type Winner = Player | "None"
+type Winner = PlayerType | "None"
 
 type Wins = { X: Position[][]; O: Position[][]; None: Position[][] }
 
@@ -132,8 +144,8 @@ const toWins = (board: Board): Wins => {
       const winner: Winner = slots.every((slot) => slot === "X")
         ? "X"
         : slots.every((slot) => slot === "O")
-        ? "O"
-        : "None"
+          ? "O"
+          : "None"
 
       return { ...wins, [winner]: [...wins[winner], winningGroup] }
     },
@@ -146,8 +158,8 @@ const toWins = (board: Board): Wins => {
 }
 
 export type Status =
-  | { type: "Turn"; turn: Player }
-  | { type: "Win"; winner: Player }
+  | { type: "Turn"; turn: PlayerType }
+  | { type: "Win"; winner: PlayerType }
   | { type: "Tie" }
 
 export const toStatus = (board: Board): Status => {
@@ -181,7 +193,7 @@ const toSlotFrequency = (board: Board): SlotFrequency => {
   )
 }
 
-export const toTurn = (board: Board): Player => {
+export const toTurn = (board: Board): PlayerType => {
   const frequency = toSlotFrequency(board)
   return frequency["X"] <= frequency["O"] ? "X" : "O"
 }
@@ -190,7 +202,7 @@ export type MoveProblem = "not_players_turn" | "position_is_taken" | "game_over"
 
 export const move = (
   board: Board,
-  player: Player,
+  player: PlayerType,
   position: Position,
 ): Result.Result<MoveProblem, Board> => {
   const status = toStatus(board)

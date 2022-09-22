@@ -123,7 +123,7 @@ export const update = (
       if (msg[0] === "TicTacToe") {
         return tagUpdate(
           "TicTacToe",
-          TicTacToe.update({ currentUserId }, msg[1], model[1]),
+          TicTacToe.update({ sendToBackend: msg => sendToBackend(['TicTacToe', msg]), currentUserId }, msg[1], model[1]),
         )
       }
       return [model, Cmd.None]
@@ -319,6 +319,7 @@ export const View = ({
           model={model[1]}
           dispatch={(msg) => dispatch(["TicTacToe", msg])}
           onCloseGame={onCloseGame}
+          onBack={onBack}
         />
       )
     }

@@ -8,6 +8,8 @@ import {
   FrontendModel,
   FrontendMsg,
   initSharedModel,
+  startGame,
+  ToBackend,
   ToFrontend,
 } from "./TicTacToe.Types"
 
@@ -21,7 +23,10 @@ import {
 
 export type Model = FrontendModel
 
-export const init = initSharedModel
+export const init: Model = {
+  ...initSharedModel,
+  openedModal: "None"
+}
 
 //
 //
@@ -35,19 +40,133 @@ export type Msg = FrontendMsg
 export type OutAction = Store.Action
 
 export const update = (
-  { currentUserId }: { currentUserId: UserId.UserId },
+  {
+    currentUserId,
+    sendToBackend
+  }: {
+    currentUserId: UserId.UserId,
+    sendToBackend: (msg: ToBackend) => Cmd.Cmd<never>
+  },
   msg: Msg,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
-  return [model, Cmd.None]
+  switch (msg[0]) {
+
+    // 
+    // 
+    // 
+    // Frontend Msg
+    // 
+    // 
+
+    case 'CloseModal': {
+      return [{ ...model, openedModal: "None" }, Cmd.None]
+    }
+
+    case 'OpenModal': {
+      return [{ ...model, openedModal: msg[1] }, Cmd.None]
+    }
+
+    // 
+    //
+    //
+    // Request Msg
+    //
+    //
+    //
+
+
+    case 'InputMove': {
+      return [model, sendToBackend(msg)]
+    }
+
+    case 'Resign': {
+      return [model, sendToBackend(msg)]
+    }
+
+    case 'InputPlayer': {
+      return [model, sendToBackend(msg)]
+    }
+
+    case 'StopPlaying': {
+      return [model, sendToBackend(msg)]
+    }
+
+    case 'StartGame': {
+      return [model, sendToBackend(msg)]
+    }
+  }
 }
 
 export const updateFromBackend = (
   msg: ToFrontend,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
-  return [model, Cmd.None]
+  switch (msg[0]) {
+
+    case 'InputMove_Done': {
+      if (msg[1].type === 'Err') {
+        return [model, Cmd.None]
+      }
+
+      const sharedModel = msg[1].value
+
+      return [{ ...sharedModel, openedModal: model.openedModal }, Cmd.None]
+    }
+
+    case 'InputPlayer_Done': {
+      if (msg[1].type === 'Err') {
+        return [model, Cmd.None]
+      }
+
+      const sharedModel = msg[1].value
+
+      return [{ ...sharedModel, openedModal: model.openedModal }, Cmd.None]
+    }
+
+    case 'StopPlaying_Done': {
+      if (msg[1].type === 'Err') {
+        return [model, Cmd.None]
+      }
+
+      const sharedModel = msg[1].value
+
+      return [{ ...sharedModel, openedModal: model.openedModal }, Cmd.None]
+    }
+
+    case 'StartGame_Done': {
+      if (msg[1].type === 'Err') {
+        return [model, Cmd.None]
+      }
+
+      const sharedModel = msg[1].value
+
+      return [{ ...sharedModel, openedModal: model.openedModal }, Cmd.None]
+    }
+
+    case 'Resign_Done': {
+      if (msg[1].type === 'Err') {
+        return [model, Cmd.None]
+      }
+
+      const sharedModel = msg[1].value
+
+      return [{ ...sharedModel, openedModal: model.openedModal }, Cmd.None]
+    }
+  }
 }
+
+
+export const mergeWithBackend = (
+  frontendModel: FrontendModel,
+  backendModel: BackendModel,
+): FrontendModel => {
+  return {
+    ...backendModel,
+    openedModal: frontendModel.openedModal
+  }
+}
+
 
 //
 //
@@ -63,31 +182,135 @@ export const View = ({
   model,
   dispatch,
   onCloseGame,
+  onBack,
 }: {
   currentUserId: UserId.UserId
   store: Store.Model
   model: Model
   dispatch: (msg: Msg) => void
   onCloseGame: () => void
+  onBack: () => void
 }) => {
-  return (
-    <UI.FillBox>
-      <UI.Header
-        left={
-          <UI.Button
-            sx={{ marginLeft: -1 }}
-            onClick={onCloseGame}
-          >
+  const header = (
+    <UI.Header
+      left={
+        <UI.IconButton onClick={onBack}>
+          <UI.Icons.Home />
+        </UI.IconButton>
+      }
+      title="Tic Tac Toe"
+    />
+  )
+
+  if (model.type === 'Setup') {
+    const startGameResult = startGame({ userId: currentUserId, }, model)
+    return (
+      <UI.FillBox>
+        {header}
+
+        <UI.Box sx={{ flex: 1, padding: 2 }} >
+          <UI.Typography color="text.secondary" sx={{ marginBottom: 1 }}>
+            Player One • <UI.Box component="span" sx={{ fontFamily: "Roboto Mono" }}>X</UI.Box>
+          </UI.Typography>
+
+
+          {model.players.X === 'None' ? (
+            <UI.Button
+              fullWidth
+              variant="contained"
+              onClick={() => dispatch(['InputPlayer', { userId: currentUserId, playerType: "X", }])}
+            >
+              Play as X
+            </UI.Button>
+          ) : (
+            <PlayerSlot
+              currentUserId={currentUserId}
+              userId={model.players.X}
+              store={store}
+              dispatch={dispatch}
+            />
+          )}
+
+          <UI.Typography color="text.secondary" sx={{ marginTop: 2, marginBottom: 1 }}>
+            Player Two • <UI.Box component="span" sx={{ fontFamily: "Roboto Mono" }}>O</UI.Box>
+          </UI.Typography>
+
+          {model.players.O === 'None' ? (
+            <UI.Button
+              fullWidth
+              variant="contained"
+              onClick={() => dispatch(['InputPlayer', { userId: currentUserId, playerType: "O" }])}
+            >
+              Play as O
+            </UI.Button>
+          ) : (
+            <PlayerSlot
+              currentUserId={currentUserId}
+              userId={model.players.O}
+              store={store}
+              dispatch={dispatch}
+            />
+
+          )}
+        </UI.Box>
+
+
+        <UI.Box sx={{ padding: 2, display: "flex", gap: 2 }}>
+          <UI.Button variant="outlined" fullWidth onClick={onCloseGame}>
             Close
           </UI.Button>
-        }
-        title="Tic Tac Toe"
+          <UI.Button
+            variant="contained"
+            fullWidth
+            onClick={() => dispatch(['StartGame', { userId: currentUserId }])}
+            disabled={startGameResult.type === 'Err'}
+          >
+            Start
+          </UI.Button>
+        </UI.Box>
+      </UI.FillBox>
+    )
+  }
+
+  return <UI.FillBox>
+    {header}
+
+    <ViewBoard
+      board={model.board}
+      onClick={(position) => dispatch(['InputMove', { position, userId: currentUserId }])}
+    />
+
+    <UI.Box sx={{ flex: 1 }} />
+
+    <UI.Box sx={{ display: 'flex' }}>
+      <UI.ActionButton icon={<UI.Icons.Flag />} label="Resign" onClick={() => dispatch(['OpenModal', 'Resignation'])} />
+      <UI.ConformationDialog
+        open={model.openedModal === 'Resignation'}
+        onCancel={() => dispatch(['CloseModal'])}
+        onClose={() => dispatch(['CloseModal'])}
+        onConfirm={() => dispatch(['Resign', { userId: currentUserId }])}
+        headerIcon={<UI.Icons.Flag />}
+        title="Resign from game?"
+        confirmTitle="Resign"
       />
-      <ViewBoard
-        board={model.board}
-        onClick={() => {}}
-      />
-    </UI.FillBox>
+    </UI.Box>
+  </UI.FillBox>
+
+}
+
+const PlayerSlot = ({ currentUserId, store, userId, dispatch }: { currentUserId: UserId.UserId, userId: UserId.UserId, store: Store.Model, dispatch: (msg: Msg) => void }) => {
+  return (
+    <UI.Box sx={{ display: 'flex', alignItems: 'center' }}>
+      <UI.Avatar src={store.Profile[userId]?.avatarUrl} sx={{ marginRight: 1 }} />
+      <UI.Typography sx={{ flex: 1 }}>
+        {store.Profile[userId]?.username ?? "..."}
+      </UI.Typography>
+      {currentUserId === userId && (
+        <UI.Button onClick={() => dispatch(['StopPlaying', { userId: currentUserId }])}>
+          Stop Playing
+        </UI.Button>
+      )}
+    </UI.Box>
   )
 }
 
@@ -137,14 +360,4 @@ export const CoverArt = () => {
       ))}
     </svg>
   )
-}
-
-export const mergeWithBackend = (
-  _frontendModel: FrontendModel,
-  backendModel: BackendModel,
-): FrontendModel => {
-  return {
-    board: backendModel.board,
-    players: backendModel.players,
-  }
 }
