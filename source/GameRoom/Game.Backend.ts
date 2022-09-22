@@ -159,7 +159,14 @@ export const updateFromFrontend = (
       if (model[0] === "TicTacToe") {
         return tagUpdate(
           "TicTacToe",
-          TicTacToe.updateFromFrontend(msg[1], model[1]),
+          TicTacToe.updateFromFrontend(
+            {
+              sendToClient: (msg) => sendToClient(["TicTacToe", msg]),
+              sendToRoom: (msg) => sendToRoom(["TicTacToe", msg]),
+            },
+            msg[1],
+            model[1]
+          ),
         )
       }
       return [model, Cmd.None]

@@ -746,10 +746,21 @@ const ViewNotInGame = ({
           }}
         >
           <GameCard
-
             icon={<Game.CoverArt gameName="Chess" />}
             label="Chess"
             onClick={() => onOpen("Chess")}
+          />
+
+          <GameCard
+            icon={<Game.CoverArt gameName="TicTacToe" />}
+            label="Tic Tac Toe"
+            onClick={() => onOpen("TicTacToe")}
+          />
+
+          <GameCard
+            icon={<Game.CoverArt gameName="ConnectFour" />}
+            label="Connect Four"
+            onClick={() => onOpen("ConnectFour")}
           />
 
           <GameCard
@@ -764,17 +775,6 @@ const ViewNotInGame = ({
             onClick={() => onOpen("Tetris")}
           />
 
-          <GameCard
-            icon={<Game.CoverArt gameName="TicTacToe" />}
-            label="Tic Tac Toe"
-            onClick={() => onOpen("TicTacToe")}
-          />
-
-          <GameCard
-            icon={<Game.CoverArt gameName="ConnectFour" />}
-            label="Connect Four"
-            onClick={() => onOpen("ConnectFour")}
-          />
         </UI.Box>
       </UI.Box>
 
@@ -1088,7 +1088,7 @@ export const ViewCallToAction = ({ onCreateRoom }: { onCreateRoom: () => void })
         Create a room
       </UI.Typography>
       <UI.Typography variant="subtitle2" color="text.secondary" align="center" sx={{ marginBottom: 3 }}>
-        Starting playing games by creating a new game room.
+        Start playing games by creating a new game room.
       </UI.Typography>
       <UI.Button onClick={onCreateRoom} variant="contained" fullWidth>
         Create Room

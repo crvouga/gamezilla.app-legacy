@@ -581,9 +581,9 @@ export type ViewNode = ReactNode
 export type Sx = Mui.SxProps
 
 
-export const ActionButton = ({ label, icon }: { label: string, icon: ReactNode }) => {
+export const ActionButton = ({ label, icon, onClick }: { label: string, icon: ReactNode, onClick: () => void }) => {
   return (
-    <ButtonBase sx={{ paddingY: 1, paddingX: 2, display: "flex", flexDirection: "column" }}>
+    <ButtonBase onClick={onClick} sx={{ paddingY: 1, paddingX: 2, display: "flex", flexDirection: "column" }}>
       {icon}
       <Typography variant="subtitle1">
         {label}
