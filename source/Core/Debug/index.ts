@@ -13,7 +13,6 @@ export const formatMsg = (msg: unknown): string => {
   }
 }
 
-
 export const format = (msg: Array<unknown>) => {
   return msg
     .flat(Infinity)
@@ -27,4 +26,3 @@ export const format = (msg: Array<unknown>) => {
       [null, null],
     )
 }
-

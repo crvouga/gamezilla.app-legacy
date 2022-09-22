@@ -1,4 +1,14 @@
-import { Audio, Cmd, Option, pipe, RemoteData, Result, Sub, tagCmd, Unit } from "../../Core"
+import {
+  Audio,
+  Cmd,
+  Option,
+  pipe,
+  RemoteData,
+  Result,
+  Sub,
+  tagCmd,
+  Unit,
+} from "../../Core"
 import {
   BackendModel,
   FrontendModel,
@@ -35,10 +45,10 @@ export const init = ({
     {
       mode: ["None"],
       requests: {
-        InputMode: RemoteData.NotAsked
-      }
+        InputMode: RemoteData.NotAsked,
+      },
     },
-    Audio.preload(Object.values(Sounds), (): Msg => ['PreloadAudio_Done'])
+    Audio.preload(Object.values(Sounds), (): Msg => ["PreloadAudio_Done"]),
   ]
 }
 
@@ -60,13 +70,18 @@ export const update = (
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
-
-    case 'PreloadAudio_Done': {
+    case "PreloadAudio_Done": {
       return [model, Cmd.None]
     }
 
     case "InputMode": {
-      return [{ ...model, requests: { ...model.requests, InputMode: RemoteData.Loading } }, sendToBackend(msg)]
+      return [
+        {
+          ...model,
+          requests: { ...model.requests, InputMode: RemoteData.Loading },
+        },
+        sendToBackend(msg),
+      ]
     }
 
     case "UserVsUser": {
@@ -77,7 +92,10 @@ export const update = (
           model.mode[1],
         )
 
-        return [{ ...model, mode: ["UserVsUser", child] }, tagCmd("UserVsUser", cmd)]
+        return [
+          { ...model, mode: ["UserVsUser", child] },
+          tagCmd("UserVsUser", cmd),
+        ]
       }
 
       return [model, Cmd.None]
@@ -91,7 +109,10 @@ export const update = (
           model.mode[1],
         )
 
-        return [{ ...model, mode: ["UserVsBot", child] }, tagCmd("UserVsBot", cmd)]
+        return [
+          { ...model, mode: ["UserVsBot", child] },
+          tagCmd("UserVsBot", cmd),
+        ]
       }
 
       return [model, Cmd.None]
@@ -100,7 +121,15 @@ export const update = (
 }
 
 export const updateFromBackend = (
-  { currentUserId, sendToBackend, store }: { currentUserId: UserId.UserId, sendToBackend: (msg: ToBackend) => Cmd.Cmd<never>, store: Store.Model },
+  {
+    currentUserId,
+    sendToBackend,
+    store,
+  }: {
+    currentUserId: UserId.UserId
+    sendToBackend: (msg: ToBackend) => Cmd.Cmd<never>
+    store: Store.Model
+  },
   msg: ToFrontend,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
@@ -112,8 +141,12 @@ export const updateFromBackend = (
         ...model,
         requests: {
           ...model.requests,
-          InputMode: pipe(result, RemoteData.fromResult, RemoteData.map(() => Unit))
-        }
+          InputMode: pipe(
+            result,
+            RemoteData.fromResult,
+            RemoteData.map(() => Unit),
+          ),
+        },
       }
 
       if (result.type === "Err") {
@@ -131,9 +164,17 @@ export const updateFromBackend = (
 
     case "UserVsUser": {
       if (model.mode[0] === "UserVsUser") {
-        const [child, cmd, actions] = UserVsUser.updateFromBackend({ currentUserId, store }, msg[1], model.mode[1])
+        const [child, cmd, actions] = UserVsUser.updateFromBackend(
+          { currentUserId, store },
+          msg[1],
+          model.mode[1],
+        )
 
-        return [{ ...model, mode: ["UserVsUser", child] }, tagCmd("UserVsUser", cmd), actions]
+        return [
+          { ...model, mode: ["UserVsUser", child] },
+          tagCmd("UserVsUser", cmd),
+          actions,
+        ]
       }
 
       return [model, Cmd.None, []]
@@ -146,7 +187,11 @@ export const updateFromBackend = (
           model.mode[1],
         )
 
-        return [{ ...model, mode: ["UserVsBot", child] }, tagCmd("UserVsBot", cmd), actions]
+        return [
+          { ...model, mode: ["UserVsBot", child] },
+          tagCmd("UserVsBot", cmd),
+          actions,
+        ]
       }
 
       return [model, Cmd.None, []]
@@ -182,24 +227,24 @@ export const View = ({
   model,
   dispatch,
   onCloseGame,
-  onBack
+  onBack,
 }: {
   onCloseGame: () => void
   currentUserId: UserId.UserId
   store: Store.Model
   model: Model
   dispatch: (msg: Msg) => void
-  roomAvatarGroup: UI.ViewNode,
-  onBack: () => void,
+  roomAvatarGroup: UI.ViewNode
+  onBack: () => void
 }) => {
   switch (model.mode[0]) {
     case "None": {
       const tooltipTitle =
-        model.requests.InputMode.type === 'Failure'
+        model.requests.InputMode.type === "Failure"
           ? inputModeProblemToString(model.requests.InputMode.problem)
-          : model.requests.InputMode.type === 'Loading'
-            ? "Loading..."
-            : ""
+          : model.requests.InputMode.type === "Loading"
+          ? "Loading..."
+          : ""
 
       return (
         <UI.FillBox>
@@ -221,10 +266,14 @@ export const View = ({
               <UI.Box sx={{ width: "50%" }}>
                 <ModeSelectCard
                   leftIcon={
-                    <UI.Icons.Person sx={{ width: iconSize, height: iconSize }} />
+                    <UI.Icons.Person
+                      sx={{ width: iconSize, height: iconSize }}
+                    />
                   }
                   rightIcon={
-                    <UI.Icons.Person sx={{ width: iconSize, height: iconSize }} />
+                    <UI.Icons.Person
+                      sx={{ width: iconSize, height: iconSize }}
+                    />
                   }
                   title="Vs User"
                   onClick={() =>
@@ -241,7 +290,9 @@ export const View = ({
               <UI.Box sx={{ width: "50%" }}>
                 <ModeSelectCard
                   leftIcon={
-                    <UI.Icons.Person sx={{ width: iconSize, height: iconSize }} />
+                    <UI.Icons.Person
+                      sx={{ width: iconSize, height: iconSize }}
+                    />
                   }
                   rightIcon={
                     <UI.Icons.SmartToy
@@ -260,11 +311,13 @@ export const View = ({
             </UI.Tooltip>
           </UI.Box>
 
-          <UI.Box sx={{ flex: 1 }}>
-
-          </UI.Box>
+          <UI.Box sx={{ flex: 1 }}></UI.Box>
           <UI.Box sx={{ padding: 2 }}>
-            <UI.Button onClick={onCloseGame} fullWidth variant="outlined">
+            <UI.Button
+              onClick={onCloseGame}
+              fullWidth
+              variant="outlined"
+            >
               Close
             </UI.Button>
           </UI.Box>
@@ -281,7 +334,9 @@ export const View = ({
           store={store}
           onBack={onBack}
           roomAvatarGroup={roomAvatarGroup}
-          onClose={() => dispatch(['InputMode', { mode: "None", userId: currentUserId }])}
+          onClose={() =>
+            dispatch(["InputMode", { mode: "None", userId: currentUserId }])
+          }
         />
       )
     }
@@ -294,7 +349,9 @@ export const View = ({
           model={model.mode[1]}
           dispatch={(msg) => dispatch(["UserVsUser", msg])}
           roomAvatarGroup={roomAvatarGroup}
-          onClose={() => dispatch(['InputMode', { mode: "None", userId: currentUserId }])}
+          onClose={() =>
+            dispatch(["InputMode", { mode: "None", userId: currentUserId }])
+          }
           onBack={onBack}
         />
       )
@@ -452,8 +509,11 @@ export const mergeWithBackend = ({
             ...frontendModel,
             mode: [
               "UserVsUser",
-              UserVsUser.mergeWithBackend(frontendModel.mode[1], backendModel[1]),
-            ]
+              UserVsUser.mergeWithBackend(
+                frontendModel.mode[1],
+                backendModel[1],
+              ),
+            ],
           },
           Cmd.None,
         ]
@@ -465,7 +525,13 @@ export const mergeWithBackend = ({
       })
 
       return [
-        { ...frontendModel, mode: ["UserVsUser", UserVsUser.mergeWithBackend(child, backendModel[1])] },
+        {
+          ...frontendModel,
+          mode: [
+            "UserVsUser",
+            UserVsUser.mergeWithBackend(child, backendModel[1]),
+          ],
+        },
         tagCmd("UserVsUser", childCmd),
       ]
     }
@@ -477,8 +543,11 @@ export const mergeWithBackend = ({
             ...frontendModel,
             mode: [
               "UserVsBot",
-              UserVsBot.mergeWithBackend(frontendModel.mode[1], backendModel[1]),
-            ]
+              UserVsBot.mergeWithBackend(
+                frontendModel.mode[1],
+                backendModel[1],
+              ),
+            ],
           },
           Cmd.None,
         ]
@@ -489,7 +558,13 @@ export const mergeWithBackend = ({
       })
 
       return [
-        { ...frontendModel, mode: ["UserVsBot", UserVsBot.mergeWithBackend(child, backendModel[1])] },
+        {
+          ...frontendModel,
+          mode: [
+            "UserVsBot",
+            UserVsBot.mergeWithBackend(child, backendModel[1]),
+          ],
+        },
         tagCmd("UserVsBot", childCmd),
       ]
     }

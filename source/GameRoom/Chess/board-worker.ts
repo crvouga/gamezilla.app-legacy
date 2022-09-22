@@ -1,13 +1,12 @@
-
 import { expose } from "threads/worker"
 import * as Board from "./Board"
 
 export type BoardWorker = {
-    toBestMove: typeof Board.toBestMoveInput
+  toBestMove: typeof Board.toBestMoveInput
 }
 
 const worker: BoardWorker = {
-    toBestMove: Board.toBestMoveInput
+  toBestMove: Board.toBestMoveInput,
 }
 
 expose(worker)

@@ -36,28 +36,24 @@ const getSoundInstance = (src: string): Howler.Howl => {
   return instance
 }
 
-export const preload = <msg>(srcList: string[], mapper: (result: PreloadResult) => msg) => pipe(
-  async () => {
+export const preload = <msg>(
+  srcList: string[],
+  mapper: (result: PreloadResult) => msg,
+) =>
+  pipe(async () => {
     for (const src of srcList) {
       getSoundInstance(src)
     }
     return Result.Ok(Unit)
-  },
-  Cmd.perform(mapper)
-)
+  }, Cmd.perform(mapper))
 
 export const play = <msg>(src: string, mapper: (result: PlayResult) => msg) =>
-  pipe(
-    async () => {
-      const sound = getSoundInstance(src)
+  pipe(async () => {
+    const sound = getSoundInstance(src)
 
-      if (document.hasFocus()) {
-        sound.play()
-      }
+    if (document.hasFocus()) {
+      sound.play()
+    }
 
-      return Result.Ok(Unit)
-    },
-    Cmd.perform(mapper)
-  )
-
-
+    return Result.Ok(Unit)
+  }, Cmd.perform(mapper))

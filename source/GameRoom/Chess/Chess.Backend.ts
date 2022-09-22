@@ -5,10 +5,17 @@ import {
   Result,
   Sub,
   tagCmd,
-  tagSub
+  tagSub,
 } from "../../Core"
 import { UserId } from "../../Data"
-import { BackendModel, BackendMsg, InputMode, InputMode_Done, ToBackend, ToFrontend } from "./Chess.Types"
+import {
+  BackendModel,
+  BackendMsg,
+  InputMode,
+  InputMode_Done,
+  ToBackend,
+  ToFrontend,
+} from "./Chess.Types"
 import * as UserVsBot from "./UserVsBot/UserVsBot.Backend"
 import * as UserVsUser from "./UserVsUser/UserVsUser.Backend"
 
@@ -96,11 +103,11 @@ export const updateFromFrontend = (
     case "InputMode": {
       const result = inputMode({ hostId }, msg[1], model)
 
-      if (result.type === 'Err') {
-        return [model, sendToClient(['InputMode_Done', msg[1], result])]
+      if (result.type === "Err") {
+        return [model, sendToClient(["InputMode_Done", msg[1], result])]
       }
 
-      return [result.value, sendToRoom(['InputMode_Done', msg[1], result])]
+      return [result.value, sendToRoom(["InputMode_Done", msg[1], result])]
     }
 
     case "UserVsBot": {
@@ -139,9 +146,11 @@ export const updateFromFrontend = (
   }
 }
 
-
-const inputMode = ({ hostId }: { hostId: UserId.UserId }, { mode, userId }: InputMode[1], model: BackendModel): InputMode_Done[2] => {
-
+const inputMode = (
+  { hostId }: { hostId: UserId.UserId },
+  { mode, userId }: InputMode[1],
+  model: BackendModel,
+): InputMode_Done[2] => {
   if (hostId !== userId) {
     return Result.Err("must_be_the_host")
   }

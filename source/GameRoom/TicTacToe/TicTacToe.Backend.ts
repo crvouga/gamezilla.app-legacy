@@ -2,7 +2,14 @@ import { Cmd, Sub } from "../../Core"
 import {
   BackendModel,
   BackendMsg,
-  initSharedModel, inputMove, inputPlayer, resign, startGame, stopPlaying, ToBackend, ToFrontend
+  initSharedModel,
+  inputMove,
+  inputPlayer,
+  resign,
+  startGame,
+  stopPlaying,
+  ToBackend,
+  ToFrontend,
 } from "./TicTacToe.Types"
 
 //
@@ -29,7 +36,7 @@ export type Msg = BackendMsg
 
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
-    case 'Noop': {
+    case "Noop": {
       return [model, Cmd.None]
     }
   }
@@ -40,73 +47,71 @@ export const updateFromFrontend = (
     sendToClient,
     sendToRoom,
   }: {
-    sendToClient: (msg: ToFrontend) => Cmd.Cmd<never>,
-    sendToRoom: (msg: ToFrontend) => Cmd.Cmd<never>,
+    sendToClient: (msg: ToFrontend) => Cmd.Cmd<never>
+    sendToRoom: (msg: ToFrontend) => Cmd.Cmd<never>
   },
   msg: ToBackend,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
-    case 'InputPlayer': {
+    case "InputPlayer": {
       const result = inputPlayer(msg[1], model)
 
-      if (result.type === 'Err') {
-        return [model, sendToClient(['InputPlayer_Done', result])]
+      if (result.type === "Err") {
+        return [model, sendToClient(["InputPlayer_Done", result])]
       }
-
 
       const modelNew = result.value
 
-      return [modelNew, sendToRoom(['InputPlayer_Done', result])]
+      return [modelNew, sendToRoom(["InputPlayer_Done", result])]
     }
 
-    case 'StopPlaying': {
+    case "StopPlaying": {
       const result = stopPlaying(msg[1], model)
 
-      if (result.type === 'Err') {
-        return [model, sendToClient(['StopPlaying_Done', result])]
+      if (result.type === "Err") {
+        return [model, sendToClient(["StopPlaying_Done", result])]
       }
 
       const modelNew = result.value
 
-      return [modelNew, sendToRoom(['StopPlaying_Done', result])]
-
+      return [modelNew, sendToRoom(["StopPlaying_Done", result])]
     }
 
-    case 'StartGame': {
+    case "StartGame": {
       const result = startGame(msg[1], model)
 
-      if (result.type === 'Err') {
-        return [model, sendToClient(['StartGame_Done', result])]
+      if (result.type === "Err") {
+        return [model, sendToClient(["StartGame_Done", result])]
       }
 
       const modelNew = result.value
 
-      return [modelNew, sendToRoom(['StartGame_Done', result])]
+      return [modelNew, sendToRoom(["StartGame_Done", result])]
     }
 
-    case 'Resign': {
+    case "Resign": {
       const result = resign(msg[1], model)
 
-      if (result.type === 'Err') {
-        return [model, sendToClient(['Resign_Done', result])]
+      if (result.type === "Err") {
+        return [model, sendToClient(["Resign_Done", result])]
       }
 
       const modelNew = result.value
 
-      return [modelNew, sendToRoom(['Resign_Done', result])]
+      return [modelNew, sendToRoom(["Resign_Done", result])]
     }
 
-    case 'InputMove': {
+    case "InputMove": {
       const result = inputMove(msg[1], model)
 
-      if (result.type === 'Err') {
-        return [model, sendToClient(['InputMove_Done', result])]
+      if (result.type === "Err") {
+        return [model, sendToClient(["InputMove_Done", result])]
       }
 
       const modelNew = result.value
 
-      return [modelNew, sendToRoom(['InputMove_Done', result])]
+      return [modelNew, sendToRoom(["InputMove_Done", result])]
     }
   }
 }

@@ -21,7 +21,7 @@ import {
   startGame,
   startGameProblemToString,
   ToBackend,
-  ToFrontend
+  ToFrontend,
 } from "./UserVsUser.Types"
 
 //
@@ -150,7 +150,7 @@ export const update = (
       return [model, sendToBackend(msg)]
     }
 
-    case 'CancelDraw': {
+    case "CancelDraw": {
       return [model, sendToBackend(msg)]
     }
 
@@ -160,7 +160,10 @@ export const update = (
 }
 
 export const updateFromBackend = (
-  { currentUserId, store }: { currentUserId: UserId.UserId, store: Store.Model },
+  {
+    currentUserId,
+    store,
+  }: { currentUserId: UserId.UserId; store: Store.Model },
   msg: ToFrontend,
   _model: Model,
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
@@ -174,12 +177,12 @@ export const updateFromBackend = (
           sharedModel: msg[1],
         },
         Cmd.None,
-        []
+        [],
       ]
     }
 
     case "InputClock_Done": {
-      if (msg[1].type === 'Err') {
+      if (msg[1].type === "Err") {
         return [model, Cmd.None, []]
       }
       return [{ ...model, sharedModel: msg[1].value }, Cmd.None, []]
@@ -199,8 +202,8 @@ export const updateFromBackend = (
       const soundCmd = Board.inCheck(sharedModelNew.board)
         ? playAudio(Sounds.check)
         : sharedModelNew.didCapture
-          ? playAudio(Sounds.capture)
-          : playAudio(Sounds.move)
+        ? playAudio(Sounds.capture)
+        : playAudio(Sounds.move)
 
       return [{ ...model, sharedModel: sharedModelNew }, soundCmd, []]
     }
@@ -225,11 +228,11 @@ export const updateFromBackend = (
       return [{ ...model, sharedModel }, Cmd.None, []]
     }
 
-    // 
+    //
     //
     // Draw
     //
-    // 
+    //
 
     case "RequestToDraw_Done": {
       switch (msg[1].type) {
@@ -240,8 +243,8 @@ export const updateFromBackend = (
         case "Ok": {
           return [
             { ...model, openedModal: "AskedToDraw" },
-            playAudio(Sounds.uiUnlock)
-            , []
+            playAudio(Sounds.uiUnlock),
+            [],
           ]
         }
       }
@@ -258,42 +261,54 @@ export const updateFromBackend = (
         return [{ ...model, sharedModel }, Cmd.None, []]
       }
 
-      const isNotPlaying = sharedModel.type === 'Game' && sharedModel.w !== currentUserId && sharedModel.b !== currentUserId
+      const isNotPlaying =
+        sharedModel.type === "Game" &&
+        sharedModel.w !== currentUserId &&
+        sharedModel.b !== currentUserId
 
       if (isNotPlaying) {
         return [{ ...model, sharedModel }, Cmd.None, []]
       }
 
-      const action: OutAction = ['Snackbar', { variant: "Info", message: "Draw was declined" }]
+      const action: OutAction = [
+        "Snackbar",
+        { variant: "Info", message: "Draw was declined" },
+      ]
 
       return [{ ...model, sharedModel }, Cmd.None, [action]]
     }
 
-    case 'CancelDraw_Done': {
+    case "CancelDraw_Done": {
       const result = msg[1]
 
-      if (result.type === 'Err') {
+      if (result.type === "Err") {
         return [model, Cmd.None, []]
       }
 
       const sharedModel = result.value
 
-      const isNotPlaying = sharedModel.type === 'Game' && sharedModel.w !== currentUserId && sharedModel.b !== currentUserId
+      const isNotPlaying =
+        sharedModel.type === "Game" &&
+        sharedModel.w !== currentUserId &&
+        sharedModel.b !== currentUserId
 
       if (isNotPlaying) {
         return [{ ...model, sharedModel }, Cmd.None, []]
       }
 
-      const action: OutAction = ['Snackbar', { variant: "Info", message: "Draw was cancelled" }]
+      const action: OutAction = [
+        "Snackbar",
+        { variant: "Info", message: "Draw was cancelled" },
+      ]
 
       return [{ ...model, sharedModel }, Cmd.None, [action]]
     }
 
-    // 
-    // 
-    // 
-    // 
-    // 
+    //
+    //
+    //
+    //
+    //
 
     case "Resign_Done": {
       if (msg[1].type === "Err") {
@@ -309,7 +324,6 @@ export const updateFromBackend = (
       return [{ ...model, sharedModel: sharedModelNew }, Cmd.None, []]
     }
 
-
     case "NewGame_Done": {
       if (msg[1].type === "Err") {
         return [model, Cmd.None, []]
@@ -317,7 +331,11 @@ export const updateFromBackend = (
 
       const sharedModelNew = msg[1].value
 
-      return [{ ...model, sharedModel: sharedModelNew }, playAudio(Sounds.navigationCancel), []]
+      return [
+        { ...model, sharedModel: sharedModelNew },
+        playAudio(Sounds.navigationCancel),
+        [],
+      ]
     }
 
     case "GameOver": {
@@ -326,8 +344,9 @@ export const updateFromBackend = (
           ...model,
           openedModal: "GameOver",
         },
-        playAudio(Sounds.gameOver)
-        , []]
+        playAudio(Sounds.gameOver),
+        [],
+      ]
     }
 
     case "GameStarted": {
@@ -351,20 +370,20 @@ export const updateFromBackend = (
 
       const username = store.Profile[msg[2].userId]?.username
 
-      const message = username ? `${username} cancelled the game` : "Game was cancelled"
+      const message = username
+        ? `${username} cancelled the game`
+        : "Game was cancelled"
 
-      const action: OutAction = ['Snackbar', { variant: "Info", message }]
+      const action: OutAction = ["Snackbar", { variant: "Info", message }]
 
       return [{ ...model, sharedModel }, Cmd.None, [action]]
     }
 
-    case 'ClockTicked': {
+    case "ClockTicked": {
       const sharedModel = msg[1]
 
       return [{ ...model, sharedModel }, Cmd.None, []]
     }
-
-
 
     default: {
       return exhaustive(msg[0])
@@ -403,14 +422,14 @@ export const View = ({
   dispatch,
   roomAvatarGroup,
   onBack,
-  onClose
+  onClose,
 }: {
   store: Store.Model
   currentUserId: UserId.UserId
   model: Model
   dispatch: (msg: Msg) => void
-  roomAvatarGroup: UI.ViewNode,
-  onBack: () => void,
+  roomAvatarGroup: UI.ViewNode
+  onBack: () => void
   onClose: () => void
 }) => {
   if (model.sharedModel.type === "Setup") {
@@ -425,7 +444,14 @@ export const View = ({
     return (
       <UI.FillBox>
         <UI.Header
-          left={<UI.IconButton onClick={onBack} sx={{ marginLeft: -1 }}><UI.Icons.Home /></UI.IconButton>}
+          left={
+            <UI.IconButton
+              onClick={onBack}
+              sx={{ marginLeft: -1 }}
+            >
+              <UI.Icons.Home />
+            </UI.IconButton>
+          }
           title="Chess"
           right={roomAvatarGroup}
         />
@@ -469,14 +495,12 @@ export const View = ({
           />
         )}
 
-
         <UI.Typography
           sx={{ paddingX: 2, marginTop: 2, marginBottom: 1 }}
           color="text.secondary"
         >
           {Board.colorToString("b")}
         </UI.Typography>
-
 
         {model.sharedModel.b.type === "None" ? (
           <UI.Box sx={{ paddingX: 2 }}>
@@ -503,7 +527,6 @@ export const View = ({
             store={store}
           />
         )}
-
 
         <UI.Typography
           sx={{ paddingX: 2, marginTop: 2, marginBottom: 1 }}
@@ -543,14 +566,14 @@ export const View = ({
           </UI.Tooltip>
         </UI.Box>
 
-
         <UI.Box sx={{ flex: 1 }} />
 
-        <UI.Box sx={{ padding: 2, display: 'flex', gap: 2 }}>
+        <UI.Box sx={{ padding: 2, display: "flex", gap: 2 }}>
           <UI.Button
             fullWidth
             variant="outlined"
-            onClick={onClose}>
+            onClick={onClose}
+          >
             Back
           </UI.Button>
 
@@ -578,7 +601,14 @@ export const View = ({
     return (
       <UI.FillBox>
         <UI.Header
-          left={<UI.IconButton onClick={onBack} sx={{ marginLeft: -1 }}><UI.Icons.Home /></UI.IconButton>}
+          left={
+            <UI.IconButton
+              onClick={onBack}
+              sx={{ marginLeft: -1 }}
+            >
+              <UI.Icons.Home />
+            </UI.IconButton>
+          }
           title="Chess"
           right={roomAvatarGroup}
         />
@@ -603,7 +633,9 @@ export const View = ({
               src={store.Profile[w]?.avatarUrl}
               sx={{ width: 80, height: 80, marginBottom: 1 }}
             />
-            <UI.Typography variant="h6">{store.Profile[w]?.username ?? "..."}</UI.Typography>
+            <UI.Typography variant="h6">
+              {store.Profile[w]?.username ?? "..."}
+            </UI.Typography>
           </UI.Box>
           <UI.Typography
             color="text.secondary"
@@ -630,7 +662,9 @@ export const View = ({
               src={store.Profile[b]?.avatarUrl}
               sx={{ width: 80, height: 80, marginBottom: 1 }}
             />
-            <UI.Typography variant="h6">{store.Profile[b]?.username ?? "..."}</UI.Typography>
+            <UI.Typography variant="h6">
+              {store.Profile[b]?.username ?? "..."}
+            </UI.Typography>
           </UI.Box>
         </UI.Box>
 
@@ -656,12 +690,11 @@ export const View = ({
           >
             {model.sharedModel.countDown}
           </UI.Typography>
-
         </UI.Box>
 
         <UI.Box sx={{ flex: 1 }}></UI.Box>
         {cancelStatGameResult.type === "Ok" && (
-          <UI.Box sx={{ width: '100%', padding: 2 }}>
+          <UI.Box sx={{ width: "100%", padding: 2 }}>
             <UI.Button
               fullWidth
               variant="outlined"
@@ -683,10 +716,10 @@ export const View = ({
     currentUserId === w && currentUserId === b
       ? "Both"
       : currentUserId === w
-        ? "w"
-        : currentUserId === b
-          ? "b"
-          : "None"
+      ? "w"
+      : currentUserId === b
+      ? "b"
+      : "None"
 
   const boardOrientation: Board.Color = pipe(
     currentUserColor === "None" || currentUserColor === "Both"
@@ -718,7 +751,14 @@ export const View = ({
   return (
     <UI.FillBox sx={{ overflowY: "scroll" }}>
       <UI.Header
-        left={<UI.IconButton sx={{ marginLeft: -1 }} onClick={onBack} ><UI.Icons.Home></UI.Icons.Home></UI.IconButton>}
+        left={
+          <UI.IconButton
+            sx={{ marginLeft: -1 }}
+            onClick={onBack}
+          >
+            <UI.Icons.Home></UI.Icons.Home>
+          </UI.IconButton>
+        }
         title={toGameText(model.sharedModel)}
         right={roomAvatarGroup}
       />
@@ -748,7 +788,8 @@ export const View = ({
 
           dispatch(msg)
 
-          const isSuccessfulMove = inputMove(msg[1], model.sharedModel).type === "Ok"
+          const isSuccessfulMove =
+            inputMove(msg[1], model.sharedModel).type === "Ok"
 
           return isSuccessfulMove
         }}
@@ -814,9 +855,8 @@ export const View = ({
                     model.sharedModel.drawAgreement.asker === currentUserColor
                   }
                 >
-
                   <UI.DialogContent>
-                    <UI.Box sx={{ display: "flex", alignItems: "center", }}>
+                    <UI.Box sx={{ display: "flex", alignItems: "center" }}>
                       <UI.CircularProgress sx={{ marginRight: 2 }} />
                       <UI.Typography variant="h6">
                         Waiting on response...
@@ -824,7 +864,11 @@ export const View = ({
                     </UI.Box>
                   </UI.DialogContent>
                   <UI.DialogActions>
-                    <UI.Button onClick={() => dispatch(['CancelDraw', { userId: currentUserId }])}>
+                    <UI.Button
+                      onClick={() =>
+                        dispatch(["CancelDraw", { userId: currentUserId }])
+                      }
+                    >
                       Cancel
                     </UI.Button>
                   </UI.DialogActions>
@@ -835,7 +879,7 @@ export const View = ({
                     model.sharedModel.type === "Game" &&
                     model.sharedModel.drawAgreement.type === "Asking" &&
                     model.sharedModel.drawAgreement.asker ===
-                    Board.toOppositeColor(currentUserColor)
+                      Board.toOppositeColor(currentUserColor)
                   }
                   headerIcon={
                     <UI.Icons.HandshakeTwoTone

@@ -1,11 +1,22 @@
-import { Cmd, exhaustive, Keyboard, Option, Sub } from "../../Core";
-import * as UI from "../../UI";
-import { initShared, ToFrontend, FrontendModel, FrontendMsg, BackendModel, columnCount, rowCount, toPiece, ToBackend, toGhostPiece } from "./Tetris.Types";
+import { Cmd, exhaustive, Keyboard, Option, Sub } from "../../Core"
+import * as UI from "../../UI"
+import {
+  initShared,
+  ToFrontend,
+  FrontendModel,
+  FrontendMsg,
+  BackendModel,
+  columnCount,
+  rowCount,
+  toPiece,
+  ToBackend,
+  toGhostPiece,
+} from "./Tetris.Types"
 import * as Piece from "./Piece"
 import * as Direction from "./Direction"
 import * as Board from "./Board"
-import * as Position from "./Position";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import * as Position from "./Position"
+import { useEffect, useLayoutEffect, useRef, useState } from "react"
 
 //
 //
@@ -15,11 +26,11 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 //
 //
 
-export type Model = FrontendModel;
+export type Model = FrontendModel
 
 export const init: Model = {
-    sharedModel: initShared,
-    touched: Option.None
+  sharedModel: initShared,
+  touched: Option.None,
 }
 
 //
@@ -32,186 +43,192 @@ export const init: Model = {
 
 export type Msg = FrontendMsg
 
-export const update = ({ sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd.Cmd<never> }, msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
-    switch (msg[0]) {
-
-
-
-
-        case 'MouseMove': {
-            return [model, sendToBackend(msg)]
-        }
-
-        case 'TouchStart': {
-            return [{ ...model, touched: Option.Some(msg[1]) }, Cmd.None]
-        }
-
-        case 'TouchMove': {
-            if (model.touched.type === 'None') {
-                return [model, Cmd.None]
-            }
-
-            const from = model.touched.value
-
-            const to = msg[1]
-
-
-
-            const direction = positionsToDirection({ from, to })
-
-
-
-            if (direction === 'None') {
-                return [model, Cmd.None]
-            }
-
-
-            return [model, sendToBackend(['InputTranslate', { direction }])]
-        }
-
-        case 'TouchEnd': {
-            return [{ ...model, touched: Option.None }, Cmd.None]
-        }
-
-        case "PressedKey": {
-            const key = msg[1]
-
-            if (key === 'Space') {
-                return [model, sendToBackend(['InputDrop'])]
-            }
-
-            if (key === 'ArrowUp' || key === 'W' || key === 'w') {
-                return [model, sendToBackend(['InputRotate'])]
-            }
-
-            const direction = keyToDirection(key)
-
-            if (direction !== 'None') {
-                return [model, sendToBackend(['InputTranslate', { direction }])]
-            }
-
-            return [model, Cmd.None]
-        }
-
-        case 'ClickedBoard': {
-            // const position = msg[1]
-
-            return [model, sendToBackend(['InputDrop'])]
-        }
-
-        default: {
-            return exhaustive(msg[0])
-        }
-    }
-};
-
-const positionsToDirection = ({ from, to, }: { from: Position.Position, to: Position.Position }): Direction.Direction | "None" => {
-    const xDelta = to.x - from.x
-    const yDelta = to.y - from.y
-
-    if (xDelta < 0) {
-        return "Left"
+export const update = (
+  { sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd.Cmd<never> },
+  msg: Msg,
+  model: Model,
+): [Model, Cmd.Cmd<Msg>] => {
+  switch (msg[0]) {
+    case "MouseMove": {
+      return [model, sendToBackend(msg)]
     }
 
-    if (xDelta > 0) {
-        return "Right"
+    case "TouchStart": {
+      return [{ ...model, touched: Option.Some(msg[1]) }, Cmd.None]
     }
 
-    if (yDelta > 0) {
-        return "Down"
+    case "TouchMove": {
+      if (model.touched.type === "None") {
+        return [model, Cmd.None]
+      }
+
+      const from = model.touched.value
+
+      const to = msg[1]
+
+      const direction = positionsToDirection({ from, to })
+
+      if (direction === "None") {
+        return [model, Cmd.None]
+      }
+
+      return [model, sendToBackend(["InputTranslate", { direction }])]
     }
 
-    return "None"
+    case "TouchEnd": {
+      return [{ ...model, touched: Option.None }, Cmd.None]
+    }
+
+    case "PressedKey": {
+      const key = msg[1]
+
+      if (key === "Space") {
+        return [model, sendToBackend(["InputDrop"])]
+      }
+
+      if (key === "ArrowUp" || key === "W" || key === "w") {
+        return [model, sendToBackend(["InputRotate"])]
+      }
+
+      const direction = keyToDirection(key)
+
+      if (direction !== "None") {
+        return [model, sendToBackend(["InputTranslate", { direction }])]
+      }
+
+      return [model, Cmd.None]
+    }
+
+    case "ClickedBoard": {
+      // const position = msg[1]
+
+      return [model, sendToBackend(["InputDrop"])]
+    }
+
+    default: {
+      return exhaustive(msg[0])
+    }
+  }
+}
+
+const positionsToDirection = ({
+  from,
+  to,
+}: {
+  from: Position.Position
+  to: Position.Position
+}): Direction.Direction | "None" => {
+  const xDelta = to.x - from.x
+  const yDelta = to.y - from.y
+
+  if (xDelta < 0) {
+    return "Left"
+  }
+
+  if (xDelta > 0) {
+    return "Right"
+  }
+
+  if (yDelta > 0) {
+    return "Down"
+  }
+
+  return "None"
 }
 
 const keyToDirection = (key: Keyboard.Key): Direction.Direction | "None" => {
-    switch (key) {
-        case 'A':
-        case 'a':
-        case 'ArrowLeft':
-            return 'Left'
+  switch (key) {
+    case "A":
+    case "a":
+    case "ArrowLeft":
+      return "Left"
 
-        case 'D':
-        case 'd':
-        case 'ArrowRight':
-            return 'Right'
+    case "D":
+    case "d":
+    case "ArrowRight":
+      return "Right"
 
-        case 'S':
-        case 's':
-        case 'ArrowDown':
-            return 'Down'
+    case "S":
+    case "s":
+    case "ArrowDown":
+      return "Down"
 
-        default:
-            return 'None'
-
-
-    }
+    default:
+      return "None"
+  }
 }
 
+export const updateFromBackend = (
+  msg: ToFrontend,
+  model: Model,
+): [Model, Cmd.Cmd<Msg>] => {
+  switch (msg[0]) {
+    case "MouseMove_Done": {
+      const result = msg[1]
 
-export const updateFromBackend = (msg: ToFrontend, model: Model): [Model, Cmd.Cmd<Msg>] => {
-    switch (msg[0]) {
+      if (result.type === "Err") {
+        return [model, Cmd.None]
+      }
 
-        case 'MouseMove_Done': {
-            const result = msg[1]
+      const modelNew = result.value
 
-            if (result.type === 'Err') {
-                return [model, Cmd.None]
-            }
-
-            const modelNew = result.value
-
-            return [{ ...model, sharedModel: modelNew }, Cmd.None]
-        }
-
-        case 'InputDrop_Done': {
-            const result = msg[1]
-
-            if (result.type === 'Err') {
-                return [model, Cmd.None]
-            }
-
-            const modelNew = result.value
-
-            return [{ ...model, sharedModel: modelNew }, Cmd.None]
-        }
-
-        case 'Tick_Done': {
-            const modelNew = msg[1]
-            return [{ ...model, sharedModel: modelNew }, Cmd.None]
-        }
-
-        case 'InputRotate_Done': {
-            const result = msg[1]
-
-            if (result.type === 'Err') {
-                return [model, Cmd.None]
-            }
-
-            const modelNew = result.value
-
-            return [{ ...model, sharedModel: modelNew }, Cmd.None]
-        }
-
-        case 'InputTranslate_Done': {
-            const result = msg[1]
-
-            if (result.type === 'Err') {
-                return [model, Cmd.None]
-            }
-
-            const modelNew = result.value
-
-            return [{ ...model, sharedModel: modelNew }, Cmd.None]
-        }
+      return [{ ...model, sharedModel: modelNew }, Cmd.None]
     }
+
+    case "InputDrop_Done": {
+      const result = msg[1]
+
+      if (result.type === "Err") {
+        return [model, Cmd.None]
+      }
+
+      const modelNew = result.value
+
+      return [{ ...model, sharedModel: modelNew }, Cmd.None]
+    }
+
+    case "Tick_Done": {
+      const modelNew = msg[1]
+      return [{ ...model, sharedModel: modelNew }, Cmd.None]
+    }
+
+    case "InputRotate_Done": {
+      const result = msg[1]
+
+      if (result.type === "Err") {
+        return [model, Cmd.None]
+      }
+
+      const modelNew = result.value
+
+      return [{ ...model, sharedModel: modelNew }, Cmd.None]
+    }
+
+    case "InputTranslate_Done": {
+      const result = msg[1]
+
+      if (result.type === "Err") {
+        return [model, Cmd.None]
+      }
+
+      const modelNew = result.value
+
+      return [{ ...model, sharedModel: modelNew }, Cmd.None]
+    }
+  }
 }
 
-export const mergeWithBackend = ({ frontendModel, backendModel }: { frontendModel: FrontendModel, backendModel: BackendModel }): FrontendModel => {
-    return {
-        ...frontendModel,
-        sharedModel: backendModel
-    }
+export const mergeWithBackend = ({
+  frontendModel,
+  backendModel,
+}: {
+  frontendModel: FrontendModel
+  backendModel: BackendModel
+}): FrontendModel => {
+  return {
+    ...frontendModel,
+    sharedModel: backendModel,
+  }
 }
 
 //
@@ -223,129 +240,139 @@ export const mergeWithBackend = ({ frontendModel, backendModel }: { frontendMode
 //
 
 export const subscriptions = (model: Model): Sub.Sub<Msg> => {
-    return Keyboard.keyDowns<Msg>(key => ['PressedKey', key])
-};
+  return Keyboard.keyDowns<Msg>((key) => ["PressedKey", key])
+}
 
-
-// 
-// 
-// 
+//
+//
+//
 // View
-// 
-// 
-// 
-
-
-
+//
+//
+//
 
 const gridStroke = "rgba(255, 255, 255, 0.2)"
 const gridStrokeWidth = 0.025
 
-export const View = ({ model, dispatch, onCloseGame, roomAvatarGroup }: { model: Model, dispatch: (msg: Msg) => void, onCloseGame: () => void, roomAvatarGroup: UI.ViewNode }) => {
+export const View = ({
+  model,
+  dispatch,
+  onCloseGame,
+  roomAvatarGroup,
+}: {
+  model: Model
+  dispatch: (msg: Msg) => void
+  onCloseGame: () => void
+  roomAvatarGroup: UI.ViewNode
+}) => {
+  const canvasRef = useRef<HTMLCanvasElement | null>(null)
+  const containerRef = useRef<HTMLDivElement | null>(null)
 
-    const canvasRef = useRef<HTMLCanvasElement | null>(null)
-    const containerRef = useRef<HTMLDivElement | null>(null)
+  useLayoutEffect(() => {
+    const canvas = canvasRef.current
 
-    useLayoutEffect(() => {
-        const canvas = canvasRef.current
+    if (!canvas) {
+      return
+    }
 
-        if (!canvas) {
-            return
+    const context = canvas.getContext("2d")
+
+    if (!context) {
+      return
+    }
+
+    const container = containerRef.current
+
+    if (!container) {
+      return
+    }
+
+    const columnCount = Board.toColumnCount(model.sharedModel.board)
+    const rowCount = Board.toRowCount(model.sharedModel.board)
+
+    const canvasHeight = container.offsetHeight
+
+    context.canvas.width = (columnCount / rowCount) * canvasHeight
+    context.canvas.height = canvasHeight
+
+    paint(context, model)
+  }, [model])
+
+  return (
+    <UI.FillBox>
+      <UI.Header
+        left={
+          <UI.Button
+            onClick={onCloseGame}
+            sx={{ marginLeft: -1 }}
+          >
+            Close
+          </UI.Button>
         }
+        title="Tetris"
+        right={roomAvatarGroup}
+      />
+      <div
+        ref={containerRef}
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          overflow: "hidden",
+          flex: 1,
+        }}
+      >
+        <canvas
+          ref={canvasRef}
+          onTouchMove={(event) => {
+            const touch = event.touches[0]
 
-        const context = canvas.getContext("2d")
-
-        if (!context) {
-            return
-        }
-
-        const container = containerRef.current
-
-        if (!container) {
-            return
-        }
-
-
-        const columnCount = Board.toColumnCount(model.sharedModel.board)
-        const rowCount = Board.toRowCount(model.sharedModel.board)
-
-        const canvasHeight = container.offsetHeight
-
-        context.canvas.width = (columnCount / rowCount) * canvasHeight
-        context.canvas.height = canvasHeight
-
-        paint(context, model)
-
-    }, [model])
-
-    return <UI.FillBox>
-        <UI.Header
-            left={
-                <UI.Button
-                    onClick={onCloseGame}
-                    sx={{ marginLeft: -1 }}
-                >
-                    Close
-                </UI.Button>
+            if (!touch) {
+              return
             }
-            title="Tetris"
-            right={
-                roomAvatarGroup
+
+            const x = touch.clientX
+            const y = touch.clientY
+
+            console.log("MOVE", { x, y })
+          }}
+          onClick={(event) => {
+            dispatch(["ClickedBoard", mouseEventToPosition(event)])
+          }}
+          onMouseMove={(event) => {
+            const x = Math.floor(
+              rescale({
+                value: event.pageX - event.currentTarget.offsetLeft,
+                from: [0, event.currentTarget.width],
+                to: [0, columnCount],
+              }),
+            )
+
+            const y = Math.floor(
+              rescale({
+                value: event.pageY - event.currentTarget.offsetTop,
+                from: [0, event.currentTarget.height],
+                to: [0, rowCount],
+              }),
+            )
+
+            dispatch(["MouseMove", { x, y }])
+          }}
+          onTouchStart={(event) => {
+            const touch = event.touches[0]
+
+            if (!touch) {
+              return
             }
+
+            const x = touch.clientX
+            const y = touch.clientY
+
+            console.log("Start", { x, y })
+          }}
         />
-        <div ref={containerRef} style={{ display: 'flex', justifyContent: "center", overflow: "hidden", flex: 1 }}>
-            <canvas
-                ref={canvasRef}
-                onTouchMove={(event) => {
-                    const touch = event.touches[0]
+      </div>
 
-                    if (!touch) {
-                        return
-                    }
-
-                    const x = touch.clientX
-                    const y = touch.clientY
-
-                    console.log("MOVE", { x, y })
-                }}
-                onClick={event => {
-                    dispatch(['ClickedBoard', mouseEventToPosition(event)])
-                }}
-
-                onMouseMove={(event) => {
-                    const x = Math.floor(rescale({
-                        value: (event.pageX - event.currentTarget.offsetLeft),
-                        from: [0, event.currentTarget.width],
-                        to: [0, columnCount]
-                    }))
-
-                    const y = Math.floor(rescale({
-                        value: (event.pageY - event.currentTarget.offsetTop),
-                        from: [0, event.currentTarget.height],
-                        to: [0, rowCount]
-                    }))
-
-
-                    dispatch(['MouseMove', { x, y }])
-                }}
-                onTouchStart={(event) => {
-                    const touch = event.touches[0]
-
-                    if (!touch) {
-                        return
-                    }
-
-                    const x = touch.clientX
-                    const y = touch.clientY
-
-                    console.log("Start", { x, y })
-
-
-                }}
-            />
-        </div>
-
-        {/* <svg width="100%" viewBox={[0, 0, columnCount, rowCount,].join(", ")}>
+      {/* <svg width="100%" viewBox={[0, 0, columnCount, rowCount,].join(", ")}>
             {range(1, Board.toColumnCount(model.sharedModel.board)).map(x => (
                 <line key={x} x1={x} y1={0} x2={x} y2={rowCount} stroke={gridStroke} strokeWidth={gridStrokeWidth} />
             ))}
@@ -381,105 +408,134 @@ export const View = ({ model, dispatch, onCloseGame, roomAvatarGroup }: { model:
             ))}
 
         </svg> */}
-
-
     </UI.FillBox>
+  )
 }
 
-const mouseEventToPosition = (event: React.MouseEvent<HTMLCanvasElement, MouseEvent>): Position.Position => {
-    const x = Math.floor(rescale({
-        value: (event.pageX - event.currentTarget.offsetLeft),
-        from: [0, event.currentTarget.width],
-        to: [0, columnCount]
-    }))
+const mouseEventToPosition = (
+  event: React.MouseEvent<HTMLCanvasElement, MouseEvent>,
+): Position.Position => {
+  const x = Math.floor(
+    rescale({
+      value: event.pageX - event.currentTarget.offsetLeft,
+      from: [0, event.currentTarget.width],
+      to: [0, columnCount],
+    }),
+  )
 
-    const y = Math.floor(rescale({
-        value: (event.pageY - event.currentTarget.offsetTop),
-        from: [0, event.currentTarget.height],
-        to: [0, rowCount]
-    }))
+  const y = Math.floor(
+    rescale({
+      value: event.pageY - event.currentTarget.offsetTop,
+      from: [0, event.currentTarget.height],
+      to: [0, rowCount],
+    }),
+  )
 
-    return { x, y }
+  return { x, y }
 }
 
 const paint = (context: CanvasRenderingContext2D, model: Model) => {
-    const columnCount = Board.toColumnCount(model.sharedModel.board)
-    const rowCount = Board.toRowCount(model.sharedModel.board)
-    const canvasWidth = context.canvas.width
-    const canvasHeight = context.canvas.height
-    const cellWidth = canvasWidth / columnCount
-    const cellHeight = canvasHeight / rowCount
-    const cellLength = Math.min(cellWidth, cellHeight)
+  const columnCount = Board.toColumnCount(model.sharedModel.board)
+  const rowCount = Board.toRowCount(model.sharedModel.board)
+  const canvasWidth = context.canvas.width
+  const canvasHeight = context.canvas.height
+  const cellWidth = canvasWidth / columnCount
+  const cellHeight = canvasHeight / rowCount
+  const cellLength = Math.min(cellWidth, cellHeight)
 
-    context.fillStyle = "#000"
-    context.fillRect(0, 0, columnCount * cellLength, rowCount * cellLength)
+  context.fillStyle = "#000"
+  context.fillRect(0, 0, columnCount * cellLength, rowCount * cellLength)
 
-    context.strokeStyle = "#222"
+  context.strokeStyle = "#222"
 
-    for (let x = 0; x < columnCount; x++) {
-        context.moveTo(x * cellLength, 0 * cellLength)
-        context.lineTo(x * cellLength, rowCount * cellLength)
-        context.stroke()
-    }
+  for (let x = 0; x < columnCount; x++) {
+    context.moveTo(x * cellLength, 0 * cellLength)
+    context.lineTo(x * cellLength, rowCount * cellLength)
+    context.stroke()
+  }
 
+  for (let y = 0; y < rowCount; y++) {
+    context.moveTo(0 * cellLength, y * cellLength)
+    context.lineTo(columnCount * cellLength, y * cellLength)
+    context.stroke()
+  }
+
+  for (const { x, y } of toGhostPiece(model.sharedModel)) {
+    context.fillStyle = "#555"
+    context.fillRect(x * cellLength, y * cellLength, cellLength, cellLength)
+  }
+
+  for (const { x, y } of toPiece(model.sharedModel)) {
+    context.fillStyle = Piece.colors[model.sharedModel.tetrominoName]
+    context.fillRect(x * cellLength, y * cellLength, cellLength, cellLength)
+  }
+
+  for (let x = 0; x < columnCount; x++) {
     for (let y = 0; y < rowCount; y++) {
-        context.moveTo(0 * cellLength, y * cellLength)
-        context.lineTo(columnCount * cellLength, y * cellLength)
-        context.stroke()
-    }
+      const cell = Board.toCell({ x, y }, model.sharedModel.board)
 
-    for (const { x, y } of toGhostPiece(model.sharedModel)) {
-        context.fillStyle = "#555"
-        context.fillRect(x * cellLength, y * cellLength, cellLength, cellLength)
+      if (cell === "Empty") {
+        continue
+      }
+      context.fillStyle = Piece.colors[cell]
+      context.fillRect(x * cellLength, y * cellLength, cellLength, cellLength)
     }
-
-    for (const { x, y } of toPiece(model.sharedModel)) {
-        context.fillStyle = Piece.colors[model.sharedModel.tetrominoName]
-        context.fillRect(x * cellLength, y * cellLength, cellLength, cellLength)
-    }
-
-    for (let x = 0; x < columnCount; x++) {
-        for (let y = 0; y < rowCount; y++) {
-            const cell = Board.toCell({ x, y }, model.sharedModel.board)
-
-            if (cell === 'Empty') {
-                continue
-            }
-            context.fillStyle = Piece.colors[cell]
-            context.fillRect(x * cellLength, y * cellLength, cellLength, cellLength)
-        }
-    }
+  }
 }
-
 
 const range = (start: number, end: number): number[] => {
-    if (start >= end) {
-        return []
-    }
+  if (start >= end) {
+    return []
+  }
 
-    return [start, ...range(start + 1, end)]
+  return [start, ...range(start + 1, end)]
 }
 
-
 const theme = {
-    lightBlue: "#01DEEC",
-    darkBlue: "#003D78",
-    pieceBlue: "#2C2C7E"
+  lightBlue: "#01DEEC",
+  darkBlue: "#003D78",
+  pieceBlue: "#2C2C7E",
 }
 
 export const CoverArt = () => {
-    return <svg width="100%" viewBox={[0, 0, 4, 4].join(", ")}>
-        <rect width="100%" height="100%" fill={theme.lightBlue} />
-        {Piece.pieces.T.map(position => Position.rotate(Position.rotate(position))).map(position => Position.add(position, { x: 1.5, y: 1 })).map(position => (
-            <rect key={`${position.x}-${position.y}`} x={position.x} y={position.y} width={1} height={1} fill={theme.pieceBlue} />
+  return (
+    <svg
+      width="100%"
+      viewBox={[0, 0, 4, 4].join(", ")}
+    >
+      <rect
+        width="100%"
+        height="100%"
+        fill={theme.lightBlue}
+      />
+      {Piece.pieces.T.map((position) =>
+        Position.rotate(Position.rotate(position)),
+      )
+        .map((position) => Position.add(position, { x: 1.5, y: 1 }))
+        .map((position) => (
+          <rect
+            key={`${position.x}-${position.y}`}
+            x={position.x}
+            y={position.y}
+            width={1}
+            height={1}
+            fill={theme.pieceBlue}
+          />
         ))}
     </svg>
+  )
 }
-
 
 type Range = [number, number]
 
-const rescale = ({ value, from, to }: { value: number, from: Range, to: Range }) => {
-    return (value - from[0]) * (to[1] - to[0]) / (from[1] - from[0]) + to[0];
+const rescale = ({
+  value,
+  from,
+  to,
+}: {
+  value: number
+  from: Range
+  to: Range
+}) => {
+  return ((value - from[0]) * (to[1] - to[0])) / (from[1] - from[0]) + to[0]
 }
-

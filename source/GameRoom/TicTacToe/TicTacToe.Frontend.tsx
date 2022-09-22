@@ -10,6 +10,7 @@ import {
   initSharedModel,
   startGame,
   ToBackend,
+  toGameOver,
   ToFrontend,
 } from "./TicTacToe.Types"
 
@@ -25,7 +26,7 @@ export type Model = FrontendModel
 
 export const init: Model = {
   ...initSharedModel,
-  openedModal: "None"
+  openedModal: "None",
 }
 
 //
@@ -42,32 +43,31 @@ export type OutAction = Store.Action
 export const update = (
   {
     currentUserId,
-    sendToBackend
+    sendToBackend,
   }: {
-    currentUserId: UserId.UserId,
+    currentUserId: UserId.UserId
     sendToBackend: (msg: ToBackend) => Cmd.Cmd<never>
   },
   msg: Msg,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
-
-    // 
-    // 
-    // 
+    //
+    //
+    //
     // Frontend Msg
-    // 
-    // 
+    //
+    //
 
-    case 'CloseModal': {
+    case "CloseModal": {
       return [{ ...model, openedModal: "None" }, Cmd.None]
     }
 
-    case 'OpenModal': {
+    case "OpenModal": {
       return [{ ...model, openedModal: msg[1] }, Cmd.None]
     }
 
-    // 
+    //
     //
     //
     // Request Msg
@@ -75,24 +75,23 @@ export const update = (
     //
     //
 
-
-    case 'InputMove': {
+    case "InputMove": {
       return [model, sendToBackend(msg)]
     }
 
-    case 'Resign': {
+    case "Resign": {
       return [model, sendToBackend(msg)]
     }
 
-    case 'InputPlayer': {
+    case "InputPlayer": {
       return [model, sendToBackend(msg)]
     }
 
-    case 'StopPlaying': {
+    case "StopPlaying": {
       return [model, sendToBackend(msg)]
     }
 
-    case 'StartGame': {
+    case "StartGame": {
       return [model, sendToBackend(msg)]
     }
   }
@@ -100,12 +99,27 @@ export const update = (
 
 export const updateFromBackend = (
   msg: ToFrontend,
+  modelPrev: Model,
+): [Model, Cmd.Cmd<Msg>] => {
+  const [modelNext, cmd] = updateFromBackend_(msg, modelPrev)
+
+  const gameOverPrev = toGameOver(modelPrev)
+  const gameOverNext = toGameOver(modelNext)
+
+  if (gameOverPrev.type === "None" && gameOverNext.type !== "None") {
+    // game over logic
+  }
+
+  return [modelNext, cmd]
+}
+
+export const updateFromBackend_ = (
+  msg: ToFrontend,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
-
-    case 'InputMove_Done': {
-      if (msg[1].type === 'Err') {
+    case "InputMove_Done": {
+      if (msg[1].type === "Err") {
         return [model, Cmd.None]
       }
 
@@ -114,8 +128,8 @@ export const updateFromBackend = (
       return [{ ...sharedModel, openedModal: model.openedModal }, Cmd.None]
     }
 
-    case 'InputPlayer_Done': {
-      if (msg[1].type === 'Err') {
+    case "InputPlayer_Done": {
+      if (msg[1].type === "Err") {
         return [model, Cmd.None]
       }
 
@@ -124,8 +138,8 @@ export const updateFromBackend = (
       return [{ ...sharedModel, openedModal: model.openedModal }, Cmd.None]
     }
 
-    case 'StopPlaying_Done': {
-      if (msg[1].type === 'Err') {
+    case "StopPlaying_Done": {
+      if (msg[1].type === "Err") {
         return [model, Cmd.None]
       }
 
@@ -134,8 +148,8 @@ export const updateFromBackend = (
       return [{ ...sharedModel, openedModal: model.openedModal }, Cmd.None]
     }
 
-    case 'StartGame_Done': {
-      if (msg[1].type === 'Err') {
+    case "StartGame_Done": {
+      if (msg[1].type === "Err") {
         return [model, Cmd.None]
       }
 
@@ -144,8 +158,8 @@ export const updateFromBackend = (
       return [{ ...sharedModel, openedModal: model.openedModal }, Cmd.None]
     }
 
-    case 'Resign_Done': {
-      if (msg[1].type === 'Err') {
+    case "Resign_Done": {
+      if (msg[1].type === "Err") {
         return [model, Cmd.None]
       }
 
@@ -155,7 +169,6 @@ export const updateFromBackend = (
     }
   }
 }
-
 
 export const mergeWithBackend = (
   frontendModel: FrontendModel,
@@ -163,10 +176,9 @@ export const mergeWithBackend = (
 ): FrontendModel => {
   return {
     ...backendModel,
-    openedModal: frontendModel.openedModal
+    openedModal: frontendModel.openedModal,
   }
 }
-
 
 //
 //
@@ -183,6 +195,7 @@ export const View = ({
   dispatch,
   onCloseGame,
   onBack,
+  roomAvatarGroup,
 }: {
   currentUserId: UserId.UserId
   store: Store.Model
@@ -190,40 +203,58 @@ export const View = ({
   dispatch: (msg: Msg) => void
   onCloseGame: () => void
   onBack: () => void
+  roomAvatarGroup: UI.ViewNode
 }) => {
   const header = (
     <UI.Header
       left={
-        <UI.IconButton onClick={onBack}>
+        <UI.IconButton
+          sx={{ marginLeft: -1 }}
+          onClick={onBack}
+        >
           <UI.Icons.Home />
         </UI.IconButton>
       }
       title="Tic Tac Toe"
+      right={roomAvatarGroup}
     />
   )
 
-  if (model.type === 'Setup') {
-    const startGameResult = startGame({ userId: currentUserId, }, model)
+  if (model.type === "Setup") {
+    const startGameResult = startGame({ userId: currentUserId }, model)
     return (
       <UI.FillBox>
         {header}
 
-        <UI.Box sx={{ flex: 1, padding: 2 }} >
-          <UI.Typography color="text.secondary" sx={{ marginBottom: 1 }}>
-            Player One • <UI.Box component="span" sx={{ fontFamily: "Roboto Mono" }}>X</UI.Box>
+        <UI.Box sx={{ flex: 1, padding: 2 }}>
+          <UI.Typography
+            color="text.secondary"
+            sx={{ marginBottom: 1 }}
+          >
+            Player One •{" "}
+            <UI.Box
+              component="span"
+              sx={{ fontFamily: "Roboto Mono" }}
+            >
+              X
+            </UI.Box>
           </UI.Typography>
 
-
-          {model.players.X === 'None' ? (
+          {model.players.X === "None" ? (
             <UI.Button
               fullWidth
               variant="contained"
-              onClick={() => dispatch(['InputPlayer', { userId: currentUserId, playerType: "X", }])}
+              onClick={() =>
+                dispatch([
+                  "InputPlayer",
+                  { userId: currentUserId, playerType: "X" },
+                ])
+              }
             >
               Play as X
             </UI.Button>
           ) : (
-            <PlayerSlot
+            <ViewPlayerSlot
               currentUserId={currentUserId}
               userId={model.players.X}
               store={store}
@@ -231,39 +262,55 @@ export const View = ({
             />
           )}
 
-          <UI.Typography color="text.secondary" sx={{ marginTop: 2, marginBottom: 1 }}>
-            Player Two • <UI.Box component="span" sx={{ fontFamily: "Roboto Mono" }}>O</UI.Box>
+          <UI.Typography
+            color="text.secondary"
+            sx={{ marginTop: 2, marginBottom: 1 }}
+          >
+            Player Two •{" "}
+            <UI.Box
+              component="span"
+              sx={{ fontFamily: "Roboto Mono" }}
+            >
+              O
+            </UI.Box>
           </UI.Typography>
 
-          {model.players.O === 'None' ? (
+          {model.players.O === "None" ? (
             <UI.Button
               fullWidth
               variant="contained"
-              onClick={() => dispatch(['InputPlayer', { userId: currentUserId, playerType: "O" }])}
+              onClick={() =>
+                dispatch([
+                  "InputPlayer",
+                  { userId: currentUserId, playerType: "O" },
+                ])
+              }
             >
               Play as O
             </UI.Button>
           ) : (
-            <PlayerSlot
+            <ViewPlayerSlot
               currentUserId={currentUserId}
               userId={model.players.O}
               store={store}
               dispatch={dispatch}
             />
-
           )}
         </UI.Box>
 
-
         <UI.Box sx={{ padding: 2, display: "flex", gap: 2 }}>
-          <UI.Button variant="outlined" fullWidth onClick={onCloseGame}>
+          <UI.Button
+            variant="outlined"
+            fullWidth
+            onClick={onCloseGame}
+          >
             Close
           </UI.Button>
           <UI.Button
             variant="contained"
             fullWidth
-            onClick={() => dispatch(['StartGame', { userId: currentUserId }])}
-            disabled={startGameResult.type === 'Err'}
+            onClick={() => dispatch(["StartGame", { userId: currentUserId }])}
+            disabled={startGameResult.type === "Err"}
           >
             Start
           </UI.Button>
@@ -272,44 +319,109 @@ export const View = ({
     )
   }
 
-  return <UI.FillBox>
-    {header}
+  return (
+    <UI.FillBox>
+      {header}
 
-    <ViewBoard
-      board={model.board}
-      onClick={(position) => dispatch(['InputMove', { position, userId: currentUserId }])}
-    />
+      <UI.Box sx={{ display: "flex", gap: 2, paddingX: 2 }}>
+        <UI.Box
+          sx={{ flex: 1, display: "flex", alignItems: "center", paddingY: 1 }}
+        >
+          <UI.Avatar src={store.Profile[model.players.X]?.avatarUrl} />
+          <UI.Typography>
+            {store.Profile[model.players.X]?.username ?? "..."}
+          </UI.Typography>
+        </UI.Box>
 
-    <UI.Box sx={{ flex: 1 }} />
+        <UI.Box
+          sx={{ flex: 1, display: "flex", alignItems: "center", paddingY: 1 }}
+        >
+          <UI.Avatar src={store.Profile[model.players.O]?.avatarUrl} />
+          <UI.Typography>
+            {store.Profile[model.players.O]?.username ?? "..."}
+          </UI.Typography>
+        </UI.Box>
+      </UI.Box>
 
-    <UI.Box sx={{ display: 'flex' }}>
-      <UI.ActionButton icon={<UI.Icons.Flag />} label="Resign" onClick={() => dispatch(['OpenModal', 'Resignation'])} />
-      <UI.ConformationDialog
-        open={model.openedModal === 'Resignation'}
-        onCancel={() => dispatch(['CloseModal'])}
-        onClose={() => dispatch(['CloseModal'])}
-        onConfirm={() => dispatch(['Resign', { userId: currentUserId }])}
-        headerIcon={<UI.Icons.Flag />}
-        title="Resign from game?"
-        confirmTitle="Resign"
+      <ViewBoard
+        board={model.board}
+        onClick={(position) =>
+          dispatch(["InputMove", { position, userId: currentUserId }])
+        }
       />
-    </UI.Box>
-  </UI.FillBox>
 
+      <UI.Box sx={{ flex: 1 }} />
+
+      <UI.Box sx={{ display: "flex" }}>
+        <UI.ActionButton
+          icon={<UI.Icons.Flag />}
+          label="Resign"
+          onClick={() => dispatch(["OpenModal", "Resignation"])}
+        />
+        <UI.ConformationDialog
+          open={model.openedModal === "Resignation"}
+          onCancel={() => dispatch(["CloseModal"])}
+          onClose={() => dispatch(["CloseModal"])}
+          onConfirm={() => dispatch(["Resign", { userId: currentUserId }])}
+          headerIcon={<UI.Icons.Flag sx={{ width: 64, height: 64 }} />}
+          title="Resign from game?"
+          confirmTitle="Resign"
+        />
+      </UI.Box>
+    </UI.FillBox>
+  )
 }
 
-const PlayerSlot = ({ currentUserId, store, userId, dispatch }: { currentUserId: UserId.UserId, userId: UserId.UserId, store: Store.Model, dispatch: (msg: Msg) => void }) => {
+const ViewPlayerSlot = ({
+  currentUserId,
+  store,
+  userId,
+  dispatch,
+}: {
+  currentUserId: UserId.UserId
+  userId: UserId.UserId
+  store: Store.Model
+  dispatch: (msg: Msg) => void
+}) => {
   return (
-    <UI.Box sx={{ display: 'flex', alignItems: 'center' }}>
-      <UI.Avatar src={store.Profile[userId]?.avatarUrl} sx={{ marginRight: 1 }} />
+    <UI.Box sx={{ display: "flex", alignItems: "center" }}>
+      <UI.Avatar
+        src={store.Profile[userId]?.avatarUrl}
+        sx={{ marginRight: 1 }}
+      />
       <UI.Typography sx={{ flex: 1 }}>
         {store.Profile[userId]?.username ?? "..."}
       </UI.Typography>
       {currentUserId === userId && (
-        <UI.Button onClick={() => dispatch(['StopPlaying', { userId: currentUserId }])}>
+        <UI.Button
+          onClick={() => dispatch(["StopPlaying", { userId: currentUserId }])}
+        >
           Stop Playing
         </UI.Button>
       )}
+    </UI.Box>
+  )
+}
+
+const ViewPlayerGameSlot = ({
+  store,
+  model,
+}: {
+  store: Store.Model
+  model: Model
+}) => {
+  if (model.type !== "Game") {
+    return <></>
+  }
+
+  return (
+    <UI.Box
+      sx={{ flex: 1, display: "flex", alignItems: "center", paddingY: 1 }}
+    >
+      <UI.Avatar src={store.Profile[model.players.O]?.avatarUrl} />
+      <UI.Typography>
+        {store.Profile[model.players.O]?.username ?? "..."}
+      </UI.Typography>
     </UI.Box>
   )
 }

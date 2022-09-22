@@ -13,15 +13,14 @@ import * as UserVsUser from "./UserVsUser/UserVsUser.Types"
 
 export type FrontendModel = {
   mode:
-  | ["None"]
-  | ["UserVsUser", UserVsUser.FrontendModel]
-  | ["UserVsBot", UserVsBot.FrontendModel]
+    | ["None"]
+    | ["UserVsUser", UserVsUser.FrontendModel]
+    | ["UserVsBot", UserVsBot.FrontendModel]
 
   requests: {
     InputMode: RemoteData.RemoteData<InputModeProblem, Unit>
   }
 }
-
 
 export type BackendModel =
   | ["None"]
@@ -42,7 +41,7 @@ export type FrontendMsg =
   | ["UserVsUser", UserVsUser.FrontendMsg]
   | ["UserVsBot", UserVsBot.FrontendMsg]
   | InputMode
-  | ['PreloadAudio_Done']
+  | ["PreloadAudio_Done"]
 
 export type BackendMsg =
   | ["UserVsUser", UserVsUser.BackendMsg]
@@ -75,7 +74,7 @@ export type InputModeProblem = "must_be_the_host"
 
 export const inputModeProblemToString = (problem: InputModeProblem): string => {
   switch (problem) {
-    case 'must_be_the_host': {
+    case "must_be_the_host": {
       return "Must be the host"
     }
   }

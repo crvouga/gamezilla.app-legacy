@@ -31,16 +31,18 @@ export const levelToString = (level: Level): string => {
   }
 }
 
-
 export type BestMoveInputResult = Result.Result<BestMoveInputProblem, MoveInput>
 export type BestMoveInputProblem = "failed_to_calculate_best_move"
 
 const isRecord = (record: unknown): record is Record<string, string> => {
   // todo: add correct validation
-  return typeof record === 'object' && record !== null
+  return typeof record === "object" && record !== null
 }
 
-export const toBestMoveInput = (level: Level, model: Model): BestMoveInputResult => {
+export const toBestMoveInput = (
+  level: Level,
+  model: Model,
+): BestMoveInputResult => {
   const fen = toFen(model)
 
   const move: unknown = aiMove(fen, level)
@@ -49,8 +51,9 @@ export const toBestMoveInput = (level: Level, model: Model): BestMoveInputResult
     return Result.Err("failed_to_calculate_best_move")
   }
 
-  const bestMoveInput = Object.entries(move)
-    .flatMap<MoveInput>(([from, to]) => isSquare(from) && isSquare(to) ? [{ from, to, promotion: "q" }] : [])[0]
+  const bestMoveInput = Object.entries(move).flatMap<MoveInput>(([from, to]) =>
+    isSquare(from) && isSquare(to) ? [{ from, to, promotion: "q" }] : [],
+  )[0]
 
   if (bestMoveInput) {
     return Result.Ok(bestMoveInput)
@@ -59,11 +62,13 @@ export const toBestMoveInput = (level: Level, model: Model): BestMoveInputResult
   return Result.Err("failed_to_calculate_best_move")
 }
 
-
-export const toRandomMoveInput = (model: Model): Result.Result<"no_legal_move", MoveInput> => {
+export const toRandomMoveInput = (
+  model: Model,
+): Result.Result<"no_legal_move", MoveInput> => {
   const legalMoveInputs = toLegalMoveInputs(model)
 
-  const randomMoveInput = legalMoveInputs[Math.floor(Math.random() * legalMoveInputs.length)]
+  const randomMoveInput =
+    legalMoveInputs[Math.floor(Math.random() * legalMoveInputs.length)]
 
   if (!randomMoveInput) {
     return Result.Err("no_legal_move")
@@ -72,19 +77,19 @@ export const toRandomMoveInput = (model: Model): Result.Result<"no_legal_move", 
   return Result.Ok(randomMoveInput)
 }
 
-export const getBestMove = (level: Level, model: Model): Task.Task<BestMoveInputResult> => async () => {
-  const worker = new Worker("./board-worker")
+export const getBestMove =
+  (level: Level, model: Model): Task.Task<BestMoveInputResult> =>
+  async () => {
+    const worker = new Worker("./board-worker")
 
-  const boardWorker = await spawn<BoardWorker>(worker)
+    const boardWorker = await spawn<BoardWorker>(worker)
 
-  const result =
-    await boardWorker.toBestMove(level, model)
+    const result = await boardWorker.toBestMove(level, model)
 
-  await Thread.terminate(boardWorker)
+    await Thread.terminate(boardWorker)
 
-  return result
-
-}
+    return result
+  }
 
 //
 //
@@ -96,7 +101,7 @@ export const getBestMove = (level: Level, model: Model): Task.Task<BestMoveInput
 
 export type Model = {
   pgn: string
-  fen: string,
+  fen: string
   previousMove?: MoveInput
 }
 
@@ -110,15 +115,19 @@ const files: { [file in File]: File } = {
   E: "E",
   F: "F",
   G: "G",
-  H: "H"
+  H: "H",
 }
 
 export const isFile = (file: unknown): file is File => {
-  return typeof file === 'string' && file in files
+  return typeof file === "string" && file in files
 }
 
 export const isLowercaseFile = (file: unknown): file is Lowercase<File> => {
-  return typeof file === 'string' && isFile(file.toUpperCase()) && file === file.toLowerCase()
+  return (
+    typeof file === "string" &&
+    isFile(file.toUpperCase()) &&
+    file === file.toLowerCase()
+  )
 }
 
 export type Rank = "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8"
@@ -135,7 +144,7 @@ const ranks: { [rank in Rank]: Rank } = {
 }
 
 export const isRank = (rank: unknown): rank is Rank => {
-  return typeof rank === 'string' && rank in ranks
+  return typeof rank === "string" && rank in ranks
 }
 
 export const toSquare = (file: File, rank: Rank): Square => {
@@ -156,32 +165,37 @@ export type Square = `${File}${Rank}`
 
 export type LowercaseSquare = `${Lowercase<File>}${Rank}`
 
-export const isLowercaseSquare = (square: unknown): square is LowercaseSquare => {
-  return typeof square === 'string' && isLowercaseFile(square[0]) && isRank(square[1])
+export const isLowercaseSquare = (
+  square: unknown,
+): square is LowercaseSquare => {
+  return (
+    typeof square === "string" &&
+    isLowercaseFile(square[0]) &&
+    isRank(square[1])
+  )
 }
-
 
 export const squareToChecker = (square: Square): "Light" | "Dark" => {
   const [file, rank] = fromSquare(square)
 
   const isOddFile =
-    file === 'A'
+    file === "A" ||
     // || file === 'B'
-    || file === 'C'
+    file === "C" ||
     // || file === 'D'
-    || file === 'E'
+    file === "E" ||
     // || file === 'F'
-    || file === 'G'
+    file === "G"
   // || file === 'H'
 
   const isOddRank =
-    rank === '1'
+    rank === "1" ||
     // || rank === '2'
-    || rank === '3'
+    rank === "3" ||
     // || rank === '4'
-    || rank === '5'
+    rank === "5" ||
     // || rank === '6'
-    || rank === '7'
+    rank === "7"
   // || rank === '8'
 
   if ((isOddFile && isOddRank) || (!isOddFile && !isOddRank)) {
@@ -191,155 +205,282 @@ export const squareToChecker = (square: Square): "Light" | "Dark" => {
   return "Light"
 }
 
-
 export const fromLowercase = (square: LowercaseSquare): Square => {
   switch (square) {
-    // 
-    case 'a1': return 'A1'
-    case 'a2': return 'A2'
-    case 'a3': return 'A3'
-    case 'a4': return 'A4'
-    case 'a5': return 'A5'
-    case 'a6': return 'A6'
-    case 'a7': return 'A7'
-    case 'a8': return 'A8'
-    // 
-    case 'b1': return 'B1'
-    case 'b2': return 'B2'
-    case 'b3': return 'B3'
-    case 'b4': return 'B4'
-    case 'b5': return 'B5'
-    case 'b6': return 'B6'
-    case 'b7': return 'B7'
-    case 'b8': return 'B8'
-    // 
-    case 'c1': return 'C1'
-    case 'c2': return 'C2'
-    case 'c3': return 'C3'
-    case 'c4': return 'C4'
-    case 'c5': return 'C5'
-    case 'c6': return 'C6'
-    case 'c7': return 'C7'
-    case 'c8': return 'C8'
-    // 
-    case 'd1': return 'D1'
-    case 'd2': return 'D2'
-    case 'd3': return 'D3'
-    case 'd4': return 'D4'
-    case 'd5': return 'D5'
-    case 'd6': return 'D6'
-    case 'd7': return 'D7'
-    case 'd8': return 'D8'
-    // 
-    case 'e1': return 'E1'
-    case 'e2': return 'E2'
-    case 'e3': return 'E3'
-    case 'e4': return 'E4'
-    case 'e5': return 'E5'
-    case 'e6': return 'E6'
-    case 'e7': return 'E7'
-    case 'e8': return 'E8'
-    // 
-    case 'f1': return 'F1'
-    case 'f2': return 'F2'
-    case 'f3': return 'F3'
-    case 'f4': return 'F4'
-    case 'f5': return 'F5'
-    case 'f6': return 'F6'
-    case 'f7': return 'F7'
-    case 'f8': return 'F8'
     //
-    case 'g1': return 'G1'
-    case 'g2': return 'G2'
-    case 'g3': return 'G3'
-    case 'g4': return 'G4'
-    case 'g5': return 'G5'
-    case 'g6': return 'G6'
-    case 'g7': return 'G7'
-    case 'g8': return 'G8'
+    case "a1":
+      return "A1"
+    case "a2":
+      return "A2"
+    case "a3":
+      return "A3"
+    case "a4":
+      return "A4"
+    case "a5":
+      return "A5"
+    case "a6":
+      return "A6"
+    case "a7":
+      return "A7"
+    case "a8":
+      return "A8"
     //
-    case 'h1': return 'H1'
-    case 'h2': return 'H2'
-    case 'h3': return 'H3'
-    case 'h4': return 'H4'
-    case 'h5': return 'H5'
-    case 'h6': return 'H6'
-    case 'h7': return 'H7'
-    case 'h8': return 'H8'
+    case "b1":
+      return "B1"
+    case "b2":
+      return "B2"
+    case "b3":
+      return "B3"
+    case "b4":
+      return "B4"
+    case "b5":
+      return "B5"
+    case "b6":
+      return "B6"
+    case "b7":
+      return "B7"
+    case "b8":
+      return "B8"
+    //
+    case "c1":
+      return "C1"
+    case "c2":
+      return "C2"
+    case "c3":
+      return "C3"
+    case "c4":
+      return "C4"
+    case "c5":
+      return "C5"
+    case "c6":
+      return "C6"
+    case "c7":
+      return "C7"
+    case "c8":
+      return "C8"
+    //
+    case "d1":
+      return "D1"
+    case "d2":
+      return "D2"
+    case "d3":
+      return "D3"
+    case "d4":
+      return "D4"
+    case "d5":
+      return "D5"
+    case "d6":
+      return "D6"
+    case "d7":
+      return "D7"
+    case "d8":
+      return "D8"
+    //
+    case "e1":
+      return "E1"
+    case "e2":
+      return "E2"
+    case "e3":
+      return "E3"
+    case "e4":
+      return "E4"
+    case "e5":
+      return "E5"
+    case "e6":
+      return "E6"
+    case "e7":
+      return "E7"
+    case "e8":
+      return "E8"
+    //
+    case "f1":
+      return "F1"
+    case "f2":
+      return "F2"
+    case "f3":
+      return "F3"
+    case "f4":
+      return "F4"
+    case "f5":
+      return "F5"
+    case "f6":
+      return "F6"
+    case "f7":
+      return "F7"
+    case "f8":
+      return "F8"
+    //
+    case "g1":
+      return "G1"
+    case "g2":
+      return "G2"
+    case "g3":
+      return "G3"
+    case "g4":
+      return "G4"
+    case "g5":
+      return "G5"
+    case "g6":
+      return "G6"
+    case "g7":
+      return "G7"
+    case "g8":
+      return "G8"
+    //
+    case "h1":
+      return "H1"
+    case "h2":
+      return "H2"
+    case "h3":
+      return "H3"
+    case "h4":
+      return "H4"
+    case "h5":
+      return "H5"
+    case "h6":
+      return "H6"
+    case "h7":
+      return "H7"
+    case "h8":
+      return "H8"
   }
 }
 
 export const toLowercaseSquare = (square: Square): LowercaseSquare => {
   switch (square) {
-    case 'A1': return 'a1'
-    case 'A2': return 'a2'
-    case 'A3': return 'a3'
-    case 'A4': return 'a4'
-    case 'A5': return 'a5'
-    case 'A6': return 'a6'
-    case 'A7': return 'a7'
-    case 'A8': return 'a8'
-    case 'B1': return 'b1'
-    case 'B2': return 'b2'
-    case 'B3': return 'b3'
-    case 'B4': return 'b4'
-    case 'B5': return 'b5'
-    case 'B6': return 'b6'
-    case 'B7': return 'b7'
-    case 'B8': return 'b8'
-    case 'C1': return 'c1'
-    case 'C2': return 'c2'
-    case 'C3': return 'c3'
-    case 'C4': return 'c4'
-    case 'C5': return 'c5'
-    case 'C6': return 'c6'
-    case 'C7': return 'c7'
-    case 'C8': return 'c8'
-    case 'D1': return 'd1'
-    case 'D2': return 'd2'
-    case 'D3': return 'd3'
-    case 'D4': return 'd4'
-    case 'D5': return 'd5'
-    case 'D6': return 'd6'
-    case 'D7': return 'd7'
-    case 'D8': return 'd8'
-    case 'E1': return 'e1'
-    case 'E2': return 'e2'
-    case 'E3': return 'e3'
-    case 'E4': return 'e4'
-    case 'E5': return 'e5'
-    case 'E6': return 'e6'
-    case 'E7': return 'e7'
-    case 'E8': return 'e8'
-    case 'F1': return 'f1'
-    case 'F2': return 'f2'
-    case 'F3': return 'f3'
-    case 'F4': return 'f4'
-    case 'F5': return 'f5'
-    case 'F6': return 'f6'
-    case 'F7': return 'f7'
-    case 'F8': return 'f8'
-    case 'G1': return 'g1'
-    case 'G2': return 'g2'
-    case 'G3': return 'g3'
-    case 'G4': return 'g4'
-    case 'G5': return 'g5'
-    case 'G6': return 'g6'
-    case 'G7': return 'g7'
-    case 'G8': return 'g8'
-    case 'H1': return 'h1'
-    case 'H2': return 'h2'
-    case 'H3': return 'h3'
-    case 'H4': return 'h4'
-    case 'H5': return 'h5'
-    case 'H6': return 'h6'
-    case 'H7': return 'h7'
-    case 'H8': return 'h8'
+    case "A1":
+      return "a1"
+    case "A2":
+      return "a2"
+    case "A3":
+      return "a3"
+    case "A4":
+      return "a4"
+    case "A5":
+      return "a5"
+    case "A6":
+      return "a6"
+    case "A7":
+      return "a7"
+    case "A8":
+      return "a8"
+    case "B1":
+      return "b1"
+    case "B2":
+      return "b2"
+    case "B3":
+      return "b3"
+    case "B4":
+      return "b4"
+    case "B5":
+      return "b5"
+    case "B6":
+      return "b6"
+    case "B7":
+      return "b7"
+    case "B8":
+      return "b8"
+    case "C1":
+      return "c1"
+    case "C2":
+      return "c2"
+    case "C3":
+      return "c3"
+    case "C4":
+      return "c4"
+    case "C5":
+      return "c5"
+    case "C6":
+      return "c6"
+    case "C7":
+      return "c7"
+    case "C8":
+      return "c8"
+    case "D1":
+      return "d1"
+    case "D2":
+      return "d2"
+    case "D3":
+      return "d3"
+    case "D4":
+      return "d4"
+    case "D5":
+      return "d5"
+    case "D6":
+      return "d6"
+    case "D7":
+      return "d7"
+    case "D8":
+      return "d8"
+    case "E1":
+      return "e1"
+    case "E2":
+      return "e2"
+    case "E3":
+      return "e3"
+    case "E4":
+      return "e4"
+    case "E5":
+      return "e5"
+    case "E6":
+      return "e6"
+    case "E7":
+      return "e7"
+    case "E8":
+      return "e8"
+    case "F1":
+      return "f1"
+    case "F2":
+      return "f2"
+    case "F3":
+      return "f3"
+    case "F4":
+      return "f4"
+    case "F5":
+      return "f5"
+    case "F6":
+      return "f6"
+    case "F7":
+      return "f7"
+    case "F8":
+      return "f8"
+    case "G1":
+      return "g1"
+    case "G2":
+      return "g2"
+    case "G3":
+      return "g3"
+    case "G4":
+      return "g4"
+    case "G5":
+      return "g5"
+    case "G6":
+      return "g6"
+    case "G7":
+      return "g7"
+    case "G8":
+      return "g8"
+    case "H1":
+      return "h1"
+    case "H2":
+      return "h2"
+    case "H3":
+      return "h3"
+    case "H4":
+      return "h4"
+    case "H5":
+      return "h5"
+    case "H6":
+      return "h6"
+    case "H7":
+      return "h7"
+    case "H8":
+      return "h8"
   }
 }
 
 export const isSquare = (square: unknown): square is Square => {
-  return typeof square === 'string' && isFile(square[0]) && isRank(square[1])
+  return typeof square === "string" && isFile(square[0]) && isRank(square[1])
 }
 
 export type PieceType = "P" | "B" | "N" | "R" | "Q" | "K"
@@ -416,9 +557,6 @@ export const init = (): Model => {
 //
 //
 
-
-
-
 const createInstance = (model: Model) => {
   const instance = new ChessTs.Chess()
   instance.load(model.fen)
@@ -485,34 +623,33 @@ export const toTurn = (model: Model): Color => {
   return instance.turn()
 }
 
-export type GameOver = {
-  type: "Checkmate",
-  winner: Color
-} | {
-  type: "Stalemate",
-}
+export type GameOver =
+  | {
+      type: "Checkmate"
+      winner: Color
+    }
+  | {
+      type: "Stalemate"
+    }
 
 export const toGameOver = (model: Model): GameOver | { type: "None" } => {
   if (inCheckmate(model)) {
     return {
       type: "Checkmate",
-      winner: toOppositeColor(toTurn(model))
+      winner: toOppositeColor(toTurn(model)),
     }
   }
 
-
   if (inStalemate(model)) {
     return {
-      type: "Stalemate"
+      type: "Stalemate",
     }
   }
 
   return {
-    type: "None"
+    type: "None",
   }
 }
-
-
 
 //
 //
@@ -523,8 +660,8 @@ export const toGameOver = (model: Model): GameOver | { type: "None" } => {
 //
 
 export type MoveInput = {
-  from: Square,
-  to: Square,
+  from: Square
+  to: Square
   promotion: PieceSymbol
 }
 
@@ -539,7 +676,7 @@ export const move = (
   const moveInput_ = {
     from: toLowercaseSquare(moveInput.from),
     to: toLowercaseSquare(moveInput.to),
-    promotion: moveInput.promotion
+    promotion: moveInput.promotion,
   }
 
   const moved = instance.move(moveInput_)
@@ -566,11 +703,13 @@ export const toLegalMoveInputs = (model: Model): MoveInput[] => {
 
 export const chessTsMoveToMove = (move: ChessTs.Move): MoveInput[] => {
   if (isLowercaseSquare(move.from) && isLowercaseSquare(move.to)) {
-    return [{
-      from: fromLowercase(move.from),
-      to: fromLowercase(move.to),
-      promotion: move.promotion ?? "q",
-    }]
+    return [
+      {
+        from: fromLowercase(move.from),
+        to: fromLowercase(move.to),
+        promotion: move.promotion ?? "q",
+      },
+    ]
   }
 
   return []
@@ -611,7 +750,6 @@ export const View = ({
     }
   }
 
-
   const clearPremoves = () => {
     if (boardRef.current) {
       // @ts-ignore
@@ -626,8 +764,6 @@ export const View = ({
       window.removeEventListener("resize", handler)
     }
   }, [])
-
-
 
   const instanceRef = useRef(createInstance(model))
   const [legalMoves, setLegalMoves] = useState<MoveInput[]>([])
@@ -656,43 +792,48 @@ export const View = ({
     refreshLegalMoves()
   }, [model.fen])
 
+  const lastMoveStyles: CustomSquareStyles = model.previousMove
+    ? {
+        [toLowercaseSquare(model.previousMove.to)]: {
+          background: "rgba(255, 255, 0, 0.4)",
+        },
 
-  const lastMoveStyles: CustomSquareStyles = model.previousMove ?
-    {
-      [toLowercaseSquare(model.previousMove.to)]: {
-        background: 'rgba(255, 255, 0, 0.4)'
-      },
-
-      [toLowercaseSquare(model.previousMove.from)]: {
-        background: 'rgba(255, 255, 0, 0.4)'
+        [toLowercaseSquare(model.previousMove.from)]: {
+          background: "rgba(255, 255, 0, 0.4)",
+        },
       }
-    }
-    : {
-    }
+    : {}
 
   const game = instanceRef.current
 
-  const legalMovesStyles = legalMoves.reduce<CustomSquareStyles>((styles, move) => ({
-    ...styles,
-    [toLowercaseSquare(move.to)]:
-      game.get(move.to) && selectedSquare && game.get(toLowercaseSquare(move.to))?.color !== game.get(toLowercaseSquare(selectedSquare))?.color
-        ? {
-          background: 'radial-gradient(circle, rgba(0,0,0,.2) 85%, transparent 85%)',
-          borderRadius: '50%',
-          cursor: "pointer"
+  const legalMovesStyles = legalMoves.reduce<CustomSquareStyles>(
+    (styles, move) => ({
+      ...styles,
+      [toLowercaseSquare(move.to)]:
+        game.get(move.to) &&
+        selectedSquare &&
+        game.get(toLowercaseSquare(move.to))?.color !==
+          game.get(toLowercaseSquare(selectedSquare))?.color
+          ? {
+              background:
+                "radial-gradient(circle, rgba(0,0,0,.2) 85%, transparent 85%)",
+              borderRadius: "50%",
+              cursor: "pointer",
+            }
+          : {
+              background:
+                "radial-gradient(circle, rgba(0,0,0,.2) 25%, transparent 25%)",
+              borderRadius: "50%",
+              cursor: "pointer",
+            },
+    }),
+    selectedSquare
+      ? {
+          [toLowercaseSquare(selectedSquare)]: {
+            background: "rgba(255, 255, 0, 0.4)",
+          },
         }
-        : {
-          background: 'radial-gradient(circle, rgba(0,0,0,.2) 25%, transparent 25%)',
-          borderRadius: '50%',
-          cursor: "pointer"
-        }
-  }),
-    selectedSquare ? {
-      [toLowercaseSquare(selectedSquare)]: {
-        background: 'rgba(255, 255, 0, 0.4)'
-      }
-    } :
-      {}
+      : {},
   )
 
   useEffect(() => {
@@ -714,7 +855,7 @@ export const View = ({
           backgroundColor: theme.dark,
         }}
         customLightSquareStyle={{
-          backgroundColor: theme.light
+          backgroundColor: theme.light,
         }}
         // onSquareClick={() => {
         //   clearPremoves()
@@ -730,10 +871,10 @@ export const View = ({
         }}
         customSquareStyles={{
           ...lastMoveStyles,
-          ...legalMovesStyles
+          ...legalMovesStyles,
         }}
         // customPieces={customPieces}
-        isDraggablePiece={({ piece, }) => {
+        isDraggablePiece={({ piece }) => {
           return isDraggablePiece({ piece })
         }}
         onPieceDrop={(from, to, _piece) => {
@@ -750,8 +891,23 @@ export const View = ({
   )
 }
 
-const pieces = ['wP', 'wN', 'wB', 'wR', 'wQ', 'wK', 'bP', 'bN', 'bB', 'bR', 'bQ', 'bK'];
-const customPieces: { [piece: string]: ({ squareWidth }: { squareWidth: number }) => ReactNode } = {};
+const pieces = [
+  "wP",
+  "wN",
+  "wB",
+  "wR",
+  "wQ",
+  "wK",
+  "bP",
+  "bN",
+  "bB",
+  "bR",
+  "bQ",
+  "bK",
+]
+const customPieces: {
+  [piece: string]: ({ squareWidth }: { squareWidth: number }) => ReactNode
+} = {}
 pieces.map((p) => {
   customPieces[p] = ({ squareWidth }) => (
     <div
@@ -759,11 +915,9 @@ pieces.map((p) => {
         width: squareWidth,
         height: squareWidth,
         backgroundImage: `url(/media/${p}.png)`,
-        backgroundSize: '100%',
+        backgroundSize: "100%",
       }}
     />
-  );
-  return null;
-});
-
-
+  )
+  return null
+})

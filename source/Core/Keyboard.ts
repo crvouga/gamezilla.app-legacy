@@ -22,21 +22,9 @@ export const isEnterKey = (key: unknown): key is EnterKey => {
 
 export type SpaceKey = "Space"
 
-export type WASD =
-  | "w"
-  | "a"
-  | "s"
-  | "d"
-  | "W"
-  | "A"
-  | "S"
-  | "D"
+export type WASD = "w" | "a" | "s" | "d" | "W" | "A" | "S" | "D"
 
-export type Key =
-  | WASD
-  | SpaceKey
-  | ArrowKey
-  | EnterKey
+export type Key = WASD | SpaceKey | ArrowKey | EnterKey
 
 const keys: { [key in Key]: Key } = {
   //

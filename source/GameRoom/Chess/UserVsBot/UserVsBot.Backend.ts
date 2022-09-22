@@ -1,6 +1,6 @@
 import { Cmd, Option, pipe, Sub, Task, Time } from "../../../Core"
 import { UserId } from "../../../Data"
-import * as Board from '../Board'
+import * as Board from "../Board"
 import {
   BackendModel,
   BackendMsg,
@@ -15,7 +15,7 @@ import {
   stopGame,
   ToBackend,
   ToFrontend,
-  initBackend
+  initBackend,
 } from "./UserVsBot.Types"
 
 //
@@ -77,25 +77,20 @@ const toBotMoveCmd = (modelPrev: Model, modelNext: Model): Cmd.Cmd<Msg> => {
   if (!didChangeToBotTurn) {
     return Cmd.None
   }
-  if (modelNext.type !== 'Game') {
+  if (modelNext.type !== "Game") {
     return Cmd.None
   }
 
   const cmd = pipe(
     Board.getBestMove(modelNext.botLevel, modelNext.board),
-    Cmd.perform((result): Msg => ['BotMoved', result])
+    Cmd.perform((result): Msg => ["BotMoved", result]),
   )
 
   return cmd
 }
 
-
-
 export const updateFromFrontend_ = (
-  {
-    sendToClient,
-    sendToRoom,
-  }: Wire,
+  { sendToClient, sendToRoom }: Wire,
   msg: ToBackend,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
@@ -144,7 +139,7 @@ export const updateFromFrontend_ = (
       return [modelNew, sendToRoom(["InputBot_Done", result])]
     }
 
-    case 'InputMove': {
+    case "InputMove": {
       const result = inputMove(msg[1], model)
 
       const modelNew = result.type === "Err" ? model : result.value

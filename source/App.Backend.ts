@@ -155,9 +155,8 @@ const updateFromFrontend = (
 
   switch (msg[0]) {
     case "Auth": {
-
       switch (msg[1][0]) {
-        case 'UserLoggedIn': {
+        case "UserLoggedIn": {
           const userId = msg[1][1]
 
           const session: Session = {
@@ -218,8 +217,8 @@ const sendToUser = (
 ) => {
   const clientIds = Object.values(model.sessions).flatMap((session) =>
     session.userId.type === "Some" &&
-      userIds.includes(session.userId.value) &&
-      session.clientId.type === "Some"
+    userIds.includes(session.userId.value) &&
+    session.clientId.type === "Some"
       ? [session.clientId.value]
       : [],
   )

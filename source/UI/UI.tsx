@@ -4,10 +4,15 @@ import { blue } from "@mui/material/colors"
 import { keyframes } from "@mui/system"
 import { ReactNode, useEffect, useMemo, useRef } from "react"
 import * as Icons from "./Icons"
-import Slide, { SlideProps } from '@mui/material/Slide';
+import Slide, { SlideProps } from "@mui/material/Slide"
 
 const SlideTransition = (props: SlideProps) => {
-  return <Slide {...props} direction="down" />;
+  return (
+    <Slide
+      {...props}
+      direction="down"
+    />
+  )
 }
 
 //
@@ -44,10 +49,10 @@ const createTheme = ({ mode }: { mode: "light" | "dark" }) =>
           defaultProps: {
             anchorOrigin: {
               horizontal: "center",
-              vertical: "top"
+              vertical: "top",
             },
-            TransitionComponent: SlideTransition
-          }
+            TransitionComponent: SlideTransition,
+          },
         },
         MuiTooltip: {
           defaultProps: {
@@ -580,14 +585,28 @@ export type ViewNode = ReactNode
 
 export type Sx = Mui.SxProps
 
-
-export const ActionButton = ({ label, icon, onClick }: { label: string, icon: ReactNode, onClick: () => void }) => {
+export const ActionButton = ({
+  label,
+  icon,
+  onClick,
+}: {
+  label: string
+  icon: ReactNode
+  onClick: () => void
+}) => {
   return (
-    <ButtonBase onClick={onClick} sx={{ paddingY: 1, paddingX: 2, display: "flex", flexDirection: "column" }}>
+    <ButtonBase
+      onClick={onClick}
+      sx={{
+        paddingY: 1,
+        paddingX: 2,
+        display: "flex",
+        flexDirection: "column",
+        flex: 1,
+      }}
+    >
       {icon}
-      <Typography variant="subtitle1">
-        {label}
-      </Typography>
+      <Typography variant="subtitle1">{label}</Typography>
     </ButtonBase>
   )
 }
