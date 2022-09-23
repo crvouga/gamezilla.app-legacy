@@ -3,14 +3,16 @@ import {
   BackendModel,
   BackendMsg,
   initSharedModel,
+  inputBestOutOf,
   inputMove,
+  inputMoveTimeLimit,
   inputPlayer,
   newGame,
   resign,
   startGame,
   stopPlaying,
   ToBackend,
-  ToFrontend,
+  ToFrontend
 } from "./TicTacToe.Types"
 
 //
@@ -125,6 +127,30 @@ export const updateFromFrontend = (
       const modelNew = result.value
 
       return [modelNew, sendToRoom(["NewGame_Done", result])]
+    }
+
+    case 'InputBestOutOf': {
+      const result = inputBestOutOf(msg[1], model)
+
+      if (result.type === "Err") {
+        return [model, sendToClient(["InputBestOutOf_Done", result])]
+      }
+
+      const modelNew = result.value
+
+      return [modelNew, sendToRoom(["InputBestOutOf_Done", result])]
+    }
+
+    case 'InputMoveTimeLimit': {
+      const result = inputMoveTimeLimit(msg[1], model)
+
+      if (result.type === "Err") {
+        return [model, sendToClient(["InputMoveTimeLimit_Done", result])]
+      }
+
+      const modelNew = result.value
+
+      return [modelNew, sendToRoom(["InputMoveTimeLimit_Done", result])]
     }
 
     default: {

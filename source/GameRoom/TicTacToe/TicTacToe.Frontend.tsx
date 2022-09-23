@@ -13,6 +13,12 @@ import {
   toGameOver,
   ToFrontend,
   GameModel,
+  allBestOutOf,
+  allMoveTimeLimit,
+  inputBestOutOf,
+  inputMoveTimeLimit,
+  inputMoveTimeLimitToString,
+  inputBestOutOfToString,
 } from "./TicTacToe.Types"
 
 //
@@ -76,6 +82,15 @@ export const update = (
     //
     //
 
+
+    case 'InputBestOutOf': {
+      return [model, sendToBackend(msg)]
+    }
+
+    case 'InputMoveTimeLimit': {
+      return [model, sendToBackend(msg)]
+    }
+
     case "InputMove": {
       return [model, sendToBackend(msg)]
     }
@@ -123,6 +138,25 @@ export const updateFromBackend_ = (
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
+    case 'InputMoveTimeLimit_Done': {
+      if (msg[1].type === "Err") {
+        return [model, Cmd.None]
+      }
+
+      const modelNew = mergeWithBackend(model, msg[1].value)
+
+      return [modelNew, Cmd.None]
+    }
+
+    case 'InputBestOutOf_Done': {
+      if (msg[1].type === "Err") {
+        return [model, Cmd.None]
+      }
+
+      const modelNew = mergeWithBackend(model, msg[1].value)
+
+      return [modelNew, Cmd.None]
+    }
 
     case 'NewGame_Done': {
       if (msg[1].type === "Err") {
@@ -233,6 +267,9 @@ export const View = ({
 
   if (model.type === "Setup") {
     const startGameResult = startGame({ userId: currentUserId }, model)
+    const inputBestOutOfResult = inputBestOutOf({ bestOutOf: model.bestOutOf, userId: currentUserId }, model)
+    const inputMoveTimeLimitResult = inputMoveTimeLimit({ moveTimeLimit: model.moveTimeLimit, userId: currentUserId }, model)
+
     return (
       <UI.FillBox>
 
@@ -242,7 +279,7 @@ export const View = ({
           right={roomAvatarGroup}
         />
 
-        <UI.Box sx={{ flex: 1, padding: 2 }}>
+        <UI.Box sx={{ flex: 1, padding: 2, overflowY: "scroll" }}>
           <UI.Typography
             color="text.secondary"
             sx={{ marginBottom: 1 }}
@@ -280,7 +317,7 @@ export const View = ({
 
           <UI.Typography
             color="text.secondary"
-            sx={{ marginTop: 2, marginBottom: 1 }}
+            sx={{ marginTop: 3, marginBottom: 1 }}
           >
             Player Two •{" "}
             <UI.Box
@@ -312,7 +349,44 @@ export const View = ({
               dispatch={dispatch}
             />
           )}
+
+          <UI.Typography
+            color="text.secondary"
+            sx={{ marginTop: 3, marginBottom: 1 }}
+          >
+            Best Out Of
+          </UI.Typography>
+
+          <UI.Tooltip title={inputBestOutOfToString(inputBestOutOfResult)}>
+            <UI.ToggleButtonGroup disabled={inputBestOutOfResult.type === 'Err'} fullWidth value={model.bestOutOf}>
+              {allBestOutOf.map(bestOutOf => (
+                <UI.ToggleButton key={bestOutOf} value={bestOutOf} onClick={() => dispatch(['InputBestOutOf', { userId: currentUserId, bestOutOf }])}>
+                  {bestOutOf}
+                </UI.ToggleButton>
+              ))}
+            </UI.ToggleButtonGroup>
+          </UI.Tooltip>
+
+
+          <UI.Typography
+            color="text.secondary"
+            sx={{ marginTop: 3, marginBottom: 1 }}
+          >
+            Move Time Limit
+          </UI.Typography>
+
+          <UI.Tooltip title={inputMoveTimeLimitToString(inputMoveTimeLimitResult)}>
+            <UI.ToggleButtonGroup disabled={inputMoveTimeLimitResult.type === 'Err'} fullWidth value={model.moveTimeLimit}>
+              {allMoveTimeLimit.map(moveTimeLimit => (
+                <UI.ToggleButton key={moveTimeLimit} value={moveTimeLimit} onClick={() => dispatch(['InputMoveTimeLimit', { userId: currentUserId, moveTimeLimit }])}>
+                  {moveTimeLimit}
+                </UI.ToggleButton>
+              ))}
+            </UI.ToggleButtonGroup>
+          </UI.Tooltip>
         </UI.Box>
+
+
 
         <UI.Box sx={{ padding: 2, display: "flex", gap: 2 }}>
           <UI.Button
@@ -341,7 +415,7 @@ export const View = ({
     <UI.FillBox>
       <UI.Header
         left={homeButton}
-        title={toGameText(model)}
+        title={toGameText({ model, store })}
         right={roomAvatarGroup}
       />
 
@@ -400,7 +474,7 @@ const ViewResignButton = ({ currentUserId, model, dispatch }: { currentUserId: U
   )
 }
 
-const toGameText = (model: Model): string => {
+const toGameText = ({ model, store }: { model: Model, store: Store.Model }): string => {
 
   switch (model.type) {
     case 'Setup': {
@@ -416,7 +490,7 @@ const toGameText = (model: Model): string => {
         }
 
         case 'Resignation': {
-          return `${gameOver.resigner} resigned`
+          return `${store.Profile[gameOver.resigner]?.username ?? "..."} resigned`
         }
 
         case 'Tie': {
