@@ -70,13 +70,10 @@ export type ToBackend = Request | ["Games", RoomId.RoomId, Game.ToBackend]
 export type BackendMsg = ["Games", RoomId.RoomId, Game.BackendMsg]
 
 export type FrontendMsg =
-  | ["ClickedBack"]
-  | ["ClickedHome"]
+  | ["ClickedGoHome"]
   | ["ClickedAvatars"]
   | ["ClosedDrawer"]
   | ["ClickedUser", { userId: UserId.UserId }]
-  | ["OpenedMenu"]
-  | ["ClosedMenu"]
   | ["ClickedBanner"]
   | ["Games", RoomId.RoomId, Game.FrontendMsg]
   | Request

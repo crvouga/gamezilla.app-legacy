@@ -289,9 +289,9 @@ export const View = ({
   dispatch,
   onCloseGame,
   roomAvatarGroup,
-  onBack,
+  goHome,
 }: {
-  onBack: () => void
+  goHome: () => void
   onCloseGame: () => void
   currentUserId: UserId.UserId
   store: Store.Model
@@ -342,7 +342,7 @@ export const View = ({
           model={model[1]}
           dispatch={(msg) => dispatch(["TicTacToe", msg])}
           onCloseGame={onCloseGame}
-          onBack={onBack}
+          goHome={goHome}
           roomAvatarGroup={roomAvatarGroup}
         />
       )
@@ -351,7 +351,7 @@ export const View = ({
     case "Chess": {
       return (
         <Chess.View
-          onBack={onBack}
+          goHome={goHome}
           onCloseGame={onCloseGame}
           currentUserId={currentUserId}
           store={store}

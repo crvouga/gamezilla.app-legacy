@@ -202,8 +202,8 @@ export const updateFromBackend = (
       const soundCmd = Board.inCheck(sharedModelNew.board)
         ? playAudio(Sounds.check)
         : sharedModelNew.didCapture
-        ? playAudio(Sounds.capture)
-        : playAudio(Sounds.move)
+          ? playAudio(Sounds.capture)
+          : playAudio(Sounds.move)
 
       return [{ ...model, sharedModel: sharedModelNew }, soundCmd, []]
     }
@@ -421,7 +421,7 @@ export const View = ({
   model,
   dispatch,
   roomAvatarGroup,
-  onBack,
+  goHome,
   onClose,
 }: {
   store: Store.Model
@@ -429,9 +429,16 @@ export const View = ({
   model: Model
   dispatch: (msg: Msg) => void
   roomAvatarGroup: UI.ViewNode
-  onBack: () => void
+  goHome: () => void
   onClose: () => void
 }) => {
+  const homeButton = <UI.IconButton
+    onClick={goHome}
+    sx={{ marginLeft: -1 }}
+  >
+    <UI.Icons.Home />
+  </UI.IconButton>
+
   if (model.sharedModel.type === "Setup") {
     const startGameResult = startGame(
       { userId: currentUserId },
@@ -441,17 +448,12 @@ export const View = ({
       { userId: currentUserId, clockPreset: model.sharedModel.clockPreset },
       model.sharedModel,
     )
+
+
     return (
       <UI.FillBox>
         <UI.Header
-          left={
-            <UI.IconButton
-              onClick={onBack}
-              sx={{ marginLeft: -1 }}
-            >
-              <UI.Icons.Home />
-            </UI.IconButton>
-          }
+          left={homeButton}
           title="Chess"
           right={roomAvatarGroup}
         />
@@ -601,14 +603,7 @@ export const View = ({
     return (
       <UI.FillBox>
         <UI.Header
-          left={
-            <UI.IconButton
-              onClick={onBack}
-              sx={{ marginLeft: -1 }}
-            >
-              <UI.Icons.Home />
-            </UI.IconButton>
-          }
+          left={homeButton}
           title="Chess"
           right={roomAvatarGroup}
         />
@@ -716,10 +711,10 @@ export const View = ({
     currentUserId === w && currentUserId === b
       ? "Both"
       : currentUserId === w
-      ? "w"
-      : currentUserId === b
-      ? "b"
-      : "None"
+        ? "w"
+        : currentUserId === b
+          ? "b"
+          : "None"
 
   const boardOrientation: Board.Color = pipe(
     currentUserColor === "None" || currentUserColor === "Both"
@@ -751,14 +746,7 @@ export const View = ({
   return (
     <UI.FillBox sx={{ overflowY: "scroll" }}>
       <UI.Header
-        left={
-          <UI.IconButton
-            sx={{ marginLeft: -1 }}
-            onClick={onBack}
-          >
-            <UI.Icons.Home></UI.Icons.Home>
-          </UI.IconButton>
-        }
+        left={homeButton}
         title={toGameText(model.sharedModel)}
         right={roomAvatarGroup}
       />
@@ -879,7 +867,7 @@ export const View = ({
                     model.sharedModel.type === "Game" &&
                     model.sharedModel.drawAgreement.type === "Asking" &&
                     model.sharedModel.drawAgreement.asker ===
-                      Board.toOppositeColor(currentUserColor)
+                    Board.toOppositeColor(currentUserColor)
                   }
                   headerIcon={
                     <UI.Icons.HandshakeTwoTone

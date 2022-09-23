@@ -144,8 +144,8 @@ const toWins = (board: Board): Wins => {
       const winner: Winner = slots.every((slot) => slot === "X")
         ? "X"
         : slots.every((slot) => slot === "O")
-        ? "O"
-        : "None"
+          ? "O"
+          : "None"
 
       return { ...wins, [winner]: [...wins[winner], winningGroup] }
     },
@@ -318,8 +318,10 @@ export const ViewSlot = ({
   cy,
   r,
   color,
+  strokeWidth
 }: {
   color?: string
+  strokeWidth?: number
   slot: Slot
   r: number
   cx: number
@@ -332,6 +334,7 @@ export const ViewSlot = ({
     case "O":
       return (
         <Naught
+          strokeWidth={strokeWidth}
           color={color}
           r={r}
           cx={cx}
@@ -342,6 +345,7 @@ export const ViewSlot = ({
     case "X":
       return (
         <Cross
+          strokeWidth={strokeWidth}
           color={color}
           r={r}
           cx={cx}

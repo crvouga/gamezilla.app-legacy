@@ -227,7 +227,7 @@ export const View = ({
   model,
   dispatch,
   onCloseGame,
-  onBack,
+  goHome,
 }: {
   onCloseGame: () => void
   currentUserId: UserId.UserId
@@ -235,7 +235,7 @@ export const View = ({
   model: Model
   dispatch: (msg: Msg) => void
   roomAvatarGroup: UI.ViewNode
-  onBack: () => void
+  goHome: () => void
 }) => {
   switch (model.mode[0]) {
     case "None": {
@@ -243,15 +243,15 @@ export const View = ({
         model.requests.InputMode.type === "Failure"
           ? inputModeProblemToString(model.requests.InputMode.problem)
           : model.requests.InputMode.type === "Loading"
-          ? "Loading..."
-          : ""
+            ? "Loading..."
+            : ""
 
       return (
         <UI.FillBox>
           <UI.Header
             left={
               <UI.IconButton
-                onClick={onBack}
+                onClick={goHome}
                 sx={{ marginLeft: -1 }}
               >
                 <UI.Icons.Home />
@@ -332,7 +332,7 @@ export const View = ({
           dispatch={(msg) => dispatch(["UserVsBot", msg])}
           model={model.mode[1]}
           store={store}
-          onBack={onBack}
+          goHome={goHome}
           roomAvatarGroup={roomAvatarGroup}
           onClose={() =>
             dispatch(["InputMode", { mode: "None", userId: currentUserId }])
@@ -352,7 +352,7 @@ export const View = ({
           onClose={() =>
             dispatch(["InputMode", { mode: "None", userId: currentUserId }])
           }
-          onBack={onBack}
+          goHome={goHome}
         />
       )
     }

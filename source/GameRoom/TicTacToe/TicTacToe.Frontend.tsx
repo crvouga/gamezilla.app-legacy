@@ -2,7 +2,7 @@ import { Cmd } from "../../Core"
 import { UserId } from "../../Data"
 import * as Store from "../../Store"
 import * as UI from "../../UI"
-import { Position, Slot, theme, ViewBoard, ViewSlot } from "./TicTacToe"
+import { PlayerType, Position, Slot, theme, ViewBoard, ViewSlot } from "./TicTacToe"
 import {
   BackendModel,
   FrontendModel,
@@ -12,6 +12,7 @@ import {
   ToBackend,
   toGameOver,
   ToFrontend,
+  GameModel,
 } from "./TicTacToe.Types"
 
 //
@@ -194,7 +195,7 @@ export const View = ({
   model,
   dispatch,
   onCloseGame,
-  onBack,
+  goHome,
   roomAvatarGroup,
 }: {
   currentUserId: UserId.UserId
@@ -202,7 +203,7 @@ export const View = ({
   model: Model
   dispatch: (msg: Msg) => void
   onCloseGame: () => void
-  onBack: () => void
+  goHome: () => void
   roomAvatarGroup: UI.ViewNode
 }) => {
   const header = (
@@ -210,7 +211,7 @@ export const View = ({
       left={
         <UI.IconButton
           sx={{ marginLeft: -1 }}
-          onClick={onBack}
+          onClick={goHome}
         >
           <UI.Icons.Home />
         </UI.IconButton>
@@ -254,7 +255,7 @@ export const View = ({
               Play as X
             </UI.Button>
           ) : (
-            <ViewPlayerSlot
+            <VidePlayerSetupSlot
               currentUserId={currentUserId}
               userId={model.players.X}
               store={store}
@@ -289,7 +290,7 @@ export const View = ({
               Play as O
             </UI.Button>
           ) : (
-            <ViewPlayerSlot
+            <VidePlayerSetupSlot
               currentUserId={currentUserId}
               userId={model.players.O}
               store={store}
@@ -324,23 +325,8 @@ export const View = ({
       {header}
 
       <UI.Box sx={{ display: "flex", gap: 2, paddingX: 2 }}>
-        <UI.Box
-          sx={{ flex: 1, display: "flex", alignItems: "center", paddingY: 1 }}
-        >
-          <UI.Avatar src={store.Profile[model.players.X]?.avatarUrl} />
-          <UI.Typography>
-            {store.Profile[model.players.X]?.username ?? "..."}
-          </UI.Typography>
-        </UI.Box>
-
-        <UI.Box
-          sx={{ flex: 1, display: "flex", alignItems: "center", paddingY: 1 }}
-        >
-          <UI.Avatar src={store.Profile[model.players.O]?.avatarUrl} />
-          <UI.Typography>
-            {store.Profile[model.players.O]?.username ?? "..."}
-          </UI.Typography>
-        </UI.Box>
+        <ViewPlayerGameSlot playerType="X" store={store} model={model} />
+        <ViewPlayerGameSlot playerType="O" store={store} model={model} />
       </UI.Box>
 
       <ViewBoard
@@ -372,7 +358,7 @@ export const View = ({
   )
 }
 
-const ViewPlayerSlot = ({
+const VidePlayerSetupSlot = ({
   currentUserId,
   store,
   userId,
@@ -406,25 +392,41 @@ const ViewPlayerSlot = ({
 const ViewPlayerGameSlot = ({
   store,
   model,
+  playerType,
 }: {
   store: Store.Model
-  model: Model
+  model: GameModel
+  playerType: PlayerType
 }) => {
-  if (model.type !== "Game") {
-    return <></>
-  }
-
+  const userId = model.players[playerType]
+  const profile = store.Profile[userId]
+  const theme = UI.useTheme()
   return (
     <UI.Box
-      sx={{ flex: 1, display: "flex", alignItems: "center", paddingY: 1 }}
+      sx={{
+        flex: 1,
+        display: "flex",
+        alignItems: "center",
+        paddingY: 1
+      }}
     >
-      <UI.Avatar src={store.Profile[model.players.O]?.avatarUrl} />
+      <UI.SvgIcon sx={{ display: "block", marginRight: 1 }} viewBox="-1 -1 2 2" >
+        <ViewSlot strokeWidth={0.3} color={theme.palette.text.primary} slot={playerType} cx={0} cy={0} r={0.8} />
+      </UI.SvgIcon>
+      <UI.Avatar src={profile?.avatarUrl} sx={{ marginRight: 1, width: 28, height: 28 }} />
       <UI.Typography>
-        {store.Profile[model.players.O]?.username ?? "..."}
+        {profile?.username ?? "..."}
       </UI.Typography>
     </UI.Box>
   )
 }
+// 
+// 
+// 
+// 
+// 
+//
+// 
 
 export const CoverArt = () => {
   const positions: [Position, Slot][] = [
