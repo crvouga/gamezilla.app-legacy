@@ -19,6 +19,8 @@ import {
   inputMoveTimeLimit,
   inputMoveTimeLimitToString,
   inputBestOutOfToString,
+  moveTimeLimitToString,
+  bestOutOfToString,
 } from "./TicTacToe.Types"
 
 //
@@ -217,8 +219,30 @@ export const updateFromBackend_ = (
 
       return [modelNew, Cmd.None]
     }
+
+    case 'MoveCountDown_Done': {
+      if (msg[1].type === "Err") {
+        return [model, Cmd.None]
+      }
+
+      const modelNew = mergeWithBackend(model, msg[1].value)
+
+      return [modelNew, Cmd.None]
+    }
+
+    case 'RoundCountDown_Done': {
+      if (msg[1].type === "Err") {
+        return [model, Cmd.None]
+      }
+
+      const modelNew = mergeWithBackend(model, msg[1].value)
+
+      return [modelNew, Cmd.None]
+    }
   }
 }
+
+
 
 export const mergeWithBackend = (
   frontendModel: FrontendModel,
@@ -361,7 +385,7 @@ export const View = ({
             <UI.ToggleButtonGroup disabled={inputBestOutOfResult.type === 'Err'} fullWidth value={model.bestOutOf}>
               {allBestOutOf.map(bestOutOf => (
                 <UI.ToggleButton key={bestOutOf} value={bestOutOf} onClick={() => dispatch(['InputBestOutOf', { userId: currentUserId, bestOutOf }])}>
-                  {bestOutOf}
+                  {bestOutOfToString(bestOutOf)}
                 </UI.ToggleButton>
               ))}
             </UI.ToggleButtonGroup>
@@ -379,7 +403,7 @@ export const View = ({
             <UI.ToggleButtonGroup disabled={inputMoveTimeLimitResult.type === 'Err'} fullWidth value={model.moveTimeLimit}>
               {allMoveTimeLimit.map(moveTimeLimit => (
                 <UI.ToggleButton key={moveTimeLimit} value={moveTimeLimit} onClick={() => dispatch(['InputMoveTimeLimit', { userId: currentUserId, moveTimeLimit }])}>
-                  {moveTimeLimit}
+                  {moveTimeLimitToString(moveTimeLimit)}
                 </UI.ToggleButton>
               ))}
             </UI.ToggleButtonGroup>
@@ -424,12 +448,35 @@ export const View = ({
         <ViewPlayerGameSlot playerType="O" store={store} model={model} />
       </UI.Box>
 
-      <ViewBoard
-        board={model.board}
-        onClick={(position) =>
-          dispatch(["InputMove", { position, userId: currentUserId }])
-        }
-      />
+      <UI.Box sx={{ width: "100%", position: "relative" }}>
+        <ViewBoard
+          board={model.board}
+          onClick={(position) =>
+            dispatch(["InputMove", { position, userId: currentUserId }])
+          }
+        />
+        {model.round.type === 'Starting' && (
+          <UI.Box sx={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", background: "rgba(0, 0, 0, 0.5)", display: "flex", alignItems: 'center', justifyContent: "center", flexDirection: "column" }}>
+            <UI.Box sx={{ flex: 1, display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
+              <UI.Typography align="center" variant="h6" color="text.secondary">
+                Round
+              </UI.Typography>
+              <UI.Typography align="center" variant="h3">
+                1 / {model.bestOutOf}
+              </UI.Typography>
+            </UI.Box>
+            <UI.Box sx={{ flex: 1 }}>
+              <UI.Typography align="center" color="text.secondary">
+                Starting in...
+              </UI.Typography>
+              <UI.Typography align="center" variant="h1">
+                {model.round.countDown}
+              </UI.Typography>
+            </UI.Box>
+            <UI.Box sx={{ flex: 1 }}></UI.Box>
+          </UI.Box>
+        )}
+      </UI.Box>
 
       <UI.Box sx={{ flex: 1 }} />
 
@@ -551,13 +598,12 @@ const ViewPlayerGameSlot = ({
   const theme = UI.useTheme()
 
   const boardStatus = toStatus(model.board)
+  const isTurn = boardStatus.type === 'Turn' && boardStatus.turn === playerType
 
   const iconSize = {
     width: 20,
     height: 20,
   }
-
-
 
 
   return (
@@ -568,18 +614,22 @@ const ViewPlayerGameSlot = ({
         alignItems: "center",
         padding: 1,
         overflow: "hidden",
-        borderBottom: `solid 3px ${boardStatus.type === 'Turn' && boardStatus.turn === playerType ? theme.palette.primary.main : theme.palette.divider}`,
+        borderBottom: `solid 3px ${isTurn ? theme.palette.primary.main : theme.palette.divider}`,
       }}
       variant="outlined"
-      elevation={12}
     >
       <UI.SvgIcon sx={{ display: "block", marginRight: 1, ...iconSize, }} viewBox="-1 -1 2 2" >
         <ViewSlot strokeWidth={0.3} color={theme.palette.text.primary} slot={playerType} cx={0} cy={0} r={0.8} />
       </UI.SvgIcon>
       <UI.Avatar src={profile?.avatarUrl} sx={{ marginRight: 1, ...iconSize, }} />
-      <UI.Typography noWrap>
+      <UI.Typography noWrap sx={{ flex: 1 }}>
         {profile?.username ?? "..."}
       </UI.Typography>
+      {isTurn && (
+        <UI.Typography sx={{ marginLeft: 1 }}>
+          {model.moveCountDown}
+        </UI.Typography>
+      )}
     </UI.Paper>
   )
 }

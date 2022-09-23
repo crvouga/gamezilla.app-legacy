@@ -1,7 +1,9 @@
-import { Cmd, exhaustive, Sub } from "../../Core"
+import { Cmd, exhaustive, Sub, Time } from "../../Core"
+import { toTurn } from "./TicTacToe"
 import {
   BackendModel,
   BackendMsg,
+  roundCountDown,
   initSharedModel,
   inputBestOutOf,
   inputMove,
@@ -12,7 +14,8 @@ import {
   startGame,
   stopPlaying,
   ToBackend,
-  ToFrontend
+  ToFrontend,
+  moveCountDown
 } from "./TicTacToe.Types"
 
 //
@@ -37,10 +40,30 @@ export const init: Model = initSharedModel
 
 export type Msg = BackendMsg
 
-export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
+export const update = ({
+  sendToRoom,
+}: {
+  sendToRoom: (msg: ToFrontend) => Cmd.Cmd<never>
+},
+  msg: Msg,
+  model: Model
+): [Model, Cmd.Cmd<Msg>] => {
+
   switch (msg[0]) {
-    case "Noop": {
-      return [model, Cmd.None]
+    case "RoundCountDown": {
+      const result = roundCountDown(model)
+
+      const modelNew = result.type === 'Err' ? model : result.value
+
+      return [modelNew, sendToRoom(['RoundCountDown_Done', result])]
+    }
+
+    case 'MoveCountDown': {
+      const result = moveCountDown(model)
+
+      const modelNew = result.type === 'Err' ? model : result.value
+
+      return [modelNew, sendToRoom(['MoveCountDown_Done', result])]
     }
   }
 }
@@ -167,17 +190,24 @@ export const updateFromFrontend = (
 //
 //
 
-export const subscriptions = (model: Model): Sub.Sub<Msg> => {
-
+export const subscriptions = (intervalId: string, model: Model): Sub.Sub<Msg> => {
   switch (model.type) {
-
     case 'Setup': {
       return Sub.None
     }
 
 
     case 'Game': {
-      return Sub.None
+      switch (model.round.type) {
+        case 'Started': {
+          const turn = toTurn(model.board)
+          return Time.every(`${intervalId}-move-count-down-${turn}`, 1000, (): Msg => ['MoveCountDown'])
+        }
+
+        case 'Starting': {
+          return Time.every(`${intervalId}-round-count-down`, 750, (): Msg => ['RoundCountDown'])
+        }
+      }
     }
   }
 }

@@ -190,7 +190,8 @@ export const toStatus = (board: Board): Status => {
 }
 
 const isTie = (board: Board): boolean => {
-  return toSlotFrequency(board).Empty === 0 && toWins(board).None.length === 0
+  const wins = toWins(board)
+  return toSlotFrequency(board).Empty === 0 && wins.O.length === 0 && wins.X.length === 0
 }
 
 type SlotFrequency = { X: number; O: number; Empty: number }
@@ -231,6 +232,10 @@ export const move = (
   }
 
   return Result.Ok(setSlot(board, position, player))
+}
+
+export const toEmptyPositions = (board: Board): Position[] => {
+  return allPositions.filter(position => toSlot(board, position) === 'Empty')
 }
 
 //
@@ -551,3 +556,4 @@ const SvgAvatar = ({
     </>
   )
 }
+
