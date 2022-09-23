@@ -1,6 +1,5 @@
 import * as Rx from "rxjs"
 import * as Cmd from "./Cmd"
-import * as Option from "./Option"
 import * as Sub from "./Sub"
 
 //
@@ -19,7 +18,6 @@ export type State<Model, Msg> = {
 
 export type Program<Model, Msg> = {
   dispatch: Dispatch<Msg>
-  cmd$: Cmd.Cmd<Msg>
   sub$: Sub.Sub<Msg>
   state$: Rx.BehaviorSubject<State<Model, Msg>>
 }
@@ -60,13 +58,10 @@ export const worker = <Model, Msg>({
     })
   }
 
-  const cmd$ = state$.pipe(Rx.mergeMap((state) => state.cmd))
-
   const sub$ = state$.pipe(Rx.switchMap((state) => subscriptions(state.model)))
 
   return {
     dispatch,
-    cmd$,
     sub$,
     state$,
   }
@@ -78,29 +73,9 @@ export const worker = <Model, Msg>({
 //
 //
 //
-//
-
-export const withStop =
-  (signal: Rx.Subject<unknown>) =>
-  <Model, Msg>(program: Program<Model, Msg>): Program<Model, Msg> => {
-    const { cmd$, sub$, ...rest } = program
-
-    return {
-      ...rest,
-      cmd$: cmd$.pipe(Rx.takeUntil(signal)),
-      sub$: sub$.pipe(Rx.takeUntil(signal)),
-    }
-  }
-
-//
-//
-//
-//
-//
-//
 
 export const run = <Model, Msg>(program: Program<Model, Msg>): (() => void) => {
-  const { dispatch, cmd$, sub$ } = program
+  const { dispatch, state$, sub$ } = program
 
   // WARNING
   // Order matters!
@@ -108,7 +83,9 @@ export const run = <Model, Msg>(program: Program<Model, Msg>): (() => void) => {
 
   const subSub = sub$.subscribe(dispatch)
 
-  const cmdSub = cmd$.subscribe((task) => task().then(Option.map(dispatch)))
+  const cmdSub = state$.subscribe(({ cmd }) => {
+    cmd(dispatch)
+  })
 
   return () => {
     cmdSub.unsubscribe()

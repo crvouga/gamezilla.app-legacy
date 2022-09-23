@@ -10,10 +10,10 @@ export const now = (): Task.Task<number> => {
 
 export const delay =
   <TMsg>(timeout: number, msg: TMsg): Task.Task<TMsg> =>
-  async () => {
-    await new Promise((resolve) => setTimeout(resolve, timeout))
-    return msg
-  }
+    async () => {
+      await new Promise((resolve) => setTimeout(resolve, timeout))
+      return msg
+    }
 
 //
 //
@@ -23,35 +23,32 @@ export const delay =
 //
 //
 
-const __timeouts: { [timeoutId: string]: string } = {}
+const timeouts = new Map<string, string>()
+
 
 export const startTimeout = <Msg>(
   timeoutId: string,
   duration: number,
   msg: Msg,
 ): Cmd.Cmd<Msg> => {
-  return Rx.of(async () => {
-    await new Promise((resolve) => {
-      __timeouts[timeoutId] = timeoutId
-      setTimeout(resolve, duration)
-    })
+  return (dispatch) => {
 
-    if (__timeouts[timeoutId]) {
-      return Option.Some(msg)
-    }
+    timeouts.set(timeoutId, timeoutId)
 
-    // memory clean up
-    delete __timeouts[timeoutId]
+    setTimeout(() => {
+      if (timeouts.has(timeoutId)) {
+        dispatch(msg)
+      }
 
-    return Option.None
-  })
+      timeouts.delete(timeoutId)
+    }, duration)
+  }
 }
 
 export const cancelTimeout = (timeoutId: string): Cmd.Cmd<never> => {
-  return Rx.of(async () => {
-    delete __timeouts[timeoutId]
-    return Option.None
-  })
+  return () => {
+    timeouts.delete(timeoutId)
+  }
 }
 
 //
