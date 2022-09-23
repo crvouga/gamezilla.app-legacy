@@ -257,14 +257,14 @@ export const ViewBoard = ({
 }) => {
   return (
     <svg
+
       width={"100%"}
       viewBox="0 0 3 3"
+      style={{
+        // maxHeight: 360,
+        backgroundColor: theme.background
+      }}
     >
-      <rect
-        width="100%"
-        height="100%"
-        fill={theme.background}
-      />
       {lines.map((line, index) => (
         <line
           key={index}
@@ -293,6 +293,7 @@ export const ViewBoard = ({
           key={[position.column, position.row, toSlot(board, position)].join(
             " ",
           )}
+          style={{ cursor: "pointer" }}
           x={Number(position.column)}
           y={Number(position.row)}
           width={1}
