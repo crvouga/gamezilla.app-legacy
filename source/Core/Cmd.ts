@@ -1,28 +1,41 @@
-import * as Rx from "rxjs"
-import * as Option from "./Option"
-import { pipe } from "./pipe"
 import * as Task from "./Task"
 
-export type Cmd<Msg> = Rx.Observable<Task.Task<Option.Option<Msg>>>
+export type Cmd<Msg> = (dispatch: (msg: Msg) => void) => void
 
-export const of = <Msg>(m: Msg): Cmd<Msg> => {
-  return Rx.of(Task.of(Option.Some(m)))
+export const of = <Msg>(msg: Msg): Cmd<Msg> => {
+  return (dispatch) => {
+    dispatch(msg)
+  }
 }
+
+
 
 export const map =
   <A, B>(mapper: (a: A) => B) =>
-  (Cmd: Cmd<A>) => {
-    return Cmd.pipe(Rx.map(Task.map(Option.map(mapper))))
-  }
+    (cmd: Cmd<A>): Cmd<B> => {
+      return (dispatch) => {
+        cmd((a) => {
+          dispatch(mapper(a))
+        })
+      }
+    }
 
 export const batch = <Msg>(cmdList: Cmd<Msg>[]): Cmd<Msg> => {
-  return Rx.merge(...cmdList)
+  return (dispatch) => {
+    for (const cmd of cmdList) {
+      cmd(dispatch)
+    }
+  }
 }
 
-export const None: Cmd<never> = Rx.EMPTY
+export const None: Cmd<never> = () => { }
 
 export const perform =
   <A, Msg>(f: (a: A) => Msg) =>
-  (task: Task.Task<A>): Cmd<Msg> => {
-    return pipe(task, Task.map(f), Task.map(Option.Some), Rx.of)
-  }
+    (task: Task.Task<A>): Cmd<Msg> => {
+      return (dispatch) => {
+        task().then(value => {
+          dispatch(f(value))
+        })
+      }
+    }

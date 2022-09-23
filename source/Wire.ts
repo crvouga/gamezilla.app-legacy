@@ -22,10 +22,9 @@ export const fromBackend = <Msg>(
 }
 
 export const sendToBackend = (msg: ToBackend): Cmd.Cmd<never> => {
-  return Rx.of(async () => {
+  return () => {
     _sendToBackend.next(msg)
-    return Option.None
-  })
+  }
 }
 
 export const onConnectionStatus = <Msg>(
@@ -91,17 +90,15 @@ export const sendToFrontend = (
   clientIds: ClientId.ClientId[],
   msg: ToFrontend,
 ): Cmd.Cmd<never> => {
-  return Rx.of(async () => {
+  return () => {
     _sendToFrontend.next([clientIds, msg])
-    return Option.None
-  })
+  }
 }
 
 export const broadcast = (msg: ToFrontend): Cmd.Cmd<never> => {
-  return Rx.of(async () => {
+  return () => {
     _broadcast.next(msg)
-    return Option.None
-  })
+  }
 }
 
 //
