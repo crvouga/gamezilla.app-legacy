@@ -10,36 +10,38 @@ import * as TicTacToe from "./TicTacToe"
 //
 //
 
-export type SharedModel =
-  | {
-      type: "Setup"
-      players: {
-        [playerType in TicTacToe.PlayerType]: UserId.UserId | "None"
-      }
-    }
-  | {
-      type: "Game"
-      players: {
-        [playerType in TicTacToe.PlayerType]: UserId.UserId
-      }
-      board: TicTacToe.Board
-      gameOver:
-        | { type: "None" }
-        | { type: "Resignation"; resigner: UserId.UserId }
-    }
+export type SharedModel = | SetupModel | GameModel
+
+export type SetupModel = {
+  type: "Setup"
+  players: {
+    [playerType in TicTacToe.PlayerType]: UserId.UserId | "None"
+  }
+}
+
+export type GameModel = {
+  type: "Game",
+  players: {
+    [playerType in TicTacToe.PlayerType]: UserId.UserId
+  }
+  board: TicTacToe.Board
+  gameOver:
+  | { type: "None" }
+  | { type: "Resignation"; resigner: UserId.UserId }
+}
 
 type GameOver =
   | {
-      type: "Resignation"
-      resigner: UserId.UserId
-    }
+    type: "Resignation"
+    resigner: UserId.UserId
+  }
   | {
-      type: "Win"
-      winner: UserId.UserId
-    }
+    type: "Win"
+    winner: UserId.UserId
+  }
   | {
-      type: "Tie"
-    }
+    type: "Tie"
+  }
 
 export const toGameOver = (model: SharedModel): GameOver | { type: "None" } => {
   if (model.type !== "Game") {

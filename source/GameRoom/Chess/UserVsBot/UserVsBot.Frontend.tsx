@@ -1,4 +1,3 @@
-import { Tooltip } from "@mui/material"
 import { Audio, Cmd, exhaustive, Option, Sub, tag } from "../../../Core"
 import { UserId } from "../../../Data"
 import * as Snackbar from "../../../Snackbar"
@@ -20,12 +19,8 @@ import {
   isBotTurn,
   Res,
   SharedModel,
-  startGame,
-  startGameProblemToString,
-  stopGame,
-  stopGameResultToString,
-  ToBackend,
-  ToFrontend,
+  startGame, stopGame, ToBackend,
+  ToFrontend
 } from "./UserVsBot.Types"
 
 //
@@ -189,8 +184,8 @@ const updateFromBackend_ = (
         sharedModel.type === "Game" && Board.inCheck(sharedModel.board)
           ? playAudio(Sounds.check)
           : didCapture
-          ? playAudio(Sounds.capture)
-          : playAudio(Sounds.move)
+            ? playAudio(Sounds.capture)
+            : playAudio(Sounds.move)
 
       return [{ ...model, sharedModel }, soundCmd, []]
     }
@@ -210,8 +205,8 @@ const updateFromBackend_ = (
         sharedModelNew.type === "Game" && Board.inCheck(sharedModelNew.board)
           ? playAudio(Sounds.check)
           : sharedModelNew.didCapture
-          ? playAudio(Sounds.capture)
-          : playAudio(Sounds.move)
+            ? playAudio(Sounds.capture)
+            : playAudio(Sounds.move)
 
       return [modelNew, soundCmd, []]
     }
@@ -296,7 +291,7 @@ export const View = ({
   store,
   model,
   dispatch,
-  onBack,
+  goHome,
   roomAvatarGroup,
   onClose,
 }: {
@@ -305,9 +300,19 @@ export const View = ({
   model: Model
   dispatch: (msg: Msg) => void
   roomAvatarGroup: UI.ViewNode
-  onBack: () => void
+  goHome: () => void
   onClose: () => void
 }) => {
+
+  const homeButton = (
+    <UI.IconButton
+      sx={{ marginLeft: -1 }}
+      onClick={goHome}
+    >
+      <UI.Icons.Home />
+    </UI.IconButton>
+  )
+
   if (model.sharedModel.type === "Setup") {
     const startGameResult = startGame(
       { userId: currentUserId },
@@ -325,14 +330,7 @@ export const View = ({
     return (
       <UI.FillBox>
         <UI.Header
-          left={
-            <UI.IconButton
-              sx={{ marginLeft: -1 }}
-              onClick={onBack}
-            >
-              <UI.Icons.Home />
-            </UI.IconButton>
-          }
+          left={homeButton}
           title="Chess"
           right={roomAvatarGroup}
         />
@@ -507,7 +505,7 @@ export const View = ({
       <UI.Avatar sx={{ marginRight: 2, backgroundColor: "transparent" }}>
         <UI.Icons.SmartToy
           sx={{ color: "text.primary", width: "100%", height: "100%" }}
-          // sx={{ width: 40, height: 40, marginRight: 2 }}
+        // sx={{ width: 40, height: 40, marginRight: 2 }}
         />
       </UI.Avatar>
 
@@ -556,14 +554,7 @@ export const View = ({
   return (
     <UI.FillBox>
       <UI.Header
-        left={
-          <UI.IconButton
-            sx={{ marginLeft: -1 }}
-            onClick={onBack}
-          >
-            <UI.Icons.Home />
-          </UI.IconButton>
-        }
+        left={homeButton}
         title={toGameText(model.sharedModel)}
         right={roomAvatarGroup}
       />

@@ -77,12 +77,8 @@ export const update = (
   const model: Model = { ...modelPrev, modal: "Closed" }
 
   switch (msg[0]) {
-    case "ClickedHome": {
+    case "ClickedGoHome": {
       return [model, Route.push(["Home"])]
-    }
-
-    case "ClickedBack": {
-      return [model, Route.back]
     }
 
     case "ClickedAvatars": {
@@ -95,14 +91,6 @@ export const update = (
 
     case "ClickedUser": {
       return [model, Route.push(["Profile", { userId: msg[1].userId }])]
-    }
-
-    case "OpenedMenu": {
-      return [{ ...model, modal: "MenuOpened" }, Cmd.None]
-    }
-
-    case "ClosedMenu": {
-      return [{ ...model, modal: "Closed" }, Cmd.None]
     }
 
     case "ClickedBanner": {
@@ -610,7 +598,7 @@ export const View = ({
       store={store}
       dispatch={(msg) => dispatch(["Games", room.roomId, msg])}
       model={game.value}
-      onBack={() => dispatch(["ClickedBack"])}
+      goHome={() => dispatch(["ClickedGoHome"])}
       roomAvatarGroup={
         <ViewGameRoomAvatarGroup
           currentUserId={currentUserId}
@@ -639,7 +627,9 @@ export const ViewNotInRoom = ({
 
   const header = (
     <UI.Header
-      left={<UI.HeaderBackButton onClick={() => dispatch(["ClickedHome"])} />}
+      left={<UI.IconButton sx={{ marginLeft: -1 }} onClick={() => dispatch(["ClickedGoHome"])}>
+        <UI.Icons.Home />
+      </UI.IconButton>}
       title="Game Rooms"
     />
   )
@@ -763,7 +753,7 @@ const ViewNotInGame = ({
         left={
           <UI.IconButton
             sx={{ marginLeft: -1 }}
-            onClick={() => dispatch(["ClickedHome"])}
+            onClick={() => dispatch(["ClickedGoHome"])}
           >
             <UI.Icons.Home />
           </UI.IconButton>
@@ -1079,9 +1069,8 @@ export const ViewBanner = ({
             variant="caption"
             color="text.secondary"
           >
-            {`${
-              game && game[0] ? `${Game.gameNameToString(game[0])} • ` : ""
-            }${roomCount} in room`}
+            {`${game && game[0] ? `${Game.gameNameToString(game[0])} • ` : ""
+              }${roomCount} in room`}
           </UI.Typography>
         </UI.Box>
 
@@ -1156,9 +1145,8 @@ export const ViewCard = ({
             color="text.secondary"
             noWrap
           >
-            {`${
-              gameName ? `${Game.gameNameToString(gameName)} • ` : ""
-            }${roomCount} in room`}
+            {`${gameName ? `${Game.gameNameToString(gameName)} • ` : ""
+              }${roomCount} in room`}
           </UI.Typography>
         </UI.Box>
       </UI.Paper>
