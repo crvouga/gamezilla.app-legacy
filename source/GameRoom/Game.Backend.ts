@@ -87,7 +87,7 @@ export const update = (
 
     case "TicTacToe": {
       if (model[0] === "TicTacToe") {
-        return tagUpdate("TicTacToe", TicTacToe.update(msg[1], model[1]))
+        return tagUpdate("TicTacToe", TicTacToe.update({ sendToRoom: msg => sendToRoom(['TicTacToe', msg]) }, msg[1], model[1]))
       }
       return [model, Cmd.None]
     }
@@ -241,7 +241,7 @@ export const subscriptions = (
       return tagSub("ConnectFour", ConnectFour.subscriptions(model[1]))
     }
     case "TicTacToe": {
-      return tagSub("TicTacToe", TicTacToe.subscriptions(model[1]))
+      return tagSub("TicTacToe", TicTacToe.subscriptions(roomId, model[1]))
     }
     case "Snake": {
       return tagSub("Snake", Snake.subscriptions(roomId, model[1]))
