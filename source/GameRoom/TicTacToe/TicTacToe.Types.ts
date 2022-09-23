@@ -17,6 +17,8 @@ export type SetupModel = {
   players: {
     [playerType in TicTacToe.PlayerType]: UserId.UserId | "None"
   }
+  bestOutOf: BestOutOf
+  moveTimeLimit: MoveTimeLimit
 }
 
 export type GameModel = {
@@ -24,13 +26,23 @@ export type GameModel = {
   players: {
     [playerType in TicTacToe.PlayerType]: UserId.UserId
   }
+  bestOutOf: BestOutOf
+  moveTimeLimit: MoveTimeLimit
   board: TicTacToe.Board
   gameOver:
   | { type: "None" }
   | { type: "Resignation"; resigner: UserId.UserId }
 }
 
-type GameOver =
+export type BestOutOf = "One" | "Three" | "Five"
+
+export const allBestOutOf: BestOutOf[] = ["One", "Three", "Five"]
+
+export type MoveTimeLimit = "5 Sec" | "10 Sec" | "15 Sec"
+
+export const allMoveTimeLimit: MoveTimeLimit[] = ["5 Sec", "10 Sec", "15 Sec"]
+
+export type GameOver =
   | {
     type: "Resignation"
     resigner: UserId.UserId
@@ -57,6 +69,8 @@ export const initSharedModel: SharedModel = {
     O: "None",
     X: "None",
   },
+  bestOutOf: "Three",
+  moveTimeLimit: "5 Sec",
 }
 
 export type FrontendModel = SharedModel & {
@@ -64,6 +78,7 @@ export type FrontendModel = SharedModel & {
 }
 
 export type BackendModel = SharedModel
+
 
 //
 //
@@ -85,10 +100,20 @@ export type BackendMsg = ["Noop"]
 
 export type GameMsg = ["ClickedBoard", TicTacToe.Position]
 
-export type Req = InputPlayer | StopPlaying | StartGame | Resign | InputMove | NewGame
+export type Req =
+  | InputPlayer
+  | InputMoveTimeLimit
+  | InputBestOutOf
+  | StopPlaying
+  | StartGame
+  | Resign
+  | InputMove
+  | NewGame
 
 export type Res =
   | InputPlayer_Done
+  | InputBestOutOf_Done
+  | InputMoveTimeLimit_Done
   | StopPlaying_Done
   | StartGame_Done
   | Resign_Done
@@ -226,7 +251,9 @@ export const startGame = (
       X: model.players.X,
       O: model.players.O,
     },
+    moveTimeLimit: "5 Sec",
     gameOver: { type: "None" },
+    bestOutOf: model.bestOutOf,
   }
 
   return Result.Ok(modelNew)
@@ -342,11 +369,101 @@ export const newGame = ({ userId }: NewGame[1], model: SharedModel): NewGame_Don
 
   const modelNew: SharedModel = {
     type: "Setup",
+    moveTimeLimit: model.moveTimeLimit,
     players: {
       O: model.players.O,
       X: model.players.X,
-    }
+    },
+    bestOutOf: model.bestOutOf
   }
 
   return Result.Ok(modelNew)
+}
+
+// 
+// 
+// 
+// 
+// 
+// 
+
+type InputBestOutOf = ["InputBestOutOf", { userId: UserId.UserId, bestOutOf: BestOutOf }]
+type InputBestOutOf_Done = ["InputBestOutOf_Done", Result.Result<InputBestOutOfProblem, SharedModel>]
+type InputBestOutOfProblem = "not_in_setup_mode" | "not_playing"
+
+export const inputBestOutOf = ({ userId, bestOutOf }: InputBestOutOf[1], model: SharedModel): InputBestOutOf_Done[1] => {
+  if (model.type !== 'Setup') {
+    return Result.Err("not_in_setup_mode")
+  }
+
+  if (model.players.X !== userId && model.players.O !== userId) {
+    return Result.Err("not_playing")
+  }
+
+  const modelNew: SharedModel = {
+    ...model,
+    bestOutOf
+  }
+
+  return Result.Ok(modelNew)
+}
+
+export const inputBestOutOfToString = (result: InputBestOutOf_Done[1]): string => {
+  if (result.type === 'Ok') {
+    return ""
+  }
+
+  switch (result.error) {
+    case 'not_in_setup_mode': {
+      return "Must be in setup mode to change"
+    }
+
+    case 'not_playing': {
+      return "Must be playing to change"
+    }
+  }
+}
+
+// 
+// 
+// 
+// 
+// 
+// 
+
+type InputMoveTimeLimit = ["InputMoveTimeLimit", { userId: UserId.UserId, moveTimeLimit: MoveTimeLimit }]
+type InputMoveTimeLimit_Done = ["InputMoveTimeLimit_Done", Result.Result<InputMoveTimeLimitProblem, SharedModel>]
+type InputMoveTimeLimitProblem = "not_in_setup_mode" | "not_playing"
+
+export const inputMoveTimeLimit = ({ userId, moveTimeLimit }: InputMoveTimeLimit[1], model: SharedModel): InputMoveTimeLimit_Done[1] => {
+  if (model.type !== 'Setup') {
+    return Result.Err("not_in_setup_mode")
+  }
+
+  if (model.players.X !== userId && model.players.O !== userId) {
+    return Result.Err("not_playing")
+  }
+
+  const modelNew: SharedModel = {
+    ...model,
+    moveTimeLimit
+  }
+
+  return Result.Ok(modelNew)
+}
+
+export const inputMoveTimeLimitToString = (result: InputMoveTimeLimit_Done[1]): string => {
+  if (result.type === 'Ok') {
+    return ""
+  }
+
+  switch (result.error) {
+    case 'not_in_setup_mode': {
+      return "Must be in setup move to change"
+    }
+
+    case 'not_playing': {
+      return "Must be playing to change"
+    }
+  }
 }
