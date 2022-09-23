@@ -32,7 +32,7 @@ export type Dispatch<Msg> = (msg: Msg) => void
 //
 //
 
-export const worker = <Model, Msg>({
+export const createProgram = <Model, Msg>({
   init,
   update,
   subscriptions,
@@ -64,31 +64,5 @@ export const worker = <Model, Msg>({
     dispatch,
     sub$,
     state$,
-  }
-}
-
-//
-//
-//
-//
-//
-//
-
-export const run = <Model, Msg>(program: Program<Model, Msg>): (() => void) => {
-  const { dispatch, state$, sub$ } = program
-
-  // WARNING
-  // Order matters!
-  // sub$.subscribe must happen before cmd$.subscribe to prevent bugs when using the dev tools debugger
-
-  const subSub = sub$.subscribe(dispatch)
-
-  const cmdSub = state$.subscribe(({ cmd }) => {
-    cmd(dispatch)
-  })
-
-  return () => {
-    cmdSub.unsubscribe()
-    subSub.unsubscribe()
   }
 }

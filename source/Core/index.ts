@@ -1,9 +1,10 @@
 export * as Audio from "./Audio"
-export * as LocalStorage from "./LocalStorage"
 export * as Browser from "./Browser"
 export * as Cmd from "./Cmd"
 export * as Debug from "./Debug"
+export * from "./equals"
 export * as Keyboard from "./Keyboard"
+export * as LocalStorage from "./LocalStorage"
 export * as Option from "./Option"
 export * from "./pipe"
 export * as Platform from "./Platform"
@@ -15,6 +16,4 @@ export * as Time from "./Time"
 export * from "./Utility"
 export * as Uuid from "./Uuid"
 export * as View from "./View"
-export * from "./equals"
 
-export type Dispatch = <msg>(msg: msg) => void

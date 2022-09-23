@@ -18,6 +18,7 @@ import {
   tag,
   tagCmd,
   tagSub,
+  Platform,
 } from "./Core"
 import * as GameRoom from "./GameRoom/GameRoom.Frontend"
 import * as Pages from "./Pages"
@@ -369,16 +370,16 @@ const initPage = (model: Model): [Model, Cmd.Cmd<Msg>] => {
 
 const updateStatusChanged =
   (modelPrev: Model) =>
-  (_msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
-    const statusPrev = toStatus(modelPrev)
-    const statusNew = toStatus(model)
+    (_msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
+      const statusPrev = toStatus(modelPrev)
+      const statusNew = toStatus(model)
 
-    if (statusNew[0] === statusPrev[0]) {
-      return [model, Cmd.None]
+      if (statusNew[0] === statusPrev[0]) {
+        return [model, Cmd.None]
+      }
+
+      return initPage(model)
     }
-
-    return initPage(model)
-  }
 
 const runAction = (action: OutAction, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (action[0]) {
@@ -453,19 +454,43 @@ const subscriptions = (model: Model): Sub.Sub<Msg> => {
   return Sub.batch<Msg>([
     Wire.onConnectionStatus(tag("Wire")),
     Wire.fromBackend(tag("▶")),
+    Browser.onLocation(onLocationChange),
     tagSub("Party", Party.subscriptions(model.party)),
     tagSub("Page", Pages.subscriptions(model.page)),
     tagSub("Auth", Auth.subscriptions),
-    model.auth[0] === "LoggedIn"
-      ? tagSub(
-          "GameRoom",
-          GameRoom.subscriptions(
-            { currentUserId: model.auth[1].userId },
-            model.gameRoom,
-          ),
-        )
-      : Sub.None,
+    gameRoomSub(model),
   ])
+}
+
+const gameRoomSub = (model: Model): Sub.Sub<Msg> => {
+  switch (model.auth[0]) {
+    case 'Loading': {
+      return Sub.None
+    }
+
+    case 'LoggedOut': {
+      return Sub.None
+    }
+
+    case 'LoggedIn': {
+      return tagSub(
+        "GameRoom",
+        GameRoom.subscriptions(
+          { currentUserId: model.auth[1].userId },
+          model.gameRoom,
+        ),
+      )
+    }
+  }
+}
+
+const onLocationChange = (location: Browser.Location): Msg => {
+  return pipe(
+    location,
+    Route.decode,
+    Option.withDefault<Route.Model>(["GameRoom"]),
+    (route) => ["Route", ["GotRoute", route]],
+  )
 }
 
 //
@@ -632,22 +657,6 @@ const ViewError = ({ reason }: { reason: string }) => (
   </UI.FillBox>
 )
 
-//
-//
-//
-// Location
-//
-//
-//
-
-const onLocationChange = (location: Browser.Location): Msg => {
-  return pipe(
-    location,
-    Route.decode,
-    Option.withDefault<Route.Model>(["GameRoom"]),
-    (route) => ["Route", ["GotRoute", route]],
-  )
-}
 
 //
 //
@@ -734,44 +743,6 @@ const toStatus = ({
   }
 }
 
-//
-//
-//
-// Main
-//
-//
-//
-
-const { program, stopDebugger } = Debug.ReduxDevTools.withDebugger(
-  Browser.application({
-    init,
-    onLocationChange,
-    subscriptions,
-    update,
-    view: (model) => (dispatch) =>
-      (
-        <View
-          model={model}
-          dispatch={dispatch}
-        />
-      ),
-  }),
-)
-
-const root = ReactDomClient.createRoot(document.getElementById("root")!)
-
-const stopProgram = Browser.run(program, (dom) => {
-  root.render(dom)
-})
-
-// program.state$.subscribe(({ model, msg }) => {
-//   if (msg) {
-//     const [msgType, msgPayload] = Debug.format(msg)
-//     console.log(msgType, msgPayload)
-//   }
-//   console.log(model)
-//   console.log("\n")
-// })
 
 //
 //
@@ -819,16 +790,37 @@ Wire._sendToBackend.subscribe((msg) => {
 //
 //
 //
-// HMR
+// Main
 //
 //
 //
 
-export const cleanup = () => {
-  root.unmount()
-  stopDebugger()
-  stopProgram()
-  socketClient.close()
-}
+const { program } =
+  Debug.ReduxDevTools.withDebugger(
+    Platform.createProgram({
+      init: init(Browser.getLocation()),
+      subscriptions,
+      update,
+    })
+  )
+
+const root = ReactDomClient.createRoot(document.getElementById("root")!)
+
+program.sub$.subscribe(msg => {
+  program.dispatch(msg)
+})
+
+program.state$.subscribe(({ model, cmd, }) => {
+  cmd(program.dispatch)
+  root.render(<View model={model} dispatch={program.dispatch} />)
+})
+
+//
+//
+//
+// HMR
+//
+//
+//
 
 export const exporting_so_HMR_is_disabled = {}

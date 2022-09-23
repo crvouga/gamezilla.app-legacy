@@ -5,7 +5,7 @@ import {
   BackendMsg,
   Session,
   ToBackend,
-  ToFrontend,
+  ToFrontend
 } from "./App.Types"
 import { Cmd, Option, pipe, Platform, Sub, tag, tagCmd } from "./Core"
 import { ClientId, SessionId, UserId } from "./Data"
@@ -217,8 +217,8 @@ const sendToUser = (
 ) => {
   const clientIds = Object.values(model.sessions).flatMap((session) =>
     session.userId.type === "Some" &&
-    userIds.includes(session.userId.value) &&
-    session.clientId.type === "Some"
+      userIds.includes(session.userId.value) &&
+      session.clientId.type === "Some"
       ? [session.clientId.value]
       : [],
   )
@@ -256,37 +256,6 @@ const subscriptions = (model: Model): Sub.Sub<Msg> => {
   ])
 }
 
-//
-//
-//
-// Main
-//
-//
-//
-
-const program = Platform.worker({
-  init: init(),
-  subscriptions,
-  update,
-})
-
-Platform.run(program)
-
-program.state$.subscribe((state) => {
-  const msg = state.msg?.flat(Infinity)
-  const msgType = msg?.reduce<string | null>(
-    (msgType, subMsgType) =>
-      typeof subMsgType === "string"
-        ? msgType
-          ? `${msgType}.${subMsgType}`
-          : subMsgType
-        : msgType,
-    null,
-  )
-  if (msgType) {
-    console.log(msgType)
-  }
-})
 
 //
 //
@@ -371,4 +340,51 @@ httpServer.listen(port, () => {
   console.clear()
   console.log(`\n[backend] http server running at:`)
   console.log(`[backend] http://localhost:${port}/\n`)
+})
+
+
+//
+//
+//
+// Main
+//
+//
+//
+
+const program = Platform.createProgram({
+  init: init(),
+  subscriptions,
+  update,
+})
+
+program.sub$.subscribe(msg => {
+  program.dispatch(msg)
+})
+
+program.state$.subscribe(({ cmd }) => {
+  cmd(program.dispatch)
+})
+
+// 
+// 
+// 
+// Logging
+// 
+// 
+// 
+
+program.state$.subscribe((state) => {
+  const msg = state.msg?.flat(Infinity)
+  const msgType = msg?.reduce<string | null>(
+    (msgType, subMsgType) =>
+      typeof subMsgType === "string"
+        ? msgType
+          ? `${msgType}.${subMsgType}`
+          : subMsgType
+        : msgType,
+    null,
+  )
+  if (msgType) {
+    console.log(msgType)
+  }
 })

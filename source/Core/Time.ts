@@ -1,6 +1,5 @@
 import * as Rx from "rxjs"
 import * as Cmd from "./Cmd"
-import * as Option from "./Option"
 import * as Sub from "./Sub"
 import * as Task from "./Task"
 
@@ -60,10 +59,10 @@ export const cancelTimeout = (timeoutId: string): Cmd.Cmd<never> => {
 //
 
 // NOTE: needs to be cleaned up when using HMR
-let __intervals: { [intervalId: string]: Rx.Subject<number> } = {}
+const intervals = new Map<string, Rx.Subject<number>>()
 
 const onTimeout = (intervalId: string, time: number) => {
-  const subj = __intervals[intervalId]
+  const subj = intervals.get(intervalId)
 
   if (subj && subj.observed) {
     subj.next(new Date().getTime())
@@ -73,7 +72,7 @@ const onTimeout = (intervalId: string, time: number) => {
     return
   }
 
-  delete __intervals[intervalId]
+  intervals.delete(intervalId)
 }
 
 export const every = <Msg>(
@@ -81,26 +80,18 @@ export const every = <Msg>(
   time: number,
   f: (time: number) => Msg,
 ): Sub.Sub<Msg> => {
-  let subj = __intervals[intervalId]
+  let subj = intervals.get(intervalId)
 
   if (subj === undefined) {
-    __intervals[intervalId] = subj = new Rx.Subject<number>()
+    subj = new Rx.Subject<number>()
 
-    setTimeout(() => onTimeout(intervalId, time), time)
+    intervals.set(intervalId, subj)
+
+    setTimeout(() => {
+      onTimeout(intervalId, time)
+    }, time)
   }
 
   return subj.pipe(Rx.map(() => f(new Date().getTime())))
 }
 
-//
-//
-//
-//
-//
-//
-
-export type Seconds = number & { _type: "Seconds" }
-
-export const isSeconds = (seconds: unknown): seconds is Seconds => {
-  return typeof seconds === "number"
-}
