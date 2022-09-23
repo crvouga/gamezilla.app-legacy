@@ -2,7 +2,7 @@ import { Cmd } from "../../Core"
 import { UserId } from "../../Data"
 import * as Store from "../../Store"
 import * as UI from "../../UI"
-import { PlayerType, Position, Slot, theme, toTurn, ViewBoard, ViewSlot } from "./TicTacToe"
+import { PlayerType, Position, Slot, theme, toStatus, toTurn, ViewBoard, ViewSlot } from "./TicTacToe"
 import {
   BackendModel,
   FrontendModel,
@@ -293,7 +293,7 @@ export const View = ({
             </UI.Box>
           </UI.Typography>
 
-          {model.players.X === "None" ? (
+          {model.X === "None" ? (
             <UI.Button
               fullWidth
               variant="contained"
@@ -309,7 +309,7 @@ export const View = ({
           ) : (
             <VidePlayerSetupSlot
               currentUserId={currentUserId}
-              userId={model.players.X}
+              userId={model.X}
               store={store}
               dispatch={dispatch}
             />
@@ -328,7 +328,7 @@ export const View = ({
             </UI.Box>
           </UI.Typography>
 
-          {model.players.O === "None" ? (
+          {model.O === "None" ? (
             <UI.Button
               fullWidth
               variant="contained"
@@ -344,7 +344,7 @@ export const View = ({
           ) : (
             <VidePlayerSetupSlot
               currentUserId={currentUserId}
-              userId={model.players.O}
+              userId={model.O}
               store={store}
               dispatch={dispatch}
             />
@@ -546,14 +546,19 @@ const ViewPlayerGameSlot = ({
   model: GameModel
   playerType: PlayerType
 }) => {
-  const userId = model.players[playerType]
+  const userId = model[playerType]
   const profile = store.Profile[userId]
   const theme = UI.useTheme()
+
+  const boardStatus = toStatus(model.board)
 
   const iconSize = {
     width: 20,
     height: 20,
   }
+
+
+
 
   return (
     <UI.Paper
@@ -563,8 +568,10 @@ const ViewPlayerGameSlot = ({
         alignItems: "center",
         padding: 1,
         overflow: "hidden",
+        borderBottom: `solid 3px ${boardStatus.type === 'Turn' && boardStatus.turn === playerType ? theme.palette.primary.main : theme.palette.divider}`,
       }}
       variant="outlined"
+      elevation={12}
     >
       <UI.SvgIcon sx={{ display: "block", marginRight: 1, ...iconSize, }} viewBox="-1 -1 2 2" >
         <ViewSlot strokeWidth={0.3} color={theme.palette.text.primary} slot={playerType} cx={0} cy={0} r={0.8} />

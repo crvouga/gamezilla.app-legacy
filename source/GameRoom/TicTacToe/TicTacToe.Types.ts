@@ -13,26 +13,34 @@ import * as TicTacToe from "./TicTacToe"
 export type SharedModel = | SetupModel | GameModel
 
 export type SetupModel = {
-  type: "Setup"
-  players: {
-    [playerType in TicTacToe.PlayerType]: UserId.UserId | "None"
-  }
+  type: "Setup",
+  X: UserId.UserId | "None",
+  O: UserId.UserId | "None",
   bestOutOf: BestOutOf
   moveTimeLimit: MoveTimeLimit
 }
 
 export type GameModel = {
   type: "Game",
-  players: {
-    [playerType in TicTacToe.PlayerType]: UserId.UserId
-  }
+  X: UserId.UserId,
+  O: UserId.UserId,
   bestOutOf: BestOutOf
-  moveTimeLimit: MoveTimeLimit
+  moveTimeLimit: MoveTimeLimit,
   board: TicTacToe.Board
   gameOver:
   | { type: "None" }
   | { type: "Resignation"; resigner: UserId.UserId }
 }
+
+export type RoundStatus =
+  | {
+    type: "Starting",
+    countDown: number
+  }
+  | {
+    type: "Started",
+  }
+
 
 export type BestOutOf = "One" | "Three" | "Five"
 
@@ -65,10 +73,8 @@ export const toGameOver = (model: SharedModel): GameOver | { type: "None" } => {
 
 export const initSharedModel: SharedModel = {
   type: "Setup",
-  players: {
-    O: "None",
-    X: "None",
-  },
+  O: "None",
+  X: "None",
   bestOutOf: "Three",
   moveTimeLimit: "5 Sec",
 }
@@ -146,24 +152,21 @@ export const inputPlayer = (
     return Result.Err("must_be_in_setup_mode")
   }
 
-  const targetPlayer = model.players[playerType]
+  const targetPlayer = model[playerType]
 
   if (targetPlayer !== "None") {
     return Result.Err("player_is_taken")
   }
 
-  const otherPlayer = model.players[TicTacToe.toOpposite(playerType)]
+  const otherPlayer = model[TicTacToe.toOpposite(playerType)]
 
   const otherPlayerNew =
     otherPlayer !== "None" && otherPlayer === userId ? "None" : otherPlayer
 
   const modelNew: SharedModel = {
     ...model,
-    players: {
-      ...model.players,
-      [playerType]: userId,
-      [TicTacToe.toOpposite(playerType)]: otherPlayerNew,
-    },
+    [playerType]: userId,
+    [TicTacToe.toOpposite(playerType)]: otherPlayerNew,
   }
 
   return Result.Ok(modelNew)
@@ -184,8 +187,8 @@ export const stopPlaying = (
     return Result.Err("must_be_in_setup_mode")
   }
 
-  const isPlayingX = model.players.X === userId
-  const isPlayingO = model.players.O === userId
+  const isPlayingX = model.X === userId
+  const isPlayingO = model.O === userId
 
   if (!isPlayingX && !isPlayingO) {
     return Result.Err("not_playing")
@@ -193,10 +196,8 @@ export const stopPlaying = (
 
   const modelNew: SharedModel = {
     ...model,
-    players: {
-      X: isPlayingX ? "None" : model.players.X,
-      O: isPlayingO ? "None" : model.players.O,
-    },
+    X: isPlayingX ? "None" : model.X,
+    O: isPlayingO ? "None" : model.O,
   }
 
   return Result.Ok(modelNew)
@@ -228,29 +229,27 @@ export const startGame = (
     return Result.Err("not_in_setup_mode")
   }
 
-  if (model.players.X !== userId && model.players.O !== userId) {
+  if (model.X !== userId && model.O !== userId) {
     return Result.Err("not_playing")
   }
 
-  if (model.players.X === "None" && model.players.O === "None") {
+  if (model.X === "None" && model.O === "None") {
     return Result.Err("missing_both")
   }
 
-  if (model.players.X === "None") {
+  if (model.X === "None") {
     return Result.Err("missing_x")
   }
 
-  if (model.players.O === "None") {
+  if (model.O === "None") {
     return Result.Err("missing_o")
   }
 
   const modelNew: SharedModel = {
     type: "Game",
     board: TicTacToe.emptyBoard,
-    players: {
-      X: model.players.X,
-      O: model.players.O,
-    },
+    X: model.X,
+    O: model.O,
     moveTimeLimit: "5 Sec",
     gameOver: { type: "None" },
     bestOutOf: model.bestOutOf,
@@ -319,7 +318,7 @@ export const inputMove = (
   }
 
   const playerType: TicTacToe.PlayerType | "None" =
-    model.players.O === userId ? "O" : model.players.X === userId ? "X" : "None"
+    model.O === userId ? "O" : model.X === userId ? "X" : "None"
 
   if (playerType === "None") {
     return Result.Err("not_playing")
@@ -363,17 +362,15 @@ export const newGame = ({ userId }: NewGame[1], model: SharedModel): NewGame_Don
     return Result.Err("not_in_game_mode")
   }
 
-  if (model.players.X !== userId && model.players.O !== userId) {
+  if (model.X !== userId && model.O !== userId) {
     return Result.Err("not_playing")
   }
 
   const modelNew: SharedModel = {
     type: "Setup",
     moveTimeLimit: model.moveTimeLimit,
-    players: {
-      O: model.players.O,
-      X: model.players.X,
-    },
+    O: model.O,
+    X: model.X,
     bestOutOf: model.bestOutOf
   }
 
@@ -396,7 +393,7 @@ export const inputBestOutOf = ({ userId, bestOutOf }: InputBestOutOf[1], model: 
     return Result.Err("not_in_setup_mode")
   }
 
-  if (model.players.X !== userId && model.players.O !== userId) {
+  if (model.X !== userId && model.O !== userId) {
     return Result.Err("not_playing")
   }
 
@@ -440,7 +437,7 @@ export const inputMoveTimeLimit = ({ userId, moveTimeLimit }: InputMoveTimeLimit
     return Result.Err("not_in_setup_mode")
   }
 
-  if (model.players.X !== userId && model.players.O !== userId) {
+  if (model.X !== userId && model.O !== userId) {
     return Result.Err("not_playing")
   }
 
@@ -467,3 +464,13 @@ export const inputMoveTimeLimitToString = (result: InputMoveTimeLimit_Done[1]): 
     }
   }
 }
+
+
+// 
+// 
+// 
+// Round Count Down Elapsed
+// 
+// 
+// 
+

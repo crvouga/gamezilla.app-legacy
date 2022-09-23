@@ -167,6 +167,17 @@ export const updateFromFrontend = (
 //
 //
 
-export const subscriptions = (_model: Model): Sub.Sub<Msg> => {
-  return Sub.batch<Msg>([])
+export const subscriptions = (model: Model): Sub.Sub<Msg> => {
+
+  switch (model.type) {
+
+    case 'Setup': {
+      return Sub.None
+    }
+
+
+    case 'Game': {
+      return Sub.None
+    }
+  }
 }
