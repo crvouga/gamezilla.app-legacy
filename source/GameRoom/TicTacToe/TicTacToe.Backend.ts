@@ -1,10 +1,11 @@
-import { Cmd, Sub } from "../../Core"
+import { Cmd, exhaustive, Sub } from "../../Core"
 import {
   BackendModel,
   BackendMsg,
   initSharedModel,
   inputMove,
   inputPlayer,
+  newGame,
   resign,
   startGame,
   stopPlaying,
@@ -112,6 +113,22 @@ export const updateFromFrontend = (
       const modelNew = result.value
 
       return [modelNew, sendToRoom(["InputMove_Done", result])]
+    }
+
+    case 'NewGame': {
+      const result = newGame(msg[1], model)
+
+      if (result.type === "Err") {
+        return [model, sendToClient(["NewGame_Done", result])]
+      }
+
+      const modelNew = result.value
+
+      return [modelNew, sendToRoom(["NewGame_Done", result])]
+    }
+
+    default: {
+      return exhaustive(msg[0])
     }
   }
 }

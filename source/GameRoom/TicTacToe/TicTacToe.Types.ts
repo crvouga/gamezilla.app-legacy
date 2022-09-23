@@ -35,13 +35,7 @@ type GameOver =
     type: "Resignation"
     resigner: UserId.UserId
   }
-  | {
-    type: "Win"
-    winner: UserId.UserId
-  }
-  | {
-    type: "Tie"
-  }
+  | TicTacToe.GameOver
 
 export const toGameOver = (model: SharedModel): GameOver | { type: "None" } => {
   if (model.type !== "Game") {
@@ -52,9 +46,9 @@ export const toGameOver = (model: SharedModel): GameOver | { type: "None" } => {
     return model.gameOver
   }
 
-  const gameOver = TicTacToe.toStatus(model.board)
+  const gameOver = TicTacToe.toGameOver(model.board)
 
-  return { type: "None" }
+  return gameOver
 }
 
 export const initSharedModel: SharedModel = {
@@ -91,7 +85,7 @@ export type BackendMsg = ["Noop"]
 
 export type GameMsg = ["ClickedBoard", TicTacToe.Position]
 
-export type Req = InputPlayer | StopPlaying | StartGame | Resign | InputMove
+export type Req = InputPlayer | StopPlaying | StartGame | Resign | InputMove | NewGame
 
 export type Res =
   | InputPlayer_Done
@@ -99,6 +93,7 @@ export type Res =
   | StartGame_Done
   | Resign_Done
   | InputMove_Done
+  | NewGame_Done
 
 //
 //
@@ -314,6 +309,43 @@ export const inputMove = (
   const modelNew: SharedModel = {
     ...model,
     board: boardNew,
+  }
+
+  return Result.Ok(modelNew)
+}
+
+// 
+// 
+// 
+// 
+// 
+// 
+
+type NewGame = ['NewGame', { userId: UserId.UserId }]
+type NewGame_Done = ['NewGame_Done', Result.Result<NewGameProblem, SharedModel>]
+type NewGameProblem = "not_playing" | "not_game_over" | "not_in_game_mode"
+
+export const newGame = ({ userId }: NewGame[1], model: SharedModel): NewGame_Done[1] => {
+  const gameOver = toGameOver(model)
+
+  if (gameOver.type === 'None') {
+    return Result.Err("not_game_over")
+  }
+
+  if (model.type !== 'Game') {
+    return Result.Err("not_in_game_mode")
+  }
+
+  if (model.players.X !== userId && model.players.O !== userId) {
+    return Result.Err("not_playing")
+  }
+
+  const modelNew: SharedModel = {
+    type: "Setup",
+    players: {
+      O: model.players.O,
+      X: model.players.X,
+    }
   }
 
   return Result.Ok(modelNew)

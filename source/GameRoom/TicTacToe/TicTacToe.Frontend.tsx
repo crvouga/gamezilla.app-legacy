@@ -2,7 +2,7 @@ import { Cmd } from "../../Core"
 import { UserId } from "../../Data"
 import * as Store from "../../Store"
 import * as UI from "../../UI"
-import { PlayerType, Position, Slot, theme, ViewBoard, ViewSlot } from "./TicTacToe"
+import { PlayerType, Position, Slot, theme, toTurn, ViewBoard, ViewSlot } from "./TicTacToe"
 import {
   BackendModel,
   FrontendModel,
@@ -95,6 +95,10 @@ export const update = (
     case "StartGame": {
       return [model, sendToBackend(msg)]
     }
+
+    case 'NewGame': {
+      return [model, sendToBackend(msg)]
+    }
   }
 }
 
@@ -119,14 +123,25 @@ export const updateFromBackend_ = (
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
+
+    case 'NewGame_Done': {
+      if (msg[1].type === "Err") {
+        return [model, Cmd.None]
+      }
+
+      const modelNew = mergeWithBackend(model, msg[1].value)
+
+      return [modelNew, Cmd.None]
+    }
+
     case "InputMove_Done": {
       if (msg[1].type === "Err") {
         return [model, Cmd.None]
       }
 
-      const sharedModel = msg[1].value
+      const modelNew = mergeWithBackend(model, msg[1].value)
 
-      return [{ ...sharedModel, openedModal: model.openedModal }, Cmd.None]
+      return [modelNew, Cmd.None]
     }
 
     case "InputPlayer_Done": {
@@ -134,9 +149,9 @@ export const updateFromBackend_ = (
         return [model, Cmd.None]
       }
 
-      const sharedModel = msg[1].value
+      const modelNew = mergeWithBackend(model, msg[1].value)
 
-      return [{ ...sharedModel, openedModal: model.openedModal }, Cmd.None]
+      return [modelNew, Cmd.None]
     }
 
     case "StopPlaying_Done": {
@@ -144,9 +159,9 @@ export const updateFromBackend_ = (
         return [model, Cmd.None]
       }
 
-      const sharedModel = msg[1].value
+      const modelNew = mergeWithBackend(model, msg[1].value)
 
-      return [{ ...sharedModel, openedModal: model.openedModal }, Cmd.None]
+      return [modelNew, Cmd.None]
     }
 
     case "StartGame_Done": {
@@ -154,9 +169,9 @@ export const updateFromBackend_ = (
         return [model, Cmd.None]
       }
 
-      const sharedModel = msg[1].value
+      const modelNew = mergeWithBackend(model, msg[1].value)
 
-      return [{ ...sharedModel, openedModal: model.openedModal }, Cmd.None]
+      return [modelNew, Cmd.None]
     }
 
     case "Resign_Done": {
@@ -164,9 +179,9 @@ export const updateFromBackend_ = (
         return [model, Cmd.None]
       }
 
-      const sharedModel = msg[1].value
+      const modelNew = mergeWithBackend(model, msg[1].value)
 
-      return [{ ...sharedModel, openedModal: model.openedModal }, Cmd.None]
+      return [modelNew, Cmd.None]
     }
   }
 }
@@ -206,26 +221,26 @@ export const View = ({
   goHome: () => void
   roomAvatarGroup: UI.ViewNode
 }) => {
-  const header = (
-    <UI.Header
-      left={
-        <UI.IconButton
-          sx={{ marginLeft: -1 }}
-          onClick={goHome}
-        >
-          <UI.Icons.Home />
-        </UI.IconButton>
-      }
-      title="Tic Tac Toe"
-      right={roomAvatarGroup}
-    />
+  const homeButton = (
+    <UI.IconButton
+      sx={{ marginLeft: -1 }}
+      onClick={goHome}
+    >
+      <UI.Icons.Home />
+    </UI.IconButton>
   )
+
 
   if (model.type === "Setup") {
     const startGameResult = startGame({ userId: currentUserId }, model)
     return (
       <UI.FillBox>
-        {header}
+
+        <UI.Header
+          left={homeButton}
+          title="Tic Tac Toe"
+          right={roomAvatarGroup}
+        />
 
         <UI.Box sx={{ flex: 1, padding: 2 }}>
           <UI.Typography
@@ -320,11 +335,17 @@ export const View = ({
     )
   }
 
+  const gameOver = toGameOver(model)
+
   return (
     <UI.FillBox>
-      {header}
+      <UI.Header
+        left={homeButton}
+        title={toGameText(model)}
+        right={roomAvatarGroup}
+      />
 
-      <UI.Box sx={{ display: "flex", gap: 2, paddingX: 2 }}>
+      <UI.Box sx={{ display: "flex", gap: 2, paddingX: 1, paddingY: 1 }}>
         <ViewPlayerGameSlot playerType="X" store={store} model={model} />
         <ViewPlayerGameSlot playerType="O" store={store} model={model} />
       </UI.Box>
@@ -338,24 +359,77 @@ export const View = ({
 
       <UI.Box sx={{ flex: 1 }} />
 
-      <UI.Box sx={{ display: "flex" }}>
-        <UI.ActionButton
-          icon={<UI.Icons.Flag />}
-          label="Resign"
-          onClick={() => dispatch(["OpenModal", "Resignation"])}
-        />
-        <UI.ConformationDialog
-          open={model.openedModal === "Resignation"}
-          onCancel={() => dispatch(["CloseModal"])}
-          onClose={() => dispatch(["CloseModal"])}
-          onConfirm={() => dispatch(["Resign", { userId: currentUserId }])}
-          headerIcon={<UI.Icons.Flag sx={{ width: 64, height: 64 }} />}
-          title="Resign from game?"
-          confirmTitle="Resign"
-        />
+      <UI.Box sx={{ display: "flex", width: '100%' }}>
+        {gameOver.type === 'None' ? (
+          <>
+            <ViewResignButton model={model} currentUserId={currentUserId} dispatch={dispatch} />
+          </>
+        ) : (
+          <>
+            <UI.Box sx={{ flex: 1, padding: 2, display: 'flex', gap: 2 }}>
+              <UI.Button fullWidth variant='contained' onClick={() => dispatch(['NewGame', { userId: currentUserId }])}>
+                New Game
+              </UI.Button>
+            </UI.Box>
+          </>
+        )}
+
       </UI.Box>
     </UI.FillBox>
   )
+}
+
+const ViewResignButton = ({ currentUserId, model, dispatch }: { currentUserId: UserId.UserId, model: Model, dispatch: (msg: Msg) => void }) => {
+  return (
+    <>
+      <UI.ActionButton
+        icon={<UI.Icons.Flag />}
+        label="Resign"
+        onClick={() => dispatch(["OpenModal", "Resignation"])}
+      />
+      <UI.ConformationDialog
+        open={model.openedModal === "Resignation"}
+        onCancel={() => dispatch(["CloseModal"])}
+        onClose={() => dispatch(["CloseModal"])}
+        onConfirm={() => dispatch(["Resign", { userId: currentUserId }])}
+        headerIcon={<UI.Icons.Flag sx={{ width: 64, height: 64 }} />}
+        title="Resign from game?"
+        confirmTitle="Resign"
+      />
+    </>
+  )
+}
+
+const toGameText = (model: Model): string => {
+
+  switch (model.type) {
+    case 'Setup': {
+      return "Setting up"
+    }
+
+    case 'Game': {
+      const gameOver = toGameOver(model)
+      switch (gameOver.type) {
+        case 'None': {
+          const turn = toTurn(model.board)
+          return `${turn}'s Turn`
+        }
+
+        case 'Resignation': {
+          return `${gameOver.resigner} resigned`
+        }
+
+        case 'Tie': {
+          return "Tie"
+        }
+
+        case 'Win': {
+          return `${gameOver.winner} won`
+        }
+      }
+    }
+  }
+
 }
 
 const VidePlayerSetupSlot = ({
@@ -401,23 +475,31 @@ const ViewPlayerGameSlot = ({
   const userId = model.players[playerType]
   const profile = store.Profile[userId]
   const theme = UI.useTheme()
+
+  const iconSize = {
+    width: 20,
+    height: 20,
+  }
+
   return (
-    <UI.Box
+    <UI.Paper
       sx={{
         flex: 1,
         display: "flex",
         alignItems: "center",
-        paddingY: 1
+        padding: 1,
+        overflow: "hidden",
       }}
+      variant="outlined"
     >
-      <UI.SvgIcon sx={{ display: "block", marginRight: 1 }} viewBox="-1 -1 2 2" >
+      <UI.SvgIcon sx={{ display: "block", marginRight: 1, ...iconSize, }} viewBox="-1 -1 2 2" >
         <ViewSlot strokeWidth={0.3} color={theme.palette.text.primary} slot={playerType} cx={0} cy={0} r={0.8} />
       </UI.SvgIcon>
-      <UI.Avatar src={profile?.avatarUrl} sx={{ marginRight: 1, width: 28, height: 28 }} />
-      <UI.Typography>
+      <UI.Avatar src={profile?.avatarUrl} sx={{ marginRight: 1, ...iconSize, }} />
+      <UI.Typography noWrap>
         {profile?.username ?? "..."}
       </UI.Typography>
-    </UI.Box>
+    </UI.Paper>
   )
 }
 // 
