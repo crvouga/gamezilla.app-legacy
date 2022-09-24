@@ -5,7 +5,7 @@ import * as Store from "../../../Store"
 import * as UI from "../../../UI"
 import * as Board from "../Board"
 import * as Sounds from "../Sounds"
-import { ViewActionButton } from "../Views"
+import { ViewActionButton, ViewHeader } from "../Views"
 import {
   BackendModel,
   FrontendModel,
@@ -335,144 +335,143 @@ export const View = ({
           right={roomAvatarGroup}
         />
 
-        <UI.Typography
-          variant="h3"
-          sx={{ paddingX: 2, paddingBottom: 1 }}
-        >
-          User Vs Bot
-        </UI.Typography>
+        <UI.Box sx={{ flex: 1, overflowY: 'scroll' }}>
 
-        <UI.Typography
-          sx={{ paddingX: 2, marginBottom: 1 }}
-          color="text.secondary"
-        >
-          Player
-        </UI.Typography>
+          <ViewHeader title="User Vs Bot" />
 
-        {model.sharedModel.userId.type === "None" ? (
-          <UI.Box sx={{ paddingX: 2 }}>
-            <UI.Button
-              fullWidth
-              size="large"
-              variant="contained"
-              onClick={() => {
-                dispatch(["InputUser", { userId: Option.Some(currentUserId) }])
-              }}
-            >
-              Start Playing
-            </UI.Button>
-          </UI.Box>
-        ) : (
-          <UI.Box sx={{ display: "flex", alignItems: "center", paddingX: 2 }}>
-            <UI.Avatar
-              sx={{ marginRight: 1 }}
-              src={store.Profile[model.sharedModel.userId.value]?.avatarUrl}
-            />
+          <UI.Typography
+            sx={{ paddingX: 2, marginTop: 2, marginBottom: 1 }}
+            color="text.secondary"
+          >
+            Player
+          </UI.Typography>
 
-            <UI.Typography
-              sx={{ flex: 1 }}
-              noWrap
-            >
-              {store.Profile[model.sharedModel.userId.value]?.username ?? "..."}
-            </UI.Typography>
-
-            {model.sharedModel.userId.value === currentUserId && (
+          {model.sharedModel.userId.type === "None" ? (
+            <UI.Box sx={{ paddingX: 2 }}>
               <UI.Button
+                fullWidth
                 size="large"
-                onClick={() => dispatch(["InputUser", { userId: Option.None }])}
+                variant="contained"
+                onClick={() => {
+                  dispatch(["InputUser", { userId: Option.Some(currentUserId) }])
+                }}
               >
-                Stop Playing
+                Start Playing
               </UI.Button>
-            )}
-          </UI.Box>
-        )}
+            </UI.Box>
+          ) : (
+            <UI.Box sx={{ display: "flex", alignItems: "center", paddingX: 2 }}>
+              <UI.Avatar
+                sx={{ marginRight: 1 }}
+                src={store.Profile[model.sharedModel.userId.value]?.avatarUrl}
+              />
 
-        <UI.Typography
-          sx={{ paddingX: 2, marginBottom: 1, marginTop: 2 }}
-          color="text.secondary"
-        >
-          Bot
-        </UI.Typography>
+              <UI.Typography
+                sx={{ flex: 1 }}
+                noWrap
+              >
+                {store.Profile[model.sharedModel.userId.value]?.username ?? "..."}
+              </UI.Typography>
 
-        <UI.Box sx={{ paddingX: 2 }}>
-          <UI.Tooltip
-            enterTouchDelay={0}
-            title={
-              inputBotResult.type === "Err"
-                ? inputBotProblemToString(inputBotResult.error)
-                : ""
-            }
-          >
-            <UI.Select
-              disabled={inputBotResult.type === "Err"}
-              fullWidth
-              value={model.sharedModel.botLevel}
-            >
-              {Board.allLevels.map((level) => (
-                <UI.MenuItem
-                  selected={model.sharedModel.botLevel === level}
-                  value={level}
-                  key={level}
-                  onClick={() => {
-                    dispatch([
-                      "InputBot",
-                      { botLevel: level, userId: currentUserId },
-                    ])
-                  }}
+              {model.sharedModel.userId.value === currentUserId && (
+                <UI.Button
+                  size="large"
+                  onClick={() => dispatch(["InputUser", { userId: Option.None }])}
                 >
-                  {level} - {Board.levelToString(level)}
-                </UI.MenuItem>
-              ))}
-            </UI.Select>
-          </UI.Tooltip>
-        </UI.Box>
+                  Stop Playing
+                </UI.Button>
+              )}
+            </UI.Box>
+          )}
 
-        <UI.Typography
-          sx={{ paddingX: 2, marginBottom: 1, marginTop: 2 }}
-          color="text.secondary"
-        >
-          Color
-        </UI.Typography>
-
-        <UI.Box sx={{ paddingX: 2, paddingBottom: 2 }}>
-          <UI.Tooltip
-            title={
-              inputColorResult.type === "Err"
-                ? inputColorProblemToString(inputColorResult.error)
-                : ""
-            }
+          <UI.Typography
+            sx={{ paddingX: 2, marginBottom: 1, marginTop: 2 }}
+            color="text.secondary"
           >
-            <UI.ToggleButtonGroup
-              disabled={inputColorResult.type === "Err"}
-              fullWidth
-              value={model.sharedModel.userColor}
+            Color
+          </UI.Typography>
+
+          <UI.Box sx={{ paddingX: 2, }}>
+            <UI.Tooltip
+              title={
+                inputColorResult.type === "Err"
+                  ? inputColorProblemToString(inputColorResult.error)
+                  : ""
+              }
             >
-              <UI.ToggleButton
-                value="w"
-                onClick={() =>
-                  dispatch([
-                    "InputColor",
-                    { userColor: "w", userId: currentUserId },
-                  ])
-                }
+              <UI.ToggleButtonGroup
+                disabled={inputColorResult.type === "Err"}
+                fullWidth
+                value={model.sharedModel.userColor}
               >
-                White
-              </UI.ToggleButton>
-              <UI.ToggleButton
-                value="b"
-                onClick={() =>
-                  dispatch([
-                    "InputColor",
-                    { userColor: "b", userId: currentUserId },
-                  ])
-                }
+                <UI.ToggleButton
+                  value="w"
+                  onClick={() =>
+                    dispatch([
+                      "InputColor",
+                      { userColor: "w", userId: currentUserId },
+                    ])
+                  }
+                >
+                  White
+                </UI.ToggleButton>
+                <UI.ToggleButton
+                  value="b"
+                  onClick={() =>
+                    dispatch([
+                      "InputColor",
+                      { userColor: "b", userId: currentUserId },
+                    ])
+                  }
+                >
+                  Black
+                </UI.ToggleButton>
+              </UI.ToggleButtonGroup>
+            </UI.Tooltip>
+          </UI.Box>
+
+          <UI.Typography
+            sx={{ paddingX: 2, marginBottom: 1, marginTop: 2 }}
+            color="text.secondary"
+          >
+            Bot
+          </UI.Typography>
+
+          <UI.Box sx={{ paddingX: 2 }}>
+            <UI.Tooltip
+              enterTouchDelay={0}
+              title={
+                inputBotResult.type === "Err"
+                  ? inputBotProblemToString(inputBotResult.error)
+                  : ""
+              }
+            >
+              <UI.Select
+                disabled={inputBotResult.type === "Err"}
+                fullWidth
+                value={model.sharedModel.botLevel}
               >
-                Black
-              </UI.ToggleButton>
-            </UI.ToggleButtonGroup>
-          </UI.Tooltip>
+                {Board.allLevels.map((level) => (
+                  <UI.MenuItem
+                    selected={model.sharedModel.botLevel === level}
+                    value={level}
+                    key={level}
+                    onClick={() => {
+                      dispatch([
+                        "InputBot",
+                        { botLevel: level, userId: currentUserId },
+                      ])
+                    }}
+                  >
+                    {level} - {Board.levelToString(level)}
+                  </UI.MenuItem>
+                ))}
+              </UI.Select>
+            </UI.Tooltip>
+          </UI.Box>
+
+          <UI.Box sx={{ flex: 1, paddingBottom: 4 }} />
         </UI.Box>
-        <UI.Box sx={{ flex: 1 }} />
 
         <UI.Box sx={{ padding: 2, display: "flex", gap: 2 }}>
           <UI.Button

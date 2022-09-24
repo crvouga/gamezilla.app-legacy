@@ -1,4 +1,5 @@
 import * as UI from "../../UI"
+import * as Board from "./Board"
 
 export const ViewActionButton = ({
   title,
@@ -26,5 +27,35 @@ export const ViewActionButton = ({
       {icon}
       <UI.Typography variant="caption">{title}</UI.Typography>
     </UI.ButtonBase>
+  )
+}
+
+
+export const ViewHeader = ({ title }: { title: string }) => {
+  return (
+    <UI.AspectRatio aspectRatio={9 / 21}>
+      <Board.View key={"exampleModel"} boardOrientation="w" model={Board.exampleModel} />
+
+      <UI.Box sx={{
+        zIndex: 10000,
+        position: "absolute",
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: "100%",
+        display: 'flex',
+        flexDirection: "column",
+        background: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.8))`,
+      }}>
+        <UI.Box sx={{ flex: 1 }} />
+        <UI.Typography
+          sx={{ paddingX: 2, paddingBottom: 1 }}
+          variant="h3"
+          color="#fff"
+        >
+          {title}
+        </UI.Typography>
+      </UI.Box>
+    </UI.AspectRatio>
   )
 }

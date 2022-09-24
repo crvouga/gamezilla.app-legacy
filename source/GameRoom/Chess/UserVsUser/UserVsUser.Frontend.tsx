@@ -5,7 +5,7 @@ import * as Store from "../../../Store"
 import * as UI from "../../../UI"
 import * as Clock from "../Clock"
 import * as Sounds from "../Sounds"
-import { ViewActionButton } from "../Views"
+import { ViewHeader, ViewActionButton } from "../Views"
 import * as Board from "./../Board"
 import {
   BackendModel,
@@ -457,118 +457,116 @@ export const View = ({
           title="Chess"
           right={roomAvatarGroup}
         />
-        <UI.Typography
-          sx={{ paddingX: 2, paddingBottom: 1 }}
-          variant="h4"
-        >
-          User Vs User
-        </UI.Typography>
 
-        <UI.Typography
-          sx={{ paddingX: 2, marginBottom: 1 }}
-          color="text.secondary"
-        >
-          {Board.colorToString("w")}
-        </UI.Typography>
+        <UI.Box sx={{ flex: 1, overflowY: "scroll" }}>
+          <ViewHeader title="User Vs User" />
 
-        {model.sharedModel.w.type === "None" ? (
-          <UI.Box sx={{ paddingX: 2 }}>
-            <UI.Button
-              fullWidth
-              size="large"
-              variant="contained"
-              onClick={() => {
-                dispatch([
-                  "InputPlayer",
-                  { userId: Option.Some(currentUserId), color: "w" },
-                ])
-              }}
-            >
-              Play As {Board.colorToString("w")}
-            </UI.Button>
-          </UI.Box>
-        ) : (
-          <ViewInputUserPlayerSlot
-            color="w"
-            userId={model.sharedModel.w.value}
-            currentUserId={currentUserId}
-            dispatch={dispatch}
-            store={store}
-          />
-        )}
 
-        <UI.Typography
-          sx={{ paddingX: 2, marginTop: 2, marginBottom: 1 }}
-          color="text.secondary"
-        >
-          {Board.colorToString("b")}
-        </UI.Typography>
-
-        {model.sharedModel.b.type === "None" ? (
-          <UI.Box sx={{ paddingX: 2 }}>
-            <UI.Button
-              fullWidth
-              size="large"
-              variant="contained"
-              onClick={() => {
-                dispatch([
-                  "InputPlayer",
-                  { userId: Option.Some(currentUserId), color: "b" },
-                ])
-              }}
-            >
-              Play As {Board.colorToString("b")}
-            </UI.Button>
-          </UI.Box>
-        ) : (
-          <ViewInputUserPlayerSlot
-            color="b"
-            userId={model.sharedModel.b.value}
-            currentUserId={currentUserId}
-            dispatch={dispatch}
-            store={store}
-          />
-        )}
-
-        <UI.Typography
-          sx={{ paddingX: 2, marginTop: 2, marginBottom: 1 }}
-          color={"text.secondary"}
-        >
-          Clock
-        </UI.Typography>
-
-        <UI.Box sx={{ paddingX: 2 }}>
-          <UI.Tooltip
-            title={
-              inputClockResult.type === "Err"
-                ? inputClockProblemToString(inputClockResult.error)
-                : ""
-            }
+          <UI.Typography
+            sx={{ paddingX: 2, marginBottom: 1, marginTop: 2 }}
+            color="text.secondary"
           >
-            <UI.ToggleButtonGroup
-              disabled={inputClockResult.type === "Err"}
-              fullWidth
-              value={model.sharedModel.clockPreset}
-            >
-              {Object.values(Clock.presets).map((clockPreset) => (
-                <UI.ToggleButton
-                  key={clockPreset}
-                  value={clockPreset}
-                  onClick={() =>
-                    dispatch([
-                      "InputClock",
-                      { clockPreset, userId: currentUserId },
-                    ])
-                  }
-                >
-                  {Clock.presetToString(clockPreset)}
-                </UI.ToggleButton>
-              ))}
-            </UI.ToggleButtonGroup>
-          </UI.Tooltip>
-        </UI.Box>
+            {Board.colorToString("w")}
+          </UI.Typography>
 
-        <UI.Box sx={{ flex: 1 }} />
+          {model.sharedModel.w.type === "None" ? (
+            <UI.Box sx={{ paddingX: 2 }}>
+              <UI.Button
+                fullWidth
+                size="large"
+                variant="contained"
+                onClick={() => {
+                  dispatch([
+                    "InputPlayer",
+                    { userId: Option.Some(currentUserId), color: "w" },
+                  ])
+                }}
+              >
+                Play As {Board.colorToString("w")}
+              </UI.Button>
+            </UI.Box>
+          ) : (
+            <ViewInputUserPlayerSlot
+              color="w"
+              userId={model.sharedModel.w.value}
+              currentUserId={currentUserId}
+              dispatch={dispatch}
+              store={store}
+            />
+          )}
+
+          <UI.Typography
+            sx={{ paddingX: 2, marginTop: 2, marginBottom: 1 }}
+            color="text.secondary"
+          >
+            {Board.colorToString("b")}
+          </UI.Typography>
+
+          {model.sharedModel.b.type === "None" ? (
+            <UI.Box sx={{ paddingX: 2 }}>
+              <UI.Button
+                fullWidth
+                size="large"
+                variant="contained"
+                onClick={() => {
+                  dispatch([
+                    "InputPlayer",
+                    { userId: Option.Some(currentUserId), color: "b" },
+                  ])
+                }}
+              >
+                Play As {Board.colorToString("b")}
+              </UI.Button>
+            </UI.Box>
+          ) : (
+            <ViewInputUserPlayerSlot
+              color="b"
+              userId={model.sharedModel.b.value}
+              currentUserId={currentUserId}
+              dispatch={dispatch}
+              store={store}
+            />
+          )}
+
+          <UI.Typography
+            sx={{ paddingX: 2, marginTop: 2, marginBottom: 1 }}
+            color={"text.secondary"}
+          >
+            Clock
+          </UI.Typography>
+
+          <UI.Box sx={{ paddingX: 2 }}>
+            <UI.Tooltip
+              title={
+                inputClockResult.type === "Err"
+                  ? inputClockProblemToString(inputClockResult.error)
+                  : ""
+              }
+            >
+              <UI.ToggleButtonGroup
+                disabled={inputClockResult.type === "Err"}
+                fullWidth
+                value={model.sharedModel.clockPreset}
+              >
+                {Object.values(Clock.presets).map((clockPreset) => (
+                  <UI.ToggleButton
+                    key={clockPreset}
+                    value={clockPreset}
+                    onClick={() =>
+                      dispatch([
+                        "InputClock",
+                        { clockPreset, userId: currentUserId },
+                      ])
+                    }
+                  >
+                    {Clock.presetToString(clockPreset)}
+                  </UI.ToggleButton>
+                ))}
+              </UI.ToggleButtonGroup>
+            </UI.Tooltip>
+          </UI.Box>
+
+        </UI.Box>
 
         <UI.Box sx={{ padding: 2, display: "flex", gap: 2 }}>
           <UI.Button
