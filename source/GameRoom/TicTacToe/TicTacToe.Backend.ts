@@ -16,8 +16,9 @@ import {
   ToBackend,
   ToFrontend,
   moveCountDown,
-  toCurrentRound
+
 } from "./TicTacToe.Types"
+import * as Round from "./Round"
 
 //
 //
@@ -204,7 +205,7 @@ export const subscriptions = (intervalId: string, model: Model): Sub.Sub<Msg> =>
 
     case 'Game': {
 
-      const currentRound = toCurrentRound(model.round)
+      const currentRound = Round.toCurrent(model.round)
 
       switch (currentRound.type) {
         case 'Started': {

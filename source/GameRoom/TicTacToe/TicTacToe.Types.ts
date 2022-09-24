@@ -1,7 +1,7 @@
-import { Option } from "../../Core"
 import { Ok, Err, Result } from "../../Core/Result"
 import { UserId } from "../../Data"
 import * as TicTacToe from "./TicTacToe"
+import * as Round from "./Round"
 
 //
 //
@@ -30,7 +30,7 @@ export type GameModel = {
   O: UserId.UserId,
   maxRoundCount: BestOutOf
   moveTimeLimit: MoveTimeLimit,
-  round: Round,
+  round: Round.Round,
 }
 
 export type GameOverModel = {
@@ -39,161 +39,11 @@ export type GameOverModel = {
   O: UserId.UserId,
   maxRoundCount: BestOutOf
   moveTimeLimit: MoveTimeLimit,
-  round: Round
+  round: Round.Round
   gameOver: GameOver
 }
 
 
-type Round =
-  | {
-    type: "Starting",
-    countDown: number
-  }
-  | {
-    type: "Started",
-    board: TicTacToe.Board
-    moveCountDown: number
-  }
-  | {
-    type: "RoundOver",
-    gameOver: TicTacToe.GameOver
-    board: TicTacToe.Board,
-    next: Round
-  }
-
-export const toCurrentRound = (round: Round): Round => {
-  switch (round.type) {
-    case 'RoundOver': {
-      return toCurrentRound(round.next)
-    }
-
-    case 'Started': {
-      return round
-    }
-
-    case 'Starting': {
-      return round
-    }
-  }
-}
-
-export const toLatestBoard = (round: Round): TicTacToe.Board | null => {
-  switch (round.type) {
-    case 'Starting': {
-      return null
-    }
-
-    case 'Started': {
-      return round.board
-    }
-
-    case 'RoundOver': {
-      const next = toLatestBoard(round.next)
-
-      if (next) {
-        return next
-      }
-
-      return round.board
-    }
-  }
-}
-
-export const toRoundCount = (round: Round): number => {
-  switch (round.type) {
-    case 'RoundOver': {
-      return 1 + toRoundCount(round.next)
-    }
-
-    case 'Started': {
-      return 1
-    }
-
-    case 'Starting': {
-      return 1
-    }
-  }
-
-}
-
-export const mapCurrentRound = (round: Round, updater: (current: Round) => Round): Round => {
-  switch (round.type) {
-    case 'RoundOver': {
-      return {
-        ...round,
-        next: mapCurrentRound(round.next, updater)
-      }
-    }
-
-    case 'Started':
-    case 'Starting': {
-      return updater(round)
-    }
-  }
-}
-
-export const toScore = (round: Round): { X: number, O: number, Tie: number } => {
-  switch (round.type) {
-    case 'RoundOver': {
-      const nextScore = toScore(round.next)
-
-      switch (round.gameOver.type) {
-        case 'Tie': {
-          return {
-            ...nextScore,
-            Tie: nextScore.Tie + 1
-          }
-        }
-
-        case 'Win': {
-          return {
-            ...nextScore,
-            [round.gameOver.winner]: nextScore[round.gameOver.winner] + 1
-          }
-        }
-      }
-    }
-
-    case 'Starting':
-    case 'Started': {
-      return { X: 0, O: 0, Tie: 0 }
-    }
-
-  }
-}
-
-
-
-
-
-export const toGameOver = (model: SharedModel): GameOver | { type: "None" } => {
-  if (model.type !== 'Game') {
-    return { type: "None" }
-  }
-
-  const score = toScore(model.round)
-  const winCount = (model.maxRoundCount + 1) / 2
-
-  if (score.X >= winCount) {
-    return { type: "Winner", winner: "X" }
-  }
-
-  if (score.O >= winCount) {
-    return { type: "Winner", winner: "O" }
-  }
-
-  if (score.Tie >= winCount) {
-    return { type: "Tie", }
-  }
-
-  const roundCount = toRoundCount(model.round)
-
-  if (roundCount >= model.maxRoundCount) {
-    return { type: "Tie" }
-  }
-
-  return { type: "None" }
-}
 
 export type GameOver =
   | {
@@ -481,7 +331,7 @@ export const inputMove = (
   }
 
 
-  const currentRound = toCurrentRound(model.round)
+  const currentRound = Round.toCurrent(model.round)
 
   if (currentRound.type !== 'Started') {
     return Err("round_not_started")
@@ -510,7 +360,7 @@ export const inputMove = (
   if (roundOver.type === 'None') {
     const modelNew: SharedModel = {
       ...model,
-      round: mapCurrentRound(model.round, () => ({
+      round: Round.mapCurrent(model.round, () => ({
         type: "Started",
         board: boardNew,
         moveCountDown: model.moveTimeLimit,
@@ -522,9 +372,9 @@ export const inputMove = (
 
   const modelNew: SharedModel = {
     ...model,
-    round: mapCurrentRound(model.round, () => ({
+    round: Round.mapCurrent(model.round, () => ({
       type: "RoundOver",
-      gameOver: roundOver,
+      roundOver,
       board: boardNew,
       next: {
         type: "Starting",
@@ -533,7 +383,7 @@ export const inputMove = (
     }))
   }
 
-  const gameOver = toGameOver(modelNew)
+  const gameOver = Round.toGameOver(modelNew)
 
   if (gameOver.type === 'None') {
     return Ok(modelNew)
@@ -563,7 +413,7 @@ export const moveCountDown = (model: SharedModel): MoveCountDown_Done[1] => {
     return Err("not_in_game_mode")
   }
 
-  const round = toCurrentRound(model.round)
+  const round = Round.toCurrent(model.round)
 
   if (round.type !== 'Started') {
     return Err("round_not_started")
@@ -576,7 +426,7 @@ export const moveCountDown = (model: SharedModel): MoveCountDown_Done[1] => {
   if (moveCountDownNew > 0) {
     const modelNew: SharedModel = {
       ...model,
-      round: mapCurrentRound(model.round, () => ({
+      round: Round.mapCurrent(model.round, () => ({
         type: "Started",
         board,
         moveCountDown: moveCountDownNew
@@ -615,7 +465,7 @@ export const moveCountDown = (model: SharedModel): MoveCountDown_Done[1] => {
   if (roundOver.type === 'None') {
     const modelNew: SharedModel = {
       ...model,
-      round: mapCurrentRound(model.round, () => ({
+      round: Round.mapCurrent(model.round, () => ({
         type: "Started",
         board: boardNew,
         moveCountDown: model.moveTimeLimit,
@@ -627,10 +477,10 @@ export const moveCountDown = (model: SharedModel): MoveCountDown_Done[1] => {
 
   const modelNew: SharedModel = {
     ...model,
-    round: mapCurrentRound(model.round, () => ({
+    round: Round.mapCurrent(model.round, () => ({
       type: "RoundOver",
       board: boardNew,
-      gameOver: roundOver,
+      roundOver,
       next: {
         type: "Starting",
         countDown: 3
@@ -638,7 +488,7 @@ export const moveCountDown = (model: SharedModel): MoveCountDown_Done[1] => {
     }))
   }
 
-  const gameOver = toGameOver(modelNew)
+  const gameOver = Round.toGameOver(modelNew)
 
   if (gameOver.type === 'None') {
     return Ok(modelNew)
@@ -793,7 +643,7 @@ export const roundCountDown = (model: SharedModel): RoundCountDown_Done[1] => {
     return Err("not_in_game_mode")
   }
 
-  const round = toCurrentRound(model.round)
+  const round = Round.toCurrent(model.round)
 
 
   if (round.type !== 'Starting') {
@@ -805,7 +655,7 @@ export const roundCountDown = (model: SharedModel): RoundCountDown_Done[1] => {
   if (countDownNew === 0) {
     const modelNew: SharedModel = {
       ...model,
-      round: mapCurrentRound(model.round, () => ({
+      round: Round.mapCurrent(model.round, () => ({
         type: "Started",
         board: TicTacToe.emptyBoard,
         moveCountDown: model.moveTimeLimit
@@ -818,7 +668,7 @@ export const roundCountDown = (model: SharedModel): RoundCountDown_Done[1] => {
 
   const modelNew: SharedModel = {
     ...model,
-    round: mapCurrentRound(model.round, () => ({
+    round: Round.mapCurrent(model.round, () => ({
       type: "Starting",
       countDown: countDownNew
     }))
