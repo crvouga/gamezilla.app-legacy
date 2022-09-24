@@ -2,30 +2,16 @@ import { Cmd } from "../../Core"
 import { UserId } from "../../Data"
 import * as Store from "../../Store"
 import * as UI from "../../UI"
-import { emptyBoard, PlayerType, Position, Slot, theme, toStatus, toTurn, ViewBoard, ViewSlot } from "./TicTacToe"
+import { emptyBoard, PlayerType, Position, Slot, theme, toTurn, ViewBoard, ViewSlot } from "./TicTacToe"
 import {
-  BackendModel,
-  FrontendModel,
-  FrontendMsg,
-  initSharedModel,
-  startGame,
-  ToBackend,
-  ToFrontend,
-  GameModel,
   allBestOutOf,
-  allMoveTimeLimit,
-  inputBestOutOf,
-  inputMoveTimeLimit,
-  inputMoveTimeLimitToString,
-  inputBestOutOfToString,
-  moveTimeLimitToString,
-  bestOutOfToString,
-  GameOverModel,
-  toCurrentRound,
-  toRoundCount,
-  toScore,
-  toLatestBoard,
+  allMoveTimeLimit, BackendModel, bestOutOfToString, FrontendModel,
+  FrontendMsg, GameModel, GameOverModel, initSharedModel, inputBestOutOf, inputBestOutOfToString, inputMoveTimeLimit,
+  inputMoveTimeLimitToString, moveTimeLimitToString, startGame,
+  ToBackend,
+  ToFrontend
 } from "./TicTacToe.Types"
+import * as Round from "./Round"
 
 //
 //
@@ -422,9 +408,9 @@ export const View = ({
   }
 
   if (model.type === 'Game') {
-    const currentRound = toCurrentRound(model.round)
-    const board = toLatestBoard(model.round) ?? emptyBoard
-    const score = toScore(model.round)
+    const currentRound = Round.toCurrent(model.round)
+    const board = Round.toLatestBoard(model.round) ?? emptyBoard
+    const score = Round.toScore(model.round)
     return (
       <UI.FillBox>
         <UI.Header
@@ -453,7 +439,7 @@ export const View = ({
                     Round
                   </UI.Typography>
                   <UI.Typography align="center" variant="h3" color="inherit">
-                    {toRoundCount(model.round)} / {model.maxRoundCount}
+                    {Round.toCount(model.round)} / {model.maxRoundCount}
                   </UI.Typography>
                 </UI.Box>
                 <UI.Box sx={{ flex: 1, color: "#fff" }}>
@@ -479,7 +465,7 @@ export const View = ({
     )
   }
 
-  const board = toLatestBoard(model.round) ?? emptyBoard
+  const board = Round.toLatestBoard(model.round) ?? emptyBoard
 
   return <UI.FillBox>
     <UI.Header
@@ -561,17 +547,17 @@ const toGameText = ({ model, store }: { model: Model, store: Store.Model }): str
 
     case 'Game': {
 
-      const currentRound = toCurrentRound(model.round)
+      const currentRound = Round.toCurrent(model.round)
 
       switch (currentRound.type) {
         case 'RoundOver': {
-          switch (currentRound.gameOver.type) {
+          switch (currentRound.roundOver.type) {
             case 'Tie': {
               return "Tie"
             }
 
             case 'Win': {
-              return `${currentRound.gameOver.winner} won`
+              return `${currentRound.roundOver.winner} won`
             }
           }
         }
@@ -634,7 +620,7 @@ const ViewPlayerGameSlot = ({
   const profile = store.Profile[userId]
   const uiTheme = UI.useTheme()
 
-  const round = toCurrentRound(model.round)
+  const round = Round.toCurrent(model.round)
 
   const isTurn = round.type === 'Started' && toTurn(round.board) === playerType
 
@@ -664,7 +650,7 @@ const ViewPlayerGameSlot = ({
         {profile?.username ?? "..."}
       </UI.Typography>
       {isTurn && (
-        <UI.Typography variant="h5" sx={{ marginLeft: 2 }}>
+        <UI.Typography sx={{ marginLeft: 2 }}>
           {round.type === 'Started' ? round.moveCountDown : 0}
         </UI.Typography>
       )}
