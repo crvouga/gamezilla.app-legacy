@@ -33,8 +33,10 @@ export const ViewActionButton = ({
 
 export const ViewHeader = ({ title }: { title: string }) => {
   return (
-    <UI.AspectRatio aspectRatio={9 / 21}>
-      <Board.View key={"exampleModel"} boardOrientation="w" model={Board.exampleModel} />
+    <UI.AspectRatio aspectRatio={Math.pow(3 / 4, 3)}>
+      <UI.Box sx={{ width: "100%", position: "relative" }}>
+        <Board.View key={"exampleModel"} boardOrientation="b" model={Board.exampleModel} />
+      </UI.Box>
 
       <UI.Box sx={{
         zIndex: 10000,
@@ -45,7 +47,7 @@ export const ViewHeader = ({ title }: { title: string }) => {
         height: "100%",
         display: 'flex',
         flexDirection: "column",
-        background: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.8))`,
+        background: `linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.8))`,
       }}>
         <UI.Box sx={{ flex: 1 }} />
         <UI.Typography
