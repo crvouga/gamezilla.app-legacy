@@ -30,7 +30,6 @@ import * as UserVsUser from "./UserVsUser/UserVsUser.Backend"
 export type Model = BackendModel
 
 export const init: Model = ["None"]
-// ['UserVsUser', UserVsUser.init]
 
 //
 //

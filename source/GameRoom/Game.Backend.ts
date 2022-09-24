@@ -28,7 +28,7 @@ export const init = ({ gameName }: { gameName: Model[0] }): Model => {
     }
 
     case "TicTacToe": {
-      return ["TicTacToe", TicTacToe.init]
+      return ["TicTacToe", TicTacToe.init({ X: "None", O: "None" })]
     }
 
     case "Chess": {
