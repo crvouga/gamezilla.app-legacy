@@ -15,7 +15,8 @@ import {
   stopPlaying,
   ToBackend,
   ToFrontend,
-  moveCountDown
+  moveCountDown,
+  toCurrentRound
 } from "./TicTacToe.Types"
 
 //
@@ -28,7 +29,7 @@ import {
 
 export type Model = BackendModel
 
-export const init: Model = initSharedModel
+export const init = initSharedModel
 
 //
 //
@@ -202,9 +203,12 @@ export const subscriptions = (intervalId: string, model: Model): Sub.Sub<Msg> =>
 
 
     case 'Game': {
-      switch (model.round.type) {
+
+      const currentRound = toCurrentRound(model.round)
+
+      switch (currentRound.type) {
         case 'Started': {
-          const turn = toTurn(model.round.board)
+          const turn = toTurn(currentRound.board)
           return Time.every(`${intervalId}-move-count-down-${turn}`, 1000, (): Msg => ['MoveCountDown'])
         }
 

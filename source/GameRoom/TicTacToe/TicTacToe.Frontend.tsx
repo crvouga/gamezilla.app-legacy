@@ -21,6 +21,10 @@ import {
   moveTimeLimitToString,
   bestOutOfToString,
   GameOverModel,
+  toCurrentRound,
+  toRoundCount,
+  toScore,
+  toLatestBoard,
 } from "./TicTacToe.Types"
 
 //
@@ -34,7 +38,7 @@ import {
 export type Model = FrontendModel
 
 export const init: Model = {
-  ...initSharedModel,
+  ...initSharedModel({ X: "None", O: "None" }),
   openedModal: "None",
 }
 
@@ -275,7 +279,7 @@ export const View = ({
 
   if (model.type === "Setup") {
     const startGameResult = startGame({ userId: currentUserId }, model)
-    const inputBestOutOfResult = inputBestOutOf({ bestOutOf: model.bestOutOf, userId: currentUserId }, model)
+    const inputBestOutOfResult = inputBestOutOf({ bestOutOf: model.maxRoundCount, userId: currentUserId }, model)
     const inputMoveTimeLimitResult = inputMoveTimeLimit({ moveTimeLimit: model.moveTimeLimit, userId: currentUserId }, model)
 
     return (
@@ -366,7 +370,7 @@ export const View = ({
           </UI.Typography>
 
           <UI.Tooltip title={inputBestOutOfToString(inputBestOutOfResult)}>
-            <UI.ToggleButtonGroup disabled={inputBestOutOfResult.type === 'Err'} fullWidth value={model.bestOutOf}>
+            <UI.ToggleButtonGroup disabled={inputBestOutOfResult.type === 'Err'} fullWidth value={model.maxRoundCount}>
               {allBestOutOf.map(bestOutOf => (
                 <UI.ToggleButton key={bestOutOf} value={bestOutOf} onClick={() => dispatch(['InputBestOutOf', { userId: currentUserId, bestOutOf }])}>
                   {bestOutOfToString(bestOutOf)}
@@ -418,7 +422,9 @@ export const View = ({
   }
 
   if (model.type === 'Game') {
-    const board = model.round.type === 'RoundOver' ? model.round.board : model.round.type === 'Started' ? model.round.board : emptyBoard
+    const currentRound = toCurrentRound(model.round)
+    const board = toLatestBoard(model.round) ?? emptyBoard
+    const score = toScore(model.round)
     return (
       <UI.FillBox>
         <UI.Header
@@ -439,26 +445,28 @@ export const View = ({
               dispatch(["InputMove", { position, userId: currentUserId }])
             }
           />
-          {model.round.type === 'Starting' && (
-            <UI.Box sx={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", background: "rgba(0, 0, 0, 0.5)", display: "flex", alignItems: 'center', justifyContent: "center", flexDirection: "column" }}>
-              <UI.Box sx={{ flex: 1, display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
-                <UI.Typography align="center" variant="h6" color="text.secondary">
-                  Round
-                </UI.Typography>
-                <UI.Typography align="center" variant="h3">
-                  1 / {model.bestOutOf}
-                </UI.Typography>
+          {currentRound.type === 'Starting' && (
+            <UI.Fade in={currentRound.type === 'Starting'}>
+              <UI.Box sx={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", background: "rgba(0, 0, 0, 0.5)", display: "flex", alignItems: 'center', justifyContent: "center", flexDirection: "column" }}>
+                <UI.Box sx={{ flex: 1, display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column", color: "#fff" }}>
+                  <UI.Typography align="center" variant="h6" color="inherit">
+                    Round
+                  </UI.Typography>
+                  <UI.Typography align="center" variant="h3" color="inherit">
+                    {toRoundCount(model.round)} / {model.maxRoundCount}
+                  </UI.Typography>
+                </UI.Box>
+                <UI.Box sx={{ flex: 1, color: "#fff" }}>
+                  <UI.Typography align="center" color="inherit">
+                    Starting in...
+                  </UI.Typography>
+                  <UI.Typography align="center" variant="h1" color="inherit">
+                    {currentRound.countDown}
+                  </UI.Typography>
+                </UI.Box>
+                <UI.Box sx={{ flex: 1 }}></UI.Box>
               </UI.Box>
-              <UI.Box sx={{ flex: 1 }}>
-                <UI.Typography align="center" color="text.secondary">
-                  Starting in...
-                </UI.Typography>
-                <UI.Typography align="center" variant="h1">
-                  {model.round.countDown}
-                </UI.Typography>
-              </UI.Box>
-              <UI.Box sx={{ flex: 1 }}></UI.Box>
-            </UI.Box>
+            </UI.Fade>
           )}
         </UI.Box>
 
@@ -471,7 +479,36 @@ export const View = ({
     )
   }
 
-  return <></>
+  const board = toLatestBoard(model.round) ?? emptyBoard
+
+  return <UI.FillBox>
+    <UI.Header
+      left={homeButton}
+      title={toGameText({ model, store })}
+      right={roomAvatarGroup}
+    />
+
+    <UI.Box sx={{ display: "flex", gap: 2, paddingX: 1, paddingY: 1 }}>
+      <ViewPlayerGameSlot playerType="X" store={store} model={model} />
+      <ViewPlayerGameSlot playerType="O" store={store} model={model} />
+    </UI.Box>
+
+    <ViewBoard
+      board={board}
+      onClick={(position) =>
+        dispatch(["InputMove", { position, userId: currentUserId }])
+      }
+    />
+
+    <UI.Box sx={{ flex: 1 }} />
+
+    <UI.Box sx={{ display: "flex", width: '100%', padding: 2 }}>
+      <UI.Button fullWidth variant="contained" onClick={() => dispatch(['NewGame', { userId: currentUserId }])}>
+        New Game
+      </UI.Button>
+
+    </UI.Box>
+  </UI.FillBox>
 }
 
 const ViewResignButton = ({ currentUserId, model, dispatch }: { currentUserId: UserId.UserId, model: Model, dispatch: (msg: Msg) => void }) => {
@@ -505,31 +542,41 @@ const toGameText = ({ model, store }: { model: Model, store: Store.Model }): str
     case 'GameOver': {
       switch (model.gameOver.type) {
         case 'Resignation': {
+
           return `${store.Profile[model.gameOver.resigner]?.username ?? "..."} resigned`
         }
 
         case 'Winner': {
-          return `${store.Profile[model.gameOver.winner]?.username ?? "..."} won`
+
+          const userId = model[model.gameOver.winner]
+
+          return `${store.Profile[userId]?.username ?? "..."} won`
+        }
+
+        case 'Tie': {
+          return `Tie`
         }
       }
     }
 
     case 'Game': {
 
-      switch (model.round.type) {
+      const currentRound = toCurrentRound(model.round)
+
+      switch (currentRound.type) {
         case 'RoundOver': {
-          switch (model.round.gameOver.type) {
+          switch (currentRound.gameOver.type) {
             case 'Tie': {
               return "Tie"
             }
 
             case 'Win': {
-              return `${model.round.gameOver.winner} won`
+              return `${currentRound.gameOver.winner} won`
             }
           }
         }
         case 'Started': {
-          const turn = toTurn(model.round.board)
+          const turn = toTurn(currentRound.board)
           return `${turn}'s Turn`
         }
 
@@ -585,9 +632,11 @@ const ViewPlayerGameSlot = ({
 }) => {
   const userId = model[playerType]
   const profile = store.Profile[userId]
-  const theme = UI.useTheme()
+  const uiTheme = UI.useTheme()
 
-  const isTurn = model.round.type === 'Started' && toTurn(model.round.board) === playerType
+  const round = toCurrentRound(model.round)
+
+  const isTurn = round.type === 'Started' && toTurn(round.board) === playerType
 
   const iconSize = {
     width: 20,
@@ -603,20 +652,20 @@ const ViewPlayerGameSlot = ({
         alignItems: "center",
         padding: 1,
         overflow: "hidden",
-        borderBottom: `solid 3px ${isTurn ? theme.palette.primary.main : theme.palette.divider}`,
+        borderBottom: `solid 3.5px ${isTurn ? theme.background : uiTheme.palette.divider}`,
       }}
       variant="outlined"
     >
       <UI.SvgIcon sx={{ display: "block", marginRight: 1, ...iconSize, }} viewBox="-1 -1 2 2" >
-        <ViewSlot strokeWidth={0.3} color={theme.palette.text.primary} slot={playerType} cx={0} cy={0} r={0.8} />
+        <ViewSlot strokeWidth={0.3} color={uiTheme.palette.text.primary} slot={playerType} cx={0} cy={0} r={0.8} />
       </UI.SvgIcon>
       <UI.Avatar src={profile?.avatarUrl} sx={{ marginRight: 1, ...iconSize, }} />
       <UI.Typography noWrap sx={{ flex: 1 }}>
         {profile?.username ?? "..."}
       </UI.Typography>
       {isTurn && (
-        <UI.Typography sx={{ marginLeft: 1 }}>
-          {model.round.type === 'Started' ? model.round.moveCountDown : 0}
+        <UI.Typography variant="h5" sx={{ marginLeft: 2 }}>
+          {round.type === 'Started' ? round.moveCountDown : 0}
         </UI.Typography>
       )}
     </UI.Paper>
