@@ -13,6 +13,7 @@ import * as TicTacToe from "./TicTacToe"
 export type SharedModel =
   | SetupModel
   | GameModel
+  | GameOverModel
 
 export type SetupModel = {
   type: "Setup",
@@ -28,34 +29,46 @@ export type GameModel = {
   O: UserId.UserId,
   bestOutOf: BestOutOf
   moveTimeLimit: MoveTimeLimit,
-  moveCountDown: number
-  board: TicTacToe.Board
-  resignation: Resignation,
-  round: RoundModel,
+  round: Round,
 }
 
-type RoundModel =
-  | {
-    type: "Starting",
-    countDown: number
-  }
-  | {
-    type: "Started"
-  }
+export type GameOverModel = {
+  type: "GameOver",
+  X: UserId.UserId,
+  O: UserId.UserId,
+  bestOutOf: BestOutOf
+  moveTimeLimit: MoveTimeLimit,
+  round: Round
+  gameOver: GameOver
+}
 
-type Resignation =
-  | { type: "None" }
-  | { type: "Resignation"; resigner: UserId.UserId }
 
-export type RoundStatus =
+type Round =
   | {
     type: "Starting",
     countDown: number
   }
   | {
     type: "Started",
+    board: TicTacToe.Board
+    moveCountDown: number
+  }
+  | {
+    type: "RoundOver",
+    gameOver: TicTacToe.GameOver
+    board: TicTacToe.Board,
+    next: Round
   }
 
+export type GameOver =
+  | {
+    type: "Resignation"
+    resigner: UserId.UserId
+  }
+  | {
+    type: "Winner",
+    winner: UserId.UserId
+  }
 
 export type BestOutOf = 1 | 3 | 5
 
@@ -80,27 +93,6 @@ export const moveTimeLimitToString = (moveTimeLimit: MoveTimeLimit): string => {
     case 10: return "10 Sec"
   }
 
-}
-
-export type GameOver =
-  | {
-    type: "Resignation"
-    resigner: UserId.UserId
-  }
-  | TicTacToe.GameOver
-
-export const toGameOver = (model: SharedModel): GameOver | { type: "None" } => {
-  if (model.type !== "Game") {
-    return { type: "None" }
-  }
-
-  if (model.resignation.type !== "None") {
-    return model.resignation
-  }
-
-  const gameOver = TicTacToe.toGameOver(model.board)
-
-  return gameOver
 }
 
 export const initSharedModel: SharedModel = {
@@ -280,12 +272,9 @@ export const startGame = (
 
   const modelNew: SharedModel = {
     type: "Game",
-    board: TicTacToe.emptyBoard,
     X: model.X,
     O: model.O,
     moveTimeLimit: model.moveTimeLimit,
-    moveCountDown: model.moveTimeLimit,
-    resignation: { type: "None" },
     bestOutOf: model.bestOutOf,
     round: {
       type: "Starting",
@@ -305,7 +294,7 @@ export const startGame = (
 
 type Resign = ["Resign", { userId: UserId.UserId }]
 type Resign_Done = ["Resign_Done", Result.Result<ResignProblem, SharedModel>]
-type ResignProblem = "not_in_game_mode" | "game_is_already_over"
+type ResignProblem = "not_in_game_mode"
 
 export const resign = (
   { userId }: Resign[1],
@@ -315,18 +304,13 @@ export const resign = (
     return Result.Err("not_in_game_mode")
   }
 
-  const gameOver = toGameOver(model)
-
-  if (gameOver.type !== "None") {
-    return Result.Err("game_is_already_over")
-  }
-
   const modelNew: SharedModel = {
     ...model,
-    resignation: {
+    type: "GameOver",
+    gameOver: {
       type: "Resignation",
       resigner: userId,
-    },
+    }
   }
 
   return Result.Ok(modelNew)
@@ -367,7 +351,10 @@ export const inputMove = (
     return Result.Err("not_playing")
   }
 
-  const result = TicTacToe.move(model.board, playerType, position)
+
+  const { board } = model.round
+
+  const result = TicTacToe.move(board, playerType, position)
 
   if (result.type === "Err") {
     return result
@@ -375,13 +362,100 @@ export const inputMove = (
 
   const boardNew = result.value
 
+  const gameOver = TicTacToe.toGameOver(boardNew)
+
+  if (gameOver.type === 'None') {
+    const modelNew: SharedModel = {
+      ...model,
+      round: {
+        type: "Started",
+        board,
+        moveCountDown: model.moveTimeLimit,
+      }
+    }
+
+    return Result.Ok(modelNew)
+  }
+
   const modelNew: SharedModel = {
     ...model,
-    board: boardNew,
-    moveCountDown: model.moveTimeLimit
+    round: {
+      type: "RoundOver",
+      gameOver: gameOver,
+      board: boardNew,
+      next: {
+        type: "Starting",
+        countDown: 3
+      }
+    }
   }
 
   return Result.Ok(modelNew)
+}
+
+// 
+// 
+// 
+
+type MoveCountDown = ['MoveCountDown']
+type MoveCountDown_Done = ['MoveCountDown_Done', Result.Result<MoveCountDownProblem, SharedModel>]
+type MoveCountDownProblem = "not_in_game_mode" | "round_not_started" | "no_empty_positions" | TicTacToe.MoveProblem
+
+export const moveCountDown = (model: SharedModel): MoveCountDown_Done[1] => {
+  if (model.type !== 'Game') {
+    return Result.Err("not_in_game_mode")
+  }
+
+  if (model.round.type !== 'Started') {
+    return Result.Err("round_not_started")
+  }
+
+  const { board, moveCountDown } = model.round
+
+  const moveCountDownNew = Math.max(moveCountDown - 1, 0)
+
+  if (moveCountDownNew > 0) {
+    const modelNew: SharedModel = {
+      ...model,
+      round: {
+        type: "Started",
+        board,
+        moveCountDown: moveCountDownNew
+      }
+    }
+
+    return Result.Ok(modelNew)
+  }
+
+
+  const emptyPositions = TicTacToe.toEmptyPositions(board)
+
+  const randomPosition = emptyPositions[Math.floor(emptyPositions.length * Math.random())]
+
+  if (!randomPosition) {
+    return Result.Err("no_empty_positions")
+  }
+
+  const turn = TicTacToe.toTurn(board)
+
+  const result = TicTacToe.move(board, turn, randomPosition)
+
+  if (result.type === 'Err') {
+    return result
+  }
+
+  const modelNew: SharedModel = {
+    ...model,
+    round: {
+      type: "Started",
+      board: result.value,
+      moveCountDown: model.moveTimeLimit,
+    }
+
+  }
+
+  return Result.Ok(modelNew)
+
 }
 
 // 
@@ -396,13 +470,7 @@ type NewGame_Done = ['NewGame_Done', Result.Result<NewGameProblem, SharedModel>]
 type NewGameProblem = "not_playing" | "not_game_over" | "not_in_game_mode"
 
 export const newGame = ({ userId }: NewGame[1], model: SharedModel): NewGame_Done[1] => {
-  const gameOver = toGameOver(model)
-
-  if (gameOver.type === 'None') {
-    return Result.Err("not_game_over")
-  }
-
-  if (model.type !== 'Game') {
+  if (model.type !== 'GameOver') {
     return Result.Err("not_in_game_mode")
   }
 
@@ -538,7 +606,9 @@ export const roundCountDown = (model: SharedModel): RoundCountDown_Done[1] => {
     const modelNew: SharedModel = {
       ...model,
       round: {
-        type: "Started"
+        type: "Started",
+        board: TicTacToe.emptyBoard,
+        moveCountDown: model.moveTimeLimit
       }
     }
 
@@ -557,59 +627,3 @@ export const roundCountDown = (model: SharedModel): RoundCountDown_Done[1] => {
   return Result.Ok(modelNew)
 }
 
-// 
-// 
-// 
-// 
-// 
-// 
-
-type MoveCountDown = ['MoveCountDown']
-type MoveCountDown_Done = ['MoveCountDown_Done', Result.Result<MoveCountDownProblem, SharedModel>]
-type MoveCountDownProblem = "not_in_game_mode" | "round_not_started" | "no_empty_positions" | TicTacToe.MoveProblem
-
-export const moveCountDown = (model: SharedModel): MoveCountDown_Done[1] => {
-  if (model.type !== 'Game') {
-    return Result.Err("not_in_game_mode")
-  }
-
-  if (model.round.type !== 'Started') {
-    return Result.Err("round_not_started")
-  }
-
-  const countDownNew = Math.max(model.moveCountDown - 1, 0)
-
-  if (countDownNew > 0) {
-    const modelNew: SharedModel = {
-      ...model,
-      moveCountDown: countDownNew
-    }
-
-    return Result.Ok(modelNew)
-  }
-
-  const emptyPositions = TicTacToe.toEmptyPositions(model.board)
-
-  const randomPosition = emptyPositions[Math.floor(emptyPositions.length * Math.random())]
-
-  if (!randomPosition) {
-    return Result.Err("no_empty_positions")
-  }
-
-  const turn = TicTacToe.toTurn(model.board)
-
-  const result = TicTacToe.move(model.board, turn, randomPosition)
-
-  if (result.type === 'Err') {
-    return result
-  }
-
-  const modelNew: SharedModel = {
-    ...model,
-    board: result.value,
-    moveCountDown: model.moveTimeLimit
-  }
-
-  return Result.Ok(modelNew)
-
-}

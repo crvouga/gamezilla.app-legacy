@@ -196,16 +196,24 @@ export const subscriptions = (intervalId: string, model: Model): Sub.Sub<Msg> =>
       return Sub.None
     }
 
+    case 'GameOver': {
+      return Sub.None
+    }
+
 
     case 'Game': {
       switch (model.round.type) {
         case 'Started': {
-          const turn = toTurn(model.board)
+          const turn = toTurn(model.round.board)
           return Time.every(`${intervalId}-move-count-down-${turn}`, 1000, (): Msg => ['MoveCountDown'])
         }
 
         case 'Starting': {
           return Time.every(`${intervalId}-round-count-down`, 750, (): Msg => ['RoundCountDown'])
+        }
+
+        case 'RoundOver': {
+          return Sub.None
         }
       }
     }

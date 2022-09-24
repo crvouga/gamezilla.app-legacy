@@ -2,7 +2,7 @@ import { Cmd } from "../../Core"
 import { UserId } from "../../Data"
 import * as Store from "../../Store"
 import * as UI from "../../UI"
-import { PlayerType, Position, Slot, theme, toStatus, toTurn, ViewBoard, ViewSlot } from "./TicTacToe"
+import { emptyBoard, PlayerType, Position, Slot, theme, toStatus, toTurn, ViewBoard, ViewSlot } from "./TicTacToe"
 import {
   BackendModel,
   FrontendModel,
@@ -10,7 +10,6 @@ import {
   initSharedModel,
   startGame,
   ToBackend,
-  toGameOver,
   ToFrontend,
   GameModel,
   allBestOutOf,
@@ -21,6 +20,7 @@ import {
   inputBestOutOfToString,
   moveTimeLimitToString,
   bestOutOfToString,
+  GameOverModel,
 } from "./TicTacToe.Types"
 
 //
@@ -120,22 +120,6 @@ export const update = (
 }
 
 export const updateFromBackend = (
-  msg: ToFrontend,
-  modelPrev: Model,
-): [Model, Cmd.Cmd<Msg>] => {
-  const [modelNext, cmd] = updateFromBackend_(msg, modelPrev)
-
-  const gameOverPrev = toGameOver(modelPrev)
-  const gameOverNext = toGameOver(modelNext)
-
-  if (gameOverPrev.type === "None" && gameOverNext.type !== "None") {
-    // game over logic
-  }
-
-  return [modelNext, cmd]
-}
-
-export const updateFromBackend_ = (
   msg: ToFrontend,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
@@ -433,71 +417,61 @@ export const View = ({
     )
   }
 
-  const gameOver = toGameOver(model)
-
-  return (
-    <UI.FillBox>
-      <UI.Header
-        left={homeButton}
-        title={toGameText({ model, store })}
-        right={roomAvatarGroup}
-      />
-
-      <UI.Box sx={{ display: "flex", gap: 2, paddingX: 1, paddingY: 1 }}>
-        <ViewPlayerGameSlot playerType="X" store={store} model={model} />
-        <ViewPlayerGameSlot playerType="O" store={store} model={model} />
-      </UI.Box>
-
-      <UI.Box sx={{ width: "100%", position: "relative" }}>
-        <ViewBoard
-          board={model.board}
-          onClick={(position) =>
-            dispatch(["InputMove", { position, userId: currentUserId }])
-          }
+  if (model.type === 'Game') {
+    const board = model.round.type === 'RoundOver' ? model.round.board : model.round.type === 'Started' ? model.round.board : emptyBoard
+    return (
+      <UI.FillBox>
+        <UI.Header
+          left={homeButton}
+          title={toGameText({ model, store })}
+          right={roomAvatarGroup}
         />
-        {model.round.type === 'Starting' && (
-          <UI.Box sx={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", background: "rgba(0, 0, 0, 0.5)", display: "flex", alignItems: 'center', justifyContent: "center", flexDirection: "column" }}>
-            <UI.Box sx={{ flex: 1, display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
-              <UI.Typography align="center" variant="h6" color="text.secondary">
-                Round
-              </UI.Typography>
-              <UI.Typography align="center" variant="h3">
-                1 / {model.bestOutOf}
-              </UI.Typography>
-            </UI.Box>
-            <UI.Box sx={{ flex: 1 }}>
-              <UI.Typography align="center" color="text.secondary">
-                Starting in...
-              </UI.Typography>
-              <UI.Typography align="center" variant="h1">
-                {model.round.countDown}
-              </UI.Typography>
-            </UI.Box>
-            <UI.Box sx={{ flex: 1 }}></UI.Box>
-          </UI.Box>
-        )}
-      </UI.Box>
 
-      <UI.Box sx={{ flex: 1 }} />
+        <UI.Box sx={{ display: "flex", gap: 2, paddingX: 1, paddingY: 1 }}>
+          <ViewPlayerGameSlot playerType="X" store={store} model={model} />
+          <ViewPlayerGameSlot playerType="O" store={store} model={model} />
+        </UI.Box>
 
-      <UI.Box sx={{ display: "flex", width: '100%' }}>
-        {gameOver.type === 'None' ? (
-          <>
-            <ViewResignButton model={model} currentUserId={currentUserId} dispatch={dispatch} />
-          </>
-        ) : (
-          <>
-            <UI.Box sx={{ flex: 1, padding: 2, display: 'flex', gap: 2 }}>
-              <UI.Button fullWidth variant='contained' onClick={() => dispatch(['NewGame', { userId: currentUserId }])}>
-                New Game
-              </UI.Button>
+        <UI.Box sx={{ width: "100%", position: "relative" }}>
+          <ViewBoard
+            board={board}
+            onClick={(position) =>
+              dispatch(["InputMove", { position, userId: currentUserId }])
+            }
+          />
+          {model.round.type === 'Starting' && (
+            <UI.Box sx={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", background: "rgba(0, 0, 0, 0.5)", display: "flex", alignItems: 'center', justifyContent: "center", flexDirection: "column" }}>
+              <UI.Box sx={{ flex: 1, display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
+                <UI.Typography align="center" variant="h6" color="text.secondary">
+                  Round
+                </UI.Typography>
+                <UI.Typography align="center" variant="h3">
+                  1 / {model.bestOutOf}
+                </UI.Typography>
+              </UI.Box>
+              <UI.Box sx={{ flex: 1 }}>
+                <UI.Typography align="center" color="text.secondary">
+                  Starting in...
+                </UI.Typography>
+                <UI.Typography align="center" variant="h1">
+                  {model.round.countDown}
+                </UI.Typography>
+              </UI.Box>
+              <UI.Box sx={{ flex: 1 }}></UI.Box>
             </UI.Box>
-          </>
-        )}
+          )}
+        </UI.Box>
 
-      </UI.Box>
-    </UI.FillBox>
-  )
+        <UI.Box sx={{ flex: 1 }} />
+
+        <UI.Box sx={{ display: "flex", width: '100%' }}>
+          <ViewResignButton model={model} currentUserId={currentUserId} dispatch={dispatch} />
+        </UI.Box>
+      </UI.FillBox>
+    )
+  }
+
+  return <></>
 }
 
 const ViewResignButton = ({ currentUserId, model, dispatch }: { currentUserId: UserId.UserId, model: Model, dispatch: (msg: Msg) => void }) => {
@@ -528,26 +502,42 @@ const toGameText = ({ model, store }: { model: Model, store: Store.Model }): str
       return "Setting up"
     }
 
+    case 'GameOver': {
+      switch (model.gameOver.type) {
+        case 'Resignation': {
+          return `${store.Profile[model.gameOver.resigner]?.username ?? "..."} resigned`
+        }
+
+        case 'Winner': {
+          return `${store.Profile[model.gameOver.winner]?.username ?? "..."} won`
+        }
+      }
+    }
+
     case 'Game': {
-      const gameOver = toGameOver(model)
-      switch (gameOver.type) {
-        case 'None': {
-          const turn = toTurn(model.board)
+
+      switch (model.round.type) {
+        case 'RoundOver': {
+          switch (model.round.gameOver.type) {
+            case 'Tie': {
+              return "Tie"
+            }
+
+            case 'Win': {
+              return `${model.round.gameOver.winner} won`
+            }
+          }
+        }
+        case 'Started': {
+          const turn = toTurn(model.round.board)
           return `${turn}'s Turn`
         }
 
-        case 'Resignation': {
-          return `${store.Profile[gameOver.resigner]?.username ?? "..."} resigned`
-        }
-
-        case 'Tie': {
-          return "Tie"
-        }
-
-        case 'Win': {
-          return `${gameOver.winner} won`
+        case 'Starting': {
+          return "Starting..."
         }
       }
+
     }
   }
 
@@ -590,15 +580,14 @@ const ViewPlayerGameSlot = ({
   playerType,
 }: {
   store: Store.Model
-  model: GameModel
+  model: GameModel | GameOverModel
   playerType: PlayerType
 }) => {
   const userId = model[playerType]
   const profile = store.Profile[userId]
   const theme = UI.useTheme()
 
-  const boardStatus = toStatus(model.board)
-  const isTurn = boardStatus.type === 'Turn' && boardStatus.turn === playerType
+  const isTurn = model.round.type === 'Started' && toTurn(model.round.board) === playerType
 
   const iconSize = {
     width: 20,
@@ -627,7 +616,7 @@ const ViewPlayerGameSlot = ({
       </UI.Typography>
       {isTurn && (
         <UI.Typography sx={{ marginLeft: 1 }}>
-          {model.moveCountDown}
+          {model.round.type === 'Started' ? model.round.moveCountDown : 0}
         </UI.Typography>
       )}
     </UI.Paper>
