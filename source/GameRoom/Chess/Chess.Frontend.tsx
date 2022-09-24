@@ -25,6 +25,7 @@ import * as UI from "../../UI"
 import { UserId } from "../../Data"
 import { ReactNode } from "react"
 import * as Sounds from "./Sounds"
+import { ViewHeader } from "./Views"
 
 //
 //
@@ -257,9 +258,11 @@ export const View = ({
                 <UI.Icons.Home />
               </UI.IconButton>
             }
-            title="Chess"
+            title=""
             right={roomAvatarGroup}
           />
+
+          <ViewHeader title="Chess" />
 
           <UI.Box sx={{ display: "flex", gap: 2, padding: 2 }}>
             <UI.Tooltip title={tooltipTitle}>
