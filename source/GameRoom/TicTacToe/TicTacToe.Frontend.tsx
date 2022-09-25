@@ -273,115 +273,119 @@ export const View = ({
 
         <UI.Header
           left={homeButton}
-          title="Tic Tac Toe"
+          title=""
           right={roomAvatarGroup}
         />
 
-        <UI.Box sx={{ flex: 1, padding: 2, overflowY: "scroll" }}>
-          <UI.Typography
-            color="text.secondary"
-            sx={{ marginBottom: 1 }}
-          >
-            Player One •{" "}
-            <UI.Box
-              component="span"
-              sx={{ fontFamily: "Roboto Mono" }}
+        <UI.Box sx={{ flex: 1, overflowY: "scroll" }}>
+          <Header title="Tic Tac Toe" />
+
+          <UI.Box sx={{ padding: 2 }}>
+            <UI.Typography
+              color="text.secondary"
+              sx={{ marginBottom: 1, }}
             >
-              X
-            </UI.Box>
-          </UI.Typography>
+              Player One •{" "}
+              <UI.Box
+                component="span"
+                sx={{ fontFamily: "Roboto Mono" }}
+              >
+                X
+              </UI.Box>
+            </UI.Typography>
 
-          {model.X === "None" ? (
-            <UI.Button
-              fullWidth
-              variant="contained"
-              onClick={() =>
-                dispatch([
-                  "InputPlayer",
-                  { userId: currentUserId, playerType: "X" },
-                ])
-              }
+            {model.X === "None" ? (
+              <UI.Button
+                fullWidth
+                variant="contained"
+                onClick={() =>
+                  dispatch([
+                    "InputPlayer",
+                    { userId: currentUserId, playerType: "X" },
+                  ])
+                }
+              >
+                Play as X
+              </UI.Button>
+            ) : (
+              <VidePlayerSetupSlot
+                currentUserId={currentUserId}
+                userId={model.X}
+                store={store}
+                dispatch={dispatch}
+              />
+            )}
+
+            <UI.Typography
+              color="text.secondary"
+              sx={{ marginTop: 3, marginBottom: 1 }}
             >
-              Play as X
-            </UI.Button>
-          ) : (
-            <VidePlayerSetupSlot
-              currentUserId={currentUserId}
-              userId={model.X}
-              store={store}
-              dispatch={dispatch}
-            />
-          )}
+              Player Two •{" "}
+              <UI.Box
+                component="span"
+                sx={{ fontFamily: "Roboto Mono" }}
+              >
+                O
+              </UI.Box>
+            </UI.Typography>
 
-          <UI.Typography
-            color="text.secondary"
-            sx={{ marginTop: 3, marginBottom: 1 }}
-          >
-            Player Two •{" "}
-            <UI.Box
-              component="span"
-              sx={{ fontFamily: "Roboto Mono" }}
+            {model.O === "None" ? (
+              <UI.Button
+                fullWidth
+                variant="contained"
+                onClick={() =>
+                  dispatch([
+                    "InputPlayer",
+                    { userId: currentUserId, playerType: "O" },
+                  ])
+                }
+              >
+                Play as O
+              </UI.Button>
+            ) : (
+              <VidePlayerSetupSlot
+                currentUserId={currentUserId}
+                userId={model.O}
+                store={store}
+                dispatch={dispatch}
+              />
+            )}
+
+            <UI.Typography
+              color="text.secondary"
+              sx={{ marginTop: 3, marginBottom: 1 }}
             >
-              O
-            </UI.Box>
-          </UI.Typography>
+              Best Out Of
+            </UI.Typography>
 
-          {model.O === "None" ? (
-            <UI.Button
-              fullWidth
-              variant="contained"
-              onClick={() =>
-                dispatch([
-                  "InputPlayer",
-                  { userId: currentUserId, playerType: "O" },
-                ])
-              }
+            <UI.Tooltip title={inputBestOutOfToString(inputBestOutOfResult)}>
+              <UI.ToggleButtonGroup disabled={inputBestOutOfResult.type === 'Err'} fullWidth value={model.maxRoundCount}>
+                {allBestOutOf.map(bestOutOf => (
+                  <UI.ToggleButton key={bestOutOf} value={bestOutOf} onClick={() => dispatch(['InputBestOutOf', { userId: currentUserId, bestOutOf }])}>
+                    {bestOutOfToString(bestOutOf)}
+                  </UI.ToggleButton>
+                ))}
+              </UI.ToggleButtonGroup>
+            </UI.Tooltip>
+
+
+            <UI.Typography
+              color="text.secondary"
+              sx={{ marginTop: 3, marginBottom: 1 }}
             >
-              Play as O
-            </UI.Button>
-          ) : (
-            <VidePlayerSetupSlot
-              currentUserId={currentUserId}
-              userId={model.O}
-              store={store}
-              dispatch={dispatch}
-            />
-          )}
+              Move Time Limit
+            </UI.Typography>
 
-          <UI.Typography
-            color="text.secondary"
-            sx={{ marginTop: 3, marginBottom: 1 }}
-          >
-            Best Out Of
-          </UI.Typography>
-
-          <UI.Tooltip title={inputBestOutOfToString(inputBestOutOfResult)}>
-            <UI.ToggleButtonGroup disabled={inputBestOutOfResult.type === 'Err'} fullWidth value={model.maxRoundCount}>
-              {allBestOutOf.map(bestOutOf => (
-                <UI.ToggleButton key={bestOutOf} value={bestOutOf} onClick={() => dispatch(['InputBestOutOf', { userId: currentUserId, bestOutOf }])}>
-                  {bestOutOfToString(bestOutOf)}
-                </UI.ToggleButton>
-              ))}
-            </UI.ToggleButtonGroup>
-          </UI.Tooltip>
-
-
-          <UI.Typography
-            color="text.secondary"
-            sx={{ marginTop: 3, marginBottom: 1 }}
-          >
-            Move Time Limit
-          </UI.Typography>
-
-          <UI.Tooltip title={inputMoveTimeLimitToString(inputMoveTimeLimitResult)}>
-            <UI.ToggleButtonGroup disabled={inputMoveTimeLimitResult.type === 'Err'} fullWidth value={model.moveTimeLimit}>
-              {allMoveTimeLimit.map(moveTimeLimit => (
-                <UI.ToggleButton key={moveTimeLimit} value={moveTimeLimit} onClick={() => dispatch(['InputMoveTimeLimit', { userId: currentUserId, moveTimeLimit }])}>
-                  {moveTimeLimitToString(moveTimeLimit)}
-                </UI.ToggleButton>
-              ))}
-            </UI.ToggleButtonGroup>
-          </UI.Tooltip>
+            <UI.Tooltip title={inputMoveTimeLimitToString(inputMoveTimeLimitResult)}>
+              <UI.ToggleButtonGroup disabled={inputMoveTimeLimitResult.type === 'Err'} fullWidth value={model.moveTimeLimit}>
+                {allMoveTimeLimit.map(moveTimeLimit => (
+                  <UI.ToggleButton key={moveTimeLimit} value={moveTimeLimit} onClick={() => dispatch(['InputMoveTimeLimit', { userId: currentUserId, moveTimeLimit }])}>
+                    {moveTimeLimitToString(moveTimeLimit)}
+                  </UI.ToggleButton>
+                ))}
+              </UI.ToggleButtonGroup>
+            </UI.Tooltip>
+          </UI.Box>
         </UI.Box>
 
 
@@ -710,5 +714,43 @@ export const CoverArt = () => {
         />
       ))}
     </svg>
+  )
+}
+
+export const Header = ({ title }: { title: string }) => {
+  const strokeWidth = 0.3
+  return (
+    <UI.AspectRatio aspectRatio={Math.pow(3 / 4, 3)}>
+      <UI.Box sx={{ width: '100%', height: "100%", padding: 2, backgroundColor: theme.background, display: "flex", alignItems: 'center', justifyContent: "center", gap: 1 }}>
+        <svg width="33%" viewBox="-1 -1 2 2">
+          <ViewSlot strokeWidth={strokeWidth} slot="X" cx={0} cy={0} r={0.8} />
+        </svg>
+        <svg width="33%" viewBox="-1 -1 2 2">
+          <ViewSlot strokeWidth={strokeWidth} slot="O" cx={0} cy={0} r={0.8} />
+        </svg>
+      </UI.Box>
+
+      <UI.Box
+        sx={{
+
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          display: 'flex',
+          flexDirection: "column",
+          background: `linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.4))`,
+        }}>
+        <UI.Box sx={{ flex: 1 }} />
+        <UI.Typography
+          sx={{ paddingX: 2, paddingBottom: 1 }}
+          variant="h3"
+          color="#fff"
+        >
+          {title}
+        </UI.Typography>
+      </UI.Box>
+    </UI.AspectRatio>
   )
 }
