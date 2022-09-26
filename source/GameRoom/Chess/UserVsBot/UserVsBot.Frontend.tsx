@@ -511,7 +511,6 @@ export const View = ({
       <UI.Box sx={{ flex: 1 }}>
         <UI.Typography
           variant="h6"
-          sx={{ fontFamily: "Roboto Mono" }}
         >
           {Board.levelToString(model.sharedModel.botLevel)}
         </UI.Typography>

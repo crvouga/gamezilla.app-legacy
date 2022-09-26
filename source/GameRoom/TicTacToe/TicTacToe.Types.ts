@@ -623,3 +623,14 @@ export const roundCountDown = (model: SharedModel): RoundCountDown_Done[1] => {
   return Ok(modelNew)
 }
 
+
+
+// 
+// 
+// 
+// Rematch
+// 
+// 
+// 
+
+// type RematchAsk = ['RematchAsk', { userId: UserId.UserId }]

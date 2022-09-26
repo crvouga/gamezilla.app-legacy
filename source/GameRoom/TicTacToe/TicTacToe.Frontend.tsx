@@ -185,7 +185,6 @@ export const View = ({
               Player One •{" "}
               <UI.Box
                 component="span"
-                sx={{ fontFamily: "Roboto Mono" }}
               >
                 X
               </UI.Box>
@@ -220,7 +219,6 @@ export const View = ({
               Player Two •{" "}
               <UI.Box
                 component="span"
-                sx={{ fontFamily: "Roboto Mono" }}
               >
                 O
               </UI.Box>
@@ -387,9 +385,12 @@ export const View = ({
 
     <UI.Box sx={{ flex: 1 }} />
 
-    <UI.Box sx={{ display: "flex", width: '100%', padding: 2 }}>
-      <UI.Button fullWidth variant="contained" onClick={() => dispatch(['NewGame', { userId: currentUserId }])}>
-        New Game
+    <UI.Box sx={{ display: "flex", width: '100%', padding: 2, gap: 2 }}>
+      <UI.Button fullWidth variant="outlined" onClick={() => dispatch(['NewGame', { userId: currentUserId }])}>
+        Back
+      </UI.Button>
+      <UI.Button fullWidth variant="contained" >
+        Rematch
       </UI.Button>
 
     </UI.Box>

@@ -32,7 +32,7 @@ const createTheme = ({ mode }: { mode: "light" | "dark" }) =>
         // primary: purple,
       },
       typography: {
-        fontFamily: ["Roboto"].join(","),
+        fontFamily: ["Inter"].join(","),
       },
       components: {
         MuiCircularProgress: {
