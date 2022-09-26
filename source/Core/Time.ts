@@ -53,7 +53,8 @@ export const cancelTimeout = (timeoutId: string): Cmd.Cmd<never> => {
 //
 //
 //
-// why not use rxjs for intervals?: https://github.com/gcanti/elm-ts/issues/20
+// why not just use rxjs for intervals?
+// https://github.com/gcanti/elm-ts/issues/20
 //
 //
 //
@@ -80,18 +81,20 @@ export const every = <Msg>(
   time: number,
   f: (time: number) => Msg,
 ): Sub.Sub<Msg> => {
-  let subj = intervals.get(intervalId)
+  const subj = intervals.get(intervalId)
 
-  if (subj === undefined) {
-    subj = new Rx.Subject<number>()
-
-    intervals.set(intervalId, subj)
-
-    setTimeout(() => {
-      onTimeout(intervalId, time)
-    }, time)
+  if (subj) {
+    return subj.pipe(Rx.map(() => f(new Date().getTime())))
   }
 
-  return subj.pipe(Rx.map(() => f(new Date().getTime())))
+  const newSubj = new Rx.Subject<number>()
+
+  intervals.set(intervalId, newSubj)
+
+  setTimeout(() => {
+    onTimeout(intervalId, time)
+  }, time)
+
+  return newSubj.pipe(Rx.map(() => f(new Date().getTime())))
 }
 

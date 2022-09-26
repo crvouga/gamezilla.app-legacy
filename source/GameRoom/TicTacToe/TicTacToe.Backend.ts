@@ -204,16 +204,15 @@ export const subscriptions = (intervalId: string, model: Model): Sub.Sub<Msg> =>
 
 
     case 'Game': {
-
       const currentRound = Round.toCurrent(model.round)
 
       switch (currentRound.type) {
-        case 'Started': {
+        case 'RoundStarted': {
           const turn = toTurn(currentRound.board)
           return Time.every(`${intervalId}-move-count-down-${turn}`, 1000, (): Msg => ['MoveCountDown'])
         }
 
-        case 'Starting': {
+        case 'RoundStarting': {
           return Time.every(`${intervalId}-round-count-down`, 750, (): Msg => ['RoundCountDown'])
         }
 
