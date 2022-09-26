@@ -33,7 +33,7 @@ export const ViewActionButton = ({
 
 export const BannerArt = ({ title }: { title: string }) => {
   return (
-    <UI.AspectRatio aspectRatio={Math.pow(3 / 4, 3)}>
+    <UI.AspectRatio aspectRatio={Math.pow(3 / 4, 4)}>
       <UI.Box sx={{ width: "100%", position: "relative" }}>
         <Board.View key={"exampleModel"} boardOrientation="b" model={Board.exampleModel} />
       </UI.Box>

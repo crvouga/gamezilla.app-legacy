@@ -1,3 +1,4 @@
+import { Fragment } from "react"
 import { Result } from "../../Core"
 import * as Store from "../../Store"
 
@@ -300,11 +301,14 @@ export const ViewBoard = ({
       ))}
 
       {allPositions.map((position) => (
+
         <rect
           key={[position.column, position.row, toSlot(board, position)].join(
             " ",
           )}
-          style={{ cursor: "pointer" }}
+          style={{
+            cursor: "pointer",
+          }}
           x={Number(position.column)}
           y={Number(position.row)}
           width={1}
@@ -312,6 +316,8 @@ export const ViewBoard = ({
           onClick={() => onClick(position)}
           fill="transparent"
         />
+
+
       ))}
     </svg>
   )

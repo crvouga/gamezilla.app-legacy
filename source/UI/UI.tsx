@@ -599,7 +599,7 @@ export const ActionButton = ({
     <ButtonBase
       onClick={onClick}
       sx={{
-        paddingY: 1,
+        paddingY: 1 / 2,
         paddingX: 2,
         display: "flex",
         flexDirection: "column",
@@ -607,7 +607,7 @@ export const ActionButton = ({
       }}
     >
       {icon}
-      <Typography variant="subtitle1">{label}</Typography>
+      <Typography sx={{ marginTop: -1 / 2 }} variant="caption">{label}</Typography>
     </ButtonBase>
   )
 }

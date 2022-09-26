@@ -1,4 +1,4 @@
-import { Cmd } from "../../Core"
+import { Cmd, exhaustive, rescale } from "../../Core"
 import { UserId } from "../../Data"
 import * as Store from "../../Store"
 import * as UI from "../../UI"
@@ -53,7 +53,6 @@ export const update = (
   switch (msg[0]) {
     //
     //
-    //
     // Frontend Msg
     //
     //
@@ -89,19 +88,30 @@ export const update = (
 
 export const updateFromBackend = (
   msg: ToFrontend,
-  _model: Model,
+  model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
-  const model: Model = { ..._model, openedModal: "None" }
-
   switch (msg[0]) {
+    case 'NewGame_Done':
     case 'InputMoveTimeLimit_Done':
     case 'InputBestOutOf_Done':
-    case 'NewGame_Done':
     case "InputMove_Done":
     case "InputPlayer_Done":
     case "StopPlaying_Done":
     case "StartGame_Done":
-    case "Resign_Done":
+    case "Resign_Done": {
+
+      const res: Res = msg
+
+      if (res[1].type === "Err") {
+        return [model, Cmd.None]
+      }
+
+      const modelNew = mergeWithBackend(model, res[1].value)
+
+      return [{ ...modelNew, openedModal: "None" }, Cmd.None]
+
+    }
+
     case 'MoveCountDown_Done':
     case 'RoundCountDown_Done': {
       if (msg[1].type === "Err") {
@@ -112,8 +122,13 @@ export const updateFromBackend = (
 
       return [modelNew, Cmd.None]
     }
+
+    default: {
+      return exhaustive(msg[0])
+    }
   }
 }
+
 
 export const mergeWithBackend = (
   frontendModel: FrontendModel,
@@ -309,6 +324,7 @@ export const View = ({
   if (model.type === 'Game') {
     const currentRound = Round.toCurrent(model.round)
     const board = Round.toCurrentBoard(model.round) ?? emptyBoard
+    const timeLeft = currentRound.type === 'RoundStarted' ? currentRound.moveCountDown : model.moveTimeLimit
     return (
       <UI.FillBox>
         <UI.Header
@@ -317,43 +333,76 @@ export const View = ({
           right={roomAvatarGroup}
         />
 
-        <UI.Box sx={{ display: "flex", gap: 2, paddingX: 1, paddingY: 1 }}>
-          <ViewPlayerGameSlot playerType="X" store={store} model={model} />
-          <ViewPlayerGameSlot playerType="O" store={store} model={model} />
-        </UI.Box>
+        <UI.Box sx={{ flex: 1, overflowY: "scroll" }}>
 
-        <UI.Box sx={{ width: "100%", position: "relative" }}>
-          <ViewBoard
-            board={board}
-            onClick={(position) =>
-              dispatch(["InputMove", { position, userId: currentUserId }])
-            }
-          />
-          {currentRound.type === 'RoundStarting' && (
-            <UI.Fade in={currentRound.type === 'RoundStarting'}>
-              <UI.Box sx={{
-                aspectRatio: 1,
-                position: "absolute",
-                top: 0,
-                left: 0,
-                width: "100%",
-                height: "100%",
-                maxHeight: "100%",
-                maxWidth: '100%',
-                background: "rgba(0, 0, 0, 0.5)",
-                display: "flex",
-                alignItems: 'center',
-                justifyContent: "center",
-                flexDirection: "column",
-                overflow: "hidden",
-              }}>
-                <ViewRoundStarting model={model} />
+          <UI.Box sx={{ display: "flex", gap: 2, paddingX: 1, paddingY: 1 }}>
+            <ViewPlayerGameSlot playerType="X" store={store} model={model} />
+            <ViewPlayerGameSlot playerType="O" store={store} model={model} />
+          </UI.Box>
+
+          <UI.Box sx={{ width: "100%", position: "relative", }}>
+            <ViewBoard
+              board={board}
+              onClick={(position) =>
+                dispatch(["InputMove", { position, userId: currentUserId }])
+              }
+            />
+
+
+            {/* {timeLeft <= 3 && (
+              <UI.Box
+                sx={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: "100%",
+                  // 
+                  display: 'flex',
+                  alignItems: "center",
+                  justifyContent: "center",
+
+                }}
+                onClick={event => {
+                  // if (event.currentTarget == event.target) 
+                  event.preventDefault()
+
+                }}
+              >
+                <UI.Typography
+                  sx={{
+                    fontSize: "200px",
+                    opacity: 0.5
+                  }}>
+                  {timeLeft}
+                </UI.Typography>
               </UI.Box>
-            </UI.Fade>
-          )}
-        </UI.Box>
+            )} */}
 
-        <UI.Box sx={{ flex: 1 }} />
+            {currentRound.type === 'RoundStarting' && (
+              <UI.Fade in={currentRound.type === 'RoundStarting'}>
+                <UI.Box sx={{
+                  aspectRatio: 1,
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  width: "100%",
+                  height: "100%",
+                  maxHeight: "100%",
+                  maxWidth: '100%',
+                  background: "rgba(0, 0, 0, 0.5)",
+                  display: "flex",
+                  alignItems: 'center',
+                  justifyContent: "center",
+                  flexDirection: "column",
+                  overflow: "hidden",
+                }}>
+                  <ViewRoundOverlay currentUserId={currentUserId} model={model} />
+                </UI.Box>
+              </UI.Fade>
+            )}
+          </UI.Box>
+        </UI.Box>
 
         <UI.Box sx={{ display: "flex", width: '100%' }}>
           <ViewResignButton model={model} currentUserId={currentUserId} dispatch={dispatch} />
@@ -378,9 +427,9 @@ export const View = ({
 
     <ViewBoard
       board={board}
-      onClick={(position) =>
+      onClick={(position) => {
         dispatch(["InputMove", { position, userId: currentUserId }])
-      }
+      }}
     />
 
     <UI.Box sx={{ flex: 1 }} />
@@ -397,7 +446,7 @@ export const View = ({
   </UI.FillBox>
 }
 
-const ViewRoundStarting = ({ model }: { model: GameModel }) => {
+const ViewRoundOverlay = ({ currentUserId, model }: { currentUserId: UserId.UserId, model: GameModel }) => {
   const currentRound = Round.toCurrent(model.round)
   const previousRound = Round.toPrevious(model.round)
 
@@ -422,24 +471,56 @@ const ViewRoundStarting = ({ model }: { model: GameModel }) => {
             flexDirection: "column",
             color: "#fff"
           }}>
-          <UI.Typography align="center" variant="h2" color="inherit">
-            Game Start
+          <UI.Typography align="center" variant="h2" color="inherit" sx={{ marginBottom: 2 }}>
+            Best {Math.floor(model.maxRoundCount / 2) + 1} out of {model.maxRoundCount}
           </UI.Typography>
-          <UI.Typography align="center" variant="h3" color="inherit">
-            {Round.toCount(model.round)} / {model.maxRoundCount}
-          </UI.Typography>
-        </UI.Box>
-        <UI.Box sx={{ flex: 1, color: "#fff", display: 'flex', flexDirection: "column", alignItems: "center", justifyContent: "flex-end" }}>
-          <UI.Typography align="center" color="inherit">
+          <UI.Typography variant="subtitle1" align="center" color="inherit">
             Starting in...
           </UI.Typography>
           <UI.Typography align="center" variant="h2" color="inherit">
             {currentRound.countDown}
           </UI.Typography>
         </UI.Box>
+        <UI.Box sx={{ flex: 1, color: "#fff", display: 'flex', flexDirection: "column", alignItems: "center", justifyContent: "flex-end" }}>
+        </UI.Box>
       </>
     )
   }
+
+  const score = Round.toScore(model.round)
+
+
+  const scoreBoard = (
+    <UI.Box sx={{ display: "flex", width: "100%", color: "#fff" }}>
+      <UI.Box sx={{ flex: 1, display: 'flex', flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+        <svg width={36} viewBox="-1 -1 2 2">
+          <ViewSlot strokeWidth={0.25} cx={0} cy={0} r={0.8} slot={"X"} color="#fff" />
+        </svg>
+        <UI.Typography align="center" variant="h2" sx={{ flex: 1, color: "#fff" }}>
+          {score.X}
+        </UI.Typography>
+      </UI.Box>
+
+      <UI.Box sx={{ flex: 1 }}>
+        <UI.Typography align="center" variant="h3" sx={{ color: "#fff" }}>
+          Tie
+        </UI.Typography>
+        <UI.Typography align="center" variant="h3" sx={{ color: "#fff" }}>
+          {score.Tie}
+        </UI.Typography>
+      </UI.Box>
+
+      <UI.Box sx={{ flex: 1, display: 'flex', flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+        <svg width={36} viewBox="-1 -1 2 2">
+          <ViewSlot strokeWidth={0.25} cx={0} cy={0} r={0.8} slot={"O"} color="#fff" />
+        </svg>
+
+        <UI.Typography align="center" variant="h2" sx={{ flex: 1, color: "#fff" }}>
+          {score.O}
+        </UI.Typography>
+      </UI.Box>
+    </UI.Box>
+  )
 
   const { roundOver } = previousRound
 
@@ -449,7 +530,7 @@ const ViewRoundStarting = ({ model }: { model: GameModel }) => {
         <UI.Box sx={{ flex: 1 }}></UI.Box>
         <UI.Box
           sx={{
-            flex: 1,
+            flex: 2,
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
@@ -457,12 +538,13 @@ const ViewRoundStarting = ({ model }: { model: GameModel }) => {
             color: "#fff"
           }}>
           <UI.Typography align="center" variant="h1" color="inherit">
-            Round Tie
+            Tie
           </UI.Typography>
           <UI.Typography align="center" variant="h3" color="inherit">
-            {Round.toCount(model.round)} / {model.maxRoundCount}
+            {/* {Round.toCount(model.round)} / {model.maxRoundCount} */}
           </UI.Typography>
         </UI.Box>
+        {scoreBoard}
         <UI.Box sx={{ flex: 1, color: "#fff" }}>
           <UI.Typography align="center" color="inherit">
             Next round starting in...
@@ -475,33 +557,55 @@ const ViewRoundStarting = ({ model }: { model: GameModel }) => {
     )
   }
 
+  const didCurrentUserWin = model[roundOver.winner] === currentUserId
+  const isPlaying = model.O === currentUserId || model.X === currentUserId
+
   return (
     <>
+      <UI.Box sx={{ flex: 1 }}></UI.Box>
       <UI.Box
         sx={{
-          flex: 1,
+          flex: 2,
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
           flexDirection: "column",
           color: "#fff"
         }}>
-        <UI.Typography align="center" variant="h6" color="inherit">
-          Round Win
-        </UI.Typography>
-        <UI.Typography align="center" variant="h3" color="inherit">
-          {Round.toCount(model.round)} / {model.maxRoundCount}
-        </UI.Typography>
+
+        {isPlaying ? (
+          didCurrentUserWin ? (
+            <UI.Typography align="center" variant="h1" color="inherit">
+              Round Win
+            </UI.Typography>
+          ) : (
+            <UI.Typography align="center" variant="h1" color="inherit">
+              Round Lost
+            </UI.Typography>
+          )
+        ) : (
+          <UI.Box sx={{ display: "flex", justifyContent: 'center', alignItems: 'center' }}>
+            <svg width={72} viewBox="-1 -1 2 2">
+              <ViewSlot strokeWidth={0.25} cx={0} cy={0} r={0.8} slot={roundOver.winner} color="#fff" />
+            </svg>
+            <UI.Typography align="center" variant="h1" color="inherit">
+              Won
+            </UI.Typography>
+          </UI.Box>
+        )}
       </UI.Box>
+
+      {scoreBoard}
+
       <UI.Box sx={{ flex: 1, color: "#fff" }}>
         <UI.Typography align="center" color="inherit">
-          Starting in...
+          Next round starting in...
         </UI.Typography>
-        <UI.Typography align="center" variant="h1" color="inherit">
+
+        <UI.Typography align="center" variant="h6" color="inherit">
           {currentRound.countDown}
         </UI.Typography>
       </UI.Box>
-      <UI.Box sx={{ flex: 1 }}></UI.Box>
     </>
   )
 
@@ -573,7 +677,7 @@ const toGameText = ({ model, store }: { model: Model, store: Store.Model }): str
         }
         case 'RoundStarted': {
           const turn = toTurn(currentRound.board)
-          return `${turn}'s Turn`
+          return `${turn} Turn`
         }
 
         case 'RoundStarting': {
@@ -632,7 +736,7 @@ const ViewPlayerGameSlot = ({
 
   const round = Round.toCurrent(model.round)
 
-  const isTurn = round.type === 'RoundStarted' && toTurn(round.board) === playerType
+  const isTurn = model.type === 'Game' && round.type === 'RoundStarted' && toTurn(round.board) === playerType
 
   const iconSize = {
     width: 20,
@@ -640,31 +744,49 @@ const ViewPlayerGameSlot = ({
   }
 
 
+  const timeLeft = round.type === 'RoundStarted' ? round.moveCountDown : 0
+
+  // const progress = isTurn ? rescale({
+  //   value: timeLeft,
+  //   from: [0, model.moveTimeLimit],
+  //   to: [0, 100]
+  // }) : 0
+
+  // const progressColor = !isTurn ? 'inherit' : timeLeft == 2 || timeLeft === 3 ? 'warning' : timeLeft === 1 ? 'error' : "inherit"
+
   return (
-    <UI.Paper
-      sx={{
-        flex: 1,
-        display: "flex",
-        alignItems: "center",
-        padding: 1,
-        overflow: "hidden",
-        borderBottom: `solid 3.5px ${isTurn ? theme.background : uiTheme.palette.divider}`,
-      }}
-      variant="outlined"
-    >
-      <UI.SvgIcon sx={{ display: "block", marginRight: 1, ...iconSize, }} viewBox="-1 -1 2 2" >
-        <ViewSlot strokeWidth={0.3} color={uiTheme.palette.text.primary} slot={playerType} cx={0} cy={0} r={0.8} />
-      </UI.SvgIcon>
-      <UI.Avatar src={profile?.avatarUrl} sx={{ marginRight: 1, ...iconSize, }} />
-      <UI.Typography noWrap sx={{ flex: 1 }}>
-        {profile?.username ?? "..."}
-      </UI.Typography>
-      {isTurn && (
-        <UI.Typography sx={{ marginLeft: 2 }}>
-          {round.type === 'RoundStarted' ? round.moveCountDown : 0}
-        </UI.Typography>
-      )}
+    <UI.Paper sx={{ flex: 1, overflow: "hidden", height: "100%", width: '100%' }} variant="outlined">
+      <UI.Box
+        sx={{
+          flex: 1,
+          display: "flex",
+          alignItems: "center",
+          overflow: "hidden",
+          borderBottom: `solid 3.5px ${isTurn ? theme.background : uiTheme.palette.divider}`,
+        }}
+
+      >
+        <UI.Box sx={{ display: 'flex', flexDirection: "row", padding: 1, flex: 2, overflow: "hidden" }}>
+          <UI.SvgIcon sx={{ display: "block", marginRight: 1, ...iconSize, }} viewBox="-1 -1 2 2" >
+            <ViewSlot strokeWidth={0.3} color={uiTheme.palette.text.primary} slot={playerType} cx={0} cy={0} r={0.8} />
+          </UI.SvgIcon>
+          <UI.Avatar src={profile?.avatarUrl} sx={{ marginRight: 1, ...iconSize, }} />
+          <UI.Typography noWrap sx={{ flex: 1 }}>
+            {profile?.username ?? "..."}
+          </UI.Typography>
+        </UI.Box>
+        <UI.Box>
+          {isTurn && (
+            <UI.Typography variant="h6" sx={{ paddingRight: 1 }} color={timeLeft === 3 ? 'warning.light' : timeLeft === 2 ? 'warning.dark' : timeLeft < 2 ? 'error.main' : 'text.primary'}>
+              {timeLeft}
+            </UI.Typography>
+          )}
+        </UI.Box>
+      </UI.Box>
+      {/* {isTurn ? <UI.LinearProgress key="isTurn" color={progressColor} variant="determinate" value={progress} /> : <UI.LinearProgress key="isNotTurn" color={"inherit"} variant="determinate" value={0} />} */}
     </UI.Paper>
+
+
   )
 }
 // 
@@ -724,15 +846,15 @@ export const CoverArt = () => {
 }
 
 export const BannerArt = ({ title }: { title: string }) => {
-  const strokeWidth = 0.3
+  const strokeWidth = 0.25
   return (
-    <UI.AspectRatio aspectRatio={Math.pow(3 / 4, 3)}>
+    <UI.AspectRatio aspectRatio={Math.pow(3 / 4, 4)}>
       <UI.Box sx={{ width: '100%', height: "100%", padding: 2, backgroundColor: theme.background, display: "flex", alignItems: 'center', justifyContent: "center", gap: 1 }}>
         <svg width="33%" viewBox="-1 -1 2 2">
-          <ViewSlot strokeWidth={strokeWidth} slot="X" cx={0} cy={0} r={0.8} />
+          <ViewSlot strokeWidth={strokeWidth} slot="X" cx={0} cy={0} r={0.75} />
         </svg>
         <svg width="33%" viewBox="-1 -1 2 2">
-          <ViewSlot strokeWidth={strokeWidth} slot="O" cx={0} cy={0} r={0.8} />
+          <ViewSlot strokeWidth={strokeWidth} slot="O" cx={0} cy={0} r={0.75} />
         </svg>
       </UI.Box>
 
