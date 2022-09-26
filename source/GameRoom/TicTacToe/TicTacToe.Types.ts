@@ -434,7 +434,7 @@ export const moveCountDown = (model: SharedModel): MoveCountDown_Done[1] => {
 
 
   // 
-  // Times up. Make a random move for the player
+  // Times up. Make a random move for the current player
   //
 
   const emptyPositions = TicTacToe.toEmptyPositions(board)
