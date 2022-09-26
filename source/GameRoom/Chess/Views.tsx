@@ -31,7 +31,7 @@ export const ViewActionButton = ({
 }
 
 
-export const ViewHeader = ({ title }: { title: string }) => {
+export const BannerArt = ({ title }: { title: string }) => {
   return (
     <UI.AspectRatio aspectRatio={Math.pow(3 / 4, 3)}>
       <UI.Box sx={{ width: "100%", position: "relative" }}>

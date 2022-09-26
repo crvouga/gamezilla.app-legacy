@@ -278,7 +278,7 @@ export const View = ({
         />
 
         <UI.Box sx={{ flex: 1, overflowY: "scroll" }}>
-          <Header title="Tic Tac Toe" />
+          <BannerArt title="Tic Tac Toe" />
 
           <UI.Box sx={{ padding: 2 }}>
             <UI.Typography
@@ -717,7 +717,7 @@ export const CoverArt = () => {
   )
 }
 
-export const Header = ({ title }: { title: string }) => {
+export const BannerArt = ({ title }: { title: string }) => {
   const strokeWidth = 0.3
   return (
     <UI.AspectRatio aspectRatio={Math.pow(3 / 4, 3)}>
@@ -732,7 +732,6 @@ export const Header = ({ title }: { title: string }) => {
 
       <UI.Box
         sx={{
-
           position: "absolute",
           top: 0,
           left: 0,

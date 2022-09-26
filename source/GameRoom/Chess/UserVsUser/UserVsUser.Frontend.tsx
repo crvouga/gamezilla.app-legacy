@@ -5,7 +5,7 @@ import * as Store from "../../../Store"
 import * as UI from "../../../UI"
 import * as Clock from "../Clock"
 import * as Sounds from "../Sounds"
-import { ViewHeader, ViewActionButton } from "../Views"
+import { BannerArt, ViewActionButton } from "../Views"
 import * as Board from "./../Board"
 import {
   BackendModel,
@@ -459,7 +459,7 @@ export const View = ({
         />
 
         <UI.Box sx={{ flex: 1, overflowY: "scroll" }}>
-          <ViewHeader title="User Vs User" />
+          <BannerArt title="User Vs User" />
 
 
           <UI.Typography
