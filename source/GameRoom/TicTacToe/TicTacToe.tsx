@@ -210,11 +210,13 @@ export const toTurn = (board: Board): PlayerType => {
 
 export type MoveProblem = "not_players_turn" | "position_is_taken" | "game_over"
 
+export type MoveResult = Result.Result<MoveProblem, Board>
+
 export const move = (
   board: Board,
   player: PlayerType,
   position: Position,
-): Result.Result<MoveProblem, Board> => {
+): MoveResult => {
   const status = toStatus(board)
 
   if (status.type === "Tie" || status.type === "Win") {
@@ -253,6 +255,8 @@ export const theme = {
   naught: "#F2EBD3",
 }
 
+
+
 export const ViewBoard = ({
   board,
   onClick,
@@ -262,7 +266,6 @@ export const ViewBoard = ({
 }) => {
   return (
     <svg
-
       width={"100%"}
       viewBox="0 0 3 3"
       style={{
@@ -270,17 +273,20 @@ export const ViewBoard = ({
         backgroundColor: theme.background
       }}
     >
-      {lines.map((line, index) => (
-        <line
-          key={index}
-          x1={line.x1}
-          y1={line.y1}
-          x2={line.x2}
-          y2={line.y2}
-          stroke={theme.line}
-          strokeWidth={0.1}
-        />
-      ))}
+      <g>
+        {lines.map((line, index) => (
+          <line
+            key={index}
+            x1={line.x1}
+            y1={line.y1}
+            x2={line.x2}
+            y2={line.y2}
+            stroke={theme.line}
+            strokeWidth={0.1}
+          />
+        ))}
+      </g>
+
       {allPositions.map((position) => (
         <ViewSlot
           key={[position.column, position.row, toSlot(board, position)].join(

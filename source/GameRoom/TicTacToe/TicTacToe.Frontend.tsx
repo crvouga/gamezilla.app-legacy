@@ -7,7 +7,7 @@ import {
   allBestOutOf,
   allMoveTimeLimit, BackendModel, bestOutOfToString, FrontendModel,
   FrontendMsg, GameModel, GameOverModel, initSharedModel, inputBestOutOf, inputBestOutOfToString, inputMoveTimeLimit,
-  inputMoveTimeLimitToString, moveTimeLimitToString, startGame,
+  inputMoveTimeLimitToString, moveTimeLimitToString, Res, startGame,
   ToBackend,
   ToFrontend
 } from "./TicTacToe.Types"
@@ -74,35 +74,13 @@ export const update = (
     //
     //
 
-
-    case 'InputBestOutOf': {
-      return [model, sendToBackend(msg)]
-    }
-
-    case 'InputMoveTimeLimit': {
-      return [model, sendToBackend(msg)]
-    }
-
-    case "InputMove": {
-      return [model, sendToBackend(msg)]
-    }
-
-    case "Resign": {
-      return [model, sendToBackend(msg)]
-    }
-
-    case "InputPlayer": {
-      return [model, sendToBackend(msg)]
-    }
-
-    case "StopPlaying": {
-      return [model, sendToBackend(msg)]
-    }
-
-    case "StartGame": {
-      return [model, sendToBackend(msg)]
-    }
-
+    case 'InputBestOutOf':
+    case 'InputMoveTimeLimit':
+    case "InputMove":
+    case "Resign":
+    case "InputPlayer":
+    case "StopPlaying":
+    case "StartGame":
     case 'NewGame': {
       return [model, sendToBackend(msg)]
     }
@@ -111,99 +89,20 @@ export const update = (
 
 export const updateFromBackend = (
   msg: ToFrontend,
-  model: Model,
+  _model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
+  const model: Model = { ..._model, openedModal: "None" }
+
   switch (msg[0]) {
-    case 'InputMoveTimeLimit_Done': {
-      if (msg[1].type === "Err") {
-        return [model, Cmd.None]
-      }
-
-      const modelNew = mergeWithBackend(model, msg[1].value)
-
-      return [modelNew, Cmd.None]
-    }
-
-    case 'InputBestOutOf_Done': {
-      if (msg[1].type === "Err") {
-        return [model, Cmd.None]
-      }
-
-      const modelNew = mergeWithBackend(model, msg[1].value)
-
-      return [modelNew, Cmd.None]
-    }
-
-    case 'NewGame_Done': {
-      if (msg[1].type === "Err") {
-        return [model, Cmd.None]
-      }
-
-      const modelNew = mergeWithBackend(model, msg[1].value)
-
-      return [modelNew, Cmd.None]
-    }
-
-    case "InputMove_Done": {
-      if (msg[1].type === "Err") {
-        return [model, Cmd.None]
-      }
-
-      const modelNew = mergeWithBackend(model, msg[1].value)
-
-      return [modelNew, Cmd.None]
-    }
-
-    case "InputPlayer_Done": {
-      if (msg[1].type === "Err") {
-        return [model, Cmd.None]
-      }
-
-      const modelNew = mergeWithBackend(model, msg[1].value)
-
-      return [modelNew, Cmd.None]
-    }
-
-    case "StopPlaying_Done": {
-      if (msg[1].type === "Err") {
-        return [model, Cmd.None]
-      }
-
-      const modelNew = mergeWithBackend(model, msg[1].value)
-
-      return [modelNew, Cmd.None]
-    }
-
-    case "StartGame_Done": {
-      if (msg[1].type === "Err") {
-        return [model, Cmd.None]
-      }
-
-      const modelNew = mergeWithBackend(model, msg[1].value)
-
-      return [modelNew, Cmd.None]
-    }
-
-    case "Resign_Done": {
-      if (msg[1].type === "Err") {
-        return [model, Cmd.None]
-      }
-
-      const modelNew = mergeWithBackend(model, msg[1].value)
-
-      return [modelNew, Cmd.None]
-    }
-
-    case 'MoveCountDown_Done': {
-      if (msg[1].type === "Err") {
-        return [model, Cmd.None]
-      }
-
-      const modelNew = mergeWithBackend(model, msg[1].value)
-
-      return [modelNew, Cmd.None]
-    }
-
+    case 'InputMoveTimeLimit_Done':
+    case 'InputBestOutOf_Done':
+    case 'NewGame_Done':
+    case "InputMove_Done":
+    case "InputPlayer_Done":
+    case "StopPlaying_Done":
+    case "StartGame_Done":
+    case "Resign_Done":
+    case 'MoveCountDown_Done':
     case 'RoundCountDown_Done': {
       if (msg[1].type === "Err") {
         return [model, Cmd.None]
@@ -215,8 +114,6 @@ export const updateFromBackend = (
     }
   }
 }
-
-
 
 export const mergeWithBackend = (
   frontendModel: FrontendModel,
@@ -413,8 +310,7 @@ export const View = ({
 
   if (model.type === 'Game') {
     const currentRound = Round.toCurrent(model.round)
-    const board = Round.toLatestBoard(model.round) ?? emptyBoard
-    const score = Round.toScore(model.round)
+    const board = Round.toCurrentBoard(model.round) ?? emptyBoard
     return (
       <UI.FillBox>
         <UI.Header
@@ -435,26 +331,25 @@ export const View = ({
               dispatch(["InputMove", { position, userId: currentUserId }])
             }
           />
-          {currentRound.type === 'Starting' && (
-            <UI.Fade in={currentRound.type === 'Starting'}>
-              <UI.Box sx={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", background: "rgba(0, 0, 0, 0.5)", display: "flex", alignItems: 'center', justifyContent: "center", flexDirection: "column" }}>
-                <UI.Box sx={{ flex: 1, display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column", color: "#fff" }}>
-                  <UI.Typography align="center" variant="h6" color="inherit">
-                    Round
-                  </UI.Typography>
-                  <UI.Typography align="center" variant="h3" color="inherit">
-                    {Round.toCount(model.round)} / {model.maxRoundCount}
-                  </UI.Typography>
-                </UI.Box>
-                <UI.Box sx={{ flex: 1, color: "#fff" }}>
-                  <UI.Typography align="center" color="inherit">
-                    Starting in...
-                  </UI.Typography>
-                  <UI.Typography align="center" variant="h1" color="inherit">
-                    {currentRound.countDown}
-                  </UI.Typography>
-                </UI.Box>
-                <UI.Box sx={{ flex: 1 }}></UI.Box>
+          {currentRound.type === 'RoundStarting' && (
+            <UI.Fade in={currentRound.type === 'RoundStarting'}>
+              <UI.Box sx={{
+                aspectRatio: 1,
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: "100%",
+                maxHeight: "100%",
+                maxWidth: '100%',
+                background: "rgba(0, 0, 0, 0.5)",
+                display: "flex",
+                alignItems: 'center',
+                justifyContent: "center",
+                flexDirection: "column",
+                overflow: "hidden",
+              }}>
+                <ViewRoundStarting model={model} />
               </UI.Box>
             </UI.Fade>
           )}
@@ -469,7 +364,7 @@ export const View = ({
     )
   }
 
-  const board = Round.toLatestBoard(model.round) ?? emptyBoard
+  const board = Round.toCurrentBoard(model.round) ?? emptyBoard
 
   return <UI.FillBox>
     <UI.Header
@@ -499,6 +394,116 @@ export const View = ({
 
     </UI.Box>
   </UI.FillBox>
+}
+
+const ViewRoundStarting = ({ model }: { model: GameModel }) => {
+  const currentRound = Round.toCurrent(model.round)
+  const previousRound = Round.toPrevious(model.round)
+
+  if (currentRound.type === 'RoundOver') {
+    return <></>
+  }
+
+  if (currentRound.type === 'RoundStarted') {
+    return <></>
+  }
+
+  if (previousRound.type === 'None') {
+    return (
+      <>
+        <UI.Box sx={{ flex: 1 }}></UI.Box>
+        <UI.Box
+          sx={{
+            flex: 1,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            flexDirection: "column",
+            color: "#fff"
+          }}>
+          <UI.Typography align="center" variant="h2" color="inherit">
+            Game Start
+          </UI.Typography>
+          <UI.Typography align="center" variant="h3" color="inherit">
+            {Round.toCount(model.round)} / {model.maxRoundCount}
+          </UI.Typography>
+        </UI.Box>
+        <UI.Box sx={{ flex: 1, color: "#fff", display: 'flex', flexDirection: "column", alignItems: "center", justifyContent: "flex-end" }}>
+          <UI.Typography align="center" color="inherit">
+            Starting in...
+          </UI.Typography>
+          <UI.Typography align="center" variant="h2" color="inherit">
+            {currentRound.countDown}
+          </UI.Typography>
+        </UI.Box>
+      </>
+    )
+  }
+
+  const { roundOver } = previousRound
+
+  if (roundOver.type === 'Tie') {
+    return (
+      <>
+        <UI.Box sx={{ flex: 1 }}></UI.Box>
+        <UI.Box
+          sx={{
+            flex: 1,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            flexDirection: "column",
+            color: "#fff"
+          }}>
+          <UI.Typography align="center" variant="h1" color="inherit">
+            Round Tie
+          </UI.Typography>
+          <UI.Typography align="center" variant="h3" color="inherit">
+            {Round.toCount(model.round)} / {model.maxRoundCount}
+          </UI.Typography>
+        </UI.Box>
+        <UI.Box sx={{ flex: 1, color: "#fff" }}>
+          <UI.Typography align="center" color="inherit">
+            Next round starting in...
+          </UI.Typography>
+          <UI.Typography align="center" variant="h6" color="inherit">
+            {currentRound.countDown}
+          </UI.Typography>
+        </UI.Box>
+      </>
+    )
+  }
+
+  return (
+    <>
+      <UI.Box
+        sx={{
+          flex: 1,
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          flexDirection: "column",
+          color: "#fff"
+        }}>
+        <UI.Typography align="center" variant="h6" color="inherit">
+          Round Win
+        </UI.Typography>
+        <UI.Typography align="center" variant="h3" color="inherit">
+          {Round.toCount(model.round)} / {model.maxRoundCount}
+        </UI.Typography>
+      </UI.Box>
+      <UI.Box sx={{ flex: 1, color: "#fff" }}>
+        <UI.Typography align="center" color="inherit">
+          Starting in...
+        </UI.Typography>
+        <UI.Typography align="center" variant="h1" color="inherit">
+          {currentRound.countDown}
+        </UI.Typography>
+      </UI.Box>
+      <UI.Box sx={{ flex: 1 }}></UI.Box>
+    </>
+  )
+
 }
 
 const ViewResignButton = ({ currentUserId, model, dispatch }: { currentUserId: UserId.UserId, model: Model, dispatch: (msg: Msg) => void }) => {
@@ -565,12 +570,12 @@ const toGameText = ({ model, store }: { model: Model, store: Store.Model }): str
             }
           }
         }
-        case 'Started': {
+        case 'RoundStarted': {
           const turn = toTurn(currentRound.board)
           return `${turn}'s Turn`
         }
 
-        case 'Starting': {
+        case 'RoundStarting': {
           return "Starting..."
         }
       }
@@ -626,7 +631,7 @@ const ViewPlayerGameSlot = ({
 
   const round = Round.toCurrent(model.round)
 
-  const isTurn = round.type === 'Started' && toTurn(round.board) === playerType
+  const isTurn = round.type === 'RoundStarted' && toTurn(round.board) === playerType
 
   const iconSize = {
     width: 20,
@@ -655,7 +660,7 @@ const ViewPlayerGameSlot = ({
       </UI.Typography>
       {isTurn && (
         <UI.Typography sx={{ marginLeft: 2 }}>
-          {round.type === 'Started' ? round.moveCountDown : 0}
+          {round.type === 'RoundStarted' ? round.moveCountDown : 0}
         </UI.Typography>
       )}
     </UI.Paper>
