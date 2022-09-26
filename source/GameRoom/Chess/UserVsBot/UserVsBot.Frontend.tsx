@@ -5,7 +5,7 @@ import * as Store from "../../../Store"
 import * as UI from "../../../UI"
 import * as Board from "../Board"
 import * as Sounds from "../Sounds"
-import { ViewActionButton, ViewHeader } from "../Views"
+import { ViewActionButton, BannerArt } from "../Views"
 import {
   BackendModel,
   FrontendModel,
@@ -337,7 +337,7 @@ export const View = ({
 
         <UI.Box sx={{ flex: 1, overflowY: 'scroll' }}>
 
-          <ViewHeader title="User Vs Bot" />
+          <BannerArt title="User Vs Bot" />
 
           <UI.Typography
             sx={{ paddingX: 2, marginTop: 2, marginBottom: 1 }}
