@@ -1,7 +1,7 @@
 import * as Auth from "./Auth"
 import { LocalStorage, Option } from "./Core"
 import { ClientId, SessionId, UserId } from "./Data"
-import * as GameRoom from "./GameRoom/GameRoom.Types"
+import * as GameRoom from "./Game/GameRoom.Types"
 import * as Page from "./Pages"
 import * as Party from "./Party/Party.Types"
 import * as Route from "./Route"

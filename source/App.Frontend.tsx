@@ -20,7 +20,7 @@ import {
   tagSub,
   Platform,
 } from "./Core"
-import * as GameRoom from "./GameRoom/GameRoom.Frontend"
+import * as GameRoom from "./Game/GameRoom.Frontend"
 import * as Pages from "./Pages"
 import * as Route from "./Route"
 import * as Snackbar from "./Snackbar"

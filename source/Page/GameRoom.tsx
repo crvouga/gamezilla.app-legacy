@@ -1,6 +1,6 @@
 import { Cmd, pipe, tag } from "../Core"
 import { UserId } from "../Data"
-import * as GameRoom from "../GameRoom/GameRoom.Frontend"
+import * as GameRoom from "../Game/GameRoom.Frontend"
 import * as Store from "../Store"
 import * as UI from "../UI"
 
