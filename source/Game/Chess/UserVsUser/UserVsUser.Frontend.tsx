@@ -6,7 +6,7 @@ import * as UI from "../../../UI"
 import * as Clock from "../Clock"
 import * as Sounds from "../Sounds"
 import { BannerArt, ViewActionButton } from "../Views"
-import * as Board from "./../Board"
+import * as Board from "../Board"
 import {
   BackendModel,
   cancelStartGame,

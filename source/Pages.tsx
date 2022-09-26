@@ -1,7 +1,7 @@
 import * as Auth from "./Auth"
 import { Cmd, exhaustive, pipe, Sub, tag, tagCmd, tagSub } from "./Core"
 import { PhoneNumber, UserId } from "./Data"
-import * as GameRoom from "./GameRoom/GameRoom.Frontend"
+import * as GameRoom from "./Game/GameRoom.Frontend"
 import {
   Account,
   Chat,
@@ -44,10 +44,10 @@ export type Model =
   | ["LoginEmailLink", LoginEmailLink.Model]
   | ["LoginPhone", LoginPhone.Model]
   | [
-      "LoginPhoneVerify",
-      { phoneNumber: PhoneNumber.PhoneNumber },
-      LoginPhoneVerify.Model,
-    ]
+    "LoginPhoneVerify",
+    { phoneNumber: PhoneNumber.PhoneNumber },
+    LoginPhoneVerify.Model,
+  ]
   | ["Home", Home.Model]
   | ["ProfileCreate", ProfileCreate.Model]
   | ["Logout", Logout.Model]

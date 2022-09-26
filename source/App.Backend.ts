@@ -9,7 +9,7 @@ import {
 } from "./App.Types"
 import { Cmd, Option, pipe, Platform, Sub, tag, tagCmd } from "./Core"
 import { ClientId, SessionId, UserId } from "./Data"
-import * as GameRoom from "./GameRoom/GameRoom.Backend"
+import * as GameRoom from "./Game/GameRoom.Backend"
 import * as Party from "./Party/Party.Backend"
 import * as Wire from "./Wire"
 
