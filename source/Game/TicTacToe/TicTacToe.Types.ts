@@ -44,6 +44,8 @@ export type GameOverModel = {
 }
 
 
+const initCountDown = 6
+
 
 export type GameOver =
   | {
@@ -268,7 +270,7 @@ export const startGame = (
     maxRoundCount: model.maxRoundCount,
     round: {
       type: "RoundStarting",
-      countDown: 5
+      countDown: initCountDown
     }
   }
 
@@ -377,7 +379,7 @@ export const inputMove = (
       board: boardNew,
       next: {
         type: "RoundStarting",
-        countDown: 8
+        countDown: initCountDown
       }
     }))
   }

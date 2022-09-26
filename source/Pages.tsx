@@ -509,7 +509,7 @@ export const updateReady = (
 
     case "Home": {
       if (msg[0] === "Home") {
-        const [child, actions] = Home.update(msg[1], model[1])
+        const [child, actions] = Home.update({ currentUserId: profile.userId }, msg[1], model[1])
         return [["Home", child], Cmd.None, actions]
       }
 

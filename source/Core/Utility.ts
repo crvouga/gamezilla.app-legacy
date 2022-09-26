@@ -13,36 +13,36 @@ export const andThen =
     update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>],
     msg: Msg,
   ) =>
-  ([model, cmdPrev]: [Model, Cmd.Cmd<Msg>]): [Model, Cmd.Cmd<Msg>] => {
-    const [modelNew, cmdNew] = update(msg, model)
+    ([model, cmdPrev]: [Model, Cmd.Cmd<Msg>]): [Model, Cmd.Cmd<Msg>] => {
+      const [modelNew, cmdNew] = update(msg, model)
 
-    return [modelNew, Cmd.batch([cmdNew, cmdPrev])]
-  }
+      return [modelNew, Cmd.batch([cmdNew, cmdPrev])]
+    }
 
 export const andThenMany =
   <Action, Model, Msg>(
     update: (msg: Action, model: Model) => [Model, Cmd.Cmd<Msg>],
     msgs: Action[],
   ) =>
-  ([modelPrev, cmdPrev]: [Model, Cmd.Cmd<Msg>]): [Model, Cmd.Cmd<Msg>] => {
-    const [msg, ...msgsRest] = msgs
+    ([modelPrev, cmdPrev]: [Model, Cmd.Cmd<Msg>]): [Model, Cmd.Cmd<Msg>] => {
+      const [msg, ...msgsRest] = msgs
 
-    if (!msg) {
-      return [modelPrev, cmdPrev]
+      if (!msg) {
+        return [modelPrev, cmdPrev]
+      }
+
+      const [modelNew, cmdNew] = update(msg, modelPrev)
+
+      return pipe(
+        [modelNew, Cmd.batch([cmdPrev, cmdNew])],
+        andThenMany(update, msgsRest),
+      )
     }
-
-    const [modelNew, cmdNew] = update(msg, modelPrev)
-
-    return pipe(
-      [modelNew, Cmd.batch([cmdPrev, cmdNew])],
-      andThenMany(update, msgsRest),
-    )
-  }
 
 export const tag =
   <Tag extends string>(tag: Tag) =>
-  <Value>(value: Value): [Tag, Value] =>
-    [tag, value]
+    <Value>(value: Value): [Tag, Value] =>
+      [tag, value]
 
 export const tagUpdate = <TagName extends string, Model, Msg>(
   tagName: TagName,
@@ -80,3 +80,19 @@ export const tagSub = <TagName extends string, Msg>(
 export type Unit = { type: "Unit" }
 
 export const Unit: Unit = { type: "Unit" }
+
+
+
+type Range = [number, number]
+
+export const rescale = ({
+  value,
+  from,
+  to,
+}: {
+  value: number
+  from: Range
+  to: Range
+}) => {
+  return ((value - from[0]) * (to[1] - to[0])) / (from[1] - from[0]) + to[0]
+}

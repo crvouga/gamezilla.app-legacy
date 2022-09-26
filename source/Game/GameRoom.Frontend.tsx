@@ -53,7 +53,7 @@ export type Msg = FrontendMsg
 
 export type Action = ["GameRoom", ["Msg", Msg]]
 
-type OutAction = Snackbar.Action | Store.Action
+type OutAction = Snackbar.Action | Store.Action | Route.Action
 
 //
 //
@@ -259,7 +259,11 @@ export const updateFromBackend = (
     }
 
     case "JoinRoom_Done": {
-      return updateResponse({ sendToBackend, msg, model }, "JoinRoom")
+      const [modelNew, cmd, actions] = updateResponse({ sendToBackend, msg, model }, "JoinRoom")
+
+      const routeActions: OutAction[] = msg[1].type === 'Ok' ? [['Route', ['Replace', ['GameRoom']]]] : []
+
+      return [modelNew, cmd, [...actions, ...routeActions]]
     }
 
     case "OpenGame_Done": {
@@ -1118,6 +1122,7 @@ export const ViewCard = ({
             ) : (
               <UI.Avatar
                 src={hostProfile?.avatarUrl ?? ""}
+                variant="square"
                 sx={{ width: "100%", height: "100%" }}
               />
             )}
@@ -1145,8 +1150,7 @@ export const ViewCard = ({
             color="text.secondary"
             noWrap
           >
-            {`${gameName ? `${Game.gameNameToString(gameName)} • ` : ""
-              }${roomCount} in room`}
+            {roomCount} in room
           </UI.Typography>
         </UI.Box>
       </UI.Paper>
