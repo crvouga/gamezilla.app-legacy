@@ -44,7 +44,7 @@ export type GameOverModel = {
 }
 
 
-const initCountDown = 6
+const initCountDown = 5
 
 
 export type GameOver =
