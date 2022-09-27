@@ -1,4 +1,4 @@
-import { Result } from "../Core"
+import { Result, Uuid } from "../Core"
 
 export type UserId = string & { _opaque: typeof UserId }
 
@@ -15,4 +15,15 @@ export const decode = (id: unknown): Result.Result<Problem, UserId> => {
     return Result.Ok(id)
   }
   return Result.Err("invalid_user_id")
+}
+
+
+export const generate = () => {
+  const id = Uuid.generateSync()
+
+  if (is(id)) {
+    return id
+  }
+
+  throw new Error("impossible condition. generated invalid user id.")
 }

@@ -550,47 +550,27 @@ const View = ({
   dispatch: (msg: Msg) => void
 }) => {
   return (
-    <UI.ThemeProvider themeMode={toThemeMode(model)}>
+    <UI.AppContainer themeMode={toThemeMode(model)}>
       <UI.Box
         sx={{
-          maxWidth: "sm",
-          maxHeight: "100%",
-
-          // userSelect: "none",
-          marginX: "auto",
-          position: "fixed",
-          width: "100%",
-          height: "100%",
-          overflow: "hidden",
-          //
           display: "flex",
           flexDirection: "column",
-          left: "50%",
-          top: "50%",
-          transform: "translate(-50%, -50%)",
+          width: "100%",
+          overflow: "hidden",
+          flex: 1,
         }}
       >
-        <UI.Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            width: "100%",
-            overflow: "hidden",
-            flex: 1,
-          }}
-        >
-          <ViewMain
-            model={model}
-            dispatch={dispatch}
-          />
-        </UI.Box>
-
-        <Snackbar.View
-          model={model.snackbar}
-          dispatch={(msg) => dispatch(["Snackbar", msg])}
+        <ViewMain
+          model={model}
+          dispatch={dispatch}
         />
       </UI.Box>
-    </UI.ThemeProvider>
+
+      <Snackbar.View
+        model={model.snackbar}
+        dispatch={(msg) => dispatch(["Snackbar", msg])}
+      />
+    </UI.AppContainer>
   )
 }
 

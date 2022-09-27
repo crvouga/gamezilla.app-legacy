@@ -109,7 +109,7 @@ const createTheme = ({ mode }: { mode: "light" | "dark" }) =>
 const darkTheme = createTheme({ mode: "dark" })
 const lightTheme = createTheme({ mode: "light" })
 
-export const ThemeProvider = ({
+export const AppContainer = ({
   children,
   themeMode,
 }: {
@@ -136,7 +136,27 @@ export const ThemeProvider = ({
   return (
     <Mui.ThemeProvider theme={theme}>
       <Mui.CssBaseline />
-      {children}
+      <Mui.Box
+        sx={{
+          maxWidth: "sm",
+          maxHeight: "100%",
+
+          // userSelect: "none",
+          marginX: "auto",
+          position: "fixed",
+          width: "100%",
+          height: "100%",
+          overflow: "hidden",
+          //
+          display: "flex",
+          flexDirection: "column",
+          left: "50%",
+          top: "50%",
+          transform: "translate(-50%, -50%)",
+        }}
+      >
+        {children}
+      </Mui.Box>
     </Mui.ThemeProvider>
   )
 }

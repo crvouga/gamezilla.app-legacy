@@ -71,7 +71,7 @@ export const toSeed = (seedString: string) => {
 const BASE_URL = `https://avatars.dicebear.com/api`
 const FILE_TYPE = "png"
 
-export const toUrl = ({ seed, style }: { style: Style; seed: Seed }) => {
+export const toUrl = ({ seed, style }: { style: Style; seed: string }) => {
   const url = new URL(`${BASE_URL}/${style}/${seed}.${FILE_TYPE}`)
 
   // url.searchParams.append("backgroundColor", "white")

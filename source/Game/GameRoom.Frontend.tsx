@@ -1073,8 +1073,7 @@ export const ViewBanner = ({
             variant="caption"
             color="text.secondary"
           >
-            {`${game && game[0] ? `${Game.gameNameToString(game[0])} • ` : ""
-              }${roomCount} in room`}
+            {`${roomCount} in room`}
           </UI.Typography>
         </UI.Box>
 

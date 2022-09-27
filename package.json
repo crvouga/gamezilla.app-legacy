@@ -11,7 +11,9 @@
     "supabase:types": "npx openapi-typescript https://ldxpcprlgecjvqwzuxgv.supabase.co/rest/v1/?apikey=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTYzNzA0MDQ5NywiZXhwIjoxOTUyNjE2NDk3fQ.ReI8CpIFbLB9Q53Az7CDBIyrn_o1JeGhPoZXdqx8Ac4 --output source/Supabase.Types.ts",
     "typecheck": "tsc -w",
     "utils:find-circular-deps": "npx madge --ts-config tsconfig.json --circular source/App.Types.ts",
-    "utils:sort": "npx sort-package-json"
+    "utils:sort": "npx sort-package-json",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook"
   },
   "dependencies": {
     "@emotion/react": "^11.9.0",
@@ -39,13 +41,22 @@
     "threads": "^1.7.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.19.1",
     "@faker-js/faker": "^7.3.0",
+    "@storybook/addon-actions": "^6.5.12",
+    "@storybook/addon-essentials": "^6.5.12",
+    "@storybook/addon-interactions": "^6.5.12",
+    "@storybook/addon-links": "^6.5.12",
+    "@storybook/builder-vite": "^0.2.2",
+    "@storybook/react": "^6.5.12",
+    "@storybook/testing-library": "^0.0.13",
     "@types/chess.js": "^0.13.2",
     "@types/howler": "^2.2.7",
     "@types/jest": "^27.4.1",
     "@types/react": "^18.0.8",
     "@types/react-dom": "^18.0.3",
     "@vitejs/plugin-react": "^1.0.7",
+    "babel-loader": "^8.2.5",
     "concurrently": "^7.3.0",
     "dotenv": "^16.0.1",
     "esbuild": "^0.14.49",
