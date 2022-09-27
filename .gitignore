@@ -31,3 +31,5 @@ tsconfig.tsbuildinfo
 web-build
 .builds
 .parcel-cache
+
+storybook-static
