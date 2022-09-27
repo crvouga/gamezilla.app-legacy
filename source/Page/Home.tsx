@@ -253,6 +253,22 @@ const ViewNotInRoom = ({
 }) => {
   const rooms = Object.values(gameRoom.rooms)
 
+  if (rooms.length === 0) {
+    return (
+      <UI.FillBox sx={{ overflowY: "scroll" }}>
+        <UI.Header title="Gamezilla" />
+
+        <UI.Box sx={{ paddingX: 2 }}>
+          <GameRoom.ViewCallToAction
+            onCreateRoom={() =>
+              dispatch(['ClickedCreateRoom'])
+            }
+          />
+        </UI.Box>
+      </UI.FillBox>
+    )
+  }
+
   return (
     <UI.FillBox sx={{ overflowY: "scroll" }}>
       <UI.Header title="Gamezilla" />
@@ -261,49 +277,42 @@ const ViewNotInRoom = ({
         <UI.Button fullWidth variant="contained" onClick={() => dispatch(['ClickedCreateRoom'])}>
           Create Room
         </UI.Button>
-        {/* <GameRoom.ViewCallToAction
-          onCreateRoom={() =>
-            dispatch(['ClickedCreateRoom'])
-          }
-        /> */}
       </UI.Box>
 
-      {rooms.length > 0 && (
-        <>
-          <UI.Typography
-            variant="h6"
-            color="text.secondary"
-            sx={{ paddingX: 2, marginBottom: 1, marginTop: 2 }}
-          >
-            Active Rooms
-          </UI.Typography>
 
-          <UI.Box
-            sx={{
-              paddingX: 2,
-              display: "flex",
-              flexDirection: "column",
-              gap: 2,
-            }}
-          >
-            {rooms.map((room) => (
-              <GameRoom.ViewCard
-                key={room.roomId}
-                roomId={room.roomId}
-                hostId={room.hostId}
-                gameName={
-                  room.game.type === "Some" ? room.game.value[0] : undefined
-                }
-                store={store}
-                gameRoom={gameRoom}
-                onClick={() =>
-                  dispatch(['ClickedRoom', { roomId: room.roomId }])
-                }
-              />
-            ))}
-          </UI.Box>
-        </>
-      )}
+      <UI.Typography
+        variant="h6"
+        color="text.secondary"
+        sx={{ paddingX: 2, marginBottom: 1, marginTop: 2 }}
+      >
+        Active Rooms
+      </UI.Typography>
+
+      <UI.Box
+        sx={{
+          paddingX: 2,
+          display: "flex",
+          flexDirection: "column",
+          gap: 2,
+        }}
+      >
+        {rooms.map((room) => (
+          <GameRoom.ViewCard
+            key={room.roomId}
+            roomId={room.roomId}
+            hostId={room.hostId}
+            gameName={
+              room.game.type === "Some" ? room.game.value[0] : undefined
+            }
+            store={store}
+            gameRoom={gameRoom}
+            onClick={() =>
+              dispatch(['ClickedRoom', { roomId: room.roomId }])
+            }
+          />
+        ))}
+      </UI.Box>
+
     </UI.FillBox>
   )
 }
