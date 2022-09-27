@@ -348,58 +348,20 @@ export const View = ({
               }
             />
 
-
-            {/* {timeLeft <= 3 && (
-              <UI.Box
-                sx={{
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  width: '100%',
-                  height: "100%",
-                  // 
-                  display: 'flex',
-                  alignItems: "center",
-                  justifyContent: "center",
-
-                }}
-                onClick={event => {
-                  // if (event.currentTarget == event.target) 
-                  event.preventDefault()
-
-                }}
-              >
-                <UI.Typography
-                  sx={{
-                    fontSize: "200px",
-                    opacity: 0.5
-                  }}>
-                  {timeLeft}
-                </UI.Typography>
-              </UI.Box>
-            )} */}
-
             {currentRound.type === 'RoundStarting' && (
-              <UI.Fade in={currentRound.type === 'RoundStarting'}>
-                <UI.Box sx={{
-                  aspectRatio: 1,
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  width: "100%",
-                  height: "100%",
-                  maxHeight: "100%",
-                  maxWidth: '100%',
-                  background: "rgba(0, 0, 0, 0.5)",
-                  display: "flex",
-                  alignItems: 'center',
-                  justifyContent: "center",
-                  flexDirection: "column",
-                  overflow: "hidden",
-                }}>
-                  <ViewRoundOverlay currentUserId={currentUserId} model={model} />
-                </UI.Box>
-              </UI.Fade>
+              <UI.Box sx={{
+                position: "absolute",
+                inset: 0,
+                background: "rgba(0, 0, 0, 0.5)",
+                display: "flex",
+                alignItems: 'center',
+                justifyContent: "center",
+                flexDirection: "column",
+                overflow: "hidden",
+                maxHeight: "100%",
+              }}>
+                <ViewRound currentUserId={currentUserId} model={model} />
+              </UI.Box>
             )}
           </UI.Box>
         </UI.Box>
@@ -438,15 +400,14 @@ export const View = ({
       <UI.Button fullWidth variant="outlined" onClick={() => dispatch(['NewGame', { userId: currentUserId }])}>
         Back
       </UI.Button>
-      <UI.Button fullWidth variant="contained" >
+      <UI.Button fullWidth variant="contained">
         Rematch
       </UI.Button>
-
     </UI.Box>
   </UI.FillBox>
 }
 
-const ViewRoundOverlay = ({ currentUserId, model }: { currentUserId: UserId.UserId, model: GameModel }) => {
+const ViewRound = ({ currentUserId, model }: { currentUserId: UserId.UserId, model: GameModel }) => {
   const currentRound = Round.toCurrent(model.round)
   const previousRound = Round.toPrevious(model.round)
 
@@ -471,7 +432,10 @@ const ViewRoundOverlay = ({ currentUserId, model }: { currentUserId: UserId.User
             flexDirection: "column",
             color: "#fff"
           }}>
-          <UI.Typography align="center" variant="h2" color="inherit" sx={{ marginBottom: 2 }}>
+          <UI.Typography align="center" variant="h3" color="inherit" sx={{ marginBottom: 1 }}>
+            Game Start
+          </UI.Typography>
+          <UI.Typography align="center" variant="h6" color="inherit" sx={{ marginBottom: 2 }}>
             Best {Math.floor(model.maxRoundCount / 2) + 1} out of {model.maxRoundCount}
           </UI.Typography>
           <UI.Typography variant="subtitle1" align="center" color="inherit">
@@ -488,7 +452,6 @@ const ViewRoundOverlay = ({ currentUserId, model }: { currentUserId: UserId.User
   }
 
   const score = Round.toScore(model.round)
-
 
   const scoreBoard = (
     <UI.Box sx={{ display: "flex", width: "100%", color: "#fff" }}>
@@ -574,21 +537,15 @@ const ViewRoundOverlay = ({ currentUserId, model }: { currentUserId: UserId.User
         }}>
 
         {isPlaying ? (
-          didCurrentUserWin ? (
-            <UI.Typography align="center" variant="h1" color="inherit">
-              Round Win
-            </UI.Typography>
-          ) : (
-            <UI.Typography align="center" variant="h1" color="inherit">
-              Round Lost
-            </UI.Typography>
-          )
+          <UI.Typography align="center" variant="h2" color="inherit">
+            {didCurrentUserWin ? "Round Win" : "Round Lost"}
+          </UI.Typography>
         ) : (
           <UI.Box sx={{ display: "flex", justifyContent: 'center', alignItems: 'center' }}>
             <svg width={72} viewBox="-1 -1 2 2">
               <ViewSlot strokeWidth={0.25} cx={0} cy={0} r={0.8} slot={roundOver.winner} color="#fff" />
             </svg>
-            <UI.Typography align="center" variant="h1" color="inherit">
+            <UI.Typography align="center" variant="h2" color="inherit">
               Won
             </UI.Typography>
           </UI.Box>
@@ -597,7 +554,7 @@ const ViewRoundOverlay = ({ currentUserId, model }: { currentUserId: UserId.User
 
       {scoreBoard}
 
-      <UI.Box sx={{ flex: 1, color: "#fff" }}>
+      <UI.Box sx={{ flex: 1, color: "#fff", display: 'flex', flexDirection: "column", justifyContent: "flex-end" }}>
         <UI.Typography align="center" color="inherit">
           Next round starting in...
         </UI.Typography>
