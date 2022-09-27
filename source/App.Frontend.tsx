@@ -3,13 +3,14 @@ import { io, Socket } from "socket.io-client"
 import { FrontendModel, FrontendMsg, ToFrontend } from "./App.Types"
 import * as Auth from "./Auth"
 import * as Wire from "./Wire"
+import * as Debug from "./Debug/Debug.Frontend"
 import {
   andThen,
   andThenMany,
   Browser,
   LocalStorage,
   Cmd,
-  Debug,
+  Debug as DebugCore,
   exhaustive,
   Option,
   pipe,
@@ -59,6 +60,8 @@ const init = (location: Browser.Location): [Model, Cmd.Cmd<Msg>] => {
   const [page, pageCmd] = Pages.initLoading()
   const [party, partyCmd] = Party.init()
 
+  const debug = Debug.init
+
   return [
     {
       route,
@@ -68,6 +71,7 @@ const init = (location: Browser.Location): [Model, Cmd.Cmd<Msg>] => {
       auth,
       page,
       party,
+      debug,
       wire: "Connecting",
     },
     Cmd.batch<Msg>([
@@ -96,6 +100,7 @@ type OutAction =
   | Auth.Action
   | Party.Action
   | Route.Action
+  | Debug.Action
 
 //
 //
@@ -202,6 +207,11 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
     case "Page": {
       const [modelNew, cmd, actions] = updatePage(msg[1], model)
       return pipe([modelNew, cmd], andThenMany(runAction, actions))
+    }
+
+    case 'Debug': {
+      const [child, cmd] = Debug.update(msg[1], model.debug)
+      return [{ ...model, debug: child }, tagCmd("Debug", cmd)]
     }
 
     default:
@@ -312,6 +322,16 @@ const updateFromBackend = (
         [{ ...model, gameRoom }, tagCmd("GameRoom", gameRoomCmd)],
         andThenMany(runAction, actions),
       )
+    }
+
+    case 'Debug': {
+      const [child, cmd] = Debug.updateFromBackend(msg[1], model.debug)
+
+      return [{ ...model, debug: child }, tagCmd("Debug", cmd)]
+    }
+
+    default: {
+      return exhaustive(msg[0])
     }
   }
 }
@@ -435,6 +455,12 @@ const runAction = (action: OutAction, model: Model): [Model, Cmd.Cmd<Msg>] => {
       const [route, routeCmd] = Route.runAction(action, model.route)
 
       return [{ ...model, route }, tagCmd("Route", routeCmd)]
+    }
+
+    case 'Debug': {
+      const [debug, debugCmd] = Debug.runAction(action, model.debug)
+
+      return [{ ...model, debug }, tagCmd("Debug", debugCmd)]
     }
 
     default:
@@ -796,7 +822,7 @@ Wire._sendToBackend.subscribe((msg) => {
 //
 
 const { program } =
-  Debug.ReduxDevTools.withDebugger(
+  DebugCore.ReduxDevTools.withDebugger(
     Platform.createProgram({
       init: init(Browser.getLocation()),
       subscriptions,
