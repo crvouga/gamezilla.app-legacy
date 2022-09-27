@@ -28,6 +28,7 @@ export type Msg =
   | ["ClickedLogout"]
   | ["ClickedDeleteProfile"]
   | ["ClickedUpdateProfile"]
+  | ["ClickedDebug"]
 
 export const update = (
   { userId }: { userId: UserId.UserId },
@@ -46,6 +47,9 @@ export const update = (
 
     case "ClickedDeleteProfile":
       return [model, Route.push(["ProfileDelete"])]
+
+    case 'ClickedDebug':
+      return [model, Route.push(["Debug"])]
   }
 }
 
@@ -91,6 +95,16 @@ export const View = ({
           <UI.Icons.Logout />
         </UI.ListItemIcon>
         <UI.ListItemText primary="Logout" />
+      </UI.ListItemButton>
+
+      <UI.ListItemButton onClick={() => dispatch(["ClickedDebug"])}>
+        <UI.ListItemIcon>
+          <UI.Icons.BugReport />
+        </UI.ListItemIcon>
+        <UI.ListItemText primary="Debug" />
+        <UI.ListItemSecondaryAction>
+          <UI.Icons.ChevronRight />
+        </UI.ListItemSecondaryAction>
       </UI.ListItemButton>
     </UI.List>
   </UI.FillBox>

@@ -1,14 +1,13 @@
 import * as Auth from "./Auth"
 import { Cmd, exhaustive, pipe, Sub, tag, tagCmd, tagSub } from "./Core"
 import { PhoneNumber, UserId } from "./Data"
+import * as Debug from "./Debug/Debug.Frontend"
 import * as GameRoom from "./Game/GameRoom.Frontend"
 import {
   Account,
   Chat,
   ChatConversation,
-  ChatNew,
-  GameRoomPage,
-  Login,
+  ChatNew, DebugPage, GameRoomPage, Home, Login,
   LoginEmailLink,
   LoginPhone,
   LoginPhoneVerify,
@@ -22,8 +21,7 @@ import {
   ProfileUpdateName,
   ProfileUpdateTheme,
   ProfileUpdateUsername,
-  Search,
-  Home,
+  Search
 } from "./Page"
 import * as Party from "./Party/Party.Frontend"
 import * as Route from "./Route"
@@ -66,6 +64,7 @@ export type Model =
   | ["GameRoom", GameRoomPage.Model]
   | ["Party", PartyPage.Model]
   | ["Loading"]
+  | ["Debug", DebugPage.Model]
 
 //
 //
@@ -98,6 +97,7 @@ export type Msg =
   | ["ChatConversation", ChatConversation.Msg]
   | ["Search", Search.Msg]
   | ["ClickedBottomNavigationLink", Route.Model]
+  | ["Debug", DebugPage.Msg]
 
 export type OutAction =
   | Store.Action
@@ -106,6 +106,7 @@ export type OutAction =
   | Auth.Action
   | Party.Action
   | Route.Action
+  | Debug.Action
 
 //
 //
@@ -231,6 +232,11 @@ export const initReady = (
       return [["Home", modelInit], Cmd.None, []]
     }
 
+    case 'Debug': {
+      const init = DebugPage.init
+      return [['Debug', init], Cmd.None, []]
+    }
+
     case "ProfileCreate":
     case "Login":
     case "LoginPhone":
@@ -265,6 +271,8 @@ export const initLoggedOut = (route: Route.Model): [Model, Cmd.Cmd<Msg>] => {
     case "LoginEmailLink":
       return [["LoginEmailLink", LoginEmailLink.init], Cmd.None]
 
+
+    case 'Debug':
     case "Account":
     case "Chat":
     case "ChatConversation":
@@ -319,10 +327,12 @@ export const initProfileMissing = (
     case "GameRoom":
     case "Home":
     case "Party":
+    case "Debug":
       return [
         ["ProfileCreate", ProfileCreate.init(auth)],
         Route.push(["ProfileCreate"]),
       ]
+
     default:
       return exhaustive(route)
   }
@@ -516,16 +526,27 @@ export const updateReady = (
       return [model, Cmd.None, []]
     }
 
+    case "Debug": {
+      if (msg[0] === "Debug") {
+        const [child, actions] = DebugPage.update(msg[1], model[1])
+        return [["Debug", child], Cmd.None, actions]
+      }
+
+      return [model, Cmd.None, []]
+    }
+
     case "Login":
     case "Loading":
     case "ProfileCreate":
     case "LoginPhone":
     case "LoginPhoneVerify":
-    case "LoginEmailLink":
+    case "LoginEmailLink": {
       return [model, Route.push(["GameRoom"]), []]
+    }
 
-    default:
+    default: {
       return exhaustive(model)
+    }
   }
 }
 
@@ -573,6 +594,7 @@ export const updateProfileMissing = (
     case "LoginPhoneVerify":
     case "Party":
     case "Home":
+    case 'Debug':
       return [model, Route.push(["ProfileCreate"]), []]
 
     default:
@@ -638,6 +660,7 @@ export const updateLoggedOut = (
     case "Search":
     case "Party":
     case "Home":
+    case "Debug":
       return [model, Route.push(["Login"]), []]
 
     default:
@@ -679,6 +702,7 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
     case "LoginPhone":
     case "LoginPhoneVerify":
     case "Home":
+    case 'Debug':
       return Sub.None
 
     default:
@@ -700,6 +724,7 @@ export const ViewReady = ({
   store,
   route,
   party,
+  debug,
   model,
   dispatch,
 }: {
@@ -708,6 +733,7 @@ export const ViewReady = ({
   profile: Store.Profile.Profile
   store: Store.Model
   party: Party.Model
+  debug: Debug.Model
   model: Model
   dispatch: (msg: Msg) => void
 }) => {
@@ -961,6 +987,10 @@ export const ViewReady = ({
       )
     }
 
+    case "Debug": {
+      return <DebugPage.View debug={debug} model={model[1]} dispatch={(msg) => dispatch(['Debug', msg])} />
+    }
+
     case "Login":
     case "ProfileCreate":
     case "Loading":
@@ -1019,6 +1049,7 @@ export const ViewProfileMissing = ({
     case "GameRoom":
     case "Party":
     case "Home":
+    case "Debug":
       return <UI.LoadingPage />
 
     default:
@@ -1085,6 +1116,7 @@ export const ViewLoggedOut = ({
     case "Loading":
     case "Party":
     case "Home":
+    case 'Debug':
       return <UI.LoadingPage />
 
     default:
