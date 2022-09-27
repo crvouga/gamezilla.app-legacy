@@ -20,3 +20,12 @@ export const decode = (username: unknown): Result.Result<Problem, Username> => {
   }
   return Result.Err("invalid_username")
 }
+
+export const fromString = (username: string): Username => {
+  const cleaned = username.substring(0, 100)
+  if (is(cleaned)) {
+    return cleaned
+  }
+
+  throw new Error("impossible state. did not create username from string")
+}

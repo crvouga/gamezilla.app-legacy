@@ -125,7 +125,9 @@ export const mapCurrent = (round: Round, updater: (current: Round) => Round): Ro
     }
 }
 
-export const toScore = (round: Round): { X: number, O: number, Tie: number } => {
+export type Score = { X: number, O: number, Tie: number }
+
+export const toScore = (round: Round): Score => {
     switch (round.type) {
         case 'RoundOver': {
             const nextScore = toScore(round.next)

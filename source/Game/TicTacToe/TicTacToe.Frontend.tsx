@@ -1,7 +1,8 @@
-import { Cmd, exhaustive, rescale } from "../../Core"
+import { Cmd, exhaustive } from "../../Core"
 import { UserId } from "../../Data"
 import * as Store from "../../Store"
 import * as UI from "../../UI"
+import * as Round from "./Round"
 import { emptyBoard, PlayerType, Position, Slot, theme, toTurn, ViewBoard, ViewSlot } from "./TicTacToe"
 import {
   allBestOutOf,
@@ -11,7 +12,6 @@ import {
   ToBackend,
   ToFrontend
 } from "./TicTacToe.Types"
-import * as Round from "./Round"
 
 //
 //
@@ -182,7 +182,6 @@ export const View = ({
 
     return (
       <UI.FillBox>
-
         <UI.Header
           left={homeButton}
           title=""
@@ -324,7 +323,7 @@ export const View = ({
   if (model.type === 'Game') {
     const currentRound = Round.toCurrent(model.round)
     const board = Round.toCurrentBoard(model.round) ?? emptyBoard
-    const timeLeft = currentRound.type === 'RoundStarted' ? currentRound.moveCountDown : model.moveTimeLimit
+
     return (
       <UI.FillBox>
         <UI.Header
@@ -334,11 +333,12 @@ export const View = ({
         />
 
         <UI.Box sx={{ flex: 1, overflowY: "scroll" }}>
-
           <UI.Box sx={{ display: "flex", gap: 2, paddingX: 1, paddingY: 1 }}>
             <ViewPlayerGameSlot playerType="X" store={store} model={model} />
             <ViewPlayerGameSlot playerType="O" store={store} model={model} />
           </UI.Box>
+
+
 
           <UI.Box sx={{ width: "100%", position: "relative", }}>
             <ViewBoard
@@ -348,21 +348,22 @@ export const View = ({
               }
             />
 
-            {currentRound.type === 'RoundStarting' && (
-              <UI.Box sx={{
-                position: "absolute",
-                inset: 0,
-                background: "rgba(0, 0, 0, 0.5)",
-                display: "flex",
-                alignItems: 'center',
-                justifyContent: "center",
-                flexDirection: "column",
-                overflow: "hidden",
-                maxHeight: "100%",
-              }}>
-                <ViewRound currentUserId={currentUserId} model={model} />
-              </UI.Box>
-            )}
+            {currentRound.type === 'RoundStarting'
+              && (
+                <UI.Box sx={{
+                  position: "absolute",
+                  inset: 0,
+                  background: "rgba(0, 0, 0, 0.66)",
+                  display: "flex",
+                  alignItems: 'center',
+                  justifyContent: "center",
+                  flexDirection: "column",
+                  overflow: "hidden",
+                  maxHeight: "100%",
+                }}>
+                  <ViewRound currentUserId={currentUserId} model={model} />
+                </UI.Box>
+              )}
           </UI.Box>
         </UI.Box>
 
@@ -407,7 +408,7 @@ export const View = ({
   </UI.FillBox>
 }
 
-const ViewRound = ({ currentUserId, model }: { currentUserId: UserId.UserId, model: GameModel }) => {
+export const ViewRound = ({ currentUserId, model }: { currentUserId: UserId.UserId, model: GameModel }) => {
   const currentRound = Round.toCurrent(model.round)
   const previousRound = Round.toPrevious(model.round)
 
@@ -420,6 +421,8 @@ const ViewRound = ({ currentUserId, model }: { currentUserId: UserId.UserId, mod
   }
 
   if (previousRound.type === 'None') {
+    const countDown = currentRound.countDown
+
     return (
       <>
         <UI.Box sx={{ flex: 1 }}></UI.Box>
@@ -432,17 +435,11 @@ const ViewRound = ({ currentUserId, model }: { currentUserId: UserId.UserId, mod
             flexDirection: "column",
             color: "#fff"
           }}>
-          <UI.Typography align="center" variant="h3" color="inherit" sx={{ marginBottom: 1 }}>
-            Game Start
+          <UI.Typography align="center" variant="h2" color="inherit" sx={{ marginBottom: 1 }}>
+            Starting in
           </UI.Typography>
-          <UI.Typography align="center" variant="h6" color="inherit" sx={{ marginBottom: 2 }}>
-            Best {Math.floor(model.maxRoundCount / 2) + 1} out of {model.maxRoundCount}
-          </UI.Typography>
-          <UI.Typography variant="subtitle1" align="center" color="inherit">
-            Starting in...
-          </UI.Typography>
-          <UI.Typography align="center" variant="h2" color="inherit">
-            {currentRound.countDown}
+          <UI.Typography align="center" variant="h1" color="inherit" sx={{ fontSize: "4rem" }}>
+            {countDown}
           </UI.Typography>
         </UI.Box>
         <UI.Box sx={{ flex: 1, color: "#fff", display: 'flex', flexDirection: "column", alignItems: "center", justifyContent: "flex-end" }}>
@@ -453,75 +450,11 @@ const ViewRound = ({ currentUserId, model }: { currentUserId: UserId.UserId, mod
 
   const score = Round.toScore(model.round)
 
-  const scoreBoard = (
-    <UI.Box sx={{ display: "flex", width: "100%", color: "#fff" }}>
-      <UI.Box sx={{ flex: 1, display: 'flex', flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-        <svg width={36} viewBox="-1 -1 2 2">
-          <ViewSlot strokeWidth={0.25} cx={0} cy={0} r={0.8} slot={"X"} color="#fff" />
-        </svg>
-        <UI.Typography align="center" variant="h2" sx={{ flex: 1, color: "#fff" }}>
-          {score.X}
-        </UI.Typography>
-      </UI.Box>
-
-      <UI.Box sx={{ flex: 1 }}>
-        <UI.Typography align="center" variant="h3" sx={{ color: "#fff" }}>
-          Tie
-        </UI.Typography>
-        <UI.Typography align="center" variant="h3" sx={{ color: "#fff" }}>
-          {score.Tie}
-        </UI.Typography>
-      </UI.Box>
-
-      <UI.Box sx={{ flex: 1, display: 'flex', flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-        <svg width={36} viewBox="-1 -1 2 2">
-          <ViewSlot strokeWidth={0.25} cx={0} cy={0} r={0.8} slot={"O"} color="#fff" />
-        </svg>
-
-        <UI.Typography align="center" variant="h2" sx={{ flex: 1, color: "#fff" }}>
-          {score.O}
-        </UI.Typography>
-      </UI.Box>
-    </UI.Box>
-  )
-
   const { roundOver } = previousRound
 
-  if (roundOver.type === 'Tie') {
-    return (
-      <>
-        <UI.Box sx={{ flex: 1 }}></UI.Box>
-        <UI.Box
-          sx={{
-            flex: 2,
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            flexDirection: "column",
-            color: "#fff"
-          }}>
-          <UI.Typography align="center" variant="h1" color="inherit">
-            Tie
-          </UI.Typography>
-          <UI.Typography align="center" variant="h3" color="inherit">
-            {/* {Round.toCount(model.round)} / {model.maxRoundCount} */}
-          </UI.Typography>
-        </UI.Box>
-        {scoreBoard}
-        <UI.Box sx={{ flex: 1, color: "#fff" }}>
-          <UI.Typography align="center" color="inherit">
-            Next round starting in...
-          </UI.Typography>
-          <UI.Typography align="center" variant="h6" color="inherit">
-            {currentRound.countDown}
-          </UI.Typography>
-        </UI.Box>
-      </>
-    )
-  }
-
-  const didCurrentUserWin = model[roundOver.winner] === currentUserId
+  const didCurrentUserWin = roundOver.type === 'Win' && model[roundOver.winner] === currentUserId
   const isPlaying = model.O === currentUserId || model.X === currentUserId
+
 
   return (
     <>
@@ -535,8 +468,11 @@ const ViewRound = ({ currentUserId, model }: { currentUserId: UserId.UserId, mod
           flexDirection: "column",
           color: "#fff"
         }}>
-
-        {isPlaying ? (
+        {roundOver.type === 'Tie' ? (
+          <UI.Typography align="center" variant="h2" color="inherit">
+            Round Tie
+          </UI.Typography>
+        ) : isPlaying ? (
           <UI.Typography align="center" variant="h2" color="inherit">
             {didCurrentUserWin ? "Round Win" : "Round Lost"}
           </UI.Typography>
@@ -552,20 +488,42 @@ const ViewRound = ({ currentUserId, model }: { currentUserId: UserId.UserId, mod
         )}
       </UI.Box>
 
-      {scoreBoard}
+      <ViewScore color="#fff" score={score} />
 
-      <UI.Box sx={{ flex: 1, color: "#fff", display: 'flex', flexDirection: "column", justifyContent: "flex-end" }}>
-        <UI.Typography align="center" color="inherit">
-          Next round starting in...
-        </UI.Typography>
-
-        <UI.Typography align="center" variant="h6" color="inherit">
-          {currentRound.countDown}
+      <UI.Box sx={{ flex: 1, display: 'flex', flexDirection: "column", alignItems: 'center', justifyContent: "flex-end", padding: 2 }}>
+        <UI.Typography align="center" variant="subtitle1">
+          Starting in {currentRound.countDown}
         </UI.Typography>
       </UI.Box>
     </>
   )
+}
 
+
+export const ViewScore = ({ color, score }: { color: string, score: { X: number, O: number, Tie: number } }) => {
+  const width = 52
+  return (
+    <UI.Box sx={{ display: "flex", width: "100%", color: "#fff", alignItems: "center" }}>
+      <UI.Box sx={{ flex: 1, display: 'flex', flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 1 }}>
+        <svg width={width} viewBox="-1 -1 2 2">
+          <ViewSlot strokeWidth={0.33} cx={0} cy={0} r={0.8} slot={"X"} color={color} />
+        </svg>
+        <UI.Typography align="center" variant="h2" sx={{ flex: 1, color: color, }}>
+          {score.X}
+        </UI.Typography>
+      </UI.Box>
+
+      <UI.Box sx={{ flex: 1, display: 'flex', flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 1 }}>
+        <svg width={width} viewBox="-1 -1 2 2">
+          <ViewSlot strokeWidth={0.33} cx={0} cy={0} r={0.8} slot={"O"} color="#fff" />
+        </svg>
+
+        <UI.Typography align="center" variant="h2" sx={{ flex: 1, color }}>
+          {score.O}
+        </UI.Typography>
+      </UI.Box>
+    </UI.Box>
+  )
 }
 
 const ViewResignButton = ({ currentUserId, model, dispatch }: { currentUserId: UserId.UserId, model: Model, dispatch: (msg: Msg) => void }) => {
