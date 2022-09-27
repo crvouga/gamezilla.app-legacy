@@ -13,7 +13,7 @@
     "utils:find-circular-deps": "npx madge --ts-config tsconfig.json --circular source/App.Types.ts",
     "utils:sort": "npx sort-package-json",
     "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook"
+    "storybook:build": "build-storybook"
   },
   "dependencies": {
     "@emotion/react": "^11.9.0",
@@ -60,7 +60,6 @@
     "concurrently": "^7.3.0",
     "dotenv": "^16.0.1",
     "esbuild": "^0.14.49",
-    "fsevents": "^2.3.2",
     "jest": "^27.5.1",
     "nodemon": "^2.0.19",
     "prettier": "^2.7.1",
