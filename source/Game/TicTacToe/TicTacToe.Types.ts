@@ -72,6 +72,10 @@ export const bestOutOfToString = (bestOutOf: BestOutOf): string => {
   }
 }
 
+export const toWinCount = ({ maxRoundCount }: Pick<GameModel, 'maxRoundCount'>): number => {
+  return Math.floor(maxRoundCount / 2) + 1
+}
+
 export type MoveTimeLimit = 3 | 5 | 10
 
 export const allMoveTimeLimit: MoveTimeLimit[] = [3, 5, 10]

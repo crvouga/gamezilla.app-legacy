@@ -10,7 +10,8 @@ import {
   FrontendMsg, GameModel, GameOverModel, initSharedModel, inputBestOutOf, inputBestOutOfToString, inputMoveTimeLimit,
   inputMoveTimeLimitToString, moveTimeLimitToString, Res, startGame,
   ToBackend,
-  ToFrontend
+  ToFrontend,
+  toWinCount
 } from "./TicTacToe.Types"
 
 //
@@ -480,8 +481,8 @@ const ViewGameOverMessage = ({ currentUserId, model, store, }: { currentUserId: 
             {didCurrentUserWin ? "You Won" : "You Lost"}
           </UI.Typography>
         ) : (
-          <UI.Box sx={{ display: "flex", justifyContent: 'center', alignItems: 'center', }}>
-            <svg width={72} viewBox="-1 -1 2 2">
+          <UI.Box sx={{ display: "flex", justifyContent: 'center', alignItems: 'center', flexDirection: "column" }}>
+            <svg width={100} viewBox="-1 -1 2 2">
               <ViewSlot strokeWidth={0.33} cx={0} cy={0} r={0.8} slot={model.gameOver.winner} color="#fff" />
             </svg>
             <UI.Typography align="center" color="inherit" fontSize={72} sx={{ marginLeft: 2 }}>
@@ -543,6 +544,10 @@ export const ViewRoundStartingMessage = ({ currentUserId, model }: { currentUser
   const didCurrentUserWin = roundOver.type === 'Win' && model[roundOver.winner] === currentUserId
   const isPlaying = model.O === currentUserId || model.X === currentUserId
 
+  const width = 52
+
+  const winCount = toWinCount(model)
+
 
   return (
     <>
@@ -557,11 +562,11 @@ export const ViewRoundStartingMessage = ({ currentUserId, model }: { currentUser
           color: "#fff"
         }}>
         {roundOver.type === 'Tie' ? (
-          <UI.Typography align="center" variant="h2" color="inherit">
+          <UI.Typography align="center" fontSize={54} color="inherit">
             Round Tie
           </UI.Typography>
         ) : isPlaying ? (
-          <UI.Typography align="center" variant="h2" color="inherit">
+          <UI.Typography align="center" fontSize={54} color="inherit">
             {didCurrentUserWin ? "Round Win" : "Round Lost"}
           </UI.Typography>
         ) : (
@@ -576,10 +581,24 @@ export const ViewRoundStartingMessage = ({ currentUserId, model }: { currentUser
         )}
       </UI.Box>
 
-      <ViewScore color="#fff" score={score} />
+      <UI.Box sx={{ display: "flex", width: "100%", color: "#fff", alignItems: "center", }}>
+        <UI.Box sx={{ flex: 1, display: 'flex', flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 2 }}>
+          <svg width={width} viewBox="-1 -1 2 2">
+            <ViewSlot strokeWidth={0.33} cx={0} cy={0} r={0.8} slot={"X"} color={"#fff"} />
+          </svg>
+          <ViewScoreSlots score={score.X} maxScore={winCount} slotSize={32} />
+        </UI.Box>
 
-      <UI.Box sx={{ flex: 1, display: 'flex', flexDirection: "column", alignItems: 'center', justifyContent: "flex-end", padding: 2 }}>
-        <UI.Typography align="center" variant="subtitle1">
+        <UI.Box sx={{ flex: 1, display: 'flex', flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 2 }}>
+          <svg width={width} viewBox="-1 -1 2 2">
+            <ViewSlot strokeWidth={0.33} cx={0} cy={0} r={0.8} slot={"O"} color="#fff" />
+          </svg>
+          <ViewScoreSlots score={score.O} maxScore={winCount} slotSize={32} />
+        </UI.Box>
+      </UI.Box>
+
+      <UI.Box sx={{ flex: 1, display: 'flex', flexDirection: "column", alignItems: 'center', justifyContent: "flex-end", padding: 4 }}>
+        <UI.Typography align="center" variant="h4" color="#fff">
           Starting in {currentRound.countDown}
         </UI.Typography>
       </UI.Box>
@@ -588,30 +607,22 @@ export const ViewRoundStartingMessage = ({ currentUserId, model }: { currentUser
 }
 
 
-export const ViewScore = ({ color, score }: { color: string, score: { X: number, O: number, Tie: number } }) => {
-  const width = 52
-  return (
-    <UI.Box sx={{ display: "flex", width: "100%", color: "#fff", alignItems: "center" }}>
-      <UI.Box sx={{ flex: 1, display: 'flex', flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 1 }}>
-        <svg width={width} viewBox="-1 -1 2 2">
-          <ViewSlot strokeWidth={0.33} cx={0} cy={0} r={0.8} slot={"X"} color={color} />
-        </svg>
-        <UI.Typography align="center" variant="h2" sx={{ flex: 1, color: color, }}>
-          {score.X}
-        </UI.Typography>
-      </UI.Box>
 
-      <UI.Box sx={{ flex: 1, display: 'flex', flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 1 }}>
-        <svg width={width} viewBox="-1 -1 2 2">
-          <ViewSlot strokeWidth={0.33} cx={0} cy={0} r={0.8} slot={"O"} color="#fff" />
-        </svg>
 
-        <UI.Typography align="center" variant="h2" sx={{ flex: 1, color }}>
-          {score.O}
-        </UI.Typography>
-      </UI.Box>
-    </UI.Box>
-  )
+const ViewScoreSlots = ({ maxScore, score, slotSize }: { maxScore: number, score: number, slotSize: number }) => {
+  return <UI.Box sx={{ display: 'flex', flexDirection: "row", alignItems: "center", justifyContent: 'center', gap: 1 / 2, color: "inherit" }}>
+    {[...new Array(maxScore)].map((_, index) => {
+      return (
+        <UI.Box key={index} sx={{ display: "flex", alignItems: 'center', justifyContent: "center", gap: 1, color: "inherit" }}>
+          {index + 1 <= score ? (
+            <UI.Icons.Circle sx={{ width: slotSize, height: slotSize, color: "inherit" }} />
+          ) : (
+            <UI.Icons.CircleOutlined sx={{ width: slotSize, height: slotSize, color: "inherit", opacity: 0.5 }} />
+          )}
+        </UI.Box>
+      )
+    })}
+  </UI.Box>
 }
 
 const ViewResignButton = ({ currentUserId, model, dispatch }: { currentUserId: UserId.UserId, model: Model, dispatch: (msg: Msg) => void }) => {

@@ -169,6 +169,8 @@ export type GameOver =
         type: "Tie"
     }
 
+
+
 export const toGameOver = ({ maxRoundCount, round }: { maxRoundCount: number, round: Round }): GameOver | { type: "None" } => {
     const score = toScore(round)
     const winCount = (maxRoundCount + 1) / 2
