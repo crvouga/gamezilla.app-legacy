@@ -135,7 +135,7 @@ export const AppContainer = ({
 
   return (
     <Mui.ThemeProvider theme={theme}>
-      <Mui.CssBaseline />
+      <Mui.CssBaseline enableColorScheme />
       <Mui.Box
         sx={{
           maxWidth: "sm",
@@ -619,7 +619,7 @@ export const ActionButton = ({
     <ButtonBase
       onClick={onClick}
       sx={{
-        paddingY: 1 / 2,
+        paddingY: 1,
         paddingX: 2,
         display: "flex",
         flexDirection: "column",
@@ -627,7 +627,7 @@ export const ActionButton = ({
       }}
     >
       {icon}
-      <Typography sx={{ marginTop: -1 / 2 }} variant="caption">{label}</Typography>
+      <Typography variant="caption">{label}</Typography>
     </ButtonBase>
   )
 }

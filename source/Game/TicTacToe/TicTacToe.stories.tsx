@@ -27,6 +27,8 @@ const X: Store.Profile.Profile = {
     username: Username.fromString("bob123"),
 }
 
+const someUserId = UserId.generate()
+
 const currentUserId = X.userId
 
 // 
@@ -207,6 +209,101 @@ export const GameOverTie = () => Template({
         X: X.userId,
         gameOver: {
             type: "Tie",
+        },
+        round: {
+            type: "RoundOver",
+            board: [
+                ['O', 'X', 'X'],
+                ['X', 'O', 'O'],
+                ['X', 'O', 'X'],
+            ],
+            next: {
+                type: "RoundStarting",
+                countDown: 3
+            },
+            roundOver: {
+                type: "Win",
+                winner: "O"
+            }
+        },
+        openedModal: "None"
+    }
+})
+
+export const GameOverWin = () => Template({
+    model: {
+        type: "GameOver",
+        maxRoundCount: 3,
+        moveTimeLimit: 5,
+        O: O.userId,
+        X: X.userId,
+        gameOver: {
+            type: "Winner",
+            winner: "X",
+        },
+        round: {
+            type: "RoundOver",
+            board: [
+                ['O', 'O', 'X'],
+                ['X', 'O', 'O'],
+                ['X', 'O', 'X'],
+            ],
+            next: {
+                type: "RoundStarting",
+                countDown: 3
+            },
+            roundOver: {
+                type: "Win",
+                winner: "O"
+            }
+        },
+        openedModal: "None"
+    }
+})
+
+
+export const GameOverWinOther = () => Template({
+    model: {
+        type: "GameOver",
+        maxRoundCount: 3,
+        moveTimeLimit: 5,
+        O: O.userId,
+        X: X.userId,
+        gameOver: {
+            type: "Winner",
+            winner: "O",
+        },
+        round: {
+            type: "RoundOver",
+            board: [
+                ['O', 'O', 'X'],
+                ['X', 'O', 'O'],
+                ['X', 'O', 'X'],
+            ],
+            next: {
+                type: "RoundStarting",
+                countDown: 3
+            },
+            roundOver: {
+                type: "Win",
+                winner: "O"
+            }
+        },
+        openedModal: "None"
+    }
+})
+
+
+export const GameOverWinNotPlaying = () => Template({
+    model: {
+        type: "GameOver",
+        maxRoundCount: 3,
+        moveTimeLimit: 5,
+        O: O.userId,
+        X: someUserId,
+        gameOver: {
+            type: "Winner",
+            winner: "X",
         },
         round: {
             type: "RoundOver",
