@@ -12,8 +12,8 @@
     "typecheck": "tsc -w",
     "utils:find-circular-deps": "npx madge --ts-config tsconfig.json --circular source/App.Types.ts",
     "utils:sort": "npx sort-package-json",
-    "storybook": "start-storybook -p 6006",
-    "storybook:build": "build-storybook"
+    "ladle": "npx ladle serve",
+    "ladle:build": "npx ladle build"
   },
   "dependencies": {
     "@emotion/react": "^11.9.0",
@@ -43,13 +43,6 @@
   "devDependencies": {
     "@babel/core": "^7.19.1",
     "@faker-js/faker": "^7.3.0",
-    "@storybook/addon-actions": "^6.5.12",
-    "@storybook/addon-essentials": "^6.5.12",
-    "@storybook/addon-interactions": "^6.5.12",
-    "@storybook/addon-links": "^6.5.12",
-    "@storybook/builder-vite": "^0.2.2",
-    "@storybook/react": "^6.5.12",
-    "@storybook/testing-library": "^0.0.13",
     "@types/chess.js": "^0.13.2",
     "@types/howler": "^2.2.7",
     "@types/jest": "^27.4.1",
