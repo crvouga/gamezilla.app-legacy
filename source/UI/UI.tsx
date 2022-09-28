@@ -77,6 +77,7 @@ const createTheme = ({ mode }: { mode: "light" | "dark" }) =>
             root: {
               textTransform: "capitalize",
             },
+
           },
         },
         MuiAvatar: {
