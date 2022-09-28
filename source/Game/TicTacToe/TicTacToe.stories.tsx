@@ -145,7 +145,7 @@ export const RoundOverTie = () => Template({
 export const RoundOverWin = () => Template({
     model: {
         type: "Game",
-        maxRoundCount: 3,
+        maxRoundCount: 5,
         moveTimeLimit: 5,
         O: O.userId,
         X: X.userId,
@@ -174,7 +174,7 @@ export const RoundOverWin = () => Template({
 export const RoundOverWinOther = () => Template({
     model: {
         type: "Game",
-        maxRoundCount: 3,
+        maxRoundCount: 5,
         moveTimeLimit: 5,
         O: O.userId,
         X: X.userId,
