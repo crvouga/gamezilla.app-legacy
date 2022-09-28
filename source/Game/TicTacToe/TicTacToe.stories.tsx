@@ -284,6 +284,10 @@ export const GameOverWinNotPlaying = () => Template({
 export const GameOverResigned = () => Template({
     model: {
         ...gameOverBase,
+        round: {
+            type: "RoundStarting",
+            countDown: 3,
+        },
         gameOver: {
             type: "Resignation",
             resigner: 'X'
