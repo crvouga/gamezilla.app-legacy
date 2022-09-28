@@ -1,8 +1,7 @@
-import { ComponentMeta, ComponentStory } from "@storybook/react"
 import { ProfileAvatar, UserId, Username } from "../../Data"
 import * as Store from "../../Store"
 import * as UI from "../../UI"
-import { View } from "./TicTacToe.Frontend"
+import { Model, View } from "./TicTacToe.Frontend"
 
 // 
 // 
@@ -41,10 +40,9 @@ const currentUserId = X.userId
 export default {
     title: "TicTacToe",
     component: View,
-} as ComponentMeta<typeof View>
+}
 
-
-const Template: ComponentStory<typeof View> = (args) => (
+const Template = (args: { model: Model }) => (
     <UI.AppContainer themeMode="System">
         <View
             currentUserId={currentUserId}
@@ -64,8 +62,7 @@ const Template: ComponentStory<typeof View> = (args) => (
     </UI.AppContainer>
 )
 
-export const GameSetup = Template.bind({})
-GameSetup.args = {
+export const GameSetup = () => Template({
     model: {
         type: "Setup",
         maxRoundCount: 3,
@@ -74,12 +71,11 @@ GameSetup.args = {
         X: X.userId,
         openedModal: "None"
     }
-}
+})
 
 
 
-export const GameStarting = Template.bind({})
-GameStarting.args = {
+export const GameStarting = () => Template({
     model: {
         type: "Game",
         maxRoundCount: 3,
@@ -92,11 +88,11 @@ GameStarting.args = {
         },
         openedModal: "None"
     }
-}
+})
 
 
-export const GameStarted = Template.bind({})
-GameStarted.args = {
+
+export const GameStarted = () => Template({
     model: {
         type: "Game",
         maxRoundCount: 3,
@@ -114,11 +110,10 @@ GameStarted.args = {
         },
         openedModal: "None"
     }
-}
+})
 
 
-export const RoundOverTie = Template.bind({})
-RoundOverTie.args = {
+export const RoundOverTie = () => Template({
     model: {
         type: "Game",
         maxRoundCount: 3,
@@ -142,10 +137,10 @@ RoundOverTie.args = {
         },
         openedModal: "None"
     }
-}
+})
 
-export const RoundOverWin = Template.bind({})
-RoundOverWin.args = {
+
+export const RoundOverWin = () => Template({
     model: {
         type: "Game",
         maxRoundCount: 3,
@@ -170,11 +165,11 @@ RoundOverWin.args = {
         },
         openedModal: "None"
     }
-}
+})
 
 
-export const RoundOverWinOther = Template.bind({})
-RoundOverWinOther.args = {
+
+export const RoundOverWinOther = () => Template({
     model: {
         type: "Game",
         maxRoundCount: 3,
@@ -199,11 +194,11 @@ RoundOverWinOther.args = {
         },
         openedModal: "None"
     }
-}
+})
 
 
-export const GameOverTie = Template.bind({})
-GameOverTie.args = {
+
+export const GameOverTie = () => Template({
     model: {
         type: "GameOver",
         maxRoundCount: 3,
@@ -231,4 +226,4 @@ GameOverTie.args = {
         },
         openedModal: "None"
     }
-}
+})
