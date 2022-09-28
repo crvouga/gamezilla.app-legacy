@@ -16,6 +16,11 @@ import {
   ToBackend,
   ToFrontend,
   moveCountDown,
+  rematchAccept,
+  Res,
+  rematchAsk,
+  rematchDecline,
+  rematchCancel,
 
 } from "./TicTacToe.Types"
 import * as Round from "./Round"
@@ -176,6 +181,50 @@ export const updateFromFrontend = (
       const modelNew = result.value
 
       return [modelNew, sendToRoom(["InputMoveTimeLimit_Done", result])]
+    }
+
+    case 'RematchAccept': {
+      const result = rematchAccept(msg[1], model)
+      const res: Res = ["RematchAccept_Done", result]
+
+      if (result.type === "Err") {
+        return [model, sendToClient(res)]
+      }
+
+      return [result.value, sendToRoom(res)]
+    }
+
+    case 'RematchAsk': {
+      const result = rematchAsk(msg[1], model)
+      const res: Res = ["RematchAsk_Done", result]
+
+      if (result.type === "Err") {
+        return [model, sendToClient(res)]
+      }
+
+      return [result.value, sendToRoom(res)]
+    }
+
+    case 'RematchDecline': {
+      const result = rematchDecline(msg[1], model)
+      const res: Res = ["RematchDecline_Done", result]
+
+      if (result.type === "Err") {
+        return [model, sendToClient(res)]
+      }
+
+      return [result.value, sendToRoom(res)]
+    }
+
+    case 'RematchCancel': {
+      const result = rematchCancel(msg[1], model)
+      const res: Res = ["RematchCancel_Done", result]
+
+      if (result.type === "Err") {
+        return [model, sendToClient(res)]
+      }
+
+      return [result.value, sendToRoom(res)]
     }
 
     default: {

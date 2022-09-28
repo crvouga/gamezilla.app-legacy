@@ -74,6 +74,10 @@ export const update = (
     //
     //
 
+    case 'RematchAccept':
+    case 'RematchAsk':
+    case 'RematchDecline':
+    case 'RematchCancel':
     case 'InputBestOutOf':
     case 'InputMoveTimeLimit':
     case "InputMove":
@@ -84,6 +88,10 @@ export const update = (
     case 'NewGame': {
       return [model, sendToBackend(msg)]
     }
+
+    default: {
+      return exhaustive(msg[0])
+    }
   }
 }
 
@@ -92,6 +100,10 @@ export const updateFromBackend = (
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
+    case 'RematchAccept_Done':
+    case 'RematchAsk_Done':
+    case 'RematchDecline_Done':
+    case 'RematchCancel_Done':
     case 'NewGame_Done':
     case 'InputMoveTimeLimit_Done':
     case 'InputBestOutOf_Done':
@@ -446,16 +458,22 @@ const ViewGameOverMessage = ({ currentUserId, model, store, }: { currentUserId: 
     )
   }
 
+  const score = Round.toScore(model.round)
+  const winCount = toWinCount(model)
+
   if (model.gameOver.type === 'Tie') {
     return (
       <>
+        {/* <UI.Box sx={{ flex: 1 }}></UI.Box> */}
 
         <UI.Box sx={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: "center" }}>
           <UI.Typography fontSize={72} align="center">
             Tie
           </UI.Typography>
         </UI.Box>
-
+        <UI.Box sx={{ flex: 1, width: '100%' }}>
+          <ViewScoreBoard score={score} winCount={winCount} />
+        </UI.Box>
       </>
     )
   }
@@ -491,7 +509,9 @@ const ViewGameOverMessage = ({ currentUserId, model, store, }: { currentUserId: 
           </UI.Box>
         )}
       </UI.Box>
-      <UI.Box sx={{ flex: 1 }}></UI.Box>
+      <UI.Box sx={{ flex: 1, width: '100%' }}>
+        <ViewScoreBoard score={score} winCount={winCount} />
+      </UI.Box>
     </>
   )
 
@@ -509,15 +529,17 @@ export const ViewRoundStartingMessage = ({ currentUserId, model }: { currentUser
     return <></>
   }
 
+  const score = Round.toScore(model.round)
+  const winCount = toWinCount(model)
+
   if (previousRound.type === 'None') {
     const countDown = currentRound.countDown
 
     return (
       <>
-        <UI.Box sx={{ flex: 1 }}></UI.Box>
         <UI.Box
           sx={{
-            flex: 1,
+            flex: 2,
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
@@ -531,22 +553,17 @@ export const ViewRoundStartingMessage = ({ currentUserId, model }: { currentUser
             {countDown}
           </UI.Typography>
         </UI.Box>
-        <UI.Box sx={{ flex: 1, color: "#fff", display: 'flex', flexDirection: "column", alignItems: "center", justifyContent: "flex-end" }}>
+        <UI.Box sx={{ flex: 1, color: "#fff", display: 'flex', flexDirection: "column", width: "100%" }}>
+          <ViewScoreBoard score={score} winCount={winCount} />
         </UI.Box>
       </>
     )
   }
 
-  const score = Round.toScore(model.round)
 
   const { roundOver } = previousRound
-
   const didCurrentUserWin = roundOver.type === 'Win' && model[roundOver.winner] === currentUserId
   const isPlaying = model.O === currentUserId || model.X === currentUserId
-
-  const width = 52
-
-  const winCount = toWinCount(model)
 
 
   return (
@@ -581,21 +598,7 @@ export const ViewRoundStartingMessage = ({ currentUserId, model }: { currentUser
         )}
       </UI.Box>
 
-      <UI.Box sx={{ display: "flex", width: "100%", color: "#fff", alignItems: "center", }}>
-        <UI.Box sx={{ flex: 1, display: 'flex', flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 2 }}>
-          <svg width={width} viewBox="-1 -1 2 2">
-            <ViewSlot strokeWidth={0.33} cx={0} cy={0} r={0.8} slot={"X"} color={"#fff"} />
-          </svg>
-          <ViewScoreSlots score={score.X} maxScore={winCount} slotSize={32} />
-        </UI.Box>
-
-        <UI.Box sx={{ flex: 1, display: 'flex', flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 2 }}>
-          <svg width={width} viewBox="-1 -1 2 2">
-            <ViewSlot strokeWidth={0.33} cx={0} cy={0} r={0.8} slot={"O"} color="#fff" />
-          </svg>
-          <ViewScoreSlots score={score.O} maxScore={winCount} slotSize={32} />
-        </UI.Box>
-      </UI.Box>
+      <ViewScoreBoard score={score} winCount={winCount} />
 
       <UI.Box sx={{ flex: 1, display: 'flex', flexDirection: "column", alignItems: 'center', justifyContent: "flex-end", padding: 4 }}>
         <UI.Typography align="center" variant="h4" color="#fff">
@@ -607,15 +610,38 @@ export const ViewRoundStartingMessage = ({ currentUserId, model }: { currentUser
 }
 
 
+const ViewScoreBoard = ({ score, winCount }: { score: Round.Score, winCount: number }) => {
+  const width = 52
 
+  return (
+    <UI.Box sx={{ display: "flex", width: "100%", color: "#fff", alignItems: "center", }}>
+      <UI.Box sx={{ flex: 1, display: 'flex', flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 2 }}>
+        <svg width={width} viewBox="-1 -1 2 2">
+          <ViewSlot strokeWidth={0.33} cx={0} cy={0} r={0.8} slot={"X"} color={"#fff"} />
+        </svg>
+        <ViewScoreSlots tieCount={score.Tie} score={score.X} maxScore={winCount} slotSize={32} />
+      </UI.Box>
 
-const ViewScoreSlots = ({ maxScore, score, slotSize }: { maxScore: number, score: number, slotSize: number }) => {
+      <UI.Box sx={{ flex: 1, display: 'flex', flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 2 }}>
+        <svg width={width} viewBox="-1 -1 2 2">
+          <ViewSlot strokeWidth={0.33} cx={0} cy={0} r={0.8} slot={"O"} color="#fff" />
+        </svg>
+        <ViewScoreSlots tieCount={score.Tie} score={score.O} maxScore={winCount} slotSize={32} />
+      </UI.Box>
+    </UI.Box>
+  )
+}
+
+const ViewScoreSlots = ({ maxScore, score, slotSize, tieCount }: { tieCount: number; maxScore: number, score: number, slotSize: number }) => {
   return <UI.Box sx={{ display: 'flex', flexDirection: "row", alignItems: "center", justifyContent: 'center', gap: 1 / 2, color: "inherit" }}>
     {[...new Array(maxScore)].map((_, index) => {
+      const n = index + 1
       return (
         <UI.Box key={index} sx={{ display: "flex", alignItems: 'center', justifyContent: "center", gap: 1, color: "inherit" }}>
-          {index + 1 <= score ? (
+          {n <= score ? (
             <UI.Icons.Circle sx={{ width: slotSize, height: slotSize, color: "inherit" }} />
+          ) : n > (maxScore - tieCount) ? (
+            <UI.Icons.Cancel sx={{ width: slotSize, height: slotSize, color: "inherit", opacity: 0.5 }} />
           ) : (
             <UI.Icons.CircleOutlined sx={{ width: slotSize, height: slotSize, color: "inherit", opacity: 0.5 }} />
           )}

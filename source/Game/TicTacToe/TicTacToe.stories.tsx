@@ -27,7 +27,13 @@ const X: Store.Profile.Profile = {
     username: Username.fromString("bob123"),
 }
 
-const someUserId = UserId.generate()
+const someUser: Store.Profile.Profile = {
+    userId: UserId.generate(),
+    avatarUrl: ProfileAvatar.toUrl({ seed: "someUser", style: "big-ears-neutral" }),
+    name: "SomeUser",
+    themeMode: "Light",
+    username: Username.fromString("SomeUser"),
+}
 
 const currentUserId = X.userId
 
@@ -57,6 +63,7 @@ const Template = (args: { model: Model }) => (
                 Profile: {
                     [X.userId]: X,
                     [O.userId]: O,
+                    [someUser.userId]: someUser,
                 }
             }}
             roomAvatarGroup={<>placeholder</>}
@@ -200,127 +207,75 @@ export const RoundOverWinOther = () => Template({
 
 
 
+const gameOverBase: Model = {
+    type: "GameOver",
+    maxRoundCount: 3,
+    moveTimeLimit: 5,
+    O: O.userId,
+    X: X.userId,
+    gameOver: {
+        type: "Tie",
+    },
+    round: {
+        type: "RoundOver",
+        board: [
+            ['O', 'X', 'X'],
+            ['X', 'O', 'O'],
+            ['X', 'O', 'X'],
+        ],
+        next: {
+            type: "RoundStarting",
+            countDown: 3
+        },
+        roundOver: {
+            type: "Win",
+            winner: "O"
+        }
+    },
+    openedModal: "None",
+    rematch: {
+        type: "NotAsking",
+    }
+}
+
 export const GameOverTie = () => Template({
     model: {
-        type: "GameOver",
-        maxRoundCount: 3,
-        moveTimeLimit: 5,
-        O: O.userId,
-        X: X.userId,
+        ...gameOverBase,
         gameOver: {
             type: "Tie",
         },
-        round: {
-            type: "RoundOver",
-            board: [
-                ['O', 'X', 'X'],
-                ['X', 'O', 'O'],
-                ['X', 'O', 'X'],
-            ],
-            next: {
-                type: "RoundStarting",
-                countDown: 3
-            },
-            roundOver: {
-                type: "Win",
-                winner: "O"
-            }
-        },
-        openedModal: "None"
     }
 })
 
 export const GameOverWin = () => Template({
     model: {
-        type: "GameOver",
-        maxRoundCount: 3,
-        moveTimeLimit: 5,
-        O: O.userId,
-        X: X.userId,
+        ...gameOverBase,
         gameOver: {
             type: "Winner",
             winner: "X",
         },
-        round: {
-            type: "RoundOver",
-            board: [
-                ['O', 'O', 'X'],
-                ['X', 'O', 'O'],
-                ['X', 'O', 'X'],
-            ],
-            next: {
-                type: "RoundStarting",
-                countDown: 3
-            },
-            roundOver: {
-                type: "Win",
-                winner: "O"
-            }
-        },
-        openedModal: "None"
     }
 })
 
 
 export const GameOverWinOther = () => Template({
     model: {
-        type: "GameOver",
-        maxRoundCount: 3,
-        moveTimeLimit: 5,
-        O: O.userId,
-        X: X.userId,
+        ...gameOverBase,
         gameOver: {
             type: "Winner",
             winner: "O",
         },
-        round: {
-            type: "RoundOver",
-            board: [
-                ['O', 'O', 'X'],
-                ['X', 'O', 'O'],
-                ['X', 'O', 'X'],
-            ],
-            next: {
-                type: "RoundStarting",
-                countDown: 3
-            },
-            roundOver: {
-                type: "Win",
-                winner: "O"
-            }
-        },
-        openedModal: "None"
     }
 })
 
 
 export const GameOverWinNotPlaying = () => Template({
     model: {
-        type: "GameOver",
-        maxRoundCount: 3,
-        moveTimeLimit: 5,
-        O: O.userId,
-        X: someUserId,
+        ...gameOverBase,
+        X: someUser.userId,
         gameOver: {
             type: "Winner",
             winner: "X",
         },
-        round: {
-            type: "RoundOver",
-            board: [
-                ['O', 'O', 'X'],
-                ['X', 'O', 'O'],
-                ['X', 'O', 'X'],
-            ],
-            next: {
-                type: "RoundStarting",
-                countDown: 3
-            },
-            roundOver: {
-                type: "Win",
-                winner: "O"
-            }
-        },
-        openedModal: "None"
     }
 })

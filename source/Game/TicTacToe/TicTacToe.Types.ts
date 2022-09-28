@@ -41,8 +41,17 @@ export type GameOverModel = {
   moveTimeLimit: MoveTimeLimit,
   round: Round.Round
   gameOver: GameOver
+  rematch: Rematch
 }
 
+type Rematch =
+  | {
+    type: "NotAsking"
+  }
+  | {
+    type: "Asking",
+    asker: UserId.UserId
+  }
 
 const initCountDown = 5
 
@@ -60,15 +69,16 @@ export type GameOver =
     type: "Tie"
   }
 
-export type BestOutOf = 1 | 3 | 5
+export type BestOutOf = 1 | 3 | 5 | 7
 
-export const allBestOutOf: BestOutOf[] = [1, 3, 5]
+export const allBestOutOf: BestOutOf[] = [1, 3, 5, 7]
 
 export const bestOutOfToString = (bestOutOf: BestOutOf): string => {
   switch (bestOutOf) {
     case 1: return "One"
     case 3: return "Three"
     case 5: return "Five"
+    case 7: return "Seven"
   }
 }
 
@@ -135,6 +145,10 @@ export type Req =
   | Resign
   | InputMove
   | NewGame
+  | RematchAsk
+  | RematchCancel
+  | RematchAccept
+  | RematchDecline
 
 export type Res =
   | InputPlayer_Done
@@ -145,6 +159,10 @@ export type Res =
   | Resign_Done
   | InputMove_Done
   | NewGame_Done
+  | RematchAsk_Done
+  | RematchCancel_Done
+  | RematchAccept_Done
+  | RematchDecline_Done
 
 //
 //
@@ -274,7 +292,7 @@ export const startGame = (
     maxRoundCount: model.maxRoundCount,
     round: {
       type: "RoundStarting",
-      countDown: initCountDown
+      countDown: 3
     }
   }
 
@@ -306,6 +324,9 @@ export const resign = (
     gameOver: {
       type: "Resignation",
       resigner: userId,
+    },
+    rematch: {
+      type: "NotAsking"
     }
   }
 
@@ -401,7 +422,10 @@ export const inputMove = (
     moveTimeLimit: modelNew.moveTimeLimit,
     O: modelNew.O,
     X: modelNew.X,
-    round: modelNew.round
+    round: modelNew.round,
+    rematch: {
+      type: "NotAsking"
+    }
   })
 }
 
@@ -639,4 +663,107 @@ export const roundCountDown = (model: SharedModel): RoundCountDown_Done[1] => {
 // 
 // 
 
-// type RematchAsk = ['RematchAsk', { userId: UserId.UserId }]
+type RematchAsk = ['RematchAsk', { userId: UserId.UserId }]
+type RematchAsk_Done = ['RematchAsk_Done', Result<RematchAskProblem, SharedModel>]
+type RematchAskProblem = "not_game_over" | "already_asking" | "not_player"
+
+export const rematchAsk = ({ userId }: RematchAsk[1], model: SharedModel): RematchAsk_Done[1] => {
+
+  if (model.type !== 'GameOver') {
+    return Err("not_game_over")
+  }
+
+  if (model.O !== userId && model.X !== userId) {
+    return Err("not_player")
+  }
+
+  if (model.rematch.type === 'Asking') {
+    return Err("already_asking")
+  }
+
+  return Ok({ ...model, rematch: { type: "Asking", asker: userId } })
+}
+
+type RematchCancel = ['RematchCancel', { userId: UserId.UserId }]
+type RematchCancel_Done = ['RematchCancel_Done', Result<RematchCancelProblem, SharedModel>]
+type RematchCancelProblem = "not_game_over" | "not_asking" | "not_asker" | "not_player"
+
+export const rematchCancel = ({ userId }: RematchCancel[1], model: SharedModel): RematchCancel_Done[1] => {
+  if (model.type !== 'GameOver') {
+    return Err("not_game_over")
+  }
+
+  if (model.rematch.type !== 'Asking') {
+    return Err("not_asking")
+  }
+
+  if (model.rematch.asker !== userId) {
+    return Err("not_asker")
+  }
+
+  if (model.O !== userId && model.X !== userId) {
+    return Err("not_player")
+  }
+
+  return Ok({ ...model, rematch: { type: "NotAsking" } })
+}
+
+
+type RematchDecline = ['RematchDecline', { userId: UserId.UserId }]
+type RematchDecline_Done = ['RematchDecline_Done', Result<RematchDeclineProblem, SharedModel>]
+type RematchDeclineProblem = "not_game_over" | "not_player" | "is_asker" | "not_asking"
+
+export const rematchDecline = ({ userId }: RematchDecline[1], model: SharedModel): RematchDecline_Done[1] => {
+  if (model.type !== 'GameOver') {
+    return Err("not_game_over")
+  }
+
+  if (model.rematch.type !== 'Asking') {
+    return Err("not_asking")
+  }
+
+  if (model.rematch.asker === userId) {
+    return Err("is_asker")
+  }
+
+  if (model.O !== userId && model.X !== userId) {
+    return Err("not_player")
+  }
+
+  return Ok({ ...model, rematch: { type: "NotAsking" } })
+}
+
+type RematchAccept = ['RematchAccept', { userId: UserId.UserId }]
+type RematchAccept_Done = ['RematchAccept_Done', Result<RematchAcceptProblem, SharedModel>]
+type RematchAcceptProblem = "not_game_over" | "not_player" | "is_asker" | "not_asking"
+
+export const rematchAccept = ({ userId }: RematchAccept[1], model: SharedModel): RematchAccept_Done[1] => {
+  if (model.type !== 'GameOver') {
+    return Err("not_game_over")
+  }
+
+  if (model.rematch.type !== 'Asking') {
+    return Err("not_asking")
+  }
+
+  if (model.rematch.asker === userId) {
+    return Err("is_asker")
+  }
+
+  if (model.O !== userId && model.X !== userId) {
+    return Err("not_player")
+  }
+
+  return Ok({
+    type: "Game",
+    maxRoundCount: model.maxRoundCount,
+    moveTimeLimit: model.moveTimeLimit,
+    O: model.O,
+    X: model.X,
+    round: {
+      type: "RoundStarting",
+      countDown: 3
+    }
+  })
+}
+
