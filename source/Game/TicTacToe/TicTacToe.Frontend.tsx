@@ -8,7 +8,7 @@ import {
   allBestOutOf,
   allMoveTimeLimit, BackendModel, bestOutOfToString, FrontendModel,
   FrontendMsg, GameModel, GameOverModel, initSharedModel, inputBestOutOf, inputBestOutOfToString, inputMoveTimeLimit,
-  inputMoveTimeLimitToString, moveTimeLimitToString, Res, startGame,
+  inputMoveTimeLimitToString, moveTimeLimitToString, newGame, newGameToString, rematchAsk, rematchAskToString, Res, startGame,
   ToBackend,
   ToFrontend,
   toWinCount
@@ -373,6 +373,7 @@ export const View = ({
                   flexDirection: "column",
                   overflow: "hidden",
                   maxHeight: "100%",
+                  color: "#fff"
                 }}
               >
                 <ViewRoundStartingMessage
@@ -393,6 +394,9 @@ export const View = ({
   }
 
   const board = Round.toCurrentBoard(model.round) ?? emptyBoard
+
+  const rematchAskResult = rematchAsk({ userId: currentUserId }, model)
+  const newGameResult = newGame({ userId: currentUserId }, model)
 
   return <UI.FillBox>
     <UI.Header
@@ -426,6 +430,7 @@ export const View = ({
             flexDirection: "column",
             overflow: "hidden",
             maxHeight: "100%",
+            color: "#fff"
           }}>
           <ViewGameOverMessage currentUserId={currentUserId} model={model} store={store} />
         </UI.Box>
@@ -435,24 +440,55 @@ export const View = ({
     <UI.Box sx={{ flex: 1 }} />
 
     <UI.Box sx={{ display: "flex", width: '100%', padding: 2, gap: 2 }}>
-      <UI.Button fullWidth variant="outlined" onClick={() => dispatch(['NewGame', { userId: currentUserId }])}>
-        Back
-      </UI.Button>
-      <UI.Button fullWidth variant="contained">
-        Rematch
-      </UI.Button>
+      <UI.Box sx={{ flex: 1 }}>
+        <UI.Tooltip title={newGameToString(newGameResult)}>
+          <span>
+            <UI.Button
+              fullWidth
+              variant="outlined"
+              onClick={() => dispatch(['NewGame', { userId: currentUserId }])}
+              disabled={newGameResult.type === 'Err'}
+            >
+              Back
+            </UI.Button>
+          </span>
+        </UI.Tooltip>
+      </UI.Box>
+      <UI.Box sx={{ flex: 1 }}>
+        <UI.Tooltip title={model.rematch.type === 'Asking' ? "" : rematchAskToString(rematchAskResult)}>
+          <span>
+            <UI.Button
+              disabled={rematchAskResult.type === 'Err'}
+              fullWidth
+              variant="contained"
+              onClick={() => dispatch(['RematchAsk', { userId: currentUserId }])}
+            >
+              Rematch
+            </UI.Button>
+          </span>
+        </UI.Tooltip>
+      </UI.Box>
     </UI.Box>
   </UI.FillBox >
 }
 
 const ViewGameOverMessage = ({ currentUserId, model, store, }: { currentUserId: UserId.UserId, model: GameOverModel, store: Store.Model }) => {
+  const isPlaying = model.O === currentUserId || model.X === currentUserId
+
   if (model.gameOver.type === 'Resignation') {
     return (
       <>
         <UI.Box sx={{ flex: 1 }}></UI.Box>
-        <UI.Box sx={{ flex: 1 }}>
-          resigned
+
+        <UI.Box sx={{ flex: 1, display: "flex", justifyContent: 'center', alignItems: 'center', flexDirection: "column", color: "inherit" }}>
+          <svg width={100} viewBox="-1 -1 2 2" color="inherit">
+            <ViewSlot strokeWidth={0.33} cx={0} cy={0} r={0.8} slot={model.gameOver.resigner} color="currentColor" />
+          </svg>
+          <UI.Typography align="center" color="inherit" fontSize={72} sx={{ marginLeft: 2 }}>
+            Resigned
+          </UI.Typography>
         </UI.Box>
+
         <UI.Box sx={{ flex: 1 }}></UI.Box>
       </>
     )
@@ -466,8 +502,8 @@ const ViewGameOverMessage = ({ currentUserId, model, store, }: { currentUserId: 
       <>
         {/* <UI.Box sx={{ flex: 1 }}></UI.Box> */}
 
-        <UI.Box sx={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: "center" }}>
-          <UI.Typography fontSize={72} align="center">
+        <UI.Box sx={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: "center", color: "inherit" }}>
+          <UI.Typography fontSize={72} align="center" color="inherit">
             Tie
           </UI.Typography>
         </UI.Box>
@@ -479,7 +515,6 @@ const ViewGameOverMessage = ({ currentUserId, model, store, }: { currentUserId: 
   }
 
   const didCurrentUserWin = model.gameOver.type === 'Winner' && model[model.gameOver.winner] === currentUserId
-  const isPlaying = model.O === currentUserId || model.X === currentUserId
 
 
   return (
@@ -492,7 +527,7 @@ const ViewGameOverMessage = ({ currentUserId, model, store, }: { currentUserId: 
           justifyContent: "center",
           alignItems: "center",
           flexDirection: "column",
-          color: "#fff"
+          color: "inherit"
         }}>
         {isPlaying ? (
           <UI.Typography align="center" color="inherit" fontSize={72}>
@@ -501,7 +536,7 @@ const ViewGameOverMessage = ({ currentUserId, model, store, }: { currentUserId: 
         ) : (
           <UI.Box sx={{ display: "flex", justifyContent: 'center', alignItems: 'center', flexDirection: "column" }}>
             <svg width={100} viewBox="-1 -1 2 2">
-              <ViewSlot strokeWidth={0.33} cx={0} cy={0} r={0.8} slot={model.gameOver.winner} color="#fff" />
+              <ViewSlot strokeWidth={0.33} cx={0} cy={0} r={0.8} slot={model.gameOver.winner} color="currentColor" />
             </svg>
             <UI.Typography align="center" color="inherit" fontSize={72} sx={{ marginLeft: 2 }}>
               Won
@@ -544,7 +579,7 @@ export const ViewRoundStartingMessage = ({ currentUserId, model }: { currentUser
             justifyContent: "center",
             alignItems: "center",
             flexDirection: "column",
-            color: "#fff"
+            color: "inherit"
           }}>
           <UI.Typography align="center" variant="h2" color="inherit" sx={{ marginBottom: 1 }}>
             Starting in
@@ -553,7 +588,7 @@ export const ViewRoundStartingMessage = ({ currentUserId, model }: { currentUser
             {countDown}
           </UI.Typography>
         </UI.Box>
-        <UI.Box sx={{ flex: 1, color: "#fff", display: 'flex', flexDirection: "column", width: "100%" }}>
+        <UI.Box sx={{ flex: 1, color: "inherit", display: 'flex', flexDirection: "column", width: "100%" }}>
           <ViewScoreBoard score={score} winCount={winCount} />
         </UI.Box>
       </>
@@ -576,7 +611,7 @@ export const ViewRoundStartingMessage = ({ currentUserId, model }: { currentUser
           justifyContent: "center",
           alignItems: "center",
           flexDirection: "column",
-          color: "#fff"
+          color: "inherit"
         }}>
         {roundOver.type === 'Tie' ? (
           <UI.Typography align="center" fontSize={54} color="inherit">
@@ -587,9 +622,9 @@ export const ViewRoundStartingMessage = ({ currentUserId, model }: { currentUser
             {didCurrentUserWin ? "Round Win" : "Round Lost"}
           </UI.Typography>
         ) : (
-          <UI.Box sx={{ display: "flex", justifyContent: 'center', alignItems: 'center' }}>
-            <svg width={64} viewBox="-1 -1 2 2">
-              <ViewSlot strokeWidth={0.25} cx={0} cy={0} r={0.8} slot={roundOver.winner} color="#fff" />
+          <UI.Box sx={{ display: "flex", justifyContent: 'center', alignItems: 'center', color: "inherit" }}>
+            <svg width={64} viewBox="-1 -1 2 2" color="inherit">
+              <ViewSlot strokeWidth={0.25} cx={0} cy={0} r={0.8} slot={roundOver.winner} color="currentColor" />
             </svg>
             <UI.Typography align="center" color="inherit" fontSize={64}>
               Won
@@ -601,7 +636,7 @@ export const ViewRoundStartingMessage = ({ currentUserId, model }: { currentUser
       <ViewScoreBoard score={score} winCount={winCount} />
 
       <UI.Box sx={{ flex: 1, display: 'flex', flexDirection: "column", alignItems: 'center', justifyContent: "flex-end", padding: 4 }}>
-        <UI.Typography align="center" variant="h4" color="#fff">
+        <UI.Typography align="center" variant="h4" color="inherit">
           Starting in {currentRound.countDown}
         </UI.Typography>
       </UI.Box>
@@ -614,17 +649,17 @@ const ViewScoreBoard = ({ score, winCount }: { score: Round.Score, winCount: num
   const width = 52
 
   return (
-    <UI.Box sx={{ display: "flex", width: "100%", color: "#fff", alignItems: "center", }}>
-      <UI.Box sx={{ flex: 1, display: 'flex', flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 2 }}>
-        <svg width={width} viewBox="-1 -1 2 2">
-          <ViewSlot strokeWidth={0.33} cx={0} cy={0} r={0.8} slot={"X"} color={"#fff"} />
+    <UI.Box sx={{ display: "flex", width: "100%", color: "inherit", alignItems: "center", }}>
+      <UI.Box sx={{ flex: 1, display: 'flex', flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 2, color: "inherit" }}>
+        <svg width={width} viewBox="-1 -1 2 2" color="inherit">
+          <ViewSlot strokeWidth={0.33} cx={0} cy={0} r={0.8} slot={"X"} color={"currentColor"} />
         </svg>
         <ViewScoreSlots tieCount={score.Tie} score={score.X} maxScore={winCount} slotSize={32} />
       </UI.Box>
 
-      <UI.Box sx={{ flex: 1, display: 'flex', flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 2 }}>
-        <svg width={width} viewBox="-1 -1 2 2">
-          <ViewSlot strokeWidth={0.33} cx={0} cy={0} r={0.8} slot={"O"} color="#fff" />
+      <UI.Box sx={{ flex: 1, display: 'flex', flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 2, color: "inherit" }}>
+        <svg width={width} viewBox="-1 -1 2 2" color="inherit">
+          <ViewSlot strokeWidth={0.33} cx={0} cy={0} r={0.8} slot={"O"} color={"currentColor"} />
         </svg>
         <ViewScoreSlots tieCount={score.Tie} score={score.O} maxScore={winCount} slotSize={32} />
       </UI.Box>
@@ -683,7 +718,9 @@ const toGameText = ({ model, store }: { model: Model, store: Store.Model }): str
       switch (model.gameOver.type) {
         case 'Resignation': {
 
-          return `${store.Profile[model.gameOver.resigner]?.username ?? "..."} resigned`
+
+
+          return `${store.Profile[model[model.gameOver.resigner]]?.username ?? "..."} resigned`
         }
 
         case 'Winner': {
@@ -908,12 +945,15 @@ export const BannerArt = ({ title }: { title: string }) => {
           display: 'flex',
           flexDirection: "column",
           background: `linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.4))`,
+          color: "#fff",
         }}>
+
         <UI.Box sx={{ flex: 1 }} />
+
         <UI.Typography
           sx={{ paddingX: 2, paddingBottom: 1 }}
           variant="h3"
-          color="#fff"
+          color="inherit"
         >
           {title}
         </UI.Typography>

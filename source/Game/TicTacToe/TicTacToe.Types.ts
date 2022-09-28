@@ -50,16 +50,15 @@ type Rematch =
   }
   | {
     type: "Asking",
-    asker: UserId.UserId
+    asker: TicTacToe.PlayerType
   }
 
 const initCountDown = 5
 
-
 export type GameOver =
   | {
     type: "Resignation"
-    resigner: UserId.UserId
+    resigner: TicTacToe.PlayerType
   }
   | {
     type: "Winner",
@@ -308,7 +307,7 @@ export const startGame = (
 
 type Resign = ["Resign", { userId: UserId.UserId }]
 type Resign_Done = ["Resign_Done", Result<ResignProblem, SharedModel>]
-type ResignProblem = "not_in_game_mode"
+type ResignProblem = "not_in_game_mode" | "not_playing"
 
 export const resign = (
   { userId }: Resign[1],
@@ -318,12 +317,18 @@ export const resign = (
     return Err("not_in_game_mode")
   }
 
+  const resigner: TicTacToe.PlayerType | "None" = model.O === userId ? 'O' : model.X === userId ? 'X' : 'None'
+
+  if (resigner === 'None') {
+    return Err("not_playing")
+  }
+
   const modelNew: SharedModel = {
     ...model,
     type: "GameOver",
     gameOver: {
       type: "Resignation",
-      resigner: userId,
+      resigner,
     },
     rematch: {
       type: "NotAsking"
@@ -492,11 +497,11 @@ export const moveCountDown = (model: SharedModel): MoveCountDown_Done[1] => {
 
 type NewGame = ['NewGame', { userId: UserId.UserId }]
 type NewGame_Done = ['NewGame_Done', Result<NewGameProblem, SharedModel>]
-type NewGameProblem = "not_playing" | "not_game_over" | "not_in_game_mode"
+type NewGameProblem = "not_playing" | "not_game_over"
 
 export const newGame = ({ userId }: NewGame[1], model: SharedModel): NewGame_Done[1] => {
   if (model.type !== 'GameOver') {
-    return Err("not_in_game_mode")
+    return Err("not_game_over")
   }
 
   if (model.X !== userId && model.O !== userId) {
@@ -512,6 +517,22 @@ export const newGame = ({ userId }: NewGame[1], model: SharedModel): NewGame_Don
   }
 
   return Ok(modelNew)
+}
+
+export const newGameToString = (result: NewGame_Done[1]): string => {
+  if (result.type === 'Ok') {
+    return ""
+  }
+
+  switch (result.error) {
+    case 'not_game_over': {
+      return "Game must be over"
+    }
+
+    case 'not_playing': {
+      return "Must be playing to start a new game"
+    }
+  }
 }
 
 // 
@@ -668,20 +689,45 @@ type RematchAsk_Done = ['RematchAsk_Done', Result<RematchAskProblem, SharedModel
 type RematchAskProblem = "not_game_over" | "already_asking" | "not_player"
 
 export const rematchAsk = ({ userId }: RematchAsk[1], model: SharedModel): RematchAsk_Done[1] => {
-
   if (model.type !== 'GameOver') {
     return Err("not_game_over")
   }
 
-  if (model.O !== userId && model.X !== userId) {
-    return Err("not_player")
-  }
 
   if (model.rematch.type === 'Asking') {
     return Err("already_asking")
   }
 
-  return Ok({ ...model, rematch: { type: "Asking", asker: userId } })
+  if (model.O === userId) {
+    return Ok({ ...model, rematch: { type: "Asking", asker: 'O' } })
+  }
+
+  if (model.X === userId) {
+    return Ok({ ...model, rematch: { type: "Asking", asker: 'X' } })
+  }
+
+  return Err("not_player")
+}
+
+export const rematchAskToString = (result: RematchAsk_Done[1]): string => {
+  if (result.type === 'Ok') {
+    return ""
+  }
+
+  switch (result.error) {
+    case 'already_asking': {
+      return "Already asking for a rematch"
+    }
+
+    case 'not_game_over': {
+      return "Game must be over to rematch"
+    }
+
+    case 'not_player': {
+      return "Must be playing to ask for a rematch"
+    }
+  }
+
 }
 
 type RematchCancel = ['RematchCancel', { userId: UserId.UserId }]
