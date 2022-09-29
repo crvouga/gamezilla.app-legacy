@@ -1,29 +1,12 @@
-import { Cmd, exhaustive, Sub, Time } from "../../Core"
-import { toTurn } from "./TicTacToe"
+import { Cmd, exhaustive, Sub, tagCmd, tagSub } from "../../Core"
+import { Ok } from "../../Core/Result"
 import {
   BackendModel,
   BackendMsg,
-  roundCountDown,
-  initSharedModel,
-  inputBestOutOf,
-  inputMove,
-  inputMoveTimeLimit,
-  inputPlayer,
-  newGame,
-  resign,
-  startGame,
-  stopPlaying,
   ToBackend,
-  ToFrontend,
-  moveCountDown,
-  rematchAccept,
-  Res,
-  rematchAsk,
-  rematchDecline,
-  rematchCancel,
-
+  ToFrontend
 } from "./TicTacToe.Types"
-import * as Round from "./Round"
+import * as UserVsUser from "./UserVsUser/UserVsUser.Backend"
 
 //
 //
@@ -35,7 +18,7 @@ import * as Round from "./Round"
 
 export type Model = BackendModel
 
-export const init = initSharedModel
+export const init: Model = { mode: "None" }
 
 //
 //
@@ -55,22 +38,13 @@ export const update = ({
   msg: Msg,
   model: Model
 ): [Model, Cmd.Cmd<Msg>] => {
-
   switch (msg[0]) {
-    case "RoundCountDown": {
-      const result = roundCountDown(model)
-
-      const modelNew = result.type === 'Err' ? model : result.value
-
-      return [modelNew, sendToRoom(['RoundCountDown_Done', result])]
-    }
-
-    case 'MoveCountDown': {
-      const result = moveCountDown(model)
-
-      const modelNew = result.type === 'Err' ? model : result.value
-
-      return [modelNew, sendToRoom(['MoveCountDown_Done', result])]
+    case "UserVsUser": {
+      if (model.mode === 'UserVsUser') {
+        const [child, cmd] = UserVsUser.update({ sendToRoom: msg => sendToRoom(['UserVsUser', msg]) }, msg[1], model.child)
+        return [{ mode: "UserVsUser", child }, tagCmd("UserVsUser", cmd)]
+      }
+      return [model, Cmd.None]
     }
   }
 }
@@ -87,148 +61,50 @@ export const updateFromFrontend = (
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
-    case "InputPlayer": {
-      const result = inputPlayer(msg[1], model)
+    case "InputMode": {
+      const { mode } = msg[1]
 
-      if (result.type === "Err") {
-        return [model, sendToClient(["InputPlayer_Done", result])]
-      }
+      const modelNew: BackendModel = initMode(mode)
 
-      const modelNew = result.value
-
-      return [modelNew, sendToRoom(["InputPlayer_Done", result])]
+      return [modelNew, sendToClient(['InputMode_Done', Ok(modelNew)])]
     }
 
-    case "StopPlaying": {
-      const result = stopPlaying(msg[1], model)
+    case 'UserVsUser': {
+      if (model.mode === 'UserVsUser') {
+        const [child, cmd] = UserVsUser.updateFromFrontend(
+          {
+            sendToClient: msg => sendToClient(['UserVsUser', msg]),
+            sendToRoom: msg => sendToRoom(['UserVsUser', msg])
+          },
+          msg[1],
+          model.child,
+        )
 
-      if (result.type === "Err") {
-        return [model, sendToClient(["StopPlaying_Done", result])]
+        return [{ mode: "UserVsUser", child }, tagCmd("UserVsUser", cmd)]
       }
 
-      const modelNew = result.value
-
-      return [modelNew, sendToRoom(["StopPlaying_Done", result])]
-    }
-
-    case "StartGame": {
-      const result = startGame(msg[1], model)
-
-      if (result.type === "Err") {
-        return [model, sendToClient(["StartGame_Done", result])]
-      }
-
-      const modelNew = result.value
-
-      return [modelNew, sendToRoom(["StartGame_Done", result])]
-    }
-
-    case "Resign": {
-      const result = resign(msg[1], model)
-
-      if (result.type === "Err") {
-        return [model, sendToClient(["Resign_Done", result])]
-      }
-
-      const modelNew = result.value
-
-      return [modelNew, sendToRoom(["Resign_Done", result])]
-    }
-
-    case "InputMove": {
-      const result = inputMove(msg[1], model)
-
-      if (result.type === "Err") {
-        return [model, sendToClient(["InputMove_Done", result])]
-      }
-
-      const modelNew = result.value
-
-      return [modelNew, sendToRoom(["InputMove_Done", result])]
-    }
-
-    case 'NewGame': {
-      const result = newGame(msg[1], model)
-
-      if (result.type === "Err") {
-        return [model, sendToClient(["NewGame_Done", result])]
-      }
-
-      const modelNew = result.value
-
-      return [modelNew, sendToRoom(["NewGame_Done", result])]
-    }
-
-    case 'InputBestOutOf': {
-      const result = inputBestOutOf(msg[1], model)
-
-      if (result.type === "Err") {
-        return [model, sendToClient(["InputBestOutOf_Done", result])]
-      }
-
-      const modelNew = result.value
-
-      return [modelNew, sendToRoom(["InputBestOutOf_Done", result])]
-    }
-
-    case 'InputMoveTimeLimit': {
-      const result = inputMoveTimeLimit(msg[1], model)
-
-      if (result.type === "Err") {
-        return [model, sendToClient(["InputMoveTimeLimit_Done", result])]
-      }
-
-      const modelNew = result.value
-
-      return [modelNew, sendToRoom(["InputMoveTimeLimit_Done", result])]
-    }
-
-    case 'RematchAccept': {
-      const result = rematchAccept(msg[1], model)
-      const res: Res = ["RematchAccept_Done", result]
-
-      if (result.type === "Err") {
-        return [model, sendToClient(res)]
-      }
-
-      return [result.value, sendToRoom(res)]
-    }
-
-    case 'RematchAsk': {
-      const result = rematchAsk(msg[1], model)
-      const res: Res = ["RematchAsk_Done", result]
-
-      if (result.type === "Err") {
-        return [model, sendToClient(res)]
-      }
-
-      return [result.value, sendToRoom(res)]
-    }
-
-    case 'RematchDecline': {
-      const result = rematchDecline(msg[1], model)
-      const res: Res = ["RematchDecline_Done", result]
-
-      if (result.type === "Err") {
-        return [model, sendToClient(res)]
-      }
-
-      return [result.value, sendToRoom(res)]
-    }
-
-    case 'RematchCancel': {
-      const result = rematchCancel(msg[1], model)
-      const res: Res = ["RematchCancel_Done", result]
-
-      if (result.type === "Err") {
-        return [model, sendToClient(res)]
-      }
-
-      return [result.value, sendToRoom(res)]
+      return [model, Cmd.None]
     }
 
     default: {
       return exhaustive(msg[0])
+    }
+  }
+}
+
+const initMode = (mode: BackendModel['mode']): BackendModel => {
+  switch (mode) {
+    case 'None': {
+      return {
+        mode: "None"
+      }
+    }
+
+    case 'UserVsUser': {
+      return {
+        mode: "UserVsUser",
+        child: UserVsUser.init({ X: 'None', O: "None" })
+      }
     }
   }
 }
@@ -242,33 +118,13 @@ export const updateFromFrontend = (
 //
 
 export const subscriptions = (intervalId: string, model: Model): Sub.Sub<Msg> => {
-  switch (model.type) {
-    case 'Setup': {
+  switch (model.mode) {
+    case 'None': {
       return Sub.None
     }
 
-    case 'GameOver': {
-      return Sub.None
-    }
-
-
-    case 'Game': {
-      const currentRound = Round.toCurrent(model.round)
-
-      switch (currentRound.type) {
-        case 'RoundStarted': {
-          const turn = toTurn(currentRound.board)
-          return Time.every(`${intervalId}-move-count-down-${turn}`, 1000, (): Msg => ['MoveCountDown'])
-        }
-
-        case 'RoundStarting': {
-          return Time.every(`${intervalId}-round-count-down`, 750, (): Msg => ['RoundCountDown'])
-        }
-
-        case 'RoundOver': {
-          return Sub.None
-        }
-      }
+    case 'UserVsUser': {
+      return tagSub("UserVsUser", UserVsUser.subscriptions(intervalId, model.child))
     }
   }
 }
