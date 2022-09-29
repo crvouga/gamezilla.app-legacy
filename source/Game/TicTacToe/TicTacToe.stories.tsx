@@ -1,3 +1,4 @@
+import { ComponentStory, ComponentMeta } from '@storybook/react';
 import { ProfileAvatar, UserId, Username } from "../../Data"
 import * as Store from "../../Store"
 import * as UI from "../../UI"
@@ -11,7 +12,7 @@ import { Model, View } from "./TicTacToe.Frontend"
 // 
 // 
 
-const O: Store.Profile.Profile = {
+const userA: Store.Profile.Profile = {
     userId: UserId.generate(),
     avatarUrl: ProfileAvatar.toUrl({ seed: "123", style: "big-ears-neutral" }),
     name: "Fred",
@@ -19,7 +20,7 @@ const O: Store.Profile.Profile = {
     username: Username.fromString("fred123"),
 }
 
-const X: Store.Profile.Profile = {
+const userB: Store.Profile.Profile = {
     userId: UserId.generate(),
     avatarUrl: ProfileAvatar.toUrl({ seed: "abc", style: "big-ears-neutral" }),
     name: "Bob",
@@ -27,7 +28,7 @@ const X: Store.Profile.Profile = {
     username: Username.fromString("bob123"),
 }
 
-const someUser: Store.Profile.Profile = {
+const userC: Store.Profile.Profile = {
     userId: UserId.generate(),
     avatarUrl: ProfileAvatar.toUrl({ seed: "someUser", style: "big-ears-neutral" }),
     name: "SomeUser",
@@ -35,7 +36,7 @@ const someUser: Store.Profile.Profile = {
     username: Username.fromString("SomeUser"),
 }
 
-const currentUserId = X.userId
+const currentUserId = userB.userId
 
 // 
 // 
@@ -48,66 +49,68 @@ const currentUserId = X.userId
 export default {
     title: "TicTacToe",
     component: View,
+    args: {
+        currentUserId: currentUserId,
+        dispatch: () => { },
+        goHome: () => { },
+        onCloseGame: () => { },
+        store: {
+            ...Store.init,
+            Profile: {
+                [userB.userId]: userB,
+                [userA.userId]: userA,
+                [userC.userId]: userC,
+            }
+        },
+        roomAvatarGroup: <>placeholder</>,
+    }
+} as ComponentMeta<typeof View>
+
+const Template: ComponentStory<typeof View> = (args) => {
+    return (
+        <UI.AppContainer themeMode="System">
+            <View {...args} />
+        </UI.AppContainer>
+    )
 }
 
-const Template = (args: { model: Model }) => (
-    <UI.AppContainer themeMode="System">
-        <View
-            currentUserId={currentUserId}
-            dispatch={() => { }}
-            goHome={() => { }}
-            model={args.model}
-            onCloseGame={() => { }}
-            store={{
-                ...Store.init,
-                Profile: {
-                    [X.userId]: X,
-                    [O.userId]: O,
-                    [someUser.userId]: someUser,
-                }
-            }}
-            roomAvatarGroup={<>placeholder</>}
-        />
-    </UI.AppContainer>
-)
-
-export const GameSetup = () => Template({
+export const GameSetup = Template.bind({})
+GameSetup.args = {
     model: {
         type: "Setup",
         maxRoundCount: 3,
         moveTimeLimit: 5,
-        O: O.userId,
-        X: X.userId,
+        O: userA.userId,
+        X: userB.userId,
         openedModal: "None"
     }
-})
+}
 
 
-
-export const GameStarting = () => Template({
+export const GameStarting = Template.bind({})
+GameStarting.args = {
     model: {
         type: "Game",
         maxRoundCount: 3,
         moveTimeLimit: 5,
-        O: O.userId,
-        X: X.userId,
+        O: userA.userId,
+        X: userB.userId,
         round: {
             type: "RoundStarting",
             countDown: 3
         },
         openedModal: "None"
     }
-})
+}
 
-
-
-export const GameStarted = () => Template({
+export const GameStarted = Template.bind({})
+GameStarted.args = {
     model: {
         type: "Game",
         maxRoundCount: 3,
         moveTimeLimit: 5,
-        O: O.userId,
-        X: X.userId,
+        O: userA.userId,
+        X: userB.userId,
         round: {
             type: "RoundStarted",
             board: [
@@ -119,16 +122,17 @@ export const GameStarted = () => Template({
         },
         openedModal: "None"
     }
-})
+}
 
 
-export const RoundOverTie = () => Template({
+export const RoundOverTie = Template.bind({})
+RoundOverTie.args = {
     model: {
         type: "Game",
         maxRoundCount: 3,
         moveTimeLimit: 5,
-        O: O.userId,
-        X: X.userId,
+        O: userA.userId,
+        X: userB.userId,
         round: {
             type: "RoundOver",
             board: [
@@ -146,16 +150,17 @@ export const RoundOverTie = () => Template({
         },
         openedModal: "None"
     }
-})
+}
 
 
-export const RoundOverWin = () => Template({
+export const RoundOverWin = Template.bind({})
+RoundOverWin.args = {
     model: {
         type: "Game",
         maxRoundCount: 5,
         moveTimeLimit: 5,
-        O: O.userId,
-        X: X.userId,
+        O: userA.userId,
+        X: userB.userId,
         round: {
             type: "RoundOver",
             board: [
@@ -174,17 +179,18 @@ export const RoundOverWin = () => Template({
         },
         openedModal: "None"
     }
-})
+}
 
 
 
-export const RoundOverWinOther = () => Template({
+export const RoundOverWinOther = Template.bind({})
+RoundOverWinOther.args = {
     model: {
         type: "Game",
         maxRoundCount: 5,
         moveTimeLimit: 5,
-        O: O.userId,
-        X: X.userId,
+        O: userA.userId,
+        X: userB.userId,
         round: {
             type: "RoundOver",
             board: [
@@ -203,7 +209,7 @@ export const RoundOverWinOther = () => Template({
         },
         openedModal: "None"
     }
-})
+}
 
 
 
@@ -211,8 +217,8 @@ const gameOverBase: Model = {
     type: "GameOver",
     maxRoundCount: 3,
     moveTimeLimit: 5,
-    O: O.userId,
-    X: X.userId,
+    O: userA.userId,
+    X: userB.userId,
     gameOver: {
         type: "Tie",
     },
@@ -238,16 +244,18 @@ const gameOverBase: Model = {
     }
 }
 
-export const GameOverTie = () => Template({
+export const GameOverTie = Template.bind({})
+GameOverTie.args = {
     model: {
         ...gameOverBase,
         gameOver: {
             type: "Tie",
         },
     }
-})
+}
 
-export const GameOverWin = () => Template({
+export const GameOverWin = Template.bind({})
+GameOverWin.args = {
     model: {
         ...gameOverBase,
         gameOver: {
@@ -255,10 +263,11 @@ export const GameOverWin = () => Template({
             winner: "X",
         },
     }
-})
+}
 
 
-export const GameOverWinOther = () => Template({
+export const GameOverWinOther = Template.bind({})
+GameOverWinOther.args = {
     model: {
         ...gameOverBase,
         gameOver: {
@@ -266,22 +275,24 @@ export const GameOverWinOther = () => Template({
             winner: "O",
         },
     }
-})
+}
 
 
-export const GameOverWinNotPlaying = () => Template({
+export const GameOverWinNotPlaying = Template.bind({})
+GameOverWinNotPlaying.args = {
     model: {
         ...gameOverBase,
-        X: someUser.userId,
+        X: userC.userId,
         gameOver: {
             type: "Winner",
             winner: "X",
         },
     }
-})
+}
 
 
-export const GameOverResigned = () => Template({
+export const GameOverResigned = Template.bind({})
+GameOverResigned.args = {
     model: {
         ...gameOverBase,
         round: {
@@ -293,4 +304,4 @@ export const GameOverResigned = () => Template({
             resigner: 'X'
         },
     }
-})
+}
