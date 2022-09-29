@@ -484,7 +484,7 @@ const ViewGameOverMessage = ({ currentUserId, model, store, }: { currentUserId: 
           <svg width={100} viewBox="-1 -1 2 2" color="inherit">
             <ViewSlot strokeWidth={0.33} cx={0} cy={0} r={0.8} slot={model.gameOver.resigner} color="currentColor" />
           </svg>
-          <UI.Typography align="center" color="inherit" fontSize={72} sx={{ marginLeft: 2 }}>
+          <UI.Typography align="center" color="inherit" fontSize={52} sx={{ marginLeft: 2 }}>
             Resigned
           </UI.Typography>
         </UI.Box>
