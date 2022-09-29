@@ -1,8 +1,8 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react';
-import { ProfileAvatar, UserId, Username } from "../../Data";
-import * as Store from "../../Store";
-import * as UI from "../../UI";
-import { Model, View } from "./TicTacToe.Frontend";
+import { ProfileAvatar, UserId, Username } from "../../../Data";
+import * as Store from "../../../Store";
+import * as UI from "../../../UI";
+import { Model, View } from "./UserVsUser.Frontend";
 
 // 
 // 
@@ -47,7 +47,7 @@ const currentUserId = userB.userId
 // 
 
 export default {
-    title: "TicTacToe",
+    title: "TicTacToe/UserVsUser",
     component: View,
     args: {
         currentUserId: currentUserId,
