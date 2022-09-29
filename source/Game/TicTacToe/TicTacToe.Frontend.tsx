@@ -474,14 +474,14 @@ export const View = ({
 
 const ViewGameOverMessage = ({ currentUserId, model, store, }: { currentUserId: UserId.UserId, model: GameOverModel, store: Store.Model }) => {
   const isPlaying = model.O === currentUserId || model.X === currentUserId
+  const score = Round.toScore(model.round)
+  const winCount = toWinCount(model)
 
   if (model.gameOver.type === 'Resignation') {
     return (
       <>
-        <UI.Box sx={{ flex: 1 }}></UI.Box>
-
-        <UI.Box sx={{ flex: 1, display: "flex", justifyContent: 'center', alignItems: 'center', flexDirection: "column", color: "inherit" }}>
-          <svg width={100} viewBox="-1 -1 2 2" color="inherit">
+        <UI.Box sx={{ flex: 2, display: "flex", justifyContent: 'center', alignItems: 'center', flexDirection: "column", color: "inherit" }}>
+          <svg width={64} viewBox="-1 -1 2 2" color="inherit">
             <ViewSlot strokeWidth={0.33} cx={0} cy={0} r={0.8} slot={model.gameOver.resigner} color="currentColor" />
           </svg>
           <UI.Typography align="center" color="inherit" fontSize={52} sx={{ marginLeft: 2 }}>
@@ -489,13 +489,13 @@ const ViewGameOverMessage = ({ currentUserId, model, store, }: { currentUserId: 
           </UI.Typography>
         </UI.Box>
 
-        <UI.Box sx={{ flex: 1 }}></UI.Box>
+        <UI.Box sx={{ flex: 1, width: '100%', padding: 2 }}>
+          <ViewScoreBoard score={score} winCount={winCount} />
+        </UI.Box>
       </>
     )
   }
 
-  const score = Round.toScore(model.round)
-  const winCount = toWinCount(model)
 
   if (model.gameOver.type === 'Tie') {
     return (
@@ -507,7 +507,7 @@ const ViewGameOverMessage = ({ currentUserId, model, store, }: { currentUserId: 
             Tie
           </UI.Typography>
         </UI.Box>
-        <UI.Box sx={{ flex: 1, width: '100%' }}>
+        <UI.Box sx={{ flex: 1, width: '100%', padding: 2 }}>
           <ViewScoreBoard score={score} winCount={winCount} />
         </UI.Box>
       </>
@@ -519,7 +519,6 @@ const ViewGameOverMessage = ({ currentUserId, model, store, }: { currentUserId: 
 
   return (
     <>
-      <UI.Box sx={{ flex: 1 }}></UI.Box>
       <UI.Box
         sx={{
           flex: 2,
@@ -530,21 +529,21 @@ const ViewGameOverMessage = ({ currentUserId, model, store, }: { currentUserId: 
           color: "inherit"
         }}>
         {isPlaying ? (
-          <UI.Typography align="center" color="inherit" fontSize={72}>
+          <UI.Typography align="center" color="inherit" fontSize={64}>
             {didCurrentUserWin ? "You Won" : "You Lost"}
           </UI.Typography>
         ) : (
-          <UI.Box sx={{ display: "flex", justifyContent: 'center', alignItems: 'center', flexDirection: "column" }}>
-            <svg width={100} viewBox="-1 -1 2 2">
+          <UI.Box sx={{ display: "flex", justifyContent: 'center', alignItems: 'center', flexDirection: "row" }}>
+            <svg width={62} viewBox="-1 -1 2 2">
               <ViewSlot strokeWidth={0.33} cx={0} cy={0} r={0.8} slot={model.gameOver.winner} color="currentColor" />
             </svg>
-            <UI.Typography align="center" color="inherit" fontSize={72} sx={{ marginLeft: 2 }}>
+            <UI.Typography align="center" color="inherit" fontSize={64} sx={{ marginLeft: 2 }}>
               Won
             </UI.Typography>
           </UI.Box>
         )}
       </UI.Box>
-      <UI.Box sx={{ flex: 1, width: '100%' }}>
+      <UI.Box sx={{ flex: 1, width: '100%', padding: 2 }}>
         <ViewScoreBoard score={score} winCount={winCount} />
       </UI.Box>
     </>
