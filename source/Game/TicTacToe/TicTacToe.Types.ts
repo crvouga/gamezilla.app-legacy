@@ -743,12 +743,14 @@ export const rematchCancel = ({ userId }: RematchCancel[1], model: SharedModel):
     return Err("not_asking")
   }
 
-  if (model.rematch.asker !== userId) {
-    return Err("not_asker")
+  const playerType: TicTacToe.PlayerType | "None" = model.X === userId ? 'X' : model.O === userId ? 'O' : "None"
+
+  if (playerType === 'None') {
+    return Err("not_player")
   }
 
-  if (model.O !== userId && model.X !== userId) {
-    return Err("not_player")
+  if (model.rematch.asker !== playerType) {
+    return Err("not_asker")
   }
 
   return Ok({ ...model, rematch: { type: "NotAsking" } })
