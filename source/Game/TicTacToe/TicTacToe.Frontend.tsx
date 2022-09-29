@@ -398,6 +398,8 @@ export const View = ({
   const rematchAskResult = rematchAsk({ userId: currentUserId }, model)
   const newGameResult = newGame({ userId: currentUserId }, model)
 
+  const currentPlayerType: PlayerType | "None" = model.X === currentUserId ? 'X' : model.O === currentUserId ? 'O' : "None"
+
   return <UI.FillBox>
     <UI.Header
       left={homeButton}
@@ -432,7 +434,7 @@ export const View = ({
             maxHeight: "100%",
             color: "#fff"
           }}>
-          <ViewGameOverMessage currentUserId={currentUserId} model={model} store={store} />
+          <ViewGameOverMessage currentUserId={currentUserId} model={model} store={store} dispatch={dispatch} />
         </UI.Box>
       </UI.Fade>
     </UI.Box>
@@ -461,6 +463,7 @@ export const View = ({
               disabled={rematchAskResult.type === 'Err'}
               fullWidth
               variant="contained"
+              loading={model.rematch.type === 'Asking' && model.rematch.asker === currentPlayerType}
               onClick={() => dispatch(['RematchAsk', { userId: currentUserId }])}
             >
               Rematch
@@ -472,10 +475,48 @@ export const View = ({
   </UI.FillBox >
 }
 
-const ViewGameOverMessage = ({ currentUserId, model, store, }: { currentUserId: UserId.UserId, model: GameOverModel, store: Store.Model }) => {
+const ViewGameOverMessage = ({ currentUserId, model, store, dispatch }: { currentUserId: UserId.UserId, model: GameOverModel, store: Store.Model, dispatch: (msg: Msg) => void }) => {
   const isPlaying = model.O === currentUserId || model.X === currentUserId
   const score = Round.toScore(model.round)
   const winCount = toWinCount(model)
+
+  const currentPlayerType: PlayerType | "None" = model.X === currentUserId ? 'X' : model.O === currentUserId ? 'O' : "None"
+
+  if (model.rematch.type === 'Asking' && model.rematch.asker !== currentPlayerType && currentPlayerType !== 'None') {
+    return <>
+      <UI.Box sx={{ flex: 2, display: "flex", justifyContent: 'center', alignItems: 'center', flexDirection: "column", color: "inherit" }}>
+        <UI.Typography align="center" color="inherit" fontSize={52} >
+          Rematch?
+        </UI.Typography>
+      </UI.Box>
+
+      <UI.Box sx={{ flex: 1, width: '100%', padding: 2, display: 'flex', alignItems: "center", justifyContent: "center", gap: 2 }}>
+        <UI.Button startIcon={<UI.Icons.Cancel />} variant="contained" color="inherit" fullWidth sx={{ color: "#000" }} onClick={() => dispatch(['RematchDecline', { userId: currentUserId }])} >
+          Decline
+        </UI.Button>
+        <UI.Button startIcon={<UI.Icons.CheckCircle />} variant="contained" fullWidth onClick={() => dispatch(['RematchAccept', { userId: currentUserId }])}>
+          Accept
+        </UI.Button>
+      </UI.Box>
+    </>
+  }
+
+  if (model.rematch.type === 'Asking' && model.rematch.asker === currentPlayerType) {
+    return <>
+      <UI.Box sx={{ flex: 2, display: "flex", justifyContent: 'center', alignItems: 'center', flexDirection: "column", color: "inherit" }}>
+        <UI.Typography align="center" color="inherit" fontSize={36} sx={{ marginBottom: 2 }}>
+          Waiting for a response
+        </UI.Typography>
+        <UI.CircularProgress />
+      </UI.Box>
+
+      <UI.Box sx={{ flex: 1, width: '100%', padding: 2, display: 'flex', alignItems: "center", justifyContent: "center", gap: 2 }}>
+        <UI.Button startIcon={<UI.Icons.Cancel />} variant="contained" onClick={() => dispatch(['RematchCancel', { userId: currentUserId }])} >
+          Cancel
+        </UI.Button>
+      </UI.Box>
+    </>
+  }
 
   if (model.gameOver.type === 'Resignation') {
     return (
@@ -484,7 +525,7 @@ const ViewGameOverMessage = ({ currentUserId, model, store, }: { currentUserId: 
           <svg width={64} viewBox="-1 -1 2 2" color="inherit">
             <ViewSlot strokeWidth={0.33} cx={0} cy={0} r={0.8} slot={model.gameOver.resigner} color="currentColor" />
           </svg>
-          <UI.Typography align="center" color="inherit" fontSize={52} sx={{ marginLeft: 2 }}>
+          <UI.Typography align="center" color="inherit" fontSize={52}>
             Resigned
           </UI.Typography>
         </UI.Box>
@@ -500,9 +541,7 @@ const ViewGameOverMessage = ({ currentUserId, model, store, }: { currentUserId: 
   if (model.gameOver.type === 'Tie') {
     return (
       <>
-        {/* <UI.Box sx={{ flex: 1 }}></UI.Box> */}
-
-        <UI.Box sx={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: "center", color: "inherit" }}>
+        <UI.Box sx={{ flex: 2, display: 'flex', alignItems: 'center', justifyContent: "center", color: "inherit" }}>
           <UI.Typography fontSize={72} align="center" color="inherit">
             Tie
           </UI.Typography>

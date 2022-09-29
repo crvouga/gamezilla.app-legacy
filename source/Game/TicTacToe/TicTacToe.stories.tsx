@@ -305,3 +305,26 @@ GameOverResigned.args = {
         },
     }
 }
+
+
+export const GameOverRematchAsked = Template.bind({})
+GameOverRematchAsked.args = {
+    model: {
+        ...gameOverBase,
+        rematch: {
+            type: "Asking",
+            asker: "O"
+        }
+    }
+}
+
+export const GameOverRematchAsking = Template.bind({})
+GameOverRematchAsking.args = {
+    model: {
+        ...gameOverBase,
+        rematch: {
+            type: "Asking",
+            asker: "X"
+        }
+    }
+}
