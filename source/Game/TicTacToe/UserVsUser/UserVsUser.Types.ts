@@ -101,8 +101,8 @@ export const moveTimeLimitToString = (moveTimeLimit: MoveTimeLimit): string => {
 export const initSharedModel = ({ X, O }: { X: SetupModel['X'], O: SetupModel['O'] }): SharedModel => {
   return {
     type: "Setup",
-    O: "None",
-    X: "None",
+    O,
+    X,
     maxRoundCount: 3,
     moveTimeLimit: 5,
   }

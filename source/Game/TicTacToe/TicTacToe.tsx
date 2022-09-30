@@ -1,4 +1,3 @@
-import { Fragment } from "react"
 import { Result } from "../../Core"
 import * as Store from "../../Store"
 
@@ -11,6 +10,11 @@ import * as Store from "../../Store"
 //
 
 export type PlayerType = "X" | "O"
+
+export const playerTypes: { [playerType in PlayerType]: PlayerType } = {
+  X: "X",
+  O: "O"
+}
 
 export const toOpposite = (playerType: PlayerType): PlayerType => {
   switch (playerType) {
