@@ -2,7 +2,7 @@ import { ComponentMeta, ComponentStory } from '@storybook/react';
 import { ProfileAvatar, UserId, Username } from "../../../Data";
 import * as Store from "../../../Store";
 import * as UI from "../../../UI";
-import { Model, View } from "./UserVsBot.Frontend";
+import { View } from "./UserVsBot.Frontend";
 
 // 
 // 
