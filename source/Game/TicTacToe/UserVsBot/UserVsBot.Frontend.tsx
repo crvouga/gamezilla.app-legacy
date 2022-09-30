@@ -155,7 +155,29 @@ export const View = ({ goBack, model, dispatch, goHome, roomAvatarGroup, store, 
     }
     return <UI.FillBox>
         <UI.Header left={homeButton} title="" right={roomAvatarGroup} />
-        <ViewBoard board={model.board} onClick={() => { }} />
+        <UI.Box sx={{ flex: 1 }}>
+            <ViewBoard board={model.board} onClick={() => { }} />
+        </UI.Box>
+
+        <UI.Box sx={{ display: 'flex' }}>
+            <UI.ActionButton
+                onClick={() => {
+                    // dispatch(['StopGame', { userId: currentUserId }])
+                }}
+                icon={<UI.Icons.ExitToApp sx={{ transform: "rotate(180deg)" }} />}
+                label="Exit"
+            />
+            <UI.ActionButton
+                onClick={() => { }}
+                icon={<UI.Icons.SwapHoriz />}
+                label="Swap"
+            />
+            <UI.ActionButton
+                onClick={() => { }}
+                icon={<UI.Icons.RestartAlt />}
+                label="Reset"
+            />
+        </UI.Box>
 
     </UI.FillBox>
 }
