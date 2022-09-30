@@ -216,4 +216,30 @@ export const startGame = ({ userId }: StartGame[1], model: SharedModel): StartGa
     }
 
     return Ok(modelNew)
-} 
+}
+
+// 
+// 
+// 
+// 
+
+type StopGame = ['StopGame', { userId: UserId.UserId }]
+type StopGame_Done = ['StopGame_Done', Result<StopGameProblem, SharedModel>]
+type StopGameProblem = "not_started" | "not_playing"
+
+export const stopGame = ({ userId }: StopGame[1], model: SharedModel): StopGame_Done[1] => {
+    if (model.type !== "Game") {
+        return Err("not_started")
+    }
+
+    if (model.player !== userId) {
+        return Err("not_playing")
+    }
+
+    return Ok({
+        type: "Setup",
+        botLevel: model.botLevel,
+        player: model.player,
+        userPlayerType: model.userPlayerType
+    })
+}

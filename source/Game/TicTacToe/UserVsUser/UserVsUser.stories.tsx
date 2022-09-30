@@ -62,7 +62,7 @@ export default {
                 [userC.userId]: userC,
             }
         },
-        roomAvatarGroup: <>placeholder</>,
+        roomAvatarGroup: <>room</>,
     }
 } as ComponentMeta<typeof View>
 
