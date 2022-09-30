@@ -11,6 +11,7 @@ import {
   ToBackend,
   ToFrontend
 } from "./TicTacToe.Types"
+import * as UserVsBot from "./UserVsBot/UserVsBot.Frontend"
 import * as UserVsUser from "./UserVsUser/UserVsUser.Frontend"
 import { BannerArt } from "./Views"
 
@@ -63,6 +64,21 @@ export const update = (
       return [model, Cmd.None]
     }
 
+    case 'UserVsBot': {
+      if (model.mode === 'UserVsBot') {
+        const [child, cmd] = UserVsBot.update(
+          {
+            // currentUserId,
+            sendToBackend: (msg) => sendToBackend(['UserVsBot', msg])
+          },
+          msg[1],
+          model.child
+        )
+        return [{ mode: "UserVsBot", child }, tagCmd("UserVsBot", cmd)]
+      }
+      return [model, Cmd.None]
+    }
+
     default: {
       return exhaustive(msg[0])
     }
@@ -87,11 +103,19 @@ export const updateFromBackend = (
     }
 
     case 'UserVsUser': {
-
-
       if (model.mode === 'UserVsUser') {
         const [child, cmd] = UserVsUser.updateFromBackend(msg[1], model.child)
         return [{ mode: "UserVsUser", child }, tagCmd("UserVsUser", cmd)]
+      }
+
+      return [model, Cmd.None]
+    }
+
+
+    case 'UserVsBot': {
+      if (model.mode === 'UserVsBot') {
+        const [child, cmd] = UserVsBot.updateFromBackend(msg[1], model.child)
+        return [{ mode: "UserVsBot", child }, tagCmd("UserVsBot", cmd)]
       }
 
       return [model, Cmd.None]
@@ -120,6 +144,15 @@ export const mergeWithBackend = (
       return {
         mode: "UserVsUser",
         child: UserVsUser.mergeWithBackend(frontendModelChild, backendModel.child)
+      }
+    }
+
+    case 'UserVsBot': {
+      const frontendModelChild = frontendModel.mode === 'UserVsBot' ? frontendModel.child : UserVsBot.init({ userId: "None" })
+
+      return {
+        mode: "UserVsBot",
+        child: UserVsBot.mergeWithBackend(frontendModelChild, backendModel.child)
       }
     }
   }
@@ -173,7 +206,7 @@ export const View = ({
               leftIcon={<UI.Icons.Person sx={{ width: iconSize, height: iconSize }} />}
               rightIcon={<UI.Icons.Person sx={{ width: iconSize, height: iconSize }} />}
               title="Vs User"
-              onClick={() => dispatch(['InputMode', { mode: "UserVsUser" }])}
+              onClick={() => dispatch(['InputMode', { mode: "UserVsUser", userId: currentUserId }])}
             />
           </UI.Box>
           <UI.Box sx={{ width: "50%" }}>
@@ -181,7 +214,7 @@ export const View = ({
               leftIcon={<UI.Icons.Person sx={{ width: iconSize, height: iconSize }} />}
               rightIcon={<UI.Icons.SmartToy sx={{ width: iconSize, height: iconSize }} />}
               title="Vs Bot"
-              onClick={() => { }}
+              onClick={() => dispatch(['InputMode', { mode: "UserVsBot", userId: currentUserId }])}
             />
           </UI.Box>
         </UI.Box>
@@ -195,11 +228,23 @@ export const View = ({
 
     case 'UserVsUser': {
       return <UserVsUser.View
-        onCloseGame={() => dispatch(['InputMode', { mode: "None" }])}
+        onCloseGame={() => dispatch(['InputMode', { mode: "None", userId: currentUserId }])}
         currentUserId={currentUserId}
         store={store}
         model={model.child}
         dispatch={msg => dispatch(['UserVsUser', msg])}
+        goHome={goHome}
+        roomAvatarGroup={roomAvatarGroup}
+      />
+    }
+
+    case 'UserVsBot': {
+      return <UserVsBot.View
+        goBack={() => dispatch(['InputMode', { mode: "None", userId: currentUserId }])}
+        currentUserId={currentUserId}
+        store={store}
+        model={model.child}
+        dispatch={msg => dispatch(['UserVsBot', msg])}
         goHome={goHome}
         roomAvatarGroup={roomAvatarGroup}
       />

@@ -7,6 +7,8 @@ import {
   ToFrontend
 } from "./TicTacToe.Types"
 import * as UserVsUser from "./UserVsUser/UserVsUser.Backend"
+import * as UserVsBot from "./UserVsBot/UserVsBot.Backend"
+import { UserId } from "../../Data"
 
 //
 //
@@ -46,6 +48,14 @@ export const update = ({
       }
       return [model, Cmd.None]
     }
+
+    case 'UserVsBot': {
+      if (model.mode === 'UserVsBot') {
+        const [child, cmd] = UserVsBot.update(msg[1], model.child)
+        return [{ mode: "UserVsBot", child }, tagCmd("UserVsBot", cmd)]
+      }
+      return [model, Cmd.None]
+    }
   }
 }
 
@@ -62,9 +72,7 @@ export const updateFromFrontend = (
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
     case "InputMode": {
-      const { mode } = msg[1]
-
-      const modelNew: BackendModel = initMode(mode)
+      const modelNew: BackendModel = initMode(msg[1])
 
       return [modelNew, sendToClient(['InputMode_Done', Ok(modelNew)])]
     }
@@ -86,13 +94,30 @@ export const updateFromFrontend = (
       return [model, Cmd.None]
     }
 
+    case 'UserVsBot': {
+      if (model.mode === 'UserVsBot') {
+        const [child, cmd] = UserVsBot.updateFromFrontend(
+          {
+            sendToClient: msg => sendToClient(['UserVsBot', msg]),
+            sendToRoom: msg => sendToRoom(['UserVsBot', msg])
+          },
+          msg[1],
+          model.child,
+        )
+
+        return [{ mode: "UserVsBot", child }, tagCmd("UserVsBot", cmd)]
+      }
+
+      return [model, Cmd.None]
+    }
+
     default: {
       return exhaustive(msg[0])
     }
   }
 }
 
-const initMode = (mode: BackendModel['mode']): BackendModel => {
+const initMode = ({ mode, userId }: { mode: BackendModel['mode'], userId: UserId.UserId }): BackendModel => {
   switch (mode) {
     case 'None': {
       return {
@@ -103,7 +128,14 @@ const initMode = (mode: BackendModel['mode']): BackendModel => {
     case 'UserVsUser': {
       return {
         mode: "UserVsUser",
-        child: UserVsUser.init({ X: 'None', O: "None" })
+        child: UserVsUser.init({ X: userId, O: "None" })
+      }
+    }
+
+    case 'UserVsBot': {
+      return {
+        mode: "UserVsBot",
+        child: UserVsBot.init({ userId }),
       }
     }
   }
@@ -125,6 +157,10 @@ export const subscriptions = (intervalId: string, model: Model): Sub.Sub<Msg> =>
 
     case 'UserVsUser': {
       return tagSub("UserVsUser", UserVsUser.subscriptions(intervalId, model.child))
+    }
+
+    case 'UserVsBot': {
+      return tagSub("UserVsBot", UserVsBot.subscriptions(model.child))
     }
   }
 }

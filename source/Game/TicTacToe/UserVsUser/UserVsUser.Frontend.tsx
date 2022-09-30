@@ -256,7 +256,7 @@ export const View = ({
                 Play as X
               </UI.Button>
             ) : (
-              <VidePlayerSetupSlot
+              <ViewPlayerSetupSlot
                 currentUserId={currentUserId}
                 userId={model.X}
                 store={store}
@@ -290,7 +290,7 @@ export const View = ({
                 Play as O
               </UI.Button>
             ) : (
-              <VidePlayerSetupSlot
+              <ViewPlayerSetupSlot
                 currentUserId={currentUserId}
                 userId={model.O}
                 store={store}
@@ -830,7 +830,7 @@ const toGameText = ({ model, store }: { model: Model, store: Store.Model }): str
 
 }
 
-const VidePlayerSetupSlot = ({
+const ViewPlayerSetupSlot = ({
   currentUserId,
   store,
   userId,
@@ -925,8 +925,6 @@ const ViewPlayerGameSlot = ({
       </UI.Box>
       {/* {isTurn ? <UI.LinearProgress key="isTurn" color={progressColor} variant="determinate" value={progress} /> : <UI.LinearProgress key="isNotTurn" color={"inherit"} variant="determinate" value={0} />} */}
     </UI.Paper>
-
-
   )
 }
 // 
