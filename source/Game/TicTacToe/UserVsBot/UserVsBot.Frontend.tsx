@@ -34,6 +34,10 @@ export const update = ({ sendToBackend }: { sendToBackend: (msg: ToBackend) => C
         case 'StopPlaying':
         case 'StartPlaying':
         case "InputBot":
+        case 'StopGame':
+        case 'InputMove':
+        case 'Restart':
+        case 'SwapSides':
         case 'InputPlayerType': {
             return [model, sendToBackend(msg)]
         }
@@ -46,6 +50,10 @@ export const updateFromBackend = (msg: ToFrontend, model: Model): [Model, Cmd.Cm
         case 'StartPlaying_Done':
         case 'StopPlaying_Done':
         case 'InputBot_Done':
+        case 'StopGame_Done':
+        case 'InputMove_Done':
+        case 'Restart_Done':
+        case 'SwapSides_Done':
         case 'InputPlayerType_Done': {
             if (msg[1].type === 'Err') {
                 return [model, Cmd.None]
@@ -158,16 +166,18 @@ export const View = ({ goBack, model, dispatch, goHome, roomAvatarGroup, store, 
             </UI.Box>
         </UI.FillBox >
     }
+
+
     return <UI.FillBox>
         <UI.Header left={homeButton} title="" right={roomAvatarGroup} />
         <UI.Box sx={{ flex: 1 }}>
-            <ViewBoard board={model.board} onClick={() => { }} />
+            <ViewBoard board={model.board} onClick={(position) => dispatch(['InputMove', { userId: currentUserId, position }])} />
         </UI.Box>
 
         <UI.Box sx={{ display: 'flex' }}>
             <UI.ActionButton
                 onClick={() => {
-                    // dispatch(['StopGame', { userId: currentUserId }])
+                    dispatch(['StopGame', { userId: currentUserId }])
                 }}
                 icon={<UI.Icons.ExitToApp sx={{ transform: "rotate(180deg)" }} />}
                 label="Exit"

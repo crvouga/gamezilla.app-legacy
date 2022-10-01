@@ -1,6 +1,6 @@
 import { Err, Ok, Result } from "../../../Core/Result"
 import { UserId } from "../../../Data"
-import { Board, emptyBoard, PlayerType } from "../TicTacToe"
+import { Board, emptyBoard, move, MoveProblem, PlayerType, Position, toOpposite, toTurn } from "../TicTacToe"
 
 
 // 
@@ -52,6 +52,10 @@ export const initSharedModel = ({ userId }: { userId: SetupModel['player'] }): S
     }
 }
 
+export const isBotTurn = (model: SharedModel) => {
+    return model.type === 'Game' && toTurn(model.board) !== model.userPlayerType
+}
+
 // 
 // 
 // 
@@ -74,6 +78,10 @@ export type Request =
     | StartPlaying
     | StopPlaying
     | StartGame
+    | StopGame
+    | InputMove
+    | SwapSides
+    | Restart
 
 export type Response =
     | InputBot_Done
@@ -81,6 +89,10 @@ export type Response =
     | StartPlaying_Done
     | StopPlaying_Done
     | StartGame_Done
+    | StopGame_Done
+    | InputMove_Done
+    | SwapSides_Done
+    | Restart_Done
 
 // 
 // 
@@ -240,5 +252,83 @@ export const stopGame = ({ userId }: StopGame[1], model: SharedModel): StopGame_
         botLevel: model.botLevel,
         player: model.player,
         userPlayerType: model.userPlayerType
+    })
+}
+
+// 
+// 
+// 
+// 
+
+type Restart = ['Restart', { userId: UserId.UserId }]
+type Restart_Done = ['Restart_Done', Result<RestartProblem, SharedModel>]
+type RestartProblem = "not_playing" | "not_in_game"
+
+export const restart = ({ userId }: Restart[1], model: SharedModel): Restart_Done[1] => {
+    if (model.type !== 'Game') {
+        return Err("not_in_game")
+    }
+
+    if (model.player !== userId) {
+        return Err("not_playing")
+    }
+
+    return Ok({
+        ...model,
+        board: emptyBoard
+    })
+}
+
+// 
+// 
+// 
+// 
+
+type InputMove = ["InputMove", { userId: UserId.UserId, position: Position }]
+type InputMove_Done = ["InputMove_Done", Result<InputMoveProblem, SharedModel>]
+type InputMoveProblem = MoveProblem | "not_in_game" | "not_playing"
+
+export const inputMove = ({ userId, position }: InputMove[1], model: SharedModel): InputMove_Done[1] => {
+    if (model.type !== 'Game') {
+        return Err("not_in_game")
+    }
+
+    if (model.player !== userId) {
+        return Err("not_playing")
+    }
+
+    const result = move(model.board, model.userPlayerType, position)
+
+    if (result.type === 'Err') {
+        return result
+    }
+
+    return Ok({
+        ...model,
+        board: result.value
+    })
+}
+
+// 
+// 
+// 
+// 
+
+type SwapSides = ["SwapSides", { userId: UserId.UserId, }]
+type SwapSides_Done = ["SwapSides_Done", Result<SwapSidesProblem, SharedModel>]
+type SwapSidesProblem = "not_in_game" | "not_playing"
+
+export const swapSides = ({ userId, }: SwapSides[1], model: SharedModel): SwapSides_Done[1] => {
+    if (model.type !== 'Game') {
+        return Err("not_in_game")
+    }
+
+    if (model.player !== userId) {
+        return Err("not_playing")
+    }
+
+    return Ok({
+        ...model,
+        userPlayerType: toOpposite(model.userPlayerType)
     })
 }

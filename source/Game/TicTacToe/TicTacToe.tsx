@@ -217,6 +217,8 @@ export type MoveProblem = "not_players_turn" | "position_is_taken" | "game_over"
 
 export type MoveResult = Result.Result<MoveProblem, Board>
 
+
+
 export const move = (
   board: Board,
   player: PlayerType,
