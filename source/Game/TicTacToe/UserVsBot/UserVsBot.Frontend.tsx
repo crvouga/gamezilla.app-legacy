@@ -84,28 +84,31 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
 export const View = ({ goBack, model, dispatch, goHome, roomAvatarGroup, store, currentUserId }: { currentUserId: UserId.UserId, store: Store.Model; goBack: () => void; goHome: () => void, model: Model, dispatch: (msg: Msg) => void, roomAvatarGroup: UI.ViewNode }) => {
 
     const homeButton = <UI.IconButton sx={{ marginLeft: -1 }} onClick={goHome}><UI.Icons.Home /></UI.IconButton>
+    const theme = UI.useTheme()
 
     if (model.type === 'Setup') {
         const startGameResult = startGame({ userId: currentUserId }, model)
+
         return <UI.FillBox>
             <UI.Header
                 left={homeButton}
-                title="Tic Tac Toe"
+                title=""
                 right={roomAvatarGroup}
             />
             <UI.Box sx={{ flex: 1, overflowY: "scroll" }}>
-                <BannerArt title="User Vs Bot" />
-                <UI.Box sx={{ padding: 2 }}>
-                    <UI.Typography color="text.secondary" sx={{ marginBottom: 1 / 2 }}>
-                        Player
-                    </UI.Typography>
+                <BannerArt title="Vs Bot" />
 
+                <UI.Typography variant="h4" color="text.secondary" sx={{ marginTop: 1, paddingX: 2, marginBottom: 2 }}>
+                    Player
+                </UI.Typography>
+
+                <UI.Box sx={{ paddingX: 2, paddingBottom: 2 }}>
                     {model.player === 'None' ? (
-                        <UI.Button sx={{ marginBottom: 2 }} fullWidth variant="contained" onClick={() => dispatch(['StartPlaying', { userId: currentUserId }])}>
+                        <UI.Button fullWidth variant="contained" onClick={() => dispatch(['StartPlaying', { userId: currentUserId }])}>
                             Start Playing
                         </UI.Button>
                     ) : (
-                        <UI.Box sx={{ marginBottom: 2, display: 'flex', alignItems: 'center' }}>
+                        <UI.Box sx={{ display: 'flex', alignItems: 'center' }}>
                             <UI.Avatar src={store.Profile[model.player]?.avatarUrl} sx={{ marginRight: 1 }} />
                             <UI.Typography sx={{ flex: 1 }}>
                                 {store.Profile[model.player]?.username ?? "..."}
@@ -115,35 +118,41 @@ export const View = ({ goBack, model, dispatch, goHome, roomAvatarGroup, store, 
                             </UI.Button>}
                         </UI.Box>
                     )}
-
-                    <UI.Typography color="text.secondary" sx={{ marginBottom: 1 / 2 }}>
-                        Player Type
-                    </UI.Typography>
-                    <UI.ToggleButtonGroup fullWidth value={model.userPlayerType} sx={{ marginBottom: 2 }}>
-                        {Object.values(playerTypes).map(playerType => (
-                            <UI.ToggleButton value={playerType} key={playerType} onClick={() => dispatch(['InputPlayerType', { playerType, userId: currentUserId }])}>
-                                <UI.SvgIcon viewBox="-1 -1 2 2">
-                                    <ViewSlot cx={0} cy={0} slot={playerType} r={0.8} color="currentColor" strokeWidth={0.33} />
-                                </UI.SvgIcon>
-                            </UI.ToggleButton>
-                        ))}
-                    </UI.ToggleButtonGroup>
-
-                    <UI.Typography color="text.secondary" sx={{ marginBottom: 1 / 2 }}>
-                        Bot Level
-                    </UI.Typography>
-                    <UI.ToggleButtonGroup fullWidth value={model.botLevel}>
-                        {Object.values(botLevels).map(botLevel => (
-                            <UI.ToggleButton value={botLevel} key={botLevel} onClick={() => dispatch(['InputBot', { userId: currentUserId, botLevel }])}>
-                                {botLevel}
-                            </UI.ToggleButton>
-                        ))}
-                    </UI.ToggleButtonGroup>
-
                 </UI.Box>
+
+                <UI.Divider sx={{ marginY: 1 }} />
+
+                <UI.Typography variant="h4" color="text.secondary" sx={{ paddingY: 1, paddingX: 2, }}>
+                    Setup
+                </UI.Typography>
+
+                <UI.Typography color="text.secondary" sx={{ marginBottom: 1 / 2, paddingX: 2 }}>
+                    Play As
+                </UI.Typography>
+                <UI.ToggleButtonGroup fullWidth value={model.userPlayerType} sx={{ marginBottom: 2, paddingX: 2 }}>
+                    {Object.values(playerTypes).map(playerType => (
+                        <UI.ToggleButton value={playerType} key={playerType} onClick={() => dispatch(['InputPlayerType', { playerType, userId: currentUserId }])}>
+                            <UI.SvgIcon viewBox="-1 -1 2 2">
+                                <ViewSlot cx={0} cy={0} slot={playerType} r={0.8} color="currentColor" strokeWidth={0.33} />
+                            </UI.SvgIcon>
+                        </UI.ToggleButton>
+                    ))}
+                </UI.ToggleButtonGroup>
+
+                <UI.Typography color="text.secondary" sx={{ marginBottom: 1 / 2, paddingX: 2 }}>
+                    Bot Level
+                </UI.Typography>
+                <UI.ToggleButtonGroup sx={{ marginBottom: 2, paddingX: 2 }} fullWidth value={model.botLevel} >
+                    {Object.values(botLevels).map(botLevel => (
+                        <UI.ToggleButton value={botLevel} key={botLevel} onClick={() => dispatch(['InputBot', { userId: currentUserId, botLevel }])}>
+                            {botLevel}
+                        </UI.ToggleButton>
+                    ))}
+                </UI.ToggleButtonGroup>
             </UI.Box>
 
-            <UI.Box sx={{ padding: 2, display: 'flex', gap: 2 }}>
+
+            <UI.Box sx={{ padding: 2, display: 'flex', gap: 2, borderTop: `solid 1px ${theme.palette.divider}` }}>
                 <UI.Button fullWidth variant="outlined" onClick={goBack}>
                     Back
                 </UI.Button>
