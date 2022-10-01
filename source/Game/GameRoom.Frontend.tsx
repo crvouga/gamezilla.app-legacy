@@ -800,7 +800,7 @@ const ViewNotInGame = ({
             onClick={() => onOpen("ConnectFour")}
           />
 
-          <GameCard
+          {/* <GameCard
             icon={<Game.CoverArt gameName="Snake" />}
             label="Snake"
             onClick={() => onOpen("Snake")}
@@ -810,7 +810,7 @@ const ViewNotInGame = ({
             icon={<Game.CoverArt gameName="Tetris" />}
             label="Tetris"
             onClick={() => onOpen("Tetris")}
-          />
+          /> */}
         </UI.Box>
       </UI.Box>
 
