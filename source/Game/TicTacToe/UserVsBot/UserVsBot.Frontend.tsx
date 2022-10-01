@@ -98,7 +98,7 @@ export const View = ({ goBack, model, dispatch, goHome, roomAvatarGroup, store, 
             <UI.Box sx={{ flex: 1, overflowY: "scroll" }}>
                 <BannerArt title="Vs Bot" />
 
-                <UI.Typography variant="h4" color="text.secondary" sx={{ padding: 2 }}>
+                <UI.Typography color="text.secondary" sx={{ paddingX: 2, paddingTop: 2, paddingBottom: 1 / 2 }}>
                     Player
                 </UI.Typography>
 
@@ -122,11 +122,7 @@ export const View = ({ goBack, model, dispatch, goHome, roomAvatarGroup, store, 
 
                 <UI.Divider />
 
-                <UI.Typography variant="h4" color="text.secondary" sx={{ padding: 2 }}>
-                    Setup
-                </UI.Typography>
-
-                <UI.Typography color="text.secondary" sx={{ marginBottom: 1 / 2, paddingX: 2 }}>
+                <UI.Typography color="text.secondary" sx={{ paddingBottom: 1 / 2, paddingTop: 2, paddingX: 2 }}>
                     Play As
                 </UI.Typography>
                 <UI.ToggleButtonGroup fullWidth value={model.userPlayerType} sx={{ marginBottom: 2, paddingX: 2 }}>
