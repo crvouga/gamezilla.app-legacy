@@ -145,7 +145,6 @@ export const inputBot = ({ userId, botLevel }: InputBot[1], model: SharedModel):
 // 
 // 
 // 
-
 type StartPlaying = ['StartPlaying', { userId: UserId.UserId, }]
 type StartPlaying_Done = ['StartPlaying_Done', Result<StartPlayingProblem, SharedModel>]
 type StartPlayingProblem = "player_is_taken" | "not_in_setup"
