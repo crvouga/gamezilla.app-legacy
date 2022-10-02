@@ -33,9 +33,9 @@ export const None: Cmd<never> = () => { }
 export const perform =
   <A, Msg>(f: (a: A) => Msg) =>
     (task: Task.Task<A>): Cmd<Msg> => {
-      return (dispatch) => {
-        task().then(value => {
-          dispatch(f(value))
-        })
+      return async (dispatch) => {
+        const value = await task()
+
+        dispatch(f(value))
       }
     }

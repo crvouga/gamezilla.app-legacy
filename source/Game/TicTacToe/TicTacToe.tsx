@@ -1,4 +1,6 @@
 import { Result } from "../../Core"
+import { Err, Ok } from "../../Core/Result"
+import { Task } from "../../Core/Task"
 import * as Store from "../../Store"
 
 //
@@ -40,6 +42,85 @@ export type Board = {
   }
 }
 
+
+const toChildren = (board: Board): Board[] => {
+  const turn = toTurn(board)
+
+  const boards: Board[] = []
+
+  for (const position of allPositions) {
+    const result = move(board, turn, position)
+
+    if (result.type === 'Ok') {
+      boards.push(result.value)
+    }
+  }
+
+  return boards
+}
+
+
+export const getBestMove = (board: Board): Task<Position> => async () => {
+  const turn = toTurn(board)
+
+
+  const boardToScore = (board: Board): number => {
+    const gameOver = toGameOver(board)
+
+    switch (gameOver.type) {
+      case 'None': {
+        return 0
+      }
+
+      case 'Tie': {
+        return -1
+      }
+
+      case 'Win': {
+        if (gameOver.winner === turn) {
+          return 100
+        }
+
+        return -100
+      }
+    }
+  }
+
+  const minimax = toMinimax({ toScore: boardToScore, toChildren })
+
+  const positionToScore = (position: Position): number => {
+    const result = move(board, turn, position)
+
+    if (result.type === 'Err') {
+      return -Infinity
+    }
+
+    const score = minimax(result.value, 7, true)
+
+    return score
+  }
+
+  const bestMove = maxBy(positionToScore, shuffle(allPositions))
+
+  return bestMove
+}
+
+type NonEmptyArray<T> = [T, ...T[]];
+
+const shuffle = <X extends T[], T>(xs: X): X => {
+  return xs.sort(() => (Math.random() > 0.5) ? 1 : -1)
+}
+
+const maxBy = <X,>(toValue: (x: X) => number, xs: NonEmptyArray<X>): X => {
+  let runningMax = xs[0]
+  for (const x of xs) {
+    if (toValue(x) > toValue(runningMax)) {
+      runningMax = x
+    }
+  }
+  return runningMax
+}
+
 export const emptyBoard: Board = {
   "0": {
     "0": "Empty",
@@ -67,15 +148,17 @@ export const setSlot = (
   board: Board,
   { column, row }: Position,
   slot: Slot,
-): Board => ({
-  ...board,
-  [column]: {
-    ...board[column],
-    [row]: slot,
-  },
-})
+): Board => {
+  return {
+    ...board,
+    [column]: {
+      ...board[column],
+      [row]: slot,
+    },
+  }
+}
 
-export const allPositions: Position[] = [
+export const allPositions: NonEmptyArray<Position> = [
   { row: 0, column: 0 },
   { row: 0, column: 1 },
   { row: 0, column: 2 },
@@ -91,7 +174,9 @@ export const toSlots = (board: Board): Slot[] => {
   return Object.values(board).flatMap((column) => Object.values(column))
 }
 
-export const allWinningGroups: Position[][] = [
+type WinningGroup = [Position, Position, Position]
+
+export const allWinningGroups: WinningGroup[] = [
   // vertical
   [
     { row: 0, column: 0 },
@@ -137,29 +222,26 @@ export const allWinningGroups: Position[][] = [
   ],
 ]
 
-type Winner = PlayerType | "None"
-
-type Wins = { X: Position[][]; O: Position[][]; None: Position[][] }
+type Wins = { X: WinningGroup[]; O: WinningGroup[]; None: WinningGroup[] }
 
 const toWins = (board: Board): Wins => {
-  return allWinningGroups.reduce(
-    (wins, winningGroup) => {
-      const slots = winningGroup.map((position) => toSlot(board, position))
+  const wins: Wins = {
+    X: [],
+    O: [],
+    None: []
+  }
 
-      const winner: Winner = slots.every((slot) => slot === "X")
-        ? "X"
-        : slots.every((slot) => slot === "O")
-          ? "O"
-          : "None"
+  for (const group of allWinningGroups) {
+    const a = toSlot(board, group[0])
+    const b = toSlot(board, group[1])
+    const c = toSlot(board, group[2])
 
-      return { ...wins, [winner]: [...wins[winner], winningGroup] }
-    },
-    {
-      X: [],
-      O: [],
-      None: [],
-    },
-  )
+    const key: keyof (typeof wins) = a === 'X' && b === 'X' && c === 'X' ? 'X' : a === 'O' && b === 'O' && c === 'O' ? 'O' : "None"
+
+    wins[key].push(group)
+  }
+
+  return wins
 }
 
 export type Status = { type: "Turn"; turn: PlayerType } | GameOver
@@ -202,10 +284,14 @@ const isTie = (board: Board): boolean => {
 type SlotFrequency = { X: number; O: number; Empty: number }
 
 const toSlotFrequency = (board: Board): SlotFrequency => {
-  return toSlots(board).reduce(
-    (frequency, slot) => ({ ...frequency, [slot]: frequency[slot] + 1 }),
-    { X: 0, O: 0, Empty: 0 },
-  )
+  const frequency: SlotFrequency = { X: 0, O: 0, Empty: 0 }
+
+  for (const position of allPositions) {
+    const slot = toSlot(board, position)
+    frequency[slot] += 1
+  }
+
+  return frequency
 }
 
 export const toTurn = (board: Board): PlayerType => {
@@ -227,20 +313,22 @@ export const move = (
   const status = toStatus(board)
 
   if (status.type === "Tie" || status.type === "Win") {
-    return Result.Err("game_over")
+    return Err("game_over")
   }
 
   if (status.turn !== player) {
-    return Result.Err("not_players_turn")
+    return Err("not_players_turn")
   }
 
   const slot = toSlot(board, position)
 
   if (slot !== "Empty") {
-    return Result.Err("not_players_turn")
+    return Err("position_is_taken")
   }
 
-  return Result.Ok(setSlot(board, position, player))
+  const boardNext = setSlot(board, position, player)
+
+  return Ok(boardNext)
 }
 
 export const toEmptyPositions = (board: Board): Position[] => {
@@ -575,3 +663,39 @@ const SvgAvatar = ({
   )
 }
 
+
+
+// source: https://en.wikipedia.org/wiki/Minimax
+const toMinimax = <State,>({ toScore, toChildren }: { toScore: (node: State) => number, toChildren: (state: State) => State[] }) => {
+  const recur = (state: State, depth: number, isMaximizingPlayer: boolean): number => {
+    if (depth === 0) {
+      return toScore(state)
+    }
+
+    const children = toChildren(state)
+
+    if (children.length === 0) {
+      return toScore(state)
+    }
+
+    if (isMaximizingPlayer) {
+      let runningScore = -Infinity
+
+      for (const child of children) {
+        runningScore = Math.max(runningScore, recur(child, depth - 1, false))
+      }
+
+      return runningScore
+    }
+
+    let runningScore = Infinity
+
+    for (const child of children) {
+      runningScore = Math.min(runningScore, recur(child, depth - 1, true))
+    }
+
+    return runningScore
+  }
+
+  return recur
+}
