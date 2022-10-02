@@ -46,6 +46,7 @@ export const update = ({ sendToBackend }: { sendToBackend: (msg: ToBackend) => C
 
 export const updateFromBackend = (msg: ToFrontend, model: Model): [Model, Cmd.Cmd<Msg>] => {
     switch (msg[0]) {
+        case 'BotMove_Done':
         case 'StartGame_Done':
         case 'StartPlaying_Done':
         case 'StopPlaying_Done':
@@ -188,7 +189,7 @@ export const View = ({ goBack, model, dispatch, goHome, roomAvatarGroup, store, 
                 label="Swap"
             />
             <UI.ActionButton
-                onClick={() => { }}
+                onClick={() => dispatch(['Restart', { userId: currentUserId }])}
                 icon={<UI.Icons.RestartAlt />}
                 label="Reset"
             />

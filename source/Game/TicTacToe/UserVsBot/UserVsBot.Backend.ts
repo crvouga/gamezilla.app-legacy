@@ -1,5 +1,6 @@
-import { Cmd, Sub } from "../../../Core";
-import { BackendModel, BackendMsg, initSharedModel, inputBot, inputMove, inputPlayerType, isBotTurn, Response, restart, startGame, startPlaying, stopGame, stopPlaying, swapSides, ToBackend, ToFrontend } from "./UserVsBot.Types";
+import { Cmd, pipe, Sub } from "../../../Core";
+import { getBestMove, move } from "../TicTacToe";
+import { BackendModel, BackendMsg, botMove, initSharedModel, inputBot, inputMove, inputPlayerType, isBotTurn, Response, restart, startGame, startPlaying, stopGame, stopPlaying, swapSides, ToBackend, ToFrontend } from "./UserVsBot.Types";
 
 //
 //
@@ -23,10 +24,12 @@ export const init = initSharedModel
 
 export type Msg = BackendMsg
 
-export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
+export const update = ({ sendToRoom }: { sendToRoom: (msg: ToFrontend) => Cmd.Cmd<never> }, msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
     switch (msg[0]) {
-        case "Noop": {
-            return [model, Cmd.None]
+        case 'BotMove': {
+            const response: ToFrontend = ['BotMove_Done', botMove(msg[1], model)]
+            const modelNext = response[1].type === 'Ok' ? response[1].value : model
+            return [modelNext, sendToRoom(response)]
         }
     }
 };
@@ -37,7 +40,14 @@ export const updateFromFrontend: UpdateFromFrontend = (wire, msg, modelPrev) => 
     const [modelNext, cmd] = updateFromFrontend_(wire, msg, modelPrev)
 
     if (!isBotTurn(modelPrev) && isBotTurn(modelNext)) {
-        return [modelNext, cmd]
+        return [
+            modelNext,
+            Cmd.batch([
+                cmd,
+                pipe(getBestMove(modelNext.board), Cmd.perform((position): Msg => ['BotMove', { position }]))
+
+            ])
+        ]
     }
 
     return [modelNext, cmd]

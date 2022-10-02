@@ -52,7 +52,7 @@ export const initSharedModel = ({ userId }: { userId: SetupModel['player'] }): S
     }
 }
 
-export const isBotTurn = (model: SharedModel) => {
+export const isBotTurn = (model: SharedModel): model is GameModel => {
     return model.type === 'Game' && toTurn(model.board) !== model.userPlayerType
 }
 
@@ -66,11 +66,11 @@ export const isBotTurn = (model: SharedModel) => {
 
 export type FrontendMsg = Request
 
-export type BackendMsg = ['Noop']
+export type BackendMsg = BotMove
 
 export type ToBackend = Request
 
-export type ToFrontend = Response
+export type ToFrontend = Response | BotMove_Done
 
 export type Request =
     | InputBot
@@ -331,4 +331,34 @@ export const swapSides = ({ userId, }: SwapSides[1], model: SharedModel): SwapSi
         ...model,
         userPlayerType: toOpposite(model.userPlayerType)
     })
+}
+
+// 
+// 
+// 
+// 
+// 
+
+type BotMove = ['BotMove', { position: Position }]
+type BotMove_Done = ['BotMove_Done', Result<BotMoveProblem, SharedModel>]
+type BotMoveProblem = "not_in_game" | MoveProblem
+
+export const botMove = ({ position }: BotMove[1], model: SharedModel): BotMove_Done[1] => {
+    if (model.type !== 'Game') {
+        return Err("not_in_game")
+    }
+
+    const botPlayerType = toOpposite(model.userPlayerType)
+
+    const result = move(model.board, botPlayerType, position)
+
+    if (result.type === 'Err') {
+        return result
+    }
+
+    return Ok({
+        ...model,
+        board: result.value
+    })
+
 }

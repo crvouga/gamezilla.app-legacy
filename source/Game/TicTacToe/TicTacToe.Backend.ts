@@ -51,7 +51,7 @@ export const update = ({
 
     case 'UserVsBot': {
       if (model.mode === 'UserVsBot') {
-        const [child, cmd] = UserVsBot.update(msg[1], model.child)
+        const [child, cmd] = UserVsBot.update({ sendToRoom: msg => sendToRoom(['UserVsBot', msg]) }, msg[1], model.child)
         return [{ mode: "UserVsBot", child }, tagCmd("UserVsBot", cmd)]
       }
       return [model, Cmd.None]
