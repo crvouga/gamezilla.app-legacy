@@ -1,7 +1,9 @@
+import * as Threads from "threads"
 import { Result } from "../../Core"
 import { Err, Ok } from "../../Core/Result"
 import { Task } from "../../Core/Task"
 import * as Store from "../../Store"
+import { TicTacToeWorker } from "./tictactoe-worker"
 
 //
 //
@@ -59,10 +61,8 @@ const toChildren = (board: Board): Board[] => {
   return boards
 }
 
-
-export const getBestMove = (board: Board): Task<Position> => async () => {
+export const toBestMove = (board: Board): Position => {
   const turn = toTurn(board)
-
 
   const boardToScore = (board: Board): number => {
     const gameOver = toGameOver(board)
@@ -103,6 +103,19 @@ export const getBestMove = (board: Board): Task<Position> => async () => {
   const bestMove = maxBy(positionToScore, shuffle(allPositions))
 
   return bestMove
+}
+
+export const getBestMove = (board: Board): Task<Position> => async () => {
+  const worker = new Threads.Worker("./tictactoe-worker")
+
+  const spawned = await Threads.spawn<TicTacToeWorker>(worker)
+
+  const result = await spawned.toBestMove(board)
+
+  await Threads.Thread.terminate(spawned)
+
+  return result
+
 }
 
 type NonEmptyArray<T> = [T, ...T[]];
