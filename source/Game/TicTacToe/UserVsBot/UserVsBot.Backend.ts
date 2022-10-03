@@ -1,5 +1,5 @@
 import { Cmd, pipe, Sub } from "../../../Core";
-import { getBestMove, move } from "../TicTacToe";
+import { getBestMove, move, toOpposite } from "../TicTacToe";
 import { BackendModel, BackendMsg, botMove, initSharedModel, inputBot, inputMove, inputPlayerType, isBotTurn, Response, restart, startGame, startPlaying, stopGame, stopPlaying, swapSides, ToBackend, ToFrontend } from "./UserVsBot.Types";
 
 //
@@ -40,12 +40,15 @@ export const updateFromFrontend: UpdateFromFrontend = (wire, msg, modelPrev) => 
     const [modelNext, cmd] = updateFromFrontend_(wire, msg, modelPrev)
 
     if (!isBotTurn(modelPrev) && isBotTurn(modelNext)) {
+        const botPlayerType = toOpposite(modelNext.userPlayerType)
         return [
             modelNext,
             Cmd.batch([
                 cmd,
-                pipe(getBestMove(modelNext.board), Cmd.perform((position): Msg => ['BotMove', { position }]))
-
+                pipe(
+                    getBestMove(botPlayerType, modelNext.board),
+                    Cmd.perform((position): Msg => ['BotMove', { position }])
+                )
             ])
         ]
     }

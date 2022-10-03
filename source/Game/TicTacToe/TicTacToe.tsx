@@ -61,41 +61,42 @@ const toChildren = (board: Board): Board[] => {
   return boards
 }
 
-export const toBestMove = (board: Board): Position => {
-  const turn = toTurn(board)
+export const toBestMove = (maximizingPlayer: PlayerType, board: Board): Position => {
 
-  const boardToScore = (board: Board): number => {
-    const gameOver = toGameOver(board)
 
-    switch (gameOver.type) {
-      case 'None': {
-        return 0
-      }
+  const minimax = createMinimax({
+    toChildren,
+    toScore: (board) => {
+      const gameOver = toGameOver(board)
 
-      case 'Tie': {
-        return -1
-      }
-
-      case 'Win': {
-        if (gameOver.winner === turn) {
-          return 100
+      switch (gameOver.type) {
+        case 'None': {
+          return 0
         }
 
-        return -100
-      }
-    }
-  }
+        case 'Tie': {
+          return -1
+        }
 
-  const minimax = toMinimax({ toScore: boardToScore, toChildren })
+        case 'Win': {
+          if (gameOver.winner === maximizingPlayer) {
+            return 10
+          }
+
+          return -10
+        }
+      }
+    },
+  })
 
   const positionToScore = (position: Position): number => {
-    const result = move(board, turn, position)
+    const result = move(board, maximizingPlayer, position)
 
     if (result.type === 'Err') {
       return -Infinity
     }
 
-    const score = minimax(result.value, 7, true)
+    const score = minimax(result.value, 12)
 
     return score
   }
@@ -105,17 +106,19 @@ export const toBestMove = (board: Board): Position => {
   return bestMove
 }
 
-export const getBestMove = (board: Board): Task<Position> => async () => {
+export const getBestMove = (maximizingPlayer: PlayerType, board: Board): Task<Position> => async () => {
   const worker = new Threads.Worker("./tictactoe-worker")
 
   const spawned = await Threads.spawn<TicTacToeWorker>(worker)
 
-  const result = await spawned.toBestMove(board)
+  try {
+    const result = await spawned.toBestMove(maximizingPlayer, board)
 
-  await Threads.Thread.terminate(spawned)
+    return result
+  } finally {
 
-  return result
-
+    await Threads.Thread.terminate(spawned)
+  }
 }
 
 type NonEmptyArray<T> = [T, ...T[]];
@@ -126,11 +129,13 @@ const shuffle = <X extends T[], T>(xs: X): X => {
 
 const maxBy = <X,>(toValue: (x: X) => number, xs: NonEmptyArray<X>): X => {
   let runningMax = xs[0]
+
   for (const x of xs) {
     if (toValue(x) > toValue(runningMax)) {
       runningMax = x
     }
   }
+
   return runningMax
 }
 
@@ -677,10 +682,41 @@ const SvgAvatar = ({
 }
 
 
-
 // source: https://en.wikipedia.org/wiki/Minimax
-const toMinimax = <State,>({ toScore, toChildren }: { toScore: (node: State) => number, toChildren: (state: State) => State[] }) => {
-  const recur = (state: State, depth: number, isMaximizingPlayer: boolean): number => {
+// https://en.wikipedia.org/wiki/Alpha%E2%80%93beta_pruning
+/* 
+
+function alphabeta(node, depth, α, β, maximizingPlayer) is
+    if depth = 0 or node is a terminal node then
+        return the heuristic value of node
+    if maximizingPlayer then
+        value := −∞
+        for each child of node do
+            value := max(value, alphabeta(child, depth − 1, α, β, FALSE))
+            if value ≥ β then
+                break (* β cutoff *)
+            α := max(α, value)
+        return value
+    else
+        value := +∞
+        for each child of node do
+            value := min(value, alphabeta(child, depth − 1, α, β, TRUE))
+            if value ≤ α then
+                break (* α cutoff *)
+            β := min(β, value)
+        return value
+
+*/
+const createMinimax = <State,>({ toScore, toChildren }: { toScore: (node: State) => number, toChildren: (state: State) => State[] }) => {
+
+  const recur = (
+    state: State,
+    depth: number,
+    alpha: number,
+    beta: number,
+    isMaximizing: boolean
+  ): number => {
+
     if (depth === 0) {
       return toScore(state)
     }
@@ -691,24 +727,44 @@ const toMinimax = <State,>({ toScore, toChildren }: { toScore: (node: State) => 
       return toScore(state)
     }
 
-    if (isMaximizingPlayer) {
-      let runningScore = -Infinity
 
-      for (const child of children) {
-        runningScore = Math.max(runningScore, recur(child, depth - 1, false))
+    if (isMaximizing) {
+      let value = -Infinity
+      let alpha_ = alpha
+
+      for (let index = 0; index < children.length; index++) {
+        value = Math.max(value, recur(children[index]!, depth - 1, alpha_, beta, false))
+
+        if (value >= beta) {
+          break
+        }
+
+        alpha_ = Math.max(alpha_, value)
       }
 
-      return runningScore
+      return value
     }
 
-    let runningScore = Infinity
+    let value = Infinity
+    let beta_ = beta
 
-    for (const child of children) {
-      runningScore = Math.min(runningScore, recur(child, depth - 1, true))
+    for (let index = 0; index < children.length; index++) {
+      value = Math.min(value, recur(children[index]!, depth - 1, alpha, beta_, true))
+
+      if (value <= alpha) {
+        break
+      }
+
+      beta_ = Math.min(beta_, value)
     }
 
-    return runningScore
+    return value
+
   }
 
-  return recur
+  const initialCall = (initialState: State, depth: number): number => {
+    return recur(initialState, depth, -Infinity, +Infinity, true)
+  }
+
+  return initialCall
 }
