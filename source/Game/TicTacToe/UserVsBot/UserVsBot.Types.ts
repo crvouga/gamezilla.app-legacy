@@ -16,14 +16,14 @@ export type SharedModel =
     | SetupModel
     | GameModel
 
-type SetupModel = {
+export type SetupModel = {
     type: "Setup",
     player: UserId.UserId | "None"
     userPlayerType: PlayerType
     botLevel: BotLevel
 }
 
-type GameModel = {
+export type GameModel = {
     type: "Game",
     player: UserId.UserId,
     userPlayerType: PlayerType

@@ -1,9 +1,9 @@
 import { Cmd, Sub } from "../../../Core";
 import * as UI from "../../../UI";
 import * as Store from "../../../Store";
-import { playerTypes, ViewBoard, ViewSlot } from "../TicTacToe";
+import { theme, PlayerType, playerTypes, ViewBoard, ViewSlot, toTurn } from "../TicTacToe";
 import { BannerArt } from "../Views";
-import { BackendModel, botLevels, FrontendModel, FrontendMsg, initSharedModel, startGame, ToBackend, ToFrontend } from "./UserVsBot.Types";
+import { GameModel, BackendModel, botLevels, FrontendModel, FrontendMsg, initSharedModel, startGame, ToBackend, ToFrontend } from "./UserVsBot.Types";
 import { UserId } from "../../../Data";
 
 //
@@ -171,7 +171,12 @@ export const View = ({ goBack, model, dispatch, goHome, roomAvatarGroup, store, 
 
     return <UI.FillBox>
         <UI.Header left={homeButton} title="" right={roomAvatarGroup} />
-        <UI.Box sx={{ flex: 1 }}>
+
+        <UI.Box sx={{ flex: 1, }}>
+            <UI.Box sx={{ display: 'flex', padding: 1, gap: 1, paddingTop: 0 }}>
+                <ViewPlayerGameSlot model={model} playerType="X" store={store} />
+                <ViewPlayerGameSlot model={model} playerType="O" store={store} />
+            </UI.Box>
             <ViewBoard board={model.board} onClick={(position) => dispatch(['InputMove', { userId: currentUserId, position }])} />
         </UI.Box>
 
@@ -196,4 +201,63 @@ export const View = ({ goBack, model, dispatch, goHome, roomAvatarGroup, store, 
         </UI.Box>
 
     </UI.FillBox>
+}
+
+
+
+export const ViewPlayerGameSlot = ({
+    store,
+    playerType,
+    model,
+}: {
+    model: GameModel,
+    store: Store.Model
+    playerType: PlayerType,
+}) => {
+    const uiTheme = UI.useTheme()
+
+    const iconSize = {
+        width: 20,
+        height: 20,
+    }
+
+    const isTurn = toTurn(model.board) === playerType
+
+    return (
+        <UI.Paper sx={{ flex: 1, overflow: "hidden", height: "100%", width: '100%' }} variant="outlined">
+            <UI.Box
+                sx={{
+                    flex: 1,
+                    display: "flex",
+                    alignItems: "center",
+                    overflow: "hidden",
+                    borderBottom: `solid 3.5px ${isTurn ? theme.background : uiTheme.palette.divider}`,
+                }}
+
+            >
+                <UI.Box sx={{ display: 'flex', flexDirection: "row", padding: 1, flex: 2, overflow: "hidden", alignItems: 'center' }}>
+                    <UI.SvgIcon sx={{ display: "block", marginRight: 1, ...iconSize, }} viewBox="-1 -1 2 2" >
+                        <ViewSlot strokeWidth={0.3} color={uiTheme.palette.text.primary} slot={playerType} cx={0} cy={0} r={0.8} />
+                    </UI.SvgIcon>
+                    {model.userPlayerType === playerType ? (
+                        <>
+                            <UI.Avatar
+                                src={store.Profile[model.player]?.avatarUrl}
+                                sx={{ marginRight: 1, ...iconSize, }} />
+                            <UI.Typography noWrap sx={{ flex: 1 }}>
+                                {store.Profile[model.player]?.username ?? "..."}
+                            </UI.Typography>
+                        </>
+                    ) : (
+                        <>
+                            <UI.Icons.SmartToy sx={{ marginRight: 1, ...iconSize }} />
+                            <UI.Typography noWrap sx={{ flex: 1 }}>
+                                {model.botLevel}
+                            </UI.Typography>
+                        </>
+                    )}
+                </UI.Box>
+            </UI.Box>
+        </UI.Paper>
+    )
 }
