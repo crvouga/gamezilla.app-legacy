@@ -36,6 +36,7 @@ export type BestMoveInputProblem = "failed_to_calculate_best_move"
 
 const isRecord = (record: unknown): record is Record<string, string> => {
   // todo: add correct validation
+  // expected { "some position": "some other position" }
   return typeof record === "object" && record !== null
 }
 
