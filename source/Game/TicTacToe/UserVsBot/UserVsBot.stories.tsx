@@ -2,6 +2,7 @@ import { ComponentMeta, ComponentStory } from '@storybook/react';
 import { ProfileAvatar, UserId, Username } from "../../../Data";
 import * as Store from "../../../Store";
 import * as UI from "../../../UI";
+import { emptyBoard } from '../TicTacToe';
 import { View } from "./UserVsBot.Frontend";
 
 // 
@@ -101,5 +102,16 @@ GameSetupOtherPlayer.args = {
         botLevel: "Medium",
         userPlayerType: "X",
         player: userB.userId
+    }
+}
+
+export const GameStartedCurrentUserTurn = Template.bind({})
+GameStartedCurrentUserTurn.args = {
+    model: {
+        type: "Game",
+        botLevel: "Medium",
+        userPlayerType: "X",
+        board: emptyBoard,
+        player: currentUserId
     }
 }
