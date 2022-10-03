@@ -760,7 +760,9 @@ const toStatus = ({
 
 const backendUrl =
   process.env.NODE_ENV === "production"
-    ? `https://backend.gamezilla.app/`
+    // todo setup this url
+    // ? `https://backend.gamezilla.app/`
+    ? "https://gamezilla-production.up.railway.app/"
     : `http://localhost:${Wire.backendServerPort}/`
 
 const socketClient: Socket<
