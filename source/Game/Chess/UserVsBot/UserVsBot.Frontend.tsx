@@ -5,7 +5,7 @@ import * as Store from "../../../Store"
 import * as UI from "../../../UI"
 import * as Board from "../Board"
 import * as Sounds from "../Sounds"
-import { ViewActionButton, BannerArt } from "../Views"
+import { BannerArt } from "../Views"
 import {
   BackendModel,
   FrontendModel,
@@ -463,7 +463,7 @@ export const View = ({
                       ])
                     }}
                   >
-                    {level} - {Board.levelToString(level)}
+                    {Board.levelToString(level)}
                   </UI.MenuItem>
                 ))}
               </UI.Select>
@@ -592,13 +592,13 @@ export const View = ({
       <UI.Box sx={{ flex: 1 }} />
 
       <UI.Box sx={{ width: "100%", display: "flex" }}>
-        <ViewActionButton
+        <UI.ActionButton
           icon={<UI.Icons.ExitToApp sx={{ transform: "rotate(180deg)" }} />}
-          title={"Exit"}
+          label={"Exit"}
           onClick={() => dispatch(["StopGame", { userId: currentUserId }])}
         />
 
-        <ViewActionButton
+        <UI.ActionButton
           icon={
             <UI.Icons.Flip
               sx={{
@@ -606,7 +606,7 @@ export const View = ({
               }}
             />
           }
-          title={model.isFlipped ? "Unflip" : "Flip"}
+          label={model.isFlipped ? "Unflip" : "Flip"}
           onClick={() => {
             dispatch(["ClickedFlip"])
           }}

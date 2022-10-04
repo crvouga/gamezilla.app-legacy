@@ -7,6 +7,7 @@ import {
   BackendModel,
   BackendMsg,
   CloseGameResult,
+  CreateRoom,
   CreateRoomResult,
   JoinRoomResult,
   LeaveRoomResult,
@@ -254,7 +255,7 @@ const updateResponse = (
 //
 
 export const createRoom = (
-  { userId, roomId }: { userId: UserId.UserId; roomId: RoomId.RoomId },
+  { userId, roomId, gameName }: CreateRoom[1],
   model: Model,
 ): CreateRoomResult => {
   const user = model.users[userId]
@@ -278,7 +279,7 @@ export const createRoom = (
         roomId,
         hostId: userId,
         events: [["Created", { userId, roomId }]],
-        game: Option.None,
+        game: gameName ? Option.Some(Game.init({ gameName })) : Option.None,
       },
     },
   }

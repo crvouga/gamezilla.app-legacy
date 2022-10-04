@@ -111,7 +111,7 @@ export type CreateRoom_Done = ["CreateRoom_Done", CreateRoomResult]
 
 export type CreateRoom = [
   "CreateRoom",
-  { roomId: RoomId.RoomId; userId: UserId.UserId },
+  { roomId: RoomId.RoomId; userId: UserId.UserId, gameName?: Game.GameName },
 ]
 
 export type CreateRoomProblem = "user_is_already_in_a_room"

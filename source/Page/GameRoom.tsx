@@ -56,12 +56,14 @@ export const View = ({
   store,
   dispatch,
   model,
+  bottomNav
 }: {
   gameRoom: GameRoom.Model
   currentUserId: UserId.UserId
   store: Store.Model
   model: Model
   dispatch: (msg: Msg) => void
+  bottomNav: UI.ViewNode
 }) => {
   return (
     <GameRoom.View
@@ -69,6 +71,7 @@ export const View = ({
       store={store}
       model={gameRoom}
       dispatch={(msg) => dispatch(["GameRoom", msg])}
+      bottomNav={bottomNav}
     />
   )
 }

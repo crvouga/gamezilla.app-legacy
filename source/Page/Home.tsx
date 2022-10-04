@@ -1,6 +1,7 @@
 import { Sub } from "../Core"
 import { RoomId, UserId } from "../Data"
 import * as Game from "../Game/Game.Frontend"
+import { GameName, gameNameList, gameNames } from "../Game/Game.Types"
 import * as GameRoom from "../Game/GameRoom.Frontend"
 import * as Route from "../Route"
 import * as Store from "../Store"
@@ -26,12 +27,19 @@ export const init: Model = {}
 //
 //
 
-export type Msg = ["ClickedCurrentRoom"] | ["ClickedCurrentRoomLeave"] | ["ClickedRoom", { roomId: RoomId.RoomId }] | ["ClickedCreateRoom"]
+export type Msg = ["ClickedCurrentRoom"] | ["ClickedCurrentRoomLeave"] | ["ClickedRoom", { roomId: RoomId.RoomId }] | ["ClickedCreateRoom"] | ["ClickedGameCard", GameName]
 
 export type OutAction = GameRoom.Action | Route.Action
 
 export const update = ({ currentUserId }: { currentUserId: UserId.UserId }, msg: Msg, model: Model): [Model, OutAction[]] => {
   switch (msg[0]) {
+    case 'ClickedGameCard': {
+      return [model, [
+        ["Route", ['Push', ['GameRoom']]],
+        ['GameRoom', ['Msg', ['CreateRoom', { gameName: msg[1], roomId: RoomId.generate(), userId: currentUserId }]]]
+      ]]
+    }
+
     case 'ClickedRoom': {
       const roomId = msg[1].roomId
       return [model, [['GameRoom', ['Msg', ['JoinRoom', { roomId, userId: currentUserId }]]]]]
@@ -130,7 +138,7 @@ export const View = ({
 
   return (
     <UI.FillBox sx={{ overflow: "scroll" }}>
-      <UI.Header title="Gamezilla" />
+      <UI.Header title="Home" />
 
       <UI.Box sx={{ paddingX: 2 }}>
         <UI.Typography
@@ -256,22 +264,36 @@ const ViewNotInRoom = ({
   if (rooms.length === 0) {
     return (
       <UI.FillBox sx={{ overflowY: "scroll" }}>
-        <UI.Header title="Gamezilla" />
+        <UI.Header title="Home" />
 
-        <UI.Box sx={{ paddingX: 2 }}>
+        <UI.Typography variant="h4" sx={{ paddingX: 2, marginBottom: 1 }}>
+          Games
+        </UI.Typography>
+        <UI.Box sx={{
+          gap: 1, paddingX: 2, display: 'flex', overflowX: "scroll", width: "100%",
+          snapScrollType: "x mandatory",
+        }}>
+          {gameNameList.map(gameName => (
+            <UI.Box sx={{ minWidth: 128, flex: 1, }}>
+              <GameRoom.ViewGameCard key={gameName} gameName={gameName} onClick={() => dispatch(['ClickedGameCard', gameName])} />
+            </UI.Box>
+          ))}
+        </UI.Box>
+
+        {/* <UI.Box sx={{ paddingX: 2 }}>
           <GameRoom.ViewCallToAction
             onCreateRoom={() =>
               dispatch(['ClickedCreateRoom'])
             }
           />
-        </UI.Box>
+        </UI.Box> */}
       </UI.FillBox>
     )
   }
 
   return (
     <UI.FillBox sx={{ overflowY: "scroll" }}>
-      <UI.Header title="Gamezilla" />
+      <UI.Header title="Home" />
 
       <UI.Box sx={{ paddingX: 2 }}>
         <UI.Button fullWidth variant="contained" onClick={() => dispatch(['ClickedCreateRoom'])}>

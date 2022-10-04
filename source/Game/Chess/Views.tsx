@@ -1,34 +1,5 @@
 import * as UI from "../../UI"
 
-export const ViewActionButton = ({
-  title,
-  icon,
-  onClick,
-}: {
-  title: string
-  icon: UI.ViewNode
-  onClick: () => void
-}) => {
-  const theme = UI.useTheme()
-  return (
-    <UI.ButtonBase
-      onClick={onClick}
-      sx={{
-        flex: 1,
-        height: 52,
-        display: "flex",
-        flexDirection: "column",
-        color: theme.palette.action.active,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      {icon}
-      <UI.Typography variant="caption">{title}</UI.Typography>
-    </UI.ButtonBase>
-  )
-}
-
 
 export const theme = {
   // lightSquare: "#EBEBD0",
@@ -115,7 +86,7 @@ export const BannerArt = ({ title }: { title: string }) => {
           height: "100%",
           display: 'flex',
           flexDirection: "column",
-          background: `linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.6))`,
+          background: `linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.3))`,
         }}>
         <UI.Box sx={{ flex: 1 }} />
         <UI.Typography

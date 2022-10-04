@@ -5,14 +5,14 @@ import * as Snackbar from "../Snackbar"
 import * as Store from "../Store"
 import * as UI from "../UI"
 import * as Game from "./Game.Frontend"
-import { GameName } from "./Game.Types"
+import { GameName, gameNameList } from "./Game.Types"
 import {
   BackendModel,
   FrontendModel,
   FrontendMsg,
   Response,
   ToBackend,
-  ToFrontend,
+  ToFrontend
 } from "./GameRoom.Types"
 
 //
@@ -549,7 +549,9 @@ export const View = ({
   store,
   model,
   dispatch,
+  bottomNav
 }: {
+  bottomNav: UI.ViewNode,
   currentUserId: UserId.UserId
   store: Store.Model
   model: Model
@@ -559,12 +561,15 @@ export const View = ({
 
   if (!user) {
     return (
-      <ViewNotInRoom
-        currentUserId={currentUserId}
-        store={store}
-        model={model}
-        dispatch={dispatch}
-      />
+      <>
+        <ViewNotInRoom
+          currentUserId={currentUserId}
+          store={store}
+          model={model}
+          dispatch={dispatch}
+        />
+        {bottomNav}
+      </>
     )
   }
 
@@ -782,35 +787,15 @@ const ViewNotInGame = ({
             gap: 2,
           }}
         >
-          <GameCard
-            icon={<Game.CoverArt gameName="Chess" />}
-            label="Chess"
-            onClick={() => onOpen("Chess")}
-          />
-
-          <GameCard
-            icon={<Game.CoverArt gameName="TicTacToe" />}
-            label="Tic Tac Toe"
-            onClick={() => onOpen("TicTacToe")}
-          />
-
-          <GameCard
-            icon={<Game.CoverArt gameName="ConnectFour" />}
-            label="Connect Four"
-            onClick={() => onOpen("ConnectFour")}
-          />
-
-          {/* <GameCard
-            icon={<Game.CoverArt gameName="Snake" />}
-            label="Snake"
-            onClick={() => onOpen("Snake")}
-          />
-
-          <GameCard
-            icon={<Game.CoverArt gameName="Tetris" />}
-            label="Tetris"
-            onClick={() => onOpen("Tetris")}
-          /> */}
+          {gameNameList.map(gameName => {
+            return (
+              <ViewGameCard
+                key={gameName}
+                gameName={gameName}
+                onClick={() => onOpen(gameName)}
+              />
+            )
+          })}
         </UI.Box>
       </UI.Box>
 
@@ -926,14 +911,12 @@ const ViewGameRoomAvatarGroup = ({
   )
 }
 
-const GameCard = ({
-  icon,
-  label,
+export const ViewGameCard = ({
+  gameName,
   onClick,
   disabled = false,
 }: {
-  icon: UI.ViewNode
-  label: string
+  gameName: GameName,
   onClick: () => void
   disabled?: boolean
 }) => {
@@ -949,7 +932,7 @@ const GameCard = ({
         }}
         onClick={onClick}
       >
-        {icon}
+        <Game.CoverArt gameName={gameName} />
 
         <UI.Box
           sx={{
@@ -976,7 +959,7 @@ const GameCard = ({
               align="left"
               variant="h4"
             >
-              {label}
+              {Game.gameNameToString(gameName)}
             </UI.Typography>
           </UI.Box>
         </UI.Box>

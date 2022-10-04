@@ -5,7 +5,7 @@ import * as Store from "../../../Store"
 import * as UI from "../../../UI"
 import * as Clock from "../Clock"
 import * as Sounds from "../Sounds"
-import { BannerArt, ViewActionButton } from "../Views"
+import { BannerArt } from "../Views"
 import * as Board from "../Board"
 import {
   BackendModel,
@@ -812,9 +812,9 @@ export const View = ({
           <>
             {(currentUserColor === "w" || currentUserColor === "b") && (
               <>
-                <ViewActionButton
+                <UI.ActionButton
                   icon={<UI.Icons.HandshakeTwoTone />}
-                  title="Draw"
+                  label="Draw"
                   onClick={() => dispatch(["OpenedModal", "RequestToDraw"])}
                 />
 
@@ -880,9 +880,9 @@ export const View = ({
                   cancelTitle="Decline"
                 />
 
-                <ViewActionButton
+                <UI.ActionButton
                   icon={<UI.Icons.FlagOutlined />}
-                  title="Resign"
+                  label="Resign"
                   onClick={() => dispatch(["OpenedModal", "Resign"])}
                 />
 
@@ -900,7 +900,7 @@ export const View = ({
               </>
             )}
 
-            <ViewActionButton
+            <UI.ActionButton
               icon={
                 <UI.Icons.Flip
                   sx={{
@@ -910,7 +910,7 @@ export const View = ({
                   }}
                 />
               }
-              title={model.isFlipped ? "Unflip" : "Flip"}
+              label={model.isFlipped ? "Unflip" : "Flip"}
               onClick={() => {
                 dispatch(["ClickedFlip"])
               }}
