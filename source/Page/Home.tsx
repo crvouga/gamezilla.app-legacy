@@ -295,11 +295,20 @@ const ViewNotInRoom = ({
     <UI.FillBox sx={{ overflowY: "scroll" }}>
       <UI.Header title="Home" />
 
-      <UI.Box sx={{ paddingX: 2 }}>
-        <UI.Button fullWidth variant="contained" onClick={() => dispatch(['ClickedCreateRoom'])}>
-          Create Room
-        </UI.Button>
+      <UI.Typography variant="h4" sx={{ paddingX: 2, marginBottom: 1 }}>
+        Games
+      </UI.Typography>
+      <UI.Box sx={{
+        gap: 1, paddingX: 2, display: 'flex', overflowX: "scroll", width: "100%",
+        snapScrollType: "x mandatory",
+      }}>
+        {gameNameList.map(gameName => (
+          <UI.Box sx={{ minWidth: 150, flex: 1, }}>
+            <GameRoom.ViewGameCard key={gameName} gameName={gameName} onClick={() => dispatch(['ClickedGameCard', gameName])} />
+          </UI.Box>
+        ))}
       </UI.Box>
+
 
 
       <UI.Typography
