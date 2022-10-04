@@ -33,6 +33,16 @@ export type GameName =
   | "Chess"
   | "Tetris"
 
+export const gameNames: { [gameName in GameName]: GameName } = {
+  TicTacToe: "TicTacToe",
+  ConnectFour: "ConnectFour",
+  Snake: "Snake",
+  Chess: "Chess",
+  Tetris: "Tetris",
+}
+
+export const gameNameList: GameName[] = ["Chess", "TicTacToe", "ConnectFour"]
+
 //
 //
 //

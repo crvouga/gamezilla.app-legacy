@@ -483,6 +483,7 @@ export const AspectRatio = ({
   return (
     <Box
       sx={{
+        width: '100%',
         paddingTop: `${aspectRatio * 100}%`,
         position: "relative",
         height: 0,
@@ -626,6 +627,7 @@ export const ActionButton = ({
         display: "flex",
         flexDirection: "column",
         flex: 1,
+        width: "100%",
       }}
     >
       {icon}

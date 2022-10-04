@@ -938,7 +938,16 @@ export const ViewReady = ({
           gameRoom={gameRoom}
           model={model[1]}
           dispatch={(msg) => dispatch(["GameRoom", msg])}
+          bottomNav={
+            <ViewBottomNavigation
+              currentUserId={currentUserId}
+              route={route}
+              dispatch={dispatch}
+            />
+          }
         />
+
+
       )
     }
 
@@ -1219,17 +1228,25 @@ const ViewBottomNavigation = ({
         const isSelected = Route.equals(route, item.route)
 
         return (
-          <UI.Box sx={{ flex: 1, color: isSelected ? "primary.main" : "text.secondary" }}>
-            <UI.ActionButton
-              key={Route.encode(item.route)}
-              icon={isSelected ? item.filled : item.outlined}
-              label={item.route[0]}
-              onClick={() => dispatch(["ClickedBottomNavigationLink", item.route])}
-            />
-          </UI.Box>
+          <UI.ButtonBase
+            key={Route.encode(item.route)}
+            onClick={() => dispatch(["ClickedBottomNavigationLink", item.route])}
+            sx={{
+              color: isSelected ? "primary.main" : "text.secondary",
+              paddingY: 0,
+              paddingX: 2,
+              display: "flex",
+              flexDirection: "column",
+              flex: 1,
+              width: "100%",
+            }}
+          >
+            {isSelected ? item.filled : item.outlined}
+            <UI.Typography variant="caption">{item.route[0]}</UI.Typography>
+          </UI.ButtonBase>
         )
       })}
-    </UI.Box>
+    </UI.Box >
   )
 }
 
