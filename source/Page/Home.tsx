@@ -274,7 +274,7 @@ const ViewNotInRoom = ({
           snapScrollType: "x mandatory",
         }}>
           {gameNameList.map(gameName => (
-            <UI.Box sx={{ minWidth: 128, flex: 1, }}>
+            <UI.Box sx={{ minWidth: 150, flex: 1, }}>
               <GameRoom.ViewGameCard key={gameName} gameName={gameName} onClick={() => dispatch(['ClickedGameCard', gameName])} />
             </UI.Box>
           ))}
