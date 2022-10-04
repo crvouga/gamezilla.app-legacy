@@ -74,7 +74,7 @@ export const updateFromFrontend = (
     case "InputMode": {
       const modelNew: BackendModel = initMode(msg[1])
 
-      return [modelNew, sendToClient(['InputMode_Done', Ok(modelNew)])]
+      return [modelNew, sendToRoom(['InputMode_Done', Ok(modelNew)])]
     }
 
     case 'UserVsUser': {
