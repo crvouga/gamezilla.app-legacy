@@ -99,15 +99,15 @@ const isFull = (columns: Columns) => {
 
 type IStatus =
   | {
-      type: "Playing"
-    }
+    type: "Playing"
+  }
   | {
-      type: "Winner"
-      winner: IPlayer
-    }
+    type: "Winner"
+    winner: IPlayer
+  }
   | {
-      type: "Tie"
-    }
+    type: "Tie"
+  }
 
 export const toStatus = (columns: Columns): IStatus => {
   const winningLines = Array.from(
@@ -201,11 +201,11 @@ function* yieldLine({
       y: y + dy,
     }
 
-    const adjancentSlot = toSlot(columns, adjacentPosition)
+    const adjacentSlot = toSlot(columns, adjacentPosition)
 
     const slot = toSlot(columns, { x, y })
 
-    if (adjancentSlot === slot) {
+    if (adjacentSlot === slot) {
       yield adjacentPosition
     } else {
       break
@@ -413,4 +413,29 @@ export const ViewColumns = ({
       ))}
     </svg>
   )
+}
+
+
+// 
+// 
+// 
+// Animation
+// 
+// 
+// 
+
+// source: https://easings.net/#easeOutBounce
+const easeOutBounce = (x: number): number => {
+  const n1 = 7.5625;
+  const d1 = 2.75;
+
+  if (x < 1 / d1) {
+    return n1 * x * x;
+  } else if (x < 2 / d1) {
+    return n1 * (x -= 1.5 / d1) * x + 0.75;
+  } else if (x < 2.5 / d1) {
+    return n1 * (x -= 2.25 / d1) * x + 0.9375;
+  } else {
+    return n1 * (x -= 2.625 / d1) * x + 0.984375;
+  }
 }

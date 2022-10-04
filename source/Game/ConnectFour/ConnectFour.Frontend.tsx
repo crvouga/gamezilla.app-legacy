@@ -79,7 +79,7 @@ export const View = ({
       />
       <ViewColumns
         columns={model.columns}
-        onClick={(columnIndex) => {}}
+        onClick={(columnIndex) => { }}
       />
     </UI.FillBox>
   )
