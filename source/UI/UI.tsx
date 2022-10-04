@@ -620,6 +620,7 @@ export const ActionButton = ({
     <ButtonBase
       onClick={onClick}
       sx={{
+        color: "inherit",
         paddingY: 0,
         paddingX: 2,
         display: "flex",
