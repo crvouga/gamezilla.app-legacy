@@ -1203,6 +1203,7 @@ const ViewBottomNavigation = ({
 
   const theme = UI.useTheme()
 
+
   return (
     <UI.Box
       sx={{
@@ -1211,23 +1212,23 @@ const ViewBottomNavigation = ({
         alignItems: "center",
         justifyContent: "center",
         height: 52,
+        borderTop: `1.5px solid ${theme.palette.divider}`,
       }}
     >
-      {items.map((item) => (
-        <UI.ButtonBase
-          key={Route.encode(item.route)}
-          sx={{ flex: 1, height: "100%", cursor: "pointer" }}
-          onClick={() => dispatch(["ClickedBottomNavigationLink", item.route])}
-        >
-          {Route.equals(route, item.route) ? (
-            <UI.Box sx={{ color: theme.palette.primary.main }}>
-              {item.filled}
-            </UI.Box>
-          ) : (
-            item.outlined
-          )}
-        </UI.ButtonBase>
-      ))}
+      {items.map((item) => {
+        const isSelected = Route.equals(route, item.route)
+
+        return (
+          <UI.Box sx={{ flex: 1, color: isSelected ? "primary.main" : "text.secondary" }}>
+            <UI.ActionButton
+              key={Route.encode(item.route)}
+              icon={isSelected ? item.filled : item.outlined}
+              label={item.route[0]}
+              onClick={() => dispatch(["ClickedBottomNavigationLink", item.route])}
+            />
+          </UI.Box>
+        )
+      })}
     </UI.Box>
   )
 }
