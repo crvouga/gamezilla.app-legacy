@@ -1,6 +1,6 @@
 import { Cmd, pipe, Sub } from "../../../Core";
 import { getBestMove, move, toOpposite } from "../TicTacToe";
-import { BackendModel, BackendMsg, botMove, initSharedModel, inputBot, inputMove, inputPlayerType, isBotTurn, Response, restart, startGame, startPlaying, stopGame, stopPlaying, swapSides, ToBackend, ToFrontend } from "./UserVsBot.Types";
+import { BackendModel, BackendMsg, botMove, initSharedModel, inputBot, inputMove, inputPlayerType, isBotTurn, playAgain, Response, restart, startGame, startPlaying, stopGame, stopPlaying, swapSides, ToBackend, ToFrontend } from "./UserVsBot.Types";
 
 //
 //
@@ -60,6 +60,13 @@ export const updateFromFrontend_: UpdateFromFrontend = ({ sendToClient, sendToRo
     switch (msg[0]) {
         case 'StartGame': {
             const response: Response = ['StartGame_Done', startGame(msg[1], model)]
+            if (response[1].type === 'Err') {
+                return [model, sendToClient(response)]
+            }
+            return [response[1].value, sendToRoom(response)]
+        }
+        case 'PlayAgain': {
+            const response: Response = ['PlayAgain_Done', playAgain(msg[1], model)]
             if (response[1].type === 'Err') {
                 return [model, sendToClient(response)]
             }

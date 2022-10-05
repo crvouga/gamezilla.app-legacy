@@ -1,6 +1,6 @@
 import { Err, Ok, Result } from "../../../Core/Result"
 import { UserId } from "../../../Data"
-import { Board, emptyBoard, move, MoveProblem, PlayerType, Position, toOpposite, toTurn } from "../TicTacToe"
+import { Board, emptyBoard, GameOver, move, MoveProblem, PlayerType, Position, toGameOver, toOpposite, toTurn } from "../TicTacToe"
 
 
 // 
@@ -15,6 +15,7 @@ import { Board, emptyBoard, move, MoveProblem, PlayerType, Position, toOpposite,
 export type SharedModel =
     | SetupModel
     | GameModel
+    | GameOverModel
 
 export type SetupModel = {
     type: "Setup",
@@ -29,6 +30,15 @@ export type GameModel = {
     userPlayerType: PlayerType
     botLevel: BotLevel,
     board: Board
+}
+
+export type GameOverModel = {
+    type: "GameOver",
+    player: UserId.UserId
+    userPlayerType: PlayerType,
+    board: Board,
+    botLevel: BotLevel,
+    gameOver: GameOver
 }
 
 type BotLevel = "Easy" | "Medium" | "Impossible"
@@ -82,6 +92,7 @@ export type Request =
     | InputMove
     | SwapSides
     | Restart
+    | PlayAgain
 
 export type Response =
     | InputBot_Done
@@ -93,6 +104,7 @@ export type Response =
     | InputMove_Done
     | SwapSides_Done
     | Restart_Done
+    | PlayAgain_Done
 
 // 
 // 
@@ -315,6 +327,36 @@ export const restart = ({ userId }: Restart[1], model: SharedModel): Restart_Don
 // 
 // 
 // 
+// 
+
+
+type PlayAgain = ['PlayAgain', { userId: UserId.UserId }]
+type PlayAgain_Done = ['PlayAgain_Done', Result<PlayAgainProblem, SharedModel>]
+type PlayAgainProblem = "not_playing" | "not_in_game_over"
+
+export const playAgain = ({ userId }: PlayAgain[1], model: SharedModel): PlayAgain_Done[1] => {
+    if (model.type !== 'GameOver') {
+        return Err("not_in_game_over")
+    }
+
+    if (model.player !== userId) {
+        return Err("not_playing")
+    }
+
+    return Ok({
+        type: "Game",
+        botLevel: model.botLevel,
+        player: model.player,
+        userPlayerType: model.userPlayerType,
+        board: emptyBoard
+    })
+}
+
+
+// 
+// 
+// 
+// 
 
 type InputMove = ["InputMove", { userId: UserId.UserId, position: Position }]
 type InputMove_Done = ["InputMove_Done", Result<InputMoveProblem, SharedModel>]
@@ -335,10 +377,23 @@ export const inputMove = ({ userId, position }: InputMove[1], model: SharedModel
         return result
     }
 
-    return Ok({
+    const modelNext: SharedModel = {
         ...model,
         board: result.value
+    }
+
+    const gameOver = toGameOver(modelNext.board)
+
+    if (gameOver.type === 'None') {
+        return Ok(modelNext)
+    }
+
+    return Ok({
+        ...modelNext,
+        type: "GameOver",
+        gameOver,
     })
+
 }
 
 // 
@@ -359,10 +414,13 @@ export const swapSides = ({ userId, }: SwapSides[1], model: SharedModel): SwapSi
         return Err("not_playing")
     }
 
-    return Ok({
+    const modelNext: SharedModel = {
         ...model,
+        board: emptyBoard,
         userPlayerType: toOpposite(model.userPlayerType)
-    })
+    }
+
+    return Ok(modelNext)
 }
 
 // 
@@ -388,9 +446,21 @@ export const botMove = ({ position }: BotMove[1], model: SharedModel): BotMove_D
         return result
     }
 
-    return Ok({
+    const modelNext: SharedModel = {
         ...model,
         board: result.value
+    }
+
+    const gameOver = toGameOver(modelNext.board)
+
+    if (gameOver.type === 'None') {
+        return Ok(modelNext)
+    }
+
+    return Ok({
+        ...modelNext,
+        type: "GameOver",
+        gameOver,
     })
 
 }

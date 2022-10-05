@@ -3,7 +3,7 @@ import * as UI from "../../../UI";
 import * as Store from "../../../Store";
 import { theme, PlayerType, playerTypes, ViewBoard, ViewSlot, toTurn } from "../TicTacToe";
 import { BannerArt } from "../Views";
-import { GameModel, BackendModel, botLevels, FrontendModel, FrontendMsg, initSharedModel, startGame, ToBackend, ToFrontend, inputBot, inputPlayerType, inputPlayerTypeToString, inputBotToString } from "./UserVsBot.Types";
+import { GameModel, BackendModel, botLevels, FrontendModel, FrontendMsg, initSharedModel, startGame, ToBackend, ToFrontend, inputBot, inputPlayerType, inputPlayerTypeToString, inputBotToString, GameOverModel } from "./UserVsBot.Types";
 import { UserId } from "../../../Data";
 
 //
@@ -36,6 +36,7 @@ export const update = ({ sendToBackend }: { sendToBackend: (msg: ToBackend) => C
         case "InputBot":
         case 'StopGame':
         case 'InputMove':
+        case 'PlayAgain':
         case 'Restart':
         case 'SwapSides':
         case 'InputPlayerType': {
@@ -46,6 +47,7 @@ export const update = ({ sendToBackend }: { sendToBackend: (msg: ToBackend) => C
 
 export const updateFromBackend = (msg: ToFrontend, model: Model): [Model, Cmd.Cmd<Msg>] => {
     switch (msg[0]) {
+        case 'PlayAgain_Done':
         case 'BotMove_Done':
         case 'StartGame_Done':
         case 'StartPlaying_Done':
@@ -168,6 +170,7 @@ export const View = ({ goBack, model, dispatch, goHome, roomAvatarGroup, store, 
                         ))}
                     </UI.ToggleButtonGroup>
                 </UI.Tooltip>
+
             </UI.Box>
 
 
@@ -192,7 +195,21 @@ export const View = ({ goBack, model, dispatch, goHome, roomAvatarGroup, store, 
                 <ViewPlayerGameSlot model={model} playerType="O" store={store} />
             </UI.Box>
 
-            <ViewBoard board={model.board} onClick={(position) => dispatch(['InputMove', { userId: currentUserId, position }])} />
+            <UI.Box sx={{ width: "100%", position: "relative", aspectRatio: 1, overflow: "hidden" }}>
+                <ViewBoard board={model.board} onClick={(position) => dispatch(['InputMove', { userId: currentUserId, position }])} />
+                <UI.Fade in={model.type === 'GameOver'}>
+                    <UI.Box
+                        onClick={() => dispatch(['PlayAgain', { userId: currentUserId }])}
+                        sx={{
+                            position: "absolute", inset: 0,
+                            backgroundColor: "rgba(0, 0, 0, 0.4)", color: "#fff",
+                            display: 'flex', placeContent: "center center", flexDirection: "column"
+                        }}
+                    >
+                        <ViewGameOverMessage store={store} currentUserId={currentUserId} model={model} />
+                    </UI.Box>
+                </UI.Fade>
+            </UI.Box>
         </UI.Box>
 
         <UI.Box sx={{ display: 'flex' }}>
@@ -204,7 +221,7 @@ export const View = ({ goBack, model, dispatch, goHome, roomAvatarGroup, store, 
                 label="Exit"
             />
             <UI.ActionButton
-                onClick={() => { }}
+                onClick={() => dispatch(['SwapSides', { userId: currentUserId }])}
                 icon={<UI.Icons.SwapHoriz />}
                 label="Swap"
             />
@@ -216,8 +233,90 @@ export const View = ({ goBack, model, dispatch, goHome, roomAvatarGroup, store, 
         </UI.Box>
 
     </UI.FillBox>
+
+
 }
 
+const ViewGameOverMessage = ({ model, store, currentUserId }: { model: Model, currentUserId: UserId.UserId, store: Store.Model }) => {
+    if (model.type !== 'GameOver') {
+        return <></>
+    }
+    switch (model.gameOver.type) {
+        case 'Tie': {
+            return <>
+                <UI.Box sx={{ flex: 1 }} />
+
+                <UI.Box sx={{ display: 'flex', placeContent: "center center", flex: 1 }}>
+                    <UI.Typography sx={{ fontSize: 72 }} color="inherit" align="center">
+                        Tie
+                    </UI.Typography>
+                </UI.Box>
+
+                <UI.Box sx={{ flex: 1 }} />
+            </>
+        }
+
+        case 'Win': {
+            const isCurrentUserPlaying = model.player === currentUserId
+            const didUserWin = model.userPlayerType === model.gameOver.winner
+
+            if (isCurrentUserPlaying && didUserWin) {
+                return <>
+                    <UI.Box sx={{ flex: 1 }} />
+
+                    <UI.Box sx={{ display: 'flex', placeContent: "center center", flex: 1 }}>
+                        <UI.Typography sx={{ fontSize: 72 }} color="inherit" align="center">
+                            You Won
+                        </UI.Typography>
+                    </UI.Box>
+
+                    <UI.Box sx={{ flex: 1 }} />
+                </>
+            }
+
+            if (isCurrentUserPlaying && !didUserWin) {
+                return <>
+                    <UI.Box sx={{ flex: 1 }} />
+
+                    <UI.Box sx={{ display: 'flex', placeContent: "center center", flex: 1 }}>
+                        <UI.Typography sx={{ fontSize: 72 }} color="inherit" align="center">
+                            You Lost
+                        </UI.Typography>
+                    </UI.Box>
+
+                    <UI.Box sx={{ flex: 1 }} />
+                </>
+            }
+
+
+
+            return <>
+                <UI.Box sx={{ flex: 1 }} />
+
+                <UI.Box sx={{
+                    display: 'flex',
+                    alignItems: 'center', justifyContent: "center",
+                    flex: 1
+                }}>
+                    {didUserWin ? (
+                        <UI.Avatar sx={{ marginRight: 2, width: 64, height: 64 }} src={store.Profile[model.player]?.avatarUrl} />
+                    ) : (
+                        <UI.Icons.SmartToy sx={{ marginRight: 2, width: 64, height: 64 }} />
+                    )}
+                    <UI.Typography sx={{ fontSize: 64 }} color="inherit" align="center">
+                        Won
+                    </UI.Typography>
+                </UI.Box>
+
+                <UI.Box sx={{ flex: 1 }} />
+            </>
+
+
+
+        }
+    }
+
+}
 
 const ViewHeaderPlayerSlot = ({ playerType, model, store, }: { playerType: PlayerType, model: Model, store: Store.Model, }) => {
     const iconSx = { width: 42, height: 42, }
@@ -239,7 +338,7 @@ const ViewHeaderPlayerSlot = ({ playerType, model, store, }: { playerType: Playe
                             <UI.Icons.QuestionMark />
                         </UI.Avatar>
                         <UI.Typography variant="caption" color="inherit" noWrap sx={{ textOverflow: "ellipsis" }}>
-                            {model.player === "None" ? "?" : store.Profile[model.player]?.username}
+                            {model.player === "None" ? "..." : store.Profile[model.player]?.username}
                         </UI.Typography>
                     </>
                 ) : (
@@ -266,7 +365,7 @@ export const ViewPlayerGameSlot = ({
     playerType,
     model,
 }: {
-    model: GameModel,
+    model: GameModel | GameOverModel,
     store: Store.Model
     playerType: PlayerType,
 }) => {
@@ -277,7 +376,7 @@ export const ViewPlayerGameSlot = ({
         height: 20,
     }
 
-    const isTurn = toTurn(model.board) === playerType
+    const isTurn = model.type === 'Game' && toTurn(model.board) === playerType
 
     return (
         <UI.Paper sx={{ flex: 1, overflow: "hidden", height: "100%", width: '100%' }} variant="outlined">
@@ -310,6 +409,7 @@ export const ViewPlayerGameSlot = ({
                             <UI.Typography noWrap sx={{ flex: 1 }}>
                                 {model.botLevel}
                             </UI.Typography>
+                            {isTurn && <UI.CircularProgress sx={{ marginLeft: 1 }} size={iconSize.width} />}
                         </>
                     )}
                 </UI.Box>
