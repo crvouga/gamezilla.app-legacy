@@ -28,9 +28,17 @@ export const moveTimeLimit: { [moveTimeLimit in MoveTimeLimit]: MoveTimeLimit } 
 
 export const moveTimeLimitToString = (timeLimit: MoveTimeLimit): string => {
     switch (timeLimit) {
-        case 5: return "5 sec"
-        case 7: return "7 sec"
-        case 9: return "9 sec"
+        case 5: {
+            return "5 sec"
+        }
+
+        case 7: {
+            return "7 sec"
+        }
+
+        case 9: {
+            return "9 sec"
+        }
     }
 }
 
