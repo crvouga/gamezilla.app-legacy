@@ -753,6 +753,7 @@ const ViewResignButton = ({ currentUserId, model, dispatch }: { currentUserId: U
   return (
     <>
       <UI.ActionButton
+
         icon={<UI.Icons.Flag />}
         label="Resign"
         onClick={() => dispatch(["OpenModal", "Resignation"])}

@@ -612,22 +612,25 @@ export const ActionButton = ({
   label,
   icon,
   onClick,
+  disabled = false
 }: {
   label: string
   icon: ReactNode
   onClick: () => void
+  disabled?: boolean
 }) => {
+  const theme = useTheme()
   return (
     <ButtonBase
       onClick={onClick}
       sx={{
-        color: "inherit",
         paddingY: 0,
         paddingX: 2,
         display: "flex",
         flexDirection: "column",
         flex: 1,
         width: "100%",
+        color: disabled ? theme.palette.action.disabled : theme.palette.action.active
       }}
     >
       {icon}

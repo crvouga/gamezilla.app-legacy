@@ -123,6 +123,22 @@ export const inputPlayerType = ({ userId, playerType }: InputPlayerType[1], mode
     return Ok(modelNew)
 }
 
+export const inputPlayerTypeToString = (result: InputPlayerType_Done[1]): string => {
+    if (result.type === 'Ok') {
+        return ""
+    }
+
+    switch (result.error) {
+        case 'not_in_setup': {
+            return "Must be in setup mode to change player player"
+        }
+
+        case 'not_playing': {
+            return "Must be playing to change"
+        }
+    }
+}
+
 // 
 // 
 // 
@@ -150,6 +166,22 @@ export const inputBot = ({ userId, botLevel }: InputBot[1], model: SharedModel):
     }
 
     return Ok(modelNew)
+}
+
+export const inputBotToString = (result: InputBot_Done[1]): string => {
+    if (result.type === 'Ok') {
+        return ""
+    }
+
+    switch (result.error) {
+        case 'not_in_setup': {
+            return "Must be in setup mode to change"
+        }
+
+        case 'not_playing': {
+            return "Must be playing to change"
+        }
+    }
 }
 
 // 
