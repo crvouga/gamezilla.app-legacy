@@ -1,8 +1,9 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react';
+import { pipe } from '../../../Core';
 import { ProfileAvatar, UserId, Username } from "../../../Data";
 import * as Store from "../../../Store";
 import * as UI from "../../../UI";
-import { emptyBoard } from '../TicTacToe';
+import { emptyBoard, setSlot } from '../TicTacToe';
 import { View } from "./UserVsBot.Frontend";
 
 // 
@@ -75,8 +76,8 @@ const Template: ComponentStory<typeof View> = (args) => {
     )
 }
 
-export const GameSetupCurrentPlayer = Template.bind({})
-GameSetupCurrentPlayer.args = {
+export const SetupCurrentPlayer = Template.bind({})
+SetupCurrentPlayer.args = {
     model: {
         type: "Setup",
         botLevel: "Medium",
@@ -85,8 +86,8 @@ GameSetupCurrentPlayer.args = {
     }
 }
 
-export const GameSetupNoPlayer = Template.bind({})
-GameSetupNoPlayer.args = {
+export const SetupNoPlayer = Template.bind({})
+SetupNoPlayer.args = {
     model: {
         type: "Setup",
         botLevel: "Medium",
@@ -95,8 +96,8 @@ GameSetupNoPlayer.args = {
     }
 }
 
-export const GameSetupOtherPlayer = Template.bind({})
-GameSetupOtherPlayer.args = {
+export const SetupOtherPlayer = Template.bind({})
+SetupOtherPlayer.args = {
     model: {
         type: "Setup",
         botLevel: "Medium",
@@ -105,13 +106,104 @@ GameSetupOtherPlayer.args = {
     }
 }
 
-export const GameStartedCurrentUserTurn = Template.bind({})
-GameStartedCurrentUserTurn.args = {
+export const GameCurrentUserTurn = Template.bind({})
+GameCurrentUserTurn.args = {
     model: {
         type: "Game",
         botLevel: "Medium",
         userPlayerType: "X",
         board: emptyBoard,
         player: currentUserId
+    }
+}
+
+export const GameBotTurn = Template.bind({})
+GameBotTurn.args = {
+    model: {
+        type: "Game",
+        botLevel: "Medium",
+        userPlayerType: "X",
+        board: pipe(emptyBoard, board => setSlot(board, { column: 0, row: 0 }, "X")),
+        player: currentUserId
+    }
+}
+
+export const CurrentUserLost = Template.bind({})
+CurrentUserLost.args = {
+    model: {
+        type: "GameOver",
+        botLevel: "Medium",
+        userPlayerType: "O",
+        board: [
+            ["X", "O", "Empty"],
+            ["X", "O", "Empty"],
+            ["X", "Empty", "Empty"],
+        ],
+        player: currentUserId,
+        gameOver: { type: "Win", winner: "X" }
+    }
+}
+
+export const CurrentUserWon = Template.bind({})
+CurrentUserWon.args = {
+    model: {
+        type: "GameOver",
+        botLevel: "Medium",
+        userPlayerType: "X",
+        board: [
+            ["X", "O", "Empty"],
+            ["X", "O", "Empty"],
+            ["X", "Empty", "Empty"],
+        ],
+        player: currentUserId,
+        gameOver: { type: "Win", winner: "X" }
+    }
+}
+
+export const OtherPlayerWon = Template.bind({})
+OtherPlayerWon.args = {
+    model: {
+        type: "GameOver",
+        botLevel: "Medium",
+        userPlayerType: "X",
+        board: [
+            ["X", "O", "Empty"],
+            ["X", "O", "Empty"],
+            ["X", "Empty", "Empty"],
+        ],
+        player: userB.userId,
+        gameOver: { type: "Win", winner: "X" }
+    }
+}
+
+export const OtherPlayerLost = Template.bind({})
+OtherPlayerLost.args = {
+    model: {
+        type: "GameOver",
+        botLevel: "Medium",
+        userPlayerType: "O",
+        board: [
+            ["X", "O", "Empty"],
+            ["X", "O", "Empty"],
+            ["X", "Empty", "Empty"],
+        ],
+        player: userB.userId,
+        gameOver: { type: "Win", winner: "X" }
+    }
+}
+
+export const Tie = Template.bind({})
+Tie.args = {
+    model: {
+        type: "GameOver",
+        botLevel: "Medium",
+        userPlayerType: "O",
+        board: [
+            ["X", "O", "X"],
+            ["X", "O", "X"],
+            ["O", "X", "O"],
+        ],
+        player: currentUserId,
+        gameOver: { type: "Tie", }
     }
 }
