@@ -1,6 +1,5 @@
 import * as UI from "../../UI"
 
-
 export const theme = {
   // lightSquare: "#EBEBD0",
   // darkSquare: "#779455",
@@ -9,7 +8,13 @@ export const theme = {
   pawn: "#93BA46",
 }
 
-export const toChecker = ({ x, y }: { x: number, y: number }): "Light" | "Dark" => {
+export const toChecker = ({
+  x,
+  y,
+}: {
+  x: number
+  y: number
+}): "Light" | "Dark" => {
   if ((isEven(x) && isOdd(y)) || (isOdd(x) && isEven(y))) {
     return "Light"
   }
@@ -18,31 +23,32 @@ export const toChecker = ({ x, y }: { x: number, y: number }): "Light" | "Dark" 
 const isEven = (x: number) => x % 2 === 0
 const isOdd = (x: number) => !isEven(x)
 
-
 export const BannerArt = ({ title }: { title: string }) => {
   const columnCount = 8
   const rowCount = 4
   return (
     <UI.AspectRatio aspectRatio={Math.pow(3 / 4, 4)}>
-
       <UI.Box sx={{ width: "100%", position: "relative" }}>
         <svg
           width="100%"
           height="100%"
           viewBox={[0, 0, columnCount, rowCount].join(" ")}
         >
-          {[...Array(columnCount)].map((_, x) => (
+          {[...Array(columnCount)].map((_, x) =>
             [...Array(rowCount)].map((_, y) => (
               <rect
                 x={x}
                 y={y}
                 width={1}
                 height={1}
-                fill={toChecker({ x, y }) === 'Light' ? theme.lightSquare : theme.darkSquare}
+                fill={
+                  toChecker({ x, y }) === "Light"
+                    ? theme.lightSquare
+                    : theme.darkSquare
+                }
               />
-            )
-            )
-          ))}
+            )),
+          )}
         </svg>
       </UI.Box>
 
@@ -53,11 +59,12 @@ export const BannerArt = ({ title }: { title: string }) => {
           left: 0,
           width: "100%",
           height: "100%",
-          display: 'flex',
+          display: "flex",
           flexDirection: "column",
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}>
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 45 45"
@@ -84,10 +91,11 @@ export const BannerArt = ({ title }: { title: string }) => {
           left: 0,
           width: "100%",
           height: "100%",
-          display: 'flex',
+          display: "flex",
           flexDirection: "column",
           background: `linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.3))`,
-        }}>
+        }}
+      >
         <UI.Box sx={{ flex: 1 }} />
         <UI.Typography
           sx={{ paddingX: 2, paddingBottom: 1 }}

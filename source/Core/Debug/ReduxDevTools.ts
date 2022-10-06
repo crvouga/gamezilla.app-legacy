@@ -49,13 +49,13 @@ interface Monitor {
   type: "DISPATCH"
   payload: {
     type:
-    | "JUMP_TO_STATE"
-    | "JUMP_TO_ACTION"
-    | "RESET"
-    | "ROLLBACK"
-    | "COMMIT"
-    | "IMPORT_STATE"
-    | "TOGGLE_ACTION"
+      | "JUMP_TO_STATE"
+      | "JUMP_TO_ACTION"
+      | "RESET"
+      | "ROLLBACK"
+      | "COMMIT"
+      | "IMPORT_STATE"
+      | "TOGGLE_ACTION"
     [k: string]: unknown
   }
   [k: string]: unknown
@@ -160,8 +160,8 @@ const handleIncomingMsg = <Model, Msg>({
 ) => Result.Result<string, Task.Task<void>>) => {
   const dispatchToApp =
     (m: unknown): Task.Task<void> =>
-      async () =>
-        dispatch(m as Msg)
+    async () =>
+      dispatch(m as Msg)
 
   const initAgain: Task.Task<void> = pipe(
     async () => {
@@ -175,13 +175,13 @@ const handleIncomingMsg = <Model, Msg>({
 
   const restart =
     (model: Model): Task.Task<void> =>
-      async () =>
-        connection.init(model)
+    async () =>
+      connection.init(model)
 
   const liftState =
     (state: LiftedState<Model>): Task.Task<void> =>
-      async () =>
-        connection.send(null, state)
+    async () =>
+      connection.send(null, state)
 
   const toggle = toggleAction(dispatch)
 
@@ -229,7 +229,7 @@ const handleIncomingMsg = <Model, Msg>({
             )
 
           case "COMMIT":
-            return Result.Ok(async () => { })
+            return Result.Ok(async () => {})
           // return Result.Ok(restart(debug$.getValue()[1]))
 
           case "IMPORT_STATE":
@@ -372,61 +372,61 @@ const parseToggleAction = <Model>(
 
 const toggleAction =
   <Model, Msg>(dispatch: Dispatch<MsgWithDebug<Model, Msg>>) =>
-    (
-      id: number,
-      liftedState: LiftedState<Model>,
-    ): Task.Task<LiftedState<Model>> =>
-      async () => {
-        const state = unsafeCopy(liftedState)
+  (
+    id: number,
+    liftedState: LiftedState<Model>,
+  ): Task.Task<LiftedState<Model>> =>
+  async () => {
+    const state = unsafeCopy(liftedState)
 
-        const { skippedActionIds, stagedActionIds, computedStates, actionsById } =
-          state
+    const { skippedActionIds, stagedActionIds, computedStates, actionsById } =
+      state
 
-        const skippedIndex = skippedActionIds.indexOf(id)
-        const skipped = skippedIndex !== -1
-        const actionIndex = stagedActionIds.indexOf(id)
+    const skippedIndex = skippedActionIds.indexOf(id)
+    const skipped = skippedIndex !== -1
+    const actionIndex = stagedActionIds.indexOf(id)
 
-        if (actionIndex === -1) {
-          return state
-        }
+    if (actionIndex === -1) {
+      return state
+    }
 
-        dispatch({
-          type: "__DebugUpdateModel__",
-          // @ts-ignore
-          payload: computedStates[actionIndex - 1].state,
-        })
+    dispatch({
+      type: "__DebugUpdateModel__",
+      // @ts-ignore
+      payload: computedStates[actionIndex - 1].state,
+    })
 
-        const start = skipped ? actionIndex : actionIndex + 1
-        const end = stagedActionIds.length
+    const start = skipped ? actionIndex : actionIndex + 1
+    const end = stagedActionIds.length
 
-        for (let i = start; i < end; i++) {
-          const currentActionId = stagedActionIds[i]
+    for (let i = start; i < end; i++) {
+      const currentActionId = stagedActionIds[i]
 
-          if (
-            i !== actionIndex &&
-            currentActionId &&
-            skippedActionIds.indexOf(currentActionId) !== -1
-          ) {
-            continue // it's already skipped
-          }
-
-          if (currentActionId) {
-            dispatch({
-              type: "__DebugApplyMsg__",
-              // @ts-ignore
-              payload: actionsById[currentActionId].action,
-            })
-          }
-        }
-
-        if (skipped) {
-          skippedActionIds.splice(skippedIndex, 1)
-        } else {
-          skippedActionIds.push(id)
-        }
-
-        return state
+      if (
+        i !== actionIndex &&
+        currentActionId &&
+        skippedActionIds.indexOf(currentActionId) !== -1
+      ) {
+        continue // it's already skipped
       }
+
+      if (currentActionId) {
+        dispatch({
+          type: "__DebugApplyMsg__",
+          // @ts-ignore
+          payload: actionsById[currentActionId].action,
+        })
+      }
+    }
+
+    if (skipped) {
+      skippedActionIds.splice(skippedIndex, 1)
+    } else {
+      skippedActionIds.push(id)
+    }
+
+    return state
+  }
 
 // poor man deep clone...
 const unsafeCopy = <A>(a: A): A => {
@@ -448,7 +448,7 @@ export const withDebugger = <Model, Msg>(
   const maybeConnection = getConnection<Model, Msg>(window)
 
   if (maybeConnection.type === "None") {
-    return { program, stopDebugger: () => { } }
+    return { program, stopDebugger: () => {} }
   }
 
   const connection = maybeConnection.value

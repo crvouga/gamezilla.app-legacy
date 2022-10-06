@@ -9,7 +9,7 @@ import {
   FrontendModel,
   FrontendMsg,
   ToBackend,
-  ToFrontend
+  ToFrontend,
 } from "./TicTacToe.Types"
 import * as UserVsBot from "./UserVsBot/UserVsBot.Frontend"
 import * as UserVsUser from "./UserVsUser/UserVsUser.Frontend"
@@ -26,7 +26,7 @@ import { BannerArt } from "./Views"
 export type Model = FrontendModel
 
 export const init: Model = {
-  mode: "None"
+  mode: "None",
 }
 
 //
@@ -52,27 +52,34 @@ export const update = (
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
-    case 'InputMode': {
+    case "InputMode": {
       return [model, sendToBackend(msg)]
     }
 
-    case 'UserVsUser': {
-      if (model.mode === 'UserVsUser') {
-        const [child, cmd] = UserVsUser.update({ currentUserId, sendToBackend: msg => sendToBackend(['UserVsUser', msg]) }, msg[1], model.child)
+    case "UserVsUser": {
+      if (model.mode === "UserVsUser") {
+        const [child, cmd] = UserVsUser.update(
+          {
+            currentUserId,
+            sendToBackend: (msg) => sendToBackend(["UserVsUser", msg]),
+          },
+          msg[1],
+          model.child,
+        )
         return [{ mode: "UserVsUser", child }, tagCmd("UserVsUser", cmd)]
       }
       return [model, Cmd.None]
     }
 
-    case 'UserVsBot': {
-      if (model.mode === 'UserVsBot') {
+    case "UserVsBot": {
+      if (model.mode === "UserVsBot") {
         const [child, cmd] = UserVsBot.update(
           {
             // currentUserId,
-            sendToBackend: (msg) => sendToBackend(['UserVsBot', msg])
+            sendToBackend: (msg) => sendToBackend(["UserVsBot", msg]),
           },
           msg[1],
-          model.child
+          model.child,
         )
         return [{ mode: "UserVsBot", child }, tagCmd("UserVsBot", cmd)]
       }
@@ -90,10 +97,10 @@ export const updateFromBackend = (
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
-    case 'InputMode_Done': {
+    case "InputMode_Done": {
       const result = msg[1]
 
-      if (result.type === 'Err') {
+      if (result.type === "Err") {
         return [model, Cmd.None]
       }
 
@@ -102,8 +109,8 @@ export const updateFromBackend = (
       return [modelNew, Cmd.None]
     }
 
-    case 'UserVsUser': {
-      if (model.mode === 'UserVsUser') {
+    case "UserVsUser": {
+      if (model.mode === "UserVsUser") {
         const [child, cmd] = UserVsUser.updateFromBackend(msg[1], model.child)
         return [{ mode: "UserVsUser", child }, tagCmd("UserVsUser", cmd)]
       }
@@ -111,9 +118,8 @@ export const updateFromBackend = (
       return [model, Cmd.None]
     }
 
-
-    case 'UserVsBot': {
-      if (model.mode === 'UserVsBot') {
+    case "UserVsBot": {
+      if (model.mode === "UserVsBot") {
         const [child, cmd] = UserVsBot.updateFromBackend(msg[1], model.child)
         return [{ mode: "UserVsBot", child }, tagCmd("UserVsBot", cmd)]
       }
@@ -127,32 +133,43 @@ export const updateFromBackend = (
   }
 }
 
-
 export const mergeWithBackend = (
   frontendModel: FrontendModel,
   backendModel: BackendModel,
 ): FrontendModel => {
   switch (backendModel.mode) {
-    case 'None': {
+    case "None": {
       return {
-        mode: "None"
+        mode: "None",
       }
     }
-    case 'UserVsUser': {
-      const frontendModelChild = frontendModel.mode === 'UserVsUser' ? frontendModel.child : UserVsUser.init
+    case "UserVsUser": {
+      const frontendModelChild =
+        frontendModel.mode === "UserVsUser"
+          ? frontendModel.child
+          : UserVsUser.init
 
       return {
         mode: "UserVsUser",
-        child: UserVsUser.mergeWithBackend(frontendModelChild, backendModel.child)
+        child: UserVsUser.mergeWithBackend(
+          frontendModelChild,
+          backendModel.child,
+        ),
       }
     }
 
-    case 'UserVsBot': {
-      const frontendModelChild = frontendModel.mode === 'UserVsBot' ? frontendModel.child : UserVsBot.init({ userId: "None" })
+    case "UserVsBot": {
+      const frontendModelChild =
+        frontendModel.mode === "UserVsBot"
+          ? frontendModel.child
+          : UserVsBot.init({ userId: "None" })
 
       return {
         mode: "UserVsBot",
-        child: UserVsBot.mergeWithBackend(frontendModelChild, backendModel.child)
+        child: UserVsBot.mergeWithBackend(
+          frontendModelChild,
+          backendModel.child,
+        ),
       }
     }
   }
@@ -167,7 +184,6 @@ export const mergeWithBackend = (
 //
 
 const iconSize = 58
-
 
 export const View = ({
   currentUserId,
@@ -196,69 +212,107 @@ export const View = ({
   )
 
   switch (model.mode) {
-    case 'None': {
-      return <UI.FillBox>
-        <UI.Header left={homeButton} title="" right={roomAvatarGroup} />
-        <BannerArt title="Tic Tac Toe" />
-        <UI.Box sx={{ flex: 1, padding: 2, gap: 2, display: "flex" }} >
-          <UI.Box sx={{ width: "50%" }}>
-            <GameModeCard
-              leftIcon={<UI.Icons.Person sx={{ width: iconSize, height: iconSize }} />}
-              rightIcon={<UI.Icons.Person sx={{ width: iconSize, height: iconSize }} />}
-              title="Vs User"
-              onClick={() => dispatch(['InputMode', { mode: "UserVsUser", userId: currentUserId }])}
-            />
+    case "None": {
+      return (
+        <UI.FillBox>
+          <UI.Header
+            left={homeButton}
+            title=""
+            right={roomAvatarGroup}
+          />
+          <BannerArt title="Tic Tac Toe" />
+          <UI.Box sx={{ flex: 1, padding: 2, gap: 2, display: "flex" }}>
+            <UI.Box sx={{ width: "50%" }}>
+              <GameModeCard
+                leftIcon={
+                  <UI.Icons.Person sx={{ width: iconSize, height: iconSize }} />
+                }
+                rightIcon={
+                  <UI.Icons.Person sx={{ width: iconSize, height: iconSize }} />
+                }
+                title="Vs User"
+                onClick={() =>
+                  dispatch([
+                    "InputMode",
+                    { mode: "UserVsUser", userId: currentUserId },
+                  ])
+                }
+              />
+            </UI.Box>
+            <UI.Box sx={{ width: "50%" }}>
+              <GameModeCard
+                leftIcon={
+                  <UI.Icons.Person sx={{ width: iconSize, height: iconSize }} />
+                }
+                rightIcon={
+                  <UI.Icons.SmartToy
+                    sx={{ width: iconSize, height: iconSize }}
+                  />
+                }
+                title="Vs Bot"
+                onClick={() =>
+                  dispatch([
+                    "InputMode",
+                    { mode: "UserVsBot", userId: currentUserId },
+                  ])
+                }
+              />
+            </UI.Box>
           </UI.Box>
-          <UI.Box sx={{ width: "50%" }}>
-            <GameModeCard
-              leftIcon={<UI.Icons.Person sx={{ width: iconSize, height: iconSize }} />}
-              rightIcon={<UI.Icons.SmartToy sx={{ width: iconSize, height: iconSize }} />}
-              title="Vs Bot"
-              onClick={() => dispatch(['InputMode', { mode: "UserVsBot", userId: currentUserId }])}
-            />
+          <UI.Box sx={{ padding: 2 }}>
+            <UI.Button
+              fullWidth
+              variant="outlined"
+              onClick={onCloseGame}
+            >
+              Close
+            </UI.Button>
           </UI.Box>
-        </UI.Box>
-        <UI.Box sx={{ padding: 2 }}>
-          <UI.Button fullWidth variant="outlined" onClick={onCloseGame}>
-            Close
-          </UI.Button>
-        </UI.Box>
-      </UI.FillBox>
+        </UI.FillBox>
+      )
     }
 
-    case 'UserVsUser': {
-      return <UserVsUser.View
-        onCloseGame={() => dispatch(['InputMode', { mode: "None", userId: currentUserId }])}
-        currentUserId={currentUserId}
-        store={store}
-        model={model.child}
-        dispatch={msg => dispatch(['UserVsUser', msg])}
-        goHome={goHome}
-        roomAvatarGroup={roomAvatarGroup}
-      />
+    case "UserVsUser": {
+      return (
+        <UserVsUser.View
+          onCloseGame={() =>
+            dispatch(["InputMode", { mode: "None", userId: currentUserId }])
+          }
+          currentUserId={currentUserId}
+          store={store}
+          model={model.child}
+          dispatch={(msg) => dispatch(["UserVsUser", msg])}
+          goHome={goHome}
+          roomAvatarGroup={roomAvatarGroup}
+        />
+      )
     }
 
-    case 'UserVsBot': {
-      return <UserVsBot.View
-        goBack={() => dispatch(['InputMode', { mode: "None", userId: currentUserId }])}
-        currentUserId={currentUserId}
-        store={store}
-        model={model.child}
-        dispatch={msg => dispatch(['UserVsBot', msg])}
-        goHome={goHome}
-        roomAvatarGroup={roomAvatarGroup}
-      />
+    case "UserVsBot": {
+      return (
+        <UserVsBot.View
+          goBack={() =>
+            dispatch(["InputMode", { mode: "None", userId: currentUserId }])
+          }
+          currentUserId={currentUserId}
+          store={store}
+          model={model.child}
+          dispatch={(msg) => dispatch(["UserVsBot", msg])}
+          goHome={goHome}
+          roomAvatarGroup={roomAvatarGroup}
+        />
+      )
     }
   }
 }
 
-// 
-// 
-// 
-// 
-// 
 //
-// 
+//
+//
+//
+//
+//
+//
 
 export const CoverArt = () => {
   const positions: [Position, Slot][] = [

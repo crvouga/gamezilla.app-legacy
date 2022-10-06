@@ -46,30 +46,30 @@ export const init = initSharedModel
 
 export type Msg = BackendMsg
 
-export const update = ({
-  sendToRoom,
-}: {
-  sendToRoom: (msg: ToFrontend) => Cmd.Cmd<never>
-},
+export const update = (
+  {
+    sendToRoom,
+  }: {
+    sendToRoom: (msg: ToFrontend) => Cmd.Cmd<never>
+  },
   msg: Msg,
-  model: Model
+  model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
-
   switch (msg[0]) {
     case "RoundCountDown": {
       const result = roundCountDown(model)
 
-      const modelNew = result.type === 'Err' ? model : result.value
+      const modelNew = result.type === "Err" ? model : result.value
 
-      return [modelNew, sendToRoom(['RoundCountDown_Done', result])]
+      return [modelNew, sendToRoom(["RoundCountDown_Done", result])]
     }
 
-    case 'MoveCountDown': {
+    case "MoveCountDown": {
       const result = moveCountDown(model)
 
-      const modelNew = result.type === 'Err' ? model : result.value
+      const modelNew = result.type === "Err" ? model : result.value
 
-      return [modelNew, sendToRoom(['MoveCountDown_Done', result])]
+      return [modelNew, sendToRoom(["MoveCountDown_Done", result])]
     }
   }
 }
@@ -146,7 +146,7 @@ export const updateFromFrontend = (
       return [modelNew, sendToRoom(["InputMove_Done", result])]
     }
 
-    case 'NewGame': {
+    case "NewGame": {
       const result = newGame(msg[1], model)
 
       if (result.type === "Err") {
@@ -158,7 +158,7 @@ export const updateFromFrontend = (
       return [modelNew, sendToRoom(["NewGame_Done", result])]
     }
 
-    case 'InputBestOutOf': {
+    case "InputBestOutOf": {
       const result = inputBestOutOf(msg[1], model)
 
       if (result.type === "Err") {
@@ -170,7 +170,7 @@ export const updateFromFrontend = (
       return [modelNew, sendToRoom(["InputBestOutOf_Done", result])]
     }
 
-    case 'InputMoveTimeLimit': {
+    case "InputMoveTimeLimit": {
       const result = inputMoveTimeLimit(msg[1], model)
 
       if (result.type === "Err") {
@@ -182,7 +182,7 @@ export const updateFromFrontend = (
       return [modelNew, sendToRoom(["InputMoveTimeLimit_Done", result])]
     }
 
-    case 'RematchAccept': {
+    case "RematchAccept": {
       const result = rematchAccept(msg[1], model)
       const res: Res = ["RematchAccept_Done", result]
 
@@ -193,7 +193,7 @@ export const updateFromFrontend = (
       return [result.value, sendToRoom(res)]
     }
 
-    case 'RematchAsk': {
+    case "RematchAsk": {
       const result = rematchAsk(msg[1], model)
       const res: Res = ["RematchAsk_Done", result]
 
@@ -204,7 +204,7 @@ export const updateFromFrontend = (
       return [result.value, sendToRoom(res)]
     }
 
-    case 'RematchDecline': {
+    case "RematchDecline": {
       const result = rematchDecline(msg[1], model)
       const res: Res = ["RematchDecline_Done", result]
 
@@ -215,7 +215,7 @@ export const updateFromFrontend = (
       return [result.value, sendToRoom(res)]
     }
 
-    case 'RematchCancel': {
+    case "RematchCancel": {
       const result = rematchCancel(msg[1], model)
       const res: Res = ["RematchCancel_Done", result]
 
@@ -240,31 +240,41 @@ export const updateFromFrontend = (
 //
 //
 
-export const subscriptions = (intervalId: string, model: Model): Sub.Sub<Msg> => {
+export const subscriptions = (
+  intervalId: string,
+  model: Model,
+): Sub.Sub<Msg> => {
   switch (model.type) {
-    case 'Setup': {
+    case "Setup": {
       return Sub.None
     }
 
-    case 'GameOver': {
+    case "GameOver": {
       return Sub.None
     }
 
-
-    case 'Game': {
+    case "Game": {
       const currentRound = Round.toCurrent(model.round)
 
       switch (currentRound.type) {
-        case 'RoundStarted': {
+        case "RoundStarted": {
           const turn = toTurn(currentRound.board)
-          return Time.every(`${intervalId}-move-count-down-${turn}`, 1000, (): Msg => ['MoveCountDown'])
+          return Time.every(
+            `${intervalId}-move-count-down-${turn}`,
+            1000,
+            (): Msg => ["MoveCountDown"],
+          )
         }
 
-        case 'RoundStarting': {
-          return Time.every(`${intervalId}-round-count-down`, 750, (): Msg => ['RoundCountDown'])
+        case "RoundStarting": {
+          return Time.every(
+            `${intervalId}-round-count-down`,
+            750,
+            (): Msg => ["RoundCountDown"],
+          )
         }
 
-        case 'RoundOver': {
+        case "RoundOver": {
           return Sub.None
         }
       }

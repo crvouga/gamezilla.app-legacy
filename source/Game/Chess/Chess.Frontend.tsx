@@ -244,8 +244,8 @@ export const View = ({
         model.requests.InputMode.type === "Failure"
           ? inputModeProblemToString(model.requests.InputMode.problem)
           : model.requests.InputMode.type === "Loading"
-            ? "Loading..."
-            : ""
+          ? "Loading..."
+          : ""
 
       return (
         <UI.FillBox>

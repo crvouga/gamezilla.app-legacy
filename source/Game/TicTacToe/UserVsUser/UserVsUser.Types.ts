@@ -11,34 +11,31 @@ import * as Round from "./Round"
 //
 //
 
-export type SharedModel =
-  | SetupModel
-  | GameModel
-  | GameOverModel
+export type SharedModel = SetupModel | GameModel | GameOverModel
 
 export type SetupModel = {
-  type: "Setup",
-  X: UserId.UserId | "None",
-  O: UserId.UserId | "None",
+  type: "Setup"
+  X: UserId.UserId | "None"
+  O: UserId.UserId | "None"
   maxRoundCount: BestOutOf
   moveTimeLimit: MoveTimeLimit
 }
 
 export type GameModel = {
-  type: "Game",
-  X: UserId.UserId,
-  O: UserId.UserId,
+  type: "Game"
+  X: UserId.UserId
+  O: UserId.UserId
   maxRoundCount: BestOutOf
-  moveTimeLimit: MoveTimeLimit,
-  round: Round.Round,
+  moveTimeLimit: MoveTimeLimit
+  round: Round.Round
 }
 
 export type GameOverModel = {
-  type: "GameOver",
-  X: UserId.UserId,
-  O: UserId.UserId,
+  type: "GameOver"
+  X: UserId.UserId
+  O: UserId.UserId
   maxRoundCount: BestOutOf
-  moveTimeLimit: MoveTimeLimit,
+  moveTimeLimit: MoveTimeLimit
   round: Round.Round
   gameOver: GameOver
   rematch: Rematch
@@ -46,27 +43,27 @@ export type GameOverModel = {
 
 type Rematch =
   | {
-    type: "NotAsking"
-  }
+      type: "NotAsking"
+    }
   | {
-    type: "Asking",
-    asker: TicTacToe.PlayerType
-  }
+      type: "Asking"
+      asker: TicTacToe.PlayerType
+    }
 
 const initCountDown = 5
 
 export type GameOver =
   | {
-    type: "Resignation"
-    resigner: TicTacToe.PlayerType
-  }
+      type: "Resignation"
+      resigner: TicTacToe.PlayerType
+    }
   | {
-    type: "Winner",
-    winner: TicTacToe.PlayerType
-  }
+      type: "Winner"
+      winner: TicTacToe.PlayerType
+    }
   | {
-    type: "Tie"
-  }
+      type: "Tie"
+    }
 
 export type BestOutOf = 1 | 3 | 5 | 7
 
@@ -74,14 +71,20 @@ export const allBestOutOf: BestOutOf[] = [1, 3, 5, 7]
 
 export const bestOutOfToString = (bestOutOf: BestOutOf): string => {
   switch (bestOutOf) {
-    case 1: return "One"
-    case 3: return "Three"
-    case 5: return "Five"
-    case 7: return "Seven"
+    case 1:
+      return "One"
+    case 3:
+      return "Three"
+    case 5:
+      return "Five"
+    case 7:
+      return "Seven"
   }
 }
 
-export const toWinCount = ({ maxRoundCount }: Pick<GameModel, 'maxRoundCount'>): number => {
+export const toWinCount = ({
+  maxRoundCount,
+}: Pick<GameModel, "maxRoundCount">): number => {
   return Math.floor(maxRoundCount / 2) + 1
 }
 
@@ -91,14 +94,22 @@ export const allMoveTimeLimit: MoveTimeLimit[] = [3, 5, 10]
 
 export const moveTimeLimitToString = (moveTimeLimit: MoveTimeLimit): string => {
   switch (moveTimeLimit) {
-    case 3: return "3 Sec"
-    case 5: return "5 Sec"
-    case 10: return "10 Sec"
+    case 3:
+      return "3 Sec"
+    case 5:
+      return "5 Sec"
+    case 10:
+      return "10 Sec"
   }
-
 }
 
-export const initSharedModel = ({ X, O }: { X: SetupModel['X'], O: SetupModel['O'] }): SharedModel => {
+export const initSharedModel = ({
+  X,
+  O,
+}: {
+  X: SetupModel["X"]
+  O: SetupModel["O"]
+}): SharedModel => {
   return {
     type: "Setup",
     O,
@@ -113,7 +124,6 @@ export type FrontendModel = SharedModel & {
 }
 
 export type BackendModel = SharedModel
-
 
 //
 //
@@ -247,10 +257,7 @@ export const stopPlaying = (
 //
 
 type StartGame = ["StartGame", { userId: UserId.UserId }]
-type StartGame_Done = [
-  "StartGame_Done",
-  Result<StartGameProblem, SharedModel>,
-]
+type StartGame_Done = ["StartGame_Done", Result<StartGameProblem, SharedModel>]
 type StartGameProblem =
   | "not_in_setup_mode"
   | "missing_x"
@@ -282,7 +289,6 @@ export const startGame = (
     return Err("missing_o")
   }
 
-
   const modelNew: SharedModel = {
     type: "Game",
     X: model.X,
@@ -291,13 +297,12 @@ export const startGame = (
     maxRoundCount: model.maxRoundCount,
     round: {
       type: "RoundStarting",
-      countDown: 3
-    }
+      countDown: 3,
+    },
   }
 
   return Ok(modelNew)
 }
-
 
 //
 //
@@ -317,9 +322,10 @@ export const resign = (
     return Err("not_in_game_mode")
   }
 
-  const resigner: TicTacToe.PlayerType | "None" = model.O === userId ? 'O' : model.X === userId ? 'X' : 'None'
+  const resigner: TicTacToe.PlayerType | "None" =
+    model.O === userId ? "O" : model.X === userId ? "X" : "None"
 
-  if (resigner === 'None') {
+  if (resigner === "None") {
     return Err("not_playing")
   }
 
@@ -331,8 +337,8 @@ export const resign = (
       resigner,
     },
     rematch: {
-      type: "NotAsking"
-    }
+      type: "NotAsking",
+    },
   }
 
   return Ok(modelNew)
@@ -348,11 +354,12 @@ type InputMove = [
   "InputMove",
   { userId: UserId.UserId; position: TicTacToe.Position },
 ]
-type InputMove_Done = [
-  "InputMove_Done",
-  Result<InputMoveProblem, SharedModel>,
-]
-type InputMoveProblem = TicTacToe.MoveProblem | "not_playing" | "not_game_mode" | "round_not_started"
+type InputMove_Done = ["InputMove_Done", Result<InputMoveProblem, SharedModel>]
+type InputMoveProblem =
+  | TicTacToe.MoveProblem
+  | "not_playing"
+  | "not_game_mode"
+  | "round_not_started"
 
 export const inputMove = (
   { userId, position }: InputMove[1],
@@ -375,7 +382,6 @@ export const inputMove = (
     return Err("not_playing")
   }
 
-
   const { board } = currentRound
 
   const result = TicTacToe.move(board, playerType, position)
@@ -388,14 +394,14 @@ export const inputMove = (
 
   const roundOver = TicTacToe.toGameOver(boardNew)
 
-  if (roundOver.type === 'None') {
+  if (roundOver.type === "None") {
     const modelNew: SharedModel = {
       ...model,
       round: Round.mapCurrent(model.round, () => ({
         type: "RoundStarted",
         board: boardNew,
         moveCountDown: model.moveTimeLimit,
-      }))
+      })),
     }
 
     return Ok(modelNew)
@@ -409,14 +415,14 @@ export const inputMove = (
       board: boardNew,
       next: {
         type: "RoundStarting",
-        countDown: initCountDown
-      }
-    }))
+        countDown: initCountDown,
+      },
+    })),
   }
 
   const gameOver = Round.toGameOver(modelNew)
 
-  if (gameOver.type === 'None') {
+  if (gameOver.type === "None") {
     return Ok(modelNew)
   }
 
@@ -429,24 +435,30 @@ export const inputMove = (
     X: modelNew.X,
     round: modelNew.round,
     rematch: {
-      type: "NotAsking"
-    }
+      type: "NotAsking",
+    },
   })
 }
 
-
-type MoveCountDown = ['MoveCountDown']
-type MoveCountDown_Done = ['MoveCountDown_Done', Result<MoveCountDownProblem, SharedModel>]
-type MoveCountDownProblem = "not_in_game_mode" | "round_not_started" | "no_empty_positions" | InputMoveProblem
+type MoveCountDown = ["MoveCountDown"]
+type MoveCountDown_Done = [
+  "MoveCountDown_Done",
+  Result<MoveCountDownProblem, SharedModel>,
+]
+type MoveCountDownProblem =
+  | "not_in_game_mode"
+  | "round_not_started"
+  | "no_empty_positions"
+  | InputMoveProblem
 
 export const moveCountDown = (model: SharedModel): MoveCountDown_Done[1] => {
-  if (model.type !== 'Game') {
+  if (model.type !== "Game") {
     return Err("not_in_game_mode")
   }
 
   const round = Round.toCurrent(model.round)
 
-  if (round.type !== 'RoundStarted') {
+  if (round.type !== "RoundStarted") {
     return Err("round_not_started")
   }
 
@@ -460,21 +472,21 @@ export const moveCountDown = (model: SharedModel): MoveCountDown_Done[1] => {
       round: Round.mapCurrent(model.round, () => ({
         type: "RoundStarted",
         board,
-        moveCountDown: moveCountDownNew
-      }))
+        moveCountDown: moveCountDownNew,
+      })),
     }
 
     return Ok(modelNew)
   }
 
-
-  // 
+  //
   // Times up. Make a random move for the current player
   //
 
   const emptyPositions = TicTacToe.toEmptyPositions(board)
 
-  const randomPosition = emptyPositions[Math.floor(emptyPositions.length * Math.random())]
+  const randomPosition =
+    emptyPositions[Math.floor(emptyPositions.length * Math.random())]
 
   if (!randomPosition) {
     return Err("no_empty_positions")
@@ -482,25 +494,30 @@ export const moveCountDown = (model: SharedModel): MoveCountDown_Done[1] => {
 
   const turn = TicTacToe.toTurn(board)
 
-  const result = inputMove({ userId: model[turn], position: randomPosition }, model)
+  const result = inputMove(
+    { userId: model[turn], position: randomPosition },
+    model,
+  )
 
   return result
 }
 
+//
+//
+//
+//
+//
+//
 
-// 
-// 
-// 
-// 
-// 
-// 
-
-type NewGame = ['NewGame', { userId: UserId.UserId }]
-type NewGame_Done = ['NewGame_Done', Result<NewGameProblem, SharedModel>]
+type NewGame = ["NewGame", { userId: UserId.UserId }]
+type NewGame_Done = ["NewGame_Done", Result<NewGameProblem, SharedModel>]
 type NewGameProblem = "not_playing" | "not_game_over"
 
-export const newGame = ({ userId }: NewGame[1], model: SharedModel): NewGame_Done[1] => {
-  if (model.type !== 'GameOver') {
+export const newGame = (
+  { userId }: NewGame[1],
+  model: SharedModel,
+): NewGame_Done[1] => {
+  if (model.type !== "GameOver") {
     return Err("not_game_over")
   }
 
@@ -513,41 +530,50 @@ export const newGame = ({ userId }: NewGame[1], model: SharedModel): NewGame_Don
     moveTimeLimit: model.moveTimeLimit,
     O: model.O,
     X: model.X,
-    maxRoundCount: model.maxRoundCount
+    maxRoundCount: model.maxRoundCount,
   }
 
   return Ok(modelNew)
 }
 
 export const newGameToString = (result: NewGame_Done[1]): string => {
-  if (result.type === 'Ok') {
+  if (result.type === "Ok") {
     return ""
   }
 
   switch (result.error) {
-    case 'not_game_over': {
+    case "not_game_over": {
       return "Game must be over"
     }
 
-    case 'not_playing': {
+    case "not_playing": {
       return "Must be playing to start a new game"
     }
   }
 }
 
-// 
-// 
-// 
-// 
-// 
-// 
+//
+//
+//
+//
+//
+//
 
-type InputBestOutOf = ["InputBestOutOf", { userId: UserId.UserId, bestOutOf: BestOutOf }]
-type InputBestOutOf_Done = ["InputBestOutOf_Done", Result<InputBestOutOfProblem, SharedModel>]
+type InputBestOutOf = [
+  "InputBestOutOf",
+  { userId: UserId.UserId; bestOutOf: BestOutOf },
+]
+type InputBestOutOf_Done = [
+  "InputBestOutOf_Done",
+  Result<InputBestOutOfProblem, SharedModel>,
+]
 type InputBestOutOfProblem = "not_in_setup_mode" | "not_playing"
 
-export const inputBestOutOf = ({ userId, bestOutOf }: InputBestOutOf[1], model: SharedModel): InputBestOutOf_Done[1] => {
-  if (model.type !== 'Setup') {
+export const inputBestOutOf = (
+  { userId, bestOutOf }: InputBestOutOf[1],
+  model: SharedModel,
+): InputBestOutOf_Done[1] => {
+  if (model.type !== "Setup") {
     return Err("not_in_setup_mode")
   }
 
@@ -557,41 +583,52 @@ export const inputBestOutOf = ({ userId, bestOutOf }: InputBestOutOf[1], model: 
 
   const modelNew: SharedModel = {
     ...model,
-    maxRoundCount: bestOutOf
+    maxRoundCount: bestOutOf,
   }
 
   return Ok(modelNew)
 }
 
-export const inputBestOutOfToString = (result: InputBestOutOf_Done[1]): string => {
-  if (result.type === 'Ok') {
+export const inputBestOutOfToString = (
+  result: InputBestOutOf_Done[1],
+): string => {
+  if (result.type === "Ok") {
     return ""
   }
 
   switch (result.error) {
-    case 'not_in_setup_mode': {
+    case "not_in_setup_mode": {
       return "Must be in setup mode to change"
     }
 
-    case 'not_playing': {
+    case "not_playing": {
       return "Must be playing to change"
     }
   }
 }
 
-// 
-// 
-// 
-// 
-// 
-// 
+//
+//
+//
+//
+//
+//
 
-type InputMoveTimeLimit = ["InputMoveTimeLimit", { userId: UserId.UserId, moveTimeLimit: MoveTimeLimit }]
-type InputMoveTimeLimit_Done = ["InputMoveTimeLimit_Done", Result<InputMoveTimeLimitProblem, SharedModel>]
+type InputMoveTimeLimit = [
+  "InputMoveTimeLimit",
+  { userId: UserId.UserId; moveTimeLimit: MoveTimeLimit },
+]
+type InputMoveTimeLimit_Done = [
+  "InputMoveTimeLimit_Done",
+  Result<InputMoveTimeLimitProblem, SharedModel>,
+]
 type InputMoveTimeLimitProblem = "not_in_setup_mode" | "not_playing"
 
-export const inputMoveTimeLimit = ({ userId, moveTimeLimit }: InputMoveTimeLimit[1], model: SharedModel): InputMoveTimeLimit_Done[1] => {
-  if (model.type !== 'Setup') {
+export const inputMoveTimeLimit = (
+  { userId, moveTimeLimit }: InputMoveTimeLimit[1],
+  model: SharedModel,
+): InputMoveTimeLimit_Done[1] => {
+  if (model.type !== "Setup") {
     return Err("not_in_setup_mode")
   }
 
@@ -601,49 +638,53 @@ export const inputMoveTimeLimit = ({ userId, moveTimeLimit }: InputMoveTimeLimit
 
   const modelNew: SharedModel = {
     ...model,
-    moveTimeLimit
+    moveTimeLimit,
   }
 
   return Ok(modelNew)
 }
 
-export const inputMoveTimeLimitToString = (result: InputMoveTimeLimit_Done[1]): string => {
-  if (result.type === 'Ok') {
+export const inputMoveTimeLimitToString = (
+  result: InputMoveTimeLimit_Done[1],
+): string => {
+  if (result.type === "Ok") {
     return ""
   }
 
   switch (result.error) {
-    case 'not_in_setup_mode': {
+    case "not_in_setup_mode": {
       return "Must be in setup move to change"
     }
 
-    case 'not_playing': {
+    case "not_playing": {
       return "Must be playing to change"
     }
   }
 }
 
-
-// 
-// 
-// 
+//
+//
+//
 // Round Count Down Elapsed
-// 
-// 
-// 
+//
+//
+//
 
-type RoundCountDown = ['RoundCountDown']
-type RoundCountDown_Done = ['RoundCountDown_Done', Result<RoundCountDownProblem, SharedModel>]
+type RoundCountDown = ["RoundCountDown"]
+type RoundCountDown_Done = [
+  "RoundCountDown_Done",
+  Result<RoundCountDownProblem, SharedModel>,
+]
 type RoundCountDownProblem = "not_in_game_mode" | "round_not_starting"
 
 export const roundCountDown = (model: SharedModel): RoundCountDown_Done[1] => {
-  if (model.type !== 'Game') {
+  if (model.type !== "Game") {
     return Err("not_in_game_mode")
   }
 
   const round = Round.toCurrent(model.round)
 
-  if (round.type !== 'RoundStarting') {
+  if (round.type !== "RoundStarting") {
     return Err("round_not_starting")
   }
 
@@ -655,97 +696,109 @@ export const roundCountDown = (model: SharedModel): RoundCountDown_Done[1] => {
       round: Round.mapCurrent(model.round, () => ({
         type: "RoundStarted",
         board: TicTacToe.emptyBoard,
-        moveCountDown: model.moveTimeLimit
-      }))
+        moveCountDown: model.moveTimeLimit,
+      })),
     }
 
     return Ok(modelNew)
   }
 
-
   const modelNew: SharedModel = {
     ...model,
     round: Round.mapCurrent(model.round, () => ({
       type: "RoundStarting",
-      countDown: countDownNew
-    }))
+      countDown: countDownNew,
+    })),
   }
 
   return Ok(modelNew)
 }
 
-
-
-// 
-// 
-// 
+//
+//
+//
 // Rematch
-// 
-// 
-// 
+//
+//
+//
 
-type RematchAsk = ['RematchAsk', { userId: UserId.UserId }]
-type RematchAsk_Done = ['RematchAsk_Done', Result<RematchAskProblem, SharedModel>]
+type RematchAsk = ["RematchAsk", { userId: UserId.UserId }]
+type RematchAsk_Done = [
+  "RematchAsk_Done",
+  Result<RematchAskProblem, SharedModel>,
+]
 type RematchAskProblem = "not_game_over" | "already_asking" | "not_player"
 
-export const rematchAsk = ({ userId }: RematchAsk[1], model: SharedModel): RematchAsk_Done[1] => {
-  if (model.type !== 'GameOver') {
+export const rematchAsk = (
+  { userId }: RematchAsk[1],
+  model: SharedModel,
+): RematchAsk_Done[1] => {
+  if (model.type !== "GameOver") {
     return Err("not_game_over")
   }
 
-
-  if (model.rematch.type === 'Asking') {
+  if (model.rematch.type === "Asking") {
     return Err("already_asking")
   }
 
   if (model.O === userId) {
-    return Ok({ ...model, rematch: { type: "Asking", asker: 'O' } })
+    return Ok({ ...model, rematch: { type: "Asking", asker: "O" } })
   }
 
   if (model.X === userId) {
-    return Ok({ ...model, rematch: { type: "Asking", asker: 'X' } })
+    return Ok({ ...model, rematch: { type: "Asking", asker: "X" } })
   }
 
   return Err("not_player")
 }
 
 export const rematchAskToString = (result: RematchAsk_Done[1]): string => {
-  if (result.type === 'Ok') {
+  if (result.type === "Ok") {
     return ""
   }
 
   switch (result.error) {
-    case 'already_asking': {
+    case "already_asking": {
       return "Already asking for a rematch"
     }
 
-    case 'not_game_over': {
+    case "not_game_over": {
       return "Game must be over to rematch"
     }
 
-    case 'not_player': {
+    case "not_player": {
       return "Must be playing to ask for a rematch"
     }
   }
-
 }
 
-type RematchCancel = ['RematchCancel', { userId: UserId.UserId }]
-type RematchCancel_Done = ['RematchCancel_Done', Result<RematchCancelProblem, SharedModel>]
-type RematchCancelProblem = "not_game_over" | "not_asking" | "not_asker" | "not_player"
+type RematchCancel = ["RematchCancel", { userId: UserId.UserId }]
+type RematchCancel_Done = [
+  "RematchCancel_Done",
+  Result<RematchCancelProblem, SharedModel>,
+]
+type RematchCancelProblem =
+  | "not_game_over"
+  | "not_asking"
+  | "not_asker"
+  | "not_player"
 
-export const rematchCancel = ({ userId }: RematchCancel[1], model: SharedModel): RematchCancel_Done[1] => {
-  if (model.type !== 'GameOver') {
+export const rematchCancel = (
+  { userId }: RematchCancel[1],
+  model: SharedModel,
+): RematchCancel_Done[1] => {
+  if (model.type !== "GameOver") {
     return Err("not_game_over")
   }
 
-  if (model.rematch.type !== 'Asking') {
+  if (model.rematch.type !== "Asking") {
     return Err("not_asking")
   }
 
-  const playerType: TicTacToe.PlayerType | "None" = model.X === userId ? 'X' : model.O === userId ? 'O' : "None"
+  const playerType: TicTacToe.PlayerType | "None" =
+    model.X === userId ? "X" : model.O === userId ? "O" : "None"
 
-  if (playerType === 'None') {
+  if (playerType === "None") {
     return Err("not_player")
   }
 
@@ -756,17 +809,26 @@ export const rematchCancel = ({ userId }: RematchCancel[1], model: SharedModel):
   return Ok({ ...model, rematch: { type: "NotAsking" } })
 }
 
+type RematchDecline = ["RematchDecline", { userId: UserId.UserId }]
+type RematchDecline_Done = [
+  "RematchDecline_Done",
+  Result<RematchDeclineProblem, SharedModel>,
+]
+type RematchDeclineProblem =
+  | "not_game_over"
+  | "not_player"
+  | "is_asker"
+  | "not_asking"
 
-type RematchDecline = ['RematchDecline', { userId: UserId.UserId }]
-type RematchDecline_Done = ['RematchDecline_Done', Result<RematchDeclineProblem, SharedModel>]
-type RematchDeclineProblem = "not_game_over" | "not_player" | "is_asker" | "not_asking"
-
-export const rematchDecline = ({ userId }: RematchDecline[1], model: SharedModel): RematchDecline_Done[1] => {
-  if (model.type !== 'GameOver') {
+export const rematchDecline = (
+  { userId }: RematchDecline[1],
+  model: SharedModel,
+): RematchDecline_Done[1] => {
+  if (model.type !== "GameOver") {
     return Err("not_game_over")
   }
 
-  if (model.rematch.type !== 'Asking') {
+  if (model.rematch.type !== "Asking") {
     return Err("not_asking")
   }
 
@@ -781,16 +843,26 @@ export const rematchDecline = ({ userId }: RematchDecline[1], model: SharedModel
   return Ok({ ...model, rematch: { type: "NotAsking" } })
 }
 
-type RematchAccept = ['RematchAccept', { userId: UserId.UserId }]
-type RematchAccept_Done = ['RematchAccept_Done', Result<RematchAcceptProblem, SharedModel>]
-type RematchAcceptProblem = "not_game_over" | "not_player" | "is_asker" | "not_asking"
+type RematchAccept = ["RematchAccept", { userId: UserId.UserId }]
+type RematchAccept_Done = [
+  "RematchAccept_Done",
+  Result<RematchAcceptProblem, SharedModel>,
+]
+type RematchAcceptProblem =
+  | "not_game_over"
+  | "not_player"
+  | "is_asker"
+  | "not_asking"
 
-export const rematchAccept = ({ userId }: RematchAccept[1], model: SharedModel): RematchAccept_Done[1] => {
-  if (model.type !== 'GameOver') {
+export const rematchAccept = (
+  { userId }: RematchAccept[1],
+  model: SharedModel,
+): RematchAccept_Done[1] => {
+  if (model.type !== "GameOver") {
     return Err("not_game_over")
   }
 
-  if (model.rematch.type !== 'Asking') {
+  if (model.rematch.type !== "Asking") {
     return Err("not_asking")
   }
 
@@ -810,8 +882,7 @@ export const rematchAccept = ({ userId }: RematchAccept[1], model: SharedModel):
     X: model.X,
     round: {
       type: "RoundStarting",
-      countDown: 3
-    }
+      countDown: 3,
+    },
   })
 }
-

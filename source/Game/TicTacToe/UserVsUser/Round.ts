@@ -1,197 +1,200 @@
 import * as TicTacToe from "../TicTacToe"
 
 export type Round =
-    | {
-        type: "RoundStarting",
-        countDown: number
+  | {
+      type: "RoundStarting"
+      countDown: number
     }
-    | {
-        type: "RoundStarted",
-        board: TicTacToe.Board
-        moveCountDown: number
+  | {
+      type: "RoundStarted"
+      board: TicTacToe.Board
+      moveCountDown: number
     }
-    | RoundOver
+  | RoundOver
 
 type RoundOver = {
-    type: "RoundOver",
-    roundOver: TicTacToe.GameOver
-    board: TicTacToe.Board,
-    next: Round
+  type: "RoundOver"
+  roundOver: TicTacToe.GameOver
+  board: TicTacToe.Board
+  next: Round
 }
 
 export const toCurrent = (round: Round): Round => {
-    switch (round.type) {
-        case 'RoundOver': {
-            return toCurrent(round.next)
-        }
-
-        case 'RoundStarted': {
-            return round
-        }
-
-        case 'RoundStarting': {
-            return round
-        }
+  switch (round.type) {
+    case "RoundOver": {
+      return toCurrent(round.next)
     }
+
+    case "RoundStarted": {
+      return round
+    }
+
+    case "RoundStarting": {
+      return round
+    }
+  }
 }
 
 export const toPrevious = (round: Round): RoundOver | { type: "None" } => {
-    switch (round.type) {
-        case 'RoundOver': {
-            const next = round.next
+  switch (round.type) {
+    case "RoundOver": {
+      const next = round.next
 
-            switch (next.type) {
-                case 'RoundOver': {
-                    return toPrevious(round.next)
-                }
-
-                case 'RoundStarted': {
-                    return round
-                }
-
-                case 'RoundStarting': {
-                    return round
-                }
-
-            }
+      switch (next.type) {
+        case "RoundOver": {
+          return toPrevious(round.next)
         }
 
-        case 'RoundStarted': {
-            return { type: "None" }
+        case "RoundStarted": {
+          return round
         }
 
-        case 'RoundStarting': {
-            return { type: "None" }
+        case "RoundStarting": {
+          return round
         }
+      }
     }
+
+    case "RoundStarted": {
+      return { type: "None" }
+    }
+
+    case "RoundStarting": {
+      return { type: "None" }
+    }
+  }
 }
 
-
 export const toCurrentBoard = (round: Round): TicTacToe.Board | null => {
-    switch (round.type) {
-        case 'RoundStarting': {
-            return null
-        }
-
-        case 'RoundStarted': {
-            return round.board
-        }
-
-        case 'RoundOver': {
-            const next = toCurrentBoard(round.next)
-
-            if (next) {
-                return next
-            }
-
-            return round.board
-        }
+  switch (round.type) {
+    case "RoundStarting": {
+      return null
     }
+
+    case "RoundStarted": {
+      return round.board
+    }
+
+    case "RoundOver": {
+      const next = toCurrentBoard(round.next)
+
+      if (next) {
+        return next
+      }
+
+      return round.board
+    }
+  }
 }
 
 export const toCount = (round: Round): number => {
-    switch (round.type) {
-        case 'RoundOver': {
-            return 1 + toCount(round.next)
-        }
-
-        case 'RoundStarted': {
-            return 1
-        }
-
-        case 'RoundStarting': {
-            return 1
-        }
+  switch (round.type) {
+    case "RoundOver": {
+      return 1 + toCount(round.next)
     }
 
-}
-
-export const mapCurrent = (round: Round, updater: (current: Round) => Round): Round => {
-    switch (round.type) {
-        case 'RoundOver': {
-            return {
-                ...round,
-                next: mapCurrent(round.next, updater)
-            }
-        }
-
-        case 'RoundStarted': {
-            return updater(round)
-        }
-
-        case 'RoundStarting': {
-            return updater(round)
-        }
+    case "RoundStarted": {
+      return 1
     }
+
+    case "RoundStarting": {
+      return 1
+    }
+  }
 }
 
-export type Score = { X: number, O: number, Tie: number }
+export const mapCurrent = (
+  round: Round,
+  updater: (current: Round) => Round,
+): Round => {
+  switch (round.type) {
+    case "RoundOver": {
+      return {
+        ...round,
+        next: mapCurrent(round.next, updater),
+      }
+    }
+
+    case "RoundStarted": {
+      return updater(round)
+    }
+
+    case "RoundStarting": {
+      return updater(round)
+    }
+  }
+}
+
+export type Score = { X: number; O: number; Tie: number }
 
 export const toScore = (round: Round): Score => {
-    switch (round.type) {
-        case 'RoundOver': {
-            const nextScore = toScore(round.next)
+  switch (round.type) {
+    case "RoundOver": {
+      const nextScore = toScore(round.next)
 
-            switch (round.roundOver.type) {
-                case 'Tie': {
-                    return {
-                        ...nextScore,
-                        Tie: nextScore.Tie + 1
-                    }
-                }
-
-                case 'Win': {
-                    return {
-                        ...nextScore,
-                        [round.roundOver.winner]: nextScore[round.roundOver.winner] + 1
-                    }
-                }
-            }
+      switch (round.roundOver.type) {
+        case "Tie": {
+          return {
+            ...nextScore,
+            Tie: nextScore.Tie + 1,
+          }
         }
 
-        case 'RoundStarting': {
-            return { X: 0, O: 0, Tie: 0 }
+        case "Win": {
+          return {
+            ...nextScore,
+            [round.roundOver.winner]: nextScore[round.roundOver.winner] + 1,
+          }
         }
-
-        case 'RoundStarted': {
-            return { X: 0, O: 0, Tie: 0 }
-        }
-
+      }
     }
+
+    case "RoundStarting": {
+      return { X: 0, O: 0, Tie: 0 }
+    }
+
+    case "RoundStarted": {
+      return { X: 0, O: 0, Tie: 0 }
+    }
+  }
 }
 
 export type GameOver =
-    | {
-        type: "Winner",
-        winner: TicTacToe.PlayerType,
+  | {
+      type: "Winner"
+      winner: TicTacToe.PlayerType
     }
-    | {
-        type: "Tie"
-    }
-
-
-
-export const toGameOver = ({ maxRoundCount, round }: { maxRoundCount: number, round: Round }): GameOver | { type: "None" } => {
-    const score = toScore(round)
-    const winCount = (maxRoundCount + 1) / 2
-
-    if (score.X >= winCount) {
-        return { type: "Winner", winner: "X" }
+  | {
+      type: "Tie"
     }
 
-    if (score.O >= winCount) {
-        return { type: "Winner", winner: "O" }
-    }
+export const toGameOver = ({
+  maxRoundCount,
+  round,
+}: {
+  maxRoundCount: number
+  round: Round
+}): GameOver | { type: "None" } => {
+  const score = toScore(round)
+  const winCount = (maxRoundCount + 1) / 2
 
-    if (score.Tie >= winCount) {
-        return { type: "Tie", }
-    }
+  if (score.X >= winCount) {
+    return { type: "Winner", winner: "X" }
+  }
 
-    const roundCount = toCount(round)
+  if (score.O >= winCount) {
+    return { type: "Winner", winner: "O" }
+  }
 
-    if (roundCount >= maxRoundCount) {
-        return { type: "Tie" }
-    }
+  if (score.Tie >= winCount) {
+    return { type: "Tie" }
+  }
 
-    return { type: "None" }
+  const roundCount = toCount(round)
+
+  if (roundCount >= maxRoundCount) {
+    return { type: "Tie" }
+  }
+
+  return { type: "None" }
 }

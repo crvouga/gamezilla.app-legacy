@@ -1,78 +1,79 @@
 import { Err, Ok, Result } from "../../../Core/Result"
 import { UserId } from "../../../Data"
-import { Board, emptyBoard, GameOver, move, MoveProblem, PlayerType, Position, toGameOver, toOpposite, toTurn } from "../TicTacToe"
+import {
+  Board,
+  emptyBoard,
+  GameOver,
+  move,
+  MoveProblem,
+  PlayerType,
+  Position,
+  toGameOver,
+  toOpposite,
+  toTurn,
+} from "../TicTacToe"
 
-
-// 
-// 
-// 
+//
+//
+//
 // Model
-// 
-// 
-// 
+//
+//
+//
 
-
-export type SharedModel =
-    | SetupModel
-    | GameModel
-    | GameOverModel
+export type SharedModel = SetupModel | GameModel
 
 export type SetupModel = {
-    type: "Setup",
-    player: UserId.UserId | "None"
-    userPlayerType: PlayerType
-    botLevel: BotLevel
+  type: "Setup"
+  player: UserId.UserId | "None"
+  userPlayerType: PlayerType
+  botLevel: BotLevel
 }
 
 export type GameModel = {
-    type: "Game",
-    player: UserId.UserId,
-    userPlayerType: PlayerType
-    botLevel: BotLevel,
-    board: Board
-}
-
-export type GameOverModel = {
-    type: "GameOver",
-    player: UserId.UserId
-    userPlayerType: PlayerType,
-    board: Board,
-    botLevel: BotLevel,
-    gameOver: GameOver
+  type: "Game"
+  player: UserId.UserId
+  userPlayerType: PlayerType
+  botLevel: BotLevel
+  board: Board
 }
 
 type BotLevel = "Easy" | "Medium" | "Impossible"
 
 export const botLevels: { [botLevel in BotLevel]: BotLevel } = {
-    Easy: "Easy",
-    Medium: "Medium",
-    Impossible: "Impossible"
+  Easy: "Easy",
+  Medium: "Medium",
+  Impossible: "Impossible",
 }
 
 export type FrontendModel = SharedModel
 
 export type BackendModel = SharedModel
 
-export const initSharedModel = ({ userId }: { userId: SetupModel['player'] }): SharedModel => {
-    return {
-        type: "Setup",
-        botLevel: "Medium",
-        userPlayerType: "X",
-        player: userId
-    }
+export const initSharedModel = ({
+  userId,
+}: {
+  userId: SetupModel["player"]
+}): SharedModel => {
+  return {
+    type: "Setup",
+    botLevel: "Medium",
+    userPlayerType: "X",
+    player: userId,
+  }
 }
 
 export const isBotTurn = (model: SharedModel): model is GameModel => {
-    return model.type === 'Game' && toTurn(model.board) !== model.userPlayerType
+  return model.type === "Game" && toTurn(model.board) !== model.userPlayerType
 }
 
-// 
-// 
-// 
+//
+//
+//
 // Msg
-// 
-// 
-// 
+//
+//
+//
 
 export type FrontendMsg = Request
 
@@ -83,384 +84,372 @@ export type ToBackend = Request
 export type ToFrontend = Response | BotMove_Done
 
 export type Request =
-    | InputBot
-    | InputPlayerType
-    | StartPlaying
-    | StopPlaying
-    | StartGame
-    | StopGame
-    | InputMove
-    | SwapSides
-    | Restart
-    | PlayAgain
+  | InputBot
+  | InputPlayerType
+  | StartPlaying
+  | StopPlaying
+  | StartGame
+  | StopGame
+  | InputMove
+  | SwapSides
+  | Restart
 
 export type Response =
-    | InputBot_Done
-    | InputPlayerType_Done
-    | StartPlaying_Done
-    | StopPlaying_Done
-    | StartGame_Done
-    | StopGame_Done
-    | InputMove_Done
-    | SwapSides_Done
-    | Restart_Done
-    | PlayAgain_Done
+  | InputBot_Done
+  | InputPlayerType_Done
+  | StartPlaying_Done
+  | StopPlaying_Done
+  | StartGame_Done
+  | StopGame_Done
+  | InputMove_Done
+  | SwapSides_Done
+  | Restart_Done
 
-// 
-// 
-// 
-// 
-// 
-// 
+//
+//
+//
+//
+//
+//
 
-type InputPlayerType = ['InputPlayerType', { userId: UserId.UserId, playerType: PlayerType }]
-type InputPlayerType_Done = ['InputPlayerType_Done', Result<InputPlayerTypeProblem, SharedModel>]
+type InputPlayerType = [
+  "InputPlayerType",
+  { userId: UserId.UserId; playerType: PlayerType },
+]
+type InputPlayerType_Done = [
+  "InputPlayerType_Done",
+  Result<InputPlayerTypeProblem, SharedModel>,
+]
 type InputPlayerTypeProblem = "not_playing" | "not_in_setup"
 
-export const inputPlayerType = ({ userId, playerType }: InputPlayerType[1], model: SharedModel): InputPlayerType_Done[1] => {
+export const inputPlayerType = (
+  { userId, playerType }: InputPlayerType[1],
+  model: SharedModel,
+): InputPlayerType_Done[1] => {
+  if (model.type !== "Setup") {
+    return Err("not_in_setup")
+  }
 
-    if (model.type !== 'Setup') {
-        return Err("not_in_setup")
-    }
+  if (model.player !== userId) {
+    return Err("not_playing")
+  }
 
-    if (model.player !== userId) {
-        return Err("not_playing")
-    }
+  const modelNew: SharedModel = {
+    ...model,
+    userPlayerType: playerType,
+  }
 
-    const modelNew: SharedModel = {
-        ...model,
-        userPlayerType: playerType
-    }
-
-    return Ok(modelNew)
+  return Ok(modelNew)
 }
 
-export const inputPlayerTypeToString = (result: InputPlayerType_Done[1]): string => {
-    if (result.type === 'Ok') {
-        return ""
+export const inputPlayerTypeToString = (
+  result: InputPlayerType_Done[1],
+): string => {
+  if (result.type === "Ok") {
+    return ""
+  }
+
+  switch (result.error) {
+    case "not_in_setup": {
+      return "Must be in setup mode to change player player"
     }
 
-    switch (result.error) {
-        case 'not_in_setup': {
-            return "Must be in setup mode to change player player"
-        }
-
-        case 'not_playing': {
-            return "Must be playing to change"
-        }
+    case "not_playing": {
+      return "Must be playing to change"
     }
+  }
 }
 
-// 
-// 
-// 
-// 
-// 
-// 
+//
+//
+//
+//
+//
+//
 
-type InputBot = ['InputBot', { userId: UserId.UserId, botLevel: BotLevel }]
-type InputBot_Done = ['InputBot_Done', Result<InputBotProblem, SharedModel>]
+type InputBot = ["InputBot", { userId: UserId.UserId; botLevel: BotLevel }]
+type InputBot_Done = ["InputBot_Done", Result<InputBotProblem, SharedModel>]
 type InputBotProblem = "not_playing" | "not_in_setup"
 
-export const inputBot = ({ userId, botLevel }: InputBot[1], model: SharedModel): InputBot_Done[1] => {
+export const inputBot = (
+  { userId, botLevel }: InputBot[1],
+  model: SharedModel,
+): InputBot_Done[1] => {
+  if (model.type !== "Setup") {
+    return Err("not_in_setup")
+  }
 
-    if (model.type !== 'Setup') {
-        return Err("not_in_setup")
-    }
+  if (model.player !== userId) {
+    return Err("not_playing")
+  }
 
-    if (model.player !== userId) {
-        return Err("not_playing")
-    }
+  const modelNew: SharedModel = {
+    ...model,
+    botLevel: botLevel,
+  }
 
-    const modelNew: SharedModel = {
-        ...model,
-        botLevel: botLevel,
-    }
-
-    return Ok(modelNew)
+  return Ok(modelNew)
 }
 
 export const inputBotToString = (result: InputBot_Done[1]): string => {
-    if (result.type === 'Ok') {
-        return ""
+  if (result.type === "Ok") {
+    return ""
+  }
+
+  switch (result.error) {
+    case "not_in_setup": {
+      return "Must be in setup mode to change"
     }
 
-    switch (result.error) {
-        case 'not_in_setup': {
-            return "Must be in setup mode to change"
-        }
-
-        case 'not_playing': {
-            return "Must be playing to change"
-        }
+    case "not_playing": {
+      return "Must be playing to change"
     }
+  }
 }
 
-// 
-// 
-// 
-// 
-// 
-type StartPlaying = ['StartPlaying', { userId: UserId.UserId, }]
-type StartPlaying_Done = ['StartPlaying_Done', Result<StartPlayingProblem, SharedModel>]
+//
+//
+//
+//
+//
+type StartPlaying = ["StartPlaying", { userId: UserId.UserId }]
+type StartPlaying_Done = [
+  "StartPlaying_Done",
+  Result<StartPlayingProblem, SharedModel>,
+]
 type StartPlayingProblem = "player_is_taken" | "not_in_setup"
 
-export const startPlaying = ({ userId }: StartPlaying[1], model: SharedModel): StartPlaying_Done[1] => {
-    if (model.type !== 'Setup') {
-        return Err("not_in_setup")
-    }
+export const startPlaying = (
+  { userId }: StartPlaying[1],
+  model: SharedModel,
+): StartPlaying_Done[1] => {
+  if (model.type !== "Setup") {
+    return Err("not_in_setup")
+  }
 
-    if (model.player !== 'None') {
-        return Err("player_is_taken")
-    }
+  if (model.player !== "None") {
+    return Err("player_is_taken")
+  }
 
-    return Ok({
-        ...model,
-        player: userId
-    })
+  return Ok({
+    ...model,
+    player: userId,
+  })
 }
 
-type StopPlaying = ['StopPlaying', { userId: UserId.UserId, }]
-type StopPlaying_Done = ['StopPlaying_Done', Result<StopPlayingProblem, SharedModel>]
+type StopPlaying = ["StopPlaying", { userId: UserId.UserId }]
+type StopPlaying_Done = [
+  "StopPlaying_Done",
+  Result<StopPlayingProblem, SharedModel>,
+]
 type StopPlayingProblem = "not_in_setup" | "not_playing"
 
-export const stopPlaying = ({ userId }: StopPlaying[1], model: SharedModel): StopPlaying_Done[1] => {
-    if (model.type !== 'Setup') {
-        return Err("not_in_setup")
-    }
+export const stopPlaying = (
+  { userId }: StopPlaying[1],
+  model: SharedModel,
+): StopPlaying_Done[1] => {
+  if (model.type !== "Setup") {
+    return Err("not_in_setup")
+  }
 
-    if (model.player !== userId) {
-        return Err("not_playing")
-    }
+  if (model.player !== userId) {
+    return Err("not_playing")
+  }
 
-    return Ok({
-        ...model,
-        player: "None"
-    })
+  return Ok({
+    ...model,
+    player: "None",
+  })
 }
 
-// 
-// 
-// 
-// 
-// 
+//
+//
+//
+//
+//
 
-type StartGame = ['StartGame', { userId: UserId.UserId }]
-type StartGame_Done = ['StartGame_Done', Result<StartGameProblem, SharedModel>]
+type StartGame = ["StartGame", { userId: UserId.UserId }]
+type StartGame_Done = ["StartGame_Done", Result<StartGameProblem, SharedModel>]
 type StartGameProblem = "not_in_setup" | "missing_player" | "not_playing"
 
-export const startGame = ({ userId }: StartGame[1], model: SharedModel): StartGame_Done[1] => {
-    if (model.type !== 'Setup') {
-        return Err("not_in_setup")
-    }
+export const startGame = (
+  { userId }: StartGame[1],
+  model: SharedModel,
+): StartGame_Done[1] => {
+  if (model.type !== "Setup") {
+    return Err("not_in_setup")
+  }
 
-    if (model.player === 'None') {
-        return Err("missing_player")
-    }
+  if (model.player === "None") {
+    return Err("missing_player")
+  }
 
-    if (model.player !== userId) {
-        return Err("not_playing")
-    }
+  if (model.player !== userId) {
+    return Err("not_playing")
+  }
 
-    const modelNew: SharedModel = {
-        type: "Game",
-        board: emptyBoard,
-        botLevel: model.botLevel,
-        player: model.player,
-        userPlayerType: model.userPlayerType
-    }
+  const modelNew: SharedModel = {
+    type: "Game",
+    board: emptyBoard,
+    botLevel: model.botLevel,
+    player: model.player,
+    userPlayerType: model.userPlayerType,
+  }
 
-    return Ok(modelNew)
+  return Ok(modelNew)
 }
 
-// 
-// 
-// 
-// 
+//
+//
+//
+//
 
-type StopGame = ['StopGame', { userId: UserId.UserId }]
-type StopGame_Done = ['StopGame_Done', Result<StopGameProblem, SharedModel>]
+type StopGame = ["StopGame", { userId: UserId.UserId }]
+type StopGame_Done = ["StopGame_Done", Result<StopGameProblem, SharedModel>]
 type StopGameProblem = "not_started" | "not_playing"
 
-export const stopGame = ({ userId }: StopGame[1], model: SharedModel): StopGame_Done[1] => {
-    if (model.type !== "Game") {
-        return Err("not_started")
-    }
+export const stopGame = (
+  { userId }: StopGame[1],
+  model: SharedModel,
+): StopGame_Done[1] => {
+  if (model.type !== "Game") {
+    return Err("not_started")
+  }
 
-    if (model.player !== userId) {
-        return Err("not_playing")
-    }
+  if (model.player !== userId) {
+    return Err("not_playing")
+  }
 
-    return Ok({
-        type: "Setup",
-        botLevel: model.botLevel,
-        player: model.player,
-        userPlayerType: model.userPlayerType
-    })
+  return Ok({
+    type: "Setup",
+    botLevel: model.botLevel,
+    player: model.player,
+    userPlayerType: model.userPlayerType,
+  })
 }
 
-// 
-// 
-// 
-// 
+//
+//
+//
+//
 
-type Restart = ['Restart', { userId: UserId.UserId }]
-type Restart_Done = ['Restart_Done', Result<RestartProblem, SharedModel>]
+type Restart = ["Restart", { userId: UserId.UserId }]
+type Restart_Done = ["Restart_Done", Result<RestartProblem, SharedModel>]
 type RestartProblem = "not_playing" | "not_in_game"
 
-export const restart = ({ userId }: Restart[1], model: SharedModel): Restart_Done[1] => {
-    if (model.type !== 'Game') {
-        return Err("not_in_game")
-    }
+export const restart = (
+  { userId }: Restart[1],
+  model: SharedModel,
+): Restart_Done[1] => {
+  if (model.type !== "Game") {
+    return Err("not_in_game")
+  }
 
-    if (model.player !== userId) {
-        return Err("not_playing")
-    }
+  if (model.player !== userId) {
+    return Err("not_playing")
+  }
 
-    return Ok({
-        ...model,
-        board: emptyBoard
-    })
+  return Ok({
+    ...model,
+    board: emptyBoard,
+  })
 }
 
-// 
-// 
-// 
-// 
-// 
+//
+//
+//
+//
 
-
-type PlayAgain = ['PlayAgain', { userId: UserId.UserId }]
-type PlayAgain_Done = ['PlayAgain_Done', Result<PlayAgainProblem, SharedModel>]
-type PlayAgainProblem = "not_playing" | "not_in_game_over"
-
-export const playAgain = ({ userId }: PlayAgain[1], model: SharedModel): PlayAgain_Done[1] => {
-    if (model.type !== 'GameOver') {
-        return Err("not_in_game_over")
-    }
-
-    if (model.player !== userId) {
-        return Err("not_playing")
-    }
-
-    return Ok({
-        type: "Game",
-        botLevel: model.botLevel,
-        player: model.player,
-        userPlayerType: model.userPlayerType,
-        board: emptyBoard
-    })
-}
-
-
-// 
-// 
-// 
-// 
-
-type InputMove = ["InputMove", { userId: UserId.UserId, position: Position }]
+type InputMove = ["InputMove", { userId: UserId.UserId; position: Position }]
 type InputMove_Done = ["InputMove_Done", Result<InputMoveProblem, SharedModel>]
 type InputMoveProblem = MoveProblem | "not_in_game" | "not_playing"
 
-export const inputMove = ({ userId, position }: InputMove[1], model: SharedModel): InputMove_Done[1] => {
-    if (model.type !== 'Game') {
-        return Err("not_in_game")
-    }
+export const inputMove = (
+  { userId, position }: InputMove[1],
+  model: SharedModel,
+): InputMove_Done[1] => {
+  if (model.type !== "Game") {
+    return Err("not_in_game")
+  }
 
-    if (model.player !== userId) {
-        return Err("not_playing")
-    }
+  if (model.player !== userId) {
+    return Err("not_playing")
+  }
 
-    const result = move(model.board, model.userPlayerType, position)
+  const result = move(model.board, model.userPlayerType, position)
 
-    if (result.type === 'Err') {
-        return result
-    }
+  if (result.type === "Err") {
+    return result
+  }
 
-    const modelNext: SharedModel = {
-        ...model,
-        board: result.value
-    }
+  const modelNext: SharedModel = {
+    ...model,
+    board: result.value,
+  }
 
-    const gameOver = toGameOver(modelNext.board)
-
-    if (gameOver.type === 'None') {
-        return Ok(modelNext)
-    }
-
-    return Ok({
-        ...modelNext,
-        type: "GameOver",
-        gameOver,
-    })
-
+  return Ok(modelNext)
 }
 
-// 
-// 
-// 
-// 
+//
+//
+//
+//
 
-type SwapSides = ["SwapSides", { userId: UserId.UserId, }]
+type SwapSides = ["SwapSides", { userId: UserId.UserId }]
 type SwapSides_Done = ["SwapSides_Done", Result<SwapSidesProblem, SharedModel>]
 type SwapSidesProblem = "not_in_game" | "not_playing"
 
-export const swapSides = ({ userId, }: SwapSides[1], model: SharedModel): SwapSides_Done[1] => {
-    if (model.type !== 'Game') {
-        return Err("not_in_game")
-    }
+export const swapSides = (
+  { userId }: SwapSides[1],
+  model: SharedModel,
+): SwapSides_Done[1] => {
+  if (model.type !== "Game") {
+    return Err("not_in_game")
+  }
 
-    if (model.player !== userId) {
-        return Err("not_playing")
-    }
+  if (model.player !== userId) {
+    return Err("not_playing")
+  }
 
-    const modelNext: SharedModel = {
-        ...model,
-        board: emptyBoard,
-        userPlayerType: toOpposite(model.userPlayerType)
-    }
+  const modelNext: SharedModel = {
+    ...model,
+    board: emptyBoard,
+    userPlayerType: toOpposite(model.userPlayerType),
+  }
 
-    return Ok(modelNext)
+  return Ok(modelNext)
 }
 
-// 
-// 
-// 
-// 
-// 
+//
+//
+//
+//
+//
 
-type BotMove = ['BotMove', { position: Position }]
-type BotMove_Done = ['BotMove_Done', Result<BotMoveProblem, SharedModel>]
+type BotMove = ["BotMove", { position: Position }]
+type BotMove_Done = ["BotMove_Done", Result<BotMoveProblem, SharedModel>]
 type BotMoveProblem = "not_in_game" | MoveProblem
 
-export const botMove = ({ position }: BotMove[1], model: SharedModel): BotMove_Done[1] => {
-    if (model.type !== 'Game') {
-        return Err("not_in_game")
-    }
+export const botMove = (
+  { position }: BotMove[1],
+  model: SharedModel,
+): BotMove_Done[1] => {
+  if (model.type !== "Game") {
+    return Err("not_in_game")
+  }
 
-    const botPlayerType = toOpposite(model.userPlayerType)
+  const botPlayerType = toOpposite(model.userPlayerType)
 
-    const result = move(model.board, botPlayerType, position)
+  const result = move(model.board, botPlayerType, position)
 
-    if (result.type === 'Err') {
-        return result
-    }
+  if (result.type === "Err") {
+    return result
+  }
 
-    const modelNext: SharedModel = {
-        ...model,
-        board: result.value
-    }
+  const modelNext: SharedModel = {
+    ...model,
+    board: result.value,
+  }
 
-    const gameOver = toGameOver(modelNext.board)
-
-    if (gameOver.type === 'None') {
-        return Ok(modelNext)
-    }
-
-    return Ok({
-        ...modelNext,
-        type: "GameOver",
-        gameOver,
-    })
-
+  return Ok(modelNext)
 }

@@ -17,7 +17,7 @@ export type PlayerType = "X" | "O"
 
 export const playerTypes: { [playerType in PlayerType]: PlayerType } = {
   X: "X",
-  O: "O"
+  O: "O",
 }
 
 export const toOpposite = (playerType: PlayerType): PlayerType => {
@@ -44,7 +44,6 @@ export type Board = {
   }
 }
 
-
 const toChildren = (board: Board): Board[] => {
   const turn = toTurn(board)
 
@@ -53,7 +52,7 @@ const toChildren = (board: Board): Board[] => {
   for (const position of allPositions) {
     const result = move(board, turn, position)
 
-    if (result.type === 'Ok') {
+    if (result.type === "Ok") {
       boards.push(result.value)
     }
   }
@@ -61,24 +60,25 @@ const toChildren = (board: Board): Board[] => {
   return boards
 }
 
-export const toBestMove = (maximizingPlayer: PlayerType, board: Board): Position => {
-
-
+export const toBestMove = (
+  maximizingPlayer: PlayerType,
+  board: Board,
+): Position => {
   const minimax = createMinimax({
     toChildren,
     toScore: (board) => {
       const gameOver = toGameOver(board)
 
       switch (gameOver.type) {
-        case 'None': {
+        case "None": {
           return 0
         }
 
-        case 'Tie': {
+        case "Tie": {
           return -1
         }
 
-        case 'Win': {
+        case "Win": {
           if (gameOver.winner === maximizingPlayer) {
             return 10
           }
@@ -92,7 +92,7 @@ export const toBestMove = (maximizingPlayer: PlayerType, board: Board): Position
   const positionToScore = (position: Position): number => {
     const result = move(board, maximizingPlayer, position)
 
-    if (result.type === 'Err') {
+    if (result.type === "Err") {
       return -Infinity
     }
 
@@ -106,25 +106,26 @@ export const toBestMove = (maximizingPlayer: PlayerType, board: Board): Position
   return bestMove
 }
 
-export const getBestMove = (maximizingPlayer: PlayerType, board: Board): Task<Position> => async () => {
-  const worker = new Threads.Worker("./tictactoe-worker")
+export const getBestMove =
+  (maximizingPlayer: PlayerType, board: Board): Task<Position> =>
+  async () => {
+    const worker = new Threads.Worker("./tictactoe-worker")
 
-  const spawned = await Threads.spawn<TicTacToeWorker>(worker)
+    const spawned = await Threads.spawn<TicTacToeWorker>(worker)
 
-  try {
-    const result = await spawned.toBestMove(maximizingPlayer, board)
+    try {
+      const result = await spawned.toBestMove(maximizingPlayer, board)
 
-    return result
-  } finally {
-
-    await Threads.Thread.terminate(spawned)
+      return result
+    } finally {
+      await Threads.Thread.terminate(spawned)
+    }
   }
-}
 
-type NonEmptyArray<T> = [T, ...T[]];
+type NonEmptyArray<T> = [T, ...T[]]
 
 const shuffle = <X extends T[], T>(xs: X): X => {
-  return xs.sort(() => (Math.random() > 0.5) ? 1 : -1)
+  return xs.sort(() => (Math.random() > 0.5 ? 1 : -1))
 }
 
 const maxBy = <X,>(toValue: (x: X) => number, xs: NonEmptyArray<X>): X => {
@@ -246,7 +247,7 @@ const toWins = (board: Board): Wins => {
   const wins: Wins = {
     X: [],
     O: [],
-    None: []
+    None: [],
   }
 
   for (const group of allWinningGroups) {
@@ -254,7 +255,12 @@ const toWins = (board: Board): Wins => {
     const b = toSlot(board, group[1])
     const c = toSlot(board, group[2])
 
-    const key: keyof (typeof wins) = a === 'X' && b === 'X' && c === 'X' ? 'X' : a === 'O' && b === 'O' && c === 'O' ? 'O' : "None"
+    const key: keyof typeof wins =
+      a === "X" && b === "X" && c === "X"
+        ? "X"
+        : a === "O" && b === "O" && c === "O"
+        ? "O"
+        : "None"
 
     wins[key].push(group)
   }
@@ -296,7 +302,11 @@ export const toStatus = (board: Board): Status => {
 
 const isTie = (board: Board): boolean => {
   const wins = toWins(board)
-  return toSlotFrequency(board).Empty === 0 && wins.O.length === 0 && wins.X.length === 0
+  return (
+    toSlotFrequency(board).Empty === 0 &&
+    wins.O.length === 0 &&
+    wins.X.length === 0
+  )
 }
 
 type SlotFrequency = { X: number; O: number; Empty: number }
@@ -320,8 +330,6 @@ export const toTurn = (board: Board): PlayerType => {
 export type MoveProblem = "not_players_turn" | "position_is_taken" | "game_over"
 
 export type MoveResult = Result.Result<MoveProblem, Board>
-
-
 
 export const move = (
   board: Board,
@@ -350,7 +358,7 @@ export const move = (
 }
 
 export const toEmptyPositions = (board: Board): Position[] => {
-  return allPositions.filter(position => toSlot(board, position) === 'Empty')
+  return allPositions.filter((position) => toSlot(board, position) === "Empty")
 }
 
 //
@@ -368,8 +376,6 @@ export const theme = {
   naught: "#F2EBD3",
 }
 
-
-
 export const ViewBoard = ({
   board,
   onClick,
@@ -383,7 +389,7 @@ export const ViewBoard = ({
       viewBox="0 0 3 3"
       style={{
         // maxHeight: 360,
-        backgroundColor: theme.background
+        backgroundColor: theme.background,
       }}
     >
       <g>
@@ -413,7 +419,6 @@ export const ViewBoard = ({
       ))}
 
       {allPositions.map((position) => (
-
         <rect
           key={[position.column, position.row, toSlot(board, position)].join(
             " ",
@@ -428,8 +433,6 @@ export const ViewBoard = ({
           onClick={() => onClick(position)}
           fill="transparent"
         />
-
-
       ))}
     </svg>
   )
@@ -448,7 +451,7 @@ export const ViewSlot = ({
   cy,
   r,
   color,
-  strokeWidth
+  strokeWidth,
 }: {
   color?: string
   strokeWidth?: number
@@ -681,7 +684,6 @@ const SvgAvatar = ({
   )
 }
 
-
 // source: https://en.wikipedia.org/wiki/Minimax
 // https://en.wikipedia.org/wiki/Alpha%E2%80%93beta_pruning
 /* 
@@ -707,16 +709,20 @@ function alphabeta(node, depth, α, β, maximizingPlayer) is
         return value
 
 */
-const createMinimax = <State,>({ toScore, toChildren }: { toScore: (node: State) => number, toChildren: (state: State) => State[] }) => {
-
+const createMinimax = <State,>({
+  toScore,
+  toChildren,
+}: {
+  toScore: (node: State) => number
+  toChildren: (state: State) => State[]
+}) => {
   const recur = (
     state: State,
     depth: number,
     alpha: number,
     beta: number,
-    isMaximizing: boolean
+    isMaximizing: boolean,
   ): number => {
-
     if (depth === 0) {
       return toScore(state)
     }
@@ -727,13 +733,15 @@ const createMinimax = <State,>({ toScore, toChildren }: { toScore: (node: State)
       return toScore(state)
     }
 
-
     if (isMaximizing) {
       let value = -Infinity
       let alpha_ = alpha
 
       for (let index = 0; index < children.length; index++) {
-        value = Math.max(value, recur(children[index]!, depth - 1, alpha_, beta, false))
+        value = Math.max(
+          value,
+          recur(children[index]!, depth - 1, alpha_, beta, false),
+        )
 
         if (value >= beta) {
           break
@@ -749,7 +757,10 @@ const createMinimax = <State,>({ toScore, toChildren }: { toScore: (node: State)
     let beta_ = beta
 
     for (let index = 0; index < children.length; index++) {
-      value = Math.min(value, recur(children[index]!, depth - 1, alpha, beta_, true))
+      value = Math.min(
+        value,
+        recur(children[index]!, depth - 1, alpha, beta_, true),
+      )
 
       if (value <= alpha) {
         break
@@ -759,7 +770,6 @@ const createMinimax = <State,>({ toScore, toChildren }: { toScore: (node: State)
     }
 
     return value
-
   }
 
   const initialCall = (initialState: State, depth: number): number => {

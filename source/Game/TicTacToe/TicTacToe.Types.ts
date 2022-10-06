@@ -13,16 +13,15 @@ import * as UserVsUser from "./UserVsUser/UserVsUser.Types"
 
 export type FrontendModel =
   | { mode: "None" }
-  | { mode: "UserVsUser", child: UserVsUser.FrontendModel }
-  | { mode: "UserVsBot", child: UserVsBot.FrontendModel }
-
+  | { mode: "UserVsUser"; child: UserVsUser.FrontendModel }
+  | { mode: "UserVsBot"; child: UserVsBot.FrontendModel }
 
 export type BackendModel =
   | { mode: "None" }
-  | { mode: "UserVsUser", child: UserVsUser.BackendModel }
-  | { mode: "UserVsBot", child: UserVsBot.BackendModel }
+  | { mode: "UserVsUser"; child: UserVsUser.BackendModel }
+  | { mode: "UserVsBot"; child: UserVsBot.BackendModel }
 
-// 
+//
 //
 //
 // Msg
@@ -49,13 +48,16 @@ export type ToFrontend =
   | ["UserVsBot", UserVsBot.ToFrontend]
   | InputMode_Done
 
-// 
-// 
-// 
-// 
-// 
-// 
+//
+//
+//
+//
+//
+//
 
-type InputMode = ["InputMode", { mode: BackendModel['mode'], userId: UserId.UserId }]
+type InputMode = [
+  "InputMode",
+  { mode: BackendModel["mode"]; userId: UserId.UserId },
+]
 type InputMode_Done = ["InputMode_Done", Result<InputModeProblem, BackendModel>]
 type InputModeProblem = "unknown"

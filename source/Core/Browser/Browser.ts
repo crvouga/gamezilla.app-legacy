@@ -5,7 +5,6 @@ import * as Result from "../Result"
 import * as Sub from "../Sub"
 import * as Task from "../Task"
 
-
 //
 //
 //
@@ -29,7 +28,9 @@ const location$ = new Rx.Observable<Location>((subscriber) => {
   }
 })
 
-export const onLocation = <Msg>(mapper: (location: Location) => Msg): Sub.Sub<Msg> => {
+export const onLocation = <Msg>(
+  mapper: (location: Location) => Msg,
+): Sub.Sub<Msg> => {
   return pipe(location$, Sub.map(mapper))
 }
 
@@ -91,16 +92,16 @@ export type FocusResult = Result.Result<Problem, {}>
 
 export const focus =
   (htmlId: string): Task.Task<FocusResult> =>
-    async () => {
-      const element = document.getElementById(htmlId)
+  async () => {
+    const element = document.getElementById(htmlId)
 
-      if (element) {
-        element.focus()
-        return Result.Ok({})
-      }
-
-      return Result.Err({ type: "ElementNotFound" })
+    if (element) {
+      element.focus()
+      return Result.Ok({})
     }
+
+    return Result.Err({ type: "ElementNotFound" })
+  }
 
 export type GetElementByIdResult = Result.Result<Problem, DomElement>
 
@@ -111,18 +112,18 @@ export type DomElement = {
 
 export const getElementById =
   (htmlId: string): Task.Task<GetElementByIdResult> =>
-    async () => {
-      const element = document.getElementById(htmlId)
+  async () => {
+    const element = document.getElementById(htmlId)
 
-      if (element) {
-        return Result.Ok({
-          offsetHeight: element.offsetHeight,
-          offsetWidth: element.offsetWidth,
-        })
-      }
-
-      return Result.Err({ type: "ElementNotFound" })
+    if (element) {
+      return Result.Ok({
+        offsetHeight: element.offsetHeight,
+        offsetWidth: element.offsetWidth,
+      })
     }
+
+    return Result.Err({ type: "ElementNotFound" })
+  }
 
 export type Resize = {
   width: number
@@ -149,4 +150,3 @@ export const onResize = <Msg>(
     }
   })
 }
-

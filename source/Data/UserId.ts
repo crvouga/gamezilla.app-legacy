@@ -17,7 +17,6 @@ export const decode = (id: unknown): Result.Result<Problem, UserId> => {
   return Result.Err("invalid_user_id")
 }
 
-
 export const generate = () => {
   const id = Uuid.generateSync()
 
