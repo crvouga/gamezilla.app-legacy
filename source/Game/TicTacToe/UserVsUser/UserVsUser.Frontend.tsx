@@ -5,6 +5,7 @@ import * as UI from "../../../UI"
 import {
   emptyBoard,
   PlayerType,
+  PlayerTypeIcon,
   Position,
   Slot,
   theme,
@@ -227,70 +228,68 @@ export const View = ({
           right={roomAvatarGroup}
         />
         <UI.Box sx={{ flex: 1, overflowY: "scroll" }}>
-          <BannerArt title="User Vs User" />
+          <UI.Box sx={{ flex: 1, width: "100%", background: theme.background, color: "#fff", display: 'flex', alignItems: "center", justifyContent: 'center', paddingX: 2, paddingY: 2 }}>
+
+            <UI.Box sx={{ marginRight: 1, display: "flex", alignItems: 'center', justifyContent: "center", flexDirection: "column" }}>
+              <UI.Avatar src={model.X === "None" ? "" : store.Profile[model.X]?.avatarUrl} >
+                <UI.Icons.QuestionMark />
+              </UI.Avatar>
+              <UI.Typography variant="caption" color={theme.text} align="center">
+                {model.X === "None" ? "..." : store.Profile[model.X]?.username ?? "..."}
+              </UI.Typography>
+            </UI.Box>
+
+            <PlayerTypeIcon sx={{ width: 72, height: 72, color: theme.cross }} playerType="X" />
+            <UI.Box sx={{ flex: 1 }}>
+              <UI.Typography align="center" color={theme.text}>
+                vs
+              </UI.Typography>
+            </UI.Box>
+            <PlayerTypeIcon sx={{ width: 72, height: 72, color: theme.naught }} playerType="O" />
+
+            <UI.Box sx={{ marginLeft: 1, display: "flex", alignItems: 'center', justifyContent: "center", flexDirection: "column" }}>
+              <UI.Avatar src={model.O === "None" ? "" : store.Profile[model.O]?.avatarUrl} >
+                <UI.Icons.QuestionMark />
+              </UI.Avatar>
+              <UI.Typography variant="caption" color={theme.text} align="center">
+                {model.O === "None" ? "..." : store.Profile[model.O]?.username ?? "..."}
+              </UI.Typography>
+            </UI.Box>
+          </UI.Box>
 
           <UI.Box sx={{ padding: 2 }}>
             <UI.Typography
               color="text.secondary"
               sx={{ marginBottom: 1 }}
             >
-              Player One • <UI.Box component="span">X</UI.Box>
+              Players
             </UI.Typography>
 
-            {model.X === "None" ? (
-              <UI.Button
-                fullWidth
-                variant="contained"
-                onClick={() =>
-                  dispatch([
-                    "InputPlayer",
-                    { userId: currentUserId, playerType: "X" },
-                  ])
-                }
-              >
-                Play as X
-              </UI.Button>
-            ) : (
-              <ViewPlayerSetupSlot
-                currentUserId={currentUserId}
-                userId={model.X}
-                store={store}
-                dispatch={dispatch}
-              />
-            )}
 
+            <ViewPlayerSetupSlot
+              playerType="X"
+              currentUserId={currentUserId}
+              userId={model.X}
+              store={store}
+              dispatch={dispatch}
+              sx={{ marginBottom: 2 }}
+            />
+
+            <ViewPlayerSetupSlot
+              playerType="O"
+              currentUserId={currentUserId}
+              userId={model.O}
+              store={store}
+              dispatch={dispatch}
+            />
+          </UI.Box>
+
+          <UI.Divider />
+
+          <UI.Box sx={{ padding: 2 }}>
             <UI.Typography
               color="text.secondary"
-              sx={{ marginTop: 3, marginBottom: 1 }}
-            >
-              Player Two • <UI.Box component="span">O</UI.Box>
-            </UI.Typography>
-
-            {model.O === "None" ? (
-              <UI.Button
-                fullWidth
-                variant="contained"
-                onClick={() =>
-                  dispatch([
-                    "InputPlayer",
-                    { userId: currentUserId, playerType: "O" },
-                  ])
-                }
-              >
-                Play as O
-              </UI.Button>
-            ) : (
-              <ViewPlayerSetupSlot
-                currentUserId={currentUserId}
-                userId={model.O}
-                store={store}
-                dispatch={dispatch}
-              />
-            )}
-
-            <UI.Typography
-              color="text.secondary"
-              sx={{ marginTop: 3, marginBottom: 1 }}
+              sx={{ marginBottom: 1 }}
             >
               Best Out Of
             </UI.Typography>
@@ -1239,15 +1238,44 @@ const ViewPlayerSetupSlot = ({
   currentUserId,
   store,
   userId,
+  playerType,
   dispatch,
+  sx
 }: {
   currentUserId: UserId.UserId
-  userId: UserId.UserId
+  userId: UserId.UserId | "None"
   store: Store.Model
+  playerType: PlayerType
   dispatch: (msg: Msg) => void
+  sx?: UI.Sx
 }) => {
+  const iconSx = { width: 42, height: 42, color: "text.secondary" }
+
+  if (userId === "None") {
+
+    return (
+      <UI.Box sx={{ display: "flex", width: "100%", alignItems: 'center', ...sx }}>
+        <PlayerTypeIcon playerType={playerType} sx={{ marginRight: 1, ...iconSx }} />
+        <UI.Button
+          sx={{ flex: 1 }}
+          fullWidth
+          variant="contained"
+          onClick={() =>
+            dispatch([
+              "InputPlayer",
+              { userId: currentUserId, playerType },
+            ])
+          }
+        >
+          Start Playing
+        </UI.Button>
+      </UI.Box>
+    )
+  }
+
   return (
-    <UI.Box sx={{ display: "flex", alignItems: "center" }}>
+    <UI.Box sx={{ display: "flex", alignItems: "center", ...sx }}>
+      <PlayerTypeIcon playerType={playerType} sx={{ marginRight: 1, ...iconSx }} />
       <UI.Avatar
         src={store.Profile[userId]?.avatarUrl}
         sx={{ marginRight: 1 }}
