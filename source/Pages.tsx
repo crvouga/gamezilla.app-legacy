@@ -7,7 +7,11 @@ import {
   Account,
   Chat,
   ChatConversation,
-  ChatNew, DebugPage, GameRoomPage, Home, Login,
+  ChatNew,
+  DebugPage,
+  GameRoomPage,
+  Home,
+  Login,
   LoginEmailLink,
   LoginPhone,
   LoginPhoneVerify,
@@ -21,7 +25,7 @@ import {
   ProfileUpdateName,
   ProfileUpdateTheme,
   ProfileUpdateUsername,
-  Search
+  Search,
 } from "./Page"
 import * as Party from "./Party/Party.Frontend"
 import * as Route from "./Route"
@@ -42,10 +46,10 @@ export type Model =
   | ["LoginEmailLink", LoginEmailLink.Model]
   | ["LoginPhone", LoginPhone.Model]
   | [
-    "LoginPhoneVerify",
-    { phoneNumber: PhoneNumber.PhoneNumber },
-    LoginPhoneVerify.Model,
-  ]
+      "LoginPhoneVerify",
+      { phoneNumber: PhoneNumber.PhoneNumber },
+      LoginPhoneVerify.Model,
+    ]
   | ["Home", Home.Model]
   | ["ProfileCreate", ProfileCreate.Model]
   | ["Logout", Logout.Model]
@@ -232,9 +236,9 @@ export const initReady = (
       return [["Home", modelInit], Cmd.None, []]
     }
 
-    case 'Debug': {
+    case "Debug": {
       const init = DebugPage.init
-      return [['Debug', init], Cmd.None, []]
+      return [["Debug", init], Cmd.None, []]
     }
 
     case "ProfileCreate":
@@ -271,8 +275,7 @@ export const initLoggedOut = (route: Route.Model): [Model, Cmd.Cmd<Msg>] => {
     case "LoginEmailLink":
       return [["LoginEmailLink", LoginEmailLink.init], Cmd.None]
 
-
-    case 'Debug':
+    case "Debug":
     case "Account":
     case "Chat":
     case "ChatConversation":
@@ -519,7 +522,11 @@ export const updateReady = (
 
     case "Home": {
       if (msg[0] === "Home") {
-        const [child, actions] = Home.update({ currentUserId: profile.userId }, msg[1], model[1])
+        const [child, actions] = Home.update(
+          { currentUserId: profile.userId },
+          msg[1],
+          model[1],
+        )
         return [["Home", child], Cmd.None, actions]
       }
 
@@ -594,7 +601,7 @@ export const updateProfileMissing = (
     case "LoginPhoneVerify":
     case "Party":
     case "Home":
-    case 'Debug':
+    case "Debug":
       return [model, Route.push(["ProfileCreate"]), []]
 
     default:
@@ -702,7 +709,7 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
     case "LoginPhone":
     case "LoginPhoneVerify":
     case "Home":
-    case 'Debug':
+    case "Debug":
       return Sub.None
 
     default:
@@ -946,8 +953,6 @@ export const ViewReady = ({
             />
           }
         />
-
-
       )
     }
 
@@ -997,7 +1002,13 @@ export const ViewReady = ({
     }
 
     case "Debug": {
-      return <DebugPage.View debug={debug} model={model[1]} dispatch={(msg) => dispatch(['Debug', msg])} />
+      return (
+        <DebugPage.View
+          debug={debug}
+          model={model[1]}
+          dispatch={(msg) => dispatch(["Debug", msg])}
+        />
+      )
     }
 
     case "Login":
@@ -1125,7 +1136,7 @@ export const ViewLoggedOut = ({
     case "Loading":
     case "Party":
     case "Home":
-    case 'Debug':
+    case "Debug":
       return <UI.LoadingPage />
 
     default:
@@ -1212,7 +1223,6 @@ const ViewBottomNavigation = ({
 
   const theme = UI.useTheme()
 
-
   return (
     <UI.Box
       sx={{
@@ -1230,7 +1240,9 @@ const ViewBottomNavigation = ({
         return (
           <UI.ButtonBase
             key={Route.encode(item.route)}
-            onClick={() => dispatch(["ClickedBottomNavigationLink", item.route])}
+            onClick={() =>
+              dispatch(["ClickedBottomNavigationLink", item.route])
+            }
             sx={{
               color: isSelected ? "primary.main" : "text.secondary",
               paddingY: 0,
@@ -1246,7 +1258,7 @@ const ViewBottomNavigation = ({
           </UI.ButtonBase>
         )
       })}
-    </UI.Box >
+    </UI.Box>
   )
 }
 

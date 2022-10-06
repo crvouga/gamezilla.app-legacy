@@ -48,7 +48,7 @@ export const update = (
     case "ClickedDeleteProfile":
       return [model, Route.push(["ProfileDelete"])]
 
-    case 'ClickedDebug':
+    case "ClickedDebug":
       return [model, Route.push(["Debug"])]
   }
 }

@@ -12,7 +12,7 @@ import {
   FrontendMsg,
   Response,
   ToBackend,
-  ToFrontend
+  ToFrontend,
 } from "./GameRoom.Types"
 
 //
@@ -259,9 +259,13 @@ export const updateFromBackend = (
     }
 
     case "JoinRoom_Done": {
-      const [modelNew, cmd, actions] = updateResponse({ sendToBackend, msg, model }, "JoinRoom")
+      const [modelNew, cmd, actions] = updateResponse(
+        { sendToBackend, msg, model },
+        "JoinRoom",
+      )
 
-      const routeActions: OutAction[] = msg[1].type === 'Ok' ? [['Route', ['Replace', ['GameRoom']]]] : []
+      const routeActions: OutAction[] =
+        msg[1].type === "Ok" ? [["Route", ["Replace", ["GameRoom"]]]] : []
 
       return [modelNew, cmd, [...actions, ...routeActions]]
     }
@@ -549,9 +553,9 @@ export const View = ({
   store,
   model,
   dispatch,
-  bottomNav
+  bottomNav,
 }: {
-  bottomNav: UI.ViewNode,
+  bottomNav: UI.ViewNode
   currentUserId: UserId.UserId
   store: Store.Model
   model: Model
@@ -636,9 +640,14 @@ export const ViewNotInRoom = ({
 
   const header = (
     <UI.Header
-      left={<UI.IconButton sx={{ marginLeft: -1 }} onClick={() => dispatch(["ClickedGoHome"])}>
-        <UI.Icons.Home />
-      </UI.IconButton>}
+      left={
+        <UI.IconButton
+          sx={{ marginLeft: -1 }}
+          onClick={() => dispatch(["ClickedGoHome"])}
+        >
+          <UI.Icons.Home />
+        </UI.IconButton>
+      }
       title="Game Rooms"
     />
   )
@@ -787,7 +796,7 @@ const ViewNotInGame = ({
             gap: 2,
           }}
         >
-          {gameNameList.map(gameName => {
+          {gameNameList.map((gameName) => {
             return (
               <ViewGameCard
                 key={gameName}
@@ -916,7 +925,7 @@ export const ViewGameCard = ({
   onClick,
   disabled = false,
 }: {
-  gameName: GameName,
+  gameName: GameName
   onClick: () => void
   disabled?: boolean
 }) => {

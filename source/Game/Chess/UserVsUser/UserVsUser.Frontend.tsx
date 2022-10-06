@@ -202,8 +202,8 @@ export const updateFromBackend = (
       const soundCmd = Board.inCheck(sharedModelNew.board)
         ? playAudio(Sounds.check)
         : sharedModelNew.didCapture
-          ? playAudio(Sounds.capture)
-          : playAudio(Sounds.move)
+        ? playAudio(Sounds.capture)
+        : playAudio(Sounds.move)
 
       return [{ ...model, sharedModel: sharedModelNew }, soundCmd, []]
     }
@@ -432,12 +432,14 @@ export const View = ({
   goHome: () => void
   onClose: () => void
 }) => {
-  const homeButton = <UI.IconButton
-    onClick={goHome}
-    sx={{ marginLeft: -1 }}
-  >
-    <UI.Icons.Home />
-  </UI.IconButton>
+  const homeButton = (
+    <UI.IconButton
+      onClick={goHome}
+      sx={{ marginLeft: -1 }}
+    >
+      <UI.Icons.Home />
+    </UI.IconButton>
+  )
 
   if (model.sharedModel.type === "Setup") {
     const startGameResult = startGame(
@@ -449,7 +451,6 @@ export const View = ({
       model.sharedModel,
     )
 
-
     return (
       <UI.FillBox>
         <UI.Header
@@ -460,7 +461,6 @@ export const View = ({
 
         <UI.Box sx={{ flex: 1, overflowY: "scroll" }}>
           <BannerArt title="User Vs User" />
-
 
           <UI.Typography
             sx={{ paddingX: 2, marginBottom: 1, marginTop: 2 }}
@@ -565,7 +565,6 @@ export const View = ({
               </UI.ToggleButtonGroup>
             </UI.Tooltip>
           </UI.Box>
-
         </UI.Box>
 
         <UI.Box sx={{ padding: 2, display: "flex", gap: 2 }}>
@@ -709,10 +708,10 @@ export const View = ({
     currentUserId === w && currentUserId === b
       ? "Both"
       : currentUserId === w
-        ? "w"
-        : currentUserId === b
-          ? "b"
-          : "None"
+      ? "w"
+      : currentUserId === b
+      ? "b"
+      : "None"
 
   const boardOrientation: Board.Color = pipe(
     currentUserColor === "None" || currentUserColor === "Both"
@@ -865,7 +864,7 @@ export const View = ({
                     model.sharedModel.type === "Game" &&
                     model.sharedModel.drawAgreement.type === "Asking" &&
                     model.sharedModel.drawAgreement.asker ===
-                    Board.toOppositeColor(currentUserColor)
+                      Board.toOppositeColor(currentUserColor)
                   }
                   headerIcon={
                     <UI.Icons.HandshakeTwoTone

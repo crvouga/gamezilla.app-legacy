@@ -77,7 +77,6 @@ const createTheme = ({ mode }: { mode: "light" | "dark" }) =>
             root: {
               textTransform: "capitalize",
             },
-
           },
         },
         MuiAvatar: {
@@ -483,7 +482,7 @@ export const AspectRatio = ({
   return (
     <Box
       sx={{
-        width: '100%',
+        width: "100%",
         paddingTop: `${aspectRatio * 100}%`,
         position: "relative",
         height: 0,
@@ -612,7 +611,7 @@ export const ActionButton = ({
   label,
   icon,
   onClick,
-  disabled = false
+  disabled = false,
 }: {
   label: string
   icon: ReactNode
@@ -630,7 +629,9 @@ export const ActionButton = ({
         flexDirection: "column",
         flex: 1,
         width: "100%",
-        color: disabled ? theme.palette.action.disabled : theme.palette.action.active
+        color: disabled
+          ? theme.palette.action.disabled
+          : theme.palette.action.active,
       }}
     >
       {icon}

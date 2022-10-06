@@ -19,8 +19,10 @@ import {
   isBotTurn,
   Res,
   SharedModel,
-  startGame, stopGame, ToBackend,
-  ToFrontend
+  startGame,
+  stopGame,
+  ToBackend,
+  ToFrontend,
 } from "./UserVsBot.Types"
 
 //
@@ -184,8 +186,8 @@ const updateFromBackend_ = (
         sharedModel.type === "Game" && Board.inCheck(sharedModel.board)
           ? playAudio(Sounds.check)
           : didCapture
-            ? playAudio(Sounds.capture)
-            : playAudio(Sounds.move)
+          ? playAudio(Sounds.capture)
+          : playAudio(Sounds.move)
 
       return [{ ...model, sharedModel }, soundCmd, []]
     }
@@ -205,8 +207,8 @@ const updateFromBackend_ = (
         sharedModelNew.type === "Game" && Board.inCheck(sharedModelNew.board)
           ? playAudio(Sounds.check)
           : sharedModelNew.didCapture
-            ? playAudio(Sounds.capture)
-            : playAudio(Sounds.move)
+          ? playAudio(Sounds.capture)
+          : playAudio(Sounds.move)
 
       return [modelNew, soundCmd, []]
     }
@@ -303,7 +305,6 @@ export const View = ({
   goHome: () => void
   onClose: () => void
 }) => {
-
   const homeButton = (
     <UI.IconButton
       sx={{ marginLeft: -1 }}
@@ -335,8 +336,7 @@ export const View = ({
           right={roomAvatarGroup}
         />
 
-        <UI.Box sx={{ flex: 1, overflowY: 'scroll' }}>
-
+        <UI.Box sx={{ flex: 1, overflowY: "scroll" }}>
           <BannerArt title="User Vs Bot" />
 
           <UI.Typography
@@ -353,7 +353,10 @@ export const View = ({
                 size="large"
                 variant="contained"
                 onClick={() => {
-                  dispatch(["InputUser", { userId: Option.Some(currentUserId) }])
+                  dispatch([
+                    "InputUser",
+                    { userId: Option.Some(currentUserId) },
+                  ])
                 }}
               >
                 Start Playing
@@ -370,13 +373,16 @@ export const View = ({
                 sx={{ flex: 1 }}
                 noWrap
               >
-                {store.Profile[model.sharedModel.userId.value]?.username ?? "..."}
+                {store.Profile[model.sharedModel.userId.value]?.username ??
+                  "..."}
               </UI.Typography>
 
               {model.sharedModel.userId.value === currentUserId && (
                 <UI.Button
                   size="large"
-                  onClick={() => dispatch(["InputUser", { userId: Option.None }])}
+                  onClick={() =>
+                    dispatch(["InputUser", { userId: Option.None }])
+                  }
                 >
                   Stop Playing
                 </UI.Button>
@@ -391,7 +397,7 @@ export const View = ({
             Color
           </UI.Typography>
 
-          <UI.Box sx={{ paddingX: 2, }}>
+          <UI.Box sx={{ paddingX: 2 }}>
             <UI.Tooltip
               title={
                 inputColorResult.type === "Err"
@@ -504,14 +510,12 @@ export const View = ({
       <UI.Avatar sx={{ marginRight: 2, backgroundColor: "transparent" }}>
         <UI.Icons.SmartToy
           sx={{ color: "text.primary", width: "100%", height: "100%" }}
-        // sx={{ width: 40, height: 40, marginRight: 2 }}
+          // sx={{ width: 40, height: 40, marginRight: 2 }}
         />
       </UI.Avatar>
 
       <UI.Box sx={{ flex: 1 }}>
-        <UI.Typography
-          variant="h6"
-        >
+        <UI.Typography variant="h6">
           {Board.levelToString(model.sharedModel.botLevel)}
         </UI.Typography>
       </UI.Box>

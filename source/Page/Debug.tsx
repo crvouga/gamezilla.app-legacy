@@ -1,6 +1,6 @@
-import { Cmd, Sub } from "../Core";
-import * as Debug from "../Debug/Debug.Frontend";
-import * as Route from "../Route";
+import { Cmd, Sub } from "../Core"
+import * as Debug from "../Debug/Debug.Frontend"
+import * as Route from "../Route"
 
 //
 //
@@ -10,7 +10,7 @@ import * as Route from "../Route";
 //
 //
 
-export type Model = {};
+export type Model = {}
 
 export const init: Model = {}
 
@@ -27,12 +27,12 @@ export type Msg = ["DebugMsg", Debug.Msg]
 export type OutAction = Debug.Action | Route.Action
 
 export const update = (msg: Msg, model: Model): [Model, OutAction[]] => {
-    switch (msg[0]) {
-        case "DebugMsg": {
-            return [model, [['Debug', ['Msg', msg[1]]]]]
-        }
+  switch (msg[0]) {
+    case "DebugMsg": {
+      return [model, [["Debug", ["Msg", msg[1]]]]]
     }
-};
+  }
+}
 
 //
 //
@@ -43,20 +43,30 @@ export const update = (msg: Msg, model: Model): [Model, OutAction[]] => {
 //
 
 export const subscriptions = (model: Model): Sub.Sub<Msg> => {
-    return Sub.None;
-};
+  return Sub.None
+}
 
-// 
-// 
-// 
+//
+//
+//
 // View
-// 
-// 
-// 
+//
+//
+//
 
-export const View = ({ debug, model, dispatch }: { debug: Debug.Model, model: Model, dispatch: (msg: Msg) => void }) => {
-    return <Debug.View
-        model={debug}
-        dispatch={(msg) => dispatch(['DebugMsg', msg])}
+export const View = ({
+  debug,
+  model,
+  dispatch,
+}: {
+  debug: Debug.Model
+  model: Model
+  dispatch: (msg: Msg) => void
+}) => {
+  return (
+    <Debug.View
+      model={debug}
+      dispatch={(msg) => dispatch(["DebugMsg", msg])}
     />
+  )
 }

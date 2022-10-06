@@ -209,7 +209,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
       return pipe([modelNew, cmd], andThenMany(runAction, actions))
     }
 
-    case 'Debug': {
+    case "Debug": {
       const [child, cmd] = Debug.update(msg[1], model.debug)
       return [{ ...model, debug: child }, tagCmd("Debug", cmd)]
     }
@@ -324,7 +324,7 @@ const updateFromBackend = (
       )
     }
 
-    case 'Debug': {
+    case "Debug": {
       const [child, cmd] = Debug.updateFromBackend(msg[1], model.debug)
 
       return [{ ...model, debug: child }, tagCmd("Debug", cmd)]
@@ -390,16 +390,16 @@ const initPage = (model: Model): [Model, Cmd.Cmd<Msg>] => {
 
 const updateStatusChanged =
   (modelPrev: Model) =>
-    (_msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
-      const statusPrev = toStatus(modelPrev)
-      const statusNew = toStatus(model)
+  (_msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
+    const statusPrev = toStatus(modelPrev)
+    const statusNew = toStatus(model)
 
-      if (statusNew[0] === statusPrev[0]) {
-        return [model, Cmd.None]
-      }
-
-      return initPage(model)
+    if (statusNew[0] === statusPrev[0]) {
+      return [model, Cmd.None]
     }
+
+    return initPage(model)
+  }
 
 const runAction = (action: OutAction, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (action[0]) {
@@ -457,7 +457,7 @@ const runAction = (action: OutAction, model: Model): [Model, Cmd.Cmd<Msg>] => {
       return [{ ...model, route }, tagCmd("Route", routeCmd)]
     }
 
-    case 'Debug': {
+    case "Debug": {
       const [debug, debugCmd] = Debug.runAction(action, model.debug)
 
       return [{ ...model, debug }, tagCmd("Debug", debugCmd)]
@@ -490,15 +490,15 @@ const subscriptions = (model: Model): Sub.Sub<Msg> => {
 
 const gameRoomSub = (model: Model): Sub.Sub<Msg> => {
   switch (model.auth[0]) {
-    case 'Loading': {
+    case "Loading": {
       return Sub.None
     }
 
-    case 'LoggedOut': {
+    case "LoggedOut": {
       return Sub.None
     }
 
-    case 'LoggedIn': {
+    case "LoggedIn": {
       return tagSub(
         "GameRoom",
         GameRoom.subscriptions(
@@ -663,7 +663,6 @@ const ViewError = ({ reason }: { reason: string }) => (
   </UI.FillBox>
 )
 
-
 //
 //
 //
@@ -749,7 +748,6 @@ const toStatus = ({
   }
 }
 
-
 //
 //
 //
@@ -760,9 +758,9 @@ const toStatus = ({
 
 const backendUrl =
   process.env.NODE_ENV === "production"
-    // todo setup this url
-    // ? `https://backend.gamezilla.app/`
-    ? "https://gamezilla-production.up.railway.app/"
+    ? // todo setup this url
+      // ? `https://backend.gamezilla.app/`
+      "https://gamezilla-production.up.railway.app/"
     : `http://localhost:${Wire.backendServerPort}/`
 
 const socketClient: Socket<
@@ -803,24 +801,28 @@ Wire._sendToBackend.subscribe((msg) => {
 //
 //
 
-const { program } =
-  DebugCore.ReduxDevTools.withDebugger(
-    Platform.createProgram({
-      init: init(Browser.getLocation()),
-      subscriptions,
-      update,
-    })
-  )
+const { program } = DebugCore.ReduxDevTools.withDebugger(
+  Platform.createProgram({
+    init: init(Browser.getLocation()),
+    subscriptions,
+    update,
+  }),
+)
 
 const root = ReactDomClient.createRoot(document.getElementById("root")!)
 
-program.sub$.subscribe(msg => {
+program.sub$.subscribe((msg) => {
   program.dispatch(msg)
 })
 
-program.state$.subscribe(({ model, cmd, }) => {
+program.state$.subscribe(({ model, cmd }) => {
   cmd(program.dispatch)
-  root.render(<View model={model} dispatch={program.dispatch} />)
+  root.render(
+    <View
+      model={model}
+      dispatch={program.dispatch}
+    />,
+  )
 })
 
 //

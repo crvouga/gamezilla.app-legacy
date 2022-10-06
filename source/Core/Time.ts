@@ -9,10 +9,10 @@ export const now = (): Task.Task<number> => {
 
 export const delay =
   <TMsg>(timeout: number, msg: TMsg): Task.Task<TMsg> =>
-    async () => {
-      await new Promise((resolve) => setTimeout(resolve, timeout))
-      return msg
-    }
+  async () => {
+    await new Promise((resolve) => setTimeout(resolve, timeout))
+    return msg
+  }
 
 //
 //
@@ -24,14 +24,12 @@ export const delay =
 
 const timeouts = new Map<string, string>()
 
-
 export const startTimeout = <Msg>(
   timeoutId: string,
   duration: number,
   msg: Msg,
 ): Cmd.Cmd<Msg> => {
   return (dispatch) => {
-
     timeouts.set(timeoutId, timeoutId)
 
     setTimeout(() => {
@@ -97,4 +95,3 @@ export const every = <Msg>(
 
   return newSubj.pipe(Rx.map(() => f(new Date().getTime())))
 }
-

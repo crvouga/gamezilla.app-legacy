@@ -85,17 +85,17 @@ export const toRandomMoveInput = (
 
 export const getBestMove =
   (level: Level, model: Model): Task.Task<BestMoveInputResult> =>
-    async () => {
-      const worker = new Worker("./board-worker")
+  async () => {
+    const worker = new Worker("./board-worker")
 
-      const boardWorker = await spawn<BoardWorker>(worker)
+    const boardWorker = await spawn<BoardWorker>(worker)
 
-      const result = await boardWorker.toBestMove(level, model)
+    const result = await boardWorker.toBestMove(level, model)
 
-      await Thread.terminate(boardWorker)
+    await Thread.terminate(boardWorker)
 
-      return result
-    }
+    return result
+  }
 
 //
 //
@@ -631,12 +631,12 @@ export const toTurn = (model: Model): Color => {
 
 export type GameOver =
   | {
-    type: "Checkmate"
-    winner: Color
-  }
+      type: "Checkmate"
+      winner: Color
+    }
   | {
-    type: "Stalemate"
-  }
+      type: "Stalemate"
+    }
 
 export const toGameOver = (model: Model): GameOver | { type: "None" } => {
   if (inCheckmate(model)) {
@@ -800,14 +800,14 @@ export const View = ({
 
   const lastMoveStyles: CustomSquareStyles = model.previousMove
     ? {
-      [toLowercaseSquare(model.previousMove.to)]: {
-        background: "rgba(255, 255, 0, 0.4)",
-      },
+        [toLowercaseSquare(model.previousMove.to)]: {
+          background: "rgba(255, 255, 0, 0.4)",
+        },
 
-      [toLowercaseSquare(model.previousMove.from)]: {
-        background: "rgba(255, 255, 0, 0.4)",
-      },
-    }
+        [toLowercaseSquare(model.previousMove.from)]: {
+          background: "rgba(255, 255, 0, 0.4)",
+        },
+      }
     : {}
 
   const game = instanceRef.current
@@ -817,28 +817,28 @@ export const View = ({
       ...styles,
       [toLowercaseSquare(move.to)]:
         game.get(move.to) &&
-          selectedSquare &&
-          game.get(toLowercaseSquare(move.to))?.color !==
+        selectedSquare &&
+        game.get(toLowercaseSquare(move.to))?.color !==
           game.get(toLowercaseSquare(selectedSquare))?.color
           ? {
-            background:
-              "radial-gradient(circle, rgba(0,0,0,.2) 85%, transparent 85%)",
-            borderRadius: "50%",
-            cursor: "pointer",
-          }
+              background:
+                "radial-gradient(circle, rgba(0,0,0,.2) 85%, transparent 85%)",
+              borderRadius: "50%",
+              cursor: "pointer",
+            }
           : {
-            background:
-              "radial-gradient(circle, rgba(0,0,0,.2) 25%, transparent 25%)",
-            borderRadius: "50%",
-            cursor: "pointer",
-          },
+              background:
+                "radial-gradient(circle, rgba(0,0,0,.2) 25%, transparent 25%)",
+              borderRadius: "50%",
+              cursor: "pointer",
+            },
     }),
     selectedSquare
       ? {
-        [toLowercaseSquare(selectedSquare)]: {
-          background: "rgba(255, 255, 0, 0.4)",
-        },
-      }
+          [toLowercaseSquare(selectedSquare)]: {
+            background: "rgba(255, 255, 0, 0.4)",
+          },
+        }
       : {},
   )
 
@@ -880,18 +880,26 @@ export const View = ({
           ...legalMovesStyles,
         }}
         // customPieces={customPieces}
-        isDraggablePiece={isDraggablePiece ? ({ piece }) => {
-          return isDraggablePiece({ piece })
-        } : undefined}
-        onPieceDrop={onPieceDrop ? (from, to, _piece) => {
-          const moveInput: MoveInput = {
-            from: fromLowercase(from),
-            to: fromLowercase(to),
-            promotion: "q",
-          }
+        isDraggablePiece={
+          isDraggablePiece
+            ? ({ piece }) => {
+                return isDraggablePiece({ piece })
+              }
+            : undefined
+        }
+        onPieceDrop={
+          onPieceDrop
+            ? (from, to, _piece) => {
+                const moveInput: MoveInput = {
+                  from: fromLowercase(from),
+                  to: fromLowercase(to),
+                  promotion: "q",
+                }
 
-          return onPieceDrop(moveInput)
-        } : undefined}
+                return onPieceDrop(moveInput)
+              }
+            : undefined
+        }
       />
     </div>
   )
@@ -928,16 +936,15 @@ pieces.map((p) => {
   return null
 })
 
-// 
-// 
-// 
-// 
-// 
-// 
-// 
+//
+//
+//
+//
+//
+//
+//
 
 export const exampleModel: Model = {
-  "pgn": "[SetUp \"1\"]\n[FEN \"rnbqkbnr/ppp2ppp/4p3/3p4/3P4/2N1P3/PPP2PPP/R1BQKBNR b KQkq - 1 3\"]\n\n3. ... Qd6",
-  "fen": "rnb1kbnr/ppp2ppp/3qp3/3p4/3P4/2N1P3/PPP2PPP/R1BQKBNR w KQkq - 2 4",
+  pgn: '[SetUp "1"]\n[FEN "rnbqkbnr/ppp2ppp/4p3/3p4/3P4/2N1P3/PPP2PPP/R1BQKBNR b KQkq - 1 3"]\n\n3. ... Qd6',
+  fen: "rnb1kbnr/ppp2ppp/3qp3/3p4/3P4/2N1P3/PPP2PPP/R1BQKBNR w KQkq - 2 4",
 }
-

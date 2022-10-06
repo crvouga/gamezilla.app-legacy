@@ -4,7 +4,7 @@ import {
   BackendModel,
   BackendMsg,
   ToBackend,
-  ToFrontend
+  ToFrontend,
 } from "./TicTacToe.Types"
 import * as UserVsUser from "./UserVsUser/UserVsUser.Backend"
 import * as UserVsBot from "./UserVsBot/UserVsBot.Backend"
@@ -32,26 +32,35 @@ export const init: Model = { mode: "None" }
 
 export type Msg = BackendMsg
 
-export const update = ({
-  sendToRoom,
-}: {
-  sendToRoom: (msg: ToFrontend) => Cmd.Cmd<never>
-},
+export const update = (
+  {
+    sendToRoom,
+  }: {
+    sendToRoom: (msg: ToFrontend) => Cmd.Cmd<never>
+  },
   msg: Msg,
-  model: Model
+  model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
     case "UserVsUser": {
-      if (model.mode === 'UserVsUser') {
-        const [child, cmd] = UserVsUser.update({ sendToRoom: msg => sendToRoom(['UserVsUser', msg]) }, msg[1], model.child)
+      if (model.mode === "UserVsUser") {
+        const [child, cmd] = UserVsUser.update(
+          { sendToRoom: (msg) => sendToRoom(["UserVsUser", msg]) },
+          msg[1],
+          model.child,
+        )
         return [{ mode: "UserVsUser", child }, tagCmd("UserVsUser", cmd)]
       }
       return [model, Cmd.None]
     }
 
-    case 'UserVsBot': {
-      if (model.mode === 'UserVsBot') {
-        const [child, cmd] = UserVsBot.update({ sendToRoom: msg => sendToRoom(['UserVsBot', msg]) }, msg[1], model.child)
+    case "UserVsBot": {
+      if (model.mode === "UserVsBot") {
+        const [child, cmd] = UserVsBot.update(
+          { sendToRoom: (msg) => sendToRoom(["UserVsBot", msg]) },
+          msg[1],
+          model.child,
+        )
         return [{ mode: "UserVsBot", child }, tagCmd("UserVsBot", cmd)]
       }
       return [model, Cmd.None]
@@ -74,15 +83,15 @@ export const updateFromFrontend = (
     case "InputMode": {
       const modelNew: BackendModel = initMode(msg[1])
 
-      return [modelNew, sendToRoom(['InputMode_Done', Ok(modelNew)])]
+      return [modelNew, sendToRoom(["InputMode_Done", Ok(modelNew)])]
     }
 
-    case 'UserVsUser': {
-      if (model.mode === 'UserVsUser') {
+    case "UserVsUser": {
+      if (model.mode === "UserVsUser") {
         const [child, cmd] = UserVsUser.updateFromFrontend(
           {
-            sendToClient: msg => sendToClient(['UserVsUser', msg]),
-            sendToRoom: msg => sendToRoom(['UserVsUser', msg])
+            sendToClient: (msg) => sendToClient(["UserVsUser", msg]),
+            sendToRoom: (msg) => sendToRoom(["UserVsUser", msg]),
           },
           msg[1],
           model.child,
@@ -94,12 +103,12 @@ export const updateFromFrontend = (
       return [model, Cmd.None]
     }
 
-    case 'UserVsBot': {
-      if (model.mode === 'UserVsBot') {
+    case "UserVsBot": {
+      if (model.mode === "UserVsBot") {
         const [child, cmd] = UserVsBot.updateFromFrontend(
           {
-            sendToClient: msg => sendToClient(['UserVsBot', msg]),
-            sendToRoom: msg => sendToRoom(['UserVsBot', msg])
+            sendToClient: (msg) => sendToClient(["UserVsBot", msg]),
+            sendToRoom: (msg) => sendToRoom(["UserVsBot", msg]),
           },
           msg[1],
           model.child,
@@ -117,22 +126,28 @@ export const updateFromFrontend = (
   }
 }
 
-const initMode = ({ mode, userId }: { mode: BackendModel['mode'], userId: UserId.UserId }): BackendModel => {
+const initMode = ({
+  mode,
+  userId,
+}: {
+  mode: BackendModel["mode"]
+  userId: UserId.UserId
+}): BackendModel => {
   switch (mode) {
-    case 'None': {
+    case "None": {
       return {
-        mode: "None"
+        mode: "None",
       }
     }
 
-    case 'UserVsUser': {
+    case "UserVsUser": {
       return {
         mode: "UserVsUser",
-        child: UserVsUser.init({ X: userId, O: "None" })
+        child: UserVsUser.init({ X: userId, O: "None" }),
       }
     }
 
-    case 'UserVsBot': {
+    case "UserVsBot": {
       return {
         mode: "UserVsBot",
         child: UserVsBot.init({ userId }),
@@ -149,17 +164,23 @@ const initMode = ({ mode, userId }: { mode: BackendModel['mode'], userId: UserId
 //
 //
 
-export const subscriptions = (intervalId: string, model: Model): Sub.Sub<Msg> => {
+export const subscriptions = (
+  intervalId: string,
+  model: Model,
+): Sub.Sub<Msg> => {
   switch (model.mode) {
-    case 'None': {
+    case "None": {
       return Sub.None
     }
 
-    case 'UserVsUser': {
-      return tagSub("UserVsUser", UserVsUser.subscriptions(intervalId, model.child))
+    case "UserVsUser": {
+      return tagSub(
+        "UserVsUser",
+        UserVsUser.subscriptions(intervalId, model.child),
+      )
     }
 
-    case 'UserVsBot': {
+    case "UserVsBot": {
       return tagSub("UserVsBot", UserVsBot.subscriptions(model.child))
     }
   }

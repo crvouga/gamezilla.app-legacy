@@ -56,7 +56,7 @@ export const View = ({
   store,
   dispatch,
   model,
-  bottomNav
+  bottomNav,
 }: {
   gameRoom: GameRoom.Model
   currentUserId: UserId.UserId

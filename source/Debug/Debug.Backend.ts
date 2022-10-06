@@ -1,4 +1,4 @@
-import { Cmd, Sub } from "../Core";
+import { Cmd, Sub } from "../Core"
 import { BackendModel, ToFrontend, ToBackend, BackendMsg } from "./Debug.Types"
 
 //
@@ -12,7 +12,7 @@ import { BackendModel, ToFrontend, ToBackend, BackendMsg } from "./Debug.Types"
 export type Model = BackendModel
 
 export const init: Model = {
-    snapshots: []
+  snapshots: [],
 }
 
 //
@@ -26,19 +26,22 @@ export const init: Model = {
 export type Msg = BackendMsg
 
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
-    switch (msg[0]) {
-        case "Noop": {
-            return [model, Cmd.None]
-        }
+  switch (msg[0]) {
+    case "Noop": {
+      return [model, Cmd.None]
     }
-};
+  }
+}
 
-export const updateFromFrontend = (msg: ToBackend, model: Model): [Model, Cmd.Cmd<Msg>] => {
-    switch (msg[0]) {
-        case 'GoBack': {
-            return [model, Cmd.None]
-        }
+export const updateFromFrontend = (
+  msg: ToBackend,
+  model: Model,
+): [Model, Cmd.Cmd<Msg>] => {
+  switch (msg[0]) {
+    case "GoBack": {
+      return [model, Cmd.None]
     }
+  }
 }
 
 //
@@ -50,5 +53,5 @@ export const updateFromFrontend = (msg: ToBackend, model: Model): [Model, Cmd.Cm
 //
 
 export const subscriptions = (model: Model): Sub.Sub<Msg> => {
-    return Sub.None;
-};
+  return Sub.None
+}

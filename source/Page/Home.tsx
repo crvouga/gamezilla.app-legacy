@@ -27,39 +27,84 @@ export const init: Model = {}
 //
 //
 
-export type Msg = ["ClickedCurrentRoom"] | ["ClickedCurrentRoomLeave"] | ["ClickedRoom", { roomId: RoomId.RoomId }] | ["ClickedCreateRoom"] | ["ClickedGameCard", GameName]
+export type Msg =
+  | ["ClickedCurrentRoom"]
+  | ["ClickedCurrentRoomLeave"]
+  | ["ClickedRoom", { roomId: RoomId.RoomId }]
+  | ["ClickedCreateRoom"]
+  | ["ClickedGameCard", GameName]
 
 export type OutAction = GameRoom.Action | Route.Action
 
-export const update = ({ currentUserId }: { currentUserId: UserId.UserId }, msg: Msg, model: Model): [Model, OutAction[]] => {
+export const update = (
+  { currentUserId }: { currentUserId: UserId.UserId },
+  msg: Msg,
+  model: Model,
+): [Model, OutAction[]] => {
   switch (msg[0]) {
-    case 'ClickedGameCard': {
-      return [model, [
-        ["Route", ['Push', ['GameRoom']]],
-        ['GameRoom', ['Msg', ['CreateRoom', { gameName: msg[1], roomId: RoomId.generate(), userId: currentUserId }]]]
-      ]]
+    case "ClickedGameCard": {
+      return [
+        model,
+        [
+          ["Route", ["Push", ["GameRoom"]]],
+          [
+            "GameRoom",
+            [
+              "Msg",
+              [
+                "CreateRoom",
+                {
+                  gameName: msg[1],
+                  roomId: RoomId.generate(),
+                  userId: currentUserId,
+                },
+              ],
+            ],
+          ],
+        ],
+      ]
     }
 
-    case 'ClickedRoom': {
+    case "ClickedRoom": {
       const roomId = msg[1].roomId
-      return [model, [['GameRoom', ['Msg', ['JoinRoom', { roomId, userId: currentUserId }]]]]]
+      return [
+        model,
+        [
+          [
+            "GameRoom",
+            ["Msg", ["JoinRoom", { roomId, userId: currentUserId }]],
+          ],
+        ],
+      ]
     }
 
-    case 'ClickedCurrentRoomLeave': {
-      return [model, [['GameRoom', ['Msg', ['LeaveRoom', { userId: currentUserId }]]]]]
+    case "ClickedCurrentRoomLeave": {
+      return [
+        model,
+        [["GameRoom", ["Msg", ["LeaveRoom", { userId: currentUserId }]]]],
+      ]
     }
 
     case "ClickedCurrentRoom": {
       return [model, [["Route", ["Push", ["GameRoom"]]]]]
     }
 
-    case 'ClickedCreateRoom': {
+    case "ClickedCreateRoom": {
       return [
         model,
         [
-          ["Route", ['Push', ['GameRoom']]],
-          ['GameRoom', ['Msg', ['CreateRoom', { roomId: RoomId.generate(), userId: currentUserId }]]]
-        ]
+          ["Route", ["Push", ["GameRoom"]]],
+          [
+            "GameRoom",
+            [
+              "Msg",
+              [
+                "CreateRoom",
+                { roomId: RoomId.generate(), userId: currentUserId },
+              ],
+            ],
+          ],
+        ],
       ]
     }
   }
@@ -159,8 +204,16 @@ export const View = ({
             alignItems: "center",
           }}
         >
-          <UI.CardActionArea sx={{ width: 100, minWidth: 100, flex: 1, display: "flex", flexDirection: "row" }}>
-            <UI.Box sx={{ width: 100 }} >
+          <UI.CardActionArea
+            sx={{
+              width: 100,
+              minWidth: 100,
+              flex: 1,
+              display: "flex",
+              flexDirection: "row",
+            }}
+          >
+            <UI.Box sx={{ width: 100 }}>
               <UI.AspectRatio aspectRatio={1}>
                 {gameName ? (
                   <Game.CoverArt gameName={gameName} />
@@ -173,8 +226,6 @@ export const View = ({
                 )}
               </UI.AspectRatio>
             </UI.Box>
-
-
 
             <UI.Box sx={{ flex: 2, padding: 2, overflow: "hidden" }}>
               <UI.Typography
@@ -197,13 +248,11 @@ export const View = ({
             sx={{ marginRight: 1 }}
             onClick={(event) => {
               event.stopPropagation()
-              dispatch(['ClickedCurrentRoomLeave'])
+              dispatch(["ClickedCurrentRoomLeave"])
             }}
           >
             Leave
           </UI.Button>
-
-
         </UI.Paper>
       </UI.Box>
 
@@ -235,7 +284,8 @@ export const View = ({
                 }
                 store={store}
                 gameRoom={gameRoom}
-                onClick={() => dispatch(['ClickedRoom', { roomId: room.roomId }])
+                onClick={() =>
+                  dispatch(["ClickedRoom", { roomId: room.roomId }])
                 }
               />
             ))}
@@ -266,16 +316,29 @@ const ViewNotInRoom = ({
       <UI.FillBox sx={{ overflowY: "scroll" }}>
         <UI.Header title="Home" />
 
-        <UI.Typography variant="h4" sx={{ paddingX: 2, marginBottom: 1 }}>
+        <UI.Typography
+          variant="h4"
+          sx={{ paddingX: 2, marginBottom: 1 }}
+        >
           Games
         </UI.Typography>
-        <UI.Box sx={{
-          gap: 1, paddingX: 2, display: 'flex', overflowX: "scroll", width: "100%",
-          snapScrollType: "x mandatory",
-        }}>
-          {gameNameList.map(gameName => (
-            <UI.Box sx={{ minWidth: 150, flex: 1, }}>
-              <GameRoom.ViewGameCard key={gameName} gameName={gameName} onClick={() => dispatch(['ClickedGameCard', gameName])} />
+        <UI.Box
+          sx={{
+            gap: 1,
+            paddingX: 2,
+            display: "flex",
+            overflowX: "scroll",
+            width: "100%",
+            snapScrollType: "x mandatory",
+          }}
+        >
+          {gameNameList.map((gameName) => (
+            <UI.Box sx={{ minWidth: 150, flex: 1 }}>
+              <GameRoom.ViewGameCard
+                key={gameName}
+                gameName={gameName}
+                onClick={() => dispatch(["ClickedGameCard", gameName])}
+              />
             </UI.Box>
           ))}
         </UI.Box>
@@ -295,21 +358,32 @@ const ViewNotInRoom = ({
     <UI.FillBox sx={{ overflowY: "scroll" }}>
       <UI.Header title="Home" />
 
-      <UI.Typography variant="h4" sx={{ paddingX: 2, marginBottom: 1 }}>
+      <UI.Typography
+        variant="h4"
+        sx={{ paddingX: 2, marginBottom: 1 }}
+      >
         Games
       </UI.Typography>
-      <UI.Box sx={{
-        gap: 1, paddingX: 2, display: 'flex', overflowX: "scroll", width: "100%",
-        snapScrollType: "x mandatory",
-      }}>
-        {gameNameList.map(gameName => (
-          <UI.Box sx={{ minWidth: 150, flex: 1, }}>
-            <GameRoom.ViewGameCard key={gameName} gameName={gameName} onClick={() => dispatch(['ClickedGameCard', gameName])} />
+      <UI.Box
+        sx={{
+          gap: 1,
+          paddingX: 2,
+          display: "flex",
+          overflowX: "scroll",
+          width: "100%",
+          snapScrollType: "x mandatory",
+        }}
+      >
+        {gameNameList.map((gameName) => (
+          <UI.Box sx={{ minWidth: 150, flex: 1 }}>
+            <GameRoom.ViewGameCard
+              key={gameName}
+              gameName={gameName}
+              onClick={() => dispatch(["ClickedGameCard", gameName])}
+            />
           </UI.Box>
         ))}
       </UI.Box>
-
-
 
       <UI.Typography
         variant="h6"
@@ -337,13 +411,10 @@ const ViewNotInRoom = ({
             }
             store={store}
             gameRoom={gameRoom}
-            onClick={() =>
-              dispatch(['ClickedRoom', { roomId: room.roomId }])
-            }
+            onClick={() => dispatch(["ClickedRoom", { roomId: room.roomId }])}
           />
         ))}
       </UI.Box>
-
     </UI.FillBox>
   )
 }

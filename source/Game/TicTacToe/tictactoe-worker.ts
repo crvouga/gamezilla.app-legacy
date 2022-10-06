@@ -2,11 +2,11 @@ import { expose } from "threads/worker"
 import * as TicTacToe from "./TicTacToe"
 
 export type TicTacToeWorker = {
-    toBestMove: typeof TicTacToe.toBestMove
+  toBestMove: typeof TicTacToe.toBestMove
 }
 
 const worker: TicTacToeWorker = {
-    toBestMove: TicTacToe.toBestMove,
+  toBestMove: TicTacToe.toBestMove,
 }
 
 expose(worker)
