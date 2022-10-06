@@ -5,6 +5,7 @@ import * as UI from "../../../UI"
 import {
   GameOver,
   PlayerType,
+  PlayerTypeIcon,
   playerTypes,
   theme,
   toGameOver,
@@ -271,16 +272,7 @@ export const View = ({
                     ])
                   }
                 >
-                  <UI.SvgIcon viewBox="-1 -1 2 2">
-                    <ViewSlot
-                      cx={0}
-                      cy={0}
-                      slot={playerType}
-                      r={0.8}
-                      color="currentColor"
-                      strokeWidth={0.33}
-                    />
-                  </UI.SvgIcon>
+                  <PlayerTypeIcon playerType={playerType} />
                 </UI.ToggleButton>
               ))}
             </UI.ToggleButtonGroup>
@@ -641,18 +633,7 @@ const ViewHeaderPlayerSlot = ({
           flexDirection: "column",
         }}
       >
-        <UI.SvgIcon
-          sx={{ ...largeIconSx }}
-          viewBox="-1 -1 2 2"
-        >
-          <ViewSlot
-            cx={0}
-            cy={0}
-            r={0.8}
-            slot={playerType}
-            strokeWidth={0.3}
-          />
-        </UI.SvgIcon>
+        <PlayerTypeIcon playerType={playerType} sx={{ ...largeIconSx, color: playerType === 'O' ? theme.naught : theme.cross }} />
       </UI.Box>
     </UI.Box>
   )
@@ -703,19 +684,8 @@ export const ViewPlayerGameSlot = ({
             alignItems: "center",
           }}
         >
-          <UI.SvgIcon
-            sx={{ display: "block", marginRight: 1, ...iconSize }}
-            viewBox="-1 -1 2 2"
-          >
-            <ViewSlot
-              strokeWidth={0.3}
-              color={uiTheme.palette.text.primary}
-              slot={playerType}
-              cx={0}
-              cy={0}
-              r={0.8}
-            />
-          </UI.SvgIcon>
+          <PlayerTypeIcon playerType={playerType} sx={{ display: "block", marginRight: 1, ...iconSize }} />
+
           {model.userPlayerType === playerType ? (
             <>
               <UI.Avatar

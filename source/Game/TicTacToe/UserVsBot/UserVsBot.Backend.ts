@@ -1,4 +1,4 @@
-import { Cmd, pipe, Sub } from "../../../Core"
+import { andThen, Cmd, pipe, Sub } from "../../../Core"
 import { getBestMove, toOpposite } from "../TicTacToe"
 import {
   BackendModel,
@@ -42,11 +42,22 @@ export const init = initSharedModel
 
 export type Msg = BackendMsg
 
-export const update = (
-  { sendToRoom }: { sendToRoom: (msg: ToFrontend) => Cmd.Cmd<never> },
+type Update = (
+  wire: { sendToRoom: (msg: ToFrontend) => Cmd.Cmd<never> },
   msg: Msg,
   model: Model,
-): [Model, Cmd.Cmd<Msg>] => {
+) => [Model, Cmd.Cmd<Msg>]
+
+
+export const update: Update = (wire, msg, model) => {
+  const [modelNext, cmd] = update_(wire, msg, model)
+
+  //
+
+  return [modelNext, cmd]
+}
+
+export const update_: Update = ({ sendToRoom }, msg, model) => {
   switch (msg[0]) {
     case "BotMove": {
       const response: ToFrontend = ["BotMove_Done", botMove(msg[1], model)]
@@ -55,6 +66,14 @@ export const update = (
     }
   }
 }
+
+
+
+// 
+// 
+// 
+// 
+// 
 
 type UpdateFromFrontend = (
   wire: {
@@ -89,7 +108,7 @@ export const updateFromFrontend: UpdateFromFrontend = (
   return [modelNext, cmd]
 }
 
-export const updateFromFrontend_: UpdateFromFrontend = (
+const updateFromFrontend_: UpdateFromFrontend = (
   { sendToClient, sendToRoom },
   msg,
   model,
