@@ -54,9 +54,9 @@ export default {
   component: View,
   args: {
     currentUserId: currentUserId,
-    dispatch: () => {},
-    goHome: () => {},
-    onCloseGame: () => {},
+    dispatch: () => { },
+    goHome: () => { },
+    onCloseGame: () => { },
     store: {
       ...Store.init,
       Profile: {
@@ -77,15 +77,44 @@ const Template: ComponentStory<typeof View> = (args) => {
   )
 }
 
-export const GameSetup = Template.bind({})
-GameSetup.args = {
+const modelSetup: Model = {
+  type: "Setup",
+  maxRoundCount: 3,
+  moveTimeLimit: 5,
+  O: "None",
+  X: "None",
+  openedModal: "None",
+}
+
+export const SetupMissingAll = Template.bind({})
+SetupMissingAll.args = {
   model: {
-    type: "Setup",
-    maxRoundCount: 3,
-    moveTimeLimit: 5,
+    ...modelSetup
+  }
+}
+
+export const SetupMissingX = Template.bind({})
+SetupMissingX.args = {
+  model: {
+    ...modelSetup,
+    O: userA.userId,
+  },
+}
+
+export const SetupMissingO = Template.bind({})
+SetupMissingO.args = {
+  model: {
+    ...modelSetup,
+    X: userB.userId,
+  },
+}
+
+export const SetupReady = Template.bind({})
+SetupReady.args = {
+  model: {
+    ...modelSetup,
     O: userA.userId,
     X: userB.userId,
-    openedModal: "None",
   },
 }
 

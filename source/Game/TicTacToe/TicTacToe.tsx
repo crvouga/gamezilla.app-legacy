@@ -2,7 +2,7 @@ import * as Threads from "threads"
 import { Result } from "../../Core"
 import { Err, Ok } from "../../Core/Result"
 import { Task } from "../../Core/Task"
-import * as Store from "../../Store"
+import * as UI from "../../UI"
 import { TicTacToeWorker } from "./tictactoe-worker"
 
 //
@@ -108,19 +108,18 @@ export const toBestMove = (
 
 export const getBestMove =
   (maximizingPlayer: PlayerType, board: Board): Task<Position> =>
-  async () => {
-    const worker = new Threads.Worker("./tictactoe-worker")
+    async () => {
+      const worker = new Threads.Worker("./tictactoe-worker")
 
-    const spawned = await Threads.spawn<TicTacToeWorker>(worker)
+      const spawned = await Threads.spawn<TicTacToeWorker>(worker)
 
-    try {
       const result = await spawned.toBestMove(maximizingPlayer, board)
 
-      return result
-    } finally {
       await Threads.Thread.terminate(spawned)
+
+      return result
+
     }
-  }
 
 type NonEmptyArray<T> = [T, ...T[]]
 
@@ -259,8 +258,8 @@ const toWins = (board: Board): Wins => {
       a === "X" && b === "X" && c === "X"
         ? "X"
         : a === "O" && b === "O" && c === "O"
-        ? "O"
-        : "None"
+          ? "O"
+          : "None"
 
     wins[key].push(group)
   }
@@ -374,6 +373,7 @@ export const theme = {
   line: "#0DA192",
   cross: "#545454",
   naught: "#F2EBD3",
+  text: "#fff",
 }
 
 export const ViewBoard = ({
@@ -549,140 +549,23 @@ const Naught = ({
   )
 }
 
-const VersusScreen = ({ store }: { store: Store.Model }) => {
-  const profileX = undefined
 
-  const profileO = undefined
 
+export const PlayerTypeIcon = ({ playerType, sx }: { playerType: PlayerType, sx?: UI.Sx }) => {
   return (
-    <svg
-      width="100%"
-      viewBox="0 0 1 1"
-    >
-      <rect
-        width="100%"
-        height="100%"
-        fill={theme.background}
+    <UI.SvgIcon viewBox="-1 -1 2 2" sx={sx}>
+      <ViewSlot
+        cx={0}
+        cy={0}
+        slot={playerType}
+        r={0.8}
+        color="currentColor"
+        strokeWidth={0.33}
       />
-
-      <mask id="avatar">
-        <rect
-          x={0}
-          y={0}
-          width={1}
-          height={1}
-          fill="black"
-        />
-        <circle
-          cx={0.5}
-          cy={0.5}
-          r={0.5}
-          fill="white"
-        />
-      </mask>
-
-      {profileX && (
-        <>
-          <Cross
-            cx={0.15}
-            cy={0.25}
-            r={0.075}
-            strokeWidth={0.05}
-          />
-          <SvgAvatar
-            id="x-avatar"
-            cx={0.4}
-            cy={0.25}
-            r={0.1}
-            src={""}
-          />
-        </>
-      )}
-
-      {profileO && (
-        <>
-          <Naught
-            cx={0.55}
-            cy={0.75}
-            r={0.075}
-            strokeWidth={0.05}
-          />
-          <SvgAvatar
-            id="o-avatar"
-            cx={0.8}
-            cy={0.75}
-            r={0.1}
-            src={""}
-          />
-        </>
-      )}
-
-      <line
-        x1={0}
-        y1={1}
-        x2={1}
-        y2={0}
-        stroke={theme.line}
-        strokeWidth={0.0333}
-      />
-      <circle
-        cx={0.5}
-        cy={0.5}
-        r={0.1}
-        fill={theme.line}
-      />
-      <text
-        dominantBaseline={"middle"}
-        textAnchor={"middle"}
-        x={0.5}
-        y={0.5}
-        fontSize={0.15}
-        fill={"#fff"}
-        r={0.15}
-      >
-        vs
-      </text>
-    </svg>
+    </UI.SvgIcon>
   )
 }
 
-const SvgAvatar = ({
-  id,
-  src,
-  cx,
-  cy,
-  r,
-}: {
-  id: string
-  src: string
-  cx: number
-  cy: number
-  r: number
-}) => {
-  return (
-    <>
-      <defs>
-        <clipPath id={id}>
-          <circle
-            cx={cx}
-            cy={cy}
-            r={r}
-            fill="#FFFFFF"
-          />
-        </clipPath>
-      </defs>
-      <image
-        x={cx - r}
-        y={cy - r}
-        width={r * 2}
-        height={r * 2}
-        xlinkHref={src}
-        href={src}
-        clipPath={`url(#${id})`}
-      />
-    </>
-  )
-}
 
 // source: https://en.wikipedia.org/wiki/Minimax
 // https://en.wikipedia.org/wiki/Alpha%E2%80%93beta_pruning

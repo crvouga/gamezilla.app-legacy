@@ -23,7 +23,10 @@ import {
   inputBotToString,
   inputPlayerType,
   inputPlayerTypeToString,
+  restart,
   startGame,
+  stopGame,
+  swapSides,
   ToBackend,
   ToFrontend,
 } from "./UserVsBot.Types"
@@ -340,6 +343,9 @@ export const View = ({
   }
 
   const gameOver = toGameOver(model.board)
+  const stopGameRes = stopGame({ userId: currentUserId }, model)
+  const restartRes = restart({ userId: currentUserId }, model)
+  const swapSidesRes = swapSides({ userId: currentUserId }, model)
 
   return (
     <UI.FillBox>
@@ -365,18 +371,17 @@ export const View = ({
 
         <UI.Box
           sx={{
-            width: "100%",
-            position: "relative",
-            aspectRatio: 1,
-            overflow: "hidden",
+            width: "100%", position: "relative", aspectRatio: 1, overflow: "hidden",
           }}
         >
+          {/*  */}
           <ViewBoard
             board={model.board}
             onClick={(position) =>
               dispatch(["InputMove", { userId: currentUserId, position }])
             }
           />
+
           <UI.Fade in={gameOver.type !== "None"}>
             <UI.Box
               onClick={() => dispatch(["Restart", { userId: currentUserId }])}
@@ -406,15 +411,18 @@ export const View = ({
           onClick={() => {
             dispatch(["StopGame", { userId: currentUserId }])
           }}
+          disabled={stopGameRes.type === 'Err'}
           icon={<UI.Icons.ExitToApp sx={{ transform: "rotate(180deg)" }} />}
           label="Exit"
         />
         <UI.ActionButton
+          disabled={swapSidesRes.type === 'Err'}
           onClick={() => dispatch(["SwapSides", { userId: currentUserId }])}
           icon={<UI.Icons.SwapHoriz />}
           label="Swap"
         />
         <UI.ActionButton
+          disabled={restartRes.type === 'Err'}
           onClick={() => dispatch(["Restart", { userId: currentUserId }])}
           icon={<UI.Icons.RestartAlt />}
           label="Reset"
@@ -668,7 +676,7 @@ export const ViewPlayerGameSlot = ({
 
   const gameOver = toGameOver(model.board)
 
-  const isTurn = gameOver.type !== "None" && toTurn(model.board) === playerType
+  const isTurn = gameOver.type === "None" && toTurn(model.board) === playerType
 
   return (
     <UI.Paper
@@ -681,9 +689,8 @@ export const ViewPlayerGameSlot = ({
           display: "flex",
           alignItems: "center",
           overflow: "hidden",
-          borderBottom: `solid 3.5px ${
-            isTurn ? theme.background : uiTheme.palette.divider
-          }`,
+          borderBottom: `solid 3.5px ${isTurn ? theme.background : uiTheme.palette.divider
+            }`,
         }}
       >
         <UI.Box
