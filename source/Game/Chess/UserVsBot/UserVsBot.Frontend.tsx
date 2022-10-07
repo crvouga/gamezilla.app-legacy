@@ -5,7 +5,7 @@ import * as Store from "../../../Store"
 import * as UI from "../../../UI"
 import * as Board from "../Board"
 import * as Sounds from "../Sounds"
-import { BannerArt, VersusHeader } from "../Views"
+import { BannerArt, PawnIcon, VersusHeader } from "../Views"
 import {
   BackendModel,
   FrontendModel,
@@ -425,6 +425,7 @@ export const View = ({
                     ])
                   }
                 >
+                  <PawnIcon stroke="#000" sx={{ width: 36, height: 36, color: "#fff", }} />
                   White
                 </UI.ToggleButton>
                 <UI.ToggleButton
@@ -436,6 +437,7 @@ export const View = ({
                     ])
                   }
                 >
+                  <PawnIcon stroke="#ccc" sx={{ width: 36, height: 36, color: "#000", }} />
                   Black
                 </UI.ToggleButton>
               </UI.ToggleButtonGroup>
@@ -458,15 +460,14 @@ export const View = ({
                   : ""
               }
             >
-              <UI.Select
-                disabled={inputBotResult.type === "Err"}
-                fullWidth
-                value={model.sharedModel.botLevel}
+              <UI.Box
+                sx={{ width: '100%', display: 'flex', alignItems: 'center', gap: 1.5, flexWrap: "wrap" }}
               >
                 {Board.allLevels.map((level) => (
-                  <UI.MenuItem
-                    selected={model.sharedModel.botLevel === level}
-                    value={level}
+                  <UI.Chip
+                    clickable
+                    color={model.sharedModel.botLevel === level ? "primary" : undefined}
+                    // variant={model.sharedModel.botLevel === level ? "filled" : "outlined"}
                     key={level}
                     onClick={() => {
                       dispatch([
@@ -474,11 +475,11 @@ export const View = ({
                         { botLevel: level, userId: currentUserId },
                       ])
                     }}
-                  >
-                    {Board.levelToString(level)}
-                  </UI.MenuItem>
+                    sx={{ fontSize: "1.1rem" }}
+                    label={Board.levelToString(level)}
+                  />
                 ))}
-              </UI.Select>
+              </UI.Box>
             </UI.Tooltip>
           </UI.Box>
 
