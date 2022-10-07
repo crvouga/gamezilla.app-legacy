@@ -15,9 +15,9 @@ import { Model, View } from "./UserVsUser.Frontend"
 const userA: Store.Profile.Profile = {
   userId: UserId.generate(),
   avatarUrl: ProfileAvatar.toUrl({ seed: "123", style: "big-ears-neutral" }),
-  name: "Fred",
+  name: "i_have_a_really_long_username",
   themeMode: "Light",
-  username: Username.fromString("fred123"),
+  username: Username.fromString("i_have_a_really_long_username"),
 }
 
 const userB: Store.Profile.Profile = {
@@ -39,7 +39,7 @@ const userC: Store.Profile.Profile = {
   username: Username.fromString("SomeUser"),
 }
 
-const currentUserId = userB.userId
+const currentUserId = userA.userId
 
 //
 //

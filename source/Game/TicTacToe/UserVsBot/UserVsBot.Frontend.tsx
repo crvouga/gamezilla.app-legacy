@@ -7,12 +7,13 @@ import {
   PlayerType,
   PlayerTypeIcon,
   playerTypes,
-  theme,
+  gameTheme,
   toGameOver,
   toTurn,
   ViewBoard,
   ViewSlot,
 } from "../TicTacToe"
+import { VersusHeader } from "../Views"
 import {
   BackendModel,
   botLevels,
@@ -170,42 +171,11 @@ export const View = ({
           right={roomAvatarGroup}
         />
         <UI.Box sx={{ flex: 1, overflowY: "scroll" }}>
-          <UI.Box
-            sx={{
-              width: "100%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "#fff",
-              backgroundColor: theme.background,
-            }}
-          >
-            <ViewHeaderPlayerSlot
-              playerType="X"
-              model={model}
-              store={store}
-            />
-            <UI.Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <UI.Typography
-                align="center"
-                sx={{ fontSize: 24, color: "inherit" }}
-              >
-                vs
-              </UI.Typography>
-            </UI.Box>
-            <ViewHeaderPlayerSlot
-              playerType="O"
-              model={model}
-              store={store}
-            />
-          </UI.Box>
-
+          <VersusHeader
+            store={store}
+            X={model.userPlayerType === 'X' ? model.player === "None" ? { type: "User" } : { type: "User", userId: model.player } : { type: "Bot", label: model.botLevel }}
+            O={model.userPlayerType === 'O' ? model.player === "None" ? { type: "User" } : { type: "User", userId: model.player } : { type: "Bot", label: model.botLevel }}
+          />
           <UI.Typography
             color="text.secondary"
             sx={{ paddingX: 2, paddingTop: 2, paddingBottom: 1 }}
@@ -548,97 +518,6 @@ const ViewGameOverMessage = ({
   }
 }
 
-const ViewHeaderPlayerSlot = ({
-  playerType,
-  model,
-  store,
-}: {
-  playerType: PlayerType
-  model: Model
-  store: Store.Model
-}) => {
-  const iconSx = { width: 42, height: 42 }
-
-  const largeIconSx = { width: 64, height: 64 }
-  return (
-    <UI.Box
-      sx={{
-        flex: 1,
-        width: "100%",
-        height: "100%",
-        overflow: "hidden",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        gap: 2,
-        flexDirection: playerType === "X" ? "row" : "row-reverse",
-        paddingY: 4,
-        paddingX: 2,
-      }}
-    >
-      <UI.Box
-        sx={{
-          flex: 1,
-          width: "100%",
-          height: "100%",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          flexDirection: "column",
-        }}
-      >
-        {model.userPlayerType === playerType ? (
-          <>
-            <UI.Avatar
-              src={
-                model.player === "None"
-                  ? ""
-                  : store.Profile[model.player]?.avatarUrl
-              }
-              sx={{ ...iconSx }}
-            >
-              <UI.Icons.QuestionMark />
-            </UI.Avatar>
-            <UI.Typography
-              variant="caption"
-              color="inherit"
-              noWrap
-              sx={{ textOverflow: "ellipsis" }}
-            >
-              {model.player === "None"
-                ? "..."
-                : store.Profile[model.player]?.username}
-            </UI.Typography>
-          </>
-        ) : (
-          <>
-            <UI.Icons.SmartToy sx={{ ...iconSx }} />
-            <UI.Typography
-              variant="caption"
-              color="inherit"
-              noWrap
-            >
-              {model.botLevel}
-            </UI.Typography>
-          </>
-        )}
-      </UI.Box>
-      <UI.Box
-        sx={{
-          flex: 1,
-          width: "100%",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          flexDirection: "column",
-        }}
-      >
-        <PlayerTypeIcon playerType={playerType} sx={{ ...largeIconSx, color: playerType === 'O' ? theme.naught : theme.cross }} />
-      </UI.Box>
-    </UI.Box>
-  )
-}
-
 export const ViewPlayerGameSlot = ({
   store,
   playerType,
@@ -670,7 +549,7 @@ export const ViewPlayerGameSlot = ({
           display: "flex",
           alignItems: "center",
           overflow: "hidden",
-          borderBottom: `solid 3.5px ${isTurn ? theme.background : uiTheme.palette.divider
+          borderBottom: `solid 3.5px ${isTurn ? gameTheme.background : uiTheme.palette.divider
             }`,
         }}
       >
