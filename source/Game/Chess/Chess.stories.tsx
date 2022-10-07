@@ -55,10 +55,10 @@ export default {
   component: View,
   args: {
     currentUserId: currentUserId,
-    dispatch: () => {},
+    dispatch: () => { },
     roomAvatarGroup: <>room</>,
-    goHome: () => {},
-    onCloseGame: () => {},
+    goHome: () => { },
+    onCloseGame: () => { },
     store: {
       ...Store.init,
       Profile: {

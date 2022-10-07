@@ -5,7 +5,7 @@ import * as Store from "../../../Store"
 import * as UI from "../../../UI"
 import * as Clock from "../Clock"
 import * as Sounds from "../Sounds"
-import { BannerArt } from "../Views"
+import { BannerArt, PawnIcon, VersusHeader } from "../Views"
 import * as Board from "../Board"
 import {
   BackendModel,
@@ -202,8 +202,8 @@ export const updateFromBackend = (
       const soundCmd = Board.inCheck(sharedModelNew.board)
         ? playAudio(Sounds.check)
         : sharedModelNew.didCapture
-        ? playAudio(Sounds.capture)
-        : playAudio(Sounds.move)
+          ? playAudio(Sounds.capture)
+          : playAudio(Sounds.move)
 
       return [{ ...model, sharedModel: sharedModelNew }, soundCmd, []]
     }
@@ -460,17 +460,23 @@ export const View = ({
         />
 
         <UI.Box sx={{ flex: 1, overflowY: "scroll" }}>
-          <BannerArt title="User Vs User" />
+          <VersusHeader
+            store={store}
+            black={model.sharedModel.b.type === 'Some' ? { type: "User", userId: model.sharedModel.b.value } : { type: "None" }}
+            white={model.sharedModel.w.type === 'Some' ? { type: "User", userId: model.sharedModel.w.value } : { type: "None" }}
+          />
 
           <UI.Typography
-            sx={{ paddingX: 2, marginBottom: 1, marginTop: 2 }}
+            sx={{ paddingX: 2, paddingTop: 1 }}
             color="text.secondary"
           >
-            {Board.colorToString("w")}
+            Players
           </UI.Typography>
 
-          {model.sharedModel.w.type === "None" ? (
-            <UI.Box sx={{ paddingX: 2 }}>
+          <UI.Box sx={{ display: "flex", alignItems: "center", paddingRight: 2, width: "100%", marginBottom: 1 }}>
+            <PawnIcon sx={{ width: 60, height: 60, color: "#fff" }} />
+
+            {model.sharedModel.w.type === "None" ? (
               <UI.Button
                 fullWidth
                 size="large"
@@ -484,26 +490,21 @@ export const View = ({
               >
                 Play As {Board.colorToString("w")}
               </UI.Button>
-            </UI.Box>
-          ) : (
-            <ViewInputUserPlayerSlot
-              color="w"
-              userId={model.sharedModel.w.value}
-              currentUserId={currentUserId}
-              dispatch={dispatch}
-              store={store}
-            />
-          )}
 
-          <UI.Typography
-            sx={{ paddingX: 2, marginTop: 2, marginBottom: 1 }}
-            color="text.secondary"
-          >
-            {Board.colorToString("b")}
-          </UI.Typography>
+            ) : (
+              <ViewInputUserPlayerSlot
+                color="w"
+                userId={model.sharedModel.w.value}
+                currentUserId={currentUserId}
+                dispatch={dispatch}
+                store={store}
+              />
+            )}
+          </UI.Box>
 
-          {model.sharedModel.b.type === "None" ? (
-            <UI.Box sx={{ paddingX: 2 }}>
+          <UI.Box sx={{ display: "flex", alignItems: "center", paddingRight: 2, width: "100%" }}>
+            <PawnIcon stroke="#787878" sx={{ width: 60, height: 60, color: "#000" }} />
+            {model.sharedModel.b.type === "None" ? (
               <UI.Button
                 fullWidth
                 size="large"
@@ -517,16 +518,19 @@ export const View = ({
               >
                 Play As {Board.colorToString("b")}
               </UI.Button>
-            </UI.Box>
-          ) : (
-            <ViewInputUserPlayerSlot
-              color="b"
-              userId={model.sharedModel.b.value}
-              currentUserId={currentUserId}
-              dispatch={dispatch}
-              store={store}
-            />
-          )}
+
+            ) : (
+              <ViewInputUserPlayerSlot
+                color="b"
+                userId={model.sharedModel.b.value}
+                currentUserId={currentUserId}
+                dispatch={dispatch}
+                store={store}
+              />
+            )}
+          </UI.Box>
+
+          <UI.Divider sx={{ marginY: 2 }} />
 
           <UI.Typography
             sx={{ paddingX: 2, marginTop: 2, marginBottom: 1 }}
@@ -587,7 +591,7 @@ export const View = ({
             Start Game
           </UI.Button>
         </UI.Box>
-      </UI.FillBox>
+      </UI.FillBox >
     )
   }
 
@@ -708,10 +712,10 @@ export const View = ({
     currentUserId === w && currentUserId === b
       ? "Both"
       : currentUserId === w
-      ? "w"
-      : currentUserId === b
-      ? "b"
-      : "None"
+        ? "w"
+        : currentUserId === b
+          ? "b"
+          : "None"
 
   const boardOrientation: Board.Color = pipe(
     currentUserColor === "None" || currentUserColor === "Both"
@@ -864,7 +868,7 @@ export const View = ({
                     model.sharedModel.type === "Game" &&
                     model.sharedModel.drawAgreement.type === "Asking" &&
                     model.sharedModel.drawAgreement.asker ===
-                      Board.toOppositeColor(currentUserColor)
+                    Board.toOppositeColor(currentUserColor)
                   }
                   headerIcon={
                     <UI.Icons.HandshakeTwoTone
@@ -963,32 +967,32 @@ const ViewInputUserPlayerSlot = ({
   color: Board.Color
 }) => {
   return (
-    <>
-      <UI.Box sx={{ display: "flex", alignItems: "center", paddingX: 2 }}>
-        <UI.Avatar
-          sx={{ marginRight: 1 }}
-          src={store.Profile[userId]?.avatarUrl}
-        />
 
-        <UI.Typography
-          sx={{ flex: 1 }}
-          noWrap
+    <UI.Box sx={{ width: "100%", flex: 1, overflow: "hidden", display: "flex", alignItems: "center", }}>
+      <UI.Avatar
+        sx={{ marginRight: 1 }}
+        src={store.Profile[userId]?.avatarUrl}
+      />
+
+      <UI.Typography
+        sx={{ flex: 1 }}
+        noWrap
+      >
+        {store.Profile[userId]?.username ?? "..."}
+      </UI.Typography>
+
+      {userId === currentUserId && (
+        <UI.Button
+          size="large"
+          onClick={() =>
+            dispatch(["InputPlayer", { userId: Option.None, color }])
+          }
         >
-          {store.Profile[userId]?.username ?? "..."}
-        </UI.Typography>
+          Stop Playing
+        </UI.Button>
+      )}
+    </UI.Box>
 
-        {userId === currentUserId && (
-          <UI.Button
-            size="large"
-            onClick={() =>
-              dispatch(["InputPlayer", { userId: Option.None, color }])
-            }
-          >
-            Stop Playing
-          </UI.Button>
-        )}
-      </UI.Box>
-    </>
   )
 }
 

@@ -5,7 +5,7 @@ import * as Store from "../../../Store"
 import * as UI from "../../../UI"
 import * as Board from "../Board"
 import * as Sounds from "../Sounds"
-import { BannerArt } from "../Views"
+import { BannerArt, VersusHeader } from "../Views"
 import {
   BackendModel,
   FrontendModel,
@@ -186,8 +186,8 @@ const updateFromBackend_ = (
         sharedModel.type === "Game" && Board.inCheck(sharedModel.board)
           ? playAudio(Sounds.check)
           : didCapture
-          ? playAudio(Sounds.capture)
-          : playAudio(Sounds.move)
+            ? playAudio(Sounds.capture)
+            : playAudio(Sounds.move)
 
       return [{ ...model, sharedModel }, soundCmd, []]
     }
@@ -207,8 +207,8 @@ const updateFromBackend_ = (
         sharedModelNew.type === "Game" && Board.inCheck(sharedModelNew.board)
           ? playAudio(Sounds.check)
           : sharedModelNew.didCapture
-          ? playAudio(Sounds.capture)
-          : playAudio(Sounds.move)
+            ? playAudio(Sounds.capture)
+            : playAudio(Sounds.move)
 
       return [modelNew, soundCmd, []]
     }
@@ -337,7 +337,11 @@ export const View = ({
         />
 
         <UI.Box sx={{ flex: 1, overflowY: "scroll" }}>
-          <BannerArt title="User Vs Bot" />
+          <VersusHeader
+            store={store}
+            black={model.sharedModel.userColor === 'w' ? { type: "Bot", label: Board.levelToString(model.sharedModel.botLevel) } : model.sharedModel.userId.type === 'None' ? { type: "None" } : { type: "User", userId: model.sharedModel.userId.value }}
+            white={model.sharedModel.userColor === 'b' ? { type: "Bot", label: Board.levelToString(model.sharedModel.botLevel) } : model.sharedModel.userId.type === 'None' ? { type: "None" } : { type: "User", userId: model.sharedModel.userId.value }}
+          />
 
           <UI.Typography
             sx={{ paddingX: 2, marginTop: 2, marginBottom: 1 }}
@@ -390,8 +394,10 @@ export const View = ({
             </UI.Box>
           )}
 
+          <UI.Divider sx={{ marginY: 2 }} />
+
           <UI.Typography
-            sx={{ paddingX: 2, marginBottom: 1, marginTop: 2 }}
+            sx={{ paddingX: 2, marginBottom: 1, }}
             color="text.secondary"
           >
             Color
@@ -510,7 +516,7 @@ export const View = ({
       <UI.Avatar sx={{ marginRight: 2, backgroundColor: "transparent" }}>
         <UI.Icons.SmartToy
           sx={{ color: "text.primary", width: "100%", height: "100%" }}
-          // sx={{ width: 40, height: 40, marginRight: 2 }}
+        // sx={{ width: 40, height: 40, marginRight: 2 }}
         />
       </UI.Avatar>
 
