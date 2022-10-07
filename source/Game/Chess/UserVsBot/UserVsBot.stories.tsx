@@ -1,0 +1,48 @@
+import { ComponentMeta, ComponentStory } from "@storybook/react"
+import { Some } from "../../../Core/Option"
+import { store, userA, userB } from '../../../TestData'
+import * as UI from "../../../UI"
+import { Model, View } from "./UserVsBot.Frontend"
+
+const currentUserId = userA.userId
+
+export default {
+    title: "Chess/UserVsBot",
+    component: View,
+    args: {
+        currentUserId: currentUserId,
+        store: store,
+        roomAvatarGroup: <>room</>,
+        goHome: () => { },
+        dispatch: () => { },
+        onClose: () => { },
+    },
+} as ComponentMeta<typeof View>
+
+const Template: ComponentStory<typeof View> = (args) => {
+    return (
+        <UI.AppContainer themeMode="System" >
+            <View {...args} />
+        </UI.AppContainer>
+    )
+}
+
+const setupModel: Model = {
+    isFlipped: false,
+    openedMenuId: { type: "None" },
+    openedModal: "None",
+    sharedModel: {
+        type: "Setup",
+        botLevel: 2,
+        userColor: "w",
+        userId: { type: "None" }
+    }
+}
+
+export const Setup = Template.bind({})
+Setup.args = {
+    model: {
+        ...setupModel
+    }
+}
+

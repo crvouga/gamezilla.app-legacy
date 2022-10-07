@@ -200,9 +200,12 @@ export const View = ({
                   src={store.Profile[model.player]?.avatarUrl}
                   sx={{ marginRight: 1 }}
                 />
-                <UI.Typography sx={{ flex: 1 }}>
-                  {store.Profile[model.player]?.username ?? "..."}
-                </UI.Typography>
+                <UI.Box sx={{ flex: 1, overflow: "hidden" }}>
+                  <UI.Typography noWrap sx={{ textOverflow: "ellipsis" }} >
+                    {store.Profile[model.player]?.username ?? "..."}
+                  </UI.Typography>
+                </UI.Box>
+
                 {model.player === currentUserId && (
                   <UI.Button
                     onClick={() =>
