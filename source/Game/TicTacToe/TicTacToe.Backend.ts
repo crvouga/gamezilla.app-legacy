@@ -78,6 +78,7 @@ export const updateFromFrontend = (
   },
   msg: ToBackend,
   model: Model,
+
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
     case "InputMode": {

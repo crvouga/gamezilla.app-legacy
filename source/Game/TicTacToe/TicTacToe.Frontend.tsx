@@ -3,7 +3,7 @@ import { UserId } from "../../Data"
 import * as Store from "../../Store"
 import * as UI from "../../UI"
 import { GameModeCard } from "../Views"
-import { Position, Slot, theme, ViewSlot } from "./TicTacToe"
+import { Position, Slot, gameTheme, ViewSlot } from "./TicTacToe"
 import {
   BackendModel,
   FrontendModel,
@@ -337,14 +337,14 @@ export const CoverArt = () => {
         y={0}
         width={2}
         height={2}
-        fill={theme.background}
+        fill={gameTheme.background}
       />
 
       {LINES.map((line, index) => (
         <line
           key={index}
           {...line}
-          stroke={theme.line}
+          stroke={gameTheme.line}
           strokeWidth={0.1}
         />
       ))}

@@ -8,11 +8,12 @@ import {
   PlayerTypeIcon,
   Position,
   Slot,
-  theme,
+  gameTheme,
   toTurn,
   ViewBoard,
   ViewSlot,
 } from "../TicTacToe"
+import { VersusHeader } from "../Views"
 import * as Round from "./Round"
 import {
   allBestOutOf,
@@ -228,39 +229,16 @@ export const View = ({
           right={roomAvatarGroup}
         />
         <UI.Box sx={{ flex: 1, overflowY: "scroll" }}>
-          <UI.Box sx={{ flex: 1, width: "100%", background: theme.background, color: "#fff", display: 'flex', alignItems: "center", justifyContent: 'center', paddingX: 2, paddingY: 2 }}>
-
-            <UI.Box sx={{ marginRight: 1, display: "flex", alignItems: 'center', justifyContent: "center", flexDirection: "column" }}>
-              <UI.Avatar src={model.X === "None" ? "" : store.Profile[model.X]?.avatarUrl} >
-                <UI.Icons.QuestionMark />
-              </UI.Avatar>
-              <UI.Typography variant="caption" color={theme.text} align="center">
-                {model.X === "None" ? "..." : store.Profile[model.X]?.username ?? "..."}
-              </UI.Typography>
-            </UI.Box>
-
-            <PlayerTypeIcon sx={{ width: 72, height: 72, color: theme.cross }} playerType="X" />
-            <UI.Box sx={{ flex: 1 }}>
-              <UI.Typography align="center" color={theme.text}>
-                vs
-              </UI.Typography>
-            </UI.Box>
-            <PlayerTypeIcon sx={{ width: 72, height: 72, color: theme.naught }} playerType="O" />
-
-            <UI.Box sx={{ marginLeft: 1, display: "flex", alignItems: 'center', justifyContent: "center", flexDirection: "column" }}>
-              <UI.Avatar src={model.O === "None" ? "" : store.Profile[model.O]?.avatarUrl} >
-                <UI.Icons.QuestionMark />
-              </UI.Avatar>
-              <UI.Typography variant="caption" color={theme.text} align="center">
-                {model.O === "None" ? "..." : store.Profile[model.O]?.username ?? "..."}
-              </UI.Typography>
-            </UI.Box>
-          </UI.Box>
+          <VersusHeader
+            store={store}
+            X={model.X === 'None' ? { type: "User" } : { type: "User", userId: model.X }}
+            O={model.O === 'None' ? { type: "User" } : { type: "User", userId: model.O }}
+          />
 
           <UI.Box sx={{ padding: 2 }}>
             <UI.Typography
               color="text.secondary"
-              sx={{ marginBottom: 1 }}
+              sx={{ marginBottom: 2 }}
             >
               Players
             </UI.Typography>
@@ -272,7 +250,7 @@ export const View = ({
               userId={model.X}
               store={store}
               dispatch={dispatch}
-              sx={{ marginBottom: 2 }}
+              sx={{ marginBottom: 3 }}
             />
 
             <ViewPlayerSetupSlot
@@ -281,6 +259,7 @@ export const View = ({
               userId={model.O}
               store={store}
               dispatch={dispatch}
+              sx={{ marginBottom: 1 }}
             />
           </UI.Box>
 
@@ -698,20 +677,7 @@ const ViewGameOverMessage = ({
             color: "inherit",
           }}
         >
-          <svg
-            width={64}
-            viewBox="-1 -1 2 2"
-            color="inherit"
-          >
-            <ViewSlot
-              strokeWidth={0.33}
-              cx={0}
-              cy={0}
-              r={0.8}
-              slot={model.gameOver.resigner}
-              color="currentColor"
-            />
-          </svg>
+          <PlayerTypeIcon playerType={model.gameOver.resigner} sx={{ width: 64, height: 64 }} />
           <UI.Typography
             align="center"
             color="inherit"
@@ -722,7 +688,8 @@ const ViewGameOverMessage = ({
         </UI.Box>
 
         <UI.Box sx={{ flex: 1, width: "100%", padding: 2 }}>
-          <ViewScoreBoard
+          <ViewScores
+            maxRoundCount={model.maxRoundCount}
             score={score}
             winCount={winCount}
           />
@@ -752,7 +719,8 @@ const ViewGameOverMessage = ({
           </UI.Typography>
         </UI.Box>
         <UI.Box sx={{ flex: 1, width: "100%", padding: 2 }}>
-          <ViewScoreBoard
+          <ViewScores
+            maxRoundCount={model.maxRoundCount}
             score={score}
             winCount={winCount}
           />
@@ -819,7 +787,8 @@ const ViewGameOverMessage = ({
         )}
       </UI.Box>
       <UI.Box sx={{ flex: 1, width: "100%", padding: 2 }}>
-        <ViewScoreBoard
+        <ViewScores
+          maxRoundCount={model.maxRoundCount}
           score={score}
           winCount={winCount}
         />
@@ -890,7 +859,8 @@ export const ViewRoundStartingMessage = ({
             width: "100%",
           }}
         >
-          <ViewScoreBoard
+          <ViewScores
+            maxRoundCount={model.maxRoundCount}
             score={score}
             winCount={winCount}
           />
@@ -942,20 +912,8 @@ export const ViewRoundStartingMessage = ({
               color: "inherit",
             }}
           >
-            <svg
-              width={64}
-              viewBox="-1 -1 2 2"
-              color="inherit"
-            >
-              <ViewSlot
-                strokeWidth={0.25}
-                cx={0}
-                cy={0}
-                r={0.8}
-                slot={roundOver.winner}
-                color="currentColor"
-              />
-            </svg>
+            <PlayerTypeIcon playerType={roundOver.winner} sx={{ width: 64, height: 64 }} />
+
             <UI.Typography
               align="center"
               color="inherit"
@@ -967,9 +925,14 @@ export const ViewRoundStartingMessage = ({
         )}
       </UI.Box>
 
-      <ViewScoreBoard
+      {/* <UI.Typography align="center" sx={{ fontSize: 32 }}>
+        {roundCount} / {model.maxRoundCount}
+      </UI.Typography> */}
+
+      <ViewScores
         score={score}
         winCount={winCount}
+        maxRoundCount={model.maxRoundCount}
       />
 
       <UI.Box
@@ -994,12 +957,14 @@ export const ViewRoundStartingMessage = ({
   )
 }
 
-const ViewScoreBoard = ({
+const ViewScores = ({
   score,
   winCount,
+  maxRoundCount,
 }: {
   score: Round.Score
-  winCount: number
+  winCount: number,
+  maxRoundCount: number
 }) => {
   const width = 52
 
@@ -1023,20 +988,7 @@ const ViewScoreBoard = ({
           color: "inherit",
         }}
       >
-        <svg
-          width={width}
-          viewBox="-1 -1 2 2"
-          color="inherit"
-        >
-          <ViewSlot
-            strokeWidth={0.33}
-            cx={0}
-            cy={0}
-            r={0.8}
-            slot={"X"}
-            color={"currentColor"}
-          />
-        </svg>
+        <PlayerTypeIcon playerType="X" sx={{ width: width, height: width }} />
         <ViewScoreSlots
           tieCount={score.Tie}
           score={score.X}
@@ -1056,20 +1008,7 @@ const ViewScoreBoard = ({
           color: "inherit",
         }}
       >
-        <svg
-          width={width}
-          viewBox="-1 -1 2 2"
-          color="inherit"
-        >
-          <ViewSlot
-            strokeWidth={0.33}
-            cx={0}
-            cy={0}
-            r={0.8}
-            slot={"O"}
-            color={"currentColor"}
-          />
-        </svg>
+        <PlayerTypeIcon playerType="O" sx={{ width: width, height: width }} />
         <ViewScoreSlots
           tieCount={score.Tie}
           score={score.O}
@@ -1120,25 +1059,27 @@ const ViewScoreSlots = ({
               <UI.Icons.Circle
                 sx={{ width: slotSize, height: slotSize, color: "inherit" }}
               />
-            ) : n > maxScore - tieCount ? (
-              <UI.Icons.Cancel
-                sx={{
-                  width: slotSize,
-                  height: slotSize,
-                  color: "inherit",
-                  opacity: 0.5,
-                }}
-              />
-            ) : (
-              <UI.Icons.CircleOutlined
-                sx={{
-                  width: slotSize,
-                  height: slotSize,
-                  color: "inherit",
-                  opacity: 0.5,
-                }}
-              />
-            )}
+            ) :
+              // n > maxScore - tieCount ? (
+              // <UI.Icons.Cancel
+              //   sx={{
+              //     width: slotSize,
+              //     height: slotSize,
+              //     color: "inherit",
+              //     opacity: 0.5,
+              //   }}
+              // />
+              // ) :
+              (
+                <UI.Icons.CircleOutlined
+                  sx={{
+                    width: slotSize,
+                    height: slotSize,
+                    color: "inherit",
+                    opacity: 0.5,
+                  }}
+                />
+              )}
           </UI.Box>
         )
       })}
@@ -1252,7 +1193,6 @@ const ViewPlayerSetupSlot = ({
   const iconSx = { width: 42, height: 42, color: "text.secondary" }
 
   if (userId === "None") {
-
     return (
       <UI.Box sx={{ display: "flex", width: "100%", alignItems: 'center', ...sx }}>
         <PlayerTypeIcon playerType={playerType} sx={{ marginRight: 1, ...iconSx }} />
@@ -1274,17 +1214,20 @@ const ViewPlayerSetupSlot = ({
   }
 
   return (
-    <UI.Box sx={{ display: "flex", alignItems: "center", ...sx }}>
+    <UI.Box sx={{ display: "flex", alignItems: "center", width: '100%', ...sx }}>
       <PlayerTypeIcon playerType={playerType} sx={{ marginRight: 1, ...iconSx }} />
       <UI.Avatar
         src={store.Profile[userId]?.avatarUrl}
         sx={{ marginRight: 1 }}
       />
-      <UI.Typography sx={{ flex: 1 }}>
-        {store.Profile[userId]?.username ?? "..."}
-      </UI.Typography>
+      <UI.Box sx={{ flex: 1, overflow: "hidden" }}>
+        <UI.Typography noWrap sx={{ textOverflow: "ellipsis" }} >
+          {store.Profile[userId]?.username ?? "..."}
+        </UI.Typography>
+      </UI.Box>
       {currentUserId === userId && (
         <UI.Button
+
           onClick={() => dispatch(["StopPlaying", { userId: currentUserId }])}
         >
           Stop Playing
@@ -1340,7 +1283,7 @@ const ViewPlayerGameSlot = ({
           display: "flex",
           alignItems: "center",
           overflow: "hidden",
-          borderBottom: `solid 3.5px ${isTurn ? theme.background : uiTheme.palette.divider
+          borderBottom: `solid 3.5px ${isTurn ? gameTheme.background : uiTheme.palette.divider
             }`,
         }}
       >
@@ -1432,14 +1375,14 @@ export const CoverArt = () => {
         y={0}
         width={2}
         height={2}
-        fill={theme.background}
+        fill={gameTheme.background}
       />
 
       {LINES.map((line, index) => (
         <line
           key={index}
           {...line}
-          stroke={theme.line}
+          stroke={gameTheme.line}
           strokeWidth={0.1}
         />
       ))}
@@ -1466,7 +1409,7 @@ export const BannerArt = ({ title }: { title: string }) => {
           width: "100%",
           height: "100%",
           padding: 2,
-          backgroundColor: theme.background,
+          backgroundColor: gameTheme.background,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",

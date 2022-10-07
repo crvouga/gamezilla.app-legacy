@@ -368,7 +368,7 @@ export const toEmptyPositions = (board: Board): Position[] => {
 //
 //
 
-export const theme = {
+export const gameTheme = {
   background: "#14BDAC",
   line: "#0DA192",
   cross: "#545454",
@@ -389,7 +389,7 @@ export const ViewBoard = ({
       viewBox="0 0 3 3"
       style={{
         // maxHeight: 360,
-        backgroundColor: theme.background,
+        backgroundColor: gameTheme.background,
       }}
     >
       <g>
@@ -400,7 +400,7 @@ export const ViewBoard = ({
             y1={line.y1}
             x2={line.x2}
             y2={line.y2}
-            stroke={theme.line}
+            stroke={gameTheme.line}
             strokeWidth={0.1}
           />
         ))}
@@ -492,7 +492,7 @@ const Cross = ({
   cx,
   cy,
   r,
-  color = theme.cross,
+  color = gameTheme.cross,
   strokeWidth = 0.1,
 }: {
   color?: string
@@ -528,7 +528,7 @@ const Naught = ({
   cx,
   cy,
   r,
-  color = theme.naught,
+  color = gameTheme.naught,
   strokeWidth = 0.1,
 }: {
   color?: string
@@ -558,7 +558,7 @@ export const PlayerTypeIcon = ({ playerType, sx }: { playerType: PlayerType, sx?
         cx={0}
         cy={0}
         slot={playerType}
-        r={0.8}
+        r={2 / 3}
         color="currentColor"
         strokeWidth={0.33}
       />

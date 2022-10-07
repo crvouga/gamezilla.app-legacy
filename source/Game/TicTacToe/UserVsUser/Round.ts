@@ -2,14 +2,14 @@ import * as TicTacToe from "../TicTacToe"
 
 export type Round =
   | {
-      type: "RoundStarting"
-      countDown: number
-    }
+    type: "RoundStarting"
+    countDown: number
+  }
   | {
-      type: "RoundStarted"
-      board: TicTacToe.Board
-      moveCountDown: number
-    }
+    type: "RoundStarted"
+    board: TicTacToe.Board
+    moveCountDown: number
+  }
   | RoundOver
 
 type RoundOver = {
@@ -161,12 +161,12 @@ export const toScore = (round: Round): Score => {
 
 export type GameOver =
   | {
-      type: "Winner"
-      winner: TicTacToe.PlayerType
-    }
+    type: "Winner"
+    winner: TicTacToe.PlayerType
+  }
   | {
-      type: "Tie"
-    }
+    type: "Tie"
+  }
 
 export const toGameOver = ({
   maxRoundCount,
@@ -176,7 +176,7 @@ export const toGameOver = ({
   round: Round
 }): GameOver | { type: "None" } => {
   const score = toScore(round)
-  const winCount = (maxRoundCount + 1) / 2
+  const winCount = Math.floor((maxRoundCount + 1) / 2)
 
   if (score.X >= winCount) {
     return { type: "Winner", winner: "X" }
@@ -186,15 +186,15 @@ export const toGameOver = ({
     return { type: "Winner", winner: "O" }
   }
 
-  if (score.Tie >= winCount) {
+  if (score.Tie >= maxRoundCount) {
     return { type: "Tie" }
   }
 
-  const roundCount = toCount(round)
+  // const roundCount = toCount(round)
 
-  if (roundCount >= maxRoundCount) {
-    return { type: "Tie" }
-  }
+  // if (roundCount >= maxRoundCount) {
+  //   return { type: "Tie" }
+  // }
 
   return { type: "None" }
 }
