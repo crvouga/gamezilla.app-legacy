@@ -1,5 +1,6 @@
+import { Result } from "../../Core/Result"
 import { UserId } from "../../Data"
-import { ColumnIndex, Columns, emptyColumns, MoveResult } from "./ConnectFour"
+import * as UserVsUser from "./UserVsUser/UserVsUser.Types"
 
 //
 //
@@ -9,17 +10,33 @@ import { ColumnIndex, Columns, emptyColumns, MoveResult } from "./ConnectFour"
 //
 //
 
-export type SharedModel = {
-  columns: Columns
-}
 
-export const initSharedModel: SharedModel = {
-  columns: emptyColumns,
-}
 
-export type FrontendModel = SharedModel
+export type FrontendModel =
+  | {
+    type: "None"
+  }
+  | {
+    type: "UserVsUser",
+    child: UserVsUser.FrontendModel
+  }
+  | {
+    type: "UserVsBot"
+  }
 
-export type BackendModel = SharedModel
+export type BackendModel =
+  | {
+    type: "None"
+  }
+  | {
+    type: "UserVsUser",
+    child: UserVsUser.BackendModel
+  }
+  | {
+    type: "UserVsBot"
+  }
+
+type Mode = BackendModel['type']
 
 //
 //
@@ -29,13 +46,20 @@ export type BackendModel = SharedModel
 //
 //
 
-export type FrontendMsg = Move
+export type FrontendMsg = ["UserVsUser", UserVsUser.FrontendMsg] | InputMode
 
-export type BackendMsg = ["None"]
+export type BackendMsg = ["UserVsUser", UserVsUser.BackendMsg]
 
-export type ToFrontend = ["None"]
+export type ToFrontend = ["UserVsUser", UserVsUser.ToFrontend] | InputMode_Done
 
-export type ToBackend = Move
+export type ToBackend = ["UserVsUser", UserVsUser.ToBackend] | InputMode
 
-export type Move = ["Move", { userId: UserId.UserId; columnIndex: ColumnIndex }]
-export type Move_Done = ["Moved_Done", MoveResult]
+// 
+// 
+// 
+// 
+// 
+
+type InputMode = ["InputMode", { mode: Mode, userId: UserId.UserId }]
+type InputMode_Done = ["InputMode_Done", BackendModel]
+

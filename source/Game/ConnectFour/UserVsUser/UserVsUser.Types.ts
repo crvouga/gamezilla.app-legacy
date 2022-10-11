@@ -1,4 +1,5 @@
 import { UserId } from "../../../Data"
+import { Columns } from "../ConnectFour"
 
 //
 //
@@ -8,12 +9,21 @@ import { UserId } from "../../../Data"
 //
 //
 
-export type SharedModel = {
-  type: "Setup"
-  playerOne: UserId.UserId | "None"
-  playerTwo: UserId.UserId | "None"
-  moveTimeLimit: MoveTimeLimit
-}
+export type SharedModel =
+  | {
+    type: "Setup"
+    playerOne: UserId.UserId | "None"
+    playerTwo: UserId.UserId | "None"
+    moveTimeLimit: MoveTimeLimit
+  }
+  | {
+    type: "Game",
+    playerOne: UserId.UserId,
+    playerTwo: UserId.UserId,
+    moveTimeLimit: MoveTimeLimit,
+    moveCountDown: number,
+    columns: Columns
+  }
 
 export type MoveTimeLimit = 5 | 7 | 9
 
@@ -38,6 +48,15 @@ export const moveTimeLimitToString = (timeLimit: MoveTimeLimit): string => {
     case 9: {
       return "9 sec"
     }
+  }
+}
+
+export const initShared = ({ playerOne, playerTwo }: { playerOne: UserId.UserId | "None", playerTwo: UserId.UserId | "None" }): SharedModel => {
+  return {
+    type: "Setup",
+    moveTimeLimit: 7,
+    playerOne,
+    playerTwo,
   }
 }
 

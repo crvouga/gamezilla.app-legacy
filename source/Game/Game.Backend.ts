@@ -168,6 +168,7 @@ export const updateFromFrontend = (
           ConnectFour.updateFromFrontend(
             {
               sendToClient: (msg) => sendToClient(["ConnectFour", msg]),
+              sendToRoom: msg => sendToRoom(['ConnectFour', msg])
             },
             msg[1],
             model[1],

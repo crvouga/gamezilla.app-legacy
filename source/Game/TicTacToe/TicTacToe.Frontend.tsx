@@ -275,9 +275,9 @@ export const View = ({
     case "UserVsUser": {
       return (
         <UserVsUser.View
-          onCloseGame={() =>
+          onCloseGame={() => {
             dispatch(["InputMode", { mode: "None", userId: currentUserId }])
-          }
+          }}
           currentUserId={currentUserId}
           store={store}
           model={model.child}
@@ -291,9 +291,9 @@ export const View = ({
     case "UserVsBot": {
       return (
         <UserVsBot.View
-          goBack={() =>
+          goBack={() => {
             dispatch(["InputMode", { mode: "None", userId: currentUserId }])
-          }
+          }}
           currentUserId={currentUserId}
           store={store}
           model={model.child}

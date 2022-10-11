@@ -26,6 +26,7 @@ import { UserId } from "../../Data"
 import { ReactNode } from "react"
 import * as Sounds from "./Sounds"
 import { BannerArt } from "./Views"
+import { GameModeCard } from "../Views"
 
 //
 //
@@ -244,8 +245,8 @@ export const View = ({
         model.requests.InputMode.type === "Failure"
           ? inputModeProblemToString(model.requests.InputMode.problem)
           : model.requests.InputMode.type === "Loading"
-          ? "Loading..."
-          : ""
+            ? "Loading..."
+            : ""
 
       return (
         <UI.FillBox>
@@ -267,7 +268,7 @@ export const View = ({
           <UI.Box sx={{ display: "flex", gap: 2, padding: 2 }}>
             <UI.Tooltip title={tooltipTitle}>
               <UI.Box sx={{ width: "50%" }}>
-                <ModeSelectCard
+                <GameModeCard
                   leftIcon={
                     <UI.Icons.Person
                       sx={{ width: iconSize, height: iconSize }}
@@ -291,7 +292,7 @@ export const View = ({
 
             <UI.Tooltip title={tooltipTitle}>
               <UI.Box sx={{ width: "50%" }}>
-                <ModeSelectCard
+                <GameModeCard
                   leftIcon={
                     <UI.Icons.Person
                       sx={{ width: iconSize, height: iconSize }}
@@ -360,50 +361,6 @@ export const View = ({
       )
     }
   }
-}
-
-const ModeSelectCard = ({
-  leftIcon,
-  rightIcon,
-  title,
-  onClick,
-}: {
-  leftIcon: ReactNode
-  rightIcon: ReactNode
-  title: string
-  onClick: () => void
-}) => {
-  const theme = UI.useTheme()
-  return (
-    <UI.CardActionArea onClick={onClick}>
-      <UI.AspectRatio aspectRatio={1}>
-        <UI.Card
-          sx={{
-            border: `1px solid ${theme.palette.divider}`,
-            width: "100%",
-            height: "100%",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            flexDirection: "column",
-          }}
-        >
-          <UI.Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              gap: 1,
-              marginBottom: 1,
-            }}
-          >
-            {leftIcon}
-            {rightIcon}
-          </UI.Box>
-          <UI.Typography variant="h5">{title}</UI.Typography>
-        </UI.Card>
-      </UI.AspectRatio>
-    </UI.CardActionArea>
-  )
 }
 
 //

@@ -88,7 +88,7 @@ export const update = (
   switch (model[0]) {
     case "ConnectFour": {
       if (msg[0] === "ConnectFour") {
-        return tagUpdate("ConnectFour", ConnectFour.update(msg[1], model[1]))
+        return tagUpdate("ConnectFour", ConnectFour.update({ sendToBackend: msg => sendToBackend(['ConnectFour', msg]) }, msg[1], model[1]))
       }
 
       return [model, Cmd.None]
@@ -288,7 +288,7 @@ export const View = ({
   model,
   dispatch,
   onCloseGame,
-  roomAvatarGroup,
+  roomAvatarGroup: roomComponent,
   goHome,
 }: {
   goHome: () => void
@@ -306,7 +306,7 @@ export const View = ({
           model={model[1]}
           dispatch={(msg) => dispatch(["Tetris", msg])}
           onCloseGame={onCloseGame}
-          roomAvatarGroup={roomAvatarGroup}
+          roomAvatarGroup={roomComponent}
         />
       )
     }
@@ -314,9 +314,12 @@ export const View = ({
     case "ConnectFour": {
       return (
         <ConnectFour.View
+          currentUserId={currentUserId}
           model={model[1]}
           dispatch={(msg) => dispatch(["ConnectFour", msg])}
-          onCloseGame={onCloseGame}
+          closeGame={onCloseGame}
+          goHome={goHome}
+          roomComponent={roomComponent}
         />
       )
     }
@@ -325,7 +328,7 @@ export const View = ({
       return (
         <Snake.View
           onClose={onCloseGame}
-          roomAvatarGroup={roomAvatarGroup}
+          roomAvatarGroup={roomComponent}
           currentUserId={currentUserId}
           store={store}
           model={model[1]}
@@ -343,7 +346,7 @@ export const View = ({
           dispatch={(msg) => dispatch(["TicTacToe", msg])}
           onCloseGame={onCloseGame}
           goHome={goHome}
-          roomAvatarGroup={roomAvatarGroup}
+          roomAvatarGroup={roomComponent}
         />
       )
     }
@@ -357,7 +360,7 @@ export const View = ({
           store={store}
           model={model[1]}
           dispatch={(msg) => dispatch(["Chess", msg])}
-          roomAvatarGroup={roomAvatarGroup}
+          roomAvatarGroup={roomComponent}
         />
       )
     }
@@ -464,7 +467,7 @@ export const mergeWithBackend = ({
         return [
           [
             "ConnectFour",
-            ConnectFour.mergeWithBackend(frontendModel[1], backendModel[1]),
+            ConnectFour.mergeWithBackend({ frontendModel: frontendModel[1], backendModel: backendModel[1] }),
           ],
           Cmd.None,
         ]
@@ -473,7 +476,7 @@ export const mergeWithBackend = ({
       const initial = ConnectFour.init
 
       return [
-        ["ConnectFour", ConnectFour.mergeWithBackend(initial, backendModel[1])],
+        ["ConnectFour", ConnectFour.mergeWithBackend({ frontendModel: initial, backendModel: backendModel[1] })],
         Cmd.None,
       ]
     }
