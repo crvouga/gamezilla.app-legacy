@@ -93,6 +93,27 @@ export const View = ({
 }) => {
   switch (model.type) {
     case 'None': {
+      const ids = {
+        playerOneGradient: "playerOneGradient",
+        playerTwoGradient: "playerTwoGradient",
+        holePattern: "holePattern",
+        columnGradient: "columnGradient",
+        holeMask: "holeMask",
+      }
+
+      const playerOneFill = `url(#${ids.playerOneGradient})`
+      const playerTwoFill = `url(#${ids.playerTwoGradient})`
+
+      const columns = [
+        ["PlayerOne",],
+        ["PlayerTwo", "PlayerOne",],
+        ["PlayerOne", "PlayerTwo", "PlayerOne",],
+        ["PlayerOne", "PlayerTwo"],
+        ["PlayerTwo",],
+        ["PlayerOne", "PlayerTwo", "PlayerTwo"],
+        ["PlayerTwo"],
+      ]
+
       return (
         <UI.FillBox>
           <UI.Header
@@ -108,7 +129,128 @@ export const View = ({
             right={roomComponent}
           />
 
-          <UI.Box sx={{ display: "flex", gap: 2, padding: 2 }}>
+          <UI.Box sx={{ width: "100%", position: "relative", overflow: "hidden" }}>
+            <svg
+              width="100%"
+              height="100%"
+              style={{ padding: 0, margin: 0 }}
+              viewBox={"0 0 7 3"}
+            >
+              <defs>
+                <pattern
+                  id={ids.holePattern}
+                  patternUnits="userSpaceOnUse"
+                  width={1}
+                  height={1}
+                >
+                  <circle
+                    cx={0.5}
+                    cy={0.5}
+                    r={0.425}
+                    fill="black"
+                  ></circle>
+                </pattern>
+
+                <mask id={ids.holeMask}>
+                  <rect
+                    x={0}
+                    y={0}
+                    width={COLUMN_COUNT}
+                    height={MAX_COLUMN_HEIGHT}
+                    fill="white"
+                  ></rect>
+                  <rect
+                    x={0}
+                    y={0}
+                    width={COLUMN_COUNT}
+                    height={MAX_COLUMN_HEIGHT}
+                    fill={`url(#${ids.holePattern})`}
+                  ></rect>
+                </mask>
+
+                <linearGradient
+                  id={ids.columnGradient}
+                  gradientTransform="rotate(90)"
+                >
+                  <stop
+                    offset="0%"
+                    stopColor={theme.primary.light}
+                  />
+                  <stop
+                    offset="100%"
+                    stopColor={theme.primary.dark}
+                  />
+                </linearGradient>
+
+                <linearGradient
+                  id={ids.playerOneGradient}
+                  gradientTransform="rotate(90)"
+                >
+                  <stop
+                    offset="0%"
+                    stopColor={theme.playerOne.light}
+                  />
+                  <stop
+                    offset="100%"
+                    stopColor={theme.playerOne.dark}
+                  />
+                </linearGradient>
+
+                <linearGradient
+                  id={ids.playerTwoGradient}
+                  gradientTransform="rotate(90)"
+                >
+                  <stop
+                    offset="0%"
+                    stopColor={theme.playerTwo.light}
+                  />
+                  <stop
+                    offset="100%"
+                    stopColor={theme.playerTwo.dark}
+                  />
+                </linearGradient>
+              </defs>
+
+              <rect
+                x={0}
+                y={0}
+                width={7}
+                height={3}
+                fill={theme.primary.darker}
+              />
+
+
+              {columns.map((column, columnIndex) =>
+                column.map((player, rowIndex) => (
+                  <circle
+                    key={[columnIndex, rowIndex].join(", ")}
+                    cx={columnIndex + 0.5}
+                    cy={3 - (rowIndex + 0.5)}
+                    r={0.5}
+                    fill={player === "PlayerOne" ? playerOneFill : playerTwoFill}
+                  />
+                )),
+              )}
+
+              <rect
+                x={0}
+                y={0}
+                width={7}
+                height={3}
+                fill={`url(#${ids.columnGradient})`}
+                mask={`url(#${ids.holeMask})`}
+              />
+            </svg>
+
+            <UI.Box sx={{ width: '100%', height: '100%', background: "rgba(0, 0, 0, 0.2)", position: "absolute", top: 0, left: 0, overflow: "hidden", display: 'flex', alignItems: "flex-end" }}>
+              <UI.Typography color="#fff" fontSize={36} sx={{ paddingX: 2, paddingY: 1 }}>
+                Connect Four
+              </UI.Typography>
+            </UI.Box>
+
+          </UI.Box>
+
+          <UI.Box sx={{ display: "flex", gap: 2, padding: 2, flex: 1 }}>
             <UI.Box sx={{ width: "50%" }}>
               <GameModeCard
                 leftIcon={<UI.Icons.Person sx={iconSx} />}
@@ -127,6 +269,11 @@ export const View = ({
                 onClick={() => dispatch(["InputMode", { mode: "UserVsBot", userId: currentUserId },])}
               />
             </UI.Box>
+          </UI.Box>
+          <UI.Box sx={{ padding: 2 }}>
+            <UI.Button fullWidth onClick={closeGame} variant="outlined">
+              Back
+            </UI.Button>
 
           </UI.Box>
 
@@ -136,7 +283,7 @@ export const View = ({
 
     case 'UserVsUser': {
       return (
-        <UserVsUser.View dispatch={msg => dispatch(['UserVsUser', msg])} goHome={goHome} model={model.child} roomComponent={roomComponent} />
+        <UserVsUser.View dispatch={msg => dispatch(['UserVsUser', msg])} goBack={() => dispatch(['InputMode', { userId: currentUserId, mode: "None" }])} goHome={goHome} model={model.child} roomComponent={roomComponent} />
       )
     }
 
