@@ -1,5 +1,7 @@
 import * as UI from "../UI"
 
+export const BotIcon = UI.Icons.SmartToy
+
 export const GameModeCard = ({
   leftIcon,
   rightIcon,

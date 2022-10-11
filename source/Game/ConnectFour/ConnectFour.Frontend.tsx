@@ -1,18 +1,20 @@
 import { Cmd } from "../../Core"
+import { UserId } from "../../Data"
 import * as UI from "../../UI"
+import { GameModeCard } from "../Views"
 import {
   COLUMN_COUNT,
   MAX_COLUMN_HEIGHT,
-  theme,
-  ViewColumns,
+  theme
 } from "./ConnectFour"
 import {
   BackendModel,
   FrontendModel,
   FrontendMsg,
-  initSharedModel,
-  ToFrontend,
+  ToBackend,
+  ToFrontend
 } from "./ConnectFour.Types"
+import * as UserVsUser from "./UserVsUser/UserVsUser.Frontend"
 
 //
 //
@@ -24,7 +26,7 @@ import {
 
 export type Model = FrontendModel
 
-export const init: Model = initSharedModel
+export const init: Model = { type: "None" }
 
 //
 //
@@ -36,15 +38,31 @@ export const init: Model = initSharedModel
 
 export type Msg = FrontendMsg
 
-export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
-  return [model, Cmd.None]
+export const update = ({ sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd.Cmd<never> }, msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
+  switch (msg[0]) {
+    case 'InputMode': {
+      return [model, sendToBackend(msg)]
+    }
+    case 'UserVsUser': {
+      return [model, Cmd.None]
+    }
+  }
 }
 
 export const updateFromBackend = (
   msg: ToFrontend,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
-  return [model, Cmd.None]
+  switch (msg[0]) {
+    case 'InputMode_Done': {
+      const merged = mergeWithBackend({ frontendModel: model, backendModel: msg[1] })
+      return [merged, Cmd.None]
+    }
+
+    case 'UserVsUser': {
+      return [model, Cmd.None]
+    }
+  }
 }
 
 //
@@ -55,34 +73,92 @@ export const updateFromBackend = (
 //
 //
 
+const iconSize = 58
+const iconSx: UI.Sx = { width: iconSize, height: iconSize }
+
 export const View = ({
   model,
   dispatch,
-  onCloseGame,
+  goHome,
+  closeGame,
+  roomComponent,
+  currentUserId
 }: {
   model: Model
   dispatch: (msg: Msg) => void
-  onCloseGame: () => void
+  closeGame: () => void
+  goHome: () => void
+  roomComponent: UI.ViewNode
+  currentUserId: UserId.UserId
 }) => {
-  return (
-    <UI.FillBox>
-      <UI.Header
-        left={
-          <UI.Button
-            sx={{ marginLeft: -1 }}
-            onClick={onCloseGame}
-          >
-            Close
-          </UI.Button>
-        }
-        title="Connect Four"
-      />
-      <ViewColumns
-        columns={model.columns}
-        onClick={(columnIndex) => {}}
-      />
-    </UI.FillBox>
-  )
+  switch (model.type) {
+    case 'None': {
+      return (
+        <UI.FillBox>
+          <UI.Header
+            left={
+              <UI.IconButton
+                sx={{ marginLeft: -1 }}
+                onClick={goHome}
+              >
+                <UI.Icons.Home />
+              </UI.IconButton>
+            }
+            title="Connect Four"
+            right={roomComponent}
+          />
+
+          <UI.Box sx={{ display: "flex", gap: 2, padding: 2 }}>
+            <UI.Box sx={{ width: "50%" }}>
+              <GameModeCard
+                leftIcon={<UI.Icons.Person sx={iconSx} />}
+                rightIcon={<UI.Icons.Person sx={iconSx} />}
+                title="Vs User"
+                onClick={() => dispatch(["InputMode", { mode: "UserVsUser", userId: currentUserId },])}
+              />
+            </UI.Box>
+
+
+            <UI.Box sx={{ width: "50%" }}>
+              <GameModeCard
+                leftIcon={<UI.Icons.Person sx={iconSx} />}
+                rightIcon={<UI.Icons.SmartToy sx={iconSx} />}
+                title="Vs User"
+                onClick={() => dispatch(["InputMode", { mode: "UserVsBot", userId: currentUserId },])}
+              />
+            </UI.Box>
+
+          </UI.Box>
+
+        </UI.FillBox>
+      )
+    }
+
+    case 'UserVsUser': {
+      return (
+        <UserVsUser.View dispatch={msg => dispatch(['UserVsUser', msg])} goHome={goHome} model={model.child} roomComponent={roomComponent} />
+      )
+    }
+
+    case 'UserVsBot': {
+      return (
+        <UI.FillBox>
+          <UI.Header
+            left={
+              <UI.IconButton
+                sx={{ marginLeft: -1 }}
+                onClick={goHome}
+              >
+                <UI.Icons.Home />
+              </UI.IconButton>
+            }
+            title="Connect Four"
+          />
+
+        </UI.FillBox>
+      )
+    }
+  }
 }
 
 //
@@ -234,10 +310,31 @@ export const CoverArt = ({ id }: { id: string }) => {
 }
 
 export const mergeWithBackend = (
-  _frontendModel: FrontendModel,
-  backendModel: BackendModel,
-): FrontendModel => {
-  return {
-    columns: backendModel.columns,
+  {
+    frontendModel,
+    backendModel
+  }: {
+    frontendModel: FrontendModel,
+    backendModel: BackendModel,
   }
+): FrontendModel => {
+  switch (backendModel.type) {
+    case 'None': {
+      return backendModel
+    }
+
+    case 'UserVsBot': {
+      return { type: "UserVsBot" }
+    }
+
+    case 'UserVsUser': {
+
+      if (frontendModel.type === 'UserVsUser') {
+        return backendModel
+      }
+
+      return backendModel
+    }
+  }
+
 }

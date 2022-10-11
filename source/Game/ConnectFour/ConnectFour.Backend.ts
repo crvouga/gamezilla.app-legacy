@@ -2,11 +2,10 @@ import { Cmd, Sub } from "../../Core"
 import {
   BackendModel,
   BackendMsg,
-  initSharedModel,
   ToBackend,
-  ToFrontend,
+  ToFrontend
 } from "./ConnectFour.Types"
-
+import * as UserVsUser from "./UserVsUser/UserVsUser.Backend"
 //
 //
 //
@@ -17,7 +16,7 @@ import {
 
 export type Model = BackendModel
 
-export const init: Model = initSharedModel
+export const init: Model = { type: "None" }
 
 //
 //
@@ -31,19 +30,37 @@ export type Msg = BackendMsg
 
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
-    case "None": {
+    case 'UserVsUser': {
       return [model, Cmd.None]
     }
   }
 }
 
 export const updateFromFrontend = (
-  { sendToClient }: { sendToClient: (msg: ToFrontend) => Cmd.Cmd<never> },
+  { sendToClient, sendToRoom }: { sendToClient: (msg: ToFrontend) => Cmd.Cmd<never>, sendToRoom: (msg: ToFrontend) => Cmd.Cmd<never> },
   msg: ToBackend,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
-    case "Move": {
+    case 'InputMode': {
+      const { mode, userId } = msg[1]
+
+      switch (mode) {
+        case 'None': {
+          const modelNew: Model = { type: "None" }
+          return [modelNew, sendToRoom(['InputMode_Done', modelNew])]
+        }
+        case 'UserVsUser': {
+          const modelNew: Model = { type: "UserVsUser", child: UserVsUser.init({ playerOne: userId, playerTwo: "None" }) }
+          return [modelNew, sendToRoom(['InputMode_Done', modelNew])]
+        }
+        case 'UserVsBot': {
+          return [model, Cmd.None]
+        }
+      }
+
+    }
+    case 'UserVsUser': {
       return [model, Cmd.None]
     }
   }
