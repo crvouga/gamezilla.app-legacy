@@ -99,15 +99,15 @@ const isFull = (columns: Columns) => {
 
 type IStatus =
   | {
-      type: "Playing"
-    }
+    type: "Playing"
+  }
   | {
-      type: "Winner"
-      winner: IPlayer
-    }
+    type: "Winner"
+    winner: IPlayer
+  }
   | {
-      type: "Tie"
-    }
+    type: "Tie"
+  }
 
 export const toStatus = (columns: Columns): IStatus => {
   const winningLines = Array.from(
@@ -254,13 +254,55 @@ export const theme = {
     darker: "#0D47A1",
   },
   playerOne: {
-    light: "#FFB74D",
-    dark: "#FFA623",
-  },
-  playerTwo: {
     light: "#F24237",
     dark: "#DB332F",
   },
+  playerTwo: {
+    light: "#FFB74D",
+    dark: "#FFA623",
+  },
+}
+
+export const ViewSvgDefs = () => {
+  return (
+    <></>
+  )
+}
+
+export const ViewPlayerOneGradientDef = ({ gradientId }: { gradientId: string }) => {
+  return (
+    <linearGradient
+      id={gradientId}
+      gradientTransform="rotate(90)"
+    >
+      <stop
+        offset="0%"
+        stopColor={theme.playerOne.light}
+      />
+      <stop
+        offset="100%"
+        stopColor={theme.playerOne.dark}
+      />
+    </linearGradient>
+  )
+}
+
+export const ViewPlayerTwoGradientDef = ({ gradientId }: { gradientId: string }) => {
+  return (
+    <linearGradient
+      id={gradientId}
+      gradientTransform="rotate(90)"
+    >
+      <stop
+        offset="0%"
+        stopColor={theme.playerTwo.light}
+      />
+      <stop
+        offset="100%"
+        stopColor={theme.playerTwo.dark}
+      />
+    </linearGradient>
+  )
 }
 
 export const ViewColumns = ({
