@@ -60,7 +60,30 @@ const toChildren = (board: Board): Board[] => {
   return boards
 }
 
+export type BotLevel = "Easy" | "Medium" | "Impossible"
+
+export const botLevels: { [botLevel in BotLevel]: BotLevel } = {
+  Easy: "Easy",
+  Medium: "Medium",
+  Impossible: "Impossible",
+}
+
+export const botLevelToDepth = (botLevel: BotLevel): number => {
+  switch (botLevel) {
+    case 'Easy': {
+      return 2
+    }
+    case 'Medium': {
+      return 3
+    }
+    case 'Impossible': {
+      return 6
+    }
+  }
+}
+
 export const toBestMove = (
+  botLevel: BotLevel,
   maximizingPlayer: PlayerType,
   board: Board,
 ): Position => {
@@ -96,7 +119,7 @@ export const toBestMove = (
       return -Infinity
     }
 
-    const score = minimax(result.value, 12)
+    const score = minimax(result.value, botLevelToDepth(botLevel))
 
     return score
   }
@@ -107,13 +130,13 @@ export const toBestMove = (
 }
 
 export const getBestMove =
-  (maximizingPlayer: PlayerType, board: Board): Task<Position> =>
+  (botLevel: BotLevel, maximizingPlayer: PlayerType, board: Board): Task<Position> =>
     async () => {
       const worker = new Threads.Worker("./tictactoe-worker")
 
       const spawned = await Threads.spawn<TicTacToeWorker>(worker)
 
-      const result = await spawned.toBestMove(maximizingPlayer, board)
+      const result = await spawned.toBestMove(botLevel, maximizingPlayer, board)
 
       await Threads.Thread.terminate(spawned)
 

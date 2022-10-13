@@ -2,15 +2,14 @@ import { Err, Ok, Result } from "../../../Core/Result"
 import { UserId } from "../../../Data"
 import {
   Board,
+  BotLevel,
   emptyBoard,
-  GameOver,
   move,
   MoveProblem,
   PlayerType,
   Position,
-  toGameOver,
   toOpposite,
-  toTurn,
+  toTurn
 } from "../TicTacToe"
 
 //
@@ -38,13 +37,6 @@ export type GameModel = {
   board: Board
 }
 
-type BotLevel = "Easy" | "Medium" | "Impossible"
-
-export const botLevels: { [botLevel in BotLevel]: BotLevel } = {
-  Easy: "Easy",
-  Medium: "Medium",
-  Impossible: "Impossible",
-}
 
 export type FrontendModel = SharedModel
 

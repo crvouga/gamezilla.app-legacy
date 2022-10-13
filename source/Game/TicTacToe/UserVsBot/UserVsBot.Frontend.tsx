@@ -3,20 +3,15 @@ import { UserId } from "../../../Data"
 import * as Store from "../../../Store"
 import * as UI from "../../../UI"
 import {
-  GameOver,
-  PlayerType,
+  botLevels, GameOver, gameTheme, PlayerType,
   PlayerTypeIcon,
-  playerTypes,
-  gameTheme,
-  toGameOver,
+  playerTypes, toGameOver,
   toTurn,
-  ViewBoard,
-  ViewSlot,
+  ViewBoard
 } from "../TicTacToe"
 import { VersusHeader } from "../Views"
 import {
   BackendModel,
-  botLevels,
   FrontendModel,
   FrontendMsg,
   GameModel,
@@ -30,7 +25,7 @@ import {
   stopGame,
   swapSides,
   ToBackend,
-  ToFrontend,
+  ToFrontend
 } from "./UserVsBot.Types"
 
 //
