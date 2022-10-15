@@ -1,5 +1,5 @@
 import * as Auth from "../Auth"
-import { Browser, Cmd, exhaustive, pipe, tag } from "../Core"
+import { Browser, Cmd, p, t } from "../Core"
 import { PhoneNumber } from "../Data"
 import * as Route from "../Route"
 import * as UI from "../UI"
@@ -15,19 +15,19 @@ import * as UI from "../UI"
 export type Model = {
   code: string
   submission:
-    | {
-        type: "Idle"
-      }
-    | {
-        type: "Loading"
-      }
-    | {
-        type: "Problem"
-        message: string
-      }
-    | {
-        type: "Success"
-      }
+  | {
+    type: "Idle"
+  }
+  | {
+    type: "Loading"
+  }
+  | {
+    type: "Problem"
+    message: string
+  }
+  | {
+    type: "Success"
+  }
 }
 
 //
@@ -73,7 +73,7 @@ export const update = (
     case "ClickedVerifyCode": {
       return [
         { code: model.code, submission: { type: "Loading" } },
-        pipe(
+        p(
           Auth.verifyCode({ code: model.code, phoneNumber }),
           Cmd.perform((result): Msg => ["VerifyCode_Done", result]),
         ),
@@ -93,7 +93,7 @@ export const update = (
             code: "",
             submission: { type: "Problem", message: result.error.message },
           },
-          pipe(Browser.focus(codeInputId), Cmd.perform(tag("Focus_Done"))),
+          p(Browser.focus(codeInputId), Cmd.perform(t("Focus_Done"))),
         ]
       }
 

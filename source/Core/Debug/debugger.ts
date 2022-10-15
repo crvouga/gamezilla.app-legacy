@@ -1,6 +1,6 @@
 import * as Rx from "rxjs"
 import * as Option from "../Option"
-import { pipe } from "../pipe"
+import { p } from "../pipe"
 import * as Task from "../Task"
 import { DebuggerDeps, Global } from "./debugger-commons"
 import * as Console from "./debugger-console"
@@ -16,24 +16,24 @@ import * as ReduxDevtool from "./debugger-redux-devtool"
 
 export const RunDebugger =
   <Model, Msg>(global: Global, stopSignal: Rx.Observable<unknown>) =>
-  (deps: DebuggerDeps<Model, Msg>): Task.Task<void> => {
-    return pipe(
-      ReduxDevtool.getConnection<Model, Msg>(global),
-      Task.map(
-        Option.fold(
-          () => Console.makeDebugger<Model, Msg>(),
-          ReduxDevtool.makeDebugger,
+    (deps: DebuggerDeps<Model, Msg>): Task.Task<void> => {
+      return p(
+        ReduxDevtool.getConnection<Model, Msg>(global),
+        Task.map(
+          Option.fold(
+            () => Console.makeDebugger<Model, Msg>(),
+            ReduxDevtool.makeDebugger,
+          ),
         ),
-      ),
-      Task.chain((debuggerInstance) => async () => {
-        console.info("[debugger] starting")
+        Task.chain((debuggerInstance) => async () => {
+          console.info("[debugger] starting")
 
-        const { debug, stop } = debuggerInstance(deps)
+          const { debug, stop } = debuggerInstance(deps)
 
-        deps.debug$.pipe(Rx.takeUntil(stopSignal)).subscribe({
-          next: debug,
-          complete: stop,
-        })
-      }),
-    )
-  }
+          deps.debug$.pipe(Rx.takeUntil(stopSignal)).subscribe({
+            next: debug,
+            complete: stop,
+          })
+        }),
+      )
+    }

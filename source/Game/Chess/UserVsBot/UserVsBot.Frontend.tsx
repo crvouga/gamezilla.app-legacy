@@ -1,4 +1,4 @@
-import { Audio, Cmd, exhaustive, Option, Sub, tag } from "../../../Core"
+import { Audio, Cmd, exhaustive, Option, Sub, t } from "../../../Core"
 import { UserId } from "../../../Data"
 import * as Snackbar from "../../../Snackbar"
 import * as Store from "../../../Store"
@@ -245,7 +245,7 @@ const handleResponse = (
 }
 
 const playAudio = (src: string): Cmd.Cmd<Msg> => {
-  return Audio.play(src, tag("Audio_Done"))
+  return Audio.play(src, t("Audio_Done"))
 }
 
 //

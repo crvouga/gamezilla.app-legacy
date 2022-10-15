@@ -1,5 +1,5 @@
 import produce from "immer"
-import { Cmd, pipe, RemoteData, Result, Task } from "../Core"
+import { Cmd, p, RemoteData, Result, Task } from "../Core"
 import { UserId } from "../Data"
 import * as Supabase from "../Supabase"
 import { definitions } from "../Supabase.Types"
@@ -58,7 +58,7 @@ export const update = (msg: Msg, model: Store): [Store, Cmd.Cmd<Msg>] => {
     case "Unsend_Done": {
       const { messageId, result } = msg[1]
       const modelNew = produce(model, (model) => {
-        model.mutations.Message.Unsend[messageId] = pipe(
+        model.mutations.Message.Unsend[messageId] = p(
           result,
           RemoteData.fromResult,
         )
@@ -78,7 +78,7 @@ export const update = (msg: Msg, model: Store): [Store, Cmd.Cmd<Msg>] => {
     case "Send_Done": {
       const { conversationId, result } = msg[1]
       const modelNew = produce(model, (model) => {
-        model.mutations.Message.Send[conversationId] = pipe(
+        model.mutations.Message.Send[conversationId] = p(
           result,
           RemoteData.fromResult,
           RemoteData.map((item) => item.messageId),
@@ -112,7 +112,7 @@ export const runAction = (
 
       return [
         modelNew,
-        pipe(
+        p(
           deleteForever({ messageId }),
           Cmd.perform((result): Msg => ["Unsend_Done", { messageId, result }]),
         ),
@@ -127,7 +127,7 @@ export const runAction = (
 
       return [
         modelNew,
-        pipe(
+        p(
           insert({
             userId,
             conversationId,
@@ -160,29 +160,29 @@ const insert =
     message: string
     userId: UserId.UserId
   }): Task.Task<Result.Result<Problem, Message>> =>
-  async () => {
-    const messageResponse = await Supabase.client
-      .from<definitions["message"]>("message")
-      .insert({
-        message,
-        user_id: userId,
-        conversation_id: conversationId,
+    async () => {
+      const messageResponse = await Supabase.client
+        .from<definitions["message"]>("message")
+        .insert({
+          message,
+          user_id: userId,
+          conversation_id: conversationId,
+        })
+        .single()
+
+      if (messageResponse.error) {
+        return Result.Err(messageResponse.error.message)
+      }
+
+      const data = messageResponse.data
+
+      return Result.Ok({
+        messageId: data.id,
+        conversationId: data.conversation_id,
+        userId,
+        message: data.message,
       })
-      .single()
-
-    if (messageResponse.error) {
-      return Result.Err(messageResponse.error.message)
     }
-
-    const data = messageResponse.data
-
-    return Result.Ok({
-      messageId: data.id,
-      conversationId: data.conversation_id,
-      userId,
-      message: data.message,
-    })
-  }
 
 const deleteForever =
   ({
@@ -190,15 +190,15 @@ const deleteForever =
   }: {
     messageId: string
   }): Task.Task<Result.Result<Problem, string>> =>
-  async () => {
-    const response = await Supabase.client
-      .from<definitions["message"]>("message")
-      .delete()
-      .eq("id", messageId)
+    async () => {
+      const response = await Supabase.client
+        .from<definitions["message"]>("message")
+        .delete()
+        .eq("id", messageId)
 
-    if (response.error) {
-      return Result.Err(response.error.message)
+      if (response.error) {
+        return Result.Err(response.error.message)
+      }
+
+      return Result.Ok(messageId)
     }
-
-    return Result.Ok(messageId)
-  }

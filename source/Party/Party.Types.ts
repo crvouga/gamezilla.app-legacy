@@ -1,4 +1,4 @@
-import { Option, pipe, Result, Unit } from "../Core"
+import { Option, p, Result, Unit } from "../Core"
 import { PartyId, UserId } from "../Data"
 import type {
   DtlsParameters,
@@ -363,7 +363,7 @@ export const leaveParty = (
     }
   }
 
-  const nextHost = pipe(
+  const nextHost = p(
     Object.values(model.users),
     (users) =>
       users.filter(

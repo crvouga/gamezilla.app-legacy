@@ -1,6 +1,6 @@
 import * as mediasoupClient from "mediasoup-client"
 import * as Rx from "rxjs"
-import { Cmd, exhaustive, pipe, Result, Sub, Task, Unit } from "../Core"
+import { Cmd, exhaustive, p, Result, Sub, Task, Unit } from "../Core"
 import { PartyId, UserId } from "../Data"
 import * as Route from "../Route"
 import * as Store from "../Store"
@@ -118,7 +118,7 @@ export const update = (
     case "SendTransport_InitFrontend_Done": {
       return [
         model,
-        pipe(
+        p(
           startProducing(),
           Cmd.perform((result): Msg => ["StartProducing_Done", result]),
         ),
@@ -224,7 +224,7 @@ export const updateFromBackend = (
 
       const { transportOptions } = result.value
 
-      const cmd = pipe(
+      const cmd = p(
         initRecvTransport({ userId, transportOptions }),
         Cmd.perform(
           (result): Msg => ["RecvTransport_InitFrontend_Done", result],
@@ -247,7 +247,7 @@ export const updateFromBackend = (
 
       const producerId = result.value.producerId
 
-      const cmd = pipe(
+      const cmd = p(
         emitBackendProducerId({ producerId }),
         Cmd.perform((): Msg => ["EmittedBackendProducerId", { producerId }]),
       )
@@ -266,7 +266,7 @@ export const updateFromBackend = (
 
       const options = result.value.transportOptions
 
-      const cmd = pipe(
+      const cmd = p(
         initSendTransport({ userId, transportOptions: options }),
         Cmd.perform(
           (result): Msg => ["SendTransport_InitFrontend_Done", result],
@@ -327,12 +327,12 @@ const toLifecycleCmd = ({
   //
 
   if (userPrev && !userNext) {
-    const deviceCmd = pipe(
+    const deviceCmd = p(
       unloadDevice,
       Cmd.perform((result): Msg => ["UnloadDevice_Done", result]),
     )
 
-    const mediaStreamCmd = pipe(
+    const mediaStreamCmd = p(
       unloadMediaStream,
       Cmd.perform((result): Msg => ["UnloadMediaStream_Done", result]),
     )
@@ -355,12 +355,12 @@ const toLifecycleCmd = ({
 
     const { routerRtpCapabilities } = party
 
-    const deviceCmd = pipe(
+    const deviceCmd = p(
       loadDevice({ routerRtpCapabilities }),
       Cmd.perform((result): Msg => ["LoadDevice_Done", userNext, result]),
     )
 
-    const mediaStreamCmd = pipe(
+    const mediaStreamCmd = p(
       loadMediaStream(),
       Cmd.perform((result): Msg => ["LoadMediaStream_Done", userNext, result]),
     )
@@ -552,9 +552,8 @@ const ViewNotInParty = ({
             </UI.ListItemAvatar>
 
             <UI.ListItemText
-              primary={`${
-                store.Profile[party.hostId]?.username ?? "..."
-              }'s party`}
+              primary={`${store.Profile[party.hostId]?.username ?? "..."
+                }'s party`}
               secondary={`${countUsersInParty(party.partyId, model)} in party`}
             />
           </UI.ListItemButton>
@@ -700,26 +699,26 @@ const loadDevice =
   }: {
     routerRtpCapabilities: RtpCapabilities
   }): Task.Task<LoadDevice_Done[2]> =>
-  async () => {
-    try {
-      if (device) {
-        return Result.Err("device_is_already_loaded")
+    async () => {
+      try {
+        if (device) {
+          return Result.Err("device_is_already_loaded")
+        }
+
+        const deviceNew = new mediasoupClient.Device()
+
+        await deviceNew.load({ routerRtpCapabilities })
+
+        device = deviceNew
+
+        return Result.Ok({
+          deviceRtpCapabilities: deviceNew.rtpCapabilities,
+        })
+      } catch (_error) {
+        console.error(_error)
+        return Result.Err("failed_to_load_device")
       }
-
-      const deviceNew = new mediasoupClient.Device()
-
-      await deviceNew.load({ routerRtpCapabilities })
-
-      device = deviceNew
-
-      return Result.Ok({
-        deviceRtpCapabilities: deviceNew.rtpCapabilities,
-      })
-    } catch (_error) {
-      console.error(_error)
-      return Result.Err("failed_to_load_device")
     }
-  }
 
 const unloadDevice: Task.Task<UnloadDevice_Done[1]> = async () => {
   device = null
@@ -729,10 +728,10 @@ const unloadDevice: Task.Task<UnloadDevice_Done[1]> = async () => {
 const backendProducerId$ = new Rx.Subject<{ producerId: string }>()
 const emitBackendProducerId =
   ({ producerId }: { producerId: string }): Task.Task<Unit> =>
-  async () => {
-    backendProducerId$.next({ producerId })
-    return Unit
-  }
+    async () => {
+      backendProducerId$.next({ producerId })
+      return Unit
+    }
 
 const initSendTransport =
   ({
@@ -742,53 +741,53 @@ const initSendTransport =
     userId: UserId.UserId
     transportOptions: TransportOptions
   }): Task.Task<SendTransport_InitFrontend_Done[1]> =>
-  async () => {
-    if (!device) {
-      return Result.Err("device_does_not_exists")
-    }
+    async () => {
+      if (!device) {
+        return Result.Err("device_does_not_exists")
+      }
 
-    if (sendTransport) {
-      return Result.Err("producer_transport_is_already_initialized")
-    }
+      if (sendTransport) {
+        return Result.Err("producer_transport_is_already_initialized")
+      }
 
-    sendTransport = device.createSendTransport({
-      ...transportOptions,
-      id: transportOptions.transportId,
+      sendTransport = device.createSendTransport({
+        ...transportOptions,
+        id: transportOptions.transportId,
 
-      // @ts-ignore
-      iceCandidates: transportOptions.iceCandidates,
+        // @ts-ignore
+        iceCandidates: transportOptions.iceCandidates,
 
-      // this fixes compiler error but cause runtime error 😑
-      // iceCandidates: options.iceCandidates.map(item => ({
-      //     ...item, tcpType: item.tcpType ?? "passive"
-      // }))
-    })
+        // this fixes compiler error but cause runtime error 😑
+        // iceCandidates: options.iceCandidates.map(item => ({
+        //     ...item, tcpType: item.tcpType ?? "passive"
+        // }))
+      })
 
-    sendTransport.on("connect", ({ dtlsParameters }, callback, _errback) => {
-      mediasoupClientMsgs.next([
-        "SendTransport_OnConnect",
-        { userId, dtlsParameters },
-      ])
-      callback()
-    })
-
-    sendTransport.on(
-      "produce",
-      ({ appData, kind, rtpParameters }, callback) => {
+      sendTransport.on("connect", ({ dtlsParameters }, callback, _errback) => {
         mediasoupClientMsgs.next([
-          "SendTransport_OnProduce",
-          { userId, appData, kind, rtpParameters },
+          "SendTransport_OnConnect",
+          { userId, dtlsParameters },
         ])
-        backendProducerId$.subscribe(({ producerId }) => {
-          callback({
-            id: producerId,
-          })
-        })
-      },
-    )
+        callback()
+      })
 
-    return Result.Ok(Unit)
-  }
+      sendTransport.on(
+        "produce",
+        ({ appData, kind, rtpParameters }, callback) => {
+          mediasoupClientMsgs.next([
+            "SendTransport_OnProduce",
+            { userId, appData, kind, rtpParameters },
+          ])
+          backendProducerId$.subscribe(({ producerId }) => {
+            callback({
+              id: producerId,
+            })
+          })
+        },
+      )
+
+      return Result.Ok(Unit)
+    }
 
 const startProducing = (): Task.Task<StartProducing_Done[1]> => async () => {
   if (!sendTransport) {
@@ -831,34 +830,34 @@ const initRecvTransport =
     userId: UserId.UserId
     transportOptions: TransportOptions
   }): Task.Task<RecvTransport_InitFrontend_Done[1]> =>
-  async () => {
-    if (!device) {
-      return Result.Err("device_does_not_exists")
+    async () => {
+      if (!device) {
+        return Result.Err("device_does_not_exists")
+      }
+
+      recvTransport = device.createRecvTransport({
+        ...transportOptions,
+        id: transportOptions.transportId,
+
+        // @ts-ignore
+        iceCandidates: transportOptions.iceCandidates,
+
+        // this fixes compiler error but cause runtime error 😑
+        // iceCandidates: transportOptions.iceCandidates.map(item => ({
+        //     ...item, tcpType: item.tcpType ?? "passive"
+        // }))
+      })
+
+      recvTransport.on("connect", ({ dtlsParameters }, callback) => {
+        mediasoupClientMsgs.next([
+          "RecvTransport_OnConnect",
+          { userId, dtlsParameters },
+        ])
+        callback()
+      })
+
+      return Result.Ok(Unit)
     }
-
-    recvTransport = device.createRecvTransport({
-      ...transportOptions,
-      id: transportOptions.transportId,
-
-      // @ts-ignore
-      iceCandidates: transportOptions.iceCandidates,
-
-      // this fixes compiler error but cause runtime error 😑
-      // iceCandidates: transportOptions.iceCandidates.map(item => ({
-      //     ...item, tcpType: item.tcpType ?? "passive"
-      // }))
-    })
-
-    recvTransport.on("connect", ({ dtlsParameters }, callback) => {
-      mediasoupClientMsgs.next([
-        "RecvTransport_OnConnect",
-        { userId, dtlsParameters },
-      ])
-      callback()
-    })
-
-    return Result.Ok(Unit)
-  }
 
 // https://mediasoup.org/documentation/v3/mediasoup-client/api/#ProducerOptions
 // https://mediasoup.org/documentation/v3/mediasoup-client/api/#transport-produce
@@ -911,7 +910,7 @@ const subscribeMediaStreamVolume = (callback: (volume: number) => void) => {
   const mediaStream = mediaStream$.getValue()
 
   if (!mediaStream) {
-    return () => {}
+    return () => { }
   }
 
   // source: https://stackoverflow.com/questions/33322681/checking-microphone-volume-in-javascript

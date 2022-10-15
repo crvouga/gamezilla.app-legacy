@@ -1,6 +1,6 @@
 import * as Rx from "rxjs"
 import { WireStatus, ToBackend, ToFrontend } from "./App.Types"
-import { Cmd, Option, pipe, Sub } from "./Core"
+import { Cmd, Option, p, Sub } from "./Core"
 import { SessionId, ClientId } from "./Data"
 
 //
@@ -18,7 +18,7 @@ export const _connectionStatus = new Rx.Subject<WireStatus>()
 export const fromBackend = <Msg>(
   mapper: (msg: ToFrontend) => Msg,
 ): Sub.Sub<Msg> => {
-  return pipe(_toFrontend, Sub.map(mapper))
+  return p(_toFrontend, Sub.map(mapper))
 }
 
 export const sendToBackend = (msg: ToBackend): Cmd.Cmd<never> => {
@@ -30,7 +30,7 @@ export const sendToBackend = (msg: ToBackend): Cmd.Cmd<never> => {
 export const onConnectionStatus = <Msg>(
   mapper: (connectionStatus: WireStatus) => Msg,
 ): Sub.Sub<Msg> => {
-  return pipe(_connectionStatus, Sub.map(mapper))
+  return p(_connectionStatus, Sub.map(mapper))
 }
 
 //
@@ -58,7 +58,7 @@ export const _broadcast = new Rx.Subject<ToFrontend>()
 export const onConnect = <Msg>(
   mapper: (sessionId: SessionId.SessionId, clientId: ClientId.ClientId) => Msg,
 ): Sub.Sub<Msg> => {
-  return pipe(
+  return p(
     _onConnect,
     Sub.map(([sessionId, clientId]) => mapper(sessionId, clientId)),
   )
@@ -67,7 +67,7 @@ export const onConnect = <Msg>(
 export const onDisconnect = <Msg>(
   mapper: (sessionId: SessionId.SessionId, clientId: ClientId.ClientId) => Msg,
 ): Sub.Sub<Msg> => {
-  return pipe(
+  return p(
     _onDisconnect,
     Sub.map(([sessionId, clientId]) => mapper(sessionId, clientId)),
   )
@@ -80,7 +80,7 @@ export const fromFrontend = <Msg>(
     msg: ToBackend,
   ) => Msg,
 ): Sub.Sub<Msg> => {
-  return pipe(
+  return p(
     _toBackend,
     Sub.map(([sessionId, clientId, msg]) => mapper(sessionId, clientId, msg)),
   )

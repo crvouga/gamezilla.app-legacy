@@ -13,10 +13,10 @@ import {
   Debug as DebugCore,
   exhaustive,
   Option,
-  pipe,
+  p,
   RemoteData,
   Sub,
-  tag,
+  t,
   tagCmd,
   tagSub,
   Platform,
@@ -48,7 +48,7 @@ type Model = FrontendModel
 //
 
 const init = (location: Browser.Location): [Model, Cmd.Cmd<Msg>] => {
-  const route = pipe(
+  const route = p(
     location,
     Route.decode,
     Option.withDefault<Route.Model>(["GameRoom"]),
@@ -111,7 +111,7 @@ type OutAction =
 //
 
 const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
-  return pipe(
+  return p(
     [model, Cmd.None],
     andThen(updateMain, msg),
     andThen(updateStatusChanged(model), msg),
@@ -201,12 +201,12 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
         model.gameRoom,
       )
 
-      return pipe([{ ...model, gameRoom: child }, tagCmd("GameRoom", childCmd)])
+      return p([{ ...model, gameRoom: child }, tagCmd("GameRoom", childCmd)])
     }
 
     case "Page": {
       const [modelNew, cmd, actions] = updatePage(msg[1], model)
-      return pipe([modelNew, cmd], andThenMany(runAction, actions))
+      return p([modelNew, cmd], andThenMany(runAction, actions))
     }
 
     case "Debug": {
@@ -277,7 +277,7 @@ const updateFromBackend = (
         LocalStorage.put(
           Wire.sessionIdKey,
           sessionId,
-          tag("LocalStoragePut_Done"),
+          t("LocalStoragePut_Done"),
         ),
       ]
     }
@@ -295,7 +295,7 @@ const updateFromBackend = (
         model.party,
       )
 
-      return pipe(
+      return p(
         [{ ...model, party }, tagCmd("Party", partyCmd)],
         andThenMany(runAction, actions),
       )
@@ -318,7 +318,7 @@ const updateFromBackend = (
         model.gameRoom,
       )
 
-      return pipe(
+      return p(
         [{ ...model, gameRoom }, tagCmd("GameRoom", gameRoomCmd)],
         andThenMany(runAction, actions),
       )
@@ -354,7 +354,7 @@ const initPage = (model: Model): [Model, Cmd.Cmd<Msg>] => {
         ["Profile", ["FindMany", { userIds: [status[1].authSession.userId] }]],
       ]
 
-      return pipe([model, Cmd.None], andThenMany(runAction, [action]))
+      return p([model, Cmd.None], andThenMany(runAction, [action]))
     }
 
     case "ProfileMissing": {
@@ -376,7 +376,7 @@ const initPage = (model: Model): [Model, Cmd.Cmd<Msg>] => {
         model.route,
         status[1].profile,
       )
-      return pipe(
+      return p(
         [{ ...model, page }, tagCmd("Page", pageCmd)],
         andThenMany(runAction, actions),
       )
@@ -390,16 +390,16 @@ const initPage = (model: Model): [Model, Cmd.Cmd<Msg>] => {
 
 const updateStatusChanged =
   (modelPrev: Model) =>
-  (_msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
-    const statusPrev = toStatus(modelPrev)
-    const statusNew = toStatus(model)
+    (_msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
+      const statusPrev = toStatus(modelPrev)
+      const statusNew = toStatus(model)
 
-    if (statusNew[0] === statusPrev[0]) {
-      return [model, Cmd.None]
+      if (statusNew[0] === statusPrev[0]) {
+        return [model, Cmd.None]
+      }
+
+      return initPage(model)
     }
-
-    return initPage(model)
-  }
 
 const runAction = (action: OutAction, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (action[0]) {
@@ -478,8 +478,8 @@ const runAction = (action: OutAction, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
 const subscriptions = (model: Model): Sub.Sub<Msg> => {
   return Sub.batch<Msg>([
-    Wire.onConnectionStatus(tag("Wire")),
-    Wire.fromBackend(tag("▶")),
+    Wire.onConnectionStatus(t("Wire")),
+    Wire.fromBackend(t("▶")),
     Browser.onLocation(onLocationChange),
     tagSub("Party", Party.subscriptions(model.party)),
     tagSub("Page", Pages.subscriptions(model.page)),
@@ -511,7 +511,7 @@ const gameRoomSub = (model: Model): Sub.Sub<Msg> => {
 }
 
 const onLocationChange = (location: Browser.Location): Msg => {
-  return pipe(
+  return p(
     location,
     Route.decode,
     Option.withDefault<Route.Model>(["GameRoom"]),
@@ -759,8 +759,8 @@ const toStatus = ({
 const backendUrl =
   process.env.NODE_ENV === "production"
     ? // todo setup this url
-      // ? `https://backend.gamezilla.app/`
-      "https://gamezilla-production.up.railway.app/"
+    // ? `https://backend.gamezilla.app/`
+    "https://gamezilla-production.up.railway.app/"
     : `http://localhost:${Wire.backendServerPort}/`
 
 const socketClient: Socket<

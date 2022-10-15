@@ -1,5 +1,5 @@
 import * as Auth from "./Auth"
-import { Cmd, exhaustive, pipe, Sub, tag, tagCmd, tagSub } from "./Core"
+import { Cmd, exhaustive, p, Sub, t, tagCmd, tagSub } from "./Core"
 import { PhoneNumber, UserId } from "./Data"
 import * as Debug from "./Debug/Debug.Frontend"
 import * as GameRoom from "./Game/GameRoom.Frontend"
@@ -46,10 +46,10 @@ export type Model =
   | ["LoginEmailLink", LoginEmailLink.Model]
   | ["LoginPhone", LoginPhone.Model]
   | [
-      "LoginPhoneVerify",
-      { phoneNumber: PhoneNumber.PhoneNumber },
-      LoginPhoneVerify.Model,
-    ]
+    "LoginPhoneVerify",
+    { phoneNumber: PhoneNumber.PhoneNumber },
+    LoginPhoneVerify.Model,
+  ]
   | ["Home", Home.Model]
   | ["ProfileCreate", ProfileCreate.Model]
   | ["Logout", Logout.Model]
@@ -134,7 +134,7 @@ export const initReady = (
 
     case "Chat": {
       const [model, cmd, actions] = Chat.init(profile)
-      return [["Chat", model], pipe(cmd, Cmd.map(tag("Chat"))), actions]
+      return [["Chat", model], p(cmd, Cmd.map(t("Chat"))), actions]
     }
 
     case "ChatNew": {
@@ -142,7 +142,7 @@ export const initReady = (
 
       return [
         ["ChatNew", chatNew],
-        pipe(chatNewCmd, Cmd.map(tag("ChatNew"))),
+        p(chatNewCmd, Cmd.map(t("ChatNew"))),
         actions,
       ]
     }
@@ -165,7 +165,7 @@ export const initReady = (
       const [modelNew, cmdNew, actions] = ProfileDelete.init
       return [
         ["ProfileDelete", modelNew],
-        pipe(cmdNew, Cmd.map(tag("ProfileDelete"))),
+        p(cmdNew, Cmd.map(t("ProfileDelete"))),
         actions,
       ]
     }
@@ -203,7 +203,7 @@ export const initReady = (
       })
       return [
         ["Profile", { userId: route[1].userId }, modelInit],
-        pipe(cmdInit, Cmd.map(tag("Profile"))),
+        p(cmdInit, Cmd.map(t("Profile"))),
         actions,
       ]
     }
@@ -212,7 +212,7 @@ export const initReady = (
       const [modelInit, cmdInit, actionsInit] = Search.init
       return [
         ["Search", modelInit],
-        pipe(cmdInit, Cmd.map(tag("Search"))),
+        p(cmdInit, Cmd.map(t("Search"))),
         actionsInit,
       ]
     }
@@ -221,14 +221,14 @@ export const initReady = (
       const [modelInit, cmdInit] = GameRoomPage.init
       return [
         ["GameRoom", modelInit],
-        pipe(cmdInit, Cmd.map(tag("GameRoom"))),
+        p(cmdInit, Cmd.map(t("GameRoom"))),
         [],
       ]
     }
 
     case "Party": {
       const [modelInit, cmdInit] = PartyPage.init
-      return [["Party", modelInit], pipe(cmdInit, Cmd.map(tag("Party"))), []]
+      return [["Party", modelInit], p(cmdInit, Cmd.map(t("Party"))), []]
     }
 
     case "Home": {
@@ -476,7 +476,7 @@ export const updateReady = (
         )
         return [
           ["Profile", model[1], modelPage],
-          pipe(cmdPage, Cmd.map(tag("Profile"))),
+          p(cmdPage, Cmd.map(t("Profile"))),
           actions,
         ]
       }
@@ -499,7 +499,7 @@ export const updateReady = (
         )
         return [
           ["GameRoom", modelPage],
-          pipe(cmdPage, Cmd.map(tag("GameRoom"))),
+          p(cmdPage, Cmd.map(t("GameRoom"))),
           actions,
         ]
       }
@@ -1276,5 +1276,5 @@ const tagUpdate = <TModel, TMsg, TAction, TPage extends Msg[0]>(
     | [TModel, Cmd.Cmd<TMsg>, TAction[]]
     | [TModel, Cmd.Cmd<TMsg>],
 ): [[TPage, TModel], Cmd.Cmd<[TPage, TMsg]>, TAction[]] => {
-  return [[page, modelPrev], pipe(cmdPrev, Cmd.map(tag(page))), actionsPrev]
+  return [[page, modelPrev], p(cmdPrev, Cmd.map(t(page))), actionsPrev]
 }

@@ -1,5 +1,5 @@
 import * as Cmd from "./Cmd"
-import { pipe } from "./pipe"
+import { p } from "./pipe"
 import * as Result from "./Result"
 import * as Task from "./Task"
 import { Unit } from "./Utility"
@@ -19,5 +19,5 @@ export const put = <value, msg>(
       return Result.Err("failed_put_item_in_local_storage")
     }
   }
-  return pipe(task, Cmd.perform(mapper))
+  return p(task, Cmd.perform(mapper))
 }

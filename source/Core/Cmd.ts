@@ -1,3 +1,5 @@
+import { p } from "./pipe"
+import { t as tag_ } from "./Utility"
 import * as Task from "./Task"
 
 export type Cmd<Msg> = (dispatch: (msg: Msg) => void) => void
@@ -10,13 +12,17 @@ export const of = <Msg>(msg: Msg): Cmd<Msg> => {
 
 export const map =
   <A, B>(mapper: (a: A) => B) =>
-  (cmd: Cmd<A>): Cmd<B> => {
-    return (dispatch) => {
-      cmd((a) => {
-        dispatch(mapper(a))
-      })
+    (cmd: Cmd<A>): Cmd<B> => {
+      return (dispatch) => {
+        cmd((a) => {
+          dispatch(mapper(a))
+        })
+      }
     }
-  }
+
+export const tag = <Tag extends string, Msg>(tagName: Tag, cmd: Cmd<Msg>): Cmd<[Tag, Msg]> => {
+  return p(cmd, map(tag_(tagName)))
+}
 
 export const batch = <Msg>(cmdList: Cmd<Msg>[]): Cmd<Msg> => {
   return (dispatch) => {
@@ -26,14 +32,14 @@ export const batch = <Msg>(cmdList: Cmd<Msg>[]): Cmd<Msg> => {
   }
 }
 
-export const None: Cmd<never> = () => {}
+export const None: Cmd<never> = () => { }
 
 export const perform =
   <A, Msg>(f: (a: A) => Msg) =>
-  (task: Task.Task<A>): Cmd<Msg> => {
-    return async (dispatch) => {
-      const value = await task()
+    (task: Task.Task<A>): Cmd<Msg> => {
+      return async (dispatch) => {
+        const value = await task()
 
-      dispatch(f(value))
+        dispatch(f(value))
+      }
     }
-  }

@@ -1,5 +1,5 @@
 import * as Cmd from "./Cmd"
-import { pipe } from "./pipe"
+import { p } from "./pipe"
 import * as Sub from "./Sub"
 
 export const exhaustive = (
@@ -13,36 +13,36 @@ export const andThen =
     update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>],
     msg: Msg,
   ) =>
-  ([model, cmdPrev]: [Model, Cmd.Cmd<Msg>]): [Model, Cmd.Cmd<Msg>] => {
-    const [modelNew, cmdNew] = update(msg, model)
+    ([model, cmdPrev]: [Model, Cmd.Cmd<Msg>]): [Model, Cmd.Cmd<Msg>] => {
+      const [modelNew, cmdNew] = update(msg, model)
 
-    return [modelNew, Cmd.batch([cmdNew, cmdPrev])]
-  }
+      return [modelNew, Cmd.batch([cmdNew, cmdPrev])]
+    }
 
 export const andThenMany =
   <Action, Model, Msg>(
     update: (msg: Action, model: Model) => [Model, Cmd.Cmd<Msg>],
     msgs: Action[],
   ) =>
-  ([modelPrev, cmdPrev]: [Model, Cmd.Cmd<Msg>]): [Model, Cmd.Cmd<Msg>] => {
-    const [msg, ...msgsRest] = msgs
+    ([modelPrev, cmdPrev]: [Model, Cmd.Cmd<Msg>]): [Model, Cmd.Cmd<Msg>] => {
+      const [msg, ...msgsRest] = msgs
 
-    if (!msg) {
-      return [modelPrev, cmdPrev]
+      if (!msg) {
+        return [modelPrev, cmdPrev]
+      }
+
+      const [modelNew, cmdNew] = update(msg, modelPrev)
+
+      return p(
+        [modelNew, Cmd.batch([cmdPrev, cmdNew])],
+        andThenMany(update, msgsRest),
+      )
     }
 
-    const [modelNew, cmdNew] = update(msg, modelPrev)
-
-    return pipe(
-      [modelNew, Cmd.batch([cmdPrev, cmdNew])],
-      andThenMany(update, msgsRest),
-    )
-  }
-
-export const tag =
+export const t =
   <Tag extends string>(tag: Tag) =>
-  <Value>(value: Value): [Tag, Value] =>
-    [tag, value]
+    <Value>(value: Value): [Tag, Value] =>
+      [tag, value]
 
 export const tagUpdate = <TagName extends string, Model, Msg>(
   tagName: TagName,
@@ -50,7 +50,7 @@ export const tagUpdate = <TagName extends string, Model, Msg>(
 ): [[TagName, Model], Cmd.Cmd<[TagName, Msg]>] => {
   return [
     [tagName, model],
-    pipe(
+    p(
       cmd,
       Cmd.map((msg) => [tagName, msg]),
     ),
@@ -61,7 +61,7 @@ export const tagCmd = <TagName extends string, Msg>(
   tagName: TagName,
   cmd: Cmd.Cmd<Msg>,
 ): Cmd.Cmd<[TagName, Msg]> => {
-  return pipe(
+  return p(
     cmd,
     Cmd.map((msg) => [tagName, msg]),
   )
@@ -71,7 +71,7 @@ export const tagSub = <TagName extends string, Msg>(
   tagName: TagName,
   sub: Sub.Sub<Msg>,
 ): Sub.Sub<[TagName, Msg]> => {
-  return pipe(
+  return p(
     sub,
     Sub.map((msg) => [tagName, msg]),
   )

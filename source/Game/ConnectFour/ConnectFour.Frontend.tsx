@@ -1,11 +1,12 @@
-import { Cmd } from "../../Core"
+import { Cmd, t, p, tagCmd } from "../../Core"
 import { UserId } from "../../Data"
+import * as Store from "../../Store"
 import * as UI from "../../UI"
 import { GameModeCard } from "../Views"
 import {
   COLUMN_COUNT,
-  MAX_COLUMN_HEIGHT,
-  theme
+  gameTheme,
+  MAX_COLUMN_HEIGHT
 } from "./ConnectFour"
 import {
   BackendModel,
@@ -44,7 +45,18 @@ export const update = ({ sendToBackend }: { sendToBackend: (msg: ToBackend) => C
       return [model, sendToBackend(msg)]
     }
     case 'UserVsUser': {
+      if (model.type === 'UserVsUser') {
+        const [child, cmd] = UserVsUser.update(
+          {
+            sendToBackend: msg => sendToBackend(['UserVsUser', msg])
+          },
+          msg[1],
+          model.child
+        )
+        return [{ type: "UserVsUser", child }, Cmd.tag("UserVsUser", cmd)]
+      }
       return [model, Cmd.None]
+
     }
   }
 }
@@ -82,12 +94,14 @@ export const View = ({
   goHome,
   closeGame,
   roomComponent,
-  currentUserId
+  currentUserId,
+  store,
 }: {
   model: Model
   dispatch: (msg: Msg) => void
   closeGame: () => void
   goHome: () => void
+  store: Store.Model
   roomComponent: UI.ViewNode
   currentUserId: UserId.UserId
 }) => {
@@ -129,7 +143,7 @@ export const View = ({
             right={roomComponent}
           />
 
-          <UI.Box sx={{ width: "100%", position: "relative", overflow: "hidden" }}>
+          <UI.AspectRatio aspectRatio={Math.pow(3 / 4, 3)}>
             <svg
               width="100%"
               height="100%"
@@ -174,11 +188,11 @@ export const View = ({
                 >
                   <stop
                     offset="0%"
-                    stopColor={theme.primary.light}
+                    stopColor={gameTheme.primary.light}
                   />
                   <stop
                     offset="100%"
-                    stopColor={theme.primary.dark}
+                    stopColor={gameTheme.primary.dark}
                   />
                 </linearGradient>
 
@@ -188,11 +202,11 @@ export const View = ({
                 >
                   <stop
                     offset="0%"
-                    stopColor={theme.playerOne.light}
+                    stopColor={gameTheme.playerOne.light}
                   />
                   <stop
                     offset="100%"
-                    stopColor={theme.playerOne.dark}
+                    stopColor={gameTheme.playerOne.dark}
                   />
                 </linearGradient>
 
@@ -202,11 +216,11 @@ export const View = ({
                 >
                   <stop
                     offset="0%"
-                    stopColor={theme.playerTwo.light}
+                    stopColor={gameTheme.playerTwo.light}
                   />
                   <stop
                     offset="100%"
-                    stopColor={theme.playerTwo.dark}
+                    stopColor={gameTheme.playerTwo.dark}
                   />
                 </linearGradient>
               </defs>
@@ -216,7 +230,7 @@ export const View = ({
                 y={0}
                 width={7}
                 height={3}
-                fill={theme.primary.darker}
+                fill={gameTheme.primary.darker}
               />
 
 
@@ -248,7 +262,7 @@ export const View = ({
               </UI.Typography>
             </UI.Box>
 
-          </UI.Box>
+          </UI.AspectRatio>
 
           <UI.Box sx={{ display: "flex", gap: 2, padding: 2, flex: 1 }}>
             <UI.Box sx={{ width: "50%" }}>
@@ -283,7 +297,15 @@ export const View = ({
 
     case 'UserVsUser': {
       return (
-        <UserVsUser.View dispatch={msg => dispatch(['UserVsUser', msg])} goBack={() => dispatch(['InputMode', { userId: currentUserId, mode: "None" }])} goHome={goHome} model={model.child} roomComponent={roomComponent} />
+        <UserVsUser.View
+          currentUserId={currentUserId}
+          store={store}
+          dispatch={msg => dispatch(['UserVsUser', msg])}
+          goBack={() => dispatch(['InputMode', { userId: currentUserId, mode: "None" }])}
+          goHome={goHome}
+          model={model.child}
+          roomComponent={roomComponent}
+        />
       )
     }
 
@@ -371,11 +393,11 @@ export const CoverArt = ({ id }: { id: string }) => {
         >
           <stop
             offset="0%"
-            stopColor={theme.primary.light}
+            stopColor={gameTheme.primary.light}
           />
           <stop
             offset="100%"
-            stopColor={theme.primary.dark}
+            stopColor={gameTheme.primary.dark}
           />
         </linearGradient>
 
@@ -385,11 +407,11 @@ export const CoverArt = ({ id }: { id: string }) => {
         >
           <stop
             offset="0%"
-            stopColor={theme.playerOne.light}
+            stopColor={gameTheme.playerOne.light}
           />
           <stop
             offset="100%"
-            stopColor={theme.playerOne.dark}
+            stopColor={gameTheme.playerOne.dark}
           />
         </linearGradient>
 
@@ -399,11 +421,11 @@ export const CoverArt = ({ id }: { id: string }) => {
         >
           <stop
             offset="0%"
-            stopColor={theme.playerTwo.light}
+            stopColor={gameTheme.playerTwo.light}
           />
           <stop
             offset="100%"
-            stopColor={theme.playerTwo.dark}
+            stopColor={gameTheme.playerTwo.dark}
           />
         </linearGradient>
       </defs>
@@ -413,7 +435,7 @@ export const CoverArt = ({ id }: { id: string }) => {
         y={0}
         width={2}
         height={2}
-        fill={theme.primary.darker}
+        fill={gameTheme.primary.darker}
       />
 
       <circle

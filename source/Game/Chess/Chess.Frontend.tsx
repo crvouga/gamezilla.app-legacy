@@ -2,7 +2,7 @@ import {
   Audio,
   Cmd,
   Option,
-  pipe,
+  p,
   RemoteData,
   Result,
   Sub,
@@ -143,7 +143,7 @@ export const updateFromBackend = (
         ...model,
         requests: {
           ...model.requests,
-          InputMode: pipe(
+          InputMode: p(
             result,
             RemoteData.fromResult,
             RemoteData.map(() => Unit),

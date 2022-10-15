@@ -1,7 +1,7 @@
 import * as Route from "../Route"
 import * as Auth from "../Auth"
 import * as UI from "../UI"
-import { Browser, Cmd, exhaustive, pipe } from "../Core"
+import { Browser, Cmd, exhaustive, p } from "../Core"
 
 //
 //
@@ -16,9 +16,9 @@ export type Model = {
   password: string
   passwordVisibility: Visibility
   submission:
-    | { type: "Idle" }
-    | { type: "Loading" }
-    | { type: "Problem"; message: string }
+  | { type: "Idle" }
+  | { type: "Loading" }
+  | { type: "Problem"; message: string }
 }
 
 type Visibility = "Showing" | "Hiding"
@@ -74,7 +74,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
           ...model,
           passwordVisibility: toggleVisibility(model.passwordVisibility),
         },
-        pipe(
+        p(
           Browser.focus(passwordFieldId),
           Cmd.perform((result) => ["Focus_Done", result]),
         ),
@@ -89,7 +89,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
           ...model,
           submission: { type: "Loading" },
         },
-        pipe(
+        p(
           Auth.loginWithEmailAndPassword({
             emailAddress: model.emailAddress,
             password: model.password,

@@ -1,4 +1,4 @@
-import { Cmd, exhaustive, Option, pipe, Result, Sub } from "../Core"
+import { Cmd, exhaustive, Option, p, Result, Sub } from "../Core"
 import { removeKey } from "../Core/Record"
 import { RoomId, UserId } from "../Data"
 import * as Game from "./Game.Backend"
@@ -101,7 +101,7 @@ export const update = (
 
       return [
         modelNew,
-        pipe(
+        p(
           gameCmd,
           Cmd.map((msg): Msg => ["Games", roomId, msg]),
         ),
@@ -171,7 +171,7 @@ export const updateFromFrontend = (
 
       return [
         modelNew,
-        pipe(
+        p(
           gameCmd,
           Cmd.map((msg): Msg => ["Games", roomId, msg]),
         ),
@@ -389,7 +389,7 @@ export const leaveRoom = (
     })
   }
 
-  const nextHost = pipe(
+  const nextHost = p(
     Object.values(model.users),
     (users) =>
       users.filter(
@@ -533,7 +533,7 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
 
     const game = room.game.value
 
-    const sub = pipe(
+    const sub = p(
       Game.subscriptions(roomId, game),
       Sub.map((msg): Msg => ["Games", roomId, msg]),
     )

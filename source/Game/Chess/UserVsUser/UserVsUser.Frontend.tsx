@@ -1,4 +1,4 @@
-import { Audio, Cmd, exhaustive, Option, pipe, Sub, tag } from "../../../Core"
+import { Audio, Cmd, exhaustive, Option, p, Sub, t } from "../../../Core"
 import { UserId } from "../../../Data"
 import * as Snackbar from "../../../Snackbar"
 import * as Store from "../../../Store"
@@ -392,7 +392,7 @@ export const updateFromBackend = (
 }
 
 const playAudio = (src: string): Cmd.Cmd<Msg> => {
-  return Audio.play(src, tag("Audio_Done"))
+  return Audio.play(src, t("Audio_Done"))
 }
 
 //
@@ -717,7 +717,7 @@ export const View = ({
           ? "b"
           : "None"
 
-  const boardOrientation: Board.Color = pipe(
+  const boardOrientation: Board.Color = p(
     currentUserColor === "None" || currentUserColor === "Both"
       ? "w"
       : currentUserColor,

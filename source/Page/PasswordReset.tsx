@@ -1,7 +1,7 @@
 import * as Route from "../Route"
 import * as Store from "../Store"
 import * as UI from "../UI"
-import { Cmd, pipe } from "../Core"
+import { Cmd, p } from "../Core"
 
 //
 //
@@ -14,10 +14,10 @@ import { Cmd, pipe } from "../Core"
 export type Model = {
   emailAddress: string
   submission:
-    | { type: "Idle" }
-    | { type: "Loading" }
-    | { type: "Problem"; message: string }
-    | { type: "Succeeded"; sentTo: string }
+  | { type: "Idle" }
+  | { type: "Loading" }
+  | { type: "Problem"; message: string }
+  | { type: "Succeeded"; sentTo: string }
 }
 
 //
@@ -46,12 +46,12 @@ export type Msg =
   | ["ClickedSend"]
   | ["InputtedEmailAddress", string]
   | [
-      "Send_Done",
-      {
-        sentTo: string
-        result: Store.Account.SendResetPasswordLinkResult
-      },
-    ]
+    "Send_Done",
+    {
+      sentTo: string
+      result: Store.Account.SendResetPasswordLinkResult
+    },
+  ]
 
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
@@ -64,7 +64,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
     case "ClickedSend":
       return [
         { ...model, submission: { type: "Loading" } },
-        pipe(
+        p(
           Store.Account.sendResetPasswordLink({
             emailAddress: model.emailAddress,
           }),

@@ -1,6 +1,6 @@
 import produce from "immer"
 import { matchSorter } from "match-sorter"
-import { Cmd, exhaustive, pipe, RemoteData, Result, Task, Unit } from "../Core"
+import { Cmd, exhaustive, p, RemoteData, Result, Task, Unit } from "../Core"
 import { ProfileAvatar, UserId, Username } from "../Data"
 import * as Supabase from "../Supabase"
 import { definitions } from "../Supabase.Types"
@@ -92,7 +92,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
       const { userId, result } = msg[1]
 
       const modeNew = produce(model, (model) => {
-        model.mutations.Profile.Edit[userId] = pipe(
+        model.mutations.Profile.Edit[userId] = p(
           msg[1].result,
           RemoteData.fromResult,
           RemoteData.map((profile) => profile.userId),
@@ -118,7 +118,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
       const key = Types.toFindManyKey(userIds)
 
       const modelNew = produce(model, (model) => {
-        model.queries.Profile.FindMany[key] = pipe(
+        model.queries.Profile.FindMany[key] = p(
           result,
           RemoteData.fromResult,
           RemoteData.map((profiles) =>
@@ -156,7 +156,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
       const { userId, result } = msg[1]
 
       const modelNew = produce(model, (model) => {
-        model.mutations.Profile.Create[userId] = pipe(
+        model.mutations.Profile.Create[userId] = p(
           result,
           RemoteData.fromResult,
           RemoteData.map((profile) => profile.userId),
@@ -180,7 +180,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
       const { result, searchText } = msg[1]
 
       const modelNew = produce(model, (model) => {
-        model.queries.Profile.Search[searchText] = pipe(
+        model.queries.Profile.Search[searchText] = p(
           result,
           RemoteData.fromResult,
           RemoteData.map((profiles) =>
@@ -227,7 +227,7 @@ export const runAction = (msg: Action, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
       return [
         modelNew,
-        pipe(
+        p(
           edit(userId, edits),
           Cmd.perform(
             (result): Msg => [
@@ -249,7 +249,7 @@ export const runAction = (msg: Action, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
       return [
         modelNew,
-        pipe(
+        p(
           findMany({ userIds }),
           Cmd.perform((result): Msg => ["FindMany_Done", { userIds, result }]),
         ),
@@ -265,7 +265,7 @@ export const runAction = (msg: Action, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
       return [
         modelNew,
-        pipe(
+        p(
           deleteForever(userId),
           Cmd.perform(
             (result): Msg => ["DeleteForever_Done", { userId, result }],
@@ -283,7 +283,7 @@ export const runAction = (msg: Action, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
       return [
         modelNew,
-        pipe(
+        p(
           create(profile),
           Cmd.perform((result): Msg => ["Create_Done", { userId, result }]),
         ),
@@ -299,7 +299,7 @@ export const runAction = (msg: Action, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
       return [
         modelNew,
-        pipe(
+        p(
           search({ nameOrUsername: searchText }),
           Cmd.perform((result): Msg => ["Search_Done", { result, searchText }]),
         ),
