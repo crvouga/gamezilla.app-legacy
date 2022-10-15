@@ -72,6 +72,13 @@ export const updateFromBackend = (
     }
 
     case 'UserVsUser': {
+      if (model.type === 'UserVsUser') {
+        const [child, cmd] = UserVsUser.updateFromBackend(
+          msg[1],
+          model.child
+        )
+        return [{ type: "UserVsUser", child }, Cmd.tag("UserVsUser", cmd)]
+      }
       return [model, Cmd.None]
     }
   }

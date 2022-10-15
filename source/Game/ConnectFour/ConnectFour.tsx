@@ -1,3 +1,5 @@
+import { Result } from "../../Core"
+
 //
 //
 //
@@ -6,9 +8,14 @@
 //
 //
 
-import { Result } from "../../Core"
+
 
 export type PlayerType = "PlayerOne" | "PlayerTwo"
+
+export const opposite: { [playerType in PlayerType]: PlayerType } = {
+  PlayerOne: "PlayerTwo",
+  PlayerTwo: "PlayerOne"
+}
 
 type Color = "Red" | "Yellow"
 
@@ -71,7 +78,7 @@ export const move = (
   }
 
   const columnsNew: Columns = columns.map((column, index) => {
-    if (index === columnIndex && toTurn(columns) === player) {
+    if (index === columnIndex) {
       return column.concat([player]).slice(0, MAX_COLUMN_HEIGHT)
     }
 

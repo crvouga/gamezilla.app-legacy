@@ -1,6 +1,6 @@
 import { Err, Ok, Result } from "../../../Core/Result"
 import { UserId } from "../../../Data"
-import { Columns, PlayerType } from "../ConnectFour"
+import { Columns, opposite, PlayerType } from "../ConnectFour"
 
 //
 //
@@ -86,7 +86,7 @@ export type Req =
   | ['StartPlaying', { userId: UserId.UserId, playerType: PlayerType }]
 
 export type Res =
-  | ['StopPlaying_Done', Result<"not_in_setup", SharedModel>]
+  | ['StopPlaying_Done', Result<"not_in_setup" | "not_playing", SharedModel>]
   | ['StartPlaying_Done', Result<"not_in_setup" | "player_taken", SharedModel>]
 
 export const handle = (req: Req, model: SharedModel): Res => {
@@ -95,7 +95,7 @@ export const handle = (req: Req, model: SharedModel): Res => {
       if (model.type !== 'Setup') {
         return ['StartPlaying_Done', Err("not_in_setup")]
       }
-      const { playerType } = req[1]
+      const { playerType, userId } = req[1]
 
       if (model[playerType] !== 'None') {
         return ["StartPlaying_Done", Err("player_taken")]
@@ -103,8 +103,8 @@ export const handle = (req: Req, model: SharedModel): Res => {
 
       const modelNew: SharedModel = {
         ...model,
-        type: "Setup",
-        moveTimeLimit: model.moveTimeLimit,
+        [opposite[playerType]]: model[opposite[playerType]] === userId ? "None" : model[opposite[playerType]],
+        [playerType]: userId,
       }
 
       return ['StartPlaying_Done', Ok(modelNew)]
@@ -115,10 +115,17 @@ export const handle = (req: Req, model: SharedModel): Res => {
         return ['StopPlaying_Done', Err("not_in_setup")]
       }
 
+      const { userId } = req[1]
+
+      const playerType: PlayerType | "None" = model.PlayerOne === userId ? 'PlayerOne' : model.PlayerTwo === userId ? "PlayerTwo" : "None"
+
+      if (playerType === "None") {
+        return ["StopPlaying_Done", Err("not_playing")]
+      }
+
       const modelNew: SharedModel = {
         ...model,
-        type: "Setup",
-        moveTimeLimit: model.moveTimeLimit,
+        [playerType]: "None"
       }
 
       return ['StopPlaying_Done', Ok(modelNew)]
