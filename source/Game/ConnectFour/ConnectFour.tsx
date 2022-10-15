@@ -8,11 +8,18 @@
 
 import { Result } from "../../Core"
 
-export type IPlayer = "PlayerOne" | "PlayerTwo"
+export type PlayerType = "PlayerOne" | "PlayerTwo"
 
-export type IColumn = readonly IPlayer[]
+type Color = "Red" | "Yellow"
 
-export type Columns = readonly IColumn[]
+export const playerTypeToColor: { [key in PlayerType]: Color } = {
+  PlayerOne: "Red",
+  PlayerTwo: "Yellow"
+}
+
+export type Column = readonly PlayerType[]
+
+export type Columns = readonly Column[]
 
 export const MAX_COLUMN_HEIGHT = 6
 
@@ -47,7 +54,7 @@ export type MoveResult = Result.Result<MoveProblem, Columns>
 export const move = (
   columns: Columns,
   columnIndex: ColumnIndex,
-  player: IPlayer,
+  player: PlayerType,
 ): MoveResult => {
   if (toTurn(columns) !== player) {
     return Result.Err("not_players_turn")
@@ -77,7 +84,7 @@ export const move = (
 export const toSlot = (
   columns: Columns,
   { x, y }: { x: number; y: number },
-): IPlayer | "Empty" => {
+): PlayerType | "Empty" => {
   const slot = columns?.[x]?.[y]
 
   if (slot) {
@@ -89,7 +96,7 @@ export const toSlot = (
 
 const isEven = (x: number) => x % 2 === 0
 
-export const toTurn = (columns: Columns): IPlayer => {
+export const toTurn = (columns: Columns): PlayerType => {
   return isEven(columns.flat().length) ? "PlayerTwo" : "PlayerOne"
 }
 
@@ -103,7 +110,7 @@ type IStatus =
   }
   | {
     type: "Winner"
-    winner: IPlayer
+    winner: PlayerType
   }
   | {
     type: "Tie"
@@ -247,7 +254,7 @@ function* filter<T>(predicate: (item: T) => boolean, generator: Generator<T>) {
 //
 //
 
-export const theme = {
+export const gameTheme = {
   primary: {
     light: "#1976D2",
     dark: "#2195F2",
@@ -277,11 +284,11 @@ export const ViewPlayerOneGradientDef = ({ gradientId }: { gradientId: string })
     >
       <stop
         offset="0%"
-        stopColor={theme.playerOne.light}
+        stopColor={gameTheme.playerOne.light}
       />
       <stop
         offset="100%"
-        stopColor={theme.playerOne.dark}
+        stopColor={gameTheme.playerOne.dark}
       />
     </linearGradient>
   )
@@ -295,11 +302,11 @@ export const ViewPlayerTwoGradientDef = ({ gradientId }: { gradientId: string })
     >
       <stop
         offset="0%"
-        stopColor={theme.playerTwo.light}
+        stopColor={gameTheme.playerTwo.light}
       />
       <stop
         offset="100%"
-        stopColor={theme.playerTwo.dark}
+        stopColor={gameTheme.playerTwo.dark}
       />
     </linearGradient>
   )
@@ -366,11 +373,11 @@ export const ViewColumns = ({
         >
           <stop
             offset="0%"
-            stopColor={theme.primary.light}
+            stopColor={gameTheme.primary.light}
           />
           <stop
             offset="100%"
-            stopColor={theme.primary.dark}
+            stopColor={gameTheme.primary.dark}
           />
         </linearGradient>
 
@@ -380,11 +387,11 @@ export const ViewColumns = ({
         >
           <stop
             offset="0%"
-            stopColor={theme.playerOne.light}
+            stopColor={gameTheme.playerOne.light}
           />
           <stop
             offset="100%"
-            stopColor={theme.playerOne.dark}
+            stopColor={gameTheme.playerOne.dark}
           />
         </linearGradient>
 
@@ -394,11 +401,11 @@ export const ViewColumns = ({
         >
           <stop
             offset="0%"
-            stopColor={theme.playerTwo.light}
+            stopColor={gameTheme.playerTwo.light}
           />
           <stop
             offset="100%"
-            stopColor={theme.playerTwo.dark}
+            stopColor={gameTheme.playerTwo.dark}
           />
         </linearGradient>
       </defs>
@@ -408,7 +415,7 @@ export const ViewColumns = ({
         y={0}
         width={7}
         height={6}
-        fill={theme.primary.darker}
+        fill={gameTheme.primary.darker}
       />
 
       {columns.map((column, columnIndex) =>

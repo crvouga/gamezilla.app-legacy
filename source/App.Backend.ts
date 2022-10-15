@@ -11,10 +11,10 @@ import {
   Cmd,
   exhaustive,
   Option,
-  pipe,
+  p,
   Platform,
   Sub,
-  tag,
+  t,
   tagCmd,
 } from "./Core"
 import { ClientId, SessionId, UserId } from "./Data"
@@ -244,8 +244,8 @@ const sendToUser = (
 ) => {
   const clientIds = Object.values(model.sessions).flatMap((session) =>
     session.userId.type === "Some" &&
-    userIds.includes(session.userId.value) &&
-    session.clientId.type === "Some"
+      userIds.includes(session.userId.value) &&
+      session.clientId.type === "Some"
       ? [session.clientId.value]
       : [],
   )
@@ -285,7 +285,7 @@ const updateWithDebug = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
 const subscriptions = (model: Model): Sub.Sub<Msg> => {
   return Sub.batch([
-    pipe(GameRoom.subscriptions(model.gameRoom), Sub.map(tag("GameRoom"))),
+    p(GameRoom.subscriptions(model.gameRoom), Sub.map(t("GameRoom"))),
     Wire.onConnect((sessionId, clientId) => [
       "ClientConnected",
       sessionId,

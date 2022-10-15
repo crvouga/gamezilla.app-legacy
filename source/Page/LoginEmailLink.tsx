@@ -1,5 +1,5 @@
 import * as Auth from "../Auth"
-import { Cmd, exhaustive, pipe } from "../Core"
+import { Cmd, exhaustive, p, t } from "../Core"
 import * as Route from "../Route"
 import * as UI from "../UI"
 
@@ -14,10 +14,10 @@ import * as UI from "../UI"
 export type Model = {
   emailAddress: string
   submission:
-    | { type: "Idle" }
-    | { type: "Loading"; sentToEmailAddress: string }
-    | { type: "Problem"; message: string }
-    | { type: "Success"; sentToEmailAddress: string }
+  | { type: "Idle" }
+  | { type: "Loading"; sentToEmailAddress: string }
+  | { type: "Problem"; message: string }
+  | { type: "Success"; sentToEmailAddress: string }
 }
 
 //
@@ -93,9 +93,9 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
             sentToEmailAddress: model.emailAddress,
           },
         },
-        pipe(
+        p(
           Auth.loginWithEmailLink({ emailAddress: model.emailAddress }),
-          Cmd.perform((result): Msg => ["Login_Done", result]),
+          Cmd.perform(t("Login_Done"))
         ),
       ]
     }

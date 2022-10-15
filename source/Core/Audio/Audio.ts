@@ -1,6 +1,6 @@
 import Howler from "howler"
 import * as Cmd from "../Cmd"
-import { pipe } from "../pipe"
+import { p } from "../pipe"
 import * as Result from "../Result"
 import { Unit } from "../Utility"
 
@@ -40,7 +40,7 @@ export const preload = <msg>(
   srcList: string[],
   mapper: (result: PreloadResult) => msg,
 ) =>
-  pipe(async () => {
+  p(async () => {
     for (const src of srcList) {
       getSoundInstance(src)
     }
@@ -48,7 +48,7 @@ export const preload = <msg>(
   }, Cmd.perform(mapper))
 
 export const play = <msg>(src: string, mapper: (result: PlayResult) => msg) =>
-  pipe(async () => {
+  p(async () => {
     const sound = getSoundInstance(src)
 
     if (document.hasFocus()) {

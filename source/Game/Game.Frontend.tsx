@@ -314,6 +314,7 @@ export const View = ({
     case "ConnectFour": {
       return (
         <ConnectFour.View
+          store={store}
           currentUserId={currentUserId}
           model={model[1]}
           dispatch={(msg) => dispatch(["ConnectFour", msg])}

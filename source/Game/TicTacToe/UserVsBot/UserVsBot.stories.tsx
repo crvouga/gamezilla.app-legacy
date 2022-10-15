@@ -1,5 +1,5 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react"
-import { pipe } from "../../../Core"
+import { p } from "../../../Core"
 import { ProfileAvatar, UserId, Username } from "../../../Data"
 import * as Store from "../../../Store"
 import * as UI from "../../../UI"
@@ -56,9 +56,9 @@ export default {
   component: View,
   args: {
     currentUserId: currentUserId,
-    dispatch: () => {},
+    dispatch: () => { },
     roomAvatarGroup: <>room</>,
-    goHome: () => {},
+    goHome: () => { },
     // onCloseGame: () => { },
     store: {
       ...Store.init,
@@ -126,7 +126,7 @@ GameBotTurn.args = {
     type: "Game",
     botLevel: "Medium",
     userPlayerType: "X",
-    board: pipe(emptyBoard, (board) =>
+    board: p(emptyBoard, (board) =>
       setSlot(board, { column: 0, row: 0 }, "X"),
     ),
     player: currentUserId,

@@ -3,7 +3,7 @@ import * as Route from "../Route"
 import * as Snackbar from "../Snackbar"
 import * as Store from "../Store"
 import * as UI from "../UI"
-import { Cmd, pipe } from "../Core"
+import { Cmd, p } from "../Core"
 
 //
 //
@@ -70,7 +70,7 @@ export const update = (
     case "ClickedRandomSeed":
       return [
         { ...model, status: "GeneratingSeed" },
-        pipe(
+        p(
           ProfileAvatar.generateRandomSeed,
           Cmd.perform((seed) => ["RandomSeedGenerated", seed]),
         ),

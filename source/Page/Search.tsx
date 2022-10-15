@@ -1,4 +1,4 @@
-import { Browser, Cmd, pipe, RemoteData } from "../Core"
+import { Browser, Cmd, p, RemoteData } from "../Core"
 import { UserId } from "../Data"
 import * as Route from "../Route"
 import * as Store from "../Store"
@@ -53,7 +53,7 @@ export const update = (
     case "ClickedClear":
       return [
         { ...model, searchText: "" },
-        pipe(
+        p(
           Browser.focus(SearchInputId),
           Cmd.perform((result) => ["Focus_Done", result]),
         ),

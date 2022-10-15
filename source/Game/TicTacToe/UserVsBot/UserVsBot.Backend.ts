@@ -1,4 +1,4 @@
-import { andThen, Cmd, pipe, Sub } from "../../../Core"
+import { andThen, Cmd, p, Sub } from "../../../Core"
 import { getBestMove, toOpposite } from "../TicTacToe"
 import {
   BackendModel,
@@ -97,7 +97,7 @@ export const updateFromFrontend: UpdateFromFrontend = (
       modelNext,
       Cmd.batch([
         cmd,
-        pipe(
+        p(
           getBestMove(modelNext.botLevel, botPlayerType, modelNext.board),
           Cmd.perform((position): Msg => ["BotMove", { position }]),
         ),

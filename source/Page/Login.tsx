@@ -1,7 +1,7 @@
 import * as Route from "../Route"
 import * as Auth from "../Auth"
 import * as UI from "../UI"
-import { Cmd, pipe } from "../Core"
+import { Cmd, p } from "../Core"
 
 //
 //
@@ -40,7 +40,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
     case "ClickedGoogleLogin":
       return [
         ["LoggingInWithProvider", "Google"],
-        pipe(
+        p(
           Auth.loginWithProvider({ provider: "Google" }),
           Cmd.perform((result) => ["LoginWithProvider_Done", result]),
         ),

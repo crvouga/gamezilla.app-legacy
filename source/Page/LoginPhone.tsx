@@ -1,5 +1,5 @@
 import * as Auth from "../Auth"
-import { Cmd, exhaustive, pipe } from "../Core"
+import { Cmd, exhaustive, p } from "../Core"
 import * as Route from "../Route"
 import { ISO_3166, PhoneNumber } from "../Data"
 import * as UI from "../UI"
@@ -17,19 +17,19 @@ export type Model = {
   country: ISO_3166.Iso3166Alpha2Code
   validation: "NotChecked" | "InvalidPhoneNumber" | "EmptyPhoneNumber"
   submission:
-    | {
-        type: "Idle"
-      }
-    | {
-        type: "Loading"
-      }
-    | {
-        type: "Problem"
-        message: string
-      }
-    | {
-        type: "Success"
-      }
+  | {
+    type: "Idle"
+  }
+  | {
+    type: "Loading"
+  }
+  | {
+    type: "Problem"
+    message: string
+  }
+  | {
+    type: "Success"
+  }
 }
 
 //
@@ -85,7 +85,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
       return [
         { ...model, submission: { type: "Loading" } },
-        pipe(
+        p(
           Auth.sendCode({ phoneNumber: phoneNumber }),
           Cmd.perform((result): Msg => ["SendCode_Done", phoneNumber, result]),
         ),
@@ -192,8 +192,8 @@ export const View = ({
             model.validation === "InvalidPhoneNumber"
               ? `Invalid phone number for ${ISO_3166.toName(model.country)}`
               : model.validation === "EmptyPhoneNumber"
-              ? "Phone number is required"
-              : undefined
+                ? "Phone number is required"
+                : undefined
           }
         />
 

@@ -1,4 +1,4 @@
-import { Cmd, pipe, tag } from "../Core"
+import { Cmd, p, t } from "../Core"
 import { UserId } from "../Data"
 import * as GameRoom from "../Game/GameRoom.Frontend"
 import * as Store from "../Store"

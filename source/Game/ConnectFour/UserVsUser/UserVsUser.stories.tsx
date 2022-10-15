@@ -29,14 +29,39 @@ const Template: ComponentStory<typeof View> = (args) => {
 const setupModel: Model = {
     type: "Setup",
     moveTimeLimit: 7,
-    playerOne: "None",
-    playerTwo: "None"
+    PlayerOne: "None",
+    PlayerTwo: "None"
 }
 
-export const Setup = Template.bind({})
-Setup.args = {
+export const MissingBoth = Template.bind({})
+MissingBoth.args = {
     model: {
         ...setupModel
+    }
+}
+
+export const MissingPlayerOne = Template.bind({})
+MissingPlayerOne.args = {
+    model: {
+        ...setupModel,
+        PlayerTwo: currentUserId
+    }
+}
+
+export const MissingPlayerTwo = Template.bind({})
+MissingPlayerTwo.args = {
+    model: {
+        ...setupModel,
+        PlayerOne: currentUserId
+    }
+}
+
+export const Ready = Template.bind({})
+Ready.args = {
+    model: {
+        ...setupModel,
+        PlayerOne: currentUserId,
+        PlayerTwo: userB.userId,
     }
 }
 

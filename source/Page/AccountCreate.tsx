@@ -1,4 +1,4 @@
-import { Browser, Cmd, exhaustive, pipe } from "../Core"
+import { Browser, Cmd, exhaustive, p } from "../Core"
 import { EmailAddress, Password } from "../Data"
 import * as Route from "../Route"
 import * as Store from "../Store"
@@ -17,15 +17,15 @@ export type Model = {
   password: string
   passwordVisibility: Visibility
   submission:
-    | { type: "NotAsked" }
-    | { type: "Loading" }
-    | {
-        type: "ProblemValidation"
-        emailAddress: Problem[]
-        password: Problem[]
-      }
-    | { type: "Problem"; message: string }
-    | { type: "Succeeded" }
+  | { type: "NotAsked" }
+  | { type: "Loading" }
+  | {
+    type: "ProblemValidation"
+    emailAddress: Problem[]
+    password: Problem[]
+  }
+  | { type: "Problem"; message: string }
+  | { type: "Succeeded" }
 }
 
 type Visibility = "Showing" | "Hiding"
@@ -115,7 +115,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
           ...model,
           passwordVisibility: toggleVisibility(model.passwordVisibility),
         },
-        pipe(
+        p(
           Browser.focus(passwordId),
           Cmd.perform((result) => ["Focus_Done", result]),
         ),
@@ -137,7 +137,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
         return [
           { ...model, submission: submissionNew },
-          pipe(
+          p(
             Browser.focus(focusId),
             Cmd.perform((result) => ["Focus_Done", result]),
           ),
@@ -146,7 +146,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
       return [
         { ...model, submission: { type: "Loading" } },
-        pipe(
+        p(
           Store.Account.createWithEmailAndPassword({
             emailAddress: emailAddress.value,
             password: password.value,

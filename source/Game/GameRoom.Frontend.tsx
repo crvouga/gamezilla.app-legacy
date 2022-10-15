@@ -1,4 +1,4 @@
-import { Cmd, exhaustive, Option, pipe, RemoteData, Sub, Unit } from "../Core"
+import { Cmd, exhaustive, Option, p, RemoteData, Sub, Unit } from "../Core"
 import { RoomId, UserId } from "../Data"
 import * as Route from "../Route"
 import * as Snackbar from "../Snackbar"
@@ -162,7 +162,7 @@ export const update = (
 
       return [
         modelNew,
-        pipe(
+        p(
           gameCmd,
           Cmd.map((msg): Msg => ["Games", roomId, msg]),
         ),
@@ -242,7 +242,7 @@ export const updateFromBackend = (
 
       return [
         modelNew,
-        pipe(
+        p(
           gameCmd,
           Cmd.map((msg): Msg => ["Games", roomId, msg]),
         ),
@@ -299,7 +299,7 @@ const updateResponse = (
       ? [["Snackbar", { message: result.error, variant: "Error" }]]
       : []
 
-  const remoteData = pipe(
+  const remoteData = p(
     result,
     RemoteData.fromResult,
     RemoteData.map(() => Unit),
@@ -394,11 +394,11 @@ const mergeWithBackendModel = ({
           },
           Cmd.batch([
             cmd,
-            pipe(
+            p(
               initial[1],
               Cmd.map((msg): Msg => ["Games", roomId, msg]),
             ),
-            pipe(
+            p(
               merged[1],
               Cmd.map((msg): Msg => ["Games", roomId, msg]),
             ),
@@ -428,11 +428,11 @@ const mergeWithBackendModel = ({
           },
           Cmd.batch([
             cmd,
-            pipe(
+            p(
               initial[1],
               Cmd.map((msg): Msg => ["Games", roomId, msg]),
             ),
-            pipe(
+            p(
               merged[1],
               Cmd.map((msg): Msg => ["Games", roomId, msg]),
             ),
@@ -460,7 +460,7 @@ const mergeWithBackendModel = ({
         },
         Cmd.batch([
           cmd,
-          pipe(
+          p(
             merged[1],
             Cmd.map((msg): Msg => ["Games", roomId, msg]),
           ),
@@ -532,7 +532,7 @@ export const subscriptions = (
 
   const intervalId = room.roomId
 
-  return pipe(
+  return p(
     Game.subscriptions(`room-${intervalId}`, room.game.value),
     Sub.map((msg): Msg => ["Games", room.roomId, msg]),
   )

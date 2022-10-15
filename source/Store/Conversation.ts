@@ -1,5 +1,5 @@
 import produce from "immer"
-import { Cmd, Option, pipe, RemoteData, Result, Task } from "../Core"
+import { Cmd, Option, p, RemoteData, Result, Task } from "../Core"
 import { UserId } from "../Data"
 import * as Route from "../Route"
 import * as Supabase from "../Supabase"
@@ -90,7 +90,7 @@ export const update = (msg: Msg, model: Store): [Store, Cmd.Cmd<Msg>] => {
     case "FindOne_Done": {
       const { conversationId, result } = msg[1]
       const modelNew = produce(model, (model) => {
-        model.queries.Conversation.FindOne[conversationId] = pipe(
+        model.queries.Conversation.FindOne[conversationId] = p(
           result,
           RemoteData.fromResult,
           RemoteData.map((item) => ({
@@ -133,7 +133,7 @@ export const update = (msg: Msg, model: Store): [Store, Cmd.Cmd<Msg>] => {
     case "FindManyByUserId_Done": {
       const { userId, result } = msg[1]
       const modelNew = produce(model, (model) => {
-        model.queries.Conversation.FindManyByUserId[userId] = pipe(
+        model.queries.Conversation.FindManyByUserId[userId] = p(
           result,
           RemoteData.fromResult,
           RemoteData.map((data) => ({
@@ -174,7 +174,7 @@ export const update = (msg: Msg, model: Store): [Store, Cmd.Cmd<Msg>] => {
       const { result } = msg[1]
 
       const modelNew = produce(model, (model) => {
-        model.mutations.Conversation.FindElseInsert = pipe(
+        model.mutations.Conversation.FindElseInsert = p(
           result,
           RemoteData.fromResult,
           RemoteData.map((item) => item.conversation.conversationId),
@@ -221,7 +221,7 @@ export const runAction = (
 
       return [
         modelNew,
-        pipe(
+        p(
           findOneById({ conversationId }),
           Cmd.perform(
             (result): Msg => ["FindOne_Done", { conversationId, result }],
@@ -247,7 +247,7 @@ export const runAction = (
 
       return [
         modelNew,
-        pipe(
+        p(
           findManyByUserId({ userId }),
           Cmd.perform(
             (result): Msg => ["FindManyByUserId_Done", { userId, result }],
@@ -265,7 +265,7 @@ export const runAction = (
 
       return [
         modelNew,
-        pipe(
+        p(
           findOneElseInsert({ userIds }),
           Cmd.perform(
             (result): Msg => ["FindOneElseInsert_Done", { userIds, result }],
@@ -324,71 +324,71 @@ const fromRow = (row: definitions["conversation"]): Conversation => {
 
 const findOneById =
   ({ conversationId }: { conversationId: string }): Task.Task<FindOneResult> =>
-  async () => {
-    const matchConversationIdResponse = await Supabase.client
-      .from<definitions["users_conversations"]>("users_conversations")
-      .select("*")
-      .eq("conversation_id", conversationId)
+    async () => {
+      const matchConversationIdResponse = await Supabase.client
+        .from<definitions["users_conversations"]>("users_conversations")
+        .select("*")
+        .eq("conversation_id", conversationId)
 
-    if (matchConversationIdResponse.error) {
-      return Result.Err(matchConversationIdResponse.error.message)
-    }
+      if (matchConversationIdResponse.error) {
+        return Result.Err(matchConversationIdResponse.error.message)
+      }
 
-    const userIds = Array.from(
-      new Set(matchConversationIdResponse.data.map((item) => item.user_id)),
-    )
+      const userIds = Array.from(
+        new Set(matchConversationIdResponse.data.map((item) => item.user_id)),
+      )
 
-    const profilesResponse = await Supabase.client
-      .from<definitions["user_profile"]>("user_profile")
-      .select("*")
-      .in("id", userIds)
+      const profilesResponse = await Supabase.client
+        .from<definitions["user_profile"]>("user_profile")
+        .select("*")
+        .in("id", userIds)
 
-    if (profilesResponse.error) {
-      return Result.Err(profilesResponse.error.message)
-    }
+      if (profilesResponse.error) {
+        return Result.Err(profilesResponse.error.message)
+      }
 
-    const messagesResponse = await Supabase.client
-      .from<definitions["message"]>("message")
-      .select("*")
-      .eq("conversation_id", conversationId)
+      const messagesResponse = await Supabase.client
+        .from<definitions["message"]>("message")
+        .select("*")
+        .eq("conversation_id", conversationId)
 
-    if (messagesResponse.error) {
-      return Result.Err(messagesResponse.error.message)
-    }
+      if (messagesResponse.error) {
+        return Result.Err(messagesResponse.error.message)
+      }
 
-    return Result.Ok({
-      conversation: {
-        conversationId,
-      },
-      profilesConversations: profilesResponse.data
-        .map((item) => ({
+      return Result.Ok({
+        conversation: {
           conversationId,
-          userId: UserId.decode(item.id),
-        }))
-        .flatMap((item) =>
-          item.userId.type === "Ok"
-            ? [{ ...item, userId: item.userId.value }]
-            : [],
+        },
+        profilesConversations: profilesResponse.data
+          .map((item) => ({
+            conversationId,
+            userId: UserId.decode(item.id),
+          }))
+          .flatMap((item) =>
+            item.userId.type === "Ok"
+              ? [{ ...item, userId: item.userId.value }]
+              : [],
+          ),
+        profiles: p(
+          profilesResponse.data.map(decodeRow),
+          Result.combine,
+          Result.withDefault<Profile[]>([]),
         ),
-      profiles: pipe(
-        profilesResponse.data.map(decodeRow),
-        Result.combine,
-        Result.withDefault<Profile[]>([]),
-      ),
-      messages: messagesResponse.data
-        .map((item) => ({
-          messageId: item.id,
-          message: item.message,
-          userId: UserId.decode(item.user_id),
-          conversationId: item.conversation_id,
-        }))
-        .flatMap((item) =>
-          item.userId.type === "Ok"
-            ? [{ ...item, userId: item.userId.value }]
-            : [],
-        ),
-    })
-  }
+        messages: messagesResponse.data
+          .map((item) => ({
+            messageId: item.id,
+            message: item.message,
+            userId: UserId.decode(item.user_id),
+            conversationId: item.conversation_id,
+          }))
+          .flatMap((item) =>
+            item.userId.type === "Ok"
+              ? [{ ...item, userId: item.userId.value }]
+              : [],
+          ),
+      })
+    }
 
 const findManyByUserId =
   ({
@@ -405,77 +405,77 @@ const findManyByUserId =
       }
     >
   > =>
-  async () => {
-    const matchUserIdResponse = await Supabase.client
-      .from<definitions["users_conversations"]>("users_conversations")
-      .select("*")
-      .match({ user_id: userId })
+    async () => {
+      const matchUserIdResponse = await Supabase.client
+        .from<definitions["users_conversations"]>("users_conversations")
+        .select("*")
+        .match({ user_id: userId })
 
-    if (matchUserIdResponse.error) {
-      return Result.Err(matchUserIdResponse.error.message)
-    }
+      if (matchUserIdResponse.error) {
+        return Result.Err(matchUserIdResponse.error.message)
+      }
 
-    const conversationResponse = await Supabase.client
-      .from<definitions["conversation"]>("conversation")
-      .select("*")
-      .in(
-        "id",
-        matchUserIdResponse.data.map((item) => item.conversation_id),
-      )
+      const conversationResponse = await Supabase.client
+        .from<definitions["conversation"]>("conversation")
+        .select("*")
+        .in(
+          "id",
+          matchUserIdResponse.data.map((item) => item.conversation_id),
+        )
 
-    if (conversationResponse.error) {
-      return Result.Err(conversationResponse.error.message)
-    }
+      if (conversationResponse.error) {
+        return Result.Err(conversationResponse.error.message)
+      }
 
-    const matchConversationIdResponse = await Supabase.client
-      .from<definitions["users_conversations"]>("users_conversations")
-      .select("*")
-      .in(
-        "conversation_id",
-        conversationResponse.data.map((item) => item.id),
-      )
+      const matchConversationIdResponse = await Supabase.client
+        .from<definitions["users_conversations"]>("users_conversations")
+        .select("*")
+        .in(
+          "conversation_id",
+          conversationResponse.data.map((item) => item.id),
+        )
 
-    if (matchConversationIdResponse.error) {
-      return Result.Err(matchConversationIdResponse.error.message)
-    }
+      if (matchConversationIdResponse.error) {
+        return Result.Err(matchConversationIdResponse.error.message)
+      }
 
-    const profileResponse = await Supabase.client
-      .from<definitions["user_profile"]>("user_profile")
-      .select("*")
-      .in("id", [
-        ...new Set(
-          matchConversationIdResponse.data.map((item) => item.user_id),
+      const profileResponse = await Supabase.client
+        .from<definitions["user_profile"]>("user_profile")
+        .select("*")
+        .in("id", [
+          ...new Set(
+            matchConversationIdResponse.data.map((item) => item.user_id),
+          ),
+        ])
+
+      if (profileResponse.error) {
+        return Result.Err(profileResponse.error.message)
+      }
+
+      return Result.Ok({
+        profilesConversations: [
+          ...matchUserIdResponse.data,
+          ...matchConversationIdResponse.data,
+        ]
+          .map((item) => ({
+            userId: UserId.decode(item.user_id),
+            conversationId: item.conversation_id,
+          }))
+          .flatMap((item) =>
+            item.userId.type === "Ok"
+              ? [{ ...item, userId: item.userId.value }]
+              : [],
+          ),
+        conversations: conversationResponse.data.map((item) => ({
+          conversationId: item.id,
+        })),
+        profiles: p(
+          profileResponse.data.map(decodeRow),
+          Result.combine,
+          Result.withDefault<Profile[]>([]),
         ),
-      ])
-
-    if (profileResponse.error) {
-      return Result.Err(profileResponse.error.message)
+      })
     }
-
-    return Result.Ok({
-      profilesConversations: [
-        ...matchUserIdResponse.data,
-        ...matchConversationIdResponse.data,
-      ]
-        .map((item) => ({
-          userId: UserId.decode(item.user_id),
-          conversationId: item.conversation_id,
-        }))
-        .flatMap((item) =>
-          item.userId.type === "Ok"
-            ? [{ ...item, userId: item.userId.value }]
-            : [],
-        ),
-      conversations: conversationResponse.data.map((item) => ({
-        conversationId: item.id,
-      })),
-      profiles: pipe(
-        profileResponse.data.map(decodeRow),
-        Result.combine,
-        Result.withDefault<Profile[]>([]),
-      ),
-    })
-  }
 
 const findUniqueByUserIds =
   ({
@@ -483,65 +483,65 @@ const findUniqueByUserIds =
   }: {
     userIds: string[]
   }): Task.Task<Result.Result<Problem, Option.Option<string>>> =>
-  async () => {
-    const usersConversationsResponse = await Supabase.client
-      .from<definitions["users_conversations"]>("users_conversations")
-      .select("*")
-      .in("user_id", userIds)
+    async () => {
+      const usersConversationsResponse = await Supabase.client
+        .from<definitions["users_conversations"]>("users_conversations")
+        .select("*")
+        .in("user_id", userIds)
 
-    if (usersConversationsResponse.error) {
-      return Result.Err(usersConversationsResponse.error.message)
-    }
+      if (usersConversationsResponse.error) {
+        return Result.Err(usersConversationsResponse.error.message)
+      }
 
-    // todo. this should be in the database query
-    const userIdsByConversationId = usersConversationsResponse.data.reduce<{
-      [conversationId: string]: { [userId: UserId.UserId]: string }
-    }>(
-      (byId, item) => ({
-        ...byId,
-        [item.conversation_id]: {
-          ...(byId[item.conversation_id] ?? {}),
-          [item.user_id]: item.user_id,
-        },
-      }),
-      {},
-    )
-
-    const conversationId = Object.entries(userIdsByConversationId)
-      .filter(
-        (entry) =>
-          userIds.every((userId) => userId in entry[1]) &&
-          userIds.length === Object.values(entry[1]).length,
+      // todo. this should be in the database query
+      const userIdsByConversationId = usersConversationsResponse.data.reduce<{
+        [conversationId: string]: { [userId: UserId.UserId]: string }
+      }>(
+        (byId, item) => ({
+          ...byId,
+          [item.conversation_id]: {
+            ...(byId[item.conversation_id] ?? {}),
+            [item.user_id]: item.user_id,
+          },
+        }),
+        {},
       )
-      .map((entry) => entry[0])[0]
 
-    return Result.Ok(Option.fromNullable(conversationId))
-  }
+      const conversationId = Object.entries(userIdsByConversationId)
+        .filter(
+          (entry) =>
+            userIds.every((userId) => userId in entry[1]) &&
+            userIds.length === Object.values(entry[1]).length,
+        )
+        .map((entry) => entry[0])[0]
+
+      return Result.Ok(Option.fromNullable(conversationId))
+    }
 
 const findOneElseInsert =
   ({ userIds }: { userIds: string[] }): Task.Task<FindOneResult> =>
-  async () => {
-    const findIdResult = await findUniqueByUserIds({ userIds })()
+    async () => {
+      const findIdResult = await findUniqueByUserIds({ userIds })()
 
-    if (findIdResult.type === "Err") {
-      return findIdResult
-    }
-    if (findIdResult.value.type === "None") {
-      const insertResult = await insert({ userIds })()
+      if (findIdResult.type === "Err") {
+        return findIdResult
+      }
+      if (findIdResult.value.type === "None") {
+        const insertResult = await insert({ userIds })()
 
-      if (insertResult.type === "Err") {
-        return insertResult
+        if (insertResult.type === "Err") {
+          return insertResult
+        }
+
+        const conversationId = insertResult.value.conversation.conversationId
+
+        return findOneById({ conversationId })()
       }
 
-      const conversationId = insertResult.value.conversation.conversationId
+      const conversationId = findIdResult.value.value
 
       return findOneById({ conversationId })()
     }
-
-    const conversationId = findIdResult.value.value
-
-    return findOneById({ conversationId })()
-  }
 
 const insert =
   ({
@@ -557,52 +557,52 @@ const insert =
       }
     >
   > =>
-  async () => {
-    const conversationResponse = await Supabase.client
-      .from<definitions["conversation"]>("conversation")
-      .insert({})
-      .single()
-
-    if (conversationResponse.error) {
-      return Result.Err(conversationResponse.error.message)
-    }
-
-    const conversation = fromRow(conversationResponse.data)
-
-    const usersConversationsResponse = await Supabase.client
-      .from<definitions["users_conversations"]>("users_conversations")
-      .insert(
-        userIds.map((userId) => ({
-          conversation_id: conversation.conversationId,
-          user_id: userId,
-        })),
-      )
-
-    if (usersConversationsResponse.error) {
-      const rollbackResponse = await Supabase.client
+    async () => {
+      const conversationResponse = await Supabase.client
         .from<definitions["conversation"]>("conversation")
-        .delete()
-        .eq("id", conversation.conversationId)
+        .insert({})
+        .single()
 
-      if (rollbackResponse.error) {
-        return Result.Err(
-          `${usersConversationsResponse.error.message}. ${rollbackResponse.error}`,
-        )
+      if (conversationResponse.error) {
+        return Result.Err(conversationResponse.error.message)
       }
 
-      return Result.Err(usersConversationsResponse.error.message)
+      const conversation = fromRow(conversationResponse.data)
+
+      const usersConversationsResponse = await Supabase.client
+        .from<definitions["users_conversations"]>("users_conversations")
+        .insert(
+          userIds.map((userId) => ({
+            conversation_id: conversation.conversationId,
+            user_id: userId,
+          })),
+        )
+
+      if (usersConversationsResponse.error) {
+        const rollbackResponse = await Supabase.client
+          .from<definitions["conversation"]>("conversation")
+          .delete()
+          .eq("id", conversation.conversationId)
+
+        if (rollbackResponse.error) {
+          return Result.Err(
+            `${usersConversationsResponse.error.message}. ${rollbackResponse.error}`,
+          )
+        }
+
+        return Result.Err(usersConversationsResponse.error.message)
+      }
+
+      const profilesConversations = usersConversationsResponse.data
+        .map(({ user_id, conversation_id }) => ({
+          userId: UserId.decode(user_id),
+          conversationId: conversation_id,
+        }))
+        .flatMap((item) =>
+          item.userId.type === "Ok"
+            ? [{ ...item, userId: item.userId.value }]
+            : [],
+        )
+
+      return Result.Ok({ conversation, profilesConversations })
     }
-
-    const profilesConversations = usersConversationsResponse.data
-      .map(({ user_id, conversation_id }) => ({
-        userId: UserId.decode(user_id),
-        conversationId: conversation_id,
-      }))
-      .flatMap((item) =>
-        item.userId.type === "Ok"
-          ? [{ ...item, userId: item.userId.value }]
-          : [],
-      )
-
-    return Result.Ok({ conversation, profilesConversations })
-  }

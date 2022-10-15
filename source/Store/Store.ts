@@ -1,4 +1,4 @@
-import { Cmd, pipe, tag } from "../Core"
+import { Cmd, p, t } from "../Core"
 import * as Conversation from "./Conversation"
 import * as Message from "./Message"
 import * as Profile from "./Profile"
@@ -46,17 +46,17 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
     case "Conversation": {
       const [modelNew, cmd] = Conversation.update(msg[1], model)
-      return [modelNew, pipe(cmd, Cmd.map(tag("Conversation")))]
+      return [modelNew, p(cmd, Cmd.map(t("Conversation")))]
     }
 
     case "Profile": {
       const [modelNew, cmd] = Profile.update(msg[1], model)
-      return [modelNew, pipe(cmd, Cmd.map(tag("Profile")))]
+      return [modelNew, p(cmd, Cmd.map(t("Profile")))]
     }
 
     case "Message": {
       const [modelNew, cmd] = Message.update(msg[1], model)
-      return [modelNew, pipe(cmd, Cmd.map(tag("Message")))]
+      return [modelNew, p(cmd, Cmd.map(t("Message")))]
     }
   }
 }
@@ -68,17 +68,17 @@ export const runAction = (
   switch (action[1][0]) {
     case "Conversation": {
       const [modelNew, cmd] = Conversation.runAction(action[1][1], model)
-      return [modelNew, pipe(cmd, Cmd.map(tag("Conversation")))]
+      return [modelNew, p(cmd, Cmd.map(t("Conversation")))]
     }
 
     case "Message": {
       const [modelNew, cmd] = Message.runAction(action[1][1], model)
-      return [modelNew, pipe(cmd, Cmd.map(tag("Message")))]
+      return [modelNew, p(cmd, Cmd.map(t("Message")))]
     }
 
     case "Profile": {
       const [modelNew, cmd] = Profile.runAction(action[1][1], model)
-      return [modelNew, pipe(cmd, Cmd.map(tag("Profile")))]
+      return [modelNew, p(cmd, Cmd.map(t("Profile")))]
     }
   }
 }

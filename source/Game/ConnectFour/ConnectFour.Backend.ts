@@ -1,4 +1,4 @@
-import { Cmd, Sub } from "../../Core"
+import { Cmd, Sub, tagCmd } from "../../Core"
 import {
   BackendModel,
   BackendMsg,
@@ -61,10 +61,19 @@ export const updateFromFrontend = (
 
     }
     case 'UserVsUser': {
+      if (model.type === 'UserVsUser') {
+        const [child, cmd] = UserVsUser.updateFromFrontend(
+          { sendToClient: msg => sendToClient(['UserVsUser', msg]), sendToRoom: msg => sendToRoom(['UserVsUser', msg]) },
+          msg[1],
+          model.child
+        )
+        return [{ type: "UserVsUser", child }, tagCmd("UserVsUser", cmd)]
+      }
       return [model, Cmd.None]
     }
   }
 }
+
 
 //
 //

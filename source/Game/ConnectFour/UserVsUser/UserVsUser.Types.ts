@@ -1,5 +1,6 @@
+import { Err, Ok, Result } from "../../../Core/Result"
 import { UserId } from "../../../Data"
-import { Columns } from "../ConnectFour"
+import { Columns, PlayerType } from "../ConnectFour"
 
 //
 //
@@ -12,14 +13,14 @@ import { Columns } from "../ConnectFour"
 export type SharedModel =
   | {
     type: "Setup"
-    playerOne: UserId.UserId | "None"
-    playerTwo: UserId.UserId | "None"
     moveTimeLimit: MoveTimeLimit
+    PlayerOne: UserId.UserId | "None"
+    PlayerTwo: UserId.UserId | "None"
   }
   | {
     type: "Game",
-    playerOne: UserId.UserId,
-    playerTwo: UserId.UserId,
+    PlayerOne: UserId.UserId,
+    PlayerTwo: UserId.UserId,
     moveTimeLimit: MoveTimeLimit,
     moveCountDown: number,
     columns: Columns
@@ -55,8 +56,8 @@ export const initShared = ({ playerOne, playerTwo }: { playerOne: UserId.UserId 
   return {
     type: "Setup",
     moveTimeLimit: 7,
-    playerOne,
-    playerTwo,
+    PlayerOne: playerOne,
+    PlayerTwo: playerTwo,
   }
 }
 
@@ -74,10 +75,58 @@ export type BackendModel = SharedModel
 
 export type BackendMsg = ["None"]
 
-export type FrontendMsg = ["None"]
+export type FrontendMsg = Req
 
-export type ToBackend = ["None"]
+export type ToBackend = Req
 
-export type ToFrontend = ["None"]
+export type ToFrontend = Res
 
-export type Req = ["InputMove"]
+export type Req =
+  | ['StopPlaying', { userId: UserId.UserId, }]
+  | ['StartPlaying', { userId: UserId.UserId, playerType: PlayerType }]
+
+export type Res =
+  | ['StopPlaying_Done', Result<"not_in_setup", SharedModel>]
+  | ['StartPlaying_Done', Result<"not_in_setup" | "player_taken", SharedModel>]
+
+export const handle = (req: Req, model: SharedModel): Res => {
+  switch (req[0]) {
+    case 'StartPlaying': {
+      if (model.type !== 'Setup') {
+        return ['StartPlaying_Done', Err("not_in_setup")]
+      }
+      const { playerType } = req[1]
+
+      if (model[playerType] !== 'None') {
+        return ["StartPlaying_Done", Err("player_taken")]
+      }
+
+      const modelNew: SharedModel = {
+        ...model,
+        type: "Setup",
+        moveTimeLimit: model.moveTimeLimit,
+      }
+
+      return ['StartPlaying_Done', Ok(modelNew)]
+    }
+
+    case 'StopPlaying': {
+      if (model.type !== 'Setup') {
+        return ['StopPlaying_Done', Err("not_in_setup")]
+      }
+
+      const modelNew: SharedModel = {
+        ...model,
+        type: "Setup",
+        moveTimeLimit: model.moveTimeLimit,
+      }
+
+      return ['StopPlaying_Done', Ok(modelNew)]
+    }
+  }
+}
+
+
+
+
+
