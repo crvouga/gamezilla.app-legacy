@@ -3,7 +3,7 @@ import * as UI from "../../../UI";
 import * as Store from "../../../Store";
 import { gameTheme, PlayerType, playerTypeToColor } from "../ConnectFour";
 import { PlayerIcon, PlayerOneIcon, PlayerTwoIcon } from "../Views";
-import { FrontendModel, FrontendMsg, initShared } from "./UserVsUser.Types";
+import { FrontendModel, FrontendMsg, initShared, ToFrontend } from "./UserVsUser.Types";
 import { UserId } from "../../../Data";
 
 
@@ -34,6 +34,16 @@ export const update = ({ sendToBackend, }: { sendToBackend: (msg: Msg) => Cmd.Cm
         case 'StopPlaying':
         case "StartPlaying": {
             return [model, sendToBackend(msg)]
+        }
+    }
+};
+
+export const updateFromBackend = (msg: ToFrontend, model: Model): [Model, Cmd.Cmd<Msg>] => {
+    switch (msg[0]) {
+        case 'StopPlaying_Done':
+        case "StartPlaying_Done": {
+            const modelNew = msg[1].type === 'Err' ? model : msg[1].value
+            return [modelNew, Cmd.None]
         }
     }
 };
