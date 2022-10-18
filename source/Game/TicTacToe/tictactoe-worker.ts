@@ -1,11 +1,7 @@
 import { expose } from "threads/worker"
 import * as TicTacToe from "./TicTacToe"
 
-export type TicTacToeWorker = {
-  toBestMove: typeof TicTacToe.toBestMove
-}
-
-const worker: TicTacToeWorker = {
+const worker: TicTacToe.Worker = {
   toBestMove: TicTacToe.toBestMove,
 }
 

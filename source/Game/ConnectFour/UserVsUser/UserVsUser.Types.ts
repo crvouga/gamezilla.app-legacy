@@ -56,16 +56,18 @@ export const moveTimeLimitToString = (timeLimit: MoveTimeLimit): string => {
   }
 }
 
-export const initShared = ({ playerOne, playerTwo }: { playerOne: UserId | "None", playerTwo: UserId | "None" }): SharedModel => {
+export const initShared = ({ PlayerOne, PlayerTwo }: Pick<SharedModel, 'PlayerOne' | 'PlayerTwo'>): SharedModel => {
   return {
     type: "Setup",
     moveTimeLimit: 7,
-    PlayerOne: playerOne,
-    PlayerTwo: playerTwo,
+    PlayerOne,
+    PlayerTwo,
   }
 }
 
-export type FrontendModel = SharedModel
+export type FrontendModel = SharedModel & {
+  openedModal: "ConfirmResign" | "None"
+}
 
 export type BackendModel = SharedModel
 

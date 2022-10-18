@@ -28,6 +28,7 @@ const Template: ComponentStory<typeof View> = (args) => {
 }
 
 const setupModel: Model = {
+    openedModal: "None",
     type: "Setup",
     moveTimeLimit: 7,
     PlayerOne: "None",
@@ -73,6 +74,7 @@ const gameModel: Model = {
     moveTimeLimit: 7,
     PlayerOne: currentUserId,
     PlayerTwo: userB.userId,
+    openedModal: "None",
 }
 
 export const GameStarted = Template.bind({})

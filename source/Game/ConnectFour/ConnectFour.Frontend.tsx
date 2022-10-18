@@ -506,10 +506,16 @@ export const mergeWithBackend = (
     case 'UserVsUser': {
 
       if (frontendModel.type === 'UserVsUser') {
-        return backendModel
+        return {
+          type: "UserVsUser",
+          child: UserVsUser.mergeWithBackend({ frontendModel: frontendModel.child, backendModel: backendModel.child })
+        }
       }
 
-      return backendModel
+      return {
+        type: "UserVsUser",
+        child: UserVsUser.mergeWithBackend({ frontendModel: UserVsUser.init(backendModel.child), backendModel: backendModel.child })
+      }
     }
   }
 

@@ -3,7 +3,7 @@ import { Result } from "../../Core"
 import { Err, Ok } from "../../Core/Result"
 import { Task } from "../../Core/Task"
 import * as UI from "../../UI"
-import { TicTacToeWorker } from "./tictactoe-worker"
+
 
 //
 //
@@ -129,12 +129,16 @@ export const toBestMove = (
   return bestMove
 }
 
+export type Worker = {
+  toBestMove: typeof toBestMove
+}
+
 export const getBestMove =
   (botLevel: BotLevel, maximizingPlayer: PlayerType, board: Board): Task<Position> =>
     async () => {
       const worker = new Threads.Worker("./tictactoe-worker")
 
-      const spawned = await Threads.spawn<TicTacToeWorker>(worker)
+      const spawned = await Threads.spawn<Worker>(worker)
 
       const result = await spawned.toBestMove(botLevel, maximizingPlayer, board)
 
