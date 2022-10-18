@@ -14,23 +14,23 @@ const expectWinner = (columns: Columns) => {
 describe("Connect Four", () => {
     it("detects horizontal win", () => {
         expectWinner(horizontal)
-        expect(toWins(horizontal).length).toEqual(1)
+        expect(toWins(horizontal).length).toBe(1)
     })
 
     it("detects vertical win", () => {
         expectWinner(vertical)
-        expect(toWins(vertical).length).toEqual(1)
+        expect(toWins(vertical).length).toBe(1)
     })
 
     it("detects right diagonal win", () => {
         expectWinner(rightDiagonal)
-        expect(toWins(rightDiagonal).length).toEqual(1)
+        expect(toWins(rightDiagonal).length).toBe(1)
     })
 
 
     it("detects left diagonal win", () => {
         expectWinner(leftDiagonal)
-        expect(toWins(leftDiagonal).length).toEqual(1)
+        expect(toWins(leftDiagonal).length).toBe(1)
     })
 
     it("detects left and right diagonal win", () => {
@@ -38,7 +38,7 @@ describe("Connect Four", () => {
 
         const wins = toWins(leftAndRightDiagonal)
 
-        expect(wins.length).toEqual(2)
+        expect(wins.length).toBe(2)
     })
 
     it("detects wins longer than 4", () => {
@@ -46,18 +46,18 @@ describe("Connect Four", () => {
 
         const wins = toWins(horizontalLongest)
 
-        expect(wins.length).toEqual(1)
+        expect(wins.length).toBe(1)
 
         const [win] = wins
 
         if (win) {
-            expect(win.length).toEqual(horizontalLongest.length)
+            expect(win.length).toBe(horizontalLongest.length)
         }
     })
 
     it("detects draw", () => {
         const status = toStatus(tie)
-        expect(status.type).toEqual("Tie")
+        expect(status.type).toBe("Tie")
     })
 
 })
