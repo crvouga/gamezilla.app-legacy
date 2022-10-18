@@ -51,7 +51,7 @@ export const updateFromFrontend = (
           return [modelNew, sendToRoom(['InputMode_Done', modelNew])]
         }
         case 'UserVsUser': {
-          const modelNew: Model = { type: "UserVsUser", child: UserVsUser.init({ playerOne: userId, playerTwo: "None" }) }
+          const modelNew: Model = { type: "UserVsUser", child: UserVsUser.init({ PlayerOne: userId, PlayerTwo: "None" }) }
           return [modelNew, sendToRoom(['InputMode_Done', modelNew])]
         }
         case 'UserVsBot': {

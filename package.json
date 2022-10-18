@@ -1,24 +1,23 @@
 {
+  "name": "",
+  "version": "",
   "private": true,
   "type": "commonjs",
   "scripts": {
     "backend": "npx ts-node-dev ./source/App.Backend.ts",
     "backend:build": "npx tsc --project tsconfig.json",
     "backend:start": "node --max-old-space-size=300 ./dist/source/App.Backend.js",
+    "build-storybook": "build-storybook",
     "format": "prettier --write source",
     "frontend": "vite --open",
     "frontend:build": "vite build",
+    "storybook": "start-storybook -p 6006",
+    "storybook:deploy": "npx chromatic --project-token=c24fda251f85",
     "supabase:types": "npx openapi-typescript https://ldxpcprlgecjvqwzuxgv.supabase.co/rest/v1/?apikey=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTYzNzA0MDQ5NywiZXhwIjoxOTUyNjE2NDk3fQ.ReI8CpIFbLB9Q53Az7CDBIyrn_o1JeGhPoZXdqx8Ac4 --output source/Supabase.Types.ts",
+    "test": "jest",
     "typecheck": "tsc -w",
     "utils:find-circular-deps": "npx madge --ts-config tsconfig.json --circular source/App.Types.ts",
-    "utils:sort": "npx sort-package-json",
-    "ladle": "npx ladle serve",
-    "ladle:build": "npx ladle build",
-    "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook",
-    "storybook:deploy": "npx chromatic --project-token=c24fda251f85",
-    "chromatic": "npx chromatic --project-token=c24fda251f85",
-    "test": "jest"
+    "utils:sort": "npx sort-package-json"
   },
   "dependencies": {
     "@emotion/react": "^11.9.0",
@@ -84,8 +83,6 @@
     "node": "16.x",
     "npm": "8.x"
   },
-  "name": "",
-  "version": "",
   "readme": "ERROR: No README data found!",
   "_id": "@"
 }

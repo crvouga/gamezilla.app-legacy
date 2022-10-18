@@ -3,7 +3,7 @@ import * as UI from "../../../UI";
 import * as Store from "../../../Store";
 import { gameTheme, PlayerType, playerTypeToColor, ViewColumns } from "../ConnectFour";
 import { PlayerIcon, PlayerOneIcon, PlayerTwoIcon } from "../Views";
-import { GameModel, SetupModel, FrontendModel, FrontendMsg, handle, initShared, ToFrontend } from "./UserVsUser.Types";
+import { BackendModel, GameModel, SetupModel, FrontendModel, FrontendMsg, handle, initShared, ToFrontend } from "./UserVsUser.Types";
 import { UserId } from "../../../Data";
 
 
@@ -17,7 +17,12 @@ import { UserId } from "../../../Data";
 
 export type Model = FrontendModel
 
-export const init = initShared
+export const init = ({ PlayerOne, PlayerTwo }: Pick<FrontendModel, 'PlayerOne' | "PlayerTwo">): FrontendModel => {
+    return {
+        ...initShared({ PlayerOne, PlayerTwo }),
+        openedModal: "None"
+    }
+}
 
 //
 //
@@ -47,10 +52,17 @@ export const updateFromBackend = (msg: ToFrontend, model: Model): [Model, Cmd.Cm
         case 'StopPlaying_Done':
         case "StartPlaying_Done": {
             const modelNew = msg[1].type === 'Err' ? model : msg[1].value
-            return [modelNew, Cmd.None]
+            return [{ ...modelNew, openedModal: model.openedModal }, Cmd.None]
         }
     }
 };
+
+export const mergeWithBackend = ({ frontendModel, backendModel }: { frontendModel: FrontendModel, backendModel: BackendModel }): FrontendModel => {
+    return {
+        ...backendModel,
+        openedModal: frontendModel.openedModal
+    }
+}
 
 //
 //

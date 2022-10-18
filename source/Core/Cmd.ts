@@ -1,5 +1,4 @@
 import { p } from "./pipe"
-import { t as tag_ } from "./Utility"
 import * as Task from "./Task"
 
 export type Cmd<Msg> = (dispatch: (msg: Msg) => void) => void
@@ -21,7 +20,7 @@ export const map =
     }
 
 export const tag = <Tag extends string, Msg>(tagName: Tag, cmd: Cmd<Msg>): Cmd<[Tag, Msg]> => {
-  return p(cmd, map(tag_(tagName)))
+  return p(cmd, map(msg => [tagName, msg]))
 }
 
 export const batch = <Msg>(cmdList: Cmd<Msg>[]): Cmd<Msg> => {
