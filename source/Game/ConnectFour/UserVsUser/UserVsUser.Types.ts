@@ -1,6 +1,6 @@
 import { Err, Ok, Result } from "../../../Core/Result"
-import { UserId } from "../../../Data"
-import { Columns, opposite, PlayerType } from "../ConnectFour"
+import { UserId } from "../../../Data/UserId"
+import { ColumnIndex, Columns, emptyColumns, move, MoveProblem, opposite, PlayerType } from "../ConnectFour"
 
 //
 //
@@ -11,20 +11,24 @@ import { Columns, opposite, PlayerType } from "../ConnectFour"
 //
 
 export type SharedModel =
-  | {
-    type: "Setup"
-    moveTimeLimit: MoveTimeLimit
-    PlayerOne: UserId.UserId | "None"
-    PlayerTwo: UserId.UserId | "None"
-  }
-  | {
-    type: "Game",
-    PlayerOne: UserId.UserId,
-    PlayerTwo: UserId.UserId,
-    moveTimeLimit: MoveTimeLimit,
-    moveCountDown: number,
-    columns: Columns
-  }
+  | GameModel
+  | SetupModel
+
+export type SetupModel = {
+  type: "Setup"
+  moveTimeLimit: MoveTimeLimit
+  PlayerOne: UserId | "None"
+  PlayerTwo: UserId | "None"
+}
+
+export type GameModel = {
+  type: "Game",
+  PlayerOne: UserId,
+  PlayerTwo: UserId,
+  moveTimeLimit: MoveTimeLimit,
+  moveCountDown: number,
+  columns: Columns
+}
 
 export type MoveTimeLimit = 5 | 7 | 9
 
@@ -52,7 +56,7 @@ export const moveTimeLimitToString = (timeLimit: MoveTimeLimit): string => {
   }
 }
 
-export const initShared = ({ playerOne, playerTwo }: { playerOne: UserId.UserId | "None", playerTwo: UserId.UserId | "None" }): SharedModel => {
+export const initShared = ({ playerOne, playerTwo }: { playerOne: UserId | "None", playerTwo: UserId | "None" }): SharedModel => {
   return {
     type: "Setup",
     moveTimeLimit: 7,
@@ -82,19 +86,53 @@ export type ToBackend = Req
 export type ToFrontend = Res
 
 export type Req =
-  | ['StopPlaying', { userId: UserId.UserId, }]
-  | ['StartPlaying', { userId: UserId.UserId, playerType: PlayerType }]
+  | ['StopPlaying', { userId: UserId, }]
+  | ['StartPlaying', { userId: UserId, playerType: PlayerType }]
+  | ['StartGame', { userId: UserId }]
+  | ['InputMove', { columnIndex: ColumnIndex, userId: UserId }]
 
 export type Res =
   | ['StopPlaying_Done', Result<"not_in_setup" | "not_playing", SharedModel>]
   | ['StartPlaying_Done', Result<"not_in_setup" | "player_taken", SharedModel>]
+  | ['StartGame_Done', Result<"not_in_setup" | "missing_player", SharedModel>]
+  | ['InputMove_Done', Result<"not_in_game" | "not_playing" | MoveProblem, SharedModel>]
 
 export const handle = (req: Req, model: SharedModel): Res => {
   switch (req[0]) {
+
+    case 'InputMove': {
+      if (model.type !== 'Game') {
+        return ['InputMove_Done', Err("not_in_game")]
+      }
+      const { userId, columnIndex } = req[1]
+
+      const playerType: PlayerType | "None" = model.PlayerOne === userId ? 'PlayerOne' : model.PlayerTwo === userId ? 'PlayerTwo' : "None"
+
+      if (playerType === 'None') {
+        return ['InputMove_Done', Err("not_playing")]
+      }
+
+      const result = move(model.columns, columnIndex, playerType)
+
+      if (result.type === 'Err') {
+        return ['InputMove_Done', result]
+      }
+
+      const columnsNew = result.value
+
+      const modelNew: SharedModel = {
+        ...model,
+        columns: columnsNew
+      }
+
+      return ['InputMove_Done', Ok(modelNew)]
+    }
+
     case 'StartPlaying': {
       if (model.type !== 'Setup') {
         return ['StartPlaying_Done', Err("not_in_setup")]
       }
+
       const { playerType, userId } = req[1]
 
       if (model[playerType] !== 'None') {
@@ -129,6 +167,27 @@ export const handle = (req: Req, model: SharedModel): Res => {
       }
 
       return ['StopPlaying_Done', Ok(modelNew)]
+    }
+
+    case 'StartGame': {
+      if (model.type !== 'Setup') {
+        return ['StartGame_Done', Err("not_in_setup")]
+      }
+
+      if (model.PlayerOne === 'None' || model.PlayerTwo === 'None') {
+        return ['StartGame_Done', Err("missing_player")]
+      }
+
+      const modelNew: SharedModel = {
+        type: "Game",
+        columns: emptyColumns,
+        moveTimeLimit: model.moveTimeLimit,
+        moveCountDown: model.moveTimeLimit,
+        PlayerOne: model.PlayerOne,
+        PlayerTwo: model.PlayerTwo,
+      }
+
+      return ['StartGame_Done', Ok(modelNew)]
     }
   }
 }
