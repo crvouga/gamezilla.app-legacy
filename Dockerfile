@@ -2,7 +2,7 @@ FROM node:16
 
 WORKDIR /app
 
-# Install DEB dependencies and others.
+# mediasoup dependencies
 RUN \
     set -x \
     && apt-get update \
@@ -10,7 +10,7 @@ RUN \
 
 ADD package*.json /app/
 
-RUN [ "npm", "install" ]
+RUN [ "npm", "install", "--legacy-peer-deps" ]
 
 COPY ./ /app/
 
