@@ -1,9 +1,9 @@
 import { Cmd, Sub } from "../../../Core";
 import * as UI from "../../../UI";
 import * as Store from "../../../Store";
-import { gameTheme, PlayerType, playerTypeToColor } from "../ConnectFour";
+import { gameTheme, PlayerType, playerTypeToColor, ViewColumns } from "../ConnectFour";
 import { PlayerIcon, PlayerOneIcon, PlayerTwoIcon } from "../Views";
-import { FrontendModel, FrontendMsg, initShared, ToFrontend } from "./UserVsUser.Types";
+import { GameModel, SetupModel, FrontendModel, FrontendMsg, handle, initShared, ToFrontend } from "./UserVsUser.Types";
 import { UserId } from "../../../Data";
 
 
@@ -31,6 +31,8 @@ export type Msg = FrontendMsg
 
 export const update = ({ sendToBackend, }: { sendToBackend: (msg: Msg) => Cmd.Cmd<never> }, msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
     switch (msg[0]) {
+        case 'InputMove':
+        case 'StartGame':
         case 'StopPlaying':
         case "StartPlaying": {
             return [model, sendToBackend(msg)]
@@ -40,6 +42,8 @@ export const update = ({ sendToBackend, }: { sendToBackend: (msg: Msg) => Cmd.Cm
 
 export const updateFromBackend = (msg: ToFrontend, model: Model): [Model, Cmd.Cmd<Msg>] => {
     switch (msg[0]) {
+        case 'InputMove_Done':
+        case 'StartGame_Done':
         case 'StopPlaying_Done':
         case "StartPlaying_Done": {
             const modelNew = msg[1].type === 'Err' ? model : msg[1].value
@@ -84,58 +88,63 @@ export const View = ({ currentUserId, model, dispatch, store, roomComponent, goB
         </UI.IconButton>
     )
 
+
+    if (model.type === 'Setup') {
+        return (
+            <ViewSetup
+                currentUserId={currentUserId}
+                goBack={goBack}
+                model={model}
+                store={store}
+                homeButton={homeButton}
+                roomComponent={roomComponent}
+                dispatch={dispatch}
+            />
+        )
+    }
+
     return (
         <UI.FillBox>
             <UI.Header left={homeButton} title="Connect Four" right={roomComponent} />
 
-            {/* 
-            
-            header
-            
-            */}
-
-            <UI.Box
-                sx={{
-                    paddingY: 6,
-                    paddingX: 2,
-                    background: `linear-gradient(${gameTheme.primary.dark}, ${gameTheme.primary.darker})`,
-                    display: 'flex',
-                    flexDirection: "row",
-                    justifyContent: 'center',
-                    alignItems: "center",
-                    gap: 2
-                }}
-            >
-                <UI.Box sx={{ width: 72, overflow: "hidden", textAlign: "center" }}>
-                    <UI.Avatar sx={{ ...avatarSx, marginX: "auto" }} src={model.PlayerOne === 'None' ? "" : store.Profile[model.PlayerOne]?.avatarUrl} >
-                        <UI.Icons.QuestionMark />
-                    </UI.Avatar>
-                    <UI.Typography color="#fff" align='center' noWrap>
-                        {model.PlayerOne === 'None' ? "?" : store.Profile[model.PlayerOne]?.username ?? "..."}
-                    </UI.Typography>
-                </UI.Box>
-                <PlayerOneIcon sx={{ ...iconSx }} />
-                <UI.Typography color="#fff" sx={{ fontSize: 32 }}>
-                    vs
-                </UI.Typography>
-                <PlayerTwoIcon sx={{ ...iconSx }} />
-                <UI.Box sx={{ width: 72, overflow: "hidden", textAlign: "center" }}>
-                    <UI.Avatar sx={{ ...avatarSx, marginX: "auto" }} src={model.PlayerTwo === 'None' ? "" : store.Profile[model.PlayerTwo]?.avatarUrl} >
-                        <UI.Icons.QuestionMark />
-                    </UI.Avatar>
-                    <UI.Typography color="#fff" align='center' noWrap>
-                        {model.PlayerTwo === 'None' ? "?" : store.Profile[model.PlayerTwo]?.username ?? "..."}
-                    </UI.Typography>
-                </UI.Box>
+            <UI.Box sx={{ paddingX: 1, gap: 1, marginBottom: 2, display: 'flex', width: "100%", overflow: "hidden" }}>
+                <ViewGamePlayerSlot playerType="PlayerOne" model={model} store={store} />
+                <ViewGamePlayerSlot playerType="PlayerTwo" model={model} store={store} />
             </UI.Box>
 
-            {/* 
-            
+            <ViewColumns
+                columns={model.columns}
+                onClick={(columnIndex) => dispatch(['InputMove', { userId: currentUserId, columnIndex }])}
+            />
 
-            Players
-            
+            <UI.Box sx={{ flex: 1 }} />
 
-            */}
+            <UI.Box sx={{ display: 'flex' }}>
+                <UI.ActionButton
+                    icon={<UI.Icons.Flag />}
+                    label="Resign"
+                    onClick={() => { }}
+                />
+                <UI.ActionButton
+                    icon={<UI.Icons.HandshakeTwoTone />}
+                    label="Draw"
+                    onClick={() => { }}
+                />
+            </UI.Box>
+
+        </UI.FillBox>
+    )
+
+}
+
+const ViewSetup = ({ model, store, dispatch, currentUserId, homeButton, roomComponent, goBack }: { goBack: () => void, currentUserId: UserId.UserId, model: SetupModel, store: Store.Model, dispatch: (msg: Msg) => void, homeButton: UI.ViewNode, roomComponent: UI.ViewNode }) => {
+    const startGameResponse = handle(['StartGame', { userId: currentUserId }], model)
+
+    return (
+        <UI.FillBox>
+            <UI.Header left={homeButton} title="Connect Four" right={roomComponent} />
+
+            <ViewBannerArt model={model} store={store} />
 
             <UI.Typography
                 color="text.secondary"
@@ -159,12 +168,6 @@ export const View = ({ currentUserId, model, dispatch, store, roomComponent, goB
                 userId={model.PlayerTwo}
                 dispatch={dispatch}
             />
-            {/* 
-            
-            
-            
-            
-            */}
 
             <UI.Divider sx={{ paddingBottom: 2 }} />
 
@@ -174,11 +177,30 @@ export const View = ({ currentUserId, model, dispatch, store, roomComponent, goB
                 <UI.Button variant="outlined" fullWidth onClick={goBack}>
                     Back
                 </UI.Button>
-                <UI.Button variant="contained" fullWidth>
+                <UI.Button
+                    variant="contained"
+                    fullWidth
+                    disabled={startGameResponse[1].type === 'Err'}
+                    onClick={() => dispatch(['StartGame', { userId: currentUserId }])}
+                >
                     Start Game
                 </UI.Button>
             </UI.Box>
         </UI.FillBox>
+    )
+
+}
+
+const ViewGamePlayerSlot = ({ model, playerType, store }: { model: GameModel, playerType: PlayerType, store: Store.Model }) => {
+    const size = { width: 32, height: 32, }
+    return (
+        <UI.Box sx={{ display: 'flex', alignItems: 'center', flex: 1, overflow: "hidden" }}>
+            <PlayerIcon playerType={playerType} sx={{ ...size, marginRight: 1 }} />
+            <UI.Avatar src={store.Profile[model[playerType]]?.avatarUrl} sx={{ ...size, marginRight: 1 }} />
+            <UI.Typography noWrap>
+                {store.Profile[model[playerType]]?.username ?? "..."}
+            </UI.Typography>
+        </UI.Box>
     )
 }
 
@@ -208,3 +230,42 @@ const ViewSetupPlayerSlot = ({ dispatch, userId, store, currentUserId, playerTyp
     )
 }
 
+const ViewBannerArt = ({ model, store, }: { model: SetupModel, store: Store.Model }) => {
+    return (
+        <UI.Box
+            sx={{
+                paddingY: 6,
+                paddingX: 2,
+                background: `linear-gradient(${gameTheme.primary.dark}, ${gameTheme.primary.darker})`,
+                display: 'flex',
+                flexDirection: "row",
+                justifyContent: 'center',
+                alignItems: "center",
+                gap: 2
+            }}
+        >
+            <UI.Box sx={{ width: 72, overflow: "hidden", textAlign: "center" }}>
+                <UI.Avatar sx={{ ...avatarSx, marginX: "auto" }} src={model.PlayerOne === 'None' ? "" : store.Profile[model.PlayerOne]?.avatarUrl} >
+                    <UI.Icons.QuestionMark />
+                </UI.Avatar>
+                <UI.Typography color="#fff" align='center' noWrap>
+                    {model.PlayerOne === 'None' ? "?" : store.Profile[model.PlayerOne]?.username ?? "..."}
+                </UI.Typography>
+            </UI.Box>
+            <PlayerOneIcon sx={{ ...iconSx }} />
+            <UI.Typography color="#fff" sx={{ fontSize: 32 }}>
+                vs
+            </UI.Typography>
+            <PlayerTwoIcon sx={{ ...iconSx }} />
+            <UI.Box sx={{ width: 72, overflow: "hidden", textAlign: "center" }}>
+                <UI.Avatar sx={{ ...avatarSx, marginX: "auto" }} src={model.PlayerTwo === 'None' ? "" : store.Profile[model.PlayerTwo]?.avatarUrl} >
+                    <UI.Icons.QuestionMark />
+                </UI.Avatar>
+                <UI.Typography color="#fff" align='center' noWrap>
+                    {model.PlayerTwo === 'None' ? "?" : store.Profile[model.PlayerTwo]?.username ?? "..."}
+                </UI.Typography>
+            </UI.Box>
+        </UI.Box>
+
+    )
+}

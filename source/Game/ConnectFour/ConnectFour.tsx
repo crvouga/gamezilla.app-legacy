@@ -1,4 +1,4 @@
-import { Result } from "../../Core"
+import { Result, Err, Ok } from "../../Core/Result"
 
 //
 //
@@ -7,8 +7,6 @@ import { Result } from "../../Core"
 //
 //
 //
-
-
 
 export type PlayerType = "PlayerOne" | "PlayerTwo"
 
@@ -26,13 +24,25 @@ export const playerTypeToColor: { [key in PlayerType]: Color } = {
 
 export type Column = readonly PlayerType[]
 
-export type Columns = readonly Column[]
+export type Columns = [Column, Column, Column, Column, Column, Column, Column]
+
+const mapColumns = (columns: Columns, f: (column: Column, columnIndex: ColumnIndex) => Column): Columns => {
+  return [
+    f(columns[0], 0),
+    f(columns[1], 1),
+    f(columns[2], 2),
+    f(columns[3], 3),
+    f(columns[4], 4),
+    f(columns[5], 5),
+    f(columns[6], 6),
+  ]
+}
 
 export const MAX_COLUMN_HEIGHT = 6
 
-export const COLUMN_COUNT = 7
 
-export const emptyColumns: Columns = [...Array(COLUMN_COUNT)].map(() => [])
+export const emptyColumns: Columns = [[], [], [], [], [], [], []]
+export const COLUMN_COUNT = emptyColumns.length
 
 export type ColumnIndex = 0 | 1 | 2 | 3 | 4 | 5 | 6
 
@@ -52,40 +62,53 @@ const isColumnIndex = (index: unknown): index is ColumnIndex => {
 export type RowIndex = 0 | 1 | 2 | 3 | 4 | 5
 
 export type MoveProblem =
-  | "not_players_turn"
+  | "game_over"
+  | "not_turn"
   | "column_is_full"
-  | "invalid_column_index"
+  | "out_of_bounds"
 
-export type MoveResult = Result.Result<MoveProblem, Columns>
+export type MoveResult = Result<MoveProblem, Columns>
 
 export const move = (
   columns: Columns,
   columnIndex: ColumnIndex,
   player: PlayerType,
 ): MoveResult => {
-  if (toTurn(columns) !== player) {
-    return Result.Err("not_players_turn")
+  const status = toStatus(columns)
+
+  if (status.type === 'Winner') {
+    return Err("game_over")
+  }
+
+  if (status.type === 'Tie') {
+    return Err("game_over")
+  }
+
+  const turn = status.turn
+
+  if (turn !== player) {
+    return Err("not_turn")
   }
 
   const column = columns[columnIndex]
 
   if (!column) {
-    return Result.Err("invalid_column_index")
+    return Err("out_of_bounds")
   }
 
   if (column.length === MAX_COLUMN_HEIGHT) {
-    return Result.Err("column_is_full")
+    return Err("column_is_full")
   }
 
-  const columnsNew: Columns = columns.map((column, index) => {
-    if (index === columnIndex) {
-      return column.concat([player]).slice(0, MAX_COLUMN_HEIGHT)
-    }
+  const columnsNew =
+    mapColumns(columns, (column, index) => {
+      if (index === columnIndex) {
+        return column.concat([player]).slice(0, MAX_COLUMN_HEIGHT)
+      }
+      return column
+    })
 
-    return column
-  })
-
-  return Result.Ok(columnsNew)
+  return Ok(columnsNew)
 }
 
 export const toSlot = (
@@ -101,19 +124,18 @@ export const toSlot = (
   return "Empty"
 }
 
-const isEven = (x: number) => x % 2 === 0
-
 export const toTurn = (columns: Columns): PlayerType => {
-  return isEven(columns.flat().length) ? "PlayerTwo" : "PlayerOne"
+  return columns.flat().length % 2 === 0 ? "PlayerOne" : "PlayerTwo"
 }
 
 const isFull = (columns: Columns) => {
   return columns.flat().length >= MAX_COLUMN_HEIGHT * COLUMN_COUNT
 }
 
-type IStatus =
+export type Status =
   | {
     type: "Playing"
+    turn: PlayerType
   }
   | {
     type: "Winner"
@@ -123,19 +145,20 @@ type IStatus =
     type: "Tie"
   }
 
-export const toStatus = (columns: Columns): IStatus => {
-  const winningLines = Array.from(
-    filter((line) => line.length >= 5, yieldLines(columns)),
-  )
 
-  const [winningLine] = winningLines
 
-  if (winningLine) {
-    const [position] = winningLine
+export const toStatus = (columns: Columns): Status => {
+  const wins = toWins(columns)
+  const turn = toTurn(columns)
+  const [win] = wins
+
+  if (win) {
+    const [position] = win
 
     if (!position) {
       return {
         type: "Playing",
+        turn
       }
     }
 
@@ -144,6 +167,7 @@ export const toStatus = (columns: Columns): IStatus => {
     if (winner === "Empty") {
       return {
         type: "Playing",
+        turn
       }
     }
 
@@ -161,6 +185,7 @@ export const toStatus = (columns: Columns): IStatus => {
 
   return {
     type: "Playing",
+    turn
   }
 }
 
@@ -172,85 +197,72 @@ export const toStatus = (columns: Columns): IStatus => {
 //
 //
 
-function* yieldPositionsAndDirections(columns: Columns) {
-  for (let x = 0; x <= columns.length; x++) {
-    const column = columns[x]
-    const columnLength = column?.length ?? 0
-    for (let y = 0; y <= columnLength; y++) {
-      for (let dx = -1; dx <= 1; dx++) {
-        for (let dy = -1; dy <= dy; dx++) {
-          yield {
-            x,
-            y,
-            dx,
-            dy,
+
+type Position = { x: number, y: number }
+
+
+const toKey = ({ x, y, dx, dy }: { x: number, y: number, dx: number, dy: number }): string => {
+  return `${x}, ${y}, ${dx}, ${dy}`
+}
+
+export const minWinLength = 4
+
+const directions: [number, number][] = [[1, 0], [0, 1], [1, 1], [-1, 1]]
+
+export const toWins = (columns: Columns): Position[][] => {
+  const wins: Position[][] = []
+
+  const visited = new Set<string>()
+
+  for (let x = 0; x < columns.length; x++) {
+    for (let y = 0; y < columns[x]!.length; y++) {
+      for (const [dx, dy] of directions) {
+        if (visited.has(toKey({ x, y, dx, dy }))) {
+          break
+        }
+
+        const targetSlot = toSlot(columns, { x, y })
+
+        if (targetSlot === 'Empty') {
+          break
+        }
+
+        const win: Position[] = []
+
+        let position: Position = { x: x, y: y }
+
+
+        while (true) {
+          win.push(position)
+
+          visited.add(toKey({ x: position.x, y: position.y, dx, dy }))
+
+          const nextPosition: Position = {
+            x: position.x + dx,
+            y: position.y + dy,
           }
+
+          const nextSlot = toSlot(columns, nextPosition)
+
+          if (nextSlot === "Empty") {
+            break
+          }
+
+          if (nextSlot !== targetSlot) {
+            break
+          }
+
+          position = nextPosition
+        }
+
+        if (win.length >= minWinLength) {
+          wins.push(win)
         }
       }
     }
   }
-}
 
-function* yieldLine({
-  columns,
-  x,
-  y,
-  dx,
-  dy,
-}: {
-  columns: Columns
-  x: number
-  y: number
-  dx: number
-  dy: number
-}) {
-  yield {
-    x,
-    y,
-  }
-
-  while (true) {
-    const adjacentPosition = {
-      x: x + dx,
-      y: y + dy,
-    }
-
-    const adjacentSlot = toSlot(columns, adjacentPosition)
-
-    const slot = toSlot(columns, { x, y })
-
-    if (adjacentSlot === slot) {
-      yield adjacentPosition
-    } else {
-      break
-    }
-  }
-}
-
-function* yieldLines(columns: Columns) {
-  const visited = new Set()
-
-  for (const { x, y, dx, dy } of yieldPositionsAndDirections(columns)) {
-    const key = `${x}${y}${dx}${dy}`
-
-    if (visited.has(key)) {
-      continue
-    }
-
-    visited.add(key)
-
-    const line = Array.from(yieldLine({ columns, x, y, dx, dy }))
-
-    yield line
-  }
-}
-
-function* filter<T>(predicate: (item: T) => boolean, generator: Generator<T>) {
-  for (const item of generator) {
-    if (predicate(item)) {
-      yield item
-    }
-  }
+  return wins
 }
 
 //

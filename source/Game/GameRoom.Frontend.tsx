@@ -1056,8 +1056,8 @@ export const ViewBanner = ({
           />
         )}
 
-        <UI.Box sx={{ marginLeft: 2 }}>
-          <UI.Typography>
+        <UI.Box sx={{ marginLeft: 2, overflow: "hidden" }}>
+          <UI.Typography noWrap>
             {hostProfile ? `${hostProfile.username}'s room` : "..."}
           </UI.Typography>
 
