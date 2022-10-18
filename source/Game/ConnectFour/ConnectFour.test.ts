@@ -1,92 +1,40 @@
-import { Columns, PlayerType, toStatus, toWins } from "./ConnectFour";
+import { Columns, toStatus, toWins } from "./ConnectFour";
+import { horizontal, horizontalLongest, leftAndRightDiagonal, leftDiagonal, rightDiagonal, tie, vertical, winner } from "./test-data";
 
-const p1: PlayerType = "PlayerOne"
-const p2: PlayerType = "PlayerTwo"
+const expectWinner = (columns: Columns) => {
+    const status = toStatus(columns)
 
-export const horizontal: Columns = [
-    [],
-    [],
-    [p1, p2],
-    [p1, p2],
-    [p1, p2],
-    [p1],
-    [],
-];
+    expect(status.type).toBe("Winner")
 
-export const vertical: Columns = [
-    [],
-    [],
-    [p1, p1, p1, p1],
-    [p2, p2, p2],
-    [],
-    [],
-    [],
-];
-
-export const rightDiagonal: Columns = [
-    [],
-    [],
-    [p1,],
-    [p2, p1,],
-    [p1, p2, p1],
-    [p2, p1, p2, p1],
-    [],
-];
-
-export const leftDiagonal: Columns = [
-    [],
-    [],
-    [p2, p1, p2, p1],
-    [p1, p2, p1],
-    [p2, p1,],
-    [p1,],
-    [],
-];
-
-export const leftAndRightDiagonal: Columns = [
-    [],
-    [p1],
-    [p2, p1, p2, p1],
-    [p1, p2, p1],
-    [p2, p1, p2, p1],
-    [p1],
-    [],
-];
-
-export const horizontalLongest: Columns = [
-    [p1, p2],
-    [p1, p2],
-    [p1, p2],
-    [p1],
-    [p1, p2],
-    [p1, p2],
-    [p1, p2],
-]
+    if (status.type === 'Winner') {
+        expect(status.winner).toBe(winner)
+    }
+}
 
 describe("Connect Four", () => {
     it("detects horizontal win", () => {
-        expectWinner(horizontal, p1)
+        expectWinner(horizontal)
         expect(toWins(horizontal).length).toEqual(1)
     })
 
     it("detects vertical win", () => {
-        expectWinner(vertical, p1)
+        expectWinner(vertical)
         expect(toWins(vertical).length).toEqual(1)
     })
 
     it("detects right diagonal win", () => {
-        expectWinner(rightDiagonal, p1)
+        expectWinner(rightDiagonal)
         expect(toWins(rightDiagonal).length).toEqual(1)
     })
 
 
     it("detects left diagonal win", () => {
-        expectWinner(leftDiagonal, p1)
+        expectWinner(leftDiagonal)
         expect(toWins(leftDiagonal).length).toEqual(1)
     })
 
     it("detects left and right diagonal win", () => {
-        expectWinner(leftAndRightDiagonal, p1)
+        expectWinner(leftAndRightDiagonal)
 
         const wins = toWins(leftAndRightDiagonal)
 
@@ -94,7 +42,7 @@ describe("Connect Four", () => {
     })
 
     it("detects wins longer than 4", () => {
-        expectWinner(horizontalLongest, p1)
+        expectWinner(horizontalLongest)
 
         const wins = toWins(horizontalLongest)
 
@@ -107,16 +55,12 @@ describe("Connect Four", () => {
         }
     })
 
+    it("detects draw", () => {
+        const status = toStatus(tie)
+        expect(status.type).toEqual("Tie")
+    })
+
 })
 
-const expectWinner = (columns: Columns, winner: PlayerType) => {
-    const status = toStatus(columns)
-
-    expect(status.type).toBe("Winner")
-
-    if (status.type === 'Winner') {
-        expect(status.winner).toBe(winner)
-    }
-}
 
 export { };

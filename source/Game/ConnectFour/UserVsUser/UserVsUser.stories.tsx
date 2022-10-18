@@ -1,6 +1,7 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react"
 import { store, userA, userB } from '../../../TestData'
 import * as UI from "../../../UI"
+import { emptyColumns } from "../ConnectFour"
 import { Model, View } from "./UserVsUser.Frontend"
 
 const currentUserId = userA.userId
@@ -11,7 +12,7 @@ export default {
     args: {
         currentUserId: currentUserId,
         store: store,
-        roomAvatarGroup: <>room</>,
+        roomComponent: <>room</>,
         goHome: () => { },
         dispatch: () => { },
         onClose: () => { },
@@ -56,12 +57,28 @@ MissingPlayerTwo.args = {
     }
 }
 
-export const Ready = Template.bind({})
-Ready.args = {
+export const SetupReady = Template.bind({})
+SetupReady.args = {
     model: {
         ...setupModel,
         PlayerOne: currentUserId,
         PlayerTwo: userB.userId,
+    }
+}
+
+const gameModel: Model = {
+    type: "Game",
+    columns: emptyColumns,
+    moveCountDown: 3,
+    moveTimeLimit: 7,
+    PlayerOne: currentUserId,
+    PlayerTwo: userB.userId,
+}
+
+export const GameStarted = Template.bind({})
+GameStarted.args = {
+    model: {
+        ...gameModel,
     }
 }
 
