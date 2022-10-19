@@ -60,6 +60,38 @@ describe("Connect Four", () => {
         expect(status.type).toBe("Tie")
     })
 
+    it("detects left diagonal win", () => {
+        const columns: Columns = [
+            [],
+            ['PlayerTwo', 'PlayerOne', 'PlayerTwo', 'PlayerOne'],
+            ['PlayerTwo', 'PlayerTwo', 'PlayerOne'],
+            ['PlayerOne', 'PlayerOne', 'PlayerTwo'],
+            ['PlayerOne'],
+            [],
+            []
+        ]
+
+        const wins = toWins(columns)
+
+        expect(wins.length).toBe(1)
+    })
+
+    it("detects right diagonal win", () => {
+        const columns: Columns = [
+            [],
+            ['PlayerOne'],
+            ['PlayerOne', 'PlayerOne', 'PlayerTwo'],
+            ['PlayerTwo', 'PlayerTwo', 'PlayerOne'],
+            ['PlayerTwo', 'PlayerOne', 'PlayerTwo', 'PlayerOne'],
+            [],
+            []
+        ]
+
+        const wins = toWins(columns)
+
+        expect(wins.length).toBe(1)
+    })
+
 })
 
 

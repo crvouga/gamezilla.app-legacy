@@ -207,7 +207,16 @@ const toKey = ({ x, y, dx, dy }: { x: number, y: number, dx: number, dy: number 
 
 export const minWinLength = 4
 
-const directions: [number, number][] = [[1, 0], [0, 1], [1, 1], [-1, 1]]
+const directions: [number, number][] = [
+  // horizontal
+  [1, 0],
+  // vertical
+  [0, 1],
+  // right diagonal
+  [1, 1],
+  // left diagonal
+  [1, -1]
+]
 
 export const toWins = (columns: Columns): Position[][] => {
   const wins: Position[][] = []
