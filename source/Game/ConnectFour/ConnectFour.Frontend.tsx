@@ -209,11 +209,11 @@ export const View = ({
                 >
                   <stop
                     offset="0%"
-                    stopColor={gameTheme.playerOne.light}
+                    stopColor={gameTheme.PlayerOne.light}
                   />
                   <stop
                     offset="100%"
-                    stopColor={gameTheme.playerOne.dark}
+                    stopColor={gameTheme.PlayerOne.dark}
                   />
                 </linearGradient>
 
@@ -223,11 +223,11 @@ export const View = ({
                 >
                   <stop
                     offset="0%"
-                    stopColor={gameTheme.playerTwo.light}
+                    stopColor={gameTheme.PlayerTwo.light}
                   />
                   <stop
                     offset="100%"
-                    stopColor={gameTheme.playerTwo.dark}
+                    stopColor={gameTheme.PlayerTwo.dark}
                   />
                 </linearGradient>
               </defs>
@@ -414,11 +414,11 @@ export const CoverArt = ({ id }: { id: string }) => {
         >
           <stop
             offset="0%"
-            stopColor={gameTheme.playerOne.light}
+            stopColor={gameTheme.PlayerOne.light}
           />
           <stop
             offset="100%"
-            stopColor={gameTheme.playerOne.dark}
+            stopColor={gameTheme.PlayerOne.dark}
           />
         </linearGradient>
 
@@ -428,11 +428,11 @@ export const CoverArt = ({ id }: { id: string }) => {
         >
           <stop
             offset="0%"
-            stopColor={gameTheme.playerTwo.light}
+            stopColor={gameTheme.PlayerTwo.light}
           />
           <stop
             offset="100%"
-            stopColor={gameTheme.playerTwo.dark}
+            stopColor={gameTheme.PlayerTwo.dark}
           />
         </linearGradient>
       </defs>

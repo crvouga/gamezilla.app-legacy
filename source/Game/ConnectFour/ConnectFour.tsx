@@ -1,3 +1,4 @@
+import { useEffect, useLayoutEffect, useRef } from "react"
 import { Result, Err, Ok } from "../../Core/Result"
 
 //
@@ -288,11 +289,11 @@ export const gameTheme = {
     dark: "#2195F2",
     darker: "#0D47A1",
   },
-  playerOne: {
+  PlayerOne: {
     light: "#F24237",
     dark: "#DB332F",
   },
-  playerTwo: {
+  PlayerTwo: {
     light: "#FFB74D",
     dark: "#FFA623",
   },
@@ -312,11 +313,11 @@ export const ViewPlayerOneGradientDef = ({ gradientId }: { gradientId: string })
     >
       <stop
         offset="0%"
-        stopColor={gameTheme.playerOne.light}
+        stopColor={gameTheme.PlayerOne.light}
       />
       <stop
         offset="100%"
-        stopColor={gameTheme.playerOne.dark}
+        stopColor={gameTheme.PlayerOne.dark}
       />
     </linearGradient>
   )
@@ -330,17 +331,38 @@ export const ViewPlayerTwoGradientDef = ({ gradientId }: { gradientId: string })
     >
       <stop
         offset="0%"
-        stopColor={gameTheme.playerTwo.light}
+        stopColor={gameTheme.PlayerTwo.light}
       />
       <stop
         offset="100%"
-        stopColor={gameTheme.playerTwo.dark}
+        stopColor={gameTheme.PlayerTwo.dark}
       />
     </linearGradient>
   )
 }
 
+
 export const ViewColumns = ({
+  columns,
+  onClick,
+  implementation = "canvas"
+}: {
+  columns: Columns
+  onClick: (columnIndex: ColumnIndex) => void,
+  implementation?: "svg" | "canvas"
+}) => {
+  switch (implementation) {
+    case 'canvas': {
+      return <ViewColumnsCanvas columns={columns} onClick={onClick} />
+    }
+
+    case 'svg': {
+      return <ViewColumnsSvg columns={columns} onClick={onClick} />
+    }
+  }
+}
+
+const ViewColumnsSvg = ({
   columns,
   onClick,
 }: {
@@ -415,11 +437,11 @@ export const ViewColumns = ({
         >
           <stop
             offset="0%"
-            stopColor={gameTheme.playerOne.light}
+            stopColor={gameTheme.PlayerOne.light}
           />
           <stop
             offset="100%"
-            stopColor={gameTheme.playerOne.dark}
+            stopColor={gameTheme.PlayerOne.dark}
           />
         </linearGradient>
 
@@ -429,11 +451,11 @@ export const ViewColumns = ({
         >
           <stop
             offset="0%"
-            stopColor={gameTheme.playerTwo.light}
+            stopColor={gameTheme.PlayerTwo.light}
           />
           <stop
             offset="100%"
-            stopColor={gameTheme.playerTwo.dark}
+            stopColor={gameTheme.PlayerTwo.dark}
           />
         </linearGradient>
       </defs>
@@ -490,6 +512,160 @@ export const ViewColumns = ({
       ))}
     </svg>
   )
+}
+
+
+
+const ViewColumnsCanvas = ({
+  columns,
+  onClick,
+}: {
+  columns: Columns
+  onClick: (columnIndex: ColumnIndex) => void
+}) => {
+  const canvasRef = useRef<HTMLCanvasElement | null>(null)
+
+  useLayoutEffect(() => {
+    const canvas = canvasRef.current
+
+    if (!canvas) {
+      return
+    }
+
+    const context = canvas.getContext("2d")
+
+    if (!context) {
+      return
+    }
+
+    context.canvas.height = (MAX_COLUMN_HEIGHT / COLUMN_COUNT) * context.canvas.width
+
+    paint(context, columns)
+  }, [columns])
+
+
+  return (
+    <canvas
+      style={{ width: "100%" }}
+      ref={canvasRef}
+      onClick={(event) => {
+        const columnIndex = Math.floor(
+          rescale({
+            value: event.pageX - event.currentTarget.offsetLeft,
+            from: [0, event.currentTarget.width],
+            to: [0, COLUMN_COUNT - 1],
+          }),
+        )
+
+        if (isColumnIndex(columnIndex)) {
+          onClick(columnIndex)
+          return
+        }
+
+
+        // const y = Math.floor(
+        //   rescale({
+        //     value: event.pageY - event.currentTarget.offsetTop,
+        //     from: [0, event.currentTarget.height],
+        //     to: [0, MAX_COLUMN_HEIGHT],
+        //   }),
+        // )
+
+      }}
+    />
+  )
+}
+
+type Range = [number, number]
+
+const rescale = ({
+  value,
+  from,
+  to,
+}: {
+  value: number
+  from: Range
+  to: Range
+}) => {
+  return ((value - from[0]) * (to[1] - to[0])) / (from[1] - from[0]) + to[0]
+}
+
+
+const paint = (context: CanvasRenderingContext2D, columns: Columns): void => {
+
+  const width = context.canvas.width
+  const height = context.canvas.height
+
+  // put origin on bottom left
+  context.translate(0, height);
+  context.scale(1, -1);
+
+  context.fillStyle = gameTheme.primary.darker
+  context.fillRect(0, 0, width, height)
+
+
+  const cellWidth = width / COLUMN_COUNT
+  const cellHeight = height / MAX_COLUMN_HEIGHT
+
+  for (let x = 0; x < columns.length; x++) {
+    const column = columns[x]
+
+    if (!column) {
+      continue
+    }
+
+    for (let y = 0; y < column.length; y++) {
+      const slot = column[y]
+
+      if (!slot) {
+        continue
+      }
+
+      const cx = (x + 1 / 2) * cellWidth
+      const cy = (y + 1 / 2) * cellHeight
+      const r = (cellWidth / 2)
+
+      context.beginPath()
+
+      context.arc(cx, cy, r, 0, Math.PI * 2)
+
+      const gradient = context.createRadialGradient(cx, cy, 0, cx, cy, r * 0.74);
+      gradient.addColorStop(0, gameTheme[slot].light);
+      gradient.addColorStop(1, gameTheme[slot].dark);
+      context.fillStyle = gradient
+      context.fill()
+
+      context.closePath()
+    }
+  }
+
+
+  // this is a hack that prevents a bug when creating the holes in board using the evenodd fill method
+  context.beginPath()
+  context.arc(width + cellWidth, height + cellHeight, cellWidth / 2, 0, Math.PI * 2)
+  context.fillStyle = "purple"
+  context.fill()
+  context.closePath()
+
+  // 
+  //
+  //
+  //
+
+
+  for (let x = 0; x < COLUMN_COUNT; x++) {
+    for (let y = 0; y < MAX_COLUMN_HEIGHT; y++) {
+      const cx = (x + 1 / 2) * cellWidth
+      const cy = (y + 1 / 2) * cellHeight
+      const r = (cellWidth / 2) * 0.8
+      context.moveTo(cy, cy)
+      context.arc(cx, cy, r, 0, Math.PI * 2)
+    }
+  }
+
+  context.fillStyle = gameTheme.primary.light
+  context.rect(0, 0, width, height)
+  context.fill("evenodd")
 }
 
 //
