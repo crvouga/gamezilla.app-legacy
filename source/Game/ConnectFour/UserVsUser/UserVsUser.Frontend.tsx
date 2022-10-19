@@ -1,9 +1,9 @@
 import { Cmd, exhaustive, Sub } from "../../../Core";
 import * as UI from "../../../UI";
 import * as Store from "../../../Store";
-import { gameTheme, PlayerType, playerTypeToColor, ViewColumns } from "../ConnectFour";
+import { gameTheme, PlayerType, playerTypeToColor, toStatus, toTurn, ViewColumns } from "../ConnectFour";
 import { PlayerIcon, PlayerOneIcon, PlayerTwoIcon } from "../Views";
-import { responseToString, BackendModel, GameModel, SetupModel, FrontendModel, FrontendMsg, handle, initShared, ToFrontend, allMoveTimeLimit } from "./UserVsUser.Types";
+import { toPlayerType, responseToString, BackendModel, GameModel, SetupModel, FrontendModel, FrontendMsg, handle, initShared, ToFrontend, allMoveTimeLimit, ToBackend } from "./UserVsUser.Types";
 import { UserId } from "../../../Data";
 
 
@@ -20,6 +20,7 @@ export type Model = FrontendModel
 export const init = ({ PlayerOne, PlayerTwo }: Pick<FrontendModel, 'PlayerOne' | "PlayerTwo">): FrontendModel => {
     return {
         ...initShared({ PlayerOne, PlayerTwo }),
+        columnIndex: "None",
         openedModal: "None"
     }
 }
@@ -34,14 +35,43 @@ export const init = ({ PlayerOne, PlayerTwo }: Pick<FrontendModel, 'PlayerOne' |
 
 export type Msg = FrontendMsg
 
-export const update = ({ sendToBackend, }: { sendToBackend: (msg: Msg) => Cmd.Cmd<never> }, msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
+// export const update = ({ sendToBackend, }: { sendToBackend: (msg: ToBackend) => Cmd.Cmd<never> }, msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
+//     const [modelNew, cmd] = update_({ sendToBackend }, msg, model)
+
+//     if (modelNew.type === 'Game' && model.type === 'Game' && toTurn(model.columns) !== toTurn(modelNew.columns)) {
+//         return [{ ...modelNew, columnIndex: "None" }, cmd]
+//     }
+
+//     return [modelNew, cmd]
+// }
+
+export const update = ({ sendToBackend, }: { sendToBackend: (msg: ToBackend) => Cmd.Cmd<never> }, msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
     switch (msg[0]) {
+
+        // 
+        //
+        //
+        //
+
+        case 'HoveredOverColumns': {
+            const { columnIndex } = msg[1]
+            return [{ ...model, columnIndex }, Cmd.None]
+        }
+
+        // 
+        //
+        //
+        //
+        // 
+
         case 'InputMoveTimeLimit':
-        case 'InputMove':
         case 'StartGame':
         case 'StopPlaying':
         case "StartPlaying": {
             return [model, sendToBackend(msg)]
+        }
+        case 'InputMove': {
+            return [{ ...model, columnIndex: "None" }, sendToBackend(msg)]
         }
         default: {
             return exhaustive(msg[0])
@@ -52,12 +82,18 @@ export const update = ({ sendToBackend, }: { sendToBackend: (msg: Msg) => Cmd.Cm
 export const updateFromBackend = (msg: ToFrontend, model: Model): [Model, Cmd.Cmd<Msg>] => {
     switch (msg[0]) {
         case 'InputMoveTimeLimit_Done':
-        case 'InputMove_Done':
         case 'StartGame_Done':
         case 'StopPlaying_Done':
         case "StartPlaying_Done": {
             const modelNew = msg[1].type === 'Err' ? model : msg[1].value
-            return [{ ...modelNew, openedModal: model.openedModal }, Cmd.None]
+            const merged = mergeWithBackend({ frontendModel: model, backendModel: modelNew })
+            return [merged, Cmd.None]
+        }
+
+        case 'InputMove_Done': {
+            const modelNew = msg[1].type === 'Err' ? model : msg[1].value
+            const merged = mergeWithBackend({ frontendModel: model, backendModel: modelNew })
+            return [{ ...merged, columnIndex: "None" }, Cmd.None]
         }
         default: {
             return exhaustive(msg[0])
@@ -69,7 +105,8 @@ export const updateFromBackend = (msg: ToFrontend, model: Model): [Model, Cmd.Cm
 export const mergeWithBackend = ({ frontendModel, backendModel }: { frontendModel: FrontendModel, backendModel: BackendModel }): FrontendModel => {
     return {
         ...backendModel,
-        openedModal: frontendModel.openedModal
+        openedModal: frontendModel.openedModal,
+        columnIndex: frontendModel.columnIndex
     }
 }
 
@@ -116,6 +153,9 @@ export const View = ({ currentUserId, model, dispatch, store, roomComponent, goB
         )
     }
 
+
+    const currentUserPlayerType = toPlayerType(currentUserId, model)
+
     return (
         <UI.FillBox>
             <UI.Header left={homeButton} title="Connect Four" right={roomComponent} />
@@ -128,6 +168,13 @@ export const View = ({ currentUserId, model, dispatch, store, roomComponent, goB
             <ViewColumns
                 columns={model.columns}
                 onClick={(columnIndex) => dispatch(['InputMove', { userId: currentUserId, columnIndex }])}
+                onHover={(columnIndex) => dispatch(['HoveredOverColumns', { columnIndex }])}
+                disabled={toTurn(model.columns) !== currentUserPlayerType || toStatus(model.columns).type !== 'Playing'}
+                ghost={
+                    currentUserPlayerType !== 'None' && model.columnIndex !== 'None'
+                        ? { playerType: currentUserPlayerType, columnIndex: model.columnIndex }
+                        : undefined
+                }
             />
 
             <UI.Box sx={{ flex: 1 }} />

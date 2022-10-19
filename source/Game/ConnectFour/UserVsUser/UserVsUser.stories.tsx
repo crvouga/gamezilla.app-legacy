@@ -31,6 +31,7 @@ const setupModel: Model = {
     openedModal: "None",
     type: "Setup",
     moveTimeLimit: 7,
+    columnIndex: "None",
     PlayerOne: "None",
     PlayerTwo: "None"
 }
@@ -74,6 +75,7 @@ const gameModel: Model = {
     moveTimeLimit: 7,
     PlayerOne: currentUserId,
     PlayerTwo: userB.userId,
+    columnIndex: "None",
     openedModal: "None",
 }
 
@@ -83,4 +85,3 @@ GameStarted.args = {
         ...gameModel,
     }
 }
-

@@ -1,6 +1,6 @@
 import { Err, Ok, Result } from "../../../Core/Result"
 import { UserId } from "../../../Data/UserId"
-import { ColumnIndex, Columns, emptyColumns, move, MoveProblem, opposite, PlayerType } from "../ConnectFour"
+import { ColumnIndex, Columns, emptyColumns, move, MoveProblem, opposite, PlayerType, toStatus } from "../ConnectFour"
 
 //
 //
@@ -30,6 +30,40 @@ export type GameModel = {
   columns: Columns
 }
 
+type GameOver =
+  | {
+    type: "Draw"
+  }
+  | {
+    type: "DrawByAgreement"
+  }
+  | {
+    type: "Winner",
+    winner: PlayerType
+  }
+  | {
+    type: "Resignation",
+    resigner: PlayerType
+  }
+
+export const toGameOver = (model: SharedModel): GameOver | { type: "None" } => {
+  if (model.type === 'Setup') {
+    return { type: "None" }
+  }
+
+  const status = toStatus(model.columns)
+
+  if (status.type === 'Tie') {
+    return { type: "Draw" }
+  }
+
+  if (status.type === 'Winner') {
+    return { type: "Winner", winner: status.winner }
+  }
+
+  return { type: "None" }
+}
+
 export type MoveTimeLimit = 5 | 7 | 9
 
 export const allMoveTimeLimit: {
@@ -50,7 +84,8 @@ export const initShared = ({ PlayerOne, PlayerTwo }: Pick<SharedModel, 'PlayerOn
 }
 
 export type FrontendModel = SharedModel & {
-  openedModal: "ConfirmResign" | "None"
+  openedModal: "ConfirmResign" | "None",
+  columnIndex: ColumnIndex | "None"
 }
 
 export type BackendModel = SharedModel
@@ -65,7 +100,7 @@ export type BackendModel = SharedModel
 
 export type BackendMsg = ["None"]
 
-export type FrontendMsg = Req
+export type FrontendMsg = Req | ["HoveredOverColumns", { columnIndex: ColumnIndex }]
 
 export type ToBackend = Req
 
@@ -200,7 +235,7 @@ export const handle = (req: Req, model: SharedModel): Res => {
   }
 }
 
-const toPlayerType = (userId: UserId, model: SharedModel): PlayerType | "None" => {
+export const toPlayerType = (userId: UserId, model: SharedModel): PlayerType | "None" => {
   if (model.PlayerOne === userId) {
     return 'PlayerOne'
   }
