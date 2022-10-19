@@ -315,17 +315,7 @@ const subscriptions = (model: Model): Sub.Sub<Msg> => {
 
 const requestListener: Http.RequestListener = (_request, response) => {
   const state = program.state$.getValue()
-  const msgType = state.msg
-    ?.flat(Infinity)
-    .reduce<string | null>(
-      (msgType, subMsgType) =>
-        typeof subMsgType === "string"
-          ? msgType
-            ? `${msgType}.${subMsgType}`
-            : subMsgType
-          : msgType,
-      null,
-    )
+  const msgType = formatMsg(state.msg)
   response.end(JSON.stringify({ msgType: msgType, model: state.model }))
 }
 
