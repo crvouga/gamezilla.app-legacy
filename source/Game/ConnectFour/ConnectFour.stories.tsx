@@ -7,6 +7,7 @@ export default {
     title: "Connect Four/Columns",
     component: ViewColumns,
     args: {
+        onHover: () => { },
         columns: emptyColumns,
         onClick: () => { }
     }
@@ -58,3 +59,14 @@ Tie.args = {
 }
 
 
+export const PlayerOneHover = Template.bind({})
+PlayerOneHover.args = {
+    columns: vertical,
+    ghost: { playerType: "PlayerOne", columnIndex: 5 }
+}
+
+export const PlayerTwoHover = Template.bind({})
+PlayerTwoHover.args = {
+    columns: vertical,
+    ghost: { playerType: "PlayerTwo", columnIndex: 5 }
+}

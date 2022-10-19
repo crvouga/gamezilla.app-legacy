@@ -342,22 +342,27 @@ export const ViewPlayerTwoGradientDef = ({ gradientId }: { gradientId: string })
 }
 
 
+type ViewColumnsProps = {
+  ghost?: { columnIndex: ColumnIndex, playerType: PlayerType };
+  columns: Columns;
+  onClick: (columnIndex: ColumnIndex) => void;
+  onHover: (columnINdex: ColumnIndex) => void;
+  disabled?: boolean
+}
+
 export const ViewColumns = ({
-  columns,
-  onClick,
-  implementation = "svg"
-}: {
-  columns: Columns
-  onClick: (columnIndex: ColumnIndex) => void,
+  implementation = "svg",
+  ...props
+}: ViewColumnsProps & {
   implementation?: "svg" | "canvas"
 }) => {
   switch (implementation) {
     case 'canvas': {
-      return <ViewColumnsCanvas columns={columns} onClick={onClick} />
+      return <ViewColumnsCanvas {...props} />
     }
 
     case 'svg': {
-      return <ViewColumnsSvg columns={columns} onClick={onClick} />
+      return <ViewColumnsSvg {...props} />
     }
   }
 }
@@ -365,10 +370,10 @@ export const ViewColumns = ({
 const ViewColumnsSvg = ({
   columns,
   onClick,
-}: {
-  columns: Columns
-  onClick: (columnIndex: ColumnIndex) => void
-}) => {
+  onHover,
+  ghost,
+  disabled
+}: ViewColumnsProps) => {
   const ids = {
     playerOneGradient: "playerOneGradient",
     playerTwoGradient: "playerTwoGradient",
@@ -480,6 +485,17 @@ const ViewColumnsSvg = ({
         )),
       )}
 
+
+      {!disabled && ghost && (
+        <circle
+          cx={ghost.columnIndex + 0.5}
+          cy={MAX_COLUMN_HEIGHT - (columns[ghost.columnIndex]?.length ?? 0) + 0.5 - 1}
+          r={0.5}
+          style={{ opacity: 2 / 3 }}
+          fill={ghost.playerType === "PlayerOne" ? playerOneFill : playerTwoFill}
+        />
+      )}
+
       <rect
         x={0}
         y={0}
@@ -493,12 +509,19 @@ const ViewColumnsSvg = ({
         <rect
           style={{
             cursor:
-              (columns[columnIndex]?.length ?? 0) >= MAX_COLUMN_HEIGHT
-                ? "not-allowed"
-                : "pointer",
+              disabled
+                ? undefined
+                : (columns[columnIndex]?.length ?? 0) >= MAX_COLUMN_HEIGHT
+                  ? "not-allowed"
+                  : "pointer",
+          }}
+          onMouseOver={() => {
+            if (!disabled && isColumnIndex(columnIndex)) {
+              onHover(columnIndex)
+            }
           }}
           onClick={() => {
-            if (isColumnIndex(columnIndex)) {
+            if (!disabled && isColumnIndex(columnIndex)) {
               onClick(columnIndex)
             }
           }}
@@ -519,10 +542,7 @@ const ViewColumnsSvg = ({
 const ViewColumnsCanvas = ({
   columns,
   onClick,
-}: {
-  columns: Columns
-  onClick: (columnIndex: ColumnIndex) => void
-}) => {
+}: ViewColumnsProps) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
 
   useLayoutEffect(() => {
