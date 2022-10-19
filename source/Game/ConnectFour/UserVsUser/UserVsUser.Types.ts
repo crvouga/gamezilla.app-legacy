@@ -32,28 +32,12 @@ export type GameModel = {
 
 export type MoveTimeLimit = 5 | 7 | 9
 
-export const moveTimeLimit: {
+export const allMoveTimeLimit: {
   [moveTimeLimit in MoveTimeLimit]: MoveTimeLimit
 } = {
   "5": 5,
   "7": 7,
   "9": 9,
-}
-
-export const moveTimeLimitToString = (timeLimit: MoveTimeLimit): string => {
-  switch (timeLimit) {
-    case 5: {
-      return "5 sec"
-    }
-
-    case 7: {
-      return "7 sec"
-    }
-
-    case 9: {
-      return "9 sec"
-    }
-  }
 }
 
 export const initShared = ({ PlayerOne, PlayerTwo }: Pick<SharedModel, 'PlayerOne' | 'PlayerTwo'>): SharedModel => {
@@ -90,25 +74,26 @@ export type ToFrontend = Res
 export type Req =
   | ['StopPlaying', { userId: UserId, }]
   | ['StartPlaying', { userId: UserId, playerType: PlayerType }]
+  | ['InputMoveTimeLimit', { userId: UserId, moveTimeLimit: MoveTimeLimit }]
   | ['StartGame', { userId: UserId }]
   | ['InputMove', { columnIndex: ColumnIndex, userId: UserId }]
 
 export type Res =
   | ['StopPlaying_Done', Result<"not_in_setup" | "not_playing", SharedModel>]
   | ['StartPlaying_Done', Result<"not_in_setup" | "player_taken", SharedModel>]
+  | ['InputMoveTimeLimit_Done', Result<"not_in_setup" | "not_playing", SharedModel>]
   | ['StartGame_Done', Result<"not_in_setup" | "missing_player", SharedModel>]
   | ['InputMove_Done', Result<"not_in_game" | "not_playing" | MoveProblem, SharedModel>]
 
 export const handle = (req: Req, model: SharedModel): Res => {
   switch (req[0]) {
-
     case 'InputMove': {
       if (model.type !== 'Game') {
         return ['InputMove_Done', Err("not_in_game")]
       }
       const { userId, columnIndex } = req[1]
 
-      const playerType: PlayerType | "None" = model.PlayerOne === userId ? 'PlayerOne' : model.PlayerTwo === userId ? 'PlayerTwo' : "None"
+      const playerType = toPlayerType(userId, model)
 
       if (playerType === 'None') {
         return ['InputMove_Done', Err("not_playing")]
@@ -150,6 +135,27 @@ export const handle = (req: Req, model: SharedModel): Res => {
       return ['StartPlaying_Done', Ok(modelNew)]
     }
 
+    case 'InputMoveTimeLimit': {
+      if (model.type !== 'Setup') {
+        return ['InputMoveTimeLimit_Done', Err("not_in_setup")]
+      }
+
+      const { userId, moveTimeLimit } = req[1]
+
+      const playerType = toPlayerType(userId, model)
+
+      if (playerType === 'None') {
+        return ['InputMoveTimeLimit_Done', Err("not_playing")]
+      }
+
+      const modelNew: SharedModel = {
+        ...model,
+        moveTimeLimit
+      }
+
+      return ['InputMoveTimeLimit_Done', Ok(modelNew)]
+    }
+
     case 'StopPlaying': {
       if (model.type !== 'Setup') {
         return ['StopPlaying_Done', Err("not_in_setup")]
@@ -157,7 +163,7 @@ export const handle = (req: Req, model: SharedModel): Res => {
 
       const { userId } = req[1]
 
-      const playerType: PlayerType | "None" = model.PlayerOne === userId ? 'PlayerOne' : model.PlayerTwo === userId ? "PlayerTwo" : "None"
+      const playerType = toPlayerType(userId, model)
 
       if (playerType === "None") {
         return ["StopPlaying_Done", Err("not_playing")]
@@ -194,7 +200,61 @@ export const handle = (req: Req, model: SharedModel): Res => {
   }
 }
 
+const toPlayerType = (userId: UserId, model: SharedModel): PlayerType | "None" => {
+  if (model.PlayerOne === userId) {
+    return 'PlayerOne'
+  }
 
+  if (model.PlayerTwo === userId) {
+    return 'PlayerTwo'
+  }
 
+  return 'None'
+}
 
+export const responseToString = (res: Res): string => {
+  const result = res[1]
 
+  if (result.type === 'Ok') {
+    return ""
+  }
+
+  switch (result.error) {
+    case 'column_is_full': {
+      return "Column is full"
+    }
+
+    case 'game_over': {
+      return "Game is over"
+    }
+
+    case 'missing_player': {
+      return "Missing a player"
+    }
+
+    case 'not_in_game': {
+      return "Must be in game mode"
+    }
+
+    case 'not_in_setup': {
+      return "Must be in setup mode"
+    }
+
+    case "not_playing": {
+      return "Must be playing to change"
+    }
+
+    case 'not_turn': {
+      return "Must be your turn"
+    }
+
+    case 'out_of_bounds': {
+      return "Out of bounds"
+    }
+
+    case 'player_taken': {
+      return "Player is taken"
+    }
+
+  }
+}

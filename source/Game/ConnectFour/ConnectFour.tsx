@@ -345,7 +345,7 @@ export const ViewPlayerTwoGradientDef = ({ gradientId }: { gradientId: string })
 export const ViewColumns = ({
   columns,
   onClick,
-  implementation = "canvas"
+  implementation = "svg"
 }: {
   columns: Columns
   onClick: (columnIndex: ColumnIndex) => void,
@@ -549,11 +549,16 @@ const ViewColumnsCanvas = ({
       style={{ width: "100%" }}
       ref={canvasRef}
       onClick={(event) => {
+        console.log({
+          value: event.pageX - event.currentTarget.offsetLeft,
+          from: [0, event.currentTarget.width],
+          to: [0, COLUMN_COUNT],
+        })
         const columnIndex = Math.floor(
           rescale({
             value: event.pageX - event.currentTarget.offsetLeft,
             from: [0, event.currentTarget.width],
-            to: [0, COLUMN_COUNT - 1],
+            to: [0, COLUMN_COUNT],
           }),
         )
 
@@ -561,16 +566,6 @@ const ViewColumnsCanvas = ({
           onClick(columnIndex)
           return
         }
-
-
-        // const y = Math.floor(
-        //   rescale({
-        //     value: event.pageY - event.currentTarget.offsetTop,
-        //     from: [0, event.currentTarget.height],
-        //     to: [0, MAX_COLUMN_HEIGHT],
-        //   }),
-        // )
-
       }}
     />
   )

@@ -1,9 +1,9 @@
-import { Cmd, Sub } from "../../../Core";
+import { Cmd, exhaustive, Sub } from "../../../Core";
 import * as UI from "../../../UI";
 import * as Store from "../../../Store";
 import { gameTheme, PlayerType, playerTypeToColor, ViewColumns } from "../ConnectFour";
 import { PlayerIcon, PlayerOneIcon, PlayerTwoIcon } from "../Views";
-import { BackendModel, GameModel, SetupModel, FrontendModel, FrontendMsg, handle, initShared, ToFrontend } from "./UserVsUser.Types";
+import { responseToString, BackendModel, GameModel, SetupModel, FrontendModel, FrontendMsg, handle, initShared, ToFrontend, allMoveTimeLimit } from "./UserVsUser.Types";
 import { UserId } from "../../../Data";
 
 
@@ -36,17 +36,22 @@ export type Msg = FrontendMsg
 
 export const update = ({ sendToBackend, }: { sendToBackend: (msg: Msg) => Cmd.Cmd<never> }, msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
     switch (msg[0]) {
+        case 'InputMoveTimeLimit':
         case 'InputMove':
         case 'StartGame':
         case 'StopPlaying':
         case "StartPlaying": {
             return [model, sendToBackend(msg)]
         }
+        default: {
+            return exhaustive(msg[0])
+        }
     }
 };
 
 export const updateFromBackend = (msg: ToFrontend, model: Model): [Model, Cmd.Cmd<Msg>] => {
     switch (msg[0]) {
+        case 'InputMoveTimeLimit_Done':
         case 'InputMove_Done':
         case 'StartGame_Done':
         case 'StopPlaying_Done':
@@ -54,7 +59,11 @@ export const updateFromBackend = (msg: ToFrontend, model: Model): [Model, Cmd.Cm
             const modelNew = msg[1].type === 'Err' ? model : msg[1].value
             return [{ ...modelNew, openedModal: model.openedModal }, Cmd.None]
         }
+        default: {
+            return exhaustive(msg[0])
+        }
     }
+
 };
 
 export const mergeWithBackend = ({ frontendModel, backendModel }: { frontendModel: FrontendModel, backendModel: BackendModel }): FrontendModel => {
@@ -84,14 +93,6 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
 // 
 // 
 
-const avatarSx: UI.Sx = {
-    // width: 36,
-    // height: 36,
-}
-const iconSx: UI.Sx = {
-    width: 64,
-    height: 64,
-}
 
 export const View = ({ currentUserId, model, dispatch, store, roomComponent, goBack, goHome }: { model: Model, store: Store.Model; dispatch: (msg: Msg) => void, roomComponent: UI.ViewNode, goBack: () => void, goHome: () => void, currentUserId: UserId.UserId }) => {
     const homeButton = (
@@ -151,6 +152,7 @@ export const View = ({ currentUserId, model, dispatch, store, roomComponent, goB
 
 const ViewSetup = ({ model, store, dispatch, currentUserId, homeButton, roomComponent, goBack }: { goBack: () => void, currentUserId: UserId.UserId, model: SetupModel, store: Store.Model, dispatch: (msg: Msg) => void, homeButton: UI.ViewNode, roomComponent: UI.ViewNode }) => {
     const startGameResponse = handle(['StartGame', { userId: currentUserId }], model)
+    const inputMoveTimeLimitResponse = handle(['InputMoveTimeLimit', { moveTimeLimit: model.moveTimeLimit, userId: currentUserId }], model)
 
     return (
         <UI.FillBox>
@@ -182,6 +184,25 @@ const ViewSetup = ({ model, store, dispatch, currentUserId, homeButton, roomComp
             />
 
             <UI.Divider sx={{ paddingBottom: 2 }} />
+
+            <UI.Typography
+                color="text.secondary"
+                sx={{ paddingX: 2, paddingTop: 2, paddingBottom: 1 }}
+            >
+                Time Limit
+            </UI.Typography>
+
+            <UI.Box sx={{ paddingX: 2 }}>
+                <UI.Tooltip title={responseToString(inputMoveTimeLimitResponse)}>
+                    <UI.ToggleButtonGroup fullWidth value={model.moveTimeLimit} disabled={inputMoveTimeLimitResponse[1].type === "Err"}>
+                        {Object.values(allMoveTimeLimit).map(moveTimeLimit => (
+                            <UI.ToggleButton key={moveTimeLimit} value={moveTimeLimit} onClick={() => dispatch(['InputMoveTimeLimit', { moveTimeLimit, userId: currentUserId }])}>
+                                {`${moveTimeLimit} sec`}
+                            </UI.ToggleButton>
+                        ))}
+                    </UI.ToggleButtonGroup>
+                </UI.Tooltip>
+            </UI.Box>
 
             <UI.Box sx={{ flex: 1 }} />
 
@@ -243,6 +264,16 @@ const ViewSetupPlayerSlot = ({ dispatch, userId, store, currentUserId, playerTyp
 }
 
 const ViewBannerArt = ({ model, store, }: { model: SetupModel, store: Store.Model }) => {
+    const avatarSx: UI.Sx = {
+        // width: 36,
+        // height: 36,
+    }
+    const iconSx: UI.Sx = {
+        width: 52,
+        height: 52,
+    }
+
+
     return (
         <UI.Box
             sx={{

@@ -4,7 +4,7 @@
   "private": true,
   "type": "commonjs",
   "scripts": {
-    "backend": "npx ts-node-dev ./source/App.Backend.ts",
+    "backend": "ts-node-dev --respawn --no-deps --transpile-only ./source/App.Backend.ts",
     "backend:build": "npx tsc --project tsconfig.json",
     "backend:start": "node --max-old-space-size=300 ./dist/source/App.Backend.js",
     "build-storybook": "build-storybook",
@@ -75,6 +75,7 @@
     "react-test-renderer": "^18.2.0",
     "ts-jest": "^29.0.3",
     "ts-node": "^10.9.1",
+    "ts-node-dev": "^2.0.0",
     "typescript": "^4.8.2",
     "vite": "^3.0.4"
   }
