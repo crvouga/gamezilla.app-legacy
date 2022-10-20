@@ -501,7 +501,6 @@ export const updateReady = (
     case "Party": {
       if (msg[0] === "Party") {
         const [child, cmd, actions] = PartyPage.update(
-          { currentUserId: profile.userId },
           msg[1],
           model[1],
         )

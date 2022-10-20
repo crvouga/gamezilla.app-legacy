@@ -28,7 +28,6 @@ export type Msg = ["Party", Party.Msg]
 type OutAction = Party.Action
 
 export const update = (
-  { currentUserId }: { currentUserId: UserId.UserId },
   msg: Msg,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {

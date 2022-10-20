@@ -28,6 +28,7 @@ import * as Snackbar from "./Snackbar"
 import * as Party from "./Party/Party.Frontend"
 import * as Store from "./Store"
 import * as UI from "./UI"
+import { env } from "./env"
 
 //
 //
@@ -757,11 +758,7 @@ const toStatus = ({
 //
 
 const backendUrl =
-  process.env['NODE_ENV'] === "production"
-    ? // todo setup this url
-    // ? `https://backend.gamezilla.app/`
-    "https://gamezilla-production.up.railway.app/"
-    : `http://localhost:${Wire.backendServerPort}/`
+  env.isProduction ? env.backendUrl : `http://localhost:${Wire.backendServerPort}/`
 
 const socketClient: Socket<
   Wire.ServerToClientEvents,
