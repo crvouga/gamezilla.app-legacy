@@ -1,9 +1,9 @@
 import { Cmd, exhaustive, Sub } from "../../../Core";
 import * as UI from "../../../UI";
 import * as Store from "../../../Store";
-import { gameTheme, PlayerType, playerTypeToColor, toStatus, toTurn, ViewColumns } from "../ConnectFour";
+import { ColumnIndex, gameTheme, PlayerType, playerTypeToColor, toStatus, toTurn, ViewColumns } from "../ConnectFour";
 import { PlayerIcon, PlayerOneIcon, PlayerTwoIcon } from "../Views";
-import { toPlayerType, responseToString, BackendModel, GameModel, SetupModel, FrontendModel, FrontendMsg, handle, initShared, ToFrontend, allMoveTimeLimit, ToBackend } from "./UserVsUser.Types";
+import { toPlayerType, responseToString, BackendModel, GameModel, SetupModel, FrontendModel, FrontendMsg, handle, initShared, ToFrontend, allMoveTimeLimit, ToBackend, GameOverModel } from "./UserVsUser.Types";
 import { UserId } from "../../../Data";
 
 
@@ -20,7 +20,7 @@ export type Model = FrontendModel
 export const init = ({ PlayerOne, PlayerTwo }: Pick<FrontendModel, 'PlayerOne' | "PlayerTwo">): FrontendModel => {
     return {
         ...initShared({ PlayerOne, PlayerTwo }),
-        columnIndex: "None",
+        ghostIndex: "None",
         openedModal: "None"
     }
 }
@@ -52,10 +52,11 @@ export const update = ({ sendToBackend, }: { sendToBackend: (msg: ToBackend) => 
         //
         //
         //
+        //
 
         case 'HoveredOverColumns': {
             const { columnIndex } = msg[1]
-            return [{ ...model, columnIndex }, Cmd.None]
+            return [{ ...model, ghostIndex: columnIndex }, Cmd.None]
         }
 
         // 
@@ -64,6 +65,8 @@ export const update = ({ sendToBackend, }: { sendToBackend: (msg: ToBackend) => 
         //
         // 
 
+        case 'RematchRequest':
+        case 'RematchRespond':
         case 'InputMoveTimeLimit':
         case 'StartGame':
         case 'StopPlaying':
@@ -71,7 +74,7 @@ export const update = ({ sendToBackend, }: { sendToBackend: (msg: ToBackend) => 
             return [model, sendToBackend(msg)]
         }
         case 'InputMove': {
-            return [{ ...model, columnIndex: "None" }, sendToBackend(msg)]
+            return [{ ...model, ghostIndex: "None" }, sendToBackend(msg)]
         }
         default: {
             return exhaustive(msg[0])
@@ -84,6 +87,8 @@ export const updateFromBackend = (msg: ToFrontend, model: Model): [Model, Cmd.Cm
         case 'InputMoveTimeLimit_Done':
         case 'StartGame_Done':
         case 'StopPlaying_Done':
+        case 'RematchRequest_Done':
+        case 'RematchRespond_Done':
         case "StartPlaying_Done": {
             const modelNew = msg[1].type === 'Err' ? model : msg[1].value
             const merged = mergeWithBackend({ frontendModel: model, backendModel: modelNew })
@@ -93,7 +98,7 @@ export const updateFromBackend = (msg: ToFrontend, model: Model): [Model, Cmd.Cm
         case 'InputMove_Done': {
             const modelNew = msg[1].type === 'Err' ? model : msg[1].value
             const merged = mergeWithBackend({ frontendModel: model, backendModel: modelNew })
-            return [{ ...merged, columnIndex: "None" }, Cmd.None]
+            return [{ ...merged, ghostIndex: "None" }, Cmd.None]
         }
         default: {
             return exhaustive(msg[0])
@@ -106,7 +111,7 @@ export const mergeWithBackend = ({ frontendModel, backendModel }: { frontendMode
     return {
         ...backendModel,
         openedModal: frontendModel.openedModal,
-        columnIndex: frontendModel.columnIndex
+        ghostIndex: frontendModel.ghostIndex
     }
 }
 
@@ -153,6 +158,50 @@ export const View = ({ currentUserId, model, dispatch, store, roomComponent, goB
         )
     }
 
+    if (model.type === 'Game') {
+        return (
+            <ViewGame
+                currentUserId={currentUserId}
+                ghostIndex={model.ghostIndex}
+                model={model}
+                store={store}
+                homeButton={homeButton}
+                roomComponent={roomComponent}
+                dispatch={dispatch}
+            />
+        )
+    }
+
+    return (
+        <ViewGameOver
+            currentUserId={currentUserId}
+            model={model}
+            store={store}
+            goBack={goBack}
+            homeButton={homeButton}
+            roomComponent={roomComponent}
+            dispatch={dispatch}
+        />
+    )
+}
+
+const ViewGame = ({
+    currentUserId,
+    model,
+    dispatch,
+    store,
+    roomComponent,
+    homeButton,
+    ghostIndex
+}: {
+    model: GameModel;
+    store: Store.Model;
+    dispatch: (msg: Msg) => void;
+    roomComponent: UI.ViewNode;
+    homeButton: UI.ViewNode;
+    currentUserId: UserId.UserId;
+    ghostIndex: ColumnIndex | "None"
+}) => {
 
     const currentUserPlayerType = toPlayerType(currentUserId, model)
 
@@ -165,17 +214,19 @@ export const View = ({ currentUserId, model, dispatch, store, roomComponent, goB
                 <ViewGamePlayerSlot playerType="PlayerTwo" model={model} store={store} />
             </UI.Box>
 
-            <ViewColumns
-                columns={model.columns}
-                onClick={(columnIndex) => dispatch(['InputMove', { userId: currentUserId, columnIndex }])}
-                onHover={(columnIndex) => dispatch(['HoveredOverColumns', { columnIndex }])}
-                disabled={toTurn(model.columns) !== currentUserPlayerType || toStatus(model.columns).type !== 'Playing'}
-                ghost={
-                    currentUserPlayerType !== 'None' && model.columnIndex !== 'None'
-                        ? { playerType: currentUserPlayerType, columnIndex: model.columnIndex }
-                        : undefined
-                }
-            />
+            <UI.Box sx={{ position: "relative", overflow: "hidden" }}>
+                <ViewColumns
+                    columns={model.columns}
+                    onClick={(columnIndex) => dispatch(['InputMove', { userId: currentUserId, columnIndex }])}
+                    onHover={(columnIndex) => dispatch(['HoveredOverColumns', { columnIndex }])}
+                    disabled={toTurn(model.columns) !== currentUserPlayerType}
+                    ghost={
+                        currentUserPlayerType !== 'None' && ghostIndex !== 'None'
+                            ? { playerType: currentUserPlayerType, columnIndex: ghostIndex }
+                            : undefined
+                    }
+                />
+            </UI.Box>
 
             <UI.Box sx={{ flex: 1 }} />
 
@@ -195,6 +246,122 @@ export const View = ({ currentUserId, model, dispatch, store, roomComponent, goB
         </UI.FillBox>
     )
 
+}
+
+const ViewGameOver = ({
+    currentUserId,
+    model,
+    dispatch,
+    store,
+    roomComponent,
+    homeButton,
+    goBack
+}: {
+    goBack: () => void,
+    model: GameOverModel,
+    store: Store.Model;
+    dispatch: (msg: Msg) => void,
+    roomComponent: UI.ViewNode,
+    homeButton: UI.ViewNode,
+    currentUserId: UserId.UserId,
+}) => {
+    return (
+        <UI.FillBox>
+            <UI.Header left={homeButton} title="Connect Four" right={roomComponent} />
+
+            <UI.Box sx={{ paddingX: 1, gap: 1, marginBottom: 2, display: 'flex', width: "100%", overflow: "hidden" }}>
+                <ViewGamePlayerSlot playerType="PlayerOne" model={model} store={store} />
+                <ViewGamePlayerSlot playerType="PlayerTwo" model={model} store={store} />
+            </UI.Box>
+
+            <UI.Box sx={{ position: "relative", overflow: "hidden" }}>
+                <ViewColumns columns={model.columns} disabled />
+
+                {model.type === 'GameOver' && <UI.Box
+                    sx={{
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        width: "100%",
+                        height: "100%",
+                        maxHeight: "100%",
+                        background: "rgba(0, 0, 0, 0.5)",
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: "center",
+                        flexDirection: "column",
+                        color: "#fff",
+                    }}
+                >
+                    <ViewGameOverMessage currentUserId={currentUserId} store={store} model={model} />
+                </UI.Box>}
+            </UI.Box>
+
+            <UI.Box sx={{ flex: 1 }} />
+
+            <UI.Box sx={{ display: 'flex', padding: 2, gap: 2 }}>
+                <UI.Button variant="outlined" fullWidth onClick={goBack}>
+                    Back
+                </UI.Button>
+
+                <UI.Button variant="contained" fullWidth>
+                    Rematch
+                </UI.Button>
+            </UI.Box>
+
+        </UI.FillBox>
+    )
+}
+
+const ViewGameOverMessage = ({ currentUserId, model, store }: { currentUserId: UserId.UserId, model: GameOverModel, store: Store.Model }) => {
+    const size = { width: 84, height: 84 }
+
+    if (model.gameOver.type === 'Draw') {
+        return <>
+            <UI.Typography sx={{ fontSize: 64 }}>
+                Tie
+            </UI.Typography>
+        </>
+    }
+
+    if (model.gameOver.type === 'DrawByAgreement') {
+        return <>draw by agreement</>
+    }
+
+    if (model.gameOver.type === 'Resignation') {
+        return <>resignation</>
+    }
+
+    if (model.gameOver.type === 'Winner') {
+        const { winner } = model.gameOver
+
+        const currentUserPlayer = toPlayerType(currentUserId, model)
+
+        if (currentUserPlayer === 'None') {
+            return (
+                <>
+                    <UI.Box sx={{ display: 'flex', alignItems: 'center', width: "100%", justifyContent: 'center' }}>
+                        <PlayerIcon sx={{ ...size, marginRight: 2 }} playerType={winner} />
+                        <UI.Avatar sx={{ ...size }} src={store.Profile[model[winner]]?.avatarUrl} />
+                    </UI.Box>
+                    <UI.Typography sx={{ fontSize: 50 }}>
+                        Winner
+                    </UI.Typography>
+                </>
+            )
+        }
+
+        return (
+            <>
+                <UI.Typography sx={{ fontSize: 64 }}>
+                    {currentUserPlayer === winner ? "You Won" : "You Lost"}
+                </UI.Typography>
+            </>
+        )
+    }
+
+
+    return <></>
 }
 
 const ViewSetup = ({ model, store, dispatch, currentUserId, homeButton, roomComponent, goBack }: { goBack: () => void, currentUserId: UserId.UserId, model: SetupModel, store: Store.Model, dispatch: (msg: Msg) => void, homeButton: UI.ViewNode, roomComponent: UI.ViewNode }) => {
@@ -271,7 +438,7 @@ const ViewSetup = ({ model, store, dispatch, currentUserId, homeButton, roomComp
 
 }
 
-const ViewGamePlayerSlot = ({ model, playerType, store }: { model: GameModel, playerType: PlayerType, store: Store.Model }) => {
+const ViewGamePlayerSlot = ({ model, playerType, store }: { model: GameModel | GameOverModel, playerType: PlayerType, store: Store.Model }) => {
     const size = { width: 32, height: 32, }
     return (
         <UI.Box sx={{ display: 'flex', alignItems: 'center', flex: 1, overflow: "hidden" }}>

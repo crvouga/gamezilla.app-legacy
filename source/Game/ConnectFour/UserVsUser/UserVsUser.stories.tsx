@@ -1,7 +1,7 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react"
-import { store, userA, userB } from '../../../TestData'
+import { store, userA, userB, userC } from '../../../TestData'
 import * as UI from "../../../UI"
-import { emptyColumns } from "../ConnectFour"
+import { emptyColumns, mapColumns, PlayerType } from "../ConnectFour"
 import { Model, View } from "./UserVsUser.Frontend"
 
 const currentUserId = userA.userId
@@ -31,7 +31,7 @@ const setupModel: Model = {
     openedModal: "None",
     type: "Setup",
     moveTimeLimit: 7,
-    columnIndex: "None",
+    ghostIndex: "None",
     PlayerOne: "None",
     PlayerTwo: "None"
 }
@@ -75,7 +75,7 @@ const gameModel: Model = {
     moveTimeLimit: 7,
     PlayerOne: currentUserId,
     PlayerTwo: userB.userId,
-    columnIndex: "None",
+    ghostIndex: "None",
     openedModal: "None",
 }
 
@@ -85,3 +85,72 @@ GameStarted.args = {
         ...gameModel,
     }
 }
+
+const p1: PlayerType = "PlayerOne"
+const p2: PlayerType = "PlayerTwo"
+
+const gameOverModel: Model = {
+    type: "GameOver",
+    columns: [
+        [],
+        [p1],
+        [p2, p1, p2, p1],
+        [p1, p2, p1],
+        [p2, p1, p2, p1],
+        [p1],
+        [],
+    ],
+    gameOver: { type: "Winner", winner: p1 },
+    moveTimeLimit: 7,
+    ghostIndex: "None",
+    openedModal: "None",
+    PlayerOne: gameModel.PlayerOne,
+    PlayerTwo: gameModel.PlayerTwo,
+}
+
+export const CurrentUserWon = Template.bind({})
+CurrentUserWon.args = {
+    model: {
+        ...gameOverModel,
+    }
+}
+
+export const CurrentUserLost = Template.bind({})
+CurrentUserLost.args = {
+    model: {
+        ...gameOverModel,
+        columns: mapColumns(gameOverModel.columns, column => column.map(slot => slot === 'PlayerOne' ? 'PlayerTwo' : 'PlayerOne')),
+        gameOver: {
+            type: "Winner",
+            winner: "PlayerTwo"
+        }
+    }
+}
+
+export const SpectatingWin = Template.bind({})
+SpectatingWin.args = {
+    model: {
+        ...gameOverModel,
+        PlayerOne: userC.userId,
+    }
+}
+
+export const Tie = Template.bind({})
+Tie.args = {
+    model: {
+        ...gameOverModel,
+        columns: [
+            [p1, p2, p1, p2, p1, p2],
+            [p1, p2, p1, p2, p1, p2],
+            [p1, p2, p1, p2, p1, p2],
+            [p2, p1, p2, p1, p2, p1],
+            [p1, p2, p1, p2, p1, p2],
+            [p1, p2, p1, p2, p1, p2],
+            [p1, p2, p1, p2, p1, p2],
+        ],
+        gameOver: {
+            type: "Draw"
+        }
+    }
+}
+
