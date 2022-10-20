@@ -80,7 +80,13 @@ export const update = (
 
     case "ConnectFour": {
       if (model[0] === "ConnectFour") {
-        return tagUpdate("ConnectFour", ConnectFour.update(msg[1], model[1]))
+        return tagUpdate("ConnectFour",
+          ConnectFour.update(
+            { sendToRoom: msg => sendToRoom(['ConnectFour', msg]) },
+            msg[1],
+            model[1]
+          )
+        )
       }
       return [model, Cmd.None]
     }
@@ -241,24 +247,24 @@ export const updateFromFrontend = (
 //
 
 export const subscriptions = (
-  roomId: RoomId.RoomId,
+  intervalId: string,
   model: Model,
 ): Sub.Sub<Msg> => {
   switch (model[0]) {
     case "ConnectFour": {
-      return tagSub("ConnectFour", ConnectFour.subscriptions(model[1]))
+      return tagSub("ConnectFour", ConnectFour.subscriptions(intervalId, model[1]))
     }
     case "TicTacToe": {
-      return tagSub("TicTacToe", TicTacToe.subscriptions(roomId, model[1]))
+      return tagSub("TicTacToe", TicTacToe.subscriptions(intervalId, model[1]))
     }
     case "Snake": {
-      return tagSub("Snake", Snake.subscriptions(roomId, model[1]))
+      return tagSub("Snake", Snake.subscriptions(intervalId, model[1]))
     }
     case "Chess": {
-      return tagSub("Chess", Chess.subscriptions(roomId, model[1]))
+      return tagSub("Chess", Chess.subscriptions(intervalId, model[1]))
     }
     case "Tetris": {
-      return tagSub("Tetris", Tetris.subscriptions(roomId, model[1]))
+      return tagSub("Tetris", Tetris.subscriptions(intervalId, model[1]))
     }
   }
 }

@@ -100,6 +100,13 @@ export const updateFromBackend = (msg: ToFrontend, model: Model): [Model, Cmd.Cm
             const merged = mergeWithBackend({ frontendModel: model, backendModel: modelNew })
             return [{ ...merged, ghostIndex: "None" }, Cmd.None]
         }
+
+        case 'Tick_Done': {
+            const modelNew = msg[1]
+            const merged = mergeWithBackend({ frontendModel: model, backendModel: modelNew })
+            return [merged, Cmd.None]
+        }
+
         default: {
             return exhaustive(msg[0])
         }
@@ -209,7 +216,7 @@ const ViewGame = ({
         <UI.FillBox>
             <UI.Header left={homeButton} title="Connect Four" right={roomComponent} />
 
-            <UI.Box sx={{ paddingX: 1, gap: 1, marginBottom: 2, display: 'flex', width: "100%", overflow: "hidden" }}>
+            <UI.Box sx={{ paddingX: 1, gap: 2, marginBottom: 2, display: 'flex', width: "100%", overflow: "hidden" }}>
                 <ViewGamePlayerSlot playerType="PlayerOne" model={model} store={store} />
                 <ViewGamePlayerSlot playerType="PlayerTwo" model={model} store={store} />
             </UI.Box>
@@ -447,6 +454,11 @@ const ViewGamePlayerSlot = ({ model, playerType, store }: { model: GameModel | G
             <UI.Typography noWrap>
                 {store.Profile[model[playerType]]?.username ?? "..."}
             </UI.Typography>
+            {model.type === 'Game' && toTurn(model.columns) === playerType && (
+                <UI.Typography sx={{ marginLeft: 1, fontSize: 32 }}>
+                    {model.moveCountDown}
+                </UI.Typography>
+            )}
         </UI.Box>
     )
 }
