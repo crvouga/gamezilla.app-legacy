@@ -751,13 +751,10 @@ const toStatus = ({
 //
 //
 
-
-
-
-const isProduction = process.env['NODE_ENV'] === "production"
-
 const backendUrl =
-  isProduction
+  // todo remove this
+  // @ts-ignore
+  import.meta.env.PROD
     ? "https://backend.gamezilla.app/"
     : `http://localhost:${Wire.backendServerPort}/`
 
