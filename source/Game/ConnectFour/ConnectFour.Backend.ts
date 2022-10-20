@@ -1,4 +1,4 @@
-import { Cmd, Sub, tagCmd } from "../../Core"
+import { Cmd, Sub, tagCmd, tagSub } from "../../Core"
 import {
   BackendModel,
   BackendMsg,
@@ -28,9 +28,17 @@ export const init: Model = { type: "None" }
 
 export type Msg = BackendMsg
 
-export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
+export const update = ({ sendToRoom }: { sendToRoom: (msg: ToFrontend) => Cmd.Cmd<never> }, msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
     case 'UserVsUser': {
+      if (model.type === 'UserVsUser') {
+        const [child, cmd] = UserVsUser.update(
+          { sendToRoom: msg => sendToRoom(['UserVsUser', msg]) },
+          msg[1],
+          model.child
+        )
+        return [{ type: "UserVsUser", child }, tagCmd("UserVsUser", cmd)]
+      }
       return [model, Cmd.None]
     }
   }
@@ -83,6 +91,18 @@ export const updateFromFrontend = (
 //
 //
 
-export const subscriptions = (model: Model): Sub.Sub<Msg> => {
-  return Sub.batch<Msg>([])
+export const subscriptions = (intervalId: string, model: Model): Sub.Sub<Msg> => {
+  switch (model.type) {
+    case 'None': {
+      return Sub.None
+    }
+
+    case 'UserVsBot': {
+      return Sub.None
+    }
+
+    case 'UserVsUser': {
+      return tagSub("UserVsUser", UserVsUser.subscriptions(intervalId, model.child))
+    }
+  }
 }

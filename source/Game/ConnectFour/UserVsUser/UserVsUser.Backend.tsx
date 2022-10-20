@@ -1,5 +1,5 @@
-import { Cmd, Sub } from "../../../Core";
-import { BackendMsg, ToBackend, initShared, BackendModel, handle, ToFrontend } from "./UserVsUser.Types";
+import { Cmd, Sub, Time } from "../../../Core";
+import { BackendMsg, ToBackend, initShared, BackendModel, handle, ToFrontend, tick } from "./UserVsUser.Types";
 
 //
 //
@@ -23,10 +23,11 @@ export const init = initShared
 
 export type Msg = BackendMsg
 
-export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
+export const update = ({ sendToRoom }: { sendToRoom: (msg: ToFrontend) => Cmd.Cmd<never> }, msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
     switch (msg[0]) {
-        case "None": {
-            return [model, Cmd.None]
+        case "Tick": {
+            const modelNew = tick(model)
+            return [modelNew, sendToRoom(['Tick_Done', modelNew])]
         }
     }
 };
@@ -61,6 +62,23 @@ export const updateFromFrontend = ({ sendToClient, sendToRoom }: { sendToClient:
 //
 //
 
-export const subscriptions = (model: Model): Sub.Sub<Msg> => {
-    return Sub.None;
+export const subscriptions = (intervalId: string, model: Model): Sub.Sub<Msg> => {
+    switch (model.type) {
+
+        case 'GameOver': {
+            return Sub.None;
+        }
+
+        case 'Setup': {
+            return Sub.None;
+        }
+
+        case 'Game': {
+            return Time.every(
+                intervalId,
+                1000,
+                (): Msg => ['Tick']
+            );
+        }
+    }
 };

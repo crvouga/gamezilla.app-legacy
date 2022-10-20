@@ -71,7 +71,7 @@ SetupReady.args = {
 const gameModel: Model = {
     type: "Game",
     columns: emptyColumns,
-    moveCountDown: 3,
+    moveCountDown: 7,
     moveTimeLimit: 7,
     PlayerOne: currentUserId,
     PlayerTwo: userB.userId,

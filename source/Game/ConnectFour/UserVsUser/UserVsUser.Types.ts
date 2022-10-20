@@ -1,7 +1,7 @@
 import { exhaustive } from "../../../Core"
 import { Err, Ok, Result } from "../../../Core/Result"
 import { UserId } from "../../../Data/UserId"
-import { ColumnIndex, Columns, emptyColumns, move, MoveProblem, opposite, PlayerType, toStatus } from "../ConnectFour"
+import { ColumnIndex, Columns, emptyColumns, MAX_COLUMN_HEIGHT, move, MoveProblem, opposite, PlayerType, toStatus } from "../ConnectFour"
 
 //
 //
@@ -109,13 +109,13 @@ export type BackendModel = SharedModel
 //
 //
 
-export type BackendMsg = ["None"]
+export type BackendMsg = Tick
 
 export type FrontendMsg = Req | ["HoveredOverColumns", { columnIndex: ColumnIndex }]
 
 export type ToBackend = Req
 
-export type ToFrontend = Res
+export type ToFrontend = Res | Tick_Done
 
 export type Req =
   | ['StopPlaying', { userId: UserId, }]
@@ -163,7 +163,8 @@ export const handle = (req: Req, model: SharedModel): Res => {
       if (status.type === 'Playing') {
         const modelNew: SharedModel = {
           ...model,
-          columns: columnsNew
+          columns: columnsNew,
+          moveCountDown: model.moveTimeLimit,
         }
 
         return ['InputMove_Done', Ok(modelNew)]
@@ -342,4 +343,42 @@ export const responseToString = (res: Res): string => {
       return exhaustive(result)
     }
   }
+}
+
+// 
+// 
+// 
+// 
+// 
+
+type Tick = ["Tick"]
+type Tick_Done = ["Tick_Done", SharedModel]
+
+export const tick = (model: SharedModel): SharedModel => {
+
+  if (model.type !== 'Game') {
+    return model
+  }
+
+  const moveCountDownNew = Math.floor(Math.max(0, model.moveCountDown - 1))
+
+  if (moveCountDownNew > 0) {
+    const modelNew: SharedModel = {
+      ...model,
+      moveCountDown: moveCountDownNew
+    }
+
+    return modelNew
+  }
+
+
+  const openColumnIndexes = model.columns.flatMap((column, columnIndex) => column.length >= MAX_COLUMN_HEIGHT ? [] : [columnIndex])
+
+  const randomColumnIndex = openColumnIndexes[Math.floor(Math.random() * openColumnIndexes.length)]
+
+  // if (!randomColumnIndex) {
+  //   return Math.
+  // }
+
+  return { ...model, moveCountDown: moveCountDownNew }
 }
