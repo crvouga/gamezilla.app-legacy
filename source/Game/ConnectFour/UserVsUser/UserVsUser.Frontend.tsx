@@ -276,7 +276,7 @@ const ViewGameOver = ({
         <UI.FillBox>
             <UI.Header left={homeButton} title="Connect Four" right={roomComponent} />
 
-            <UI.Box sx={{ paddingX: 1, gap: 1, marginBottom: 2, display: 'flex', width: "100%", overflow: "hidden" }}>
+            <UI.Box sx={{ paddingX: 1, gap: 2, marginBottom: 2, display: 'flex', width: "100%", overflow: "hidden" }}>
                 <ViewGamePlayerSlot playerType="PlayerOne" model={model} store={store} />
                 <ViewGamePlayerSlot playerType="PlayerTwo" model={model} store={store} />
             </UI.Box>
