@@ -27,7 +27,7 @@ export type Column = readonly PlayerType[]
 
 export type Columns = [Column, Column, Column, Column, Column, Column, Column]
 
-const mapColumns = (columns: Columns, f: (column: Column, columnIndex: ColumnIndex) => Column): Columns => {
+export const mapColumns = (columns: Columns, f: (column: Column, columnIndex: ColumnIndex) => Column): Columns => {
   return [
     f(columns[0], 0),
     f(columns[1], 1),
@@ -343,10 +343,10 @@ export const ViewPlayerTwoGradientDef = ({ gradientId }: { gradientId: string })
 
 
 type ViewColumnsProps = {
-  ghost?: { columnIndex: ColumnIndex, playerType: PlayerType };
   columns: Columns;
-  onClick: (columnIndex: ColumnIndex) => void;
-  onHover: (columnINdex: ColumnIndex) => void;
+  ghost?: { columnIndex: ColumnIndex, playerType: PlayerType };
+  onClick?: (columnIndex: ColumnIndex) => void;
+  onHover?: (columnINdex: ColumnIndex) => void;
   disabled?: boolean
 }
 
@@ -509,19 +509,19 @@ const ViewColumnsSvg = ({
         <rect
           style={{
             cursor:
-              disabled
+              disabled || !onClick
                 ? undefined
                 : (columns[columnIndex]?.length ?? 0) >= MAX_COLUMN_HEIGHT
                   ? "not-allowed"
                   : "pointer",
           }}
           onMouseOver={() => {
-            if (!disabled && isColumnIndex(columnIndex)) {
+            if (!disabled && isColumnIndex(columnIndex) && onHover) {
               onHover(columnIndex)
             }
           }}
           onClick={() => {
-            if (!disabled && isColumnIndex(columnIndex)) {
+            if (!disabled && isColumnIndex(columnIndex) && onClick) {
               onClick(columnIndex)
             }
           }}
@@ -582,7 +582,7 @@ const ViewColumnsCanvas = ({
           }),
         )
 
-        if (isColumnIndex(columnIndex)) {
+        if (onClick && isColumnIndex(columnIndex)) {
           onClick(columnIndex)
           return
         }
