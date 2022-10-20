@@ -2,33 +2,27 @@ import * as ReactDomClient from "react-dom/client"
 import { io, Socket } from "socket.io-client"
 import { FrontendModel, FrontendMsg, ToFrontend } from "./App.Types"
 import * as Auth from "./Auth"
-import * as Wire from "./Wire"
-import * as Debug from "./Debug/Debug.Frontend"
 import {
   andThen,
   andThenMany,
-  Browser,
-  LocalStorage,
-  Cmd,
+  Browser, Cmd,
   Debug as DebugCore,
-  exhaustive,
-  Option,
-  p,
-  RemoteData,
+  exhaustive, LocalStorage, Option,
+  p, Platform, RemoteData,
   Sub,
   t,
   tagCmd,
-  tagSub,
-  Platform,
+  tagSub
 } from "./Core"
+import * as Debug from "./Debug/Debug.Frontend"
 import * as GameRoom from "./Game/GameRoom.Frontend"
 import * as Pages from "./Pages"
+import * as Party from "./Party/Party.Frontend"
 import * as Route from "./Route"
 import * as Snackbar from "./Snackbar"
-import * as Party from "./Party/Party.Frontend"
 import * as Store from "./Store"
 import * as UI from "./UI"
-import { env } from "./env"
+import * as Wire from "./Wire"
 
 //
 //
@@ -757,8 +751,15 @@ const toStatus = ({
 //
 //
 
+
+
+
+const isProduction = process.env['NODE_ENV'] === "production"
+
 const backendUrl =
-  env.isProduction ? env.backendUrl : `http://localhost:${Wire.backendServerPort}/`
+  isProduction
+    ? "https://backend.gamezilla.app/"
+    : `http://localhost:${Wire.backendServerPort}/`
 
 const socketClient: Socket<
   Wire.ServerToClientEvents,
