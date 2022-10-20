@@ -1,8 +1,7 @@
+import { Cmd } from "../Core"
 import * as Route from "../Route"
 import * as Profile from "../Store/Profile"
 import * as UI from "../UI"
-import { Cmd } from "../Core"
-import { UserId } from "../Data"
 
 //
 //
@@ -32,11 +31,7 @@ export type Msg =
   | ["ClickedChangedAvatar"]
   | ["ClickedTheme"]
 
-export const update = (
-  { userId }: { userId: UserId.UserId },
-  msg: Msg,
-  model: Model,
-): [Model, Cmd.Cmd<Msg>] => {
+export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
     case "ClickedAvatar":
       return [model, Route.push(["ProfileUpdateAvatar"])]

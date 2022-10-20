@@ -75,7 +75,7 @@ export const transpose = (board: Board): Board => {
 
   const matrixNew = matrix.reduce<Cell[][]>(
     (prev, next) =>
-      next.map((item, i) => (prev[i] || []).concat(next[i] ?? [])),
+      next.map((_item, i) => (prev[i] || []).concat(next[i] ?? [])),
     [],
   )
 
@@ -90,7 +90,7 @@ export const toFilledRows = (board: Board): number[] => {
   const filledRows: number[] = []
 
   for (let x = 0; x < board.columnCount; x++) {
-    for (let y = 0; y < board.rowCount; y++) {}
+    for (let y = 0; y < board.rowCount; y++) { }
   }
 
   return filledRows

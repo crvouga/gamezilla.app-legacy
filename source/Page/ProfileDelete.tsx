@@ -67,7 +67,6 @@ export const update = (
 export const View = ({
   store,
   profileId,
-  model,
   dispatch,
 }: {
   store: Store.Model

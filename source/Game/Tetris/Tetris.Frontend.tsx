@@ -1,22 +1,15 @@
+import { useLayoutEffect, useRef } from "react"
 import { Cmd, exhaustive, Keyboard, Option, Sub } from "../../Core"
 import * as UI from "../../UI"
-import {
-  initShared,
-  ToFrontend,
-  FrontendModel,
-  FrontendMsg,
-  BackendModel,
-  columnCount,
-  rowCount,
-  toPiece,
-  ToBackend,
-  toGhostPiece,
-} from "./Tetris.Types"
-import * as Piece from "./Piece"
-import * as Direction from "./Direction"
 import * as Board from "./Board"
+import * as Direction from "./Direction"
+import * as Piece from "./Piece"
 import * as Position from "./Position"
-import { useEffect, useLayoutEffect, useRef, useState } from "react"
+import {
+  BackendModel,
+  columnCount, FrontendModel,
+  FrontendMsg, initShared, rowCount, ToBackend, ToFrontend, toGhostPiece, toPiece
+} from "./Tetris.Types"
 
 //
 //
@@ -239,7 +232,7 @@ export const mergeWithBackend = ({
 //
 //
 
-export const subscriptions = (model: Model): Sub.Sub<Msg> => {
+export const subscriptions = (_model: Model): Sub.Sub<Msg> => {
   return Keyboard.keyDowns<Msg>((key) => ["PressedKey", key])
 }
 
@@ -251,8 +244,8 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
 //
 //
 
-const gridStroke = "rgba(255, 255, 255, 0.2)"
-const gridStrokeWidth = 0.025
+// const gridStroke = "rgba(255, 255, 255, 0.2)"
+// const gridStrokeWidth = 0.025
 
 export const View = ({
   model,

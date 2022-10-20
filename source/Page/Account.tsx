@@ -1,5 +1,4 @@
 import { Cmd } from "../Core"
-import { UserId } from "../Data"
 import * as Route from "../Route"
 import * as UI from "../UI"
 
@@ -31,7 +30,6 @@ export type Msg =
   | ["ClickedDebug"]
 
 export const update = (
-  { userId }: { userId: UserId.UserId },
   msg: Msg,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {

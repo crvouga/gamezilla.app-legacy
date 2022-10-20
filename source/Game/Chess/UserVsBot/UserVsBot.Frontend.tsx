@@ -5,7 +5,7 @@ import * as Store from "../../../Store"
 import * as UI from "../../../UI"
 import * as Board from "../Board"
 import * as Sounds from "../Sounds"
-import { BannerArt, PawnIcon, VersusHeader } from "../Views"
+import { PawnIcon, VersusHeader } from "../Views"
 import {
   BackendModel,
   FrontendModel,
@@ -19,10 +19,8 @@ import {
   isBotTurn,
   Res,
   SharedModel,
-  startGame,
-  stopGame,
-  ToBackend,
-  ToFrontend,
+  startGame, ToBackend,
+  ToFrontend
 } from "./UserVsBot.Types"
 
 //
@@ -510,7 +508,7 @@ export const View = ({
     )
   }
 
-  const stopGameResult = stopGame({ userId: currentUserId }, model.sharedModel)
+  // const stopGameResult = stopGame({ userId: currentUserId }, model.sharedModel)
 
   const botSlot = (
     <UI.Box sx={{ paddingX: 2, display: "flex", alignItems: "center" }}>

@@ -1,26 +1,13 @@
-import { Cmd, exhaustive, Option, Sub, Time } from "../../../Core"
-import { UserId } from "../../../Data"
+import { Cmd, exhaustive, Sub, Time } from "../../../Core"
 import * as Board from "../Board"
 import {
   BackendModel,
-  BackendMsg,
-  clockTicked,
-  countDownElapsed,
-  initShared,
-  inputClock,
-  inputPlayer,
-  inputMove,
-  newGame,
-  requestToDraw,
-  resign,
-  respondToDraw,
-  Res,
-  startGame,
+  BackendMsg, cancelDraw, cancelStartGame, clockTicked,
+  countDownElapsed, initBackend, inputClock, inputMove, inputPlayer, newGame,
+  requestToDraw, Res, resign,
+  respondToDraw, startGame,
   ToBackend,
-  ToFrontend,
-  cancelStartGame,
-  cancelDraw,
-  initBackend,
+  ToFrontend
 } from "./UserVsUser.Types"
 
 //

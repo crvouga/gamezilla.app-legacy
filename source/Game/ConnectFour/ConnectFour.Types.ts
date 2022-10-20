@@ -1,4 +1,3 @@
-import { Result } from "../../Core/Result"
 import { UserId } from "../../Data"
 import * as UserVsUser from "./UserVsUser/UserVsUser.Types"
 

@@ -3,30 +3,27 @@ import {
   Cmd,
   Option,
   p,
-  RemoteData,
-  Result,
-  Sub,
+  RemoteData, Sub,
   tagCmd,
-  Unit,
+  Unit
 } from "../../Core"
+import { UserId } from "../../Data"
+import * as Snackbar from "../../Snackbar"
+import * as Store from "../../Store"
+import * as UI from "../../UI"
+import { GameModeCard } from "../Views"
 import {
   BackendModel,
   FrontendModel,
   FrontendMsg,
   inputModeProblemToString,
   ToBackend,
-  ToFrontend,
+  ToFrontend
 } from "./Chess.Types"
-import * as UserVsUser from "./UserVsUser/UserVsUser.Frontend"
-import * as UserVsBot from "./UserVsBot/UserVsBot.Frontend"
-import * as Store from "../../Store"
-import * as Snackbar from "../../Snackbar"
-import * as UI from "../../UI"
-import { UserId } from "../../Data"
-import { ReactNode } from "react"
 import * as Sounds from "./Sounds"
+import * as UserVsBot from "./UserVsBot/UserVsBot.Frontend"
+import * as UserVsUser from "./UserVsUser/UserVsUser.Frontend"
 import { BannerArt } from "./Views"
-import { GameModeCard } from "../Views"
 
 //
 //
@@ -39,7 +36,7 @@ import { GameModeCard } from "../Views"
 export type Model = FrontendModel
 
 export const init = ({
-  sendToBackend,
+  // sendToBackend,
 }: {
   sendToBackend: (msg: ToBackend) => Cmd.Cmd<never>
 }): [FrontendModel, Cmd.Cmd<Msg>] => {
@@ -208,7 +205,7 @@ export const updateFromBackend = (
 //
 //
 
-export const subscriptions = (model: Model): Sub.Sub<Msg> => {
+export const subscriptions = (_model: Model): Sub.Sub<Msg> => {
   return Sub.None
 }
 

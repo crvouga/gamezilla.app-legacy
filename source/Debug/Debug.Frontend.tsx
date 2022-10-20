@@ -1,12 +1,10 @@
 import { Cmd, Sub } from "../Core"
+import * as Route from "../Route"
 import * as UI from "../UI"
 import {
-  ToFrontend,
   FrontendModel,
-  FrontendMsg,
-  ToBackend,
+  FrontendMsg, ToFrontend
 } from "./Debug.Types"
-import * as Route from "../Route"
 
 //
 //
@@ -46,7 +44,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
 export const updateFromBackend = (
   msg: ToFrontend,
-  model: Model,
+  _model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
     case "GoBack_Done": {
@@ -79,7 +77,7 @@ export const runAction = (msg: Action, model: Model): [Model, Cmd.Cmd<Msg>] => {
 //
 //
 
-export const subscriptions = (model: Model): Sub.Sub<Msg> => {
+export const subscriptions = (_model: Model): Sub.Sub<Msg> => {
   return Sub.None
 }
 

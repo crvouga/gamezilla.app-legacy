@@ -1,7 +1,7 @@
 import { exhaustive } from "../../../Core"
 import { Err, Ok, Result } from "../../../Core/Result"
 import { UserId } from "../../../Data/UserId"
-import { ColumnIndex, Columns, emptyColumns, MAX_COLUMN_HEIGHT, move, MoveProblem, opposite, PlayerType, toStatus } from "../ConnectFour"
+import { allColumnIndexes, ColumnIndex, Columns, emptyColumns, move, MoveProblem, MoveResult, opposite, PlayerType, toStatus, toTurn } from "../ConnectFour"
 
 //
 //
@@ -125,6 +125,7 @@ export type Req =
   | ['InputMove', { columnIndex: ColumnIndex, userId: UserId }]
   | ["RematchRequest", { userId: UserId }]
   | ["RematchRespond", { userId: UserId, response: "Accept" | "Decline" }]
+  | ["NewGame", { userId: UserId }]
 
 export type Res =
   | ['StopPlaying_Done', Result<"not_in_setup" | "not_playing", SharedModel>]
@@ -134,6 +135,7 @@ export type Res =
   | ['InputMove_Done', Result<"not_in_game" | "not_playing" | MoveProblem, SharedModel>]
   | ["RematchRequest_Done", Result<"not_playing" | "not_game_over", SharedModel>]
   | ["RematchRespond_Done", Result<"not_playing" | "not_asking" | "not_game_over", SharedModel>]
+  | ["NewGame_Done", Result<"not_playing" | "not_game_over", SharedModel>]
 
 export const handle = (req: Req, model: SharedModel): Res => {
   switch (req[0]) {
@@ -155,29 +157,7 @@ export const handle = (req: Req, model: SharedModel): Res => {
         return ['InputMove_Done', result]
       }
 
-      const columnsNew = result.value
-
-
-      const status = toStatus(columnsNew)
-
-      if (status.type === 'Playing') {
-        const modelNew: SharedModel = {
-          ...model,
-          columns: columnsNew,
-          moveCountDown: model.moveTimeLimit,
-        }
-
-        return ['InputMove_Done', Ok(modelNew)]
-      }
-
-      const modelNew: SharedModel = {
-        type: "GameOver",
-        moveTimeLimit: model.moveTimeLimit,
-        PlayerOne: model.PlayerOne,
-        PlayerTwo: model.PlayerTwo,
-        columns: columnsNew,
-        gameOver: status.type === 'Winner' ? { type: "Winner", winner: status.winner } : { type: "Draw" }
-      }
+      const modelNew = handleMoveResult(result, model)
 
       return ['InputMove_Done', Ok(modelNew)]
     }
@@ -272,7 +252,35 @@ export const handle = (req: Req, model: SharedModel): Res => {
     case "RematchRespond": {
       return ["RematchRespond_Done", Ok(model)]
     }
+
+    case 'NewGame': {
+      if (model.type !== 'GameOver') {
+        return ['NewGame_Done', Err("not_game_over")]
+      }
+
+      const { userId } = req[1]
+
+      const playerType = toPlayerType(userId, model)
+
+      if (playerType === 'None') {
+        return ['NewGame_Done', Err("not_playing")]
+      }
+
+      const modelNew: SharedModel = {
+        type: "Setup",
+        moveTimeLimit: model.moveTimeLimit,
+        PlayerOne: model.PlayerOne,
+        PlayerTwo: model.PlayerTwo,
+      }
+
+      return ['NewGame_Done', Ok(modelNew)]
+    }
+
+    default: {
+      return exhaustive(req[0])
+    }
   }
+
 }
 
 export const toPlayerType = (userId: UserId, model: SharedModel): PlayerType | "None" => {
@@ -299,7 +307,11 @@ export const responseToString = (res: Res): string => {
       return "Column is full"
     }
 
-    case 'game_over': {
+    case 'game_over_winner': {
+      return "Game is over"
+    }
+
+    case 'game_over_tie': {
       return "Game is over"
     }
 
@@ -355,7 +367,6 @@ type Tick = ["Tick"]
 type Tick_Done = ["Tick_Done", SharedModel]
 
 export const tick = (model: SharedModel): SharedModel => {
-
   if (model.type !== 'Game') {
     return model
   }
@@ -371,14 +382,55 @@ export const tick = (model: SharedModel): SharedModel => {
     return modelNew
   }
 
+  const turn = toTurn(model.columns)
 
-  const openColumnIndexes = model.columns.flatMap((column, columnIndex) => column.length >= MAX_COLUMN_HEIGHT ? [] : [columnIndex])
+  for (const columnIndex of shuffle(allColumnIndexes)) {
+    const result = move(model.columns, columnIndex, turn)
 
-  const randomColumnIndex = openColumnIndexes[Math.floor(Math.random() * openColumnIndexes.length)]
+    if (result.type === 'Err') {
+      continue
+    }
 
-  // if (!randomColumnIndex) {
-  //   return Math.
-  // }
+    const modelNew = handleMoveResult(result, model)
 
-  return { ...model, moveCountDown: moveCountDownNew }
+    return modelNew
+  }
+
+  return model
+}
+
+
+const handleMoveResult = (result: MoveResult, model: GameModel): GameModel | GameOverModel => {
+  if (result.type === 'Err') {
+    return model
+  }
+
+  const columnsNew = result.value
+
+  const status = toStatus(columnsNew)
+
+  if (status.type === 'Playing') {
+    const modelNew: SharedModel = {
+      ...model,
+      columns: columnsNew,
+      moveCountDown: model.moveTimeLimit,
+    }
+
+    return modelNew
+  }
+
+  const modelNew: SharedModel = {
+    type: "GameOver",
+    moveTimeLimit: model.moveTimeLimit,
+    PlayerOne: model.PlayerOne,
+    PlayerTwo: model.PlayerTwo,
+    columns: columnsNew,
+    gameOver: status.type === 'Winner' ? { type: "Winner", winner: status.winner } : { type: "Draw" }
+  }
+
+  return modelNew
+}
+
+const shuffle = <X>(xs: X[]): X[] => {
+  return [...xs].sort(() => Math.random() > 0.5 ? -1 : 1)
 }

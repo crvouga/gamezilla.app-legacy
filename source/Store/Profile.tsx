@@ -1,7 +1,7 @@
 import produce from "immer"
 import { matchSorter } from "match-sorter"
 import { Cmd, exhaustive, p, RemoteData, Result, Task, Unit } from "../Core"
-import { ProfileAvatar, UserId, Username } from "../Data"
+import { UserId, Username } from "../Data"
 import * as Supabase from "../Supabase"
 import { definitions } from "../Supabase.Types"
 import * as Types from "./Types"

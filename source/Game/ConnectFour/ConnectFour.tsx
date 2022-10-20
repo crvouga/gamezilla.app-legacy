@@ -1,5 +1,5 @@
-import { useEffect, useLayoutEffect, useRef } from "react"
-import { Result, Err, Ok } from "../../Core/Result"
+import { useLayoutEffect, useRef } from "react"
+import { Err, Ok, Result } from "../../Core/Result"
 
 //
 //
@@ -47,6 +47,8 @@ export const COLUMN_COUNT = emptyColumns.length
 
 export type ColumnIndex = 0 | 1 | 2 | 3 | 4 | 5 | 6
 
+export const allColumnIndexes: ColumnIndex[] = [0, 1, 2, 3, 4, 5, 6]
+
 const isColumnIndex = (index: unknown): index is ColumnIndex => {
   return (
     typeof index === "number" &&
@@ -63,7 +65,8 @@ const isColumnIndex = (index: unknown): index is ColumnIndex => {
 export type RowIndex = 0 | 1 | 2 | 3 | 4 | 5
 
 export type MoveProblem =
-  | "game_over"
+  | "game_over_winner"
+  | "game_over_tie"
   | "not_turn"
   | "column_is_full"
   | "out_of_bounds"
@@ -78,11 +81,11 @@ export const move = (
   const status = toStatus(columns)
 
   if (status.type === 'Winner') {
-    return Err("game_over")
+    return Err("game_over_winner")
   }
 
   if (status.type === 'Tie') {
-    return Err("game_over")
+    return Err("game_over_tie")
   }
 
   const turn = status.turn
@@ -692,17 +695,16 @@ const paint = (context: CanvasRenderingContext2D, columns: Columns): void => {
 //
 
 // source: https://easings.net/#easeOutBounce
-const easeOutBounce = (x: number): number => {
-  const n1 = 7.5625
-  const d1 = 2.75
-
-  if (x < 1 / d1) {
-    return n1 * x * x
-  } else if (x < 2 / d1) {
-    return n1 * (x -= 1.5 / d1) * x + 0.75
-  } else if (x < 2.5 / d1) {
-    return n1 * (x -= 2.25 / d1) * x + 0.9375
-  } else {
-    return n1 * (x -= 2.625 / d1) * x + 0.984375
-  }
-}
+// const easeOutBounce = (x: number): number => {
+//   const n1 = 7.5625
+//   const d1 = 2.75
+//   if (x < 1 / d1) {
+//     return n1 * x * x
+//   } else if (x < 2 / d1) {
+//     return n1 * (x -= 1.5 / d1) * x + 0.75
+//   } else if (x < 2.5 / d1) {
+//     return n1 * (x -= 2.25 / d1) * x + 0.9375
+//   } else {
+//     return n1 * (x -= 2.625 / d1) * x + 0.984375
+//   }
+// }

@@ -757,7 +757,7 @@ const toStatus = ({
 //
 
 const backendUrl =
-  process.env.NODE_ENV === "production"
+  process.env['NODE_ENV'] === "production"
     ? // todo setup this url
     // ? `https://backend.gamezilla.app/`
     "https://gamezilla-production.up.railway.app/"

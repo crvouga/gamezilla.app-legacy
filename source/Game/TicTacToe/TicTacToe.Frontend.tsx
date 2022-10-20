@@ -42,10 +42,8 @@ export type OutAction = Store.Action
 
 export const update = (
   {
-    currentUserId,
     sendToBackend,
   }: {
-    currentUserId: UserId.UserId
     sendToBackend: (msg: ToBackend) => Cmd.Cmd<never>
   },
   msg: Msg,
@@ -60,7 +58,6 @@ export const update = (
       if (model.mode === "UserVsUser") {
         const [child, cmd] = UserVsUser.update(
           {
-            currentUserId,
             sendToBackend: (msg) => sendToBackend(["UserVsUser", msg]),
           },
           msg[1],

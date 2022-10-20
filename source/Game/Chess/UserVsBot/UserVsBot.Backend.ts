@@ -1,12 +1,9 @@
-import { Cmd, Option, p, Sub, Task, Time } from "../../../Core"
-import { UserId } from "../../../Data"
+import { Cmd, p, Sub } from "../../../Core"
 import * as Board from "../Board"
 import {
   BackendModel,
   BackendMsg,
-  botMoved,
-  initShared,
-  inputBot,
+  botMoved, initBackend, inputBot,
   inputColor,
   inputMove,
   inputUser,
@@ -14,8 +11,7 @@ import {
   startGame,
   stopGame,
   ToBackend,
-  ToFrontend,
-  initBackend,
+  ToFrontend
 } from "./UserVsBot.Types"
 
 //
@@ -158,8 +154,8 @@ export const updateFromFrontend_ = (
 //
 
 export const subscriptions = (
-  intervalId: string,
-  model: Model,
+  _intervalId: string,
+  _model: Model,
 ): Sub.Sub<Msg> => {
   return Sub.None
 }

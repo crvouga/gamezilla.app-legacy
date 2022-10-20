@@ -19,10 +19,10 @@ export const init = ({
 }: {
   userId: UserId.UserId
 }): [Model, Cmd.Cmd<Msg>, OutAction[]] => [
-  {},
-  Cmd.None,
-  [["Store", ["Profile", ["FindMany", { userIds: [userId] }]]]],
-]
+    {},
+    Cmd.None,
+    [["Store", ["Profile", ["FindMany", { userIds: [userId] }]]]],
+  ]
 
 //
 //
@@ -98,7 +98,6 @@ export const View = ({
   store,
   currentUserId,
   userId,
-  model,
   dispatch,
 }: {
   store: Store.Model

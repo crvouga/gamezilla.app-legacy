@@ -1,10 +1,10 @@
 import { Cmd, exhaustive, Sub } from "../../../Core";
-import * as UI from "../../../UI";
-import * as Store from "../../../Store";
-import { ColumnIndex, gameTheme, PlayerType, playerTypeToColor, toStatus, toTurn, ViewColumns } from "../ConnectFour";
-import { PlayerIcon, PlayerOneIcon, PlayerTwoIcon } from "../Views";
-import { toPlayerType, responseToString, BackendModel, GameModel, SetupModel, FrontendModel, FrontendMsg, handle, initShared, ToFrontend, allMoveTimeLimit, ToBackend, GameOverModel } from "./UserVsUser.Types";
 import { UserId } from "../../../Data";
+import * as Store from "../../../Store";
+import * as UI from "../../../UI";
+import { ColumnIndex, gameTheme, PlayerType, playerTypeToColor, toTurn, ViewColumns } from "../ConnectFour";
+import { PlayerIcon, PlayerOneIcon, PlayerTwoIcon } from "../Views";
+import { allMoveTimeLimit, BackendModel, FrontendModel, FrontendMsg, GameModel, GameOverModel, handle, initShared, responseToString, SetupModel, ToBackend, ToFrontend, toPlayerType } from "./UserVsUser.Types";
 
 
 //
@@ -35,16 +35,6 @@ export const init = ({ PlayerOne, PlayerTwo }: Pick<FrontendModel, 'PlayerOne' |
 
 export type Msg = FrontendMsg
 
-// export const update = ({ sendToBackend, }: { sendToBackend: (msg: ToBackend) => Cmd.Cmd<never> }, msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
-//     const [modelNew, cmd] = update_({ sendToBackend }, msg, model)
-
-//     if (modelNew.type === 'Game' && model.type === 'Game' && toTurn(model.columns) !== toTurn(modelNew.columns)) {
-//         return [{ ...modelNew, columnIndex: "None" }, cmd]
-//     }
-
-//     return [modelNew, cmd]
-// }
-
 export const update = ({ sendToBackend, }: { sendToBackend: (msg: ToBackend) => Cmd.Cmd<never> }, msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
     switch (msg[0]) {
 
@@ -65,6 +55,7 @@ export const update = ({ sendToBackend, }: { sendToBackend: (msg: ToBackend) => 
         //
         // 
 
+        case 'NewGame':
         case 'RematchRequest':
         case 'RematchRespond':
         case 'InputMoveTimeLimit':
@@ -84,6 +75,7 @@ export const update = ({ sendToBackend, }: { sendToBackend: (msg: ToBackend) => 
 
 export const updateFromBackend = (msg: ToFrontend, model: Model): [Model, Cmd.Cmd<Msg>] => {
     switch (msg[0]) {
+        case 'NewGame_Done':
         case 'InputMoveTimeLimit_Done':
         case 'StartGame_Done':
         case 'StopPlaying_Done':
@@ -130,7 +122,7 @@ export const mergeWithBackend = ({ frontendModel, backendModel }: { frontendMode
 //
 //
 
-export const subscriptions = (model: Model): Sub.Sub<Msg> => {
+export const subscriptions = (_model: Model): Sub.Sub<Msg> => {
     return Sub.None;
 };
 
@@ -184,7 +176,6 @@ export const View = ({ currentUserId, model, dispatch, store, roomComponent, goB
             currentUserId={currentUserId}
             model={model}
             store={store}
-            goBack={goBack}
             homeButton={homeButton}
             roomComponent={roomComponent}
             dispatch={dispatch}
@@ -262,9 +253,7 @@ const ViewGameOver = ({
     store,
     roomComponent,
     homeButton,
-    goBack
 }: {
-    goBack: () => void,
     model: GameOverModel,
     store: Store.Model;
     dispatch: (msg: Msg) => void,
@@ -277,8 +266,16 @@ const ViewGameOver = ({
             <UI.Header left={homeButton} title="Connect Four" right={roomComponent} />
 
             <UI.Box sx={{ paddingX: 1, gap: 2, marginBottom: 2, display: 'flex', width: "100%", overflow: "hidden" }}>
-                <ViewGamePlayerSlot playerType="PlayerOne" model={model} store={store} />
-                <ViewGamePlayerSlot playerType="PlayerTwo" model={model} store={store} />
+                <ViewGamePlayerSlot
+                    playerType="PlayerOne"
+                    model={model}
+                    store={store}
+                />
+                <ViewGamePlayerSlot
+                    playerType="PlayerTwo"
+                    model={model}
+                    store={store}
+                />
             </UI.Box>
 
             <UI.Box sx={{ position: "relative", overflow: "hidden" }}>
@@ -307,11 +304,11 @@ const ViewGameOver = ({
             <UI.Box sx={{ flex: 1 }} />
 
             <UI.Box sx={{ display: 'flex', padding: 2, gap: 2 }}>
-                <UI.Button variant="outlined" fullWidth onClick={goBack}>
+                <UI.Button variant="outlined" fullWidth onClick={() => dispatch(['NewGame', { userId: currentUserId }])}>
                     Back
                 </UI.Button>
 
-                <UI.Button variant="contained" fullWidth>
+                <UI.Button variant="contained" fullWidth >
                     Rematch
                 </UI.Button>
             </UI.Box>

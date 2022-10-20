@@ -3,10 +3,10 @@ import { UserId } from "../../../Data"
 import * as Snackbar from "../../../Snackbar"
 import * as Store from "../../../Store"
 import * as UI from "../../../UI"
+import * as Board from "../Board"
 import * as Clock from "../Clock"
 import * as Sounds from "../Sounds"
-import { BannerArt, PawnIcon, VersusHeader } from "../Views"
-import * as Board from "../Board"
+import { PawnIcon, VersusHeader } from "../Views"
 import {
   BackendModel,
   cancelStartGame,
@@ -18,10 +18,8 @@ import {
   inputMove,
   InputMove,
   SharedModel,
-  startGame,
-  startGameProblemToString,
-  ToBackend,
-  ToFrontend,
+  startGame, ToBackend,
+  ToFrontend
 } from "./UserVsUser.Types"
 
 //
@@ -996,42 +994,14 @@ const ViewInputUserPlayerSlot = ({
   )
 }
 
-const ViewInputPlayerButton = ({
-  dispatch,
-  currentUserId,
-  color,
-}: {
-  color: Board.Color
-  dispatch: (msg: Msg) => void
-  currentUserId: UserId.UserId
-}) => {
-  return (
-    <UI.Box sx={{ paddingX: 2, paddingY: 1 }}>
-      <UI.Button
-        fullWidth
-        size="large"
-        variant="contained"
-        onClick={() => {
-          dispatch([
-            "InputPlayer",
-            { userId: Option.Some(currentUserId), color },
-          ])
-        }}
-      >
-        Play As {Board.colorToString(color)}
-      </UI.Button>
-    </UI.Box>
-  )
-}
 
 const toGameText = (model: SharedModel): string => {
   switch (model.type) {
     case "GameOver": {
       switch (model.gameOver.type) {
         case "Checkmate": {
-          return `${Board.colorToString(
-            model.gameOver.winner,
-          )} won by checkmate`
+          const colorStr = Board.colorToString(model.gameOver.winner)
+          return `${colorStr} won by checkmate`
         }
 
         case "DrawByAgreement": {

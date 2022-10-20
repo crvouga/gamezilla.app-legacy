@@ -132,11 +132,11 @@ export const update = (
         },
       }
 
-      const otherUsers = Object.values(model.users).map(
-        (user) =>
-          user.partyId === producingUser.partyId &&
-          user.userId !== producingUser.userId,
-      )
+      // const otherUsers = Object.values(model.users).map(
+      //   (user) =>
+      //     user.partyId === producingUser.partyId &&
+      //     user.userId !== producingUser.userId,
+      // )
       //
 
       const cmd = Cmd.batch([
@@ -425,7 +425,7 @@ export const updateFromFrontend = (
 //
 //
 
-export const subscriptions = (model: Model) => {
+export const subscriptions = (_model: Model) => {
   return mediasoupMsgs
 }
 
@@ -494,13 +494,13 @@ const initialPeer: Peer = {
   consumers: {},
 }
 
-const logInstances = () => {
-  console.log({
-    worker,
-    routers,
-    peers,
-  })
-}
+// const logInstances = () => {
+//   console.log({
+//     worker,
+//     routers,
+//     peers,
+//   })
+// }
 
 //
 //
@@ -684,17 +684,17 @@ const handleSendTransport_OnProduce =
       }
     }
 
-const toOtherUsersInParty = (
-  someUser: { userId: UserId.UserId; partyId: PartyId.PartyId },
-  model: Model,
-): UserId.UserId[] => {
-  return Object.values(model.users)
-    .filter(
-      (user) =>
-        user.userId !== someUser.userId && user.partyId === someUser.partyId,
-    )
-    .map((user) => user.userId)
-}
+// const toOtherUsersInParty = (
+//   someUser: { userId: UserId.UserId; partyId: PartyId.PartyId },
+//   model: Model,
+// ): UserId.UserId[] => {
+//   return Object.values(model.users)
+//     .filter(
+//       (user) =>
+//         user.userId !== someUser.userId && user.partyId === someUser.partyId,
+//     )
+//     .map((user) => user.userId)
+// }
 
 const initRecvTransport =
   ({
@@ -733,34 +733,33 @@ const initRecvTransport =
       return Result.Ok({ transportOptions })
     }
 
-const startConsuming =
-  ({
-    producerId,
-    partyId,
-    userIds,
-  }: {
-    producerId: string
-    partyId: PartyId.PartyId
-    userIds: UserId.UserId[]
-  }): Task.Task<Unit> =>
-    async () => {
-      const router = routers.get(partyId)
+// const startConsuming =
+//   ({
+//     partyId,
+//     userIds,
+//   }: {
+//     producerId: string
+//     partyId: PartyId.PartyId
+//     userIds: UserId.UserId[]
+//   }): Task.Task<Unit> =>
+//     async () => {
+//       const router = routers.get(partyId)
 
-      if (!router) {
-        return Unit
-      }
+//       if (!router) {
+//         return Unit
+//       }
 
-      for (const userId in userIds) {
-        if (!UserId.is(userId)) {
-          continue
-        }
+//       for (const userId in userIds) {
+//         if (!UserId.is(userId)) {
+//           continue
+//         }
 
-        const peer = peers.get(userId)
+//         const peer = peers.get(userId)
 
-        if (!peer) {
-          continue
-        }
-      }
+//         if (!peer) {
+//           continue
+//         }
+//       }
 
-      return Unit
-    }
+//       return Unit
+//     }

@@ -28,7 +28,6 @@ export type Msg = ["ClickedCancel"] | ["ClickedBackdrop"] | ["ClickedLogout"]
 type OutAction = Auth.Action
 
 export const update = (
-  { name }: { name: string },
   msg: Msg,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {

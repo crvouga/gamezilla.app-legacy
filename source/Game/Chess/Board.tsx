@@ -85,17 +85,17 @@ export const toRandomMoveInput = (
 
 export const getBestMove =
   (level: Level, model: Model): Task.Task<BestMoveInputResult> =>
-  async () => {
-    const worker = new Worker("./board-worker")
+    async () => {
+      const worker = new Worker("./board-worker")
 
-    const boardWorker = await spawn<BoardWorker>(worker)
+      const boardWorker = await spawn<BoardWorker>(worker)
 
-    const result = await boardWorker.toBestMove(level, model)
+      const result = await boardWorker.toBestMove(level, model)
 
-    await Thread.terminate(boardWorker)
+      await Thread.terminate(boardWorker)
 
-    return result
-  }
+      return result
+    }
 
 //
 //
@@ -631,12 +631,12 @@ export const toTurn = (model: Model): Color => {
 
 export type GameOver =
   | {
-      type: "Checkmate"
-      winner: Color
-    }
+    type: "Checkmate"
+    winner: Color
+  }
   | {
-      type: "Stalemate"
-    }
+    type: "Stalemate"
+  }
 
 export const toGameOver = (model: Model): GameOver | { type: "None" } => {
   if (inCheckmate(model)) {
@@ -756,13 +756,6 @@ export const View = ({
     }
   }
 
-  const clearPremoves = () => {
-    if (boardRef.current) {
-      // @ts-ignore
-      boardRef.current?.clearPremoves?.()
-    }
-  }
-
   useLayoutEffect(() => {
     handler()
     window.addEventListener("resize", handler)
@@ -800,14 +793,14 @@ export const View = ({
 
   const lastMoveStyles: CustomSquareStyles = model.previousMove
     ? {
-        [toLowercaseSquare(model.previousMove.to)]: {
-          background: "rgba(255, 255, 0, 0.4)",
-        },
+      [toLowercaseSquare(model.previousMove.to)]: {
+        background: "rgba(255, 255, 0, 0.4)",
+      },
 
-        [toLowercaseSquare(model.previousMove.from)]: {
-          background: "rgba(255, 255, 0, 0.4)",
-        },
-      }
+      [toLowercaseSquare(model.previousMove.from)]: {
+        background: "rgba(255, 255, 0, 0.4)",
+      },
+    }
     : {}
 
   const game = instanceRef.current
@@ -817,28 +810,28 @@ export const View = ({
       ...styles,
       [toLowercaseSquare(move.to)]:
         game.get(move.to) &&
-        selectedSquare &&
-        game.get(toLowercaseSquare(move.to))?.color !==
+          selectedSquare &&
+          game.get(toLowercaseSquare(move.to))?.color !==
           game.get(toLowercaseSquare(selectedSquare))?.color
           ? {
-              background:
-                "radial-gradient(circle, rgba(0,0,0,.2) 85%, transparent 85%)",
-              borderRadius: "50%",
-              cursor: "pointer",
-            }
+            background:
+              "radial-gradient(circle, rgba(0,0,0,.2) 85%, transparent 85%)",
+            borderRadius: "50%",
+            cursor: "pointer",
+          }
           : {
-              background:
-                "radial-gradient(circle, rgba(0,0,0,.2) 25%, transparent 25%)",
-              borderRadius: "50%",
-              cursor: "pointer",
-            },
+            background:
+              "radial-gradient(circle, rgba(0,0,0,.2) 25%, transparent 25%)",
+            borderRadius: "50%",
+            cursor: "pointer",
+          },
     }),
     selectedSquare
       ? {
-          [toLowercaseSquare(selectedSquare)]: {
-            background: "rgba(255, 255, 0, 0.4)",
-          },
-        }
+        [toLowercaseSquare(selectedSquare)]: {
+          background: "rgba(255, 255, 0, 0.4)",
+        },
+      }
       : {},
   )
 
@@ -872,7 +865,7 @@ export const View = ({
         onPieceDragBegin={(_piece, sourceSquare) => {
           setSelectedSquare(fromLowercase(sourceSquare))
         }}
-        onPieceClick={(piece) => {
+        onPieceClick={() => {
           setSelectedSquare(hoveredSquare)
         }}
         customSquareStyles={{
@@ -883,21 +876,21 @@ export const View = ({
         isDraggablePiece={
           isDraggablePiece
             ? ({ piece }) => {
-                return isDraggablePiece({ piece })
-              }
+              return isDraggablePiece({ piece })
+            }
             : undefined
         }
         onPieceDrop={
           onPieceDrop
             ? (from, to, _piece) => {
-                const moveInput: MoveInput = {
-                  from: fromLowercase(from),
-                  to: fromLowercase(to),
-                  promotion: "q",
-                }
-
-                return onPieceDrop(moveInput)
+              const moveInput: MoveInput = {
+                from: fromLowercase(from),
+                to: fromLowercase(to),
+                promotion: "q",
               }
+
+              return onPieceDrop(moveInput)
+            }
             : undefined
         }
       />
