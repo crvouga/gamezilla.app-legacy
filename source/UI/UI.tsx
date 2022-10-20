@@ -1,10 +1,10 @@
 import * as MuiLab from "@mui/lab"
 import * as Mui from "@mui/material"
 import { blue } from "@mui/material/colors"
+import Slide, { SlideProps } from "@mui/material/Slide"
 import { keyframes } from "@mui/system"
 import { ReactNode, useEffect, useMemo, useRef } from "react"
 import * as Icons from "./Icons"
-import Slide, { SlideProps } from "@mui/material/Slide"
 
 const SlideTransition = (props: SlideProps) => {
   return (
@@ -201,7 +201,7 @@ export const ThemeModeToggleButtons = ({
       value={themeMode}
       exclusive
       orientation="vertical"
-      onChange={(event, value) => {
+      onChange={(_event, value) => {
         if (isThemeMode(value)) {
           onChange(value)
         }

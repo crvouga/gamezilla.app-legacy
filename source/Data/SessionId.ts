@@ -1,4 +1,4 @@
-import { Uuid, Result } from "../Core"
+import { Result } from "../Core"
 
 export type SessionId = string & { _opaque: typeof SessionId }
 

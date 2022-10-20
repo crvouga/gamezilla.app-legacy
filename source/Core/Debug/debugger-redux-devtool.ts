@@ -292,7 +292,7 @@ const handleActions = <Model, Msg>({
  */
 const parseJump = <Model>(msg: Monitor): Result.Result<string, Model> => {
   return p(
-    Json.parse(String(msg.state)),
+    Json.parse(String(msg['state'])),
     Result.mapError((problem) => problem.message),
     Result.map(
       (value) =>
@@ -309,7 +309,7 @@ const parseJump = <Model>(msg: Monitor): Result.Result<string, Model> => {
  */
 const parseRollback = <Model>(msg: Monitor): Result.Result<string, Model> => {
   return p(
-    Json.parse(String(msg.state)),
+    Json.parse(String(msg['state'])),
     Result.mapError((problem) => problem.message),
     Result.map(
       (u) =>
@@ -327,9 +327,9 @@ const parseRollback = <Model>(msg: Monitor): Result.Result<string, Model> => {
 const parseImportState = <Model>(
   msg: Monitor,
 ): Result.Result<string, LiftedState<Model>> => {
-  return typeof msg.payload.nextLiftedState === "object" &&
-    msg.payload.nextLiftedState !== null
-    ? Result.Ok(msg.payload.nextLiftedState as LiftedState<Model>)
+  return typeof msg.payload['nextLiftedState'] === "object" &&
+    msg.payload['nextLiftedState'] !== null
+    ? Result.Ok(msg.payload['nextLiftedState'] as LiftedState<Model>)
     : Result.Err("IMPORT_STATE message has some bad payload...")
 }
 
@@ -342,7 +342,7 @@ const parseToggleAction = <Model>(
   msg: Monitor,
 ): Result.Result<string, [number, LiftedState<Model>]> => {
   const getId = p(
-    msg.payload.id,
+    msg.payload['id'],
     Result.fromNullable("TOGGLE_ACTION message has some bad payload..."),
     Result.map((x) => x as number),
   )
@@ -352,7 +352,7 @@ const parseToggleAction = <Model>(
   }
 
   const parseState = p(
-    Json.parse(String(msg.state)),
+    Json.parse(String(msg['state'])),
     Result.map(
       // @ts-ignore
       (u) => u as LiftedState<Model>,

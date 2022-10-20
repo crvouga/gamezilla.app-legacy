@@ -148,7 +148,7 @@ export const updateFromFrontend = (
 const inputMode = (
   { hostId }: { hostId: UserId.UserId },
   { mode, userId }: InputMode[1],
-  model: BackendModel,
+  _model: BackendModel,
 ): InputMode_Done[2] => {
   if (hostId !== userId) {
     return Result.Err("must_be_the_host")

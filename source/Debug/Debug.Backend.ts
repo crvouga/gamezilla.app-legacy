@@ -1,5 +1,5 @@
 import { Cmd, Sub } from "../Core"
-import { BackendModel, ToFrontend, ToBackend, BackendMsg } from "./Debug.Types"
+import { BackendModel, BackendMsg, ToBackend } from "./Debug.Types"
 
 //
 //
@@ -52,6 +52,6 @@ export const updateFromFrontend = (
 //
 //
 
-export const subscriptions = (model: Model): Sub.Sub<Msg> => {
+export const subscriptions = (_model: Model): Sub.Sub<Msg> => {
   return Sub.None
 }

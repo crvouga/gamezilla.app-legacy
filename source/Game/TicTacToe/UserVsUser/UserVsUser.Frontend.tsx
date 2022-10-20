@@ -3,15 +3,12 @@ import { UserId } from "../../../Data"
 import * as Store from "../../../Store"
 import * as UI from "../../../UI"
 import {
-  emptyBoard,
-  PlayerType,
+  emptyBoard, gameTheme, PlayerType,
   PlayerTypeIcon,
   Position,
-  Slot,
-  gameTheme,
-  toTurn,
+  Slot, toTurn,
   ViewBoard,
-  ViewSlot,
+  ViewSlot
 } from "../TicTacToe"
 import { VersusHeader } from "../Views"
 import * as Round from "./Round"
@@ -38,7 +35,7 @@ import {
   startGame,
   ToBackend,
   ToFrontend,
-  toWinCount,
+  toWinCount
 } from "./UserVsUser.Types"
 
 //
@@ -69,10 +66,8 @@ export type OutAction = Store.Action
 
 export const update = (
   {
-    currentUserId,
     sendToBackend,
-  }: {
-    currentUserId: UserId.UserId
+  }: {    
     sendToBackend: (msg: ToBackend) => Cmd.Cmd<never>
   },
   msg: Msg,
@@ -533,7 +528,6 @@ export const View = ({
 const ViewGameOverMessage = ({
   currentUserId,
   model,
-  store,
   dispatch,
 }: {
   currentUserId: UserId.UserId
@@ -960,7 +954,6 @@ export const ViewRoundStartingMessage = ({
 const ViewScores = ({
   score,
   winCount,
-  maxRoundCount,
 }: {
   score: Round.Score
   winCount: number,
@@ -1023,8 +1016,7 @@ const ViewScores = ({
 const ViewScoreSlots = ({
   maxScore,
   score,
-  slotSize,
-  tieCount,
+  slotSize
 }: {
   tieCount: number
   maxScore: number

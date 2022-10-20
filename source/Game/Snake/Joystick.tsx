@@ -5,7 +5,7 @@ export type MoveEvent = {
 }
 
 export const ViewJoystick = ({
-  onMove,
+
 }: {
   onMove: (moveEvent: MoveEvent) => void
 }) => {

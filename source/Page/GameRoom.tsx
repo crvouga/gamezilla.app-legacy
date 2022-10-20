@@ -1,4 +1,4 @@
-import { Cmd, p, t } from "../Core"
+import { Cmd } from "../Core"
 import { UserId } from "../Data"
 import * as GameRoom from "../Game/GameRoom.Frontend"
 import * as Store from "../Store"
@@ -30,14 +30,10 @@ export type Msg = ["GameRoom", GameRoom.Msg]
 
 type OutAction = GameRoom.Action
 
-export const update = (
-  { currentUserId }: { currentUserId: UserId.UserId },
-  msg: Msg,
-  model: Model,
-): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
+export const update = (msg: Msg, model: Model): [Model, OutAction[]] => {
   switch (msg[0]) {
     case "GameRoom": {
-      return [model, Cmd.None, [["GameRoom", ["Msg", msg[1]]]]]
+      return [model, [["GameRoom", ["Msg", msg[1]]]]]
     }
   }
 }
@@ -55,7 +51,6 @@ export const View = ({
   gameRoom,
   store,
   dispatch,
-  model,
   bottomNav,
 }: {
   gameRoom: GameRoom.Model

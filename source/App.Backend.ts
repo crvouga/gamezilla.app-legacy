@@ -253,27 +253,27 @@ const sendToUser = (
   return Wire.sendToFrontend(clientIds, msg)
 }
 
-const updateWithDebug = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
-  const [modelNew, cmd] = update(msg, model)
+// const updateWithDebug = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
+//   const [modelNew, cmd] = update(msg, model)
 
-  const modelNext: Model = {
-    ...modelNew,
-    debug: {
-      snapshots: [
-        ...model.debug.snapshots,
-        {
-          gameRoom: model.gameRoom,
-          msgType: formatMsg(msg),
-        },
-      ],
-    },
-  }
+//   const modelNext: Model = {
+//     ...modelNew,
+//     debug: {
+//       snapshots: [
+//         ...model.debug.snapshots,
+//         {
+//           gameRoom: model.gameRoom,
+//           msgType: formatMsg(msg),
+//         },
+//       ],
+//     },
+//   }
 
-  return [
-    modelNext,
-    Cmd.batch([Wire.broadcast(["Debug", ["Sync", model.debug]]), cmd]),
-  ]
-}
+//   return [
+//     modelNext,
+//     Cmd.batch([Wire.broadcast(["Debug", ["Sync", model.debug]]), cmd]),
+//   ]
+// }
 
 //
 //
@@ -372,7 +372,7 @@ Wire._broadcast.subscribe((msg) => {
   socketServer.emit("ToFrontend", msg)
 })
 
-const port = Number(process.env.PORT) || Wire.backendServerPort
+const port = Number(process.env['PORT']) || Wire.backendServerPort
 
 httpServer.listen(port, () => {
   console.clear()

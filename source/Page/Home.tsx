@@ -1,7 +1,7 @@
 import { Sub } from "../Core"
 import { RoomId, UserId } from "../Data"
 import * as Game from "../Game/Game.Frontend"
-import { GameName, gameNameList, gameNames } from "../Game/Game.Types"
+import { GameName, gameNameList } from "../Game/Game.Types"
 import * as GameRoom from "../Game/GameRoom.Frontend"
 import * as Route from "../Route"
 import * as Store from "../Store"
@@ -118,7 +118,7 @@ export const update = (
 //
 //
 
-export const subscriptions = (model: Model): Sub.Sub<Msg> => {
+export const subscriptions = (_model: Model): Sub.Sub<Msg> => {
   return Sub.None
 }
 
@@ -297,9 +297,7 @@ export const View = ({
 }
 
 const ViewNotInRoom = ({
-  model,
   dispatch,
-  currentUserId,
   gameRoom,
   store,
 }: {

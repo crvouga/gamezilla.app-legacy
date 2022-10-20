@@ -1,11 +1,11 @@
 import { Cmd, Sub, tagSub, tagUpdate } from "../Core"
-import { RoomId, UserId } from "../Data"
+import { UserId } from "../Data"
 import * as Chess from "./Chess/Chess.Backend"
 import * as ConnectFour from "./ConnectFour/ConnectFour.Backend"
 import { BackendModel, BackendMsg, ToBackend, ToFrontend } from "./Game.Types"
 import * as Snake from "./Snake/Snake.Backend"
-import * as TicTacToe from "./TicTacToe/TicTacToe.Backend"
 import * as Tetris from "./Tetris/Tetris.Backend"
+import * as TicTacToe from "./TicTacToe/TicTacToe.Backend"
 
 //
 //
@@ -54,10 +54,8 @@ export type Msg = BackendMsg
 export const update = (
   {
     sendToRoom,
-    roomId,
   }: {
     sendToRoom: (toFrontend: ToFrontend) => Cmd.Cmd<never>
-    roomId: RoomId.RoomId
   },
   msg: Msg,
   model: Model,

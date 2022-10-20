@@ -1,5 +1,5 @@
 import * as Auth from "../Auth"
-import { Cmd, exhaustive, p } from "../Core"
+import { Cmd, p } from "../Core"
 import * as Route from "../Route"
 import { ISO_3166, PhoneNumber } from "../Data"
 import * as UI from "../UI"

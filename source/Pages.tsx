@@ -353,7 +353,6 @@ export const updateReady = (
   {
     profile,
     store,
-    gameRoom,
   }: {
     profile: Store.Profile.Profile
     store: Store.Model
@@ -369,13 +368,13 @@ export const updateReady = (
   switch (model[0]) {
     case "Account":
       if (msg[0] === "Account") {
-        return tagUpdate("Account", Account.update(profile, msg[1], model[1]))
+        return tagUpdate("Account", Account.update(msg[1], model[1]))
       }
       return [model, Cmd.None, []]
 
     case "Logout":
       if (msg[0] === "Logout") {
-        return tagUpdate("Logout", Logout.update(profile, msg[1], model[1]))
+        return tagUpdate("Logout", Logout.update(msg[1], model[1]))
       }
       return [model, Cmd.None, []]
 
@@ -390,10 +389,7 @@ export const updateReady = (
 
     case "ProfileUpdate":
       if (msg[0] === "ProfileUpdate") {
-        return tagUpdate(
-          "ProfileUpdate",
-          ProfileUpdate.update(profile, msg[1], model[1]),
-        )
+        return tagUpdate("ProfileUpdate", ProfileUpdate.update(msg[1], model[1]))
       }
       return [model, Cmd.None, []]
 
@@ -492,16 +488,11 @@ export const updateReady = (
 
     case "GameRoom": {
       if (msg[0] === "GameRoom") {
-        const [modelPage, cmdPage, actions] = GameRoomPage.update(
-          { currentUserId: profile.userId },
+        const [modelPage, actions] = GameRoomPage.update(
           msg[1],
           model[1],
         )
-        return [
-          ["GameRoom", modelPage],
-          p(cmdPage, Cmd.map(t("GameRoom"))),
-          actions,
-        ]
+        return [["GameRoom", modelPage], Cmd.None, actions]
       }
 
       return [model, Cmd.None, []]
@@ -567,7 +558,7 @@ export const updateProfileMissing = (
       if (msg[0] === "Logout") {
         return tagUpdate(
           "Logout",
-          Logout.update({ name: auth.defaultName }, msg[1], model[1]),
+          Logout.update(msg[1], model[1]),
         )
       }
       return [model, Cmd.None, []]
@@ -1158,7 +1149,6 @@ const ViewTopLevel = ({
   dispatch,
   route,
   currentUserId,
-  gameRoom,
 }: {
   children: UI.ViewNode
   currentUserId: UserId.UserId

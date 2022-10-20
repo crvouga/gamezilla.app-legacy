@@ -1,4 +1,4 @@
-import { Cmd, Sub } from "../Core"
+import { Sub } from "../Core"
 import * as Debug from "../Debug/Debug.Frontend"
 import * as Route from "../Route"
 
@@ -42,7 +42,7 @@ export const update = (msg: Msg, model: Model): [Model, OutAction[]] => {
 //
 //
 
-export const subscriptions = (model: Model): Sub.Sub<Msg> => {
+export const subscriptions = (_model: Model): Sub.Sub<Msg> => {
   return Sub.None
 }
 
@@ -56,7 +56,6 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
 
 export const View = ({
   debug,
-  model,
   dispatch,
 }: {
   debug: Debug.Model

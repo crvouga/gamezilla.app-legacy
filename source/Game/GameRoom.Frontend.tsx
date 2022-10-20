@@ -142,7 +142,6 @@ export const update = (
       const [gameNew, gameCmd] = Game.update(
         {
           currentUserId,
-          currentRoomId: roomId,
           sendToBackend: (msg) => sendToBackend(["Games", roomId, msg]),
         },
         gameMsg,

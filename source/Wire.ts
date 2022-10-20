@@ -1,7 +1,7 @@
 import * as Rx from "rxjs"
-import { WireStatus, ToBackend, ToFrontend } from "./App.Types"
-import { Cmd, Option, p, Sub } from "./Core"
-import { SessionId, ClientId } from "./Data"
+import { ToBackend, ToFrontend, WireStatus } from "./App.Types"
+import { Cmd, p, Sub } from "./Core"
+import { ClientId, SessionId } from "./Data"
 
 //
 //

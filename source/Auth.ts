@@ -268,8 +268,8 @@ export const fromSupabaseSession = (auth: Supabase.Session | null): Msg => {
   const userId = UserId.decode(auth?.user?.id)
 
   const defaultName =
-    auth?.user?.user_metadata?.name ??
-    auth?.user?.user_metadata?.full_name ??
+    auth?.user?.user_metadata?.['name'] ??
+    auth?.user?.user_metadata?.['full_name'] ??
     ""
 
   if (userId.type === "Ok") {

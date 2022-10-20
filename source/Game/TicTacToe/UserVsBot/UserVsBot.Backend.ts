@@ -1,4 +1,4 @@
-import { andThen, Cmd, p, Sub } from "../../../Core"
+import { Cmd, p, Sub } from "../../../Core"
 import { getBestMove, toOpposite } from "../TicTacToe"
 import {
   BackendModel,
@@ -17,7 +17,7 @@ import {
   stopPlaying,
   swapSides,
   ToBackend,
-  ToFrontend,
+  ToFrontend
 } from "./UserVsBot.Types"
 
 //
@@ -205,6 +205,6 @@ const updateFromFrontend_: UpdateFromFrontend = (
 //
 //
 
-export const subscriptions = (model: Model): Sub.Sub<Msg> => {
+export const subscriptions = (_model: Model): Sub.Sub<Msg> => {
   return Sub.None
 }

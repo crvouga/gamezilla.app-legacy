@@ -1,10 +1,9 @@
-import * as UI from "../../UI"
-import * as Store from "../../Store"
-import { gameTheme, PlayerType, PlayerTypeIcon, ViewSlot } from "./TicTacToe"
 import { UserId } from "../../Data"
+import * as Store from "../../Store"
+import * as UI from "../../UI"
+import { gameTheme, PlayerTypeIcon } from "./TicTacToe"
 
 export const BannerArt = ({ title }: { title: string }) => {
-  const strokeWidth = 0.25
   return (
     <UI.Box sx={{ position: "relative" }}>
       <UI.Box

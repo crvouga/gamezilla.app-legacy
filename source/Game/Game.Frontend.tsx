@@ -1,5 +1,5 @@
 import { Cmd, Sub, tagCmd, tagSub, tagUpdate } from "../Core"
-import { RoomId, UserId } from "../Data"
+import { UserId } from "../Data"
 import * as Snackbar from "../Snackbar"
 import * as Store from "../Store"
 import * as UI from "../UI"
@@ -11,7 +11,7 @@ import {
   FrontendMsg,
   GameName,
   ToBackend,
-  ToFrontend,
+  ToFrontend
 } from "./Game.Types"
 import * as Snake from "./Snake/Snake.Frontend"
 import * as Tetris from "./Tetris/Tetris.Frontend"
@@ -75,11 +75,9 @@ export type OutAction = Snackbar.Action
 export const update = (
   {
     currentUserId,
-    currentRoomId,
     sendToBackend,
   }: {
     currentUserId: UserId.UserId
-    currentRoomId: RoomId.RoomId
     sendToBackend: (msg: ToBackend) => Cmd.Cmd<never>
   },
   msg: Msg,
@@ -133,7 +131,6 @@ export const update = (
           TicTacToe.update(
             {
               sendToBackend: (msg) => sendToBackend(["TicTacToe", msg]),
-              currentUserId,
             },
             msg[1],
             model[1],

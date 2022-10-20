@@ -1,6 +1,5 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react"
-import { Some } from "../../../Core/Option"
-import { store, userA, userB } from '../../../TestData'
+import { store, userA } from '../../../TestData'
 import * as UI from "../../../UI"
 import { Model, View } from "./UserVsBot.Frontend"
 

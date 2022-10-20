@@ -17,7 +17,7 @@ import {
   initSharedModel,
   SharedModel,
   ToBackend,
-  ToFrontend,
+  ToFrontend
 } from "./Snake.Types"
 
 //
@@ -78,9 +78,9 @@ export const update = (
       const changeDirectionCmd =
         direction.type === "Some"
           ? sendToBackend([
-              "InputDirection",
-              { userId: currentUserId, direction: direction.value },
-            ])
+            "InputDirection",
+            { userId: currentUserId, direction: direction.value },
+          ])
           : Cmd.None
 
       const toggleStatusCmd =
@@ -179,8 +179,8 @@ const updateResponse = <
 //
 
 export const subscriptions = (
-  intervalId: string,
-  model: Model,
+  _intervalId: string,
+  _model: Model,
 ): Sub.Sub<Msg> => {
   return Keyboard.keyDowns<Msg>((key) => ["PressedKeyDown", key])
 }
@@ -192,30 +192,6 @@ export const subscriptions = (
 //
 //
 //
-
-const iconSx: UI.Sx = {
-  width: 40,
-  height: 40,
-  color: "text.secondary",
-}
-
-const buttonSx: UI.Sx = {
-  border: "1px solid #ddd",
-}
-
-const upDown: UI.Sx = {
-  ...buttonSx,
-  width: 64,
-  height: 64,
-  color: "text.secondary",
-}
-
-const leftRight: UI.Sx = {
-  ...buttonSx,
-  width: 64,
-  height: 128,
-  color: "text.secondary",
-}
 
 export const View = ({
   currentUserId,
@@ -435,7 +411,6 @@ export const joystickDirectionToDirection = (
 
 export const ViewBoard = ({
   model,
-  dispatch,
 }: {
   model: Model
   dispatch: (msg: Msg) => void

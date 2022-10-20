@@ -94,7 +94,7 @@ export const updateFromBackend = (
 }
 
 export const mergeWithBackend = (
-  frontendModel: FrontendModel,
+  _frontendModel: FrontendModel,
   backendModel: BackendModel,
 ): FrontendModel => {
   return backendModel
@@ -108,7 +108,7 @@ export const mergeWithBackend = (
 //
 //
 
-export const subscriptions = (model: Model): Sub.Sub<Msg> => {
+export const subscriptions = (_model: Model): Sub.Sub<Msg> => {
   return Sub.None
 }
 

@@ -82,7 +82,6 @@ export const update = (
       const [gameNew, gameCmd] = Game.update(
         {
           sendToRoom: (msg) => sendToRoom(roomId, ["Games", roomId, msg]),
-          roomId,
         },
         gameMsg,
         game,
@@ -238,7 +237,7 @@ const updateResponse = (
 
   const modelNew = response[1].value
 
-  const allUserIds = Object.values(modelNew.users).map((user) => user.userId)
+  // const allUserIds = Object.values(modelNew.users).map((user) => user.userId)
 
   return [
     modelNew,
