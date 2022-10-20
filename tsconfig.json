@@ -13,7 +13,7 @@
     "noFallthroughCasesInSwitch": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
-    "module": "CommonJS",
+    "module": "NodeNext",
     "moduleResolution": "Node",
     "resolveJsonModule": true,
     "isolatedModules": true,

@@ -2,7 +2,6 @@
   "name": "",
   "version": "",
   "private": true,
-  "type": "commonjs",
   "scripts": {
     "backend": "ts-node-dev --respawn --no-deps --transpile-only ./source/App.Backend.ts",
     "backend:build": "npx tsc --project tsconfig.json",
