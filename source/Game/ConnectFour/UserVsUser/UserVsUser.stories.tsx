@@ -86,6 +86,14 @@ GameStarted.args = {
     }
 }
 
+export const ConfirmResign = Template.bind({})
+ConfirmResign.args = {
+    model: {
+        ...gameModel,
+        openedModal: "ConfirmResign"
+    }
+}
+
 const p1: PlayerType = "PlayerOne"
 const p2: PlayerType = "PlayerTwo"
 

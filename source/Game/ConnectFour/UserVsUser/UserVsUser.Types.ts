@@ -118,7 +118,11 @@ export type BackendModel = SharedModel
 
 export type BackendMsg = Tick
 
-export type FrontendMsg = Req | ["HoveredOverColumns", { columnIndex: ColumnIndex }]
+export type FrontendMsg =
+  | Req
+  | ["HoveredOverColumns", { columnIndex: ColumnIndex }]
+  | ['ClickedResign', { userId: UserId }]
+  | ['CloseModal']
 
 export type ToBackend = Req
 
@@ -134,6 +138,7 @@ export type Req =
   | ["Rematch_Respond", { userId: UserId, response: "Accept" | "Decline" }]
   | ["Rematch_Cancel", { userId: UserId, }]
   | ["NewGame", { userId: UserId }]
+  | ['Resign', { userId: UserId }]
 
 export type Res =
   | ['StopPlaying_Done', Result<"not_in_setup" | "not_playing", SharedModel>]
@@ -145,6 +150,7 @@ export type Res =
   | ["Rematch_Respond_Done", Result<"not_playing" | "not_asking" | "not_game_over", SharedModel>]
   | ["Rematch_Cancel_Done", Result<"not_playing" | "not_asking" | "not_game_over", SharedModel>]
   | ["NewGame_Done", Result<"not_playing" | "not_game_over", SharedModel>]
+  | ["Resign_Done", Result<"not_playing" | "not_in_game", SharedModel>]
 
 export const handle = (req: Req, model: SharedModel): Res => {
   switch (req[0]) {
@@ -366,6 +372,33 @@ export const handle = (req: Req, model: SharedModel): Res => {
       }
 
       return ['Rematch_Cancel_Done', Ok(modelNew)]
+    }
+
+
+    case 'Resign': {
+      if (model.type !== 'Game') {
+        return ['Resign_Done', Err('not_in_game')]
+      }
+
+      const { userId } = req[1]
+
+      const playerType = toPlayerType(userId, model)
+
+      if (!playerType) {
+        return ['Resign_Done', Err("not_playing")]
+      }
+
+      const modelNew: SharedModel = {
+        type: "GameOver",
+        columns: model.columns,
+        PlayerOne: model.PlayerOne,
+        PlayerTwo: model.PlayerTwo,
+        rematch: { type: "NotAsking" },
+        moveTimeLimit: model.moveTimeLimit,
+        gameOver: { type: "Resignation", resigner: playerType },
+      }
+
+      return ['Resign_Done', Ok(modelNew)]
     }
 
     default: {

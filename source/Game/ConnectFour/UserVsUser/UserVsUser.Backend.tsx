@@ -1,4 +1,4 @@
-import { Cmd, Sub, Time } from "../../../Core";
+import { Cmd, exhaustive, Sub, Time } from "../../../Core";
 import { BackendMsg, ToBackend, initShared, BackendModel, handle, ToFrontend, tick } from "./UserVsUser.Types";
 
 //
@@ -34,6 +34,7 @@ export const update = ({ sendToRoom }: { sendToRoom: (msg: ToFrontend) => Cmd.Cm
 
 export const updateFromFrontend = ({ sendToClient, sendToRoom }: { sendToClient: (msg: ToFrontend) => Cmd.Cmd<never>, sendToRoom: (msg: ToFrontend) => Cmd.Cmd<never> }, msg: ToBackend, model: Model): [Model, Cmd.Cmd<Msg>] => {
     switch (msg[0]) {
+        case 'Resign':
         case 'NewGame':
         case 'Rematch_Cancel':
         case 'Rematch_Request':
@@ -52,6 +53,10 @@ export const updateFromFrontend = ({ sendToClient, sendToRoom }: { sendToClient:
             const modelNew = response[1].value
 
             return [modelNew, sendToRoom(response)]
+        }
+
+        default: {
+            return exhaustive(msg[0])
         }
     }
 }
