@@ -44,9 +44,17 @@ export const update = ({ sendToBackend, }: { sendToBackend: (msg: ToBackend) => 
         //
         //
 
+        case 'ClickedResign': {
+            return [{ ...model, openedModal: "ConfirmResign" }, Cmd.None]
+        }
+
         case 'HoveredOverColumns': {
             const { columnIndex } = msg[1]
             return [{ ...model, ghostIndex: columnIndex }, Cmd.None]
+        }
+
+        case 'CloseModal': {
+            return [{ ...model, openedModal: 'None' }, Cmd.None]
         }
 
         // 
@@ -55,6 +63,7 @@ export const update = ({ sendToBackend, }: { sendToBackend: (msg: ToBackend) => 
         //
         // 
 
+        case 'Resign':
         case 'NewGame':
         case 'Rematch_Request':
         case 'Rematch_Respond':
@@ -81,12 +90,13 @@ export const updateFromBackend = (msg: ToFrontend, model: Model): [Model, Cmd.Cm
         case 'StartGame_Done':
         case 'StopPlaying_Done':
         case 'Rematch_Cancel_Done':
+        case 'Resign_Done':
         case 'Rematch_Request_Done':
         case 'Rematch_Respond_Done':
         case "StartPlaying_Done": {
             const modelNew = msg[1].type === 'Err' ? model : msg[1].value
             const merged = mergeWithBackend({ frontendModel: model, backendModel: modelNew })
-            return [merged, Cmd.None]
+            return [{ ...merged, openedModal: "None" }, Cmd.None]
         }
 
         case 'InputMove_Done': {
@@ -161,15 +171,28 @@ export const View = ({ currentUserId, model, dispatch, store, roomComponent, goB
 
     if (model.type === 'Game') {
         return (
-            <ViewGame
-                currentUserId={currentUserId}
-                ghostIndex={model.ghostIndex}
-                model={model}
-                store={store}
-                homeButton={homeButton}
-                roomComponent={roomComponent}
-                dispatch={dispatch}
-            />
+            <>
+                <ViewGame
+                    currentUserId={currentUserId}
+                    ghostIndex={model.ghostIndex}
+                    model={model}
+                    store={store}
+                    homeButton={homeButton}
+                    roomComponent={roomComponent}
+                    dispatch={dispatch}
+                />
+
+                <UI.ConformationDialog
+                    headerIcon={<UI.Icons.Flag sx={{ width: 52, height: 52 }} />}
+                    title="Resign from game?"
+                    onCancel={() => dispatch(['CloseModal'])}
+                    onClose={() => dispatch(['CloseModal'])}
+                    confirmTitle="Resign"
+                    onConfirm={() => dispatch(['Resign', { userId: currentUserId }])}
+                    open={model.openedModal === 'ConfirmResign'}
+                />
+
+            </>
         )
     }
 
@@ -234,14 +257,15 @@ const ViewGame = ({
                 <UI.ActionButton
                     icon={<UI.Icons.Flag />}
                     label="Resign"
-                    onClick={() => { }}
+                    onClick={() => dispatch(['ClickedResign', { userId: currentUserId }])}
                 />
-                <UI.ActionButton
+                {/* <UI.ActionButton
                     icon={<UI.Icons.HandshakeTwoTone />}
                     label="Draw"
                     onClick={() => { }}
-                />
+                /> */}
             </UI.Box>
+
 
         </UI.FillBox>
     )
