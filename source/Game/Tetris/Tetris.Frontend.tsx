@@ -251,12 +251,12 @@ export const View = ({
   model,
   dispatch,
   onCloseGame,
-  roomAvatarGroup,
+  roomComponent,
 }: {
   model: Model
   dispatch: (msg: Msg) => void
   onCloseGame: () => void
-  roomAvatarGroup: UI.ViewNode
+  roomComponent: UI.ViewNode
 }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const containerRef = useRef<HTMLDivElement | null>(null)
@@ -303,7 +303,7 @@ export const View = ({
           </UI.Button>
         }
         title="Tetris"
-        right={roomAvatarGroup}
+        right={roomComponent}
       />
       <div
         ref={containerRef}

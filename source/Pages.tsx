@@ -935,13 +935,6 @@ export const ViewReady = ({
           gameRoom={gameRoom}
           model={model[1]}
           dispatch={(msg) => dispatch(["GameRoom", msg])}
-          bottomNav={
-            <ViewBottomNavigation
-              currentUserId={currentUserId}
-              route={route}
-              dispatch={dispatch}
-            />
-          }
         />
       )
     }

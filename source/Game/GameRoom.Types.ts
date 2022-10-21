@@ -1,6 +1,8 @@
-import { Option, RemoteData, Result, Unit } from "../Core"
+import { p, RemoteData, Result, Unit } from "../Core"
 import { RoomId, UserId } from "../Data"
 import * as Game from "./Game.Types"
+import * as GameBackend from "./Game.Backend"
+import { removeKey } from "../Core/Record"
 
 //
 //
@@ -12,35 +14,25 @@ import * as Game from "./Game.Types"
 
 export type BackendModel = {
   rooms: {
-    [roomId: RoomId.RoomId]: {
-      roomId: RoomId.RoomId
-      hostId: UserId.UserId
-      events: RoomEvent[]
-      game: Option.Option<Game.BackendModel>
-    }
+    [roomId: RoomId.RoomId]: BackendRoom
   }
   users: {
-    [userId: UserId.UserId]: {
-      userId: UserId.UserId
-      roomId: RoomId.RoomId
-    }
+    [userId: UserId.UserId]: RoomUser
   }
+}
+
+export type BackendRoom = {
+  roomId: RoomId.RoomId
+  hostId: UserId.UserId
+  game: Game.BackendModel
 }
 
 export type FrontendModel = {
   rooms: {
-    [roomId: RoomId.RoomId]: {
-      roomId: RoomId.RoomId
-      hostId: UserId.UserId
-      events: RoomEvent[]
-      game: Option.Option<Game.FrontendModel>
-    }
+    [roomId: RoomId.RoomId]: FrontendRoom
   }
   users: {
-    [userId: UserId.UserId]: {
-      userId: UserId.UserId
-      roomId: RoomId.RoomId
-    }
+    [userId: UserId.UserId]: RoomUser
   }
   modal: "DrawerOpened" | "Closed" | "MenuOpened"
   requests: {
@@ -50,6 +42,17 @@ export type FrontendModel = {
     OpenGame: RemoteData.RemoteData<OpenGameProblem, Unit>
     CloseGame: RemoteData.RemoteData<CloseGameProblem, Unit>
   }
+}
+
+export type FrontendRoom = {
+  roomId: RoomId.RoomId
+  hostId: UserId.UserId
+  game: Game.FrontendModel
+}
+
+export type RoomUser = {
+  userId: UserId.UserId
+  roomId: RoomId.RoomId
 }
 
 //
@@ -95,11 +98,68 @@ export type Response =
 
 export type LeaveRoom = ["LeaveRoom", { userId: UserId.UserId }]
 
-export type LeaveRoom_Done = ["LeaveRoom_Done", LeaveRoomResult]
+export type LeaveRoom_Done = ["LeaveRoom_Done", Result.Result<LeaveRoomProblem, BackendModel>]
 
-export type LeaveRoomProblem = "user_is_not_a_room"
+export type LeaveRoomProblem = "not_in_room"
 
-export type LeaveRoomResult = Result.Result<LeaveRoomProblem, BackendModel>
+export const leaveRoom = (
+  { userId }: { userId: UserId.UserId },
+  model: BackendModel,
+): LeaveRoom_Done[1] => {
+  const user = model.users[userId]
+
+  if (!user) {
+    return Result.Err("not_in_room")
+  }
+
+  const room = model.rooms[user.roomId]
+
+  if (!room) {
+    return Result.Err("not_in_room")
+  }
+
+  const usersNew = removeKey(userId, model.users)
+
+  if (user.userId !== room.hostId) {
+    return Result.Ok({
+      ...model,
+      users: usersNew,
+    })
+  }
+
+  const nextHost = p(
+    Object.values(model.users),
+    (users) =>
+      users.filter(
+        (user) => user.roomId === room.roomId && user.userId !== room.hostId,
+      ),
+    (users) => users[0],
+  )
+
+  if (!nextHost) {
+    return Result.Ok({
+      ...model,
+      users: usersNew,
+      rooms: removeKey(room.roomId, model.rooms),
+    })
+  }
+
+  const roomNew: BackendRoom = {
+    game: room.game,
+    hostId: nextHost.userId,
+    roomId: room.roomId
+  }
+
+
+  return Result.Ok({
+    ...model,
+    users: usersNew,
+    rooms: {
+      ...model.rooms,
+      [room.roomId]: roomNew,
+    },
+  })
+}
 
 //
 //
@@ -107,16 +167,47 @@ export type LeaveRoomResult = Result.Result<LeaveRoomProblem, BackendModel>
 //
 //
 
-export type CreateRoom_Done = ["CreateRoom_Done", CreateRoomResult]
 
 export type CreateRoom = [
   "CreateRoom",
-  { roomId: RoomId.RoomId; userId: UserId.UserId; gameName?: Game.GameName },
+  { roomId: RoomId.RoomId; userId: UserId.UserId; gameName: Game.GameName },
 ]
 
-export type CreateRoomProblem = "user_is_already_in_a_room"
+export type CreateRoom_Done = ["CreateRoom_Done", Result.Result<CreateRoomProblem, BackendModel>]
 
-export type CreateRoomResult = Result.Result<CreateRoomProblem, BackendModel>
+export type CreateRoomProblem = "already_in_room"
+
+export const createRoom = (
+  { userId, roomId, gameName }: CreateRoom[1],
+  model: BackendModel,
+): CreateRoom_Done[1] => {
+  const user = model.users[userId]
+
+  if (user && model.rooms[user.roomId]) {
+    return Result.Err("already_in_room")
+  }
+
+  const modelNew: BackendModel = {
+    ...model,
+    users: {
+      ...model.users,
+      [userId]: {
+        userId,
+        roomId,
+      },
+    },
+    rooms: {
+      ...model.rooms,
+      [roomId]: {
+        roomId,
+        hostId: userId,
+        game: GameBackend.init({ gameName })
+      },
+    },
+  }
+
+  return Result.Ok(modelNew)
+}
 
 //
 //
@@ -128,13 +219,46 @@ export type JoinRoom = [
   "JoinRoom",
   { roomId: RoomId.RoomId; userId: UserId.UserId },
 ]
-export type JoinRoom_Done = ["JoinRoom_Done", JoinRoomResult]
+export type JoinRoom_Done = ["JoinRoom_Done", Result.Result<JoinRoomProblem, BackendModel>]
 
 export type JoinRoomProblem =
   | "user_is_already_in_a_room"
   | "room_does_not_exists"
 
-export type JoinRoomResult = Result.Result<JoinRoomProblem, BackendModel>
+export const joinRoom = (
+  { userId, roomId }: { userId: UserId.UserId; roomId: RoomId.RoomId },
+  model: BackendModel,
+): JoinRoom_Done[1] => {
+  const user = model.users[userId]
+
+  if (user && user.roomId !== roomId && model.rooms[user.roomId]) {
+    return Result.Err("user_is_already_in_a_room")
+  }
+
+  const room = model.rooms[roomId]
+
+  if (!room) {
+    return Result.Err("room_does_not_exists")
+  }
+
+  const modelNew: BackendModel = {
+    ...model,
+    rooms: {
+      ...model.rooms,
+      [room.roomId]: room,
+    },
+    users: {
+      ...model.users,
+      [userId]: {
+        userId,
+        roomId,
+      },
+    },
+  }
+
+  return Result.Ok(modelNew)
+}
+
 
 //
 //
@@ -146,11 +270,40 @@ export type OpenGame = [
   "OpenGame",
   { gameName: Game.GameName; userId: UserId.UserId },
 ]
-export type OpenGame_Done = ["OpenGame_Done", OpenGameResult]
+export type OpenGame_Done = ["OpenGame_Done", Result.Result<OpenGameProblem, BackendModel>]
 
-export type OpenGameProblem = "user_is_not_in_a_room" | "game_already_started"
+export type OpenGameProblem = "not_in_room"
 
-export type OpenGameResult = Result.Result<OpenGameProblem, BackendModel>
+
+export const openGame = (
+  { userId, gameName }: { userId: UserId.UserId; gameName: Game.GameName },
+  model: BackendModel,
+): OpenGame_Done[1] => {
+  const user = model.users[userId]
+
+  if (!user) {
+    return Result.Err("not_in_room")
+  }
+
+  const room = model.rooms[user.roomId]
+
+  if (!room) {
+    return Result.Err("not_in_room")
+  }
+
+  const modelNew: BackendModel = {
+    ...model,
+    rooms: {
+      ...model.rooms,
+      [room.roomId]: {
+        ...room,
+        game: GameBackend.init({ gameName }),
+      },
+    },
+  }
+
+  return Result.Ok(modelNew)
+}
 
 //
 //
@@ -160,21 +313,37 @@ export type OpenGameResult = Result.Result<OpenGameProblem, BackendModel>
 
 export type CloseGame = ["CloseGame", { userId: UserId.UserId }]
 
-export type CloseGame_Done = ["CloseGame_Done", CloseGameResult]
+export type CloseGame_Done = ["CloseGame_Done", Result.Result<CloseGameProblem, BackendModel>]
 
 export type CloseGameProblem = "user_is_not_in_a_room" | "game_already_stopped"
 
-export type CloseGameResult = Result.Result<CloseGameProblem, BackendModel>
+export const closeGame = (
+  { userId }: { userId: UserId.UserId },
+  model: BackendModel,
+): CloseGame_Done[1] => {
+  const user = model.users[userId]
 
-//
-//
-//
-// Rooms
-//
-//
-//
+  if (!user) {
+    return Result.Err("user_is_not_in_a_room")
+  }
 
-export type RoomEvent =
-  | ["Created", { userId: UserId.UserId; roomId: RoomId.RoomId }]
-  | ["Joined", { userId: UserId.UserId }]
-  | ["Left", { userId: UserId.UserId }]
+  const room = model.rooms[user.roomId]
+
+  if (!room) {
+    return Result.Err("user_is_not_in_a_room")
+  }
+
+  const modelNew: BackendModel = {
+    ...model,
+    rooms: {
+      ...model.rooms,
+      [room.roomId]: {
+        ...room,
+        // todo close game should be removed
+        game: room.game,
+      },
+    },
+  }
+
+  return Result.Ok(modelNew)
+}

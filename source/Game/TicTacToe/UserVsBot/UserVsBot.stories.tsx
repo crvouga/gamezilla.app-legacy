@@ -52,12 +52,12 @@ const currentUserId = userA.userId
 //
 
 export default {
-  title: "TicTacToe/UserVsBot",
+  title: "TicTacToe / UserVsBot",
   component: View,
   args: {
     currentUserId: currentUserId,
     dispatch: () => { },
-    roomAvatarGroup: <>room</>,
+    roomComponent: <>room</>,
     goHome: () => { },
     // onCloseGame: () => { },
     store: {

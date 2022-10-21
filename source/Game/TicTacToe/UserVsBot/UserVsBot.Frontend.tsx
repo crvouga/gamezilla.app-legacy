@@ -125,7 +125,7 @@ export const View = ({
   model,
   dispatch,
   goHome,
-  roomAvatarGroup,
+  roomComponent,
   store,
   currentUserId,
 }: {
@@ -135,7 +135,7 @@ export const View = ({
   goHome: () => void
   model: Model
   dispatch: (msg: Msg) => void
-  roomAvatarGroup: UI.ViewNode
+  roomComponent: UI.ViewNode
 }) => {
   const homeButton = (
     <UI.IconButton
@@ -163,7 +163,7 @@ export const View = ({
         <UI.Header
           left={homeButton}
           title=""
-          right={roomAvatarGroup}
+          right={roomComponent}
         />
         <UI.Box sx={{ flex: 1, overflowY: "scroll" }}>
           <VersusHeader
@@ -312,7 +312,7 @@ export const View = ({
       <UI.Header
         left={homeButton}
         title=""
-        right={roomAvatarGroup}
+        right={roomComponent}
       />
 
       <UI.Box sx={{ flex: 1 }}>

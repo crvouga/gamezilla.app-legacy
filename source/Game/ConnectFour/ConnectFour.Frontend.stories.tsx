@@ -1,5 +1,5 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react"
-import * as TestData from "../../TestData"
+import * as TestData from "../../test-data"
 import * as UI from "../../UI"
 import { View } from "./ConnectFour.Frontend"
 
@@ -11,11 +11,10 @@ export default {
     component: View,
     args: {
         currentUserId: currentUserId,
+        roomComponent: <>room</>,
         dispatch: () => { },
-        roomButton: <></>,
         goHome: () => { },
         onCloseGame: () => { },
-        roomComponent: <>room</>
     }
 } as ComponentMeta<typeof View>
 

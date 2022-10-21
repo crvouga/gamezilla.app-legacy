@@ -18,7 +18,7 @@ export const PlayerIcon = ({ playerType, sx }: { playerType: PlayerType, sx?: UI
 export const PlayerOneIcon = ({ sx }: { sx?: UI.Sx }) => {
     return (
         <UI.SvgIcon viewBox="-1 -1 2 2" sx={{ ...sx }}>
-            <ViewPlayerOneGradientDef gradientId="playerOneGradient" />
+            <ViewPlayerOneGradientDef gradientId="playerOneGradient" cx={0} cy={0} r={1} />
             <circle cx={0} cy={0} r={1} fill={`url(#playerOneGradient)`} />
         </UI.SvgIcon>
     )

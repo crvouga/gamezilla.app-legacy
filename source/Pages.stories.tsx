@@ -1,0 +1,48 @@
+import { ComponentMeta, ComponentStory } from "@storybook/react"
+import { store, userA } from "./test-data"
+import * as UI from "./UI"
+import { initReady, ViewReady } from "./Pages"
+import * as GameRoom from "./Game/GameRoom.Frontend"
+import * as Party from "./Party/Party.Frontend"
+import * as Debug from "./Debug/Debug.Frontend"
+
+export default {
+    title: "Page/Ready",
+    component: ViewReady,
+    args: {
+        dispatch: () => { },
+        store: store,
+        profile: userA,
+        debug: Debug.init,
+        gameRoom: GameRoom.init[0],
+        party: Party.init()[0],
+    },
+} as ComponentMeta<typeof ViewReady>
+
+
+const Template: ComponentStory<typeof ViewReady> = (args) => {
+    return (
+        <UI.AppContainer themeMode="System" >
+            <ViewReady {...args} />
+        </UI.AppContainer>
+    )
+}
+
+
+export const Home = Template.bind({})
+Home.args = {
+    model: initReady(['Home'], userA)[0],
+    route: ['Home']
+}
+
+export const Chat = Template.bind({})
+Chat.args = {
+    model: initReady(['Chat'], userA)[0],
+    route: ['Chat']
+}
+
+export const Search = Template.bind({})
+Search.args = {
+    model: initReady(['Search'], userA)[0],
+    route: ['Search']
+}

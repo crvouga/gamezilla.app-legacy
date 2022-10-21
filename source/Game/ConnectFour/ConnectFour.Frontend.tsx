@@ -2,7 +2,7 @@ import { Cmd } from "../../Core"
 import { UserId } from "../../Data"
 import * as Store from "../../Store"
 import * as UI from "../../UI"
-import { GameModeCard } from "../Views"
+import { bannerArtAspectRatio, GameModeCardGrid } from "../Views"
 import {
   COLUMN_COUNT,
   gameTheme,
@@ -16,6 +16,7 @@ import {
   ToFrontend
 } from "./ConnectFour.Types"
 import * as UserVsUser from "./UserVsUser/UserVsUser.Frontend"
+import { PlayerIcon } from "./Views"
 
 //
 //
@@ -92,21 +93,16 @@ export const updateFromBackend = (
 //
 //
 
-const iconSize = 58
-const iconSx: UI.Sx = { width: iconSize, height: iconSize }
-
 export const View = ({
   model,
   dispatch,
   goHome,
-  closeGame,
   roomComponent,
   currentUserId,
   store,
 }: {
   model: Model
   dispatch: (msg: Msg) => void
-  closeGame: () => void
   goHome: () => void
   store: Store.Model
   roomComponent: UI.ViewNode
@@ -114,26 +110,7 @@ export const View = ({
 }) => {
   switch (model.type) {
     case 'None': {
-      const ids = {
-        playerOneGradient: "playerOneGradient",
-        playerTwoGradient: "playerTwoGradient",
-        holePattern: "holePattern",
-        columnGradient: "columnGradient",
-        holeMask: "holeMask",
-      }
 
-      const playerOneFill = `url(#${ids.playerOneGradient})`
-      const playerTwoFill = `url(#${ids.playerTwoGradient})`
-
-      const columns = [
-        ["PlayerOne",],
-        ["PlayerTwo", "PlayerOne",],
-        ["PlayerOne", "PlayerTwo", "PlayerOne",],
-        ["PlayerOne", "PlayerTwo"],
-        ["PlayerTwo",],
-        ["PlayerOne", "PlayerTwo", "PlayerTwo"],
-        ["PlayerTwo"],
-      ]
 
       return (
         <UI.FillBox>
@@ -150,154 +127,12 @@ export const View = ({
             right={roomComponent}
           />
 
-          <UI.AspectRatio aspectRatio={Math.pow(3 / 4, 3)}>
-            <svg
-              width="100%"
-              height="100%"
-              style={{ padding: 0, margin: 0 }}
-              viewBox={"0 0 7 3"}
-            >
-              <defs>
-                <pattern
-                  id={ids.holePattern}
-                  patternUnits="userSpaceOnUse"
-                  width={1}
-                  height={1}
-                >
-                  <circle
-                    cx={0.5}
-                    cy={0.5}
-                    r={0.425}
-                    fill="black"
-                  ></circle>
-                </pattern>
+          <BannerArt />
 
-                <mask id={ids.holeMask}>
-                  <rect
-                    x={0}
-                    y={0}
-                    width={COLUMN_COUNT}
-                    height={MAX_COLUMN_HEIGHT}
-                    fill="white"
-                  ></rect>
-                  <rect
-                    x={0}
-                    y={0}
-                    width={COLUMN_COUNT}
-                    height={MAX_COLUMN_HEIGHT}
-                    fill={`url(#${ids.holePattern})`}
-                  ></rect>
-                </mask>
-
-                <linearGradient
-                  id={ids.columnGradient}
-                  gradientTransform="rotate(90)"
-                >
-                  <stop
-                    offset="0%"
-                    stopColor={gameTheme.primary.light}
-                  />
-                  <stop
-                    offset="100%"
-                    stopColor={gameTheme.primary.dark}
-                  />
-                </linearGradient>
-
-                <linearGradient
-                  id={ids.playerOneGradient}
-                  gradientTransform="rotate(90)"
-                >
-                  <stop
-                    offset="0%"
-                    stopColor={gameTheme.PlayerOne.light}
-                  />
-                  <stop
-                    offset="100%"
-                    stopColor={gameTheme.PlayerOne.dark}
-                  />
-                </linearGradient>
-
-                <linearGradient
-                  id={ids.playerTwoGradient}
-                  gradientTransform="rotate(90)"
-                >
-                  <stop
-                    offset="0%"
-                    stopColor={gameTheme.PlayerTwo.light}
-                  />
-                  <stop
-                    offset="100%"
-                    stopColor={gameTheme.PlayerTwo.dark}
-                  />
-                </linearGradient>
-              </defs>
-
-              <rect
-                x={0}
-                y={0}
-                width={7}
-                height={3}
-                fill={gameTheme.primary.darker}
-              />
-
-
-              {columns.map((column, columnIndex) =>
-                column.map((player, rowIndex) => (
-                  <circle
-                    key={[columnIndex, rowIndex].join(", ")}
-                    cx={columnIndex + 0.5}
-                    cy={3 - (rowIndex + 0.5)}
-                    r={0.5}
-                    fill={player === "PlayerOne" ? playerOneFill : playerTwoFill}
-                  />
-                )),
-              )}
-
-              <rect
-                x={0}
-                y={0}
-                width={7}
-                height={3}
-                fill={`url(#${ids.columnGradient})`}
-                mask={`url(#${ids.holeMask})`}
-              />
-            </svg>
-
-            <UI.Box sx={{ width: '100%', height: '100%', background: "rgba(0, 0, 0, 0.2)", position: "absolute", top: 0, left: 0, overflow: "hidden", display: 'flex', alignItems: "flex-end" }}>
-              <UI.Typography color="#fff" fontSize={36} sx={{ paddingX: 2, paddingY: 1 }}>
-                Connect Four
-              </UI.Typography>
-            </UI.Box>
-
-          </UI.AspectRatio>
-
-          <UI.Box sx={{ display: "flex", gap: 2, padding: 2, flex: 1 }}>
-            <UI.Box sx={{ width: "50%" }}>
-              <GameModeCard
-                leftIcon={<UI.Icons.Person sx={iconSx} />}
-                rightIcon={<UI.Icons.Person sx={iconSx} />}
-                title="Vs User"
-                onClick={() => dispatch(["InputMode", { mode: "UserVsUser", userId: currentUserId },])}
-              />
-            </UI.Box>
-
-
-            <UI.Box sx={{ width: "50%" }}>
-              <GameModeCard
-                leftIcon={<UI.Icons.Person sx={iconSx} />}
-                rightIcon={<UI.Icons.SmartToy sx={iconSx} />}
-                title="Vs User"
-                onClick={() => dispatch(["InputMode", { mode: "UserVsBot", userId: currentUserId },])}
-              />
-            </UI.Box>
-          </UI.Box>
-          <UI.Box sx={{ padding: 2 }}>
-            <UI.Button fullWidth onClick={closeGame} variant="outlined">
-              Back
-            </UI.Button>
-
-          </UI.Box>
-
+          <GameModeCardGrid
+            onUserVsUser={() => dispatch(["InputMode", { mode: "UserVsUser", userId: currentUserId },])}
+            onUserVsBot={() => dispatch(["InputMode", { mode: "UserVsBot", userId: currentUserId },])}
+          />
         </UI.FillBox>
       )
     }
@@ -340,10 +175,39 @@ export const View = ({
 //
 //
 //
-// Cover Art
+// Art
 //
 //
 //
+
+
+const BannerArt = () => {
+  const iconSx: UI.Sx = { width: 120, height: 120, maxHeight: "66%" }
+
+  return (
+    <UI.AspectRatio aspectRatio={bannerArtAspectRatio}>
+      <UI.Box sx={{
+        width: "100%",
+        height: "100%",
+        background: `linear-gradient(${gameTheme.primary.dark}, ${gameTheme.primary.darker})`,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: 'center',
+        gap: 4
+      }}>
+
+        <PlayerIcon playerType="PlayerOne" sx={iconSx} />
+        <PlayerIcon playerType="PlayerTwo" sx={iconSx} />
+      </UI.Box>
+      <UI.Box sx={{ width: '100%', height: '100%', background: "rgba(0, 0, 0, 0.1)", position: "absolute", top: 0, left: 0, overflow: "hidden", display: 'flex', alignItems: "flex-end" }}>
+        <UI.Typography color="#fff" fontSize={36} sx={{ paddingX: 2, paddingY: 1 }}>
+          Connect Four
+        </UI.Typography>
+      </UI.Box>
+
+    </UI.AspectRatio>
+  )
+}
 
 export const CoverArt = ({ id }: { id: string }) => {
   const ids = {

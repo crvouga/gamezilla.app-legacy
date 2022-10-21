@@ -452,7 +452,7 @@ const ViewGamePlayerSlot = ({ model, playerType, store }: { model: GameModel | G
                 {store.Profile[model[playerType]]?.username ?? "..."}
             </UI.Typography>
             {model.type === 'Game' && toTurn(model.columns) === playerType && (
-                <UI.Typography sx={{ marginLeft: 1, fontSize: 32 }}>
+                <UI.Typography sx={{ marginLeft: 1, fontSize: 20 }}>
                     {model.moveCountDown}
                 </UI.Typography>
             )}

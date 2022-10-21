@@ -285,7 +285,7 @@ export const View = ({
   model,
   dispatch,
   onCloseGame,
-  roomAvatarGroup: roomComponent,
+  roomComponent: roomComponent,
   goHome,
 }: {
   goHome: () => void
@@ -294,7 +294,7 @@ export const View = ({
   store: Store.Model
   model: Model
   dispatch: (msg: Msg) => void
-  roomAvatarGroup: UI.ViewNode
+  roomComponent: UI.ViewNode
 }) => {
   switch (model[0]) {
     case "Tetris": {
@@ -303,7 +303,7 @@ export const View = ({
           model={model[1]}
           dispatch={(msg) => dispatch(["Tetris", msg])}
           onCloseGame={onCloseGame}
-          roomAvatarGroup={roomComponent}
+          roomComponent={roomComponent}
         />
       )
     }
@@ -315,7 +315,6 @@ export const View = ({
           currentUserId={currentUserId}
           model={model[1]}
           dispatch={(msg) => dispatch(["ConnectFour", msg])}
-          closeGame={onCloseGame}
           goHome={goHome}
           roomComponent={roomComponent}
         />
@@ -326,7 +325,7 @@ export const View = ({
       return (
         <Snake.View
           onClose={onCloseGame}
-          roomAvatarGroup={roomComponent}
+          roomComponent={roomComponent}
           currentUserId={currentUserId}
           store={store}
           model={model[1]}
@@ -342,9 +341,8 @@ export const View = ({
           store={store}
           model={model[1]}
           dispatch={(msg) => dispatch(["TicTacToe", msg])}
-          onCloseGame={onCloseGame}
           goHome={goHome}
-          roomAvatarGroup={roomComponent}
+          roomComponent={roomComponent}
         />
       )
     }
@@ -353,12 +351,11 @@ export const View = ({
       return (
         <Chess.View
           goHome={goHome}
-          onCloseGame={onCloseGame}
           currentUserId={currentUserId}
           store={store}
           model={model[1]}
           dispatch={(msg) => dispatch(["Chess", msg])}
-          roomAvatarGroup={roomComponent}
+          roomComponent={roomComponent}
         />
       )
     }

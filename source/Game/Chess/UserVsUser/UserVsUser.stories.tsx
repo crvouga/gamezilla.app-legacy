@@ -1,6 +1,6 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react"
 import { Some } from "../../../Core/Option"
-import { store, userA, userB } from '../../../TestData'
+import { store, userA, userB } from '../../../test-data'
 import * as UI from "../../../UI"
 import { Model, View } from "./UserVsUser.Frontend"
 
@@ -14,7 +14,7 @@ export default {
     args: {
         currentUserId: currentUserId,
         store: store,
-        roomAvatarGroup: <>room</>,
+        roomComponent: <>room</>,
         goHome: () => { },
         dispatch: () => { },
         onClose: () => { },

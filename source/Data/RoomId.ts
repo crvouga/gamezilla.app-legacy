@@ -1,4 +1,4 @@
-import { Result, Uuid } from "../Core"
+import { Result } from "../Core"
 
 export type RoomId = string & { _opaque: typeof RoomId }
 
@@ -19,7 +19,9 @@ export const decode = (id: string): Result.Result<Problem, RoomId> => {
 }
 
 export const generate = (): RoomId => {
-  const roomId = Uuid.generateSync()
+  // warning collisions could happen
+  // use short id so the logs are more readable
+  const roomId = Math.random().toString(36).slice(-6);
 
   if (is(roomId)) {
     return roomId

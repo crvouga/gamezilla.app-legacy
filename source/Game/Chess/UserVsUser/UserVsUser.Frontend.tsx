@@ -418,7 +418,7 @@ export const View = ({
   store,
   model,
   dispatch,
-  roomAvatarGroup,
+  roomComponent,
   goHome,
   onClose,
 }: {
@@ -426,7 +426,7 @@ export const View = ({
   currentUserId: UserId.UserId
   model: Model
   dispatch: (msg: Msg) => void
-  roomAvatarGroup: UI.ViewNode
+  roomComponent: UI.ViewNode
   goHome: () => void
   onClose: () => void
 }) => {
@@ -454,7 +454,7 @@ export const View = ({
         <UI.Header
           left={homeButton}
           title="Chess"
-          right={roomAvatarGroup}
+          right={roomComponent}
         />
 
         <UI.Box sx={{ flex: 1, overflowY: "scroll" }}>
@@ -604,7 +604,7 @@ export const View = ({
         <UI.Header
           left={homeButton}
           title="Chess"
-          right={roomAvatarGroup}
+          right={roomComponent}
         />
         <UI.Box
           sx={{
@@ -747,7 +747,7 @@ export const View = ({
       <UI.Header
         left={homeButton}
         title={toGameText(model.sharedModel)}
-        right={roomAvatarGroup}
+        right={roomComponent}
       />
 
       <ViewUserPlayerSlot

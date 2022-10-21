@@ -1,11 +1,12 @@
 import { UserId } from "../../Data"
 import * as Store from "../../Store"
 import * as UI from "../../UI"
+import { bannerArtAspectRatio } from "../Views"
 import { gameTheme, PlayerTypeIcon } from "./TicTacToe"
 
 export const BannerArt = ({ title }: { title: string }) => {
   return (
-    <UI.Box sx={{ position: "relative" }}>
+    <UI.AspectRatio aspectRatio={bannerArtAspectRatio}>
       <UI.Box
         sx={{
           width: "100%",
@@ -47,7 +48,7 @@ export const BannerArt = ({ title }: { title: string }) => {
           {title}
         </UI.Typography>
       </UI.Box>
-    </UI.Box>
+    </UI.AspectRatio>
 
   )
 }

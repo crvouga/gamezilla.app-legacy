@@ -198,21 +198,21 @@ export const View = ({
   store,
   model,
   dispatch,
-  roomAvatarGroup,
+  roomComponent,
   onClose,
 }: {
   currentUserId: UserId.UserId
   store: Store.Model
   model: Model
   dispatch: (msg: Msg) => void
-  roomAvatarGroup: UI.ViewNode
+  roomComponent: UI.ViewNode
   onClose: () => void
 }) => {
   const header = (
     <UI.Header
       left={<UI.Button onClick={onClose}>Close</UI.Button>}
       title="Snake"
-      right={roomAvatarGroup}
+      right={roomComponent}
     />
   )
 
