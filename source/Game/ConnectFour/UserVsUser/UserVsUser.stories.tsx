@@ -106,6 +106,7 @@ const gameOverModel: Model = {
     openedModal: "None",
     PlayerOne: gameModel.PlayerOne,
     PlayerTwo: gameModel.PlayerTwo,
+    rematch: { type: "NotAsking" }
 }
 
 export const CurrentUserWon = Template.bind({})
