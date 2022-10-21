@@ -624,7 +624,7 @@ export const ViewNotInRoom = ({
         }}
       >
         {gameNameList.map((gameName) => (
-          <UI.Box sx={{ minWidth: 150, flex: 1 }}>
+          <UI.Box key={gameName} sx={{ minWidth: 150, flex: 1 }}>
             <ViewGameCard
               key={gameName}
               gameName={gameName}
@@ -720,16 +720,17 @@ const ViewGameRoomAvatarGroup = ({
       >
         <UI.Typography
           variant="h4"
-          sx={{ paddingX: 2, paddingTop: 1 }}
+          sx={{ paddingX: 2, paddingTop: 2, width: "100%" }}
+          noWrap
         >
           {store.Profile[room.hostId]?.username ?? "..."}'s room
         </UI.Typography>
 
         <UI.Box
           sx={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr 1fr",
+            display: "flex",
             paddingY: 1,
+            paddingX: 2,
           }}
         >
           {usersInRoom.map((user) => (
@@ -741,26 +742,45 @@ const ViewGameRoomAvatarGroup = ({
                 flexDirection: "column",
                 alignItems: "center",
                 justifyContent: "center",
+                width: `${(1 / 3) * 100}%`,
                 padding: 1,
+                overflowX: "hidden",
               }}
             >
               <UI.Avatar src={store.Profile[user.userId]?.avatarUrl} />
               <UI.Typography
                 align="center"
-                sx={{ marginBottom: -1 / 2 }}
+                sx={{ marginBottom: -1 / 2, width: '100%' }}
+                noWrap
               >
                 {store.Profile[user.userId]?.username ?? "..."}
               </UI.Typography>
-              <UI.Typography
+              {user.userId === room.hostId ? <UI.Typography
                 variant="subtitle2"
                 color="text.secondary"
               >
-                {user.userId === room.hostId ? "Host" : "Guest"}
-              </UI.Typography>
+                Host
+              </UI.Typography> : (
+                <UI.Typography
+                  variant="subtitle2"
+                  color="text.secondary"
+                  sx={{ opacity: 0 }}
+                >
+                  Guest
+                </UI.Typography>
+              )}
             </UI.Box>
           ))}
         </UI.Box>
-        <UI.Box sx={{ paddingX: 2, paddingBottom: 2 }}>
+
+        <UI.Box sx={{ paddingX: 2, paddingBottom: 2, display: "flex", gap: 2 }}>
+          {currentUserId === room.hostId && <UI.Button
+            fullWidth
+            variant="outlined"
+
+          >
+            Change Game
+          </UI.Button>}
           <UI.Button
             fullWidth
             variant="contained"

@@ -299,7 +299,7 @@ const ViewGameOver = ({
                         color: "#fff",
                     }}
                 >
-                    <ViewGameOverMessage currentUserId={currentUserId} store={store} model={model} />
+                    <ViewGameOverMessage dispatch={dispatch} currentUserId={currentUserId} store={store} model={model} />
                 </UI.Box>}
             </UI.Box>
 
@@ -310,7 +310,7 @@ const ViewGameOver = ({
                     Back
                 </UI.Button>
 
-                <UI.Button variant="contained" fullWidth >
+                <UI.Button variant="contained" fullWidth disabled={model.rematch.type === 'Asking'} onClick={() => dispatch(['Rematch_Request', { userId: currentUserId }])}>
                     Rematch
                 </UI.Button>
             </UI.Box>
@@ -319,8 +319,39 @@ const ViewGameOver = ({
     )
 }
 
-const ViewGameOverMessage = ({ currentUserId, model, store }: { currentUserId: UserId.UserId, model: GameOverModel, store: Store.Model }) => {
+const ViewGameOverMessage = ({ currentUserId, model, store, dispatch }: { currentUserId: UserId.UserId, model: GameOverModel, store: Store.Model, dispatch: (msg: Msg) => void }) => {
     const size = { width: 84, height: 84 }
+
+    const currentUserPlayer = toPlayerType(currentUserId, model)
+
+    if (model.rematch.type === 'Asking' && model.rematch.asker === currentUserPlayer) {
+        return <>
+            <UI.Typography align="center" sx={{ fontSize: 48, marginBottom: 4 }} >
+                Waiting for response
+            </UI.Typography>
+            <UI.CircularProgress sx={{ marginBottom: 4 }} />
+            <UI.Button variant="contained" onClick={() => dispatch(['Rematch_Cancel', { userId: currentUserId }])}>
+                Cancel
+            </UI.Button>
+        </>
+    }
+
+    if (model.rematch.type === 'Asking' && model.rematch.asker !== currentUserPlayer && currentUserPlayer !== null) {
+        return <>
+            <UI.Typography align="center" sx={{ fontSize: 64, marginBottom: 4 }} >
+                Rematch?
+            </UI.Typography>
+
+            <UI.Box sx={{ display: 'flex', gap: 2 }}>
+                <UI.Button variant="contained" color="inherit" sx={{ color: "#000" }} startIcon={<UI.Icons.Cancel />} onClick={() => dispatch(['Rematch_Respond', { response: "Decline", userId: currentUserId }])}>
+                    Decline
+                </UI.Button>
+                <UI.Button variant="contained" startIcon={<UI.Icons.Done />} onClick={() => dispatch(['Rematch_Respond', { response: "Accept", userId: currentUserId }])}>
+                    Accept
+                </UI.Button>
+            </UI.Box>
+        </>
+    }
 
     if (model.gameOver.type === 'Draw') {
         return <>
@@ -330,10 +361,6 @@ const ViewGameOverMessage = ({ currentUserId, model, store }: { currentUserId: U
         </>
     }
 
-    if (model.gameOver.type === 'DrawByAgreement') {
-        return <>draw by agreement</>
-    }
-
     if (model.gameOver.type === 'Resignation') {
         return <>resignation</>
     }
@@ -341,7 +368,6 @@ const ViewGameOverMessage = ({ currentUserId, model, store }: { currentUserId: U
     if (model.gameOver.type === 'Winner') {
         const { winner } = model.gameOver
 
-        const currentUserPlayer = toPlayerType(currentUserId, model)
 
         if (!currentUserPlayer) {
             return (
