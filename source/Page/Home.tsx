@@ -31,7 +31,6 @@ export type Msg =
   | ["ClickedCurrentRoom"]
   | ["ClickedCurrentRoomLeave"]
   | ["ClickedRoom", { roomId: RoomId.RoomId }]
-  | ["ClickedCreateRoom"]
   | ["ClickedGameCard", GameName]
 
 export type OutAction = GameRoom.Action | Route.Action
@@ -47,20 +46,7 @@ export const update = (
         model,
         [
           ["Route", ["Push", ["GameRoom"]]],
-          [
-            "GameRoom",
-            [
-              "Msg",
-              [
-                "CreateRoom",
-                {
-                  gameName: msg[1],
-                  roomId: RoomId.generate(),
-                  userId: currentUserId,
-                },
-              ],
-            ],
-          ],
+          ["GameRoom", ["Msg", ["CreateRoom", { gameName: msg[1], roomId: RoomId.generate(), userId: currentUserId, },],],],
         ],
       ]
     }
@@ -69,12 +55,7 @@ export const update = (
       const roomId = msg[1].roomId
       return [
         model,
-        [
-          [
-            "GameRoom",
-            ["Msg", ["JoinRoom", { roomId, userId: currentUserId }]],
-          ],
-        ],
+        [["GameRoom", ["Msg", ["JoinRoom", { roomId, userId: currentUserId }]]],],
       ]
     }
 
@@ -89,24 +70,7 @@ export const update = (
       return [model, [["Route", ["Push", ["GameRoom"]]]]]
     }
 
-    case "ClickedCreateRoom": {
-      return [
-        model,
-        [
-          ["Route", ["Push", ["GameRoom"]]],
-          [
-            "GameRoom",
-            [
-              "Msg",
-              [
-                "CreateRoom",
-                { roomId: RoomId.generate(), userId: currentUserId },
-              ],
-            ],
-          ],
-        ],
-      ]
-    }
+
   }
 }
 
@@ -175,8 +139,8 @@ export const View = ({
   const roomCount = Object.values(gameRoom.users).filter(
     (user) => user.roomId === currentRoom.roomId,
   ).length
-  const gameName =
-    currentRoom.game.type === "Some" ? currentRoom.game.value[0] : undefined
+
+  const gameName = currentRoom.game[0]
   const otherRooms = Object.values(gameRoom.rooms).filter(
     (room) => room.roomId !== currentRoom.roomId,
   )
@@ -279,9 +243,7 @@ export const View = ({
                 key={room.roomId}
                 roomId={room.roomId}
                 hostId={room.hostId}
-                gameName={
-                  room.game.type === "Some" ? room.game.value[0] : undefined
-                }
+                gameName={room.game[0]}
                 store={store}
                 gameRoom={gameRoom}
                 onClick={() =>
@@ -404,9 +366,7 @@ const ViewNotInRoom = ({
             key={room.roomId}
             roomId={room.roomId}
             hostId={room.hostId}
-            gameName={
-              room.game.type === "Some" ? room.game.value[0] : undefined
-            }
+            gameName={room.game[0]}
             store={store}
             gameRoom={gameRoom}
             onClick={() => dispatch(["ClickedRoom", { roomId: room.roomId }])}

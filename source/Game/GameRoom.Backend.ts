@@ -1,20 +1,11 @@
-import { Cmd, exhaustive, Option, p, Result, Sub } from "../Core"
-import { removeKey } from "../Core/Record"
+import { Cmd, exhaustive, p, Sub } from "../Core"
 import { RoomId, UserId } from "../Data"
 import * as Game from "./Game.Backend"
-import { GameName } from "./Game.Types"
 import {
   BackendModel,
-  BackendMsg,
-  CloseGameResult,
-  CreateRoom,
-  CreateRoomResult,
-  JoinRoomResult,
-  LeaveRoomResult,
-  OpenGame_Done,
-  Response,
+  BackendMsg, BackendRoom, closeGame, createRoom, joinRoom, leaveRoom, openGame, Response,
   ToBackend,
-  ToFrontend,
+  ToFrontend
 } from "./GameRoom.Types"
 
 //
@@ -51,15 +42,7 @@ export const update = (
   msg: Msg,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
-  const sendToRoom = (
-    roomId: RoomId.RoomId,
-    msg: ToFrontend,
-  ): Cmd.Cmd<never> => {
-    const userIds = Object.values(model.users)
-      .filter((user) => user.roomId === roomId)
-      .map((user) => user.userId)
-    return sendToUser(userIds, msg)
-  }
+  const sendToRoom = makeSendToRoom({ sendToUser, model })
 
   switch (msg[0]) {
     case "Games": {
@@ -71,12 +54,6 @@ export const update = (
         return [model, Cmd.None]
       }
 
-      if (room.game.type === "None") {
-        return [model, Cmd.None]
-      }
-
-      const game = room.game.value
-
       const gameMsg = msg[2]
 
       const [gameNew, gameCmd] = Game.update(
@@ -84,17 +61,20 @@ export const update = (
           sendToRoom: (msg) => sendToRoom(roomId, ["Games", roomId, msg]),
         },
         gameMsg,
-        game,
+        room.game,
       )
+
+
+      const roomNew: BackendRoom = {
+        ...room,
+        game: gameNew,
+      }
 
       const modelNew: Model = {
         ...model,
         rooms: {
           ...model.rooms,
-          [roomId]: {
-            ...room,
-            game: Option.Some(gameNew),
-          },
+          [roomId]: roomNew,
         },
       }
 
@@ -122,12 +102,7 @@ export const updateFromFrontend = (
   msg: ToBackend,
   model: Model,
 ): [Model, Cmd.Cmd<BackendMsg>] => {
-  const sendToRoom = (roomId: RoomId.RoomId, msg: ToFrontend) => {
-    const userIds = Object.values(model.users)
-      .filter((user) => user.roomId === roomId)
-      .map((user) => user.userId)
-    return sendToUser(userIds, msg)
-  }
+  const sendToRoom = makeSendToRoom({ sendToUser, model })
 
   switch (msg[0]) {
     case "Games": {
@@ -139,12 +114,6 @@ export const updateFromFrontend = (
         return [model, Cmd.None]
       }
 
-      if (room.game.type === "None") {
-        return [model, Cmd.None]
-      }
-
-      const game = room.game.value
-
       const gameMsg = msg[2]
 
       const [gameNew, gameCmd] = Game.updateFromFrontend(
@@ -154,17 +123,19 @@ export const updateFromFrontend = (
           sendToRoom: (msg) => sendToRoom(roomId, ["Games", roomId, msg]),
         },
         gameMsg,
-        game,
+        room.game,
       )
+
+      const roomNew: BackendRoom = {
+        ...room,
+        game: gameNew,
+      }
 
       const modelNew: Model = {
         ...model,
         rooms: {
           ...model.rooms,
-          [roomId]: {
-            ...room,
-            game: Option.Some(gameNew),
-          },
+          [roomId]: roomNew,
         },
       }
 
@@ -231,60 +202,49 @@ const updateResponse = (
   if (response[1].type === "Err") {
     return [
       model,
-      Cmd.batch([sendToClient(response), sendToClient(["Sync", model])]),
+      Cmd.batch([
+        sendToClient(response),
+        // is this needed?
+        sendToClient(["Sync", model])
+      ]),
     ]
   }
 
   const modelNew = response[1].value
 
-  // const allUserIds = Object.values(modelNew.users).map((user) => user.userId)
-
   return [
     modelNew,
-    Cmd.batch([broadcast(["Sync", modelNew]), sendToClient(response)]),
+    Cmd.batch([broadcast(response),]),
   ]
 }
 
-//
-//
-//
-//
-//
-//
-//
 
-export const createRoom = (
-  { userId, roomId, gameName }: CreateRoom[1],
-  model: Model,
-): CreateRoomResult => {
-  const user = model.users[userId]
+const makeSendToRoom = ({ model, sendToUser }: { model: Model, sendToUser: (userIds: UserId.UserId[], msg: ToFrontend) => Cmd.Cmd<never> }) => (
+  roomId: RoomId.RoomId,
+  msg: ToFrontend,
+): Cmd.Cmd<never> => {
+  const userIds: UserId.UserId[] = []
 
-  if (user && model.rooms[user.roomId]) {
-    return Result.Err("user_is_already_in_a_room")
+  for (const userId in model.users) {
+    if (!UserId.is(userId)) {
+      continue
+    }
+
+    const user = model.users[userId]
+
+    if (!user) {
+      continue
+    }
+
+    if (user.roomId === roomId) {
+      userIds.push(userId)
+    }
+
   }
 
-  const modelNew: Model = {
-    ...model,
-    users: {
-      ...model.users,
-      [userId]: {
-        userId,
-        roomId,
-      },
-    },
-    rooms: {
-      ...model.rooms,
-      [roomId]: {
-        roomId,
-        hostId: userId,
-        events: [["Created", { userId, roomId }]],
-        game: gameName ? Option.Some(Game.init({ gameName })) : Option.None,
-      },
-    },
-  }
-
-  return Result.Ok(modelNew)
+  return sendToUser(userIds, msg)
 }
+
 
 //
 //
@@ -301,208 +261,6 @@ export const onClientConnected = (
   return sendToClient(["Sync", model])
 }
 
-//
-//
-//
-//
-//
-//
-//
-
-export const joinRoom = (
-  { userId, roomId }: { userId: UserId.UserId; roomId: RoomId.RoomId },
-  model: Model,
-): JoinRoomResult => {
-  const user = model.users[userId]
-
-  if (user && user.roomId !== roomId && model.rooms[user.roomId]) {
-    return Result.Err("user_is_already_in_a_room")
-  }
-
-  const room = model.rooms[roomId]
-
-  if (!room) {
-    return Result.Err("room_does_not_exists")
-  }
-
-  const modelNew: Model = {
-    ...model,
-    rooms: {
-      ...model.rooms,
-      [room.roomId]: {
-        ...room,
-        events: [...room.events, ["Joined", { userId }]],
-      },
-    },
-    users: {
-      ...model.users,
-      [userId]: {
-        userId,
-        roomId,
-      },
-    },
-  }
-
-  return Result.Ok(modelNew)
-}
-
-//
-//
-//
-//
-//
-//
-//
-
-export const leaveRoom = (
-  { userId }: { userId: UserId.UserId },
-  model: Model,
-): LeaveRoomResult => {
-  const user = model.users[userId]
-
-  if (!user) {
-    return Result.Err("user_is_not_a_room")
-  }
-
-  const room = model.rooms[user.roomId]
-
-  if (!room) {
-    return Result.Err("user_is_not_a_room")
-  }
-
-  const usersNew = removeKey(userId, model.users)
-
-  const roomNew = {
-    ...room,
-    events: [...room.events, ["Left", { userId }]],
-  }
-
-  if (user.userId !== room.hostId) {
-    return Result.Ok({
-      ...model,
-      users: usersNew,
-      rooms: {
-        ...model.rooms,
-        [room.roomId]: roomNew,
-      },
-    })
-  }
-
-  const nextHost = p(
-    Object.values(model.users),
-    (users) =>
-      users.filter(
-        (user) => user.roomId === room.roomId && user.userId !== room.hostId,
-      ),
-    (users) => users[0],
-  )
-
-  if (!nextHost) {
-    return Result.Ok({
-      ...model,
-      users: usersNew,
-      rooms: removeKey(room.roomId, model.rooms),
-    })
-  }
-
-  const roomsNew: Model["rooms"] = {
-    ...model.rooms,
-    [room.roomId]: {
-      ...roomNew,
-      hostId: nextHost.userId,
-    },
-  }
-
-  return Result.Ok({
-    ...model,
-    users: usersNew,
-    rooms: roomsNew,
-  })
-}
-
-//
-//
-//
-//
-//
-//
-//
-
-export const openGame = (
-  { userId, gameName }: { userId: UserId.UserId; gameName: GameName },
-  model: Model,
-): OpenGame_Done[1] => {
-  const user = model.users[userId]
-
-  if (!user) {
-    return Result.Err("user_is_not_in_a_room")
-  }
-
-  const room = model.rooms[user.roomId]
-
-  if (!room) {
-    return Result.Err("user_is_not_in_a_room")
-  }
-
-  if (room.game.type !== "None") {
-    return Result.Err("game_already_started")
-  }
-
-  const modelNew: Model = {
-    ...model,
-    rooms: {
-      ...model.rooms,
-      [room.roomId]: {
-        ...room,
-        game: Option.Some(Game.init({ gameName })),
-      },
-    },
-  }
-
-  return Result.Ok(modelNew)
-}
-
-//
-//
-//
-//
-//
-//
-//
-
-export const closeGame = (
-  { userId }: { userId: UserId.UserId },
-  model: Model,
-): CloseGameResult => {
-  const user = model.users[userId]
-
-  if (!user) {
-    return Result.Err("user_is_not_in_a_room")
-  }
-
-  const room = model.rooms[user.roomId]
-
-  if (!room) {
-    return Result.Err("user_is_not_in_a_room")
-  }
-
-  if (room.game.type === "None") {
-    return Result.Err("game_already_stopped")
-  }
-
-  const modelNew: Model = {
-    ...model,
-    rooms: {
-      ...model.rooms,
-      [room.roomId]: {
-        ...room,
-        game: Option.None,
-      },
-    },
-  }
-
-  return Result.Ok(modelNew)
-}
 
 //
 //
@@ -526,14 +284,8 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
       continue
     }
 
-    if (room.game.type === "None") {
-      continue
-    }
-
-    const game = room.game.value
-
     const sub = p(
-      Game.subscriptions(roomId, game),
+      Game.subscriptions(roomId, room.game),
       Sub.map((msg): Msg => ["Games", roomId, msg]),
     )
 

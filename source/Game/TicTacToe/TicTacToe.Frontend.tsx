@@ -2,14 +2,14 @@ import { Cmd, exhaustive, tagCmd } from "../../Core"
 import { UserId } from "../../Data"
 import * as Store from "../../Store"
 import * as UI from "../../UI"
-import { GameModeCard } from "../Views"
-import { Position, Slot, gameTheme, ViewSlot } from "./TicTacToe"
+import { GameModeCardGrid } from "../Views"
+import { gameTheme, Position, Slot, ViewSlot } from "./TicTacToe"
 import {
   BackendModel,
   FrontendModel,
   FrontendMsg,
   ToBackend,
-  ToFrontend,
+  ToFrontend
 } from "./TicTacToe.Types"
 import * as UserVsBot from "./UserVsBot/UserVsBot.Frontend"
 import * as UserVsUser from "./UserVsUser/UserVsUser.Frontend"
@@ -180,24 +180,20 @@ export const mergeWithBackend = (
 //
 //
 
-const iconSize = 58
-
 export const View = ({
   currentUserId,
   store,
   model,
   dispatch,
-  onCloseGame,
   goHome,
-  roomAvatarGroup,
+  roomComponent: roomComponent,
 }: {
   currentUserId: UserId.UserId
   store: Store.Model
   model: Model
   dispatch: (msg: Msg) => void
-  onCloseGame: () => void
   goHome: () => void
-  roomAvatarGroup: UI.ViewNode
+  roomComponent: UI.ViewNode
 }) => {
   const homeButton = (
     <UI.IconButton
@@ -215,56 +211,14 @@ export const View = ({
           <UI.Header
             left={homeButton}
             title=""
-            right={roomAvatarGroup}
+            right={roomComponent}
           />
           <BannerArt title="Tic Tac Toe" />
-          <UI.Box sx={{ flex: 1, padding: 2, gap: 2, display: "flex" }}>
-            <UI.Box sx={{ width: "50%" }}>
-              <GameModeCard
-                leftIcon={
-                  <UI.Icons.Person sx={{ width: iconSize, height: iconSize }} />
-                }
-                rightIcon={
-                  <UI.Icons.Person sx={{ width: iconSize, height: iconSize }} />
-                }
-                title="Vs User"
-                onClick={() =>
-                  dispatch([
-                    "InputMode",
-                    { mode: "UserVsUser", userId: currentUserId },
-                  ])
-                }
-              />
-            </UI.Box>
-            <UI.Box sx={{ width: "50%" }}>
-              <GameModeCard
-                leftIcon={
-                  <UI.Icons.Person sx={{ width: iconSize, height: iconSize }} />
-                }
-                rightIcon={
-                  <UI.Icons.SmartToy
-                    sx={{ width: iconSize, height: iconSize }}
-                  />
-                }
-                title="Vs Bot"
-                onClick={() =>
-                  dispatch([
-                    "InputMode",
-                    { mode: "UserVsBot", userId: currentUserId },
-                  ])
-                }
-              />
-            </UI.Box>
-          </UI.Box>
-          <UI.Box sx={{ padding: 2 }}>
-            <UI.Button
-              fullWidth
-              variant="outlined"
-              onClick={onCloseGame}
-            >
-              Close
-            </UI.Button>
-          </UI.Box>
+
+          <GameModeCardGrid
+            onUserVsUser={() => dispatch(["InputMode", { mode: "UserVsUser", userId: currentUserId },])}
+            onUserVsBot={() => dispatch(["InputMode", { mode: "UserVsBot", userId: currentUserId },])}
+          />
         </UI.FillBox>
       )
     }
@@ -280,7 +234,7 @@ export const View = ({
           model={model.child}
           dispatch={(msg) => dispatch(["UserVsUser", msg])}
           goHome={goHome}
-          roomAvatarGroup={roomAvatarGroup}
+          roomComponent={roomComponent}
         />
       )
     }
@@ -296,7 +250,7 @@ export const View = ({
           model={model.child}
           dispatch={(msg) => dispatch(["UserVsBot", msg])}
           goHome={goHome}
-          roomAvatarGroup={roomAvatarGroup}
+          roomComponent={roomComponent}
         />
       )
     }

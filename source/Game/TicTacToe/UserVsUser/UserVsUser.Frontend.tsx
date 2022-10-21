@@ -67,7 +67,7 @@ export type OutAction = Store.Action
 export const update = (
   {
     sendToBackend,
-  }: {    
+  }: {
     sendToBackend: (msg: ToBackend) => Cmd.Cmd<never>
   },
   msg: Msg,
@@ -187,7 +187,7 @@ export const View = ({
   dispatch,
   onCloseGame,
   goHome,
-  roomAvatarGroup,
+  roomComponent,
 }: {
   currentUserId: UserId.UserId
   store: Store.Model
@@ -195,7 +195,7 @@ export const View = ({
   dispatch: (msg: Msg) => void
   onCloseGame: () => void
   goHome: () => void
-  roomAvatarGroup: UI.ViewNode
+  roomComponent: UI.ViewNode
 }) => {
   const homeButton = (
     <UI.IconButton
@@ -221,7 +221,7 @@ export const View = ({
         <UI.Header
           left={homeButton}
           title=""
-          right={roomAvatarGroup}
+          right={roomComponent}
         />
         <UI.Box sx={{ flex: 1, overflowY: "scroll" }}>
           <VersusHeader
@@ -355,7 +355,7 @@ export const View = ({
         <UI.Header
           left={homeButton}
           title={toGameText({ model, store })}
-          right={roomAvatarGroup}
+          right={roomComponent}
         />
 
         <UI.Box sx={{ flex: 1, overflowY: "scroll" }}>
@@ -428,7 +428,7 @@ export const View = ({
       <UI.Header
         left={homeButton}
         title={toGameText({ model, store })}
-        right={roomAvatarGroup}
+        right={roomComponent}
       />
 
       <UI.Box sx={{ display: "flex", gap: 2, paddingX: 1, paddingY: 1 }}>

@@ -1,6 +1,6 @@
 import * as UI from "../UI"
 
-export const BotIcon = UI.Icons.SmartToy
+export const bannerArtAspectRatio = Math.pow(3 / 4, 4)
 
 export const GameModeCard = ({
   leftIcon,
@@ -43,5 +43,34 @@ export const GameModeCard = ({
         </UI.Card>
       </UI.AspectRatio>
     </UI.CardActionArea>
+  )
+}
+
+
+const iconSize = 64
+const iconSx: UI.Sx = { width: iconSize, height: iconSize }
+
+
+
+export const GameModeCardGrid = ({ onUserVsUser, onUserVsBot }: { onUserVsUser: () => void, onUserVsBot: () => void }) => {
+  return (
+    <UI.Box sx={{ display: "flex", gap: 2, padding: 2, flex: 1 }}>
+      <UI.Box sx={{ width: "50%" }}>
+        <GameModeCard
+          leftIcon={<UI.Icons.Person sx={iconSx} />}
+          rightIcon={<UI.Icons.Person sx={iconSx} />}
+          title="Vs User"
+          onClick={onUserVsUser}
+        />
+      </UI.Box>
+      <UI.Box sx={{ width: "50%" }}>
+        <GameModeCard
+          leftIcon={<UI.Icons.Person sx={iconSx} />}
+          rightIcon={<UI.Icons.SmartToy sx={iconSx} />}
+          title="Vs Bot"
+          onClick={onUserVsBot}
+        />
+      </UI.Box>
+    </UI.Box>
   )
 }

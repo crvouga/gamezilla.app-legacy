@@ -1,4 +1,4 @@
-import { Cmd, exhaustive, Option, p, RemoteData, Sub, Unit } from "../Core"
+import { Cmd, exhaustive, p, RemoteData, Sub, Unit } from "../Core"
 import { RoomId, UserId } from "../Data"
 import * as Route from "../Route"
 import * as Snackbar from "../Snackbar"
@@ -9,10 +9,9 @@ import { GameName, gameNameList } from "./Game.Types"
 import {
   BackendModel,
   FrontendModel,
-  FrontendMsg,
-  Response,
+  FrontendMsg, FrontendRoom, Response,
   ToBackend,
-  ToFrontend,
+  ToFrontend
 } from "./GameRoom.Types"
 
 //
@@ -133,10 +132,6 @@ export const update = (
         return [model, Cmd.None]
       }
 
-      if (room.game.type === "None") {
-        return [model, Cmd.None]
-      }
-
       const gameMsg = msg[2]
 
       const [gameNew, gameCmd] = Game.update(
@@ -145,17 +140,19 @@ export const update = (
           sendToBackend: (msg) => sendToBackend(["Games", roomId, msg]),
         },
         gameMsg,
-        room.game.value,
+        room.game,
       )
+
+      const roomNew: FrontendRoom = {
+        ...room,
+        game: gameNew,
+      }
 
       const modelNew: Model = {
         ...model,
         rooms: {
           ...model.rooms,
-          [roomId]: {
-            ...room,
-            game: Option.Some(gameNew),
-          },
+          [roomId]: roomNew
         },
       }
 
@@ -212,10 +209,6 @@ export const updateFromBackend = (
         return [model, Cmd.None, []]
       }
 
-      if (room.game.type === "None") {
-        return [model, Cmd.None, []]
-      }
-
       const gameMsg = msg[2]
 
       const [gameNew, gameCmd, actions] = Game.updateFromBackend(
@@ -225,17 +218,20 @@ export const updateFromBackend = (
           store,
         },
         gameMsg,
-        room.game.value,
+        room.game,
       )
+
+
+      const roomNew: FrontendRoom = {
+        ...room,
+        game: gameNew,
+      }
 
       const modelNew: Model = {
         ...model,
         rooms: {
           ...model.rooms,
-          [roomId]: {
-            ...room,
-            game: Option.Some(gameNew),
-          },
+          [roomId]: roomNew,
         },
       }
 
@@ -332,7 +328,13 @@ const updateResponse = (
     },
   }
 
-  return [modelNew, mergedCmd, actions]
+  const userIds = Object.values(modelNew.users).map((user) => user.userId)
+
+  const storeActions: OutAction[] = [
+    ["Store", ["Profile", ["FindMany", { userIds }]]],
+  ]
+
+  return [modelNew, mergedCmd, [...actions, ...storeActions]]
 }
 
 const mergeWithBackendModel = ({
@@ -352,22 +354,7 @@ const mergeWithBackendModel = ({
         return [rooms, cmd]
       }
 
-      if (backendRoom.game.type === "None") {
-        return [
-          {
-            ...rooms,
-            [roomId]: {
-              events: backendRoom.events,
-              hostId: backendRoom.hostId,
-              roomId: backendRoom.roomId,
-              game: Option.None,
-            },
-          },
-          cmd,
-        ]
-      }
-
-      const backendGame = backendRoom.game.value
+      const backendGame = backendRoom.game
 
       const frontendRoom = frontendModel.rooms[roomId]
 
@@ -381,15 +368,17 @@ const mergeWithBackendModel = ({
           frontendModel: initial[0],
           sendToBackend: (msg) => sendToBackend(["Games", roomId, msg]),
         })
+
+        const frontendRoomNew: FrontendRoom = {
+          hostId: backendRoom.hostId,
+          roomId: backendRoom.roomId,
+          game: merged[0],
+        }
+
         return [
           {
             ...rooms,
-            [roomId]: {
-              events: backendRoom.events,
-              hostId: backendRoom.hostId,
-              roomId: backendRoom.roomId,
-              game: Option.Some(merged[0]),
-            },
+            [roomId]: frontendRoomNew,
           },
           Cmd.batch([
             cmd,
@@ -404,58 +393,23 @@ const mergeWithBackendModel = ({
           ]),
         ]
       }
-
-      if (frontendRoom.game.type === "None") {
-        const initial = Game.init({
-          gameName: backendGame[0],
-          sendToBackend: (msg) => sendToBackend(["Games", roomId, msg]),
-        })
-        const merged = Game.mergeWithBackend({
-          backendModel: backendGame,
-          frontendModel: initial[0],
-          sendToBackend: (msg) => sendToBackend(["Games", roomId, msg]),
-        })
-        return [
-          {
-            ...rooms,
-            [roomId]: {
-              events: backendRoom.events,
-              hostId: backendRoom.hostId,
-              roomId: backendRoom.roomId,
-              game: Option.Some(merged[0]),
-            },
-          },
-          Cmd.batch([
-            cmd,
-            p(
-              initial[1],
-              Cmd.map((msg): Msg => ["Games", roomId, msg]),
-            ),
-            p(
-              merged[1],
-              Cmd.map((msg): Msg => ["Games", roomId, msg]),
-            ),
-          ]),
-        ]
-      }
-
-      const frontendGame = frontendRoom.game.value
 
       const merged = Game.mergeWithBackend({
         backendModel: backendGame,
-        frontendModel: frontendGame,
+        frontendModel: frontendRoom.game,
         sendToBackend: (msg) => sendToBackend(["Games", roomId, msg]),
       })
+
+      const frontendRoomNew: FrontendRoom = {
+        hostId: backendRoom.hostId,
+        roomId: backendRoom.roomId,
+        game: merged[0],
+      }
 
       return [
         {
           ...rooms,
-          [roomId]: {
-            events: backendRoom.events,
-            hostId: backendRoom.hostId,
-            roomId: backendRoom.roomId,
-            game: Option.Some(merged[0]),
-          },
+          [roomId]: frontendRoomNew,
         },
         Cmd.batch([
           cmd,
@@ -525,14 +479,10 @@ export const subscriptions = (
     return Sub.None
   }
 
-  if (room.game.type === "None") {
-    return Sub.None
-  }
-
-  const intervalId = room.roomId
+  const intervalId = `room-${room.roomId}`
 
   return p(
-    Game.subscriptions(`room-${intervalId}`, room.game.value),
+    Game.subscriptions(intervalId, room.game),
     Sub.map((msg): Msg => ["Games", room.roomId, msg]),
   )
 }
@@ -551,10 +501,8 @@ export const View = ({
   currentUserId,
   store,
   model,
-  dispatch,
-  bottomNav,
+  dispatch
 }: {
-  bottomNav: UI.ViewNode
   currentUserId: UserId.UserId
   store: Store.Model
   model: Model
@@ -564,15 +512,12 @@ export const View = ({
 
   if (!user) {
     return (
-      <>
-        <ViewNotInRoom
-          currentUserId={currentUserId}
-          store={store}
-          model={model}
-          dispatch={dispatch}
-        />
-        {bottomNav}
-      </>
+      <ViewNotInRoom
+        currentUserId={currentUserId}
+        store={store}
+        model={model}
+        dispatch={dispatch}
+      />
     )
   }
 
@@ -591,27 +536,15 @@ export const View = ({
 
   const game = room.game
 
-  if (game.type === "None") {
-    return (
-      <ViewNotInGame
-        currentUserId={currentUserId}
-        store={store}
-        room={room}
-        model={model}
-        dispatch={dispatch}
-      />
-    )
-  }
-
   return (
     <Game.View
       onCloseGame={() => dispatch(["CloseGame", { userId: currentUserId }])}
       currentUserId={currentUserId}
       store={store}
       dispatch={(msg) => dispatch(["Games", room.roomId, msg])}
-      model={game.value}
+      model={game}
       goHome={() => dispatch(["ClickedGoHome"])}
-      roomAvatarGroup={
+      roomComponent={
         <ViewGameRoomAvatarGroup
           currentUserId={currentUserId}
           store={store}
@@ -672,45 +605,61 @@ export const ViewNotInRoom = ({
     )
   }
 
-  if (rooms.length === 0) {
-    return (
-      <UI.FillBox>
-        {header}
-        <UI.Box sx={{ paddingX: 2 }}>
-          <ViewCallToAction
-            onCreateRoom={() =>
-              dispatch([
-                "CreateRoom",
-                { roomId: RoomId.generate(), userId: currentUserId },
-              ])
-            }
-          />
-        </UI.Box>
-      </UI.FillBox>
-    )
-  }
-
   return (
     <UI.FillBox>
       {header}
+      <UI.Typography sx={{ paddingX: 2, marginBottom: 1 }} variant="h4">
+        Games
+      </UI.Typography>
+
       <UI.Box
         sx={{
-          padding: 2,
+          gap: 1,
+          paddingX: 2,
+          display: "flex",
+          overflowX: "scroll",
+          width: "100%",
+          snapScrollType: "x mandatory",
+          marginBottom: 2,
+        }}
+      >
+        {gameNameList.map((gameName) => (
+          <UI.Box sx={{ minWidth: 150, flex: 1 }}>
+            <ViewGameCard
+              key={gameName}
+              gameName={gameName}
+              onClick={() => { }}
+            />
+          </UI.Box>
+        ))}
+      </UI.Box>
+
+      <UI.Typography sx={{ paddingX: 2, marginBottom: 1 }} variant="h6" color="text.secondary">
+        Active Rooms
+      </UI.Typography>
+      <UI.Box
+        sx={{
+          paddingX: 2,
           flex: 1,
           display: "flex",
           flexDirection: "column",
           gap: 2,
-          overflowY: "scroll",
         }}
       >
+
+        {Object.values(rooms).length === 0 && (
+          <UI.Typography color="text.secondary">
+            No rooms
+          </UI.Typography>
+
+        )}
+
         {Object.values(rooms).map((room) => (
           <ViewCard
             key={room.roomId}
             roomId={room.roomId}
             hostId={room.hostId}
-            gameName={
-              room.game.type === "Some" ? room.game.value[0] : undefined
-            }
+            gameName={room.game[0]}
             store={store}
             gameRoom={model}
             onClick={() =>
@@ -721,100 +670,6 @@ export const ViewNotInRoom = ({
             }
           />
         ))}
-      </UI.Box>
-
-      <UI.Box sx={{ padding: 2 }}>
-        <UI.Button
-          fullWidth
-          size="large"
-          variant="contained"
-          onClick={() =>
-            dispatch([
-              "CreateRoom",
-              { roomId: RoomId.generate(), userId: currentUserId },
-            ])
-          }
-        >
-          Create Room
-        </UI.Button>
-      </UI.Box>
-    </UI.FillBox>
-  )
-}
-
-const ViewNotInGame = ({
-  currentUserId,
-  store,
-  room,
-  model,
-  dispatch,
-}: {
-  store: Store.Model
-  room: {
-    roomId: RoomId.RoomId
-    hostId: UserId.UserId
-  }
-  currentUserId: UserId.UserId
-  model: Model
-  dispatch: (msg: Msg) => void
-}) => {
-  const onOpen = (gameName: GameName) => {
-    dispatch(["OpenGame", { gameName, userId: currentUserId }])
-  }
-
-  const hostUsername = store.Profile[room.hostId]?.username
-
-  return (
-    <UI.FillBox>
-      <UI.Header
-        left={
-          <UI.IconButton
-            sx={{ marginLeft: -1 }}
-            onClick={() => dispatch(["ClickedGoHome"])}
-          >
-            <UI.Icons.Home />
-          </UI.IconButton>
-        }
-        title={hostUsername ? `${hostUsername}'s room` : "..."}
-        right={
-          <ViewGameRoomAvatarGroup
-            currentUserId={currentUserId}
-            store={store}
-            room={room}
-            model={model}
-            dispatch={dispatch}
-          />
-        }
-      />
-
-      <UI.Box sx={{ flex: 1, overflowY: "scroll", padding: 2 }}>
-        <UI.Box
-          sx={{
-            display: "grid",
-            gridTemplateColumns: "repeat(2, 1fr)",
-            gap: 2,
-          }}
-        >
-          {gameNameList.map((gameName) => {
-            return (
-              <ViewGameCard
-                key={gameName}
-                gameName={gameName}
-                onClick={() => onOpen(gameName)}
-              />
-            )
-          })}
-        </UI.Box>
-      </UI.Box>
-
-      <UI.Box sx={{ padding: 2 }}>
-        <UI.Button
-          fullWidth
-          variant="outlined"
-          onClick={() => dispatch(["LeaveRoom", { userId: currentUserId }])}
-        >
-          Leave
-        </UI.Button>
       </UI.Box>
     </UI.FillBox>
   )
@@ -1017,8 +872,6 @@ export const ViewBanner = ({
     return <></>
   }
 
-  const game = room.game.type === "None" ? null : room.game.value
-
   const hostProfile = store.Profile[room.hostId]
   const roomCount = Object.values(model.users).filter(
     (user) => user.roomId === room.roomId,
@@ -1041,10 +894,10 @@ export const ViewBanner = ({
         }}
         onClick={() => dispatch(["ClickedBanner"])}
       >
-        {game ? (
+        {room.game ? (
           <UI.Box sx={{ maxWidth: bannerHeight, width: "100%" }}>
             <UI.AspectRatio aspectRatio={1}>
-              <Game.CoverArt gameName={game[0]} />
+              <Game.CoverArt gameName={room.game[0]} />
             </UI.AspectRatio>
           </UI.Box>
         ) : (
@@ -1148,43 +1001,43 @@ export const ViewCard = ({
   )
 }
 
-export const ViewCallToAction = ({
-  onCreateRoom,
-}: {
-  onCreateRoom: () => void
-}) => {
-  return (
-    <UI.Card
-      variant="outlined"
-      sx={{
-        padding: 4,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        flexDirection: "column",
-      }}
-    >
-      <UI.Typography
-        variant="h4"
-        align="center"
-      >
-        Create a room
-      </UI.Typography>
-      <UI.Typography
-        variant="subtitle2"
-        color="text.secondary"
-        align="center"
-        sx={{ marginBottom: 3 }}
-      >
-        Start playing games by creating a new game room.
-      </UI.Typography>
-      <UI.Button
-        onClick={onCreateRoom}
-        variant="contained"
-        fullWidth
-      >
-        Create Room
-      </UI.Button>
-    </UI.Card>
-  )
-}
+// export const ViewCallToAction = ({
+//   onCreateRoom,
+// }: {
+//   onCreateRoom: () => void
+// }) => {
+//   return (
+//     <UI.Card
+//       variant="outlined"
+//       sx={{
+//         padding: 4,
+//         display: "flex",
+//         alignItems: "center",
+//         justifyContent: "center",
+//         flexDirection: "column",
+//       }}
+//     >
+//       <UI.Typography
+//         variant="h4"
+//         align="center"
+//       >
+//         Create a room
+//       </UI.Typography>
+//       <UI.Typography
+//         variant="subtitle2"
+//         color="text.secondary"
+//         align="center"
+//         sx={{ marginBottom: 3 }}
+//       >
+//         Start playing games by creating a new game room.
+//       </UI.Typography>
+//       <UI.Button
+//         onClick={onCreateRoom}
+//         variant="contained"
+//         fullWidth
+//       >
+//         Create Room
+//       </UI.Button>
+//     </UI.Card>
+//   )
+// }

@@ -36,5 +36,6 @@ export const store: Store.Model = {
         [userB.userId]: userB,
         [userC.userId]: userC,
     }
-
 }
+
+export const currentUserId = userA.userId

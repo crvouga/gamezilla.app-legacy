@@ -293,12 +293,12 @@ export const gameTheme = {
     darker: "#0D47A1",
   },
   PlayerOne: {
-    light: "#F24237",
-    dark: "#DB332F",
+    light: "#f45e55",
+    dark: "#c12521",
   },
   PlayerTwo: {
     light: "#FFB74D",
-    dark: "#FFA623",
+    dark: "#ff9a06",
   },
 }
 
@@ -308,27 +308,30 @@ export const ViewSvgDefs = () => {
   )
 }
 
-export const ViewPlayerOneGradientDef = ({ gradientId }: { gradientId: string }) => {
+export const ViewPlayerOneGradientDef = ({ gradientId, cx, cy, r }: { gradientId: string, cx: number, cy: number, r: number }) => {
   return (
-    <linearGradient
+    <radialGradient
       id={gradientId}
       gradientTransform="rotate(90)"
+      cx={cx}
+      cy={cy}
+      r={r}
     >
       <stop
-        offset="0%"
+        offset="50%"
         stopColor={gameTheme.PlayerOne.light}
       />
       <stop
         offset="100%"
         stopColor={gameTheme.PlayerOne.dark}
       />
-    </linearGradient>
+    </radialGradient>
   )
 }
 
 export const ViewPlayerTwoGradientDef = ({ gradientId }: { gradientId: string }) => {
   return (
-    <linearGradient
+    <radialGradient
       id={gradientId}
       gradientTransform="rotate(90)"
     >
@@ -340,7 +343,7 @@ export const ViewPlayerTwoGradientDef = ({ gradientId }: { gradientId: string })
         offset="100%"
         stopColor={gameTheme.PlayerTwo.dark}
       />
-    </linearGradient>
+    </radialGradient>
   )
 }
 

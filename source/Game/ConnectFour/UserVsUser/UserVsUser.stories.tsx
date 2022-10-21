@@ -1,5 +1,5 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react"
-import { store, userA, userB, userC } from '../../../TestData'
+import { store, userA, userB, userC } from '../../../test-data'
 import * as UI from "../../../UI"
 import { emptyColumns, mapColumns, PlayerType } from "../ConnectFour"
 import { Model, View } from "./UserVsUser.Frontend"

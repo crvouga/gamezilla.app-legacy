@@ -11,13 +11,11 @@ import { UserId } from "../../Data"
 import * as Snackbar from "../../Snackbar"
 import * as Store from "../../Store"
 import * as UI from "../../UI"
-import { GameModeCard } from "../Views"
+import { GameModeCardGrid } from "../Views"
 import {
   BackendModel,
   FrontendModel,
-  FrontendMsg,
-  inputModeProblemToString,
-  ToBackend,
+  FrontendMsg, ToBackend,
   ToFrontend
 } from "./Chess.Types"
 import * as Sounds from "./Sounds"
@@ -217,33 +215,23 @@ export const subscriptions = (_model: Model): Sub.Sub<Msg> => {
 //
 //
 
-const iconSize = 58
-
 export const View = ({
-  roomAvatarGroup,
+  roomComponent: roomComponent,
   currentUserId,
   store,
   model,
   dispatch,
-  onCloseGame,
   goHome,
 }: {
-  onCloseGame: () => void
   currentUserId: UserId.UserId
   store: Store.Model
   model: Model
   dispatch: (msg: Msg) => void
-  roomAvatarGroup: UI.ViewNode
+  roomComponent: UI.ViewNode
   goHome: () => void
 }) => {
   switch (model.mode[0]) {
     case "None": {
-      const tooltipTitle =
-        model.requests.InputMode.type === "Failure"
-          ? inputModeProblemToString(model.requests.InputMode.problem)
-          : model.requests.InputMode.type === "Loading"
-            ? "Loading..."
-            : ""
 
       return (
         <UI.FillBox>
@@ -257,71 +245,15 @@ export const View = ({
               </UI.IconButton>
             }
             title=""
-            right={roomAvatarGroup}
+            right={roomComponent}
           />
 
           <BannerArt title="Chess" />
 
-          <UI.Box sx={{ display: "flex", gap: 2, padding: 2 }}>
-            <UI.Tooltip title={tooltipTitle}>
-              <UI.Box sx={{ width: "50%" }}>
-                <GameModeCard
-                  leftIcon={
-                    <UI.Icons.Person
-                      sx={{ width: iconSize, height: iconSize }}
-                    />
-                  }
-                  rightIcon={
-                    <UI.Icons.Person
-                      sx={{ width: iconSize, height: iconSize }}
-                    />
-                  }
-                  title="Vs User"
-                  onClick={() =>
-                    dispatch([
-                      "InputMode",
-                      { mode: "UserVsUser", userId: currentUserId },
-                    ])
-                  }
-                />
-              </UI.Box>
-            </UI.Tooltip>
-
-            <UI.Tooltip title={tooltipTitle}>
-              <UI.Box sx={{ width: "50%" }}>
-                <GameModeCard
-                  leftIcon={
-                    <UI.Icons.Person
-                      sx={{ width: iconSize, height: iconSize }}
-                    />
-                  }
-                  rightIcon={
-                    <UI.Icons.SmartToy
-                      sx={{ width: iconSize, height: iconSize }}
-                    />
-                  }
-                  title="Vs Bot"
-                  onClick={() =>
-                    dispatch([
-                      "InputMode",
-                      { mode: "UserVsBot", userId: currentUserId },
-                    ])
-                  }
-                />
-              </UI.Box>
-            </UI.Tooltip>
-          </UI.Box>
-
-          <UI.Box sx={{ flex: 1 }}></UI.Box>
-          <UI.Box sx={{ padding: 2 }}>
-            <UI.Button
-              onClick={onCloseGame}
-              fullWidth
-              variant="outlined"
-            >
-              Close
-            </UI.Button>
-          </UI.Box>
+          <GameModeCardGrid
+            onUserVsUser={() => dispatch(["InputMode", { mode: "UserVsUser", userId: currentUserId },])}
+            onUserVsBot={() => dispatch(["InputMode", { mode: "UserVsBot", userId: currentUserId },])}
+          />
         </UI.FillBox>
       )
     }
@@ -334,7 +266,7 @@ export const View = ({
           model={model.mode[1]}
           store={store}
           goHome={goHome}
-          roomAvatarGroup={roomAvatarGroup}
+          roomComponent={roomComponent}
           onClose={() =>
             dispatch(["InputMode", { mode: "None", userId: currentUserId }])
           }
@@ -349,7 +281,7 @@ export const View = ({
           store={store}
           model={model.mode[1]}
           dispatch={(msg) => dispatch(["UserVsUser", msg])}
-          roomAvatarGroup={roomAvatarGroup}
+          roomComponent={roomComponent}
           onClose={() =>
             dispatch(["InputMode", { mode: "None", userId: currentUserId }])
           }

@@ -1,6 +1,7 @@
 import { UserId } from "../../Data"
 import * as UI from "../../UI"
 import * as Store from "../../Store"
+import { bannerArtAspectRatio } from "../Views"
 
 export const theme = {
   // lightSquare: "#EBEBD0",
@@ -29,7 +30,7 @@ export const BannerArt = ({ title }: { title: string }) => {
   const columnCount = 8
   const rowCount = 4
   return (
-    <UI.AspectRatio aspectRatio={Math.pow(3 / 4, 4)}>
+    <UI.AspectRatio aspectRatio={bannerArtAspectRatio}>
       <UI.Box sx={{ width: "100%", position: "relative" }}>
         <svg
           width="100%"
