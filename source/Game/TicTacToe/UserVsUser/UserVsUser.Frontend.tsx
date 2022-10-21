@@ -99,7 +99,7 @@ export const update = (
     case "RematchAccept":
     case "RematchAsk":
     case "RematchDecline":
-    case "RematchCancel":
+    case "Rematch_Cancel":
     case "InputBestOutOf":
     case "InputMoveTimeLimit":
     case "InputMove":
@@ -125,7 +125,7 @@ export const updateFromBackend = (
     case "RematchAccept_Done":
     case "RematchAsk_Done":
     case "RematchDecline_Done":
-    case "RematchCancel_Done":
+    case "Rematch_Cancel_Done":
     case "NewGame_Done":
     case "InputMoveTimeLimit_Done":
     case "InputBestOutOf_Done":
@@ -648,7 +648,7 @@ const ViewGameOverMessage = ({
             startIcon={<UI.Icons.Cancel />}
             variant="contained"
             onClick={() =>
-              dispatch(["RematchCancel", { userId: currentUserId }])
+              dispatch(["Rematch_Cancel", { userId: currentUserId }])
             }
           >
             Cancel

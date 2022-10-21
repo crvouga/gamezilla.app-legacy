@@ -215,9 +215,9 @@ export const updateFromFrontend = (
       return [result.value, sendToRoom(res)]
     }
 
-    case "RematchCancel": {
+    case "Rematch_Cancel": {
       const result = rematchCancel(msg[1], model)
-      const res: Res = ["RematchCancel_Done", result]
+      const res: Res = ["Rematch_Cancel_Done", result]
 
       if (result.type === "Err") {
         return [model, sendToClient(res)]

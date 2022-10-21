@@ -56,8 +56,9 @@ export const update = ({ sendToBackend, }: { sendToBackend: (msg: ToBackend) => 
         // 
 
         case 'NewGame':
-        case 'RematchRequest':
-        case 'RematchRespond':
+        case 'Rematch_Request':
+        case 'Rematch_Respond':
+        case 'Rematch_Cancel':
         case 'InputMoveTimeLimit':
         case 'StartGame':
         case 'StopPlaying':
@@ -79,8 +80,9 @@ export const updateFromBackend = (msg: ToFrontend, model: Model): [Model, Cmd.Cm
         case 'InputMoveTimeLimit_Done':
         case 'StartGame_Done':
         case 'StopPlaying_Done':
-        case 'RematchRequest_Done':
-        case 'RematchRespond_Done':
+        case 'Rematch_Cancel_Done':
+        case 'Rematch_Request_Done':
+        case 'Rematch_Respond_Done':
         case "StartPlaying_Done": {
             const modelNew = msg[1].type === 'Err' ? model : msg[1].value
             const merged = mergeWithBackend({ frontendModel: model, backendModel: modelNew })
@@ -219,7 +221,7 @@ const ViewGame = ({
                     onHover={(columnIndex) => dispatch(['HoveredOverColumns', { columnIndex }])}
                     disabled={toTurn(model.columns) !== currentUserPlayerType}
                     ghost={
-                        currentUserPlayerType !== 'None' && ghostIndex !== 'None'
+                        currentUserPlayerType !== null && ghostIndex !== 'None'
                             ? { playerType: currentUserPlayerType, columnIndex: ghostIndex }
                             : undefined
                     }
@@ -341,7 +343,7 @@ const ViewGameOverMessage = ({ currentUserId, model, store }: { currentUserId: U
 
         const currentUserPlayer = toPlayerType(currentUserId, model)
 
-        if (currentUserPlayer === 'None') {
+        if (!currentUserPlayer) {
             return (
                 <>
                     <UI.Box sx={{ display: 'flex', alignItems: 'center', width: "100%", justifyContent: 'center' }}>

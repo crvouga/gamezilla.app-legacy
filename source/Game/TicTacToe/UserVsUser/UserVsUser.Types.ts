@@ -43,27 +43,27 @@ export type GameOverModel = {
 
 type Rematch =
   | {
-      type: "NotAsking"
-    }
+    type: "NotAsking"
+  }
   | {
-      type: "Asking"
-      asker: TicTacToe.PlayerType
-    }
+    type: "Asking"
+    asker: TicTacToe.PlayerType
+  }
 
 const initCountDown = 5
 
 export type GameOver =
   | {
-      type: "Resignation"
-      resigner: TicTacToe.PlayerType
-    }
+    type: "Resignation"
+    resigner: TicTacToe.PlayerType
+  }
   | {
-      type: "Winner"
-      winner: TicTacToe.PlayerType
-    }
+    type: "Winner"
+    winner: TicTacToe.PlayerType
+  }
   | {
-      type: "Tie"
-    }
+    type: "Tie"
+  }
 
 export type BestOutOf = 1 | 3 | 5 | 7
 
@@ -155,7 +155,7 @@ export type Req =
   | InputMove
   | NewGame
   | RematchAsk
-  | RematchCancel
+  | Rematch_Cancel
   | RematchAccept
   | RematchDecline
 
@@ -169,7 +169,7 @@ export type Res =
   | InputMove_Done
   | NewGame_Done
   | RematchAsk_Done
-  | RematchCancel_Done
+  | Rematch_Cancel_Done
   | RematchAccept_Done
   | RematchDecline_Done
 
@@ -772,21 +772,21 @@ export const rematchAskToString = (result: RematchAsk_Done[1]): string => {
   }
 }
 
-type RematchCancel = ["RematchCancel", { userId: UserId.UserId }]
-type RematchCancel_Done = [
-  "RematchCancel_Done",
-  Result<RematchCancelProblem, SharedModel>,
+type Rematch_Cancel = ["Rematch_Cancel", { userId: UserId.UserId }]
+type Rematch_Cancel_Done = [
+  "Rematch_Cancel_Done",
+  Result<Rematch_CancelProblem, SharedModel>,
 ]
-type RematchCancelProblem =
+type Rematch_CancelProblem =
   | "not_game_over"
   | "not_asking"
   | "not_asker"
   | "not_player"
 
 export const rematchCancel = (
-  { userId }: RematchCancel[1],
+  { userId }: Rematch_Cancel[1],
   model: SharedModel,
-): RematchCancel_Done[1] => {
+): Rematch_Cancel_Done[1] => {
   if (model.type !== "GameOver") {
     return Err("not_game_over")
   }

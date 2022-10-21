@@ -3,7 +3,7 @@ import { p } from "./pipe"
 import * as Sub from "./Sub"
 
 export const exhaustive = (
-  discriminatedUnionType: "Missing Cases Error",
+  discriminatedUnionType: "Missing Switch Case!",
 ): never => {
   throw new Error(`Missing case for: ${discriminatedUnionType}`)
 }

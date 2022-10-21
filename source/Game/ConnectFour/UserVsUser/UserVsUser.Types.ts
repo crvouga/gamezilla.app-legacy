@@ -38,8 +38,18 @@ export type GameOverModel = {
   PlayerTwo: UserId,
   moveTimeLimit: MoveTimeLimit,
   columns: Columns,
-  gameOver: GameOver
+  gameOver: GameOver,
+  rematch: Rematch
 }
+
+type Rematch =
+  | {
+    type: "NotAsking"
+  }
+  | {
+    type: "Asking",
+    asker: PlayerType
+  }
 
 type GameOver =
   | {
@@ -123,8 +133,9 @@ export type Req =
   | ['InputMoveTimeLimit', { userId: UserId, moveTimeLimit: MoveTimeLimit }]
   | ['StartGame', { userId: UserId }]
   | ['InputMove', { columnIndex: ColumnIndex, userId: UserId }]
-  | ["RematchRequest", { userId: UserId }]
-  | ["RematchRespond", { userId: UserId, response: "Accept" | "Decline" }]
+  | ["Rematch_Request", { userId: UserId }]
+  | ["Rematch_Respond", { userId: UserId, response: "Accept" | "Decline" }]
+  | ["Rematch_Cancel", { userId: UserId, }]
   | ["NewGame", { userId: UserId }]
 
 export type Res =
@@ -133,8 +144,9 @@ export type Res =
   | ['InputMoveTimeLimit_Done', Result<"not_in_setup" | "not_playing", SharedModel>]
   | ['StartGame_Done', Result<"not_in_setup" | "missing_player", SharedModel>]
   | ['InputMove_Done', Result<"not_in_game" | "not_playing" | MoveProblem, SharedModel>]
-  | ["RematchRequest_Done", Result<"not_playing" | "not_game_over", SharedModel>]
-  | ["RematchRespond_Done", Result<"not_playing" | "not_asking" | "not_game_over", SharedModel>]
+  | ["Rematch_Request_Done", Result<"not_playing" | 'already_asking' | "not_game_over", SharedModel>]
+  | ["Rematch_Respond_Done", Result<"not_playing" | "not_asking" | "not_game_over", SharedModel>]
+  | ["Rematch_Cancel_Done", Result<"not_playing" | "not_asking" | "not_game_over", SharedModel>]
   | ["NewGame_Done", Result<"not_playing" | "not_game_over", SharedModel>]
 
 export const handle = (req: Req, model: SharedModel): Res => {
@@ -147,7 +159,7 @@ export const handle = (req: Req, model: SharedModel): Res => {
 
       const playerType = toPlayerType(userId, model)
 
-      if (playerType === 'None') {
+      if (!playerType) {
         return ['InputMove_Done', Err("not_playing")]
       }
 
@@ -191,7 +203,7 @@ export const handle = (req: Req, model: SharedModel): Res => {
 
       const playerType = toPlayerType(userId, model)
 
-      if (playerType === 'None') {
+      if (!playerType) {
         return ['InputMoveTimeLimit_Done', Err("not_playing")]
       }
 
@@ -212,7 +224,7 @@ export const handle = (req: Req, model: SharedModel): Res => {
 
       const playerType = toPlayerType(userId, model)
 
-      if (playerType === "None") {
+      if (!playerType) {
         return ["StopPlaying_Done", Err("not_playing")]
       }
 
@@ -245,12 +257,34 @@ export const handle = (req: Req, model: SharedModel): Res => {
       return ['StartGame_Done', Ok(modelNew)]
     }
 
-    case 'RematchRequest': {
-      return ["RematchRequest_Done", Ok(model)]
+    case 'Rematch_Request': {
+
+      const { userId } = req[1]
+
+      if (model.type !== 'GameOver') {
+        return ['Rematch_Request_Done', Err("not_game_over")]
+      }
+
+      if (model.rematch.type === 'Asking') {
+        return ['Rematch_Request_Done', Err("already_asking")]
+      }
+
+      const playerType = toPlayerType(userId, model)
+
+      if (!playerType) {
+        return ['Rematch_Request_Done', Err("not_playing")]
+      }
+
+      const modelNew: SharedModel = {
+        ...model,
+        rematch: { type: "Asking", asker: playerType }
+      }
+
+      return ["Rematch_Request_Done", Ok(modelNew)]
     }
 
-    case "RematchRespond": {
-      return ["RematchRespond_Done", Ok(model)]
+    case "Rematch_Respond": {
+      return ["Rematch_Respond_Done", Ok(model)]
     }
 
     case 'NewGame': {
@@ -262,7 +296,7 @@ export const handle = (req: Req, model: SharedModel): Res => {
 
       const playerType = toPlayerType(userId, model)
 
-      if (playerType === 'None') {
+      if (!playerType) {
         return ['NewGame_Done', Err("not_playing")]
       }
 
@@ -276,6 +310,35 @@ export const handle = (req: Req, model: SharedModel): Res => {
       return ['NewGame_Done', Ok(modelNew)]
     }
 
+    case 'Rematch_Cancel': {
+      const { userId } = req[1]
+
+      if (model.type !== 'GameOver') {
+        return ['Rematch_Cancel_Done', Err("not_game_over")]
+      }
+
+      const playerType = toPlayerType(userId, model)
+
+      if (!playerType) {
+        return ['Rematch_Cancel_Done', Err("not_playing")]
+      }
+
+      if (model.rematch.type !== 'Asking') {
+        return ['Rematch_Cancel_Done', Err("not_asking")]
+      }
+
+      if (model.rematch.asker !== playerType) {
+        return ['Rematch_Cancel_Done', Err("not_asking")]
+      }
+
+      const modelNew: SharedModel = {
+        ...model,
+        rematch: { type: "NotAsking" }
+      }
+
+      return ['Rematch_Cancel_Done', Ok(modelNew)]
+    }
+
     default: {
       return exhaustive(req[0])
     }
@@ -283,7 +346,7 @@ export const handle = (req: Req, model: SharedModel): Res => {
 
 }
 
-export const toPlayerType = (userId: UserId, model: SharedModel): PlayerType | "None" => {
+export const toPlayerType = (userId: UserId, model: SharedModel): PlayerType | null => {
   if (model.PlayerOne === userId) {
     return 'PlayerOne'
   }
@@ -292,7 +355,7 @@ export const toPlayerType = (userId: UserId, model: SharedModel): PlayerType | "
     return 'PlayerTwo'
   }
 
-  return 'None'
+  return null
 }
 
 export const responseToString = (res: Res): string => {
@@ -302,7 +365,9 @@ export const responseToString = (res: Res): string => {
     return ""
   }
 
-  switch (result.error) {
+  const { error: err } = result
+
+  switch (err) {
     case 'column_is_full': {
       return "Column is full"
     }
@@ -351,8 +416,12 @@ export const responseToString = (res: Res): string => {
       return "The other player is not asking for a rematch"
     }
 
+    case 'already_asking': {
+      return "Already asking"
+    }
+
     default: {
-      return exhaustive(result)
+      return exhaustive(err)
     }
   }
 }
@@ -419,13 +488,19 @@ const handleMoveResult = (result: MoveResult, model: GameModel): GameModel | Gam
     return modelNew
   }
 
+  const gameOver: GameOver =
+    status.type === 'Winner'
+      ? { type: "Winner", winner: status.winner }
+      : { type: "Draw" }
+
   const modelNew: SharedModel = {
     type: "GameOver",
     moveTimeLimit: model.moveTimeLimit,
     PlayerOne: model.PlayerOne,
     PlayerTwo: model.PlayerTwo,
     columns: columnsNew,
-    gameOver: status.type === 'Winner' ? { type: "Winner", winner: status.winner } : { type: "Draw" }
+    gameOver: gameOver,
+    rematch: { type: "NotAsking" }
   }
 
   return modelNew

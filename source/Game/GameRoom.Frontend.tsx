@@ -628,7 +628,7 @@ export const ViewNotInRoom = ({
             <ViewGameCard
               key={gameName}
               gameName={gameName}
-              onClick={() => { }}
+              onClick={() => dispatch(['CreateRoom', { userId: currentUserId, roomId: RoomId.generate(), gameName }])}
             />
           </UI.Box>
         ))}
