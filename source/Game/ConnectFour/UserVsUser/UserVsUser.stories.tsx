@@ -155,3 +155,19 @@ Tie.args = {
     }
 }
 
+
+export const RematchRequesting = Template.bind({})
+RematchRequesting.args = {
+    model: {
+        ...gameOverModel,
+        rematch: { type: "Asking", asker: "PlayerOne" }
+    }
+}
+
+export const RematchResponding = Template.bind({})
+RematchResponding.args = {
+    model: {
+        ...gameOverModel,
+        rematch: { type: "Asking", asker: "PlayerTwo" }
+    }
+}

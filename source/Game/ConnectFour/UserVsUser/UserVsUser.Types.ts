@@ -56,9 +56,6 @@ type GameOver =
     type: "Draw"
   }
   | {
-    type: "DrawByAgreement"
-  }
-  | {
     type: "Winner",
     winner: PlayerType
   }
@@ -284,10 +281,42 @@ export const handle = (req: Req, model: SharedModel): Res => {
     }
 
     case "Rematch_Respond": {
-      return ["Rematch_Respond_Done", Ok(model)]
+
+      if (model.type !== 'GameOver') {
+        return ['Rematch_Respond_Done', Err("not_game_over")]
+      }
+
+      if (model.rematch.type === 'NotAsking') {
+        return ['Rematch_Respond_Done', Err("not_asking")]
+      }
+
+
+      const { response } = req[1]
+
+      if (response === 'Decline') {
+        const modelNew: SharedModel = {
+          ...model,
+          rematch: { type: "NotAsking" }
+        }
+
+        return ["Rematch_Respond_Done", Ok(modelNew)]
+      }
+
+
+      const modelNew: SharedModel = {
+        type: "Game",
+        columns: emptyColumns,
+        moveCountDown: model.moveTimeLimit,
+        moveTimeLimit: model.moveTimeLimit,
+        PlayerOne: model.PlayerOne,
+        PlayerTwo: model.PlayerTwo
+      }
+
+      return ["Rematch_Respond_Done", Ok(modelNew)]
     }
 
     case 'NewGame': {
+
       if (model.type !== 'GameOver') {
         return ['NewGame_Done', Err("not_game_over")]
       }
