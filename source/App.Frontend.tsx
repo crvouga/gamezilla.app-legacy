@@ -616,6 +616,14 @@ const ViewMain = ({
           const { profile } = status[1]
           return (
             <>
+              <Party.ViewBanner
+                store={model.store}
+                currentUserId={profile.userId}
+                model={model.party}
+                route={model.route}
+                dispatch={(msg) => dispatch(["Party", msg])}
+              />
+
               <GameRoom.ViewBanner
                 store={model.store}
                 currentUserId={profile.userId}

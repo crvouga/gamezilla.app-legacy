@@ -775,14 +775,13 @@ const ViewGameRoomAvatarGroup = ({
         <UI.Box sx={{ paddingX: 2, paddingBottom: 2, display: "flex", gap: 2 }}>
           {currentUserId === room.hostId && <UI.Button
             fullWidth
-            variant="outlined"
-
+          // variant="outlined"
           >
             Change Game
           </UI.Button>}
           <UI.Button
             fullWidth
-            variant="contained"
+            color="error"
             onClick={() => dispatch(["LeaveRoom", { userId: currentUserId }])}
           >
             Leave Room
