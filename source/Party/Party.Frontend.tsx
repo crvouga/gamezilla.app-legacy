@@ -448,50 +448,41 @@ export const View = ({
 
   return (
     <UI.FillBox>
-      <UI.Box sx={{ paddingX: 2, paddingY: 1 }}>
-        <UI.Typography align="center">
-          {`${store.Profile[party.hostId]?.username ?? "..."}'s party`}
-        </UI.Typography>
-        <UI.Typography
-          variant="subtitle2"
-          align="center"
-          color="text.secondary"
-        >
-          {`${countUsersInParty(party.partyId, model)} in party`}
-        </UI.Typography>
-      </UI.Box>
 
-      <UI.Box sx={{ flex: 1 }}>
+      <UI.Box sx={{ flex: 1, display: 'flex', flexWrap: "wrap", width: "100%", }}>
         {Object.values(model.users)
           .filter((user) => user.partyId === party.partyId)
           .map((user) => (
-            <UI.ListItemButton key={user.userId}>
-              <UI.ListItemAvatar>
-                <UI.Avatar
-                  src={store.Profile[user.userId]?.avatarUrl}
-                  sx={{
-                    border:
-                      model.volume > 0
-                        ? `solid 3px ${theme.palette.primary.main}`
-                        : undefined,
-                  }}
-                />
-              </UI.ListItemAvatar>
-
-              <UI.ListItemText
-                primary={`${store.Profile[user.userId]?.username ?? "..."}`}
+            <UI.Box sx={{ flex: 1, display: "flex", alignItems: 'center', justifyContent: 'center', flexDirection: "column" }}>
+              <UI.Avatar
+                src={store.Profile[user.userId]?.avatarUrl}
+                sx={{
+                  width: 100,
+                  height: 100,
+                  border:
+                    model.volume > 0
+                      ? `solid 3px ${theme.palette.primary.main}`
+                      : undefined,
+                }}
               />
-            </UI.ListItemButton>
+              <UI.Typography variant="h6">
+                {`${store.Profile[user.userId]?.username ?? "..."}`}
+              </UI.Typography>
+              <UI.Typography variant="subtitle1" color="text.secondary">
+                {party.hostId === user.userId ? "Host" : " "}
+              </UI.Typography>
+            </UI.Box>
           ))}
       </UI.Box>
-      <UI.Box sx={{ padding: 2 }}>
+      <UI.Box sx={{ paddingX: 2, paddingY: 2, display: "flex", alignItems: 'center', justifyContent: "center" }}>
         <UI.Button
-          fullWidth
-          variant="contained"
+          variant="outlined"
+          startIcon={<UI.Icons.CallEnd />}
+          color="error"
           size="large"
           onClick={() => dispatch(["LeaveParty", { userId: currentUserId }])}
         >
-          Leave Party
+          Leave
         </UI.Button>
       </UI.Box>
     </UI.FillBox>
@@ -568,12 +559,12 @@ const countUsersInParty = (partyId: PartyId.PartyId, model: Model): number => {
     .length
 }
 
-export const viewBanner = ({
+export const ViewBanner = ({
   dispatch,
   route,
   currentUserId,
   model,
-  store,
+  // store,
 }: {
   store: Store.Model
   route: Route.Model
@@ -598,37 +589,57 @@ export const viewBanner = ({
   }
 
   return (
-    <>
-      <UI.ButtonBase
-        onClick={() => dispatch(["ClickedBanner"])}
-        sx={{
-          width: "100%",
-          height: 58,
-          display: "flex",
-          alignItems: "center",
-          flexDirection: "row",
-          paddingX: 2,
-          paddingY: 1,
-        }}
-      >
-        <UI.Box sx={{ flex: 1 }}>
-          <UI.Typography align="left">
-            {`${store.Profile[party.hostId]?.username ?? "..."}'s party`}
-          </UI.Typography>
-          <UI.Typography
-            variant="subtitle2"
-            align="left"
-            color="text.secondary"
-          >
-            {`${countUsersInParty(party.partyId, model)} in party`}
-          </UI.Typography>
-        </UI.Box>
-        <UI.Icons.ChevronRight />
-      </UI.ButtonBase>
-
-      <UI.Divider />
-    </>
+    <UI.Typography
+      variant="caption"
+      align="center"
+      onClick={() => dispatch(["ClickedBanner"])}
+      sx={{
+        width: '100%',
+        paddingX: 2,
+        paddingY: 1 / 2,
+        backgroundColor: "primary.main",
+        color: "#fff",
+        display: "flex",
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}>
+      <UI.Icons.Group sx={{ marginRight: 1 / 2 }} />
+      Party
+    </UI.Typography>
   )
+
+  // return (
+  //   <>
+  //     <UI.ButtonBase
+  //       onClick={() => dispatch(["ClickedBanner"])}
+  //       sx={{
+  //         width: "100%",
+  //         height: 58,
+  //         display: "flex",
+  //         alignItems: "center",
+  //         flexDirection: "row",
+  //         paddingX: 2,
+  //         paddingY: 1,
+  //       }}
+  //     >
+  //       <UI.Box sx={{ flex: 1 }}>
+  //         <UI.Typography align="left">
+  //           {`${store.Profile[party.hostId]?.username ?? "..."}'s party`}
+  //         </UI.Typography>
+  //         <UI.Typography
+  //           variant="subtitle2"
+  //           align="left"
+  //           color="text.secondary"
+  //         >
+  //           {`${countUsersInParty(party.partyId, model)} in party`}
+  //         </UI.Typography>
+  //       </UI.Box>
+  //       <UI.Icons.ChevronRight />
+  //     </UI.ButtonBase>
+
+  //     <UI.Divider />
+  //   </>
+  // )
 }
 
 //
