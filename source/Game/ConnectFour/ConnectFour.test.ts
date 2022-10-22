@@ -76,7 +76,7 @@ describe("Connect Four", () => {
         expect(wins.length).toBe(1)
     })
 
-    it("detects right diagonal win", () => {
+    it("detects diagonal", () => {
         const columns: Columns = [
             [],
             ['PlayerOne'],
@@ -91,6 +91,24 @@ describe("Connect Four", () => {
 
         expect(wins.length).toBe(1)
     })
+
+
+    it.todo("detects right most vertical")
+    // it.todo("finds win 2", () => {
+    //     const columns: Columns = [
+    //         ['PlayerTwo', 'PlayerTwo', 'PlayerTwo'],
+    //         ['PlayerOne'],
+    //         ['PlayerTwo', 'PlayerTwo', 'PlayerOne', 'PlayerTwo'],
+    //         ['PlayerOne', 'PlayerOne', 'PlayerTwo', 'PlayerOne'],
+    //         ['PlayerTwo', 'PlayerTwo', 'PlayerOne', 'PlayerOne', 'PlayerTwo'],
+    //         ['PlayerOne', 'PlayerTwo', 'PlayerTwo'],
+    //         ['PlayerOne', 'PlayerOne', 'PlayerOne', 'PlayerOne']
+    //     ]
+
+    //     const wins = toWins(columns)
+
+    //     expect(wins.length).toBe(1)
+    // })
 
 })
 

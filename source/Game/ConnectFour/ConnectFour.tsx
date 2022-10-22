@@ -1,4 +1,5 @@
 import { useLayoutEffect, useRef } from "react"
+import { eq, isSubset, unique } from "../../Core"
 import { Err, Ok, Result } from "../../Core/Result"
 
 //
@@ -214,22 +215,35 @@ export const minWinLength = 4
 const directions: [number, number][] = [
   // horizontal
   [1, 0],
+  [-1, 0],
   // vertical
   [0, 1],
+  [0, -1],
   // right diagonal
   [1, 1],
+  [-1, -1],
   // left diagonal
-  [1, -1]
+  [1, -1],
+  [-1, 1]
 ]
 
+type Win = Position[]
+
 export const toWins = (columns: Columns): Position[][] => {
-  const wins: Position[][] = []
+  const wins: Win[] = []
 
   const visited = new Set<string>()
 
   for (let x = 0; x < columns.length; x++) {
-    for (let y = 0; y < columns[x]!.length; y++) {
+    const column = columns[x]
+
+    if (!column) {
+      continue
+    }
+
+    for (let y = 0; y < column.length; y++) {
       for (const [dx, dy] of directions) {
+
         if (visited.has(toKey({ x, y, dx, dy }))) {
           break
         }
@@ -243,7 +257,6 @@ export const toWins = (columns: Columns): Position[][] => {
         const win: Position[] = []
 
         let position: Position = { x: x, y: y }
-
 
         while (true) {
           win.push(position)
@@ -275,8 +288,11 @@ export const toWins = (columns: Columns): Position[][] => {
     }
   }
 
-  return wins
+
+  return unique(isSameWin, wins)
 }
+
+const isSameWin = (a: Win, b: Win) => isSubset(eq, a, b) && isSubset(eq, b, a)
 
 //
 //

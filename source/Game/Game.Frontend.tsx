@@ -285,7 +285,7 @@ export const View = ({
   model,
   dispatch,
   onCloseGame,
-  roomComponent: roomComponent,
+  roomComponent,
   goHome,
 }: {
   goHome: () => void
