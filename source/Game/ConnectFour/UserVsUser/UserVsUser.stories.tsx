@@ -94,6 +94,8 @@ ConfirmResign.args = {
     }
 }
 
+
+
 const p1: PlayerType = "PlayerOne"
 const p2: PlayerType = "PlayerTwo"
 
@@ -177,5 +179,32 @@ RematchResponding.args = {
     model: {
         ...gameOverModel,
         rematch: { type: "Asking", asker: "PlayerTwo" }
+    }
+}
+
+
+
+export const ResignedCurrentUser = Template.bind({})
+ResignedCurrentUser.args = {
+    model: {
+        ...gameOverModel,
+        gameOver: { type: "Resignation", resigner: "PlayerOne" }
+    }
+}
+
+export const ResignedOtherUser = Template.bind({})
+ResignedOtherUser.args = {
+    model: {
+        ...gameOverModel,
+        gameOver: { type: "Resignation", resigner: "PlayerTwo" }
+    }
+}
+
+export const ResignedSpectating = Template.bind({})
+ResignedSpectating.args = {
+    model: {
+        ...gameOverModel,
+        gameOver: { type: "Resignation", resigner: "PlayerOne" },
+        PlayerOne: userC.userId,
     }
 }

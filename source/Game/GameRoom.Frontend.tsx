@@ -634,9 +634,9 @@ export const ViewNotInRoom = ({
         ))}
       </UI.Box>
 
-      <UI.Typography sx={{ paddingX: 2, marginBottom: 1 }} variant="h6" color="text.secondary">
+      {Object.values(rooms).length > 0 && <UI.Typography sx={{ paddingX: 2, marginBottom: 1 }} variant="h6" color="text.secondary">
         Active Rooms
-      </UI.Typography>
+      </UI.Typography>}
       <UI.Box
         sx={{
           paddingX: 2,
@@ -646,13 +646,6 @@ export const ViewNotInRoom = ({
           gap: 2,
         }}
       >
-
-        {Object.values(rooms).length === 0 && (
-          <UI.Typography color="text.secondary">
-            No rooms
-          </UI.Typography>
-
-        )}
 
         {Object.values(rooms).map((room) => (
           <ViewCard
@@ -696,8 +689,14 @@ const ViewGameRoomAvatarGroup = ({
   )
 
   return (
+
     <>
-      <UI.AvatarGroup
+      <UI.IconButton sx={{ marginRight: -1 }} onClick={() => dispatch(["ClickedAvatars"])}>
+        <UI.Badge badgeContent={usersInRoom.length > 1 ? usersInRoom.length : undefined} color="primary">
+          <UI.Icons.Group />
+        </UI.Badge>
+      </UI.IconButton>
+      {/* <UI.AvatarGroup
         sx={{ marginRight: -1 }}
         onClick={() => dispatch(["ClickedAvatars"])}
         componentsProps={{
@@ -711,7 +710,7 @@ const ViewGameRoomAvatarGroup = ({
             sx={{ width: 28, height: 28 }}
           />
         ))}
-      </UI.AvatarGroup>
+      </UI.AvatarGroup> */}
 
       <UI.Drawer
         anchor="bottom"

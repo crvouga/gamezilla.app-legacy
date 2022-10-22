@@ -75,7 +75,13 @@ export const update = ({ sendToBackend, }: { sendToBackend: (msg: ToBackend) => 
             return [model, sendToBackend(msg)]
         }
         case 'InputMove': {
-            return [{ ...model, ghostIndex: "None" }, sendToBackend(msg)]
+            return [
+                {
+                    ...model,
+                    // ghostIndex: "None"
+                },
+                sendToBackend(msg)
+            ]
         }
         default: {
             return exhaustive(msg[0])
@@ -244,7 +250,7 @@ const ViewGame = ({
                     onHover={(columnIndex) => dispatch(['HoveredOverColumns', { columnIndex }])}
                     disabled={toTurn(model.columns) !== currentUserPlayerType}
                     ghost={
-                        currentUserPlayerType !== null && ghostIndex !== 'None'
+                        currentUserPlayerType !== "None" && ghostIndex !== 'None'
                             ? { playerType: currentUserPlayerType, columnIndex: ghostIndex }
                             : undefined
                     }
@@ -307,24 +313,28 @@ const ViewGameOver = ({
             <UI.Box sx={{ position: "relative", overflow: "hidden" }}>
                 <ViewColumns columns={model.columns} disabled />
 
-                {model.type === 'GameOver' && <UI.Box
-                    sx={{
-                        position: "absolute",
-                        top: 0,
-                        left: 0,
-                        width: "100%",
-                        height: "100%",
-                        maxHeight: "100%",
-                        background: "rgba(0, 0, 0, 0.5)",
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: "center",
-                        flexDirection: "column",
-                        color: "#fff",
-                    }}
-                >
-                    <ViewGameOverMessage dispatch={dispatch} currentUserId={currentUserId} store={store} model={model} />
-                </UI.Box>}
+                {model.type === 'GameOver' && (
+                    <UI.Fade in>
+                        <UI.Box
+                            sx={{
+                                position: "absolute",
+                                top: 0,
+                                left: 0,
+                                width: "100%",
+                                height: "100%",
+                                maxHeight: "100%",
+                                background: "rgba(0, 0, 0, 0.5)",
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: "center",
+                                flexDirection: "column",
+                                color: "#fff",
+                            }}
+                        >
+                            <ViewGameOverMessage dispatch={dispatch} currentUserId={currentUserId} store={store} model={model} />
+                        </UI.Box>
+                    </UI.Fade>
+                )}
             </UI.Box>
 
             <UI.Box sx={{ flex: 1 }} />
@@ -346,11 +356,11 @@ const ViewGameOver = ({
 const ViewGameOverMessage = ({ currentUserId, model, store, dispatch }: { currentUserId: UserId.UserId, model: GameOverModel, store: Store.Model, dispatch: (msg: Msg) => void }) => {
     const size = { width: 84, height: 84 }
 
-    const currentUserPlayer = toPlayerType(currentUserId, model)
+    const currentPlayerType = toPlayerType(currentUserId, model)
 
-    if (model.rematch.type === 'Asking' && model.rematch.asker === currentUserPlayer) {
+    if (model.rematch.type === 'Asking' && model.rematch.asker === currentPlayerType) {
         return <>
-            <UI.Typography align="center" sx={{ fontSize: 48, marginBottom: 4 }} >
+            <UI.Typography align="center" sx={{ fontSize: "2rem", marginBottom: 4 }} >
                 Waiting for response
             </UI.Typography>
             <UI.CircularProgress sx={{ marginBottom: 4 }} />
@@ -360,12 +370,11 @@ const ViewGameOverMessage = ({ currentUserId, model, store, dispatch }: { curren
         </>
     }
 
-    if (model.rematch.type === 'Asking' && model.rematch.asker !== currentUserPlayer && currentUserPlayer !== null) {
+    if (model.rematch.type === 'Asking' && model.rematch.asker !== currentPlayerType && currentPlayerType !== null) {
         return <>
-            <UI.Typography align="center" sx={{ fontSize: 64, marginBottom: 4 }} >
+            <UI.Typography align="center" sx={{ fontSize: 54, marginBottom: 4 }} >
                 Rematch?
             </UI.Typography>
-
             <UI.Box sx={{ display: 'flex', gap: 2 }}>
                 <UI.Button variant="contained" color="inherit" sx={{ color: "#000" }} startIcon={<UI.Icons.Cancel />} onClick={() => dispatch(['Rematch_Respond', { response: "Decline", userId: currentUserId }])}>
                     Decline
@@ -386,14 +395,11 @@ const ViewGameOverMessage = ({ currentUserId, model, store, dispatch }: { curren
     }
 
     if (model.gameOver.type === 'Resignation') {
-        return <>resignation</>
-    }
+        const { resigner } = model.gameOver
 
-    if (model.gameOver.type === 'Winner') {
-        const { winner } = model.gameOver
+        const winner: PlayerType = resigner === 'PlayerOne' ? 'PlayerTwo' : "PlayerOne"
 
-
-        if (!currentUserPlayer) {
+        if (currentPlayerType === 'None') {
             return (
                 <>
                     <UI.Box sx={{ display: 'flex', alignItems: 'center', width: "100%", justifyContent: 'center' }}>
@@ -410,7 +416,38 @@ const ViewGameOverMessage = ({ currentUserId, model, store, dispatch }: { curren
         return (
             <>
                 <UI.Typography sx={{ fontSize: 64 }}>
-                    {currentUserPlayer === winner ? "You Won" : "You Lost"}
+                    {currentPlayerType === winner ? 'You Won' : 'You Lost'}
+                </UI.Typography>
+                <UI.Typography >
+                    by resignation
+                </UI.Typography>
+            </>
+        )
+
+    }
+
+    if (model.gameOver.type === 'Winner') {
+        const { winner } = model.gameOver
+
+
+        if (currentPlayerType === 'None') {
+            return (
+                <>
+                    <UI.Box sx={{ display: 'flex', alignItems: 'center', width: "100%", justifyContent: 'center' }}>
+                        <PlayerIcon sx={{ ...size, marginRight: 2 }} playerType={winner} />
+                        <UI.Avatar sx={{ ...size }} src={store.Profile[model[winner]]?.avatarUrl} />
+                    </UI.Box>
+                    <UI.Typography sx={{ fontSize: 50 }}>
+                        Winner
+                    </UI.Typography>
+                </>
+            )
+        }
+
+        return (
+            <>
+                <UI.Typography sx={{ fontSize: 64 }}>
+                    {currentPlayerType === winner ? "You Won" : "You Lost"}
                 </UI.Typography>
             </>
         )

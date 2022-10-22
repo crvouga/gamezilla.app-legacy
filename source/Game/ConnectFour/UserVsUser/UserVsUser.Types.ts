@@ -162,7 +162,7 @@ export const handle = (req: Req, model: SharedModel): Res => {
 
       const playerType = toPlayerType(userId, model)
 
-      if (!playerType) {
+      if (playerType === "None") {
         return ['InputMove_Done', Err("not_playing")]
       }
 
@@ -206,7 +206,7 @@ export const handle = (req: Req, model: SharedModel): Res => {
 
       const playerType = toPlayerType(userId, model)
 
-      if (!playerType) {
+      if (playerType === "None") {
         return ['InputMoveTimeLimit_Done', Err("not_playing")]
       }
 
@@ -227,7 +227,7 @@ export const handle = (req: Req, model: SharedModel): Res => {
 
       const playerType = toPlayerType(userId, model)
 
-      if (!playerType) {
+      if (playerType === "None") {
         return ["StopPlaying_Done", Err("not_playing")]
       }
 
@@ -274,7 +274,7 @@ export const handle = (req: Req, model: SharedModel): Res => {
 
       const playerType = toPlayerType(userId, model)
 
-      if (!playerType) {
+      if (playerType === "None") {
         return ['Rematch_Request_Done', Err("not_playing")]
       }
 
@@ -331,7 +331,7 @@ export const handle = (req: Req, model: SharedModel): Res => {
 
       const playerType = toPlayerType(userId, model)
 
-      if (!playerType) {
+      if (playerType === "None") {
         return ['NewGame_Done', Err("not_playing")]
       }
 
@@ -354,7 +354,7 @@ export const handle = (req: Req, model: SharedModel): Res => {
 
       const playerType = toPlayerType(userId, model)
 
-      if (!playerType) {
+      if (playerType === "None") {
         return ['Rematch_Cancel_Done', Err("not_playing")]
       }
 
@@ -384,7 +384,7 @@ export const handle = (req: Req, model: SharedModel): Res => {
 
       const playerType = toPlayerType(userId, model)
 
-      if (!playerType) {
+      if (playerType === "None") {
         return ['Resign_Done', Err("not_playing")]
       }
 
@@ -408,7 +408,7 @@ export const handle = (req: Req, model: SharedModel): Res => {
 
 }
 
-export const toPlayerType = (userId: UserId, model: SharedModel): PlayerType | null => {
+export const toPlayerType = (userId: UserId, model: SharedModel): PlayerType | "None" => {
   if (model.PlayerOne === userId) {
     return 'PlayerOne'
   }
@@ -417,7 +417,7 @@ export const toPlayerType = (userId: UserId, model: SharedModel): PlayerType | n
     return 'PlayerTwo'
   }
 
-  return null
+  return "None"
 }
 
 export const responseToString = (res: Res): string => {

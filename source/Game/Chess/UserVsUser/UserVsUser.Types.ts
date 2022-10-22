@@ -1,4 +1,4 @@
-import { Audio, isEqual, Option, Result } from "../../../Core"
+import { Audio, eq, Option, Result } from "../../../Core"
 import { UserId } from "../../../Data"
 import * as Board from "../Board"
 import * as Clock from "../Clock"
@@ -26,57 +26,57 @@ export type BackendModel = {
 
 export type SharedModel =
   | {
-      type: "Setup"
-      clockPreset: Clock.Preset
-      w: Option.Option<UserId.UserId>
-      b: Option.Option<UserId.UserId>
-    }
+    type: "Setup"
+    clockPreset: Clock.Preset
+    w: Option.Option<UserId.UserId>
+    b: Option.Option<UserId.UserId>
+  }
   | {
-      type: "Starting"
-      clockPreset: Clock.Preset
-      w: UserId.UserId
-      b: UserId.UserId
-      countDown: 3 | 2 | 1
-    }
+    type: "Starting"
+    clockPreset: Clock.Preset
+    w: UserId.UserId
+    b: UserId.UserId
+    countDown: 3 | 2 | 1
+  }
   | {
-      type: "Game"
-      drawAgreement: DrawAgreement
-      w: UserId.UserId
-      b: UserId.UserId
-      clock: Clock.Clock
-      board: Board.Model
-    }
+    type: "Game"
+    drawAgreement: DrawAgreement
+    w: UserId.UserId
+    b: UserId.UserId
+    clock: Clock.Clock
+    board: Board.Model
+  }
   | {
-      type: "GameOver"
-      gameOver: GameOver
-      w: UserId.UserId
-      b: UserId.UserId
-      clock: Clock.Clock
-      board: Board.Model
-    }
+    type: "GameOver"
+    gameOver: GameOver
+    w: UserId.UserId
+    b: UserId.UserId
+    clock: Clock.Clock
+    board: Board.Model
+  }
 
 export type DrawAgreement =
   | {
-      type: "NotAsking"
-    }
+    type: "NotAsking"
+  }
   | {
-      type: "Asking"
-      asker: Board.Color
-    }
+    type: "Asking"
+    asker: Board.Color
+  }
 
 export type GameOver =
   | Board.GameOver
   | {
-      type: "Resignation"
-      resigner: Board.Color
-    }
+    type: "Resignation"
+    resigner: Board.Color
+  }
   | {
-      type: "DrawByAgreement"
-    }
+    type: "DrawByAgreement"
+  }
   | {
-      type: "WinOnTime"
-      winner: Board.Color
-    }
+    type: "WinOnTime"
+    winner: Board.Color
+  }
 
 export const initShared = ({
   userId,
@@ -267,8 +267,8 @@ export const inputPlayer = (
 
   const otherPlayerNew =
     otherPlayer.type === "Some" &&
-    targetPlayer.type === "Some" &&
-    otherPlayer.value === targetPlayer.value
+      targetPlayer.type === "Some" &&
+      otherPlayer.value === targetPlayer.value
       ? Option.None
       : otherPlayer
 
@@ -322,7 +322,7 @@ export const inputClock = (
 
   const someUserId = Option.Some(userId)
 
-  if (!isEqual(someUserId, model.b) && !isEqual(someUserId, model.w)) {
+  if (!eq(someUserId, model.b) && !eq(someUserId, model.w)) {
     return Result.Err("must_be_playing")
   }
 

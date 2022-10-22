@@ -94,3 +94,37 @@ export const rescale = ({
 }) => {
   return ((value - from[0]) * (to[1] - to[0])) / (from[1] - from[0]) + to[0]
 }
+
+
+/**
+ * @example
+ * const strEq = (s1, s2) => String(s1) === String(s2)
+ * unique(strEq, [1, '1', 2, 1]) //=> [1, 2]
+ * unique(strEq, [{}, {}])       //=> [{}]
+ * unique(strEq, [1, '1', 1])    //=> [1]
+ * unique(strEq, ['1', 1, 1])    //=> ['1']
+ */
+export const unique = <X,>(eq: (a: X, b: X) => boolean, xs: X[]): X[] => {
+  const items: X[] = []
+
+  for (const x of xs) {
+    if (!items.some(item => eq(item, x))) {
+      items.push(x)
+    }
+  }
+
+  return items
+}
+
+/**
+ * @example
+ * const eq = (a, b) => a === b
+ * isSubset(eq, [], []) //=> true
+ * isSubset(eq, [], ['a']) //=> true
+ * isSubset(eq, ['a'], ['a']) //=> true
+ * isSubset(eq, ['a'], ['a', 'b']) //=> true
+ * isSubset(eq, ['a'], []) //=> false
+ * isSubset(eq, ['a', 'b'], ['a']) //=> false
+ */
+export const isSubset = <X,>(eq: (x1: X, x2: X) => boolean, a: X[], b: X[]): boolean =>
+  a.every((a_i) => b.some((b_i) => eq(a_i, b_i)))
