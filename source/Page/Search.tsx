@@ -96,45 +96,46 @@ export const View = ({
 
   return (
     <UI.FillBox>
-      <UI.Toolbar>
-        <UI.InputBase
-          sx={{ height: "100%", flex: 1 }}
-          placeholder="Search"
-          value={model.searchText}
-          onChange={(event) =>
-            dispatch(["InputtedSearchText", event.target.value])
-          }
-        />
 
-        {query.type === "Loading" && <UI.CircularProgress size={24} />}
+      <UI.InputBase
+        sx={{ width: "100%", paddingY: 1, paddingX: 2, }}
+        placeholder="Search"
+        value={model.searchText}
+        onChange={(event) =>
+          dispatch(["InputtedSearchText", event.target.value])
+        }
+        endAdornment={
+          <UI.InputAdornment position="end">
+            {query.type === "Loading" && <UI.CircularProgress size={24} />}
+            <UI.IconButton
+              edge="end"
+              onClick={() => dispatch(["ClickedClear"])}
+            >
+              <UI.Icons.Close />
+            </UI.IconButton>
+          </UI.InputAdornment>
+        }
+      />
 
-        <UI.IconButton
-          edge="end"
-          onClick={() => dispatch(["ClickedClear"])}
-        >
-          <UI.Icons.Close />
-        </UI.IconButton>
-      </UI.Toolbar>
+
+
 
       <UI.Divider />
 
-      {query.type === "Failure" && <UI.Box sx={{ flex: 1 }}></UI.Box>}
-      {query.type === "NotAsked" && <UI.Box sx={{ flex: 1 }}></UI.Box>}
+      {results.length === 0 && (
+        <UI.Typography
+          sx={{ paddingX: 2 }}
+          color="text.secondary"
+        >
+          {query.type === "Loading" ? "Searching..." : "No results found"}
+        </UI.Typography>
+      )}
 
-      <UI.Box sx={{ paddingTop: 1, flex: 1, overflowY: "scroll" }}>
-        {results.length === 0 && (
-          <UI.Typography
-            sx={{ paddingX: 2 }}
-            color="text.secondary"
-          >
-            {query.type === "Loading" ? "Searching..." : "No results found"}
-          </UI.Typography>
-        )}
-
+      <UI.List sx={{ overflowY: "scroll" }}>
         {results.map((result) => (
           <UI.ListItemButton
             key={result.userId}
-            sx={{ flex: 1, width: "100%" }}
+            sx={{ width: "100%" }}
             onClick={() =>
               dispatch(["ClickedResult", { userId: result.userId }])
             }
@@ -142,13 +143,13 @@ export const View = ({
             <UI.ListItemAvatar>
               <UI.Avatar src={result.avatarUrl} />
             </UI.ListItemAvatar>
-            <UI.ListItemText primary={result.username} />
+            <UI.ListItemText primaryTypographyProps={{ noWrap: true }} primary={result.username} />
             <UI.ListItemSecondaryAction>
               <UI.Icons.ChevronRight />
             </UI.ListItemSecondaryAction>
           </UI.ListItemButton>
         ))}
-      </UI.Box>
+      </UI.List>
     </UI.FillBox>
   )
 }

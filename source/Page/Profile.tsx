@@ -148,23 +148,18 @@ export const View = ({
             alignItems: "center",
             justifyContent: "center",
             p: 2,
+            overflowX: "hidden",
           }}
         >
           <UI.Avatar
             sx={{ width: 120, height: 120, marginBottom: 1 }}
             src={profile.avatarUrl}
           />
-          <UI.Typography variant="h3">{profile.username}</UI.Typography>
-          <UI.Typography
-            variant="h6"
-            color="text.secondary"
-            sx={{ marginBottom: 2 }}
-          >
-            {profile.name}
-          </UI.Typography>
+          <UI.Typography variant="h4" sx={{ maxWidth: "100%", marginBottom: 2 }} noWrap>{profile.username}</UI.Typography>
           <UI.Button
             fullWidth
             variant="contained"
+            size="small"
             sx={{ marginBottom: 2 }}
             onClick={() => dispatch(["ClickedEditProfile"])}
           >
@@ -188,6 +183,7 @@ export const View = ({
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
+          overflowX: "hidden",
           p: 2,
         }}
       >
@@ -195,23 +191,18 @@ export const View = ({
           sx={{ width: 120, height: 120, marginBottom: 1 }}
           src={profile.avatarUrl}
         />
-        <UI.Typography variant="h3">{profile.username}</UI.Typography>
-        <UI.Typography
-          variant="h6"
-          color="text.secondary"
-          sx={{ marginBottom: 2 }}
-        >
-          {profile.name}
-        </UI.Typography>
+        <UI.Typography variant="h4" sx={{ maxWidth: "100%", marginBottom: 2 }} noWrap>{profile.username}</UI.Typography>
 
-        <UI.Button
+        {/* <UI.Button
+          size="small"
           fullWidth
           variant="contained"
           sx={{ marginBottom: 2 }}
         >
           Send Friend Request
-        </UI.Button>
+        </UI.Button> */}
         <UI.Button
+          size="small"
           fullWidth
           loading={
             store.mutations.Conversation.FindElseInsert.type === "Loading"
