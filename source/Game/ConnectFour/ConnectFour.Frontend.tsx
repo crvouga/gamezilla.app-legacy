@@ -186,7 +186,7 @@ const BannerArt = () => {
 
   return (
     <UI.AspectRatio aspectRatio={bannerArtAspectRatio}>
-      <UI.Box sx={{
+      <UI.List sx={{
         width: "100%",
         height: "100%",
         background: `linear-gradient(${gameTheme.primary.dark}, ${gameTheme.primary.darker})`,
@@ -198,12 +198,12 @@ const BannerArt = () => {
 
         <PlayerIcon playerType="PlayerOne" sx={iconSx} />
         <PlayerIcon playerType="PlayerTwo" sx={iconSx} />
-      </UI.Box>
-      <UI.Box sx={{ width: '100%', height: '100%', background: "rgba(0, 0, 0, 0.1)", position: "absolute", top: 0, left: 0, overflow: "hidden", display: 'flex', alignItems: "flex-end" }}>
+      </UI.List>
+      <UI.List sx={{ width: '100%', height: '100%', background: "rgba(0, 0, 0, 0.1)", position: "absolute", top: 0, left: 0, overflow: "hidden", display: 'flex', alignItems: "flex-end" }}>
         <UI.Typography color="#fff" fontSize={36} sx={{ paddingX: 2, paddingY: 1 }}>
           Connect Four
         </UI.Typography>
-      </UI.Box>
+      </UI.List>
 
     </UI.AspectRatio>
   )
