@@ -250,12 +250,10 @@ export const subscriptions = (_model: Model): Sub.Sub<Msg> => {
 export const View = ({
   model,
   dispatch,
-  onCloseGame,
   roomComponent,
 }: {
   model: Model
   dispatch: (msg: Msg) => void
-  onCloseGame: () => void
   roomComponent: UI.ViewNode
 }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
@@ -296,7 +294,6 @@ export const View = ({
       <UI.Header
         left={
           <UI.Button
-            onClick={onCloseGame}
             sx={{ marginLeft: -1 }}
           >
             Close

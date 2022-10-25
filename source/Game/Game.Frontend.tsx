@@ -284,12 +284,10 @@ export const View = ({
   store,
   model,
   dispatch,
-  onCloseGame,
   roomComponent,
   goHome,
 }: {
   goHome: () => void
-  onCloseGame: () => void
   currentUserId: UserId.UserId
   store: Store.Model
   model: Model
@@ -302,7 +300,6 @@ export const View = ({
         <Tetris.View
           model={model[1]}
           dispatch={(msg) => dispatch(["Tetris", msg])}
-          onCloseGame={onCloseGame}
           roomComponent={roomComponent}
         />
       )
@@ -324,7 +321,6 @@ export const View = ({
     case "Snake": {
       return (
         <Snake.View
-          onClose={onCloseGame}
           roomComponent={roomComponent}
           currentUserId={currentUserId}
           store={store}

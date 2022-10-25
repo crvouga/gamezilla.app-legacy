@@ -3,7 +3,10 @@ import { RoomId, UserId } from "../Data"
 import * as Game from "./Game.Backend"
 import {
   BackendModel,
-  BackendMsg, BackendRoom, closeGame, createRoom, joinRoom, leaveRoom, openGame, Response,
+  BackendMsg,
+  BackendRoom,
+  handle,
+  Res,
   ToBackend,
   ToFrontend
 } from "./GameRoom.Types"
@@ -148,79 +151,26 @@ export const updateFromFrontend = (
       ]
     }
 
-    case "CreateRoom": {
-      return updateResponse({ sendToClient, broadcast }, model, [
-        "CreateRoom_Done",
-        createRoom(msg[1], model),
-      ])
+    case 'ChangeGame':
+    case 'ChangeHost':
+    case 'RoomJoin':
+    case 'RoomLeave':
+    case 'RoomDestroy':
+    case "RoomCreate": {
+      const res: Res = [msg[0], handle(msg, model)]
+
+      if (res[1].type === "Err") {
+        return [model, sendToClient(res)]
+      }
+
+      return [res[1].value, broadcast(res)]
     }
 
-    case "LeaveRoom": {
-
-
-
-      return updateResponse({ sendToClient, broadcast }, model, [
-        "LeaveRoom_Done",
-        leaveRoom(msg[1], model),
-      ])
-    }
-
-    case "JoinRoom": {
-      return updateResponse({ sendToClient, broadcast }, model, [
-        "JoinRoom_Done",
-        joinRoom(msg[1], model),
-      ])
-    }
-
-    case "OpenGame": {
-      return updateResponse({ sendToClient, broadcast }, model, [
-        "OpenGame_Done",
-        openGame(msg[1], model),
-      ])
-    }
-
-    case "CloseGame": {
-      return updateResponse({ sendToClient, broadcast }, model, [
-        "CloseGame_Done",
-        closeGame(msg[1], model),
-      ])
-    }
 
     default:
       return exhaustive(msg[0])
   }
 }
-
-const updateResponse = (
-  {
-    sendToClient,
-    broadcast,
-  }: {
-    sendToClient: (msg: ToFrontend) => Cmd.Cmd<never>
-    broadcast: (msg: ToFrontend) => Cmd.Cmd<never>
-  },
-  model: Model,
-  response: Response,
-): [Model, Cmd.Cmd<BackendMsg>] => {
-  if (response[1].type === "Err") {
-    return [
-      model,
-      Cmd.batch([
-        sendToClient(response),
-        // is this needed?
-        sendToClient(["Sync", model])
-      ]),
-    ]
-  }
-
-  const modelNew = response[1].value
-
-  return [
-    modelNew,
-    Cmd.batch([broadcast(response),]),
-  ]
-}
-
 
 const makeSendToRoom = ({ model, sendToUser }: { model: Model, sendToUser: (userIds: UserId.UserId[], msg: ToFrontend) => Cmd.Cmd<never> }) => (
   roomId: RoomId.RoomId,

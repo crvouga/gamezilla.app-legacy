@@ -46,7 +46,7 @@ export const update = (
         model,
         [
           ["Route", ["Push", ["GameRoom"]]],
-          ["GameRoom", ["Msg", ["CreateRoom", { gameName: msg[1], roomId: RoomId.generate(), userId: currentUserId, },],],],
+          ["GameRoom", ["Msg", ["RoomCreate", { gameName: msg[1], roomId: RoomId.generate(), userId: currentUserId, },],],],
         ],
       ]
     }
@@ -55,14 +55,14 @@ export const update = (
       const roomId = msg[1].roomId
       return [
         model,
-        [["GameRoom", ["Msg", ["JoinRoom", { roomId, userId: currentUserId }]]],],
+        [["GameRoom", ["Msg", ["RoomJoin", { roomId, userId: currentUserId }]]],],
       ]
     }
 
     case "ClickedCurrentRoomLeave": {
       return [
         model,
-        [["GameRoom", ["Msg", ["LeaveRoom", { userId: currentUserId }]]]],
+        [["GameRoom", ["Msg", ["RoomLeave", { userId: currentUserId }]]]],
       ]
     }
 
