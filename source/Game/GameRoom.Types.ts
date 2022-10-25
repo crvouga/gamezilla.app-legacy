@@ -1,8 +1,9 @@
-import { p, RemoteData, Result, Unit } from "../Core"
-import { RoomId, UserId } from "../Data"
-import * as Game from "./Game.Types"
+import { RemoteData } from "../Core/RemoteData"
+import { Err, Ok, Result } from "../Core/Result"
+import { RoomId } from "../Data/RoomId"
+import { UserId } from "../Data/UserId"
 import * as GameBackend from "./Game.Backend"
-import { removeKey } from "../Core/Record"
+import * as Game from "./Game.Types"
 
 //
 //
@@ -14,45 +15,41 @@ import { removeKey } from "../Core/Record"
 
 export type BackendModel = {
   rooms: {
-    [roomId: RoomId.RoomId]: BackendRoom
+    [roomId: RoomId]: BackendRoom
   }
   users: {
-    [userId: UserId.UserId]: RoomUser
+    [userId: UserId]: RoomUser
   }
 }
 
 export type BackendRoom = {
-  roomId: RoomId.RoomId
-  hostId: UserId.UserId
+  roomId: RoomId
+  hostId: UserId
   game: Game.BackendModel
 }
 
 export type FrontendModel = {
   rooms: {
-    [roomId: RoomId.RoomId]: FrontendRoom
+    [roomId: RoomId]: FrontendRoom
   }
   users: {
-    [userId: UserId.UserId]: RoomUser
+    [userId: UserId]: RoomUser
   }
   modal: "DrawerOpened" | "Closed" | "MenuOpened"
   requests: {
-    CreateRoom: RemoteData.RemoteData<CreateRoomProblem, Unit>
-    LeaveRoom: RemoteData.RemoteData<LeaveRoomProblem, Unit>
-    JoinRoom: RemoteData.RemoteData<JoinRoomProblem, Unit>
-    OpenGame: RemoteData.RemoteData<OpenGameProblem, Unit>
-    CloseGame: RemoteData.RemoteData<CloseGameProblem, Unit>
+    [key in Req[0]]?: RemoteData<Problem, "None">
   }
 }
 
 export type FrontendRoom = {
-  roomId: RoomId.RoomId
-  hostId: UserId.UserId
+  roomId: RoomId
+  hostId: UserId
   game: Game.FrontendModel
 }
 
 export type RoomUser = {
-  userId: UserId.UserId
-  roomId: RoomId.RoomId
+  userId: UserId
+  roomId: RoomId
 }
 
 //
@@ -65,30 +62,24 @@ export type RoomUser = {
 
 export type ToFrontend =
   | ["Sync", BackendModel]
-  | ["Games", RoomId.RoomId, Game.ToFrontend]
-  | Response
+  | ["Games", RoomId, Game.ToFrontend]
+  | Res
 
-export type ToBackend = Request | ["Games", RoomId.RoomId, Game.ToBackend]
+export type ToBackend =
+  | Req
+  | ["Games", RoomId, Game.ToBackend]
 
-export type BackendMsg = ["Games", RoomId.RoomId, Game.BackendMsg]
+export type BackendMsg =
+  | ["Games", RoomId, Game.BackendMsg]
 
 export type FrontendMsg =
   | ["ClickedGoHome"]
-  | ["ClickedAvatars"]
+  | ["ClickedRoomButton"]
   | ["ClosedDrawer"]
-  | ["ClickedUser", { userId: UserId.UserId }]
+  | ["ClickedUser", { userId: UserId }]
   | ["ClickedBanner"]
-  | ["Games", RoomId.RoomId, Game.FrontendMsg]
-  | Request
-
-export type Request = CreateRoom | LeaveRoom | JoinRoom | OpenGame | CloseGame
-
-export type Response =
-  | CreateRoom_Done
-  | LeaveRoom_Done
-  | JoinRoom_Done
-  | OpenGame_Done
-  | CloseGame_Done
+  | ["Games", RoomId, Game.FrontendMsg]
+  | Req
 
 //
 //
@@ -96,254 +87,233 @@ export type Response =
 //
 //
 
-export type LeaveRoom = ["LeaveRoom", { userId: UserId.UserId }]
+type Model = BackendModel
 
-export type LeaveRoom_Done = ["LeaveRoom_Done", Result.Result<LeaveRoomProblem, BackendModel>]
+export type Req =
+  | ['RoomCreate', { userId: UserId, roomId: RoomId, gameName: Game.GameName }]
+  | ['RoomDestroy', { userId: UserId }]
+  | ['RoomJoin', { userId: UserId, roomId: RoomId }]
+  | ['RoomLeave', { userId: UserId }]
+  | ['ChangeGame', { userId: UserId, gameName: Game.GameName }]
+  | ['ChangeHost', { userId: UserId, nextHostId: UserId }]
 
-export type LeaveRoomProblem = "not_in_room"
+export type Res = [Req[0], Result<Problem, Model>]
 
-export const leaveRoom = (
-  { userId }: { userId: UserId.UserId },
-  model: BackendModel,
-): LeaveRoom_Done[1] => {
-  const user = model.users[userId]
+type Problem =
+  | "must_be_host"
+  | "must_be_guest"
+  | "not_in_room"
+  | "already_in_room"
+  | "room_not_found"
+  | "impossible_state_room_id_taken"
+  | ChangeHostProblem
 
-  if (!user) {
-    return Result.Err("not_in_room")
-  }
-
-  const room = model.rooms[user.roomId]
-
-  if (!room) {
-    return Result.Err("not_in_room")
-  }
-
-  const usersNew = removeKey(userId, model.users)
-
-  if (user.userId !== room.hostId) {
-    return Result.Ok({
-      ...model,
-      users: usersNew,
-    })
-  }
-
-  const nextHost = p(
-    Object.values(model.users),
-    (users) =>
-      users.filter(
-        (user) => user.roomId === room.roomId && user.userId !== room.hostId,
-      ),
-    (users) => users[0],
-  )
-
-  if (!nextHost) {
-    return Result.Ok({
-      ...model,
-      users: usersNew,
-      rooms: removeKey(room.roomId, model.rooms),
-    })
-  }
-
-  const roomNew: BackendRoom = {
-    game: room.game,
-    hostId: nextHost.userId,
-    roomId: room.roomId
-  }
+type ChangeHostProblem =
+  | "next_host_not_in_room"
+  | "next_host_room_not_found"
+  | "next_host_must_be_in_same_room"
 
 
-  return Result.Ok({
-    ...model,
-    users: usersNew,
-    rooms: {
-      ...model.rooms,
-      [room.roomId]: roomNew,
-    },
-  })
-}
+export const handle = (msg: Req, model: Model): Result<Problem, Model> => {
+  switch (msg[0]) {
 
-//
-//
-//
-//
-//
+    case 'RoomCreate': {
+      const user = model.users[msg[1].userId]
 
+      if (user) {
+        return Err("already_in_room")
+      }
 
-export type CreateRoom = [
-  "CreateRoom",
-  { roomId: RoomId.RoomId; userId: UserId.UserId; gameName: Game.GameName },
-]
+      const room = model.rooms[msg[1].roomId]
 
-export type CreateRoom_Done = ["CreateRoom_Done", Result.Result<CreateRoomProblem, BackendModel>]
+      if (room) {
+        return Err("impossible_state_room_id_taken")
+      }
 
-export type CreateRoomProblem = "already_in_room"
+      const roomNew: BackendRoom = {
+        roomId: msg[1].roomId,
+        hostId: msg[1].userId,
+        game: GameBackend.init({ gameName: msg[1].gameName })
+      }
 
-export const createRoom = (
-  { userId, roomId, gameName }: CreateRoom[1],
-  model: BackendModel,
-): CreateRoom_Done[1] => {
-  const user = model.users[userId]
+      const userNew: RoomUser = {
+        roomId: msg[1].roomId,
+        userId: msg[1].userId
+      }
 
-  if (user && model.rooms[user.roomId]) {
-    return Result.Err("already_in_room")
-  }
+      const modelNew: Model = {
+        ...model,
+        rooms: {
+          ...model.rooms,
+          [roomNew.roomId]: roomNew,
+        },
+        users: {
+          ...model.users,
+          [userNew.userId]: userNew
+        }
+      }
 
-  const modelNew: BackendModel = {
-    ...model,
-    users: {
-      ...model.users,
-      [userId]: {
-        userId,
-        roomId,
-      },
-    },
-    rooms: {
-      ...model.rooms,
-      [roomId]: {
-        roomId,
-        hostId: userId,
-        game: GameBackend.init({ gameName })
-      },
-    },
-  }
+      return Ok(modelNew)
+    }
 
-  return Result.Ok(modelNew)
-}
+    case 'RoomDestroy': {
+      const user = model.users[msg[1].userId]
 
-//
-//
-//
-//
-//
+      if (!user) {
+        return Err("not_in_room")
+      }
 
-export type JoinRoom = [
-  "JoinRoom",
-  { roomId: RoomId.RoomId; userId: UserId.UserId },
-]
-export type JoinRoom_Done = ["JoinRoom_Done", Result.Result<JoinRoomProblem, BackendModel>]
+      const room = model.rooms[user.roomId]
 
-export type JoinRoomProblem =
-  | "user_is_already_in_a_room"
-  | "room_does_not_exists"
+      if (!room) {
+        return Err("room_not_found")
+      }
 
-export const joinRoom = (
-  { userId, roomId }: { userId: UserId.UserId; roomId: RoomId.RoomId },
-  model: BackendModel,
-): JoinRoom_Done[1] => {
-  const user = model.users[userId]
+      if (room.hostId !== user.userId) {
+        return Err("must_be_host")
+      }
 
-  if (user && user.roomId !== roomId && model.rooms[user.roomId]) {
-    return Result.Err("user_is_already_in_a_room")
-  }
+      const roomsNew = removeKey(room.roomId, model.rooms)
 
-  const room = model.rooms[roomId]
+      const usersNew = filterObject(model.users, (entry) => entry[1].roomId !== user.roomId)
 
-  if (!room) {
-    return Result.Err("room_does_not_exists")
-  }
+      const modelNew: Model = {
+        ...model,
+        rooms: roomsNew,
+        users: usersNew
+      }
 
-  const modelNew: BackendModel = {
-    ...model,
-    rooms: {
-      ...model.rooms,
-      [room.roomId]: room,
-    },
-    users: {
-      ...model.users,
-      [userId]: {
-        userId,
-        roomId,
-      },
-    },
-  }
+      return Ok(modelNew)
+    }
 
-  return Result.Ok(modelNew)
-}
+    case 'RoomJoin': {
+      const user = model.users[msg[1].userId]
 
+      if (user) {
+        return Err("already_in_room")
+      }
 
-//
-//
-//
-//
-//
+      const userNew: RoomUser = {
+        roomId: msg[1].roomId,
+        userId: msg[1].userId
+      }
 
-export type OpenGame = [
-  "OpenGame",
-  { gameName: Game.GameName; userId: UserId.UserId },
-]
-export type OpenGame_Done = ["OpenGame_Done", Result.Result<OpenGameProblem, BackendModel>]
+      const modelNew: Model = {
+        ...model,
+        users: {
+          ...model.users,
+          [msg[1].userId]: userNew
+        }
+      }
 
-export type OpenGameProblem = "not_in_room"
+      return Ok(modelNew)
+    }
 
+    case 'RoomLeave': {
+      const user = model.users[msg[1].userId]
 
-export const openGame = (
-  { userId, gameName }: { userId: UserId.UserId; gameName: Game.GameName },
-  model: BackendModel,
-): OpenGame_Done[1] => {
-  const user = model.users[userId]
+      if (!user) {
+        return Err("not_in_room")
+      }
 
-  if (!user) {
-    return Result.Err("not_in_room")
-  }
+      const room = model.rooms[user.roomId]
 
-  const room = model.rooms[user.roomId]
+      if (!room) {
+        return Err("room_not_found")
+      }
 
-  if (!room) {
-    return Result.Err("not_in_room")
-  }
+      if (user.userId === room.hostId) {
+        return Err("must_be_guest")
+      }
 
-  const modelNew: BackendModel = {
-    ...model,
-    rooms: {
-      ...model.rooms,
-      [room.roomId]: {
+      const usersNew = removeKey(user.userId, model.users)
+
+      const modelNew: Model = {
+        ...model,
+        users: usersNew
+      }
+
+      return Ok(modelNew)
+    }
+
+    case 'ChangeGame': {
+      return Ok(model)
+    }
+
+    case 'ChangeHost': {
+      const user = model.users[msg[1].userId]
+
+      if (!user) {
+        return Err("not_in_room")
+      }
+
+      const room = model.rooms[user.roomId]
+
+      if (!room) {
+        return Err("room_not_found")
+      }
+
+      if (room.hostId !== user.userId) {
+        return Err("must_be_host")
+      }
+
+      const nextHost = model.users[msg[1].nextHostId]
+
+      if (!nextHost) {
+        return Err("next_host_not_in_room")
+      }
+
+      const nextHostRoom = model.rooms[nextHost.roomId]
+
+      if (!nextHostRoom) {
+        return Err("next_host_room_not_found")
+      }
+
+      if (nextHostRoom.roomId !== room.roomId) {
+        return Err("next_host_must_be_in_same_room")
+      }
+
+      const roomNew: BackendRoom = {
         ...room,
-        game: GameBackend.init({ gameName }),
-      },
-    },
-  }
+        hostId: nextHost.userId
+      }
 
-  return Result.Ok(modelNew)
+      const modelNew: Model = {
+        ...model,
+        rooms: {
+          ...model.rooms,
+          [roomNew.roomId]: roomNew
+        }
+      }
+
+      return Ok(modelNew)
+    }
+
+  }
 }
 
-//
-//
-//
-//
-//
+// 
+// 
+// 
+// Helpers
+// 
+// 
+// 
 
-export type CloseGame = ["CloseGame", { userId: UserId.UserId }]
+const removeKey = <T>(key: keyof T, obj: T): Omit<T, keyof T> => {
+  const { [key]: _value, ...rest } = obj
+  return rest
+}
 
-export type CloseGame_Done = ["CloseGame_Done", Result.Result<CloseGameProblem, BackendModel>]
+type Entry<T> = {
+  [K in keyof T]: [K, T[K]]
+}[keyof T]
 
-export type CloseGameProblem = "user_is_not_in_a_room" | "game_already_stopped"
-
-export const closeGame = (
-  { userId }: { userId: UserId.UserId },
-  model: BackendModel,
-): CloseGame_Done[1] => {
-  const user = model.users[userId]
-
-  if (!user) {
-    return Result.Err("user_is_not_in_a_room")
-  }
-
-  const room = model.rooms[user.roomId]
-
-  if (!room) {
-    return Result.Err("user_is_not_in_a_room")
-  }
-
-  const modelNew: BackendModel = {
-    ...model,
-    rooms: {
-      ...model.rooms,
-      [room.roomId]: {
-        ...room,
-        // todo close game should be removed
-        game: room.game,
-      },
-    },
-  }
-
-  return Result.Ok(modelNew)
+const filterObject = <T extends object>(
+  obj: T,
+  predicate: (entry: Entry<T>, i: number, arr: Entry<T>[]) => boolean
+): T => {
+  return Object.fromEntries(
+    (Object.entries(obj) as Entry<T>[]).filter(predicate)
+  ) as T
 }

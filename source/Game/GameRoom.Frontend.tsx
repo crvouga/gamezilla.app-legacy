@@ -1,4 +1,5 @@
-import { Cmd, exhaustive, p, RemoteData, Sub, Unit } from "../Core"
+import { Cmd, exhaustive, p, RemoteData, Sub } from "../Core"
+import { Failure, Success } from "../Core/RemoteData"
 import { RoomId, UserId } from "../Data"
 import * as Route from "../Route"
 import * as Snackbar from "../Snackbar"
@@ -9,7 +10,10 @@ import { GameName, gameNameList } from "./Game.Types"
 import {
   BackendModel,
   FrontendModel,
-  FrontendMsg, FrontendRoom, Response,
+  FrontendMsg,
+  FrontendRoom,
+  Res,
+  RoomUser,
   ToBackend,
   ToFrontend
 } from "./GameRoom.Types"
@@ -29,13 +33,7 @@ export const init: [Model, Cmd.Cmd<Msg>] = [
     rooms: {},
     users: {},
     modal: "Closed",
-    requests: {
-      CreateRoom: RemoteData.NotAsked,
-      JoinRoom: RemoteData.NotAsked,
-      LeaveRoom: RemoteData.NotAsked,
-      OpenGame: RemoteData.NotAsked,
-      CloseGame: RemoteData.NotAsked,
-    },
+    requests: {},
   },
   Cmd.None,
 ]
@@ -80,7 +78,7 @@ export const update = (
       return [model, Route.push(["Home"])]
     }
 
-    case "ClickedAvatars": {
+    case "ClickedRoomButton": {
       return [{ ...model, modal: "DrawerOpened" }, Cmd.None]
     }
 
@@ -96,11 +94,12 @@ export const update = (
       return [model, Route.push(["GameRoom"])]
     }
 
-    case "JoinRoom":
-    case "LeaveRoom":
-    case "CreateRoom":
-    case "OpenGame":
-    case "CloseGame": {
+    case "RoomCreate":
+    case "RoomDestroy":
+    case "RoomJoin":
+    case "RoomLeave":
+    case 'ChangeHost':
+    case "ChangeGame": {
       return [
         {
           ...model,
@@ -245,97 +244,79 @@ export const updateFromBackend = (
       ]
     }
 
-    case "CreateRoom_Done": {
-      return updateResponse({ sendToBackend, msg, model }, "CreateRoom")
+    case 'ChangeGame':
+    case 'ChangeHost':
+    case 'RoomLeave':
+    case "RoomCreate": {
+      return handleResponse({ sendToBackend }, msg, model)
     }
 
-    case "LeaveRoom_Done": {
-      return updateResponse({ sendToBackend, msg, model }, "LeaveRoom")
+    case "RoomDestroy": {
+      const handled = handleResponse({ sendToBackend }, msg, model)
+
+      const user = model.users[currentUserId]
+
+      if (!user) {
+        return handled
+      }
+
+      const room = model.rooms[user.roomId]
+
+      if (!room) {
+        return handled
+      }
+
+      if (room.hostId === currentUserId) {
+        return handled
+      }
+
+      const snackbarActions: OutAction[] =
+        msg[1].type === "Ok" ? [["Snackbar", { message: "The host ended the room", variant: "Info" }]] : []
+
+      return [handled[0], handled[1], [...handled[2], ...snackbarActions]]
     }
 
-    case "JoinRoom_Done": {
-      const [modelNew, cmd, actions] = updateResponse(
-        { sendToBackend, msg, model },
-        "JoinRoom",
-      )
+    case "RoomJoin": {
+      const handled = handleResponse({ sendToBackend }, msg, model)
 
       const routeActions: OutAction[] =
         msg[1].type === "Ok" ? [["Route", ["Replace", ["GameRoom"]]]] : []
 
-      return [modelNew, cmd, [...actions, ...routeActions]]
+      return [handled[0], handled[1], [...handled[2], ...routeActions]]
     }
 
-    case "OpenGame_Done": {
-      return updateResponse({ sendToBackend, msg, model }, "OpenGame")
-    }
-
-    case "CloseGame_Done": {
-      return updateResponse({ sendToBackend, model, msg }, "CloseGame")
-    }
   }
 }
 
-const updateResponse = (
-  {
-    sendToBackend,
-    msg,
-    model,
-  }: {
-    msg: Response
-    model: Model
-    sendToBackend: (msg: ToBackend) => Cmd.Cmd<never>
-  },
-  requestKey: keyof Model["requests"],
-): [Model, Cmd.Cmd<FrontendMsg>, OutAction[]] => {
-  const result = msg[1]
-
-  const actions: OutAction[] =
-    result.type === "Err"
-      ? [["Snackbar", { message: result.error, variant: "Error" }]]
-      : []
-
-  const remoteData = p(
-    result,
-    RemoteData.fromResult,
-    RemoteData.map(() => Unit),
-  )
-
-  if (result.type === "Err") {
+const handleResponse = ({ sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd.Cmd<never> }, msg: Res, model: Model): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
+  if (msg[1].type === 'Err') {
     return [
-      {
-        ...model,
-        requests: {
-          ...model.requests,
-          [requestKey]: remoteData,
-        },
-      },
+      { ...model, requests: { ...model.requests, [msg[0]]: Failure(msg[1].error) } },
       Cmd.None,
-      [["Snackbar", { message: result.error, variant: "Error" }]],
+      []
     ]
   }
 
-  const [merged, mergedCmd] = mergeWithBackendModel({
+  const merged = mergeWithBackendModel({
     frontendModel: model,
-    backendModel: result.value,
+    backendModel: msg[1].value,
     sendToBackend,
   })
 
-  const modelNew: Model = {
-    ...merged,
-    requests: {
-      ...merged.requests,
-      [requestKey]: remoteData,
-    },
-  }
-
-  const userIds = Object.values(modelNew.users).map((user) => user.userId)
+  const userIds = Object.values(merged[0].users).map((user) => user.userId)
 
   const storeActions: OutAction[] = [
     ["Store", ["Profile", ["FindMany", { userIds }]]],
   ]
 
-  return [modelNew, mergedCmd, [...actions, ...storeActions]]
+
+  return [
+    { ...merged[0], requests: { ...merged[0].requests, [msg[0]]: Success("None") } },
+    merged[1],
+    storeActions
+  ]
 }
+
 
 const mergeWithBackendModel = ({
   frontendModel,
@@ -538,7 +519,6 @@ export const View = ({
 
   return (
     <Game.View
-      onCloseGame={() => dispatch(["CloseGame", { userId: currentUserId }])}
       currentUserId={currentUserId}
       store={store}
       dispatch={(msg) => dispatch(["Games", room.roomId, msg])}
@@ -585,8 +565,8 @@ export const ViewNotInRoom = ({
   )
 
   if (
-    model.requests.CreateRoom.type === "Loading" ||
-    model.requests.JoinRoom.type === "Loading"
+    model.requests.RoomCreate?.type === "Loading" ||
+    model.requests.RoomJoin?.type === "Loading"
   ) {
     return (
       <UI.FillBox>
@@ -628,7 +608,7 @@ export const ViewNotInRoom = ({
             <ViewGameCard
               key={gameName}
               gameName={gameName}
-              onClick={() => dispatch(['CreateRoom', { userId: currentUserId, roomId: RoomId.generate(), gameName }])}
+              onClick={() => dispatch(['RoomCreate', { userId: currentUserId, roomId: RoomId.generate(), gameName }])}
             />
           </UI.Box>
         ))}
@@ -657,7 +637,7 @@ export const ViewNotInRoom = ({
             gameRoom={model}
             onClick={() =>
               dispatch([
-                "JoinRoom",
+                "RoomJoin",
                 { roomId: room.roomId, userId: currentUserId },
               ])
             }
@@ -666,6 +646,29 @@ export const ViewNotInRoom = ({
       </UI.Box>
     </UI.FillBox>
   )
+}
+
+const toRoomUsers = (roomId: RoomId.RoomId, model: Model): RoomUser[] => {
+  const roomUsers: RoomUser[] = []
+  for (const userId in model.users) {
+    if (!UserId.is(userId)) {
+      continue
+    }
+
+    const user = model.users[userId]
+
+    if (!user) {
+      continue
+    }
+
+    if (user.roomId !== roomId) {
+      continue
+    }
+
+    roomUsers.push(user)
+  }
+
+  return roomUsers
 }
 
 const ViewGameRoomAvatarGroup = ({
@@ -684,33 +687,16 @@ const ViewGameRoomAvatarGroup = ({
   dispatch: (msg: Msg) => void
   currentUserId: UserId.UserId
 }) => {
-  const usersInRoom = Object.values(model.users).filter(
-    (user) => user.roomId === room.roomId,
-  )
+  const usersInRoom = toRoomUsers(room.roomId, model)
 
   return (
 
     <>
-      <UI.IconButton sx={{ marginRight: -1 }} onClick={() => dispatch(["ClickedAvatars"])}>
+      <UI.IconButton sx={{ marginRight: -1 }} onClick={() => dispatch(["ClickedRoomButton"])}>
         <UI.Badge badgeContent={usersInRoom.length > 1 ? usersInRoom.length : undefined} color="primary">
           <UI.Icons.Group />
         </UI.Badge>
       </UI.IconButton>
-      {/* <UI.AvatarGroup
-        sx={{ marginRight: -1 }}
-        onClick={() => dispatch(["ClickedAvatars"])}
-        componentsProps={{
-          additionalAvatar: { sx: { width: 28, height: 28 } },
-        }}
-      >
-        {usersInRoom.map((user) => (
-          <UI.Avatar
-            key={user.userId}
-            src={store.Profile[user.userId]?.avatarUrl}
-            sx={{ width: 28, height: 28 }}
-          />
-        ))}
-      </UI.AvatarGroup> */}
 
       <UI.Drawer
         anchor="bottom"
@@ -773,19 +759,29 @@ const ViewGameRoomAvatarGroup = ({
         </UI.Box>
 
         <UI.Box sx={{ paddingX: 2, paddingBottom: 2, display: "flex", gap: 2 }}>
-          {currentUserId === room.hostId && <UI.Button
-            fullWidth
-          // variant="outlined"
-          >
-            Change Game
-          </UI.Button>}
-          <UI.Button
-            fullWidth
-            color="error"
-            onClick={() => dispatch(["LeaveRoom", { userId: currentUserId }])}
-          >
-            Leave Room
-          </UI.Button>
+          {currentUserId === room.hostId ?
+            <>
+              <UI.Button fullWidth>
+                Change Game
+              </UI.Button>
+              <UI.Button
+                fullWidth
+                color="error"
+                onClick={() => dispatch(["RoomDestroy", { userId: currentUserId }])}
+              >
+                End Room
+              </UI.Button>
+            </> : (
+              <>
+                <UI.Button
+                  fullWidth
+                  color="error"
+                  onClick={() => dispatch(["RoomLeave", { userId: currentUserId }])}
+                >
+                  Leave Room
+                </UI.Button>
+              </>
+            )}
         </UI.Box>
       </UI.Drawer>
     </>
