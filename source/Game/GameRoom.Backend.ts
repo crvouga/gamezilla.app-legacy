@@ -154,7 +154,6 @@ export const updateFromFrontend = (
     case 'ChangeGame':
     case 'ChangeHost':
     case 'RoomJoin':
-    case 'RoomLeave':
     case 'RoomDestroy':
     case "RoomCreate": {
       const res: Res = [msg[0], handle(msg, model)]
@@ -166,6 +165,18 @@ export const updateFromFrontend = (
       return [res[1].value, broadcast(res)]
     }
 
+    case "RoomLeave": {
+      const res: Res = [msg[0], handle(msg, model)]
+
+      if (res[1].type === "Err") {
+        return [model, sendToClient(res)]
+      }
+
+
+      // todo handle room leave logic
+
+      return [res[1].value, broadcast(res)]
+    }
 
     default:
       return exhaustive(msg[0])
