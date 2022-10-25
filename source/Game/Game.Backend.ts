@@ -236,6 +236,30 @@ export const updateFromFrontend = (
   }
 }
 
+export const handleLeaveRoom = (model: Model): Model => {
+  switch (model[0]) {
+    case 'Chess': {
+      return model
+    }
+
+    case 'ConnectFour': {
+      return model
+    }
+
+    case 'Snake': {
+      return model
+    }
+
+    case 'Tetris': {
+      return model
+    }
+
+    case 'TicTacToe': {
+      return model
+    }
+  }
+}
+
 //
 //
 //
