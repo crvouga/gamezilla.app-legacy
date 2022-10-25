@@ -156,6 +156,9 @@ export const updateFromFrontend = (
     }
 
     case "LeaveRoom": {
+
+
+
       return updateResponse({ sendToClient, broadcast }, model, [
         "LeaveRoom_Done",
         leaveRoom(msg[1], model),

@@ -293,7 +293,7 @@ const ViewNotInRoom = ({
           }}
         >
           {gameNameList.map((gameName) => (
-            <UI.Box sx={{ minWidth: 150, flex: 1 }}>
+            <UI.Box key={gameName} sx={{ minWidth: 150, flex: 1 }}>
               <GameRoom.ViewGameCard
                 key={gameName}
                 gameName={gameName}

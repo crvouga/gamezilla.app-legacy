@@ -27,7 +27,7 @@ import * as Round from "./Round"
 //
 //
 //
-// ModelØ
+// Model
 //
 //
 //

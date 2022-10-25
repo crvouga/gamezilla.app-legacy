@@ -3,13 +3,17 @@ import {
   BackendModel,
   BackendMsg,
   ToBackend,
-  ToFrontend
+  ToFrontend,
+  Mode
 } from "./ConnectFour.Types"
 import * as UserVsUser from "./UserVsUser/UserVsUser.Backend"
+import * as UserVsBot from "./UserVsBot/UserVsBot.Backend"
+import { UserId } from "../../Data/UserId"
+
 //
 //
 //
-// ModelØ
+// Model
 //
 //
 //
@@ -39,10 +43,24 @@ export const update = ({ sendToRoom }: { sendToRoom: (msg: ToFrontend) => Cmd.Cm
         )
         return [{ type: "UserVsUser", child }, tagCmd("UserVsUser", cmd)]
       }
+
+      return [model, Cmd.None]
+    }
+
+    case 'UserVsBot': {
+      if (model.type === 'UserVsBot') {
+        const [child, cmd] = UserVsBot.update(
+          msg[1],
+          model.child
+        )
+        return [{ type: "UserVsBot", child }, tagCmd("UserVsBot", cmd)]
+      }
+
       return [model, Cmd.None]
     }
   }
 }
+
 
 export const updateFromFrontend = (
   { sendToClient, sendToRoom }: { sendToClient: (msg: ToFrontend) => Cmd.Cmd<never>, sendToRoom: (msg: ToFrontend) => Cmd.Cmd<never> },
@@ -53,20 +71,9 @@ export const updateFromFrontend = (
     case 'InputMode': {
       const { mode, userId } = msg[1]
 
-      switch (mode) {
-        case 'None': {
-          const modelNew: Model = { type: "None" }
-          return [modelNew, sendToRoom(['InputMode_Done', modelNew])]
-        }
-        case 'UserVsUser': {
-          const modelNew: Model = { type: "UserVsUser", child: UserVsUser.init({ PlayerOne: userId, PlayerTwo: "None" }) }
-          return [modelNew, sendToRoom(['InputMode_Done', modelNew])]
-        }
-        case 'UserVsBot': {
-          return [model, Cmd.None]
-        }
-      }
+      const modelNew = initMode(mode, userId)
 
+      return [modelNew, sendToRoom(['InputMode_Done', modelNew])]
     }
     case 'UserVsUser': {
       if (model.type === 'UserVsUser') {
@@ -79,9 +86,44 @@ export const updateFromFrontend = (
       }
       return [model, Cmd.None]
     }
+
+    case 'UserVsBot': {
+      if (model.type === 'UserVsBot') {
+        const [child, cmd] = UserVsBot.updateFromFrontend(
+          { sendToClient: msg => sendToClient(['UserVsBot', msg]), sendToRoom: msg => sendToRoom(['UserVsBot', msg]) },
+          msg[1],
+          model.child
+        )
+        return [{ type: "UserVsBot", child }, tagCmd("UserVsBot", cmd)]
+      }
+
+      return [model, Cmd.None]
+    }
   }
 }
 
+
+const initMode = (mode: Mode, userId: UserId): Model => {
+  switch (mode) {
+    case 'None': {
+      return { type: "None" }
+    }
+
+    case 'UserVsBot': {
+      return {
+        type: "UserVsBot",
+        child: UserVsBot.init({ player: userId })
+      }
+    }
+
+    case 'UserVsUser': {
+      return {
+        type: "UserVsUser",
+        child: UserVsUser.init({ PlayerOne: userId, PlayerTwo: "None" })
+      }
+    }
+  }
+}
 
 //
 //
