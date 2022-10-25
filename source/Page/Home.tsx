@@ -30,6 +30,7 @@ export const init: Model = {}
 export type Msg =
   | ["ClickedCurrentRoom"]
   | ["ClickedCurrentRoomLeave"]
+  | ["ClickedCurrentRoomDestroy"]
   | ["ClickedRoom", { roomId: RoomId.RoomId }]
   | ["ClickedGameCard", GameName]
 
@@ -63,6 +64,13 @@ export const update = (
       return [
         model,
         [["GameRoom", ["Msg", ["RoomLeave", { userId: currentUserId }]]]],
+      ]
+    }
+
+    case 'ClickedCurrentRoomDestroy': {
+      return [
+        model,
+        [["GameRoom", ["Msg", ["RoomDestroy", { userId: currentUserId }]]]],
       ]
     }
 
@@ -208,15 +216,34 @@ export const View = ({
             </UI.Box>
           </UI.CardActionArea>
 
-          <UI.Button
-            sx={{ marginRight: 1 }}
-            onClick={(event) => {
-              event.stopPropagation()
-              dispatch(["ClickedCurrentRoomLeave"])
-            }}
-          >
-            Leave
-          </UI.Button>
+          {currentRoom.hostId === currentUserId ? (
+            <>
+              <UI.Button
+                sx={{ marginRight: 1 }}
+                color="error"
+                onClick={(event) => {
+                  event.stopPropagation()
+                  dispatch(["ClickedCurrentRoomDestroy"])
+                }}
+              >
+                End Room
+              </UI.Button>
+            </>
+          ) : (
+            <>
+              <UI.Button
+                sx={{ marginRight: 1 }}
+                color="error"
+                onClick={(event) => {
+                  event.stopPropagation()
+                  dispatch(["ClickedCurrentRoomLeave"])
+                }}
+              >
+                Leave
+              </UI.Button>
+            </>
+          )}
+
         </UI.Paper>
       </UI.Box>
 
