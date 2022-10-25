@@ -40,7 +40,7 @@ export type BackendModel = SharedModel
 
 export type FrontendModel = SharedModel
 
-export const initShared = ({ player }: { player: UserId }): SharedModel => {
+export const initShared = ({ player }: { player: UserId | "None" }): SharedModel => {
     return {
         type: "Setup",
         botLevel: "Medium",

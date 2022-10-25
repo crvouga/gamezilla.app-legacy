@@ -1,7 +1,7 @@
 import { Cmd, Sub } from "../../../Core";
 import * as UI from "../../../UI";
 import { UserId } from "../../../Data/UserId";
-import { ToFrontend, FrontendMsg, initShared, FrontendModel, ToBackend } from "./UserVsBot.Types";
+import { BackendModel, ToFrontend, FrontendMsg, initShared, FrontendModel, ToBackend } from "./UserVsBot.Types";
 
 //
 //
@@ -62,6 +62,12 @@ export const updateFromBackend = (msg: ToFrontend, model: Model): [Model, Cmd.Cm
     }
 };
 
+export const mergeWithBackend = ({ backendModel }: { frontendModel: FrontendModel, backendModel: BackendModel }): FrontendModel => {
+    return {
+        ...backendModel
+    }
+}
+
 //
 //
 //
@@ -85,14 +91,30 @@ export const subscriptions = (_model: Model): Sub.Sub<Msg> => {
 export const View = (
     {
         model,
+        goBack
     }: {
         model: Model,
         dispatch: (msg: Msg) => void,
         currentUserId: UserId,
+        goBack: () => void
     }) => {
     return (
         <UI.FillBox>
-            {JSON.stringify(model, null, 4)}
+            <pre>
+                {JSON.stringify(model, null, 4)}
+            </pre>
+
+            <UI.Box sx={{ flex: 1 }} />
+
+            <UI.Box sx={{ padding: 2, gap: 2, display: "flex", }}>
+                <UI.Button variant="outlined" onClick={goBack} fullWidth>
+                    Back
+                </UI.Button>
+
+                <UI.Button variant="contained" onClick={() => { }} fullWidth>
+                    Start Game
+                </UI.Button>
+            </UI.Box>
         </UI.FillBox>
     )
 }

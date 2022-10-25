@@ -16,6 +16,7 @@ import {
   ToFrontend
 } from "./ConnectFour.Types"
 import * as UserVsUser from "./UserVsUser/UserVsUser.Frontend"
+import * as UserVsBot from "./UserVsBot/UserVsBot.Frontend"
 import { PlayerIcon } from "./Views"
 
 //
@@ -59,6 +60,20 @@ export const update = ({ sendToBackend }: { sendToBackend: (msg: ToBackend) => C
       return [model, Cmd.None]
 
     }
+
+    case 'UserVsBot': {
+      if (model.type === 'UserVsBot') {
+        const [child, cmd] = UserVsBot.update(
+          {
+            sendToBackend: msg => sendToBackend(['UserVsBot', msg])
+          },
+          msg[1],
+          model.child
+        )
+        return [{ type: "UserVsBot", child }, Cmd.tag("UserVsBot", cmd)]
+      }
+      return [model, Cmd.None]
+    }
   }
 }
 
@@ -79,6 +94,17 @@ export const updateFromBackend = (
           model.child
         )
         return [{ type: "UserVsUser", child }, Cmd.tag("UserVsUser", cmd)]
+      }
+      return [model, Cmd.None]
+    }
+
+    case 'UserVsBot': {
+      if (model.type === 'UserVsBot') {
+        const [child, cmd] = UserVsBot.updateFromBackend(
+          msg[1],
+          model.child
+        )
+        return [{ type: "UserVsBot", child }, Cmd.tag("UserVsBot", cmd)]
       }
       return [model, Cmd.None]
     }
@@ -108,10 +134,11 @@ export const View = ({
   roomComponent: UI.ViewNode
   currentUserId: UserId.UserId
 }) => {
+
+  const goBack = () => dispatch(['InputMode', { userId: currentUserId, mode: "None" }])
+
   switch (model.type) {
     case 'None': {
-
-
       return (
         <UI.FillBox>
           <UI.Header
@@ -143,7 +170,7 @@ export const View = ({
           currentUserId={currentUserId}
           store={store}
           dispatch={msg => dispatch(['UserVsUser', msg])}
-          goBack={() => dispatch(['InputMode', { userId: currentUserId, mode: "None" }])}
+          goBack={goBack}
           goHome={goHome}
           model={model.child}
           roomComponent={roomComponent}
@@ -153,20 +180,12 @@ export const View = ({
 
     case 'UserVsBot': {
       return (
-        <UI.FillBox>
-          <UI.Header
-            left={
-              <UI.IconButton
-                sx={{ marginLeft: -1 }}
-                onClick={goHome}
-              >
-                <UI.Icons.Home />
-              </UI.IconButton>
-            }
-            title="Connect Four"
-          />
-
-        </UI.FillBox>
+        <UserVsBot.View
+          currentUserId={currentUserId}
+          dispatch={(msg) => dispatch(['UserVsBot', msg])}
+          model={model.child}
+          goBack={goBack}
+        />
       )
     }
   }
@@ -364,7 +383,20 @@ export const mergeWithBackend = (
     }
 
     case 'UserVsBot': {
-      return { type: "UserVsBot" }
+      if (frontendModel.type === 'UserVsBot') {
+        return {
+          type: "UserVsBot",
+          child: UserVsBot.mergeWithBackend({ frontendModel: frontendModel.child, backendModel: backendModel.child })
+        }
+      }
+
+      return {
+        type: "UserVsBot",
+        child: UserVsBot.mergeWithBackend({
+          frontendModel: UserVsBot.init(backendModel.child),
+          backendModel: backendModel.child
+        })
+      }
     }
 
     case 'UserVsUser': {
@@ -372,7 +404,10 @@ export const mergeWithBackend = (
       if (frontendModel.type === 'UserVsUser') {
         return {
           type: "UserVsUser",
-          child: UserVsUser.mergeWithBackend({ frontendModel: frontendModel.child, backendModel: backendModel.child })
+          child: UserVsUser.mergeWithBackend({
+            frontendModel: frontendModel.child,
+            backendModel: backendModel.child
+          })
         }
       }
 
