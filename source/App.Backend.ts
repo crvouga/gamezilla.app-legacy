@@ -242,38 +242,30 @@ const sendToUser = (
   userIds: UserId.UserId[],
   msg: ToFrontend,
 ) => {
-  const clientIds = Object.values(model.sessions).flatMap((session) =>
-    session.userId.type === "Some" &&
-      userIds.includes(session.userId.value) &&
-      session.clientId.type === "Some"
-      ? [session.clientId.value]
-      : [],
-  )
+  const clientIds: ClientId.ClientId[] = []
+
+  const userIdSet = new Set<UserId.UserId>(userIds)
+
+  for (const sessionId in model.sessions) {
+    if (!SessionId.is(sessionId)) {
+      continue
+    }
+
+    const session = model.sessions[sessionId]
+
+    if (
+      session
+      && session.userId.type !== 'None'
+      && session.clientId.type !== 'None'
+      && userIdSet.has(session.userId.value)
+    ) {
+      clientIds.push(session.clientId.value)
+    }
+  }
+
 
   return Wire.sendToFrontend(clientIds, msg)
 }
-
-// const updateWithDebug = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
-//   const [modelNew, cmd] = update(msg, model)
-
-//   const modelNext: Model = {
-//     ...modelNew,
-//     debug: {
-//       snapshots: [
-//         ...model.debug.snapshots,
-//         {
-//           gameRoom: model.gameRoom,
-//           msgType: formatMsg(msg),
-//         },
-//       ],
-//     },
-//   }
-
-//   return [
-//     modelNext,
-//     Cmd.batch([Wire.broadcast(["Debug", ["Sync", model.debug]]), cmd]),
-//   ]
-// }
 
 //
 //
