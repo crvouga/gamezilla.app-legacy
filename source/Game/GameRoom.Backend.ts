@@ -172,10 +172,47 @@ export const updateFromFrontend = (
         return [model, sendToClient(res)]
       }
 
+      const user = model.users[msg[1].userId]
 
-      // todo handle room leave logic
+      if (!user) {
+        return [res[1].value, broadcast(res)]
+      }
 
-      return [res[1].value, broadcast(res)]
+      const room = model.rooms[user.roomId]
+
+      if (!room) {
+        return [res[1].value, broadcast(res)]
+      }
+
+      const sendToRoom = makeSendToRoom({ sendToUser, model: res[1].value })
+
+      const [gameNew, cmd] = Game.updateRoomLeave(
+        { sendToRoom: msg => sendToRoom(room.roomId, ['Games', room.roomId, msg]) },
+        user.userId,
+        room.game
+      )
+
+      const roomNew: BackendRoom = {
+        ...room,
+        game: gameNew
+      }
+
+      const modelNew: Model = {
+        ...res[1].value,
+        rooms: {
+          ...res[1].value.rooms,
+          [roomNew.roomId]: roomNew
+        }
+      }
+
+      return [
+        modelNew,
+        Cmd.batch([
+          broadcast(res),
+          // broadcast(['Sync', modelNew]),
+          p(cmd, Cmd.map((msg): Msg => ['Games', room.roomId, msg]))
+        ])
+      ]
     }
 
     default:

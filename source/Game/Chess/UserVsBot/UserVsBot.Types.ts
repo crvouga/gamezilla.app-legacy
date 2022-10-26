@@ -24,7 +24,7 @@ export type SharedModel = SetupModel | GameModel | GameOverModel
 export type SetupModel = {
   type: "Setup"
   userColor: Board.Color
-  userId: Option.Option<UserId.UserId>
+  userId: UserId.UserId | "None"
   botLevel: Board.Level
 }
 
@@ -50,14 +50,14 @@ export type GameOver = Board.GameOver
 export const initShared: SharedModel = {
   type: "Setup",
   userColor: "w",
-  userId: Option.None,
+  userId: "None",
   botLevel: 1,
 }
 
 export const initBackend = ({
   userId,
 }: {
-  userId: Option.Option<UserId.UserId>
+  userId: UserId.UserId | "None"
 }): BackendModel => {
   return {
     type: "Setup",
@@ -91,7 +91,11 @@ export type BackendMsg = BotMoved
 
 export type ToBackend = ["Init"] | Req
 
-export type ToFrontend = ["Sync", SharedModel] | Res | BotMoved_Done
+export type ToFrontend =
+  | ["Sync", SharedModel]
+  | Res
+  | BotMoved_Done
+  | ['PlayerLeft', SharedModel]
 
 export type Req =
   | InputUser
@@ -114,7 +118,7 @@ export type Res =
 //
 //
 
-export type InputUser = ["InputUser", { userId: Option.Option<UserId.UserId> }]
+export type InputUser = ["InputUser", { userId: UserId.UserId | "None" }]
 export type InputUser_Done = [
   "InputUser_Done",
   Result.Result<"must_be_in_setup_mode", SharedModel>,
@@ -168,11 +172,11 @@ export const inputColor = (
     return Result.Err("must_be_in_setup_mode")
   }
 
-  if (model.userId.type === "None") {
+  if (model.userId === "None") {
     return Result.Err("must_be_playing")
   }
 
-  if (model.userId.value !== userId) {
+  if (model.userId !== userId) {
     return Result.Err("must_be_playing")
   }
 
@@ -219,11 +223,11 @@ export const inputBot = (
     return Result.Err("must_be_in_setup_mode")
   }
 
-  if (model.userId.type === "None") {
+  if (model.userId === "None") {
     return Result.Err("must_be_playing")
   }
 
-  if (model.userId.value !== userId) {
+  if (model.userId !== userId) {
     return Result.Err("must_be_playing")
   }
 
@@ -268,11 +272,11 @@ export const startGame = (
     return Result.Err("must_be_in_setup_mode")
   }
 
-  if (model.userId.type === "None") {
+  if (model.userId === "None") {
     return Result.Err("user_is_missing")
   }
 
-  if (model.userId.value !== userId) {
+  if (model.userId !== userId) {
     return Result.Err("must_be_the_player")
   }
 
@@ -281,7 +285,7 @@ export const startGame = (
     board: Board.init(),
     botLevel: model.botLevel,
     userColor: model.userColor,
-    userId: model.userId.value,
+    userId: model.userId,
   }
 
   return Result.Ok(modelNew)
@@ -324,7 +328,7 @@ export const stopGame = (
     type: "Setup",
     botLevel: model.botLevel,
     userColor: model.userColor,
-    userId: Option.Some(model.userId),
+    userId: model.userId,
   }
 
   return Result.Ok(modelNew)

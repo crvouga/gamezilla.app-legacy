@@ -34,7 +34,7 @@ const setupModel: Model = {
         type: "Setup",
         botLevel: 2,
         userColor: "w",
-        userId: { type: "None" }
+        userId: "None"
     }
 }
 

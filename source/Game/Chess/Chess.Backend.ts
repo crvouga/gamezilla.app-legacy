@@ -145,6 +145,23 @@ export const updateFromFrontend = (
   }
 }
 
+export const updateRoomLeave = ({ sendToRoom }: { sendToRoom: (msg: ToFrontend) => Cmd.Cmd<never> }, userId: UserId.UserId, model: Model): [Model, Cmd.Cmd<Msg>] => {
+  switch (model[0]) {
+    case 'None': {
+      return [model, Cmd.None]
+    }
+
+    case 'UserVsBot': {
+      const [child, cmd] = UserVsBot.updateRoomLeave({ sendToRoom: msg => sendToRoom(['UserVsBot', msg]) }, userId, model[1])
+      return [['UserVsBot', child], tagCmd("UserVsBot", cmd)]
+    }
+
+    case 'UserVsUser': {
+      return [model, Cmd.None]
+    }
+  }
+}
+
 const inputMode = (
   { hostId }: { hostId: UserId.UserId },
   { mode, userId }: InputMode[1],
@@ -162,10 +179,7 @@ const inputMode = (
     }
 
     case "UserVsBot": {
-      const modelNew: BackendModel = [
-        "UserVsBot",
-        UserVsBot.init({ userId: Option.Some(userId) }),
-      ]
+      const modelNew: BackendModel = ["UserVsBot", UserVsBot.init({ userId: userId })]
 
       return Result.Ok(modelNew)
     }
