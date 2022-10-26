@@ -1,5 +1,4 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react"
-import { Some } from "../../../Core/Option"
 import { store, userA, userB } from '../../../test-data'
 import * as UI from "../../../UI"
 import { Model, View } from "./UserVsUser.Frontend"
@@ -35,8 +34,8 @@ const setupModel: Model = {
     openedModal: "None",
     sharedModel: {
         type: "Setup",
-        b: { type: "None" },
-        w: { type: "None" },
+        b: "None",
+        w: "None",
         clockPreset: "Bullet"
     }
 }
@@ -55,8 +54,8 @@ MissingWhite.args = {
         ...setupModel,
         sharedModel: {
             type: "Setup",
-            w: { type: "None" },
-            b: Some(userB.userId),
+            w: "None",
+            b: userB.userId,
             clockPreset: "Blitz",
         }
     }
@@ -69,8 +68,8 @@ MissingBlack.args = {
         ...setupModel,
         sharedModel: {
             type: "Setup",
-            w: Some(userB.userId),
-            b: { type: "None" },
+            w: userB.userId,
+            b: "None",
             clockPreset: "Blitz",
         }
     }
@@ -83,8 +82,8 @@ SetupReady.args = {
         ...setupModel,
         sharedModel: {
             type: "Setup",
-            w: Some(userB.userId),
-            b: Some(userA.userId),
+            w: userB.userId,
+            b: userA.userId,
             clockPreset: "Blitz",
         }
     }

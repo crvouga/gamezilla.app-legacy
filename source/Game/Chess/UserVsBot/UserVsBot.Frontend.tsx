@@ -192,7 +192,7 @@ const updateFromBackend_ = (
 
     case 'PlayerLeft': {
       const merged = mergeWithBackend(model, msg[1])
-      return [merged, Cmd.None, [['Snackbar', { message: "Player left the game", variant: "Info" }]]]
+      return [merged, Cmd.None, [['Snackbar', { message: "The player left the game", variant: "Info" }]]]
     }
 
     case "InputMove_Done": {

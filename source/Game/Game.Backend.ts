@@ -257,7 +257,8 @@ export const updateRoomLeave = ({ sendToRoom }: { sendToRoom: (msg: ToFrontend) 
     }
 
     case 'TicTacToe': {
-      return [model, Cmd.None]
+      const [child, cmd] = TicTacToe.updateRoomLeave({ sendToRoom: msg => sendToRoom(['TicTacToe', msg]) }, userId, model[1])
+      return [['TicTacToe', child], tagCmd("TicTacToe", cmd)]
     }
   }
 }

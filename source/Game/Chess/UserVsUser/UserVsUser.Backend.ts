@@ -1,9 +1,11 @@
 import { Cmd, exhaustive, Sub, Time } from "../../../Core"
+import { UserId } from "../../../Data"
 import * as Board from "../Board"
 import {
+  initShared,
   BackendModel,
   BackendMsg, cancelDraw, cancelStartGame, clockTicked,
-  countDownElapsed, initBackend, inputClock, inputMove, inputPlayer, newGame,
+  countDownElapsed, inputClock, inputMove, inputPlayer, newGame,
   requestToDraw, Res, resign,
   respondToDraw, startGame,
   ToBackend,
@@ -20,8 +22,7 @@ import {
 
 export type Model = BackendModel
 
-export const init = initBackend
-
+export const init = initShared
 //
 //
 //
@@ -41,17 +42,17 @@ export const update = (
     case "ClockTicked": {
       const modelNew: Model = {
         ...model,
-        sharedModel: clockTicked(model.sharedModel),
+        ...clockTicked(model),
       }
 
       const didChangeToGameOver =
-        model.sharedModel.type !== "GameOver" &&
-        modelNew.sharedModel.type === "GameOver"
+        model.type !== "GameOver" &&
+        modelNew.type === "GameOver"
 
       return [
         modelNew,
         Cmd.batch([
-          sendToRoom(["ClockTicked", modelNew.sharedModel]),
+          sendToRoom(["ClockTicked", modelNew]),
           didChangeToGameOver ? sendToRoom(["GameOver"]) : Cmd.None,
         ]),
       ]
@@ -60,17 +61,17 @@ export const update = (
     case "CountDownElapsed": {
       const modelNew: Model = {
         ...model,
-        sharedModel: countDownElapsed(model.sharedModel),
+        ...countDownElapsed(model),
       }
 
       const didChangeToGameStart =
-        model.sharedModel.type !== "Game" &&
-        modelNew.sharedModel.type === "Game"
+        model.type !== "Game" &&
+        modelNew.type === "Game"
 
       return [
         modelNew,
         Cmd.batch([
-          sendToRoom(["CountDownElapsed_Done", modelNew.sharedModel]),
+          sendToRoom(["CountDownElapsed_Done", modelNew]),
           didChangeToGameStart ? sendToRoom(["GameStarted"]) : Cmd.None,
         ]),
       ]
@@ -88,13 +89,13 @@ export const updateFromFrontend = (
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
     case "Init": {
-      return [model, wire.sendToClient(["Sync", model.sharedModel])]
+      return [model, wire.sendToClient(["Sync", model])]
     }
 
     case "RequestToDraw": {
       return sendResponse(
         wire,
-        ["RequestToDraw_Done", requestToDraw(msg[1], model.sharedModel)],
+        ["RequestToDraw_Done", requestToDraw(msg[1], model)],
         model,
       )
     }
@@ -102,7 +103,7 @@ export const updateFromFrontend = (
     case "Resign": {
       return sendResponse(
         wire,
-        ["Resign_Done", resign(msg[1], model.sharedModel)],
+        ["Resign_Done", resign(msg[1], model)],
         model,
       )
     }
@@ -110,7 +111,7 @@ export const updateFromFrontend = (
     case "InputClock": {
       return sendResponse(
         wire,
-        ["InputClock_Done", inputClock(msg[1], model.sharedModel)],
+        ["InputClock_Done", inputClock(msg[1], model)],
         model,
       )
     }
@@ -118,7 +119,7 @@ export const updateFromFrontend = (
     case "InputPlayer": {
       return sendResponse(
         wire,
-        ["InputPlayer_Done", inputPlayer(msg[1], model.sharedModel)],
+        ["InputPlayer_Done", inputPlayer(msg[1], model)],
         model,
       )
     }
@@ -126,7 +127,7 @@ export const updateFromFrontend = (
     case "StartGame": {
       return sendResponse(
         wire,
-        ["StartGame_Done", startGame(msg[1], model.sharedModel)],
+        ["StartGame_Done", startGame(msg[1], model)],
         model,
       )
     }
@@ -134,7 +135,7 @@ export const updateFromFrontend = (
     case "InputMove": {
       return sendResponse(
         wire,
-        ["InputMove_Done", inputMove(msg[1], model.sharedModel)],
+        ["InputMove_Done", inputMove(msg[1], model)],
         model,
       )
     }
@@ -142,7 +143,7 @@ export const updateFromFrontend = (
     case "RespondToDraw": {
       return sendResponse(
         wire,
-        ["RespondToDraw_Done", respondToDraw(msg[1], model.sharedModel)],
+        ["RespondToDraw_Done", respondToDraw(msg[1], model)],
         model,
       )
     }
@@ -150,7 +151,7 @@ export const updateFromFrontend = (
     case "NewGame": {
       return sendResponse(
         wire,
-        ["NewGame_Done", newGame(model.sharedModel)],
+        ["NewGame_Done", newGame(model)],
         model,
       )
     }
@@ -160,7 +161,7 @@ export const updateFromFrontend = (
         wire,
         [
           "CancelStartGame_Done",
-          cancelStartGame(msg[1], model.sharedModel),
+          cancelStartGame(msg[1], model),
           msg[1],
         ],
         model,
@@ -170,7 +171,7 @@ export const updateFromFrontend = (
     case "CancelDraw": {
       return sendResponse(
         wire,
-        ["CancelDraw_Done", cancelDraw(msg[1], model.sharedModel)],
+        ["CancelDraw_Done", cancelDraw(msg[1], model)],
         model,
       )
     }
@@ -197,18 +198,16 @@ const sendResponse = (
       model,
       Cmd.batch([
         sendToClient(response),
-        sendToClient(["Sync", model.sharedModel]),
+        sendToClient(["Sync", model]),
       ]),
     ]
   }
 
-  const modelNew: Model = {
-    sharedModel: response[1].value,
-  }
+  const modelNew: Model = response[1].value
 
   const didChangeToGameOver =
-    model.sharedModel.type !== "GameOver" &&
-    modelNew.sharedModel.type === "GameOver"
+    model.type !== "GameOver" &&
+    modelNew.type === "GameOver"
 
   return [
     modelNew,
@@ -217,6 +216,48 @@ const sendResponse = (
       sendToRoom(response),
     ]),
   ]
+}
+
+
+export const updateRoomLeave = ({ sendToRoom }: { sendToRoom: (m: ToFrontend) => Cmd.Cmd<never> }, userId: UserId.UserId, model: Model): [Model, Cmd.Cmd<Msg>] => {
+
+  switch (model.type) {
+    case 'Setup': {
+      const color: Board.Color | 'None' = model.b === userId ? 'b' : model.w === userId ? 'w' : 'None'
+
+      if (color === 'None') {
+        return [model, Cmd.None]
+      }
+
+      const modelNew: Model = { ...model, [color]: "None" }
+
+      return [modelNew, sendToRoom(['PlayerLeft', modelNew])]
+    }
+
+    case 'Game':
+    case 'GameOver':
+    case 'Starting': {
+      const color: Board.Color | 'None' = model.b === userId ? 'b' : model.w === userId ? 'w' : 'None'
+
+      if (color === 'None') {
+        return [model, Cmd.None]
+      }
+
+      const otherColor = Board.toOppositeColor(color)
+
+      const modelNew: Model = {
+        ...model,
+        type: "Setup",
+        clockPreset: model.clock.preset,
+        [otherColor]: model[otherColor],
+        [color]: "None",
+      }
+
+      return [modelNew, sendToRoom(['PlayerLeft', modelNew])]
+    }
+  }
+
+
 }
 
 //
@@ -231,7 +272,7 @@ export const subscriptions = (
   intervalId: string,
   model: Model,
 ): Sub.Sub<Msg> => {
-  switch (model.sharedModel.type) {
+  switch (model.type) {
     case "Setup": {
       return Sub.None
     }
@@ -247,7 +288,7 @@ export const subscriptions = (
     }
 
     case "Game": {
-      const turn = Board.toTurn(model.sharedModel.board)
+      const turn = Board.toTurn(model.board)
 
       switch (turn) {
         case "b": {
