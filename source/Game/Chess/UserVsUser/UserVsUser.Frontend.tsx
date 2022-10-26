@@ -37,7 +37,7 @@ export const init = ({
   userId,
 }: {
   sendToBackend: (msg: ToBackend) => Cmd.Cmd<never>
-  userId: Option.Option<UserId.UserId>
+  userId: UserId.UserId | "None"
 }): [FrontendModel, Cmd.Cmd<Msg>] => {
   return [
     {
@@ -383,6 +383,10 @@ export const updateFromBackend = (
       return [{ ...model, sharedModel }, Cmd.None, []]
     }
 
+    case 'PlayerLeft': {
+      return [{ ...model, sharedModel: msg[1] }, Cmd.None, [['Snackbar', { message: "Player left the room", variant: "Info" }]]]
+    }
+
     default: {
       return exhaustive(msg[0])
     }
@@ -460,8 +464,8 @@ export const View = ({
         <UI.Box sx={{ flex: 1, overflowY: "scroll" }}>
           <VersusHeader
             store={store}
-            black={model.sharedModel.b.type === 'Some' ? { type: "User", userId: model.sharedModel.b.value } : { type: "None" }}
-            white={model.sharedModel.w.type === 'Some' ? { type: "User", userId: model.sharedModel.w.value } : { type: "None" }}
+            black={model.sharedModel.b !== 'None' ? { type: "User", userId: model.sharedModel.b } : { type: "None" }}
+            white={model.sharedModel.w !== 'None' ? { type: "User", userId: model.sharedModel.w } : { type: "None" }}
           />
 
           <UI.Typography
@@ -474,7 +478,7 @@ export const View = ({
           <UI.Box sx={{ display: "flex", alignItems: "center", paddingRight: 2, width: "100%", marginBottom: 1 }}>
             <PawnIcon sx={{ width: 60, height: 60, color: "#fff" }} />
 
-            {model.sharedModel.w.type === "None" ? (
+            {model.sharedModel.w === "None" ? (
               <UI.Button
                 fullWidth
                 size="large"
@@ -482,17 +486,16 @@ export const View = ({
                 onClick={() => {
                   dispatch([
                     "InputPlayer",
-                    { userId: Option.Some(currentUserId), color: "w" },
+                    { userId: currentUserId, color: "w" },
                   ])
                 }}
               >
                 Play As {Board.colorToString("w")}
               </UI.Button>
-
             ) : (
               <ViewInputUserPlayerSlot
                 color="w"
-                userId={model.sharedModel.w.value}
+                userId={model.sharedModel.w}
                 currentUserId={currentUserId}
                 dispatch={dispatch}
                 store={store}
@@ -502,7 +505,7 @@ export const View = ({
 
           <UI.Box sx={{ display: "flex", alignItems: "center", paddingRight: 2, width: "100%" }}>
             <PawnIcon stroke="#787878" sx={{ width: 60, height: 60, color: "#000" }} />
-            {model.sharedModel.b.type === "None" ? (
+            {model.sharedModel.b === "None" ? (
               <UI.Button
                 fullWidth
                 size="large"
@@ -510,7 +513,7 @@ export const View = ({
                 onClick={() => {
                   dispatch([
                     "InputPlayer",
-                    { userId: Option.Some(currentUserId), color: "b" },
+                    { userId: currentUserId, color: "b" },
                   ])
                 }}
               >
@@ -520,7 +523,7 @@ export const View = ({
             ) : (
               <ViewInputUserPlayerSlot
                 color="b"
-                userId={model.sharedModel.b.value}
+                userId={model.sharedModel.b}
                 currentUserId={currentUserId}
                 dispatch={dispatch}
                 store={store}
@@ -983,7 +986,7 @@ const ViewInputUserPlayerSlot = ({
         <UI.Button
           size="large"
           onClick={() =>
-            dispatch(["InputPlayer", { userId: Option.None, color }])
+            dispatch(["InputPlayer", { userId: "None", color }])
           }
         >
           Stop Playing
@@ -1112,6 +1115,6 @@ export const mergeWithBackend = (
     isFlipped: frontendModel.isFlipped,
     openedMenuId: frontendModel.openedMenuId,
     openedModal: frontendModel.openedModal,
-    sharedModel: backendModel.sharedModel,
+    sharedModel: backendModel,
   }
 }

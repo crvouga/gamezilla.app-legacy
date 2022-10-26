@@ -1,7 +1,6 @@
 import {
   Audio,
   Cmd,
-  Option,
   p,
   RemoteData, Sub,
   tagCmd,
@@ -409,7 +408,7 @@ export const mergeWithBackend = ({
       }
 
       const [child, childCmd] = UserVsUser.init({
-        userId: Option.None,
+        userId: "None",
         sendToBackend: (msg) => sendToBackend(["UserVsUser", msg]),
       })
 

@@ -20,20 +20,18 @@ export type FrontendModel = {
 
 export type Modal = "RequestToDraw" | "AskedToDraw" | "Resign" | "GameOver"
 
-export type BackendModel = {
-  sharedModel: SharedModel
-}
+export type BackendModel = SharedModel
 
 export type SharedModel =
   | {
     type: "Setup"
     clockPreset: Clock.Preset
-    w: Option.Option<UserId.UserId>
-    b: Option.Option<UserId.UserId>
+    w: UserId.UserId | "None"
+    b: UserId.UserId | "None"
   }
   | {
     type: "Starting"
-    clockPreset: Clock.Preset
+    clock: Clock.Clock
     w: UserId.UserId
     b: UserId.UserId
     countDown: 3 | 2 | 1
@@ -81,25 +79,17 @@ export type GameOver =
 export const initShared = ({
   userId,
 }: {
-  userId: Option.Option<UserId.UserId>
+  userId: UserId.UserId | "None"
 }): SharedModel => {
   return {
     type: "Setup",
     w: userId,
-    b: Option.None,
+    b: "None",
     clockPreset: "Blitz",
   }
 }
 
-export const initBackend = ({
-  userId,
-}: {
-  userId: Option.Option<UserId.UserId>
-}): BackendModel => {
-  return {
-    sharedModel: initShared({ userId }),
-  }
-}
+
 
 //
 //
@@ -124,6 +114,7 @@ export type ToFrontend =
   | ["Sync", SharedModel]
   | ["GameOver"]
   | ["GameStarted"]
+  | ['PlayerLeft', SharedModel]
   | CountDownElapsed_Done
   | ClockTicked_Done
   | Res
@@ -233,7 +224,7 @@ export type InputPlayer = [
   "InputPlayer",
   {
     color: Board.Color
-    userId: Option.Option<UserId.UserId>
+    userId: UserId.UserId | "None"
   },
 ]
 
@@ -258,7 +249,7 @@ export const inputPlayer = (
   const targetPlayer = userId
   const targetColor = color
 
-  if (model[targetColor].type === "Some" && targetPlayer.type === "Some") {
+  if (model[targetColor] !== "None" && targetPlayer !== "None") {
     return Result.Err("player_is_taken")
   }
 
@@ -266,10 +257,10 @@ export const inputPlayer = (
   const otherPlayer = model[otherColor]
 
   const otherPlayerNew =
-    otherPlayer.type === "Some" &&
-      targetPlayer.type === "Some" &&
-      otherPlayer.value === targetPlayer.value
-      ? Option.None
+    otherPlayer !== "None" &&
+      targetPlayer !== "None" &&
+      otherPlayer === targetPlayer
+      ? "None"
       : otherPlayer
 
   return Result.Ok({
@@ -381,27 +372,27 @@ export const startGame = (
     return Result.Err("game_not_in_setup_mode")
   }
 
-  if (model.w.type === "None" && model.b.type === "None") {
+  if (model.w === "None" && model.b === "None") {
     return Result.Err("missing_both_players")
   }
 
-  if (model.w.type === "None") {
+  if (model.w === "None") {
     return Result.Err("missing_white_player")
   }
 
-  if (model.b.type === "None") {
+  if (model.b === "None") {
     return Result.Err("missing_black_player")
   }
 
-  if (userId !== model.b.value && userId !== model.w.value) {
+  if (userId !== model.b && userId !== model.w) {
     return Result.Err("must_be_a_player")
   }
 
   return Result.Ok({
     type: "Starting",
-    w: model.w.value,
-    b: model.b.value,
-    clockPreset: model.clockPreset,
+    w: model.w,
+    b: model.b,
+    clock: Clock.presetToClock(model.clockPreset),
     countDown: 3,
   })
 }
@@ -576,8 +567,8 @@ export const newGame = (model: SharedModel): NewGame_Done[1] => {
 
   const modelNew: SharedModel = {
     type: "Setup",
-    b: Option.Some(model.b),
-    w: Option.Some(model.w),
+    b: model.b,
+    w: model.w,
     clockPreset: model.clock.preset,
   }
 
@@ -653,7 +644,7 @@ export const countDownElapsed = (model: SharedModel): SharedModel => {
       w: model.w,
       b: model.b,
       board: Board.init(),
-      clock: Clock.presetToClock(model.clockPreset),
+      clock: model.clock,
       drawAgreement: { type: "NotAsking" },
     }
   }
@@ -718,9 +709,9 @@ export const cancelStartGame = (
 
   const modelNew: SharedModel = {
     type: "Setup",
-    b: Option.Some(model.b),
-    w: Option.Some(model.w),
-    clockPreset: model.clockPreset,
+    b: model.b,
+    w: model.w,
+    clockPreset: model.clock.preset,
   }
 
   return Result.Ok(modelNew)

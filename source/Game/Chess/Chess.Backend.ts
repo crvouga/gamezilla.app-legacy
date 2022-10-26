@@ -1,20 +1,17 @@
 import {
   Cmd,
   exhaustive,
-  Option,
-  Result,
   Sub,
   tagCmd,
-  tagSub,
+  tagSub
 } from "../../Core"
+import { Err, Ok } from "../../Core/Result"
 import { UserId } from "../../Data"
 import {
   BackendModel,
-  BackendMsg,
-  InputMode,
-  InputMode_Done,
+  BackendMsg, InputMode_Done,
   ToBackend,
-  ToFrontend,
+  ToFrontend
 } from "./Chess.Types"
 import * as UserVsBot from "./UserVsBot/UserVsBot.Backend"
 import * as UserVsUser from "./UserVsUser/UserVsUser.Backend"
@@ -100,7 +97,7 @@ export const updateFromFrontend = (
 ): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
     case "InputMode": {
-      const result = inputMode({ hostId }, msg[1], model)
+      const result = initMode({ hostId, mode: msg[1].mode, userId: msg[1].userId })
 
       if (result.type === "Err") {
         return [model, sendToClient(["InputMode_Done", msg[1], result])]
@@ -157,40 +154,39 @@ export const updateRoomLeave = ({ sendToRoom }: { sendToRoom: (msg: ToFrontend) 
     }
 
     case 'UserVsUser': {
-      return [model, Cmd.None]
+      const [child, cmd] = UserVsUser.updateRoomLeave({ sendToRoom: msg => sendToRoom(['UserVsUser', msg]) }, userId, model[1])
+      return [['UserVsUser', child], tagCmd("UserVsUser", cmd)]
     }
   }
 }
 
-const inputMode = (
-  { hostId }: { hostId: UserId.UserId },
-  { mode, userId }: InputMode[1],
-  _model: BackendModel,
+const initMode = (
+  { hostId, mode, userId, }: { hostId: UserId.UserId, mode: BackendModel[0], userId: UserId.UserId },
 ): InputMode_Done[2] => {
   if (hostId !== userId) {
-    return Result.Err("must_be_the_host")
+    return Err("must_be_the_host")
   }
 
   switch (mode) {
     case "None": {
       const modelNew: BackendModel = ["None"]
 
-      return Result.Ok(modelNew)
+      return Ok(modelNew)
     }
 
     case "UserVsBot": {
       const modelNew: BackendModel = ["UserVsBot", UserVsBot.init({ userId: userId })]
 
-      return Result.Ok(modelNew)
+      return Ok(modelNew)
     }
 
     case "UserVsUser": {
       const modelNew: BackendModel = [
         "UserVsUser",
-        UserVsUser.init({ userId: Option.Some(userId) }),
+        UserVsUser.init({ userId: userId }),
       ]
 
-      return Result.Ok(modelNew)
+      return Ok(modelNew)
     }
   }
 }
