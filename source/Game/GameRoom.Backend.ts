@@ -45,8 +45,6 @@ export const update = (
   msg: Msg,
   model: Model,
 ): [Model, Cmd.Cmd<Msg>] => {
-  const sendToRoom = makeSendToRoom({ sendToUser, model })
-
   switch (msg[0]) {
     case "Games": {
       const roomId = msg[1]
@@ -61,7 +59,7 @@ export const update = (
 
       const [gameNew, gameCmd] = Game.update(
         {
-          sendToRoom: (msg) => sendToRoom(roomId, ["Games", roomId, msg]),
+          sendToRoom: (msg) => sendToRoom({ sendToUser, model, roomId, msg: ["Games", roomId, msg] }),
         },
         gameMsg,
         room.game,
@@ -105,8 +103,6 @@ export const updateFromFrontend = (
   msg: ToBackend,
   model: Model,
 ): [Model, Cmd.Cmd<BackendMsg>] => {
-  const sendToRoom = makeSendToRoom({ sendToUser, model })
-
   switch (msg[0]) {
     case "Games": {
       const roomId = msg[1]
@@ -123,7 +119,7 @@ export const updateFromFrontend = (
         {
           hostId: room.hostId,
           sendToClient: (msg) => sendToClient(["Games", roomId, msg]),
-          sendToRoom: (msg) => sendToRoom(roomId, ["Games", roomId, msg]),
+          sendToRoom: (msg) => sendToRoom({ sendToUser, model, roomId, msg: ["Games", roomId, msg] }),
         },
         gameMsg,
         room.game,
@@ -172,6 +168,8 @@ export const updateFromFrontend = (
         return [model, sendToClient(res)]
       }
 
+      const modelAfter = res[1].value
+
       const user = model.users[msg[1].userId]
 
       if (!user) {
@@ -184,10 +182,8 @@ export const updateFromFrontend = (
         return [res[1].value, broadcast(res)]
       }
 
-      const sendToRoom = makeSendToRoom({ sendToUser, model: res[1].value })
-
       const [gameNew, cmd] = Game.updateRoomLeave(
-        { sendToRoom: msg => sendToRoom(room.roomId, ['Games', room.roomId, msg]) },
+        { sendToRoom: msg => sendToRoom({ sendToUser, model: modelAfter, roomId: room.roomId, msg: ['Games', room.roomId, msg] }) },
         user.userId,
         room.game
       )
@@ -209,7 +205,6 @@ export const updateFromFrontend = (
         modelNew,
         Cmd.batch([
           broadcast(res),
-          // broadcast(['Sync', modelNew]),
           p(cmd, Cmd.map((msg): Msg => ['Games', room.roomId, msg]))
         ])
       ]
@@ -220,10 +215,17 @@ export const updateFromFrontend = (
   }
 }
 
-const makeSendToRoom = ({ model, sendToUser }: { model: Model, sendToUser: (userIds: UserId.UserId[], msg: ToFrontend) => Cmd.Cmd<never> }) => (
+const sendToRoom = ({
+  model,
+  sendToUser,
+  roomId,
+  msg,
+}: {
+  model: Model,
+  sendToUser: (userIds: UserId.UserId[], msg: ToFrontend) => Cmd.Cmd<never>,
   roomId: RoomId.RoomId,
   msg: ToFrontend,
-): Cmd.Cmd<never> => {
+}): Cmd.Cmd<never> => {
   const userIds: UserId.UserId[] = []
 
   for (const userId in model.users) {
