@@ -1,4 +1,5 @@
 import { Cmd, p, Sub } from "../../../Core"
+import { UserId } from "../../../Data/UserId"
 import * as Board from "../Board"
 import {
   BackendModel,
@@ -85,7 +86,7 @@ const toBotMoveCmd = (modelPrev: Model, modelNext: Model): Cmd.Cmd<Msg> => {
   return cmd
 }
 
-export const updateFromFrontend_ = (
+const updateFromFrontend_ = (
   { sendToClient, sendToRoom }: Wire,
   msg: ToBackend,
   model: Model,
@@ -143,6 +144,20 @@ export const updateFromFrontend_ = (
       return [modelNew, sendToRoom(["InputMove_Done", result])]
     }
   }
+}
+
+export const updateRoomLeave = ({ sendToRoom }: { sendToRoom: (msg: ToFrontend) => Cmd.Cmd<never> }, userId: UserId, model: Model): [Model, Cmd.Cmd<Msg>] => {
+  if (model.userId === userId) {
+    const modelNew: Model = {
+      type: "Setup",
+      botLevel: model.botLevel,
+      userColor: model.userColor,
+      userId: "None"
+    }
+    return [modelNew, sendToRoom(['PlayerLeft', modelNew])]
+  }
+
+  return [model, Cmd.None]
 }
 
 //

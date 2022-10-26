@@ -190,6 +190,11 @@ const updateFromBackend_ = (
       return [{ ...model, sharedModel }, soundCmd, []]
     }
 
+    case 'PlayerLeft': {
+      const merged = mergeWithBackend(model, msg[1])
+      return [merged, Cmd.None, [['Snackbar', { message: "Player left the game", variant: "Info" }]]]
+    }
+
     case "InputMove_Done": {
       const result = msg[1]
 
@@ -337,8 +342,8 @@ export const View = ({
         <UI.Box sx={{ flex: 1, overflowY: "scroll" }}>
           <VersusHeader
             store={store}
-            black={model.sharedModel.userColor === 'w' ? { type: "Bot", label: Board.levelToString(model.sharedModel.botLevel) } : model.sharedModel.userId.type === 'None' ? { type: "None" } : { type: "User", userId: model.sharedModel.userId.value }}
-            white={model.sharedModel.userColor === 'b' ? { type: "Bot", label: Board.levelToString(model.sharedModel.botLevel) } : model.sharedModel.userId.type === 'None' ? { type: "None" } : { type: "User", userId: model.sharedModel.userId.value }}
+            black={model.sharedModel.userColor === 'w' ? { type: "Bot", label: Board.levelToString(model.sharedModel.botLevel) } : model.sharedModel.userId === 'None' ? { type: "None" } : { type: "User", userId: model.sharedModel.userId }}
+            white={model.sharedModel.userColor === 'b' ? { type: "Bot", label: Board.levelToString(model.sharedModel.botLevel) } : model.sharedModel.userId === 'None' ? { type: "None" } : { type: "User", userId: model.sharedModel.userId }}
           />
 
           <UI.Typography
@@ -348,17 +353,14 @@ export const View = ({
             Player
           </UI.Typography>
 
-          {model.sharedModel.userId.type === "None" ? (
+          {model.sharedModel.userId === "None" ? (
             <UI.Box sx={{ paddingX: 2 }}>
               <UI.Button
                 fullWidth
                 size="large"
                 variant="contained"
                 onClick={() => {
-                  dispatch([
-                    "InputUser",
-                    { userId: Option.Some(currentUserId) },
-                  ])
+                  dispatch(["InputUser", { userId: currentUserId },])
                 }}
               >
                 Start Playing
@@ -368,22 +370,18 @@ export const View = ({
             <UI.Box sx={{ display: "flex", alignItems: "center", paddingX: 2 }}>
               <UI.Avatar
                 sx={{ marginRight: 1 }}
-                src={store.Profile[model.sharedModel.userId.value]?.avatarUrl}
+                src={store.Profile[model.sharedModel.userId]?.avatarUrl}
               />
 
-              <UI.Typography
-                sx={{ flex: 1 }}
-                noWrap
-              >
-                {store.Profile[model.sharedModel.userId.value]?.username ??
-                  "..."}
+              <UI.Typography sx={{ flex: 1 }} noWrap>
+                {store.Profile[model.sharedModel.userId]?.username ?? "..."}
               </UI.Typography>
 
-              {model.sharedModel.userId.value === currentUserId && (
+              {model.sharedModel.userId === currentUserId && (
                 <UI.Button
                   size="large"
                   onClick={() =>
-                    dispatch(["InputUser", { userId: Option.None }])
+                    dispatch(["InputUser", { userId: "None" }])
                   }
                 >
                   Stop Playing

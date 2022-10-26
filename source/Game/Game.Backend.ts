@@ -1,4 +1,4 @@
-import { Cmd, Sub, tagSub, tagUpdate } from "../Core"
+import { Cmd, Sub, tagCmd, tagSub, tagUpdate } from "../Core"
 import { UserId } from "../Data"
 import * as Chess from "./Chess/Chess.Backend"
 import * as ConnectFour from "./ConnectFour/ConnectFour.Backend"
@@ -236,26 +236,28 @@ export const updateFromFrontend = (
   }
 }
 
-export const handleLeaveRoom = (model: Model): Model => {
+export const updateRoomLeave = ({ sendToRoom }: { sendToRoom: (msg: ToFrontend) => Cmd.Cmd<never> }, userId: UserId.UserId, model: Model): [Model, Cmd.Cmd<Msg>] => {
+  console.log("updateRoomLeave", userId, model)
   switch (model[0]) {
     case 'Chess': {
-      return model
+      const [child, cmd] = Chess.updateRoomLeave({ sendToRoom: msg => sendToRoom(['Chess', msg]) }, userId, model[1])
+      return [['Chess', child], tagCmd("Chess", cmd)]
     }
 
     case 'ConnectFour': {
-      return model
+      return [model, Cmd.None]
     }
 
     case 'Snake': {
-      return model
+      return [model, Cmd.None]
     }
 
     case 'Tetris': {
-      return model
+      return [model, Cmd.None]
     }
 
     case 'TicTacToe': {
-      return model
+      return [model, Cmd.None]
     }
   }
 }
