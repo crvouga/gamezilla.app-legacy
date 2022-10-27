@@ -237,7 +237,6 @@ export const updateFromFrontend = (
 }
 
 export const updateRoomLeave = ({ sendToRoom }: { sendToRoom: (msg: ToFrontend) => Cmd.Cmd<never> }, userId: UserId.UserId, model: Model): [Model, Cmd.Cmd<Msg>] => {
-  console.log("updateRoomLeave", userId, model)
   switch (model[0]) {
     case 'Chess': {
       const [child, cmd] = Chess.updateRoomLeave({ sendToRoom: msg => sendToRoom(['Chess', msg]) }, userId, model[1])
@@ -245,7 +244,8 @@ export const updateRoomLeave = ({ sendToRoom }: { sendToRoom: (msg: ToFrontend) 
     }
 
     case 'ConnectFour': {
-      return [model, Cmd.None]
+      const [child, cmd] = ConnectFour.updateRoomLeave({ userId, model: model[1], sendToRoom: msg => sendToRoom(['ConnectFour', msg]) },)
+      return [['ConnectFour', child], tagCmd("ConnectFour", cmd)]
     }
 
     case 'Snake': {

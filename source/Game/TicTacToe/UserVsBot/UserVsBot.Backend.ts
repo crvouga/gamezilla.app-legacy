@@ -1,4 +1,5 @@
 import { Cmd, p, Sub } from "../../../Core"
+import { UserId } from "../../../Data/UserId"
 import { getBestMove, toOpposite } from "../TicTacToe"
 import {
   BackendModel,
@@ -99,7 +100,7 @@ export const updateFromFrontend: UpdateFromFrontend = (
         cmd,
         p(
           getBestMove(modelNext.botLevel, botPlayerType, modelNext.board),
-          Cmd.perform((position): Msg => ["BotMove", { position }]),
+          Cmd.perform((result): Msg => ["BotMove", result]),
         ),
       ]),
     ]
@@ -195,6 +196,22 @@ const updateFromFrontend_: UpdateFromFrontend = (
       return [response[1].value, sendToRoom(response)]
     }
   }
+}
+
+export const updateRoomLeave = ({ sendToRoom, userId, model }: { userId: UserId, model: Model, sendToRoom: (m: ToFrontend) => Cmd.Cmd }): [Model, Cmd.Cmd<Msg>] => {
+
+  if (model.player !== userId) {
+    return [model, Cmd.None]
+  }
+
+  const modelNew: Model = {
+    type: "Setup",
+    botLevel: model.botLevel,
+    player: "None",
+    userPlayerType: model.userPlayerType
+  }
+
+  return [modelNew, sendToRoom(['PlayerLeft', modelNew])]
 }
 
 //

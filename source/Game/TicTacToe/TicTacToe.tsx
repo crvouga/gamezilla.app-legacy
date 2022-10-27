@@ -1,6 +1,5 @@
 import * as Threads from "threads"
-import { Result } from "../../Core"
-import { Err, Ok } from "../../Core/Result"
+import { Err, Ok, Result } from "../../Core/Result"
 import { Task } from "../../Core/Task"
 import * as UI from "../../UI"
 
@@ -133,18 +132,27 @@ export type Worker = {
   toBestMove: typeof toBestMove
 }
 
+export type GetBestMoveProblem = "worker_thread_error"
+
 export const getBestMove =
-  (botLevel: BotLevel, maximizingPlayer: PlayerType, board: Board): Task<Position> =>
+  (botLevel: BotLevel, maximizingPlayer: PlayerType, board: Board): Task<Result<GetBestMoveProblem, Position>> =>
     async () => {
-      const worker = new Threads.Worker("./tictactoe-worker")
+      try {
+        const worker = new Threads.Worker("./tictactoe-worker")
 
-      const spawned = await Threads.spawn<Worker>(worker)
+        const spawned = await Threads.spawn<Worker>(worker)
 
-      const result = await spawned.toBestMove(botLevel, maximizingPlayer, board)
-
-      await Threads.Thread.terminate(spawned)
-
-      return result
+        try {
+          const result = await spawned.toBestMove(botLevel, maximizingPlayer, board)
+          return Ok(result)
+        } catch (error) {
+          return Err("worker_thread_error")
+        } finally {
+          await Threads.Thread.terminate(spawned)
+        }
+      } catch (error) {
+        return Err("worker_thread_error")
+      }
 
     }
 
@@ -355,13 +363,11 @@ export const toTurn = (board: Board): PlayerType => {
 
 export type MoveProblem = "not_players_turn" | "position_is_taken" | "game_over"
 
-export type MoveResult = Result.Result<MoveProblem, Board>
-
 export const move = (
   board: Board,
   player: PlayerType,
   position: Position,
-): MoveResult => {
+): Result<MoveProblem, Board> => {
   const status = toStatus(board)
 
   if (status.type === "Tie" || status.type === "Win") {

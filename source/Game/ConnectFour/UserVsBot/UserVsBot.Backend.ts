@@ -1,5 +1,6 @@
 import { Cmd, Sub } from "../../../Core";
 import { initShared, BackendMsg, BackendModel, ToBackend, handle, Res, ToFrontend } from "./UserVsBot.Types"
+import { UserId } from "../../../Data/UserId"
 
 //
 //
@@ -56,6 +57,25 @@ export const updateFromFrontend = (
         }
     }
 };
+
+export const updateRoomLeave = ({ userId, model, sendToRoom }: {
+    sendToRoom: (m: ToFrontend) => Cmd.Cmd<never>,
+    userId: UserId,
+    model: Model,
+}): [Model, Cmd.Cmd<Msg>] => {
+    if (model.player !== userId) {
+        return [model, Cmd.None]
+    }
+
+    const modelNew: Model = {
+        type: "Setup",
+        botLevel: model.botLevel,
+        userPlayerType: model.userPlayerType,
+        player: "None"
+    }
+
+    return [modelNew, sendToRoom(['PlayerLeft', modelNew])]
+}
 
 //
 //

@@ -4,6 +4,7 @@ import {
   Board,
   BotLevel,
   emptyBoard,
+  GetBestMoveProblem,
   move,
   MoveProblem,
   PlayerType,
@@ -73,7 +74,7 @@ export type BackendMsg = BotMove
 
 export type ToBackend = Request
 
-export type ToFrontend = Response | BotMove_Done
+export type ToFrontend = Response | BotMove_Done | ["PlayerLeft", SharedModel]
 
 export type Request =
   | InputBot
@@ -418,29 +419,35 @@ export const swapSides = (
 //
 //
 
-type BotMove = ["BotMove", { position: Position }]
+type BotMove = ["BotMove", Result<GetBestMoveProblem, Position>]
 type BotMove_Done = ["BotMove_Done", Result<BotMoveProblem, SharedModel>]
-type BotMoveProblem = "not_in_game" | MoveProblem
+type BotMoveProblem = "not_in_game" | MoveProblem | GetBestMoveProblem
 
 export const botMove = (
-  { position }: BotMove[1],
+  botMoveResult: BotMove[1],
   model: SharedModel,
 ): BotMove_Done[1] => {
   if (model.type !== "Game") {
     return Err("not_in_game")
   }
 
+  if (botMoveResult.type === 'Err') {
+    return botMoveResult
+  }
+
+  const position = botMoveResult.value
+
   const botPlayerType = toOpposite(model.userPlayerType)
 
-  const result = move(model.board, botPlayerType, position)
+  const moveResult = move(model.board, botPlayerType, position)
 
-  if (result.type === "Err") {
-    return result
+  if (moveResult.type === "Err") {
+    return moveResult
   }
 
   const modelNext: SharedModel = {
     ...model,
-    board: result.value,
+    board: moveResult.value,
   }
 
   return Ok(modelNext)

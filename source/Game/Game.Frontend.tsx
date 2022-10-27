@@ -70,7 +70,7 @@ export const init = ({
 
 export type Msg = FrontendMsg
 
-export type OutAction = Snackbar.Action
+export type OutAction = Snackbar.Action | Store.Action
 
 export const update = (
   {
@@ -204,13 +204,8 @@ export const updateFromBackend = (
 
     case "TicTacToe": {
       if (model[0] === "TicTacToe") {
-        return [
-          ...tagUpdate(
-            "TicTacToe",
-            TicTacToe.updateFromBackend(msg[1], model[1]),
-          ),
-          [],
-        ]
+        const [child, cmd, actions] = TicTacToe.updateFromBackend(msg[1], model[1])
+        return [['TicTacToe', child], tagCmd("TicTacToe", cmd), actions]
       }
       return [model, Cmd.None, []]
     }

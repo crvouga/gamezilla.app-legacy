@@ -1,7 +1,7 @@
 import { p } from "./pipe"
 import * as Task from "./Task"
 
-export type Cmd<Msg> = (dispatch: (msg: Msg) => void) => void
+export type Cmd<Msg = never> = (dispatch: (msg: Msg) => void) => void
 
 export const of = <Msg>(msg: Msg): Cmd<Msg> => {
   return (dispatch) => {

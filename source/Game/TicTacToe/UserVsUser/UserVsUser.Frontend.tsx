@@ -1,6 +1,7 @@
 import { Cmd, exhaustive } from "../../../Core"
 import { UserId } from "../../../Data"
 import * as Store from "../../../Store"
+import * as Snackbar from "../../../Snackbar"
 import * as UI from "../../../UI"
 import {
   emptyBoard, gameTheme, PlayerType,
@@ -62,7 +63,7 @@ export const init: Model = {
 
 export type Msg = FrontendMsg
 
-export type OutAction = Store.Action
+export type OutAction = Store.Action | Snackbar.Action
 
 export const update = (
   {
@@ -120,8 +121,14 @@ export const update = (
 export const updateFromBackend = (
   msg: ToFrontend,
   model: Model,
-): [Model, Cmd.Cmd<Msg>] => {
+): [Model, OutAction[]] => {
   switch (msg[0]) {
+
+    case 'PlayerLeft': {
+      const modelNew = mergeWithBackend(model, msg[1])
+      return [modelNew, [['Snackbar', { message: "Player left the game", variant: "Info" }]]]
+    }
+
     case "RematchAccept_Done":
     case "RematchAsk_Done":
     case "RematchDecline_Done":
@@ -137,23 +144,23 @@ export const updateFromBackend = (
       const res: Res = msg
 
       if (res[1].type === "Err") {
-        return [model, Cmd.None]
+        return [model, []]
       }
 
       const modelNew = mergeWithBackend(model, res[1].value)
 
-      return [{ ...modelNew, openedModal: "None" }, Cmd.None]
+      return [{ ...modelNew, openedModal: "None" }, []]
     }
 
     case "MoveCountDown_Done":
     case "RoundCountDown_Done": {
       if (msg[1].type === "Err") {
-        return [model, Cmd.None]
+        return [model, []]
       }
 
       const modelNew = mergeWithBackend(model, msg[1].value)
 
-      return [modelNew, Cmd.None]
+      return [modelNew, []]
     }
 
     default: {
