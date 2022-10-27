@@ -1,6 +1,7 @@
 import { Cmd, exhaustive, tagCmd } from "../../Core"
 import { UserId } from "../../Data"
 import * as Store from "../../Store"
+import * as Snackbar from "../../Snackbar"
 import * as UI from "../../UI"
 import { GameModeCardGrid } from "../Views"
 import { gameTheme, Position, Slot, ViewSlot } from "./TicTacToe"
@@ -38,7 +39,7 @@ export const init: Model = {
 
 export type Msg = FrontendMsg
 
-export type OutAction = Store.Action
+export type OutAction = Store.Action | Snackbar.Action
 
 export const update = (
   {
@@ -92,36 +93,36 @@ export const update = (
 export const updateFromBackend = (
   msg: ToFrontend,
   model: Model,
-): [Model, Cmd.Cmd<Msg>] => {
+): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
     case "InputMode_Done": {
       const result = msg[1]
 
       if (result.type === "Err") {
-        return [model, Cmd.None]
+        return [model, Cmd.None, []]
       }
 
       const modelNew = mergeWithBackend(model, result.value)
 
-      return [modelNew, Cmd.None]
+      return [modelNew, Cmd.None, []]
     }
 
     case "UserVsUser": {
       if (model.mode === "UserVsUser") {
-        const [child, cmd] = UserVsUser.updateFromBackend(msg[1], model.child)
-        return [{ mode: "UserVsUser", child }, tagCmd("UserVsUser", cmd)]
+        const [child, actions] = UserVsUser.updateFromBackend(msg[1], model.child)
+        return [{ mode: "UserVsUser", child }, Cmd.None, actions]
       }
 
-      return [model, Cmd.None]
+      return [model, Cmd.None, []]
     }
 
     case "UserVsBot": {
       if (model.mode === "UserVsBot") {
-        const [child, cmd] = UserVsBot.updateFromBackend(msg[1], model.child)
-        return [{ mode: "UserVsBot", child }, tagCmd("UserVsBot", cmd)]
+        const [child, cmd, actions] = UserVsBot.updateFromBackend(msg[1], model.child)
+        return [{ mode: "UserVsBot", child }, tagCmd("UserVsBot", cmd), actions]
       }
 
-      return [model, Cmd.None]
+      return [model, Cmd.None, []]
     }
 
     default: {

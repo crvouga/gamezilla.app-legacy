@@ -127,18 +127,20 @@ export const updateFromFrontend = (
   }
 }
 
-export const updateRoomLeave = ({ }: { sendToRoom: (m: ToFrontend) => Cmd.Cmd<never> }, _userId: UserId.UserId, model: Model): [Model, Cmd.Cmd<Msg>] => {
+export const updateRoomLeave = ({ sendToRoom }: { sendToRoom: (m: ToFrontend) => Cmd.Cmd<never> }, userId: UserId.UserId, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (model.mode) {
     case 'None': {
       return [model, Cmd.None]
     }
 
     case 'UserVsBot': {
-      return [model, Cmd.None]
+      const [child, cmd] = UserVsBot.updateRoomLeave({ sendToRoom: m => sendToRoom(['UserVsBot', m]), userId, model: model.child })
+      return [{ mode: 'UserVsBot', child }, tagCmd("UserVsBot", cmd)]
     }
 
     case 'UserVsUser': {
-      return [model, Cmd.None]
+      const [child, cmd] = UserVsUser.updateRoomLeave({ sendToRoom: m => sendToRoom(['UserVsUser', m]) }, userId, model.child)
+      return [{ mode: "UserVsUser", child }, tagCmd("UserVsUser", cmd)]
     }
   }
 }

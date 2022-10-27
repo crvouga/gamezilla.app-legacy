@@ -1,6 +1,7 @@
 import { Cmd, Sub } from "../../../Core"
 import { UserId } from "../../../Data"
 import * as Store from "../../../Store"
+import * as Snackbar from "../../../Snackbar"
 import * as UI from "../../../UI"
 import {
   botLevels, GameOver, gameTheme, PlayerType,
@@ -50,6 +51,8 @@ export const init = initSharedModel
 
 export type Msg = FrontendMsg
 
+export type OutAction = Snackbar.Action
+
 export const update = (
   { sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd.Cmd<never> },
   msg: Msg,
@@ -73,8 +76,14 @@ export const update = (
 export const updateFromBackend = (
   msg: ToFrontend,
   model: Model,
-): [Model, Cmd.Cmd<Msg>] => {
+): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
+
+    case 'PlayerLeft': {
+      const modelNew = mergeWithBackend(model, msg[1])
+      return [modelNew, Cmd.None, [['Snackbar', { message: "Player left the game", variant: "Info" }]]]
+    }
+
     case "BotMove_Done":
     case "StartGame_Done":
     case "StartPlaying_Done":
@@ -86,9 +95,10 @@ export const updateFromBackend = (
     case "SwapSides_Done":
     case "InputPlayerType_Done": {
       if (msg[1].type === "Err") {
-        return [model, Cmd.None]
+        return [model, Cmd.None, []]
       }
-      return [msg[1].value, Cmd.None]
+      const modelNew = mergeWithBackend(model, msg[1].value)
+      return [modelNew, Cmd.None, []]
     }
   }
 }

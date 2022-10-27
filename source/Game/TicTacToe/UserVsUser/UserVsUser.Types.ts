@@ -141,7 +141,7 @@ export type BackendMsg = RoundCountDown | MoveCountDown
 
 export type ToBackend = Req
 
-export type ToFrontend = Res | RoundCountDown_Done | MoveCountDown_Done
+export type ToFrontend = Res | RoundCountDown_Done | MoveCountDown_Done | ['PlayerLeft', SharedModel]
 
 export type GameMsg = ["ClickedBoard", TicTacToe.Position]
 

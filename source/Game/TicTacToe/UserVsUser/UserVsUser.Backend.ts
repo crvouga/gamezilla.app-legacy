@@ -1,5 +1,5 @@
 import { Cmd, exhaustive, Sub, Time } from "../../../Core"
-import { toTurn } from "../TicTacToe"
+import { PlayerType, toOpposite, toTurn } from "../TicTacToe"
 import {
   BackendModel,
   BackendMsg,
@@ -23,6 +23,7 @@ import {
   rematchCancel,
 } from "./UserVsUser.Types"
 import * as Round from "./Round"
+import { UserId } from "../../../Data"
 
 //
 //
@@ -230,6 +231,30 @@ export const updateFromFrontend = (
       return exhaustive(msg[0])
     }
   }
+}
+
+
+export const updateRoomLeave = ({ sendToRoom }: { sendToRoom: (m: ToFrontend) => Cmd.Cmd<never> }, userId: UserId.UserId, model: Model): [Model, Cmd.Cmd<Msg>] => {
+  const player: PlayerType | "None" = model.O === userId ? 'O' : model.X === userId ? 'X' : 'None'
+
+  if (player === 'None') {
+    return [model, Cmd.None]
+  }
+
+  const other = toOpposite(player)
+
+  const modelNew: Model = {
+    type: "Setup",
+    maxRoundCount: model.maxRoundCount,
+    moveTimeLimit: model.moveTimeLimit,
+    X: model.X,
+    O: model.O,
+    [player]: "None",
+    [other]: model[other]
+  }
+
+  return [modelNew, sendToRoom(['PlayerLeft', modelNew])]
+
 }
 
 //

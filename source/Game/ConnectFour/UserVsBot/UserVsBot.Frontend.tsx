@@ -1,5 +1,6 @@
 import { Cmd, Sub } from "../../../Core";
 import * as UI from "../../../UI";
+import * as Snackbar from "../../../Snackbar";
 import { UserId } from "../../../Data/UserId";
 import { BackendModel, ToFrontend, FrontendMsg, initShared, FrontendModel, ToBackend } from "./UserVsBot.Types";
 
@@ -25,6 +26,8 @@ export const init = initShared
 
 export type Msg = FrontendMsg
 
+type OutAction = Snackbar.Action
+
 export const update = ({ sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd.Cmd<never> }, msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
     switch (msg[0]) {
         case 'InputMove':
@@ -41,8 +44,14 @@ export const update = ({ sendToBackend }: { sendToBackend: (msg: ToBackend) => C
     }
 };
 
-export const updateFromBackend = (msg: ToFrontend, model: Model): [Model, Cmd.Cmd<Msg>] => {
+export const updateFromBackend = (msg: ToFrontend, model: Model): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
     switch (msg[0]) {
+
+        case 'PlayerLeft': {
+            const modelNew = mergeWithBackend({ frontendModel: model, backendModel: msg[1] })
+            return [modelNew, Cmd.None, [['Snackbar', { message: "Player left the game", variant: "Info" }]]]
+        }
+
         case 'InputMove':
         case 'InputPlayerType':
         case 'Restart':
@@ -54,18 +63,18 @@ export const updateFromBackend = (msg: ToFrontend, model: Model): [Model, Cmd.Cm
         case 'InputBotLevel': {
 
             if (msg[1].type === 'Err') {
-                return [model, Cmd.None]
+                return [model, Cmd.None, []]
             }
 
-            return [msg[1].value, Cmd.None]
+            const modelNew = mergeWithBackend({ frontendModel: model, backendModel: msg[1].value })
+
+            return [modelNew, Cmd.None, []]
         }
     }
 };
 
 export const mergeWithBackend = ({ backendModel }: { frontendModel: FrontendModel, backendModel: BackendModel }): FrontendModel => {
-    return {
-        ...backendModel
-    }
+    return backendModel
 }
 
 //

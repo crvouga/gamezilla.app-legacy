@@ -68,7 +68,7 @@ export type FrontendMsg = Req
 
 export type BackendMsg = ["None"]
 
-export type ToFrontend = Res
+export type ToFrontend = Res | ['PlayerLeft', SharedModel]
 
 export type ToBackend = Req
 
