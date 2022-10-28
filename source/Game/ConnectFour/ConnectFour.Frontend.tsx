@@ -175,8 +175,8 @@ export const View = ({
           dispatch={msg => dispatch(['UserVsUser', msg])}
           goBack={goBack}
           goHome={goHome}
-          model={model.child}
           roomComponent={roomComponent}
+          model={model.child}
         />
       )
     }
@@ -184,10 +184,13 @@ export const View = ({
     case 'UserVsBot': {
       return (
         <UserVsBot.View
+          store={store}
           currentUserId={currentUserId}
           dispatch={(msg) => dispatch(['UserVsBot', msg])}
           model={model.child}
           goBack={goBack}
+          goHome={goHome}
+          roomComponent={roomComponent}
         />
       )
     }

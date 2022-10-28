@@ -472,7 +472,7 @@ const ViewSetup = ({ model, store, dispatch, currentUserId, homeButton, roomComp
         <UI.FillBox>
             <UI.Header left={homeButton} title="Connect Four" right={roomComponent} />
 
-            <ViewBannerArt model={model} store={store} />
+            <ViewVersusHeader model={model} store={store} />
 
             <UI.Typography
                 color="text.secondary"
@@ -582,7 +582,7 @@ const ViewSetupPlayerSlot = ({ dispatch, userId, store, currentUserId, playerTyp
     )
 }
 
-const ViewBannerArt = ({ model, store, }: { model: SetupModel, store: Store.Model }) => {
+const ViewVersusHeader = ({ model, store, }: { model: SetupModel, store: Store.Model }) => {
     const avatarSx: UI.Sx = {
         // width: 36,
         // height: 36,
