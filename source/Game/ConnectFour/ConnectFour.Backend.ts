@@ -114,7 +114,8 @@ export const updateRoomLeave = ({ userId, sendToRoom, model }: { userId: UserId,
     }
 
     case 'UserVsUser': {
-      return [model, Cmd.None]
+      const [child, cmd] = UserVsUser.updateRoomLeave({ userId, model: model.child, sendToRoom: m => sendToRoom(['UserVsUser', m]) })
+      return [{ type: "UserVsUser", child }, tagCmd("UserVsUser", cmd)]
     }
   }
 }

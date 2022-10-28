@@ -183,13 +183,8 @@ export const updateFromBackend = (
 
     case "ConnectFour": {
       if (model[0] === "ConnectFour") {
-        return [
-          ...tagUpdate(
-            "ConnectFour",
-            ConnectFour.updateFromBackend(msg[1], model[1]),
-          ),
-          [],
-        ]
+        const [child, cmd, actions] = ConnectFour.updateFromBackend(msg[1], model[1])
+        return [["ConnectFour", child], tagCmd("ConnectFour", cmd), actions]
       }
       return [model, Cmd.None, []]
     }
