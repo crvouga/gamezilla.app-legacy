@@ -103,6 +103,7 @@ export const VersusHeader = (
     renderRightIcon,
     background,
     store,
+    sx
   }: {
     store: Store.Model;
     background: UI.ViewNode;
@@ -110,10 +111,12 @@ export const VersusHeader = (
     left: Player;
     renderRightIcon: (sx: UI.Sx) => UI.ViewNode;
     right: Player;
+    sx?: UI.Sx
   }) => {
   const iconSx: UI.Sx = {
-    width: 42,
-    height: 42,
+    width: 52,
+    height: 52,
+    display: 'block',
   }
   return (
     <UI.Box
@@ -122,9 +125,20 @@ export const VersusHeader = (
         width: '100%',
         paddingY: 8,
         overflowX: "hidden",
+        ...sx,
       }}
     >
-      {background}
+      <UI.Box
+        sx={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+        }}
+      >
+        {background}
+      </UI.Box>
 
       <UI.Box
         sx={{
@@ -133,22 +147,27 @@ export const VersusHeader = (
           left: 0,
           width: '100%',
           height: '100%',
-          maxWidth: '100%',
+          // 
           overflow: "hidden",
           // 
           display: 'flex',
           flexDirection: "row",
           justifyContent: 'center',
           alignItems: "center",
-          paddingX: 2,
+          paddingX: 2
+
         }}>
-        <VersusHeaderPlayer player={left} store={store} />
-        {renderLeftIcon({ ...iconSx, marginLeft: 1, flex: 1 })}
-        <UI.Typography align="center" color="#fff" sx={{ fontSize: 24, flex: 1 }}>
+        <UI.Box sx={{ display: 'flex', gap: 1, flex: 1, overflow: "hidden", justifyContent: "center" }}>
+          <VersusHeaderPlayer player={left} store={store} />
+          {renderLeftIcon({ ...iconSx })}
+        </UI.Box>
+        <UI.Typography align="center" color="#fff" sx={{ fontSize: 24, marginX: 2 }}>
           vs
         </UI.Typography>
-        {renderRightIcon({ ...iconSx, marginRight: 1, flex: 1 })}
-        <VersusHeaderPlayer player={right} store={store} />
+        <UI.Box sx={{ display: 'flex', gap: 1, flex: 1, overflow: "hidden", justifyContent: "center" }}>
+          {renderRightIcon({ ...iconSx, })}
+          <VersusHeaderPlayer player={right} store={store} />
+        </UI.Box>
       </UI.Box>
     </UI.Box>
   )
@@ -156,14 +175,13 @@ export const VersusHeader = (
 
 const VersusHeaderPlayer = ({ player, store }: { player: Player, store: Store.Model }) => {
   const sx: UI.Sx = {
-    flex: 2,
     display: 'flex',
     alignItems: "center",
     justifyContent: 'center',
-    flexDirection: "column", overflow: "hidden",
-    width: 72,
-    overflowX: "hidden",
-    textAlign: "center"
+    flexDirection: "column",
+    overflow: "hidden",
+    width: "100%",
+    maxWidth: 72
   }
   switch (player.type) {
     case 'Bot': {
