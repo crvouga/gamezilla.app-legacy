@@ -1,8 +1,12 @@
 import { Cmd, Sub } from "../../../Core";
-import * as UI from "../../../UI";
-import * as Snackbar from "../../../Snackbar";
 import { UserId } from "../../../Data/UserId";
-import { BackendModel, ToFrontend, FrontendMsg, initShared, FrontendModel, ToBackend } from "./UserVsBot.Types";
+import * as Snackbar from "../../../Snackbar";
+import * as Store from "../../../Store";
+import * as UI from "../../../UI";
+import { VersusHeader } from "../../Views";
+import { gameTheme } from "../ConnectFour";
+import { PlayerIcon } from "../Views";
+import { BackendModel, FrontendModel, FrontendMsg, initShared, ToBackend, ToFrontend } from "./UserVsBot.Types";
 
 //
 //
@@ -100,18 +104,64 @@ export const subscriptions = (_model: Model): Sub.Sub<Msg> => {
 export const View = (
     {
         model,
-        goBack
+        goBack,
+        store,
+        roomComponent,
+        goHome,
     }: {
-        model: Model,
-        dispatch: (msg: Msg) => void,
-        currentUserId: UserId,
-        goBack: () => void
+        model: Model;
+        dispatch: (msg: Msg) => void;
+        currentUserId: UserId;
+        goBack: () => void;
+        store: Store.Model;
+        goHome: () => void;
+        roomComponent: UI.ViewNode;
     }) => {
     return (
         <UI.FillBox>
-            <pre>
-                {JSON.stringify(model, null, 4)}
-            </pre>
+            <UI.Header
+                left={
+                    <UI.IconButton sx={{ marginLeft: -1 }} onClick={goHome}>
+                        <UI.Icons.Home />
+                    </UI.IconButton>
+                }
+                title="Connect Four"
+                right={roomComponent}
+            />
+            <VersusHeader
+                store={store}
+                background={
+                    <UI.Box
+                        sx={{
+                            flex: 1,
+                            position: "absolute",
+                            top: 0,
+                            left: 0,
+                            bottom: 0,
+                            right: 0,
+                            width: '100%',
+                            height: '100%',
+                            background: `linear-gradient(${gameTheme.primary.light}, ${gameTheme.primary.darker})`
+                        }}
+                    />
+                }
+                renderLeftIcon={sx => <PlayerIcon playerType="PlayerOne" sx={{ ...sx }} />}
+                left={
+                    model.userPlayerType === 'PlayerOne'
+                        ? model.player === 'None'
+                            ? { type: "None" }
+                            : { type: "User", userId: model.player }
+                        : { type: "Bot", label: model.botLevel }
+                }
+                renderRightIcon={sx => <PlayerIcon playerType="PlayerTwo" sx={{ ...sx }} />}
+                right={
+                    model.userPlayerType === 'PlayerTwo'
+                        ? model.player === 'None'
+                            ? { type: "None" }
+                            : { type: "User", userId: model.player }
+                        : { type: "Bot", label: model.botLevel }
+                }
+            />
 
             <UI.Box sx={{ flex: 1 }} />
 

@@ -79,16 +79,14 @@ type Player =
   | {
     type: 'User',
     userId: UserId,
-    icon: UI.ViewNode
   }
   | {
     type: "Bot",
     label: string,
-    icon: UI.ViewNode
   }
   | {
     type: "None"
-    icon: UI.ViewNode
+
   }
 
 const avatarSx: UI.Sx = {
@@ -97,72 +95,109 @@ const avatarSx: UI.Sx = {
 }
 
 
-export const VersusHeader = ({ left, right, background, store, }: { background: UI.ViewNode, left: Player, right: Player, store: Store.Model }) => {
-  // const iconSx: UI.Sx = {
-  //   width: 52,
-  //   height: 52,
-  // }
+export const VersusHeader = (
+  {
+    left,
+    renderLeftIcon,
+    right,
+    renderRightIcon,
+    background,
+    store,
+  }: {
+    store: Store.Model;
+    background: UI.ViewNode;
+    renderLeftIcon: (sx: UI.Sx) => UI.ViewNode;
+    left: Player;
+    renderRightIcon: (sx: UI.Sx) => UI.ViewNode;
+    right: Player;
+  }) => {
+  const iconSx: UI.Sx = {
+    width: 42,
+    height: 42,
+  }
   return (
     <UI.Box
       sx={{
-        paddingY: 6,
-        paddingX: 2,
-        display: 'flex',
-        flexDirection: "row",
-        justifyContent: 'center',
-        alignItems: "center",
-        gap: 2,
         position: "relative",
+        width: '100%',
+        paddingY: 8,
+        overflowX: "hidden",
       }}
     >
-      <UI.Box sx={{ position: "absolute", top: 0, left: 0, width: '100%', height: '100%' }}>
-        {background}
+      {background}
+
+      <UI.Box
+        sx={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          maxWidth: '100%',
+          overflow: "hidden",
+          // 
+          display: 'flex',
+          flexDirection: "row",
+          justifyContent: 'center',
+          alignItems: "center",
+          paddingX: 2,
+        }}>
+        <VersusHeaderPlayer player={left} store={store} />
+        {renderLeftIcon({ ...iconSx, marginLeft: 1, flex: 1 })}
+        <UI.Typography align="center" color="#fff" sx={{ fontSize: 24, flex: 1 }}>
+          vs
+        </UI.Typography>
+        {renderRightIcon({ ...iconSx, marginRight: 1, flex: 1 })}
+        <VersusHeaderPlayer player={right} store={store} />
       </UI.Box>
-      <VersusHeaderPlayer player={left} store={store} />
-      {left.icon}
-      <UI.Typography color="#fff" sx={{ fontSize: 32 }}>
-        vs
-      </UI.Typography>
-      {right.icon}
-      <VersusHeaderPlayer player={right} store={store} />
     </UI.Box>
   )
 }
 
-export const VersusHeaderPlayer = ({ player, store }: { player: Player, store: Store.Model }) => {
+const VersusHeaderPlayer = ({ player, store }: { player: Player, store: Store.Model }) => {
+  const sx: UI.Sx = {
+    flex: 2,
+    display: 'flex',
+    alignItems: "center",
+    justifyContent: 'center',
+    flexDirection: "column", overflow: "hidden",
+    width: 72,
+    overflowX: "hidden",
+    textAlign: "center"
+  }
   switch (player.type) {
     case 'Bot': {
       return (
-        <>
-          <UI.Icons.SmartToy />
-          <UI.Typography align="center">
+        <UI.Box sx={{ ...sx }}>
+          <UI.Icons.SmartToy sx={{ marginX: "auto", width: 32, height: 32, color: "#fff" }} />
+          <UI.Typography color="#fff" noWrap align="center">
             {player.label}
           </UI.Typography>
-        </>
+        </UI.Box>
       )
     }
     case 'None': {
       return (
-        <>
+        <UI.Box sx={{ ...sx }}>
           <UI.Avatar sx={{ ...avatarSx, marginX: "auto" }}>
             <UI.Icons.QuestionMark />
           </UI.Avatar>
-          <UI.Typography color="#fff" align='center'>
+          <UI.Typography noWrap color="#fff" align='center'>
             ?
           </UI.Typography>
-        </>
+        </UI.Box>
       )
     }
 
     case 'User': {
       const profile = store.Profile[player.userId]
       return (
-        <>
+        <UI.Box sx={{ ...sx }}>
           <UI.Avatar sx={{ ...avatarSx, marginX: "auto" }} src={profile?.avatarUrl} />
-          <UI.Typography color="#fff" align='center'>
+          <UI.Typography noWrap color="#fff" align='center'>
             {profile?.username ?? "..."}
           </UI.Typography>
-        </>
+        </UI.Box>
       )
     }
   }
