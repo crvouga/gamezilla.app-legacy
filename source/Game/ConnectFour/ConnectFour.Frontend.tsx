@@ -1,6 +1,7 @@
 import { Cmd } from "../../Core"
 import { UserId } from "../../Data"
 import * as Store from "../../Store"
+import * as Snackbar from "../../Snackbar"
 import * as UI from "../../UI"
 import { bannerArtAspectRatio, GameModeCardGrid } from "../Views"
 import {
@@ -41,6 +42,8 @@ export const init: Model = { type: "None" }
 
 export type Msg = FrontendMsg
 
+type OutAction = Snackbar.Action
+
 export const update = ({ sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd.Cmd<never> }, msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
     case 'InputMode': {
@@ -80,33 +83,33 @@ export const update = ({ sendToBackend }: { sendToBackend: (msg: ToBackend) => C
 export const updateFromBackend = (
   msg: ToFrontend,
   model: Model,
-): [Model, Cmd.Cmd<Msg>] => {
+): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
     case 'InputMode_Done': {
       const merged = mergeWithBackend({ frontendModel: model, backendModel: msg[1] })
-      return [merged, Cmd.None]
+      return [merged, Cmd.None, []]
     }
 
     case 'UserVsUser': {
       if (model.type === 'UserVsUser') {
-        const [child, cmd] = UserVsUser.updateFromBackend(
+        const [child, cmd, actions] = UserVsUser.updateFromBackend(
           msg[1],
           model.child
         )
-        return [{ type: "UserVsUser", child }, Cmd.tag("UserVsUser", cmd)]
+        return [{ type: "UserVsUser", child }, Cmd.tag("UserVsUser", cmd), actions]
       }
-      return [model, Cmd.None]
+      return [model, Cmd.None, []]
     }
 
     case 'UserVsBot': {
       if (model.type === 'UserVsBot') {
-        const [child, cmd] = UserVsBot.updateFromBackend(
+        const [child, cmd, actions] = UserVsBot.updateFromBackend(
           msg[1],
           model.child
         )
-        return [{ type: "UserVsBot", child }, Cmd.tag("UserVsBot", cmd)]
+        return [{ type: "UserVsBot", child }, Cmd.tag("UserVsBot", cmd), actions]
       }
-      return [model, Cmd.None]
+      return [model, Cmd.None, []]
     }
   }
 }

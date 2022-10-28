@@ -1,5 +1,6 @@
 import { Cmd, exhaustive, Sub, Time } from "../../../Core";
-import { BackendMsg, ToBackend, initShared, BackendModel, handle, ToFrontend, tick } from "./UserVsUser.Types";
+import { UserId } from "../../../Data/UserId";
+import { BackendModel, BackendMsg, handle, initShared, Res, tick, ToBackend, ToFrontend, toPlayerType } from "./UserVsUser.Types";
 
 //
 //
@@ -44,21 +45,37 @@ export const updateFromFrontend = ({ sendToClient, sendToRoom }: { sendToClient:
         case 'StartGame':
         case 'StopPlaying':
         case 'StartPlaying': {
-            const response = handle(msg, model)
+            const res: Res = [msg[0], handle(msg, model)]
 
-            if (response[1].type === 'Err') {
-                return [model, sendToClient(response)]
+            if (res[1].type === 'Err') {
+                return [model, sendToClient(res)]
             }
 
-            const modelNew = response[1].value
-
-            return [modelNew, sendToRoom(response)]
+            return [res[1].value, sendToRoom(res)]
         }
 
         default: {
             return exhaustive(msg[0])
         }
     }
+}
+
+export const updateRoomLeave = ({ sendToRoom, userId, model }: { sendToRoom: (m: ToFrontend) => Cmd.Cmd<never>, userId: UserId, model: Model }): [Model, Cmd.Cmd<Msg>] => {
+    const player = toPlayerType(userId, model)
+
+    if (player === 'None') {
+        return [model, Cmd.None]
+    }
+
+    const modelNew: Model = {
+        type: "Setup",
+        moveTimeLimit: model.moveTimeLimit,
+        PlayerOne: model.PlayerOne,
+        PlayerTwo: model.PlayerTwo,
+        [player]: 'None',
+    }
+
+    return [modelNew, sendToRoom(['PlayerLeft', modelNew])]
 }
 
 //
@@ -71,7 +88,6 @@ export const updateFromFrontend = ({ sendToClient, sendToRoom }: { sendToClient:
 
 export const subscriptions = (intervalId: string, model: Model): Sub.Sub<Msg> => {
     switch (model.type) {
-
         case 'GameOver': {
             return Sub.None;
         }
@@ -81,11 +97,7 @@ export const subscriptions = (intervalId: string, model: Model): Sub.Sub<Msg> =>
         }
 
         case 'Game': {
-            return Time.every(
-                intervalId,
-                1000,
-                (): Msg => ['Tick']
-            );
+            return Time.every(intervalId, 1000, () => ['Tick']);
         }
     }
 };

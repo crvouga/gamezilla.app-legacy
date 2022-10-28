@@ -1,10 +1,11 @@
 import { Cmd, exhaustive, Sub } from "../../../Core";
 import { UserId } from "../../../Data";
 import * as Store from "../../../Store";
+import * as Snackbar from "../../../Snackbar";
 import * as UI from "../../../UI";
 import { ColumnIndex, gameTheme, PlayerType, playerTypeToColor, toTurn, ViewColumns } from "../ConnectFour";
 import { PlayerIcon, PlayerOneIcon, PlayerTwoIcon } from "../Views";
-import { allMoveTimeLimit, BackendModel, FrontendModel, FrontendMsg, GameModel, GameOverModel, handle, initShared, responseToString, SetupModel, ToBackend, ToFrontend, toPlayerType } from "./UserVsUser.Types";
+import { allMoveTimeLimit, BackendModel, FrontendModel, FrontendMsg, GameModel, GameOverModel, handle, initShared, resultToString, SetupModel, ToBackend, ToFrontend, toPlayerType } from "./UserVsUser.Types";
 
 
 //
@@ -34,6 +35,8 @@ export const init = ({ PlayerOne, PlayerTwo }: Pick<FrontendModel, 'PlayerOne' |
 //
 
 export type Msg = FrontendMsg
+
+export type OutAction = Snackbar.Action
 
 export const update = ({ sendToBackend, }: { sendToBackend: (msg: ToBackend) => Cmd.Cmd<never> }, msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
     switch (msg[0]) {
@@ -89,32 +92,36 @@ export const update = ({ sendToBackend, }: { sendToBackend: (msg: ToBackend) => 
     }
 };
 
-export const updateFromBackend = (msg: ToFrontend, model: Model): [Model, Cmd.Cmd<Msg>] => {
+export const updateFromBackend = (msg: ToFrontend, model: Model): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
     switch (msg[0]) {
-        case 'NewGame_Done':
-        case 'InputMoveTimeLimit_Done':
-        case 'StartGame_Done':
-        case 'StopPlaying_Done':
-        case 'Rematch_Cancel_Done':
-        case 'Resign_Done':
-        case 'Rematch_Request_Done':
-        case 'Rematch_Respond_Done':
-        case "StartPlaying_Done": {
+        case 'NewGame':
+        case 'InputMoveTimeLimit':
+        case 'StartGame':
+        case 'StopPlaying':
+        case 'Rematch_Cancel':
+        case 'Resign':
+        case 'Rematch_Request':
+        case 'Rematch_Respond':
+        case "StartPlaying": {
             const modelNew = msg[1].type === 'Err' ? model : msg[1].value
             const merged = mergeWithBackend({ frontendModel: model, backendModel: modelNew })
-            return [{ ...merged, openedModal: "None" }, Cmd.None]
+            return [{ ...merged, openedModal: "None" }, Cmd.None, []]
         }
 
-        case 'InputMove_Done': {
+        case 'InputMove': {
             const modelNew = msg[1].type === 'Err' ? model : msg[1].value
             const merged = mergeWithBackend({ frontendModel: model, backendModel: modelNew })
-            return [{ ...merged, ghostIndex: "None" }, Cmd.None]
+            return [{ ...merged, ghostIndex: "None" }, Cmd.None, []]
         }
 
         case 'Tick_Done': {
-            const modelNew = msg[1]
-            const merged = mergeWithBackend({ frontendModel: model, backendModel: modelNew })
-            return [merged, Cmd.None]
+            const merged = mergeWithBackend({ frontendModel: model, backendModel: msg[1] })
+            return [merged, Cmd.None, []]
+        }
+
+        case 'PlayerLeft': {
+            const merged = mergeWithBackend({ frontendModel: model, backendModel: msg[1] })
+            return [merged, Cmd.None, [['Snackbar', { message: "Player left the game", variant: "Info" }]]]
         }
 
         default: {
@@ -458,8 +465,8 @@ const ViewGameOverMessage = ({ currentUserId, model, store, dispatch }: { curren
 }
 
 const ViewSetup = ({ model, store, dispatch, currentUserId, homeButton, roomComponent, goBack }: { goBack: () => void, currentUserId: UserId.UserId, model: SetupModel, store: Store.Model, dispatch: (msg: Msg) => void, homeButton: UI.ViewNode, roomComponent: UI.ViewNode }) => {
-    const startGameResponse = handle(['StartGame', { userId: currentUserId }], model)
-    const inputMoveTimeLimitResponse = handle(['InputMoveTimeLimit', { moveTimeLimit: model.moveTimeLimit, userId: currentUserId }], model)
+    const startGameResult = handle(['StartGame', { userId: currentUserId }], model)
+    const inputMoveTimeLimitResult = handle(['InputMoveTimeLimit', { moveTimeLimit: model.moveTimeLimit, userId: currentUserId }], model)
 
     return (
         <UI.FillBox>
@@ -500,8 +507,8 @@ const ViewSetup = ({ model, store, dispatch, currentUserId, homeButton, roomComp
             </UI.Typography>
 
             <UI.Box sx={{ paddingX: 2 }}>
-                <UI.Tooltip title={responseToString(inputMoveTimeLimitResponse)}>
-                    <UI.ToggleButtonGroup fullWidth value={model.moveTimeLimit} disabled={inputMoveTimeLimitResponse[1].type === "Err"}>
+                <UI.Tooltip title={resultToString(inputMoveTimeLimitResult)}>
+                    <UI.ToggleButtonGroup fullWidth value={model.moveTimeLimit} disabled={inputMoveTimeLimitResult.type === "Err"}>
                         {Object.values(allMoveTimeLimit).map(moveTimeLimit => (
                             <UI.ToggleButton key={moveTimeLimit} value={moveTimeLimit} onClick={() => dispatch(['InputMoveTimeLimit', { moveTimeLimit, userId: currentUserId }])}>
                                 {`${moveTimeLimit} sec`}
@@ -520,7 +527,7 @@ const ViewSetup = ({ model, store, dispatch, currentUserId, homeButton, roomComp
                 <UI.Button
                     variant="contained"
                     fullWidth
-                    disabled={startGameResponse[1].type === 'Err'}
+                    disabled={startGameResult.type === 'Err'}
                     onClick={() => dispatch(['StartGame', { userId: currentUserId }])}
                 >
                     Start Game
