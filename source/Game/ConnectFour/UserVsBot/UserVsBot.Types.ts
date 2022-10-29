@@ -1,7 +1,7 @@
 import { exhaustive } from "../../../Core"
 import { Err, Ok, Result } from "../../../Core/Result"
 import { UserId } from "../../../Data/UserId"
-import { ColumnIndex, Columns, emptyColumns, move, MoveProblem, opposite, PlayerType, toStatus } from "../ConnectFour"
+import { ColumnIndex, Columns, emptyColumns, move, MoveProblem, opposite, PlayerType, toStatus, toTurn } from "../ConnectFour"
 
 // 
 // 
@@ -35,6 +35,9 @@ export type GameOverModel = {
     gameOver: GameOver
 }
 
+export const isBotTurn = (model: SharedModel): boolean => {
+    return model.type === 'Game' && toTurn(model.columns) === opposite[model.userPlayerType]
+}
 
 export type BackendModel = SharedModel
 

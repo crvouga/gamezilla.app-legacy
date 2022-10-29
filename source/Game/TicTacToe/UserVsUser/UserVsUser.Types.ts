@@ -384,7 +384,7 @@ export const inputMove = (
 
   const { board } = currentRound
 
-  const result = TicTacToe.move(board, playerType, position)
+  const result = TicTacToe.move({ board, player: playerType, position })
 
   if (result.type === "Err") {
     return result

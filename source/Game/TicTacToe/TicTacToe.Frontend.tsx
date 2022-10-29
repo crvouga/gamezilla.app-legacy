@@ -4,7 +4,7 @@ import * as Store from "../../Store"
 import * as Snackbar from "../../Snackbar"
 import * as UI from "../../UI"
 import { GameModeCardGrid } from "../Views"
-import { gameTheme, Position, Slot, ViewSlot } from "./TicTacToe"
+import { Empty, gameTheme, Position, Slot, ViewSlot } from "./TicTacToe"
 import {
   BackendModel,
   FrontendModel,
@@ -269,8 +269,8 @@ export const View = ({
 export const CoverArt = () => {
   const positions: [Position, Slot][] = [
     [{ row: 0, column: 0 }, "X"],
-    [{ row: 0, column: 1 }, "Empty"],
-    [{ row: 1, column: 0 }, "Empty"],
+    [{ row: 0, column: 1 }, Empty],
+    [{ row: 1, column: 0 }, Empty],
     [{ row: 1, column: 1 }, "O"],
   ]
 

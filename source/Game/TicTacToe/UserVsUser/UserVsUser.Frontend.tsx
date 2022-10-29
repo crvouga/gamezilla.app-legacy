@@ -1354,8 +1354,8 @@ const ViewPlayerGameSlot = ({
 export const CoverArt = () => {
   const positions: [Position, Slot][] = [
     [{ row: 0, column: 0 }, "X"],
-    [{ row: 0, column: 1 }, "Empty"],
-    [{ row: 1, column: 0 }, "Empty"],
+    [{ row: 0, column: 1 }, "_"],
+    [{ row: 1, column: 0 }, "_"],
     [{ row: 1, column: 1 }, "O"],
   ]
 

@@ -99,7 +99,11 @@ export const updateFromFrontend: UpdateFromFrontend = (
       Cmd.batch([
         cmd,
         p(
-          getBestMove(modelNext.botLevel, botPlayerType, modelNext.board),
+          getBestMove({
+            botLevel: modelNext.botLevel,
+            maximizingPlayer: botPlayerType,
+            board: modelNext.board
+          }),
           Cmd.perform((result): Msg => ["BotMove", result]),
         ),
       ]),

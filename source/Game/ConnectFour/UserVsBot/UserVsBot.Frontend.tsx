@@ -184,7 +184,10 @@ const ViewGameOver = (
                 right={roomComponent}
             />
 
-            <ViewColumns columns={model.columns} />
+            <ViewColumns
+                columns={model.columns}
+            />
+
             <UI.Box sx={{ flex: 1 }} />
 
             <UI.Box sx={{ display: 'flex' }}>
@@ -200,6 +203,8 @@ const ViewGame = (
         model,
         roomComponent,
         goHome,
+        dispatch,
+        currentUserId
     }: {
         model: GameModel;
         dispatch: (msg: Msg) => void;
@@ -208,6 +213,7 @@ const ViewGame = (
         goHome: () => void;
         roomComponent: UI.ViewNode;
     }) => {
+
     return (
         <UI.FillBox>
             <UI.Header
@@ -220,8 +226,10 @@ const ViewGame = (
                 right={roomComponent}
             />
 
-            <ViewColumns columns={model.columns} />
-
+            <ViewColumns
+                columns={model.columns}
+                onClick={columnIndex => dispatch(['InputMove', { columnIndex, userId: currentUserId }])}
+            />
         </UI.FillBox>
     )
 }
