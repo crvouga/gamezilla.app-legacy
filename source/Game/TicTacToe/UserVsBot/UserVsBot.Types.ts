@@ -369,7 +369,7 @@ export const inputMove = (
     return Err("not_playing")
   }
 
-  const result = move(model.board, model.userPlayerType, position)
+  const result = move({ board: model.board, player: model.userPlayerType, position })
 
   if (result.type === "Err") {
     return result
@@ -439,7 +439,11 @@ export const botMove = (
 
   const botPlayerType = toOpposite(model.userPlayerType)
 
-  const moveResult = move(model.board, botPlayerType, position)
+  const moveResult = move({
+    board: model.board,
+    player: botPlayerType,
+    position
+  })
 
   if (moveResult.type === "Err") {
     return moveResult

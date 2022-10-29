@@ -2,6 +2,7 @@ import * as Threads from "threads"
 import { Err, Ok, Result } from "../../Core/Result"
 import { Task } from "../../Core/Task"
 import * as UI from "../../UI"
+import * as Minimax from "../Minimax"
 
 
 //
@@ -31,17 +32,22 @@ export const toOpposite = (playerType: PlayerType): PlayerType => {
   }
 }
 
-export type Slot = PlayerType | "Empty"
+type Empty = "_"
+
+export const Empty: Empty = "_"
+
+export type Slot = PlayerType | Empty
 
 export type Row = 0 | 1 | 2
 
 export type Column = 0 | 1 | 2
 
-export type Board = {
-  [key in Column]: {
-    [key in Row]: Slot
-  }
-}
+export type Board = [
+  [Slot, Slot, Slot],
+  [Slot, Slot, Slot],
+  [Slot, Slot, Slot]
+]
+
 
 const toChildren = (board: Board): Board[] => {
   const turn = toTurn(board)
@@ -49,7 +55,7 @@ const toChildren = (board: Board): Board[] => {
   const boards: Board[] = []
 
   for (const position of allPositions) {
-    const result = move(board, turn, position)
+    const result = move({ board, player: turn, position })
 
     if (result.type === "Ok") {
       boards.push(result.value)
@@ -81,12 +87,17 @@ export const botLevelToDepth = (botLevel: BotLevel): number => {
   }
 }
 
-export const toBestMove = (
+export const toBestMove = ({
+  botLevel,
+  maximizingPlayer,
+  board
+}: {
   botLevel: BotLevel,
   maximizingPlayer: PlayerType,
   board: Board,
+}
 ): Position => {
-  const minimax = createMinimax({
+  const minimax = Minimax.create({
     toChildren,
     toScore: (board) => {
       const gameOver = toGameOver(board)
@@ -102,20 +113,20 @@ export const toBestMove = (
 
         case "Win": {
           if (gameOver.winner === maximizingPlayer) {
-            return 10
+            return 100
           }
 
-          return -10
+          return -100
         }
       }
     },
   })
 
   const positionToScore = (position: Position): number => {
-    const result = move(board, maximizingPlayer, position)
+    const result = move({ board, player: maximizingPlayer, position })
 
     if (result.type === "Err") {
-      return -Infinity
+      return -100
     }
 
     const score = minimax(result.value, botLevelToDepth(botLevel))
@@ -135,15 +146,16 @@ export type Worker = {
 export type GetBestMoveProblem = "worker_thread_error"
 
 export const getBestMove =
-  (botLevel: BotLevel, maximizingPlayer: PlayerType, board: Board): Task<Result<GetBestMoveProblem, Position>> =>
+  ({ board, botLevel, maximizingPlayer }: { botLevel: BotLevel, maximizingPlayer: PlayerType, board: Board }): Task<Result<GetBestMoveProblem, Position>> =>
     async () => {
       try {
+        // docs: https://threads.js.org/
         const worker = new Threads.Worker("./tictactoe-worker")
 
         const spawned = await Threads.spawn<Worker>(worker)
 
         try {
-          const result = await spawned.toBestMove(botLevel, maximizingPlayer, board)
+          const result = await spawned.toBestMove({ botLevel, maximizingPlayer, board })
           return Ok(result)
         } catch (error) {
           return Err("worker_thread_error")
@@ -174,41 +186,24 @@ const maxBy = <X,>(toValue: (x: X) => number, xs: NonEmptyArray<X>): X => {
   return runningMax
 }
 
-export const emptyBoard: Board = {
-  "0": {
-    "0": "Empty",
-    "1": "Empty",
-    "2": "Empty",
-  },
-  "1": {
-    "0": "Empty",
-    "1": "Empty",
-    "2": "Empty",
-  },
-  "2": {
-    "0": "Empty",
-    "1": "Empty",
-    "2": "Empty",
-  },
-}
+export const emptyBoard: Board = [
+  ["_", "_", "_"],
+  ["_", "_", "_"],
+  ["_", "_", "_"]
+]
 
 export type Position = { row: Row; column: Column }
 
 export const toSlot = (board: Board, position: Position): Slot =>
   board[position.column][position.row]
 
+
 export const setSlot = (
   board: Board,
-  { column, row }: Position,
-  slot: Slot,
+  position: Position,
+  slotNew: Slot,
 ): Board => {
-  return {
-    ...board,
-    [column]: {
-      ...board[column],
-      [row]: slot,
-    },
-  }
+  return board.map((slots, rowIndex) => slots.map((slot, columnIndex) => columnIndex === position.column && rowIndex === position.row ? slotNew : slot)) as Board
 }
 
 export const allPositions: NonEmptyArray<Position> = [
@@ -337,16 +332,16 @@ export const toStatus = (board: Board): Status => {
 const isTie = (board: Board): boolean => {
   const wins = toWins(board)
   return (
-    toSlotFrequency(board).Empty === 0 &&
+    toSlotFrequency(board)._ === 0 &&
     wins.O.length === 0 &&
     wins.X.length === 0
   )
 }
 
-type SlotFrequency = { X: number; O: number; Empty: number }
+type SlotFrequency = { X: number; O: number; _: number }
 
 const toSlotFrequency = (board: Board): SlotFrequency => {
-  const frequency: SlotFrequency = { X: 0, O: 0, Empty: 0 }
+  const frequency: SlotFrequency = { X: 0, O: 0, _: 0 }
 
   for (const position of allPositions) {
     const slot = toSlot(board, position)
@@ -363,10 +358,15 @@ export const toTurn = (board: Board): PlayerType => {
 
 export type MoveProblem = "not_players_turn" | "position_is_taken" | "game_over"
 
-export const move = (
+export const move = ({
+  board,
+  player,
+  position
+}: {
   board: Board,
   player: PlayerType,
   position: Position,
+}
 ): Result<MoveProblem, Board> => {
   const status = toStatus(board)
 
@@ -380,7 +380,7 @@ export const move = (
 
   const slot = toSlot(board, position)
 
-  if (slot !== "Empty") {
+  if (slot !== Empty) {
     return Err("position_is_taken")
   }
 
@@ -390,7 +390,7 @@ export const move = (
 }
 
 export const toEmptyPositions = (board: Board): Position[] => {
-  return allPositions.filter((position) => toSlot(board, position) === "Empty")
+  return allPositions.filter((position) => toSlot(board, position) === Empty)
 }
 
 //
@@ -494,7 +494,7 @@ export const ViewSlot = ({
   cy: number
 }) => {
   switch (slot) {
-    case "Empty":
+    case Empty:
       return <g></g>
 
     case "O":
@@ -599,98 +599,3 @@ export const PlayerTypeIcon = ({ playerType, sx }: { playerType: PlayerType, sx?
   )
 }
 
-
-// source: https://en.wikipedia.org/wiki/Minimax
-// https://en.wikipedia.org/wiki/Alpha%E2%80%93beta_pruning
-/* 
-
-function alphabeta(node, depth, α, β, maximizingPlayer) is
-    if depth = 0 or node is a terminal node then
-        return the heuristic value of node
-    if maximizingPlayer then
-        value := −∞
-        for each child of node do
-            value := max(value, alphabeta(child, depth − 1, α, β, FALSE))
-            if value ≥ β then
-                break (* β cutoff *)
-            α := max(α, value)
-        return value
-    else
-        value := +∞
-        for each child of node do
-            value := min(value, alphabeta(child, depth − 1, α, β, TRUE))
-            if value ≤ α then
-                break (* α cutoff *)
-            β := min(β, value)
-        return value
-
-*/
-const createMinimax = <State,>({
-  toScore,
-  toChildren,
-}: {
-  toScore: (node: State) => number
-  toChildren: (state: State) => State[]
-}) => {
-  const recur = (
-    state: State,
-    depth: number,
-    alpha: number,
-    beta: number,
-    isMaximizing: boolean,
-  ): number => {
-    if (depth === 0) {
-      return toScore(state)
-    }
-
-    const children = toChildren(state)
-
-    if (children.length === 0) {
-      return toScore(state)
-    }
-
-    if (isMaximizing) {
-      let value = -Infinity
-      let alpha_ = alpha
-
-      for (let index = 0; index < children.length; index++) {
-        value = Math.max(
-          value,
-          recur(children[index]!, depth - 1, alpha_, beta, false),
-        )
-
-        if (value >= beta) {
-          break
-        }
-
-        alpha_ = Math.max(alpha_, value)
-      }
-
-      return value
-    }
-
-    let value = Infinity
-    let beta_ = beta
-
-    for (let index = 0; index < children.length; index++) {
-      value = Math.min(
-        value,
-        recur(children[index]!, depth - 1, alpha, beta_, true),
-      )
-
-      if (value <= alpha) {
-        break
-      }
-
-      beta_ = Math.min(beta_, value)
-    }
-
-    return value
-  }
-
-  const initialCall = (initialState: State, depth: number): number => {
-    return recur(initialState, depth, -Infinity, +Infinity, true)
-  }
-
-  return initialCall
-}

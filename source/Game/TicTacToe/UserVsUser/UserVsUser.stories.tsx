@@ -95,8 +95,8 @@ GameStarted.args = {
       type: "RoundStarted",
       board: [
         ["O", "X", "O"],
-        ["O", "X", "Empty"],
-        ["X", "Empty", "Empty"],
+        ["O", "X", "_"],
+        ["X", "_", "_"],
       ],
       moveCountDown: 4,
     },
@@ -144,7 +144,7 @@ RoundOverWin.args = {
       board: [
         ["O", "X", "O"],
         ["O", "X", "O"],
-        ["X", "X", "Empty"],
+        ["X", "X", "_"],
       ],
       next: {
         type: "RoundStarting",

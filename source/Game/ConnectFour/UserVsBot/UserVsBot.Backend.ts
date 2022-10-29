@@ -1,5 +1,5 @@
 import { Cmd, Sub } from "../../../Core";
-import { initShared, BackendMsg, BackendModel, ToBackend, handle, Res, ToFrontend } from "./UserVsBot.Types"
+import { isBotTurn, initShared, BackendMsg, BackendModel, ToBackend, handle, Res, ToFrontend } from "./UserVsBot.Types"
 import { UserId } from "../../../Data/UserId"
 
 //
@@ -27,12 +27,36 @@ export type Msg = BackendMsg
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
     switch (msg[0]) {
         case "None": {
+
+
+
             return [model, Cmd.None]
         }
     }
 };
 
+
 export const updateFromFrontend = (
+    wire: { sendToRoom: (msg: ToFrontend) => Cmd.Cmd<never>, sendToClient: (msg: ToFrontend) => Cmd.Cmd<never> },
+    msg: ToBackend,
+    model: Model
+): [Model, Cmd.Cmd<Msg>] => {
+    const [modelNew, cmd] = updateFromFrontend_(wire, msg, model)
+
+    if (!isBotTurn(model) && isBotTurn(modelNew) && model.type === 'Game') {
+        return [
+            modelNew,
+            Cmd.batch([
+                cmd,
+                // todo bot move
+            ])
+        ]
+    }
+
+    return [modelNew, cmd]
+}
+
+const updateFromFrontend_ = (
     { sendToRoom, sendToClient }: { sendToRoom: (msg: ToFrontend) => Cmd.Cmd<never>, sendToClient: (msg: ToFrontend) => Cmd.Cmd<never> },
     msg: ToBackend,
     model: Model
