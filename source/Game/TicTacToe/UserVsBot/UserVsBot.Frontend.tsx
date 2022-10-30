@@ -84,11 +84,20 @@ export const updateFromBackend = (
       return [modelNew, Cmd.None, [['Snackbar', { message: "Player left the game", variant: "Info" }]]]
     }
 
-    case "BotMove_Done":
+    case "BotMove_Done": {
+      if (msg[1].type === "Err") {
+        return [model, Cmd.None, []]
+      }
+
+      const modelNew = mergeWithBackend(model, msg[1].value)
+
+      return [modelNew, Cmd.None, [['Snackbar', { message: "Bot failed to make a move", variant: "Error" }]]]
+    }
+
+    case "InputBot_Done":
     case "StartGame_Done":
     case "StartPlaying_Done":
     case "StopPlaying_Done":
-    case "InputBot_Done":
     case "StopGame_Done":
     case "InputMove_Done":
     case "Restart_Done":

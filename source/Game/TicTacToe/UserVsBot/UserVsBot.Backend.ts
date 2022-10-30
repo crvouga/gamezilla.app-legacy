@@ -1,6 +1,6 @@
 import { Cmd, p, Sub } from "../../../Core"
 import { UserId } from "../../../Data/UserId"
-import { getBestMove, toOpposite } from "../TicTacToe"
+import { toDepth, getBestMove, toOpposite } from "../TicTacToe"
 import {
   BackendModel,
   BackendMsg,
@@ -78,8 +78,8 @@ export const update_: Update = ({ sendToRoom }, msg, model) => {
 
 type UpdateFromFrontend = (
   wire: {
-    sendToClient: (msg: ToFrontend) => Cmd.Cmd<never>
-    sendToRoom: (msg: ToFrontend) => Cmd.Cmd<never>
+    sendToClient: (m: ToFrontend) => Cmd.Cmd<never>
+    sendToRoom: (m: ToFrontend) => Cmd.Cmd<never>
   },
   msg: ToBackend,
   model: Model,
@@ -93,18 +93,17 @@ export const updateFromFrontend: UpdateFromFrontend = (
   const [modelNext, cmd] = updateFromFrontend_(wire, msg, modelPrev)
 
   if (!isBotTurn(modelPrev) && isBotTurn(modelNext)) {
-    const botPlayerType = toOpposite(modelNext.userPlayerType)
     return [
       modelNext,
       Cmd.batch([
         cmd,
         p(
           getBestMove({
-            botLevel: modelNext.botLevel,
-            maximizingPlayer: botPlayerType,
-            board: modelNext.board
+            depth: toDepth(modelNext.botLevel),
+            maximizingPlayer: toOpposite(modelNext.userPlayerType),
+            board: modelNext.board,
           }),
-          Cmd.perform((result): Msg => ["BotMove", result]),
+          Cmd.perform((result) => ["BotMove", result]),
         ),
       ]),
     ]

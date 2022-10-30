@@ -73,7 +73,7 @@ export const botLevels: { [botLevel in BotLevel]: BotLevel } = {
   Impossible: "Impossible",
 }
 
-export const botLevelToDepth = (botLevel: BotLevel): number => {
+export const toDepth = (botLevel: BotLevel): number => {
   switch (botLevel) {
     case 'Easy': {
       return 2
@@ -87,54 +87,59 @@ export const botLevelToDepth = (botLevel: BotLevel): number => {
   }
 }
 
+const toScore = ({ board, maximizingPlayer }: { board: Board, maximizingPlayer: PlayerType }): number => {
+  const gameOver = toGameOver(board)
+
+  switch (gameOver.type) {
+    case "None": {
+      return 0
+    }
+
+    case "Tie": {
+      return 0
+    }
+
+    case "Win": {
+      if (gameOver.winner === maximizingPlayer) {
+        return Infinity
+      }
+
+      return -Infinity
+    }
+  }
+}
+
+
 export const toBestMove = ({
-  botLevel,
+  depth,
   maximizingPlayer,
   board
 }: {
-  botLevel: BotLevel,
+  depth: number,
   maximizingPlayer: PlayerType,
   board: Board,
 }
 ): Position => {
   const minimax = Minimax.create({
     toChildren,
-    toScore: (board) => {
-      const gameOver = toGameOver(board)
-
-      switch (gameOver.type) {
-        case "None": {
-          return 0
-        }
-
-        case "Tie": {
-          return -1
-        }
-
-        case "Win": {
-          if (gameOver.winner === maximizingPlayer) {
-            return 100
-          }
-
-          return -100
-        }
-      }
-    },
+    toScore: (board) => toScore({ board, maximizingPlayer })
   })
 
-  const positionToScore = (position: Position): number => {
-    const result = move({ board, player: maximizingPlayer, position })
 
-    if (result.type === "Err") {
-      return -100
-    }
+  const bestMove = maxBy(
+    allPositions,
+    (position) => {
+      const result = move({ board, player: maximizingPlayer, position })
 
-    const score = minimax(result.value, botLevelToDepth(botLevel))
+      if (result.type === "Err") {
+        return -Infinity
+      }
 
-    return score
-  }
+      const score = minimax({ state: result.value, depth })
 
-  const bestMove = maxBy(positionToScore, shuffle(allPositions))
+      return score
+    },
+  )
 
   return bestMove
 }
@@ -146,7 +151,7 @@ export type Worker = {
 export type GetBestMoveProblem = "worker_thread_error"
 
 export const getBestMove =
-  ({ board, botLevel, maximizingPlayer }: { botLevel: BotLevel, maximizingPlayer: PlayerType, board: Board }): Task<Result<GetBestMoveProblem, Position>> =>
+  ({ board, depth, maximizingPlayer }: { depth: number, maximizingPlayer: PlayerType, board: Board }): Task<Result<GetBestMoveProblem, Position>> =>
     async () => {
       try {
         // docs: https://threads.js.org/
@@ -155,7 +160,7 @@ export const getBestMove =
         const spawned = await Threads.spawn<Worker>(worker)
 
         try {
-          const result = await spawned.toBestMove({ botLevel, maximizingPlayer, board })
+          const result = await spawned.toBestMove({ depth, maximizingPlayer, board })
           return Ok(result)
         } catch (error) {
           return Err("worker_thread_error")
@@ -170,11 +175,7 @@ export const getBestMove =
 
 type NonEmptyArray<T> = [T, ...T[]]
 
-const shuffle = <X extends T[], T>(xs: X): X => {
-  return xs.sort(() => (Math.random() > 0.5 ? 1 : -1))
-}
-
-const maxBy = <X,>(toValue: (x: X) => number, xs: NonEmptyArray<X>): X => {
+const maxBy = <X,>(xs: NonEmptyArray<X>, toValue: (x: X) => number): X => {
   let runningMax = xs[0]
 
   for (const x of xs) {
@@ -203,7 +204,7 @@ export const setSlot = (
   position: Position,
   slotNew: Slot,
 ): Board => {
-  return board.map((slots, rowIndex) => slots.map((slot, columnIndex) => columnIndex === position.column && rowIndex === position.row ? slotNew : slot)) as Board
+  return board.map((columns, columnIndex) => columns.map((slot, rowIndex) => columnIndex === position.column && rowIndex === position.row ? slotNew : slot)) as Board
 }
 
 export const allPositions: NonEmptyArray<Position> = [

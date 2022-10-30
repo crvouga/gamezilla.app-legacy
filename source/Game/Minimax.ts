@@ -88,8 +88,8 @@ export const create = <TState,>({
         return value
     }
 
-    const initialCall = (initialState: TState, depth: number): number => {
-        return recur(initialState, depth, -Infinity, +Infinity, true)
+    const initialCall = ({ state, depth }: { state: TState, depth: number }): number => {
+        return recur(state, depth, -Infinity, +Infinity, true)
     }
 
     return initialCall
