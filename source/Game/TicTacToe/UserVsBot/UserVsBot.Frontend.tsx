@@ -86,12 +86,12 @@ export const updateFromBackend = (
 
     case "BotMove_Done": {
       if (msg[1].type === "Err") {
-        return [model, Cmd.None, []]
+        return [model, Cmd.None, [['Snackbar', { message: "Bot failed to make a move", variant: "Error" }]]]
       }
 
       const modelNew = mergeWithBackend(model, msg[1].value)
 
-      return [modelNew, Cmd.None, [['Snackbar', { message: "Bot failed to make a move", variant: "Error" }]]]
+      return [modelNew, Cmd.None, []]
     }
 
     case "InputBot_Done":
