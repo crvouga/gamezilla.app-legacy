@@ -1,4 +1,4 @@
-import * as Threads from "threads"
+// import * as Threads from "threads"
 import { Err, Ok, Result } from "../../Core/Result"
 import { Task } from "../../Core/Task"
 import * as UI from "../../UI"
@@ -177,23 +177,29 @@ export type GetBestMoveProblem = "worker_thread_error" | ToBestMoveProblem
 export const getBestMove =
   ({ board, depth, maximizingPlayer }: { depth: number, maximizingPlayer: PlayerType, board: Board }): Task<Result<GetBestMoveProblem, Position>> =>
     async () => {
-      try {
-        // docs: https://threads.js.org/
-        const worker = new Threads.Worker("./tictactoe-worker")
+      const result = toBestMove({ board, depth, maximizingPlayer })
 
-        const spawned = await Threads.spawn<Worker>(worker)
+      await new Promise(resolve => setTimeout(resolve, 1000))
 
-        try {
-          const result = await spawned.toBestMove({ depth, maximizingPlayer, board })
-          return result
-        } catch (error) {
-          return Err("worker_thread_error")
-        } finally {
-          await Threads.Thread.terminate(spawned)
-        }
-      } catch (error) {
-        return Err("worker_thread_error")
-      }
+      return result
+
+      // try {
+      //   // docs: https://threads.js.org/
+      //   const worker = new Threads.Worker("./tictactoe-worker")
+
+      //   const spawned = await Threads.spawn<Worker>(worker)
+
+      //   try {
+      //     const result = await spawned.toBestMove({ depth, maximizingPlayer, board })
+      //     return result
+      //   } catch (error) {
+      //     return Err("worker_thread_error")
+      //   } finally {
+      //     await Threads.Thread.terminate(spawned)
+      //   }
+      // } catch (error) {
+      //   return Err("worker_thread_error")
+      // }
 
     }
 

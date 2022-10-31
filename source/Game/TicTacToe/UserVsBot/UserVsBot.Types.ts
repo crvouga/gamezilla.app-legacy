@@ -10,7 +10,7 @@ import {
   PlayerType,
   Position,
   toOpposite,
-  toTurn
+  toStatus
 } from "../TicTacToe"
 
 //
@@ -57,7 +57,14 @@ export const initSharedModel = ({
 }
 
 export const isBotTurn = (model: SharedModel): model is GameModel => {
-  return model.type === "Game" && toTurn(model.board) !== model.userPlayerType
+
+  if (model.type !== 'Game') {
+    return false
+  }
+
+  const status = toStatus(model.board)
+
+  return status.type === 'Turn' && status.turn === toOpposite(model.userPlayerType)
 }
 
 //

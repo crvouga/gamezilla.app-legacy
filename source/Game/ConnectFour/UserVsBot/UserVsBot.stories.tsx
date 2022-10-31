@@ -1,5 +1,6 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react"
-import { store, userA } from '../../../test-data'
+import { store, userA, userB } from '../../../test-data'
+import { leftAndRightDiagonal } from '../test-data'
 import * as UI from "../../../UI"
 import { emptyColumns } from "../ConnectFour"
 import { Model, View } from "./UserVsBot.Frontend"
@@ -56,4 +57,64 @@ const gameModel: Model = {
 export const GameStarted = Template.bind({})
 GameStarted.args = {
     model: gameModel
+}
+
+export const TurnCurrentUser = Template.bind({})
+TurnCurrentUser.args = {
+    model: {
+        ...gameModel,
+        columns: [
+            [],
+            [],
+            ["PlayerOne", "PlayerOne"],
+            ["PlayerTwo"],
+            ["PlayerTwo"],
+            [],
+            []
+        ]
+    }
+}
+
+export const TurnBot = Template.bind({})
+TurnBot.args = {
+    model: {
+        ...gameModel,
+        columns: [
+            [],
+            [],
+            ["PlayerOne", "PlayerOne"],
+            ["PlayerTwo",],
+            [],
+            [],
+            []
+        ]
+    }
+}
+
+
+export const WonCurrentUser = Template.bind({})
+WonCurrentUser.args = {
+    model: {
+        ...gameModel,
+        columns: leftAndRightDiagonal
+    }
+}
+
+export const WonBot = Template.bind({})
+WonBot.args = {
+    model: {
+        ...gameModel,
+        userPlayerType: "PlayerTwo",
+        columns: leftAndRightDiagonal
+    }
+}
+
+
+export const WinnerSpectating = Template.bind({})
+WinnerSpectating.args = {
+    model: {
+        ...gameModel,
+        player: userB.userId,
+        columns: leftAndRightDiagonal
+    }
 }

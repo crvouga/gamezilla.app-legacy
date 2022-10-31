@@ -6,7 +6,7 @@ import * as UI from "../../../UI";
 import { VersusHeader } from "../../Views";
 import { gameTheme, PlayerType, ViewColumns } from "../ConnectFour";
 import { PlayerIcon } from "../Views";
-import { botLevel, GameOverModel, SetupModel, GameModel, BackendModel, FrontendModel, FrontendMsg, handle, initShared, ToBackend, ToFrontend } from "./UserVsBot.Types";
+import { BackendModel, botLevel, GameOver, FrontendModel, FrontendMsg, GameModel, handle, initShared, isBotTurn, SetupModel, ToBackend, ToFrontend, toGameOver } from "./UserVsBot.Types";
 
 //
 //
@@ -144,106 +144,10 @@ export const View = (
         )
     }
 
-    if (model.type === 'GameOver') {
-        return (
-            <ViewGameOver
-                model={model}
-                store={store}
-                roomComponent={roomComponent}
-                goHome={goHome}
-                currentUserId={currentUserId}
-                dispatch={dispatch}
-            />
-        )
-    }
-
-    return (
-        <ViewGame
-            model={model}
-            store={store}
-            roomComponent={roomComponent}
-            goHome={goHome}
-            currentUserId={currentUserId}
-            dispatch={dispatch}
-        />
-    )
-}
-
-const ViewGameOver = (
-    {
-        model,
-        roomComponent,
-        goHome,
-    }: {
-        model: GameOverModel;
-        dispatch: (msg: Msg) => void;
-        currentUserId: UserId;
-        store: Store.Model;
-        goHome: () => void;
-        roomComponent: UI.ViewNode;
-    }) => {
-    return (
-        <UI.FillBox>
-            <UI.Header
-                left={
-                    <UI.IconButton sx={{ marginLeft: -1 }} onClick={goHome}>
-                        <UI.Icons.Home />
-                    </UI.IconButton>
-                }
-                title="Connect Four"
-                right={roomComponent}
-            />
-
-            <ViewColumns
-                columns={model.columns}
-            />
-
-            <UI.Box sx={{ flex: 1 }} />
-
-            <UI.Box sx={{ display: 'flex' }}>
-
-
-            </UI.Box>
-        </UI.FillBox>
-    )
-}
-
-// const ViewGamePlayerSlot = ({ model, playerType, store }: { model: GameModel | GameOverModel, playerType: PlayerType, store: Store.Model }) => {
-//     const size = { width: 32, height: 32, }
-//     return (
-//         <UI.Box sx={{ display: 'flex', alignItems: 'center', flex: 1, overflow: "hidden" }}>
-//             <PlayerIcon playerType={playerType} sx={{ ...size, marginRight: 1 }} />
-//             <UI.Avatar src={store.Profile[model[playerType]]?.avatarUrl} sx={{ ...size, marginRight: 1 }} />
-//             <UI.Typography noWrap>
-//                 {store.Profile[model[playerType]]?.username ?? "..."}
-//             </UI.Typography>
-//             {model.type === 'Game' && toTurn(model.columns) === playerType && (
-//                 <UI.Typography sx={{ marginLeft: 1, fontSize: 20 }}>
-//                     {model.moveCountDown}
-//                 </UI.Typography>
-//             )}
-//         </UI.Box>
-//     )
-// }
-
-const ViewGame = (
-    {
-        model,
-        roomComponent,
-        goHome,
-        dispatch,
-        currentUserId
-    }: {
-        model: GameModel;
-        dispatch: (msg: Msg) => void;
-        currentUserId: UserId;
-        store: Store.Model;
-        goHome: () => void;
-        roomComponent: UI.ViewNode;
-    }) => {
     const stopGameRes = handle(['StopGame', { userId: currentUserId }], model)
     const restartRes = handle(['Restart', { userId: currentUserId }], model)
     const swapSidesRes = handle(['SwapSides', { userId: currentUserId }], model)
+    const gameOver = toGameOver(model)
     return (
         <UI.FillBox>
             <UI.Header
@@ -256,10 +160,25 @@ const ViewGame = (
                 right={roomComponent}
             />
 
-            <ViewColumns
-                columns={model.columns}
-                onClick={columnIndex => dispatch(['InputMove', { columnIndex, userId: currentUserId }])}
-            />
+
+            <UI.Box sx={{ display: 'flex', alignItems: 'center', padding: 1, gap: 1, paddingBottom: 2 }}>
+                <ViewGamePlayerSlot model={model} store={store} playerType="PlayerOne" />
+                <ViewGamePlayerSlot model={model} store={store} playerType="PlayerTwo" />
+            </UI.Box>
+
+            <UI.Box sx={{ position: "relative" }}>
+                <ViewColumns
+                    columns={model.columns}
+                    onClick={columnIndex => dispatch(['InputMove', { columnIndex, userId: currentUserId }])}
+                />
+                <UI.Fade in={gameOver.type !== 'None'}>
+                    <UI.Box sx={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: "center", background: "rgba(0, 0, 0, 0.333)", color: "#fff" }}>
+                        {gameOver.type !== 'None' && (
+                            <ViewGameOverMessage model={model} currentUserId={currentUserId} gameOver={gameOver} />
+                        )}
+                    </UI.Box>
+                </UI.Fade>
+            </UI.Box>
 
             <UI.Box sx={{ flex: 1 }} />
             <UI.Box sx={{ display: 'flex' }}>
@@ -285,6 +204,86 @@ const ViewGame = (
         </UI.FillBox>
     )
 }
+
+const ViewGameOverMessage = ({ gameOver, currentUserId, model }: { model: Model, currentUserId: UserId, gameOver: GameOver }) => {
+    switch (gameOver.type) {
+        case 'Tie': {
+            return <>
+                <UI.Typography align="center" fontSize={64}>
+                    Tie
+                </UI.Typography>
+            </>
+        }
+
+        case 'Winner': {
+            const winner = gameOver.winner
+
+            if (model.player === currentUserId) {
+                if (winner === model.userPlayerType) {
+                    return <>
+                        <UI.Typography align="center" fontSize={64}>
+                            You Won
+                        </UI.Typography>
+                    </>
+                }
+
+                return <>
+                    <UI.Typography align="center" fontSize={64}>
+                        You Lost
+                    </UI.Typography>
+                </>
+            }
+
+            const size = 72
+            return <>
+                <UI.Box sx={{ width: "100%", display: 'flex', alignItems: "center", justifyContent: "center", gap: 2 }}>
+                    <PlayerIcon sx={{ width: size, height: size }} playerType={winner} />
+                    <UI.Typography align="center" fontSize={size}>
+                        Won
+                    </UI.Typography>
+                </UI.Box>
+            </>
+
+        }
+    }
+
+}
+
+const ViewGamePlayerSlot = ({ model, playerType, store }: { model: GameModel, playerType: PlayerType, store: Store.Model }) => {
+    const size = { width: 32, height: 32, }
+
+    if (model.userPlayerType === playerType) {
+        return (
+            <UI.Box sx={{ display: 'flex', alignItems: 'center', flex: 1, overflow: "hidden" }}>
+                <PlayerIcon playerType={playerType} sx={{ ...size, marginRight: 1 }} />
+                <UI.Avatar src={store.Profile[model.player]?.avatarUrl} sx={{ ...size, marginRight: 1 }} />
+                <UI.Typography noWrap>
+                    {store.Profile[model.player]?.username ?? "..."}
+                </UI.Typography>
+            </UI.Box>
+        )
+    }
+
+    return (
+        <UI.Box sx={{ display: 'flex', alignItems: 'center', flex: 1, overflow: "hidden" }}>
+            <PlayerIcon playerType={playerType} sx={{ ...size, marginRight: 1 }} />
+            <UI.Icons.SmartToy sx={{ ...size, padding: 0, margin: 0, marginRight: 1 }} />
+            <UI.Typography noWrap sx={{ flex: 1 }}>
+                {model.botLevel}
+            </UI.Typography>
+            {isBotTurn(model) && (
+                <UI.Box sx={{ marginLeft: 1 }}>
+                    <UI.CircularProgress
+                        size={size.width * 3 / 4}
+                    />
+                </UI.Box>
+            )}
+        </UI.Box>
+    )
+
+}
+
+
 const ViewSetup = (
     {
         model,
