@@ -61,28 +61,28 @@ export const tagCmd = <TagName extends string, Msg>(
   tagName: TagName,
   cmd: Cmd.Cmd<Msg>,
 ): Cmd.Cmd<[TagName, Msg]> => {
-  return p(
-    cmd,
-    Cmd.map((msg) => [tagName, msg]),
-  )
+  return p(cmd, Cmd.map(t(tagName)))
 }
 
 export const tagSub = <TagName extends string, Msg>(
   tagName: TagName,
   sub: Sub.Sub<Msg>,
 ): Sub.Sub<[TagName, Msg]> => {
-  return p(
-    sub,
-    Sub.map((msg) => [tagName, msg]),
-  )
+  return p(sub, Sub.map(t(tagName)))
 }
 
 export type Unit = { type: "Unit" }
 
 export const Unit: Unit = { type: "Unit" }
 
-type Range = [number, number]
 
+type Range = [number, number]
+/**
+ * @example
+ * // assume a ∈ [0, 100]
+ * const a = 10
+ * const b = rescale({ value: a, from: [0, 100], to: [0, 10] }) //=> 1
+ */
 export const rescale = ({
   value,
   from,
@@ -128,3 +128,31 @@ export const unique = <X,>(eq: (a: X, b: X) => boolean, xs: X[]): X[] => {
  */
 export const isSubset = <X,>(eq: (x1: X, x2: X) => boolean, a: X[], b: X[]): boolean =>
   a.every((a_i) => b.some((b_i) => eq(a_i, b_i)))
+
+
+/**
+* @description
+* optimization for expensive function calls by caching results 
+* 
+* @example
+* // O(n^2) time complexity
+* const fibonacci = (n) => 
+*   n <= 1 ? 1 : fibonacci(n - 1) + fibonacci(n - 2)
+*
+* // O(n) time complexity 
+* const memoizedFibonacci = memoize(fibonacci)
+*
+*/
+export const memoize = <X, Y>(toKey: (x: X) => string, f: (x: X) => Y) => {
+  const cache = new Map<string, Y>()
+  return (x: X): Y => {
+    const key = toKey(x)
+    const cached = cache.get(key)
+    if (cached) {
+      return cached
+    }
+    const y = f(x)
+    cache.set(key, y)
+    return y
+  }
+}
