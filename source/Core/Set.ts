@@ -2,7 +2,15 @@ export type Set<T> = {
     [key: string]: T
 }
 
-export const fromArray = <T>(toKey: (element: T) => string, array: T[]): Set<T> => {
+type ToKey<T> = (element: T) => string
+
+export const singleton = <T>(toKey: ToKey<T>, element: T): Set<T> => {
+    return {
+        [toKey(element)]: element
+    }
+}
+
+export const fromArray = <T>(toKey: ToKey<T>, array: T[]): Set<T> => {
     const set: Set<T> = {}
 
     for (const element of array) {
@@ -36,7 +44,7 @@ export const union = <T>(a: Set<T>, b: Set<T>): Set<T> => {
     }
 }
 
-export const intersection = <T>(a: Set<T>, b: Set<T>): Set<T> => {
+export const intersect = <T>(a: Set<T>, b: Set<T>): Set<T> => {
     const c: Set<T> = {}
 
     for (const key in a) {
@@ -54,7 +62,7 @@ export const intersection = <T>(a: Set<T>, b: Set<T>): Set<T> => {
     return c
 }
 
-export const difference = <T>(a: Set<T>, b: Set<T>): Set<T> => {
+export const diff = <T>(a: Set<T>, b: Set<T>): Set<T> => {
     const c: Set<T> = { ...a }
 
     for (const key in a) {
@@ -74,4 +82,12 @@ export const difference = <T>(a: Set<T>, b: Set<T>): Set<T> => {
 
 export const size = <T>(a: Set<T>): number => {
     return Object.keys(a).length
+}
+
+export const isEmpty = <T>(a: Set<T>): boolean => {
+    return size(a) === 0
+}
+
+export const isMember = <T>(toKey: ToKey<T>, element: T, set: Set<T>): boolean => {
+    return Boolean(set[toKey(element)])
 }
