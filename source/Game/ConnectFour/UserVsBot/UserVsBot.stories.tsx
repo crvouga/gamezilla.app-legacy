@@ -1,0 +1,59 @@
+import { ComponentMeta, ComponentStory } from "@storybook/react"
+import { store, userA } from '../../../test-data'
+import * as UI from "../../../UI"
+import { emptyColumns } from "../ConnectFour"
+import { Model, View } from "./UserVsBot.Frontend"
+
+const currentUserId = userA.userId
+
+export default {
+    title: "Connect Four/UserVsBot",
+    component: View,
+    args: {
+        currentUserId: currentUserId,
+        store: store,
+        roomComponent: <>room</>,
+        goHome: () => { },
+        dispatch: () => { },
+        onClose: () => { },
+        goBack: () => { },
+    },
+} as ComponentMeta<typeof View>
+
+const Template: ComponentStory<typeof View> = (args) => {
+    return (
+        <UI.AppContainer themeMode="System" >
+            <View {...args} />
+        </UI.AppContainer>
+    )
+}
+
+const setupModel: Model = {
+    type: "Setup",
+    botLevel: "Medium",
+    player: "None",
+    userPlayerType: "PlayerOne"
+}
+
+export const SetupMissingPlayer = Template.bind({})
+SetupMissingPlayer.args = {
+    model: setupModel
+}
+
+export const SetupReady = Template.bind({})
+SetupReady.args = {
+    model: { ...setupModel, player: currentUserId }
+}
+
+const gameModel: Model = {
+    type: "Game",
+    botLevel: "Medium",
+    columns: emptyColumns,
+    player: currentUserId,
+    userPlayerType: "PlayerOne"
+}
+
+export const GameStarted = Template.bind({})
+GameStarted.args = {
+    model: gameModel
+}

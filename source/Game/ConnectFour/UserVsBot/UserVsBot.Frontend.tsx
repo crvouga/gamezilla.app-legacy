@@ -4,7 +4,7 @@ import * as Snackbar from "../../../Snackbar";
 import * as Store from "../../../Store";
 import * as UI from "../../../UI";
 import { VersusHeader } from "../../Views";
-import { gameTheme, ViewColumns } from "../ConnectFour";
+import { gameTheme, PlayerType, ViewColumns } from "../ConnectFour";
 import { PlayerIcon } from "../Views";
 import { botLevel, GameOverModel, SetupModel, GameModel, BackendModel, FrontendModel, FrontendMsg, handle, initShared, ToBackend, ToFrontend } from "./UserVsBot.Types";
 
@@ -60,7 +60,7 @@ export const updateFromBackend = (msg: ToFrontend, model: Model): [Model, Cmd.Cm
             if (msg[1].type === 'Err') {
                 return [model, Cmd.None, []]
             }
-            
+
             const modelNew = mergeWithBackend({ frontendModel: model, backendModel: msg[1].value })
 
             return [modelNew, Cmd.None, []]
@@ -207,6 +207,24 @@ const ViewGameOver = (
         </UI.FillBox>
     )
 }
+
+// const ViewGamePlayerSlot = ({ model, playerType, store }: { model: GameModel | GameOverModel, playerType: PlayerType, store: Store.Model }) => {
+//     const size = { width: 32, height: 32, }
+//     return (
+//         <UI.Box sx={{ display: 'flex', alignItems: 'center', flex: 1, overflow: "hidden" }}>
+//             <PlayerIcon playerType={playerType} sx={{ ...size, marginRight: 1 }} />
+//             <UI.Avatar src={store.Profile[model[playerType]]?.avatarUrl} sx={{ ...size, marginRight: 1 }} />
+//             <UI.Typography noWrap>
+//                 {store.Profile[model[playerType]]?.username ?? "..."}
+//             </UI.Typography>
+//             {model.type === 'Game' && toTurn(model.columns) === playerType && (
+//                 <UI.Typography sx={{ marginLeft: 1, fontSize: 20 }}>
+//                     {model.moveCountDown}
+//                 </UI.Typography>
+//             )}
+//         </UI.Box>
+//     )
+// }
 
 const ViewGame = (
     {

@@ -42,16 +42,22 @@ describe("TicTacToe", () => {
 
         const botPlayerType: PlayerType = "X"
 
-        const position = toBestMove({
+        const bestMoveResult = toBestMove({
             depth: 1,
             maximizingPlayer: botPlayerType,
             board: before
         })
 
+        expect(bestMoveResult.type).toBe("Ok")
+
+        if (bestMoveResult.type === "Err") {
+            return
+        }
+
         const result = move({
             board: before,
             player: botPlayerType,
-            position
+            position: bestMoveResult.value
         })
 
         expect(result.type).toBe("Ok")
@@ -75,16 +81,22 @@ describe("TicTacToe", () => {
 
         const botPlayerType: PlayerType = "O"
 
-        const position = toBestMove({
+        const bestMoveResult = toBestMove({
             depth: 1,
             maximizingPlayer: botPlayerType,
             board: before
         })
 
+        expect(bestMoveResult.type).toBe("Ok")
+
+        if (bestMoveResult.type === 'Err') {
+            return
+        }
+
         const result = move({
             board: before,
             player: botPlayerType,
-            position
+            position: bestMoveResult.value
         })
 
         expect(result.type).toBe("Ok")
