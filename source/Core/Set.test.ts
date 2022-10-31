@@ -1,4 +1,4 @@
-import { size, toArray, fromArray, union, intersection, difference } from "./Set"
+import { size, toArray, fromArray, union, intersect, diff } from "./Set"
 
 
 
@@ -24,7 +24,7 @@ describe("Set data structure", () => {
         const toKey = (element: number) => String(element)
         const a = fromArray(toKey, [1, 2, 3])
         const b = fromArray(toKey, [2, 3, 4])
-        const c = intersection(a, b)
+        const c = intersect(a, b)
         const expectation = [2, 3]
         const actual = toArray(c)
         expect(expectation).toEqual(actual)
@@ -34,7 +34,7 @@ describe("Set data structure", () => {
         const toKey = (element: number) => String(element)
         const a = fromArray(toKey, [1, 2, 3])
         const b = fromArray(toKey, [2, 3, 4])
-        const c = difference(a, b)
+        const c = diff(a, b)
         const expectation = [1]
         const actual = toArray(c)
         expect(expectation).toEqual(actual)
