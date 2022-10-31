@@ -123,7 +123,7 @@ export const VersusHeader = (
       sx={{
         position: "relative",
         width: '100%',
-        paddingY: 8,
+        paddingY: 10,
         overflowX: "hidden",
         ...sx,
       }}

@@ -1,6 +1,8 @@
-import { Cmd, Sub } from "../../../Core";
-import { isBotTurn, initShared, BackendMsg, BackendModel, ToBackend, handle, Res, ToFrontend } from "./UserVsBot.Types"
+import { Cmd, p, Sub } from "../../../Core";
+import { isBotTurn, initShared, BackendMsg, BackendModel, ToBackend, handle, Res, ToFrontend, botMove } from "./UserVsBot.Types"
 import { UserId } from "../../../Data/UserId"
+import { getBestMove, opposite } from "../ConnectFour";
+import { perform } from "../../../Core/Cmd";
 
 //
 //
@@ -24,13 +26,14 @@ export const init = initShared
 
 export type Msg = BackendMsg
 
-export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
+export const update = ({ sendToRoom }: { sendToRoom: (m: ToFrontend) => Cmd.Cmd<never> }, msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
     switch (msg[0]) {
-        case "None": {
-
-
-
-            return [model, Cmd.None]
+        case "BotMove": {
+            const result = botMove(msg[1], model)
+            if (result.type === 'Err') {
+                return [model, sendToRoom(['BotMove', result])]
+            }
+            return [result.value, sendToRoom(['BotMove', result])]
         }
     }
 };
@@ -39,21 +42,24 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 export const updateFromFrontend = (
     wire: { sendToRoom: (msg: ToFrontend) => Cmd.Cmd<never>, sendToClient: (msg: ToFrontend) => Cmd.Cmd<never> },
     msg: ToBackend,
-    model: Model
+    modelPrev: Model
 ): [Model, Cmd.Cmd<Msg>] => {
-    const [modelNew, cmd] = updateFromFrontend_(wire, msg, model)
+    const [modelNext, cmd] = updateFromFrontend_(wire, msg, modelPrev)
 
-    if (!isBotTurn(model) && isBotTurn(modelNew) && model.type === 'Game') {
+    if (!isBotTurn(modelPrev) && isBotTurn(modelNext) && modelNext.type === 'Game') {
         return [
-            modelNew,
+            modelNext,
             Cmd.batch([
                 cmd,
-                // todo bot move
+                p(
+                    getBestMove({ columns: modelNext.columns, maximizingPlayer: opposite[modelNext.userPlayerType] }),
+                    perform(result => ['BotMove', result])
+                )
             ])
         ]
     }
 
-    return [modelNew, cmd]
+    return [modelNext, cmd]
 }
 
 const updateFromFrontend_ = (
