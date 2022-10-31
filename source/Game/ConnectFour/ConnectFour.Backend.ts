@@ -50,6 +50,7 @@ export const update = ({ sendToRoom }: { sendToRoom: (msg: ToFrontend) => Cmd.Cm
     case 'UserVsBot': {
       if (model.type === 'UserVsBot') {
         const [child, cmd] = UserVsBot.update(
+          { sendToRoom: m => sendToRoom(['UserVsBot', m]) },
           msg[1],
           model.child
         )

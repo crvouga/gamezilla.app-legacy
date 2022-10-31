@@ -6,7 +6,7 @@ import * as UI from "../../../UI";
 import { VersusHeader } from "../../Views";
 import { gameTheme, ViewColumns } from "../ConnectFour";
 import { PlayerIcon } from "../Views";
-import { GameOverModel, SetupModel, GameModel, BackendModel, FrontendModel, FrontendMsg, handle, initShared, ToBackend, ToFrontend } from "./UserVsBot.Types";
+import { botLevel, GameOverModel, SetupModel, GameModel, BackendModel, FrontendModel, FrontendMsg, handle, initShared, ToBackend, ToFrontend } from "./UserVsBot.Types";
 
 //
 //
@@ -54,6 +54,16 @@ export const updateFromBackend = (msg: ToFrontend, model: Model): [Model, Cmd.Cm
         case 'PlayerLeft': {
             const modelNew = mergeWithBackend({ frontendModel: model, backendModel: msg[1] })
             return [modelNew, Cmd.None, [['Snackbar', { message: "Player left the game", variant: "Info" }]]]
+        }
+
+        case 'BotMove': {
+            if (msg[1].type === 'Err') {
+                return [model, Cmd.None, []]
+            }
+            
+            const modelNew = mergeWithBackend({ frontendModel: model, backendModel: msg[1].value })
+
+            return [modelNew, Cmd.None, []]
         }
 
         case 'InputMove':
@@ -213,7 +223,9 @@ const ViewGame = (
         goHome: () => void;
         roomComponent: UI.ViewNode;
     }) => {
-
+    const stopGameRes = handle(['StopGame', { userId: currentUserId }], model)
+    const restartRes = handle(['Restart', { userId: currentUserId }], model)
+    const swapSidesRes = handle(['SwapSides', { userId: currentUserId }], model)
     return (
         <UI.FillBox>
             <UI.Header
@@ -230,6 +242,28 @@ const ViewGame = (
                 columns={model.columns}
                 onClick={columnIndex => dispatch(['InputMove', { columnIndex, userId: currentUserId }])}
             />
+
+            <UI.Box sx={{ flex: 1 }} />
+            <UI.Box sx={{ display: 'flex' }}>
+                <UI.ActionButton
+                    icon={<UI.Icons.ExitToApp sx={{ transform: "rotate(180deg)" }} />}
+                    label="Exit"
+                    onClick={() => dispatch(['StopGame', { userId: currentUserId, }])}
+                    disabled={stopGameRes.type === 'Err'}
+                />
+                <UI.ActionButton
+                    icon={<UI.Icons.RestartAlt />}
+                    label="Restart"
+                    onClick={() => dispatch(['Restart', { userId: currentUserId, }])}
+                    disabled={restartRes.type === 'Err'}
+                />
+                <UI.ActionButton
+                    icon={<UI.Icons.SwapHorizSharp />}
+                    label="Swap"
+                    onClick={() => dispatch(['SwapSides', { userId: currentUserId, }])}
+                    disabled={swapSidesRes.type === 'Err'}
+                />
+            </UI.Box>
         </UI.FillBox>
     )
 }
@@ -286,7 +320,7 @@ const ViewSetup = (
                 }
             />
 
-            <UI.Typography sx={{ paddingX: 2, paddingTop: 2, }} color="text.secondary">
+            <UI.Typography sx={{ paddingX: 2, paddingTop: 2, paddingBottom: 1 }} color="text.secondary">
                 Player
             </UI.Typography>
 
@@ -310,9 +344,36 @@ const ViewSetup = (
                 </UI.Box>
             )}
 
+            <UI.Divider sx={{ marginY: 2 }} />
 
-            <UI.Divider sx={{ paddingY: 2 }} />
+            <UI.Typography sx={{ paddingX: 2, paddingBottom: 1 }} color="text.secondary">
+                Play As
+            </UI.Typography>
 
+            <UI.Box sx={{ paddingX: 2, paddingBottom: 2 }} >
+                <UI.ToggleButtonGroup value={model.userPlayerType} fullWidth>
+                    <UI.ToggleButton value={"PlayerOne"} onClick={() => dispatch(['InputPlayerType', { userId: currentUserId, playerType: "PlayerOne" }])}>
+                        <PlayerIcon playerType="PlayerOne" sx={{ width: 32, height: 32 }} />
+                    </UI.ToggleButton>
+                    <UI.ToggleButton value={"PlayerTwo"} onClick={() => dispatch(['InputPlayerType', { userId: currentUserId, playerType: "PlayerTwo" }])}>
+                        <PlayerIcon playerType="PlayerTwo" sx={{ width: 32, height: 32 }} />
+                    </UI.ToggleButton>
+                </UI.ToggleButtonGroup>
+            </UI.Box>
+
+            <UI.Typography sx={{ paddingX: 2, paddingBottom: 1 }} color="text.secondary">
+                Bot Level
+            </UI.Typography>
+
+            <UI.Box sx={{ paddingX: 2, }} >
+                <UI.ToggleButtonGroup value={model.botLevel} fullWidth>
+                    {Object.values(botLevel).map(botLevel => (
+                        <UI.ToggleButton key={botLevel} value={botLevel} onClick={() => dispatch(['InputBotLevel', { userId: currentUserId, botLevel }])}>
+                            {botLevel}
+                        </UI.ToggleButton>
+                    ))}
+                </UI.ToggleButtonGroup>
+            </UI.Box>
 
             <UI.Box sx={{ flex: 1 }} />
 

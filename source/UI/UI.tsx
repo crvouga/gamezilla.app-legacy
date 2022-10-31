@@ -623,7 +623,7 @@ export const ActionButton = ({
     <ButtonBase
       onClick={onClick}
       sx={{
-        paddingY: 0,
+        paddingY: 1 / 2,
         paddingX: 2,
         display: "flex",
         flexDirection: "column",

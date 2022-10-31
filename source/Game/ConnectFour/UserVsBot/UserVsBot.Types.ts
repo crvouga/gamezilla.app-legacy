@@ -1,7 +1,7 @@
 import { exhaustive } from "../../../Core"
 import { Err, Ok, Result } from "../../../Core/Result"
 import { UserId } from "../../../Data/UserId"
-import { ColumnIndex, Columns, emptyColumns, move, MoveProblem, opposite, PlayerType, toStatus, toTurn } from "../ConnectFour"
+import { BestMoveProblem, BestMoveResult, ColumnIndex, Columns, emptyColumns, move, MoveProblem, opposite, PlayerType, toStatus, toTurn } from "../ConnectFour"
 
 // 
 // 
@@ -61,6 +61,12 @@ type GameOver = { type: "Tie" } | { type: "Winner", winner: PlayerType }
 
 type BotLevel = "Easy" | "Medium" | "Hard"
 
+export const botLevel: { [botLevel in BotLevel]: BotLevel } = {
+    Easy: "Easy",
+    Medium: "Medium",
+    Hard: "Hard"
+}
+
 // 
 // 
 // Msg
@@ -69,9 +75,9 @@ type BotLevel = "Easy" | "Medium" | "Hard"
 
 export type FrontendMsg = Req
 
-export type BackendMsg = ["None"]
+export type BackendMsg = ["BotMove", BestMoveResult]
 
-export type ToFrontend = Res | ['PlayerLeft', SharedModel]
+export type ToFrontend = Res | ['PlayerLeft', SharedModel] | ['BotMove', BotMoveResult]
 
 export type ToBackend = Req
 
@@ -251,28 +257,26 @@ export const handle = (msg: Req, model: SharedModel): Result<Problem, SharedMode
                 return result
             }
 
-            const columnsNew = result.value
+            const status = toStatus(result.value)
 
-            const statusNew = toStatus(columnsNew)
-
-            if (statusNew.type === 'Playing') {
+            if (status.type === 'Playing') {
                 const modelNew: SharedModel = {
                     ...model,
-                    columns: columnsNew
+                    columns: result.value
                 }
 
                 return Ok(modelNew)
             }
 
             const gameOver: GameOver =
-                statusNew.type === 'Tie'
+                status.type === 'Tie'
                     ? { type: "Tie" }
-                    : { type: "Winner", winner: statusNew.winner }
+                    : { type: "Winner", winner: status.winner }
 
             const modelNew: SharedModel = {
                 type: "GameOver",
                 botLevel: model.botLevel,
-                columns: model.columns,
+                columns: result.value,
                 gameOver: gameOver,
                 player: model.player,
                 userPlayerType: model.userPlayerType
@@ -302,4 +306,45 @@ export const handle = (msg: Req, model: SharedModel): Result<Problem, SharedMode
             return exhaustive(msg[0])
         }
     }
+}
+
+
+type BotMoveResult = Result<MoveProblem | BestMoveProblem | "not_game", SharedModel>
+
+export const botMove = (bestMoveResult: BestMoveResult, model: SharedModel): BotMoveResult => {
+
+    if (model.type !== 'Game') {
+        return Err("not_game")
+    }
+
+    if (bestMoveResult.type === "Err") {
+        return bestMoveResult
+    }
+
+    const moveResult = move(model.columns, bestMoveResult.value, opposite[model.userPlayerType])
+
+    if (moveResult.type === 'Err') {
+        return moveResult
+    }
+
+    const status = toStatus(moveResult.value)
+
+    if (status.type === 'Playing') {
+        const modelNew: SharedModel = {
+            ...model,
+            columns: moveResult.value
+        }
+        return Ok(modelNew)
+    }
+
+    const modelNew: SharedModel = {
+        type: "GameOver",
+        botLevel: model.botLevel,
+        columns: moveResult.value,
+        gameOver: status.type === 'Tie' ? { type: "Tie" } : { type: "Winner", winner: status.winner },
+        player: model.player,
+        userPlayerType: model.userPlayerType,
+    }
+
+    return Ok(modelNew)
 }

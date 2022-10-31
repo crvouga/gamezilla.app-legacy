@@ -1,6 +1,7 @@
 import { useLayoutEffect, useRef } from "react"
-import { eq, isSubset, unique } from "../../Core"
+import { eq, isSubset, shuffle, unique } from "../../Core"
 import { Err, Ok, Result } from "../../Core/Result"
+import { Task } from "../../Core/Task"
 
 //
 //
@@ -114,6 +115,28 @@ export const move = (
     })
 
   return Ok(columnsNew)
+}
+
+export type BestMoveProblem = "no_move_available"
+
+export type BestMoveResult = Result<BestMoveProblem, ColumnIndex>
+
+export const toBestMove = ({ columns, maximizingPlayer }: { columns: Columns, maximizingPlayer: PlayerType }): BestMoveResult => {
+  for (const columnIndex of shuffle(allColumnIndexes)) {
+    const result = move(columns, columnIndex, maximizingPlayer)
+    if (result.type === 'Ok') {
+      return Ok(columnIndex)
+    }
+  }
+  return Err("no_move_available")
+}
+
+export const getBestMove = ({ columns, maximizingPlayer }: { columns: Columns, maximizingPlayer: PlayerType }): Task<BestMoveResult> => async () => {
+  const result = toBestMove({ columns, maximizingPlayer })
+
+  await new Promise(resolve => setTimeout(resolve, 1_000))
+
+  return result
 }
 
 export const toSlot = (
@@ -235,23 +258,17 @@ export const toWins = (columns: Columns): Position[][] => {
   const visited = new Set<string>()
 
   for (let x = 0; x < columns.length; x++) {
-    const column = columns[x]
-
-    if (!column) {
-      continue
-    }
-
-    for (let y = 0; y < column.length; y++) {
+    for (let y = 0; y < columns[x]!.length; y++) {
       for (const [dx, dy] of directions) {
 
         if (visited.has(toKey({ x, y, dx, dy }))) {
-          break
+          continue
         }
 
         const targetSlot = toSlot(columns, { x, y })
 
         if (targetSlot === 'Empty') {
-          break
+          continue
         }
 
         const win: Position[] = []
@@ -259,14 +276,11 @@ export const toWins = (columns: Columns): Position[][] => {
         let position: Position = { x: x, y: y }
 
         while (true) {
-          win.push(position)
-
           visited.add(toKey({ x: position.x, y: position.y, dx, dy }))
 
-          const nextPosition: Position = {
-            x: position.x + dx,
-            y: position.y + dy,
-          }
+          win.push(position)
+
+          const nextPosition: Position = { x: position.x + dx, y: position.y + dy, }
 
           const nextSlot = toSlot(columns, nextPosition)
 

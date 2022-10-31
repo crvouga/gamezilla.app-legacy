@@ -156,3 +156,25 @@ export const memoize = <X, Y>(toKey: (x: X) => string, f: (x: X) => Y) => {
     return y
   }
 }
+
+/**
+ * @description 
+ * returns a random permutation of the inputted array
+ * @link 
+ * https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle
+ * @example
+ * const x = ['a', 'b', 'c']
+ * shuffle(x) //=> ['b', 'a', 'c']
+ * shuffle(x) //=> ['a', 'c', 'b']
+ * shuffle(x) //=> ['c', 'a', 'b']
+ */
+export const shuffle = <X>(xs: X[]): X[] => {
+  const ys = [...xs]
+  for (let i = ys.length - 1; i >= 0; i--) {
+    const j = Math.floor(Math.random() * i)
+    const temp = ys[i]!
+    ys[i]! = ys[j]!
+    ys[j]! = temp
+  }
+  return ys
+}
