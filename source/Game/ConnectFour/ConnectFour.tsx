@@ -280,19 +280,12 @@ export const toWins = (columns: Columns): Position[][] => {
 
           win.push(position)
 
-          const nextPosition: Position = { x: position.x + dx, y: position.y + dy, }
+          position = { x: position.x + dx, y: position.y + dy, }
 
-          const nextSlot = toSlot(columns, nextPosition)
-
-          if (nextSlot === "Empty") {
+          if (toSlot(columns, position) !== targetSlot) {
             break
           }
 
-          if (nextSlot !== targetSlot) {
-            break
-          }
-
-          position = nextPosition
         }
 
         if (win.length >= minWinLength) {
