@@ -94,7 +94,6 @@ const avatarSx: UI.Sx = {
   height: 32,
 }
 
-
 export const VersusHeader = (
   {
     left,

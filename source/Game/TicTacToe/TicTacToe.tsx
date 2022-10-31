@@ -110,7 +110,8 @@ const toScore = ({ board, maximizingPlayer }: { board: Board, maximizingPlayer: 
 }
 
 
-export const toBestMove = ({
+// todo: make this run faster. its too slow
+export const toBestMove_ = ({
   depth,
   maximizingPlayer,
   board
@@ -145,11 +146,33 @@ export const toBestMove = ({
   return bestMove
 }
 
+export type ToBestMoveProblem = "no_valid_move"
+
+export const toBestMove = ({
+  maximizingPlayer,
+  board
+}: {
+  depth: number,
+  maximizingPlayer: PlayerType,
+  board: Board,
+}
+): Result<ToBestMoveProblem, Position> => {
+
+  for (const position of allPositions) {
+    const result = move({ board, player: maximizingPlayer, position })
+    if (result.type === 'Ok') {
+      return Ok(position)
+    }
+  }
+
+  return Err("no_valid_move")
+}
+
 export type Worker = {
   toBestMove: typeof toBestMove
 }
 
-export type GetBestMoveProblem = "worker_thread_error"
+export type GetBestMoveProblem = "worker_thread_error" | ToBestMoveProblem
 
 export const getBestMove =
   ({ board, depth, maximizingPlayer }: { depth: number, maximizingPlayer: PlayerType, board: Board }): Task<Result<GetBestMoveProblem, Position>> =>
@@ -162,7 +185,7 @@ export const getBestMove =
 
         try {
           const result = await spawned.toBestMove({ depth, maximizingPlayer, board })
-          return Ok(result)
+          return result
         } catch (error) {
           return Err("worker_thread_error")
         } finally {
