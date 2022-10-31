@@ -120,6 +120,7 @@ export const toBestMove = ({
   board: Board,
 }
 ): Position => {
+
   const minimax = Minimax.create({
     toChildren,
     toScore: (board) => toScore({ board, maximizingPlayer })
@@ -273,6 +274,8 @@ export const allWinningGroups: WinningGroup[] = [
 
 type Wins = { X: WinningGroup[]; O: WinningGroup[]; None: WinningGroup[] }
 
+
+
 const toWins = (board: Board): Wins => {
   const wins: Wins = {
     X: [],
@@ -280,7 +283,8 @@ const toWins = (board: Board): Wins => {
     None: [],
   }
 
-  for (const group of allWinningGroups) {
+  for (let i = 0; i < allWinningGroups.length; i++) {
+    const group = allWinningGroups[i]!
     const a = toSlot(board, group[0])
     const b = toSlot(board, group[1])
     const c = toSlot(board, group[2])
@@ -333,9 +337,9 @@ export const toStatus = (board: Board): Status => {
 const isTie = (board: Board): boolean => {
   const wins = toWins(board)
   return (
-    toSlotFrequency(board)._ === 0 &&
-    wins.O.length === 0 &&
-    wins.X.length === 0
+    wins.O.length === 0
+    && wins.X.length === 0
+    && toSlotFrequency(board)._ === 0
   )
 }
 
@@ -344,7 +348,8 @@ type SlotFrequency = { X: number; O: number; _: number }
 const toSlotFrequency = (board: Board): SlotFrequency => {
   const frequency: SlotFrequency = { X: 0, O: 0, _: 0 }
 
-  for (const position of allPositions) {
+  for (let i = 0; i < allPositions.length; i++) {
+    const position = allPositions[i]!
     const slot = toSlot(board, position)
     frequency[slot] += 1
   }
