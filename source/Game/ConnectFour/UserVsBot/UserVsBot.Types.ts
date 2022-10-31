@@ -1,7 +1,7 @@
 import { exhaustive } from "../../../Core"
 import { Err, Ok, Result } from "../../../Core/Result"
 import { UserId } from "../../../Data/UserId"
-import { BestMoveProblem, BestMoveResult, ColumnIndex, Columns, emptyColumns, move, MoveProblem, opposite, PlayerType, toStatus, toTurn } from "../ConnectFour"
+import { BestMoveProblem, BestMoveResult, ColumnIndex, Columns, emptyColumns, move, MoveProblem, opposite, PlayerType, toStatus } from "../ConnectFour"
 
 // 
 // 
@@ -9,7 +9,7 @@ import { BestMoveProblem, BestMoveResult, ColumnIndex, Columns, emptyColumns, mo
 // 
 // 
 
-export type SharedModel = SetupModel | GameModel | GameOverModel
+export type SharedModel = SetupModel | GameModel
 
 export type SetupModel = {
     type: "Setup",
@@ -26,17 +26,12 @@ export type GameModel = {
     columns: Columns
 }
 
-export type GameOverModel = {
-    type: "GameOver"
-    userPlayerType: PlayerType
-    botLevel: BotLevel
-    player: UserId
-    columns: Columns
-    gameOver: GameOver
-}
-
 export const isBotTurn = (model: SharedModel): boolean => {
-    return model.type === 'Game' && toTurn(model.columns) === opposite[model.userPlayerType]
+    if (model.type !== 'Game') {
+        return false
+    }
+    const status = toStatus(model.columns)
+    return status.type === 'Playing' && status.turn === opposite[model.userPlayerType]
 }
 
 export type BackendModel = SharedModel
@@ -57,7 +52,31 @@ export const initShared = ({ player }: { player: UserId | "None" }): SharedModel
 // 
 // 
 
-type GameOver = { type: "Tie" } | { type: "Winner", winner: PlayerType }
+export type GameOver = { type: "Tie" } | { type: "Winner", winner: PlayerType }
+
+export const toGameOver = (model: SharedModel): GameOver | { type: "None" } => {
+    switch (model.type) {
+        case 'Game': {
+            const status = toStatus(model.columns)
+            switch (status.type) {
+                case 'Playing': {
+                    return { type: "None" }
+                }
+                case 'Tie': {
+                    return { type: "Tie" }
+                }
+
+                case 'Winner': {
+                    return { type: "Winner", winner: status.winner }
+                }
+            }
+        }
+
+        case 'Setup': {
+            return { type: "None" }
+        }
+    }
+}
 
 type BotLevel = "Easy" | "Medium" | "Hard"
 
@@ -257,29 +276,9 @@ export const handle = (msg: Req, model: SharedModel): Result<Problem, SharedMode
                 return result
             }
 
-            const status = toStatus(result.value)
-
-            if (status.type === 'Playing') {
-                const modelNew: SharedModel = {
-                    ...model,
-                    columns: result.value
-                }
-
-                return Ok(modelNew)
-            }
-
-            const gameOver: GameOver =
-                status.type === 'Tie'
-                    ? { type: "Tie" }
-                    : { type: "Winner", winner: status.winner }
-
             const modelNew: SharedModel = {
-                type: "GameOver",
-                botLevel: model.botLevel,
-                columns: result.value,
-                gameOver: gameOver,
-                player: model.player,
-                userPlayerType: model.userPlayerType
+                ...model,
+                columns: result.value
             }
 
             return Ok(modelNew)
@@ -327,23 +326,9 @@ export const botMove = (bestMoveResult: BestMoveResult, model: SharedModel): Bot
         return moveResult
     }
 
-    const status = toStatus(moveResult.value)
-
-    if (status.type === 'Playing') {
-        const modelNew: SharedModel = {
-            ...model,
-            columns: moveResult.value
-        }
-        return Ok(modelNew)
-    }
-
     const modelNew: SharedModel = {
-        type: "GameOver",
-        botLevel: model.botLevel,
-        columns: moveResult.value,
-        gameOver: status.type === 'Tie' ? { type: "Tie" } : { type: "Winner", winner: status.winner },
-        player: model.player,
-        userPlayerType: model.userPlayerType,
+        ...model,
+        columns: moveResult.value
     }
 
     return Ok(modelNew)
