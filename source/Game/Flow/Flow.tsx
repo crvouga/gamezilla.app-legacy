@@ -16,7 +16,19 @@ export const union = <T,>(_a: T, _b: T, set: DisjointSets<T>): DisjointSets<T> =
 
 
 export type Model = {
-    board: DisjointSets<Position>
+    board: Board
+}
+
+type Board = {
+    size: number,
+    sets: DisjointSets<Position>
+}
+
+export const emptyBoard = (size: number): Board => {
+    return {
+        size,
+        sets: []
+    }
 }
 
 
@@ -42,8 +54,23 @@ export const generateBoard = () => {
 
 }
 
-export const paint = () => {
 
+// 
+// 
+// 
+// View
+// 
+// 
+// 
+
+export const ViewBoard = ({ board }: { board: Board }) => {
+    return (
+        <svg width="100%" viewBox={toViewBox(board)}>
+
+        </svg>
+    )
 }
 
-
+const toViewBox = (board: Board): string => {
+    return [0, 0, board.size, board.size].join(", ")
+}
