@@ -1,6 +1,6 @@
 import { UserId } from "../../Data"
 import * as UI from "../../UI"
-import * as Store from "../../Store"
+import * as ProfileStore from "../../Profile/Profile.Store"
 import { bannerArtAspectRatio } from "../Views"
 
 export const theme = {
@@ -118,7 +118,7 @@ type Player =
   | { type: "User", userId: UserId.UserId }
   | { type: "Bot", label: string }
 
-export const VersusHeader = ({ store, white, black }: { store: Store.Model, white: Player, black: Player }) => {
+export const VersusHeader = ({ store, white, black }: { store: ProfileStore.Model, white: Player, black: Player }) => {
   const columnCount = 8
   const rowCount = 3
 
@@ -176,7 +176,7 @@ export const VersusHeader = ({ store, white, black }: { store: Store.Model, whit
 
 }
 
-const PlayerSlot = ({ player, store, }: { player: Player, store: Store.Model }) => {
+const PlayerSlot = ({ player, store, }: { player: Player, store: ProfileStore.Model }) => {
   const iconSx = { width: 48, height: 48, }
   const boxSx: UI.Sx = { display: 'flex', flexDirection: "column", alignItems: 'center', justifyContent: "center", color: "inherit", }
   // const textSx: UI.Sx = { color: "#101010" }
@@ -208,7 +208,7 @@ const PlayerSlot = ({ player, store, }: { player: Player, store: Store.Model }) 
     case 'User': {
       return (
         <UI.Box sx={{ ...boxSx }}>
-          <UI.Avatar src={store.Profile[player.userId]?.avatarUrl ?? ""} sx={{ ...iconSx }} ></UI.Avatar>
+          <UI.Avatar src={store.profiles[player.userId]?.avatarUrl ?? ""} sx={{ ...iconSx }} ></UI.Avatar>
           {/* <UI.Typography variant="caption" noWrap sx={{ ...textSx }}>
             {store.Profile[player.userId]?.username ?? "..."}
           </UI.Typography> */}

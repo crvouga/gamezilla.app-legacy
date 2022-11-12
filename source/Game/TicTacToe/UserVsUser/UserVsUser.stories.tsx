@@ -1,5 +1,5 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react"
-import { store, userA, userB, userC } from "../../../test-data"
+import { profileStore, userA, userB, userC } from "../../../test-data"
 import * as UI from "../../../UI"
 import { Model, View } from "./UserVsUser.Frontend"
 
@@ -13,7 +13,7 @@ export default {
     dispatch: () => { },
     goHome: () => { },
     onCloseGame: () => { },
-    store: store,
+    store: profileStore,
     roomComponent: <>room</>,
   },
 } as ComponentMeta<typeof View>

@@ -1,7 +1,7 @@
 import { Cmd, Sub, tagCmd, tagSub, tagUpdate } from "../Core"
 import { UserId } from "../Data"
 import * as Snackbar from "../Snackbar"
-import * as Store from "../Store"
+import * as ProfileStore from "../Profile/Profile.Store"
 import * as UI from "../UI"
 import * as Chess from "./Chess/Chess.Frontend"
 import * as ConnectFour from "./ConnectFour/ConnectFour.Frontend"
@@ -70,7 +70,7 @@ export const init = ({
 
 export type Msg = FrontendMsg
 
-export type OutAction = Snackbar.Action | Store.Action
+export type OutAction = Snackbar.Action | ProfileStore.Action
 
 export const update = (
   {
@@ -164,7 +164,7 @@ export const updateFromBackend = (
   }: {
     currentUserId: UserId.UserId
     sendToBackend: (msg: ToBackend) => Cmd.Cmd<never>
-    store: Store.Model
+    store: ProfileStore.Model
   },
   msg: ToFrontend,
   model: Model,
@@ -279,7 +279,7 @@ export const View = ({
 }: {
   goHome: () => void
   currentUserId: UserId.UserId
-  store: Store.Model
+  store: ProfileStore.Model
   model: Model
   dispatch: (msg: Msg) => void
   roomComponent: UI.ViewNode

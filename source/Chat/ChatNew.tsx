@@ -2,7 +2,8 @@ import { useEffect, useRef } from "react"
 import { Cmd, exhaustive, Keyboard, RemoteData, Sub } from "../Core"
 import { UserId } from "../Data"
 import * as Route from "../Route"
-import * as Store from "../Store"
+import * as ChatStore from "./Chat.Store"
+import * as ProfileStore from "../Profile/Profile.Store"
 import * as UI from "../UI"
 
 //
@@ -27,7 +28,7 @@ export type Model = {
 //
 //
 
-export const init = (): [Model, Cmd.Cmd<Msg>, Action[]] => {
+export const init = (): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   const searchText = ""
   return [
     {
@@ -36,7 +37,7 @@ export const init = (): [Model, Cmd.Cmd<Msg>, Action[]] => {
       highlightedIndex: "None",
     },
     Cmd.None,
-    [["Store", ["Profile", ["Search", { searchText }]]]],
+    [["Profile", ["Search", { searchText }]]],
   ]
 }
 
@@ -56,24 +57,22 @@ export type Msg =
   | ["ClickedSelectedDelete", { userId: UserId.UserId }]
   | ["PressedKeyDown", Keyboard.ArrowKey | Keyboard.EnterKey]
 
-export type Action = Store.Action
+export type OutAction = ProfileStore.Action | ChatStore.Action
 
 export const update = (
   {
     currentUserId,
-    store,
-  }: { currentUserId: UserId.UserId; store: Store.Model },
+    profileStore,
+  }: { currentUserId: UserId.UserId; profileStore: ProfileStore.Model },
   msg: Msg,
   model: Model,
-): [Model, Cmd.Cmd<Msg>, Action[]] => {
+): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
     case "ClickedChat":
       const userIds = [...Object.values(model.selected), currentUserId]
 
-      const action: Action = [
-        "Store",
-        ["Conversation", ["FindOneElseInsert", { userIds }]],
-      ]
+      const action: OutAction =
+        ['Chat', ["Conversation", ["FindOneElseInsert", { userIds }]]]
 
       return [model, Cmd.None, [action]]
 
@@ -89,7 +88,7 @@ export const update = (
           highlightedIndex: "None",
         },
         Cmd.None,
-        [["Store", ["Profile", ["Search", { searchText }]]]],
+        [["Profile", ["Search", { searchText }]]]
       ]
 
     case "ClickedSelectedDelete":
@@ -97,7 +96,7 @@ export const update = (
       return [{ ...model, selected: selectedNew }, Cmd.None, []]
 
     case "PressedKeyDown":
-      const profiles = Store.Profile.toSearch(model.searchText, store)
+      const profiles = ProfileStore.toSearch(model.searchText, profileStore)
 
       switch (msg[1]) {
         case "ArrowDown":
@@ -156,7 +155,7 @@ export const update = (
 const toggleSelected = (
   userId: UserId.UserId,
   model: Model,
-): [Model, Cmd.Cmd<Msg>, Action[]] => {
+): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   if (userId in model.selected) {
     return [
       {
@@ -208,27 +207,29 @@ export const subscriptions = (_model: Model): Sub.Sub<Msg> => {
 //
 
 export const View = ({
-  store,
+  chatStore,
   currentUserProfile,
   dispatch,
   model,
+  profileStore,
 }: {
-  store: Store.Model
-  currentUserProfile: Store.Profile.Profile
+  profileStore: ProfileStore.Model,
+  chatStore: ChatStore.Model
+  currentUserProfile: ProfileStore.Profile
   model: Model
   dispatch: (msg: Msg) => void
 }) => {
-  const mutation = store.mutations.Conversation.FindElseInsert
+  const mutation = chatStore.mutations.Conversation.FindElseInsert
 
   const searchQuery =
-    store.queries.Profile.Search[model.searchText] ?? RemoteData.NotAsked
+    profileStore.search[model.searchText] ?? RemoteData.NotAsked
 
-  const profiles = Store.Profile.toSearch(model.searchText, store).filter(
+  const profiles = ProfileStore.toSearch(model.searchText, profileStore).filter(
     (profile) => profile.userId !== currentUserProfile.userId,
   )
 
   const selected = Object.values(model.selected).flatMap((userId) => {
-    const profile = store.Profile[userId]
+    const profile = profileStore.profiles[userId]
     if (profile) {
       return [profile]
     }
@@ -354,7 +355,7 @@ const SearchResultListItem = ({
 }: {
   highlighted: boolean
   selected: boolean
-  profile: Store.Profile.Profile
+  profile: ProfileStore.Profile
   onClick: () => void
 }) => {
   const ref = useRef<HTMLDivElement | null>(null)

@@ -1,5 +1,6 @@
 import * as Route from "../Route"
-import * as Store from "../Store"
+import * as ProfileStore from "./Profile.Store"
+import * as ChatStore from "../Chat/Chat.Store"
 import * as UI from "../UI"
 import { Cmd, Sub } from "../Core"
 import { UserId } from "../Data"
@@ -21,7 +22,7 @@ export const init = ({
 }): [Model, Cmd.Cmd<Msg>, OutAction[]] => [
     {},
     Cmd.None,
-    [["Store", ["Profile", ["FindMany", { userIds: [userId] }]]]],
+    [["Profile", ["FindMany", { userIds: [userId] }]]],
   ]
 
 //
@@ -38,7 +39,7 @@ export type Msg =
   | ["ClickedEditProfile"]
   | ["ClickedAccountMenu"]
 
-type OutAction = Store.Action
+type OutAction = ProfileStore.Action | ChatStore.Action
 
 export const update = (
   {
@@ -64,10 +65,9 @@ export const update = (
     case "ClickedSendMessage": {
       const userIds = [userId, currentUserId]
 
-      const action: OutAction = [
-        "Store",
-        ["Conversation", ["FindOneElseInsert", { userIds }]],
-      ]
+      const action: OutAction =
+        ['Chat', ["Conversation", ["FindOneElseInsert", { userIds }]]]
+
 
       return [model, Cmd.None, [action]]
     }
@@ -95,18 +95,20 @@ export const subscriptions = (_: Model): Sub.Sub<Msg> => {
 //
 
 export const View = ({
-  store,
+  profileStore,
+  chatStore,
   currentUserId,
   userId,
   dispatch,
 }: {
-  store: Store.Model
+  chatStore: ChatStore.Model
+  profileStore: ProfileStore.Model
   currentUserId: UserId.UserId
   userId: UserId.UserId
   model: Model
   dispatch: (msg: Msg) => void
 }) => {
-  const profile = store.Profile[userId]
+  const profile = profileStore.profiles[userId]
 
   if (!profile) {
     return (
@@ -205,7 +207,7 @@ export const View = ({
           size="small"
           fullWidth
           loading={
-            store.mutations.Conversation.FindElseInsert.type === "Loading"
+            chatStore.mutations.Conversation.FindElseInsert.type === "Loading"
           }
           variant="contained"
           onClick={() => dispatch(["ClickedSendMessage"])}

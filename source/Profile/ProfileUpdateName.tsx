@@ -1,7 +1,7 @@
 import { Cmd } from "../Core"
 import { UserId } from "../Data"
 import * as Route from "../Route"
-import * as Store from "../Store"
+import * as ProfileStore from "./Profile.Store"
 import * as UI from "../UI"
 
 //
@@ -33,7 +33,7 @@ export type Msg =
   | ["ClickedCancel"]
   | ["ClickedSubmit"]
 
-export type OutAction = Store.Action
+export type OutAction = ProfileStore.Action
 
 export const update = (
   { userId }: { userId: UserId.UserId },
@@ -48,12 +48,7 @@ export const update = (
       return [
         model,
         Route.back,
-        [
-          [
-            "Store",
-            ["Profile", ["Edit", { userId, edits: { name: model.name } }]],
-          ],
-        ],
+        [["Profile", ["EditOne", { userId, edits: { name: model.name } }]]],
       ]
 
     case "ClickedCancel":

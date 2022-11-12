@@ -1,5 +1,5 @@
 import { UserId } from "../../Data"
-import * as Store from "../../Store"
+import * as ProfileStore from "../../Profile/Profile.Store"
 import * as UI from "../../UI"
 import { bannerArtAspectRatio } from "../Views"
 import { gameTheme, PlayerTypeIcon } from "./TicTacToe"
@@ -57,7 +57,7 @@ type Player =
   | { type: "User", userId?: UserId.UserId }
   | { type: "Bot", label: string }
 
-export const VersusHeader = ({ X, O, store }: { X: Player, O: Player, store: Store.Model }) => {
+export const VersusHeader = ({ X, O, store }: { X: Player, O: Player, store: ProfileStore.Model }) => {
   const largeIconSx = { width: 72, height: 72 }
 
   return (
@@ -111,7 +111,7 @@ const ViewHeaderPlayerSlot = ({
   player,
 }: {
   player: Player
-  store: Store.Model
+  store: ProfileStore.Model
 }) => {
   const iconSx = { width: 42, height: 42 }
   const wrapperSx: UI.Sx = { display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", overflow: "hidden", flexWrap: "none", textOverflow: "ellipsis", width: '100%' }
@@ -146,7 +146,7 @@ const ViewHeaderPlayerSlot = ({
 
   return (
     <UI.Box sx={wrapperSx}>
-      <UI.Avatar src={store.Profile[player.userId]?.avatarUrl} sx={{ ...iconSx }}>
+      <UI.Avatar src={store.profiles[player.userId]?.avatarUrl} sx={{ ...iconSx }}>
         <UI.Icons.QuestionMark />
       </UI.Avatar>
       <UI.Typography
@@ -156,7 +156,7 @@ const ViewHeaderPlayerSlot = ({
         align="center"
         sx={{ width: "100%", textOverflow: "ellipsis" }}
       >
-        {store.Profile[player.userId]?.username ?? "..."}
+        {store.profiles[player.userId]?.username ?? "..."}
       </UI.Typography>
     </UI.Box>
   )

@@ -1,6 +1,6 @@
 import { Cmd } from "../../Core"
 import { UserId } from "../../Data"
-import * as Store from "../../Store"
+import * as Store from "../../Profile/Profile.Store"
 import * as Snackbar from "../../Snackbar"
 import * as UI from "../../UI"
 import { bannerArtAspectRatio, GameModeCardGrid } from "../Views"
@@ -16,8 +16,8 @@ import {
   ToBackend,
   ToFrontend
 } from "./ConnectFour.Types"
-import * as UserVsUser from "./UserVsUser/UserVsUser.Frontend"
 import * as UserVsBot from "./UserVsBot/UserVsBot.Frontend"
+import * as UserVsUser from "./UserVsUser/UserVsUser.Frontend"
 import { PlayerIcon } from "./Views"
 
 //

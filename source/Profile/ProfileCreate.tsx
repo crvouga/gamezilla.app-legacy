@@ -1,7 +1,7 @@
 import { Cmd } from "../Core"
 import { ProfileAvatar, UserId, Username } from "../Data"
 import * as Route from "../Route"
-import * as Store from "../Store"
+import * as ProfileStore from "../Profile/Profile.Store"
 import * as UI from "../UI"
 
 //
@@ -45,7 +45,7 @@ export type Msg =
   | ["ClickedSubmit"]
   | ["ClickedLogout"]
 
-export type OutAction = Store.Action
+export type OutAction = ProfileStore.Action
 
 export const update = (
   { userId }: { userId: UserId.UserId },
@@ -69,7 +69,7 @@ export const update = (
         return [model, Cmd.None, []]
       }
 
-      const profile: Store.Profile.Profile = {
+      const profile: ProfileStore.Profile = {
         name: "",
         username: username.value,
         userId,
@@ -80,7 +80,7 @@ export const update = (
       return [
         model,
         Cmd.None,
-        [["Store", ["Profile", ["Create", { userId, profile }]]]],
+        [["Profile", ["CreateOne", { profile }]]],
       ]
 
     case "ClickedLogout":

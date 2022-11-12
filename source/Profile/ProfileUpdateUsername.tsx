@@ -1,7 +1,7 @@
 import { Cmd } from "../Core"
 import { UserId, Username } from "../Data"
 import * as Route from "../Route"
-import * as Store from "../Store"
+import * as ProfileStore from "./Profile.Store"
 import * as UI from "../UI"
 
 //
@@ -33,7 +33,7 @@ export type Msg =
   | ["ClickedSubmit"]
   | ["InputtedUsername", string]
 
-type OutAction = Store.Action
+type OutAction = ProfileStore.Action
 
 export const update = (
   { userId }: { userId: UserId.UserId },
@@ -51,22 +51,13 @@ export const update = (
       const username = Username.decode(model.username)
 
       if (username.type === "Err") {
-        // todo handle validation error
         return [model, Cmd.None, []]
       }
 
       return [
         model,
         Route.back,
-        [
-          [
-            "Store",
-            [
-              "Profile",
-              ["Edit", { userId, edits: { username: username.value } }],
-            ],
-          ],
-        ],
+        [["Profile", ["EditOne", { userId, edits: { username: username.value } }]]],
       ]
     }
   }

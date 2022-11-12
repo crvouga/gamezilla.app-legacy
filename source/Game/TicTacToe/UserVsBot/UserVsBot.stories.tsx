@@ -1,47 +1,13 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react"
 import { p } from "../../../Core"
-import { ProfileAvatar, UserId, Username } from "../../../Data"
-import * as Store from "../../../Store"
+import { currentUserId, profileStore, userB } from "../../../test-data"
 import * as UI from "../../../UI"
 import { emptyBoard, setSlot } from "../TicTacToe"
 import { View } from "./UserVsBot.Frontend"
 
-//
-//
-//
-// Data
-//
-//
-//
 
-const userA: Store.Profile.Profile = {
-  userId: UserId.generate(),
-  avatarUrl: ProfileAvatar.toUrl({ seed: "123", style: "big-ears-neutral" }),
-  name: "Fred",
-  themeMode: "Light",
-  username: Username.fromString("fred123"),
-}
 
-const userB: Store.Profile.Profile = {
-  userId: UserId.generate(),
-  avatarUrl: ProfileAvatar.toUrl({ seed: "abc", style: "big-ears-neutral" }),
-  name: "Bob",
-  themeMode: "Light",
-  username: Username.fromString("bob123"),
-}
 
-const userC: Store.Profile.Profile = {
-  userId: UserId.generate(),
-  avatarUrl: ProfileAvatar.toUrl({
-    seed: "someUser",
-    style: "big-ears-neutral",
-  }),
-  name: "SomeUser",
-  themeMode: "Light",
-  username: Username.fromString("SomeUser"),
-}
-
-const currentUserId = userA.userId
 
 //
 //
@@ -59,15 +25,7 @@ export default {
     dispatch: () => { },
     roomComponent: <>room</>,
     goHome: () => { },
-    // onCloseGame: () => { },
-    store: {
-      ...Store.init,
-      Profile: {
-        [userB.userId]: userB,
-        [userA.userId]: userA,
-        [userC.userId]: userC,
-      },
-    },
+    store: profileStore,
   },
 } as ComponentMeta<typeof View>
 

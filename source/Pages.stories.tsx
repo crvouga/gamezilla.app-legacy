@@ -1,16 +1,16 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react"
-import { store, userA } from "./test-data"
-import * as UI from "./UI"
-import { initReady, ViewReady } from "./Pages"
 import * as GameRoom from "./Game/GameRoom.Frontend"
+import { initReady, ViewReady } from "./Pages"
 import * as Party from "./Party/Party.Frontend"
+import { chatStore, userA } from "./test-data"
+import * as UI from "./UI"
 
 export default {
     title: "Page/Ready",
     component: ViewReady,
     args: {
         dispatch: () => { },
-        store: store,
+        chatStore: chatStore,
         profile: userA,
         gameRoom: GameRoom.init[0],
         party: Party.init()[0],

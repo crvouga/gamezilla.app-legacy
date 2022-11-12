@@ -1,8 +1,8 @@
 import { Browser, Cmd, exhaustive, p } from "../Core"
 import { EmailAddress, Password } from "../Data"
 import * as Route from "../Route"
-import * as Store from "../Store"
 import * as UI from "../UI"
+import * as AccountStore from "./Account.Store"
 
 //
 //
@@ -67,7 +67,7 @@ export type Msg =
   | ["ClickedCreateAccount"]
   | ["InputtedEmailAddress", string]
   | ["InputtedPassword", string]
-  | ["CreateAccount_Done", Store.Account.CreateResult]
+  | ["CreateAccount_Done", AccountStore.CreateResult]
   | ["Focus_Done", Browser.FocusResult]
 
 const emailAddressId = "emailAddress"
@@ -146,8 +146,9 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 
       return [
         { ...model, submission: { type: "Loading" } },
+        // Cmd.None,
         p(
-          Store.Account.createWithEmailAndPassword({
+          AccountStore.createWithEmailAndPassword({
             emailAddress: emailAddress.value,
             password: password.value,
           }),

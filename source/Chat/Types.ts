@@ -1,5 +1,5 @@
-import { RemoteData, Unit } from "../Core"
-import { UserId, Username } from "../Data"
+import { RemoteData } from "../Core"
+import { UserId } from "../Data"
 
 //
 //
@@ -10,17 +10,14 @@ import { UserId, Username } from "../Data"
 //
 
 export type Store = {
-  Profile: {
-    [id: UserId.UserId]: Profile
-  }
   Conversation: {
     [id: string]: Conversation
   }
   Message: {
     [id: string]: Message
   }
-  ProfilesConversations: {
-    [id: string]: ProfilesConversations
+  UsersConversations: {
+    [id: string]: UsersConversations
   }
   queries: Queries
   mutations: Mutations
@@ -33,20 +30,11 @@ export type Store = {
 //
 //
 //
-
-export type Profile = {
-  userId: UserId.UserId
-  username: Username.Username
-  name: string
-  avatarUrl: string
-  themeMode: "Light" | "Dark" | "System"
-}
-
-export type ProfilesConversations = {
+export type UsersConversations = {
   userId: UserId.UserId
   conversationId: string
 }
-export const toProfilesConversationsId = ({
+export const toUsersConversationsId = ({
   userId,
   conversationId,
 }: {
@@ -75,37 +63,8 @@ export type Message = {
 //
 //
 
-type FindManyKey = string & { _opaque: "FindManyKey" }
-
-const seperator = ","
-
-const isFindManyKey = (key: unknown): key is FindManyKey => {
-  return (
-    typeof key === "string" &&
-    key.split(seperator).every((item) => UserId.is(item))
-  )
-}
-
-export const toFindManyKey = (userIds: UserId.UserId[]): FindManyKey => {
-  const key = userIds.sort().join(seperator)
-
-  if (isFindManyKey(key)) {
-    return key
-  }
-
-  throw new Error("Failed to create find many key")
-}
 
 export type Queries = {
-  Profile: {
-    FindMany: {
-      [key: FindManyKey]: RemoteData.RemoteData<Problem, UserId.UserId[]>
-    }
-    Search: {
-      [searchText: string]: RemoteData.RemoteData<Problem, UserId.UserId[]>
-    }
-  }
-
   Conversation: {
     FindOne: {
       [id: string]: RemoteData.RemoteData<
@@ -113,7 +72,6 @@ export type Queries = {
         {
           conversation: string
           message: string[]
-          profile: string[]
         }
       >
     }
@@ -121,9 +79,8 @@ export type Queries = {
       [userId: UserId.UserId]: RemoteData.RemoteData<
         Problem,
         {
-          profile: string[]
           conversation: string[]
-          profilesConversations: string[]
+          usersConversations: string[]
         }
       >
     }
@@ -139,17 +96,6 @@ export type Queries = {
 //
 
 export type Mutations = {
-  Profile: {
-    Edit: {
-      [userId: UserId.UserId]: RemoteData.RemoteData<Problem, UserId.UserId>
-    }
-    DeleteForever: {
-      [userId: UserId.UserId]: RemoteData.RemoteData<Problem, Unit>
-    }
-    Create: {
-      [userId: UserId.UserId]: RemoteData.RemoteData<Problem, UserId.UserId>
-    }
-  }
   Conversation: {
     FindElseInsert: RemoteData.RemoteData<Problem, string>
   }
@@ -182,28 +128,18 @@ export type Problem = string
 //
 
 export const initialStore: Store = {
-  Profile: {},
   Conversation: {},
-  ProfilesConversations: {},
+  UsersConversations: {},
   Message: {},
   queries: {
     Conversation: {
       FindOne: {},
       FindManyByUserId: {},
     },
-    Profile: {
-      FindMany: {},
-      Search: {},
-    },
   },
   mutations: {
     Conversation: {
       FindElseInsert: RemoteData.NotAsked,
-    },
-    Profile: {
-      Create: {},
-      Edit: {},
-      DeleteForever: {},
     },
     Message: {
       Send: {},

@@ -1,6 +1,6 @@
 import { Cmd, exhaustive, Sub } from "../../../Core";
 import { UserId } from "../../../Data";
-import * as Store from "../../../Store";
+import * as ProfileStore from "../../../Profile/Profile.Store";
 import * as Snackbar from "../../../Snackbar";
 import * as UI from "../../../UI";
 import { ColumnIndex, gameTheme, PlayerType, playerTypeToColor, toTurn, ViewColumns } from "../ConnectFour";
@@ -160,7 +160,7 @@ export const subscriptions = (_model: Model): Sub.Sub<Msg> => {
 // 
 
 
-export const View = ({ currentUserId, model, dispatch, store, roomComponent, goBack, goHome }: { model: Model, store: Store.Model; dispatch: (msg: Msg) => void, roomComponent: UI.ViewNode, goBack: () => void, goHome: () => void, currentUserId: UserId.UserId }) => {
+export const View = ({ currentUserId, model, dispatch, store, roomComponent, goBack, goHome }: { model: Model, store: ProfileStore.Model; dispatch: (msg: Msg) => void, roomComponent: UI.ViewNode, goBack: () => void, goHome: () => void, currentUserId: UserId.UserId }) => {
     const homeButton = (
         <UI.IconButton sx={{ marginLeft: -1 }} onClick={goHome}>
             <UI.Icons.Home />
@@ -231,7 +231,7 @@ const ViewGame = ({
     ghostIndex
 }: {
     model: GameModel;
-    store: Store.Model;
+    store: ProfileStore.Model;
     dispatch: (msg: Msg) => void;
     roomComponent: UI.ViewNode;
     homeButton: UI.ViewNode;
@@ -294,7 +294,7 @@ const ViewGameOver = ({
     homeButton,
 }: {
     model: GameOverModel,
-    store: Store.Model;
+    store: ProfileStore.Model;
     dispatch: (msg: Msg) => void,
     roomComponent: UI.ViewNode,
     homeButton: UI.ViewNode,
@@ -360,7 +360,7 @@ const ViewGameOver = ({
     )
 }
 
-const ViewGameOverMessage = ({ currentUserId, model, store, dispatch }: { currentUserId: UserId.UserId, model: GameOverModel, store: Store.Model, dispatch: (msg: Msg) => void }) => {
+const ViewGameOverMessage = ({ currentUserId, model, store, dispatch }: { currentUserId: UserId.UserId, model: GameOverModel, store: ProfileStore.Model, dispatch: (msg: Msg) => void }) => {
     const size = { width: 84, height: 84 }
 
     const currentPlayerType = toPlayerType(currentUserId, model)
@@ -411,7 +411,7 @@ const ViewGameOverMessage = ({ currentUserId, model, store, dispatch }: { curren
                 <>
                     <UI.Box sx={{ display: 'flex', alignItems: 'center', width: "100%", justifyContent: 'center' }}>
                         <PlayerIcon sx={{ ...size, marginRight: 2 }} playerType={winner} />
-                        <UI.Avatar sx={{ ...size }} src={store.Profile[model[winner]]?.avatarUrl} />
+                        <UI.Avatar sx={{ ...size }} src={store.profiles[model[winner]]?.avatarUrl} />
                     </UI.Box>
                     <UI.Typography sx={{ fontSize: 50 }}>
                         Winner
@@ -442,7 +442,7 @@ const ViewGameOverMessage = ({ currentUserId, model, store, dispatch }: { curren
                 <>
                     <UI.Box sx={{ display: 'flex', alignItems: 'center', width: "100%", justifyContent: 'center' }}>
                         <PlayerIcon sx={{ ...size, marginRight: 2 }} playerType={winner} />
-                        <UI.Avatar sx={{ ...size }} src={store.Profile[model[winner]]?.avatarUrl} />
+                        <UI.Avatar sx={{ ...size }} src={store.profiles[model[winner]]?.avatarUrl} />
                     </UI.Box>
                     <UI.Typography sx={{ fontSize: 50 }}>
                         Winner
@@ -464,7 +464,7 @@ const ViewGameOverMessage = ({ currentUserId, model, store, dispatch }: { curren
     return <></>
 }
 
-const ViewSetup = ({ model, store, dispatch, currentUserId, homeButton, roomComponent, goBack }: { goBack: () => void, currentUserId: UserId.UserId, model: SetupModel, store: Store.Model, dispatch: (msg: Msg) => void, homeButton: UI.ViewNode, roomComponent: UI.ViewNode }) => {
+const ViewSetup = ({ model, store, dispatch, currentUserId, homeButton, roomComponent, goBack }: { goBack: () => void, currentUserId: UserId.UserId, model: SetupModel, store: ProfileStore.Model, dispatch: (msg: Msg) => void, homeButton: UI.ViewNode, roomComponent: UI.ViewNode }) => {
     const startGameResult = handle(['StartGame', { userId: currentUserId }], model)
     const inputMoveTimeLimitResult = handle(['InputMoveTimeLimit', { moveTimeLimit: model.moveTimeLimit, userId: currentUserId }], model)
 
@@ -538,14 +538,14 @@ const ViewSetup = ({ model, store, dispatch, currentUserId, homeButton, roomComp
 
 }
 
-const ViewGamePlayerSlot = ({ model, playerType, store }: { model: GameModel | GameOverModel, playerType: PlayerType, store: Store.Model }) => {
+const ViewGamePlayerSlot = ({ model, playerType, store }: { model: GameModel | GameOverModel, playerType: PlayerType, store: ProfileStore.Model }) => {
     const size = { width: 32, height: 32, }
     return (
         <UI.Box sx={{ display: 'flex', alignItems: 'center', flex: 1, overflow: "hidden" }}>
             <PlayerIcon playerType={playerType} sx={{ ...size, marginRight: 1 }} />
-            <UI.Avatar src={store.Profile[model[playerType]]?.avatarUrl} sx={{ ...size, marginRight: 1 }} />
+            <UI.Avatar src={store.profiles[model[playerType]]?.avatarUrl} sx={{ ...size, marginRight: 1 }} />
             <UI.Typography noWrap>
-                {store.Profile[model[playerType]]?.username ?? "..."}
+                {store.profiles[model[playerType]]?.username ?? "..."}
             </UI.Typography>
             {model.type === 'Game' && toTurn(model.columns) === playerType && (
                 <UI.Typography sx={{ marginLeft: 1, fontSize: 20 }}>
@@ -557,7 +557,7 @@ const ViewGamePlayerSlot = ({ model, playerType, store }: { model: GameModel | G
 }
 
 
-const ViewSetupPlayerSlot = ({ dispatch, userId, store, currentUserId, playerType }: { dispatch: (msg: Msg) => void, playerType: PlayerType, userId: "None" | UserId.UserId, store: Store.Model, currentUserId: UserId.UserId, }) => {
+const ViewSetupPlayerSlot = ({ dispatch, userId, store, currentUserId, playerType }: { dispatch: (msg: Msg) => void, playerType: PlayerType, userId: "None" | UserId.UserId, store: ProfileStore.Model, currentUserId: UserId.UserId, }) => {
     return (
         <UI.Box sx={{ paddingX: 2, display: 'flex', paddingBottom: 2, alignItems: 'center' }}>
             <PlayerIcon playerType={playerType} sx={{ width: 42, height: 42, marginRight: 1 }} />
@@ -567,9 +567,9 @@ const ViewSetupPlayerSlot = ({ dispatch, userId, store, currentUserId, playerTyp
                 </UI.Button>
             ) : (
                 <UI.Box sx={{ display: "flex", alignItems: "center", overflow: "hidden", flex: 1 }}>
-                    <UI.Avatar src={store.Profile[userId]?.avatarUrl} sx={{ marginRight: 1 }} />
+                    <UI.Avatar src={store.profiles[userId]?.avatarUrl} sx={{ marginRight: 1 }} />
                     <UI.Typography noWrap sx={{ flex: 1 }}>
-                        {store.Profile[userId]?.username ?? "..."}
+                        {store.profiles[userId]?.username ?? "..."}
                     </UI.Typography>
                     {userId === currentUserId && (
                         <UI.Button onClick={() => dispatch(['StopPlaying', { userId: currentUserId, }])}>
@@ -582,7 +582,7 @@ const ViewSetupPlayerSlot = ({ dispatch, userId, store, currentUserId, playerTyp
     )
 }
 
-const ViewVersusHeader = ({ model, store, }: { model: SetupModel, store: Store.Model }) => {
+const ViewVersusHeader = ({ model, store, }: { model: SetupModel, store: ProfileStore.Model }) => {
     const avatarSx: UI.Sx = {
         // width: 36,
         // height: 36,
@@ -607,11 +607,11 @@ const ViewVersusHeader = ({ model, store, }: { model: SetupModel, store: Store.M
             }}
         >
             <UI.Box sx={{ width: 72, overflow: "hidden", textAlign: "center" }}>
-                <UI.Avatar sx={{ ...avatarSx, marginX: "auto" }} src={model.PlayerOne === 'None' ? "" : store.Profile[model.PlayerOne]?.avatarUrl} >
+                <UI.Avatar sx={{ ...avatarSx, marginX: "auto" }} src={model.PlayerOne === 'None' ? "" : store.profiles[model.PlayerOne]?.avatarUrl} >
                     <UI.Icons.QuestionMark />
                 </UI.Avatar>
                 <UI.Typography color="#fff" align='center' noWrap>
-                    {model.PlayerOne === 'None' ? "?" : store.Profile[model.PlayerOne]?.username ?? "..."}
+                    {model.PlayerOne === 'None' ? "?" : store.profiles[model.PlayerOne]?.username ?? "..."}
                 </UI.Typography>
             </UI.Box>
             <PlayerOneIcon sx={{ ...iconSx }} />
@@ -620,11 +620,11 @@ const ViewVersusHeader = ({ model, store, }: { model: SetupModel, store: Store.M
             </UI.Typography>
             <PlayerTwoIcon sx={{ ...iconSx }} />
             <UI.Box sx={{ width: 72, overflow: "hidden", textAlign: "center" }}>
-                <UI.Avatar sx={{ ...avatarSx, marginX: "auto" }} src={model.PlayerTwo === 'None' ? "" : store.Profile[model.PlayerTwo]?.avatarUrl} >
+                <UI.Avatar sx={{ ...avatarSx, marginX: "auto" }} src={model.PlayerTwo === 'None' ? "" : store.profiles[model.PlayerTwo]?.avatarUrl} >
                     <UI.Icons.QuestionMark />
                 </UI.Avatar>
                 <UI.Typography color="#fff" align='center' noWrap>
-                    {model.PlayerTwo === 'None' ? "?" : store.Profile[model.PlayerTwo]?.username ?? "..."}
+                    {model.PlayerTwo === 'None' ? "?" : store.profiles[model.PlayerTwo]?.username ?? "..."}
                 </UI.Typography>
             </UI.Box>
         </UI.Box>

@@ -1,8 +1,8 @@
-import * as Route from "../Route"
-import * as Store from "../Store"
-import * as UI from "../UI"
 import { Cmd, RemoteData } from "../Core"
 import { UserId } from "../Data"
+import * as ProfileStore from "../Profile/Profile.Store"
+import * as Route from "../Route"
+import * as UI from "../UI"
 
 //
 //
@@ -30,7 +30,7 @@ export type Msg =
   | ["ClickedDelete"]
   | ["ClickedCloseFailure"]
 
-export type OutAction = Store.Action
+export type OutAction = ProfileStore.Action
 
 export const update = (
   { userId }: { userId: UserId.UserId },
@@ -48,11 +48,11 @@ export const update = (
       return [
         model,
         Cmd.None,
-        [["Store", ["Profile", ["DeleteForever", { userId }]]]],
+        [["Profile", ["DeleteForever", { userId }]]],
       ]
 
     case "ClickedCloseFailure":
-      return [model, Cmd.None, [["Store", ["Profile", ["ResetMutations"]]]]]
+      return [model, Cmd.None, [["Profile", ["ResetMutations"]]]]
   }
 }
 
@@ -65,17 +65,17 @@ export const update = (
 //
 
 export const View = ({
-  store,
-  profileId,
+  profileStore,
+  userId,
   dispatch,
 }: {
-  store: Store.Model
-  profileId: UserId.UserId
+  profileStore: ProfileStore.Model
+  userId: UserId.UserId
   model: Model
   dispatch: (msg: Msg) => void
 }) => {
   const mutation =
-    store.mutations.Profile.DeleteForever[profileId] ?? RemoteData.NotAsked
+    profileStore.deleteForever[userId] ?? RemoteData.NotAsked
 
   switch (mutation.type) {
     case "Loading":

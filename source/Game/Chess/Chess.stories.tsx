@@ -1,6 +1,6 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react"
 import { RemoteData } from "../../Core"
-import { currentUserId, store } from "../../test-data"
+import { currentUserId, profileStore } from "../../test-data"
 import * as UI from "../../UI"
 import { View } from "./Chess.Frontend"
 
@@ -12,7 +12,7 @@ export default {
     dispatch: () => { },
     roomComponent: <>room</>,
     goHome: () => { },
-    store: store,
+    profileStore: profileStore,
   },
 } as ComponentMeta<typeof View>
 

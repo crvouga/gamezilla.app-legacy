@@ -1,5 +1,5 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react"
-import { store, userA, userB } from '../../../test-data'
+import { profileStore, userA, userB } from '../../../test-data'
 import { leftAndRightDiagonal } from '../test-data'
 import * as UI from "../../../UI"
 import { emptyColumns } from "../ConnectFour"
@@ -12,7 +12,7 @@ export default {
     component: View,
     args: {
         currentUserId: currentUserId,
-        store: store,
+        store: profileStore,
         roomComponent: <>room</>,
         goHome: () => { },
         dispatch: () => { },

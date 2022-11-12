@@ -1,8 +1,9 @@
 import { Cmd, RemoteData } from "../Core"
 import { UserId } from "../Data"
+import * as ProfileStore from "../Profile/Profile.Store"
 import * as Route from "../Route"
-import * as Store from "../Store"
 import * as UI from "../UI"
+import * as ChatStore from "./Chat.Store"
 
 //
 //
@@ -22,7 +23,7 @@ export const init = ({
   return [
     {},
     Cmd.None,
-    [["Store", ["Conversation", ["FindManyByUserId", { userId }]]]],
+    [["Chat", ["Conversation", ["FindManyByUserId", { userId }]]]],
   ]
 }
 
@@ -39,7 +40,7 @@ export type Msg =
   | ["ClickedSendMessage"]
   | ["ClickedConversationItem", { conversationId: string }]
 
-type OutAction = Store.Action
+type OutAction = ChatStore.Action
 
 export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
@@ -63,29 +64,38 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 //
 
 export const View = ({
-  store,
-  profile,
+  chatStore,
+  profileStore,
   dispatch,
+  currentUserId,
 }: {
-  store: Store.Model
-  profile: { userId: UserId.UserId }
+  chatStore: ChatStore.Model
+  profileStore: ProfileStore.Model
+  currentUserId: UserId.UserId,
   model: Model
   dispatch: (msg: Msg) => void
 }) => {
   const query =
-    store.queries.Conversation.FindManyByUserId[profile.userId] ??
+    chatStore.queries.Conversation.FindManyByUserId[currentUserId] ??
     RemoteData.NotAsked
 
-  const conversations = Object.values(store.ProfilesConversations)
-    .filter((item) => item.userId === profile.userId)
-    .map((item) =>
-      Store.Conversation.toConversation(item.conversationId, store),
-    )
-    .map((item) => ({
-      ...item,
-      profiles: item.profiles.filter((item) => item.userId !== profile.userId),
-    }))
-    .filter((item) => item.profiles.length > 0)
+  const conversations = Object.values(chatStore.UsersConversations)
+    .filter((item) => item.userId === currentUserId)
+    .flatMap((item) => {
+      const profiles =
+        Object.values(profileStore.profiles)
+          .filter(profile => profile.userId === item.userId)
+          .filter(profile => profile.userId !== currentUserId)
+
+      if (profiles.length === 0) {
+        return []
+      }
+
+      return [{
+        ...item,
+        profiles: profiles
+      }]
+    })
 
   return (
     <UI.FillBox>

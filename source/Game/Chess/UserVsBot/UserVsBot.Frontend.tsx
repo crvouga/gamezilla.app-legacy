@@ -1,7 +1,7 @@
 import { Audio, Cmd, exhaustive, Option, Sub, t } from "../../../Core"
 import { UserId } from "../../../Data"
 import * as Snackbar from "../../../Snackbar"
-import * as Store from "../../../Store"
+import * as ProfileStore from "../../../Profile/Profile.Store"
 import * as UI from "../../../UI"
 import * as Board from "../Board"
 import * as Sounds from "../Sounds"
@@ -300,7 +300,7 @@ export const View = ({
   roomComponent,
   onClose,
 }: {
-  store: Store.Model
+  store: ProfileStore.Model
   currentUserId: UserId.UserId
   model: Model
   dispatch: (msg: Msg) => void
@@ -370,11 +370,11 @@ export const View = ({
             <UI.Box sx={{ display: "flex", alignItems: "center", paddingX: 2 }}>
               <UI.Avatar
                 sx={{ marginRight: 1 }}
-                src={store.Profile[model.sharedModel.userId]?.avatarUrl}
+                src={store.profiles[model.sharedModel.userId]?.avatarUrl}
               />
 
               <UI.Typography sx={{ flex: 1 }} noWrap>
-                {store.Profile[model.sharedModel.userId]?.username ?? "..."}
+                {store.profiles[model.sharedModel.userId]?.username ?? "..."}
               </UI.Typography>
 
               {model.sharedModel.userId === currentUserId && (
@@ -530,12 +530,12 @@ export const View = ({
   const userSlot = (
     <UI.Box sx={{ paddingX: 2, display: "flex", alignItems: "center" }}>
       <UI.Avatar
-        src={store.Profile[model.sharedModel.userId]?.avatarUrl}
+        src={store.profiles[model.sharedModel.userId]?.avatarUrl}
         sx={{ marginRight: 2 }}
       />
 
       <UI.Typography variant="h6">
-        {store.Profile[model.sharedModel.userId]?.username}
+        {store.profiles[model.sharedModel.userId]?.username}
       </UI.Typography>
     </UI.Box>
   )
