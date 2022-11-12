@@ -22,3 +22,4 @@ const Template: ComponentStory<typeof ViewBoard> = (args) => {
 
 
 export const Empty = Template.bind({})
+
