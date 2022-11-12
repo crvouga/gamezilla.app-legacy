@@ -1,6 +1,6 @@
 import { UserId } from "../Data/UserId"
 import * as UI from "../UI"
-import * as Store from "../Store"
+import * as ProfileStore from "../Profile/Profile.Store"
 
 export const bannerArtAspectRatio = Math.pow(3 / 4, 4)
 
@@ -104,7 +104,7 @@ export const VersusHeader = (
     store,
     sx
   }: {
-    store: Store.Model;
+    store: ProfileStore.Model;
     background: UI.ViewNode;
     renderLeftIcon: (sx: UI.Sx) => UI.ViewNode;
     left: Player;
@@ -172,7 +172,7 @@ export const VersusHeader = (
   )
 }
 
-const VersusHeaderPlayer = ({ player, store }: { player: Player, store: Store.Model }) => {
+const VersusHeaderPlayer = ({ player, store }: { player: Player, store: ProfileStore.Model }) => {
   const sx: UI.Sx = {
     display: 'flex',
     alignItems: "center",
@@ -207,7 +207,7 @@ const VersusHeaderPlayer = ({ player, store }: { player: Player, store: Store.Mo
     }
 
     case 'User': {
-      const profile = store.Profile[player.userId]
+      const profile = store.profiles[player.userId]
       return (
         <UI.Box sx={{ ...sx }}>
           <UI.Avatar sx={{ ...avatarSx, marginX: "auto" }} src={profile?.avatarUrl} />

@@ -8,7 +8,7 @@ import {
 } from "../../Core"
 import { UserId } from "../../Data"
 import * as Snackbar from "../../Snackbar"
-import * as Store from "../../Store"
+import * as ProfileStore from "../../Profile/Profile.Store"
 import * as UI from "../../UI"
 import { GameModeCardGrid } from "../Views"
 import {
@@ -124,7 +124,7 @@ export const updateFromBackend = (
   }: {
     currentUserId: UserId.UserId
     sendToBackend: (msg: ToBackend) => Cmd.Cmd<never>
-    store: Store.Model
+    store: ProfileStore.Model
   },
   msg: ToFrontend,
   model: Model,
@@ -161,7 +161,7 @@ export const updateFromBackend = (
     case "UserVsUser": {
       if (model.mode[0] === "UserVsUser") {
         const [child, cmd, actions] = UserVsUser.updateFromBackend(
-          { currentUserId, store },
+          { currentUserId, profileStore: store },
           msg[1],
           model.mode[1],
         )
@@ -223,7 +223,7 @@ export const View = ({
   goHome,
 }: {
   currentUserId: UserId.UserId
-  store: Store.Model
+  store: ProfileStore.Model
   model: Model
   dispatch: (msg: Msg) => void
   roomComponent: UI.ViewNode

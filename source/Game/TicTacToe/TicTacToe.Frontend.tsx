@@ -1,6 +1,6 @@
 import { Cmd, exhaustive, tagCmd } from "../../Core"
 import { UserId } from "../../Data"
-import * as Store from "../../Store"
+import * as ProfileStore from "../../Profile/Profile.Store"
 import * as Snackbar from "../../Snackbar"
 import * as UI from "../../UI"
 import { GameModeCardGrid } from "../Views"
@@ -39,7 +39,7 @@ export const init: Model = {
 
 export type Msg = FrontendMsg
 
-export type OutAction = Store.Action | Snackbar.Action
+export type OutAction = ProfileStore.Action | Snackbar.Action
 
 export const update = (
   {
@@ -190,7 +190,7 @@ export const View = ({
   roomComponent: roomComponent,
 }: {
   currentUserId: UserId.UserId
-  store: Store.Model
+  store: ProfileStore.Model
   model: Model
   dispatch: (msg: Msg) => void
   goHome: () => void

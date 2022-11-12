@@ -30,6 +30,7 @@
     "twillo",
     "typecheck",
     "Unflip",
+    "Unsend",
     "WASD"
   ] // optional but recommended
 }

@@ -3,7 +3,7 @@ import { Cmd, exhaustive, Keyboard, Option, Result, Sub } from "../../Core"
 import { UserId } from "../../Data"
 import * as Route from "../../Route"
 import * as Snackbar from "../../Snackbar"
-import * as Store from "../../Store"
+import * as ProfileStore from "../../Profile/Profile.Store"
 import * as UI from "../../UI"
 import * as Direction from "./Direction"
 import * as Joystick from "./Joystick"
@@ -201,7 +201,7 @@ export const View = ({
   roomComponent,
 }: {
   currentUserId: UserId.UserId
-  store: Store.Model
+  store: ProfileStore.Model
   model: Model
   dispatch: (msg: Msg) => void
   roomComponent: UI.ViewNode
@@ -258,13 +258,13 @@ export const View = ({
                 <UI.ListItemAvatar>
                   <UI.Avatar
                     src={
-                      store.Profile[model.gameStatus.player.value[1]]?.avatarUrl
+                      store.profiles[model.gameStatus.player.value[1]]?.avatarUrl
                     }
                   />
                 </UI.ListItemAvatar>
                 <UI.ListItemText
                   primary={
-                    store.Profile[model.gameStatus.player.value[1]]?.username
+                    store.profiles[model.gameStatus.player.value[1]]?.username
                   }
                 />
                 <UI.ListItemSecondaryAction>

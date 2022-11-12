@@ -1,6 +1,6 @@
 import { Cmd, Sub } from "../../../Core"
 import { UserId } from "../../../Data"
-import * as Store from "../../../Store"
+import * as ProfileStore from "../../../Profile/Profile.Store"
 import * as Snackbar from "../../../Snackbar"
 import * as UI from "../../../UI"
 import {
@@ -149,7 +149,7 @@ export const View = ({
   currentUserId,
 }: {
   currentUserId: UserId.UserId
-  store: Store.Model
+  store: ProfileStore.Model
   goBack: () => void
   goHome: () => void
   model: Model
@@ -211,12 +211,12 @@ export const View = ({
             ) : (
               <UI.Box sx={{ display: "flex", alignItems: "center" }}>
                 <UI.Avatar
-                  src={store.Profile[model.player]?.avatarUrl}
+                  src={store.profiles[model.player]?.avatarUrl}
                   sx={{ marginRight: 1 }}
                 />
                 <UI.Box sx={{ flex: 1, overflow: "hidden" }}>
                   <UI.Typography noWrap sx={{ textOverflow: "ellipsis" }} >
-                    {store.Profile[model.player]?.username ?? "..."}
+                    {store.profiles[model.player]?.username ?? "..."}
                   </UI.Typography>
                 </UI.Box>
 
@@ -419,7 +419,7 @@ const ViewGameOverMessage = ({
 }: {
   model: GameModel
   currentUserId: UserId.UserId
-  store: Store.Model
+  store: ProfileStore.Model
   gameOver: GameOver | { type: "None" }
 }) => {
   switch (gameOver.type) {
@@ -512,7 +512,7 @@ const ViewGameOverMessage = ({
             {didUserWin ? (
               <UI.Avatar
                 sx={{ marginRight: 2, width: 64, height: 64 }}
-                src={store.Profile[model.player]?.avatarUrl}
+                src={store.profiles[model.player]?.avatarUrl}
               />
             ) : (
               <UI.Icons.SmartToy
@@ -541,7 +541,7 @@ export const ViewPlayerGameSlot = ({
   model,
 }: {
   model: GameModel
-  store: Store.Model
+  store: ProfileStore.Model
   playerType: PlayerType
 }) => {
   const uiTheme = UI.useTheme()
@@ -585,14 +585,14 @@ export const ViewPlayerGameSlot = ({
           {model.userPlayerType === playerType ? (
             <>
               <UI.Avatar
-                src={store.Profile[model.player]?.avatarUrl}
+                src={store.profiles[model.player]?.avatarUrl}
                 sx={{ marginRight: 1, ...iconSize }}
               />
               <UI.Typography
                 noWrap
                 sx={{ flex: 1 }}
               >
-                {store.Profile[model.player]?.username ?? "..."}
+                {store.profiles[model.player]?.username ?? "..."}
               </UI.Typography>
             </>
           ) : (

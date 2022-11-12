@@ -1,7 +1,7 @@
 import { Cmd } from "../Core"
 import { UserId } from "../Data"
 import * as GameRoom from "./GameRoom.Frontend"
-import * as Store from "../Store"
+import * as ProfileStore from "../Profile/Profile.Store"
 
 //
 //
@@ -48,19 +48,19 @@ export const update = (msg: Msg, model: Model): [Model, OutAction[]] => {
 export const View = ({
   currentUserId,
   gameRoom,
-  store,
+  profileStore,
   dispatch,
 }: {
   gameRoom: GameRoom.Model
   currentUserId: UserId.UserId
-  store: Store.Model
+  profileStore: ProfileStore.Model
   model: Model
   dispatch: (msg: Msg) => void
 }) => {
   return (
     <GameRoom.View
       currentUserId={currentUserId}
-      store={store}
+      profileStore={profileStore}
       model={gameRoom}
       dispatch={(msg) => dispatch(["GameRoom", msg])}
     />

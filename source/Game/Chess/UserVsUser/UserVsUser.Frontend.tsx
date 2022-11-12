@@ -1,7 +1,7 @@
 import { Audio, Cmd, exhaustive, Option, p, Sub, t } from "../../../Core"
 import { UserId } from "../../../Data"
 import * as Snackbar from "../../../Snackbar"
-import * as Store from "../../../Store"
+import * as ProfileStore from "../../../Profile/Profile.Store"
 import * as UI from "../../../UI"
 import * as Board from "../Board"
 import * as Clock from "../Clock"
@@ -160,8 +160,11 @@ export const update = (
 export const updateFromBackend = (
   {
     currentUserId,
-    store,
-  }: { currentUserId: UserId.UserId; store: Store.Model },
+    profileStore,
+  }: {
+    currentUserId: UserId.UserId;
+    profileStore: ProfileStore.Model
+  },
   msg: ToFrontend,
   _model: Model,
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
@@ -366,7 +369,7 @@ export const updateFromBackend = (
 
       const sharedModel = result.value
 
-      const username = store.Profile[msg[2].userId]?.username
+      const username = profileStore.profiles[msg[2].userId]?.username
 
       const message = username
         ? `${username} cancelled the game`
@@ -426,7 +429,7 @@ export const View = ({
   goHome,
   onClose,
 }: {
-  store: Store.Model
+  store: ProfileStore.Model
   currentUserId: UserId.UserId
   model: Model
   dispatch: (msg: Msg) => void
@@ -627,11 +630,11 @@ export const View = ({
             }}
           >
             <UI.Avatar
-              src={store.Profile[w]?.avatarUrl}
+              src={store.profiles[w]?.avatarUrl}
               sx={{ width: 80, height: 80, marginBottom: 1 }}
             />
             <UI.Typography variant="h6">
-              {store.Profile[w]?.username ?? "..."}
+              {store.profiles[w]?.username ?? "..."}
             </UI.Typography>
           </UI.Box>
           <UI.Typography
@@ -656,11 +659,11 @@ export const View = ({
             }}
           >
             <UI.Avatar
-              src={store.Profile[b]?.avatarUrl}
+              src={store.profiles[b]?.avatarUrl}
               sx={{ width: 80, height: 80, marginBottom: 1 }}
             />
             <UI.Typography variant="h6">
-              {store.Profile[b]?.username ?? "..."}
+              {store.profiles[b]?.username ?? "..."}
             </UI.Typography>
           </UI.Box>
         </UI.Box>
@@ -728,15 +731,15 @@ export const View = ({
   const turn = Board.toTurn(board)
 
   const whiteSlot: ViewUserPlayerSlotProps = {
-    src: store.Profile[w]?.avatarUrl,
-    username: store.Profile[w]?.username ?? "...",
+    src: store.profiles[w]?.avatarUrl,
+    username: store.profiles[w]?.username ?? "...",
     isActive: turn === "w" && model.sharedModel.type === "Game",
     seconds: Clock.toTime("w", clock),
   }
 
   const blackSlot: ViewUserPlayerSlotProps = {
-    src: store.Profile[b]?.avatarUrl,
-    username: store.Profile[b]?.username ?? "...",
+    src: store.profiles[b]?.avatarUrl,
+    username: store.profiles[b]?.username ?? "...",
     isActive: turn === "b" && model.sharedModel.type === "Game",
     seconds: Clock.toTime("b", clock),
   }
@@ -962,7 +965,7 @@ const ViewInputUserPlayerSlot = ({
   color,
 }: {
   dispatch: (msg: Msg) => void
-  store: Store.Model
+  store: ProfileStore.Model
   userId: UserId.UserId
   currentUserId: UserId.UserId
   color: Board.Color
@@ -972,14 +975,14 @@ const ViewInputUserPlayerSlot = ({
     <UI.Box sx={{ width: "100%", flex: 1, overflow: "hidden", display: "flex", alignItems: "center", }}>
       <UI.Avatar
         sx={{ marginRight: 1 }}
-        src={store.Profile[userId]?.avatarUrl}
+        src={store.profiles[userId]?.avatarUrl}
       />
 
       <UI.Typography
         sx={{ flex: 1 }}
         noWrap
       >
-        {store.Profile[userId]?.username ?? "..."}
+        {store.profiles[userId]?.username ?? "..."}
       </UI.Typography>
 
       {userId === currentUserId && (

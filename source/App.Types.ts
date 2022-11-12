@@ -6,7 +6,8 @@ import * as Page from "./Pages"
 import * as Party from "./Party/Party.Types"
 import * as Route from "./Route"
 import * as Snackbar from "./Snackbar"
-import * as Store from "./Store"
+import * as ChatStore from "./Chat/Chat.Store"
+import * as ProfileStore from "./Profile/Profile.Store"
 
 //
 //
@@ -32,13 +33,14 @@ export type Session = {
 
 export type FrontendModel = {
   snackbar: Snackbar.Model
-  store: Store.Model
+  chatStore: ChatStore.Model
   auth: Auth.Model
   page: Page.Model
   route: Route.Model
   gameRoom: GameRoom.FrontendModel
   party: Party.FrontendModel
   wire: WireStatus
+  profileStore: ProfileStore.Model
 }
 
 export type WireStatus =
@@ -71,11 +73,12 @@ export type FrontendMsg =
   | ["Route", Route.Msg]
   | ["Snackbar", Snackbar.Msg]
   | ["GameRoom", GameRoom.FrontendMsg]
-  | ["Store", Store.Msg]
+  | ["Store", ChatStore.Msg]
   | ["Auth", Auth.Msg]
   | ["Page", Page.Msg]
   | ["LocalStoragePut_Done", LocalStorage.PutResult]
   | ["Party", Party.FrontendMsg]
+  | ['ProfileStore', ProfileStore.Msg]
 
 export type BackendMsg =
   | ["▶", SessionId.SessionId, ClientId.ClientId, ToBackend]

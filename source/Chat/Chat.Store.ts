@@ -1,7 +1,6 @@
 import { Cmd, p, t } from "../Core"
-import * as Conversation from "./Conversation"
-import * as Message from "./Message"
-import * as Profile from "./Profile"
+import * as Conversation from "./Conversation.Store"
+import * as Message from "./Message.Store"
 import { initialStore, Store } from "./Types"
 
 //
@@ -25,14 +24,12 @@ export const init = initialStore
 //
 
 export type Msg =
-  | ["Profile", Profile.Msg]
   | ["Conversation", Conversation.Msg]
   | ["Message", Message.Msg]
 
 export type Action =
-  | ["Store", ["Profile", Profile.Action]]
-  | ["Store", ["Conversation", Conversation.Action]]
-  | ["Store", ["Message", Message.Action]]
+  | ["Chat", ["Conversation", Conversation.Action]]
+  | ["Chat", ["Message", Message.Action]]
 
 //
 //
@@ -47,11 +44,6 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
     case "Conversation": {
       const [modelNew, cmd] = Conversation.update(msg[1], model)
       return [modelNew, p(cmd, Cmd.map(t("Conversation")))]
-    }
-
-    case "Profile": {
-      const [modelNew, cmd] = Profile.update(msg[1], model)
-      return [modelNew, p(cmd, Cmd.map(t("Profile")))]
     }
 
     case "Message": {
@@ -74,11 +66,6 @@ export const runAction = (
     case "Message": {
       const [modelNew, cmd] = Message.runAction(action[1][1], model)
       return [modelNew, p(cmd, Cmd.map(t("Message")))]
-    }
-
-    case "Profile": {
-      const [modelNew, cmd] = Profile.runAction(action[1][1], model)
-      return [modelNew, p(cmd, Cmd.map(t("Profile")))]
     }
   }
 }

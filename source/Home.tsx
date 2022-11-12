@@ -3,8 +3,8 @@ import { RoomId, UserId } from "./Data"
 import * as Game from "./Game/Game.Frontend"
 import { GameName, gameNameList } from "./Game/Game.Types"
 import * as GameRoom from "./Game/GameRoom.Frontend"
+import * as ProfileStore from "./Profile/Profile.Store"
 import * as Route from "./Route"
-import * as Store from "./Store"
 import * as UI from "./UI"
 
 //
@@ -113,7 +113,7 @@ export const View = ({
   gameRoom: GameRoom.Model
   model: Model
   dispatch: (msg: Msg) => void
-  store: Store.Model
+  store: ProfileStore.Model
 }) => {
   const user = gameRoom.users[currentUserId]
 
@@ -143,7 +143,7 @@ export const View = ({
     )
   }
 
-  const hostProfile = store.Profile[currentRoom.hostId]
+  const hostProfile = store.profiles[currentRoom.hostId]
   const roomCount = Object.values(gameRoom.users).filter(
     (user) => user.roomId === currentRoom.roomId,
   ).length
@@ -294,7 +294,7 @@ const ViewNotInRoom = ({
   gameRoom: GameRoom.Model
   model: Model
   dispatch: (msg: Msg) => void
-  store: Store.Model
+  store: ProfileStore.Model
 }) => {
   const rooms = Object.values(gameRoom.rooms)
 

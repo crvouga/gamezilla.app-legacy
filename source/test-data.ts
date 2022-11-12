@@ -1,7 +1,8 @@
 import { ProfileAvatar, UserId, Username } from "./Data"
-import * as Store from "./Store"
+import * as ProfileStore from "./Profile/Profile.Store"
+import * as ChatStore from "./Chat/Chat.Store"
 
-export const userA: Store.Profile.Profile = {
+export const userA: ProfileStore.Profile = {
     userId: UserId.generate(),
     avatarUrl: ProfileAvatar.toUrl({ seed: "123", style: "big-ears-neutral" }),
     name: "i_have_a_really_long_username",
@@ -9,7 +10,7 @@ export const userA: Store.Profile.Profile = {
     username: Username.fromString("i_have_a_really_long_username"),
 }
 
-export const userB: Store.Profile.Profile = {
+export const userB: ProfileStore.Profile = {
     userId: UserId.generate(),
     avatarUrl: ProfileAvatar.toUrl({ seed: "abc", style: "big-ears-neutral" }),
     name: "Bob",
@@ -17,7 +18,7 @@ export const userB: Store.Profile.Profile = {
     username: Username.fromString("bob123"),
 }
 
-export const userC: Store.Profile.Profile = {
+export const userC: ProfileStore.Profile = {
     userId: UserId.generate(),
     avatarUrl: ProfileAvatar.toUrl({
         seed: "someUser",
@@ -29,9 +30,9 @@ export const userC: Store.Profile.Profile = {
 }
 
 
-export const store: Store.Model = {
-    ...Store.init,
-    Profile: {
+export const profileStore: ProfileStore.Model = {
+    ...ProfileStore.init,
+    profiles: {
         [userA.userId]: userA,
         [userB.userId]: userB,
         [userC.userId]: userC,
@@ -39,3 +40,5 @@ export const store: Store.Model = {
 }
 
 export const currentUserId = userA.userId
+
+export const chatStore: ChatStore.Model = ChatStore.init

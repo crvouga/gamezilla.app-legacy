@@ -4,15 +4,7 @@ import { UserId } from "../Data"
 import * as Route from "../Route"
 import * as Supabase from "../Supabase"
 import { definitions } from "../Supabase.Types"
-import { decodeRow } from "./Profile"
 import * as Types from "./Types"
-import {
-  Message,
-  Problem,
-  Profile,
-  ProfilesConversations,
-  Store,
-} from "./Types"
 
 //
 //
@@ -23,6 +15,8 @@ import {
 //
 
 export type Conversation = Types.Conversation
+
+export type Model = Types.Store
 
 //
 //
@@ -36,13 +30,14 @@ export type Msg = FindOneElseInsert_Done | FindManyByUserId_Done | FindOne_Done
 
 export type Action = FindOneElseInsert | FindManyByUserId | FindOne
 
+type Problem = string
+
 type FindOneResult = Result.Result<
   Problem,
   {
     conversation: Conversation
-    profiles: Profile[]
-    profilesConversations: ProfilesConversations[]
-    messages: Message[]
+    usersConversations: Types.UsersConversations[]
+    messages: Types.Message[]
   }
 >
 
@@ -64,8 +59,7 @@ export type FindManyByUserId_Done = [
       Problem,
       {
         conversations: Conversation[]
-        profiles: Profile[]
-        profilesConversations: ProfilesConversations[]
+        usersConversations: Types.UsersConversations[]
       }
     >
   },
@@ -85,7 +79,7 @@ export type FindOne_Done = [
 //
 //
 
-export const update = (msg: Msg, model: Store): [Store, Cmd.Cmd<Msg>] => {
+export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (msg[0]) {
     case "FindOne_Done": {
       const { conversationId, result } = msg[1]
@@ -95,7 +89,6 @@ export const update = (msg: Msg, model: Store): [Store, Cmd.Cmd<Msg>] => {
           RemoteData.fromResult,
           RemoteData.map((item) => ({
             conversation: item.conversation.conversationId,
-            profile: item.profiles.map((item) => item.userId),
             message: item.messages.map((item) => item.messageId),
           })),
         )
@@ -113,15 +106,9 @@ export const update = (msg: Msg, model: Store): [Store, Cmd.Cmd<Msg>] => {
               model.Message[message.messageId] = message
             }
 
-            for (const profile of data.profiles) {
-              model.Profile[profile.userId] = profile
-
-              const profileConversation = {
-                userId: profile.userId,
-                conversationId: data.conversation.conversationId,
-              }
-              const id = Types.toProfilesConversationsId(profileConversation)
-              model.ProfilesConversations[id] = profileConversation
+            for (const userConversation of data.usersConversations) {
+              const id = Types.toUsersConversationsId(userConversation)
+              model.UsersConversations[id] = userConversation
             }
           }
         }
@@ -138,9 +125,8 @@ export const update = (msg: Msg, model: Store): [Store, Cmd.Cmd<Msg>] => {
           RemoteData.fromResult,
           RemoteData.map((data) => ({
             conversation: data.conversations.map((item) => item.conversationId),
-            profile: data.profiles.map((item) => item.userId),
-            profilesConversations: data.profilesConversations.map(
-              Types.toProfilesConversationsId,
+            usersConversations: data.usersConversations.map(
+              Types.toUsersConversationsId,
             ),
           })),
         )
@@ -155,13 +141,9 @@ export const update = (msg: Msg, model: Store): [Store, Cmd.Cmd<Msg>] => {
               model.Conversation[item.conversationId] = item
             }
 
-            for (const item of data.profiles) {
-              model.Profile[item.userId] = item
-            }
-
-            for (const item of data.profilesConversations) {
-              const id = Types.toProfilesConversationsId(item)
-              model.ProfilesConversations[id] = item
+            for (const item of data.usersConversations) {
+              const id = Types.toUsersConversationsId(item)
+              model.UsersConversations[id] = item
             }
           }
         }
@@ -190,9 +172,9 @@ export const update = (msg: Msg, model: Store): [Store, Cmd.Cmd<Msg>] => {
             model.Conversation[data.conversation.conversationId] =
               data.conversation
 
-            for (const item of data.profilesConversations) {
-              const id = Types.toProfilesConversationsId(item)
-              model.ProfilesConversations[id] = item
+            for (const item of data.usersConversations) {
+              const id = Types.toUsersConversationsId(item)
+              model.UsersConversations[id] = item
             }
           }
         }
@@ -210,8 +192,8 @@ export const update = (msg: Msg, model: Store): [Store, Cmd.Cmd<Msg>] => {
 
 export const runAction = (
   action: Action,
-  model: Store,
-): [Store, Cmd.Cmd<Msg>] => {
+  model: Model,
+): [Model, Cmd.Cmd<Msg>] => {
   switch (action[0]) {
     case "FindOne": {
       const { conversationId } = action[1]
@@ -276,37 +258,6 @@ export const runAction = (
   }
 }
 
-//
-//
-//
-// Selectors
-//
-//
-//
-
-export const toConversation = (
-  conversationId: string,
-  store: Store,
-): {
-  conversationId: string
-  profiles: Profile[]
-  messages: Message[]
-} => {
-  const profiles = Object.values(store.ProfilesConversations)
-    .filter((row) => row.conversationId === conversationId)
-    .map((item) => store.Profile[item.userId])
-    .flatMap((item) => (item ? [item] : []))
-
-  const messages = Object.values(store.Message).filter(
-    (item) => item.conversationId === conversationId,
-  )
-
-  return {
-    conversationId: conversationId,
-    profiles,
-    messages,
-  }
-}
 
 //
 //
@@ -360,7 +311,7 @@ const findOneById =
         conversation: {
           conversationId,
         },
-        profilesConversations: profilesResponse.data
+        usersConversations: profilesResponse.data
           .map((item) => ({
             conversationId,
             userId: UserId.decode(item.id),
@@ -370,11 +321,6 @@ const findOneById =
               ? [{ ...item, userId: item.userId.value }]
               : [],
           ),
-        profiles: p(
-          profilesResponse.data.map(decodeRow),
-          Result.combine,
-          Result.withDefault<Profile[]>([]),
-        ),
         messages: messagesResponse.data
           .map((item) => ({
             messageId: item.id,
@@ -400,8 +346,7 @@ const findManyByUserId =
       Problem,
       {
         conversations: Conversation[]
-        profiles: Profile[]
-        profilesConversations: ProfilesConversations[]
+        usersConversations: Types.UsersConversations[]
       }
     >
   > =>
@@ -453,7 +398,7 @@ const findManyByUserId =
       }
 
       return Result.Ok({
-        profilesConversations: [
+        usersConversations: [
           ...matchUserIdResponse.data,
           ...matchConversationIdResponse.data,
         ]
@@ -469,11 +414,7 @@ const findManyByUserId =
         conversations: conversationResponse.data.map((item) => ({
           conversationId: item.id,
         })),
-        profiles: p(
-          profileResponse.data.map(decodeRow),
-          Result.combine,
-          Result.withDefault<Profile[]>([]),
-        ),
+
       })
     }
 
@@ -553,7 +494,7 @@ const insert =
       Problem,
       {
         conversation: Conversation
-        profilesConversations: ProfilesConversations[]
+        usersConversations: Types.UsersConversations[]
       }
     >
   > =>
@@ -593,7 +534,7 @@ const insert =
         return Result.Err(usersConversationsResponse.error.message)
       }
 
-      const profilesConversations = usersConversationsResponse.data
+      const usersConversations = usersConversationsResponse.data
         .map(({ user_id, conversation_id }) => ({
           userId: UserId.decode(user_id),
           conversationId: conversation_id,
@@ -604,5 +545,5 @@ const insert =
             : [],
         )
 
-      return Result.Ok({ conversation, profilesConversations })
+      return Result.Ok({ conversation, usersConversations })
     }

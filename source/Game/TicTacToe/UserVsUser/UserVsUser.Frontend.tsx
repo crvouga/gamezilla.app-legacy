@@ -1,6 +1,6 @@
 import { Cmd, exhaustive } from "../../../Core"
 import { UserId } from "../../../Data"
-import * as Store from "../../../Store"
+import * as ProfileStore from "../../../Profile/Profile.Store"
 import * as Snackbar from "../../../Snackbar"
 import * as UI from "../../../UI"
 import {
@@ -63,7 +63,7 @@ export const init: Model = {
 
 export type Msg = FrontendMsg
 
-export type OutAction = Store.Action | Snackbar.Action
+export type OutAction = ProfileStore.Action | Snackbar.Action
 
 export const update = (
   {
@@ -197,7 +197,7 @@ export const View = ({
   roomComponent,
 }: {
   currentUserId: UserId.UserId
-  store: Store.Model
+  store: ProfileStore.Model
   model: Model
   dispatch: (msg: Msg) => void
   onCloseGame: () => void
@@ -539,7 +539,7 @@ const ViewGameOverMessage = ({
 }: {
   currentUserId: UserId.UserId
   model: GameOverModel
-  store: Store.Model
+  store: ProfileStore.Model
   dispatch: (msg: Msg) => void
 }) => {
   const isPlaying = model.O === currentUserId || model.X === currentUserId
@@ -1120,7 +1120,7 @@ const toGameText = ({
   store,
 }: {
   model: Model
-  store: Store.Model
+  store: ProfileStore.Model
 }): string => {
   switch (model.type) {
     case "Setup": {
@@ -1130,14 +1130,14 @@ const toGameText = ({
     case "GameOver": {
       switch (model.gameOver.type) {
         case "Resignation": {
-          return `${store.Profile[model[model.gameOver.resigner]]?.username ?? "..."
+          return `${store.profiles[model[model.gameOver.resigner]]?.username ?? "..."
             } resigned`
         }
 
         case "Winner": {
           const userId = model[model.gameOver.winner]
 
-          return `${store.Profile[userId]?.username ?? "..."} won`
+          return `${store.profiles[userId]?.username ?? "..."} won`
         }
 
         case "Tie": {
@@ -1184,7 +1184,7 @@ const ViewPlayerSetupSlot = ({
 }: {
   currentUserId: UserId.UserId
   userId: UserId.UserId | "None"
-  store: Store.Model
+  store: ProfileStore.Model
   playerType: PlayerType
   dispatch: (msg: Msg) => void
   sx?: UI.Sx
@@ -1216,12 +1216,12 @@ const ViewPlayerSetupSlot = ({
     <UI.Box sx={{ display: "flex", alignItems: "center", width: '100%', ...sx }}>
       <PlayerTypeIcon playerType={playerType} sx={{ marginRight: 1, ...iconSx }} />
       <UI.Avatar
-        src={store.Profile[userId]?.avatarUrl}
+        src={store.profiles[userId]?.avatarUrl}
         sx={{ marginRight: 1 }}
       />
       <UI.Box sx={{ flex: 1, overflow: "hidden" }}>
         <UI.Typography noWrap sx={{ textOverflow: "ellipsis" }} >
-          {store.Profile[userId]?.username ?? "..."}
+          {store.profiles[userId]?.username ?? "..."}
         </UI.Typography>
       </UI.Box>
       {currentUserId === userId && (
@@ -1241,12 +1241,12 @@ const ViewPlayerGameSlot = ({
   model,
   playerType,
 }: {
-  store: Store.Model
+  store: ProfileStore.Model
   model: GameModel | GameOverModel
   playerType: PlayerType
 }) => {
   const userId = model[playerType]
-  const profile = store.Profile[userId]
+  const profile = store.profiles[userId]
   const uiTheme = UI.useTheme()
 
   const round = Round.toCurrent(model.round)

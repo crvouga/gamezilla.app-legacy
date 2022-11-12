@@ -1,6 +1,6 @@
 import { Cmd } from "../Core"
 import * as Route from "../Route"
-import * as Profile from "../Store/Profile"
+import * as ProfileStore from "./Profile.Store"
 import * as UI from "../UI"
 
 //
@@ -65,7 +65,7 @@ export const View = ({
   profile,
   dispatch,
 }: {
-  profile: Profile.Profile
+  profile: ProfileStore.Profile
   model: Model
   dispatch: (msg: Msg) => void
 }) => (

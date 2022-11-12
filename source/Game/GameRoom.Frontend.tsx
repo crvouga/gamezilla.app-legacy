@@ -3,7 +3,7 @@ import { Failure, Success } from "../Core/RemoteData"
 import { RoomId, UserId } from "../Data"
 import * as Route from "../Route"
 import * as Snackbar from "../Snackbar"
-import * as Store from "../Store"
+import * as ProfileStore from "../Profile/Profile.Store"
 import * as UI from "../UI"
 import * as Game from "./Game.Frontend"
 import { GameName, gameNameList } from "./Game.Types"
@@ -50,7 +50,7 @@ export type Msg = FrontendMsg
 
 export type Action = ["GameRoom", ["Msg", Msg]]
 
-type OutAction = Snackbar.Action | Store.Action | Route.Action
+type OutAction = Snackbar.Action | ProfileStore.Action | Route.Action
 
 //
 //
@@ -173,11 +173,11 @@ export const updateFromBackend = (
   {
     currentUserId,
     sendToBackend,
-    store,
+    profileStore,
   }: {
     currentUserId: UserId.UserId
     sendToBackend: (msg: ToBackend) => Cmd.Cmd<never>
-    store: Store.Model
+    profileStore: ProfileStore.Model
   },
   msg: ToFrontend,
   model: Model,
@@ -187,7 +187,7 @@ export const updateFromBackend = (
       const userIds = Object.values(msg[1].users).map((user) => user.userId)
 
       const actions: OutAction[] = [
-        ["Store", ["Profile", ["FindMany", { userIds }]]],
+        ["Profile", ["FindMany", { userIds }]],
       ]
 
       const [synced, syncedCmd] = mergeWithBackendModel({
@@ -214,7 +214,7 @@ export const updateFromBackend = (
         {
           currentUserId,
           sendToBackend: (msg) => sendToBackend(["Games", roomId, msg]),
-          store,
+          store: profileStore,
         },
         gameMsg,
         room.game,
@@ -306,7 +306,7 @@ const handleResponse = ({ sendToBackend }: { sendToBackend: (msg: ToBackend) => 
   const userIds = Object.values(merged[0].users).map((user) => user.userId)
 
   const storeActions: OutAction[] = [
-    ["Store", ["Profile", ["FindMany", { userIds }]]],
+    ["Profile", ["FindMany", { userIds }]],
   ]
 
 
@@ -480,12 +480,12 @@ export const subscriptions = (
 
 export const View = ({
   currentUserId,
-  store,
+  profileStore,
   model,
   dispatch
 }: {
   currentUserId: UserId.UserId
-  store: Store.Model
+  profileStore: ProfileStore.Model
   model: Model
   dispatch: (msg: Msg) => void
 }) => {
@@ -495,7 +495,7 @@ export const View = ({
     return (
       <ViewNotInRoom
         currentUserId={currentUserId}
-        store={store}
+        store={profileStore}
         model={model}
         dispatch={dispatch}
       />
@@ -508,7 +508,7 @@ export const View = ({
     return (
       <ViewNotInRoom
         currentUserId={currentUserId}
-        store={store}
+        store={profileStore}
         model={model}
         dispatch={dispatch}
       />
@@ -520,14 +520,14 @@ export const View = ({
   return (
     <Game.View
       currentUserId={currentUserId}
-      store={store}
+      store={profileStore}
       dispatch={(msg) => dispatch(["Games", room.roomId, msg])}
       model={game}
       goHome={() => dispatch(["ClickedGoHome"])}
       roomComponent={
         <ViewGameRoomAvatarGroup
           currentUserId={currentUserId}
-          store={store}
+          store={profileStore}
           room={room}
           model={model}
           dispatch={dispatch}
@@ -543,7 +543,7 @@ export const ViewNotInRoom = ({
   model,
   dispatch,
 }: {
-  store: Store.Model
+  store: ProfileStore.Model
   currentUserId: UserId.UserId
   model: Model
   dispatch: (msg: Msg) => void
@@ -678,7 +678,7 @@ const ViewGameRoomAvatarGroup = ({
   dispatch,
   currentUserId,
 }: {
-  store: Store.Model
+  store: ProfileStore.Model
   room: {
     roomId: RoomId.RoomId
     hostId: UserId.UserId
@@ -708,7 +708,7 @@ const ViewGameRoomAvatarGroup = ({
           sx={{ paddingX: 2, paddingTop: 2, width: "100%" }}
           noWrap
         >
-          {store.Profile[room.hostId]?.username ?? "..."}'s room
+          {store.profiles[room.hostId]?.username ?? "..."}'s room
         </UI.Typography>
 
         <UI.Box
@@ -732,13 +732,13 @@ const ViewGameRoomAvatarGroup = ({
                 overflowX: "hidden",
               }}
             >
-              <UI.Avatar src={store.Profile[user.userId]?.avatarUrl} />
+              <UI.Avatar src={store.profiles[user.userId]?.avatarUrl} />
               <UI.Typography
                 align="center"
                 sx={{ marginBottom: -1 / 2, width: '100%' }}
                 noWrap
               >
-                {store.Profile[user.userId]?.username ?? "..."}
+                {store.profiles[user.userId]?.username ?? "..."}
               </UI.Typography>
               {user.userId === room.hostId ? <UI.Typography
                 variant="subtitle2"
@@ -868,7 +868,7 @@ export const ViewBanner = ({
   route: Route.Model
   model: Model
   dispatch: (msg: Msg) => void
-  store: Store.Model
+  store: ProfileStore.Model
 }) => {
   if (route[0] === "GameRoom") {
     return <></>
@@ -886,7 +886,7 @@ export const ViewBanner = ({
     return <></>
   }
 
-  const hostProfile = store.Profile[room.hostId]
+  const hostProfile = store.profiles[room.hostId]
   const roomCount = Object.values(model.users).filter(
     (user) => user.roomId === room.roomId,
   ).length
@@ -958,11 +958,11 @@ export const ViewCard = ({
   roomId: RoomId.RoomId
   hostId: UserId.UserId
   gameName?: GameName
-  store: Store.Model
+  store: ProfileStore.Model
   gameRoom: Model
   onClick: () => void
 }) => {
-  const hostProfile = store.Profile[hostId]
+  const hostProfile = store.profiles[hostId]
   const roomCount = Object.values(gameRoom.users).filter(
     (user) => user.roomId === roomId,
   ).length

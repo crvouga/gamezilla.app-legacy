@@ -19,7 +19,8 @@ import * as Pages from "./Pages"
 import * as Party from "./Party/Party.Frontend"
 import * as Route from "./Route"
 import * as Snackbar from "./Snackbar"
-import * as Store from "./Store"
+import * as ChatStore from "./Chat/Chat.Store"
+import * as ProfileStore from './Profile/Profile.Store'
 import * as UI from "./UI"
 import * as Wire from "./Wire"
 
@@ -49,20 +50,22 @@ const init = (location: Browser.Location): [Model, Cmd.Cmd<Msg>] => {
   )
   const [auth, authCmd] = Auth.init()
   const snackbar = Snackbar.init
-  const store = Store.init
+  const store = ChatStore.init
   const [gameRoom, gameRoomCmd] = GameRoom.init
   const [page, pageCmd] = Pages.initLoading()
   const [party, partyCmd] = Party.init();
+  const profileStore = ProfileStore.init
 
   return [
     {
       route,
       snackbar,
-      store,
+      chatStore: store,
       gameRoom,
       auth,
       page,
       party,
+      profileStore,
       wire: "Connecting",
     },
     Cmd.batch<Msg>([
@@ -87,10 +90,11 @@ type Msg = FrontendMsg
 type OutAction =
   | Snackbar.Action
   | GameRoom.Action
-  | Store.Action
+  | ChatStore.Action
   | Auth.Action
   | Party.Action
   | Route.Action
+  | ProfileStore.Action
 
 //
 //
@@ -115,9 +119,9 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
     }
 
     case "Store": {
-      const [storeNew, storeCmd] = Store.update(msg[1], model.store)
+      const [storeNew, storeCmd] = ChatStore.update(msg[1], model.chatStore)
 
-      return [{ ...model, store: storeNew }, tagCmd("Store", storeCmd)]
+      return [{ ...model, chatStore: storeNew }, tagCmd("Store", storeCmd)]
     }
 
     case "Auth": {
@@ -197,6 +201,11 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
     case "Page": {
       const [modelNew, cmd, actions] = updatePage(msg[1], model)
       return p([modelNew, cmd], andThenMany(runAction, actions))
+    }
+
+    case 'ProfileStore': {
+      const [modelNew, cmd] = ProfileStore.update(msg[1], model.profileStore)
+      return [{ ...model, profileStore: modelNew }, tagCmd("ProfileStore", cmd)]
     }
 
     default:
@@ -297,7 +306,7 @@ const updateFromBackend = (
         {
           currentUserId,
           sendToBackend: (msg) => Wire.sendToBackend(["GameRoom", msg]),
-          store: model.store,
+          profileStore: model.profileStore,
         },
         msg[1],
         model.gameRoom,
@@ -328,10 +337,8 @@ const initPage = (model: Model): [Model, Cmd.Cmd<Msg>] => {
     }
 
     case "ProfileLoading": {
-      const action: OutAction = [
-        "Store",
-        ["Profile", ["FindMany", { userIds: [status[1].authSession.userId] }]],
-      ]
+      const action: OutAction =
+        ["Profile", ["FindMany", { userIds: [status[1].authSession.userId] }]]
 
       return p([model, Cmd.None], andThenMany(runAction, [action]))
     }
@@ -382,9 +389,9 @@ const updateStatusChanged =
 
 const runAction = (action: OutAction, model: Model): [Model, Cmd.Cmd<Msg>] => {
   switch (action[0]) {
-    case "Store": {
-      const [storeNew, storeCmd] = Store.runAction(action, model.store)
-      return [{ ...model, store: storeNew }, tagCmd("Store", storeCmd)]
+    case "Chat": {
+      const [chatNew, chatCmd] = ChatStore.runAction(action, model.chatStore)
+      return [{ ...model, chatStore: chatNew }, tagCmd("Store", chatCmd)]
     }
 
     case "Snackbar": {
@@ -434,6 +441,11 @@ const runAction = (action: OutAction, model: Model): [Model, Cmd.Cmd<Msg>] => {
       const [route, routeCmd] = Route.runAction(action, model.route)
 
       return [{ ...model, route }, tagCmd("Route", routeCmd)]
+    }
+
+    case 'Profile': {
+      const [profileStore, profileStoreCmd] = ProfileStore.runAction(action, model.profileStore)
+      return [{ ...model, profileStore, }, tagCmd("ProfileStore", profileStoreCmd)]
     }
 
     default:
@@ -595,7 +607,7 @@ const ViewMain = ({
           return (
             <>
               <Party.ViewBanner
-                store={model.store}
+                store={model.profileStore}
                 currentUserId={profile.userId}
                 model={model.party}
                 route={model.route}
@@ -603,7 +615,7 @@ const ViewMain = ({
               />
 
               <GameRoom.ViewBanner
-                store={model.store}
+                store={model.profileStore}
                 currentUserId={profile.userId}
                 model={model.gameRoom}
                 route={model.route}
@@ -658,13 +670,13 @@ type Status =
   | ["ProfileLoading", { authSession: Auth.Session }]
   | ["ProfileMissing", { authSession: Auth.Session }]
   | ["ProfileError", { authSession: Auth.Session }]
-  | ["Ready", { profile: Store.Profile.Profile; authSession: Auth.Session }]
+  | ["Ready", { profile: ProfileStore.Profile; authSession: Auth.Session }]
 
 const toStatus = ({
-  store,
   auth,
+  profileStore,
 }: {
-  store: Store.Model
+  profileStore: ProfileStore.Model
   auth: Auth.Model
 }): Status => {
   switch (auth[0]) {
@@ -677,7 +689,7 @@ const toStatus = ({
     case "LoggedIn": {
       const authSession = auth[1]
 
-      const profile = store.Profile[authSession.userId]
+      const profile = profileStore.profiles[authSession.userId]
 
       if (profile) {
         return [
@@ -689,9 +701,9 @@ const toStatus = ({
         ]
       }
 
-      const key = Store.Types.toFindManyKey([authSession.userId])
+      const key = ProfileStore.toFindManyKey([authSession.userId])
 
-      const query = store.queries.Profile.FindMany[key] ?? RemoteData.NotAsked
+      const query = profileStore.findMany[key] ?? RemoteData.NotAsked
 
       switch (query.type) {
         case "NotAsked":
@@ -707,7 +719,7 @@ const toStatus = ({
           const userIds = query.value
 
           const profiles = userIds
-            .map((userId) => store.Profile[userId])
+            .map((userId) => profileStore.profiles[userId])
             .flatMap((item) => (item ? [item] : []))
 
           const profile = profiles[0]

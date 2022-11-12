@@ -1,8 +1,7 @@
 import { Cmd } from "../Core"
 import { UserId } from "../Data"
 import * as Route from "../Route"
-import * as Store from "../Store"
-import * as Profile from "../Store/Profile"
+import * as ProfileStore from "./Profile.Store"
 import * as UI from "../UI"
 
 //
@@ -29,9 +28,9 @@ export const init: Model = {
 
 export type Msg =
   | ["ClickedBack"]
-  | ["ClickedThemeMode", Profile.Profile["themeMode"]]
+  | ["ClickedThemeMode", ProfileStore.Profile["themeMode"]]
 
-type OutMsg = Store.Action
+type OutMsg = ProfileStore.Action
 
 export const update = (
   { userId }: { userId: UserId.UserId },
@@ -43,11 +42,10 @@ export const update = (
       return [model, Route.back, []]
 
     case "ClickedThemeMode":
-      const themeMode = msg[1]
       return [
         model,
         Cmd.None,
-        [["Store", ["Profile", ["Edit", { userId, edits: { themeMode } }]]]],
+        [["Profile", ["EditOne", { userId, edits: { themeMode: msg[1] } }]]],
       ]
   }
 }
@@ -65,7 +63,7 @@ export const View = ({
   model,
   dispatch,
 }: {
-  profile: Profile.Profile
+  profile: ProfileStore.Profile
   model: Model
   dispatch: (msg: Msg) => void
 }) => (

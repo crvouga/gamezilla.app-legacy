@@ -1,5 +1,5 @@
 import * as Route from "../Route"
-import * as Store from "../Store"
+import * as AccountStore from "./Account.Store"
 import * as UI from "../UI"
 import { Cmd, p } from "../Core"
 
@@ -49,7 +49,7 @@ export type Msg =
     "Send_Done",
     {
       sentTo: string
-      result: Store.Account.SendResetPasswordLinkResult
+      result: AccountStore.SendResetPasswordLinkResult
     },
   ]
 
@@ -65,7 +65,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
       return [
         { ...model, submission: { type: "Loading" } },
         p(
-          Store.Account.sendResetPasswordLink({
+          AccountStore.sendResetPasswordLink({
             emailAddress: model.emailAddress,
           }),
           Cmd.perform((result) => [

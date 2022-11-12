@@ -11,6 +11,7 @@ import {
   ChatConversation,
   ChatNew
 } from "./Chat"
+import * as ChatStore from "./Chat/Chat.Store"
 import { Cmd, exhaustive, p, Sub, t, tagCmd, tagSub } from "./Core"
 import { PhoneNumber, UserId } from "./Data"
 import * as GameRoom from "./Game/GameRoom.Frontend"
@@ -28,9 +29,9 @@ import {
   ProfileUpdateTheme,
   ProfileUpdateUsername, Search
 } from "./Profile"
+import * as ProfileStore from "./Profile/Profile.Store"
 import * as Route from "./Route"
 import * as Snackbar from "./Snackbar"
-import * as Store from "./Store"
 import * as UI from "./UI"
 
 //
@@ -102,12 +103,13 @@ export type Msg =
   | ["ClickedBottomNavigationLink", Route.Model]
 
 export type OutAction =
-  | Store.Action
+  | ChatStore.Action
   | Snackbar.Action
   | GameRoom.Action
   | Auth.Action
   | Party.Action
   | Route.Action
+  | ProfileStore.Action
 
 //
 //
@@ -123,7 +125,7 @@ export const initLoading = (): [Model, Cmd.Cmd<Msg>] => {
 
 export const initReady = (
   route: Route.Model,
-  profile: Store.Profile.Profile,
+  profile: ProfileStore.Profile,
 ): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
   switch (route[0]) {
     case "Account":
@@ -340,10 +342,10 @@ export const initProfileMissing = (
 export const updateReady = (
   {
     profile,
-    store,
+    profileStore
   }: {
-    profile: Store.Profile.Profile
-    store: Store.Model
+    profileStore: ProfileStore.Model,
+    profile: ProfileStore.Profile
     gameRoom: GameRoom.Model
   },
   msg: Msg,
@@ -419,7 +421,7 @@ export const updateReady = (
         return tagUpdate(
           "ChatNew",
           ChatNew.update(
-            { store, currentUserId: profile.userId },
+            { profileStore: profileStore, currentUserId: profile.userId },
             msg[1],
             model[1],
           ),
@@ -696,16 +698,18 @@ export const subscriptions = (model: Model): Sub.Sub<Msg> => {
 export const ViewReady = ({
   profile,
   gameRoom,
-  store,
+  chatStore,
   route,
   party,
   model,
+  profileStore,
   dispatch,
 }: {
   route: Route.Model
   gameRoom: GameRoom.Model
-  profile: Store.Profile.Profile
-  store: Store.Model
+  profile: ProfileStore.Profile
+  chatStore: ChatStore.Model
+  profileStore: ProfileStore.Model
   party: Party.Model
   model: Model
   dispatch: (msg: Msg) => void
@@ -732,10 +736,11 @@ export const ViewReady = ({
       return (
         <UI.FillBox>
           <Chat.View
-            profile={profile}
+            currentUserId={profile.userId}
+            profileStore={profileStore}
             model={model[1]}
             dispatch={(msg) => dispatch(["Chat", msg])}
-            store={store}
+            chatStore={chatStore}
           />
           <ViewBottomNavigation
             currentUserId={currentUserId}
@@ -751,7 +756,7 @@ export const ViewReady = ({
           <Search.View
             dispatch={(msg) => dispatch(["Search", msg])}
             model={model[1]}
-            store={store}
+            profileStore={profileStore}
           />
 
           <ViewBottomNavigation
@@ -766,7 +771,8 @@ export const ViewReady = ({
       return (
         <UI.FillBox>
           <ChatNew.View
-            store={store}
+            profileStore={profileStore}
+            chatStore={chatStore}
             currentUserProfile={profile}
             model={model[1]}
             dispatch={(msg) => dispatch(["ChatNew", msg])}
@@ -782,8 +788,9 @@ export const ViewReady = ({
     case "ChatConversation":
       return (
         <ChatConversation.View
-          store={store}
-          authUser={profile}
+          profileStore={profileStore}
+          chatStore={chatStore}
+          currentUserId={profile.userId}
           model={model[2]}
           conversationId={model[1].conversationId}
           dispatch={(msg) => dispatch(["ChatConversation", msg])}
@@ -801,8 +808,8 @@ export const ViewReady = ({
     case "ProfileDelete":
       return (
         <ProfileDelete.View
-          store={store}
-          profileId={profile.userId}
+          profileStore={profileStore}
+          userId={profile.userId}
           model={model[1]}
           dispatch={(msg) => dispatch(["ProfileDelete", msg])}
         />
@@ -890,7 +897,8 @@ export const ViewReady = ({
         <UI.FillBox>
           <Profile.View
             userId={model[1].userId}
-            store={store}
+            chatStore={chatStore}
+            profileStore={profileStore}
             currentUserId={profile.userId}
             model={model[2]}
             dispatch={(msg) => dispatch(["Profile", msg])}
@@ -906,7 +914,7 @@ export const ViewReady = ({
     case "GameRoom": {
       return (
         <GameRoomPage.View
-          store={store}
+          profileStore={profileStore}
           currentUserId={currentUserId}
           gameRoom={gameRoom}
           model={model[1]}
@@ -921,7 +929,7 @@ export const ViewReady = ({
           <PartyPage.View
             currentUserId={currentUserId}
             party={party}
-            store={store}
+            store={profileStore}
             model={model[1]}
             dispatch={(msg) => dispatch(["Party", msg])}
           />
@@ -944,18 +952,14 @@ export const ViewReady = ({
           gameRoom={gameRoom}
         >
           <Home.View
-            store={store}
+            store={profileStore}
             gameRoom={gameRoom}
             currentUserId={currentUserId}
             model={model[1]}
             dispatch={(msg) => dispatch(["Home", msg])}
           />
 
-          {/* <ViewBottomNavigation
-            currentUserId={currentUserId}
-            route={route}
-            dispatch={dispatch}
-          /> */}
+
         </ViewTopLevel>
       )
     }

@@ -1,5 +1,5 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react"
-import { store, userA } from '../../../test-data'
+import { profileStore, userA } from '../../../test-data'
 import * as UI from "../../../UI"
 import { Model, View } from "./UserVsBot.Frontend"
 
@@ -10,7 +10,7 @@ export default {
     component: View,
     args: {
         currentUserId: currentUserId,
-        store: store,
+        profileStore: profileStore,
         roomComponent: <>room</>,
         goHome: () => { },
         dispatch: () => { },

@@ -1,7 +1,7 @@
 import { Cmd, Sub } from "../../../Core";
 import { UserId } from "../../../Data/UserId";
 import * as Snackbar from "../../../Snackbar";
-import * as Store from "../../../Store";
+import * as ProfileStore from "../../../Profile/Profile.Store";
 import * as UI from "../../../UI";
 import { VersusHeader } from "../../Views";
 import { gameTheme, PlayerType, ViewColumns } from "../ConnectFour";
@@ -125,7 +125,7 @@ export const View = (
         dispatch: (msg: Msg) => void;
         currentUserId: UserId;
         goBack: () => void;
-        store: Store.Model;
+        store: ProfileStore.Model;
         goHome: () => void;
         roomComponent: UI.ViewNode;
     }) => {
@@ -249,16 +249,16 @@ const ViewGameOverMessage = ({ gameOver, currentUserId, model }: { model: Model,
 
 }
 
-const ViewGamePlayerSlot = ({ model, playerType, store }: { model: GameModel, playerType: PlayerType, store: Store.Model }) => {
+const ViewGamePlayerSlot = ({ model, playerType, store }: { model: GameModel, playerType: PlayerType, store: ProfileStore.Model }) => {
     const size = { width: 32, height: 32, }
 
     if (model.userPlayerType === playerType) {
         return (
             <UI.Box sx={{ display: 'flex', alignItems: 'center', flex: 1, overflow: "hidden" }}>
                 <PlayerIcon playerType={playerType} sx={{ ...size, marginRight: 1 }} />
-                <UI.Avatar src={store.Profile[model.player]?.avatarUrl} sx={{ ...size, marginRight: 1 }} />
+                <UI.Avatar src={store.profiles[model.player]?.avatarUrl} sx={{ ...size, marginRight: 1 }} />
                 <UI.Typography noWrap>
-                    {store.Profile[model.player]?.username ?? "..."}
+                    {store.profiles[model.player]?.username ?? "..."}
                 </UI.Typography>
             </UI.Box>
         )
@@ -298,7 +298,7 @@ const ViewSetup = (
         dispatch: (msg: Msg) => void;
         currentUserId: UserId;
         goBack: () => void;
-        store: Store.Model;
+        store: ProfileStore.Model;
         goHome: () => void;
         roomComponent: UI.ViewNode;
     }) => {
@@ -351,9 +351,9 @@ const ViewSetup = (
                     </UI.Box>
                 ) : (
                     <UI.Box sx={{ display: 'flex', alignItems: "center", justifyContent: 'center', paddingX: 2, width: '100%', }}>
-                        <UI.Avatar src={store.Profile[model.player]?.avatarUrl} sx={{ marginRight: 2 }} />
+                        <UI.Avatar src={store.profiles[model.player]?.avatarUrl} sx={{ marginRight: 2 }} />
                         <UI.Typography noWrap sx={{ flex: 1 }}>
-                            {store.Profile[model.player]?.username ?? "..."}
+                            {store.profiles[model.player]?.username ?? "..."}
                         </UI.Typography>
                         {model.player === currentUserId && (
                             <UI.Button onClick={() => dispatch(['StopPlaying', { userId: currentUserId }])}>

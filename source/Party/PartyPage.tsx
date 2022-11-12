@@ -1,7 +1,7 @@
 import { Cmd } from "../Core"
 import { UserId } from "../Data"
 import * as Party from "./Party.Frontend"
-import * as Store from "../Store"
+import * as ProfileStore from "../Profile/Profile.Store"
 
 //
 //
@@ -54,7 +54,7 @@ export const View = ({
 }: {
   party: Party.Model
   currentUserId: UserId.UserId
-  store: Store.Model
+  store: ProfileStore.Model
   model: Model
   dispatch: (msg: Msg) => void
 }) => {

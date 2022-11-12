@@ -1,5 +1,5 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react"
-import { userA, store } from "../../test-data"
+import { userA, profileStore } from "../../test-data"
 import * as UI from "../../UI"
 import { View } from "./TicTacToe.Frontend"
 
@@ -14,7 +14,7 @@ export default {
         roomComponent: <>room</>,
         goHome: () => { },
         onCloseGame: () => { },
-        store
+        store: profileStore
 
     }
 } as ComponentMeta<typeof View>

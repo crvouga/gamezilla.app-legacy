@@ -2,7 +2,8 @@ import { ReactNode, useLayoutEffect, useRef, useState } from "react"
 import { Browser, Cmd, p, RemoteData } from "../Core"
 import { UserId } from "../Data"
 import * as Route from "../Route"
-import * as Store from "../Store"
+import * as ChatStore from "./Chat.Store"
+import * as ProfileStore from "../Profile/Profile.Store"
 import * as UI from "../UI"
 
 //
@@ -39,7 +40,7 @@ export const init = ({
     },
     Cmd.None,
 
-    [["Store", ["Conversation", ["FindOne", { conversationId }]]]],
+    [["Chat", ["Conversation", ["FindOne", { conversationId }]]]],
   ]
 
 //
@@ -60,7 +61,7 @@ export type Msg =
   | ["InputtedText", string]
   | ["ClipboardCopy_Done", Browser.Clipboard.CopyResult]
 
-export type OutAction = Store.Action
+export type OutAction = ChatStore.Action
 
 export const update = (
   { userId, conversationId }: { userId: UserId.UserId; conversationId: string },
@@ -91,7 +92,7 @@ export const update = (
         messageText: model.text,
       }
 
-      return [model, Cmd.None, [["Store", ["Message", ["Send", payload]]]]]
+      return [model, Cmd.None, [["Chat", ["Message", ["Send", payload]]]]]
 
     case "InputtedText":
       return [{ ...model, text: msg[1] }, Cmd.None, []]
@@ -128,7 +129,7 @@ export const update = (
       return [
         model,
         Cmd.None,
-        [["Store", ["Message", ["Unsend", { messageId }]]]],
+        [["Chat", ["Message", ["Unsend", { messageId }]]]],
       ]
   }
 }
@@ -142,33 +143,34 @@ export const update = (
 //
 
 export const View = ({
-  store,
-  authUser,
+  chatStore,
+  profileStore,
   model,
   dispatch,
   conversationId,
+  currentUserId,
 }: {
-  store: Store.Model
-  authUser: { userId: UserId.UserId }
+  chatStore: ChatStore.Model
+  profileStore: ProfileStore.Model
+  currentUserId: UserId.UserId
   model: Model
   conversationId: string
   dispatch: (msg: Msg) => void
 }) => {
   const query =
-    store.queries.Conversation.FindOne[conversationId] ?? RemoteData.NotAsked
+    chatStore.queries.Conversation.FindOne[conversationId] ?? RemoteData.NotAsked
 
-  const conversation = p(
-    Store.Conversation.toConversation(conversationId, store),
-    (conversation) => ({
-      ...conversation,
-      profiles: conversation.profiles.filter(
-        (item) => item.userId !== authUser.userId,
-      ),
-    }),
-  )
+  const profiles = Object.values(chatStore.UsersConversations)
+    .filter(conversation => conversation.conversationId === conversationId)
+    .flatMap(joinRecord => {
+      const profiles = Object.values(profileStore.profiles).filter(profile => profile.userId === joinRecord.userId && profile.userId !== currentUserId)
+      return profiles
+    })
+
+  const messages = Object.values(chatStore.Message).filter(message => message.conversationId === conversationId)
 
   const messageInsertMutation =
-    store.mutations.Message.Send[conversationId] ?? RemoteData.NotAsked
+    chatStore.mutations.Message.Send[conversationId] ?? RemoteData.NotAsked
 
   return (
     <UI.FillBox>
@@ -188,7 +190,7 @@ export const View = ({
           }}
         >
           <UI.AvatarGroup>
-            {conversation.profiles.map((item) => (
+            {profiles.map((item) => (
               <UI.Avatar
                 key={item.userId}
                 src={item.avatarUrl}
@@ -199,7 +201,7 @@ export const View = ({
             align="center"
             noWrap
           >
-            {conversation.profiles
+            {profiles
               .map((profile) => profile.username)
               .join(", ")}
           </UI.Typography>
@@ -209,18 +211,18 @@ export const View = ({
 
       <MessageContainer
         isLoading={query.type === "Loading"}
-        scrollKey={String(conversation.messages.length)}
+        scrollKey={String(messages.length)}
       >
         <UI.Box sx={{ flex: 1 }}></UI.Box>
 
-        {conversation.messages.map((message) => (
+        {messages.map((message) => (
           <ChatMessage
             key={message.messageId}
             message={message}
-            currentUserId={authUser.userId}
+            currentUserId={currentUserId}
             dispatch={dispatch}
             model={model}
-            store={store}
+            store={chatStore}
           />
         ))}
       </MessageContainer>
@@ -362,11 +364,15 @@ const ChatMessage = ({
   store,
   dispatch,
 }: {
-  message: Store.Message.Message
+  message: {
+    messageId: string,
+    message: string,
+    userId: UserId.UserId
+  },
   currentUserId: UserId.UserId
   model: Model
   dispatch: (msg: Msg) => void
-  store: Store.Model
+  store: ChatStore.Model
 }) => {
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
@@ -374,7 +380,7 @@ const ChatMessage = ({
     dispatch(["ClickedMessage", message])
   }
 
-  const variant = currentUserId === message.userId ? "sent" : "recieved"
+  const variant = currentUserId === message.userId ? "sent" : "received"
 
   const theme = UI.useTheme()
   const backgroundColor =
@@ -392,7 +398,7 @@ const ChatMessage = ({
         paddingX: 1,
         width: "100%",
         display: "flex",
-        justifyContent: variant === "recieved" ? "flex-start" : "flex-end",
+        justifyContent: variant === "received" ? "flex-start" : "flex-end",
       }}
     >
       <UI.Typography

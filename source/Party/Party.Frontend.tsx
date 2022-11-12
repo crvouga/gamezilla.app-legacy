@@ -3,7 +3,7 @@ import * as Rx from "rxjs"
 import { Cmd, exhaustive, p, Result, Sub, Task, Unit } from "../Core"
 import { PartyId, UserId } from "../Data"
 import * as Route from "../Route"
-import * as Store from "../Store"
+import * as ProfileStore from "../Profile/Profile.Store"
 import * as UI from "../UI"
 import {
   FrontendModel,
@@ -55,7 +55,7 @@ export const init = (): [Model, Cmd.Cmd<Msg>] => {
 
 export type Msg = FrontendMsg
 
-export type OutAction = Store.Action
+export type OutAction = ProfileStore.Action
 
 export const update = (
   { sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd.Cmd<never> },
@@ -209,7 +209,7 @@ export const updateFromBackend = (
           modelNext: modelNew,
           modelPrev: model,
         }),
-        [["Store", ["Profile", ["FindMany", { userIds }]]]],
+        [["Profile", ["FindMany", { userIds }]]],
       ]
     }
 
@@ -415,7 +415,7 @@ export const View = ({
   dispatch,
 }: {
   currentUserId: UserId.UserId
-  store: Store.Model
+  store: ProfileStore.Model
   model: Model
   dispatch: (msg: Msg) => void
 }) => {
@@ -455,7 +455,7 @@ export const View = ({
           .map((user) => (
             <UI.Box sx={{ flex: 1, display: "flex", alignItems: 'center', justifyContent: 'center', flexDirection: "column" }}>
               <UI.Avatar
-                src={store.Profile[user.userId]?.avatarUrl}
+                src={store.profiles[user.userId]?.avatarUrl}
                 sx={{
                   width: 100,
                   height: 100,
@@ -466,7 +466,7 @@ export const View = ({
                 }}
               />
               <UI.Typography variant="h6">
-                {`${store.Profile[user.userId]?.username ?? "..."}`}
+                {`${store.profiles[user.userId]?.username ?? "..."}`}
               </UI.Typography>
               <UI.Typography variant="subtitle1" color="text.secondary">
                 {party.hostId === user.userId ? "Host" : " "}
@@ -495,7 +495,7 @@ const ViewNotInParty = ({
   store,
   dispatch,
 }: {
-  store: Store.Model
+  store: ProfileStore.Model
   model: Model
   currentUserId: UserId.UserId
   dispatch: (msg: Msg) => void
@@ -539,11 +539,11 @@ const ViewNotInParty = ({
             }
           >
             <UI.ListItemAvatar>
-              <UI.Avatar src={store.Profile[party.hostId]?.avatarUrl} />
+              <UI.Avatar src={store.profiles[party.hostId]?.avatarUrl} />
             </UI.ListItemAvatar>
 
             <UI.ListItemText
-              primary={`${store.Profile[party.hostId]?.username ?? "..."
+              primary={`${store.profiles[party.hostId]?.username ?? "..."
                 }'s party`}
               secondary={`${countUsersInParty(party.partyId, model)} in party`}
             />
@@ -566,7 +566,7 @@ export const ViewBanner = ({
   model,
   // store,
 }: {
-  store: Store.Model
+  store: ProfileStore.Model
   route: Route.Model
   currentUserId: UserId.UserId
   model: Model

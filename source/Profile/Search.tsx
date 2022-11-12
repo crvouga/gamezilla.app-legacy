@@ -1,7 +1,7 @@
 import { Browser, Cmd, p, RemoteData } from "../Core"
 import { UserId } from "../Data"
 import * as Route from "../Route"
-import * as Store from "../Store"
+import * as ProfileStore from "./Profile.Store"
 import * as UI from "../UI"
 
 //
@@ -21,7 +21,7 @@ export const init: [Model, Cmd.Cmd<Msg>, OutAction[]] = [
     searchText: "",
   },
   Cmd.None,
-  [["Store", ["Profile", ["Search", { searchText: "" }]]]],
+  [["Profile", ["Search", { searchText: "" }]]],
 ]
 
 //
@@ -38,9 +38,9 @@ export type Msg =
   | ["InputtedSearchText", string]
   | ["ClickedResult", { userId: UserId.UserId }]
 
-export type OutAction = Store.Action
+export type OutAction = ProfileStore.Action
 
-const SearchInputId = "SearchInput"
+const searchInputId = "SearchInput"
 
 export const update = (
   msg: Msg,
@@ -54,7 +54,7 @@ export const update = (
       return [
         { ...model, searchText: "" },
         p(
-          Browser.focus(SearchInputId),
+          Browser.focus(searchInputId),
           Cmd.perform((result) => ["Focus_Done", result]),
         ),
         [],
@@ -68,7 +68,7 @@ export const update = (
       return [
         { ...model, searchText: searchTextNew },
         Cmd.None,
-        [["Store", ["Profile", ["Search", { searchText: searchTextNew }]]]],
+        [["Profile", ["Search", { searchText: searchTextNew }]]],
       ]
   }
 }
@@ -82,17 +82,17 @@ export const update = (
 //
 
 export const View = ({
-  store,
+  profileStore,
   model,
   dispatch,
 }: {
-  store: Store.Model
+  profileStore: ProfileStore.Model
   model: Model
   dispatch: (msg: Msg) => void
 }) => {
-  const results = Store.Profile.toSearch(model.searchText, store)
+  const results = ProfileStore.toSearch(model.searchText, profileStore)
   const query =
-    store.queries.Profile.Search[model.searchText] ?? RemoteData.NotAsked
+    profileStore.search[model.searchText] ?? RemoteData.NotAsked
 
   return (
     <UI.FillBox>
