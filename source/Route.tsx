@@ -31,7 +31,6 @@ export type Model =
   | ["ChatConversation", { conversationId: string }]
   | ["Search"]
   | ["Home"]
-  | ["Debug"]
 
 //
 //
@@ -63,7 +62,6 @@ export const routesTypes: { [routeType in Model[0]]: string } = {
   ChatConversation: "ChatConversation",
   Search: "Search",
   Home: "Home",
-  Debug: "Debug",
 }
 
 export const isRouteType = (routeType: unknown): routeType is Model[0] => {

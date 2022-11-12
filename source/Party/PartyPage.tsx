@@ -1,6 +1,6 @@
 import { Cmd } from "../Core"
 import { UserId } from "../Data"
-import * as Party from "../Party/Party.Frontend"
+import * as Party from "./Party.Frontend"
 import * as Store from "../Store"
 
 //
