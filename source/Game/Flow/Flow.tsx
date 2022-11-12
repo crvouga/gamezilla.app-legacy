@@ -37,11 +37,11 @@ type Position = {
     y: number
 }
 
-export const range = (upper: Position): Position[] => {
+export const toAllPositions = (board: Board): Position[] => {
     const positions: Position[] = []
 
-    for (let x = 0; x < upper.x; x++) {
-        for (let y = 0; y < upper.y; y++) {
+    for (let x = 0; x < board.size; x++) {
+        for (let y = 0; y < board.size; y++) {
             positions.push({ x, y })
         }
     }
@@ -66,7 +66,17 @@ export const generateBoard = () => {
 export const ViewBoard = ({ board }: { board: Board }) => {
     return (
         <svg width="100%" viewBox={toViewBox(board)}>
-
+            {toAllPositions(board).map((position) => (
+                <rect
+                    key={`${position.x}, ${position.y}`}
+                    x={position.x}
+                    y={position.y}
+                    width={1}
+                    height={1}
+                    stroke={"#fff"}
+                    strokeWidth={0.01}
+                />
+            ))}
         </svg>
     )
 }
