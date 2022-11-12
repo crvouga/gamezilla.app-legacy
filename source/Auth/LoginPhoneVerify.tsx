@@ -1,4 +1,4 @@
-import * as Auth from "../Auth"
+import * as Auth from "../Auth/Auth"
 import { Browser, Cmd, p, t } from "../Core"
 import { PhoneNumber } from "../Data"
 import * as Route from "../Route"

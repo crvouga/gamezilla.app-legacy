@@ -1,4 +1,4 @@
-import * as Auth from "../Auth"
+import * as Auth from "./Auth"
 import { Cmd } from "../Core"
 import * as Route from "../Route"
 import * as UI from "../UI"

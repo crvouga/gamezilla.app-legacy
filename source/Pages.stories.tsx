@@ -4,7 +4,6 @@ import * as UI from "./UI"
 import { initReady, ViewReady } from "./Pages"
 import * as GameRoom from "./Game/GameRoom.Frontend"
 import * as Party from "./Party/Party.Frontend"
-import * as Debug from "./Debug/Debug.Frontend"
 
 export default {
     title: "Page/Ready",
@@ -13,7 +12,6 @@ export default {
         dispatch: () => { },
         store: store,
         profile: userA,
-        debug: Debug.init,
         gameRoom: GameRoom.init[0],
         party: Party.init()[0],
     },

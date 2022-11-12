@@ -1,11 +1,11 @@
-import { Sub } from "../Core"
-import { RoomId, UserId } from "../Data"
-import * as Game from "../Game/Game.Frontend"
-import { GameName, gameNameList } from "../Game/Game.Types"
-import * as GameRoom from "../Game/GameRoom.Frontend"
-import * as Route from "../Route"
-import * as Store from "../Store"
-import * as UI from "../UI"
+import { Sub } from "./Core"
+import { RoomId, UserId } from "./Data"
+import * as Game from "./Game/Game.Frontend"
+import { GameName, gameNameList } from "./Game/Game.Types"
+import * as GameRoom from "./Game/GameRoom.Frontend"
+import * as Route from "./Route"
+import * as Store from "./Store"
+import * as UI from "./UI"
 
 //
 //

@@ -21,7 +21,6 @@ import { ClientId, SessionId, UserId } from "./Data"
 import * as GameRoom from "./Game/GameRoom.Backend"
 import * as Party from "./Party/Party.Backend"
 import * as Wire from "./Wire"
-import * as Debug from "./Debug/Debug.Backend"
 import { formatMsg } from "./Core/Debug"
 
 //
@@ -41,7 +40,6 @@ const init = (): [Model, Cmd.Cmd<Msg>] => {
       gameRoom: GameRoom.init,
       sessions: {},
       party,
-      debug: Debug.init,
     },
     tagCmd("Party", partyCmd),
   ]
@@ -155,11 +153,6 @@ const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
       return [{ ...model, gameRoom: child }, tagCmd("GameRoom", childCmd)]
     }
 
-    case "Debug": {
-      const [child, childCmd] = Debug.update(msg[1], model.debug)
-      return [{ ...model, debug: child }, tagCmd("Debug", childCmd)]
-    }
-
     default: {
       return exhaustive(msg[0])
     }
@@ -229,11 +222,6 @@ const updateFromFrontend = (
       return [{ ...model, gameRoom: child }, tagCmd("GameRoom", childCmd)]
     }
 
-    case "Debug": {
-      const [child, childCmd] = Debug.updateFromFrontend(msg[1], model.debug)
-
-      return [{ ...model, debug: child }, tagCmd("Debug", childCmd)]
-    }
   }
 }
 

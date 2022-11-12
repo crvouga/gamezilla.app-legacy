@@ -1,5 +1,5 @@
 import * as Route from "../Route"
-import * as Auth from "../Auth"
+import * as Auth from "../Auth/Auth"
 import * as UI from "../UI"
 import { Cmd, p } from "../Core"
 
