@@ -374,11 +374,11 @@ const ChatMessage = ({
     dispatch(["ClickedMessage", message])
   }
 
-  const variant = currentUserId === message.userId ? "sented" : "recieved"
+  const variant = currentUserId === message.userId ? "sent" : "recieved"
 
   const theme = UI.useTheme()
   const backgroundColor =
-    variant === "sented"
+    variant === "sent"
       ? theme.palette.primary.main
       : theme.palette.grey["200"]
   const textColor = theme.palette.getContrastText(backgroundColor)
@@ -426,11 +426,11 @@ const ChatMessage = ({
         onClose={() => dispatch(["ClosedMessageMenu", message])}
         anchorOrigin={{
           vertical: "bottom",
-          horizontal: variant === "sented" ? "left" : "right",
+          horizontal: variant === "sent" ? "left" : "right",
         }}
         transformOrigin={{
           vertical: "center",
-          horizontal: variant === "sented" ? "right" : "left",
+          horizontal: variant === "sent" ? "right" : "left",
         }}
       >
         <UI.Box sx={{ display: "flex", flexDirection: "column" }}>
@@ -448,7 +448,7 @@ const ChatMessage = ({
               ? "Copied"
               : "Copy Text"}
           </UI.Button>
-          {variant === "sented" && (
+          {variant === "sent" && (
             <UI.Button
               loading={
                 store.mutations.Message.Unsend[message.messageId]?.type ===
