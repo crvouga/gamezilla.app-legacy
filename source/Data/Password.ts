@@ -1,18 +1,16 @@
 import { Result } from "../Core"
 
-export type Password = string & { _opaque: typeof Password }
-
-declare const Password: unique symbol
+export type Password = string & { _opaque: 'Password' }
 
 const passwordMinLength = 6
 
-export const is = (password: unknown): password is Password => {
+const is = (password: unknown): password is Password => {
   return typeof password === "string" && password.length >= passwordMinLength
 }
 
-export type Problem = { message: string }
+type Problem = { message: string }
 
-export const decode = (password: string): Result<Problem, Password> => {
+const decode = (password: string): Result<Problem, Password> => {
   if (password.length < passwordMinLength) {
     return Result.Err({
       message: `Password must be longer than ${passwordMinLength} characters.`,
@@ -24,4 +22,9 @@ export const decode = (password: string): Result<Problem, Password> => {
   }
 
   return Result.Err({ message: "Password is invalid for an unknown reason." })
+}
+
+export const Password = {
+  is,
+  decode
 }

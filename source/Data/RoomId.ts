@@ -1,16 +1,14 @@
 import { Result } from "../Core"
 
-export type RoomId = string & { _opaque: typeof RoomId }
+export type RoomId = string & { _opaque: 'RoomId' }
 
-declare const RoomId: unique symbol
-
-export const is = (id: unknown): id is RoomId => {
+const is = (id: unknown): id is RoomId => {
   return typeof id === "string"
 }
 
 type Problem = "invalid_id"
 
-export const decode = (id: string): Result<Problem, RoomId> => {
+const decode = (id: string): Result<Problem, RoomId> => {
   if (is(id)) {
     return Result.Ok(id)
   }
@@ -18,7 +16,7 @@ export const decode = (id: string): Result<Problem, RoomId> => {
   return Result.Err("invalid_id")
 }
 
-export const generate = (): RoomId => {
+const generate = (): RoomId => {
   // warning collisions could happen
   // use short id so the logs are more readable
   const roomId = Math.random().toString(36).slice(-6);
@@ -28,4 +26,11 @@ export const generate = (): RoomId => {
   }
 
   throw new Error("generated invalid id")
+}
+
+
+export const RoomId = {
+  is,
+  decode,
+  generate,
 }

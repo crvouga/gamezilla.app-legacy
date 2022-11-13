@@ -262,22 +262,22 @@ const ISO_3166_ALPHA_2_MAPPINGS = {
 
 export type Iso3166Alpha2Code = keyof typeof ISO_3166_ALPHA_2_MAPPINGS
 
-export const all = Object.keys(ISO_3166_ALPHA_2_MAPPINGS) as Iso3166Alpha2Code[]
+const all = Object.keys(ISO_3166_ALPHA_2_MAPPINGS) as Iso3166Alpha2Code[]
 
-export const toName = (code: Iso3166Alpha2Code): string => {
+const toName = (code: Iso3166Alpha2Code): string => {
   return ISO_3166_ALPHA_2_MAPPINGS[code]
 }
 
 const _all = new Set<string>(all)
 
-export const is = (code: unknown): code is Iso3166Alpha2Code => {
+const is = (code: unknown): code is Iso3166Alpha2Code => {
   return typeof code === "string" && _all.has(code)
 }
 
-export const of = (code: Iso3166Alpha2Code): Iso3166Alpha2Code => code
+const of = (code: Iso3166Alpha2Code): Iso3166Alpha2Code => code
 
 // source: https://github.com/srcagency/country-to-emoji-flag
-export const toEmoji = (country: Iso3166Alpha2Code): string | undefined => {
+const toEmoji = (country: Iso3166Alpha2Code): string | undefined => {
   const offset = 127397
   const A = 65
   const Z = 90
@@ -298,4 +298,12 @@ export const toEmoji = (country: Iso3166Alpha2Code): string | undefined => {
   }
 
   return String.fromCodePoint(f + offset) + String.fromCodePoint(s + offset)
+}
+
+export const Iso3166Alpha2Code = {
+  of,
+  toEmoji,
+  toName,
+  is,
+  all,
 }

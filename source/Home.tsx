@@ -31,7 +31,7 @@ export type Msg =
   | ["ClickedCurrentRoom"]
   | ["ClickedCurrentRoomLeave"]
   | ["ClickedCurrentRoomDestroy"]
-  | ["ClickedRoom", { roomId: RoomId.RoomId }]
+  | ["ClickedRoom", { roomId: RoomId }]
   | ["ClickedGameCard", GameName]
 
 export type OutAction = GameRoom.Action | Route.Action

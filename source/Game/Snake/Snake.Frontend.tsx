@@ -1,13 +1,13 @@
 import { useLayoutEffect, useRef } from "react"
 import { Cmd, exhaustive, Keyboard, Option, Result, Sub } from "../../Core"
 import { UserId } from "../../Data"
+import * as ProfileStore from "../../Profile/Profile.Store"
 import * as Route from "../../Route"
 import * as Snackbar from "../../Snackbar"
-import * as ProfileStore from "../../Profile/Profile.Store"
 import * as UI from "../../UI"
-import * as Direction from "./Direction"
+import { Direction } from "./Direction"
 import * as Joystick from "./Joystick"
-import * as Position from "./Position"
+import { Position } from "./Position"
 import * as Snake from "./Snake"
 import {
   BackendModel,
@@ -387,7 +387,7 @@ export const View = ({
 
 export const joystickDirectionToDirection = (
   direction: Joystick.Direction,
-): Direction.Direction => {
+): Direction => {
   switch (direction) {
     case "Down": {
       return "down"

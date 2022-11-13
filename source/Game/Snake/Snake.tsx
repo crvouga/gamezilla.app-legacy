@@ -1,5 +1,6 @@
-import * as Direction from "./Direction"
-import * as Position from "./Position"
+import { NonNegInt, PosNum } from "../../Data"
+import { Direction } from "./Direction"
+import { Position } from "./Position"
 
 //
 //
@@ -11,17 +12,17 @@ import * as Position from "./Position"
 
 export type Model = {
   status: Status
-  head: Position.Position
-  tail: Position.Position[]
-  food: Position.Position
-  tailLength: number
-  foodEatenCount: number
-  tickRate: number
-  direction: Direction.Direction
-  directionQueue: Direction.Direction[]
+  head: Position
+  tail: Position[]
+  food: Position
+  tailLength: NonNegInt
+  foodEatenCount: NonNegInt
+  tickRate: PosNum
+  direction: Direction
+  directionQueue: Direction[]
   bounds: {
-    lower: Position.Position
-    upper: Position.Position
+    lower: Position
+    upper: Position
   }
 }
 
@@ -62,12 +63,12 @@ const food: Model["food"] = Position.add(head, { x: 3, y: 0 })
 
 export const init: Model = {
   status: "Paused",
-  tickRate: 1000 / 6,
+  tickRate: PosNum.fromNum(1000 / 6),
   head,
   tail,
   food,
-  tailLength: 4,
-  foodEatenCount: 0,
+  tailLength: NonNegInt.floor(4),
+  foodEatenCount: NonNegInt.floor(0),
   direction: "right",
   directionQueue: [],
   bounds,
@@ -87,8 +88,8 @@ const circularIndex = (index: number, length: number): number => {
 
 const circular = (
   model: Model,
-  position: Position.Position,
-): Position.Position => {
+  position: Position,
+): Position => {
   return {
     x: circularIndex(position.x, model.bounds.upper.x),
     y: circularIndex(position.y, model.bounds.upper.y),
@@ -96,10 +97,10 @@ const circular = (
 }
 
 export const enqueueDirection = (
-  direction: Direction.Direction,
+  direction: Direction,
   model: Model,
 ): Model => {
-  const directionQueueNew = unqiue(
+  const directionQueueNew = unique(
     [...model.directionQueue, direction].slice(0, 2),
   )
 
@@ -144,11 +145,11 @@ export const step = (model: Model): Model => {
     : model.food
 
   const tailLengthNew = isSnakeEatingFood
-    ? model.tailLength + 1
+    ? NonNegInt.inc(model.tailLength)
     : model.tailLength
 
   const foodEatenCountNew = isSnakeEatingFood
-    ? model.foodEatenCount + 1
+    ? NonNegInt.inc(model.foodEatenCount)
     : model.foodEatenCount
 
   return {
@@ -171,7 +172,7 @@ const shuffle = <T,>(xs: T[]): T[] => {
   return ys
 }
 
-const unqiue = <T,>(as: T[]): T[] => {
+const unique = <T,>(as: T[]): T[] => {
   return Array.from(new Set(as))
 }
 
@@ -244,7 +245,7 @@ export const draw = (
 
 export type TileVariant = "light" | "dark"
 
-export const toTileVariant = (position: Position.Position): TileVariant => {
+export const toTileVariant = (position: Position): TileVariant => {
   if (
     (isEven(position.x) && isOdd(position.y)) ||
     (isOdd(position.x) && isEven(position.y))

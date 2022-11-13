@@ -93,7 +93,7 @@ export const createWithEmailAndPassword =
     password,
   }: {
     emailAddress: EmailAddress
-    password: Password.Password
+    password: Password
   }): Task.Task<CreateResult> =>
     async () => {
       const response = await Supabase.client.auth.signUp({

@@ -648,7 +648,7 @@ export const ViewNotInRoom = ({
   )
 }
 
-const toRoomUsers = (roomId: RoomId.RoomId, model: Model): RoomUser[] => {
+const toRoomUsers = (roomId: RoomId, model: Model): RoomUser[] => {
   const roomUsers: RoomUser[] = []
   for (const userId in model.users) {
     if (!UserId.is(userId)) {
@@ -680,7 +680,7 @@ const ViewGameRoomAvatarGroup = ({
 }: {
   store: ProfileStore.Model
   room: {
-    roomId: RoomId.RoomId
+    roomId: RoomId
     hostId: UserId
   }
   model: Model
@@ -955,7 +955,7 @@ export const ViewCard = ({
   gameRoom,
   onClick,
 }: {
-  roomId: RoomId.RoomId
+  roomId: RoomId
   hostId: UserId
   gameName?: GameName
   store: ProfileStore.Model

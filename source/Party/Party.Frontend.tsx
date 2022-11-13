@@ -512,7 +512,7 @@ const ViewNotInParty = ({
           onClick={() =>
             dispatch([
               "StartParty",
-              { hostId: currentUserId, partyId: PartyId.generateSync() },
+              { hostId: currentUserId, partyId: PartyId.generate() },
             ])
           }
         >
@@ -554,7 +554,7 @@ const ViewNotInParty = ({
   )
 }
 
-const countUsersInParty = (partyId: PartyId.PartyId, model: Model): number => {
+const countUsersInParty = (partyId: PartyId, model: Model): number => {
   return Object.values(model.users).filter((user) => user.partyId === partyId)
     .length
 }

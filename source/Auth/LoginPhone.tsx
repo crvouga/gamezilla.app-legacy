@@ -1,7 +1,7 @@
 import * as Auth from "../Auth/Auth"
 import { Cmd, p } from "../Core"
+import { Iso3166Alpha2Code, PhoneNumber } from "../Data"
 import * as Route from "../Route"
-import { ISO_3166, PhoneNumber } from "../Data"
 import * as UI from "../UI"
 
 //
@@ -14,7 +14,7 @@ import * as UI from "../UI"
 
 export type Model = {
   phoneNumber: string
-  country: ISO_3166.Iso3166Alpha2Code
+  country: Iso3166Alpha2Code
   validation: "NotChecked" | "InvalidPhoneNumber" | "EmptyPhoneNumber"
   submission:
   | {
@@ -61,7 +61,7 @@ export type Msg =
   | ["ClickedBack"]
   | ["ClickedSendCode"]
   | ["InputtedPhoneNumber", string]
-  | ["InputtedCountry", ISO_3166.Iso3166Alpha2Code]
+  | ["InputtedCountry", Iso3166Alpha2Code]
   | ["SendCode_Done", PhoneNumber, Auth.AuthResult]
 
 export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
@@ -153,10 +153,10 @@ export const View = ({
       >
         <UI.Autocomplete
           id="iso_3166_phone_number"
-          defaultValue={ISO_3166.of("US")}
-          options={ISO_3166.all}
+          defaultValue={Iso3166Alpha2Code.of("US")}
+          options={Iso3166Alpha2Code.all}
           getOptionLabel={(option) =>
-            `${ISO_3166.toEmoji(option)} ${ISO_3166.toName(option)}`
+            `${Iso3166Alpha2Code.toEmoji(option)} ${Iso3166Alpha2Code.toName(option)}`
           }
           renderInput={(params) => (
             <UI.TextField
@@ -190,7 +190,7 @@ export const View = ({
           }
           helperText={
             model.validation === "InvalidPhoneNumber"
-              ? `Invalid phone number for ${ISO_3166.toName(model.country)}`
+              ? `Invalid phone number for ${Iso3166Alpha2Code.toName(model.country)}`
               : model.validation === "EmptyPhoneNumber"
                 ? "Phone number is required"
                 : undefined

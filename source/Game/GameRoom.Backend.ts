@@ -223,7 +223,7 @@ const sendToRoom = ({
 }: {
   model: Model,
   sendToUser: (userIds: UserId[], msg: ToFrontend) => Cmd<never>,
-  roomId: RoomId.RoomId,
+  roomId: RoomId,
   msg: ToFrontend,
 }): Cmd<never> => {
   const userIds: UserId[] = []
