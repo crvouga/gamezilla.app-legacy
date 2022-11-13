@@ -6,17 +6,17 @@
  * @since 0.5.0
  */
 import * as Json from "../Json"
-import * as Option from "../Option"
+import { Option } from "../Option"
 import { p } from "../pipe"
 import { Dispatch } from "../Platform"
 import { Result } from "../Result"
-import * as Task from "../Task"
+import { Task } from "../Task"
 import {
   Debug,
   Debugger,
   DebuggerDeps,
   Global,
-  MsgWithDebug,
+  MsgWithDebug
 } from "./debugger-commons"
 
 type Unsubscription = () => void
@@ -93,7 +93,7 @@ interface DevToolHandlerR<Model, Msg> extends DebuggerDeps<Model, Msg> {
 export const getConnection =
   <Model, Msg>(
     global: Global,
-  ): Task.Task<Option.Option<Connection<Model, Msg>>> =>
+  ): Task<Option<Connection<Model, Msg>>> =>
     async () => {
       return hasExtension(global)
         ? Option.Some(global.__REDUX_DEVTOOLS_EXTENSION__.connect())
@@ -167,24 +167,24 @@ const handleIncomingMsg = <Model, Msg>({
   dispatch,
 }: DevToolHandlerR<Model, Msg>): ((
   msg: DevToolMsg,
-) => Result<string, Task.Task<void>>) => {
+) => Result<string, Task<void>>) => {
   const dispatchToApp =
-    (m: unknown): Task.Task<void> =>
+    (m: unknown): Task<void> =>
       async () =>
         dispatch(m as Msg)
 
-  const reInit: Task.Task<void> = async () => connection.init(init)
+  const reInit: Task<void> = async () => connection.init(init)
 
-  const update = (payload: Model): Task.Task<void> =>
+  const update = (payload: Model): Task<void> =>
     dispatchToApp({ type: "__DebugUpdateModel__", payload })
 
   const restart =
-    (model: Model): Task.Task<void> =>
+    (model: Model): Task<void> =>
       async () =>
         connection.init(model)
 
   const liftState =
-    (state: LiftedState<Model>): Task.Task<void> =>
+    (state: LiftedState<Model>): Task<void> =>
       async () =>
         connection.send(null, state)
 
@@ -382,7 +382,7 @@ const toggleAction =
     (
       id: number,
       liftedState: LiftedState<Model>,
-    ): Task.Task<LiftedState<Model>> =>
+    ): Task<LiftedState<Model>> =>
       async () => {
         const state = unsafeCopy(liftedState)
 

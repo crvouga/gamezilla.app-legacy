@@ -53,14 +53,14 @@ const decodeRow = (
   })
 }
 
-export type FindResult = Result<Problem, Option.Option<Account>>
+export type FindResult = Result<Problem, Option<Account>>
 
 export const findByEmailAddress =
   ({
     emailAddress,
   }: {
     emailAddress: EmailAddress
-  }): Task.Task<FindResult> =>
+  }): Task<FindResult> =>
     async () => {
       const response = await Supabase.client
         .from<definitions["user_account"]>("user_account")
@@ -84,7 +84,7 @@ export const findByEmailAddress =
 
 export type CreateResult = Result<
   Problem,
-  Option.Option<{ userId: UserId }>
+  Option<{ userId: UserId }>
 >
 
 export const createWithEmailAndPassword =
@@ -94,7 +94,7 @@ export const createWithEmailAndPassword =
   }: {
     emailAddress: EmailAddress
     password: Password
-  }): Task.Task<CreateResult> =>
+  }): Task<CreateResult> =>
     async () => {
       const response = await Supabase.client.auth.signUp({
         email: emailAddress,
@@ -136,7 +136,7 @@ export const sendResetPasswordLink =
     emailAddress,
   }: {
     emailAddress: string
-  }): Task.Task<SendResetPasswordLinkResult> =>
+  }): Task<SendResetPasswordLinkResult> =>
     async () => {
       const response = await Supabase.client.auth.api.resetPasswordForEmail(
         emailAddress,

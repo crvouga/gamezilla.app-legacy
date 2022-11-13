@@ -1,14 +1,14 @@
 import * as Rx from "rxjs"
 import { Cmd } from "./Cmd"
 import { Sub } from "./Sub"
-import * as Task from "./Task"
+import { Task } from "./Task"
 
-export const now = (): Task.Task<number> => {
+export const now = (): Task<number> => {
   return async () => new Date().getTime()
 }
 
 export const delay =
-  <TMsg>(timeout: number, msg: TMsg): Task.Task<TMsg> =>
+  <TMsg>(timeout: number, msg: TMsg): Task<TMsg> =>
     async () => {
       await new Promise((resolve) => setTimeout(resolve, timeout))
       return msg

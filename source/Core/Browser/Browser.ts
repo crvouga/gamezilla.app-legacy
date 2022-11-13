@@ -3,7 +3,7 @@ import { Cmd } from "../Cmd"
 import { p } from "../pipe"
 import { Result } from "../Result"
 import { Sub } from "../Sub"
-import * as Task from "../Task"
+import { Task } from "../Task"
 
 //
 //
@@ -91,7 +91,7 @@ export type Problem = { type: "ElementNotFound" }
 export type FocusResult = Result<Problem, {}>
 
 export const focus =
-  (htmlId: string): Task.Task<FocusResult> =>
+  (htmlId: string): Task<FocusResult> =>
     async () => {
       const element = document.getElementById(htmlId)
 
@@ -111,7 +111,7 @@ export type DomElement = {
 }
 
 export const getElementById =
-  (htmlId: string): Task.Task<GetElementByIdResult> =>
+  (htmlId: string): Task<GetElementByIdResult> =>
     async () => {
       const element = document.getElementById(htmlId)
 

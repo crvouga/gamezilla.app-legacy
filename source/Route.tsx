@@ -71,7 +71,7 @@ export const isRouteType = (routeType: unknown): routeType is Model[0] => {
 export const decode = ({
   pathname,
   query,
-}: Browser.Location): Option.Option<Model> => {
+}: Browser.Location): Option<Model> => {
   const [first, second] = pathname.substring(1).split("/")
 
   if (!isRouteType(first)) {

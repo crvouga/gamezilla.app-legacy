@@ -1,4 +1,6 @@
-import { size, toArray, fromArray, union, intersect, diff } from "./Set"
+import { Set } from "./Set"
+
+const { size, toArray, fromArray, union, intersect, diff } = Set
 
 
 

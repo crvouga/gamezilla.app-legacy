@@ -1,4 +1,4 @@
-import * as Task from "./Task"
+import { Task } from "./Task"
 
 export type Uuid = string & { _opaque: typeof Uuid }
 
@@ -8,7 +8,7 @@ export const is = (id: unknown): id is Uuid => {
   return typeof id === "string"
 }
 
-export const generate: Task.Task<Uuid> = async () => {
+export const generate: Task<Uuid> = async () => {
   return generateSync()
 }
 

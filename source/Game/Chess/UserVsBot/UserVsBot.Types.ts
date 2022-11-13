@@ -12,7 +12,7 @@ import * as Board from "../Board"
 
 export type FrontendModel = {
   sharedModel: SharedModel
-  openedMenuId: Option.Option<string>
+  openedMenuId: Option<string>
   openedModal: "None" | "GameOver"
   isFlipped: boolean
 }
