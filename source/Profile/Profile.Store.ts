@@ -19,19 +19,19 @@ export type Model = {
         [id: UserId]: Profile
     }
     findMany: {
-        [key: FindManyKey]: RemoteData.RemoteData<Problem, UserId[]>
+        [key: FindManyKey]: RemoteData<Problem, UserId[]>
     }
     search: {
-        [searchText: string]: RemoteData.RemoteData<Problem, UserId[]>
+        [searchText: string]: RemoteData<Problem, UserId[]>
     },
     edit: {
-        [userId: UserId]: RemoteData.RemoteData<Problem, UserId>
+        [userId: UserId]: RemoteData<Problem, UserId>
     }
     deleteForever: {
-        [userId: UserId]: RemoteData.RemoteData<Problem, Unit>
+        [userId: UserId]: RemoteData<Problem, Unit>
     }
     create: {
-        [userId: UserId]: RemoteData.RemoteData<Problem, UserId>
+        [userId: UserId]: RemoteData<Problem, UserId>
     }
 }
 
@@ -136,7 +136,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
                     profiles: removeKey(userId, model.profiles),
                     edit: {
                         ...model.edit,
-                        [userId]: RemoteData.Failure(result.error)
+                        [userId]: RemoteData.Err(result.error)
                     }
                 }
 
@@ -151,7 +151,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
                 },
                 edit: {
                     ...model.edit,
-                    [userId]: RemoteData.Success(userId)
+                    [userId]: RemoteData.Ok(userId)
                 }
             }
 
@@ -167,7 +167,6 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
             const modelNew = produce(model, (model) => {
                 model.findMany[key] = p(
                     result,
-                    RemoteData.fromResult,
                     RemoteData.map((profiles) =>
                         profiles.map((profile) => profile.userId),
                     ),
@@ -185,8 +184,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
         case "DeleteForever_Done": {
             const { result, userId } = msg[1]
             const modelNew = produce(model, (model) => {
-                model.deleteForever[userId] =
-                    RemoteData.fromResult(result)
+                model.deleteForever[userId] = result
 
                 switch (result.type) {
                     case "Err":
@@ -205,7 +203,6 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
             const modelNew = produce(model, (model) => {
                 model.create[userId] = p(
                     result,
-                    RemoteData.fromResult,
                     RemoteData.map((profile) => profile.userId),
                 )
 
@@ -229,7 +226,6 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
             const modelNew = produce(model, (model) => {
                 model.search[searchText] = p(
                     result,
-                    RemoteData.fromResult,
                     RemoteData.map((profiles) =>
                         profiles.map((profile) => profile.userId),
                     ),

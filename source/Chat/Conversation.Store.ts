@@ -86,7 +86,6 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
       const modelNew = produce(model, (model) => {
         model.queries.Conversation.FindOne[conversationId] = p(
           result,
-          RemoteData.fromResult,
           RemoteData.map((item) => ({
             conversation: item.conversation.conversationId,
             message: item.messages.map((item) => item.messageId),
@@ -122,7 +121,6 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
       const modelNew = produce(model, (model) => {
         model.queries.Conversation.FindManyByUserId[userId] = p(
           result,
-          RemoteData.fromResult,
           RemoteData.map((data) => ({
             conversation: data.conversations.map((item) => item.conversationId),
             usersConversations: data.usersConversations.map(
@@ -158,7 +156,6 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
       const modelNew = produce(model, (model) => {
         model.mutations.Conversation.FindElseInsert = p(
           result,
-          RemoteData.fromResult,
           RemoteData.map((item) => item.conversation.conversationId),
         )
 
@@ -219,7 +216,7 @@ export const runAction = (
         model.queries.Conversation.FindManyByUserId[userId] ??
         RemoteData.NotAsked
 
-      if (query.type === "Success") {
+      if (query.type === "Ok") {
         return [model, Cmd.None]
       }
 

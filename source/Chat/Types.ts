@@ -67,7 +67,7 @@ export type Message = {
 export type Queries = {
   Conversation: {
     FindOne: {
-      [id: string]: RemoteData.RemoteData<
+      [id: string]: RemoteData<
         Problem,
         {
           conversation: string
@@ -76,7 +76,7 @@ export type Queries = {
       >
     }
     FindManyByUserId: {
-      [userId: UserId]: RemoteData.RemoteData<
+      [userId: UserId]: RemoteData<
         Problem,
         {
           conversation: string[]
@@ -97,14 +97,14 @@ export type Queries = {
 
 export type Mutations = {
   Conversation: {
-    FindElseInsert: RemoteData.RemoteData<Problem, string>
+    FindElseInsert: RemoteData<Problem, string>
   }
   Message: {
     Send: {
-      [conversationId: string]: RemoteData.RemoteData<Problem, string>
+      [conversationId: string]: RemoteData<Problem, string>
     }
     Unsend: {
-      [messageId: string]: RemoteData.RemoteData<Problem, string>
+      [messageId: string]: RemoteData<Problem, string>
     }
   }
 }

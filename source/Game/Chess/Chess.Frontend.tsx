@@ -139,7 +139,6 @@ export const updateFromBackend = (
           ...model.requests,
           InputMode: p(
             result,
-            RemoteData.fromResult,
             RemoteData.map(() => Unit),
           ),
         },

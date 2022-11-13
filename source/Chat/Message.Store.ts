@@ -58,10 +58,7 @@ export const update = (msg: Msg, model: Store): [Store, Cmd<Msg>] => {
     case "Unsend_Done": {
       const { messageId, result } = msg[1]
       const modelNew = produce(model, (model) => {
-        model.mutations.Message.Unsend[messageId] = p(
-          result,
-          RemoteData.fromResult,
-        )
+        model.mutations.Message.Unsend[messageId] = result
 
         switch (result.type) {
           case "Err":
@@ -80,7 +77,6 @@ export const update = (msg: Msg, model: Store): [Store, Cmd<Msg>] => {
       const modelNew = produce(model, (model) => {
         model.mutations.Message.Send[conversationId] = p(
           result,
-          RemoteData.fromResult,
           RemoteData.map((item) => item.messageId),
         )
         switch (result.type) {

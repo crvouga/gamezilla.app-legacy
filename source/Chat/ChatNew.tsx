@@ -301,7 +301,7 @@ export const View = ({
       <UI.Divider />
 
       <UI.List sx={{ overflowY: "scroll", flex: 1 }}>
-        {searchQuery.type === "Success" && profiles.length === 0 && (
+        {searchQuery.type === "Ok" && profiles.length === 0 && (
           <UI.Typography
             sx={{ p: 2 }}
             color="text.secondary"

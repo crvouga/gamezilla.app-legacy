@@ -26,7 +26,7 @@ export type Model = {
     message: string
   }
   | {
-    type: "Success"
+    type: "Ok"
   }
 }
 
@@ -97,7 +97,7 @@ export const update = (
         ]
       }
 
-      return [{ ...model, submission: { type: "Success" } }, Cmd.None]
+      return [{ ...model, submission: { type: "Ok" } }, Cmd.None]
     }
 
     case "Focus_Done": {
