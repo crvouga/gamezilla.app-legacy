@@ -53,7 +53,7 @@ export type Unsend_Done = [
 //
 //
 
-export const update = (msg: Msg, model: Store): [Store, Cmd.Cmd<Msg>] => {
+export const update = (msg: Msg, model: Store): [Store, Cmd<Msg>] => {
   switch (msg[0]) {
     case "Unsend_Done": {
       const { messageId, result } = msg[1]
@@ -102,7 +102,7 @@ export const update = (msg: Msg, model: Store): [Store, Cmd.Cmd<Msg>] => {
 export const runAction = (
   action: Action,
   model: Store,
-): [Store, Cmd.Cmd<Msg>] => {
+): [Store, Cmd<Msg>] => {
   switch (action[0]) {
     case "Unsend": {
       const { messageId } = action[1]

@@ -36,9 +36,9 @@ export const init = ({
   sendToBackend,
   userId,
 }: {
-  sendToBackend: (msg: ToBackend) => Cmd.Cmd<never>
+  sendToBackend: (msg: ToBackend) => Cmd<never>
   userId: UserId.UserId | "None"
-}): [FrontendModel, Cmd.Cmd<Msg>] => {
+}): [FrontendModel, Cmd<Msg>] => {
   return [
     {
       sharedModel: initShared({ userId }),
@@ -63,10 +63,10 @@ export type Msg = FrontendMsg
 export type OutAction = Snackbar.Action
 
 export const update = (
-  { sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd.Cmd<never> },
+  { sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd<never> },
   msg: Msg,
   model: Model,
-): [Model, Cmd.Cmd<Msg>] => {
+): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     //
     //
@@ -167,7 +167,7 @@ export const updateFromBackend = (
   },
   msg: ToFrontend,
   _model: Model,
-): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
+): [Model, Cmd<Msg>, OutAction[]] => {
   const model: Model = { ..._model, openedMenuId: Option.None }
 
   switch (msg[0]) {
@@ -396,7 +396,7 @@ export const updateFromBackend = (
   }
 }
 
-const playAudio = (src: string): Cmd.Cmd<Msg> => {
+const playAudio = (src: string): Cmd<Msg> => {
   return Audio.play(src, t("Audio_Done"))
 }
 

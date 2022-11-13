@@ -51,11 +51,11 @@ export const update = (
   {
     sendToRoom,
   }: {
-    sendToRoom: (msg: ToFrontend) => Cmd.Cmd<never>
+    sendToRoom: (msg: ToFrontend) => Cmd<never>
   },
   msg: Msg,
   model: Model,
-): [Model, Cmd.Cmd<Msg>] => {
+): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case "RoundCountDown": {
       const result = roundCountDown(model)
@@ -80,12 +80,12 @@ export const updateFromFrontend = (
     sendToClient,
     sendToRoom,
   }: {
-    sendToClient: (msg: ToFrontend) => Cmd.Cmd<never>
-    sendToRoom: (msg: ToFrontend) => Cmd.Cmd<never>
+    sendToClient: (msg: ToFrontend) => Cmd<never>
+    sendToRoom: (msg: ToFrontend) => Cmd<never>
   },
   msg: ToBackend,
   model: Model,
-): [Model, Cmd.Cmd<Msg>] => {
+): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case "InputPlayer": {
       const result = inputPlayer(msg[1], model)
@@ -234,7 +234,7 @@ export const updateFromFrontend = (
 }
 
 
-export const updateRoomLeave = ({ sendToRoom }: { sendToRoom: (m: ToFrontend) => Cmd.Cmd<never> }, userId: UserId.UserId, model: Model): [Model, Cmd.Cmd<Msg>] => {
+export const updateRoomLeave = ({ sendToRoom }: { sendToRoom: (m: ToFrontend) => Cmd<never> }, userId: UserId.UserId, model: Model): [Model, Cmd<Msg>] => {
   const player: PlayerType | "None" = model.O === userId ? 'O' : model.X === userId ? 'X' : 'None'
 
   if (player === 'None') {

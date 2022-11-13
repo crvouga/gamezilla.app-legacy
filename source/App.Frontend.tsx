@@ -42,7 +42,7 @@ type Model = FrontendModel
 //
 //
 
-const init = (location: Browser.Location): [Model, Cmd.Cmd<Msg>] => {
+const init = (location: Browser.Location): [Model, Cmd<Msg>] => {
   const route = p(
     location,
     Route.decode,
@@ -104,7 +104,7 @@ type OutAction =
 //
 //
 
-const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
+const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
   return p(
     [model, Cmd.None],
     andThen(updateMain, msg),
@@ -112,7 +112,7 @@ const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
   )
 }
 
-const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
+const updateMain = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case "▶": {
       return updateFromBackend(msg[1], model)
@@ -216,7 +216,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 const updatePage = (
   msg: Pages.Msg,
   model: Model,
-): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
+): [Model, Cmd<Msg>, OutAction[]] => {
   const status = toStatus(model)
 
   switch (status[0]) {
@@ -261,7 +261,7 @@ const updatePage = (
 const updateFromBackend = (
   msg: ToFrontend,
   model: Model,
-): [Model, Cmd.Cmd<Msg>] => {
+): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case "Session": {
       const sessionId = msg[1]
@@ -324,7 +324,7 @@ const updateFromBackend = (
   }
 }
 
-const initPage = (model: Model): [Model, Cmd.Cmd<Msg>] => {
+const initPage = (model: Model): [Model, Cmd<Msg>] => {
   const status = toStatus(model)
 
   switch (status[0]) {
@@ -376,7 +376,7 @@ const initPage = (model: Model): [Model, Cmd.Cmd<Msg>] => {
 
 const updateStatusChanged =
   (modelPrev: Model) =>
-    (_msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
+    (_msg: Msg, model: Model): [Model, Cmd<Msg>] => {
       const statusPrev = toStatus(modelPrev)
       const statusNew = toStatus(model)
 
@@ -387,7 +387,7 @@ const updateStatusChanged =
       return initPage(model)
     }
 
-const runAction = (action: OutAction, model: Model): [Model, Cmd.Cmd<Msg>] => {
+const runAction = (action: OutAction, model: Model): [Model, Cmd<Msg>] => {
   switch (action[0]) {
     case "Chat": {
       const [chatNew, chatCmd] = ChatStore.runAction(action, model.chatStore)

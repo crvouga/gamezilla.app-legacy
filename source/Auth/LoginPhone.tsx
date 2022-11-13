@@ -64,7 +64,7 @@ export type Msg =
   | ["InputtedCountry", ISO_3166.Iso3166Alpha2Code]
   | ["SendCode_Done", PhoneNumber.PhoneNumber, Auth.AuthResult]
 
-export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
+export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case "ClickedBack": {
       return [model, Route.back]

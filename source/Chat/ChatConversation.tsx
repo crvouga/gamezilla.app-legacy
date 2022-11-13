@@ -33,7 +33,7 @@ export const init = ({
   conversationId,
 }: {
   conversationId: string
-}): [Model, Cmd.Cmd<Msg>, OutAction[]] => [
+}): [Model, Cmd<Msg>, OutAction[]] => [
     {
       text: "",
       focused: { type: "Blurred" },
@@ -67,7 +67,7 @@ export const update = (
   { userId, conversationId }: { userId: UserId.UserId; conversationId: string },
   msg: Msg,
   model: Model,
-): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
+): [Model, Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
     case "ClipboardCopy_Done":
       return [{ ...model, focused: { type: "Blurred" } }, Cmd.None, []]

@@ -55,11 +55,11 @@ export const update = (
   {
     sendToRoom,
   }: {
-    sendToRoom: (toFrontend: ToFrontend) => Cmd.Cmd<never>
+    sendToRoom: (toFrontend: ToFrontend) => Cmd<never>
   },
   msg: Msg,
   model: Model,
-): [Model, Cmd.Cmd<Msg>] => {
+): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case "Tetris": {
       if (model[0] === "Tetris") {
@@ -140,12 +140,12 @@ export const updateFromFrontend = (
     sendToRoom,
   }: {
     hostId: UserId.UserId
-    sendToClient: (msg: ToFrontend) => Cmd.Cmd<never>
-    sendToRoom: (msg: ToFrontend) => Cmd.Cmd<never>
+    sendToClient: (msg: ToFrontend) => Cmd<never>
+    sendToRoom: (msg: ToFrontend) => Cmd<never>
   },
   msg: ToBackend,
   model: Model,
-): [Model, Cmd.Cmd<Msg>] => {
+): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case "Tetris": {
       if (model[0] === "Tetris") {
@@ -236,7 +236,7 @@ export const updateFromFrontend = (
   }
 }
 
-export const updateRoomLeave = ({ sendToRoom }: { sendToRoom: (msg: ToFrontend) => Cmd.Cmd<never> }, userId: UserId.UserId, model: Model): [Model, Cmd.Cmd<Msg>] => {
+export const updateRoomLeave = ({ sendToRoom }: { sendToRoom: (msg: ToFrontend) => Cmd<never> }, userId: UserId.UserId, model: Model): [Model, Cmd<Msg>] => {
   switch (model[0]) {
     case 'Chess': {
       const [child, cmd] = Chess.updateRoomLeave({ sendToRoom: msg => sendToRoom(['Chess', msg]) }, userId, model[1])

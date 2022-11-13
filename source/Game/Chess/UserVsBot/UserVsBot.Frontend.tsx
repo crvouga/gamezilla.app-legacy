@@ -36,8 +36,8 @@ export type Model = FrontendModel
 export const init = ({
   sendToBackend,
 }: {
-  sendToBackend: (msg: ToBackend) => Cmd.Cmd<never>
-}): [FrontendModel, Cmd.Cmd<Msg>] => {
+  sendToBackend: (msg: ToBackend) => Cmd<never>
+}): [FrontendModel, Cmd<Msg>] => {
   return [
     {
       sharedModel: initShared,
@@ -62,10 +62,10 @@ export type Msg = FrontendMsg
 export type OutAction = Snackbar.Action
 
 export const update = (
-  { sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd.Cmd<never> },
+  { sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd<never> },
   msg: Msg,
   _model: Model,
-): [Model, Cmd.Cmd<Msg>] => {
+): [Model, Cmd<Msg>] => {
   const model: Model = { ..._model, openedMenuId: Option.None }
   switch (msg[0]) {
     //
@@ -138,7 +138,7 @@ export const update = (
 export const updateFromBackend = (
   msg: ToFrontend,
   modelPrev: Model,
-): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
+): [Model, Cmd<Msg>, OutAction[]] => {
   const [modelNext, cmd, actions] = updateFromBackend_(msg, modelPrev)
 
   if (
@@ -165,7 +165,7 @@ export const updateFromBackend = (
 const updateFromBackend_ = (
   msg: ToFrontend,
   model: Model,
-): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
+): [Model, Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
     case "Sync": {
       return [model, Cmd.None, []]
@@ -233,7 +233,7 @@ const updateFromBackend_ = (
 const handleResponse = (
   res: Res,
   model: Model,
-): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
+): [Model, Cmd<Msg>, OutAction[]] => {
   const result = res[1]
 
   if (result.type === "Err") {
@@ -247,7 +247,7 @@ const handleResponse = (
   return [modelNew, Cmd.None, []]
 }
 
-const playAudio = (src: string): Cmd.Cmd<Msg> => {
+const playAudio = (src: string): Cmd<Msg> => {
   return Audio.play(src, t("Audio_Done"))
 }
 

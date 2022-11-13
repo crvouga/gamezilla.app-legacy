@@ -119,14 +119,14 @@ export type OutAction =
 //
 //
 
-export const initLoading = (): [Model, Cmd.Cmd<Msg>] => {
+export const initLoading = (): [Model, Cmd<Msg>] => {
   return [["Loading"], Cmd.None]
 }
 
 export const initReady = (
   route: Route.Model,
   profile: ProfileStore.Profile,
-): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
+): [Model, Cmd<Msg>, OutAction[]] => {
   switch (route[0]) {
     case "Account":
       return [["Account", Account.init], Cmd.None, []]
@@ -249,7 +249,7 @@ export const initReady = (
   }
 }
 
-export const initLoggedOut = (route: Route.Model): [Model, Cmd.Cmd<Msg>] => {
+export const initLoggedOut = (route: Route.Model): [Model, Cmd<Msg>] => {
   switch (route[0]) {
     case "Login":
       return [["Login", Login.init], Cmd.None]
@@ -298,7 +298,7 @@ export const initLoggedOut = (route: Route.Model): [Model, Cmd.Cmd<Msg>] => {
 export const initProfileMissing = (
   route: Route.Model,
   auth: Auth.Session,
-): [Model, Cmd.Cmd<Msg>] => {
+): [Model, Cmd<Msg>] => {
   switch (route[0]) {
     case "ProfileCreate":
       return [["ProfileCreate", ProfileCreate.init(auth)], Cmd.None]
@@ -350,7 +350,7 @@ export const updateReady = (
   },
   msg: Msg,
   model: Model,
-): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
+): [Model, Cmd<Msg>, OutAction[]] => {
   if (msg[0] === "ClickedBottomNavigationLink") {
     return [model, Route.push(msg[1]), []]
   }
@@ -532,7 +532,7 @@ export const updateProfileMissing = (
   auth: Auth.Session,
   msg: Msg,
   model: Model,
-): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
+): [Model, Cmd<Msg>, OutAction[]] => {
   switch (model[0]) {
     case "Logout":
       if (msg[0] === "Logout") {
@@ -582,7 +582,7 @@ export const updateProfileMissing = (
 export const updateLoggedOut = (
   msg: Msg,
   model: Model,
-): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
+): [Model, Cmd<Msg>, OutAction[]] => {
   switch (model[0]) {
     case "Login":
       if (msg[0] === "Login") {
@@ -1223,8 +1223,8 @@ const ViewBottomNavigation = ({
 const tagUpdate = <TModel, TMsg, TAction, TPage extends Msg[0]>(
   page: TPage,
   [modelPrev, cmdPrev, actionsPrev = []]:
-    | [TModel, Cmd.Cmd<TMsg>, TAction[]]
-    | [TModel, Cmd.Cmd<TMsg>],
-): [[TPage, TModel], Cmd.Cmd<[TPage, TMsg]>, TAction[]] => {
+    | [TModel, Cmd<TMsg>, TAction[]]
+    | [TModel, Cmd<TMsg>],
+): [[TPage, TModel], Cmd<[TPage, TMsg]>, TAction[]] => {
   return [[page, modelPrev], p(cmdPrev, Cmd.map(t(page))), actionsPrev]
 }

@@ -125,7 +125,7 @@ export type Action =
 //
 //
 
-export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
+export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
     switch (msg[0]) {
         case "EditOne_Done": {
             const { userId, result } = msg[1]
@@ -255,7 +255,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
     }
 }
 
-export const runAction = (msg: Action, model: Model): [Model, Cmd.Cmd<Msg>] => {
+export const runAction = (msg: Action, model: Model): [Model, Cmd<Msg>] => {
     switch (msg[1][0]) {
         case "EditOne": {
             const { userId, edits } = msg[1][1]

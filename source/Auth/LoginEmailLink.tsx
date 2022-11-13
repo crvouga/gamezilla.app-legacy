@@ -47,7 +47,7 @@ export type Msg =
   | ["InputtedEmailAddress", string]
   | ["Login_Done", Auth.AuthResult]
 
-export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
+export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case "InputtedEmailAddress":
       return [{ ...model, emailAddress: msg[1] }, Cmd.None]

@@ -40,11 +40,11 @@ export const update = (
   {
     sendToUser,
   }: {
-    sendToUser: (userIds: UserId.UserId[], msg: ToFrontend) => Cmd.Cmd<never>
+    sendToUser: (userIds: UserId.UserId[], msg: ToFrontend) => Cmd<never>
   },
   msg: Msg,
   model: Model,
-): [Model, Cmd.Cmd<Msg>] => {
+): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case "Games": {
       const roomId = msg[1]
@@ -96,13 +96,13 @@ export const updateFromFrontend = (
     sendToUser,
     broadcast,
   }: {
-    sendToClient: (msg: ToFrontend) => Cmd.Cmd<never>
-    sendToUser: (userId: UserId.UserId[], msg: ToFrontend) => Cmd.Cmd<never>
-    broadcast: (msg: ToFrontend) => Cmd.Cmd<never>
+    sendToClient: (msg: ToFrontend) => Cmd<never>
+    sendToUser: (userId: UserId.UserId[], msg: ToFrontend) => Cmd<never>
+    broadcast: (msg: ToFrontend) => Cmd<never>
   },
   msg: ToBackend,
   model: Model,
-): [Model, Cmd.Cmd<BackendMsg>] => {
+): [Model, Cmd<BackendMsg>] => {
   switch (msg[0]) {
     case "Games": {
       const roomId = msg[1]
@@ -222,10 +222,10 @@ const sendToRoom = ({
   msg,
 }: {
   model: Model,
-  sendToUser: (userIds: UserId.UserId[], msg: ToFrontend) => Cmd.Cmd<never>,
+  sendToUser: (userIds: UserId.UserId[], msg: ToFrontend) => Cmd<never>,
   roomId: RoomId.RoomId,
   msg: ToFrontend,
-}): Cmd.Cmd<never> => {
+}): Cmd<never> => {
   const userIds: UserId.UserId[] = []
 
   for (const userId in model.users) {
@@ -258,9 +258,9 @@ const sendToRoom = ({
 //
 
 export const onClientConnected = (
-  { sendToClient }: { sendToClient: (msg: ToFrontend) => Cmd.Cmd<Msg> },
+  { sendToClient }: { sendToClient: (msg: ToFrontend) => Cmd<Msg> },
   model: Model,
-): Cmd.Cmd<Msg> => {
+): Cmd<Msg> => {
   return sendToClient(["Sync", model])
 }
 

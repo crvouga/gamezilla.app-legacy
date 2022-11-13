@@ -2,7 +2,6 @@ import { Cmd, p, Sub } from "../../../Core";
 import { isBotTurn, initShared, BackendMsg, BackendModel, ToBackend, handle, Res, ToFrontend, botMove } from "./UserVsBot.Types"
 import { UserId } from "../../../Data/UserId"
 import { getBestMove, opposite } from "../ConnectFour";
-import { perform } from "../../../Core/Cmd";
 
 //
 //
@@ -26,7 +25,7 @@ export const init = initShared
 
 export type Msg = BackendMsg
 
-export const update = ({ sendToRoom }: { sendToRoom: (m: ToFrontend) => Cmd.Cmd<never> }, msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
+export const update = ({ sendToRoom }: { sendToRoom: (m: ToFrontend) => Cmd<never> }, msg: Msg, model: Model): [Model, Cmd<Msg>] => {
     switch (msg[0]) {
         case "BotMove": {
             const result = botMove(msg[1], model)
@@ -40,10 +39,10 @@ export const update = ({ sendToRoom }: { sendToRoom: (m: ToFrontend) => Cmd.Cmd<
 
 
 export const updateFromFrontend = (
-    wire: { sendToRoom: (msg: ToFrontend) => Cmd.Cmd<never>, sendToClient: (msg: ToFrontend) => Cmd.Cmd<never> },
+    wire: { sendToRoom: (msg: ToFrontend) => Cmd<never>, sendToClient: (msg: ToFrontend) => Cmd<never> },
     msg: ToBackend,
     modelPrev: Model
-): [Model, Cmd.Cmd<Msg>] => {
+): [Model, Cmd<Msg>] => {
     const [modelNext, cmd] = updateFromFrontend_(wire, msg, modelPrev)
 
     if (!isBotTurn(modelPrev) && isBotTurn(modelNext) && modelNext.type === 'Game') {
@@ -53,7 +52,7 @@ export const updateFromFrontend = (
                 cmd,
                 p(
                     getBestMove({ columns: modelNext.columns, maximizingPlayer: opposite[modelNext.userPlayerType] }),
-                    perform(result => ['BotMove', result])
+                    Cmd.perform(result => ['BotMove', result])
                 )
             ])
         ]
@@ -63,10 +62,10 @@ export const updateFromFrontend = (
 }
 
 const updateFromFrontend_ = (
-    { sendToRoom, sendToClient }: { sendToRoom: (msg: ToFrontend) => Cmd.Cmd<never>, sendToClient: (msg: ToFrontend) => Cmd.Cmd<never> },
+    { sendToRoom, sendToClient }: { sendToRoom: (msg: ToFrontend) => Cmd<never>, sendToClient: (msg: ToFrontend) => Cmd<never> },
     msg: ToBackend,
     model: Model
-): [Model, Cmd.Cmd<Msg>] => {
+): [Model, Cmd<Msg>] => {
     switch (msg[0]) {
         case 'Restart':
         case 'StartGame':
@@ -89,10 +88,10 @@ const updateFromFrontend_ = (
 };
 
 export const updateRoomLeave = ({ userId, model, sendToRoom }: {
-    sendToRoom: (m: ToFrontend) => Cmd.Cmd<never>,
+    sendToRoom: (m: ToFrontend) => Cmd<never>,
     userId: UserId,
     model: Model,
-}): [Model, Cmd.Cmd<Msg>] => {
+}): [Model, Cmd<Msg>] => {
     if (model.player !== userId) {
         return [model, Cmd.None]
     }

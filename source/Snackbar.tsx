@@ -46,7 +46,7 @@ export type Action = [
   { variant: Variant; message: string; title?: string },
 ]
 
-export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
+export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case "DurationElapsed":
       return removeById(msg[1], model)
@@ -64,7 +64,7 @@ const snackTimeout = 4000
 export const runAction = (
   action: Action,
   model: Model,
-): [Model, Cmd.Cmd<Msg>] => {
+): [Model, Cmd<Msg>] => {
   const { message, title, variant } = action[1]
 
   const snack: Snack = {
@@ -86,7 +86,7 @@ export const runAction = (
   ]
 }
 
-const removeById = (snackId: string, model: Model): [Model, Cmd.Cmd<Msg>] => [
+const removeById = (snackId: string, model: Model): [Model, Cmd<Msg>] => [
   {
     ...model,
     queue: model.queue.filter((snack) => snack.snackId !== snackId),

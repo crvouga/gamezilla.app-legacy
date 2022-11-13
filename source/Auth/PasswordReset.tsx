@@ -53,7 +53,7 @@ export type Msg =
     },
   ]
 
-export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
+export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case "ClickedBack":
       return [model, Route.back]

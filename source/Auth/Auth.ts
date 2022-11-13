@@ -15,7 +15,7 @@ export type Session = { defaultName: string; userId: UserId.UserId }
 
 export type Model = ["Loading"] | ["LoggedOut"] | ["LoggedIn", Session]
 
-export const init = (): [Model, Cmd.Cmd<Msg>] => {
+export const init = (): [Model, Cmd<Msg>] => {
   return [
     ["Loading"],
     p(
@@ -51,10 +51,10 @@ export type ToBackend = ["UserLoggedIn", UserId.UserId]
 //
 
 export const update = (
-  { sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd.Cmd<never> },
+  { sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd<never> },
   msg: Msg,
   model: Model,
-): [Model, Cmd.Cmd<Msg>] => {
+): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case "GotSession":
       switch (msg[1].type) {
@@ -91,7 +91,7 @@ export const update = (
 export const runAction = (
   action: Action,
   model: Model,
-): [Model, Cmd.Cmd<Msg>] => {
+): [Model, Cmd<Msg>] => {
   switch (action[0]) {
     case "Auth": {
       switch (action[1][0]) {

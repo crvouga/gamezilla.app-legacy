@@ -40,10 +40,10 @@ export const init = initSharedModel
 export type Msg = BackendMsg
 
 export const update = (
-  { sendToRoom }: { sendToRoom: (msg: ToFrontend) => Cmd.Cmd<never> },
+  { sendToRoom }: { sendToRoom: (msg: ToFrontend) => Cmd<never> },
   msg: Msg,
   model: Model,
-): [Model, Cmd.Cmd<Msg>] => {
+): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case "Tick": {
       const modelNew: Model = {
@@ -61,12 +61,12 @@ export const updateFromFrontend = (
     sendToClient,
     sendToRoom,
   }: {
-    sendToClient: (msg: ToFrontend) => Cmd.Cmd<never>
-    sendToRoom: (msg: ToFrontend) => Cmd.Cmd<never>
+    sendToClient: (msg: ToFrontend) => Cmd<never>
+    sendToRoom: (msg: ToFrontend) => Cmd<never>
   },
   msg: ToBackend,
   model: Model,
-): [Model, Cmd.Cmd<Msg>] => {
+): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case "StartGame": {
       return updateRequest(
@@ -107,12 +107,12 @@ const updateRequest = (
     sendToClient,
     sendToRoom,
   }: {
-    sendToClient: (msg: ToFrontend) => Cmd.Cmd<never>
-    sendToRoom: (msg: ToFrontend) => Cmd.Cmd<never>
+    sendToClient: (msg: ToFrontend) => Cmd<never>
+    sendToRoom: (msg: ToFrontend) => Cmd<never>
   },
   response: Response,
   model: Model,
-): [Model, Cmd.Cmd<Msg>] => {
+): [Model, Cmd<Msg>] => {
   if (response[1].type === "Err") {
     return [model, sendToClient(response)]
   }

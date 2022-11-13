@@ -35,8 +35,8 @@ export type Model = FrontendModel
 export const init = ({
   // sendToBackend,
 }: {
-  sendToBackend: (msg: ToBackend) => Cmd.Cmd<never>
-}): [FrontendModel, Cmd.Cmd<Msg>] => {
+  sendToBackend: (msg: ToBackend) => Cmd<never>
+}): [FrontendModel, Cmd<Msg>] => {
   return [
     {
       mode: ["None"],
@@ -61,10 +61,10 @@ export type Msg = FrontendMsg
 export type OutAction = Snackbar.Action
 
 export const update = (
-  { sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd.Cmd<never> },
+  { sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd<never> },
   msg: Msg,
   model: Model,
-): [Model, Cmd.Cmd<Msg>] => {
+): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case "PreloadAudio_Done": {
       return [model, Cmd.None]
@@ -123,12 +123,12 @@ export const updateFromBackend = (
     store,
   }: {
     currentUserId: UserId.UserId
-    sendToBackend: (msg: ToBackend) => Cmd.Cmd<never>
+    sendToBackend: (msg: ToBackend) => Cmd<never>
     store: ProfileStore.Model
   },
   msg: ToFrontend,
   model: Model,
-): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
+): [Model, Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
     case "InputMode_Done": {
       const result = msg[2]
@@ -381,10 +381,10 @@ export const mergeWithBackend = ({
   backendModel,
   sendToBackend,
 }: {
-  sendToBackend: (msg: ToBackend) => Cmd.Cmd<never>
+  sendToBackend: (msg: ToBackend) => Cmd<never>
   frontendModel: FrontendModel
   backendModel: BackendModel
-}): [FrontendModel, Cmd.Cmd<Msg>] => {
+}): [FrontendModel, Cmd<Msg>] => {
   switch (backendModel[0]) {
     case "None": {
       return [{ ...frontendModel, mode: ["None"] }, Cmd.None]

@@ -35,10 +35,10 @@ export const init: Model = initShared
 export type Msg = BackendMsg
 
 export const update = (
-  { sendToRoom }: { sendToRoom: (msg: ToFrontend) => Cmd.Cmd<never> },
+  { sendToRoom }: { sendToRoom: (msg: ToFrontend) => Cmd<never> },
   msg: Msg,
   model: Model,
-): [Model, Cmd.Cmd<Msg>] => {
+): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case "Tick": {
       const modelNext = tick(model)
@@ -53,12 +53,12 @@ export const updateFromFrontend = (
     sendToRoom,
     sendToClient,
   }: {
-    sendToRoom: (msg: ToFrontend) => Cmd.Cmd<never>
-    sendToClient: (msg: ToFrontend) => Cmd.Cmd<never>
+    sendToRoom: (msg: ToFrontend) => Cmd<never>
+    sendToClient: (msg: ToFrontend) => Cmd<never>
   },
   msg: ToBackend,
   model: Model,
-): [Model, Cmd.Cmd<Msg>] => {
+): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case "MouseMove": {
       const toFrontend = mouseMove(msg, model)

@@ -33,7 +33,7 @@ import { formatMsg } from "./Core/Debug"
 
 type Model = BackendModel
 
-const init = (): [Model, Cmd.Cmd<Msg>] => {
+const init = (): [Model, Cmd<Msg>] => {
   const [party, partyCmd] = Party.init()
   return [
     {
@@ -55,7 +55,7 @@ const init = (): [Model, Cmd.Cmd<Msg>] => {
 
 type Msg = BackendMsg
 
-const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
+const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case "▶":
       return updateFromFrontend(msg[1], msg[2], msg[3], model)
@@ -164,7 +164,7 @@ const updateFromFrontend = (
   clientId: ClientId.ClientId,
   msg: ToBackend,
   model: Model,
-): [Model, Cmd.Cmd<Msg>] => {
+): [Model, Cmd<Msg>] => {
   const sendToClient = (msg: ToFrontend) => Wire.sendToFrontend([clientId], msg)
 
   switch (msg[0]) {

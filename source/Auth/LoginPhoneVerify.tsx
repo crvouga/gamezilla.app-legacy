@@ -64,7 +64,7 @@ export const update = (
   { phoneNumber }: { phoneNumber: PhoneNumber.PhoneNumber },
   msg: Msg,
   model: Model,
-): [Model, Cmd.Cmd<Msg>] => {
+): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case "ClickedBack": {
       return [model, Route.back]

@@ -1,4 +1,4 @@
-import { Cmd, p, Sub, Uuid } from "../Core";
+import { Cmd, p, Uuid } from "../Core";
 import { SMS } from "../SMS/SMS";
 import { BackendModel, BackendMsg, ToBackend, ToFrontend } from "./Auth.Type";
 
@@ -24,7 +24,7 @@ export const init: Model = { sessions: {}, verifications: {} }
 
 export type Msg = BackendMsg
 
-export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
+export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
     switch (msg[0]) {
         case "LoginCodeSent": {
             return [model, Cmd.None]
@@ -32,15 +32,8 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
     }
 };
 
-const toCodeMessage = (code: number) => {
-    return `Your Gamezilla login code is ${code}`
-}
 
-const generateRandomCode = () => {
-    return Math.floor(Math.random() * 100_000)
-}
-
-export const updateFromFrontend = ({ sendToClient, SMS }: { sendToClient: (msg: ToFrontend) => Cmd.Cmd<never>, SMS: SMS }, msg: ToBackend, model: Model): [Model, Cmd.Cmd<Msg>] => {
+export const updateFromFrontend = ({ sendToClient, SMS }: { sendToClient: (msg: ToFrontend) => Cmd<never>, SMS: SMS }, msg: ToBackend, model: Model): [Model, Cmd<Msg>] => {
     switch (msg[0]) {
         case 'LoginWithCode': {
             const code = generateRandomCode()
@@ -75,14 +68,11 @@ export const updateFromFrontend = ({ sendToClient, SMS }: { sendToClient: (msg: 
     }
 }
 
-//
-//
-//
-// Subscriptions
-//
-//
-//
+const toCodeMessage = (code: number) => {
+    return `Your Gamezilla login code is ${code}`
+}
 
-export const subscriptions = (_model: Model): Sub.Sub<Msg> => {
-    return Sub.None;
-};
+const generateRandomCode = () => {
+    return Math.floor(Math.random() * 100_000)
+}
+

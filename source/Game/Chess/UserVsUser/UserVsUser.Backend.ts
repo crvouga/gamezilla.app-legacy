@@ -34,10 +34,10 @@ export const init = initShared
 export type Msg = BackendMsg
 
 export const update = (
-  { sendToRoom }: { sendToRoom: (msg: ToFrontend) => Cmd.Cmd<never> },
+  { sendToRoom }: { sendToRoom: (msg: ToFrontend) => Cmd<never> },
   msg: Msg,
   model: Model,
-): [Model, Cmd.Cmd<Msg>] => {
+): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case "ClockTicked": {
       const modelNew: Model = {
@@ -81,12 +81,12 @@ export const update = (
 
 export const updateFromFrontend = (
   wire: {
-    sendToClient: (msg: ToFrontend) => Cmd.Cmd<never>
-    sendToRoom: (msg: ToFrontend) => Cmd.Cmd<never>
+    sendToClient: (msg: ToFrontend) => Cmd<never>
+    sendToRoom: (msg: ToFrontend) => Cmd<never>
   },
   msg: ToBackend,
   model: Model,
-): [Model, Cmd.Cmd<Msg>] => {
+): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case "Init": {
       return [model, wire.sendToClient(["Sync", model])]
@@ -187,12 +187,12 @@ const sendResponse = (
     sendToClient,
     sendToRoom,
   }: {
-    sendToClient: (msg: ToFrontend) => Cmd.Cmd<never>
-    sendToRoom: (msg: ToFrontend) => Cmd.Cmd<never>
+    sendToClient: (msg: ToFrontend) => Cmd<never>
+    sendToRoom: (msg: ToFrontend) => Cmd<never>
   },
   response: Res,
   model: Model,
-): [Model, Cmd.Cmd<Msg>] => {
+): [Model, Cmd<Msg>] => {
   if (response[1].type === "Err") {
     return [
       model,
@@ -219,7 +219,7 @@ const sendResponse = (
 }
 
 
-export const updateRoomLeave = ({ sendToRoom }: { sendToRoom: (m: ToFrontend) => Cmd.Cmd<never> }, userId: UserId.UserId, model: Model): [Model, Cmd.Cmd<Msg>] => {
+export const updateRoomLeave = ({ sendToRoom }: { sendToRoom: (m: ToFrontend) => Cmd<never> }, userId: UserId.UserId, model: Model): [Model, Cmd<Msg>] => {
 
   switch (model.type) {
     case 'Setup': {

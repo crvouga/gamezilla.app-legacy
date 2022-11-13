@@ -1,5 +1,5 @@
 import * as Rx from "rxjs"
-import * as Cmd from "../Cmd"
+import { Cmd } from "../Cmd"
 import { p } from "../pipe"
 import * as Result from "../Result"
 import * as Sub from "../Sub"
@@ -53,7 +53,7 @@ export const getLocation = (): Location => {
 
 // setTimeout because actions where happening in a weird order if not setTimeout
 
-export const push = (url: string): Cmd.Cmd<never> => {
+export const push = (url: string): Cmd<never> => {
   return () => {
     setTimeout(() => {
       window.history.pushState(null, "", url)
@@ -62,7 +62,7 @@ export const push = (url: string): Cmd.Cmd<never> => {
   }
 }
 
-export const replace = (url: string): Cmd.Cmd<never> => {
+export const replace = (url: string): Cmd<never> => {
   return () => {
     setTimeout(() => {
       window.history.replaceState(null, "", url)
@@ -71,7 +71,7 @@ export const replace = (url: string): Cmd.Cmd<never> => {
   }
 }
 
-export const back: Cmd.Cmd<never> = () => {
+export const back: Cmd<never> = () => {
   setTimeout(() => {
     window.history.back()
     window.dispatchEvent(new Event("popstate"))

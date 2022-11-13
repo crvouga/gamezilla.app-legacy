@@ -29,7 +29,7 @@ export type Msg =
   | ["ClickedPhoneLogin"]
   | ["LoginWithProvider_Done", Auth.AuthResult]
 
-export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
+export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case "ClickedEmailLogin":
       return [model, Route.push(["LoginEmailLink"])]

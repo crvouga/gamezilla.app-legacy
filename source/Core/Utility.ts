@@ -1,4 +1,4 @@
-import * as Cmd from "./Cmd"
+import { Cmd } from "./Cmd"
 import { p } from "./pipe"
 import * as Sub from "./Sub"
 
@@ -10,10 +10,10 @@ export const exhaustive = (
 
 export const andThen =
   <Msg, Model>(
-    update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>],
+    update: (msg: Msg, model: Model) => [Model, Cmd<Msg>],
     msg: Msg,
   ) =>
-    ([model, cmdPrev]: [Model, Cmd.Cmd<Msg>]): [Model, Cmd.Cmd<Msg>] => {
+    ([model, cmdPrev]: [Model, Cmd<Msg>]): [Model, Cmd<Msg>] => {
       const [modelNew, cmdNew] = update(msg, model)
 
       return [modelNew, Cmd.batch([cmdNew, cmdPrev])]
@@ -21,10 +21,10 @@ export const andThen =
 
 export const andThenMany =
   <Action, Model, Msg>(
-    update: (msg: Action, model: Model) => [Model, Cmd.Cmd<Msg>],
+    update: (msg: Action, model: Model) => [Model, Cmd<Msg>],
     msgs: Action[],
   ) =>
-    ([modelPrev, cmdPrev]: [Model, Cmd.Cmd<Msg>]): [Model, Cmd.Cmd<Msg>] => {
+    ([modelPrev, cmdPrev]: [Model, Cmd<Msg>]): [Model, Cmd<Msg>] => {
       const [msg, ...msgsRest] = msgs
 
       if (!msg) {
@@ -46,8 +46,8 @@ export const t =
 
 export const tagUpdate = <TagName extends string, Model, Msg>(
   tagName: TagName,
-  [model, cmd]: [Model, Cmd.Cmd<Msg>],
-): [[TagName, Model], Cmd.Cmd<[TagName, Msg]>] => {
+  [model, cmd]: [Model, Cmd<Msg>],
+): [[TagName, Model], Cmd<[TagName, Msg]>] => {
   return [
     [tagName, model],
     p(
@@ -59,8 +59,8 @@ export const tagUpdate = <TagName extends string, Model, Msg>(
 
 export const tagCmd = <TagName extends string, Msg>(
   tagName: TagName,
-  cmd: Cmd.Cmd<Msg>,
-): Cmd.Cmd<[TagName, Msg]> => {
+  cmd: Cmd<Msg>,
+): Cmd<[TagName, Msg]> => {
   return p(cmd, Cmd.map(t(tagName)))
 }
 
