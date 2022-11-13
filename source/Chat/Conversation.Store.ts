@@ -274,7 +274,7 @@ const fromRow = (row: definitions["conversation"]): Conversation => {
 }
 
 const findOneById =
-  ({ conversationId }: { conversationId: string }): Task.Task<FindOneResult> =>
+  ({ conversationId }: { conversationId: string }): Task<FindOneResult> =>
     async () => {
       const matchConversationIdResponse = await Supabase.client
         .from<definitions["users_conversations"]>("users_conversations")
@@ -341,7 +341,7 @@ const findManyByUserId =
     userId,
   }: {
     userId: UserId
-  }): Task.Task<
+  }): Task<
     Result<
       Problem,
       {
@@ -423,7 +423,7 @@ const findUniqueByUserIds =
     userIds,
   }: {
     userIds: string[]
-  }): Task.Task<Result<Problem, Option.Option<string>>> =>
+  }): Task<Result<Problem, Option<string>>> =>
     async () => {
       const usersConversationsResponse = await Supabase.client
         .from<definitions["users_conversations"]>("users_conversations")
@@ -460,7 +460,7 @@ const findUniqueByUserIds =
     }
 
 const findOneElseInsert =
-  ({ userIds }: { userIds: string[] }): Task.Task<FindOneResult> =>
+  ({ userIds }: { userIds: string[] }): Task<FindOneResult> =>
     async () => {
       const findIdResult = await findUniqueByUserIds({ userIds })()
 
@@ -489,7 +489,7 @@ const insert =
     userIds,
   }: {
     userIds: string[]
-  }): Task.Task<
+  }): Task<
     Result<
       Problem,
       {

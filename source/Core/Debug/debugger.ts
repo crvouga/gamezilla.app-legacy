@@ -1,7 +1,7 @@
 import * as Rx from "rxjs"
-import * as Option from "../Option"
+import { Option } from "../Option"
 import { p } from "../pipe"
-import * as Task from "../Task"
+import { Task } from "../Task"
 import { DebuggerDeps, Global } from "./debugger-commons"
 import * as Console from "./debugger-console"
 import * as ReduxDevtool from "./debugger-redux-devtool"
@@ -16,7 +16,7 @@ import * as ReduxDevtool from "./debugger-redux-devtool"
 
 export const RunDebugger =
   <Model, Msg>(global: Global, stopSignal: Rx.Observable<unknown>) =>
-    (deps: DebuggerDeps<Model, Msg>): Task.Task<void> => {
+    (deps: DebuggerDeps<Model, Msg>): Task<void> => {
       return p(
         ReduxDevtool.getConnection<Model, Msg>(global),
         Task.map(

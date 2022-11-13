@@ -58,8 +58,8 @@ export type PartyModel = {
 export type UserModel = {
   userId: UserId
   partyId: PartyId
-  producerId: Option.Option<string>
-  deviceRtpCapabilities: Option.Option<RtpCapabilities>
+  producerId: Option<string>
+  deviceRtpCapabilities: Option<RtpCapabilities>
 }
 
 //

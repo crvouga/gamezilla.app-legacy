@@ -1,5 +1,5 @@
 import { p } from "./pipe"
-import * as Task from "./Task"
+import { Task } from "./Task"
 
 export type Cmd<Msg = never> = (dispatch: (msg: Msg) => void) => void
 
@@ -48,7 +48,7 @@ const None: Cmd<never> = () => { }
 
 const perform =
   <A, Msg>(f: (a: A) => Msg) =>
-    (task: Task.Task<A>): Cmd<Msg> => {
+    (task: Task<A>): Cmd<Msg> => {
       return async (dispatch) => {
         const value = await task()
 

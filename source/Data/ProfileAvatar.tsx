@@ -110,7 +110,7 @@ export const parseUrl = (
   }
 }
 
-export const generateRandomSeed: Task.Task<Seed> = async () => {
+export const generateRandomSeed: Task<Seed> = async () => {
   await new Promise((resolve) => setTimeout(resolve, 100))
   return toSeed(String(Math.floor(Math.random() * 10000)))
 }

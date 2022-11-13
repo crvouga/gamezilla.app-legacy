@@ -1,4 +1,4 @@
-import { Result } from "./Result"
+import { Result } from "./Result";
 
 export type Option<T> = Some<T> | None
 
@@ -10,7 +10,7 @@ export type None = { type: "None" }
 
 export const None: None = { type: "None" }
 
-export const map =
+const map =
   <A, B>(mapper: (value: A) => B) =>
     (option: Option<A>): Option<B> => {
       switch (option.type) {
@@ -22,7 +22,7 @@ export const map =
       }
     }
 
-export const fold =
+const fold =
   <A, B>(onNone: () => B, onSome: (value: A) => B) =>
     (option: Option<A>): B => {
       switch (option.type) {
@@ -34,7 +34,7 @@ export const fold =
       }
     }
 
-export const withDefault =
+const withDefault =
   <T>(fallback: T) =>
     (option: Option<T>): T => {
       switch (option.type) {
@@ -46,7 +46,7 @@ export const withDefault =
       }
     }
 
-export const fromNullable = <T>(value: T | null | undefined): Option<T> => {
+const fromNullable = <T>(value: T | null | undefined): Option<T> => {
   if (value === null) {
     return None
   }
@@ -58,7 +58,7 @@ export const fromNullable = <T>(value: T | null | undefined): Option<T> => {
   return Some(value)
 }
 
-export const fromResult = <TErr, TOk>(
+const fromResult = <TErr, TOk>(
   result: Result<TErr, TOk>,
 ): Option<TOk> => {
   switch (result.type) {
@@ -68,4 +68,15 @@ export const fromResult = <TErr, TOk>(
     case "Ok":
       return Some(result.value)
   }
+}
+
+
+export const Option = {
+  Some,
+  None,
+  map,
+  fold,
+  withDefault,
+  fromNullable,
+  fromResult,
 }

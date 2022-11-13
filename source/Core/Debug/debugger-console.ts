@@ -3,7 +3,7 @@
  *
  * @since 0.5.0
  */
-import * as Option from "../Option"
+import { Option } from "../Option"
 import { p } from "../pipe"
 import { Debugger, DebugMsg } from "./debugger-commons"
 
@@ -54,7 +54,7 @@ export const makeDebugger = <Model, Msg>(): Debugger<Model, Msg> => {
  * Tries to extract the "type" of a `Message` reading the value of the [_discriminant_ property](http://www.typescriptlang.org/docs/handbook/advanced-types.html#discriminated-unions) (iterating through a list of commonly used names - e.g. "tag", "type", "kind" etc.)
  * @since 0.5.0
  */
-function getMsgType<Msg>(m: DebugMsg<Msg>): Option.Option<string> {
+function getMsgType<Msg>(m: DebugMsg<Msg>): Option<string> {
   // todo: remove any
   const { payload } = m as any
 

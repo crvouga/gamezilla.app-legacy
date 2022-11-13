@@ -14,7 +14,7 @@ import * as Position from "./Position"
 //
 
 export type FrontendModel = {
-  touched: Option.Option<Position.Position>
+  touched: Option<Position.Position>
   sharedModel: SharedModel
 }
 

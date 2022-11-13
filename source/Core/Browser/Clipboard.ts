@@ -1,12 +1,12 @@
 import { Result } from "../Result"
-import * as Task from "../Task"
+import { Task } from "../Task"
 
 export type CopyResult = Result<Problem, {}>
 
 export type Problem = { message: string }
 
 export const copy =
-  (text: string): Task.Task<CopyResult> =>
+  (text: string): Task<CopyResult> =>
     async () => {
       try {
         await navigator.clipboard.writeText(text)

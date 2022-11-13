@@ -26,7 +26,7 @@ const directions: { [direction in Direction]: Direction } = {
   down: "down",
 }
 
-const fromKey = (key: Keyboard.Key): Option.Option<Direction> => {
+const fromKey = (key: Keyboard.Key): Option<Direction> => {
   switch (key) {
     case "w":
     case "W":

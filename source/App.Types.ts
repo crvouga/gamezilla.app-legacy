@@ -27,8 +27,8 @@ export type BackendModel = {
 
 export type Session = {
   sessionId: SessionId
-  userId: Option.Option<UserId>
-  clientId: Option.Option<ClientId>
+  userId: Option<UserId>
+  clientId: Option<ClientId>
 }
 
 export type FrontendModel = {

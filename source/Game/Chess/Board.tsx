@@ -84,7 +84,7 @@ export const toRandomMoveInput = (
 }
 
 export const getBestMove =
-  (level: Level, model: Model): Task.Task<BestMoveInputResult> =>
+  (level: Level, model: Model): Task<BestMoveInputResult> =>
     async () => {
       const worker = new Worker("./board-worker")
 

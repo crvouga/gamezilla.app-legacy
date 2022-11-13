@@ -159,7 +159,7 @@ const insert =
     conversationId: string
     message: string
     userId: UserId
-  }): Task.Task<Result<Problem, Message>> =>
+  }): Task<Result<Problem, Message>> =>
     async () => {
       const messageResponse = await Supabase.client
         .from<definitions["message"]>("message")
@@ -189,7 +189,7 @@ const deleteForever =
     messageId,
   }: {
     messageId: string
-  }): Task.Task<Result<Problem, string>> =>
+  }): Task<Result<Problem, string>> =>
     async () => {
       const response = await Supabase.client
         .from<definitions["message"]>("message")

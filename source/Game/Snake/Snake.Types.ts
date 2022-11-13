@@ -14,14 +14,14 @@ import * as Snake from "./Snake"
 export type BackendModel = SharedModel
 
 export type FrontendModel = SharedModel & {
-  openedMenuId: Option.Option<string>
+  openedMenuId: Option<string>
 }
 
 export type SharedModel = Snake.Model & {
   gameStatus:
   | {
     type: "GameSetup"
-    player: Option.Option<Player>
+    player: Option<Player>
   }
   | {
     type: "GameStarted"
@@ -112,7 +112,7 @@ export type ToggleStatusResult = Result<
 //
 //
 
-export type InputPlayer = ["InputPlayer", Option.Option<Player>]
+export type InputPlayer = ["InputPlayer", Option<Player>]
 
 export type InputPlayer_Done = [
   "InputPlayer_Done",

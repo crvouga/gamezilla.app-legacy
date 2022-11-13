@@ -13,7 +13,7 @@ import * as Clock from "../Clock"
 
 export type FrontendModel = {
   sharedModel: SharedModel
-  openedMenuId: Option.Option<string>
+  openedMenuId: Option<string>
   openedModal: Modal | "None"
   isFlipped: boolean
 }

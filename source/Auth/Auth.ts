@@ -34,7 +34,7 @@ export const init = (): [Model, Cmd<Msg>] => {
 //
 
 export type Msg =
-  | ["GotSession", Option.Option<Session>]
+  | ["GotSession", Option<Session>]
   | ["Login_Done", Result<{}, {}>]
   | ["Logout_Done", Result<{}, {}>]
 
@@ -127,7 +127,7 @@ export const loginWithEmailAndPassword =
   }: {
     emailAddress: string
     password: string
-  }): Task.Task<AuthResult> =>
+  }): Task<AuthResult> =>
     async () => {
       const response = await Supabase.client.auth.signIn({
         email: emailAddress,
@@ -146,7 +146,7 @@ export const sendCode =
     phoneNumber,
   }: {
     phoneNumber: PhoneNumber
-  }): Task.Task<AuthResult> =>
+  }): Task<AuthResult> =>
     async () => {
       const response = await Supabase.client.auth.signIn({
         phone: PhoneNumber.toString(phoneNumber),
@@ -166,7 +166,7 @@ export const verifyCode =
   }: {
     code: string
     phoneNumber: PhoneNumber
-  }): Task.Task<AuthResult> =>
+  }): Task<AuthResult> =>
     async () => {
       const response = await Supabase.client.auth.verifyOTP({
         phone: PhoneNumber.toString(phoneNumber),
@@ -181,7 +181,7 @@ export const verifyCode =
     }
 
 export const loginWithEmailLink =
-  ({ emailAddress }: { emailAddress: string }): Task.Task<AuthResult> =>
+  ({ emailAddress }: { emailAddress: string }): Task<AuthResult> =>
     async () => {
       const response = await Supabase.client.auth.signIn({
         email: emailAddress,
@@ -197,7 +197,7 @@ export const loginWithEmailLink =
 export type Provider = "Google"
 
 export const loginWithProvider =
-  ({ provider }: { provider: Provider }): Task.Task<AuthResult> =>
+  ({ provider }: { provider: Provider }): Task<AuthResult> =>
     async () => {
       switch (provider) {
         case "Google": {
@@ -214,7 +214,7 @@ export const loginWithProvider =
       }
     }
 
-const logout: Task.Task<Result<{}, {}>> = async () => {
+const logout: Task<Result<{}, {}>> = async () => {
   const { error } = await Supabase.client.auth.signOut()
 
   if (error) {
@@ -224,7 +224,7 @@ const logout: Task.Task<Result<{}, {}>> = async () => {
   return Result.Ok({})
 }
 
-const getSession: Task.Task<Msg> = async () => {
+const getSession: Task<Msg> = async () => {
   const session = Supabase.client.auth.session()
 
   return fromSupabaseSession(session)

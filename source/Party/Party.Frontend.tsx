@@ -673,7 +673,7 @@ const mediasoupClientMsgs = new Rx.Subject<Msg>()
 //
 //
 
-const loadMediaStream = (): Task.Task<LoadMediaStream_Done[2]> => async () => {
+const loadMediaStream = (): Task<LoadMediaStream_Done[2]> => async () => {
   try {
     const mediaStream = await navigator.mediaDevices.getUserMedia({
       audio: true,
@@ -686,7 +686,7 @@ const loadMediaStream = (): Task.Task<LoadMediaStream_Done[2]> => async () => {
   }
 }
 
-const unloadMediaStream: Task.Task<UnloadMediaStream_Done[1]> = async () => {
+const unloadMediaStream: Task<UnloadMediaStream_Done[1]> = async () => {
   const mediaStream = mediaStream$.getValue()
 
   if (!mediaStream) {
@@ -709,7 +709,7 @@ const loadDevice =
     routerRtpCapabilities,
   }: {
     routerRtpCapabilities: RtpCapabilities
-  }): Task.Task<LoadDevice_Done[2]> =>
+  }): Task<LoadDevice_Done[2]> =>
     async () => {
       try {
         if (device) {
@@ -731,14 +731,14 @@ const loadDevice =
       }
     }
 
-const unloadDevice: Task.Task<UnloadDevice_Done[1]> = async () => {
+const unloadDevice: Task<UnloadDevice_Done[1]> = async () => {
   device = null
   return Result.Ok(Unit)
 }
 
 const backendProducerId$ = new Rx.Subject<{ producerId: string }>()
 const emitBackendProducerId =
-  ({ producerId }: { producerId: string }): Task.Task<Unit> =>
+  ({ producerId }: { producerId: string }): Task<Unit> =>
     async () => {
       backendProducerId$.next({ producerId })
       return Unit
@@ -751,7 +751,7 @@ const initSendTransport =
   }: {
     userId: UserId
     transportOptions: TransportOptions
-  }): Task.Task<SendTransport_InitFrontend_Done[1]> =>
+  }): Task<SendTransport_InitFrontend_Done[1]> =>
     async () => {
       if (!device) {
         return Result.Err("device_does_not_exists")
@@ -800,7 +800,7 @@ const initSendTransport =
       return Result.Ok(Unit)
     }
 
-const startProducing = (): Task.Task<StartProducing_Done[1]> => async () => {
+const startProducing = (): Task<StartProducing_Done[1]> => async () => {
   if (!sendTransport) {
     return Result.Err("send_transport_does_not_exists")
   }
@@ -840,7 +840,7 @@ const initRecvTransport =
   }: {
     userId: UserId
     transportOptions: TransportOptions
-  }): Task.Task<RecvTransport_InitFrontend_Done[1]> =>
+  }): Task<RecvTransport_InitFrontend_Done[1]> =>
     async () => {
       if (!device) {
         return Result.Err("device_does_not_exists")
