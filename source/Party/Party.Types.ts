@@ -37,6 +37,7 @@ export type FrontendModel = SharedModel & {
   mediaStream: MediaStreamModel
   volume: number
   microphonePermissionStatus: MicrophonePermissionStatus
+  micData: Uint8Array
 }
 
 export type MicrophonePermissionStatus =
@@ -82,6 +83,7 @@ export type BackendMsg =
 
 export type FrontendMsg =
   | Request
+  | ['MicData', { micData: FrontendModel['micData'] }]
   | ["GotVolume", { volume: number }]
   | ["ClickedBanner"]
   | ["GotMicrophonePermissionStatus", MicrophonePermissionStatus]
