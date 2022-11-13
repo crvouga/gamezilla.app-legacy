@@ -36,7 +36,7 @@ export const levelToString = (level: Level): string => {
   }
 }
 
-export type BestMoveInputResult = Result.Result<BestMoveInputProblem, MoveInput>
+export type BestMoveInputResult = Result<BestMoveInputProblem, MoveInput>
 export type BestMoveInputProblem = "failed_to_calculate_best_move"
 
 const isRecord = (record: unknown): record is Record<string, string> => {
@@ -70,7 +70,7 @@ export const toBestMoveInput = (
 
 export const toRandomMoveInput = (
   model: Model,
-): Result.Result<"no_legal_move", MoveInput> => {
+): Result<"no_legal_move", MoveInput> => {
   const legalMoveInputs = toLegalMoveInputs(model)
 
   const randomMoveInput =
@@ -676,7 +676,7 @@ export type MoveProblem = "invalid_move"
 export const move = (
   moveInput: MoveInput,
   model: Model,
-): Result.Result<MoveProblem, Model & { didCapture: boolean }> => {
+): Result<MoveProblem, Model & { didCapture: boolean }> => {
   const instance = createInstance(model)
 
   const moveInput_ = {

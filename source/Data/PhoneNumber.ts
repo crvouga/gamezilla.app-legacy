@@ -13,7 +13,7 @@ type Problem = "invalid_phone_number"
 export const decode = (
   country: ISO_3166.Iso3166Alpha2Code,
   phoneNumber: string,
-): Result.Result<Problem, PhoneNumber> => {
+): Result<Problem, PhoneNumber> => {
   const result = phone(phoneNumber, { country })
 
   if (result.isValid) {

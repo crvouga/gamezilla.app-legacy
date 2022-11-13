@@ -26,7 +26,7 @@ export type Account = {
 
 const decodeRow = (
   row: definitions["user_account"],
-): Result.Result<Problem, Account> => {
+): Result<Problem, Account> => {
   const decodedUserId = UserId.decode(row.id)
 
   if (decodedUserId.type === "Err") {
@@ -53,7 +53,7 @@ const decodeRow = (
   })
 }
 
-export type FindResult = Result.Result<Problem, Option.Option<Account>>
+export type FindResult = Result<Problem, Option.Option<Account>>
 
 export const findByEmailAddress =
   ({
@@ -82,7 +82,7 @@ export const findByEmailAddress =
       return p(decoded, Result.map(Option.Some))
     }
 
-export type CreateResult = Result.Result<
+export type CreateResult = Result<
   Problem,
   Option.Option<{ userId: UserId.UserId }>
 >
@@ -129,7 +129,7 @@ export const createWithEmailAndPassword =
       return Result.Ok(Option.Some({ userId: userIdResult.value }))
     }
 
-export type SendResetPasswordLinkResult = Result.Result<Problem, Unit>
+export type SendResetPasswordLinkResult = Result<Problem, Unit>
 
 export const sendResetPasswordLink =
   ({

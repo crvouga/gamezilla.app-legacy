@@ -14,7 +14,7 @@ export const is = (username: unknown): username is Username => {
 
 type Problem = "invalid_username"
 
-export const decode = (username: unknown): Result.Result<Problem, Username> => {
+export const decode = (username: unknown): Result<Problem, Username> => {
   if (is(username)) {
     return Result.Ok(username)
   }

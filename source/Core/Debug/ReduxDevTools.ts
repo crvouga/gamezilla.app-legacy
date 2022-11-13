@@ -5,7 +5,7 @@ import * as Option from "../Option"
 import { p } from "../pipe"
 import * as Platform from "../Platform"
 import { Dispatch } from "../Platform"
-import * as Result from "../Result"
+import { Result } from "../Result"
 import * as Task from "../Task"
 import { Debug, Debugger, Global, MsgWithDebug } from "./debugger-commons"
 
@@ -157,7 +157,7 @@ const handleIncomingMsg = <Model, Msg>({
   dispatch,
 }: DevToolHandlerR<Model, Msg>): ((
   msg: DevToolMsg,
-) => Result.Result<string, Task.Task<void>>) => {
+) => Result<string, Task.Task<void>>) => {
   const dispatchToApp =
     (m: unknown): Task.Task<void> =>
       async () =>
@@ -283,7 +283,7 @@ const handleActions = <Model, Msg>({
  *
  * @since 0.5.0
  */
-const parseJump = <Model>(msg: Monitor): Result.Result<string, Model> => {
+const parseJump = <Model>(msg: Monitor): Result<string, Model> => {
   return p(
     Json.parse(String(msg['state'])),
     Result.mapError((problem) => problem.message),
@@ -300,7 +300,7 @@ const parseJump = <Model>(msg: Monitor): Result.Result<string, Model> => {
  *
  * @since 0.5.0
  */
-const parseRollback = <Model>(msg: Monitor): Result.Result<string, Model> => {
+const parseRollback = <Model>(msg: Monitor): Result<string, Model> => {
   return p(
     Json.parse(String(msg['state'])),
     Result.mapError((problem) => problem.message),
@@ -319,7 +319,7 @@ const parseRollback = <Model>(msg: Monitor): Result.Result<string, Model> => {
  */
 const parseImportState = <Model>(
   msg: Monitor,
-): Result.Result<string, LiftedState<Model>> => {
+): Result<string, LiftedState<Model>> => {
   return typeof msg.payload['nextLiftedState'] === "object" &&
     msg.payload['nextLiftedState'] !== null
     ? Result.Ok(msg.payload['nextLiftedState'] as LiftedState<Model>)
@@ -333,7 +333,7 @@ const parseImportState = <Model>(
  */
 const parseToggleAction = <Model>(
   msg: Monitor,
-): Result.Result<string, [number, LiftedState<Model>]> => {
+): Result<string, [number, LiftedState<Model>]> => {
   const getId = p(
     msg.payload['id'],
     Result.fromNullable("TOGGLE_ACTION message has some bad payload..."),

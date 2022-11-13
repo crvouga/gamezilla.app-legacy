@@ -159,7 +159,7 @@ export type InputMove = [
 
 export type InputMove_Done = [
   "InputMove_Done",
-  Result.Result<MoveProblem, SharedModel & { didCapture: boolean }>,
+  Result<MoveProblem, SharedModel & { didCapture: boolean }>,
 ]
 
 export type MoveProblem =
@@ -230,7 +230,7 @@ export type InputPlayer = [
 
 export type InputPlayer_Done = [
   "InputPlayer_Done",
-  Result.Result<InputPlayerProblem, SharedModel>,
+  Result<InputPlayerProblem, SharedModel>,
 ]
 
 export type InputPlayerProblem =
@@ -284,7 +284,7 @@ export type InputClock = [
 
 export type InputClock_Done = [
   "InputClock_Done",
-  Result.Result<InputClockProblem, SharedModel>,
+  Result<InputClockProblem, SharedModel>,
 ]
 
 export type InputClockProblem = "must_be_in_setup_mode" | "must_be_playing"
@@ -331,7 +331,7 @@ export const inputClock = (
 export type StartGame = ["StartGame", { userId: UserId.UserId }]
 export type StartGame_Done = [
   "StartGame_Done",
-  Result.Result<StartGameProblem, SharedModel>,
+  Result<StartGameProblem, SharedModel>,
 ]
 export type StartGameProblem =
   | "missing_white_player"
@@ -408,7 +408,7 @@ export const startGame = (
 export type RequestToDraw = ["RequestToDraw", Board.Color]
 export type RequestToDraw_Done = [
   "RequestToDraw_Done",
-  Result.Result<"game_must_be_started", SharedModel>,
+  Result<"game_must_be_started", SharedModel>,
 ]
 
 export const requestToDraw = (
@@ -432,7 +432,7 @@ export const requestToDraw = (
 export type RespondToDraw = ["RespondToDraw", "Accepted" | "Declined"]
 export type RespondToDraw_Done = [
   "RespondToDraw_Done",
-  Result.Result<"failed_to_respond_to_draw", SharedModel>,
+  Result<"failed_to_respond_to_draw", SharedModel>,
 ]
 
 export const respondToDraw = (
@@ -472,7 +472,7 @@ export const respondToDraw = (
 export type CancelDraw = ["CancelDraw", { userId: UserId.UserId }]
 export type CancelDraw_Done = [
   "CancelDraw_Done",
-  Result.Result<CancelDrawProblem, SharedModel>,
+  Result<CancelDrawProblem, SharedModel>,
 ]
 export type CancelDrawProblem =
   | "must_be_in_game_mode"
@@ -524,7 +524,7 @@ export const cancelDraw = (
 export type Resign = ["Resign", Board.Color]
 export type Resign_Done = [
   "Resign_Done",
-  Result.Result<"can_not_resign", SharedModel>,
+  Result<"can_not_resign", SharedModel>,
 ]
 
 export const resign = (
@@ -558,7 +558,7 @@ export const resign = (
 export type NewGame = ["NewGame"]
 export type NewGame_Done = [
   "NewGame_Done",
-  Result.Result<"game_must_be_over", SharedModel>,
+  Result<"game_must_be_over", SharedModel>,
 ]
 export const newGame = (model: SharedModel): NewGame_Done[1] => {
   if (model.type !== "GameOver") {
@@ -674,7 +674,7 @@ export const decrementCountDown = (countDown: 3 | 2 | 1): 2 | 1 | 0 => {
 export type CancelStartGame = ["CancelStartGame", { userId: UserId.UserId }]
 export type CancelStartGame_Done = [
   "CancelStartGame_Done",
-  Result.Result<CancelStartGameProblem, SharedModel>,
+  Result<CancelStartGameProblem, SharedModel>,
   { userId: UserId.UserId },
 ]
 export type CancelStartGameProblem =

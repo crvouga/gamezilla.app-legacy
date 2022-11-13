@@ -1,8 +1,8 @@
-import * as Result from "./Result"
+import { Result } from "./Result"
 
 export type Json = boolean | number | string | null | JsonArray | JsonRecord
 
-export interface JsonArray extends ReadonlyArray<Json> {}
+export interface JsonArray extends ReadonlyArray<Json> { }
 
 export interface JsonRecord {
   readonly [key: string]: Json
@@ -10,7 +10,7 @@ export interface JsonRecord {
 
 export type Problem = { message: string }
 
-export const parse = (s: string): Result.Result<Problem, Json> => {
+export const parse = (s: string): Result<Problem, Json> => {
   try {
     const parsed: Json = JSON.parse(s)
 
@@ -22,7 +22,7 @@ export const parse = (s: string): Result.Result<Problem, Json> => {
   }
 }
 
-export const stringify = (json: Json): Result.Result<Problem, string> => {
+export const stringify = (json: Json): Result<Problem, string> => {
   try {
     const stringified: string = JSON.stringify(json)
 

@@ -10,7 +10,7 @@ export const is = (id: unknown): id is ClientId => {
 
 type Problem = "invalid_client_id"
 
-export const decode = (id: string): Result.Result<Problem, ClientId> => {
+export const decode = (id: string): Result<Problem, ClientId> => {
   if (is(id)) {
     return Result.Ok(id)
   }

@@ -12,70 +12,70 @@ export const Err = <T>(error: T): Err<T> => {
   return { type: "Err", error }
 }
 
-export const fold =
+const fold =
   <TError, TValue, T>(
     onErr: (error: TError) => T,
     onValue: (value: TValue) => T,
   ) =>
-  (result: Result<TError, TValue>): T => {
-    if (result.type === "Ok") {
-      return onValue(result.value)
+    (result: Result<TError, TValue>): T => {
+      if (result.type === "Ok") {
+        return onValue(result.value)
+      }
+
+      return onErr(result.error)
     }
 
-    return onErr(result.error)
-  }
-
-export const map =
+const map =
   <TError, A, B>(mapper: (a: A) => B) =>
-  (result: Result<TError, A>): Result<TError, B> => {
-    switch (result.type) {
-      case "Err":
-        return result
+    (result: Result<TError, A>): Result<TError, B> => {
+      switch (result.type) {
+        case "Err":
+          return result
 
-      case "Ok":
-        return Ok(mapper(result.value))
+        case "Ok":
+          return Ok(mapper(result.value))
+      }
     }
-  }
 
-export const mapError =
+const mapError =
   <A, B, TValue>(mapper: (a: A) => B) =>
-  (result: Result<A, TValue>): Result<B, TValue> => {
-    switch (result.type) {
-      case "Err":
-        return Err(mapper(result.error))
+    (result: Result<A, TValue>): Result<B, TValue> => {
+      switch (result.type) {
+        case "Err":
+          return Err(mapper(result.error))
 
-      case "Ok":
-        return result
+        case "Ok":
+          return result
+      }
     }
-  }
 
-export const fromNullable =
+const fromNullable =
   <TError, TValue>(err: TError) =>
-  (value: TValue | undefined | null): Result<TError, TValue> => {
-    if (value === undefined) {
-      return Err(err)
+    (value: TValue | undefined | null): Result<TError, TValue> => {
+      if (value === undefined) {
+        return Err(err)
+      }
+
+      if (value === null) {
+        return Err(err)
+      }
+
+      return Ok(value)
     }
 
-    if (value === null) {
-      return Err(err)
-    }
-
-    return Ok(value)
-  }
-
-export const withDefault =
+const withDefault =
   <T>(fallback: T) =>
-  (result: Result<unknown, T>): T => {
-    switch (result.type) {
-      case "Err":
-        return fallback
+    (result: Result<unknown, T>): T => {
+      switch (result.type) {
+        case "Err":
+          return fallback
 
-      case "Ok":
-        return result.value
+        case "Ok":
+          return result.value
+      }
     }
-  }
 
-export const combine = <E, A>(results: Result<E, A>[]): Result<E, A[]> => {
+const combine = <E, A>(results: Result<E, A>[]): Result<E, A[]> => {
   return results.reduce<Result<E, A[]>>((combined, result) => {
     if (combined.type === "Err") {
       return combined
@@ -86,4 +86,15 @@ export const combine = <E, A>(results: Result<E, A>[]): Result<E, A[]> => {
     }
     return Ok([...combined.value, result.value])
   }, Ok([]))
+}
+
+export const Result = {
+  Ok,
+  Err,
+  fold,
+  map,
+  mapError,
+  fromNullable,
+  withDefault,
+  combine,
 }

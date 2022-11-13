@@ -1,4 +1,4 @@
-import * as Result from "./Result"
+import { Result } from "./Result"
 
 export type RemoteData<TError, TValue> =
   | NotAsked
@@ -25,7 +25,7 @@ export const Success = <T>(value: T): Success<T> => ({
 })
 
 export const fromResult = <E, A>(
-  result: Result.Result<E, A>,
+  result: Result<E, A>,
 ): RemoteData<E, A> => {
   switch (result.type) {
     case "Err": {
@@ -40,14 +40,14 @@ export const fromResult = <E, A>(
 
 export const map =
   <E, A, B>(mapper: (a: A) => B) =>
-  (remoteData: RemoteData<E, A>): RemoteData<E, B> => {
-    switch (remoteData.type) {
-      case "NotAsked":
-      case "Loading":
-      case "Failure":
-        return remoteData
+    (remoteData: RemoteData<E, A>): RemoteData<E, B> => {
+      switch (remoteData.type) {
+        case "NotAsked":
+        case "Loading":
+        case "Failure":
+          return remoteData
 
-      case "Success":
-        return Success(mapper(remoteData.value))
+        case "Success":
+          return Success(mapper(remoteData.value))
+      }
     }
-  }

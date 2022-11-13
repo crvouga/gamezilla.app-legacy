@@ -35,8 +35,8 @@ export const init = (): [Model, Cmd<Msg>] => {
 
 export type Msg =
   | ["GotSession", Option.Option<Session>]
-  | ["Login_Done", Result.Result<{}, {}>]
-  | ["Logout_Done", Result.Result<{}, {}>]
+  | ["Login_Done", Result<{}, {}>]
+  | ["Logout_Done", Result<{}, {}>]
 
 export type Action = ["Auth", ["Logout"]]
 
@@ -118,7 +118,7 @@ export const runAction = (
 
 type Problem = { message: string }
 
-export type AuthResult = Result.Result<Problem, Unit>
+export type AuthResult = Result<Problem, Unit>
 
 export const loginWithEmailAndPassword =
   ({
@@ -214,7 +214,7 @@ export const loginWithProvider =
       }
     }
 
-const logout: Task.Task<Result.Result<{}, {}>> = async () => {
+const logout: Task.Task<Result<{}, {}>> = async () => {
   const { error } = await Supabase.client.auth.signOut()
 
   if (error) {

@@ -16,7 +16,7 @@ export const is = (emailAddress: unknown): emailAddress is EmailAddress => {
 
 export const decode = (
   emailAddress: string,
-): Result.Result<Problem, EmailAddress> => {
+): Result<Problem, EmailAddress> => {
   if (is(emailAddress)) {
     return Result.Ok(emailAddress)
   }

@@ -157,7 +157,7 @@ export const updateFromBackend = (
 
 const updateResponse = <
   TProblem extends string,
-  TResult extends Result.Result<TProblem, SharedModel>,
+  TResult extends Result<TProblem, SharedModel>,
 >(
   result: TResult,
   model: Model,
