@@ -30,7 +30,7 @@ export type Action = Send | Unsend
 
 export type Send = [
   "Send",
-  { userId: UserId.UserId; conversationId: string; messageText: string },
+  { userId: UserId; conversationId: string; messageText: string },
 ]
 
 export type Send_Done = [
@@ -158,7 +158,7 @@ const insert =
   }: {
     conversationId: string
     message: string
-    userId: UserId.UserId
+    userId: UserId
   }): Task.Task<Result<Problem, Message>> =>
     async () => {
       const messageResponse = await Supabase.client

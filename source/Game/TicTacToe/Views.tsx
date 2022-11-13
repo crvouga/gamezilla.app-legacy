@@ -54,7 +54,7 @@ export const BannerArt = ({ title }: { title: string }) => {
 }
 
 type Player =
-  | { type: "User", userId?: UserId.UserId }
+  | { type: "User", userId?: UserId }
   | { type: "Bot", label: string }
 
 export const VersusHeader = ({ X, O, store }: { X: Player, O: Player, store: ProfileStore.Model }) => {

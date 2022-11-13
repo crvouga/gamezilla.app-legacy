@@ -73,6 +73,6 @@ export type ToBackend =
 // 
 // 
 
-type InputMode = ["InputMode", { mode: Mode, userId: UserId.UserId }]
+type InputMode = ["InputMode", { mode: Mode, userId: UserId }]
 type InputMode_Done = ["InputMode_Done", BackendModel]
 

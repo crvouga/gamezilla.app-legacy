@@ -48,14 +48,14 @@ export type Model =
   | ["LoginPhone", LoginPhone.Model]
   | [
     "LoginPhoneVerify",
-    { phoneNumber: PhoneNumber.PhoneNumber },
+    { phoneNumber: PhoneNumber },
     LoginPhoneVerify.Model,
   ]
   | ["Home", Home.Model]
   | ["ProfileCreate", ProfileCreate.Model]
   | ["Logout", Logout.Model]
   | ["Account", Account.Model]
-  | ["Profile", { userId: UserId.UserId }, Profile.Model]
+  | ["Profile", { userId: UserId }, Profile.Model]
   | ["ProfileDelete", ProfileDelete.Model]
   | ["ProfileUpdate", ProfileUpdate.Model]
   | ["ProfileUpdateAvatar", ProfileUpdateAvatar.Model]
@@ -1111,7 +1111,7 @@ const ViewTopLevel = ({
   currentUserId,
 }: {
   children: UI.ViewNode
-  currentUserId: UserId.UserId
+  currentUserId: UserId
   route: Route.Model
   dispatch: (msg: Msg) => void
   gameRoom: GameRoom.Model
@@ -1139,7 +1139,7 @@ const ViewBottomNavigation = ({
   route,
   dispatch,
 }: {
-  currentUserId: UserId.UserId
+  currentUserId: UserId
   route: Route.Model
   dispatch: (msg: Msg) => void
 }) => {

@@ -64,10 +64,10 @@ export type ToBackend =
 //
 //
 
-export type InputMode = ["InputMode", { mode: Mode; userId: UserId.UserId }]
+export type InputMode = ["InputMode", { mode: Mode; userId: UserId }]
 export type InputMode_Done = [
   "InputMode_Done",
-  { mode: Mode; userId: UserId.UserId },
+  { mode: Mode; userId: UserId },
   Result<InputModeProblem, BackendModel>,
 ]
 export type InputModeProblem = "must_be_the_host"

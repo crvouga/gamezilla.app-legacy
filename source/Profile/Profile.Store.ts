@@ -1,10 +1,10 @@
 import produce from "immer"
 import { matchSorter } from "match-sorter"
 import { Cmd, exhaustive, p, RemoteData, Result, Task, Unit } from "../Core"
-import { Username } from "../Data"
+import { UserId, Username } from "../Data"
 import * as Supabase from "../Supabase"
 import { definitions } from "../Supabase.Types"
-import { UserId, is as isUserId, decode as decodeUserId } from "../Data/UserId"
+
 
 //
 //
@@ -38,7 +38,7 @@ export type Model = {
 
 export type Profile = {
     userId: UserId
-    username: Username.Username
+    username: Username
     name: string
     avatarUrl: string
     themeMode: "Light" | "Dark" | "System"
@@ -53,7 +53,7 @@ const sep = ","
 const isFindManyKey = (key: unknown): key is FindManyKey => {
     return (
         typeof key === "string" &&
-        key.split(sep).every((item) => isUserId(item))
+        key.split(sep).every((item) => UserId.is(item))
     )
 }
 
@@ -419,7 +419,7 @@ const fromThemeMode = (
 export const decodeRow = (
     row: definitions["user_profile"],
 ): Result<string, Profile> => {
-    const userId = decodeUserId(row.id)
+    const userId = UserId.decode(row.id)
     const username = Username.decode(row.username)
 
     if (userId.type === "Ok" && username.type === "Ok") {

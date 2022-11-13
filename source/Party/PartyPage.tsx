@@ -53,7 +53,7 @@ export const View = ({
   dispatch,
 }: {
   party: Party.Model
-  currentUserId: UserId.UserId
+  currentUserId: UserId
   store: ProfileStore.Model
   model: Model
   dispatch: (msg: Msg) => void

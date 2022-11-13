@@ -62,7 +62,7 @@ export type Msg =
   | ["ClickedSendCode"]
   | ["InputtedPhoneNumber", string]
   | ["InputtedCountry", ISO_3166.Iso3166Alpha2Code]
-  | ["SendCode_Done", PhoneNumber.PhoneNumber, Auth.AuthResult]
+  | ["SendCode_Done", PhoneNumber, Auth.AuthResult]
 
 export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
   switch (msg[0]) {

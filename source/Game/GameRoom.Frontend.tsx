@@ -65,7 +65,7 @@ export const update = (
     currentUserId,
     sendToBackend,
   }: {
-    currentUserId: UserId.UserId
+    currentUserId: UserId
     sendToBackend: (msg: ToBackend) => Cmd<never>
   },
   msg: Msg,
@@ -175,7 +175,7 @@ export const updateFromBackend = (
     sendToBackend,
     profileStore,
   }: {
-    currentUserId: UserId.UserId
+    currentUserId: UserId
     sendToBackend: (msg: ToBackend) => Cmd<never>
     profileStore: ProfileStore.Model
   },
@@ -420,7 +420,7 @@ export const runAction = (
     currentUserId,
     sendToBackend,
   }: {
-    currentUserId: UserId.UserId
+    currentUserId: UserId
     sendToBackend: (msg: ToBackend) => Cmd<never>
   },
   action: Action,
@@ -445,7 +445,7 @@ export const runAction = (
 //
 
 export const subscriptions = (
-  { currentUserId }: { currentUserId: UserId.UserId },
+  { currentUserId }: { currentUserId: UserId },
   model: Model,
 ): Sub<Msg> => {
   const user = model.users[currentUserId]
@@ -484,7 +484,7 @@ export const View = ({
   model,
   dispatch
 }: {
-  currentUserId: UserId.UserId
+  currentUserId: UserId
   profileStore: ProfileStore.Model
   model: Model
   dispatch: (msg: Msg) => void
@@ -544,7 +544,7 @@ export const ViewNotInRoom = ({
   dispatch,
 }: {
   store: ProfileStore.Model
-  currentUserId: UserId.UserId
+  currentUserId: UserId
   model: Model
   dispatch: (msg: Msg) => void
 }) => {
@@ -681,11 +681,11 @@ const ViewGameRoomAvatarGroup = ({
   store: ProfileStore.Model
   room: {
     roomId: RoomId.RoomId
-    hostId: UserId.UserId
+    hostId: UserId
   }
   model: Model
   dispatch: (msg: Msg) => void
-  currentUserId: UserId.UserId
+  currentUserId: UserId
 }) => {
   const usersInRoom = toRoomUsers(room.roomId, model)
 
@@ -864,7 +864,7 @@ export const ViewBanner = ({
   dispatch,
   store,
 }: {
-  currentUserId: UserId.UserId
+  currentUserId: UserId
   route: Route.Model
   model: Model
   dispatch: (msg: Msg) => void
@@ -956,7 +956,7 @@ export const ViewCard = ({
   onClick,
 }: {
   roomId: RoomId.RoomId
-  hostId: UserId.UserId
+  hostId: UserId
   gameName?: GameName
   store: ProfileStore.Model
   gameRoom: Model

@@ -77,7 +77,7 @@ export const update = (
     currentUserId,
     sendToBackend,
   }: {
-    currentUserId: UserId.UserId
+    currentUserId: UserId
     sendToBackend: (msg: ToBackend) => Cmd<never>
   },
   msg: Msg,
@@ -162,7 +162,7 @@ export const updateFromBackend = (
     store,
     sendToBackend,
   }: {
-    currentUserId: UserId.UserId
+    currentUserId: UserId
     sendToBackend: (msg: ToBackend) => Cmd<never>
     store: ProfileStore.Model
   },
@@ -278,7 +278,7 @@ export const View = ({
   goHome,
 }: {
   goHome: () => void
-  currentUserId: UserId.UserId
+  currentUserId: UserId
   store: ProfileStore.Model
   model: Model
   dispatch: (msg: Msg) => void

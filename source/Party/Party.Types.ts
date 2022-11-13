@@ -22,7 +22,7 @@ export type SharedModel = {
     [partyId: PartyId.PartyId]: PartyModel
   }
   users: {
-    [userId: UserId.UserId]: UserModel
+    [userId: UserId]: UserModel
   }
 }
 
@@ -51,12 +51,12 @@ type MediaStreamModel = { type: "Unloaded" } | { type: "Loaded" }
 
 export type PartyModel = {
   partyId: PartyId.PartyId
-  hostId: UserId.UserId
+  hostId: UserId
   routerRtpCapabilities: RtpCapabilities
 }
 
 export type UserModel = {
-  userId: UserId.UserId
+  userId: UserId
   partyId: PartyId.PartyId
   producerId: Option.Option<string>
   deviceRtpCapabilities: Option.Option<RtpCapabilities>
@@ -133,7 +133,7 @@ export type CreateWorker_Done = ["CreateWorker_Done"]
 export type WorkerDied = ["WorkerDied"]
 export type CreateRouter_Done = [
   "CreateRouter_Done",
-  { hostId: UserId.UserId; partyId: PartyId.PartyId },
+  { hostId: UserId; partyId: PartyId.PartyId },
   Result<
     "worker_does_not_exists",
     { routerRtpCapabilities: RtpCapabilities }
@@ -144,7 +144,7 @@ export type CreateRouter_Done = [
 
 export type LoadMediaStream_Done = [
   "LoadMediaStream_Done",
-  { userId: UserId.UserId; partyId: PartyId.PartyId },
+  { userId: UserId; partyId: PartyId.PartyId },
   Result<"failed_to_load", Unit>,
 ]
 export type UnloadMediaStream_Done = [
@@ -153,7 +153,7 @@ export type UnloadMediaStream_Done = [
 ]
 export type LoadDevice_Done = [
   "LoadDevice_Done",
-  { userId: UserId.UserId; partyId: PartyId.PartyId },
+  { userId: UserId; partyId: PartyId.PartyId },
   Result<
     "device_is_already_loaded" | "failed_to_load_device",
     {
@@ -169,17 +169,17 @@ export type UnloadDevice_Done = [
 // Step 2
 export type SendTransport_InitBackend = [
   "SendTransport_InitBackend",
-  { userId: UserId.UserId; partyId: PartyId.PartyId },
+  { userId: UserId; partyId: PartyId.PartyId },
 ]
 export type RecvTransport_InitBackend = [
   "RecvTransport_InitBackend",
-  { userId: UserId.UserId; partyId: PartyId.PartyId },
+  { userId: UserId; partyId: PartyId.PartyId },
 ]
 
 // Step 3
 export type SendTransport_InitBackend_Done = [
   "SendTransport_InitBackend_Done",
-  { userId: UserId.UserId; partyId: PartyId.PartyId },
+  { userId: UserId; partyId: PartyId.PartyId },
   Result<
     "router_does_not_exists",
     { transportOptions: TransportOptions }
@@ -194,7 +194,7 @@ export type SendTransport_InitFrontend_Done = [
 ]
 export type RecvTransport_InitBackend_Done = [
   "RecvTransport_InitBackend_Done",
-  { userId: UserId.UserId; partyId: PartyId.PartyId },
+  { userId: UserId; partyId: PartyId.PartyId },
   Result<
     "router_does_not_exists" | "recv_transport_is_already_initialized",
     { transportOptions: TransportOptions }
@@ -224,12 +224,12 @@ export type StartProducing_Done = [
 
 export type SendTransport_OnConnect = [
   "SendTransport_OnConnect",
-  { userId: UserId.UserId; dtlsParameters: DtlsParameters },
+  { userId: UserId; dtlsParameters: DtlsParameters },
 ]
 export type SendTransport_OnProduce = [
   "SendTransport_OnProduce",
   {
-    userId: UserId.UserId
+    userId: UserId
     rtpParameters: RtpParameters
     kind: MediaKind
     appData: AppData
@@ -237,7 +237,7 @@ export type SendTransport_OnProduce = [
 ]
 export type SendTransport_OnConnect_Done = [
   "SendTransport_OnConnect_Done",
-  { userId: UserId.UserId },
+  { userId: UserId },
   Result<
     | "peer_does_not_exists"
     | "peer_missing_producer_transport"
@@ -247,7 +247,7 @@ export type SendTransport_OnConnect_Done = [
 ]
 export type SendTransport_OnProduce_Done = [
   "SendTransport_OnProduce_Done",
-  { userId: UserId.UserId },
+  { userId: UserId },
   Result<
     | "peer_does_not_exists"
     | "peer_missing_producer_transport"
@@ -268,11 +268,11 @@ export type RecvTransport_StartConsuming_Done = [
 export type StartConsuming_Done = ["StartConsuming_Backend_Done"]
 export type RecvTransport_OnConnect = [
   "RecvTransport_OnConnect",
-  { userId: UserId.UserId; dtlsParameters: DtlsParameters },
+  { userId: UserId; dtlsParameters: DtlsParameters },
 ]
 export type RecvTransport_OnConnect_Done = [
   "RecvTransport_OnConnect_Done",
-  { userId: UserId.UserId },
+  { userId: UserId },
   Result<"peer_does_not_exists", Unit>,
 ]
 
@@ -309,7 +309,7 @@ export type Response = StartParty_Done | LeaveParty_Done | JoinParty_Done
 
 export type StartParty = [
   "StartParty",
-  { hostId: UserId.UserId; partyId: PartyId.PartyId },
+  { hostId: UserId; partyId: PartyId.PartyId },
 ]
 
 export type StartParty_Done = [
@@ -321,12 +321,12 @@ export type StartParty_Done = [
 //
 //
 
-export type LeaveParty = ["LeaveParty", { userId: UserId.UserId }]
+export type LeaveParty = ["LeaveParty", { userId: UserId }]
 
 export type LeaveParty_Done = [
   "LeaveParty_Done",
   {
-    userId: UserId.UserId
+    userId: UserId
     result: Result<"not_in_a_party", SharedModel>
   },
 ]
@@ -409,7 +409,7 @@ export const leaveParty = (
 
 export type JoinParty = [
   "JoinParty",
-  { userId: UserId.UserId; partyId: PartyId.PartyId },
+  { userId: UserId; partyId: PartyId.PartyId },
 ]
 
 export type JoinParty_Done = [

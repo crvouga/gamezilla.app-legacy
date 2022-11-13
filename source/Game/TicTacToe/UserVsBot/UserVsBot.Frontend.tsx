@@ -148,7 +148,7 @@ export const View = ({
   store,
   currentUserId,
 }: {
-  currentUserId: UserId.UserId
+  currentUserId: UserId
   store: ProfileStore.Model
   goBack: () => void
   goHome: () => void
@@ -418,7 +418,7 @@ const ViewGameOverMessage = ({
   currentUserId,
 }: {
   model: GameModel
-  currentUserId: UserId.UserId
+  currentUserId: UserId
   store: ProfileStore.Model
   gameOver: GameOver | { type: "None" }
 }) => {

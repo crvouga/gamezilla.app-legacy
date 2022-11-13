@@ -43,18 +43,18 @@ type FindOneResult = Result<
 
 export type FindOneElseInsert = [
   "FindOneElseInsert",
-  { userIds: UserId.UserId[] },
+  { userIds: UserId[] },
 ]
 export type FindOneElseInsert_Done = [
   "FindOneElseInsert_Done",
-  { userIds: UserId.UserId[]; result: FindOneResult },
+  { userIds: UserId[]; result: FindOneResult },
 ]
 
-export type FindManyByUserId = ["FindManyByUserId", { userId: UserId.UserId }]
+export type FindManyByUserId = ["FindManyByUserId", { userId: UserId }]
 export type FindManyByUserId_Done = [
   "FindManyByUserId_Done",
   {
-    userId: UserId.UserId
+    userId: UserId
     result: Result<
       Problem,
       {
@@ -340,7 +340,7 @@ const findManyByUserId =
   ({
     userId,
   }: {
-    userId: UserId.UserId
+    userId: UserId
   }): Task.Task<
     Result<
       Problem,
@@ -436,7 +436,7 @@ const findUniqueByUserIds =
 
       // todo. this should be in the database query
       const userIdsByConversationId = usersConversationsResponse.data.reduce<{
-        [conversationId: string]: { [userId: UserId.UserId]: string }
+        [conversationId: string]: { [userId: UserId]: string }
       }>(
         (byId, item) => ({
           ...byId,

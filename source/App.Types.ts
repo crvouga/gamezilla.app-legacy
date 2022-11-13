@@ -21,14 +21,14 @@ export type BackendModel = {
   party: Party.BackendModel
   gameRoom: GameRoom.BackendModel
   sessions: {
-    [sessionId: SessionId.SessionId]: Session
+    [sessionId: SessionId]: Session
   }
 }
 
 export type Session = {
-  sessionId: SessionId.SessionId
-  userId: Option.Option<UserId.UserId>
-  clientId: Option.Option<ClientId.ClientId>
+  sessionId: SessionId
+  userId: Option.Option<UserId>
+  clientId: Option.Option<ClientId>
 }
 
 export type FrontendModel = {
@@ -65,7 +65,7 @@ export type ToBackend =
 export type ToFrontend =
   | ["GameRoom", GameRoom.ToFrontend]
   | ["Party", Party.ToFrontend]
-  | ["Session", SessionId.SessionId]
+  | ["Session", SessionId]
 
 export type FrontendMsg =
   | ["▶", ToFrontend]
@@ -81,8 +81,8 @@ export type FrontendMsg =
   | ['ProfileStore', ProfileStore.Msg]
 
 export type BackendMsg =
-  | ["▶", SessionId.SessionId, ClientId.ClientId, ToBackend]
-  | ["ClientConnected", SessionId.SessionId, ClientId.ClientId]
-  | ["ClientDisconnected", SessionId.SessionId, ClientId.ClientId]
+  | ["▶", SessionId, ClientId, ToBackend]
+  | ["ClientConnected", SessionId, ClientId]
+  | ["ClientDisconnected", SessionId, ClientId]
   | ["GameRoom", GameRoom.BackendMsg]
   | ["Party", Party.BackendMsg]

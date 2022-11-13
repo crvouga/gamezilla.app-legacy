@@ -64,7 +64,7 @@ export type Msg =
 export type OutAction = ChatStore.Action
 
 export const update = (
-  { userId, conversationId }: { userId: UserId.UserId; conversationId: string },
+  { userId, conversationId }: { userId: UserId; conversationId: string },
   msg: Msg,
   model: Model,
 ): [Model, Cmd<Msg>, OutAction[]] => {
@@ -152,7 +152,7 @@ export const View = ({
 }: {
   chatStore: ChatStore.Model
   profileStore: ProfileStore.Model
-  currentUserId: UserId.UserId
+  currentUserId: UserId
   model: Model
   conversationId: string
   dispatch: (msg: Msg) => void
@@ -367,9 +367,9 @@ const ChatMessage = ({
   message: {
     messageId: string,
     message: string,
-    userId: UserId.UserId
+    userId: UserId
   },
-  currentUserId: UserId.UserId
+  currentUserId: UserId
   model: Model
   dispatch: (msg: Msg) => void
   store: ChatStore.Model

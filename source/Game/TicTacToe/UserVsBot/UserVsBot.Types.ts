@@ -25,14 +25,14 @@ export type SharedModel = SetupModel | GameModel
 
 export type SetupModel = {
   type: "Setup"
-  player: UserId.UserId | "None"
+  player: UserId | "None"
   userPlayerType: PlayerType
   botLevel: BotLevel
 }
 
 export type GameModel = {
   type: "Game"
-  player: UserId.UserId
+  player: UserId
   userPlayerType: PlayerType
   botLevel: BotLevel
   board: Board
@@ -114,7 +114,7 @@ export type Response =
 
 type InputPlayerType = [
   "InputPlayerType",
-  { userId: UserId.UserId; playerType: PlayerType },
+  { userId: UserId; playerType: PlayerType },
 ]
 type InputPlayerType_Done = [
   "InputPlayerType_Done",
@@ -167,7 +167,7 @@ export const inputPlayerTypeToString = (
 //
 //
 
-type InputBot = ["InputBot", { userId: UserId.UserId; botLevel: BotLevel }]
+type InputBot = ["InputBot", { userId: UserId; botLevel: BotLevel }]
 type InputBot_Done = ["InputBot_Done", Result<InputBotProblem, SharedModel>]
 type InputBotProblem = "not_playing" | "not_in_setup"
 
@@ -212,7 +212,7 @@ export const inputBotToString = (result: InputBot_Done[1]): string => {
 //
 //
 //
-type StartPlaying = ["StartPlaying", { userId: UserId.UserId }]
+type StartPlaying = ["StartPlaying", { userId: UserId }]
 type StartPlaying_Done = [
   "StartPlaying_Done",
   Result<StartPlayingProblem, SharedModel>,
@@ -237,7 +237,7 @@ export const startPlaying = (
   })
 }
 
-type StopPlaying = ["StopPlaying", { userId: UserId.UserId }]
+type StopPlaying = ["StopPlaying", { userId: UserId }]
 type StopPlaying_Done = [
   "StopPlaying_Done",
   Result<StopPlayingProblem, SharedModel>,
@@ -268,7 +268,7 @@ export const stopPlaying = (
 //
 //
 
-type StartGame = ["StartGame", { userId: UserId.UserId }]
+type StartGame = ["StartGame", { userId: UserId }]
 type StartGame_Done = ["StartGame_Done", Result<StartGameProblem, SharedModel>]
 type StartGameProblem = "not_in_setup" | "missing_player" | "not_playing"
 
@@ -304,7 +304,7 @@ export const startGame = (
 //
 //
 
-type StopGame = ["StopGame", { userId: UserId.UserId }]
+type StopGame = ["StopGame", { userId: UserId }]
 type StopGame_Done = ["StopGame_Done", Result<StopGameProblem, SharedModel>]
 type StopGameProblem = "not_started" | "not_playing"
 
@@ -333,7 +333,7 @@ export const stopGame = (
 //
 //
 
-type Restart = ["Restart", { userId: UserId.UserId }]
+type Restart = ["Restart", { userId: UserId }]
 type Restart_Done = ["Restart_Done", Result<RestartProblem, SharedModel>]
 type RestartProblem = "not_playing" | "not_in_game"
 
@@ -360,7 +360,7 @@ export const restart = (
 //
 //
 
-type InputMove = ["InputMove", { userId: UserId.UserId; position: Position }]
+type InputMove = ["InputMove", { userId: UserId; position: Position }]
 type InputMove_Done = ["InputMove_Done", Result<InputMoveProblem, SharedModel>]
 type InputMoveProblem = MoveProblem | "not_in_game" | "not_playing"
 
@@ -395,7 +395,7 @@ export const inputMove = (
 //
 //
 
-type SwapSides = ["SwapSides", { userId: UserId.UserId }]
+type SwapSides = ["SwapSides", { userId: UserId }]
 type SwapSides_Done = ["SwapSides_Done", Result<SwapSidesProblem, SharedModel>]
 type SwapSidesProblem = "not_in_game" | "not_playing"
 

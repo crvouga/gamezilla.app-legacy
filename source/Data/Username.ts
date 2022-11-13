@@ -1,10 +1,8 @@
-import { Result } from "../Core"
+import { Err, Ok, Result } from "../Core/Result"
 
-export type Username = string & { _opaque: typeof Username }
+export type Username = string & { _opaque: 'Username' }
 
-declare const Username: unique symbol
-
-export const is = (username: unknown): username is Username => {
+const is = (username: unknown): username is Username => {
   return (
     typeof username === "string" &&
     username.length > 0 &&
@@ -14,18 +12,25 @@ export const is = (username: unknown): username is Username => {
 
 type Problem = "invalid_username"
 
-export const decode = (username: unknown): Result<Problem, Username> => {
+const decode = (username: unknown): Result<Problem, Username> => {
   if (is(username)) {
-    return Result.Ok(username)
+    return Ok(username)
   }
-  return Result.Err("invalid_username")
+  return Err("invalid_username")
 }
 
-export const fromString = (username: string): Username => {
+const fromString = (username: string): Username => {
   const cleaned = username.substring(0, 100)
   if (is(cleaned)) {
     return cleaned
   }
 
   throw new Error("impossible state. did not create username from string")
+}
+
+
+export const Username = {
+  is,
+  fromString,
+  decode,
 }

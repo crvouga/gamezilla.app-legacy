@@ -31,14 +31,14 @@ export type Store = {
 //
 //
 export type UsersConversations = {
-  userId: UserId.UserId
+  userId: UserId
   conversationId: string
 }
 export const toUsersConversationsId = ({
   userId,
   conversationId,
 }: {
-  userId: UserId.UserId
+  userId: UserId
   conversationId: string
 }): string => {
   return [userId, conversationId].join(",")
@@ -51,7 +51,7 @@ export type Conversation = {
 export type Message = {
   messageId: string
   conversationId: string
-  userId: UserId.UserId
+  userId: UserId
   message: string
 }
 
@@ -76,7 +76,7 @@ export type Queries = {
       >
     }
     FindManyByUserId: {
-      [userId: UserId.UserId]: RemoteData.RemoteData<
+      [userId: UserId]: RemoteData.RemoteData<
         Problem,
         {
           conversation: string[]

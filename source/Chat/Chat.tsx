@@ -18,7 +18,7 @@ export type Model = {}
 export const init = ({
   userId,
 }: {
-  userId: UserId.UserId
+  userId: UserId
 }): [Model, Cmd<Msg>, OutAction[]] => {
   return [
     {},
@@ -71,7 +71,7 @@ export const View = ({
 }: {
   chatStore: ChatStore.Model
   profileStore: ProfileStore.Model
-  currentUserId: UserId.UserId,
+  currentUserId: UserId,
   model: Model
   dispatch: (msg: Msg) => void
 }) => {

@@ -10,7 +10,7 @@ export type PhoneNumber = {
 
 type Problem = "invalid_phone_number"
 
-export const decode = (
+const decode = (
   country: ISO_3166.Iso3166Alpha2Code,
   phoneNumber: string,
 ): Result<Problem, PhoneNumber> => {
@@ -27,16 +27,23 @@ export const decode = (
   return Result.Err("invalid_phone_number")
 }
 
-export const toString = (phoneNumber: PhoneNumber): string => {
+const toString = (phoneNumber: PhoneNumber): string => {
   return phoneNumber._validPhoneNumber
 }
 
-export const toCountry = (
+const toCountry = (
   phoneNumber: PhoneNumber,
 ): ISO_3166.Iso3166Alpha2Code => {
   return phoneNumber._country
 }
 
-export const eq = (a: PhoneNumber, b: PhoneNumber): boolean => {
+const eq = (a: PhoneNumber, b: PhoneNumber): boolean => {
   return a._validPhoneNumber === b._validPhoneNumber
+}
+
+export const PhoneNumber = {
+  toString,
+  eq,
+  toCountry,
+  decode
 }

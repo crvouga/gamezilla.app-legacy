@@ -16,7 +16,7 @@ import * as UI from "../UI"
 
 export type Model = {
   searchText: string
-  selected: { [userId: UserId.UserId]: UserId.UserId }
+  selected: { [userId: UserId]: UserId }
   highlightedIndex: "None" | number
 }
 
@@ -53,8 +53,8 @@ export type Msg =
   | ["ClickedCancel"]
   | ["ClickedChat"]
   | ["InputtedSearch", string]
-  | ["ClickedResult", { userId: UserId.UserId }]
-  | ["ClickedSelectedDelete", { userId: UserId.UserId }]
+  | ["ClickedResult", { userId: UserId }]
+  | ["ClickedSelectedDelete", { userId: UserId }]
   | ["PressedKeyDown", Keyboard.ArrowKey | Keyboard.EnterKey]
 
 export type OutAction = ProfileStore.Action | ChatStore.Action
@@ -63,7 +63,7 @@ export const update = (
   {
     currentUserId,
     profileStore,
-  }: { currentUserId: UserId.UserId; profileStore: ProfileStore.Model },
+  }: { currentUserId: UserId; profileStore: ProfileStore.Model },
   msg: Msg,
   model: Model,
 ): [Model, Cmd<Msg>, OutAction[]] => {
@@ -153,7 +153,7 @@ export const update = (
 }
 
 const toggleSelected = (
-  userId: UserId.UserId,
+  userId: UserId,
   model: Model,
 ): [Model, Cmd<Msg>, OutAction[]] => {
   if (userId in model.selected) {

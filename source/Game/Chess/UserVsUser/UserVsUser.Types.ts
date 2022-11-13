@@ -26,29 +26,29 @@ export type SharedModel =
   | {
     type: "Setup"
     clockPreset: Clock.Preset
-    w: UserId.UserId | "None"
-    b: UserId.UserId | "None"
+    w: UserId | "None"
+    b: UserId | "None"
   }
   | {
     type: "Starting"
     clock: Clock.Clock
-    w: UserId.UserId
-    b: UserId.UserId
+    w: UserId
+    b: UserId
     countDown: 3 | 2 | 1
   }
   | {
     type: "Game"
     drawAgreement: DrawAgreement
-    w: UserId.UserId
-    b: UserId.UserId
+    w: UserId
+    b: UserId
     clock: Clock.Clock
     board: Board.Model
   }
   | {
     type: "GameOver"
     gameOver: GameOver
-    w: UserId.UserId
-    b: UserId.UserId
+    w: UserId
+    b: UserId
     clock: Clock.Clock
     board: Board.Model
   }
@@ -79,7 +79,7 @@ export type GameOver =
 export const initShared = ({
   userId,
 }: {
-  userId: UserId.UserId | "None"
+  userId: UserId | "None"
 }): SharedModel => {
   return {
     type: "Setup",
@@ -154,7 +154,7 @@ export type Res =
 
 export type InputMove = [
   "InputMove",
-  Board.MoveInput & { userId: UserId.UserId },
+  Board.MoveInput & { userId: UserId },
 ]
 
 export type InputMove_Done = [
@@ -224,7 +224,7 @@ export type InputPlayer = [
   "InputPlayer",
   {
     color: Board.Color
-    userId: UserId.UserId | "None"
+    userId: UserId | "None"
   },
 ]
 
@@ -279,7 +279,7 @@ export const inputPlayer = (
 
 export type InputClock = [
   "InputClock",
-  { clockPreset: Clock.Preset; userId: UserId.UserId },
+  { clockPreset: Clock.Preset; userId: UserId },
 ]
 
 export type InputClock_Done = [
@@ -328,7 +328,7 @@ export const inputClock = (
 //
 //
 
-export type StartGame = ["StartGame", { userId: UserId.UserId }]
+export type StartGame = ["StartGame", { userId: UserId }]
 export type StartGame_Done = [
   "StartGame_Done",
   Result<StartGameProblem, SharedModel>,
@@ -469,7 +469,7 @@ export const respondToDraw = (
   return Result.Ok(modelNew)
 }
 
-export type CancelDraw = ["CancelDraw", { userId: UserId.UserId }]
+export type CancelDraw = ["CancelDraw", { userId: UserId }]
 export type CancelDraw_Done = [
   "CancelDraw_Done",
   Result<CancelDrawProblem, SharedModel>,
@@ -671,11 +671,11 @@ export const decrementCountDown = (countDown: 3 | 2 | 1): 2 | 1 | 0 => {
 //
 //
 
-export type CancelStartGame = ["CancelStartGame", { userId: UserId.UserId }]
+export type CancelStartGame = ["CancelStartGame", { userId: UserId }]
 export type CancelStartGame_Done = [
   "CancelStartGame_Done",
   Result<CancelStartGameProblem, SharedModel>,
-  { userId: UserId.UserId },
+  { userId: UserId },
 ]
 export type CancelStartGameProblem =
   | "must_be_playing"

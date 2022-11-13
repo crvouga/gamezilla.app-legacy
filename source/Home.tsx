@@ -37,7 +37,7 @@ export type Msg =
 export type OutAction = GameRoom.Action | Route.Action
 
 export const update = (
-  { currentUserId }: { currentUserId: UserId.UserId },
+  { currentUserId }: { currentUserId: UserId },
   msg: Msg,
   model: Model,
 ): [Model, OutAction[]] => {
@@ -109,7 +109,7 @@ export const View = ({
   gameRoom,
   store,
 }: {
-  currentUserId: UserId.UserId
+  currentUserId: UserId
   gameRoom: GameRoom.Model
   model: Model
   dispatch: (msg: Msg) => void
@@ -290,7 +290,7 @@ const ViewNotInRoom = ({
   gameRoom,
   store,
 }: {
-  currentUserId: UserId.UserId
+  currentUserId: UserId
   gameRoom: GameRoom.Model
   model: Model
   dispatch: (msg: Msg) => void

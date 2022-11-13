@@ -61,7 +61,7 @@ export type Msg =
 const codeInputId = "codeInputId"
 
 export const update = (
-  { phoneNumber }: { phoneNumber: PhoneNumber.PhoneNumber },
+  { phoneNumber }: { phoneNumber: PhoneNumber },
   msg: Msg,
   model: Model,
 ): [Model, Cmd<Msg>] => {
@@ -119,7 +119,7 @@ export const View = ({
   model,
   dispatch,
 }: {
-  phoneNumber: PhoneNumber.PhoneNumber
+  phoneNumber: PhoneNumber
   model: Model
   dispatch: (msg: Msg) => void
 }) => {
