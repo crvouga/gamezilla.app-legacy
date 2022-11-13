@@ -36,3 +36,7 @@ export const toCountry = (
 ): ISO_3166.Iso3166Alpha2Code => {
   return phoneNumber._country
 }
+
+export const eq = (a: PhoneNumber, b: PhoneNumber): boolean => {
+  return a._validPhoneNumber === b._validPhoneNumber
+}

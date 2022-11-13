@@ -19,6 +19,19 @@ export const map =
       }
     }
 
+
+export const chain =
+  <A, B>(mapper: (a: A) => Cmd<B>) =>
+    (cmd: Cmd<A>): Cmd<B> => {
+      return (dispatch) => {
+        cmd((a) => {
+          mapper(a)(b => {
+            dispatch(b)
+          })
+        })
+      }
+    }
+
 export const tag = <Tag extends string, Msg>(tagName: Tag, cmd: Cmd<Msg>): Cmd<[Tag, Msg]> => {
   return p(cmd, map(msg => [tagName, msg]))
 }
