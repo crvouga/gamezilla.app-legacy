@@ -59,7 +59,7 @@ export const GameModeCardGrid = ({ onUserVsUser, onUserVsBot }: { onUserVsUser: 
         <GameModeCard
           leftIcon={<UI.Icons.Person sx={iconSx} />}
           rightIcon={<UI.Icons.Person sx={iconSx} />}
-          title="Vs User"
+          title="Vs Player"
           onClick={onUserVsUser}
         />
       </UI.Box>
