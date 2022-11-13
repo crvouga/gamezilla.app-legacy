@@ -19,7 +19,7 @@ export const init = ({
   userId,
 }: {
   userId: UserId.UserId
-}): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
+}): [Model, Cmd<Msg>, OutAction[]] => {
   return [
     {},
     Cmd.None,
@@ -42,7 +42,7 @@ export type Msg =
 
 type OutAction = ChatStore.Action
 
-export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
+export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case "ClickedBack":
       return [model, Route.back]

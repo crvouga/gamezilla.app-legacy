@@ -34,7 +34,7 @@ import {
 
 export type Model = BackendModel
 
-export const init = (): [Model, Cmd.Cmd<Msg>] => [
+export const init = (): [Model, Cmd<Msg>] => [
   {
     worker: { type: "Loading" },
     parties: {},
@@ -61,16 +61,16 @@ export const update = (
     sendToUser,
     broadcast,
   }: {
-    sendToUser: (userIds: UserId.UserId[], msg: ToFrontend) => Cmd.Cmd<never>
-    broadcast: (msg: ToFrontend) => Cmd.Cmd<never>
+    sendToUser: (userIds: UserId.UserId[], msg: ToFrontend) => Cmd<never>
+    broadcast: (msg: ToFrontend) => Cmd<never>
   },
   msg: Msg,
   model: Model,
-): [Model, Cmd.Cmd<Msg>] => {
+): [Model, Cmd<Msg>] => {
   const sendToParty = (
     partyId: PartyId.PartyId,
     msg: ToFrontend,
-  ): Cmd.Cmd<never> => {
+  ): Cmd<never> => {
     const userIds = Object.values(model.users).flatMap((user) =>
       user.partyId === partyId ? [user.userId] : [],
     )
@@ -218,16 +218,16 @@ export const updateFromFrontend = (
     broadcast,
     sendToUser,
   }: {
-    broadcast: (msg: ToFrontend) => Cmd.Cmd<Msg>
-    sendToUser: (userId: UserId.UserId[], msg: ToFrontend) => Cmd.Cmd<never>
+    broadcast: (msg: ToFrontend) => Cmd<Msg>
+    sendToUser: (userId: UserId.UserId[], msg: ToFrontend) => Cmd<never>
   },
   msg: ToBackend,
   model: Model,
-): [Model, Cmd.Cmd<Msg>] => {
+): [Model, Cmd<Msg>] => {
   const sendToParty = (
     partyId: PartyId.PartyId,
     msg: ToFrontend,
-  ): Cmd.Cmd<never> => {
+  ): Cmd<never> => {
     const userIds = Object.values(model.users).flatMap((user) =>
       user.partyId === partyId ? [user.userId] : [],
     )
@@ -440,11 +440,11 @@ export const onClientConnected = (
   {
     sendToUser,
   }: {
-    sendToUser: (userIds: UserId.UserId[], msg: ToFrontend) => Cmd.Cmd<Msg>
+    sendToUser: (userIds: UserId.UserId[], msg: ToFrontend) => Cmd<Msg>
   },
   maybeUserId: Option.Option<UserId.UserId>,
   model: Model,
-): Cmd.Cmd<Msg> => {
+): Cmd<Msg> => {
   if (maybeUserId.type === "None") {
     return Cmd.None
   }

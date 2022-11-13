@@ -31,7 +31,7 @@ export type Msg =
   | ["ClickedChangedAvatar"]
   | ["ClickedTheme"]
 
-export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
+export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case "ClickedAvatar":
       return [model, Route.push(["ProfileUpdateAvatar"])]

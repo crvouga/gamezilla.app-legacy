@@ -37,10 +37,10 @@ export const init: Model = {
 export type Msg = FrontendMsg
 
 export const update = (
-  { sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd.Cmd<never> },
+  { sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd<never> },
   msg: Msg,
   model: Model,
-): [Model, Cmd.Cmd<Msg>] => {
+): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case "MouseMove": {
       return [model, sendToBackend(msg)]
@@ -154,7 +154,7 @@ const keyToDirection = (key: Keyboard.Key): Direction.Direction | "None" => {
 export const updateFromBackend = (
   msg: ToFrontend,
   model: Model,
-): [Model, Cmd.Cmd<Msg>] => {
+): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case "MouseMove_Done": {
       const result = msg[1]

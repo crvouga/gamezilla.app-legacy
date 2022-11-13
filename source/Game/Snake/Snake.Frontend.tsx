@@ -52,12 +52,12 @@ export const update = (
     sendToBackend,
     currentUserId,
   }: {
-    sendToBackend: (msg: ToBackend) => Cmd.Cmd<never>
+    sendToBackend: (msg: ToBackend) => Cmd<never>
     currentUserId: UserId.UserId
   },
   msg: Msg,
   _model: Model,
-): [Model, Cmd.Cmd<Msg>] => {
+): [Model, Cmd<Msg>] => {
   const model: Model = { ..._model, openedMenuId: Option.None }
 
   switch (msg[0]) {
@@ -123,7 +123,7 @@ export const update = (
 export const updateFromBackend = (
   msg: ToFrontend,
   model: Model,
-): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
+): [Model, Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
     case "Sync": {
       const sharedModel = msg[1]
@@ -161,7 +161,7 @@ const updateResponse = <
 >(
   result: TResult,
   model: Model,
-): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
+): [Model, Cmd<Msg>, OutAction[]] => {
   if (result.type === "Err") {
     const message = result.error.split("_").join(" ")
     return [model, Cmd.None, [["Snackbar", { message, variant: "Error" }]]]

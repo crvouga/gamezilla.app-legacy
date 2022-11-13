@@ -1,6 +1,6 @@
 export * as Audio from "./Audio"
 export * as Browser from "./Browser"
-export * as Cmd from "./Cmd"
+export * from "./Cmd"
 export * as Debug from "./Debug"
 export * from "./equals"
 export * as Keyboard from "./Keyboard"

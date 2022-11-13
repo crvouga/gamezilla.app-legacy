@@ -3,13 +3,13 @@ import * as Task from "./Task"
 
 export type Cmd<Msg = never> = (dispatch: (msg: Msg) => void) => void
 
-export const of = <Msg>(msg: Msg): Cmd<Msg> => {
+const of = <Msg>(msg: Msg): Cmd<Msg> => {
   return (dispatch) => {
     dispatch(msg)
   }
 }
 
-export const map =
+const map =
   <A, B>(mapper: (a: A) => B) =>
     (cmd: Cmd<A>): Cmd<B> => {
       return (dispatch) => {
@@ -20,7 +20,7 @@ export const map =
     }
 
 
-export const chain =
+const chain =
   <A, B>(mapper: (a: A) => Cmd<B>) =>
     (cmd: Cmd<A>): Cmd<B> => {
       return (dispatch) => {
@@ -32,11 +32,11 @@ export const chain =
       }
     }
 
-export const tag = <Tag extends string, Msg>(tagName: Tag, cmd: Cmd<Msg>): Cmd<[Tag, Msg]> => {
+const tag = <Tag extends string, Msg>(tagName: Tag, cmd: Cmd<Msg>): Cmd<[Tag, Msg]> => {
   return p(cmd, map(msg => [tagName, msg]))
 }
 
-export const batch = <Msg>(cmdList: Cmd<Msg>[]): Cmd<Msg> => {
+const batch = <Msg>(cmdList: Cmd<Msg>[]): Cmd<Msg> => {
   return (dispatch) => {
     for (const cmd of cmdList) {
       cmd(dispatch)
@@ -44,9 +44,9 @@ export const batch = <Msg>(cmdList: Cmd<Msg>[]): Cmd<Msg> => {
   }
 }
 
-export const None: Cmd<never> = () => { }
+const None: Cmd<never> = () => { }
 
-export const perform =
+const perform =
   <A, Msg>(f: (a: A) => Msg) =>
     (task: Task.Task<A>): Cmd<Msg> => {
       return async (dispatch) => {
@@ -55,3 +55,15 @@ export const perform =
         dispatch(f(value))
       }
     }
+
+
+
+export const Cmd = {
+  None,
+  perform,
+  batch,
+  tag,
+  chain,
+  map,
+  of
+}

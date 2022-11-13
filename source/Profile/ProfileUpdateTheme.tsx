@@ -36,7 +36,7 @@ export const update = (
   { userId }: { userId: UserId.UserId },
   msg: Msg,
   model: Model,
-): [Model, Cmd.Cmd<Msg>, OutMsg[]] => {
+): [Model, Cmd<Msg>, OutMsg[]] => {
   switch (msg[0]) {
     case "ClickedBack":
       return [model, Route.back, []]

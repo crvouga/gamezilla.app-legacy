@@ -19,7 +19,7 @@ export const init = ({
   userId,
 }: {
   userId: UserId.UserId
-}): [Model, Cmd.Cmd<Msg>, OutAction[]] => [
+}): [Model, Cmd<Msg>, OutAction[]] => [
     {},
     Cmd.None,
     [["Profile", ["FindMany", { userIds: [userId] }]]],
@@ -48,7 +48,7 @@ export const update = (
   }: { currentUserId: UserId.UserId; userId: UserId.UserId },
   msg: Msg,
   model: Model,
-): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
+): [Model, Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
     case "ClickedBack": {
       return [model, Route.back, []]

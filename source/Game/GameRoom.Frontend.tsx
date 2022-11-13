@@ -28,7 +28,7 @@ import {
 
 export type Model = FrontendModel
 
-export const init: [Model, Cmd.Cmd<Msg>] = [
+export const init: [Model, Cmd<Msg>] = [
   {
     rooms: {},
     users: {},
@@ -66,11 +66,11 @@ export const update = (
     sendToBackend,
   }: {
     currentUserId: UserId.UserId
-    sendToBackend: (msg: ToBackend) => Cmd.Cmd<never>
+    sendToBackend: (msg: ToBackend) => Cmd<never>
   },
   msg: Msg,
   modelPrev: Model,
-): [Model, Cmd.Cmd<Msg>] => {
+): [Model, Cmd<Msg>] => {
   const model: Model = { ...modelPrev, modal: "Closed" }
 
   switch (msg[0]) {
@@ -176,12 +176,12 @@ export const updateFromBackend = (
     profileStore,
   }: {
     currentUserId: UserId.UserId
-    sendToBackend: (msg: ToBackend) => Cmd.Cmd<never>
+    sendToBackend: (msg: ToBackend) => Cmd<never>
     profileStore: ProfileStore.Model
   },
   msg: ToFrontend,
   model: Model,
-): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
+): [Model, Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
     case "Sync": {
       const userIds = Object.values(msg[1].users).map((user) => user.userId)
@@ -288,7 +288,7 @@ export const updateFromBackend = (
   }
 }
 
-const handleResponse = ({ sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd.Cmd<never> }, msg: Res, model: Model): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
+const handleResponse = ({ sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd<never> }, msg: Res, model: Model): [Model, Cmd<Msg>, OutAction[]] => {
   if (msg[1].type === 'Err') {
     return [
       { ...model, requests: { ...model.requests, [msg[0]]: Failure(msg[1].error) } },
@@ -323,12 +323,12 @@ const mergeWithBackendModel = ({
   backendModel,
   sendToBackend,
 }: {
-  sendToBackend: (msg: ToBackend) => Cmd.Cmd<never>
+  sendToBackend: (msg: ToBackend) => Cmd<never>
   frontendModel: FrontendModel
   backendModel: BackendModel
-}): [FrontendModel, Cmd.Cmd<FrontendMsg>] => {
+}): [FrontendModel, Cmd<FrontendMsg>] => {
   const [roomsNew, roomsCmd] = Object.entries(backendModel.rooms).reduce<
-    [FrontendModel["rooms"], Cmd.Cmd<FrontendMsg>]
+    [FrontendModel["rooms"], Cmd<FrontendMsg>]
   >(
     ([rooms, cmd], [roomId, backendRoom]) => {
       if (!RoomId.is(roomId)) {
@@ -421,11 +421,11 @@ export const runAction = (
     sendToBackend,
   }: {
     currentUserId: UserId.UserId
-    sendToBackend: (msg: ToBackend) => Cmd.Cmd<never>
+    sendToBackend: (msg: ToBackend) => Cmd<never>
   },
   action: Action,
   model: Model,
-): [Model, Cmd.Cmd<Msg>] => {
+): [Model, Cmd<Msg>] => {
   switch (action[1][0]) {
     case "Msg": {
       const msg = action[1][1]

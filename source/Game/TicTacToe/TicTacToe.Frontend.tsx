@@ -45,11 +45,11 @@ export const update = (
   {
     sendToBackend,
   }: {
-    sendToBackend: (msg: ToBackend) => Cmd.Cmd<never>
+    sendToBackend: (msg: ToBackend) => Cmd<never>
   },
   msg: Msg,
   model: Model,
-): [Model, Cmd.Cmd<Msg>] => {
+): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case "InputMode": {
       return [model, sendToBackend(msg)]
@@ -93,7 +93,7 @@ export const update = (
 export const updateFromBackend = (
   msg: ToFrontend,
   model: Model,
-): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
+): [Model, Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
     case "InputMode_Done": {
       const result = msg[1]

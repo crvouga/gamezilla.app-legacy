@@ -79,7 +79,7 @@ export type FindOne_Done = [
 //
 //
 
-export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
+export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case "FindOne_Done": {
       const { conversationId, result } = msg[1]
@@ -181,7 +181,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
       })
 
       // todo put this logic elsewhere
-      const cmdNew: Cmd.Cmd<Msg> =
+      const cmdNew: Cmd<Msg> =
         result.type === "Ok"
           ? Route.push(["ChatConversation", result.value.conversation])
           : Cmd.None
@@ -193,7 +193,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 export const runAction = (
   action: Action,
   model: Model,
-): [Model, Cmd.Cmd<Msg>] => {
+): [Model, Cmd<Msg>] => {
   switch (action[0]) {
     case "FindOne": {
       const { conversationId } = action[1]

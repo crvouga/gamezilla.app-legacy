@@ -44,10 +44,10 @@ export const init = initSharedModel
 export type Msg = BackendMsg
 
 type Update = (
-  wire: { sendToRoom: (msg: ToFrontend) => Cmd.Cmd<never> },
+  wire: { sendToRoom: (msg: ToFrontend) => Cmd<never> },
   msg: Msg,
   model: Model,
-) => [Model, Cmd.Cmd<Msg>]
+) => [Model, Cmd<Msg>]
 
 
 export const update: Update = (wire, msg, model) => {
@@ -78,12 +78,12 @@ export const update_: Update = ({ sendToRoom }, msg, model) => {
 
 type UpdateFromFrontend = (
   wire: {
-    sendToClient: (m: ToFrontend) => Cmd.Cmd<never>
-    sendToRoom: (m: ToFrontend) => Cmd.Cmd<never>
+    sendToClient: (m: ToFrontend) => Cmd<never>
+    sendToRoom: (m: ToFrontend) => Cmd<never>
   },
   msg: ToBackend,
   model: Model,
-) => [Model, Cmd.Cmd<Msg>]
+) => [Model, Cmd<Msg>]
 
 export const updateFromFrontend: UpdateFromFrontend = (
   wire,
@@ -201,7 +201,7 @@ const updateFromFrontend_: UpdateFromFrontend = (
   }
 }
 
-export const updateRoomLeave = ({ sendToRoom, userId, model }: { userId: UserId, model: Model, sendToRoom: (m: ToFrontend) => Cmd.Cmd }): [Model, Cmd.Cmd<Msg>] => {
+export const updateRoomLeave = ({ sendToRoom, userId, model }: { userId: UserId, model: Model, sendToRoom: (m: ToFrontend) => Cmd }): [Model, Cmd<Msg>] => {
 
   if (model.player !== userId) {
     return [model, Cmd.None]

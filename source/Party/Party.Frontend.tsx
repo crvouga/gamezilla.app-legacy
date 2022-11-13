@@ -31,7 +31,7 @@ import {
 
 export type Model = FrontendModel
 
-export const init = (): [Model, Cmd.Cmd<Msg>] => {
+export const init = (): [Model, Cmd<Msg>] => {
   return [
     {
       parties: {},
@@ -58,10 +58,10 @@ export type Msg = FrontendMsg
 export type OutAction = ProfileStore.Action
 
 export const update = (
-  { sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd.Cmd<never> },
+  { sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd<never> },
   msg: Msg,
   model: Model,
-): [Model, Cmd.Cmd<Msg>] => {
+): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case "ClickedBanner": {
       return [model, Route.push(["Party"])]
@@ -187,7 +187,7 @@ export const updateFromBackend = (
   { currentUserId }: { currentUserId: UserId.UserId },
   msg: ToFrontend,
   model: Model,
-): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
+): [Model, Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
     case "Sync": {
       const sharedModel = msg[1]
@@ -316,7 +316,7 @@ const toLifecycleCmd = ({
   currentUserId: UserId.UserId
   modelPrev: Model
   modelNext: Model
-}): Cmd.Cmd<Msg> => {
+}): Cmd<Msg> => {
   const userPrev = modelPrev.users[currentUserId]
   const userNext = modelNext.users[currentUserId]
 
@@ -374,10 +374,10 @@ const toLifecycleCmd = ({
 export type Action = ["Party", ["Msg", Msg]]
 
 export const runAction = (
-  { sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd.Cmd<never> },
+  { sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd<never> },
   action: Action,
   model: Model,
-): [Model, Cmd.Cmd<Msg>] => {
+): [Model, Cmd<Msg>] => {
   switch (action[1][0]) {
     case "Msg": {
       return update({ sendToBackend }, action[1][1], model)

@@ -38,7 +38,7 @@ export type Msg = FrontendMsg
 
 export type OutAction = Snackbar.Action
 
-export const update = ({ sendToBackend, }: { sendToBackend: (msg: ToBackend) => Cmd.Cmd<never> }, msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
+export const update = ({ sendToBackend, }: { sendToBackend: (msg: ToBackend) => Cmd<never> }, msg: Msg, model: Model): [Model, Cmd<Msg>] => {
     switch (msg[0]) {
 
         // 
@@ -92,7 +92,7 @@ export const update = ({ sendToBackend, }: { sendToBackend: (msg: ToBackend) => 
     }
 };
 
-export const updateFromBackend = (msg: ToFrontend, model: Model): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
+export const updateFromBackend = (msg: ToFrontend, model: Model): [Model, Cmd<Msg>, OutAction[]] => {
     switch (msg[0]) {
         case 'NewGame':
         case 'InputMoveTimeLimit':

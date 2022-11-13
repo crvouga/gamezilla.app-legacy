@@ -13,7 +13,7 @@ import * as ProfileStore from "../Profile/Profile.Store"
 
 export type Model = {}
 
-export const init: [Model, Cmd.Cmd<Msg>] = [{}, Cmd.None]
+export const init: [Model, Cmd<Msg>] = [{}, Cmd.None]
 
 //
 //
@@ -30,7 +30,7 @@ type OutAction = Party.Action
 export const update = (
   msg: Msg,
   model: Model,
-): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
+): [Model, Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
     case "Party": {
       return [model, Cmd.None, [["Party", ["Msg", msg[1]]]]]

@@ -28,7 +28,7 @@ export type Model = {
 //
 //
 
-export const init = (): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
+export const init = (): [Model, Cmd<Msg>, OutAction[]] => {
   const searchText = ""
   return [
     {
@@ -66,7 +66,7 @@ export const update = (
   }: { currentUserId: UserId.UserId; profileStore: ProfileStore.Model },
   msg: Msg,
   model: Model,
-): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
+): [Model, Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
     case "ClickedChat":
       const userIds = [...Object.values(model.selected), currentUserId]
@@ -155,7 +155,7 @@ export const update = (
 const toggleSelected = (
   userId: UserId.UserId,
   model: Model,
-): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
+): [Model, Cmd<Msg>, OutAction[]] => {
   if (userId in model.selected) {
     return [
       {

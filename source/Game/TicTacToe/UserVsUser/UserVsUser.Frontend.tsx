@@ -69,11 +69,11 @@ export const update = (
   {
     sendToBackend,
   }: {
-    sendToBackend: (msg: ToBackend) => Cmd.Cmd<never>
+    sendToBackend: (msg: ToBackend) => Cmd<never>
   },
   msg: Msg,
   model: Model,
-): [Model, Cmd.Cmd<Msg>] => {
+): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     //
     //

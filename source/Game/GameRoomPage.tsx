@@ -15,7 +15,7 @@ export type Model = {
   drawer: "Opened" | "Closed"
 }
 
-export const init: [Model, Cmd.Cmd<Msg>] = [{ drawer: "Closed" }, Cmd.None]
+export const init: [Model, Cmd<Msg>] = [{ drawer: "Closed" }, Cmd.None]
 
 //
 //

@@ -1,5 +1,5 @@
 import Howler from "howler"
-import * as Cmd from "../Cmd"
+import { Cmd } from "../Cmd"
 import { p } from "../pipe"
 import * as Result from "../Result"
 import { Unit } from "../Utility"

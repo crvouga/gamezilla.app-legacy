@@ -31,9 +31,9 @@ export const init = ({
   gameName,
   sendToBackend,
 }: {
-  sendToBackend: (msg: ToBackend) => Cmd.Cmd<never>
+  sendToBackend: (msg: ToBackend) => Cmd<never>
   gameName: Model[0]
-}): [Model, Cmd.Cmd<Msg>] => {
+}): [Model, Cmd<Msg>] => {
   switch (gameName) {
     case "TicTacToe": {
       return [["TicTacToe", TicTacToe.init], Cmd.None]
@@ -78,11 +78,11 @@ export const update = (
     sendToBackend,
   }: {
     currentUserId: UserId.UserId
-    sendToBackend: (msg: ToBackend) => Cmd.Cmd<never>
+    sendToBackend: (msg: ToBackend) => Cmd<never>
   },
   msg: Msg,
   model: Model,
-): [Model, Cmd.Cmd<Msg>] => {
+): [Model, Cmd<Msg>] => {
   switch (model[0]) {
     case "ConnectFour": {
       if (msg[0] === "ConnectFour") {
@@ -163,12 +163,12 @@ export const updateFromBackend = (
     sendToBackend,
   }: {
     currentUserId: UserId.UserId
-    sendToBackend: (msg: ToBackend) => Cmd.Cmd<never>
+    sendToBackend: (msg: ToBackend) => Cmd<never>
     store: ProfileStore.Model
   },
   msg: ToFrontend,
   model: Model,
-): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
+): [Model, Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
     case "Tetris": {
       if (model[0] === "Tetris") {
@@ -397,10 +397,10 @@ export const mergeWithBackend = ({
   frontendModel,
   backendModel,
 }: {
-  sendToBackend: (msg: ToBackend) => Cmd.Cmd<never>
+  sendToBackend: (msg: ToBackend) => Cmd<never>
   frontendModel: FrontendModel
   backendModel: BackendModel
-}): [FrontendModel, Cmd.Cmd<Msg>] => {
+}): [FrontendModel, Cmd<Msg>] => {
   switch (backendModel[0]) {
     case "Tetris": {
       if (frontendModel[0] === "Tetris") {

@@ -38,10 +38,10 @@ export const init = initBackend
 export type Msg = BackendMsg
 
 export const update = (
-  { sendToRoom }: { sendToRoom: (msg: ToFrontend) => Cmd.Cmd<never> },
+  { sendToRoom }: { sendToRoom: (msg: ToFrontend) => Cmd<never> },
   msg: Msg,
   model: Model,
-): [Model, Cmd.Cmd<Msg>] => {
+): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case "BotMoved": {
       const result = botMoved(msg[1], model)
@@ -54,21 +54,21 @@ export const update = (
 }
 
 type Wire = {
-  sendToClient: (msg: ToFrontend) => Cmd.Cmd<never>
-  sendToRoom: (msg: ToFrontend) => Cmd.Cmd<never>
+  sendToClient: (msg: ToFrontend) => Cmd<never>
+  sendToRoom: (msg: ToFrontend) => Cmd<never>
 }
 
 export const updateFromFrontend = (
   wire: Wire,
   msg: ToBackend,
   model: Model,
-): [Model, Cmd.Cmd<Msg>] => {
+): [Model, Cmd<Msg>] => {
   const [modelNew, cmd] = updateFromFrontend_(wire, msg, model)
 
   return [modelNew, Cmd.batch([cmd, toBotMoveCmd(model, modelNew)])]
 }
 
-const toBotMoveCmd = (modelPrev: Model, modelNext: Model): Cmd.Cmd<Msg> => {
+const toBotMoveCmd = (modelPrev: Model, modelNext: Model): Cmd<Msg> => {
   const didChangeToBotTurn = !isBotTurn(modelPrev) && isBotTurn(modelNext)
 
   if (!didChangeToBotTurn) {
@@ -90,7 +90,7 @@ const updateFromFrontend_ = (
   { sendToClient, sendToRoom }: Wire,
   msg: ToBackend,
   model: Model,
-): [Model, Cmd.Cmd<Msg>] => {
+): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case "Init": {
       return [model, sendToClient(["Sync", model])]
@@ -146,7 +146,7 @@ const updateFromFrontend_ = (
   }
 }
 
-export const updateRoomLeave = ({ sendToRoom }: { sendToRoom: (msg: ToFrontend) => Cmd.Cmd<never> }, userId: UserId, model: Model): [Model, Cmd.Cmd<Msg>] => {
+export const updateRoomLeave = ({ sendToRoom }: { sendToRoom: (msg: ToFrontend) => Cmd<never> }, userId: UserId, model: Model): [Model, Cmd<Msg>] => {
   if (model.userId === userId) {
     const modelNew: Model = {
       type: "Setup",

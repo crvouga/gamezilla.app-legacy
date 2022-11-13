@@ -36,11 +36,11 @@ export const update = (
   {
     sendToRoom,
   }: {
-    sendToRoom: (msg: ToFrontend) => Cmd.Cmd<never>
+    sendToRoom: (msg: ToFrontend) => Cmd<never>
   },
   msg: Msg,
   model: Model,
-): [Model, Cmd.Cmd<Msg>] => {
+): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case "UserVsUser": {
       if (model.mode === "UserVsUser") {
@@ -73,13 +73,13 @@ export const updateFromFrontend = (
     sendToClient,
     sendToRoom,
   }: {
-    sendToClient: (msg: ToFrontend) => Cmd.Cmd<never>
-    sendToRoom: (msg: ToFrontend) => Cmd.Cmd<never>
+    sendToClient: (msg: ToFrontend) => Cmd<never>
+    sendToRoom: (msg: ToFrontend) => Cmd<never>
   },
   msg: ToBackend,
   model: Model,
 
-): [Model, Cmd.Cmd<Msg>] => {
+): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case "InputMode": {
       const modelNew: BackendModel = initMode(msg[1])
@@ -127,7 +127,7 @@ export const updateFromFrontend = (
   }
 }
 
-export const updateRoomLeave = ({ sendToRoom }: { sendToRoom: (m: ToFrontend) => Cmd.Cmd<never> }, userId: UserId.UserId, model: Model): [Model, Cmd.Cmd<Msg>] => {
+export const updateRoomLeave = ({ sendToRoom }: { sendToRoom: (m: ToFrontend) => Cmd<never> }, userId: UserId.UserId, model: Model): [Model, Cmd<Msg>] => {
   switch (model.mode) {
     case 'None': {
       return [model, Cmd.None]

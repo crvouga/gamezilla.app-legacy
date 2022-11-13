@@ -16,7 +16,7 @@ export type Model = {
   searchText: string
 }
 
-export const init: [Model, Cmd.Cmd<Msg>, OutAction[]] = [
+export const init: [Model, Cmd<Msg>, OutAction[]] = [
   {
     searchText: "",
   },
@@ -45,7 +45,7 @@ const searchInputId = "SearchInput"
 export const update = (
   msg: Msg,
   model: Model,
-): [Model, Cmd.Cmd<Msg>, OutAction[]] => {
+): [Model, Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
     case "Focus_Done":
       return [model, Cmd.None, []]

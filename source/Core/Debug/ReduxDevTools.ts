@@ -1,5 +1,5 @@
 import * as Rx from "rxjs"
-import * as Cmd from "../Cmd"
+import { Cmd } from "../Cmd"
 import * as Json from "../Json"
 import * as Option from "../Option"
 import { p } from "../pipe"

@@ -40,7 +40,7 @@ type Problem = { message: string }
 //
 //
 
-export const init = (): [Model, Cmd.Cmd<Msg>] => {
+export const init = (): [Model, Cmd<Msg>] => {
   return [
     {
       submission: { type: "NotAsked" },
@@ -73,7 +73,7 @@ export type Msg =
 const emailAddressId = "emailAddress"
 const passwordId = "password"
 
-export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
+export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case "ClickedBack":
       return [model, Route.back]

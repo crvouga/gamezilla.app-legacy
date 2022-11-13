@@ -1,5 +1,5 @@
 import * as Rx from "rxjs"
-import * as Cmd from "./Cmd"
+import { Cmd } from "./Cmd"
 import * as Sub from "./Sub"
 
 //
@@ -12,7 +12,7 @@ import * as Sub from "./Sub"
 
 export type State<Model, Msg> = {
   model: Model
-  cmd: Cmd.Cmd<Msg>
+  cmd: Cmd<Msg>
   msg?: Msg
 }
 
@@ -37,8 +37,8 @@ export const createProgram = <Model, Msg>({
   update,
   subscriptions,
 }: {
-  init: [Model, Cmd.Cmd<Msg>]
-  update: (msg: Msg, model: Model) => [Model, Cmd.Cmd<Msg>]
+  init: [Model, Cmd<Msg>]
+  update: (msg: Msg, model: Model) => [Model, Cmd<Msg>]
   subscriptions: (model: Model) => Sub.Sub<Msg>
 }): Program<Model, Msg> => {
   const initialState: State<Model, Msg> = {

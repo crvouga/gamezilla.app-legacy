@@ -187,7 +187,7 @@ export const update = (msg: Msg): Model => {
 export const runAction = (
   action: Action,
   model: Model,
-): [Model, Cmd.Cmd<Msg>] => {
+): [Model, Cmd<Msg>] => {
   switch (action[1][0]) {
     case "Back": {
       return [model, Browser.back]

@@ -39,7 +39,7 @@ export type Action =
 //
 //
 
-export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
+export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case "Conversation": {
       const [modelNew, cmd] = Conversation.update(msg[1], model)
@@ -56,7 +56,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
 export const runAction = (
   action: Action,
   model: Model,
-): [Model, Cmd.Cmd<Msg>] => {
+): [Model, Cmd<Msg>] => {
   switch (action[1][0]) {
     case "Conversation": {
       const [modelNew, cmd] = Conversation.runAction(action[1][1], model)

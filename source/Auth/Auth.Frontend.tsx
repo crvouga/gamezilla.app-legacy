@@ -1,4 +1,5 @@
-import { Cmd, Sub } from "../Core";
+import { Cmd } from "../Core";
+import { FrontendModel, FrontendMsg, ToBackend, ToFrontend } from "./Auth.Type";
 
 //
 //
@@ -8,9 +9,9 @@ import { Cmd, Sub } from "../Core";
 //
 //
 
-export type Model = {};
+export type Model = FrontendModel;
 
-export const init: [Model, Cmd.Cmd<Msg>] = [{}, Cmd.None];
+export const init: Model = { session: { type: "Loading" } }
 
 //
 //
@@ -20,24 +21,24 @@ export const init: [Model, Cmd.Cmd<Msg>] = [{}, Cmd.None];
 //
 //
 
-export type Msg = ["Noop"]
+export type Msg = FrontendMsg
 
-export const update = (msg: Msg, model: Model): [Model, Cmd.Cmd<Msg>] => {
+export type Action = ['Auth', FrontendMsg]
+
+export const update = ({ sendToBackend, msg, model, }: { sendToBackend: (m: ToBackend) => Cmd<never>, msg: Msg, model: Model }): [Model, Cmd<Msg>] => {
     switch (msg[0]) {
-        case "Noop": {
-            return [model, Cmd.None]
+        case 'VerifyCode':
+        case "LoginWithCode": {
+            return [model, sendToBackend(msg)]
         }
     }
 };
 
-//
-//
-//
-// Subscriptions
-//
-//
-//
-
-export const subscriptions = (_model: Model): Sub.Sub<Msg> => {
-    return Sub.None;
-};
+export const updateFromBackend = ({ msg, model }: { msg: ToFrontend, model: Model }): [Model, Cmd<Msg>] => {
+    switch (msg[0]) {
+        case 'VerifyCode_Done':
+        case 'LoginWithCode_Done': {
+            return [model, Cmd.None]
+        }
+    }
+}

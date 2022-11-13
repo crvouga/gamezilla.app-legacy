@@ -1,4 +1,4 @@
-import * as Cmd from "./Cmd"
+import { Cmd } from "./Cmd"
 import * as Sub from "./Sub"
 
 //
@@ -16,7 +16,7 @@ export type Input<Msg, Model> = {
 
 export type Output<Msg, Model> = {
   model: Model
-  cmd?: Cmd.Cmd<Msg>
+  cmd?: Cmd<Msg>
 }
 
 export interface Update<Msg, Model> {
