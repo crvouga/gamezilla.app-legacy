@@ -245,13 +245,12 @@ export const updateFromBackend = (
 
     case 'ChangeGame':
     case 'ChangeHost':
-    case 'RoomLeave':
     case "RoomCreate": {
-      return handleResponse({ sendToBackend }, msg, model)
+      return updateResponse({ sendToBackend }, msg, model)
     }
 
     case "RoomDestroy": {
-      const handled = handleResponse({ sendToBackend }, msg, model)
+      const handled = updateResponse({ sendToBackend }, msg, model)
 
       const user = model.users[currentUserId]
 
@@ -270,27 +269,80 @@ export const updateFromBackend = (
       }
 
       const snackbarActions: OutAction[] =
-        msg[1].type === "Ok" ? [["Snackbar", { message: "The host ended the room", variant: "Info" }]] : []
+        msg[2].type === "Ok"
+          ? [["Snackbar", { message: toRoomEndMessage({ profileStore, hostId: msg[1].userId }), variant: "Info" }]]
+          : []
+
+      return [handled[0], handled[1], [...handled[2], ...snackbarActions]]
+    }
+
+    case 'RoomLeave': {
+      const handled = updateResponse({ sendToBackend }, msg, model)
+
+      if (msg[2].type === 'Err') {
+        return handled
+      }
+
+      const snackbarActions: OutAction[] =
+        msg[1].userId !== currentUserId
+          ? [['Snackbar', { variant: "Info", message: toRoomLeaveMessage({ userId: msg[1].userId, profileStore }) }]]
+          : []
 
       return [handled[0], handled[1], [...handled[2], ...snackbarActions]]
     }
 
     case "RoomJoin": {
-      const handled = handleResponse({ sendToBackend }, msg, model)
+      const handled = updateResponse({ sendToBackend }, msg, model)
+
+      if (msg[2].type === 'Err') {
+        return handled
+      }
 
       const routeActions: OutAction[] =
-        msg[1].type === "Ok" ? [["Route", ["Replace", ["GameRoom"]]]] : []
+        msg[1].userId === currentUserId
+          ? [["Route", ["Replace", ["GameRoom"]]]]
+          : []
 
-      return [handled[0], handled[1], [...handled[2], ...routeActions]]
+      const snackbarActions: OutAction[] =
+        msg[1].userId !== currentUserId
+          ? [['Snackbar', { variant: "Info", message: toRoomJoinMessage({ userId: msg[1].userId, profileStore }) }]]
+          : []
+
+
+      return [handled[0], handled[1], [...handled[2], ...routeActions, ...snackbarActions]]
     }
 
   }
 }
 
-const handleResponse = ({ sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd<never> }, msg: Res, model: Model): [Model, Cmd<Msg>, OutAction[]] => {
-  if (msg[1].type === 'Err') {
+const toRoomEndMessage = ({ profileStore, hostId }: { hostId: UserId, profileStore: ProfileStore.Model }) => {
+  const profile = profileStore.profiles[hostId]
+  if (profile) {
+    return `${profile.username} ended the room`
+  }
+  return "The host ended the room"
+}
+
+const toRoomJoinMessage = ({ profileStore, userId }: { userId: UserId, profileStore: ProfileStore.Model }) => {
+  const profile = profileStore.profiles[userId]
+  if (profile) {
+    return `${profile.username} joined the room`
+  }
+  return "A user joined the room"
+}
+
+const toRoomLeaveMessage = ({ profileStore, userId }: { userId: UserId, profileStore: ProfileStore.Model }) => {
+  const profile = profileStore.profiles[userId]
+  if (profile) {
+    return `${profile.username} left the room`
+  }
+  return "A user left the room"
+}
+
+const updateResponse = ({ sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd<never> }, msg: Res, model: Model): [Model, Cmd<Msg>, OutAction[]] => {
+  if (msg[2].type === 'Err') {
     return [
-      { ...model, requests: { ...model.requests, [msg[0]]: RemoteData.Err(msg[1].error) } },
+      { ...model, requests: { ...model.requests, [msg[0]]: RemoteData.Err(msg[2].error) } },
       Cmd.None,
       []
     ]
@@ -298,7 +350,7 @@ const handleResponse = ({ sendToBackend }: { sendToBackend: (msg: ToBackend) => 
 
   const merged = mergeWithBackendModel({
     frontendModel: model,
-    backendModel: msg[1].value,
+    backendModel: msg[2].value,
     sendToBackend,
   })
 

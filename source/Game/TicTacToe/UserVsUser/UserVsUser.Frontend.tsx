@@ -126,7 +126,7 @@ export const updateFromBackend = (
 
     case 'PlayerLeft': {
       const modelNew = mergeWithBackend(model, msg[1])
-      return [modelNew, [['Snackbar', { message: "Player left the game", variant: "Info" }]]]
+      return [modelNew, []]
     }
 
     case "RematchAccept_Done":

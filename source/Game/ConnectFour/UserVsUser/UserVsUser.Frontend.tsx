@@ -121,7 +121,7 @@ export const updateFromBackend = (msg: ToFrontend, model: Model): [Model, Cmd<Ms
 
         case 'PlayerLeft': {
             const merged = mergeWithBackend({ frontendModel: model, backendModel: msg[1] })
-            return [merged, Cmd.None, [['Snackbar', { message: "Player left the game", variant: "Info" }]]]
+            return [merged, Cmd.None, []]
         }
 
         default: {

@@ -152,34 +152,34 @@ export const updateFromFrontend = (
     case 'RoomJoin':
     case 'RoomDestroy':
     case "RoomCreate": {
-      const res: Res = [msg[0], handle(msg, model)]
+      const res: Res = [...msg, handle(msg, model)]
 
-      if (res[1].type === "Err") {
+      if (res[2].type === "Err") {
         return [model, sendToClient(res)]
       }
 
-      return [res[1].value, broadcast(res)]
+      return [res[2].value, broadcast(res)]
     }
 
     case "RoomLeave": {
-      const res: Res = [msg[0], handle(msg, model)]
+      const res: Res = [...msg, handle(msg, model)]
 
-      if (res[1].type === "Err") {
+      if (res[2].type === "Err") {
         return [model, sendToClient(res)]
       }
 
-      const modelAfter = res[1].value
+      const modelAfter = res[2].value
 
       const user = model.users[msg[1].userId]
 
       if (!user) {
-        return [res[1].value, broadcast(res)]
+        return [res[2].value, broadcast(res)]
       }
 
       const room = model.rooms[user.roomId]
 
       if (!room) {
-        return [res[1].value, broadcast(res)]
+        return [res[2].value, broadcast(res)]
       }
 
       const [gameNew, cmd] = Game.updateRoomLeave(
@@ -194,9 +194,9 @@ export const updateFromFrontend = (
       }
 
       const modelNew: Model = {
-        ...res[1].value,
+        ...res[2].value,
         rooms: {
-          ...res[1].value.rooms,
+          ...res[2].value.rooms,
           [roomNew.roomId]: roomNew
         }
       }
