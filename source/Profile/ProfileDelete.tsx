@@ -28,7 +28,7 @@ export type Msg =
   | ["ClickedCancel"]
   | ["ClickedBackdrop"]
   | ["ClickedDelete"]
-  | ["ClickedCloseFailure"]
+  | ["ClickedCloseErr"]
 
 export type OutAction = ProfileStore.Action
 
@@ -51,7 +51,7 @@ export const update = (
         [["Profile", ["DeleteForever", { userId }]]],
       ]
 
-    case "ClickedCloseFailure":
+    case "ClickedCloseErr":
       return [model, Cmd.None, [["Profile", ["ResetMutations"]]]]
   }
 }
@@ -86,7 +86,7 @@ export const View = ({
         />
       )
 
-    case "Failure":
+    case "Err":
       return (
         <UI.Backdrop open>
           <UI.Alert
@@ -95,7 +95,7 @@ export const View = ({
             sx={{ margin: 2 }}
           >
             <UI.AlertTitle>Failed to delete profile.</UI.AlertTitle>
-            {mutation.problem}
+            {mutation.error}
             <UI.Box
               sx={{
                 display: "flex",
@@ -108,7 +108,7 @@ export const View = ({
                 size="large"
                 color="inherit"
                 startIcon={<UI.Icons.Close />}
-                onClick={() => dispatch(["ClickedCloseFailure"])}
+                onClick={() => dispatch(["ClickedCloseErr"])}
               >
                 Close
               </UI.Button>
@@ -118,7 +118,7 @@ export const View = ({
       )
 
     case "NotAsked":
-    case "Success":
+    case "Ok":
       return (
         <UI.ConformationDialog
           open

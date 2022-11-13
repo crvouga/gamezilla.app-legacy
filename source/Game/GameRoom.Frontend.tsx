@@ -1,5 +1,4 @@
 import { Cmd, exhaustive, p, RemoteData, Sub } from "../Core"
-import { Failure, Success } from "../Core/RemoteData"
 import { RoomId, UserId } from "../Data"
 import * as Route from "../Route"
 import * as Snackbar from "../Snackbar"
@@ -291,7 +290,7 @@ export const updateFromBackend = (
 const handleResponse = ({ sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd<never> }, msg: Res, model: Model): [Model, Cmd<Msg>, OutAction[]] => {
   if (msg[1].type === 'Err') {
     return [
-      { ...model, requests: { ...model.requests, [msg[0]]: Failure(msg[1].error) } },
+      { ...model, requests: { ...model.requests, [msg[0]]: RemoteData.Err(msg[1].error) } },
       Cmd.None,
       []
     ]
@@ -309,9 +308,8 @@ const handleResponse = ({ sendToBackend }: { sendToBackend: (msg: ToBackend) => 
     ["Profile", ["FindMany", { userIds }]],
   ]
 
-
   return [
-    { ...merged[0], requests: { ...merged[0].requests, [msg[0]]: Success("None") } },
+    { ...merged[0], requests: { ...merged[0].requests, [msg[0]]: RemoteData.Ok("None") } },
     merged[1],
     storeActions
   ]

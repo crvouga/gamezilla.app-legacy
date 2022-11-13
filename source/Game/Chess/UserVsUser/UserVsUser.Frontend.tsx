@@ -781,10 +781,10 @@ export const View = ({
 
           dispatch(msg)
 
-          const isSuccessfulMove =
+          const isOkfulMove =
             inputMove(msg[1], model.sharedModel).type === "Ok"
 
-          return isSuccessfulMove
+          return isOkfulMove
         }}
       />
 

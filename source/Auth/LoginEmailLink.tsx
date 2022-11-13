@@ -17,7 +17,7 @@ export type Model = {
   | { type: "Idle" }
   | { type: "Loading"; sentToEmailAddress: string }
   | { type: "Problem"; message: string }
-  | { type: "Success"; sentToEmailAddress: string }
+  | { type: "Ok"; sentToEmailAddress: string }
 }
 
 //
@@ -76,7 +76,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
             {
               ...model,
               emailAddress: "",
-              submission: { type: "Success", sentToEmailAddress: emailAddress },
+              submission: { type: "Ok", sentToEmailAddress: emailAddress },
             },
             Cmd.None,
           ]
@@ -164,7 +164,7 @@ export const View = ({
           <UI.Alert severity="error">{model.submission.message}</UI.Alert>
         )}
 
-        {model.submission.type === "Success" && (
+        {model.submission.type === "Ok" && (
           <UI.Alert severity="success">
             <UI.AlertTitle>Check your email</UI.AlertTitle>
             <UI.Typography
@@ -176,7 +176,7 @@ export const View = ({
                 component="span"
                 sx={{ color: "text.primary" }}
               >
-                {model.submission.type === "Success"
+                {model.submission.type === "Ok"
                   ? model.submission.sentToEmailAddress
                   : "the provider email address"}
               </UI.Box>

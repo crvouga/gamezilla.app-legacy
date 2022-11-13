@@ -28,7 +28,7 @@ export type Model = {
     message: string
   }
   | {
-    type: "Success"
+    type: "Ok"
   }
 }
 
@@ -118,7 +118,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
       }
 
       return [
-        { ...model, submission: { type: "Success" } },
+        { ...model, submission: { type: "Ok" } },
         Route.push(["LoginPhoneVerify", { phoneNumber: phoneNumber }]),
       ]
     }

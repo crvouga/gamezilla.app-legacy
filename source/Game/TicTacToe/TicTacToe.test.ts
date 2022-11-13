@@ -2,7 +2,7 @@ import { Board, move, PlayerType, toBestMove } from "./TicTacToe"
 
 describe("TicTacToe", () => {
 
-    it("successfully moves", () => {
+    it("Okfully moves", () => {
         const before: Board = [
             ['X', 'O', '_'],
             ['X', '_', '_'],

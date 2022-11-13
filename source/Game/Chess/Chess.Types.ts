@@ -18,7 +18,7 @@ export type FrontendModel = {
   | ["UserVsBot", UserVsBot.FrontendModel]
 
   requests: {
-    InputMode: RemoteData.RemoteData<InputModeProblem, Unit>
+    InputMode: RemoteData<InputModeProblem, Unit>
   }
 }
 

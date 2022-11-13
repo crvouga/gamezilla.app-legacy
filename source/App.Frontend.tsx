@@ -712,10 +712,10 @@ const toStatus = ({
         case "Loading":
           return ["ProfileLoading", { authSession }]
 
-        case "Failure":
+        case "Err":
           return ["ProfileError", { authSession }]
 
-        case "Success": {
+        case "Ok": {
           const userIds = query.value
 
           const profiles = userIds
