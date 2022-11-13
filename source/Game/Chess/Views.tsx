@@ -40,6 +40,7 @@ export const BannerArt = ({ title }: { title: string }) => {
           {[...Array(columnCount)].map((_, x) =>
             [...Array(rowCount)].map((_, y) => (
               <rect
+                key={`${x}-${y}`}
                 x={x}
                 y={y}
                 width={1}
@@ -134,6 +135,7 @@ export const VersusHeader = ({ store, white, black }: { store: ProfileStore.Mode
         {[...Array(columnCount)].map((_, x) =>
           [...Array(rowCount)].map((_, y) => (
             <rect
+              key={`${x}-${y}`}
               x={x}
               y={y}
               width={1}
