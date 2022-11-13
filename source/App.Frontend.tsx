@@ -2,6 +2,7 @@ import * as ReactDomClient from "react-dom/client"
 import { io, Socket } from "socket.io-client"
 import { FrontendModel, FrontendMsg, ToFrontend } from "./App.Types"
 import * as Auth from "./Auth/Auth"
+import * as ChatStore from "./Chat/Chat.Store"
 import {
   andThen,
   andThenMany,
@@ -17,10 +18,9 @@ import {
 import * as GameRoom from "./Game/GameRoom.Frontend"
 import * as Pages from "./Pages"
 import * as Party from "./Party/Party.Frontend"
+import * as ProfileStore from './Profile/Profile.Store'
 import * as Route from "./Route"
 import * as Snackbar from "./Snackbar"
-import * as ChatStore from "./Chat/Chat.Store"
-import * as ProfileStore from './Profile/Profile.Store'
 import * as UI from "./UI"
 import * as Wire from "./Wire"
 
