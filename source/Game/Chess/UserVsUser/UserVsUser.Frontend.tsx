@@ -387,7 +387,7 @@ export const updateFromBackend = (
     }
 
     case 'PlayerLeft': {
-      return [{ ...model, sharedModel: msg[1] }, Cmd.None, [['Snackbar', { message: "Player left the room", variant: "Info" }]]]
+      return [{ ...model, sharedModel: msg[1] }, Cmd.None, []]
     }
 
     default: {

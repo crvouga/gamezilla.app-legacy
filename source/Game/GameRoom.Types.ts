@@ -97,7 +97,13 @@ export type Req =
   | ['ChangeGame', { userId: UserId, gameName: Game.GameName }]
   | ['ChangeHost', { userId: UserId, nextHostId: UserId }]
 
-export type Res = [Req[0], Result<Problem, Model>]
+export type Res =
+  | ['RoomCreate', { userId: UserId, roomId: RoomId, gameName: Game.GameName, }, Result<Problem, Model>]
+  | ['RoomDestroy', { userId: UserId }, Result<Problem, Model>]
+  | ['RoomJoin', { userId: UserId, roomId: RoomId, }, Result<Problem, Model>]
+  | ['RoomLeave', { userId: UserId }, Result<Problem, Model>]
+  | ['ChangeGame', { userId: UserId, gameName: Game.GameName, }, Result<Problem, Model>]
+  | ['ChangeHost', { userId: UserId, nextHostId: UserId, }, Result<Problem, Model>]
 
 type Problem =
   | "must_be_host"
