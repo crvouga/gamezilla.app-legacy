@@ -453,7 +453,7 @@ export const View = ({
         {Object.values(model.users)
           .filter((user) => user.partyId === party.partyId)
           .map((user) => (
-            <UI.Box sx={{ flex: 1, display: "flex", alignItems: 'center', justifyContent: 'center', flexDirection: "column" }}>
+            <UI.Box sx={{ flex: 1, display: "flex", alignItems: 'center', justifyContent: 'center', flexDirection: "column", overflow: "hidden", }}>
               <UI.Avatar
                 src={store.profiles[user.userId]?.avatarUrl}
                 sx={{
@@ -465,10 +465,10 @@ export const View = ({
                       : undefined,
                 }}
               />
-              <UI.Typography variant="h6">
+              <UI.Typography variant="h6" noWrap sx={{ width: '100%', paddingX: 1 }} align='center'>
                 {`${store.profiles[user.userId]?.username ?? "..."}`}
               </UI.Typography>
-              <UI.Typography variant="subtitle1" color="text.secondary">
+              <UI.Typography variant="subtitle1" color="text.secondary" sx={{ height: "1rem" }}>
                 {party.hostId === user.userId ? "Host" : " "}
               </UI.Typography>
             </UI.Box>
@@ -555,8 +555,13 @@ const ViewNotInParty = ({
 }
 
 const countUsersInParty = (partyId: PartyId, model: Model): number => {
-  return Object.values(model.users).filter((user) => user.partyId === partyId)
-    .length
+  let count = 0
+  for (const userId in model.users) {
+    if (UserId.is(userId) && model.users[userId]?.partyId === partyId) {
+      count++
+    }
+  }
+  return count
 }
 
 export const ViewBanner = ({
