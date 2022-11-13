@@ -1,6 +1,7 @@
 import * as mediasoup from "mediasoup"
 import * as Rx from "rxjs"
 import { Cmd, exhaustive, Option, p, Result, Task, Unit } from "../Core"
+import { Ok } from "../Core/Result"
 import { PartyId, UserId } from "../Data"
 import { Config } from "./Config"
 import {
@@ -68,7 +69,7 @@ export const update = (
   model: Model,
 ): [Model, Cmd<Msg>] => {
   const sendToParty = (
-    partyId: PartyId.PartyId,
+    partyId: PartyId,
     msg: ToFrontend,
   ): Cmd<never> => {
     const userIds = Object.values(model.users).flatMap((user) =>
@@ -224,16 +225,6 @@ export const updateFromFrontend = (
   msg: ToBackend,
   model: Model,
 ): [Model, Cmd<Msg>] => {
-  const sendToParty = (
-    partyId: PartyId.PartyId,
-    msg: ToFrontend,
-  ): Cmd<never> => {
-    const userIds = Object.values(model.users).flatMap((user) =>
-      user.partyId === partyId ? [user.userId] : [],
-    )
-    return sendToUser(userIds, msg)
-  }
-
   switch (msg[0]) {
     case "RecvTransport_InitBackend": {
       return [
@@ -327,10 +318,12 @@ export const updateFromFrontend = (
       const cmd = user
         ? Cmd.batch([
           broadcast(["Sync", sharedModelNew]),
-          sendToParty(user.partyId, [
-            "LeaveParty_Done",
-            { userId, result: Result.Ok(sharedModelNew) },
-          ]),
+          sendToParty({
+            sendToUser,
+            model,
+            partyId: user.partyId,
+            msg: ["LeaveParty_Done", { userId, result: Ok(sharedModelNew) }]
+          }),
         ])
         : broadcast(["Sync", sharedModelNew])
 
@@ -371,7 +364,7 @@ export const updateFromFrontend = (
         modelNew,
         Cmd.batch([
           broadcast(["Sync", modelNew]),
-          sendToParty(partyId, ["JoinParty_Done", result]),
+          sendToParty({ sendToUser, model, partyId, msg: ["JoinParty_Done", result] }),
         ]),
       ]
     }
@@ -408,13 +401,44 @@ export const updateFromFrontend = (
         },
       }
 
-      return [modelNew, sendToParty(user.partyId, ["Sync", modelNew])]
+      return [modelNew, sendToParty({ sendToUser, model, partyId: user.partyId, msg: ["Sync", modelNew] })]
     }
 
     default: {
       return exhaustive(msg[0])
     }
   }
+}
+
+const sendToParty = (
+  {
+    model,
+    partyId,
+    msg,
+    sendToUser,
+  }: {
+    model: Model,
+    partyId: PartyId,
+    msg: ToFrontend,
+    sendToUser: (userIds: UserId[], msg: ToFrontend) => Cmd<never>
+  }
+): Cmd<never> => {
+  const userIds: UserId[] = []
+
+  for (const userId in model.users) {
+    if (!UserId.is(userId)) {
+      continue
+    }
+    const user = model.users[userId]
+    if (!user) {
+      continue
+    }
+    if (user.partyId !== partyId) {
+      continue
+    }
+    userIds.push(userId)
+  }
+  return sendToUser(userIds, msg)
 }
 
 //
@@ -466,7 +490,7 @@ export const onClientConnected = (
 
 let worker: mediasoup.types.Worker | null = null
 
-const routers = new Map<PartyId.PartyId, mediasoup.types.Router>()
+const routers = new Map<PartyId, mediasoup.types.Router>()
 
 const peers = new Map<UserId, Peer>()
 
@@ -519,7 +543,7 @@ const initWorker: Task.Task<Unit> = async () => {
 }
 
 const initRouter =
-  (partyId: PartyId.PartyId): Task.Task<CreateRouter_Done[2]> =>
+  (partyId: PartyId): Task.Task<CreateRouter_Done[2]> =>
     async () => {
       if (!worker) {
         return Result.Err("worker_does_not_exists")
@@ -685,7 +709,7 @@ const handleSendTransport_OnProduce =
     }
 
 // const toOtherUsersInParty = (
-//   someUser: { userId: UserId; partyId: PartyId.PartyId },
+//   someUser: { userId: UserId; partyId: PartyId },
 //   model: Model,
 // ): UserId[] => {
 //   return Object.values(model.users)
@@ -739,7 +763,7 @@ const initRecvTransport =
 //     userIds,
 //   }: {
 //     producerId: string
-//     partyId: PartyId.PartyId
+//     partyId: PartyId
 //     userIds: UserId[]
 //   }): Task.Task<Unit> =>
 //     async () => {

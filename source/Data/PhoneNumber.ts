@@ -1,17 +1,17 @@
 import { phone } from "phone"
 import { Result } from "../Core"
-import * as ISO_3166 from "./ISO_3166"
+import { Iso3166Alpha2Code } from "./Iso3166Alpha2Code"
 
 export type PhoneNumber = {
   _opaque: "PhoneNumber"
   _validPhoneNumber: string
-  _country: ISO_3166.Iso3166Alpha2Code
+  _country: Iso3166Alpha2Code
 }
 
 type Problem = "invalid_phone_number"
 
 const decode = (
-  country: ISO_3166.Iso3166Alpha2Code,
+  country: Iso3166Alpha2Code,
   phoneNumber: string,
 ): Result<Problem, PhoneNumber> => {
   const result = phone(phoneNumber, { country })
@@ -33,7 +33,7 @@ const toString = (phoneNumber: PhoneNumber): string => {
 
 const toCountry = (
   phoneNumber: PhoneNumber,
-): ISO_3166.Iso3166Alpha2Code => {
+): Iso3166Alpha2Code => {
   return phoneNumber._country
 }
 

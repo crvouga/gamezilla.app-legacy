@@ -1,28 +1,31 @@
 import { Result, Uuid } from "../Core"
 
-export type PartyId = string & { _opaque: typeof PartyId }
+export type PartyId = string & { _opaque: 'PartyId' }
 
-declare const PartyId: unique symbol
-
-export const is = (id: unknown): id is PartyId => {
+const is = (id: unknown): id is PartyId => {
   return typeof id === "string"
 }
 
 type Problem = "invalid_party_id"
 
-export const decode = (id: string): Result<Problem, PartyId> => {
+const decode = (id: string): Result<Problem, PartyId> => {
   if (is(id)) {
     return Result.Ok(id)
   }
 
   return Result.Err("invalid_party_id")
 }
-
-export const generateSync = (): PartyId => {
+const generate = (): PartyId => {
   const id = Uuid.generateSync()
   if (is(id)) {
     return id
   }
 
   throw new Error("generated invalid id")
+}
+
+export const PartyId = {
+  is,
+  decode,
+  generate,
 }

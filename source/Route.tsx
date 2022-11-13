@@ -1,5 +1,5 @@
 import { Browser, Cmd, Option } from "./Core"
-import { PhoneNumber, UserId, ISO_3166 } from "./Data"
+import { PhoneNumber, UserId, Iso3166Alpha2Code } from "./Data"
 
 //
 //
@@ -105,7 +105,7 @@ export const decode = ({
         return Option.None
       }
 
-      if (!ISO_3166.is(country)) {
+      if (!Iso3166Alpha2Code.is(country)) {
         return Option.None
       }
 

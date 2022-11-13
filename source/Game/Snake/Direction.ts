@@ -1,9 +1,9 @@
 import { Keyboard, Option } from "../../Core"
-import * as Position from "./Position"
+import { Position } from "./Position"
 
 export type Direction = "left" | "up" | "right" | "down"
 
-export const toVector = (direction: Direction): Position.Position => {
+const toVector = (direction: Direction): Position => {
   switch (direction) {
     case "down":
       return { x: 0, y: 1 }
@@ -19,14 +19,14 @@ export const toVector = (direction: Direction): Position.Position => {
   }
 }
 
-export const directions: { [direction in Direction]: Direction } = {
+const directions: { [direction in Direction]: Direction } = {
   left: "left",
   right: "right",
   up: "up",
   down: "down",
 }
 
-export const fromKey = (key: Keyboard.Key): Option.Option<Direction> => {
+const fromKey = (key: Keyboard.Key): Option.Option<Direction> => {
   switch (key) {
     case "w":
     case "W":
@@ -49,7 +49,7 @@ export const fromKey = (key: Keyboard.Key): Option.Option<Direction> => {
   }
 }
 
-export const toOpposite = (direction: Direction): Direction => {
+const toOpposite = (direction: Direction): Direction => {
   switch (direction) {
     case "down":
       return "up"
@@ -65,6 +65,14 @@ export const toOpposite = (direction: Direction): Direction => {
   }
 }
 
-export const isOpposite = (a: Direction, b: Direction): boolean => {
+const isOpposite = (a: Direction, b: Direction): boolean => {
   return toOpposite(a) === b
+}
+
+export const Direction = {
+  toVector,
+  directions,
+  fromKey,
+  toOpposite,
+  isOpposite,
 }
