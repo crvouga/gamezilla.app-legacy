@@ -1,18 +1,16 @@
 import { Task } from "./Task"
 
-export type Uuid = string & { _opaque: typeof Uuid }
+export type Uuid = string & { _opaque: 'Uuid' }
 
-declare const Uuid: unique symbol
-
-export const is = (id: unknown): id is Uuid => {
+const is = (id: unknown): id is Uuid => {
   return typeof id === "string"
 }
 
-export const generate: Task<Uuid> = async () => {
+const generate: Task<Uuid> = async () => {
   return generateSync()
 }
 
-export const generateSync = (): Uuid => {
+const generateSync = (): Uuid => {
   let d = new Date().getTime()
   let d2 = (performance && performance.now && performance.now() * 1000) || 0
 
@@ -33,4 +31,10 @@ export const generateSync = (): Uuid => {
   }
 
   throw new Error("generated invalid uuid")
+}
+
+export const Uuid = {
+  generate,
+  generateSync,
+  is,
 }
