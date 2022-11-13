@@ -1,10 +1,12 @@
 import * as mediasoupClient from "mediasoup-client"
 import * as Rx from "rxjs"
-import { Cmd, exhaustive, p, Result, Sub, Task, Unit } from "../Core"
+import { Cmd, exhaustive, p, rescale, Sub, Task, Unit } from "../Core"
+import { Err, Ok } from "../Core/Result"
 import { PartyId, UserId } from "../Data"
-import * as Route from "../Route"
 import * as ProfileStore from "../Profile/Profile.Store"
+import * as Route from "../Route"
 import * as UI from "../UI"
+import { Mic } from "./Mic"
 import {
   FrontendModel,
   FrontendMsg,
@@ -18,7 +20,7 @@ import {
   ToFrontend,
   TransportOptions,
   UnloadDevice_Done,
-  UnloadMediaStream_Done,
+  UnloadMediaStream_Done
 } from "./Party.Types"
 
 //
@@ -40,6 +42,7 @@ export const init = (): [Model, Cmd<Msg>] => {
       mediaStream: { type: "Unloaded" },
       volume: 0,
       microphonePermissionStatus: "None",
+      micData: new Uint8Array()
     },
     Cmd.None,
   ]
@@ -63,6 +66,11 @@ export const update = (
   model: Model,
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
+
+    case 'MicData': {
+      return [{ ...model, micData: msg[1].micData }, Cmd.None]
+    }
+
     case "ClickedBanner": {
       return [model, Route.push(["Party"])]
     }
@@ -396,6 +404,8 @@ export const runAction = (
 export const subscriptions = (_model: Model): Sub<Msg> => {
   return Sub.batch([
     mediasoupClientMsgs,
+    // p(micData$, Sub.map(micData => ['MicData', { micData }])),
+    p(volume$, Sub.map(volume => ['GotVolume', { volume }]))
     // pipe(_mediaStreamVolume$, Sub.map((volume): Msg => ['GotVolume', { volume }]))
   ])
 }
@@ -448,23 +458,23 @@ export const View = ({
 
   return (
     <UI.FillBox>
-
       <UI.Box sx={{ flex: 1, display: 'flex', flexWrap: "wrap", width: "100%", }}>
         {Object.values(model.users)
           .filter((user) => user.partyId === party.partyId)
-          .map((user) => (
-            <UI.Box sx={{ flex: 1, display: "flex", alignItems: 'center', justifyContent: 'center', flexDirection: "column", overflow: "hidden", }}>
-              <UI.Avatar
-                src={store.profiles[user.userId]?.avatarUrl}
-                sx={{
-                  width: 100,
-                  height: 100,
-                  border:
-                    model.volume > 0
-                      ? `solid 3px ${theme.palette.primary.main}`
-                      : undefined,
-                }}
-              />
+          .map((user) => {
+            const px = rescale({ value: model.volume, from: [0, 30], to: [0, 15] })
+            return <UI.Box key={user.userId} sx={{ flex: 1, display: "flex", alignItems: 'center', justifyContent: 'center', flexDirection: "column", overflow: "hidden", }}>
+              <UI.Box sx={{ padding: 2, }}>
+                <UI.Avatar
+                  src={store.profiles[user.userId]?.avatarUrl}
+                  sx={{
+                    width: 100,
+                    height: 100,
+                    boxSizing: "content-box",
+                    border: `solid ${px}px ${model.volume > 0 ? theme.palette.primary.main : "transparent"}`
+                  }}
+                />
+              </UI.Box>
               <UI.Typography variant="h6" noWrap sx={{ width: '100%', paddingX: 1 }} align='center'>
                 {`${store.profiles[user.userId]?.username ?? "..."}`}
               </UI.Typography>
@@ -472,7 +482,8 @@ export const View = ({
                 {party.hostId === user.userId ? "Host" : " "}
               </UI.Typography>
             </UI.Box>
-          ))}
+          }
+          )}
       </UI.Box>
       <UI.Box sx={{ paddingX: 2, paddingY: 2, display: "flex", alignItems: 'center', justifyContent: "center" }}>
         <UI.Button
@@ -659,7 +670,7 @@ export const ViewBanner = ({
 
 let device: mediasoupClient.types.Device | null = null
 
-const mediaStream$ = new Rx.BehaviorSubject<MediaStream | null>(null)
+const localStream$ = new Rx.BehaviorSubject<MediaStream | null>(null)
 
 let sendTransport: mediasoupClient.types.Transport | null = null
 
@@ -671,6 +682,20 @@ let producer: mediasoupClient.types.Producer | null = null
 
 const mediasoupClientMsgs = new Rx.Subject<Msg>()
 
+
+const volume$ = new Rx.Subject<number>()
+
+localStream$.pipe(
+  Rx.switchMap(mediaStream => {
+    if (!mediaStream) {
+      return Rx.NEVER
+    }
+    return Mic.volume(mediaStream)
+  }),
+).forEach(val => {
+  volume$.next(val)
+})
+
 //
 //
 //
@@ -680,22 +705,23 @@ const mediasoupClientMsgs = new Rx.Subject<Msg>()
 
 const loadMediaStream = (): Task<LoadMediaStream_Done[2]> => async () => {
   try {
-    const mediaStream = await navigator.mediaDevices.getUserMedia({
+    const localStream = await navigator.mediaDevices.getUserMedia({
       audio: true,
     })
-    mediaStream$.next(mediaStream)
-    return Result.Ok(Unit)
+
+    localStream$.next(localStream)
+    return Ok(Unit)
   } catch (error) {
     console.error(error)
-    return Result.Err("failed_to_load")
+    return Err("failed_to_load")
   }
 }
 
 const unloadMediaStream: Task<UnloadMediaStream_Done[1]> = async () => {
-  const mediaStream = mediaStream$.getValue()
+  const mediaStream = localStream$.getValue()
 
   if (!mediaStream) {
-    return Result.Ok(Unit)
+    return Ok(Unit)
   }
 
   for (const track of mediaStream.getTracks()) {
@@ -704,9 +730,9 @@ const unloadMediaStream: Task<UnloadMediaStream_Done[1]> = async () => {
     }
   }
 
-  mediaStream$.next(null)
+  localStream$.next(null)
 
-  return Result.Ok(Unit)
+  return Ok(Unit)
 }
 
 const loadDevice =
@@ -718,7 +744,7 @@ const loadDevice =
     async () => {
       try {
         if (device) {
-          return Result.Err("device_is_already_loaded")
+          return Err("device_is_already_loaded")
         }
 
         const deviceNew = new mediasoupClient.Device()
@@ -727,18 +753,18 @@ const loadDevice =
 
         device = deviceNew
 
-        return Result.Ok({
+        return Ok({
           deviceRtpCapabilities: deviceNew.rtpCapabilities,
         })
       } catch (_error) {
         console.error(_error)
-        return Result.Err("failed_to_load_device")
+        return Err("failed_to_load_device")
       }
     }
 
 const unloadDevice: Task<UnloadDevice_Done[1]> = async () => {
   device = null
-  return Result.Ok(Unit)
+  return Ok(Unit)
 }
 
 const backendProducerId$ = new Rx.Subject<{ producerId: string }>()
@@ -759,11 +785,11 @@ const initSendTransport =
   }): Task<SendTransport_InitFrontend_Done[1]> =>
     async () => {
       if (!device) {
-        return Result.Err("device_does_not_exists")
+        return Err("device_does_not_exists")
       }
 
       if (sendTransport) {
-        return Result.Err("producer_transport_is_already_initialized")
+        return Err("producer_transport_is_already_initialized")
       }
 
       sendTransport = device.createSendTransport({
@@ -802,18 +828,18 @@ const initSendTransport =
         },
       )
 
-      return Result.Ok(Unit)
+      return Ok(Unit)
     }
 
 const startProducing = (): Task<StartProducing_Done[1]> => async () => {
   if (!sendTransport) {
-    return Result.Err("send_transport_does_not_exists")
+    return Err("send_transport_does_not_exists")
   }
 
-  const mediaStream = mediaStream$.getValue()
+  const mediaStream = localStream$.getValue()
 
   if (!mediaStream) {
-    return Result.Err("media_stream_track_does_not_exists")
+    return Err("media_stream_track_does_not_exists")
   }
 
   const track = mediaStream.getTracks()[0]
@@ -831,10 +857,10 @@ const startProducing = (): Task<StartProducing_Done[1]> => async () => {
       mediasoupClientMsgs.next(["Producer_TransportClosed"])
     })
 
-    return Result.Ok(Unit)
+    return Ok(Unit)
   } catch (_error) {
     console.error(_error)
-    return Result.Err("failed")
+    return Err("failed")
   }
 }
 
@@ -848,7 +874,7 @@ const initRecvTransport =
   }): Task<RecvTransport_InitFrontend_Done[1]> =>
     async () => {
       if (!device) {
-        return Result.Err("device_does_not_exists")
+        return Err("device_does_not_exists")
       }
 
       recvTransport = device.createRecvTransport({
@@ -872,7 +898,7 @@ const initRecvTransport =
         callback()
       })
 
-      return Result.Ok(Unit)
+      return Ok(Unit)
     }
 
 // https://mediasoup.org/documentation/v3/mediasoup-client/api/#ProducerOptions
@@ -901,65 +927,3 @@ export const producerOptions: mediasoupClient.types.ProducerOptions = {
     videoGoogleStartBitrate: 1000,
   },
 }
-
-//
-//
-//
-//
-// Volume
-//
-//
-//
-//
-
-const _mediaStreamVolume$ = new Rx.Observable<number>((subscriber) => {
-  const unsubscribe = subscribeMediaStreamVolume((volume) => {
-    subscriber.next(volume)
-  })
-
-  return () => {
-    unsubscribe()
-  }
-}).pipe(Rx.distinctUntilChanged((previous, current) => previous === current))
-
-const subscribeMediaStreamVolume = (callback: (volume: number) => void) => {
-  const mediaStream = mediaStream$.getValue()
-
-  if (!mediaStream) {
-    return () => { }
-  }
-
-  // source: https://stackoverflow.com/questions/33322681/checking-microphone-volume-in-javascript
-  const audioContext = new AudioContext()
-  const analyser = audioContext.createAnalyser()
-  const microphone = audioContext.createMediaStreamSource(mediaStream)
-  const scriptProcessor = audioContext.createScriptProcessor(2048, 1, 1)
-
-  analyser.smoothingTimeConstant = 0.8
-  analyser.fftSize = 1024
-
-  microphone.connect(analyser)
-  analyser.connect(scriptProcessor)
-  scriptProcessor.connect(audioContext.destination)
-  const handler = () => {
-    const array = new Uint8Array(analyser.frequencyBinCount)
-    analyser.getByteFrequencyData(array)
-    const arraySum = array.reduce((a, value) => a + value, 0)
-    const average = arraySum / array.length
-    const betweenOand1 = Math.round(average) / 100
-    callback(betweenOand1)
-  }
-  scriptProcessor.addEventListener("audioprocess", handler)
-
-  return () => {
-    scriptProcessor.disconnect()
-    scriptProcessor.removeEventListener("audioprocess", handler)
-    microphone.disconnect()
-    analyser.disconnect()
-    audioContext.close()
-  }
-}
-
-_mediaStreamVolume$.subscribe((volume) => {
-  console.log("_mediaStreamVolume$", volume)
-})
