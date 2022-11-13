@@ -82,7 +82,7 @@ export const update = (
 //
 //
 
-export const subscriptions = (_: Model): Sub.Sub<Msg> => {
+export const subscriptions = (_: Model): Sub<Msg> => {
   return Sub.None
 }
 

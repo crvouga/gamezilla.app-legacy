@@ -181,7 +181,7 @@ const updateResponse = <
 export const subscriptions = (
   _intervalId: string,
   _model: Model,
-): Sub.Sub<Msg> => {
+): Sub<Msg> => {
   return Keyboard.keyDowns<Msg>((key) => ["PressedKeyDown", key])
 }
 

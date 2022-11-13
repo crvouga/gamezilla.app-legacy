@@ -202,7 +202,7 @@ export const updateFromBackend = (
 //
 //
 
-export const subscriptions = (_model: Model): Sub.Sub<Msg> => {
+export const subscriptions = (_model: Model): Sub<Msg> => {
   return Sub.None
 }
 

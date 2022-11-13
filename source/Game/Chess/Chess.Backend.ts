@@ -202,7 +202,7 @@ const initMode = (
 export const subscriptions = (
   intervalId: string,
   model: Model,
-): Sub.Sub<Msg> => {
+): Sub<Msg> => {
   switch (model[0]) {
     case "None": {
       return Sub.None

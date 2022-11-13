@@ -254,7 +254,7 @@ Supabase.client.auth.onAuthStateChange((event, supabaseSession) => {
   }
 })
 
-export const subscriptions: Sub.Sub<Msg> = subject
+export const subscriptions: Sub<Msg> = subject
 
 //
 //

@@ -55,7 +55,7 @@
       "//",
       "//",
       "",
-      "export const subscriptions = (model: Model): Sub.Sub<Msg> => {",
+      "export const subscriptions = (model: Model): Sub <Msg> => {",
       "  return Sub.None;",
       "};",
       ""

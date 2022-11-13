@@ -1,7 +1,7 @@
 import * as Rx from "rxjs"
 import { Cmd } from "../Cmd"
 import * as Platform from "../Platform"
-import * as Sub from "../Sub"
+import { Sub } from "../Sub"
 
 //
 //
@@ -142,7 +142,7 @@ export const subscriptionsWithDebug =
     subscriptions,
     debugId$,
   }: {
-    subscriptions: (model: Model) => Sub.Sub<Msg>
+    subscriptions: (model: Model) => Sub<Msg>
     debugId$: Rx.BehaviorSubject<string | undefined>
   }) =>
     (model: Model) => {

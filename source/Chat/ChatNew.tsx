@@ -190,7 +190,7 @@ const toggleSelected = (
 //
 //
 
-export const subscriptions = (_model: Model): Sub.Sub<Msg> => {
+export const subscriptions = (_model: Model): Sub<Msg> => {
   return Keyboard.keyDowns((key) =>
     Keyboard.isArrowKey(key) || Keyboard.isEnterKey(key)
       ? ["PressedKeyDown", key]

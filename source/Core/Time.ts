@@ -1,6 +1,6 @@
 import * as Rx from "rxjs"
 import { Cmd } from "./Cmd"
-import * as Sub from "./Sub"
+import { Sub } from "./Sub"
 import * as Task from "./Task"
 
 export const now = (): Task.Task<number> => {
@@ -78,7 +78,7 @@ export const every = <Msg>(
   intervalId: string,
   time: number,
   f: (time: number) => Msg,
-): Sub.Sub<Msg> => {
+): Sub<Msg> => {
   const subj = intervals.get(intervalId)
 
   if (subj) {

@@ -461,7 +461,7 @@ const runAction = (action: OutAction, model: Model): [Model, Cmd<Msg>] => {
 //
 //
 
-const subscriptions = (model: Model): Sub.Sub<Msg> => {
+const subscriptions = (model: Model): Sub<Msg> => {
   return Sub.batch<Msg>([
     Wire.onConnectionStatus(t("Wire")),
     Wire.fromBackend(t("▶")),
@@ -473,7 +473,7 @@ const subscriptions = (model: Model): Sub.Sub<Msg> => {
   ])
 }
 
-const gameRoomSub = (model: Model): Sub.Sub<Msg> => {
+const gameRoomSub = (model: Model): Sub<Msg> => {
   switch (model.auth[0]) {
     case "Loading": {
       return Sub.None

@@ -121,6 +121,6 @@ export const updateFromFrontend = (
 export const subscriptions = (
   intervalId: string,
   _model: Model,
-): Sub.Sub<Msg> => {
+): Sub<Msg> => {
   return Time.every(intervalId, 500, (): Msg => ["Tick"])
 }

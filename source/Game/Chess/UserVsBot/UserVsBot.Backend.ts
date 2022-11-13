@@ -171,6 +171,6 @@ export const updateRoomLeave = ({ sendToRoom }: { sendToRoom: (msg: ToFrontend) 
 export const subscriptions = (
   _intervalId: string,
   _model: Model,
-): Sub.Sub<Msg> => {
+): Sub<Msg> => {
   return Sub.None
 }

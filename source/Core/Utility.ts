@@ -1,6 +1,6 @@
 import { Cmd } from "./Cmd"
 import { p } from "./pipe"
-import * as Sub from "./Sub"
+import { Sub } from "./Sub"
 
 export const exhaustive = (
   discriminatedUnionType: "Missing Case!",
@@ -66,8 +66,8 @@ export const tagCmd = <TagName extends string, Msg>(
 
 export const tagSub = <TagName extends string, Msg>(
   tagName: TagName,
-  sub: Sub.Sub<Msg>,
-): Sub.Sub<[TagName, Msg]> => {
+  sub: Sub<Msg>,
+): Sub<[TagName, Msg]> => {
   return p(sub, Sub.map(t(tagName)))
 }
 
