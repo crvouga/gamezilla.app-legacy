@@ -268,7 +268,7 @@ export const updateRoomLeave = ({ sendToRoom }: { sendToRoom: (m: ToFrontend) =>
 export const subscriptions = (
   intervalId: string,
   model: Model,
-): Sub.Sub<Msg> => {
+): Sub<Msg> => {
   switch (model.type) {
     case "Setup": {
       return Sub.None

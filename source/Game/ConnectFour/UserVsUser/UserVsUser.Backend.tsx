@@ -86,7 +86,7 @@ export const updateRoomLeave = ({ sendToRoom, userId, model }: { sendToRoom: (m:
 //
 //
 
-export const subscriptions = (intervalId: string, model: Model): Sub.Sub<Msg> => {
+export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
     switch (model.type) {
         case 'GameOver': {
             return Sub.None;

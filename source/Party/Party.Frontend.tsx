@@ -393,7 +393,7 @@ export const runAction = (
 //
 //
 
-export const subscriptions = (_model: Model): Sub.Sub<Msg> => {
+export const subscriptions = (_model: Model): Sub<Msg> => {
   return Sub.batch([
     mediasoupClientMsgs,
     // pipe(_mediaStreamVolume$, Sub.map((volume): Msg => ['GotVolume', { volume }]))

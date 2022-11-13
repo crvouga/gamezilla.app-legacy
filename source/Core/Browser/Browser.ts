@@ -2,7 +2,7 @@ import * as Rx from "rxjs"
 import { Cmd } from "../Cmd"
 import { p } from "../pipe"
 import { Result } from "../Result"
-import * as Sub from "../Sub"
+import { Sub } from "../Sub"
 import * as Task from "../Task"
 
 //
@@ -30,7 +30,7 @@ const location$ = new Rx.Observable<Location>((subscriber) => {
 
 export const onLocation = <Msg>(
   mapper: (location: Location) => Msg,
-): Sub.Sub<Msg> => {
+): Sub<Msg> => {
   return p(location$, Sub.map(mapper))
 }
 
@@ -132,7 +132,7 @@ export type Resize = {
 
 export const onResize = <Msg>(
   mapper: (resize: Resize) => Msg,
-): Sub.Sub<Msg> => {
+): Sub<Msg> => {
   return new Rx.Observable((subscriber) => {
     const handle = () => {
       subscriber.next(

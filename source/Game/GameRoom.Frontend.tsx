@@ -447,7 +447,7 @@ export const runAction = (
 export const subscriptions = (
   { currentUserId }: { currentUserId: UserId.UserId },
   model: Model,
-): Sub.Sub<Msg> => {
+): Sub<Msg> => {
   const user = model.users[currentUserId]
 
   if (!user) {

@@ -38,6 +38,6 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
 //
 //
 
-export const subscriptions = (_model: Model): Sub.Sub<Msg> => {
+export const subscriptions = (_model: Model): Sub<Msg> => {
     return Sub.None;
 };

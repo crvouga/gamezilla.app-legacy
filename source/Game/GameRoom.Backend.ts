@@ -273,8 +273,8 @@ export const onClientConnected = (
 //
 //
 
-export const subscriptions = (model: Model): Sub.Sub<Msg> => {
-  const subs: Sub.Sub<Msg>[] = []
+export const subscriptions = (model: Model): Sub<Msg> => {
+  const subs: Sub<Msg>[] = []
 
   for (const roomId in model.rooms) {
     if (!RoomId.is(roomId)) {

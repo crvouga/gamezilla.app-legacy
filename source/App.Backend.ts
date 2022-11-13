@@ -263,7 +263,7 @@ const sendToUser = (
 //
 //
 
-const subscriptions = (model: Model): Sub.Sub<Msg> => {
+const subscriptions = (model: Model): Sub<Msg> => {
   return Sub.batch([
     p(GameRoom.subscriptions(model.gameRoom), Sub.map(t("GameRoom"))),
     Wire.onConnect((sessionId, clientId) => [

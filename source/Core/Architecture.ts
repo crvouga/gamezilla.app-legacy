@@ -1,5 +1,5 @@
 import { Cmd } from "./Cmd"
-import * as Sub from "./Sub"
+import { Sub } from "./Sub"
 
 //
 //
@@ -31,7 +31,7 @@ export interface Update<Msg, Model> {
 //
 //
 
-export type Subscriptions = <Msg, Model>(model: Model) => Sub.Sub<Msg>
+export type Subscriptions = <Msg, Model>(model: Model) => Sub<Msg>
 
 type Model = number
 

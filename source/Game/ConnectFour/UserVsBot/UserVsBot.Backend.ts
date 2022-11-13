@@ -114,6 +114,6 @@ export const updateRoomLeave = ({ userId, model, sendToRoom }: {
 //
 //
 
-export const subscriptions = (_model: Model): Sub.Sub<Msg> => {
+export const subscriptions = (_model: Model): Sub<Msg> => {
     return Sub.None;
 };

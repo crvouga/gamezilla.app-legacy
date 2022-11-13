@@ -653,7 +653,7 @@ export const updateLoggedOut = (
 //
 //
 
-export const subscriptions = (model: Model): Sub.Sub<Msg> => {
+export const subscriptions = (model: Model): Sub<Msg> => {
   switch (model[0]) {
     case "ChatNew":
       return tagSub("ChatNew", ChatNew.subscriptions(model[1]))
