@@ -134,7 +134,7 @@ export type WorkerDied = ["WorkerDied"]
 export type CreateRouter_Done = [
   "CreateRouter_Done",
   { hostId: UserId.UserId; partyId: PartyId.PartyId },
-  Result.Result<
+  Result<
     "worker_does_not_exists",
     { routerRtpCapabilities: RtpCapabilities }
   >,
@@ -145,16 +145,16 @@ export type CreateRouter_Done = [
 export type LoadMediaStream_Done = [
   "LoadMediaStream_Done",
   { userId: UserId.UserId; partyId: PartyId.PartyId },
-  Result.Result<"failed_to_load", Unit>,
+  Result<"failed_to_load", Unit>,
 ]
 export type UnloadMediaStream_Done = [
   "UnloadMediaStream_Done",
-  Result.Result<"failed_to_unload", Unit>,
+  Result<"failed_to_unload", Unit>,
 ]
 export type LoadDevice_Done = [
   "LoadDevice_Done",
   { userId: UserId.UserId; partyId: PartyId.PartyId },
-  Result.Result<
+  Result<
     "device_is_already_loaded" | "failed_to_load_device",
     {
       deviceRtpCapabilities: RtpCapabilities
@@ -163,7 +163,7 @@ export type LoadDevice_Done = [
 ]
 export type UnloadDevice_Done = [
   "UnloadDevice_Done",
-  Result.Result<"device_is_already_unloaded" | "failed_to_unload_device", Unit>,
+  Result<"device_is_already_unloaded" | "failed_to_unload_device", Unit>,
 ]
 
 // Step 2
@@ -180,14 +180,14 @@ export type RecvTransport_InitBackend = [
 export type SendTransport_InitBackend_Done = [
   "SendTransport_InitBackend_Done",
   { userId: UserId.UserId; partyId: PartyId.PartyId },
-  Result.Result<
+  Result<
     "router_does_not_exists",
     { transportOptions: TransportOptions }
   >,
 ]
 export type SendTransport_InitFrontend_Done = [
   "SendTransport_InitFrontend_Done",
-  Result.Result<
+  Result<
     "device_does_not_exists" | "producer_transport_is_already_initialized",
     Unit
   >,
@@ -195,14 +195,14 @@ export type SendTransport_InitFrontend_Done = [
 export type RecvTransport_InitBackend_Done = [
   "RecvTransport_InitBackend_Done",
   { userId: UserId.UserId; partyId: PartyId.PartyId },
-  Result.Result<
+  Result<
     "router_does_not_exists" | "recv_transport_is_already_initialized",
     { transportOptions: TransportOptions }
   >,
 ]
 export type RecvTransport_InitFrontend_Done = [
   "RecvTransport_InitFrontend_Done",
-  Result.Result<
+  Result<
     "device_does_not_exists" | "recv_transport_is_already_initialized",
     Unit
   >,
@@ -212,7 +212,7 @@ export type RecvTransport_InitFrontend_Done = [
 
 export type StartProducing_Done = [
   "StartProducing_Done",
-  Result.Result<
+  Result<
     | "send_transport_does_not_exists"
     | "media_stream_track_does_not_exists"
     | "failed",
@@ -238,7 +238,7 @@ export type SendTransport_OnProduce = [
 export type SendTransport_OnConnect_Done = [
   "SendTransport_OnConnect_Done",
   { userId: UserId.UserId },
-  Result.Result<
+  Result<
     | "peer_does_not_exists"
     | "peer_missing_producer_transport"
     | "producer_transport_connect_errored",
@@ -248,7 +248,7 @@ export type SendTransport_OnConnect_Done = [
 export type SendTransport_OnProduce_Done = [
   "SendTransport_OnProduce_Done",
   { userId: UserId.UserId },
-  Result.Result<
+  Result<
     | "peer_does_not_exists"
     | "peer_missing_producer_transport"
     | "produce_threw_an_error"
@@ -273,7 +273,7 @@ export type RecvTransport_OnConnect = [
 export type RecvTransport_OnConnect_Done = [
   "RecvTransport_OnConnect_Done",
   { userId: UserId.UserId },
-  Result.Result<"peer_does_not_exists", Unit>,
+  Result<"peer_does_not_exists", Unit>,
 ]
 
 //
@@ -314,7 +314,7 @@ export type StartParty = [
 
 export type StartParty_Done = [
   "StartParty_Done",
-  Result.Result<"worker_does_not_exists" | "already_in_a_party", SharedModel>,
+  Result<"worker_does_not_exists" | "already_in_a_party", SharedModel>,
 ]
 
 //
@@ -327,7 +327,7 @@ export type LeaveParty_Done = [
   "LeaveParty_Done",
   {
     userId: UserId.UserId
-    result: Result.Result<"not_in_a_party", SharedModel>
+    result: Result<"not_in_a_party", SharedModel>
   },
 ]
 
@@ -414,7 +414,7 @@ export type JoinParty = [
 
 export type JoinParty_Done = [
   "JoinParty_Done",
-  Result.Result<
+  Result<
     "user_already_in_a_party" | "party_does_not_exists",
     SharedModel
   >,

@@ -68,7 +68,7 @@ export type InputMode = ["InputMode", { mode: Mode; userId: UserId.UserId }]
 export type InputMode_Done = [
   "InputMode_Done",
   { mode: Mode; userId: UserId.UserId },
-  Result.Result<InputModeProblem, BackendModel>,
+  Result<InputModeProblem, BackendModel>,
 ]
 export type InputModeProblem = "must_be_the_host"
 

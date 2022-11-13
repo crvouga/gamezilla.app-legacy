@@ -121,7 +121,7 @@ export type Res =
 export type InputUser = ["InputUser", { userId: UserId.UserId | "None" }]
 export type InputUser_Done = [
   "InputUser_Done",
-  Result.Result<"must_be_in_setup_mode", SharedModel>,
+  Result<"must_be_in_setup_mode", SharedModel>,
 ]
 export const inputUser = (
   { userId }: InputUser[1],
@@ -145,7 +145,7 @@ export type InputColor = [
 ]
 export type InputColor_Done = [
   "InputColor_Done",
-  Result.Result<InputColorProblem, SharedModel>,
+  Result<InputColorProblem, SharedModel>,
 ]
 
 export type InputColorProblem = "must_be_playing" | "must_be_in_setup_mode"
@@ -199,7 +199,7 @@ export type InputBot = [
 ]
 export type InputBot_Done = [
   "InputBot_Done",
-  Result.Result<InputBotProblem, SharedModel>,
+  Result<InputBotProblem, SharedModel>,
 ]
 export type InputBotProblem = "must_be_in_setup_mode" | "must_be_playing"
 
@@ -241,7 +241,7 @@ export const inputBot = (
 export type StartGame = ["StartGame", { userId: UserId.UserId }]
 export type StartGame_Done = [
   "StartGame_Done",
-  Result.Result<StartGameProblem, SharedModel>,
+  Result<StartGameProblem, SharedModel>,
 ]
 export type StartGameProblem =
   | "must_be_in_setup_mode"
@@ -299,7 +299,7 @@ export const startGame = (
 export type StopGame = ["StopGame", { userId: UserId.UserId }]
 export type StopGame_Done = [
   "StopGame_Done",
-  Result.Result<"must_be_playing", SharedModel>,
+  Result<"must_be_playing", SharedModel>,
 ]
 
 export const stopGameResultToString = (result: StopGame_Done[1]): string => {
@@ -349,7 +349,7 @@ export type InputMove = [
 
 export type InputMove_Done = [
   "InputMove_Done",
-  Result.Result<InputMoveProblem, SharedModel & { didCapture: boolean }>,
+  Result<InputMoveProblem, SharedModel & { didCapture: boolean }>,
 ]
 
 export type InputMoveProblem =
@@ -420,7 +420,7 @@ export const inputMove = (
 export type BotMoved = ["BotMoved", Board.BestMoveInputResult]
 export type BotMoved_Done = [
   "BotMoved_Done",
-  Result.Result<BotMovedProblem, SharedModel & { didCapture: boolean }>,
+  Result<BotMovedProblem, SharedModel & { didCapture: boolean }>,
 ]
 export type BotMovedProblem =
   | Board.MoveProblem

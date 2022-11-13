@@ -126,7 +126,7 @@ export type ToFrontend =
 export type MouseMove = ["MouseMove", Position.Position]
 export type MouseMove_Done = [
   "MouseMove_Done",
-  Result.Result<"collision", SharedModel>,
+  Result<"collision", SharedModel>,
 ]
 
 export const mouseMove = (
@@ -154,7 +154,7 @@ export type InputTranslate = [
 ]
 export type InputTranslate_Done = [
   "InputTranslate_Done",
-  Result.Result<InputTranslateProblem, SharedModel>,
+  Result<InputTranslateProblem, SharedModel>,
 ]
 export type InputTranslateProblem = "collision"
 
@@ -187,7 +187,7 @@ export const inputTranslate = (
 export type InputRotate = ["InputRotate"]
 export type InputRotate_Done = [
   "InputRotate_Done",
-  Result.Result<InputRotateProblem, SharedModel>,
+  Result<InputRotateProblem, SharedModel>,
 ]
 export type InputRotateProblem = "collision"
 
@@ -228,7 +228,7 @@ const toNextRotation = (rotation: 0 | 1 | 2 | 3): 0 | 1 | 2 | 3 => {
 export type InputDrop = ["InputDrop"]
 export type InputDrop_Done = [
   "InputDrop_Done",
-  Result.Result<InputDropProblem, SharedModel>,
+  Result<InputDropProblem, SharedModel>,
 ]
 export type InputDropProblem = ""
 

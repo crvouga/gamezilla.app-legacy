@@ -35,14 +35,14 @@ export type Send = [
 
 export type Send_Done = [
   "Send_Done",
-  { conversationId: string; result: Result.Result<Problem, Message> },
+  { conversationId: string; result: Result<Problem, Message> },
 ]
 
 export type Unsend = ["Unsend", { messageId: string }]
 
 export type Unsend_Done = [
   "Unsend_Done",
-  { messageId: string; result: Result.Result<Problem, string> },
+  { messageId: string; result: Result<Problem, string> },
 ]
 
 //
@@ -159,7 +159,7 @@ const insert =
     conversationId: string
     message: string
     userId: UserId.UserId
-  }): Task.Task<Result.Result<Problem, Message>> =>
+  }): Task.Task<Result<Problem, Message>> =>
     async () => {
       const messageResponse = await Supabase.client
         .from<definitions["message"]>("message")
@@ -189,7 +189,7 @@ const deleteForever =
     messageId,
   }: {
     messageId: string
-  }): Task.Task<Result.Result<Problem, string>> =>
+  }): Task.Task<Result<Problem, string>> =>
     async () => {
       const response = await Supabase.client
         .from<definitions["message"]>("message")

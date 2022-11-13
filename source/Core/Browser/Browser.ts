@@ -1,7 +1,7 @@
 import * as Rx from "rxjs"
 import { Cmd } from "../Cmd"
 import { p } from "../pipe"
-import * as Result from "../Result"
+import { Result } from "../Result"
 import * as Sub from "../Sub"
 import * as Task from "../Task"
 
@@ -88,7 +88,7 @@ export const back: Cmd<never> = () => {
 
 export type Problem = { type: "ElementNotFound" }
 
-export type FocusResult = Result.Result<Problem, {}>
+export type FocusResult = Result<Problem, {}>
 
 export const focus =
   (htmlId: string): Task.Task<FocusResult> =>
@@ -103,7 +103,7 @@ export const focus =
       return Result.Err({ type: "ElementNotFound" })
     }
 
-export type GetElementByIdResult = Result.Result<Problem, DomElement>
+export type GetElementByIdResult = Result<Problem, DomElement>
 
 export type DomElement = {
   offsetHeight: number

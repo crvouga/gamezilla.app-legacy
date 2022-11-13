@@ -1,14 +1,14 @@
 import Howler from "howler"
 import { Cmd } from "../Cmd"
 import { p } from "../pipe"
-import * as Result from "../Result"
+import { Result } from "../Result"
 import { Unit } from "../Utility"
 
 export type Problem = "Unknown"
 
-export type PlayResult = Result.Result<Problem, Unit>
+export type PlayResult = Result<Problem, Unit>
 
-export type PreloadResult = Result.Result<Problem, Unit>
+export type PreloadResult = Result<Problem, Unit>
 
 const instances = new Map<string, Howler.Howl>()
 

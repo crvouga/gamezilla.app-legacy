@@ -32,7 +32,7 @@ export type Action = FindOneElseInsert | FindManyByUserId | FindOne
 
 type Problem = string
 
-type FindOneResult = Result.Result<
+type FindOneResult = Result<
   Problem,
   {
     conversation: Conversation
@@ -55,7 +55,7 @@ export type FindManyByUserId_Done = [
   "FindManyByUserId_Done",
   {
     userId: UserId.UserId
-    result: Result.Result<
+    result: Result<
       Problem,
       {
         conversations: Conversation[]
@@ -342,7 +342,7 @@ const findManyByUserId =
   }: {
     userId: UserId.UserId
   }): Task.Task<
-    Result.Result<
+    Result<
       Problem,
       {
         conversations: Conversation[]
@@ -423,7 +423,7 @@ const findUniqueByUserIds =
     userIds,
   }: {
     userIds: string[]
-  }): Task.Task<Result.Result<Problem, Option.Option<string>>> =>
+  }): Task.Task<Result<Problem, Option.Option<string>>> =>
     async () => {
       const usersConversationsResponse = await Supabase.client
         .from<definitions["users_conversations"]>("users_conversations")
@@ -490,7 +490,7 @@ const insert =
   }: {
     userIds: string[]
   }): Task.Task<
-    Result.Result<
+    Result<
       Problem,
       {
         conversation: Conversation

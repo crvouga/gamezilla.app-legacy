@@ -101,15 +101,15 @@ export type Req =
     | ['Search', { searchText: string }]
 
 export type Res =
-    | ['FindMany_Done', { userIds: UserId[]; result: Result.Result<Problem, Profile[]> }]
+    | ['FindMany_Done', { userIds: UserId[]; result: Result<Problem, Profile[]> }]
     | ['EditOne_Done', {
         userId: UserId
         previous: Profile
-        result: Result.Result<Problem, Profile>
+        result: Result<Problem, Profile>
     }]
-    | ['DeleteForever_Done', { userId: UserId; result: Result.Result<Problem, Unit> }]
-    | ['CreateOne_Done', { userId: UserId; result: Result.Result<Problem, Profile> }]
-    | ['Search_Done', { searchText: string, result: Result.Result<Problem, Profile[]> }]
+    | ['DeleteForever_Done', { userId: UserId; result: Result<Problem, Unit> }]
+    | ['CreateOne_Done', { userId: UserId; result: Result<Problem, Profile> }]
+    | ['Search_Done', { searchText: string, result: Result<Problem, Profile[]> }]
 
 export type Msg =
     Res
@@ -418,7 +418,7 @@ const fromThemeMode = (
 
 export const decodeRow = (
     row: definitions["user_profile"],
-): Result.Result<string, Profile> => {
+): Result<string, Profile> => {
     const userId = decodeUserId(row.id)
     const username = Username.decode(row.username)
 
@@ -441,7 +441,7 @@ export const findOne =
         userId,
     }: {
         userId: UserId
-    }): Task.Task<Result.Result<string, Profile>> =>
+    }): Task.Task<Result<string, Profile>> =>
         async () => {
             const response = await Supabase.client
                 .from<definitions["user_profile"]>("user_profile")
@@ -461,7 +461,7 @@ export const findMany =
         userIds,
     }: {
         userIds: string[]
-    }): Task.Task<Result.Result<string, Profile[]>> =>
+    }): Task.Task<Result<string, Profile[]>> =>
         async () => {
             const response = await Supabase.client
                 .from<definitions["user_profile"]>("user_profile")
@@ -488,7 +488,7 @@ export const create =
         name: string
         username: string
         avatarUrl: string
-    }): Task.Task<Result.Result<string, Profile>> =>
+    }): Task.Task<Result<string, Profile>> =>
         async () => {
             const response = await Supabase.client
                 .from<definitions["user_profile"]>("user_profile")
@@ -509,7 +509,7 @@ export const create =
         }
 
 export const deleteForever =
-    (userId: UserId): Task.Task<Result.Result<Problem, Unit>> =>
+    (userId: UserId): Task.Task<Result<Problem, Unit>> =>
         async () => {
             await new Promise((resolve) => setTimeout(resolve, 1000))
 
@@ -530,7 +530,7 @@ export const search =
         nameOrUsername,
     }: {
         nameOrUsername: string
-    }): Task.Task<Result.Result<string, Profile[]>> =>
+    }): Task.Task<Result<string, Profile[]>> =>
         async () => {
             const response = await Supabase.client
                 .from<definitions["user_profile"]>("user_profile")
@@ -554,7 +554,7 @@ export const edit =
     (
         userId: UserId,
         edits: Partial<Profile>,
-    ): Task.Task<Result.Result<string, Profile>> =>
+    ): Task.Task<Result<string, Profile>> =>
         async () => {
             const response = await Supabase.client
                 .from<definitions["user_profile"]>("user_profile")

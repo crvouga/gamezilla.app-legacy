@@ -19,14 +19,14 @@ export type FrontendModel = SharedModel & {
 
 export type SharedModel = Snake.Model & {
   gameStatus:
-    | {
-        type: "GameSetup"
-        player: Option.Option<Player>
-      }
-    | {
-        type: "GameStarted"
-        player: Player
-      }
+  | {
+    type: "GameSetup"
+    player: Option.Option<Player>
+  }
+  | {
+    type: "GameStarted"
+    player: Player
+  }
 }
 
 export type Player = ["User", UserId.UserId]
@@ -87,7 +87,7 @@ export type InputDirection = [
 
 export type InputDirection_Done = [
   "InputDirection_Done",
-  Result.Result<InputDirectionProblem, SharedModel>,
+  Result<InputDirectionProblem, SharedModel>,
 ]
 
 export type InputDirectionProblem =
@@ -102,7 +102,7 @@ export type ToggleStatus = ["ToggleStatus", { userId: UserId.UserId }]
 
 export type ToggleStatus_Done = ["ToggleStatus_Done", ToggleStatusResult]
 
-export type ToggleStatusResult = Result.Result<
+export type ToggleStatusResult = Result<
   "user_must_be_the_current_player" | "must_be_in_game_started",
   SharedModel
 >
@@ -116,13 +116,13 @@ export type InputPlayer = ["InputPlayer", Option.Option<Player>]
 
 export type InputPlayer_Done = [
   "InputPlayer_Done",
-  Result.Result<"must_be_in_game_setup", SharedModel>,
+  Result<"must_be_in_game_setup", SharedModel>,
 ]
 
 export type StartGame = ["StartGame"]
 export type StartGame_Done = [
   "StartGame_Done",
-  Result.Result<"must_be_in_game_setup" | "missing_player", SharedModel>,
+  Result<"must_be_in_game_setup" | "missing_player", SharedModel>,
 ]
 
 export const canStartGame = (model: SharedModel): boolean => {
