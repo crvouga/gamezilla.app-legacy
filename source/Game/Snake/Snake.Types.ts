@@ -29,7 +29,7 @@ export type SharedModel = Snake.Model & {
   }
 }
 
-export type Player = ["User", UserId.UserId]
+export type Player = ["User", UserId]
 
 export type MouseStatus = "Active" | "Inactive"
 
@@ -82,7 +82,7 @@ export type Response =
 
 export type InputDirection = [
   "InputDirection",
-  { direction: Direction.Direction; userId: UserId.UserId },
+  { direction: Direction.Direction; userId: UserId },
 ]
 
 export type InputDirection_Done = [
@@ -98,7 +98,7 @@ export type InputDirectionProblem =
 //
 //
 
-export type ToggleStatus = ["ToggleStatus", { userId: UserId.UserId }]
+export type ToggleStatus = ["ToggleStatus", { userId: UserId }]
 
 export type ToggleStatus_Done = ["ToggleStatus_Done", ToggleStatusResult]
 

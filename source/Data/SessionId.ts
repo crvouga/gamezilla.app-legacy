@@ -1,8 +1,6 @@
 import { Result } from "../Core"
 
-export type SessionId = string & { _opaque: typeof SessionId }
-
-declare const SessionId: unique symbol
+export type SessionId = string & { _opaque: 'SessionId' }
 
 export const is = (id: unknown): id is SessionId => {
   return typeof id === "string"
@@ -43,4 +41,10 @@ export const generate = (): SessionId => {
   }
 
   throw new Error("generated invalid session id")
+}
+
+export const SessionId = {
+  generate,
+  decode,
+  is,
 }

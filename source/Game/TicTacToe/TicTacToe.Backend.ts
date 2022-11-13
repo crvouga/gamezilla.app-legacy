@@ -127,7 +127,7 @@ export const updateFromFrontend = (
   }
 }
 
-export const updateRoomLeave = ({ sendToRoom }: { sendToRoom: (m: ToFrontend) => Cmd<never> }, userId: UserId.UserId, model: Model): [Model, Cmd<Msg>] => {
+export const updateRoomLeave = ({ sendToRoom }: { sendToRoom: (m: ToFrontend) => Cmd<never> }, userId: UserId, model: Model): [Model, Cmd<Msg>] => {
   switch (model.mode) {
     case 'None': {
       return [model, Cmd.None]
@@ -150,7 +150,7 @@ const initMode = ({
   userId,
 }: {
   mode: BackendModel["mode"]
-  userId: UserId.UserId
+  userId: UserId
 }): BackendModel => {
   switch (mode) {
     case "None": {

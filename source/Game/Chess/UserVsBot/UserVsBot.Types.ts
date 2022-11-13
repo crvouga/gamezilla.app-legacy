@@ -24,14 +24,14 @@ export type SharedModel = SetupModel | GameModel | GameOverModel
 export type SetupModel = {
   type: "Setup"
   userColor: Board.Color
-  userId: UserId.UserId | "None"
+  userId: UserId | "None"
   botLevel: Board.Level
 }
 
 export type GameModel = {
   type: "Game"
   userColor: Board.Color
-  userId: UserId.UserId
+  userId: UserId
   board: Board.Model
   botLevel: Board.Level
 }
@@ -40,7 +40,7 @@ export type GameOverModel = {
   type: "GameOver"
   gameOver: GameOver
   userColor: Board.Color
-  userId: UserId.UserId
+  userId: UserId
   board: Board.Model
   botLevel: Board.Level
 }
@@ -57,7 +57,7 @@ export const initShared: SharedModel = {
 export const initBackend = ({
   userId,
 }: {
-  userId: UserId.UserId | "None"
+  userId: UserId | "None"
 }): BackendModel => {
   return {
     type: "Setup",
@@ -118,7 +118,7 @@ export type Res =
 //
 //
 
-export type InputUser = ["InputUser", { userId: UserId.UserId | "None" }]
+export type InputUser = ["InputUser", { userId: UserId | "None" }]
 export type InputUser_Done = [
   "InputUser_Done",
   Result<"must_be_in_setup_mode", SharedModel>,
@@ -141,7 +141,7 @@ export const inputUser = (
 
 export type InputColor = [
   "InputColor",
-  { userColor: Board.Color; userId: UserId.UserId },
+  { userColor: Board.Color; userId: UserId },
 ]
 export type InputColor_Done = [
   "InputColor_Done",
@@ -195,7 +195,7 @@ export const inputColor = (
 
 export type InputBot = [
   "InputBot",
-  { botLevel: Board.Level; userId: UserId.UserId },
+  { botLevel: Board.Level; userId: UserId },
 ]
 export type InputBot_Done = [
   "InputBot_Done",
@@ -238,7 +238,7 @@ export const inputBot = (
   return Result.Ok(modelNew)
 }
 
-export type StartGame = ["StartGame", { userId: UserId.UserId }]
+export type StartGame = ["StartGame", { userId: UserId }]
 export type StartGame_Done = [
   "StartGame_Done",
   Result<StartGameProblem, SharedModel>,
@@ -296,7 +296,7 @@ export const startGame = (
 //
 //
 
-export type StopGame = ["StopGame", { userId: UserId.UserId }]
+export type StopGame = ["StopGame", { userId: UserId }]
 export type StopGame_Done = [
   "StopGame_Done",
   Result<"must_be_playing", SharedModel>,
@@ -344,7 +344,7 @@ export const stopGame = (
 
 export type InputMove = [
   "InputMove",
-  Board.MoveInput & { userId: UserId.UserId },
+  Board.MoveInput & { userId: UserId },
 ]
 
 export type InputMove_Done = [

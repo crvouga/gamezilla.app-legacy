@@ -15,16 +15,16 @@ export type SharedModel = SetupModel | GameModel | GameOverModel
 
 export type SetupModel = {
   type: "Setup"
-  X: UserId.UserId | "None"
-  O: UserId.UserId | "None"
+  X: UserId | "None"
+  O: UserId | "None"
   maxRoundCount: BestOutOf
   moveTimeLimit: MoveTimeLimit
 }
 
 export type GameModel = {
   type: "Game"
-  X: UserId.UserId
-  O: UserId.UserId
+  X: UserId
+  O: UserId
   maxRoundCount: BestOutOf
   moveTimeLimit: MoveTimeLimit
   round: Round.Round
@@ -32,8 +32,8 @@ export type GameModel = {
 
 export type GameOverModel = {
   type: "GameOver"
-  X: UserId.UserId
-  O: UserId.UserId
+  X: UserId
+  O: UserId
   maxRoundCount: BestOutOf
   moveTimeLimit: MoveTimeLimit
   round: Round.Round
@@ -183,7 +183,7 @@ export type Res =
 
 type InputPlayer = [
   "InputPlayer",
-  { userId: UserId.UserId; playerType: TicTacToe.PlayerType },
+  { userId: UserId; playerType: TicTacToe.PlayerType },
 ]
 type InputPlayer_Done = [
   "InputPlayer_Done",
@@ -219,7 +219,7 @@ export const inputPlayer = (
   return Ok(modelNew)
 }
 
-type StopPlaying = ["StopPlaying", { userId: UserId.UserId }]
+type StopPlaying = ["StopPlaying", { userId: UserId }]
 type StopPlaying_Done = [
   "StopPlaying_Done",
   Result<StopPlayingProblem, SharedModel>,
@@ -256,7 +256,7 @@ export const stopPlaying = (
 //
 //
 
-type StartGame = ["StartGame", { userId: UserId.UserId }]
+type StartGame = ["StartGame", { userId: UserId }]
 type StartGame_Done = ["StartGame_Done", Result<StartGameProblem, SharedModel>]
 type StartGameProblem =
   | "not_in_setup_mode"
@@ -310,7 +310,7 @@ export const startGame = (
 //
 //
 
-type Resign = ["Resign", { userId: UserId.UserId }]
+type Resign = ["Resign", { userId: UserId }]
 type Resign_Done = ["Resign_Done", Result<ResignProblem, SharedModel>]
 type ResignProblem = "not_in_game_mode" | "not_playing"
 
@@ -352,7 +352,7 @@ export const resign = (
 
 type InputMove = [
   "InputMove",
-  { userId: UserId.UserId; position: TicTacToe.Position },
+  { userId: UserId; position: TicTacToe.Position },
 ]
 type InputMove_Done = ["InputMove_Done", Result<InputMoveProblem, SharedModel>]
 type InputMoveProblem =
@@ -509,7 +509,7 @@ export const moveCountDown = (model: SharedModel): MoveCountDown_Done[1] => {
 //
 //
 
-type NewGame = ["NewGame", { userId: UserId.UserId }]
+type NewGame = ["NewGame", { userId: UserId }]
 type NewGame_Done = ["NewGame_Done", Result<NewGameProblem, SharedModel>]
 type NewGameProblem = "not_playing" | "not_game_over"
 
@@ -561,7 +561,7 @@ export const newGameToString = (result: NewGame_Done[1]): string => {
 
 type InputBestOutOf = [
   "InputBestOutOf",
-  { userId: UserId.UserId; bestOutOf: BestOutOf },
+  { userId: UserId; bestOutOf: BestOutOf },
 ]
 type InputBestOutOf_Done = [
   "InputBestOutOf_Done",
@@ -616,7 +616,7 @@ export const inputBestOutOfToString = (
 
 type InputMoveTimeLimit = [
   "InputMoveTimeLimit",
-  { userId: UserId.UserId; moveTimeLimit: MoveTimeLimit },
+  { userId: UserId; moveTimeLimit: MoveTimeLimit },
 ]
 type InputMoveTimeLimit_Done = [
   "InputMoveTimeLimit_Done",
@@ -722,7 +722,7 @@ export const roundCountDown = (model: SharedModel): RoundCountDown_Done[1] => {
 //
 //
 
-type RematchAsk = ["RematchAsk", { userId: UserId.UserId }]
+type RematchAsk = ["RematchAsk", { userId: UserId }]
 type RematchAsk_Done = [
   "RematchAsk_Done",
   Result<RematchAskProblem, SharedModel>,
@@ -772,7 +772,7 @@ export const rematchAskToString = (result: RematchAsk_Done[1]): string => {
   }
 }
 
-type Rematch_Cancel = ["Rematch_Cancel", { userId: UserId.UserId }]
+type Rematch_Cancel = ["Rematch_Cancel", { userId: UserId }]
 type Rematch_Cancel_Done = [
   "Rematch_Cancel_Done",
   Result<Rematch_CancelProblem, SharedModel>,
@@ -809,7 +809,7 @@ export const rematchCancel = (
   return Ok({ ...model, rematch: { type: "NotAsking" } })
 }
 
-type RematchDecline = ["RematchDecline", { userId: UserId.UserId }]
+type RematchDecline = ["RematchDecline", { userId: UserId }]
 type RematchDecline_Done = [
   "RematchDecline_Done",
   Result<RematchDeclineProblem, SharedModel>,
@@ -843,7 +843,7 @@ export const rematchDecline = (
   return Ok({ ...model, rematch: { type: "NotAsking" } })
 }
 
-type RematchAccept = ["RematchAccept", { userId: UserId.UserId }]
+type RematchAccept = ["RematchAccept", { userId: UserId }]
 type RematchAccept_Done = [
   "RematchAccept_Done",
   Result<RematchAcceptProblem, SharedModel>,

@@ -184,7 +184,7 @@ export const update = (
 }
 
 export const updateFromBackend = (
-  { currentUserId }: { currentUserId: UserId.UserId },
+  { currentUserId }: { currentUserId: UserId },
   msg: ToFrontend,
   model: Model,
 ): [Model, Cmd<Msg>, OutAction[]] => {
@@ -313,7 +313,7 @@ const toLifecycleCmd = ({
   modelNext,
   modelPrev,
 }: {
-  currentUserId: UserId.UserId
+  currentUserId: UserId
   modelPrev: Model
   modelNext: Model
 }): Cmd<Msg> => {
@@ -414,7 +414,7 @@ export const View = ({
   model,
   dispatch,
 }: {
-  currentUserId: UserId.UserId
+  currentUserId: UserId
   store: ProfileStore.Model
   model: Model
   dispatch: (msg: Msg) => void
@@ -497,7 +497,7 @@ const ViewNotInParty = ({
 }: {
   store: ProfileStore.Model
   model: Model
-  currentUserId: UserId.UserId
+  currentUserId: UserId
   dispatch: (msg: Msg) => void
 }) => {
   const parties = Object.values(model.parties)
@@ -568,7 +568,7 @@ export const ViewBanner = ({
 }: {
   store: ProfileStore.Model
   route: Route.Model
-  currentUserId: UserId.UserId
+  currentUserId: UserId
   model: Model
   dispatch: (msg: Msg) => void
 }) => {
@@ -662,7 +662,7 @@ let recvTransport: mediasoupClient.types.Transport | null = null
 
 let producer: mediasoupClient.types.Producer | null = null
 
-// const _consumers = new Map<UserId.UserId, mediasoupClient.types.Consumer>()
+// const _consumers = new Map<UserId, mediasoupClient.types.Consumer>()
 
 const mediasoupClientMsgs = new Rx.Subject<Msg>()
 
@@ -749,7 +749,7 @@ const initSendTransport =
     userId,
     transportOptions,
   }: {
-    userId: UserId.UserId
+    userId: UserId
     transportOptions: TransportOptions
   }): Task.Task<SendTransport_InitFrontend_Done[1]> =>
     async () => {
@@ -838,7 +838,7 @@ const initRecvTransport =
     userId,
     transportOptions,
   }: {
-    userId: UserId.UserId
+    userId: UserId
     transportOptions: TransportOptions
   }): Task.Task<RecvTransport_InitFrontend_Done[1]> =>
     async () => {

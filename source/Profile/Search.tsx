@@ -36,7 +36,7 @@ export type Msg =
   | ["ClickedClear"]
   | ["Focus_Done", Browser.FocusResult]
   | ["InputtedSearchText", string]
-  | ["ClickedResult", { userId: UserId.UserId }]
+  | ["ClickedResult", { userId: UserId }]
 
 export type OutAction = ProfileStore.Action
 

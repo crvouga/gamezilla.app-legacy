@@ -301,7 +301,7 @@ export const View = ({
   onClose,
 }: {
   store: ProfileStore.Model
-  currentUserId: UserId.UserId
+  currentUserId: UserId
   model: Model
   dispatch: (msg: Msg) => void
   roomComponent: UI.ViewNode

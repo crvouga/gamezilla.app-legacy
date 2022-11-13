@@ -234,7 +234,7 @@ export const updateFromFrontend = (
 }
 
 
-export const updateRoomLeave = ({ sendToRoom }: { sendToRoom: (m: ToFrontend) => Cmd<never> }, userId: UserId.UserId, model: Model): [Model, Cmd<Msg>] => {
+export const updateRoomLeave = ({ sendToRoom }: { sendToRoom: (m: ToFrontend) => Cmd<never> }, userId: UserId, model: Model): [Model, Cmd<Msg>] => {
   const player: PlayerType | "None" = model.O === userId ? 'O' : model.X === userId ? 'X' : 'None'
 
   if (player === 'None') {

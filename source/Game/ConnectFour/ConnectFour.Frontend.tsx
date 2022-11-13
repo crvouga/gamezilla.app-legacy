@@ -135,7 +135,7 @@ export const View = ({
   goHome: () => void
   store: Store.Model
   roomComponent: UI.ViewNode
-  currentUserId: UserId.UserId
+  currentUserId: UserId
 }) => {
 
   const goBack = () => dispatch(['InputMode', { userId: currentUserId, mode: "None" }])

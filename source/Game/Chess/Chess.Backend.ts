@@ -88,7 +88,7 @@ export const updateFromFrontend = (
     sendToClient,
     sendToRoom,
   }: {
-    hostId: UserId.UserId
+    hostId: UserId
     sendToClient: (msg: ToFrontend) => Cmd<never>
     sendToRoom: (msg: ToFrontend) => Cmd<never>
   },
@@ -142,7 +142,7 @@ export const updateFromFrontend = (
   }
 }
 
-export const updateRoomLeave = ({ sendToRoom }: { sendToRoom: (msg: ToFrontend) => Cmd<never> }, userId: UserId.UserId, model: Model): [Model, Cmd<Msg>] => {
+export const updateRoomLeave = ({ sendToRoom }: { sendToRoom: (msg: ToFrontend) => Cmd<never> }, userId: UserId, model: Model): [Model, Cmd<Msg>] => {
   switch (model[0]) {
     case 'None': {
       return [model, Cmd.None]
@@ -161,7 +161,7 @@ export const updateRoomLeave = ({ sendToRoom }: { sendToRoom: (msg: ToFrontend) 
 }
 
 const initMode = (
-  { hostId, mode, userId, }: { hostId: UserId.UserId, mode: BackendModel[0], userId: UserId.UserId },
+  { hostId, mode, userId, }: { hostId: UserId, mode: BackendModel[0], userId: UserId },
 ): InputMode_Done[2] => {
   if (hostId !== userId) {
     return Err("must_be_the_host")

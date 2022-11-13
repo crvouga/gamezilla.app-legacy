@@ -57,7 +57,7 @@ export type ToFrontend =
 
 type InputMode = [
   "InputMode",
-  { mode: BackendModel["mode"]; userId: UserId.UserId },
+  { mode: BackendModel["mode"]; userId: UserId },
 ]
 type InputMode_Done = ["InputMode_Done", Result<InputModeProblem, BackendModel>]
 type InputModeProblem = "unknown"

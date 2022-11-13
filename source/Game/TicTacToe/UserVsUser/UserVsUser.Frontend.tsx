@@ -196,7 +196,7 @@ export const View = ({
   goHome,
   roomComponent,
 }: {
-  currentUserId: UserId.UserId
+  currentUserId: UserId
   store: ProfileStore.Model
   model: Model
   dispatch: (msg: Msg) => void
@@ -537,7 +537,7 @@ const ViewGameOverMessage = ({
   model,
   dispatch,
 }: {
-  currentUserId: UserId.UserId
+  currentUserId: UserId
   model: GameOverModel
   store: ProfileStore.Model
   dispatch: (msg: Msg) => void
@@ -802,7 +802,7 @@ export const ViewRoundStartingMessage = ({
   currentUserId,
   model,
 }: {
-  currentUserId: UserId.UserId
+  currentUserId: UserId
   model: GameModel
 }) => {
   const currentRound = Round.toCurrent(model.round)
@@ -1091,7 +1091,7 @@ const ViewResignButton = ({
   model,
   dispatch,
 }: {
-  currentUserId: UserId.UserId
+  currentUserId: UserId
   model: Model
   dispatch: (msg: Msg) => void
 }) => {
@@ -1182,8 +1182,8 @@ const ViewPlayerSetupSlot = ({
   dispatch,
   sx
 }: {
-  currentUserId: UserId.UserId
-  userId: UserId.UserId | "None"
+  currentUserId: UserId
+  userId: UserId | "None"
   store: ProfileStore.Model
   playerType: PlayerType
   dispatch: (msg: Msg) => void

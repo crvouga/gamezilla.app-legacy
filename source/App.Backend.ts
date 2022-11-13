@@ -160,8 +160,8 @@ const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
 }
 
 const updateFromFrontend = (
-  sessionId: SessionId.SessionId,
-  clientId: ClientId.ClientId,
+  sessionId: SessionId,
+  clientId: ClientId,
   msg: ToBackend,
   model: Model,
 ): [Model, Cmd<Msg>] => {
@@ -227,12 +227,12 @@ const updateFromFrontend = (
 
 const sendToUser = (
   model: Model,
-  userIds: UserId.UserId[],
+  userIds: UserId[],
   msg: ToFrontend,
 ) => {
-  const clientIds: ClientId.ClientId[] = []
+  const clientIds: ClientId[] = []
 
-  const userIdSet = new Set<UserId.UserId>(userIds)
+  const userIdSet = new Set<UserId>(userIds)
 
   for (const sessionId in model.sessions) {
     if (!SessionId.is(sessionId)) {

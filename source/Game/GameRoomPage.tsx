@@ -52,7 +52,7 @@ export const View = ({
   dispatch,
 }: {
   gameRoom: GameRoom.Model
-  currentUserId: UserId.UserId
+  currentUserId: UserId
   profileStore: ProfileStore.Model
   model: Model
   dispatch: (msg: Msg) => void

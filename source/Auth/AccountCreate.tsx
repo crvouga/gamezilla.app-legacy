@@ -128,7 +128,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
       if (emailAddress.type === "Err" || password.type === "Err") {
         const submissionNew: Model["submission"] = {
           type: "ProblemValidation",
-          emailAddress: emailAddress.type === "Err" ? [emailAddress.error] : [],
+          emailAddress: emailAddress.type === "Err" ? [{ message: emailAddress.error }] : [],
           password: password.type === "Err" ? [password.error] : [],
         }
 

@@ -12,8 +12,8 @@ import { definitions } from "../Supabase.Types"
 //
 
 export type Account = {
-  userId: UserId.UserId
-  emailAddress?: EmailAddress.EmailAddress
+  userId: UserId
+  emailAddress?: EmailAddress
 }
 
 //
@@ -43,7 +43,7 @@ const decodeRow = (
 
   if (emailAddress.type === "Err") {
     return Result.Err(
-      `Failed to decode user from supabase. ${emailAddress.error.message}`,
+      `Failed to decode user from supabase. ${emailAddress.error}`,
     )
   }
 
@@ -59,7 +59,7 @@ export const findByEmailAddress =
   ({
     emailAddress,
   }: {
-    emailAddress: EmailAddress.EmailAddress
+    emailAddress: EmailAddress
   }): Task.Task<FindResult> =>
     async () => {
       const response = await Supabase.client
@@ -84,7 +84,7 @@ export const findByEmailAddress =
 
 export type CreateResult = Result<
   Problem,
-  Option.Option<{ userId: UserId.UserId }>
+  Option.Option<{ userId: UserId }>
 >
 
 export const createWithEmailAndPassword =
@@ -92,7 +92,7 @@ export const createWithEmailAndPassword =
     emailAddress,
     password,
   }: {
-    emailAddress: EmailAddress.EmailAddress
+    emailAddress: EmailAddress
     password: Password.Password
   }): Task.Task<CreateResult> =>
     async () => {

@@ -189,7 +189,7 @@ export const View = ({
   goHome,
   roomComponent: roomComponent,
 }: {
-  currentUserId: UserId.UserId
+  currentUserId: UserId
   store: ProfileStore.Model
   model: Model
   dispatch: (msg: Msg) => void

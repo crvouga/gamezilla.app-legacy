@@ -53,7 +53,7 @@ export const update = (
     currentUserId,
   }: {
     sendToBackend: (msg: ToBackend) => Cmd<never>
-    currentUserId: UserId.UserId
+    currentUserId: UserId
   },
   msg: Msg,
   _model: Model,
@@ -200,7 +200,7 @@ export const View = ({
   dispatch,
   roomComponent,
 }: {
-  currentUserId: UserId.UserId
+  currentUserId: UserId
   store: ProfileStore.Model
   model: Model
   dispatch: (msg: Msg) => void

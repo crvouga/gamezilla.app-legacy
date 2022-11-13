@@ -11,7 +11,7 @@ import * as Supabase from "../Supabase"
 //
 //
 
-export type Session = { defaultName: string; userId: UserId.UserId }
+export type Session = { defaultName: string; userId: UserId }
 
 export type Model = ["Loading"] | ["LoggedOut"] | ["LoggedIn", Session]
 
@@ -40,7 +40,7 @@ export type Msg =
 
 export type Action = ["Auth", ["Logout"]]
 
-export type ToBackend = ["UserLoggedIn", UserId.UserId]
+export type ToBackend = ["UserLoggedIn", UserId]
 
 //
 //
@@ -145,7 +145,7 @@ export const sendCode =
   ({
     phoneNumber,
   }: {
-    phoneNumber: PhoneNumber.PhoneNumber
+    phoneNumber: PhoneNumber
   }): Task.Task<AuthResult> =>
     async () => {
       const response = await Supabase.client.auth.signIn({
@@ -165,7 +165,7 @@ export const verifyCode =
     phoneNumber,
   }: {
     code: string
-    phoneNumber: PhoneNumber.PhoneNumber
+    phoneNumber: PhoneNumber
   }): Task.Task<AuthResult> =>
     async () => {
       const response = await Supabase.client.auth.verifyOTP({

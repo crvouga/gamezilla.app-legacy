@@ -42,21 +42,21 @@ export const onConnectionStatus = <Msg>(
 //
 
 export const _toBackend = new Rx.Subject<
-  [SessionId.SessionId, ClientId.ClientId, ToBackend]
+  [SessionId, ClientId, ToBackend]
 >()
 export const _onConnect = new Rx.Subject<
-  [SessionId.SessionId, ClientId.ClientId]
+  [SessionId, ClientId]
 >()
 export const _onDisconnect = new Rx.Subject<
-  [SessionId.SessionId, ClientId.ClientId]
+  [SessionId, ClientId]
 >()
 export const _sendToFrontend = new Rx.Subject<
-  [ClientId.ClientId[], ToFrontend]
+  [ClientId[], ToFrontend]
 >()
 export const _broadcast = new Rx.Subject<ToFrontend>()
 
 export const onConnect = <Msg>(
-  mapper: (sessionId: SessionId.SessionId, clientId: ClientId.ClientId) => Msg,
+  mapper: (sessionId: SessionId, clientId: ClientId) => Msg,
 ): Sub<Msg> => {
   return p(
     _onConnect,
@@ -65,7 +65,7 @@ export const onConnect = <Msg>(
 }
 
 export const onDisconnect = <Msg>(
-  mapper: (sessionId: SessionId.SessionId, clientId: ClientId.ClientId) => Msg,
+  mapper: (sessionId: SessionId, clientId: ClientId) => Msg,
 ): Sub<Msg> => {
   return p(
     _onDisconnect,
@@ -75,8 +75,8 @@ export const onDisconnect = <Msg>(
 
 export const fromFrontend = <Msg>(
   mapper: (
-    sessionId: SessionId.SessionId,
-    clientId: ClientId.ClientId,
+    sessionId: SessionId,
+    clientId: ClientId,
     msg: ToBackend,
   ) => Msg,
 ): Sub<Msg> => {
@@ -87,7 +87,7 @@ export const fromFrontend = <Msg>(
 }
 
 export const sendToFrontend = (
-  clientIds: ClientId.ClientId[],
+  clientIds: ClientId[],
   msg: ToFrontend,
 ): Cmd<never> => {
   return () => {

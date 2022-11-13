@@ -36,7 +36,7 @@ export type Msg =
 export type OutAction = ProfileStore.Action
 
 export const update = (
-  { userId }: { userId: UserId.UserId },
+  { userId }: { userId: UserId },
   msg: Msg,
   model: Model,
 ): [Model, Cmd<Msg>, OutAction[]] => {

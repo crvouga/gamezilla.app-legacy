@@ -160,7 +160,7 @@ export const subscriptions = (_model: Model): Sub<Msg> => {
 // 
 
 
-export const View = ({ currentUserId, model, dispatch, store, roomComponent, goBack, goHome }: { model: Model, store: ProfileStore.Model; dispatch: (msg: Msg) => void, roomComponent: UI.ViewNode, goBack: () => void, goHome: () => void, currentUserId: UserId.UserId }) => {
+export const View = ({ currentUserId, model, dispatch, store, roomComponent, goBack, goHome }: { model: Model, store: ProfileStore.Model; dispatch: (msg: Msg) => void, roomComponent: UI.ViewNode, goBack: () => void, goHome: () => void, currentUserId: UserId }) => {
     const homeButton = (
         <UI.IconButton sx={{ marginLeft: -1 }} onClick={goHome}>
             <UI.Icons.Home />
@@ -235,7 +235,7 @@ const ViewGame = ({
     dispatch: (msg: Msg) => void;
     roomComponent: UI.ViewNode;
     homeButton: UI.ViewNode;
-    currentUserId: UserId.UserId;
+    currentUserId: UserId;
     ghostIndex: ColumnIndex | "None"
 }) => {
 
@@ -298,7 +298,7 @@ const ViewGameOver = ({
     dispatch: (msg: Msg) => void,
     roomComponent: UI.ViewNode,
     homeButton: UI.ViewNode,
-    currentUserId: UserId.UserId,
+    currentUserId: UserId,
 }) => {
     return (
         <UI.FillBox>
@@ -360,7 +360,7 @@ const ViewGameOver = ({
     )
 }
 
-const ViewGameOverMessage = ({ currentUserId, model, store, dispatch }: { currentUserId: UserId.UserId, model: GameOverModel, store: ProfileStore.Model, dispatch: (msg: Msg) => void }) => {
+const ViewGameOverMessage = ({ currentUserId, model, store, dispatch }: { currentUserId: UserId, model: GameOverModel, store: ProfileStore.Model, dispatch: (msg: Msg) => void }) => {
     const size = { width: 84, height: 84 }
 
     const currentPlayerType = toPlayerType(currentUserId, model)
@@ -464,7 +464,7 @@ const ViewGameOverMessage = ({ currentUserId, model, store, dispatch }: { curren
     return <></>
 }
 
-const ViewSetup = ({ model, store, dispatch, currentUserId, homeButton, roomComponent, goBack }: { goBack: () => void, currentUserId: UserId.UserId, model: SetupModel, store: ProfileStore.Model, dispatch: (msg: Msg) => void, homeButton: UI.ViewNode, roomComponent: UI.ViewNode }) => {
+const ViewSetup = ({ model, store, dispatch, currentUserId, homeButton, roomComponent, goBack }: { goBack: () => void, currentUserId: UserId, model: SetupModel, store: ProfileStore.Model, dispatch: (msg: Msg) => void, homeButton: UI.ViewNode, roomComponent: UI.ViewNode }) => {
     const startGameResult = handle(['StartGame', { userId: currentUserId }], model)
     const inputMoveTimeLimitResult = handle(['InputMoveTimeLimit', { moveTimeLimit: model.moveTimeLimit, userId: currentUserId }], model)
 
@@ -557,7 +557,7 @@ const ViewGamePlayerSlot = ({ model, playerType, store }: { model: GameModel | G
 }
 
 
-const ViewSetupPlayerSlot = ({ dispatch, userId, store, currentUserId, playerType }: { dispatch: (msg: Msg) => void, playerType: PlayerType, userId: "None" | UserId.UserId, store: ProfileStore.Model, currentUserId: UserId.UserId, }) => {
+const ViewSetupPlayerSlot = ({ dispatch, userId, store, currentUserId, playerType }: { dispatch: (msg: Msg) => void, playerType: PlayerType, userId: "None" | UserId, store: ProfileStore.Model, currentUserId: UserId, }) => {
     return (
         <UI.Box sx={{ paddingX: 2, display: 'flex', paddingBottom: 2, alignItems: 'center' }}>
             <PlayerIcon playerType={playerType} sx={{ width: 42, height: 42, marginRight: 1 }} />

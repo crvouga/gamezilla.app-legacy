@@ -37,7 +37,7 @@ export const init = ({
   userId,
 }: {
   sendToBackend: (msg: ToBackend) => Cmd<never>
-  userId: UserId.UserId | "None"
+  userId: UserId | "None"
 }): [FrontendModel, Cmd<Msg>] => {
   return [
     {
@@ -162,7 +162,7 @@ export const updateFromBackend = (
     currentUserId,
     profileStore,
   }: {
-    currentUserId: UserId.UserId;
+    currentUserId: UserId;
     profileStore: ProfileStore.Model
   },
   msg: ToFrontend,
@@ -430,7 +430,7 @@ export const View = ({
   onClose,
 }: {
   store: ProfileStore.Model
-  currentUserId: UserId.UserId
+  currentUserId: UserId
   model: Model
   dispatch: (msg: Msg) => void
   roomComponent: UI.ViewNode
@@ -966,8 +966,8 @@ const ViewInputUserPlayerSlot = ({
 }: {
   dispatch: (msg: Msg) => void
   store: ProfileStore.Model
-  userId: UserId.UserId
-  currentUserId: UserId.UserId
+  userId: UserId
+  currentUserId: UserId
   color: Board.Color
 }) => {
   return (

@@ -11,8 +11,8 @@ import { UserId } from "../../Data"
 export type SharedModel = {
   maze: Maze
   players: {
-    [userId: UserId.UserId]: {
-      userId: UserId.UserId
+    [userId: UserId]: {
+      userId: UserId
     }
   }
 }

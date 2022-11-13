@@ -61,7 +61,7 @@ export const update = (
     sendToUser,
     broadcast,
   }: {
-    sendToUser: (userIds: UserId.UserId[], msg: ToFrontend) => Cmd<never>
+    sendToUser: (userIds: UserId[], msg: ToFrontend) => Cmd<never>
     broadcast: (msg: ToFrontend) => Cmd<never>
   },
   msg: Msg,
@@ -219,7 +219,7 @@ export const updateFromFrontend = (
     sendToUser,
   }: {
     broadcast: (msg: ToFrontend) => Cmd<Msg>
-    sendToUser: (userId: UserId.UserId[], msg: ToFrontend) => Cmd<never>
+    sendToUser: (userId: UserId[], msg: ToFrontend) => Cmd<never>
   },
   msg: ToBackend,
   model: Model,
@@ -440,9 +440,9 @@ export const onClientConnected = (
   {
     sendToUser,
   }: {
-    sendToUser: (userIds: UserId.UserId[], msg: ToFrontend) => Cmd<Msg>
+    sendToUser: (userIds: UserId[], msg: ToFrontend) => Cmd<Msg>
   },
-  maybeUserId: Option.Option<UserId.UserId>,
+  maybeUserId: Option.Option<UserId>,
   model: Model,
 ): Cmd<Msg> => {
   if (maybeUserId.type === "None") {
@@ -468,7 +468,7 @@ let worker: mediasoup.types.Worker | null = null
 
 const routers = new Map<PartyId.PartyId, mediasoup.types.Router>()
 
-const peers = new Map<UserId.UserId, Peer>()
+const peers = new Map<UserId, Peer>()
 
 const mediasoupMsgs = new Rx.Subject<Msg>()
 
@@ -483,7 +483,7 @@ type Peer = {
   producer: mediasoup.types.Producer | null
   recvTransport: mediasoup.types.Transport | null
   consumers: {
-    [producingUserId: UserId.UserId]: mediasoup.types.Consumer
+    [producingUserId: UserId]: mediasoup.types.Consumer
   }
 }
 
@@ -685,9 +685,9 @@ const handleSendTransport_OnProduce =
     }
 
 // const toOtherUsersInParty = (
-//   someUser: { userId: UserId.UserId; partyId: PartyId.PartyId },
+//   someUser: { userId: UserId; partyId: PartyId.PartyId },
 //   model: Model,
-// ): UserId.UserId[] => {
+// ): UserId[] => {
 //   return Object.values(model.users)
 //     .filter(
 //       (user) =>
@@ -740,7 +740,7 @@ const initRecvTransport =
 //   }: {
 //     producerId: string
 //     partyId: PartyId.PartyId
-//     userIds: UserId.UserId[]
+//     userIds: UserId[]
 //   }): Task.Task<Unit> =>
 //     async () => {
 //       const router = routers.get(partyId)
