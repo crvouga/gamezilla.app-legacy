@@ -462,7 +462,8 @@ export const View = ({
         {Object.values(model.users)
           .filter((user) => user.partyId === party.partyId)
           .map((user) => {
-            const px = rescale({ value: model.volume, from: [0, 30], to: [0, 15] })
+            const isActive = Math.round(rescale({ value: model.volume, from: [0, 10], to: [0, 1] })) === 1
+
             return <UI.Box key={user.userId} sx={{ flex: 1, display: "flex", alignItems: 'center', justifyContent: 'center', flexDirection: "column", overflow: "hidden", }}>
               <UI.Box sx={{ padding: 2, }}>
                 <UI.Avatar
@@ -471,7 +472,7 @@ export const View = ({
                     width: 100,
                     height: 100,
                     boxSizing: "content-box",
-                    border: `solid ${px}px ${model.volume > 0 ? theme.palette.primary.main : "transparent"}`
+                    border: `solid 8px ${isActive ? theme.palette.primary.main : "transparent"}`
                   }}
                 />
               </UI.Box>
