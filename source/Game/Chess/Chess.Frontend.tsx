@@ -35,7 +35,7 @@ export type Model = FrontendModel
 export const init = ({
   // sendToBackend,
 }: {
-  sendToBackend: (msg: ToBackend) => Cmd<never>
+  sendToBackend: (msg: ToBackend) => Cmd
 }): [FrontendModel, Cmd<Msg>] => {
   return [
     {
@@ -61,7 +61,7 @@ export type Msg = FrontendMsg
 export type OutAction = Snackbar.Action
 
 export const update = (
-  { sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd<never> },
+  { sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd },
   msg: Msg,
   model: Model,
 ): [Model, Cmd<Msg>] => {
@@ -123,7 +123,7 @@ export const updateFromBackend = (
     store,
   }: {
     currentUserId: UserId
-    sendToBackend: (msg: ToBackend) => Cmd<never>
+    sendToBackend: (msg: ToBackend) => Cmd
     store: ProfileStore.Model
   },
   msg: ToFrontend,
@@ -380,7 +380,7 @@ export const mergeWithBackend = ({
   backendModel,
   sendToBackend,
 }: {
-  sendToBackend: (msg: ToBackend) => Cmd<never>
+  sendToBackend: (msg: ToBackend) => Cmd
   frontendModel: FrontendModel
   backendModel: BackendModel
 }): [FrontendModel, Cmd<Msg>] => {

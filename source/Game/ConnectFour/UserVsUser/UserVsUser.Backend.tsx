@@ -24,7 +24,7 @@ export const init = initShared
 
 export type Msg = BackendMsg
 
-export const update = ({ sendToRoom }: { sendToRoom: (msg: ToFrontend) => Cmd<never> }, msg: Msg, model: Model): [Model, Cmd<Msg>] => {
+export const update = ({ sendToRoom }: { sendToRoom: (msg: ToFrontend) => Cmd }, msg: Msg, model: Model): [Model, Cmd<Msg>] => {
     switch (msg[0]) {
         case "Tick": {
             const modelNew = tick(model)
@@ -33,7 +33,7 @@ export const update = ({ sendToRoom }: { sendToRoom: (msg: ToFrontend) => Cmd<ne
     }
 };
 
-export const updateFromFrontend = ({ sendToClient, sendToRoom }: { sendToClient: (msg: ToFrontend) => Cmd<never>, sendToRoom: (msg: ToFrontend) => Cmd<never> }, msg: ToBackend, model: Model): [Model, Cmd<Msg>] => {
+export const updateFromFrontend = ({ sendToClient, sendToRoom }: { sendToClient: (msg: ToFrontend) => Cmd, sendToRoom: (msg: ToFrontend) => Cmd }, msg: ToBackend, model: Model): [Model, Cmd<Msg>] => {
     switch (msg[0]) {
         case 'Resign':
         case 'NewGame':
@@ -60,7 +60,7 @@ export const updateFromFrontend = ({ sendToClient, sendToRoom }: { sendToClient:
     }
 }
 
-export const updateRoomLeave = ({ sendToRoom, userId, model }: { sendToRoom: (m: ToFrontend) => Cmd<never>, userId: UserId, model: Model }): [Model, Cmd<Msg>] => {
+export const updateRoomLeave = ({ sendToRoom, userId, model }: { sendToRoom: (m: ToFrontend) => Cmd, userId: UserId, model: Model }): [Model, Cmd<Msg>] => {
     const player = toPlayerType(userId, model)
 
     if (player === 'None') {

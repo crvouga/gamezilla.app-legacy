@@ -13,7 +13,7 @@ export default {
         chatStore: chatStore,
         profile: userA,
         gameRoom: GameRoom.init[0],
-        party: Party.init()[0],
+        party: Party.init({ sendToBackend: () => () => { } })[0],
     },
 } as ComponentMeta<typeof ViewReady>
 

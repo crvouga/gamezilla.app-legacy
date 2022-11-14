@@ -41,7 +41,7 @@ const createTheme = ({ mode }: { mode: "light" | "dark" }) =>
           },
           styleOverrides: {
             root: {
-              animationDuration: `${1 / 2}s`,
+              animationDuration: `${1 / 2.5}s`,
             },
           },
         },

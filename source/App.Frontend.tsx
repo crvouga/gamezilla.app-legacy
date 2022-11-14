@@ -53,7 +53,7 @@ const init = (location: Browser.Location): [Model, Cmd<Msg>] => {
   const store = ChatStore.init
   const [gameRoom, gameRoomCmd] = GameRoom.init
   const [page, pageCmd] = Pages.initLoading()
-  const [party, partyCmd] = Party.init();
+  const [party, partyCmd] = Party.init({ sendToBackend: msg => Wire.sendToBackend(['Party', msg]) });
   const profileStore = ProfileStore.init
 
   return [

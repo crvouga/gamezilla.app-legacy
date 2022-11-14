@@ -178,3 +178,21 @@ export const shuffle = <X>(xs: X[]): X[] => {
   }
   return ys
 }
+
+export const removeKey = <T>(key: keyof T, obj: T): Omit<T, keyof T> => {
+  const { [key]: _value, ...rest } = obj
+  return rest
+}
+
+type Entry<T> = {
+  [K in keyof T]: [K, T[K]]
+}[keyof T]
+
+export const filterObject = <T extends object>(
+  obj: T,
+  predicate: (entry: Entry<T>, i: number, arr: Entry<T>[]) => boolean
+): T => {
+  return Object.fromEntries(
+    (Object.entries(obj) as Entry<T>[]).filter(predicate)
+  ) as T
+}

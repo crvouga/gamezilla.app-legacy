@@ -65,7 +65,7 @@ export const update = (
     sendToBackend,
   }: {
     currentUserId: UserId
-    sendToBackend: (msg: ToBackend) => Cmd<never>
+    sendToBackend: (msg: ToBackend) => Cmd
   },
   msg: Msg,
   modelPrev: Model,
@@ -175,7 +175,7 @@ export const updateFromBackend = (
     profileStore,
   }: {
     currentUserId: UserId
-    sendToBackend: (msg: ToBackend) => Cmd<never>
+    sendToBackend: (msg: ToBackend) => Cmd
     profileStore: ProfileStore.Model
   },
   msg: ToFrontend,
@@ -339,7 +339,7 @@ const toRoomLeaveMessage = ({ profileStore, userId }: { userId: UserId, profileS
   return "A user left the room"
 }
 
-const updateResponse = ({ sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd<never> }, msg: Res, model: Model): [Model, Cmd<Msg>, OutAction[]] => {
+const updateResponse = ({ sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd }, msg: Res, model: Model): [Model, Cmd<Msg>, OutAction[]] => {
   if (msg[2].type === 'Err') {
     return [
       { ...model, requests: { ...model.requests, [msg[0]]: RemoteData.Err(msg[2].error) } },
@@ -373,7 +373,7 @@ const mergeWithBackendModel = ({
   backendModel,
   sendToBackend,
 }: {
-  sendToBackend: (msg: ToBackend) => Cmd<never>
+  sendToBackend: (msg: ToBackend) => Cmd
   frontendModel: FrontendModel
   backendModel: BackendModel
 }): [FrontendModel, Cmd<FrontendMsg>] => {
@@ -471,7 +471,7 @@ export const runAction = (
     sendToBackend,
   }: {
     currentUserId: UserId
-    sendToBackend: (msg: ToBackend) => Cmd<never>
+    sendToBackend: (msg: ToBackend) => Cmd
   },
   action: Action,
   model: Model,

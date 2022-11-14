@@ -52,7 +52,7 @@ export const update = (
     sendToBackend,
     currentUserId,
   }: {
-    sendToBackend: (msg: ToBackend) => Cmd<never>
+    sendToBackend: (msg: ToBackend) => Cmd
     currentUserId: UserId
   },
   msg: Msg,

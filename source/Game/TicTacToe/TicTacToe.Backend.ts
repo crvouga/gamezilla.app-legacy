@@ -36,7 +36,7 @@ export const update = (
   {
     sendToRoom,
   }: {
-    sendToRoom: (msg: ToFrontend) => Cmd<never>
+    sendToRoom: (msg: ToFrontend) => Cmd
   },
   msg: Msg,
   model: Model,
@@ -73,8 +73,8 @@ export const updateFromFrontend = (
     sendToClient,
     sendToRoom,
   }: {
-    sendToClient: (msg: ToFrontend) => Cmd<never>
-    sendToRoom: (msg: ToFrontend) => Cmd<never>
+    sendToClient: (msg: ToFrontend) => Cmd
+    sendToRoom: (msg: ToFrontend) => Cmd
   },
   msg: ToBackend,
   model: Model,
@@ -127,7 +127,7 @@ export const updateFromFrontend = (
   }
 }
 
-export const updateRoomLeave = ({ sendToRoom }: { sendToRoom: (m: ToFrontend) => Cmd<never> }, userId: UserId, model: Model): [Model, Cmd<Msg>] => {
+export const updateRoomLeave = ({ sendToRoom }: { sendToRoom: (m: ToFrontend) => Cmd }, userId: UserId, model: Model): [Model, Cmd<Msg>] => {
   switch (model.mode) {
     case 'None': {
       return [model, Cmd.None]

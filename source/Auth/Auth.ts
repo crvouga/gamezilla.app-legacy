@@ -51,7 +51,7 @@ export type ToBackend = ["UserLoggedIn", UserId]
 //
 
 export const update = (
-  { sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd<never> },
+  { sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd },
   msg: Msg,
   model: Model,
 ): [Model, Cmd<Msg>] => {

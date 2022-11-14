@@ -21,7 +21,7 @@ export const fromBackend = <Msg>(
   return p(_toFrontend, Sub.map(mapper))
 }
 
-export const sendToBackend = (msg: ToBackend): Cmd<never> => {
+export const sendToBackend = (msg: ToBackend): Cmd => {
   return () => {
     _sendToBackend.next(msg)
   }
@@ -89,13 +89,13 @@ export const fromFrontend = <Msg>(
 export const sendToFrontend = (
   clientIds: ClientId[],
   msg: ToFrontend,
-): Cmd<never> => {
+): Cmd => {
   return () => {
     _sendToFrontend.next([clientIds, msg])
   }
 }
 
-export const broadcast = (msg: ToFrontend): Cmd<never> => {
+export const broadcast = (msg: ToFrontend): Cmd => {
   return () => {
     _broadcast.next(msg)
   }

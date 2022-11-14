@@ -34,7 +34,7 @@ export const init = initShared
 export type Msg = BackendMsg
 
 export const update = (
-  { sendToRoom }: { sendToRoom: (msg: ToFrontend) => Cmd<never> },
+  { sendToRoom }: { sendToRoom: (msg: ToFrontend) => Cmd },
   msg: Msg,
   model: Model,
 ): [Model, Cmd<Msg>] => {
@@ -81,8 +81,8 @@ export const update = (
 
 export const updateFromFrontend = (
   wire: {
-    sendToClient: (msg: ToFrontend) => Cmd<never>
-    sendToRoom: (msg: ToFrontend) => Cmd<never>
+    sendToClient: (msg: ToFrontend) => Cmd
+    sendToRoom: (msg: ToFrontend) => Cmd
   },
   msg: ToBackend,
   model: Model,
@@ -187,8 +187,8 @@ const sendResponse = (
     sendToClient,
     sendToRoom,
   }: {
-    sendToClient: (msg: ToFrontend) => Cmd<never>
-    sendToRoom: (msg: ToFrontend) => Cmd<never>
+    sendToClient: (msg: ToFrontend) => Cmd
+    sendToRoom: (msg: ToFrontend) => Cmd
   },
   response: Res,
   model: Model,
@@ -219,7 +219,7 @@ const sendResponse = (
 }
 
 
-export const updateRoomLeave = ({ sendToRoom }: { sendToRoom: (m: ToFrontend) => Cmd<never> }, userId: UserId, model: Model): [Model, Cmd<Msg>] => {
+export const updateRoomLeave = ({ sendToRoom }: { sendToRoom: (m: ToFrontend) => Cmd }, userId: UserId, model: Model): [Model, Cmd<Msg>] => {
 
   switch (model.type) {
     case 'Setup': {

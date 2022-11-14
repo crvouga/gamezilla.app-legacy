@@ -40,7 +40,7 @@ export const init = initSharedModel
 export type Msg = BackendMsg
 
 export const update = (
-  { sendToRoom }: { sendToRoom: (msg: ToFrontend) => Cmd<never> },
+  { sendToRoom }: { sendToRoom: (msg: ToFrontend) => Cmd },
   msg: Msg,
   model: Model,
 ): [Model, Cmd<Msg>] => {
@@ -61,8 +61,8 @@ export const updateFromFrontend = (
     sendToClient,
     sendToRoom,
   }: {
-    sendToClient: (msg: ToFrontend) => Cmd<never>
-    sendToRoom: (msg: ToFrontend) => Cmd<never>
+    sendToClient: (msg: ToFrontend) => Cmd
+    sendToRoom: (msg: ToFrontend) => Cmd
   },
   msg: ToBackend,
   model: Model,
@@ -107,8 +107,8 @@ const updateRequest = (
     sendToClient,
     sendToRoom,
   }: {
-    sendToClient: (msg: ToFrontend) => Cmd<never>
-    sendToRoom: (msg: ToFrontend) => Cmd<never>
+    sendToClient: (msg: ToFrontend) => Cmd
+    sendToRoom: (msg: ToFrontend) => Cmd
   },
   response: Response,
   model: Model,
