@@ -4,7 +4,6 @@ import { Producer } from "mediasoup/node/lib/Producer"
 import { Transport } from "mediasoup/node/lib/Transport"
 import * as Rx from "rxjs"
 import { Err, Ok } from "../Core/Result"
-
 import { Config } from "./Config"
 import { ToClient, ToServer } from "./VoiceRoom.Types"
 
@@ -25,7 +24,7 @@ type Peer = {
     consumers: Consumer[];
 }
 
-export const VoiceServer = async () => {
+export const VoiceRoomServer = async () => {
     const toClient$ = new Rx.Subject<ToClient>()
     const fromClient$ = new Rx.Subject<ToServer>()
 

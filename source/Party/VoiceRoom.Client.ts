@@ -3,7 +3,7 @@ import * as Rx from "rxjs"
 import { Err, Ok } from "../Core/Result"
 import { ToClient, ToServer } from "./VoiceRoom.Types"
 
-export const VoiceClient = async ({ }: { localStream: MediaStream }) => {
+export const VoiceRoomClient = ({ }: { localStream: MediaStream }) => {
     const toServer$ = new Rx.Subject<ToServer>()
     const fromServer$ = new Rx.Subject<ToClient>()
     const device = new Device()
