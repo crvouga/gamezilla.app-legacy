@@ -38,7 +38,7 @@ export const init = initBackend
 export type Msg = BackendMsg
 
 export const update = (
-  { sendToRoom }: { sendToRoom: (msg: ToFrontend) => Cmd<never> },
+  { sendToRoom }: { sendToRoom: (msg: ToFrontend) => Cmd },
   msg: Msg,
   model: Model,
 ): [Model, Cmd<Msg>] => {
@@ -54,8 +54,8 @@ export const update = (
 }
 
 type Wire = {
-  sendToClient: (msg: ToFrontend) => Cmd<never>
-  sendToRoom: (msg: ToFrontend) => Cmd<never>
+  sendToClient: (msg: ToFrontend) => Cmd
+  sendToRoom: (msg: ToFrontend) => Cmd
 }
 
 export const updateFromFrontend = (
@@ -146,7 +146,7 @@ const updateFromFrontend_ = (
   }
 }
 
-export const updateRoomLeave = ({ sendToRoom }: { sendToRoom: (msg: ToFrontend) => Cmd<never> }, userId: UserId, model: Model): [Model, Cmd<Msg>] => {
+export const updateRoomLeave = ({ sendToRoom }: { sendToRoom: (msg: ToFrontend) => Cmd }, userId: UserId, model: Model): [Model, Cmd<Msg>] => {
   if (model.userId === userId) {
     const modelNew: Model = {
       type: "Setup",

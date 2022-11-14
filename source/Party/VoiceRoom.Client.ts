@@ -1,7 +1,7 @@
 import { Device } from "mediasoup-client"
 import * as Rx from "rxjs"
 import { Err, Ok } from "../Core/Result"
-import { ToClient, ToServer } from "./Voice.Types"
+import { ToClient, ToServer } from "./VoiceRoom.Types"
 
 export const VoiceClient = async ({ }: { localStream: MediaStream }) => {
     const toServer$ = new Rx.Subject<ToServer>()

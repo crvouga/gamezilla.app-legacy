@@ -44,7 +44,7 @@ const batch = <Msg>(cmdList: Cmd<Msg>[]): Cmd<Msg> => {
   }
 }
 
-const None: Cmd<never> = () => { }
+const None: Cmd = () => { }
 
 const perform =
   <A, Msg>(f: (a: A) => Msg) =>

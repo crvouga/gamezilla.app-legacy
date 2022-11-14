@@ -1,7 +1,4 @@
-import * as mediasoupClient from "mediasoup-client"
-import * as Rx from "rxjs"
-import { Cmd, exhaustive, p, rescale, Sub, Task, Unit } from "../Core"
-import { Err, Ok } from "../Core/Result"
+import { Cmd, exhaustive, p, RemoteData, Sub } from "../Core"
 import { PartyId, UserId } from "../Data"
 import * as ProfileStore from "../Profile/Profile.Store"
 import * as Route from "../Route"
@@ -9,18 +6,8 @@ import * as UI from "../UI"
 import { Mic } from "./Mic"
 import {
   FrontendModel,
-  FrontendMsg,
-  LoadDevice_Done,
-  LoadMediaStream_Done,
-  RecvTransport_InitFrontend_Done,
-  RtpCapabilities,
-  SendTransport_InitFrontend_Done,
-  StartProducing_Done,
-  ToBackend,
-  ToFrontend,
-  TransportOptions,
-  UnloadDevice_Done,
-  UnloadMediaStream_Done
+  FrontendMsg, ToBackend,
+  ToFrontend
 } from "./Party.Types"
 
 //
@@ -33,18 +20,16 @@ import {
 
 export type Model = FrontendModel
 
-export const init = (): [Model, Cmd<Msg>] => {
+export const init = ({ sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd }): [Model, Cmd<Msg>] => {
   return [
     {
       parties: {},
       users: {},
-      device: { type: "Unloaded" },
-      mediaStream: { type: "Unloaded" },
+      // 
+      requests: {},
       volume: 0,
-      microphonePermissionStatus: "None",
-      micData: new Uint8Array()
     },
-    Cmd.None,
+    sendToBackend(['PartyGet', {}]),
   ]
 }
 
@@ -61,128 +46,30 @@ export type Msg = FrontendMsg
 export type OutAction = ProfileStore.Action
 
 export const update = (
-  { sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd<never> },
+  { sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd },
   msg: Msg,
   model: Model,
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-
-    case 'MicData': {
-      return [{ ...model, micData: msg[1].micData }, Cmd.None]
-    }
-
     case "ClickedBanner": {
       return [model, Route.push(["Party"])]
     }
 
-    case "LoadMediaStream_Done": {
-      const { userId, partyId } = msg[1]
-      const result = msg[2]
-
-      if (result.type === "Err") {
-        return [model, Cmd.None]
-      }
-
-      const cmd = Cmd.batch([
-        sendToBackend(["SendTransport_InitBackend", { userId, partyId }]),
-        sendToBackend(["RecvTransport_InitBackend", { userId, partyId }]),
-      ])
-
-      return [{ ...model, mediaStream: { type: "Loaded" } }, cmd]
-    }
-
-    case "Producer_TrackEnded": {
-      return [model, Cmd.None]
-    }
-
-    case "Producer_TransportClosed": {
-      return [model, Cmd.None]
-    }
-
-    case "UnloadMediaStream_Done": {
-      if (msg[1].type === "Err") {
-        return [model, Cmd.None]
-      }
-
-      return [{ ...model, mediaStream: { type: "Unloaded" } }, Cmd.None]
-    }
-
-    case "LoadDevice_Done": {
-      const result = msg[2]
-
-      if (result.type === "Err") {
-        return [model, Cmd.None]
-      }
-
-      return [
-        {
-          ...model,
-          device: { type: "Loaded" },
-        },
-        sendToBackend(msg),
-      ]
-    }
-
-    case "SendTransport_InitFrontend_Done": {
-      return [
-        model,
-        p(
-          startProducing(),
-          Cmd.perform((result): Msg => ["StartProducing_Done", result]),
-        ),
-      ]
-    }
-
-    case "StartProducing_Done": {
-      return [model, Cmd.None]
-    }
-
-    case "RecvTransport_InitFrontend_Done": {
-      return [model, Cmd.None]
-    }
-
-    case "UnloadDevice_Done": {
-      if (msg[1].type === "Err") {
-        return [model, Cmd.None]
-      }
-
-      return [{ ...model, device: { type: "Unloaded" } }, Cmd.None]
-    }
-
-    case "SendTransport_OnConnect": {
-      return [model, sendToBackend(msg)]
-    }
-
-    case "SendTransport_OnProduce": {
-      return [model, sendToBackend(msg)]
-    }
-
-    case "StartParty": {
-      return [model, sendToBackend(msg)]
-    }
-
-    case "LeaveParty": {
-      return [model, sendToBackend(msg)]
-    }
-
-    case "JoinParty": {
-      return [model, sendToBackend(msg)]
-    }
-
-    case "EmittedBackendProducerId": {
-      return [model, Cmd.None]
-    }
-
-    case "GotVolume": {
+    case "MicSound": {
       return [{ ...model, volume: msg[1].volume }, Cmd.None]
     }
 
-    case "GotMicrophonePermissionStatus": {
-      return [{ ...model, microphonePermissionStatus: msg[1] }, Cmd.None]
+    case 'MicUnload':
+    case 'MicLoad': {
+      return [model, Cmd.None]
     }
 
-    case "RecvTransport_OnConnect": {
-      return [model, sendToBackend(msg)]
+    case 'PartyGet':
+    case "PartyCreate":
+    case "PartyDestroy":
+    case "PartyLeave":
+    case "PartyJoin": {
+      return [{ ...model, requests: { ...model.requests, [msg[0]]: RemoteData.Loading } }, sendToBackend(msg)]
     }
 
     default: {
@@ -197,121 +84,33 @@ export const updateFromBackend = (
   model: Model,
 ): [Model, Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
-    case "Sync": {
-      const sharedModel = msg[1]
+    case 'PartyGet':
+    case 'PartyDestroy':
+    case "PartyCreate":
+    case 'PartyJoin':
+    case 'PartyLeave': {
+      const requestsNew: Model['requests'] = { ...model.requests, [msg[0]]: p(msg[2], RemoteData.map(() => null)) }
 
-      const modelNew: Model = {
+      if (msg[2].type === "Err") {
+        return [{ ...model, requests: requestsNew }, Cmd.None, []]
+      }
+
+      const modelNext: Model = {
         ...model,
-        parties: sharedModel.parties,
-        users: sharedModel.users,
+        requests: requestsNew,
+        ...msg[2].value,
       }
 
-      const userIds = Object.values(sharedModel.users).map(
-        (user) => user.userId,
-      )
+      const userIds = Object.values(modelNext.users).map(user => user.userId)
 
-      return [
-        modelNew,
-        toLifecycleCmd({
-          currentUserId,
-          modelNext: modelNew,
-          modelPrev: model,
-        }),
-        [["Profile", ["FindMany", { userIds }]]],
-      ]
+      const action: OutAction = ['Profile', ['FindMany', { userIds }]]
+
+      const cmd = toLifecycleCmd({ currentUserId, modelNext: modelNext, modelPrev: model })
+
+      return [modelNext, cmd, [action]]
     }
-
-    case "RecvTransport_InitBackend_Done": {
-      const { userId } = msg[1]
-
-      const result = msg[2]
-
-      if (result.type === "Err") {
-        return [model, Cmd.None, []]
-      }
-
-      const { transportOptions } = result.value
-
-      const cmd = p(
-        initRecvTransport({ userId, transportOptions }),
-        Cmd.perform(
-          (result): Msg => ["RecvTransport_InitFrontend_Done", result],
-        ),
-      )
-
-      return [model, cmd, []]
-    }
-
-    case "SendTransport_OnConnect_Done": {
-      return [model, Cmd.None, []]
-    }
-
-    case "SendTransport_OnProduce_Done": {
-      const result = msg[2]
-
-      if (result.type === "Err") {
-        return [model, Cmd.None, []]
-      }
-
-      const producerId = result.value.producerId
-
-      const cmd = p(
-        emitBackendProducerId({ producerId }),
-        Cmd.perform((): Msg => ["EmittedBackendProducerId", { producerId }]),
-      )
-
-      return [model, cmd, []]
-    }
-
-    case "SendTransport_InitBackend_Done": {
-      const result = msg[2]
-
-      if (result.type === "Err") {
-        return [model, Cmd.None, []]
-      }
-
-      const { userId } = msg[1]
-
-      const options = result.value.transportOptions
-
-      const cmd = p(
-        initSendTransport({ userId, transportOptions: options }),
-        Cmd.perform(
-          (result): Msg => ["SendTransport_InitFrontend_Done", result],
-        ),
-      )
-
-      return [model, cmd, []]
-    }
-
-    case "StartParty_Done": {
-      if (msg[1].type === "Err") {
-        return [model, Cmd.None, []]
-      }
-
-      const sharedModel = msg[1].value
-
-      return [
-        { ...model, parties: sharedModel.parties, users: sharedModel.users },
-        Cmd.None,
-        [],
-      ]
-    }
-
-    case "LeaveParty_Done": {
-      return [model, Cmd.None, []]
-    }
-
-    case "JoinParty_Done": {
-      return [model, Cmd.None, []]
-    }
-
-    case "RecvTransport_OnConnect_Done": {
-      return [model, Cmd.None, []]
-    }
-
     default: {
-      return exhaustive(msg[1])
+      return exhaustive(msg[0])
     }
   }
 }
@@ -328,52 +127,14 @@ const toLifecycleCmd = ({
   const userPrev = modelPrev.users[currentUserId]
   const userNext = modelNext.users[currentUserId]
 
-  //
-  //
   // did user just leave party?
-  //
-  //
-
   if (userPrev && !userNext) {
-    const deviceCmd = p(
-      unloadDevice,
-      Cmd.perform((result): Msg => ["UnloadDevice_Done", result]),
-    )
-
-    const mediaStreamCmd = p(
-      unloadMediaStream,
-      Cmd.perform((result): Msg => ["UnloadMediaStream_Done", result]),
-    )
-
-    return Cmd.batch([deviceCmd, mediaStreamCmd])
+    return p(Mic.unload, Cmd.perform(result => ['MicUnload', result]))
   }
 
-  //
-  //
   // did user just join party?
-  //
-  //
-
   if (!userPrev && userNext) {
-    const party = modelNext.parties[userNext.partyId]
-
-    if (!party) {
-      return Cmd.None
-    }
-
-    const { routerRtpCapabilities } = party
-
-    const deviceCmd = p(
-      loadDevice({ routerRtpCapabilities }),
-      Cmd.perform((result): Msg => ["LoadDevice_Done", userNext, result]),
-    )
-
-    const mediaStreamCmd = p(
-      loadMediaStream(),
-      Cmd.perform((result): Msg => ["LoadMediaStream_Done", userNext, result]),
-    )
-
-    return Cmd.batch([deviceCmd, mediaStreamCmd])
+    return p(Mic.load, Cmd.perform(result => ['MicLoad', result]))
   }
 
   return Cmd.None
@@ -382,32 +143,15 @@ const toLifecycleCmd = ({
 export type Action = ["Party", ["Msg", Msg]]
 
 export const runAction = (
-  { sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd<never> },
+  wire: { sendToBackend: (msg: ToBackend) => Cmd },
   action: Action,
   model: Model,
 ): [Model, Cmd<Msg>] => {
   switch (action[1][0]) {
     case "Msg": {
-      return update({ sendToBackend }, action[1][1], model)
+      return update(wire, action[1][1], model)
     }
   }
-}
-
-//
-//
-//
-// Subscriptions
-//
-//
-//
-
-export const subscriptions = (_model: Model): Sub<Msg> => {
-  return Sub.batch([
-    mediasoupClientMsgs,
-    // p(micData$, Sub.map(micData => ['MicData', { micData }])),
-    p(volume$, Sub.map(volume => ['GotVolume', { volume }]))
-    // pipe(_mediaStreamVolume$, Sub.map((volume): Msg => ['GotVolume', { volume }]))
-  ])
 }
 
 //
@@ -462,7 +206,7 @@ export const View = ({
         {Object.values(model.users)
           .filter((user) => user.partyId === party.partyId)
           .map((user) => {
-            const isActive = Math.round(rescale({ value: model.volume, from: [0, 10], to: [0, 1] })) === 1
+            const isActive = model.volume > 1 && user.userId === currentUserId
 
             return <UI.Box key={user.userId} sx={{ flex: 1, display: "flex", alignItems: 'center', justifyContent: 'center', flexDirection: "column", overflow: "hidden", }}>
               <UI.Box sx={{ padding: 2, }}>
@@ -487,15 +231,31 @@ export const View = ({
           )}
       </UI.Box>
       <UI.Box sx={{ paddingX: 2, paddingY: 2, display: "flex", alignItems: 'center', justifyContent: "center" }}>
-        <UI.Button
-          variant="outlined"
-          startIcon={<UI.Icons.CallEnd />}
-          color="error"
-          size="large"
-          onClick={() => dispatch(["LeaveParty", { userId: currentUserId }])}
-        >
-          Leave
-        </UI.Button>
+        {
+          party.hostId === currentUserId ? (
+            <UI.Button
+              variant="outlined"
+              startIcon={<UI.Icons.CallEnd />}
+              color="error"
+              size="large"
+              loading={model.requests.PartyDestroy?.type === 'Loading'}
+              onClick={() => dispatch(["PartyDestroy", { userId: currentUserId }])}
+            >
+              End
+            </UI.Button>
+          ) : (
+            <UI.Button
+              variant="outlined"
+              startIcon={<UI.Icons.CallEnd />}
+              color="error"
+              size="large"
+              loading={model.requests.PartyLeave?.type === 'Loading'}
+              onClick={() => dispatch(["PartyLeave", { userId: currentUserId }])}
+            >
+              Leave
+            </UI.Button>
+          )
+        }
       </UI.Box>
     </UI.FillBox>
   )
@@ -521,11 +281,9 @@ const ViewNotInParty = ({
           fullWidth
           variant="contained"
           size="large"
+          loading={model.requests.PartyCreate?.type === 'Loading'}
           onClick={() =>
-            dispatch([
-              "StartParty",
-              { hostId: currentUserId, partyId: PartyId.generate() },
-            ])
+            dispatch(["PartyCreate", { userId: currentUserId, partyId: PartyId.generate() }])
           }
         >
           Start Party
@@ -544,10 +302,7 @@ const ViewNotInParty = ({
           <UI.ListItemButton
             key={party.partyId}
             onClick={() =>
-              dispatch([
-                "JoinParty",
-                { userId: currentUserId, partyId: party.partyId },
-              ])
+              dispatch(["PartyJoin", { userId: currentUserId, partyId: party.partyId }])
             }
           >
             <UI.ListItemAvatar>
@@ -624,307 +379,17 @@ export const ViewBanner = ({
       Party
     </UI.Typography>
   )
-
-  // return (
-  //   <>
-  //     <UI.ButtonBase
-  //       onClick={() => dispatch(["ClickedBanner"])}
-  //       sx={{
-  //         width: "100%",
-  //         height: 58,
-  //         display: "flex",
-  //         alignItems: "center",
-  //         flexDirection: "row",
-  //         paddingX: 2,
-  //         paddingY: 1,
-  //       }}
-  //     >
-  //       <UI.Box sx={{ flex: 1 }}>
-  //         <UI.Typography align="left">
-  //           {`${store.Profile[party.hostId]?.username ?? "..."}'s party`}
-  //         </UI.Typography>
-  //         <UI.Typography
-  //           variant="subtitle2"
-  //           align="left"
-  //           color="text.secondary"
-  //         >
-  //           {`${countUsersInParty(party.partyId, model)} in party`}
-  //         </UI.Typography>
-  //       </UI.Box>
-  //       <UI.Icons.ChevronRight />
-  //     </UI.ButtonBase>
-
-  //     <UI.Divider />
-  //   </>
-  // )
 }
 
-//
-//
-//
-//
-// Mediasoup
-//
-//
-//
-//
-
-let device: mediasoupClient.types.Device | null = null
-
-const localStream$ = new Rx.BehaviorSubject<MediaStream | null>(null)
-
-let sendTransport: mediasoupClient.types.Transport | null = null
-
-let recvTransport: mediasoupClient.types.Transport | null = null
-
-let producer: mediasoupClient.types.Producer | null = null
-
-// const _consumers = new Map<UserId, mediasoupClient.types.Consumer>()
-
-const mediasoupClientMsgs = new Rx.Subject<Msg>()
-
-
-const volume$ = new Rx.Subject<number>()
-
-localStream$.pipe(
-  Rx.switchMap(mediaStream => {
-    if (!mediaStream) {
-      return Rx.NEVER
-    }
-    return Mic.volume(mediaStream)
-  }),
-).forEach(val => {
-  volume$.next(val)
-})
 
 //
 //
 //
+// Subscriptions
 //
 //
 //
 
-const loadMediaStream = (): Task<LoadMediaStream_Done[2]> => async () => {
-  try {
-    const localStream = await navigator.mediaDevices.getUserMedia({
-      audio: true,
-    })
-
-    localStream$.next(localStream)
-    return Ok(Unit)
-  } catch (error) {
-    console.error(error)
-    return Err("failed_to_load")
-  }
-}
-
-const unloadMediaStream: Task<UnloadMediaStream_Done[1]> = async () => {
-  const mediaStream = localStream$.getValue()
-
-  if (!mediaStream) {
-    return Ok(Unit)
-  }
-
-  for (const track of mediaStream.getTracks()) {
-    if (track.readyState === "live") {
-      track.stop()
-    }
-  }
-
-  localStream$.next(null)
-
-  return Ok(Unit)
-}
-
-const loadDevice =
-  ({
-    routerRtpCapabilities,
-  }: {
-    routerRtpCapabilities: RtpCapabilities
-  }): Task<LoadDevice_Done[2]> =>
-    async () => {
-      try {
-        if (device) {
-          return Err("device_is_already_loaded")
-        }
-
-        const deviceNew = new mediasoupClient.Device()
-
-        await deviceNew.load({ routerRtpCapabilities })
-
-        device = deviceNew
-
-        return Ok({
-          deviceRtpCapabilities: deviceNew.rtpCapabilities,
-        })
-      } catch (_error) {
-        console.error(_error)
-        return Err("failed_to_load_device")
-      }
-    }
-
-const unloadDevice: Task<UnloadDevice_Done[1]> = async () => {
-  device = null
-  return Ok(Unit)
-}
-
-const backendProducerId$ = new Rx.Subject<{ producerId: string }>()
-const emitBackendProducerId =
-  ({ producerId }: { producerId: string }): Task<Unit> =>
-    async () => {
-      backendProducerId$.next({ producerId })
-      return Unit
-    }
-
-const initSendTransport =
-  ({
-    userId,
-    transportOptions,
-  }: {
-    userId: UserId
-    transportOptions: TransportOptions
-  }): Task<SendTransport_InitFrontend_Done[1]> =>
-    async () => {
-      if (!device) {
-        return Err("device_does_not_exists")
-      }
-
-      if (sendTransport) {
-        return Err("producer_transport_is_already_initialized")
-      }
-
-      sendTransport = device.createSendTransport({
-        ...transportOptions,
-        id: transportOptions.transportId,
-
-        // @ts-ignore
-        iceCandidates: transportOptions.iceCandidates,
-
-        // this fixes compiler error but cause runtime error 😑
-        // iceCandidates: options.iceCandidates.map(item => ({
-        //     ...item, tcpType: item.tcpType ?? "passive"
-        // }))
-      })
-
-      sendTransport.on("connect", ({ dtlsParameters }, callback, _errback) => {
-        mediasoupClientMsgs.next([
-          "SendTransport_OnConnect",
-          { userId, dtlsParameters },
-        ])
-        callback()
-      })
-
-      sendTransport.on(
-        "produce",
-        ({ appData, kind, rtpParameters }, callback) => {
-          mediasoupClientMsgs.next([
-            "SendTransport_OnProduce",
-            { userId, appData, kind, rtpParameters },
-          ])
-          backendProducerId$.subscribe(({ producerId }) => {
-            callback({
-              id: producerId,
-            })
-          })
-        },
-      )
-
-      return Ok(Unit)
-    }
-
-const startProducing = (): Task<StartProducing_Done[1]> => async () => {
-  if (!sendTransport) {
-    return Err("send_transport_does_not_exists")
-  }
-
-  const mediaStream = localStream$.getValue()
-
-  if (!mediaStream) {
-    return Err("media_stream_track_does_not_exists")
-  }
-
-  const track = mediaStream.getTracks()[0]
-
-  try {
-    producer = await sendTransport.produce({
-      track: track,
-    })
-
-    producer.on("trackended", () => {
-      mediasoupClientMsgs.next(["Producer_TrackEnded"])
-    })
-
-    producer.on("transportclose", () => {
-      mediasoupClientMsgs.next(["Producer_TransportClosed"])
-    })
-
-    return Ok(Unit)
-  } catch (_error) {
-    console.error(_error)
-    return Err("failed")
-  }
-}
-
-const initRecvTransport =
-  ({
-    userId,
-    transportOptions,
-  }: {
-    userId: UserId
-    transportOptions: TransportOptions
-  }): Task<RecvTransport_InitFrontend_Done[1]> =>
-    async () => {
-      if (!device) {
-        return Err("device_does_not_exists")
-      }
-
-      recvTransport = device.createRecvTransport({
-        ...transportOptions,
-        id: transportOptions.transportId,
-
-        // @ts-ignore
-        iceCandidates: transportOptions.iceCandidates,
-
-        // this fixes compiler error but cause runtime error 😑
-        // iceCandidates: transportOptions.iceCandidates.map(item => ({
-        //     ...item, tcpType: item.tcpType ?? "passive"
-        // }))
-      })
-
-      recvTransport.on("connect", ({ dtlsParameters }, callback) => {
-        mediasoupClientMsgs.next([
-          "RecvTransport_OnConnect",
-          { userId, dtlsParameters },
-        ])
-        callback()
-      })
-
-      return Ok(Unit)
-    }
-
-// https://mediasoup.org/documentation/v3/mediasoup-client/api/#ProducerOptions
-// https://mediasoup.org/documentation/v3/mediasoup-client/api/#transport-produce
-export const producerOptions: mediasoupClient.types.ProducerOptions = {
-  // mediasoup params
-  encodings: [
-    {
-      rid: "r0",
-      maxBitrate: 100000,
-      scalabilityMode: "S1T3",
-    },
-    {
-      rid: "r1",
-      maxBitrate: 300000,
-      scalabilityMode: "S1T3",
-    },
-    {
-      rid: "r2",
-      maxBitrate: 900000,
-      scalabilityMode: "S1T3",
-    },
-  ],
-  // https://mediasoup.org/documentation/v3/mediasoup-client/api/#ProducerCodecOptions
-  codecOptions: {
-    videoGoogleStartBitrate: 1000,
-  },
+export const subscriptions = (_model: Model): Sub<Msg> => {
+  return p(Mic.volumes, Sub.map(volume => ['MicSound', { volume }]))
 }

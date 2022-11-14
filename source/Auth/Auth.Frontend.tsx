@@ -25,7 +25,7 @@ export type Msg = FrontendMsg
 
 export type Action = ['Auth', FrontendMsg]
 
-export const update = ({ sendToBackend, msg, model, }: { sendToBackend: (m: ToBackend) => Cmd<never>, msg: Msg, model: Model }): [Model, Cmd<Msg>] => {
+export const update = ({ sendToBackend, msg, model, }: { sendToBackend: (m: ToBackend) => Cmd, msg: Msg, model: Model }): [Model, Cmd<Msg>] => {
     switch (msg[0]) {
         case 'VerifyCode':
         case "LoginWithCode": {

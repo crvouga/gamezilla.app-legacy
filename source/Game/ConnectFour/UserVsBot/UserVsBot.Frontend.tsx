@@ -32,7 +32,7 @@ export type Msg = FrontendMsg
 
 type OutAction = Snackbar.Action
 
-export const update = ({ sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd<never> }, msg: Msg, model: Model): [Model, Cmd<Msg>] => {
+export const update = ({ sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd }, msg: Msg, model: Model): [Model, Cmd<Msg>] => {
     switch (msg[0]) {
         case 'InputMove':
         case 'InputPlayerType':

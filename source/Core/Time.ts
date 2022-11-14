@@ -42,7 +42,7 @@ export const startTimeout = <Msg>(
   }
 }
 
-export const cancelTimeout = (timeoutId: string): Cmd<never> => {
+export const cancelTimeout = (timeoutId: string): Cmd => {
   return () => {
     timeouts.delete(timeoutId)
   }

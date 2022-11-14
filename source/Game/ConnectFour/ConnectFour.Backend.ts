@@ -32,7 +32,7 @@ export const init: Model = { type: "None" }
 
 export type Msg = BackendMsg
 
-export const update = ({ sendToRoom }: { sendToRoom: (msg: ToFrontend) => Cmd<never> }, msg: Msg, model: Model): [Model, Cmd<Msg>] => {
+export const update = ({ sendToRoom }: { sendToRoom: (msg: ToFrontend) => Cmd }, msg: Msg, model: Model): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case 'UserVsUser': {
       if (model.type === 'UserVsUser') {
@@ -64,7 +64,7 @@ export const update = ({ sendToRoom }: { sendToRoom: (msg: ToFrontend) => Cmd<ne
 
 
 export const updateFromFrontend = (
-  { sendToClient, sendToRoom }: { sendToClient: (msg: ToFrontend) => Cmd<never>, sendToRoom: (msg: ToFrontend) => Cmd<never> },
+  { sendToClient, sendToRoom }: { sendToClient: (msg: ToFrontend) => Cmd, sendToRoom: (msg: ToFrontend) => Cmd },
   msg: ToBackend,
   model: Model,
 ): [Model, Cmd<Msg>] => {

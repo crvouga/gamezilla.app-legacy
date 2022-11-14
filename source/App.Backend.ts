@@ -34,14 +34,13 @@ import { formatMsg } from "./Core/Debug"
 type Model = BackendModel
 
 const init = (): [Model, Cmd<Msg>] => {
-  const [party, partyCmd] = Party.init()
   return [
     {
       gameRoom: GameRoom.init,
+      party: Party.init,
       sessions: {},
-      party,
     },
-    tagCmd("Party", partyCmd),
+    Cmd.None,
   ]
 }
 
@@ -79,14 +78,7 @@ const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
         },
       }
 
-      const partyCmd = Party.onClientConnected(
-        {
-          sendToUser: (userIds, msg) =>
-            sendToUser(modelNew, userIds, ["Party", msg]),
-        },
-        maybeUserId,
-        model.party,
-      )
+
 
       const gameRoomCmd = GameRoom.onClientConnected(
         {
@@ -100,7 +92,6 @@ const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
         modelNew,
         Cmd.batch<Msg>([
           tagCmd("GameRoom", gameRoomCmd),
-          tagCmd("Party", partyCmd),
         ]),
       ]
     }
@@ -196,6 +187,7 @@ const updateFromFrontend = (
     case "Party": {
       const [child, childCmd] = Party.updateFromFrontend(
         {
+          sendToClient: msg => Wire.sendToFrontend([clientId], ['Party', msg]),
           broadcast: (msg) => Wire.broadcast(["Party", msg]),
           sendToUser: (userIds, msg) =>
             sendToUser(model, userIds, ["Party", msg]),

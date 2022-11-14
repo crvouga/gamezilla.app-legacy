@@ -40,7 +40,7 @@ export const update = (
   {
     sendToUser,
   }: {
-    sendToUser: (userIds: UserId[], msg: ToFrontend) => Cmd<never>
+    sendToUser: (userIds: UserId[], msg: ToFrontend) => Cmd
   },
   msg: Msg,
   model: Model,
@@ -96,9 +96,9 @@ export const updateFromFrontend = (
     sendToUser,
     broadcast,
   }: {
-    sendToClient: (msg: ToFrontend) => Cmd<never>
-    sendToUser: (userId: UserId[], msg: ToFrontend) => Cmd<never>
-    broadcast: (msg: ToFrontend) => Cmd<never>
+    sendToClient: (msg: ToFrontend) => Cmd
+    sendToUser: (userId: UserId[], msg: ToFrontend) => Cmd
+    broadcast: (msg: ToFrontend) => Cmd
   },
   msg: ToBackend,
   model: Model,
@@ -222,10 +222,10 @@ const sendToRoom = ({
   msg,
 }: {
   model: Model,
-  sendToUser: (userIds: UserId[], msg: ToFrontend) => Cmd<never>,
+  sendToUser: (userIds: UserId[], msg: ToFrontend) => Cmd,
   roomId: RoomId,
   msg: ToFrontend,
-}): Cmd<never> => {
+}): Cmd => {
   const userIds: UserId[] = []
 
   for (const userId in model.users) {

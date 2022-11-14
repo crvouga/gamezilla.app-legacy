@@ -31,7 +31,7 @@ export const init = ({
   gameName,
   sendToBackend,
 }: {
-  sendToBackend: (msg: ToBackend) => Cmd<never>
+  sendToBackend: (msg: ToBackend) => Cmd
   gameName: Model[0]
 }): [Model, Cmd<Msg>] => {
   switch (gameName) {
@@ -78,7 +78,7 @@ export const update = (
     sendToBackend,
   }: {
     currentUserId: UserId
-    sendToBackend: (msg: ToBackend) => Cmd<never>
+    sendToBackend: (msg: ToBackend) => Cmd
   },
   msg: Msg,
   model: Model,
@@ -163,7 +163,7 @@ export const updateFromBackend = (
     sendToBackend,
   }: {
     currentUserId: UserId
-    sendToBackend: (msg: ToBackend) => Cmd<never>
+    sendToBackend: (msg: ToBackend) => Cmd
     store: ProfileStore.Model
   },
   msg: ToFrontend,
@@ -397,7 +397,7 @@ export const mergeWithBackend = ({
   frontendModel,
   backendModel,
 }: {
-  sendToBackend: (msg: ToBackend) => Cmd<never>
+  sendToBackend: (msg: ToBackend) => Cmd
   frontendModel: FrontendModel
   backendModel: BackendModel
 }): [FrontendModel, Cmd<Msg>] => {

@@ -36,7 +36,7 @@ export type Model = FrontendModel
 export const init = ({
   sendToBackend,
 }: {
-  sendToBackend: (msg: ToBackend) => Cmd<never>
+  sendToBackend: (msg: ToBackend) => Cmd
 }): [FrontendModel, Cmd<Msg>] => {
   return [
     {
@@ -62,7 +62,7 @@ export type Msg = FrontendMsg
 export type OutAction = Snackbar.Action
 
 export const update = (
-  { sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd<never> },
+  { sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd },
   msg: Msg,
   _model: Model,
 ): [Model, Cmd<Msg>] => {

@@ -53,7 +53,7 @@ export const getLocation = (): Location => {
 
 // setTimeout because actions where happening in a weird order if not setTimeout
 
-export const push = (url: string): Cmd<never> => {
+export const push = (url: string): Cmd => {
   return () => {
     setTimeout(() => {
       window.history.pushState(null, "", url)
@@ -62,7 +62,7 @@ export const push = (url: string): Cmd<never> => {
   }
 }
 
-export const replace = (url: string): Cmd<never> => {
+export const replace = (url: string): Cmd => {
   return () => {
     setTimeout(() => {
       window.history.replaceState(null, "", url)
@@ -71,7 +71,7 @@ export const replace = (url: string): Cmd<never> => {
   }
 }
 
-export const back: Cmd<never> = () => {
+export const back: Cmd = () => {
   setTimeout(() => {
     window.history.back()
     window.dispatchEvent(new Event("popstate"))

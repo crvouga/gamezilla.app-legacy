@@ -44,7 +44,7 @@ export const init = initSharedModel
 export type Msg = BackendMsg
 
 type Update = (
-  wire: { sendToRoom: (msg: ToFrontend) => Cmd<never> },
+  wire: { sendToRoom: (msg: ToFrontend) => Cmd },
   msg: Msg,
   model: Model,
 ) => [Model, Cmd<Msg>]
@@ -78,8 +78,8 @@ export const update_: Update = ({ sendToRoom }, msg, model) => {
 
 type UpdateFromFrontend = (
   wire: {
-    sendToClient: (m: ToFrontend) => Cmd<never>
-    sendToRoom: (m: ToFrontend) => Cmd<never>
+    sendToClient: (m: ToFrontend) => Cmd
+    sendToRoom: (m: ToFrontend) => Cmd
   },
   msg: ToBackend,
   model: Model,

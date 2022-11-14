@@ -69,7 +69,7 @@ export const update = (
   {
     sendToBackend,
   }: {
-    sendToBackend: (msg: ToBackend) => Cmd<never>
+    sendToBackend: (msg: ToBackend) => Cmd
   },
   msg: Msg,
   model: Model,

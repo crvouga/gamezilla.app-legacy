@@ -6,7 +6,7 @@ import * as Rx from "rxjs"
 import { Err, Ok } from "../Core/Result"
 
 import { Config } from "./Config"
-import { ToClient, ToServer } from "./Voice.Types"
+import { ToClient, ToServer } from "./VoiceRoom.Types"
 
 
 type Room = {
