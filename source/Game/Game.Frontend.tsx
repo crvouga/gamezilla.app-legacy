@@ -1,7 +1,7 @@
-import { Cmd, Sub, tagCmd, tagSub, tagUpdate } from "../Core"
+import { Cmd, Sub, tagUpdate } from "../Core"
 import { UserId } from "../Data"
-import * as Snackbar from "../Snackbar"
 import * as ProfileStore from "../Profile/Profile.Store"
+import * as Snackbar from "../Snackbar"
 import * as UI from "../UI"
 import * as Chess from "./Chess/Chess.Frontend"
 import * as ConnectFour from "./ConnectFour/ConnectFour.Frontend"
@@ -13,6 +13,7 @@ import {
   ToBackend,
   ToFrontend
 } from "./Game.Types"
+import * as Maze from "./Maze/Maze.Frontend"
 import * as Snake from "./Snake/Snake.Frontend"
 import * as Tetris from "./Tetris/Tetris.Frontend"
 import * as TicTacToe from "./TicTacToe/TicTacToe.Frontend"
@@ -55,7 +56,11 @@ export const init = ({
       const [child, cmd] = Chess.init({
         sendToBackend: (msg) => sendToBackend(["Chess", msg]),
       })
-      return [["Chess", child], tagCmd("Chess", cmd)]
+      return [["Chess", child], Cmd.tag("Chess", cmd)]
+    }
+
+    case 'Maze': {
+      return [['Maze', Maze.init], Cmd.None]
     }
   }
 }
@@ -84,6 +89,17 @@ export const update = (
   model: Model,
 ): [Model, Cmd<Msg>] => {
   switch (model[0]) {
+
+    case 'Maze': {
+      if (msg[0] === "Maze") {
+        const [child, cmd] = Maze.update(msg[1], model[1])
+
+        return [['Maze', child], Cmd.tag('Maze', cmd)]
+      }
+
+      return [model, Cmd.None]
+    }
+
     case "ConnectFour": {
       if (msg[0] === "ConnectFour") {
         return tagUpdate("ConnectFour", ConnectFour.update({ sendToBackend: msg => sendToBackend(['ConnectFour', msg]) }, msg[1], model[1]))
@@ -184,7 +200,7 @@ export const updateFromBackend = (
     case "ConnectFour": {
       if (model[0] === "ConnectFour") {
         const [child, cmd, actions] = ConnectFour.updateFromBackend(msg[1], model[1])
-        return [["ConnectFour", child], tagCmd("ConnectFour", cmd), actions]
+        return [["ConnectFour", child], Cmd.tag("ConnectFour", cmd), actions]
       }
       return [model, Cmd.None, []]
     }
@@ -192,7 +208,7 @@ export const updateFromBackend = (
     case "Snake": {
       if (model[0] === "Snake") {
         const [child, cmd, actions] = Snake.updateFromBackend(msg[1], model[1])
-        return [["Snake", child], tagCmd("Snake", cmd), actions]
+        return [["Snake", child], Cmd.tag("Snake", cmd), actions]
       }
       return [model, Cmd.None, []]
     }
@@ -200,7 +216,7 @@ export const updateFromBackend = (
     case "TicTacToe": {
       if (model[0] === "TicTacToe") {
         const [child, cmd, actions] = TicTacToe.updateFromBackend(msg[1], model[1])
-        return [['TicTacToe', child], tagCmd("TicTacToe", cmd), actions]
+        return [['TicTacToe', child], Cmd.tag("TicTacToe", cmd), actions]
       }
       return [model, Cmd.None, []]
     }
@@ -217,7 +233,15 @@ export const updateFromBackend = (
           model[1],
         )
 
-        return [["Chess", child], tagCmd("Chess", cmd), actions]
+        return [["Chess", child], Cmd.tag("Chess", cmd), actions]
+      }
+      return [model, Cmd.None, []]
+    }
+
+    case 'Maze': {
+      if (model[0] === 'Maze') {
+        const [child, cmd] = Maze.updateFromBackend(msg[1], model[1])
+        return [['Maze', child], Cmd.tag('Maze', cmd), []]
       }
       return [model, Cmd.None, []]
     }
@@ -240,8 +264,9 @@ export const subscriptions = (
     case "ConnectFour": {
       return Sub.None
     }
+
     case "Snake": {
-      return tagSub(
+      return Sub.tag(
         "Snake",
         Snake.subscriptions(`snake-${intervalId}`, model[1]),
       )
@@ -252,11 +277,15 @@ export const subscriptions = (
     }
 
     case "Chess": {
-      return tagSub("Chess", Chess.subscriptions(model[1]))
+      return Sub.tag("Chess", Chess.subscriptions(model[1]))
     }
 
     case "Tetris": {
-      return tagSub("Tetris", Tetris.subscriptions(model[1]))
+      return Sub.tag("Tetris", Tetris.subscriptions(model[1]))
+    }
+
+    case 'Maze': {
+      return Sub.tag("Maze", Maze.subscriptions(model[1]))
     }
   }
 }
@@ -345,6 +374,15 @@ export const View = ({
         />
       )
     }
+
+    case 'Maze': {
+      const homeComponent = <UI.IconButton onClick={goHome} sx={{ marginLeft: -1 }}><UI.Icons.Home /></UI.IconButton>
+      return <Maze.View
+        homeComponent={homeComponent}
+        roomComponent={roomComponent}
+        dispatch={m => dispatch(['Maze', m])} model={model[1]}
+      />
+    }
   }
 }
 
@@ -369,6 +407,10 @@ export const gameNameToString = (game: GameName): string => {
     case "Tetris": {
       return "Tetris"
     }
+
+    case 'Maze': {
+      return 'Maze'
+    }
   }
 }
 
@@ -388,6 +430,9 @@ export const CoverArt = ({ gameName }: { gameName: GameName }) => {
     }
     case "Tetris": {
       return <Tetris.CoverArt />
+    }
+    case 'Maze': {
+      return <Maze.CoverArt />
     }
   }
 }
@@ -424,7 +469,7 @@ export const mergeWithBackend = ({
           backendModel: backendModel[1],
         })
 
-        return [["Chess", merged[0]], tagCmd("Chess", merged[1])]
+        return [["Chess", merged[0]], Cmd.tag("Chess", merged[1])]
       }
 
       const initial = Chess.init({
@@ -439,7 +484,7 @@ export const mergeWithBackend = ({
 
       return [
         ["Chess", merged[0]],
-        Cmd.batch([tagCmd("Chess", initial[1]), tagCmd("Chess", merged[1])]),
+        Cmd.batch([Cmd.tag("Chess", initial[1]), Cmd.tag("Chess", merged[1])]),
       ]
     }
 
@@ -495,6 +540,14 @@ export const mergeWithBackend = ({
         ["TicTacToe", TicTacToe.mergeWithBackend(initial, backendModel[1])],
         Cmd.None,
       ]
+    }
+
+
+    case 'Maze': {
+      if (frontendModel[0] === 'Maze') {
+        return [['Maze', Maze.mergeWithBackend({ frontendModel: frontendModel[1], backendModel: backendModel[1] })], Cmd.None]
+      }
+      return [['Maze', Maze.init], Cmd.None]
     }
   }
 }

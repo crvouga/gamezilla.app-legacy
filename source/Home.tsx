@@ -329,14 +329,6 @@ const ViewNotInRoom = ({
             </UI.Box>
           ))}
         </UI.Box>
-
-        {/* <UI.Box sx={{ paddingX: 2 }}>
-          <GameRoom.ViewCallToAction
-            onCreateRoom={() =>
-              dispatch(['ClickedCreateRoom'])
-            }
-          />
-        </UI.Box> */}
       </UI.FillBox>
     )
   }

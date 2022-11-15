@@ -1,7 +1,7 @@
 import { Audio, Cmd, exhaustive, Option, Sub, t } from "../../../Core"
 import { UserId } from "../../../Data"
-import * as Snackbar from "../../../Snackbar"
 import * as ProfileStore from "../../../Profile/Profile.Store"
+import * as Snackbar from "../../../Snackbar"
 import * as UI from "../../../UI"
 import * as Board from "../Board"
 import * as Sounds from "../Sounds"

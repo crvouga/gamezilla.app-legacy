@@ -14,8 +14,7 @@ import {
   p,
   Platform,
   Sub,
-  t,
-  tagCmd,
+  t
 } from "./Core"
 import { ClientId, SessionId, UserId } from "./Data"
 import * as GameRoom from "./Game/GameRoom.Backend"
@@ -91,7 +90,7 @@ const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
       return [
         modelNew,
         Cmd.batch<Msg>([
-          tagCmd("GameRoom", gameRoomCmd),
+          Cmd.tag("GameRoom", gameRoomCmd),
         ]),
       ]
     }
@@ -128,7 +127,7 @@ const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
         model.party,
       )
 
-      return [{ ...model, party: child }, tagCmd("Party", childCmd)]
+      return [{ ...model, party: child }, Cmd.tag("Party", childCmd)]
     }
 
     case "GameRoom": {
@@ -141,7 +140,7 @@ const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
         model.gameRoom,
       )
 
-      return [{ ...model, gameRoom: child }, tagCmd("GameRoom", childCmd)]
+      return [{ ...model, gameRoom: child }, Cmd.tag("GameRoom", childCmd)]
     }
 
     default: {
@@ -196,7 +195,7 @@ const updateFromFrontend = (
         model.party,
       )
 
-      return [{ ...model, party: child }, tagCmd("Party", childCmd)]
+      return [{ ...model, party: child }, Cmd.tag("Party", childCmd)]
     }
 
     case "GameRoom": {
@@ -211,7 +210,7 @@ const updateFromFrontend = (
         model.gameRoom,
       )
 
-      return [{ ...model, gameRoom: child }, tagCmd("GameRoom", childCmd)]
+      return [{ ...model, gameRoom: child }, Cmd.tag("GameRoom", childCmd)]
     }
 
   }

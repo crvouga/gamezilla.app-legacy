@@ -1,4 +1,4 @@
-import { Cmd, exhaustive, tagCmd } from "../../Core"
+import { Cmd, exhaustive } from "../../Core"
 import { UserId } from "../../Data"
 import * as ProfileStore from "../../Profile/Profile.Store"
 import * as Snackbar from "../../Snackbar"
@@ -64,7 +64,7 @@ export const update = (
           msg[1],
           model.child,
         )
-        return [{ mode: "UserVsUser", child }, tagCmd("UserVsUser", cmd)]
+        return [{ mode: "UserVsUser", child }, Cmd.tag("UserVsUser", cmd)]
       }
       return [model, Cmd.None]
     }
@@ -79,7 +79,7 @@ export const update = (
           msg[1],
           model.child,
         )
-        return [{ mode: "UserVsBot", child }, tagCmd("UserVsBot", cmd)]
+        return [{ mode: "UserVsBot", child }, Cmd.tag("UserVsBot", cmd)]
       }
       return [model, Cmd.None]
     }
@@ -119,7 +119,7 @@ export const updateFromBackend = (
     case "UserVsBot": {
       if (model.mode === "UserVsBot") {
         const [child, cmd, actions] = UserVsBot.updateFromBackend(msg[1], model.child)
-        return [{ mode: "UserVsBot", child }, tagCmd("UserVsBot", cmd), actions]
+        return [{ mode: "UserVsBot", child }, Cmd.tag("UserVsBot", cmd), actions]
       }
 
       return [model, Cmd.None, []]

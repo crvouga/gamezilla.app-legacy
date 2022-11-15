@@ -1,8 +1,9 @@
-import { Cmd, Sub, tagCmd, tagSub, tagUpdate } from "../Core"
+import { Cmd, Sub } from "../Core"
 import { UserId } from "../Data"
 import * as Chess from "./Chess/Chess.Backend"
 import * as ConnectFour from "./ConnectFour/ConnectFour.Backend"
 import { BackendModel, BackendMsg, ToBackend, ToFrontend } from "./Game.Types"
+import * as Maze from "./Maze/Maze.Backend"
 import * as Snake from "./Snake/Snake.Backend"
 import * as Tetris from "./Tetris/Tetris.Backend"
 import * as TicTacToe from "./TicTacToe/TicTacToe.Backend"
@@ -38,6 +39,10 @@ export const init = ({ gameName }: { gameName: Model[0] }): Model => {
     case "Tetris": {
       return ["Tetris", Tetris.init]
     }
+
+    case 'Maze': {
+      return ["Maze", Maze.init]
+    }
   }
 }
 
@@ -51,82 +56,52 @@ export const init = ({ gameName }: { gameName: Model[0] }): Model => {
 
 export type Msg = BackendMsg
 
-export const update = (
-  {
-    sendToRoom,
-  }: {
-    sendToRoom: (toFrontend: ToFrontend) => Cmd
-  },
-  msg: Msg,
-  model: Model,
-): [Model, Cmd<Msg>] => {
+export const update = ({ sendToRoom }: { sendToRoom: (m: ToFrontend) => Cmd }, msg: Msg, model: Model,): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case "Tetris": {
       if (model[0] === "Tetris") {
-        return tagUpdate(
-          "Tetris",
-          Tetris.update(
-            { sendToRoom: (msg) => sendToRoom(["Tetris", msg]) },
-            msg[1],
-            model[1],
-          ),
-        )
+        const [child, cmd] = Tetris.update({ sendToRoom: m => sendToRoom(['Tetris', m]) }, msg[1], model[1])
+        return [['Tetris', child], Cmd.tag('Tetris', cmd)]
       }
-
       return [model, Cmd.None]
     }
 
     case "ConnectFour": {
       if (model[0] === "ConnectFour") {
-        return tagUpdate("ConnectFour",
-          ConnectFour.update(
-            { sendToRoom: msg => sendToRoom(['ConnectFour', msg]) },
-            msg[1],
-            model[1]
-          )
-        )
+        const [child, cmd] = ConnectFour.update({ sendToRoom: m => sendToRoom(['ConnectFour', m]) }, msg[1], model[1])
+        return [['ConnectFour', child], Cmd.tag('ConnectFour', cmd)]
       }
       return [model, Cmd.None]
     }
 
     case "TicTacToe": {
       if (model[0] === "TicTacToe") {
-        return tagUpdate(
-          "TicTacToe",
-          TicTacToe.update(
-            { sendToRoom: (msg) => sendToRoom(["TicTacToe", msg]) },
-            msg[1],
-            model[1],
-          ),
-        )
+        const [child, cmd] = TicTacToe.update({ sendToRoom: (m) => sendToRoom(["TicTacToe", m]) }, msg[1], model[1],)
+        return [['TicTacToe', child], Cmd.tag("TicTacToe", cmd)]
       }
       return [model, Cmd.None]
     }
 
     case "Snake": {
       if (model[0] === "Snake") {
-        return tagUpdate(
-          "Snake",
-          Snake.update(
-            { sendToRoom: (msg) => sendToRoom(["Snake", msg]) },
-            msg[1],
-            model[1],
-          ),
-        )
+        const [child, cmd] = Snake.update({ sendToRoom: (m) => sendToRoom(["Snake", m]) }, msg[1], model[1],)
+        return [['Snake', child], Cmd.tag("Snake", cmd)]
       }
       return [model, Cmd.None]
     }
 
     case "Chess": {
       if (model[0] === "Chess") {
-        return tagUpdate(
-          "Chess",
-          Chess.update(
-            { sendToRoom: (msg) => sendToRoom(["Chess", msg]) },
-            msg[1],
-            model[1],
-          ),
-        )
+        const [child, cmd] = Chess.update({ sendToRoom: (m) => sendToRoom(["Chess", m]) }, msg[1], model[1])
+        return [['Chess', child], Cmd.tag("Chess", cmd)]
+      }
+      return [model, Cmd.None]
+    }
+
+    case 'Maze': {
+      if (model[0] === 'Maze') {
+        const [child, cmd] = Maze.update(msg[1], model[1])
+        return [['Maze', child], Cmd.tag("Maze", cmd)]
       }
       return [model, Cmd.None]
     }
@@ -149,17 +124,15 @@ export const updateFromFrontend = (
   switch (msg[0]) {
     case "Tetris": {
       if (model[0] === "Tetris") {
-        return tagUpdate(
-          "Tetris",
-          Tetris.updateFromFrontend(
-            {
-              sendToClient: (msg) => sendToClient(["Tetris", msg]),
-              sendToRoom: (msg) => sendToRoom(["Tetris", msg]),
-            },
-            msg[1],
-            model[1],
-          ),
+        const [child, cmd] = Tetris.updateFromFrontend(
+          {
+            sendToClient: (msg) => sendToClient(["Tetris", msg]),
+            sendToRoom: (msg) => sendToRoom(["Tetris", msg]),
+          },
+          msg[1],
+          model[1],
         )
+        return [['Tetris', child], Cmd.tag("Tetris", cmd)]
       }
 
       return [model, Cmd.None]
@@ -167,69 +140,69 @@ export const updateFromFrontend = (
 
     case "ConnectFour": {
       if (model[0] === "ConnectFour") {
-        return tagUpdate(
-          "ConnectFour",
-          ConnectFour.updateFromFrontend(
-            {
-              sendToClient: (msg) => sendToClient(["ConnectFour", msg]),
-              sendToRoom: msg => sendToRoom(['ConnectFour', msg])
-            },
-            msg[1],
-            model[1],
-          ),
+        const [child, cmd] = ConnectFour.updateFromFrontend(
+          {
+            sendToClient: (msg) => sendToClient(["ConnectFour", msg]),
+            sendToRoom: (msg) => sendToRoom(["ConnectFour", msg]),
+          },
+          msg[1],
+          model[1],
         )
+        return [['ConnectFour', child], Cmd.tag("ConnectFour", cmd)]
       }
       return [model, Cmd.None]
     }
 
     case "TicTacToe": {
       if (model[0] === "TicTacToe") {
-        return tagUpdate(
-          "TicTacToe",
-          TicTacToe.updateFromFrontend(
-            {
-              sendToClient: (msg) => sendToClient(["TicTacToe", msg]),
-              sendToRoom: (msg) => sendToRoom(["TicTacToe", msg]),
-            },
-            msg[1],
-            model[1],
-          ),
+        const [child, cmd] = TicTacToe.updateFromFrontend(
+          {
+            sendToClient: (msg) => sendToClient(["TicTacToe", msg]),
+            sendToRoom: (msg) => sendToRoom(["TicTacToe", msg]),
+          },
+          msg[1],
+          model[1],
         )
+        return [['TicTacToe', child], Cmd.tag("TicTacToe", cmd)]
       }
       return [model, Cmd.None]
     }
 
     case "Snake": {
       if (model[0] === "Snake") {
-        return tagUpdate(
-          "Snake",
-          Snake.updateFromFrontend(
-            {
-              sendToClient: (msg) => sendToClient(["Snake", msg]),
-              sendToRoom: (msg) => sendToRoom(["Snake", msg]),
-            },
-            msg[1],
-            model[1],
-          ),
+        const [child, cmd] = Snake.updateFromFrontend(
+          {
+            sendToClient: (msg) => sendToClient(["Snake", msg]),
+            sendToRoom: (msg) => sendToRoom(["Snake", msg]),
+          },
+          msg[1],
+          model[1],
         )
+        return [['Snake', child], Cmd.tag("Snake", cmd)]
       }
       return [model, Cmd.None]
     }
 
     case "Chess": {
       if (model[0] === "Chess") {
-        return tagUpdate(
-          "Chess",
-          Chess.updateFromFrontend(
-            {
-              hostId: hostId,
-              sendToClient: (msg) => sendToClient(["Chess", msg]),
-              sendToRoom: (msg) => sendToRoom(["Chess", msg]),
-            },
-            msg[1],
-            model[1],
-          ),
+        const [child, cmd] = Chess.updateFromFrontend(
+          {
+            hostId: hostId,
+            sendToClient: (msg) => sendToClient(["Chess", msg]),
+            sendToRoom: (msg) => sendToRoom(["Chess", msg]),
+          },
+          msg[1],
+          model[1],
         )
+        return [['Chess', child], Cmd.tag("Chess", cmd)]
+      }
+      return [model, Cmd.None]
+    }
+
+    case 'Maze': {
+      if (model[0] === 'Maze') {
+        const [child, cmd] = Maze.updateFromFrontend(msg[1], model[1])
+        return [['Maze', child], Cmd.tag("Maze", cmd)]
       }
       return [model, Cmd.None]
     }
@@ -240,12 +213,12 @@ export const updateRoomLeave = ({ sendToRoom }: { sendToRoom: (msg: ToFrontend) 
   switch (model[0]) {
     case 'Chess': {
       const [child, cmd] = Chess.updateRoomLeave({ sendToRoom: msg => sendToRoom(['Chess', msg]) }, userId, model[1])
-      return [['Chess', child], tagCmd("Chess", cmd)]
+      return [['Chess', child], Cmd.tag("Chess", cmd)]
     }
 
     case 'ConnectFour': {
       const [child, cmd] = ConnectFour.updateRoomLeave({ userId, model: model[1], sendToRoom: msg => sendToRoom(['ConnectFour', msg]) },)
-      return [['ConnectFour', child], tagCmd("ConnectFour", cmd)]
+      return [['ConnectFour', child], Cmd.tag("ConnectFour", cmd)]
     }
 
     case 'Snake': {
@@ -258,7 +231,13 @@ export const updateRoomLeave = ({ sendToRoom }: { sendToRoom: (msg: ToFrontend) 
 
     case 'TicTacToe': {
       const [child, cmd] = TicTacToe.updateRoomLeave({ sendToRoom: msg => sendToRoom(['TicTacToe', msg]) }, userId, model[1])
-      return [['TicTacToe', child], tagCmd("TicTacToe", cmd)]
+      return [['TicTacToe', child], Cmd.tag("TicTacToe", cmd)]
+    }
+
+    case 'Maze': {
+      const [child, cmd] = Maze.updateRoomLeave(userId, model[1])
+      return [['Maze', child], Cmd.tag("Maze", cmd)]
+
     }
   }
 }
@@ -277,19 +256,22 @@ export const subscriptions = (
 ): Sub<Msg> => {
   switch (model[0]) {
     case "ConnectFour": {
-      return tagSub("ConnectFour", ConnectFour.subscriptions(intervalId, model[1]))
+      return Sub.tag("ConnectFour", ConnectFour.subscriptions(intervalId, model[1]))
     }
     case "TicTacToe": {
-      return tagSub("TicTacToe", TicTacToe.subscriptions(intervalId, model[1]))
+      return Sub.tag("TicTacToe", TicTacToe.subscriptions(intervalId, model[1]))
     }
     case "Snake": {
-      return tagSub("Snake", Snake.subscriptions(intervalId, model[1]))
+      return Sub.tag("Snake", Snake.subscriptions(intervalId, model[1]))
     }
     case "Chess": {
-      return tagSub("Chess", Chess.subscriptions(intervalId, model[1]))
+      return Sub.tag("Chess", Chess.subscriptions(intervalId, model[1]))
     }
     case "Tetris": {
-      return tagSub("Tetris", Tetris.subscriptions(intervalId, model[1]))
+      return Sub.tag("Tetris", Tetris.subscriptions(intervalId, model[1]))
+    }
+    case 'Maze': {
+      return Sub.tag("Maze", Maze.subscriptions(model[1]))
     }
   }
 }

@@ -1,4 +1,6 @@
 import * as Rx from "rxjs"
+import { p } from "./pipe"
+import { t } from "./Utility"
 
 export interface Sub<Msg> extends Rx.Observable<Msg> { }
 
@@ -30,9 +32,14 @@ export const create = <Msg>(
   })
 }
 
+export const tag = <Tag extends string, Msg>(tagName: Tag, sub: Sub<Msg>): Sub<[Tag, Msg]> => {
+  return p(sub, Sub.map(t(tagName)))
+}
+
 export const Sub = {
   map,
   batch,
   create,
   None,
+  tag,
 }
