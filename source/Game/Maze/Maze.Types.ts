@@ -8,8 +8,10 @@ import { UserId } from "../../Data"
 //
 //
 
-export type SharedModel = {
-  maze: Maze
+export type SharedModel = SetupModel
+
+export type SetupModel = {
+  type: "Setup"
   players: {
     [userId: UserId]: {
       userId: UserId
@@ -27,6 +29,25 @@ export type Cell = {
   hasTop: boolean
   hasLeft: boolean
 }
+
+export const generateMaze = () => { }
+
+// 
+// 
+// 
+// Msg
+// 
+// 
+// 
+
+export type FrontendMsg = ['None']
+
+export type BackendMsg = ['None']
+
+export type ToFrontend = ['None']
+
+export type ToBackend = ['None']
+
 
 //
 //
@@ -56,4 +77,9 @@ export const initMaze = ({
   }
 
   return maze
+}
+
+export const initShared: SharedModel = {
+  type: "Setup",
+  players: {},
 }

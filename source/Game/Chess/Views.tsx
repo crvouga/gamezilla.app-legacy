@@ -1,6 +1,6 @@
 import { UserId } from "../../Data"
-import * as UI from "../../UI"
 import * as ProfileStore from "../../Profile/Profile.Store"
+import * as UI from "../../UI"
 import { bannerArtAspectRatio } from "../Views"
 
 export const theme = {

@@ -57,13 +57,6 @@ export const tagUpdate = <TagName extends string, Model, Msg>(
   ]
 }
 
-export const tagCmd = <TagName extends string, Msg>(
-  tagName: TagName,
-  cmd: Cmd<Msg>,
-): Cmd<[TagName, Msg]> => {
-  return p(cmd, Cmd.map(t(tagName)))
-}
-
 export const tagSub = <TagName extends string, Msg>(
   tagName: TagName,
   sub: Sub<Msg>,

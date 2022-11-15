@@ -1,4 +1,4 @@
-import { Cmd, exhaustive, Sub, tagCmd, tagSub } from "../../Core"
+import { Cmd, exhaustive, Sub, tagSub } from "../../Core"
 import { Ok } from "../../Core/Result"
 import {
   BackendModel,
@@ -49,7 +49,7 @@ export const update = (
           msg[1],
           model.child,
         )
-        return [{ mode: "UserVsUser", child }, tagCmd("UserVsUser", cmd)]
+        return [{ mode: "UserVsUser", child }, Cmd.tag("UserVsUser", cmd)]
       }
       return [model, Cmd.None]
     }
@@ -61,7 +61,7 @@ export const update = (
           msg[1],
           model.child,
         )
-        return [{ mode: "UserVsBot", child }, tagCmd("UserVsBot", cmd)]
+        return [{ mode: "UserVsBot", child }, Cmd.tag("UserVsBot", cmd)]
       }
       return [model, Cmd.None]
     }
@@ -98,7 +98,7 @@ export const updateFromFrontend = (
           model.child,
         )
 
-        return [{ mode: "UserVsUser", child }, tagCmd("UserVsUser", cmd)]
+        return [{ mode: "UserVsUser", child }, Cmd.tag("UserVsUser", cmd)]
       }
 
       return [model, Cmd.None]
@@ -115,7 +115,7 @@ export const updateFromFrontend = (
           model.child,
         )
 
-        return [{ mode: "UserVsBot", child }, tagCmd("UserVsBot", cmd)]
+        return [{ mode: "UserVsBot", child }, Cmd.tag("UserVsBot", cmd)]
       }
 
       return [model, Cmd.None]
@@ -135,12 +135,12 @@ export const updateRoomLeave = ({ sendToRoom }: { sendToRoom: (m: ToFrontend) =>
 
     case 'UserVsBot': {
       const [child, cmd] = UserVsBot.updateRoomLeave({ sendToRoom: m => sendToRoom(['UserVsBot', m]), userId, model: model.child })
-      return [{ mode: 'UserVsBot', child }, tagCmd("UserVsBot", cmd)]
+      return [{ mode: 'UserVsBot', child }, Cmd.tag("UserVsBot", cmd)]
     }
 
     case 'UserVsUser': {
       const [child, cmd] = UserVsUser.updateRoomLeave({ sendToRoom: m => sendToRoom(['UserVsUser', m]) }, userId, model.child)
-      return [{ mode: "UserVsUser", child }, tagCmd("UserVsUser", cmd)]
+      return [{ mode: "UserVsUser", child }, Cmd.tag("UserVsUser", cmd)]
     }
   }
 }

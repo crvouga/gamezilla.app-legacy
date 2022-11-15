@@ -1,14 +1,12 @@
-import { Cmd, Sub, tagCmd, tagSub } from "../../Core"
+import { Cmd, Sub, tagSub } from "../../Core"
+import { UserId } from "../../Data/UserId"
 import {
   BackendModel,
-  BackendMsg,
-  ToBackend,
-  ToFrontend,
-  Mode
+  BackendMsg, Mode, ToBackend,
+  ToFrontend
 } from "./ConnectFour.Types"
-import * as UserVsUser from "./UserVsUser/UserVsUser.Backend"
 import * as UserVsBot from "./UserVsBot/UserVsBot.Backend"
-import { UserId } from "../../Data/UserId"
+import * as UserVsUser from "./UserVsUser/UserVsUser.Backend"
 
 //
 //
@@ -41,7 +39,7 @@ export const update = ({ sendToRoom }: { sendToRoom: (msg: ToFrontend) => Cmd },
           msg[1],
           model.child
         )
-        return [{ type: "UserVsUser", child }, tagCmd("UserVsUser", cmd)]
+        return [{ type: "UserVsUser", child }, Cmd.tag("UserVsUser", cmd)]
       }
 
       return [model, Cmd.None]
@@ -54,7 +52,7 @@ export const update = ({ sendToRoom }: { sendToRoom: (msg: ToFrontend) => Cmd },
           msg[1],
           model.child
         )
-        return [{ type: "UserVsBot", child }, tagCmd("UserVsBot", cmd)]
+        return [{ type: "UserVsBot", child }, Cmd.tag("UserVsBot", cmd)]
       }
 
       return [model, Cmd.None]
@@ -83,7 +81,7 @@ export const updateFromFrontend = (
           msg[1],
           model.child
         )
-        return [{ type: "UserVsUser", child }, tagCmd("UserVsUser", cmd)]
+        return [{ type: "UserVsUser", child }, Cmd.tag("UserVsUser", cmd)]
       }
       return [model, Cmd.None]
     }
@@ -95,7 +93,7 @@ export const updateFromFrontend = (
           msg[1],
           model.child
         )
-        return [{ type: "UserVsBot", child }, tagCmd("UserVsBot", cmd)]
+        return [{ type: "UserVsBot", child }, Cmd.tag("UserVsBot", cmd)]
       }
 
       return [model, Cmd.None]
@@ -111,12 +109,12 @@ export const updateRoomLeave = ({ userId, sendToRoom, model }: { userId: UserId,
 
     case 'UserVsBot': {
       const [child, cmd] = UserVsBot.updateRoomLeave({ userId, model: model.child, sendToRoom: m => sendToRoom(['UserVsBot', m]) })
-      return [{ type: "UserVsBot", child }, tagCmd("UserVsBot", cmd)]
+      return [{ type: "UserVsBot", child }, Cmd.tag("UserVsBot", cmd)]
     }
 
     case 'UserVsUser': {
       const [child, cmd] = UserVsUser.updateRoomLeave({ userId, model: model.child, sendToRoom: m => sendToRoom(['UserVsUser', m]) })
-      return [{ type: "UserVsUser", child }, tagCmd("UserVsUser", cmd)]
+      return [{ type: "UserVsUser", child }, Cmd.tag("UserVsUser", cmd)]
     }
   }
 }

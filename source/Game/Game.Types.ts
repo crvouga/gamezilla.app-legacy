@@ -1,5 +1,6 @@
 import * as Chess from "./Chess/Chess.Types"
 import * as ConnectFour from "./ConnectFour/ConnectFour.Types"
+import * as Maze from "./Maze/Maze.Types"
 import * as Snake from "./Snake/Snake.Types"
 import * as Tetris from "./Tetris/Tetris.Types"
 import * as TicTacToe from "./TicTacToe/TicTacToe.Types"
@@ -18,6 +19,7 @@ export type FrontendModel =
   | ["Snake", Snake.FrontendModel]
   | ["Chess", Chess.FrontendModel]
   | ["Tetris", Tetris.FrontendModel]
+  | ['Maze', Maze.FrontendModel]
 
 export type BackendModel =
   | ["TicTacToe", TicTacToe.BackendModel]
@@ -25,6 +27,7 @@ export type BackendModel =
   | ["Snake", Snake.BackendModel]
   | ["Chess", Chess.BackendModel]
   | ["Tetris", Tetris.BackendModel]
+  | ['Maze', Maze.BackendModel]
 
 export type GameName =
   | "TicTacToe"
@@ -32,6 +35,7 @@ export type GameName =
   | "Snake"
   | "Chess"
   | "Tetris"
+  | "Maze"
 
 export const gameNames: { [gameName in GameName]: GameName } = {
   TicTacToe: "TicTacToe",
@@ -39,9 +43,10 @@ export const gameNames: { [gameName in GameName]: GameName } = {
   Snake: "Snake",
   Chess: "Chess",
   Tetris: "Tetris",
+  Maze: "Maze"
 }
 
-export const gameNameList: GameName[] = ["Chess", "TicTacToe", "ConnectFour"]
+export const gameNameList: GameName[] = ["Maze", "Chess", "TicTacToe", "ConnectFour",]
 
 //
 //
@@ -57,6 +62,7 @@ export type BackendMsg =
   | ["Snake", Snake.BackendMsg]
   | ["Chess", Chess.BackendMsg]
   | ["Tetris", Tetris.BackendMsg]
+  | ["Maze", Maze.BackendMsg]
 
 export type FrontendMsg =
   | ["TicTacToe", TicTacToe.FrontendMsg]
@@ -64,6 +70,7 @@ export type FrontendMsg =
   | ["Snake", Snake.FrontendMsg]
   | ["Chess", Chess.FrontendMsg]
   | ["Tetris", Tetris.FrontendMsg]
+  | ["Maze", Maze.FrontendMsg]
 
 export type ToFrontend =
   | ["TicTacToe", TicTacToe.ToFrontend]
@@ -71,6 +78,7 @@ export type ToFrontend =
   | ["Snake", Snake.ToFrontend]
   | ["Chess", Chess.ToFrontend]
   | ["Tetris", Tetris.ToFrontend]
+  | ["Maze", Maze.ToFrontend]
 
 export type ToBackend =
   | ["TicTacToe", TicTacToe.ToBackend]
@@ -78,3 +86,4 @@ export type ToBackend =
   | ["Snake", Snake.ToBackend]
   | ["Chess", Chess.ToBackend]
   | ["Tetris", Tetris.ToBackend]
+  | ["Maze", Maze.ToFrontend]

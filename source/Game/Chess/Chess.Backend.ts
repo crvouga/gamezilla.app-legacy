@@ -2,7 +2,6 @@ import {
   Cmd,
   exhaustive,
   Sub,
-  tagCmd,
   tagSub
 } from "../../Core"
 import { Err, Ok } from "../../Core/Result"
@@ -56,7 +55,7 @@ export const update = (
           model[1],
         )
 
-        return [["UserVsUser", child], tagCmd("UserVsUser", cmd)]
+        return [["UserVsUser", child], Cmd.tag("UserVsUser", cmd)]
       }
 
       return [model, Cmd.None]
@@ -70,7 +69,7 @@ export const update = (
           model[1],
         )
 
-        return [["UserVsBot", child], tagCmd("UserVsBot", cmd)]
+        return [["UserVsBot", child], Cmd.tag("UserVsBot", cmd)]
       }
 
       return [model, Cmd.None]
@@ -117,7 +116,7 @@ export const updateFromFrontend = (
           model[1],
         )
 
-        return [["UserVsBot", child], tagCmd("UserVsBot", cmd)]
+        return [["UserVsBot", child], Cmd.tag("UserVsBot", cmd)]
       }
 
       return [model, Cmd.None]
@@ -134,7 +133,7 @@ export const updateFromFrontend = (
           model[1],
         )
 
-        return [["UserVsUser", child], tagCmd("UserVsUser", cmd)]
+        return [["UserVsUser", child], Cmd.tag("UserVsUser", cmd)]
       }
 
       return [model, Cmd.None]
@@ -150,12 +149,12 @@ export const updateRoomLeave = ({ sendToRoom }: { sendToRoom: (msg: ToFrontend) 
 
     case 'UserVsBot': {
       const [child, cmd] = UserVsBot.updateRoomLeave({ sendToRoom: msg => sendToRoom(['UserVsBot', msg]) }, userId, model[1])
-      return [['UserVsBot', child], tagCmd("UserVsBot", cmd)]
+      return [['UserVsBot', child], Cmd.tag("UserVsBot", cmd)]
     }
 
     case 'UserVsUser': {
       const [child, cmd] = UserVsUser.updateRoomLeave({ sendToRoom: msg => sendToRoom(['UserVsUser', msg]) }, userId, model[1])
-      return [['UserVsUser', child], tagCmd("UserVsUser", cmd)]
+      return [['UserVsUser', child], Cmd.tag("UserVsUser", cmd)]
     }
   }
 }

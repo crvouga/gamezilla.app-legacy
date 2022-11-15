@@ -2,8 +2,8 @@ import {
   Audio,
   Cmd,
   p,
-  RemoteData, Sub,
-  tagCmd,
+  RemoteData,
+  Sub,
   Unit
 } from "../../Core"
 import { UserId } from "../../Data"
@@ -90,7 +90,7 @@ export const update = (
 
         return [
           { ...model, mode: ["UserVsUser", child] },
-          tagCmd("UserVsUser", cmd),
+          Cmd.tag("UserVsUser", cmd),
         ]
       }
 
@@ -107,7 +107,7 @@ export const update = (
 
         return [
           { ...model, mode: ["UserVsBot", child] },
-          tagCmd("UserVsBot", cmd),
+          Cmd.tag("UserVsBot", cmd),
         ]
       }
 
@@ -167,7 +167,7 @@ export const updateFromBackend = (
 
         return [
           { ...model, mode: ["UserVsUser", child] },
-          tagCmd("UserVsUser", cmd),
+          Cmd.tag("UserVsUser", cmd),
           actions,
         ]
       }
@@ -184,7 +184,7 @@ export const updateFromBackend = (
 
         return [
           { ...model, mode: ["UserVsBot", child] },
-          tagCmd("UserVsBot", cmd),
+          Cmd.tag("UserVsBot", cmd),
           actions,
         ]
       }
@@ -419,7 +419,7 @@ export const mergeWithBackend = ({
             UserVsUser.mergeWithBackend(child, backendModel[1]),
           ],
         },
-        tagCmd("UserVsUser", childCmd),
+        Cmd.tag("UserVsUser", childCmd),
       ]
     }
 
@@ -452,7 +452,7 @@ export const mergeWithBackend = ({
             UserVsBot.mergeWithBackend(child, backendModel[1]),
           ],
         },
-        tagCmd("UserVsBot", childCmd),
+        Cmd.tag("UserVsBot", childCmd),
       ]
     }
   }

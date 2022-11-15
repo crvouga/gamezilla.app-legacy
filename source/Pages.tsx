@@ -12,7 +12,7 @@ import {
   ChatNew
 } from "./Chat"
 import * as ChatStore from "./Chat/Chat.Store"
-import { Cmd, exhaustive, p, Sub, t, tagCmd, tagSub } from "./Core"
+import { Cmd, exhaustive, p, Sub, t, tagSub } from "./Core"
 import { PhoneNumber, UserId } from "./Data"
 import * as GameRoom from "./Game/GameRoom.Frontend"
 import * as GameRoomPage from "./Game/GameRoomPage"
@@ -46,11 +46,7 @@ export type Model =
   | ["Login", Login.Model]
   | ["LoginEmailLink", LoginEmailLink.Model]
   | ["LoginPhone", LoginPhone.Model]
-  | [
-    "LoginPhoneVerify",
-    { phoneNumber: PhoneNumber },
-    LoginPhoneVerify.Model,
-  ]
+  | ["LoginPhoneVerify",{ phoneNumber: PhoneNumber },LoginPhoneVerify.Model]
   | ["Home", Home.Model]
   | ["ProfileCreate", ProfileCreate.Model]
   | ["Logout", Logout.Model]
@@ -152,7 +148,7 @@ export const initReady = (
       })
       return [
         ["ChatConversation", route[1], child],
-        tagCmd("ChatConversation", cmd),
+        Cmd.tag("ChatConversation", cmd),
         actions,
       ]
     }
@@ -438,7 +434,7 @@ export const updateReady = (
         )
         return [
           ["ChatConversation", model[1], child],
-          tagCmd("ChatConversation", cmd),
+          Cmd.tag("ChatConversation", cmd),
           actions,
         ]
       }
@@ -494,7 +490,7 @@ export const updateReady = (
           msg[1],
           model[1],
         )
-        return [["Party", child], tagCmd("Party", cmd), actions]
+        return [["Party", child], Cmd.tag("Party", cmd), actions]
       }
 
       return [model, Cmd.None, []]
@@ -612,7 +608,7 @@ export const updateLoggedOut = (
         const [child, cmd] = LoginPhoneVerify.update(model[1], msg[1], model[2])
         return [
           ["LoginPhoneVerify", model[1], child],
-          tagCmd("LoginPhoneVerify", cmd),
+          Cmd.tag("LoginPhoneVerify", cmd),
           [],
         ]
       }

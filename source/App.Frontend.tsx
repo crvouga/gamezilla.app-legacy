@@ -6,13 +6,17 @@ import * as ChatStore from "./Chat/Chat.Store"
 import {
   andThen,
   andThenMany,
-  Browser, Cmd,
-  Debug as DebugCore,
-  exhaustive, LocalStorage, Option,
-  p, Platform, RemoteData,
+  Browser,
+  Cmd,
+  Debug,
+  exhaustive,
+  LocalStorage,
+  Option,
+  p,
+  Platform,
+  RemoteData,
   Sub,
   t,
-  tagCmd,
   tagSub
 } from "./Core"
 import * as GameRoom from "./Game/GameRoom.Frontend"
@@ -69,10 +73,10 @@ const init = (location: Browser.Location): [Model, Cmd<Msg>] => {
       wire: "Connecting",
     },
     Cmd.batch<Msg>([
-      tagCmd("Auth", authCmd),
-      tagCmd("Page", pageCmd),
-      tagCmd("GameRoom", gameRoomCmd),
-      tagCmd("Party", partyCmd),
+      Cmd.tag("Auth", authCmd),
+      Cmd.tag("Page", pageCmd),
+      Cmd.tag("GameRoom", gameRoomCmd),
+      Cmd.tag("Party", partyCmd),
     ]),
   ]
 }
@@ -121,7 +125,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
     case "Store": {
       const [storeNew, storeCmd] = ChatStore.update(msg[1], model.chatStore)
 
-      return [{ ...model, chatStore: storeNew }, tagCmd("Store", storeCmd)]
+      return [{ ...model, chatStore: storeNew }, Cmd.tag("Store", storeCmd)]
     }
 
     case "Auth": {
@@ -131,7 +135,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
         model.auth,
       )
 
-      return [{ ...model, auth: authNew }, tagCmd("Auth", authCmd)]
+      return [{ ...model, auth: authNew }, Cmd.tag("Auth", authCmd)]
     }
 
     case "Snackbar": {
@@ -139,7 +143,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
 
       return [
         { ...model, snackbar: snackbarNew },
-        tagCmd("Snackbar", snackbarCmd),
+        Cmd.tag("Snackbar", snackbarCmd),
       ]
     }
 
@@ -149,7 +153,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
         msg[1],
         model.party,
       )
-      return [{ ...model, party: child }, tagCmd("Party", childCmd)]
+      return [{ ...model, party: child }, Cmd.tag("Party", childCmd)]
     }
 
     case "Route": {
@@ -195,7 +199,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
         model.gameRoom,
       )
 
-      return p([{ ...model, gameRoom: child }, tagCmd("GameRoom", childCmd)])
+      return p([{ ...model, gameRoom: child }, Cmd.tag("GameRoom", childCmd)])
     }
 
     case "Page": {
@@ -205,7 +209,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
 
     case 'ProfileStore': {
       const [modelNew, cmd] = ProfileStore.update(msg[1], model.profileStore)
-      return [{ ...model, profileStore: modelNew }, tagCmd("ProfileStore", cmd)]
+      return [{ ...model, profileStore: modelNew }, Cmd.tag("ProfileStore", cmd)]
     }
 
     default:
@@ -228,7 +232,7 @@ const updatePage = (
     case "LoggedOut": {
       const [pageNew, pageCmd, actions] = Pages.updateLoggedOut(msg, model.page)
 
-      return [{ ...model, page: pageNew }, tagCmd("Page", pageCmd), actions]
+      return [{ ...model, page: pageNew }, Cmd.tag("Page", pageCmd), actions]
     }
 
     case "ProfileMissing": {
@@ -238,7 +242,7 @@ const updatePage = (
         model.page,
       )
 
-      return [{ ...model, page: pageNew }, tagCmd("Page", pageCmd), actions]
+      return [{ ...model, page: pageNew }, Cmd.tag("Page", pageCmd), actions]
     }
 
     case "Ready": {
@@ -250,7 +254,7 @@ const updatePage = (
         msg,
         model.page,
       )
-      return [{ ...model, page: pageNew }, tagCmd("Page", pageCmd), actions]
+      return [{ ...model, page: pageNew }, Cmd.tag("Page", pageCmd), actions]
     }
 
     default:
@@ -290,7 +294,7 @@ const updateFromBackend = (
       )
 
       return p(
-        [{ ...model, party }, tagCmd("Party", partyCmd)],
+        [{ ...model, party }, Cmd.tag("Party", partyCmd)],
         andThenMany(runAction, actions),
       )
     }
@@ -313,7 +317,7 @@ const updateFromBackend = (
       )
 
       return p(
-        [{ ...model, gameRoom }, tagCmd("GameRoom", gameRoomCmd)],
+        [{ ...model, gameRoom }, Cmd.tag("GameRoom", gameRoomCmd)],
         andThenMany(runAction, actions),
       )
     }
@@ -349,12 +353,12 @@ const initPage = (model: Model): [Model, Cmd<Msg>] => {
         status[1].authSession,
       )
 
-      return [{ ...model, page }, tagCmd("Page", pageCmd)]
+      return [{ ...model, page }, Cmd.tag("Page", pageCmd)]
     }
 
     case "LoggedOut": {
       const [page, pageCmd] = Pages.initLoggedOut(model.route)
-      return [{ ...model, page }, tagCmd("Page", pageCmd)]
+      return [{ ...model, page }, Cmd.tag("Page", pageCmd)]
     }
 
     case "Ready": {
@@ -363,7 +367,7 @@ const initPage = (model: Model): [Model, Cmd<Msg>] => {
         status[1].profile,
       )
       return p(
-        [{ ...model, page }, tagCmd("Page", pageCmd)],
+        [{ ...model, page }, Cmd.tag("Page", pageCmd)],
         andThenMany(runAction, actions),
       )
     }
@@ -391,7 +395,7 @@ const runAction = (action: OutAction, model: Model): [Model, Cmd<Msg>] => {
   switch (action[0]) {
     case "Chat": {
       const [chatNew, chatCmd] = ChatStore.runAction(action, model.chatStore)
-      return [{ ...model, chatStore: chatNew }, tagCmd("Store", chatCmd)]
+      return [{ ...model, chatStore: chatNew }, Cmd.tag("Store", chatCmd)]
     }
 
     case "Snackbar": {
@@ -401,7 +405,7 @@ const runAction = (action: OutAction, model: Model): [Model, Cmd<Msg>] => {
       )
       return [
         { ...model, snackbar: snackbarNew },
-        tagCmd("Snackbar", snackbarCmd),
+        Cmd.tag("Snackbar", snackbarCmd),
       ]
     }
 
@@ -420,12 +424,12 @@ const runAction = (action: OutAction, model: Model): [Model, Cmd<Msg>] => {
         action,
         model.gameRoom,
       )
-      return [{ ...model, gameRoom }, tagCmd("GameRoom", gameRoomCmd)]
+      return [{ ...model, gameRoom }, Cmd.tag("GameRoom", gameRoomCmd)]
     }
 
     case "Auth": {
       const [authNew, authCmd] = Auth.runAction(action, model.auth)
-      return [{ ...model, auth: authNew }, tagCmd("Auth", authCmd)]
+      return [{ ...model, auth: authNew }, Cmd.tag("Auth", authCmd)]
     }
 
     case "Party": {
@@ -434,18 +438,18 @@ const runAction = (action: OutAction, model: Model): [Model, Cmd<Msg>] => {
         action,
         model.party,
       )
-      return [{ ...model, party }, tagCmd("Party", partyCmd)]
+      return [{ ...model, party }, Cmd.tag("Party", partyCmd)]
     }
 
     case "Route": {
       const [route, routeCmd] = Route.runAction(action, model.route)
 
-      return [{ ...model, route }, tagCmd("Route", routeCmd)]
+      return [{ ...model, route }, Cmd.tag("Route", routeCmd)]
     }
 
     case 'Profile': {
       const [profileStore, profileStoreCmd] = ProfileStore.runAction(action, model.profileStore)
-      return [{ ...model, profileStore, }, tagCmd("ProfileStore", profileStoreCmd)]
+      return [{ ...model, profileStore, }, Cmd.tag("ProfileStore", profileStoreCmd)]
     }
 
     default:
@@ -794,7 +798,7 @@ Wire._sendToBackend.subscribe((msg) => {
 //
 //
 
-const { program } = DebugCore.ReduxDevTools.withDebugger(
+const { program } = Debug.ReduxDevTools.withDebugger(
   Platform.createProgram({
     init: init(Browser.getLocation()),
     subscriptions,
