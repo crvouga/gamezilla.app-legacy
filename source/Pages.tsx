@@ -46,7 +46,7 @@ export type Model =
   | ["Login", Login.Model]
   | ["LoginEmailLink", LoginEmailLink.Model]
   | ["LoginPhone", LoginPhone.Model]
-  | ["LoginPhoneVerify",{ phoneNumber: PhoneNumber },LoginPhoneVerify.Model]
+  | ["LoginPhoneVerify", { phoneNumber: PhoneNumber }, LoginPhoneVerify.Model]
   | ["Home", Home.Model]
   | ["ProfileCreate", ProfileCreate.Model]
   | ["Logout", Logout.Model]
@@ -652,7 +652,7 @@ export const updateLoggedOut = (
 export const subscriptions = (model: Model): Sub<Msg> => {
   switch (model[0]) {
     case "ChatNew":
-      return tagSub("ChatNew", ChatNew.subscriptions(model[1]))
+      return Sub.tag("ChatNew", ChatNew.subscriptions(model[1]))
 
     case "Account":
     case "Chat":

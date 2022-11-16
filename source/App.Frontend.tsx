@@ -470,9 +470,9 @@ const subscriptions = (model: Model): Sub<Msg> => {
     Wire.onConnectionStatus(t("Wire")),
     Wire.fromBackend(t("▶")),
     Browser.onLocation(onLocationChange),
-    tagSub("Party", Party.subscriptions(model.party)),
-    tagSub("Page", Pages.subscriptions(model.page)),
-    tagSub("Auth", Auth.subscriptions),
+    Sub.tag("Party", Party.subscriptions(model.party)),
+    Sub.tag("Page", Pages.subscriptions(model.page)),
+    Sub.tag("Auth", Auth.subscriptions),
     gameRoomSub(model),
   ])
 }
@@ -488,7 +488,7 @@ const gameRoomSub = (model: Model): Sub<Msg> => {
     }
 
     case "LoggedIn": {
-      return tagSub(
+      return Sub.tag(
         "GameRoom",
         GameRoom.subscriptions(
           { currentUserId: model.auth[1].userId },

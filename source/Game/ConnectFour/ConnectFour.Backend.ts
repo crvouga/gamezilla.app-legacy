@@ -1,8 +1,10 @@
-import { Cmd, Sub, tagSub } from "../../Core"
+import { Cmd, Sub } from "../../Core"
 import { UserId } from "../../Data/UserId"
 import {
   BackendModel,
-  BackendMsg, Mode, ToBackend,
+  BackendMsg,
+  Mode,
+  ToBackend,
   ToFrontend
 } from "./ConnectFour.Types"
 import * as UserVsBot from "./UserVsBot/UserVsBot.Backend"
@@ -161,7 +163,7 @@ export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
     }
 
     case 'UserVsUser': {
-      return tagSub("UserVsUser", UserVsUser.subscriptions(intervalId, model.child))
+      return Sub.tag("UserVsUser", UserVsUser.subscriptions(intervalId, model.child))
     }
   }
 }

@@ -1,14 +1,14 @@
-import { Cmd, exhaustive, Sub, tagSub } from "../../Core"
+import { Cmd, exhaustive, Sub } from "../../Core"
 import { Ok } from "../../Core/Result"
+import { UserId } from "../../Data"
 import {
   BackendModel,
   BackendMsg,
   ToBackend,
-  ToFrontend,
+  ToFrontend
 } from "./TicTacToe.Types"
-import * as UserVsUser from "./UserVsUser/UserVsUser.Backend"
 import * as UserVsBot from "./UserVsBot/UserVsBot.Backend"
-import { UserId } from "../../Data"
+import * as UserVsUser from "./UserVsUser/UserVsUser.Backend"
 
 //
 //
@@ -193,14 +193,11 @@ export const subscriptions = (
     }
 
     case "UserVsUser": {
-      return tagSub(
-        "UserVsUser",
-        UserVsUser.subscriptions(intervalId, model.child),
-      )
+      return Sub.tag("UserVsUser", UserVsUser.subscriptions(intervalId, model.child))
     }
 
     case "UserVsBot": {
-      return tagSub("UserVsBot", UserVsBot.subscriptions(model.child))
+      return Sub.tag("UserVsBot", UserVsBot.subscriptions(model.child))
     }
   }
 }
