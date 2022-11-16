@@ -12,7 +12,7 @@ import {
   ChatNew
 } from "./Chat"
 import * as ChatStore from "./Chat/Chat.Store"
-import { Cmd, exhaustive, p, Sub, t, tagSub } from "./Core"
+import { Cmd, exhaustive, p, Sub, t } from "./Core"
 import { PhoneNumber, UserId } from "./Data"
 import * as GameRoom from "./Game/GameRoom.Frontend"
 import * as GameRoomPage from "./Game/GameRoomPage"
