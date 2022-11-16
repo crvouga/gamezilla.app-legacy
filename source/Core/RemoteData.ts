@@ -1,6 +1,4 @@
-import { p } from "./pipe"
-import { Result, Err, Ok } from "./Result"
-
+import { Err, Ok, Result } from "./Result"
 
 export type RemoteData<TError, TValue> =
   | NotAsked
@@ -23,7 +21,7 @@ export const map =
 
         case "Err":
         case "Ok":
-          return p(remoteData, Result.map(mapper))
+          return Result.map(mapper)(remoteData)
       }
     }
 
