@@ -17,7 +17,6 @@ import {
   RemoteData,
   Sub,
   t,
-  tagSub
 } from "./Core"
 import * as GameRoom from "./Game/GameRoom.Frontend"
 import * as Pages from "./Pages"
