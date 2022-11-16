@@ -1,29 +1,18 @@
 import { Cmd, exhaustive, Sub, Time } from "../../../Core"
+import { UserId } from "../../../Data"
 import { PlayerType, toOpposite, toTurn } from "../TicTacToe"
+import * as Round from "./Round"
 import {
   BackendModel,
-  BackendMsg,
-  roundCountDown,
-  initSharedModel,
+  BackendMsg, initSharedModel,
   inputBestOutOf,
   inputMove,
   inputMoveTimeLimit,
-  inputPlayer,
-  newGame,
-  resign,
-  startGame,
+  inputPlayer, moveCountDown, newGame, rematchAccept, rematchAsk, rematchCancel, rematchDecline, Res, resign, roundCountDown, startGame,
   stopPlaying,
   ToBackend,
-  ToFrontend,
-  moveCountDown,
-  rematchAccept,
-  Res,
-  rematchAsk,
-  rematchDecline,
-  rematchCancel,
+  ToFrontend
 } from "./UserVsUser.Types"
-import * as Round from "./Round"
-import { UserId } from "../../../Data"
 
 //
 //

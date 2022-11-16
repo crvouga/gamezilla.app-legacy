@@ -208,14 +208,14 @@ export const subscriptions = (
     }
 
     case "UserVsUser": {
-      return tagSub(
+      return Sub.tag(
         "UserVsUser",
         UserVsUser.subscriptions(intervalId, model[1]),
       )
     }
 
     case "UserVsBot": {
-      return tagSub("UserVsBot", UserVsBot.subscriptions(intervalId, model[1]))
+      return Sub.tag("UserVsBot", UserVsBot.subscriptions(intervalId, model[1]))
     }
   }
 }
