@@ -1,3 +1,4 @@
+import { p } from "./pipe"
 import { Err, Ok, Result } from "./Result"
 
 export type RemoteData<TError, TValue> =
@@ -21,7 +22,7 @@ export const map =
 
         case "Err":
         case "Ok":
-          return Result.map(mapper)(remoteData)
+          return p(remoteData, Result.map(mapper))
       }
     }
 
