@@ -1,11 +1,14 @@
+import * as Rx from "rxjs"
 import * as Http from "http"
 import * as Socket from "socket.io"
 import {
   BackendModel,
-  BackendMsg,
+  BackendMsg, backendServerPort, ClientToServerEvents,
+  ServerToClientEvents,
   Session,
+  sessionIdKey,
   ToBackend,
-  ToFrontend,
+  ToFrontend
 } from "./App.Types"
 import {
   Cmd,
@@ -16,11 +19,10 @@ import {
   Sub,
   t
 } from "./Core"
+import { formatMsg } from "./Core/Debug"
 import { ClientId, SessionId, UserId } from "./Data"
 import * as GameRoom from "./Game/GameRoom.Backend"
 import * as Party from "./Party/Party.Backend"
-import * as Wire from "./Wire"
-import { formatMsg } from "./Core/Debug"
 
 //
 //
@@ -82,7 +84,7 @@ const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
       const gameRoomCmd = GameRoom.onClientConnected(
         {
           sendToClient: (msg) =>
-            Wire.sendToFrontend([clientId], ["GameRoom", msg]),
+            sendToFrontend([clientId], ["GameRoom", msg]),
         },
         model.gameRoom,
       )
@@ -119,7 +121,7 @@ const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
     case "Party": {
       const [child, childCmd] = Party.update(
         {
-          broadcast: (msg) => Wire.broadcast(["Party", msg]),
+          broadcast: (msg) => broadcast(["Party", msg]),
           sendToUser: (userId, msg) =>
             sendToUser(model, userId, ["Party", msg]),
         },
@@ -155,7 +157,7 @@ const updateFromFrontend = (
   msg: ToBackend,
   model: Model,
 ): [Model, Cmd<Msg>] => {
-  const sendToClient = (msg: ToFrontend) => Wire.sendToFrontend([clientId], msg)
+  const sendToClient = (msg: ToFrontend) => sendToFrontend([clientId], msg)
 
   switch (msg[0]) {
     case "Auth": {
@@ -186,8 +188,8 @@ const updateFromFrontend = (
     case "Party": {
       const [child, childCmd] = Party.updateFromFrontend(
         {
-          sendToClient: msg => Wire.sendToFrontend([clientId], ['Party', msg]),
-          broadcast: (msg) => Wire.broadcast(["Party", msg]),
+          sendToClient: msg => sendToFrontend([clientId], ['Party', msg]),
+          broadcast: (msg) => broadcast(["Party", msg]),
           sendToUser: (userIds, msg) =>
             sendToUser(model, userIds, ["Party", msg]),
         },
@@ -201,7 +203,7 @@ const updateFromFrontend = (
     case "GameRoom": {
       const [child, childCmd] = GameRoom.updateFromFrontend(
         {
-          broadcast: (msg) => Wire.broadcast(["GameRoom", msg]),
+          broadcast: (msg) => broadcast(["GameRoom", msg]),
           sendToClient: (msg) => sendToClient(["GameRoom", msg]),
           sendToUser: (userIds, msg) =>
             sendToUser(model, userIds, ["GameRoom", msg]),
@@ -243,7 +245,7 @@ const sendToUser = (
   }
 
 
-  return Wire.sendToFrontend(clientIds, msg)
+  return sendToFrontend(clientIds, msg)
 }
 
 //
@@ -257,22 +259,22 @@ const sendToUser = (
 const subscriptions = (model: Model): Sub<Msg> => {
   return Sub.batch([
     p(GameRoom.subscriptions(model.gameRoom), Sub.map(t("GameRoom"))),
-    Wire.onConnect((sessionId, clientId) => [
+    p(onConnect, Sub.map(([sessionId, clientId]): Msg => [
       "ClientConnected",
       sessionId,
       clientId,
-    ]),
-    Wire.onDisconnect((sessionId, clientId) => [
+    ])),
+    p(onDisconnect, Sub.map(([sessionId, clientId]): Msg => [
       "ClientDisconnected",
       sessionId,
       clientId,
-    ]),
-    Wire.fromFrontend<Msg>((sessionId, clientId, toBackend) => [
+    ])),
+    p(fromFrontend, Sub.map(([sessionId, clientId, msg]): Msg => [
       "▶",
       sessionId,
       clientId,
-      toBackend,
-    ]),
+      msg,
+    ])),
   ])
 }
 
@@ -293,10 +295,10 @@ const requestListener: Http.RequestListener = (_request, response) => {
 const httpServer = Http.createServer(requestListener)
 
 const socketServer = new Socket.Server<
-  Wire.ClientToServerEvents,
-  Wire.ServerToClientEvents,
-  Wire.InterServerEvents,
-  Wire.SocketData
+  ClientToServerEvents,
+  ServerToClientEvents,
+  {},
+  {}
 >(httpServer, {
   cors: {
     origin: "*",
@@ -305,8 +307,18 @@ const socketServer = new Socket.Server<
   cookie: true,
 })
 
+export const fromFrontend = new Rx.Subject<
+  [SessionId, ClientId, ToBackend]
+>()
+export const onConnect = new Rx.Subject<
+  [SessionId, ClientId]
+>()
+export const onDisconnect = new Rx.Subject<
+  [SessionId, ClientId]
+>()
+
 socketServer.on("connection", (socket) => {
-  const maybeSessionId: unknown = socket.handshake.auth[Wire.sessionIdKey]
+  const maybeSessionId: unknown = socket.handshake.auth[sessionIdKey]
 
   // todo remove this hack
   const cleaned =
@@ -316,34 +328,38 @@ socketServer.on("connection", (socket) => {
 
   const sessionId = SessionId.is(cleaned) ? cleaned : SessionId.generate()
 
+  // move this inside frontend
   socket.emit("ToFrontend", ["Session", sessionId])
 
   if (ClientId.is(socket.id)) {
-    Wire._onConnect.next([sessionId, socket.id])
+    onConnect.next([sessionId, socket.id])
   }
 
   socket.on("disconnect", () => {
     if (ClientId.is(socket.id)) {
-      Wire._onDisconnect.next([sessionId, socket.id])
+      onDisconnect.next([sessionId, socket.id])
     }
   })
 
   socket.on("ToBackend", (msg) => {
     if (ClientId.is(socket.id)) {
-      Wire._toBackend.next([sessionId, socket.id, msg])
+      fromFrontend.next([sessionId, socket.id, msg])
     }
   })
 })
 
-Wire._sendToFrontend.subscribe(([clientIds, msg]) => {
+
+const sendToFrontend = (clientIds: ClientId[], msg: ToFrontend): Cmd => () => {
   socketServer.to(clientIds).emit("ToFrontend", msg)
-})
-
-Wire._broadcast.subscribe((msg) => {
   socketServer.emit("ToFrontend", msg)
-})
+}
 
-const port = Number(process.env['PORT']) || Wire.backendServerPort
+const broadcast = (msg: ToFrontend): Cmd => () => {
+  socketServer.emit("ToFrontend", msg)
+}
+
+
+const port = Number(process.env['PORT']) || backendServerPort
 
 httpServer.listen(port, () => {
   console.clear()
@@ -373,14 +389,7 @@ program.state$.subscribe(({ cmd }) => {
   cmd(program.dispatch)
 })
 
-//
-//
-//
-// Logging
-//
-//
-//
-
+// logging
 program.state$.subscribe((state) => {
   const msg = state.msg?.flat(Infinity)
   const msgType = msg?.reduce<string | null>(
