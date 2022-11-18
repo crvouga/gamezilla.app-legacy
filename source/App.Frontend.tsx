@@ -1,6 +1,6 @@
 import * as ReactDomClient from "react-dom/client"
 import { io, Socket } from "socket.io-client"
-import { FrontendModel, FrontendMsg, ToFrontend } from "./App.Types"
+import { backendServerPort, ClientToServerEvents, FrontendModel, FrontendMsg, ServerToClientEvents, sessionIdKey, ToBackend, ToFrontend, WireStatus } from "./App.Types"
 import * as Auth from "./Auth/Auth"
 import * as ChatStore from "./Chat/Chat.Store"
 import {
@@ -16,7 +16,7 @@ import {
   Platform,
   RemoteData,
   Sub,
-  t,
+  t
 } from "./Core"
 import * as GameRoom from "./Game/GameRoom.Frontend"
 import * as Pages from "./Pages"
@@ -25,7 +25,6 @@ import * as ProfileStore from './Profile/Profile.Store'
 import * as Route from "./Route"
 import * as Snackbar from "./Snackbar"
 import * as UI from "./UI"
-import * as Wire from "./Wire"
 
 //
 //
@@ -36,14 +35,6 @@ import * as Wire from "./Wire"
 //
 
 type Model = FrontendModel
-
-//
-//
-//
-// Init
-//
-//
-//
 
 const init = (location: Browser.Location): [Model, Cmd<Msg>] => {
   const route = p(
@@ -56,7 +47,7 @@ const init = (location: Browser.Location): [Model, Cmd<Msg>] => {
   const store = ChatStore.init
   const [gameRoom, gameRoomCmd] = GameRoom.init
   const [page, pageCmd] = Pages.initLoading()
-  const [party, partyCmd] = Party.init({ sendToBackend: msg => Wire.sendToBackend(['Party', msg]) });
+  const [party, partyCmd] = Party.init({ sendToBackend: msg => sendToBackend(['Party', msg]) });
   const profileStore = ProfileStore.init
 
   return [
@@ -129,7 +120,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
 
     case "Auth": {
       const [authNew, authCmd] = Auth.update(
-        { sendToBackend: (msg) => Wire.sendToBackend(["Auth", msg]) },
+        { sendToBackend: (msg) => sendToBackend(["Auth", msg]) },
         msg[1],
         model.auth,
       )
@@ -148,7 +139,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
 
     case "Party": {
       const [child, childCmd] = Party.update(
-        { sendToBackend: (msg) => Wire.sendToBackend(["Party", msg]) },
+        { sendToBackend: (msg) => sendToBackend(["Party", msg]) },
         msg[1],
         model.party,
       )
@@ -192,7 +183,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
       const [child, childCmd] = GameRoom.update(
         {
           currentUserId: profile.userId,
-          sendToBackend: (msg) => Wire.sendToBackend(["GameRoom", msg]),
+          sendToBackend: (msg) => sendToBackend(["GameRoom", msg]),
         },
         msg[1],
         model.gameRoom,
@@ -272,7 +263,7 @@ const updateFromBackend = (
       return [
         model,
         LocalStorage.put(
-          Wire.sessionIdKey,
+          sessionIdKey,
           sessionId,
           t("LocalStoragePut_Done"),
         ),
@@ -308,7 +299,7 @@ const updateFromBackend = (
       const [gameRoom, gameRoomCmd, actions] = GameRoom.updateFromBackend(
         {
           currentUserId,
-          sendToBackend: (msg) => Wire.sendToBackend(["GameRoom", msg]),
+          sendToBackend: (msg) => sendToBackend(["GameRoom", msg]),
           profileStore: model.profileStore,
         },
         msg[1],
@@ -418,7 +409,7 @@ const runAction = (action: OutAction, model: Model): [Model, Cmd<Msg>] => {
       const [gameRoom, gameRoomCmd] = GameRoom.runAction(
         {
           currentUserId,
-          sendToBackend: (msg) => Wire.sendToBackend(["GameRoom", msg]),
+          sendToBackend: (msg) => sendToBackend(["GameRoom", msg]),
         },
         action,
         model.gameRoom,
@@ -433,7 +424,7 @@ const runAction = (action: OutAction, model: Model): [Model, Cmd<Msg>] => {
 
     case "Party": {
       const [party, partyCmd] = Party.runAction(
-        { sendToBackend: (msg) => Wire.sendToBackend(["Party", msg]) },
+        { sendToBackend: (msg) => sendToBackend(["Party", msg]) },
         action,
         model.party,
       )
@@ -466,8 +457,8 @@ const runAction = (action: OutAction, model: Model): [Model, Cmd<Msg>] => {
 
 const subscriptions = (model: Model): Sub<Msg> => {
   return Sub.batch<Msg>([
-    Wire.onConnectionStatus(t("Wire")),
-    Wire.fromBackend(t("▶")),
+    Sub.tag("Wire", wireStatus),
+    Sub.tag("▶", fromBackend),
     Browser.onLocation(onLocationChange),
     Sub.tag("Party", Party.subscriptions(model.party)),
     Sub.tag("Page", Pages.subscriptions(model.page)),
@@ -757,37 +748,48 @@ const backendUrl =
   // @ts-ignore
   import.meta.env.PROD
     ? "https://backend.gamezilla.app/"
-    : `http://localhost:${Wire.backendServerPort}/`
+    : `http://localhost:${backendServerPort}/`
 
 const socketClient: Socket<
-  Wire.ServerToClientEvents,
-  Wire.ClientToServerEvents
+  ServerToClientEvents,
+  ClientToServerEvents
 > = io(backendUrl, {
   auth: {
-    [Wire.sessionIdKey]: localStorage.getItem(Wire.sessionIdKey) ?? undefined,
+    [sessionIdKey]: localStorage.getItem(sessionIdKey) ?? undefined,
   },
   forceNew: true,
 })
 
-socketClient.on("connect", () => {
-  Wire._connectionStatus.next("Connected")
+
+const wireStatus = Sub.create<WireStatus>(emit => {
+  socketClient.on("connect", () => {
+    emit("Connected")
+  })
+
+  socketClient.on("connect_error", () => {
+    emit("ConnectError")
+  })
+
+  socketClient.on("disconnect", () => {
+    emit("Disconnected")
+  })
+
+  return () => { }
 })
 
-socketClient.on("connect_error", () => {
-  Wire._connectionStatus.next("ConnectError")
+
+const fromBackend = Sub.create<ToFrontend>(emit => {
+  socketClient.on("ToFrontend", (msg) => {
+    emit(msg)
+  })
+
+  return () => { }
 })
 
-socketClient.on("disconnect", () => {
-  Wire._connectionStatus.next("Disconnected")
-})
 
-socketClient.on("ToFrontend", (msg) => {
-  Wire._toFrontend.next(msg)
-})
-
-Wire._sendToBackend.subscribe((msg) => {
+const sendToBackend = (msg: ToBackend): Cmd => () => {
   socketClient.emit("ToBackend", msg)
-})
+}
 
 //
 //
@@ -797,12 +799,13 @@ Wire._sendToBackend.subscribe((msg) => {
 //
 //
 
-const { program } = Debug.ReduxDevTools.withDebugger(
+const { program } = p(
   Platform.createProgram({
     init: init(Browser.getLocation()),
     subscriptions,
     update,
   }),
+  Debug.ReduxDevTools.withDebugger
 )
 
 const root = ReactDomClient.createRoot(document.getElementById("root")!)

@@ -86,3 +86,24 @@ export type BackendMsg =
   | ["ClientDisconnected", SessionId, ClientId]
   | ["GameRoom", GameRoom.BackendMsg]
   | ["Party", Party.BackendMsg]
+
+
+// 
+// 
+// 
+// Transport
+// 
+// 
+// 
+
+export type ServerToClientEvents = {
+  ToFrontend: (msg: ToFrontend) => void
+}
+
+export type ClientToServerEvents = {
+  ToBackend: (msg: ToBackend) => void
+}
+
+export const backendServerPort = 5000
+
+export const sessionIdKey = "gamezilla_session_id"
