@@ -1,5 +1,5 @@
 import { Cmd, Sub } from "../../Core";
-import { FillBox, Header, ViewNode } from "../../UI";
+import { FillBox, Header, Typography, ViewNode } from "../../UI";
 import { BackendModel, FrontendModel, FrontendMsg, initMaze, initShared, ToFrontend } from "./Maze.Types";
 
 //
@@ -64,7 +64,7 @@ export const subscriptions = (_model: Model): Sub<Msg> => {
 //
 //
 
-export const View = ({ model, homeComponent, roomComponent }: { model: Model, dispatch: (msg: Msg) => void, homeComponent: ViewNode, roomComponent: ViewNode }) => {
+export const View = ({ homeComponent, roomComponent }: { model: Model, dispatch: (msg: Msg) => void, homeComponent: ViewNode, roomComponent: ViewNode }) => {
     return (
         <FillBox>
             <Header
@@ -72,7 +72,10 @@ export const View = ({ model, homeComponent, roomComponent }: { model: Model, di
                 title="Maze"
                 right={roomComponent}
             />
-            {JSON.stringify(model.players)}
+            <Typography>
+                Players
+            </Typography>
+            {/* {Object.values(model.players).map(player => ())} */}
         </FillBox>
     )
 }
