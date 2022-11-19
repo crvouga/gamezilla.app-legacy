@@ -35,8 +35,8 @@ const add = <T>(element: T, set: Set<T>, toKey?: (element: T) => string): Set<T>
     }
 }
 
-const remove = <T>(toKey: (element: T) => string, element: T, set: Set<T>): Set<T> => {
-    const key = toKey(element)
+const remove = <T>(element: T, set: Set<T>, toKey?: (element: T) => string): Set<T> => {
+    const key = toKey ? toKey(element) : String(element)
     const { [key]: _removed, ...rest } = set
     return rest
 }
