@@ -17,28 +17,11 @@ export type Model = {
   country: Iso3166Alpha2Code
   validation: "NotChecked" | "InvalidPhoneNumber" | "EmptyPhoneNumber"
   submission:
-  | {
-    type: "Idle"
-  }
-  | {
-    type: "Loading"
-  }
-  | {
-    type: "Problem"
-    message: string
-  }
-  | {
-    type: "Ok"
-  }
+  | { type: "Idle" }
+  | { type: "Loading" }
+  | { type: "Problem"; message: string }
+  | { type: "Ok" }
 }
-
-//
-//
-//
-// Init
-//
-//
-//
 
 export const init: Model = {
   country: "US",
@@ -133,17 +116,11 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
 //
 //
 
-export const View = ({
-  model,
-  dispatch,
-}: {
-  model: Model
-  dispatch: (msg: Msg) => void
-}) => {
+export const View = ({ model, $d, }: { model: Model; $d: (msg: Msg) => void }) => {
   return (
     <UI.FillBox>
       <UI.Header
-        left={<UI.HeaderBackButton onClick={() => dispatch(["ClickedBack"])} />}
+        left={<UI.HeaderBackButton onClick={() => $d(["ClickedBack"])} />}
         title="Login With Phone"
       />
       <UI.Box
@@ -168,7 +145,7 @@ export const View = ({
           )}
           onChange={(_event, value) => {
             if (value) {
-              dispatch(["InputtedCountry", value])
+              $d(["InputtedCountry", value])
             }
           }}
         />
@@ -182,7 +159,7 @@ export const View = ({
           label="Phone Number"
           value={model.phoneNumber}
           onChange={(event) => {
-            dispatch(["InputtedPhoneNumber", event.target.value])
+            $d(["InputtedPhoneNumber", event.target.value])
           }}
           error={
             model.validation === "InvalidPhoneNumber" ||
@@ -202,7 +179,7 @@ export const View = ({
           size="large"
           fullWidth
           loading={model.submission.type === "Loading"}
-          onClick={() => dispatch(["ClickedSendCode"])}
+          onClick={() => $d(["ClickedSendCode"])}
         >
           Send Code
         </UI.Button>

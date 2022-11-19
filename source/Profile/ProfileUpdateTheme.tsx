@@ -61,15 +61,15 @@ export const update = (
 export const View = ({
   profile,
   model,
-  dispatch,
+  $d,
 }: {
   profile: ProfileStore.Profile
   model: Model
-  dispatch: (msg: Msg) => void
+  $d: (msg: Msg) => void
 }) => (
   <UI.FillBox>
     <UI.Header
-      left={<UI.HeaderBackButton onClick={() => dispatch(["ClickedBack"])} />}
+      left={<UI.HeaderBackButton onClick={() => $d(["ClickedBack"])} />}
       title="Theme"
     />
 
@@ -81,7 +81,7 @@ export const View = ({
     <UI.Box sx={{ padding: 2 }}>
       <UI.ThemeModeToggleButtons
         themeMode={profile.themeMode}
-        onChange={(themeMode) => dispatch(["ClickedThemeMode", themeMode])}
+        onChange={(themeMode) => $d(["ClickedThemeMode", themeMode])}
       />
     </UI.Box>
   </UI.FillBox>

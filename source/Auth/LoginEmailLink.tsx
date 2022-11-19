@@ -20,14 +20,6 @@ export type Model = {
   | { type: "Ok"; sentToEmailAddress: string }
 }
 
-//
-//
-//
-// Init
-//
-//
-//
-
 export const init: Model = {
   emailAddress: "",
   submission: { type: "Idle" },
@@ -119,15 +111,15 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
 
 export const View = ({
   model,
-  dispatch,
+  $d,
 }: {
   model: Model
-  dispatch: (msg: Msg) => void
+  $d: (msg: Msg) => void
 }) => {
   return (
     <UI.FillBox>
       <UI.Header
-        left={<UI.HeaderBackButton onClick={() => dispatch(["ClickedBack"])} />}
+        left={<UI.HeaderBackButton onClick={() => $d(["ClickedBack"])} />}
         title="Login With Email"
       />
 
@@ -145,7 +137,7 @@ export const View = ({
           label="Email Address"
           value={model.emailAddress}
           onChange={(event) => {
-            dispatch(["InputtedEmailAddress", event.target.value])
+            $d(["InputtedEmailAddress", event.target.value])
           }}
         />
 
@@ -154,7 +146,7 @@ export const View = ({
           size="large"
           fullWidth
           loading={model.submission.type === "Loading"}
-          onClick={() => dispatch(["ClickedSendLoginLink"])}
+          onClick={() => $d(["ClickedSendLoginLink"])}
           sx={{ marginBottom: 2 }}
         >
           Send Login Link

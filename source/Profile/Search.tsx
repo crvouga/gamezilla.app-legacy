@@ -84,11 +84,11 @@ export const update = (
 export const View = ({
   profileStore,
   model,
-  dispatch,
+  $d,
 }: {
   profileStore: ProfileStore.Model
   model: Model
-  dispatch: (msg: Msg) => void
+  $d: (msg: Msg) => void
 }) => {
   const results = ProfileStore.toSearch(model.searchText, profileStore)
   const query =
@@ -102,14 +102,14 @@ export const View = ({
         placeholder="Search"
         value={model.searchText}
         onChange={(event) =>
-          dispatch(["InputtedSearchText", event.target.value])
+          $d(["InputtedSearchText", event.target.value])
         }
         endAdornment={
           <UI.InputAdornment position="end">
             {query.type === "Loading" && <UI.CircularProgress size={24} />}
             <UI.IconButton
               edge="end"
-              onClick={() => dispatch(["ClickedClear"])}
+              onClick={() => $d(["ClickedClear"])}
             >
               <UI.Icons.Close />
             </UI.IconButton>
@@ -137,7 +137,7 @@ export const View = ({
             key={result.userId}
             sx={{ width: "100%" }}
             onClick={() =>
-              dispatch(["ClickedResult", { userId: result.userId }])
+              $d(["ClickedResult", { userId: result.userId }])
             }
           >
             <UI.ListItemAvatar>

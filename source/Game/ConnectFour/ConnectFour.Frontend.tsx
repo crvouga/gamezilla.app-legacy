@@ -122,14 +122,14 @@ export const updateFromBackend = (
 
 export const View = ({
   model,
-  dispatch,
+  $d,
   ctx,
 }: {
   model: Model
-  dispatch: (msg: Msg) => void
+  $d: (msg: Msg) => void
   ctx: Ctx
 }) => {
-  const goBack = () => dispatch(['InputMode', { userId: ctx.currentUserId, mode: "None" }])
+  const goBack = () => $d(['InputMode', { userId: ctx.currentUserId, mode: "None" }])
 
   switch (model.type) {
     case 'None': {
@@ -138,8 +138,8 @@ export const View = ({
           <BannerArt />
 
           <GameModeCardGrid
-            onUserVsUser={() => dispatch(["InputMode", { mode: "UserVsUser", userId: ctx.currentUserId },])}
-            onUserVsBot={() => dispatch(["InputMode", { mode: "UserVsBot", userId: ctx.currentUserId },])}
+            onUserVsUser={() => $d(["InputMode", { mode: "UserVsUser", userId: ctx.currentUserId },])}
+            onUserVsBot={() => $d(["InputMode", { mode: "UserVsBot", userId: ctx.currentUserId },])}
           />
         </UI.FillBox>
       )
@@ -149,7 +149,7 @@ export const View = ({
       return (
         <UserVsUser.View
           ctx={ctx}
-          dispatch={msg => dispatch(['UserVsUser', msg])}
+          $d={msg => $d(['UserVsUser', msg])}
           goBack={goBack}
           model={model.child}
         />
@@ -160,7 +160,7 @@ export const View = ({
       return (
         <UserVsBot.View
           ctx={ctx}
-          dispatch={(msg) => dispatch(['UserVsBot', msg])}
+          $d={(msg) => $d(['UserVsBot', msg])}
           model={model.child}
           goBack={goBack}
         />

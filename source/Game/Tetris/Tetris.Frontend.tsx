@@ -249,10 +249,10 @@ export const subscriptions = (_model: Model): Sub<Msg> => {
 
 export const View = ({
   model,
-  dispatch,
+  $d,
 }: {
   model: Model
-  dispatch: (msg: Msg) => void
+  $d: (msg: Msg) => void
 }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const containerRef = useRef<HTMLDivElement | null>(null)
@@ -313,7 +313,7 @@ export const View = ({
             console.log("MOVE", { x, y })
           }}
           onClick={(event) => {
-            dispatch(["ClickedBoard", mouseEventToPosition(event)])
+            $d(["ClickedBoard", mouseEventToPosition(event)])
           }}
           onMouseMove={(event) => {
             const x = Math.floor(
@@ -332,7 +332,7 @@ export const View = ({
               }),
             )
 
-            dispatch(["MouseMove", { x, y }])
+            $d(["MouseMove", { x, y }])
           }}
           onTouchStart={(event) => {
             const touch = event.touches[0]
@@ -378,9 +378,9 @@ export const View = ({
                     x={x}
                     y={y}
                     fill="transparent"
-                    onTouchStart={() => dispatch(['TouchStart', { x, y }])}
-                    onTouchEnd={() => dispatch(['TouchEnd', { x, y }])}
-                    onTouchMove={() => dispatch(['TouchMove', { x, y }])}
+                    onTouchStart={() => $d(['TouchStart', { x, y }])}
+                    onTouchEnd={() => $d(['TouchEnd', { x, y }])}
+                    onTouchMove={() => $d(['TouchMove', { x, y }])}
                 />
             ))}
 

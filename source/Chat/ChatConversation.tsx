@@ -146,7 +146,7 @@ export const View = ({
   chatStore,
   profileStore,
   model,
-  dispatch,
+  $d,
   conversationId,
   currentUserId,
 }: {
@@ -155,7 +155,7 @@ export const View = ({
   currentUserId: UserId
   model: Model
   conversationId: string
-  dispatch: (msg: Msg) => void
+  $d: (msg: Msg) => void
 }) => {
   const query =
     chatStore.queries.Conversation.FindOne[conversationId] ?? RemoteData.NotAsked
@@ -176,7 +176,7 @@ export const View = ({
     <UI.FillBox>
       <UI.Toolbar>
         <UI.Box sx={{ flex: 1 }}>
-          <UI.HeaderBackButton onClick={() => dispatch(["ClickedBack"])} />
+          <UI.HeaderBackButton onClick={() => $d(["ClickedBack"])} />
         </UI.Box>
 
         <UI.Box
@@ -220,7 +220,7 @@ export const View = ({
             key={message.messageId}
             message={message}
             currentUserId={currentUserId}
-            dispatch={dispatch}
+            $d={$d}
             model={model}
             store={chatStore}
           />
@@ -229,8 +229,8 @@ export const View = ({
 
       <ChatInput
         value={model.text}
-        onChange={(text) => dispatch(["InputtedText", text])}
-        onSend={() => dispatch(["ClickedSend"])}
+        onChange={(text) => $d(["InputtedText", text])}
+        onSend={() => $d(["ClickedSend"])}
         isSending={messageInsertMutation.type === "Loading"}
       />
     </UI.FillBox>
@@ -362,7 +362,7 @@ const ChatMessage = ({
   currentUserId,
   model,
   store,
-  dispatch,
+  $d,
 }: {
   message: {
     messageId: string,
@@ -371,13 +371,13 @@ const ChatMessage = ({
   },
   currentUserId: UserId
   model: Model
-  dispatch: (msg: Msg) => void
+  $d: (msg: Msg) => void
   store: ChatStore.Model
 }) => {
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
     event.stopPropagation()
-    dispatch(["ClickedMessage", message])
+    $d(["ClickedMessage", message])
   }
 
   const variant = currentUserId === message.userId ? "sent" : "received"
@@ -429,7 +429,7 @@ const ChatMessage = ({
           model.focused.type === "Focused" &&
           model.focused.messageId === message.messageId
         }
-        onClose={() => dispatch(["ClosedMessageMenu", message])}
+        onClose={() => $d(["ClosedMessageMenu", message])}
         anchorOrigin={{
           vertical: "bottom",
           horizontal: variant === "sent" ? "left" : "right",
@@ -446,7 +446,7 @@ const ChatMessage = ({
               model.focused.copyStatus === "Loading"
             }
             onClick={() =>
-              dispatch(["ClickedCopyMessageText", message.message])
+              $d(["ClickedCopyMessageText", message.message])
             }
           >
             {model.focused.type === "Focused" &&
@@ -460,7 +460,7 @@ const ChatMessage = ({
                 store.mutations.Message.Unsend[message.messageId]?.type ===
                 "Loading"
               }
-              onClick={() => dispatch(["ClickedDeleteMessage", message])}
+              onClick={() => $d(["ClickedDeleteMessage", message])}
             >
               Delete Forever
             </UI.Button>

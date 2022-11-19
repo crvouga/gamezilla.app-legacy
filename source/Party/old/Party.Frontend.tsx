@@ -419,12 +419,12 @@ export const View = ({
   currentUserId,
   store,
   model,
-  dispatch,
+  $d,
 }: {
   currentUserId: UserId
   store: ProfileStore.Model
   model: Model
-  dispatch: (msg: Msg) => void
+  $d: (msg: Msg) => void
 }) => {
   const theme = UI.useTheme()
   const user = model.users[currentUserId]
@@ -435,7 +435,7 @@ export const View = ({
         model={model}
         store={store}
         currentUserId={currentUserId}
-        dispatch={dispatch}
+        $d={$d}
       />
     )
   }
@@ -448,7 +448,7 @@ export const View = ({
         model={model}
         store={store}
         currentUserId={currentUserId}
-        dispatch={dispatch}
+        $d={$d}
       />
     )
   }
@@ -489,7 +489,7 @@ export const View = ({
           startIcon={<UI.Icons.CallEnd />}
           color="error"
           size="large"
-          onClick={() => dispatch(["LeaveParty", { userId: currentUserId }])}
+          onClick={() => $d(["LeaveParty", { userId: currentUserId }])}
         >
           Leave
         </UI.Button>
@@ -502,12 +502,12 @@ const ViewNotInParty = ({
   currentUserId,
   model,
   store,
-  dispatch,
+  $d,
 }: {
   store: ProfileStore.Model
   model: Model
   currentUserId: UserId
-  dispatch: (msg: Msg) => void
+  $d: (msg: Msg) => void
 }) => {
   const parties = Object.values(model.parties)
   return (
@@ -519,7 +519,7 @@ const ViewNotInParty = ({
           variant="contained"
           size="large"
           onClick={() =>
-            dispatch([
+            $d([
               "StartParty",
               { hostId: currentUserId, partyId: PartyId.generate() },
             ])
@@ -541,7 +541,7 @@ const ViewNotInParty = ({
           <UI.ListItemButton
             key={party.partyId}
             onClick={() =>
-              dispatch([
+              $d([
                 "JoinParty",
                 { userId: currentUserId, partyId: party.partyId },
               ])
@@ -574,7 +574,7 @@ const countUsersInParty = (partyId: PartyId, model: Model): number => {
 }
 
 export const ViewBanner = ({
-  dispatch,
+  $d,
   route,
   currentUserId,
   model,
@@ -584,7 +584,7 @@ export const ViewBanner = ({
   route: Route.Model
   currentUserId: UserId
   model: Model
-  dispatch: (msg: Msg) => void
+  $d: (msg: Msg) => void
 }) => {
   if (route[0] === "Party") {
     return <></>
@@ -606,7 +606,7 @@ export const ViewBanner = ({
     <UI.Typography
       variant="caption"
       align="center"
-      onClick={() => dispatch(["ClickedBanner"])}
+      onClick={() => $d(["ClickedBanner"])}
       sx={{
         width: '100%',
         paddingX: 2,
@@ -625,7 +625,7 @@ export const ViewBanner = ({
   // return (
   //   <>
   //     <UI.ButtonBase
-  //       onClick={() => dispatch(["ClickedBanner"])}
+  //       onClick={() => $d(["ClickedBanner"])}
   //       sx={{
   //         width: "100%",
   //         height: 58,

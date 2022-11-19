@@ -211,15 +211,15 @@ const toggleVisibility = (visibility: Visibility): Visibility => {
 
 export const View = ({
   model,
-  dispatch,
+  $d,
 }: {
   model: Model
-  dispatch: (msg: Msg) => void
+  $d: (msg: Msg) => void
 }) => {
   return (
     <UI.FillBox>
       <UI.Header
-        left={<UI.HeaderBackButton onClick={() => dispatch(["ClickedBack"])} />}
+        left={<UI.HeaderBackButton onClick={() => $d(["ClickedBack"])} />}
         title="Create Account"
       />
 
@@ -241,7 +241,7 @@ export const View = ({
           label="Email Address"
           value={model.emailAddress}
           onChange={(event) =>
-            dispatch(["InputtedEmailAddress", event.target.value])
+            $d(["InputtedEmailAddress", event.target.value])
           }
           error={
             model.submission.type === "ProblemValidation" &&
@@ -262,7 +262,7 @@ export const View = ({
           label="Password"
           value={model.password}
           onChange={(event) =>
-            dispatch(["InputtedPassword", event.target.value])
+            $d(["InputtedPassword", event.target.value])
           }
           error={
             model.submission.type === "ProblemValidation" &&
@@ -277,7 +277,7 @@ export const View = ({
             endAdornment: (
               <UI.InputAdornment position="end">
                 <UI.Button
-                  onClick={() => dispatch(["ClickedTogglePasswordVisibility"])}
+                  onClick={() => $d(["ClickedTogglePasswordVisibility"])}
                 >
                   {model.passwordVisibility === "Hiding" ? "Show" : "Hide"}
                 </UI.Button>
@@ -289,7 +289,7 @@ export const View = ({
         <UI.Button
           variant="contained"
           loading={model.submission.type === "Loading"}
-          onClick={() => dispatch(["ClickedCreateAccount"])}
+          onClick={() => $d(["ClickedCreateAccount"])}
         >
           Create Account
         </UI.Button>
@@ -310,7 +310,7 @@ export const View = ({
         >
           Already have an account?
         </UI.Typography>
-        <UI.Button onClick={() => dispatch(["ClickedLogin"])}>Login</UI.Button>
+        <UI.Button onClick={() => $d(["ClickedLogin"])}>Login</UI.Button>
       </UI.Box>
     </UI.FillBox>
   )

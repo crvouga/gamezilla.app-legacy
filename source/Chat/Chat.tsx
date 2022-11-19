@@ -66,14 +66,14 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
 export const View = ({
   chatStore,
   profileStore,
-  dispatch,
+  $d,
   currentUserId,
 }: {
   chatStore: ChatStore.Model
   profileStore: ProfileStore.Model
   currentUserId: UserId,
   model: Model
-  dispatch: (msg: Msg) => void
+  $d: (msg: Msg) => void
 }) => {
   const query =
     chatStore.queries.Conversation.FindManyByUserId[currentUserId] ??
@@ -104,7 +104,7 @@ export const View = ({
         <UI.Button
           fullWidth
           variant="contained"
-          onClick={() => dispatch(["ClickedSendMessage"])}
+          onClick={() => $d(["ClickedSendMessage"])}
         >
           Send Message
         </UI.Button>
@@ -114,7 +114,7 @@ export const View = ({
         {conversations.map((item) => (
           <UI.ListItemButton
             key={item.conversationId}
-            onClick={() => dispatch(["ClickedConversationItem", item])}
+            onClick={() => $d(["ClickedConversationItem", item])}
           >
             <UI.ListItemAvatar>
               <UI.AvatarGroup max={2}>

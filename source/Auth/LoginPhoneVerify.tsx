@@ -114,19 +114,11 @@ export const update = (
 //
 //
 
-export const View = ({
-  phoneNumber,
-  model,
-  dispatch,
-}: {
-  phoneNumber: PhoneNumber
-  model: Model
-  dispatch: (msg: Msg) => void
-}) => {
+export const View = ({ phoneNumber, model, $d }: { phoneNumber: PhoneNumber; model: Model; $d: (msg: Msg) => void }) => {
   return (
     <UI.FillBox>
       <UI.Header
-        left={<UI.HeaderBackButton onClick={() => dispatch(["ClickedBack"])} />}
+        left={<UI.HeaderBackButton onClick={() => $d(["ClickedBack"])} />}
         title="Verify Code"
       />
       <UI.Box
@@ -143,12 +135,8 @@ export const View = ({
           inputMode="tel"
           label="Code"
           value={model.code}
-          onChange={(event) => {
-            dispatch(["InputtedCode", event.target.value])
-          }}
-          helperText={`The code was sent to ${PhoneNumber.toString(
-            phoneNumber,
-          )}`}
+          onChange={(e) => $d(["InputtedCode", e.target.value])}
+          helperText={`The code was sent to ${PhoneNumber.toString(phoneNumber)}`}
         />
 
         <UI.Button
@@ -156,7 +144,7 @@ export const View = ({
           size="large"
           fullWidth
           loading={model.submission.type === "Loading"}
-          onClick={() => dispatch(["ClickedVerifyCode"])}
+          onClick={() => $d(["ClickedVerifyCode"])}
         >
           Verify Code
         </UI.Button>
@@ -174,4 +162,4 @@ export const View = ({
   )
 }
 
-// 4802098698
+

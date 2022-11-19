@@ -12,7 +12,7 @@ export default {
     args: {
         currentUserId: currentUserId,
         roomComponent: <>room</>,
-        dispatch: () => { },
+        $d: () => { },
         goHome: () => { },
         onCloseGame: () => { },
     }

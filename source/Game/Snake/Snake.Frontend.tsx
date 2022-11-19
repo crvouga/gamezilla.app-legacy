@@ -196,11 +196,11 @@ export const subscriptions = (
 export const View = ({
   ctx,
   model,
-  dispatch,
+  $d,
 }: {
   ctx: Ctx,
   model: Model
-  dispatch: (msg: Msg) => void
+  $d: (msg: Msg) => void
 }) => {
   if (model.gameStatus.type === "GameSetup") {
     const menuAnchorId = "playerSlotMenuId"
@@ -227,7 +227,7 @@ export const View = ({
                 variant="contained"
                 fullWidth
                 onClick={() =>
-                  dispatch([
+                  $d([
                     "InputPlayer",
                     Option.Some(["User", ctx.currentUserId]),
                   ])
@@ -240,7 +240,7 @@ export const View = ({
             <>
               <UI.ListItemButton
                 id={menuAnchorId}
-                onClick={() => dispatch(["OpenedMenu", menuAnchorId])}
+                onClick={() => $d(["OpenedMenu", menuAnchorId])}
               >
                 <UI.ListItemAvatar>
                   <UI.Avatar src={ctx.profiles[model.gameStatus.player.value[1]]?.avatarUrl} />
@@ -255,13 +255,13 @@ export const View = ({
                   model.openedMenuId.type === "Some" &&
                   model.openedMenuId.value === menuAnchorId
                 }
-                onClose={() => dispatch(["ClosedMenu"])}
+                onClose={() => $d(["ClosedMenu"])}
                 anchorEl={document.getElementById(menuAnchorId)}
               >
                 <UI.Button
                   size="large"
                   fullWidth
-                  onClick={() => dispatch(["InputPlayer", Option.None])}
+                  onClick={() => $d(["InputPlayer", Option.None])}
                 >
                   Stop Playing
                 </UI.Button>
@@ -278,7 +278,7 @@ export const View = ({
             fullWidth
             disabled={!canStartGame(model)}
             onClick={() => {
-              dispatch(["StartGame"])
+              $d(["StartGame"])
             }}
           >
             Start Game
@@ -292,7 +292,7 @@ export const View = ({
     <UI.FillBox>
       <ViewBoard
         model={model}
-        dispatch={dispatch}
+        $d={$d}
       />
       {model.gameStatus.player[1] === ctx.currentUserId && (
         <UI.Box
@@ -306,7 +306,7 @@ export const View = ({
         >
           <Joystick.ViewJoystick
             onMove={(moveEvent) => {
-              dispatch([
+              $d([
                 "InputDirection",
                 {
                   userId: ctx.currentUserId,
@@ -329,7 +329,7 @@ export const View = ({
               >
                 <UI.ButtonBase
                   sx={leftRight}
-                  onMouseDown={() => dispatch(["InputDirection", { direction: "left", userId: currentUserId }])}
+                  onMouseDown={() => $d(["InputDirection", { direction: "left", userId: currentUserId }])}
                 >
                   <UI.Icons.KeyboardArrowLeft sx={iconSx} />
                 </UI.ButtonBase>
@@ -337,14 +337,14 @@ export const View = ({
                 <UI.Box sx={{ display: "flex", flexDirection: "column" }}>
                   <UI.ButtonBase
                     sx={upDown}
-                    onMouseDown={() => dispatch(["InputDirection", { direction: "up", userId: currentUserId }])}
+                    onMouseDown={() => $d(["InputDirection", { direction: "up", userId: currentUserId }])}
                   >
                     <UI.Icons.KeyboardArrowUp sx={iconSx} />
                   </UI.ButtonBase>
 
                   <UI.ButtonBase
                     sx={upDown}
-                    onMouseDown={() => dispatch(["InputDirection", { direction: "down", userId: currentUserId }])}
+                    onMouseDown={() => $d(["InputDirection", { direction: "down", userId: currentUserId }])}
                   >
                     <UI.Icons.KeyboardArrowDown sx={iconSx} />
                   </UI.ButtonBase>
@@ -352,7 +352,7 @@ export const View = ({
 
                 <UI.ButtonBase
                   sx={leftRight}
-                  onMouseDown={() => dispatch(["InputDirection", { direction: "right", userId: currentUserId }])}
+                  onMouseDown={() => $d(["InputDirection", { direction: "right", userId: currentUserId }])}
                 >
                   <UI.Icons.KeyboardArrowRight sx={iconSx} />
                 </UI.ButtonBase>
@@ -389,7 +389,7 @@ export const ViewBoard = ({
   model,
 }: {
   model: Model
-  dispatch: (msg: Msg) => void
+  $d: (msg: Msg) => void
 }) => {
   const ref = useRef<HTMLCanvasElement | null>(null)
 

@@ -99,14 +99,14 @@ export const View = ({
   chatStore,
   currentUserId,
   userId,
-  dispatch,
+  $d,
 }: {
   chatStore: ChatStore.Model
   profileStore: ProfileStore.Model
   currentUserId: UserId
   userId: UserId
   model: Model
-  dispatch: (msg: Msg) => void
+  $d: (msg: Msg) => void
 }) => {
   const profile = profileStore.profiles[userId]
 
@@ -136,7 +136,7 @@ export const View = ({
           right={
             <UI.IconButton
               edge="end"
-              onClick={() => dispatch(["ClickedAccountMenu"])}
+              onClick={() => $d(["ClickedAccountMenu"])}
             >
               <UI.Icons.Menu />
             </UI.IconButton>
@@ -163,7 +163,7 @@ export const View = ({
             variant="contained"
             size="small"
             sx={{ marginBottom: 2 }}
-            onClick={() => dispatch(["ClickedEditProfile"])}
+            onClick={() => $d(["ClickedEditProfile"])}
           >
             Edit Profile
           </UI.Button>
@@ -175,7 +175,7 @@ export const View = ({
   return (
     <UI.FillBox>
       <UI.Header
-        left={<UI.HeaderBackButton onClick={() => dispatch(["ClickedBack"])} />}
+        left={<UI.HeaderBackButton onClick={() => $d(["ClickedBack"])} />}
         title={profile.username}
       />
 
@@ -210,7 +210,7 @@ export const View = ({
             chatStore.mutations.Conversation.FindElseInsert.type === "Loading"
           }
           variant="contained"
-          onClick={() => dispatch(["ClickedSendMessage"])}
+          onClick={() => $d(["ClickedSendMessage"])}
         >
           Send Message
         </UI.Button>

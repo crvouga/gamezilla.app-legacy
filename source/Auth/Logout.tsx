@@ -53,10 +53,10 @@ export const update = (
 
 export const View = ({
   model,
-  dispatch,
+  $d,
 }: {
   model: Model
-  dispatch: (msg: Msg) => void
+  $d: (msg: Msg) => void
 }) => {
   switch (model.type) {
     case "Idle": {
@@ -65,9 +65,9 @@ export const View = ({
           open={model.type === "Idle"}
           title="Logout of Gamezilla?"
           confirmTitle="Logout"
-          onConfirm={() => dispatch(["ClickedLogout"])}
-          onClose={() => dispatch(["ClickedBackdrop"])}
-          onCancel={() => dispatch(["ClickedCancel"])}
+          onConfirm={() => $d(["ClickedLogout"])}
+          onClose={() => $d(["ClickedBackdrop"])}
+          onCancel={() => $d(["ClickedCancel"])}
         />
       )
     }

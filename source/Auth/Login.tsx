@@ -67,10 +67,10 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
 
 export const View = ({
   model,
-  dispatch,
+  $d,
 }: {
   model: Model
-  dispatch: (msg: Msg) => void
+  $d: (msg: Msg) => void
 }) => {
   return (
     <UI.FillBox
@@ -89,7 +89,7 @@ export const View = ({
         loading={model[0] === "LoggingInWithProvider" && model[1] === "Google"}
         fullWidth
         startIcon={<UI.Icons.Google />}
-        onClick={() => dispatch(["ClickedGoogleLogin"])}
+        onClick={() => $d(["ClickedGoogleLogin"])}
       >
         Continue With Google
       </UI.Button>
@@ -99,7 +99,7 @@ export const View = ({
         size="large"
         fullWidth
         color="primary"
-        onClick={() => dispatch(["ClickedPhoneLogin"])}
+        onClick={() => $d(["ClickedPhoneLogin"])}
         startIcon={<UI.Icons.PhoneAndroid />}
       >
         Continue With Phone
@@ -110,7 +110,7 @@ export const View = ({
         size="large"
         fullWidth
         color="primary"
-        onClick={() => dispatch(["ClickedEmailLogin"])}
+        onClick={() => $d(["ClickedEmailLogin"])}
         startIcon={<UI.Icons.Email />}
       >
         Continue With Email

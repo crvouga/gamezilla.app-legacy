@@ -166,12 +166,12 @@ export const View = ({
   currentUserId,
   store,
   model,
-  dispatch,
+  $d,
 }: {
   currentUserId: UserId
   store: ProfileStore.Model
   model: Model
-  dispatch: (msg: Msg) => void
+  $d: (msg: Msg) => void
 }) => {
   const theme = UI.useTheme()
   const user = model.users[currentUserId]
@@ -182,7 +182,7 @@ export const View = ({
         model={model}
         store={store}
         currentUserId={currentUserId}
-        dispatch={dispatch}
+        $d={$d}
       />
     )
   }
@@ -195,7 +195,7 @@ export const View = ({
         model={model}
         store={store}
         currentUserId={currentUserId}
-        dispatch={dispatch}
+        $d={$d}
       />
     )
   }
@@ -239,7 +239,7 @@ export const View = ({
               color="error"
               size="large"
               loading={model.requests.PartyDestroy?.type === 'Loading'}
-              onClick={() => dispatch(["PartyDestroy", { userId: currentUserId }])}
+              onClick={() => $d(["PartyDestroy", { userId: currentUserId }])}
             >
               End
             </UI.Button>
@@ -250,7 +250,7 @@ export const View = ({
               color="error"
               size="large"
               loading={model.requests.PartyLeave?.type === 'Loading'}
-              onClick={() => dispatch(["PartyLeave", { userId: currentUserId }])}
+              onClick={() => $d(["PartyLeave", { userId: currentUserId }])}
             >
               Leave
             </UI.Button>
@@ -265,12 +265,12 @@ const ViewNotInParty = ({
   currentUserId,
   model,
   store,
-  dispatch,
+  $d,
 }: {
   store: ProfileStore.Model
   model: Model
   currentUserId: UserId
-  dispatch: (msg: Msg) => void
+  $d: (msg: Msg) => void
 }) => {
   const parties = Object.values(model.parties)
   return (
@@ -283,7 +283,7 @@ const ViewNotInParty = ({
           size="large"
           loading={model.requests.PartyCreate?.type === 'Loading'}
           onClick={() =>
-            dispatch(["PartyCreate", { userId: currentUserId, partyId: PartyId.generate() }])
+            $d(["PartyCreate", { userId: currentUserId, partyId: PartyId.generate() }])
           }
         >
           Start Party
@@ -302,7 +302,7 @@ const ViewNotInParty = ({
           <UI.ListItemButton
             key={party.partyId}
             onClick={() =>
-              dispatch(["PartyJoin", { userId: currentUserId, partyId: party.partyId }])
+              $d(["PartyJoin", { userId: currentUserId, partyId: party.partyId }])
             }
           >
             <UI.ListItemAvatar>
@@ -332,7 +332,7 @@ const countUsersInParty = (partyId: PartyId, model: Model): number => {
 }
 
 export const ViewBanner = ({
-  dispatch,
+  $d,
   route,
   currentUserId,
   model,
@@ -342,7 +342,7 @@ export const ViewBanner = ({
   route: Route.Model
   currentUserId: UserId
   model: Model
-  dispatch: (msg: Msg) => void
+  $d: (msg: Msg) => void
 }) => {
   if (route[0] === "Party") {
     return <></>
@@ -364,7 +364,7 @@ export const ViewBanner = ({
     <UI.Typography
       variant="caption"
       align="center"
-      onClick={() => dispatch(["ClickedBanner"])}
+      onClick={() => $d(["ClickedBanner"])}
       sx={{
         width: '100%',
         paddingX: 2,

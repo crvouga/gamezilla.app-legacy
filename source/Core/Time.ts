@@ -29,12 +29,12 @@ export const startTimeout = <Msg>(
   duration: number,
   msg: Msg,
 ): Cmd<Msg> => {
-  return (dispatch) => {
+  return ($d) => {
     timeouts.set(timeoutId, timeoutId)
 
     setTimeout(() => {
       if (timeouts.has(timeoutId)) {
-        dispatch(msg)
+        $d(msg)
       }
 
       timeouts.delete(timeoutId)

@@ -152,15 +152,15 @@ const toggleVisibility = (visibility: Visibility): Visibility => {
 
 export const View = ({
   model,
-  dispatch,
+  $d,
 }: {
   model: Model
-  dispatch: (msg: Msg) => void
+  $d: (msg: Msg) => void
 }) => {
   return (
     <UI.FillBox>
       <UI.Header
-        left={<UI.HeaderBackButton onClick={() => dispatch(["ClickedBack"])} />}
+        left={<UI.HeaderBackButton onClick={() => $d(["ClickedBack"])} />}
         title="Continue With Email"
       />
 
@@ -182,7 +182,7 @@ export const View = ({
           label="Email Address"
           value={model.emailAddress}
           onChange={(event) => {
-            dispatch(["InputtedEmailAddress", event.target.value])
+            $d(["InputtedEmailAddress", event.target.value])
           }}
         />
 
@@ -194,13 +194,13 @@ export const View = ({
           label="Password"
           value={model.password}
           onChange={(event) => {
-            dispatch(["InputtedPassword", event.target.value])
+            $d(["InputtedPassword", event.target.value])
           }}
           InputProps={{
             endAdornment: (
               <UI.InputAdornment position="end">
                 <UI.Button
-                  onClick={() => dispatch(["ClickedTogglePasswordVisibility"])}
+                  onClick={() => $d(["ClickedTogglePasswordVisibility"])}
                 >
                   {model.passwordVisibility === "Hiding" ? "Show" : "Hide"}
                 </UI.Button>
@@ -214,7 +214,7 @@ export const View = ({
           size="large"
           fullWidth
           loading={model.submission.type === "Loading"}
-          onClick={() => dispatch(["ClickedLogin"])}
+          onClick={() => $d(["ClickedLogin"])}
         >
           Login
         </UI.Button>
@@ -239,7 +239,7 @@ export const View = ({
 
         <UI.Button
           sx={{ marginBottom: 2 }}
-          onClick={() => dispatch(["ClickedCreateAccount"])}
+          onClick={() => $d(["ClickedCreateAccount"])}
         >
           Create Account
         </UI.Button>
@@ -250,7 +250,7 @@ export const View = ({
           Forgot password?
         </UI.Typography>
 
-        <UI.Button onClick={() => dispatch(["ClickedResetPassword"])}>
+        <UI.Button onClick={() => $d(["ClickedResetPassword"])}>
           Reset Password
         </UI.Button>
       </UI.Box>

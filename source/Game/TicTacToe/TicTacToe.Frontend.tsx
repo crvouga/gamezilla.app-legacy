@@ -183,11 +183,11 @@ export const mergeWithBackend = (
 export const View = ({
   ctx,
   model,
-  dispatch,
+  $d,
 }: {
   ctx: Ctx
   model: Model
-  dispatch: (msg: Msg) => void
+  $d: (msg: Msg) => void
 }) => {
   switch (model.mode) {
     case "None": {
@@ -196,8 +196,8 @@ export const View = ({
           <BannerArt title="Tic Tac Toe" />
 
           <GameModeCardGrid
-            onUserVsUser={() => dispatch(["InputMode", { mode: "UserVsUser", userId: ctx.currentUserId },])}
-            onUserVsBot={() => dispatch(["InputMode", { mode: "UserVsBot", userId: ctx.currentUserId },])}
+            onUserVsUser={() => $d(["InputMode", { mode: "UserVsUser", userId: ctx.currentUserId },])}
+            onUserVsBot={() => $d(["InputMode", { mode: "UserVsBot", userId: ctx.currentUserId },])}
           />
         </UI.FillBox>
       )
@@ -207,11 +207,11 @@ export const View = ({
       return (
         <UserVsUser.View
           onCloseGame={() => {
-            dispatch(["InputMode", { mode: "None", userId: ctx.currentUserId }])
+            $d(["InputMode", { mode: "None", userId: ctx.currentUserId }])
           }}
           ctx={ctx}
           model={model.child}
-          dispatch={(msg) => dispatch(["UserVsUser", msg])}
+          $d={(msg) => $d(["UserVsUser", msg])}
         />
       )
     }
@@ -220,11 +220,11 @@ export const View = ({
       return (
         <UserVsBot.View
           goBack={() => {
-            dispatch(["InputMode", { mode: "None", userId: ctx.currentUserId }])
+            $d(["InputMode", { mode: "None", userId: ctx.currentUserId }])
           }}
           ctx={ctx}
           model={model.child}
-          dispatch={(msg) => dispatch(["UserVsBot", msg])}
+          $d={(msg) => $d(["UserVsBot", msg])}
         />
       )
     }

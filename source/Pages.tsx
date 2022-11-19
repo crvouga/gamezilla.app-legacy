@@ -694,7 +694,7 @@ export const ViewReady = ({
   party,
   model,
   profileStore,
-  dispatch,
+  $d,
 }: {
   route: Route.Model
   gameRoom: GameRoom.Model
@@ -703,7 +703,7 @@ export const ViewReady = ({
   profileStore: ProfileStore.Model
   party: Party.Model
   model: Model
-  dispatch: (msg: Msg) => void
+  $d: (msg: Msg) => void
 }) => {
   const currentUserId = profile.userId
   switch (model[0]) {
@@ -713,12 +713,12 @@ export const ViewReady = ({
           <Account.View
             username={profile.username}
             model={model[1]}
-            dispatch={(msg) => dispatch(["Account", msg])}
+            $d={(msg) => $d(["Account", msg])}
           />
           <ViewBottomNavigation
             currentUserId={currentUserId}
             route={route}
-            dispatch={dispatch}
+            $d={$d}
           />
         </UI.FillBox>
       )
@@ -730,13 +730,13 @@ export const ViewReady = ({
             currentUserId={profile.userId}
             profileStore={profileStore}
             model={model[1]}
-            dispatch={(msg) => dispatch(["Chat", msg])}
+            $d={(msg) => $d(["Chat", msg])}
             chatStore={chatStore}
           />
           <ViewBottomNavigation
             currentUserId={currentUserId}
             route={route}
-            dispatch={dispatch}
+            $d={$d}
           />
         </UI.FillBox>
       )
@@ -745,7 +745,7 @@ export const ViewReady = ({
       return (
         <UI.FillBox>
           <Search.View
-            dispatch={(msg) => dispatch(["Search", msg])}
+            $d={(msg) => $d(["Search", msg])}
             model={model[1]}
             profileStore={profileStore}
           />
@@ -753,7 +753,7 @@ export const ViewReady = ({
           <ViewBottomNavigation
             currentUserId={currentUserId}
             route={route}
-            dispatch={dispatch}
+            $d={$d}
           />
         </UI.FillBox>
       )
@@ -766,12 +766,12 @@ export const ViewReady = ({
             chatStore={chatStore}
             currentUserProfile={profile}
             model={model[1]}
-            dispatch={(msg) => dispatch(["ChatNew", msg])}
+            $d={(msg) => $d(["ChatNew", msg])}
           />
           <ViewBottomNavigation
             currentUserId={currentUserId}
             route={route}
-            dispatch={dispatch}
+            $d={$d}
           />
         </UI.FillBox>
       )
@@ -784,7 +784,7 @@ export const ViewReady = ({
           currentUserId={profile.userId}
           model={model[2]}
           conversationId={model[1].conversationId}
-          dispatch={(msg) => dispatch(["ChatConversation", msg])}
+          $d={(msg) => $d(["ChatConversation", msg])}
         />
       )
 
@@ -792,7 +792,7 @@ export const ViewReady = ({
       return (
         <Logout.View
           model={model[1]}
-          dispatch={(msg) => dispatch(["Logout", msg])}
+          $d={(msg) => $d(["Logout", msg])}
         />
       )
 
@@ -802,7 +802,7 @@ export const ViewReady = ({
           profileStore={profileStore}
           userId={profile.userId}
           model={model[1]}
-          dispatch={(msg) => dispatch(["ProfileDelete", msg])}
+          $d={(msg) => $d(["ProfileDelete", msg])}
         />
       )
 
@@ -812,12 +812,12 @@ export const ViewReady = ({
           <ProfileUpdate.View
             profile={profile}
             model={model[1]}
-            dispatch={(msg) => dispatch(["ProfileUpdate", msg])}
+            $d={(msg) => $d(["ProfileUpdate", msg])}
           />
           <ViewBottomNavigation
             currentUserId={currentUserId}
             route={route}
-            dispatch={dispatch}
+            $d={$d}
           />
         </UI.FillBox>
       )
@@ -827,12 +827,12 @@ export const ViewReady = ({
         <UI.FillBox>
           <ProfileUpdateAvatar.View
             model={model[1]}
-            dispatch={(msg) => dispatch(["ProfileUpdateAvatar", msg])}
+            $d={(msg) => $d(["ProfileUpdateAvatar", msg])}
           />
           <ViewBottomNavigation
             currentUserId={currentUserId}
             route={route}
-            dispatch={dispatch}
+            $d={$d}
           />
         </UI.FillBox>
       )
@@ -842,12 +842,12 @@ export const ViewReady = ({
         <UI.FillBox>
           <ProfileUpdateName.View
             model={model[1]}
-            dispatch={(msg) => dispatch(["ProfileUpdateName", msg])}
+            $d={(msg) => $d(["ProfileUpdateName", msg])}
           />
           <ViewBottomNavigation
             currentUserId={currentUserId}
             route={route}
-            dispatch={dispatch}
+            $d={$d}
           />
         </UI.FillBox>
       )
@@ -858,12 +858,12 @@ export const ViewReady = ({
           <ProfileUpdateTheme.View
             profile={profile}
             model={model[1]}
-            dispatch={(msg) => dispatch(["ProfileUpdateTheme", msg])}
+            $d={(msg) => $d(["ProfileUpdateTheme", msg])}
           />
           <ViewBottomNavigation
             currentUserId={currentUserId}
             route={route}
-            dispatch={dispatch}
+            $d={$d}
           />
         </UI.FillBox>
       )
@@ -873,12 +873,12 @@ export const ViewReady = ({
         <UI.FillBox>
           <ProfileUpdateUsername.View
             model={model[1]}
-            dispatch={(msg) => dispatch(["ProfileUpdateUsername", msg])}
+            $d={(msg) => $d(["ProfileUpdateUsername", msg])}
           />
           <ViewBottomNavigation
             currentUserId={currentUserId}
             route={route}
-            dispatch={dispatch}
+            $d={$d}
           />
         </UI.FillBox>
       )
@@ -892,19 +892,19 @@ export const ViewReady = ({
             profileStore={profileStore}
             currentUserId={profile.userId}
             model={model[2]}
-            dispatch={(msg) => dispatch(["Profile", msg])}
+            $d={(msg) => $d(["Profile", msg])}
           />
           <ViewBottomNavigation
             currentUserId={currentUserId}
             route={route}
-            dispatch={dispatch}
+            $d={$d}
           />
         </UI.FillBox>
       )
 
     case "GameRoom": {
       return (
-        <GameRoomPage.View ctx={{ currentUserId: profile.userId, profiles: profileStore.profiles }} gameRoom={gameRoom} model={model[1]} dispatch={(msg) => dispatch(["GameRoom", msg])} />
+        <GameRoomPage.View ctx={{ currentUserId: profile.userId, profiles: profileStore.profiles }} gameRoom={gameRoom} model={model[1]} $d={(msg) => $d(["GameRoom", msg])} />
       )
     }
 
@@ -916,13 +916,13 @@ export const ViewReady = ({
             party={party}
             store={profileStore}
             model={model[1]}
-            dispatch={(msg) => dispatch(["Party", msg])}
+            $d={(msg) => $d(["Party", msg])}
           />
 
           <ViewBottomNavigation
             currentUserId={currentUserId}
             route={route}
-            dispatch={dispatch}
+            $d={$d}
           />
         </UI.FillBox>
       )
@@ -933,14 +933,14 @@ export const ViewReady = ({
         <ViewTopLevel
           currentUserId={currentUserId}
           route={route}
-          dispatch={dispatch}
+          $d={$d}
           gameRoom={gameRoom}
         >
           <Home.View
             ctx={{ profiles: profileStore.profiles, currentUserId }}
             gameRoom={gameRoom}
             model={model[1]}
-            dispatch={(msg) => dispatch(["Home", msg])}
+            $d={(msg) => $d(["Home", msg])}
           />
 
 
@@ -963,18 +963,18 @@ export const ViewReady = ({
 
 export const ViewProfileMissing = ({
   model,
-  dispatch,
+  $d,
 }: {
   authSession: Auth.Session
   model: Model
-  dispatch: (msg: Msg) => void
+  $d: (msg: Msg) => void
 }) => {
   switch (model[0]) {
     case "Logout":
       return (
         <Logout.View
           model={model[1]}
-          dispatch={(msg) => dispatch(["Logout", msg])}
+          $d={(msg) => $d(["Logout", msg])}
         />
       )
 
@@ -982,7 +982,7 @@ export const ViewProfileMissing = ({
       return (
         <ProfileCreate.View
           model={model[1]}
-          dispatch={(msg) => dispatch(["ProfileCreate", msg])}
+          $d={(msg) => $d(["ProfileCreate", msg])}
         />
       )
 
@@ -1015,17 +1015,17 @@ export const ViewProfileMissing = ({
 
 export const ViewLoggedOut = ({
   model,
-  dispatch,
+  $d,
 }: {
   model: Model
-  dispatch: (msg: Msg) => void
+  $d: (msg: Msg) => void
 }) => {
   switch (model[0]) {
     case "Login":
       return (
         <Login.View
           model={model[1]}
-          dispatch={(msg) => dispatch(["Login", msg])}
+          $d={(msg) => $d(["Login", msg])}
         />
       )
 
@@ -1033,7 +1033,7 @@ export const ViewLoggedOut = ({
       return (
         <LoginEmailLink.View
           model={model[1]}
-          dispatch={(msg) => dispatch(["LoginEmailLink", msg])}
+          $d={(msg) => $d(["LoginEmailLink", msg])}
         />
       )
 
@@ -1041,7 +1041,7 @@ export const ViewLoggedOut = ({
       return (
         <LoginPhone.View
           model={model[1]}
-          dispatch={(msg) => dispatch(["LoginPhone", msg])}
+          $d={(msg) => $d(["LoginPhone", msg])}
         />
       )
 
@@ -1050,7 +1050,7 @@ export const ViewLoggedOut = ({
         <LoginPhoneVerify.View
           phoneNumber={model[1].phoneNumber}
           model={model[2]}
-          dispatch={(msg) => dispatch(["LoginPhoneVerify", msg])}
+          $d={(msg) => $d(["LoginPhoneVerify", msg])}
         />
       )
 
@@ -1090,14 +1090,14 @@ export const ViewLoggedOut = ({
 
 const ViewTopLevel = ({
   children,
-  dispatch,
+  $d,
   route,
   currentUserId,
 }: {
   children: UI.ViewNode
   currentUserId: UserId
   route: Route.Model
-  dispatch: (msg: Msg) => void
+  $d: (msg: Msg) => void
   gameRoom: GameRoom.Model
 }) => {
   return (
@@ -1106,7 +1106,7 @@ const ViewTopLevel = ({
       <ViewBottomNavigation
         currentUserId={currentUserId}
         route={route}
-        dispatch={dispatch}
+        $d={$d}
       />
     </UI.FillBox>
   )
@@ -1121,11 +1121,11 @@ type BottomNavigationItem = {
 const ViewBottomNavigation = ({
   currentUserId,
   route,
-  dispatch,
+  $d,
 }: {
   currentUserId: UserId
   route: Route.Model
-  dispatch: (msg: Msg) => void
+  $d: (msg: Msg) => void
 }) => {
   const items: BottomNavigationItem[] = [
     {
@@ -1175,7 +1175,7 @@ const ViewBottomNavigation = ({
           <UI.ButtonBase
             key={Route.encode(item.route)}
             onClick={() =>
-              dispatch(["ClickedBottomNavigationLink", item.route])
+              $d(["ClickedBottomNavigationLink", item.route])
             }
             sx={{
               color: isSelected ? "primary.main" : "text.secondary",

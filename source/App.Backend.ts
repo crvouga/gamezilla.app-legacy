@@ -382,11 +382,11 @@ const program = Platform.createProgram({
 })
 
 program.sub$.subscribe((msg) => {
-  program.dispatch(msg)
+  program.$d(msg)
 })
 
 program.state$.subscribe(({ cmd }) => {
-  cmd(program.dispatch)
+  cmd(program.$d)
 })
 
 // logging

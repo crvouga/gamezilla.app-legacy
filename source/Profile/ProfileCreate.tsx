@@ -100,10 +100,10 @@ export const update = (
 
 export const View = ({
   model,
-  dispatch,
+  $d,
 }: {
   model: Model
-  dispatch: (msg: Msg) => void
+  $d: (msg: Msg) => void
 }) => (
   <UI.FillBox>
     <UI.Header
@@ -111,7 +111,7 @@ export const View = ({
         <UI.Button
           sx={{ marginLeft: -1 }}
           size="small"
-          onClick={() => dispatch(["ClickedLogout"])}
+          onClick={() => $d(["ClickedLogout"])}
         >
           Logout
         </UI.Button>
@@ -147,7 +147,7 @@ export const View = ({
         label="Username"
         fullWidth
         onChange={(event) =>
-          dispatch(["InputtedUsername", event.currentTarget.value])
+          $d(["InputtedUsername", event.currentTarget.value])
         }
       />
 
@@ -155,7 +155,7 @@ export const View = ({
         fullWidth
         size="large"
         variant="contained"
-        onClick={() => dispatch(["ClickedSubmit"])}
+        onClick={() => $d(["ClickedSubmit"])}
       >
         Create Profile
       </UI.Button>

@@ -67,12 +67,12 @@ export const update = (
 export const View = ({
   profileStore,
   userId,
-  dispatch,
+  $d,
 }: {
   profileStore: ProfileStore.Model
   userId: UserId
   model: Model
-  dispatch: (msg: Msg) => void
+  $d: (msg: Msg) => void
 }) => {
   const mutation =
     profileStore.deleteForever[userId] ?? RemoteData.NotAsked
@@ -108,7 +108,7 @@ export const View = ({
                 size="large"
                 color="inherit"
                 startIcon={<UI.Icons.Close />}
-                onClick={() => dispatch(["ClickedCloseErr"])}
+                onClick={() => $d(["ClickedCloseErr"])}
               >
                 Close
               </UI.Button>
@@ -124,9 +124,9 @@ export const View = ({
           open
           title="Delete profile forever?"
           confirmTitle="Delete"
-          onCancel={() => dispatch(["ClickedCancel"])}
-          onClose={() => dispatch(["ClickedBackdrop"])}
-          onConfirm={() => dispatch(["ClickedDelete"])}
+          onCancel={() => $d(["ClickedCancel"])}
+          onClose={() => $d(["ClickedBackdrop"])}
+          onConfirm={() => $d(["ClickedDelete"])}
         />
       )
   }
