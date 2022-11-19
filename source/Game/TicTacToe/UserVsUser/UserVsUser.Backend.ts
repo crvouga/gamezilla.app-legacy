@@ -38,9 +38,9 @@ export type Msg = BackendMsg
 
 export const update = (
   {
-    sendToRoom,
+    broadcast,
   }: {
-    sendToRoom: (msg: ToFrontend) => Cmd
+    broadcast: (msg: ToFrontend) => Cmd
   },
   msg: Msg,
   model: Model,
@@ -51,7 +51,7 @@ export const update = (
 
       const modelNew = result.type === "Err" ? model : result.value
 
-      return [modelNew, sendToRoom(["RoundCountDown_Done", result])]
+      return [modelNew, broadcast(["RoundCountDown_Done", result])]
     }
 
     case "MoveCountDown": {
@@ -59,7 +59,7 @@ export const update = (
 
       const modelNew = result.type === "Err" ? model : result.value
 
-      return [modelNew, sendToRoom(["MoveCountDown_Done", result])]
+      return [modelNew, broadcast(["MoveCountDown_Done", result])]
     }
   }
 }
@@ -67,10 +67,10 @@ export const update = (
 export const updateFromFrontend = (
   {
     sendToClient,
-    sendToRoom,
+    broadcast,
   }: {
     sendToClient: (msg: ToFrontend) => Cmd
-    sendToRoom: (msg: ToFrontend) => Cmd
+    broadcast: (msg: ToFrontend) => Cmd
   },
   msg: ToBackend,
   model: Model,
@@ -85,7 +85,7 @@ export const updateFromFrontend = (
 
       const modelNew = result.value
 
-      return [modelNew, sendToRoom(["InputPlayer_Done", result])]
+      return [modelNew, broadcast(["InputPlayer_Done", result])]
     }
 
     case "StopPlaying": {
@@ -97,7 +97,7 @@ export const updateFromFrontend = (
 
       const modelNew = result.value
 
-      return [modelNew, sendToRoom(["StopPlaying_Done", result])]
+      return [modelNew, broadcast(["StopPlaying_Done", result])]
     }
 
     case "StartGame": {
@@ -109,7 +109,7 @@ export const updateFromFrontend = (
 
       const modelNew = result.value
 
-      return [modelNew, sendToRoom(["StartGame_Done", result])]
+      return [modelNew, broadcast(["StartGame_Done", result])]
     }
 
     case "Resign": {
@@ -121,7 +121,7 @@ export const updateFromFrontend = (
 
       const modelNew = result.value
 
-      return [modelNew, sendToRoom(["Resign_Done", result])]
+      return [modelNew, broadcast(["Resign_Done", result])]
     }
 
     case "InputMove": {
@@ -133,7 +133,7 @@ export const updateFromFrontend = (
 
       const modelNew = result.value
 
-      return [modelNew, sendToRoom(["InputMove_Done", result])]
+      return [modelNew, broadcast(["InputMove_Done", result])]
     }
 
     case "NewGame": {
@@ -145,7 +145,7 @@ export const updateFromFrontend = (
 
       const modelNew = result.value
 
-      return [modelNew, sendToRoom(["NewGame_Done", result])]
+      return [modelNew, broadcast(["NewGame_Done", result])]
     }
 
     case "InputBestOutOf": {
@@ -157,7 +157,7 @@ export const updateFromFrontend = (
 
       const modelNew = result.value
 
-      return [modelNew, sendToRoom(["InputBestOutOf_Done", result])]
+      return [modelNew, broadcast(["InputBestOutOf_Done", result])]
     }
 
     case "InputMoveTimeLimit": {
@@ -169,7 +169,7 @@ export const updateFromFrontend = (
 
       const modelNew = result.value
 
-      return [modelNew, sendToRoom(["InputMoveTimeLimit_Done", result])]
+      return [modelNew, broadcast(["InputMoveTimeLimit_Done", result])]
     }
 
     case "RematchAccept": {
@@ -180,7 +180,7 @@ export const updateFromFrontend = (
         return [model, sendToClient(res)]
       }
 
-      return [result.value, sendToRoom(res)]
+      return [result.value, broadcast(res)]
     }
 
     case "RematchAsk": {
@@ -191,7 +191,7 @@ export const updateFromFrontend = (
         return [model, sendToClient(res)]
       }
 
-      return [result.value, sendToRoom(res)]
+      return [result.value, broadcast(res)]
     }
 
     case "RematchDecline": {
@@ -202,7 +202,7 @@ export const updateFromFrontend = (
         return [model, sendToClient(res)]
       }
 
-      return [result.value, sendToRoom(res)]
+      return [result.value, broadcast(res)]
     }
 
     case "Rematch_Cancel": {
@@ -213,7 +213,7 @@ export const updateFromFrontend = (
         return [model, sendToClient(res)]
       }
 
-      return [result.value, sendToRoom(res)]
+      return [result.value, broadcast(res)]
     }
 
     default: {
@@ -223,7 +223,7 @@ export const updateFromFrontend = (
 }
 
 
-export const updateRoomLeave = ({ sendToRoom }: { sendToRoom: (m: ToFrontend) => Cmd }, userId: UserId, model: Model): [Model, Cmd<Msg>] => {
+export const updateRoomLeave = ({ broadcast }: { broadcast: (m: ToFrontend) => Cmd }, userId: UserId, model: Model): [Model, Cmd<Msg>] => {
   const player: PlayerType | "None" = model.O === userId ? 'O' : model.X === userId ? 'X' : 'None'
 
   if (player === 'None') {
@@ -242,7 +242,7 @@ export const updateRoomLeave = ({ sendToRoom }: { sendToRoom: (m: ToFrontend) =>
     [other]: model[other]
   }
 
-  return [modelNew, sendToRoom(['PlayerLeft', modelNew])]
+  return [modelNew, broadcast(['PlayerLeft', modelNew])]
 
 }
 

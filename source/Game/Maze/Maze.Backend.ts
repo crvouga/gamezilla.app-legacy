@@ -1,6 +1,6 @@
 import { Cmd, Sub } from "../../Core";
 import { UserId } from "../../Data";
-import { BackendModel, BackendMsg, initShared, ToBackend } from "./Maze.Types";
+import { BackendModel, BackendMsg, handle, initShared, Res, ToBackend, ToFrontend } from "./Maze.Types";
 //
 //
 //
@@ -31,10 +31,11 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
     }
 };
 
-export const updateFromFrontend = (msg: ToBackend, model: Model): [Model, Cmd<Msg>] => {
+export const updateFromFrontend = ({ broadcast }: { broadcast: (m: ToFrontend) => Cmd }, msg: ToBackend, model: Model): [Model, Cmd<Msg>] => {
     switch (msg[0]) {
-        case 'None': {
-            return [model, Cmd.None]
+        case 'StartPlaying': {
+            const res: Res = [...msg, handle(msg, model)]
+            return [model, broadcast(res)]
         }
     }
 }

@@ -42,7 +42,7 @@ export const init = initShared
 export type Msg = BackendMsg
 
 export const update = (
-  { sendToRoom }: { sendToRoom: (msg: ToFrontend) => Cmd },
+  { broadcast }: { broadcast: (msg: ToFrontend) => Cmd },
   msg: Msg,
   model: Model,
 ): [Model, Cmd<Msg>] => {
@@ -60,8 +60,8 @@ export const update = (
       return [
         modelNew,
         Cmd.batch([
-          sendToRoom(["ClockTicked", modelNew]),
-          didChangeToGameOver ? sendToRoom(["GameOver"]) : Cmd.None,
+          broadcast(["ClockTicked", modelNew]),
+          didChangeToGameOver ? broadcast(["GameOver"]) : Cmd.None,
         ]),
       ]
     }
@@ -71,7 +71,7 @@ export const update = (
 export const updateFromFrontend = (
   wire: {
     sendToClient: (msg: ToFrontend) => Cmd
-    sendToRoom: (msg: ToFrontend) => Cmd
+    broadcast: (msg: ToFrontend) => Cmd
   },
   msg: ToBackend,
   model: Model,
@@ -162,10 +162,10 @@ export const updateFromFrontend = (
 const sendResponse = (
   {
     sendToClient,
-    sendToRoom,
+    broadcast,
   }: {
     sendToClient: (msg: ToFrontend) => Cmd
-    sendToRoom: (msg: ToFrontend) => Cmd
+    broadcast: (msg: ToFrontend) => Cmd
   },
   response: Res,
   model: Model,
@@ -189,14 +189,14 @@ const sendResponse = (
   return [
     modelNew,
     Cmd.batch([
-      didChangeToGameOver ? sendToRoom(["GameOver"]) : Cmd.None,
-      sendToRoom(response),
+      didChangeToGameOver ? broadcast(["GameOver"]) : Cmd.None,
+      broadcast(response),
     ]),
   ]
 }
 
 
-export const updateRoomLeave = ({ sendToRoom }: { sendToRoom: (m: ToFrontend) => Cmd }, userId: UserId, model: Model): [Model, Cmd<Msg>] => {
+export const updateRoomLeave = ({ broadcast }: { broadcast: (m: ToFrontend) => Cmd }, userId: UserId, model: Model): [Model, Cmd<Msg>] => {
 
   switch (model.type) {
     case 'Setup': {
@@ -208,7 +208,7 @@ export const updateRoomLeave = ({ sendToRoom }: { sendToRoom: (m: ToFrontend) =>
 
       const modelNew: Model = { ...model, [color]: "None" }
 
-      return [modelNew, sendToRoom(['PlayerLeft', modelNew])]
+      return [modelNew, broadcast(['PlayerLeft', modelNew])]
     }
 
     case 'Game':
@@ -229,7 +229,7 @@ export const updateRoomLeave = ({ sendToRoom }: { sendToRoom: (m: ToFrontend) =>
         [color]: "None",
       }
 
-      return [modelNew, sendToRoom(['PlayerLeft', modelNew])]
+      return [modelNew, broadcast(['PlayerLeft', modelNew])]
     }
   }
 

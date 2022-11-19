@@ -38,7 +38,7 @@ export const init = initBackend
 export type Msg = BackendMsg
 
 export const update = (
-  { sendToRoom }: { sendToRoom: (msg: ToFrontend) => Cmd },
+  { broadcast }: { broadcast: (msg: ToFrontend) => Cmd },
   msg: Msg,
   model: Model,
 ): [Model, Cmd<Msg>] => {
@@ -48,14 +48,14 @@ export const update = (
 
       const modelNew = result.type === "Err" ? model : result.value
 
-      return [modelNew, sendToRoom(["BotMoved_Done", result])]
+      return [modelNew, broadcast(["BotMoved_Done", result])]
     }
   }
 }
 
 type Wire = {
   sendToClient: (msg: ToFrontend) => Cmd
-  sendToRoom: (msg: ToFrontend) => Cmd
+  broadcast: (msg: ToFrontend) => Cmd
 }
 
 export const updateFromFrontend = (
@@ -87,7 +87,7 @@ const toBotMoveCmd = (modelPrev: Model, modelNext: Model): Cmd<Msg> => {
 }
 
 const updateFromFrontend_ = (
-  { sendToClient, sendToRoom }: Wire,
+  { sendToClient, broadcast }: Wire,
   msg: ToBackend,
   model: Model,
 ): [Model, Cmd<Msg>] => {
@@ -101,7 +101,7 @@ const updateFromFrontend_ = (
 
       const modelNew = result.type === "Err" ? model : result.value
 
-      return [modelNew, sendToRoom(["StartGame_Done", result])]
+      return [modelNew, broadcast(["StartGame_Done", result])]
     }
 
     case "StopGame": {
@@ -109,7 +109,7 @@ const updateFromFrontend_ = (
 
       const modelNew = result.type === "Err" ? model : result.value
 
-      return [modelNew, sendToRoom(["StopGame_Done", result])]
+      return [modelNew, broadcast(["StopGame_Done", result])]
     }
 
     case "InputUser": {
@@ -117,7 +117,7 @@ const updateFromFrontend_ = (
 
       const modelNew = result.type === "Err" ? model : result.value
 
-      return [modelNew, sendToRoom(["InputUser_Done", result])]
+      return [modelNew, broadcast(["InputUser_Done", result])]
     }
 
     case "InputColor": {
@@ -125,7 +125,7 @@ const updateFromFrontend_ = (
 
       const modelNew = result.type === "Err" ? model : result.value
 
-      return [modelNew, sendToRoom(["InputColor_Done", result])]
+      return [modelNew, broadcast(["InputColor_Done", result])]
     }
 
     case "InputBot": {
@@ -133,7 +133,7 @@ const updateFromFrontend_ = (
 
       const modelNew = result.type === "Err" ? model : result.value
 
-      return [modelNew, sendToRoom(["InputBot_Done", result])]
+      return [modelNew, broadcast(["InputBot_Done", result])]
     }
 
     case "InputMove": {
@@ -141,12 +141,12 @@ const updateFromFrontend_ = (
 
       const modelNew = result.type === "Err" ? model : result.value
 
-      return [modelNew, sendToRoom(["InputMove_Done", result])]
+      return [modelNew, broadcast(["InputMove_Done", result])]
     }
   }
 }
 
-export const updateRoomLeave = ({ sendToRoom }: { sendToRoom: (msg: ToFrontend) => Cmd }, userId: UserId, model: Model): [Model, Cmd<Msg>] => {
+export const updateRoomLeave = ({ broadcast }: { broadcast: (msg: ToFrontend) => Cmd }, userId: UserId, model: Model): [Model, Cmd<Msg>] => {
   if (model.userId === userId) {
     const modelNew: Model = {
       type: "Setup",
@@ -154,7 +154,7 @@ export const updateRoomLeave = ({ sendToRoom }: { sendToRoom: (msg: ToFrontend) 
       userColor: model.userColor,
       userId: "None"
     }
-    return [modelNew, sendToRoom(['PlayerLeft', modelNew])]
+    return [modelNew, broadcast(['PlayerLeft', modelNew])]
   }
 
   return [model, Cmd.None]

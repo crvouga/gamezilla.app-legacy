@@ -1,3 +1,5 @@
+import { Result, Set } from "../../Core"
+import { Err, Ok } from "../../Core/Result"
 import { UserId } from "../../Data"
 
 //
@@ -12,11 +14,7 @@ export type SharedModel = SetupModel
 
 export type SetupModel = {
   type: "Setup"
-  players: {
-    [userId: UserId]: {
-      userId: UserId
-    }
-  }
+  players: Set<UserId>
 }
 
 export type FrontendModel = SharedModel
@@ -40,13 +38,40 @@ export const generateMaze = () => { }
 // 
 // 
 
-export type FrontendMsg = ['None']
+export type FrontendMsg = Req
 
 export type BackendMsg = ['None']
 
-export type ToFrontend = ['None']
+export type ToBackend = Req
 
-export type ToBackend = ['None']
+export type ToFrontend = Res
+
+// 
+// 
+// 
+// 
+
+export type Req = ['StartPlaying', { userId: UserId }]
+
+export type Res = [...Req, Result<Problem, SharedModel>]
+
+type Problem = "must_be_setup"
+
+export const handle = (msg: Req, model: SharedModel): Result<Problem, SharedModel> => {
+  switch (msg[0]) {
+    case 'StartPlaying': {
+      if (model.type !== 'Setup') {
+        return Err("must_be_setup")
+      }
+
+      const modelNew: SharedModel = {
+        ...model,
+        players: Set.add(msg[1].userId, model.players)
+      }
+      return Ok(modelNew)
+    }
+  }
+}
 
 
 //

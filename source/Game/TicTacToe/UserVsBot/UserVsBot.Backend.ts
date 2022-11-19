@@ -44,7 +44,7 @@ export const init = initSharedModel
 export type Msg = BackendMsg
 
 type Update = (
-  wire: { sendToRoom: (msg: ToFrontend) => Cmd },
+  wire: { broadcast: (msg: ToFrontend) => Cmd },
   msg: Msg,
   model: Model,
 ) => [Model, Cmd<Msg>]
@@ -58,12 +58,12 @@ export const update: Update = (wire, msg, model) => {
   return [modelNext, cmd]
 }
 
-export const update_: Update = ({ sendToRoom }, msg, model) => {
+export const update_: Update = ({ broadcast }, msg, model) => {
   switch (msg[0]) {
     case "BotMove": {
       const response: ToFrontend = ["BotMove_Done", botMove(msg[1], model)]
       const modelNext = response[1].type === "Ok" ? response[1].value : model
-      return [modelNext, sendToRoom(response)]
+      return [modelNext, broadcast(response)]
     }
   }
 }
@@ -79,7 +79,7 @@ export const update_: Update = ({ sendToRoom }, msg, model) => {
 type UpdateFromFrontend = (
   wire: {
     sendToClient: (m: ToFrontend) => Cmd
-    sendToRoom: (m: ToFrontend) => Cmd
+    broadcast: (m: ToFrontend) => Cmd
   },
   msg: ToBackend,
   model: Model,
@@ -113,7 +113,7 @@ export const updateFromFrontend: UpdateFromFrontend = (
 }
 
 const updateFromFrontend_: UpdateFromFrontend = (
-  { sendToClient, sendToRoom },
+  { sendToClient, broadcast },
   msg,
   model,
 ) => {
@@ -123,7 +123,7 @@ const updateFromFrontend_: UpdateFromFrontend = (
       if (response[1].type === "Err") {
         return [model, sendToClient(response)]
       }
-      return [response[1].value, sendToRoom(response)]
+      return [response[1].value, broadcast(response)]
     }
 
     case "StopPlaying": {
@@ -134,7 +134,7 @@ const updateFromFrontend_: UpdateFromFrontend = (
       if (response[1].type === "Err") {
         return [model, sendToClient(response)]
       }
-      return [response[1].value, sendToRoom(response)]
+      return [response[1].value, broadcast(response)]
     }
 
     case "StartPlaying": {
@@ -145,7 +145,7 @@ const updateFromFrontend_: UpdateFromFrontend = (
       if (response[1].type === "Err") {
         return [model, sendToClient(response)]
       }
-      return [response[1].value, sendToRoom(response)]
+      return [response[1].value, broadcast(response)]
     }
 
     case "InputBot": {
@@ -153,7 +153,7 @@ const updateFromFrontend_: UpdateFromFrontend = (
       if (response[1].type === "Err") {
         return [model, sendToClient(response)]
       }
-      return [response[1].value, sendToRoom(response)]
+      return [response[1].value, broadcast(response)]
     }
 
     case "InputPlayerType": {
@@ -164,7 +164,7 @@ const updateFromFrontend_: UpdateFromFrontend = (
       if (response[1].type === "Err") {
         return [model, sendToClient(response)]
       }
-      return [response[1].value, sendToRoom(response)]
+      return [response[1].value, broadcast(response)]
     }
 
     case "StopGame": {
@@ -172,7 +172,7 @@ const updateFromFrontend_: UpdateFromFrontend = (
       if (response[1].type === "Err") {
         return [model, sendToClient(response)]
       }
-      return [response[1].value, sendToRoom(response)]
+      return [response[1].value, broadcast(response)]
     }
 
     case "InputMove": {
@@ -180,7 +180,7 @@ const updateFromFrontend_: UpdateFromFrontend = (
       if (response[1].type === "Err") {
         return [model, sendToClient(response)]
       }
-      return [response[1].value, sendToRoom(response)]
+      return [response[1].value, broadcast(response)]
     }
 
     case "SwapSides": {
@@ -188,7 +188,7 @@ const updateFromFrontend_: UpdateFromFrontend = (
       if (response[1].type === "Err") {
         return [model, sendToClient(response)]
       }
-      return [response[1].value, sendToRoom(response)]
+      return [response[1].value, broadcast(response)]
     }
 
     case "Restart": {
@@ -196,12 +196,12 @@ const updateFromFrontend_: UpdateFromFrontend = (
       if (response[1].type === "Err") {
         return [model, sendToClient(response)]
       }
-      return [response[1].value, sendToRoom(response)]
+      return [response[1].value, broadcast(response)]
     }
   }
 }
 
-export const updateRoomLeave = ({ sendToRoom, userId, model }: { userId: UserId, model: Model, sendToRoom: (m: ToFrontend) => Cmd }): [Model, Cmd<Msg>] => {
+export const updateRoomLeave = ({ broadcast, userId, model }: { userId: UserId, model: Model, broadcast: (m: ToFrontend) => Cmd }): [Model, Cmd<Msg>] => {
 
   if (model.player !== userId) {
     return [model, Cmd.None]
@@ -214,7 +214,7 @@ export const updateRoomLeave = ({ sendToRoom, userId, model }: { userId: UserId,
     userPlayerType: model.userPlayerType
   }
 
-  return [modelNew, sendToRoom(['PlayerLeft', modelNew])]
+  return [modelNew, broadcast(['PlayerLeft', modelNew])]
 }
 
 //

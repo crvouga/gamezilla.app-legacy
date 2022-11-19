@@ -4,17 +4,20 @@ export type Set<T> = {
 
 type ToKey<T> = (element: T) => string
 
-const singleton = <T>(toKey: ToKey<T>, element: T): Set<T> => {
+const singleton = <T>(element: T, toKey?: ToKey<T>): Set<T> => {
+    const key = toKey ? toKey(element) : String(element)
     return {
-        [toKey(element)]: element
+        [key]: element
     }
 }
 
-const fromArray = <T>(toKey: ToKey<T>, array: T[]): Set<T> => {
+const fromArray = <T>(array: T[], toKey?: ToKey<T>): Set<T> => {
     const set: Set<T> = {}
 
     for (const element of array) {
-        set[toKey(element)] = element
+        const key = toKey ? toKey(element) : String(element)
+
+        set[key] = element
     }
 
     return set
@@ -24,10 +27,11 @@ const toArray = <T>(set: Set<T>): T[] => {
     return Object.values(set)
 }
 
-const add = <T>(toKey: (element: T) => string, element: T, set: Set<T>): Set<T> => {
+const add = <T>(element: T, set: Set<T>, toKey?: (element: T) => string): Set<T> => {
+    const key = toKey ? toKey(element) : String(element)
     return {
         ...set,
-        [toKey(element)]: element
+        [key]: element
     }
 }
 
@@ -88,9 +92,11 @@ const isEmpty = <T>(a: Set<T>): boolean => {
     return size(a) === 0
 }
 
-const isMember = <T>(toKey: ToKey<T>, element: T, set: Set<T>): boolean => {
-    return Boolean(set[toKey(element)])
+const isMember = <T>(element: T, set: Set<T>, toKey?: ToKey<T>): boolean => {
+    const key = toKey ? toKey(element) : String(element)
+    return Boolean(set[key])
 }
+
 
 export const Set = {
     singleton,

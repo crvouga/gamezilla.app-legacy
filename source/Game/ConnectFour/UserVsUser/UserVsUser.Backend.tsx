@@ -24,16 +24,16 @@ export const init = initShared
 
 export type Msg = BackendMsg
 
-export const update = ({ sendToRoom }: { sendToRoom: (msg: ToFrontend) => Cmd }, msg: Msg, model: Model): [Model, Cmd<Msg>] => {
+export const update = ({ broadcast }: { broadcast: (msg: ToFrontend) => Cmd }, msg: Msg, model: Model): [Model, Cmd<Msg>] => {
     switch (msg[0]) {
         case "Tick": {
             const modelNew = tick(model)
-            return [modelNew, sendToRoom(['Tick_Done', modelNew])]
+            return [modelNew, broadcast(['Tick_Done', modelNew])]
         }
     }
 };
 
-export const updateFromFrontend = ({ sendToClient, sendToRoom }: { sendToClient: (msg: ToFrontend) => Cmd, sendToRoom: (msg: ToFrontend) => Cmd }, msg: ToBackend, model: Model): [Model, Cmd<Msg>] => {
+export const updateFromFrontend = ({ sendToClient, broadcast }: { sendToClient: (msg: ToFrontend) => Cmd, broadcast: (msg: ToFrontend) => Cmd }, msg: ToBackend, model: Model): [Model, Cmd<Msg>] => {
     switch (msg[0]) {
         case 'Resign':
         case 'NewGame':
@@ -51,7 +51,7 @@ export const updateFromFrontend = ({ sendToClient, sendToRoom }: { sendToClient:
                 return [model, sendToClient(res)]
             }
 
-            return [res[1].value, sendToRoom(res)]
+            return [res[1].value, broadcast(res)]
         }
 
         default: {
@@ -60,7 +60,7 @@ export const updateFromFrontend = ({ sendToClient, sendToRoom }: { sendToClient:
     }
 }
 
-export const updateRoomLeave = ({ sendToRoom, userId, model }: { sendToRoom: (m: ToFrontend) => Cmd, userId: UserId, model: Model }): [Model, Cmd<Msg>] => {
+export const updateRoomLeave = ({ broadcast, userId, model }: { broadcast: (m: ToFrontend) => Cmd, userId: UserId, model: Model }): [Model, Cmd<Msg>] => {
     const player = toPlayerType(userId, model)
 
     if (player === 'None') {
@@ -75,7 +75,7 @@ export const updateRoomLeave = ({ sendToRoom, userId, model }: { sendToRoom: (m:
         [player]: 'None',
     }
 
-    return [modelNew, sendToRoom(['PlayerLeft', modelNew])]
+    return [modelNew, broadcast(['PlayerLeft', modelNew])]
 }
 
 //

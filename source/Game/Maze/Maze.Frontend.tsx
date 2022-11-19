@@ -1,7 +1,7 @@
-import { Cmd, Sub } from "../../Core";
+import { Cmd, Set, Sub } from "../../Core";
 import { Button, FillBox, List, ListItem, ListItemText, Typography } from "../../UI";
 import { Ctx } from "../Game.Shared";
-import { BackendModel, FrontendModel, FrontendMsg, initMaze, initShared, ToFrontend } from "./Maze.Types";
+import { BackendModel, FrontendModel, FrontendMsg, initMaze, initShared, ToBackend, ToFrontend } from "./Maze.Types";
 
 //
 //
@@ -25,18 +25,21 @@ export const init: FrontendModel = initShared
 
 export type Msg = FrontendMsg
 
-export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
+export const update = ({ sendToBackend }: { sendToBackend: (m: ToBackend) => Cmd }, msg: Msg, model: Model): [Model, Cmd<Msg>] => {
     switch (msg[0]) {
-        case "None": {
-            return [model, Cmd.None]
+        case "StartPlaying": {
+            return [model, sendToBackend(msg)]
         }
     }
 };
 
 export const updateFromBackend = (msg: ToFrontend, model: Model): [Model, Cmd<Msg>] => {
     switch (msg[0]) {
-        case 'None': {
-            return [model, Cmd.None]
+        case 'StartPlaying': {
+            if (msg[2].type === 'Err') {
+                return [model, Cmd.None]
+            }
+            return [msg[2].value, Cmd.None]
         }
     }
 }
@@ -65,19 +68,19 @@ export const subscriptions = (_model: Model): Sub<Msg> => {
 //
 //
 
-export const View = ({ model, ctx }: { ctx: Ctx, model: Model, $d: (msg: Msg) => void, }) => {
+export const View = ({ model, ctx, $d }: { ctx: Ctx, model: Model, $d: (msg: Msg) => void, }) => {
     return (
         <FillBox>
-            <Typography sx={{ px: 2, }}>
+            <Typography sx={{ pt: 2, px: 2, mb: 1, color: "text.secondary" }}>
                 Players
             </Typography>
-            <Button sx={{ w: 100, mx: 2 }}>
+            <Button variant="outlined" sx={{ w: 100, mx: 2 }} onClick={() => $d(['StartPlaying', { userId: ctx.currentUserId }])}>
                 Start Playing
             </Button>
             <List>
-                {Object.values(model.players).map(player => (
-                    <ListItem key={player.userId}>
-                        <ListItemText primary={ctx.profiles[player.userId]?.username} />
+                {Set.toArray(model.players).map(player => (
+                    <ListItem key={player}>
+                        <ListItemText primary={ctx.profiles[player]?.username} />
                     </ListItem>
                 ))}
             </List>

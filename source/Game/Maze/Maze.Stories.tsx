@@ -5,7 +5,7 @@ import { init, View } from "./Maze.Frontend"
 
 
 export default {
-    title: "Maze / UserVsUser",
+    title: "Maze",
     component: View,
     args: {
         $d: () => { },

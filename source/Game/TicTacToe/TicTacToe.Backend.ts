@@ -34,9 +34,9 @@ export type Msg = BackendMsg
 
 export const update = (
   {
-    sendToRoom,
+    broadcast,
   }: {
-    sendToRoom: (msg: ToFrontend) => Cmd
+    broadcast: (msg: ToFrontend) => Cmd
   },
   msg: Msg,
   model: Model,
@@ -45,7 +45,7 @@ export const update = (
     case "UserVsUser": {
       if (model.mode === "UserVsUser") {
         const [child, cmd] = UserVsUser.update(
-          { sendToRoom: (msg) => sendToRoom(["UserVsUser", msg]) },
+          { broadcast: (msg) => broadcast(["UserVsUser", msg]) },
           msg[1],
           model.child,
         )
@@ -57,7 +57,7 @@ export const update = (
     case "UserVsBot": {
       if (model.mode === "UserVsBot") {
         const [child, cmd] = UserVsBot.update(
-          { sendToRoom: (msg) => sendToRoom(["UserVsBot", msg]) },
+          { broadcast: (msg) => broadcast(["UserVsBot", msg]) },
           msg[1],
           model.child,
         )
@@ -71,10 +71,10 @@ export const update = (
 export const updateFromFrontend = (
   {
     sendToClient,
-    sendToRoom,
+    broadcast,
   }: {
     sendToClient: (msg: ToFrontend) => Cmd
-    sendToRoom: (msg: ToFrontend) => Cmd
+    broadcast: (msg: ToFrontend) => Cmd
   },
   msg: ToBackend,
   model: Model,
@@ -84,7 +84,7 @@ export const updateFromFrontend = (
     case "InputMode": {
       const modelNew: BackendModel = initMode(msg[1])
 
-      return [modelNew, sendToRoom(["InputMode_Done", Ok(modelNew)])]
+      return [modelNew, broadcast(["InputMode_Done", Ok(modelNew)])]
     }
 
     case "UserVsUser": {
@@ -92,7 +92,7 @@ export const updateFromFrontend = (
         const [child, cmd] = UserVsUser.updateFromFrontend(
           {
             sendToClient: (msg) => sendToClient(["UserVsUser", msg]),
-            sendToRoom: (msg) => sendToRoom(["UserVsUser", msg]),
+            broadcast: (msg) => broadcast(["UserVsUser", msg]),
           },
           msg[1],
           model.child,
@@ -109,7 +109,7 @@ export const updateFromFrontend = (
         const [child, cmd] = UserVsBot.updateFromFrontend(
           {
             sendToClient: (msg) => sendToClient(["UserVsBot", msg]),
-            sendToRoom: (msg) => sendToRoom(["UserVsBot", msg]),
+            broadcast: (msg) => broadcast(["UserVsBot", msg]),
           },
           msg[1],
           model.child,
@@ -127,19 +127,19 @@ export const updateFromFrontend = (
   }
 }
 
-export const updateRoomLeave = ({ sendToRoom }: { sendToRoom: (m: ToFrontend) => Cmd }, userId: UserId, model: Model): [Model, Cmd<Msg>] => {
+export const updateRoomLeave = ({ broadcast }: { broadcast: (m: ToFrontend) => Cmd }, userId: UserId, model: Model): [Model, Cmd<Msg>] => {
   switch (model.mode) {
     case 'None': {
       return [model, Cmd.None]
     }
 
     case 'UserVsBot': {
-      const [child, cmd] = UserVsBot.updateRoomLeave({ sendToRoom: m => sendToRoom(['UserVsBot', m]), userId, model: model.child })
+      const [child, cmd] = UserVsBot.updateRoomLeave({ broadcast: m => broadcast(['UserVsBot', m]), userId, model: model.child })
       return [{ mode: 'UserVsBot', child }, Cmd.tag("UserVsBot", cmd)]
     }
 
     case 'UserVsUser': {
-      const [child, cmd] = UserVsUser.updateRoomLeave({ sendToRoom: m => sendToRoom(['UserVsUser', m]) }, userId, model.child)
+      const [child, cmd] = UserVsUser.updateRoomLeave({ broadcast: m => broadcast(['UserVsUser', m]) }, userId, model.child)
       return [{ mode: "UserVsUser", child }, Cmd.tag("UserVsUser", cmd)]
     }
   }
