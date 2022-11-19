@@ -13,7 +13,7 @@ import { Debugger, DebugMsg } from "./debugger-commons"
  * @since 0.5.4
  */
 
-export const makeDebugger = <Model, Msg>(): Debugger<Model, Msg> => {
+export const makeDebugger = <Model, Msg extends {}>(): Debugger<Model, Msg> => {
   return () => {
     return {
       debug: (data) => {

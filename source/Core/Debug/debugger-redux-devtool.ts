@@ -81,7 +81,7 @@ interface LiftedState<Model> {
   isPaused: boolean
 }
 
-interface DevToolHandlerR<Model, Msg> extends DebuggerDeps<Model, Msg> {
+interface DevToolHandlerR<Model, Msg extends {}> extends DebuggerDeps<Model, Msg> {
   connection: Connection<Model, Msg>
 }
 
@@ -117,7 +117,7 @@ const hasExtension = (
  * @category constructors
  * @since 0.5.4
  */
-export const makeDebugger = <Model, Msg>(
+export const makeDebugger = <Model, Msg extends {}>(
   connection: Connection<Model, Msg>,
 ): Debugger<Model, Msg> => {
   return (d) => {
@@ -137,19 +137,19 @@ export const makeDebugger = <Model, Msg>(
  * **[UNSAFE]** Handles the execution of an effect related to an incoming messages sent from extension monitor.
  * @since 0.5.0
  */
-const handleSubscription = <Model, Msg>(
+const handleSubscription = <Model, Msg extends {}>(
   deps: DevToolHandlerR<Model, Msg>,
 ): ((msg: DevToolMsg) => void) => {
   const handler = handleIncomingMsg(deps)
 
-  return (msg) =>
-    p(
-      handler(msg),
-      Result.fold(
-        (err) => console.warn("[REDUX DEV TOOL]", err),
-        (eff) => eff(),
-      ),
-    )
+  return (msg) => {
+    const res = handler(msg)
+    if (res.type === 'Err') {
+      console.warn("[REDUX DEV TOOL]", res.error)
+      return
+    }
+    res.value()
+  }
 }
 
 /**
@@ -160,7 +160,7 @@ const handleSubscription = <Model, Msg>(
  * **Note:** the monitor can dispatch messages of any shape that will be re-dispatched into the application; these messages **are not validated** and can lead to unexpected behaviours.
  * @since 0.5.0
  */
-const handleIncomingMsg = <Model, Msg>({
+const handleIncomingMsg = <Model, Msg extends {}>({
   connection,
   init,
   debug$,
@@ -276,7 +276,7 @@ const handleIncomingMsg = <Model, Msg>({
  * The `MESSAGE` action will send the message payload and state to the connected extension (`connection`).
  * @since 0.5.0
  */
-const handleActions = <Model, Msg>({
+const handleActions = <Model, Msg extends {}>({
   connection,
 }: DevToolHandlerR<Model, Msg>): Debug<Model, Msg> => {
   return ([action, model]) =>
@@ -378,7 +378,7 @@ const parseToggleAction = <Model>(
  */
 
 const toggleAction =
-  <Model, Msg>(dispatch: Dispatch<MsgWithDebug<Model, Msg>>) =>
+  <Model, Msg extends {}>(dispatch: Dispatch<MsgWithDebug<Model, Msg>>) =>
     (
       id: number,
       liftedState: LiftedState<Model>,
