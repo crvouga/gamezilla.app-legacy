@@ -8,7 +8,7 @@ export default {
     title: "Maze / UserVsUser",
     component: View,
     args: {
-        dispatch: () => { },
+        $d: () => { },
         model: init,
         profiles: profileStore.profiles
     },

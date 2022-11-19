@@ -118,15 +118,15 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
 
 export const View = ({
   model,
-  dispatch,
+  $d,
 }: {
   model: Model
-  dispatch: (msg: Msg) => void
+  $d: (msg: Msg) => void
 }) => {
   return (
     <UI.FillBox>
       <UI.Header
-        left={<UI.HeaderBackButton onClick={() => dispatch(["ClickedBack"])} />}
+        left={<UI.HeaderBackButton onClick={() => $d(["ClickedBack"])} />}
         title="Reset Password"
       />
 
@@ -148,7 +148,7 @@ export const View = ({
           label="Email Address"
           value={model.emailAddress}
           onChange={(event) => {
-            dispatch(["InputtedEmailAddress", event.target.value])
+            $d(["InputtedEmailAddress", event.target.value])
           }}
         />
 
@@ -157,7 +157,7 @@ export const View = ({
           size="large"
           fullWidth
           loading={model.submission.type === "Loading"}
-          onClick={() => dispatch(["ClickedSend"])}
+          onClick={() => $d(["ClickedSend"])}
         >
           Send Password Reset Link
         </UI.Button>

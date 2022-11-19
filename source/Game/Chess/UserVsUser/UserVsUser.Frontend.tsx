@@ -392,12 +392,12 @@ export const subscriptions = (_model: Model): Sub<Msg> => {
 export const View = ({
   ctx,
   model,
-  dispatch,
+  $d,
   onClose,
 }: {
   ctx: Ctx,
   model: Model
-  dispatch: (msg: Msg) => void
+  $d: (msg: Msg) => void
   onClose: () => void
 }) => {
 
@@ -435,7 +435,7 @@ export const View = ({
                 fullWidth
                 size="large"
                 variant="contained"
-                onClick={() => dispatch(["InputPlayer", { userId: ctx.currentUserId, color: "w" }])}
+                onClick={() => $d(["InputPlayer", { userId: ctx.currentUserId, color: "w" }])}
               >
                 Play As {Board.colorToString("w")}
               </UI.Button>
@@ -443,7 +443,7 @@ export const View = ({
               <ViewInputUserPlayerSlot
                 color="w"
                 userId={model.sharedModel.w}
-                dispatch={dispatch}
+                $d={$d}
                 ctx={ctx}
               />
             )}
@@ -456,7 +456,7 @@ export const View = ({
                 fullWidth
                 size="large"
                 variant="contained"
-                onClick={() => dispatch([
+                onClick={() => $d([
                   "InputPlayer",
                   { userId: ctx.currentUserId, color: "b" },
                 ])}
@@ -465,7 +465,7 @@ export const View = ({
               </UI.Button>
 
             ) : (
-              <ViewInputUserPlayerSlot color="b" userId={model.sharedModel.b} ctx={ctx} dispatch={dispatch} />
+              <ViewInputUserPlayerSlot color="b" userId={model.sharedModel.b} ctx={ctx} $d={$d} />
             )}
           </UI.Box>
 
@@ -496,7 +496,7 @@ export const View = ({
                     key={clockPreset}
                     value={clockPreset}
                     onClick={() =>
-                      dispatch([
+                      $d([
                         "InputClock",
                         { clockPreset, userId: ctx.currentUserId },
                       ])
@@ -524,7 +524,7 @@ export const View = ({
             fullWidth
             variant="contained"
             onClick={() => {
-              dispatch(["StartGame", { userId: ctx.currentUserId }])
+              $d(["StartGame", { userId: ctx.currentUserId }])
             }}
           >
             Start Game
@@ -597,7 +597,7 @@ export const View = ({
             },
           ]
 
-          dispatch(msg)
+          $d(msg)
 
           const isOkfulMove =
             inputMove(msg[1], model.sharedModel).type === "Ok"
@@ -615,7 +615,7 @@ export const View = ({
 
       <ViewGameOverDialog
         model={model}
-        dispatch={dispatch}
+        $d={$d}
       />
 
       <UI.Box sx={{ width: "100%", display: "flex" }}>
@@ -625,7 +625,7 @@ export const View = ({
               fullWidth
               variant="contained"
               size="large"
-              onClick={() => dispatch(["NewGame"])}
+              onClick={() => $d(["NewGame"])}
               disabled={!(currentUserColor === "w" || currentUserColor === "b")}
             >
               New Game
@@ -640,7 +640,7 @@ export const View = ({
                 <UI.ActionButton
                   icon={<UI.Icons.HandshakeTwoTone />}
                   label="Draw"
-                  onClick={() => dispatch(["OpenedModal", "RequestToDraw"])}
+                  onClick={() => $d(["OpenedModal", "RequestToDraw"])}
                 />
 
                 <UI.ConformationDialog
@@ -649,10 +649,10 @@ export const View = ({
                       style={{ width: 48, height: 48 }}
                     />
                   }
-                  onCancel={() => dispatch(["ClosedModal"])}
-                  onClose={() => dispatch(["ClosedModal"])}
+                  onCancel={() => $d(["ClosedModal"])}
+                  onClose={() => $d(["ClosedModal"])}
                   onConfirm={() =>
-                    dispatch(["RequestToDraw", currentUserColor])
+                    $d(["RequestToDraw", currentUserColor])
                   }
                   open={model.openedModal === "RequestToDraw"}
                   title="Ask for a draw?"
@@ -677,7 +677,7 @@ export const View = ({
                   <UI.DialogActions>
                     <UI.Button
                       onClick={() =>
-                        dispatch(["CancelDraw", { userId: ctx.currentUserId }])
+                        $d(["CancelDraw", { userId: ctx.currentUserId }])
                       }
                     >
                       Cancel
@@ -697,9 +697,9 @@ export const View = ({
                       style={{ width: 48, height: 48 }}
                     />
                   }
-                  onClose={() => dispatch(["RespondToDraw", "Declined"])}
-                  onCancel={() => dispatch(["RespondToDraw", "Declined"])}
-                  onConfirm={() => dispatch(["RespondToDraw", "Accepted"])}
+                  onClose={() => $d(["RespondToDraw", "Declined"])}
+                  onCancel={() => $d(["RespondToDraw", "Declined"])}
+                  onConfirm={() => $d(["RespondToDraw", "Accepted"])}
                   title="Agree to a draw?"
                   confirmTitle="Accept"
                   cancelTitle="Decline"
@@ -708,16 +708,16 @@ export const View = ({
                 <UI.ActionButton
                   icon={<UI.Icons.FlagOutlined />}
                   label="Resign"
-                  onClick={() => dispatch(["OpenedModal", "Resign"])}
+                  onClick={() => $d(["OpenedModal", "Resign"])}
                 />
 
                 <UI.ConformationDialog
                   headerIcon={
                     <UI.Icons.FlagOutlined style={{ width: 48, height: 48 }} />
                   }
-                  onCancel={() => dispatch(["ClosedModal"])}
-                  onClose={() => dispatch(["ClosedModal"])}
-                  onConfirm={() => dispatch(["Resign", currentUserColor])}
+                  onCancel={() => $d(["ClosedModal"])}
+                  onClose={() => $d(["ClosedModal"])}
+                  onConfirm={() => $d(["Resign", currentUserColor])}
                   open={model.openedModal === "Resign"}
                   title="Resign from game?"
                   confirmTitle="Resign"
@@ -737,7 +737,7 @@ export const View = ({
               }
               label={model.isFlipped ? "Unflip" : "Flip"}
               onClick={() => {
-                dispatch(["ClickedFlip"])
+                $d(["ClickedFlip"])
               }}
             />
           </>
@@ -749,10 +749,10 @@ export const View = ({
 
 const ViewGameOverDialog = ({
   model,
-  dispatch,
+  $d,
 }: {
   model: Model
-  dispatch: (msg: Msg) => void
+  $d: (msg: Msg) => void
 }) => {
   if (model.sharedModel.type === "Setup") {
     return <></>
@@ -765,23 +765,23 @@ const ViewGameOverDialog = ({
   return (
     <UI.Dialog
       open={model.openedModal === "GameOver"}
-      onClose={() => dispatch(["ClosedModal"])}
+      onClose={() => $d(["ClosedModal"])}
     >
       <UI.DialogTitle>{toGameText(model.sharedModel)}</UI.DialogTitle>
       <UI.DialogActions>
-        <UI.Button onClick={() => dispatch(["ClosedModal"])}>Close</UI.Button>
+        <UI.Button onClick={() => $d(["ClosedModal"])}>Close</UI.Button>
       </UI.DialogActions>
     </UI.Dialog>
   )
 }
 
 const ViewInputUserPlayerSlot = ({
-  dispatch,
+  $d,
   ctx,
   userId,
   color,
 }: {
-  dispatch: (msg: Msg) => void
+  $d: (msg: Msg) => void
   userId: UserId
   ctx: Ctx,
   color: Board.Color
@@ -805,7 +805,7 @@ const ViewInputUserPlayerSlot = ({
         <UI.Button
           size="large"
           onClick={() =>
-            dispatch(["InputPlayer", { userId: "None", color }])
+            $d(["InputPlayer", { userId: "None", color }])
           }
         >
           Stop Playing

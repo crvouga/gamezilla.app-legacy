@@ -9,7 +9,7 @@ export default {
     title: "Page/Ready",
     component: ViewReady,
     args: {
-        dispatch: () => { },
+        $d: () => { },
         chatStore: chatStore,
         profile: userA,
         gameRoom: GameRoom.init[0],

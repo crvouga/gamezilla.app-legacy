@@ -17,12 +17,12 @@ export type State<Model, Msg> = {
 }
 
 export type Program<Model, Msg> = {
-  dispatch: Dispatch<Msg>
+  $d: $d<Msg>
   sub$: Sub<Msg>
   state$: Rx.BehaviorSubject<State<Model, Msg>>
 }
 
-export type Dispatch<Msg> = (msg: Msg) => void
+export type $d<Msg> = (msg: Msg) => void
 
 //
 //
@@ -48,7 +48,7 @@ export const createProgram = <Model, Msg>({
 
   const state$ = new Rx.BehaviorSubject(initialState)
 
-  const dispatch: Dispatch<Msg> = (msg) => {
+  const $d: $d<Msg> = (msg) => {
     const prev = state$.getValue()
     const [model, cmd] = update(msg, prev.model)
     state$.next({
@@ -61,7 +61,7 @@ export const createProgram = <Model, Msg>({
   const sub$ = state$.pipe(Rx.switchMap((state) => subscriptions(state.model)))
 
   return {
-    dispatch,
+    $d,
     sub$,
     state$,
   }

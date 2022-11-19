@@ -66,17 +66,17 @@ export const update = (
 
 export const View = ({
   model,
-  dispatch,
+  $d,
 }: {
   model: Model
-  dispatch: (msg: Msg) => void
+  $d: (msg: Msg) => void
 }) => (
   <UI.FillBox>
     <UI.Header
       left={
         <UI.Button
           sx={{ marginLeft: -1 }}
-          onClick={() => dispatch(["ClickedCancel"])}
+          onClick={() => $d(["ClickedCancel"])}
         >
           Cancel
         </UI.Button>
@@ -85,7 +85,7 @@ export const View = ({
       right={
         <UI.Button
           sx={{ marginRight: -1 }}
-          onClick={() => dispatch(["ClickedSubmit"])}
+          onClick={() => $d(["ClickedSubmit"])}
         >
           Done
         </UI.Button>
@@ -99,7 +99,7 @@ export const View = ({
         label="Name"
         fullWidth
         onChange={(event) =>
-          dispatch(["InputtedName", event.currentTarget.value])
+          $d(["InputtedName", event.currentTarget.value])
         }
       />
     </UI.Box>

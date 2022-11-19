@@ -25,7 +25,7 @@ export default {
     args: {
         bottomNav: <>bottom nav</>,
         currentUserId: userA.userId,
-        dispatch: () => { },
+        $d: () => { },
         model: init[0],
         profileStore: profileStore
     },

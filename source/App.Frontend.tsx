@@ -523,10 +523,10 @@ const toThemeMode = (model: Model): UI.ThemeMode => {
 
 const View = ({
   model,
-  dispatch,
+  $d,
 }: {
   model: Model
-  dispatch: (msg: Msg) => void
+  $d: (msg: Msg) => void
 }) => {
   return (
     <UI.AppContainer themeMode={toThemeMode(model)}>
@@ -541,13 +541,13 @@ const View = ({
       >
         <ViewMain
           model={model}
-          dispatch={dispatch}
+          $d={$d}
         />
       </UI.Box>
 
       <Snackbar.View
         model={model.snackbar}
-        dispatch={(msg) => dispatch(["Snackbar", msg])}
+        $d={(msg) => $d(["Snackbar", msg])}
       />
     </UI.AppContainer>
   )
@@ -555,10 +555,10 @@ const View = ({
 
 const ViewMain = ({
   model,
-  dispatch,
+  $d,
 }: {
   model: Model
-  dispatch: (msg: Msg) => void
+  $d: (msg: Msg) => void
 }) => {
   const status = toStatus(model)
 
@@ -583,7 +583,7 @@ const ViewMain = ({
           return (
             <Pages.ViewLoggedOut
               model={model.page}
-              dispatch={(msg) => dispatch(["Page", msg])}
+              $d={(msg) => $d(["Page", msg])}
             />
           )
 
@@ -592,7 +592,7 @@ const ViewMain = ({
             <Pages.ViewProfileMissing
               authSession={status[1].authSession}
               model={model.page}
-              dispatch={(msg) => dispatch(["Page", msg])}
+              $d={(msg) => $d(["Page", msg])}
             />
           )
 
@@ -605,7 +605,7 @@ const ViewMain = ({
                 currentUserId={profile.userId}
                 model={model.party}
                 route={model.route}
-                dispatch={(msg) => dispatch(["Party", msg])}
+                $d={(msg) => $d(["Party", msg])}
               />
 
               <GameRoom.ViewBanner
@@ -613,13 +613,13 @@ const ViewMain = ({
                 currentUserId={profile.userId}
                 model={model.gameRoom}
                 route={model.route}
-                dispatch={(msg) => dispatch(["GameRoom", msg])}
+                $d={(msg) => $d(["GameRoom", msg])}
               />
 
               <Pages.ViewReady
                 {...model}
                 profile={status[1].profile}
-                dispatch={(msg) => dispatch(["Page", msg])}
+                $d={(msg) => $d(["Page", msg])}
                 model={model.page}
               />
             </>
@@ -811,15 +811,15 @@ const { program } = p(
 const root = ReactDomClient.createRoot(document.getElementById("root")!)
 
 program.sub$.subscribe((msg) => {
-  program.dispatch(msg)
+  program.$d(msg)
 })
 
 program.state$.subscribe(({ model, cmd }) => {
-  cmd(program.dispatch)
+  cmd(program.$d)
   root.render(
     <View
       model={model}
-      dispatch={program.dispatch}
+      $d={program.$d}
     />,
   )
 })

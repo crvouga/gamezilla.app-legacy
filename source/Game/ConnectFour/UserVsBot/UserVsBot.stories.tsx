@@ -15,7 +15,7 @@ export default {
         store: profileStore,
         roomComponent: <>room</>,
         goHome: () => { },
-        dispatch: () => { },
+        $d: () => { },
         onClose: () => { },
         goBack: () => { },
     },

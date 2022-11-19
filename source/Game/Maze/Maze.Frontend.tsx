@@ -65,7 +65,7 @@ export const subscriptions = (_model: Model): Sub<Msg> => {
 //
 //
 
-export const View = ({ model, ctx }: { ctx: Ctx, model: Model, dispatch: (msg: Msg) => void, }) => {
+export const View = ({ model, ctx }: { ctx: Ctx, model: Model, $d: (msg: Msg) => void, }) => {
     return (
         <FillBox>
             <Typography sx={{ px: 2, }}>

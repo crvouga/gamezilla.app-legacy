@@ -191,12 +191,12 @@ export const mergeWithBackend = (
 export const View = ({
   ctx,
   model,
-  dispatch,
+  $d,
   onCloseGame,
 }: {
   ctx: Ctx
   model: Model
-  dispatch: (msg: Msg) => void
+  $d: (msg: Msg) => void
   onCloseGame: () => void
 }) => {
   if (model.type === "Setup") {
@@ -231,7 +231,7 @@ export const View = ({
               playerType="X"
               ctx={ctx}
               userId={model.X}
-              dispatch={dispatch}
+              $d={$d}
               sx={{ marginBottom: 3 }}
             />
 
@@ -239,7 +239,7 @@ export const View = ({
               playerType="O"
               ctx={ctx}
               userId={model.O}
-              dispatch={dispatch}
+              $d={$d}
               sx={{ marginBottom: 1 }}
             />
           </UI.Box>
@@ -265,7 +265,7 @@ export const View = ({
                     key={bestOutOf}
                     value={bestOutOf}
                     onClick={() =>
-                      dispatch([
+                      $d([
                         "InputBestOutOf",
                         { userId: ctx.currentUserId, bestOutOf },
                       ])
@@ -297,7 +297,7 @@ export const View = ({
                     key={moveTimeLimit}
                     value={moveTimeLimit}
                     onClick={() =>
-                      dispatch([
+                      $d([
                         "InputMoveTimeLimit",
                         { userId: ctx.currentUserId, moveTimeLimit },
                       ])
@@ -322,7 +322,7 @@ export const View = ({
           <UI.Button
             variant="contained"
             fullWidth
-            onClick={() => dispatch(["StartGame", { userId: ctx.currentUserId }])}
+            onClick={() => $d(["StartGame", { userId: ctx.currentUserId }])}
             disabled={startGameResult.type === "Err"}
           >
             Start
@@ -348,7 +348,7 @@ export const View = ({
             <ViewBoard
               board={board}
               onClick={(position) =>
-                dispatch(["InputMove", { position, userId: ctx.currentUserId }])
+                $d(["InputMove", { position, userId: ctx.currentUserId }])
               }
             />
 
@@ -380,7 +380,7 @@ export const View = ({
           <ViewResignButton
             model={model}
             ctx={ctx}
-            dispatch={dispatch}
+            $d={$d}
           />
         </UI.Box>
       </UI.FillBox>
@@ -406,7 +406,7 @@ export const View = ({
         <ViewBoard
           board={board}
           onClick={(position) =>
-            dispatch(["InputMove", { position, userId: ctx.currentUserId }])
+            $d(["InputMove", { position, userId: ctx.currentUserId }])
           }
         />
 
@@ -429,7 +429,7 @@ export const View = ({
               ctx={ctx}
               model={model}
 
-              dispatch={dispatch}
+              $d={$d}
             />
           </UI.Box>
         </UI.Fade>
@@ -444,7 +444,7 @@ export const View = ({
               <UI.Button
                 fullWidth
                 variant="outlined"
-                onClick={() => dispatch(["NewGame", { userId: ctx.currentUserId }])}
+                onClick={() => $d(["NewGame", { userId: ctx.currentUserId }])}
                 disabled={newGameResult.type === "Err"}
               >
                 Back
@@ -470,7 +470,7 @@ export const View = ({
                   model.rematch.asker === currentPlayerType
                 }
                 onClick={() =>
-                  dispatch(["RematchAsk", { userId: ctx.currentUserId }])
+                  $d(["RematchAsk", { userId: ctx.currentUserId }])
                 }
               >
                 Rematch
@@ -486,11 +486,11 @@ export const View = ({
 const ViewGameOverMessage = ({
   ctx,
   model,
-  dispatch,
+  $d,
 }: {
   ctx: Ctx,
   model: GameOverModel
-  dispatch: (msg: Msg) => void
+  $d: (msg: Msg) => void
 }) => {
   const isPlaying = model.O === ctx.currentUserId || model.X === ctx.currentUserId
   const score = Round.toScore(model.round)
@@ -543,7 +543,7 @@ const ViewGameOverMessage = ({
             fullWidth
             sx={{ color: "#000" }}
             onClick={() =>
-              dispatch(["RematchDecline", { userId: ctx.currentUserId }])
+              $d(["RematchDecline", { userId: ctx.currentUserId }])
             }
           >
             Decline
@@ -553,7 +553,7 @@ const ViewGameOverMessage = ({
             variant="contained"
             fullWidth
             onClick={() =>
-              dispatch(["RematchAccept", { userId: ctx.currentUserId }])
+              $d(["RematchAccept", { userId: ctx.currentUserId }])
             }
           >
             Accept
@@ -605,7 +605,7 @@ const ViewGameOverMessage = ({
             startIcon={<UI.Icons.Cancel />}
             variant="contained"
             onClick={() =>
-              dispatch(["Rematch_Cancel", { userId: ctx.currentUserId }])
+              $d(["Rematch_Cancel", { userId: ctx.currentUserId }])
             }
           >
             Cancel
@@ -1039,24 +1039,24 @@ const ViewScoreSlots = ({
 const ViewResignButton = ({
   ctx,
   model,
-  dispatch,
+  $d,
 }: {
   ctx: Ctx
   model: Model
-  dispatch: (msg: Msg) => void
+  $d: (msg: Msg) => void
 }) => {
   return (
     <>
       <UI.ActionButton
         icon={<UI.Icons.Flag />}
         label="Resign"
-        onClick={() => dispatch(["OpenModal", "Resignation"])}
+        onClick={() => $d(["OpenModal", "Resignation"])}
       />
       <UI.ConformationDialog
         open={model.openedModal === "Resignation"}
-        onCancel={() => dispatch(["CloseModal"])}
-        onClose={() => dispatch(["CloseModal"])}
-        onConfirm={() => dispatch(["Resign", { userId: ctx.currentUserId }])}
+        onCancel={() => $d(["CloseModal"])}
+        onClose={() => $d(["CloseModal"])}
+        onConfirm={() => $d(["Resign", { userId: ctx.currentUserId }])}
         headerIcon={<UI.Icons.Flag sx={{ width: 64, height: 64 }} />}
         title="Resign from game?"
         confirmTitle="Resign"
@@ -1129,13 +1129,13 @@ const ViewPlayerSetupSlot = ({
   ctx,
   userId,
   playerType,
-  dispatch,
+  $d,
   sx
 }: {
   ctx: Ctx,
   userId: UserId | "None"
   playerType: PlayerType
-  dispatch: (msg: Msg) => void
+  $d: (msg: Msg) => void
   sx?: UI.Sx
 }) => {
   const iconSx = { width: 42, height: 42, color: "text.secondary" }
@@ -1149,7 +1149,7 @@ const ViewPlayerSetupSlot = ({
           fullWidth
           variant="contained"
           onClick={() =>
-            dispatch([
+            $d([
               "InputPlayer",
               { userId: ctx.currentUserId, playerType },
             ])
@@ -1176,7 +1176,7 @@ const ViewPlayerSetupSlot = ({
       {ctx.currentUserId === userId && (
         <UI.Button
 
-          onClick={() => dispatch(["StopPlaying", { userId: ctx.currentUserId }])}
+          onClick={() => $d(["StopPlaying", { userId: ctx.currentUserId }])}
         >
           Stop Playing
         </UI.Button>

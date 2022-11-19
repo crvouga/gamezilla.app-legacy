@@ -50,20 +50,20 @@ export const View = ({
   currentUserId,
   party,
   store,
-  dispatch,
+  $d,
 }: {
   party: Party.Model
   currentUserId: UserId
   store: ProfileStore.Model
   model: Model
-  dispatch: (msg: Msg) => void
+  $d: (msg: Msg) => void
 }) => {
   return (
     <Party.View
       currentUserId={currentUserId}
       store={store}
       model={party}
-      dispatch={(msg) => dispatch(["Party", msg])}
+      $d={(msg) => $d(["Party", msg])}
     />
   )
 }

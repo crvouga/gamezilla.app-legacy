@@ -10,7 +10,7 @@ export default {
   component: View,
   args: {
     currentUserId: currentUserId,
-    dispatch: () => { },
+    $d: () => { },
     goHome: () => { },
     onCloseGame: () => { },
     store: profileStore,

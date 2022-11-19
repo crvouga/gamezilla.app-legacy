@@ -115,10 +115,10 @@ export const View = (
         model,
         goBack,
         ctx,
-        dispatch
+        $d
     }: {
         model: Model;
-        dispatch: (msg: Msg) => void;
+        $d: (msg: Msg) => void;
         goBack: () => void;
         ctx: Ctx
     }) => {
@@ -129,7 +129,7 @@ export const View = (
                 model={model}
                 goBack={goBack}
                 ctx={ctx}
-                dispatch={dispatch}
+                $d={$d}
             />
         )
     }
@@ -148,7 +148,7 @@ export const View = (
             <UI.Box sx={{ position: "relative" }}>
                 <ViewColumns
                     columns={model.columns}
-                    onClick={columnIndex => dispatch(['InputMove', { columnIndex, userId: ctx.currentUserId }])}
+                    onClick={columnIndex => $d(['InputMove', { columnIndex, userId: ctx.currentUserId }])}
                 />
                 <UI.Fade in={gameOver.type !== 'None'}>
                     <UI.Box sx={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: "center", background: "rgba(0, 0, 0, 0.333)", color: "#fff" }}>
@@ -164,19 +164,19 @@ export const View = (
                 <UI.ActionButton
                     icon={<UI.Icons.ExitToApp sx={{ transform: "rotate(180deg)" }} />}
                     label="Exit"
-                    onClick={() => dispatch(['StopGame', { userId: ctx.currentUserId, }])}
+                    onClick={() => $d(['StopGame', { userId: ctx.currentUserId, }])}
                     disabled={stopGameRes.type === 'Err'}
                 />
                 <UI.ActionButton
                     icon={<UI.Icons.RestartAlt />}
                     label="Restart"
-                    onClick={() => dispatch(['Restart', { userId: ctx.currentUserId, }])}
+                    onClick={() => $d(['Restart', { userId: ctx.currentUserId, }])}
                     disabled={restartRes.type === 'Err'}
                 />
                 <UI.ActionButton
                     icon={<UI.Icons.SwapHorizSharp />}
                     label="Swap"
-                    onClick={() => dispatch(['SwapSides', { userId: ctx.currentUserId, }])}
+                    onClick={() => $d(['SwapSides', { userId: ctx.currentUserId, }])}
                     disabled={swapSidesRes.type === 'Err'}
                 />
             </UI.Box>
@@ -268,10 +268,10 @@ const ViewSetup = (
         model,
         goBack,
         ctx,
-        dispatch
+        $d
     }: {
         model: SetupModel;
-        dispatch: (msg: Msg) => void;
+        $d: (msg: Msg) => void;
         ctx: Ctx,
         goBack: () => void;
 
@@ -309,7 +309,7 @@ const ViewSetup = (
 
                 {model.player === 'None' ? (
                     <UI.Box sx={{ paddingX: 2 }}>
-                        <UI.Button variant="contained" fullWidth onClick={() => dispatch(['StartPlaying', { userId: ctx.currentUserId }])}>
+                        <UI.Button variant="contained" fullWidth onClick={() => $d(['StartPlaying', { userId: ctx.currentUserId }])}>
                             Start Playing
                         </UI.Button>
                     </UI.Box>
@@ -320,7 +320,7 @@ const ViewSetup = (
                             {ctx.profiles[model.player]?.username ?? "..."}
                         </UI.Typography>
                         {model.player === ctx.currentUserId && (
-                            <UI.Button onClick={() => dispatch(['StopPlaying', { userId: ctx.currentUserId }])}>
+                            <UI.Button onClick={() => $d(['StopPlaying', { userId: ctx.currentUserId }])}>
                                 Stop Playing
                             </UI.Button>
                         )}
@@ -335,10 +335,10 @@ const ViewSetup = (
 
                 <UI.Box sx={{ paddingX: 2, paddingBottom: 2 }} >
                     <UI.ToggleButtonGroup value={model.userPlayerType} fullWidth>
-                        <UI.ToggleButton value={"PlayerOne"} onClick={() => dispatch(['InputPlayerType', { userId: ctx.currentUserId, playerType: "PlayerOne" }])}>
+                        <UI.ToggleButton value={"PlayerOne"} onClick={() => $d(['InputPlayerType', { userId: ctx.currentUserId, playerType: "PlayerOne" }])}>
                             <PlayerIcon playerType="PlayerOne" sx={{ width: 32, height: 32 }} />
                         </UI.ToggleButton>
-                        <UI.ToggleButton value={"PlayerTwo"} onClick={() => dispatch(['InputPlayerType', { userId: ctx.currentUserId, playerType: "PlayerTwo" }])}>
+                        <UI.ToggleButton value={"PlayerTwo"} onClick={() => $d(['InputPlayerType', { userId: ctx.currentUserId, playerType: "PlayerTwo" }])}>
                             <PlayerIcon playerType="PlayerTwo" sx={{ width: 32, height: 32 }} />
                         </UI.ToggleButton>
                     </UI.ToggleButtonGroup>
@@ -351,7 +351,7 @@ const ViewSetup = (
                 <UI.Box sx={{ paddingX: 2, paddingBottom: 4 }} >
                     <UI.ToggleButtonGroup value={model.botLevel} fullWidth>
                         {Object.values(botLevel).map(botLevel => (
-                            <UI.ToggleButton key={botLevel} value={botLevel} onClick={() => dispatch(['InputBotLevel', { userId: ctx.currentUserId, botLevel }])}>
+                            <UI.ToggleButton key={botLevel} value={botLevel} onClick={() => $d(['InputBotLevel', { userId: ctx.currentUserId, botLevel }])}>
                                 {botLevel}
                             </UI.ToggleButton>
                         ))}
@@ -365,7 +365,7 @@ const ViewSetup = (
                     Back
                 </UI.Button>
 
-                <UI.Button variant="contained" onClick={() => dispatch(['StartGame', { userId: ctx.currentUserId }])} fullWidth disabled={startGameRes.type === 'Err'}>
+                <UI.Button variant="contained" onClick={() => $d(['StartGame', { userId: ctx.currentUserId }])} fullWidth disabled={startGameRes.type === 'Err'}>
                     Start Game
                 </UI.Button>
             </UI.Box>

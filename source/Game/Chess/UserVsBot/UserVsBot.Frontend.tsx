@@ -293,12 +293,12 @@ export const subscriptions = (_model: Model): Sub<Msg> => {
 export const View = ({
   ctx,
   model,
-  dispatch,
+  $d,
   onClose,
 }: {
   ctx: Ctx
   model: Model
-  dispatch: (msg: Msg) => void
+  $d: (msg: Msg) => void
   onClose: () => void
 }) => {
   if (model.sharedModel.type === "Setup") {
@@ -338,7 +338,7 @@ export const View = ({
                 size="large"
                 variant="contained"
                 onClick={() => {
-                  dispatch(["InputUser", { userId: ctx.currentUserId },])
+                  $d(["InputUser", { userId: ctx.currentUserId },])
                 }}
               >
                 Start Playing
@@ -359,7 +359,7 @@ export const View = ({
                 <UI.Button
                   size="large"
                   onClick={() =>
-                    dispatch(["InputUser", { userId: "None" }])
+                    $d(["InputUser", { userId: "None" }])
                   }
                 >
                   Stop Playing
@@ -393,7 +393,7 @@ export const View = ({
                 <UI.ToggleButton
                   value="w"
                   onClick={() =>
-                    dispatch([
+                    $d([
                       "InputColor",
                       { userColor: "w", userId: ctx.currentUserId },
                     ])
@@ -405,7 +405,7 @@ export const View = ({
                 <UI.ToggleButton
                   value="b"
                   onClick={() =>
-                    dispatch([
+                    $d([
                       "InputColor",
                       { userColor: "b", userId: ctx.currentUserId },
                     ])
@@ -444,7 +444,7 @@ export const View = ({
                     // variant={model.sharedModel.botLevel === level ? "filled" : "outlined"}
                     key={level}
                     onClick={() => {
-                      dispatch([
+                      $d([
                         "InputBot",
                         { botLevel: level, userId: ctx.currentUserId },
                       ])
@@ -475,7 +475,7 @@ export const View = ({
             size="large"
             variant="contained"
             disabled={startGameResult.type === "Err"}
-            onClick={() => dispatch(["StartGame", { userId: ctx.currentUserId }])}
+            onClick={() => $d(["StartGame", { userId: ctx.currentUserId }])}
           >
             Start Game
           </UI.Button>
@@ -558,7 +558,7 @@ export const View = ({
             },
           ]
 
-          dispatch(msg)
+          $d(msg)
 
           const result = inputMove(msg[1], model.sharedModel)
 
@@ -574,7 +574,7 @@ export const View = ({
         <UI.ActionButton
           icon={<UI.Icons.ExitToApp sx={{ transform: "rotate(180deg)" }} />}
           label={"Exit"}
-          onClick={() => dispatch(["StopGame", { userId: ctx.currentUserId }])}
+          onClick={() => $d(["StopGame", { userId: ctx.currentUserId }])}
         />
 
         <UI.ActionButton
@@ -587,7 +587,7 @@ export const View = ({
           }
           label={model.isFlipped ? "Unflip" : "Flip"}
           onClick={() => {
-            dispatch(["ClickedFlip"])
+            $d(["ClickedFlip"])
           }}
         />
       </UI.Box>
@@ -598,7 +598,7 @@ export const View = ({
             model.sharedModel.type === "GameOver" &&
             model.openedModal === "GameOver"
           }
-          onClose={() => dispatch(["ClosedModal"])}
+          onClose={() => $d(["ClosedModal"])}
         >
           {model.sharedModel.gameOver.type === "Checkmate" && (
             <UI.DialogTitle>
@@ -612,7 +612,7 @@ export const View = ({
           )}
 
           <UI.DialogActions>
-            <UI.Button onClick={() => dispatch(["ClosedModal"])}>
+            <UI.Button onClick={() => $d(["ClosedModal"])}>
               Close
             </UI.Button>
           </UI.DialogActions>

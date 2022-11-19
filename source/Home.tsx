@@ -104,20 +104,20 @@ export const subscriptions = (_model: Model): Sub<Msg> => {
 
 export const View = ({
   model,
-  dispatch,
+  $d,
   gameRoom,
   ctx,
 }: {
   gameRoom: GameRoom.Model
   model: Model
-  dispatch: (msg: Msg) => void
+  $d: (msg: Msg) => void
   ctx: Ctx,
 }) => {
   const user = gameRoom.users[ctx.currentUserId]
 
   if (!user) {
     return (
-      <ViewNotInRoom model={model} dispatch={dispatch} ctx={ctx} gameRoom={gameRoom} />
+      <ViewNotInRoom model={model} $d={$d} ctx={ctx} gameRoom={gameRoom} />
     )
   }
 
@@ -125,7 +125,7 @@ export const View = ({
 
   if (!currentRoom) {
     return (
-      <ViewNotInRoom model={model} dispatch={dispatch} ctx={ctx} gameRoom={gameRoom} />
+      <ViewNotInRoom model={model} $d={$d} ctx={ctx} gameRoom={gameRoom} />
     )
   }
 
@@ -152,7 +152,7 @@ export const View = ({
         </UI.Typography>
 
         <UI.Paper
-          onClick={() => dispatch(["ClickedCurrentRoom"])}
+          onClick={() => $d(["ClickedCurrentRoom"])}
           variant="outlined"
           sx={{
             overflow: "hidden",
@@ -209,7 +209,7 @@ export const View = ({
                 color="error"
                 onClick={(event) => {
                   event.stopPropagation()
-                  dispatch(["ClickedCurrentRoomDestroy"])
+                  $d(["ClickedCurrentRoomDestroy"])
                 }}
               >
                 End Room
@@ -222,7 +222,7 @@ export const View = ({
                 color="error"
                 onClick={(event) => {
                   event.stopPropagation()
-                  dispatch(["ClickedCurrentRoomLeave"])
+                  $d(["ClickedCurrentRoomLeave"])
                 }}
               >
                 Leave
@@ -260,7 +260,7 @@ export const View = ({
                 ctx={ctx}
                 gameRoom={gameRoom}
                 onClick={() =>
-                  dispatch(["ClickedRoom", { roomId: room.roomId }])
+                  $d(["ClickedRoom", { roomId: room.roomId }])
                 }
               />
             ))}
@@ -272,14 +272,14 @@ export const View = ({
 }
 
 const ViewNotInRoom = ({
-  dispatch,
+  $d,
   gameRoom,
   ctx,
 }: {
   ctx: Ctx
   gameRoom: GameRoom.Model
   model: Model
-  dispatch: (msg: Msg) => void
+  $d: (msg: Msg) => void
 }) => {
   const rooms = Object.values(gameRoom.rooms)
 
@@ -309,7 +309,7 @@ const ViewNotInRoom = ({
               <GameRoom.ViewGameCard
                 key={gameName}
                 gameName={gameName}
-                onClick={() => dispatch(["ClickedGameCard", gameName])}
+                onClick={() => $d(["ClickedGameCard", gameName])}
               />
             </UI.Box>
           ))}
@@ -343,7 +343,7 @@ const ViewNotInRoom = ({
             <GameRoom.ViewGameCard
               key={gameName}
               gameName={gameName}
-              onClick={() => dispatch(["ClickedGameCard", gameName])}
+              onClick={() => $d(["ClickedGameCard", gameName])}
             />
           </UI.Box>
         ))}
@@ -373,7 +373,7 @@ const ViewNotInRoom = ({
             gameName={room.game[0]}
             ctx={ctx}
             gameRoom={gameRoom}
-            onClick={() => dispatch(["ClickedRoom", { roomId: room.roomId }])}
+            onClick={() => $d(["ClickedRoom", { roomId: room.roomId }])}
           />
         ))}
       </UI.Box>

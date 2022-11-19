@@ -141,13 +141,13 @@ export const subscriptions = (_model: Model): Sub<Msg> => {
 export const View = ({
   goBack,
   model,
-  dispatch,
+  $d,
   ctx,
 }: {
   ctx: Ctx,
   goBack: () => void
   model: Model
-  dispatch: (msg: Msg) => void
+  $d: (msg: Msg) => void
 }) => {
   const uiTheme = UI.useTheme()
 
@@ -183,7 +183,7 @@ export const View = ({
                 fullWidth
                 variant="contained"
                 onClick={() =>
-                  dispatch(["StartPlaying", { userId: ctx.currentUserId }])
+                  $d(["StartPlaying", { userId: ctx.currentUserId }])
                 }
               >
                 Start Playing
@@ -203,7 +203,7 @@ export const View = ({
                 {model.player === ctx.currentUserId && (
                   <UI.Button
                     onClick={() =>
-                      dispatch(["StopPlaying", { userId: ctx.currentUserId }])
+                      $d(["StopPlaying", { userId: ctx.currentUserId }])
                     }
                   >
                     Stop Playing
@@ -233,7 +233,7 @@ export const View = ({
                   value={playerType}
                   key={playerType}
                   onClick={() =>
-                    dispatch([
+                    $d([
                       "InputPlayerType",
                       { playerType, userId: ctx.currentUserId },
                     ])
@@ -263,7 +263,7 @@ export const View = ({
                   value={botLevel}
                   key={botLevel}
                   onClick={() =>
-                    dispatch(["InputBot", { userId: ctx.currentUserId, botLevel }])
+                    $d(["InputBot", { userId: ctx.currentUserId, botLevel }])
                   }
                 >
                   {botLevel}
@@ -292,7 +292,7 @@ export const View = ({
             fullWidth
             variant="contained"
             disabled={startGameResult.type === "Err"}
-            onClick={() => dispatch(["StartGame", { userId: ctx.currentUserId }])}
+            onClick={() => $d(["StartGame", { userId: ctx.currentUserId }])}
           >
             Start Game
           </UI.Button>
@@ -323,13 +323,13 @@ export const View = ({
           <ViewBoard
             board={model.board}
             onClick={(position) =>
-              dispatch(["InputMove", { userId: ctx.currentUserId, position }])
+              $d(["InputMove", { userId: ctx.currentUserId, position }])
             }
           />
 
           <UI.Fade in={gameOver.type !== "None"}>
             <UI.Box
-              onClick={() => dispatch(["Restart", { userId: ctx.currentUserId }])}
+              onClick={() => $d(["Restart", { userId: ctx.currentUserId }])}
               sx={{
                 position: "absolute",
                 inset: 0,
@@ -349,7 +349,7 @@ export const View = ({
       <UI.Box sx={{ display: "flex" }}>
         <UI.ActionButton
           onClick={() => {
-            dispatch(["StopGame", { userId: ctx.currentUserId }])
+            $d(["StopGame", { userId: ctx.currentUserId }])
           }}
           disabled={stopGameRes.type === 'Err'}
           icon={<UI.Icons.ExitToApp sx={{ transform: "rotate(180deg)" }} />}
@@ -357,13 +357,13 @@ export const View = ({
         />
         <UI.ActionButton
           disabled={swapSidesRes.type === 'Err'}
-          onClick={() => dispatch(["SwapSides", { userId: ctx.currentUserId }])}
+          onClick={() => $d(["SwapSides", { userId: ctx.currentUserId }])}
           icon={<UI.Icons.SwapHoriz />}
           label="Swap"
         />
         <UI.ActionButton
           disabled={restartRes.type === 'Err'}
-          onClick={() => dispatch(["Restart", { userId: ctx.currentUserId }])}
+          onClick={() => $d(["Restart", { userId: ctx.currentUserId }])}
           icon={<UI.Icons.RestartAlt />}
           label="Reset"
         />

@@ -10,7 +10,7 @@ export default {
     component: View,
     args: {
         currentUserId: currentUserId,
-        dispatch: () => { },
+        $d: () => { },
         roomComponent: <>room</>,
         goHome: () => { },
         onCloseGame: () => { },

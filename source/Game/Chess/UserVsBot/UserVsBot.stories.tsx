@@ -13,7 +13,7 @@ export default {
         profileStore: profileStore,
         roomComponent: <>room</>,
         goHome: () => { },
-        dispatch: () => { },
+        $d: () => { },
         onClose: () => { },
     },
 } as ComponentMeta<typeof View>

@@ -4,6 +4,7 @@ import * as ProfileStore from "../Profile/Profile.Store"
 import * as Snackbar from "../Snackbar"
 import * as Chess from "./Chess/Chess.Frontend"
 import * as ConnectFour from "./ConnectFour/ConnectFour.Frontend"
+import { Ctx } from "./Game.Shared"
 import {
   BackendModel,
   FrontendModel,
@@ -13,7 +14,6 @@ import {
   ToFrontend
 } from "./Game.Types"
 import * as Maze from "./Maze/Maze.Frontend"
-import { Ctx } from "./Game.Shared"
 import * as Snake from "./Snake/Snake.Frontend"
 import * as Tetris from "./Tetris/Tetris.Frontend"
 import * as TicTacToe from "./TicTacToe/TicTacToe.Frontend"
@@ -302,54 +302,33 @@ export const subscriptions = (
 export const View = ({
   ctx,
   model,
-  dispatch,
+  $d,
 }: {
   ctx: Ctx
   model: Model
-  dispatch: (msg: Msg) => void
+  $d: (msg: Msg) => void
 }) => {
 
-  switch (model[0]) {
-    case "Tetris": {
-      return (
-        <Tetris.View model={model[1]} dispatch={(msg) => dispatch(["Tetris", msg])} />
-      )
-    }
+  const views: { [key in (typeof model)[0]]: Function } = {
+    Tetris: (model: Tetris.Model) =>
+      <Tetris.View model={model} $d={(msg) => $d(["Tetris", msg])} />,
 
-    case "ConnectFour": {
-      return (
-        <ConnectFour.View ctx={ctx} model={model[1]} dispatch={(msg) => dispatch(["ConnectFour", msg])} />
-      )
-    }
+    ConnectFour: (model: ConnectFour.Model) =>
+      <ConnectFour.View ctx={ctx} model={model} $d={(msg) => $d(["ConnectFour", msg])} />,
 
-    case "Snake": {
-      return (
-        <Snake.View ctx={ctx} model={model[1]} dispatch={(msg) => dispatch(["Snake", msg])} />
-      )
-    }
+    Snake: (model: Snake.Model) =>
+      <Snake.View ctx={ctx} model={model} $d={(msg) => $d(["Snake", msg])} />,
 
+    TicTacToe: (model: TicTacToe.Model) =>
+      <TicTacToe.View ctx={ctx} model={model} $d={(msg) => $d(["TicTacToe", msg])} />,
 
+    Chess: (model: Chess.Model) =>
+      <Chess.View ctx={ctx} model={model} $d={(msg) => $d(["Chess", msg])} />,
 
-    case "TicTacToe": {
-      return (
-        <TicTacToe.View ctx={ctx} model={model[1]} dispatch={(msg) => dispatch(["TicTacToe", msg])}
-        />
-      )
-    }
-
-    case "Chess": {
-      return (
-        <Chess.View ctx={ctx} model={model[1]} dispatch={(msg) => dispatch(["Chess", msg])} />
-      )
-    }
-
-    case 'Maze': {
-      return (
-        <Maze.View ctx={ctx} model={model[1]} dispatch={m => dispatch(['Maze', m])} />
-      )
-
-    }
+    Maze: (model: Maze.Model) =>
+      <Maze.View ctx={ctx} model={model} $d={m => $d(['Maze', m])} />,
   }
+  return views[model[0]](model[1])
 }
 
 export const gameNameToString = (game: GameName): string => {

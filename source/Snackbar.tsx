@@ -103,11 +103,11 @@ const removeById = (snackId: string, model: Model): [Model, Cmd<Msg>] => [
 //
 
 export const View = ({
-  dispatch,
+  $d,
   model,
 }: {
   model: Model
-  dispatch: (msg: Msg) => void
+  $d: (msg: Msg) => void
 }) => {
   const snack = model.queue[0]
 
@@ -124,12 +124,12 @@ export const View = ({
         }}
         open
         message={snack.message}
-        onClose={() => dispatch(["ClickedAwayClose", snack.snackId])}
+        onClose={() => $d(["ClickedAwayClose", snack.snackId])}
       />
 
       {/* <UI.Alert
           variant="filled"
-          onClose={() => dispatch(["ClickedClose", snack.snackId])}
+          onClose={() => $d(["ClickedClose", snack.snackId])}
           severity={snack.variant === "Error" ? "error" : "info"}
           sx={{ width: "100%" }}
         >
