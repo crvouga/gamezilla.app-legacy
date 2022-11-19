@@ -12,18 +12,6 @@ export const Err = <T>(error: T): Err<T> => {
   return { type: "Err", error }
 }
 
-const fold =
-  <TError, TValue, T>(
-    onErr: (error: TError) => T,
-    onValue: (value: TValue) => T,
-  ) =>
-    (result: Result<TError, TValue>): T => {
-      if (result.type === "Ok") {
-        return onValue(result.value)
-      }
-
-      return onErr(result.error)
-    }
 
 const map =
   <TError, A, B>(mapper: (a: A) => B) =>
@@ -37,7 +25,7 @@ const map =
       }
     }
 
-const mapError =
+const mapErr =
   <A, B, TValue>(mapper: (a: A) => B) =>
     (result: Result<A, TValue>): Result<B, TValue> => {
       switch (result.type) {
@@ -91,9 +79,8 @@ const combine = <E, A>(results: Result<E, A>[]): Result<E, A[]> => {
 export const Result = {
   Ok,
   Err,
-  fold,
   map,
-  mapError,
+  mapErr,
   fromNullable,
   withDefault,
   combine,

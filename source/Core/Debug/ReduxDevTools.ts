@@ -286,7 +286,7 @@ const handleActions = <Model, Msg>({
 const parseJump = <Model>(msg: Monitor): Result<string, Model> => {
   return p(
     Json.parse(String(msg['state'])),
-    Result.mapError((problem) => problem.message),
+    Result.mapErr((problem) => problem.message),
     Result.map(
       (value) =>
         // @ts-ignore
@@ -303,7 +303,7 @@ const parseJump = <Model>(msg: Monitor): Result<string, Model> => {
 const parseRollback = <Model>(msg: Monitor): Result<string, Model> => {
   return p(
     Json.parse(String(msg['state'])),
-    Result.mapError((problem) => problem.message),
+    Result.mapErr((problem) => problem.message),
     Result.map(
       (u) =>
         // @ts-ignore
@@ -350,7 +350,7 @@ const parseToggleAction = <Model>(
       // @ts-ignore
       (u) => u as LiftedState<Model>,
     ),
-    Result.mapError((problem) => problem.message),
+    Result.mapErr((problem) => problem.message),
   )
 
   if (parseState.type === "Err") {
