@@ -1,6 +1,5 @@
 import { p } from "./pipe"
-import { Result, Err, Ok } from "./Result"
-
+import { Err, Ok, Result } from "./Result"
 
 export type RemoteData<TError, TValue> =
   | NotAsked
