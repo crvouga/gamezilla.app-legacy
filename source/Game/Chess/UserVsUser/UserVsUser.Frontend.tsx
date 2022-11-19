@@ -9,7 +9,6 @@ import * as Sounds from "../Sounds"
 import { PawnIcon, VersusHeader } from "../Views"
 import {
   BackendModel,
-  cancelStartGame,
   FrontendModel,
   FrontendMsg,
   initShared,
@@ -144,10 +143,6 @@ export const update = (
       return [{ ...model, sharedModel: result.value }, sendToBackend(msg)]
     }
 
-    case "CancelStartGame": {
-      return [model, sendToBackend(msg)]
-    }
-
     case "CancelDraw": {
       return [model, sendToBackend(msg)]
     }
@@ -160,7 +155,6 @@ export const update = (
 export const updateFromBackend = (
   {
     currentUserId,
-    profileStore,
   }: {
     currentUserId: UserId;
     profileStore: ProfileStore.Model
@@ -352,32 +346,6 @@ export const updateFromBackend = (
 
     case "GameStarted": {
       return [model, playAudio(Sounds.gameStart), []]
-    }
-
-    case "CountDownElapsed_Done": {
-      const sharedModel = msg[1]
-
-      return [{ ...model, sharedModel }, Cmd.None, []]
-    }
-
-    case "CancelStartGame_Done": {
-      const result = msg[1]
-
-      if (result.type === "Err") {
-        return [model, Cmd.None, []]
-      }
-
-      const sharedModel = result.value
-
-      const username = profileStore.profiles[msg[2].userId]?.username
-
-      const message = username
-        ? `${username} cancelled the game`
-        : "Game was cancelled"
-
-      const action: OutAction = ["Snackbar", { variant: "Info", message }]
-
-      return [{ ...model, sharedModel }, Cmd.None, [action]]
     }
 
     case "ClockTicked": {
@@ -596,117 +564,6 @@ export const View = ({
           </UI.Button>
         </UI.Box>
       </UI.FillBox >
-    )
-  }
-
-  if (model.sharedModel.type === "Starting") {
-    const { w, b } = model.sharedModel
-    const cancelStatGameResult = cancelStartGame(
-      { userId: currentUserId },
-      model.sharedModel,
-    )
-    return (
-      <UI.FillBox>
-        <UI.Header
-          left={homeButton}
-          title="Chess"
-          right={roomComponent}
-        />
-        <UI.Box
-          sx={{
-            flex: 1,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <UI.Box
-            sx={{
-              flex: 1,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              flexDirection: "column",
-            }}
-          >
-            <UI.Avatar
-              src={store.profiles[w]?.avatarUrl}
-              sx={{ width: 80, height: 80, marginBottom: 1 }}
-            />
-            <UI.Typography variant="h6">
-              {store.profiles[w]?.username ?? "..."}
-            </UI.Typography>
-          </UI.Box>
-          <UI.Typography
-            color="text.secondary"
-            sx={{
-              fontSize: "1.5rem",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              flexDirection: "column",
-            }}
-          >
-            VS
-          </UI.Typography>
-          <UI.Box
-            sx={{
-              flex: 1,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              flexDirection: "column",
-            }}
-          >
-            <UI.Avatar
-              src={store.profiles[b]?.avatarUrl}
-              sx={{ width: 80, height: 80, marginBottom: 1 }}
-            />
-            <UI.Typography variant="h6">
-              {store.profiles[b]?.username ?? "..."}
-            </UI.Typography>
-          </UI.Box>
-        </UI.Box>
-
-        <UI.Box
-          sx={{
-            flex: 1,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <UI.Typography
-            sx={{ marginBottom: -3 }}
-            color="text.secondary"
-            align="center"
-          >
-            Starting in
-          </UI.Typography>
-          <UI.Typography
-            sx={{ fontSize: "6rem" }}
-            align="center"
-          >
-            {model.sharedModel.countDown}
-          </UI.Typography>
-        </UI.Box>
-
-        <UI.Box sx={{ flex: 1 }}></UI.Box>
-        {cancelStatGameResult.type === "Ok" && (
-          <UI.Box sx={{ width: "100%", padding: 2 }}>
-            <UI.Button
-              fullWidth
-              variant="outlined"
-              onClick={() =>
-                dispatch(["CancelStartGame", { userId: currentUserId }])
-              }
-            >
-              Cancel
-            </UI.Button>
-          </UI.Box>
-        )}
-      </UI.FillBox>
     )
   }
 
@@ -1033,10 +890,6 @@ const toGameText = (model: SharedModel): string => {
 
     case "Setup": {
       return "Setting up game"
-    }
-
-    case "Starting": {
-      return "Game is about to start"
     }
 
     case "Game": {

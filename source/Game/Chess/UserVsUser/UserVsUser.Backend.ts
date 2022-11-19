@@ -2,12 +2,20 @@ import { Cmd, exhaustive, Sub, Time } from "../../../Core"
 import { UserId } from "../../../Data"
 import * as Board from "../Board"
 import {
-  initShared,
   BackendModel,
-  BackendMsg, cancelDraw, cancelStartGame, clockTicked,
-  countDownElapsed, inputClock, inputMove, inputPlayer, newGame,
-  requestToDraw, Res, resign,
-  respondToDraw, startGame,
+  BackendMsg,
+  cancelDraw,
+  clockTicked,
+  initShared,
+  inputClock,
+  inputMove,
+  inputPlayer,
+  newGame,
+  requestToDraw,
+  Res,
+  resign,
+  respondToDraw,
+  startGame,
   ToBackend,
   ToFrontend
 } from "./UserVsUser.Types"
@@ -54,25 +62,6 @@ export const update = (
         Cmd.batch([
           sendToRoom(["ClockTicked", modelNew]),
           didChangeToGameOver ? sendToRoom(["GameOver"]) : Cmd.None,
-        ]),
-      ]
-    }
-
-    case "CountDownElapsed": {
-      const modelNew: Model = {
-        ...model,
-        ...countDownElapsed(model),
-      }
-
-      const didChangeToGameStart =
-        model.type !== "Game" &&
-        modelNew.type === "Game"
-
-      return [
-        modelNew,
-        Cmd.batch([
-          sendToRoom(["CountDownElapsed_Done", modelNew]),
-          didChangeToGameStart ? sendToRoom(["GameStarted"]) : Cmd.None,
         ]),
       ]
     }
@@ -156,18 +145,6 @@ export const updateFromFrontend = (
       )
     }
 
-    case "CancelStartGame": {
-      return sendResponse(
-        wire,
-        [
-          "CancelStartGame_Done",
-          cancelStartGame(msg[1], model),
-          msg[1],
-        ],
-        model,
-      )
-    }
-
     case "CancelDraw": {
       return sendResponse(
         wire,
@@ -235,8 +212,7 @@ export const updateRoomLeave = ({ sendToRoom }: { sendToRoom: (m: ToFrontend) =>
     }
 
     case 'Game':
-    case 'GameOver':
-    case 'Starting': {
+    case 'GameOver': {
       const color: Board.Color | 'None' = model.b === userId ? 'b' : model.w === userId ? 'w' : 'None'
 
       if (color === 'None') {
@@ -279,12 +255,6 @@ export const subscriptions = (
 
     case "GameOver": {
       return Sub.None
-    }
-
-    case "Starting": {
-      return Time.every(`${intervalId}-count-down`, (3 / 4) * 1000, () => [
-        "CountDownElapsed",
-      ])
     }
 
     case "Game": {
