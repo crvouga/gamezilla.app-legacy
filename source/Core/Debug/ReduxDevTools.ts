@@ -134,6 +134,7 @@ const handleSubscription = <Model, Msg extends {}>(
 
   return (msg) => {
     const result = handler(msg)
+    console.log({ result, msg })
     if (result.type === 'Err') {
       console.warn("[REDUX DEV TOOL]", result.error)
       return

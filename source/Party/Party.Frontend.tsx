@@ -369,7 +369,7 @@ export const ViewBanner = ({
         width: '100%',
         paddingX: 2,
         paddingY: 1 / 2,
-        backgroundColor: "primary.main",
+        backgroundColor: "primary.dark",
         color: "#fff",
         display: "flex",
         alignItems: 'center',

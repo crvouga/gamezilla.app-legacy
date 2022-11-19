@@ -887,7 +887,7 @@ export const ViewGameCard = ({
 //
 //
 
-const bannerHeight = 58
+
 
 export const ViewBanner = ({
   currentUserId,
@@ -919,9 +919,7 @@ export const ViewBanner = ({
   }
 
   const hostProfile = store.profiles[room.hostId]
-  const roomCount = Object.values(model.users).filter(
-    (user) => user.roomId === room.roomId,
-  ).length
+
 
   return (
     <>
@@ -933,15 +931,16 @@ export const ViewBanner = ({
           alignItems: "center",
           justifyContent: "flex-start",
           textAlign: "left",
-          minHeight: bannerHeight,
-          height: bannerHeight,
-          maxHeight: bannerHeight,
+          paddingY: 3,
+          // minHeight: bannerHeight,
+          // height: bannerHeight,
+          // maxHeight: bannerHeight,
           overflow: "hidden",
         }}
         onClick={() => $d(["ClickedBanner"])}
       >
         {room.game ? (
-          <UI.Box sx={{ maxWidth: bannerHeight, width: "100%" }}>
+          <UI.Box sx={{ width: "40px" }}>
             <UI.AspectRatio aspectRatio={1}>
               <Game.CoverArt gameName={room.game[0]} />
             </UI.AspectRatio>
@@ -949,7 +948,7 @@ export const ViewBanner = ({
         ) : (
           <UI.Avatar
             variant="square"
-            sx={{ width: bannerHeight, height: bannerHeight }}
+            sx={{}}
             src={hostProfile?.avatarUrl ?? "..."}
           />
         )}
@@ -959,12 +958,12 @@ export const ViewBanner = ({
             {hostProfile ? `${hostProfile.username}'s room` : "..."}
           </UI.Typography>
 
-          <UI.Typography
+          {/* <UI.Typography
             variant="caption"
             color="text.secondary"
           >
             {`${roomCount} in room`}
-          </UI.Typography>
+          </UI.Typography> */}
         </UI.Box>
 
         <UI.Box sx={{ flex: 1 }} />
