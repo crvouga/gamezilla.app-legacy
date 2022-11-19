@@ -13,6 +13,7 @@ import {
   ToFrontend
 } from "./Game.Types"
 import * as Maze from "./Maze/Maze.Frontend"
+import { Ctx } from "./Game.Shared"
 import * as Snake from "./Snake/Snake.Frontend"
 import * as Tetris from "./Tetris/Tetris.Frontend"
 import * as TicTacToe from "./TicTacToe/TicTacToe.Frontend"
@@ -297,15 +298,13 @@ export const subscriptions = (
 //
 //
 
+
 export const View = ({
-  currentUserId,
-  store: profileStore,
+  ctx,
   model,
   dispatch,
 }: {
-  goHome: () => void
-  currentUserId: UserId
-  store: ProfileStore.Model
+  ctx: Ctx
   model: Model
   dispatch: (msg: Msg) => void
 }) => {
@@ -313,65 +312,40 @@ export const View = ({
   switch (model[0]) {
     case "Tetris": {
       return (
-        <Tetris.View
-          model={model[1]}
-          dispatch={(msg) => dispatch(["Tetris", msg])}
-        />
+        <Tetris.View model={model[1]} dispatch={(msg) => dispatch(["Tetris", msg])} />
       )
     }
 
     case "ConnectFour": {
       return (
-        <ConnectFour.View
-          store={profileStore}
-          currentUserId={currentUserId}
-          model={model[1]}
-          dispatch={(msg) => dispatch(["ConnectFour", msg])}
-        />
+        <ConnectFour.View ctx={ctx} model={model[1]} dispatch={(msg) => dispatch(["ConnectFour", msg])} />
       )
     }
 
     case "Snake": {
       return (
-        <Snake.View
-          currentUserId={currentUserId}
-          store={profileStore}
-          model={model[1]}
-          dispatch={(msg) => dispatch(["Snake", msg])}
-        />
+        <Snake.View ctx={ctx} model={model[1]} dispatch={(msg) => dispatch(["Snake", msg])} />
       )
     }
 
     case "TicTacToe": {
       return (
-        <TicTacToe.View
-          currentUserId={currentUserId}
-          store={profileStore}
-          model={model[1]}
-          dispatch={(msg) => dispatch(["TicTacToe", msg])}
+        <TicTacToe.View ctx={ctx} model={model[1]} emit={(msg) => dispatch(["TicTacToe", msg])}
         />
       )
     }
 
     case "Chess": {
       return (
-        <Chess.View
-          currentUserId={currentUserId}
-          store={profileStore}
-          model={model[1]}
-          dispatch={(msg) => dispatch(["Chess", msg])}
-        />
+        <Chess.View ctx={ctx} model={model[1]} dispatch={(msg) => dispatch(["Chess", msg])} />
       )
     }
 
     case 'Maze': {
-      return <>
-        <Maze.View
-          profiles={profileStore.profiles}
-          model={model[1]}
-          dispatch={m => dispatch(['Maze', m])}
-        />
-      </>
+      return (
+        <Maze.View ctx={ctx} model={model[1]} dispatch={m => dispatch(['Maze', m])} />
+      )
+
     }
   }
 }

@@ -1,7 +1,7 @@
 import { UserId } from "../../Data"
 import * as ProfileStore from "../../Profile/Profile.Store"
 import * as UI from "../../UI"
-import { bannerArtAspectRatio } from "../Shared"
+import { bannerArtAspectRatio } from "../Game.Shared"
 import { gameTheme, PlayerTypeIcon } from "./TicTacToe"
 
 export const BannerArt = ({ title }: { title: string }) => {

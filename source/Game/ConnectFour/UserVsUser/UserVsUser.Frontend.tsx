@@ -3,6 +3,7 @@ import { UserId } from "../../../Data";
 import * as ProfileStore from "../../../Profile/Profile.Store";
 import * as Snackbar from "../../../Snackbar";
 import * as UI from "../../../UI";
+import { Ctx } from "../../Game.Shared";
 import { ColumnIndex, gameTheme, PlayerType, playerTypeToColor, toTurn, ViewColumns } from "../ConnectFour";
 import { PlayerIcon, PlayerOneIcon, PlayerTwoIcon } from "../Views";
 import { allMoveTimeLimit, BackendModel, FrontendModel, FrontendMsg, GameModel, GameOverModel, handle, initShared, resultToString, SetupModel, ToBackend, ToFrontend, toPlayerType } from "./UserVsUser.Types";
@@ -160,15 +161,14 @@ export const subscriptions = (_model: Model): Sub<Msg> => {
 // 
 
 
-export const View = ({ currentUserId, model, dispatch, store, goBack, }: { model: Model, store: ProfileStore.Model; dispatch: (msg: Msg) => void, goBack: () => void, currentUserId: UserId }) => {
+export const View = ({ ctx, model, dispatch, goBack, }: { model: Model, ctx: Ctx; dispatch: (msg: Msg) => void, goBack: () => void, }) => {
 
     if (model.type === 'Setup') {
         return (
             <ViewSetup
-                currentUserId={currentUserId}
+                ctx={ctx}
                 goBack={goBack}
                 model={model}
-                store={store}
                 dispatch={dispatch}
             />
         )
@@ -178,10 +178,9 @@ export const View = ({ currentUserId, model, dispatch, store, goBack, }: { model
         return (
             <>
                 <ViewGame
-                    currentUserId={currentUserId}
+                    ctx={ctx}
                     ghostIndex={model.ghostIndex}
                     model={model}
-                    store={store}
                     dispatch={dispatch}
                 />
 
@@ -194,16 +193,14 @@ export const View = ({ currentUserId, model, dispatch, store, goBack, }: { model
                     onConfirm={() => dispatch(['Resign', { userId: currentUserId }])}
                     open={model.openedModal === 'ConfirmResign'}
                 />
-
             </>
         )
     }
 
     return (
         <ViewGameOver
-            currentUserId={currentUserId}
             model={model}
-            store={store}
+            ctx={ctx}
             dispatch={dispatch}
         />
     )

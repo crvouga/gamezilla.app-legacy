@@ -10,7 +10,7 @@ import { UserId } from "../../Data"
 import * as Snackbar from "../../Snackbar"
 import * as ProfileStore from "../../Profile/Profile.Store"
 import * as UI from "../../UI"
-import { GameModeCardGrid } from "../Shared"
+import { GameModeCardGrid } from "../Game.Shared"
 import {
   BackendModel,
   FrontendModel,

@@ -3,7 +3,7 @@ import { UserId } from "../../Data"
 import * as ProfileStore from "../../Profile/Profile.Store"
 import * as Snackbar from "../../Snackbar"
 import * as UI from "../../UI"
-import { GameModeCardGrid } from "../Shared"
+import { GameModeCardGrid } from "../Game.Shared"
 import { Empty, gameTheme, Position, Slot, ViewSlot } from "./TicTacToe"
 import {
   BackendModel,

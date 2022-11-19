@@ -2,6 +2,27 @@ import { UserId } from "../Data/UserId"
 import * as UI from "../UI"
 import * as ProfileStore from "../Profile/Profile.Store"
 
+// 
+// 
+// 
+// Model
+// 
+// 
+// 
+
+export type Ctx = {
+  profiles: ProfileStore.Model['profiles'],
+  currentUserId: UserId
+}
+
+// 
+// 
+// 
+// View
+// 
+// 
+// 
+
 export const bannerArtAspectRatio = Math.pow(3 / 4, 4)
 
 export const GameModeCard = ({
