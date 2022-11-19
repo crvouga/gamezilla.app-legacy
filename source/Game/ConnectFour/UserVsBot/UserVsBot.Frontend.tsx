@@ -3,7 +3,7 @@ import { UserId } from "../../../Data/UserId";
 import * as Snackbar from "../../../Snackbar";
 import * as ProfileStore from "../../../Profile/Profile.Store";
 import * as UI from "../../../UI";
-import { VersusHeader } from "../../Views";
+import { Ctx, VersusHeader } from "../../Game.Shared";
 import { gameTheme, PlayerType, ViewColumns } from "../ConnectFour";
 import { PlayerIcon } from "../Views";
 import { BackendModel, botLevel, GameOver, FrontendModel, FrontendMsg, GameModel, handle, initShared, isBotTurn, SetupModel, ToBackend, ToFrontend, toGameOver } from "./UserVsBot.Types";
@@ -115,19 +115,13 @@ export const View = (
     {
         model,
         goBack,
-        store,
-        roomComponent,
-        goHome,
-        currentUserId,
+        ctx,
         dispatch
     }: {
         model: Model;
         dispatch: (msg: Msg) => void;
-        currentUserId: UserId;
         goBack: () => void;
-        store: ProfileStore.Model;
-        goHome: () => void;
-        roomComponent: UI.ViewNode;
+        ctx: Ctx
     }) => {
 
     if (model.type === 'Setup') {
@@ -135,46 +129,32 @@ export const View = (
             <ViewSetup
                 model={model}
                 goBack={goBack}
-                store={store}
-                roomComponent={roomComponent}
-                goHome={goHome}
-                currentUserId={currentUserId}
+                ctx={ctx}
                 dispatch={dispatch}
             />
         )
     }
 
-    const stopGameRes = handle(['StopGame', { userId: currentUserId }], model)
-    const restartRes = handle(['Restart', { userId: currentUserId }], model)
-    const swapSidesRes = handle(['SwapSides', { userId: currentUserId }], model)
+    const stopGameRes = handle(['StopGame', { userId: ctx.currentUserId }], model)
+    const restartRes = handle(['Restart', { userId: ctx.currentUserId }], model)
+    const swapSidesRes = handle(['SwapSides', { userId: ctx.currentUserId }], model)
     const gameOver = toGameOver(model)
     return (
         <UI.FillBox>
-            <UI.Header
-                left={
-                    <UI.IconButton sx={{ marginLeft: -1 }} onClick={goHome}>
-                        <UI.Icons.Home />
-                    </UI.IconButton>
-                }
-                title="Connect Four"
-                right={roomComponent}
-            />
-
-
             <UI.Box sx={{ display: 'flex', alignItems: 'center', padding: 1, gap: 1, paddingBottom: 2 }}>
-                <ViewGamePlayerSlot model={model} store={store} playerType="PlayerOne" />
-                <ViewGamePlayerSlot model={model} store={store} playerType="PlayerTwo" />
+                <ViewGamePlayerSlot model={model} ctx={ctx} playerType="PlayerOne" />
+                <ViewGamePlayerSlot model={model} ctx={ctx} playerType="PlayerTwo" />
             </UI.Box>
 
             <UI.Box sx={{ position: "relative" }}>
                 <ViewColumns
                     columns={model.columns}
-                    onClick={columnIndex => dispatch(['InputMove', { columnIndex, userId: currentUserId }])}
+                    onClick={columnIndex => dispatch(['InputMove', { columnIndex, userId: ctx.currentUserId }])}
                 />
                 <UI.Fade in={gameOver.type !== 'None'}>
                     <UI.Box sx={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: "center", background: "rgba(0, 0, 0, 0.333)", color: "#fff" }}>
                         {gameOver.type !== 'None' && (
-                            <ViewGameOverMessage model={model} currentUserId={currentUserId} gameOver={gameOver} />
+                            <ViewGameOverMessage model={model} currentUserId={ctx.currentUserId} gameOver={gameOver} />
                         )}
                     </UI.Box>
                 </UI.Fade>
@@ -185,19 +165,19 @@ export const View = (
                 <UI.ActionButton
                     icon={<UI.Icons.ExitToApp sx={{ transform: "rotate(180deg)" }} />}
                     label="Exit"
-                    onClick={() => dispatch(['StopGame', { userId: currentUserId, }])}
+                    onClick={() => dispatch(['StopGame', { userId: ctx.currentUserId, }])}
                     disabled={stopGameRes.type === 'Err'}
                 />
                 <UI.ActionButton
                     icon={<UI.Icons.RestartAlt />}
                     label="Restart"
-                    onClick={() => dispatch(['Restart', { userId: currentUserId, }])}
+                    onClick={() => dispatch(['Restart', { userId: ctx.currentUserId, }])}
                     disabled={restartRes.type === 'Err'}
                 />
                 <UI.ActionButton
                     icon={<UI.Icons.SwapHorizSharp />}
                     label="Swap"
-                    onClick={() => dispatch(['SwapSides', { userId: currentUserId, }])}
+                    onClick={() => dispatch(['SwapSides', { userId: ctx.currentUserId, }])}
                     disabled={swapSidesRes.type === 'Err'}
                 />
             </UI.Box>
@@ -288,33 +268,18 @@ const ViewSetup = (
     {
         model,
         goBack,
-        store,
-        roomComponent,
-        goHome,
-        currentUserId,
+        ctx,
         dispatch
     }: {
         model: SetupModel;
         dispatch: (msg: Msg) => void;
-        currentUserId: UserId;
+        ctx: Ctx,
         goBack: () => void;
-        store: ProfileStore.Model;
-        goHome: () => void;
-        roomComponent: UI.ViewNode;
+
     }) => {
     const startGameRes = handle(['StartGame', { userId: currentUserId }], model)
     return (
         <UI.FillBox>
-            <UI.Header
-                left={
-                    <UI.IconButton sx={{ marginLeft: -1 }} onClick={goHome}>
-                        <UI.Icons.Home />
-                    </UI.IconButton>
-                }
-                title="Connect Four"
-                right={roomComponent}
-            />
-
             <UI.Box sx={{ flex: 1, overflowY: "scroll" }}>
                 <VersusHeader
                     store={store}

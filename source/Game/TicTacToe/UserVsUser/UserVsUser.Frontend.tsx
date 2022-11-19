@@ -193,26 +193,13 @@ export const View = ({
   model,
   dispatch,
   onCloseGame,
-  goHome,
-  roomComponent,
 }: {
   currentUserId: UserId
   store: ProfileStore.Model
   model: Model
   dispatch: (msg: Msg) => void
   onCloseGame: () => void
-  goHome: () => void
-  roomComponent: UI.ViewNode
 }) => {
-  const homeButton = (
-    <UI.IconButton
-      sx={{ marginLeft: -1 }}
-      onClick={goHome}
-    >
-      <UI.Icons.Home />
-    </UI.IconButton>
-  )
-
   if (model.type === "Setup") {
     const startGameResult = startGame({ userId: currentUserId }, model)
     const inputBestOutOfResult = inputBestOutOf(
@@ -225,11 +212,6 @@ export const View = ({
     )
     return (
       <UI.FillBox>
-        <UI.Header
-          left={homeButton}
-          title=""
-          right={roomComponent}
-        />
         <UI.Box sx={{ flex: 1, overflowY: "scroll" }}>
           <VersusHeader
             store={store}
@@ -359,12 +341,6 @@ export const View = ({
 
     return (
       <UI.FillBox>
-        <UI.Header
-          left={homeButton}
-          title={toGameText({ model, store })}
-          right={roomComponent}
-        />
-
         <UI.Box sx={{ flex: 1, overflowY: "scroll" }}>
           <UI.Box sx={{ display: "flex", gap: 2, paddingX: 1, paddingY: 1 }}>
             <ViewPlayerGameSlot
@@ -432,12 +408,6 @@ export const View = ({
 
   return (
     <UI.FillBox>
-      <UI.Header
-        left={homeButton}
-        title={toGameText({ model, store })}
-        right={roomComponent}
-      />
-
       <UI.Box sx={{ display: "flex", gap: 2, paddingX: 1, paddingY: 1 }}>
         <ViewPlayerGameSlot
           playerType="X"
@@ -1115,6 +1085,7 @@ const ViewResignButton = ({
   )
 }
 
+// @ts-ignore
 const toGameText = ({
   model,
   store,

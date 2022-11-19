@@ -133,12 +133,12 @@ const handleSubscription = <Model, Msg extends {}>(
   const handler = handleIncomingMsg(deps)
 
   return (msg) => {
-    const res = handler(msg)
-    if (res.type === 'Err') {
-      console.warn("[REDUX DEV TOOL]", res.error)
+    const result = handler(msg)
+    if (result.type === 'Err') {
+      console.warn("[REDUX DEV TOOL]", result.error)
       return
     }
-    res.value()
+    result.value()
   }
 }
 

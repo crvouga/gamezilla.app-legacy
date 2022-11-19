@@ -198,27 +198,16 @@ export const View = ({
   store,
   model,
   dispatch,
-  roomComponent,
 }: {
   currentUserId: UserId
   store: ProfileStore.Model
   model: Model
   dispatch: (msg: Msg) => void
-  roomComponent: UI.ViewNode
 }) => {
-  const header = (
-    <UI.Header
-      left={<UI.Button >Close</UI.Button>}
-      title="Snake"
-      right={roomComponent}
-    />
-  )
-
   if (model.gameStatus.type === "GameSetup") {
     const menuAnchorId = "playerSlotMenuId"
     return (
       <UI.FillBox>
-        {header}
         <UI.Typography
           sx={{ paddingX: 2 }}
           color="text.secondary"
@@ -311,7 +300,6 @@ export const View = ({
 
   return (
     <UI.FillBox>
-      {header}
       <ViewBoard
         model={model}
         dispatch={dispatch}

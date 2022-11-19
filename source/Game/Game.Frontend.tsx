@@ -2,7 +2,6 @@ import { Cmd, Sub, tagUpdate } from "../Core"
 import { UserId } from "../Data"
 import * as ProfileStore from "../Profile/Profile.Store"
 import * as Snackbar from "../Snackbar"
-import * as UI from "../UI"
 import * as Chess from "./Chess/Chess.Frontend"
 import * as ConnectFour from "./ConnectFour/ConnectFour.Frontend"
 import {
@@ -14,6 +13,7 @@ import {
   ToFrontend
 } from "./Game.Types"
 import * as Maze from "./Maze/Maze.Frontend"
+import { Ctx } from "./Game.Shared"
 import * as Snake from "./Snake/Snake.Frontend"
 import * as Tetris from "./Tetris/Tetris.Frontend"
 import * as TicTacToe from "./TicTacToe/TicTacToe.Frontend"
@@ -298,90 +298,54 @@ export const subscriptions = (
 //
 //
 
+
 export const View = ({
-  currentUserId,
-  store,
+  ctx,
   model,
   dispatch,
-  roomComponent,
-  goHome,
 }: {
-  goHome: () => void
-  currentUserId: UserId
-  store: ProfileStore.Model
+  ctx: Ctx
   model: Model
   dispatch: (msg: Msg) => void
-  roomComponent: UI.ViewNode
 }) => {
+
   switch (model[0]) {
     case "Tetris": {
       return (
-        <Tetris.View
-          model={model[1]}
-          dispatch={(msg) => dispatch(["Tetris", msg])}
-          roomComponent={roomComponent}
-        />
+        <Tetris.View model={model[1]} dispatch={(msg) => dispatch(["Tetris", msg])} />
       )
     }
 
     case "ConnectFour": {
       return (
-        <ConnectFour.View
-          store={store}
-          currentUserId={currentUserId}
-          model={model[1]}
-          dispatch={(msg) => dispatch(["ConnectFour", msg])}
-          goHome={goHome}
-          roomComponent={roomComponent}
-        />
+        <ConnectFour.View ctx={ctx} model={model[1]} dispatch={(msg) => dispatch(["ConnectFour", msg])} />
       )
     }
 
     case "Snake": {
       return (
-        <Snake.View
-          roomComponent={roomComponent}
-          currentUserId={currentUserId}
-          store={store}
-          model={model[1]}
-          dispatch={(msg) => dispatch(["Snake", msg])}
-        />
+        <Snake.View ctx={ctx} model={model[1]} dispatch={(msg) => dispatch(["Snake", msg])} />
       )
     }
 
     case "TicTacToe": {
       return (
-        <TicTacToe.View
-          currentUserId={currentUserId}
-          store={store}
-          model={model[1]}
-          dispatch={(msg) => dispatch(["TicTacToe", msg])}
-          goHome={goHome}
-          roomComponent={roomComponent}
+        <TicTacToe.View ctx={ctx} model={model[1]} emit={(msg) => dispatch(["TicTacToe", msg])}
         />
       )
     }
 
     case "Chess": {
       return (
-        <Chess.View
-          goHome={goHome}
-          currentUserId={currentUserId}
-          store={store}
-          model={model[1]}
-          dispatch={(msg) => dispatch(["Chess", msg])}
-          roomComponent={roomComponent}
-        />
+        <Chess.View ctx={ctx} model={model[1]} dispatch={(msg) => dispatch(["Chess", msg])} />
       )
     }
 
     case 'Maze': {
-      const homeComponent = <UI.IconButton onClick={goHome} sx={{ marginLeft: -1 }}><UI.Icons.Home /></UI.IconButton>
-      return <Maze.View
-        homeComponent={homeComponent}
-        roomComponent={roomComponent}
-        dispatch={m => dispatch(['Maze', m])} model={model[1]}
-      />
+      return (
+        <Maze.View ctx={ctx} model={model[1]} dispatch={m => dispatch(['Maze', m])} />
+      )
+
     }
   }
 }

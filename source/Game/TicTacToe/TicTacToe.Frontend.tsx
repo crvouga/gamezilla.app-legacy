@@ -3,7 +3,7 @@ import { UserId } from "../../Data"
 import * as ProfileStore from "../../Profile/Profile.Store"
 import * as Snackbar from "../../Snackbar"
 import * as UI from "../../UI"
-import { GameModeCardGrid } from "../Views"
+import { GameModeCardGrid } from "../Game.Shared"
 import { Empty, gameTheme, Position, Slot, ViewSlot } from "./TicTacToe"
 import {
   BackendModel,
@@ -186,34 +186,16 @@ export const View = ({
   store,
   model,
   dispatch,
-  goHome,
-  roomComponent: roomComponent,
 }: {
   currentUserId: UserId
   store: ProfileStore.Model
   model: Model
   dispatch: (msg: Msg) => void
-  goHome: () => void
-  roomComponent: UI.ViewNode
 }) => {
-  const homeButton = (
-    <UI.IconButton
-      sx={{ marginLeft: -1 }}
-      onClick={goHome}
-    >
-      <UI.Icons.Home />
-    </UI.IconButton>
-  )
-
   switch (model.mode) {
     case "None": {
       return (
         <UI.FillBox>
-          <UI.Header
-            left={homeButton}
-            title=""
-            right={roomComponent}
-          />
           <BannerArt title="Tic Tac Toe" />
 
           <GameModeCardGrid
@@ -234,8 +216,6 @@ export const View = ({
           store={store}
           model={model.child}
           dispatch={(msg) => dispatch(["UserVsUser", msg])}
-          goHome={goHome}
-          roomComponent={roomComponent}
         />
       )
     }
@@ -250,8 +230,6 @@ export const View = ({
           store={store}
           model={model.child}
           dispatch={(msg) => dispatch(["UserVsBot", msg])}
-          goHome={goHome}
-          roomComponent={roomComponent}
         />
       )
     }

@@ -4,6 +4,7 @@ import * as ProfileStore from "../Profile/Profile.Store"
 import * as Route from "../Route"
 import * as Snackbar from "../Snackbar"
 import * as UI from "../UI"
+import { Button, Divider, Toolbar } from "../UI"
 import * as Game from "./Game.Frontend"
 import { GameName, gameNameList } from "./Game.Types"
 import {
@@ -566,15 +567,42 @@ export const View = ({
   }
 
   const game = room.game
-
+  const usersInRoom = toRoomUsers(room.roomId, model)
   return (
-    <Game.View
-      currentUserId={currentUserId}
-      store={profileStore}
-      dispatch={(msg) => dispatch(["Games", room.roomId, msg])}
-      model={game}
-      goHome={() => dispatch(["ClickedGoHome"])}
-      roomComponent={
+    <>
+
+      <Game.View
+        currentUserId={currentUserId}
+        store={profileStore}
+        dispatch={(msg) => dispatch(["Games", room.roomId, msg])}
+        model={game}
+        goHome={() => dispatch(["ClickedGoHome"])}
+
+      />
+
+      <Divider />
+
+      <Toolbar variant="dense" sx={{ paddingX: 2, justifyContent: "space-between" }}>
+        <Button startIcon={<UI.Icons.Home />} size="small" onClick={() => dispatch(['ClickedGoHome'])}>
+          Home
+        </Button>
+
+
+
+
+        {/* <Typography variant="h6" component={"h1"} sx={{ flex: 4, textAlign: 'center' }}>
+          {Game.gameNameToString(game[0])}
+        </Typography> */}
+
+
+
+        <UI.Badge badgeContent={usersInRoom.length > 1 ? usersInRoom.length : undefined} color="secondary">
+          <Button startIcon={<UI.Icons.Group />} size="small" onClick={() => dispatch(['ClickedRoomButton'])}>
+            Room
+          </Button>
+        </UI.Badge>
+
+
         <ViewGameRoomAvatarGroup
           currentUserId={currentUserId}
           store={profileStore}
@@ -582,8 +610,11 @@ export const View = ({
           model={model}
           dispatch={dispatch}
         />
-      }
-    />
+
+      </Toolbar>
+
+    </>
+
   )
 }
 
@@ -740,101 +771,93 @@ const ViewGameRoomAvatarGroup = ({
   const usersInRoom = toRoomUsers(room.roomId, model)
 
   return (
-
-    <>
-      <UI.IconButton sx={{ marginRight: -1 }} onClick={() => dispatch(["ClickedRoomButton"])}>
-        <UI.Badge badgeContent={usersInRoom.length > 1 ? usersInRoom.length : undefined} color="primary">
-          <UI.Icons.Group />
-        </UI.Badge>
-      </UI.IconButton>
-
-      <UI.Drawer
-        anchor="bottom"
-        open={model.modal === "DrawerOpened"}
-        onClose={() => dispatch(["ClosedDrawer"])}
+    <UI.Drawer
+      anchor="bottom"
+      open={model.modal === "DrawerOpened"}
+      onClose={() => dispatch(["ClosedDrawer"])}
+    >
+      <UI.Typography
+        variant="h4"
+        sx={{ paddingX: 2, paddingTop: 2, width: "100%" }}
+        noWrap
       >
-        <UI.Typography
-          variant="h4"
-          sx={{ paddingX: 2, paddingTop: 2, width: "100%" }}
-          noWrap
-        >
-          {store.profiles[room.hostId]?.username ?? "..."}'s room
-        </UI.Typography>
+        {store.profiles[room.hostId]?.username ?? "..."}'s room
+      </UI.Typography>
 
-        <UI.Box
-          sx={{
-            display: "flex",
-            paddingY: 1,
-            paddingX: 2,
-          }}
-        >
-          {usersInRoom.map((user) => (
-            <UI.Box
-              key={user.userId}
-              onClick={() => dispatch(["ClickedUser", user])}
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                width: `${(1 / 3) * 100}%`,
-                padding: 1,
-                overflowX: "hidden",
-              }}
+      <UI.Box
+        sx={{
+          display: "flex",
+          paddingY: 1,
+          paddingX: 2,
+        }}
+      >
+        {usersInRoom.map((user) => (
+          <UI.Box
+            key={user.userId}
+            onClick={() => dispatch(["ClickedUser", user])}
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              width: `${(1 / 3) * 100}%`,
+              padding: 1,
+              overflowX: "hidden",
+            }}
+          >
+            <UI.Avatar src={store.profiles[user.userId]?.avatarUrl} />
+            <UI.Typography
+              align="center"
+              sx={{ marginBottom: -1 / 2, width: '100%' }}
+              noWrap
             >
-              <UI.Avatar src={store.profiles[user.userId]?.avatarUrl} />
+              {store.profiles[user.userId]?.username ?? "..."}
+            </UI.Typography>
+            {user.userId === room.hostId ? <UI.Typography
+              variant="subtitle2"
+              color="text.secondary"
+            >
+              Host
+            </UI.Typography> : (
               <UI.Typography
-                align="center"
-                sx={{ marginBottom: -1 / 2, width: '100%' }}
-                noWrap
-              >
-                {store.profiles[user.userId]?.username ?? "..."}
-              </UI.Typography>
-              {user.userId === room.hostId ? <UI.Typography
                 variant="subtitle2"
                 color="text.secondary"
+                sx={{ opacity: 0 }}
               >
-                Host
-              </UI.Typography> : (
-                <UI.Typography
-                  variant="subtitle2"
-                  color="text.secondary"
-                  sx={{ opacity: 0 }}
-                >
-                  Guest
-                </UI.Typography>
-              )}
-            </UI.Box>
-          ))}
-        </UI.Box>
+                Guest
+              </UI.Typography>
+            )}
+          </UI.Box>
+        ))}
+      </UI.Box>
 
-        <UI.Box sx={{ paddingX: 2, paddingBottom: 2, display: "flex", gap: 2 }}>
-          {currentUserId === room.hostId ?
+      <UI.Box sx={{ paddingX: 2, paddingBottom: 2, display: "flex", gap: 2 }}>
+        {currentUserId === room.hostId ?
+          <>
+            <UI.Button fullWidth>
+              Change Game
+            </UI.Button>
+            <UI.Button
+              fullWidth
+              color="error"
+              onClick={() => dispatch(["RoomDestroy", { userId: currentUserId }])}
+            >
+              End Room
+            </UI.Button>
+          </> : (
             <>
-              <UI.Button fullWidth>
-                Change Game
-              </UI.Button>
               <UI.Button
                 fullWidth
                 color="error"
-                onClick={() => dispatch(["RoomDestroy", { userId: currentUserId }])}
+                onClick={() => dispatch(["RoomLeave", { userId: currentUserId }])}
               >
-                End Room
+                Leave Room
               </UI.Button>
-            </> : (
-              <>
-                <UI.Button
-                  fullWidth
-                  color="error"
-                  onClick={() => dispatch(["RoomLeave", { userId: currentUserId }])}
-                >
-                  Leave Room
-                </UI.Button>
-              </>
-            )}
-        </UI.Box>
-      </UI.Drawer>
-    </>
+            </>
+          )}
+      </UI.Box>
+    </UI.Drawer>
+
   )
 }
 
