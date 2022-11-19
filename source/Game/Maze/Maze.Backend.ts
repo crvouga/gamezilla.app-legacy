@@ -33,9 +33,13 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
 
 export const updateFromFrontend = ({ broadcast }: { broadcast: (m: ToFrontend) => Cmd }, msg: ToBackend, model: Model): [Model, Cmd<Msg>] => {
     switch (msg[0]) {
+        case 'InputMove':
+        case 'StartGame':
+        case 'StopPlaying':
         case 'StartPlaying': {
             const res: Res = [...msg, handle(msg, model)]
-            return [model, broadcast(res)]
+            const modelNew = res[2].type === 'Ok' ? res[2].value : model
+            return [modelNew, broadcast(res)]
         }
     }
 }
