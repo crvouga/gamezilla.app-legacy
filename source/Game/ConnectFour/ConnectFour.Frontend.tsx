@@ -1,9 +1,7 @@
 import { Cmd } from "../../Core"
-import { UserId } from "../../Data"
-import * as Store from "../../Profile/Profile.Store"
 import * as Snackbar from "../../Snackbar"
 import * as UI from "../../UI"
-import { bannerArtAspectRatio, GameModeCardGrid } from "../Shared"
+import { bannerArtAspectRatio, Ctx, GameModeCardGrid } from "../Game.Shared"
 import {
   COLUMN_COUNT,
   gameTheme,
@@ -125,16 +123,13 @@ export const updateFromBackend = (
 export const View = ({
   model,
   dispatch,
-  currentUserId,
-  store,
+  ctx,
 }: {
   model: Model
   dispatch: (msg: Msg) => void
-  store: Store.Model
-  currentUserId: UserId
+  ctx: Ctx
 }) => {
-
-  const goBack = () => dispatch(['InputMode', { userId: currentUserId, mode: "None" }])
+  const goBack = () => dispatch(['InputMode', { userId: ctx.currentUserId, mode: "None" }])
 
   switch (model.type) {
     case 'None': {
@@ -143,8 +138,8 @@ export const View = ({
           <BannerArt />
 
           <GameModeCardGrid
-            onUserVsUser={() => dispatch(["InputMode", { mode: "UserVsUser", userId: currentUserId },])}
-            onUserVsBot={() => dispatch(["InputMode", { mode: "UserVsBot", userId: currentUserId },])}
+            onUserVsUser={() => dispatch(["InputMode", { mode: "UserVsUser", userId: ctx.currentUserId },])}
+            onUserVsBot={() => dispatch(["InputMode", { mode: "UserVsBot", userId: ctx.currentUserId },])}
           />
         </UI.FillBox>
       )
@@ -153,8 +148,7 @@ export const View = ({
     case 'UserVsUser': {
       return (
         <UserVsUser.View
-          currentUserId={currentUserId}
-          store={store}
+          ctx={ctx}
           dispatch={msg => dispatch(['UserVsUser', msg])}
           goBack={goBack}
           model={model.child}
@@ -165,8 +159,7 @@ export const View = ({
     case 'UserVsBot': {
       return (
         <UserVsBot.View
-          store={store}
-          currentUserId={currentUserId}
+          ctx={ctx}
           dispatch={(msg) => dispatch(['UserVsBot', msg])}
           model={model.child}
           goBack={goBack}
