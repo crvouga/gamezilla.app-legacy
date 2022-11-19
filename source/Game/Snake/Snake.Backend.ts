@@ -40,7 +40,7 @@ export const init = initSharedModel
 export type Msg = BackendMsg
 
 export const update = (
-  { sendToRoom }: { sendToRoom: (msg: ToFrontend) => Cmd },
+  { broadcast }: { broadcast: (msg: ToFrontend) => Cmd },
   msg: Msg,
   model: Model,
 ): [Model, Cmd<Msg>] => {
@@ -51,7 +51,7 @@ export const update = (
         gameStatus: model.gameStatus,
       }
 
-      return [modelNew, sendToRoom(["Sync", modelNew])]
+      return [modelNew, broadcast(["Sync", modelNew])]
     }
   }
 }
@@ -59,10 +59,10 @@ export const update = (
 export const updateFromFrontend = (
   {
     sendToClient,
-    sendToRoom,
+    broadcast,
   }: {
     sendToClient: (msg: ToFrontend) => Cmd
-    sendToRoom: (msg: ToFrontend) => Cmd
+    broadcast: (msg: ToFrontend) => Cmd
   },
   msg: ToBackend,
   model: Model,
@@ -70,7 +70,7 @@ export const updateFromFrontend = (
   switch (msg[0]) {
     case "StartGame": {
       return updateRequest(
-        { sendToClient, sendToRoom },
+        { sendToClient, broadcast },
         ["StartGame_Done", startGame(model)],
         model,
       )
@@ -78,7 +78,7 @@ export const updateFromFrontend = (
 
     case "ToggleStatus": {
       return updateRequest(
-        { sendToClient, sendToRoom },
+        { sendToClient, broadcast },
         ["ToggleStatus_Done", toggleStatus(msg[1], model)],
         model,
       )
@@ -86,7 +86,7 @@ export const updateFromFrontend = (
 
     case "InputDirection": {
       return updateRequest(
-        { sendToClient, sendToRoom },
+        { sendToClient, broadcast },
         ["InputDirection_Done", inputDirection(msg[1], model)],
         model,
       )
@@ -94,7 +94,7 @@ export const updateFromFrontend = (
 
     case "InputPlayer": {
       return updateRequest(
-        { sendToClient, sendToRoom },
+        { sendToClient, broadcast },
         ["InputPlayer_Done", inputPlayer(msg[1], model)],
         model,
       )
@@ -105,10 +105,10 @@ export const updateFromFrontend = (
 const updateRequest = (
   {
     sendToClient,
-    sendToRoom,
+    broadcast,
   }: {
     sendToClient: (msg: ToFrontend) => Cmd
-    sendToRoom: (msg: ToFrontend) => Cmd
+    broadcast: (msg: ToFrontend) => Cmd
   },
   response: Response,
   model: Model,
@@ -121,7 +121,7 @@ const updateRequest = (
 
   return [
     modelNew,
-    Cmd.batch([sendToRoom(response), sendToRoom(["Sync", modelNew])]),
+    Cmd.batch([broadcast(response), broadcast(["Sync", modelNew])]),
   ]
 }
 

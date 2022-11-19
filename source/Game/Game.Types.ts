@@ -86,4 +86,4 @@ export type ToBackend =
   | ["Snake", Snake.ToBackend]
   | ["Chess", Chess.ToBackend]
   | ["Tetris", Tetris.ToBackend]
-  | ["Maze", Maze.ToFrontend]
+  | ["Maze", Maze.ToBackend]

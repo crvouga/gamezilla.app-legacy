@@ -92,7 +92,7 @@ export const update = (
 
     case 'Maze': {
       if (msg[0] === "Maze") {
-        const [child, cmd] = Maze.update(msg[1], model[1])
+        const [child, cmd] = Maze.update({ sendToBackend: m => sendToBackend(['Maze', m]) }, msg[1], model[1])
 
         return [['Maze', child], Cmd.tag('Maze', cmd)]
       }

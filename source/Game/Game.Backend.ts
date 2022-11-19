@@ -56,11 +56,11 @@ export const init = ({ gameName }: { gameName: Model[0] }): Model => {
 
 export type Msg = BackendMsg
 
-export const update = ({ sendToRoom }: { sendToRoom: (m: ToFrontend) => Cmd }, msg: Msg, model: Model,): [Model, Cmd<Msg>] => {
+export const update = ({ broadcast }: { broadcast: (m: ToFrontend) => Cmd }, msg: Msg, model: Model,): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case "Tetris": {
       if (model[0] === "Tetris") {
-        const [child, cmd] = Tetris.update({ sendToRoom: m => sendToRoom(['Tetris', m]) }, msg[1], model[1])
+        const [child, cmd] = Tetris.update({ broadcast: m => broadcast(['Tetris', m]) }, msg[1], model[1])
         return [['Tetris', child], Cmd.tag('Tetris', cmd)]
       }
       return [model, Cmd.None]
@@ -68,7 +68,7 @@ export const update = ({ sendToRoom }: { sendToRoom: (m: ToFrontend) => Cmd }, m
 
     case "ConnectFour": {
       if (model[0] === "ConnectFour") {
-        const [child, cmd] = ConnectFour.update({ sendToRoom: m => sendToRoom(['ConnectFour', m]) }, msg[1], model[1])
+        const [child, cmd] = ConnectFour.update({ broadcast: m => broadcast(['ConnectFour', m]) }, msg[1], model[1])
         return [['ConnectFour', child], Cmd.tag('ConnectFour', cmd)]
       }
       return [model, Cmd.None]
@@ -76,7 +76,7 @@ export const update = ({ sendToRoom }: { sendToRoom: (m: ToFrontend) => Cmd }, m
 
     case "TicTacToe": {
       if (model[0] === "TicTacToe") {
-        const [child, cmd] = TicTacToe.update({ sendToRoom: (m) => sendToRoom(["TicTacToe", m]) }, msg[1], model[1],)
+        const [child, cmd] = TicTacToe.update({ broadcast: (m) => broadcast(["TicTacToe", m]) }, msg[1], model[1],)
         return [['TicTacToe', child], Cmd.tag("TicTacToe", cmd)]
       }
       return [model, Cmd.None]
@@ -84,7 +84,7 @@ export const update = ({ sendToRoom }: { sendToRoom: (m: ToFrontend) => Cmd }, m
 
     case "Snake": {
       if (model[0] === "Snake") {
-        const [child, cmd] = Snake.update({ sendToRoom: (m) => sendToRoom(["Snake", m]) }, msg[1], model[1],)
+        const [child, cmd] = Snake.update({ broadcast: (m) => broadcast(["Snake", m]) }, msg[1], model[1],)
         return [['Snake', child], Cmd.tag("Snake", cmd)]
       }
       return [model, Cmd.None]
@@ -92,7 +92,7 @@ export const update = ({ sendToRoom }: { sendToRoom: (m: ToFrontend) => Cmd }, m
 
     case "Chess": {
       if (model[0] === "Chess") {
-        const [child, cmd] = Chess.update({ sendToRoom: (m) => sendToRoom(["Chess", m]) }, msg[1], model[1])
+        const [child, cmd] = Chess.update({ broadcast: (m) => broadcast(["Chess", m]) }, msg[1], model[1])
         return [['Chess', child], Cmd.tag("Chess", cmd)]
       }
       return [model, Cmd.None]
@@ -112,11 +112,11 @@ export const updateFromFrontend = (
   {
     hostId,
     sendToClient,
-    sendToRoom,
+    broadcast,
   }: {
     hostId: UserId
     sendToClient: (msg: ToFrontend) => Cmd
-    sendToRoom: (msg: ToFrontend) => Cmd
+    broadcast: (msg: ToFrontend) => Cmd
   },
   msg: ToBackend,
   model: Model,
@@ -127,7 +127,7 @@ export const updateFromFrontend = (
         const [child, cmd] = Tetris.updateFromFrontend(
           {
             sendToClient: (msg) => sendToClient(["Tetris", msg]),
-            sendToRoom: (msg) => sendToRoom(["Tetris", msg]),
+            broadcast: (msg) => broadcast(["Tetris", msg]),
           },
           msg[1],
           model[1],
@@ -143,7 +143,7 @@ export const updateFromFrontend = (
         const [child, cmd] = ConnectFour.updateFromFrontend(
           {
             sendToClient: (msg) => sendToClient(["ConnectFour", msg]),
-            sendToRoom: (msg) => sendToRoom(["ConnectFour", msg]),
+            broadcast: (msg) => broadcast(["ConnectFour", msg]),
           },
           msg[1],
           model[1],
@@ -158,7 +158,7 @@ export const updateFromFrontend = (
         const [child, cmd] = TicTacToe.updateFromFrontend(
           {
             sendToClient: (msg) => sendToClient(["TicTacToe", msg]),
-            sendToRoom: (msg) => sendToRoom(["TicTacToe", msg]),
+            broadcast: (msg) => broadcast(["TicTacToe", msg]),
           },
           msg[1],
           model[1],
@@ -173,7 +173,7 @@ export const updateFromFrontend = (
         const [child, cmd] = Snake.updateFromFrontend(
           {
             sendToClient: (msg) => sendToClient(["Snake", msg]),
-            sendToRoom: (msg) => sendToRoom(["Snake", msg]),
+            broadcast: (msg) => broadcast(["Snake", msg]),
           },
           msg[1],
           model[1],
@@ -189,7 +189,7 @@ export const updateFromFrontend = (
           {
             hostId: hostId,
             sendToClient: (msg) => sendToClient(["Chess", msg]),
-            sendToRoom: (msg) => sendToRoom(["Chess", msg]),
+            broadcast: (msg) => broadcast(["Chess", msg]),
           },
           msg[1],
           model[1],
@@ -201,7 +201,7 @@ export const updateFromFrontend = (
 
     case 'Maze': {
       if (model[0] === 'Maze') {
-        const [child, cmd] = Maze.updateFromFrontend(msg[1], model[1])
+        const [child, cmd] = Maze.updateFromFrontend({ broadcast: m => broadcast(['Maze', m]) }, msg[1], model[1])
         return [['Maze', child], Cmd.tag("Maze", cmd)]
       }
       return [model, Cmd.None]
@@ -209,15 +209,15 @@ export const updateFromFrontend = (
   }
 }
 
-export const updateRoomLeave = ({ sendToRoom }: { sendToRoom: (msg: ToFrontend) => Cmd }, userId: UserId, model: Model): [Model, Cmd<Msg>] => {
+export const updateRoomLeave = ({ broadcast }: { broadcast: (msg: ToFrontend) => Cmd }, userId: UserId, model: Model): [Model, Cmd<Msg>] => {
   switch (model[0]) {
     case 'Chess': {
-      const [child, cmd] = Chess.updateRoomLeave({ sendToRoom: msg => sendToRoom(['Chess', msg]) }, userId, model[1])
+      const [child, cmd] = Chess.updateRoomLeave({ broadcast: msg => broadcast(['Chess', msg]) }, userId, model[1])
       return [['Chess', child], Cmd.tag("Chess", cmd)]
     }
 
     case 'ConnectFour': {
-      const [child, cmd] = ConnectFour.updateRoomLeave({ userId, model: model[1], sendToRoom: msg => sendToRoom(['ConnectFour', msg]) },)
+      const [child, cmd] = ConnectFour.updateRoomLeave({ userId, model: model[1], broadcast: msg => broadcast(['ConnectFour', msg]) },)
       return [['ConnectFour', child], Cmd.tag("ConnectFour", cmd)]
     }
 
@@ -230,7 +230,7 @@ export const updateRoomLeave = ({ sendToRoom }: { sendToRoom: (msg: ToFrontend) 
     }
 
     case 'TicTacToe': {
-      const [child, cmd] = TicTacToe.updateRoomLeave({ sendToRoom: msg => sendToRoom(['TicTacToe', msg]) }, userId, model[1])
+      const [child, cmd] = TicTacToe.updateRoomLeave({ broadcast: msg => broadcast(['TicTacToe', msg]) }, userId, model[1])
       return [['TicTacToe', child], Cmd.tag("TicTacToe", cmd)]
     }
 

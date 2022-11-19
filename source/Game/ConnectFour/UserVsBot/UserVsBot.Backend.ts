@@ -25,21 +25,21 @@ export const init = initShared
 
 export type Msg = BackendMsg
 
-export const update = ({ sendToRoom }: { sendToRoom: (m: ToFrontend) => Cmd }, msg: Msg, model: Model): [Model, Cmd<Msg>] => {
+export const update = ({ broadcast }: { broadcast: (m: ToFrontend) => Cmd }, msg: Msg, model: Model): [Model, Cmd<Msg>] => {
     switch (msg[0]) {
         case "BotMove": {
             const result = botMove(msg[1], model)
             if (result.type === 'Err') {
-                return [model, sendToRoom(['BotMove', result])]
+                return [model, broadcast(['BotMove', result])]
             }
-            return [result.value, sendToRoom(['BotMove', result])]
+            return [result.value, broadcast(['BotMove', result])]
         }
     }
 };
 
 
 export const updateFromFrontend = (
-    wire: { sendToRoom: (msg: ToFrontend) => Cmd, sendToClient: (msg: ToFrontend) => Cmd },
+    wire: { broadcast: (msg: ToFrontend) => Cmd, sendToClient: (msg: ToFrontend) => Cmd },
     msg: ToBackend,
     modelPrev: Model
 ): [Model, Cmd<Msg>] => {
@@ -62,7 +62,7 @@ export const updateFromFrontend = (
 }
 
 const updateFromFrontend_ = (
-    { sendToRoom, sendToClient }: { sendToRoom: (msg: ToFrontend) => Cmd, sendToClient: (msg: ToFrontend) => Cmd },
+    { broadcast, sendToClient }: { broadcast: (msg: ToFrontend) => Cmd, sendToClient: (msg: ToFrontend) => Cmd },
     msg: ToBackend,
     model: Model
 ): [Model, Cmd<Msg>] => {
@@ -82,13 +82,13 @@ const updateFromFrontend_ = (
                 return [model, sendToClient(res)]
             }
 
-            return [res[1].value, sendToRoom(res)]
+            return [res[1].value, broadcast(res)]
         }
     }
 };
 
-export const updateRoomLeave = ({ userId, model, sendToRoom }: {
-    sendToRoom: (m: ToFrontend) => Cmd,
+export const updateRoomLeave = ({ userId, model, broadcast }: {
+    broadcast: (m: ToFrontend) => Cmd,
     userId: UserId,
     model: Model,
 }): [Model, Cmd<Msg>] => {
@@ -103,7 +103,7 @@ export const updateRoomLeave = ({ userId, model, sendToRoom }: {
         player: "None"
     }
 
-    return [modelNew, sendToRoom(['PlayerLeft', modelNew])]
+    return [modelNew, broadcast(['PlayerLeft', modelNew])]
 }
 
 //

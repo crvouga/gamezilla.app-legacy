@@ -35,7 +35,7 @@ export const init: Model = initShared
 export type Msg = BackendMsg
 
 export const update = (
-  { sendToRoom }: { sendToRoom: (msg: ToFrontend) => Cmd },
+  { broadcast }: { broadcast: (msg: ToFrontend) => Cmd },
   msg: Msg,
   model: Model,
 ): [Model, Cmd<Msg>] => {
@@ -43,17 +43,17 @@ export const update = (
     case "Tick": {
       const modelNext = tick(model)
 
-      return [modelNext, sendToRoom(["Tick_Done", modelNext])]
+      return [modelNext, broadcast(["Tick_Done", modelNext])]
     }
   }
 }
 
 export const updateFromFrontend = (
   {
-    sendToRoom,
+    broadcast,
     sendToClient,
   }: {
-    sendToRoom: (msg: ToFrontend) => Cmd
+    broadcast: (msg: ToFrontend) => Cmd
     sendToClient: (msg: ToFrontend) => Cmd
   },
   msg: ToBackend,
@@ -69,7 +69,7 @@ export const updateFromFrontend = (
 
       const modelNew = toFrontend[1].value
 
-      return [modelNew, sendToRoom(toFrontend)]
+      return [modelNew, broadcast(toFrontend)]
     }
 
     case "InputDrop": {
@@ -81,7 +81,7 @@ export const updateFromFrontend = (
 
       const modelNew = result.value
 
-      return [modelNew, sendToRoom(["InputDrop_Done", result])]
+      return [modelNew, broadcast(["InputDrop_Done", result])]
     }
 
     case "InputTranslate": {
@@ -93,7 +93,7 @@ export const updateFromFrontend = (
 
       const modelNew = result.value
 
-      return [modelNew, sendToRoom(["InputTranslate_Done", result])]
+      return [modelNew, broadcast(["InputTranslate_Done", result])]
     }
 
     case "InputRotate": {
@@ -105,7 +105,7 @@ export const updateFromFrontend = (
 
       const modelNew = result.value
 
-      return [modelNew, sendToRoom(["InputRotate_Done", result])]
+      return [modelNew, broadcast(["InputRotate_Done", result])]
     }
   }
 }

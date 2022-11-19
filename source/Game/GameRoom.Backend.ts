@@ -59,7 +59,7 @@ export const update = (
 
       const [gameNew, gameCmd] = Game.update(
         {
-          sendToRoom: (msg) => sendToRoom({ sendToUser, model, roomId, msg: ["Games", roomId, msg] }),
+          broadcast: (msg) => sendToRoom({ sendToUser, model, roomId, msg: ["Games", roomId, msg] }),
         },
         gameMsg,
         room.game,
@@ -119,7 +119,7 @@ export const updateFromFrontend = (
         {
           hostId: room.hostId,
           sendToClient: (msg) => sendToClient(["Games", roomId, msg]),
-          sendToRoom: (msg) => sendToRoom({ sendToUser, model, roomId, msg: ["Games", roomId, msg] }),
+          broadcast: (msg) => sendToRoom({ sendToUser, model, roomId, msg: ["Games", roomId, msg] }),
         },
         gameMsg,
         room.game,
@@ -183,7 +183,7 @@ export const updateFromFrontend = (
       }
 
       const [gameNew, cmd] = Game.updateRoomLeave(
-        { sendToRoom: msg => sendToRoom({ sendToUser, model: modelAfter, roomId: room.roomId, msg: ['Games', room.roomId, msg] }) },
+        { broadcast: msg => sendToRoom({ sendToUser, model: modelAfter, roomId: room.roomId, msg: ['Games', room.roomId, msg] }) },
         user.userId,
         room.game
       )
