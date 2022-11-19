@@ -296,27 +296,14 @@ export const View = ({
   store,
   model,
   dispatch,
-  goHome,
-  roomComponent,
   onClose,
 }: {
   store: ProfileStore.Model
   currentUserId: UserId
   model: Model
   dispatch: (msg: Msg) => void
-  roomComponent: UI.ViewNode
-  goHome: () => void
   onClose: () => void
 }) => {
-  const homeButton = (
-    <UI.IconButton
-      sx={{ marginLeft: -1 }}
-      onClick={goHome}
-    >
-      <UI.Icons.Home />
-    </UI.IconButton>
-  )
-
   if (model.sharedModel.type === "Setup") {
     const startGameResult = startGame(
       { userId: currentUserId },
@@ -333,12 +320,6 @@ export const View = ({
 
     return (
       <UI.FillBox>
-        <UI.Header
-          left={homeButton}
-          title="Chess"
-          right={roomComponent}
-        />
-
         <UI.Box sx={{ flex: 1, overflowY: "scroll" }}>
           <VersusHeader
             store={store}
@@ -558,12 +539,6 @@ export const View = ({
 
   return (
     <UI.FillBox>
-      <UI.Header
-        left={homeButton}
-        title={toGameText(model.sharedModel)}
-        right={roomComponent}
-      />
-
       {topSlot}
 
       <Board.View
@@ -650,6 +625,7 @@ export const View = ({
   )
 }
 
+// @ts-ignore
 const toGameText = (model: SharedModel): string => {
   switch (model.type) {
     case "GameOver": {

@@ -143,27 +143,15 @@ export const View = ({
   goBack,
   model,
   dispatch,
-  goHome,
-  roomComponent,
   store,
   currentUserId,
 }: {
   currentUserId: UserId
   store: ProfileStore.Model
   goBack: () => void
-  goHome: () => void
   model: Model
   dispatch: (msg: Msg) => void
-  roomComponent: UI.ViewNode
 }) => {
-  const homeButton = (
-    <UI.IconButton
-      sx={{ marginLeft: -1 }}
-      onClick={goHome}
-    >
-      <UI.Icons.Home />
-    </UI.IconButton>
-  )
   const uiTheme = UI.useTheme()
 
   if (model.type === "Setup") {
@@ -179,11 +167,6 @@ export const View = ({
 
     return (
       <UI.FillBox>
-        <UI.Header
-          left={homeButton}
-          title=""
-          right={roomComponent}
-        />
         <UI.Box sx={{ flex: 1, overflowY: "scroll" }}>
           <VersusHeader
             store={store}
@@ -328,12 +311,6 @@ export const View = ({
 
   return (
     <UI.FillBox>
-      <UI.Header
-        left={homeButton}
-        title=""
-        right={roomComponent}
-      />
-
       <UI.Box sx={{ flex: 1 }}>
         <UI.Box sx={{ display: "flex", padding: 1, gap: 1, paddingTop: 0 }}>
           <ViewPlayerGameSlot
