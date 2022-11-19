@@ -129,8 +129,11 @@ export const View = ({ model, ctx, $d }: { ctx: Ctx, model: Model, $d: (msg: Msg
     return <FillBox>
         <svg width="100%" viewBox={viewBox}>
             {model.maze.map((column, x) => column.map((_cell, y) => (
-                <rect key={`${x}-${y}`} x={x} y={y} width={1} height={1} strokeWidth="0.04" stroke="#bcbcbc" />
+                <rect key={`${x}-${y}`} x={x} y={y} width={1} height={1} strokeWidth="0.04" stroke="#565656" />
             )))}
+            {Object.values(model.players).map(player => (
+                <circle key={player.userId} cx={player.position.x + 1 / 2} cy={player.position.y + 1 / 2} r={1 / 2} fill="#fff" />
+            ))}
         </svg>
         <Box sx={{
             maxWidth: "50vw",
@@ -149,9 +152,10 @@ export const View = ({ model, ctx, $d }: { ctx: Ctx, model: Model, $d: (msg: Msg
 
                 <g clipPath="url(#cut-off-bottom)" stroke={stroke} strokeWidth={strokeWidth} >
                     <rect x={-1} y={-1} width={1} height={1} onClick={() => $d(['InputMove', { userId: ctx.currentUserId, direction: "North" }])} ></rect>
+
                     <rect x={0} y={-1} width={1} height={1} onClick={() => $d(['InputMove', { userId: ctx.currentUserId, direction: "East" }])}></rect>
-                    <rect x={-1} y={0} width={1} height={1} onClick={() => $d(['InputMove', { userId: ctx.currentUserId, direction: "South" }])}></rect>
-                    <rect x={0} y={0} width={1} height={1} onClick={() => $d(['InputMove', { userId: ctx.currentUserId, direction: "West" }])}></rect>
+                    <rect x={0} y={0} width={1} height={1} onClick={() => $d(['InputMove', { userId: ctx.currentUserId, direction: "South" }])}></rect>
+                    <rect x={-1} y={0} width={1} height={1} onClick={() => $d(['InputMove', { userId: ctx.currentUserId, direction: "West" }])}></rect>
                 </g>
             </svg>
         </Box>
