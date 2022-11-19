@@ -1,5 +1,7 @@
 import { Cmd, Sub } from "../../Core";
-import { FillBox, Header, Typography, ViewNode } from "../../UI";
+import { UserId } from "../../Data";
+import { Profile } from "../../Profile/Profile.Store";
+import { Button, FillBox, List, ListItem, ListItemText, Typography } from "../../UI";
 import { BackendModel, FrontendModel, FrontendMsg, initMaze, initShared, ToFrontend } from "./Maze.Types";
 
 //
@@ -64,18 +66,22 @@ export const subscriptions = (_model: Model): Sub<Msg> => {
 //
 //
 
-export const View = ({ homeComponent, roomComponent }: { model: Model, dispatch: (msg: Msg) => void, homeComponent: ViewNode, roomComponent: ViewNode }) => {
+export const View = ({ model, profiles }: { profiles: { [userId: UserId]: Profile }, model: Model, dispatch: (msg: Msg) => void, }) => {
     return (
         <FillBox>
-            <Header
-                left={homeComponent}
-                title="Maze"
-                right={roomComponent}
-            />
-            <Typography>
+            <Typography sx={{ px: 2, }}>
                 Players
             </Typography>
-            {/* {Object.values(model.players).map(player => ())} */}
+            <Button sx={{ w: 100, mx: 2 }}>
+                Start Playing
+            </Button>
+            <List>
+                {Object.values(model.players).map(player => (
+                    <ListItem key={player.userId}>
+                        <ListItemText primary={profiles[player.userId]?.username} />
+                    </ListItem>
+                ))}
+            </List>
         </FillBox>
     )
 }

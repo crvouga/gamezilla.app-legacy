@@ -2,7 +2,6 @@ import { Cmd, Sub, tagUpdate } from "../Core"
 import { UserId } from "../Data"
 import * as ProfileStore from "../Profile/Profile.Store"
 import * as Snackbar from "../Snackbar"
-import * as UI from "../UI"
 import * as Chess from "./Chess/Chess.Frontend"
 import * as ConnectFour from "./ConnectFour/ConnectFour.Frontend"
 import {
@@ -300,26 +299,23 @@ export const subscriptions = (
 
 export const View = ({
   currentUserId,
-  store,
+  store: profileStore,
   model,
   dispatch,
-  roomComponent,
-  goHome,
 }: {
   goHome: () => void
   currentUserId: UserId
   store: ProfileStore.Model
   model: Model
   dispatch: (msg: Msg) => void
-  roomComponent: UI.ViewNode
 }) => {
+
   switch (model[0]) {
     case "Tetris": {
       return (
         <Tetris.View
           model={model[1]}
           dispatch={(msg) => dispatch(["Tetris", msg])}
-          roomComponent={roomComponent}
         />
       )
     }
@@ -327,12 +323,10 @@ export const View = ({
     case "ConnectFour": {
       return (
         <ConnectFour.View
-          store={store}
+          store={profileStore}
           currentUserId={currentUserId}
           model={model[1]}
           dispatch={(msg) => dispatch(["ConnectFour", msg])}
-          goHome={goHome}
-          roomComponent={roomComponent}
         />
       )
     }
@@ -340,9 +334,8 @@ export const View = ({
     case "Snake": {
       return (
         <Snake.View
-          roomComponent={roomComponent}
           currentUserId={currentUserId}
-          store={store}
+          store={profileStore}
           model={model[1]}
           dispatch={(msg) => dispatch(["Snake", msg])}
         />
@@ -353,11 +346,9 @@ export const View = ({
       return (
         <TicTacToe.View
           currentUserId={currentUserId}
-          store={store}
+          store={profileStore}
           model={model[1]}
           dispatch={(msg) => dispatch(["TicTacToe", msg])}
-          goHome={goHome}
-          roomComponent={roomComponent}
         />
       )
     }
@@ -365,23 +356,22 @@ export const View = ({
     case "Chess": {
       return (
         <Chess.View
-          goHome={goHome}
           currentUserId={currentUserId}
-          store={store}
+          store={profileStore}
           model={model[1]}
           dispatch={(msg) => dispatch(["Chess", msg])}
-          roomComponent={roomComponent}
         />
       )
     }
 
     case 'Maze': {
-      const homeComponent = <UI.IconButton onClick={goHome} sx={{ marginLeft: -1 }}><UI.Icons.Home /></UI.IconButton>
-      return <Maze.View
-        homeComponent={homeComponent}
-        roomComponent={roomComponent}
-        dispatch={m => dispatch(['Maze', m])} model={model[1]}
-      />
+      return <>
+        <Maze.View
+          profiles={profileStore.profiles}
+          model={model[1]}
+          dispatch={m => dispatch(['Maze', m])}
+        />
+      </>
     }
   }
 }

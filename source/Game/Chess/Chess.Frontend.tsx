@@ -10,7 +10,7 @@ import { UserId } from "../../Data"
 import * as Snackbar from "../../Snackbar"
 import * as ProfileStore from "../../Profile/Profile.Store"
 import * as UI from "../../UI"
-import { GameModeCardGrid } from "../Views"
+import { GameModeCardGrid } from "../Shared"
 import {
   BackendModel,
   FrontendModel,
@@ -214,38 +214,21 @@ export const subscriptions = (_model: Model): Sub<Msg> => {
 //
 
 export const View = ({
-  roomComponent: roomComponent,
   currentUserId,
   store,
   model,
   dispatch,
-  goHome,
 }: {
   currentUserId: UserId
   store: ProfileStore.Model
   model: Model
   dispatch: (msg: Msg) => void
-  roomComponent: UI.ViewNode
-  goHome: () => void
 }) => {
   switch (model.mode[0]) {
     case "None": {
 
       return (
         <UI.FillBox>
-          <UI.Header
-            left={
-              <UI.IconButton
-                onClick={goHome}
-                sx={{ marginLeft: -1 }}
-              >
-                <UI.Icons.Home />
-              </UI.IconButton>
-            }
-            title=""
-            right={roomComponent}
-          />
-
           <BannerArt title="Chess" />
 
           <GameModeCardGrid
@@ -263,8 +246,6 @@ export const View = ({
           dispatch={(msg) => dispatch(["UserVsBot", msg])}
           model={model.mode[1]}
           store={store}
-          goHome={goHome}
-          roomComponent={roomComponent}
           onClose={() =>
             dispatch(["InputMode", { mode: "None", userId: currentUserId }])
           }
@@ -279,11 +260,9 @@ export const View = ({
           store={store}
           model={model.mode[1]}
           dispatch={(msg) => dispatch(["UserVsUser", msg])}
-          roomComponent={roomComponent}
           onClose={() =>
             dispatch(["InputMode", { mode: "None", userId: currentUserId }])
           }
-          goHome={goHome}
         />
       )
     }

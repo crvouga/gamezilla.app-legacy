@@ -142,14 +142,14 @@ const handleSubscription = <Model, Msg>(
 ): ((msg: DevToolMsg) => void) => {
   const handler = handleIncomingMsg(deps)
 
-  return (msg) =>
-    p(
-      handler(msg),
-      Result.fold(
-        (err) => console.warn("[REDUX DEV TOOL]", err),
-        (eff) => eff(),
-      ),
-    )
+  return (msg) => {
+    const result = handler(msg)
+    if (result.type === 'Err') {
+      console.warn("[REDUX DEV TOOL]", result.error)
+      return
+    }
+    result.value()
+  }
 }
 
 /**

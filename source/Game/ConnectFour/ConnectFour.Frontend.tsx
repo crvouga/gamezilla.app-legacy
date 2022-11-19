@@ -3,7 +3,7 @@ import { UserId } from "../../Data"
 import * as Store from "../../Profile/Profile.Store"
 import * as Snackbar from "../../Snackbar"
 import * as UI from "../../UI"
-import { bannerArtAspectRatio, GameModeCardGrid } from "../Views"
+import { bannerArtAspectRatio, GameModeCardGrid } from "../Shared"
 import {
   COLUMN_COUNT,
   gameTheme,
@@ -125,16 +125,12 @@ export const updateFromBackend = (
 export const View = ({
   model,
   dispatch,
-  goHome,
-  roomComponent,
   currentUserId,
   store,
 }: {
   model: Model
   dispatch: (msg: Msg) => void
-  goHome: () => void
   store: Store.Model
-  roomComponent: UI.ViewNode
   currentUserId: UserId
 }) => {
 
@@ -144,19 +140,6 @@ export const View = ({
     case 'None': {
       return (
         <UI.FillBox>
-          <UI.Header
-            left={
-              <UI.IconButton
-                sx={{ marginLeft: -1 }}
-                onClick={goHome}
-              >
-                <UI.Icons.Home />
-              </UI.IconButton>
-            }
-            title="Connect Four"
-            right={roomComponent}
-          />
-
           <BannerArt />
 
           <GameModeCardGrid
@@ -174,8 +157,6 @@ export const View = ({
           store={store}
           dispatch={msg => dispatch(['UserVsUser', msg])}
           goBack={goBack}
-          goHome={goHome}
-          roomComponent={roomComponent}
           model={model.child}
         />
       )
@@ -189,8 +170,6 @@ export const View = ({
           dispatch={(msg) => dispatch(['UserVsBot', msg])}
           model={model.child}
           goBack={goBack}
-          goHome={goHome}
-          roomComponent={roomComponent}
         />
       )
     }
