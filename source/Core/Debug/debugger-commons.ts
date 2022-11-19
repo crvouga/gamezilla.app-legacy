@@ -33,24 +33,24 @@ export const debugMsg = <Msg>(payload: Msg): DebugMsg<Msg> => ({
   payload,
 })
 
-export type MsgWithDebug<Model, Msg> =
+export type MsgWithDebug<Model, Msg extends {}> =
   | Msg
   | { type: "__DebugUpdateModel__"; payload: Model }
   | { type: "__DebugApplyMsg__"; payload: Msg }
   | { type: "__DebugStarted__" }
 
-export interface Debug<Model, Msg> {
+export interface Debug<Model, Msg extends {}> {
   (data: DebugData<Model, Msg>): void
 }
 
-export interface Debugger<Model, Msg> {
+export interface Debugger<Model, Msg extends {}> {
   (d: DebuggerDeps<Model, Msg>): {
     debug: Debug<Model, Msg>
     stop: () => void
   }
 }
 
-export interface DebuggerDeps<Model, Msg> {
+export interface DebuggerDeps<Model, Msg extends {}> {
   init: Model
   debug$: Rx.BehaviorSubject<DebugData<Model, Msg>>
   dispatch: Platform.Dispatch<MsgWithDebug<Model, Msg>>
@@ -94,7 +94,7 @@ const makeDebugIdGen = function* () {
 const debugIdGen = makeDebugIdGen()
 
 export const updateWithDebug =
-  <Model, Msg>({
+  <Model, Msg extends {}>({
     debug$,
     debugId$,
     update,

@@ -15,7 +15,7 @@ import * as ReduxDevtool from "./debugger-redux-devtool"
  */
 
 export const RunDebugger =
-  <Model, Msg>(global: Global, stopSignal: Rx.Observable<unknown>) =>
+  <Model, Msg extends {}>(global: Global, stopSignal: Rx.Observable<unknown>) =>
     (deps: DebuggerDeps<Model, Msg>): Task<void> => {
       return p(
         ReduxDevtool.getConnection<Model, Msg>(global),
