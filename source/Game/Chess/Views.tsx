@@ -3,10 +3,10 @@ import * as UI from "../../UI"
 import { bannerArtAspectRatio, Ctx } from "../Game.Shared"
 
 export const theme = {
-  // lightSquare: "#EBEBD0",
-  // darkSquare: "#779455",
-  lightSquare: "#7C6141",
-  darkSquare: "#533F30",
+  lightSquare: "#EBEBD0",
+  darkSquare: "#779455",
+  // lightSquare: "#7C6141",
+  // darkSquare: "#533F30",
   pawn: "#93BA46",
 }
 
@@ -30,7 +30,7 @@ export const BannerArt = ({ title }: { title: string }) => {
   const rowCount = 4
   return (
     <UI.AspectRatio aspectRatio={bannerArtAspectRatio}>
-      <UI.Box sx={{ width: "100%", position: "relative" }}>
+      <UI.Box sx={{ width: "100%", position: "relative", }}>
         <svg
           width="100%"
           height="100%"
@@ -96,7 +96,8 @@ export const BannerArt = ({ title }: { title: string }) => {
           height: "100%",
           display: "flex",
           flexDirection: "column",
-          background: `linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.3))`,
+          background: "rgba(0, 0, 0, 0.4)"
+          // background: `linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.3))`,
         }}
       >
         <UI.Box sx={{ flex: 1 }} />
@@ -125,7 +126,7 @@ export const VersusHeader = ({ ctx, white, black }: { ctx: Ctx, white: Player, b
   const itemSx: UI.Sx = { flex: 1, display: "flex", alignItems: 'center', justifyContent: "center", color: "inherit" }
 
   return (
-    <UI.Box sx={{ width: "100%", position: "relative", color: "#fff" }}>
+    <UI.Box sx={{ width: "100%", position: "relative", color: "#fff", }}>
       <svg
         width="100%"
         height="100%"
@@ -153,7 +154,7 @@ export const VersusHeader = ({ ctx, white, black }: { ctx: Ctx, white: Player, b
       <UI.Box sx={{
         position: "absolute", top: 0, left: 0, height: "100%", width: "100%",
         display: 'flex', alignItems: 'center', justifyContent: "center",
-        color: "inherit"
+        color: "inherit", background: "rgba(0, 0, 0, 0.4)"
       }}>
         <UI.Box sx={{ ...itemSx }}>
           <PlayerSlot ctx={ctx} player={white} />
