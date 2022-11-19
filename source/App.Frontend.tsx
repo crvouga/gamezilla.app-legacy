@@ -25,6 +25,7 @@ import * as ProfileStore from './Profile/Profile.Store'
 import * as Route from "./Route"
 import * as Snackbar from "./Snackbar"
 import * as UI from "./UI"
+import { Divider } from "./UI"
 
 //
 //
@@ -600,13 +601,14 @@ const ViewMain = ({
           const { profile } = status[1]
           return (
             <>
-              <Party.ViewBanner
-                store={model.profileStore}
-                currentUserId={profile.userId}
-                model={model.party}
-                route={model.route}
-                $d={(msg) => $d(["Party", msg])}
+              <Pages.ViewReady
+                {...model}
+                profile={status[1].profile}
+                $d={(msg) => $d(["Page", msg])}
+                model={model.page}
               />
+
+              <Divider />
 
               <GameRoom.ViewBanner
                 store={model.profileStore}
@@ -616,11 +618,14 @@ const ViewMain = ({
                 $d={(msg) => $d(["GameRoom", msg])}
               />
 
-              <Pages.ViewReady
-                {...model}
-                profile={status[1].profile}
-                $d={(msg) => $d(["Page", msg])}
-                model={model.page}
+              <Divider />
+
+              <Party.ViewBanner
+                store={model.profileStore}
+                currentUserId={profile.userId}
+                model={model.party}
+                route={model.route}
+                $d={(msg) => $d(["Party", msg])}
               />
             </>
           )
