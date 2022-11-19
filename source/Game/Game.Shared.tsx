@@ -2,6 +2,27 @@ import { UserId } from "../Data/UserId"
 import * as UI from "../UI"
 import * as ProfileStore from "../Profile/Profile.Store"
 
+// 
+// 
+// 
+// Model
+// 
+// 
+// 
+
+export type Ctx = {
+  profiles: ProfileStore.Model['profiles'],
+  currentUserId: UserId
+}
+
+// 
+// 
+// 
+// View
+// 
+// 
+// 
+
 export const bannerArtAspectRatio = Math.pow(3 / 4, 4)
 
 export const GameModeCard = ({
@@ -218,4 +239,37 @@ const VersusHeaderPlayer = ({ player, store }: { player: Player, store: ProfileS
       )
     }
   }
+}
+
+
+type GameHeaderProps = {
+  onHome: () => void
+  onRoom: () => void
+  title: string
+  roomCount: number
+}
+
+export const GameHeader = (
+  {
+    onHome,
+    title,
+    onRoom,
+    roomCount
+  }: GameHeaderProps
+) => {
+  return <UI.Header
+    left={
+      <UI.IconButton onClick={onHome} sx={{ ml: -1 }}>
+        <UI.Icons.Home />
+      </UI.IconButton>
+    }
+    title={title}
+    right={
+      <UI.IconButton onClick={onRoom}>
+        <UI.Badge title={String(roomCount)}>
+          <UI.Icons.People />
+        </UI.Badge>
+      </UI.IconButton>
+    }
+  />
 }

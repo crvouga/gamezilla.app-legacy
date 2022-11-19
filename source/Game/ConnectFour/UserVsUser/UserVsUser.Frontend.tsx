@@ -3,6 +3,7 @@ import { UserId } from "../../../Data";
 import * as ProfileStore from "../../../Profile/Profile.Store";
 import * as Snackbar from "../../../Snackbar";
 import * as UI from "../../../UI";
+import { Ctx } from "../../Game.Shared";
 import { ColumnIndex, gameTheme, PlayerType, playerTypeToColor, toTurn, ViewColumns } from "../ConnectFour";
 import { PlayerIcon, PlayerOneIcon, PlayerTwoIcon } from "../Views";
 import { allMoveTimeLimit, BackendModel, FrontendModel, FrontendMsg, GameModel, GameOverModel, handle, initShared, resultToString, SetupModel, ToBackend, ToFrontend, toPlayerType } from "./UserVsUser.Types";
@@ -160,23 +161,14 @@ export const subscriptions = (_model: Model): Sub<Msg> => {
 // 
 
 
-export const View = ({ currentUserId, model, dispatch, store, roomComponent, goBack, goHome }: { model: Model, store: ProfileStore.Model; dispatch: (msg: Msg) => void, roomComponent: UI.ViewNode, goBack: () => void, goHome: () => void, currentUserId: UserId }) => {
-    const homeButton = (
-        <UI.IconButton sx={{ marginLeft: -1 }} onClick={goHome}>
-            <UI.Icons.Home />
-        </UI.IconButton>
-    )
-
+export const View = ({ ctx, model, dispatch, goBack, }: { model: Model, ctx: Ctx; dispatch: (msg: Msg) => void, goBack: () => void, }) => {
 
     if (model.type === 'Setup') {
         return (
             <ViewSetup
-                currentUserId={currentUserId}
+                ctx={ctx}
                 goBack={goBack}
                 model={model}
-                store={store}
-                homeButton={homeButton}
-                roomComponent={roomComponent}
                 dispatch={dispatch}
             />
         )
@@ -186,12 +178,9 @@ export const View = ({ currentUserId, model, dispatch, store, roomComponent, goB
         return (
             <>
                 <ViewGame
-                    currentUserId={currentUserId}
+                    ctx={ctx}
                     ghostIndex={model.ghostIndex}
                     model={model}
-                    store={store}
-                    homeButton={homeButton}
-                    roomComponent={roomComponent}
                     dispatch={dispatch}
                 />
 
@@ -204,18 +193,14 @@ export const View = ({ currentUserId, model, dispatch, store, roomComponent, goB
                     onConfirm={() => dispatch(['Resign', { userId: currentUserId }])}
                     open={model.openedModal === 'ConfirmResign'}
                 />
-
             </>
         )
     }
 
     return (
         <ViewGameOver
-            currentUserId={currentUserId}
             model={model}
-            store={store}
-            homeButton={homeButton}
-            roomComponent={roomComponent}
+            ctx={ctx}
             dispatch={dispatch}
         />
     )
@@ -226,15 +211,11 @@ const ViewGame = ({
     model,
     dispatch,
     store,
-    roomComponent,
-    homeButton,
     ghostIndex
 }: {
     model: GameModel;
     store: ProfileStore.Model;
     dispatch: (msg: Msg) => void;
-    roomComponent: UI.ViewNode;
-    homeButton: UI.ViewNode;
     currentUserId: UserId;
     ghostIndex: ColumnIndex | "None"
 }) => {
@@ -243,8 +224,6 @@ const ViewGame = ({
 
     return (
         <UI.FillBox>
-            <UI.Header left={homeButton} title="Connect Four" right={roomComponent} />
-
             <UI.Box sx={{ paddingX: 1, gap: 2, marginBottom: 2, display: 'flex', width: "100%", overflow: "hidden" }}>
                 <ViewGamePlayerSlot playerType="PlayerOne" model={model} store={store} />
                 <ViewGamePlayerSlot playerType="PlayerTwo" model={model} store={store} />
@@ -290,20 +269,14 @@ const ViewGameOver = ({
     model,
     dispatch,
     store,
-    roomComponent,
-    homeButton,
 }: {
     model: GameOverModel,
     store: ProfileStore.Model;
     dispatch: (msg: Msg) => void,
-    roomComponent: UI.ViewNode,
-    homeButton: UI.ViewNode,
     currentUserId: UserId,
 }) => {
     return (
         <UI.FillBox>
-            <UI.Header left={homeButton} title="Connect Four" right={roomComponent} />
-
             <UI.Box sx={{ paddingX: 1, gap: 2, marginBottom: 2, display: 'flex', width: "100%", overflow: "hidden" }}>
                 <ViewGamePlayerSlot
                     playerType="PlayerOne"
@@ -464,14 +437,12 @@ const ViewGameOverMessage = ({ currentUserId, model, store, dispatch }: { curren
     return <></>
 }
 
-const ViewSetup = ({ model, store, dispatch, currentUserId, homeButton, roomComponent, goBack }: { goBack: () => void, currentUserId: UserId, model: SetupModel, store: ProfileStore.Model, dispatch: (msg: Msg) => void, homeButton: UI.ViewNode, roomComponent: UI.ViewNode }) => {
+const ViewSetup = ({ model, store, dispatch, currentUserId, goBack }: { goBack: () => void, currentUserId: UserId, model: SetupModel, store: ProfileStore.Model, dispatch: (msg: Msg) => void, }) => {
     const startGameResult = handle(['StartGame', { userId: currentUserId }], model)
     const inputMoveTimeLimitResult = handle(['InputMoveTimeLimit', { moveTimeLimit: model.moveTimeLimit, userId: currentUserId }], model)
 
     return (
         <UI.FillBox>
-            <UI.Header left={homeButton} title="Connect Four" right={roomComponent} />
-
             <ViewVersusHeader model={model} store={store} />
 
             <UI.Typography

@@ -30,13 +30,6 @@ export type SharedModel =
     b: UserId | "None"
   }
   | {
-    type: "Starting"
-    clock: Clock.Clock
-    w: UserId
-    b: UserId
-    countDown: 3 | 2 | 1
-  }
-  | {
     type: "Game"
     drawAgreement: DrawAgreement
     w: UserId
@@ -108,14 +101,13 @@ export type FrontendMsg =
   | ["ClickedFlip"]
   | Req
 
-export type BackendMsg = ClockTicked | CountDownElapsed
+export type BackendMsg = ClockTicked
 
 export type ToFrontend =
   | ["Sync", SharedModel]
   | ["GameOver"]
   | ["GameStarted"]
   | ['PlayerLeft', SharedModel]
-  | CountDownElapsed_Done
   | ClockTicked_Done
   | Res
 
@@ -130,7 +122,6 @@ export type Req =
   | RequestToDraw
   | RespondToDraw
   | NewGame
-  | CancelStartGame
   | CancelDraw
 
 export type Res =
@@ -142,7 +133,6 @@ export type Res =
   | RequestToDraw_Done
   | RespondToDraw_Done
   | NewGame_Done
-  | CancelStartGame_Done
   | CancelDraw_Done
 
 //
@@ -389,11 +379,12 @@ export const startGame = (
   }
 
   return Result.Ok({
-    type: "Starting",
+    type: "Game",
     w: model.w,
     b: model.b,
+    board: Board.init(),
     clock: Clock.presetToClock(model.clockPreset),
-    countDown: 3,
+    drawAgreement: { type: "NotAsking" },
   })
 }
 
@@ -622,97 +613,3 @@ export const clockTicked = (model: SharedModel): SharedModel => {
   }
 }
 
-//
-//
-//
-//
-//
-
-export type CountDownElapsed = ["CountDownElapsed"]
-export type CountDownElapsed_Done = ["CountDownElapsed_Done", SharedModel]
-
-export const countDownElapsed = (model: SharedModel): SharedModel => {
-  if (model.type !== "Starting") {
-    return model
-  }
-
-  const countDownNew = decrementCountDown(model.countDown)
-
-  if (countDownNew === 0) {
-    return {
-      type: "Game",
-      w: model.w,
-      b: model.b,
-      board: Board.init(),
-      clock: model.clock,
-      drawAgreement: { type: "NotAsking" },
-    }
-  }
-
-  return {
-    ...model,
-    countDown: countDownNew,
-  }
-}
-
-export const decrementCountDown = (countDown: 3 | 2 | 1): 2 | 1 | 0 => {
-  const countDownNew = countDown - 1
-
-  if (countDownNew === 2 || countDownNew === 1 || countDownNew === 0) {
-    return countDownNew
-  }
-
-  return 0
-}
-
-//
-//
-//
-//
-//
-
-export type CancelStartGame = ["CancelStartGame", { userId: UserId }]
-export type CancelStartGame_Done = [
-  "CancelStartGame_Done",
-  Result<CancelStartGameProblem, SharedModel>,
-  { userId: UserId },
-]
-export type CancelStartGameProblem =
-  | "must_be_playing"
-  | "must_be_in_starting_mode"
-
-export const cancelStartProblemToString = (
-  problem: CancelStartGameProblem,
-): string => {
-  switch (problem) {
-    case "must_be_in_starting_mode": {
-      return "Must be in starting mode"
-    }
-
-    case "must_be_playing": {
-      return "Must be playing to cancel"
-    }
-  }
-}
-
-export const cancelStartGame = (
-  { userId }: CancelStartGame[1],
-  model: SharedModel,
-): CancelStartGame_Done[1] => {
-  if (model.type !== "Starting") {
-    return Result.Err("must_be_in_starting_mode")
-  }
-
-  if (model.w !== userId && model.b !== userId) {
-    return Result.Err("must_be_playing")
-  }
-
-  const modelNew: SharedModel = {
-    type: "Setup",
-    b: model.b,
-    w: model.w,
-    clockPreset: model.clock.preset,
-  }
-
-  return Result.Ok(modelNew)
-}

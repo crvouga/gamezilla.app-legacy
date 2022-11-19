@@ -250,11 +250,9 @@ export const subscriptions = (_model: Model): Sub<Msg> => {
 export const View = ({
   model,
   dispatch,
-  roomComponent,
 }: {
   model: Model
   dispatch: (msg: Msg) => void
-  roomComponent: UI.ViewNode
 }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const containerRef = useRef<HTMLDivElement | null>(null)
@@ -291,17 +289,6 @@ export const View = ({
 
   return (
     <UI.FillBox>
-      <UI.Header
-        left={
-          <UI.Button
-            sx={{ marginLeft: -1 }}
-          >
-            Close
-          </UI.Button>
-        }
-        title="Tetris"
-        right={roomComponent}
-      />
       <div
         ref={containerRef}
         style={{
