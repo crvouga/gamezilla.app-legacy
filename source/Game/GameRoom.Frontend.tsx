@@ -6,6 +6,7 @@ import * as Snackbar from "../Snackbar"
 import * as UI from "../UI"
 import { Button, Divider, Toolbar } from "../UI"
 import * as Game from "./Game.Frontend"
+import { Ctx } from "./Game.Shared"
 import { GameName, gameNameList } from "./Game.Types"
 import {
   BackendModel,
@@ -530,26 +531,19 @@ export const subscriptions = (
 //
 
 export const View = ({
-  currentUserId,
-  profileStore,
+  ctx,
   model,
   dispatch
 }: {
-  currentUserId: UserId
-  profileStore: ProfileStore.Model
+  ctx: Ctx,
   model: Model
   dispatch: (msg: Msg) => void
 }) => {
-  const user = model.users[currentUserId]
+  const user = model.users[ctx.currentUserId]
 
   if (!user) {
     return (
-      <ViewNotInRoom
-        currentUserId={currentUserId}
-        store={profileStore}
-        model={model}
-        dispatch={dispatch}
-      />
+      <ViewNotInRoom ctx={ctx} model={model} dispatch={dispatch} />
     )
   }
 
@@ -557,11 +551,7 @@ export const View = ({
 
   if (!room) {
     return (
-      <ViewNotInRoom
-        currentUserId={currentUserId}
-        store={profileStore}
-        model={model}
-        dispatch={dispatch}
+      <ViewNotInRoom ctx={ctx} model={model} dispatch={dispatch}
       />
     )
   }
@@ -570,15 +560,7 @@ export const View = ({
   const usersInRoom = toRoomUsers(room.roomId, model)
   return (
     <>
-
-      <Game.View
-        currentUserId={currentUserId}
-        store={profileStore}
-        dispatch={(msg) => dispatch(["Games", room.roomId, msg])}
-        model={game}
-        goHome={() => dispatch(["ClickedGoHome"])}
-
-      />
+      <Game.View ctx={ctx} dispatch={(msg) => dispatch(["Games", room.roomId, msg])} model={game} />
 
       <Divider />
 
@@ -586,46 +568,30 @@ export const View = ({
         <Button startIcon={<UI.Icons.Home />} size="small" onClick={() => dispatch(['ClickedGoHome'])}>
           Home
         </Button>
-
-
-
-
-        {/* <Typography variant="h6" component={"h1"} sx={{ flex: 4, textAlign: 'center' }}>
-          {Game.gameNameToString(game[0])}
-        </Typography> */}
-
-
-
         <UI.Badge badgeContent={usersInRoom.length > 1 ? usersInRoom.length : undefined} color="secondary">
           <Button startIcon={<UI.Icons.Group />} size="small" onClick={() => dispatch(['ClickedRoomButton'])}>
             Room
           </Button>
         </UI.Badge>
-
-
-        <ViewGameRoomAvatarGroup
-          currentUserId={currentUserId}
-          store={profileStore}
-          room={room}
-          model={model}
-          dispatch={dispatch}
-        />
-
       </Toolbar>
 
+      <ViewGameRoomAvatarGroup
+        ctx={ctx}
+        room={room}
+        model={model}
+        dispatch={dispatch}
+      />
     </>
 
   )
 }
 
 export const ViewNotInRoom = ({
-  currentUserId,
-  store,
+  ctx,
   model,
   dispatch,
 }: {
-  store: ProfileStore.Model
-  currentUserId: UserId
+  ctx: Ctx
   model: Model
   dispatch: (msg: Msg) => void
 }) => {
@@ -689,7 +655,7 @@ export const ViewNotInRoom = ({
             <ViewGameCard
               key={gameName}
               gameName={gameName}
-              onClick={() => dispatch(['RoomCreate', { userId: currentUserId, roomId: RoomId.generate(), gameName }])}
+              onClick={() => dispatch(['RoomCreate', { userId: ctx.currentUserId, roomId: RoomId.generate(), gameName }])}
             />
           </UI.Box>
         ))}
@@ -714,14 +680,9 @@ export const ViewNotInRoom = ({
             roomId={room.roomId}
             hostId={room.hostId}
             gameName={room.game[0]}
-            store={store}
+            ctx={ctx}
             gameRoom={model}
-            onClick={() =>
-              dispatch([
-                "RoomJoin",
-                { roomId: room.roomId, userId: currentUserId },
-              ])
-            }
+            onClick={() => dispatch(["RoomJoin", { roomId: room.roomId, userId: ctx.currentUserId }])}
           />
         ))}
       </UI.Box>
@@ -753,20 +714,18 @@ const toRoomUsers = (roomId: RoomId, model: Model): RoomUser[] => {
 }
 
 const ViewGameRoomAvatarGroup = ({
-  store,
   room,
   model,
   dispatch,
-  currentUserId,
+  ctx,
 }: {
-  store: ProfileStore.Model
+  ctx: Ctx
   room: {
     roomId: RoomId
     hostId: UserId
   }
   model: Model
   dispatch: (msg: Msg) => void
-  currentUserId: UserId
 }) => {
   const usersInRoom = toRoomUsers(room.roomId, model)
 
@@ -781,7 +740,7 @@ const ViewGameRoomAvatarGroup = ({
         sx={{ paddingX: 2, paddingTop: 2, width: "100%" }}
         noWrap
       >
-        {store.profiles[room.hostId]?.username ?? "..."}'s room
+        {ctx.profiles[room.hostId]?.username ?? "..."}'s room
       </UI.Typography>
 
       <UI.Box
@@ -805,13 +764,13 @@ const ViewGameRoomAvatarGroup = ({
               overflowX: "hidden",
             }}
           >
-            <UI.Avatar src={store.profiles[user.userId]?.avatarUrl} />
+            <UI.Avatar src={ctx.profiles[user.userId]?.avatarUrl} />
             <UI.Typography
               align="center"
               sx={{ marginBottom: -1 / 2, width: '100%' }}
               noWrap
             >
-              {store.profiles[user.userId]?.username ?? "..."}
+              {ctx.profiles[user.userId]?.username ?? "..."}
             </UI.Typography>
             {user.userId === room.hostId ? <UI.Typography
               variant="subtitle2"
@@ -832,7 +791,7 @@ const ViewGameRoomAvatarGroup = ({
       </UI.Box>
 
       <UI.Box sx={{ paddingX: 2, paddingBottom: 2, display: "flex", gap: 2 }}>
-        {currentUserId === room.hostId ?
+        {ctx.currentUserId === room.hostId ?
           <>
             <UI.Button fullWidth>
               Change Game
@@ -840,7 +799,7 @@ const ViewGameRoomAvatarGroup = ({
             <UI.Button
               fullWidth
               color="error"
-              onClick={() => dispatch(["RoomDestroy", { userId: currentUserId }])}
+              onClick={() => dispatch(["RoomDestroy", { userId: ctx.currentUserId }])}
             >
               End Room
             </UI.Button>
@@ -849,7 +808,7 @@ const ViewGameRoomAvatarGroup = ({
               <UI.Button
                 fullWidth
                 color="error"
-                onClick={() => dispatch(["RoomLeave", { userId: currentUserId }])}
+                onClick={() => dispatch(["RoomLeave", { userId: ctx.currentUserId }])}
               >
                 Leave Room
               </UI.Button>
@@ -1024,18 +983,18 @@ export const ViewCard = ({
   roomId,
   hostId,
   gameName,
-  store,
+  ctx,
   gameRoom,
   onClick,
 }: {
   roomId: RoomId
   hostId: UserId
   gameName?: GameName
-  store: ProfileStore.Model
+  ctx: Ctx
   gameRoom: Model
   onClick: () => void
 }) => {
-  const hostProfile = store.profiles[hostId]
+  const hostProfile = ctx.profiles[hostId]
   const roomCount = Object.values(gameRoom.users).filter(
     (user) => user.roomId === roomId,
   ).length

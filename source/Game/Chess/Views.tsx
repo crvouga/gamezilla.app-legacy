@@ -1,7 +1,6 @@
 import { UserId } from "../../Data"
-import * as ProfileStore from "../../Profile/Profile.Store"
 import * as UI from "../../UI"
-import { bannerArtAspectRatio } from "../Game.Shared"
+import { bannerArtAspectRatio, Ctx } from "../Game.Shared"
 
 export const theme = {
   // lightSquare: "#EBEBD0",
@@ -119,7 +118,7 @@ type Player =
   | { type: "User", userId: UserId }
   | { type: "Bot", label: string }
 
-export const VersusHeader = ({ store, white, black }: { store: ProfileStore.Model, white: Player, black: Player }) => {
+export const VersusHeader = ({ ctx, white, black }: { ctx: Ctx, white: Player, black: Player }) => {
   const columnCount = 8
   const rowCount = 3
 
@@ -157,7 +156,7 @@ export const VersusHeader = ({ store, white, black }: { store: ProfileStore.Mode
         color: "inherit"
       }}>
         <UI.Box sx={{ ...itemSx }}>
-          <PlayerSlot store={store} player={white} />
+          <PlayerSlot ctx={ctx} player={white} />
         </UI.Box>
         <UI.Box sx={{ ...itemSx }}>
           <PawnIcon sx={{ color: "#fff", width: 72, height: 72 }} />
@@ -169,7 +168,7 @@ export const VersusHeader = ({ store, white, black }: { store: ProfileStore.Mode
           <PawnIcon sx={{ stroke: "#fff", color: "#101010", width: 72, height: 72 }} />
         </UI.Box>
         <UI.Box sx={{ ...itemSx }}>
-          <PlayerSlot store={store} player={black} />
+          <PlayerSlot ctx={ctx} player={black} />
         </UI.Box>
       </UI.Box>
     </UI.Box>
@@ -178,7 +177,7 @@ export const VersusHeader = ({ store, white, black }: { store: ProfileStore.Mode
 
 }
 
-const PlayerSlot = ({ player, store, }: { player: Player, store: ProfileStore.Model }) => {
+const PlayerSlot = ({ player, ctx, }: { player: Player, ctx: Ctx }) => {
   const iconSx = { width: 48, height: 48, }
   const boxSx: UI.Sx = { display: 'flex', flexDirection: "column", alignItems: 'center', justifyContent: "center", color: "inherit", }
   // const textSx: UI.Sx = { color: "#101010" }
@@ -210,7 +209,7 @@ const PlayerSlot = ({ player, store, }: { player: Player, store: ProfileStore.Mo
     case 'User': {
       return (
         <UI.Box sx={{ ...boxSx }}>
-          <UI.Avatar src={store.profiles[player.userId]?.avatarUrl ?? ""} sx={{ ...iconSx }} ></UI.Avatar>
+          <UI.Avatar src={ctx.profiles[player.userId]?.avatarUrl ?? ""} sx={{ ...iconSx }} ></UI.Avatar>
           {/* <UI.Typography variant="caption" noWrap sx={{ ...textSx }}>
             {store.Profile[player.userId]?.username ?? "..."}
           </UI.Typography> */}

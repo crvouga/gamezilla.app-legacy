@@ -1,7 +1,5 @@
-import { Cmd } from "../Core"
-import { UserId } from "../Data"
+import { Ctx } from "./Game.Shared"
 import * as GameRoom from "./GameRoom.Frontend"
-import * as ProfileStore from "../Profile/Profile.Store"
 
 //
 //
@@ -11,11 +9,9 @@ import * as ProfileStore from "../Profile/Profile.Store"
 //
 //
 
-export type Model = {
-  drawer: "Opened" | "Closed"
-}
+export type Model = {}
 
-export const init: [Model, Cmd<Msg>] = [{ drawer: "Closed" }, Cmd.None]
+export const init: Model = {}
 
 //
 //
@@ -45,24 +41,8 @@ export const update = (msg: Msg, model: Model): [Model, OutAction[]] => {
 //
 //
 
-export const View = ({
-  currentUserId,
-  gameRoom,
-  profileStore,
-  dispatch,
-}: {
-  gameRoom: GameRoom.Model
-  currentUserId: UserId
-  profileStore: ProfileStore.Model
-  model: Model
-  dispatch: (msg: Msg) => void
-}) => {
+export const View = ({ gameRoom, ctx, dispatch }: { gameRoom: GameRoom.Model; ctx: Ctx; model: Model; dispatch: (msg: Msg) => void }) => {
   return (
-    <GameRoom.View
-      currentUserId={currentUserId}
-      profileStore={profileStore}
-      model={gameRoom}
-      dispatch={(msg) => dispatch(["GameRoom", msg])}
-    />
+    <GameRoom.View ctx={ctx} model={gameRoom} dispatch={(msg) => dispatch(["GameRoom", msg])} />
   )
 }

@@ -213,12 +213,7 @@ export const initReady = (
     }
 
     case "GameRoom": {
-      const [modelInit, cmdInit] = GameRoomPage.init
-      return [
-        ["GameRoom", modelInit],
-        p(cmdInit, Cmd.map(t("GameRoom"))),
-        [],
-      ]
+      return [["GameRoom", GameRoomPage.init], Cmd.None, []]
     }
 
     case "Party": {
@@ -909,13 +904,7 @@ export const ViewReady = ({
 
     case "GameRoom": {
       return (
-        <GameRoomPage.View
-          profileStore={profileStore}
-          currentUserId={currentUserId}
-          gameRoom={gameRoom}
-          model={model[1]}
-          dispatch={(msg) => dispatch(["GameRoom", msg])}
-        />
+        <GameRoomPage.View ctx={{ currentUserId: profile.userId, profiles: profileStore.profiles }} gameRoom={gameRoom} model={model[1]} dispatch={(msg) => dispatch(["GameRoom", msg])} />
       )
     }
 
@@ -948,9 +937,8 @@ export const ViewReady = ({
           gameRoom={gameRoom}
         >
           <Home.View
-            store={profileStore}
+            ctx={{ profiles: profileStore.profiles, currentUserId }}
             gameRoom={gameRoom}
-            currentUserId={currentUserId}
             model={model[1]}
             dispatch={(msg) => dispatch(["Home", msg])}
           />

@@ -3,6 +3,7 @@ import { UserId } from "../../../Data"
 import * as ProfileStore from "../../../Profile/Profile.Store"
 import * as Snackbar from "../../../Snackbar"
 import * as UI from "../../../UI"
+import { Ctx } from "../../Game.Shared"
 import {
   emptyBoard, gameTheme, PlayerType,
   PlayerTypeIcon,
@@ -188,33 +189,31 @@ export const mergeWithBackend = (
 //
 
 export const View = ({
-  currentUserId,
-  store,
+  ctx,
   model,
   dispatch,
   onCloseGame,
 }: {
-  currentUserId: UserId
-  store: ProfileStore.Model
+  ctx: Ctx
   model: Model
   dispatch: (msg: Msg) => void
   onCloseGame: () => void
 }) => {
   if (model.type === "Setup") {
-    const startGameResult = startGame({ userId: currentUserId }, model)
+    const startGameResult = startGame({ userId: ctx.currentUserId }, model)
     const inputBestOutOfResult = inputBestOutOf(
-      { bestOutOf: model.maxRoundCount, userId: currentUserId },
+      { bestOutOf: model.maxRoundCount, userId: ctx.currentUserId },
       model,
     )
     const inputMoveTimeLimitResult = inputMoveTimeLimit(
-      { moveTimeLimit: model.moveTimeLimit, userId: currentUserId },
+      { moveTimeLimit: model.moveTimeLimit, userId: ctx.currentUserId },
       model,
     )
     return (
       <UI.FillBox>
         <UI.Box sx={{ flex: 1, overflowY: "scroll" }}>
           <VersusHeader
-            store={store}
+            ctx={ctx}
             X={model.X === 'None' ? { type: "User" } : { type: "User", userId: model.X }}
             O={model.O === 'None' ? { type: "User" } : { type: "User", userId: model.O }}
           />
@@ -230,18 +229,16 @@ export const View = ({
 
             <ViewPlayerSetupSlot
               playerType="X"
-              currentUserId={currentUserId}
+              ctx={ctx}
               userId={model.X}
-              store={store}
               dispatch={dispatch}
               sx={{ marginBottom: 3 }}
             />
 
             <ViewPlayerSetupSlot
               playerType="O"
-              currentUserId={currentUserId}
+              ctx={ctx}
               userId={model.O}
-              store={store}
               dispatch={dispatch}
               sx={{ marginBottom: 1 }}
             />
@@ -270,7 +267,7 @@ export const View = ({
                     onClick={() =>
                       dispatch([
                         "InputBestOutOf",
-                        { userId: currentUserId, bestOutOf },
+                        { userId: ctx.currentUserId, bestOutOf },
                       ])
                     }
                   >
@@ -302,7 +299,7 @@ export const View = ({
                     onClick={() =>
                       dispatch([
                         "InputMoveTimeLimit",
-                        { userId: currentUserId, moveTimeLimit },
+                        { userId: ctx.currentUserId, moveTimeLimit },
                       ])
                     }
                   >
@@ -325,7 +322,7 @@ export const View = ({
           <UI.Button
             variant="contained"
             fullWidth
-            onClick={() => dispatch(["StartGame", { userId: currentUserId }])}
+            onClick={() => dispatch(["StartGame", { userId: ctx.currentUserId }])}
             disabled={startGameResult.type === "Err"}
           >
             Start
@@ -343,23 +340,15 @@ export const View = ({
       <UI.FillBox>
         <UI.Box sx={{ flex: 1, overflowY: "scroll" }}>
           <UI.Box sx={{ display: "flex", gap: 2, paddingX: 1, paddingY: 1 }}>
-            <ViewPlayerGameSlot
-              playerType="X"
-              store={store}
-              model={model}
-            />
-            <ViewPlayerGameSlot
-              playerType="O"
-              store={store}
-              model={model}
-            />
+            <ViewPlayerGameSlot playerType="X" ctx={ctx} model={model} />
+            <ViewPlayerGameSlot playerType="O" ctx={ctx} model={model} />
           </UI.Box>
 
           <UI.Box sx={{ width: "100%", position: "relative" }}>
             <ViewBoard
               board={board}
               onClick={(position) =>
-                dispatch(["InputMove", { position, userId: currentUserId }])
+                dispatch(["InputMove", { position, userId: ctx.currentUserId }])
               }
             />
 
@@ -379,7 +368,7 @@ export const View = ({
                 }}
               >
                 <ViewRoundStartingMessage
-                  currentUserId={currentUserId}
+                  ctx={ctx}
                   model={model}
                 />
               </UI.Box>
@@ -390,7 +379,7 @@ export const View = ({
         <UI.Box sx={{ display: "flex", width: "100%" }}>
           <ViewResignButton
             model={model}
-            currentUserId={currentUserId}
+            ctx={ctx}
             dispatch={dispatch}
           />
         </UI.Box>
@@ -400,32 +389,24 @@ export const View = ({
 
   const board = Round.toCurrentBoard(model.round) ?? emptyBoard
 
-  const rematchAskResult = rematchAsk({ userId: currentUserId }, model)
-  const newGameResult = newGame({ userId: currentUserId }, model)
+  const rematchAskResult = rematchAsk({ userId: ctx.currentUserId }, model)
+  const newGameResult = newGame({ userId: ctx.currentUserId }, model)
 
   const currentPlayerType: PlayerType | "None" =
-    model.X === currentUserId ? "X" : model.O === currentUserId ? "O" : "None"
+    model.X === ctx.currentUserId ? "X" : model.O === ctx.currentUserId ? "O" : "None"
 
   return (
     <UI.FillBox>
       <UI.Box sx={{ display: "flex", gap: 2, paddingX: 1, paddingY: 1 }}>
-        <ViewPlayerGameSlot
-          playerType="X"
-          store={store}
-          model={model}
-        />
-        <ViewPlayerGameSlot
-          playerType="O"
-          store={store}
-          model={model}
-        />
+        <ViewPlayerGameSlot playerType="X" ctx={ctx} model={model} />
+        <ViewPlayerGameSlot playerType="O" ctx={ctx} model={model} />
       </UI.Box>
 
       <UI.Box sx={{ width: "100%", position: "relative" }}>
         <ViewBoard
           board={board}
           onClick={(position) =>
-            dispatch(["InputMove", { position, userId: currentUserId }])
+            dispatch(["InputMove", { position, userId: ctx.currentUserId }])
           }
         />
 
@@ -445,9 +426,9 @@ export const View = ({
             }}
           >
             <ViewGameOverMessage
-              currentUserId={currentUserId}
+              ctx={ctx}
               model={model}
-              store={store}
+
               dispatch={dispatch}
             />
           </UI.Box>
@@ -463,7 +444,7 @@ export const View = ({
               <UI.Button
                 fullWidth
                 variant="outlined"
-                onClick={() => dispatch(["NewGame", { userId: currentUserId }])}
+                onClick={() => dispatch(["NewGame", { userId: ctx.currentUserId }])}
                 disabled={newGameResult.type === "Err"}
               >
                 Back
@@ -489,7 +470,7 @@ export const View = ({
                   model.rematch.asker === currentPlayerType
                 }
                 onClick={() =>
-                  dispatch(["RematchAsk", { userId: currentUserId }])
+                  dispatch(["RematchAsk", { userId: ctx.currentUserId }])
                 }
               >
                 Rematch
@@ -503,21 +484,20 @@ export const View = ({
 }
 
 const ViewGameOverMessage = ({
-  currentUserId,
+  ctx,
   model,
   dispatch,
 }: {
-  currentUserId: UserId
+  ctx: Ctx,
   model: GameOverModel
-  store: ProfileStore.Model
   dispatch: (msg: Msg) => void
 }) => {
-  const isPlaying = model.O === currentUserId || model.X === currentUserId
+  const isPlaying = model.O === ctx.currentUserId || model.X === ctx.currentUserId
   const score = Round.toScore(model.round)
   const winCount = toWinCount(model)
 
   const currentPlayerType: PlayerType | "None" =
-    model.X === currentUserId ? "X" : model.O === currentUserId ? "O" : "None"
+    model.X === ctx.currentUserId ? "X" : model.O === ctx.currentUserId ? "O" : "None"
 
   if (
     model.rematch.type === "Asking" &&
@@ -563,7 +543,7 @@ const ViewGameOverMessage = ({
             fullWidth
             sx={{ color: "#000" }}
             onClick={() =>
-              dispatch(["RematchDecline", { userId: currentUserId }])
+              dispatch(["RematchDecline", { userId: ctx.currentUserId }])
             }
           >
             Decline
@@ -573,7 +553,7 @@ const ViewGameOverMessage = ({
             variant="contained"
             fullWidth
             onClick={() =>
-              dispatch(["RematchAccept", { userId: currentUserId }])
+              dispatch(["RematchAccept", { userId: ctx.currentUserId }])
             }
           >
             Accept
@@ -625,7 +605,7 @@ const ViewGameOverMessage = ({
             startIcon={<UI.Icons.Cancel />}
             variant="contained"
             onClick={() =>
-              dispatch(["Rematch_Cancel", { userId: currentUserId }])
+              dispatch(["Rematch_Cancel", { userId: ctx.currentUserId }])
             }
           >
             Cancel
@@ -702,7 +682,7 @@ const ViewGameOverMessage = ({
 
   const didCurrentUserWin =
     model.gameOver.type === "Winner" &&
-    model[model.gameOver.winner] === currentUserId
+    model[model.gameOver.winner] === ctx.currentUserId
 
   return (
     <>
@@ -769,10 +749,10 @@ const ViewGameOverMessage = ({
 }
 
 export const ViewRoundStartingMessage = ({
-  currentUserId,
+  ctx,
   model,
 }: {
-  currentUserId: UserId
+  ctx: Ctx,
   model: GameModel
 }) => {
   const currentRound = Round.toCurrent(model.round)
@@ -842,8 +822,8 @@ export const ViewRoundStartingMessage = ({
 
   const { roundOver } = previousRound
   const didCurrentUserWin =
-    roundOver.type === "Win" && model[roundOver.winner] === currentUserId
-  const isPlaying = model.O === currentUserId || model.X === currentUserId
+    roundOver.type === "Win" && model[roundOver.winner] === ctx.currentUserId
+  const isPlaying = model.O === ctx.currentUserId || model.X === ctx.currentUserId
 
   return (
     <>
@@ -1057,11 +1037,11 @@ const ViewScoreSlots = ({
 }
 
 const ViewResignButton = ({
-  currentUserId,
+  ctx,
   model,
   dispatch,
 }: {
-  currentUserId: UserId
+  ctx: Ctx
   model: Model
   dispatch: (msg: Msg) => void
 }) => {
@@ -1076,7 +1056,7 @@ const ViewResignButton = ({
         open={model.openedModal === "Resignation"}
         onCancel={() => dispatch(["CloseModal"])}
         onClose={() => dispatch(["CloseModal"])}
-        onConfirm={() => dispatch(["Resign", { userId: currentUserId }])}
+        onConfirm={() => dispatch(["Resign", { userId: ctx.currentUserId }])}
         headerIcon={<UI.Icons.Flag sx={{ width: 64, height: 64 }} />}
         title="Resign from game?"
         confirmTitle="Resign"
@@ -1146,16 +1126,14 @@ const toGameText = ({
 }
 
 const ViewPlayerSetupSlot = ({
-  currentUserId,
-  store,
+  ctx,
   userId,
   playerType,
   dispatch,
   sx
 }: {
-  currentUserId: UserId
+  ctx: Ctx,
   userId: UserId | "None"
-  store: ProfileStore.Model
   playerType: PlayerType
   dispatch: (msg: Msg) => void
   sx?: UI.Sx
@@ -1173,7 +1151,7 @@ const ViewPlayerSetupSlot = ({
           onClick={() =>
             dispatch([
               "InputPlayer",
-              { userId: currentUserId, playerType },
+              { userId: ctx.currentUserId, playerType },
             ])
           }
         >
@@ -1187,18 +1165,18 @@ const ViewPlayerSetupSlot = ({
     <UI.Box sx={{ display: "flex", alignItems: "center", width: '100%', ...sx }}>
       <PlayerTypeIcon playerType={playerType} sx={{ marginRight: 1, ...iconSx }} />
       <UI.Avatar
-        src={store.profiles[userId]?.avatarUrl}
+        src={ctx.profiles[userId]?.avatarUrl}
         sx={{ marginRight: 1 }}
       />
       <UI.Box sx={{ flex: 1, overflow: "hidden" }}>
         <UI.Typography noWrap sx={{ textOverflow: "ellipsis" }} >
-          {store.profiles[userId]?.username ?? "..."}
+          {ctx.profiles[userId]?.username ?? "..."}
         </UI.Typography>
       </UI.Box>
-      {currentUserId === userId && (
+      {ctx.currentUserId === userId && (
         <UI.Button
 
-          onClick={() => dispatch(["StopPlaying", { userId: currentUserId }])}
+          onClick={() => dispatch(["StopPlaying", { userId: ctx.currentUserId }])}
         >
           Stop Playing
         </UI.Button>
@@ -1208,16 +1186,16 @@ const ViewPlayerSetupSlot = ({
 }
 
 const ViewPlayerGameSlot = ({
-  store,
+  ctx,
   model,
   playerType,
 }: {
-  store: ProfileStore.Model
+  ctx: Ctx
   model: GameModel | GameOverModel
   playerType: PlayerType
 }) => {
   const userId = model[playerType]
-  const profile = store.profiles[userId]
+  const profile = ctx.profiles[userId]
   const uiTheme = UI.useTheme()
 
   const round = Round.toCurrent(model.round)

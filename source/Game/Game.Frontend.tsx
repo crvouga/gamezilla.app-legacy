@@ -328,9 +328,11 @@ export const View = ({
       )
     }
 
+
+
     case "TicTacToe": {
       return (
-        <TicTacToe.View ctx={ctx} model={model[1]} emit={(msg) => dispatch(["TicTacToe", msg])}
+        <TicTacToe.View ctx={ctx} model={model[1]} dispatch={(msg) => dispatch(["TicTacToe", msg])}
         />
       )
     }

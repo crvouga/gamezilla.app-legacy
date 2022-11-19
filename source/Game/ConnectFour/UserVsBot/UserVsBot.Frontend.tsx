@@ -1,12 +1,11 @@
 import { Cmd, Sub } from "../../../Core";
 import { UserId } from "../../../Data/UserId";
 import * as Snackbar from "../../../Snackbar";
-import * as ProfileStore from "../../../Profile/Profile.Store";
 import * as UI from "../../../UI";
 import { Ctx, VersusHeader } from "../../Game.Shared";
 import { gameTheme, PlayerType, ViewColumns } from "../ConnectFour";
 import { PlayerIcon } from "../Views";
-import { BackendModel, botLevel, GameOver, FrontendModel, FrontendMsg, GameModel, handle, initShared, isBotTurn, SetupModel, ToBackend, ToFrontend, toGameOver } from "./UserVsBot.Types";
+import { BackendModel, botLevel, FrontendModel, FrontendMsg, GameModel, GameOver, handle, initShared, isBotTurn, SetupModel, ToBackend, ToFrontend, toGameOver } from "./UserVsBot.Types";
 
 //
 //
@@ -229,16 +228,16 @@ const ViewGameOverMessage = ({ gameOver, currentUserId, model }: { model: Model,
 
 }
 
-const ViewGamePlayerSlot = ({ model, playerType, store }: { model: GameModel, playerType: PlayerType, store: ProfileStore.Model }) => {
+const ViewGamePlayerSlot = ({ model, playerType, ctx }: { model: GameModel, playerType: PlayerType, ctx: Ctx }) => {
     const size = { width: 32, height: 32, }
 
     if (model.userPlayerType === playerType) {
         return (
             <UI.Box sx={{ display: 'flex', alignItems: 'center', flex: 1, overflow: "hidden" }}>
                 <PlayerIcon playerType={playerType} sx={{ ...size, marginRight: 1 }} />
-                <UI.Avatar src={store.profiles[model.player]?.avatarUrl} sx={{ ...size, marginRight: 1 }} />
+                <UI.Avatar src={ctx.profiles[model.player]?.avatarUrl} sx={{ ...size, marginRight: 1 }} />
                 <UI.Typography noWrap>
-                    {store.profiles[model.player]?.username ?? "..."}
+                    {ctx.profiles[model.player]?.username ?? "..."}
                 </UI.Typography>
             </UI.Box>
         )
@@ -277,12 +276,12 @@ const ViewSetup = (
         goBack: () => void;
 
     }) => {
-    const startGameRes = handle(['StartGame', { userId: currentUserId }], model)
+    const startGameRes = handle(['StartGame', { userId: ctx.currentUserId }], model)
     return (
         <UI.FillBox>
             <UI.Box sx={{ flex: 1, overflowY: "scroll" }}>
                 <VersusHeader
-                    store={store}
+                    ctx={ctx}
                     background={
                         <UI.Box sx={{ width: '100%', height: '100%', background: `linear-gradient(${gameTheme.primary.light}, ${gameTheme.primary.darker})` }} />
                     }
@@ -310,18 +309,18 @@ const ViewSetup = (
 
                 {model.player === 'None' ? (
                     <UI.Box sx={{ paddingX: 2 }}>
-                        <UI.Button variant="contained" fullWidth onClick={() => dispatch(['StartPlaying', { userId: currentUserId }])}>
+                        <UI.Button variant="contained" fullWidth onClick={() => dispatch(['StartPlaying', { userId: ctx.currentUserId }])}>
                             Start Playing
                         </UI.Button>
                     </UI.Box>
                 ) : (
                     <UI.Box sx={{ display: 'flex', alignItems: "center", justifyContent: 'center', paddingX: 2, width: '100%', }}>
-                        <UI.Avatar src={store.profiles[model.player]?.avatarUrl} sx={{ marginRight: 2 }} />
+                        <UI.Avatar src={ctx.profiles[model.player]?.avatarUrl} sx={{ marginRight: 2 }} />
                         <UI.Typography noWrap sx={{ flex: 1 }}>
-                            {store.profiles[model.player]?.username ?? "..."}
+                            {ctx.profiles[model.player]?.username ?? "..."}
                         </UI.Typography>
-                        {model.player === currentUserId && (
-                            <UI.Button onClick={() => dispatch(['StopPlaying', { userId: currentUserId }])}>
+                        {model.player === ctx.currentUserId && (
+                            <UI.Button onClick={() => dispatch(['StopPlaying', { userId: ctx.currentUserId }])}>
                                 Stop Playing
                             </UI.Button>
                         )}
@@ -336,10 +335,10 @@ const ViewSetup = (
 
                 <UI.Box sx={{ paddingX: 2, paddingBottom: 2 }} >
                     <UI.ToggleButtonGroup value={model.userPlayerType} fullWidth>
-                        <UI.ToggleButton value={"PlayerOne"} onClick={() => dispatch(['InputPlayerType', { userId: currentUserId, playerType: "PlayerOne" }])}>
+                        <UI.ToggleButton value={"PlayerOne"} onClick={() => dispatch(['InputPlayerType', { userId: ctx.currentUserId, playerType: "PlayerOne" }])}>
                             <PlayerIcon playerType="PlayerOne" sx={{ width: 32, height: 32 }} />
                         </UI.ToggleButton>
-                        <UI.ToggleButton value={"PlayerTwo"} onClick={() => dispatch(['InputPlayerType', { userId: currentUserId, playerType: "PlayerTwo" }])}>
+                        <UI.ToggleButton value={"PlayerTwo"} onClick={() => dispatch(['InputPlayerType', { userId: ctx.currentUserId, playerType: "PlayerTwo" }])}>
                             <PlayerIcon playerType="PlayerTwo" sx={{ width: 32, height: 32 }} />
                         </UI.ToggleButton>
                     </UI.ToggleButtonGroup>
@@ -352,7 +351,7 @@ const ViewSetup = (
                 <UI.Box sx={{ paddingX: 2, paddingBottom: 4 }} >
                     <UI.ToggleButtonGroup value={model.botLevel} fullWidth>
                         {Object.values(botLevel).map(botLevel => (
-                            <UI.ToggleButton key={botLevel} value={botLevel} onClick={() => dispatch(['InputBotLevel', { userId: currentUserId, botLevel }])}>
+                            <UI.ToggleButton key={botLevel} value={botLevel} onClick={() => dispatch(['InputBotLevel', { userId: ctx.currentUserId, botLevel }])}>
                                 {botLevel}
                             </UI.ToggleButton>
                         ))}
@@ -366,7 +365,7 @@ const ViewSetup = (
                     Back
                 </UI.Button>
 
-                <UI.Button variant="contained" onClick={() => dispatch(['StartGame', { userId: currentUserId }])} fullWidth disabled={startGameRes.type === 'Err'}>
+                <UI.Button variant="contained" onClick={() => dispatch(['StartGame', { userId: ctx.currentUserId }])} fullWidth disabled={startGameRes.type === 'Err'}>
                     Start Game
                 </UI.Button>
             </UI.Box>

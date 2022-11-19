@@ -1,10 +1,10 @@
 import { useLayoutEffect, useRef } from "react"
 import { Cmd, exhaustive, Keyboard, Option, Result, Sub } from "../../Core"
 import { UserId } from "../../Data"
-import * as ProfileStore from "../../Profile/Profile.Store"
 import * as Route from "../../Route"
 import * as Snackbar from "../../Snackbar"
 import * as UI from "../../UI"
+import { Ctx } from "../Game.Shared"
 import { Direction } from "./Direction"
 import * as Joystick from "./Joystick"
 import { Position } from "./Position"
@@ -194,13 +194,11 @@ export const subscriptions = (
 //
 
 export const View = ({
-  currentUserId,
-  store,
+  ctx,
   model,
   dispatch,
 }: {
-  currentUserId: UserId
-  store: ProfileStore.Model
+  ctx: Ctx,
   model: Model
   dispatch: (msg: Msg) => void
 }) => {
@@ -231,7 +229,7 @@ export const View = ({
                 onClick={() =>
                   dispatch([
                     "InputPlayer",
-                    Option.Some(["User", currentUserId]),
+                    Option.Some(["User", ctx.currentUserId]),
                   ])
                 }
               >
@@ -245,17 +243,9 @@ export const View = ({
                 onClick={() => dispatch(["OpenedMenu", menuAnchorId])}
               >
                 <UI.ListItemAvatar>
-                  <UI.Avatar
-                    src={
-                      store.profiles[model.gameStatus.player.value[1]]?.avatarUrl
-                    }
-                  />
+                  <UI.Avatar src={ctx.profiles[model.gameStatus.player.value[1]]?.avatarUrl} />
                 </UI.ListItemAvatar>
-                <UI.ListItemText
-                  primary={
-                    store.profiles[model.gameStatus.player.value[1]]?.username
-                  }
-                />
+                <UI.ListItemText primary={ctx.profiles[model.gameStatus.player.value[1]]?.username} />
                 <UI.ListItemSecondaryAction>
                   <UI.Icons.MoreVert />
                 </UI.ListItemSecondaryAction>
@@ -304,7 +294,7 @@ export const View = ({
         model={model}
         dispatch={dispatch}
       />
-      {model.gameStatus.player[1] === currentUserId && (
+      {model.gameStatus.player[1] === ctx.currentUserId && (
         <UI.Box
           sx={{
             display: "flex",
@@ -319,7 +309,7 @@ export const View = ({
               dispatch([
                 "InputDirection",
                 {
-                  userId: currentUserId,
+                  userId: ctx.currentUserId,
                   direction: joystickDirectionToDirection(moveEvent.direction),
                 },
               ])
