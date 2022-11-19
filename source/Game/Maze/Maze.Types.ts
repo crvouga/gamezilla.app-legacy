@@ -139,7 +139,7 @@ export const handle = (msg: Req, model: SharedModel): Result<Problem, SharedMode
       const modelNew: SharedModel = {
         type: "Game",
         colors: model.colors,
-        maze: initMaze({ columnCount: 20, rowCount: 20 }),
+        maze: initMaze({ columnCount: 10, rowCount: 10 }),
         players: playersNew
 
       }
