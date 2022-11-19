@@ -82,7 +82,7 @@ export type Direction = "North" | "South" | "East" | "West"
 
 export type Res = [...Req, Result<Problem, SharedModel>]
 
-type Problem = "must_be_setup" | "already_playing" | "must_have_at_least_one_player" | "must_be_playing" | "must_be_game"
+type Problem = "must_be_setup" | "already_playing" | "must_have_at_least_one_player" | "must_be_playing" | "must_be_game" | "out_of_bounds"
 
 export const handle = (msg: Req, model: SharedModel): Result<Problem, SharedModel> => {
   switch (msg[0]) {
@@ -158,13 +158,24 @@ export const handle = (msg: Req, model: SharedModel): Result<Problem, SharedMode
         return Err("must_be_playing")
       }
 
+      const positionNew = add(
+        directionToVector(msg[1].direction),
+        player.position,
+      )
+
+      const isInbounds =
+        0 <= positionNew.x && positionNew.x < model.maze.length &&
+        0 <= positionNew.y && positionNew.y < (model.maze?.[0]?.length ?? 0)
+
+      if (!isInbounds) {
+        return Err("out_of_bounds")
+      }
+
       const playerNew: Player = {
         ...player,
-        position: add(
-          directionToVector(msg[1].direction),
-          player.position,
-        )
+        position: positionNew
       }
+
       const modelNew: SharedModel = {
         type: "Game",
         colors: model.colors,
