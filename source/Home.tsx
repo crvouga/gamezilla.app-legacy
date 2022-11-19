@@ -1,9 +1,9 @@
+import { Ctx } from "./App.Shared"
 import { Sub } from "./Core"
 import { RoomId, UserId } from "./Data"
 import * as Game from "./Game/Game.Frontend"
 import { GameName, gameNameList } from "./Game/Game.Types"
 import * as GameRoom from "./Game/GameRoom.Frontend"
-import * as ProfileStore from "./Profile/Profile.Store"
 import * as Route from "./Route"
 import * as UI from "./UI"
 
@@ -105,27 +105,19 @@ export const subscriptions = (_model: Model): Sub<Msg> => {
 export const View = ({
   model,
   dispatch,
-  currentUserId,
   gameRoom,
-  store,
+  ctx,
 }: {
-  currentUserId: UserId
   gameRoom: GameRoom.Model
   model: Model
   dispatch: (msg: Msg) => void
-  store: ProfileStore.Model
+  ctx: Ctx,
 }) => {
-  const user = gameRoom.users[currentUserId]
+  const user = gameRoom.users[ctx.currentUserId]
 
   if (!user) {
     return (
-      <ViewNotInRoom
-        model={model}
-        dispatch={dispatch}
-        currentUserId={currentUserId}
-        gameRoom={gameRoom}
-        store={store}
-      />
+      <ViewNotInRoom model={model} dispatch={dispatch} ctx={ctx} gameRoom={gameRoom} />
     )
   }
 
@@ -133,17 +125,11 @@ export const View = ({
 
   if (!currentRoom) {
     return (
-      <ViewNotInRoom
-        model={model}
-        dispatch={dispatch}
-        currentUserId={currentUserId}
-        gameRoom={gameRoom}
-        store={store}
-      />
+      <ViewNotInRoom model={model} dispatch={dispatch} ctx={ctx} gameRoom={gameRoom} />
     )
   }
 
-  const hostProfile = store.profiles[currentRoom.hostId]
+  const hostProfile = ctx.profiles[currentRoom.hostId]
   const roomCount = Object.values(gameRoom.users).filter(
     (user) => user.roomId === currentRoom.roomId,
   ).length
@@ -216,7 +202,7 @@ export const View = ({
             </UI.Box>
           </UI.CardActionArea>
 
-          {currentRoom.hostId === currentUserId ? (
+          {currentRoom.hostId === ctx.currentUserId ? (
             <>
               <UI.Button
                 sx={{ marginRight: 1 }}
@@ -271,7 +257,7 @@ export const View = ({
                 roomId={room.roomId}
                 hostId={room.hostId}
                 gameName={room.game[0]}
-                store={store}
+                ctx={ctx}
                 gameRoom={gameRoom}
                 onClick={() =>
                   dispatch(["ClickedRoom", { roomId: room.roomId }])
@@ -288,13 +274,12 @@ export const View = ({
 const ViewNotInRoom = ({
   dispatch,
   gameRoom,
-  store,
+  ctx,
 }: {
-  currentUserId: UserId
+  ctx: Ctx
   gameRoom: GameRoom.Model
   model: Model
   dispatch: (msg: Msg) => void
-  store: ProfileStore.Model
 }) => {
   const rooms = Object.values(gameRoom.rooms)
 
@@ -386,7 +371,7 @@ const ViewNotInRoom = ({
             roomId={room.roomId}
             hostId={room.hostId}
             gameName={room.game[0]}
-            store={store}
+            ctx={ctx}
             gameRoom={gameRoom}
             onClick={() => dispatch(["ClickedRoom", { roomId: room.roomId }])}
           />

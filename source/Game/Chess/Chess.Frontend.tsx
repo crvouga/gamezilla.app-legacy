@@ -10,7 +10,7 @@ import { UserId } from "../../Data"
 import * as Snackbar from "../../Snackbar"
 import * as ProfileStore from "../../Profile/Profile.Store"
 import * as UI from "../../UI"
-import { GameModeCardGrid } from "../Game.Shared"
+import { Ctx, GameModeCardGrid } from "../Game.Shared"
 import {
   BackendModel,
   FrontendModel,
@@ -214,13 +214,11 @@ export const subscriptions = (_model: Model): Sub<Msg> => {
 //
 
 export const View = ({
-  currentUserId,
-  store,
+  ctx,
   model,
   dispatch,
 }: {
-  currentUserId: UserId
-  store: ProfileStore.Model
+  ctx: Ctx
   model: Model
   dispatch: (msg: Msg) => void
 }) => {
@@ -232,8 +230,8 @@ export const View = ({
           <BannerArt title="Chess" />
 
           <GameModeCardGrid
-            onUserVsUser={() => dispatch(["InputMode", { mode: "UserVsUser", userId: currentUserId },])}
-            onUserVsBot={() => dispatch(["InputMode", { mode: "UserVsBot", userId: currentUserId },])}
+            onUserVsUser={() => dispatch(["InputMode", { mode: "UserVsUser", userId: ctx.currentUserId },])}
+            onUserVsBot={() => dispatch(["InputMode", { mode: "UserVsBot", userId: ctx.currentUserId },])}
           />
         </UI.FillBox>
       )
@@ -242,12 +240,11 @@ export const View = ({
     case "UserVsBot": {
       return (
         <UserVsBot.View
-          currentUserId={currentUserId}
+          ctx={ctx}
           dispatch={(msg) => dispatch(["UserVsBot", msg])}
           model={model.mode[1]}
-          store={store}
           onClose={() =>
-            dispatch(["InputMode", { mode: "None", userId: currentUserId }])
+            dispatch(["InputMode", { mode: "None", userId: ctx.currentUserId }])
           }
         />
       )
@@ -256,12 +253,11 @@ export const View = ({
     case "UserVsUser": {
       return (
         <UserVsUser.View
-          currentUserId={currentUserId}
-          store={store}
+          ctx={ctx}
           model={model.mode[1]}
           dispatch={(msg) => dispatch(["UserVsUser", msg])}
           onClose={() =>
-            dispatch(["InputMode", { mode: "None", userId: currentUserId }])
+            dispatch(["InputMode", { mode: "None", userId: ctx.currentUserId }])
           }
         />
       )

@@ -1,8 +1,7 @@
 import { Audio, Cmd, exhaustive, Option, Sub, t } from "../../../Core"
-import { UserId } from "../../../Data"
-import * as ProfileStore from "../../../Profile/Profile.Store"
 import * as Snackbar from "../../../Snackbar"
 import * as UI from "../../../UI"
+import { Ctx } from "../../Game.Shared"
 import * as Board from "../Board"
 import * as Sounds from "../Sounds"
 import { PawnIcon, VersusHeader } from "../Views"
@@ -292,29 +291,27 @@ export const subscriptions = (_model: Model): Sub<Msg> => {
 //
 
 export const View = ({
-  currentUserId,
-  store,
+  ctx,
   model,
   dispatch,
   onClose,
 }: {
-  store: ProfileStore.Model
-  currentUserId: UserId
+  ctx: Ctx
   model: Model
   dispatch: (msg: Msg) => void
   onClose: () => void
 }) => {
   if (model.sharedModel.type === "Setup") {
     const startGameResult = startGame(
-      { userId: currentUserId },
+      { userId: ctx.currentUserId },
       model.sharedModel,
     )
     const inputBotResult = inputBot(
-      { botLevel: model.sharedModel.botLevel, userId: currentUserId },
+      { botLevel: model.sharedModel.botLevel, userId: ctx.currentUserId },
       model.sharedModel,
     )
     const inputColorResult = inputColor(
-      { userColor: model.sharedModel.userColor, userId: currentUserId },
+      { userColor: model.sharedModel.userColor, userId: ctx.currentUserId },
       model.sharedModel,
     )
 
@@ -322,7 +319,7 @@ export const View = ({
       <UI.FillBox>
         <UI.Box sx={{ flex: 1, overflowY: "scroll" }}>
           <VersusHeader
-            store={store}
+            ctx={ctx}
             black={model.sharedModel.userColor === 'w' ? { type: "Bot", label: Board.levelToString(model.sharedModel.botLevel) } : model.sharedModel.userId === 'None' ? { type: "None" } : { type: "User", userId: model.sharedModel.userId }}
             white={model.sharedModel.userColor === 'b' ? { type: "Bot", label: Board.levelToString(model.sharedModel.botLevel) } : model.sharedModel.userId === 'None' ? { type: "None" } : { type: "User", userId: model.sharedModel.userId }}
           />
@@ -341,7 +338,7 @@ export const View = ({
                 size="large"
                 variant="contained"
                 onClick={() => {
-                  dispatch(["InputUser", { userId: currentUserId },])
+                  dispatch(["InputUser", { userId: ctx.currentUserId },])
                 }}
               >
                 Start Playing
@@ -351,14 +348,14 @@ export const View = ({
             <UI.Box sx={{ display: "flex", alignItems: "center", paddingX: 2 }}>
               <UI.Avatar
                 sx={{ marginRight: 1 }}
-                src={store.profiles[model.sharedModel.userId]?.avatarUrl}
+                src={ctx.profiles[model.sharedModel.userId]?.avatarUrl}
               />
 
               <UI.Typography sx={{ flex: 1 }} noWrap>
-                {store.profiles[model.sharedModel.userId]?.username ?? "..."}
+                {ctx.profiles[model.sharedModel.userId]?.username ?? "..."}
               </UI.Typography>
 
-              {model.sharedModel.userId === currentUserId && (
+              {model.sharedModel.userId === ctx.currentUserId && (
                 <UI.Button
                   size="large"
                   onClick={() =>
@@ -398,7 +395,7 @@ export const View = ({
                   onClick={() =>
                     dispatch([
                       "InputColor",
-                      { userColor: "w", userId: currentUserId },
+                      { userColor: "w", userId: ctx.currentUserId },
                     ])
                   }
                 >
@@ -410,7 +407,7 @@ export const View = ({
                   onClick={() =>
                     dispatch([
                       "InputColor",
-                      { userColor: "b", userId: currentUserId },
+                      { userColor: "b", userId: ctx.currentUserId },
                     ])
                   }
                 >
@@ -449,7 +446,7 @@ export const View = ({
                     onClick={() => {
                       dispatch([
                         "InputBot",
-                        { botLevel: level, userId: currentUserId },
+                        { botLevel: level, userId: ctx.currentUserId },
                       ])
                     }}
                     sx={{ fontSize: "1.1rem" }}
@@ -478,7 +475,7 @@ export const View = ({
             size="large"
             variant="contained"
             disabled={startGameResult.type === "Err"}
-            onClick={() => dispatch(["StartGame", { userId: currentUserId }])}
+            onClick={() => dispatch(["StartGame", { userId: ctx.currentUserId }])}
           >
             Start Game
           </UI.Button>
@@ -511,12 +508,12 @@ export const View = ({
   const userSlot = (
     <UI.Box sx={{ paddingX: 2, display: "flex", alignItems: "center" }}>
       <UI.Avatar
-        src={store.profiles[model.sharedModel.userId]?.avatarUrl}
+        src={ctx.profiles[model.sharedModel.userId]?.avatarUrl}
         sx={{ marginRight: 2 }}
       />
 
       <UI.Typography variant="h6">
-        {store.profiles[model.sharedModel.userId]?.username}
+        {ctx.profiles[model.sharedModel.userId]?.username}
       </UI.Typography>
     </UI.Box>
   )
@@ -546,7 +543,7 @@ export const View = ({
         isDraggablePiece={({ piece }) => {
           return (
             Board.toColor(piece) === model.sharedModel.userColor &&
-            model.sharedModel.userId === currentUserId
+            model.sharedModel.userId === ctx.currentUserId
           )
         }}
         model={model.sharedModel.board}
@@ -554,7 +551,7 @@ export const View = ({
           const msg: Msg = [
             "InputMove",
             {
-              userId: currentUserId,
+              userId: ctx.currentUserId,
               from: move.from,
               to: move.to,
               promotion: move.promotion,
@@ -577,7 +574,7 @@ export const View = ({
         <UI.ActionButton
           icon={<UI.Icons.ExitToApp sx={{ transform: "rotate(180deg)" }} />}
           label={"Exit"}
-          onClick={() => dispatch(["StopGame", { userId: currentUserId }])}
+          onClick={() => dispatch(["StopGame", { userId: ctx.currentUserId }])}
         />
 
         <UI.ActionButton

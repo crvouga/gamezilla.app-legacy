@@ -1,7 +1,6 @@
 import { Cmd, Sub } from "../../Core";
-import { UserId } from "../../Data";
-import { Profile } from "../../Profile/Profile.Store";
 import { Button, FillBox, List, ListItem, ListItemText, Typography } from "../../UI";
+import { Ctx } from "../Game.Shared";
 import { BackendModel, FrontendModel, FrontendMsg, initMaze, initShared, ToFrontend } from "./Maze.Types";
 
 //
@@ -66,7 +65,7 @@ export const subscriptions = (_model: Model): Sub<Msg> => {
 //
 //
 
-export const View = ({ model, profiles }: { profiles: { [userId: UserId]: Profile }, model: Model, dispatch: (msg: Msg) => void, }) => {
+export const View = ({ model, ctx }: { ctx: Ctx, model: Model, dispatch: (msg: Msg) => void, }) => {
     return (
         <FillBox>
             <Typography sx={{ px: 2, }}>
@@ -78,7 +77,7 @@ export const View = ({ model, profiles }: { profiles: { [userId: UserId]: Profil
             <List>
                 {Object.values(model.players).map(player => (
                     <ListItem key={player.userId}>
-                        <ListItemText primary={profiles[player.userId]?.username} />
+                        <ListItemText primary={ctx.profiles[player.userId]?.username} />
                     </ListItem>
                 ))}
             </List>

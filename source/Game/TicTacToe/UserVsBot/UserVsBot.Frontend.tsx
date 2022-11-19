@@ -1,8 +1,7 @@
 import { Cmd, Sub } from "../../../Core"
-import { UserId } from "../../../Data"
-import * as ProfileStore from "../../../Profile/Profile.Store"
 import * as Snackbar from "../../../Snackbar"
 import * as UI from "../../../UI"
+import { Ctx } from "../../Game.Shared"
 import {
   botLevels, GameOver, gameTheme, PlayerType,
   PlayerTypeIcon,
@@ -143,11 +142,9 @@ export const View = ({
   goBack,
   model,
   dispatch,
-  store,
-  currentUserId,
+  ctx,
 }: {
-  currentUserId: UserId
-  store: ProfileStore.Model
+  ctx: Ctx,
   goBack: () => void
   model: Model
   dispatch: (msg: Msg) => void
@@ -155,13 +152,13 @@ export const View = ({
   const uiTheme = UI.useTheme()
 
   if (model.type === "Setup") {
-    const startGameResult = startGame({ userId: currentUserId }, model)
+    const startGameResult = startGame({ userId: ctx.currentUserId }, model)
     const inputBotResult = inputBot(
-      { userId: currentUserId, botLevel: model.botLevel },
+      { userId: ctx.currentUserId, botLevel: model.botLevel },
       model,
     )
     const inputPlayerTypeResult = inputPlayerType(
-      { userId: currentUserId, playerType: model.userPlayerType },
+      { userId: ctx.currentUserId, playerType: model.userPlayerType },
       model,
     )
 
@@ -169,7 +166,7 @@ export const View = ({
       <UI.FillBox>
         <UI.Box sx={{ flex: 1, overflowY: "scroll" }}>
           <VersusHeader
-            store={store}
+            ctx={ctx}
             X={model.userPlayerType === 'X' ? model.player === "None" ? { type: "User" } : { type: "User", userId: model.player } : { type: "Bot", label: model.botLevel }}
             O={model.userPlayerType === 'O' ? model.player === "None" ? { type: "User" } : { type: "User", userId: model.player } : { type: "Bot", label: model.botLevel }}
           />
@@ -186,7 +183,7 @@ export const View = ({
                 fullWidth
                 variant="contained"
                 onClick={() =>
-                  dispatch(["StartPlaying", { userId: currentUserId }])
+                  dispatch(["StartPlaying", { userId: ctx.currentUserId }])
                 }
               >
                 Start Playing
@@ -194,19 +191,19 @@ export const View = ({
             ) : (
               <UI.Box sx={{ display: "flex", alignItems: "center" }}>
                 <UI.Avatar
-                  src={store.profiles[model.player]?.avatarUrl}
+                  src={ctx.profiles[model.player]?.avatarUrl}
                   sx={{ marginRight: 1 }}
                 />
                 <UI.Box sx={{ flex: 1, overflow: "hidden" }}>
                   <UI.Typography noWrap sx={{ textOverflow: "ellipsis" }} >
-                    {store.profiles[model.player]?.username ?? "..."}
+                    {ctx.profiles[model.player]?.username ?? "..."}
                   </UI.Typography>
                 </UI.Box>
 
-                {model.player === currentUserId && (
+                {model.player === ctx.currentUserId && (
                   <UI.Button
                     onClick={() =>
-                      dispatch(["StopPlaying", { userId: currentUserId }])
+                      dispatch(["StopPlaying", { userId: ctx.currentUserId }])
                     }
                   >
                     Stop Playing
@@ -238,7 +235,7 @@ export const View = ({
                   onClick={() =>
                     dispatch([
                       "InputPlayerType",
-                      { playerType, userId: currentUserId },
+                      { playerType, userId: ctx.currentUserId },
                     ])
                   }
                 >
@@ -266,7 +263,7 @@ export const View = ({
                   value={botLevel}
                   key={botLevel}
                   onClick={() =>
-                    dispatch(["InputBot", { userId: currentUserId, botLevel }])
+                    dispatch(["InputBot", { userId: ctx.currentUserId, botLevel }])
                   }
                 >
                   {botLevel}
@@ -295,7 +292,7 @@ export const View = ({
             fullWidth
             variant="contained"
             disabled={startGameResult.type === "Err"}
-            onClick={() => dispatch(["StartGame", { userId: currentUserId }])}
+            onClick={() => dispatch(["StartGame", { userId: ctx.currentUserId }])}
           >
             Start Game
           </UI.Button>
@@ -305,24 +302,16 @@ export const View = ({
   }
 
   const gameOver = toGameOver(model.board)
-  const stopGameRes = stopGame({ userId: currentUserId }, model)
-  const restartRes = restart({ userId: currentUserId }, model)
-  const swapSidesRes = swapSides({ userId: currentUserId }, model)
+  const stopGameRes = stopGame({ userId: ctx.currentUserId }, model)
+  const restartRes = restart({ userId: ctx.currentUserId }, model)
+  const swapSidesRes = swapSides({ userId: ctx.currentUserId }, model)
 
   return (
     <UI.FillBox>
       <UI.Box sx={{ flex: 1 }}>
         <UI.Box sx={{ display: "flex", padding: 1, gap: 1, paddingTop: 0 }}>
-          <ViewPlayerGameSlot
-            model={model}
-            playerType="X"
-            store={store}
-          />
-          <ViewPlayerGameSlot
-            model={model}
-            playerType="O"
-            store={store}
-          />
+          <ViewPlayerGameSlot model={model} playerType="X" ctx={ctx} />
+          <ViewPlayerGameSlot model={model} playerType="O" ctx={ctx} />
         </UI.Box>
 
         <UI.Box
@@ -334,13 +323,13 @@ export const View = ({
           <ViewBoard
             board={model.board}
             onClick={(position) =>
-              dispatch(["InputMove", { userId: currentUserId, position }])
+              dispatch(["InputMove", { userId: ctx.currentUserId, position }])
             }
           />
 
           <UI.Fade in={gameOver.type !== "None"}>
             <UI.Box
-              onClick={() => dispatch(["Restart", { userId: currentUserId }])}
+              onClick={() => dispatch(["Restart", { userId: ctx.currentUserId }])}
               sx={{
                 position: "absolute",
                 inset: 0,
@@ -351,12 +340,7 @@ export const View = ({
                 flexDirection: "column",
               }}
             >
-              <ViewGameOverMessage
-                gameOver={gameOver}
-                store={store}
-                currentUserId={currentUserId}
-                model={model}
-              />
+              <ViewGameOverMessage gameOver={gameOver} ctx={ctx} model={model} />
             </UI.Box>
           </UI.Fade>
         </UI.Box>
@@ -365,7 +349,7 @@ export const View = ({
       <UI.Box sx={{ display: "flex" }}>
         <UI.ActionButton
           onClick={() => {
-            dispatch(["StopGame", { userId: currentUserId }])
+            dispatch(["StopGame", { userId: ctx.currentUserId }])
           }}
           disabled={stopGameRes.type === 'Err'}
           icon={<UI.Icons.ExitToApp sx={{ transform: "rotate(180deg)" }} />}
@@ -373,13 +357,13 @@ export const View = ({
         />
         <UI.ActionButton
           disabled={swapSidesRes.type === 'Err'}
-          onClick={() => dispatch(["SwapSides", { userId: currentUserId }])}
+          onClick={() => dispatch(["SwapSides", { userId: ctx.currentUserId }])}
           icon={<UI.Icons.SwapHoriz />}
           label="Swap"
         />
         <UI.ActionButton
           disabled={restartRes.type === 'Err'}
-          onClick={() => dispatch(["Restart", { userId: currentUserId }])}
+          onClick={() => dispatch(["Restart", { userId: ctx.currentUserId }])}
           icon={<UI.Icons.RestartAlt />}
           label="Reset"
         />
@@ -388,17 +372,7 @@ export const View = ({
   )
 }
 
-const ViewGameOverMessage = ({
-  gameOver,
-  model,
-  store,
-  currentUserId,
-}: {
-  model: GameModel
-  currentUserId: UserId
-  store: ProfileStore.Model
-  gameOver: GameOver | { type: "None" }
-}) => {
+const ViewGameOverMessage = ({ gameOver, model, ctx }: { model: GameModel; gameOver: GameOver | { type: "None" }; ctx: Ctx }) => {
   switch (gameOver.type) {
     case "None": {
       return <></>
@@ -427,7 +401,7 @@ const ViewGameOverMessage = ({
     }
 
     case "Win": {
-      const isCurrentUserPlaying = model.player === currentUserId
+      const isCurrentUserPlaying = model.player === ctx.currentUserId
       const didUserWin = model.userPlayerType === gameOver.winner
 
       if (isCurrentUserPlaying && didUserWin) {
@@ -487,14 +461,9 @@ const ViewGameOverMessage = ({
             }}
           >
             {didUserWin ? (
-              <UI.Avatar
-                sx={{ marginRight: 2, width: 64, height: 64 }}
-                src={store.profiles[model.player]?.avatarUrl}
-              />
+              <UI.Avatar sx={{ marginRight: 2, width: 64, height: 64 }} src={ctx.profiles[model.player]?.avatarUrl} />
             ) : (
-              <UI.Icons.SmartToy
-                sx={{ marginRight: 2, width: 64, height: 64 }}
-              />
+              <UI.Icons.SmartToy sx={{ marginRight: 2, width: 64, height: 64 }} />
             )}
             <UI.Typography
               sx={{ fontSize: 64 }}
@@ -512,15 +481,7 @@ const ViewGameOverMessage = ({
   }
 }
 
-export const ViewPlayerGameSlot = ({
-  store,
-  playerType,
-  model,
-}: {
-  model: GameModel
-  store: ProfileStore.Model
-  playerType: PlayerType
-}) => {
+export const ViewPlayerGameSlot = ({ ctx, playerType, model, }: { model: GameModel; ctx: Ctx; playerType: PlayerType }) => {
   const uiTheme = UI.useTheme()
 
   const iconSize = {
@@ -562,14 +523,14 @@ export const ViewPlayerGameSlot = ({
           {model.userPlayerType === playerType ? (
             <>
               <UI.Avatar
-                src={store.profiles[model.player]?.avatarUrl}
+                src={ctx.profiles[model.player]?.avatarUrl}
                 sx={{ marginRight: 1, ...iconSize }}
               />
               <UI.Typography
                 noWrap
                 sx={{ flex: 1 }}
               >
-                {store.profiles[model.player]?.username ?? "..."}
+                {ctx.profiles[model.player]?.username ?? "..."}
               </UI.Typography>
             </>
           ) : (

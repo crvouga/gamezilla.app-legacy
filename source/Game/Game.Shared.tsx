@@ -122,10 +122,10 @@ export const VersusHeader = (
     right,
     renderRightIcon,
     background,
-    store,
+    ctx,
     sx
   }: {
-    store: ProfileStore.Model;
+    ctx: Ctx;
     background: UI.ViewNode;
     renderLeftIcon: (sx: UI.Sx) => UI.ViewNode;
     left: Player;
@@ -178,7 +178,7 @@ export const VersusHeader = (
 
         }}>
         <UI.Box sx={{ display: 'flex', gap: 1, flex: 1, overflow: "hidden", justifyContent: "center" }}>
-          <VersusHeaderPlayer player={left} store={store} />
+          <VersusHeaderPlayer player={left} ctx={ctx} />
           {renderLeftIcon({ ...iconSx })}
         </UI.Box>
         <UI.Typography align="center" color="#fff" sx={{ fontSize: 24, marginX: 2 }}>
@@ -186,14 +186,14 @@ export const VersusHeader = (
         </UI.Typography>
         <UI.Box sx={{ display: 'flex', gap: 1, flex: 1, overflow: "hidden", justifyContent: "center" }}>
           {renderRightIcon({ ...iconSx, })}
-          <VersusHeaderPlayer player={right} store={store} />
+          <VersusHeaderPlayer player={right} ctx={ctx} />
         </UI.Box>
       </UI.Box>
     </UI.Box>
   )
 }
 
-const VersusHeaderPlayer = ({ player, store }: { player: Player, store: ProfileStore.Model }) => {
+const VersusHeaderPlayer = ({ player, ctx }: { player: Player, ctx: Ctx }) => {
   const sx: UI.Sx = {
     display: 'flex',
     alignItems: "center",
@@ -228,7 +228,7 @@ const VersusHeaderPlayer = ({ player, store }: { player: Player, store: ProfileS
     }
 
     case 'User': {
-      const profile = store.profiles[player.userId]
+      const profile = ctx.profiles[player.userId]
       return (
         <UI.Box sx={{ ...sx }}>
           <UI.Avatar sx={{ ...avatarSx, marginX: "auto" }} src={profile?.avatarUrl} />

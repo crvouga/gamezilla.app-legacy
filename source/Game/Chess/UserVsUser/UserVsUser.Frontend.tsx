@@ -1,8 +1,9 @@
 import { Audio, Cmd, exhaustive, Option, p, Sub, t } from "../../../Core"
 import { UserId } from "../../../Data"
-import * as Snackbar from "../../../Snackbar"
 import * as ProfileStore from "../../../Profile/Profile.Store"
+import * as Snackbar from "../../../Snackbar"
 import * as UI from "../../../UI"
+import { Ctx } from "../../Game.Shared"
 import * as Board from "../Board"
 import * as Clock from "../Clock"
 import * as Sounds from "../Sounds"
@@ -389,14 +390,12 @@ export const subscriptions = (_model: Model): Sub<Msg> => {
 //
 
 export const View = ({
-  currentUserId,
-  store,
+  ctx,
   model,
   dispatch,
   onClose,
 }: {
-  store: ProfileStore.Model
-  currentUserId: UserId
+  ctx: Ctx,
   model: Model
   dispatch: (msg: Msg) => void
   onClose: () => void
@@ -404,11 +403,11 @@ export const View = ({
 
   if (model.sharedModel.type === "Setup") {
     const startGameResult = startGame(
-      { userId: currentUserId },
+      { userId: ctx.currentUserId },
       model.sharedModel,
     )
     const inputClockResult = inputClock(
-      { userId: currentUserId, clockPreset: model.sharedModel.clockPreset },
+      { userId: ctx.currentUserId, clockPreset: model.sharedModel.clockPreset },
       model.sharedModel,
     )
 
@@ -416,7 +415,7 @@ export const View = ({
       <UI.FillBox>
         <UI.Box sx={{ flex: 1, overflowY: "scroll" }}>
           <VersusHeader
-            store={store}
+            ctx={ctx}
             black={model.sharedModel.b !== 'None' ? { type: "User", userId: model.sharedModel.b } : { type: "None" }}
             white={model.sharedModel.w !== 'None' ? { type: "User", userId: model.sharedModel.w } : { type: "None" }}
           />
@@ -436,12 +435,7 @@ export const View = ({
                 fullWidth
                 size="large"
                 variant="contained"
-                onClick={() => {
-                  dispatch([
-                    "InputPlayer",
-                    { userId: currentUserId, color: "w" },
-                  ])
-                }}
+                onClick={() => dispatch(["InputPlayer", { userId: ctx.currentUserId, color: "w" }])}
               >
                 Play As {Board.colorToString("w")}
               </UI.Button>
@@ -449,9 +443,8 @@ export const View = ({
               <ViewInputUserPlayerSlot
                 color="w"
                 userId={model.sharedModel.w}
-                currentUserId={currentUserId}
                 dispatch={dispatch}
-                store={store}
+                ctx={ctx}
               />
             )}
           </UI.Box>
@@ -463,24 +456,16 @@ export const View = ({
                 fullWidth
                 size="large"
                 variant="contained"
-                onClick={() => {
-                  dispatch([
-                    "InputPlayer",
-                    { userId: currentUserId, color: "b" },
-                  ])
-                }}
+                onClick={() => dispatch([
+                  "InputPlayer",
+                  { userId: ctx.currentUserId, color: "b" },
+                ])}
               >
                 Play As {Board.colorToString("b")}
               </UI.Button>
 
             ) : (
-              <ViewInputUserPlayerSlot
-                color="b"
-                userId={model.sharedModel.b}
-                currentUserId={currentUserId}
-                dispatch={dispatch}
-                store={store}
-              />
+              <ViewInputUserPlayerSlot color="b" userId={model.sharedModel.b} ctx={ctx} dispatch={dispatch} />
             )}
           </UI.Box>
 
@@ -513,7 +498,7 @@ export const View = ({
                     onClick={() =>
                       dispatch([
                         "InputClock",
-                        { clockPreset, userId: currentUserId },
+                        { clockPreset, userId: ctx.currentUserId },
                       ])
                     }
                   >
@@ -539,7 +524,7 @@ export const View = ({
             fullWidth
             variant="contained"
             onClick={() => {
-              dispatch(["StartGame", { userId: currentUserId }])
+              dispatch(["StartGame", { userId: ctx.currentUserId }])
             }}
           >
             Start Game
@@ -552,11 +537,11 @@ export const View = ({
   const { w, b, board, clock } = model.sharedModel
 
   const currentUserColor: Board.Color | "None" | "Both" =
-    currentUserId === w && currentUserId === b
+    ctx.currentUserId === w && ctx.currentUserId === b
       ? "Both"
-      : currentUserId === w
+      : ctx.currentUserId === w
         ? "w"
-        : currentUserId === b
+        : ctx.currentUserId === b
           ? "b"
           : "None"
 
@@ -570,15 +555,15 @@ export const View = ({
   const turn = Board.toTurn(board)
 
   const whiteSlot: ViewUserPlayerSlotProps = {
-    src: store.profiles[w]?.avatarUrl,
-    username: store.profiles[w]?.username ?? "...",
+    src: ctx.profiles[w]?.avatarUrl,
+    username: ctx.profiles[w]?.username ?? "...",
     isActive: turn === "w" && model.sharedModel.type === "Game",
     seconds: Clock.toTime("w", clock),
   }
 
   const blackSlot: ViewUserPlayerSlotProps = {
-    src: store.profiles[b]?.avatarUrl,
-    username: store.profiles[b]?.username ?? "...",
+    src: ctx.profiles[b]?.avatarUrl,
+    username: ctx.profiles[b]?.username ?? "...",
     isActive: turn === "b" && model.sharedModel.type === "Game",
     seconds: Clock.toTime("b", clock),
   }
@@ -607,7 +592,7 @@ export const View = ({
           const msg: InputMove = [
             "InputMove",
             {
-              userId: currentUserId,
+              userId: ctx.currentUserId,
               ...moveInput,
             },
           ]
@@ -692,7 +677,7 @@ export const View = ({
                   <UI.DialogActions>
                     <UI.Button
                       onClick={() =>
-                        dispatch(["CancelDraw", { userId: currentUserId }])
+                        dispatch(["CancelDraw", { userId: ctx.currentUserId }])
                       }
                     >
                       Cancel
@@ -792,15 +777,13 @@ const ViewGameOverDialog = ({
 
 const ViewInputUserPlayerSlot = ({
   dispatch,
-  store,
+  ctx,
   userId,
-  currentUserId,
   color,
 }: {
   dispatch: (msg: Msg) => void
-  store: ProfileStore.Model
   userId: UserId
-  currentUserId: UserId
+  ctx: Ctx,
   color: Board.Color
 }) => {
   return (
@@ -808,17 +791,17 @@ const ViewInputUserPlayerSlot = ({
     <UI.Box sx={{ width: "100%", flex: 1, overflow: "hidden", display: "flex", alignItems: "center", }}>
       <UI.Avatar
         sx={{ marginRight: 1 }}
-        src={store.profiles[userId]?.avatarUrl}
+        src={ctx.profiles[userId]?.avatarUrl}
       />
 
       <UI.Typography
         sx={{ flex: 1 }}
         noWrap
       >
-        {store.profiles[userId]?.username ?? "..."}
+        {ctx.profiles[userId]?.username ?? "..."}
       </UI.Typography>
 
-      {userId === currentUserId && (
+      {userId === ctx.currentUserId && (
         <UI.Button
           size="large"
           onClick={() =>
