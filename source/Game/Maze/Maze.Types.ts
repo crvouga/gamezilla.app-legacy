@@ -29,7 +29,11 @@ export type SetupModel =
 
 type ColorMap = { [color in Color]?: UserId }
 
-type Player = { userId: UserId; position: Position }
+type Player = {
+  userId: UserId;
+  position: Position
+  direction: Direction | "None"
+}
 
 type Color = "Red" | "Blue" | "Green" | "Purple"
 
@@ -132,7 +136,8 @@ export const handle = (msg: Req, model: SharedModel): Result<Problem, SharedMode
             ...byId,
             [userId]: {
               userId,
-              position: { x: 0, y: 0 }
+              position: { x: 0, y: 0 },
+              direction: "None"
             }
           }),
             {}

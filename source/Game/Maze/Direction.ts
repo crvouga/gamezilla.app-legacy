@@ -2,6 +2,8 @@ import { Position } from "./Position"
 
 export type Direction = "North" | "South" | "East" | "West"
 
+const all: Direction[] = ['East', 'North', 'South', 'West']
+
 const toVector = (direction: Direction): Position => {
     switch (direction) {
         case 'East': {
@@ -20,5 +22,6 @@ const toVector = (direction: Direction): Position => {
 }
 
 export const Direction = {
-    toVector
+    toVector,
+    all
 }
