@@ -1,6 +1,8 @@
 import { Result, Set } from "../../Core"
 import { Err, Ok } from "../../Core/Result"
 import { UserId } from "../../Data"
+import { Direction } from "./Direction"
+import { Position } from "./Position"
 
 //
 //
@@ -29,14 +31,10 @@ type ColorMap = { [color in Color]?: UserId }
 
 type Player = { userId: UserId; position: Position }
 
-type Position = { x: number, y: number }
-
 type Color = "Red" | "Blue" | "Green" | "Purple"
 
 
 // const colorSequence: Color[] = ['Red', 'Blue', "Green", "Purple"]
-
-
 
 export type FrontendModel = SharedModel
 
@@ -78,11 +76,15 @@ export type Req =
   | ['StartGame', { userId: UserId }]
   | ['InputMove', { userId: UserId, direction: Direction }]
 
-export type Direction = "North" | "South" | "East" | "West"
-
 export type Res = [...Req, Result<Problem, SharedModel>]
 
-type Problem = "must_be_setup" | "already_playing" | "must_have_at_least_one_player" | "must_be_playing" | "must_be_game" | "out_of_bounds"
+type Problem =
+  | "must_be_setup"
+  | "already_playing"
+  | "must_have_at_least_one_player"
+  | "must_be_playing"
+  | "must_be_game"
+  | "out_of_bounds"
 
 export const handle = (msg: Req, model: SharedModel): Result<Problem, SharedModel> => {
   switch (msg[0]) {
@@ -158,8 +160,8 @@ export const handle = (msg: Req, model: SharedModel): Result<Problem, SharedMode
         return Err("must_be_playing")
       }
 
-      const positionNew = add(
-        directionToVector(msg[1].direction),
+      const positionNew = Position.add(
+        Direction.toVector(msg[1].direction),
         player.position,
       )
 
@@ -189,26 +191,6 @@ export const handle = (msg: Req, model: SharedModel): Result<Problem, SharedMode
   }
 }
 
-
-const add = (a: Position, b: Position): Position => ({ x: a.x + b.x, y: a.y + b.y })
-
-const directionToVector = (direction: Direction): Position => {
-  switch (direction) {
-    case 'East': {
-      return { x: 1, y: 0, }
-    }
-    case 'West': {
-      return { x: -1, y: 0, }
-    }
-    case 'North': {
-      return { x: 0, y: -1, }
-    }
-    case 'South': {
-      return { x: 0, y: 1, }
-    }
-  }
-}
-
 //
 //
 //
@@ -216,6 +198,8 @@ const directionToVector = (direction: Direction): Position => {
 //
 //
 //
+
+
 
 export const initMaze = ({
   columnCount,
