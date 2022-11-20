@@ -1,6 +1,5 @@
 import { useLayoutEffect, useRef } from "react"
 import { Cmd, exhaustive, Keyboard, Option, Result, Sub } from "../../Core"
-import { UserId } from "../../Data"
 import * as Route from "../../Route"
 import * as Snackbar from "../../Snackbar"
 import * as UI from "../../UI"
@@ -50,10 +49,10 @@ export type OutAction = Snackbar.Action
 export const update = (
   {
     sendToBackend,
-    currentUserId,
+    ctx,
   }: {
     sendToBackend: (msg: ToBackend) => Cmd
-    currentUserId: UserId
+    ctx: Ctx
   },
   msg: Msg,
   _model: Model,
@@ -69,7 +68,7 @@ export const update = (
         return [model, Cmd.None]
       }
 
-      if (model.gameStatus.player[1] !== currentUserId) {
+      if (model.gameStatus.player[1] !== ctx.currentUserId) {
         return [model, Cmd.None]
       }
 
@@ -79,13 +78,13 @@ export const update = (
         direction.type === "Some"
           ? sendToBackend([
             "InputDirection",
-            { userId: currentUserId, direction: direction.value },
+            { userId: ctx.currentUserId, direction: direction.value },
           ])
           : Cmd.None
 
       const toggleStatusCmd =
         msg[1] === "Space"
-          ? sendToBackend(["ToggleStatus", { userId: currentUserId }])
+          ? sendToBackend(["ToggleStatus", { userId: ctx.currentUserId }])
           : Cmd.None
 
       return [model, Cmd.batch([changeDirectionCmd, toggleStatusCmd])]
