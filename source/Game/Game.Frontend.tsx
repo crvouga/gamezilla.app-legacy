@@ -79,10 +79,10 @@ export type OutAction = Snackbar.Action | ProfileStore.Action
 
 export const update = (
   {
-    currentUserId,
+    ctx,
     sendToBackend,
   }: {
-    currentUserId: UserId
+    ctx: Ctx,
     sendToBackend: (msg: ToBackend) => Cmd
   },
   msg: Msg,
@@ -92,7 +92,7 @@ export const update = (
 
     case 'Maze': {
       if (msg[0] === "Maze") {
-        const [child, cmd] = Maze.update({ sendToBackend: m => sendToBackend(['Maze', m]) }, msg[1], model[1])
+        const [child, cmd] = Maze.update({ ctx, sendToBackend: m => sendToBackend(['Maze', m]) }, msg[1], model[1])
 
         return [['Maze', child], Cmd.tag('Maze', cmd)]
       }
@@ -129,7 +129,7 @@ export const update = (
           "Snake",
           Snake.update(
             {
-              currentUserId,
+              ctx,
               sendToBackend: (msg) => sendToBackend(["Snake", msg]),
             },
             msg[1],

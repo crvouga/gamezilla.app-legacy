@@ -183,7 +183,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
 
       const [child, childCmd] = GameRoom.update(
         {
-          currentUserId: profile.userId,
+          ctx: { currentUserId: profile.userId, profiles: model.profileStore.profiles },
           sendToBackend: (msg) => sendToBackend(["GameRoom", msg]),
         },
         msg[1],
@@ -405,11 +405,9 @@ const runAction = (action: OutAction, model: Model): [Model, Cmd<Msg>] => {
         return [model, Cmd.None]
       }
 
-      const currentUserId = model.auth[1].userId
-
       const [gameRoom, gameRoomCmd] = GameRoom.runAction(
         {
-          currentUserId,
+          ctx: { currentUserId: model.auth[1].userId, profiles: model.profileStore.profiles },
           sendToBackend: (msg) => sendToBackend(["GameRoom", msg]),
         },
         action,

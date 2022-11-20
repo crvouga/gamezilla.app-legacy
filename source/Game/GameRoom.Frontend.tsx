@@ -63,10 +63,10 @@ type OutAction = Snackbar.Action | ProfileStore.Action | Route.Action
 
 export const update = (
   {
-    currentUserId,
+    ctx,
     sendToBackend,
   }: {
-    currentUserId: UserId
+    ctx: Ctx
     sendToBackend: (msg: ToBackend) => Cmd
   },
   msg: Msg,
@@ -114,7 +114,7 @@ export const update = (
     }
 
     case "Games": {
-      const user = model.users[currentUserId]
+      const user = model.users[ctx.currentUserId]
 
       if (!user) {
         return [model, Cmd.None]
@@ -136,7 +136,7 @@ export const update = (
 
       const [gameNew, gameCmd] = Game.update(
         {
-          currentUserId,
+          ctx,
           sendToBackend: (msg) => sendToBackend(["Games", roomId, msg]),
         },
         gameMsg,
@@ -469,10 +469,10 @@ const mergeWithBackendModel = ({
 
 export const runAction = (
   {
-    currentUserId,
+    ctx,
     sendToBackend,
   }: {
-    currentUserId: UserId
+    ctx: Ctx
     sendToBackend: (msg: ToBackend) => Cmd
   },
   action: Action,
@@ -481,7 +481,7 @@ export const runAction = (
   switch (action[1][0]) {
     case "Msg": {
       const msg = action[1][1]
-      return update({ sendToBackend, currentUserId }, msg, model)
+      return update({ sendToBackend, ctx }, msg, model)
     }
   }
 }

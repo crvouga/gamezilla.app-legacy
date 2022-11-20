@@ -1,8 +1,7 @@
-import { Result, Set } from "../../Core"
+import { Keyboard, Result, Set as CoreSet, shuffle } from "../../Core"
 import { Err, Ok } from "../../Core/Result"
 import { UserId } from "../../Data"
-import { Direction } from "./Direction"
-import { Position } from "./Position"
+import { Direction, Bounds, Position } from "./Position"
 
 //
 //
@@ -17,7 +16,7 @@ export type SharedModel = SetupModel
 export type SetupModel =
   | {
     type: "Setup"
-    players: Set<UserId>,
+    players: CoreSet<UserId>,
     colors: ColorMap
   }
   | {
@@ -47,11 +46,10 @@ export type BackendModel = SharedModel
 export type Maze = Cell[][]
 
 export type Cell = {
-  hasTop: boolean
-  hasLeft: boolean
+  hasNorth: boolean
+  hasWest: boolean
 }
 
-export const generateMaze = () => { }
 
 // 
 // 
@@ -61,7 +59,7 @@ export const generateMaze = () => { }
 // 
 // 
 
-export type FrontendMsg = Req
+export type FrontendMsg = Req | ['KeyDown', Keyboard.Key]
 
 export type BackendMsg = ['None']
 
@@ -89,6 +87,7 @@ type Problem =
   | "must_be_playing"
   | "must_be_game"
   | "out_of_bounds"
+  | "hit_wall"
 
 export const handle = (msg: Req, model: SharedModel): Result<Problem, SharedModel> => {
   switch (msg[0]) {
@@ -97,13 +96,13 @@ export const handle = (msg: Req, model: SharedModel): Result<Problem, SharedMode
         return Err("must_be_setup")
       }
 
-      if (Set.isMember(msg[1].userId, model.players)) {
+      if (CoreSet.isMember(msg[1].userId, model.players)) {
         return Err("already_playing")
       }
 
       const modelNew: SharedModel = {
         ...model,
-        players: Set.add(msg[1].userId, model.players)
+        players: CoreSet.add(msg[1].userId, model.players)
       }
       return Ok(modelNew)
     }
@@ -115,7 +114,7 @@ export const handle = (msg: Req, model: SharedModel): Result<Problem, SharedMode
 
       const modelNew: SharedModel = {
         ...model,
-        players: Set.remove(msg[1].userId, model.players)
+        players: CoreSet.remove(msg[1].userId, model.players)
       }
 
       return Ok(modelNew)
@@ -131,7 +130,7 @@ export const handle = (msg: Req, model: SharedModel): Result<Problem, SharedMode
       }
 
       const playersNew: { [userId: UserId]: Player } =
-        Set.toArray(model.players)
+        CoreSet.toArray(model.players)
           .reduce<{ [userId: UserId]: Player }>((byId, userId) => ({
             ...byId,
             [userId]: {
@@ -146,7 +145,7 @@ export const handle = (msg: Req, model: SharedModel): Result<Problem, SharedMode
       const modelNew: SharedModel = {
         type: "Game",
         colors: model.colors,
-        maze: initMaze({ columnCount: 10, rowCount: 10 }),
+        maze: getRandomMaze({ columnCount: 15, rowCount: 15 }),
         players: playersNew
 
       }
@@ -170,11 +169,22 @@ export const handle = (msg: Req, model: SharedModel): Result<Problem, SharedMode
         player.position,
       )
 
-      const isInbounds =
-        0 <= positionNew.x && positionNew.x < model.maze.length &&
-        0 <= positionNew.y && positionNew.y < (model.maze?.[0]?.length ?? 0)
+      if (!canMoveTo({ maze: model.maze, from: player.position, to: positionNew })) {
+        return Err("hit_wall")
+      }
 
-      if (!isInbounds) {
+      const inbounds =
+        Position.isBetweenInclusive(
+          {
+            lower: { x: 0, y: 0 },
+            upper: { x: model.maze.length - 1, y: model.maze?.[0]?.length ?? 0 }
+          },
+          positionNew
+        )
+
+
+      if (!inbounds) {
+
         return Err("out_of_bounds")
       }
 
@@ -196,6 +206,18 @@ export const handle = (msg: Req, model: SharedModel): Result<Problem, SharedMode
   }
 }
 
+
+const canMoveTo = ({ maze, from, to }: { from: Position, to: Position, maze: Maze }): boolean => {
+  const fromCell = maze?.[from.x]?.[from.y] ?? null
+  const toCell = maze?.[to.x]?.[to.y] ?? null
+  const direction = Position.toDirection({ from, to })
+
+  return ((direction === 'East' && !toCell?.hasWest) ||
+    (direction === 'North' && !fromCell?.hasNorth) ||
+    (direction === 'South' && !toCell?.hasNorth) ||
+    (direction === 'West' && !fromCell?.hasWest))
+}
+
 //
 //
 //
@@ -204,6 +226,89 @@ export const handle = (msg: Req, model: SharedModel): Result<Problem, SharedMode
 //
 //
 
+
+export const getRandomMaze = ({ rowCount, columnCount }: { rowCount: number, columnCount: number }) => {
+  const maze: Cell[][] = []
+
+  for (let columnIndex = 0; columnIndex < columnCount; columnIndex++) {
+    const column: Cell[] = []
+    for (let rowIndex = 0; rowIndex < rowCount; rowIndex++) {
+      column.push({ hasWest: true, hasNorth: true })
+    }
+    maze.push(column)
+  }
+
+  const boundsInclusive: Bounds = {
+    lower: { x: 0, y: 0 },
+    upper: { x: rowCount - 1, y: columnCount - 1 }
+  }
+
+  const initial: Position = { x: 0, y: 0 }
+  const stack: Position[] = [initial]
+  const visited = new Set<string>()
+  visited.add(Position.toKey(initial))
+
+  while (true) {
+    const current = stack.pop()
+
+    if (!current) {
+      break
+    }
+
+    // 
+    //
+    // 
+
+    let unvisitedNeighbor: { position: Position, direction: Direction } | null = null
+
+    for (const direction of shuffle(Direction.all)) {
+      const neighbor = Position.add(Direction.toVector(direction), current)
+
+      if (!Position.isBetweenInclusive(boundsInclusive, neighbor)) {
+        continue
+      }
+
+      if (visited.has(Position.toKey(neighbor))) {
+        continue
+      }
+
+      unvisitedNeighbor = { position: neighbor, direction }
+      break
+    }
+
+
+    if (!unvisitedNeighbor) {
+      continue
+    }
+
+    stack.push(current)
+    stack.push(unvisitedNeighbor.position)
+    visited.add(Position.toKey(unvisitedNeighbor.position))
+
+    // 
+    // break down walls
+    // 
+    switch (unvisitedNeighbor.direction) {
+      case 'East':
+        maze[unvisitedNeighbor.position.x]![unvisitedNeighbor.position.y]!.hasWest = false
+        break
+
+      case 'North':
+        maze[current.x]![current.y]!.hasNorth = false
+        break
+
+      case 'South':
+        maze[unvisitedNeighbor.position.x]![unvisitedNeighbor.position.y]!.hasNorth = false
+        break
+
+      case 'West':
+        maze[current.x]![current.y]!.hasWest = false
+        break
+    }
+  }
+
+  return maze
+}
 
 
 export const initMaze = ({
@@ -219,7 +324,7 @@ export const initMaze = ({
     const column: Cell[] = []
 
     for (let rowIndex = 0; rowIndex < rowCount; rowIndex++) {
-      column.push({ hasLeft: true, hasTop: true })
+      column.push({ hasWest: true, hasNorth: true })
     }
 
     maze.push(column)

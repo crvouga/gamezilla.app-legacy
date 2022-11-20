@@ -1,9 +1,8 @@
-import { Cmd, Set, Sub } from "../../Core";
+import { Cmd, Keyboard, Set, Sub } from "../../Core";
 import { Avatar, Box, Button, FillBox, Typography } from "../../UI";
 import { Ctx } from "../Game.Shared";
-import { Direction } from "./Direction";
 import { BackendModel, FrontendModel, FrontendMsg, handle, initMaze, initShared, ToBackend, ToFrontend } from "./Maze.Types";
-import { Position } from "./Position";
+import { Direction, Position } from "./Position";
 
 //
 //
@@ -27,8 +26,28 @@ export const init: FrontendModel = initShared
 
 export type Msg = FrontendMsg
 
-export const update = ({ sendToBackend }: { sendToBackend: (m: ToBackend) => Cmd }, msg: Msg, model: Model): [Model, Cmd<Msg>] => {
+export const update = ({ ctx, sendToBackend }: { ctx: Ctx, sendToBackend: (m: ToBackend) => Cmd }, msg: Msg, model: Model): [Model, Cmd<Msg>] => {
     switch (msg[0]) {
+
+        // 
+        //
+        //
+
+        case 'KeyDown': {
+
+            const direction = keyToDirection(msg[1])
+
+            if (!direction) {
+                return [model, Cmd.None]
+            }
+
+            return [model, sendToBackend(['InputMove', { userId: ctx.currentUserId, direction }])]
+        }
+
+        // 
+        //
+        // 
+
         case 'InputMove':
         case 'StartGame':
         case 'StopPlaying':
@@ -56,6 +75,34 @@ export const mergeWithBackend = ({ backendModel }: { frontendModel: FrontendMode
     return backendModel
 }
 
+
+const keyToDirection = (key: Keyboard.Key): Direction | null => {
+    switch (key) {
+        case 'A':
+        case 'a':
+        case 'ArrowLeft':
+            return "West"
+
+        case 'W':
+        case 'w':
+        case 'ArrowUp':
+            return "North"
+
+        case 's':
+        case 'S':
+        case 'ArrowDown':
+            return "South"
+
+        case 'd':
+        case 'D':
+        case 'ArrowRight':
+            return "East"
+
+        default:
+            return null
+    }
+}
+
 // 
 // 
 // 
@@ -64,8 +111,10 @@ export const mergeWithBackend = ({ backendModel }: { frontendModel: FrontendMode
 // 
 // 
 
+
+
 export const subscriptions = (_model: Model): Sub<Msg> => {
-    return Sub.None
+    return Keyboard.keyDowns(key => ['KeyDown', key])
 }
 
 //
@@ -130,11 +179,19 @@ export const View = ({ model, ctx, $d }: { ctx: Ctx, model: Model, $d: (msg: Msg
     const strokeWidth = 0.033
     return <Box>
         <svg style={{ maxWidth: "400px", margin: "auto" }} width="100%" viewBox={viewBox}>
-            {model.maze.map((column, x) => column.map((_cell, y) => (
-                <rect key={`${x}-${y}`} x={x} y={y} width={1} height={1} strokeWidth="0.04" stroke="#565656" />
+            <rect x={0} y={0} width="100%" height="100%" fill="black" />
+            {model.maze.map((column, x) => column.map((cell, y) => (
+                <g key={`${x}-${y}`} strokeWidth="0.1" stroke="#787878">
+                    {cell.hasNorth && (
+                        <line x1={x} y1={y} x2={x + 1} y2={y} />
+                    )}
+                    {cell.hasWest && (
+                        <line x1={x} y1={y} x2={x} y2={y + 1} />
+                    )}
+                </g>
             )))}
             {Object.values(model.players).map(player => (
-                <circle key={player.userId} cx={player.position.x + 1 / 2} cy={player.position.y + 1 / 2} r={1 / 2} fill="#fff" />
+                <circle key={player.userId} cx={player.position.x + 1 / 2} cy={player.position.y + 1 / 2} r={1 / 3} fill="#fff" />
             ))}
         </svg>
         <Box sx={{
