@@ -1,7 +1,9 @@
 import { Cmd, Set, Sub } from "../../Core";
 import { Avatar, Box, Button, FillBox, Typography } from "../../UI";
 import { Ctx } from "../Game.Shared";
+import { Direction } from "./Direction";
 import { BackendModel, FrontendModel, FrontendMsg, handle, initMaze, initShared, ToBackend, ToFrontend } from "./Maze.Types";
+import { Position } from "./Position";
 
 //
 //
@@ -126,8 +128,8 @@ export const View = ({ model, ctx, $d }: { ctx: Ctx, model: Model, $d: (msg: Msg
     const viewBox = [0, 0, model.maze.length, model.maze[0]?.length ?? 0].join(" ")
     const stroke = "#565656"
     const strokeWidth = 0.033
-    return <FillBox>
-        <svg width="100%" viewBox={viewBox}>
+    return <Box>
+        <svg style={{ maxWidth: "400px", margin: "auto" }} width="100%" viewBox={viewBox}>
             {model.maze.map((column, x) => column.map((_cell, y) => (
                 <rect key={`${x}-${y}`} x={x} y={y} width={1} height={1} strokeWidth="0.04" stroke="#565656" />
             )))}
@@ -142,7 +144,7 @@ export const View = ({ model, ctx, $d }: { ctx: Ctx, model: Model, $d: (msg: Msg
             transformOrigin: "center",
             transformBox: "fill-box"
         }}>
-            <svg width="100%" viewBox="-1 -1 2 2" style={{ overflow: "hidden" }} >
+            <svg width="100%" viewBox="-1 -1 2 2" style={{ overflow: "hidden", userSelect: "none", touchAction: "none" }} >
                 <defs>
                     <clipPath id="cut-off-bottom">
                         <circle x="0" y="0" r={1} />
@@ -151,15 +153,37 @@ export const View = ({ model, ctx, $d }: { ctx: Ctx, model: Model, $d: (msg: Msg
                 <circle x="0" y="0" r={1} stroke={stroke} strokeWidth={0.025} />
 
                 <g clipPath="url(#cut-off-bottom)" stroke={stroke} strokeWidth={strokeWidth} >
-                    <rect x={-1} y={-1} width={1} height={1} onClick={() => $d(['InputMove', { userId: ctx.currentUserId, direction: "North" }])} ></rect>
-
-                    <rect x={0} y={-1} width={1} height={1} onClick={() => $d(['InputMove', { userId: ctx.currentUserId, direction: "East" }])}></rect>
-                    <rect x={0} y={0} width={1} height={1} onClick={() => $d(['InputMove', { userId: ctx.currentUserId, direction: "South" }])}></rect>
-                    <rect x={-1} y={0} width={1} height={1} onClick={() => $d(['InputMove', { userId: ctx.currentUserId, direction: "West" }])}></rect>
+                    {Direction.all.map(direction => {
+                        const { x, y } = directionToPosition(direction)
+                        return (
+                            <rect
+                                key={direction}
+                                x={x}
+                                y={y}
+                                width={1}
+                                height={1}
+                                // 
+                                onTouchStart={() => $d(['InputMove', { userId: ctx.currentUserId, direction }])}
+                                // onTouchMove={() => $d(['InputMove', { userId: ctx.currentUserId, direction }])}
+                                // 
+                                onMouseDown={() => $d(['InputMove', { userId: ctx.currentUserId, direction }])}
+                            // onMouseOver={() => $d(['InputMove', { userId: ctx.currentUserId, direction }])}
+                            />
+                        )
+                    })}
                 </g>
             </svg>
         </Box>
-    </FillBox >
+    </Box>
+}
+
+const directionToPosition = (direction: Direction): Position => {
+    switch (direction) {
+        case 'East': return { x: 0, y: -1 }
+        case 'North': return { x: -1, y: -1 }
+        case 'South': return { x: 0, y: 0 }
+        case 'West': return { x: -1, y: 0 }
+    }
 }
 
 export const CoverArt = () => {
