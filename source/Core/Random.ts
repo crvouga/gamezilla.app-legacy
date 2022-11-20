@@ -26,28 +26,31 @@ export function cyrb128(str: string) {
     return [(h1 ^ h2 ^ h3 ^ h4) >>> 0, (h2 ^ h1) >>> 0, (h3 ^ h1) >>> 0, (h4 ^ h1) >>> 0];
 }
 
-// export const seededRandom = ({ rng = null, seed = "apples" } = {}) => {
-//     rng = rng || mulberry32(cyrb128(seed)[0]!);
 
-//     const rnd = (lo: number, hi: number, defaultHi = 1) => {
-//         if (hi === undefined) {
-//             hi = lo === undefined ? defaultHi : lo;
-//             lo = 0;
-//         }
 
-//         return rng() * (hi - lo) + lo;
-//     };
+export const seededRandom = ({ rng }: { seed: string, rng: () => number }) => {
 
-//     const rndInt = (lo, hi) => Math.floor(rnd(lo, hi, 2));
+    const rnd = (lo: number, hi: number, defaultHi = 1) => {
+        if (hi === undefined) {
+            hi = lo === undefined ? defaultHi : lo;
+            lo = 0;
+        }
 
-//     const shuffle = a => {
-//         for (let i = a.length - 1; i > 0; i--) {
-//             const j = rndInt(i + 1);
-//             const x = a[i];
-//             a[i] = a[j];
-//             a[j] = x;
-//         }
-//     };
+        return rng() * (hi - lo) + lo;
+    };
 
-//     return { rnd, rndInt, shuffle };
-// };
+    const rndInt = (lo: number, hi: number) => {
+        return Math.floor(rnd(lo, hi, 2))
+    };
+
+    const shuffle = <T>(a: T[]) => {
+        for (let i = a.length - 1; i > 0; i--) {
+            const j = rndInt(i + 1, 2);
+            const temp = a[i];
+            a[i] = a[j]!;
+            a[j] = temp!;
+        }
+    };
+
+    return { rnd, rndInt, shuffle };
+};
