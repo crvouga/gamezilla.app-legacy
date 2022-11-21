@@ -1,7 +1,8 @@
 import { Cmd, Keyboard, Set, Sub } from "../../Core";
 import { Avatar, Box, Button, FillBox, Typography } from "../../UI";
 import { Ctx } from "../Game.Shared";
-import { BackendModel, FrontendModel, FrontendMsg, handle, initMaze, initShared, ToBackend, ToFrontend, toMaze } from "./Maze.Types";
+import { Maze } from "./Maze";
+import { BackendModel, FrontendModel, FrontendMsg, handle, initShared, ToBackend, ToFrontend } from "./Maze.Types";
 import { Direction, Position } from "./Position";
 
 //
@@ -178,7 +179,7 @@ export const View = ({ model, ctx, $d }: { ctx: Ctx, model: Model, $d: (msg: Msg
     const stroke = "#565656"
     const strokeWidth = 0.033
 
-    const maze = toMaze(model)
+    const maze = Maze.make(model)
 
     return <Box sx={{ flex: 1 }}>
         <svg style={{ maxWidth: "400px", margin: "auto" }} width="100%" viewBox={viewBox}>
@@ -252,21 +253,24 @@ const directionToPosition = (direction: Direction): Position => {
     }
 }
 
+
 export const CoverArt = () => {
+    const inclusiveUpperBound = { x: 8, y: 8 }
+    const maze = Maze.make({ seed: "cover art maze!", inclusiveUpperBound })
+    const viewBox = [0, 0, inclusiveUpperBound.x + 1, inclusiveUpperBound.y + 1].join(" ")
     return (
-        <svg viewBox={[0, 0, 4, 4].join(", ")} width={"100%"} height={"100%"}>
-            {initMaze({ rowCount: 4, columnCount: 4 }).map((column, columnIndex) => column.map((_cell, rowIndex) => (
-                <rect
-                    key={[columnIndex, rowIndex].join(", ")}
-                    x={columnIndex}
-                    y={rowIndex}
-                    width={1}
-                    height={1}
-                    fill="#121212"
-                    stroke="#898989"
-                    strokeWidth={0.1}
-                />
+        <svg viewBox={viewBox} width={"100%"} height={"100%"}>
+            {maze.map((vertical, x) => vertical.map((cell, y) => (
+                <g key={`${x}-${y}`} strokeWidth="0.1" stroke="#787878">
+                    {cell.hasNorth && (
+                        <line x1={x} y1={y} x2={x + 1} y2={y} />
+                    )}
+                    {cell.hasWest && (
+                        <line x1={x} y1={y} x2={x} y2={y + 1} />
+                    )}
+                </g>
             )))}
+            <rect x={0} y={0} width="100%" height="100%" fill="transparent" stroke="#787878" strokeWidth={0.25} />
         </svg>
     )
 }

@@ -1,7 +1,8 @@
-import { Keyboard, memoize, Random, Result, Set as CoreSet } from "../../Core"
+import { Keyboard, Result, Set } from "../../Core"
 import { Err, Ok } from "../../Core/Result"
 import { UserId } from "../../Data"
-import { Bounds, Direction, Position } from "./Position"
+import { Maze } from "./Maze"
+import { Direction, Position } from "./Position"
 
 //
 //
@@ -16,7 +17,7 @@ export type SharedModel = SetupModel
 export type SetupModel =
   | {
     type: "Setup"
-    players: CoreSet<UserId>,
+    players: Set<UserId>,
     colors: ColorMap
     seed: string
     inclusiveUpperBound: Position
@@ -46,12 +47,6 @@ export type FrontendModel = SharedModel
 
 export type BackendModel = SharedModel
 
-export type Maze = Cell[][]
-
-export type Cell = {
-  hasNorth: boolean
-  hasWest: boolean
-}
 
 
 // 
@@ -99,13 +94,13 @@ export const handle = (msg: Req, model: SharedModel): Result<Problem, SharedMode
         return Err("must_be_setup")
       }
 
-      if (CoreSet.isMember(msg[1].userId, model.players)) {
+      if (Set.isMember(msg[1].userId, model.players)) {
         return Err("already_playing")
       }
 
       const modelNew: SharedModel = {
         ...model,
-        players: CoreSet.add(msg[1].userId, model.players)
+        players: Set.add(msg[1].userId, model.players)
       }
       return Ok(modelNew)
     }
@@ -117,7 +112,7 @@ export const handle = (msg: Req, model: SharedModel): Result<Problem, SharedMode
 
       const modelNew: SharedModel = {
         ...model,
-        players: CoreSet.remove(msg[1].userId, model.players)
+        players: Set.remove(msg[1].userId, model.players)
       }
 
       return Ok(modelNew)
@@ -133,7 +128,7 @@ export const handle = (msg: Req, model: SharedModel): Result<Problem, SharedMode
       }
 
       const playersNew: { [userId: UserId]: Player } =
-        CoreSet.toArray(model.players)
+        Set.toArray(model.players)
           .reduce<{ [userId: UserId]: Player }>((byId, userId) => ({
             ...byId,
             [userId]: {
@@ -172,7 +167,7 @@ export const handle = (msg: Req, model: SharedModel): Result<Problem, SharedMode
         player.position,
       )
 
-      const maze = toMaze(model)
+      const maze = Maze.make(model)
 
       if (!canMoveTo({ maze: maze, from: player.position, to: positionNew })) {
         return Err("hit_wall")
@@ -236,120 +231,6 @@ const canMoveTo = ({ maze, from, to }: { from: Position, to: Position, maze: Maz
 //
 //
 
-type MazeParams = {
-  seed: string,
-  inclusiveUpperBound: Position
-}
-
-export const encodeParams = ({ seed, inclusiveUpperBound }: MazeParams) => [seed, inclusiveUpperBound.x, inclusiveUpperBound.y].join("-")
-
-export const toMaze = memoize<MazeParams, Maze>(encodeParams, ({ seed, inclusiveUpperBound }) => {
-  const gen = Random.generator(seed)
-
-  const maze: Cell[][] = []
-
-  for (let x = 0; x <= inclusiveUpperBound.x; x++) {
-    const vertical: Cell[] = []
-    for (let y = 0; y <= inclusiveUpperBound.y; y++) {
-      vertical.push({ hasWest: true, hasNorth: true })
-    }
-    maze.push(vertical)
-  }
-
-  const boundsInclusive: Bounds = {
-    lower: { x: 0, y: 0 },
-    upper: inclusiveUpperBound
-  }
-
-  const initial: Position = { x: 0, y: 0 }
-  const stack: Position[] = [initial]
-  const visited = new Set<string>()
-  visited.add(Position.toKey(initial))
-
-  while (true) {
-    const current = stack.pop()
-
-    if (!current) {
-      break
-    }
-
-    // 
-    //
-    // 
-
-    let unvisitedNeighbor: { position: Position, direction: Direction } | null = null
-
-    for (const direction of Random.shuffle(gen, Direction.all)) {
-      const neighbor = Position.add(Direction.toVector(direction), current)
-
-      if (!Position.inclusiveContains(boundsInclusive, neighbor)) {
-        continue
-      }
-
-      if (visited.has(Position.toKey(neighbor))) {
-        continue
-      }
-
-      unvisitedNeighbor = { position: neighbor, direction }
-      break
-    }
-
-
-    if (!unvisitedNeighbor) {
-      continue
-    }
-
-    stack.push(current)
-    stack.push(unvisitedNeighbor.position)
-    visited.add(Position.toKey(unvisitedNeighbor.position))
-
-    // 
-    // break down walls
-    // 
-    switch (unvisitedNeighbor.direction) {
-      case 'East':
-        maze[unvisitedNeighbor.position.x]![unvisitedNeighbor.position.y]!.hasWest = false
-        break
-
-      case 'North':
-        maze[current.x]![current.y]!.hasNorth = false
-        break
-
-      case 'South':
-        maze[unvisitedNeighbor.position.x]![unvisitedNeighbor.position.y]!.hasNorth = false
-        break
-
-      case 'West':
-        maze[current.x]![current.y]!.hasWest = false
-        break
-    }
-  }
-
-  return maze
-})
-
-
-export const initMaze = ({
-  columnCount,
-  rowCount,
-}: {
-  columnCount: number
-  rowCount: number
-}): Maze => {
-  const maze: Cell[][] = []
-
-  for (let columnIndex = 0; columnIndex < columnCount; columnIndex++) {
-    const column: Cell[] = []
-
-    for (let rowIndex = 0; rowIndex < rowCount; rowIndex++) {
-      column.push({ hasWest: true, hasNorth: true })
-    }
-
-    maze.push(column)
-  }
-
-  return maze
-}
 
 export const initShared: SharedModel = {
   type: "Setup",
