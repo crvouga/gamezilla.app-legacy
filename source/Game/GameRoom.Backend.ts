@@ -6,6 +6,7 @@ import {
   BackendMsg,
   BackendRoom,
   handle,
+  Req,
   Res,
   ToBackend,
   ToFrontend
@@ -90,16 +91,14 @@ export const update = (
   }
 }
 
+type Wire = {
+  sendToClient: (msg: ToFrontend) => Cmd
+  sendToUser: (userId: UserId[], msg: ToFrontend) => Cmd
+  broadcast: (msg: ToFrontend) => Cmd
+}
+
 export const updateFromFrontend = (
-  {
-    sendToClient,
-    sendToUser,
-    broadcast,
-  }: {
-    sendToClient: (msg: ToFrontend) => Cmd
-    sendToUser: (userId: UserId[], msg: ToFrontend) => Cmd
-    broadcast: (msg: ToFrontend) => Cmd
-  },
+  wire: Wire,
   msg: ToBackend,
   model: Model,
 ): [Model, Cmd<BackendMsg>] => {
@@ -118,8 +117,8 @@ export const updateFromFrontend = (
       const [gameNew, gameCmd] = Game.updateFromFrontend(
         {
           hostId: room.hostId,
-          sendToClient: (msg) => sendToClient(["Games", roomId, msg]),
-          broadcast: (msg) => sendToRoom({ sendToUser, model, roomId, msg: ["Games", roomId, msg] }),
+          sendToClient: (msg) => wire.sendToClient(["Games", roomId, msg]),
+          broadcast: (msg) => sendToRoom({ sendToUser: wire.sendToUser, model, roomId, msg: ["Games", roomId, msg] }),
         },
         gameMsg,
         room.game,
@@ -152,60 +151,21 @@ export const updateFromFrontend = (
     case 'RoomJoin':
     case 'RoomDestroy':
     case "RoomCreate": {
-      const res: Res = [...msg, handle(msg, model)]
-
-      if (res[2].type === "Err") {
-        return [model, sendToClient(res)]
-      }
-
-      return [res[2].value, broadcast(res)]
+      return updateRequest(wire, msg, model)
     }
 
     case "RoomLeave": {
-      const res: Res = [...msg, handle(msg, model)]
+      return updateRoomLeave(wire, msg, model)
+    }
 
-      if (res[2].type === "Err") {
-        return [model, sendToClient(res)]
-      }
-
-      const modelAfter = res[2].value
-
-      const user = model.users[msg[1].userId]
-
-      if (!user) {
-        return [res[2].value, broadcast(res)]
-      }
-
-      const room = model.rooms[user.roomId]
-
-      if (!room) {
-        return [res[2].value, broadcast(res)]
-      }
-
-      const [gameNew, cmd] = Game.updateRoomLeave(
-        { broadcast: msg => sendToRoom({ sendToUser, model: modelAfter, roomId: room.roomId, msg: ['Games', room.roomId, msg] }) },
-        user.userId,
-        room.game
-      )
-
-      const roomNew: BackendRoom = {
-        ...room,
-        game: gameNew
-      }
-
-      const modelNew: Model = {
-        ...res[2].value,
-        rooms: {
-          ...res[2].value.rooms,
-          [roomNew.roomId]: roomNew
-        }
-      }
-
+    case 'RoomLeaveThenJoin': {
+      const roomLeft = updateRoomLeave(wire, ['RoomLeave', { userId: msg[1].userId }], model)
+      const roomJoined = updateRequest(wire, ['RoomJoin', { roomId: msg[1].roomId, userId: msg[1].userId }], roomLeft[0])
       return [
-        modelNew,
+        roomJoined[0],
         Cmd.batch([
-          broadcast(res),
-          p(cmd, Cmd.map((msg): Msg => ['Games', room.roomId, msg]))
+          roomLeft[1],
+          roomJoined[1]
         ])
       ]
     }
@@ -213,6 +173,72 @@ export const updateFromFrontend = (
     default:
       return exhaustive(msg[0])
   }
+}
+
+const updateRequest = (wire: Wire, msg: Req, model: Model): [Model, Cmd<Msg>] => {
+  const res: Res = [...msg, handle(msg, model)]
+
+  if (res[2].type === "Err") {
+    return [model, wire.sendToClient(res)]
+  }
+
+  return [res[2].value, wire.broadcast(res)]
+}
+
+
+
+const updateRoomLeave = (wire: Wire, msg: ToBackend, model: Model): [Model, Cmd<Msg>] => {
+
+  if (msg[0] !== 'RoomLeave') {
+    return [model, Cmd.None]
+  }
+
+  const res: Res = [...msg, handle(msg, model)]
+
+  if (res[2].type === "Err") {
+    return [model, wire.sendToClient(res)]
+  }
+
+  const modelAfter = res[2].value
+
+  const user = model.users[msg[1].userId]
+
+  if (!user) {
+    return [res[2].value, wire.broadcast(res)]
+  }
+
+  const room = model.rooms[user.roomId]
+
+  if (!room) {
+    return [res[2].value, wire.broadcast(res)]
+  }
+
+  const [gameNew, cmd] = Game.updateRoomLeave(
+    { broadcast: msg => sendToRoom({ sendToUser: wire.sendToUser, model: modelAfter, roomId: room.roomId, msg: ['Games', room.roomId, msg] }) },
+    user.userId,
+    room.game
+  )
+
+  const roomNew: BackendRoom = {
+    ...room,
+    game: gameNew
+  }
+
+  const modelNew: Model = {
+    ...res[2].value,
+    rooms: {
+      ...res[2].value.rooms,
+      [roomNew.roomId]: roomNew
+    }
+  }
+
+  return [
+    modelNew,
+    Cmd.batch([
+      wire.broadcast(res),
+      p(cmd, Cmd.map((msg): Msg => ['Games', room.roomId, msg]))
+    ])
+  ]
 }
 
 const sendToRoom = ({

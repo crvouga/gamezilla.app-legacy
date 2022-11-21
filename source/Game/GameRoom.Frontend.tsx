@@ -4,7 +4,7 @@ import * as ProfileStore from "../Profile/Profile.Store"
 import * as Route from "../Route"
 import * as Snackbar from "../Snackbar"
 import * as UI from "../UI"
-import { Button, Divider, Toolbar } from "../UI"
+import { Button, ConformationDialog, Divider, Toolbar } from "../UI"
 import * as Game from "./Game.Frontend"
 import { Ctx } from "./Game.Shared"
 import { GameName, gameNameList } from "./Game.Types"
@@ -33,7 +33,7 @@ export const init: [Model, Cmd<Msg>] = [
   {
     rooms: {},
     users: {},
-    modal: "Closed",
+    modal: { type: "Closed" },
     requests: {},
   },
   Cmd.None,
@@ -72,7 +72,7 @@ export const update = (
   msg: Msg,
   modelPrev: Model,
 ): [Model, Cmd<Msg>] => {
-  const model: Model = { ...modelPrev, modal: "Closed" }
+  const model: Model = { ...modelPrev, modal: { type: "Closed" } }
 
   switch (msg[0]) {
     case "ClickedGoHome": {
@@ -80,7 +80,7 @@ export const update = (
     }
 
     case "ClickedRoomButton": {
-      return [{ ...model, modal: "DrawerOpened" }, Cmd.None]
+      return [{ ...model, modal: { type: "DrawerOpened" } }, Cmd.None]
     }
 
     case "ClosedDrawer": {
@@ -93,6 +93,10 @@ export const update = (
 
     case "ClickedBanner": {
       return [model, Route.push(["GameRoom"])]
+    }
+
+    case 'ClosedModal': {
+      return [{ ...model, modal: { type: "Closed" } }, Cmd.None]
     }
 
     case "RoomCreate":
@@ -163,6 +167,11 @@ export const update = (
           Cmd.map((msg): Msg => ["Games", roomId, msg]),
         ),
       ]
+    }
+
+
+    case 'RoomLeaveThenJoin': {
+      return [model, sendToBackend(['RoomLeave', { userId: msg[1].userId }])]
     }
 
     default:
@@ -297,6 +306,11 @@ export const updateFromBackend = (
       const handled = updateResponse({ sendToBackend }, msg, model)
 
       if (msg[2].type === 'Err') {
+
+        if (msg[2].error === 'already_in_room') {
+          return [{ ...handled[0], modal: { type: "RoomLeaveThenJoin", roomId: msg[1].roomId } }, handled[1], handled[2]]
+        }
+
         return handled
       }
 
@@ -560,6 +574,23 @@ export const View = ({
   const usersInRoom = toRoomUsers(room.roomId, model)
   return (
     <>
+
+
+      {/* todo make a global conformation dialog */}
+      <ConformationDialog
+        open={model.modal.type === 'RoomLeaveThenJoin'}
+        onCancel={() => $d(['ClosedModal'])}
+        onClose={() => $d(['ClosedModal'])}
+        onConfirm={() => {
+          if (model.modal.type === 'RoomLeaveThenJoin') {
+            $d(['RoomLeaveThenJoin', { userId: ctx.currentUserId, roomId: model.modal.roomId }])
+          }
+        }}
+        confirmTitle="Join"
+        cancelTitle="Cancel"
+        title="Leave your current room to join this room?"
+      />
+
       <Game.View ctx={ctx} $d={(msg) => $d(["Games", room.roomId, msg])} model={game} />
 
       <Divider />
@@ -732,7 +763,7 @@ const ViewGameRoomAvatarGroup = ({
   return (
     <UI.Drawer
       anchor="bottom"
-      open={model.modal === "DrawerOpened"}
+      open={model.modal.type === "DrawerOpened"}
       onClose={() => $d(["ClosedDrawer"])}
     >
       <UI.Typography
