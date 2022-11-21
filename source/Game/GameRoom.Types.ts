@@ -108,7 +108,7 @@ export type Res =
   | ['ChangeGame', { userId: UserId, gameName: Game.GameName, }, Result<Problem, Model>]
   | ['ChangeHost', { userId: UserId, nextHostId: UserId, }, Result<Problem, Model>]
 
-type Problem =
+export type Problem =
   | "must_be_host"
   | "must_be_guest"
   | "not_in_room"

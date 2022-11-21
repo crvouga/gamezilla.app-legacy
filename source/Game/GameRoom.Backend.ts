@@ -1,13 +1,11 @@
-import { Cmd, exhaustive, p, Sub } from "../Core"
+import { Cmd, exhaustive, p, Result, Sub } from "../Core"
 import { RoomId, UserId } from "../Data"
 import * as Game from "./Game.Backend"
 import {
   BackendModel,
   BackendMsg,
   BackendRoom,
-  handle,
-  Req,
-  Res,
+  handle, Problem, Res,
   ToBackend,
   ToFrontend
 } from "./GameRoom.Types"
@@ -151,21 +149,35 @@ export const updateFromFrontend = (
     case 'RoomJoin':
     case 'RoomDestroy':
     case "RoomCreate": {
-      return updateRequest(wire, msg, model)
+      const res: Res = [...msg, handle(msg, model)]
+
+      if (res[2].type === "Err") {
+        return [model, wire.sendToClient(res)]
+      }
+
+      return [res[2].value, wire.broadcast(res)]
     }
 
     case "RoomLeave": {
-      return updateRoomLeave(wire, msg, model)
+      const roomLeaveResult = handle(['RoomLeave', { userId: msg[1].userId }], model)
+      return updateRoomLeave(wire, msg[1].userId, roomLeaveResult, model)
     }
 
     case 'RoomLeaveThenJoin': {
-      const roomLeft = updateRoomLeave(wire, ['RoomLeave', { userId: msg[1].userId }], model)
-      const roomJoined = updateRequest(wire, ['RoomJoin', { roomId: msg[1].roomId, userId: msg[1].userId }], roomLeft[0])
+      const roomLeft = handle(['RoomLeave', { userId: msg[1].userId }], model)
+      const roomLeftUpdate = updateRoomLeave(wire, msg[1].userId, roomLeft, model)
+      if (roomLeft.type === 'Err') {
+        return roomLeftUpdate
+      }
+      const roomJoined = handle(['RoomJoin', msg[1]], roomLeftUpdate[0])
+      if (roomJoined.type === "Err") {
+        return [roomLeftUpdate[0], wire.sendToClient(['RoomJoin', msg[1], roomJoined])]
+      }
       return [
-        roomJoined[0],
+        roomJoined.value,
         Cmd.batch([
-          roomLeft[1],
-          roomJoined[1]
+          wire.broadcast(['RoomLeave', msg[1], roomJoined]),
+          roomLeftUpdate[1]
         ])
       ]
     }
@@ -175,42 +187,26 @@ export const updateFromFrontend = (
   }
 }
 
-const updateRequest = (wire: Wire, msg: Req, model: Model): [Model, Cmd<Msg>] => {
-  const res: Res = [...msg, handle(msg, model)]
+const updateRoomLeave = (wire: Wire, userId: UserId, result: Result<Problem, Model>, model: Model): [Model, Cmd<Msg>] => {
 
-  if (res[2].type === "Err") {
+  const res: Res = ['RoomLeave', { userId }, result]
+
+  if (result.type === "Err") {
     return [model, wire.sendToClient(res)]
   }
 
-  return [res[2].value, wire.broadcast(res)]
-}
+  const modelAfter = result.value
 
-
-
-const updateRoomLeave = (wire: Wire, msg: ToBackend, model: Model): [Model, Cmd<Msg>] => {
-
-  if (msg[0] !== 'RoomLeave') {
-    return [model, Cmd.None]
-  }
-
-  const res: Res = [...msg, handle(msg, model)]
-
-  if (res[2].type === "Err") {
-    return [model, wire.sendToClient(res)]
-  }
-
-  const modelAfter = res[2].value
-
-  const user = model.users[msg[1].userId]
+  const user = model.users[userId]
 
   if (!user) {
-    return [res[2].value, wire.broadcast(res)]
+    return [modelAfter, wire.broadcast(res)]
   }
 
   const room = model.rooms[user.roomId]
 
   if (!room) {
-    return [res[2].value, wire.broadcast(res)]
+    return [modelAfter, wire.broadcast(res)]
   }
 
   const [gameNew, cmd] = Game.updateRoomLeave(
@@ -225,9 +221,9 @@ const updateRoomLeave = (wire: Wire, msg: ToBackend, model: Model): [Model, Cmd<
   }
 
   const modelNew: Model = {
-    ...res[2].value,
+    ...modelAfter,
     rooms: {
-      ...res[2].value.rooms,
+      ...modelAfter.rooms,
       [roomNew.roomId]: roomNew
     }
   }
