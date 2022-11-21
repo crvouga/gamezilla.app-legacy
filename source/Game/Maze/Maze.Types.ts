@@ -76,7 +76,7 @@ export type Req =
   | ['StartPlaying', { userId: UserId }]
   | ['StopPlaying', { userId: UserId }]
   | ['StartGame', { userId: UserId }]
-  | ['InputMove', { userId: UserId, direction: Direction }]
+  | ['InputDirection', { userId: UserId, direction: Direction }]
 
 export type Res = [...Req, Result<Problem, SharedModel>]
 
@@ -153,7 +153,7 @@ export const handle = (msg: Req, model: SharedModel): Result<Problem, SharedMode
       return Ok(modelNew)
     }
 
-    case 'InputMove': {
+    case 'InputDirection': {
       if (model.type !== 'Game') {
         return Err("must_be_game")
       }
@@ -177,7 +177,7 @@ export const handle = (msg: Req, model: SharedModel): Result<Problem, SharedMode
         Position.isBetweenInclusive(
           {
             lower: { x: 0, y: 0 },
-            upper: { x: model.maze.length - 1, y: model.maze?.[0]?.length ?? 0 }
+            upper: { x: model.maze.length - 1, y: (model.maze?.[0]?.length ?? 0) - 1 }
           },
           positionNew
         )
@@ -189,7 +189,8 @@ export const handle = (msg: Req, model: SharedModel): Result<Problem, SharedMode
 
       const playerNew: Player = {
         ...player,
-        position: positionNew
+        position: positionNew,
+        direction: msg[1].direction
       }
 
       const modelNew: SharedModel = {
