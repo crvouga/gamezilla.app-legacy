@@ -35,7 +35,7 @@ export type FrontendModel = {
   users: {
     [userId: UserId]: RoomUser
   }
-  modal: { type: "DrawerOpened" } | { type: "Closed" } | { type: "MenuOpened" } | { type: "RoomLeaveThenJoin", roomId: RoomId }
+  modal: { type: "DrawerOpened" } | { type: "Closed" } | { type: "RoomLeaveThenJoin", roomId: RoomId }
   requests: {
     [key in Req[0]]?: RemoteData<Problem, "None">
   }
