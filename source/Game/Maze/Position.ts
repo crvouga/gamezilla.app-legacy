@@ -33,7 +33,7 @@ export type Bounds = {
     upper: Position
 }
 
-const isBetweenInclusive = ({ lower, upper }: Bounds, position: Position): boolean => {
+const inclusiveContains = ({ lower, upper }: Bounds, position: Position): boolean => {
     return (
         lower.x <= position.x &&
         position.x <= upper.x &&
@@ -77,7 +77,7 @@ export const Position = {
     range,
     toKey,
     toDirection,
-    isBetweenInclusive
+    inclusiveContains
 }
 
 export type Direction = "North" | "South" | "East" | "West"

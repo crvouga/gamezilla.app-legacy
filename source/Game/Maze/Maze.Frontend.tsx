@@ -1,7 +1,7 @@
 import { Cmd, Keyboard, Set, Sub } from "../../Core";
 import { Avatar, Box, Button, FillBox, Typography } from "../../UI";
 import { Ctx } from "../Game.Shared";
-import { BackendModel, FrontendModel, FrontendMsg, handle, initMaze, initShared, ToBackend, ToFrontend } from "./Maze.Types";
+import { BackendModel, FrontendModel, FrontendMsg, handle, initMaze, initShared, ToBackend, ToFrontend, toMaze } from "./Maze.Types";
 import { Direction, Position } from "./Position";
 
 //
@@ -174,13 +174,16 @@ export const View = ({ model, ctx, $d }: { ctx: Ctx, model: Model, $d: (msg: Msg
     }
 
 
-    const viewBox = [0, 0, model.maze.length, model.maze[0]?.length ?? 0].join(" ")
+    const viewBox = [0, 0, model.inclusiveUpperBound.x + 1, model.inclusiveUpperBound.y + 1].join(" ")
     const stroke = "#565656"
     const strokeWidth = 0.033
+
+    const maze = toMaze(model)
+
     return <Box sx={{ flex: 1 }}>
         <svg style={{ maxWidth: "400px", margin: "auto" }} width="100%" viewBox={viewBox}>
             <rect x={0} y={0} width="100%" height="100%" fill="black" />
-            {model.maze.map((column, x) => column.map((cell, y) => (
+            {maze.map((column, x) => column.map((cell, y) => (
                 <g key={`${x}-${y}`} strokeWidth="0.1" stroke="#787878">
                     {cell.hasNorth && (
                         <line x1={x} y1={y} x2={x + 1} y2={y} />
