@@ -1,5 +1,5 @@
 import { Cmd, Keyboard, Set, Sub } from "../../Core";
-import { Avatar, Box, Button, FillBox, Typography } from "../../UI";
+import { Avatar, Box, Button, FillBox, Typography, useTheme } from "../../UI";
 import { Ctx } from "../Game.Shared";
 import { Maze } from "./Maze";
 import { BackendModel, FrontendModel, FrontendMsg, handle, initShared, ToBackend, ToFrontend } from "./Maze.Types";
@@ -176,16 +176,18 @@ export const View = ({ model, ctx, $d }: { ctx: Ctx, model: Model, $d: (msg: Msg
 
 
     const viewBox = [0, 0, model.inclusiveUpperBound.x + 1, model.inclusiveUpperBound.y + 1].join(" ")
-    const stroke = "#565656"
-    const strokeWidth = 0.033
 
     const maze = Maze.make(model)
 
+    const theme = useTheme()
+    const stroke = theme.palette.text.disabled
+    const strokeWidth = 0.05
+
     return <Box sx={{ flex: 1 }}>
         <svg style={{ maxWidth: "400px", margin: "auto" }} width="100%" viewBox={viewBox}>
-            <rect x={0} y={0} width="100%" height="100%" fill="black" />
+            <rect x={0} y={0} width="100%" height="100%" fill={theme.palette.background.default} />
             {maze.map((column, x) => column.map((cell, y) => (
-                <g key={`${x}-${y}`} strokeWidth="0.1" stroke="#787878">
+                <g key={`${x}-${y}`} strokeWidth="0.1" stroke={theme.palette.text.secondary}>
                     {cell.hasNorth && (
                         <line x1={x} y1={y} x2={x + 1} y2={y} />
                     )}
@@ -195,7 +197,7 @@ export const View = ({ model, ctx, $d }: { ctx: Ctx, model: Model, $d: (msg: Msg
                 </g>
             )))}
             {Object.values(model.players).map(player => (
-                <circle key={player.userId} cx={player.position.x + 1 / 2} cy={player.position.y + 1 / 2} r={1 / 3} fill="#fff" />
+                <circle key={player.userId} cx={player.position.x + 1 / 2} cy={player.position.y + 1 / 2} r={1 / 3} fill={theme.palette.text.primary} />
             ))}
         </svg>
         <Box sx={{
@@ -215,7 +217,7 @@ export const View = ({ model, ctx, $d }: { ctx: Ctx, model: Model, $d: (msg: Msg
 
                 <g clipPath="url(#cut-off-bottom)" stroke={stroke} strokeWidth={strokeWidth} >
                     {Direction.all.map(direction => {
-                        const { x, y } = directionToPosition(direction)
+                        const { x, y } = directionToVector(direction)
 
                         return (
                             <rect
@@ -224,7 +226,7 @@ export const View = ({ model, ctx, $d }: { ctx: Ctx, model: Model, $d: (msg: Msg
                                 y={y}
                                 width={1}
                                 height={1}
-                                fill={model.players[ctx.currentUserId]?.direction === direction ? "rgba(255, 255, 255, 0.5)" : undefined}
+                                fill={model.players[ctx.currentUserId]?.direction === direction ? theme.palette.action.active : theme.palette.background.default}
                                 // 
                                 onTouchStart={() => $d(['InputDirection', { userId: ctx.currentUserId, direction }])}
                                 // onTouchMove={() => $d(['InputMove', { userId: ctx.currentUserId, direction }])}
@@ -236,15 +238,15 @@ export const View = ({ model, ctx, $d }: { ctx: Ctx, model: Model, $d: (msg: Msg
                     })}
                 </g>
 
-                <circle x="0" y="0" r={0.5} fill="#000" style={{ touchAction: "none", userSelect: "none", pointerEvents: "none" }} stroke={stroke} strokeWidth={0.033} />
+                <circle x="0" y="0" r={0.5} fill={theme.palette.background.default} style={{ touchAction: "none", userSelect: "none", pointerEvents: "none" }} stroke={stroke} strokeWidth={strokeWidth} />
 
-                <circle x="0" y="0" r={0.98} style={{ touchAction: "none", userSelect: "none", pointerEvents: "none" }} fill="transparent" stroke={stroke} strokeWidth={0.05} />
+                <circle x="0" y="0" r={0.98} style={{ touchAction: "none", userSelect: "none", pointerEvents: "none" }} fill="transparent" stroke={stroke} strokeWidth={strokeWidth} />
             </svg>
         </Box>
     </Box>
 }
 
-const directionToPosition = (direction: Direction): Position => {
+const directionToVector = (direction: Direction): Position => {
     switch (direction) {
         case 'East': return { x: 0, y: -1 }
         case 'North': return { x: -1, y: -1 }
@@ -255,13 +257,15 @@ const directionToPosition = (direction: Direction): Position => {
 
 
 export const CoverArt = () => {
-    const inclusiveUpperBound = { x: 8, y: 8 }
+    const inclusiveUpperBound = { x: 7, y: 7 }
     const maze = Maze.make({ seed: "cover art maze!", inclusiveUpperBound })
     const viewBox = [0, 0, inclusiveUpperBound.x + 1, inclusiveUpperBound.y + 1].join(" ")
+    const strokeWidth = 0.25
+    const stroke = "#ABABAB"
     return (
         <svg viewBox={viewBox} width={"100%"} height={"100%"}>
             {maze.map((vertical, x) => vertical.map((cell, y) => (
-                <g key={`${x}-${y}`} strokeWidth="0.1" stroke="#787878">
+                <g key={`${x}-${y}`} strokeWidth={strokeWidth} stroke={stroke}>
                     {cell.hasNorth && (
                         <line x1={x} y1={y} x2={x + 1} y2={y} />
                     )}
@@ -270,7 +274,7 @@ export const CoverArt = () => {
                     )}
                 </g>
             )))}
-            <rect x={0} y={0} width="100%" height="100%" fill="transparent" stroke="#787878" strokeWidth={0.25} />
+            <rect x={0} y={0} width="100%" height="100%" fill="transparent" stroke={stroke} strokeWidth={strokeWidth} />
         </svg>
     )
 }
