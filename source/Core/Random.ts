@@ -1,6 +1,5 @@
 // source: https://stackoverflow.com/questions/16801687/javascript-random-ordering-with-seed
 
-
 export const mulberry32 = (a: number) => {
     return () => {
         var t = a += 0x6D2B79F5;
@@ -10,11 +9,11 @@ export const mulberry32 = (a: number) => {
     }
 }
 
-export const cyrb128 = (str: string) => {
+export const cyrb128 = (seed: string) => {
     let h1 = 1779033703, h2 = 3144134277,
         h3 = 1013904242, h4 = 2773480762;
-    for (let i = 0, k; i < str.length; i++) {
-        k = str.charCodeAt(i);
+    for (let i = 0, k; i < seed.length; i++) {
+        k = seed.charCodeAt(i);
         h1 = h2 ^ Math.imul(h1 ^ k, 597399067);
         h2 = h3 ^ Math.imul(h2 ^ k, 2869860233);
         h3 = h4 ^ Math.imul(h3 ^ k, 951274213);
@@ -27,35 +26,23 @@ export const cyrb128 = (str: string) => {
     return [(h1 ^ h2 ^ h3 ^ h4) >>> 0, (h2 ^ h1) >>> 0, (h3 ^ h1) >>> 0, (h4 ^ h1) >>> 0];
 }
 
+const generator = (seed: string) => {
+    return mulberry32(cyrb128(seed)[0]!)
+}
+
+const shuffle = <T>(random: () => number, xs: T[]): T[] => {
+    const ys = [...xs]
+    for (let i = ys.length - 1; i >= 0; i--) {
+        const j = Math.floor(random() * i)
+        const temp = ys[i]!
+        ys[i]! = ys[j]!
+        ys[j]! = temp
+    }
+    return ys
+}
 
 
-export const seededRandom = ({ rng }: { seed: string, rng: () => number }) => {
-
-    const rnd = (lo: number, hi: number, defaultHi = 1) => {
-        if (hi === undefined) {
-            hi = lo === undefined ? defaultHi : lo;
-            lo = 0;
-        }
-
-        return rng() * (hi - lo) + lo;
-    };
-
-    const rndInt = (lo: number, hi: number) => {
-        return Math.floor(rnd(lo, hi, 2))
-    };
-
-    const shuffle = <T>(a: T[]) => {
-        for (let i = a.length - 1; i > 0; i--) {
-            const j = rndInt(i + 1, 2);
-            const temp = a[i];
-            a[i] = a[j]!;
-            a[j] = temp!;
-        }
-    };
-
-    return {
-        rnd,
-        rndInt,
-        shuffle
-    };
-};
+export const Random = {
+    generator,
+    shuffle,
+}

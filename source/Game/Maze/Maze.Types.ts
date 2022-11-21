@@ -1,7 +1,7 @@
-import { Keyboard, Result, Set as CoreSet, shuffle } from "../../Core"
+import { Keyboard, memoize, Random, Result, Set as CoreSet } from "../../Core"
 import { Err, Ok } from "../../Core/Result"
 import { UserId } from "../../Data"
-import { Direction, Bounds, Position } from "./Position"
+import { Bounds, Direction, Position } from "./Position"
 
 //
 //
@@ -18,12 +18,15 @@ export type SetupModel =
     type: "Setup"
     players: CoreSet<UserId>,
     colors: ColorMap
+    seed: string
+    inclusiveUpperBound: Position
   }
   | {
     type: "Game",
     players: { [userId: UserId]: Player }
     colors: ColorMap
-    maze: Maze
+    seed: string,
+    inclusiveUpperBound: Position
   }
 
 type ColorMap = { [color in Color]?: UserId }
@@ -145,9 +148,9 @@ export const handle = (msg: Req, model: SharedModel): Result<Problem, SharedMode
       const modelNew: SharedModel = {
         type: "Game",
         colors: model.colors,
-        maze: getRandomMaze({ columnCount: 15, rowCount: 15 }),
-        players: playersNew
-
+        seed: model.seed,
+        inclusiveUpperBound: model.inclusiveUpperBound,
+        players: playersNew,
       }
 
       return Ok(modelNew)
@@ -169,15 +172,17 @@ export const handle = (msg: Req, model: SharedModel): Result<Problem, SharedMode
         player.position,
       )
 
-      if (!canMoveTo({ maze: model.maze, from: player.position, to: positionNew })) {
+      const maze = toMaze(model)
+
+      if (!canMoveTo({ maze: maze, from: player.position, to: positionNew })) {
         return Err("hit_wall")
       }
 
       const inbounds =
-        Position.isBetweenInclusive(
+        Position.inclusiveContains(
           {
             lower: { x: 0, y: 0 },
-            upper: { x: model.maze.length - 1, y: (model.maze?.[0]?.length ?? 0) - 1 }
+            upper: model.inclusiveUpperBound
           },
           positionNew
         )
@@ -196,8 +201,12 @@ export const handle = (msg: Req, model: SharedModel): Result<Problem, SharedMode
       const modelNew: SharedModel = {
         type: "Game",
         colors: model.colors,
-        maze: model.maze,
-        players: { ...model.players, [playerNew.userId]: playerNew },
+        seed: model.seed,
+        inclusiveUpperBound: model.inclusiveUpperBound,
+        players: {
+          ...model.players,
+          [playerNew.userId]: playerNew
+        },
       }
 
       return Ok(modelNew)
@@ -227,22 +236,29 @@ const canMoveTo = ({ maze, from, to }: { from: Position, to: Position, maze: Maz
 //
 //
 
+type MazeParams = {
+  seed: string,
+  inclusiveUpperBound: Position
+}
 
-export const getRandomMaze = ({ rowCount, columnCount }: { rowCount: number, columnCount: number }) => {
+export const encodeParams = ({ seed, inclusiveUpperBound }: MazeParams) => [seed, inclusiveUpperBound.x, inclusiveUpperBound.y].join("-")
+
+export const toMaze = memoize<MazeParams, Maze>(encodeParams, ({ seed, inclusiveUpperBound }) => {
+  const gen = Random.generator(seed)
 
   const maze: Cell[][] = []
 
-  for (let columnIndex = 0; columnIndex < columnCount; columnIndex++) {
-    const column: Cell[] = []
-    for (let rowIndex = 0; rowIndex < rowCount; rowIndex++) {
-      column.push({ hasWest: true, hasNorth: true })
+  for (let x = 0; x <= inclusiveUpperBound.x; x++) {
+    const vertical: Cell[] = []
+    for (let y = 0; y <= inclusiveUpperBound.y; y++) {
+      vertical.push({ hasWest: true, hasNorth: true })
     }
-    maze.push(column)
+    maze.push(vertical)
   }
 
   const boundsInclusive: Bounds = {
     lower: { x: 0, y: 0 },
-    upper: { x: rowCount - 1, y: columnCount - 1, }
+    upper: inclusiveUpperBound
   }
 
   const initial: Position = { x: 0, y: 0 }
@@ -263,10 +279,10 @@ export const getRandomMaze = ({ rowCount, columnCount }: { rowCount: number, col
 
     let unvisitedNeighbor: { position: Position, direction: Direction } | null = null
 
-    for (const direction of shuffle(Direction.all)) {
+    for (const direction of Random.shuffle(gen, Direction.all)) {
       const neighbor = Position.add(Direction.toVector(direction), current)
 
-      if (!Position.isBetweenInclusive(boundsInclusive, neighbor)) {
+      if (!Position.inclusiveContains(boundsInclusive, neighbor)) {
         continue
       }
 
@@ -310,7 +326,7 @@ export const getRandomMaze = ({ rowCount, columnCount }: { rowCount: number, col
   }
 
   return maze
-}
+})
 
 
 export const initMaze = ({
@@ -338,5 +354,7 @@ export const initMaze = ({
 export const initShared: SharedModel = {
   type: "Setup",
   players: {},
-  colors: {}
+  colors: {},
+  seed: "some arbitrary seed",
+  inclusiveUpperBound: { x: 15, y: 15 }
 }
