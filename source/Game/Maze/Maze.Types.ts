@@ -184,7 +184,6 @@ export const handle = (msg: Req, model: SharedModel): Result<Problem, SharedMode
 
 
       if (!inbounds) {
-
         return Err("out_of_bounds")
       }
 
@@ -200,7 +199,6 @@ export const handle = (msg: Req, model: SharedModel): Result<Problem, SharedMode
         players: { ...model.players, [playerNew.userId]: playerNew },
       }
 
-
       return Ok(modelNew)
     }
   }
@@ -212,10 +210,12 @@ const canMoveTo = ({ maze, from, to }: { from: Position, to: Position, maze: Maz
   const toCell = maze?.[to.x]?.[to.y] ?? null
   const direction = Position.toDirection({ from, to })
 
-  return ((direction === 'East' && !toCell?.hasWest) ||
+  return (
+    (direction === 'East' && !toCell?.hasWest) ||
     (direction === 'North' && !fromCell?.hasNorth) ||
     (direction === 'South' && !toCell?.hasNorth) ||
-    (direction === 'West' && !fromCell?.hasWest))
+    (direction === 'West' && !fromCell?.hasWest)
+  )
 }
 
 //
@@ -228,6 +228,7 @@ const canMoveTo = ({ maze, from, to }: { from: Position, to: Position, maze: Maz
 
 
 export const getRandomMaze = ({ rowCount, columnCount }: { rowCount: number, columnCount: number }) => {
+
   const maze: Cell[][] = []
 
   for (let columnIndex = 0; columnIndex < columnCount; columnIndex++) {
@@ -240,7 +241,7 @@ export const getRandomMaze = ({ rowCount, columnCount }: { rowCount: number, col
 
   const boundsInclusive: Bounds = {
     lower: { x: 0, y: 0 },
-    upper: { x: rowCount - 1, y: columnCount - 1 }
+    upper: { x: rowCount - 1, y: columnCount - 1, }
   }
 
   const initial: Position = { x: 0, y: 0 }

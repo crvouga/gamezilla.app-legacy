@@ -1,7 +1,8 @@
 // source: https://stackoverflow.com/questions/16801687/javascript-random-ordering-with-seed
 
-export function mulberry32(a: number) {
-    return function () {
+
+export const mulberry32 = (a: number) => {
+    return () => {
         var t = a += 0x6D2B79F5;
         t = Math.imul(t ^ t >>> 15, t | 1);
         t ^= t + Math.imul(t ^ t >>> 7, t | 61);
@@ -9,7 +10,7 @@ export function mulberry32(a: number) {
     }
 }
 
-export function cyrb128(str: string) {
+export const cyrb128 = (str: string) => {
     let h1 = 1779033703, h2 = 3144134277,
         h3 = 1013904242, h4 = 2773480762;
     for (let i = 0, k; i < str.length; i++) {
@@ -52,5 +53,9 @@ export const seededRandom = ({ rng }: { seed: string, rng: () => number }) => {
         }
     };
 
-    return { rnd, rndInt, shuffle };
+    return {
+        rnd,
+        rndInt,
+        shuffle
+    };
 };
