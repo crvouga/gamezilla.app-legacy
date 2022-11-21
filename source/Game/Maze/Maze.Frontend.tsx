@@ -41,14 +41,14 @@ export const update = ({ ctx, sendToBackend }: { ctx: Ctx, sendToBackend: (m: To
                 return [model, Cmd.None]
             }
 
-            return [model, sendToBackend(['InputMove', { userId: ctx.currentUserId, direction }])]
+            return [model, sendToBackend(['InputDirection', { userId: ctx.currentUserId, direction }])]
         }
 
         // 
         //
         // 
 
-        case 'InputMove':
+        case 'InputDirection':
         case 'StartGame':
         case 'StopPlaying':
         case "StartPlaying": {
@@ -59,7 +59,7 @@ export const update = ({ ctx, sendToBackend }: { ctx: Ctx, sendToBackend: (m: To
 
 export const updateFromBackend = (msg: ToFrontend, model: Model): [Model, Cmd<Msg>] => {
     switch (msg[0]) {
-        case 'InputMove':
+        case 'InputDirection':
         case 'StartGame':
         case 'StopPlaying':
         case 'StartPlaying': {
@@ -177,7 +177,7 @@ export const View = ({ model, ctx, $d }: { ctx: Ctx, model: Model, $d: (msg: Msg
     const viewBox = [0, 0, model.maze.length, model.maze[0]?.length ?? 0].join(" ")
     const stroke = "#565656"
     const strokeWidth = 0.033
-    return <Box>
+    return <Box sx={{ flex: 1 }}>
         <svg style={{ maxWidth: "400px", margin: "auto" }} width="100%" viewBox={viewBox}>
             <rect x={0} y={0} width="100%" height="100%" fill="black" />
             {model.maze.map((column, x) => column.map((cell, y) => (
@@ -207,11 +207,12 @@ export const View = ({ model, ctx, $d }: { ctx: Ctx, model: Model, $d: (msg: Msg
                         <circle x="0" y="0" r={1} />
                     </clipPath>
                 </defs>
-                <circle x="0" y="0" r={1} stroke={stroke} strokeWidth={0.025} />
+
 
                 <g clipPath="url(#cut-off-bottom)" stroke={stroke} strokeWidth={strokeWidth} >
                     {Direction.all.map(direction => {
                         const { x, y } = directionToPosition(direction)
+
                         return (
                             <rect
                                 key={direction}
@@ -219,16 +220,21 @@ export const View = ({ model, ctx, $d }: { ctx: Ctx, model: Model, $d: (msg: Msg
                                 y={y}
                                 width={1}
                                 height={1}
+                                fill={model.players[ctx.currentUserId]?.direction === direction ? "rgba(255, 255, 255, 0.5)" : undefined}
                                 // 
-                                onTouchStart={() => $d(['InputMove', { userId: ctx.currentUserId, direction }])}
+                                onTouchStart={() => $d(['InputDirection', { userId: ctx.currentUserId, direction }])}
                                 // onTouchMove={() => $d(['InputMove', { userId: ctx.currentUserId, direction }])}
                                 // 
-                                onMouseDown={() => $d(['InputMove', { userId: ctx.currentUserId, direction }])}
+                                onMouseDown={() => $d(['InputDirection', { userId: ctx.currentUserId, direction }])}
                             // onMouseOver={() => $d(['InputMove', { userId: ctx.currentUserId, direction }])}
                             />
                         )
                     })}
                 </g>
+
+                <circle x="0" y="0" r={0.5} fill="#000" style={{ touchAction: "none", userSelect: "none", pointerEvents: "none" }} stroke={stroke} strokeWidth={0.033} />
+
+                <circle x="0" y="0" r={0.98} style={{ touchAction: "none", userSelect: "none", pointerEvents: "none" }} fill="transparent" stroke={stroke} strokeWidth={0.05} />
             </svg>
         </Box>
     </Box>
