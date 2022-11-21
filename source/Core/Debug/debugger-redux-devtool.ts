@@ -56,7 +56,7 @@ interface Action {
 }
 
 interface Monitor {
-  type: "$d"
+  type: "DISPATCH"
   payload: {
     type:
     | "JUMP_TO_STATE"
@@ -206,7 +206,7 @@ const handleIncomingMsg = <Model, Msg extends {}>({
         }
       }
 
-      case "$d":
+      case "DISPATCH":
         switch (msg.payload.type) {
           case "JUMP_TO_STATE":
             return p(parseJump<Model>(msg), Result.map(update))

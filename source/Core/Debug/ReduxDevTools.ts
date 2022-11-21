@@ -46,7 +46,7 @@ interface Action {
 }
 
 interface Monitor {
-  type: "$d"
+  type: "DISPATCH"
   payload: {
     type:
     | "JUMP_TO_STATE"
@@ -134,11 +134,12 @@ const handleSubscription = <Model, Msg extends {}>(
 
   return (msg) => {
     const result = handler(msg)
-    console.log({ result, msg })
+
     if (result.type === 'Err') {
       console.warn("[REDUX DEV TOOL]", result.error)
       return
     }
+
     result.value()
   }
 }
@@ -187,6 +188,7 @@ const handleIncomingMsg = <Model, Msg extends {}>({
   const toggle = toggleAction($d)
 
   return (msg) => {
+
     switch (msg.type) {
       case "START":
         return Result.Ok(initAgain)
@@ -202,12 +204,13 @@ const handleIncomingMsg = <Model, Msg extends {}>({
         }
       }
 
-      case "$d":
+      case "DISPATCH":
         switch (msg.payload.type) {
           case "JUMP_TO_STATE":
             return p(parseJump<Model>(msg), Result.map(update))
 
           case "JUMP_TO_ACTION":
+            console.log("hello", msg)
             return p(parseJump<Model>(msg), Result.map(update))
 
           case "RESET":
