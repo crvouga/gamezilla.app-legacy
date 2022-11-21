@@ -35,7 +35,7 @@ export type FrontendModel = {
   users: {
     [userId: UserId]: RoomUser
   }
-  modal: "DrawerOpened" | "Closed" | "MenuOpened"
+  modal: { type: "DrawerOpened" } | { type: "Closed" } | { type: "MenuOpened" } | { type: "RoomLeaveThenJoin", roomId: RoomId }
   requests: {
     [key in Req[0]]?: RemoteData<Problem, "None">
   }
@@ -67,6 +67,7 @@ export type ToFrontend =
 
 export type ToBackend =
   | Req
+  | ['RoomLeaveThenJoin', { roomId: RoomId, userId: UserId }]
   | ["Games", RoomId, Game.ToBackend]
 
 export type BackendMsg =
@@ -78,7 +79,9 @@ export type FrontendMsg =
   | ["ClosedDrawer"]
   | ["ClickedUser", { userId: UserId }]
   | ["ClickedBanner"]
+  | ['ClosedModal']
   | ["Games", RoomId, Game.FrontendMsg]
+  | ['RoomLeaveThenJoin', { roomId: RoomId, userId: UserId }]
   | Req
 
 //
