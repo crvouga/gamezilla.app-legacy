@@ -12,6 +12,9 @@ import { Debug, Debugger, Global, MsgWithDebug } from "./debugger-commons"
 type Unsubscribe = () => void
 
 /**
+ * Docs
+ * @link https://github.com/reduxjs/redux-devtools/tree/main/extension/docs
+ * 
  * Defines a _Redux DevTool Extension_ object.
  * @category model
  * @since 0.5.0
