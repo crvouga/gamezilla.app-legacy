@@ -20,14 +20,16 @@ export type SetupModel =
     players: Set<UserId>,
     colors: ColorMap
     seed: string
-    inclusiveUpperBound: Position
+    lower: Position
+    upper: Position
   }
   | {
     type: "Game",
     players: { [userId: UserId]: Player }
     colors: ColorMap
     seed: string,
-    inclusiveUpperBound: Position
+    lower: Position
+    upper: Position
   }
 
 type ColorMap = { [color in Color]?: UserId }
@@ -75,6 +77,7 @@ export type Req =
   | ['StopPlaying', { userId: UserId }]
   | ['StartGame', { userId: UserId }]
   | ['InputDirection', { userId: UserId, direction: Direction }]
+  | ['InputSeed', { userId: UserId, seed: string }]
 
 export type Res = [...Req, Result<Problem, SharedModel>]
 
@@ -89,6 +92,26 @@ type Problem =
 
 export const handle = (msg: Req, model: SharedModel): Result<Problem, SharedModel> => {
   switch (msg[0]) {
+
+    case 'InputSeed': {
+      if (model.type !== 'Setup') {
+        return Err("must_be_setup")
+      }
+
+      const player = model.players[msg[1].userId]
+
+      if (!player) {
+        return Err("must_be_playing")
+      }
+
+      const modelNew: SharedModel = {
+        ...model,
+        seed: msg[1].seed
+      }
+
+      return Ok(modelNew)
+    }
+
     case 'StartPlaying': {
       if (model.type !== 'Setup') {
         return Err("must_be_setup")
@@ -144,7 +167,8 @@ export const handle = (msg: Req, model: SharedModel): Result<Problem, SharedMode
         type: "Game",
         colors: model.colors,
         seed: model.seed,
-        inclusiveUpperBound: model.inclusiveUpperBound,
+        lower: model.lower,
+        upper: model.upper,
         players: playersNew,
       }
 
@@ -169,18 +193,12 @@ export const handle = (msg: Req, model: SharedModel): Result<Problem, SharedMode
 
       const maze = Maze.make(model)
 
-      if (!canMoveTo({ maze: maze, from: player.position, to: positionNew })) {
+      if (!Maze.hasEdge([player.position, positionNew], maze)) {
         return Err("hit_wall")
       }
 
       const inbounds =
-        Position.inclusiveContains(
-          {
-            lower: { x: 0, y: 0 },
-            upper: model.inclusiveUpperBound
-          },
-          positionNew
-        )
+        Position.inclusiveContains({ lower: model.lower, upper: model.upper }, positionNew)
 
 
       if (!inbounds) {
@@ -197,7 +215,8 @@ export const handle = (msg: Req, model: SharedModel): Result<Problem, SharedMode
         type: "Game",
         colors: model.colors,
         seed: model.seed,
-        inclusiveUpperBound: model.inclusiveUpperBound,
+        upper: model.upper,
+        lower: model.lower,
         players: {
           ...model.players,
           [playerNew.userId]: playerNew
@@ -209,19 +228,6 @@ export const handle = (msg: Req, model: SharedModel): Result<Problem, SharedMode
   }
 }
 
-
-const canMoveTo = ({ maze, from, to }: { from: Position, to: Position, maze: Maze }): boolean => {
-  const fromCell = maze?.[from.x]?.[from.y] ?? null
-  const toCell = maze?.[to.x]?.[to.y] ?? null
-  const direction = Position.toDirection({ from, to })
-
-  return (
-    (direction === 'East' && !toCell?.hasWest) ||
-    (direction === 'North' && !fromCell?.hasNorth) ||
-    (direction === 'South' && !toCell?.hasNorth) ||
-    (direction === 'West' && !fromCell?.hasWest)
-  )
-}
 
 //
 //
@@ -237,5 +243,6 @@ export const initShared: SharedModel = {
   players: {},
   colors: {},
   seed: "some arbitrary seed",
-  inclusiveUpperBound: { x: 15, y: 15 }
+  lower: { x: -10, y: -10 },
+  upper: { x: 10, y: 10 }
 }

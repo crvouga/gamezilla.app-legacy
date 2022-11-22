@@ -1,5 +1,6 @@
+import { TextField } from "@mui/material";
 import { Cmd, Keyboard, Set, Sub } from "../../Core";
-import { Avatar, Box, Button, FillBox, Typography, useTheme } from "../../UI";
+import { IconButton, Avatar, Box, Button, FillBox, Icons, InputAdornment, Typography, useTheme } from "../../UI";
 import { Ctx } from "../Game.Shared";
 import { Maze } from "./Maze";
 import { BackendModel, FrontendModel, FrontendMsg, handle, initShared, ToBackend, ToFrontend } from "./Maze.Types";
@@ -47,8 +48,9 @@ export const update = ({ ctx, sendToBackend }: { ctx: Ctx, sendToBackend: (m: To
 
         // 
         //
-        // 
+        //
 
+        case 'InputSeed':
         case 'InputDirection':
         case 'StartGame':
         case 'StopPlaying':
@@ -60,6 +62,7 @@ export const update = ({ ctx, sendToBackend }: { ctx: Ctx, sendToBackend: (m: To
 
 export const updateFromBackend = (msg: ToFrontend, model: Model): [Model, Cmd<Msg>] => {
     switch (msg[0]) {
+        case 'InputSeed':
         case 'InputDirection':
         case 'StartGame':
         case 'StopPlaying':
@@ -132,21 +135,35 @@ export const View = ({ model, ctx, $d }: { ctx: Ctx, model: Model, $d: (msg: Msg
 
         return (
             <FillBox>
-                <Typography sx={{ pt: 2, px: 2, mb: 1, color: "text.secondary" }}>
+                <Typography variant="h2" sx={{ px: 2, pt: 2 }}>
+                    Maze
+                </Typography>
+                <Box sx={{ px: 2, pt: 2 }}>
+                    <TextField
+                        disabled={handle(['InputSeed', { userId: ctx.currentUserId, seed: model.seed }], model).type === "Err"}
+                        value={model.seed}
+                        onChange={e => $d(['InputSeed', { userId: ctx.currentUserId, seed: e.target.value }])}
+                        fullWidth
+                        label="Seed"
+                        InputProps={{
+                            endAdornment: (
+                                <InputAdornment position="end" onClick={() => $d(['InputSeed', { userId: ctx.currentUserId, seed: `s${Math.floor(Math.random() * 1_000_000_000)}`, }])}>
+                                    <IconButton>
+                                        <Icons.Shuffle />
+                                    </IconButton>
+                                </InputAdornment>
+                            )
+                        }}
+                    />
+                </Box>
+
+                <Typography sx={{ pt: 2, px: 2, color: "text.secondary" }}>
                     Players
                 </Typography>
-                <Button
-                    variant="outlined"
-                    sx={{ w: 100, mx: 2 }}
-                    onClick={() => $d(['StartPlaying', { userId: ctx.currentUserId }])}
-                    disabled={handle(['StartPlaying', { userId: ctx.currentUserId }], model).type === 'Err'}
-                >
-                    Start Playing
-                </Button>
 
-                <Box sx={{ display: "flex", flexDirection: "column", gap: 2, pt: 2, flex: 1 }}>
+                <Box sx={{ display: "flex", flexDirection: "column", gap: 1, px: 2, mt: 1, flex: 1 }}>
                     {Set.toArray(model.players).map(player => (
-                        <Box key={player} sx={{ display: 'flex', alignItems: "center", justifyContent: 'center', paddingX: 2, width: '100%', }}>
+                        <Box key={player} sx={{ display: 'flex', alignItems: "center", justifyContent: 'center', width: '100%', }}>
                             <Avatar src={ctx.profiles[player]?.avatarUrl} sx={{ marginRight: 2 }} />
                             <Typography noWrap sx={{ flex: 1 }}>
                                 {ctx.profiles[player]?.username ?? "..."}
@@ -158,6 +175,18 @@ export const View = ({ model, ctx, $d }: { ctx: Ctx, model: Model, $d: (msg: Msg
                             )}
                         </Box>
                     ))}
+
+                    {!model.players[ctx.currentUserId] && (
+                        <Button
+                            variant="outlined"
+                            fullWidth
+                            onClick={() => $d(['StartPlaying', { userId: ctx.currentUserId }])}
+                            disabled={handle(['StartPlaying', { userId: ctx.currentUserId }], model).type === 'Err'}
+                        >
+                            Start Playing
+                        </Button>
+                    )}
+
                 </Box>
 
                 <Box sx={{ display: "flex", gap: 2, p: 2 }}>
@@ -175,7 +204,7 @@ export const View = ({ model, ctx, $d }: { ctx: Ctx, model: Model, $d: (msg: Msg
     }
 
 
-    const viewBox = [0, 0, model.inclusiveUpperBound.x + 1, model.inclusiveUpperBound.y + 1].join(" ")
+    const viewBox = [model.lower.x, model.lower.y, model.upper.x - model.lower.x + 1, model.upper.y - model.lower.y + 1,].join(" ")
 
     const maze = Maze.make(model)
 
@@ -183,25 +212,25 @@ export const View = ({ model, ctx, $d }: { ctx: Ctx, model: Model, $d: (msg: Msg
     const stroke = theme.palette.text.disabled
     const strokeWidth = 0.05
 
-    return <Box sx={{ flex: 1 }}>
+    return <FillBox >
         <svg style={{ maxWidth: "400px", margin: "auto" }} width="100%" viewBox={viewBox}>
             <rect x={0} y={0} width="100%" height="100%" fill={theme.palette.background.default} />
-            {maze.map((column, x) => column.map((cell, y) => (
-                <g key={`${x}-${y}`} strokeWidth="0.1" stroke={theme.palette.text.secondary}>
-                    {cell.hasNorth && (
-                        <line x1={x} y1={y} x2={x + 1} y2={y} />
-                    )}
-                    {cell.hasWest && (
-                        <line x1={x} y1={y} x2={x} y2={y + 1} />
-                    )}
+            {maze.edges.map(([a, b]) => (
+                <g
+                    key={[a.x, a.y, b.x, b.y].join("-")}
+                    strokeWidth="0.1"
+                    stroke={theme.palette.text.secondary}
+                >
+                    <line x1={a.x + 1 / 2} y1={a.y + 1 / 2} x2={b.x + 1 / 2} y2={b.y + 1 / 2} />
                 </g>
-            )))}
+            ))}
+
             {Object.values(model.players).map(player => (
                 <circle key={player.userId} cx={player.position.x + 1 / 2} cy={player.position.y + 1 / 2} r={1 / 3} fill={theme.palette.text.primary} />
             ))}
         </svg>
         <Box sx={{
-            maxWidth: "50vw",
+            maxWidth: "40vw",
             margin: "auto",
             transform: "rotate(45deg)",
             transformOrigin: "center",
@@ -243,7 +272,7 @@ export const View = ({ model, ctx, $d }: { ctx: Ctx, model: Model, $d: (msg: Msg
                 <circle x="0" y="0" r={0.98} style={{ touchAction: "none", userSelect: "none", pointerEvents: "none" }} fill="transparent" stroke={stroke} strokeWidth={strokeWidth} />
             </svg>
         </Box>
-    </Box>
+    </FillBox>
 }
 
 const directionToVector = (direction: Direction): Position => {
@@ -256,25 +285,24 @@ const directionToVector = (direction: Direction): Position => {
 }
 
 
+const coverArtMaze = Maze.make({ seed: "cover art maze!", lower: { x: 0, y: 0 }, upper: { x: 8, y: 8 } })
+const viewBox = [coverArtMaze.lower.x, coverArtMaze.lower.y, (coverArtMaze.upper.x - coverArtMaze.lower.x) + 1, (coverArtMaze.upper.y - coverArtMaze.lower.y) + 1].join(" ")
+
 export const CoverArt = () => {
-    const inclusiveUpperBound = { x: 7, y: 7 }
-    const maze = Maze.make({ seed: "cover art maze!", inclusiveUpperBound })
-    const viewBox = [0, 0, inclusiveUpperBound.x + 1, inclusiveUpperBound.y + 1].join(" ")
-    const strokeWidth = 0.25
-    const stroke = "#ABABAB"
+    const theme = useTheme()
     return (
         <svg viewBox={viewBox} width={"100%"} height={"100%"}>
-            {maze.map((vertical, x) => vertical.map((cell, y) => (
-                <g key={`${x}-${y}`} strokeWidth={strokeWidth} stroke={stroke}>
-                    {cell.hasNorth && (
-                        <line x1={x} y1={y} x2={x + 1} y2={y} />
-                    )}
-                    {cell.hasWest && (
-                        <line x1={x} y1={y} x2={x} y2={y + 1} />
-                    )}
+            <rect x={coverArtMaze.lower.x} y={coverArtMaze.lower.y} width="100%" height="100%" fill={theme.palette.background.default} />
+            {coverArtMaze.edges.map(([a, b]) => (
+                <g
+                    key={[a.x, a.y, b.x, b.y].join("-")}
+                    strokeWidth="0.1"
+                    stroke={theme.palette.text.secondary}
+                >
+                    <line x1={a.x + 1 / 2} y1={a.y + 1 / 2} x2={b.x + 1 / 2} y2={b.y + 1 / 2} />
                 </g>
-            )))}
-            <rect x={0} y={0} width="100%" height="100%" fill="transparent" stroke={stroke} strokeWidth={strokeWidth} />
+            ))}
+            {/* <rect x={coverArtMaze.lower.x} y={coverArtMaze.lower.y} width="100%" height="100%" fill="transparent" stroke={stroke} strokeWidth={strokeWidth} /> */}
         </svg>
     )
 }

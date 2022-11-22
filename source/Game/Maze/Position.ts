@@ -11,11 +11,11 @@ const add = (a: Position, b: Position): Position => {
     }
 }
 
-const range = (bounds: { x: number, y: number }): Position[] => {
+const range = (exclusiveUpperBounds: { x: number, y: number }): Position[] => {
     const positions: Position[] = []
 
-    for (let x = 0; x < bounds.x; x++) {
-        for (let y = 0; y < bounds.y; y++) {
+    for (let x = 0; x < exclusiveUpperBounds.x; x++) {
+        for (let y = 0; y < exclusiveUpperBounds.y; y++) {
             positions.push({ x, y })
         }
     }
