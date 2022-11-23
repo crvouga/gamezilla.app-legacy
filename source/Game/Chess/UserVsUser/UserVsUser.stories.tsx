@@ -1,32 +1,7 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react"
-import { profileStore, userA, userB } from '../../../test-data'
+import { ctx, userA, userB } from '../../../test-data'
 import * as UI from "../../../UI"
 import { Model, View } from "./UserVsUser.Frontend"
-
-const currentUserId = userA.userId
-
-
-
-export default {
-    title: "Chess/UserVsUser",
-    component: View,
-    args: {
-        currentUserId: currentUserId,
-        store: profileStore,
-        roomComponent: <>room</>,
-        goHome: () => { },
-        $d: () => { },
-        onClose: () => { },
-    },
-} as ComponentMeta<typeof View>
-
-const Template: ComponentStory<typeof View> = (args) => {
-    return (
-        <UI.AppContainer themeMode="System" >
-            <View {...args} />
-        </UI.AppContainer>
-    )
-}
 
 const setupModel: Model = {
     isFlipped: false,
@@ -39,6 +14,29 @@ const setupModel: Model = {
         clockPreset: "Bullet"
     }
 }
+
+const props: Parameters<typeof View>[0] = {
+    ctx,
+    $d: () => { },
+    onClose: () => { },
+    model: setupModel
+}
+
+export default {
+    title: "Chess/UserVsUser",
+    component: View,
+    args: props,
+} as ComponentMeta<typeof View>
+
+const Template: ComponentStory<typeof View> = (args) => {
+    return (
+        <UI.AppContainer themeMode="System" >
+            <View {...args} />
+        </UI.AppContainer>
+    )
+}
+
+
 
 export const Setup = Template.bind({})
 Setup.args = {

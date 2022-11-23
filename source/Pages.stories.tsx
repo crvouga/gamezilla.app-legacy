@@ -1,21 +1,23 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react"
+import { Cmd } from "./Core"
 import * as GameRoom from "./Game/GameRoom.Frontend"
 import { initReady, ViewReady } from "./Pages"
 import * as Party from "./Party/Party.Frontend"
-import { chatStore, userA } from "./test-data"
+import { chatStore, profileStore, userA } from "./test-data"
 import * as UI from "./UI"
 
-export default {
-    title: "Page/Ready",
-    component: ViewReady,
-    args: {
-        $d: () => { },
-        chatStore: chatStore,
-        profile: userA,
-        gameRoom: GameRoom.init[0],
-        party: Party.init({ sendToBackend: () => () => { } })[0],
-    },
-} as ComponentMeta<typeof ViewReady>
+const props: Parameters<typeof ViewReady>[0] = {
+    model: initReady(['Home'], userA)[0],
+    route: ['Home'],
+    profileStore: profileStore,
+    $d: () => { },
+    chatStore: chatStore,
+    profile: userA,
+    gameRoom: GameRoom.init[0],
+    party: Party.init({ sendToBackend: () => Cmd.None })[0],
+}
+
+export default { title: "Page/Ready", component: ViewReady, args: props } as ComponentMeta<typeof ViewReady>
 
 
 const Template: ComponentStory<typeof ViewReady> = (args) => {

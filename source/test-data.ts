@@ -1,6 +1,7 @@
 import { ProfileAvatar, UserId, Username } from "./Data"
 import * as ProfileStore from "./Profile/Profile.Store"
 import * as ChatStore from "./Chat/Chat.Store"
+import { Ctx } from "./App.Shared"
 
 export const userA: ProfileStore.Profile = {
     userId: UserId.generate(),
@@ -39,6 +40,11 @@ export const profileStore: ProfileStore.Model = {
     }
 }
 
-export const currentUserId = userA.userId
+const currentUserId = userA.userId
 
 export const chatStore: ChatStore.Model = ChatStore.init
+
+export const ctx: Ctx = {
+    currentUserId,
+    profiles: profileStore.profiles
+}

@@ -1,24 +1,30 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react"
-import { profileStore, userA, userB } from '../../../test-data'
-import { leftAndRightDiagonal } from '../test-data'
+import { ctx, userB } from '../../../test-data'
 import * as UI from "../../../UI"
 import { emptyColumns } from "../ConnectFour"
+import { leftAndRightDiagonal } from '../test-data'
 import { Model, View } from "./UserVsBot.Frontend"
 
-const currentUserId = userA.userId
+
+const setupModel: Model = {
+    type: "Setup",
+    botLevel: "Medium",
+    player: "None",
+    userPlayerType: "PlayerOne"
+}
+
+
+const props: Parameters<typeof View>[0] = {
+    $d: () => { },
+    ctx,
+    goBack: () => { },
+    model: setupModel
+}
 
 export default {
     title: "Connect Four/UserVsBot",
     component: View,
-    args: {
-        currentUserId: currentUserId,
-        store: profileStore,
-        roomComponent: <>room</>,
-        goHome: () => { },
-        $d: () => { },
-        onClose: () => { },
-        goBack: () => { },
-    },
+    args: props,
 } as ComponentMeta<typeof View>
 
 const Template: ComponentStory<typeof View> = (args) => {
@@ -29,13 +35,6 @@ const Template: ComponentStory<typeof View> = (args) => {
     )
 }
 
-const setupModel: Model = {
-    type: "Setup",
-    botLevel: "Medium",
-    player: "None",
-    userPlayerType: "PlayerOne"
-}
-
 export const SetupMissingPlayer = Template.bind({})
 SetupMissingPlayer.args = {
     model: setupModel
@@ -43,14 +42,14 @@ SetupMissingPlayer.args = {
 
 export const SetupReady = Template.bind({})
 SetupReady.args = {
-    model: { ...setupModel, player: currentUserId }
+    model: { ...setupModel, player: ctx.currentUserId }
 }
 
 const gameModel: Model = {
     type: "Game",
     botLevel: "Medium",
     columns: emptyColumns,
-    player: currentUserId,
+    player: ctx.currentUserId,
     userPlayerType: "PlayerOne"
 }
 

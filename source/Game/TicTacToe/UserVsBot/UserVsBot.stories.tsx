@@ -1,32 +1,29 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react"
 import { p } from "../../../Core"
-import { currentUserId, profileStore, userB } from "../../../test-data"
+import { ctx, userB } from "../../../test-data"
 import * as UI from "../../../UI"
 import { emptyBoard, setSlot } from "../TicTacToe"
-import { View } from "./UserVsBot.Frontend"
+import { Model, View } from "./UserVsBot.Frontend"
+
+const modelSetup: Model = {
+  type: "Setup",
+  botLevel: "Medium",
+  userPlayerType: "X",
+  player: ctx.currentUserId,
+}
 
 
-
-
-
-//
-//
-//
-//
-//
-//
-//
+const props: Parameters<typeof View>[0] = {
+  $d: () => { },
+  ctx,
+  goBack: () => { },
+  model: modelSetup
+}
 
 export default {
   title: "TicTacToe / UserVsBot",
   component: View,
-  args: {
-    currentUserId: currentUserId,
-    $d: () => { },
-    roomComponent: <>room</>,
-    goHome: () => { },
-    store: profileStore,
-  },
+  args: props,
 } as ComponentMeta<typeof View>
 
 const Template: ComponentStory<typeof View> = (args) => {
@@ -39,12 +36,7 @@ const Template: ComponentStory<typeof View> = (args) => {
 
 export const SetupCurrentPlayer = Template.bind({})
 SetupCurrentPlayer.args = {
-  model: {
-    type: "Setup",
-    botLevel: "Medium",
-    userPlayerType: "X",
-    player: currentUserId,
-  },
+  model: modelSetup,
 }
 
 export const SetupNoPlayer = Template.bind({})
@@ -74,7 +66,7 @@ GameCurrentUserTurn.args = {
     botLevel: "Medium",
     userPlayerType: "X",
     board: emptyBoard,
-    player: currentUserId,
+    player: ctx.currentUserId,
   },
 }
 
@@ -87,7 +79,7 @@ GameBotTurn.args = {
     board: p(emptyBoard, (board) =>
       setSlot(board, { column: 0, row: 0 }, "X"),
     ),
-    player: currentUserId,
+    player: ctx.currentUserId,
   },
 }
 
@@ -102,7 +94,7 @@ CurrentUserLost.args = {
       ["X", "O", "_"],
       ["X", "_", "_"],
     ],
-    player: currentUserId,
+    player: ctx.currentUserId,
   },
 }
 
@@ -117,7 +109,7 @@ CurrentUserWon.args = {
       ["X", "O", "_"],
       ["X", "_", "_"],
     ],
-    player: currentUserId,
+    player: ctx.currentUserId,
   },
 }
 
@@ -162,6 +154,6 @@ Tie.args = {
       ["X", "O", "X"],
       ["O", "X", "O"],
     ],
-    player: currentUserId,
+    player: ctx.currentUserId,
   },
 }

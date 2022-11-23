@@ -1,21 +1,28 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react"
-import { profileStore, userA, userB, userC } from "../../../test-data"
+import { ctx, userA, userB, userC } from "../../../test-data"
 import * as UI from "../../../UI"
 import { Model, View } from "./UserVsUser.Frontend"
 
-const currentUserId = userA.userId
+const modelSetup: Model = {
+  type: "Setup",
+  maxRoundCount: 3,
+  moveTimeLimit: 5,
+  O: "None",
+  X: "None",
+  openedModal: "None",
+}
+
+const props: Parameters<typeof View>[0] = {
+  $d: () => { },
+  ctx: ctx,
+  model: modelSetup,
+  onCloseGame: () => { }
+}
 
 export default {
   title: "TicTacToe / UserVsUser",
   component: View,
-  args: {
-    currentUserId: currentUserId,
-    $d: () => { },
-    goHome: () => { },
-    onCloseGame: () => { },
-    store: profileStore,
-    roomComponent: <>room</>,
-  },
+  args: props,
 } as ComponentMeta<typeof View>
 
 const Template: ComponentStory<typeof View> = (args) => {
@@ -26,14 +33,7 @@ const Template: ComponentStory<typeof View> = (args) => {
   )
 }
 
-const modelSetup: Model = {
-  type: "Setup",
-  maxRoundCount: 3,
-  moveTimeLimit: 5,
-  O: "None",
-  X: "None",
-  openedModal: "None",
-}
+
 
 export const SetupMissingAll = Template.bind({})
 SetupMissingAll.args = {
