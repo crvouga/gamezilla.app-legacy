@@ -529,7 +529,7 @@ const View = ({
 }) => {
   return (
     <UI.AppContainer themeMode={toThemeMode(model)}>
-      <UI.Box
+      {/* <UI.Box
         sx={{
           display: "flex",
           flexDirection: "column",
@@ -537,12 +537,12 @@ const View = ({
           overflow: "hidden",
           flex: 1,
         }}
-      >
-        <ViewMain
-          model={model}
-          $d={$d}
-        />
-      </UI.Box>
+      > */}
+      <ViewMain
+        model={model}
+        $d={$d}
+      />
+      {/* </UI.Box> */}
 
       <Snackbar.View
         model={model.snackbar}

@@ -1,6 +1,6 @@
-import { TextField } from "@mui/material";
+
 import { Cmd, Keyboard, Set, Sub } from "../../Core";
-import { IconButton, Avatar, Box, Button, FillBox, Icons, InputAdornment, Typography, useTheme } from "../../UI";
+import { Avatar, Box, Button, FillBox, IconButton, Icons, InputAdornment, TextField, Typography, useTheme } from "../../UI";
 import { Ctx } from "../Game.Shared";
 import { Maze } from "./Maze";
 import { BackendModel, FrontendModel, FrontendMsg, handle, initShared, ToBackend, ToFrontend } from "./Maze.Types";
@@ -157,7 +157,12 @@ export const View = ({ model, ctx, $d }: { ctx: Ctx, model: Model, $d: (msg: Msg
                         ))}
                         {/* <rect x={coverArtMaze.lower.x} y={coverArtMaze.lower.y} width="100%" height="100%" fill="transparent" stroke={stroke} strokeWidth={strokeWidth} /> */}
                     </svg>
-                    <Box sx={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", background: `linear-gradient(transparent, ${theme.palette.background.default})` }} >
+                    <Box sx={{
+                        position: "absolute", top: 0, left: 0, width: "100%", height: "100%",
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                        // background: `linear-gradient(transparent, ${theme.palette.background.default})`
+                        background: "rgba(0, 0, 0, 0.5)"
+                    }} >
                         <Typography variant="h2" align="center" color='text.secondary'>
                             Maze
                         </Typography>
