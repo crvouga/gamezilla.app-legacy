@@ -1,22 +1,18 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react"
-import { userA, profileStore } from "../../test-data"
+import { ctx } from "../../test-data"
 import * as UI from "../../UI"
 import { View } from "./TicTacToe.Frontend"
 
-const currentUserId = userA.userId
+const props: Parameters<typeof View>[0] = {
+    $d: () => { },
+    ctx,
+    model: { mode: "None" }
+}
 
 export default {
     title: "TicTacToe",
     component: View,
-    args: {
-        currentUserId: currentUserId,
-        $d: () => { },
-        roomComponent: <>room</>,
-        goHome: () => { },
-        onCloseGame: () => { },
-        store: profileStore
-
-    }
+    args: props
 } as ComponentMeta<typeof View>
 
 
@@ -30,9 +26,4 @@ const Template: ComponentStory<typeof View> = (args) => {
 
 
 export const None = Template.bind({})
-
-None.args = {
-    model: {
-        mode: "None"
-    }
-}
+None.args = {}

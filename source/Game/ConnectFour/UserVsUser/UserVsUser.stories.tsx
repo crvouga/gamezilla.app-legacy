@@ -1,22 +1,29 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react"
-import { profileStore, userA, userB, userC } from '../../../test-data'
+import { ctx, userB, userC } from '../../../test-data'
 import * as UI from "../../../UI"
 import { emptyColumns, mapColumns, PlayerType } from "../ConnectFour"
 import { Model, View } from "./UserVsUser.Frontend"
 
-const currentUserId = userA.userId
+const setupModel: Model = {
+    openedModal: "None",
+    type: "Setup",
+    moveTimeLimit: 7,
+    ghostIndex: "None",
+    PlayerOne: "None",
+    PlayerTwo: "None"
+}
+
+const props: Parameters<typeof View>[0] = {
+    ctx,
+    $d: () => { },
+    goBack: () => { },
+    model: setupModel
+}
 
 export default {
     title: "Connect Four/UserVsUser",
     component: View,
-    args: {
-        currentUserId: currentUserId,
-        store: profileStore,
-        roomComponent: <>room</>,
-        goHome: () => { },
-        $d: () => { },
-        onClose: () => { },
-    },
+    args: props
 } as ComponentMeta<typeof View>
 
 const Template: ComponentStory<typeof View> = (args) => {
@@ -27,14 +34,7 @@ const Template: ComponentStory<typeof View> = (args) => {
     )
 }
 
-const setupModel: Model = {
-    openedModal: "None",
-    type: "Setup",
-    moveTimeLimit: 7,
-    ghostIndex: "None",
-    PlayerOne: "None",
-    PlayerTwo: "None"
-}
+
 
 export const MissingBoth = Template.bind({})
 MissingBoth.args = {
@@ -47,7 +47,7 @@ export const MissingPlayerOne = Template.bind({})
 MissingPlayerOne.args = {
     model: {
         ...setupModel,
-        PlayerTwo: currentUserId
+        PlayerTwo: ctx.currentUserId
     }
 }
 
@@ -55,7 +55,7 @@ export const MissingPlayerTwo = Template.bind({})
 MissingPlayerTwo.args = {
     model: {
         ...setupModel,
-        PlayerOne: currentUserId
+        PlayerOne: ctx.currentUserId
     }
 }
 
@@ -63,7 +63,7 @@ export const SetupReady = Template.bind({})
 SetupReady.args = {
     model: {
         ...setupModel,
-        PlayerOne: currentUserId,
+        PlayerOne: ctx.currentUserId,
         PlayerTwo: userB.userId,
     }
 }
@@ -73,7 +73,7 @@ const gameModel: Model = {
     columns: emptyColumns,
     moveCountDown: 7,
     moveTimeLimit: 7,
-    PlayerOne: currentUserId,
+    PlayerOne: ctx.currentUserId,
     PlayerTwo: userB.userId,
     ghostIndex: "None",
     openedModal: "None",

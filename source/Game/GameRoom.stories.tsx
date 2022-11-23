@@ -1,11 +1,11 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react"
-import { profileStore, userA, userB, userC } from "../test-data"
-import * as UI from "../UI"
-import { View, init } from "./GameRoom.Frontend"
-import { FrontendRoom } from "./GameRoom.Types"
-import * as Game from "./Game.Frontend"
 import { Cmd } from "../Core"
 import { RoomId } from "../Data"
+import { ctx, userB, userC } from "../test-data"
+import * as UI from "../UI"
+import * as Game from "./Game.Frontend"
+import { init, View } from "./GameRoom.Frontend"
+import { FrontendRoom } from "./GameRoom.Types"
 
 const roomA: FrontendRoom = {
     game: Game.init({ gameName: "Chess", sendToBackend: () => Cmd.None })[0],
@@ -19,16 +19,16 @@ const roomB: FrontendRoom = {
     roomId: RoomId.generate()
 }
 
+const props: Parameters<typeof View>[0] = {
+    $d: () => { },
+    model: init[0],
+    ctx,
+}
+
 export default {
     title: "Game Room",
     component: View,
-    args: {
-        bottomNav: <>bottom nav</>,
-        currentUserId: userA.userId,
-        $d: () => { },
-        model: init[0],
-        profileStore: profileStore
-    },
+    args: props,
 } as ComponentMeta<typeof View>
 
 
@@ -39,7 +39,6 @@ const Template: ComponentStory<typeof View> = (args) => {
         </UI.AppContainer>
     )
 }
-
 
 export const NoActiveRooms = Template.bind({})
 NoActiveRooms.args = {

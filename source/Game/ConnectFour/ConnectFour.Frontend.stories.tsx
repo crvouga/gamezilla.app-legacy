@@ -1,21 +1,19 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react"
-import * as TestData from "../../test-data"
+import { ctx } from "../../test-data"
 import * as UI from "../../UI"
 import { View } from "./ConnectFour.Frontend"
 
 
-const currentUserId = TestData.userA.userId
+const props: Parameters<typeof View>[0] = {
+    $d: () => { },
+    ctx,
+    model: { type: "None" }
+}
 
 export default {
     title: "Connect Four",
     component: View,
-    args: {
-        currentUserId: currentUserId,
-        roomComponent: <>room</>,
-        $d: () => { },
-        goHome: () => { },
-        onCloseGame: () => { },
-    }
+    args: props
 } as ComponentMeta<typeof View>
 
 
@@ -29,9 +27,4 @@ const Template: ComponentStory<typeof View> = (args) => {
 
 
 export const None = Template.bind({})
-
-None.args = {
-    model: {
-        type: "None",
-    }
-}
+None.args = {}

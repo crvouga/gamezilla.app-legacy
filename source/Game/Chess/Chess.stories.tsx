@@ -1,20 +1,21 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react"
 import { RemoteData } from "../../Core"
-import { currentUserId, profileStore } from "../../test-data"
+import { ctx } from "../../test-data"
 import * as UI from "../../UI"
 import { View } from "./Chess.Frontend"
 
-export default {
-  title: "Chess",
-  component: View,
-  args: {
-    currentUserId: currentUserId,
-    $d: () => { },
-    roomComponent: <>room</>,
-    goHome: () => { },
-    profileStore: profileStore,
-  },
-} as ComponentMeta<typeof View>
+const props: Parameters<typeof View>[0] = {
+  $d: () => { },
+  ctx,
+  model: {
+    mode: ['None'],
+    requests: {
+      InputMode: RemoteData.NotAsked
+    }
+  }
+}
+
+export default { title: "Chess", component: View, args: props, } as ComponentMeta<typeof View>
 
 const Template: ComponentStory<typeof View> = (args) => {
   return (
@@ -25,11 +26,4 @@ const Template: ComponentStory<typeof View> = (args) => {
 }
 
 export const None = Template.bind({})
-None.args = {
-  model: {
-    mode: ["None"],
-    requests: {
-      InputMode: RemoteData.NotAsked,
-    },
-  },
-}
+None.args = {}

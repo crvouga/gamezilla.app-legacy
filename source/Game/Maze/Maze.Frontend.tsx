@@ -129,15 +129,40 @@ export const subscriptions = (_model: Model): Sub<Msg> => {
 //
 //
 
+
+const artMaze = Maze.make({ seed: "art maze!", lower: { x: 0, y: 0 }, upper: { x: 27, y: 9 } })
+const artMazeViewBox = [artMaze.lower.x, artMaze.lower.y, (artMaze.upper.x - artMaze.lower.x) + 1, (artMaze.upper.y - artMaze.lower.y) + 1].join(" ")
+
+
 export const View = ({ model, ctx, $d }: { ctx: Ctx, model: Model, $d: (msg: Msg) => void, }) => {
+    const theme = useTheme()
     if (model.type === 'Setup') {
-
-
         return (
             <FillBox>
-                <Typography variant="h2" sx={{ px: 2, pt: 2 }}>
-                    Maze
-                </Typography>
+
+                {/* <Box sx={{ width: "25%", pt: 2, mx: 'auto' }}>
+                    <CoverArt />
+                </Box> */}
+                <Box sx={{ position: "relative" }}>
+                    <svg viewBox={artMazeViewBox} width={"100%"}>
+                        <rect x={artMaze.lower.x} y={artMaze.lower.y} width="100%" height="100%" fill={theme.palette.background.default} />
+                        {artMaze.edges.map(([a, b]) => (
+                            <g
+                                key={[a.x, a.y, b.x, b.y].join("-")}
+                                strokeWidth="0.1"
+                                stroke={theme.palette.text.secondary}
+                            >
+                                <line x1={a.x + 1 / 2} y1={a.y + 1 / 2} x2={b.x + 1 / 2} y2={b.y + 1 / 2} />
+                            </g>
+                        ))}
+                        {/* <rect x={coverArtMaze.lower.x} y={coverArtMaze.lower.y} width="100%" height="100%" fill="transparent" stroke={stroke} strokeWidth={strokeWidth} /> */}
+                    </svg>
+                    <Box sx={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", background: `linear-gradient(transparent, ${theme.palette.background.default})` }} >
+                        <Typography variant="h2" align="center" color='text.secondary'>
+                            Maze
+                        </Typography>
+                    </Box>
+                </Box>
                 <Box sx={{ px: 2, pt: 2 }}>
                     <TextField
                         disabled={handle(['InputSeed', { userId: ctx.currentUserId, seed: model.seed }], model).type === "Err"}
@@ -195,6 +220,7 @@ export const View = ({ model, ctx, $d }: { ctx: Ctx, model: Model, $d: (msg: Msg
                         variant="contained"
                         onClick={() => $d(['StartGame', { userId: ctx.currentUserId }])}
                         disabled={handle(['StartGame', { userId: ctx.currentUserId }], model).type === 'Err'}
+
                     >
                         Start Game
                     </Button>
@@ -208,12 +234,11 @@ export const View = ({ model, ctx, $d }: { ctx: Ctx, model: Model, $d: (msg: Msg
 
     const maze = Maze.make(model)
 
-    const theme = useTheme()
     const stroke = theme.palette.text.disabled
     const strokeWidth = 0.05
 
-    return <FillBox >
-        <svg style={{ maxWidth: "400px", margin: "auto" }} width="100%" viewBox={viewBox}>
+    return <FillBox sx={{ alignItems: "center" }}>
+        <svg style={{ maxWidth: "400px", margin: 0, }} width="100%" viewBox={viewBox}>
             <rect x={0} y={0} width="100%" height="100%" fill={theme.palette.background.default} />
             {maze.edges.map(([a, b]) => (
                 <g

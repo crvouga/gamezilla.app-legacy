@@ -2,13 +2,14 @@ import { ComponentMeta, ComponentStory } from "@storybook/react"
 import * as UI from "../../UI"
 import { emptyBoard, ViewBoard } from "./Flow"
 
+const props: Parameters<typeof ViewBoard>[0] = {
+    board: emptyBoard(9)
+}
 
 export default {
     title: "Flow/Board",
     component: ViewBoard,
-    args: {
-        board: emptyBoard(9),
-    }
+    args: props
 } as ComponentMeta<typeof ViewBoard>
 
 
@@ -19,7 +20,6 @@ const Template: ComponentStory<typeof ViewBoard> = (args) => {
         </UI.AppContainer>
     )
 }
-
 
 export const Empty = Template.bind({})
 
