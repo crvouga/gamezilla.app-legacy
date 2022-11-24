@@ -1,4 +1,3 @@
-
 import { Cmd, Keyboard, Set, Sub } from "../../Core";
 import { Avatar, Box, Button, FillBox, IconButton, Icons, InputAdornment, TextField, Typography, useTheme } from "../../UI";
 import { Ctx } from "../Game.Shared";
@@ -238,9 +237,6 @@ export const View = ({ model, ctx, $d }: { ctx: Ctx, model: Model, $d: (msg: Msg
 
     const maze = Maze.makeMemoized(model)
 
-    const stroke = theme.palette.text.disabled
-    const strokeWidth = 0.05
-
     return <FillBox sx={{ alignItems: "center" }}>
         <svg style={{ maxWidth: "400px", margin: 0, }} width="100%" viewBox={viewBox}>
             <rect x={0} y={0} width="100%" height="100%" fill={theme.palette.background.default} />
@@ -258,6 +254,33 @@ export const View = ({ model, ctx, $d }: { ctx: Ctx, model: Model, $d: (msg: Msg
                 <circle key={player.userId} cx={player.position.x + 1 / 2} cy={player.position.y + 1 / 2} r={1 / 3} fill={theme.palette.text.primary} />
             ))}
         </svg>
+        <Joystick
+            activeDirection={model.players[ctx.currentUserId]?.direction}
+            onChange={(direction) => $d(['InputDirection', { direction, userId: ctx.currentUserId }])}
+            activeFill="#fff"
+            fill="#000"
+            stroke="#bcbcbc"
+        />
+    </FillBox>
+}
+
+
+
+const Joystick = ({
+    activeDirection,
+    onChange,
+    stroke,
+    fill,
+    activeFill,
+}: {
+    activeDirection?: Direction;
+    onChange: (direction: Direction) => void;
+    stroke: string;
+    fill: string,
+    activeFill: string
+}) => {
+
+    return (
         <Box sx={{
             maxWidth: "40vw",
             margin: "auto",
@@ -272,36 +295,32 @@ export const View = ({ model, ctx, $d }: { ctx: Ctx, model: Model, $d: (msg: Msg
                     </clipPath>
                 </defs>
 
+                <g strokeWidth={0.025} >
+                    <g clipPath="url(#cut-off-bottom)" stroke={stroke} >
+                        {Direction.all.map(direction => {
+                            const { x, y } = directionToVector(direction)
+                            return (
+                                <rect
+                                    key={direction}
+                                    x={x}
+                                    y={y}
+                                    width={1}
+                                    height={1}
+                                    fill={activeDirection === direction ? activeFill : fill}
+                                    onTouchStart={() => onChange(direction)}
+                                    onMouseDown={() => onChange(direction)}
 
-                <g clipPath="url(#cut-off-bottom)" stroke={stroke} strokeWidth={strokeWidth} >
-                    {Direction.all.map(direction => {
-                        const { x, y } = directionToVector(direction)
+                                />
+                            )
+                        })}
+                    </g>
 
-                        return (
-                            <rect
-                                key={direction}
-                                x={x}
-                                y={y}
-                                width={1}
-                                height={1}
-                                fill={model.players[ctx.currentUserId]?.direction === direction ? theme.palette.action.active : theme.palette.background.default}
-                                // 
-                                onTouchStart={() => $d(['InputDirection', { userId: ctx.currentUserId, direction }])}
-                                // onTouchMove={() => $d(['InputMove', { userId: ctx.currentUserId, direction }])}
-                                // 
-                                onMouseDown={() => $d(['InputDirection', { userId: ctx.currentUserId, direction }])}
-                            // onMouseOver={() => $d(['InputMove', { userId: ctx.currentUserId, direction }])}
-                            />
-                        )
-                    })}
+                    <circle x="0" y="0" r={0.5} fill={fill} style={{ touchAction: "none", userSelect: "none", pointerEvents: "none" }} stroke={stroke} />
+                    <circle x="0" y="0" r={0.98} style={{ touchAction: "none", userSelect: "none", pointerEvents: "none" }} fill="transparent" stroke={stroke} />
                 </g>
-
-                <circle x="0" y="0" r={0.5} fill={theme.palette.background.default} style={{ touchAction: "none", userSelect: "none", pointerEvents: "none" }} stroke={stroke} strokeWidth={strokeWidth} />
-
-                <circle x="0" y="0" r={0.98} style={{ touchAction: "none", userSelect: "none", pointerEvents: "none" }} fill="transparent" stroke={stroke} strokeWidth={strokeWidth} />
             </svg>
         </Box>
-    </FillBox>
+    )
 }
 
 const directionToVector = (direction: Direction): Position => {
@@ -312,6 +331,7 @@ const directionToVector = (direction: Direction): Position => {
         case 'West': return { x: -1, y: 0 }
     }
 }
+
 
 
 const coverArtMaze = Maze.make({ seed: "cover art maze!", lower: { x: 0, y: 0 }, upper: { x: 8, y: 8 } })
