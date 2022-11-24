@@ -71,8 +71,10 @@ export const update = (
     case "ClickedChat":
       const userIds = [...Object.values(model.selected), currentUserId]
 
-      const action: OutAction =
-        ['Chat', ["Conversation", ["FindOneElseInsert", { userIds }]]]
+      const action: OutAction = [
+        "Chat",
+        ["Conversation", ["FindOneElseInsert", { userIds }]],
+      ]
 
       return [model, Cmd.None, [action]]
 
@@ -88,7 +90,7 @@ export const update = (
           highlightedIndex: "None",
         },
         Cmd.None,
-        [["Profile", ["Search", { searchText }]]]
+        [["Profile", ["Search", { searchText }]]],
       ]
 
     case "ClickedSelectedDelete":
@@ -213,7 +215,7 @@ export const View = ({
   model,
   profileStore,
 }: {
-  profileStore: ProfileStore.Model,
+  profileStore: ProfileStore.Model
   chatStore: ChatStore.Model
   currentUserProfile: ProfileStore.Profile
   model: Model
@@ -238,9 +240,7 @@ export const View = ({
   return (
     <UI.FillBox>
       <UI.Header
-        left={
-          <UI.HeaderBackButton onClick={() => $d(["ClickedCancel"])} />
-        }
+        left={<UI.HeaderBackButton onClick={() => $d(["ClickedCancel"])} />}
         title="New message"
         right={
           <UI.Button

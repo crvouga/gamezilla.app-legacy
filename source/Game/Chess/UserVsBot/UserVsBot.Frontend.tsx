@@ -1,5 +1,5 @@
 import { Audio, Cmd, exhaustive, Option, Sub, t } from "../../../Core"
-import * as Snackbar from "../../../Snackbar"
+import * as Snackbar from "../../../Alerts"
 import * as UI from "../../../UI"
 import { Ctx } from "../../Game.Shared"
 import * as Board from "../Board"
@@ -18,8 +18,9 @@ import {
   isBotTurn,
   Res,
   SharedModel,
-  startGame, ToBackend,
-  ToFrontend
+  startGame,
+  ToBackend,
+  ToFrontend,
 } from "./UserVsBot.Types"
 
 //
@@ -183,13 +184,13 @@ const updateFromBackend_ = (
         sharedModel.type === "Game" && Board.inCheck(sharedModel.board)
           ? playAudio(Sounds.check)
           : didCapture
-            ? playAudio(Sounds.capture)
-            : playAudio(Sounds.move)
+          ? playAudio(Sounds.capture)
+          : playAudio(Sounds.move)
 
       return [{ ...model, sharedModel }, soundCmd, []]
     }
 
-    case 'PlayerLeft': {
+    case "PlayerLeft": {
       const merged = mergeWithBackend(model, msg[1])
       return [merged, Cmd.None, []]
     }
@@ -209,8 +210,8 @@ const updateFromBackend_ = (
         sharedModelNew.type === "Game" && Board.inCheck(sharedModelNew.board)
           ? playAudio(Sounds.check)
           : sharedModelNew.didCapture
-            ? playAudio(Sounds.capture)
-            : playAudio(Sounds.move)
+          ? playAudio(Sounds.capture)
+          : playAudio(Sounds.move)
 
       return [modelNew, soundCmd, []]
     }
@@ -320,8 +321,26 @@ export const View = ({
         <UI.Box sx={{ flex: 1, overflowY: "scroll" }}>
           <VersusHeader
             ctx={ctx}
-            black={model.sharedModel.userColor === 'w' ? { type: "Bot", label: Board.levelToString(model.sharedModel.botLevel) } : model.sharedModel.userId === 'None' ? { type: "None" } : { type: "User", userId: model.sharedModel.userId }}
-            white={model.sharedModel.userColor === 'b' ? { type: "Bot", label: Board.levelToString(model.sharedModel.botLevel) } : model.sharedModel.userId === 'None' ? { type: "None" } : { type: "User", userId: model.sharedModel.userId }}
+            black={
+              model.sharedModel.userColor === "w"
+                ? {
+                    type: "Bot",
+                    label: Board.levelToString(model.sharedModel.botLevel),
+                  }
+                : model.sharedModel.userId === "None"
+                ? { type: "None" }
+                : { type: "User", userId: model.sharedModel.userId }
+            }
+            white={
+              model.sharedModel.userColor === "b"
+                ? {
+                    type: "Bot",
+                    label: Board.levelToString(model.sharedModel.botLevel),
+                  }
+                : model.sharedModel.userId === "None"
+                ? { type: "None" }
+                : { type: "User", userId: model.sharedModel.userId }
+            }
           />
 
           <UI.Typography
@@ -338,7 +357,7 @@ export const View = ({
                 size="large"
                 variant="contained"
                 onClick={() => {
-                  $d(["InputUser", { userId: ctx.currentUserId },])
+                  $d(["InputUser", { userId: ctx.currentUserId }])
                 }}
               >
                 Start Playing
@@ -351,16 +370,17 @@ export const View = ({
                 src={ctx.profiles[model.sharedModel.userId]?.avatarUrl}
               />
 
-              <UI.Typography sx={{ flex: 1 }} noWrap>
+              <UI.Typography
+                sx={{ flex: 1 }}
+                noWrap
+              >
                 {ctx.profiles[model.sharedModel.userId]?.username ?? "..."}
               </UI.Typography>
 
               {model.sharedModel.userId === ctx.currentUserId && (
                 <UI.Button
                   size="large"
-                  onClick={() =>
-                    $d(["InputUser", { userId: "None" }])
-                  }
+                  onClick={() => $d(["InputUser", { userId: "None" }])}
                 >
                   Stop Playing
                 </UI.Button>
@@ -371,7 +391,7 @@ export const View = ({
           <UI.Divider sx={{ marginY: 2 }} />
 
           <UI.Typography
-            sx={{ paddingX: 2, marginBottom: 1, }}
+            sx={{ paddingX: 2, marginBottom: 1 }}
             color="text.secondary"
           >
             Color
@@ -399,7 +419,10 @@ export const View = ({
                     ])
                   }
                 >
-                  <PawnIcon stroke="#000" sx={{ width: 36, height: 36, color: "#fff", }} />
+                  <PawnIcon
+                    stroke="#000"
+                    sx={{ width: 36, height: 36, color: "#fff" }}
+                  />
                   White
                 </UI.ToggleButton>
                 <UI.ToggleButton
@@ -411,7 +434,10 @@ export const View = ({
                     ])
                   }
                 >
-                  <PawnIcon stroke="#ccc" sx={{ width: 36, height: 36, color: "#000", }} />
+                  <PawnIcon
+                    stroke="#ccc"
+                    sx={{ width: 36, height: 36, color: "#000" }}
+                  />
                   Black
                 </UI.ToggleButton>
               </UI.ToggleButtonGroup>
@@ -435,12 +461,22 @@ export const View = ({
               }
             >
               <UI.Box
-                sx={{ width: '100%', display: 'flex', alignItems: 'center', gap: 1.5, flexWrap: "wrap" }}
+                sx={{
+                  width: "100%",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 1.5,
+                  flexWrap: "wrap",
+                }}
               >
                 {Board.allLevels.map((level) => (
                   <UI.Chip
                     clickable
-                    color={model.sharedModel.botLevel === level ? "primary" : undefined}
+                    color={
+                      model.sharedModel.botLevel === level
+                        ? "primary"
+                        : undefined
+                    }
                     // variant={model.sharedModel.botLevel === level ? "filled" : "outlined"}
                     key={level}
                     onClick={() => {
@@ -491,7 +527,7 @@ export const View = ({
       <UI.Avatar sx={{ marginRight: 2, backgroundColor: "transparent" }}>
         <UI.Icons.SmartToy
           sx={{ color: "text.primary", width: "100%", height: "100%" }}
-        // sx={{ width: 40, height: 40, marginRight: 2 }}
+          // sx={{ width: 40, height: 40, marginRight: 2 }}
         />
       </UI.Avatar>
 
@@ -612,9 +648,7 @@ export const View = ({
           )}
 
           <UI.DialogActions>
-            <UI.Button onClick={() => $d(["ClosedModal"])}>
-              Close
-            </UI.Button>
+            <UI.Button onClick={() => $d(["ClosedModal"])}>Close</UI.Button>
           </UI.DialogActions>
         </UI.Dialog>
       )}

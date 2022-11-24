@@ -1,107 +1,106 @@
 import { Board, move, PlayerType, toBestMove } from "./TicTacToe"
 
 describe("TicTacToe", () => {
+  it("Okfully moves", () => {
+    const before: Board = [
+      ["X", "O", "_"],
+      ["X", "_", "_"],
+      ["_", "_", "_"],
+    ]
 
-    it("Okfully moves", () => {
-        const before: Board = [
-            ['X', 'O', '_'],
-            ['X', '_', '_'],
-            ['_', '_', '_'],
-        ]
+    const expected: Board = [
+      ["X", "O", "_"],
+      ["X", "_", "_"],
+      ["O", "_", "_"],
+    ]
 
-        const expected: Board = [
-            ['X', 'O', '_'],
-            ['X', '_', '_'],
-            ['O', '_', '_'],
-        ]
-
-        const result = move({
-            board: before,
-            player: "O",
-            position: { row: 0, column: 2 }
-        })
-
-        expect(result.type).toBe("Ok")
-        if (result.type === 'Ok') {
-            expect(expected).toEqual(result.value)
-        }
+    const result = move({
+      board: before,
+      player: "O",
+      position: { row: 0, column: 2 },
     })
 
-    it("makes winning move", () => {
-        const before: Board = [
-            ['X', 'O', '_'],
-            ['X', 'O', '_'],
-            ['_', '_', '_'],
-        ]
+    expect(result.type).toBe("Ok")
+    if (result.type === "Ok") {
+      expect(expected).toEqual(result.value)
+    }
+  })
 
-        const expected: Board = [
-            ['X', 'O', '_'],
-            ['X', 'O', '_'],
-            ['X', '_', '_'],
-        ]
+  it("makes winning move", () => {
+    const before: Board = [
+      ["X", "O", "_"],
+      ["X", "O", "_"],
+      ["_", "_", "_"],
+    ]
 
-        const botPlayerType: PlayerType = "X"
+    const expected: Board = [
+      ["X", "O", "_"],
+      ["X", "O", "_"],
+      ["X", "_", "_"],
+    ]
 
-        const bestMoveResult = toBestMove({
-            depth: 1,
-            maximizingPlayer: botPlayerType,
-            board: before
-        })
+    const botPlayerType: PlayerType = "X"
 
-        expect(bestMoveResult.type).toBe("Ok")
-
-        if (bestMoveResult.type === "Err") {
-            return
-        }
-
-        const result = move({
-            board: before,
-            player: botPlayerType,
-            position: bestMoveResult.value
-        })
-
-        expect(result.type).toBe("Ok")
-        if (result.type === 'Ok') {
-            expect(expected).toEqual(result.value)
-        }
+    const bestMoveResult = toBestMove({
+      depth: 1,
+      maximizingPlayer: botPlayerType,
+      board: before,
     })
 
-    it("blocks winning move", () => {
-        const before: Board = [
-            ['X', 'O', '_'],
-            ['X', '_', '_'],
-            ['_', '_', '_'],
-        ]
+    expect(bestMoveResult.type).toBe("Ok")
 
-        const expected: Board = [
-            ['X', 'O', '_'],
-            ['X', '_', '_'],
-            ['O', '_', '_'],
-        ]
+    if (bestMoveResult.type === "Err") {
+      return
+    }
 
-        const botPlayerType: PlayerType = "O"
-
-        const bestMoveResult = toBestMove({
-            depth: 1,
-            maximizingPlayer: botPlayerType,
-            board: before
-        })
-
-        expect(bestMoveResult.type).toBe("Ok")
-
-        if (bestMoveResult.type === 'Err') {
-            return
-        }
-
-        const result = move({
-            board: before,
-            player: botPlayerType,
-            position: bestMoveResult.value
-        })
-
-        expect(result.type).toBe("Ok")
-        if (result.type === 'Ok') {
-            expect(expected).toEqual(result.value)
-        }
+    const result = move({
+      board: before,
+      player: botPlayerType,
+      position: bestMoveResult.value,
     })
+
+    expect(result.type).toBe("Ok")
+    if (result.type === "Ok") {
+      expect(expected).toEqual(result.value)
+    }
+  })
+
+  it("blocks winning move", () => {
+    const before: Board = [
+      ["X", "O", "_"],
+      ["X", "_", "_"],
+      ["_", "_", "_"],
+    ]
+
+    const expected: Board = [
+      ["X", "O", "_"],
+      ["X", "_", "_"],
+      ["O", "_", "_"],
+    ]
+
+    const botPlayerType: PlayerType = "O"
+
+    const bestMoveResult = toBestMove({
+      depth: 1,
+      maximizingPlayer: botPlayerType,
+      board: before,
+    })
+
+    expect(bestMoveResult.type).toBe("Ok")
+
+    if (bestMoveResult.type === "Err") {
+      return
+    }
+
+    const result = move({
+      board: before,
+      player: botPlayerType,
+      position: bestMoveResult.value,
+    })
+
+    expect(result.type).toBe("Ok")
+    if (result.type === "Ok") {
+      expect(expected).toEqual(result.value)
+    }
+  })
 })

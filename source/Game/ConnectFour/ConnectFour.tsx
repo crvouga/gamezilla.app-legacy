@@ -15,21 +15,24 @@ export type PlayerType = "PlayerOne" | "PlayerTwo"
 
 export const opposite: { [playerType in PlayerType]: PlayerType } = {
   PlayerOne: "PlayerTwo",
-  PlayerTwo: "PlayerOne"
+  PlayerTwo: "PlayerOne",
 }
 
 type Color = "Red" | "Yellow"
 
 export const playerTypeToColor: { [key in PlayerType]: Color } = {
   PlayerOne: "Red",
-  PlayerTwo: "Yellow"
+  PlayerTwo: "Yellow",
 }
 
 export type Column = readonly PlayerType[]
 
 export type Columns = [Column, Column, Column, Column, Column, Column, Column]
 
-export const mapColumns = (columns: Columns, f: (column: Column, columnIndex: ColumnIndex) => Column): Columns => {
+export const mapColumns = (
+  columns: Columns,
+  f: (column: Column, columnIndex: ColumnIndex) => Column,
+): Columns => {
   return [
     f(columns[0], 0),
     f(columns[1], 1),
@@ -42,7 +45,6 @@ export const mapColumns = (columns: Columns, f: (column: Column, columnIndex: Co
 }
 
 export const MAX_COLUMN_HEIGHT = 6
-
 
 export const emptyColumns: Columns = [[], [], [], [], [], [], []]
 export const COLUMN_COUNT = emptyColumns.length
@@ -82,11 +84,11 @@ export const move = (
 ): MoveResult => {
   const status = toStatus(columns)
 
-  if (status.type === 'Winner') {
+  if (status.type === "Winner") {
     return Err("game_over_winner")
   }
 
-  if (status.type === 'Tie') {
+  if (status.type === "Tie") {
     return Err("game_over_tie")
   }
 
@@ -106,13 +108,12 @@ export const move = (
     return Err("column_is_full")
   }
 
-  const columnsNew =
-    mapColumns(columns, (column, index) => {
-      if (index === columnIndex) {
-        return column.concat([player]).slice(0, MAX_COLUMN_HEIGHT)
-      }
-      return column
-    })
+  const columnsNew = mapColumns(columns, (column, index) => {
+    if (index === columnIndex) {
+      return column.concat([player]).slice(0, MAX_COLUMN_HEIGHT)
+    }
+    return column
+  })
 
   return Ok(columnsNew)
 }
@@ -121,23 +122,37 @@ export type BestMoveProblem = "no_move_available"
 
 export type BestMoveResult = Result<BestMoveProblem, ColumnIndex>
 
-export const toBestMove = ({ columns, maximizingPlayer }: { columns: Columns, maximizingPlayer: PlayerType }): BestMoveResult => {
+export const toBestMove = ({
+  columns,
+  maximizingPlayer,
+}: {
+  columns: Columns
+  maximizingPlayer: PlayerType
+}): BestMoveResult => {
   for (const columnIndex of shuffle(allColumnIndexes)) {
     const result = move(columns, columnIndex, maximizingPlayer)
-    if (result.type === 'Ok') {
+    if (result.type === "Ok") {
       return Ok(columnIndex)
     }
   }
   return Err("no_move_available")
 }
 
-export const getBestMove = ({ columns, maximizingPlayer }: { columns: Columns, maximizingPlayer: PlayerType }): Task<BestMoveResult> => async () => {
-  const result = toBestMove({ columns, maximizingPlayer })
+export const getBestMove =
+  ({
+    columns,
+    maximizingPlayer,
+  }: {
+    columns: Columns
+    maximizingPlayer: PlayerType
+  }): Task<BestMoveResult> =>
+  async () => {
+    const result = toBestMove({ columns, maximizingPlayer })
 
-  await new Promise(resolve => setTimeout(resolve, 1_000))
+    await new Promise((resolve) => setTimeout(resolve, 1_000))
 
-  return result
-}
+    return result
+  }
 
 export const toSlot = (
   columns: Columns,
@@ -162,18 +177,16 @@ const isFull = (columns: Columns) => {
 
 export type Status =
   | {
-    type: "Playing"
-    turn: PlayerType
-  }
+      type: "Playing"
+      turn: PlayerType
+    }
   | {
-    type: "Winner"
-    winner: PlayerType
-  }
+      type: "Winner"
+      winner: PlayerType
+    }
   | {
-    type: "Tie"
-  }
-
-
+      type: "Tie"
+    }
 
 export const toStatus = (columns: Columns): Status => {
   const wins = toWins(columns)
@@ -186,7 +199,7 @@ export const toStatus = (columns: Columns): Status => {
     if (!position) {
       return {
         type: "Playing",
-        turn
+        turn,
       }
     }
 
@@ -195,7 +208,7 @@ export const toStatus = (columns: Columns): Status => {
     if (winner === "Empty") {
       return {
         type: "Playing",
-        turn
+        turn,
       }
     }
 
@@ -213,7 +226,7 @@ export const toStatus = (columns: Columns): Status => {
 
   return {
     type: "Playing",
-    turn
+    turn,
   }
 }
 
@@ -225,11 +238,19 @@ export const toStatus = (columns: Columns): Status => {
 //
 //
 
+type Position = { x: number; y: number }
 
-type Position = { x: number, y: number }
-
-
-const toKey = ({ x, y, dx, dy }: { x: number, y: number, dx: number, dy: number }): string => {
+const toKey = ({
+  x,
+  y,
+  dx,
+  dy,
+}: {
+  x: number
+  y: number
+  dx: number
+  dy: number
+}): string => {
   return `${x}, ${y}, ${dx}, ${dy}`
 }
 
@@ -247,7 +268,7 @@ const directions: [number, number][] = [
   [-1, -1],
   // left diagonal
   [1, -1],
-  [-1, 1]
+  [-1, 1],
 ]
 
 type Win = Position[]
@@ -260,14 +281,13 @@ export const toWins = (columns: Columns): Position[][] => {
   for (let x = 0; x < columns.length; x++) {
     for (let y = 0; y < columns[x]!.length; y++) {
       for (const [dx, dy] of directions) {
-
         if (visited.has(toKey({ x, y, dx, dy }))) {
           continue
         }
 
         const targetSlot = toSlot(columns, { x, y })
 
-        if (targetSlot === 'Empty') {
+        if (targetSlot === "Empty") {
           continue
         }
 
@@ -280,12 +300,11 @@ export const toWins = (columns: Columns): Position[][] => {
 
           win.push(position)
 
-          position = { x: position.x + dx, y: position.y + dy, }
+          position = { x: position.x + dx, y: position.y + dy }
 
           if (toSlot(columns, position) !== targetSlot) {
             break
           }
-
         }
 
         if (win.length >= minWinLength) {
@@ -294,7 +313,6 @@ export const toWins = (columns: Columns): Position[][] => {
       }
     }
   }
-
 
   return unique(isSameWin, wins)
 }
@@ -326,12 +344,20 @@ export const gameTheme = {
 }
 
 export const ViewSvgDefs = () => {
-  return (
-    <></>
-  )
+  return <></>
 }
 
-export const ViewPlayerOneGradientDef = ({ gradientId, cx, cy, r }: { gradientId: string, cx: number, cy: number, r: number }) => {
+export const ViewPlayerOneGradientDef = ({
+  gradientId,
+  cx,
+  cy,
+  r,
+}: {
+  gradientId: string
+  cx: number
+  cy: number
+  r: number
+}) => {
   return (
     <radialGradient
       id={gradientId}
@@ -352,7 +378,11 @@ export const ViewPlayerOneGradientDef = ({ gradientId, cx, cy, r }: { gradientId
   )
 }
 
-export const ViewPlayerTwoGradientDef = ({ gradientId }: { gradientId: string }) => {
+export const ViewPlayerTwoGradientDef = ({
+  gradientId,
+}: {
+  gradientId: string
+}) => {
   return (
     <radialGradient
       id={gradientId}
@@ -370,12 +400,11 @@ export const ViewPlayerTwoGradientDef = ({ gradientId }: { gradientId: string })
   )
 }
 
-
 type ViewColumnsProps = {
-  columns: Columns;
-  ghost?: { columnIndex: ColumnIndex, playerType: PlayerType };
-  onClick?: (columnIndex: ColumnIndex) => void;
-  onHover?: (columnINdex: ColumnIndex) => void;
+  columns: Columns
+  ghost?: { columnIndex: ColumnIndex; playerType: PlayerType }
+  onClick?: (columnIndex: ColumnIndex) => void
+  onHover?: (columnINdex: ColumnIndex) => void
   disabled?: boolean
 }
 
@@ -386,11 +415,11 @@ export const ViewColumns = ({
   implementation?: "svg" | "canvas"
 }) => {
   switch (implementation) {
-    case 'canvas': {
+    case "canvas": {
       return <ViewColumnsCanvas {...props} />
     }
 
-    case 'svg': {
+    case "svg": {
       return <ViewColumnsSvg {...props} />
     }
   }
@@ -401,7 +430,7 @@ const ViewColumnsSvg = ({
   onClick,
   onHover,
   ghost,
-  disabled
+  disabled,
 }: ViewColumnsProps) => {
   const ids = {
     playerOneGradient: "playerOneGradient",
@@ -514,14 +543,20 @@ const ViewColumnsSvg = ({
         )),
       )}
 
-
       {!disabled && ghost && (
         <circle
           cx={ghost.columnIndex + 0.5}
-          cy={MAX_COLUMN_HEIGHT - (columns[ghost.columnIndex]?.length ?? 0) + 0.5 - 1}
+          cy={
+            MAX_COLUMN_HEIGHT -
+            (columns[ghost.columnIndex]?.length ?? 0) +
+            0.5 -
+            1
+          }
           r={0.5}
           style={{ opacity: 2 / 3 }}
-          fill={ghost.playerType === "PlayerOne" ? playerOneFill : playerTwoFill}
+          fill={
+            ghost.playerType === "PlayerOne" ? playerOneFill : playerTwoFill
+          }
         />
       )}
 
@@ -541,8 +576,8 @@ const ViewColumnsSvg = ({
               disabled || !onClick
                 ? undefined
                 : (columns[columnIndex]?.length ?? 0) >= MAX_COLUMN_HEIGHT
-                  ? "not-allowed"
-                  : "pointer",
+                ? "not-allowed"
+                : "pointer",
           }}
           onMouseOver={() => {
             if (!disabled && isColumnIndex(columnIndex) && onHover) {
@@ -566,12 +601,7 @@ const ViewColumnsSvg = ({
   )
 }
 
-
-
-const ViewColumnsCanvas = ({
-  columns,
-  onClick,
-}: ViewColumnsProps) => {
+const ViewColumnsCanvas = ({ columns, onClick }: ViewColumnsProps) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
 
   useLayoutEffect(() => {
@@ -587,11 +617,11 @@ const ViewColumnsCanvas = ({
       return
     }
 
-    context.canvas.height = (MAX_COLUMN_HEIGHT / COLUMN_COUNT) * context.canvas.width
+    context.canvas.height =
+      (MAX_COLUMN_HEIGHT / COLUMN_COUNT) * context.canvas.width
 
     paint(context, columns)
   }, [columns])
-
 
   return (
     <canvas
@@ -634,19 +664,16 @@ const rescale = ({
   return ((value - from[0]) * (to[1] - to[0])) / (from[1] - from[0]) + to[0]
 }
 
-
 const paint = (context: CanvasRenderingContext2D, columns: Columns): void => {
-
   const width = context.canvas.width
   const height = context.canvas.height
 
   // put origin on bottom left
-  context.translate(0, height);
-  context.scale(1, -1);
+  context.translate(0, height)
+  context.scale(1, -1)
 
   context.fillStyle = gameTheme.primary.darker
   context.fillRect(0, 0, width, height)
-
 
   const cellWidth = width / COLUMN_COUNT
   const cellHeight = height / MAX_COLUMN_HEIGHT
@@ -667,15 +694,15 @@ const paint = (context: CanvasRenderingContext2D, columns: Columns): void => {
 
       const cx = (x + 1 / 2) * cellWidth
       const cy = (y + 1 / 2) * cellHeight
-      const r = (cellWidth / 2)
+      const r = cellWidth / 2
 
       context.beginPath()
 
       context.arc(cx, cy, r, 0, Math.PI * 2)
 
-      const gradient = context.createRadialGradient(cx, cy, 0, cx, cy, r * 0.74);
-      gradient.addColorStop(0, gameTheme[slot].light);
-      gradient.addColorStop(1, gameTheme[slot].dark);
+      const gradient = context.createRadialGradient(cx, cy, 0, cx, cy, r * 0.74)
+      gradient.addColorStop(0, gameTheme[slot].light)
+      gradient.addColorStop(1, gameTheme[slot].dark)
       context.fillStyle = gradient
       context.fill()
 
@@ -683,19 +710,23 @@ const paint = (context: CanvasRenderingContext2D, columns: Columns): void => {
     }
   }
 
-
   // this is a hack that prevents a bug when creating the holes in board using the evenodd fill method
   context.beginPath()
-  context.arc(width + cellWidth, height + cellHeight, cellWidth / 2, 0, Math.PI * 2)
+  context.arc(
+    width + cellWidth,
+    height + cellHeight,
+    cellWidth / 2,
+    0,
+    Math.PI * 2,
+  )
   context.fillStyle = "purple"
   context.fill()
   context.closePath()
 
-  // 
   //
   //
   //
-
+  //
 
   for (let x = 0; x < COLUMN_COUNT; x++) {
     for (let y = 0; y < MAX_COLUMN_HEIGHT; y++) {

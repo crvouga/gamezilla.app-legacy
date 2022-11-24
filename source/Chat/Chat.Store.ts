@@ -23,9 +23,7 @@ export const init = initialStore
 //
 //
 
-export type Msg =
-  | ["Conversation", Conversation.Msg]
-  | ["Message", Message.Msg]
+export type Msg = ["Conversation", Conversation.Msg] | ["Message", Message.Msg]
 
 export type Action =
   | ["Chat", ["Conversation", Conversation.Action]]
@@ -53,10 +51,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
   }
 }
 
-export const runAction = (
-  action: Action,
-  model: Model,
-): [Model, Cmd<Msg>] => {
+export const runAction = (action: Action, model: Model): [Model, Cmd<Msg>] => {
   switch (action[1][0]) {
     case "Conversation": {
       const [modelNew, cmd] = Conversation.runAction(action[1][1], model)

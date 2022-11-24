@@ -3,22 +3,16 @@ import * as Http from "http"
 import * as Socket from "socket.io"
 import {
   BackendModel,
-  BackendMsg, backendServerPort, ClientToServerEvents,
+  BackendMsg,
+  backendServerPort,
+  ClientToServerEvents,
   ServerToClientEvents,
   Session,
   sessionIdKey,
   ToBackend,
-  ToFrontend
+  ToFrontend,
 } from "./App.Types"
-import {
-  Cmd,
-  exhaustive,
-  Option,
-  p,
-  Platform,
-  Sub,
-  t
-} from "./Core"
+import { Cmd, exhaustive, Option, p, Platform, Sub, t } from "./Core"
 import { formatMsg } from "./Core/Debug"
 import { ClientId, SessionId, UserId } from "./Data"
 import * as GameRoom from "./Game/GameRoom.Backend"
@@ -79,22 +73,14 @@ const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
         },
       }
 
-
-
       const gameRoomCmd = GameRoom.onClientConnected(
         {
-          sendToClient: (msg) =>
-            sendToFrontend([clientId], ["GameRoom", msg]),
+          sendToClient: (msg) => sendToFrontend([clientId], ["GameRoom", msg]),
         },
         model.gameRoom,
       )
 
-      return [
-        modelNew,
-        Cmd.batch<Msg>([
-          Cmd.tag("GameRoom", gameRoomCmd),
-        ]),
-      ]
+      return [modelNew, Cmd.batch<Msg>([Cmd.tag("GameRoom", gameRoomCmd)])]
     }
 
     case "ClientDisconnected": {
@@ -188,7 +174,7 @@ const updateFromFrontend = (
     case "Party": {
       const [child, childCmd] = Party.updateFromFrontend(
         {
-          sendToClient: msg => sendToFrontend([clientId], ['Party', msg]),
+          sendToClient: (msg) => sendToFrontend([clientId], ["Party", msg]),
           broadcast: (msg) => broadcast(["Party", msg]),
           sendToUser: (userIds, msg) =>
             sendToUser(model, userIds, ["Party", msg]),
@@ -214,15 +200,10 @@ const updateFromFrontend = (
 
       return [{ ...model, gameRoom: child }, Cmd.tag("GameRoom", childCmd)]
     }
-
   }
 }
 
-const sendToUser = (
-  model: Model,
-  userIds: UserId[],
-  msg: ToFrontend,
-) => {
+const sendToUser = (model: Model, userIds: UserId[], msg: ToFrontend) => {
   const clientIds: ClientId[] = []
 
   const userIdSet = new Set<UserId>(userIds)
@@ -235,15 +216,14 @@ const sendToUser = (
     const session = model.sessions[sessionId]
 
     if (
-      session
-      && session.userId.type !== 'None'
-      && session.clientId.type !== 'None'
-      && userIdSet.has(session.userId.value)
+      session &&
+      session.userId.type !== "None" &&
+      session.clientId.type !== "None" &&
+      userIdSet.has(session.userId.value)
     ) {
       clientIds.push(session.clientId.value)
     }
   }
-
 
   return sendToFrontend(clientIds, msg)
 }
@@ -259,22 +239,32 @@ const sendToUser = (
 const subscriptions = (model: Model): Sub<Msg> => {
   return Sub.batch([
     p(GameRoom.subscriptions(model.gameRoom), Sub.map(t("GameRoom"))),
-    p(onConnect, Sub.map(([sessionId, clientId]): Msg => [
-      "ClientConnected",
-      sessionId,
-      clientId,
-    ])),
-    p(onDisconnect, Sub.map(([sessionId, clientId]): Msg => [
-      "ClientDisconnected",
-      sessionId,
-      clientId,
-    ])),
-    p(fromFrontend, Sub.map(([sessionId, clientId, msg]): Msg => [
-      "▶",
-      sessionId,
-      clientId,
-      msg,
-    ])),
+    p(
+      onConnect,
+      Sub.map(
+        ([sessionId, clientId]): Msg => [
+          "ClientConnected",
+          sessionId,
+          clientId,
+        ],
+      ),
+    ),
+    p(
+      onDisconnect,
+      Sub.map(
+        ([sessionId, clientId]): Msg => [
+          "ClientDisconnected",
+          sessionId,
+          clientId,
+        ],
+      ),
+    ),
+    p(
+      fromFrontend,
+      Sub.map(
+        ([sessionId, clientId, msg]): Msg => ["▶", sessionId, clientId, msg],
+      ),
+    ),
   ])
 }
 
@@ -307,15 +297,9 @@ const socketServer = new Socket.Server<
   cookie: true,
 })
 
-export const fromFrontend = new Rx.Subject<
-  [SessionId, ClientId, ToBackend]
->()
-export const onConnect = new Rx.Subject<
-  [SessionId, ClientId]
->()
-export const onDisconnect = new Rx.Subject<
-  [SessionId, ClientId]
->()
+export const fromFrontend = new Rx.Subject<[SessionId, ClientId, ToBackend]>()
+export const onConnect = new Rx.Subject<[SessionId, ClientId]>()
+export const onDisconnect = new Rx.Subject<[SessionId, ClientId]>()
 
 socketServer.on("connection", (socket) => {
   const maybeSessionId: unknown = socket.handshake.auth[sessionIdKey]
@@ -348,18 +332,20 @@ socketServer.on("connection", (socket) => {
   })
 })
 
+const sendToFrontend =
+  (clientIds: ClientId[], msg: ToFrontend): Cmd =>
+  () => {
+    socketServer.to(clientIds).emit("ToFrontend", msg)
+    socketServer.emit("ToFrontend", msg)
+  }
 
-const sendToFrontend = (clientIds: ClientId[], msg: ToFrontend): Cmd => () => {
-  socketServer.to(clientIds).emit("ToFrontend", msg)
-  socketServer.emit("ToFrontend", msg)
-}
+const broadcast =
+  (msg: ToFrontend): Cmd =>
+  () => {
+    socketServer.emit("ToFrontend", msg)
+  }
 
-const broadcast = (msg: ToFrontend): Cmd => () => {
-  socketServer.emit("ToFrontend", msg)
-}
-
-
-const port = Number(process.env['PORT']) || backendServerPort
+const port = Number(process.env["PORT"]) || backendServerPort
 
 httpServer.listen(port, () => {
   console.clear()

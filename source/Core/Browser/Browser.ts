@@ -90,40 +90,36 @@ export type Problem = { type: "ElementNotFound" }
 
 export type FocusResult = Result<Problem, {}>
 
-
-
 export const focus =
   (htmlId: string): Task<FocusResult> =>
-    async () => {
-      await new Promise(resolve => setTimeout(resolve, 0))
+  async () => {
+    await new Promise((resolve) => setTimeout(resolve, 0))
 
-      const element = document.getElementById(htmlId)
+    const element = document.getElementById(htmlId)
 
-      if (element) {
-        element.focus()
-        return Result.Ok({})
-      }
-
-      return Result.Err({ type: "ElementNotFound" })
+    if (element) {
+      element.focus()
+      return Result.Ok({})
     }
+
+    return Result.Err({ type: "ElementNotFound" })
+  }
 
 export const scrollIntoView =
   (htmlId: string): Task<FocusResult> =>
-    async () => {
+  async () => {
+    await new Promise((resolve) => setTimeout(resolve, 0))
 
-      await new Promise(resolve => setTimeout(resolve, 0))
+    const element = document.getElementById(htmlId)
 
-      const element = document.getElementById(htmlId)
+    if (element) {
+      element.scrollIntoView({ behavior: "auto" })
 
-
-      if (element) {
-        element.scrollIntoView({ behavior: "auto" })
-
-        return Result.Ok({})
-      }
-
-      return Result.Err({ type: "ElementNotFound" })
+      return Result.Ok({})
     }
+
+    return Result.Err({ type: "ElementNotFound" })
+  }
 
 export type GetElementByIdResult = Result<Problem, DomElement>
 
@@ -134,27 +130,25 @@ export type DomElement = {
 
 export const getElementById =
   (htmlId: string): Task<GetElementByIdResult> =>
-    async () => {
-      const element = document.getElementById(htmlId)
+  async () => {
+    const element = document.getElementById(htmlId)
 
-      if (element) {
-        return Result.Ok({
-          offsetHeight: element.offsetHeight,
-          offsetWidth: element.offsetWidth,
-        })
-      }
-
-      return Result.Err({ type: "ElementNotFound" })
+    if (element) {
+      return Result.Ok({
+        offsetHeight: element.offsetHeight,
+        offsetWidth: element.offsetWidth,
+      })
     }
+
+    return Result.Err({ type: "ElementNotFound" })
+  }
 
 export type Resize = {
   width: number
   height: number
 }
 
-export const onResize = <Msg>(
-  mapper: (resize: Resize) => Msg,
-): Sub<Msg> => {
+export const onResize = <Msg>(mapper: (resize: Resize) => Msg): Sub<Msg> => {
   return new Rx.Observable((subscriber) => {
     const handle = () => {
       subscriber.next(

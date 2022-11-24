@@ -1,6 +1,16 @@
 import * as ReactDomClient from "react-dom/client"
 import { io, Socket } from "socket.io-client"
-import { backendServerPort, ClientToServerEvents, FrontendModel, FrontendMsg, ServerToClientEvents, sessionIdKey, ToBackend, ToFrontend, WireStatus } from "./App.Types"
+import {
+  backendServerPort,
+  ClientToServerEvents,
+  FrontendModel,
+  FrontendMsg,
+  ServerToClientEvents,
+  sessionIdKey,
+  ToBackend,
+  ToFrontend,
+  WireStatus,
+} from "./App.Types"
 import * as Auth from "./Auth/Auth"
 import * as ChatStore from "./Chat/Chat.Store"
 import {
@@ -16,14 +26,14 @@ import {
   Platform,
   RemoteData,
   Sub,
-  t
+  t,
 } from "./Core"
 import * as GameRoom from "./Game/GameRoom.Frontend"
 import * as Pages from "./Pages"
 import * as Party from "./Party/Party.Frontend"
-import * as ProfileStore from './Profile/Profile.Store'
+import * as ProfileStore from "./Profile/Profile.Store"
 import * as Route from "./Route"
-import * as Snackbar from "./Snackbar"
+import * as Snackbar from "./Alerts"
 import * as UI from "./UI"
 import { Divider } from "./UI"
 
@@ -48,7 +58,9 @@ const init = (location: Browser.Location): [Model, Cmd<Msg>] => {
   const store = ChatStore.init
   const [gameRoom, gameRoomCmd] = GameRoom.init
   const [page, pageCmd] = Pages.initLoading()
-  const [party, partyCmd] = Party.init({ sendToBackend: msg => sendToBackend(['Party', msg]) });
+  const [party, partyCmd] = Party.init({
+    sendToBackend: (msg) => sendToBackend(["Party", msg]),
+  })
   const profileStore = ProfileStore.init
 
   return [
@@ -129,13 +141,10 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
       return [{ ...model, auth: authNew }, Cmd.tag("Auth", authCmd)]
     }
 
-    case "Snackbar": {
-      const [snackbarNew, snackbarCmd] = Snackbar.update(msg[1], model.snackbar)
+    case "Alerts": {
+      const [snackbarNew, alertsCmd] = Snackbar.update(msg[1], model.snackbar)
 
-      return [
-        { ...model, snackbar: snackbarNew },
-        Cmd.tag("Snackbar", snackbarCmd),
-      ]
+      return [{ ...model, snackbar: snackbarNew }, Cmd.tag("Alerts", alertsCmd)]
     }
 
     case "Party": {
@@ -183,7 +192,10 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
 
       const [child, childCmd] = GameRoom.update(
         {
-          ctx: { currentUserId: profile.userId, profiles: model.profileStore.profiles },
+          ctx: {
+            currentUserId: profile.userId,
+            profiles: model.profileStore.profiles,
+          },
           sendToBackend: (msg) => sendToBackend(["GameRoom", msg]),
         },
         msg[1],
@@ -198,9 +210,12 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
       return p([modelNew, cmd], andThenMany(runAction, actions))
     }
 
-    case 'ProfileStore': {
+    case "ProfileStore": {
       const [modelNew, cmd] = ProfileStore.update(msg[1], model.profileStore)
-      return [{ ...model, profileStore: modelNew }, Cmd.tag("ProfileStore", cmd)]
+      return [
+        { ...model, profileStore: modelNew },
+        Cmd.tag("ProfileStore", cmd),
+      ]
     }
 
     default:
@@ -263,11 +278,7 @@ const updateFromBackend = (
 
       return [
         model,
-        LocalStorage.put(
-          sessionIdKey,
-          sessionId,
-          t("LocalStoragePut_Done"),
-        ),
+        LocalStorage.put(sessionIdKey, sessionId, t("LocalStoragePut_Done")),
       ]
     }
 
@@ -332,8 +343,10 @@ const initPage = (model: Model): [Model, Cmd<Msg>] => {
     }
 
     case "ProfileLoading": {
-      const action: OutAction =
-        ["Profile", ["FindMany", { userIds: [status[1].authSession.userId] }]]
+      const action: OutAction = [
+        "Profile",
+        ["FindMany", { userIds: [status[1].authSession.userId] }],
+      ]
 
       return p([model, Cmd.None], andThenMany(runAction, [action]))
     }
@@ -371,16 +384,16 @@ const initPage = (model: Model): [Model, Cmd<Msg>] => {
 
 const updateStatusChanged =
   (modelPrev: Model) =>
-    (_msg: Msg, model: Model): [Model, Cmd<Msg>] => {
-      const statusPrev = toStatus(modelPrev)
-      const statusNew = toStatus(model)
+  (_msg: Msg, model: Model): [Model, Cmd<Msg>] => {
+    const statusPrev = toStatus(modelPrev)
+    const statusNew = toStatus(model)
 
-      if (statusNew[0] === statusPrev[0]) {
-        return [model, Cmd.None]
-      }
-
-      return initPage(model)
+    if (statusNew[0] === statusPrev[0]) {
+      return [model, Cmd.None]
     }
+
+    return initPage(model)
+  }
 
 const runAction = (action: OutAction, model: Model): [Model, Cmd<Msg>] => {
   switch (action[0]) {
@@ -389,15 +402,12 @@ const runAction = (action: OutAction, model: Model): [Model, Cmd<Msg>] => {
       return [{ ...model, chatStore: chatNew }, Cmd.tag("Store", chatCmd)]
     }
 
-    case "Snackbar": {
-      const [snackbarNew, snackbarCmd] = Snackbar.runAction(
+    case "Alerts": {
+      const [snackbarNew, alertsCmd] = Snackbar.runAction(
         action,
         model.snackbar,
       )
-      return [
-        { ...model, snackbar: snackbarNew },
-        Cmd.tag("Snackbar", snackbarCmd),
-      ]
+      return [{ ...model, snackbar: snackbarNew }, Cmd.tag("Alerts", alertsCmd)]
     }
 
     case "GameRoom": {
@@ -407,7 +417,10 @@ const runAction = (action: OutAction, model: Model): [Model, Cmd<Msg>] => {
 
       const [gameRoom, gameRoomCmd] = GameRoom.runAction(
         {
-          ctx: { currentUserId: model.auth[1].userId, profiles: model.profileStore.profiles },
+          ctx: {
+            currentUserId: model.auth[1].userId,
+            profiles: model.profileStore.profiles,
+          },
           sendToBackend: (msg) => sendToBackend(["GameRoom", msg]),
         },
         action,
@@ -436,9 +449,15 @@ const runAction = (action: OutAction, model: Model): [Model, Cmd<Msg>] => {
       return [{ ...model, route }, Cmd.tag("Route", routeCmd)]
     }
 
-    case 'Profile': {
-      const [profileStore, profileStoreCmd] = ProfileStore.runAction(action, model.profileStore)
-      return [{ ...model, profileStore, }, Cmd.tag("ProfileStore", profileStoreCmd)]
+    case "Profile": {
+      const [profileStore, profileStoreCmd] = ProfileStore.runAction(
+        action,
+        model.profileStore,
+      )
+      return [
+        { ...model, profileStore },
+        Cmd.tag("ProfileStore", profileStoreCmd),
+      ]
     }
 
     default:
@@ -520,13 +539,7 @@ const toThemeMode = (model: Model): UI.ThemeMode => {
   }
 }
 
-const View = ({
-  model,
-  $d,
-}: {
-  model: Model
-  $d: (msg: Msg) => void
-}) => {
+const View = ({ model, $d }: { model: Model; $d: (msg: Msg) => void }) => {
   return (
     <UI.AppContainer themeMode={toThemeMode(model)}>
       {/* <UI.Box
@@ -546,19 +559,13 @@ const View = ({
 
       <Snackbar.View
         model={model.snackbar}
-        $d={(msg) => $d(["Snackbar", msg])}
+        $d={(msg) => $d(["Alerts", msg])}
       />
     </UI.AppContainer>
   )
 }
 
-const ViewMain = ({
-  model,
-  $d,
-}: {
-  model: Model
-  $d: (msg: Msg) => void
-}) => {
+const ViewMain = ({ model, $d }: { model: Model; $d: (msg: Msg) => void }) => {
   const status = toStatus(model)
 
   switch (model.wire) {
@@ -753,18 +760,17 @@ const backendUrl =
     ? "https://backend.gamezilla.app/"
     : `http://localhost:${backendServerPort}/`
 
-const socketClient: Socket<
-  ServerToClientEvents,
-  ClientToServerEvents
-> = io(backendUrl, {
-  auth: {
-    [sessionIdKey]: localStorage.getItem(sessionIdKey) ?? undefined,
+const socketClient: Socket<ServerToClientEvents, ClientToServerEvents> = io(
+  backendUrl,
+  {
+    auth: {
+      [sessionIdKey]: localStorage.getItem(sessionIdKey) ?? undefined,
+    },
+    forceNew: true,
   },
-  forceNew: true,
-})
+)
 
-
-const wireStatus = Sub.create<WireStatus>(emit => {
+const wireStatus = Sub.create<WireStatus>((emit) => {
   socketClient.on("connect", () => {
     emit("Connected")
   })
@@ -777,22 +783,22 @@ const wireStatus = Sub.create<WireStatus>(emit => {
     emit("Disconnected")
   })
 
-  return () => { }
+  return () => {}
 })
 
-
-const fromBackend = Sub.create<ToFrontend>(emit => {
+const fromBackend = Sub.create<ToFrontend>((emit) => {
   socketClient.on("ToFrontend", (msg) => {
     emit(msg)
   })
 
-  return () => { }
+  return () => {}
 })
 
-
-const sendToBackend = (msg: ToBackend): Cmd => () => {
-  socketClient.emit("ToBackend", msg)
-}
+const sendToBackend =
+  (msg: ToBackend): Cmd =>
+  () => {
+    socketClient.emit("ToBackend", msg)
+  }
 
 //
 //
@@ -808,7 +814,7 @@ const { program } = p(
     subscriptions,
     update,
   }),
-  Debug.ReduxDevTools.withDebugger
+  Debug.ReduxDevTools.withDebugger,
 )
 
 const root = ReactDomClient.createRoot(document.getElementById("root")!)

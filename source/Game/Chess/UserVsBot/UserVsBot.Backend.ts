@@ -4,7 +4,9 @@ import * as Board from "../Board"
 import {
   BackendModel,
   BackendMsg,
-  botMoved, initBackend, inputBot,
+  botMoved,
+  initBackend,
+  inputBot,
   inputColor,
   inputMove,
   inputUser,
@@ -12,7 +14,7 @@ import {
   startGame,
   stopGame,
   ToBackend,
-  ToFrontend
+  ToFrontend,
 } from "./UserVsBot.Types"
 
 //
@@ -146,15 +148,19 @@ const updateFromFrontend_ = (
   }
 }
 
-export const updateRoomLeave = ({ broadcast }: { broadcast: (msg: ToFrontend) => Cmd }, userId: UserId, model: Model): [Model, Cmd<Msg>] => {
+export const updateRoomLeave = (
+  { broadcast }: { broadcast: (msg: ToFrontend) => Cmd },
+  userId: UserId,
+  model: Model,
+): [Model, Cmd<Msg>] => {
   if (model.userId === userId) {
     const modelNew: Model = {
       type: "Setup",
       botLevel: model.botLevel,
       userColor: model.userColor,
-      userId: "None"
+      userId: "None",
     }
-    return [modelNew, broadcast(['PlayerLeft', modelNew])]
+    return [modelNew, broadcast(["PlayerLeft", modelNew])]
   }
 
   return [model, Cmd.None]
@@ -168,9 +174,6 @@ export const updateRoomLeave = ({ broadcast }: { broadcast: (msg: ToFrontend) =>
 //
 //
 
-export const subscriptions = (
-  _intervalId: string,
-  _model: Model,
-): Sub<Msg> => {
+export const subscriptions = (_intervalId: string, _model: Model): Sub<Msg> => {
   return Sub.None
 }

@@ -63,7 +63,6 @@ export type Message = {
 //
 //
 
-
 export type Queries = {
   Conversation: {
     FindOne: {

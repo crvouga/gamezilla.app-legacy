@@ -1,6 +1,6 @@
 import { Cmd, exhaustive } from "../../Core"
 import * as ProfileStore from "../../Profile/Profile.Store"
-import * as Snackbar from "../../Snackbar"
+import * as Snackbar from "../../Alerts"
 import * as UI from "../../UI"
 import { Ctx, GameModeCardGrid } from "../Game.Shared"
 import { Empty, gameTheme, Position, Slot, ViewSlot } from "./TicTacToe"
@@ -9,7 +9,7 @@ import {
   FrontendModel,
   FrontendMsg,
   ToBackend,
-  ToFrontend
+  ToFrontend,
 } from "./TicTacToe.Types"
 import * as UserVsBot from "./UserVsBot/UserVsBot.Frontend"
 import * as UserVsUser from "./UserVsUser/UserVsUser.Frontend"
@@ -108,7 +108,10 @@ export const updateFromBackend = (
 
     case "UserVsUser": {
       if (model.mode === "UserVsUser") {
-        const [child, actions] = UserVsUser.updateFromBackend(msg[1], model.child)
+        const [child, actions] = UserVsUser.updateFromBackend(
+          msg[1],
+          model.child,
+        )
         return [{ mode: "UserVsUser", child }, Cmd.None, actions]
       }
 
@@ -117,8 +120,15 @@ export const updateFromBackend = (
 
     case "UserVsBot": {
       if (model.mode === "UserVsBot") {
-        const [child, cmd, actions] = UserVsBot.updateFromBackend(msg[1], model.child)
-        return [{ mode: "UserVsBot", child }, Cmd.tag("UserVsBot", cmd), actions]
+        const [child, cmd, actions] = UserVsBot.updateFromBackend(
+          msg[1],
+          model.child,
+        )
+        return [
+          { mode: "UserVsBot", child },
+          Cmd.tag("UserVsBot", cmd),
+          actions,
+        ]
       }
 
       return [model, Cmd.None, []]
@@ -196,8 +206,18 @@ export const View = ({
           <BannerArt title="Tic Tac Toe" />
 
           <GameModeCardGrid
-            onUserVsUser={() => $d(["InputMode", { mode: "UserVsUser", userId: ctx.currentUserId },])}
-            onUserVsBot={() => $d(["InputMode", { mode: "UserVsBot", userId: ctx.currentUserId },])}
+            onUserVsUser={() =>
+              $d([
+                "InputMode",
+                { mode: "UserVsUser", userId: ctx.currentUserId },
+              ])
+            }
+            onUserVsBot={() =>
+              $d([
+                "InputMode",
+                { mode: "UserVsBot", userId: ctx.currentUserId },
+              ])
+            }
           />
         </UI.FillBox>
       )

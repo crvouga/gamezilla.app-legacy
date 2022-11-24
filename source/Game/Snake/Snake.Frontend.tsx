@@ -1,7 +1,7 @@
 import { useLayoutEffect, useRef } from "react"
 import { Cmd, exhaustive, Keyboard, Option, Result, Sub } from "../../Core"
 import * as Route from "../../Route"
-import * as Snackbar from "../../Snackbar"
+import * as Snackbar from "../../Alerts"
 import * as UI from "../../UI"
 import { Ctx } from "../Game.Shared"
 import { Direction } from "./Direction"
@@ -16,7 +16,7 @@ import {
   initSharedModel,
   SharedModel,
   ToBackend,
-  ToFrontend
+  ToFrontend,
 } from "./Snake.Types"
 
 //
@@ -77,9 +77,9 @@ export const update = (
       const changeDirectionCmd =
         direction.type === "Some"
           ? sendToBackend([
-            "InputDirection",
-            { userId: ctx.currentUserId, direction: direction.value },
-          ])
+              "InputDirection",
+              { userId: ctx.currentUserId, direction: direction.value },
+            ])
           : Cmd.None
 
       const toggleStatusCmd =
@@ -163,7 +163,7 @@ const updateResponse = <
 ): [Model, Cmd<Msg>, OutAction[]] => {
   if (result.type === "Err") {
     const message = result.error.split("_").join(" ")
-    return [model, Cmd.None, [["Snackbar", { message, variant: "Error" }]]]
+    return [model, Cmd.None, [["Alerts", { message, variant: "Error" }]]]
   }
   const sharedModel = result.value
   return [{ ...model, ...sharedModel }, Cmd.None, []]
@@ -177,10 +177,7 @@ const updateResponse = <
 //
 //
 
-export const subscriptions = (
-  _intervalId: string,
-  _model: Model,
-): Sub<Msg> => {
+export const subscriptions = (_intervalId: string, _model: Model): Sub<Msg> => {
   return Keyboard.keyDowns<Msg>((key) => ["PressedKeyDown", key])
 }
 
@@ -197,7 +194,7 @@ export const View = ({
   model,
   $d,
 }: {
-  ctx: Ctx,
+  ctx: Ctx
   model: Model
   $d: (msg: Msg) => void
 }) => {
@@ -226,10 +223,7 @@ export const View = ({
                 variant="contained"
                 fullWidth
                 onClick={() =>
-                  $d([
-                    "InputPlayer",
-                    Option.Some(["User", ctx.currentUserId]),
-                  ])
+                  $d(["InputPlayer", Option.Some(["User", ctx.currentUserId])])
                 }
               >
                 Play as Snake
@@ -242,9 +236,17 @@ export const View = ({
                 onClick={() => $d(["OpenedMenu", menuAnchorId])}
               >
                 <UI.ListItemAvatar>
-                  <UI.Avatar src={ctx.profiles[model.gameStatus.player.value[1]]?.avatarUrl} />
+                  <UI.Avatar
+                    src={
+                      ctx.profiles[model.gameStatus.player.value[1]]?.avatarUrl
+                    }
+                  />
                 </UI.ListItemAvatar>
-                <UI.ListItemText primary={ctx.profiles[model.gameStatus.player.value[1]]?.username} />
+                <UI.ListItemText
+                  primary={
+                    ctx.profiles[model.gameStatus.player.value[1]]?.username
+                  }
+                />
                 <UI.ListItemSecondaryAction>
                   <UI.Icons.MoreVert />
                 </UI.ListItemSecondaryAction>

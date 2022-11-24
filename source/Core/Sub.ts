@@ -2,13 +2,13 @@ import * as Rx from "rxjs"
 import { p } from "./pipe"
 import { t } from "./Utility"
 
-export interface Sub<Msg> extends Rx.Observable<Msg> { }
+export interface Sub<Msg> extends Rx.Observable<Msg> {}
 
 export const map =
   <A, Msg>(f: (a: A) => Msg) =>
-    (sub: Sub<A>): Sub<Msg> => {
-      return sub.pipe(Rx.map(f))
-    }
+  (sub: Sub<A>): Sub<Msg> => {
+    return sub.pipe(Rx.map(f))
+  }
 
 export const batch = <Msg>(arr: Sub<Msg>[]): Sub<Msg> => {
   return Rx.merge(...arr)
@@ -32,7 +32,10 @@ export const create = <Msg>(
   })
 }
 
-export const tag = <Tag extends string, Msg>(tagName: Tag, sub: Sub<Msg>): Sub<[Tag, Msg]> => {
+export const tag = <Tag extends string, Msg>(
+  tagName: Tag,
+  sub: Sub<Msg>,
+): Sub<[Tag, Msg]> => {
   return p(sub, Sub.map(t(tagName)))
 }
 

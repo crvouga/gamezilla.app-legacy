@@ -11,4 +11,3 @@ export { RoomId } from "./RoomId"
 export { SessionId } from "./SessionId"
 export { UserId } from "./UserId"
 export { Username } from "./Username"
-

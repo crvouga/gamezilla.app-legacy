@@ -11,29 +11,34 @@ const of = <Msg>(msg: Msg): Cmd<Msg> => {
 
 const map =
   <A, B>(mapper: (a: A) => B) =>
-    (cmd: Cmd<A>): Cmd<B> => {
-      return ($d) => {
-        cmd((a) => {
-          $d(mapper(a))
-        })
-      }
+  (cmd: Cmd<A>): Cmd<B> => {
+    return ($d) => {
+      cmd((a) => {
+        $d(mapper(a))
+      })
     }
-
+  }
 
 const chain =
   <A, B>(mapper: (a: A) => Cmd<B>) =>
-    (cmd: Cmd<A>): Cmd<B> => {
-      return ($d) => {
-        cmd((a) => {
-          mapper(a)(b => {
-            $d(b)
-          })
+  (cmd: Cmd<A>): Cmd<B> => {
+    return ($d) => {
+      cmd((a) => {
+        mapper(a)((b) => {
+          $d(b)
         })
-      }
+      })
     }
+  }
 
-const tag = <Tag extends string, Msg>(tagName: Tag, cmd: Cmd<Msg>): Cmd<[Tag, Msg]> => {
-  return p(cmd, map(msg => [tagName, msg]))
+const tag = <Tag extends string, Msg>(
+  tagName: Tag,
+  cmd: Cmd<Msg>,
+): Cmd<[Tag, Msg]> => {
+  return p(
+    cmd,
+    map((msg) => [tagName, msg]),
+  )
 }
 
 const batch = <Msg>(cmdList: Cmd<Msg>[]): Cmd<Msg> => {
@@ -44,19 +49,17 @@ const batch = <Msg>(cmdList: Cmd<Msg>[]): Cmd<Msg> => {
   }
 }
 
-const None: Cmd = () => { }
+const None: Cmd = () => {}
 
 const perform =
   <A, Msg>(f: (a: A) => Msg) =>
-    (task: Task<A>): Cmd<Msg> => {
-      return async ($d) => {
-        const value = await task()
+  (task: Task<A>): Cmd<Msg> => {
+    return async ($d) => {
+      const value = await task()
 
-        $d(f(value))
-      }
+      $d(f(value))
     }
-
-
+  }
 
 export const Cmd = {
   None,
@@ -65,5 +68,5 @@ export const Cmd = {
   tag,
   chain,
   map,
-  of
+  of,
 }

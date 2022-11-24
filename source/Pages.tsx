@@ -1,16 +1,13 @@
 import {
   Account,
-  Auth, Login,
+  Auth,
+  Login,
   LoginEmailLink,
   LoginPhone,
   LoginPhoneVerify,
-  Logout
+  Logout,
 } from "./Auth"
-import {
-  Chat,
-  ChatConversation,
-  ChatNew
-} from "./Chat"
+import { Chat, ChatConversation, ChatNew } from "./Chat"
 import * as ChatStore from "./Chat/Chat.Store"
 import { Cmd, exhaustive, p, Sub, t } from "./Core"
 import { PhoneNumber, UserId } from "./Data"
@@ -27,11 +24,12 @@ import {
   ProfileUpdateAvatar,
   ProfileUpdateName,
   ProfileUpdateTheme,
-  ProfileUpdateUsername, Search
+  ProfileUpdateUsername,
+  Search,
 } from "./Profile"
 import * as ProfileStore from "./Profile/Profile.Store"
 import * as Route from "./Route"
-import * as Snackbar from "./Snackbar"
+import * as Snackbar from "./Alerts"
 import * as UI from "./UI"
 
 //
@@ -226,7 +224,6 @@ export const initReady = (
       return [["Home", modelInit], Cmd.None, []]
     }
 
-
     case "ProfileCreate":
     case "Login":
     case "LoginPhone":
@@ -240,10 +237,13 @@ export const initReady = (
   }
 }
 
-export const initLoggedOut = (model: Model, route: Route.Model): [Model, Cmd<Msg>] => {
+export const initLoggedOut = (
+  model: Model,
+  route: Route.Model,
+): [Model, Cmd<Msg>] => {
   switch (route[0]) {
     case "Login":
-      const childNew = model[0] === 'Login' ? model[2]  : Login.init
+      const childNew = model[0] === "Login" ? model[2] : Login.init
       return [["Login", route[1], childNew], Cmd.None]
 
     case "LoginPhone":
@@ -262,7 +262,6 @@ export const initLoggedOut = (model: Model, route: Route.Model): [Model, Cmd<Msg
     case "LoginEmailLink":
       return [["LoginEmailLink", LoginEmailLink.init], Cmd.None]
 
-
     case "Account":
     case "Chat":
     case "ChatConversation":
@@ -280,7 +279,10 @@ export const initLoggedOut = (model: Model, route: Route.Model): [Model, Cmd<Msg
     case "ProfileUpdateUsername":
     case "Party":
     case "Home":
-      return [["Login", { drawer: "none" }, Login.init], Route.push(["Login", { drawer: "none" }])]
+      return [
+        ["Login", { drawer: "none" }, Login.init],
+        Route.push(["Login", { drawer: "none" }]),
+      ]
 
     default:
       return exhaustive(route)
@@ -317,7 +319,7 @@ export const initProfileMissing = (
     case "GameRoom":
     case "Home":
     case "Party":
-      return [['ProfileCreate', ProfileCreate.init(auth)], Cmd.None]
+      return [["ProfileCreate", ProfileCreate.init(auth)], Cmd.None]
     default:
       return exhaustive(route)
   }
@@ -334,9 +336,9 @@ export const initProfileMissing = (
 export const updateReady = (
   {
     profile,
-    profileStore
+    profileStore,
   }: {
-    profileStore: ProfileStore.Model,
+    profileStore: ProfileStore.Model
     profile: ProfileStore.Profile
     gameRoom: GameRoom.Model
   },
@@ -371,7 +373,10 @@ export const updateReady = (
 
     case "ProfileUpdate":
       if (msg[0] === "ProfileUpdate") {
-        return tagUpdate("ProfileUpdate", ProfileUpdate.update(msg[1], model[1]))
+        return tagUpdate(
+          "ProfileUpdate",
+          ProfileUpdate.update(msg[1], model[1]),
+        )
       }
       return [model, Cmd.None, []]
 
@@ -470,10 +475,7 @@ export const updateReady = (
 
     case "GameRoom": {
       if (msg[0] === "GameRoom") {
-        const [modelPage, actions] = GameRoomPage.update(
-          msg[1],
-          model[1],
-        )
+        const [modelPage, actions] = GameRoomPage.update(msg[1], model[1])
         return [["GameRoom", modelPage], Cmd.None, actions]
       }
 
@@ -482,10 +484,7 @@ export const updateReady = (
 
     case "Party": {
       if (msg[0] === "Party") {
-        const [child, cmd, actions] = PartyPage.update(
-          msg[1],
-          model[1],
-        )
+        const [child, cmd, actions] = PartyPage.update(msg[1], model[1])
         return [["Party", child], Cmd.tag("Party", cmd), actions]
       }
 
@@ -528,10 +527,7 @@ export const updateProfileMissing = (
   switch (model[0]) {
     case "Logout":
       if (msg[0] === "Logout") {
-        return tagUpdate(
-          "Logout",
-          Logout.update(msg[1], model[1]),
-        )
+        return tagUpdate("Logout", Logout.update(msg[1], model[1]))
       }
       return [model, Cmd.None, []]
 
@@ -579,7 +575,7 @@ export const updateLoggedOut = (
     case "Login":
       if (msg[0] === "Login") {
         const [child, cmd] = Login.update(msg[1], model[2])
-        return [['Login', model[1], child], Cmd.tag("Login", cmd), []]
+        return [["Login", model[1], child], Cmd.tag("Login", cmd), []]
       }
       return [model, Cmd.None, []]
 
@@ -630,7 +626,6 @@ export const updateLoggedOut = (
     case "Search":
     case "Party":
     case "Home":
-
       return [model, Route.push(["Login", { drawer: "none" }]), []]
 
     default:
@@ -672,7 +667,6 @@ export const subscriptions = (model: Model): Sub<Msg> => {
     case "LoginPhone":
     case "LoginPhoneVerify":
     case "Home":
-
       return Sub.None
 
     default:
@@ -906,7 +900,15 @@ export const ViewReady = ({
 
     case "GameRoom": {
       return (
-        <GameRoomPage.View ctx={{ currentUserId: profile.userId, profiles: profileStore.profiles }} gameRoom={gameRoom} model={model[1]} $d={(msg) => $d(["GameRoom", msg])} />
+        <GameRoomPage.View
+          ctx={{
+            currentUserId: profile.userId,
+            profiles: profileStore.profiles,
+          }}
+          gameRoom={gameRoom}
+          model={model[1]}
+          $d={(msg) => $d(["GameRoom", msg])}
+        />
       )
     }
 
@@ -944,8 +946,6 @@ export const ViewReady = ({
             model={model[1]}
             $d={(msg) => $d(["Home", msg])}
           />
-
-
         </ViewTopLevel>
       )
     }
@@ -1177,9 +1177,7 @@ const ViewBottomNavigation = ({
         return (
           <UI.ButtonBase
             key={Route.encode(item.route)}
-            onClick={() =>
-              $d(["ClickedBottomNavigationLink", item.route])
-            }
+            onClick={() => $d(["ClickedBottomNavigationLink", item.route])}
             sx={{
               color: isSelected ? "primary.main" : "text.secondary",
               paddingY: 0,

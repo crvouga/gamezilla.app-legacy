@@ -7,8 +7,15 @@ import * as Piece from "./Piece"
 import * as Position from "./Position"
 import {
   BackendModel,
-  columnCount, FrontendModel,
-  FrontendMsg, initShared, rowCount, ToBackend, ToFrontend, toGhostPiece, toPiece
+  columnCount,
+  FrontendModel,
+  FrontendMsg,
+  initShared,
+  rowCount,
+  ToBackend,
+  ToFrontend,
+  toGhostPiece,
+  toPiece,
 } from "./Tetris.Types"
 
 //

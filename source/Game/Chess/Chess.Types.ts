@@ -13,9 +13,9 @@ import * as UserVsUser from "./UserVsUser/UserVsUser.Types"
 
 export type FrontendModel = {
   mode:
-  | ["None"]
-  | ["UserVsUser", UserVsUser.FrontendModel]
-  | ["UserVsBot", UserVsBot.FrontendModel]
+    | ["None"]
+    | ["UserVsUser", UserVsUser.FrontendModel]
+    | ["UserVsBot", UserVsBot.FrontendModel]
 
   requests: {
     InputMode: RemoteData<InputModeProblem, Unit>
@@ -79,4 +79,3 @@ export const inputModeProblemToString = (problem: InputModeProblem): string => {
     }
   }
 }
-

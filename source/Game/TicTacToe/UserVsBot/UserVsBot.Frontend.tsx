@@ -1,13 +1,17 @@
 import { Cmd, Sub } from "../../../Core"
-import * as Snackbar from "../../../Snackbar"
+import * as Snackbar from "../../../Alerts"
 import * as UI from "../../../UI"
 import { Ctx } from "../../Game.Shared"
 import {
-  botLevels, GameOver, gameTheme, PlayerType,
+  botLevels,
+  GameOver,
+  gameTheme,
+  PlayerType,
   PlayerTypeIcon,
-  playerTypes, toGameOver,
+  playerTypes,
+  toGameOver,
   toTurn,
-  ViewBoard
+  ViewBoard,
 } from "../TicTacToe"
 import { VersusHeader } from "../Views"
 import {
@@ -25,7 +29,7 @@ import {
   stopGame,
   swapSides,
   ToBackend,
-  ToFrontend
+  ToFrontend,
 } from "./UserVsBot.Types"
 
 //
@@ -77,15 +81,23 @@ export const updateFromBackend = (
   model: Model,
 ): [Model, Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
-
-    case 'PlayerLeft': {
+    case "PlayerLeft": {
       const modelNew = mergeWithBackend(model, msg[1])
       return [modelNew, Cmd.None, []]
     }
 
     case "BotMove_Done": {
       if (msg[1].type === "Err") {
-        return [model, Cmd.None, [['Snackbar', { message: "Bot failed to make a move", variant: "Error" }]]]
+        return [
+          model,
+          Cmd.None,
+          [
+            [
+              "Alerts",
+              { message: "Bot failed to make a move", variant: "Error" },
+            ],
+          ],
+        ]
       }
 
       const modelNew = mergeWithBackend(model, msg[1].value)
@@ -144,7 +156,7 @@ export const View = ({
   $d,
   ctx,
 }: {
-  ctx: Ctx,
+  ctx: Ctx
   goBack: () => void
   model: Model
   $d: (msg: Msg) => void
@@ -167,8 +179,20 @@ export const View = ({
         <UI.Box sx={{ flex: 1, overflowY: "scroll" }}>
           <VersusHeader
             ctx={ctx}
-            X={model.userPlayerType === 'X' ? model.player === "None" ? { type: "User" } : { type: "User", userId: model.player } : { type: "Bot", label: model.botLevel }}
-            O={model.userPlayerType === 'O' ? model.player === "None" ? { type: "User" } : { type: "User", userId: model.player } : { type: "Bot", label: model.botLevel }}
+            X={
+              model.userPlayerType === "X"
+                ? model.player === "None"
+                  ? { type: "User" }
+                  : { type: "User", userId: model.player }
+                : { type: "Bot", label: model.botLevel }
+            }
+            O={
+              model.userPlayerType === "O"
+                ? model.player === "None"
+                  ? { type: "User" }
+                  : { type: "User", userId: model.player }
+                : { type: "Bot", label: model.botLevel }
+            }
           />
           <UI.Typography
             color="text.secondary"
@@ -195,7 +219,10 @@ export const View = ({
                   sx={{ marginRight: 1 }}
                 />
                 <UI.Box sx={{ flex: 1, overflow: "hidden" }}>
-                  <UI.Typography noWrap sx={{ textOverflow: "ellipsis" }} >
+                  <UI.Typography
+                    noWrap
+                    sx={{ textOverflow: "ellipsis" }}
+                  >
                     {ctx.profiles[model.player]?.username ?? "..."}
                   </UI.Typography>
                 </UI.Box>
@@ -310,13 +337,24 @@ export const View = ({
     <UI.FillBox>
       <UI.Box sx={{ flex: 1 }}>
         <UI.Box sx={{ display: "flex", padding: 1, gap: 1, paddingTop: 0 }}>
-          <ViewPlayerGameSlot model={model} playerType="X" ctx={ctx} />
-          <ViewPlayerGameSlot model={model} playerType="O" ctx={ctx} />
+          <ViewPlayerGameSlot
+            model={model}
+            playerType="X"
+            ctx={ctx}
+          />
+          <ViewPlayerGameSlot
+            model={model}
+            playerType="O"
+            ctx={ctx}
+          />
         </UI.Box>
 
         <UI.Box
           sx={{
-            width: "100%", position: "relative", aspectRatio: 1, overflow: "hidden",
+            width: "100%",
+            position: "relative",
+            aspectRatio: 1,
+            overflow: "hidden",
           }}
         >
           {/*  */}
@@ -340,7 +378,11 @@ export const View = ({
                 flexDirection: "column",
               }}
             >
-              <ViewGameOverMessage gameOver={gameOver} ctx={ctx} model={model} />
+              <ViewGameOverMessage
+                gameOver={gameOver}
+                ctx={ctx}
+                model={model}
+              />
             </UI.Box>
           </UI.Fade>
         </UI.Box>
@@ -351,18 +393,18 @@ export const View = ({
           onClick={() => {
             $d(["StopGame", { userId: ctx.currentUserId }])
           }}
-          disabled={stopGameRes.type === 'Err'}
+          disabled={stopGameRes.type === "Err"}
           icon={<UI.Icons.ExitToApp sx={{ transform: "rotate(180deg)" }} />}
           label="Exit"
         />
         <UI.ActionButton
-          disabled={swapSidesRes.type === 'Err'}
+          disabled={swapSidesRes.type === "Err"}
           onClick={() => $d(["SwapSides", { userId: ctx.currentUserId }])}
           icon={<UI.Icons.SwapHoriz />}
           label="Swap"
         />
         <UI.ActionButton
-          disabled={restartRes.type === 'Err'}
+          disabled={restartRes.type === "Err"}
           onClick={() => $d(["Restart", { userId: ctx.currentUserId }])}
           icon={<UI.Icons.RestartAlt />}
           label="Reset"
@@ -372,7 +414,15 @@ export const View = ({
   )
 }
 
-const ViewGameOverMessage = ({ gameOver, model, ctx }: { model: GameModel; gameOver: GameOver | { type: "None" }; ctx: Ctx }) => {
+const ViewGameOverMessage = ({
+  gameOver,
+  model,
+  ctx,
+}: {
+  model: GameModel
+  gameOver: GameOver | { type: "None" }
+  ctx: Ctx
+}) => {
   switch (gameOver.type) {
     case "None": {
       return <></>
@@ -461,9 +511,14 @@ const ViewGameOverMessage = ({ gameOver, model, ctx }: { model: GameModel; gameO
             }}
           >
             {didUserWin ? (
-              <UI.Avatar sx={{ marginRight: 2, width: 64, height: 64 }} src={ctx.profiles[model.player]?.avatarUrl} />
+              <UI.Avatar
+                sx={{ marginRight: 2, width: 64, height: 64 }}
+                src={ctx.profiles[model.player]?.avatarUrl}
+              />
             ) : (
-              <UI.Icons.SmartToy sx={{ marginRight: 2, width: 64, height: 64 }} />
+              <UI.Icons.SmartToy
+                sx={{ marginRight: 2, width: 64, height: 64 }}
+              />
             )}
             <UI.Typography
               sx={{ fontSize: 64 }}
@@ -481,7 +536,15 @@ const ViewGameOverMessage = ({ gameOver, model, ctx }: { model: GameModel; gameO
   }
 }
 
-export const ViewPlayerGameSlot = ({ ctx, playerType, model, }: { model: GameModel; ctx: Ctx; playerType: PlayerType }) => {
+export const ViewPlayerGameSlot = ({
+  ctx,
+  playerType,
+  model,
+}: {
+  model: GameModel
+  ctx: Ctx
+  playerType: PlayerType
+}) => {
   const uiTheme = UI.useTheme()
 
   const iconSize = {
@@ -518,7 +581,10 @@ export const ViewPlayerGameSlot = ({ ctx, playerType, model, }: { model: GameMod
             alignItems: "center",
           }}
         >
-          <PlayerTypeIcon playerType={playerType} sx={{ display: "block", marginRight: 1, ...iconSize }} />
+          <PlayerTypeIcon
+            playerType={playerType}
+            sx={{ display: "block", marginRight: 1, ...iconSize }}
+          />
 
           {model.userPlayerType === playerType ? (
             <>

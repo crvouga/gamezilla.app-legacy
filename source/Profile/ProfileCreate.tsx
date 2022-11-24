@@ -77,11 +77,7 @@ export const update = (
         themeMode: "System",
       }
 
-      return [
-        model,
-        Cmd.None,
-        [["Profile", ["CreateOne", { profile }]]],
-      ]
+      return [model, Cmd.None, [["Profile", ["CreateOne", { profile }]]]]
 
     case "ClickedLogout":
       return [model, Route.push(["Logout"]), []]

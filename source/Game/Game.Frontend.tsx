@@ -1,7 +1,7 @@
 import { Cmd, Sub, tagUpdate } from "../Core"
 import { UserId } from "../Data"
 import * as ProfileStore from "../Profile/Profile.Store"
-import * as Snackbar from "../Snackbar"
+import * as Snackbar from "../Alerts"
 import * as Chess from "./Chess/Chess.Frontend"
 import * as ConnectFour from "./ConnectFour/ConnectFour.Frontend"
 import { Ctx } from "./Game.Shared"
@@ -11,7 +11,7 @@ import {
   FrontendMsg,
   GameName,
   ToBackend,
-  ToFrontend
+  ToFrontend,
 } from "./Game.Types"
 import * as Maze from "./Maze/Maze.Frontend"
 import * as Snake from "./Snake/Snake.Frontend"
@@ -59,8 +59,8 @@ export const init = ({
       return [["Chess", child], Cmd.tag("Chess", cmd)]
     }
 
-    case 'Maze': {
-      return [['Maze', Maze.init], Cmd.None]
+    case "Maze": {
+      return [["Maze", Maze.init], Cmd.None]
     }
   }
 }
@@ -82,19 +82,22 @@ export const update = (
     ctx,
     sendToBackend,
   }: {
-    ctx: Ctx,
+    ctx: Ctx
     sendToBackend: (msg: ToBackend) => Cmd
   },
   msg: Msg,
   model: Model,
 ): [Model, Cmd<Msg>] => {
   switch (model[0]) {
-
-    case 'Maze': {
+    case "Maze": {
       if (msg[0] === "Maze") {
-        const [child, cmd] = Maze.update({ ctx, sendToBackend: m => sendToBackend(['Maze', m]) }, msg[1], model[1])
+        const [child, cmd] = Maze.update(
+          { ctx, sendToBackend: (m) => sendToBackend(["Maze", m]) },
+          msg[1],
+          model[1],
+        )
 
-        return [['Maze', child], Cmd.tag('Maze', cmd)]
+        return [["Maze", child], Cmd.tag("Maze", cmd)]
       }
 
       return [model, Cmd.None]
@@ -102,7 +105,14 @@ export const update = (
 
     case "ConnectFour": {
       if (msg[0] === "ConnectFour") {
-        return tagUpdate("ConnectFour", ConnectFour.update({ sendToBackend: msg => sendToBackend(['ConnectFour', msg]) }, msg[1], model[1]))
+        return tagUpdate(
+          "ConnectFour",
+          ConnectFour.update(
+            { sendToBackend: (msg) => sendToBackend(["ConnectFour", msg]) },
+            msg[1],
+            model[1],
+          ),
+        )
       }
 
       return [model, Cmd.None]
@@ -199,7 +209,10 @@ export const updateFromBackend = (
 
     case "ConnectFour": {
       if (model[0] === "ConnectFour") {
-        const [child, cmd, actions] = ConnectFour.updateFromBackend(msg[1], model[1])
+        const [child, cmd, actions] = ConnectFour.updateFromBackend(
+          msg[1],
+          model[1],
+        )
         return [["ConnectFour", child], Cmd.tag("ConnectFour", cmd), actions]
       }
       return [model, Cmd.None, []]
@@ -215,8 +228,11 @@ export const updateFromBackend = (
 
     case "TicTacToe": {
       if (model[0] === "TicTacToe") {
-        const [child, cmd, actions] = TicTacToe.updateFromBackend(msg[1], model[1])
-        return [['TicTacToe', child], Cmd.tag("TicTacToe", cmd), actions]
+        const [child, cmd, actions] = TicTacToe.updateFromBackend(
+          msg[1],
+          model[1],
+        )
+        return [["TicTacToe", child], Cmd.tag("TicTacToe", cmd), actions]
       }
       return [model, Cmd.None, []]
     }
@@ -238,10 +254,10 @@ export const updateFromBackend = (
       return [model, Cmd.None, []]
     }
 
-    case 'Maze': {
-      if (model[0] === 'Maze') {
+    case "Maze": {
+      if (model[0] === "Maze") {
         const [child, cmd] = Maze.updateFromBackend(msg[1], model[1])
-        return [['Maze', child], Cmd.tag('Maze', cmd), []]
+        return [["Maze", child], Cmd.tag("Maze", cmd), []]
       }
       return [model, Cmd.None, []]
     }
@@ -256,10 +272,7 @@ export const updateFromBackend = (
 //
 //
 
-export const subscriptions = (
-  intervalId: string,
-  model: Model,
-): Sub<Msg> => {
+export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
   switch (model[0]) {
     case "ConnectFour": {
       return Sub.None
@@ -284,7 +297,7 @@ export const subscriptions = (
       return Sub.tag("Tetris", Tetris.subscriptions(model[1]))
     }
 
-    case 'Maze': {
+    case "Maze": {
       return Sub.tag("Maze", Maze.subscriptions(model[1]))
     }
   }
@@ -298,7 +311,6 @@ export const subscriptions = (
 //
 //
 
-
 export const View = ({
   ctx,
   model,
@@ -308,25 +320,53 @@ export const View = ({
   model: Model
   $d: (msg: Msg) => void
 }) => {
+  const views: { [key in typeof model[0]]: Function } = {
+    Tetris: (model: Tetris.Model) => (
+      <Tetris.View
+        model={model}
+        $d={(msg) => $d(["Tetris", msg])}
+      />
+    ),
 
-  const views: { [key in (typeof model)[0]]: Function } = {
-    Tetris: (model: Tetris.Model) =>
-      <Tetris.View model={model} $d={(msg) => $d(["Tetris", msg])} />,
+    ConnectFour: (model: ConnectFour.Model) => (
+      <ConnectFour.View
+        ctx={ctx}
+        model={model}
+        $d={(msg) => $d(["ConnectFour", msg])}
+      />
+    ),
 
-    ConnectFour: (model: ConnectFour.Model) =>
-      <ConnectFour.View ctx={ctx} model={model} $d={(msg) => $d(["ConnectFour", msg])} />,
+    Snake: (model: Snake.Model) => (
+      <Snake.View
+        ctx={ctx}
+        model={model}
+        $d={(msg) => $d(["Snake", msg])}
+      />
+    ),
 
-    Snake: (model: Snake.Model) =>
-      <Snake.View ctx={ctx} model={model} $d={(msg) => $d(["Snake", msg])} />,
+    TicTacToe: (model: TicTacToe.Model) => (
+      <TicTacToe.View
+        ctx={ctx}
+        model={model}
+        $d={(msg) => $d(["TicTacToe", msg])}
+      />
+    ),
 
-    TicTacToe: (model: TicTacToe.Model) =>
-      <TicTacToe.View ctx={ctx} model={model} $d={(msg) => $d(["TicTacToe", msg])} />,
+    Chess: (model: Chess.Model) => (
+      <Chess.View
+        ctx={ctx}
+        model={model}
+        $d={(msg) => $d(["Chess", msg])}
+      />
+    ),
 
-    Chess: (model: Chess.Model) =>
-      <Chess.View ctx={ctx} model={model} $d={(msg) => $d(["Chess", msg])} />,
-
-    Maze: (model: Maze.Model) =>
-      <Maze.View ctx={ctx} model={model} $d={m => $d(['Maze', m])} />,
+    Maze: (model: Maze.Model) => (
+      <Maze.View
+        ctx={ctx}
+        model={model}
+        $d={(m) => $d(["Maze", m])}
+      />
+    ),
   }
   return views[model[0]](model[1])
 }
@@ -353,8 +393,8 @@ export const gameNameToString = (game: GameName): string => {
       return "Tetris"
     }
 
-    case 'Maze': {
-      return 'Maze'
+    case "Maze": {
+      return "Maze"
     }
   }
 }
@@ -376,7 +416,7 @@ export const CoverArt = ({ gameName }: { gameName: GameName }) => {
     case "Tetris": {
       return <Tetris.CoverArt />
     }
-    case 'Maze': {
+    case "Maze": {
       return <Maze.CoverArt />
     }
   }
@@ -438,7 +478,10 @@ export const mergeWithBackend = ({
         return [
           [
             "ConnectFour",
-            ConnectFour.mergeWithBackend({ frontendModel: frontendModel[1], backendModel: backendModel[1] }),
+            ConnectFour.mergeWithBackend({
+              frontendModel: frontendModel[1],
+              backendModel: backendModel[1],
+            }),
           ],
           Cmd.None,
         ]
@@ -447,7 +490,13 @@ export const mergeWithBackend = ({
       const initial = ConnectFour.init
 
       return [
-        ["ConnectFour", ConnectFour.mergeWithBackend({ frontendModel: initial, backendModel: backendModel[1] })],
+        [
+          "ConnectFour",
+          ConnectFour.mergeWithBackend({
+            frontendModel: initial,
+            backendModel: backendModel[1],
+          }),
+        ],
         Cmd.None,
       ]
     }
@@ -487,12 +536,20 @@ export const mergeWithBackend = ({
       ]
     }
 
-
-    case 'Maze': {
-      if (frontendModel[0] === 'Maze') {
-        return [['Maze', Maze.mergeWithBackend({ frontendModel: frontendModel[1], backendModel: backendModel[1] })], Cmd.None]
+    case "Maze": {
+      if (frontendModel[0] === "Maze") {
+        return [
+          [
+            "Maze",
+            Maze.mergeWithBackend({
+              frontendModel: frontendModel[1],
+              backendModel: backendModel[1],
+            }),
+          ],
+          Cmd.None,
+        ]
       }
-      return [['Maze', Maze.init], Cmd.None]
+      return [["Maze", Maze.init], Cmd.None]
     }
   }
 }

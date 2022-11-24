@@ -17,10 +17,10 @@ export type Model = {
   country: Iso3166Alpha2Code
   validation: "NotChecked" | "InvalidPhoneNumber" | "EmptyPhoneNumber"
   submission:
-  | { type: "Idle" }
-  | { type: "Loading" }
-  | { type: "Problem"; message: string }
-  | { type: "Ok" }
+    | { type: "Idle" }
+    | { type: "Loading" }
+    | { type: "Problem"; message: string }
+    | { type: "Ok" }
 }
 
 export const init: Model = {
@@ -116,7 +116,13 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
 //
 //
 
-export const View = ({ model, $d, }: { model: Model; $d: (msg: Msg) => void }) => {
+export const View = ({
+  model,
+  $d,
+}: {
+  model: Model
+  $d: (msg: Msg) => void
+}) => {
   return (
     <UI.FillBox>
       <UI.Header
@@ -133,7 +139,9 @@ export const View = ({ model, $d, }: { model: Model; $d: (msg: Msg) => void }) =
           defaultValue={Iso3166Alpha2Code.of("US")}
           options={Iso3166Alpha2Code.all}
           getOptionLabel={(option) =>
-            `${Iso3166Alpha2Code.toEmoji(option)} ${Iso3166Alpha2Code.toName(option)}`
+            `${Iso3166Alpha2Code.toEmoji(option)} ${Iso3166Alpha2Code.toName(
+              option,
+            )}`
           }
           renderInput={(params) => (
             <UI.TextField
@@ -167,10 +175,12 @@ export const View = ({ model, $d, }: { model: Model; $d: (msg: Msg) => void }) =
           }
           helperText={
             model.validation === "InvalidPhoneNumber"
-              ? `Invalid phone number for ${Iso3166Alpha2Code.toName(model.country)}`
+              ? `Invalid phone number for ${Iso3166Alpha2Code.toName(
+                  model.country,
+                )}`
               : model.validation === "EmptyPhoneNumber"
-                ? "Phone number is required"
-                : undefined
+              ? "Phone number is required"
+              : undefined
           }
         />
 

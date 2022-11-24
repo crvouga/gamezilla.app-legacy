@@ -30,12 +30,11 @@ export type SharedModel = {
 export type BackendModel = SharedModel
 
 export type FrontendModel = SharedModel & {
-  volume: number,
+  volume: number
   requests: {
     [key in Req[0]]?: RemoteData<Problem, null>
   }
 }
-
 
 //
 //
@@ -45,22 +44,18 @@ export type FrontendModel = SharedModel & {
 //
 //
 
-export type BackendMsg =
-  | ['None']
+export type BackendMsg = ["None"]
 
 export type FrontendMsg =
   | Req
   | ["ClickedBanner"]
   | ["MicSound", { volume: number }]
-  | ['MicLoad', MicLoadResult]
-  | ['MicUnload', MicUnloadResult]
+  | ["MicLoad", MicLoadResult]
+  | ["MicUnload", MicUnloadResult]
 
-export type ToBackend =
-  | Req
+export type ToBackend = Req
 
-export type ToFrontend =
-  | Res
-
+export type ToFrontend = Res
 
 //
 //
@@ -73,16 +68,24 @@ export type ToFrontend =
 export type Req =
   | ["PartyGet", {}]
   | ["PartyCreate", { userId: UserId; partyId: PartyId }]
-  | ["PartyDestroy", { userId: UserId; }]
+  | ["PartyDestroy", { userId: UserId }]
   | ["PartyLeave", { userId: UserId }]
   | ["PartyJoin", { userId: UserId; partyId: PartyId }]
 
 export type Res =
   | ["PartyGet", {}, Result<Problem, SharedModel>]
-  | ["PartyCreate", { userId: UserId; partyId: PartyId }, Result<Problem, SharedModel>]
-  | ["PartyDestroy", { userId: UserId; }, Result<Problem, SharedModel>]
+  | [
+      "PartyCreate",
+      { userId: UserId; partyId: PartyId },
+      Result<Problem, SharedModel>,
+    ]
+  | ["PartyDestroy", { userId: UserId }, Result<Problem, SharedModel>]
   | ["PartyLeave", { userId: UserId }, Result<Problem, SharedModel>]
-  | ["PartyJoin", { userId: UserId; partyId: PartyId }, Result<Problem, SharedModel>]
+  | [
+      "PartyJoin",
+      { userId: UserId; partyId: PartyId },
+      Result<Problem, SharedModel>,
+    ]
 
 type Problem =
   | "must_not_be_in_party"
@@ -93,13 +96,16 @@ type Problem =
   | "user_not_found"
   | "party_not_found"
 
-export const handle = (msg: Req, model: SharedModel): Result<Problem, SharedModel> => {
+export const handle = (
+  msg: Req,
+  model: SharedModel,
+): Result<Problem, SharedModel> => {
   switch (msg[0]) {
-    case 'PartyGet': {
+    case "PartyGet": {
       return Ok(model)
     }
 
-    case 'PartyCreate': {
+    case "PartyCreate": {
       const { partyId, userId } = msg[1]
 
       const user = model.users[userId]
@@ -115,21 +121,21 @@ export const handle = (msg: Req, model: SharedModel): Result<Problem, SharedMode
           [userId]: {
             partyId,
             userId,
-          }
+          },
         },
         parties: {
           ...model.parties,
           [partyId]: {
             hostId: userId,
-            partyId
-          }
-        }
+            partyId,
+          },
+        },
       }
 
       return Ok(modelNew)
     }
 
-    case 'PartyDestroy': {
+    case "PartyDestroy": {
       const { userId } = msg[1]
 
       const user = model.users[userId]
@@ -150,13 +156,16 @@ export const handle = (msg: Req, model: SharedModel): Result<Problem, SharedMode
 
       const modelNew: SharedModel = {
         parties: removeKey(user.partyId, model.parties),
-        users: filterObject(model.users, entry => entry[1].partyId !== user.partyId)
+        users: filterObject(
+          model.users,
+          (entry) => entry[1].partyId !== user.partyId,
+        ),
       }
 
       return Ok(modelNew)
     }
 
-    case 'PartyJoin': {
+    case "PartyJoin": {
       const { userId, partyId } = msg[1]
 
       const user = model.users[userId]
@@ -177,15 +186,15 @@ export const handle = (msg: Req, model: SharedModel): Result<Problem, SharedMode
           ...model.users,
           [userId]: {
             userId,
-            partyId
-          }
-        }
+            partyId,
+          },
+        },
       }
 
       return Ok(modelNew)
     }
 
-    case 'PartyLeave': {
+    case "PartyLeave": {
       const { userId } = msg[1]
 
       const user = model.users[userId]
@@ -206,11 +215,10 @@ export const handle = (msg: Req, model: SharedModel): Result<Problem, SharedMode
 
       const modelNew: SharedModel = {
         parties: model.parties,
-        users: removeKey(userId, model.users)
+        users: removeKey(userId, model.users),
       }
 
       return Ok(modelNew)
     }
-
   }
 }

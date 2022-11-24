@@ -56,36 +56,29 @@ const decodeRow = (
 export type FindResult = Result<Problem, Option<Account>>
 
 export const findByEmailAddress =
-  ({
-    emailAddress,
-  }: {
-    emailAddress: EmailAddress
-  }): Task<FindResult> =>
-    async () => {
-      const response = await Supabase.client
-        .from<definitions["user_account"]>("user_account")
-        .select("*")
-        .eq("email_address", emailAddress)
+  ({ emailAddress }: { emailAddress: EmailAddress }): Task<FindResult> =>
+  async () => {
+    const response = await Supabase.client
+      .from<definitions["user_account"]>("user_account")
+      .select("*")
+      .eq("email_address", emailAddress)
 
-      if (response.error) {
-        return Result.Err(response.error.message)
-      }
-
-      const row = response.data[0]
-
-      if (!row) {
-        return Result.Ok(Option.None)
-      }
-
-      const decoded = decodeRow(row)
-
-      return p(decoded, Result.map(Option.Some))
+    if (response.error) {
+      return Result.Err(response.error.message)
     }
 
-export type CreateResult = Result<
-  Problem,
-  Option<{ userId: UserId }>
->
+    const row = response.data[0]
+
+    if (!row) {
+      return Result.Ok(Option.None)
+    }
+
+    const decoded = decodeRow(row)
+
+    return p(decoded, Result.map(Option.Some))
+  }
+
+export type CreateResult = Result<Problem, Option<{ userId: UserId }>>
 
 export const createWithEmailAndPassword =
   ({
@@ -95,39 +88,39 @@ export const createWithEmailAndPassword =
     emailAddress: EmailAddress
     password: Password
   }): Task<CreateResult> =>
-    async () => {
-      const response = await Supabase.client.auth.signUp({
-        email: emailAddress,
-        password: password,
-      })
+  async () => {
+    const response = await Supabase.client.auth.signUp({
+      email: emailAddress,
+      password: password,
+    })
 
-      if (response.error) {
-        return Result.Err(response.error.message)
-      }
-
-      //
-      //
-      //
-      // Note!
-      // a supabase trigger is expected to insert a row into a public table after sign up
-      //
-      //
-      //
-
-      const user = response.user
-
-      if (!user) {
-        return Result.Err("failed to create user")
-      }
-
-      const userIdResult = UserId.decode(user.id)
-
-      if (userIdResult.type === "Err") {
-        return userIdResult
-      }
-
-      return Result.Ok(Option.Some({ userId: userIdResult.value }))
+    if (response.error) {
+      return Result.Err(response.error.message)
     }
+
+    //
+    //
+    //
+    // Note!
+    // a supabase trigger is expected to insert a row into a public table after sign up
+    //
+    //
+    //
+
+    const user = response.user
+
+    if (!user) {
+      return Result.Err("failed to create user")
+    }
+
+    const userIdResult = UserId.decode(user.id)
+
+    if (userIdResult.type === "Err") {
+      return userIdResult
+    }
+
+    return Result.Ok(Option.Some({ userId: userIdResult.value }))
+  }
 
 export type SendResetPasswordLinkResult = Result<Problem, Unit>
 
@@ -137,17 +130,17 @@ export const sendResetPasswordLink =
   }: {
     emailAddress: string
   }): Task<SendResetPasswordLinkResult> =>
-    async () => {
-      const response = await Supabase.client.auth.api.resetPasswordForEmail(
-        emailAddress,
-      )
+  async () => {
+    const response = await Supabase.client.auth.api.resetPasswordForEmail(
+      emailAddress,
+    )
 
-      if (response.error) {
-        return Result.Err(response.error.message)
-      }
-
-      return Result.Ok(Unit)
+    if (response.error) {
+      return Result.Err(response.error.message)
     }
+
+    return Result.Ok(Unit)
+  }
 
 //
 //

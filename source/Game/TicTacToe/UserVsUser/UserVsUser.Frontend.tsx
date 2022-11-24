@@ -1,16 +1,19 @@
 import { Cmd, exhaustive } from "../../../Core"
 import { UserId } from "../../../Data"
 import * as ProfileStore from "../../../Profile/Profile.Store"
-import * as Snackbar from "../../../Snackbar"
+import * as Snackbar from "../../../Alerts"
 import * as UI from "../../../UI"
 import { Ctx } from "../../Game.Shared"
 import {
-  emptyBoard, gameTheme, PlayerType,
+  emptyBoard,
+  gameTheme,
+  PlayerType,
   PlayerTypeIcon,
   Position,
-  Slot, toTurn,
+  Slot,
+  toTurn,
   ViewBoard,
-  ViewSlot
+  ViewSlot,
 } from "../TicTacToe"
 import { VersusHeader } from "../Views"
 import * as Round from "./Round"
@@ -37,7 +40,7 @@ import {
   startGame,
   ToBackend,
   ToFrontend,
-  toWinCount
+  toWinCount,
 } from "./UserVsUser.Types"
 
 //
@@ -124,8 +127,7 @@ export const updateFromBackend = (
   model: Model,
 ): [Model, OutAction[]] => {
   switch (msg[0]) {
-
-    case 'PlayerLeft': {
+    case "PlayerLeft": {
       const modelNew = mergeWithBackend(model, msg[1])
       return [modelNew, []]
     }
@@ -214,8 +216,16 @@ export const View = ({
         <UI.Box sx={{ flex: 1, overflowY: "scroll" }}>
           <VersusHeader
             ctx={ctx}
-            X={model.X === 'None' ? { type: "User" } : { type: "User", userId: model.X }}
-            O={model.O === 'None' ? { type: "User" } : { type: "User", userId: model.O }}
+            X={
+              model.X === "None"
+                ? { type: "User" }
+                : { type: "User", userId: model.X }
+            }
+            O={
+              model.O === "None"
+                ? { type: "User" }
+                : { type: "User", userId: model.O }
+            }
           />
 
           <UI.Box sx={{ padding: 2 }}>
@@ -225,7 +235,6 @@ export const View = ({
             >
               Players
             </UI.Typography>
-
 
             <ViewPlayerSetupSlot
               playerType="X"
@@ -340,8 +349,16 @@ export const View = ({
       <UI.FillBox>
         <UI.Box sx={{ flex: 1, overflowY: "scroll" }}>
           <UI.Box sx={{ display: "flex", gap: 2, paddingX: 1, paddingY: 1 }}>
-            <ViewPlayerGameSlot playerType="X" ctx={ctx} model={model} />
-            <ViewPlayerGameSlot playerType="O" ctx={ctx} model={model} />
+            <ViewPlayerGameSlot
+              playerType="X"
+              ctx={ctx}
+              model={model}
+            />
+            <ViewPlayerGameSlot
+              playerType="O"
+              ctx={ctx}
+              model={model}
+            />
           </UI.Box>
 
           <UI.Box sx={{ width: "100%", position: "relative" }}>
@@ -393,13 +410,25 @@ export const View = ({
   const newGameResult = newGame({ userId: ctx.currentUserId }, model)
 
   const currentPlayerType: PlayerType | "None" =
-    model.X === ctx.currentUserId ? "X" : model.O === ctx.currentUserId ? "O" : "None"
+    model.X === ctx.currentUserId
+      ? "X"
+      : model.O === ctx.currentUserId
+      ? "O"
+      : "None"
 
   return (
     <UI.FillBox>
       <UI.Box sx={{ display: "flex", gap: 2, paddingX: 1, paddingY: 1 }}>
-        <ViewPlayerGameSlot playerType="X" ctx={ctx} model={model} />
-        <ViewPlayerGameSlot playerType="O" ctx={ctx} model={model} />
+        <ViewPlayerGameSlot
+          playerType="X"
+          ctx={ctx}
+          model={model}
+        />
+        <ViewPlayerGameSlot
+          playerType="O"
+          ctx={ctx}
+          model={model}
+        />
       </UI.Box>
 
       <UI.Box sx={{ width: "100%", position: "relative" }}>
@@ -428,7 +457,6 @@ export const View = ({
             <ViewGameOverMessage
               ctx={ctx}
               model={model}
-
               $d={$d}
             />
           </UI.Box>
@@ -488,16 +516,21 @@ const ViewGameOverMessage = ({
   model,
   $d,
 }: {
-  ctx: Ctx,
+  ctx: Ctx
   model: GameOverModel
   $d: (msg: Msg) => void
 }) => {
-  const isPlaying = model.O === ctx.currentUserId || model.X === ctx.currentUserId
+  const isPlaying =
+    model.O === ctx.currentUserId || model.X === ctx.currentUserId
   const score = Round.toScore(model.round)
   const winCount = toWinCount(model)
 
   const currentPlayerType: PlayerType | "None" =
-    model.X === ctx.currentUserId ? "X" : model.O === ctx.currentUserId ? "O" : "None"
+    model.X === ctx.currentUserId
+      ? "X"
+      : model.O === ctx.currentUserId
+      ? "O"
+      : "None"
 
   if (
     model.rematch.type === "Asking" &&
@@ -552,9 +585,7 @@ const ViewGameOverMessage = ({
             startIcon={<UI.Icons.CheckCircle />}
             variant="contained"
             fullWidth
-            onClick={() =>
-              $d(["RematchAccept", { userId: ctx.currentUserId }])
-            }
+            onClick={() => $d(["RematchAccept", { userId: ctx.currentUserId }])}
           >
             Accept
           </UI.Button>
@@ -628,7 +659,10 @@ const ViewGameOverMessage = ({
             color: "inherit",
           }}
         >
-          <PlayerTypeIcon playerType={model.gameOver.resigner} sx={{ width: 64, height: 64 }} />
+          <PlayerTypeIcon
+            playerType={model.gameOver.resigner}
+            sx={{ width: 64, height: 64 }}
+          />
           <UI.Typography
             align="center"
             color="inherit"
@@ -752,7 +786,7 @@ export const ViewRoundStartingMessage = ({
   ctx,
   model,
 }: {
-  ctx: Ctx,
+  ctx: Ctx
   model: GameModel
 }) => {
   const currentRound = Round.toCurrent(model.round)
@@ -823,7 +857,8 @@ export const ViewRoundStartingMessage = ({
   const { roundOver } = previousRound
   const didCurrentUserWin =
     roundOver.type === "Win" && model[roundOver.winner] === ctx.currentUserId
-  const isPlaying = model.O === ctx.currentUserId || model.X === ctx.currentUserId
+  const isPlaying =
+    model.O === ctx.currentUserId || model.X === ctx.currentUserId
 
   return (
     <>
@@ -863,7 +898,10 @@ export const ViewRoundStartingMessage = ({
               color: "inherit",
             }}
           >
-            <PlayerTypeIcon playerType={roundOver.winner} sx={{ width: 64, height: 64 }} />
+            <PlayerTypeIcon
+              playerType={roundOver.winner}
+              sx={{ width: 64, height: 64 }}
+            />
 
             <UI.Typography
               align="center"
@@ -913,7 +951,7 @@ const ViewScores = ({
   winCount,
 }: {
   score: Round.Score
-  winCount: number,
+  winCount: number
   maxRoundCount: number
 }) => {
   const width = 52
@@ -938,7 +976,10 @@ const ViewScores = ({
           color: "inherit",
         }}
       >
-        <PlayerTypeIcon playerType="X" sx={{ width: width, height: width }} />
+        <PlayerTypeIcon
+          playerType="X"
+          sx={{ width: width, height: width }}
+        />
         <ViewScoreSlots
           tieCount={score.Tie}
           score={score.X}
@@ -958,7 +999,10 @@ const ViewScores = ({
           color: "inherit",
         }}
       >
-        <PlayerTypeIcon playerType="O" sx={{ width: width, height: width }} />
+        <PlayerTypeIcon
+          playerType="O"
+          sx={{ width: width, height: width }}
+        />
         <ViewScoreSlots
           tieCount={score.Tie}
           score={score.O}
@@ -973,7 +1017,7 @@ const ViewScores = ({
 const ViewScoreSlots = ({
   maxScore,
   score,
-  slotSize
+  slotSize,
 }: {
   tieCount: number
   maxScore: number
@@ -1008,7 +1052,7 @@ const ViewScoreSlots = ({
               <UI.Icons.Circle
                 sx={{ width: slotSize, height: slotSize, color: "inherit" }}
               />
-            ) :
+            ) : (
               // n > maxScore - tieCount ? (
               // <UI.Icons.Cancel
               //   sx={{
@@ -1019,16 +1063,15 @@ const ViewScoreSlots = ({
               //   }}
               // />
               // ) :
-              (
-                <UI.Icons.CircleOutlined
-                  sx={{
-                    width: slotSize,
-                    height: slotSize,
-                    color: "inherit",
-                    opacity: 0.5,
-                  }}
-                />
-              )}
+              <UI.Icons.CircleOutlined
+                sx={{
+                  width: slotSize,
+                  height: slotSize,
+                  color: "inherit",
+                  opacity: 0.5,
+                }}
+              />
+            )}
           </UI.Box>
         )
       })}
@@ -1081,8 +1124,9 @@ const toGameText = ({
     case "GameOver": {
       switch (model.gameOver.type) {
         case "Resignation": {
-          return `${store.profiles[model[model.gameOver.resigner]]?.username ?? "..."
-            } resigned`
+          return `${
+            store.profiles[model[model.gameOver.resigner]]?.username ?? "..."
+          } resigned`
         }
 
         case "Winner": {
@@ -1130,9 +1174,9 @@ const ViewPlayerSetupSlot = ({
   userId,
   playerType,
   $d,
-  sx
+  sx,
 }: {
-  ctx: Ctx,
+  ctx: Ctx
   userId: UserId | "None"
   playerType: PlayerType
   $d: (msg: Msg) => void
@@ -1142,17 +1186,19 @@ const ViewPlayerSetupSlot = ({
 
   if (userId === "None") {
     return (
-      <UI.Box sx={{ display: "flex", width: "100%", alignItems: 'center', ...sx }}>
-        <PlayerTypeIcon playerType={playerType} sx={{ marginRight: 1, ...iconSx }} />
+      <UI.Box
+        sx={{ display: "flex", width: "100%", alignItems: "center", ...sx }}
+      >
+        <PlayerTypeIcon
+          playerType={playerType}
+          sx={{ marginRight: 1, ...iconSx }}
+        />
         <UI.Button
           sx={{ flex: 1 }}
           fullWidth
           variant="contained"
           onClick={() =>
-            $d([
-              "InputPlayer",
-              { userId: ctx.currentUserId, playerType },
-            ])
+            $d(["InputPlayer", { userId: ctx.currentUserId, playerType }])
           }
         >
           Start Playing
@@ -1162,20 +1208,27 @@ const ViewPlayerSetupSlot = ({
   }
 
   return (
-    <UI.Box sx={{ display: "flex", alignItems: "center", width: '100%', ...sx }}>
-      <PlayerTypeIcon playerType={playerType} sx={{ marginRight: 1, ...iconSx }} />
+    <UI.Box
+      sx={{ display: "flex", alignItems: "center", width: "100%", ...sx }}
+    >
+      <PlayerTypeIcon
+        playerType={playerType}
+        sx={{ marginRight: 1, ...iconSx }}
+      />
       <UI.Avatar
         src={ctx.profiles[userId]?.avatarUrl}
         sx={{ marginRight: 1 }}
       />
       <UI.Box sx={{ flex: 1, overflow: "hidden" }}>
-        <UI.Typography noWrap sx={{ textOverflow: "ellipsis" }} >
+        <UI.Typography
+          noWrap
+          sx={{ textOverflow: "ellipsis" }}
+        >
           {ctx.profiles[userId]?.username ?? "..."}
         </UI.Typography>
       </UI.Box>
       {ctx.currentUserId === userId && (
         <UI.Button
-
           onClick={() => $d(["StopPlaying", { userId: ctx.currentUserId }])}
         >
           Stop Playing
@@ -1231,8 +1284,9 @@ const ViewPlayerGameSlot = ({
           display: "flex",
           alignItems: "center",
           overflow: "hidden",
-          borderBottom: `solid 3.5px ${isTurn ? gameTheme.background : uiTheme.palette.divider
-            }`,
+          borderBottom: `solid 3.5px ${
+            isTurn ? gameTheme.background : uiTheme.palette.divider
+          }`,
         }}
       >
         <UI.Box
@@ -1277,10 +1331,10 @@ const ViewPlayerGameSlot = ({
                 timeLeft === 3
                   ? "warning.light"
                   : timeLeft === 2
-                    ? "warning.dark"
-                    : timeLeft < 2
-                      ? "error.main"
-                      : "text.primary"
+                  ? "warning.dark"
+                  : timeLeft < 2
+                  ? "error.main"
+                  : "text.primary"
               }
             >
               {timeLeft}

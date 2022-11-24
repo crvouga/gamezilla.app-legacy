@@ -133,10 +133,7 @@ const updateRequest = (
 //
 //
 
-export const subscriptions = (
-  intervalId: string,
-  model: Model,
-): Sub<Msg> => {
+export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
   switch (model.status) {
     case "Paused": {
       return Sub.None

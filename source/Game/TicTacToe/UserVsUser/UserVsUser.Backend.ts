@@ -4,14 +4,25 @@ import { PlayerType, toOpposite, toTurn } from "../TicTacToe"
 import * as Round from "./Round"
 import {
   BackendModel,
-  BackendMsg, initSharedModel,
+  BackendMsg,
+  initSharedModel,
   inputBestOutOf,
   inputMove,
   inputMoveTimeLimit,
-  inputPlayer, moveCountDown, newGame, rematchAccept, rematchAsk, rematchCancel, rematchDecline, Res, resign, roundCountDown, startGame,
+  inputPlayer,
+  moveCountDown,
+  newGame,
+  rematchAccept,
+  rematchAsk,
+  rematchCancel,
+  rematchDecline,
+  Res,
+  resign,
+  roundCountDown,
+  startGame,
   stopPlaying,
   ToBackend,
-  ToFrontend
+  ToFrontend,
 } from "./UserVsUser.Types"
 
 //
@@ -222,11 +233,15 @@ export const updateFromFrontend = (
   }
 }
 
+export const updateRoomLeave = (
+  { broadcast }: { broadcast: (m: ToFrontend) => Cmd },
+  userId: UserId,
+  model: Model,
+): [Model, Cmd<Msg>] => {
+  const player: PlayerType | "None" =
+    model.O === userId ? "O" : model.X === userId ? "X" : "None"
 
-export const updateRoomLeave = ({ broadcast }: { broadcast: (m: ToFrontend) => Cmd }, userId: UserId, model: Model): [Model, Cmd<Msg>] => {
-  const player: PlayerType | "None" = model.O === userId ? 'O' : model.X === userId ? 'X' : 'None'
-
-  if (player === 'None') {
+  if (player === "None") {
     return [model, Cmd.None]
   }
 
@@ -239,11 +254,10 @@ export const updateRoomLeave = ({ broadcast }: { broadcast: (m: ToFrontend) => C
     X: model.X,
     O: model.O,
     [player]: "None",
-    [other]: model[other]
+    [other]: model[other],
   }
 
-  return [modelNew, broadcast(['PlayerLeft', modelNew])]
-
+  return [modelNew, broadcast(["PlayerLeft", modelNew])]
 }
 
 //
@@ -254,10 +268,7 @@ export const updateRoomLeave = ({ broadcast }: { broadcast: (m: ToFrontend) => C
 //
 //
 
-export const subscriptions = (
-  intervalId: string,
-  model: Model,
-): Sub<Msg> => {
+export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
   switch (model.type) {
     case "Setup": {
       return Sub.None

@@ -86,20 +86,14 @@ const circularIndex = (index: number, length: number): number => {
   return ((index % length) + length) % length
 }
 
-const circular = (
-  model: Model,
-  position: Position,
-): Position => {
+const circular = (model: Model, position: Position): Position => {
   return {
     x: circularIndex(position.x, model.bounds.upper.x),
     y: circularIndex(position.y, model.bounds.upper.y),
   }
 }
 
-export const enqueueDirection = (
-  direction: Direction,
-  model: Model,
-): Model => {
+export const enqueueDirection = (direction: Direction, model: Model): Model => {
   const directionQueueNew = unique(
     [...model.directionQueue, direction].slice(0, 2),
   )

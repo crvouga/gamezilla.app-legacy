@@ -4,7 +4,6 @@ import { Task } from "../../Core/Task"
 import * as UI from "../../UI"
 import * as Minimax from "../Minimax"
 
-
 //
 //
 //
@@ -42,12 +41,7 @@ export type Row = 0 | 1 | 2
 
 export type Column = 0 | 1 | 2
 
-export type Board = [
-  [Slot, Slot, Slot],
-  [Slot, Slot, Slot],
-  [Slot, Slot, Slot]
-]
-
+export type Board = [[Slot, Slot, Slot], [Slot, Slot, Slot], [Slot, Slot, Slot]]
 
 const toChildren = (board: Board): Board[] => {
   const turn = toTurn(board)
@@ -75,19 +69,25 @@ export const botLevels: { [botLevel in BotLevel]: BotLevel } = {
 
 export const toDepth = (botLevel: BotLevel): number => {
   switch (botLevel) {
-    case 'Easy': {
+    case "Easy": {
       return 2
     }
-    case 'Medium': {
+    case "Medium": {
       return 3
     }
-    case 'Impossible': {
+    case "Impossible": {
       return 6
     }
   }
 }
 
-const toScore = ({ board, maximizingPlayer }: { board: Board, maximizingPlayer: PlayerType }): number => {
+const toScore = ({
+  board,
+  maximizingPlayer,
+}: {
+  board: Board
+  maximizingPlayer: PlayerType
+}): number => {
   const gameOver = toGameOver(board)
 
   switch (gameOver.type) {
@@ -109,39 +109,32 @@ const toScore = ({ board, maximizingPlayer }: { board: Board, maximizingPlayer: 
   }
 }
 
-
 // todo: make this run faster. its too slow
 export const toBestMove_ = ({
   depth,
   maximizingPlayer,
-  board
+  board,
 }: {
-  depth: number,
-  maximizingPlayer: PlayerType,
-  board: Board,
-}
-): Position => {
-
+  depth: number
+  maximizingPlayer: PlayerType
+  board: Board
+}): Position => {
   const minimax = Minimax.create({
     toChildren,
-    toScore: (board) => toScore({ board, maximizingPlayer })
+    toScore: (board) => toScore({ board, maximizingPlayer }),
   })
 
+  const bestMove = maxBy(allPositions, (position) => {
+    const result = move({ board, player: maximizingPlayer, position })
 
-  const bestMove = maxBy(
-    allPositions,
-    (position) => {
-      const result = move({ board, player: maximizingPlayer, position })
+    if (result.type === "Err") {
+      return -Infinity
+    }
 
-      if (result.type === "Err") {
-        return -Infinity
-      }
+    const score = minimax({ state: result.value, depth })
 
-      const score = minimax({ state: result.value, depth })
-
-      return score
-    },
-  )
+    return score
+  })
 
   return bestMove
 }
@@ -150,17 +143,15 @@ export type ToBestMoveProblem = "no_valid_move"
 
 export const toBestMove = ({
   maximizingPlayer,
-  board
+  board,
 }: {
-  depth: number,
-  maximizingPlayer: PlayerType,
-  board: Board,
-}
-): Result<ToBestMoveProblem, Position> => {
-
+  depth: number
+  maximizingPlayer: PlayerType
+  board: Board
+}): Result<ToBestMoveProblem, Position> => {
   for (const position of allPositions) {
     const result = move({ board, player: maximizingPlayer, position })
-    if (result.type === 'Ok') {
+    if (result.type === "Ok") {
       return Ok(position)
     }
   }
@@ -175,33 +166,40 @@ export type Worker = {
 export type GetBestMoveProblem = "worker_thread_error" | ToBestMoveProblem
 
 export const getBestMove =
-  ({ board, depth, maximizingPlayer }: { depth: number, maximizingPlayer: PlayerType, board: Board }): Task<Result<GetBestMoveProblem, Position>> =>
-    async () => {
-      const result = toBestMove({ board, depth, maximizingPlayer })
+  ({
+    board,
+    depth,
+    maximizingPlayer,
+  }: {
+    depth: number
+    maximizingPlayer: PlayerType
+    board: Board
+  }): Task<Result<GetBestMoveProblem, Position>> =>
+  async () => {
+    const result = toBestMove({ board, depth, maximizingPlayer })
 
-      await new Promise(resolve => setTimeout(resolve, 1000))
+    await new Promise((resolve) => setTimeout(resolve, 1000))
 
-      return result
+    return result
 
-      // try {
-      //   // docs: https://threads.js.org/
-      //   const worker = new Threads.Worker("./tictactoe-worker")
+    // try {
+    //   // docs: https://threads.js.org/
+    //   const worker = new Threads.Worker("./tictactoe-worker")
 
-      //   const spawned = await Threads.spawn<Worker>(worker)
+    //   const spawned = await Threads.spawn<Worker>(worker)
 
-      //   try {
-      //     const result = await spawned.toBestMove({ depth, maximizingPlayer, board })
-      //     return result
-      //   } catch (error) {
-      //     return Err("worker_thread_error")
-      //   } finally {
-      //     await Threads.Thread.terminate(spawned)
-      //   }
-      // } catch (error) {
-      //   return Err("worker_thread_error")
-      // }
-
-    }
+    //   try {
+    //     const result = await spawned.toBestMove({ depth, maximizingPlayer, board })
+    //     return result
+    //   } catch (error) {
+    //     return Err("worker_thread_error")
+    //   } finally {
+    //     await Threads.Thread.terminate(spawned)
+    //   }
+    // } catch (error) {
+    //   return Err("worker_thread_error")
+    // }
+  }
 
 type NonEmptyArray<T> = [T, ...T[]]
 
@@ -220,7 +218,7 @@ const maxBy = <X,>(xs: NonEmptyArray<X>, toValue: (x: X) => number): X => {
 export const emptyBoard: Board = [
   ["_", "_", "_"],
   ["_", "_", "_"],
-  ["_", "_", "_"]
+  ["_", "_", "_"],
 ]
 
 export type Position = { row: Row; column: Column }
@@ -228,13 +226,18 @@ export type Position = { row: Row; column: Column }
 export const toSlot = (board: Board, position: Position): Slot =>
   board[position.column][position.row]
 
-
 export const setSlot = (
   board: Board,
   position: Position,
   slotNew: Slot,
 ): Board => {
-  return board.map((columns, columnIndex) => columns.map((slot, rowIndex) => columnIndex === position.column && rowIndex === position.row ? slotNew : slot)) as Board
+  return board.map((columns, columnIndex) =>
+    columns.map((slot, rowIndex) =>
+      columnIndex === position.column && rowIndex === position.row
+        ? slotNew
+        : slot,
+    ),
+  ) as Board
 }
 
 export const allPositions: NonEmptyArray<Position> = [
@@ -303,8 +306,6 @@ export const allWinningGroups: WinningGroup[] = [
 
 type Wins = { X: WinningGroup[]; O: WinningGroup[]; None: WinningGroup[] }
 
-
-
 const toWins = (board: Board): Wins => {
   const wins: Wins = {
     X: [],
@@ -322,8 +323,8 @@ const toWins = (board: Board): Wins => {
       a === "X" && b === "X" && c === "X"
         ? "X"
         : a === "O" && b === "O" && c === "O"
-          ? "O"
-          : "None"
+        ? "O"
+        : "None"
 
     wins[key].push(group)
   }
@@ -366,9 +367,7 @@ export const toStatus = (board: Board): Status => {
 const isTie = (board: Board): boolean => {
   const wins = toWins(board)
   return (
-    wins.O.length === 0
-    && wins.X.length === 0
-    && toSlotFrequency(board)._ === 0
+    wins.O.length === 0 && wins.X.length === 0 && toSlotFrequency(board)._ === 0
   )
 }
 
@@ -396,13 +395,12 @@ export type MoveProblem = "not_players_turn" | "position_is_taken" | "game_over"
 export const move = ({
   board,
   player,
-  position
+  position,
 }: {
-  board: Board,
-  player: PlayerType,
-  position: Position,
-}
-): Result<MoveProblem, Board> => {
+  board: Board
+  player: PlayerType
+  position: Position
+}): Result<MoveProblem, Board> => {
   const status = toStatus(board)
 
   if (status.type === "Tie" || status.type === "Win") {
@@ -617,11 +615,18 @@ const Naught = ({
   )
 }
 
-
-
-export const PlayerTypeIcon = ({ playerType, sx }: { playerType: PlayerType, sx?: UI.Sx }) => {
+export const PlayerTypeIcon = ({
+  playerType,
+  sx,
+}: {
+  playerType: PlayerType
+  sx?: UI.Sx
+}) => {
   return (
-    <UI.SvgIcon viewBox="-1 -1 2 2" sx={sx}>
+    <UI.SvgIcon
+      viewBox="-1 -1 2 2"
+      sx={sx}
+    >
       <ViewSlot
         cx={0}
         cy={0}
@@ -633,4 +638,3 @@ export const PlayerTypeIcon = ({ playerType, sx }: { playerType: PlayerType, sx?
     </UI.SvgIcon>
   )
 }
-

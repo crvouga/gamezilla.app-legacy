@@ -95,7 +95,7 @@ export type ToFrontend =
   | ["Sync", SharedModel]
   | Res
   | BotMoved_Done
-  | ['PlayerLeft', SharedModel]
+  | ["PlayerLeft", SharedModel]
 
 export type Req =
   | InputUser
@@ -193,10 +193,7 @@ export const inputColor = (
 //
 //
 
-export type InputBot = [
-  "InputBot",
-  { botLevel: Board.Level; userId: UserId },
-]
+export type InputBot = ["InputBot", { botLevel: Board.Level; userId: UserId }]
 export type InputBot_Done = [
   "InputBot_Done",
   Result<InputBotProblem, SharedModel>,
@@ -342,10 +339,7 @@ export const stopGame = (
 //
 //
 
-export type InputMove = [
-  "InputMove",
-  Board.MoveInput & { userId: UserId },
-]
+export type InputMove = ["InputMove", Board.MoveInput & { userId: UserId }]
 
 export type InputMove_Done = [
   "InputMove_Done",

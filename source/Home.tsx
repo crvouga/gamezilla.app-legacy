@@ -47,7 +47,20 @@ export const update = (
         model,
         [
           ["Route", ["Push", ["GameRoom"]]],
-          ["GameRoom", ["Msg", ["RoomCreate", { gameName: msg[1], roomId: RoomId.generate(), userId: currentUserId, },],],],
+          [
+            "GameRoom",
+            [
+              "Msg",
+              [
+                "RoomCreate",
+                {
+                  gameName: msg[1],
+                  roomId: RoomId.generate(),
+                  userId: currentUserId,
+                },
+              ],
+            ],
+          ],
         ],
       ]
     }
@@ -56,7 +69,12 @@ export const update = (
       const roomId = msg[1].roomId
       return [
         model,
-        [["GameRoom", ["Msg", ["RoomJoin", { roomId, userId: currentUserId }]]],],
+        [
+          [
+            "GameRoom",
+            ["Msg", ["RoomJoin", { roomId, userId: currentUserId }]],
+          ],
+        ],
       ]
     }
 
@@ -67,7 +85,7 @@ export const update = (
       ]
     }
 
-    case 'ClickedCurrentRoomDestroy': {
+    case "ClickedCurrentRoomDestroy": {
       return [
         model,
         [["GameRoom", ["Msg", ["RoomDestroy", { userId: currentUserId }]]]],
@@ -77,8 +95,6 @@ export const update = (
     case "ClickedCurrentRoom": {
       return [model, [["Route", ["Push", ["GameRoom"]]]]]
     }
-
-
   }
 }
 
@@ -111,13 +127,18 @@ export const View = ({
   gameRoom: GameRoom.Model
   model: Model
   $d: (msg: Msg) => void
-  ctx: Ctx,
+  ctx: Ctx
 }) => {
   const user = gameRoom.users[ctx.currentUserId]
 
   if (!user) {
     return (
-      <ViewNotInRoom model={model} $d={$d} ctx={ctx} gameRoom={gameRoom} />
+      <ViewNotInRoom
+        model={model}
+        $d={$d}
+        ctx={ctx}
+        gameRoom={gameRoom}
+      />
     )
   }
 
@@ -125,7 +146,12 @@ export const View = ({
 
   if (!currentRoom) {
     return (
-      <ViewNotInRoom model={model} $d={$d} ctx={ctx} gameRoom={gameRoom} />
+      <ViewNotInRoom
+        model={model}
+        $d={$d}
+        ctx={ctx}
+        gameRoom={gameRoom}
+      />
     )
   }
 
@@ -229,7 +255,6 @@ export const View = ({
               </UI.Button>
             </>
           )}
-
         </UI.Paper>
       </UI.Box>
 
@@ -259,9 +284,7 @@ export const View = ({
                 gameName={room.game[0]}
                 ctx={ctx}
                 gameRoom={gameRoom}
-                onClick={() =>
-                  $d(["ClickedRoom", { roomId: room.roomId }])
-                }
+                onClick={() => $d(["ClickedRoom", { roomId: room.roomId }])}
               />
             ))}
           </UI.Box>
@@ -305,7 +328,10 @@ const ViewNotInRoom = ({
           }}
         >
           {gameNameList.map((gameName) => (
-            <UI.Box key={gameName} sx={{ minWidth: 150, flex: 1 }}>
+            <UI.Box
+              key={gameName}
+              sx={{ minWidth: 150, flex: 1 }}
+            >
               <GameRoom.ViewGameCard
                 key={gameName}
                 gameName={gameName}

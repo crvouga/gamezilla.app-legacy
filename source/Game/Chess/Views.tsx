@@ -30,7 +30,7 @@ export const BannerArt = ({ title }: { title: string }) => {
   const rowCount = 4
   return (
     <UI.AspectRatio aspectRatio={bannerArtAspectRatio}>
-      <UI.Box sx={{ width: "100%", position: "relative", }}>
+      <UI.Box sx={{ width: "100%", position: "relative" }}>
         <svg
           width="100%"
           height="100%"
@@ -96,7 +96,7 @@ export const BannerArt = ({ title }: { title: string }) => {
           height: "100%",
           display: "flex",
           flexDirection: "column",
-          background: "rgba(0, 0, 0, 0.4)"
+          background: "rgba(0, 0, 0, 0.4)",
           // background: `linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.3))`,
         }}
       >
@@ -113,20 +113,33 @@ export const BannerArt = ({ title }: { title: string }) => {
   )
 }
 
-
 type Player =
   | { type: "None" }
-  | { type: "User", userId: UserId }
-  | { type: "Bot", label: string }
+  | { type: "User"; userId: UserId }
+  | { type: "Bot"; label: string }
 
-export const VersusHeader = ({ ctx, white, black }: { ctx: Ctx, white: Player, black: Player }) => {
+export const VersusHeader = ({
+  ctx,
+  white,
+  black,
+}: {
+  ctx: Ctx
+  white: Player
+  black: Player
+}) => {
   const columnCount = 8
   const rowCount = 3
 
-  const itemSx: UI.Sx = { flex: 1, display: "flex", alignItems: 'center', justifyContent: "center", color: "inherit" }
+  const itemSx: UI.Sx = {
+    flex: 1,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    color: "inherit",
+  }
 
   return (
-    <UI.Box sx={{ width: "100%", position: "relative", color: "#fff", }}>
+    <UI.Box sx={{ width: "100%", position: "relative", color: "#fff" }}>
       <svg
         width="100%"
         height="100%"
@@ -150,40 +163,58 @@ export const VersusHeader = ({ ctx, white, black }: { ctx: Ctx, white: Player, b
         )}
       </svg>
 
-
-      <UI.Box sx={{
-        position: "absolute", top: 0, left: 0, height: "100%", width: "100%",
-        display: 'flex', alignItems: 'center', justifyContent: "center",
-        color: "inherit", background: "rgba(0, 0, 0, 0.4)"
-      }}>
+      <UI.Box
+        sx={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          height: "100%",
+          width: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          color: "inherit",
+          background: "rgba(0, 0, 0, 0.4)",
+        }}
+      >
         <UI.Box sx={{ ...itemSx }}>
-          <PlayerSlot ctx={ctx} player={white} />
+          <PlayerSlot
+            ctx={ctx}
+            player={white}
+          />
         </UI.Box>
         <UI.Box sx={{ ...itemSx }}>
           <PawnIcon sx={{ color: "#fff", width: 72, height: 72 }} />
         </UI.Box>
-        <UI.Typography sx={{ color: "#fff", fontSize: 32, }} >
-          vs
-        </UI.Typography>
+        <UI.Typography sx={{ color: "#fff", fontSize: 32 }}>vs</UI.Typography>
         <UI.Box sx={{ ...itemSx }}>
-          <PawnIcon sx={{ stroke: "#fff", color: "#101010", width: 72, height: 72 }} />
+          <PawnIcon
+            sx={{ stroke: "#fff", color: "#101010", width: 72, height: 72 }}
+          />
         </UI.Box>
         <UI.Box sx={{ ...itemSx }}>
-          <PlayerSlot ctx={ctx} player={black} />
+          <PlayerSlot
+            ctx={ctx}
+            player={black}
+          />
         </UI.Box>
       </UI.Box>
     </UI.Box>
-
   )
-
 }
 
-const PlayerSlot = ({ player, ctx, }: { player: Player, ctx: Ctx }) => {
-  const iconSx = { width: 48, height: 48, }
-  const boxSx: UI.Sx = { display: 'flex', flexDirection: "column", alignItems: 'center', justifyContent: "center", color: "inherit", }
+const PlayerSlot = ({ player, ctx }: { player: Player; ctx: Ctx }) => {
+  const iconSx = { width: 48, height: 48 }
+  const boxSx: UI.Sx = {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    color: "inherit",
+  }
   // const textSx: UI.Sx = { color: "#101010" }
   switch (player.type) {
-    case 'Bot': {
+    case "Bot": {
       return (
         <UI.Box sx={{ ...boxSx }}>
           <UI.Icons.SmartToy sx={{ color: "inherit", ...iconSx }} />
@@ -194,7 +225,7 @@ const PlayerSlot = ({ player, ctx, }: { player: Player, ctx: Ctx }) => {
       )
     }
 
-    case 'None': {
+    case "None": {
       return (
         <UI.Box sx={{ ...boxSx }}>
           <UI.Avatar sx={{ ...iconSx }}>
@@ -207,10 +238,13 @@ const PlayerSlot = ({ player, ctx, }: { player: Player, ctx: Ctx }) => {
       )
     }
 
-    case 'User': {
+    case "User": {
       return (
         <UI.Box sx={{ ...boxSx }}>
-          <UI.Avatar src={ctx.profiles[player.userId]?.avatarUrl ?? ""} sx={{ ...iconSx }} ></UI.Avatar>
+          <UI.Avatar
+            src={ctx.profiles[player.userId]?.avatarUrl ?? ""}
+            sx={{ ...iconSx }}
+          ></UI.Avatar>
           {/* <UI.Typography variant="caption" noWrap sx={{ ...textSx }}>
             {store.Profile[player.userId]?.username ?? "..."}
           </UI.Typography> */}
@@ -220,9 +254,10 @@ const PlayerSlot = ({ player, ctx, }: { player: Player, ctx: Ctx }) => {
   }
 }
 
-export const PawnIcon = ({ sx, stroke }: { sx: UI.Sx, stroke?: string }) => {
+export const PawnIcon = ({ sx, stroke }: { sx: UI.Sx; stroke?: string }) => {
   return (
-    <UI.SvgIcon viewBox="0 0 45 45"
+    <UI.SvgIcon
+      viewBox="0 0 45 45"
       sx={{ ...sx }}
     >
       <g

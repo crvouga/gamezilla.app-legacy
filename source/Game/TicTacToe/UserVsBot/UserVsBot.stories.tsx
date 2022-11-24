@@ -12,12 +12,11 @@ const modelSetup: Model = {
   player: ctx.currentUserId,
 }
 
-
 const props: Parameters<typeof View>[0] = {
-  $d: () => { },
+  $d: () => {},
   ctx,
-  goBack: () => { },
-  model: modelSetup
+  goBack: () => {},
+  model: modelSetup,
 }
 
 export default {
@@ -76,9 +75,7 @@ GameBotTurn.args = {
     type: "Game",
     botLevel: "Medium",
     userPlayerType: "X",
-    board: p(emptyBoard, (board) =>
-      setSlot(board, { column: 0, row: 0 }, "X"),
-    ),
+    board: p(emptyBoard, (board) => setSlot(board, { column: 0, row: 0 }, "X")),
     player: ctx.currentUserId,
   },
 }

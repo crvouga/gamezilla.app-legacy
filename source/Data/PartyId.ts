@@ -1,6 +1,6 @@
 import { Result, Uuid } from "../Core"
 
-export type PartyId = string & { _opaque: 'PartyId' }
+export type PartyId = string & { _opaque: "PartyId" }
 
 const is = (id: unknown): id is PartyId => {
   return typeof id === "string"

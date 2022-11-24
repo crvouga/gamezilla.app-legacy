@@ -31,9 +31,7 @@ const toString = (phoneNumber: PhoneNumber): string => {
   return phoneNumber._validPhoneNumber
 }
 
-const toCountry = (
-  phoneNumber: PhoneNumber,
-): Iso3166Alpha2Code => {
+const toCountry = (phoneNumber: PhoneNumber): Iso3166Alpha2Code => {
   return phoneNumber._country
 }
 

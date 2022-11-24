@@ -1,6 +1,6 @@
 import { Result } from "../Core"
 
-export type RoomId = string & { _opaque: 'RoomId' }
+export type RoomId = string & { _opaque: "RoomId" }
 
 const is = (id: unknown): id is RoomId => {
   return typeof id === "string"
@@ -19,7 +19,7 @@ const decode = (id: string): Result<Problem, RoomId> => {
 const generate = (): RoomId => {
   // warning collisions could happen
   // use short id so the logs are more readable
-  const roomId = Math.random().toString(36).slice(-6);
+  const roomId = Math.random().toString(36).slice(-6)
 
   if (is(roomId)) {
     return roomId
@@ -27,7 +27,6 @@ const generate = (): RoomId => {
 
   throw new Error("generated invalid id")
 }
-
 
 export const RoomId = {
   is,

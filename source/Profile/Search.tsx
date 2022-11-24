@@ -91,19 +91,15 @@ export const View = ({
   $d: (msg: Msg) => void
 }) => {
   const results = ProfileStore.toSearch(model.searchText, profileStore)
-  const query =
-    profileStore.search[model.searchText] ?? RemoteData.NotAsked
+  const query = profileStore.search[model.searchText] ?? RemoteData.NotAsked
 
   return (
     <UI.FillBox>
-
       <UI.InputBase
-        sx={{ width: "100%", paddingY: 1, paddingX: 2, }}
+        sx={{ width: "100%", paddingY: 1, paddingX: 2 }}
         placeholder="Search"
         value={model.searchText}
-        onChange={(event) =>
-          $d(["InputtedSearchText", event.target.value])
-        }
+        onChange={(event) => $d(["InputtedSearchText", event.target.value])}
         endAdornment={
           <UI.InputAdornment position="end">
             {query.type === "Loading" && <UI.CircularProgress size={24} />}
@@ -116,9 +112,6 @@ export const View = ({
           </UI.InputAdornment>
         }
       />
-
-
-
 
       <UI.Divider />
 
@@ -136,14 +129,15 @@ export const View = ({
           <UI.ListItemButton
             key={result.userId}
             sx={{ width: "100%" }}
-            onClick={() =>
-              $d(["ClickedResult", { userId: result.userId }])
-            }
+            onClick={() => $d(["ClickedResult", { userId: result.userId }])}
           >
             <UI.ListItemAvatar>
               <UI.Avatar src={result.avatarUrl} />
             </UI.ListItemAvatar>
-            <UI.ListItemText primaryTypographyProps={{ noWrap: true }} primary={result.username} />
+            <UI.ListItemText
+              primaryTypographyProps={{ noWrap: true }}
+              primary={result.username}
+            />
             <UI.ListItemSecondaryAction>
               <UI.Icons.ChevronRight />
             </UI.ListItemSecondaryAction>

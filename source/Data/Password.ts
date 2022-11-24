@@ -1,6 +1,6 @@
 import { Result } from "../Core"
 
-export type Password = string & { _opaque: 'Password' }
+export type Password = string & { _opaque: "Password" }
 
 const passwordMinLength = 6
 
@@ -26,5 +26,5 @@ const decode = (password: string): Result<Problem, Password> => {
 
 export const Password = {
   is,
-  decode
+  decode,
 }

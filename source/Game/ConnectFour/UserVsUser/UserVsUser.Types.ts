@@ -1,7 +1,19 @@
 import { exhaustive } from "../../../Core"
 import { Err, Ok, Result } from "../../../Core/Result"
 import { UserId } from "../../../Data/UserId"
-import { allColumnIndexes, ColumnIndex, Columns, emptyColumns, move, MoveProblem, MoveResult, opposite, PlayerType, toStatus, toTurn } from "../ConnectFour"
+import {
+  allColumnIndexes,
+  ColumnIndex,
+  Columns,
+  emptyColumns,
+  move,
+  MoveProblem,
+  MoveResult,
+  opposite,
+  PlayerType,
+  toStatus,
+  toTurn,
+} from "../ConnectFour"
 
 //
 //
@@ -11,10 +23,7 @@ import { allColumnIndexes, ColumnIndex, Columns, emptyColumns, move, MoveProblem
 //
 //
 
-export type SharedModel =
-  | SetupModel
-  | GameModel
-  | GameOverModel
+export type SharedModel = SetupModel | GameModel | GameOverModel
 
 export type SetupModel = {
   type: "Setup"
@@ -24,58 +33,58 @@ export type SetupModel = {
 }
 
 export type GameModel = {
-  type: "Game",
-  PlayerOne: UserId,
-  PlayerTwo: UserId,
-  moveTimeLimit: MoveTimeLimit,
-  moveCountDown: number,
+  type: "Game"
+  PlayerOne: UserId
+  PlayerTwo: UserId
+  moveTimeLimit: MoveTimeLimit
+  moveCountDown: number
   columns: Columns
 }
 
 export type GameOverModel = {
-  type: "GameOver",
-  PlayerOne: UserId,
-  PlayerTwo: UserId,
-  moveTimeLimit: MoveTimeLimit,
-  columns: Columns,
-  gameOver: GameOver,
+  type: "GameOver"
+  PlayerOne: UserId
+  PlayerTwo: UserId
+  moveTimeLimit: MoveTimeLimit
+  columns: Columns
+  gameOver: GameOver
   rematch: Rematch
 }
 
 type Rematch =
   | {
-    type: "NotAsking"
-  }
+      type: "NotAsking"
+    }
   | {
-    type: "Asking",
-    asker: PlayerType
-  }
+      type: "Asking"
+      asker: PlayerType
+    }
 
 type GameOver =
   | {
-    type: "Draw"
-  }
+      type: "Draw"
+    }
   | {
-    type: "Winner",
-    winner: PlayerType
-  }
+      type: "Winner"
+      winner: PlayerType
+    }
   | {
-    type: "Resignation",
-    resigner: PlayerType
-  }
+      type: "Resignation"
+      resigner: PlayerType
+    }
 
 export const toGameOver = (model: SharedModel): GameOver | { type: "None" } => {
-  if (model.type === 'Setup') {
+  if (model.type === "Setup") {
     return { type: "None" }
   }
 
   const status = toStatus(model.columns)
 
-  if (status.type === 'Tie') {
+  if (status.type === "Tie") {
     return { type: "Draw" }
   }
 
-  if (status.type === 'Winner') {
+  if (status.type === "Winner") {
     return { type: "Winner", winner: status.winner }
   }
 
@@ -92,7 +101,10 @@ export const allMoveTimeLimit: {
   "9": 9,
 }
 
-export const initShared = ({ PlayerOne, PlayerTwo }: Pick<SharedModel, 'PlayerOne' | 'PlayerTwo'>): SharedModel => {
+export const initShared = ({
+  PlayerOne,
+  PlayerTwo,
+}: Pick<SharedModel, "PlayerOne" | "PlayerTwo">): SharedModel => {
   return {
     type: "Setup",
     moveTimeLimit: 7,
@@ -102,7 +114,7 @@ export const initShared = ({ PlayerOne, PlayerTwo }: Pick<SharedModel, 'PlayerOn
 }
 
 export type FrontendModel = SharedModel & {
-  openedModal: "ConfirmResign" | "None",
+  openedModal: "ConfirmResign" | "None"
   ghostIndex: ColumnIndex | "None"
 }
 
@@ -121,24 +133,24 @@ export type BackendMsg = Tick
 export type FrontendMsg =
   | Req
   | ["HoveredOverColumns", { columnIndex: ColumnIndex }]
-  | ['ClickedResign', { userId: UserId }]
-  | ['CloseModal']
+  | ["ClickedResign", { userId: UserId }]
+  | ["CloseModal"]
 
 export type ToBackend = Req
 
-export type ToFrontend = Res | Tick_Done | ['PlayerLeft', SharedModel]
+export type ToFrontend = Res | Tick_Done | ["PlayerLeft", SharedModel]
 
 export type Req =
-  | ['StopPlaying', { userId: UserId, }]
-  | ['StartPlaying', { userId: UserId, playerType: PlayerType }]
-  | ['InputMoveTimeLimit', { userId: UserId, moveTimeLimit: MoveTimeLimit }]
-  | ['StartGame', { userId: UserId }]
-  | ['InputMove', { columnIndex: ColumnIndex, userId: UserId }]
+  | ["StopPlaying", { userId: UserId }]
+  | ["StartPlaying", { userId: UserId; playerType: PlayerType }]
+  | ["InputMoveTimeLimit", { userId: UserId; moveTimeLimit: MoveTimeLimit }]
+  | ["StartGame", { userId: UserId }]
+  | ["InputMove", { columnIndex: ColumnIndex; userId: UserId }]
   | ["Rematch_Request", { userId: UserId }]
-  | ["Rematch_Respond", { userId: UserId, response: "Accept" | "Decline" }]
-  | ["Rematch_Cancel", { userId: UserId, }]
+  | ["Rematch_Respond", { userId: UserId; response: "Accept" | "Decline" }]
+  | ["Rematch_Cancel", { userId: UserId }]
   | ["NewGame", { userId: UserId }]
-  | ['Resign', { userId: UserId }]
+  | ["Resign", { userId: UserId }]
 
 export type Res = [Req[0], Result<Problem, SharedModel>]
 
@@ -153,10 +165,13 @@ export type Problem =
   | MoveProblem
   | "already_asking"
 
-export const handle = (req: Req, model: SharedModel): Result<Problem, SharedModel> => {
+export const handle = (
+  req: Req,
+  model: SharedModel,
+): Result<Problem, SharedModel> => {
   switch (req[0]) {
-    case 'InputMove': {
-      if (model.type !== 'Game') {
+    case "InputMove": {
+      if (model.type !== "Game") {
         return Err("not_in_game")
       }
       const { userId, columnIndex } = req[1]
@@ -169,7 +184,7 @@ export const handle = (req: Req, model: SharedModel): Result<Problem, SharedMode
 
       const result = move(model.columns, columnIndex, playerType)
 
-      if (result.type === 'Err') {
+      if (result.type === "Err") {
         return result
       }
 
@@ -178,28 +193,31 @@ export const handle = (req: Req, model: SharedModel): Result<Problem, SharedMode
       return Ok(modelNew)
     }
 
-    case 'StartPlaying': {
-      if (model.type !== 'Setup') {
+    case "StartPlaying": {
+      if (model.type !== "Setup") {
         return Err("not_in_setup")
       }
 
       const { playerType, userId } = req[1]
 
-      if (model[playerType] !== 'None') {
+      if (model[playerType] !== "None") {
         return Err("player_taken")
       }
 
       const modelNew: SharedModel = {
         ...model,
-        [opposite[playerType]]: model[opposite[playerType]] === userId ? "None" : model[opposite[playerType]],
+        [opposite[playerType]]:
+          model[opposite[playerType]] === userId
+            ? "None"
+            : model[opposite[playerType]],
         [playerType]: userId,
       }
 
       return Ok(modelNew)
     }
 
-    case 'InputMoveTimeLimit': {
-      if (model.type !== 'Setup') {
+    case "InputMoveTimeLimit": {
+      if (model.type !== "Setup") {
         return Err("not_in_setup")
       }
 
@@ -213,14 +231,14 @@ export const handle = (req: Req, model: SharedModel): Result<Problem, SharedMode
 
       const modelNew: SharedModel = {
         ...model,
-        moveTimeLimit
+        moveTimeLimit,
       }
 
       return Ok(modelNew)
     }
 
-    case 'StopPlaying': {
-      if (model.type !== 'Setup') {
+    case "StopPlaying": {
+      if (model.type !== "Setup") {
         return Err("not_in_setup")
       }
 
@@ -234,18 +252,18 @@ export const handle = (req: Req, model: SharedModel): Result<Problem, SharedMode
 
       const modelNew: SharedModel = {
         ...model,
-        [playerType]: "None"
+        [playerType]: "None",
       }
 
       return Ok(modelNew)
     }
 
-    case 'StartGame': {
-      if (model.type !== 'Setup') {
+    case "StartGame": {
+      if (model.type !== "Setup") {
         return Err("not_in_setup")
       }
 
-      if (model.PlayerOne === 'None' || model.PlayerTwo === 'None') {
+      if (model.PlayerOne === "None" || model.PlayerTwo === "None") {
         return Err("missing_player")
       }
 
@@ -261,15 +279,14 @@ export const handle = (req: Req, model: SharedModel): Result<Problem, SharedMode
       return Ok(modelNew)
     }
 
-    case 'Rematch_Request': {
-
+    case "Rematch_Request": {
       const { userId } = req[1]
 
-      if (model.type !== 'GameOver') {
+      if (model.type !== "GameOver") {
         return Err("not_game_over")
       }
 
-      if (model.rematch.type === 'Asking') {
+      if (model.rematch.type === "Asking") {
         return Err("already_asking")
       }
 
@@ -281,34 +298,31 @@ export const handle = (req: Req, model: SharedModel): Result<Problem, SharedMode
 
       const modelNew: SharedModel = {
         ...model,
-        rematch: { type: "Asking", asker: playerType }
+        rematch: { type: "Asking", asker: playerType },
       }
 
       return Ok(modelNew)
     }
 
     case "Rematch_Respond": {
-
-      if (model.type !== 'GameOver') {
+      if (model.type !== "GameOver") {
         return Err("not_game_over")
       }
 
-      if (model.rematch.type === 'NotAsking') {
+      if (model.rematch.type === "NotAsking") {
         return Err("not_asking")
       }
 
-
       const { response } = req[1]
 
-      if (response === 'Decline') {
+      if (response === "Decline") {
         const modelNew: SharedModel = {
           ...model,
-          rematch: { type: "NotAsking" }
+          rematch: { type: "NotAsking" },
         }
 
         return Ok(modelNew)
       }
-
 
       const modelNew: SharedModel = {
         type: "Game",
@@ -316,15 +330,14 @@ export const handle = (req: Req, model: SharedModel): Result<Problem, SharedMode
         moveCountDown: model.moveTimeLimit,
         moveTimeLimit: model.moveTimeLimit,
         PlayerOne: model.PlayerOne,
-        PlayerTwo: model.PlayerTwo
+        PlayerTwo: model.PlayerTwo,
       }
 
       return Ok(modelNew)
     }
 
-    case 'NewGame': {
-
-      if (model.type !== 'GameOver') {
+    case "NewGame": {
+      if (model.type !== "GameOver") {
         return Err("not_game_over")
       }
 
@@ -346,10 +359,10 @@ export const handle = (req: Req, model: SharedModel): Result<Problem, SharedMode
       return Ok(modelNew)
     }
 
-    case 'Rematch_Cancel': {
+    case "Rematch_Cancel": {
       const { userId } = req[1]
 
-      if (model.type !== 'GameOver') {
+      if (model.type !== "GameOver") {
         return Err("not_game_over")
       }
 
@@ -359,7 +372,7 @@ export const handle = (req: Req, model: SharedModel): Result<Problem, SharedMode
         return Err("not_playing")
       }
 
-      if (model.rematch.type !== 'Asking') {
+      if (model.rematch.type !== "Asking") {
         return Err("not_asking")
       }
 
@@ -369,16 +382,15 @@ export const handle = (req: Req, model: SharedModel): Result<Problem, SharedMode
 
       const modelNew: SharedModel = {
         ...model,
-        rematch: { type: "NotAsking" }
+        rematch: { type: "NotAsking" },
       }
 
       return Ok(modelNew)
     }
 
-
-    case 'Resign': {
-      if (model.type !== 'Game') {
-        return Err('not_in_game')
+    case "Resign": {
+      if (model.type !== "Game") {
+        return Err("not_in_game")
       }
 
       const { userId } = req[1]
@@ -406,50 +418,50 @@ export const handle = (req: Req, model: SharedModel): Result<Problem, SharedMode
       return exhaustive(req[0])
     }
   }
-
 }
 
-export const toPlayerType = (userId: UserId, model: SharedModel): PlayerType | "None" => {
+export const toPlayerType = (
+  userId: UserId,
+  model: SharedModel,
+): PlayerType | "None" => {
   if (model.PlayerOne === userId) {
-    return 'PlayerOne'
+    return "PlayerOne"
   }
 
   if (model.PlayerTwo === userId) {
-    return 'PlayerTwo'
+    return "PlayerTwo"
   }
 
   return "None"
 }
 
 export const resultToString = (result: ReturnType<typeof handle>): string => {
-
-  if (result.type === 'Ok') {
+  if (result.type === "Ok") {
     return ""
   }
 
-
   switch (result.error) {
-    case 'column_is_full': {
+    case "column_is_full": {
       return "Column is full"
     }
 
-    case 'game_over_winner': {
+    case "game_over_winner": {
       return "Game is over"
     }
 
-    case 'game_over_tie': {
+    case "game_over_tie": {
       return "Game is over"
     }
 
-    case 'missing_player': {
+    case "missing_player": {
       return "Missing a player"
     }
 
-    case 'not_in_game': {
+    case "not_in_game": {
       return "Must be in game mode"
     }
 
-    case 'not_in_setup': {
+    case "not_in_setup": {
       return "Must be in setup mode"
     }
 
@@ -457,27 +469,27 @@ export const resultToString = (result: ReturnType<typeof handle>): string => {
       return "Must be playing to change"
     }
 
-    case 'not_turn': {
+    case "not_turn": {
       return "Must be your turn"
     }
 
-    case 'out_of_bounds': {
+    case "out_of_bounds": {
       return "Out of bounds"
     }
 
-    case 'player_taken': {
+    case "player_taken": {
       return "Player is taken"
     }
 
-    case 'not_game_over': {
+    case "not_game_over": {
       return "Must be in game over mode"
     }
 
-    case 'not_asking': {
+    case "not_asking": {
       return "The other player is not asking for a rematch"
     }
 
-    case 'already_asking': {
+    case "already_asking": {
       return "Already asking"
     }
 
@@ -487,17 +499,17 @@ export const resultToString = (result: ReturnType<typeof handle>): string => {
   }
 }
 
-// 
-// 
-// 
-// 
-// 
+//
+//
+//
+//
+//
 
 type Tick = ["Tick"]
 type Tick_Done = ["Tick_Done", SharedModel]
 
 export const tick = (model: SharedModel): SharedModel => {
-  if (model.type !== 'Game') {
+  if (model.type !== "Game") {
     return model
   }
 
@@ -506,7 +518,7 @@ export const tick = (model: SharedModel): SharedModel => {
   if (moveCountDownNew > 0) {
     const modelNew: SharedModel = {
       ...model,
-      moveCountDown: moveCountDownNew
+      moveCountDown: moveCountDownNew,
     }
 
     return modelNew
@@ -517,7 +529,7 @@ export const tick = (model: SharedModel): SharedModel => {
   for (const columnIndex of shuffle(allColumnIndexes)) {
     const result = move(model.columns, columnIndex, turn)
 
-    if (result.type === 'Err') {
+    if (result.type === "Err") {
       continue
     }
 
@@ -529,9 +541,11 @@ export const tick = (model: SharedModel): SharedModel => {
   return model
 }
 
-
-const handleMoveResult = (result: MoveResult, model: GameModel): GameModel | GameOverModel => {
-  if (result.type === 'Err') {
+const handleMoveResult = (
+  result: MoveResult,
+  model: GameModel,
+): GameModel | GameOverModel => {
+  if (result.type === "Err") {
     return model
   }
 
@@ -539,7 +553,7 @@ const handleMoveResult = (result: MoveResult, model: GameModel): GameModel | Gam
 
   const status = toStatus(columnsNew)
 
-  if (status.type === 'Playing') {
+  if (status.type === "Playing") {
     const modelNew: SharedModel = {
       ...model,
       columns: columnsNew,
@@ -550,7 +564,7 @@ const handleMoveResult = (result: MoveResult, model: GameModel): GameModel | Gam
   }
 
   const gameOver: GameOver =
-    status.type === 'Winner'
+    status.type === "Winner"
       ? { type: "Winner", winner: status.winner }
       : { type: "Draw" }
 
@@ -561,12 +575,12 @@ const handleMoveResult = (result: MoveResult, model: GameModel): GameModel | Gam
     PlayerTwo: model.PlayerTwo,
     columns: columnsNew,
     gameOver: gameOver,
-    rematch: { type: "NotAsking" }
+    rematch: { type: "NotAsking" },
   }
 
   return modelNew
 }
 
 const shuffle = <X>(xs: X[]): X[] => {
-  return [...xs].sort(() => Math.random() > 0.5 ? -1 : 1)
+  return [...xs].sort(() => (Math.random() > 0.5 ? -1 : 1))
 }

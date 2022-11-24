@@ -2,7 +2,7 @@ import { Result } from "./Result"
 
 export type Json = boolean | number | string | null | JsonArray | JsonRecord
 
-export interface JsonArray extends ReadonlyArray<Json> { }
+export interface JsonArray extends ReadonlyArray<Json> {}
 
 export interface JsonRecord {
   readonly [key: string]: Json

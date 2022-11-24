@@ -16,12 +16,17 @@ export const BannerArt = ({ title }: { title: string }) => {
           justifyContent: "center",
           gap: 2,
           paddingY: 2,
-          paddingX: 2
+          paddingX: 2,
         }}
       >
-
-        <PlayerTypeIcon playerType="X" sx={{ color: gameTheme.cross, width: 120, height: 120 }} />
-        <PlayerTypeIcon playerType="O" sx={{ color: gameTheme.naught, width: 120, height: 120 }} />
+        <PlayerTypeIcon
+          playerType="X"
+          sx={{ color: gameTheme.cross, width: 120, height: 120 }}
+        />
+        <PlayerTypeIcon
+          playerType="O"
+          sx={{ color: gameTheme.naught, width: 120, height: 120 }}
+        />
       </UI.Box>
 
       <UI.Box
@@ -48,15 +53,20 @@ export const BannerArt = ({ title }: { title: string }) => {
         </UI.Typography>
       </UI.Box>
     </UI.AspectRatio>
-
   )
 }
 
-type Player =
-  | { type: "User", userId?: UserId }
-  | { type: "Bot", label: string }
+type Player = { type: "User"; userId?: UserId } | { type: "Bot"; label: string }
 
-export const VersusHeader = ({ X, O, ctx }: { X: Player, O: Player, ctx: Ctx }) => {
+export const VersusHeader = ({
+  X,
+  O,
+  ctx,
+}: {
+  X: Player
+  O: Player
+  ctx: Ctx
+}) => {
   const largeIconSx = { width: 72, height: 72 }
 
   return (
@@ -69,13 +79,26 @@ export const VersusHeader = ({ X, O, ctx }: { X: Player, O: Player, ctx: Ctx }) 
         color: "#fff",
         backgroundColor: gameTheme.background,
         paddingY: 4,
-        paddingX: 2
+        paddingX: 2,
       }}
     >
-      <ViewHeaderPlayerSlot player={X} ctx={ctx} />
+      <ViewHeaderPlayerSlot
+        player={X}
+        ctx={ctx}
+      />
 
-      <UI.Box sx={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <PlayerTypeIcon playerType={"X"} sx={{ ...largeIconSx, marginLeft: 2, color: gameTheme.cross }} />
+      <UI.Box
+        sx={{
+          flex: 1,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <PlayerTypeIcon
+          playerType={"X"}
+          sx={{ ...largeIconSx, marginLeft: 2, color: gameTheme.cross }}
+        />
 
         <UI.Typography
           align="center"
@@ -84,21 +107,40 @@ export const VersusHeader = ({ X, O, ctx }: { X: Player, O: Player, ctx: Ctx }) 
           vs
         </UI.Typography>
 
-        <PlayerTypeIcon playerType={"O"} sx={{ ...largeIconSx, marginRight: 2, color: gameTheme.naught }} />
+        <PlayerTypeIcon
+          playerType={"O"}
+          sx={{ ...largeIconSx, marginRight: 2, color: gameTheme.naught }}
+        />
       </UI.Box>
 
-      <ViewHeaderPlayerSlot player={O} ctx={ctx} />
-    </UI.Box >
-
+      <ViewHeaderPlayerSlot
+        player={O}
+        ctx={ctx}
+      />
+    </UI.Box>
   )
 }
 
-
-const ViewHeaderPlayerSlot = ({ ctx, player, }: { player: Player; ctx: Ctx }) => {
+const ViewHeaderPlayerSlot = ({
+  ctx,
+  player,
+}: {
+  player: Player
+  ctx: Ctx
+}) => {
   const iconSx = { width: 42, height: 42 }
-  const wrapperSx: UI.Sx = { display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", overflow: "hidden", flexWrap: "none", textOverflow: "ellipsis", width: '100%' }
+  const wrapperSx: UI.Sx = {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "column",
+    overflow: "hidden",
+    flexWrap: "none",
+    textOverflow: "ellipsis",
+    width: "100%",
+  }
 
-  if (player.type === 'Bot') {
+  if (player.type === "Bot") {
     return (
       <UI.Box sx={wrapperSx}>
         <UI.Icons.SmartToy sx={{ ...iconSx }} />
@@ -119,7 +161,10 @@ const ViewHeaderPlayerSlot = ({ ctx, player, }: { player: Player; ctx: Ctx }) =>
         <UI.Avatar sx={{ ...iconSx }}>
           <UI.Icons.QuestionMark />
         </UI.Avatar>
-        <UI.Typography variant="caption" color="inherit">
+        <UI.Typography
+          variant="caption"
+          color="inherit"
+        >
           ?
         </UI.Typography>
       </UI.Box>
@@ -128,7 +173,10 @@ const ViewHeaderPlayerSlot = ({ ctx, player, }: { player: Player; ctx: Ctx }) =>
 
   return (
     <UI.Box sx={wrapperSx}>
-      <UI.Avatar src={ctx.profiles[player.userId]?.avatarUrl} sx={{ ...iconSx }}>
+      <UI.Avatar
+        src={ctx.profiles[player.userId]?.avatarUrl}
+        sx={{ ...iconSx }}
+      >
         <UI.Icons.QuestionMark />
       </UI.Avatar>
       <UI.Typography
