@@ -337,6 +337,8 @@ export const ListItem = Mui.ListItem
 
 export const ListSubheader = Mui.ListSubheader
 
+export const MobileStepper = Mui.MobileStepper
+
 export const Avatar = Mui.Avatar
 
 export const AvatarGroup = Mui.AvatarGroup
