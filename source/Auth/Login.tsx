@@ -354,7 +354,7 @@ export const View = ({
           {model.send_code.type !== 'ok' ?
             <>
               <Button fullWidth variant="contained" size="large" startIcon={<Icons.SendToMobile />} onClick={() => $d(['send_code'])} loading={model.send_code.type === 'loading'}>
-                Text Code
+                Send Code
               </Button>
             </>
             : <>
@@ -380,7 +380,7 @@ export const View = ({
               </Alert>
               <Divider orientation="vertical" sx={{ height: "2rem", marginX: "auto" }} />
               <TextField
-                inputProps={{ id: htmlIds.code }}
+                inputProps={{ id: htmlIds.code, style: { WebkitBoxShadow: `0 0 0 1000px ${theme.palette.background.default} inset` } }}
                 sx={{ width: '100%' }}
                 autoFocus
                 fullWidth
