@@ -37,7 +37,7 @@ type ColorMap = { [color in Color]?: UserId }
 type Player = {
   userId: UserId;
   position: Position
-  direction: Direction | "None"
+  direction?: Direction
 }
 
 type Color = "Red" | "Blue" | "Green" | "Purple"
