@@ -2,7 +2,7 @@ import { ListItemText } from "@mui/material"
 import { matchSorter } from "match-sorter"
 import { Browser, Cmd, p } from "../Core"
 import { Iso3166Alpha2Code, PhoneNumber } from "../Data"
-import { Alert, Box, Button, Divider, FillBox, IconButton, Icons, InputAdornment, InputBase, List, ListItemButton, ListItemIcon, TextField, ToggleButton, ToggleButtonGroup, Typography, useTheme } from "../UI"
+import { MobileStepper, Alert, Box, Button, Divider, FillBox, IconButton, Icons, InputAdornment, InputBase, List, ListItemButton, ListItemIcon, TextField, ToggleButton, ToggleButtonGroup, Typography, useTheme } from "../UI"
 import * as Auth from "./Auth"
 
 //
@@ -239,7 +239,7 @@ export const View = ({
         </Typography>
 
         <InputBase
-          autoFocus
+
           sx={{ p: 2 }}
           inputProps={{ id: htmlIds.country_name }}
           placeholder="Search country"
@@ -331,7 +331,7 @@ export const View = ({
 
       {model.method === 'phone' && (
         <>
-          <TextField sx={{ width: '100%' }} fullWidth label="Enter Phone Number" placeholder="phone number"
+          <TextField sx={{ width: '100%' }} fullWidth label="Enter Phone Number" placeholder="Phone number"
             type="tel"
             error={model.send_code.type === 'err'}
             helperText={model.send_code.type === 'err' ? 'Invalid phone number' : ''}
@@ -353,7 +353,9 @@ export const View = ({
 
           {model.send_code.type !== 'ok' ?
             <>
-              <Button fullWidth variant="contained" size="large" startIcon={<Icons.SendToMobile />} onClick={() => $d(['send_code'])} loading={model.send_code.type === 'loading'}>
+              <Button fullWidth variant="contained" size="large" startIcon={<Icons.SendToMobile />} onClick={() => $d(['send_code'])} loading={model.send_code.type === 'loading'}
+                disabled={PhoneNumber.decode(model.country, model.phone).type === 'Err'}
+              >
                 Send Code
               </Button>
             </>
@@ -380,17 +382,24 @@ export const View = ({
               </Alert>
               <Divider orientation="vertical" sx={{ height: "2rem", marginX: "auto" }} />
               <TextField
-                inputProps={{ id: htmlIds.code, style: { WebkitBoxShadow: `0 0 0 1000px ${theme.palette.background.default} inset` } }}
+
+                inputProps={{
+                  id: htmlIds.code,
+                  // why? https://stackoverflow.com/questions/54706919/material-ui-remove-the-yellow-background-on-textfield-autofill
+                  style: { WebkitBoxShadow: `0 0 0 1000px ${theme.palette.background.default} inset` }
+                }}
                 sx={{ width: '100%' }}
                 autoFocus
                 fullWidth
-                label="Code"
-                placeholder="Enter code"
+                label="Enter Code"
+                placeholder="Code"
                 value={model.send_code.code}
                 onChange={e => $d(['input_code', e.target.value])}
                 type="tel"
               />
-              <Button fullWidth variant="contained" size="large" startIcon={<Icons.VerifiedUser />} onClick={() => $d(['verify_code'])} loading={model.send_code.verify.type === 'loading'}>
+              <Button fullWidth variant="contained" size="large" startIcon={<Icons.VerifiedUser />} onClick={() => $d(['verify_code'])} loading={model.send_code.verify.type === 'loading'}
+                disabled={model.send_code.code.length === 0}
+              >
                 Verify Code
               </Button>
               {model.send_code.verify.type === 'err' && (
@@ -413,6 +422,8 @@ export const View = ({
           </Button>
         </>
       )}
+
+
     </FillBox>
   )
 }
