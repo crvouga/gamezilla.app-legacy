@@ -90,13 +90,32 @@ export type Problem = { type: "ElementNotFound" }
 
 export type FocusResult = Result<Problem, {}>
 
+
+
 export const focus =
   (htmlId: string): Task<FocusResult> =>
     async () => {
       const element = document.getElementById(htmlId)
 
       if (element) {
-        element.focus()
+        setTimeout(() => {
+          element.focus()
+        }, 0)
+        return Result.Ok({})
+      }
+
+      return Result.Err({ type: "ElementNotFound" })
+    }
+
+export const scrollIntoView =
+  (htmlId: string): Task<FocusResult> =>
+    async () => {
+      const element = document.getElementById(htmlId)
+
+      if (element) {
+        setTimeout(() => {
+          element.scrollIntoView({ behavior: "auto" })
+        }, 0)
         return Result.Ok({})
       }
 
