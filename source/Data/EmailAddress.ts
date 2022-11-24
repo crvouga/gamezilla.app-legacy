@@ -1,9 +1,9 @@
 import { Result } from "../Core"
 import { Err, Ok } from "../Core/Result"
 
-type Problem = 'Invalid'
+type Problem = "Invalid"
 
-export type EmailAddress = string & { _opaque: 'EmailAddress' }
+export type EmailAddress = string & { _opaque: "EmailAddress" }
 
 // source: https://stackoverflow.com/questions/201323/how-can-i-validate-an-email-address-using-a-regular-expression
 const regex =
@@ -17,7 +17,7 @@ const decode = (emailAddress: string): Result<Problem, EmailAddress> => {
   if (is(emailAddress)) {
     return Ok(emailAddress)
   }
-  return Err('Invalid')
+  return Err("Invalid")
 }
 
 export const EmailAddress = {

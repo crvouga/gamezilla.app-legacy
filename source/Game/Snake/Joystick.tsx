@@ -4,12 +4,8 @@ export type MoveEvent = {
   direction: Direction
 }
 
-export const ViewJoystick = ({
-
-}: {
+export const ViewJoystick = ({}: {
   onMove: (moveEvent: MoveEvent) => void
 }) => {
-  return (
-    <>joystick</>
-  )
+  return <>joystick</>
 }

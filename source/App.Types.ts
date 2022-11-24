@@ -5,7 +5,7 @@ import * as GameRoom from "./Game/GameRoom.Types"
 import * as Page from "./Pages"
 import * as Party from "./Party/Party.Types"
 import * as Route from "./Route"
-import * as Snackbar from "./Snackbar"
+import * as Snackbar from "./Alerts"
 import * as ChatStore from "./Chat/Chat.Store"
 import * as ProfileStore from "./Profile/Profile.Store"
 
@@ -71,14 +71,14 @@ export type FrontendMsg =
   | ["▶", ToFrontend]
   | ["Wire", WireStatus]
   | ["Route", Route.Msg]
-  | ["Snackbar", Snackbar.Msg]
+  | ["Alerts", Snackbar.Msg]
   | ["GameRoom", GameRoom.FrontendMsg]
   | ["Store", ChatStore.Msg]
   | ["Auth", Auth.Msg]
   | ["Page", Page.Msg]
   | ["LocalStoragePut_Done", LocalStorage.PutResult]
   | ["Party", Party.FrontendMsg]
-  | ['ProfileStore', ProfileStore.Msg]
+  | ["ProfileStore", ProfileStore.Msg]
 
 export type BackendMsg =
   | ["▶", SessionId, ClientId, ToBackend]
@@ -87,14 +87,13 @@ export type BackendMsg =
   | ["GameRoom", GameRoom.BackendMsg]
   | ["Party", Party.BackendMsg]
 
-
-// 
-// 
-// 
+//
+//
+//
 // Transport
-// 
-// 
-// 
+//
+//
+//
 
 export type ServerToClientEvents = {
   ToFrontend: (msg: ToFrontend) => void

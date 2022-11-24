@@ -24,50 +24,50 @@ export type BackendModel = SharedModel
 
 export type SharedModel =
   | {
-    type: "Setup"
-    clockPreset: Clock.Preset
-    w: UserId | "None"
-    b: UserId | "None"
-  }
+      type: "Setup"
+      clockPreset: Clock.Preset
+      w: UserId | "None"
+      b: UserId | "None"
+    }
   | {
-    type: "Game"
-    drawAgreement: DrawAgreement
-    w: UserId
-    b: UserId
-    clock: Clock.Clock
-    board: Board.Model
-  }
+      type: "Game"
+      drawAgreement: DrawAgreement
+      w: UserId
+      b: UserId
+      clock: Clock.Clock
+      board: Board.Model
+    }
   | {
-    type: "GameOver"
-    gameOver: GameOver
-    w: UserId
-    b: UserId
-    clock: Clock.Clock
-    board: Board.Model
-  }
+      type: "GameOver"
+      gameOver: GameOver
+      w: UserId
+      b: UserId
+      clock: Clock.Clock
+      board: Board.Model
+    }
 
 export type DrawAgreement =
   | {
-    type: "NotAsking"
-  }
+      type: "NotAsking"
+    }
   | {
-    type: "Asking"
-    asker: Board.Color
-  }
+      type: "Asking"
+      asker: Board.Color
+    }
 
 export type GameOver =
   | Board.GameOver
   | {
-    type: "Resignation"
-    resigner: Board.Color
-  }
+      type: "Resignation"
+      resigner: Board.Color
+    }
   | {
-    type: "DrawByAgreement"
-  }
+      type: "DrawByAgreement"
+    }
   | {
-    type: "WinOnTime"
-    winner: Board.Color
-  }
+      type: "WinOnTime"
+      winner: Board.Color
+    }
 
 export const initShared = ({
   userId,
@@ -81,8 +81,6 @@ export const initShared = ({
     clockPreset: "Blitz",
   }
 }
-
-
 
 //
 //
@@ -107,7 +105,7 @@ export type ToFrontend =
   | ["Sync", SharedModel]
   | ["GameOver"]
   | ["GameStarted"]
-  | ['PlayerLeft', SharedModel]
+  | ["PlayerLeft", SharedModel]
   | ClockTicked_Done
   | Res
 
@@ -142,10 +140,7 @@ export type Res =
 //
 //
 
-export type InputMove = [
-  "InputMove",
-  Board.MoveInput & { userId: UserId },
-]
+export type InputMove = ["InputMove", Board.MoveInput & { userId: UserId }]
 
 export type InputMove_Done = [
   "InputMove_Done",
@@ -248,8 +243,8 @@ export const inputPlayer = (
 
   const otherPlayerNew =
     otherPlayer !== "None" &&
-      targetPlayer !== "None" &&
-      otherPlayer === targetPlayer
+    targetPlayer !== "None" &&
+    otherPlayer === targetPlayer
       ? "None"
       : otherPlayer
 
@@ -513,10 +508,7 @@ export const cancelDraw = (
 //
 
 export type Resign = ["Resign", Board.Color]
-export type Resign_Done = [
-  "Resign_Done",
-  Result<"can_not_resign", SharedModel>,
-]
+export type Resign_Done = ["Resign_Done", Result<"can_not_resign", SharedModel>]
 
 export const resign = (
   color: Resign[1],
@@ -612,4 +604,3 @@ export const clockTicked = (model: SharedModel): SharedModel => {
     clock: result.clock,
   }
 }
-

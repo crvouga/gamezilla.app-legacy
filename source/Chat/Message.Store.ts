@@ -95,10 +95,7 @@ export const update = (msg: Msg, model: Store): [Store, Cmd<Msg>] => {
   }
 }
 
-export const runAction = (
-  action: Action,
-  model: Store,
-): [Store, Cmd<Msg>] => {
+export const runAction = (action: Action, model: Store): [Store, Cmd<Msg>] => {
   switch (action[0]) {
     case "Unsend": {
       const { messageId } = action[1]
@@ -156,45 +153,41 @@ const insert =
     message: string
     userId: UserId
   }): Task<Result<Problem, Message>> =>
-    async () => {
-      const messageResponse = await Supabase.client
-        .from<definitions["message"]>("message")
-        .insert({
-          message,
-          user_id: userId,
-          conversation_id: conversationId,
-        })
-        .single()
-
-      if (messageResponse.error) {
-        return Result.Err(messageResponse.error.message)
-      }
-
-      const data = messageResponse.data
-
-      return Result.Ok({
-        messageId: data.id,
-        conversationId: data.conversation_id,
-        userId,
-        message: data.message,
+  async () => {
+    const messageResponse = await Supabase.client
+      .from<definitions["message"]>("message")
+      .insert({
+        message,
+        user_id: userId,
+        conversation_id: conversationId,
       })
+      .single()
+
+    if (messageResponse.error) {
+      return Result.Err(messageResponse.error.message)
     }
+
+    const data = messageResponse.data
+
+    return Result.Ok({
+      messageId: data.id,
+      conversationId: data.conversation_id,
+      userId,
+      message: data.message,
+    })
+  }
 
 const deleteForever =
-  ({
-    messageId,
-  }: {
-    messageId: string
-  }): Task<Result<Problem, string>> =>
-    async () => {
-      const response = await Supabase.client
-        .from<definitions["message"]>("message")
-        .delete()
-        .eq("id", messageId)
+  ({ messageId }: { messageId: string }): Task<Result<Problem, string>> =>
+  async () => {
+    const response = await Supabase.client
+      .from<definitions["message"]>("message")
+      .delete()
+      .eq("id", messageId)
 
-      if (response.error) {
-        return Result.Err(response.error.message)
-      }
-
-      return Result.Ok(messageId)
+    if (response.error) {
+      return Result.Err(response.error.message)
     }
+
+    return Result.Ok(messageId)
+  }

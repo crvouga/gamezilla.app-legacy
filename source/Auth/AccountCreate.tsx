@@ -17,15 +17,15 @@ export type Model = {
   password: string
   passwordVisibility: Visibility
   submission:
-  | { type: "NotAsked" }
-  | { type: "Loading" }
-  | {
-    type: "ProblemValidation"
-    emailAddress: Problem[]
-    password: Problem[]
-  }
-  | { type: "Problem"; message: string }
-  | { type: "Succeeded" }
+    | { type: "NotAsked" }
+    | { type: "Loading" }
+    | {
+        type: "ProblemValidation"
+        emailAddress: Problem[]
+        password: Problem[]
+      }
+    | { type: "Problem"; message: string }
+    | { type: "Succeeded" }
 }
 
 type Visibility = "Showing" | "Hiding"
@@ -128,7 +128,10 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
       if (emailAddress.type === "Err" || password.type === "Err") {
         const submissionNew: Model["submission"] = {
           type: "ProblemValidation",
-          emailAddress: emailAddress.type === "Err" ? [{ message: emailAddress.error }] : [],
+          emailAddress:
+            emailAddress.type === "Err"
+              ? [{ message: emailAddress.error }]
+              : [],
           password: password.type === "Err" ? [password.error] : [],
         }
 
@@ -240,9 +243,7 @@ export const View = ({
           inputMode="email"
           label="Email Address"
           value={model.emailAddress}
-          onChange={(event) =>
-            $d(["InputtedEmailAddress", event.target.value])
-          }
+          onChange={(event) => $d(["InputtedEmailAddress", event.target.value])}
           error={
             model.submission.type === "ProblemValidation" &&
             model.submission.emailAddress.length > 0
@@ -261,9 +262,7 @@ export const View = ({
           fullWidth
           label="Password"
           value={model.password}
-          onChange={(event) =>
-            $d(["InputtedPassword", event.target.value])
-          }
+          onChange={(event) => $d(["InputtedPassword", event.target.value])}
           error={
             model.submission.type === "ProblemValidation" &&
             model.submission.password.length > 0

@@ -1,4 +1,5 @@
-import { Cmd, Sub } from "./Core";
+import { Cmd, Time, Uuid } from "./Core"
+import * as UI from "./UI"
 
 //
 //
@@ -9,23 +10,23 @@ import { Cmd, Sub } from "./Core";
 //
 
 export type Model = {
-    snacks: Snack[]
-    conformationModal: ConformationModal | "None"
-};
-
-type ConformationModal = {
-    title: string,
+  queue: Snack[]
 }
 
-type Snack = {
-    variant: "Error" | "Info",
-    message: string
+type SnackId = string
+
+export type Snack = {
+  variant: Variant
+  snackId: SnackId
+  message: string
+  title?: string
 }
 
 export const init: Model = {
-    conformationModal: "None",
-    snacks: []
+  queue: [],
 }
+
+type Variant = "Info" | "Error"
 
 //
 //
@@ -35,24 +36,104 @@ export const init: Model = {
 //
 //
 
-export type Msg = ["Noop"]
+export type Msg =
+  | ["DurationElapsed", SnackId]
+  | ["ClickedClose", SnackId]
+  | ["ClickedAwayClose", SnackId]
+
+export type Action = [
+  "Alerts",
+  { variant: Variant; message: string; title?: string },
+]
 
 export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
-    switch (msg[0]) {
-        case "Noop": {
-            return [model, Cmd.None]
-        }
-    }
-};
+  switch (msg[0]) {
+    case "DurationElapsed":
+      return removeById(msg[1], model)
+
+    case "ClickedClose":
+      return removeById(msg[1], model)
+
+    case "ClickedAwayClose":
+      return [model, Cmd.None]
+  }
+}
+
+const snackTimeout = 4000
+
+export const runAction = (action: Action, model: Model): [Model, Cmd<Msg>] => {
+  const { message, title, variant } = action[1]
+
+  const snack: Snack = {
+    snackId: Uuid.generateSync(),
+    message,
+    variant,
+    title,
+  }
+
+  return [
+    {
+      ...model,
+      queue: [snack, ...model.queue],
+    },
+    Time.startTimeout(snack.snackId, snackTimeout, [
+      "DurationElapsed",
+      snack.snackId,
+    ]),
+  ]
+}
+
+const removeById = (snackId: string, model: Model): [Model, Cmd<Msg>] => [
+  {
+    ...model,
+    queue: model.queue.filter((snack) => snack.snackId !== snackId),
+  },
+  Time.cancelTimeout(snackId),
+]
 
 //
 //
 //
-// Subscriptions
+// View
 //
 //
 //
 
-export const subscriptions = (_model: Model): Sub<Msg> => {
-    return Sub.None;
-};
+export const View = ({
+  $d,
+  model,
+}: {
+  model: Model
+  $d: (msg: Msg) => void
+}) => {
+  const snack = model.queue[0]
+
+  if (!snack) {
+    return <></>
+  }
+
+  return (
+    <UI.Portal>
+      <UI.Snackbar
+        anchorOrigin={{
+          horizontal: "center",
+          vertical: "top",
+        }}
+        open
+        message={snack.message}
+        onClose={() => $d(["ClickedAwayClose", snack.snackId])}
+      />
+
+      {/* <UI.Alert
+          variant="filled"
+          onClose={() => $d(["ClickedClose", snack.snackId])}
+          severity={snack.variant === "Error" ? "error" : "info"}
+          sx={{ width: "100%" }}
+        >
+          {snack.title && <UI.AlertTitle>{snack.title}</UI.AlertTitle>}
+          {snack.message}
+        </UI.Alert>
+      </UI.Snackbar> */}
+    </UI.Portal>
+  )
+}

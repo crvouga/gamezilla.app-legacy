@@ -18,7 +18,7 @@ import {
   stopPlaying,
   swapSides,
   ToBackend,
-  ToFrontend
+  ToFrontend,
 } from "./UserVsBot.Types"
 
 //
@@ -49,7 +49,6 @@ type Update = (
   model: Model,
 ) => [Model, Cmd<Msg>]
 
-
 export const update: Update = (wire, msg, model) => {
   const [modelNext, cmd] = update_(wire, msg, model)
 
@@ -68,13 +67,11 @@ export const update_: Update = ({ broadcast }, msg, model) => {
   }
 }
 
-
-
-// 
-// 
-// 
-// 
-// 
+//
+//
+//
+//
+//
 
 type UpdateFromFrontend = (
   wire: {
@@ -201,8 +198,15 @@ const updateFromFrontend_: UpdateFromFrontend = (
   }
 }
 
-export const updateRoomLeave = ({ broadcast, userId, model }: { userId: UserId, model: Model, broadcast: (m: ToFrontend) => Cmd }): [Model, Cmd<Msg>] => {
-
+export const updateRoomLeave = ({
+  broadcast,
+  userId,
+  model,
+}: {
+  userId: UserId
+  model: Model
+  broadcast: (m: ToFrontend) => Cmd
+}): [Model, Cmd<Msg>] => {
   if (model.player !== userId) {
     return [model, Cmd.None]
   }
@@ -211,10 +215,10 @@ export const updateRoomLeave = ({ broadcast, userId, model }: { userId: UserId, 
     type: "Setup",
     botLevel: model.botLevel,
     player: "None",
-    userPlayerType: model.userPlayerType
+    userPlayerType: model.userPlayerType,
   }
 
-  return [modelNew, broadcast(['PlayerLeft', modelNew])]
+  return [modelNew, broadcast(["PlayerLeft", modelNew])]
 }
 
 //

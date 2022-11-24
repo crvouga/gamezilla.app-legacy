@@ -121,15 +121,15 @@ export const decode = ({
       return Some(["LoginPhoneVerify", { phoneNumber: phoneNumber }])
     }
 
-    case 'Login': {
-      const drawerDirty = query['drawer']
+    case "Login": {
+      const drawerDirty = query["drawer"]
       if (!drawerDirty) {
-        return Some(['Login', { drawer: 'none' }])
+        return Some(["Login", { drawer: "none" }])
       }
-      if (drawerDirty === 'country' || drawerDirty === 'none') {
-        return Some(['Login', { drawer: drawerDirty }])
+      if (drawerDirty === "country" || drawerDirty === "none") {
+        return Some(["Login", { drawer: drawerDirty }])
       }
-      return Some(['Login', { drawer: 'none' }])
+      return Some(["Login", { drawer: "none" }])
     }
 
     default: {
@@ -153,7 +153,7 @@ export const encode = (route: Model): string => {
       return `/${route[0]}?${params.toString()}`
     }
 
-    case 'Login': {
+    case "Login": {
       const params = new URLSearchParams({ drawer: route[1].drawer })
       return `/${route[0]}?${params.toString()}`
     }
@@ -201,10 +201,7 @@ export const update = (msg: Msg): Model => {
   }
 }
 
-export const runAction = (
-  action: Action,
-  model: Model,
-): [Model, Cmd<Msg>] => {
+export const runAction = (action: Action, model: Model): [Model, Cmd<Msg>] => {
   switch (action[1][0]) {
     case "Back": {
       return [model, Browser.back]

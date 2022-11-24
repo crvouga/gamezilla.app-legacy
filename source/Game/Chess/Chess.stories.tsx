@@ -5,17 +5,21 @@ import * as UI from "../../UI"
 import { View } from "./Chess.Frontend"
 
 const props: Parameters<typeof View>[0] = {
-  $d: () => { },
+  $d: () => {},
   ctx,
   model: {
-    mode: ['None'],
+    mode: ["None"],
     requests: {
-      InputMode: RemoteData.NotAsked
-    }
-  }
+      InputMode: RemoteData.NotAsked,
+    },
+  },
 }
 
-export default { title: "Chess", component: View, args: props, } as ComponentMeta<typeof View>
+export default {
+  title: "Chess",
+  component: View,
+  args: props,
+} as ComponentMeta<typeof View>
 
 const Template: ComponentStory<typeof View> = (args) => {
   return (

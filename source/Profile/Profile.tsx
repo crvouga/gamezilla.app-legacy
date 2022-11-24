@@ -20,10 +20,10 @@ export const init = ({
 }: {
   userId: UserId
 }): [Model, Cmd<Msg>, OutAction[]] => [
-    {},
-    Cmd.None,
-    [["Profile", ["FindMany", { userIds: [userId] }]]],
-  ]
+  {},
+  Cmd.None,
+  [["Profile", ["FindMany", { userIds: [userId] }]]],
+]
 
 //
 //
@@ -42,10 +42,7 @@ export type Msg =
 type OutAction = ProfileStore.Action | ChatStore.Action
 
 export const update = (
-  {
-    currentUserId,
-    userId,
-  }: { currentUserId: UserId; userId: UserId },
+  { currentUserId, userId }: { currentUserId: UserId; userId: UserId },
   msg: Msg,
   model: Model,
 ): [Model, Cmd<Msg>, OutAction[]] => {
@@ -65,9 +62,10 @@ export const update = (
     case "ClickedSendMessage": {
       const userIds = [userId, currentUserId]
 
-      const action: OutAction =
-        ['Chat', ["Conversation", ["FindOneElseInsert", { userIds }]]]
-
+      const action: OutAction = [
+        "Chat",
+        ["Conversation", ["FindOneElseInsert", { userIds }]],
+      ]
 
       return [model, Cmd.None, [action]]
     }
@@ -157,7 +155,13 @@ export const View = ({
             sx={{ width: 120, height: 120, marginBottom: 1 }}
             src={profile.avatarUrl}
           />
-          <UI.Typography variant="h4" sx={{ maxWidth: "100%", marginBottom: 2 }} noWrap>{profile.username}</UI.Typography>
+          <UI.Typography
+            variant="h4"
+            sx={{ maxWidth: "100%", marginBottom: 2 }}
+            noWrap
+          >
+            {profile.username}
+          </UI.Typography>
           <UI.Button
             fullWidth
             variant="contained"
@@ -193,7 +197,13 @@ export const View = ({
           sx={{ width: 120, height: 120, marginBottom: 1 }}
           src={profile.avatarUrl}
         />
-        <UI.Typography variant="h4" sx={{ maxWidth: "100%", marginBottom: 2 }} noWrap>{profile.username}</UI.Typography>
+        <UI.Typography
+          variant="h4"
+          sx={{ maxWidth: "100%", marginBottom: 2 }}
+          noWrap
+        >
+          {profile.username}
+        </UI.Typography>
 
         {/* <UI.Button
           size="small"

@@ -6,8 +6,9 @@ import * as UI from "../UI"
 import { Mic } from "./Mic"
 import {
   FrontendModel,
-  FrontendMsg, ToBackend,
-  ToFrontend
+  FrontendMsg,
+  ToBackend,
+  ToFrontend,
 } from "./Party.Types"
 
 //
@@ -20,16 +21,20 @@ import {
 
 export type Model = FrontendModel
 
-export const init = ({ sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd }): [Model, Cmd<Msg>] => {
+export const init = ({
+  sendToBackend,
+}: {
+  sendToBackend: (msg: ToBackend) => Cmd
+}): [Model, Cmd<Msg>] => {
   return [
     {
       parties: {},
       users: {},
-      // 
+      //
       requests: {},
       volume: 0,
     },
-    sendToBackend(['PartyGet', {}]),
+    sendToBackend(["PartyGet", {}]),
   ]
 }
 
@@ -59,17 +64,23 @@ export const update = (
       return [{ ...model, volume: msg[1].volume }, Cmd.None]
     }
 
-    case 'MicUnload':
-    case 'MicLoad': {
+    case "MicUnload":
+    case "MicLoad": {
       return [model, Cmd.None]
     }
 
-    case 'PartyGet':
+    case "PartyGet":
     case "PartyCreate":
     case "PartyDestroy":
     case "PartyLeave":
     case "PartyJoin": {
-      return [{ ...model, requests: { ...model.requests, [msg[0]]: RemoteData.Loading } }, sendToBackend(msg)]
+      return [
+        {
+          ...model,
+          requests: { ...model.requests, [msg[0]]: RemoteData.Loading },
+        },
+        sendToBackend(msg),
+      ]
     }
 
     default: {
@@ -84,12 +95,18 @@ export const updateFromBackend = (
   model: Model,
 ): [Model, Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
-    case 'PartyGet':
-    case 'PartyDestroy':
+    case "PartyGet":
+    case "PartyDestroy":
     case "PartyCreate":
-    case 'PartyJoin':
-    case 'PartyLeave': {
-      const requestsNew: Model['requests'] = { ...model.requests, [msg[0]]: p(msg[2], RemoteData.map(() => null)) }
+    case "PartyJoin":
+    case "PartyLeave": {
+      const requestsNew: Model["requests"] = {
+        ...model.requests,
+        [msg[0]]: p(
+          msg[2],
+          RemoteData.map(() => null),
+        ),
+      }
 
       if (msg[2].type === "Err") {
         return [{ ...model, requests: requestsNew }, Cmd.None, []]
@@ -101,11 +118,15 @@ export const updateFromBackend = (
         ...msg[2].value,
       }
 
-      const userIds = Object.values(modelNext.users).map(user => user.userId)
+      const userIds = Object.values(modelNext.users).map((user) => user.userId)
 
-      const action: OutAction = ['Profile', ['FindMany', { userIds }]]
+      const action: OutAction = ["Profile", ["FindMany", { userIds }]]
 
-      const cmd = toLifecycleCmd({ currentUserId, modelNext: modelNext, modelPrev: model })
+      const cmd = toLifecycleCmd({
+        currentUserId,
+        modelNext: modelNext,
+        modelPrev: model,
+      })
 
       return [modelNext, cmd, [action]]
     }
@@ -129,12 +150,18 @@ const toLifecycleCmd = ({
 
   // did user just leave party?
   if (userPrev && !userNext) {
-    return p(Mic.unload, Cmd.perform(result => ['MicUnload', result]))
+    return p(
+      Mic.unload,
+      Cmd.perform((result) => ["MicUnload", result]),
+    )
   }
 
   // did user just join party?
   if (!userPrev && userNext) {
-    return p(Mic.load, Cmd.perform(result => ['MicLoad', result]))
+    return p(
+      Mic.load,
+      Cmd.perform((result) => ["MicLoad", result]),
+    )
   }
 
   return Cmd.None
@@ -202,60 +229,90 @@ export const View = ({
 
   return (
     <UI.FillBox>
-      <UI.Box sx={{ flex: 1, display: 'flex', flexWrap: "wrap", width: "100%", }}>
+      <UI.Box
+        sx={{ flex: 1, display: "flex", flexWrap: "wrap", width: "100%" }}
+      >
         {Object.values(model.users)
           .filter((user) => user.partyId === party.partyId)
           .map((user) => {
             const isActive = model.volume > 1 && user.userId === currentUserId
 
-            return <UI.Box key={user.userId} sx={{ flex: 1, display: "flex", alignItems: 'center', justifyContent: 'center', flexDirection: "column", overflow: "hidden", }}>
-              <UI.Box sx={{ padding: 2, }}>
-                <UI.Avatar
-                  src={store.profiles[user.userId]?.avatarUrl}
-                  sx={{
-                    width: 100,
-                    height: 100,
-                    boxSizing: "content-box",
-                    border: `solid 8px ${isActive ? theme.palette.primary.main : "transparent"}`
-                  }}
-                />
+            return (
+              <UI.Box
+                key={user.userId}
+                sx={{
+                  flex: 1,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexDirection: "column",
+                  overflow: "hidden",
+                }}
+              >
+                <UI.Box sx={{ padding: 2 }}>
+                  <UI.Avatar
+                    src={store.profiles[user.userId]?.avatarUrl}
+                    sx={{
+                      width: 100,
+                      height: 100,
+                      boxSizing: "content-box",
+                      border: `solid 8px ${
+                        isActive ? theme.palette.primary.main : "transparent"
+                      }`,
+                    }}
+                  />
+                </UI.Box>
+                <UI.Typography
+                  variant="h6"
+                  noWrap
+                  sx={{ width: "100%", paddingX: 1 }}
+                  align="center"
+                >
+                  {`${store.profiles[user.userId]?.username ?? "..."}`}
+                </UI.Typography>
+                <UI.Typography
+                  variant="subtitle1"
+                  color="text.secondary"
+                  sx={{ height: "1rem" }}
+                >
+                  {party.hostId === user.userId ? "Host" : " "}
+                </UI.Typography>
               </UI.Box>
-              <UI.Typography variant="h6" noWrap sx={{ width: '100%', paddingX: 1 }} align='center'>
-                {`${store.profiles[user.userId]?.username ?? "..."}`}
-              </UI.Typography>
-              <UI.Typography variant="subtitle1" color="text.secondary" sx={{ height: "1rem" }}>
-                {party.hostId === user.userId ? "Host" : " "}
-              </UI.Typography>
-            </UI.Box>
-          }
-          )}
+            )
+          })}
       </UI.Box>
-      <UI.Box sx={{ paddingX: 2, paddingY: 2, display: "flex", alignItems: 'center', justifyContent: "center" }}>
-        {
-          party.hostId === currentUserId ? (
-            <UI.Button
-              variant="outlined"
-              startIcon={<UI.Icons.CallEnd />}
-              color="error"
-              size="large"
-              loading={model.requests.PartyDestroy?.type === 'Loading'}
-              onClick={() => $d(["PartyDestroy", { userId: currentUserId }])}
-            >
-              End
-            </UI.Button>
-          ) : (
-            <UI.Button
-              variant="outlined"
-              startIcon={<UI.Icons.CallEnd />}
-              color="error"
-              size="large"
-              loading={model.requests.PartyLeave?.type === 'Loading'}
-              onClick={() => $d(["PartyLeave", { userId: currentUserId }])}
-            >
-              Leave
-            </UI.Button>
-          )
-        }
+      <UI.Box
+        sx={{
+          paddingX: 2,
+          paddingY: 2,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        {party.hostId === currentUserId ? (
+          <UI.Button
+            variant="outlined"
+            startIcon={<UI.Icons.CallEnd />}
+            color="error"
+            size="large"
+            loading={model.requests.PartyDestroy?.type === "Loading"}
+            onClick={() => $d(["PartyDestroy", { userId: currentUserId }])}
+          >
+            End
+          </UI.Button>
+        ) : (
+          <UI.Button
+            variant="outlined"
+            startIcon={<UI.Icons.CallEnd />}
+            color="error"
+            size="large"
+            loading={model.requests.PartyLeave?.type === "Loading"}
+            onClick={() => $d(["PartyLeave", { userId: currentUserId }])}
+          >
+            Leave
+          </UI.Button>
+        )}
       </UI.Box>
     </UI.FillBox>
   )
@@ -281,9 +338,12 @@ const ViewNotInParty = ({
           fullWidth
           variant="contained"
           size="large"
-          loading={model.requests.PartyCreate?.type === 'Loading'}
+          loading={model.requests.PartyCreate?.type === "Loading"}
           onClick={() =>
-            $d(["PartyCreate", { userId: currentUserId, partyId: PartyId.generate() }])
+            $d([
+              "PartyCreate",
+              { userId: currentUserId, partyId: PartyId.generate() },
+            ])
           }
         >
           Start Party
@@ -302,7 +362,10 @@ const ViewNotInParty = ({
           <UI.ListItemButton
             key={party.partyId}
             onClick={() =>
-              $d(["PartyJoin", { userId: currentUserId, partyId: party.partyId }])
+              $d([
+                "PartyJoin",
+                { userId: currentUserId, partyId: party.partyId },
+              ])
             }
           >
             <UI.ListItemAvatar>
@@ -310,8 +373,9 @@ const ViewNotInParty = ({
             </UI.ListItemAvatar>
 
             <UI.ListItemText
-              primary={`${store.profiles[party.hostId]?.username ?? "..."
-                }'s party`}
+              primary={`${
+                store.profiles[party.hostId]?.username ?? "..."
+              }'s party`}
               secondary={`${countUsersInParty(party.partyId, model)} in party`}
             />
           </UI.ListItemButton>
@@ -336,8 +400,8 @@ export const ViewBanner = ({
   route,
   currentUserId,
   model,
-  // store,
-}: {
+}: // store,
+{
   store: ProfileStore.Model
   route: Route.Model
   currentUserId: UserId
@@ -366,21 +430,21 @@ export const ViewBanner = ({
       align="center"
       onClick={() => $d(["ClickedBanner"])}
       sx={{
-        width: '100%',
+        width: "100%",
         paddingX: 2,
         paddingY: 1 / 2,
         backgroundColor: "primary.dark",
         color: "#fff",
         display: "flex",
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}>
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
       <UI.Icons.Group sx={{ marginRight: 1 / 2 }} />
       Party
     </UI.Typography>
   )
 }
-
 
 //
 //
@@ -391,5 +455,8 @@ export const ViewBanner = ({
 //
 
 export const subscriptions = (_model: Model): Sub<Msg> => {
-  return p(Mic.volumes, Sub.map(volume => ['MicSound', { volume }]))
+  return p(
+    Mic.volumes,
+    Sub.map((volume) => ["MicSound", { volume }]),
+  )
 }

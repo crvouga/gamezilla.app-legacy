@@ -45,11 +45,7 @@ export const update = (
       return [model, Route.back, []]
 
     case "ClickedDelete":
-      return [
-        model,
-        Cmd.None,
-        [["Profile", ["DeleteForever", { userId }]]],
-      ]
+      return [model, Cmd.None, [["Profile", ["DeleteForever", { userId }]]]]
 
     case "ClickedCloseErr":
       return [model, Cmd.None, [["Profile", ["ResetMutations"]]]]
@@ -74,8 +70,7 @@ export const View = ({
   model: Model
   $d: (msg: Msg) => void
 }) => {
-  const mutation =
-    profileStore.deleteForever[userId] ?? RemoteData.NotAsked
+  const mutation = profileStore.deleteForever[userId] ?? RemoteData.NotAsked
 
   switch (mutation.type) {
     case "Loading":

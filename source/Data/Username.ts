@@ -1,6 +1,6 @@
 import { Err, Ok, Result } from "../Core/Result"
 
-export type Username = string & { _opaque: 'Username' }
+export type Username = string & { _opaque: "Username" }
 
 const is = (username: unknown): username is Username => {
   return (
@@ -27,7 +27,6 @@ const fromString = (username: string): Username => {
 
   throw new Error("impossible state. did not create username from string")
 }
-
 
 export const Username = {
   is,

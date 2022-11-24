@@ -19,7 +19,7 @@ export type FrontendModel =
   | ["Snake", Snake.FrontendModel]
   | ["Chess", Chess.FrontendModel]
   | ["Tetris", Tetris.FrontendModel]
-  | ['Maze', Maze.FrontendModel]
+  | ["Maze", Maze.FrontendModel]
 
 export type BackendModel =
   | ["TicTacToe", TicTacToe.BackendModel]
@@ -27,7 +27,7 @@ export type BackendModel =
   | ["Snake", Snake.BackendModel]
   | ["Chess", Chess.BackendModel]
   | ["Tetris", Tetris.BackendModel]
-  | ['Maze', Maze.BackendModel]
+  | ["Maze", Maze.BackendModel]
 
 export type GameName =
   | "TicTacToe"
@@ -43,10 +43,15 @@ export const gameNames: { [gameName in GameName]: GameName } = {
   Snake: "Snake",
   Chess: "Chess",
   Tetris: "Tetris",
-  Maze: "Maze"
+  Maze: "Maze",
 }
 
-export const gameNameList: GameName[] = ["Maze", "Chess", "TicTacToe", "ConnectFour",]
+export const gameNameList: GameName[] = [
+  "Maze",
+  "Chess",
+  "TicTacToe",
+  "ConnectFour",
+]
 
 //
 //

@@ -1,6 +1,14 @@
-import { Cmd, Sub } from "../../Core";
-import { UserId } from "../../Data";
-import { BackendModel, BackendMsg, handle, initShared, Res, ToBackend, ToFrontend } from "./Maze.Types";
+import { Cmd, Sub } from "../../Core"
+import { UserId } from "../../Data"
+import {
+  BackendModel,
+  BackendMsg,
+  handle,
+  initShared,
+  Res,
+  ToBackend,
+  ToFrontend,
+} from "./Maze.Types"
 //
 //
 //
@@ -24,39 +32,46 @@ export const init: BackendModel = initShared
 export type Msg = BackendMsg
 
 export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
-    switch (msg[0]) {
-        case "None": {
-            return [model, Cmd.None]
-        }
+  switch (msg[0]) {
+    case "None": {
+      return [model, Cmd.None]
     }
-};
-
-export const updateFromFrontend = ({ broadcast }: { broadcast: (m: ToFrontend) => Cmd }, msg: ToBackend, model: Model): [Model, Cmd<Msg>] => {
-    switch (msg[0]) {
-        case 'InputDirection':
-        case 'InputSeed':
-        case 'StartGame':
-        case 'StopPlaying':
-        case 'StartPlaying': {
-            const res: Res = [...msg, handle(msg, model)]
-            const modelNew = res[2].type === 'Ok' ? res[2].value : model
-            return [modelNew, broadcast(res)]
-        }
-    }
+  }
 }
 
-export const updateRoomLeave = (_userId: UserId, model: Model): [Model, Cmd<Msg>] => {
-    return [model, Cmd.None]
+export const updateFromFrontend = (
+  { broadcast }: { broadcast: (m: ToFrontend) => Cmd },
+  msg: ToBackend,
+  model: Model,
+): [Model, Cmd<Msg>] => {
+  switch (msg[0]) {
+    case "InputDirection":
+    case "InputSeed":
+    case "StartGame":
+    case "StopPlaying":
+    case "StartPlaying": {
+      const res: Res = [...msg, handle(msg, model)]
+      const modelNew = res[2].type === "Ok" ? res[2].value : model
+      return [modelNew, broadcast(res)]
+    }
+  }
 }
 
-// 
-// 
-// 
+export const updateRoomLeave = (
+  _userId: UserId,
+  model: Model,
+): [Model, Cmd<Msg>] => {
+  return [model, Cmd.None]
+}
+
+//
+//
+//
 // Subscriptions
-// 
-// 
-// 
+//
+//
+//
 
 export const subscriptions = (_model: BackendModel): Sub<Msg> => {
-    return Sub.None
+  return Sub.None
 }

@@ -21,27 +21,27 @@ export type Model = {
 
 type FocusedModel =
   | {
-    type: "Blurred"
-  }
+      type: "Blurred"
+    }
   | {
-    type: "Focused"
-    messageId: string
-    copyStatus: "Failed" | "NotAsked" | "Succeeded" | "Loading"
-  }
+      type: "Focused"
+      messageId: string
+      copyStatus: "Failed" | "NotAsked" | "Succeeded" | "Loading"
+    }
 
 export const init = ({
   conversationId,
 }: {
   conversationId: string
 }): [Model, Cmd<Msg>, OutAction[]] => [
-    {
-      text: "",
-      focused: { type: "Blurred" },
-    },
-    Cmd.None,
+  {
+    text: "",
+    focused: { type: "Blurred" },
+  },
+  Cmd.None,
 
-    [["Chat", ["Conversation", ["FindOne", { conversationId }]]]],
-  ]
+  [["Chat", ["Conversation", ["FindOne", { conversationId }]]]],
+]
 
 //
 //
@@ -158,16 +158,23 @@ export const View = ({
   $d: (msg: Msg) => void
 }) => {
   const query =
-    chatStore.queries.Conversation.FindOne[conversationId] ?? RemoteData.NotAsked
+    chatStore.queries.Conversation.FindOne[conversationId] ??
+    RemoteData.NotAsked
 
   const profiles = Object.values(chatStore.UsersConversations)
-    .filter(conversation => conversation.conversationId === conversationId)
-    .flatMap(joinRecord => {
-      const profiles = Object.values(profileStore.profiles).filter(profile => profile.userId === joinRecord.userId && profile.userId !== currentUserId)
+    .filter((conversation) => conversation.conversationId === conversationId)
+    .flatMap((joinRecord) => {
+      const profiles = Object.values(profileStore.profiles).filter(
+        (profile) =>
+          profile.userId === joinRecord.userId &&
+          profile.userId !== currentUserId,
+      )
       return profiles
     })
 
-  const messages = Object.values(chatStore.Message).filter(message => message.conversationId === conversationId)
+  const messages = Object.values(chatStore.Message).filter(
+    (message) => message.conversationId === conversationId,
+  )
 
   const messageInsertMutation =
     chatStore.mutations.Message.Send[conversationId] ?? RemoteData.NotAsked
@@ -201,9 +208,7 @@ export const View = ({
             align="center"
             noWrap
           >
-            {profiles
-              .map((profile) => profile.username)
-              .join(", ")}
+            {profiles.map((profile) => profile.username).join(", ")}
           </UI.Typography>
         </UI.Box>
         <UI.Box sx={{ flex: 1 }}></UI.Box>
@@ -365,10 +370,10 @@ const ChatMessage = ({
   $d,
 }: {
   message: {
-    messageId: string,
-    message: string,
+    messageId: string
+    message: string
     userId: UserId
-  },
+  }
   currentUserId: UserId
   model: Model
   $d: (msg: Msg) => void
@@ -384,9 +389,7 @@ const ChatMessage = ({
 
   const theme = UI.useTheme()
   const backgroundColor =
-    variant === "sent"
-      ? theme.palette.primary.main
-      : theme.palette.grey["200"]
+    variant === "sent" ? theme.palette.primary.main : theme.palette.grey["200"]
   const textColor = theme.palette.getContrastText(backgroundColor)
 
   const [anchorRef, setAnchorRef] = useState<null | HTMLElement>(null)
@@ -445,12 +448,10 @@ const ChatMessage = ({
               model.focused.type === "Focused" &&
               model.focused.copyStatus === "Loading"
             }
-            onClick={() =>
-              $d(["ClickedCopyMessageText", message.message])
-            }
+            onClick={() => $d(["ClickedCopyMessageText", message.message])}
           >
             {model.focused.type === "Focused" &&
-              model.focused.copyStatus === "Succeeded"
+            model.focused.copyStatus === "Succeeded"
               ? "Copied"
               : "Copy Text"}
           </UI.Button>

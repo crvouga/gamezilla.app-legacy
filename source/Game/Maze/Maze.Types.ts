@@ -16,32 +16,31 @@ export type SharedModel = SetupModel
 
 export type SetupModel =
   | {
-    type: "Setup"
-    players: Set<UserId>,
-    colors: ColorMap
-    seed: string
-    lower: Position
-    upper: Position
-  }
+      type: "Setup"
+      players: Set<UserId>
+      colors: ColorMap
+      seed: string
+      lower: Position
+      upper: Position
+    }
   | {
-    type: "Game",
-    players: { [userId: UserId]: Player }
-    colors: ColorMap
-    seed: string,
-    lower: Position
-    upper: Position
-  }
+      type: "Game"
+      players: { [userId: UserId]: Player }
+      colors: ColorMap
+      seed: string
+      lower: Position
+      upper: Position
+    }
 
 type ColorMap = { [color in Color]?: UserId }
 
 type Player = {
-  userId: UserId;
+  userId: UserId
   position: Position
   direction?: Direction
 }
 
 type Color = "Red" | "Blue" | "Green" | "Purple"
-
 
 // const colorSequence: Color[] = ['Red', 'Blue', "Green", "Purple"]
 
@@ -49,35 +48,33 @@ export type FrontendModel = SharedModel
 
 export type BackendModel = SharedModel
 
-
-
-// 
-// 
-// 
+//
+//
+//
 // Msg
-// 
-// 
-// 
+//
+//
+//
 
-export type FrontendMsg = Req | ['KeyDown', Keyboard.Key]
+export type FrontendMsg = Req | ["KeyDown", Keyboard.Key]
 
-export type BackendMsg = ['None']
+export type BackendMsg = ["None"]
 
 export type ToBackend = Req
 
 export type ToFrontend = Res
 
-// 
-// 
-// 
-// 
+//
+//
+//
+//
 
 export type Req =
-  | ['StartPlaying', { userId: UserId }]
-  | ['StopPlaying', { userId: UserId }]
-  | ['StartGame', { userId: UserId }]
-  | ['InputDirection', { userId: UserId, direction: Direction }]
-  | ['InputSeed', { userId: UserId, seed: string }]
+  | ["StartPlaying", { userId: UserId }]
+  | ["StopPlaying", { userId: UserId }]
+  | ["StartGame", { userId: UserId }]
+  | ["InputDirection", { userId: UserId; direction: Direction }]
+  | ["InputSeed", { userId: UserId; seed: string }]
 
 export type Res = [...Req, Result<Problem, SharedModel>]
 
@@ -90,11 +87,13 @@ type Problem =
   | "out_of_bounds"
   | "hit_wall"
 
-export const handle = (msg: Req, model: SharedModel): Result<Problem, SharedModel> => {
+export const handle = (
+  msg: Req,
+  model: SharedModel,
+): Result<Problem, SharedModel> => {
   switch (msg[0]) {
-
-    case 'InputSeed': {
-      if (model.type !== 'Setup') {
+    case "InputSeed": {
+      if (model.type !== "Setup") {
         return Err("must_be_setup")
       }
 
@@ -106,14 +105,14 @@ export const handle = (msg: Req, model: SharedModel): Result<Problem, SharedMode
 
       const modelNew: SharedModel = {
         ...model,
-        seed: msg[1].seed
+        seed: msg[1].seed,
       }
 
       return Ok(modelNew)
     }
 
-    case 'StartPlaying': {
-      if (model.type !== 'Setup') {
+    case "StartPlaying": {
+      if (model.type !== "Setup") {
         return Err("must_be_setup")
       }
 
@@ -123,26 +122,26 @@ export const handle = (msg: Req, model: SharedModel): Result<Problem, SharedMode
 
       const modelNew: SharedModel = {
         ...model,
-        players: Set.add(msg[1].userId, model.players)
+        players: Set.add(msg[1].userId, model.players),
       }
       return Ok(modelNew)
     }
 
-    case 'StopPlaying': {
-      if (model.type !== 'Setup') {
+    case "StopPlaying": {
+      if (model.type !== "Setup") {
         return Err("must_be_setup")
       }
 
       const modelNew: SharedModel = {
         ...model,
-        players: Set.remove(msg[1].userId, model.players)
+        players: Set.remove(msg[1].userId, model.players),
       }
 
       return Ok(modelNew)
     }
 
-    case 'StartGame': {
-      if (model.type !== 'Setup') {
+    case "StartGame": {
+      if (model.type !== "Setup") {
         return Err("must_be_setup")
       }
 
@@ -150,18 +149,19 @@ export const handle = (msg: Req, model: SharedModel): Result<Problem, SharedMode
         return Err("must_have_at_least_one_player")
       }
 
-      const playersNew: { [userId: UserId]: Player } =
-        Set.toArray(model.players)
-          .reduce<{ [userId: UserId]: Player }>((byId, userId) => ({
-            ...byId,
-            [userId]: {
-              userId,
-              position: { x: 0, y: 0 },
-              direction: "None"
-            }
-          }),
-            {}
-          )
+      const playersNew: { [userId: UserId]: Player } = Set.toArray(
+        model.players,
+      ).reduce<{ [userId: UserId]: Player }>(
+        (byId, userId) => ({
+          ...byId,
+          [userId]: {
+            userId,
+            position: { x: 0, y: 0 },
+            direction: "None",
+          },
+        }),
+        {},
+      )
 
       const modelNew: SharedModel = {
         type: "Game",
@@ -175,8 +175,8 @@ export const handle = (msg: Req, model: SharedModel): Result<Problem, SharedMode
       return Ok(modelNew)
     }
 
-    case 'InputDirection': {
-      if (model.type !== 'Game') {
+    case "InputDirection": {
+      if (model.type !== "Game") {
         return Err("must_be_game")
       }
 
@@ -197,9 +197,10 @@ export const handle = (msg: Req, model: SharedModel): Result<Problem, SharedMode
         return Err("hit_wall")
       }
 
-      const inbounds =
-        Position.inclusiveContains({ lower: model.lower, upper: model.upper }, positionNew)
-
+      const inbounds = Position.inclusiveContains(
+        { lower: model.lower, upper: model.upper },
+        positionNew,
+      )
 
       if (!inbounds) {
         return Err("out_of_bounds")
@@ -208,7 +209,7 @@ export const handle = (msg: Req, model: SharedModel): Result<Problem, SharedMode
       const playerNew: Player = {
         ...player,
         position: positionNew,
-        direction: msg[1].direction
+        direction: msg[1].direction,
       }
 
       const modelNew: SharedModel = {
@@ -219,7 +220,7 @@ export const handle = (msg: Req, model: SharedModel): Result<Problem, SharedMode
         lower: model.lower,
         players: {
           ...model.players,
-          [playerNew.userId]: playerNew
+          [playerNew.userId]: playerNew,
         },
       }
 
@@ -227,7 +228,6 @@ export const handle = (msg: Req, model: SharedModel): Result<Problem, SharedMode
     }
   }
 }
-
 
 //
 //
@@ -237,12 +237,11 @@ export const handle = (msg: Req, model: SharedModel): Result<Problem, SharedMode
 //
 //
 
-
 export const initShared: SharedModel = {
   type: "Setup",
   players: {},
   colors: {},
   seed: "some arbitrary seed",
   lower: { x: -10, y: -10 },
-  upper: { x: 10, y: 10 }
+  upper: { x: 10, y: 10 },
 }

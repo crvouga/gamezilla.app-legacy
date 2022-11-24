@@ -90,7 +90,7 @@ export const toFilledRows = (board: Board): number[] => {
   const filledRows: number[] = []
 
   for (let x = 0; x < board.columnCount; x++) {
-    for (let y = 0; y < board.rowCount; y++) { }
+    for (let y = 0; y < board.rowCount; y++) {}
   }
 
   return filledRows

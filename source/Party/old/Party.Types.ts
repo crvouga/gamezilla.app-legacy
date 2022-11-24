@@ -83,7 +83,7 @@ export type BackendMsg =
 
 export type FrontendMsg =
   | Request
-  | ['MicData', { micData: FrontendModel['micData'] }]
+  | ["MicData", { micData: FrontendModel["micData"] }]
   | ["GotVolume", { volume: number }]
   | ["ClickedBanner"]
   | ["GotMicrophonePermissionStatus", MicrophonePermissionStatus]
@@ -136,10 +136,7 @@ export type WorkerDied = ["WorkerDied"]
 export type CreateRouter_Done = [
   "CreateRouter_Done",
   { hostId: UserId; partyId: PartyId },
-  Result<
-    "worker_does_not_exists",
-    { routerRtpCapabilities: RtpCapabilities }
-  >,
+  Result<"worker_does_not_exists", { routerRtpCapabilities: RtpCapabilities }>,
 ]
 
 // Step 1
@@ -182,10 +179,7 @@ export type RecvTransport_InitBackend = [
 export type SendTransport_InitBackend_Done = [
   "SendTransport_InitBackend_Done",
   { userId: UserId; partyId: PartyId },
-  Result<
-    "router_does_not_exists",
-    { transportOptions: TransportOptions }
-  >,
+  Result<"router_does_not_exists", { transportOptions: TransportOptions }>,
 ]
 export type SendTransport_InitFrontend_Done = [
   "SendTransport_InitFrontend_Done",
@@ -309,10 +303,7 @@ export type Response = StartParty_Done | LeaveParty_Done | JoinParty_Done
 //
 //
 
-export type StartParty = [
-  "StartParty",
-  { hostId: UserId; partyId: PartyId },
-]
+export type StartParty = ["StartParty", { hostId: UserId; partyId: PartyId }]
 
 export type StartParty_Done = [
   "StartParty_Done",
@@ -409,17 +400,11 @@ export const leaveParty = (
 //
 //
 
-export type JoinParty = [
-  "JoinParty",
-  { userId: UserId; partyId: PartyId },
-]
+export type JoinParty = ["JoinParty", { userId: UserId; partyId: PartyId }]
 
 export type JoinParty_Done = [
   "JoinParty_Done",
-  Result<
-    "user_already_in_a_party" | "party_does_not_exists",
-    SharedModel
-  >,
+  Result<"user_already_in_a_party" | "party_does_not_exists", SharedModel>,
 ]
 
 export const joinParty = (

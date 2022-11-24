@@ -1,6 +1,6 @@
 import { ProfileAvatar, UserId } from "../Data"
 import * as Route from "../Route"
-import * as Snackbar from "../Snackbar"
+import * as Snackbar from "../Alerts"
 import * as ProfileStore from "./Profile.Store"
 import * as UI from "../UI"
 import { Cmd, p } from "../Core"
@@ -87,7 +87,15 @@ export const update = (
       return [
         model,
         Route.back,
-        [["Profile", ["EditOne", { userId, edits: { avatarUrl: ProfileAvatar.toUrl(model) } }]]],
+        [
+          [
+            "Profile",
+            [
+              "EditOne",
+              { userId, edits: { avatarUrl: ProfileAvatar.toUrl(model) } },
+            ],
+          ],
+        ],
       ]
   }
 }

@@ -28,5 +28,5 @@ const generate = () => {
 export const UserId = {
   generate,
   decode,
-  is
+  is,
 }

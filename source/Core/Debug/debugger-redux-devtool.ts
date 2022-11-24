@@ -16,7 +16,7 @@ import {
   Debugger,
   DebuggerDeps,
   Global,
-  MsgWithDebug
+  MsgWithDebug,
 } from "./debugger-commons"
 
 type Unsubscription = () => void
@@ -59,13 +59,13 @@ interface Monitor {
   type: "DISPATCH"
   payload: {
     type:
-    | "JUMP_TO_STATE"
-    | "JUMP_TO_ACTION"
-    | "RESET"
-    | "ROLLBACK"
-    | "COMMIT"
-    | "IMPORT_STATE"
-    | "TOGGLE_ACTION"
+      | "JUMP_TO_STATE"
+      | "JUMP_TO_ACTION"
+      | "RESET"
+      | "ROLLBACK"
+      | "COMMIT"
+      | "IMPORT_STATE"
+      | "TOGGLE_ACTION"
     [k: string]: unknown
   }
   [k: string]: unknown
@@ -81,7 +81,8 @@ interface LiftedState<Model> {
   isPaused: boolean
 }
 
-interface DevToolHandlerR<Model, Msg extends {}> extends DebuggerDeps<Model, Msg> {
+interface DevToolHandlerR<Model, Msg extends {}>
+  extends DebuggerDeps<Model, Msg> {
   connection: Connection<Model, Msg>
 }
 
@@ -91,14 +92,12 @@ interface DevToolHandlerR<Model, Msg extends {}> extends DebuggerDeps<Model, Msg
  * @since 0.5.0
  */
 export const getConnection =
-  <Model, Msg>(
-    global: Global,
-  ): Task<Option<Connection<Model, Msg>>> =>
-    async () => {
-      return hasExtension(global)
-        ? Option.Some(global.__REDUX_DEVTOOLS_EXTENSION__.connect())
-        : Option.None
-    }
+  <Model, Msg>(global: Global): Task<Option<Connection<Model, Msg>>> =>
+  async () => {
+    return hasExtension(global)
+      ? Option.Some(global.__REDUX_DEVTOOLS_EXTENSION__.connect())
+      : Option.None
+  }
 
 /**
  * **[UNSAFE]** Type guard to check if _Redux DevTool Extension_ is available.
@@ -144,7 +143,7 @@ const handleSubscription = <Model, Msg extends {}>(
 
   return (msg) => {
     const result = handler(msg)
-    if (result.type === 'Err') {
+    if (result.type === "Err") {
       console.warn("[REDUX DEV TOOL]", result.error)
       return
     }
@@ -170,8 +169,8 @@ const handleIncomingMsg = <Model, Msg extends {}>({
 ) => Result<string, Task<void>>) => {
   const $dToApp =
     (m: unknown): Task<void> =>
-      async () =>
-        $d(m as Msg)
+    async () =>
+      $d(m as Msg)
 
   const reInit: Task<void> = async () => connection.init(init)
 
@@ -180,13 +179,13 @@ const handleIncomingMsg = <Model, Msg extends {}>({
 
   const restart =
     (model: Model): Task<void> =>
-      async () =>
-        connection.init(model)
+    async () =>
+      connection.init(model)
 
   const liftState =
     (state: LiftedState<Model>): Task<void> =>
-      async () =>
-        connection.send(null, state)
+    async () =>
+      connection.send(null, state)
 
   const toggle = toggleAction($d)
 
@@ -292,7 +291,7 @@ const handleActions = <Model, Msg extends {}>({
  */
 const parseJump = <Model>(msg: Monitor): Result<string, Model> => {
   return p(
-    Json.parse(String(msg['state'])),
+    Json.parse(String(msg["state"])),
     Result.mapErr((problem) => problem.message),
     Result.map(
       (value) =>
@@ -309,7 +308,7 @@ const parseJump = <Model>(msg: Monitor): Result<string, Model> => {
  */
 const parseRollback = <Model>(msg: Monitor): Result<string, Model> => {
   return p(
-    Json.parse(String(msg['state'])),
+    Json.parse(String(msg["state"])),
     Result.mapErr((problem) => problem.message),
     Result.map(
       (u) =>
@@ -327,9 +326,9 @@ const parseRollback = <Model>(msg: Monitor): Result<string, Model> => {
 const parseImportState = <Model>(
   msg: Monitor,
 ): Result<string, LiftedState<Model>> => {
-  return typeof msg.payload['nextLiftedState'] === "object" &&
-    msg.payload['nextLiftedState'] !== null
-    ? Result.Ok(msg.payload['nextLiftedState'] as LiftedState<Model>)
+  return typeof msg.payload["nextLiftedState"] === "object" &&
+    msg.payload["nextLiftedState"] !== null
+    ? Result.Ok(msg.payload["nextLiftedState"] as LiftedState<Model>)
     : Result.Err("IMPORT_STATE message has some bad payload...")
 }
 
@@ -342,7 +341,7 @@ const parseToggleAction = <Model>(
   msg: Monitor,
 ): Result<string, [number, LiftedState<Model>]> => {
   const getId = p(
-    msg.payload['id'],
+    msg.payload["id"],
     Result.fromNullable("TOGGLE_ACTION message has some bad payload..."),
     Result.map((x) => x as number),
   )
@@ -352,7 +351,7 @@ const parseToggleAction = <Model>(
   }
 
   const parseState = p(
-    Json.parse(String(msg['state'])),
+    Json.parse(String(msg["state"])),
     Result.map(
       // @ts-ignore
       (u) => u as LiftedState<Model>,
@@ -379,61 +378,58 @@ const parseToggleAction = <Model>(
 
 const toggleAction =
   <Model, Msg extends {}>($d: $d<MsgWithDebug<Model, Msg>>) =>
-    (
-      id: number,
-      liftedState: LiftedState<Model>,
-    ): Task<LiftedState<Model>> =>
-      async () => {
-        const state = unsafeCopy(liftedState)
+  (id: number, liftedState: LiftedState<Model>): Task<LiftedState<Model>> =>
+  async () => {
+    const state = unsafeCopy(liftedState)
 
-        const { skippedActionIds, stagedActionIds, computedStates, actionsById } =
-          state
+    const { skippedActionIds, stagedActionIds, computedStates, actionsById } =
+      state
 
-        const skippedIndex = skippedActionIds.indexOf(id)
-        const skipped = skippedIndex !== -1
-        const actionIndex = stagedActionIds.indexOf(id)
+    const skippedIndex = skippedActionIds.indexOf(id)
+    const skipped = skippedIndex !== -1
+    const actionIndex = stagedActionIds.indexOf(id)
 
-        if (actionIndex === -1) {
-          return state
-        }
+    if (actionIndex === -1) {
+      return state
+    }
 
-        $d({
-          type: "__DebugUpdateModel__",
-          // @ts-ignore
-          payload: computedStates[actionIndex - 1].state,
-        })
+    $d({
+      type: "__DebugUpdateModel__",
+      // @ts-ignore
+      payload: computedStates[actionIndex - 1].state,
+    })
 
-        const start = skipped ? actionIndex : actionIndex + 1
-        const end = stagedActionIds.length
+    const start = skipped ? actionIndex : actionIndex + 1
+    const end = stagedActionIds.length
 
-        for (let i = start; i < end; i++) {
-          const currentActionId = stagedActionIds[i]
+    for (let i = start; i < end; i++) {
+      const currentActionId = stagedActionIds[i]
 
-          if (
-            i !== actionIndex &&
-            currentActionId &&
-            skippedActionIds.indexOf(currentActionId) !== -1
-          ) {
-            continue // it's already skipped
-          }
-
-          if (currentActionId) {
-            $d({
-              type: "__DebugApplyMsg__",
-              // @ts-ignore
-              payload: actionsById[currentActionId].action,
-            })
-          }
-        }
-
-        if (skipped) {
-          skippedActionIds.splice(skippedIndex, 1)
-        } else {
-          skippedActionIds.push(id)
-        }
-
-        return state
+      if (
+        i !== actionIndex &&
+        currentActionId &&
+        skippedActionIds.indexOf(currentActionId) !== -1
+      ) {
+        continue // it's already skipped
       }
+
+      if (currentActionId) {
+        $d({
+          type: "__DebugApplyMsg__",
+          // @ts-ignore
+          payload: actionsById[currentActionId].action,
+        })
+      }
+    }
+
+    if (skipped) {
+      skippedActionIds.splice(skippedIndex, 1)
+    } else {
+      skippedActionIds.push(id)
+    }
+
+    return state
+  }
 
 // poor man deep clone...
 const unsafeCopy = <A>(a: A): A => {

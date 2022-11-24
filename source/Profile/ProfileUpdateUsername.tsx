@@ -57,7 +57,12 @@ export const update = (
       return [
         model,
         Route.back,
-        [["Profile", ["EditOne", { userId, edits: { username: username.value } }]]],
+        [
+          [
+            "Profile",
+            ["EditOne", { userId, edits: { username: username.value } }],
+          ],
+        ],
       ]
     }
   }

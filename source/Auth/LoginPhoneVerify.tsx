@@ -15,19 +15,19 @@ import * as UI from "../UI"
 export type Model = {
   code: string
   submission:
-  | {
-    type: "Idle"
-  }
-  | {
-    type: "Loading"
-  }
-  | {
-    type: "Problem"
-    message: string
-  }
-  | {
-    type: "Ok"
-  }
+    | {
+        type: "Idle"
+      }
+    | {
+        type: "Loading"
+      }
+    | {
+        type: "Problem"
+        message: string
+      }
+    | {
+        type: "Ok"
+      }
 }
 
 //
@@ -114,7 +114,15 @@ export const update = (
 //
 //
 
-export const View = ({ phoneNumber, model, $d }: { phoneNumber: PhoneNumber; model: Model; $d: (msg: Msg) => void }) => {
+export const View = ({
+  phoneNumber,
+  model,
+  $d,
+}: {
+  phoneNumber: PhoneNumber
+  model: Model
+  $d: (msg: Msg) => void
+}) => {
   return (
     <UI.FillBox>
       <UI.Header
@@ -136,7 +144,9 @@ export const View = ({ phoneNumber, model, $d }: { phoneNumber: PhoneNumber; mod
           label="Code"
           value={model.code}
           onChange={(e) => $d(["InputtedCode", e.target.value])}
-          helperText={`The code was sent to ${PhoneNumber.toString(phoneNumber)}`}
+          helperText={`The code was sent to ${PhoneNumber.toString(
+            phoneNumber,
+          )}`}
         />
 
         <UI.Button
@@ -161,5 +171,3 @@ export const View = ({ phoneNumber, model, $d }: { phoneNumber: PhoneNumber; mod
     </UI.FillBox>
   )
 }
-
-

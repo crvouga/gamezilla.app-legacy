@@ -1,7 +1,7 @@
 import { Audio, Cmd, exhaustive, Option, p, Sub, t } from "../../../Core"
 import { UserId } from "../../../Data"
 import * as ProfileStore from "../../../Profile/Profile.Store"
-import * as Snackbar from "../../../Snackbar"
+import * as Snackbar from "../../../Alerts"
 import * as UI from "../../../UI"
 import { Ctx } from "../../Game.Shared"
 import * as Board from "../Board"
@@ -18,8 +18,9 @@ import {
   inputMove,
   InputMove,
   SharedModel,
-  startGame, ToBackend,
-  ToFrontend
+  startGame,
+  ToBackend,
+  ToFrontend,
 } from "./UserVsUser.Types"
 
 //
@@ -157,7 +158,7 @@ export const updateFromBackend = (
   {
     currentUserId,
   }: {
-    currentUserId: UserId;
+    currentUserId: UserId
     profileStore: ProfileStore.Model
   },
   msg: ToFrontend,
@@ -198,8 +199,8 @@ export const updateFromBackend = (
       const soundCmd = Board.inCheck(sharedModelNew.board)
         ? playAudio(Sounds.check)
         : sharedModelNew.didCapture
-          ? playAudio(Sounds.capture)
-          : playAudio(Sounds.move)
+        ? playAudio(Sounds.capture)
+        : playAudio(Sounds.move)
 
       return [{ ...model, sharedModel: sharedModelNew }, soundCmd, []]
     }
@@ -267,7 +268,7 @@ export const updateFromBackend = (
       }
 
       const action: OutAction = [
-        "Snackbar",
+        "Alerts",
         { variant: "Info", message: "Draw was declined" },
       ]
 
@@ -293,7 +294,7 @@ export const updateFromBackend = (
       }
 
       const action: OutAction = [
-        "Snackbar",
+        "Alerts",
         { variant: "Info", message: "Draw was cancelled" },
       ]
 
@@ -355,7 +356,7 @@ export const updateFromBackend = (
       return [{ ...model, sharedModel }, Cmd.None, []]
     }
 
-    case 'PlayerLeft': {
+    case "PlayerLeft": {
       return [{ ...model, sharedModel: msg[1] }, Cmd.None, []]
     }
 
@@ -395,12 +396,11 @@ export const View = ({
   $d,
   onClose,
 }: {
-  ctx: Ctx,
+  ctx: Ctx
   model: Model
   $d: (msg: Msg) => void
   onClose: () => void
 }) => {
-
   if (model.sharedModel.type === "Setup") {
     const startGameResult = startGame(
       { userId: ctx.currentUserId },
@@ -416,8 +416,16 @@ export const View = ({
         <UI.Box sx={{ flex: 1, overflowY: "scroll" }}>
           <VersusHeader
             ctx={ctx}
-            black={model.sharedModel.b !== 'None' ? { type: "User", userId: model.sharedModel.b } : { type: "None" }}
-            white={model.sharedModel.w !== 'None' ? { type: "User", userId: model.sharedModel.w } : { type: "None" }}
+            black={
+              model.sharedModel.b !== "None"
+                ? { type: "User", userId: model.sharedModel.b }
+                : { type: "None" }
+            }
+            white={
+              model.sharedModel.w !== "None"
+                ? { type: "User", userId: model.sharedModel.w }
+                : { type: "None" }
+            }
           />
 
           <UI.Typography
@@ -427,7 +435,15 @@ export const View = ({
             Players
           </UI.Typography>
 
-          <UI.Box sx={{ display: "flex", alignItems: "center", paddingRight: 2, width: "100%", marginBottom: 1 }}>
+          <UI.Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              paddingRight: 2,
+              width: "100%",
+              marginBottom: 1,
+            }}
+          >
             <PawnIcon sx={{ width: 60, height: 60, color: "#fff" }} />
 
             {model.sharedModel.w === "None" ? (
@@ -435,7 +451,9 @@ export const View = ({
                 fullWidth
                 size="large"
                 variant="contained"
-                onClick={() => $d(["InputPlayer", { userId: ctx.currentUserId, color: "w" }])}
+                onClick={() =>
+                  $d(["InputPlayer", { userId: ctx.currentUserId, color: "w" }])
+                }
               >
                 Play As {Board.colorToString("w")}
               </UI.Button>
@@ -449,23 +467,36 @@ export const View = ({
             )}
           </UI.Box>
 
-          <UI.Box sx={{ display: "flex", alignItems: "center", paddingRight: 2, width: "100%" }}>
-            <PawnIcon stroke="#787878" sx={{ width: 60, height: 60, color: "#000" }} />
+          <UI.Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              paddingRight: 2,
+              width: "100%",
+            }}
+          >
+            <PawnIcon
+              stroke="#787878"
+              sx={{ width: 60, height: 60, color: "#000" }}
+            />
             {model.sharedModel.b === "None" ? (
               <UI.Button
                 fullWidth
                 size="large"
                 variant="contained"
-                onClick={() => $d([
-                  "InputPlayer",
-                  { userId: ctx.currentUserId, color: "b" },
-                ])}
+                onClick={() =>
+                  $d(["InputPlayer", { userId: ctx.currentUserId, color: "b" }])
+                }
               >
                 Play As {Board.colorToString("b")}
               </UI.Button>
-
             ) : (
-              <ViewInputUserPlayerSlot color="b" userId={model.sharedModel.b} ctx={ctx} $d={$d} />
+              <ViewInputUserPlayerSlot
+                color="b"
+                userId={model.sharedModel.b}
+                ctx={ctx}
+                $d={$d}
+              />
             )}
           </UI.Box>
 
@@ -530,7 +561,7 @@ export const View = ({
             Start Game
           </UI.Button>
         </UI.Box>
-      </UI.FillBox >
+      </UI.FillBox>
     )
   }
 
@@ -540,10 +571,10 @@ export const View = ({
     ctx.currentUserId === w && ctx.currentUserId === b
       ? "Both"
       : ctx.currentUserId === w
-        ? "w"
-        : ctx.currentUserId === b
-          ? "b"
-          : "None"
+      ? "w"
+      : ctx.currentUserId === b
+      ? "b"
+      : "None"
 
   const boardOrientation: Board.Color = p(
     currentUserColor === "None" || currentUserColor === "Both"
@@ -599,8 +630,7 @@ export const View = ({
 
           $d(msg)
 
-          const isOkfulMove =
-            inputMove(msg[1], model.sharedModel).type === "Ok"
+          const isOkfulMove = inputMove(msg[1], model.sharedModel).type === "Ok"
 
           return isOkfulMove
         }}
@@ -651,9 +681,7 @@ export const View = ({
                   }
                   onCancel={() => $d(["ClosedModal"])}
                   onClose={() => $d(["ClosedModal"])}
-                  onConfirm={() =>
-                    $d(["RequestToDraw", currentUserColor])
-                  }
+                  onConfirm={() => $d(["RequestToDraw", currentUserColor])}
                   open={model.openedModal === "RequestToDraw"}
                   title="Ask for a draw?"
                   confirmTitle="Ask"
@@ -690,7 +718,7 @@ export const View = ({
                     model.sharedModel.type === "Game" &&
                     model.sharedModel.drawAgreement.type === "Asking" &&
                     model.sharedModel.drawAgreement.asker ===
-                    Board.toOppositeColor(currentUserColor)
+                      Board.toOppositeColor(currentUserColor)
                   }
                   headerIcon={
                     <UI.Icons.HandshakeTwoTone
@@ -783,12 +811,19 @@ const ViewInputUserPlayerSlot = ({
 }: {
   $d: (msg: Msg) => void
   userId: UserId
-  ctx: Ctx,
+  ctx: Ctx
   color: Board.Color
 }) => {
   return (
-
-    <UI.Box sx={{ width: "100%", flex: 1, overflow: "hidden", display: "flex", alignItems: "center", }}>
+    <UI.Box
+      sx={{
+        width: "100%",
+        flex: 1,
+        overflow: "hidden",
+        display: "flex",
+        alignItems: "center",
+      }}
+    >
       <UI.Avatar
         sx={{ marginRight: 1 }}
         src={ctx.profiles[userId]?.avatarUrl}
@@ -804,18 +839,14 @@ const ViewInputUserPlayerSlot = ({
       {userId === ctx.currentUserId && (
         <UI.Button
           size="large"
-          onClick={() =>
-            $d(["InputPlayer", { userId: "None", color }])
-          }
+          onClick={() => $d(["InputPlayer", { userId: "None", color }])}
         >
           Stop Playing
         </UI.Button>
       )}
     </UI.Box>
-
   )
 }
-
 
 const toGameText = (model: SharedModel): string => {
   switch (model.type) {

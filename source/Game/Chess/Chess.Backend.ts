@@ -1,15 +1,12 @@
-import {
-  Cmd,
-  exhaustive,
-  Sub,
-} from "../../Core"
+import { Cmd, exhaustive, Sub } from "../../Core"
 import { Err, Ok } from "../../Core/Result"
 import { UserId } from "../../Data"
 import {
   BackendModel,
-  BackendMsg, InputMode_Done,
+  BackendMsg,
+  InputMode_Done,
   ToBackend,
-  ToFrontend
+  ToFrontend,
 } from "./Chess.Types"
 import * as UserVsBot from "./UserVsBot/UserVsBot.Backend"
 import * as UserVsUser from "./UserVsUser/UserVsUser.Backend"
@@ -95,7 +92,11 @@ export const updateFromFrontend = (
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case "InputMode": {
-      const result = initMode({ hostId, mode: msg[1].mode, userId: msg[1].userId })
+      const result = initMode({
+        hostId,
+        mode: msg[1].mode,
+        userId: msg[1].userId,
+      })
 
       if (result.type === "Err") {
         return [model, sendToClient(["InputMode_Done", msg[1], result])]
@@ -140,27 +141,45 @@ export const updateFromFrontend = (
   }
 }
 
-export const updateRoomLeave = ({ broadcast }: { broadcast: (msg: ToFrontend) => Cmd }, userId: UserId, model: Model): [Model, Cmd<Msg>] => {
+export const updateRoomLeave = (
+  { broadcast }: { broadcast: (msg: ToFrontend) => Cmd },
+  userId: UserId,
+  model: Model,
+): [Model, Cmd<Msg>] => {
   switch (model[0]) {
-    case 'None': {
+    case "None": {
       return [model, Cmd.None]
     }
 
-    case 'UserVsBot': {
-      const [child, cmd] = UserVsBot.updateRoomLeave({ broadcast: msg => broadcast(['UserVsBot', msg]) }, userId, model[1])
-      return [['UserVsBot', child], Cmd.tag("UserVsBot", cmd)]
+    case "UserVsBot": {
+      const [child, cmd] = UserVsBot.updateRoomLeave(
+        { broadcast: (msg) => broadcast(["UserVsBot", msg]) },
+        userId,
+        model[1],
+      )
+      return [["UserVsBot", child], Cmd.tag("UserVsBot", cmd)]
     }
 
-    case 'UserVsUser': {
-      const [child, cmd] = UserVsUser.updateRoomLeave({ broadcast: msg => broadcast(['UserVsUser', msg]) }, userId, model[1])
-      return [['UserVsUser', child], Cmd.tag("UserVsUser", cmd)]
+    case "UserVsUser": {
+      const [child, cmd] = UserVsUser.updateRoomLeave(
+        { broadcast: (msg) => broadcast(["UserVsUser", msg]) },
+        userId,
+        model[1],
+      )
+      return [["UserVsUser", child], Cmd.tag("UserVsUser", cmd)]
     }
   }
 }
 
-const initMode = (
-  { hostId, mode, userId, }: { hostId: UserId, mode: BackendModel[0], userId: UserId },
-): InputMode_Done[2] => {
+const initMode = ({
+  hostId,
+  mode,
+  userId,
+}: {
+  hostId: UserId
+  mode: BackendModel[0]
+  userId: UserId
+}): InputMode_Done[2] => {
   if (hostId !== userId) {
     return Err("must_be_the_host")
   }
@@ -173,7 +192,10 @@ const initMode = (
     }
 
     case "UserVsBot": {
-      const modelNew: BackendModel = ["UserVsBot", UserVsBot.init({ userId: userId })]
+      const modelNew: BackendModel = [
+        "UserVsBot",
+        UserVsBot.init({ userId: userId }),
+      ]
 
       return Ok(modelNew)
     }
@@ -197,10 +219,7 @@ const initMode = (
 //
 //
 
-export const subscriptions = (
-  intervalId: string,
-  model: Model,
-): Sub<Msg> => {
+export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
   switch (model[0]) {
     case "None": {
       return Sub.None

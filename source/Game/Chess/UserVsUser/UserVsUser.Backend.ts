@@ -17,7 +17,7 @@ import {
   respondToDraw,
   startGame,
   ToBackend,
-  ToFrontend
+  ToFrontend,
 } from "./UserVsUser.Types"
 
 //
@@ -54,8 +54,7 @@ export const update = (
       }
 
       const didChangeToGameOver =
-        model.type !== "GameOver" &&
-        modelNew.type === "GameOver"
+        model.type !== "GameOver" && modelNew.type === "GameOver"
 
       return [
         modelNew,
@@ -90,11 +89,7 @@ export const updateFromFrontend = (
     }
 
     case "Resign": {
-      return sendResponse(
-        wire,
-        ["Resign_Done", resign(msg[1], model)],
-        model,
-      )
+      return sendResponse(wire, ["Resign_Done", resign(msg[1], model)], model)
     }
 
     case "InputClock": {
@@ -138,11 +133,7 @@ export const updateFromFrontend = (
     }
 
     case "NewGame": {
-      return sendResponse(
-        wire,
-        ["NewGame_Done", newGame(model)],
-        model,
-      )
+      return sendResponse(wire, ["NewGame_Done", newGame(model)], model)
     }
 
     case "CancelDraw": {
@@ -173,18 +164,14 @@ const sendResponse = (
   if (response[1].type === "Err") {
     return [
       model,
-      Cmd.batch([
-        sendToClient(response),
-        sendToClient(["Sync", model]),
-      ]),
+      Cmd.batch([sendToClient(response), sendToClient(["Sync", model])]),
     ]
   }
 
   const modelNew: Model = response[1].value
 
   const didChangeToGameOver =
-    model.type !== "GameOver" &&
-    modelNew.type === "GameOver"
+    model.type !== "GameOver" && modelNew.type === "GameOver"
 
   return [
     modelNew,
@@ -195,27 +182,31 @@ const sendResponse = (
   ]
 }
 
-
-export const updateRoomLeave = ({ broadcast }: { broadcast: (m: ToFrontend) => Cmd }, userId: UserId, model: Model): [Model, Cmd<Msg>] => {
-
+export const updateRoomLeave = (
+  { broadcast }: { broadcast: (m: ToFrontend) => Cmd },
+  userId: UserId,
+  model: Model,
+): [Model, Cmd<Msg>] => {
   switch (model.type) {
-    case 'Setup': {
-      const color: Board.Color | 'None' = model.b === userId ? 'b' : model.w === userId ? 'w' : 'None'
+    case "Setup": {
+      const color: Board.Color | "None" =
+        model.b === userId ? "b" : model.w === userId ? "w" : "None"
 
-      if (color === 'None') {
+      if (color === "None") {
         return [model, Cmd.None]
       }
 
       const modelNew: Model = { ...model, [color]: "None" }
 
-      return [modelNew, broadcast(['PlayerLeft', modelNew])]
+      return [modelNew, broadcast(["PlayerLeft", modelNew])]
     }
 
-    case 'Game':
-    case 'GameOver': {
-      const color: Board.Color | 'None' = model.b === userId ? 'b' : model.w === userId ? 'w' : 'None'
+    case "Game":
+    case "GameOver": {
+      const color: Board.Color | "None" =
+        model.b === userId ? "b" : model.w === userId ? "w" : "None"
 
-      if (color === 'None') {
+      if (color === "None") {
         return [model, Cmd.None]
       }
 
@@ -229,11 +220,9 @@ export const updateRoomLeave = ({ broadcast }: { broadcast: (m: ToFrontend) => C
         [color]: "None",
       }
 
-      return [modelNew, broadcast(['PlayerLeft', modelNew])]
+      return [modelNew, broadcast(["PlayerLeft", modelNew])]
     }
   }
-
-
 }
 
 //
@@ -244,10 +233,7 @@ export const updateRoomLeave = ({ broadcast }: { broadcast: (m: ToFrontend) => C
 //
 //
 
-export const subscriptions = (
-  intervalId: string,
-  model: Model,
-): Sub<Msg> => {
+export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
   switch (model.type) {
     case "Setup": {
       return Sub.None

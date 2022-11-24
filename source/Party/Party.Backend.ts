@@ -6,7 +6,7 @@ import {
   handle,
   Res,
   ToBackend,
-  ToFrontend
+  ToFrontend,
 } from "./Party.Types"
 
 //
@@ -43,7 +43,7 @@ export const update = (
   model: Model,
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case 'None': {
+    case "None": {
       return [model, Cmd.None]
     }
 
@@ -56,7 +56,7 @@ export const update = (
 export const updateFromFrontend = (
   {
     sendToClient,
-    broadcast
+    broadcast,
   }: {
     broadcast: (msg: ToFrontend) => Cmd
     sendToUser: (userId: UserId[], msg: ToFrontend) => Cmd
@@ -69,10 +69,10 @@ export const updateFromFrontend = (
     case "PartyCreate":
     case "PartyDestroy":
     case "PartyJoin":
-    case 'PartyGet':
+    case "PartyGet":
     case "PartyLeave": {
       const res: Res = [...msg, handle(msg, model)]
-      if (res[2].type === 'Err') {
+      if (res[2].type === "Err") {
         return [model, sendToClient(res)]
       }
       return [res[2].value, broadcast(res)]
@@ -84,19 +84,17 @@ export const updateFromFrontend = (
   }
 }
 
-export const sendToParty = (
-  {
-    model,
-    partyId,
-    msg,
-    sendToUser,
-  }: {
-    model: Model,
-    partyId: PartyId,
-    msg: ToFrontend,
-    sendToUser: (userIds: UserId[], msg: ToFrontend) => Cmd
-  }
-): Cmd => {
+export const sendToParty = ({
+  model,
+  partyId,
+  msg,
+  sendToUser,
+}: {
+  model: Model
+  partyId: PartyId
+  msg: ToFrontend
+  sendToUser: (userIds: UserId[], msg: ToFrontend) => Cmd
+}): Cmd => {
   const userIds: UserId[] = []
 
   for (const userId in model.users) {

@@ -10,7 +10,7 @@ import {
   PlayerType,
   Position,
   toOpposite,
-  toStatus
+  toStatus,
 } from "../TicTacToe"
 
 //
@@ -38,7 +38,6 @@ export type GameModel = {
   board: Board
 }
 
-
 export type FrontendModel = SharedModel
 
 export type BackendModel = SharedModel
@@ -57,14 +56,15 @@ export const initSharedModel = ({
 }
 
 export const isBotTurn = (model: SharedModel): model is GameModel => {
-
-  if (model.type !== 'Game') {
+  if (model.type !== "Game") {
     return false
   }
 
   const status = toStatus(model.board)
 
-  return status.type === 'Turn' && status.turn === toOpposite(model.userPlayerType)
+  return (
+    status.type === "Turn" && status.turn === toOpposite(model.userPlayerType)
+  )
 }
 
 //
@@ -376,7 +376,11 @@ export const inputMove = (
     return Err("not_playing")
   }
 
-  const result = move({ board: model.board, player: model.userPlayerType, position })
+  const result = move({
+    board: model.board,
+    player: model.userPlayerType,
+    position,
+  })
 
   if (result.type === "Err") {
     return result
@@ -438,7 +442,7 @@ export const botMove = (
     return Err("not_in_game")
   }
 
-  if (botMoveResult.type === 'Err') {
+  if (botMoveResult.type === "Err") {
     return botMoveResult
   }
 
@@ -449,7 +453,7 @@ export const botMove = (
   const moveResult = move({
     board: model.board,
     player: botPlayerType,
-    position
+    position,
   })
 
   if (moveResult.type === "Err") {

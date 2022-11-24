@@ -14,17 +14,17 @@ export const Loading: Loading = { type: "Loading" }
 
 export const map =
   <E, A, B>(mapper: (a: A) => B) =>
-    (remoteData: RemoteData<E, A>): RemoteData<E, B> => {
-      switch (remoteData.type) {
-        case "NotAsked":
-        case "Loading":
-          return remoteData
+  (remoteData: RemoteData<E, A>): RemoteData<E, B> => {
+    switch (remoteData.type) {
+      case "NotAsked":
+      case "Loading":
+        return remoteData
 
-        case "Err":
-        case "Ok":
-          return p(remoteData, Result.map(mapper))
-      }
+      case "Err":
+      case "Ok":
+        return p(remoteData, Result.map(mapper))
     }
+  }
 
 export const RemoteData = {
   map,

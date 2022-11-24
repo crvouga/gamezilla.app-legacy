@@ -1,9 +1,7 @@
 import { Cmd } from "./Cmd"
 import { p } from "./pipe"
 
-export const exhaustive = (
-  discriminatedUnionType: "Missing Case!",
-): never => {
+export const exhaustive = (discriminatedUnionType: "Missing Case!"): never => {
   throw new Error(`Missing case for: ${discriminatedUnionType}`)
 }
 
@@ -12,47 +10,47 @@ export const andThen_ =
     msg: Msg,
     update: (msg: Msg, model: Model) => [Model, Cmd<Msg>],
   ) =>
-    ([model, cmdPrev]: [Model, Cmd<Msg>]): [Model, Cmd<Msg>] => {
-      const [modelNew, cmdNew] = update(msg, model)
+  ([model, cmdPrev]: [Model, Cmd<Msg>]): [Model, Cmd<Msg>] => {
+    const [modelNew, cmdNew] = update(msg, model)
 
-      return [modelNew, Cmd.batch([cmdNew, cmdPrev])]
-    }
+    return [modelNew, Cmd.batch([cmdNew, cmdPrev])]
+  }
 
 export const andThen =
   <Msg, Model>(
     update: (msg: Msg, model: Model) => [Model, Cmd<Msg>],
     msg: Msg,
   ) =>
-    ([model, cmdPrev]: [Model, Cmd<Msg>]): [Model, Cmd<Msg>] => {
-      const [modelNew, cmdNew] = update(msg, model)
+  ([model, cmdPrev]: [Model, Cmd<Msg>]): [Model, Cmd<Msg>] => {
+    const [modelNew, cmdNew] = update(msg, model)
 
-      return [modelNew, Cmd.batch([cmdNew, cmdPrev])]
-    }
+    return [modelNew, Cmd.batch([cmdNew, cmdPrev])]
+  }
 
 export const andThenMany =
   <Action, Model, Msg>(
     update: (msg: Action, model: Model) => [Model, Cmd<Msg>],
     msgs: Action[],
   ) =>
-    ([modelPrev, cmdPrev]: [Model, Cmd<Msg>]): [Model, Cmd<Msg>] => {
-      const [msg, ...msgsRest] = msgs
+  ([modelPrev, cmdPrev]: [Model, Cmd<Msg>]): [Model, Cmd<Msg>] => {
+    const [msg, ...msgsRest] = msgs
 
-      if (!msg) {
-        return [modelPrev, cmdPrev]
-      }
-
-      const [modelNew, cmdNew] = update(msg, modelPrev)
-
-      return p(
-        [modelNew, Cmd.batch([cmdPrev, cmdNew])],
-        andThenMany(update, msgsRest),
-      )
+    if (!msg) {
+      return [modelPrev, cmdPrev]
     }
+
+    const [modelNew, cmdNew] = update(msg, modelPrev)
+
+    return p(
+      [modelNew, Cmd.batch([cmdPrev, cmdNew])],
+      andThenMany(update, msgsRest),
+    )
+  }
 
 export const t =
   <Tag extends string>(tag: Tag) =>
-    <Value>(value: Value): [Tag, Value] =>
-      [tag, value]
+  <Value>(value: Value): [Tag, Value] =>
+    [tag, value]
 
 export const tagUpdate = <TagName extends string, Model, Msg>(
   tagName: TagName,
@@ -70,7 +68,6 @@ export const tagUpdate = <TagName extends string, Model, Msg>(
 export type Unit = { type: "Unit" }
 
 export const Unit: Unit = { type: "Unit" }
-
 
 type Range = [number, number]
 /**
@@ -91,7 +88,6 @@ export const rescale = ({
   return ((value - from[0]) * (to[1] - to[0])) / (from[1] - from[0]) + to[0]
 }
 
-
 /**
  * @example
  * const strEq = (s1, s2) => String(s1) === String(s2)
@@ -100,11 +96,11 @@ export const rescale = ({
  * unique(strEq, [1, '1', 1])    //=> [1]
  * unique(strEq, ['1', 1, 1])    //=> ['1']
  */
-export const unique = <X,>(eq: (a: X, b: X) => boolean, xs: X[]): X[] => {
+export const unique = <X>(eq: (a: X, b: X) => boolean, xs: X[]): X[] => {
   const items: X[] = []
 
   for (const x of xs) {
-    if (!items.some(item => eq(item, x))) {
+    if (!items.some((item) => eq(item, x))) {
       items.push(x)
     }
   }
@@ -122,23 +118,25 @@ export const unique = <X,>(eq: (a: X, b: X) => boolean, xs: X[]): X[] => {
  * isSubset(eq, ['a'], []) //=> false
  * isSubset(eq, ['a', 'b'], ['a']) //=> false
  */
-export const isSubset = <X,>(eq: (x1: X, x2: X) => boolean, a: X[], b: X[]): boolean =>
-  a.every((a_i) => b.some((b_i) => eq(a_i, b_i)))
-
+export const isSubset = <X>(
+  eq: (x1: X, x2: X) => boolean,
+  a: X[],
+  b: X[],
+): boolean => a.every((a_i) => b.some((b_i) => eq(a_i, b_i)))
 
 /**
-* @description
-* optimization for expensive function calls by caching results 
-* 
-* @example
-* // O(n^2) time complexity
-* const fibonacci = (n) => 
-*   n <= 1 ? 1 : fibonacci(n - 1) + fibonacci(n - 2)
-*
-* // O(n) time complexity 
-* const memoizedFibonacci = memoize(fibonacci)
-*
-*/
+ * @description
+ * optimization for expensive function calls by caching results
+ *
+ * @example
+ * // O(n^2) time complexity
+ * const fibonacci = (n) =>
+ *   n <= 1 ? 1 : fibonacci(n - 1) + fibonacci(n - 2)
+ *
+ * // O(n) time complexity
+ * const memoizedFibonacci = memoize(fibonacci)
+ *
+ */
 export const memoize = <X, Y>(toKey: (x: X) => string, f: (x: X) => Y) => {
   const cache = new Map<string, Y>()
   return (x: X): Y => {
@@ -154,9 +152,9 @@ export const memoize = <X, Y>(toKey: (x: X) => string, f: (x: X) => Y) => {
 }
 
 /**
- * @description 
+ * @description
  * returns a random permutation of the inputted array
- * @link 
+ * @link
  * https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle
  * @example
  * const x = ['a', 'b', 'c']
@@ -186,9 +184,9 @@ type Entry<T> = {
 
 export const filterObject = <T extends object>(
   obj: T,
-  predicate: (entry: Entry<T>, i: number, arr: Entry<T>[]) => boolean
+  predicate: (entry: Entry<T>, i: number, arr: Entry<T>[]) => boolean,
 ): T => {
   return Object.fromEntries(
-    (Object.entries(obj) as Entry<T>[]).filter(predicate)
+    (Object.entries(obj) as Entry<T>[]).filter(predicate),
   ) as T
 }

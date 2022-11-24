@@ -41,8 +41,21 @@ export const update = (msg: Msg, model: Model): [Model, OutAction[]] => {
 //
 //
 
-export const View = ({ gameRoom, ctx, $d }: { gameRoom: GameRoom.Model; ctx: Ctx; model: Model; $d: (msg: Msg) => void }) => {
+export const View = ({
+  gameRoom,
+  ctx,
+  $d,
+}: {
+  gameRoom: GameRoom.Model
+  ctx: Ctx
+  model: Model
+  $d: (msg: Msg) => void
+}) => {
   return (
-    <GameRoom.View ctx={ctx} model={gameRoom} $d={(msg) => $d(["GameRoom", msg])} />
+    <GameRoom.View
+      ctx={ctx}
+      model={gameRoom}
+      $d={(msg) => $d(["GameRoom", msg])}
+    />
   )
 }

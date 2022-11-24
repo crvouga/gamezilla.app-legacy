@@ -71,7 +71,7 @@ export const View = ({
 }: {
   chatStore: ChatStore.Model
   profileStore: ProfileStore.Model
-  currentUserId: UserId,
+  currentUserId: UserId
   model: Model
   $d: (msg: Msg) => void
 }) => {
@@ -82,19 +82,20 @@ export const View = ({
   const conversations = Object.values(chatStore.UsersConversations)
     .filter((item) => item.userId === currentUserId)
     .flatMap((item) => {
-      const profiles =
-        Object.values(profileStore.profiles)
-          .filter(profile => profile.userId === item.userId)
-          .filter(profile => profile.userId !== currentUserId)
+      const profiles = Object.values(profileStore.profiles)
+        .filter((profile) => profile.userId === item.userId)
+        .filter((profile) => profile.userId !== currentUserId)
 
       if (profiles.length === 0) {
         return []
       }
 
-      return [{
-        ...item,
-        profiles: profiles
-      }]
+      return [
+        {
+          ...item,
+          profiles: profiles,
+        },
+      ]
     })
 
   return (

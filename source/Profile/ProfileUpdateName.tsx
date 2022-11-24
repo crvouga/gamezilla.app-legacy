@@ -98,9 +98,7 @@ export const View = ({
         sx={{ marginBottom: 4 }}
         label="Name"
         fullWidth
-        onChange={(event) =>
-          $d(["InputtedName", event.currentTarget.value])
-        }
+        onChange={(event) => $d(["InputtedName", event.currentTarget.value])}
       />
     </UI.Box>
   </UI.FillBox>

@@ -43,27 +43,27 @@ export type GameOverModel = {
 
 type Rematch =
   | {
-    type: "NotAsking"
-  }
+      type: "NotAsking"
+    }
   | {
-    type: "Asking"
-    asker: TicTacToe.PlayerType
-  }
+      type: "Asking"
+      asker: TicTacToe.PlayerType
+    }
 
 const initCountDown = 5
 
 export type GameOver =
   | {
-    type: "Resignation"
-    resigner: TicTacToe.PlayerType
-  }
+      type: "Resignation"
+      resigner: TicTacToe.PlayerType
+    }
   | {
-    type: "Winner"
-    winner: TicTacToe.PlayerType
-  }
+      type: "Winner"
+      winner: TicTacToe.PlayerType
+    }
   | {
-    type: "Tie"
-  }
+      type: "Tie"
+    }
 
 export type BestOutOf = 1 | 3 | 5 | 7
 
@@ -141,7 +141,11 @@ export type BackendMsg = RoundCountDown | MoveCountDown
 
 export type ToBackend = Req
 
-export type ToFrontend = Res | RoundCountDown_Done | MoveCountDown_Done | ['PlayerLeft', SharedModel]
+export type ToFrontend =
+  | Res
+  | RoundCountDown_Done
+  | MoveCountDown_Done
+  | ["PlayerLeft", SharedModel]
 
 export type GameMsg = ["ClickedBoard", TicTacToe.Position]
 
@@ -350,10 +354,7 @@ export const resign = (
 //
 //
 
-type InputMove = [
-  "InputMove",
-  { userId: UserId; position: TicTacToe.Position },
-]
+type InputMove = ["InputMove", { userId: UserId; position: TicTacToe.Position }]
 type InputMove_Done = ["InputMove_Done", Result<InputMoveProblem, SharedModel>]
 type InputMoveProblem =
   | TicTacToe.MoveProblem

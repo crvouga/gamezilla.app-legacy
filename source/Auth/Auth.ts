@@ -88,10 +88,7 @@ export const update = (
   }
 }
 
-export const runAction = (
-  action: Action,
-  model: Model,
-): [Model, Cmd<Msg>] => {
+export const runAction = (action: Action, model: Model): [Model, Cmd<Msg>] => {
   switch (action[0]) {
     case "Auth": {
       switch (action[1][0]) {
@@ -128,36 +125,32 @@ export const loginWithEmailAndPassword =
     emailAddress: string
     password: string
   }): Task<AuthResult> =>
-    async () => {
-      const response = await Supabase.client.auth.signIn({
-        email: emailAddress,
-        password: password,
-      })
+  async () => {
+    const response = await Supabase.client.auth.signIn({
+      email: emailAddress,
+      password: password,
+    })
 
-      if (response.error) {
-        return Result.Err({ message: response.error.message })
-      }
-
-      return Result.Ok(Unit)
+    if (response.error) {
+      return Result.Err({ message: response.error.message })
     }
+
+    return Result.Ok(Unit)
+  }
 
 export const sendCode =
-  ({
-    phoneNumber,
-  }: {
-    phoneNumber: PhoneNumber
-  }): Task<AuthResult> =>
-    async () => {
-      const response = await Supabase.client.auth.signIn({
-        phone: PhoneNumber.toString(phoneNumber),
-      })
+  ({ phoneNumber }: { phoneNumber: PhoneNumber }): Task<AuthResult> =>
+  async () => {
+    const response = await Supabase.client.auth.signIn({
+      phone: PhoneNumber.toString(phoneNumber),
+    })
 
-      if (response.error) {
-        return Result.Err({ message: response.error.message })
-      }
-
-      return Result.Ok(Unit)
+    if (response.error) {
+      return Result.Err({ message: response.error.message })
     }
+
+    return Result.Ok(Unit)
+  }
 
 export const verifyCode =
   ({
@@ -167,52 +160,52 @@ export const verifyCode =
     code: string
     phoneNumber: PhoneNumber
   }): Task<AuthResult> =>
-    async () => {
-      const response = await Supabase.client.auth.verifyOTP({
-        phone: PhoneNumber.toString(phoneNumber),
-        token: code,
-      })
+  async () => {
+    const response = await Supabase.client.auth.verifyOTP({
+      phone: PhoneNumber.toString(phoneNumber),
+      token: code,
+    })
 
-      if (response.error) {
-        return Result.Err({ message: response.error.message })
-      }
-
-      return Result.Ok(Unit)
+    if (response.error) {
+      return Result.Err({ message: response.error.message })
     }
+
+    return Result.Ok(Unit)
+  }
 
 export const loginWithEmailLink =
   ({ emailAddress }: { emailAddress: string }): Task<AuthResult> =>
-    async () => {
-      const response = await Supabase.client.auth.signIn({
-        email: emailAddress,
-      })
+  async () => {
+    const response = await Supabase.client.auth.signIn({
+      email: emailAddress,
+    })
 
-      if (response.error) {
-        return Result.Err({ message: response.error.message })
-      }
-
-      return Result.Ok(Unit)
+    if (response.error) {
+      return Result.Err({ message: response.error.message })
     }
+
+    return Result.Ok(Unit)
+  }
 
 export type Provider = "Google"
 
 export const loginWithProvider =
   ({ provider }: { provider: Provider }): Task<AuthResult> =>
-    async () => {
-      switch (provider) {
-        case "Google": {
-          const response = await Supabase.client.auth.signIn({
-            provider: "google",
-          })
+  async () => {
+    switch (provider) {
+      case "Google": {
+        const response = await Supabase.client.auth.signIn({
+          provider: "google",
+        })
 
-          if (response.error) {
-            return Result.Err({ message: response.error.message })
-          }
-
-          return Result.Ok(Unit)
+        if (response.error) {
+          return Result.Err({ message: response.error.message })
         }
+
+        return Result.Ok(Unit)
       }
     }
+  }
 
 const logout: Task<Result<{}, {}>> = async () => {
   const { error } = await Supabase.client.auth.signOut()
@@ -268,8 +261,8 @@ export const fromSupabaseSession = (auth: Supabase.Session | null): Msg => {
   const userId = UserId.decode(auth?.user?.id)
 
   const defaultName =
-    auth?.user?.user_metadata?.['name'] ??
-    auth?.user?.user_metadata?.['full_name'] ??
+    auth?.user?.user_metadata?.["name"] ??
+    auth?.user?.user_metadata?.["full_name"] ??
     ""
 
   if (userId.type === "Ok") {

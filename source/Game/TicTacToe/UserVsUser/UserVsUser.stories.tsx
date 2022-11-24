@@ -13,10 +13,10 @@ const modelSetup: Model = {
 }
 
 const props: Parameters<typeof View>[0] = {
-  $d: () => { },
+  $d: () => {},
   ctx: ctx,
   model: modelSetup,
-  onCloseGame: () => { }
+  onCloseGame: () => {},
 }
 
 export default {
@@ -33,13 +33,11 @@ const Template: ComponentStory<typeof View> = (args) => {
   )
 }
 
-
-
 export const SetupMissingAll = Template.bind({})
 SetupMissingAll.args = {
   model: {
-    ...modelSetup
-  }
+    ...modelSetup,
+  },
 }
 
 export const SetupMissingX = Template.bind({})

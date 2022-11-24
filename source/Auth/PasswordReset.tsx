@@ -14,10 +14,10 @@ import { Cmd, p } from "../Core"
 export type Model = {
   emailAddress: string
   submission:
-  | { type: "Idle" }
-  | { type: "Loading" }
-  | { type: "Problem"; message: string }
-  | { type: "Succeeded"; sentTo: string }
+    | { type: "Idle" }
+    | { type: "Loading" }
+    | { type: "Problem"; message: string }
+    | { type: "Succeeded"; sentTo: string }
 }
 
 //
@@ -46,12 +46,12 @@ export type Msg =
   | ["ClickedSend"]
   | ["InputtedEmailAddress", string]
   | [
-    "Send_Done",
-    {
-      sentTo: string
-      result: AccountStore.SendResetPasswordLinkResult
-    },
-  ]
+      "Send_Done",
+      {
+        sentTo: string
+        result: AccountStore.SendResetPasswordLinkResult
+      },
+    ]
 
 export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
   switch (msg[0]) {

@@ -1,4 +1,3 @@
-
 import * as MuiLab from "@mui/lab"
 import * as Mui from "@mui/material"
 import { blue } from "@mui/material/colors"
@@ -248,7 +247,10 @@ export const TextField = ({ label, sx, ...props }: Mui.TextFieldProps) => {
 
   return (
     <Box sx={{ color: "text.secondary", ...sx }}>
-      <Typography color={props.disabled ? "text.disabled" : "inherit"} sx={{ mb: 1 / 2 }}>
+      <Typography
+        color={props.disabled ? "text.disabled" : "inherit"}
+        sx={{ mb: 1 / 2 }}
+      >
         {label}
       </Typography>
       <Mui.TextField

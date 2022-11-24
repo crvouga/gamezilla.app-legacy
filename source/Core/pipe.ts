@@ -224,28 +224,7 @@ export function p<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S>(
   rs: (r: R) => S,
 ): S
 
-export function p<
-  A,
-  B,
-  C,
-  D,
-  E,
-  F,
-  G,
-  H,
-  I,
-  J,
-  K,
-  L,
-  M,
-  N,
-  O,
-  P,
-  Q,
-  R,
-  S,
-  T,
->(
+export function p<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T>(
   a: A,
   ab: (a: A) => B,
   bc: (b: B) => C,

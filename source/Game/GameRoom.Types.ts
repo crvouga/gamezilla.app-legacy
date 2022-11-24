@@ -35,7 +35,10 @@ export type FrontendModel = {
   users: {
     [userId: UserId]: RoomUser
   }
-  modal: { type: "DrawerOpened" } | { type: "Closed" } | { type: "RoomLeaveThenJoin", roomId: RoomId }
+  modal:
+    | { type: "DrawerOpened" }
+    | { type: "Closed" }
+    | { type: "RoomLeaveThenJoin"; roomId: RoomId }
   requests: {
     [key in Req[0]]?: RemoteData<Problem, "None">
   }
@@ -67,11 +70,10 @@ export type ToFrontend =
 
 export type ToBackend =
   | Req
-  | ['RoomLeaveThenJoin', { roomId: RoomId, userId: UserId }]
+  | ["RoomLeaveThenJoin", { roomId: RoomId; userId: UserId }]
   | ["Games", RoomId, Game.ToBackend]
 
-export type BackendMsg =
-  | ["Games", RoomId, Game.BackendMsg]
+export type BackendMsg = ["Games", RoomId, Game.BackendMsg]
 
 export type FrontendMsg =
   | ["ClickedGoHome"]
@@ -79,9 +81,9 @@ export type FrontendMsg =
   | ["ClosedDrawer"]
   | ["ClickedUser", { userId: UserId }]
   | ["ClickedBanner"]
-  | ['ClosedModal']
+  | ["ClosedModal"]
   | ["Games", RoomId, Game.FrontendMsg]
-  | ['RoomLeaveThenJoin', { roomId: RoomId, userId: UserId }]
+  | ["RoomLeaveThenJoin", { roomId: RoomId; userId: UserId }]
   | Req
 
 //
@@ -93,20 +95,32 @@ export type FrontendMsg =
 type Model = BackendModel
 
 export type Req =
-  | ['RoomCreate', { userId: UserId, roomId: RoomId, gameName: Game.GameName }]
-  | ['RoomDestroy', { userId: UserId }]
-  | ['RoomJoin', { userId: UserId, roomId: RoomId }]
-  | ['RoomLeave', { userId: UserId }]
-  | ['ChangeGame', { userId: UserId, gameName: Game.GameName }]
-  | ['ChangeHost', { userId: UserId, nextHostId: UserId }]
+  | ["RoomCreate", { userId: UserId; roomId: RoomId; gameName: Game.GameName }]
+  | ["RoomDestroy", { userId: UserId }]
+  | ["RoomJoin", { userId: UserId; roomId: RoomId }]
+  | ["RoomLeave", { userId: UserId }]
+  | ["ChangeGame", { userId: UserId; gameName: Game.GameName }]
+  | ["ChangeHost", { userId: UserId; nextHostId: UserId }]
 
 export type Res =
-  | ['RoomCreate', { userId: UserId, roomId: RoomId, gameName: Game.GameName, }, Result<Problem, Model>]
-  | ['RoomDestroy', { userId: UserId }, Result<Problem, Model>]
-  | ['RoomJoin', { userId: UserId, roomId: RoomId, }, Result<Problem, Model>]
-  | ['RoomLeave', { userId: UserId }, Result<Problem, Model>]
-  | ['ChangeGame', { userId: UserId, gameName: Game.GameName, }, Result<Problem, Model>]
-  | ['ChangeHost', { userId: UserId, nextHostId: UserId, }, Result<Problem, Model>]
+  | [
+      "RoomCreate",
+      { userId: UserId; roomId: RoomId; gameName: Game.GameName },
+      Result<Problem, Model>,
+    ]
+  | ["RoomDestroy", { userId: UserId }, Result<Problem, Model>]
+  | ["RoomJoin", { userId: UserId; roomId: RoomId }, Result<Problem, Model>]
+  | ["RoomLeave", { userId: UserId }, Result<Problem, Model>]
+  | [
+      "ChangeGame",
+      { userId: UserId; gameName: Game.GameName },
+      Result<Problem, Model>,
+    ]
+  | [
+      "ChangeHost",
+      { userId: UserId; nextHostId: UserId },
+      Result<Problem, Model>,
+    ]
 
 export type Problem =
   | "must_be_host"
@@ -122,11 +136,9 @@ type ChangeHostProblem =
   | "next_host_room_not_found"
   | "next_host_must_be_in_same_room"
 
-
 export const handle = (msg: Req, model: Model): Result<Problem, Model> => {
   switch (msg[0]) {
-
-    case 'RoomCreate': {
+    case "RoomCreate": {
       const user = model.users[msg[1].userId]
 
       if (user) {
@@ -142,12 +154,12 @@ export const handle = (msg: Req, model: Model): Result<Problem, Model> => {
       const roomNew: BackendRoom = {
         roomId: msg[1].roomId,
         hostId: msg[1].userId,
-        game: GameBackend.init({ gameName: msg[1].gameName })
+        game: GameBackend.init({ gameName: msg[1].gameName }),
       }
 
       const userNew: RoomUser = {
         roomId: msg[1].roomId,
-        userId: msg[1].userId
+        userId: msg[1].userId,
       }
 
       const modelNew: Model = {
@@ -158,14 +170,14 @@ export const handle = (msg: Req, model: Model): Result<Problem, Model> => {
         },
         users: {
           ...model.users,
-          [userNew.userId]: userNew
-        }
+          [userNew.userId]: userNew,
+        },
       }
 
       return Ok(modelNew)
     }
 
-    case 'RoomDestroy': {
+    case "RoomDestroy": {
       const user = model.users[msg[1].userId]
 
       if (!user) {
@@ -184,18 +196,21 @@ export const handle = (msg: Req, model: Model): Result<Problem, Model> => {
 
       const roomsNew = removeKey(room.roomId, model.rooms)
 
-      const usersNew = filterObject(model.users, (entry) => entry[1].roomId !== user.roomId)
+      const usersNew = filterObject(
+        model.users,
+        (entry) => entry[1].roomId !== user.roomId,
+      )
 
       const modelNew: Model = {
         ...model,
         rooms: roomsNew,
-        users: usersNew
+        users: usersNew,
       }
 
       return Ok(modelNew)
     }
 
-    case 'RoomJoin': {
+    case "RoomJoin": {
       const user = model.users[msg[1].userId]
 
       if (user) {
@@ -204,21 +219,21 @@ export const handle = (msg: Req, model: Model): Result<Problem, Model> => {
 
       const userNew: RoomUser = {
         roomId: msg[1].roomId,
-        userId: msg[1].userId
+        userId: msg[1].userId,
       }
 
       const modelNew: Model = {
         ...model,
         users: {
           ...model.users,
-          [msg[1].userId]: userNew
-        }
+          [msg[1].userId]: userNew,
+        },
       }
 
       return Ok(modelNew)
     }
 
-    case 'RoomLeave': {
+    case "RoomLeave": {
       const user = model.users[msg[1].userId]
 
       if (!user) {
@@ -239,17 +254,17 @@ export const handle = (msg: Req, model: Model): Result<Problem, Model> => {
 
       const modelNew: Model = {
         ...model,
-        users: usersNew
+        users: usersNew,
       }
 
       return Ok(modelNew)
     }
 
-    case 'ChangeGame': {
+    case "ChangeGame": {
       return Ok(model)
     }
 
-    case 'ChangeHost': {
+    case "ChangeHost": {
       const user = model.users[msg[1].userId]
 
       if (!user) {
@@ -284,30 +299,29 @@ export const handle = (msg: Req, model: Model): Result<Problem, Model> => {
 
       const roomNew: BackendRoom = {
         ...room,
-        hostId: nextHost.userId
+        hostId: nextHost.userId,
       }
 
       const modelNew: Model = {
         ...model,
         rooms: {
           ...model.rooms,
-          [roomNew.roomId]: roomNew
-        }
+          [roomNew.roomId]: roomNew,
+        },
       }
 
       return Ok(modelNew)
     }
-
   }
 }
 
-// 
-// 
-// 
+//
+//
+//
 // Helpers
-// 
-// 
-// 
+//
+//
+//
 
 const removeKey = <T>(key: keyof T, obj: T): Omit<T, keyof T> => {
   const { [key]: _value, ...rest } = obj
@@ -320,9 +334,9 @@ type Entry<T> = {
 
 const filterObject = <T extends object>(
   obj: T,
-  predicate: (entry: Entry<T>, i: number, arr: Entry<T>[]) => boolean
+  predicate: (entry: Entry<T>, i: number, arr: Entry<T>[]) => boolean,
 ): T => {
   return Object.fromEntries(
-    (Object.entries(obj) as Entry<T>[]).filter(predicate)
+    (Object.entries(obj) as Entry<T>[]).filter(predicate),
   ) as T
 }

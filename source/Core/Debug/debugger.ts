@@ -16,24 +16,24 @@ import * as ReduxDevtool from "./debugger-redux-devtool"
 
 export const RunDebugger =
   <Model, Msg extends {}>(global: Global, stopSignal: Rx.Observable<unknown>) =>
-    (deps: DebuggerDeps<Model, Msg>): Task<void> => {
-      return p(
-        ReduxDevtool.getConnection<Model, Msg>(global),
-        Task.map(
-          Option.fold(
-            () => Console.makeDebugger<Model, Msg>(),
-            ReduxDevtool.makeDebugger,
-          ),
+  (deps: DebuggerDeps<Model, Msg>): Task<void> => {
+    return p(
+      ReduxDevtool.getConnection<Model, Msg>(global),
+      Task.map(
+        Option.fold(
+          () => Console.makeDebugger<Model, Msg>(),
+          ReduxDevtool.makeDebugger,
         ),
-        Task.chain((debuggerInstance) => async () => {
-          console.info("[debugger] starting")
+      ),
+      Task.chain((debuggerInstance) => async () => {
+        console.info("[debugger] starting")
 
-          const { debug, stop } = debuggerInstance(deps)
+        const { debug, stop } = debuggerInstance(deps)
 
-          deps.debug$.pipe(Rx.takeUntil(stopSignal)).subscribe({
-            next: debug,
-            complete: stop,
-          })
-        }),
-      )
-    }
+        deps.debug$.pipe(Rx.takeUntil(stopSignal)).subscribe({
+          next: debug,
+          complete: stop,
+        })
+      }),
+    )
+  }

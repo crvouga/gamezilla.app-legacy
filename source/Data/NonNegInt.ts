@@ -1,8 +1,6 @@
 export type NonNegInt = number & { _opaque: "NonNegInt" }
 
-const is = (
-  number: unknown,
-): number is NonNegInt => {
+const is = (number: unknown): number is NonNegInt => {
   return (
     typeof number === "number" && number >= 0 && Math.floor(number) === number
   )
@@ -22,7 +20,7 @@ const add = (a: NonNegInt, b: NonNegInt): NonNegInt => {
   return floor(a + b)
 }
 
-const sub = (a: NonNegInt, b: NonNegInt,): NonNegInt => {
+const sub = (a: NonNegInt, b: NonNegInt): NonNegInt => {
   return floor(a - b)
 }
 
@@ -35,5 +33,5 @@ export const NonNegInt = {
   add,
   floor,
   is,
-  inc
+  inc,
 }

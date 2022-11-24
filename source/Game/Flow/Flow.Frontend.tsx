@@ -1,4 +1,4 @@
-import { Cmd, Sub } from "../../Core";
+import { Cmd, Sub } from "../../Core"
 
 //
 //
@@ -8,9 +8,9 @@ import { Cmd, Sub } from "../../Core";
 //
 //
 
-export type Model = {};
+export type Model = {}
 
-export const init: [Model, Cmd<Msg>] = [{}, Cmd.None];
+export const init: [Model, Cmd<Msg>] = [{}, Cmd.None]
 
 //
 //
@@ -23,12 +23,12 @@ export const init: [Model, Cmd<Msg>] = [{}, Cmd.None];
 export type Msg = ["Noop"]
 
 export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
-    switch (msg[0]) {
-        case "Noop": {
-            return [model, Cmd.None]
-        }
+  switch (msg[0]) {
+    case "Noop": {
+      return [model, Cmd.None]
     }
-};
+  }
+}
 
 //
 //
@@ -39,5 +39,5 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
 //
 
 export const subscriptions = (_model: Model): Sub<Msg> => {
-    return Sub.None;
-};
+  return Sub.None
+}

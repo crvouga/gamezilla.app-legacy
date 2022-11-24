@@ -1,6 +1,6 @@
 import { Task } from "./Task"
 
-export type Uuid = string & { _opaque: 'Uuid' }
+export type Uuid = string & { _opaque: "Uuid" }
 
 const is = (id: unknown): id is Uuid => {
   return typeof id === "string"

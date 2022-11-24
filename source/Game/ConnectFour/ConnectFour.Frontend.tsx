@@ -1,18 +1,14 @@
 import { Cmd } from "../../Core"
-import * as Snackbar from "../../Snackbar"
+import * as Snackbar from "../../Alerts"
 import * as UI from "../../UI"
 import { bannerArtAspectRatio, Ctx, GameModeCardGrid } from "../Game.Shared"
-import {
-  COLUMN_COUNT,
-  gameTheme,
-  MAX_COLUMN_HEIGHT
-} from "./ConnectFour"
+import { COLUMN_COUNT, gameTheme, MAX_COLUMN_HEIGHT } from "./ConnectFour"
 import {
   BackendModel,
   FrontendModel,
   FrontendMsg,
   ToBackend,
-  ToFrontend
+  ToFrontend,
 } from "./ConnectFour.Types"
 import * as UserVsBot from "./UserVsBot/UserVsBot.Frontend"
 import * as UserVsUser from "./UserVsUser/UserVsUser.Frontend"
@@ -42,34 +38,37 @@ export type Msg = FrontendMsg
 
 type OutAction = Snackbar.Action
 
-export const update = ({ sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd }, msg: Msg, model: Model): [Model, Cmd<Msg>] => {
+export const update = (
+  { sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd },
+  msg: Msg,
+  model: Model,
+): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case 'InputMode': {
+    case "InputMode": {
       return [model, sendToBackend(msg)]
     }
-    case 'UserVsUser': {
-      if (model.type === 'UserVsUser') {
+    case "UserVsUser": {
+      if (model.type === "UserVsUser") {
         const [child, cmd] = UserVsUser.update(
           {
-            sendToBackend: msg => sendToBackend(['UserVsUser', msg])
+            sendToBackend: (msg) => sendToBackend(["UserVsUser", msg]),
           },
           msg[1],
-          model.child
+          model.child,
         )
         return [{ type: "UserVsUser", child }, Cmd.tag("UserVsUser", cmd)]
       }
       return [model, Cmd.None]
-
     }
 
-    case 'UserVsBot': {
-      if (model.type === 'UserVsBot') {
+    case "UserVsBot": {
+      if (model.type === "UserVsBot") {
         const [child, cmd] = UserVsBot.update(
           {
-            sendToBackend: msg => sendToBackend(['UserVsBot', msg])
+            sendToBackend: (msg) => sendToBackend(["UserVsBot", msg]),
           },
           msg[1],
-          model.child
+          model.child,
         )
         return [{ type: "UserVsBot", child }, Cmd.tag("UserVsBot", cmd)]
       }
@@ -83,29 +82,40 @@ export const updateFromBackend = (
   model: Model,
 ): [Model, Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
-    case 'InputMode_Done': {
-      const merged = mergeWithBackend({ frontendModel: model, backendModel: msg[1] })
+    case "InputMode_Done": {
+      const merged = mergeWithBackend({
+        frontendModel: model,
+        backendModel: msg[1],
+      })
       return [merged, Cmd.None, []]
     }
 
-    case 'UserVsUser': {
-      if (model.type === 'UserVsUser') {
+    case "UserVsUser": {
+      if (model.type === "UserVsUser") {
         const [child, cmd, actions] = UserVsUser.updateFromBackend(
           msg[1],
-          model.child
+          model.child,
         )
-        return [{ type: "UserVsUser", child }, Cmd.tag("UserVsUser", cmd), actions]
+        return [
+          { type: "UserVsUser", child },
+          Cmd.tag("UserVsUser", cmd),
+          actions,
+        ]
       }
       return [model, Cmd.None, []]
     }
 
-    case 'UserVsBot': {
-      if (model.type === 'UserVsBot') {
+    case "UserVsBot": {
+      if (model.type === "UserVsBot") {
         const [child, cmd, actions] = UserVsBot.updateFromBackend(
           msg[1],
-          model.child
+          model.child,
         )
-        return [{ type: "UserVsBot", child }, Cmd.tag("UserVsBot", cmd), actions]
+        return [
+          { type: "UserVsBot", child },
+          Cmd.tag("UserVsBot", cmd),
+          actions,
+        ]
       }
       return [model, Cmd.None, []]
     }
@@ -129,38 +139,49 @@ export const View = ({
   $d: (msg: Msg) => void
   ctx: Ctx
 }) => {
-  const goBack = () => $d(['InputMode', { userId: ctx.currentUserId, mode: "None" }])
+  const goBack = () =>
+    $d(["InputMode", { userId: ctx.currentUserId, mode: "None" }])
 
   switch (model.type) {
-    case 'None': {
+    case "None": {
       return (
         <UI.FillBox>
           <BannerArt />
 
           <GameModeCardGrid
-            onUserVsUser={() => $d(["InputMode", { mode: "UserVsUser", userId: ctx.currentUserId },])}
-            onUserVsBot={() => $d(["InputMode", { mode: "UserVsBot", userId: ctx.currentUserId },])}
+            onUserVsUser={() =>
+              $d([
+                "InputMode",
+                { mode: "UserVsUser", userId: ctx.currentUserId },
+              ])
+            }
+            onUserVsBot={() =>
+              $d([
+                "InputMode",
+                { mode: "UserVsBot", userId: ctx.currentUserId },
+              ])
+            }
           />
         </UI.FillBox>
       )
     }
 
-    case 'UserVsUser': {
+    case "UserVsUser": {
       return (
         <UserVsUser.View
           ctx={ctx}
-          $d={msg => $d(['UserVsUser', msg])}
+          $d={(msg) => $d(["UserVsUser", msg])}
           goBack={goBack}
           model={model.child}
         />
       )
     }
 
-    case 'UserVsBot': {
+    case "UserVsBot": {
       return (
         <UserVsBot.View
           ctx={ctx}
-          $d={(msg) => $d(['UserVsBot', msg])}
+          $d={(msg) => $d(["UserVsBot", msg])}
           model={model.child}
           goBack={goBack}
         />
@@ -177,31 +198,52 @@ export const View = ({
 //
 //
 
-
 const BannerArt = () => {
   const iconSx: UI.Sx = { width: 120, height: 120, maxHeight: "66%" }
 
   return (
     <UI.AspectRatio aspectRatio={bannerArtAspectRatio}>
-      <UI.List sx={{
-        width: "100%",
-        height: "100%",
-        background: `linear-gradient(${gameTheme.primary.dark}, ${gameTheme.primary.darker})`,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: 'center',
-        gap: 4
-      }}>
-
-        <PlayerIcon playerType="PlayerOne" sx={iconSx} />
-        <PlayerIcon playerType="PlayerTwo" sx={iconSx} />
+      <UI.List
+        sx={{
+          width: "100%",
+          height: "100%",
+          background: `linear-gradient(${gameTheme.primary.dark}, ${gameTheme.primary.darker})`,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: 4,
+        }}
+      >
+        <PlayerIcon
+          playerType="PlayerOne"
+          sx={iconSx}
+        />
+        <PlayerIcon
+          playerType="PlayerTwo"
+          sx={iconSx}
+        />
       </UI.List>
-      <UI.List sx={{ width: '100%', height: '100%', background: "rgba(0, 0, 0, 0.1)", position: "absolute", top: 0, left: 0, overflow: "hidden", display: 'flex', alignItems: "flex-end" }}>
-        <UI.Typography color="#fff" fontSize={36} sx={{ paddingX: 2, paddingY: 1 }}>
+      <UI.List
+        sx={{
+          width: "100%",
+          height: "100%",
+          background: "rgba(0, 0, 0, 0.1)",
+          position: "absolute",
+          top: 0,
+          left: 0,
+          overflow: "hidden",
+          display: "flex",
+          alignItems: "flex-end",
+        }}
+      >
+        <UI.Typography
+          color="#fff"
+          fontSize={36}
+          sx={{ paddingX: 2, paddingY: 1 }}
+        >
           Connect Four
         </UI.Typography>
       </UI.List>
-
     </UI.AspectRatio>
   )
 }
@@ -346,25 +388,26 @@ export const CoverArt = ({ id }: { id: string }) => {
   )
 }
 
-export const mergeWithBackend = (
-  {
-    frontendModel,
-    backendModel
-  }: {
-    frontendModel: FrontendModel,
-    backendModel: BackendModel,
-  }
-): FrontendModel => {
+export const mergeWithBackend = ({
+  frontendModel,
+  backendModel,
+}: {
+  frontendModel: FrontendModel
+  backendModel: BackendModel
+}): FrontendModel => {
   switch (backendModel.type) {
-    case 'None': {
+    case "None": {
       return backendModel
     }
 
-    case 'UserVsBot': {
-      if (frontendModel.type === 'UserVsBot') {
+    case "UserVsBot": {
+      if (frontendModel.type === "UserVsBot") {
         return {
           type: "UserVsBot",
-          child: UserVsBot.mergeWithBackend({ frontendModel: frontendModel.child, backendModel: backendModel.child })
+          child: UserVsBot.mergeWithBackend({
+            frontendModel: frontendModel.child,
+            backendModel: backendModel.child,
+          }),
         }
       }
 
@@ -372,28 +415,29 @@ export const mergeWithBackend = (
         type: "UserVsBot",
         child: UserVsBot.mergeWithBackend({
           frontendModel: UserVsBot.init(backendModel.child),
-          backendModel: backendModel.child
-        })
+          backendModel: backendModel.child,
+        }),
       }
     }
 
-    case 'UserVsUser': {
-
-      if (frontendModel.type === 'UserVsUser') {
+    case "UserVsUser": {
+      if (frontendModel.type === "UserVsUser") {
         return {
           type: "UserVsUser",
           child: UserVsUser.mergeWithBackend({
             frontendModel: frontendModel.child,
-            backendModel: backendModel.child
-          })
+            backendModel: backendModel.child,
+          }),
         }
       }
 
       return {
         type: "UserVsUser",
-        child: UserVsUser.mergeWithBackend({ frontendModel: UserVsUser.init(backendModel.child), backendModel: backendModel.child })
+        child: UserVsUser.mergeWithBackend({
+          frontendModel: UserVsUser.init(backendModel.child),
+          backendModel: backendModel.child,
+        }),
       }
     }
   }
-
 }
