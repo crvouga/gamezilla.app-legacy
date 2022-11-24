@@ -72,6 +72,7 @@ export type Msg =
   | ['scrolled', Browser.FocusResult]
   | ['send_code']
   | ['send_code_done', Auth.AuthResult]
+  | ['send_code_clear']
   | ['verify_code']
   | ['verify_code_done', Auth.AuthResult]
   | ['input_code', string]
@@ -146,6 +147,10 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
       ]
     }
 
+
+    case 'send_code_clear': {
+      return [{ ...model, send_code: { type: "not_asked" } }, Cmd.None]
+    }
 
     case 'input_code': {
       if (model.send_code.type !== 'ok') {
@@ -306,13 +311,13 @@ export const View = ({
       </Box>
       <Box>
         <Typography sx={{ mb: 1 / 2 }} color="text.secondary">
-          Method
+          Choose Method
         </Typography>
 
         <ToggleButtonGroup fullWidth size="medium" value={model.method}>
           <ToggleButton value="phone" onClick={() => $d(['input_method', 'phone'])}>
-            <Icons.Phone sx={{ mr: 1 }} />
-            Phone
+            <Icons.Textsms sx={{ mr: 1 }} />
+            Text
           </ToggleButton>
           <ToggleButton value="email" onClick={() => $d(['input_method', 'email'])}>
             <Icons.Email sx={{ mr: 1 }} />
@@ -322,9 +327,11 @@ export const View = ({
       </Box>
 
 
+      <Divider orientation="vertical" sx={{ height: "2rem", marginX: "auto" }} />
+
       {model.method === 'phone' && (
         <>
-          <TextField sx={{ width: '100%' }} fullWidth label="Phone Number" placeholder="Enter you phone number"
+          <TextField sx={{ width: '100%' }} fullWidth label="Enter Phone Number" placeholder="phone number"
             type="tel"
             error={model.send_code.type === 'err'}
             helperText={model.send_code.type === 'err' ? 'Invalid phone number' : ''}
@@ -352,9 +359,9 @@ export const View = ({
             </>
             : <>
 
-              <Divider orientation="vertical" sx={{ height: "2rem", marginX: "auto" }} />
+              {/* <Divider orientation="vertical" sx={{ height: "2rem", marginX: "auto" }} /> */}
               <Alert severity="success" variant="filled" action={
-                <IconButton color="inherit" size="small">
+                <IconButton color="inherit" size="small" onClick={() => $d(['send_code_clear'])}>
                   <Icons.Clear />
                 </IconButton>
               }>
@@ -362,14 +369,13 @@ export const View = ({
                   color="text.secondary"
                   variant="body2"
                 >
-                  A text message was sent to{" "}
+                  The code was sent to{" "}
                   <Box
                     component="span"
                     sx={{ color: "text.primary" }}
                   >
                     {model.send_code.phoneNumber._validPhoneNumber}
                   </Box>
-                  {" "}with the code.
                 </Typography>
               </Alert>
               <Divider orientation="vertical" sx={{ height: "2rem", marginX: "auto" }} />
@@ -387,6 +393,11 @@ export const View = ({
               <Button fullWidth variant="contained" size="large" startIcon={<Icons.VerifiedUser />} onClick={() => $d(['verify_code'])} loading={model.send_code.verify.type === 'loading'}>
                 Verify Code
               </Button>
+              {model.send_code.verify.type === 'err' && (
+                <Alert severity="error">
+                  {model.send_code.verify.err}
+                </Alert>
+              )}
             </>
           }
 
@@ -405,3 +416,5 @@ export const View = ({
     </FillBox>
   )
 }
+
+
