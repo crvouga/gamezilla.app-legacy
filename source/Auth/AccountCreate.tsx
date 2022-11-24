@@ -181,7 +181,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
     }
 
     case "ClickedLogin": {
-      return [model, Route.push(["Login"])]
+      return [model, Route.push(["Login", { drawer: "none" }])]
     }
 
     default:
