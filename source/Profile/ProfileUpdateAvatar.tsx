@@ -1,6 +1,6 @@
 import { ProfileAvatar, UserId } from "../Data"
 import * as Route from "../Route"
-import * as Snackbar from "../Alerts"
+import * as Alerts from "../Alerts"
 import * as ProfileStore from "./Profile.Store"
 import * as UI from "../UI"
 import { Cmd, p } from "../Core"
@@ -47,7 +47,7 @@ export type Msg =
   | ["InputtedSeed", ProfileAvatar.Seed]
   | ["RandomSeedGenerated", ProfileAvatar.Seed]
 
-type OutAction = Snackbar.Action | ProfileStore.Action
+type OutAction = Alerts.Action | ProfileStore.Action
 
 export const update = (
   { userId }: { userId: UserId },

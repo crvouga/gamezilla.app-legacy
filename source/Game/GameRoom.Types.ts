@@ -36,9 +36,9 @@ export type FrontendModel = {
     [userId: UserId]: RoomUser
   }
   modal:
-    | { type: "DrawerOpened" }
-    | { type: "Closed" }
-    | { type: "RoomLeaveThenJoin"; roomId: RoomId }
+  | { type: "DrawerOpened" }
+  | { type: "Closed" }
+  | { type: "RoomLeaveThenJoin"; roomId: RoomId }
   requests: {
     [key in Req[0]]?: RemoteData<Problem, "None">
   }
@@ -70,6 +70,7 @@ export type ToFrontend =
 
 export type ToBackend =
   | Req
+  | ["RoomEndThenJoin", { roomId: RoomId; userId: UserId }]
   | ["RoomLeaveThenJoin", { roomId: RoomId; userId: UserId }]
   | ["Games", RoomId, Game.ToBackend]
 
@@ -83,6 +84,7 @@ export type FrontendMsg =
   | ["ClickedBanner"]
   | ["ClosedModal"]
   | ["Games", RoomId, Game.FrontendMsg]
+  | ["RoomEndThenJoin", { roomId: RoomId; userId: UserId }]
   | ["RoomLeaveThenJoin", { roomId: RoomId; userId: UserId }]
   | Req
 
@@ -104,23 +106,23 @@ export type Req =
 
 export type Res =
   | [
-      "RoomCreate",
-      { userId: UserId; roomId: RoomId; gameName: Game.GameName },
-      Result<Problem, Model>,
-    ]
+    "RoomCreate",
+    { userId: UserId; roomId: RoomId; gameName: Game.GameName },
+    Result<Problem, Model>,
+  ]
   | ["RoomDestroy", { userId: UserId }, Result<Problem, Model>]
   | ["RoomJoin", { userId: UserId; roomId: RoomId }, Result<Problem, Model>]
   | ["RoomLeave", { userId: UserId }, Result<Problem, Model>]
   | [
-      "ChangeGame",
-      { userId: UserId; gameName: Game.GameName },
-      Result<Problem, Model>,
-    ]
+    "ChangeGame",
+    { userId: UserId; gameName: Game.GameName },
+    Result<Problem, Model>,
+  ]
   | [
-      "ChangeHost",
-      { userId: UserId; nextHostId: UserId },
-      Result<Problem, Model>,
-    ]
+    "ChangeHost",
+    { userId: UserId; nextHostId: UserId },
+    Result<Problem, Model>,
+  ]
 
 export type Problem =
   | "must_be_host"

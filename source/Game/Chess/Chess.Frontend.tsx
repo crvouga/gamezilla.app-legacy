@@ -1,7 +1,5 @@
+import * as Alerts from "../../Alerts"
 import { Audio, Cmd, p, RemoteData, Sub, Unit } from "../../Core"
-import { UserId } from "../../Data"
-import * as Snackbar from "../../Alerts"
-import * as ProfileStore from "../../Profile/Profile.Store"
 import * as UI from "../../UI"
 import { Ctx, GameModeCardGrid } from "../Game.Shared"
 import {
@@ -9,7 +7,7 @@ import {
   FrontendModel,
   FrontendMsg,
   ToBackend,
-  ToFrontend,
+  ToFrontend
 } from "./Chess.Types"
 import * as Sounds from "./Sounds"
 import * as UserVsBot from "./UserVsBot/UserVsBot.Frontend"
@@ -26,10 +24,10 @@ import { BannerArt } from "./Views"
 
 export type Model = FrontendModel
 
-export const init = ({}: // sendToBackend,
-{
-  sendToBackend: (msg: ToBackend) => Cmd
-}): [FrontendModel, Cmd<Msg>] => {
+export const init = ({ }: // sendToBackend,
+  {
+    sendToBackend: (msg: ToBackend) => Cmd
+  }): [FrontendModel, Cmd<Msg>] => {
   return [
     {
       mode: ["None"],
@@ -51,7 +49,7 @@ export const init = ({}: // sendToBackend,
 
 export type Msg = FrontendMsg
 
-export type OutAction = Snackbar.Action
+export type OutAction = Alerts.Action
 
 export const update = (
   { sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd },
@@ -111,13 +109,11 @@ export const update = (
 
 export const updateFromBackend = (
   {
-    currentUserId,
+    ctx,
     sendToBackend,
-    store,
   }: {
-    currentUserId: UserId
     sendToBackend: (msg: ToBackend) => Cmd
-    store: ProfileStore.Model
+    ctx: Ctx,
   },
   msg: ToFrontend,
   model: Model,
@@ -153,7 +149,7 @@ export const updateFromBackend = (
     case "UserVsUser": {
       if (model.mode[0] === "UserVsUser") {
         const [child, cmd, actions] = UserVsUser.updateFromBackend(
-          { currentUserId, profileStore: store },
+          { ctx },
           msg[1],
           model.mode[1],
         )

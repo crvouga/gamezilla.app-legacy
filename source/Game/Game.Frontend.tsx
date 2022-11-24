@@ -1,7 +1,6 @@
+import * as Alerts from "../Alerts"
 import { Cmd, Sub, tagUpdate } from "../Core"
-import { UserId } from "../Data"
 import * as ProfileStore from "../Profile/Profile.Store"
-import * as Snackbar from "../Alerts"
 import * as Chess from "./Chess/Chess.Frontend"
 import * as ConnectFour from "./ConnectFour/ConnectFour.Frontend"
 import { Ctx } from "./Game.Shared"
@@ -11,7 +10,7 @@ import {
   FrontendMsg,
   GameName,
   ToBackend,
-  ToFrontend,
+  ToFrontend
 } from "./Game.Types"
 import * as Maze from "./Maze/Maze.Frontend"
 import * as Snake from "./Snake/Snake.Frontend"
@@ -75,7 +74,7 @@ export const init = ({
 
 export type Msg = FrontendMsg
 
-export type OutAction = Snackbar.Action | ProfileStore.Action
+export type OutAction = Alerts.Action | ProfileStore.Action
 
 export const update = (
   {
@@ -184,13 +183,11 @@ export const update = (
 
 export const updateFromBackend = (
   {
-    currentUserId,
-    store,
+    ctx,
     sendToBackend,
   }: {
-    currentUserId: UserId
+    ctx: Ctx,
     sendToBackend: (msg: ToBackend) => Cmd
-    store: ProfileStore.Model
   },
   msg: ToFrontend,
   model: Model,
@@ -241,9 +238,8 @@ export const updateFromBackend = (
       if (model[0] === "Chess") {
         const [child, cmd, actions] = Chess.updateFromBackend(
           {
-            currentUserId,
+            ctx,
             sendToBackend: (msg) => sendToBackend(["Chess", msg]),
-            store,
           },
           msg[1],
           model[1],

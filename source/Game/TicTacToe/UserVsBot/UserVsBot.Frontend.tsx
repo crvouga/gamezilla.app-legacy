@@ -1,5 +1,5 @@
 import { Cmd, Sub } from "../../../Core"
-import * as Snackbar from "../../../Alerts"
+import * as Alerts from "../../../Alerts"
 import * as UI from "../../../UI"
 import { Ctx } from "../../Game.Shared"
 import {
@@ -54,7 +54,7 @@ export const init = initSharedModel
 
 export type Msg = FrontendMsg
 
-export type OutAction = Snackbar.Action
+export type OutAction = Alerts.Action
 
 export const update = (
   { sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd },
@@ -86,25 +86,7 @@ export const updateFromBackend = (
       return [modelNew, Cmd.None, []]
     }
 
-    case "BotMove_Done": {
-      if (msg[1].type === "Err") {
-        return [
-          model,
-          Cmd.None,
-          [
-            [
-              "Alerts",
-              { message: "Bot failed to make a move", variant: "Error" },
-            ],
-          ],
-        ]
-      }
-
-      const modelNew = mergeWithBackend(model, msg[1].value)
-
-      return [modelNew, Cmd.None, []]
-    }
-
+    case "BotMove_Done":
     case "InputBot_Done":
     case "StartGame_Done":
     case "StartPlaying_Done":

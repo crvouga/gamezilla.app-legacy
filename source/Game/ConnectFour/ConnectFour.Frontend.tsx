@@ -1,5 +1,5 @@
 import { Cmd } from "../../Core"
-import * as Snackbar from "../../Alerts"
+import * as Alerts from "../../Alerts"
 import * as UI from "../../UI"
 import { bannerArtAspectRatio, Ctx, GameModeCardGrid } from "../Game.Shared"
 import { COLUMN_COUNT, gameTheme, MAX_COLUMN_HEIGHT } from "./ConnectFour"
@@ -36,7 +36,7 @@ export const init: Model = { type: "None" }
 
 export type Msg = FrontendMsg
 
-type OutAction = Snackbar.Action
+type OutAction = Alerts.Action
 
 export const update = (
   { sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd },

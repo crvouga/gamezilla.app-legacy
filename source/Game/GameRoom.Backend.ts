@@ -206,6 +206,32 @@ export const updateFromFrontend = (
       ]
     }
 
+    case "RoomEndThenJoin": {
+      const roomDestroyed = handle(["RoomDestroy", { userId: msg[1].userId }], model)
+
+      if (roomDestroyed.type === "Err") {
+        return [model, wire.sendToClient(['RoomDestroy', msg[1], roomDestroyed])]
+      }
+
+      const roomJoined = handle(["RoomJoin", msg[1]], roomDestroyed.value)
+
+      if (roomJoined.type === "Err") {
+        return [
+          model,
+          wire.sendToClient(["RoomJoin", msg[1], roomJoined]),
+        ]
+      }
+
+      return [
+        roomJoined.value,
+        Cmd.batch([
+          wire.broadcast(["RoomDestroy", msg[1], roomDestroyed]),
+          wire.broadcast(["RoomJoin", msg[1], roomJoined]),
+        ]),
+      ]
+    }
+
+
     default:
       return exhaustive(msg[0])
   }
@@ -228,13 +254,13 @@ const updateRoomLeave = (
   const user = model.users[userId]
 
   if (!user) {
-    return [modelAfter, wire.broadcast(res)]
+    return [modelAfter, wire.sendToClient(res)]
   }
 
   const room = model.rooms[user.roomId]
 
   if (!room) {
-    return [modelAfter, wire.broadcast(res)]
+    return [modelAfter, wire.sendToClient(res)]
   }
 
   const [gameNew, cmd] = Game.updateRoomLeave(

@@ -29,7 +29,7 @@ import {
 } from "./Profile"
 import * as ProfileStore from "./Profile/Profile.Store"
 import * as Route from "./Route"
-import * as Snackbar from "./Alerts"
+import * as Alerts from "./Alerts"
 import * as UI from "./UI"
 
 //
@@ -98,7 +98,7 @@ export type Msg =
 
 export type OutAction =
   | ChatStore.Action
-  | Snackbar.Action
+  | Alerts.Action
   | GameRoom.Action
   | Auth.Action
   | Party.Action
